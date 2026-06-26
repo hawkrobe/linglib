@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -131,25 +131,21 @@ def absPosition : Mayan.ABSPosition := .low
 -- § 3: Extraction Data
 -- ============================================================================
 
-/-- Chol's extraction profile: no special morphology for any extraction.
-    Unlike Q'anjob'al, Chol requires **no Agent Focus morphology** for
-    A-extraction (the diagnostic for "lacking syntactic ergativity" in the
-    [coon-mateo-pedro-preminger-2014] sense). The substantive claim
-    is `extractionProfile.strategy = .none`; per-position extractability
-    follows trivially (every argument extracts freely), so no per-position
-    table is stipulated — the contrast with Q'anjob'al lives at the
-    `strategy` field.
+/-- Chol's extraction data: no special morphology for any extraction
+    (`extractionStrategy = .unmarked`). Unlike Q'anjob'al, Chol requires
+    **no Agent Focus morphology** for A-extraction (the diagnostic for
+    "lacking syntactic ergativity" in the [coon-mateo-pedro-preminger-2014]
+    sense). Per-position extractability follows trivially (every argument
+    extracts freely), so the marked-positions list is empty — the contrast
+    with Q'anjob'al lives at the strategy.
 
     The resulting ambiguity (when both arguments are 3rd person) is a
     natural consequence of the absence of AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "Chol"
-  , strategy := .unmarked
-  , markedPositions := []
-  , distinguishesPosition := false
-  , notes := "No Agent Focus morphology required for A-extraction [coon-mateo-pedro-preminger-2014]" }
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
+def extractionMarkedPositions : List Extraction.ExtractionTarget := []
+def extractionDistinguishesPosition : Bool := false
 
 -- ============================================================================
 -- § 4: Non-Finite Absolutive Availability

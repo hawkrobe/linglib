@@ -1,5 +1,5 @@
 import Linglib.Features.WordOrder
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 import Linglib.Typology.Universal
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.English.Adposition
@@ -79,7 +79,7 @@ structure SampleEntry where
   iso : String
   name : String
   wordOrder : _root_.WordOrder.WordOrderProfile
-  adposition : _root_.Typology.Adposition.AdpositionOrder
+  adposition : _root_.Adposition.AdpositionOrder
   deriving Repr, DecidableEq
 
 /-- Hand-verified 15-language sample spanning the four major basic-order

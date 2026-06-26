@@ -1,4 +1,4 @@
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # K'iche' Extraction Morphology Fragment
@@ -231,20 +231,18 @@ theorem fronting_particle_generalization :
 -- § 5: Extraction Profile
 -- ============================================================================
 
-/-- K'ichean extraction profile: *wi* marks oblique extraction via
-    copy spellout at the foot of the Ā-chain. -/
-def kicheanExtractionProfile : Typology.ExtractionProfile :=
-  { language := "K'ichean (K'iche', Kaqchikel, Tz'utujil)"
-  , strategy := .dedicatedMorpheme
-  , markedPositions := [.oblique]
-  , distinguishesPosition := true
-  , notes := "Fronting particle wi (Chain Reduction via Substitution); " ++
-             "triggered by low adjuncts (spatial, instrumental, etc.); " ++
-             "temporal and reason exempt; obligatory in K'iche', " ++
-             "optional in Patzún Kaqchikel; FPG: matrix wi contingent " ++
-             "on overt complementizer in embedded clause" }
+/-- K'ichean extraction profile (language "K'ichean (K'iche', Kaqchikel,
+    Tz'utujil)"): *wi* marks oblique extraction via copy spellout at the
+    foot of the Ā-chain. Notes: Fronting particle wi (Chain Reduction via
+    Substitution); triggered by low adjuncts (spatial, instrumental, etc.);
+    temporal and reason exempt; obligatory in K'iche', optional in Patzún
+    Kaqchikel; FPG: matrix wi contingent on overt complementizer in
+    embedded clause. -/
+def kicheanExtractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def kicheanExtractionMarkedPositions : List Extraction.ExtractionTarget := [.oblique]
+def kicheanExtractionDistinguishesPosition : Bool := true
 
 theorem kichean_marks_oblique :
-    kicheanExtractionProfile.Marks .oblique := by decide
+    Extraction.Marks kicheanExtractionMarkedPositions .oblique := by decide
 
 end Kiche

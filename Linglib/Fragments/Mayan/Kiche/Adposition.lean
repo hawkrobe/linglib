@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # K'iche' adposition order [mondloch-2017] [clemens-coon-2018]
@@ -33,6 +33,6 @@ namespace Kiche
     Ch 85 — direct override rather than `AdpositionOrder.ofWALS "quc"`
     (which would return `.notInWALS`). The `.prepositional` choice is
     contested across Mayanist literature; see module docstring. -/
-def adposition : Typology.Adposition.AdpositionOrder := .prepositional
+def adposition : Adposition.AdpositionOrder := .prepositional
 
 end Kiche

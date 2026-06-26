@@ -1,4 +1,4 @@
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # Voice system typology
@@ -24,7 +24,7 @@ namespace Voice
 /-! ### Pivot target -/
 
 /-- Which argument role a voice promotes to pivot. Finer-grained than
-    `Typology.ArgumentRole`: Philippine-type systems distinguish locative,
+    `Extraction.ArgumentRole`: Philippine-type systems distinguish locative,
     instrumental, benefactive, and circumstantial pivots, all collapsing to oblique. -/
 inductive PivotTarget where
   | agent
@@ -35,8 +35,8 @@ inductive PivotTarget where
   | circumstantial
   deriving DecidableEq, Repr
 
-/-- Coarsen a `PivotTarget` to a `Typology.ArgumentRole` (obliques collapse). -/
-def PivotTarget.toArgumentRole : PivotTarget → Typology.ArgumentRole
+/-- Coarsen a `PivotTarget` to a `Extraction.ArgumentRole` (obliques collapse). -/
+def PivotTarget.toArgumentRole : PivotTarget → Extraction.ArgumentRole
   | .agent => .agent
   | .patient => .patient
   | .locative => .oblique

@@ -294,6 +294,6 @@ theorem locality_sensitivity :
     (Toba Batak) or dedicated morpheme (Mam). Different repair strategy,
     same underlying problem (anti-locality). -/
 theorem strategy_is_af :
-    extractionProfile.strategy = .dedicatedMorpheme := rfl
+    extractionStrategy = .dedicatedMorpheme := rfl
 
 end Erlewine2016

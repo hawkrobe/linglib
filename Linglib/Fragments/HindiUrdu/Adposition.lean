@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Hindi/Urdu adposition order
@@ -10,7 +10,7 @@ classifies Hindi as postpositional.
 namespace HindiUrdu
 
 /-- Hindi adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "hin"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "hin"
 
 end HindiUrdu

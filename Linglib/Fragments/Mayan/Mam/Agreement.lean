@@ -3,7 +3,7 @@ import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # Mam Agreement Fragment [scott-2023]
@@ -352,7 +352,7 @@ def setALinearity : MarkerLinearity := .prefixal
     per [scott-2023] §2.5.1). -/
 def setBLinearity : MarkerLinearity := .prefixal
 
-/-- Mam's extraction profile: AF morphology is productive in SJA Mam
+/-- Mam's extraction strategy: AF morphology is productive in SJA Mam
     ([scott-2023] §2.5.4.1 ex. 169 + §2.7.1 syntactic ergativity).
     The construction combines the antipassive suffix *-(a)n* with the
     AF-specific suffix *-ta* (e.g., `b'yo-n-ta` 'hit-AP-AF'), making
@@ -366,13 +366,13 @@ def setBLinearity : MarkerLinearity := .prefixal
     SSAL repair (Erlewine-line) lives in
     `Studies/Erlewine2016.lean`; rival accounts
     (Coon-Mateo Pedro-Preminger absolutive licensing, Coon-Keine
-    Feature Gluttony) are not encoded in the typology enum. -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "Mam (SJA)"
-  , strategy := .dedicatedMorpheme
-  , markedPositions := [.subject]
-  , distinguishesPosition := true
-  , notes := "AF (-(a)n + -ta) for A-extraction; HIGH-ABS tripartite Mam (Scott 2023 §2.5.4.1)" }
+    Feature Gluttony) are not encoded in the typology enum.
+
+    Language: "Mam (SJA)". Notes: AF (-(a)n + -ta) for A-extraction;
+    HIGH-ABS tripartite Mam (Scott 2023 §2.5.4.1). -/
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
+def extractionDistinguishesPosition : Bool := true
 
 -- ============================================================================
 -- § 8: Theory-Neutral Marker Verification

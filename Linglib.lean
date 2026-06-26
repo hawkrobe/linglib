@@ -688,7 +688,6 @@ import Linglib.Fragments.Arabic.ModernStandard.Plurals
 import Linglib.Fragments.Arabic.ModernStandard.Possession
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.WordOrder
-import Linglib.Fragments.Arabic.Syrian.UniversalQuantifier
 import Linglib.Fragments.Armenian.ClassifierSystem
 import Linglib.Fragments.Aymara.Evidentiality
 import Linglib.Fragments.Bambara.Relativization
@@ -698,7 +697,6 @@ import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Reference
-import Linglib.Fragments.Basque.UniversalQuantifier
 import Linglib.Fragments.Basque.WordOrder
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Buryat.Complementizers
@@ -710,7 +708,6 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
 import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Chuj.VerbBuilding
-import Linglib.Fragments.Dagara.UniversalQuantifier
 import Linglib.Fragments.Danish.Reference
 import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Dargwa.Agreement
@@ -772,7 +769,6 @@ import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TenseAspect
 import Linglib.Fragments.English.Toy
-import Linglib.Fragments.English.UniversalQuantifier
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.Farsi.Coordination
@@ -860,13 +856,11 @@ import Linglib.Fragments.German.Reference
 import Linglib.Fragments.German.Relativization
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.Tense
-import Linglib.Fragments.German.UniversalQuantifier
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.VerbParticles
 import Linglib.Fragments.German.WordOrder
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
-import Linglib.Fragments.Gourmantchema.UniversalQuantifier
 import Linglib.Fragments.Greek.AncientGreek.Directives
 import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.Grevena.Possession
@@ -890,7 +884,6 @@ import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Hausa.Reference
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Fragments.Hausa.UniversalQuantifier
 import Linglib.Fragments.Hausa.VerbGrades
 import Linglib.Fragments.Hawaiian.Plurals
 import Linglib.Fragments.Hawaiian.Possession
@@ -904,7 +897,6 @@ import Linglib.Fragments.Hindi.Plurals
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Hindi.TenseAspect
-import Linglib.Fragments.Hindi.UniversalQuantifier
 import Linglib.Fragments.HindiUrdu.Adposition
 import Linglib.Fragments.HindiUrdu.Comparison
 import Linglib.Fragments.HindiUrdu.Coordination
@@ -1045,7 +1037,6 @@ import Linglib.Fragments.Latin.Phonology
 import Linglib.Fragments.Latin.Reference
 import Linglib.Fragments.Latvian.IndeterminatePronouns
 import Linglib.Fragments.Lezgian.Plurals
-import Linglib.Fragments.Logoori.UniversalQuantifier
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Malagasy.Relativization
@@ -1114,7 +1105,6 @@ import Linglib.Fragments.Mayan.Yukatek.Roots
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Fragments.Mongolian.Case
-import Linglib.Fragments.Moore.UniversalQuantifier
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Fragments.Navajo.Comparison
 import Linglib.Fragments.Navajo.Relativization
@@ -1132,7 +1122,6 @@ import Linglib.Fragments.Portuguese.MoodChoice
 import Linglib.Fragments.Punjabi.Pronouns
 import Linglib.Fragments.Quechua.Directives
 import Linglib.Fragments.Quechua.Evidentiality
-import Linglib.Fragments.Quechua.Imbabura.UniversalQuantifier
 import Linglib.Fragments.Quechua.Morph
 import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Quechua.PolarityItems
@@ -1187,7 +1176,6 @@ import Linglib.Fragments.Slavic.Russian.Reference
 import Linglib.Fragments.Slavic.Russian.Relativization
 import Linglib.Fragments.Slavic.Russian.TemporalDeictic
 import Linglib.Fragments.Slavic.Russian.TenseAspect
-import Linglib.Fragments.Slavic.Russian.UniversalQuantifier
 import Linglib.Fragments.Slavic.Russian.VerbalPrefixes
 import Linglib.Fragments.Slavic.Russian.WordOrder
 import Linglib.Fragments.Slavic.Serbian.Case
@@ -1253,7 +1241,6 @@ import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Tariana.Evidentiality
 import Linglib.Fragments.Tarifit.Inventory
 import Linglib.Fragments.Telugu.Case
-import Linglib.Fragments.Telugu.UniversalQuantifier
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Thai.Definiteness
@@ -1291,7 +1278,6 @@ import Linglib.Fragments.Turkish.Relativization
 import Linglib.Fragments.Turkish.SuffixTemplate
 import Linglib.Fragments.Turkish.TAM
 import Linglib.Fragments.Turkish.TenseAspect
-import Linglib.Fragments.Turkish.UniversalQuantifier
 import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Fragments.Turkish.WordOrder
 import Linglib.Fragments.Tuyuca.Evidentiality
@@ -1306,7 +1292,6 @@ import Linglib.Fragments.Welsh.Adposition
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Welsh.WordOrder
 import Linglib.Fragments.WestGreenlandic.Evidentiality
-import Linglib.Fragments.Wolof.UniversalQuantifier
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Xhosa.ClassifierSystem
 import Linglib.Fragments.Yakut.Case
@@ -2807,6 +2792,7 @@ import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Syntax.Adposition.Basic
+import Linglib.Syntax.Adposition.Order
 import Linglib.Syntax.Adposition.Spatial
 import Linglib.Syntax.Agreement.AdjAgreement
 import Linglib.Syntax.Agreement.Basic
@@ -2863,6 +2849,7 @@ import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Syntax.DependencyGrammar.Projection
 import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Extraction
 import Linglib.Syntax.HPSG.Basic
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Categories
@@ -2952,7 +2939,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Adposition
 import Linglib.Typology.Alignment
 import Linglib.Typology.ArgumentStructure
 import Linglib.Typology.AuxiliaryVerbs
@@ -2967,7 +2953,6 @@ import Linglib.Typology.Copulas
 import Linglib.Typology.Directives
 import Linglib.Typology.Evidentiality
 import Linglib.Typology.ExpressiveModifier
-import Linglib.Typology.Extraction
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Modality
 import Linglib.Typology.Negation
@@ -2986,4 +2971,3 @@ import Linglib.Typology.Reference
 import Linglib.Typology.TemporalConnectives
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Universal
-import Linglib.Typology.UniversalQuantifier

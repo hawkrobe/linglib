@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -76,10 +76,10 @@ def StatusSuffix.form : StatusSuffix → String
   | .tv  => "-V'"
 
 -- The local `inductive ExtractionTarget` (intranS/patient/agent) was
--- redundant with `extractionProfile.markedPositions`: the substantive
+-- redundant with `extractionMarkedPositions`: the substantive
 -- claim "A-extraction is banned without AF" is now expressed as
--- `extractionProfile.marks .subject = true` (subject = .agent's default
--- position per `Typology.ArgumentRole.defaultPosition`).
+-- `Extraction.Marks extractionMarkedPositions .subject` (subject = .agent's
+-- default position per `Extraction.ArgumentRole.defaultPosition`).
 
 -- ============================================================================
 -- § 2: Agent Focus Construction
@@ -214,12 +214,10 @@ theorem crazy_ap_all_persons :
 -- § 5: Extraction Profile
 -- ============================================================================
 
-/-- Q'anjob'al's extraction morphology profile. -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "Q'anjob'al"
-  , strategy := .dedicatedMorpheme
-  , markedPositions := [.subject]
-  , distinguishesPosition := true
-  , notes := "AF (*-on*) for 3rd person agent extraction; Coon, Mateo Pedro & Preminger 2014" }
+/-- Q'anjob'al's extraction data: dedicated AF morphology (*-on*) marks
+    3rd person agent (subject) extraction ([coon-mateo-pedro-preminger-2014]). -/
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
+def extractionDistinguishesPosition : Bool := true
 
 end Qanjobal
