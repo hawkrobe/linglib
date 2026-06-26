@@ -645,6 +645,7 @@ import Linglib.Features.MassCount
 import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
 import Linglib.Features.ModalIndefinite
+import Linglib.Features.NegativeConcord
 import Linglib.Features.NounCategorization.Basic
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
@@ -2901,7 +2902,7 @@ import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
-import Linglib.Typology.NegativeConcord
+
 import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
