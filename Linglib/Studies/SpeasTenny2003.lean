@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Context.Tower
 import Linglib.Discourse.Roles

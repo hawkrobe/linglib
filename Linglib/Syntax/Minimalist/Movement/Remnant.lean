@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
 # Remnant XP Movement

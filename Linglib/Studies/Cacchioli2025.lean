@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Typology.Complementation
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic

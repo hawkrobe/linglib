@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.VerbMovementParameter
+import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter
 import Linglib.Studies.Westergaard2009
 import Linglib.Fragments.German.V2
 

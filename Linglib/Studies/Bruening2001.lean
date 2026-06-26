@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Features.ScopeTypes
 
 /-!

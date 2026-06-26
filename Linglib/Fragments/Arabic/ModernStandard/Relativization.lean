@@ -1,5 +1,5 @@
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # Modern Standard Arabic Relativization Fragment
@@ -133,7 +133,9 @@ def relAsyndeticResumptive : Marker :=
 def relMarkers : List Marker :=
   [relAlladhi, relResumptive, relAsyndeticGap, relAsyndeticResumptive]
 
-/-- Arabic relativization profile (WALS-style summary).
+/-! Arabic relativization profile (WALS-style summary). Subject: no overt
+    element in relativized position; non-subject (definite head): resumptive
+    pronoun ([ryding-2005] §14).
 
     `subjStrategy := .gap`: subject relativization uses no overt element
     in the relativized position (Ryding §14.2). The resumptive marker
@@ -147,13 +149,11 @@ def relMarkers : List Marker :=
     `arabic_kc_covers_deeper_than_wals` in
     `Studies/KeenanComrie1977.lean` documents
     the systematic K&C-vs-WALS asymmetry. -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .pronounRetention
-  , rcPosition := .postNominal
-  , lowestRelativizable := .oblique
-  , notes := "Subject: no overt element in relativized position. "
-          ++ "Non-subject (definite head): resumptive pronoun. "
-          ++ "[ryding-2005] §14" }
+namespace Relativization
+def subjStrategy : SubjStrategy := .gap
+def oblStrategy : OblStrategy := .pronounRetention
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .oblique
+end Relativization
 
 end Arabic.ModernStandard

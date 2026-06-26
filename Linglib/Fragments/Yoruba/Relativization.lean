@@ -1,5 +1,5 @@
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # Yoruba Relativization Fragment
@@ -120,17 +120,18 @@ def relTiGenitive : Marker :=
 def relMarkers : List Marker :=
   [relTiSubject, relTiObject, relTiOblique, relTiGenitive]
 
-/-- Yoruba relativization profile (typological summary). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .pronounRetention
-  , oblStrategy := .gap
-  , rcPosition := .postNominal
-  , lowestRelativizable := .genitive
-  , internallyHeaded := .absent
-  , notes := "Relativizer tí (high tone; distinct from preverbal/preposition ti). "
-          ++ "[awobuluyi-1978] §6.19 SU resumption (ó); §6.20 DO gap; "
-          ++ "§6.21 OBL gap (fi/ti/bá/fún/sí); §6.22 OBL with ní triggers "
-          ++ "drop+repositioning (complexity not captured by oblStrategy field); "
-          ++ "§6.23 GEN resumption (rẹ̀/wọn). Matches WALS F122A pronounRetention." }
+/-! Yoruba relativization profile (typological summary). Relativizer tí
+(high tone; distinct from preverbal/preposition ti). [awobuluyi-1978]
+§6.19 SU resumption (ó); §6.20 DO gap; §6.21 OBL gap (fi, ti, bá, fún, sí);
+§6.22 OBL with ní triggers drop+repositioning (complexity not captured by
+the oblStrategy field); §6.23 GEN resumption (rẹ̀, wọn). Matches WALS
+F122A pronounRetention. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .pronounRetention
+def oblStrategy : OblStrategy := .gap
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .genitive
+def internallyHeaded : InternallyHeadedStrategy := .absent
+end Relativization
 
 end Yoruba

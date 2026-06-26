@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 
 /-!
 # Feature Checking: The Derivational Lifecycle

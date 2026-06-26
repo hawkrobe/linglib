@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.VerbMovementParameter
+import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter
 import Linglib.Data.Examples.Pollock1989
 
 /-!

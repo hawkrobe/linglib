@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Typology.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Typology.Alignment
 import Linglib.Studies.Dixon1994
@@ -29,7 +29,7 @@ grammatical domains:
   Same `AnimacyLevel` type governs the split threshold.
 - **Relativization** (Ch 7): The [keenan-comrie-1977] Accessibility
   Hierarchy orders grammatical relations by extraction accessibility
-  (`Typology.RelativeClause.Basic`, `FillerGap.Studies.KeenanComrie1977`).
+  (`Syntax.RelativeClause.Basic`, `FillerGap.Studies.KeenanComrie1977`).
   The AH positions (Subject > DO > IO > OBL) mirror the GR hierarchy
   that governs causee demotion.
 - **Causatives** (Ch 8): Morphological complexity correlates with semantic
@@ -57,7 +57,7 @@ Dyirbal subordinate clauses) is rare.
 
 Relativization typology is formalized in
 `KeenanComrie1977` and
-`Typology.RelativeClause.Basic`. The AH concerns accessibility to
+`Syntax.RelativeClause.Basic`. The AH concerns accessibility to
 extraction — a filler-gap dependency — which is why the study file
 lives under `FillerGap/`. Non-extraction relative clause types
 (correlatives, internally-headed RCs) fall outside the AH's scope:
@@ -395,7 +395,7 @@ accessibility (Ch 7):
     Subject > Direct Object > Indirect Object > Oblique
 
 `CauseeSlot` (in `Causation.Morphological`) and
-`AHPosition` (in `Typology.RelativeClause.Basic`) encode overlapping
+`AHPosition` (in `Syntax.RelativeClause.Basic`) encode overlapping
 portions of this hierarchy independently. The bridge function
 `causeeToAH` maps causee slots to their corresponding AH positions,
 and the order-preservation theorem proves the mapping is monotone —

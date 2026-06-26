@@ -1,4 +1,4 @@
-import Linglib.Typology.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Morphology.DM.VocabularyInsertion

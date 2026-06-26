@@ -2,7 +2,7 @@ import Linglib.Studies.Hoeksema1983
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Studies.Heim2001
 import Linglib.Studies.Bresnan1973
-import Linglib.Syntax.Minimalist.DegreeMovement
+import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Linglib.Semantics.Degree.ThanClause
 import Linglib.Typology.PolarityItem
 

@@ -1,21 +1,20 @@
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # French relativization profile
 
-Typological-summary `RelativeClause.Profile` for French (ISO `fra`).
+Relativization typology for French (ISO `fra`).
 -/
 
 namespace French
 
-/-- French relativization: relative pronoun system *qui* (SU), *que* (DO),
+/-! French relativization: relative pronoun system *qui* (SU), *que* (DO),
     *dont* (GEN), *lequel* (OBL); covers all AH positions; postnominal RC. -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .relativePronoun
-  , oblStrategy := .relativePronoun
-  , rcPosition := .postNominal
-  , lowestRelativizable := .objComparison
-  , notes := "Rel pronoun system: qui (SU), que (DO), dont (GEN), "
-          ++ "lequel (OBL); all AH positions" }
+namespace Relativization
+def subjStrategy : RelativeClause.SubjStrategy := .relativePronoun
+def oblStrategy : RelativeClause.OblStrategy := .relativePronoun
+def rcPosition : RelativeClause.RCPosition := .postNominal
+def lowestRelativizable : RelativeClause.AHPosition := .objComparison
+end Relativization
 
 end French

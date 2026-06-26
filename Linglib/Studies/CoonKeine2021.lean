@@ -1,6 +1,6 @@
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
-import Linglib.Syntax.Minimalist.CyclicAgree
+import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Studies.BejarRezac2003
 
