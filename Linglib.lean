@@ -2910,5 +2910,4 @@ import Linglib.Typology.PolarityMarking
 import Linglib.Typology.Profile
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Question
-import Linglib.Typology.TemporalConnectives
 import Linglib.Morphology.TenseAspect
