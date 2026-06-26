@@ -1,6 +1,6 @@
 import Linglib.Semantics.NaturalLogic
 import Linglib.Features.LicensingContext
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Semantics.Polarity.Licensing
@@ -256,7 +256,7 @@ strength (`PolarityItemEntry.strength`, itself derived from
 `polarityType`). `false` when either side is not strength-keyed — those
 items/contexts license via mechanism (`LicensingMechanism`), not
 signature. -/
-def strengthLicenses (e : Typology.PolarityItem.PolarityItemEntry)
+def strengthLicenses (e : Semantics.Polarity.PolarityItemEntry)
     (c : LicensingContext) : Bool :=
   match (contextProperties c).strawsonSignature.toDEStrength, e.strength with
   | some supplied, some required =>
@@ -264,7 +264,7 @@ def strengthLicenses (e : Typology.PolarityItem.PolarityItemEntry)
   | _, _ => false
 
 /-- `strengthLicenses` as a proposition. -/
-abbrev LicensedBySignature (e : Typology.PolarityItem.PolarityItemEntry)
+abbrev LicensedBySignature (e : Semantics.Polarity.PolarityItemEntry)
     (c : LicensingContext) : Prop :=
   strengthLicenses e c = true
 
@@ -295,14 +295,14 @@ def StrengthScale.licenses {Item Context S : Type*} [Preorder S]
 strength from `PolarityItemEntry.strength`, context strength from the row's
 Strawson signature. The first instance of `StrengthScale`. -/
 def zwartsScale :
-    StrengthScale Typology.PolarityItem.PolarityItemEntry LicensingContext
+    StrengthScale Semantics.Polarity.PolarityItemEntry LicensingContext
       NaturalLogic.DEStrength where
   required e := e.strength
   supplied c := (contextProperties c).strawsonSignature.toDEStrength
 
 /-- The polymorphic scale subsumes the bespoke predicate: `zwartsScale.licenses`
 is exactly `LicensedBySignature` (derive-don't-duplicate). -/
-theorem zwartsScale_licenses_iff (e : Typology.PolarityItem.PolarityItemEntry)
+theorem zwartsScale_licenses_iff (e : Semantics.Polarity.PolarityItemEntry)
     (c : LicensingContext) :
     zwartsScale.licenses e c ↔ LicensedBySignature e c := by
   simp only [StrengthScale.licenses, zwartsScale, LicensedBySignature,

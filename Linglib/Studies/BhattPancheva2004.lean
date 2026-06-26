@@ -4,7 +4,7 @@ import Linglib.Studies.Heim2001
 import Linglib.Studies.Bresnan1973
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Linglib.Semantics.Degree.ThanClause
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Bhatt & Pancheva 2004: Late Merger of Degree Clauses
@@ -77,7 +77,7 @@ open Minimalist.DegreeMovement
 open Core.Order (Comparison)
 open Semantics.Degree (gtOverSet_eq_singleton_of_isGreatest)
 open Semantics.Degree.ThanClause (thanClauseDenotation thanClauseMax thanClauseMax_isGreatest)
-open Typology.PolarityItem (LicensingContext)
+open Semantics.Polarity (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
 
 variable {Entity : Type*}

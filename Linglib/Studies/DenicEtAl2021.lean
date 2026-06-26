@@ -1,5 +1,5 @@
 import Linglib.Semantics.NaturalLogic
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.PolarityItems
 
 /-!
@@ -233,7 +233,7 @@ def ppiItemTested : String := "some"
 -- ============================================================================
 
 open NaturalLogic
-open Typology.PolarityItem
+open Semantics.Polarity
 open English.PolarityItems
 
 /-- Map the paper's environments to canonical entailment signatures. -/

@@ -25,12 +25,12 @@ Theory-neutral lexical entries for polarity-sensitive items:
 
 -/
 
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Israel
 
 namespace English.PolarityItems
 
-open Typology.PolarityItem
+open Semantics.Polarity
 
 -- ============================================================================
 -- The Polarity Item Lexicon

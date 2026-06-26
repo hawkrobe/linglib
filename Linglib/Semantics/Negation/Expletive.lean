@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Prod
@@ -26,7 +26,7 @@ without committing to a syntactic analysis. The syntactic derivation
 
 namespace Semantics.Negation
 
-open Typology.PolarityItem (PolarityType)
+open Semantics.Polarity (PolarityType)
 
 /-! ### EN blocking reasons -/
 

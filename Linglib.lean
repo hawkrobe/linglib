@@ -1788,6 +1788,7 @@ import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.Israel
+import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Marking
 import Linglib.Semantics.Polarity.Operator
@@ -2909,6 +2910,5 @@ import Linglib.Tactics.RSAPredict.Reify
 
 
 import Linglib.Morphology.Number
-import Linglib.Typology.PolarityItem
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Morphology.TenseAspect
