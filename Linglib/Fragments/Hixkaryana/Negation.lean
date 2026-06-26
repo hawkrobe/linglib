@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Hixkaryana Negation Fragment
@@ -22,7 +22,7 @@ becomes the finite element carrying person/tense marking.
 
 namespace Hixkaryana.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *-hira* — Hixkaryana's standard negation suffix.
     Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
@@ -75,7 +75,7 @@ theorem copula_as_finite :
   decide
 
 /-- Hixkaryana negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Hixkaryana"
   , iso := "hix"
   , morphemeType := .affix

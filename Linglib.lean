@@ -1775,6 +1775,7 @@ import Linglib.Semantics.Mood.VerbalMood
 import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
+import Linglib.Semantics.Negation.Expletive
 import Linglib.Semantics.Numerals.Basic
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Semantics.Numerals.Roundness
@@ -2873,6 +2874,7 @@ import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
+import Linglib.Syntax.Negation
 import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Numeral.Basic
 import Linglib.Syntax.Pronoun.Basic
@@ -2906,8 +2908,6 @@ import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 
-import Linglib.Typology.Negation
-import Linglib.Typology.Negation.ExpletiveNegation
 
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem

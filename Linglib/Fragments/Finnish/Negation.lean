@@ -1,5 +1,5 @@
 import Linglib.Morphology.MorphRule
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Finnish Negation: The Negative Auxiliary *ei* [karlsson-2017]
@@ -33,7 +33,7 @@ rather than within a synthetic word.
 namespace Finnish.Negation
 
 open Morphology (MorphCategory MorphRule InflDistribution)
-open Typology.Negation
+open Syntax.Negation
 
 /-! ### Marker and system -/
 
@@ -133,7 +133,7 @@ theorem neg_aux_respects_bybee :
     MorphCategory.peripherality (.agreement .subj) := by decide
 
 /-- Finnish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Finnish"
   , iso := "fin"
   , morphemeType := .auxVerb

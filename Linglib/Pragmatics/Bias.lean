@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation.ExpletiveNegation
+import Linglib.Semantics.Negation.Expletive
 import Linglib.Semantics.Mood.IllocutionaryMood
 
 /-!
@@ -49,7 +49,7 @@ so consumers can use `obtain`/`rintro` directly. Decidability is provided.
 ## Cross-construction connections
 
 §6 connects the predicate to [greco-2020]'s weak-EN polarity profile
-in `Typology.Negation.PolarityLicensing`. The Romero-2024 HiNQ bridge — a
+in `Semantics.Negation.PolarityLicensing`. The Romero-2024 HiNQ bridge — a
 predicate-level correspondence between this licensing condition and
 Romero's bias requirement — lives in
 `Studies/Romero2024.lean`, so that this file does
@@ -74,7 +74,7 @@ commitment-update ([farkas-bruce-2010]) reanalyses.
 
 namespace Pragmatics.Bias
 
-open Typology.Negation (PolarityLicensing weakENProfile)
+open Semantics.Negation (PolarityLicensing weakENProfile)
 open Semantics.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════

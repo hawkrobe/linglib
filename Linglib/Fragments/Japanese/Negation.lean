@@ -1,5 +1,5 @@
 import Linglib.Morphology.MorphRule
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Japanese Negation Fragment
@@ -36,7 +36,7 @@ category marking.
 namespace Japanese.Negation
 
 open Morphology (MorphCategory)
-open Typology.Negation
+open Syntax.Negation
 
 /-- *-nai* — Japanese's negative verbal suffix.
     Attaches to the verb stem (mizenkei/continuative form) and itself
@@ -131,7 +131,7 @@ theorem tense_moves_to_suffix :
   decide
 
 /-- Japanese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Japanese"
   , iso := "jpn"
   , morphemeType := .affix

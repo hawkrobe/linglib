@@ -8,7 +8,7 @@ import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Pipil.AuxiliaryVerbs
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
 import Linglib.Morphology.Grammaticalization
@@ -102,7 +102,7 @@ namespace Anderson2006
 
 open AuxiliaryVerbs
 open Semantics.ArgumentStructure.AuxiliarySelection
-open Typology.Negation (NegStrategy)
+open Syntax.Negation (NegStrategy)
 
 /-- A cross-linguistic AVC datum. Study-local: the `AuxiliaryVerbs` substrate
     classifies over `InflPattern`; this paper's per-language rows bundle the

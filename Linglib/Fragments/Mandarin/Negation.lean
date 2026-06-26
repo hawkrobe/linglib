@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
@@ -34,7 +34,7 @@ not-exceed-threshold).
 
 namespace Mandarin.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- 不 *bù* — the general non-perfective negation particle.
     Used with imperfective, stative, modal, and future contexts;
@@ -220,7 +220,7 @@ theorem regret_uses_deontic_neg :
       (·.enNegatorForm == "bùgāi") = true := by decide
 
 /-- Mandarin Chinese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Mandarin Chinese"
   , iso := "cmn"
   , morphemeType := .particle

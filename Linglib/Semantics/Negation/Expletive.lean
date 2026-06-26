@@ -24,7 +24,7 @@ without committing to a syntactic analysis. The syntactic derivation
 `Studies/Greco2020.lean` under `namespace Minimalist.NegScope`.
 -/
 
-namespace Typology.Negation
+namespace Semantics.Negation
 
 open Typology.PolarityItem (PolarityType)
 
@@ -268,4 +268,4 @@ def PolarityLicensing.licensesType (p : PolarityLicensing) (t : PolarityType) :
     Option Bool :=
   (PolarityClass.fromPolarityType? t).map p.licenses
 
-end Typology.Negation
+end Semantics.Negation

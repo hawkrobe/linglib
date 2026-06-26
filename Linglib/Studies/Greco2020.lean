@@ -1,9 +1,9 @@
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Typology.Negation.ExpletiveNegation
+import Linglib.Semantics.Negation.Expletive
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.French.Negation
@@ -50,10 +50,10 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 
 ## Connections
 
-- `Typology.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
+- `Semantics.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
 - `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
 - `ENEnvironment` (below) — the eleven Italian EN environments of Tables 1–2
-- `Typology.Negation.NegationProfile.negIsHead` — head status
+- `Syntax.Negation.NegationProfile.negIsHead` — head status
 - `Minimalist.fValue` / `isCPArea` — f-value classification
 - `Italian.Negation.enTriggerNegators` — the consensus EN trigger inventory
   ([jin-koenig-2021]); Greco's construction-level classification is finer-grained
@@ -72,8 +72,7 @@ paper picks them up.
 namespace Minimalist.NegScope
 
 open Minimalist (Cat fValue isCPArea)
-open Typology.Negation (ENType ENStrength PolarityLicensing PolarityClass
-           weakENProfile strongENProfile)
+open Semantics.Negation (ENType ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
 
 /-! ### Neg merge position -/
 
@@ -318,8 +317,8 @@ namespace Greco2020
 
 open Minimalist (Cat fValue isCPArea)
 open Minimalist.NegScope (NegMergePosition)
-open Typology.Negation (ENStrength PolarityLicensing PolarityClass
-           weakENProfile strongENProfile NegationProfile)
+open Semantics.Negation (ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
+open Syntax.Negation (NegationProfile)
 
 /-- Italian negation profile (re-exported from Fragments for local use). -/
 private abbrev italian : NegationProfile := Italian.Negation.negationProfile

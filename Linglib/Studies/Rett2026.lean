@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Studies.JinKoenig2021
-import Linglib.Typology.Negation.ExpletiveNegation
+import Linglib.Semantics.Negation.Expletive
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.PolarityItems
@@ -58,7 +58,7 @@ structure MannerEffect where
 -- § 1. High vs Low EN (re-exported from ExpletiveNegation)
 -- ════════════════════════════════════════════════════
 
-open Typology.Negation (ENType)
+open Semantics.Negation (ENType)
 
 /-- Constructions relevant to EN licensing. Each has a theory-derived
     ambidirectionality status (§3) and an empirically-observed EN status

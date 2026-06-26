@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-! # Italian Negation Fragment
 [haspelmath-2013] [dryer-2013-wals] [zanuttini-1997] [cinque-1999]
@@ -37,7 +37,7 @@ entries in `PolarityItems.lean`.
 
 namespace Italian.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *non* — Italian's standard preverbal negation particle.
     `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
@@ -97,7 +97,7 @@ theorem en_negator_is_standard :
     enTriggerNegators.all (·.enNegatorForm == non.form) = true := by decide
 
 /-- Italian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Italian"
   , iso := "ita"
   , morphemeType := .particle

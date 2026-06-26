@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 import Mathlib.Data.Fin.Basic
 /-!
 # Greek Negation Fragment
@@ -24,7 +24,7 @@ distinction that [tsiakmakis-2025] argues is cross-linguistically valid.
 namespace Greek.StandardModern.Negation
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource necessity)
--- NB: not opening Typology.Negation namespace-wide to avoid
+-- NB: not opening Syntax.Negation namespace-wide to avoid
 -- collision with the local `MoodMarkerEntry` (Tsiakmakis 2025 paper
 -- apparatus). The Core entries below are fully qualified.
 
@@ -35,7 +35,7 @@ abbrev World := Fin 4
 /-- A Greek sentential negation marker, augmented with the mood/NCI
     properties from [tsiakmakis-2025]'s NEG₁/NEG₂ analysis.
 
-    Distinct from the cross-linguistic `Typology.Negation.NegMarkerEntry`
+    Distinct from the cross-linguistic `Syntax.Negation.NegMarkerEntry`
     substrate (which carries only form/morphemeType/position): this
     structure exposes the Tsiakmakis-specific paper apparatus that other
     languages don't have analogues for. The Core entries `dhenMarker` and
@@ -79,13 +79,13 @@ def min : MoodMarkerEntry :=
 /-- *dhen* in Core substrate form. Cross-linguistic typology face of the
     indicative negator; the paper-specific mood/NCI apparatus lives on
     `MoodMarkerEntry` above. -/
-def dhenMarker : Typology.Negation.NegMarkerEntry :=
+def dhenMarker : Syntax.Negation.NegMarkerEntry :=
   { form := "dhen"
   , morphemeType := .particle
   , position := .preverbal }
 
 /-- *min* in Core substrate form. -/
-def minMarker : Typology.Negation.NegMarkerEntry :=
+def minMarker : Syntax.Negation.NegMarkerEntry :=
   { form := "min"
   , morphemeType := .particle
   , position := .preverbal }
@@ -94,8 +94,8 @@ def minMarker : Typology.Negation.NegMarkerEntry :=
     *dhen* (indicative, default-context) listed first, *min* (subjunctive/
     modal) second. The Fragment-side joint consumed by
     `Studies/Dryer2013Negation.lean`. -/
-def negationSystem : Typology.Negation.NegationSystem :=
-  Typology.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
+def negationSystem : Syntax.Negation.NegationSystem :=
+  Syntax.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
 
 /-! ### Semantics -/
 
