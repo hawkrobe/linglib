@@ -12,7 +12,7 @@ The shared foundation for any constraint framework that assigns numerical
 - Noisy HG [boersma-pater-2016]
 - Normal MaxEnt [flemming-2021]
 
-A `WeightedConstraint C` extends `NamedConstraint C` (from `Constraint`)
+A `WeightedConstraint C` extends `NamedConstraint C` (from `Constraints.Defs`)
 with a rational `weight`. The `harmonyScore` of a candidate is the negated
 weighted sum of its violations: `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
 
