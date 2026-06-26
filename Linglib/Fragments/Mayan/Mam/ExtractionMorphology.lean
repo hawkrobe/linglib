@@ -1,4 +1,4 @@
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 import Linglib.Data.UD.Basic
 
 /-!
@@ -356,21 +356,20 @@ theorem passive_oblique_cooccurrence :
 -- § 9: Extraction Profile
 -- ============================================================================
 
-/-- Mam extraction profile: dedicated morpheme strategy, marks oblique only.
-    Excludes temporal obliques (§8.1). -/
-def mamExtractionProfile : Typology.ExtractionProfile :=
-  { language := "Mam (SJO)"
-  , strategy := .dedicatedMorpheme
-  , markedPositions := [.oblique]
-  , distinguishesPosition := true
-  , notes := "Optional enclitic =(y)a' on Voice⁰/Dir⁰ marks oblique extraction; " ++
-             "absent for subject (AF) and object extraction; " ++
-             "conditioned by clause size (requires Voice projection); " ++
-             "temporal obliques exempt (§8.1); island-sensitive (§7.1)" }
+/-- Mam extraction strategy: dedicated morpheme strategy, marks oblique only.
+    Excludes temporal obliques (§8.1).
+
+    Language: "Mam (SJO)". Notes: Optional enclitic =(y)a' on Voice⁰/Dir⁰
+    marks oblique extraction; absent for subject (AF) and object extraction;
+    conditioned by clause size (requires Voice projection); temporal obliques
+    exempt (§8.1); island-sensitive (§7.1). -/
+def mamExtractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def mamExtractionMarkedPositions : List Extraction.ExtractionTarget := [.oblique]
+def mamExtractionDistinguishesPosition : Bool := true
 
 theorem mam_marks_oblique :
-    mamExtractionProfile.Marks .oblique := by decide
+    Extraction.Marks mamExtractionMarkedPositions .oblique := by decide
 theorem mam_no_mark_subject :
-    ¬ mamExtractionProfile.Marks .subject := by decide
+    ¬ Extraction.Marks mamExtractionMarkedPositions .subject := by decide
 
 end Mam

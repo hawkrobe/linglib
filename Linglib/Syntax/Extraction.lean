@@ -2,9 +2,11 @@
 # Extraction Morphology
 [elkins-torrence-brown-2026] [erlewine-2018] [erlewine-2016]
 
-Theory-neutral types for cross-linguistic extraction morphology ---
-how languages morphologically mark that a constituent has undergone
-A-bar-movement (wh-movement, relativization, focus fronting, etc.).
+Theory-neutral substrate for cross-linguistic extraction morphology — how
+languages morphologically mark that a constituent has undergone A-bar-movement
+(wh-movement, relativization, focus fronting, etc.). Bare-root `Extraction`
+namespace in `Syntax/` (graduated from the dissolving `Typology/`). Per-language
+data are bare `def`s in `Fragments/<Lang>/…`.
 
 Languages vary dramatically in whether and how they track extraction:
 - English: no overt marking (gap strategy)
@@ -17,7 +19,7 @@ Languages vary dramatically in whether and how they track extraction:
 
 -/
 
-namespace Typology
+namespace Extraction
 
 -- ============================================================================
 -- § 1: Extraction Marking Strategy
@@ -119,45 +121,25 @@ inductive Extractee where
   | adjunct : Extractee
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Extraction Profile
--- ============================================================================
+/-! ### Extraction-profile queries
 
-/-- A language's extraction morphology profile: what strategy it uses,
-    which positions are marked, and whether the marking distinguishes
-    between different extracted positions. -/
-structure ExtractionProfile where
-  /-- Language name -/
-  language : String
-  /-- Primary extraction-marking strategy -/
-  strategy : ExtractionMarkingStrategy
-  /-- Which extraction targets trigger overt marking.
-      Empty for `none` strategy languages. -/
-  markedPositions : List ExtractionTarget
-  /-- Does the marking distinguish which position was extracted?
-      E.g., Tagalog voice distinguishes subject/object/oblique;
-      Mam =(y)a' marks only oblique. -/
-  distinguishesPosition : Bool
-  /-- Notes -/
-  notes : String := ""
-  deriving Repr
+The `ExtractionProfile` bundle is retired: a language exposes its extraction
+data as bare `def`s (`…Strategy : ExtractionMarkingStrategy`,
+`…MarkedPositions : List ExtractionTarget`, `…DistinguishesPosition : Bool`),
+and these queries operate on the marked-positions list / strategy. -/
 
--- ============================================================================
--- § 4: Helpers
--- ============================================================================
+/-- Does a marked-positions list mark extraction from a given target? -/
+def Marks (markedPositions : List ExtractionTarget) (t : ExtractionTarget) : Prop :=
+  t ∈ markedPositions
 
-/-- Does this profile mark extraction from a given position? -/
-def ExtractionProfile.Marks (p : ExtractionProfile) (t : ExtractionTarget) : Prop :=
-  t ∈ p.markedPositions
-
-instance (p : ExtractionProfile) (t : ExtractionTarget) : Decidable (p.Marks t) :=
+instance (mp : List ExtractionTarget) (t : ExtractionTarget) : Decidable (Marks mp t) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-/-- Does this profile use any overt extraction marking? -/
-def ExtractionProfile.HasOvertMarking (p : ExtractionProfile) : Prop :=
-  p.strategy ≠ .unmarked
+/-- Does an extraction-marking strategy use any overt marking? -/
+def HasOvertMarking (strategy : ExtractionMarkingStrategy) : Prop :=
+  strategy ≠ .unmarked
 
-instance (p : ExtractionProfile) : Decidable p.HasOvertMarking :=
+instance (s : ExtractionMarkingStrategy) : Decidable (HasOvertMarking s) :=
   inferInstanceAs (Decidable (_ ≠ _))
 
-end Typology
+end Extraction

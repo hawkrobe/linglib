@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # Tsotsil Agreement Fragment
@@ -115,13 +115,11 @@ theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" :=
 -- § 5: Extraction Profile
 -- ============================================================================
 
-/-- Tsotsil's extraction profile: no Agent Focus morphology required for
-    A-extraction, consistent with Tsotsil being LOW-ABS. -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "Tsotsil"
-  , strategy := .unmarked
-  , markedPositions := []
-  , distinguishesPosition := false
-  , notes := "LOW-ABS Tseltalan; no AF morphology" }
+/-- Tsotsil's extraction profile (language "Tsotsil"): no Agent Focus
+    morphology required for A-extraction, consistent with Tsotsil being
+    LOW-ABS. Notes: LOW-ABS Tseltalan; no AF morphology. -/
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
+def extractionMarkedPositions : List Extraction.ExtractionTarget := []
+def extractionDistinguishesPosition : Bool := false
 
 end Tsotsil
