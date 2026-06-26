@@ -1,6 +1,6 @@
 import Linglib.Features.Polarity
 import Linglib.Discourse.Coherence
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 import Linglib.Features.InformationStructure
 
 /-!
@@ -29,7 +29,7 @@ sentential negation.
 namespace Semantics.Focus.PolarityLevel
 
 open Features (Polarity)
-open Typology.PolarityMarking (Strategy)
+open Semantics.Polarity.Marking (Strategy)
 open Discourse.Coherence (CoherenceRelation)
 
 /-- The semantic level at which a polarity-marking device operates.

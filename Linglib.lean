@@ -645,6 +645,7 @@ import Linglib.Features.MassCount
 import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
 import Linglib.Features.ModalIndefinite
+import Linglib.Features.NegativeConcord
 import Linglib.Features.NounCategorization.Basic
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
@@ -1786,6 +1787,7 @@ import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.Israel
 import Linglib.Semantics.Polarity.Licensing
+import Linglib.Semantics.Polarity.Marking
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Semantics.Possessive.Basic
@@ -2877,6 +2879,7 @@ import Linglib.Syntax.Pronoun.Demonstrative
 import Linglib.Syntax.Pronoun.Indefinite
 import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Pronoun.Logophoric
+import Linglib.Syntax.Question
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
@@ -2902,14 +2905,10 @@ import Linglib.Tactics.RSAPredict.Reify
 
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
-import Linglib.Typology.NegativeConcord
+
 import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
-import Linglib.Typology.PolarityMarking
-import Linglib.Typology.Profile
 import Linglib.Typology.Pronoun.WALS
-import Linglib.Typology.Question
-import Linglib.Typology.TemporalConnectives
 import Linglib.Morphology.TenseAspect

@@ -6,7 +6,7 @@ import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
 import Linglib.Syntax.AuxiliaryVerbs
-import Linglib.Typology.NegativeConcord
+import Linglib.Features.NegativeConcord
 import Linglib.Morphology.Grammaticalization
 
 /-!
@@ -393,7 +393,7 @@ def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
 
 /-! ### Negative concord: WALS 115A strategy ↔ item-level n-word status -/
 
-open Typology.NegativeConcord (NWordStatus)
+open Features.NegativeConcord (NWordStatus)
 
 /-- Whether the negative-indefinite system shows negative concord
     ([van-der-auwera-van-alsenoy-2016]): WALS 115A `cooccur` (concord) and `mixed`

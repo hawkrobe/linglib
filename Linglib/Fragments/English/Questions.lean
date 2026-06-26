@@ -1,4 +1,4 @@
-import Linglib.Typology.Question
+import Linglib.Syntax.Question
 
 /-!
 # English question profile
@@ -18,7 +18,7 @@ set_option autoImplicit false
 
 namespace English.Questions
 
-open _root_.Typology.Question
+open _root_.Syntax.Question
 
 /-- English question profile. -/
 def question : QuestionProfile :=
