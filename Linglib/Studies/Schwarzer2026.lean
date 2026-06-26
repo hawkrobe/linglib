@@ -2,7 +2,7 @@ import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.WordOrder
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 import Linglib.Typology.Coordination
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -52,7 +52,7 @@ namespace Schwarzer2026
 
 open Features
 open German.Predicates
-open Typology.WordOrder
+open WordOrder
 open BrueningAlKhalaf2020
 
 -- ============================================================================
@@ -165,7 +165,7 @@ theorem beschliessen_selecting :
 
 /-! `ConjunctOrder`, `bottomUpPrediction`, and `linearClosenessPrediction`
     are defined in [bruening-alkhalaf-2020] and imported via `open`.
-    `VerbPosition` and `OVOrder.verbPosition` live in `Typology.WordOrder`
+    `VerbPosition` and `OVOrder.verbPosition` live in `WordOrder`
     substrate. -/
 
 /-- **Temporal closeness prediction**: the conjunct parsed closest in

@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # K'iche' word-order profile [mondloch-2017] [clemens-coon-2018]
@@ -35,7 +35,7 @@ namespace Kiche
     81/82/83 — fields override `.notInWALS`. The `.vos` basic-order
     commitment is contested across Mayanist literature; see module
     docstring. -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
+def wordOrder : WordOrder.WordOrderProfile :=
   { basicOrder := .vos
     svOrder := .vs
     ovOrder := .vo }

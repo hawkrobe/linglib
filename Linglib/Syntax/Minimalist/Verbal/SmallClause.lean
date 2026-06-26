@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
-import Linglib.Syntax.Minimalist.Workspace
+import Linglib.Syntax.Minimalist.Workspace.Basic
 
 /-!
 # Small Clause Predication

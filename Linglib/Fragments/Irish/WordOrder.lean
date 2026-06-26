@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Irish word-order profile
@@ -9,8 +9,8 @@ WALS-derived word-order profile for Irish (ISO `gle`).
 namespace Irish
 
 /-- Irish word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
-  Typology.WordOrder.WordOrderProfile.ofWALS "gle"
+def wordOrder : WordOrder.WordOrderProfile :=
+  WordOrder.WordOrderProfile.ofWALS "gle"
 
 
 set_option maxRecDepth 4096 in
