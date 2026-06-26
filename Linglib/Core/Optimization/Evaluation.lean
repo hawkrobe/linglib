@@ -478,6 +478,10 @@ def lexFinNatOf {C : Type*} {n : Nat}
     (atoms : Fin n → C → Nat) (c : C) : Lex (Fin n → Nat) :=
   toLex fun i => atoms i c
 
+@[simp] theorem lexFinNatOf_apply {C : Type*} {n : Nat}
+    (atoms : Fin n → C → Nat) (c : C) (i : Fin n) :
+    lexFinNatOf atoms c i = atoms i c := rfl
+
 -- ============================================================================
 -- § 12c: Tropical Semiring Derivation
 -- ============================================================================
