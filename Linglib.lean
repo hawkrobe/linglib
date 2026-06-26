@@ -2799,6 +2799,7 @@ import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.ArgumentStructure.Reciprocal
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -2937,7 +2938,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.ArgumentStructure
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.BodyParts
 import Linglib.Typology.ClassifierSystem
