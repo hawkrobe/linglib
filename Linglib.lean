@@ -2845,6 +2845,7 @@ import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
 import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.MinimalPronoun
