@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Czech Negation Fragment
@@ -25,7 +25,7 @@ the n-word system at the sentence level.
 
 namespace Czech.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *ne-* — Czech's standard negation prefix.
     Attaches directly to the verb stem: *nepřijde* 'will not come',
@@ -124,7 +124,7 @@ def allConcordExamples : List NegConcordExample := [nikdo, nic, nikdy]
 theorem all_examples_count : allExamples.length = 4 := by decide
 
 /-- Czech negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Czech"
   , iso := "ces"
   , morphemeType := .affix

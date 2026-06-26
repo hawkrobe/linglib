@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # French Negation Fragment
@@ -28,7 +28,7 @@ informal speech, variable in formal registers.
 
 namespace French.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- The French preverbal negative clitic. Phonologically a clitic on the
     finite verb (or auxiliary); syntactically the head of NegP per
@@ -178,7 +178,7 @@ theorem high_entrenchment_uses_ne_alone :
 theorem en_marker_is_ne_clitic : enMarker = neClitic := rfl
 
 /-- French negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "French"
   , iso := "fra"
   , morphemeType := .particle

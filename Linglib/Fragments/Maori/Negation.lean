@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Maori Negation Fragment
@@ -28,7 +28,7 @@ form with *e...ana* or bare.
 
 namespace Maori.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *kāhore* — Maori's standard sentential negation word.
     WALS Ch 112A classifies this as `.wordUnclear` — in Maori's isolating
@@ -87,7 +87,7 @@ theorem all_asymmetric :
   decide
 
 /-- Maori negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Maori"
   , iso := "mri"
   , morphemeType := .wordUnclear

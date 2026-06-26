@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # German Negation Fragment
@@ -26,7 +26,7 @@ no structural changes beyond the negation marker itself.
 
 namespace German.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *nicht* — German's standard negation particle.
     Attaches to the VP at clause-final position; surfaces after the
@@ -103,7 +103,7 @@ def allExamples : List NegExample :=
 theorem all_tenses_available : allExamples.length = 5 := by decide
 
 /-- German negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "German"
   , iso := "deu"
   , morphemeType := .particle

@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # English Negation Fragment
@@ -24,7 +24,7 @@ WALS classifies English as **mixed**:
 
 namespace English.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *not* — English's standard negation particle.
     The contracted form *n't* attaches as a clitic to auxiliaries
@@ -113,7 +113,7 @@ theorem symmetric_no_dosupport :
   decide
 
 /-- English negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "English"
   , iso := "eng"
   , morphemeType := .particle

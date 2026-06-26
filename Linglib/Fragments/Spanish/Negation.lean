@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Spanish Negation Fragment
@@ -36,7 +36,7 @@ the n-word system at the sentence level (operator-side typology).
 
 namespace Spanish.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *no* — Spanish's standard preverbal negation particle.
     A free word, syntactically immediately preverbal:
@@ -120,7 +120,7 @@ def postverbalNada : NegConcordExample :=
 theorem all_tenses_available : allExamples.length = 5 := by decide
 
 /-- Spanish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Spanish"
   , iso := "spa"
   , morphemeType := .particle

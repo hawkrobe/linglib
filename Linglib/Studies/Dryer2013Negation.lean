@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.French.Negation
@@ -46,7 +46,7 @@ set_option autoImplicit false
 
 namespace Dryer2013Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 -- ============================================================================
 -- §1. The 15-language Fragment sample

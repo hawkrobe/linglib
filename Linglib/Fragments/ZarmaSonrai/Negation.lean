@@ -1,5 +1,5 @@
-import Linglib.Typology.Negation
-import Linglib.Typology.Negation.ExpletiveNegation
+import Linglib.Syntax.Negation
+import Linglib.Semantics.Negation.Expletive
 
 /-!
 # Zarma-Sonrai: Negation and Expletive Negation Markers
@@ -40,7 +40,7 @@ the complement clause, not with the trigger class itself.
 
 namespace ZarmaSonrai.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-! ### Standard negation -/
 
@@ -180,7 +180,7 @@ def enNegatorForAspect : ENAspect → String
 theorem fear_uses_ipfv_neg : enNegatorForAspect .ipfv = "si" := rfl
 theorem delay_uses_pfv_neg : enNegatorForAspect .pfv = "batu" := rfl
 
-open Typology.Negation (ENBlockingReason)
+open Semantics.Negation (ENBlockingReason)
 
 /-- Why WITHOUT and TOO…TO do not trigger EN in Zarma-Sonrai.
 
