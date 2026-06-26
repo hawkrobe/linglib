@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-import Linglib.Syntax.Minimalist.RepOrder
+import Linglib.Syntax.Minimalist.SyntacticObject.RepOrder
 
 /-!
 # Externalization on the `SO` carrier (selection-induced order)

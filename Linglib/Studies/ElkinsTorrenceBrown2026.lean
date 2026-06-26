@@ -3,7 +3,7 @@ import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Studies.Scott2023

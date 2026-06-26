@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.CyclicAgree
+import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 

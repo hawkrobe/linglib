@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Features.Person.Decomposition
 import Linglib.Features.Person.Interp
 import Linglib.Features.Number.Decomposition
-import Linglib.Syntax.Minimalist.CyclicAgree
+import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Studies.Corbett2000
