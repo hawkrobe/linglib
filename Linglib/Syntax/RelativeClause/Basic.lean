@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.Interval.Set.OrdConnected
 import Linglib.Features.Definiteness
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # Relative clauses: structural core
@@ -45,7 +45,7 @@ set_option autoImplicit false
 
 namespace RelativeClause
 
-open Typology (ExtractionTarget)
+open Extraction (ExtractionTarget)
 
 /-! ### Grammatical positions on the Accessibility Hierarchy -/
 
@@ -335,7 +335,7 @@ theorem ah_transitive (a b c : AHPosition)
 
 /-! ### Extraction bridge
 
-Maps between `Typology.ExtractionTarget` (5 structural positions from
+Maps between `Extraction.ExtractionTarget` (5 structural positions from
 extraction morphology, in `Typology/Extraction.lean`) and `AHPosition` (6
 positions on the [keenan-comrie-1977] Accessibility Hierarchy). Both
 encode overlapping Ā-movement phenomena: extraction focuses on *where*

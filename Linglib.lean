@@ -2846,6 +2846,7 @@ import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Syntax.DependencyGrammar.Projection
 import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Extraction
 import Linglib.Syntax.HPSG.Basic
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Categories
@@ -2950,7 +2951,6 @@ import Linglib.Typology.Copulas
 import Linglib.Typology.Directives
 import Linglib.Typology.Evidentiality
 import Linglib.Typology.ExpressiveModifier
-import Linglib.Typology.Extraction
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Modality
 import Linglib.Typology.Negation

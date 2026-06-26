@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # Tseltal Agreement Fragment
@@ -115,13 +115,11 @@ theorem setB_is_suffixal : setBLinearity = .suffixal := rfl
 -- § 5: Extraction Profile
 -- ============================================================================
 
-/-- Tseltal's extraction profile: no Agent Focus morphology required for
-    A-extraction, consistent with Tseltal being LOW-ABS. -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "Tseltal"
-  , strategy := .unmarked
-  , markedPositions := []
-  , distinguishesPosition := false
-  , notes := "LOW-ABS Tseltalan; no AF morphology" }
+/-- Tseltal's extraction data: no Agent Focus morphology required for
+    A-extraction (`extractionStrategy = .unmarked`), consistent with
+    Tseltal being LOW-ABS. -/
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
+def extractionMarkedPositions : List Extraction.ExtractionTarget := []
+def extractionDistinguishesPosition : Bool := false
 
 end Tseltal

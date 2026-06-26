@@ -3,7 +3,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 
 /-!
 # K'iche' Agreement Fragment [mondloch-2017]
@@ -404,19 +404,17 @@ def setBExponent : ExponentTable :=
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "∅" := rfl
 
-/-- K'iche''s extraction profile: Agent-Focus Antipassive is productive
-    ([mondloch-2017] Lesson 22, with parallel coverage at Lessons
-    30 + 33 for radical TV and perfect aspect). The voice marker is
-    *-n* (shared morphologically with the Absolutive Antipassive of
-    Lesson 21; the AF vs absolutive-antipassive alternation is
-    *syntactic* — both arguments overt for AF, object suppressed for
+/-- K'iche''s extraction profile (language "K'iche'"): Agent-Focus
+    Antipassive is productive ([mondloch-2017] Lesson 22, with parallel
+    coverage at Lessons 30 + 33 for radical TV and perfect aspect). The
+    voice marker is *-n* (shared morphologically with the Absolutive
+    Antipassive of Lesson 21; the AF vs absolutive-antipassive alternation
+    is *syntactic* — both arguments overt for AF, object suppressed for
     absolutive antipassive — not morphological). HIGH-ABS K'ichean,
-    structurally analogous to Kaqchikel. -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "K'iche'"
-  , strategy := .dedicatedMorpheme
-  , markedPositions := [.subject]
-  , distinguishesPosition := true
-  , notes := "AF (-n) for A-extraction; HIGH-ABS K'ichean (Mondloch 2017 Lesson 22)" }
+    structurally analogous to Kaqchikel. Notes: AF (-n) for A-extraction;
+    HIGH-ABS K'ichean (Mondloch 2017 Lesson 22). -/
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
+def extractionDistinguishesPosition : Bool := true
 
 end Kiche
