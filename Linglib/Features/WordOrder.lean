@@ -5,15 +5,13 @@ import Linglib.Data.WALS.Features.F83A
 /-!
 # Word-order typology
 
-[dryer-2013-wals] [greenberg-1963] [dryer-1992]
-
 Framework-agnostic per-language word-order substrate (WALS chapters 81–83), under
 a bare-root `WordOrder` namespace in `Features/`.
 
 ## Main definitions
 
 * `BasicOrder`, `SVOrder`, `OVOrder` : the WALS Ch 81/82/83 constituent-order
-  classifications.
+  classifications ([dryer-2013-wals]).
 * `WordOrderProfile` : the three classifications bundled per language, with the
   cross-field invariant `WordOrderProfile.IsConsistent` and the ISO-639-3 lookup
   constructor `WordOrderProfile.ofWALS`.
