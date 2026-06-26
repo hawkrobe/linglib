@@ -1,7 +1,7 @@
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Phase
-import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement

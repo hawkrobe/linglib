@@ -2,7 +2,7 @@ import Linglib.Fragments.NezPerce.ClausalEmbedding
 import Linglib.Typology.Complementation
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Semantics.Presupposition.ProjectiveContent
 
 /-! # Deal (2026): Clausal complementation as relativization, revisited
