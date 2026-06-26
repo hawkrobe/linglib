@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Typology.NullSubject
 import Linglib.Studies.Landau2015
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Allotey (2021): Overt Pronouns of Infinitival Predicates in Gã
@@ -316,7 +316,7 @@ theorem ga_prodrop_would_exclude_overt_pro
 -- § 9: Noonan Complementation Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Typology.Complementation
+open Clause.Complementation
 
 /-- Map Gã clause types to [noonan-2007]'s complement typology.
 

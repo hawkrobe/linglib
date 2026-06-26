@@ -1,4 +1,4 @@
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Semantics.Mood.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -34,7 +34,7 @@ Five bridges connecting CTPClass to existing infrastructure:
 
 namespace Noonan2007
 
-open Typology.Complementation
+open Clause.Complementation
 open English.Predicates.Verbal
 open Minimalist.LeftPeriphery
 open Semantics.Mood
