@@ -128,9 +128,10 @@ calls the noncomputable `SO.node`/`SO.replace` (it uses planar tree surgery + a
 `Nonplanar.mk` equality test), so surface orders `decide`. Index-free traces are sound
 here: traces are unpronounced, dropped by `planarYield`.
 
-The formal Π-bridge faithfulness theorem (`Nonplanar.mk externalizeP? = final`) is a
-planned follow-up; the `decide` demos below validate the replay reproduces the attested
-orders. -/
+The formal Π-bridge faithfulness theorem (`SO.Derivation.externalizeP?_faithful`, below)
+proves `Nonplanar.mk externalizeP? = final` whenever the replay succeeds: the surface
+readouts are the word order of the *actual* derived object, not just a replay that happens
+to reproduce attested orders. The `decide` demos below exercise concrete derivations. -/
 
 /-- Planar form of a leaf/trace `SO` (the only items merged in canonical derivations);
     `none` for a complex `SO` (no recorded internal order). -/
@@ -200,6 +201,245 @@ def surfacePhon (d : SO.Derivation) : List String :=
   d.surfaceTokens.filterMap fun t => let p := t.phonForm; if p.isEmpty then none else some p
 
 end SO.Derivation
+
+/-! ### Π-bridge faithfulness: `Nonplanar.mk externalizeP? = final`
+
+[marcolli-chomsky-berwick-2025] §1.12. The externalization replay (`externStepP` on an
+ordered `Planar SOLabel` accumulator) is *faithful* to the abstract derived object: each
+planar op's `Nonplanar.mk` equals the corresponding noncomputable `SO` op, so whenever
+the replay succeeds its nonplanar projection is exactly `final`. This upgrades
+`surfaceCats`/`surfacePhon` from "validated by `decide` demos" to "provably the word
+order of the actual derived SO" — the guarantee the word-order studies (Cinque2005,
+ColeHermon2008, Chomsky1995, …) rely on. -/
+
+/-- `isSOPlanar` of a bare binary node is the conjunction of the children's. -/
+private theorem isSOPlanar_nodeP {a b : Planar SOLabel}
+    (ha : isSOPlanar a = true) (hb : isSOPlanar b = true) : isSOPlanar (SO.nodeP a b) = true := by
+  simp only [isSOPlanar, isSOPlanarList, ha, hb, List.length_cons, List.length_nil,
+    Nat.reduceAdd, Nat.reduceBEq, Bool.or_true, Bool.and_self]
+
+/-- `Nonplanar.mk` of the planar binary builder is the bare binary nonplanar node. -/
+private theorem mk_nodeP (a b : Planar SOLabel) :
+    Nonplanar.mk (SO.nodeP a b) = Nonplanar.node (Sum.inr ()) {Nonplanar.mk a, Nonplanar.mk b} := by
+  rw [show ({Nonplanar.mk a, Nonplanar.mk b} : Multiset (Nonplanar SOLabel))
+        = Multiset.ofList ([a, b].map Nonplanar.mk) from rfl, Nonplanar.node_mk_planar_list]
+
+/-- A bare binary node (two children) is never the trace leaf (no children). -/
+private theorem SO.node_ne_traceLeaf (l r : SO) : SO.node l r ≠ SO.traceLeaf := by
+  intro heq
+  have ha : (SO.node l r).val.rootChildren = SO.traceLeaf.val.rootChildren := by rw [heq]
+  rw [SO.node_val, Nonplanar.rootChildren_node] at ha
+  simp only [SO.traceLeaf, Nonplanar.leaf_def, Nonplanar.rootChildren_mk, Planar.children,
+    Multiset.insert_eq_cons] at ha
+  exact Multiset.cons_ne_zero ha
+
+/-- **Lemma 1.** A successful `toPlanarLeaf?` projects (under `Nonplanar.mk`) back to the
+    `SO` it came from, and is a well-formed planar leaf. -/
+private theorem toPlanarLeaf?_mk {s : SO} {ip : Planar SOLabel} (h : s.toPlanarLeaf? = some ip) :
+    Nonplanar.mk ip = s.val ∧ isSOPlanar ip = true := by
+  induction s using SO.ind with
+  | lex tok =>
+    rw [SO.toPlanarLeaf?, SO.getLIToken_lexLeaf] at h
+    obtain rfl : ip = SO.leafP tok := by simpa using h.symm
+    exact ⟨rfl, rfl⟩
+  | trace =>
+    rw [SO.toPlanarLeaf?, SO.getLIToken_traceLeaf, if_pos rfl] at h
+    obtain rfl : ip = SO.traceP := by simpa using h.symm
+    exact ⟨rfl, rfl⟩
+  | node l r _ _ =>
+    rw [SO.toPlanarLeaf?, SO.getLIToken_node, if_neg (SO.node_ne_traceLeaf l r)] at h
+    exact absurd h (by simp)
+
+/-- **Lemma 2.** `projEqP target s` certifies that `s` projects to `target`. -/
+private theorem projEqP_eq {target : SO} {s : Planar SOLabel} (h : projEqP target s = true) :
+    Nonplanar.mk s = target.val := of_decide_eq_true h
+
+/-- **Lemma 3a.** A subtree raised by `planarFindP?` satisfies the predicate. -/
+private theorem planarFindP?_pred {p : Planar SOLabel → Bool} {t s : Planar SOLabel}
+    (h : planarFindP? p t = some s) : p s = true := by
+  fun_induction planarFindP? p t generalizing s with
+  | case1 _ hp => obtain rfl := Option.some.inj h; exact hp
+  | case2 => exact absurd h (by simp)
+  | case3 _ _ _ hp => obtain rfl := Option.some.inj h; exact hp
+  | case4 _ l r _ ihl ihr =>
+    rcases hl : planarFindP? p l with _ | sl
+    · rw [hl, Option.none_or] at h; exact ihr h
+    · rw [hl, Option.some_or] at h; obtain rfl := Option.some.inj h; exact ihl hl
+  | case5 _ _ _ _ hp => obtain rfl := Option.some.inj h; exact hp
+  | case6 => exact absurd h (by simp)
+
+/-- A bare binary node's children are both well-formed when the node is. -/
+private theorem isSOPlanar_pair_children {l r : Planar SOLabel}
+    (ht : isSOPlanar (SO.nodeP l r) = true) : isSOPlanar l = true ∧ isSOPlanar r = true := by
+  rw [SO.nodeP, isSOPlanar, isSOPlanarList, isSOPlanarList, isSOPlanarList,
+    Bool.and_eq_true, Bool.and_eq_true, Bool.and_eq_true] at ht
+  exact ⟨ht.2.1, ht.2.2.1⟩
+
+/-- **Lemma 3b.** A subtree raised by `planarFindP?` from a well-formed tree is itself
+    well-formed. -/
+private theorem planarFindP?_isSOPlanar {p : Planar SOLabel → Bool} {t s : Planar SOLabel}
+    (h : planarFindP? p t = some s) (ht : isSOPlanar t = true) : isSOPlanar s = true := by
+  fun_induction planarFindP? p t generalizing s with
+  | case1 => obtain rfl := Option.some.inj h; exact ht
+  | case2 => exact absurd h (by simp)
+  | case3 => obtain rfl := Option.some.inj h; exact ht
+  | case4 a l r _ ihl ihr =>
+    have hcase : a = Sum.inr () := by
+      cases a with
+      | inl _ => simp [isSOPlanar] at ht
+      | inr u => cases u; rfl
+    subst hcase
+    obtain ⟨hl', hr'⟩ := isSOPlanar_pair_children ht
+    rcases hlf : planarFindP? p l with _ | sl
+    · rw [hlf, Option.none_or] at h; exact ihr h hr'
+    · rw [hlf, Option.some_or] at h; obtain rfl := Option.some.inj h; exact ihl hlf hl'
+  | case5 => obtain rfl := Option.some.inj h; exact ht
+  | case6 => exact absurd h (by simp)
+
+/-- Under `isSOPlanar`, a node has either no children or exactly two. -/
+private theorem isSOPlanar_length {a : SOLabel} {cs : List (Planar SOLabel)}
+    (ht : isSOPlanar (Planar.node a cs) = true) : cs.length = 0 ∨ cs.length = 2 := by
+  cases a with
+  | inl _ =>
+    rw [isSOPlanar] at ht
+    rw [List.isEmpty_iff] at ht
+    exact Or.inl (by rw [ht]; rfl)
+  | inr u =>
+    cases u
+    rw [isSOPlanar, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq, beq_iff_eq] at ht
+    exact ht.1
+
+/-- `projEqP` reflects (in)equality of the nonplanar projection to the target. -/
+private theorem not_projEqP {target : SO} {s : Planar SOLabel}
+    (h : ¬ projEqP target s = true) : Nonplanar.mk s ≠ target.val := by
+  rw [projEqP, decide_eq_true_eq] at h; exact h
+
+/-- **Lemma 4 (CRUX): the replace bridge.** On a well-formed planar tree, the computable
+    planar replacement (`planarReplaceWhereP (projEqP target) SO.traceP`) projects under
+    `Nonplanar.mk` to the abstract structural substitution `replaceN target SO.traceLeaf`,
+    and stays well-formed. The two `if`-conditions agree (`projEqP target s = true ↔
+    Nonplanar.mk s = target.val`), and the recursive bare-binary case lines up with
+    `replaceN_node`'s else branch (`{·,·}` multiset built from the two daughters). -/
+private theorem replaceWhereP_mk (target : SO) {t : Planar SOLabel} (ht : isSOPlanar t = true) :
+    Nonplanar.mk (planarReplaceWhereP (projEqP target) SO.traceP t)
+        = replaceN target.val SO.traceLeaf.val (Nonplanar.mk t)
+      ∧ isSOPlanar (planarReplaceWhereP (projEqP target) SO.traceP t) = true := by
+  fun_induction planarReplaceWhereP (projEqP target) SO.traceP t with
+  | case1 _ hp =>
+    refine ⟨?_, rfl⟩
+    rw [projEqP_eq hp, replaceN_self]; rfl
+  | case2 b hp =>
+    refine ⟨?_, ht⟩
+    rw [show Nonplanar.mk (Planar.node b []) = Nonplanar.leaf b from rfl,
+      replaceN_leaf, if_neg]
+    rw [show Nonplanar.leaf b = Nonplanar.mk (Planar.node b []) from rfl]
+    exact not_projEqP hp
+  | case3 _ _ _ hp =>
+    refine ⟨?_, rfl⟩
+    rw [projEqP_eq hp, replaceN_self]; rfl
+  | case4 a l r hp ihl ihr =>
+    have hcase : a = Sum.inr () := by
+      cases a with
+      | inl _ => simp [isSOPlanar] at ht
+      | inr u => cases u; rfl
+    subst hcase
+    obtain ⟨hl', hr'⟩ := isSOPlanar_pair_children ht
+    obtain ⟨ihle, ihls⟩ := ihl hl'
+    obtain ⟨ihre, ihrs⟩ := ihr hr'
+    refine ⟨?_, isSOPlanar_nodeP ihls ihrs⟩
+    have hne : Nonplanar.node (Sum.inr ()) {Nonplanar.mk l, Nonplanar.mk r} ≠ target.val := by
+      rw [← mk_nodeP]; exact not_projEqP hp
+    rw [show Planar.node (Sum.inr ()) [planarReplaceWhereP (projEqP target) SO.traceP l,
+          planarReplaceWhereP (projEqP target) SO.traceP r]
+        = SO.nodeP (planarReplaceWhereP (projEqP target) SO.traceP l)
+          (planarReplaceWhereP (projEqP target) SO.traceP r) from rfl,
+      mk_nodeP, ihle, ihre, mk_nodeP, replaceN_node, if_neg hne]
+  | case5 _ cs hnil hpair _ =>
+    rcases isSOPlanar_length ht with hlen | hlen
+    · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
+    · obtain ⟨x, y, rfl⟩ := List.length_eq_two.mp hlen; exact absurd rfl (hpair x y)
+  | case6 _ cs hnil hpair _ =>
+    rcases isSOPlanar_length ht with hlen | hlen
+    · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
+    · obtain ⟨x, y, rfl⟩ := List.length_eq_two.mp hlen; exact absurd rfl (hpair x y)
+
+/-- **Lemma 6: per-step faithfulness.** A successful replay step on a well-formed
+    accumulator stays well-formed and projects to the abstract `SO.Step.apply`. -/
+private theorem externStepP_step {acc : SO} {accp p' : Planar SOLabel} {step : SO.Step}
+    (h : externStepP (some accp) step = some p') (hwf : isSOPlanar accp = true)
+    (hmk : Nonplanar.mk accp = acc.val) :
+    isSOPlanar p' = true ∧ Nonplanar.mk p' = (step.apply acc).val := by
+  cases step with
+  | emL item =>
+    change item.toPlanarLeaf?.map (fun p => SO.nodeP p accp) = some p' at h
+    rcases hip : item.toPlanarLeaf? with _ | ip
+    · rw [hip, Option.map_none] at h; exact absurd h (by simp)
+    · rw [hip, Option.map_some] at h
+      obtain rfl := Option.some.inj h
+      obtain ⟨hmkip, hwfip⟩ := toPlanarLeaf?_mk hip
+      refine ⟨isSOPlanar_nodeP hwfip hwf, ?_⟩
+      rw [SO.Step.apply, SO.node_val, mk_nodeP, hmkip, hmk]
+  | emR item =>
+    change item.toPlanarLeaf?.map (fun p => SO.nodeP accp p) = some p' at h
+    rcases hip : item.toPlanarLeaf? with _ | ip
+    · rw [hip, Option.map_none] at h; exact absurd h (by simp)
+    · rw [hip, Option.map_some] at h
+      obtain rfl := Option.some.inj h
+      obtain ⟨hmkip, hwfip⟩ := toPlanarLeaf?_mk hip
+      refine ⟨isSOPlanar_nodeP hwf hwfip, ?_⟩
+      rw [SO.Step.apply, SO.node_val, mk_nodeP, hmkip, hmk]
+  | im mover =>
+    change moveLeftPlanarP accp mover = some p' at h
+    rw [moveLeftPlanarP] at h
+    rcases hfind : planarFindP? (projEqP mover) accp with _ | s
+    · rw [hfind, Option.map_none] at h; exact absurd h (by simp)
+    · rw [hfind, Option.map_some] at h
+      obtain rfl := Option.some.inj h
+      have hmks : Nonplanar.mk s = mover.val := projEqP_eq (planarFindP?_pred hfind)
+      have hwfs : isSOPlanar s = true := planarFindP?_isSOPlanar hfind hwf
+      obtain ⟨hrwe, hrws⟩ := replaceWhereP_mk mover hwf
+      refine ⟨isSOPlanar_nodeP hwfs hrws, ?_⟩
+      rw [SO.Step.apply, SO.node_val, SO.replace_val, mk_nodeP, hmks, hrwe, hmk]
+
+/-- `none` is absorbing for the replay fold: once externalization fails, it stays failed. -/
+private theorem foldl_externStepP_none (steps : List SO.Step) :
+    steps.foldl externStepP none = none := by
+  induction steps with
+  | nil => rfl
+  | cons st rest ih => rw [List.foldl_cons, show externStepP none st = none from rfl]; exact ih
+
+/-- **Lemma 7: foldl faithfulness.** A successful replay fold from a well-formed,
+    faithful accumulator projects to the abstract `final`-style fold of `SO.Step.apply`. -/
+private theorem foldl_externStepP_mk : ∀ (steps : List SO.Step) {acc : SO} {accp p : Planar SOLabel},
+    steps.foldl externStepP (some accp) = some p → isSOPlanar accp = true →
+    Nonplanar.mk accp = acc.val →
+    Nonplanar.mk p = (steps.foldl (fun so st => st.apply so) acc).val
+  | [], acc, accp, p, h, _, hmk => by
+      rw [List.foldl_nil] at h ⊢; obtain rfl := Option.some.inj h; exact hmk
+  | st :: rest, acc, accp, p, h, hwf, hmk => by
+      rw [List.foldl_cons] at h ⊢
+      rcases hstep : externStepP (some accp) st with _ | accp'
+      · rw [hstep, foldl_externStepP_none] at h; exact absurd h (by simp)
+      · obtain ⟨hwf', hmk'⟩ := externStepP_step hstep hwf hmk
+        rw [hstep] at h
+        exact foldl_externStepP_mk rest h hwf' hmk'
+
+/-- **Π-bridge faithfulness** ([marcolli-chomsky-berwick-2025] §1.12): whenever the
+    computable externalization replay `externalizeP?` succeeds, its nonplanar projection
+    is exactly the abstract derived object `final`. So the surface readouts
+    (`surfaceTokens`/`surfaceCats`/`surfacePhon`) are provably the word order of the *actual*
+    derived syntactic object — the guarantee the word-order studies depend on. The replay
+    is partial by design (EM of a complex item / a missing mover ⇒ `none`, making the claim
+    vacuous there); on the canonical leaf/trace derivations the studies build, it succeeds. -/
+theorem SO.Derivation.externalizeP?_faithful (d : SO.Derivation) {p : Planar SOLabel}
+    (h : d.externalizeP? = some p) : Nonplanar.mk p = d.final.val := by
+  rw [SO.Derivation.externalizeP?] at h
+  rcases hinit : d.initial.toPlanarLeaf? with _ | init
+  · rw [hinit] at h; exact absurd h (by simp [Option.bind])
+  · rw [hinit] at h
+    change d.steps.foldl externStepP (some init) = some p at h
+    obtain ⟨hmkinit, hwfinit⟩ := toPlanarLeaf?_mk hinit
+    exact foldl_externStepP_mk d.steps h hwfinit hmkinit
 
 /-! ### Verification: the [cinque-2005] pied-piping contrast
 
