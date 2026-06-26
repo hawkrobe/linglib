@@ -1,4 +1,5 @@
-import Linglib.Syntax.Minimalist.PConstraint
+import Linglib.Features.Person.PersonCaseConstraint
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Features.Logophoricity
 import Linglib.Features.Person.Decomposition
 import Linglib.Fragments.Italian.Pronouns
@@ -48,7 +49,7 @@ namespace PanchevaZubizarreta2018
 
 open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
 open Minimalist (DecomposedPerson decomposePerson)
-open Minimalist.PConstraint
+open PCC
 
 -- The Sells correspondence (§6.2): a P&Z-specific theoretical reading,
 -- defined here in the study file rather than baked into PConstraint.
@@ -62,6 +63,59 @@ def pProminence_to_sellsRole : PProminence → LogophoricRole
   | .proximate   => .pivot
   | .participant => .self
   | .author      => .source
+
+-- ════════════════════════════════════════════════════
+-- The P-Constraint over Appl domains (the syntactic encoding)
+-- ════════════════════════════════════════════════════
+
+/-! P&Z's syntactic encoding: the interpretable person feature on Appl marks one DP as the
+point-of-view center. The theory-neutral PCC (`Features/Person/PersonCaseConstraint.lean`)
+is grounded here in that Appl model — a ⟨IO, DO⟩ is licit iff IO-as-POV-center is
+consistent with the Appl p-feature. (Formerly `PConstraint.lean`'s §9 grounding; it has
+no consumers outside this study, so it lives with the paper that motivates it.) -/
+
+/-- A minimal model of the Appl phase: the two arguments and the chosen POV center. -/
+structure ApplDomain where
+  /-- The indirect-object argument introduced by Appl. -/
+  io : Person
+  /-- The direct-object argument inside VP. -/
+  do_ : Person
+  /-- The DP selected as point-of-view center within the phase. -/
+  povCenter : Person
+  deriving DecidableEq, Repr
+
+/-- The IO is the canonical POV-center candidate ([pancheva-zubizarreta-2018] p. 1320). -/
+def ApplDomain.povIsIO (a : ApplDomain) : Prop := a.povCenter = a.io
+
+instance (a : ApplDomain) : Decidable a.povIsIO :=
+  inferInstanceAs (Decidable (a.povCenter = a.io))
+
+/-- The P-Constraint as a predicate over an Appl domain. -/
+def PConstraintSatisfied (g : PCCGrammar) (a : ApplDomain) : Prop :=
+  DomainExempt g a.io a.do_ ∨
+    (a.povIsIO ∧ IOSatisfiesProminence g a.io a.do_ ∧
+     (g.uniqueness = false ∨ UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
+
+instance (g : PCCGrammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- **Central derivation.** ⟨IO, DO⟩ is licit iff some Appl domain over them — IO as POV
+    center — satisfies the P-Constraint. The four parametric clauses are not stipulated
+    verdicts; they are the conditions under which IO-as-POV-center is consistent with the
+    interpretable person feature on Appl. -/
+theorem isLicit_iff_exists_appl_satisfying (g : PCCGrammar) (io do_ : Person) :
+    IsLicit g io do_ ↔
+      ∃ a : ApplDomain, a.io = io ∧ a.do_ = do_ ∧ PConstraintSatisfied g a := by
+  constructor
+  · intro h
+    refine ⟨⟨io, do_, io⟩, rfl, rfl, ?_⟩
+    rcases h with hexempt | ⟨hprom, hrest⟩
+    · exact Or.inl hexempt
+    · exact Or.inr ⟨rfl, hprom, hrest⟩
+  · rintro ⟨a, hio, hdo, hsat⟩
+    rcases hsat with hexempt | ⟨_, hprom, hrest⟩
+    · subst hio; subst hdo; exact Or.inl hexempt
+    · subst hio; subst hdo; exact Or.inr ⟨hprom, hrest⟩
 
 -- ============================================================================
 -- § 1: Person Hierarchy as Derived (paper §2.1)
