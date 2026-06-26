@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Mandarin Chinese Classifier Lexicon
@@ -27,7 +27,7 @@ ones" (ibid.).
 
 namespace Mandarin.Classifiers
 
-open Typology (ClassifierEntry SemanticParameter ShapeDimension)
+open NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Sortal classifiers (inherent properties)

@@ -642,6 +642,7 @@ import Linglib.Features.MassCount
 import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
 import Linglib.Features.ModalIndefinite
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
@@ -2929,7 +2930,6 @@ import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.BodyParts
-import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.ClauseChaining
 import Linglib.Typology.Color
 import Linglib.Typology.Comparison

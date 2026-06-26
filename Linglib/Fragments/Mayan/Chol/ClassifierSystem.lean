@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Mayan.Chol.Classifiers
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Fragments.Mayan.Chol.Classifiers
 
 Classifier-system metadata for Ch'ol (ISO `ctu`). The lexical classifier
 inventory lives in `Fragments/Mayan/Chol/Classifiers.lean`; this file
-aggregates that inventory into a `NounCategorizationSystem` summary.
+aggregates that inventory into a `System` summary.
 
 Per-language claims (consensus, see [bale-coon-2014],
 [bale-et-al-2019], [little-moroney-royer-2022]): suffix
@@ -20,10 +20,10 @@ paper-anchored Studies that consume this profile.
 
 namespace Chol
 
-open Typology (collectSemantics) in
+open NounCategorization (collectSemantics) in
 /-- Ch'ol numeral classifier system: suffix on the numeral stem,
 restricted to numeralNP scope, with CLF/PL co-occurrence. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Mayan"
   , classifierType := .numeralClassifier
   , scopes := [.numeralNP]
