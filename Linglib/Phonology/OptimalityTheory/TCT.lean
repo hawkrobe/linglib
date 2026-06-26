@@ -179,9 +179,10 @@ def TetruSchema.toRanking {C : Type} (s : TetruSchema C) :
 -- ============================================================================
 
 /-- **Misapplication unification** (the architectural content of TCT
-    [benua-1997]): under TETRU, when two candidates tie on M₁,
-    the candidate with strictly fewer OO-Ident violations strictly beats
-    the other on OO-Ident — regardless of M₂ and IO-Faith.
+    [benua-1997]): under TETRU, when two candidates tie on M₁, the candidate
+    with strictly fewer OO-Ident violations has the lexicographically smaller
+    violation profile under the ranking `[m1, ooIdent, m2, ioFaith]` — and so
+    wins the TETRU tableau, regardless of its M₂ and IO-Faith violations.
 
     Empirical reading: the "misapplied" candidate (overapplied harmony in
     Sundanese, underapplied spirantization in Tiberian Hebrew) violates M₂
@@ -193,10 +194,15 @@ theorem TetruSchema.misapplication_wins {C : Type} (s : TetruSchema C)
     (canonical misapplied : C)
     (hM1 : s.m1.eval canonical = s.m1.eval misapplied)
     (hOO : s.ooIdent.eval misapplied < s.ooIdent.eval canonical) :
-    -- At the M₁ level, the candidates tie:
-    s.m1.eval canonical = s.m1.eval misapplied ∧
-    -- At the OO-Ident level, misapplied strictly wins:
-    s.ooIdent.eval misapplied < s.ooIdent.eval canonical :=
-  ⟨hM1, hOO⟩
+    mkProfile s.toRanking misapplied < mkProfile s.toRanking canonical := by
+  -- First difference is at OO-Ident (index 1): the candidates tie on M₁
+  -- (index 0), and `misapplied` strictly wins on OO-Ident — so its violation
+  -- profile is lexicographically smaller under `[m1, ooIdent, m2, ioFaith]`
+  -- regardless of M₂/IO-Faith, i.e. `misapplied` wins the TETRU tableau.
+  refine ⟨⟨1, by simp⟩, fun j hj => ?_, ?_⟩
+  · have hj0 : j.val = 0 := by have : j.val < 1 := hj; omega
+    obtain rfl : j = ⟨0, by simp⟩ := Fin.ext hj0
+    exact hM1.symm
+  · exact hOO
 
 end OptimalityTheory.TCT

@@ -384,25 +384,28 @@ noncomputable def nonSeparableInverseHarmony {n : ℕ} (w : Fin n → ℝ)
     (v : Fin n → ℕ) : ℝ :=
   inverseFunction (∑ k, w k * (v k : ℝ))
 
-/-- **Counterexample** (§4.4, online appendix D.1):
-    the non-separable inverse harmony does *not* predict HZ's
-    generalization in general.
+/-- **Counterexample** (§4.4, online appendix D.1): the non-separable inverse
+    harmony `H(v) = inverseFunction (Σ wₖvₖ) = 1/(1 + Σ wₖvₖ)` does *not*
+    predict HZ's generalization in general.
 
-    For the inverse harmony `H(v) = 1/(1 + Σ wₖvₖ)`, the logit
-    probability is `log((1 + S_NO(x)) / (1 + S_YES(x)))` where
-    `S_y(x) = Σₖ wₖ Cₖ(x,y)`. HZ holds iff the cross-product
-    `(1+S_NO(tl))(1+S_YES(tr))(1+S_YES(bl))(1+S_NO(br))`
-    equals `(1+S_YES(tl))(1+S_NO(tr))(1+S_NO(bl))(1+S_YES(br))`.
+    For this harmony the logit rate is `log((1 + S_NO(x)) / (1 + S_YES(x)))`
+    with `S_y(x) = Σₖ wₖ Cₖ(x,y)`, and HZ holds iff the cross-product of
+    `inverseFunction(S)` across the square is equal on both diagonals — i.e.
+    `∏ inverseFunction(S_NO tl, S_YES tr, S_YES bl, S_NO br)` equals
+    `∏ inverseFunction(S_YES tl, S_NO tr, S_NO bl, S_YES br)`.
 
-    With Tagalog constraints and w₅ ≠ w₆ (weights 1,1,1,1,1,2),
-    the cross-products are 72 and 60, disproving HZ. -/
+    Stating it over `inverseFunction` of the *actual* weighted sums (rather
+    than the bare `(1+S)` products) keeps the witness sensitive to the
+    harmony and weights: with Tagalog constraints and w₅ ≠ w₆ (weights
+    1,1,1,1,1,2) the two products are `1/72 ≠ 1/60`, disproving HZ. -/
 theorem inverse_not_always_hz :
-    -- Using w = (1,1,1,1,1,2) and Tagalog constraints:
-    -- S_YES(maŋb)=1, S_NO(maŋb)=1, S_YES(maŋk)=3, S_NO(maŋk)=2
-    -- S_YES(paŋb)=2, S_NO(paŋb)=1, S_YES(paŋk)=4, S_NO(paŋk)=2
-    -- LHS cross-product: (1+1)(1+3)(1+2)(1+2) = 2·4·3·3 = 72
-    -- RHS cross-product: (1+1)(1+2)(1+1)(1+4) = 2·3·2·5 = 60
-    (2 : ℕ) * 4 * 3 * 3 ≠ 2 * 3 * 2 * 5 := by decide
+    -- Tagalog square (YES/NO × {maŋb, maŋk, paŋb, paŋk}), weights (1,1,1,1,1,2):
+    -- S_YES(maŋb)=1 S_NO(maŋb)=1  S_YES(maŋk)=3 S_NO(maŋk)=2
+    -- S_YES(paŋb)=2 S_NO(paŋb)=1  S_YES(paŋk)=4 S_NO(paŋk)=2
+    inverseFunction 1 * inverseFunction 3 * inverseFunction 2 * inverseFunction 2 ≠
+      inverseFunction 1 * inverseFunction 2 * inverseFunction 1 * inverseFunction 4 := by
+  simp only [inverseFunction]
+  norm_num
 
 -- ============================================================================
 -- § 11: Bridge — List-Based MaxEnt ↔ Separable Harmony
