@@ -1,6 +1,6 @@
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Data.Examples.Landau2026
-import Linglib.Typology.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Fragments.Hebrew.Relativization
 
 /-!

@@ -2949,6 +2949,8 @@ import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
 import Linglib.Syntax.Pronoun.Indefinite
 import Linglib.Syntax.Pronoun.Logophoric
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
@@ -2999,8 +3001,6 @@ import Linglib.Typology.Profile
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Question
 import Linglib.Typology.Reference
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.TemporalConnectives
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Universal

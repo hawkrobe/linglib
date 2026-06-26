@@ -1,5 +1,5 @@
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # English Relativization Fragment

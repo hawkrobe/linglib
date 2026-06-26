@@ -1,4 +1,4 @@
-import Linglib.Typology.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.Relativization

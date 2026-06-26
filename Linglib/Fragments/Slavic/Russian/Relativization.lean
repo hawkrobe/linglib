@@ -1,4 +1,4 @@
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # Russian relativization profile

@@ -1,4 +1,4 @@
-import Linglib.Typology.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Data.WALS.Features.F90D
 import Linglib.Data.WALS.Features.F122A
 import Linglib.Data.WALS.Features.F123A

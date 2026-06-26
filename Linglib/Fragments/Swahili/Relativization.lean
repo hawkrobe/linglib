@@ -1,6 +1,6 @@
 import Linglib.Features.Number.Basic
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Fragments.Swahili.Basic
 
 /-!
