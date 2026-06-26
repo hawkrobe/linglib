@@ -1,4 +1,4 @@
-import Linglib.Typology.Question
+import Linglib.Syntax.Question
 import Linglib.Fragments.English.Questions
 import Linglib.Fragments.HindiUrdu.Questions
 import Linglib.Fragments.Japanese.Questions
@@ -32,7 +32,7 @@ set_option autoImplicit false
 
 namespace Dryer2013Question
 
-open Typology.Question
+open Syntax.Question
 
 -- ============================================================================
 -- §1. The Fragment sample

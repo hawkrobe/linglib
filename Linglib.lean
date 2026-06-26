@@ -2877,6 +2877,7 @@ import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
 import Linglib.Syntax.Pronoun.Indefinite
 import Linglib.Syntax.Pronoun.Logophoric
+import Linglib.Syntax.Question
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
@@ -2907,8 +2908,7 @@ import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
-
 import Linglib.Typology.Pronoun.WALS
-import Linglib.Typology.Question
+
 import Linglib.Typology.TemporalConnectives
 import Linglib.Morphology.TenseAspect
