@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
