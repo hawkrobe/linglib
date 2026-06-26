@@ -9,7 +9,9 @@ import Mathlib.Data.Fintype.Basic
 
 Pre-Fragment typological substrate for expletive negation (EN):
 framework-agnostic classification types that Fragments and Studies
-import to type their per-language EN data.
+import to type their per-language EN data. The trigger-class /
+licensing apparatus traces to [espinal-1992]'s logical-absorption
+account, on which the [greco-2020] / [rett-2026] refinements build.
 
 Two orthogonal classifications:
 
