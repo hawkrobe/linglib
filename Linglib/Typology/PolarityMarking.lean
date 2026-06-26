@@ -1,4 +1,3 @@
-import Linglib.Typology.Profile
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -125,7 +124,7 @@ structure Entry where
   /-- What bears prosodic prominence, if the strategy is prosodic -/
   prosodicTarget : Option String := none
   /-- Set of positions/contexts in which this marker is available. -/
-  environments : Typology.Profile Env
+  environments : Set Env
   /-- The polarity-marking strategy category -/
   strategy : Strategy
 

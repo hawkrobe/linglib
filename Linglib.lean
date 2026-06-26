@@ -2907,7 +2907,6 @@ import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.PolarityMarking
-import Linglib.Typology.Profile
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Question
 import Linglib.Typology.TemporalConnectives
