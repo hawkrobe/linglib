@@ -3,42 +3,23 @@ import Linglib.Features.Prominence
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Accessibility Marking Scale — Referential Form Taxonomy
-[ariel-2001] [arnold-wasow-losongco-ginstrom-2000]
+# Accessibility — Ariel's referential-form scale
 
-Per-entry feature taxonomy classifying referring expressions by
-**accessibility** — the degree to which the referent's mental
-representation is available to the addressee. Speakers choose between
-reduced (pronoun) and full (name, description) forms based on this
-accessibility ([ariel-2001]).
+`AccessibilityLevel`: a fine-grained (18-tier) reconstruction of
+[ariel-2001]'s Accessibility Marking Scale (least accessible `fullNameMod`
+to most accessible `zero`), with `rank`, the coarsening `toDefLevel` to
+`Prominence.DefinitenessLevel`, and the GHZ bridge `GivennessStatus.toAccessibility`.
+The tier order follows Ariel; the `verbalAgreement`/`zero` split refines
+her single "Extremely High Accessibility Markers" tier.
 
-## The Accessibility Marking Scale
+Accessibility and definiteness are **non-monotonically** related (full
+names are less accessible than definite descriptions, yet first/last names
+are more accessible; names are also more prominent for DOM), so they are
+separate types and `toDefLevel` is many-to-one and non-monotone.
 
-`AccessibilityLevel` is a fine-grained (18-tier) reconstruction of
-[ariel-2001]'s Accessibility Marking Scale, from least accessible (full
-name + modifier) to most accessible (zero / pro-drop). The relative
-order of the tiers follows Ariel; the `verbalAgreement` / `zero` split
-at the top refines Ariel's single "Extremely High Accessibility Markers"
-category. This replaces the earlier conflation with `DefinitenessLevel`
-— the scales are **non-monotonically** related (full names are less
-accessible than definite descriptions, yet first/last names are more
-accessible, so the name band straddles the description band; names are
-also more prominent for DOM), so they must be separate types. A
-coarsening function `toDefLevel` bridges to the DOM/DSM scale when needed.
-
-## Layer position
-
-`Features/`. Sibling of `Features/Givenness.lean` (the GHZ-6
-hierarchy). Both are per-entry feature taxonomies for cognitive
-status: `AccessibilityLevel` classifies *forms* by their
-accessibility-marking behavior; `GivennessStatus` classifies *entities*
-by cognitive status. Ariel argues `AccessibilityLevel`'s tiers are
-better empirically supported than GHZ-6's 6 tiers; both retained as
-substrate because they serve different consumer profiles. The
-`GivennessStatus.toAccessibility` projection (defined below) bridges them.
-
-This module connects referential form choice to word-order position
-choice via the shared dimension of NP weight/reduction.
+Sibling of `Features/Givenness.lean` (GHZ-6): this classifies *forms*,
+`GivennessStatus` classifies *entities*. Also here: `NextMentionBias` and a
+`typicalWeight` NP-weight correlate ([arnold-wasow-losongco-ginstrom-2000]).
 -/
 
 set_option autoImplicit false
@@ -109,12 +90,6 @@ def AccessibilityLevel.toDefLevel : AccessibilityLevel → DefinitenessLevel
   | .stressedPronGesture | .stressedPron | .unstressedPron
   | .cliticizedPron | .verbalAgreement | .zero          => .personalPronoun
 
-/-! ### Referential form -/
-
-/-- Referential form options for referring to a discourse entity.
-    Uses [ariel-2001]'s 18-level accessibility marking scale. -/
-abbrev ReferentialForm := AccessibilityLevel
-
 /-- An unstressed pronoun is more reduced than a full name. -/
 theorem pronoun_more_reduced_than_name :
     AccessibilityLevel.unstressedPron.rank > AccessibilityLevel.fullName.rank := by
@@ -138,7 +113,7 @@ inductive NextMentionBias where
     Accessibility Marking Scale: more accessible referents → more
     reduced forms. The same relationship underlies the Probabilistic
     Reduction Hypothesis (more predictable → shorter/more reduced). -/
-def NextMentionBias.predictedForm : NextMentionBias → ReferentialForm
+def NextMentionBias.predictedForm : NextMentionBias → AccessibilityLevel
   | .high => .unstressedPron
   | .low  => .fullName
 
@@ -159,7 +134,7 @@ theorem high_bias_more_reduced :
     The same choice that makes a referent "more reduced" also makes
     it "lighter", linking [ariel-2001]'s accessibility hierarchy
     to [arnold-wasow-losongco-ginstrom-2000]'s heaviness effects. -/
-def ReferentialForm.typicalWeight : ReferentialForm → Nat
+def AccessibilityLevel.typicalWeight : AccessibilityLevel → Nat
   | .fullNameMod                              => 4  -- "the former governor of Alaska, Sarah Palin"
   | .longDefDescription                       => 4  -- "the former governor of Alaska"
   | .distalDemMod | .proxDemMod               => 3  -- "that tall woman over there"
@@ -175,8 +150,8 @@ def ReferentialForm.typicalWeight : ReferentialForm → Nat
 
 /-- Pronouns are at most as heavy as definite descriptions. -/
 theorem pronoun_lightest :
-    ReferentialForm.typicalWeight .unstressedPron ≤
-    ReferentialForm.typicalWeight .shortDefDescription := by
+    AccessibilityLevel.typicalWeight .unstressedPron ≤
+    AccessibilityLevel.typicalWeight .shortDefDescription := by
   decide
 
 /-! ### Givenness projection -/
