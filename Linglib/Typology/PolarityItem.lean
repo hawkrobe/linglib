@@ -1,5 +1,5 @@
 import Linglib.Features.LicensingContext
-import Linglib.Typology.NegativeConcord
+import Linglib.Features.NegativeConcord
 import Linglib.Semantics.NaturalLogic
 
 /-!
@@ -284,7 +284,7 @@ structure PolarityItemEntry where
       [van-der-auwera-van-alsenoy-2016]). `none` for items outside the
       negative-concord system; strict-NC n-words set `some .nWord` here rather than
       leaning on a strong-NPI `polarityType`. -/
-  nWordStatus : Option NegativeConcord.NWordStatus := none
+  nWordStatus : Option Features.NegativeConcord.NWordStatus := none
   /-- Notes -/
   notes : String := ""
   deriving Repr

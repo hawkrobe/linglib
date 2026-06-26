@@ -1,4 +1,3 @@
-import Linglib.Typology.TemporalConnectives
 import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Tense.TemporalConnectives.Projection
@@ -760,11 +759,43 @@ theorem before_not_equiv_eventiveUntil :
 -- ============================================================================
 
 /-! Per-language strategy entries for the durative/eventive *until*
-distinction. The `UntilStrategy` enum + `UntilTypologyEntry` schema live
-in `Typology/TemporalConnectives.lean`; the per-language data + Fragment
-grounding theorems are paper-anchored here. -/
+distinction. The `UntilStrategy` enum + `UntilTypologyEntry` schema (consolidated from the former
+`Typology/TemporalConnectives.lean`) plus the per-language data + Fragment
+grounding theorems are all paper-anchored here. -/
 
-open Typology.TemporalConnectives
+/-- How a language handles the durative/eventive *until* distinction
+    ([giannakidou-2002]). -/
+inductive UntilStrategy where
+  /-- Three distinct lexemes: *before*, durative *until*, eventive NPI-*until*.
+      Greek: *prin*, *mexri*, *para monon*. -/
+  | threeWay
+  /-- Two distinct lexemes: durative *until* and eventive NPI-*until*.
+      Icelandic: *flanga til*, *fyrr en*. Finnish: *kunnes*, *ennenkuin*. -/
+  | twoWay
+  /-- Single ambiguous lexeme, disambiguated by negation context.
+      English: *until*. -/
+  | ambiguous
+  /-- Durative *until* blocked under negation; PPI replaces NPI-*until*.
+      Dutch: *tot*, *pas*. German: *bis*, *erst*. -/
+  | ppiReplacement
+  deriving DecidableEq, Repr
+
+/-- A language's strategy for the two-*until* distinction. -/
+structure UntilTypologyEntry where
+  language : String
+  strategy : UntilStrategy
+  /-- Surface form for durative *until*. -/
+  durativeForm : String
+  /-- Surface form for eventive *until* (NPI or PPI). -/
+  eventiveForm : String
+  /-- Is the eventive form morphologically built on *before*?
+      ([karttunen-1974]'s identity NPI-*until* = ¬*before*.) -/
+  eventiveMorphBeforeBased : Bool
+  /-- Does the language have overt perfective/imperfective marking?
+      Orthogonal to the lexicalization choice. -/
+  hasOvertAspect : Bool
+  deriving Repr
+
 
 def greek : UntilTypologyEntry where
   language := "Greek"

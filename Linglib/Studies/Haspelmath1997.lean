@@ -1,4 +1,4 @@
-import Linglib.Typology.Indefinite
+import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Data.WALS.Features.F46A
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.German.Indefinites

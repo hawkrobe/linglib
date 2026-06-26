@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Economy
-import Linglib.Typology.Question
+import Linglib.Syntax.Question
 /-!
 # Economy in PF Reduction
 [citko-gracanin-yuksek-2025]
@@ -71,7 +71,7 @@ multidominance as the PF reduction mechanism.
 namespace CitkoGracaninYuksek2025
 
 open Minimalist
-open Typology.Question
+open Syntax.Question
 
 /-! ### Multidominance (relocated from Minimalist/Multidominance.lean)
 

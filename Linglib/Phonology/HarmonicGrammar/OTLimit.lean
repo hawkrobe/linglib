@@ -171,17 +171,6 @@ def Ganging (w₁ w₂ w₃ : ℚ) : Prop :=
 theorem ganging_example : Ganging 2 2 3 := by
   unfold Ganging; norm_num
 
-/-- **Ganging is incompatible with exponential separation**: if weights are
-    exponentially separated, no pair of lower constraints can gang up
-    against any higher constraint. -/
-theorem exponential_separation_precludes_ganging {n : Nat}
-    (w : Fin n → ℚ) (M : Nat)
-    (_hw : ExponentiallySeparated w M)
-    (k : Fin n) :
-    ¬Ganging ((univ.filter (· > k)).sum w) 0 (w k) := by
-  intro ⟨_, h0, _, _, _, _⟩
-  linarith
-
 /-- With exponentially separated weights (M = 1), each constraint
     outweighs the total of all lower weights. -/
 theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
@@ -190,6 +179,27 @@ theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
   have h := hw.2 k
   simp only [Nat.cast_one, one_mul] at h
   exact h
+
+/-- **Ganging is precluded by exponential separation**: with exponentially
+    separated weights (M = 1), no two distinct lower-ranked constraints `i`,
+    `j` can gang up against a higher-ranked `k`. Their combined weight is at
+    most the total lower weight, which `no_ganging_when_separated` bounds
+    strictly below `w k` — contradicting ganging's `w k < w i + w j`. -/
+theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℚ)
+    (hw : ExponentiallySeparated w 1) (k i j : Fin n)
+    (hi : k < i) (hj : k < j) (hij : i ≠ j) :
+    ¬ Ganging (w i) (w j) (w k) := by
+  rintro ⟨_, _, _, _, _, hgang⟩
+  have hsum : (univ.filter (· > k)).sum w < w k := no_ganging_when_separated w hw k
+  have hsub : ({i, j} : Finset (Fin n)) ⊆ univ.filter (· > k) := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, gt_iff_lt]
+    rcases hx with rfl | rfl <;> assumption
+  have hpair : w i + w j ≤ (univ.filter (· > k)).sum w := by
+    rw [← Finset.sum_pair hij]
+    exact Finset.sum_le_sum_of_subset_of_nonneg hsub (fun l _ _ => (hw.1 l).le)
+  linarith
 
 -- ============================================================================
 -- § 4: HG–OT Agreement

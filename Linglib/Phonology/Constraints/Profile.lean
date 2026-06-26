@@ -46,7 +46,7 @@ constraint wins under any ranking, and underlies Dijkstra monotonicity of the
 violation semiring (`[riggle-2009]`). -/
 theorem ViolationProfile.zero_le {n : Nat} (p : ViolationProfile n) :
     (0 : ViolationProfile n) ≤ p :=
-  not_lt.mp fun ⟨_, _, hi⟩ => absurd hi (Nat.not_lt_zero _)
+  bot_le
 
 /-- OT-named alias for `lexFinNat_le_apply_zero` — first-component extraction
 from a lexicographic `≤`. -/

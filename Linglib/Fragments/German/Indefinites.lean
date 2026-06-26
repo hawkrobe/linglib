@@ -1,4 +1,4 @@
-import Linglib.Typology.Indefinite
+import Linglib.Syntax.Pronoun.IndefiniteParadigm
 
 /-!
 # German Indefinite Pronouns
