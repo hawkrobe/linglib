@@ -66,6 +66,9 @@ def polarHahn (s : LaurentSeries A) : LaurentSeries A where
 @[simp] theorem coeff_polarHahn (s : LaurentSeries A) (i : ℤ) :
     (polarHahn s).coeff i = if i < 0 then s.coeff i else 0 := rfl
 
+@[simp] theorem polarHahn_zero : polarHahn (0 : LaurentSeries A) = 0 :=
+  HahnSeries.coeff_inj.mp <| funext fun i => by simp only [coeff_polarHahn]; split_ifs <;> rfl
+
 theorem polarHahn_add (x y : LaurentSeries A) :
     polarHahn (x + y) = polarHahn x + polarHahn y :=
   HahnSeries.coeff_inj.mp <| funext fun i => by
@@ -180,5 +183,9 @@ noncomputable def rotaBaxterPolar : RotaBaxter k (LaurentSeries A) (-1) where
     simp only [LinearMap.coe_mk, AddHom.coe_mk]
     rw [neg_one_smul, ← sub_eq_add_neg]
     exact polarHahn_rotaBaxter a b
+
+@[simp] theorem rotaBaxterPolar_op_apply (s : LaurentSeries A) :
+    (rotaBaxterPolar (k := k)).op s = polarHahn s := by
+  simp only [rotaBaxterPolar, LinearMap.coe_mk, AddHom.coe_mk]
 
 end LaurentSeries
