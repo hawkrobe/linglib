@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 import Linglib.Data.WALS.Features.F58A
 import Linglib.Data.WALS.Features.F59A
 import Linglib.Fragments.English.Possession
@@ -45,7 +45,7 @@ two would have to silently diverge for the theorem to fail, and the typed
 Fragment value already encodes the WALS coding at definition site.
 
 The WALS-aggregate sample-size and dominance theorems live in the substrate
-(`Linglib/Typology/Possession.lean`) per the project's "WALS goes to
+(`Linglib/Features/Possession.lean`) per the project's "WALS goes to
 `Linglib/Typology/`" rule.
 -/
 
@@ -53,7 +53,7 @@ set_option autoImplicit false
 
 namespace NicholsBickel2013
 
-open Typology.Possession
+open Possession
 
 private abbrev ch58 := Data.WALS.F58A.allData
 private abbrev ch59 := Data.WALS.F59A.allData
@@ -86,12 +86,12 @@ def allLanguages : List PossessionProfile :=
 
 /-- Count of languages in the sample with a given predicative strategy. -/
 def countByPredicative (langs : List PossessionProfile)
-    (s : PredicativePossession) : Nat :=
+    (s : PredicativeStrategy) : Nat :=
   (langs.filter (·.predicativeStrategy == s)).length
 
 /-- Count of languages in the sample with a given adnominal strategy. -/
 def countByAdnominal (langs : List PossessionProfile)
-    (s : AdnominalPossession) : Nat :=
+    (s : AdnominalMarking) : Nat :=
   (langs.filter (·.adnominalStrategy == s)).length
 
 -- ============================================================================

@@ -146,6 +146,7 @@ import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Semantics.Questions.Partition.Negativity
 import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
+import Linglib.Features.Possession
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -283,7 +284,6 @@ import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Numeral.WALS
 import Linglib.Typology.Plurals
 import Linglib.Typology.PolarityMarking
-import Linglib.Typology.Possession
 import Linglib.Typology.Question
 import Linglib.Typology.Reference
 import Linglib.Typology.TenseAspect

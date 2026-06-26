@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Smyrna Greek possession profile
@@ -36,12 +36,12 @@ set_option autoImplicit false
 
 namespace Greek.Smyrna.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 /-- Heine notions expressible by Smyrna inflectional genitive. Same
     coverage as SMG — the Smyrna difference is in the *paradigm* (no gaps
     on `-aki` diminutives), not in the *notional range*. -/
-def genNotions : List PossessiveNotion :=
+def genNotions : List Notion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
 
@@ -49,7 +49,7 @@ def genNotions : List PossessiveNotion :=
     permissive on the genitive side, so the `apo`-PP variant is less
     pressed into service; the `apo`-PP coverage parallels SMG (restricted
     to inanimate part-whole/source). -/
-def apoNotions : List PossessiveNotion :=
+def apoNotions : List Notion :=
   [.inanimateInalienable, .inanimateAlienable]
 
 /-- Smyrna Greek possession profile.

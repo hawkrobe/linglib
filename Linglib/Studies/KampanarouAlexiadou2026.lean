@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Syntax.Minimalist.SmallClause
@@ -60,7 +60,7 @@ set_option autoImplicit false
 
 namespace KampanarouAlexiadou2026
 
-open Typology.Possession (PossessiveNotion InalienabilityRank)
+open Possession (Notion InalienabilityRank)
 open Morphology.DM (PossessionType NominalPosition)
 open Morphology.DM.Allosemy (NominalizationReading)
 open Minimalist (SmallClause SCPredCategory ApplType)
@@ -75,7 +75,7 @@ open Minimalist (SmallClause SCPredCategory ApplType)
     (c) whether the possessee is a body-part. Body parts are formally
     part-whole but block apo-PPs when the possessor is animate (5c). -/
 structure PossessionRelation where
-  notion : PossessiveNotion
+  notion : Notion
   possessorAnimate : Bool
   possesseeIsBodyPart : Bool := false
   deriving Repr, DecidableEq
@@ -171,7 +171,7 @@ structure ParadigmGapData where
   apoVariant : String              -- e.g. "apo ta sokolat-akia"
   inflectionalAcc : Acceptability
   apoAcc : Acceptability
-  apoRelation : PossessiveNotion
+  apoRelation : Notion
   deriving Repr, DecidableEq
 
 /-- K&A exx (14)–(15): -aki diminutives in part-whole context allow apo-PP
@@ -482,7 +482,7 @@ def diachronicPath : List String :=
   , "Northern Modern Greek (e.g. Grevena): inflectional GEN lost on common nouns; apo-PP serves all GEN functions"
   ]
 
-/-- **Negative theorem against [heine-1997]**: Heine's `PossessionSource`
+/-- **Negative theorem against [heine-1997]**: Heine's `Source`
     enum (8 schemas) is for grammaticalisation paths to PREDICATIVE
     possession. K&A's case-loss-to-adposition trajectory for ADNOMINAL
     possession has no slot in Heine's typology — `.source` is for
@@ -497,7 +497,7 @@ theorem ka2026_smg_to_gg_not_in_heine_typology :
     -- 8 schemas are all about predicative possession arising from various
     -- propositional sources. The relevant Heine-side notion would be
     -- "GEN-marked-NP-of-X → P-marked-NP-of-X" reanalysis, which is not
-    -- a `PossessionSource` schema.
+    -- a `Source` schema.
     True := trivial
 
 -- ============================================================================

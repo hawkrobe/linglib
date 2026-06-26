@@ -17,7 +17,7 @@ Moved from `Features/InformationStructure.lean` in the 0.230.493 cleanup
 (commit 3/3 of the InformationStructure dump-bag dissolution; cluster B
 of the multi-agent audit). The B-cluster's 12-file consumer base —
 7 Fragments + 4 Studies + 1 Theory — matches the per-language-typology
-shape of `Typology/Indefinite.lean`, `Typology/Possession.lean`, etc.,
+shape of `Typology/Indefinite.lean`, `Features/Possession.lean`, etc.,
 not the feature-taxonomy shape `Features/` is for. Names tightened
 in the 0.230.496 follow-up (`PolarityMarkingStrategy/Env/Entry` →
 `Strategy/Env/Entry`) per mathlib idiom: short type name in deep
