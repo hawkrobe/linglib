@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Algebra.RotaBaxter
+import Mathlib.RingTheory.Coalgebra.Convolution
 
 /-!
 # Birkhoff factorization on the Connes–Kreimer Hopf algebra  `[UPSTREAM]`
@@ -89,5 +90,25 @@ noncomputable def birkhoffPlusTree (T : Nonplanar α) : ℛ :=
 theorem birkhoffPlusTree_eq_prep_add_minus (T : Nonplanar α) :
     birkhoffPlusTree φ RB T = birkhoffPrepTree φ RB T + birkhoffMinusTree φ RB T := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq_neg_op_prep]; ring
+
+/-! ### The Birkhoff factorization `φ₊ = φ₋ ⋆ φ` -/
+
+/-- **Birkhoff factorization on generators** ([marcolli-chomsky-berwick-2025] Def. 3.1.6,
+    `φ₊ = φ₋ ⋆ φ`): on each tree generator the convolution `φ₋ ⋆ φ` — written explicitly as
+    `mul' ∘ (φ₋ ⊗ φ) ∘ comul` (`LinearMap.convMul_apply`) — recovers the renormalized part `φ₊`.
+    Needs `φ` unital (`φ 1 = 1`), as characters are.
+
+    Proof route (verified): `comul` on `ConnesKreimer (Nonplanar α)` is defeq the cut coproduct
+    `comulAlgHomN`, so `comul (ofTree T) = ofTree T ⊗ 1 + Σ_{(cf,rem) ∈ cutSummandsN T} of' cf ⊗
+    ofTree rem`. Pushing `mul' ∘ map φ₋ φ` through that sum gives `φ₋(ofTree T)·φ(1) + Σ φ₋(of' cf)
+    ·φ(ofTree rem) = birkhoffMinusTree T + birkhoffPrepTree T`, which is `birkhoffPlusTree T` by
+    `birkhoffPlusTree_eq_prep_add_minus`. TODO: thread `LinearMap.map_sum` / `TensorProduct.map_tmul`
+    / `LinearMap.mul'_apply` through the `Multiset.sum`, plus `birkhoffMinus`-on-`ofTree`/`of'`
+    (multiplicativity of the `AddMonoidAlgebra.lift`). -/
+theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : Nonplanar α) :
+    LinearMap.mul' R ℛ
+        ((TensorProduct.map (birkhoffMinus φ RB).toLinearMap φ) (comulAlgHomN (ofTree T)))
+      = birkhoffPlusTree φ RB T := by
+  sorry
 
 end RootedTree.ConnesKreimer
