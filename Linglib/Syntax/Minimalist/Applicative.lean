@@ -2,6 +2,8 @@ import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
 # Applicative Heads
@@ -63,10 +65,22 @@ def ApplType.complement : ApplType → Cat
   | .lowRecipient => .D    -- the theme (DP)
   | .lowSource    => .D    -- the theme (DP)
 
-/-- Low iff the applicative merges with a nominal (theme) complement; high iff
-    it merges with the verbal (event) projection. -/
+/-- The complement an applicative Merges with, as an actual `SO` constituent: a leaf
+    headed by `a.complement` (the event for high, the theme for low). The Merge itself is
+    `ApplType.toSO`, whose right child is this. -/
+def ApplType.complementSO (a : ApplType) (id : Nat := 0) : SO :=
+  SO.mkLeaf a.complement [] id
+
+/-- The categorial features of the actual Merge complement, **read off the `SO` via the
+    §1.13 head function** `SO.outerCatC`. The high/low typology below is this read, by
+    construction — Pylkkänen's attachment claim is the definition, not a `Cat` table and
+    not a separate predicate bridged to the structure. -/
+def ApplType.complementFeatures (a : ApplType) : CatFeatures :=
+  a.complementSO.outerCatC.elim ⟨false, false⟩ catFeatures
+
+/-- Low iff the applicative Merges with a nominal (theme) complement. -/
 def ApplType.IsLow (a : ApplType) : Prop :=
-  (catFeatures a.complement).plusN = true
+  a.complementFeatures.plusN = true
 
 instance : DecidablePred ApplType.IsLow :=
   fun _ => inferInstanceAs (Decidable (_ = true))
@@ -93,12 +107,11 @@ def ApplType.semantics : ApplType → ApplSemantics
   | .lowSource    => .possessionFrom
 
 /-- Does this applicative type require event-level semantics from Voice?
-    A high applicative merges with the event projection (a `[+V]` complement),
-    so it needs Voice to contribute event semantics; a low applicative merges
-    with the theme and is independent of Voice. Derived from the complement
-    category, not the constructor. -/
+    A high applicative Merges with the event projection (a `[+V]` complement), so it needs
+    Voice to contribute event semantics; a low applicative Merges with the theme and is
+    independent of Voice. Read off the Merge complement (`complementFeatures`). -/
 def ApplType.RequiresEventSemantics (a : ApplType) : Prop :=
-  (catFeatures a.complement).plusV = true
+  a.complementFeatures.plusV = true
 
 instance : DecidablePred ApplType.RequiresEventSemantics :=
   fun _ => inferInstanceAs (Decidable (_ = true))
@@ -234,5 +247,16 @@ theorem caseless_blocked_in_specAppl :
 /-- A case-bearing DP CAN merge in SpecApplP. -/
 theorem caseful_ok_in_specAppl :
     applLowRecipient.specCanBearCase (some Case.dat) = true := rfl
+
+-- ============================================================================
+-- § 7: The applicative as an actual Merge
+-- ============================================================================
+
+/-- An applicative of type `a` realized as an actual Merge: the `Appl` head (selecting
+    `a.complement`) `SO.merge`d with its complement. Its right child is `a.complementSO`,
+    the very constituent whose head category `RequiresEventSemantics`/`IsLow` read off —
+    so the typology *is* a property of this derivation, by construction. -/
+noncomputable def ApplType.toSO (a : ApplType) (applId complId : Nat := 0) : SO :=
+  SO.merge (SO.mkLeaf .Appl [a.complement] applId) (a.complementSO complId)
 
 end Minimalist
