@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Korean adposition order
@@ -10,7 +10,7 @@ classifies Korean as postpositional.
 namespace Korean
 
 /-- Korean adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "kor"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "kor"
 
 end Korean

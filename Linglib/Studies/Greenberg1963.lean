@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Card
 import Linglib.Features.WordOrder
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.Japanese.WordOrder
@@ -87,7 +87,7 @@ structure SampleEntry where
   iso : String
   name : String
   wordOrder : _root_.WordOrder.WordOrderProfile
-  adposition : _root_.Typology.Adposition.AdpositionOrder
+  adposition : _root_.Adposition.AdpositionOrder
   deriving Repr, DecidableEq
 
 /-- Hand-verified 15-language sample spanning the four major basic-order
@@ -154,7 +154,7 @@ abbrev isOV (p : SampleEntry) : Prop := p.wordOrder.ovOrder.IsOV
 -- ============================================================================
 -- The proofs decide a quotient over a 15-element `Finset` literal — bumping
 -- `maxRecDepth` is the same idiom mathlib uses for similar `Finset.decide`
--- sites (see `Typology/Universal.lean` for the discussion).
+-- sites.
 
 set_option maxRecDepth 4096 in
 /-- [greenberg-1963] Universal 1: in declarative sentences with nominal

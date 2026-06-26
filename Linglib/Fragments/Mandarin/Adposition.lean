@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Mandarin adposition order
@@ -11,7 +11,7 @@ classifies Mandarin as having both prepositions and postpositions
 namespace Mandarin
 
 /-- Mandarin adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "cmn"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "cmn"
 
 end Mandarin

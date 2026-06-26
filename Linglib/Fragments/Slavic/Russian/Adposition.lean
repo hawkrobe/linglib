@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Russian adposition order
@@ -10,7 +10,7 @@ classifies Russian as prepositional.
 namespace Russian
 
 /-- Russian adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "rus"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "rus"
 
 end Russian

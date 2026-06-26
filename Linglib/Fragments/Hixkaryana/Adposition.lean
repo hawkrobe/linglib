@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Hixkaryana adposition order
@@ -10,7 +10,7 @@ classifies Hixkaryana as postpositional.
 namespace Hixkaryana
 
 /-- Hixkaryana adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "hix"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "hix"
 
 end Hixkaryana
