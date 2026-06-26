@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Hixkaryana word-order profile
@@ -10,8 +10,8 @@ one of the few documented OVS languages.
 namespace Hixkaryana
 
 /-- Hixkaryana word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
-  Typology.WordOrder.WordOrderProfile.ofWALS "hix"
+def wordOrder : WordOrder.WordOrderProfile :=
+  WordOrder.WordOrderProfile.ofWALS "hix"
 
 
 set_option maxRecDepth 4096 in

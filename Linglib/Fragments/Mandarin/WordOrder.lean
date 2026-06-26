@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Mandarin word-order profile
@@ -10,8 +10,8 @@ of `WordOrderProfile.ofWALS "cmn"`.
 namespace Mandarin
 
 /-- Mandarin word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
-  Typology.WordOrder.WordOrderProfile.ofWALS "cmn"
+def wordOrder : WordOrder.WordOrderProfile :=
+  WordOrder.WordOrderProfile.ofWALS "cmn"
 
 
 set_option maxRecDepth 4096 in

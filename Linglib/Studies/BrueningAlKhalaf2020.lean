@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 import Linglib.Typology.Coordination
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.English.WordOrder
@@ -53,7 +53,7 @@ namespace BrueningAlKhalaf2020
 open Typology.Coordination (CoordSymmetry)
 open Syntax (Cat)
 open Syntax.Cat (NP VP AdjP AdvP PP)
-open Typology.WordOrder
+open WordOrder
 
 /-! ### Shared types for selection-violating coordination -/
 
@@ -66,7 +66,7 @@ inductive ConjunctOrder where
   deriving DecidableEq, Repr
 
 -- `VerbPosition` and the `OVOrder → Option VerbPosition` projection
--- live in `Typology.WordOrder` substrate; consumed via `open` above.
+-- live in `WordOrder` substrate; consumed via `open` above.
 
 /-! ### Feature percolation and the directionality principle -/
 

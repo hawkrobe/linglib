@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.InformationStructure
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Aissen & Polian 2025: Possessor Extraction and Categorical Subject in Tseltalan
