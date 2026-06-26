@@ -1327,6 +1327,7 @@ import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
+import Linglib.Phonology.Inventory
 import Linglib.Phonology.ItemSpecificity.Defs
 import Linglib.Phonology.ItemSpecificity.IndexedConstraints
 import Linglib.Phonology.ItemSpecificity.RepresentationStrength
@@ -2907,7 +2908,7 @@ import Linglib.Tactics.RSAPredict.Reify
 
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
-import Linglib.Typology.Phonology
+
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
 
