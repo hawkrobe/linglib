@@ -49,7 +49,7 @@ The formalization captures five parameter dimensions:
 
 -/
 
-namespace Typology.ClauseChaining
+namespace Clause.Chaining
 
 -- ============================================================================
 -- § Clause status
@@ -474,4 +474,4 @@ theorem simultaneous_encodable_via_sr :
 theorem causal_not_sr_only :
     InterclauseRelation.causal.encodableViaSR = false := rfl
 
-end Typology.ClauseChaining
+end Clause.Chaining

@@ -727,8 +727,6 @@ import Linglib.Fragments.Dutch.VerbParticles
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Binominals
-import Linglib.Fragments.English.BodyParts
-import Linglib.Fragments.English.Color
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.English.Complementizers
 import Linglib.Fragments.English.Conditionals
@@ -2804,6 +2802,7 @@ import Linglib.Syntax.Case.Filter
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Clause.Basic
+import Linglib.Syntax.Clause.Chaining
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.GrammarDist
@@ -2922,9 +2921,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.AuxiliaryVerbs
-import Linglib.Typology.BodyParts
-import Linglib.Typology.ClauseChaining
 import Linglib.Typology.Comparison
 import Linglib.Typology.Complementation
 import Linglib.Typology.Coordination
