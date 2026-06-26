@@ -153,7 +153,7 @@ namespace ChanShen2026
 open Singlish.Questions (WhStrategy fullMovement partialMovement
   whInSitu theHell)
 open Mandarin.Questions (daodi)
-open Typology.Question (WhInterpMechanism)
+open Syntax.Question (WhInterpMechanism)
 open ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
 open Minimalist.ANDL

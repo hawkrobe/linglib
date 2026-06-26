@@ -2,7 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Data.WALS.Aggregation
 import Linglib.Data.WALS.Features.F46A
 import Linglib.Typology.PolarityItem
-import Linglib.Typology.Indefinite
+import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Slavic.Russian.PolarityItems

@@ -1,4 +1,4 @@
-import Linglib.Typology.Indefinite
+import Linglib.Syntax.Pronoun.IndefiniteParadigm
 
 /-!
 # Yakut (Sakha) Indefinite Pronouns

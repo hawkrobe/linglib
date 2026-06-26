@@ -1,8 +1,7 @@
-import Linglib.Typology.Profile
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Typology.PolarityMarking
+# Polarity marking: strategy typology
 [turco-braun-dimroth-2014] [bluhdorn-lohnstein-2012] [sudhoff-2012]
 [hohle-1992] [holmberg-2016]
 
@@ -64,7 +63,7 @@ with the form-class encoding for different reasons; the
 incompatibilities are recorded, not silently resolved.
 -/
 
-namespace Typology.PolarityMarking
+namespace Semantics.Polarity.Marking
 
 /-- How a language marks polarity switches (neg → affirm). See module
     docstring for the framework-commitment note. -/
@@ -125,8 +124,8 @@ structure Entry where
   /-- What bears prosodic prominence, if the strategy is prosodic -/
   prosodicTarget : Option String := none
   /-- Set of positions/contexts in which this marker is available. -/
-  environments : Typology.Profile Env
+  environments : Set Env
   /-- The polarity-marking strategy category -/
   strategy : Strategy
 
-end Typology.PolarityMarking
+end Semantics.Polarity.Marking

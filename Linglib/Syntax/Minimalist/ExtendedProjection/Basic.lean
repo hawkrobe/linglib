@@ -23,7 +23,6 @@ Standard EPs:
 -/
 
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
-import Linglib.Typology.Profile
 import Linglib.Syntax.Clause.Basic
 
 namespace Minimalist
@@ -687,12 +686,9 @@ theorem forceHead_verbal (fh : ForceHead) :
 
 /-- [westergaard-2009]'s micro-parameter profile for V2: the set of
     clause-type heads at which verb movement is active (+) for a given
-    language or dialect. Recast as `Typology.Profile ForceHead` so
-    that fragment files can be written as set literals
-    (e.g. `{.Decl, .Int, .Pol, .Fin}`) and cross-language comparison
-    reuses the polymorphic `Profile.activeCount` /
-    `Profile.DiffersOnExactlyOne` API. -/
-abbrev V2Profile : Type := Typology.Profile ForceHead
+    language or dialect. A `Set ForceHead`, so that fragment files can be
+    written as set literals (e.g. `{.Decl, .Int, .Pol, .Fin}`). -/
+abbrev V2Profile : Type := Set ForceHead
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 11: Wh-Element Head/Phrase Status ([westergaard-2009])
