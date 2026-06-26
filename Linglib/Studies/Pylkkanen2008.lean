@@ -1240,9 +1240,9 @@ theorem high_appl_licenses_unergative_denotational
   toEvent_licenses_all _
 
 /-! ## §16. Voice × Appl licensing matrix
-    (`Syntax/Minimalism/Applicative.lean.licensedWith`)
+    (`Syntax/Minimalism/Applicative.lean.Licensed`)
 
-`ApplHead.licensedWith` (in `Applicative.lean`) checks whether a
+`ApplHead.Licensed` (in `Applicative.lean`) checks whether a
 particular Appl head is licensed with a given Voice head: high
 applicatives require event-introducing Voice (`hasSemantics = true`);
 low applicatives are licensed with any Voice. Cross [pylkkanen-2008]'s
@@ -1260,14 +1260,12 @@ Appl typology in a single matrix. -/
     and so don't license high Appl. -/
 theorem voice_appl_licensing_matrix :
     -- High Appl licensed with event-bearing Voice flavors:
-    Minimalist.applHigh.licensedWith Minimalist.voiceAgent = true ∧
-    Minimalist.applHigh.licensedWith Minimalist.voiceCauser = true ∧
+    Minimalist.applHigh.Licensed Minimalist.voiceAgent ∧
+    Minimalist.applHigh.Licensed Minimalist.voiceCauser ∧
     -- Low Appl is always licensed (independent of Voice semantics):
-    Minimalist.applLowRecipient.licensedWith Minimalist.voiceAgent = true ∧
-    Minimalist.applLowRecipient.licensedWith Minimalist.voicePassive = true ∧
-    Minimalist.applLowSource.licensedWith Minimalist.voiceAnticausative = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
-    (unfold Minimalist.ApplHead.licensedWith; decide)
+    Minimalist.applLowRecipient.Licensed Minimalist.voiceAgent ∧
+    Minimalist.applLowRecipient.Licensed Minimalist.voicePassive ∧
+    Minimalist.applLowSource.Licensed Minimalist.voiceAnticausative := by decide
 
 /-! ## §17. WALS-vs-Pylkkänen divergence on English/Japanese applicatives
 

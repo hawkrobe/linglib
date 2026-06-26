@@ -401,45 +401,44 @@ instantiates them for the Semitic template space, paralleling the Icelandic
 asymmetry in `Wood2015.dative_voice_asymmetry`. -/
 
 /-- Does this template license a given applicative type? Composes the substrate's
-    `ApplHead.licensedWith` with `toVoiceHead`. -/
-def SemiticTemplate.licensesAppl (t : SemiticTemplate) (appl : ApplHead) : Bool :=
-  appl.licensedWith t.toVoiceHead
+    `ApplHead.Licensed` with `toVoiceHead`. -/
+def SemiticTemplate.licensesAppl (t : SemiticTemplate) (appl : ApplHead) : Prop :=
+  appl.Licensed t.toVoiceHead
+
+instance (t : SemiticTemplate) (appl : ApplHead) : Decidable (t.licensesAppl appl) :=
+  inferInstanceAs (Decidable (appl.Licensed t.toVoiceHead))
 
 /-- High-Appl licensing factors through `HasSemantics`. -/
 theorem high_appl_iff_hasSemantics (t : SemiticTemplate) :
-    t.licensesAppl applHigh = true ↔ t.toVoiceHead.HasSemantics := by
+    t.licensesAppl applHigh ↔ t.toVoiceHead.HasSemantics := by
   cases t <;> decide
 
 /-- A template that blocks high applicatives assigns no θ — via the substrate
     implication, not template enumeration. -/
 theorem high_appl_blocked_implies_no_theta (t : SemiticTemplate)
-    (h : t.licensesAppl applHigh = false) : ¬ t.toVoiceHead.AssignsTheta :=
-  fun hθ => Bool.noConfusion
-    (h.symm.trans (high_licensed_of_assignsTheta t.toVoiceHead hθ))
+    (h : ¬ t.licensesAppl applHigh) : ¬ t.toVoiceHead.AssignsTheta :=
+  fun hθ => h (high_licensed_of_assignsTheta t.toVoiceHead hθ)
 
 /-- A θ-assigning template licenses every applicative type. -/
 theorem theta_licenses_all_appl (t : SemiticTemplate) (appl : ApplHead)
-    (hθ : t.toVoiceHead.AssignsTheta) : t.licensesAppl appl = true := by
-  simp only [SemiticTemplate.licensesAppl, ApplHead.licensedWith]
-  split
-  · exact decide_eq_true hθ.hasSemantics
-  · rfl
+    (hθ : t.toVoiceHead.AssignsTheta) : t.licensesAppl appl :=
+  fun _ => hθ.hasSemantics
 
 /-- The Voice-predicate chain pulled back to the Semitic template space; both
     inclusions are strict: nXaYaZ licenses high Appl without assigning θ, and
     tXaYYaZ blocks high Appl. -/
 theorem voice_predicate_chain :
     (∀ t : SemiticTemplate,
-      t.toVoiceHead.AssignsTheta → t.licensesAppl applHigh = true) ∧
+      t.toVoiceHead.AssignsTheta → t.licensesAppl applHigh) ∧
     (∃ t : SemiticTemplate,
-      t.licensesAppl applHigh = true ∧ ¬ t.toVoiceHead.AssignsTheta) ∧
+      t.licensesAppl applHigh ∧ ¬ t.toVoiceHead.AssignsTheta) ∧
     (∀ t : SemiticTemplate,
-      t.licensesAppl applHigh = true → t.licensesAppl applLowRecipient = true) ∧
-    (∃ t : SemiticTemplate, t.licensesAppl applHigh = false) :=
+      t.licensesAppl applHigh → t.licensesAppl applLowRecipient) ∧
+    (∃ t : SemiticTemplate, ¬ t.licensesAppl applHigh) :=
   ⟨fun t hθ => high_licensed_of_assignsTheta t.toVoiceHead hθ,
     ⟨.nXaYaZ, by decide, by decide⟩,
     fun t _ => (low_licensed_with_any t.toVoiceHead).1,
-    ⟨.tXaYYaZ, rfl⟩⟩
+    ⟨.tXaYYaZ, by decide⟩⟩
 
 /-! ### Feature activation
 
