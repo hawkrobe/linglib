@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
+import Linglib.Syntax.Minimalist.Ellipsis
 
 /-!
 # Benz & Salzmann (2025): Evidence from German for N-stranding NP-ellipsis

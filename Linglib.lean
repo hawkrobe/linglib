@@ -2877,14 +2877,14 @@ import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy
-import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
+import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
+import Linglib.Syntax.Minimalist.Linearization
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
@@ -2934,6 +2934,8 @@ import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
+import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.Middle
 import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Choice
 import Linglib.Syntax.WordGrammar.Inheritance.Default
@@ -2984,5 +2986,3 @@ import Linglib.Typology.TemporalConnectives
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Universal
 import Linglib.Typology.UniversalQuantifier
-import Linglib.Typology.Voice
-import Linglib.Typology.VoiceSystem

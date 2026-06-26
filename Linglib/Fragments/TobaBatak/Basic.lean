@@ -1,5 +1,5 @@
 import Linglib.Typology.Extraction
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 
 /-!
 # Toba Batak Fragment [erlewine-2018]
@@ -149,31 +149,40 @@ def tbExtractionProfile : Typology.ExtractionProfile :=
              "in Spec,CP lack a Case licensor ([erlewine-2018], §4)" }
 
 -- ============================================================================
--- § 6: Voice System Profile
+-- § 6: Voice System
 -- ============================================================================
 
-/-- Toba Batak voice system: two-way symmetrical (AV/OV).
+namespace VoiceSystem
+
+/-! Toba Batak voice system: two-way symmetrical (AV/OV).
 
     Unlike Philippine-type languages (Tagalog: 4+ voices including
     locative, instrumental), Toba Batak has only actor and object
     voice. The system is symmetrical — neither voice is morphologically
-    basic. -/
-def tbVoiceSystem : Typology.VoiceSystemProfile :=
-  { language := "Toba Batak"
-    voices := [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]
-    symmetry := .symmetrical
-    notes := "Two-way symmetrical system ([erlewine-2018])" }
+    basic.
+
+    Language: "Toba Batak".
+    Notes: Two-way symmetrical system ([erlewine-2018]). -/
+
+/-- The voices of the Toba Batak system. -/
+def voices : List _root_.Voice.VoiceEntry :=
+  [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]
+
+/-- System symmetry: symmetrical (neither voice is morphologically basic). -/
+def symmetry : _root_.Voice.VoiceSystemSymmetry := .symmetrical
+
+end VoiceSystem
 
 theorem tb_voice_system_symmetrical :
-    tbVoiceSystem.symmetry = .symmetrical := rfl
+    VoiceSystem.symmetry = .symmetrical := rfl
 
 theorem tb_voice_count :
-    tbVoiceSystem.voiceCount = 2 := rfl
+    _root_.Voice.voiceCount VoiceSystem.voices = 2 := rfl
 
 theorem tb_is_active_passive :
-    tbVoiceSystem.isActivePassive := by decide
+    _root_.Voice.isActivePassive VoiceSystem.voices := by decide
 
 theorem tb_promotes_agent :
-    tbVoiceSystem.promotesRole .agent := by decide
+    _root_.Voice.promotesRole VoiceSystem.voices .agent := by decide
 
 end TobaBatak

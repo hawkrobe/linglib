@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.Causation.Implicative
 
 /-!
@@ -141,26 +141,30 @@ theorem verb_types_distinct :
 -- § 5: Voice System Profile
 -- ============================================================================
 
-/-- Finnish voice system: two-way asymmetrical (active/impersonal).
+/-! ### Finnish voice system
 
-    Finnish lacks a true passive — what is traditionally called the
-    passive is an impersonal construction where the agent is demoted
-    to an implicit generic human referent, not promoted to a by-phrase
-    ([karlsson-2017] Ch. 11). Active is the basic form. -/
-def finnishVoiceSystem : Typology.VoiceSystemProfile :=
-  { language := "Finnish"
-    voices := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]
-    symmetry := .asymmetrical
-    notes := "Not a true passive; impersonal with implicit generic agent (Karlsson 2018)" }
+    Two-way asymmetrical (active/impersonal). Finnish lacks a true
+    passive — what is traditionally called the passive is an impersonal
+    construction where the agent is demoted to an implicit generic human
+    referent, not promoted to a by-phrase ([karlsson-2017] Ch. 11).
+    Active is the basic form. Not a true passive; impersonal with
+    implicit generic agent (Karlsson 2018). -/
+namespace VoiceSystem
+
+def voices : List Voice.VoiceEntry := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]
+
+def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
+
+end VoiceSystem
 
 theorem finnish_voice_system_asymmetrical :
-    finnishVoiceSystem.symmetry = .asymmetrical := rfl
+    VoiceSystem.symmetry = .asymmetrical := rfl
 
 theorem finnish_voice_count :
-    finnishVoiceSystem.voiceCount = 2 := rfl
+    Voice.voiceCount VoiceSystem.voices = 2 := rfl
 
 theorem finnish_is_active_passive :
-    finnishVoiceSystem.isActivePassive := by decide
+    Voice.isActivePassive VoiceSystem.voices := by decide
 
 -- ============================================================================
 -- § 6: Finnish Implicative Verbs ([nadathur-2023-implicatives])
