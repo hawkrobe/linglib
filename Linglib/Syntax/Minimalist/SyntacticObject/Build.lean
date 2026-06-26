@@ -66,6 +66,37 @@ theorem SO.mul_comm (l r : SO) : l * r = r * l := by
   apply Subtype.ext
   rw [SO.mul_def, SO.mul_def, SO.node_val, SO.node_val, Multiset.pair_comm]
 
+/-! ### The canonical Merge operators (carrier primitives)
+
+`SO.merge` / `SO.intMerge` are the carrier-level Merge operators
+([marcolli-chomsky-berwick-2025] Lemma 1.4.1 / Prop 1.4.2): they need only the bare
+binary node, so they live here. Their **coproduct identity** on the workspace Hopf
+algebra (`SO.merge_toForest` / `SO.intMerge_toForest`) lives in `Workspace.lean`, which
+imports the Merge algebra; this file stays algebra-free so `decide`-based consumers
+(e.g. the externalization replay in `SyntacticObject/Derivation.lean`) keep the
+computable `DecidableEq (Nonplanar …)` (#792) in scope. -/
+
+/-- **External Merge on the carrier** ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): the
+    bare binary node `SO.node` *is* External Merge (for distinct workspace items) and the
+    re-merge stage of Internal Merge. Noncomputable; build concrete results with the
+    planar DSL + `decide`. -/
+noncomputable def SO.merge (S S' : SO) : SO := SO.node S S'
+
+@[simp] theorem SO.merge_val (S S' : SO) :
+    (SO.merge S S').val = Nonplanar.node (Sum.inr ()) {S.val, S'.val} := rfl
+
+/-- **Internal Merge on the carrier** ([marcolli-chomsky-berwick-2025] Prop 1.4.2):
+    re-Merge the `mover` with the **deletion remainder** `remainder = T/mover` (the
+    `M_{T/β, β}` order: remainder left, mover right). IM is *not* a new structural
+    primitive — it is `SO.merge` of the remainder and the mover. The mover ↔ trace
+    correspondence (the chain) is read at the workspace level (`Workspace.chainMultiplicity`),
+    not from an index. -/
+noncomputable def SO.intMerge (mover remainder : SO) : SO := SO.merge remainder mover
+
+@[simp] theorem SO.intMerge_val (mover remainder : SO) :
+    (SO.intMerge mover remainder).val
+      = Nonplanar.node (Sum.inr ()) {remainder.val, mover.val} := rfl
+
 /-! ### Lexical-leaf construction (the legacy `mkLeaf` API) -/
 
 /-- A lexical leaf from a category and selectional stack. -/

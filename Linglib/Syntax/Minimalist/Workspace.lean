@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Merge.Internal
 
 /-!
@@ -49,22 +49,11 @@ namespace Minimalist
 
 open RootedTree RootedTree.ConnesKreimer
 
-/-! ### The Merge primitive: a bare binary node
+/-! ### Workspaces (MCB Def 1.2.1)
 
-`SO.node` (the bare binary constructor), `SO.lexLeaf`, and the index-free
-`SO.traceLeaf` live in `SyntacticObject.lean`; here the node acquires its **Merge
-semantics**. -/
-
-/-- **Merge on the carrier** ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): the bare
-    binary node `SO.node` *is* External Merge (when the arguments are distinct
-    workspace items) and the re-merge stage of Internal Merge (`SO.intMerge`).
-    Noncomputable; build concrete results via `SO.node_mk` + `decide`. -/
-noncomputable def SO.merge (S S' : SO) : SO := SO.node S S'
-
-@[simp] theorem SO.merge_val (S S' : SO) :
-    (SO.merge S S').val = Nonplanar.node (Sum.inr ()) {S.val, S'.val} := rfl
-
-/-! ### Workspaces (MCB Def 1.2.1) -/
+The carrier Merge operators `SO.merge` (Lemma 1.4.1) and `SO.intMerge` (Prop 1.4.2) are
+defined in `SyntacticObject/Build.lean` (they need only the bare binary node); this file
+adds their **coproduct identity** on the workspace Hopf algebra. -/
 
 /-- A **workspace** is a forest (finite multiset) of syntactic objects
     ([marcolli-chomsky-berwick-2025] Def 1.2.1). The forest **product is disjoint
@@ -94,21 +83,6 @@ theorem SO.merge_toForest (S S' : SO) :
   rw [Merge.mergeOp_pair, SO.merge_val]
 
 /-! ### Internal Merge as composition (MCB Prop 1.4.2) -/
-
-/-- **Internal Merge on the carrier** ([marcolli-chomsky-berwick-2025] Prop 1.4.2):
-    re-Merge the `mover` with the **deletion remainder** `remainder = T/mover`. IM is
-    *not* a new structural primitive — it is `SO.merge` applied to the remainder and
-    the mover (the `M_{T/β, β}` order: remainder left, mover right).
-
-    The remainder `T/mover` is the tree with the mover's deeper copy cut out, leaving
-    a **bare `Sum.inr ()` trace** (Def 1.2.7's ρ-vertex) in its place; the
-    `mover`/trace correspondence (the chain) is read at the workspace level
-    (`Workspace.chainMultiplicity`), not from an index. -/
-noncomputable def SO.intMerge (mover remainder : SO) : SO := SO.merge remainder mover
-
-@[simp] theorem SO.intMerge_val (mover remainder : SO) :
-    (SO.intMerge mover remainder).val
-      = Nonplanar.node (Sum.inr ()) {remainder.val, mover.val} := rfl
 
 /-- **Internal Merge ↔ algebra** ([marcolli-chomsky-berwick-2025] Prop 1.4.2). Given
     the Δ^ρ cut data on `T` extracting `mover` with remainder `remainder` (the unique
