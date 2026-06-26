@@ -33,36 +33,32 @@ open Core.Optimization.Evaluation
 fixed-length violation profile. -/
 abbrev Tableau (C : Type*) [DecidableEq C] (n : Nat) := LexMinProblem C n
 
+variable {C : Type*} [DecidableEq C] {n : Nat}
+
 /-- OT-named alias for `LexMinProblem.IsLexMin` — `c` is a lexicographic
 winner of `t`. -/
-abbrev Tableau.IsOptimal {C : Type*} [DecidableEq C] {n : Nat}
-    (t : Tableau C n) (c : C) : Prop :=
+abbrev Tableau.IsOptimal (t : Tableau C n) (c : C) : Prop :=
   LexMinProblem.IsLexMin t c
 
 /-- OT-named alias for `LexMinProblem.lexMins` — the winning candidates. -/
-abbrev Tableau.optimal {C : Type*} [DecidableEq C] {n : Nat}
-    (t : Tableau C n) : Finset C :=
+abbrev Tableau.optimal (t : Tableau C n) : Finset C :=
   LexMinProblem.lexMins t
 
 /-- OT-named alias for `LexMinProblem.exists_lexMin`. -/
-theorem Tableau.exists_optimal {C : Type*} [DecidableEq C] {n : Nat}
-    (t : Tableau C n) : ∃ c, t.IsOptimal c :=
+theorem Tableau.exists_optimal (t : Tableau C n) : ∃ c, t.IsOptimal c :=
   LexMinProblem.exists_lexMin t
 
 /-- OT-named alias for `LexMinProblem.mem_lexMins_iff`. -/
-theorem Tableau.mem_optimal_iff {C : Type*} [DecidableEq C] {n : Nat}
-    (t : Tableau C n) (c : C) :
+theorem Tableau.mem_optimal_iff (t : Tableau C n) (c : C) :
     c ∈ t.optimal ↔ t.IsOptimal c :=
   LexMinProblem.mem_lexMins_iff t c
 
 /-- OT-named alias for `LexMinProblem.lexMins_nonempty`. -/
-theorem Tableau.optimal_nonempty {C : Type*} [DecidableEq C] {n : Nat}
-    (t : Tableau C n) : t.optimal.Nonempty :=
+theorem Tableau.optimal_nonempty (t : Tableau C n) : t.optimal.Nonempty :=
   LexMinProblem.lexMins_nonempty t
 
 /-- OT-named alias for `LexMinProblem.lexMins_subset`. -/
-theorem Tableau.optimal_subset {C : Type*} [DecidableEq C] {n : Nat}
-    (t : Tableau C n) (c : C) :
+theorem Tableau.optimal_subset (t : Tableau C n) (c : C) :
     c ∈ t.optimal → c ∈ t.candidates :=
   LexMinProblem.lexMins_subset t c
 
