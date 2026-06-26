@@ -2908,7 +2908,6 @@ import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.PolarityMarking
-import Linglib.Typology.Profile
 import Linglib.Typology.Pronoun.WALS
 
 import Linglib.Typology.TemporalConnectives

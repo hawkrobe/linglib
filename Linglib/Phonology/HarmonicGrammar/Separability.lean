@@ -414,14 +414,6 @@ theorem inverse_not_always_hz :
 -- connection formal, enabling separability results (independence → HZ,
 -- constraint rescaling) to be applied to any `WeightedConstraint` list.
 
-private lemma foldl_sub_eq' {α : Type*} (l : List α) (f : α → ℚ) (init : ℚ) :
-    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
-  induction l generalizing init with
-  | nil => simp
-  | cons _ _ ih =>
-    simp only [List.foldl_cons, List.map_cons, List.sum_cons]
-    rw [ih]; ring
-
 private lemma list_map_sum_eq_finsum {α : Type*} (l : List α) (f : α → ℚ) :
     (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
   induction l with
@@ -444,8 +436,8 @@ theorem harmonyScoreR_as_finsum {C : Type*}
     harmonyScoreR constraints c =
     -(∑ i : Fin constraints.length,
       ((constraints.get i).weight : ℝ) * ((constraints.get i).eval c : ℝ)) := by
-  simp only [harmonyScoreR, harmonyScore]
-  rw [foldl_sub_eq']
+  simp only [harmonyScoreR]
+  rw [harmonyScore_eq_neg_sum]
   push_cast [list_map_sum_eq_finsum]
   ring
 

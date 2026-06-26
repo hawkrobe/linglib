@@ -383,27 +383,11 @@ def de_emb : V2Datum :=
 -- § 4  Cross-Language Comparison Theorems
 -- ============================================================================
 
-/-- Standard Norwegian and Standard English differ only on Decl°.
-    Captures the classic observation that English lost V2 in
-    declaratives but retained it in questions. -/
-theorem no_en_differ_only_on_decl :
-    Typology.Profile.DiffersExactlyOn stdNorwegian stdEnglish .Decl := by
-  refine ⟨?_, ?_⟩
-  · simp only [Set.mem_symmDiff]; decide
-  · intro fh hne; cases fh <;> first | (exact absurd rfl hne) | (constructor <;> decide)
-
 /-- Nordmøre Norwegian is the mirror image of English on Decl° vs. Int°. -/
 theorem nordmore_en_mirror_decl_int :
     .Decl ∈ nordmoreNorwegian ∧ .Int ∉ nordmoreNorwegian ∧
     .Decl ∉ stdEnglish        ∧ .Int ∈ stdEnglish := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- Danish differs from Standard Norwegian only on Excl°. -/
-theorem danish_no_differ_only_on_excl :
-    Typology.Profile.DiffersExactlyOn danish stdNorwegian .Excl := by
-  refine ⟨?_, ?_⟩
-  · simp only [Set.mem_symmDiff]; decide
-  · intro fh hne; cases fh <;> first | (exact absurd rfl hne) | (constructor <;> decide)
 
 /-- All six languages in [westergaard-2009] Table 3.1 agree on
     +Pol° (verb-fronting / V1 in yes/no-questions). NOT a Germanic
@@ -623,31 +607,5 @@ theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
 
 /-- New subjects predict V2 in Tromsø short *wh*-questions. -/
 theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
-
--- ============================================================================
--- § 11  Economy
--- ============================================================================
-
-/-! [westergaard-2009]'s structural economy (p. 4):
-
-    (9a) Only build as much structure as there is evidence for in the input.
-    (9b) Only move elements as far as there is evidence for in the input.
-
-    These principles constrain *children's grammars*: children build
-    minimal structure, adding projections only when input evidence forces
-    them.
-
-    The corollary below: languages with fewer active micro-parameters
-    require less structure to be built. Our own derivation, not a claim
-    directly stated in the book. `Profile.activeCount` instances the
-    polymorphic counter from `Typology/Profile.lean`. -/
-
-/-- English activates fewer micro-parameters than Standard Norwegian. -/
-theorem english_fewer_active :
-    stdEnglish.activeCount < stdNorwegian.activeCount := by decide
-
-/-- Nordmøre activates fewer micro-parameters than Standard Norwegian. -/
-theorem nordmore_fewer_active :
-    nordmoreNorwegian.activeCount < stdNorwegian.activeCount := by decide
 
 end Westergaard2009

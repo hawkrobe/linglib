@@ -283,18 +283,6 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℚ) (M : Nat)
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
 
-private lemma foldl_sub_map_sum {α : Type} (l : List α) (f : α → ℚ) (init : ℚ) :
-    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
-  induction l generalizing init with
-  | nil => simp
-  | cons x xs ih =>
-    simp only [List.foldl_cons, List.map_cons, List.sum_cons]; rw [ih]; ring
-
-private lemma harmonyScore_eq_neg_sum {C : Type}
-    (cons : List (WeightedConstraint C)) (c : C) :
-    harmonyScore cons c = -((cons.map (λ con => con.weight * (con.eval c : ℚ))).sum) := by
-  unfold harmonyScore; rw [foldl_sub_map_sum]; ring
-
 private lemma mapIdx_sum_eq_fin_sum {α : Type} (l : List α) (f : ℕ → α → ℚ) :
     (l.mapIdx f).sum = ∑ i : Fin l.length, f i (l.get i) := by
   induction l generalizing f with
