@@ -33,13 +33,15 @@ open Core.Optimization
 -- § 1: Smart Constructors
 -- ============================================================================
 
+variable {Cand : Type*}
+
 /-- Build an Optimality Theory system: lexicographic minimum on a violation
     profile. The candidate set must be finite; `profile c` gives the
     `n`-tuple of constraint violations for candidate `c` ranked in
     order of dominance.
 
     Equivalent to choosing the OT winner(s) by `argmin` on the lex order. -/
-noncomputable def otSystem {Cand : Type*} {n : Nat}
+noncomputable def otSystem {n : Nat}
     (candidates : Finset Cand) (profile : Cand → LexProfile Nat n) :
     ConstraintSystem Cand (LexProfile Nat n) where
   candidates := candidates
@@ -51,7 +53,7 @@ noncomputable def otSystem {Cand : Type*} {n : Nat}
 
     The harmony score is `harmonyScoreR constraints c = -Σⱼ wⱼ · Cⱼ(c)`.
     Higher harmony = lower (weighted) violation = more grammatical. -/
-noncomputable def hgSystem {Cand : Type*}
+noncomputable def hgSystem
     (candidates : Finset Cand) (constraints : List (WeightedConstraint Cand)) :
     ConstraintSystem Cand ℝ where
   candidates := candidates
@@ -64,7 +66,7 @@ noncomputable def hgSystem {Cand : Type*}
 
     The default `α = 1` matches [goldwater-johnson-2003]'s
     standard MaxEnt formulation. -/
-noncomputable def maxEntSystem {Cand : Type*}
+noncomputable def maxEntSystem
     (candidates : Finset Cand) (constraints : List (WeightedConstraint Cand))
     (α : ℝ := 1) :
     ConstraintSystem Cand ℝ where
