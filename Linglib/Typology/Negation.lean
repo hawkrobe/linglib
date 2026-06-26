@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Features.F114A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
-import Linglib.Typology.AuxiliaryVerbs
+import Linglib.Syntax.AuxiliaryVerbs
 import Linglib.Typology.NegativeConcord
 import Linglib.Morphology.Grammaticalization
 
@@ -425,12 +425,12 @@ theorem nWord_vs_negQuantifier :
 Some languages express sentential negation through a **negative auxiliary
 verb** that hosts inflection (tense, agreement) while the lexical verb
 appears in a nonfinite form (Finnish *ei mene* 'NEG.3SG go') — a special
-case of the aux-headed AVC pattern of `Typology.AuxiliaryVerbs`.
+case of the aux-headed AVC pattern of `AuxiliaryVerbs`.
 `NegStrategy` classifies negation strategies at this AVC-relevant grain
 and bridges them to Anderson's inflectional patterns, Heine's
 grammaticalization cline, and the WALS Ch 112 morpheme typology. -/
 
-open Typology.AuxiliaryVerbs (InflPattern)
+open AuxiliaryVerbs (InflPattern)
 open Grammaticalization (GramStage)
 
 /-- Strategy for expressing sentential negation. -/
