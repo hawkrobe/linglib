@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Intensional.Defs
@@ -46,7 +46,7 @@ constraint rather than realized as a stand-alone constituent of type
 
 namespace LittleMoroneyRoyer2022
 
-open Typology
+open NounCategorization
 open Intensional (Ty)
 open Semantics.Montague (LexEntry Lexicon)
 open Semantics.Composition.Tree (interp)

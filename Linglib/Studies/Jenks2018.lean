@@ -251,7 +251,7 @@ theorem iota_is_last_resort :
 theorem clf_is_atomization {α : Type*} [PartialOrder α]
     (P : α → Prop) :
     Semantics.Classifier.classifierDenot
-      Typology.ClassifierStrategy.forNoun P
+      NounCategorization.ClassifierStrategy.forNoun P
       (fun _ => 0) 0
     = Semantics.Classifier.clfForNoun P := rfl
 

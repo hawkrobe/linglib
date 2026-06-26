@@ -1,61 +1,34 @@
-import Linglib.Data.WALS.Features.F55A
 
 /-!
-# Typology.ClassifierSystem
-[aikhenvald-2000] [chierchia-1998] [dixon-1982]
-[downing-1996] [allan-1977] [little-moroney-royer-2022]
-[krifka-1995] [bale-coon-2014] [jenks-2011]
-[nomoto-2013] [sudo-2016]
+# Noun categorization devices
+[aikhenvald-2000] [dixon-1982] [downing-1996] [allan-1977] [corbett-1991]
 
-Cross-linguistic typology of noun categorization devices, following
-[aikhenvald-2000] *Classifiers: A Typology of Noun Categorization
-Devices*.
+Theory-neutral cross-linguistic typology of noun-categorization devices, following
+[aikhenvald-2000] *Classifiers: A Typology of Noun Categorization Devices*: the
+device-type continuum (`ClassifierType`, with `nounClass` = gender at its agreement
+pole), the semantic parameters classifiers employ, the per-classifier lexical
+schema, and the per-language paradigm record. Graduated from the dissolved
+`Typology/` drawer as a sibling of `Features/Gender`.
 
-## Provenance
+## Main definitions
 
-Merged from `Core/Lexical/NounCategorization.lean` (vocabulary types:
-`ClassifierType`, `SemanticParameter`, `ShapeDimension`,
-`CategorizationScope`, `AssignmentPrinciple`, `SurfaceRealization`,
-`ClassifierEntry`, `ClassifierStrategy`) and the existing
-`Typology/ClassifierSystem.lean` (`NounCategorizationSystem` paradigm
-record + WALS Ch 55 datapoints) in the cleanup that dissolved
-`Core/Lexical/`. Consolidation matches the
-`Typology/PolarityMarking.lean` precedent: vocabulary + entry schema
-+ paradigm record co-located in one file when only one Typology client
-exists.
+* `ClassifierType` — [aikhenvald-2000]'s noun-categorization device types.
+* `SemanticParameter`, `ShapeDimension` — the semantic axes ([allan-1977], [downing-1996]).
+* `CategorizationScope`, `AssignmentPrinciple`, `SurfaceRealization`, `GrammaticalCategory`.
+* `ClassifierEntry` — per-classifier lexical schema.
+* `ClassifierStrategy` — competing composition frameworks (theory-laden; consumed by
+  `Semantics/Classifier`, where the cross-paper disagreement is proved as theorems).
+* `System` — Aikhenvald's per-language paradigm record (Bool property fields + `Prop` API).
 
-## Sections
+## Implementation notes
 
-- §1 Aikhenvald classifier types (Table 15.1)
-- §2 Semantic parameters (§11.1.1) + shape dimensionality (Downing/Allan)
-- §3 Structural properties (assignment, realization, scope)
-- §4 ClassifierEntry — per-classifier lexical entry schema
-- §5 ClassifierStrategy — competing semantic frameworks (Krifka/B&C/L-M-R
-  vs Chierchia/Jenks/Nomoto/L-M-R vs Sudo blocking)
-- §6 NounCategorizationSystem — Aikhenvald 7-property paradigm record
-- §7 Prop API for boolean property fields
-- §8 Grammatical-category interactions (Table 10.17)
-- §9 WALS Ch 55 numeral-classifier status + distribution
-
-## What does NOT live here
-
-Theoretical commitments about *which strategy* mediates the numeral-noun
-composition (`forNoun` per Chierchia, `sudoBlocking` per Sudo) live in
-the relevant `Studies/` files, not on the
-description here. Cross-paper disagreement is proved as theorems, not
-embedded as metadata.
-
-## Out of scope
-
-[corbett-1991] on gender systems is the obvious adjacent reference
-for the `nounClass` constructor; not currently consumed by this file
-but should be cited if a per-language gender-system substrate gets
-formalised here. The `nounClass` cell here collapses what Corbett
-carefully separates (target gender, controller gender, gender vs.
-classifier).
+The `nounClass` cell collapses what [corbett-1991] separates (target/controller
+gender, gender vs. classifier); the per-language gender structure lives in
+`Features/Gender`, and a noun-class `System`'s `inventorySize`/`hasAgreement` should
+derive from a `Gender.System` rather than being stipulated (follow-on).
 -/
 
-namespace Typology
+namespace NounCategorization
 
 -- ════════════════════════════════════════════════════
 -- § 1. Classifier Types ([aikhenvald-2000])
@@ -249,7 +222,7 @@ def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
 
     Strategy assignments to specific languages live in study files
     (`Studies/{NMP,LittleMoroneyRoyer2022,Sudo2016}.lean`),
-    not in this file or in `NounCategorizationSystem`. Each paper owns its
+    not in this file or in `System`. Each paper owns its
     own per-language commitments; cross-paper agreement and disagreement
     are first-class theorems in the study files. -/
 inductive ClassifierStrategy where
@@ -259,7 +232,7 @@ inductive ClassifierStrategy where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 6. NounCategorizationSystem — paradigm record
+-- § 6. System — paradigm record
 -- ════════════════════════════════════════════════════
 
 /-- A noun categorization system in a language.
@@ -274,7 +247,7 @@ inductive ClassifierStrategy where
     (G) grammaticalization → `isObligatory`
 
     UNVERIFIED: A–G enumeration cited from memory. -/
-structure NounCategorizationSystem where
+structure System where
   /-- Language family (e.g., "Indo-European", "Sino-Tibetan", "Bantu"). -/
   family : String
   /-- Aikhenvald classifier type. -/
@@ -312,7 +285,7 @@ structure NounCategorizationSystem where
   source : String := ""
   deriving Repr, DecidableEq
 
-namespace NounCategorizationSystem
+namespace System
 
 /-! ## Prop API for the boolean property fields
 
@@ -326,21 +299,21 @@ for either since the Bool projection reduces structurally for concrete
 fragment values. -/
 
 /-- The system involves agreement (E). -/
-abbrev HasAgreement (s : NounCategorizationSystem) : Prop := s.hasAgreement = true
+abbrev HasAgreement (s : System) : Prop := s.hasAgreement = true
 
 /-- Realization is obligatory (G). -/
-abbrev IsObligatory (s : NounCategorizationSystem) : Prop := s.isObligatory = true
+abbrev IsObligatory (s : System) : Prop := s.isObligatory = true
 
 /-- The system has a formally/functionally unmarked default (F). -/
-abbrev HasUnmarkedDefault (s : NounCategorizationSystem) : Prop :=
+abbrev HasUnmarkedDefault (s : System) : Prop :=
   s.hasUnmarkedDefault = true
 
 /-- The language has obligatory grammatical number marking. -/
-abbrev HasObligatoryNumber (s : NounCategorizationSystem) : Prop :=
+abbrev HasObligatoryNumber (s : System) : Prop :=
   s.hasObligatoryNumber = true
 
 /-- Classifiers and plural marking can co-occur. -/
-abbrev PluralClfCooccur (s : NounCategorizationSystem) : Prop :=
+abbrev PluralClfCooccur (s : System) : Prop :=
   s.pluralClfCooccur = true
 
 /-- [dixon-1982]'s noun-class vs. classifier divide.
@@ -353,7 +326,7 @@ def isNounClassType (t : ClassifierType) : Bool :=
 def isClassifierType (t : ClassifierType) : Bool :=
   !isNounClassType t
 
-end NounCategorizationSystem
+end System
 
 -- ════════════════════════════════════════════════════
 -- § 8. Grammatical-Category Interactions (Aikhenvald)
@@ -384,41 +357,4 @@ def interacts : ClassifierType → GrammaticalCategory → Bool
   | .possessedClassifier, .possession => true
   | _, _ => false
 
--- ════════════════════════════════════════════════════
--- § 9. WALS Chapter 55 — Numeral Classifiers
--- ════════════════════════════════════════════════════
-
-/-- Whether a language uses numeral classifiers ([wals-2013] Ch 55). -/
-inductive ClassifierStatus where
-  /-- No numeral classifiers (e.g., English, Spanish, Arabic). -/
-  | absent
-  /-- Classifiers available but not required (e.g., Turkish, Bengali). -/
-  | optional
-  /-- Classifiers required (e.g., Mandarin, Japanese, Thai). -/
-  | obligatory
-  deriving DecidableEq, Repr
-
-/-- Convert WALS 55A numeral classifier values to the local `ClassifierStatus`. -/
-def fromWALS55A : Data.WALS.F55A.NumeralClassifiers → ClassifierStatus
-  | .absent => .absent
-  | .optional => .optional
-  | .obligatory => .obligatory
-
-/-- WALS Chapter 55 distribution: language counts per classifier status.
-    Total: 400 languages. -/
-structure ClassifierDistribution where
-  absent : Nat
-  optional : Nat
-  obligatory : Nat
-  deriving Repr
-
-def ClassifierDistribution.total (d : ClassifierDistribution) : Nat :=
-  d.absent + d.optional + d.obligatory
-
-/-- Actual WALS Ch 55 counts (260 absent + 62 optional + 78 obligatory = 400). -/
-def ch55Distribution : ClassifierDistribution :=
-  { absent := 260
-  , optional := 62
-  , obligatory := 78 }
-
-end Typology
+end NounCategorization

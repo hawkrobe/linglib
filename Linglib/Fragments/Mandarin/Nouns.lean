@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
@@ -19,7 +19,7 @@ of Aikhenvald's semantic generalizations about classifier selection.
 
 namespace Mandarin.Nouns
 
-open Typology (ClassifierEntry)
+open NounCategorization (ClassifierEntry)
 open Mandarin.Classifiers
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
