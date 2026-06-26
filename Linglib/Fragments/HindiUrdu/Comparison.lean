@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Hindi-Urdu comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace HindiUrdu.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Hindi-Urdu comparative profile. -/
 def comparison : ComparativeProfile :=

@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Japanese.Classifier
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Fragments.Japanese.Classifier
 Classifier-system metadata for Japanese (ISO `jpn`). The lexical
 classifier inventory itself lives in `Fragments/Japanese/Classifier.lean`;
 this file aggregates that inventory into the typological-system summary
-(`NounCategorizationSystem`).
+(`System`).
 -/
 
 namespace Japanese
@@ -16,7 +16,7 @@ namespace Japanese
 /-- Japanese numeral classifier system: obligatory CL suffixing on
     numerals; default つ tsu; preferred semantics derived from the
     lexical inventory. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Japonic"
   , classifierType := .numeralClassifier
   , scopes := [.numeralNP]

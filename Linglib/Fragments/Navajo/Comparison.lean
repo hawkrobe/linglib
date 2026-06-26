@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Navajo comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Navajo.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Navajo comparative profile. -/
 def comparison : ComparativeProfile :=

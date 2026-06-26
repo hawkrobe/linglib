@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Comparison
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
+import Linglib.Syntax.Comparative
 /-!
 # Turkish Comparative Construction [stassen-1985]
 
@@ -21,7 +21,7 @@ The optional adverb *daha* ('more') may intensify but is not required.
 namespace Turkish.Comparison
 
 /-- Turkish comparative: separative (ablative) standard marker `-dan`/`-den`. -/
-def entry : Typology.Comparison.ComparativeEntry :=
+def entry : Comparative.ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
@@ -39,7 +39,7 @@ theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
 -- ============================================================================
 
 /-- Turkish comparative profile (WALS Ch 121 + degree-word + superlative). -/
-def comparison : Typology.Comparison.ComparativeProfile :=
+def comparison : Comparative.ComparativeProfile :=
   { language := "Turkish"
   , iso := "tur"
   , comparativeType := .locational

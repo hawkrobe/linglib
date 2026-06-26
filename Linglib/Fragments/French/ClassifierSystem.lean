@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # French noun-categorization system
@@ -12,7 +12,7 @@ namespace French
 
 /-- French noun-class system: 2-class gender (masculine/feminine),
     obligatory agreement, mostly semantic + morphological residue. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Indo-European"
   , classifierType := .nounClass
   , scopes := [.headModifierNP, .predicateArgument]

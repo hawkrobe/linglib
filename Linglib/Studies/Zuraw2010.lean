@@ -94,7 +94,7 @@ those definitions must remain stable.
 
 namespace Zuraw2010
 
-open Constraint Core.Optimization Constraint OptimalityTheory OptimalityTheory
+open Constraints Core.Optimization Constraints OptimalityTheory OptimalityTheory
 open Core.Optimization HarmonicGrammar.PartialOrderConstraints
 open Core.Optimization Core.Optimization.PermSubsetCombinatorics
 

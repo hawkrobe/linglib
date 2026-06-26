@@ -119,13 +119,13 @@ favouring a paradigm-anchored account.
 namespace BreissKatsudaKawahara2026
 
 open Japanese.Prosody
-open Constraint.ItemSpecificity
-open Constraint.ItemSpecificity.Scaled (scaledWeight)
+open Constraints.ItemSpecificity
+open Constraints.ItemSpecificity.Scaled (scaledWeight)
 open OptimalityTheory.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
 open Morphology.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
   NovelShowsFreqGradient NovelInvariantInFrequency
   novelGradient_inconsistent_with_invariance)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Real lexical entries from the paper

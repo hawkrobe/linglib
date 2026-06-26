@@ -1,31 +1,37 @@
-import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Aliases
-import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.Constraints.Profile
+import Linglib.Phonology.OptimalityTheory.Defs
 
 /-!
-# Optimality Theory — Core Vocabulary
+# Tableau Construction and Factorial Typology
 
-OT-specific vocabulary layered on `Core.Optimization.Evaluation`. Provides
-named constraints with a faithfulness/markedness distinction, convenience
-constructors for building tableaux from ranked constraint lists, and factorial
-typology computation.
+The OT evaluation machinery built on the `Tableau` type (`OptimalityTheory.Defs`)
+and the violation-profile vocabulary (`Constraints.Profile`): a smart constructor
+for tableaux from ranked constraint lists, the structural optimality theorems,
+and factorial-typology computation.
 
-## Connection to Evaluation
+## Main definitions
 
-`Core.Optimization.Evaluation` provides the generic engine (`LexLE`, `Tableau`,
-`Tableau.optimal`). This module adds OT-specific structure: constraint
-families, named constraints, `mkTableau` for building tableaux from ranked
-constraint lists, and factorial typology computation.
+* `mkTableau` — build a `Tableau` from a candidate list and a ranked constraint
+  list.
+* `permutations` — all rankings of a constraint list (factorial typology).
+* `mkFactorialOptima` / `mkFactorialTypologySize` — the distinct optimal sets
+  predicted across all rankings, and their count.
+
+## Main results
+
+* `mkTableau_zero_isOptimal` / `mkTableau_zero_optimal_allRankings` — a
+  candidate with no violations wins under any (every) ranking.
+* `mkTableau_isOptimal_zero_first` — a satisfiable top constraint forces all
+  winners to satisfy it.
 -/
 
 namespace OptimalityTheory
 
-
-open Core.Optimization.Evaluation
-open Constraint
+open Constraints
 
 -- ============================================================================
--- § 3: Permutations (for factorial typology)
+-- § 1: Permutations (for factorial typology)
 -- ============================================================================
 
 /-- Insert element `a` at every position in list `l`. -/
@@ -95,7 +101,7 @@ theorem permutations_subset {α : Type*} {l l' : List α}
   fun _ hx => mem_of_mem_permutations hp hx
 
 -- ============================================================================
--- § 4: Tableau Construction
+-- § 2: Tableau Construction
 -- ============================================================================
 
 /-- Build a `Tableau C ranking.length` from a candidate list and ranking.
@@ -127,7 +133,7 @@ theorem mkTableau_optimal_mem {C : Type*} [DecidableEq C]
   fun hc => List.mem_toFinset.mp (Tableau.optimal_subset _ c hc)
 
 -- ============================================================================
--- § 5: Top-Constraint Optimality
+-- § 3: Top-Constraint Optimality
 -- ============================================================================
 
 /-- If any candidate has 0 violations on the top-ranked constraint,
@@ -165,22 +171,6 @@ theorem mkTableau_optimal_zero_first {C : Type*} [DecidableEq C]
   fun c hc => mkTableau_isOptimal_zero_first candidates con rest h hExists c
     ((Tableau.mem_optimal_iff _ c).mp hc)
 
--- ============================================================================
--- § 5b: Zero-Profile Optimality
--- ============================================================================
-
-/-- The zero `ViolationProfile n` is the minimum: `0 ≤ p` for all `p`.
-    This is the structural reason that a candidate with zero violations
-    on every constraint wins under any ranking.
-
-    Proof: `0 ≤ p` iff `¬(p < 0)`. Under `Pi.Lex`, `p < 0` requires
-    `∃ i, p i < 0 i`, but `0 i = 0` and `Nat` has no negative values. -/
-theorem ViolationProfile.zero_le {n : Nat} (p : ViolationProfile n) :
-    (0 : ViolationProfile n) ≤ p := by
-  rw [not_lt.symm]
-  intro ⟨i, _, hi⟩
-  exact absurd hi (Nat.not_lt_zero _)
-
 /-- If a candidate in `mkTableau` has 0 violations on every constraint,
     it is optimal. -/
 theorem mkTableau_zero_isOptimal {C : Type*} [DecidableEq C]
@@ -215,7 +205,7 @@ theorem mkTableau_zero_optimal_allRankings {C : Type*} [DecidableEq C]
     (fun con hcon => hzero con (permutations_subset hp con hcon))
 
 -- ============================================================================
--- § 6: Factorial Typology
+-- § 4: Factorial Typology
 -- ============================================================================
 
 /-- For each permutation of `constraints`, compute the set of optimal

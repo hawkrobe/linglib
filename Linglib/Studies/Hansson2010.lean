@@ -253,13 +253,13 @@ tier-adjacent disagreeing sibilant pair on the sibilant tier. The OT-side
 counterpart of `navajoSibilantHarmony` — same tier predicate, packaged as
 a `NamedConstraint` via the `mkAgreeOnTier` specialization. The TSL
 grammar characterizes the *language*; this constraint *evaluates* it. -/
-def navajoAgree : Constraint.NamedConstraint (List NSeg) :=
+def navajoAgree : Constraints.NamedConstraint (List NSeg) :=
   OptimalityTheory.mkAgreeOnTier
     "AGREE-[ant]/CC" (TierProjection.byClass NSeg.onTier) id
 
 /-- `navajoAgree` is a markedness constraint by construction. -/
 theorem navajoAgree_is_markedness :
-    navajoAgree.family = Constraint.ConstraintFamily.markedness :=
+    navajoAgree.family = Constraints.ConstraintFamily.markedness :=
   OptimalityTheory.mkAgreeOnTier_is_markedness _ _ _
 
 /-- **Bridge**: `navajoAgree` evaluates to zero on a candidate iff the

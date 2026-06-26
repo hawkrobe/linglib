@@ -1,5 +1,6 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Aliases
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Defs
 
 /-!
 # OT — Evaluation Mode (Parallel vs Directional)
@@ -73,7 +74,7 @@ by `HarmonicSerialism.lean`'s combinator, which currently routes the
 -/
 
 namespace OptimalityTheory
-open Constraint
+open Constraints
 
 
 /-- Direction of lex comparison on violation position vectors.

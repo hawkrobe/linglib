@@ -1,4 +1,4 @@
-import Linglib.Typology.ArgumentStructure
+import Linglib.Syntax.ArgumentStructure.Reciprocal
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 
 /-!
@@ -38,7 +38,7 @@ embedding.
 
 namespace Siloni2012
 
-open Typology.ArgumentStructure
+open Reciprocal
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════

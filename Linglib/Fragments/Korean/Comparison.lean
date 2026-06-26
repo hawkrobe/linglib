@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Comparison
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
+import Linglib.Syntax.Comparative
 /-!
 # Korean Comparative Construction [stassen-1985]
 
@@ -22,7 +22,7 @@ typology.
 namespace Korean.Comparison
 
 /-- Korean comparative: separative standard marker *-boda*. -/
-def entry : Typology.Comparison.ComparativeEntry :=
+def entry : Comparative.ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
@@ -40,7 +40,7 @@ theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
 -- ============================================================================
 
 /-- Korean comparative profile (WALS Ch 121 + degree-word + superlative). -/
-def comparison : Typology.Comparison.ComparativeProfile :=
+def comparison : Comparative.ComparativeProfile :=
   { language := "Korean"
   , iso := "kor"
   , comparativeType := .locational

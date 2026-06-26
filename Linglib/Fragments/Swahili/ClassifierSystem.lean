@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Swahili noun-categorization system
@@ -12,7 +12,7 @@ namespace Swahili
 
 /-- Swahili Bantu noun-class system: 15-class inventory, prefix
     realization, agreement-rich. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Bantu"
   , classifierType := .nounClass
   , scopes := [.headModifierNP, .predicateArgument]

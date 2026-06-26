@@ -1,8 +1,8 @@
 import Linglib.Phonology.Subregular.Harmony
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
-import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Fragments.Hungarian.VowelHarmony
 
 /-!
@@ -45,7 +45,7 @@ namespace SiptarTorkenczy2000
 open Phonology (Segment Feature)
 open Subregular.Harmony
 open OptimalityTheory.Correspondence (Corr)
-open Constraint OptimalityTheory Core.Optimization Core.Optimization.Evaluation
+open Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Hungarian.VowelHarmony
 
 -- ============================================================================
@@ -327,7 +327,7 @@ here both expose `predict : Cand → ℝ`; for the deterministic OT case,
 `predict winner = 1` and `predict loser = 0`. -/
 
 section PredictAPI
-open Core.Optimization Constraint
+open Core.Optimization Constraints
 
 /-- *ház* SPREAD ≫ IDENT tableau as a generic `ConstraintSystem`. -/
 noncomputable def házSystem : ConstraintSystem VHCandidate (LexProfile Nat 2) :=

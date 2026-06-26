@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -122,7 +122,7 @@ def agreementData : List AgreementDatum := [
 -- ============================================================================
 
 open Minimalist
-open Typology.Complementation
+open Clause.Complementation
 
 /-- Map CTP reality status to [±finite] selection.
 

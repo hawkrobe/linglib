@@ -1,5 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraints.Weighted
 import Linglib.Features.Givenness
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
@@ -101,7 +101,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Constraint OptimalityTheory Core.Optimization Constraint HarmonicGrammar Features
+open Constraints Core.Optimization HarmonicGrammar Features
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================

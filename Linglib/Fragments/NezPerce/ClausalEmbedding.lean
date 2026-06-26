@@ -1,4 +1,4 @@
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 
@@ -45,7 +45,7 @@ Relative-pronoun paradigm is from [deal-2016a] (Table 22 reproduced in
 
 namespace NezPerce.ClausalEmbedding
 
-open Typology.Complementation (CTPClass)
+open Clause.Complementation (CTPClass)
 
 -- ============================================================================
 -- §1. Predicate Schema

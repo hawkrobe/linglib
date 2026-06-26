@@ -48,7 +48,7 @@ namespace Tone
 
 open Autosegmental
 open Tone (TRN)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 variable {S : Type*} [DecidableEq S] (f : FloatingForm S TRN)
 

@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Tagalog comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Tagalog.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Tagalog comparative profile. -/
 def comparison : ComparativeProfile :=

@@ -1,4 +1,4 @@
-import Linglib.Typology.ClauseChaining
+import Linglib.Syntax.Clause.Chaining
 import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Korean.MedialVerbs
@@ -49,7 +49,7 @@ the origin (the final verb's context).
 
 namespace ClauseChaining
 
-open _root_.Typology.ClauseChaining
+open Clause.Chaining
 
 -- ============================================================================
 -- Language data (inlined per the
@@ -238,7 +238,7 @@ namespace SarvasyAikhenvald2025
 -- ============================================================================
 
 open ClauseChaining
-open Typology.ClauseChaining
+open Clause.Chaining
 open Nungon.MedialVerbs (SRCategory dsParadigm ssSuffixes ds2du ds3du ds2pl ds3pl)
 open Manambu.MedialVerbs (allMarkers ssMarkers dsMarkers neutralMarkers
   markersWithSubjAgreement MarkerEntry SRValue)

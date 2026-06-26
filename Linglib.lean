@@ -645,6 +645,7 @@ import Linglib.Features.MassCount
 import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
 import Linglib.Features.ModalIndefinite
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
@@ -729,8 +730,6 @@ import Linglib.Fragments.Dutch.VerbParticles
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Binominals
-import Linglib.Fragments.English.BodyParts
-import Linglib.Fragments.English.Color
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.English.Complementizers
 import Linglib.Fragments.English.Conditionals
@@ -777,7 +776,6 @@ import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.Fering.Definiteness
 import Linglib.Fragments.Fijian.Possession
-import Linglib.Fragments.Finnish.BodyParts
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.Comparison
 import Linglib.Fragments.Finnish.ConsonantGradation
@@ -798,9 +796,7 @@ import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Finnish.TenseAspect
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.French.Binominals
-import Linglib.Fragments.French.BodyParts
 import Linglib.Fragments.French.ClassifierSystem
-import Linglib.Fragments.French.Color
 import Linglib.Fragments.French.Comparison
 import Linglib.Fragments.French.Determiners
 import Linglib.Fragments.French.Evidentiality
@@ -829,10 +825,8 @@ import Linglib.Fragments.Georgian.PolarityItems
 import Linglib.Fragments.Georgian.Possession
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.BarePluralWordOrder
-import Linglib.Fragments.German.BodyParts
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.ClauseTypes
-import Linglib.Fragments.German.Color
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.German.Coordination
@@ -911,7 +905,6 @@ import Linglib.Fragments.HindiUrdu.WordOrder
 import Linglib.Fragments.Hixkaryana.Adposition
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Hixkaryana.WordOrder
-import Linglib.Fragments.Hungarian.BodyParts
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.Directives
@@ -964,11 +957,9 @@ import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Adposition
-import Linglib.Fragments.Japanese.BodyParts
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Fragments.Japanese.ClassifierSystem
-import Linglib.Fragments.Japanese.Color
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Coordination
@@ -1001,9 +992,7 @@ import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Kashaya.Evidentiality
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 import Linglib.Fragments.Korean.Adposition
-import Linglib.Fragments.Korean.BodyParts
 import Linglib.Fragments.Korean.Case
-import Linglib.Fragments.Korean.Color
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Fragments.Korean.Coordination
@@ -1045,10 +1034,8 @@ import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Mandarin.Adposition
 import Linglib.Fragments.Mandarin.AspectComparison
-import Linglib.Fragments.Mandarin.BodyParts
 import Linglib.Fragments.Mandarin.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Fragments.Mandarin.Color
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Fragments.Mandarin.Definiteness
@@ -1158,9 +1145,7 @@ import Linglib.Fragments.Slavic.Polish.QuestionParticles
 import Linglib.Fragments.Slavic.Polish.VerbalPrefixes
 import Linglib.Fragments.Slavic.Russian.AdjAgreement
 import Linglib.Fragments.Slavic.Russian.Adposition
-import Linglib.Fragments.Slavic.Russian.BodyParts
 import Linglib.Fragments.Slavic.Russian.Case
-import Linglib.Fragments.Slavic.Russian.Color
 import Linglib.Fragments.Slavic.Russian.Comparison
 import Linglib.Fragments.Slavic.Russian.Directives
 import Linglib.Fragments.Slavic.Russian.Gender
@@ -1189,9 +1174,7 @@ import Linglib.Fragments.Slavic.Sorbian.Case
 import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
 import Linglib.Fragments.Spanish.Binominals
-import Linglib.Fragments.Spanish.BodyParts
 import Linglib.Fragments.Spanish.Clitics
-import Linglib.Fragments.Spanish.Color
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.MoodChoice
@@ -1207,7 +1190,6 @@ import Linglib.Fragments.Spanish.TenseAspect
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Swahili.Adposition
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Fragments.Swahili.BodyParts
 import Linglib.Fragments.Swahili.ClassifierSystem
 import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Swahili.Directives
@@ -1224,7 +1206,6 @@ import Linglib.Fragments.Swahili.WordOrder
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.SwissGerman.Case
-import Linglib.Fragments.Tagalog.BodyParts
 import Linglib.Fragments.Tagalog.Comparison
 import Linglib.Fragments.Tagalog.Directives
 import Linglib.Fragments.Tagalog.Morph
@@ -1258,7 +1239,6 @@ import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Turkish.Adposition
 import Linglib.Fragments.Turkish.Anaphors
-import Linglib.Fragments.Turkish.BodyParts
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.Coordination
@@ -1364,11 +1344,11 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.WellFormedAR
-import Linglib.Phonology.Constraint.Aliases
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.Constraint.Iteration
-import Linglib.Phonology.Constraint.System
-import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.Constraints.Iteration
+import Linglib.Phonology.Constraints.Profile
+import Linglib.Phonology.Constraints.System
+import Linglib.Phonology.Constraints.Weighted
 import Linglib.Phonology.ElementTheory
 import Linglib.Phonology.Feature
 import Linglib.Phonology.FeatureGeometry
@@ -1388,16 +1368,18 @@ import Linglib.Phonology.ItemSpecificity.Separation
 import Linglib.Phonology.ItemSpecificity.UseListed
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.OptimalityTheory.Correspondence
+import Linglib.Phonology.OptimalityTheory.Defs
 import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.EvalMode
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.OptimalityTheory.StratalCorr
 import Linglib.Phonology.OptimalityTheory.TCT
@@ -1533,6 +1515,7 @@ import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
@@ -2802,6 +2785,8 @@ import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.ArgumentStructure.Reciprocal
+import Linglib.Syntax.AuxiliaryVerbs
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -2822,6 +2807,9 @@ import Linglib.Syntax.Case.Filter
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Clause.Basic
+import Linglib.Syntax.Clause.Chaining
+import Linglib.Syntax.Clause.Complementation
+import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.GrammarDist
@@ -2941,15 +2929,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Alignment
-import Linglib.Typology.ArgumentStructure
-import Linglib.Typology.AuxiliaryVerbs
-import Linglib.Typology.BodyParts
-import Linglib.Typology.ClassifierSystem
-import Linglib.Typology.ClauseChaining
-import Linglib.Typology.Color
-import Linglib.Typology.Comparison
-import Linglib.Typology.Complementation
 import Linglib.Typology.Coordination
 import Linglib.Typology.Copulas
 import Linglib.Typology.Directives
@@ -2972,4 +2951,3 @@ import Linglib.Typology.Question
 import Linglib.Typology.Reference
 import Linglib.Typology.TemporalConnectives
 import Linglib.Typology.TenseAspect
-import Linglib.Typology.Universal

@@ -32,9 +32,9 @@ compounds show the same compound-frequency-conditioned nasalisation
 gradient as familiar compounds, contra UseListed.
 -/
 
-namespace Constraint.ItemSpecificity.UseListed
+namespace Constraints.ItemSpecificity.UseListed
 
-open Constraint.ItemSpecificity
+open Constraints.ItemSpecificity
 
 -- ============================================================================
 -- § 1: Listed-vs-computed gate
@@ -77,4 +77,4 @@ theorem dispatch_novel_eq_grammar
   unfold dispatch
   simp [not_le.mpr hnovel]
 
-end Constraint.ItemSpecificity.UseListed
+end Constraints.ItemSpecificity.UseListed

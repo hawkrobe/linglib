@@ -1,7 +1,7 @@
 import Linglib.Features.Prominence
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Typology.Alignment
+import Linglib.Syntax.Case.Alignment
 import Linglib.Studies.Dixon1994
 import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
@@ -85,7 +85,7 @@ three prominence scales are defined once in `Features.Prominence` and
 imported by every downstream module. -/
 
 open Features.Prominence (AnimacyLevel ArgumentRole)
-open Typology.Alignment (AlignmentType)
+open Alignment (AlignmentType)
 
 -- ============================================================================
 -- § 1a: Subject Property Bundles (Ch 5)
@@ -173,19 +173,19 @@ def SubjectPropertyBundle.converges (b : SubjectPropertyBundle) : Bool :=
     sensitive to prominence (animate/definite Ps get marked, inanimates
     don't). -/
 theorem accusative_marks_P :
-    AlignmentType.accusative.marksPatient = true := rfl
+    AlignmentType.accusative.marksPatient := by decide
 
 /-- Ergative alignment implies A is differentially marked. In an
     ergative language, it is the **A** role whose marking is
     prominence-sensitive — less prominent As (full NPs, inanimates)
     get ergative marking. -/
 theorem ergative_marks_A :
-    AlignmentType.ergative.marksAgent = true := rfl
+    AlignmentType.ergative.marksAgent := by decide
 
 /-- Neutral alignment marks neither A nor P distinctly. -/
 theorem neutral_marks_neither :
-    AlignmentType.neutral.marksAgent = false ∧
-    AlignmentType.neutral.marksPatient = false := ⟨rfl, rfl⟩
+    ¬ AlignmentType.neutral.marksAgent ∧
+    ¬ AlignmentType.neutral.marksPatient := by decide
 
 /-- The directionality of differential marking follows from alignment:
     accusative systems differentially mark the low-default role (P),
@@ -500,31 +500,30 @@ open Aissen2003
   (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
 open Dixon1994 (russian turkish dyirbalSplit)
 open Features (AlignmentFamily)
-open Typology.Alignment (Aspect hindiSplit)
+open Alignment (Aspect hindiSplit)
 
 /-- Whether DOM (differential P marking) is expected given alignment.
     Structurally identical to `AlignmentType.marksPatient`: exactly
     the alignments that mark P distinctly from S predict DOM. -/
-def domExpected (a : AlignmentType) : Bool := a.marksPatient
+abbrev domExpected (a : AlignmentType) : Prop := a.marksPatient
 
 /-- Whether DSM (differential A marking) is expected given alignment.
     Structurally identical to `AlignmentType.marksAgent`. -/
-def dsmExpected (a : AlignmentType) : Bool := a.marksAgent
+abbrev dsmExpected (a : AlignmentType) : Prop := a.marksAgent
 
 /-- DOM expectation = patient marking. -/
 theorem dom_iff_marks_patient (a : AlignmentType) :
-    domExpected a = a.marksPatient := rfl
+    domExpected a ↔ a.marksPatient := Iff.rfl
 
 /-- DSM expectation = agent marking. -/
 theorem dsm_iff_marks_agent (a : AlignmentType) :
-    dsmExpected a = a.marksAgent := rfl
+    dsmExpected a ↔ a.marksAgent := Iff.rfl
 
 /-- Accusative predicts DOM (not DSM); ergative predicts DSM (not DOM).
     [comrie-1989] Ch 6 / [de-hoop-malchukov-2008] §4. -/
 theorem acc_dom_erg_dsm :
-    domExpected .accusative = true ∧ dsmExpected .accusative = false ∧
-    domExpected .ergative = false ∧ dsmExpected .ergative = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    domExpected .accusative ∧ ¬ dsmExpected .accusative ∧
+    ¬ domExpected .ergative ∧ dsmExpected .ergative := by decide
 
 /-- Whether a DOMProfile has any differential marking (at least one
     prominence cell is overtly marked). -/
@@ -550,19 +549,19 @@ alignment predicts DOM; ergative predicts DSM instead.
 
 /-- Turkish: accusative alignment → DOM expected; DOM present. -/
 theorem turkish_dom_consistent :
-    domExpected turkish.npAlignment = true ∧
-    hasAnyMarking turkishDOM = true := ⟨rfl, by native_decide⟩
+    domExpected turkish.npAlignment ∧
+    hasAnyMarking turkishDOM = true := ⟨by decide, by native_decide⟩
 
 /-- Russian: accusative alignment → DOM expected; DOM present. -/
 theorem russian_dom_consistent :
-    domExpected russian.npAlignment = true ∧
-    hasAnyMarking russianDOM = true := ⟨rfl, by native_decide⟩
+    domExpected russian.npAlignment ∧
+    hasAnyMarking russianDOM = true := ⟨by decide, by native_decide⟩
 
 /-- No-DOM languages with neutral alignment: DOM not expected,
     and no DOM exists. Doubly consistent. -/
 theorem neutral_no_dom :
-    domExpected .neutral = false ∧
-    hasAnyMarking noDOMProfile = false := ⟨rfl, by native_decide⟩
+    ¬ domExpected .neutral ∧
+    hasAnyMarking noDOMProfile = false := ⟨by decide, by native_decide⟩
 
 -- ============================================================================
 -- § 7b: Split Ergativity × DOM Interaction

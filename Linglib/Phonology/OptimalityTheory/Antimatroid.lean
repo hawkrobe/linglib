@@ -59,7 +59,7 @@ ERC sets and antimatroids
 -/
 
 namespace OptimalityTheory
-open Constraint
+open Constraints
 
 
 -- ============================================================================

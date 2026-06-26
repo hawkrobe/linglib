@@ -82,7 +82,7 @@ namespace Haspelmath2021
 
 open Features.Prominence
 open Core.Optimization.Evaluation
-open Constraint Pragmatics.Bidirectional
+open Constraints Pragmatics.Bidirectional
 open Aissen2003
 open DeHoopMalchukov2008
 open Alignment

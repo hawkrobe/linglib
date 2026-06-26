@@ -1,6 +1,6 @@
+import Mathlib.Data.Finset.Card
 import Linglib.Features.WordOrder
 import Linglib.Syntax.Adposition.Order
-import Linglib.Typology.Universal
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.Japanese.WordOrder
@@ -50,8 +50,8 @@ curated 15-language Fragment-derived sample:
   greater than chance frequency).
 
 All three are tested over `fragmentSample`, a 15-language Fragment-derived
-sample. The substrate type `ImplicationalUniversal` lives in
-`Linglib/Typology/Universal.lean`. WALS-aggregate distributional claims
+sample. The `ImplicationalUniversal` predicate (every `P`-language is also `Q`)
+is defined study-locally below. WALS-aggregate distributional claims
 (SOV-most-common, SV-dominates-VS, etc.) live in
 `Studies/DryerHaspelmath2013.lean`.
 
@@ -67,7 +67,15 @@ non-vacuously.
 
 namespace Greenberg1963
 
-open _root_.Typology (ImplicationalUniversal)
+/-- A Greenbergian implicational universal: every language in sample `s` with
+    property `P` also has `Q` (the "no `P`-but-not-`Q` counterexample" claim,
+    [greenberg-1963]). -/
+def ImplicationalUniversal {α : Type*} (P Q : α → Prop) (s : Finset α) : Prop :=
+  ∀ l ∈ s, P l → Q l
+
+instance {α : Type*} (P Q : α → Prop) (s : Finset α)
+    [DecidablePred P] [DecidablePred Q] : Decidable (ImplicationalUniversal P Q s) :=
+  Finset.decidableDforallFinset
 
 -- ============================================================================
 -- §1. Sample: per-language data sourced from Fragment files
@@ -146,7 +154,7 @@ abbrev isOV (p : SampleEntry) : Prop := p.wordOrder.ovOrder.IsOV
 -- ============================================================================
 -- The proofs decide a quotient over a 15-element `Finset` literal — bumping
 -- `maxRecDepth` is the same idiom mathlib uses for similar `Finset.decide`
--- sites (see `Typology/Universal.lean` for the discussion).
+-- sites.
 
 set_option maxRecDepth 4096 in
 /-- [greenberg-1963] Universal 1: in declarative sentences with nominal

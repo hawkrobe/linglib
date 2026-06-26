@@ -1,6 +1,6 @@
 import Linglib.Phonology.ItemSpecificity.Defs
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Frequency-Scaled Weights
@@ -38,10 +38,10 @@ theory needs separate slopes per constraint — which it has, and so
 remains a viable account.
 -/
 
-namespace Constraint.ItemSpecificity.Scaled
+namespace Constraints.ItemSpecificity.Scaled
 
-open Constraint.ItemSpecificity
-open Constraint OptimalityTheory
+open Constraints.ItemSpecificity
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Scaled weight
@@ -92,4 +92,4 @@ theorem scaledWeight_monotone_in_freq
   unfold scaledWeight
   exact (add_le_add_iff_left baseWeight).mpr (mul_le_mul_of_nonneg_left hab h)
 
-end Constraint.ItemSpecificity.Scaled
+end Constraints.ItemSpecificity.Scaled

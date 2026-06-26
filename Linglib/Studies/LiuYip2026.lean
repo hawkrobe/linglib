@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Cantonese.Aspect
@@ -86,7 +86,7 @@ explicit in §10 as a refutation theorem candidate.
 namespace LiuYip2026
 
 open Minimalist (AspFlavor AspHead Probe.Profile ClauseSpine ComplementSize Cat fValue)
-open Typology.Complementation (CTPClass ComplementClauseStructure)
+open Clause.Complementation (CTPClass ComplementClauseStructure)
 
 -- ============================================================================
 -- §1. Three Chinese clause types as ComplementSize instances
@@ -467,11 +467,11 @@ have Studies-level Chinese formalizations they currently lack):
   explicit prose noting the alternative locality model. -/
 
 -- ============================================================================
--- §12. Bridge to Typology.Complementation.ComplementClauseStructure
+-- §12. Bridge to Clause.Complementation.ComplementClauseStructure
 -- ============================================================================
 
 /-- The local `ComplementClass` projects to the existing theory-neutral
-    surface enum `Typology.Complementation.ComplementClauseStructure`.
+    surface enum `Clause.Complementation.ComplementClauseStructure`.
     This converts the planned ICH from a parallel third axis into a
     projection over substrate that already serves [deal-2026],
     [landau-2015], [cristofaro-2013], and [noonan-2007]

@@ -1,5 +1,5 @@
 import Linglib.Fragments.NezPerce.ClausalEmbedding
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
@@ -83,7 +83,7 @@ predicate-modification mechanism may not directly apply.
 namespace Deal2026
 
 open NezPerce.ClausalEmbedding
-open Typology.Complementation
+open Clause.Complementation
 open Semantics.Presupposition.ProjectiveContent (ProjectiveClass)
 open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
   hasValuedFeature FeatureBundle FeatureVal GramFeature ābar_is_Ā)

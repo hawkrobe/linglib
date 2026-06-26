@@ -54,7 +54,7 @@ subregular hierarchy.
 namespace Subregular.OTBound
 
 open OptimalityTheory
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 2. Existing bridges, restated in zero-set form

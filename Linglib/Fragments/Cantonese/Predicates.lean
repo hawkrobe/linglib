@@ -1,4 +1,4 @@
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Cantonese Complement-Taking Predicates
@@ -19,7 +19,7 @@ by the Studies file, not by the Fragment.
 
 namespace Cantonese.Predicates
 
-open Typology.Complementation (CTPClass)
+open Clause.Complementation (CTPClass)
 
 /-- The size of the complement clause a Cantonese predicate selects, per
     [liu-yip-2026] §5–6's classification: vP (Aspect Restructuring,

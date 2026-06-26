@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Ch'ol Numeral Classifier Lexicon
@@ -29,7 +29,7 @@ that the numeral requires as its first argument:
 
 namespace Chol.Classifiers
 
-open Typology (ClassifierEntry SemanticParameter ShapeDimension)
+open NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Numeral classifiers (Table 4 of [little-moroney-royer-2022])

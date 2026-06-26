@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Syntax.DependencyGrammar.Formal.EnhancedDependencies
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Studies.Noonan2007
 
 /-!
@@ -239,7 +239,7 @@ theorem control_raising_same_enhancement :
 -- §8: Bridge to CTPDatum — Fragment controlType predicts equi-deletion
 -- ============================================================================
 
-open Typology.Complementation
+open Clause.Complementation
 open Noonan2007
 open English.Predicates.Verbal (manage persuade want hope stop start continue_ seem)
 

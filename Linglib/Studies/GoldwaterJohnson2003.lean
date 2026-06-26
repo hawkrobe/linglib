@@ -43,7 +43,7 @@ models over weighted features, differing only in what the features measure.
 
 namespace GoldwaterJohnson2003
 
-open Core.Optimization Constraint HarmonicGrammar Core Finset Real
+open Core.Optimization Constraints HarmonicGrammar Core Finset Real
 
 -- ============================================================================
 -- § 1: MaxEnt = softmax (eq (1))

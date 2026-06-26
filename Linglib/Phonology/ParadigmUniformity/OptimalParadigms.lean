@@ -42,7 +42,7 @@ that phonological behavior tracks paradigm structure. See
 
 namespace OptimalityTheory.ParadigmUniformity
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open OptimalityTheory.Correspondence (Corr)
 
 -- ============================================================================

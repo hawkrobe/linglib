@@ -52,7 +52,7 @@ open OptimalityTheory.Doubling
 
 namespace BerentEtAl2016
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: L1 Morphological Grammars

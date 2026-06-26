@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Alignment
+import Linglib.Syntax.Case.Alignment
 /-!
 # Hindi Case Inventory [blake-1994]
 
@@ -18,7 +18,7 @@ cross-linguistically common patterns.
 ## Split-Ergative Connection
 
 This fragment connects to the `hindiSplit` already defined in
-`Typology.Alignment.SplitErgativity`, which formalizes the perfective to
+`Alignment.SplitErgativity`, which formalizes the perfective to
 ergative conditioning.
 
 -/
@@ -55,9 +55,9 @@ theorem abl_inst_same_tier :
 
 /-- The split-ergative system defined in `SplitConditions.lean`. -/
 theorem hindi_perfective_is_ergative :
-    Typology.Alignment.hindiSplit.alignment .perfective = .ergative := rfl
+    Alignment.hindiSplit.alignment .perfective = .ergative := rfl
 
 theorem hindi_imperfective_is_accusative :
-    Typology.Alignment.hindiSplit.alignment .imperfective = .accusative := rfl
+    Alignment.hindiSplit.alignment .imperfective = .accusative := rfl
 
 end Hindi.Case

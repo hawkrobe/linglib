@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Arabic (MSA) comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Arabic.ModernStandard.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Arabic (MSA) comparative profile. -/
 def comparison : ComparativeProfile :=
