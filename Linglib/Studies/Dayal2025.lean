@@ -33,10 +33,11 @@ This study file is the canonical home for:
   places the polar-Q-typing locus at `PolP` (via the
   `Features/AnsweringSystem.lean` typological parameter). Holmberg's
   analysis competes with Dayal's for the same matrix-polar facts.
-- **Speas-Tenny / `Syntax/Minimalist/SpeechActs.lean`** derives
-  `seatOfKnowledge` from a 2×2 feature matrix; Dayal places SoK in PerspP
-  with PRO. Both predict the Newari conjunct/disjunct flip; the bridge
-  theorem `SpeechActs.SoK ↔ PerspP-PRO over Newari` is unformalized.
+- **Speas-Tenny / `Studies/SpeasTenny2003.lean`** derives
+  `SpeasTenny2003.seatOfKnowledge` from a 2×2 feature matrix; Dayal places SoK
+  in PerspP with PRO. Both predict the Newari conjunct/disjunct flip; the bridge
+  theorem `SpeasTenny2003.seatOfKnowledge ↔ PerspP-PRO over Newari` is
+  unformalized.
 -/
 
 namespace Dayal2025
