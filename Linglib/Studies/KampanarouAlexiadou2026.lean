@@ -405,7 +405,7 @@ theorem ka2026_refutes_myler_VI_for_smg :
     -- to be accusative-syncretic, which apo-PPs are not.
     -- Stated structurally: the SMG distinction tracks SYNTAX (analyses
     -- 41/43/47), not phonology.
-    Greek.StandardModern.Possession.possession.adnominalStrategy
+    Greek.StandardModern.Possession.adnominalStrategy
       = .dependentMarking := by
   refine ⟨rfl, rfl⟩
 
@@ -435,10 +435,10 @@ theorem apo_PP_cannot_extract_per_ka2026 :
     asymmetry encoded in the Fragment files. -/
 theorem gg_uses_reduced_relative_smg_does_not :
     -- GG: apo-PP is the dominant adnominal strategy (genitive lost on common nouns)
-    Greek.Grevena.Possession.possession.adnominalStrategy
+    Greek.Grevena.Possession.adnominalStrategy
       = .zeroMarking ∧
     -- SMG: apo-PP coexists with inflectional genitive (NOT a reduced relative)
-    Greek.StandardModern.Possession.possession.adnominalStrategy
+    Greek.StandardModern.Possession.adnominalStrategy
       = .dependentMarking := by
   refine ⟨rfl, rfl⟩
 

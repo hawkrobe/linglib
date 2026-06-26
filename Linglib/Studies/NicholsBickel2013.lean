@@ -33,20 +33,17 @@ The four WALS chapters by Nichols & Bickel (2013):
 - Ch 59A: Possessive Classification
 
 This study file holds **cross-linguistic generalisations** that consume the
-Fragment-side `def possession : PossessionProfile` data with non-trivial
-semantic content (`oceanic_have_classification`, `head_marking_mostly_complex`,
-`have_verb_implies_not_head_marking`, etc.), plus corpus-level WALS
-distribution claims that depend on filtering by chapter value.
+per-language Fragment possession `def`s (projected into the study-local `Lang`
+row) with non-trivial semantic content (`oceanic_have_classification`,
+`head_marking_mostly_complex`, `have_verb_implies_not_head_marking`, etc.),
+plus corpus-level WALS distribution claims that depend on filtering by chapter
+value.
 
 Per-language Fragment-vs-WALS data-equality theorems are **deliberately
-absent** — verifying that `X.Possession.possession.field` equals
+absent** — verifying that `X.Possession.predicativeStrategy` equals
 `Data.WALS.lookup "iso"` is "encoding conclusions as definitions": the
 two would have to silently diverge for the theorem to fail, and the typed
 Fragment value already encodes the WALS coding at definition site.
-
-The WALS-aggregate sample-size and dominance theorems live in the substrate
-(`Linglib/Features/Possession.lean`) per the project's "WALS goes to
-`Linglib/Typology/`" rule.
 -/
 
 set_option autoImplicit false
@@ -62,36 +59,75 @@ private abbrev ch59 := Data.WALS.F59A.allData
 -- §1. The 19-language Fragment sample
 -- ============================================================================
 
-/-- The 19-language sample drawn from per-language Fragment Possession files. -/
-def allLanguages : List PossessionProfile :=
-  [ English.Possession.possession
-  , Russian.Possession.possession
-  , Japanese.Possession.possession
-  , Turkish.Possession.possession
-  , HindiUrdu.Possession.possession
-  , Mandarin.Possession.possession
-  , Finnish.Possession.possession
-  , Hungarian.Possession.possession
-  , Irish.Possession.possession
-  , Swahili.Possession.possession
-  , Korean.Possession.possession
-  , Arabic.ModernStandard.Possession.possession
-  , Quechua.Possession.possession
-  , Yoruba.Possession.possession
-  , Georgian.Possession.possession
-  , Hawaiian.Possession.possession
-  , Fijian.Possession.possession
-  , Tsotsil.Possession.possession
-  , Tseltal.Possession.possession ]
+/-- Study-local row: the four typological dimensions Nichols & Bickel's WALS
+    chapters cross-tabulate over the sample, projected from per-language
+    Fragment defs (the bundle `PossessionProfile` was retired). -/
+structure Lang where
+  predicativeStrategy : PredicativeStrategy
+  adnominalStrategy : AdnominalMarking
+  possessiveClassification : Classification
+  obligatoryPossession : Obligatoriness
+  deriving DecidableEq, Repr
+
+def Lang.hasObligatoryPossession (p : Lang) : Bool := p.obligatoryPossession == .exists_
+def Lang.hasClassification (p : Lang) : Bool := p.possessiveClassification != .noClassification
+def Lang.usesHaveVerb (p : Lang) : Bool := p.predicativeStrategy == .haveVerb
+def Lang.usesLocational (p : Lang) : Bool := p.predicativeStrategy == .locational
+def Lang.isHeadMarking (p : Lang) : Bool := p.adnominalStrategy == .headMarking
+
+/-- A row built from a Fragment's four possession dimensions. -/
+private def ofFragment (pr : PredicativeStrategy) (ad : AdnominalMarking)
+    (cl : Classification) (ob : Obligatoriness) : Lang := ⟨pr, ad, cl, ob⟩
+
+/-- The 19-language sample, each row projected from its Fragment defs. -/
+def allLanguages : List Lang :=
+  [ ofFragment English.Possession.predicativeStrategy English.Possession.adnominalStrategy
+      English.Possession.possessiveClassification English.Possession.obligatoryPossession
+  , ofFragment Russian.Possession.predicativeStrategy Russian.Possession.adnominalStrategy
+      Russian.Possession.possessiveClassification Russian.Possession.obligatoryPossession
+  , ofFragment Japanese.Possession.predicativeStrategy Japanese.Possession.adnominalStrategy
+      Japanese.Possession.possessiveClassification Japanese.Possession.obligatoryPossession
+  , ofFragment Turkish.Possession.predicativeStrategy Turkish.Possession.adnominalStrategy
+      Turkish.Possession.possessiveClassification Turkish.Possession.obligatoryPossession
+  , ofFragment HindiUrdu.Possession.predicativeStrategy HindiUrdu.Possession.adnominalStrategy
+      HindiUrdu.Possession.possessiveClassification HindiUrdu.Possession.obligatoryPossession
+  , ofFragment Mandarin.Possession.predicativeStrategy Mandarin.Possession.adnominalStrategy
+      Mandarin.Possession.possessiveClassification Mandarin.Possession.obligatoryPossession
+  , ofFragment Finnish.Possession.predicativeStrategy Finnish.Possession.adnominalStrategy
+      Finnish.Possession.possessiveClassification Finnish.Possession.obligatoryPossession
+  , ofFragment Hungarian.Possession.predicativeStrategy Hungarian.Possession.adnominalStrategy
+      Hungarian.Possession.possessiveClassification Hungarian.Possession.obligatoryPossession
+  , ofFragment Irish.Possession.predicativeStrategy Irish.Possession.adnominalStrategy
+      Irish.Possession.possessiveClassification Irish.Possession.obligatoryPossession
+  , ofFragment Swahili.Possession.predicativeStrategy Swahili.Possession.adnominalStrategy
+      Swahili.Possession.possessiveClassification Swahili.Possession.obligatoryPossession
+  , ofFragment Korean.Possession.predicativeStrategy Korean.Possession.adnominalStrategy
+      Korean.Possession.possessiveClassification Korean.Possession.obligatoryPossession
+  , ofFragment Arabic.ModernStandard.Possession.predicativeStrategy
+      Arabic.ModernStandard.Possession.adnominalStrategy
+      Arabic.ModernStandard.Possession.possessiveClassification
+      Arabic.ModernStandard.Possession.obligatoryPossession
+  , ofFragment Quechua.Possession.predicativeStrategy Quechua.Possession.adnominalStrategy
+      Quechua.Possession.possessiveClassification Quechua.Possession.obligatoryPossession
+  , ofFragment Yoruba.Possession.predicativeStrategy Yoruba.Possession.adnominalStrategy
+      Yoruba.Possession.possessiveClassification Yoruba.Possession.obligatoryPossession
+  , ofFragment Georgian.Possession.predicativeStrategy Georgian.Possession.adnominalStrategy
+      Georgian.Possession.possessiveClassification Georgian.Possession.obligatoryPossession
+  , ofFragment Hawaiian.Possession.predicativeStrategy Hawaiian.Possession.adnominalStrategy
+      Hawaiian.Possession.possessiveClassification Hawaiian.Possession.obligatoryPossession
+  , ofFragment Fijian.Possession.predicativeStrategy Fijian.Possession.adnominalStrategy
+      Fijian.Possession.possessiveClassification Fijian.Possession.obligatoryPossession
+  , ofFragment Tsotsil.Possession.predicativeStrategy Tsotsil.Possession.adnominalStrategy
+      Tsotsil.Possession.possessiveClassification Tsotsil.Possession.obligatoryPossession
+  , ofFragment Tseltal.Possession.predicativeStrategy Tseltal.Possession.adnominalStrategy
+      Tseltal.Possession.possessiveClassification Tseltal.Possession.obligatoryPossession ]
 
 /-- Count of languages in the sample with a given predicative strategy. -/
-def countByPredicative (langs : List PossessionProfile)
-    (s : PredicativeStrategy) : Nat :=
+def countByPredicative (langs : List Lang) (s : PredicativeStrategy) : Nat :=
   (langs.filter (·.predicativeStrategy == s)).length
 
 /-- Count of languages in the sample with a given adnominal strategy. -/
-def countByAdnominal (langs : List PossessionProfile)
-    (s : AdnominalMarking) : Nat :=
+def countByAdnominal (langs : List Lang) (s : AdnominalMarking) : Nat :=
   (langs.filter (·.adnominalStrategy == s)).length
 
 -- ============================================================================
@@ -251,9 +287,11 @@ theorem locational_count :
     have possessive classification (two-way or three-or-more). Possessive
     classification is an areal feature of the Pacific: the
     alienable/inalienable distinction is nearly universal in Oceanic. -/
-def oceanicLanguages : List PossessionProfile :=
-  [ Hawaiian.Possession.possession
-  , Fijian.Possession.possession ]
+def oceanicLanguages : List Lang :=
+  [ ofFragment Hawaiian.Possession.predicativeStrategy Hawaiian.Possession.adnominalStrategy
+      Hawaiian.Possession.possessiveClassification Hawaiian.Possession.obligatoryPossession
+  , ofFragment Fijian.Possession.predicativeStrategy Fijian.Possession.adnominalStrategy
+      Fijian.Possession.possessiveClassification Fijian.Possession.obligatoryPossession ]
 
 theorem oceanic_have_classification :
     oceanicLanguages.all (·.hasClassification) = true := by

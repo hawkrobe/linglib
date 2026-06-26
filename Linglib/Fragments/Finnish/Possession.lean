@@ -18,8 +18,7 @@ of the Location Schema reaching Stage III: the adessive in possessive
 use is no longer interpreted as locative by speakers
 ([heine-1997] Overlap Model).
 
-PossessionProfile bundle for Finnish (ISO `fin`), per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
+Per-language possession defs for Finnish (ISO `fin`). Substrate enums live in
 `Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Finnish lives in `Studies/Heine1997.lean`.
 
@@ -99,11 +98,11 @@ def possSuffix : FiPossPerson → FiPossNumber → String
 -- §4. Adnominal Possession Marking
 -- ============================================================================
 
-/-- Finnish marks possession on the possessum (head-marking) via the
-    possessive suffixes above. It also uses the genitive case on the
-    possessor NP (dependent-marking), giving a double-marking pattern
-    in formal registers: `Matti-n kirja-nsa` 'Matti-GEN book-POSS.3'. -/
-def adnominalStrategy : AdnominalMarking := .doubleMarking
+/-- Adnominal genitive on the possessor (dependent-marking); the optional
+    possessive suffix on the head (`Matti-n kirja-nsa` 'Matti-GEN book-POSS.3')
+    adds a double-marking pattern in formal registers, but WALS codes Finnish
+    as dependent-marking. -/
+def adnominalStrategy : AdnominalMarking := .dependentMarking
 
 -- ============================================================================
 -- §5. Schema-Notion Correlations
@@ -123,21 +122,11 @@ theorem covers_all_notions :
     expressibleNotions.length = 7 := rfl
 
 -- ============================================================================
--- §6. Finnish Possession Profile (PossessionProfile bundle)
+-- §6. Remaining typological dimensions
 -- ============================================================================
 
-/-- Finnish possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Finnish"
-  , family := "Uralic"
-  , iso := "fin"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .locational
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := some .suffixes
-  , examples := ["minu-lla on kirja", "Matin kirja"]
-  , notes := "Adessive -lla for locational predicative possession; " ++
-             "genitive + optional possessive suffix on head" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def affixPosition : Option AffixPosition := some .suffixes
 
 end Finnish.Possession

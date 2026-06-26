@@ -6,10 +6,19 @@ import Linglib.Features.Possession
 [holton-mackridge-philippaki-warburton-spyropoulos-2012]
 [kampanarou-alexiadou-2026]
 
-`PossessionProfile` bundle for Standard Modern Greek (SMG; ISO `ell`), per
-the project's per-language data flows through Fragments rule. Substrate
-types live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
-consume this profile from `Studies/NicholsBickel2013.lean`.
+Per-language possession data for Standard Modern Greek (SMG; Indo-European;
+ISO `ell`), per the project's per-language data flows through Fragments
+rule, as bare field-by-field `def`s. Substrate types live in
+`Linglib/Features/Possession.lean`. Cross-linguistic theorems consume these
+values from `Studies/NicholsBickel2013.lean`.
+
+Examples: *to vivlio tu Jani* 'John's book' (inflectional GEN), *to pomolo
+apo tin porta* 'the door's handle' (apo-PP, part-whole), *to nero apo tin
+piji* 'the spring's water' (apo-PP, source), *exi pola vivlia* 'has many
+books' (predicative haveVerb). Inflectional genitive (head-suffix on
+possessor) is the broad-coverage strategy; the apo-PP alternates only in
+part-whole and source-like contexts and is degraded with animate
+possessors, pronouns, and proper names ([kampanarou-alexiadou-2026]).
 
 Greek is the canonical case of a language that **morphologically** has a
 single adnominal possession class (no alienable/inalienable split is marked
@@ -17,8 +26,8 @@ on the noun) yet **structurally** distinguishes the two via the position of
 the possessor (per [kampanarou-alexiadou-2026] §7, citing
 [alexiadou-2003]: inalienable possessors are introduced as complements
 of the possessee NP, alienable possessors in the specifier of a dedicated
-PossP). The structural distinction is not visible on `PossessionProfile`,
-which is a typological-surface bundle; it lives in
+PossP). The structural distinction is not visible in these
+typological-surface values; it lives in
 `Morphology/DM/NominalStructure.lean::PossessionType`.
 
 The `apo`-PP variant of the genitive (e.g., *to vivlio apo ton ðimarxo*
@@ -54,24 +63,10 @@ def genNotions : List Notion :=
 def apoNotions : List Notion :=
   [.inanimateInalienable, .inanimateAlienable]
 
-/-- Standard Modern Greek possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Greek"
-  , family := "Indo-European"
-  , iso := "ell"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := some .noAffix
-  , examples :=
-      [ "to vivlio tu Jani"        -- 'John's book' (inflectional GEN)
-      , "to pomolo apo tin porta"  -- 'the door's handle' (apo-PP, part-whole)
-      , "to nero apo tin piji"     -- 'the spring's water' (apo-PP, source)
-      , "exi pola vivlia"          -- 'has many books' (predicative haveVerb)
-      ]
-  , notes := "Inflectional genitive (head-suffix on possessor) is the broad-coverage strategy;\
- apo-PP alternates only in part-whole and source-like contexts and is degraded with animate possessors,\
- pronouns, and proper names (per Kampanarou & Alexiadou 2026)." }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .haveVerb
+def adnominalStrategy : AdnominalMarking := .dependentMarking
+def affixPosition : Option AffixPosition := some .noAffix
 
 end Greek.StandardModern.Possession

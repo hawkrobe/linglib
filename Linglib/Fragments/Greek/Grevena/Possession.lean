@@ -6,8 +6,16 @@ import Linglib.Features.Possession
 [michelioudakis-chatzikyriakidis-spathas-2024]
 [kampanarou-alexiadou-2026]
 
-`PossessionProfile` bundle for Grevena Greek (GG; Northern Greek dialect),
-the genitive-loss endpoint within the Modern Greek dialect continuum.
+Per-language possession data for Grevena Greek (GG; Northern Greek dialect;
+Indo-European; ISO `ell`, shared macro-language code with SMG), as bare
+field-by-field `def`s — the genitive-loss endpoint within the Modern Greek
+dialect continuum.
+
+Examples: *tu vivliu ap tun ðimarxu* 'the book of the mayor' (apo-PP, no GEN
+on noun), *i piriγrafi ap tun ðimarxu ap ta piðja* (iterated apo-PPs,
+impossible in SMG), *tu spiti m* 'my house' (cliticised pronoun retains
+GEN). Inflectional genitive lost on common nouns; apo-PPs cover all genitive
+functions and can stack, front, and sub-extract (cf. Romance de/di).
 
 ## What makes GG different from SMG
 
@@ -58,32 +66,19 @@ def apoNotions : List Notion :=
     coverage is the dialect's defining feature. -/
 def genNotions : List Notion := []
 
-/-- Grevena Greek possession profile.
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .haveVerb
 
-    `adnominalStrategy := .zeroMarking` reflects the loss of inflectional
-    GEN on common nouns; the `apo`-PP variant carries the load. The label
-    is approximate — `juxtaposition` is the closest WALS-mapped category
-    for "no morphological possessor marking on the noun, possession encoded
-    by phrasal means" — but the genuine analysis (per Michelioudakis et al.)
+/-- `.zeroMarking` reflects the loss of inflectional GEN on common nouns;
+    the `apo`-PP variant carries the load. The label is approximate —
+    `juxtaposition` is the closest WALS-mapped category for "no morphological
+    possessor marking on the noun, possession encoded by phrasal means" — but
+    the genuine analysis (per [michelioudakis-chatzikyriakidis-spathas-2024])
     is *reduced relative clause adjunction*, which the substrate doesn't
-    distinguish from juxtaposition. -/
-def possession : PossessionProfile :=
-  { language := "Grevena Greek"
-  , family := "Indo-European"
-  , iso := "ell"  -- shares macro-language code with SMG
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .zeroMarking
-  , affixPosition := some .noAffix
-  , examples :=
-      [ "tu vivliu ap tun ðimarxu"     -- 'the book of the mayor' (apo-PP, no GEN on noun)
-      , "i piriγrafi ap tun ðimarxu ap ta piðja"  -- iterated apo-PPs (impossible in SMG)
-      , "tu spiti m"                    -- 'my house' (cliticised pronoun retains GEN)
-      ]
-  , notes := "Inflectional genitive lost on common nouns; apo-PPs cover all genitive functions and\
- can stack, front, and sub-extract (cf. Romance de/di). Per Michelioudakis et al. 2024, GG apo-PPs\
- are reduced relative clauses — a structure SMG apo-PPs do NOT support (see Kampanarou & Alexiadou\
- 2026 §4)." }
+    distinguish from juxtaposition (a structure SMG apo-PPs do NOT support,
+    see [kampanarou-alexiadou-2026] §4). -/
+def adnominalStrategy : AdnominalMarking := .zeroMarking
+def affixPosition : Option AffixPosition := some .noAffix
 
 end Greek.Grevena.Possession
