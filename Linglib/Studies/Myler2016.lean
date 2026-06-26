@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Copula
+import Linglib.Syntax.Minimalist.Voice
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Semantics.ArgumentStructure.Relational
@@ -24,6 +24,73 @@ predictions and cross-linguistic data from [myler-2016].
 namespace Myler2016
 
 open Minimalist
+
+-- ════════════════════════════════════════════════════
+-- § 0. Copula substrate ([myler-2016]: the vacuous light verb)
+-- ════════════════════════════════════════════════════
+
+/-! Formerly `Syntax/Minimalist/Copula.lean`, dissolved into its single consumer
+(the rest of that file — `GratificationType`, `FreeHead`, `voiceAllosemeForComplement`,
+`haveThetaPrediction`, … — was dead). The copula `v` is a semantically vacuous light
+verb (⟦v⟧ = λx.x); its PF form is HAVE in a transitive-Voice environment, BE elsewhere
+(HAVE = BE + transitivity). -/
+
+/-- The surface realization of the copula, by Vocabulary Insertion. -/
+inductive CopulaForm where
+  | have | be
+  deriving DecidableEq, Repr
+
+/-- [myler-2016] (89): v ⇔ HAVE / ___Voice_{D},φ ; v ⇔ BE / elsewhere. The HAVE
+    environment is transitive Voice — `hasD` with a thematic, non-passive flavor. -/
+def copulaVI (voice : VoiceHead) : CopulaForm :=
+  if voice.hasD && voice.flavor != .nonThematic && voice.flavor != .passive
+  then .have else .be
+
+open Morphology.DM.VI in
+/-- The copula VI as competing `VocabItem`s (HAVE specificity 2, BE elsewhere). -/
+def copulaVIRules : List (VocabItem VoiceHead Unit) :=
+  [ { exponent := "have"
+    , contextMatch := λ v => v.hasD && v.flavor != .nonThematic && v.flavor != .passive
+    , specificity := 2 }
+  , { exponent := "be", contextMatch := λ _ => true, specificity := 0 } ]
+
+open Morphology.DM.VI in
+/-- The `VocabItem` formulation agrees with `copulaVI`. -/
+theorem copulaVI_agrees_vocabItem (v : VoiceHead) :
+    vocabularyInsertSimple copulaVIRules v =
+    some (if copulaVI v = .have then "have" else "be") := by
+  cases v with | mk flavor hasD _ checksCase features =>
+  cases flavor <;> cases hasD <;> cases checksCase <;>
+  simp [copulaVI, copulaVIRules, vocabularyInsertSimple, vocabularyInsert,
+    VocabItem.matches, List.mergeSort, List.findSome?]
+
+/-- HAVE ↔ Voice is transitive (external argument, not PF-only, not passive). -/
+theorem vi_characterization (v : VoiceHead) :
+    copulaVI v = .have ↔
+    (v.hasD = true ∧ v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive) := by
+  cases v with | mk flavor hasD _ checksCase _ =>
+  cases flavor <;> cases hasD <;> simp [copulaVI]
+
+/-- The complement type of a HAVE sentence ([myler-2016] §5). -/
+inductive HaveComplement where
+  | possessedDP | eventDP | saturatedEventiveVoiceP | stativeSC | freeP | modalBase
+  deriving DecidableEq, Repr
+
+/-- The reading of a HAVE sentence ([myler-2016] table (100)). -/
+inductive HaveReading where
+  | relational | lightVerb | engineer | causer | experiencerEventive
+  | experiencerStative | locative | temporaryPossession | modal
+  deriving DecidableEq, Repr
+
+/-- The predicted reading per complement type. The too-many-meanings puzzle is
+    that this is **injective** (`haveReading_injective`). -/
+def haveReading : HaveComplement → HaveReading
+  | .possessedDP             => .relational
+  | .eventDP                 => .lightVerb
+  | .saturatedEventiveVoiceP => .engineer
+  | .stativeSC               => .causer
+  | .freeP                   => .experiencerEventive
+  | .modalBase               => .modal
 
 -- ════════════════════════════════════════════════════
 -- § 1. Icelandic: Two HAVEs (§4.3)

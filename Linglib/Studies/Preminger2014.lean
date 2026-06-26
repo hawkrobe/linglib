@@ -1,6 +1,5 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Probe.Phi
-import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Studies.Halpert2012
@@ -108,12 +107,11 @@ gives five arguments against hierarchy accounts:
 
 - `Syntax/Minimalist/Phi/Geometry.lean` — `decomposePerson`,
   `probeVisible`, `probeResolutionRank`.
-- `Syntax/Minimalist/Probe/Basic.lean` — `Probe`, `Probe.Licensed`;
-  `Probe/Phi.lean` — `PLC`: the search-and-licensing layer the
-  derivations below consume.
-- `Syntax/Minimalist/ObligatoryOperations.lean` — the Ch. 5 model
-  (`AgreementModel`, `Probe.Outcome`, `PFRealization`), consumed
-  below for the failed-Agree theorems.
+- `Syntax/Minimalist/Probe/Basic.lean` — `Probe`, `Probe.Licensed`,
+  `Probe.outcome`/`Probe.Outcome` (the Ch. 5 valued/unvalued result of an
+  obligatory probe); `Probe/Phi.lean` — `PLC`: the search-and-licensing layer
+  the derivations below consume. Failed Agree = an `unvalued` probe outcome
+  that is *tolerated* (no crash) and spells out as the Elsewhere entry.
 - `Morphology/DM/VocabSimple.lean` — `Vocabulary`,
   `Agreement.Cell.toPhiFeatures`, `makePersonVocab`, `spellout`.
 - `Studies/Scott2023.lean` — the same DM/Agree machinery applied to
@@ -396,10 +394,6 @@ theorem failed_agree_tolerated :
     piOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     numOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
-    derivationConverges .obligatoryNocrash
-      (afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing)) = true ∧
-    (afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing)).pfRealization
-      = .elsewhere ∧
     spellout setBVocab ⊥ (some .T) = some "∅" ∧
     afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" := by
   decide

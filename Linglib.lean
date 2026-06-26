@@ -2150,7 +2150,6 @@ import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.PConstraint
-import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Filter
@@ -2191,7 +2190,6 @@ import Linglib.Syntax.Minimalist.RepOrder
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Syntax.Minimalist.SmallClause
-import Linglib.Syntax.Minimalist.Copula
 import Linglib.Syntax.Minimalist.Cascade
 import Linglib.Syntax.Minimalist.DegreeMovement
 import Linglib.Morphology.FragmentGrammars.CFGFragment
