@@ -1,4 +1,4 @@
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 import Linglib.Syntax.Voice.Basic
 
 /-!
@@ -65,9 +65,9 @@ def VerbForm.hasAFSuffix : VerbForm → Bool
 /-- An extraction datum: which argument is extracted and which verb form
     surfaces. -/
 structure ExtractionDatum where
-  extracted : Typology.ArgumentRole
+  extracted : Extraction.ArgumentRole
   verbForm : VerbForm
-  judgment : Typology.ExtractionMarkingStrategy
+  judgment : Extraction.ExtractionMarkingStrategy
   deriving Repr
 
 /-- Agent extraction (clause-local) requires AF. -/
@@ -106,14 +106,13 @@ def longDistanceAgentExtraction : ExtractionDatum :=
 -- § 3: Extraction Profile
 -- ============================================================================
 
-/-- Kaqchikel's extraction morphology profile: agent focus alternation.
-    Canonical name `extractionProfile` (uniform with Chol, Q'anjob'al). -/
-def extractionProfile : Typology.ExtractionProfile :=
-  { language := "Kaqchikel"
-  , strategy := .dedicatedMorpheme
-  , markedPositions := [.subject]
-  , distinguishesPosition := true
-  , notes := "AF (*-Vn*) obligatory for clause-local agent extraction; Erlewine 2016" }
+/-- Kaqchikel's extraction data: agent focus alternation
+    (`extractionStrategy = .dedicatedMorpheme`, marking subject extraction).
+    AF (*-Vn*) is obligatory for clause-local agent extraction
+    ([erlewine-2016]). -/
+def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
+def extractionDistinguishesPosition : Bool := true
 
 -- ============================================================================
 -- § 4: Mayan AF Typology ([erlewine-2016] §6.1)

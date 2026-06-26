@@ -384,12 +384,12 @@ theorem mayan_tada (lang : MayanLang) :
     transitives). The substantive claim lives at `extractionProfile`'s
     `markedPositions := [.subject]` field. -/
 theorem qanjobal_extraction_consistent :
-    Qanjobal.extractionProfile.Marks .subject := by decide
+    Extraction.Marks Qanjobal.extractionMarkedPositions .subject := by decide
 
 /-- Chol's extraction data is consistent: no Agent Focus morphology
     required (every argument extracts freely under the absent strategy). -/
 theorem chol_extraction_consistent :
-    Chol.extractionProfile.strategy = .unmarked := rfl
+    Chol.extractionStrategy = .unmarked := rfl
 
 /-- Q'anjob'al's AF form carries the intransitive status suffix, matching
     the prediction that AF Voice is non-phasal (intransitive v⁰). -/
@@ -459,7 +459,7 @@ structure MayanExtractionDatum where
 def tadasTable : List MayanExtractionDatum :=
   -- HIGH-ABS, +extraction asymmetries
   [ ⟨"Q'anjob'al",  Qanjobal.absPosition,
-      decide (Qanjobal.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Qanjobal.extractionMarkedPositions .subject)⟩
   , ⟨"Akatek",      .high, true⟩
   , ⟨"Popti'",      .high, true⟩
   , ⟨"Chuj",        .high, true⟩
@@ -468,14 +468,14 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Poqomchi'",   .high, true⟩
   , ⟨"Poqomam",     .high, true⟩
   , ⟨"K'ichee'",    Kiche.absPosition,
-      decide (Kiche.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Kiche.extractionMarkedPositions .subject)⟩
   , ⟨"Kaqchikel",   Kaqchikel.absPosition,
-      decide (Kaqchikel.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Kaqchikel.extractionMarkedPositions .subject)⟩
   , ⟨"Tz'utujil",   .high, true⟩
   , ⟨"Sakapultek",  .high, true⟩
   , ⟨"Sipakapense", .high, true⟩
   , ⟨"Mam",         Mam.absPosition,
-      decide (Mam.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Mam.extractionMarkedPositions .subject)⟩
   , ⟨"Awakatek",    .high, true⟩
   -- LOW-ABS, +extraction asymmetries (outliers)
   , ⟨"Yucatec",     .low,  true⟩
@@ -485,12 +485,12 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Mopan",       .low,  false⟩
   , ⟨"Itzaj",       .low,  false⟩
   , ⟨"Chol",        Chol.absPosition,
-      decide (Chol.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Chol.extractionMarkedPositions .subject)⟩
   , ⟨"Chontal",     .low,  false⟩
   , ⟨"Tseltal",     Tseltal.absPosition,
-      decide (Tseltal.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Tseltal.extractionMarkedPositions .subject)⟩
   , ⟨"Tsotsil",     Tsotsil.absPosition,
-      decide (Tsotsil.extractionProfile.Marks .subject)⟩
+      decide (Extraction.Marks Tsotsil.extractionMarkedPositions .subject)⟩
   , ⟨"Tojol-ab'al", .low,  false⟩ ]
 
 /-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/
@@ -841,7 +841,7 @@ theorem shared_phase_problem :
     asymmetries: agent extraction is blocked without AF in both. -/
 theorem both_have_extraction_asymmetries :
     Qanjobal.absPosition = .high ∧
-    Qanjobal.extractionProfile.Marks .subject ∧
+    Extraction.Marks Qanjobal.extractionMarkedPositions .subject ∧
     Kaqchikel.kaqAFType = .afLanguage := by
   refine ⟨rfl, ?_, rfl⟩
   decide

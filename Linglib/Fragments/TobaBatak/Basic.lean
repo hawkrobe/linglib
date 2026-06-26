@@ -1,4 +1,4 @@
-import Linglib.Typology.Extraction
+import Linglib.Syntax.Extraction
 import Linglib.Syntax.Voice.Basic
 
 /-!
@@ -44,7 +44,7 @@ inductive Voice where
   deriving Repr, DecidableEq
 
 /-- Which argument role is the pivot for a given voice? -/
-def Voice.pivotRole : Voice → Typology.ArgumentRole
+def Voice.pivotRole : Voice → Extraction.ArgumentRole
   | .av => .agent
   | .ov => .patient
 
@@ -67,7 +67,7 @@ structure ExtractionDatum where
   /-- Which voice the clause is in -/
   voice : Voice
   /-- What is being extracted (DP argument or adjunct) -/
-  extracted : Typology.Extractee
+  extracted : Extraction.Extractee
   /-- Whether the extraction is grammatical -/
   judgment : ExtractionJudgment
   /-- Description -/
@@ -135,18 +135,16 @@ def extractionData : List ExtractionDatum :=
 -- § 5: Extraction Profile
 -- ============================================================================
 
-/-- Toba Batak extraction profile: structural restriction (pivot-only). -/
-def tbExtractionProfile : Typology.ExtractionProfile :=
-  { language := "Toba Batak"
-    strategy := .voiceAlternation
-    markedPositions := [.subject]
-    distinguishesPosition := true
-    notes := "Only the pivot (= surface subject) can be extracted; " ++
-             "voice alternation (AV/OV) determines which thematic " ++
-             "role occupies the pivot, but the extractable structural " ++
-             "position is always subject. Restriction derived from " ++
-             "predicate fronting + nominal licensing: non-pivot DPs " ++
-             "in Spec,CP lack a Case licensor ([erlewine-2018], §4)" }
+/-- Toba Batak extraction strategy: structural restriction (pivot-only).
+
+    Language: "Toba Batak". Notes: Only the pivot (= surface subject) can be
+    extracted; voice alternation (AV/OV) determines which thematic role
+    occupies the pivot, but the extractable structural position is always
+    subject. Restriction derived from predicate fronting + nominal licensing:
+    non-pivot DPs in Spec,CP lack a Case licensor ([erlewine-2018], §4). -/
+def tbExtractionStrategy : Extraction.ExtractionMarkingStrategy := .voiceAlternation
+def tbExtractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
+def tbExtractionDistinguishesPosition : Bool := true
 
 -- ============================================================================
 -- § 6: Voice System

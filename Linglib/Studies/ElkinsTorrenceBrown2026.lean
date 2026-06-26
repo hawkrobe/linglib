@@ -66,8 +66,8 @@ open Mam Kiche
 
 /-- Both Mam and K'ichean use dedicated morphemes for oblique extraction. -/
 theorem both_mark_oblique :
-    mamExtractionProfile.strategy = .dedicatedMorpheme ∧
-    kicheanExtractionProfile.strategy = .dedicatedMorpheme := ⟨rfl, rfl⟩
+    mamExtractionStrategy = .dedicatedMorpheme ∧
+    kicheanExtractionStrategy = .dedicatedMorpheme := ⟨rfl, rfl⟩
 
 /-- Both exempt temporal obliques from extraction marking. -/
 theorem both_exempt_temporal :
