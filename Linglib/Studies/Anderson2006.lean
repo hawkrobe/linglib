@@ -1,4 +1,6 @@
-import Linglib.Typology.AuxiliaryVerbs
+import Linglib.Syntax.AuxiliaryVerbs
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+import Linglib.Morphology.MorphRule
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
@@ -98,8 +100,20 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
 
 namespace Anderson2006
 
-open Typology.AuxiliaryVerbs
+open AuxiliaryVerbs
+open Semantics.ArgumentStructure.AuxiliarySelection
 open Typology.Negation (NegStrategy)
+
+/-- A cross-linguistic AVC datum. Study-local: the `AuxiliaryVerbs` substrate
+    classifies over `InflPattern`; this paper's per-language rows bundle the
+    form/distribution/gloss with it. -/
+structure AVCDatum where
+  language : String
+  form : String
+  inflPattern : InflPattern
+  distribution : Option Morphology.InflDistribution := none
+  gloss : String := ""
+  deriving Repr, BEq
 
 /-! ## Per-language AVC data
 

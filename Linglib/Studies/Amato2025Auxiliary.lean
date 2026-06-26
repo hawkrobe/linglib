@@ -1,4 +1,4 @@
-import Linglib.Typology.AuxiliaryVerbs
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Studies.Amato2025.NestedAgree
 
@@ -63,7 +63,7 @@ The cyclic-Agree person-feature analysis adopted here originates in
 
 namespace Amato2025Auxiliary
 
-open Typology.AuxiliaryVerbs
+open Semantics.ArgumentStructure.AuxiliarySelection
 open Olivier2026Auxiliary
 open Minimalist
 open Amato2025.NestedAgree

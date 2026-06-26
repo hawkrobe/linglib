@@ -6,7 +6,7 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Typology.AuxiliaryVerbs
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # Quotative Inversion as Smuggling
@@ -42,7 +42,7 @@ namespace Storment2026
 open Semantics.Lexical
 open English.Predicates.Verbal
 open Data.Examples
-open Typology.AuxiliaryVerbs (TransitivityClass canonicalSelection)
+open Semantics.ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
 open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
 
 /-! ## §1 + §2. Lexical annotations and QI data

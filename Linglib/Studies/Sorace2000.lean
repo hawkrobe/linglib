@@ -1,4 +1,4 @@
-import Linglib.Typology.AuxiliaryVerbs
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Features.Aktionsart
 
 /-!
@@ -6,7 +6,7 @@ import Linglib.Features.Aktionsart
 [sorace-2000]
 
 Connects the auxiliary selection substrate in
-`Typology.AuxiliaryVerbs` to Vendler's aspectual
+`AuxiliarySelection` to Vendler's aspectual
 classification from `Features.Aktionsart`.
 
 ## Known gaps
@@ -24,7 +24,7 @@ classification from `Features.Aktionsart`.
 namespace Sorace2000
 
 open Features
-open Typology.AuxiliaryVerbs
+open Semantics.ArgumentStructure.AuxiliarySelection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to
     unaccusativity: canonical achievements are change-of-state verbs whose

@@ -2,6 +2,7 @@ import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Studies.Olivier2026Auxiliary
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # [olivier-2026] — clitic-typology asymmetry
@@ -68,7 +69,7 @@ namespace Olivier2026
 open Olivier2026Auxiliary
   (RestructuringClause AuxiliarySwitchOccurs predictedMatrixAux
    beWantReflexiveClimbed)
-open Typology.AuxiliaryVerbs (TransitivityClass PerfectAux SelectsBe)
+open Semantics.ArgumentStructure.AuxiliarySelection (TransitivityClass PerfectAux SelectsBe)
 
 /-! ## Clitic types
 
@@ -116,7 +117,7 @@ def CliticType.boundByEAviaVoiceStar : CliticType → Bool
     transitive embedded verbs.
 
     This is the projection from clitic-type taxonomy to the
-    `Typology.AuxiliaryVerbs.TransitivityClass` enum
+    `Semantics.ArgumentStructure.AuxiliarySelection.TransitivityClass` enum
     used by the AuxVerbs sibling's AS predicate. -/
 def CliticType.embeddedClassOnClimbing : CliticType → TransitivityClass
   | .reflexive => .reflexive
@@ -160,8 +161,8 @@ theorem triggersAS_iff_boundByEAviaVoiceStar (c : CliticType) :
           CliticType.boundByEAviaVoiceStar,
           CliticType.embeddedClassOnClimbing,
           AuxiliarySwitchOccurs, SelectsBe,
-          Typology.AuxiliaryVerbs.canonicalSelection,
-          Typology.AuxiliaryVerbs.selection]
+          Semantics.ArgumentStructure.AuxiliarySelection.canonicalSelection,
+          Semantics.ArgumentStructure.AuxiliarySelection.selection]
 
 /-! ### Per-clitic-type smoke checks
 
