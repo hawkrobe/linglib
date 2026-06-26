@@ -69,7 +69,7 @@ set_option autoImplicit false
 namespace Blutner2000
 
 open Core.Optimization.Evaluation
-open Constraint Pragmatics.Bidirectional
+open Pragmatics.Bidirectional
 
 -- ============================================================================
 -- § 1: Projection Sites

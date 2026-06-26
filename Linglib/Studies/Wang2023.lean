@@ -1,6 +1,6 @@
 import Linglib.Features.ContainmentPair
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Syntax.Minimalist.Features
@@ -58,7 +58,7 @@ set_option autoImplicit false
 namespace Wang2023
 
 open Features (ContainmentPair ContainmentPairLike)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
   presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
 
@@ -465,8 +465,8 @@ it holds for arbitrary candidate sets. The proof is purely algebraic:
 
 section GeneralTheorem
 
-open Constraint OptimalityTheory
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
+open Constraints OptimalityTheory
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.

@@ -1,5 +1,4 @@
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Rat.Cast.Order
 
@@ -23,10 +22,7 @@ modules in `Core.Optimization.*` consume them; framework-specific wrappers
 (MaxEnt, NHG, ...) live in their respective theory directories.
 -/
 
-namespace Constraint
-
-
-open Constraint OptimalityTheory
+namespace Constraints
 
 -- ============================================================================
 -- § 1: Weighted Constraints
@@ -117,4 +113,4 @@ theorem harmonyScoreR_lt_of_dominates {C : Type*}
     harmonyScoreR constraints b < harmonyScoreR constraints a :=
   (harmonyScoreR_lt_iff_harmonyScore_lt _ _ _).mpr h
 
-end Constraint
+end Constraints

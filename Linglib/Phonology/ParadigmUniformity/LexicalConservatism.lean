@@ -55,7 +55,7 @@ without auxiliary stipulation; LC handles it by paradigm membership.
 
 namespace OptimalityTheory.ParadigmUniformity
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open OptimalityTheory.Correspondence (Corr)
 
 -- ============================================================================

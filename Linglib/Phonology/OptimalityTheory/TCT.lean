@@ -1,6 +1,6 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Transderivational Correspondence Theory (TCT)
@@ -61,7 +61,7 @@ within-paradigm OO-Faith) lives in
 namespace OptimalityTheory.TCT
 
 open OptimalityTheory.Correspondence (Corr)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: TCT Roles

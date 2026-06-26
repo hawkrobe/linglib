@@ -671,7 +671,7 @@ Two demonstrations:
    doing real work — without \*Misalignment dominating, the spreading
    candidate would win on template-satisfaction grounds. -/
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 /-- The √klj candidate set: the spreading attempt and the empty-slot
     actual surface form. Built as the `RootTemplateMatch` values from

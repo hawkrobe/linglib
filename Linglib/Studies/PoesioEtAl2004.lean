@@ -104,7 +104,7 @@ type-changing axes, not the bookkeeping ones" recommendation.
   `HasDerivAt`/`HasFDerivAt`/`lineDeriv` as separate definitions
   with cross-implications, not a `DerivativeConfig` bundling them.)
 
-- **The OT-bridge to `Constraint.Tableau.optimal`** per
+- **The OT-bridge to `OptimalityTheory.Tableau.optimal`** per
   Beaver 2004. PSDH §3.1 fn 12 endorse Beaver's OT reformulation
   of Centering, but the bridge theorem belongs in
   `Studies/Beaver2004.lean` (queued as a

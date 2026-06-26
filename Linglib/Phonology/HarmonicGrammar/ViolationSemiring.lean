@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Aliases
+import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Mathlib.Algebra.Tropical.Basic
 
@@ -45,8 +45,7 @@ an optimal input–output mapping is itself an optimal mapping."
 namespace HarmonicGrammar.ViolationSemiring
 
 
-open Core.Optimization.Evaluation Constraint
-open Constraint OptimalityTheory
+open Core.Optimization.Evaluation Constraints
 
 -- ============================================================================
 -- § 1: The Violation Semiring V
@@ -71,15 +70,6 @@ noncomputable instance (n : Nat) : CommSemiring (VS n) := inferInstance
 -- § 2: Monotonicity — Dijkstra's Principle
 -- ============================================================================
 
-/-- The zero-violations profile is the bottom element: no violations
-    is at least as harmonic as any profile.
-
-    Proof: `a < 0` would require `a i < 0` for some `i`, which is
-    impossible since `a i : Nat`. So `¬(a < 0)`, hence `0 ≤ a`. -/
-theorem ViolationProfile.zero_le (n : Nat) (a : ViolationProfile n) :
-    (0 : ViolationProfile n) ≤ a :=
-  not_lt.mp fun ⟨_, _, hi⟩ => absurd hi (Nat.not_lt_zero _)
-
 /-- **Dijkstra's principle** for violation profiles
     ([riggle-2009] §4, [dijkstra-1959]):
     merging violations can only make things worse (or keep them equal).
@@ -93,7 +83,7 @@ theorem ViolationProfile.zero_le (n : Nat) (a : ViolationProfile n) :
     input–output mapping is itself an optimal mapping." -/
 theorem merge_monotone (n : Nat) (a b : ViolationProfile n) :
     a ≤ a + b :=
-  le_add_of_nonneg_right (ViolationProfile.zero_le n b)
+  le_add_of_nonneg_right (ViolationProfile.zero_le b)
 
 /-- The ⊗ (min) operation is idempotent: A ⊗ A = A. This is a direct
     consequence of `LinearOrder` and is the property Riggle identifies

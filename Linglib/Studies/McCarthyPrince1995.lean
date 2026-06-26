@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Akan.Phonology
@@ -38,7 +38,7 @@ three core constraints can produce it. We prove this as
 
 namespace McCarthyPrince1995
 
-open Core.Optimization Constraint OptimalityTheory
+open Core.Optimization Constraints OptimalityTheory
 open OptimalityTheory
 
 -- ============================================================================
@@ -756,7 +756,7 @@ For these deterministic OT analyses, the unique-winner pattern collapses
 the `argminDecoder` distribution to probability 1 on the winner. -/
 
 section PredictAPI
-open Core.Optimization Constraint
+open Core.Optimization Constraints
 
 /-- Javanese overapplication tableau as a generic `ConstraintSystem`. -/
 noncomputable def javaneseSystem : ConstraintSystem JavaneseCand (LexProfile Nat 3) :=

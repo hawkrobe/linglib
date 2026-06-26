@@ -2,8 +2,8 @@ import Linglib.Semantics.Gradability.Antonymy
 import Linglib.Semantics.Gradability.AntonymPrediction
 import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Data.Examples.TesslerFranke2019
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Pragmatics.Superoptimal
 
 /-!
@@ -75,7 +75,7 @@ open Data.Examples
 open Features (NegationType)
 open Pragmatics.Bidirectional (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ════════════════════════════════════════════════════
 -- § 1. Quadruplet: The Central Data Structure

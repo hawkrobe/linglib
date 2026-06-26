@@ -1,5 +1,4 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Aliases
 import Mathlib.Order.FixedPoints
 import Mathlib.Order.Preorder.Finite
 /-!

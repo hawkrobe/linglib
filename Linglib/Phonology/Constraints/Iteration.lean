@@ -42,7 +42,7 @@ the iteration loop — see
 `Phonology/OptimalityTheory/Stratal.lean`.)
 -/
 
-namespace Constraint
+namespace Constraints
 
 
 variable {C : Type*}
@@ -252,4 +252,4 @@ theorem iterateGen_eventually_constant [DecidableEq C]
                 iterateGen_succ_of_step _ hcv hp,
                 IH' n hn']
 
-end Constraint
+end Constraints

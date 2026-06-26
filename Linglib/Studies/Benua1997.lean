@@ -3,8 +3,8 @@ import Linglib.Phonology.OptimalityTheory.TCT
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.OptimalityTheory.StratalCorr
 import Linglib.Phonology.ParadigmUniformity.Transderivational
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Benua 1997 — Misapplication Unification
@@ -68,7 +68,7 @@ open OptimalityTheory.Correspondence (Corr)
 open OptimalityTheory.TCT (Role TetruSchema)
 open OptimalityTheory.ParadigmUniformity.Transderivational
   (diagramWithEdge identOOViol)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Shared Segmental Inventory

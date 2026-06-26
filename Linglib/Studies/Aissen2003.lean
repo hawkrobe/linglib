@@ -41,7 +41,7 @@ to a possible OT grammar.
 namespace Aissen2003
 
 open Features.Prominence
-open Constraint OptimalityTheory OptimalityTheory
+open Constraints OptimalityTheory OptimalityTheory
 
 open Core.Optimization.Evaluation (Finset.checkAll Finset.checkAny)
 

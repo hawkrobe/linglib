@@ -1,6 +1,6 @@
-import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraints.Weighted
 import Linglib.Core.Optimization.Decoder
-import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.Constraints.System
 import Linglib.Core.Probability.CoupledEvaluation
 
 /-!
@@ -25,7 +25,7 @@ candidates by weighted constraint violations.
 ## Architecture
 
 - `MaxEntGrammar` packages inputs, candidate generation, and weighted constraints
-  (`WeightedConstraint` and `harmonyScore` come from `Constraint.Weighted`)
+  (`WeightedConstraint` and `harmonyScore` come from `Constraints.Weighted`)
 - `SystemicConstraint` evaluates *tuples* of outputs (different type signature)
 - `jointHarmonyScore` combines classical + systemic scores over the product space
 - `marginalProb` marginalizes the joint to recover individual mapping probabilities
@@ -43,7 +43,7 @@ namespace HarmonicGrammar
 open Core.Optimization
 
 
-open Constraint OptimalityTheory Core
+open Constraints Core
 
 -- ============================================================================
 -- § 1: MaxEnt Grammar (Classical — Individual Mappings)

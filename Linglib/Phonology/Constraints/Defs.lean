@@ -1,29 +1,26 @@
-import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Aliases
 import Mathlib.Computability.Language
 
 /-!
-# Optimality Theory — Core Vocabulary
+# Named Constraints
 
-OT-specific vocabulary layered on `Core.Optimization.Evaluation`. Provides
-named constraints with a faithfulness/markedness distinction, convenience
-constructors for building tableaux from ranked constraint lists, and factorial
-typology computation.
+The framework-neutral constraint vocabulary shared by Optimality Theory and
+Harmonic Grammar: a `NamedConstraint` is a violation-counting function with a
+faithfulness/markedness label.
 
-## Connection to Evaluation
+## Main definitions
 
-`Core.Optimization.Evaluation` provides the generic engine (`LexLE`, `Tableau`,
-`Tableau.optimal`). This module adds OT-specific structure: constraint
-families, named constraints, `mkTableau` for building tableaux from ranked
-constraint lists, and factorial typology computation.
+* `ConstraintFamily` — the faithfulness/markedness distinction.
+* `NamedConstraint` — a named violation-counting constraint over candidates.
+* `mkMark` / `mkFaith` / `mkMarkGrad` / `mkFaithGrad` — constraint constructors.
+* `NamedConstraint.comap` — pull a constraint back along a candidate map.
+* `NamedConstraint.zeroSet` — the zero-violation language of a constraint.
+
+The tableau/violation-profile vocabulary built on these lives in
+`Constraints.Profile`; the lexicographic tableau machinery proper lives in
+`OptimalityTheory`.
 -/
 
-namespace Constraint
-
-
-open Core.Optimization.Evaluation
-
--- ============================================================================
+namespace Constraints
 
 /-- Constraint families in OT. -/
 inductive ConstraintFamily where
@@ -106,26 +103,4 @@ lemma NamedConstraint.mem_zeroSet {α : Type*}
     (c : NamedConstraint (List α)) (w : List α) :
     w ∈ c.zeroSet ↔ c.eval w = 0 := Iff.rfl
 
--- ============================================================================
--- § 2: Tableau Construction
--- ============================================================================
-
-/-- Build a `ViolationProfile ranking.length` from a ranked list of named
-    constraints. This is the fixed-length analog of the profile computation
-    inside `mkTableau` — use it to inspect or compare violation counts
-    outside a tableau context. -/
-def mkProfile {C : Type*} (ranking : List (NamedConstraint C)) (c : C)
-    : ViolationProfile ranking.length :=
-  buildViolationProfile (fun i c => (ranking.get i).eval c) c
-
-/-- Create a `ViolationProfile n` from a `List Nat` literal.
-
-    The length proof defaults to `by decide`, so study files can write
-    readable profile comparisons without an explicit proof:
-    ```
-    theorem t24a_profile : mkProfile ranking c = vpOfList [2, 2, 0] := by decide
-    ``` -/
-def vpOfList {n : Nat} (vs : List Nat) (h : vs.length = n := by decide)
-    : ViolationProfile n :=
-  toLex fun (i : Fin n) => vs.get ⟨i.val, by omega⟩
-end Constraint
+end Constraints
