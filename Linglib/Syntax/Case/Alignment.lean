@@ -15,9 +15,9 @@ The SAP-indexed counterpart to `Syntax/Case/Dependent.lean`'s
 configural algorithm. Each `Alignment.X.assignCase` is a function from
 `Features.Prominence.ArgumentRole` to `Case` capturing the canonical
 case pattern of alignment type X. The configural derivations in
-`Dependent.lean` (Marantz/Baker) and the typology classifier in
-`Linglib/Typology/Alignment.lean` (WALS-style observation) are checked
-against the functions here as ground truth.
+`Dependent.lean` (Marantz/Baker) and the observational `AlignmentType` enum
+(WALS-style classification, below) are checked against the case-assignment
+functions here as ground truth.
 
 ## Coverage
 
@@ -234,7 +234,7 @@ theorem assignCase_partitions :
 
 /-- The horizontal partition `{A,P}|{S}` (A and P align, S apart — attested,
     Pamir-type) is a genuine partition of {S, A, P} realized by **none** of the
-    `assignCase` functions here. (It is also absent from `Typology.AlignmentType`.) -/
+    `assignCase` functions here. (It is also absent from `AlignmentType`.) -/
 theorem horizontal_unrealized :
     ConsistentSig (false, false, true) = true ∧
     coreSig nominativeAccusative.assignCase ≠ (false, false, true) ∧
@@ -283,5 +283,96 @@ structure DitransitiveProfile where
   alignment : DitransitiveAlignment
   notes : String := ""
   deriving Repr, DecidableEq
+
+/-! ### Observational alignment type (WALS Chs 98/99/100)
+
+The 5-way WALS classification ([comrie-2013]) of how a language groups S/A/P.
+The case-assignment functions above are the kernel; this enum is the
+observational label, grounded in the partition `coreSig` induces by
+`partitionSig_grounded`. -/
+
+/-- Morphosyntactic alignment type: five categories classifying how a language
+    groups the three core grammatical relations S, A, P. -/
+inductive AlignmentType where
+  /-- S = A = P: no morphological distinction (e.g. Mandarin, Thai). -/
+  | neutral
+  /-- S = A ≠ P: subject + agent grouped, patient distinct (most common). -/
+  | accusative
+  /-- S = P ≠ A: absolutive grouping, agent distinct (e.g. Basque). -/
+  | ergative
+  /-- S ≠ A ≠ P: all three distinctly marked (rare; Nez Perce). -/
+  | tripartite
+  /-- Active / split-S: S splits into agent-like and patient-like. -/
+  | active
+  deriving DecidableEq, BEq, Repr
+
+instance : Inhabited AlignmentType := ⟨.neutral⟩
+
+/-- Whether this alignment marks the agent (A) distinctly from S. -/
+def AlignmentType.marksAgent (a : AlignmentType) : Prop := a = .ergative ∨ a = .tripartite
+
+instance (a : AlignmentType) : Decidable a.marksAgent := by
+  unfold AlignmentType.marksAgent; infer_instance
+
+/-- Whether this alignment marks the patient (P) distinctly from S. -/
+def AlignmentType.marksPatient (a : AlignmentType) : Prop := a = .accusative ∨ a = .tripartite
+
+instance (a : AlignmentType) : Decidable a.marksPatient := by
+  unfold AlignmentType.marksPatient; infer_instance
+
+/-! ### Split ergativity [blake-1994] [dixon-1994]
+
+A `SplitErgativity Factor` is parameterised by the conditioning factor (aspect,
+person, animacy, …); `alignment` projects to the ergative or accusative family.
+The Hindi aspect-conditioned split (`hindiSplit`) is the canonical worked
+example, used as the cross-linguistic reference point by the Yukatek/Hindi
+fragments and the Mayan/Silverstein studies. -/
+
+open Features (AlignmentFamily)
+
+/-- A split-ergative system ([blake-1994], [dixon-1994]): alignment varies by
+    some conditioning factor. -/
+structure SplitErgativity (Factor : Type) where
+  ergCondition : Factor → Bool
+
+def SplitErgativity.alignment {Factor : Type} (split : SplitErgativity Factor)
+    (f : Factor) : AlignmentFamily :=
+  if split.ergCondition f then .ergative else .accusative
+
+inductive Aspect where
+  | perfective
+  | imperfective
+  deriving DecidableEq, Repr
+
+/-- The canonical aspect-conditioned split: perfective ⇒ ergative, imperfective
+    ⇒ accusative (Hindi-Urdu). The reference instance other aspect-split
+    languages are compared against. -/
+def hindiSplit : SplitErgativity Aspect :=
+  { ergCondition := fun a => a == .perfective }
+
+theorem hindi_perfective_erg : hindiSplit.alignment .perfective = .ergative := rfl
+
+theorem hindi_imperfective_acc : hindiSplit.alignment .imperfective = .accusative := rfl
+
+/-! ### Grounding the enum in the partition object -/
+
+/-- `AlignmentType` as the core-role signature `(S≈A, S≈P, A≈P)` of the partition
+    it denotes (`coreSig` vocabulary). `active` is **not** a partition of {S,A,P}
+    — it splits S — so it has no signature (`none`). -/
+def AlignmentType.partitionSig : AlignmentType → Option (Bool × Bool × Bool)
+  | .neutral    => some (true, true, true)
+  | .accusative => some (true, false, false)
+  | .ergative   => some (false, true, false)
+  | .tripartite => some (false, false, false)
+  | .active     => none
+
+/-- The four partition-denoting `AlignmentType`s agree with the partitions the
+    corresponding `assignCase` functions induce — grounding the enum in the
+    kernel object rather than maintaining it independently. -/
+theorem partitionSig_grounded :
+    AlignmentType.accusative.partitionSig = some (coreSig nominativeAccusative.assignCase) ∧
+    AlignmentType.ergative.partitionSig = some (coreSig ergative.assignCase) ∧
+    AlignmentType.tripartite.partitionSig = some (coreSig tripartite.assignCase) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Alignment
