@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Modification
+import Linglib.Syntax.Agreement.AdjAgreement
 import Linglib.Fragments.Greek.Case
 
 /-!
@@ -17,20 +17,20 @@ and agreement covers all φ/κ-features in the DP.
 
 namespace Greek.StandardModern.AdjAgreement
 
-open Minimalist.Modification
+open Agreement
 
 /-- φ-features realized on Greek adjectives: number and gender. -/
-private def phiFeatures : List MAGFeatureType :=
-  [ .phi (.number .plural), .phi (.number .singular)
-  , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2) ]
+private def phiFeatures : List AgrFeature :=
+  [ .number .plural, .number .singular
+  , .gender 0, .gender 1, .gender 2 ]
 
 /-- κ-features realized on Greek adjectives: full 3-case system
     (nom, acc, gen — matching `Case.caseInventory`). -/
-private def kappaFeatures : List MAGFeatureType :=
+private def kappaFeatures : List AgrFeature :=
   [.kappa .nom, .kappa .acc, .kappa .gen]
 
 /-- All φ/κ-features present in the Greek DP. -/
-def dpFeatures : List MAGFeatureType := phiFeatures ++ kappaFeatures
+def dpFeatures : List AgrFeature := phiFeatures ++ kappaFeatures
 
 /-- Greek adjective agreement entry: identical pred and attr features,
     covering all DP features. -/

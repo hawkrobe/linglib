@@ -345,6 +345,7 @@ import Linglib.Typology.Alignment
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
 import Linglib.Typology.Comparison
+import Linglib.Syntax.Agreement.AdjAgreement
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Syntax.Agreement.Paradigm
@@ -2174,7 +2175,6 @@ import Linglib.Studies.Ochs1992
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Economy
-import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm

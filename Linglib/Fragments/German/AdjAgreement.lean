@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Modification
+import Linglib.Syntax.Agreement.AdjAgreement
 
 /-!
 # German Adjective Agreement
@@ -17,19 +17,19 @@ spellout of Attr), so the ICP forces adjacency.
 
 namespace German.AdjAgreement
 
-open Minimalist.Modification
+open Agreement
 
 /-- German predicative adjectives carry NO agreement features (bare). -/
-def predFeatures : List MAGFeatureType := []
+def predFeatures : List AgrFeature := []
 
 /-- German attributive adjectives carry φ + κ (strong endings). -/
-def attrFeatures : List MAGFeatureType :=
-  [ .phi (.number .plural), .phi (.number .singular)
-  , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2)
+def attrFeatures : List AgrFeature :=
+  [ .number .plural, .number .singular
+  , .gender 0, .gender 1, .gender 2
   , .kappa .nom, .kappa .acc, .kappa .dat, .kappa .gen ]
 
 /-- All φ/κ-features available in the German DP. -/
-def dpFeatures : List MAGFeatureType := attrFeatures
+def dpFeatures : List AgrFeature := attrFeatures
 
 def entry : AdjAgreementEntry where
   predFeatures := predFeatures
