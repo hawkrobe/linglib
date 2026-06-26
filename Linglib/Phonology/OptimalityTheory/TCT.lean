@@ -199,13 +199,4 @@ theorem TetruSchema.misapplication_wins {C : Type} (s : TetruSchema C)
     s.ooIdent.eval misapplied < s.ooIdent.eval canonical :=
   ⟨hM1, hOO⟩
 
-/-- Symmetric form: when two candidates tie on M₁, OO-Ident is the
-    deciding constraint. The OO-Ident-better candidate has strictly
-    fewer violations at the second-highest-ranked position. -/
-theorem TetruSchema.oo_decides_when_m1_ties {C : Type} (s : TetruSchema C)
-    (cand₁ cand₂ : C)
-    (_hM1 : s.m1.eval cand₁ = s.m1.eval cand₂)
-    (hOO : s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂) :
-    s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂ := hOO
-
 end OptimalityTheory.TCT
