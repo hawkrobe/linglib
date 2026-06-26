@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Imbabura Quechua Negation Fragment
@@ -28,7 +28,7 @@ asymmetry).
 
 namespace Quechua.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *mana* — Imbabura Quechua's standard preverbal negation particle.
     The load-bearing element of the negation construction; the *-chu*
@@ -101,7 +101,7 @@ theorem asymmetric_iff_chu :
   decide
 
 /-- Quechua (Imbabura) negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Quechua (Imbabura)"
   , iso := "qvi"
   , morphemeType := .particle

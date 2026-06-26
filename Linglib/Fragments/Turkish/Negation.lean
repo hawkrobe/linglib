@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Turkish Negation Fragment
@@ -28,7 +28,7 @@ marker appears, not just insertion of the negative morpheme.
 
 namespace Turkish.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *-mA-* — Turkish's negative verbal suffix (underlying form).
     Surfaces as *-ma-* (back-vowel stems) or *-me-* (front-vowel stems)
@@ -96,7 +96,7 @@ theorem aorist_asymmetric :
   exact ⟨by decide, rfl⟩
 
 /-- Turkish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Turkish"
   , iso := "tur"
   , morphemeType := .affix

@@ -74,7 +74,7 @@ and `Studies/Miestamo2005.lean` (Ch 113-115 grounding).
 
 set_option autoImplicit false
 
-namespace Typology.Negation
+namespace Syntax.Negation
 
 /-! ### Substrate enums -/
 
@@ -482,4 +482,4 @@ def NegStrategy.toNegMorphemeType : NegStrategy → NegMorphemeType
   | .negAffix    => .affix
   | .negParticle => .particle
 
-end Typology.Negation
+end Syntax.Negation

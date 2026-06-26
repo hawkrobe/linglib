@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 import Linglib.Data.WALS.Features.F113A
 import Linglib.Data.WALS.Features.F114A
 import Linglib.Data.WALS.Features.F115A
@@ -71,7 +71,7 @@ different numbers; those are captured separately via `Data.WALS.F113A`.
 
 namespace Miestamo2005
 
-open Typology.Negation
+open Syntax.Negation
   (NegSymmetry AsymmetrySubtype NegMorphemeType NegationProfile)
 
 -- ============================================================================
@@ -1009,7 +1009,7 @@ end Universals
 
 section NegAuxBridge
 
-open Typology.Negation (NegStrategy)
+open Syntax.Negation (NegStrategy)
 
 /-- The NegStrategy→NegMorphemeType mapping is consistent with Finnish's
     classification: the auxiliary literature's negVerb strategy and this

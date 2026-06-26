@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation.ExpletiveNegation
+import Linglib.Semantics.Negation.Expletive
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Mathlib.Order.Monotone.Basic
 
@@ -14,14 +14,14 @@ coherent architecture with three layers:
    (weak DE / anti-additive / anti-morphic) determines the polarity licensing
    profile, connecting the `Prop`-based semantic properties in
    `Entailment` to the `Bool`-valued empirical classification
-   in `Typology.Negation`
+   in `Semantics.Negation`
 3. **Scoped vs unscoped negation** — a negation operator that retains scope
    into a domain preserves its semantic properties; when scope is blocked
    (e.g., by phase transfer), it loses antitonicity and hence licensing ability
 
 ## Dependencies
 
-- `Typology.Negation` — framework-agnostic classification types (ENType, ENStrength,
+- `Semantics.Negation` — framework-agnostic classification types (ENType, ENStrength,
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
 - `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) is the canonical
   propositional negation (no custom `pnot` wrapper)
@@ -35,7 +35,7 @@ coherent architecture with three layers:
 
 namespace Semantics.Negation
 
-open Typology.Negation (ENType ENStrength PolarityLicensing PolarityClass
+open Semantics.Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open NaturalLogic (DEStrength strengthSufficient)
 open Entailment (World)
@@ -125,7 +125,7 @@ theorem standardNeg_isAntiMorphic :
 
 /-! ### The entailment hierarchy determines polarity licensing
 
-The `Bool`-valued `PolarityLicensing` profile in `Typology.Negation` is a
+The `Bool`-valued `PolarityLicensing` profile in `Semantics.Negation` is a
 *consequence* of the `Prop`-based entailment properties in
 `Entailment`:
 

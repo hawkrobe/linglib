@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Russian Negation Fragment
@@ -25,7 +25,7 @@ the sentence level, which is operator-side typology consumed by
 
 namespace Russian.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- *не* — Russian's standard preverbal negation particle.
     A free word, syntactically immediately preverbal. -/
@@ -120,7 +120,7 @@ theorem ne_form : ne.form = "не" := rfl
 theorem all_examples_count : allExamples.length = 4 := by decide
 
 /-- Russian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Russian"
   , iso := "rus"
   , morphemeType := .particle

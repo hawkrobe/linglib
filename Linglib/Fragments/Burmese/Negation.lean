@@ -1,4 +1,4 @@
-import Linglib.Typology.Negation
+import Linglib.Syntax.Negation
 
 /-!
 # Burmese Negation Fragment
@@ -28,7 +28,7 @@ future (*-laimeh*), but the negative collapses all three to *ma-...-bu*.
 
 namespace Burmese.Negation
 
-open Typology.Negation
+open Syntax.Negation
 
 /-- The Burmese negative prefix. Component of the bipartite *ma-...-bu*
     circumfix; see `circumfix` for the substrate-typed entry. -/
@@ -110,7 +110,7 @@ theorem affirmative_forms_distinct :
   exact ⟨rfl, by decide⟩
 
 /-- Burmese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Typology.Negation.NegationProfile :=
+def negationProfile : Syntax.Negation.NegationProfile :=
   { language := "Burmese"
   , iso := "mya"
   , morphemeType := .doubleNeg
