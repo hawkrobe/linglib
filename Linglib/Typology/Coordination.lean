@@ -292,4 +292,23 @@ instance (sys : ConjunctionSystem) : Decidable sys.hasBisyndetic := by
 def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Boundness :=
   (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.boundness)
 
+/-! ### Coordinate-structure symmetry -/
+
+/-- Structural symmetry of a coordinate phrase (`&P`): whether one conjunct is
+    structurally more prominent (c-commands the other) or the structure is flat /
+    multidominant. The three groups of analyses for selection-violating coordination
+    ([schwarzer-2026]) disagree on this parameter:
+    - **Bottom-up accounts** assume `asymmetric`: the first conjunct c-commands the
+      second, so only it must satisfy the selector's c-selectional requirements.
+    - **Linear/temporal-closeness accounts** are compatible with either; their
+      predictions derive from linear/temporal order, not structure.
+    - **Symmetric accounts** ([neeleman-etal-2022], [przepiorkowski-2024]) posit flat or
+      multidominance structures with no structural prominence. -/
+inductive CoordSymmetry where
+  /-- Flat or multidominance: no conjunct is structurally more prominent. -/
+  | symmetric
+  /-- Binary `&P`: the first conjunct c-commands the second. -/
+  | asymmetric
+  deriving DecidableEq, Repr, BEq
+
 end Typology.Coordination

@@ -2173,7 +2173,6 @@ import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
 import Linglib.Syntax.Minimalist.Phase
-import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject
