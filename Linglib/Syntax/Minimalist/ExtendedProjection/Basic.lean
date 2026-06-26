@@ -22,7 +22,7 @@ Standard EPs:
 
 -/
 
-import Linglib.Syntax.Minimalist.SyntacticObject
+import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Typology.Profile
 import Linglib.Syntax.Clause.Basic
 

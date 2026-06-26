@@ -2929,7 +2929,7 @@ import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Probe.Transmission
 import Linglib.Syntax.Minimalist.RepOrder
-import Linglib.Syntax.Minimalist.SyntacticObject
+import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Syntax.Minimalist.SyntacticObject.Externalization
@@ -2943,7 +2943,7 @@ import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Workspace
+import Linglib.Syntax.Minimalist.Workspace.Basic
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
