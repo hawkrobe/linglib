@@ -1530,6 +1530,7 @@ import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
+import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
@@ -2800,6 +2801,7 @@ import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Syntax.ArgumentStructure.Reciprocal
+import Linglib.Syntax.AuxiliaryVerbs
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -2938,7 +2940,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.BodyParts
 import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.ClauseChaining
