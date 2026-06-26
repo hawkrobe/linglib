@@ -141,7 +141,7 @@ abbrev seesRel (x y : ToyEntity) : Prop := sees_sem y x
 
 /-- Each concrete `sees_sem a b` reduces to `True`/`False`, mirroring the
     fragment's own `DecidablePred` pattern. -/
-instance instDecidableSees (a b : ToyEntity) : Decidable (sees_sem a b) := by
+instance (a b : ToyEntity) : Decidable (sees_sem a b) := by
   cases a <;> cases b <;> first | exact isTrue trivial | exact isFalse id
 
 /-- **Surface reading is true** on the fragment: every student sees some
@@ -194,16 +194,30 @@ def everyStudentSeesAPerson : ScopeDerivation ToyEntity Unit .t where
     | .surface => surfaceScope every_sem some_sem student_sem person_sem seesRel
     | .inverse => inverseScope every_sem some_sem student_sem person_sem seesRel
 
-/-- Truth of the surface (∀∃) reading over the single extensional world; the
-    `Prop` is defeq to `everyStudentSeesAPerson.meaningAt .surface`, written
-    explicitly so `Decidable` synthesises over `ToyEntity`. -/
+/-- Truth of the surface (∀∃) reading over the single extensional world. The
+    `Prop` is written explicitly (rather than as `everyStudentSeesAPerson.meaningAt
+    .surface`) so `Decidable` synthesises over `ToyEntity`; `surfaceTruth_iff`
+    certifies it is the same reading. -/
 def surfaceTruth (_ : Unit) : Bool :=
   decide (∀ x : ToyEntity, student_sem x → ∃ y : ToyEntity, person_sem y ∧ seesRel x y)
 
-/-- Truth of the inverse (∃∀) reading; defeq to
-    `everyStudentSeesAPerson.meaningAt .inverse`. -/
+/-- Truth of the inverse (∃∀) reading; `inverseTruth_iff` ties it to the
+    `ScopeDerivation`. -/
 def inverseTruth (_ : Unit) : Bool :=
   decide (∃ y : ToyEntity, person_sem y ∧ ∀ x : ToyEntity, student_sem x → seesRel x y)
+
+/-- The `Bool` surface truth function reflects the `ScopeDerivation`'s surface
+    meaning — certifying that the explicitly-written `Prop` in `surfaceTruth` is
+    `everyStudentSeesAPerson.meaningAt .surface`, not merely asserted to be. -/
+theorem surfaceTruth_iff :
+    surfaceTruth () = true ↔ everyStudentSeesAPerson.meaningAt .surface :=
+  decide_eq_true_iff
+
+/-- The `Bool` inverse truth function reflects the `ScopeDerivation`'s inverse
+    meaning. -/
+theorem inverseTruth_iff :
+    inverseTruth () = true ↔ everyStudentSeesAPerson.meaningAt .inverse :=
+  decide_eq_true_iff
 
 /-- In the shared `ScopeEntailment` vocabulary (cf.
     `ScontrasPearl2021Quantification.every_not_scope_entailment`, which gets
