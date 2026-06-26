@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mereology
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Semantics.Plurality.Algebra
 
 /-!
@@ -51,7 +51,7 @@ This module composes existing pieces:
 namespace Semantics.Classifier
 
 open _root_.Mereology
-open Typology (ClassifierStrategy)
+open NounCategorization (ClassifierStrategy)
 
 -- ============================================================================
 -- §1: CLF-for-N — Atomization ([chierchia-1998])

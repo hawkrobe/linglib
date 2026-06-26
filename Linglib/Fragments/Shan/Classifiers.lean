@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Shan Numeral Classifier Lexicon
@@ -33,7 +33,7 @@ position below ClfP to a position above the numeral and classifier.
 
 namespace Shan.Classifiers
 
-open Typology (ClassifierEntry SemanticParameter ShapeDimension)
+open NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Numeral classifiers (Table 6 of [little-moroney-royer-2022])

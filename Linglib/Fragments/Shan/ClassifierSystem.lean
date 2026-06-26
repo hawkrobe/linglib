@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Shan.Classifiers
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Fragments.Shan.Classifiers
 
 Classifier-system metadata for Shan (ISO `shn`). The lexical classifier
 inventory lives in `Fragments/Shan/Classifiers.lean`; this file
-aggregates that inventory into a `NounCategorizationSystem` summary.
+aggregates that inventory into a `System` summary.
 
 Per-language claims (consensus, see [moroney-2021],
 [little-moroney-royer-2022]): free-morpheme classifiers derived
@@ -18,10 +18,10 @@ quantifiers, demonstratives, and relative clauses.
 
 namespace Shan
 
-open Typology (collectSemantics) in
+open NounCategorization (collectSemantics) in
 /-- Shan numeral classifier system: free morphemes appearing with
 numerals and broader DP scope. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Kra-Dai"
   , classifierType := .numeralClassifier
   , scopes := [.numeralNP, .attributiveNP]

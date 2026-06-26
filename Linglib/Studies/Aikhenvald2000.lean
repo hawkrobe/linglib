@@ -1,5 +1,4 @@
-import Linglib.Typology.ClassifierSystem
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.French.ClassifierSystem
 import Linglib.Fragments.Italian.ClassifierSystem
 import Linglib.Fragments.Mandarin.ClassifierSystem
@@ -21,7 +20,7 @@ Oxford University Press.
 
 Cross-linguistic typology of noun categorization systems following
 Aikhenvald's 7-property schema (A–G, §1.5). The schema
-(`NounCategorizationSystem`) lives in `Typology/ClassifierSystem.lean`;
+(`System`) lives in `Typology/ClassifierSystem.lean`;
 per-language data in `Fragments/{Lang}/ClassifierSystem.lean`.
 
 This file aggregates the 7 currently-formalized systems
@@ -29,7 +28,7 @@ This file aggregates the 7 currently-formalized systems
 typological properties from [aikhenvald-2000] (Tables 10.17, 15.1,
 15.2) and [greenberg-1972]'s classifier-number complementarity *over
 that sample*. None of the theorems below are universals over the abstract
-`NounCategorizationSystem` type — they are sample-restricted empirical
+`System` type — they are sample-restricted empirical
 claims; adding a counterexample language to the sample is the right way to
 falsify them.
 
@@ -48,9 +47,8 @@ appears here (Aikhenvald §15 cites Greenberg) and is refined in
 
 namespace Aikhenvald2000
 
-open Typology
-open Typology
-open Typology.NounCategorizationSystem
+open NounCategorization
+open NounCategorization.System
 
 -- ============================================================================
 -- §0: Per-language convenience aliases
@@ -70,7 +68,7 @@ abbrev westernArmenian := Armenian.classifierSystem
 -- ============================================================================
 
 /-- The seven obligatory-classifier systems formalized so far. -/
-def allSystems : List NounCategorizationSystem :=
+def allSystems : List System :=
   [french, italian, mandarin, japanese, xhosa, shona, swahili]
 
 /-- Languages whose Fragment is in `allSystems` are all obligatory. -/
@@ -174,7 +172,7 @@ theorem french_scope_agreement :
 
 /-- [aikhenvald-2000] Table 10.17: noun classes interact with more
     grammatical categories than numeral classifiers. Verified against the
-    framework-agnostic `interacts` table in `Typology.NounCategorization`. -/
+    framework-agnostic `interacts` table in `NounCategorization.NounCategorization`. -/
 theorem noun_class_more_interactions :
     let cats := [GrammaticalCategory.definiteness, .number, .case_, .tenseAspect, .possession]
     let ncInteractions := cats.filter (interacts .nounClass)
@@ -256,7 +254,7 @@ theorem bantu_have_prefix_realization :
     the sample-restricted findings above are over obligatory systems —
     Armenian is precisely the kind of language those generalizations
     don't cover. -/
-def optionalClassifierSystems : List NounCategorizationSystem :=
+def optionalClassifierSystems : List System :=
   [Armenian.classifierSystem]
 
 theorem westernArmenian_not_obligatory :

@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Italian noun-categorization system
@@ -12,7 +12,7 @@ namespace Italian
 
 /-- Italian noun-class system: 2-class gender (masculine/feminine);
     semantic (sex) + morphological (-o / -a endings) assignment. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Indo-European"
   , classifierType := .nounClass
   , scopes := [.headModifierNP, .predicateArgument]
