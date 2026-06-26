@@ -2937,7 +2937,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Alignment
 import Linglib.Typology.ArgumentStructure
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.BodyParts

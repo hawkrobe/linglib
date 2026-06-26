@@ -48,7 +48,7 @@ Modality,Gender,Alignment}` substrate-extension pattern. Fragment-importable.
 - `ValenceProfile` per-language struct (Ch 106--109 + Ch 111).
 - `AlignmentType` abbreviation pointing at `Features.AlignmentFamily` (the
   accusative/ergative dichotomy used for the antipassive correlation;
-  the richer 5-way typology lives in `Typology.Alignment.AlignmentType`).
+  the richer 5-way typology lives in `Alignment.AlignmentType`).
 - WALS converters `fromWALS{105A,106A,108A,109A,109B,111A}`.
 - WALS aggregate sample-size + corpus-only theorems.
 
@@ -267,7 +267,7 @@ inductive AntipassiveProductivity where
     The canonical accusative/ergative dichotomy lives in `Features.AlignmentFamily`;
     this file uses that type directly rather than re-declaring it. A richer
     typology (active-stative, tripartite, hierarchical, etc.) is available in
-    `Typology.Alignment.AlignmentType`. -/
+    `Alignment.AlignmentType`. -/
 abbrev AlignmentType := Features.AlignmentFamily
 
 -- ============================================================================

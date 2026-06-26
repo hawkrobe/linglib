@@ -1,7 +1,7 @@
 import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Alignment
+import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
@@ -335,8 +335,8 @@ theorem end_to_end_all_languages :
 
 /-- The Mayan split is aspect-conditioned: perfective → ergative,
     non-perfective → accusative. Instantiates the same `SplitErgativity`
-    infrastructure as the Hindi example in `Typology.Alignment.SplitErgativity`. -/
-def mayanSplit : Typology.Alignment.SplitErgativity Typology.Alignment.Aspect :=
+    infrastructure as the Hindi example in `Alignment.SplitErgativity`. -/
+def mayanSplit : Alignment.SplitErgativity Alignment.Aspect :=
   { ergCondition := λ a => a == .perfective }
 
 theorem mayan_perfective_erg :
@@ -347,7 +347,7 @@ theorem mayan_imperfective_acc :
 
 /-- Mayan and Hindi have the same aspect-conditioned split direction:
     perfective triggers ergativity in both language families. -/
-theorem mayan_hindi_same_split : mayanSplit = Typology.Alignment.hindiSplit := rfl
+theorem mayan_hindi_same_split : mayanSplit = Alignment.hindiSplit := rfl
 
 -- ============================================================================
 -- § 11: Cross-Study Bridge ([coon-mateo-pedro-preminger-2014])
