@@ -2193,7 +2193,6 @@ import Linglib.Syntax.Minimalist.RepOrder
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Syntax.Minimalist.SmallClause
-import Linglib.Syntax.Minimalist.Copula
 import Linglib.Syntax.Minimalist.Cascade
 import Linglib.Syntax.Minimalist.DegreeMovement
 import Linglib.Morphology.FragmentGrammars.CFGFragment
