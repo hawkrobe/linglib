@@ -140,7 +140,7 @@ This subsection houses the Minimalist `VoiceHead`, `ClauseSpine`, and
 Fragments," these belong with the paper that anchors them
 ([elkins-torrence-brown-2026] for the =(y)a' analysis;
 [scott-2023] for the antipassive). The Fragment file retains only
-the theory-neutral `mamVoiceSystem : VoiceSystemProfile`.
+the per-language `Mam.VoiceSystem.voices`/`symmetry` defs.
 
 `Studies/Scott2023.lean` consumes `mamVoice` and
 `eqYaVocab` from this file via cross-Studies import. -/

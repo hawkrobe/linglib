@@ -2933,6 +2933,8 @@ import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
+import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.Middle
 import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Choice
 import Linglib.Syntax.WordGrammar.Inheritance.Default
@@ -2983,5 +2985,3 @@ import Linglib.Typology.TemporalConnectives
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Universal
 import Linglib.Typology.UniversalQuantifier
-import Linglib.Typology.Voice
-import Linglib.Typology.VoiceSystem

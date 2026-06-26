@@ -1,4 +1,4 @@
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -47,7 +47,7 @@ agent is the surface subject) and expletive-like behavior
 
 namespace Indonesian.VoiceSystem
 
-open Typology (VoiceEntry PivotTarget VoiceSystemProfile VoiceSystemSymmetry)
+open Voice (VoiceEntry PivotTarget VoiceSystemSymmetry)
 open Minimalist (VoiceParams ExternalArgSemantics VoiceFlavor)
 
 -- ============================================================================
@@ -68,13 +68,17 @@ def diVoice : VoiceEntry :=
 def berVoice : VoiceEntry :=
   { name := "ber-", promotes := .patient }
 
-/-- Indonesian voice system profile: three-way asymmetrical system.
-    *meN-* is the unmarked active; *di-* and *ber-* are marked. -/
-def indonesianVoiceSystem : VoiceSystemProfile :=
-  { language := "Indonesian"
-  , voices := [menVoice, diVoice, berVoice]
-  , symmetry := .asymmetrical
-  , notes := "Sneddon 1996: §1.167–177 (ber-), §1.265–275 (ter-), §3.26–40 (voice); Arka 2003. OV (unmarked object voice) omitted." }
+/-! ### Indonesian voice system profile
+
+Three-way asymmetrical system: *meN-* is the unmarked active; *di-* and
+*ber-* are marked. [sneddon-1996] §1.167–177 (ber-), §1.265–275 (ter-),
+§3.26–40 (voice); Arka 2003. OV (unmarked object voice) omitted. -/
+
+/-- The three productive voices of Indonesian. -/
+def voices : List VoiceEntry := [menVoice, diVoice, berVoice]
+
+/-- Indonesian is asymmetrical — *meN-* is the unmarked active. -/
+def symmetry : VoiceSystemSymmetry := .asymmetrical
 
 -- ============================================================================
 -- § 2: Parametric Decomposition (Minimalist analysis)
@@ -116,11 +120,11 @@ def berParams : VoiceParams :=
 -- ============================================================================
 
 /-- The Indonesian voice system has exactly three voices. -/
-theorem voice_count : indonesianVoiceSystem.voiceCount = 3 := rfl
+theorem voice_count : Voice.voiceCount voices = 3 := rfl
 
 /-- The system promotes both agent and patient roles. -/
-theorem promotes_agent : indonesianVoiceSystem.promotesRole .agent := by decide
-theorem promotes_patient : indonesianVoiceSystem.promotesRole .patient := by decide
+theorem promotes_agent : Voice.promotesRole voices .agent := by decide
+theorem promotes_patient : Voice.promotesRole voices .patient := by decide
 
 /-- *meN-* is fully specified; *ber-* is not. -/
 theorem men_fully_specified : menParams.isFullySpecified = true := rfl
