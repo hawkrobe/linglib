@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Welsh word-order profile
@@ -9,8 +9,8 @@ WALS-derived word-order profile for Welsh (ISO `cym`).
 namespace Welsh
 
 /-- Welsh word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
-  Typology.WordOrder.WordOrderProfile.ofWALS "cym"
+def wordOrder : WordOrder.WordOrderProfile :=
+  WordOrder.WordOrderProfile.ofWALS "cym"
 
 
 set_option maxRecDepth 4096 in

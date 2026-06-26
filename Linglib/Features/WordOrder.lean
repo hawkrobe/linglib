@@ -7,14 +7,12 @@ import Linglib.Data.WALS.Features.F83A
 [dryer-2013-wals] [greenberg-1963] [dryer-1992]
 
 Framework-agnostic substrate for storing per-language word-order data
-(WALS Chs 81–83). Lives in `Typology/` so that `Fragments/`
-(per-language profiles) and the study layer (cross-linguistic
-generalisations) can import it without violating the layered
-dependency hierarchy.
+(WALS Chs 81–83), under a bare-root `WordOrder` namespace in `Features/`
+(graduated from the dissolving `Typology/`), like `Features/Case`.
 
-The key record is `WordOrderProfile`, a flat bundle of three
-orthogonal WALS classifications. `WordOrderProfile.ofWALS` provides
-the canonical "derive from WALS by ISO lookup" convenience.
+The key record is `WordOrderProfile`, a flat bundle of three orthogonal WALS
+classifications constrained by the cross-field `WordOrderProfile.IsConsistent`
+invariant; `WordOrderProfile.ofWALS` derives it from WALS by ISO lookup.
 
 ## Epistemic distinction: `noDominant` vs `notInWALS`
 
@@ -61,7 +59,7 @@ inductive HeadDirection where
   | headFinal
   deriving Repr, DecidableEq
 
-namespace Typology.WordOrder
+namespace WordOrder
 
 -- ============================================================================
 -- Enums
@@ -280,4 +278,4 @@ def OVOrder.verbPosition : OVOrder → Option VerbPosition
   | .ov => some .preverbal
   | .noDominant | .notInWALS => none
 
-end Typology.WordOrder
+end WordOrder
