@@ -132,7 +132,7 @@ structure JLexicalEntry extends JProsodicEntry where
     standard mathlib coercion. The instance is `noncomputable` because
     `ℝ` is noncomputable; the `ℚ` field itself remains computable for
     `decide`-style proofs. -/
-noncomputable instance : Constraint.ItemSpecificity.HasTokenFreq JLexicalEntry where
+noncomputable instance : Constraints.ItemSpecificity.HasTokenFreq JLexicalEntry where
   tokenLogFreq e := (e.tokenLogFreq : ℝ)
 
 -- ============================================================================

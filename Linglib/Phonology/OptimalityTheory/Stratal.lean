@@ -1,8 +1,8 @@
 import Mathlib.Order.Nat
 import Mathlib.Data.List.Dedup
 import Mathlib.Logic.Relation
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Core.Relation.ReflTransGen
 
 /-!
@@ -62,7 +62,7 @@ underlying form.
 
 namespace OptimalityTheory.Stratal
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Core.Optimization.Evaluation
 
 -- ============================================================================

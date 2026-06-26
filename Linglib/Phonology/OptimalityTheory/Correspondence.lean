@@ -6,8 +6,8 @@ import Mathlib.Combinatorics.Quiver.Basic
 import Mathlib.Order.Hom.Basic
 import Mathlib.Order.Hom.Set
 import Mathlib.Data.Fintype.Card
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
@@ -52,7 +52,7 @@ model-theoretic treatment of [payne-vu-heinz-2017] and
 
 namespace OptimalityTheory.Correspondence
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Finset
 
 /-! ### Binary and ternary roles -/

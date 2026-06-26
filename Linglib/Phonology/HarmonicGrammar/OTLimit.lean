@@ -1,4 +1,5 @@
-import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraints.Weighted
+import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
@@ -34,10 +35,10 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 -/
 
 namespace HarmonicGrammar
-open Constraint
+open Constraints
 
 
-open Core Constraint OptimalityTheory Core.Optimization.Evaluation Real Finset
+open Core Constraints Core.Optimization.Evaluation Real Finset
 
 -- ============================================================================
 -- § 1: OT → HG Weight Construction

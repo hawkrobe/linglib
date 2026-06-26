@@ -60,14 +60,14 @@ have observable consequences.
   nasalisation; this file stays abstract.
 -/
 
-namespace Constraint.ItemSpecificity.Separation
+namespace Constraints.ItemSpecificity.Separation
 
-open Constraint.ItemSpecificity
-open Constraint.ItemSpecificity.Indexed
-open Constraint.ItemSpecificity.Scaled
-open Constraint.ItemSpecificity.UseListed
-open Constraint.ItemSpecificity.RepStrength
-open Constraint OptimalityTheory
+open Constraints.ItemSpecificity
+open Constraints.ItemSpecificity.Indexed
+open Constraints.ItemSpecificity.Scaled
+open Constraints.ItemSpecificity.UseListed
+open Constraints.ItemSpecificity.RepStrength
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Toy lexicon for separation witnesses
@@ -337,4 +337,4 @@ theorem sep_repstrength_vs_indexed_within_stratum :
       show (10 : ℝ) ≥ 3; norm_num
     simp [mkCoreOnly, h_lo, h_hi, baseOne]
 
-end Constraint.ItemSpecificity.Separation
+end Constraints.ItemSpecificity.Separation

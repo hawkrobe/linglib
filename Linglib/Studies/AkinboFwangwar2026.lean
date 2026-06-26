@@ -70,7 +70,7 @@ anchor combinators defined in §2 below.
 
 namespace AkinboFwangwar2026
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (integrityTone)

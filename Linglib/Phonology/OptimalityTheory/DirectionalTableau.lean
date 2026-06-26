@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.EvalMode
 
 /-!
@@ -39,7 +39,7 @@ It deliberately does NOT yet ship:
 -/
 
 namespace OptimalityTheory
-open Constraint
+open Constraints
 
 
 open Core.Optimization.Evaluation

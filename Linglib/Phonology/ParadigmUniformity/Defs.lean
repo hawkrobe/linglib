@@ -1,5 +1,5 @@
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Paradigm Uniformity — generic lift combinators
@@ -47,7 +47,7 @@ which pairing best fits Japanese velar nasalisation.
 
 namespace OptimalityTheory.ParadigmUniformity
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Generic lift combinators

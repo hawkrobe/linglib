@@ -314,7 +314,7 @@ def indexStrength (c : IndexCandidate) : Nat :=
     to the binary indexed/non-indexed competition. Per paper p. 524,
     "Index! is a specific instance of Maximize Presupposition!
     (Heim 1990)". -/
-def indexConstraint : Constraint.NamedConstraint IndexCandidate :=
+def indexConstraint : Constraints.NamedConstraint IndexCandidate :=
   Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
     1 indexStrength
 
@@ -381,7 +381,7 @@ def topicAwareIndexStrength (c : TopicCandidate) : Nat :=
 
 /-- The topic-aware Index! constraint. -/
 def topicAwareIndexConstraint :
-    Constraint.NamedConstraint TopicCandidate :=
+    Constraints.NamedConstraint TopicCandidate :=
   Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
     1 topicAwareIndexStrength
 

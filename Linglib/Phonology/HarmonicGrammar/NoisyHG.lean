@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraints.Weighted
 import Linglib.Core.Probability.RandomUtility
 import Linglib.Core.Probability.LogitChoice
 
@@ -37,7 +37,7 @@ noise variance σ_d depends on the violation profile.
 namespace HarmonicGrammar
 
 
-open Core Real Constraint
+open Core Real Constraints
 
 -- ============================================================================
 -- § 1: NHG Noise Variance

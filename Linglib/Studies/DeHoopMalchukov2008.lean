@@ -1,5 +1,5 @@
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Features.Prominence
@@ -79,7 +79,7 @@ namespace DeHoopMalchukov2008
 
 open Pragmatics.Bidirectional (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Features.Prominence
 open Aissen2003
 open Aissen2003

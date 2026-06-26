@@ -1,4 +1,5 @@
-import Linglib.Phonology.Constraint.Aliases
+import Linglib.Phonology.Constraints.Profile
+import Linglib.Phonology.OptimalityTheory.Defs
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Data.Sign.Basic
 import Mathlib.Data.Fintype.Perm
@@ -44,7 +45,7 @@ some `W`-constraint ([prince-2002] §0 (3)/(4)).
 open Core.Optimization.Evaluation
 
 namespace OptimalityTheory
-open Constraint
+open Constraints
 
 variable {n : ℕ}
 

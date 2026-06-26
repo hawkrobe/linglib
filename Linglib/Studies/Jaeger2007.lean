@@ -43,7 +43,7 @@ Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
 
 namespace Jaeger2007
 
-open Core Core.Optimization Constraint HarmonicGrammar Real
+open Core Core.Optimization Constraints HarmonicGrammar Real
 
 -- ============================================================================
 -- § 1: GLA = SGA (Main Theorem)

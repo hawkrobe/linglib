@@ -1,6 +1,6 @@
 import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Cophonology Theory
@@ -50,8 +50,8 @@ remains the right substrate for morpheme-internal effects.
 namespace OptimalityTheory.CophonologyTheory
 
 open Morphology.DM.VI (VocabItem)
-open Constraint OptimalityTheory
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Cophonological Vocabulary Item

@@ -1,8 +1,8 @@
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # [beaver-2004]: The Optimization of Discourse Anaphora
@@ -84,7 +84,7 @@ set_option autoImplicit false
 
 namespace Beaver2004
 
-open Discourse.Centering Constraint OptimalityTheory Core.Optimization.Evaluation
+open Discourse.Centering Constraints OptimalityTheory Core.Optimization.Evaluation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Candidate type

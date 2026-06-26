@@ -75,9 +75,9 @@ from S-G's optimality condition without further machinery; cf.
 discrimination across siblings.
 -/
 
-namespace Constraint.ItemSpecificity.RepStrength
+namespace Constraints.ItemSpecificity.RepStrength
 
-open Constraint.ItemSpecificity
+open Constraints.ItemSpecificity
 
 -- ============================================================================
 -- § 1: Activation
@@ -132,4 +132,4 @@ def addCombine (a b : ℝ) : ℝ := a + b
     by S-G's coalescence mechanism. -/
 def minCombine (a b : ℝ) : ℝ := min a b
 
-end Constraint.ItemSpecificity.RepStrength
+end Constraints.ItemSpecificity.RepStrength
