@@ -1,6 +1,5 @@
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.Japanese.Plurals
-import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number.Resolve
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
