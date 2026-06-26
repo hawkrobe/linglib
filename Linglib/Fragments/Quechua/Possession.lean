@@ -27,7 +27,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .twoWay
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .doubleMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["Hwan-pa wasi-n ka-n", "mama-y", "Hwan-pa wasi-n"]
   , notes := "Possessive suffixes obligatory on kinship/body-part nouns; -yuq 'having' for predicative; GEN + POSS double-marking" }
 

@@ -436,7 +436,7 @@ theorem apo_PP_cannot_extract_per_ka2026 :
 theorem gg_uses_reduced_relative_smg_does_not :
     -- GG: apo-PP is the dominant adnominal strategy (genitive lost on common nouns)
     Greek.Grevena.Possession.possession.adnominalStrategy
-      = .juxtaposition ∧
+      = .zeroMarking ∧
     -- SMG: apo-PP coexists with inflectional genitive (NOT a reduced relative)
     Greek.StandardModern.Possession.possession.adnominalStrategy
       = .dependentMarking := by

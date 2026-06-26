@@ -438,9 +438,10 @@ def walsToSchema : Data.WALS.F117A.PredicativePossession → Source
 theorem wals_agrees_with_predicativeSource :
     walsToSchema .have = predicativeSource .haveVerb ∧
     walsToSchema .locational = predicativeSource .locational ∧
+    walsToSchema .genitive = predicativeSource .genitive ∧
     walsToSchema .topic = predicativeSource .topic ∧
     walsToSchema .conjunctional = predicativeSource .comitative := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- §9. Per-Language Heine Prediction Verification

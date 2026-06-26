@@ -26,8 +26,8 @@ def possession : PossessionProfile :=
   , obligatoryPossession := .noObligatory
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .juxtaposition
-  , affixPosition := some .none
+  , adnominalStrategy := .zeroMarking
+  , affixPosition := some .noAffix
   , examples := ["mo ni iwe", "iwe mi"]
   , notes := "Have-verb ni; juxtaposition for adnominal (possessum-possessor)" }
 

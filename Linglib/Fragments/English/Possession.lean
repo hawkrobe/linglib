@@ -27,7 +27,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["I have a book", "John's book", "the book of John"]
   , notes := "Genitive clitic -'s on possessor; of-phrase alternative" }
 

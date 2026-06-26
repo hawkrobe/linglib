@@ -43,7 +43,7 @@ def sourceSchema : Source := .genitive
 
 /-- Turkish's predicative strategy is genitive/dative (the possessor is
     marked with genitive case, the predicate is a non-verbal existential). -/
-def predicativeStrategy : PredicativeStrategy := .genitiveDative
+def predicativeStrategy : PredicativeStrategy := .genitive
 
 -- ============================================================================
 -- §2. Possessive Agreement Suffixes
@@ -141,7 +141,7 @@ theorem location_not_inalienable :
 /-- Turkish possession profile.
 
     Note: Turkish's primary construction (`Hasan-ın inek-i var`) is
-    [heine-1997]'s Genitive Schema, encoded as `.genitiveDative`
+    [heine-1997]'s Genitive Schema, encoded as `.genitive`
     in [stassen-2009]'s WALS Ch 117 typology. -/
 def possession : PossessionProfile :=
   { language := "Turkish"
@@ -149,7 +149,7 @@ def possession : PossessionProfile :=
   , iso := "tur"
   , obligatoryPossession := .exists_
   , possessiveClassification := .noClassification
-  , predicativeStrategy := .genitiveDative
+  , predicativeStrategy := .genitive
   , adnominalStrategy := .doubleMarking
   , affixPosition := some .suffixes
   , examples := ["(benim) kitab-im var", "Ali-nin kitab-i"]

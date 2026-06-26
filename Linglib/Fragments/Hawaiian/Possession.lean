@@ -27,7 +27,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .twoWay
   , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["ko'u makuahine (o-class)", "ka'u puke (a-class)"]
   , notes := "Classic Oceanic alienable/inalienable: a-class (alienable) vs o-class (inalienable body parts, kinship, clothing, land)" }
 

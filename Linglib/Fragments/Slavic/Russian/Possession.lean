@@ -111,7 +111,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["u menja est' kniga", "kniga Ivana"]
   , notes := "Locational: u + GEN + est'; adnominal: NP-GEN" }
 

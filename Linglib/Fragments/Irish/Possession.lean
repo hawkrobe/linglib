@@ -25,9 +25,9 @@ def possession : PossessionProfile :=
   , iso := "gle"
   , obligatoryPossession := .noObligatory
   , possessiveClassification := .noClassification
-  , predicativeStrategy := .genitiveDative
+  , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["ta leabhar agam", "teach an fhir"]
   , notes := "Celtic at-possession: ta X ag-PRON; genitive case on possessor in adnominal" }
 

@@ -66,7 +66,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples :=
       [ "tu luluðakju"          -- 'little flower-DIM.SG.GEN' (SMG: *)
       , "ton naftakjo(n)"       -- 'little sailor-DIM.PL.GEN' (SMG: *)

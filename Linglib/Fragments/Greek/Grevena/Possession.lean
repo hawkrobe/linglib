@@ -60,7 +60,7 @@ def genNotions : List Notion := []
 
 /-- Grevena Greek possession profile.
 
-    `adnominalStrategy := .juxtaposition` reflects the loss of inflectional
+    `adnominalStrategy := .zeroMarking` reflects the loss of inflectional
     GEN on common nouns; the `apo`-PP variant carries the load. The label
     is approximate — `juxtaposition` is the closest WALS-mapped category
     for "no morphological possessor marking on the noun, possession encoded
@@ -74,8 +74,8 @@ def possession : PossessionProfile :=
   , obligatoryPossession := .noObligatory
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .juxtaposition
-  , affixPosition := some .none
+  , adnominalStrategy := .zeroMarking
+  , affixPosition := some .noAffix
   , examples :=
       [ "tu vivliu ap tun ðimarxu"     -- 'the book of the mayor' (apo-PP, no GEN on noun)
       , "i piriγrafi ap tun ðimarxu ap ta piðja"  -- iterated apo-PPs (impossible in SMG)
