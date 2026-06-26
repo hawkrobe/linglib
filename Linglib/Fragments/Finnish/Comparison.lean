@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Finnish comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Finnish.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Finnish comparative profile. -/
 def comparison : ComparativeProfile :=

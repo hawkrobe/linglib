@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.Japanese.Comparison
@@ -43,7 +43,7 @@ set_option autoImplicit false
 
 namespace Stassen2013Comparison
 
-open Typology.Comparison
+open Comparative
 
 -- ============================================================================
 -- §1. The 17-language Fragment sample

@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Thai comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Thai.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Thai comparative profile. -/
 def comparison : ComparativeProfile :=

@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Yoruba comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Yoruba.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Yoruba comparative profile. -/
 def comparison : ComparativeProfile :=

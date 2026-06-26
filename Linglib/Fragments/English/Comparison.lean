@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # English comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace English.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- English comparative profile. -/
 def comparison : ComparativeProfile :=

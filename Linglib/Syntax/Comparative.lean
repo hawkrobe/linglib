@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Features.F121A
 import Linglib.Features.Case.Basic
 
 /-!
-# Typology.Comparison
+# Comparison: comparative-construction typology
 [stassen-2013] [wals-2013] [beck-2009] [haspelmath-2001]
 
 Per-language typological substrate for comparative-construction typology
@@ -49,7 +49,7 @@ Cross-linguistic theorems consuming Fragment per-language data live in
 
 set_option autoImplicit false
 
-namespace Typology.Comparison
+namespace Comparative
 
 private abbrev ch121 := Data.WALS.F121A.allData
 
@@ -247,4 +247,4 @@ structure ComparativeEntry where
   hasDegreeMorphology : Bool
   deriving Repr, BEq
 
-end Typology.Comparison
+end Comparative
