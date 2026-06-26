@@ -1,6 +1,5 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Economy
-import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Typology.Question
 /-!
 # Economy in PF Reduction
@@ -57,10 +56,6 @@ multidominance as the PF reduction mechanism.
   per-op vacuity (a derivation with one real deletion + one vacuous
   deletion violates), which a whole-derivation `pfBefore ≠ pfAfter`
   check could not express.
-- The CS bulk-sharing structure trivially satisfies [bruening-2021]'s
-  identity condition (Minimalist.Ellipsis.FormalMatching §7), since
-  bulk-sharing means the elided TP literally **is** the antecedent TP
-  (one node, two parents). Stated as a theorem in §10 below.
 
 ## Integration
 
@@ -781,13 +776,13 @@ theorem cs_twoEFeature_wholeDeriv_pf_differs :
 /-- The adopted CWH structure: non-bulk-sharing MD, no ellipsis (paper's (10b)).
     Shared nodes: C and T are individually multiply dominated. -/
 def cwhStructure : PFReducedCoordination where
-  conjunct1 := mkLeaf .C [] 0
-  conjunct2 := mkLeaf .C [] 1
+  conjunct1 := SO.mkLeaf .C [] 0
+  conjunct2 := SO.mkLeaf .C [] 1
   mechanisms := [.multidominance]
   sharing := some .nonBulk
   sharedNodes :=
-    [ { node := mkLeaf .C [] 10, category := some .C, pronounced := true }
-    , { node := mkLeaf .T [] 11, category := some .T, pronounced := false } ]
+    [ { node := SO.mkLeaf .C [] 10, category := some .C, pronounced := true }
+    , { node := SO.mkLeaf .T [] 11, category := some .T, pronounced := false } ]
   pfOutput := ["what", "and", "when", "should", "you", "teach"]
 
 /-- The adopted CS structure: bulk-sharing MD + ellipsis (paper's (20b)).
@@ -795,14 +790,14 @@ def cwhStructure : PFReducedCoordination where
     triggers TP deletion, repairing the MWF violation at the vP edge.
     Shared nodes: entire C' is shared (includes C, TP, vP, VP). -/
 def csStructure : PFReducedCoordination where
-  conjunct1 := mkLeaf .C [] 0
-  conjunct2 := mkLeaf .C [] 1
+  conjunct1 := SO.mkLeaf .C [] 0
+  conjunct2 := SO.mkLeaf .C [] 1
   mechanisms := [.multidominance, .ellipsis]
   sharing := some .bulk
   sharedNodes :=
-    [ { node := mkLeaf .C [] 10, category := some .C, pronounced := true }
-    , { node := mkLeaf .T [] 11, category := some .T, pronounced := false }
-    , { node := mkLeaf .v [] 12, category := some .v, pronounced := false } ]
+    [ { node := SO.mkLeaf .C [] 10, category := some .C, pronounced := true }
+    , { node := SO.mkLeaf .T [] 11, category := some .T, pronounced := false }
+    , { node := SO.mkLeaf .v [] 12, category := some .v, pronounced := false } ]
   pfOutput := ["what", "and", "when"]
 
 /-- Structural drift sentry over the four key properties of cwhStructure
@@ -1011,33 +1006,5 @@ theorem rnr_md_is_economy_winner (pm pl nm nl : Nat) :
     ∀ alt ∈ ({rnrMDPivotCost pm pl nm nl, rnrEllipsisCost pm pl nm nl} : Set _),
       ¬ strictlyMoreEconomical alt (rnrMDPivotCost pm pl nm nl) :=
   Minimalist.economy_winner_of_pair (rnr_md_beats_ellipsis pm pl nm nl)
-
--- ============================================================================
--- § 10: Cross-framework consilience — Bruening 2021 identity condition
--- ============================================================================
-
-/-! [bruening-2021]'s max-projection identity condition for ellipsis
-(formalized as `Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical`)
-requires the antecedent and the elided constituent to have the same
-filtered max-projection path lists (up to permutation).
-
-In the C&G-Y CS bulk-sharing structure, the elided TP **literally is**
-the antecedent TP — one node in the multidominance graph with two
-parents. So the filtered max-projection paths are physically identical,
-and `List.Perm.refl` discharges the identity condition. -/
-
-/-- The C&G-Y CS bulk-sharing structure is robust to identity-condition
-    choice: it trivially satisfies [bruening-2021]'s max-projection
-    identity by `List.Perm.refl` on identical path lists, for any
-    `HeadFunction` parameterizing the projection paths.
-
-    This is a positive cross-framework consilience: the C&G-Y MD
-    architecture and the Bruening 2021 identity condition agree on CS,
-    so the paper's predictions for CS sluicing licensing do not depend
-    on identity-condition choice. -/
-theorem cs_bulk_satisfies_bruening2021_identity
-    (h : Minimalist.HeadFunction) (so : SyntacticObject) :
-    Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical h so so :=
-  Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical_refl h so
 
 end CitkoGracaninYuksek2025

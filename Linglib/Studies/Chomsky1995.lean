@@ -1,6 +1,5 @@
-import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Syntax.Minimalist.FromFragments
-import Linglib.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 /-!
 # Minimalist Derivations of Word Order
@@ -19,7 +18,7 @@ open Minimalist Minimalist.FromFragments
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/
-def john_sees_mary : Derivation :=
+def john_sees_mary : SO.Derivation :=
   { initial := verbToSO English.Predicates.Verbal.see 31
     steps   := [.emR (nounToSO English.Nouns.mary 11),
                 .emL (nounToSO English.Nouns.john 10)] }
@@ -27,7 +26,7 @@ def john_sees_mary : Derivation :=
 /-- The phonological yield of `john_sees_mary` is the SVO string
     "John sees Mary": the Minimalist derivation (built by `emR` then
     `emL` over `verbToSO`/`nounToSO`) linearizes subject-verb-object via the
-    derivation-grounded computable externalization (`Derivation.surfacePhon`). -/
+    derivation-grounded computable externalization (`SO.Derivation.surfacePhon`). -/
 theorem models_svo_word_order :
     String.intercalate " " john_sees_mary.surfacePhon = "John sees Mary" := by decide
 

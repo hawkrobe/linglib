@@ -1,4 +1,5 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Binding.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
@@ -73,33 +74,35 @@ combine it with English's binding-class classifier.
 
 /-! #### C-command from tree geometry -/
 
-/-- Convert a word to a Minimalist syntactic object (leaf with UPOS mapped to
-    Cat and phonological form attached). -/
-private def wordToSO (w : Word) (id : Nat) : SyntacticObject :=
-  mkLeafPhon (uposToCat w.cat) [] w.form id
+/-- Convert a word to a Minimalist lexical-item token (UPOS mapped to `Cat`,
+    phonological form attached). The smart Merge `SO.node` is noncomputable, so
+    concrete trees are built planar-first from these tokens and `decide`d over. -/
+private def wordTok (w : Word) (id : Nat) : LIToken :=
+  ⟨.simple (uposToCat w.cat) [] w.form, id⟩
 
 /-- Build a phrase-structure tree from a clause: transitive `{subj, {verb, obj}}`
     (subject specifier, verb–object a head-complement pair), intransitive
-    `{subj, verb}`. C-command follows from the geometry. -/
+    `{subj, verb}`. C-command follows from the geometry. Built planar-first so
+    the containment / c-command decision procedures reduce. -/
 def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
-  let subjSO := wordToSO clause.subject 0
-  let verbSO := wordToSO clause.verb 1
+  let subjP := SO.leafP (wordTok clause.subject 0)
+  let verbP := SO.leafP (wordTok clause.verb 1)
   match clause.object with
-  | none => merge subjSO verbSO
-  | some obj => merge subjSO (merge verbSO (wordToSO obj 2))
+  | none => SO.ofPlanar (SO.nodeP subjP verbP)
+  | some obj => SO.ofPlanar (SO.nodeP subjP (SO.nodeP verbP (SO.leafP (wordTok obj 2))))
 
 private def subjectSO (clause : SimpleClause) : SyntacticObject :=
-  wordToSO clause.subject 0
+  SO.lexLeaf (wordTok clause.subject 0)
 
 private def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
-  clause.object.map fun obj => wordToSO obj 2
+  clause.object.map fun obj => SO.lexLeaf (wordTok obj 2)
 
 /-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
     `{verb, obj}` contains the object. -/
 def subjectCCommandsObject (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => False
-  | some objSO => cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
+  | some objSO => SO.cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
 
 instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := by
   unfold subjectCCommandsObject; cases objectSO? clause <;> infer_instance
@@ -109,7 +112,7 @@ instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := 
 def objectCCommandsSubject (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => False
-  | some objSO => cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
+  | some objSO => SO.cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
 
 instance (clause : SimpleClause) : Decidable (objectCCommandsSubject clause) := by
   unfold objectCCommandsSubject; cases objectSO? clause <;> infer_instance
@@ -119,8 +122,8 @@ def sameLocalDomain (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => True
   | some objSO =>
-    contains (toSyntacticObject clause) (subjectSO clause) ∧
-    contains (toSyntacticObject clause) objSO
+    SO.contains (toSyntacticObject clause) (subjectSO clause) ∧
+    SO.contains (toSyntacticObject clause) objSO
 
 instance (clause : SimpleClause) : Decidable (sameLocalDomain clause) := by
   unfold sameLocalDomain; cases objectSO? clause <;> infer_instance

@@ -138,69 +138,77 @@ def vToken : LIToken :=
   { item := LexicalItem.simple .v []
   , id := idV }
 
+/-- The subject DP's LIToken (class 1, uZondi). -/
+def subjectToken : LIToken :=
+  { item := LexicalItem.simple .D [], id := idSubject }
+
+/-- A trace LIToken at the base position after movement (distinct LIToken,
+    indistinguishable to PIC since the interior membership check tests
+    structural containment, not LI equality). -/
+def subjectTraceToken : LIToken :=
+  { item := LexicalItem.simple .D [], id := idSubjectTrace }
+
 /-- The subject DP at its base position (Spec,vP). Class 1 (uZondi). -/
-def subjectAtBase : SyntacticObject :=
-  .leaf { item := LexicalItem.simple .D [], id := idSubject }
+def subjectAtBase : SyntacticObject := SO.lexLeaf subjectToken
 
 /-- The subject DP after movement to Spec,VoiceP (a fresh copy, since
     each `LIToken` in copy theory is a distinct token). -/
-def subjectAtSpecVoiceP : SyntacticObject :=
-  .leaf { item := LexicalItem.simple .D [], id := idSubject }
+def subjectAtSpecVoiceP : SyntacticObject := SO.lexLeaf subjectToken
 
-/-- A trace at the base position after movement (distinct LIToken,
-    indistinguishable to PIC since `phaseImpenetrable` checks structural
-    containment, not LI equality). -/
-def subjectTrace : SyntacticObject :=
-  .leaf { item := LexicalItem.simple .D [], id := idSubjectTrace }
+/-- A trace at the base position after movement (distinct LIToken). -/
+def subjectTrace : SyntacticObject := SO.lexLeaf subjectTraceToken
 
-/-- The vP subtree with subject in situ (Spec,vP).
-
-    Structure: `.node subject (.node v VP)` where VP holds the verb +
-    object. Stylized: we omit the V/Object internal structure and treat
-    the v-projection as a single binary node. -/
-def vP_subjectInSitu : SyntacticObject :=
-  .node subjectAtBase (.leaf vToken)
-
-/-- The vP subtree after subject movement: the trace replaces the subject. -/
-def vP_subjectMoved : SyntacticObject :=
-  .node subjectTrace (.leaf vToken)
+/-! The trees below are built **planar-first** via the DSL (`SO.ofPlanar`
+    / `SO.nodeP` / `SO.leafP`) because the smart Merge `SO.node` is
+    noncomputable; planar construction keeps the `decide` PIC proofs
+    reducing. -/
 
 /-- The Voice projection with NO Spec,VoiceP — subject remains in vP.
-    Structure: `.node voiceHead vP`. Voice is the phase; its complement
+    Structure: `voice (subject v)`. Voice is the phase; its complement
     is the entire vP, which contains the subject. -/
 def voiceP_noSpec : SyntacticObject :=
-  .node (.leaf voiceToken) vP_subjectInSitu
+  SO.ofPlanar (SO.nodeP (SO.leafP voiceToken)
+    (SO.nodeP (SO.leafP subjectToken) (SO.leafP vToken)))
 
 /-- The Voice projection with subject at Spec,VoiceP (phase edge).
-    Structure: `.node subject (.node voiceHead vP_with_trace)`.
-    The OUTER node is not the phase; the inner `.node voiceHead vP`
-    is the phase, and the subject (sister to it) is at the edge. -/
+    Structure: `subject (voice (trace v))`. The OUTER node is not the
+    phase; the inner `voice (trace v)` is the phase, and the subject
+    (sister to it) is at the edge. -/
 def voiceP_withSpec : SyntacticObject :=
-  .node subjectAtSpecVoiceP (.node (.leaf voiceToken) vP_subjectMoved)
+  SO.ofPlanar (SO.nodeP (SO.leafP subjectToken)
+    (SO.nodeP (SO.leafP voiceToken)
+      (SO.nodeP (SO.leafP subjectTraceToken) (SO.leafP vToken))))
 
 /-- The Voice phase for `voiceP_noSpec`: phase head `voiceToken`, tree
-    `voiceP_noSpec`. Its complement (the spelled-out vP), interior, and edge are
-    now **derived** from the head function (MCB §1.14), not stipulated — the
-    derived `complement` is `vP_subjectInSitu`. -/
+    `voiceP_noSpec`. Its interior (= the head's c-command domain, the
+    spelled-out vP) and edge are **derived** from the selection head
+    (MCB §1.14), not stipulated. The subject sits in the interior. -/
 def voicePhase_noSpec : Phase :=
-  { h := HeadFunction.leftSpine, tree := voiceP_noSpec, head := voiceToken }
+  { tree := voiceP_noSpec, head := voiceToken }
 
 /-- The Voice phase for `voiceP_withSpec`: phase head `voiceToken`, whose maximal
-    projection is the inner VoiceP. The derived complement is the post-movement vP
-    (`vP_subjectMoved`); the moved subject at Spec,VoiceP is on the derived edge. -/
+    projection is the inner VoiceP. The derived interior is the post-movement vP;
+    the moved subject at Spec,VoiceP is on the derived edge. -/
 def voicePhase_withSpec : Phase :=
-  { h := HeadFunction.leftSpine, tree := voiceP_withSpec, head := voiceToken }
+  { tree := voiceP_withSpec, head := voiceToken }
 
 /-- The full Aux-V tree (T > Asp > Voice > vP) with subject in situ. -/
 def auxVTree_inSitu : SyntacticObject :=
-  .node (.leaf tToken) (.node (.leaf aspToken) voiceP_noSpec)
+  SO.ofPlanar (SO.nodeP (SO.leafP tToken)
+    (SO.nodeP (SO.leafP aspToken)
+      (SO.nodeP (SO.leafP voiceToken)
+        (SO.nodeP (SO.leafP subjectToken) (SO.leafP vToken)))))
 
 /-- The full Aux-V tree with subject moved to Spec,VoiceP. T's probe will
     additionally attract the subject to Spec,TP — that movement is the
     derivational step we don't model here; the salient question is just
     whether T's probe *finds* the subject under PIC. -/
 def auxVTree_subjectMoved : SyntacticObject :=
-  .node (.leaf tToken) (.node (.leaf aspToken) voiceP_withSpec)
+  SO.ofPlanar (SO.nodeP (SO.leafP tToken)
+    (SO.nodeP (SO.leafP aspToken)
+      (SO.nodeP (SO.leafP subjectToken)
+        (SO.nodeP (SO.leafP voiceToken)
+          (SO.nodeP (SO.leafP subjectTraceToken) (SO.leafP vToken))))))
 
 end Sample
 

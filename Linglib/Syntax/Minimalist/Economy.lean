@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Syntax.Minimalist.Checking
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Data.DFinsupp.WellFounded
@@ -114,7 +114,7 @@ end DerivationCost
     numeration draw.)
     `mergeOps`: total step count.
     `agreeOps`/`ellipsisOps`: not tracked by the step-based model. -/
-def Derivation.cost (d : Derivation) : DerivationCost where
+def SO.Derivation.cost (d : SO.Derivation) : DerivationCost where
   lexicalItems :=
     d.steps.filter
       (match · with | .emL _ | .emR _ => true | _ => false)

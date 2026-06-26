@@ -1,6 +1,5 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Syntax.Minimalist.Merge.Defs
-import Linglib.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
@@ -315,44 +314,10 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
 private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
   Classical.decEq _
 
-/-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.4.1, F̂ = ∅).
-    `mergeOp (Sum.inl L) current.toNonplanar item.toNonplanar` applied to the 2-tree workspace
-    `{current.toNonplanar, item.toNonplanar}` yields the singleton workspace of
-    `.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}` = `(Step.emR item).apply current`.
-
-    `L` is the **head label** of the merged node. The externalize-respect property
-    — that `toNonplanar` on `current * item` factors as
-    `Nonplanar.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}` with the
-    SAME `L` that `mergeOp` grafts — is now a *theorem* (`toNonplanar_mul_selHead`)
-    rather than a hypothesis: the selection-induced section is built to respect the
-    merge, and `L` is just the head selector. The consumer supplies only the simple,
-    decidable `selHead (current * item) = some L`. -/
-theorem mergeOp_emR_matches_Step
-    (current item : Minimalist.SyntacticObject) (L : LIToken)
-    (hsel : Minimalist.selHead (current * item) = some L) :
-    mergeOp (R := ℤ) (Sum.inl L) current.toNonplanar item.toNonplanar
-        (of' ({current.toNonplanar, item.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({((Step.emR item).apply current).toNonplanar}
-        : Forest (Nonplanar (LIToken ⊕ Unit))) := by
-  show mergeOp (R := ℤ) (Sum.inl L) current.toNonplanar item.toNonplanar
-        (of' ({current.toNonplanar, item.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({(current * item).toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))
-  rw [mergeOp_pair, ← Minimalist.SyntacticObject.toNonplanar_mul_selHead current item L hsel]
-
-/-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, F̂ = ∅,
-    symmetric pair). `mergeOp (Sum.inl L) item.toNonplanar current.toNonplanar` applied to
-    `{item.toNonplanar, current.toNonplanar}` yields `.node (Sum.inl L) {item.toNonplanar, current.toNonplanar}`
-    = `(Step.emL item).apply current`. -/
-theorem mergeOp_emL_matches_Step
-    (item current : Minimalist.SyntacticObject) (L : LIToken)
-    (hsel : Minimalist.selHead (item * current) = some L) :
-    mergeOp (R := ℤ) (Sum.inl L) item.toNonplanar current.toNonplanar
-        (of' ({item.toNonplanar, current.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({((Step.emL item).apply current).toNonplanar}
-        : Forest (Nonplanar (LIToken ⊕ Unit))) := by
-  show mergeOp (R := ℤ) (Sum.inl L) item.toNonplanar current.toNonplanar
-        (of' ({item.toNonplanar, current.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({(item * current).toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))
-  rw [mergeOp_pair, ← Minimalist.SyntacticObject.toNonplanar_mul_selHead item current L hsel]
+/-! The linguistic External-Merge bridges `mergeOp_emR/emL_matches_Step` (which
+related `mergeOp (Sum.inl L)` on the head-decorated `toNonplanar` projection to the
+legacy `Step.emR/emL`) have been retired by the single-carrier migration. On the
+bare `SO` carrier the bridge is `Workspace.lean`'s `SO.merge_toForest`
+(`mergeOp_pair` with the bare `Sum.inr ()` label). -/
 
 end Minimalist.Merge

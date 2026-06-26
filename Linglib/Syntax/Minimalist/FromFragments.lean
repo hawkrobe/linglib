@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
@@ -65,27 +65,27 @@ section EntryProjections
 /-- Convert a `VerbEntry` to a `SyntacticObject` leaf with `Cat = .V` and
     `SelStack` derived from `complementType`. -/
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
-  mkLeafPhon .V (verbToSelStack v) v.form3sg id
+  SO.mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
 /-- Convert a `PersonalPronoun` to a `SyntacticObject` leaf. Pronouns are D
     heads (they project as DPs per Adger ch. 7). -/
 def pronounToSO (p : PersonalPronoun) (id : Nat) : SyntacticObject :=
-  mkLeafPhon .D [] p.form id
+  SO.mkLeafPhon .D [] p.form id
 
 /-- Convert a `NounEntry` to a `SyntacticObject` leaf. Proper names are
     D-projecting (Longobardi 1994 / Adger ch. 7); common nouns are bare N
     (need null-D wrapping or an overt determiner to project as DPs). -/
 def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
   if n.proper then
-    mkLeafPhon .D [] n.formSg id
+    SO.mkLeafPhon .D [] n.formSg id
   else
-    mkLeafPhon .N [] n.formSg id
+    SO.mkLeafPhon .N [] n.formSg id
 
 /-- Convert a `Quantifier` (determiner) to a `SyntacticObject` leaf
     with `Cat = .D` and `SelStack = [.N]` (Adger ch. 7 eq. 110:
     `the [D, uN]`). -/
 def determinerToSO (d : Quantifier) (id : Nat) : SyntacticObject :=
-  mkLeafPhon .D [.N] d.form id
+  SO.mkLeafPhon .D [.N] d.form id
 
 end EntryProjections
 

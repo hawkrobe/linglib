@@ -80,8 +80,8 @@ with SpecSC empty. The current `SmallClause` shape forces a subject
 field, so we record the post-movement form. -/
 
 def pvToSmallClause (pv : ParticleVerb) (dpId prtId : Nat) : SmallClause :=
-  { subject := mkLeafPhon .D [] "DP" dpId
-    predicate := mkLeafPhon .P [] pv.particle prtId
+  { subject := SO.mkLeafPhon .D [] "DP" dpId
+    predicate := SO.mkLeafPhon .P [] pv.particle prtId
     predCat := .P }
 
 /-- All PVC small clauses have predicate category P. -/
@@ -96,15 +96,15 @@ once converted to a `SyntacticObject` via `SmallClause.toSO` — a 2-leaf
 binary tree (subject + predicate). This is the shape consumed by any
 file that wants to compose PVC SCs into larger structures (e.g.
 `embedUnderV` for the full `[VP V [SC DP Prt]]` analysis, as used by
-`HaddicanEtAl2026.pvc_sc`). Stated as `rfl` over the canonical shape so
-that downstream files can rewrite without unfolding `pvToSmallClause`. -/
+`HaddicanEtAl2026.pvc_sc`). Stated as a leaf count over the noncomputable
+Merge node (`SO.leafCount_merge`) so downstream files can rewrite without
+unfolding `pvToSmallClause`. -/
 
 /-- Any PVC small clause is a 2-leaf binary tree (subject + predicate). -/
 theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
-    (pvToSmallClause pv dpId prtId).toSO.shape =
-      FreeCommMagma.of () * FreeCommMagma.of () := by
-  simp only [pvToSmallClause, SmallClause.toSO, merge,
-    SyntacticObject.shape_mul, mkLeafPhon, SyntacticObject.shape_leaf]
+    (pvToSmallClause pv dpId prtId).toSO.leafCount = 2 := by
+  simp only [pvToSmallClause, SmallClause.toSO, SO.leafCount_merge,
+    SO.mkLeafPhon, SO.leafCount_lexLeaf]
 
 /-- The `predCat` field of `pvToSmallClause` agrees with the
     `predicate.headCat` reading — the well-formedness invariant

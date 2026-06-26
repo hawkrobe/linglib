@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 /-!
 # Cinque 2005: Deriving Greenberg's Universal 20 [cinque-2005]
@@ -20,12 +20,15 @@ require a *wrong Merge order* of the modifiers).
 
 ## What this file establishes
 
-This study runs Cinque's derivations on the **real MCB Merge substrate**
-(`Syntax/Minimalist/Derivation.lean`): each order is a `Derivation` (fixed-order
-External Merge to build the base, then `Step.im` leftward movements), and the
-surface order is read off by the computable `Derivation.surfaceCats`
-(derivation-grounded externalization — MCB σ_L, not `Quot.out`). The orders are
-verified by `decide`.
+This study runs Cinque's derivations on the **single MCB `SO` carrier**
+(`Syntax/Minimalist/SyntacticObject/Derivation.lean`): each order is an
+`SO.Derivation` (fixed-order External Merge to build the base, then `SO.Step.im`
+leftward movements), and the surface order is read off by the computable
+`SO.Derivation.surfaceCats` (derivation-grounded externalization — MCB σ_L, not
+`Quot.out`). The orders are verified by `decide`. Internal Merge is **index-free**
+(`SO.Step.im mover`, no trace id); the trace it leaves is the bare `SO.traceLeaf`,
+and pied-piping movers (which contain an earlier trace) are built planar-first via
+the computable DSL (`SO.ofPlanar`/`SO.nodeP`/`SO.leafP`/`SO.traceP`).
 
 **Eight of the fourteen attested orders are derived explicitly here** (the
 bare-NP-raising series a–d and the pied-piping cases n, o, t, x), demonstrating
@@ -46,17 +49,18 @@ needs four distinct categories.
 namespace Cinque2005
 
 open Minimalist
+open RootedTree
 
 /-! ### The four elements (head-initial leaves) -/
 
 /-- Noun (the raising NP). -/
-def noun : SyntacticObject := mkLeaf .N [] 1
+def noun : SyntacticObject := SO.mkLeaf .N [] 1
 /-- Adjective. -/
-def adj : SyntacticObject := mkLeaf .A [] 2
+def adj : SyntacticObject := SO.mkLeaf .A [] 2
 /-- Numeral. -/
-def numl : SyntacticObject := mkLeaf .Num [] 3
+def numl : SyntacticObject := SO.mkLeaf .Num [] 3
 /-- Demonstrative (encoded as `.D`; see module note). -/
-def dem : SyntacticObject := mkLeaf .D [] 4
+def dem : SyntacticObject := SO.mkLeaf .D [] 4
 
 /-! ### Frequency buckets and the 24-order attestation table ([cinque-2005] (6))
 
@@ -117,49 +121,58 @@ theorem table_freq_consistent :
 /-! ### Derivations on the MCB substrate
 
 Built bottom-up: `initial := noun`, then head-initial External Merge of A, Num,
-Dem (`emL`), interleaved with `Step.im` leftward raising. `surfaceCats` reads off
-the order via the computable derivation-grounded externalization.
+Dem (`emL`), interleaved with `SO.Step.im` leftward raising. `surfaceCats` reads
+off the order via the computable derivation-grounded externalization.
 
 Movers: a bare NP raise passes `noun`; a pied-piping raise passes the
-NP-containing constituent (which contains the earlier traces). -/
+NP-containing constituent (which contains the earlier `SO.traceLeaf`), built with
+the planar DSL so the surface orders `decide`. -/
+
+/-- The four leaf tokens, used to build pied-piping movers planar-first. -/
+private def pN : Planar SOLabel := SO.leafP ⟨.simple .N [], 1⟩
+private def pA : Planar SOLabel := SO.leafP ⟨.simple .A [], 2⟩
+private def pNum : Planar SOLabel := SO.leafP ⟨.simple .Num [], 3⟩
+
+/-- The pied-piped `[N [A t]]` mover (N raised around A, then the whole `[A t]`
+    with N on top). -/
+def movNAt : SyntacticObject := SO.ofPlanar (SO.nodeP pN (SO.nodeP pA SO.traceP))
+/-- The pied-piped `[A N]` mover. -/
+def movAN : SyntacticObject := SO.ofPlanar (SO.nodeP pA pN)
+/-- The pied-piped `[N [A t]]` constituent raised again past Num, with the Num
+    sub-trace: `[N [Num [t [A t]]]]` — the (t) roll-up's third mover. -/
+def movNNumAt : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP pN (SO.nodeP pNum (SO.nodeP SO.traceP (SO.nodeP pA SO.traceP))))
+/-- The successive pied-pipe past Num for (x): `[[N [A t]] [Num t]]`. -/
+def movNAtNum : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.nodeP pN (SO.nodeP pA SO.traceP)) (SO.nodeP pNum SO.traceP))
 
 /-- (a) Dem Num A N — no movement. -/
-def derA : Derivation := { initial := noun, steps := [.emL adj, .emL numl, .emL dem] }
+def derA : SO.Derivation := ⟨noun, [.emL adj, .emL numl, .emL dem]⟩
 
 /-- (b) Dem Num N A — NP raises around A (bare). -/
-def derB : Derivation :=
-  { initial := noun, steps := [.emL adj, .im noun 1, .emL numl, .emL dem] }
+def derB : SO.Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .emL dem]⟩
 
 /-- (c) Dem N Num A — NP raises around A then Num (partial, bare). -/
-def derC : Derivation :=
-  { initial := noun, steps := [.emL adj, .im noun 1, .emL numl, .im noun 2, .emL dem] }
+def derC : SO.Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem]⟩
 
 /-- (d) N Dem Num A — NP raises around A, Num, Dem (total, bare). -/
-def derD : Derivation :=
-  { initial := noun
-    steps := [.emL adj, .im noun 1, .emL numl, .im noun 2, .emL dem, .im noun 3] }
+def derD : SO.Derivation :=
+  ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem, .im noun]⟩
 
 /-- (n) Dem A N Num — pied-pipe `[A N]` around Num (no sub-raise). -/
-def derN : Derivation :=
-  { initial := noun, steps := [.emL adj, .emL numl, .im (adj * noun) 2, .emL dem] }
+def derN : SO.Derivation := ⟨noun, [.emL adj, .emL numl, .im movAN, .emL dem]⟩
 
 /-- (o) Dem N A Num — raise N around A, then pied-pipe `[N A]` around Num. -/
-def derO : Derivation :=
-  { initial := noun
-    steps := [.emL adj, .im noun 1, .emL numl, .im (noun * (adj * mkTrace 1)) 2, .emL dem] }
+def derO : SO.Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .im movNAt, .emL dem]⟩
 
 /-- (t) N Num A Dem — bare raise around A and Num, then pied-pipe `[N Num A]`
     around Dem. -/
-def derT : Derivation :=
-  { initial := noun
-    steps := [.emL adj, .im noun 1, .emL numl, .im noun 2, .emL dem,
-              .im (noun * (numl * (mkTrace 2 * (adj * mkTrace 1)))) 3] }
+def derT : SO.Derivation :=
+  ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem, .im movNNumAt]⟩
 
 /-- (x) N A Num Dem — successive pied-piping all the way up (the roll-up). -/
-def derX : Derivation :=
-  { initial := noun
-    steps := [.emL adj, .im noun 1, .emL numl, .im (noun * (adj * mkTrace 1)) 2,
-              .emL dem, .im ((noun * (adj * mkTrace 1)) * (numl * mkTrace 2)) 3] }
+def derX : SO.Derivation :=
+  ⟨noun, [.emL adj, .im noun, .emL numl, .im movNAt, .emL dem, .im movNAtNum]⟩
 
 /-! ### The eight derivations produce their attested orders (kernel-checked) -/
 
@@ -188,47 +201,58 @@ enumerate the **whole** legal derivation space and show its surface orders are
 (each would require a "wrong Merge order"; [cinque-2005], cf. Abels & Neeleman
 2012's leftward-movement characterization).
 
-The enumeration runs on the substrate's planar externalization type
-`FreeMagma (LIToken ⊕ Nat)` (what `Derivation.externalizeP?` produces) with
-`linearizePlanar` (the substrate's planar yield). Building the base bottom-up,
-at each of the three specs (around A, Num, Dem) we optionally raise an
-N-containing **proper** subtree to the left edge — leftward movement of an
-N-containing constituent, no remnant movement. Fully computable; `decide`-checked. -/
+The enumeration runs on the substrate's ordered planar externalization type
+`Planar SOLabel` (what the externalization replay produces) with `planarYield`
+(the substrate's planar yield, traces dropped). Building the base bottom-up, at
+each of the three specs (around A, Num, Dem) we optionally raise an N-containing
+**proper** subtree to the left edge — leftward movement of an N-containing
+constituent, no remnant movement. Fully computable; `decide`-checked. -/
 
-private abbrev FM := FreeMagma (LIToken ⊕ Nat)
 private def tokN : LIToken := ⟨.simple .N [], 1⟩
 private def tokA : LIToken := ⟨.simple .A [], 2⟩
 private def tokNum : LIToken := ⟨.simple .Num [], 3⟩
 private def tokD : LIToken := ⟨.simple .D [], 4⟩
-private def fmTr : FM := .of (.inr 0)
 
-/-- Does the planar structure contain the noun leaf? -/
-private def fmHasN : FM → Bool
-  | .of (.inl t) => t == tokN
-  | .of (.inr _) => false
-  | .mul l r => fmHasN l || fmHasN r
+/-- Does the planar structure contain the noun leaf? (Canonical SO trees are
+    binary: a leaf is `.node _ []`, an internal node `.node _ [l, r]`.) -/
+private def pHasN : Planar SOLabel → Bool
+  | .node (.inl t) _ => t == tokN
+  | .node (.inr ()) [l, r] => pHasN l || pHasN r
+  | .node (.inr ()) _ => false
+
+/-- All subtrees of a binary planar tree (the node itself and, recursively, its
+    daughters' subtrees) — replaces the deleted `planarSubtrees`. -/
+private def pSubtrees : Planar SOLabel → List (Planar SOLabel)
+  | t@(.node _ []) => [t]
+  | t@(.node _ [l, r]) => t :: (pSubtrees l ++ pSubtrees r)
+  | t@(.node _ _) => [t]
 
 /-- Eligible movers: N-containing proper subtrees (no remnant movement; can't
-    raise the whole node to its own spec). Uses the shared planar-tree toolkit
-    (`planarSubtrees`, `Syntax/Minimalist/Derivation.lean`). -/
-private def fmMovers (cur : FM) : List FM :=
-  (planarSubtrees cur).filter (fun s => fmHasN s && s != cur)
+    raise the whole node to its own spec). -/
+private def pMovers (cur : Planar SOLabel) : List (Planar SOLabel) :=
+  (pSubtrees cur).filter (fun s => pHasN s && s != cur)
 
-/-- At a spec: keep, or raise one eligible mover (leftward, via the shared
-    `planarMoveLeft`). -/
-private def fmOpt (cur : FM) : List FM :=
-  cur :: (fmMovers cur).filterMap (fun s => planarMoveLeft (· == s) fmTr cur)
+/-- Raise the first subtree equal to `s` to the LEFT edge, leaving the bare trace
+    `SO.traceP` (planar leftward movement) — `none` if `s` is absent. -/
+private def pMoveLeft (s : Planar SOLabel) (cur : Planar SOLabel) : Option (Planar SOLabel) :=
+  if (pSubtrees cur).contains s then
+    some (SO.nodeP s (planarReplaceWhereP (· == s) SO.traceP cur))
+  else none
+
+/-- At a spec: keep, or raise one eligible mover (leftward). -/
+private def pOpt (cur : Planar SOLabel) : List (Planar SOLabel) :=
+  cur :: (pMovers cur).filterMap (fun s => pMoveLeft s cur)
 
 /-- The whole legal derivation space (planar externalizations): merge A, Num, Dem
     head-initially with an optional raise at each spec. -/
-private def space : List FM :=
-  ([(.of (.inl tokN) : FM)].map (fun c => .mul (.of (.inl tokA)) c)).flatMap fmOpt
-    |>.map (fun c => .mul (.of (.inl tokNum)) c) |>.flatMap fmOpt
-    |>.map (fun c => .mul (.of (.inl tokD)) c)   |>.flatMap fmOpt
+private def space : List (Planar SOLabel) :=
+  ([SO.leafP tokN].map (fun c => SO.nodeP (SO.leafP tokA) c)).flatMap pOpt
+    |>.map (fun c => SO.nodeP (SO.leafP tokNum) c) |>.flatMap pOpt
+    |>.map (fun c => SO.nodeP (SO.leafP tokD) c)   |>.flatMap pOpt
 
 /-- The distinct surface orders reachable by Cinque's movement. -/
 def reachableOrders : List (List Cat) :=
-  (space.map (fun fm => (linearizePlanar fm).map (·.item.outerCat))).eraseDups
+  (space.map (fun p => (planarYield p).map (·.item.outerCat))).eraseDups
 
 /-- The 14 attested orders. -/
 def attestedOrders : List (List Cat) := (table.filter (·.attested)).map (·.order)
@@ -323,29 +347,37 @@ raise — NP leftmost in the moved constituent — is unmarked). This is what a 
 compositional reading of (7b) gives. The two theorems below show it is **not**
 Cinque's count and does **not** track frequency. -/
 
+/-- Leftmost leaf token of a planar tree (root-first), if any. -/
+private def pLeftmostTok : Planar SOLabel → Option LIToken
+  | .node (.inl t) _ => some t
+  | .node (.inr ()) (c :: _) => pLeftmostTok c
+  | .node _ _ => none
+
 /-- Local markedness of a single raise: `0` for *whose-picture* pied-piping
     (NP leftmost in the mover), `1` for a bare raise or *picture-of-who*. -/
-private def moveMark : FM → Nat
-  | .of _ => 1
-  | .mul l r => if leftmostLeafPlanar (.mul l r) == tokN then 0 else 1
+private def moveMark (s : Planar SOLabel) : Nat :=
+  match s with
+  | .node (.inl _) _ => 1
+  | _ => if pLeftmostTok s == some tokN then 0 else 1
+
+/-- One spec step carrying accumulated local marked-move cost. -/
+private def stepCost (build : Planar SOLabel → Planar SOLabel) (p : Planar SOLabel × Nat) :
+    List (Planar SOLabel × Nat) :=
+  (build p.1, p.2) :: (pMovers p.1).filterMap (fun s =>
+    (pMoveLeft s p.1).map (fun m => (build m, p.2 + moveMark s)))
 
 /-- The legal derivation space (as in `space`) carrying accumulated local
     marked-move cost. -/
-private def spaceCost : List (FM × Nat) :=
-  ([((.of (.inl tokN) : FM), 0)].map (fun p => ((.of (.inl tokA)) * p.1, p.2))).flatMap
-      (fun p => p :: (fmMovers p.1).filterMap (fun s =>
-        (planarMoveLeft (· == s) fmTr p.1).map (fun m => (m, p.2 + moveMark s))))
-    |>.map (fun p => ((.of (.inl tokNum)) * p.1, p.2)) |>.flatMap
-      (fun p => p :: (fmMovers p.1).filterMap (fun s =>
-        (planarMoveLeft (· == s) fmTr p.1).map (fun m => (m, p.2 + moveMark s))))
-    |>.map (fun p => ((.of (.inl tokD)) * p.1, p.2)) |>.flatMap
-      (fun p => p :: (fmMovers p.1).filterMap (fun s =>
-        (planarMoveLeft (· == s) fmTr p.1).map (fun m => (m, p.2 + moveMark s))))
+private def spaceCost : List (Planar SOLabel × Nat) :=
+  [(SO.nodeP (SO.leafP tokA) (SO.leafP tokN), 0)]
+    |>.flatMap (stepCost (fun c => SO.nodeP (SO.leafP tokNum) c))
+    |>.flatMap (stepCost (fun c => SO.nodeP (SO.leafP tokD) c))
+    |>.flatMap (stepCost id)
 
 /-- **Derived** local proxy: the minimum number of locally-marked moves over the
     derivations producing `ord` (`none` if unreachable). -/
 def markedMoves (ord : List Cat) : Option Nat :=
-  ((spaceCost.filter (fun p => (linearizePlanar p.1).map (·.item.outerCat) == ord)).map (·.2)).foldl
+  ((spaceCost.filter (fun p => (planarYield p.1).map (·.item.outerCat) == ord)).map (·.2)).foldl
     (fun acc n => some (acc.elim n (Nat.min · n))) none
 
 /-- The derived local proxy **disagrees** with Cinque's holistic count: the

@@ -1,4 +1,3 @@
-import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Semantics.ArgumentStructure.Linking

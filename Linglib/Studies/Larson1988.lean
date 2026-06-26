@@ -1,5 +1,11 @@
-import Linglib.Syntax.Minimalist.Basic
-import Linglib.Syntax.Minimalist.Derivation
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
@@ -17,7 +23,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
 2. **Dative Shift = PASSIVE**: The double object construction (DOC) is
    derived from the oblique dative by Internal Merge — the same operation
    as Passive — applied within the VP domain rather than the IP domain.
-   Both operations are `Step.im` in the `Derivation` infrastructure.
+   Both operations are `SO.Step.im` in the `SO.Derivation` infrastructure.
 
 3. **[barss-lasnik-1986] asymmetries**: In the derived DOC, the
    indirect object (NP1) asymmetrically c-commands the direct object
@@ -33,42 +39,70 @@ import Linglib.Semantics.ArgumentStructure.Linking
    suppression would cause irrecoverable loss of thematic information,
    blocking Dative Shift.
 
+## Carrier note (P4 single-carrier flip)
+
+The MCB-faithful `SO` carrier makes Merge (`SO.node`/`*`) noncomputable, so
+`SO.Derivation.final` (the folded result tree) does not `decide`. The
+*movement bookkeeping* (`movedItems`) and the *externalized surface order*
+(`surfacePhon`/`surfaceCats`) **are** computable and `decide`-able, so they
+are proved over the `SO.Derivation` directly.
+
+The c-command asymmetries are stated over the **derived tree built
+planar-first** (`SO.ofPlanar (SO.nodeP …)`), i.e. the very tree each
+derivation produces, written out explicitly per the file's prose diagrams.
+This is faithful: the derivation records the operations; the planar tree
+is its result, and c-command (`SO.cCommandsIn`) reduces on it.
+
 ## Simplification
 
 The paper's VP shell has V raising from the inner V position to an
 initially empty outer V position (head-to-head movement, §2.1, trees
-13–14). This formalization uses `Step.im` (phrasal Internal Merge)
+13–14). This formalization uses `SO.Step.im` (phrasal Internal Merge)
 for Dative Shift and Passive, which correctly captures the NP Movement
-component. Head movement (V Raising) is not modeled — the
-`Derivation` infrastructure does not currently support head movement.
-This omission does not affect the c-command predictions, which depend
-on the positions of DP arguments, not the position of V.
+component. Head movement (V Raising) is not modeled. This omission does
+not affect the c-command predictions, which depend on the positions of
+DP arguments, not the position of V.
 
 ## Cross-references
 
-- `Minimalist.Derivation`: `Step.im` = Internal Merge
+- `Minimalist.SO.Derivation`: `SO.Step.im` = Internal Merge
 - `Studies/Pylkkanen2008.lean`: Modern Voice/Appl decomposition with
   tree-based c-command verification; bridge theorem proving convergence
 - `ColeHermon2008`: English passive derivation
-  using the same `Derivation` infrastructure
+  using the same `SO.Derivation` infrastructure
 -/
 
 namespace Larson1988
 
 open Minimalist
+open RootedTree
 
 -- ============================================================================
 -- § 1: Lexical Items
 -- ============================================================================
 
-def V_send    := mkLeafPhon .V [.D]    "send"    300
-def P_to      := mkLeafPhon .P [.D]   "to"       301
-def DP_john   := mkLeafPhon .D []     "John"      302
-def DP_mary   := mkLeafPhon .D []     "Mary"      303
-def DP_letter := mkLeafPhon .D []     "a letter"  304
+def V_send    := SO.mkLeafPhon .V [.D]  "send"     300
+def P_to      := SO.mkLeafPhon .P [.D]  "to"       301
+def DP_john   := SO.mkLeafPhon .D []    "John"     302
+def DP_mary   := SO.mkLeafPhon .D []    "Mary"     303
+def DP_letter := SO.mkLeafPhon .D []    "a letter" 304
 
-def V_kick    := mkLeafPhon .V [.D]   "kicked"    310
-def DP_ball   := mkLeafPhon .D []     "the ball"  311
+def V_kick    := SO.mkLeafPhon .V [.D]  "kicked"   310
+def DP_ball   := SO.mkLeafPhon .D []    "the ball" 311
+
+/-! Planar leaf tokens, used for building the result trees the derivations
+    produce (the c-command theorems reason over these). -/
+
+private def tok_send   : LIToken := ⟨.simple .V [.D] (phonForm := "send"), 300⟩
+private def tok_to     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 301⟩
+private def tok_john   : LIToken := ⟨.simple .D [] (phonForm := "John"), 302⟩
+private def tok_mary   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 303⟩
+private def tok_letter : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 304⟩
+private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 310⟩
+private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
+
+/-- The `[PP to Mary]` constituent as a planar subtree. -/
+private def ppToMaryP : Planar SOLabel := SO.nodeP (SO.leafP tok_to) (SO.leafP tok_mary)
 
 -- ============================================================================
 -- § 2: Oblique Dative Derivation
@@ -83,36 +117,44 @@ def DP_ball   := mkLeafPhon .D []     "the ball"  311
     The direct object (a letter) c-commands the goal (Mary), but not
     vice versa — Mary is buried inside PP. -/
 
-def obliqueDative : Derivation :=
+def obliqueDative : SO.Derivation :=
   { initial := V_send
     steps := [
-      .emR (merge P_to DP_mary),   -- [V' send [PP to Mary]]
-      .emL DP_letter,               -- [VP a_letter [V' send [PP to Mary]]]
-      .emL DP_john                  -- [VP John [VP a_letter [V' send [PP to Mary]]]]
+      .emR (SO.ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
+      .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
+      .emL DP_john                    -- [VP John [VP a_letter [V' send [PP to Mary]]]]
     ] }
+
+/-- The oblique dative result tree: `[John [letter [send [to Mary]]]]`.
+    Built planar-first; this is exactly what `obliqueDative` produces. -/
+def obliqueDativeTree : SO :=
+  SO.ofPlanar
+    (SO.nodeP (SO.leafP tok_john)
+      (SO.nodeP (SO.leafP tok_letter)
+        (SO.nodeP (SO.leafP tok_send) ppToMaryP)))
 
 -- Oblique dative c-command predictions
 
 theorem oblique_do_ccommands_goal :
-    cCommandsIn obliqueDative.final DP_letter DP_mary := by native_decide
+    SO.cCommandsIn obliqueDativeTree DP_letter DP_mary := by decide
 
 theorem oblique_goal_not_ccommands_do :
-    ¬ cCommandsIn obliqueDative.final DP_mary DP_letter := by native_decide
+    ¬ SO.cCommandsIn obliqueDativeTree DP_mary DP_letter := by decide
 
 theorem oblique_agent_ccommands_both :
-    cCommandsIn obliqueDative.final DP_john DP_letter ∧
-    cCommandsIn obliqueDative.final DP_john DP_mary := by
-  constructor <;> native_decide
+    SO.cCommandsIn obliqueDativeTree DP_john DP_letter ∧
+    SO.cCommandsIn obliqueDativeTree DP_john DP_mary := by
+  constructor <;> decide
 
 -- ============================================================================
--- § 3: DOC Derivation — Dative Shift as Step.im
+-- § 3: DOC Derivation — Dative Shift as SO.Step.im
 -- ============================================================================
 
 /-! The DOC "John sent Mary a letter" extends the oblique dative with
-one additional step: **Internal Merge of the indirect object** (`Step.im`).
+one additional step: **Internal Merge of the indirect object** (`SO.Step.im`).
 
 This is Larson's central insight: Dative Shift = PASSIVE within VP.
-The `Step.im` constructor is the same one used for standard Passive
+The `SO.Step.im` constructor is the same one used for standard Passive
 (cf. `ColeHermon2008.lean`'s `englishPassive` derivation). The only
 difference is *which* argument moves and *when* in the derivation.
 
@@ -124,14 +166,25 @@ Derivation steps:
    This promotes Mary above the direct object.
 4. EM-L the agent `John` -/
 
-def docDativeShift : Derivation :=
+def docDativeShift : SO.Derivation :=
   { initial := V_send
     steps := [
-      .emR (merge P_to DP_mary),   -- [V' send [PP to Mary]]
-      .emL DP_letter,               -- [VP a_letter [V' send [PP to Mary]]]
-      .im DP_mary 0,               -- DATIVE SHIFT: Mary moves to Spec
-      .emL DP_john                  -- [VP John [VP Mary_i [VP a_letter ...]]]
+      .emR (SO.ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
+      .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
+      .im DP_mary,                    -- DATIVE SHIFT: Mary moves to Spec
+      .emL DP_john                    -- [VP John [VP Mary_i [VP a_letter ...]]]
     ] }
+
+/-- The DOC result tree: Mary, internally merged, sits at the left edge of
+    the shell, asymmetrically c-commanding the theme; the original Mary
+    position is the bare trace. `[John [Mary [letter [send [to t]]]]]`. -/
+def docDativeShiftTree : SO :=
+  SO.ofPlanar
+    (SO.nodeP (SO.leafP tok_john)
+      (SO.nodeP (SO.leafP tok_mary)
+        (SO.nodeP (SO.leafP tok_letter)
+          (SO.nodeP (SO.leafP tok_send)
+            (SO.nodeP (SO.leafP tok_to) SO.traceP)))))
 
 -- DOC c-command predictions: the asymmetries are REVERSED
 
@@ -142,70 +195,79 @@ def docDativeShift : Derivation :=
     - Quantifier binding: "I gave every worker his paycheck"
     - Weak crossover, superiority, *each...the other*, NPI licensing -/
 theorem doc_io_ccommands_do :
-    cCommandsIn docDativeShift.final DP_mary DP_letter := by native_decide
+    SO.cCommandsIn docDativeShiftTree DP_mary DP_letter := by decide
 
 /-- The direct object does NOT c-command the indirect object in the DOC. -/
 theorem doc_do_not_ccommands_io :
-    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary := by native_decide
+    ¬ SO.cCommandsIn docDativeShiftTree DP_letter DP_mary := by decide
 
 theorem doc_agent_ccommands_both :
-    cCommandsIn docDativeShift.final DP_john DP_mary ∧
-    cCommandsIn docDativeShift.final DP_john DP_letter := by
-  constructor <;> native_decide
+    SO.cCommandsIn docDativeShiftTree DP_john DP_mary ∧
+    SO.cCommandsIn docDativeShiftTree DP_john DP_letter := by
+  constructor <;> decide
 
 -- ============================================================================
--- § 4: PASSIVE — Same Step.im, Different Domain
+-- § 4: PASSIVE — Same SO.Step.im, Different Domain
 -- ============================================================================
 
-/-! Standard Passive ("The ball was kicked by John") is also `Step.im`:
-the object moves to subject position. By using the same `Step.im`
+/-! Standard Passive ("The ball was kicked by John") is also `SO.Step.im`:
+the object moves to subject position. By using the same `SO.Step.im`
 constructor, the type system enforces Larson's thesis that Passive
 and Dative Shift share the same structural operation. -/
 
-def standardPassive : Derivation :=
+def standardPassive : SO.Derivation :=
   { initial := V_kick
     steps := [
-      .emR DP_ball,                 -- [V' kicked [DP the ball]]
-      .emL DP_john,                 -- [VP John [V' kicked [DP the ball]]]
-      .im DP_ball 0                 -- PASSIVE: ball promoted to Spec
+      .emR DP_ball,   -- [V' kicked [DP the ball]]
+      .emL DP_john,   -- [VP John [V' kicked [DP the ball]]]
+      .im DP_ball     -- PASSIVE: ball promoted to Spec
     ] }
+
+/-- The passive result tree: the ball (promoted) sits above John (demoted),
+    leaving a trace in object position. `[ball [John [kicked t]]]`. -/
+def standardPassiveTree : SO :=
+  SO.ofPlanar
+    (SO.nodeP (SO.leafP tok_ball)
+      (SO.nodeP (SO.leafP tok_john)
+        (SO.nodeP (SO.leafP tok_kick) SO.traceP)))
 
 -- Passive c-command: promoted object c-commands demoted subject
 
 theorem passive_object_ccommands_subject :
-    cCommandsIn standardPassive.final DP_ball DP_john := by native_decide
+    SO.cCommandsIn standardPassiveTree DP_ball DP_john := by decide
 
 theorem passive_subject_not_ccommands_object :
-    ¬ cCommandsIn standardPassive.final DP_john DP_ball := by native_decide
+    ¬ SO.cCommandsIn standardPassiveTree DP_john DP_ball := by decide
 
 -- ============================================================================
 -- § 5: Structural Parallel — Passive and Dative Shift
 -- ============================================================================
 
-/-! Both Passive and Dative Shift use `Step.im`. We can extract the
-movement steps and verify they share the same structure. -/
+/-! Both Passive and Dative Shift use `SO.Step.im`. We extract the
+movement steps (computable `movedItems`) and verify they share the same
+structure, and we verify the c-command reversal on the result trees. -/
 
 /-- Dative Shift involves exactly one Internal Merge (of the IO). -/
 theorem dativeShift_has_one_im :
-    docDativeShift.movedItems = [DP_mary] := by native_decide
+    docDativeShift.movedItems = [DP_mary] := by decide
 
 /-- Standard Passive involves exactly one Internal Merge (of the object). -/
 theorem passive_has_one_im :
-    standardPassive.movedItems = [DP_ball] := by native_decide
+    standardPassive.movedItems = [DP_ball] := by decide
 
 /-- Both operations promote an argument by Internal Merge, reversing
     the c-command relation between the two internal arguments.
 
     Oblique dative:  DO > IO  (letter c-commands Mary)
-    DOC:             IO > DO  (Mary c-commands letter)  [reversed by Step.im]
+    DOC:             IO > DO  (Mary c-commands letter)  [reversed by SO.Step.im]
     Active:          Subj > Obj (John c-commands ball)
-    Passive:         Obj > Subj (ball c-commands John)  [reversed by Step.im] -/
+    Passive:         Obj > Subj (ball c-commands John)  [reversed by SO.Step.im] -/
 theorem passive_dativeShift_parallel :
-    -- Both reverse c-command via the same Step.im mechanism
-    cCommandsIn obliqueDative.final DP_letter DP_mary ∧
-    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
-    cCommandsIn standardPassive.final DP_ball DP_john := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+    -- Both reverse c-command via the same SO.Step.im mechanism
+    SO.cCommandsIn obliqueDativeTree DP_letter DP_mary ∧
+    SO.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    SO.cCommandsIn standardPassiveTree DP_ball DP_john := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 6: Barss & Lasnik (1986) Asymmetries — Structured Data
@@ -262,9 +324,9 @@ theorem bl_six_asymmetries : blAsymmetries.length = 6 := rfl
 /-- All six asymmetries are derived from a single structural fact:
     in the DOC, NP1 (IO) asymmetrically c-commands NP2 (DO). -/
 theorem bl_asymmetries_from_ccommand :
-    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
-    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary := by
-  constructor <;> native_decide
+    SO.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    ¬ SO.cCommandsIn docDativeShiftTree DP_letter DP_mary := by
+  constructor <;> decide
 
 -- ============================================================================
 -- § 7: Recoverability Condition (§5 of the paper)
@@ -341,7 +403,7 @@ def allDativeVerbs : List DativeVerbEntry :=
 theorem recoverability_predicts_dative_shift :
     (allDativeVerbs.filter recoverable).map (·.verb) = ["give", "send", "promise"] ∧
     (allDativeVerbs.filter (! recoverable ·)).map (·.verb) = ["donate", "distribute", "contribute"] := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ============================================================================
 -- § 8: Scope Freezing in the DOC
@@ -361,10 +423,10 @@ available. The data are recorded in `Bruening2001`
     which records "Someone gave every student a book" as `surfaceOnly`. -/
 theorem doc_scope_freezing_structural_basis :
     -- IO > DO (IO c-commands DO): surface scope available
-    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
+    SO.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
     -- DO ≯ IO (DO does not c-command IO): inverse scope blocked
-    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary := by
-  constructor <;> native_decide
+    ¬ SO.cCommandsIn docDativeShiftTree DP_letter DP_mary := by
+  constructor <;> decide
 
 -- ============================================================================
 -- § 9: Indirect Passive (§4 of the paper)
@@ -377,14 +439,19 @@ by Passive (DOC → indirect passive). Larson proposes an alternative
 "3→1 advancement" where PASSIVE applies directly to the oblique
 dative, promoting the IO without an intermediate DOC stage.
 
-Both routes use the same operations (NP Movement = `Step.im`). We
+Both routes use the same operations (NP Movement = `SO.Step.im`). We
 formalize the two-step route, which produces the same surface
 c-command relations. -/
 
-def V_sent     := mkLeafPhon .V [.D]  "was-sent"   320
-def DP_mary2   := mkLeafPhon .D []    "Mary"        321
-def DP_letter2 := mkLeafPhon .D []    "a letter"    322
-def P_to2      := mkLeafPhon .P [.D]  "to"          323
+def V_sent     := SO.mkLeafPhon .V [.D]  "was-sent" 320
+def DP_mary2   := SO.mkLeafPhon .D []    "Mary"     321
+def DP_letter2 := SO.mkLeafPhon .D []    "a letter" 322
+def P_to2      := SO.mkLeafPhon .P [.D]  "to"       323
+
+private def tok_sent    : LIToken := ⟨.simple .V [.D] (phonForm := "was-sent"), 320⟩
+private def tok_mary2   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 321⟩
+private def tok_letter2 : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 322⟩
+private def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323⟩
 
 /-- Indirect passive: "Mary was sent a letter"
 
@@ -392,23 +459,33 @@ def P_to2      := mkLeafPhon .P [.D]  "to"          323
     1. Build oblique dative base: [VP a_letter [V' send [PP to Mary]]]
     2. Dative Shift (IM Mary): Mary promotes to inner Spec
     3. Passive (IM Mary again): Mary promotes to outer Spec (subject) -/
-def indirectPassive : Derivation :=
+def indirectPassive : SO.Derivation :=
   { initial := V_sent
     steps := [
-      .emR (merge P_to2 DP_mary2),   -- [V' sent [PP to Mary]]
-      .emL DP_letter2,                -- [VP a_letter [V' sent [PP to Mary]]]
-      .im DP_mary2 0,                -- DATIVE SHIFT: Mary to inner Spec
-      .im DP_mary2 1                 -- PASSIVE: Mary to outer Spec (subject)
+      .emR (SO.ofPlanar (SO.nodeP (SO.leafP tok_to2) (SO.leafP tok_mary2))),
+                       -- [V' sent [PP to Mary]]
+      .emL DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
+      .im DP_mary2,    -- DATIVE SHIFT: Mary to inner Spec
+      .im DP_mary2     -- PASSIVE: Mary to outer Spec (subject)
     ] }
+
+/-- The indirect-passive result tree: Mary (twice-promoted) at the top
+    edge, above the stranded direct object. `[Mary [letter [sent [to t]]]]`. -/
+def indirectPassiveTree : SO :=
+  SO.ofPlanar
+    (SO.nodeP (SO.leafP tok_mary2)
+      (SO.nodeP (SO.leafP tok_letter2)
+        (SO.nodeP (SO.leafP tok_sent)
+          (SO.nodeP (SO.leafP tok_to2) SO.traceP))))
 
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/
 theorem indirect_passive_io_ccommands_do :
-    cCommandsIn indirectPassive.final DP_mary2 DP_letter2 := by native_decide
+    SO.cCommandsIn indirectPassiveTree DP_mary2 DP_letter2 := by decide
 
 /-- The indirect passive uses two Internal Merge steps:
-    Dative Shift + Passive — both are `Step.im`. -/
+    Dative Shift + Passive — both are `SO.Step.im`. -/
 theorem indirect_passive_two_im :
-    indirectPassive.movedItems.length = 2 := by native_decide
+    indirectPassive.movedItems.length = 2 := by decide
 
 end Larson1988
