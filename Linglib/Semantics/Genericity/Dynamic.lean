@@ -44,7 +44,7 @@ worlds. The single-world simplification suffices for all the paper's
 examples about Sobel sequences.
 -/
 
-namespace Semantics.Genericity.GenericsDynamic
+namespace Semantics.Genericity.Dynamic
 
 -- ═══ Computable Model ═══
 
@@ -599,7 +599,7 @@ This is a single Boolean judgment — it doesn't decompose into "select
 normal instances, then universally quantify." The `GenericSentence` shape
 (restrict → select normals → ∀) captures the normality-based family of
 theories; threshold semantics is a genuinely different algebraic shape.
-See `Generics.thresholdGeneric` (on `Quantification.thresholdGtOn`) for the
+See `Genericity.thresholdGeneric` (on `Quantification.thresholdGtOn`) for the
 threshold reading of GEN. -/
 
 /-- Construct a `GenericSentence` from a binary normalcy predicate.
@@ -653,4 +653,4 @@ def GenericSentence.fromOrder
     decide (∀ e' ∈ restricted, le e' e → le e e')
   ⟨restrictor, scope, normals⟩
 
-end Semantics.Genericity.GenericsDynamic
+end Semantics.Genericity.Dynamic

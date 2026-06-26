@@ -12,7 +12,7 @@ generic sentences like "Dogs bark", "Birds fly", etc.
 GEN is grounded on the canonical generalized-quantifier substrate in
 `Quantification/Counting.lean`: `traditionalGEN` is `Quantification.everyOn`
 over the situation domain with restriction `normal ∧ restrictor` and nuclear
-scope `scope` (`gen_is_every_on`). The prevalence-based alternative is the
+scope `scope` (true by construction — see the definition). The prevalence-based alternative is the
 ℚ view `Quantification.prevalenceOn` (`prevalence`), with the threshold
 reading `Quantification.thresholdGtOn` (`thresholdGeneric`).
 
@@ -57,7 +57,7 @@ See `Studies/TesslerGoodman2019.lean` for the RSA account.
 
 -/
 
-namespace Semantics.Genericity.Generics
+namespace Semantics.Genericity
 
 -- Core Types
 
@@ -119,18 +119,6 @@ Traditional GEN as a quantifier over situations.
     : Prop :=
   Quantification.everyOn situations.toFinset
     (fun s => (normal s && restrictor s) = true) (fun s => scope s = true)
-
-/-- GEN is the canonical relativized restricted universal `everyOn`, with
-    restriction = normal ∧ restrictor (a grounding identity, true by
-    construction). -/
-theorem gen_is_every_on
-    (situations : List Situation)
-    (normal : NormalcyPredicate)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    : traditionalGEN situations normal restrictor scope =
-      Quantification.everyOn situations.toFinset
-        (fun s => (normal s && restrictor s) = true) (fun s => scope s = true) := rfl
 
 /--
 Alternative formulation: existential test for counterexamples.
@@ -257,7 +245,7 @@ example : thresholdGeneric dogSituations isDogSituation dogBarks 1 2 := by decid
 
 -- Homogeneity Presupposition
 
-/-- GEN's homogeneity presupposition ([magri-2009] eq. (137)).
+/-- GEN's homogeneity presupposition ([magri-2009]).
 
     The covert generic operator GEN carries a presupposition that the
     nuclear scope either holds of ALL restrictor-satisfying elements or
@@ -307,4 +295,4 @@ theorem homogeneity_no
     genHomogeneityPresup situations restrictor scope :=
   Or.inr h
 
-end Semantics.Genericity.Generics
+end Semantics.Genericity

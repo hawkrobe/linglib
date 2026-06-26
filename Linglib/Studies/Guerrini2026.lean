@@ -1,5 +1,5 @@
 import Linglib.Semantics.Kinds.NominalMappingParameter
-import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Cumulativity
@@ -991,7 +991,7 @@ example : (genericityData.filter (·.language == "English")
 
 The two parses connect to different operators in the theory layer:
 
-- **BFG** instantiates `traditionalGEN` from `Generics.lean`:
+- **BFG** instantiates `traditionalGEN` from `Genericity/Basic.lean`:
   the kind's extension provides the restrictor, the VP provides the scope,
   and Gen's normalcy parameter captures the hidden context-dependence
   that [tessler-goodman-2019]'s RSA model replaces with prevalence priors.
@@ -1005,7 +1005,7 @@ they are structurally different semantic compositions that yield
 different truth conditions and different pragmatic properties.
 -/
 
-open Semantics.Genericity.Generics (traditionalGEN Situation
+open Semantics.Genericity (traditionalGEN Situation
   NormalcyPredicate Restrictor Scope)
 
 /-- The Bona Fide Generic parse is compositionally an instance of

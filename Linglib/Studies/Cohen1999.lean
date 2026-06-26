@@ -1,4 +1,4 @@
-import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Quantification.Counting
 
 /-!
@@ -56,7 +56,7 @@ divergence as a theorem against `cohenGEN`.
 
 namespace Cohen1999
 
-open Semantics.Genericity.Generics (Situation)
+open Semantics.Genericity (Situation)
 open Quantification (prevalenceOn countOn everyOn thresholdGtOn thresholdGtOn_iff_prevalenceOn
   mostOn thresholdGtOn_one_two_iff_mostOn Proportional mostOn_univ_proportional
   count count_decompose)

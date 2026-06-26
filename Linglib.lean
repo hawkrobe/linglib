@@ -2332,8 +2332,8 @@ import Linglib.Semantics.Gradability.GradableNouns
 import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Kinds.MeaningPreservation
-import Linglib.Semantics.Genericity.Generics
-import Linglib.Semantics.Genericity.GenericsDynamic
+import Linglib.Semantics.Genericity.Basic
+import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Studies.Krifka2004
 import Linglib.Semantics.Kinds.Subkinds
 import Linglib.Semantics.Homogeneity.Basic
