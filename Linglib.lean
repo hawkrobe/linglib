@@ -2805,6 +2805,7 @@ import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Syntax.DependencyGrammar.Projection
 import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.ExpressiveModifier
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.HPSG.Basic
 import Linglib.Syntax.HPSG.Binding
@@ -2897,7 +2898,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.ExpressiveModifier
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
