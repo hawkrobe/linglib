@@ -45,11 +45,10 @@ language- and configuration-particular data.
   and FCA postverbally).
 * The `res` table is language-particular data; its derivation from feature
   intersection over interpretable features is
-  `Syntax/Minimalist/Agreement/GenderResolution.lean`
-  ([adamson-anagnostopoulou-2025]'s mechanism) — the identification is
-  stated downstream, where both are visible.
+  [adamson-anagnostopoulou-2025]'s mechanism, formalized in
+  `Studies/AdamsonAnagnostopoulou2025.lean` (`resolve`/`resolveN`).
 * Binary resolution only; n-ary conjunctions fold once consumers need them
-  (cf. `GenderResolution.resolveN`).
+  (cf. `AdamsonAnagnostopoulou2025.resolveN`).
 * The strategy layer (closest/highest/resolved/default) is φ-generic —
   [bhatt-walkow-2013]'s CCA is one mechanism across number and gender — and
   hoists to shared substrate when a second feature module consumes it.

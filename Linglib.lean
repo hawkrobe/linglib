@@ -1877,8 +1877,6 @@ import Linglib.Studies.Deal2024
 import Linglib.Studies.ClemDeal2024
 import Linglib.Studies.PanchevaZubizarreta2018
 import Linglib.Syntax.Minimalist.Phi.Recursion
-import Linglib.Syntax.Minimalist.Agreement.GenderResolution
-import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Studies.Corbett2000
 import Linglib.Studies.Carstens2026
 import Linglib.Studies.HalpertHammerly2026

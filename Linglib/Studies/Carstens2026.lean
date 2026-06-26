@@ -4,8 +4,8 @@ import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Studies.Kramer2020
-import Linglib.Syntax.Minimalist.Agreement.GenderResolution
-import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
+import Linglib.Features.Number.Resolve
+import Linglib.Features.Person.Resolve
 import Linglib.Studies.AdamsonAnagnostopoulou2025
 import Linglib.Studies.TaraldsenEtAl2018
 
@@ -45,16 +45,18 @@ Linguistic Theory* 44:20.
 
 ## Formalization
 
-Resolution uses `GenderResolution.resolve` — the single compositional
+Resolution uses `resolve` — the single compositional
 endpoint — via `statusToBundle` which bridges Bantu `GenderStatus` to
-`FeatureBundle SemanticCore`. Study-level theorems verify the mechanism's
+`AnnotatedFeatures SemanticCore`. Study-level theorems verify the mechanism's
 predictions against [carstens-2026]'s empirical data.
 -/
 
 namespace Carstens2026
 
 open Bantu
-open Minimalist.Agreement.GenderResolution
+open AdamsonAnagnostopoulou2025 (AnnotatedFeature AnnotatedFeatures percolateI
+  intersectFeatures resolve SelectionGrammar selectFeature resolveN resolveN_binary
+  satisfiesMRH FeatureOrder)
 open _root_.Minimalist (Interpretability)
 
 -- ============================================================================
@@ -62,18 +64,18 @@ open _root_.Minimalist (Interpretability)
 -- ============================================================================
 
 /-- A single interpretable nP layer bearing `SemanticCore` c. -/
-def nP (c : SemanticCore) : FeatureBundle SemanticCore := [⟨c, .interpretable⟩]
+def nP (c : SemanticCore) : AnnotatedFeatures SemanticCore := [⟨c, .interpretable⟩]
 
 /-- An uninterpretable nP layer (no features to percolate). -/
-def nP_u : FeatureBundle SemanticCore := []
+def nP_u : AnnotatedFeatures SemanticCore := []
 
 /-- Stack an outer gender layer on an inner core (outer ++ inner). -/
-def nPStack (outer inner : FeatureBundle SemanticCore) := outer ++ inner
+def nPStack (outer inner : AnnotatedFeatures SemanticCore) := outer ++ inner
 
 /-- Convert `GenderStatus` to a feature bundle for `resolve`.
     Interpretable genders produce a singleton i-feature bundle;
     uninterpretable genders produce an empty bundle. -/
-def statusToBundle (s : GenderStatus) : FeatureBundle SemanticCore :=
+def statusToBundle (s : GenderStatus) : AnnotatedFeatures SemanticCore :=
   match s with
   | .interpretable c => nP c
   | .uninterpretable => nP_u
@@ -603,14 +605,14 @@ def TwoGrammarFeature.specificity (f : TwoGrammarFeature) : Nat :=
     Outer: class 1, arbitrary i[entity] from gender A.
     Inner: class 7, core i[inanimate] from gender D.
     [carstens-2026] (78)a, (79)a, (80)a. -/
-def trainFeatures : FeatureBundle TwoGrammarFeature :=
+def trainFeatures : AnnotatedFeatures TwoGrammarFeature :=
   [⟨⟨1, false⟩, .interpretable⟩, ⟨⟨7, true⟩, .interpretable⟩]
 
 /-- Feature bundle for diviner.7: [n₇(arbitrary) [n₁(core human) √DIVINER]].
     Outer: class 7, arbitrary i[entity] from gender D.
     Inner: class 1, core i[human] from gender A.
     [carstens-2026] (78)b, (79)b, (80)b. -/
-def divinerFeatures : FeatureBundle TwoGrammarFeature :=
+def divinerFeatures : AnnotatedFeatures TwoGrammarFeature :=
   [⟨⟨7, false⟩, .interpretable⟩, ⟨⟨1, true⟩, .interpretable⟩]
 
 /-- Intersection for train.1a & machine.1a: both layers survive.
@@ -683,15 +685,54 @@ theorem two_grammars_differ_diviner :
 -- § 14: Bridge to Unified Coordinate Resolution
 -- ============================================================================
 
-open Minimalist.Agreement.CoordinateResolution
+/-! ### Coordinate φ-resolution (the &P composition)
 
-/-! ### Bantu–CoordinateResolution bridge
+Composes the three φ-dimensions for a conjoined DP, each independently: **number** by
+lattice join (`Number.resolveIn`, [link-1983]/[harbour-2014]), **person** by hierarchy
+(`Person.resolve`, [noyer-1997]), **gender** by percolation+intersection (`resolve`,
+above). Number and person always succeed; gender can fail (→ default). (Formerly
+`Syntax/Minimalist/Agreement/CoordinateResolution.lean`, dissolved to its one consumer;
+the per-dimension operations are the canonical `Features/` ones, called directly.) -/
 
-    The unified `CoordinateResolution` framework resolves all three
-    phi-dimensions (person, number, gender) independently. Here we
-    show that the gender dimension, instantiated with `SemanticCore`
-    via `statusToBundle`, gives the expected outcomes for conjoined
-    Bantu singular DPs. -/
+/-- A conjunct DP's φ-bundle. -/
+structure PhiBundle (G : Type) where
+  person : AnnotatedFeature Person
+  number : AnnotatedFeature Number
+  gender : AnnotatedFeatures G
+
+/-- Resolved φ-features for a conjoined DP (`&P`). -/
+structure PhiResolved (G : Type) where
+  person : Option Person
+  number : Option Number
+  gender : Option (List G)
+
+/-- Percolate an annotated feature: its value iff interpretable. -/
+private def percolate {F : Type} (a : AnnotatedFeature F) : Option F :=
+  if a.interp == .interpretable then some a.value else none
+
+/-- Resolve two annotated features under a dimension operation `op`; both must be
+    interpretable to proceed. -/
+private def resolveAnnotated {F : Type} (op : F → F → Option F)
+    (a b : AnnotatedFeature F) : Option F :=
+  match percolate a, percolate b with
+  | some x, some y => op x y
+  | _, _ => none
+
+/-- Resolve all φ-features for two conjoined DPs, each dimension independently:
+    number by `Number.resolveIn` (coarsened to `system`), person by `Person.resolve`,
+    gender by percolation+intersection (`resolve`). -/
+def resolveCoordinate {G : Type} [BEq G]
+    (system : List Number) (dp1 dp2 : PhiBundle G) : PhiResolved G :=
+  { person := resolveAnnotated (fun p q => some (Person.resolve p q).coarsen)
+                dp1.person dp2.person
+    number := resolveAnnotated (fun a b => some (Number.resolveIn system a b))
+                dp1.number dp2.number
+    gender := resolve dp1.gender dp2.gender }
+
+/-! ### Bantu coordinate-resolution outcomes
+
+    The gender dimension, instantiated with `SemanticCore` via `statusToBundle`, gives
+    the expected outcomes for conjoined Bantu singular DPs. -/
 
 /-- A Bantu singular DP's phi-bundle: 3rd person (all full DPs are 3rd),
     singular number, gender from the noun's gender status. -/
@@ -753,7 +794,7 @@ theorem xhosa_uninterpretable_coordinate :
 
     [carstens-2026] explicitly adopts [adamson-anagnostopoulou-2025]'s
     percolation-and-intersection mechanism. Both studies use the same
-    `GenderResolution.resolve` function, instantiated with different
+    `resolve` function, instantiated with different
     feature types:
     - A&A: `GenderNode` (privative geometry nodes — CLASS, MASC, FEM, etc.)
     - Carstens: `SemanticCore` (entity flavors — human, animal, inanimate)
