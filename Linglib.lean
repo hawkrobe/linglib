@@ -380,6 +380,7 @@ import Linglib.Features.ContainmentPair
 import Linglib.Features.Person.Basic
 import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Features.Person.Interp
 import Linglib.Features.Person.Resolve
 import Linglib.Features.PhiKernel
@@ -2151,7 +2152,6 @@ import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
-import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Filter

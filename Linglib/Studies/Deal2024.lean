@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.PConstraint
+import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Studies.CoonKeine2021
 
@@ -58,7 +58,7 @@ are derived from runs.
 namespace Deal2024
 
 open Minimalist (decomposePerson)
-open Minimalist.PConstraint (IsLicit strongGrammar ultraStrongGrammar
+open PCC (IsLicit strongGrammar ultraStrongGrammar
   weakGrammar meFirstGrammar)
 open Minimalist.CyclicAgree (activeResidue personSpec partialProbe)
 

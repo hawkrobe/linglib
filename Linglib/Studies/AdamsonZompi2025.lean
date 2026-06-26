@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Syntax.Minimalist.PConstraint
+import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
@@ -54,7 +54,7 @@ not addressee reference per se.
 namespace AdamsonZompi2025
 
 open Minimalist (DecomposedPerson decomposePerson)
-open Minimalist.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
+open PCC (PCCGrammar IsLicit weakGrammar strongGrammar
   IsInherentlyProximate)
 
 -- ============================================================================
