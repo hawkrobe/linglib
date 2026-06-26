@@ -1,6 +1,6 @@
 import Linglib.Phonology.ItemSpecificity.Defs
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Indexed Constraints
@@ -29,10 +29,10 @@ theory under-fits relative to `ScaledWeights` /
 `RepresentationStrength`.
 -/
 
-namespace Constraint.ItemSpecificity.Indexed
+namespace Constraints.ItemSpecificity.Indexed
 
-open Constraint.ItemSpecificity
-open Constraint OptimalityTheory
+open Constraints.ItemSpecificity
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Stratification
@@ -86,4 +86,4 @@ theorem mkCoreOnly_constant_within_stratum
     (mkCoreOnly cutoff base).eval c1 = (mkCoreOnly cutoff base).eval c2 := by
   simp [mkCoreOnly, h1, h2, hbase]
 
-end Constraint.ItemSpecificity.Indexed
+end Constraints.ItemSpecificity.Indexed

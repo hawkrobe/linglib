@@ -72,7 +72,7 @@ namespace OptimalityTheory.CophonologyByPhrase
 
 open OptimalityTheory.CophonologyTheory (cophonologicalEval mergeRanking
   mergeRanking_empty_sub cophonologicalEval_empty_sub)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Minimalist (Phase SyntacticObject)
 
 -- ============================================================================

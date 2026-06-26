@@ -58,7 +58,7 @@ sub-grid.
 
 namespace ZurawHayes2017
 
-open Constraint HarmonicGrammar Core.Optimization Constraint OptimalityTheory OptimalityTheory
+open Constraints HarmonicGrammar Core.Optimization Constraints OptimalityTheory OptimalityTheory
 
 /-! ## § 1: 2×2 Square — Underlying Forms -/
 

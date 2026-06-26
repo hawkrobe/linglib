@@ -1,5 +1,5 @@
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.Tone.Constraints
@@ -60,7 +60,7 @@ step witnesses are `decide`-checked (no `sorry`).
 
 namespace McPhersonLamont2026
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Core.Optimization.Evaluation
 
 -- ============================================================================
@@ -282,7 +282,7 @@ theorem weighted_HG_inadequate :
 
 namespace Fig3
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -582,7 +582,7 @@ end Fig3
 
 namespace Eq24
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -664,7 +664,7 @@ end Eq24
 
 namespace Eq21
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -732,7 +732,7 @@ end Eq21
 
 namespace Eq27
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -802,7 +802,7 @@ end Eq27
 
 namespace Eq30
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -885,7 +885,7 @@ end Eq30
 
 namespace Eq22
 
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone

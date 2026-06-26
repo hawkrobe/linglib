@@ -2,7 +2,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Case.Allomorphy
-import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.Prosodic.Foot
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
@@ -53,7 +53,7 @@ Telugu nouns exhibit two stem alternation patterns:
 
 namespace Aitha2026
 
-open Core Constraint OptimalityTheory Core.Optimization Core.Optimization.Evaluation
+open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Morphology.DM.VI
 open Prosody.Syllable
 
@@ -1020,7 +1020,7 @@ end MoraicCLConnection
 becomes a probability-1 claim per stratum. -/
 
 section PredictAPI
-open Core.Optimization Constraint
+open Core.Optimization Constraints
 
 /-- Stem-level metrical parse tableau as a generic `ConstraintSystem`. -/
 noncomputable def stemSystem : ConstraintSystem StemCandidate (LexProfile Nat 3) :=

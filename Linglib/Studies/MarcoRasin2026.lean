@@ -1,7 +1,7 @@
 import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Prosodic.Syllable
-import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.OptimalityTheory.Predict
 
 /-!
 # Marco & Rasin (2026): Optimal Paradigms — A Challenge from JTA
@@ -43,7 +43,7 @@ argument that OP fails "regardless of what constitutes a paradigm."
 
 namespace MarcoRasin2026
 
-open Core.Optimization Constraint OptimalityTheory
+open Core.Optimization Constraints OptimalityTheory
 open OptimalityTheory
 open OptimalityTheory.ParadigmUniformity
 open Prosody.Syllable (SonorityRank)
@@ -348,7 +348,7 @@ predictions for verbs and nouns, and the *wrong* prediction for adjectives —
 the empirical content of [marco-rasin-2026]'s argument. -/
 
 section PredictAPI
-open Core.Optimization Constraint
+open Core.Optimization Constraints
 
 /-- Verbal paradigm under McCarthy's OP ranking. -/
 noncomputable def verbSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=

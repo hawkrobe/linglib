@@ -1,6 +1,7 @@
-import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.EvalMode
-import Linglib.Phonology.Constraint.Iteration
+import Linglib.Phonology.Constraints.Iteration
 import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 
 /-!
@@ -58,7 +59,7 @@ silently routing directional callers to the parallel optimum.
 -/
 
 namespace OptimalityTheory
-open Constraint
+open Constraints
 
 
 open Core.Optimization.Evaluation

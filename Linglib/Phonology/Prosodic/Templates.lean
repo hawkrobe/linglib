@@ -32,7 +32,7 @@ the first place — the central analytical move of [faust-2026] §4.
 namespace Prosody.Templates
 
 open Morphology
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open OptimalityTheory (mkAlign)
 
 -- ============================================================================

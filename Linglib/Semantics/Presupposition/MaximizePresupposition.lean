@@ -1,6 +1,6 @@
 import Linglib.Features.ContainmentPair
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Semantics.Presupposition.PhiFeatures
 
 /-!
@@ -69,7 +69,7 @@ set_option autoImplicit false
 namespace Semantics.Presupposition.MaximizePresupposition
 
 open Features (ContainmentPair)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Core.Optimization.Evaluation
 open Semantics.Presupposition.PhiFeatures
 

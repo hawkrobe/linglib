@@ -54,7 +54,7 @@ open Semantics.Plurality.Algebra (star D)
 open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
 open Features (ContainmentPair ContainmentPairLike)
 open Semantics.Presupposition (PartialProp)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
 

@@ -1,7 +1,7 @@
 import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.OptimalityTheory.Doubling
-import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.OptimalityTheory.Predict
 
 /-!
 # Berent (2026) [berent-2026]
@@ -57,7 +57,7 @@ open OptimalityTheory.Doubling
 
 namespace Berent2026
 
-open Core.Optimization Constraint OptimalityTheory
+open Core.Optimization Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient
@@ -183,7 +183,7 @@ probability-1 reversal: the same OCP-XX assigns probability 1 to
 morphological contexts. -/
 
 section PredictAPI
-open Core.Optimization Constraint
+open Core.Optimization Constraints
 
 /-- Phonological-context tableau as a generic `ConstraintSystem`. -/
 noncomputable def phonSystem : ConstraintSystem DoublingParse (LexProfile Nat 2) :=

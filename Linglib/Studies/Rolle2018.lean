@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Rolle 2018 — Grammatical tone: CoP-scope and Matrix-Basemap Correspondence
@@ -53,7 +53,7 @@ namespace Rolle2018
 
 open Tone
 open OptimalityTheory.Correspondence (Corr)
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 /-! ## CoP-scope: cophonological domain scope hierarchy -/
 

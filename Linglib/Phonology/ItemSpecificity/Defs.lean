@@ -42,7 +42,7 @@ empirically standard predictor and (b) frequency-scaled-weight theories
 want raw counts can `Real.exp ∘ tokenLogFreq`.
 -/
 
-namespace Constraint.ItemSpecificity
+namespace Constraints.ItemSpecificity
 
 -- ============================================================================
 -- § 1: Frequency channels
@@ -95,4 +95,4 @@ abbrev isAboveThreshold {α : Type} [HasTokenFreq α] (threshold : ℝ) (a : α)
 noncomputable instance {α : Type} [HasTokenFreq α] (threshold : ℝ) :
     DecidablePred (isAboveThreshold (α := α) threshold) := fun _ => Classical.dec _
 
-end Constraint.ItemSpecificity
+end Constraints.ItemSpecificity

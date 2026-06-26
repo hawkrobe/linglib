@@ -78,7 +78,6 @@ set_option autoImplicit false
 namespace Pragmatics.Bidirectional
 
 open Core.Optimization.Evaluation
-open Constraint
 
 -- ============================================================================
 -- § 1: Q-Principle and I-Principle as Bool Predicates (List-based, decidable)

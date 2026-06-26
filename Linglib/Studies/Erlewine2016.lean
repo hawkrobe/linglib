@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Syntax.Minimalist.Position
-import Linglib.Phonology.Constraint.Defs
-import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus
@@ -89,7 +89,7 @@ derivation via AF (alternation strategy). Both use
 namespace Erlewine2016
 
 open Kaqchikel Minimalist
-open Constraint OptimalityTheory
+open Constraints OptimalityTheory
 
 -- ============================================================================
 -- § 1: Competing Derivations

@@ -59,7 +59,7 @@ to any `WeightedConstraint` list without re-proving in Fin-indexed form.
 namespace HarmonicGrammar
 
 
-open Core Real Finset Constraint
+open Core Real Finset Constraints
 
 -- ============================================================================
 -- § 1: The 2×2 Square of Underlying Forms (§2.4)
