@@ -1,7 +1,7 @@
 import Linglib.Features.Gender.Interp
 import Linglib.Morphology.RootTypology
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Categorizing Heads (Distributed Morphology) [harley-2014]

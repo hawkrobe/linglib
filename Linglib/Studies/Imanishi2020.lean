@@ -1,5 +1,5 @@
 import Linglib.Studies.CoonMateoPedroPreminger2014
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Features.Case.Basic
 import Linglib.Typology.Alignment
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement

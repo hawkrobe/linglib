@@ -1,5 +1,5 @@
 import Linglib.Typology.VoiceSystem
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Indonesian Voice System

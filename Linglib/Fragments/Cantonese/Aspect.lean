@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Aspect
+import Linglib.Syntax.Minimalist.Verbal.Aspect
 
 /-!
 # Cantonese Aspect Markers

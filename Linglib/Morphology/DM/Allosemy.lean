@@ -1,7 +1,7 @@
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
 import Linglib.Morphology.RootTypology
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Allosemy: Contextual Meaning Variation of Functional Heads

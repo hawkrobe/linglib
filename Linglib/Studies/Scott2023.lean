@@ -1,6 +1,6 @@
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Alignment
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Satisfaction

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Semantics.ArgumentStructure.Relational

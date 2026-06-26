@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Agree
-import Linglib.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!

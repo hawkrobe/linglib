@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # [merchant-2013] — Voice and Ellipsis

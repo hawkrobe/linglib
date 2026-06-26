@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Fragments.Malayic.VoiceSystem
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Voice and Extraction in Malayic
