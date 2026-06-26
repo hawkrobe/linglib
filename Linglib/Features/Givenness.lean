@@ -1,132 +1,44 @@
-import Mathlib.Order.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Givenness — Cognitive Status of Discourse Referents
-[gundel-hedberg-zacharski-1993] [prince-1981] [chafe-1976]
-[chafe-1987] [ariel-2001]
+# Givenness — cognitive status of discourse referents
 
-Substrate type for the **Givenness** axis of information structure.
-[krifka-2008] enumerates four IS notions — focus, givenness,
-topic, and **delimitation** (frame-setting). At-issueness (Roberts /
-Tonhauser-Beaver-Roberts-Simons / Tonhauser-Beaver-Degen) is a
-separate axis from the QUD tradition that the post-2008 literature
-treats as orthogonal to Krifka's four. [fery-ishihara-2016]
-(Oxford Handbook of Information Structure introduction) adopts
-Krifka's definitions as the unifying baseline. Linglib currently
-provides substrate for focus, givenness, topic, and at-issueness;
-delimitation has no substrate yet.
+Substrate for the **givenness** axis of information structure (one of
+[krifka-2008]'s four IS notions). Two types, for the scalar and the
+categorical view of givenness.
 
-The handbook section on givenness names two interpretive modes:
+* `GivennessStatus` — the [gundel-hedberg-zacharski-1993] (GHZ) six-tier
+  Givenness Hierarchy `inFocus > activated > familiar >
+  uniquelyIdentifiable > referential > typeIdentifiable`, with a `rank`
+  giving GHZ's implicational *status* order (each status entails all
+  lower; not a claim about the many-to-many status-to-form mapping).
+  Promoted from `Studies/Ariel2001.lean` so it can be shared.
+* `BinaryGivenness` — `given | new`, the GHZ coarsening
+  (`GivennessStatus.toBinary`) at the identifiable/indefinite boundary
+  ([lambrecht-1994] identifiability). Not [prince-1992]'s hearer-old/new
+  binary (which cross-cuts identifiability), nor [schwarzschild-1999]
+  entailment-givenness (`isGiven` in `Studies/KratzerSelkirk2020.lean`);
+  a consumer meaning another axis (e.g. discourse-status) should say so.
 
-- **Scalar / hierarchical** — Prince 1981, Chafe 1976,
-  [gundel-hedberg-zacharski-1993] (GHZ), [lambrecht-1994]. The
-  cognitive status of a referent in the hearer's mind is graded.
-- **Categorical** — Schwarzschild 1999. Binary given vs not given,
-  derived from grammatical antecedent presence.
-
-This file provides the substrate for both:
-
-- `GivennessStatus` (GHZ-6): `inFocus | activated | familiar |
-  uniquelyIdentifiable | referential | typeIdentifiable`. The full
-  hierarchy, promoted from `Studies/Ariel2001.lean`
-  (where it was originally defined for the GHZ-vs-Ariel comparison) so
-  it can be consumed across `Theories/` and `Features/`.
-
-- `BinaryGivenness` (Prince 1981 hearer-status): `given | new`. The
-  simplest categorical distinction; coarsening of GHZ-6 cutting at
-  hearer-knowledge: anything the hearer can identify (`inFocus` through
-  `uniquelyIdentifiable`) is `given`; anything brand-new to the hearer
-  (`referential`, `typeIdentifiable`) is `new`. This is the cut Prince
-  1981 / Strube-Hahn 1999 use. Chafe's later activation-based view
-  (Chafe 1987, elaborated in Chafe 1994) draws a different cut as a
-  three-way active / semi-active / inactive taxonomy; not provided
-  here as a primitive.
-
-## Critique: Ariel 2001 on GHZ
-
-[ariel-2001] (pp. 62-65) raises four substantive critiques of the
-GHZ-6 hierarchy that consumers should know about:
-
-1. **Limited psychological evidence.** Ariel argues (p. 64) that
-   psychological evidence supports the scalar relation between
-   `inFocus` and `activated` only — the four lower tiers (`familiar`
-   through `typeIdentifiable`) lack independent experimental support
-   as a distinct scalar order.
-2. **Internally disjunctive tiers.** `uniquelyIdentifiable` and
-   `referential` each cover two cognitively different processes
-   (retrieve vs construct an existing/new representation; Ariel p. 63).
-3. **Many-many form-function.** A given GHZ status maps to many
-   surface forms, and a given form maps to many statuses (Mulkern 1996
-   on partial vs full proper names; Ariel p. 64).
-4. **Implicationality counterexample.** Ziv 1996 — pronouns
-   (`inFocus`) are predicted by the implicational hierarchy to also
-   be `uniquelyIdentifiable`, but Ziv exhibits cases of unidentified
-   inferred role players where this fails.
-
-Ariel's own account uses the 18-tier `Features.AccessibilityLevel`
-(see below) which Ariel argues is the better-grounded scale. **GHZ-6 is
-nonetheless retained as substrate** because it is what the IS
-literature widely cites (Krifka 2008 / Féry-Ishihara 2016 list it as
-the canonical scalar givenness theory), and because Centering's
-[strube-hahn-1999] information-status taxonomy projects naturally
-from GHZ-style categories. Discrete enough for `decide`-based
-theorems, where AccessibilityLevel's 18 tiers can be unwieldy.
-
-## Relation to AccessibilityLevel
-
-`Features.AccessibilityLevel` ([ariel-2001]) is the
-empirically-better-supported sibling: 18 tiers of NP-form-marking
-with informativity, rigidity, and attenuation criteria. Ariel's `toAccessibility` projection from GHZ-6
-to AccessibilityLevel lives in `Studies/Ariel2001.lean`
-(Ariel-specific bridge). Use AccessibilityLevel when finer distinctions
-matter (proximate vs distal demonstratives; clitic vs unstressed vs zero
-pronouns); use GivennessStatus when the IS-literature 6-tier shape is
-the right granularity.
-
-## Layer position
-
-`Features/`. Importable from any theory-layer, Fragments/, or Studies/
-consumer that needs to type a discourse referent's cognitive status.
-The Centering MEDIATED tier
-(`Discourse/Centering/Instances/InformationStatus.lean`) used
-to lack a substrate source for the inferable / containing-inferable /
-anchored-brand-new tier; GHZ-6's `familiar` and `uniquelyIdentifiable`
-now supply it via `StrubeHahnInfoStatus.ofGivenness`.
-
+Sibling GHZ-6 coarsenings/scales: Ariel's 18-tier
+`Features.AccessibilityLevel` (`toAccessibility`) and Centering's
+[strube-hahn-1999] `StrubeHahnInfoStatus.ofGivenness` (its `mediated`
+tier drawn from `uniquelyIdentifiable`/`referential`). [ariel-2001]
+argues AccessibilityLevel is better grounded — the lower GHZ tiers lack
+independent scalar support — but GHZ-6 is retained as the literature's
+canonical scalar scale and is small enough for `decide`. See also
+[prince-1981], [chafe-1976], [chafe-1987].
 -/
 
 set_option autoImplicit false
 
 namespace Features
 
-/-- [gundel-hedberg-zacharski-1993] (GHZ): six cognitive statuses
-    organized as an implicational hierarchy. Each status implies all
-    lower ones (a referent in focus is also activated, familiar, etc.):
-
-        in focus > activated > familiar > uniquely identifiable >
-        referential > type identifiable
-
-    The form-mapping documented in the original paper:
-    `inFocus`              = unstressed pronoun
-    `activated`            = that, this, this N
-    `familiar`             = that N
-    `uniquelyIdentifiable` = the N
-    `referential`          = indefinite this N
-    `typeIdentifiable`     = a N
-
-    Promoted from `Studies/Ariel2001.lean` where it
-    was originally defined for the GHZ-vs-Ariel-accessibility
-    comparison. The Ariel-specific projection
-    (`GivennessStatus.toAccessibility`) stays in `Ariel2001.lean`. -/
+/-- [gundel-hedberg-zacharski-1993] six-tier Givenness Hierarchy
+    (`inFocus > … > typeIdentifiable`), each status entailing all lower. -/
 inductive GivennessStatus where
-  /-- Unstressed pronoun: referent currently in attention. Per
-      [ariel-2001] p. 64 (citing Ziv 1996), the implicational
-      claim that `inFocus` entities are also `uniquelyIdentifiable`
-      has counterexamples (unidentified inferred role players); this
-      enum's ordinal placement is the GHZ-claimed order, not a proven
-      cognitive fact. -/
+  /-- In focus: unstressed pronoun — referent currently in attention. -/
   | inFocus
   /-- Activated: that/this/this-N — referent in working memory. -/
   | activated
@@ -153,21 +65,12 @@ def GivennessStatus.rank : GivennessStatus → Nat
   | .referential          => 1
   | .typeIdentifiable     => 0
 
-/-- [prince-1981] hearer-status binary: `given | new`. The simplest
-    categorical givenness distinction. `given` covers any referent the
-    hearer can identify (regardless of activation state); `new` covers
-    referents the hearer doesn't yet know about.
-
-    This is the cut Prince 1981 / Strube-Hahn 1999 use. Chafe's
-    activation-based view (Chafe 1987) draws a different
-    *three-way* taxonomy (active / semi-active / inactive); not
-    provided here as a primitive. -/
+/-- `given | new`: the GHZ identifiability coarsening
+    (`GivennessStatus.toBinary`); see the module docstring for what it is not. -/
 inductive BinaryGivenness where
-  /-- Given: hearer can identify the referent. Covers GHZ's `inFocus`
-      through `uniquelyIdentifiable`. -/
+  /-- Given: hearer can identify the referent (GHZ `inFocus`..`uniquelyIdentifiable`). -/
   | given
-  /-- New: brand-new to the hearer. Covers GHZ's `referential` and
-      `typeIdentifiable`. -/
+  /-- New: indefinite, not yet identifiable (GHZ `referential`, `typeIdentifiable`). -/
   | new
   deriving DecidableEq, Repr, Fintype, Inhabited
 
@@ -176,24 +79,15 @@ def BinaryGivenness.rank : BinaryGivenness → Nat
   | .given => 1
   | .new   => 0
 
-/-- Distinct GHZ-6 statuses have distinct ranks. -/
-theorem GivennessStatus.rank_injective :
-    Function.Injective GivennessStatus.rank := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [GivennessStatus.rank]
+/-- GHZ-6 given–new coarsening: identifiable tiers ↦ `given`, indefinite
+    tiers ↦ `new`. Makes the module docstring's cut true by construction. -/
+def GivennessStatus.toBinary : GivennessStatus → BinaryGivenness
+  | .inFocus | .activated | .familiar | .uniquelyIdentifiable => .given
+  | .referential | .typeIdentifiable                          => .new
 
-/-- Distinct binary-givenness values have distinct ranks. -/
-theorem BinaryGivenness.rank_injective :
-    Function.Injective BinaryGivenness.rank := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [BinaryGivenness.rank]
-
-/-- Total order on `GivennessStatus` via the rank function. -/
-instance : LinearOrder GivennessStatus :=
-  LinearOrder.lift' GivennessStatus.rank GivennessStatus.rank_injective
-
-/-- Total order on `BinaryGivenness` via the rank function. -/
-instance : LinearOrder BinaryGivenness :=
-  LinearOrder.lift' BinaryGivenness.rank BinaryGivenness.rank_injective
+/-- The coarsening is rank-monotone: more accessible GHZ tiers map to `given`. -/
+theorem GivennessStatus.toBinary_monotone (a b : GivennessStatus) :
+    a.rank ≤ b.rank → a.toBinary.rank ≤ b.toBinary.rank := by
+  cases a <;> cases b <;> decide
 
 end Features

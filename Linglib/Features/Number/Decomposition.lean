@@ -116,7 +116,7 @@ def Features.ofNumber : Number → Option Features
 containment pair: `outer` = minimal, `inner` = atomic. The containment
 [+atomic] → [+minimal] maps to [+inner] → [+outer], unifying the structure
 with person features — one edge of the φ-feature iso-web
-(`Features/PhiKernel.lean`). -/
+(`phiKernelEquiv`, `Studies/Harbour2016.lean`). -/
 def featuresEquiv : Features ≃ ContainmentPair where
   toFun f := ⟨f.isMinimal, f.isAtomic⟩
   invFun p := ⟨p.inner, p.outer⟩

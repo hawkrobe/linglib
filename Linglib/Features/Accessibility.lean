@@ -1,3 +1,4 @@
+import Linglib.Features.Givenness
 import Linglib.Features.Prominence
 import Mathlib.Order.Basic
 import Mathlib.Tactic.DeriveFintype
@@ -103,9 +104,7 @@ theorem AccessibilityLevel.rank_injective :
   intro a b h
   cases a <;> cases b <;> simp_all [AccessibilityLevel.rank]
 
-/-- Total order on `AccessibilityLevel` via the rank pullback,
-    matching the `LinearOrder GivennessStatus` / `BinaryGivenness`
-    pattern in `Features/Givenness.lean`. -/
+/-- Total order on `AccessibilityLevel` via the rank pullback. -/
 instance : LinearOrder AccessibilityLevel :=
   LinearOrder.lift' AccessibilityLevel.rank AccessibilityLevel.rank_injective
 
@@ -255,5 +254,21 @@ theorem pronoun_implies_elaborated :
     representations — the referent is being (re-)introduced. -/
 theorem fullName_implies_underspecified :
     AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
+
+/-- Ariel's GHZ→AccessibilityLevel projection ([ariel-2001]): the
+    prototypical accessibility level for each givenness status.
+
+    Caveat: GHZ's lower statuses (`referential` = "indefinite this N",
+    `typeIdentifiable` = "a N") are **indefinite**, which do not appear
+    on Ariel's accessibility-marking scale (Given/definite forms); the
+    mapping for these two is by approximate accessibility degree, not
+    by form identity. -/
+def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
+  | .inFocus              => .unstressedPron
+  | .activated            => .proxDem
+  | .familiar             => .distalDemNP
+  | .uniquelyIdentifiable => .shortDefDescription
+  | .referential          => .longDefDescription
+  | .typeIdentifiable     => .fullNameMod
 
 end Features

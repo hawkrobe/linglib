@@ -108,7 +108,7 @@ def toFeatures : Person → Option Features
 
 /-- The `[±participant, ±author]` decomposition is carrier-equivalent to
 the containment pair: `outer` = participant, `inner` = author. One edge of
-the φ-feature iso-web (`Features/PhiKernel.lean`). -/
+the φ-feature iso-web (`phiKernelEquiv`, `Studies/Harbour2016.lean`). -/
 def featuresEquiv : Features ≃ ContainmentPair where
   toFun f := ⟨f.hasParticipant, f.hasAuthor⟩
   invFun p := ⟨p.outer, p.inner⟩

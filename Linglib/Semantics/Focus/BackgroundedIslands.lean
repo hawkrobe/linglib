@@ -384,7 +384,7 @@ def extractedFillerStatus : FocusMark := .focused
 the extracted filler is [FoC] (derived from `extractedFillerStatus`) but
 the clause is [G] (derived from the verb's default QUD).
 
-Uses `extractionISClash` from `Core/InformationStructure.lean`, which
+Uses `extractionISClash` from `Semantics/Focus/Comparability.lean`, which
 unifies [abeille-et-al-2020]'s FBC with [erteschik-shir-1973]'s
 Dominance Condition. -/
 theorem backgrounded_extraction_clashes :
@@ -449,7 +449,7 @@ The full derivation chain:
 5. Backgrounded → extraction creates information-structural clash (§4 Route 2)
 
 Steps 4 and 5 are derived in §4 from `manner_qud_ignores_content`.
-`DiscourseStatus.rank` from `Core/InformationStructure.lean` provides the
+`BinaryGivenness.rank` (`Features/Givenness.lean`) provides the
 ordinal ranking consistent with this derivation.
 -/
 
@@ -861,7 +861,7 @@ Backgroundedness is derived from the formal model (§6 `mos_island_effect`).
 Projectivity follows from the anti-correlation with at-issueness
 ([tonhauser-beaver-degen-2018]): backgrounded content is not at-issue,
 and not-at-issue content projects. Extraction resistance follows from
-backgroundedness (§6 `DiscourseStatus.rank_injective`). -/
+backgroundedness (ranked by `BinaryGivenness.rank`). -/
 def mosComplementProfile : ExtractionProfile := ⟨true, true, true⟩
 
 /-- Factive verb complement (*notice*, *discover*): projective but NOT
