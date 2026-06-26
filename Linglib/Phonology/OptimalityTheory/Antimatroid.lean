@@ -46,9 +46,9 @@ The design follows mathlib's `Matroid` pattern: bundled structure with
 ## Theorems
 
 - `Antimat_entailment` — Theorem 3: entailment → containment (proved)
-- `Antimat_RCErc_inv` — Theorem 1 (placeholder)
-- `RCErc_Antimat_inv` — Theorem 2 (placeholder)
-- `RCErc_entailment` — Theorem 4 (placeholder)
+- `Antimat_RCErc_inv` — Theorem 1: `Antimat ∘ RCErc = id` (stated; proof `sorry`)
+- `RCErc_Antimat_inv` — Theorem 2: `RCErc ∘ Antimat = id` (stated; proof `sorry`)
+- `RCErc_entailment` — Theorem 4: containment → entailment (stated; proof `sorry`)
 
 ## References
 
@@ -213,7 +213,7 @@ def Antimatroid.free (E : Set α) : Antimatroid α where
     exact ⟨x, hxE, hxS, Set.insert_subset hxE hS⟩
   removal := fun S hS hne => by
     obtain ⟨x, hx⟩ := hne
-    exact ⟨x, hx, Set.diff_subset.trans hS⟩
+    exact ⟨x, hx, Set.sdiff_subset.trans hS⟩
   union_closed := fun _ _ hS hT => Set.union_subset hS hT
 
 /-- The free antimatroid on `E` has `IsFeasible S ↔ S ⊆ E`. -/
@@ -608,7 +608,7 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E) :
     · -- r(k-1) ∈ S: its rank position is k-1 < k
       rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Equiv.symm_apply_apply]; omega
     · -- S \ {r(k-1)} = maximalChain r (k-1)
-      rw [← hk]; ext i; simp only [maximalChain, Set.mem_diff, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      rw [← hk]; ext i; simp only [maximalChain, Set.mem_sdiff, Set.mem_setOf_eq, Set.mem_singleton_iff]
       constructor
       · intro h
         exact ⟨by omega, fun heq => by rw [heq] at h; simp only [Equiv.symm_apply_apply] at h; omega⟩
@@ -640,29 +640,46 @@ noncomputable def RCErc_single {n : Nat} (A : Antimatroid (Fin n))
     else if k = rc.root then .L
     else .e
 
+/-- `RCErc A` is the ERC set of antimatroid `A`: the image of `A`'s rooted
+    circuits under `RCErc_single`. This is the inverse of `Antimat`
+    ([merchant-riggle-2016] Theorems 1–2).
+
+    Represented as a `Set (ERC n)`; a ranking `r` *satisfies* `RCErc A` when
+    `∀ α ∈ RCErc A, ERC.satisfiedBy r α` — the `Set` analogue of
+    `ERCSet.satisfiedBy`, used to state the isomorphism theorems below. -/
+noncomputable def RCErc {n : Nat} (A : Antimatroid (Fin n)) : Set (ERC n) :=
+  Set.range (RCErc_single A)
+
 -- ============================================================================
 -- § 14: Isomorphism Theorems
 -- ============================================================================
 
-/-- **Theorem 1** ([merchant-riggle-2016]): `MChain` is the
-    inverse of `RCErc`.
+/-- **Theorem 1** ([merchant-riggle-2016]): `Antimat` is a left inverse of
+    `RCErc`. For any antimatroid `A`, rebuilding from `A`'s rooted-circuit
+    ERCs recovers `A` — stated at the feasible-set level (`Antimat (RCErc A)`
+    and `A` have the same feasible sets), since `Antimat`'s feasible sets are
+    by definition the maximal chains satisfying the ERC set. -/
+theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n)) (S : Set (Fin n)) :
+    A.IsFeasible S ↔
+      ∃ r : Ranking n, (∀ α ∈ RCErc A, ERC.satisfiedBy r α) ∧
+        ∃ k, maximalChain r k = S := by
+  -- TODO: [merchant-riggle-2016] Theorem 1 (antimatroid → ERC direction of
+  -- the isomorphism). Show A's feasible sets are exactly the maximal chains
+  -- consistent with A's rooted-circuit ERCs. Requires characterizing the
+  -- rooted circuits of A (the hard direction the paper proves via traces).
+  sorry
 
-    For any antimatroid `A`, `Antimat(RCErc(A)) = A`. That is, if we
-    extract the rooted circuits of `A`, convert them to ERCs, and then
-    build the antimatroid from those ERCs, we recover `A` exactly. -/
-theorem Antimat_RCErc_inv {n : Nat} (_A : Antimatroid (Fin n))
-    -- TODO: requires stating RCErc on full antimatroids,
-    -- not just single rooted circuits
-    : True := trivial
-
-/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is the
-    inverse of `Antimat`.
-
-    For any consistent ERC set `E`, `RCErc(Antimat(E)) = E`. -/
-theorem RCErc_Antimat_inv {n : Nat} (_E : List (ERC n))
-    (_hcons : ERCSet.consistent _E)
-    -- TODO: requires full RCErc definition
-    : True := trivial
+/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is a left inverse of
+    `Antimat`. For a consistent ERC set `E`, the rooted-circuit ERCs of
+    `Antimat E` are exactly `E`. -/
+theorem RCErc_Antimat_inv {n : Nat} (E : List (ERC n))
+    (hcons : ERCSet.consistent E) :
+    RCErc (Antimat E hcons) = { α | α ∈ E } := by
+  -- TODO: [merchant-riggle-2016] Theorem 2. Verify the faithful form before
+  -- discharging: the paper's inverse holds for ERC sets in rooted-circuit
+  -- canonical form, so this may be equality up to entailment-equivalence
+  -- rather than literal set equality.
+  sorry
 
 /-- **Theorem 3** ([merchant-riggle-2016]): `Antimat` preserves
     entailment.
@@ -682,9 +699,13 @@ theorem Antimat_entailment {n : Nat} (E F : List (ERC n))
 
     If antimatroid `A ⊆ B` (every feasible set of `A` is feasible in
     `B`), then `RCErc(A)` entails `RCErc(B)`. -/
-theorem RCErc_entailment {n : Nat}
-    (_A _B : Antimatroid (Fin n))
-    -- TODO: requires full RCErc definition
-    : True := trivial
+theorem RCErc_entailment {n : Nat} (A B : Antimatroid (Fin n))
+    (h : ∀ S, A.IsFeasible S → B.IsFeasible S) :
+    ∀ r : Ranking n, (∀ α ∈ RCErc A, ERC.satisfiedBy r α) →
+      (∀ α ∈ RCErc B, ERC.satisfiedBy r α) := by
+  -- TODO: [merchant-riggle-2016] Theorem 4 (mirror of `Antimat_entailment`).
+  -- Feasible-set containment A ⊆ B becomes ERC entailment RCErc A ⊨ RCErc B;
+  -- needs the rooted-circuit ↔ feasible-set correspondence from Theorem 1.
+  sorry
 
 end OptimalityTheory
