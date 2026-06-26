@@ -2881,7 +2881,6 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.FromFragments
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
