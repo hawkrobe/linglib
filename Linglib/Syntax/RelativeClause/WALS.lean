@@ -7,21 +7,20 @@ import Linglib.Data.WALS.Features.F123A
 # Relative clauses: typological survey (WALS)
 [comrie-1989] [keenan-comrie-1977] [comrie-kuteva-2013a] [comrie-kuteva-2013b] [dryer-2013-wals]
 
-The cross-linguistic WALS-survey facet of the relative clause: the per-language
-`Profile` summarizing relativization strategies (WALS Chs 122/123/90D), the RC
-position, and the [keenan-comrie-1977] Accessibility-Hierarchy cut-off,
-with the WALS converters and the aggregate distribution theorems. Per-language
-values live in `Fragments/{Lang}/Relativization.lean` as
-`def relativization : RelativeClause.Profile`.
+The cross-linguistic WALS-survey facet of the relative clause: relativization
+strategies (WALS Chs 122/123/90D), RC position, and the [keenan-comrie-1977]
+Accessibility-Hierarchy cut-off, with the WALS converters and aggregate
+distribution theorems. Per-language values are bare `def`s in a
+`Relativization` namespace in `Fragments/{Lang}/Relativization.lean`.
 
 ## Main declarations
 
 * `RelativeClause.SubjStrategy` — subject relativization strategy (WALS Ch 122).
 * `RelativeClause.OblStrategy` — oblique relativization strategy (WALS Ch 123),
   including the `.notRelativizable` value subjects structurally lack.
+* `RelativeClause.RCPosition`, `AHPosition` — RC position and AH cut-off.
 * `RelativeClause.InternallyHeadedStrategy` — status of the head-internal
   strategy (WALS Ch 90D).
-* `RelativeClause.Profile` — per-language relativization summary.
 * `fromWALS122A` / `fromWALS123A` / `fromWALS90D` — WALS raw-value converters.
 
 ## Implementation notes
@@ -105,27 +104,6 @@ inductive InternallyHeadedStrategy where
   | absent
   deriving DecidableEq, Repr
 
-/-! ### Profile -/
-
-/-- A language's relativization profile: WALS Chs 122/123 strategies plus
-    RC position and AH cut-off. -/
-structure Profile where
-  /-- Strategy used for relativizing subjects (Ch 122). -/
-  subjStrategy : SubjStrategy
-  /-- Strategy used for relativizing obliques (Ch 123). -/
-  oblStrategy : OblStrategy
-  /-- Position of the relative clause with respect to the head noun. -/
-  rcPosition : RCPosition
-  /-- Lowest [keenan-comrie-1977] AH position that can be relativized. -/
-  lowestRelativizable : AHPosition
-  /-- Status of the head-internal relativization strategy (WALS 90D). Defaults
-      to `.absent`, since most languages outside East Asia, Mesoamerica, and a
-      few isolates lack this construction. -/
-  internallyHeaded : InternallyHeadedStrategy := .absent
-  /-- Free-text notes on the relativization system, including citation
-      keys for hand-coded values. -/
-  notes : String := ""
-  deriving Repr, DecidableEq
 
 /-! ### WALS converters (Chs 122, 123, 90D) -/
 

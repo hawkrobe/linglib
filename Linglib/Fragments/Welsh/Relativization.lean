@@ -43,13 +43,13 @@ def relParticleY : Marker :=
 /-- All Welsh relative clause markers. -/
 def relMarkers : List Marker := [relParticleA, relParticleY]
 
-/-- Welsh relativization profile (typological summary). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .pronounRetention
-  , rcPosition := .postNominal
-  , lowestRelativizable := .oblique
-  , notes := "Gap on subject (particle a); resumptive on obliques; "
-          ++ "VSO language with post-nominal RC" }
+/-! Welsh relativization profile (typological summary): gap on subject
+(particle *a*); resumptive on obliques; VSO language with post-nominal RC. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .gap
+def oblStrategy : OblStrategy := .pronounRetention
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .oblique
+end Relativization
 
 end Welsh

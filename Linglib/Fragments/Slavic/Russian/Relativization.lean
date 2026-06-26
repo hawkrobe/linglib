@@ -3,18 +3,18 @@ import Linglib.Syntax.RelativeClause.WALS
 /-!
 # Russian relativization profile
 
-Typological-summary `RelativeClause.Profile` for Russian (ISO `rus`).
+Relativization typology for Russian (ISO `rus`).
 -/
 
 namespace Russian
 
-/-- Russian relativization: declining relative pronoun *kotoryj*; all
+/-! Russian relativization: declining relative pronoun *kotoryj*; all
     AH positions; postnominal RC. -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .relativePronoun
-  , oblStrategy := .relativePronoun
-  , rcPosition := .postNominal
-  , lowestRelativizable := .objComparison
-  , notes := "Rel pronoun kotoryj (declines); all AH positions" }
+namespace Relativization
+def subjStrategy : RelativeClause.SubjStrategy := .relativePronoun
+def oblStrategy : RelativeClause.OblStrategy := .relativePronoun
+def rcPosition : RelativeClause.RCPosition := .postNominal
+def lowestRelativizable : RelativeClause.AHPosition := .objComparison
+end Relativization
 
 end Russian

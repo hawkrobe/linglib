@@ -47,12 +47,13 @@ def relGenitive : Marker :=
 /-- All Korean relative clause markers. -/
 def relMarkers : List Marker := [relAdnominal, relGenitive]
 
-/-- Korean relativization profile (typological summary). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .gap
-  , rcPosition := .preNominal
-  , lowestRelativizable := .oblique
-  , notes := "Gap strategy; pre-nominal RC; parallel to Japanese" }
+/-! Korean relativization profile: gap strategy; pre-nominal RC; parallel
+to Japanese. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .gap
+def oblStrategy : OblStrategy := .gap
+def rcPosition : RCPosition := .preNominal
+def lowestRelativizable : AHPosition := .oblique
+end Relativization
 
 end Korean

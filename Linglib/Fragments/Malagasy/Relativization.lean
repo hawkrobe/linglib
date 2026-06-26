@@ -34,13 +34,14 @@ def relGap : Marker :=
 /-- All Malagasy relative clause markers. -/
 def relMarkers : List Marker := [relGap]
 
-/-- Malagasy relativization profile (typological summary). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .notRelativizable
-  , rcPosition := .postNominal
-  , lowestRelativizable := .subject
-  , notes := "Gap on subject only; voice alternation needed for "
-          ++ "non-subject relativization; Austronesian pattern" }
+/-! Malagasy relativization profile (typological summary): gap on subject
+    only; voice alternation needed for non-subject relativization;
+    Austronesian pattern. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .gap
+def oblStrategy : OblStrategy := .notRelativizable
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .subject
+end Relativization
 
 end Malagasy

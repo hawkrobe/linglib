@@ -304,11 +304,11 @@ theorem yoruba_strategy_breakdown :
     (yoruba.map (fun m => decide m.IsPrimary))        = [true, false, false, false] := by decide
 
 -- ============================================================================
--- § 7: Bridge to RelativeClause.Profile (Typology layer)
+-- § 7: Bridge to the per-language relativization defs (Syntax layer)
 -- ============================================================================
 
-/-! K&C 1977 Table 1's per-position coverage and `RelativeClause.Profile`'s
-WALS-derived `lowestRelativizable` encode complementary views of the same
+/-! K&C 1977 Table 1's per-position coverage and each language's
+WALS-derived `Relativization.lowestRelativizable` encode complementary views of the same
 data. Bridge theorems below verify agreement on the lowest position
 covered, language by language. K&C's Table 1 is strictly more detailed
 than WALS Ch 122/123 (which only ask about subjects and obliques), so
@@ -317,49 +317,49 @@ the K&C `lowestCovered` is at least as deep as the WALS
 
 theorem english_kc_matches_wals :
     lowestCovered english = .objComparison ∧
-    English.relativization.lowestRelativizable = .objComparison := by decide
+    English.Relativization.lowestRelativizable = .objComparison := by decide
 
 theorem welsh_kc_covers_deeper_than_wals :
     lowestCovered welsh = .objComparison ∧
-    Welsh.relativization.lowestRelativizable = .oblique ∧
+    Welsh.Relativization.lowestRelativizable = .oblique ∧
     AHPosition.moreAccessible .oblique .objComparison := by decide
 
 theorem korean_kc_covers_deeper_than_wals :
     lowestCovered korean = .genitive ∧
-    Korean.relativization.lowestRelativizable = .oblique := by decide
+    Korean.Relativization.lowestRelativizable = .oblique := by decide
 
 theorem malagasy_kc_matches_wals :
     lowestCovered malagasy = .subject ∧
-    Malagasy.relativization.lowestRelativizable = .subject := by decide
+    Malagasy.Relativization.lowestRelativizable = .subject := by decide
 
 theorem finnish_kc_matches_wals :
     lowestCovered finnish = .genitive ∧
-    Finnish.relativization.lowestRelativizable = .oblique := by decide
+    Finnish.Relativization.lowestRelativizable = .oblique := by decide
 
 theorem hebrew_kc_covers_deeper_than_wals :
     lowestCovered hebrew = .objComparison ∧
-    Hebrew.relativization.lowestRelativizable = .oblique := by decide
+    Hebrew.Relativization.lowestRelativizable = .oblique := by decide
 
 theorem arabic_kc_covers_deeper_than_wals :
     lowestCovered arabic = .objComparison ∧
-    Arabic.ModernStandard.relativization.lowestRelativizable = .oblique := by decide
+    Arabic.ModernStandard.Relativization.lowestRelativizable = .oblique := by decide
 
 theorem yoruba_kc_matches_wals :
     lowestCovered yoruba = .genitive ∧
-    Yoruba.relativization.lowestRelativizable = .genitive := by decide
+    Yoruba.Relativization.lowestRelativizable = .genitive := by decide
 
 /-- **Systematic coverage agreement**: K&C is at least as detailed as
     WALS for every sample language. The WALS profile never claims a
     language can relativize a position that K&C Table 1 doesn't cover. -/
 theorem kc_at_least_as_detailed_as_wals :
-    (lowestCovered english).rank   ≤ English.relativization.lowestRelativizable.rank ∧
-    (lowestCovered welsh).rank     ≤ Welsh.relativization.lowestRelativizable.rank ∧
-    (lowestCovered korean).rank    ≤ Korean.relativization.lowestRelativizable.rank ∧
-    (lowestCovered malagasy).rank  ≤ Malagasy.relativization.lowestRelativizable.rank ∧
-    (lowestCovered finnish).rank   ≤ Finnish.relativization.lowestRelativizable.rank ∧
-    (lowestCovered hebrew).rank    ≤ Hebrew.relativization.lowestRelativizable.rank ∧
-    (lowestCovered arabic).rank    ≤ Arabic.ModernStandard.relativization.lowestRelativizable.rank ∧
-    (lowestCovered yoruba).rank    ≤ Yoruba.relativization.lowestRelativizable.rank :=
+    (lowestCovered english).rank   ≤ English.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered welsh).rank     ≤ Welsh.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered korean).rank    ≤ Korean.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered malagasy).rank  ≤ Malagasy.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered finnish).rank   ≤ Finnish.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered hebrew).rank    ≤ Hebrew.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered arabic).rank    ≤ Arabic.ModernStandard.Relativization.lowestRelativizable.rank ∧
+    (lowestCovered yoruba).rank    ≤ Yoruba.Relativization.lowestRelativizable.rank :=
   by decide
 
 -- ============================================================================

@@ -104,14 +104,14 @@ def ambaMovement : Marker :=
 /-- All Swahili relative clause markers. -/
 def relMarkers : List Marker := [ambaGap, ambaBound, ambaMovement]
 
-/-- Swahili relativization profile (typological summary). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .pronounRetention
-  , rcPosition := .postNominal
-  , lowestRelativizable := .oblique
-  , notes := "Gap on subjects (with amba-); resumptive on obliques; "
-          ++ "relative marker agrees in noun class" }
+/-! Swahili relativization profile (typological summary): gap on subjects
+(with amba-); resumptive on obliques; relative marker agrees in noun class. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .gap
+def oblStrategy : OblStrategy := .pronounRetention
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .oblique
+end Relativization
 
 -- ============================================================================
 -- § 2: Personal Pronoun Paradigm

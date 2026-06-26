@@ -3,19 +3,18 @@ import Linglib.Syntax.RelativeClause.WALS
 /-!
 # German relativization profile
 
-Typological-summary `RelativeClause.Profile` for German (ISO `deu`).
+Relativization typology for German (ISO `deu`).
 -/
 
 namespace German
 
-/-- German relativization: relative pronoun *der/die/das* on both
-    subjects and obliques; postnominal RC; all AH positions
-    relativizable. -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .relativePronoun
-  , oblStrategy := .relativePronoun
-  , rcPosition := .postNominal
-  , lowestRelativizable := .objComparison
-  , notes := "Relative pronoun der/die/das; all AH positions relativizable" }
+/-! German relativization: relative pronoun der/die/das on both subjects
+and obliques; postnominal RC; all AH positions relativizable. -/
+namespace Relativization
+def subjStrategy : RelativeClause.SubjStrategy := .relativePronoun
+def oblStrategy : RelativeClause.OblStrategy := .relativePronoun
+def rcPosition : RelativeClause.RCPosition := .postNominal
+def lowestRelativizable : RelativeClause.AHPosition := .objComparison
+end Relativization
 
 end German
