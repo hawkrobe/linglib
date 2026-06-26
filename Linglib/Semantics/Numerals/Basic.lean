@@ -2,7 +2,7 @@ import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Typology.Numeral.Basic
+import Linglib.Syntax.Numeral.Basic
 import Mathlib.Order.Interval.Set.Basic
 
 /-!
@@ -362,7 +362,7 @@ theorem gqt_exactly_agrees {α : Type*} [Fintype α]
 
 end GQTBridge
 
-/-! ### Denotation of the `Typology.Numeral` object
+/-! ### Denotation of the `Numeral` object
 
 The lexical numeral object (`Core.Order.Comparison`, `Numeral.Entry`) is owned by
 `Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports

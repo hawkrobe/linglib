@@ -2873,6 +2873,7 @@ import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
 import Linglib.Syntax.NullSubject
+import Linglib.Syntax.Numeral.Basic
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
@@ -2905,8 +2906,6 @@ import Linglib.Tactics.RSAPredict.Reify
 
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
-
-import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
