@@ -15,8 +15,10 @@ is not invertible — tropical `(ℝ ∪ {−∞}, max, +)`, Viterbi, and Boolea
 "Birkhoff Factorization and (Semi)ring Parsing"; §3.5.2, "Minimal Yield as Birkhoff Factorization").
 
 The Hopf algebra `H = ConnesKreimer R (Nonplanar α)` of nonplanar rooted forests is unchanged (base
-`R` a commutative ring), so the entire coproduct/cut infrastructure is reused. Only the *character
-target* `ℛ` becomes a semiring, equipped with a weight-`+1` `RotaBaxterSemiring` operator `R`. The
+`R` only a commutative *semiring* — the antipode-free factorization needs no negation, so this works
+over `R = ℕ`, the base for a Boolean-semiring target), so the entire coproduct/cut infrastructure is
+reused. Only the *character target* `ℛ` is a semiring, with a weight-`+1` `RotaBaxterSemiring`
+operator `R`. The
 Bogolyubov recursion (Prop. 3.1.9, eq. (3.1.7)) reads
 
   `φ̃(x) = φ(x) ⊡ Σ φ₋(x′) ⊙ φ(x″)`,    `φ₋(x) = R(φ̃(x))`,    `φ₊(x) = φ₋(x) ⊡ φ̃(x)`,
@@ -45,7 +47,7 @@ namespace RootedTree.ConnesKreimer.SemiringRenorm
 
 open scoped TensorProduct
 
-variable {R ℛ : Type*} [CommRing R] [CommSemiring ℛ] [Algebra R ℛ] {α : Type*}
+variable {R ℛ : Type*} [CommSemiring R] [CommSemiring ℛ] [Algebra R ℛ] {α : Type*}
   (φ : ConnesKreimer R (Nonplanar α) →ₗ[R] ℛ) (RB : RotaBaxterSemiring ℛ)
 
 set_option linter.unusedVariables false in
