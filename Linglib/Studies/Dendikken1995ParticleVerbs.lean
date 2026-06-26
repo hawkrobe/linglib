@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.SmallClause
+import Linglib.Syntax.Minimalist.Verbal.SmallClause
 
 /-!
 # Particle verb constructions — small-clause analysis

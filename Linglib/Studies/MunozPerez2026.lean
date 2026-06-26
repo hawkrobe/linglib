@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Morphology.DM.Fission
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics

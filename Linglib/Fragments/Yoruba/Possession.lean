@@ -2,14 +2,16 @@ import Linglib.Features.Possession
 
 /-!
 # Yoruba possession profile
-[stassen-2009] [nichols-1986] [heine-1997] 
+[stassen-2009] [nichols-1986] [heine-1997]
 
-PossessionProfile bundle for Yoruba (ISO `yor`), per the
-project's "per-language data flows through Fragments" rule. Substrate
-types (`PossessionProfile`, `PredicativeStrategy`, `AdnominalMarking`,
-…) live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
-consuming this profile live in
-`Studies/NicholsBickel2013.lean`.
+Bare per-language possession `def`s for Yoruba (Niger-Congo, ISO `yor`),
+per the project's "per-language data flows through Fragments" rule.
+Substrate types (`PredicativeStrategy`, `AdnominalMarking`, …) live in
+`Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming
+these values live in `Studies/NicholsBickel2013.lean`.
+
+Examples: mo ni iwe; iwe mi. Have-verb ni; juxtaposition for adnominal
+(possessum-possessor).
 -/
 
 set_option autoImplicit false
@@ -18,17 +20,10 @@ namespace Yoruba.Possession
 
 open _root_.Possession
 
-/-- Yoruba possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Yoruba"
-  , family := "Niger-Congo"
-  , iso := "yor"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .zeroMarking
-  , affixPosition := some .noAffix
-  , examples := ["mo ni iwe", "iwe mi"]
-  , notes := "Have-verb ni; juxtaposition for adnominal (possessum-possessor)" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .haveVerb
+def adnominalStrategy : AdnominalMarking := .zeroMarking
+def affixPosition : Option AffixPosition := some .noAffix
 
 end Yoruba.Possession

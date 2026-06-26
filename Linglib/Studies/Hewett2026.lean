@@ -1,8 +1,8 @@
 import Linglib.Morphology.DM.Categorizer
-import Linglib.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Checking
-import Linglib.Syntax.Minimalist.Voice
-import Linglib.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Syntax.Minimalist.Verbal.Voice
+import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Studies.Baker1985
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Wood2015

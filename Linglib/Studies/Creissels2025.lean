@@ -1,7 +1,7 @@
 import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Typology.VoiceSystem
-import Linglib.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Algebra.Group.TypeTags.Basic
 

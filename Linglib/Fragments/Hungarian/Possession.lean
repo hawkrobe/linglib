@@ -5,12 +5,16 @@ import Linglib.Features.Possession
 [stassen-2009] [nichols-1986] [heine-1997]
 [kenesei-vago-fenyvesi-1998] [rounds-2001]
 
-PossessionProfile bundle for Hungarian (ISO `hun`), per the
-project's "per-language data flows through Fragments" rule. Substrate
-types (`PossessionProfile`, `PredicativeStrategy`, `AdnominalMarking`,
-…) live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
-consuming this profile live in
+Per-language possession data for Hungarian (Uralic; ISO `hun`), per the
+project's "per-language data flows through Fragments" rule, as bare
+field-by-field `def`s. Substrate types (`PredicativeStrategy`,
+`AdnominalMarking`, …) live in `Linglib/Features/Possession.lean`.
+Cross-linguistic theorems consuming these values live in
 `Studies/NicholsBickel2013.lean`.
+
+Examples: *nekem van konyvem*, *Janos kalap-ja*. Dative possessor + *van*
+'exists' + head-marked possessum; possessive suffixes obligatory on
+relational nouns.
 
 The `adnominalStrategy := .headMarking` choice is consistent with both
 standard reference grammars: [kenesei-vago-fenyvesi-1998] §1.10
@@ -30,17 +34,10 @@ namespace Hungarian.Possession
 
 open _root_.Possession
 
-/-- Hungarian possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Hungarian"
-  , family := "Uralic"
-  , iso := "hun"
-  , obligatoryPossession := .exists_
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .locational
-  , adnominalStrategy := .headMarking
-  , affixPosition := some .suffixes
-  , examples := ["nekem van konyvem", "Janos kalap-ja"]
-  , notes := "Dative possessor + van 'exists' + head-marked possessum; possessive suffixes obligatory on relational nouns" }
+def obligatoryPossession : Obligatoriness := .exists_
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .locational
+def adnominalStrategy : AdnominalMarking := .headMarking
+def affixPosition : Option AffixPosition := some .suffixes
 
 end Hungarian.Possession

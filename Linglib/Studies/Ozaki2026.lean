@@ -1,5 +1,5 @@
 import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive

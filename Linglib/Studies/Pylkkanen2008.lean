@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.Applicative
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Applicative
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction

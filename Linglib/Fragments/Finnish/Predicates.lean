@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Typology.VoiceSystem
 import Linglib.Semantics.Causation.Implicative
 

@@ -5,9 +5,17 @@ import Linglib.Features.Possession
 [stassen-2009] [nichols-1986] [heine-1997]
 [liosis-2016] [kampanarou-alexiadou-2026]
 
-`PossessionProfile` bundle for Smyrna Greek (Aegean), the
-*genitive-over-extension* endpoint within the Modern Greek dialect
-continuum — the opposite direction from Grevena Greek.
+Per-language possession data for Smyrna Greek (Aegean; Indo-European;
+ISO `ell`, shared macro-language code with SMG), as bare field-by-field
+`def`s — the *genitive-over-extension* endpoint within the Modern Greek
+dialect continuum, the opposite direction from Grevena Greek.
+
+Examples: *tu luluðakju* 'little flower-DIM.SG.GEN' (SMG: *), *ton
+naftakjo(n)* 'little sailor-DIM.PL.GEN' (SMG: *). Same surface adnominal
+strategy as SMG (dependent-marking inflectional genitive), but with a more
+permissive paradigm: -aki diminutive nouns license inflectional genitive
+forms that SMG rejects as paradigm gaps ([liosis-2016], cited in
+[kampanarou-alexiadou-2026] fn 7).
 
 ## What makes Smyrna different from SMG
 
@@ -52,29 +60,16 @@ def genNotions : List Notion :=
 def apoNotions : List Notion :=
   [.inanimateInalienable, .inanimateAlienable]
 
-/-- Smyrna Greek possession profile.
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .haveVerb
 
-    Surface profile (`adnominalStrategy = .dependentMarking`) matches SMG;
-    the difference is *paradigm completeness*, not strategy choice — the
-    `-aki` diminutive class permits the genitive forms that SMG rejects
-    as paradigm gaps. -/
-def possession : PossessionProfile :=
-  { language := "Smyrna Greek"
-  , family := "Indo-European"
-  , iso := "ell"  -- shares macro-language code with SMG
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := some .noAffix
-  , examples :=
-      [ "tu luluðakju"          -- 'little flower-DIM.SG.GEN' (SMG: *)
-      , "ton naftakjo(n)"       -- 'little sailor-DIM.PL.GEN' (SMG: *)
-      ]
-  , notes := "Same surface adnominal strategy as SMG (dependent-marking inflectional genitive),\
- but with a more permissive paradigm: -aki diminutive nouns license inflectional genitive forms\
- that SMG rejects as paradigm gaps (per Liosis 2016, cited in Kampanarou & Alexiadou 2026 fn 7).\
- Establishes the bidirectionality of the Modern Greek dialect continuum: SMG sits between Smyrna's\
- over-extension and Grevena's complete loss." }
+/-- Surface strategy (`.dependentMarking`) matches SMG; the difference is
+    *paradigm completeness*, not strategy choice — the `-aki` diminutive
+    class permits the genitive forms that SMG rejects as paradigm gaps.
+    Establishes the bidirectionality of the Modern Greek dialect continuum:
+    SMG sits between Smyrna's over-extension and Grevena's complete loss. -/
+def adnominalStrategy : AdnominalMarking := .dependentMarking
+def affixPosition : Option AffixPosition := some .noAffix
 
 end Greek.Smyrna.Possession
