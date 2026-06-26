@@ -48,7 +48,7 @@ sits outside it — a linglib cross-reference Hewett does not draw.
 
 namespace Hewett2026
 
-open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus TrackedFeature
+open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus
   ActivationIndex ApplHead applHigh applLowRecipient buildDecomposition
   voiceAgent voiceCauser voicePassive voiceAnticausative isCausative
   low_licensed_with_any high_licensed_of_assignsTheta)
@@ -512,15 +512,6 @@ theorem both_activations_active (p : SemiticPrep) (t : SemiticTemplate) :
       |>.activate (.cat .v)
       |>.activate (.template t)).status = .active := by
   cases t <;> rfl
-
-/-- An activated feature enters the standard `Checking.lean` lifecycle: it can be
-    checked and erased. -/
-theorem activated_feature_enters_lifecycle :
-    let tf : TrackedFeature := ⟨.phi (.person .first), .v, .uninterpretable, .inactive⟩
-    ∃ tf1, tf.activate = some tf1 ∧
-    ∃ tf2, tf1.check = some tf2 ∧
-    ∃ tf3, tf2.erase = some tf3 ∧ tf3.status = .erased := by
-  simp [TrackedFeature.activate, TrackedFeature.check, TrackedFeature.erase]
 
 /-! ### Worked derivation (exx. (24)–(25)) -/
 
