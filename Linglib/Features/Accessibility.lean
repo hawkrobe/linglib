@@ -1,6 +1,5 @@
 import Linglib.Features.Givenness
 import Linglib.Features.Prominence
-import Mathlib.Order.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -15,13 +14,17 @@ accessibility ([ariel-2001]).
 
 ## The Accessibility Marking Scale
 
-`AccessibilityLevel` is [ariel-2001]'s 18-level ordering from
-least accessible (full name + modifier) to most accessible (zero /
-pro-drop). This replaces the earlier conflation with `DefinitenessLevel`
-— the accessibility and definiteness scales are **non-monotonically**
-related (names are less accessible than definite descriptions but more
-prominent for DOM), so they must be separate types. A coarsening
-function `toDefLevel` bridges to the DOM/DSM scale when needed.
+`AccessibilityLevel` is a fine-grained (18-tier) reconstruction of
+[ariel-2001]'s Accessibility Marking Scale, from least accessible (full
+name + modifier) to most accessible (zero / pro-drop). The relative
+order of the tiers follows Ariel; the `verbalAgreement` / `zero` split
+at the top refines Ariel's single "Extremely High Accessibility Markers"
+category. This replaces the earlier conflation with `DefinitenessLevel`
+— the scales are **non-monotonically** related (full names are less
+accessible than definite descriptions, yet first/last names are more
+accessible, so the name band straddles the description band; names are
+also more prominent for DOM), so they must be separate types. A
+coarsening function `toDefLevel` bridges to the DOM/DSM scale when needed.
 
 ## Layer position
 
@@ -29,12 +32,10 @@ function `toDefLevel` bridges to the DOM/DSM scale when needed.
 hierarchy). Both are per-entry feature taxonomies for cognitive
 status: `AccessibilityLevel` classifies *forms* by their
 accessibility-marking behavior; `GivennessStatus` classifies *entities*
-by cognitive status. Ariel argues (her chapter pp. 62-65) that
-`AccessibilityLevel`'s 18 tiers are better empirically supported than
-GHZ-6's 6 tiers; both retained as substrate because they serve
-different consumer profiles. The `GivennessStatus.toAccessibility`
-projection (in `Studies/Ariel2001.lean`) bridges
-them.
+by cognitive status. Ariel argues `AccessibilityLevel`'s tiers are
+better empirically supported than GHZ-6's 6 tiers; both retained as
+substrate because they serve different consumer profiles. The
+`GivennessStatus.toAccessibility` projection (defined below) bridges them.
 
 This module connects referential form choice to word-order position
 choice via the shared dimension of NP weight/reduction.
@@ -44,11 +45,9 @@ set_option autoImplicit false
 
 namespace Features
 
-open Features.Prominence
+open Features.Prominence (DefinitenessLevel)
 
--- ════════════════════════════════════════════════════
--- § 1. Accessibility Marking Scale
--- ════════════════════════════════════════════════════
+/-! ### Accessibility marking scale -/
 
 /-- [ariel-2001]'s Accessibility Marking Scale: a fine-grained ordering
     of referential form types from least to most accessible.
@@ -98,16 +97,6 @@ def AccessibilityLevel.rank : AccessibilityLevel → Nat
   | .verbalAgreement     => 16
   | .zero                => 17
 
-/-- Distinct accessibility levels have distinct ranks. -/
-theorem AccessibilityLevel.rank_injective :
-    Function.Injective AccessibilityLevel.rank := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [AccessibilityLevel.rank]
-
-/-- Total order on `AccessibilityLevel` via the rank pullback. -/
-instance : LinearOrder AccessibilityLevel :=
-  LinearOrder.lift' AccessibilityLevel.rank AccessibilityLevel.rank_injective
-
 /-- Coarsening: each accessibility level maps to one of the 5
     `DefinitenessLevel` categories used for differential argument marking.
     This is a many-to-one, **non-monotone** mapping — names are less
@@ -120,9 +109,7 @@ def AccessibilityLevel.toDefLevel : AccessibilityLevel → DefinitenessLevel
   | .stressedPronGesture | .stressedPron | .unstressedPron
   | .cliticizedPron | .verbalAgreement | .zero          => .personalPronoun
 
--- ════════════════════════════════════════════════════
--- § 2. Referential Form
--- ════════════════════════════════════════════════════
+/-! ### Referential form -/
 
 /-- Referential form options for referring to a discourse entity.
     Uses [ariel-2001]'s 18-level accessibility marking scale. -/
@@ -133,9 +120,7 @@ theorem pronoun_more_reduced_than_name :
     AccessibilityLevel.unstressedPron.rank > AccessibilityLevel.fullName.rank := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 3. Next-Mention Bias
--- ════════════════════════════════════════════════════
+/-! ### Next-mention bias -/
 
 /-- Next-mention bias: how likely a discourse referent is to be
     mentioned again in the subsequent utterance. Driven by thematic
@@ -164,9 +149,7 @@ theorem high_bias_more_reduced :
     (NextMentionBias.low.predictedForm).rank := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 4. Weight Bridge
--- ════════════════════════════════════════════════════
+/-! ### Weight bridge -/
 
 /-- NP weight correlate: reduced referential forms are lighter.
     Approximate number of words in a typical instance of each form.
@@ -196,64 +179,7 @@ theorem pronoun_lightest :
     ReferentialForm.typicalWeight .shortDefDescription := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 5. Discourse Elaboration
--- ════════════════════════════════════════════════════
-
-/-- How elaborated a referent's discourse representation is.
-
-    [arnold-2026] §2: the key criterion for underspecified singular
-    *they* is "discourse specificity" — whether the speaker intends to
-    evoke a detailed mental representation for the addressee.
-
-    This extends [newman-1992]'s "solidity" (existence of a specific
-    concrete referent) and [newman-1998]'s "individuation" (referents
-    treated as individuals with identity-relevant details).
-
-    The scale runs from `underspecified` (the referent is barely sketched
-    in the discourse model — quantified, indefinite, or mentioned only in
-    passing) to `elaborated` (the referent has a rich, detailed
-    representation — named, described, central to the narrative). -/
-inductive DiscourseElaboration where
-  /-- The referent's discourse representation is minimal: quantified,
-      indefinite, epicene, or not developed. Identity is unknown or
-      unimportant. "Everyone should make their bed." -/
-  | underspecified
-  /-- The referent has a rich, detailed discourse representation:
-      named, described, topical, with known personal attributes.
-      "Asia Kate Dillon (born November 15, 1984) is an American actor.
-      They are known for their roles as…" -/
-  | elaborated
-  deriving DecidableEq, Repr, BEq
-
-/-- Bridge from Ariel's accessibility scale to discourse elaboration.
-
-    [ariel-2001]'s Accessibility Marking Scale describes which
-    referential form is appropriate given how accessible a referent is.
-    Arnold's discourse elaboration is related but distinct: low
-    accessibility *tends to co-occur with* underspecified elaboration
-    (a referent you haven't mentioned much is both less accessible and
-    less elaborated), but they are not identical.
-
-    This coarsening maps high-accessibility forms (pronouns, agreement,
-    zero) to elaborated (these forms require a well-established referent)
-    and low-accessibility forms (full names, descriptions) to underspecified
-    (these forms are used when the referent is being newly introduced or
-    is not yet established). The boundary is approximate. -/
-def AccessibilityLevel.toElaboration (a : AccessibilityLevel) : DiscourseElaboration :=
-  if a.rank ≥ 13 then .elaborated    -- stressed pronoun and above
-  else .underspecified                -- demonstrations, descriptions, names
-
-/-- Pronouns (high accessibility) correlate with elaborated discourse
-    representations — you use a pronoun for a referent that is already
-    well-established in the discourse. -/
-theorem pronoun_implies_elaborated :
-    AccessibilityLevel.unstressedPron.toElaboration = .elaborated := rfl
-
-/-- Full names (low accessibility) correlate with underspecified discourse
-    representations — the referent is being (re-)introduced. -/
-theorem fullName_implies_underspecified :
-    AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
+/-! ### Givenness projection -/
 
 /-- Ariel's GHZ→AccessibilityLevel projection ([ariel-2001]): the
     prototypical accessibility level for each givenness status.

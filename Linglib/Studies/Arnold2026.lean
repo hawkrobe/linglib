@@ -1,6 +1,5 @@
 import Linglib.Features.Gender.Interp
 import Linglib.Discourse.CommonGround
-import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
 import Linglib.Studies.KonnellyCowper2020
 
@@ -61,7 +60,24 @@ set_option autoImplicit false
 
 namespace Arnold2026
 
-open Features (DiscourseElaboration AccessibilityLevel)
+/-- How elaborated a referent's discourse representation is ([arnold-2026]).
+
+    [arnold-2026] (§2, UNVERIFIED): the criterion for underspecified
+    singular *they* is "discourse specificity" — whether the speaker
+    intends to evoke a detailed mental representation for the addressee.
+    Extends [newman-1992]'s "solidity" and [newman-1998]'s "individuation".
+    Crucially this is *orthogonal* to a referential form's accessibility:
+    the same reduced form (*they*) spans both an `underspecified` generic
+    and an `elaborated` named individual, so it is assigned from antecedent
+    type (`antecedentElaboration`), not derived from `AccessibilityLevel.rank`. -/
+inductive DiscourseElaboration where
+  /-- Minimal discourse representation: quantified, indefinite, epicene,
+      or not developed. "Everyone should make their bed." -/
+  | underspecified
+  /-- Rich, detailed discourse representation: named, described, topical,
+      with known personal attributes. -/
+  | elaborated
+  deriving DecidableEq, Repr, BEq
 
 -- ============================================================================
 -- § 2: The Two-Kinds Taxonomy
@@ -256,21 +272,8 @@ theorem personal_has_stronger_precondition :
   exact ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Connection to Accessibility Theory
+-- § 8: Gender feature consistency
 -- ============================================================================
-
-/-- Pronouns (high accessibility) correlate with elaborated discourse
-    representations — you use a pronoun for a referent that is already
-    well-established in the discourse. The bridge function
-    `AccessibilityLevel.toElaboration` is defined in
-    `Discourse.Accessibility`. -/
-theorem pronoun_implies_elaborated :
-    AccessibilityLevel.unstressedPron.toElaboration = .elaborated := rfl
-
-/-- Full names (low accessibility) correlate with underspecified discourse
-    representations — the referent is being (re-)introduced. -/
-theorem fullName_implies_underspecified :
-    AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
 
 /-- Singular and plural *they* share the same (empty) gender feature — the
     structural `gender` field agrees across number. -/
