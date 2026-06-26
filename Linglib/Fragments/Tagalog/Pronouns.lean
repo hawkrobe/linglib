@@ -1,5 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
+import Linglib.Syntax.Pronoun.WALS
 import Linglib.Features.Clusivity
 import Linglib.Features.Person.Decomposition
 
