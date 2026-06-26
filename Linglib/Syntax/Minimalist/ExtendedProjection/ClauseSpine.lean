@@ -108,53 +108,7 @@ def ClauseSpine.forceP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice, .T, .C, .Force], by decide⟩
 
 -- ============================================================================
--- § 4: Projection Theorems
--- ============================================================================
-
-/-- VoiceP projects Voice. -/
-theorem voiceP_has_voice : ClauseSpine.voiceP.projects .Voice = true := by decide
-
-/-- ApplP does not project Voice. This is the key distinction that
-    `ComplementSize` cannot capture (both have fValue = 1 as highest head). -/
-theorem applP_lacks_voice : ClauseSpine.applP.projects .Voice = false := by decide
-
-/-- CP projects Voice (inherited from the full spine). -/
-theorem cP_has_voice : ClauseSpine.cP.projects .Voice = true := by decide
-
-/-- TP projects Voice. -/
-theorem tP_has_voice : ClauseSpine.tP.projects .Voice = true := by decide
-
-/-- Bare VP does not project Voice. -/
-theorem bareVP_lacks_voice : ClauseSpine.bareVP.projects .Voice = false := by decide
-
-/-- Bare VP does not project Appl. -/
-theorem bareVP_lacks_appl : ClauseSpine.bareVP.projects .Appl = false := by decide
-
-/-- vP does not project Voice. -/
-theorem vP_lacks_voice : ClauseSpine.vP.projects .Voice = false := by decide
-
-/-- ApplP projects Appl. -/
-theorem applP_has_appl : ClauseSpine.applP.projects .Appl = true := by decide
-
-/-- NmlzP projects Nmlz but not C. -/
-theorem nmlzP_has_nmlz : ClauseSpine.nmlzP.projects .Nmlz = true := by decide
-theorem nmlzP_lacks_c : ClauseSpine.nmlzP.projects .C = false := by decide
-
-/-- CP projects C but not Nmlz. -/
-theorem cP_lacks_nmlz : ClauseSpine.cP.projects .Nmlz = false := by decide
-
-/-- ForceP projects Force and C. -/
-theorem forceP_has_force : ClauseSpine.forceP.projects .Force = true := by decide
-theorem forceP_has_c : ClauseSpine.forceP.projects .C = true := by decide
-
-/-- VoiceP and ApplP have the same fValue for their highest head, showing
-    why ComplementSize can't distinguish them. -/
-theorem voiceP_applP_same_fLevel :
-    fValue ClauseSpine.voiceP.highestHead = fValue ClauseSpine.applP.highestHead := by
-  decide
-
--- ============================================================================
--- § 5: F-Level Bridge
+-- § 4: F-Level Bridge
 -- ============================================================================
 
 /-- The F-level of a clause spine: the `fValue` of its highest projected
@@ -166,41 +120,5 @@ theorem voiceP_applP_same_fLevel :
     `ClauseSpine.tP.fLevel = 2` (T is F2). -/
 def ClauseSpine.fLevel (spine : ClauseSpine) : Nat :=
   fValue spine.highestHead
-
-/-- CP-sized clauses are F6. -/
-theorem cP_fLevel : ClauseSpine.cP.fLevel = 6 := by decide
-
-/-- TP-sized clauses are F2. -/
-theorem tP_fLevel : ClauseSpine.tP.fLevel = 2 := by decide
-
-/-- vP-sized clauses are F1. -/
-theorem vP_fLevel : ClauseSpine.vP.fLevel = 1 := by decide
-
-/-- VoiceP-sized clauses are F1. -/
-theorem voiceP_fLevel : ClauseSpine.voiceP.fLevel = 1 := by decide
-
-/-- NmlzP-sized clauses are F3 (same as FinP). -/
-theorem nmlzP_fLevel : ClauseSpine.nmlzP.fLevel = 3 := by decide
-
-/-- ForceP-sized clauses are F6 (same as CP in fValue, but structurally larger). -/
-theorem forceP_fLevel : ClauseSpine.forceP.fLevel = 6 := by decide
-
--- ============================================================================
--- § 6: Size Ordering
--- ============================================================================
-
-/-- Spine sizes are ordered: ApplP < vP < VoiceP < TP < CP < ForceP.
-    NmlzP has the same size as CP (both have 6 projected heads). -/
-theorem spine_size_ordering :
-    ClauseSpine.applP.size < ClauseSpine.voiceP.size ∧
-    ClauseSpine.voiceP.size < ClauseSpine.tP.size ∧
-    ClauseSpine.tP.size < ClauseSpine.cP.size ∧
-    ClauseSpine.cP.size < ClauseSpine.forceP.size := by
-  decide
-
-/-- NmlzP and CP have the same number of projected heads — their
-    difference is in WHICH heads are projected, not how many. -/
-theorem nmlzP_cP_same_size :
-    ClauseSpine.nmlzP.size = ClauseSpine.cP.size := by decide
 
 end Minimalist

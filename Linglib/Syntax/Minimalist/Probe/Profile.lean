@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
