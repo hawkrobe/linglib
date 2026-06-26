@@ -1,5 +1,5 @@
 import Linglib.Typology.Extraction
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 
 /-!
 # Kaqchikel Agent Focus Fragment [erlewine-2016]
@@ -154,34 +154,43 @@ theorem trans_has_set_a : VerbForm.transitive.hasSetA = true := rfl
 theorem af_has_suffix : VerbForm.agentFocus.hasAFSuffix = true := rfl
 
 -- ============================================================================
--- § 6: Voice System Profile
+-- § 6: Voice System
 -- ============================================================================
 
-/-- Kaqchikel voice system: two-way asymmetrical (transitive/AF).
+namespace VoiceSystem
+
+/-! Kaqchikel voice system: two-way asymmetrical (transitive/AF).
 
     Not a true pivot system — AF is a locality-sensitive repair for
     clause-local agent extraction, not a symmetric voice alternation.
-    Transitive is the basic form; AF is derived (triggered by SSAL). -/
-def kaqVoiceSystem : Typology.VoiceSystemProfile :=
-  { language := "Kaqchikel"
-    voices := [ ⟨"Transitive", .agent⟩, ⟨"Agent Focus", .agent⟩ ]
-    symmetry := .asymmetrical
-    notes := "AF is locality-sensitive repair, not symmetric pivot (Erlewine 2016)" }
+    Transitive is the basic form; AF is derived (triggered by SSAL).
+
+    Language: "Kaqchikel".
+    Notes: AF is locality-sensitive repair, not symmetric pivot (Erlewine 2016). -/
+
+/-- The voices of the Kaqchikel system. -/
+def voices : List Voice.VoiceEntry :=
+  [ ⟨"Transitive", .agent⟩, ⟨"Agent Focus", .agent⟩ ]
+
+/-- System symmetry: asymmetrical (transitive is the basic form). -/
+def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
+
+end VoiceSystem
 
 theorem kaq_voice_system_asymmetrical :
-    kaqVoiceSystem.symmetry = .asymmetrical := rfl
+    VoiceSystem.symmetry = .asymmetrical := rfl
 
 theorem kaq_voice_count :
-    kaqVoiceSystem.voiceCount = 2 := rfl
+    Voice.voiceCount VoiceSystem.voices = 2 := rfl
 
 /-- Both Kaqchikel voices promote agent — AF is not a patient-promoting
     voice but an alternative agent-extracting structure. -/
 theorem kaq_both_promote_agent :
-    kaqVoiceSystem.voices.all (·.promotes == .agent) = true := rfl
+    VoiceSystem.voices.all (·.promotes == .agent) = true := rfl
 
 /-- Kaqchikel is NOT an active/passive system: it lacks a
     patient-promoting voice. -/
 theorem kaq_not_active_passive :
-    ¬ kaqVoiceSystem.isActivePassive := by decide
+    ¬ Voice.isActivePassive VoiceSystem.voices := by decide
 
 end Kaqchikel

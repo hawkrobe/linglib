@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Typology.Voice
+import Linglib.Syntax.Voice.Middle
 import Linglib.Fragments.Indonesian.Morphophonology
 
 /-!
@@ -50,7 +50,7 @@ namespace Indonesian.Predicates
 
 open Verb
 open Semantics.Lexical
-open Typology.Voice
+open Voice
 open Indonesian.Morphophonology
 
 -- ============================================================================

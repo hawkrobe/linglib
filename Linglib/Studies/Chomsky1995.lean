@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.FromFragments
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Nouns
 
 /-!
 # Minimalist Derivations of Word Order
@@ -14,7 +16,26 @@ English-derivation lexicon now lives).
 
 namespace Chomsky1995
 
-open Minimalist Minimalist.FromFragments
+open Minimalist
+open English.Predicates.Verbal (VerbEntry)
+open English.Nouns (NounEntry)
+
+/-- Map a verb's complement type to its selectional stack: each c-selected argument is one
+    `Cat` feature consumed by complement Merge; nominal arguments are `.D` (the DP hypothesis).
+    Folded in from the former `Syntax/Minimalist/FromFragments.lean` (its only consumer). -/
+def verbToSelStack (v : VerbEntry) : SelStack :=
+  match v.complementType with
+  | .none => [] | .np => [.D] | .np_np => [.D, .D] | .np_pp => [.D]
+  | .finiteClause => [.C] | .infinitival => [.T] | .gerund => [.V]
+  | .smallClause => [.D] | .question => [.C]
+
+/-- A `VerbEntry` as a `SyntacticObject` leaf (`Cat = .V`, selStack from `complementType`). -/
+def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
+  SO.mkLeafPhon .V (verbToSelStack v) v.form3sg id
+
+/-- A `NounEntry` as a leaf: proper names project as `.D`, common nouns as bare `.N`. -/
+def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
+  if n.proper then SO.mkLeafPhon .D [] n.formSg id else SO.mkLeafPhon .N [] n.formSg id
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/

@@ -1,5 +1,5 @@
 import Linglib.Morphology.RootTypology
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 
 /-!
 # Chuj Verb Building Fragment [coon-2019]
@@ -283,34 +283,38 @@ def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
 -- § 9: Voice System Profile
 -- ============================================================================
 
-/-- Chuj voice system: four-way asymmetrical (Ø, -w, -ch, -j).
+/-! ### Chuj voice system
 
-    Unlike pivot systems (Toba Batak, Tagalog), Chuj voices don't
-    promote arguments to a privileged position. Instead, Voice controls
-    whether an external argument is overt, implicit, or absent.
-    Each voice form is built independently from root + v/Voice⁰: passive
-    is not derived from active. -/
-def chujVoiceSystem : Typology.VoiceSystemProfile :=
-  { language := "Chuj"
-    voices := [ ⟨"Active (Ø)", .agent⟩
-              , ⟨"Agentive intransitive (-w)", .agent⟩
-              , ⟨"Passive (-ch)", .patient⟩
-              , ⟨"Agentless passive (-j)", .patient⟩ ]
-    symmetry := .asymmetrical
-    notes := "Non-pivot system; Voice controls EA status (Coon 2019)" }
+    Four-way asymmetrical (Ø, -w, -ch, -j). Unlike pivot systems
+    (Toba Batak, Tagalog), Chuj voices don't promote arguments to a
+    privileged position. Instead, Voice controls whether an external
+    argument is overt, implicit, or absent. Each voice form is built
+    independently from root + v/Voice⁰: passive is not derived from
+    active. Non-pivot system; Voice controls EA status (Coon 2019). -/
+namespace VoiceSystem
+
+def voices : List Voice.VoiceEntry :=
+  [ ⟨"Active (Ø)", .agent⟩
+  , ⟨"Agentive intransitive (-w)", .agent⟩
+  , ⟨"Passive (-ch)", .patient⟩
+  , ⟨"Agentless passive (-j)", .patient⟩ ]
+
+def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
+
+end VoiceSystem
 
 theorem chuj_voice_system_asymmetrical :
-    chujVoiceSystem.symmetry = .asymmetrical := rfl
+    VoiceSystem.symmetry = .asymmetrical := rfl
 
 theorem chuj_voice_count :
-    chujVoiceSystem.voiceCount = 4 := rfl
+    Voice.voiceCount VoiceSystem.voices = 4 := rfl
 
 /-- Chuj is NOT a simple active/passive: it has 4 voices, not 2. -/
 theorem chuj_not_simple_active_passive :
-    ¬ chujVoiceSystem.isActivePassive := by decide
+    ¬ Voice.isActivePassive VoiceSystem.voices := by decide
 
 theorem chuj_no_oblique_pivots :
-    ¬ chujVoiceSystem.distinguishesObliques := by decide
+    ¬ Voice.distinguishesObliques VoiceSystem.voices := by decide
 
 -- ============================================================================
 -- § 10: Root Lexicon (Table (5), p. 39)

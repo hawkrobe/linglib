@@ -1,6 +1,6 @@
 import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Algebra.Group.TypeTags.Basic
@@ -36,7 +36,7 @@ open Syntax.ArgumentStructure.Alternation
 open Causation.Morphological
   (IntransitivizationType CausativeComplexity CausativeConstruction
    CausativizabilityData)
-open Typology (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)
+open Voice (VoiceSystemSymmetry VoiceEntry PivotTarget)
 
 /-! ### Bridge: Decausativization ↔ IntransitivizationType -/
 
@@ -130,15 +130,15 @@ theorem all_applicativizations_nucleativize :
 theorem p_applicativization_valency_increasing :
     pApplicativization.isValencyIncreasing = true := rfl
 
-/-! ### Bridge: Symmetrical Voices ↔ VoiceSystemProfile -/
+/-! ### Bridge: symmetrical voices ↔ the `Voice` substrate -/
 
 /-! §8.5: symmetrical voice systems are those in which
 verb morphology marks the selection of a participant as the privileged
 syntactic term (pivot) WITHOUT AFFECTING TRANSITIVITY. This is a fundamentally
 different type of voice system from A/P-prominent systems (§1.3.3.3).
 
-The existing `VoiceSystemProfile` captures this with `.symmetrical` vs
-`.asymmetrical`, but doesn't encode Creissels' key insight: symmetrical
+The `Voice` substrate's `VoiceSystemSymmetry` captures this with `.symmetrical`
+vs `.asymmetrical`, but doesn't encode Creissels' key insight: symmetrical
 voices are NOT instances of passivization, causativization, etc. — they are
 a distinct type that doesn't fit the nucleativization/denucleativization
 framework at all.
@@ -147,18 +147,16 @@ Example Toba Batak voice profiles illustrate that symmetrical systems
 have 2+ voices with equal morphological complexity (equipollent marking). -/
 
 /-- An A/P-prominent transitive construction (e.g., English active/passive)
-    maps to an asymmetrical voice system. -/
-def englishVoiceSystem : VoiceSystemProfile :=
-  { language := "English"
-  , voices := [ { name := "active", promotes := .agent }
-              , { name := "passive", promotes := .patient } ]
-  , symmetry := .asymmetrical }
+    is an asymmetrical voice system. -/
+def englishVoices : List VoiceEntry :=
+  [ { name := "active", promotes := .agent }
+  , { name := "passive", promotes := .patient } ]
 
-theorem english_is_asymmetrical :
-    englishVoiceSystem.symmetry = .asymmetrical := rfl
+def englishSymmetry : VoiceSystemSymmetry := .asymmetrical
 
-theorem english_is_active_passive :
-    englishVoiceSystem.isActivePassive := by decide
+theorem english_is_asymmetrical : englishSymmetry = .asymmetrical := rfl
+
+theorem english_is_active_passive : Voice.isActivePassive englishVoices := by decide
 
 /-! ### Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1) -/
 

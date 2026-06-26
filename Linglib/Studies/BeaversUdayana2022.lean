@@ -1,7 +1,7 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Studies.Beavers2010
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Typology.Voice
+import Linglib.Syntax.Voice.Middle
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 
 /-!
@@ -92,13 +92,28 @@ open Indonesian.VoiceSystem
 open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree)
-open Typology.Voice
+open Voice
 open Semantics.ArgumentStructure.VoiceSemantics
 open Intensional
 
 -- ============================================================================
 -- § 2: Indonesian ber- Middle Inventory
 -- ============================================================================
+
+/-- The paper's 2×2 middle classification (object realization × suppressed-variable
+    reading). Study-local: the `Voice` substrate exposes the two dimensions as
+    independent enums (`Voice.ObjectRealization`, `Voice.SuppressedVarReading`) and
+    does not bundle them; this paper's analysis names the four cells. -/
+structure MiddleType where
+  objRealization : ObjectRealization
+  suppressedVar : SuppressedVarReading
+  deriving DecidableEq, Repr
+
+/-- Which argument surfaces as subject depends only on object realization. -/
+def MiddleType.agentSurfaces (m : MiddleType) : Prop := m.objRealization.agentSurfaces
+
+instance : DecidablePred MiddleType.agentSurfaces :=
+  fun m => decEq m.objRealization .incorporation
 
 /-- Dispositional/passive middle: *Mobil itu ber-jual dengan mudah.*
     'The car sells easily.' (the paper's (2b)) / *Mobil itu ber-jual

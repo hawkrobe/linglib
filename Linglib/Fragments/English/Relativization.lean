@@ -1,5 +1,5 @@
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # English Relativization Fragment
@@ -43,13 +43,14 @@ def relWhom : Marker :=
 /-- All English relative clause markers. -/
 def relMarkers : List Marker := [relThat, relWhom]
 
-/-- English relativization profile (typological summary). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .mixed
-  , oblStrategy := .mixed
-  , rcPosition := .postNominal
-  , lowestRelativizable := .objComparison
-  , notes := "Gap + relative pronoun; P-stranding allows gap on obliques; "
-          ++ "can relativize all AH positions" }
+/-! English relativization profile (typological summary). Gap + relative
+    pronoun; P-stranding allows gap on obliques; can relativize all AH
+    positions. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .mixed
+def oblStrategy : OblStrategy := .mixed
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .objComparison
+end Relativization
 
 end English

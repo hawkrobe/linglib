@@ -1,4 +1,4 @@
-import Linglib.Typology.VoiceSystem
+import Linglib.Syntax.Voice.Basic
 import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
@@ -249,35 +249,42 @@ theorem rtv_af_marker_neq_antip :
 -- § 8: Voice System Profile
 -- ============================================================================
 
-/-- K'iche' voice system profile. Five voices, asymmetrical (Active
-    is the basic form). -/
-def kicheVoiceSystem : Typology.VoiceSystemProfile :=
-  { language := "K'iche'"
-  , voices :=
-    [ ⟨"Active Voice", .agent⟩
-    , ⟨"Simple Passive", .patient⟩
-    , ⟨"Completive Passive", .patient⟩
-    , ⟨"Absolutive Antipassive", .agent⟩
-    , ⟨"Agent Focus Antipassive", .agent⟩ ]
-  , symmetry := .asymmetrical
-  , notes := "5 voices (+ instrumental, not covered); Active is basic " ++
-             "(Mondloch 2017); Agent Focus used for subject extraction" }
+namespace VoiceSystem
+
+/-! ### K'iche' voice system profile
+
+Five voices, asymmetrical (Active is the basic form): 5 voices
+(+ instrumental, not covered); Active is basic ([mondloch-2017]);
+Agent Focus used for subject extraction. -/
+
+/-- The five voices of K'iche'. -/
+def voices : List Voice.VoiceEntry :=
+  [ ⟨"Active Voice", .agent⟩
+  , ⟨"Simple Passive", .patient⟩
+  , ⟨"Completive Passive", .patient⟩
+  , ⟨"Absolutive Antipassive", .agent⟩
+  , ⟨"Agent Focus Antipassive", .agent⟩ ]
+
+/-- K'iche' is asymmetrical — Active is the basic voice. -/
+def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
+
+end VoiceSystem
 
 -- ============================================================================
 -- § 9: Voice System Theorems
 -- ============================================================================
 
 /-- K'iche' has 5 voices. -/
-theorem kiche_voice_count : kicheVoiceSystem.voiceCount = 5 := rfl
+theorem kiche_voice_count : Voice.voiceCount Kiche.VoiceSystem.voices = 5 := rfl
 
 /-- K'iche' voice system is asymmetrical (Active is basic). -/
 theorem kiche_asymmetrical :
-    kicheVoiceSystem.symmetry = .asymmetrical := rfl
+    Kiche.VoiceSystem.symmetry = .asymmetrical := rfl
 
 /-- K'iche' is NOT a simple active/passive system (it has 5 voices,
     not 2). -/
 theorem kiche_not_simple_active_passive :
-    ¬ kicheVoiceSystem.isActivePassive := by decide
+    ¬ Voice.isActivePassive Kiche.VoiceSystem.voices := by decide
 
 -- ============================================================================
 -- § 10: DTV Voice Marker Verification
