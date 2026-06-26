@@ -1,6 +1,6 @@
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Semantics.Spatial.Trace
@@ -293,10 +293,10 @@ theorem no_rPron_not_postP :
 
 set_option maxRecDepth 4096 in
 /-- Dutch is classified as prepositional in WALS Ch 85, via the
-    substrate `Typology.Adposition.AdpositionOrder.ofWALS` lookup
+    substrate `Adposition.AdpositionOrder.ofWALS` lookup
     (Dutch ISO 639-3 = `nld`; the WALS-internal code is `dut`). -/
 theorem dutch_wals_prepositions :
-    Typology.Adposition.AdpositionOrder.ofWALS "nld"
+    Adposition.AdpositionOrder.ofWALS "nld"
     = .prepositional := by decide
 
 -- ════════════════════════════════════════════════════

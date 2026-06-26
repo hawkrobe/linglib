@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Japanese adposition order
@@ -10,7 +10,7 @@ classifies Japanese as postpositional.
 namespace Japanese
 
 /-- Japanese adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "jpn"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "jpn"
 
 end Japanese

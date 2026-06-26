@@ -7,9 +7,10 @@ import Linglib.Features.WordOrder
 [dryer-2013-wals] [greenberg-1963] [dryer-1992]
 
 Framework-agnostic enum for storing per-language adposition order
-(WALS Ch 85). Lives in `Typology/` so both `Fragments/` (per-language
-profiles) and `Studies/` (cross-linguistic generalisations) can
-import without violating the layered dependency hierarchy.
+(WALS Ch 85). The adposition-order facet of the bare-root `Adposition`
+namespace (sibling of `Syntax/Adposition/Basic.lean`'s PP structure);
+both `Fragments/` (per-language profiles) and `Studies/` (cross-linguistic
+generalisations) import it.
 
 Sister substrate to `WordOrder` — same shape (enum with
 WALS-attested cases plus epistemic-distinction cases, namespaced
@@ -46,7 +47,7 @@ both `IsPrepositional`/`IsPostpositional` (Greenberg-style
 predicates) and `headDirection` (Dryer-style projection).
 -/
 
-namespace Typology.Adposition
+namespace Adposition
 
 /-- WALS Ch 85 plus the absence-from-WALS case. -/
 inductive AdpositionOrder where
@@ -113,4 +114,4 @@ def headDirection : AdpositionOrder → Option HeadDirection
 
 end AdpositionOrder
 
-end Typology.Adposition
+end Adposition
