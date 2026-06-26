@@ -2892,7 +2892,6 @@ import Linglib.Syntax.MereologicalSyntax.Basic
 import Linglib.Syntax.MereologicalSyntax.Bridge
 import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Syntax.Minimalist.Agree
-import Linglib.Syntax.Minimalist.Amalgamation
 import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Defs
@@ -2928,12 +2927,13 @@ import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Probe.Transmission
-import Linglib.Syntax.Minimalist.RepOrder
+import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Syntax.Minimalist.SyntacticObject.Externalization
 import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+import Linglib.Syntax.Minimalist.SyntacticObject.RepOrder
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
