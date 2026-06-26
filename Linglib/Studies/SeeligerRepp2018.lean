@@ -482,7 +482,7 @@ theorem dq_epistemic_lacks_romero_counterpart :
 open Swedish.QuestionParticles
 open German.QuestionParticles
 open German.PolarityMarking (dochPreUtterance)
-open Typology.PolarityMarking (Env)
+open Semantics.Polarity.Marking (Env)
 
 /-- Swedish *väl* is question-inducing — declaratives with *väl* are
     questions, not assertions ([seeliger-repp-2018] §5.2). -/
