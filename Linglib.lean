@@ -2872,8 +2872,8 @@ import Linglib.Syntax.MereologicalSyntax.Basic
 import Linglib.Syntax.MereologicalSyntax.Bridge
 import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Syntax.Minimalist.Agree.Cyclic
-import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Ellipsis
