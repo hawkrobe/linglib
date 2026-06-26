@@ -6,7 +6,6 @@ import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
 import Linglib.Syntax.AuxiliaryVerbs
-import Linglib.Features.NegativeConcord
 import Linglib.Morphology.Grammaticalization
 
 /-!
@@ -51,8 +50,7 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   the marker-side joint is independent from the typology-feature joint.
 - `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters.
 - `countByMorphemeType`/`countBySymmetry` sample-counting helpers (consumed by
-  `Studies/Dryer2013Negation.lean`) and the `NegIndefiniteStrategy.admits`
-  negative-concord bridge.
+  `Studies/Dryer2013Negation.lean`).
 
 ## Theory-laden caveats
 
@@ -390,34 +388,6 @@ def countByMorphemeType (langs : List NegationProfile)
 /-- Count of languages in a sample with a given symmetry type. -/
 def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
   (langs.filter (·.symmetry == s)).length
-
-/-! ### Negative concord: WALS 115A strategy ↔ item-level n-word status -/
-
-open Features.NegativeConcord (NWordStatus)
-
-/-- Whether the negative-indefinite system shows negative concord
-    ([van-der-auwera-van-alsenoy-2016]): WALS 115A `cooccur` (concord) and `mixed`
-    (position-dependent) do; `preclude` (double negation) and `negExistential` do not.
-    Broader than `NegationProfile.hasNegConcord`, which tests `cooccur` only. -/
-def NegIndefiniteStrategy.hasNegativeConcord : NegIndefiniteStrategy → Bool
-  | .cooccur | .mixed => true
-  | .preclude | .negExistential => false
-
-/-- Whether an item-level n-word status is consistent with a language's WALS 115A
-    negative-indefinite strategy: an n-word needs a concord system, an inherently
-    negative quantifier a non-concord (double-negation / neg-existential) one, an NPI
-    any ([van-der-auwera-van-alsenoy-2016]). -/
-def NegIndefiniteStrategy.admits : NegIndefiniteStrategy → NWordStatus → Bool
-  | strat, .nWord => strat.hasNegativeConcord
-  | strat, .negQuantifier => !strat.hasNegativeConcord
-  | _, .npi => true
-
-/-- N-words live in negative-concord systems, inherently negative quantifiers in
-    double-negation ones ([van-der-auwera-van-alsenoy-2016]). -/
-theorem nWord_vs_negQuantifier :
-    (NegIndefiniteStrategy.cooccur).admits .nWord = true ∧
-    (NegIndefiniteStrategy.preclude).admits .nWord = false ∧
-    (NegIndefiniteStrategy.preclude).admits .negQuantifier = true := by decide
 
 /-! ### Negation strategy and the AVC bridge
 [anderson-2006] [heine-1993] [miestamo-2005]
