@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
-import Linglib.Syntax.Minimalist.Amalgamation
+import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 
 /-!
 # Sande, Clem & Dąbkowski (2026): Discontinuous vowel harmony in Guébie
