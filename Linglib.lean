@@ -2766,14 +2766,9 @@ import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 -- Theories: SDS
 import Linglib.Semantics.Probabilistic.SDS.ConceptNode
-import Linglib.Semantics.Probabilistic.SDS.Basic
 import Linglib.Semantics.Probabilistic.SDS.GraphicalModel
 import Linglib.Semantics.Probabilistic.SDS.JointPosterior
-import Linglib.Semantics.Probabilistic.SDS.Marginalization
-import Linglib.Semantics.Probabilistic.SDS.MeasureTheory
 import Linglib.Semantics.Probabilistic.SDS.ScenarioMix
-import Linglib.Semantics.Probabilistic.SDS.ThresholdInstances
-import Linglib.Semantics.Probabilistic.SDS.ThresholdSemantics
 -- Storment2026 mathlib-style refactor: VerbCore↔smuggling bridge,
 -- Probing primitives (Roberts 2010, Storment 2025), InverseVoice family,
 -- and three meta-bridges in Unaccusativity/.

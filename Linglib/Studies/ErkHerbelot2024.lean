@@ -736,4 +736,55 @@ theorem starSun_increases_as_alpha_decreases :
             ENNReal.mul_div_mul_right _ _ (by norm_num) (by norm_num)]]
   exact ENNReal.div_le_div_right (by norm_num) _
 
+/-! ### Figure 6: selectional and scenario constraints conflict
+
+Paper §5.2 / Figure 6 (p. 571): *"Either the concept for star conflicts
+with the selectional constraint ... or it conflicts with the preference
+for a coherent scenario."* The pun in *an astronomer married a star*
+arises because the two constraints on the `star` concept node disagree.
+The selectional constraint MARRY-THEME prefers the *person* sense
+(STAR-PERSON, 0.475) over the *celestial* sense (STAR-SUN, 0.05); but a
+coherent STARGAZING scenario prefers STAR-SUN (1/3) over STAR-PERSON (0 —
+STAR-PERSON is not in STARGAZING's support). Over the two
+observation-admissible `star` concepts the selectional argmax and the
+scenario argmax differ, and neither factor's preferred sense dominates the
+joint posterior (`starSun_increases_as_alpha_decreases`) — hence the pun.
+
+This is the formal content of Figure 6. It re-expresses the
+conflict-detection idea of the retired `SDSConstraintSystem.hasConflict`
+on the paper-faithful PMF model, rather than on the deleted two-function
+caricature. -/
+
+/-- Selectional side of the Figure 6 conflict: MARRY-THEME prefers the
+*person* sense of `star` to the *celestial* sense (paper p. 571: 0.475 vs
+0.05). -/
+theorem marryTheme_prefers_person :
+    marryThemeSel .STAR_SUN < marryThemeSel .STAR_PERSON := by
+  have h1 : marryThemeSel .STAR_SUN = 50 / 1000 := by simp [marryThemeSel]
+  have h2 : marryThemeSel .STAR_PERSON = 475 / 1000 := by simp [marryThemeSel]
+  rw [h1, h2]
+  gcongr <;> norm_num
+
+/-- Scenario side of the Figure 6 conflict: a coherent STARGAZING scenario
+prefers the *celestial* sense of `star` to the *person* sense (paper p. 571:
+STAR-SUN is in STARGAZING's support, STAR-PERSON is not). -/
+theorem stargazing_prefers_sun :
+    stargazingDist .STAR_PERSON < stargazingDist .STAR_SUN := by
+  have h0 : stargazingDist .STAR_PERSON = 0 := by
+    unfold stargazingDist; rw [PMF.uniformOfFinset_apply]; simp
+  have hpos : 0 < stargazingDist .STAR_SUN := by
+    unfold stargazingDist; rw [PMF.uniformOfFinset_apply]; simp
+  rw [h0]; exact hpos
+
+/-- **Figure 6 conflict (the pun).** On the `star` concept node the
+selectional and scenario constraints pull in opposite directions:
+selectional prefers STAR-PERSON while the coherent STARGAZING scenario
+prefers STAR-SUN. This opposition — neither factor's preferred sense
+dominating — is the source of the pun in *an astronomer married a star*
+(paper §5.2, Figure 6). -/
+theorem star_node_constraints_conflict :
+    marryThemeSel .STAR_SUN < marryThemeSel .STAR_PERSON ∧
+      stargazingDist .STAR_PERSON < stargazingDist .STAR_SUN :=
+  ⟨marryTheme_prefers_person, stargazing_prefers_sun⟩
+
 end ErkHerbelot2024
