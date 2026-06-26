@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Basic
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Turkish Possessive Constructions
@@ -17,7 +17,7 @@ existential `var`, and the Equation Schema for belong-constructions.
 
 PossessionProfile bundle for Turkish (ISO `tur`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+`Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Turkish lives in `Studies/Heine1997.lean`.
 
 ## Examples
@@ -31,7 +31,7 @@ set_option autoImplicit false
 
 namespace Turkish.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
@@ -39,11 +39,11 @@ open _root_.Typology.Possession
 
 /-- Turkish uses the Genitive Schema for its primary have-construction:
     GEN-possessor + POSS-possessum + `var`/`yok`. -/
-def sourceSchema : PossessionSource := .genitive
+def sourceSchema : Source := .genitive
 
 /-- Turkish's predicative strategy is genitive/dative (the possessor is
     marked with genitive case, the predicate is a non-verbal existential). -/
-def predicativeStrategy : PredicativePossession := .genitiveDative
+def predicativeStrategy : PredicativeStrategy := .genitiveDative
 
 -- ============================================================================
 -- §2. Possessive Agreement Suffixes
@@ -97,15 +97,15 @@ def existPredIsNonVerbal : Bool := true
 /-- Turkish also has a Location Schema variant where the possessor
     takes locative case (`-DA`) instead of genitive. This variant
     tends toward physical/temporary possession readings. -/
-def locationVariant : PossessionSource := .location
+def locationVariant : Source := .location
 
 /-- Turkish uses the Equation Schema for belong-constructions with
     genitive predicates: `Kitap Hasan-ın.` 'The book is Hasan's.' -/
-def belongSchema : PossessionSource := .equation
+def belongSchema : Source := .equation
 
 /-- Turkish exhibits three schemas, as [heine-1997] predicts is common
     for languages that draw on Existence sub-schemas. -/
-def attestedSchemas : List PossessionSource :=
+def attestedSchemas : List Source :=
   [sourceSchema, locationVariant, belongSchema]
 
 theorem three_schemas :
@@ -120,10 +120,10 @@ theorem three_schemas :
     by the Location Schema variant with locative case. This matches
     [heine-1997]'s generalizations: Existence schemas correlate with
     permanent/inalienable notions; Location with physical/temporary. -/
-def genitiveNotions : List PossessiveNotion :=
+def genitiveNotions : List Notion :=
   [.permanent, .inalienable, .abstract]
 
-def locationNotions : List PossessiveNotion :=
+def locationNotions : List Notion :=
   [.physical, .temporary]
 
 /-- Genitive Schema does not express physical possession in Turkish. -/

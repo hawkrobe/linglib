@@ -73,7 +73,7 @@ namespace Features
     → abstract/core: the source function is less grammaticalized than the
     target.
 
-    See also `Typology.Possession.PossessionSource` for
+    See also `Possession.Source` for
     [heine-2009] Table 29.5 (possessive case sources, adapted from
     [heine-1997]). -/
 def _root_.Case.Extends : Case → Case → Prop

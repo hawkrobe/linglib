@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Grevena Greek possession profile
@@ -40,14 +40,14 @@ set_option autoImplicit false
 
 namespace Greek.Grevena.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 /-- Heine notions expressible by GG `apo`-PPs. Unlike SMG (where `apoNotions`
     is restricted to inanimate part-whole/source readings), GG `apo`-PPs
     cover the full range that SMG inflectional genitive covers
     (per [michelioudakis-chatzikyriakidis-spathas-2024] (19), discussed
     by [kampanarou-alexiadou-2026] §4 ex. 16a). -/
-def apoNotions : List PossessiveNotion :=
+def apoNotions : List Notion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
 
@@ -56,7 +56,7 @@ def apoNotions : List PossessiveNotion :=
     sub-varieties), per [michelioudakis-chatzikyriakidis-spathas-2024]
     discussed in [kampanarou-alexiadou-2026] §4. The empty common-noun
     coverage is the dialect's defining feature. -/
-def genNotions : List PossessiveNotion := []
+def genNotions : List Notion := []
 
 /-- Grevena Greek possession profile.
 

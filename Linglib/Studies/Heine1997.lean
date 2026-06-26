@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 import Linglib.Morphology.Grammaticalization
 import Linglib.Semantics.ArgumentStructure.Relational
 import Linglib.Data.WALS.Features.F117A
@@ -39,15 +39,15 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 
 ## Connections
 
-- `Typology.Possession.PossessionSource`: the eight schemas (substrate)
-- `Typology.Possession.PossessiveNotion`: the seven target notions (substrate)
+- `Possession.Source`: the eight schemas (substrate)
+- `Possession.Notion`: the seven target notions (substrate)
 - `Grammaticalization.GramStage`: the verbal cline
 - `Semantics.ArgumentStructure.Relational`: π operator and
   arity tracking — connects to which schemas have possessor-as-subject
   (Action, Companion = transitive/Pred2) vs possessee-as-subject (rest)
 -/
 
-open Typology.Possession
+open Possession
 open Grammaticalization
 open Semantics.ArgumentStructure.Relational (Pred1 Pred2 NominalInterpType)
 
@@ -61,7 +61,7 @@ namespace Heine1997
     Action is unique: its predicate nucleus is a lexical verb ('take', 'seize',
     'hold'). All other schemas have non-lexical nuclei (copulas, existentials,
     locative verbs). -/
-def schemaHasLexicalNucleus : PossessionSource → Bool
+def schemaHasLexicalNucleus : Source → Bool
   | .action => true
   | _       => false
 
@@ -74,7 +74,7 @@ inductive SourceStructure where
   | extended -- Basic + oblique/topic participant added
   deriving DecidableEq, Repr
 
-def schemaStructure : PossessionSource → SourceStructure
+def schemaStructure : Source → SourceStructure
   | .action    => .basic
   | .location  => .basic
   | .companion => .extended
@@ -92,7 +92,7 @@ inductive SubjectParticipant where
   | possessee  -- Possessee = clausal subject (intransitive/existential)
   deriving DecidableEq, Repr
 
-def schemaSubject : PossessionSource → SubjectParticipant
+def schemaSubject : Source → SubjectParticipant
   | .action    => .possessor
   | .companion => .possessor
   | .location  => .possessee
@@ -104,18 +104,18 @@ def schemaSubject : PossessionSource → SubjectParticipant
 
 /-- Only Action has a lexical predicate nucleus. -/
 theorem action_unique_lexical :
-    (∀ s : PossessionSource, schemaHasLexicalNucleus s = true → s = .action) := by
+    (∀ s : Source, schemaHasLexicalNucleus s = true → s = .action) := by
   intro s h; cases s <;> simp_all [schemaHasLexicalNucleus]
 
 /-- Only Action and Companion have possessor-as-subject. -/
 theorem possessor_subject_iff_action_or_companion :
-    ∀ s : PossessionSource,
+    ∀ s : Source,
       schemaSubject s = .possessor ↔ (s = .action ∨ s = .companion) := by
   intro s; cases s <;> simp [schemaSubject]
 
 /-- Basic schemas are exactly Action and Location. -/
 theorem basic_iff_action_or_location :
-    ∀ s : PossessionSource,
+    ∀ s : Source,
       schemaStructure s = .basic ↔ (s = .action ∨ s = .location) := by
   intro s; cases s <;> simp [schemaStructure]
 
@@ -128,7 +128,7 @@ theorem basic_iff_action_or_location :
     Location → have only. Equation → belong only. Action and Goal → both.
     Companion, Genitive, Topic → have only. Source → irrelevant for
     predicative possession (provides attributive possession source). -/
-def schemaYieldsHave : PossessionSource → Bool
+def schemaYieldsHave : Source → Bool
   | .action    => true
   | .location  => true
   | .companion => true
@@ -138,7 +138,7 @@ def schemaYieldsHave : PossessionSource → Bool
   | .topic     => true
   | .equation  => false
 
-def schemaYieldsBelong : PossessionSource → Bool
+def schemaYieldsBelong : Source → Bool
   | .action    => true
   | .location  => false
   | .companion => false
@@ -160,7 +160,7 @@ theorem equation_yields_belong_only :
 
 /-- Action and Goal are the only schemas that can yield both types. -/
 theorem dual_schemas :
-    ∀ s : PossessionSource,
+    ∀ s : Source,
       (schemaYieldsHave s = true ∧ schemaYieldsBelong s = true) ↔
       (s = .action ∨ s = .goal) := by
   intro s; cases s <;> simp [schemaYieldsHave, schemaYieldsBelong]
@@ -221,7 +221,7 @@ theorem action_overlap_cline_covary :
     100-language sample. Each entry is (schema, counts by continent).
     Continents: Europe, Asia, Africa, America, Indian/Pacific Ocean. -/
 structure SchemaDist where
-  schema : PossessionSource
+  schema : Source
   europe : Nat
   asia : Nat
   africa : Nat
@@ -286,7 +286,7 @@ theorem africa_location_action_tie :
     - Companion: physical/temporary, or alienable possession
     - Action: wide range (physical through permanent)
     - Equation: permanent (ownership, "the book is mine") -/
-def schemaTypicalNotions : PossessionSource → List PossessiveNotion
+def schemaTypicalNotions : Source → List Notion
   | .action    => [.physical, .temporary, .permanent]
   | .location  => [.physical, .temporary]
   | .companion => [.physical, .temporary]
@@ -325,14 +325,14 @@ theorem location_not_permanent :
     constructions: the possessee is the sole core argument, and the
     possessor is an oblique adjunct. The possessive predicate is Pred1,
     with the possessor introduced by Ex closure or case marking. -/
-def schemaArity : PossessionSource → NominalInterpType
+def schemaArity : Source → NominalInterpType
   | .action    => .pred2  -- X takes Y: two core arguments
   | .companion => .pred2  -- X is with Y: two core arguments
   | _          => .pred1  -- Y exists/is-at/...: one core argument + oblique
 
 /-- Possessor-as-subject correlates exactly with Pred2 (transitive). -/
 theorem possessor_subject_iff_pred2 :
-    ∀ s : PossessionSource,
+    ∀ s : Source,
       schemaSubject s = .possessor ↔ schemaArity s = .pred2 := by
   intro s; cases s <;> simp [schemaSubject, schemaArity]
 
@@ -341,7 +341,7 @@ theorem possessor_subject_iff_pred2 :
     exception: extended structure but still Pred2, because the comitative
     complement is reanalyzed as a core argument. -/
 theorem pred2_action_companion_only :
-    ∀ s : PossessionSource,
+    ∀ s : Source,
       schemaArity s = .pred2 ↔ (s = .action ∨ s = .companion) := by
   intro s; cases s <;> simp [schemaArity]
 
@@ -356,7 +356,7 @@ theorem pred2_action_companion_only :
     introduced via case morphology (locative, dative, genitive, etc.) —
     the morphological reflex of the oblique adjunct position. -/
 theorem pred1_possessee_subject :
-    ∀ s : PossessionSource,
+    ∀ s : Source,
       schemaArity s = .pred1 → schemaSubject s = .possessee := by
   intro s h; cases s <;> simp [schemaArity] at h <;> simp [schemaSubject]
 
@@ -374,14 +374,14 @@ theorem action_schema_on_cline :
 /-- A schema prediction bundle: the testable predictions Heine makes for
     any language that draws on a given source schema. -/
 structure SchemaPrediction where
-  schema : PossessionSource
+  schema : Source
   yieldsHave : Bool
   yieldsBelong : Bool
   possessorIsSubject : Bool
   arity : NominalInterpType
 
 /-- Derive predictions from a schema. -/
-def predictionsFor (s : PossessionSource) : SchemaPrediction :=
+def predictionsFor (s : Source) : SchemaPrediction :=
   { schema := s
     yieldsHave := schemaYieldsHave s
     yieldsBelong := schemaYieldsBelong s
@@ -426,7 +426,7 @@ theorem genitive_predictions :
     possession (Heine's Companion Schema). Goal Schema languages are
     typically classified under WALS `locational` (since both use oblique
     possessors with existential predicates). -/
-def walsToSchema : Data.WALS.F117A.PredicativePossession → PossessionSource
+def walsToSchema : Data.WALS.F117A.PredicativePossession → Source
   | .locational    => .location
   | .genitive      => .genitive
   | .topic         => .topic
@@ -434,7 +434,7 @@ def walsToSchema : Data.WALS.F117A.PredicativePossession → PossessionSource
   | .have          => .action
 
 /-- The WALS-to-Heine mapping agrees with `predicativeSource` from
-    Typology/Possession.lean for the five strategies they share. -/
+    Features/Possession.lean for the five strategies they share. -/
 theorem wals_agrees_with_predicativeSource :
     walsToSchema .have = predicativeSource .haveVerb ∧
     walsToSchema .locational = predicativeSource .locational ∧

@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Basic
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Finnish Possessive Constructions
@@ -20,7 +20,7 @@ use is no longer interpreted as locative by speakers
 
 PossessionProfile bundle for Finnish (ISO `fin`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+`Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Finnish lives in `Studies/Heine1997.lean`.
 
 ## Examples
@@ -34,17 +34,17 @@ set_option autoImplicit false
 
 namespace Finnish.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
 -- ============================================================================
 
 /-- Finnish uses the Location Schema for its primary have-construction. -/
-def sourceSchema : PossessionSource := .location
+def sourceSchema : Source := .location
 
 /-- Finnish's predicative strategy is locational/existential. -/
-def predicativeStrategy : PredicativePossession := .locational
+def predicativeStrategy : PredicativeStrategy := .locational
 
 /-- The strategy matches the schema via `predicativeSource`. -/
 theorem strategy_matches_schema :
@@ -103,7 +103,7 @@ def possSuffix : FiPossPerson → FiPossNumber → String
     possessive suffixes above. It also uses the genitive case on the
     possessor NP (dependent-marking), giving a double-marking pattern
     in formal registers: `Matti-n kirja-nsa` 'Matti-GEN book-POSS.3'. -/
-def adnominalStrategy : AdnominalPossession := .doubleMarking
+def adnominalStrategy : AdnominalMarking := .doubleMarking
 
 -- ============================================================================
 -- §5. Schema-Notion Correlations
@@ -113,7 +113,7 @@ def adnominalStrategy : AdnominalPossession := .doubleMarking
     like Estonian, uses the Location Schema for both physical/temporary
     and permanent/inalienable possession — showing full Stage III
     grammaticalization (no location meaning remains). -/
-def expressibleNotions : List PossessiveNotion :=
+def expressibleNotions : List Notion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
 

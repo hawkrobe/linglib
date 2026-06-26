@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Standard Modern Greek possession profile
@@ -8,7 +8,7 @@ import Linglib.Typology.Possession
 
 `PossessionProfile` bundle for Standard Modern Greek (SMG; ISO `ell`), per
 the project's per-language data flows through Fragments rule. Substrate
-types live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
+types live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
 consume this profile from `Studies/NicholsBickel2013.lean`.
 
 Greek is the canonical case of a language that **morphologically** has a
@@ -39,11 +39,11 @@ set_option autoImplicit false
 
 namespace Greek.StandardModern.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 /-- Heine notions expressible by SMG inflectional genitive (broad coverage:
     ownership, kinship, body parts, part-whole, abstract). -/
-def genNotions : List PossessiveNotion :=
+def genNotions : List Notion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
 
@@ -51,7 +51,7 @@ def genNotions : List PossessiveNotion :=
     Restricted set per [kampanarou-alexiadou-2026] (5)–(11): part-whole
     and source-like readings; ownership and kinship are degraded
     (the `apo`-PP coerces a partitive interpretation). -/
-def apoNotions : List PossessiveNotion :=
+def apoNotions : List Notion :=
   [.inanimateInalienable, .inanimateAlienable]
 
 /-- Standard Modern Greek possession profile. -/
