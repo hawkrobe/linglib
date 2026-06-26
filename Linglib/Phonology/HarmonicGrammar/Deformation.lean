@@ -1,6 +1,5 @@
 import Linglib.Core.Optimization.Semiring
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
-import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 
 /-!
@@ -60,15 +59,8 @@ Concretely:
    This is `argmax_winner_iff_lse_max_limit` composed with
    `ot_lex_imp_higher_harmony`.
 
-2. `softmax_decoder_gap_form` — packaged restatement of the
-   partition-function identity `softmax = exp(α · gap)`, where the gap
-   is the difference between this candidate's harmony and the warped
-   aggregate. The OT winner closes the gap to 0 in the limit; losers
-   open it to −∞.
-
-The two together say: the OT winner is exactly the candidate whose
-harmony "tracks the soft aggregator all the way to the limit." Every
-other candidate's softmax probability decays exponentially in the gap.
+This says: the OT winner is exactly the candidate whose harmony "tracks
+the soft aggregator all the way to the limit."
 -/
 
 namespace HarmonicGrammar
@@ -78,7 +70,7 @@ open Core.Optimization
 
 
 open Real Filter Topology Finset
-open Constraints HarmonicGrammar.ViolationSemiring
+open Constraints
 
 -- ============================================================================
 -- § 1: The Soft Aggregator on Harmony Scores
@@ -117,29 +109,5 @@ theorem lse_aggregator_tendsto_winner_harmony {C : Type} [DecidableEq C]
   · exact le_of_lt (ot_lex_imp_higher_harmony ranking M hM c_opt c'
       (fun con hcon => ⟨hbound c_opt hc_opt con hcon, hbound c' hc' con hcon⟩)
       (hlex c' hc' h))
-
--- ============================================================================
--- § 2: The Softmax Gap Form
--- ============================================================================
-
-/-- **Softmax-decoder gap form.** For `c ∈ cands` and `α ≠ 0`, the
-    softmax probability is `exp(α · (score c − lseFinset))`. The
-    lse-summary `lseFinset α cands score` lies in `[max_c' score c',
-    max_c' score c' + log(card)/α]` (sandwich from `LogSumExp/Limit.lean`).
-
-    Reading this off:
-    - For the unique max-score candidate, the gap `score c − lseFinset`
-      tends to `0` as `α → ∞`, so the probability tends to `1`.
-    - For any sub-optimal candidate, the gap tends to `score c − max < 0`,
-      so `α · gap → −∞`, so the probability tends to `0`.
-
-    This is `softmaxDecoder_eq_exp_score_sub_lse` repackaged with a
-    pointer to the dequantization story; the per-candidate limit
-    behaviour is the algebraic content of `softmax_argmax_limit`. -/
-theorem softmax_decoder_gap_form {Cand : Type*} (α : ℝ) (hα : α ≠ 0)
-    {cands : Finset Cand} (score : Cand → ℝ) {c : Cand} (hc : c ∈ cands) :
-    (softmaxDecoder α).decode cands score c
-      = exp (α * (score c - lseFinset α cands score)) :=
-  softmaxDecoder_eq_exp_score_sub_lse α hα score hc
 
 end HarmonicGrammar

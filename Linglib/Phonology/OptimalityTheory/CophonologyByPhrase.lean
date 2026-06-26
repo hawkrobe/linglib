@@ -88,7 +88,7 @@ open Minimalist (Phase SyntacticObject)
       matches v heads, `subranking` lists ATRHARM ≫ IDENT-IO(ATR).
     - DP phase carries definite-marker phonology — `phaseSelector`
       matches D heads of definite category. -/
-structure PhrasalCophonology (C : Type) where
+structure PhrasalCophonology (C : Type*) where
   /-- Predicate selecting which phase heads activate this cophonology. -/
   phaseSelector : SyntacticObject → Bool
   /-- Constraint subranking promoted within the matched phase. -/
@@ -98,7 +98,7 @@ structure PhrasalCophonology (C : Type) where
 
 /-- A phrasal cophonology activates on a phase iff its `phaseSelector`
     matches the phase head (the head leaf `ph.head`, as a leaf SO). -/
-def PhrasalCophonology.appliesTo {C : Type}
+def PhrasalCophonology.appliesTo {C : Type*}
     (pc : PhrasalCophonology C) (ph : Phase) : Bool :=
   pc.phaseSelector (Minimalist.SO.lexLeaf ph.head)
 
@@ -112,7 +112,7 @@ def PhrasalCophonology.appliesTo {C : Type}
     Delegates to `cophonologicalEval` from `CophonologyTheory.lean`;
     the difference relative to per-VI cophonology is the *trigger*
     (phase head match), not the constraint-merge mechanics. -/
-def phrasalCophonologicalEval {C : Type} [DecidableEq C]
+def phrasalCophonologicalEval {C : Type*} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (pc : PhrasalCophonology C)
     (candidates : List C)
@@ -121,7 +121,7 @@ def phrasalCophonologicalEval {C : Type} [DecidableEq C]
 
 /-- A phrasal cophonology with empty subranking reduces to default OT.
     Lifts `cophonologicalEval_empty_sub`. -/
-theorem phrasalCophonologicalEval_empty_sub {C : Type} [DecidableEq C]
+theorem phrasalCophonologicalEval_empty_sub {C : Type*} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (pc : PhrasalCophonology C)
     (candidates : List C) (h : candidates ≠ [])
@@ -144,13 +144,13 @@ theorem phrasalCophonologicalEval_empty_sub {C : Type} [DecidableEq C]
 
     Returns `none` if no registered cophonology matches; in that case
     callers should fall back to the default ranking. -/
-def selectCophonology {C : Type}
+def selectCophonology {C : Type*}
     (registry : List (PhrasalCophonology C)) (ph : Phase)
     : Option (PhrasalCophonology C) :=
   registry.find? (·.appliesTo ph)
 
 /-- The selected cophonology, when present, applies to the phase. -/
-theorem selectCophonology_applies {C : Type}
+theorem selectCophonology_applies {C : Type*}
     {registry : List (PhrasalCophonology C)} {ph : Phase}
     {pc : PhrasalCophonology C}
     (h : selectCophonology registry ph = some pc) :
@@ -164,7 +164,7 @@ theorem selectCophonology_applies {C : Type}
 -- ============================================================================
 
 /-- An empty registry selects no cophonology. -/
-theorem selectCophonology_empty {C : Type} (ph : Phase) :
+theorem selectCophonology_empty {C : Type*} (ph : Phase) :
     selectCophonology ([] : List (PhrasalCophonology C)) ph = none := rfl
 
 end OptimalityTheory.CophonologyByPhrase

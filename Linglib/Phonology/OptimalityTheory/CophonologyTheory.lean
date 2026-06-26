@@ -69,7 +69,7 @@ open Constraints OptimalityTheory
     constraint ranking: constraints named in `subranking` are promoted
     to the top of the ranking (in the order listed), and the remaining
     default constraints follow. -/
-structure CophVocabItem (Ctx Root C : Type) extends VocabItem Ctx Root where
+structure CophVocabItem (Ctx Root C : Type*) extends VocabItem Ctx Root where
   /-- Morpheme-specific constraint subranking (R component).
       Constraints listed here are promoted to the top of the effective
       ranking, overriding their default position. An empty subranking
@@ -89,43 +89,16 @@ structure CophVocabItem (Ctx Root C : Type) extends VocabItem Ctx Root where
     ranking without disturbing the relative order of other constraints.
 
     When `sub` is empty, the result is exactly `default`. -/
-def mergeRanking {C : Type}
+def mergeRanking {C : Type*}
     (default sub : List (NamedConstraint C)) : List (NamedConstraint C) :=
   let subNames := sub.map (·.name)
   sub ++ default.filter (λ c => !subNames.contains c.name)
 
 /-- An empty subranking produces the default ranking unchanged. -/
-theorem mergeRanking_empty_sub {C : Type}
+theorem mergeRanking_empty_sub {C : Type*}
     (default : List (NamedConstraint C)) :
     mergeRanking default [] = default := by
   simp [mergeRanking]
-
-/-- Subranking constraints appear first in the merged ranking. -/
-theorem mergeRanking_sub_prefix {C : Type}
-    (default sub : List (NamedConstraint C)) :
-    (mergeRanking default sub).take sub.length = sub := by
-  simp [mergeRanking, List.take_append_of_le_length (Nat.le_refl _)]
-
-/-- Every subranking constraint is in the merged ranking. -/
-theorem mergeRanking_sub_subset {C : Type}
-    (default sub : List (NamedConstraint C))
-    (c : NamedConstraint C) (h : c ∈ sub) :
-    c ∈ mergeRanking default sub := by
-  simp only [mergeRanking]
-  exact List.mem_append_left _ h
-
-/-- Every default constraint whose name is not in the subranking
-    is preserved in the merged ranking. -/
-theorem mergeRanking_preserves_default {C : Type}
-    (default sub : List (NamedConstraint C))
-    (c : NamedConstraint C) (hMem : c ∈ default)
-    (hName : ¬ (sub.map (·.name)).contains c.name) :
-    c ∈ mergeRanking default sub := by
-  simp only [mergeRanking]
-  refine List.mem_append_right _ (List.mem_filter.mpr ⟨hMem, ?_⟩)
-  cases h : (sub.map (·.name)).contains c.name
-  · rfl
-  · exact absurd h hName
 
 -- ============================================================================
 -- § 3: Cophonological Evaluation
@@ -140,7 +113,7 @@ theorem mergeRanking_preserves_default {C : Type}
     constraint (basemap correspondence) above default markedness
     constraints, forcing the output to match the basemap rather than
     preserving the target's underlying tones ([rolle-2018] Ch 5). -/
-def cophonologicalEval {C : Type} [DecidableEq C]
+def cophonologicalEval {C : Type*} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (subranking : List (NamedConstraint C))
     (candidates : List C)
@@ -150,40 +123,12 @@ def cophonologicalEval {C : Type} [DecidableEq C]
 
 /-- When the subranking is empty, cophonological evaluation reduces to
     standard OT evaluation. CPT is a proper generalization of OT. -/
-theorem cophonologicalEval_empty_sub {C : Type} [DecidableEq C]
+theorem cophonologicalEval_empty_sub {C : Type*} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (candidates : List C) (h : candidates ≠ []) :
     cophonologicalEval defaultRanking [] candidates h =
     (mkTableau candidates defaultRanking h).optimal := by
   show (mkTableau candidates (mergeRanking defaultRanking []) h).optimal = _
   rw [mergeRanking_empty_sub]
-
--- ============================================================================
--- § 4: Dominant vs Non-dominant Cophonology
--- ============================================================================
-
-/-- A dominant cophonology is one whose subranking is non-empty: the VI
-    imposes morpheme-specific constraint effects on the phonological
-    evaluation.
-
-    In [rolle-2018]'s analysis of grammatical tone, dominant GT
-    triggers have a subranking that promotes basemap faithfulness,
-    while non-dominant triggers have an empty subranking (relying on
-    the default ranking). -/
-def CophVocabItem.isDominantCoph {Ctx Root C : Type}
-    (cvi : CophVocabItem Ctx Root C) : Bool :=
-  !cvi.subranking.isEmpty
-
-/-- A non-dominant cophonology imposes no morpheme-specific constraints:
-    the phonological evaluation proceeds under the default ranking. -/
-def CophVocabItem.isNonDominantCoph {Ctx Root C : Type}
-    (cvi : CophVocabItem Ctx Root C) : Bool :=
-  cvi.subranking.isEmpty
-
-/-- Dominant and non-dominant are complementary. -/
-theorem coph_dominant_complement {Ctx Root C : Type}
-    (cvi : CophVocabItem Ctx Root C) :
-    cvi.isDominantCoph = !cvi.isNonDominantCoph := by
-  simp [CophVocabItem.isDominantCoph, CophVocabItem.isNonDominantCoph]
 
 end OptimalityTheory.CophonologyTheory

@@ -124,10 +124,6 @@ def weightMap {n : Nat} (w : Fin n → ℚ) : ViolationProfile n →+ ℚ where
     show w i * ((a i + b i : Nat) : ℚ) = w i * (a i : ℚ) + w i * (b i : ℚ)
     push_cast; ring
 
-/-- Convenience alias: `weightedSum w v = weightMap w v`. -/
-abbrev weightedSum {n : Nat} (w : Fin n → ℚ) (v : ViolationProfile n) : ℚ :=
-  weightMap w v
-
 -- ============================================================================
 -- § 4: Bridge to Existing HG Code
 -- ============================================================================
@@ -145,14 +141,6 @@ theorem weightMap_eq_weightedViolations {n : Nat}
 -- ============================================================================
 -- § 5: Order-Preservation (⊕-compatibility)
 -- ============================================================================
-
-/-- `LexStrictlyBetter` from `OTLimit.lean` is definitionally equal to `<`
-    on `ViolationProfile n` — they are both `∃ k, (∀ j < k, a j = b j) ∧ a k < b k`.
-
-    This bridges the HG–OT agreement literature's vocabulary
-    (`LexStrictlyBetter`) to the algebraic ordering on `ViolationProfile`. -/
-theorem lt_iff_lexStrictlyBetter {n : Nat} (a b : ViolationProfile n) :
-    a < b ↔ LexStrictlyBetter a b := Iff.rfl
 
 /-- **The weight map is strictly order-preserving** when weights are
     exponentially separated ([riggle-2009] §4,
