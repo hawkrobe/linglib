@@ -34,20 +34,22 @@ open Constraints
 -- § 1: Permutations (for factorial typology)
 -- ============================================================================
 
+variable {α : Type*}
+
 /-- Insert element `a` at every position in list `l`. -/
-private def insertEverywhere {α : Type*} (a : α) : List α → List (List α)
+private def insertEverywhere (a : α) : List α → List (List α)
   | [] => [[a]]
   | x :: xs =>
     (a :: x :: xs) :: (insertEverywhere a xs).map (x :: ·)
 
 /-- All permutations of a list. -/
-def permutations {α : Type*} : List α → List (List α)
+def permutations : List α → List (List α)
   | [] => [[]]
   | x :: xs => (permutations xs).flatMap (insertEverywhere x)
 
 /-- Elements of `insertEverywhere a l` contain exactly `a` and the
     elements of `l`. -/
-private theorem mem_of_mem_insertEverywhere {α : Type*} (a : α) :
+private theorem mem_of_mem_insertEverywhere (a : α) :
     ∀ (l : List α) (l' : List α), l' ∈ insertEverywhere a l →
       ∀ x, x ∈ l' → x = a ∨ x ∈ l := by
   intro l
@@ -77,7 +79,7 @@ private theorem mem_of_mem_insertEverywhere {α : Type*} (a : α) :
         · exact Or.inr (.tail _ hm)
 
 /-- Elements of any permutation of `l` are elements of `l`. -/
-theorem mem_of_mem_permutations {α : Type*} {x : α} :
+theorem mem_of_mem_permutations {x : α} :
     ∀ {l l' : List α}, l' ∈ permutations l → x ∈ l' → x ∈ l := by
   intro l
   induction l with
@@ -96,13 +98,15 @@ theorem mem_of_mem_permutations {α : Type*} {x : α} :
 /-- A permutation of `constraints` has the same elements, so any
     `con ∈ ranking` for `ranking ∈ permutations constraints` satisfies
     `con ∈ constraints`. -/
-theorem permutations_subset {α : Type*} {l l' : List α}
+theorem permutations_subset {l l' : List α}
     (hp : l' ∈ permutations l) : ∀ x ∈ l', x ∈ l :=
   fun _ hx => mem_of_mem_permutations hp hx
 
 -- ============================================================================
 -- § 2: Tableau Construction
 -- ============================================================================
+
+variable {C : Type*} [DecidableEq C]
 
 /-- Build a `Tableau C ranking.length` from a candidate list and ranking.
 
@@ -114,7 +118,7 @@ theorem permutations_subset {α : Type*} {l l' : List α}
     (mkTableau candidates ranking h).optimal = {.winner}
     ```
     where `{.winner}` is a `Finset` literal. -/
-def mkTableau {C : Type*} [DecidableEq C] (candidates : List C)
+def mkTableau (candidates : List C)
     (ranking : List (NamedConstraint C))
     (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
   { candidates := candidates.toFinset
@@ -126,7 +130,7 @@ def mkTableau {C : Type*} [DecidableEq C] (candidates : List C)
       | cons a _ => exact ⟨a, by simp⟩ }
 
 /-- Candidates in `mkTableau ... .optimal` belong to the original list. -/
-theorem mkTableau_optimal_mem {C : Type*} [DecidableEq C]
+theorem mkTableau_optimal_mem
     (candidates : List C) (ranking : List (NamedConstraint C))
     (h : candidates ≠ []) (c : C) :
     c ∈ (mkTableau candidates ranking h).optimal → c ∈ candidates :=
@@ -144,7 +148,7 @@ theorem mkTableau_optimal_mem {C : Type*} [DecidableEq C]
     the ranking, it forces all winners to satisfy it perfectly. Uses
     `ViolationProfile.le_apply_zero` to extract the first component
     of the lexicographic comparison. -/
-theorem mkTableau_isOptimal_zero_first {C : Type*} [DecidableEq C]
+theorem mkTableau_isOptimal_zero_first
     (candidates : List C) (con : NamedConstraint C)
     (rest : List (NamedConstraint C))
     (h : candidates ≠ [])
@@ -161,7 +165,7 @@ theorem mkTableau_isOptimal_zero_first {C : Type*} [DecidableEq C]
   exact Nat.le_zero.mp h0
 
 /-- `∈ .optimal` version of `mkTableau_isOptimal_zero_first`. -/
-theorem mkTableau_optimal_zero_first {C : Type*} [DecidableEq C]
+theorem mkTableau_optimal_zero_first
     (candidates : List C) (con : NamedConstraint C)
     (rest : List (NamedConstraint C))
     (h : candidates ≠ [])
@@ -173,7 +177,7 @@ theorem mkTableau_optimal_zero_first {C : Type*} [DecidableEq C]
 
 /-- If a candidate in `mkTableau` has 0 violations on every constraint,
     it is optimal. -/
-theorem mkTableau_zero_isOptimal {C : Type*} [DecidableEq C]
+theorem mkTableau_zero_isOptimal
     (candidates : List C) (ranking : List (NamedConstraint C))
     (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
     (hzero : ∀ con ∈ ranking, con.eval c = 0) :
@@ -195,7 +199,7 @@ theorem mkTableau_zero_isOptimal {C : Type*} [DecidableEq C]
     proof reduces to `mkTableau_zero_isOptimal` after using
     `permutations_subset` to show that elements of a permutation are
     elements of the original list. -/
-theorem mkTableau_zero_optimal_allRankings {C : Type*} [DecidableEq C]
+theorem mkTableau_zero_optimal_allRankings
     (candidates : List C) (constraints : List (NamedConstraint C))
     (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
     (hzero : ∀ con ∈ constraints, con.eval c = 0) :
@@ -214,7 +218,7 @@ theorem mkTableau_zero_optimal_allRankings {C : Type*} [DecidableEq C]
     This is the core of OT factorial typology: the number of distinct
     optimal sets equals the number of language types predicted by the
     constraint set. -/
-def mkFactorialOptima {C : Type*} [DecidableEq C]
+def mkFactorialOptima
     (candidates : List C)
     (constraints : List (NamedConstraint C))
     (h : candidates ≠ [] := by decide) : List (Finset C) :=
@@ -225,7 +229,7 @@ def mkFactorialOptima {C : Type*} [DecidableEq C]
 
 /-- Number of distinct language types predicted by the factorial typology.
     Equals `|mkFactorialOptima|`. -/
-def mkFactorialTypologySize {C : Type*} [DecidableEq C]
+def mkFactorialTypologySize
     (candidates : List C)
     (constraints : List (NamedConstraint C))
     (h : candidates ≠ [] := by decide) : Nat :=
