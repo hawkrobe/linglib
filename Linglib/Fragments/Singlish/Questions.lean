@@ -1,4 +1,4 @@
-import Linglib.Typology.Question
+import Linglib.Syntax.Question
 import Linglib.Studies.ShenHuang2026
 import Linglib.Syntax.ExpressiveModifier
 
@@ -40,7 +40,7 @@ crosses the island boundary).
 
 namespace Singlish.Questions
 
-open Typology.Question (WhInterpMechanism WhMovementStrategy)
+open Syntax.Question (WhInterpMechanism WhMovementStrategy)
 open ShenHuang2026 (WhDependencyType)
 open ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
@@ -136,8 +136,8 @@ end Singlish.Questions
 /-- Map a `WhInterpMechanism` to [shen-huang-2026]'s coarser
     `WhDependencyType`. Overt, covert, and partial movement all map to
     `.movement`; unselective binding maps to `.binding`. -/
-def Typology.Question.WhInterpMechanism.toDependencyType :
-    Typology.Question.WhInterpMechanism →
+def Syntax.Question.WhInterpMechanism.toDependencyType :
+    Syntax.Question.WhInterpMechanism →
     ShenHuang2026.WhDependencyType
   | .overtMovement      => .movement
   | .covertMovement     => .movement
@@ -203,7 +203,7 @@ def theHell : ExpressiveModifier.ExpressiveWhModifier :=
     partial movement, in-situ) are interchangeable ([sato-2013]).
     Polar questions use sentence-final particles (*ah*, *meh*)
     ([sato-ngui-2017]). -/
-def question : Typology.Question.QuestionProfile :=
+def question : Syntax.Question.QuestionProfile :=
   { language := "Singlish"
   , walsCode := "cse"
   , qParticlePos := some .final

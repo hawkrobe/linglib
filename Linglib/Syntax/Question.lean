@@ -54,7 +54,7 @@ per-language data live in
 
 set_option autoImplicit false
 
-namespace Typology.Question
+namespace Syntax.Question
 
 private abbrev ch92  := Data.WALS.F92A.allData
 private abbrev ch93  := Data.WALS.F93A.allData
@@ -315,5 +315,5 @@ theorem mwf_language_no_violation (p : MWFParameter)
   cases p <;> simp_all [MWFParameter.AllowsMWF, MWFViolation,
     MWFParameter.EdgeAsterisk]
 
-end Typology.Question
+end Syntax.Question
 
