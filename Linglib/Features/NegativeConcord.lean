@@ -1,5 +1,5 @@
 /-!
-# Typology.NegativeConcord
+# Negative concord: n-word + concord typology
 [giannakidou-2000] [van-der-auwera-van-alsenoy-2016]
 
 Lightweight, Fragment-importable types for negative concord: the item-level n-word
@@ -20,7 +20,7 @@ bridge the item-level status to its language-level WALS 115A `NegIndefiniteStrat
   derived from the type.
 -/
 
-namespace Typology.NegativeConcord
+namespace Features.NegativeConcord
 
 /-- Item-level status of a negation-sensitive indefinite: the n-word vs
     negative-quantifier vs NPI trichotomy. [giannakidou-2000] gives the minimal,
@@ -83,4 +83,4 @@ theorem strict_nonstrict_contrast :
     NegConcordSubtype.nonStrict.nmRequired .preverbal = false ∧
     NegConcordSubtype.nonStrict.nmRequired .postverbal = true := by decide
 
-end Typology.NegativeConcord
+end Features.NegativeConcord
