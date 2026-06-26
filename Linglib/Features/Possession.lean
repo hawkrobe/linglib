@@ -9,162 +9,113 @@ Authors: Robert Hawkins
 [stassen-2009] [stassen-2013b] [nichols-1986] [nichols-bickel-2013]
 [nichols-bickel-2013c] [heine-1997] [heine-2009] [aikhenvald-2012] [wals-2013]
 
-Theory-neutral classification substrate for possession, typing per-language
-Fragment data and feeding the cross-linguistic theorems in
-`Studies/NicholsBickel2013.lean`, `Studies/Heine1997.lean`, and
-`Studies/KampanarouAlexiadou2026.lean`. Graduated from the (dissolving)
-`Typology/` layer to `Features/` under a bare-root `Possession` namespace,
-mirroring `Features/Case` and `Features/Person`.
+Theory-neutral classification enums for possession plus a per-language
+`PossessionProfile`, typed by Fragment data and consumed by
+`Studies/NicholsBickel2013`, `Studies/Heine1997`, and
+`Studies/KampanarouAlexiadou2026`. Bare-root `Possession` namespace under
+`Features/`, like `Features/Case`.
 
-## Dimensions
+## Main definitions
 
-- `Obligatoriness` (WALS Ch 58A)
-- `Classification` (WALS Ch 59A)
-- `PredicativeStrategy` ([stassen-2009] four-way; [stassen-2013b] / WALS 117A
-  five-way refinement)
-- `AdnominalMarking` ([nichols-1986]; WALS Ch 24A [nichols-bickel-2013c])
-- `AffixPosition` (WALS Ch 57A)
-- `Notion` ([heine-1997]): semantic targets of possession
-- `InalienabilityRank`: coarse cline of inalienability candidates
-- `Source` ([heine-1997] / [heine-2009]): grammaticalization schemas
-- `Alienability`: the neutral binary the typological `Classification`, the
-  DM-structural `PossessionType`, and the V&J semantic `PossessionRelationType`
-  all coarsen onto — the shared cut, named once.
-- `PossessionProfile`: per-language bundle + derived predicates.
+`Obligatoriness` (WALS 58A), `Classification` (59A), `AffixPosition` (57A),
+`PredicativeStrategy` ([stassen-2009] four-way; [stassen-2013b] adds Genitive),
+`AdnominalMarking` ([nichols-1986]), `Notion` and `Source` ([heine-1997]),
+`InalienabilityRank`, the neutral `Alienability` cut, and `PossessionProfile`.
 
-## Theory-laden caveats
+## Notes
 
-Several enums encode **specific frameworks**, not field-wide consensus:
-
-- **`PredicativeStrategy` is Stassen's predicative typology.** [stassen-2009]
-  recognises four types (Have / Locational / With-Comitative / Topic); the
-  Genitive type is the fifth, introduced in his WALS chapter ([stassen-2013b],
-  WALS 117A), where Genitive and Locational group under "Oblique Possessive".
-  [heine-1997] splits Genitive and Goal as separable schemas.
-
-- **`Classification` (3-way) hides language-internal variation.** Mayan
-  3-class systems and Hawaiian a/o-class systems both code as `threeOrMore`
-  with analytical loss. A fine-grained split indexed by possessor and possessum
-  class (the Oceanic / Mayan literature; [aikhenvald-2012]) is future substrate.
-
-- **`Source`** ([heine-1997] / [heine-2009] event schemas) and
-  **`PredicativeStrategy`** (Stassen) are **parallel typologies over the same
-  data**; `predicativeSource` is the bridge — the right pattern for parallel
-  substrates.
+These enums adopt specific frameworks, not field-wide consensus:
+`PredicativeStrategy` is Stassen's typology (Genitive is his WALS 117A addition,
+grouped with Locational as "Oblique Possessive"); `Classification` collapses
+Mayan/Oceanic multi-class systems into `threeOrMore`; `Source` (Heine's event
+schemas) and `PredicativeStrategy` are parallel typologies bridged by
+`predicativeSource`.
 -/
 
 set_option autoImplicit false
 
 namespace Possession
 
-/-- WALS Ch 58A: whether some nouns (typically kinship, body parts) require
-    obligatory possessive marking. Unpossessed forms are either ungrammatical
-    or require special "absolute" morphology. -/
+/-- WALS 58A: whether some nouns (kinship, body parts) require possessive marking. -/
 inductive Obligatoriness where
-  /-- Obligatory possessive inflection exists (e.g., Mohawk, Turkish, Hungarian, Navajo). -/
+  /-- Obligatory possessive inflection exists (Mohawk, Navajo). -/
   | exists_
-  /-- No obligatory possessive inflection (e.g., English, Mandarin, Russian, Finnish). -/
+  /-- No obligatory possessive inflection (English, Russian). -/
   | noObligatory
-  /-- Possessive inflection exists but is never obligatory; data insufficient. -/
+  /-- Inflection exists but is never obligatory; data insufficient. -/
   | unclear
   deriving DecidableEq, Repr
 
-/-- WALS Ch 59A: whether the language morphosyntactically distinguishes
-    different classes of possession (typically alienable vs inalienable). -/
+/-- WALS 59A: whether possession is morphosyntactically classified (alienability). -/
 inductive Classification where
-  /-- All nouns use the same possessive construction (e.g., English, Russian, Turkish). -/
+  /-- One construction for all nouns (English, Russian). -/
   | noClassification
-  /-- Two-way classification, typically alienable vs inalienable
-      (e.g., Fijian, Hawaiian, many Oceanic and Amazonian languages). -/
+  /-- Two-way, typically alienable vs inalienable (Fijian, Hawaiian). -/
   | twoWay
-  /-- Three or more classes of possession distinguished. -/
+  /-- Three or more possessive classes. -/
   | threeOrMore
   deriving DecidableEq, Repr
 
-/-- [stassen-2009] / [stassen-2013b] (WALS 117A): how a language expresses
-    predicative (clausal) possession ("I have X"). The five strategies refine
-    Stassen's four-way 2009 typology (the Genitive type is the WALS 117A
-    addition); each corresponds to a different syntactic analysis of the
-    possessor. -/
+/-- How a language predicates possession ("I have X"); [stassen-2009] four-way,
+    [stassen-2013b] (WALS 117A) adds Genitive. -/
 inductive PredicativeStrategy where
-  /-- Have-verb: dedicated transitive verb 'have'
-      (e.g., English `I have a book`, Mandarin `wo you yi-ben shu`). -/
+  /-- Transitive 'have' verb (English, Mandarin). -/
   | haveVerb
-  /-- Locational/Existential: existential construction with possessor in
-      a locative/oblique case (e.g., Russian `u menja est' kniga`,
-      Finnish `minulla on kirja`). -/
+  /-- Existential with possessor in a locative/oblique (Russian, Finnish, Irish, Hindi). -/
   | locational
-  /-- Genitive/Dative predicate: possessor in genitive or dative with copula
-      (e.g., Hindi `mere paas kitaab hai`, Irish `ta leabhar agam`,
-      Arabic `indi kitaab`). -/
-  | genitiveDative
-  /-- Topic-comment: possessor topicalized, possessum in existential comment
-      (e.g., Japanese `watashi-ni-wa hon-ga aru`). -/
+  /-- Existential with possessor in the genitive, "X's Y exists" (Turkish `var`). -/
+  | genitive
+  /-- Possessor topicalized over an existential comment (Japanese). -/
   | topic
-  /-- Conjunctional/Comitative: "I am with a book"
-      (e.g., Bantu Swahili `nina kitabu` 'I-with book'). -/
+  /-- Comitative "I am with Y" (Swahili `-na`). -/
   | comitative
   deriving DecidableEq, Repr
 
-/-- [nichols-1986]; WALS Ch 24A [nichols-bickel-2013c]: how the possessive
-    relation is marked within the NP ("my book", "John's house"). -/
+/-- [nichols-1986]; WALS 24A [nichols-bickel-2013c]: locus of NP-internal marking. -/
 inductive AdnominalMarking where
-  /-- Head-marking: possessive marker on the possessed noun (head)
-      (e.g., Hungarian `Janos kalap-ja`, Swahili `kitabu ch-ake`). -/
+  /-- Marker on the possessed head noun (Hungarian, Swahili). -/
   | headMarking
-  /-- Dependent-marking: possessive marker on the possessor
-      (e.g., English `John's book`, Japanese `Tanaka-no hon`). -/
+  /-- Marker on the possessor (English `'s`, Japanese `no`). -/
   | dependentMarking
-  /-- Double-marking: both possessor and possessed noun marked
-      (e.g., Turkish `Ali-nin kitab-i`, Georgian `kac-is saxl-i`). -/
+  /-- Both possessor and head marked (Turkish, Georgian). -/
   | doubleMarking
-  /-- Juxtaposition: no overt marker; word-order only (WALS "no marking")
-      (e.g., Vietnamese `nha toi` 'house I' = 'my house'). -/
-  | juxtaposition
+  /-- No overt marker; word order alone (WALS "no marking"; Vietnamese). -/
+  | zeroMarking
   deriving DecidableEq, Repr
 
-/-- WALS Ch 57A: position of pronominal possessive affixes on the noun. -/
+/-- WALS 57A: position of pronominal possessive affixes on the noun. -/
 inductive AffixPosition where
-  /-- Possessive prefixes (e.g., Swahili class-agreement prefixes, many Bantu/Papuan). -/
+  /-- Possessive prefixes (Bantu, many Papuan). -/
   | prefixes
-  /-- Possessive suffixes (e.g., Turkish -im, Hungarian -m, Finnish -ni). -/
+  /-- Possessive suffixes (Turkish, Hungarian, Finnish). -/
   | suffixes
-  /-- Both prefixes and suffixes used. -/
+  /-- Both prefixes and suffixes. -/
   | both
-  /-- No possessive affixes; possession marked by independent words/clitics
-      (e.g., English my, Japanese no, Mandarin de). -/
-  | none
+  /-- No affixes; independent words/clitics (English `my`, Mandarin `de`). -/
+  | noAffix
   deriving DecidableEq, Repr
 
-/-- [heine-1997]: the semantic *targets* of possessive constructions — what
-    kind of possessive relationship is expressed. Distinct from `Source`, which
-    encodes the cognitive source (how the construction arose diachronically).
-    Seven notions; the first five form an abstractness cline
-    (physical < temporary < permanent < inalienable < abstract), plus two for
-    inanimate possessors. -/
+/-- [heine-1997]: semantic targets of possession (vs `Source`, the diachronic origin). -/
 inductive Notion where
-  /-- Physical possession (e.g., "I have a pen in my hand"). -/
+  /-- Physical possession ("a pen in my hand"). -/
   | physical
-  /-- Temporary possession (e.g., "I have a rental car"). -/
+  /-- Temporary possession ("a rental car"). -/
   | temporary
-  /-- Permanent possession (e.g., "I have a house"). -/
+  /-- Permanent possession ("a house"). -/
   | permanent
-  /-- Inalienable possession (e.g., "I have two sisters", "blue eyes"). -/
+  /-- Inalienable possession ("two sisters", "blue eyes"). -/
   | inalienable
-  /-- Abstract possession (e.g., "I have a headache", "an idea"). -/
+  /-- Abstract possession ("a headache", "an idea"). -/
   | abstract
-  /-- Inanimate inalienable (e.g., "The tree has branches"). -/
+  /-- Inanimate inalienable ("the tree has branches"). -/
   | inanimateInalienable
-  /-- Inanimate alienable (e.g., "The room has a window"). -/
+  /-- Inanimate alienable ("the room has a window"). -/
   | inanimateAlienable
   deriving DecidableEq, Repr
 
-/-- A coarse cline of inalienability candidates: if a language draws an
-    alienable/inalienable boundary, body-part and kinship terms are the first
-    candidates for the inalienable class. The numeric `toNat` ranking is a
-    coarse operationalization for comparison, **not** a claimed cross-linguistic
-    universal — [nichols-1986] and the prototype-network view ([aikhenvald-2012])
-    treat kinship and body-parts as co-central rather than strictly ranked. -/
+/-- Coarse inalienability cline (body-part/kinship rank highest). `toNat` is an
+    operationalization for comparison, not a claimed universal — [nichols-1986]
+    and [aikhenvald-2012] treat kinship and body-parts as co-central. -/
 inductive InalienabilityRank where
   | bodyPart
   | kinship
@@ -174,8 +125,7 @@ inductive InalienabilityRank where
   | generalProperty
   deriving DecidableEq, Repr
 
-/-- Numeric rank for comparison (higher = more likely to be inalienable).
-    A coarse operationalization; see `InalienabilityRank`. -/
+/-- Numeric rank (higher = more likely inalienable); see `InalienabilityRank`. -/
 def InalienabilityRank.toNat : InalienabilityRank → Nat
   | .bodyPart        => 5
   | .kinship         => 4
@@ -184,65 +134,58 @@ def InalienabilityRank.toNat : InalienabilityRank → Nat
   | .culturalItem    => 1
   | .generalProperty => 0
 
-/-- [heine-1997] / [heine-2009]: eight diachronic source schemas from which
-    predicative possession constructions arise via grammaticalization. -/
+/-- [heine-1997] / [heine-2009]: diachronic source schemas of predicative possession. -/
 inductive Source where
-  /-- Action: "X takes Y" → 'X has Y' (e.g., English `have` < OE `habban`). -/
+  /-- Action "X takes Y" (English `have` < OE `habban`). -/
   | action
-  /-- Location: "Y is at X" → 'X has Y' (e.g., Finnish adessive, Russian `u`). -/
+  /-- Location "Y is at X" (Finnish adessive, Russian `u`). -/
   | location
-  /-- Companion: "X is with Y" → 'X has Y' (e.g., Swahili `-na`, Venda `na`). -/
+  /-- Companion "X is with Y" (Swahili `-na`). -/
   | companion
-  /-- Genitive: "X's Y exists" → 'X has Y' (e.g., Turkish `Hasan-ın inek-i var`). -/
+  /-- Genitive "X's Y exists" (Turkish `var`). -/
   | genitive
-  /-- Goal: "Y exists for X" → 'X has Y' (e.g., Hindi `mere paas`, Irish `agam`). -/
+  /-- Goal "Y exists for X" (Hindi, Irish). -/
   | goal
-  /-- Source: "Y exists from X" → 'X has Y'. -/
+  /-- Source "Y exists from X". -/
   | source
-  /-- Topic: "As for X, Y exists" → 'X has Y' (e.g., Japanese `watashi-ni-wa`). -/
+  /-- Topic "as for X, Y exists" (Japanese). -/
   | topic
-  /-- Equation: "Y is X's" → 'X has Y' (e.g., Scots Gaelic `is leam an leabhar`). -/
+  /-- Equation "Y is X's" (Scots Gaelic). -/
   | equation
   deriving DecidableEq, Repr
 
-/-- Map predicative strategies to their likely grammaticalization source. -/
+/-- Likely grammaticalization source of each predicative strategy. -/
 def predicativeSource : PredicativeStrategy → Source
-  | .haveVerb       => .action
-  | .locational     => .location
-  | .genitiveDative => .goal
-  | .topic          => .topic
-  | .comitative     => .companion
+  | .haveVerb   => .action
+  | .locational => .location
+  | .genitive   => .genitive
+  | .topic      => .topic
+  | .comitative => .companion
 
 /-! ### The neutral alienability cut -/
 
-/-- The neutral alienable/inalienable cut. Lives low in `Features` so that the
-    typological `Classification`, the DM-structural `PossessionType`
-    (`Morphology/DM`), and the V&J semantic `PossessionRelationType`
-    (`Semantics/Possessive`) can each coarsen onto it rather than re-stipulating
-    the contrast. -/
+/-- Neutral alienable/inalienable cut, low in `Features` so the typological
+    `Classification`, DM `PossessionType`, and V&J `PossessionRelationType` can
+    coarsen onto it instead of re-stipulating the contrast. -/
 inductive Alienability where
   | inalienable
   | alienable
   deriving DecidableEq, Repr
 
-/-- A language draws the `Alienability` cut iff it morphosyntactically
-    classifies possession at all. -/
+/-- A language draws the alienability cut iff it classifies possession at all. -/
 def Classification.drawsAlienabilityCut : Classification → Bool
   | .noClassification => false
   | _                 => true
 
-/-- The inalienable class is drawn from the top of the cline: ranks at or above
-    a language's `cut` count as inalienable. Makes the implicational shape of
-    the hierarchy explicit, with the cut as the per-language parameter. -/
+/-- Coarsen the cline at a language's `cut`: ranks at or above `cut` are inalienable. -/
 def InalienabilityRank.alienabilityAt (cut : InalienabilityRank) :
     InalienabilityRank → Alienability :=
   fun r => if cut.toNat ≤ r.toNat then .inalienable else .alienable
 
 /-! ### Per-language profile -/
 
-/-- A language's possession profile across [wals-2013] chapters 57–59 and the
-    additional typological dimensions of predicative ([stassen-2009]) and
-    adnominal ([nichols-1986]) possession. -/
+/-- A language's possession profile across WALS 57–59, predicative
+    ([stassen-2009]), and adnominal ([nichols-1986]) dimensions. -/
 structure PossessionProfile where
   /-- Language name. -/
   language : String
@@ -250,43 +193,43 @@ structure PossessionProfile where
   family : String
   /-- ISO 639-3 code. -/
   iso : String := ""
-  /-- Ch 58: whether obligatory possessive inflection exists. -/
+  /-- WALS 58A: obligatory possessive inflection. -/
   obligatoryPossession : Obligatoriness
-  /-- Ch 59: whether the language morphosyntactically classifies possession. -/
+  /-- WALS 59A: morphosyntactic possession classification. -/
   possessiveClassification : Classification
-  /-- Primary strategy for predicative possession ("I have X"). -/
+  /-- Predicative strategy ("I have X"). -/
   predicativeStrategy : PredicativeStrategy
-  /-- Primary strategy for adnominal possession ("my book"). -/
+  /-- Adnominal marking ("my book"). -/
   adnominalStrategy : AdnominalMarking
-  /-- Ch 57: position of pronominal possessive affixes, if attested. -/
+  /-- WALS 57A: pronominal possessive affix position, if attested. -/
   affixPosition : Option AffixPosition := .none
-  /-- Illustrative possessive forms or constructions. -/
+  /-- Illustrative forms. -/
   examples : List String := []
   /-- Notes on the possession system. -/
   notes : String := ""
   deriving Repr, DecidableEq
 
-/-- Does a language have obligatory possessive inflection? -/
+/-- Has obligatory possessive inflection? -/
 def PossessionProfile.hasObligatoryPossession (p : PossessionProfile) : Bool :=
   p.obligatoryPossession == .exists_
 
-/-- Does a language morphosyntactically classify possession? -/
+/-- Morphosyntactically classifies possession? -/
 def PossessionProfile.hasClassification (p : PossessionProfile) : Bool :=
   p.possessiveClassification != .noClassification
 
-/-- Does a language use a have-verb strategy? -/
+/-- Uses a have-verb predicative strategy? -/
 def PossessionProfile.usesHaveVerb (p : PossessionProfile) : Bool :=
   p.predicativeStrategy == .haveVerb
 
-/-- Does a language use a locational/existential strategy? -/
+/-- Uses a locational/existential predicative strategy? -/
 def PossessionProfile.usesLocational (p : PossessionProfile) : Bool :=
   p.predicativeStrategy == .locational
 
-/-- Does a language use head-marking for adnominal possession? -/
+/-- Uses head-marking for adnominal possession? -/
 def PossessionProfile.isHeadMarking (p : PossessionProfile) : Bool :=
   p.adnominalStrategy == .headMarking
 
-/-- Does a language use dependent-marking for adnominal possession? -/
+/-- Uses dependent-marking for adnominal possession? -/
 def PossessionProfile.isDependentMarking (p : PossessionProfile) : Bool :=
   p.adnominalStrategy == .dependentMarking
 

@@ -27,7 +27,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["wo you yi-ben shu", "wo de shu", "wo mama"]
   , notes := "Have-verb you; de marks adnominal possession but drops with inalienable/close relations" }
 

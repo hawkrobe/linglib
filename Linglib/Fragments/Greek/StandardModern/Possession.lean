@@ -63,7 +63,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples :=
       [ "to vivlio tu Jani"        -- 'John's book' (inflectional GEN)
       , "to pomolo apo tin porta"  -- 'the door's handle' (apo-PP, part-whole)

@@ -27,7 +27,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .doubleMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["me m-akvs cigni", "kac-is saxl-i"]
   , notes := "Dative experiencer + verb agreeing with possessum; genitive on possessor in adnominal constructions" }
 

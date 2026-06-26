@@ -156,12 +156,12 @@ theorem two_way_dominates_three_plus :
 -- ============================================================================
 
 /-- In the sample, locational strategies are the most common predicative
-    possession type (9 languages), followed by have-verb (4), genitive/dative
-    (4), topic (1), and comitative (1). -/
+    possession type (12 languages), followed by have-verb (4), genitive (1),
+    topic (1), and comitative (1). -/
 theorem predicative_distribution :
-    countByPredicative allLanguages .locational = 9 ∧
+    countByPredicative allLanguages .locational = 12 ∧
     countByPredicative allLanguages .haveVerb = 4 ∧
-    countByPredicative allLanguages .genitiveDative = 4 ∧
+    countByPredicative allLanguages .genitive = 1 ∧
     countByPredicative allLanguages .topic = 1 ∧
     countByPredicative allLanguages .comitative = 1 := by
   native_decide
@@ -170,7 +170,7 @@ theorem predicative_distribution :
 theorem all_predicative_strategies_attested :
     allLanguages.any (·.predicativeStrategy == .haveVerb) &&
     allLanguages.any (·.predicativeStrategy == .locational) &&
-    allLanguages.any (·.predicativeStrategy == .genitiveDative) &&
+    allLanguages.any (·.predicativeStrategy == .genitive) &&
     allLanguages.any (·.predicativeStrategy == .topic) &&
     allLanguages.any (·.predicativeStrategy == .comitative) = true := by
   native_decide
@@ -181,20 +181,20 @@ theorem all_predicative_strategies_attested :
 
 /-- In the sample, dependent-marking is the most common adnominal possession
     strategy (9 languages), followed by head-marking (5), double-marking (3),
-    and juxtaposition (2). -/
+    and zero-marking (2). -/
 theorem adnominal_distribution :
     countByAdnominal allLanguages .dependentMarking = 9 ∧
     countByAdnominal allLanguages .doubleMarking = 3 ∧
     countByAdnominal allLanguages .headMarking = 5 ∧
-    countByAdnominal allLanguages .juxtaposition = 2 := by
+    countByAdnominal allLanguages .zeroMarking = 2 := by
   native_decide
 
-/-- Dependent-marking exceeds head-marking + juxtaposition combined in
+/-- Dependent-marking exceeds head-marking + zero-marking combined in
     the sample (with the European-bias caveat). -/
 theorem dependent_marking_dominant :
     countByAdnominal allLanguages .dependentMarking >
     countByAdnominal allLanguages .headMarking +
-    countByAdnominal allLanguages .juxtaposition := by
+    countByAdnominal allLanguages .zeroMarking := by
   native_decide
 
 -- ============================================================================
@@ -233,13 +233,14 @@ theorem head_marking_mostly_complex_possession :
 -- ============================================================================
 
 /-- In the sample, locational/existential predicative possession is the most
-    widespread strategy (9 languages: Russian, Finnish, Hungarian, Korean,
-    Georgian, Hawaiian, Fijian, Tsotsil, Tseltal). The Eurasian "habeo-less"
-    belt stretches from Finland through Korea, and locational strategies also
-    appear in Oceanic and Mayan languages. (Turkish has a Location-Schema
-    variant but its primary strategy is `.genitiveDative`.) -/
+    widespread strategy (12 languages: Russian, Finnish, Hungarian, Korean,
+    Georgian, Hawaiian, Fijian, Tsotsil, Tseltal, plus Hindi-Urdu, Irish, and
+    Arabic, whose "at/near"-oblique possessives are Locational, not Genitive).
+    The Eurasian "habeo-less" belt stretches from Finland through Korea, and
+    locational strategies also appear in Oceanic and Mayan languages. (Turkish,
+    with its genitive `var`-existential, is the sample's sole Genitive type.) -/
 theorem locational_count :
-    (allLanguages.filter (·.usesLocational)).length = 9 := by
+    (allLanguages.filter (·.usesLocational)).length = 12 := by
   native_decide
 
 -- ============================================================================
@@ -327,7 +328,7 @@ theorem all_adnominal_strategies_attested :
     allLanguages.any (·.adnominalStrategy == .headMarking) &&
     allLanguages.any (·.adnominalStrategy == .dependentMarking) &&
     allLanguages.any (·.adnominalStrategy == .doubleMarking) &&
-    allLanguages.any (·.adnominalStrategy == .juxtaposition) = true := by
+    allLanguages.any (·.adnominalStrategy == .zeroMarking) = true := by
   native_decide
 
 -- ============================================================================
@@ -364,7 +365,7 @@ theorem location_source_dominates :
 theorem attested_sources :
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .action) &&
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .location) &&
-    allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .goal) &&
+    allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .genitive) &&
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .companion) &&
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .topic)
     = true := by

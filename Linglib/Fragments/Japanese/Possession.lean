@@ -27,7 +27,7 @@ def possession : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .topic
   , adnominalStrategy := .dependentMarking
-  , affixPosition := some .none
+  , affixPosition := some .noAffix
   , examples := ["watashi-ni-wa hon-ga aru", "Tanaka-no hon"]
   , notes := "Topic-comment: possessor-DAT-TOP possessum-NOM aru/iru; genitive no for adnominal" }
 
