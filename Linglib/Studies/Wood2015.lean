@@ -348,30 +348,30 @@ theorem parametric_diversity :
     Ch. 5 argues Icelandic lacks true high applicatives; the asymmetry
     formalized here follows the cross-linguistic typology. -/
 theorem ethical_blocked_in_middle :
-    applHigh.licensedWith voiceMiddle = false := rfl
+    ¬ applHigh.Licensed voiceMiddle := by decide
 
 /-- Low applicatives survive when Voice has no event semantics
     because they relate to the theme, not the event
     ([pylkkanen-2008]). -/
 theorem possessive_survives_middle :
-    applLowRecipient.licensedWith voiceMiddle = true := rfl
+    applLowRecipient.Licensed voiceMiddle := by decide
 
 /-- In anticausatives, possessive datives also survive. -/
 theorem possessive_survives_anticausative :
-    applLowRecipient.licensedWith voiceAnticausative = true := rfl
+    applLowRecipient.Licensed voiceAnticausative := by decide
 
 /-- High applicatives ARE licensed with agentive Voice. -/
 theorem ethical_ok_in_active :
-    applHigh.licensedWith voiceAgent = true := rfl
+    applHigh.Licensed voiceAgent := by decide
 
 /-- The full asymmetry: high applicatives require Voice with event
     semantics; low applicatives are independent of Voice
     ([pylkkanen-2008], [schaefer-2008]). -/
 theorem dative_voice_asymmetry :
-    applHigh.licensedWith voiceMiddle = false ∧
-    applHigh.licensedWith voiceAgent = true ∧
-    applLowRecipient.licensedWith voiceMiddle = true ∧
-    applLowRecipient.licensedWith voiceAgent = true := ⟨rfl, rfl, rfl, rfl⟩
+    ¬ applHigh.Licensed voiceMiddle ∧
+    applHigh.Licensed voiceAgent ∧
+    applLowRecipient.Licensed voiceMiddle ∧
+    applLowRecipient.Licensed voiceAgent := by decide
 
 -- ============================================================================
 -- § 5: Theta Role Predictions
@@ -401,14 +401,14 @@ theorem middle_predicts_none :
     SpecApplP because Appl assigns dative case and *-st* lacks case
     features. -/
 theorem st_blocked_from_specApplP :
-    applLowRecipient.specCanBearCase (none : Option Case) = false ∧
-    applLowRecipient.specCanBearCase (some Case.dat) = true := ⟨rfl, rfl⟩
+    ¬ applLowRecipient.SpecCanBearCase (none : Option Case) ∧
+    applLowRecipient.SpecCanBearCase (some Case.dat) := by decide
 
 /-- In ditransitive *-st* alternations, Appl datives are retained
     because Appl assigns case independently of Voice
     ([wood-2015] Ch. 5, §5.3.1). -/
 theorem appl_dative_retained_with_st :
-    applLowRecipient.licensedWith voiceAnticausative = true := rfl
+    applLowRecipient.Licensed voiceAnticausative := by decide
 
 -- ============================================================================
 -- § 7: -st/-na Complementary Distribution (Ch. 3)
