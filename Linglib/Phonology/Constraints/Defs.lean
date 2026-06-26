@@ -66,17 +66,9 @@ def mkFaithGrad (name : String) (violations : C → Nat) : NamedConstraint C :=
 /-- Pull a `NamedConstraint D` back along `f : C → D`: compose `eval` with `f`,
     inherit `name` and `family`. Lets a specific carrier reuse a constraint
     defined on a more general one. -/
+@[simps]
 def NamedConstraint.comap (f : C → D) (c : NamedConstraint D) : NamedConstraint C :=
   { name := c.name, family := c.family, eval := c.eval ∘ f }
-
-@[simp] theorem NamedConstraint.comap_eval (f : C → D) (c : NamedConstraint D) (x : C) :
-    (c.comap f).eval x = c.eval (f x) := rfl
-
-@[simp] theorem NamedConstraint.comap_name (f : C → D)
-    (c : NamedConstraint D) : (c.comap f).name = c.name := rfl
-
-@[simp] theorem NamedConstraint.comap_family (f : C → D)
-    (c : NamedConstraint D) : (c.comap f).family = c.family := rfl
 
 variable {α : Type*}
 

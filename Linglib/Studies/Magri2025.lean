@@ -265,9 +265,9 @@ theorem me_separable_predicts_hz_tagalog (w : Fin 6 → ℝ) :
   simp only [SeparableHarmony.rescale, meSeparable, Real.log_exp, nasalSubSquare]
   fin_cases k <;>
     simp only [constraints, nasSub, starNC, starStemVelar, starStemVelarCoronal,
-      unifMang, unifPang, NamedConstraint.comap_eval, mkFaithGrad, mkMark,
-      Zuraw2010.nasSub, Zuraw2010.starNC, Zuraw2010.starInitVelar,
-      Zuraw2010.starInitCorVel, NasalSubCandidate.project,
+      unifMang, unifPang, NamedConstraint.comap_eval, Function.comp_apply,
+      mkFaithGrad, mkMark, Zuraw2010.nasSub, Zuraw2010.starNC,
+      Zuraw2010.starInitVelar, Zuraw2010.starInitCorVel, NasalSubCandidate.project,
       NasalSubInput.toStemC, NasalSubOutput.toSubSt] <;>
     simp
 
