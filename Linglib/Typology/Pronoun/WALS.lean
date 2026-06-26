@@ -38,7 +38,7 @@ theorem over the accessor in that study file.
   ([nichols-peterson-2013]).
 * `Pronoun.Plurality` — how independent personal pronouns encode number,
   WALS Ch 35. The canonical home for this pronoun-paradigm feature; the
-  per-language values are carried by `Typology.PluralityProfile` (which bundles
+  per-language values are carried by `Morphology.Number.PluralityProfile` (which bundles
   it with the nominal-plurality Chs 33/34/36).
 -/
 
@@ -401,7 +401,7 @@ end Pronoun
 namespace Pronoun
 
 /-- WALS Ch 35: how independent personal pronouns encode number. The canonical
-    home for this pronoun-paradigm feature; `Typology.PluralityProfile` carries
+    home for this pronoun-paradigm feature; `Morphology.Number.PluralityProfile` carries
     the per-language values alongside the nominal-plurality chapters (33/34/36). -/
 inductive Plurality where
   /-- No independent subject pronouns (e.g., Acoma). -/

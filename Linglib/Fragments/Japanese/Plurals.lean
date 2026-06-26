@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Japanese plurality profile (WALS Chs 33–36)
@@ -11,7 +11,7 @@ namespace Japanese
     optional (suffix `-tachi` is limited and optional); person-number stems in
     pronouns; unique periphrastic associative plural (`-tachi` on proper names:
     *Tanaka-tachi* 'Tanaka and associates'). -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Japanese"
   , iso := "jpn"
   , coding := .noPlural

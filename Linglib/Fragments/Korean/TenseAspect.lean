@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # Korean tense-aspect profile (WALS Chs 65–69, 78)
@@ -12,7 +12,7 @@ namespace Korean
     perfect; suffixing. Evidentiality via verbal suffixes (*-te*
     retrospective, *-ney* contemporaneous; [cumming-2026] analyzes
     these as tense-evidential interactions). -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "Korean", iso := "kor", family := "Koreanic"
   , aspect := .grammatical, past := .marked, future := .inflectional
   , perfect := .none, affixPosition := .suffixing

@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Russian plurality profile (WALS Chs 33–36)
@@ -10,7 +10,7 @@ namespace Russian
 /-- Russian: suffix plural (*-y*, *-i*, *-a*), obligatory on all nouns;
     person-number stem + nominal plural affix in pronouns (*ja* vs *m-y*);
     no productive associative plural. -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Russian"
   , iso := "rus"
   , coding := .suffix

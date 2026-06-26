@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Tagalog plurality profile (WALS Chs 33–36)
@@ -69,7 +69,7 @@ Coding (Ch 33): plural word *mga*. Occurrence (Ch 34): all nouns, always
 optional. Pronoun plurality (Ch 35): person-number stem (refined to
 minimal-augmented in `Tagalog.clusivitySystem`). Associative
 (Ch 36): unique periphrastic — *sina* on personal names. -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Tagalog"
   , iso := "tgl"
   , coding := .pluralWord

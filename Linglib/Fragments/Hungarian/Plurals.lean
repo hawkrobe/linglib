@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Hungarian plurality profile (WALS Chs 33–36)
@@ -11,7 +11,7 @@ namespace Hungarian
     stem + nominal plural affix on pronouns (*én* vs *mi*, with `-k` also on
     nouns); unique affixal associative plural (`-ék`: *Pál-ék* 'Paul and
     associates', distinct from additive `-k`/`-ak`). -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Hungarian"
   , iso := "hun"
   , coding := .suffix

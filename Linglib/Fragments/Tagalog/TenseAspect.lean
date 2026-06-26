@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # Tagalog tense-aspect profile (WALS Chs 65–69)
@@ -11,7 +11,7 @@ namespace Tagalog
     (completed vs contemplated aspect); no inflectional past or future
     (aspect-based system); no distinct perfect; prefixing
     (*mag-*, *nag-*, *-um-* etc.). -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "Tagalog", iso := "tgl", family := "Austronesian"
   , aspect := .grammatical, past := .none, future := .none
   , perfect := .none, affixPosition := .prefixing }

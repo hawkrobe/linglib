@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # Turkish tense-aspect profile (WALS Chs 65–69, 78)
@@ -11,7 +11,7 @@ namespace Turkish
     past; inflectional future (*-ecek*); other perfect (*-miş*, from
     evidential/inferential); suffixing. Evidentiality is part of the tense
     paradigm: *-miş* marks indirect (hearsay/inference) vs *-di* (direct). -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "Turkish", iso := "tur", family := "Turkic"
   , aspect := .grammatical, past := .marked, future := .inflectional
   , perfect := .other, affixPosition := .suffixing
