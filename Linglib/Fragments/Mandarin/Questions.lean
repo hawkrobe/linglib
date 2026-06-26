@@ -1,4 +1,4 @@
-import Linglib.Typology.Question
+import Linglib.Syntax.Question
 import Linglib.Syntax.ExpressiveModifier
 
 /-!
@@ -33,7 +33,7 @@ the lexical entries with their typological parameters.
 
 namespace Mandarin.Questions
 
-open Typology.Question (WhInterpMechanism WhMovementStrategy)
+open Syntax.Question (WhInterpMechanism WhMovementStrategy)
 open ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
 
@@ -85,7 +85,7 @@ theorem mandarin_wh_island_free :
 /-- Mandarin question profile (WALS-grounded).
     Wh-in-situ, sentence-final question particle 吗 *ma*, polar via particle.
     [chan-shen-2026] -/
-def question : Typology.Question.QuestionProfile :=
+def question : Syntax.Question.QuestionProfile :=
   { language := "Mandarin"
   , walsCode := "mnd"
   , qParticlePos := some .final

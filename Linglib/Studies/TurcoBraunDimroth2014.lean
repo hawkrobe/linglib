@@ -1,5 +1,5 @@
 import Linglib.Discourse.Coherence
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 import Mathlib.Tactic.NormNum
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
@@ -54,7 +54,7 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Typology.PolarityMarking (Strategy Entry Env)
+open Semantics.Polarity.Marking (Strategy Entry Env)
 open Discourse.Coherence (CoherenceRelation)
 open Dutch.Particles (wel)
 open German.PolarityMarking (verumFocus dochPreUtterance)
