@@ -1,7 +1,7 @@
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.CyclicAgree
-import Linglib.Syntax.Minimalist.PConstraint
+import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Studies.BejarRezac2003
 
 /-!
@@ -603,7 +603,7 @@ theorem probeless_divergence_from_plc :
     ¬ BejarRezac2003.PLCOk [] [⟨.first, false⟩] := by
   decide
 
-open Minimalist.PConstraint in
+open PCC in
 /-- Gluttony reproduces [pancheva-zubizarreta-2018]'s weak and
     strong grammars cell-for-cell over the 1/2/3 grid. -/
 theorem weak_strong_match_pConstraint :
@@ -613,7 +613,7 @@ theorem weak_strong_match_pConstraint :
       (pccViolation weakProbe true io do_ ↔ ¬ IsLicit strongGrammar io do_)) := by
   decide
 
-open Minimalist.PConstraint in
+open PCC in
 /-- Where the two formal systems part ways, ultrastrong half:
     P-Constraint's ultrastrong grammar additionally rules out 2>2
     (P-Uniqueness with no [+author] rescue), which gluttony permits
@@ -627,7 +627,7 @@ theorem ultrastrong_diverges_from_pConstraint :
     ¬ IsLicit ultraStrongGrammar .second .second := by
   decide
 
-open Minimalist.PConstraint in
+open PCC in
 /-- Me-first half: P-Constraint's me-first grammar rules out 1>1,
     which gluttony permits (the probe's [uSPKR] is matched by the
     IO) — the same cell where the probe (39c) departs from the
