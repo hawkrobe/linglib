@@ -5,33 +5,33 @@ Authors: Robert Hawkins
 -/
 
 /-!
-# Possession — typological feature substrate
+# Possession typology
+
 [stassen-2009] [stassen-2013b] [nichols-1986] [nichols-bickel-2013]
 [nichols-bickel-2013c] [heine-1997] [heine-2009] [aikhenvald-2012] [wals-2013]
 
-Theory-neutral classification enums for possession. Per-language values are
-bare `def`s in `Fragments/<Lang>/Possession.lean`, consumed by
-`Studies/NicholsBickel2013`, `Studies/Heine1997`, and
-`Studies/KampanarouAlexiadou2026`. Bare-root `Possession` namespace under
-`Features/`, like `Features/Case`.
+Theory-neutral classification enums for possession, under a bare-root `Possession`
+namespace in `Features/` (like `Features/Case`). Per-language values are bare `def`s
+in `Fragments/<Lang>/Possession.lean`, aggregated by a study-local row in
+`Studies/NicholsBickel2013.lean` and consumed by `Studies/Heine1997` and
+`Studies/KampanarouAlexiadou2026`.
 
 ## Main definitions
 
-`Obligatoriness` (WALS 58A), `Classification` (59A), `AffixPosition` (57A),
-`PredicativeStrategy` ([stassen-2009] four-way; [stassen-2013b] adds Genitive),
-`AdnominalMarking` ([nichols-1986]), `Notion` and `Source` ([heine-1997]),
-`InalienabilityRank`, and the neutral `Alienability` cut. Per-language values
-are bare `def`s in `Fragments/<Lang>/Possession.lean`; cross-linguistic
-aggregation uses a study-local row in `Studies/NicholsBickel2013.lean`.
+* `Obligatoriness`, `Classification`, `AffixPosition` : WALS Ch 58A/59A/57A.
+* `PredicativeStrategy` : [stassen-2009] four-way, [stassen-2013b] adds Genitive.
+* `AdnominalMarking` : [nichols-1986] locus of NP-internal marking.
+* `Notion`, `Source` : [heine-1997] semantic targets and diachronic schemas.
+* `InalienabilityRank` : a coarse inalienability cline.
+* `Alienability` : the neutral alienable/inalienable cut downstream layers coarsen onto.
 
-## Notes
+## Implementation notes
 
-These enums adopt specific frameworks, not field-wide consensus:
-`PredicativeStrategy` is Stassen's typology (Genitive is his WALS 117A addition,
-grouped with Locational as "Oblique Possessive"); `Classification` collapses
-Mayan/Oceanic multi-class systems into `threeOrMore`; `Source` (Heine's event
-schemas) and `PredicativeStrategy` are parallel typologies bridged by
-`predicativeSource`.
+These enums adopt specific frameworks, not field-wide consensus: `PredicativeStrategy`
+is Stassen's typology (Genitive is his WALS 117A addition, grouped with Locational as
+"Oblique Possessive"); `Classification` collapses Mayan/Oceanic multi-class systems into
+`threeOrMore`; `Source` (Heine's event schemas) and `PredicativeStrategy` are parallel
+typologies bridged by `predicativeSource`.
 -/
 
 set_option autoImplicit false
