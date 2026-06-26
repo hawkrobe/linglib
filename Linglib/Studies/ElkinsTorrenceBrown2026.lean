@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
-import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.SyntacticObject.Build

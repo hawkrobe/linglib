@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
 # Probes and Their Horizons [keine-2020]
