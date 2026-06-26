@@ -1228,7 +1228,7 @@ theorem low_appl_blocks_unergative_denotational
     (body : Event Time → Prop) :
     ¬ (applIntroMode a).Licenses (VerbDenot.unergative (Entity := Entity) body) := by
   have h : applIntroMode a = .toTheme := by
-    rcases hLow with h | h <;> subst h <;> rfl
+    cases a <;> first | rfl | exact absurd hLow (by decide)
   rw [h]; exact toTheme_blocks_unergative body
 
 /-- High applicatives license unergatives, derived denotationally

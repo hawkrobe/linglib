@@ -334,7 +334,7 @@ theorem lightP_is_lowSource_in_DP :
     lightP_relator = ApplType.lowSource ∧
     ApplType.IsLow lightP_relator := by
   refine ⟨rfl, ?_⟩
-  exact Or.inr rfl
+  decide
 
 -- ============================================================================
 -- §6. Single Argument Restriction + derived nominals
