@@ -2891,11 +2891,10 @@ import Linglib.Syntax.HPSG.Signature
 import Linglib.Syntax.MereologicalSyntax.Basic
 import Linglib.Syntax.MereologicalSyntax.Bridge
 import Linglib.Syntax.MereologicalSyntax.Interpretation
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Checking
-import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.DegreeMovement
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -2914,9 +2913,11 @@ import Linglib.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.MinimalPronoun
+import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
@@ -2937,7 +2938,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.RepOrder
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
-import Linglib.Syntax.Minimalist.VerbMovementParameter
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Verbal.Decomposition

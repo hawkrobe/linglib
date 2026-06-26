@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Features.Person.PersonCaseConstraint
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures

@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Studies.ErlewineSommerlot2025
