@@ -65,12 +65,12 @@ the substrate file's docstring for the full architectural argument.
 The DLM is the latest in a lineage of usage-based, gradient-weight
 theories. Adjacent linglib substrate:
 
-- `Phonology/ItemSpecificity/` — four phonological theories
-  parameterised by lexical frequency (`UseListed.lean` [zuraw-2000],
-  `IndexedConstraints.lean` [pater-2010],
-  `RepresentationStrength.lean` [moore-cantwell-2021],
-  `ScaledWeights.lean` [coetzee-pater-2008]). All four presuppose
-  a stored lexicon to which frequency attaches.
+- Four rival theories of token frequency in the grammar — UseListed
+  ([zuraw-2000]), indexed constraints ([pater-2010]), representational
+  strength ([moore-cantwell-2021]), and scaled weights
+  ([coetzee-pater-2008]), adjudicated in
+  `Studies/BreissKatsudaKawahara2026.lean` (§5). All four presuppose a
+  stored lexicon to which frequency attaches.
 - `Morphology/UsageBased/Network.lean` ([bybee-1985]):
   Bybee's dynamic network — typed `LexicalEntry`s with `tokenFreq`
   strength + connection edges. Stores entries.
@@ -79,12 +79,11 @@ The DLM is the natural extreme of these traditions: it rejects the
 storage premise altogether — no `LexicalEntry`, no `tokenFreq`, no
 entry-typed connections. The architectural divergence is sharpest
 against Bybee (both usage-based, only one stores entries) and is
-documented in the substrate file's docstring; per the linguistics
-audit (see CHANGELOG 0.231.15), the architectural debate the DLM
-entry into makes the case for keeping the four `ItemSpecificity`
-channels and Bybee where they are — they are linguistic-level theories
+documented in the substrate file's docstring. The four frequency
+theories and Bybee's network are linguistic-level theories
 parameterised by lexical-frequency, not theories of "the lexicon as
-its own object".
+its own object" — the DLM is the tradition's extreme that rejects the
+storage premise the others share.
 
 ## Architectural note: tones as emergent vs stored
 

@@ -1330,12 +1330,6 @@ import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
 import Linglib.Phonology.Inventory
-import Linglib.Phonology.ItemSpecificity.Defs
-import Linglib.Phonology.ItemSpecificity.IndexedConstraints
-import Linglib.Phonology.ItemSpecificity.RepresentationStrength
-import Linglib.Phonology.ItemSpecificity.ScaledWeights
-import Linglib.Phonology.ItemSpecificity.Separation
-import Linglib.Phonology.ItemSpecificity.UseListed
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Basic

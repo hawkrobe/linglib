@@ -30,9 +30,9 @@ a candidate plus an *optional* attested anchor, returning a singleton
 when the anchor is absent (no LC pressure) and a pair when present
 (LC pressure scales with the anchor's mismatch from the candidate).
 The strength of the LC pressure is then a downstream
-*frequency-conditioned* weight on the constraint, supplied by
-`Phonology/ItemSpecificity/ScaledWeights.lean` or sibling
-files.
+*frequency-conditioned* weight on the constraint, supplied by a
+frequency-scaled weight in the consuming study (e.g. `scaledWeight` in
+`Studies/BreissKatsudaKawahara2026.lean`).
 
 ## Connection to OP
 
@@ -46,7 +46,7 @@ without auxiliary stipulation; LC handles it by paradigm membership.
 ## Out of scope
 
 - The specific shape of attestation strength (sigmoid, linear, step) —
-  supplied externally via `ItemSpecificity/`. LC only commits to the
+  supplied externally by the consuming study. LC only commits to the
   qualitative claim that strength is monotone in attestation.
 - Specific segment-level mismatch metrics — passed in as `mismatch :
   Form → Form → Nat`, with the only requirement that
