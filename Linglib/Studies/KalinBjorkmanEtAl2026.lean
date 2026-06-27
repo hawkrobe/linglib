@@ -1,7 +1,6 @@
 import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Phonology.Prosody.Word
 import Linglib.Morphology.Containment.Superset
 
 -- ============================================================================
@@ -262,34 +261,6 @@ theorem clitic_implies_ms_free (s : MorphStatus) (h : s.IsClitic) :
 /-- Map Word membership to p-boundedness. -/
 def prWdMembershipToPBound (isPrWdInternal : Bool) : PBoundedness :=
   if isPrWdInternal then .bound else .free
-
-open Prosody in
-theorem inflectional_is_p_bound :
-    prWdMembershipToPBound MorphStatus.inflectional.isPrWdInternal = .bound := rfl
-
-open Prosody in
-theorem agreement_is_p_bound :
-    prWdMembershipToPBound MorphStatus.agreement.isPrWdInternal = .bound := rfl
-
-open Prosody in
-theorem derivational_is_p_bound :
-    prWdMembershipToPBound MorphStatus.derivational.isPrWdInternal = .bound := rfl
-
-open Prosody in
-theorem postposition_is_p_free :
-    prWdMembershipToPBound MorphStatus.postposition.isPrWdInternal = .free := rfl
-
-open Prosody in
-theorem inflAffix_prWdInternal_is_canonicalAffix :
-    (wordhoodProfile .inflAffix
-      (prWdMembershipToPBound MorphStatus.inflectional.isPrWdInternal)
-    ).classify = .canonicalAffix := rfl
-
-open Prosody in
-theorem postposition_prWdExternal_is_canonicalWord :
-    (wordhoodProfile .freeWord
-      (prWdMembershipToPBound MorphStatus.postposition.isPrWdInternal)
-    ).classify = .canonicalWord := rfl
 
 end Morphology.WordhoodBridge
 
