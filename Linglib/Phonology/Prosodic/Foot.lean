@@ -99,12 +99,23 @@ def isDegenerate (ws : List SyllWeight) : Prop :=
 instance (ws : List SyllWeight) : Decidable (isDegenerate ws) := by
   unfold isDegenerate; infer_instance
 
-/-- Is a foot well-formed for the given foot type? -/
+/-- Is a foot well-formed for the given foot type?
+
+    The iamb clause encodes Hayes' canonical right-prominent inventory
+    `{(H), (LL), (LH)}` ([hayes-1995], Ch. 6): a bimoraic monosyllable,
+    or a disyllable that is right-heavy-or-even (first syllable no heavier
+    than the second) with two or three morae. This excludes the degenerate
+    monomoraic `(L)`, the left-heavy `(HL)`, and the trimoraic monosyllable
+    `(SH)` — the Iambic/Trochaic-Law asymmetry that the moraic-trochee
+    clause (`footMorae = 2`) lacks. -/
 def isWellFormedFoot (ft : FootType) (ws : List SyllWeight) : Prop :=
   match ft with
   | .moraicTrochee => footMorae ws = 2
   | .syllabicTrochee => ws.length = 2
-  | .iamb => footMorae ws ≥ 1 ∧ footMorae ws ≤ 3 ∧ ws.length ≤ 2
+  | .iamb =>
+    (ws.length = 1 ∧ footMorae ws = 2) ∨
+    (ws.length = 2 ∧ 2 ≤ footMorae ws ∧ footMorae ws ≤ 3 ∧
+      (ws.headD ⟨0⟩).morae ≤ (ws.getLast?.getD ⟨0⟩).morae)
 
 instance (ft : FootType) (ws : List SyllWeight) :
     Decidable (isWellFormedFoot ft ws) := by
@@ -176,6 +187,16 @@ theorem ll_wellformed_mt :
 
 theorem l_not_wellformed_mt :
     ¬ isWellFormedFoot .moraicTrochee [.light] := by decide
+
+-- Iamb: canonical inventory {(H), (LL), (LH)} only
+
+theorem h_wellformed_iamb : isWellFormedFoot .iamb [.heavy] := by decide
+theorem ll_wellformed_iamb : isWellFormedFoot .iamb [.light, .light] := by decide
+theorem lh_wellformed_iamb : isWellFormedFoot .iamb [.light, .heavy] := by decide
+
+theorem l_not_wellformed_iamb : ¬ isWellFormedFoot .iamb [.light] := by decide
+theorem hl_not_wellformed_iamb : ¬ isWellFormedFoot .iamb [.heavy, .light] := by decide
+theorem sh_not_wellformed_iamb : ¬ isWellFormedFoot .iamb [.superheavy] := by decide
 
 -- Degeneracy
 
