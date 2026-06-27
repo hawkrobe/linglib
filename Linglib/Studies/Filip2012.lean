@@ -1,4 +1,5 @@
-import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.ArgumentStructure.Properties
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
@@ -49,7 +50,6 @@ The third class's compositional behavior:
 namespace Filip2012
 
 open _root_.Mereology
-open Semantics.Events.CEM
 open Semantics.ArgumentStructure
 open Semantics.Aspect.Incremental
 open Semantics.Aspect.Cumulativity
