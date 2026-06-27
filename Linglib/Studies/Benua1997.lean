@@ -2,7 +2,6 @@ import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.TCT
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.OptimalityTheory.StratalCorr
-import Linglib.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Basic
 
@@ -29,8 +28,8 @@ markedness constraint M₂ is satisfied or violated by the base output.
   spread; plural [ɲ-ãl-ĩãr] 'seek (pl)' has *root* vowels still nasal even
   though they are now post-`l` (an oral consonant) — overapplication
   preserves paradigmatic identity to the singular base. Formalized
-  end-to-end with explicit morphological alignment via
-  `Transderivational.diagramWithEdge`, and `decide`-proven
+  end-to-end with explicit morphological alignment via the local
+  `diagramWithEdge` (§ 0), and `decide`-proven
   `overapplied_beats_normal_on_OO_ident`.
 
 - **Tiberian Hebrew** (`TiberianHebrew` namespace): post-vocalic spirantization
@@ -51,8 +50,8 @@ markedness constraint M₂ is satisfied or violated by the base output.
 
 Consumes:
 - `Phonology.OptimalityTheory.TCT.Role` and `TetruSchema`
-- `OptimalityTheory.ParadigmUniformity.Transderivational.diagramWithEdge`
-  (general 3-role correspondence with explicit OO alignment)
+- the local § 0 `diagramWithEdge` (general 3-role correspondence with explicit
+  OO alignment), folded in from the former `ParadigmUniformity/Transderivational`
 - `Phonology.OptimalityTheory.Correspondence.Corr.identViol` (segmental)
   and `Corr.identViolFeature` (featural)
 
@@ -66,9 +65,75 @@ namespace Benua1997
 
 open OptimalityTheory.Correspondence (Corr)
 open OptimalityTheory.TCT (Role TetruSchema)
-open OptimalityTheory.ParadigmUniformity.Transderivational
-  (diagramWithEdge identOOViol)
 open Constraints OptimalityTheory
+
+-- ============================================================================
+-- § 0: TCT diagram constructors
+-- ============================================================================
+
+/-! The paradigm-uniformity face of TCT: a `Corr`-typed 3-role diagram over
+input + base + derivative, with the OO edge carrying the morphological alignment.
+The asymmetric base-priority *evaluation discipline* lives in
+`OptimalityTheory/TCT.lean` (`TCTGrammar`); these constructors are the
+compositional face that the case studies below build their candidates from. -/
+
+variable {α : Type*}
+
+/-- Select the form for a TCT role from explicit `input`/`base`/`derivative`
+    lists. -/
+def formFor (input base derivative : List α) : Role → List α
+  | .input      => input
+  | .base       => base
+  | .derivative => derivative
+
+/-- The general TCT diagram constructor: the three forms plus an explicit OO
+    correspondence relation `ooEdge` between base and derivative positions (with
+    a well-formedness proof `hOO`). The IO relations (input-base, input-
+    derivative) are the parallel-pair correspondence; only the OO relation
+    carries the morphological alignment a study specifies (e.g. the Sundanese
+    infix). The reverse directions are recovered by `Corr.edge`. -/
+def diagramWithEdge (input base derivative : List α)
+    (ooEdge : Finset (ℕ × ℕ))
+    (hOO : ∀ p ∈ ooEdge, p.1 < base.length ∧ p.2 < derivative.length) :
+    Corr Role α where
+  form := formFor input base derivative
+  edge r₁ r₂ :=
+    match r₁, r₂ with
+    | .base, .derivative =>
+        ooEdge.attach.image fun p => (⟨p.1.1, (hOO p.1 p.2).1⟩, ⟨p.1.2, (hOO p.1 p.2).2⟩)
+    | .input, .base       => Corr.diagDiag input.length base.length
+    | .input, .derivative => Corr.diagDiag input.length derivative.length
+    | _, _ => ∅
+
+/-- The parallel-pair specialization: the OO edge is the parallel `(i, i)`
+    correspondence up to `min base.length derivative.length`. For morphological
+    re-alignment use `diagramWithEdge`. -/
+def diagram (input base derivative : List α) : Corr Role α :=
+  Corr.diagram (formFor input base derivative) (· ≠ ·)
+
+/-- IDENT-OO: featural identity of corresponding base and derivative positions.
+    The load-bearing constraint of [benua-1997]'s misapplication unification —
+    high-ranked IDENT-OO forces overapplication (Sundanese nasal harmony) and
+    underapplication (Tiberian Hebrew spirantization) as duals of one
+    mechanism. -/
+def identOOViol [DecidableEq α] (c : Corr Role α) : ℕ :=
+  c.identViol .base .derivative
+
+/-- When the derivative is identical to the base, IDENT-OO is satisfied (zero
+    violations) — the "perfect uniformity" baseline where there is nothing to
+    misapply. -/
+theorem identOO_when_equal [DecidableEq α] (input shared : List α) :
+    identOOViol (diagram input shared shared) = 0 := by
+  have hedge : (diagram input shared shared).edge Role.base Role.derivative =
+      Corr.diagDiag shared.length shared.length := by
+    simp only [diagram]
+    exact Corr.diagram_edge_pos _ _ (by decide)
+  unfold identOOViol Corr.identViol
+  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  intro p hp
+  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (Corr.mem_diagDiag p.1 p.2).mp hp
+  simp only [not_not]
+  exact congrArg (fun i : Fin shared.length => shared[i]) (Fin.ext hpq)
 
 -- ============================================================================
 -- § 1: Shared Segmental Inventory

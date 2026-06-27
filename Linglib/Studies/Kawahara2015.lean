@@ -163,6 +163,6 @@ theorem long_n2_initial_avoids_final :
 theorem japanese_wbp_active (o n c : Phonology.Segment) :
     -- CVC with WBP is heavy (e.g., /tan/ = 2μ)
     (Prosody.syllableToMoraic { wbp := true }
-      ⟨[o], [n], [c]⟩).toSyllWeight = .heavy := rfl
+      ⟨[o], [n], [c]⟩).toWeight = .heavy := rfl
 
 end Kawahara2015

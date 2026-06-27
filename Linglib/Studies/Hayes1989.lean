@@ -84,7 +84,7 @@ def kasnus_σ₂ : MoraicSyllable := ⟨[n], [⟨u, .one⟩, ⟨s, .one⟩]⟩
 def kasnus : MoraicForm := ⟨[kasnus_σ₁, kasnus_σ₂]⟩
 
 /-- σ₁ of *kasnus is heavy (2 morae: nucleus + coda with WBP). -/
-theorem kasnus_σ₁_heavy : kasnus_σ₁.toSyllWeight = .heavy := rfl
+theorem kasnus_σ₁_heavy : kasnus_σ₁.toWeight = .heavy := rfl
 
 /-- After ⟨s⟩-deletion from σ₁, one mora is stranded. -/
 theorem kasnus_s_deletion_strands :
@@ -96,7 +96,7 @@ def kaanus_σ₁ : MoraicSyllable :=
   let (σ_del, stranded) := deleteMoraic kasnus_σ₁ 1
   spreadToFill σ_del stranded .left
 
-theorem kaanus_σ₁_heavy : kaanus_σ₁.toSyllWeight = .heavy := rfl
+theorem kaanus_σ₁_heavy : kaanus_σ₁.toWeight = .heavy := rfl
 
 /-- Moraic conservation: *kasnus σ₁ and ka:nus σ₁ have the same mora count. -/
 theorem kasnus_conservation : kasnus_σ₁.moraCount = kaanus_σ₁.moraCount := rfl
@@ -127,7 +127,7 @@ theorem smereo_onset_no_cl :
 
 /-- The mora count after onset deletion is still 1 (light syllable). -/
 theorem smereo_remains_light :
-    (deleteOnset smereo_σ₁ 0).toSyllWeight = .light := rfl
+    (deleteOnset smereo_σ₁ 0).toWeight = .light := rfl
 
 end LatinOnsetDeletion
 
@@ -174,7 +174,7 @@ section WeightPrerequisite
 def lardil_cvc : MoraicSyllable :=
   syllableToMoraic { wbp := false } ⟨[t], [a], [k]⟩
 
-theorem lardil_cvc_is_light : lardil_cvc.toSyllWeight = .light := rfl
+theorem lardil_cvc_is_light : lardil_cvc.toWeight = .light := rfl
 
 theorem lardil_no_cl_from_coda :
     (deleteMoraic lardil_cvc 1).2 = 0 := rfl
@@ -184,7 +184,7 @@ theorem lardil_no_cl_from_coda :
 def latin_cvc : MoraicSyllable :=
   syllableToMoraic { wbp := true } ⟨[t], [a], [k]⟩
 
-theorem latin_cvc_is_heavy : latin_cvc.toSyllWeight = .heavy := rfl
+theorem latin_cvc_is_heavy : latin_cvc.toWeight = .heavy := rfl
 
 theorem latin_cl_from_coda :
     (deleteMoraic latin_cvc 1).2 = 1 := rfl
@@ -210,9 +210,9 @@ def estonian_q1 : MoraicSyllable := ⟨[k], [⟨a, .one⟩]⟩           -- Q1: 
 def estonian_q2 : MoraicSyllable := ⟨[k], [⟨a, .two⟩]⟩           -- Q2: heavy
 def estonian_q3 : MoraicSyllable := ⟨[k], [⟨a, .two⟩, ⟨l, .one⟩]⟩ -- Q3: superheavy
 
-theorem q1_is_light : estonian_q1.toSyllWeight = .light := rfl
-theorem q2_is_heavy : estonian_q2.toSyllWeight = .heavy := rfl
-theorem q3_is_superheavy : estonian_q3.toSyllWeight = .superheavy := rfl
+theorem q1_is_light : estonian_q1.toWeight = .light := rfl
+theorem q2_is_heavy : estonian_q2.toWeight = .heavy := rfl
+theorem q3_is_superheavy : estonian_q3.toWeight = .superheavy := rfl
 
 /-- Q3 → Q2 grade shift: removing the third mora.
     The moraic account: Q3 has 3 morae, Q2 has 2. The shift is simply
@@ -241,7 +241,7 @@ section ProsodicPipeline
     moraic syllabification → weight profile → prosodic word.
 
     This demonstrates the chain that moraic theory creates:
-    segments + WBP → `MoraicSyllable` → `SyllWeight` → `PrWd`
+    segments + WBP → `MoraicSyllable` → `Syllable.Weight` → `PrWd`
 
     CL output: σ₁ = [ka:] (bimoraic = heavy), σ₂ = [nus] (bimoraic = heavy).
     Weight profile: [H, H]. -/

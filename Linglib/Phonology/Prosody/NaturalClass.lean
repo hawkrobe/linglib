@@ -21,7 +21,7 @@ and [±voice]:
 | Vowels             |  +  |  +   |  ±    |  8   |
 
 Sonorants (ranks 5–8) are distinguished by [±approximant], [±consonantal],
-and [±syllabic], exactly as in the Clements scale (`SonorityRank`). The
+and [±syllabic], exactly as in the Clements scale (`Sonority`). The
 Parker refinement adds [±voice] only within obstruents.
 
 Crucially, [parker-2002] ranks **voiced stops above voiceless fricatives**
@@ -69,7 +69,7 @@ def NatClass.parkerSonority : NatClass → Nat
 -- ============================================================================
 
 /-- Classify a segment into the Parker 8-level scale.
-    Follows the feature decomposition of `SonorityRank` but additionally
+    Follows the feature decomposition of `Sonority` but additionally
     splits obstruents by [±voice] ([parker-2002]). -/
 def natClassOf (s : Segment) : NatClass :=
   if s.HasValue .sonorant false then
@@ -91,11 +91,11 @@ def parkerSonorityOf (s : Segment) : Nat :=
 -- § 3: Verification
 -- ============================================================================
 
-/-- Map NatClass to the abstract `SonorityRank`. This collapses the Parker
+/-- Map NatClass to the abstract `Sonority`. This collapses the Parker
     voicing distinction within obstruents (vls/vds → stop, vlf/vdf → fricative),
     connecting the fine-grained 8-level scale to the substance-free 6-level
     hierarchy that the grammar operates on. -/
-def NatClass.toSonorityRank : NatClass → SonorityRank
+def NatClass.toSonority : NatClass → Sonority
   | .vls | .vds => .stop
   | .vlf | .vdf => .fricative
   | .nasal => .nasal

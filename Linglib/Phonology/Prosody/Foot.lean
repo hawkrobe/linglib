@@ -20,7 +20,7 @@ trochees, final in iambs.
 
 ## Definitions
 
-- `SyllWeight.morae`: mora count from weight class
+- `Syllable.Weight.morae`: mora count from weight class
 - `FootType`: the three canonical foot types
 - `ParseElement`: element in a metrical parse (footed or unfooted)
 - `MetricalParse`: a complete metrical parse of a prosodic domain
@@ -29,7 +29,7 @@ trochees, final in iambs.
 
 namespace Prosody
 
--- `SyllWeight.morae` is now a field accessor — no separate function needed.
+-- `Syllable.Weight.morae` is now a field accessor — no separate function needed.
 
 -- ============================================================================
 -- § 1: Foot Type
@@ -60,9 +60,9 @@ inductive FootType where
     linear order within the prosodic domain. -/
 inductive ParseElement where
   /-- A foot containing one or more syllables (represented by weight). -/
-  | foot : List SyllWeight → ParseElement
+  | foot : List Syllable.Weight → ParseElement
   /-- An unparsed syllable not dominated by any foot. -/
-  | unfooted : SyllWeight → ParseElement
+  | unfooted : Syllable.Weight → ParseElement
   deriving DecidableEq, Repr
 
 /-- A metrical parse: a prosodic domain represented as a linear sequence
@@ -74,11 +74,11 @@ abbrev MetricalParse := List ParseElement
 -- ============================================================================
 
 /-- Extract all feet from a parse. -/
-def MetricalParse.feet (p : MetricalParse) : List (List SyllWeight) :=
+def MetricalParse.feet (p : MetricalParse) : List (List Syllable.Weight) :=
   p.filterMap λ | .foot ws => some ws | .unfooted _ => none
 
 /-- Mora count of a single foot. -/
-def footMorae (ws : List SyllWeight) : Nat :=
+def footMorae (ws : List Syllable.Weight) : Nat :=
   ws.foldl (· + ·.morae) 0
 
 /-- Total syllable count in a parse. -/
@@ -93,10 +93,10 @@ def MetricalParse.unparsedCount (p : MetricalParse) : Nat :=
 
 /-- Is a foot degenerate (subminimal)? A monomoraic foot (L) is
     degenerate — it fails to meet the bimoraic minimum. -/
-def isDegenerate (ws : List SyllWeight) : Prop :=
+def isDegenerate (ws : List Syllable.Weight) : Prop :=
   footMorae ws < 2
 
-instance (ws : List SyllWeight) : Decidable (isDegenerate ws) := by
+instance (ws : List Syllable.Weight) : Decidable (isDegenerate ws) := by
   unfold isDegenerate; infer_instance
 
 /-- Is a foot well-formed for the given foot type?
@@ -108,7 +108,7 @@ instance (ws : List SyllWeight) : Decidable (isDegenerate ws) := by
     monomoraic `(L)`, the left-heavy `(HL)`, and the trimoraic monosyllable
     `(SH)` — the Iambic/Trochaic-Law asymmetry that the moraic-trochee
     clause (`footMorae = 2`) lacks. -/
-def isWellFormedFoot (ft : FootType) (ws : List SyllWeight) : Prop :=
+def isWellFormedFoot (ft : FootType) (ws : List Syllable.Weight) : Prop :=
   match ft with
   | .moraicTrochee => footMorae ws = 2
   | .syllabicTrochee => ws.length = 2
@@ -117,7 +117,7 @@ def isWellFormedFoot (ft : FootType) (ws : List SyllWeight) : Prop :=
     (ws.length = 2 ∧ 2 ≤ footMorae ws ∧ footMorae ws ≤ 3 ∧
       (ws.headD ⟨0⟩).morae ≤ (ws.getLast?.getD ⟨0⟩).morae)
 
-instance (ft : FootType) (ws : List SyllWeight) :
+instance (ft : FootType) (ws : List Syllable.Weight) :
     Decidable (isWellFormedFoot ft ws) := by
   unfold isWellFormedFoot; cases ft <;> infer_instance
 
