@@ -39,7 +39,7 @@ the consensus geometry:
    complex segments with dorsal as major articulator.
 -/
 
-open Phonology (Segment Feature FeatureVal)
+open Phonology (Segment Feature)
 open Phonology.FeatureGeometry (GeomNode)
 open Autosegmental (agreeAt)
 

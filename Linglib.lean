@@ -1350,7 +1350,6 @@ import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Mora
-import Linglib.Phonology.Prosody.NaturalClass
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Segment

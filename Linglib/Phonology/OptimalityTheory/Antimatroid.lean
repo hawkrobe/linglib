@@ -315,6 +315,57 @@ def MChain {n : Nat} (E : List (ERC n)) : Set (Fin n) → Prop :=
   fun S => ∃ r : Ranking n, ERCSet.satisfiedBy r E ∧
     ∃ k : Fin (n + 1), maximalChain r k = S
 
+/-! ### Local feasibility — the decidable rooted-circuit condition -/
+
+/-- **Local feasibility** of a candidate prefix `S` against ERC set `E`: for
+every ERC, if `S` contains one of its losers then it contains one of its winners
+(one rooted circuit per loser). This is the *decidable*, `Finset`-valued, local
+form of `MChain`: `decide` reduces on it, unlike the existential `MChain` (which
+quantifies over rankings and compares `Set`s). The representation theorem
+relating the two (a prefix of a consistent ranking iff locally feasible) is the
+Merchant–Riggle content. -/
+def Feasible {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
+  ∀ α ∈ E, (∃ l, α l = .L ∧ l ∈ S) → (∃ w, α w = .W ∧ w ∈ S)
+
+instance {n : Nat} (E : List (ERC n)) : DecidablePred (Feasible E) :=
+  fun S => by unfold Feasible; infer_instance
+
+/-- The empty prefix is locally feasible (no losers present). -/
+@[simp] theorem Feasible.empty {n : Nat} (E : List (ERC n)) :
+    Feasible E (∅ : Finset (Fin n)) := by
+  intro α _ ⟨l, _, hl⟩; exact absurd hl (Finset.notMem_empty l)
+
+/-- **Local feasibility is union-closed** ([merchant-riggle-2016] Lemma 3) — *by
+construction*, retiring the 160-line ranking-merge proof for the local form. A
+loser in `S ∪ T` lies in one of them, whose winner then lies in `S ∪ T`. -/
+theorem Feasible.union_closed {n : Nat} (E : List (ERC n)) {S T : Finset (Fin n)}
+    (hS : Feasible E S) (hT : Feasible E T) : Feasible E (S ∪ T) := by
+  intro α hα ⟨l, hlL, hlST⟩
+  rcases Finset.mem_union.mp hlST with hlS | hlT
+  · obtain ⟨w, hwW, hwS⟩ := hS α hα ⟨l, hlL, hlS⟩
+    exact ⟨w, hwW, Finset.mem_union.mpr (Or.inl hwS)⟩
+  · obtain ⟨w, hwW, hwT⟩ := hT α hα ⟨l, hlL, hlT⟩
+    exact ⟨w, hwW, Finset.mem_union.mpr (Or.inr hwT)⟩
+
+/-- The top-`k` constraints under ranking `r`, as a `Finset` (the decidable
+counterpart of `maximalChain r k`). -/
+def prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) : Finset (Fin n) :=
+  Finset.univ.filter (fun i => (r.symm i : Nat) < k.val)
+
+@[simp] theorem mem_prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) (i : Fin n) :
+    i ∈ prefixFinset r k ↔ (r.symm i : Nat) < k.val := by simp [prefixFinset]
+
+/-- **Forward representation** (the easy half of [merchant-riggle-2016]'s
+isomorphism): a prefix of a ranking that satisfies `E` is locally feasible.
+Winners dominate their losers, so a loser inside the prefix drags its winner in
+(`maximalChain_dominance` in `Finset` form). -/
+theorem feasible_of_satisfiedBy {n : Nat} {E : List (ERC n)} {r : Ranking n}
+    (hr : ERCSet.satisfiedBy r E) (k : Fin (n + 1)) : Feasible E (prefixFinset r k) := by
+  intro α hα ⟨l, hlL, hlmem⟩
+  rw [mem_prefixFinset] at hlmem
+  obtain ⟨w, hwW, hdom⟩ := (ERC.satisfiedBy_iff_dominance r α).mp (hr α hα) l hlL
+  exact ⟨w, hwW, by rw [mem_prefixFinset]; unfold Ranking.dominates at hdom; omega⟩
+
 -- ============================================================================
 -- § 11: Union Closure (Lemma 3)
 -- ============================================================================
