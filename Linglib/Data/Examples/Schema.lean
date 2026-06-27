@@ -177,6 +177,26 @@ def surfaceTokens (e : LinguisticExample) : List String :=
 def glossLine (e : LinguisticExample) : List String :=
   e.glossedTokens.map Prod.snd
 
+/-- The value of paper-specific feature `key`, if tagged (`paperFeatures` lookup).
+    Consumers use this instead of re-rolling a `paperFeatures.find?` helper. -/
+def feature? (e : LinguisticExample) (key : String) : Option String :=
+  (e.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- The judgment of the named reading, if annotated (`readings` lookup). -/
+def reading? (e : LinguisticExample) (name : String) : Option Judgment :=
+  (e.readings.find? (·.1 == name)).map (·.2)
+
 end LinguisticExample
+
+/-- `Covers rows select holds`: at least one row satisfies `select`, and every
+    row that does also satisfies `holds`. The existential conjunct guards the
+    vacuous-pass hazard of `(rows.filter select).all holds = true`, which is
+    silently `true` when `select` matches no rows — e.g. a prediction theorem
+    over a mistyped `paperFeatures` key that quietly tests nothing. -/
+def Covers {α : Type} (rows : List α) (select holds : α → Bool) : Prop :=
+  (∃ r ∈ rows, select r = true) ∧ (∀ r ∈ rows, select r = true → holds r = true)
+
+instance {α : Type} (rows : List α) (select holds : α → Bool) :
+    Decidable (Covers rows select holds) := by unfold Covers; infer_instance
 
 end Data.Examples

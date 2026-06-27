@@ -17,26 +17,25 @@ Janek Guerrini, "Distributive kind predication", *Natural Language Semantics*
 
 Generalizations with kind-denoting plurals (English bare plurals, Italian
 definite plurals) are structurally **ambiguous** — not because `Gen` has a
-complex semantics, but because the kind-denoting plural licenses parses with no
-`Gen` at all: Bona Fide Generic (BFG: kind restricts `Gen`, law-like), and the
-`Gen`-free Distributive Kind Predication (DKP: `DIST` over the kind at `s₀`,
-accidental), Cumulative Kind Predication (CKP: `**`, §4), and Derived Property
-Predication (DPP: property → low-scoped `∃`, §5.3). Singular indefinites cannot
-denote kinds (`∩` undefined for singular count nouns), so DKP/CKP never apply
-and they are limited to BFG, explaining their narrower distribution (Table 1).
+complex semantics, but because the plural licenses `Gen`-free parses: Bona Fide
+Generic (BFG: kind restricts `Gen`, law-like), Distributive Kind Predication
+(DKP: `DIST` over the kind at `s₀`, accidental), Cumulative Kind Predication
+(CKP: `**`, §4), and Derived Property Predication (DPP: property → `∃`, §5.3).
+Singular indefinites cannot denote kinds (`∩` undefined for singular count
+nouns), so DKP/CKP never apply and they are limited to BFG (Table 1).
 
 This file derives the LF typology from the shared Chierchia kind-denotation
 primitive ([chierchia-1998]), states the prevalence bridge to
 [tessler-goodman-2019], and contrasts the non-quantificational DKP/CKP analyses
-with the quantificational rivals [cohen-1999a] and [nickel-2009]. Empirical
-stimuli are typed rows in `Data/Examples/Guerrini2026.json` (`Examples.all`).
+with the quantificational rivals [cohen-1999a]/[nickel-2009]. Stimuli are typed
+rows in `Data/Examples/Guerrini2026.json` (`Examples.all`).
 -/
 
 namespace Guerrini2026
 
 open Semantics.Kinds.NMP (NominalMapping NominalDenotation CanDenoteKind downDefinedFor)
 open Semantics.Plurality (distMaximal allSatisfy noneSatisfy)
-open Data.Examples (LinguisticExample)
+open Data.Examples (LinguisticExample Covers)
 
 /-! ### The four LF parses -/
 
@@ -359,76 +358,77 @@ theorem parses_can_disagree :
 
 /-! ### Empirical predictions over the (21)–(136) stimuli
 
-Stimuli are typed `LinguisticExample` rows in `Data/Examples/Guerrini2026.json`.
-`featOf`/`readOf` project the paper-specific tags and reading-level judgments. -/
-
-/-- A paper-feature value of an example row. -/
-def featOf (r : LinguisticExample) (k : String) : Option String :=
-  (r.paperFeatures.find? (·.1 == k)).map (·.2)
-
-/-- A reading-level judgment of an example row. -/
-def readOf (r : LinguisticExample) (n : String) : Option Features.Judgment :=
-  (r.readings.find? (·.1 == n)).map (·.2)
+Stimuli are typed `LinguisticExample` rows in `Data/Examples/Guerrini2026.json`,
+projected via the schema's `feature?`/`reading?` accessors. `Covers` requires each
+prediction to hold over a *non-empty* match set, so a mistyped tag fails. -/
 
 /-- Table 1 over the (21)/(22) stimuli: kind-denoting plurals are felicitous in
     both flavors; singular indefinites are infelicitous in accidental ones. -/
 theorem genericity_table1_data :
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "genericity" &&
-        featOf r "nominalForm" == some "kindDenotingPlural")).all
-        (·.judgment == .acceptable) = true ∧
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "genericity" &&
-        featOf r "nominalForm" == some "singularIndefinite" &&
-        featOf r "flavor" == some "accidental")).all
-        (·.judgment == .unacceptable) = true := by decide
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "genericity" &&
+                r.feature? "nominalForm" == some "kindDenotingPlural")
+      (·.judgment == .acceptable) ∧
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "genericity" &&
+                r.feature? "nominalForm" == some "singularIndefinite" &&
+                r.feature? "flavor" == some "accidental")
+      (·.judgment == .unacceptable) := by decide
 
-/-- Near-universal asymmetry across episodics (§5) and epistemic adjectives
-    (§5.2.2): kind-denoting plurals and local adjectives get the near-universal
-    (DKP) reading; singular indefinites and nonlocal adjectives do not. -/
+/-- Near-universal asymmetry (episodics §5, epistemic adjectives §5.2.2):
+    kind-denoting plurals/local adjectives get it, singular/nonlocal do not. -/
 theorem near_universal_tracks_kind :
-    (Examples.all.filter (fun r => (featOf r "diagnostic" == some "episodic" ||
-        featOf r "diagnostic" == some "epistemic-adj") &&
-        (featOf r "nominalForm" == some "kindDenotingPlural" ||
-         featOf r "adjReading" == some "local"))).all
-        (readOf · "near-universal" == some .acceptable) = true ∧
-    (Examples.all.filter (fun r => (featOf r "diagnostic" == some "episodic" ||
-        featOf r "diagnostic" == some "epistemic-adj") &&
-        (featOf r "nominalForm" == some "singularIndefinite" ||
-         featOf r "adjReading" == some "nonlocal"))).all
-        (readOf · "near-universal" == some .unacceptable) = true := by decide
+    Covers Examples.all
+      (fun r => (r.feature? "diagnostic" == some "episodic" ||
+                 r.feature? "diagnostic" == some "epistemic-adj") &&
+                (r.feature? "nominalForm" == some "kindDenotingPlural" ||
+                 r.feature? "adjReading" == some "local"))
+      (·.reading? "near-universal" == some .acceptable) ∧
+    Covers Examples.all
+      (fun r => (r.feature? "diagnostic" == some "episodic" ||
+                 r.feature? "diagnostic" == some "epistemic-adj") &&
+                (r.feature? "nominalForm" == some "singularIndefinite" ||
+                 r.feature? "adjReading" == some "nonlocal"))
+      (·.reading? "near-universal" == some .unacceptable) := by decide
 
-/-- Accidental-reading asymmetry, including the [greenberg-2004]/[greenberg-2007]
-    data reported in §3.7: kind-denoting plurals license accidental readings,
-    singular indefinites do not. -/
+/-- Accidental-reading asymmetry (incl. the [greenberg-2004]/[greenberg-2007]
+    data, §3.7): kind-denoting plurals license accidental readings, not singulars. -/
 theorem accidental_tracks_kind :
-    (Examples.all.filter (fun r => (featOf r "diagnostic" == some "greenberg" ||
-        featOf r "diagnostic" == some "italian-gen") &&
-        (featOf r "nominalForm" == some "kindDenotingPlural" ||
-         featOf r "nominalExpression" == some "italianDefinitePlural"))).all
-        (readOf · "accidental" == some .acceptable) = true ∧
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "greenberg" &&
-        featOf r "nominalForm" == some "singularIndefinite")).all
-        (readOf · "accidental" == some .unacceptable) = true := by decide
+    Covers Examples.all
+      (fun r => (r.feature? "diagnostic" == some "greenberg" ||
+                 r.feature? "diagnostic" == some "italian-gen") &&
+                (r.feature? "nominalForm" == some "kindDenotingPlural" ||
+                 r.feature? "nominalExpression" == some "italianDefinitePlural"))
+      (·.reading? "accidental" == some .acceptable) ∧
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "greenberg" &&
+                r.feature? "nominalForm" == some "singularIndefinite")
+      (·.reading? "accidental" == some .unacceptable) := by decide
 
 /-- Singular vs plural kind terms (§6.2): singular kind terms lack accidental and
     cumulative readings; plural kind terms have the accidental reading. -/
 theorem singular_kind_divergence_data :
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "singular-kind" &&
-        featOf r "kindTermNumber" == some "singular")).all
-        (fun r => readOf r "accidental" == some .unacceptable &&
-                  readOf r "cumulative" == some .unacceptable) = true ∧
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "singular-kind" &&
-        featOf r "kindTermNumber" == some "plural")).all
-        (readOf · "accidental" == some .acceptable) = true := by decide
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "singular-kind" &&
+                r.feature? "kindTermNumber" == some "singular")
+      (fun r => r.reading? "accidental" == some .unacceptable &&
+                r.reading? "cumulative" == some .unacceptable) ∧
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "singular-kind" &&
+                r.feature? "kindTermNumber" == some "plural")
+      (·.reading? "accidental" == some .acceptable) := by decide
 
 /-- Q-adverb and cumulativity diagnostics: `always`/Q-adverbs (overt `Gen`) strip
     the DKP/CKP readings while `all` (the DIST counterpart) does not — no `Gen`. -/
 theorem qadv_and_cumulativity_data :
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "homogeneity-removal" &&
-        featOf r "remover" == some "all")).all (·.judgment == .acceptable) = true ∧
-    (Examples.all.filter (fun r => featOf r "diagnostic" == some "homogeneity-removal" &&
-        featOf r "remover" == some "always")).all (·.judgment == .unacceptable) = true ∧
-    readOf Examples.ex68a "cumulative" == some .acceptable ∧
-    readOf Examples.ex69 "cumulative" == some .unacceptable := by decide
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "homogeneity-removal" &&
+                r.feature? "remover" == some "all") (·.judgment == .acceptable) ∧
+    Covers Examples.all
+      (fun r => r.feature? "diagnostic" == some "homogeneity-removal" &&
+                r.feature? "remover" == some "always") (·.judgment == .unacceptable) ∧
+    Examples.ex68a.reading? "cumulative" == some .acceptable ∧
+    Examples.ex69.reading? "cumulative" == some .unacceptable := by decide
 
 /-! ### Bridge to [longobardi-2001] -/
 
