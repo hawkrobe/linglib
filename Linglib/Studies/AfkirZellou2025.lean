@@ -4,7 +4,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Core.Optimization.System
 import Linglib.Core.Optimization.Decoder
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 import Linglib.Fragments.Tarifit.Inventory
 
 /-!

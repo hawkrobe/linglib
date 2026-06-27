@@ -24,8 +24,8 @@ The stress and length features ([stress], [long]) are excluded: Hayes treats
 stress as a syllable-level property, not a segmental feature.
 
 `Segment` (the bundle over `Feature`) and its predicate API live in
-`Phonology/Segment.lean`; the hierarchical re-grouping of these features into
-autosegmental tiers lives in `Phonology/FeatureGeometry.lean`, bridged to the
+`Phonology/Segmental/Basic.lean`; the hierarchical re-grouping of these features into
+autosegmental tiers lives in `Phonology/Segmental/FeatureGeometry.lean`, bridged to the
 flat classification here by subsumption theorems.
 -/
 

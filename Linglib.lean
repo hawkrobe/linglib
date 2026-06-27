@@ -1321,9 +1321,6 @@ import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.Constraints.Weighted
-import Linglib.Phonology.ElementTheory
-import Linglib.Phonology.Feature
-import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Phonology.HarmonicGrammar.Deformation
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
@@ -1356,7 +1353,10 @@ import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Tree
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Prosody.WordSize
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
+import Linglib.Phonology.Segmental.ElementTheory
+import Linglib.Phonology.Segmental.Feature
+import Linglib.Phonology.Segmental.FeatureGeometry
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.Harmony

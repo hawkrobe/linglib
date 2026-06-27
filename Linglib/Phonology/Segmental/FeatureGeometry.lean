@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Feature Geometry [clements-1985] [sagey-1986]

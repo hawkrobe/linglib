@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.TierRule
 import Linglib.Core.Computability.Subregular.Function.OSL
 

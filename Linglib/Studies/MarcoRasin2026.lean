@@ -1,7 +1,7 @@
 import Linglib.Studies.McCarthy2005
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.OptimalityTheory.Predict
 
 /-!

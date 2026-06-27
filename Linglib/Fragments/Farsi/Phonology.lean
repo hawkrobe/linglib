@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Persian (Farsi) Vowel Hiatus Data [storme-2026]

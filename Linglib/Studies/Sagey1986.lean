@@ -1,4 +1,4 @@
-import Linglib.Phonology.FeatureGeometry
+import Linglib.Phonology.Segmental.FeatureGeometry
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Subregular.LocalRewrite
@@ -14,9 +14,9 @@ PhD dissertation, Massachusetts Institute of Technology.
 [sagey-1986] proposes a hierarchical feature geometry organized by
 vocal tract articulator, establishing the labial, coronal, dorsal, and
 soft palate nodes that are now standard in phonological theory
-(`Phonology/FeatureGeometry.lean`). The geometry predicts which
+(`Phonology/Segmental/FeatureGeometry.lean`). The geometry predicts which
 multiply-articulated (complex) segments are possible in human language
-(`Phonology/FeatureGeometry.lean`).
+(`Phonology/Segmental/FeatureGeometry.lean`).
 
 This study file formalizes Sagey-specific contributions that go beyond
 the consensus geometry:

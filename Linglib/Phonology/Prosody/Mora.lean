@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Morae

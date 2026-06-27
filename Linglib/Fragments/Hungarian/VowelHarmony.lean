@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Phonology.Subregular.Harmony
 
