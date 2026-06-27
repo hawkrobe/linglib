@@ -276,6 +276,86 @@ theorem Overlap.symm {γ : Type*} [PartialOrder γ] {x y : γ}
     (h : Overlap x y) : Overlap y x :=
   let ⟨z, hzx, hzy⟩ := h; ⟨z, hzy, hzx⟩
 
+/-! ### Classical (extensional) mereology ([hovda-2009])
+
+[hovda-2009] catalogs the equivalent axiomatizations of *classical mereology*.
+We adopt his headline characterization: classical mereology is the partial-order
+parthood axioms together with **type-2 fusion existence** (`Fusion2E`) and
+**weak supplementation** (`WeakSup`); equivalently (Tarski) a complete Boolean
+algebra with the zero element removed. `Overlap` is Hovda's `∘`, proper part is
+the order `<`, and disjointness is `¬ Overlap`. Mathlib's `IsLUB` plays the role
+of Hovda's minimal upper bound `Mub` (minimal coincides with least under
+antisymmetry), so the fusion-existence axiom delivers binary sums for free. -/
+
+/-- Type-2 (Tarski) fusion ([hovda-2009] §1.1.2): `t` fuses the `P`-things iff
+`t` is an upper bound on `P` and every part of `t` overlaps some `P`-thing. -/
+def IsFusion {α : Type*} [PartialOrder α] (P : α → Prop) (t : α) : Prop :=
+  (∀ x, P x → x ≤ t) ∧ ∀ y, y ≤ t → ∃ x, P x ∧ Overlap y x
+
+/-- Classical (extensional) mereology ([hovda-2009] §3): parthood is a partial
+order closed under type-2 fusion of every inhabited predicate (`Fusion2E`) and
+satisfying weak supplementation (`WeakSup`). -/
+class ClassicalMereology (α : Type*) [PartialOrder α] : Prop where
+  /-- `Fusion2E`: every inhabited predicate has a type-2 fusion. -/
+  fusion_exists : ∀ P : α → Prop, (∃ x, P x) → ∃ t, IsFusion P t
+  /-- `WeakSup`: a proper part is supplemented by a disjoint part. -/
+  weak_supplementation : ∀ x y : α, x < y → ∃ z, z ≤ y ∧ ¬ Overlap z x
+
+/-- A type-2 fusion of `P` is the least upper bound of `P` ([hovda-2009] Fu2MUB):
+weak supplementation forces the fusion (which is by definition *an* upper bound)
+to be the *least* one. -/
+theorem IsFusion.isLUB {α : Type*} [PartialOrder α] [ClassicalMereology α]
+    {P : α → Prop} {t : α} (h : IsFusion P t) : IsLUB {x | P x} t := by
+  refine ⟨fun a ha => h.1 a ha, fun w hw => ?_⟩
+  -- `w` is an upper bound on `P`; show the fusion `t ≤ w` via the sum of `{w, t}`.
+  obtain ⟨v, hv⟩ :=
+    ClassicalMereology.fusion_exists (fun u => u = w ∨ u = t) ⟨w, Or.inl rfl⟩
+  have hwv : w ≤ v := hv.1 w (Or.inl rfl)
+  have htv : t ≤ v := hv.1 t (Or.inr rfl)
+  suffices hvw : v = w by rw [hvw] at htv; exact htv
+  by_contra hne
+  obtain ⟨s, hsv, hsw⟩ :=
+    ClassicalMereology.weak_supplementation w v (lt_of_le_of_ne hwv (Ne.symm hne))
+  obtain ⟨u, hu, p, hps, hpu⟩ := hv.2 s hsv
+  rcases hu with rfl | rfl
+  · exact hsw ⟨p, hps, hpu⟩
+  · obtain ⟨a, hPa, q, hqp, hqa⟩ := h.2 p hpu
+    exact hsw ⟨q, hqp.trans hps, hqa.trans (hw hPa)⟩
+
+/-- Type-2 fusions are unique ([hovda-2009] Fu2Uniqueness): immediate from
+`IsFusion.isLUB` and antisymmetry of the parthood order. -/
+theorem IsFusion.unique {α : Type*} [PartialOrder α] [ClassicalMereology α]
+    {P : α → Prop} {s t : α} (hs : IsFusion P s) (ht : IsFusion P t) : s = t :=
+  hs.isLUB.unique ht.isLUB
+
+/-- In a classical mereology every pair has a least upper bound (the binary sum
+`a ⊕ b`), obtained by fusing `{a, b}`. -/
+theorem ClassicalMereology.exists_isLUB_pair {α : Type*} [PartialOrder α]
+    [ClassicalMereology α] (a b : α) : ∃ s, IsLUB {a, b} s := by
+  obtain ⟨t, ht⟩ := ClassicalMereology.fusion_exists (fun u => u = a ∨ u = b) ⟨a, Or.inl rfl⟩
+  refine ⟨t, ?_⟩
+  have h := ht.isLUB
+  rwa [show {x | x = a ∨ x = b} = ({a, b} : Set α) from by ext x; simp [Set.mem_insert_iff]] at h
+
+/-- The binary-sum (join-semilattice) structure carried by every classical
+mereology, with parthood `≤` as its order. The join `a ⊔ b` is the unique
+type-2 fusion of `{a, b}`; noncomputable because it is extracted by choice from
+the fusion-existence axiom. -/
+@[reducible] noncomputable def ClassicalMereology.toSemilatticeSup {α : Type*}
+    [PartialOrder α] [ClassicalMereology α] : SemilatticeSup α :=
+  { ‹PartialOrder α› with
+    sup := fun a b => Classical.choose (ClassicalMereology.exists_isLUB_pair a b)
+    le_sup_left := fun a b =>
+      (Classical.choose_spec (ClassicalMereology.exists_isLUB_pair a b)).1 (Set.mem_insert _ _)
+    le_sup_right := fun a b =>
+      (Classical.choose_spec (ClassicalMereology.exists_isLUB_pair a b)).1
+        (Set.mem_insert_of_mem _ rfl)
+    sup_le := fun a b c ha hb =>
+      (Classical.choose_spec (ClassicalMereology.exists_isLUB_pair a b)).2
+        (fun x hx => by rcases hx with rfl | rfl
+                        · exact ha
+                        · exact hb) }
+
 /-! ### Atomic domains (discrete orders)
 
 The sort-level, instance-resolvable companion of `QUA`. An `IsAtomicDomain` is a

@@ -7,8 +7,9 @@ import Linglib.Features.Aktionsart
 [gawron-2009] [krifka-1998] [talmy-2000] [zwarts-2005] [zwarts-winter-2000]
 
 The spatial dimension of event structure: σ maps events to their spatial
-trajectories (paths). This parallels τ (temporal trace, `EventCEM.τ_hom`)
-and θ (thematic role, `RoleHom`) as the third Krifka/Zwarts dimension.
+trajectories (paths). This parallels τ (the temporal trace, `EventCEM.τ_hom`)
+and the thematic-role dimension θ as Krifka/Zwarts trace functions — each a
+`Mereology.IsSumHom` into a different domain (intervals, paths, entities).
 
 ## Three-Dimension Picture
 
@@ -123,8 +124,7 @@ theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
     whether the VP it creates is telic or atelic.
 
     This is the spatial analog of the QUA/CUM ↔ telic/atelic correspondence
-    from `vendlerClass_telic_cases` / `vendlerClass_atelic_cases`
-    in `Events/CEM.lean`. -/
+    over `Features.VendlerClass.telicity` (see `Features.telic_classes`). -/
 def pathShapeToTelicity : PathShape → Telicity
   | .bounded => .telic
   | .source => .telic

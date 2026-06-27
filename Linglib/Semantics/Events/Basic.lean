@@ -20,7 +20,7 @@ events; thematic roles are independent two-place predicates
 * `Event.isPunctual` / `Event.isDurative` — decidable `Prop` duration predicates
 * `Event.existsClosure` — Davidsonian existential closure
 * `Event.Mereology` — part-of typeclass with τ-monotonicity + sort-preservation
-* `Event.preorder` — Preorder instance derived from `Event.Mereology`
+* `Event.partialOrder` — `PartialOrder` instance derived from `Event.Mereology`
 * `Event.Manner` — manner ontology ([liefke-2024] §4.3)
 * `exampleRun` / `exampleKnow` — concrete `Event ℤ` instances
 
@@ -142,12 +142,14 @@ class Mereology (Time : Type*) [LinearOrder Time] where
       parts of states are states -/
   sort_preserved : ∀ e₁ e₂, partOf e₁ e₂ → e₁.sort = e₂.sort
 
-/-- Event mereology induces a Preorder. -/
-instance preorder (Time : Type*) [LinearOrder Time]
-    [m : Mereology Time] : Preorder (Event Time) where
+/-- Event mereology induces a `PartialOrder`: parthood is reflexive,
+    transitive, and antisymmetric. -/
+instance partialOrder (Time : Type*) [LinearOrder Time]
+    [m : Mereology Time] : PartialOrder (Event Time) where
   le := m.partOf
   le_refl := m.refl
   le_trans := m.trans
+  le_antisymm := m.antisymm
 
 /-! ### Manner -/
 
