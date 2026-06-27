@@ -757,4 +757,157 @@ theorem RCErc_entailment {n : Nat} (A B : Antimatroid (Fin n))
   -- ([dietrich-1987]; [merchant-riggle-2016] Lemmas 7, 9).
   sorry
 
+-- ============================================================================
+-- § 15: Rankings as maximal chains
+-- ============================================================================
+
+/-! ### Rankings as maximal chains
+
+A ranking is the same data as a maximal chain in the boolean lattice `2^(Fin n)`:
+its sequence of prefixes `∅ ⊂ … ⊂ univ`, each step adding the next-ranked
+constraint. The design deliberately keeps this order-theoretic content *outside*
+the type of `Ranking` (which stays a permutation, [merchant-riggle-2016]):
+`rankingChainEquiv` records the bijection without retyping rankings as chains. -/
+
+/-- The prefix `∅` at height `0`. -/
+theorem prefixFinset_zero {n : Nat} (r : Ranking n) : prefixFinset r 0 = ∅ := by
+  ext i; simp [mem_prefixFinset]
+
+/-- The constraint at rank position `k` is the new element added passing from the
+height-`k` prefix to the height-`k+1` prefix. -/
+theorem prefixFinset_succ_eq {n : Nat} (r : Ranking n) (k : Fin n) :
+    prefixFinset r k.succ = insert (r k) (prefixFinset r k.castSucc) := by
+  ext i
+  simp only [mem_prefixFinset, Finset.mem_insert, Fin.val_succ, Fin.val_castSucc]
+  constructor
+  · intro h
+    rcases Nat.lt_succ_iff_lt_or_eq.mp h with h' | h'
+    · exact Or.inr h'
+    · refine Or.inl ?_
+      have hk : r.symm i = k := Fin.ext h'
+      rw [← hk, Equiv.apply_symm_apply]
+  · rintro (rfl | h')
+    · rw [Equiv.symm_apply_apply]; omega
+    · omega
+
+theorem prefixFinset_apply_notMem {n : Nat} (r : Ranking n) (k : Fin n) :
+    r k ∉ prefixFinset r k.castSucc := by
+  simp [mem_prefixFinset, Equiv.symm_apply_apply]
+
+private theorem insert_eq_of_notMem {α : Type*} [DecidableEq α] {s : Finset α}
+    {x y : α} (hx : x ∉ s) (h : insert x s = insert y s) : x = y := by
+  have hmem : x ∈ insert y s := h ▸ Finset.mem_insert_self x s
+  rcases Finset.mem_insert.mp hmem with h1 | h1
+  · exact h1
+  · exact absurd h1 hx
+
+/-- A **maximal chain** in the boolean lattice `2^(Fin n)`: an ascending family of
+finsets from `∅`, each step adding exactly one new element (so it reaches `univ` at
+the top, `toFun_last`). -/
+@[ext] structure MaximalChain (n : ℕ) where
+  /-- The chain, indexed by height `0 … n`. -/
+  toFun : Fin (n + 1) → Finset (Fin n)
+  /-- The chain starts at the empty set. -/
+  bot : toFun 0 = ∅
+  /-- Each step adds exactly one new element. -/
+  step : ∀ k : Fin n, ∃ x, x ∉ toFun k.castSucc ∧ toFun k.succ = insert x (toFun k.castSucc)
+
+namespace MaximalChain
+
+variable {n : ℕ} (C : MaximalChain n)
+
+/-- The unique element added at step `k`. -/
+noncomputable def added (k : Fin n) : Fin n := Classical.choose (C.step k)
+
+theorem added_notMem (k : Fin n) : C.added k ∉ C.toFun k.castSucc :=
+  (Classical.choose_spec (C.step k)).1
+
+theorem toFun_succ (k : Fin n) :
+    C.toFun k.succ = insert (C.added k) (C.toFun k.castSucc) :=
+  (Classical.choose_spec (C.step k)).2
+
+/-- A constraint is in the height-`k` prefix iff it was added at some earlier step. -/
+theorem mem_toFun_iff (k : Fin (n + 1)) (i : Fin n) :
+    i ∈ C.toFun k ↔ ∃ j : Fin n, j.val < k.val ∧ C.added j = i := by
+  induction k using Fin.induction with
+  | zero => simp [C.bot]
+  | succ k ih =>
+    rw [C.toFun_succ, Finset.mem_insert, ih]
+    constructor
+    · rintro (rfl | ⟨j, hj, rfl⟩)
+      · exact ⟨k, by simp [Fin.val_succ], rfl⟩
+      · exact ⟨j, by simp only [Fin.val_succ, Fin.val_castSucc] at hj ⊢; omega, rfl⟩
+    · rintro ⟨j, hj, rfl⟩
+      rw [Fin.val_succ] at hj
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hj with h | h
+      · exact Or.inr ⟨j, by simpa [Fin.val_castSucc] using h, rfl⟩
+      · exact Or.inl (by rw [show j = k from Fin.ext (by simpa using h)])
+
+theorem added_injective : Function.Injective C.added := by
+  intro a b hab
+  rcases Nat.lt_trichotomy a.val b.val with h | h | h
+  · refine absurd ?_ (C.added_notMem b)
+    rw [← hab]
+    exact (C.mem_toFun_iff b.castSucc (C.added a)).mpr ⟨a, by simpa using h, rfl⟩
+  · exact Fin.ext h
+  · refine absurd ?_ (C.added_notMem a)
+    rw [hab]
+    exact (C.mem_toFun_iff a.castSucc (C.added b)).mpr ⟨b, by simpa using h, rfl⟩
+
+theorem added_bijective : Function.Bijective C.added :=
+  Finite.injective_iff_bijective.mp C.added_injective
+
+/-- A maximal chain reaches the full ground set at its top. -/
+theorem toFun_last : C.toFun (Fin.last n) = Finset.univ := by
+  ext i
+  simp only [C.mem_toFun_iff, Finset.mem_univ, iff_true, Fin.val_last]
+  obtain ⟨j, hj⟩ := C.added_bijective.surjective i
+  exact ⟨j, j.isLt, hj⟩
+
+/-- The ranking recovered from a maximal chain: position `k` holds the element
+added at step `k`. -/
+noncomputable def toRanking : Ranking n := Equiv.ofBijective C.added C.added_bijective
+
+theorem toRanking_apply (k : Fin n) : C.toRanking k = C.added k := rfl
+
+theorem added_toRanking_symm (i : Fin n) : C.added (C.toRanking.symm i) = i := by
+  have h := C.toRanking.apply_symm_apply i
+  rwa [toRanking_apply] at h
+
+/-- The prefixes of the recovered ranking are the original chain. -/
+theorem prefixFinset_toRanking (k : Fin (n + 1)) :
+    prefixFinset C.toRanking k = C.toFun k := by
+  ext i
+  rw [mem_prefixFinset, C.mem_toFun_iff]
+  constructor
+  · intro h
+    exact ⟨C.toRanking.symm i, h, C.added_toRanking_symm i⟩
+  · rintro ⟨j, hj, rfl⟩
+    have hj' : C.toRanking.symm (C.added j) = j := by
+      rw [← toRanking_apply]; exact C.toRanking.symm_apply_apply j
+    rw [hj']; exact hj
+
+end MaximalChain
+
+/-- The maximal chain of a ranking: its sequence of prefixes. -/
+def prefixChain {n : Nat} (r : Ranking n) : MaximalChain n where
+  toFun := prefixFinset r
+  bot := prefixFinset_zero r
+  step := fun k => ⟨r k, prefixFinset_apply_notMem r k, prefixFinset_succ_eq r k⟩
+
+/-- **Rankings are maximal chains** ([merchant-riggle-2016]). A ranking and the
+maximal chain of its prefixes carry the same information — the "ranking is a chain"
+intuition, as a bijection rather than a retyping of `Ranking`. -/
+noncomputable def rankingChainEquiv (n : ℕ) : Ranking n ≃ MaximalChain n where
+  toFun := prefixChain
+  invFun := MaximalChain.toRanking
+  left_inv r := by
+    apply Equiv.ext
+    intro k
+    rw [MaximalChain.toRanking_apply]
+    refine insert_eq_of_notMem ((prefixChain r).added_notMem k) ?_
+    rw [← (prefixChain r).toFun_succ]
+    exact prefixFinset_succ_eq r k
+  right_inv C := MaximalChain.ext (funext fun k => C.prefixFinset_toRanking k)
+
 end OptimalityTheory
