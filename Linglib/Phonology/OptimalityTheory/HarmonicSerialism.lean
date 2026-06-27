@@ -1,6 +1,6 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.OptimalityTheory.EvalMode
+import Linglib.Phonology.OptimalityTheory.Defs
 import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 import Mathlib.Data.Finset.Union
 
@@ -155,8 +155,8 @@ theorem iterateGen_idempotent_at_fixedPoint [DecidableEq C]
 
 /-- **Harmonic improvement.** At each non-fixed-point step every newly chosen
     candidate is strictly better than the input under the supplied harmony
-    order `lt`. The order is a parameter so this stays agnostic about
-    `EvalMode`; soundness (`sound`) is witnessed by the caller. -/
+    order `lt`. The order is a parameter so this stays agnostic about the
+    EVAL term order; soundness (`sound`) is witnessed by the caller. -/
 theorem harmonicImprovement [DecidableEq C] (lt : C → C → Prop)
     (gen : C → Finset C) (eval : Finset C → Finset C)
     (sound : ∀ c c', c' ∈ eval (gen c) → c' ≠ c → lt c' c)
@@ -377,13 +377,13 @@ end HSDerivation
 -- § 7: Directional Harmonic Serialism
 -- ============================================================================
 
-/-! Directional HS ([lamont-2022b]): the constraint hierarchy is a
-    list of `DirectionalConstraint C`, evaluated via `DirectionalTableau`
-    under a chosen `EvalMode`. Sibling to the parallel `HSDerivation`
-    above; the two are not unified because their constraint types
-    differ (`NamedConstraint C` for parallel vs `DirectionalConstraint C`
-    for directional) and weighted aggregation is theoretically incoherent
-    with directional EVAL (per Lamont 2022b).
+/-! Directional HS ([lamont-2022b]): the constraint hierarchy is a list of
+    `Constraint C`, each carrying its own `TermOrder` (counting constraints
+    `.degree`, `*FLOAT^→` `.lex`, `*FLOAT^←` `.revLex`), evaluated via
+    `DirectionalTableau`. Sibling to the parallel `HSDerivation` above; the two
+    are not unified because their constraint types differ (`NamedConstraint C`
+    carries a scalar `eval` for weighted aggregation; `Constraint C` carries a
+    vector + term order, with which weighting is incoherent per Lamont 2022b).
 
     The motivating consumer is paper, fig. 3 (`/kāk^H + rī^H + dō^H/`):
     parallel HS produces a divergent tie among three deletion candidates;
@@ -392,8 +392,7 @@ end HSDerivation
 
 structure DirectionalHSDerivation (C : Type*) [DecidableEq C] where
   gen : C → Finset C
-  ranking : List (DirectionalConstraint C)
-  evalMode : EvalMode := .directional .leftToRight
+  ranking : List (Constraint C)
 
 namespace DirectionalHSDerivation
 
@@ -404,14 +403,13 @@ def tableauFor (D : DirectionalHSDerivation C) (cands : Finset C)
     (h : cands.Nonempty) : DirectionalTableau C :=
   { candidates := cands
     ranking := D.ranking
-    evalMode := D.evalMode
     nonempty := h }
 
-/-- Filter a candidate set to its optimal subset under `D.ranking` and
-    `D.evalMode`. Routes through `DirectionalTableau.optimal` (Layered
-    Grounding). Returns `∅` on empty input. -/
+/-- Filter a candidate set to its optimal subset under `D.ranking`. Routes
+    through `DirectionalTableau.optima` (Layered Grounding). Returns `∅` on
+    empty input. -/
 def evalFilter (D : DirectionalHSDerivation C) (cands : Finset C) : Finset C :=
-  if h : cands.Nonempty then (D.tableauFor cands h).optimal else ∅
+  if h : cands.Nonempty then (D.tableauFor cands h).optima else ∅
 
 /-- Optimal set for one HS step under directional EVAL. -/
 def stepOptimum (D : DirectionalHSDerivation C) (c : C) : Finset C :=

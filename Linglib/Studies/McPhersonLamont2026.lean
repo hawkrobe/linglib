@@ -317,21 +317,22 @@ def fig3Input : PokoForm :=
 
     `*FLOAT` is the only genuinely directional constraint (left-to-right
     per paper §4); the rest are parallel-via-singleton. -/
-def fig3Ranking : List (DirectionalConstraint PokoForm) :=
+def fig3Ranking : List (Constraint PokoForm) :=
   [ haveTone, starFloat, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
-/-- DirectionalHSDerivation under `*FLOAT^→` (left-to-right). The
-    paper's positive analysis. -/
+/-- DirectionalHSDerivation under `*FLOAT^→` (left-to-right, `starFloat`'s
+    `.lex` order). The paper's positive analysis. -/
 def derivationLR : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := fig3Ranking
-  evalMode := .directional .leftToRight
 
-/-- Mirror under `*FLOAT^←` (right-to-left). The paper's negative
-    counterexample: yields the wrong surface form. -/
-def derivationRL : DirectionalHSDerivation PokoForm :=
-  { derivationLR with evalMode := .directional .rightToLeft }
+/-- Mirror under `*FLOAT^←` (right-to-left): the same ranking with `*FLOAT`
+    set to `.revLex`. The paper's negative counterexample — wrong surface form. -/
+def derivationRL : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := [ haveTone, { starFloat with order := .revLex }, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 -- ============================================================================
 -- § 6.3: Attested LR Final Form
@@ -486,14 +487,13 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
     is picked, and only the leftmost-deletion path reaches the
     attested form.
 
-    The substrate proves this directly by switching `evalMode` on the
-    fig.3 derivation from `.directional .leftToRight` to `.parallel`,
+    The substrate proves this directly by swapping the directional `starFloat`
+    (`.lex`) for the counting `starFloatCount` (`.degree`) in the fig.3 ranking
     and showing the optimum has 3 elements. The full fig.3 ranking
     (HAVETONE ≫ *FLOAT ≫ *CROWD ≫ *TAUTDOCK ≫ MAX(H) ≫ *FALL ≫
-    DEP(link)/H ≫ MAX(M) ≫ MAX(link)/M) is preserved — only the EVAL
-    semantics changes — confirming the paper's claim that ranking
-    gymnastics alone cannot fix the divergence; only directional EVAL
-    can.
+    DEP(link)/H ≫ MAX(M) ≫ MAX(link)/M) is preserved — only the `*FLOAT` term
+    order changes — confirming the paper's claim that ranking gymnastics alone
+    cannot fix the divergence; only directional EVAL can.
 
     Beyond cardinality: the paper's broader claim is that ANY
     non-directional tie-breaker fails to consistently pick the
@@ -504,23 +504,20 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
 
 /-- Fig.3 ranking with `starFloatCount` substituted for `starFloat` —
     the count-based *FLOAT used in regular (non-directional) HS.
-    Architectural note (per `starFloatCount` docstring): the substrate's
-    parallel-vs-directional distinction lives in the *constraint*
-    (count vs indicator), not the EVAL mode flag, so simply switching
-    `evalMode := .parallel` while keeping the indicator-emitting
-    `starFloat` would not change behaviour. The genuine "regular HS"
-    counterpart of `derivationLR` requires a count-emitting *FLOAT. -/
-def fig3RankingCount : List (DirectionalConstraint PokoForm) :=
+    The substrate's parallel-vs-directional distinction lives in the
+    *constraint's term order* (`starFloatCount` is `.degree`, `starFloat` is
+    `.lex`), per [lamont-2022b]; the genuine "regular HS" counterpart of
+    `derivationLR` is a `.degree`-order *FLOAT. -/
+def fig3RankingCount : List (Constraint PokoForm) :=
   [ haveTone, Tone.starFloatCount, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
-/-- The fig.3 derivation under regular HS (count-based *FLOAT, parallel
-    EVAL). Same GEN as `derivationLR`; differs in ranking (`starFloat`
-    → `starFloatCount`) and `evalMode`. -/
+/-- The fig.3 derivation under regular HS (count-based *FLOAT, `.degree` order).
+    Same GEN as `derivationLR`; differs only in the *FLOAT variant
+    (`starFloat` `.lex` → `starFloatCount` `.degree`). -/
 def derivationParallel : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := fig3RankingCount
-  evalMode := .parallel
 
 /-- **The divergent tie**: under parallel *FLOAT, the three depth-1
     deletion candidates each remove exactly one floating tone, scoring
@@ -603,14 +600,13 @@ def eq24Input : PokoForm :=
 /-- Same ranking as fig. 3 (paper, fig. 2 Hasse): `HAVETONE ≫
     *FLOAT^→ ≫ *CROWD ≫ *TAUTDOCK ≫ MAX(H) ≫ *FALL ≫ DEP(link)/H ≫
     MAX(M) ≫ MAX(link)/M`. -/
-def eq24Ranking : List (DirectionalConstraint PokoForm) :=
+def eq24Ranking : List (Constraint PokoForm) :=
   [ haveTone, starFloat, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 def derivationLR : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := eq24Ranking
-  evalMode := .directional .leftToRight
 
 /-- Attested surface form `[nãn rī ná]` — H of rī docked to nã, M of
     nã deleted by *FALL repair. -/
@@ -684,14 +680,13 @@ def eq21Input : PokoForm :=
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). Eq. (20)'s minimal
     statement `*FLOAT, *TAUTDOCK ≫ MAX(H)` is a sub-ranking of this. -/
-def eq21Ranking : List (DirectionalConstraint PokoForm) :=
+def eq21Ranking : List (Constraint PokoForm) :=
   [ haveTone, starFloat, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 def derivationLR : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := eq21Ranking
-  evalMode := .directional .leftToRight
 
 /-- Attested surface form `[nãn rī]` — H deleted, both lexical Ms
     intact and linked. -/
@@ -753,14 +748,13 @@ def eq27Input : PokoForm :=
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
     for eq. (27) are *FLOAT, *CROWD, *TAUTDOCK, MAX(H), DEP(link)/H. -/
-def eq27Ranking : List (DirectionalConstraint PokoForm) :=
+def eq27Ranking : List (Constraint PokoForm) :=
   [ haveTone, starFloat, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 def derivationLR : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := eq27Ranking
-  evalMode := .directional .leftToRight
 
 /-- Attested surface form `[kāk kā]` — H-kāk deleted; kā retains its
     lexical MH contour. -/
@@ -830,7 +824,7 @@ def eq30Input : PokoForm :=
     docking in this context (paper text: "this constraint outranks
     *TAUTDOCK, candidate (30c) with tautomorphic docking is selected
     as the output"). -/
-def eq30Ranking : List (DirectionalConstraint PokoForm) :=
+def eq30Ranking : List (Constraint PokoForm) :=
   [ haveTone, starMlessL, starFloat, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H,
     maxTone TRN.M, maxTone TRN.L, maxLinkTone TRN.M ]
@@ -838,7 +832,6 @@ def eq30Ranking : List (DirectionalConstraint PokoForm) :=
 def derivationLR : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := eq30Ranking
-  evalMode := .directional .leftToRight
 
 /-- Attested surface form `[kāk ìlí]` — H-kāk docked tautomorphically
     onto kāk's TBU (creating an MH contour on kāk), ìlí unchanged. -/
@@ -905,14 +898,13 @@ def eq22Input : PokoForm :=
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
     are HAVETONE (drives docking onto ne), *FLOAT, *TAUTDOCK, MAX(H). -/
-def eq22Ranking : List (DirectionalConstraint PokoForm) :=
+def eq22Ranking : List (Constraint PokoForm) :=
   [ haveTone, starFloat, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 def derivationLR : DirectionalHSDerivation PokoForm where
   gen := FloatingForm.gen
   ranking := eq22Ranking
-  evalMode := .directional .leftToRight
 
 /-- Attested surface form `[nãn rī né]` — H-rī docked rightward to TBU
     2 (ne), giving ne its only tone (H). -/

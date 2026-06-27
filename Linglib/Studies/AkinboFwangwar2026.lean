@@ -162,33 +162,33 @@ def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
 def maxToneAuto (f : MwaghavulForm) : Nat :=
   f.countUpper f.IsDeleted
 
-/-- L-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
-def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm :=
+/-- L-ANCHOR-Mᵥ as a `Constraint`. -/
+def lAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
   .ofCount s!"L-ANCH-{reprStr t}({m.form})" .faithfulness (lAnchTone t m)
 
-/-- R-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
-def rAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm :=
+/-- R-ANCHOR-Mᵥ as a `Constraint`. -/
+def rAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
   .ofCount s!"R-ANCH-{reprStr t}({m.form})" .faithfulness (rAnchTone t m)
 
-/-- MAX-Tone as a `DirectionalConstraint`. -/
-def maxToneC : DirectionalConstraint MwaghavulForm :=
+/-- MAX-Tone as a `Constraint`. -/
+def maxToneC : Constraint MwaghavulForm :=
   .ofCount "MAX-Tone" .faithfulness maxToneAuto
 
 /-- INTEGRITY-Mᵥ for the verbaliser (canonical case). -/
-def integMv : DirectionalConstraint MwaghavulForm := integrityTone vbzMorph TRN.M
+def integMv : Constraint MwaghavulForm := integrityTone vbzMorph TRN.M
 
 /-- L-ANCHOR-Mᵥ for the verbaliser. -/
-def lAnchMv : DirectionalConstraint MwaghavulForm := lAnchToneC TRN.M vbzMorph
+def lAnchMv : Constraint MwaghavulForm := lAnchToneC TRN.M vbzMorph
 
 /-- R-ANCHOR-Mᵥ for the verbaliser. -/
-def rAnchMv : DirectionalConstraint MwaghavulForm := rAnchToneC TRN.M vbzMorph
+def rAnchMv : Constraint MwaghavulForm := rAnchToneC TRN.M vbzMorph
 
 /-- L-ANCHOR-Hᵥ for the verbaliser (paper p. 25 fn: H-tone version of
     eq. 22 has the same conditions). -/
-def lAnchHv : DirectionalConstraint MwaghavulForm := lAnchToneC TRN.H vbzMorph
+def lAnchHv : Constraint MwaghavulForm := lAnchToneC TRN.H vbzMorph
 
 /-- R-ANCHOR-Hᵥ for the verbaliser. -/
-def rAnchHv : DirectionalConstraint MwaghavulForm := rAnchToneC TRN.H vbzMorph
+def rAnchHv : Constraint MwaghavulForm := rAnchToneC TRN.H vbzMorph
 
 end SingleRoot
 
@@ -238,14 +238,14 @@ def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
   else
     rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
-/-- L-ANCHOR-`t`-from-`m`-across-roots as a `DirectionalConstraint`. -/
+/-- L-ANCHOR-`t`-from-`m`-across-roots as a `Constraint`. -/
 def lAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
-    DirectionalConstraint MwaghavulForm :=
+    Constraint MwaghavulForm :=
   .ofCount s!"L-ANCH-{reprStr t}({m.form},across)" .faithfulness (lAnchToneAcrossRoots t m rms)
 
-/-- R-ANCHOR across roots as a `DirectionalConstraint`. -/
+/-- R-ANCHOR across roots as a `Constraint`. -/
 def rAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
-    DirectionalConstraint MwaghavulForm :=
+    Constraint MwaghavulForm :=
   .ofCount s!"R-ANCH-{reprStr t}({m.form},across)" .faithfulness (rAnchToneAcrossRoots t m rms)
 
 end PerRoot
@@ -303,13 +303,12 @@ theorem nonempty : candidates.Nonempty := by decide
 
 /-- Ranking from paper §4.3 + p. 26: `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫
     R-ANCH-Mᵥ ≫ MAX-Tone`. -/
-def ranking : List (DirectionalConstraint MwaghavulForm) :=
+def ranking : List (Constraint MwaghavulForm) :=
   [integMv, lAnchMv, rAnchMv, maxToneC]
 
 def tableau : DirectionalTableau MwaghavulForm where
   candidates := candidates
   ranking := ranking
-  evalMode := .parallel
   nonempty := nonempty
 
 /-- (24a) profile `[INTEG-Mᵥ, L-ANCH-Mᵥ, R-ANCH-Mᵥ, MAX-T] = [0, 2, 2, 0]`:
@@ -342,7 +341,7 @@ theorem candF_profile :
 /-- **Headline**: `(24e)` is the unique optimum under
     `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone`. The copying variant
     (24f) is ruled out by INTEGRITY; (24a-d) lose on anchors. -/
-theorem optimal : tableau.optimal = {candE} := by decide
+theorem optimal : tableau.optima = {candE} := by decide
 
 end Tableau24
 
@@ -411,13 +410,12 @@ theorem nonempty : candidates.Nonempty := by decide
 
 /-- Ranking from paper Tableau 25 (p. 27):
     `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
-def ranking : List (DirectionalConstraint MwaghavulForm) :=
+def ranking : List (Constraint MwaghavulForm) :=
   [lAnchMv, rAnchHv, rAnchMv, lAnchHv, maxToneC]
 
 def tableau : DirectionalTableau MwaghavulForm where
   candidates := candidates
   ranking := ranking
-  evalMode := .parallel
   nonempty := nonempty
 
 /-- (25a) profile `[3, 3, 3, 3, 2]`: no verbaliser realised. -/
@@ -452,7 +450,7 @@ theorem candG_profile :
 /-- **Headline**: (25e) is the unique optimum. (25a-d) lose on the
     top-tier anchors; (25f-g) tie with (25e) on top constraints but
     lose on R-ANCH-Mᵥ. -/
-theorem optimal : tableau.optimal = {candE} := by decide
+theorem optimal : tableau.optima = {candE} := by decide
 
 end Tableau25
 
@@ -483,13 +481,13 @@ def input : MwaghavulForm :=
     (links := {(0, 0), (0, 1), (1, 2), (1, 3)})
 
 /-- Per-root anchor instantiations for the two-root pluractional. -/
-def lAnchMv26 : DirectionalConstraint MwaghavulForm :=
+def lAnchMv26 : Constraint MwaghavulForm :=
   lAnchToneCAcross TRN.M vbzMorph [rootRedMorph, rootBaseMorph]
-def rAnchHv26 : DirectionalConstraint MwaghavulForm :=
+def rAnchHv26 : Constraint MwaghavulForm :=
   rAnchToneCAcross TRN.H vbzMorph [rootRedMorph, rootBaseMorph]
-def rAnchMv26 : DirectionalConstraint MwaghavulForm :=
+def rAnchMv26 : Constraint MwaghavulForm :=
   rAnchToneCAcross TRN.M vbzMorph [rootRedMorph, rootBaseMorph]
-def lAnchHv26 : DirectionalConstraint MwaghavulForm :=
+def lAnchHv26 : Constraint MwaghavulForm :=
   lAnchToneCAcross TRN.H vbzMorph [rootRedMorph, rootBaseMorph]
 
 /-- (26a): both vbz tones deleted; both lex Ls survive. -/
@@ -541,13 +539,12 @@ theorem nonempty : candidates.Nonempty := by decide
 
 /-- Ranking, same shape as Tableau 25 but with per-root anchors:
     `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
-def ranking : List (DirectionalConstraint MwaghavulForm) :=
+def ranking : List (Constraint MwaghavulForm) :=
   [lAnchMv26, rAnchHv26, rAnchMv26, lAnchHv26, maxToneC]
 
 def tableau : DirectionalTableau MwaghavulForm where
   candidates := candidates
   ranking := ranking
-  evalMode := .parallel
   nonempty := nonempty
 
 /-- (26d) profile `[0, 0, 0, 0, 2]`: perfect realisation — vbz M on
@@ -558,7 +555,7 @@ theorem candD_profile :
 
 /-- **Headline**: (26d) is the unique optimum — the iconic M-on-RED +
     H-on-BASE disharmony pattern. -/
-theorem optimal : tableau.optimal = {candD} := by decide
+theorem optimal : tableau.optima = {candD} := by decide
 
 end Tableau26
 
