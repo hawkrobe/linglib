@@ -315,6 +315,108 @@ def MChain {n : Nat} (E : List (ERC n)) : Set (Fin n) → Prop :=
   fun S => ∃ r : Ranking n, ERCSet.satisfiedBy r E ∧
     ∃ k : Fin (n + 1), maximalChain r k = S
 
+/-! ### Local feasibility — a decidable sound over-approximation -/
+
+/-- **Local feasibility** of a candidate prefix `S` against ERC set `E`: for
+every ERC, if `S` contains one of its losers then it contains one of its winners
+(one rooted circuit per loser). Decidable and `decide`-reducing.
+
+`Feasible` is a *necessary* condition for antimatroid feasibility — implied by
+`FeasiblePrefix`/`MChain` (`feasible_of_satisfiedBy`) — but **strictly weaker for
+disjunctive (multi-`W`) ERCs**: two ERCs can mutually cover each other's losers
+inside `S` with no consistent global order realizing it
+(`feasible_not_accessible`). It is **exact** only on the simple-ERC fragment
+(each ERC one `W`/one `L` = a Hasse edge = a partial order). The faithful, *also
+decidable* notion is `FeasiblePrefix`. -/
+def Feasible {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
+  ∀ α ∈ E, (∃ l, α l = .L ∧ l ∈ S) → (∃ w, α w = .W ∧ w ∈ S)
+
+instance {n : Nat} (E : List (ERC n)) : DecidablePred (Feasible E) :=
+  fun S => by unfold Feasible; infer_instance
+
+/-- The empty prefix is locally feasible (no losers present). -/
+@[simp] theorem Feasible.empty {n : Nat} (E : List (ERC n)) :
+    Feasible E (∅ : Finset (Fin n)) := by
+  intro α _ ⟨l, _, hl⟩; exact absurd hl (Finset.notMem_empty l)
+
+/-- **Local feasibility is union-closed** (a one-liner): a loser in `S ∪ T` lies
+in one of them, whose winner then lies in `S ∪ T`. (This is union-closure of the
+over-approximation; the faithful family's union-closure is `MChain.union_closed`,
+[merchant-riggle-2016] Lemma 3.) -/
+theorem Feasible.union_closed {n : Nat} (E : List (ERC n)) {S T : Finset (Fin n)}
+    (hS : Feasible E S) (hT : Feasible E T) : Feasible E (S ∪ T) := by
+  intro α hα ⟨l, hlL, hlST⟩
+  rcases Finset.mem_union.mp hlST with hlS | hlT
+  · obtain ⟨w, hwW, hwS⟩ := hS α hα ⟨l, hlL, hlS⟩
+    exact ⟨w, hwW, Finset.mem_union.mpr (Or.inl hwS)⟩
+  · obtain ⟨w, hwW, hwT⟩ := hT α hα ⟨l, hlL, hlT⟩
+    exact ⟨w, hwW, Finset.mem_union.mpr (Or.inr hwT)⟩
+
+/-- The top-`k` constraints under ranking `r`, as a `Finset` (the decidable
+counterpart of `maximalChain r k`). -/
+def prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) : Finset (Fin n) :=
+  Finset.univ.filter (fun i => (r.symm i : Nat) < k.val)
+
+@[simp] theorem mem_prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) (i : Fin n) :
+    i ∈ prefixFinset r k ↔ (r.symm i : Nat) < k.val := by simp [prefixFinset]
+
+/-- **Forward representation** (the easy half of [merchant-riggle-2016]'s
+isomorphism): a prefix of a ranking that satisfies `E` is locally feasible.
+Winners dominate their losers, so a loser inside the prefix drags its winner in
+(`maximalChain_dominance` in `Finset` form). -/
+theorem feasible_of_satisfiedBy {n : Nat} {E : List (ERC n)} {r : Ranking n}
+    (hr : ERCSet.satisfiedBy r E) (k : Fin (n + 1)) : Feasible E (prefixFinset r k) := by
+  intro α hα ⟨l, hlL, hlmem⟩
+  rw [mem_prefixFinset] at hlmem
+  obtain ⟨w, hwW, hdom⟩ := (ERC.satisfiedBy_iff_dominance r α).mp (hr α hα) l hlL
+  exact ⟨w, hwW, by rw [mem_prefixFinset]; unfold Ranking.dominates at hdom; omega⟩
+
+/-! ### `FeasiblePrefix` — the faithful, decidable antimatroid feasibility -/
+
+/-- **Faithful feasibility**: `S` is the top-`k` constraints of *some* ranking
+satisfying `E` — the `Finset`-valued form of `MChain`. Decidable by finite search
+over `Ranking n` (a `Fintype`) and `Fin (n+1)`, so `decide` reduces — *and*
+unlike `Feasible` it is the genuine antimatroid family, not an over-approximation. -/
+def FeasiblePrefix {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
+  ∃ r : Ranking n, ERCSet.satisfiedBy r E ∧ ∃ k : Fin (n + 1), prefixFinset r k = S
+
+instance {n : Nat} (E : List (ERC n)) : DecidablePred (FeasiblePrefix E) :=
+  fun _ => Fintype.decidableExistsFintype
+
+/-- The faithful predicate implies the over-approximation (`feasible_of_satisfiedBy`). -/
+theorem feasible_of_feasiblePrefix {n : Nat} {E : List (ERC n)} {S : Finset (Fin n)}
+    (h : FeasiblePrefix E S) : Feasible E S := by
+  obtain ⟨r, hr, k, rfl⟩ := h; exact feasible_of_satisfiedBy hr k
+
+/-- `prefixFinset` coerces to `maximalChain`. -/
+@[simp] theorem prefixFinset_coe {n : Nat} (r : Ranking n) (k : Fin (n + 1)) :
+    (↑(prefixFinset r k) : Set (Fin n)) = maximalChain r k := by
+  ext i; simp [prefixFinset, maximalChain]
+
+/-- `FeasiblePrefix` is `MChain` over `Finset` — the decidable counterpart of the
+existential, `Set`-valued antimatroid family. -/
+theorem mChain_coe_iff_feasiblePrefix {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) :
+    MChain E (↑S) ↔ FeasiblePrefix E S := by
+  constructor
+  · rintro ⟨r, hr, k, hk⟩
+    exact ⟨r, hr, k, Finset.coe_inj.mp ((prefixFinset_coe r k).trans hk)⟩
+  · rintro ⟨r, hr, k, rfl⟩; exact ⟨r, hr, k, (prefixFinset_coe r k).symm⟩
+
+/-- **`Feasible` strictly over-approximates the antimatroid family.** Two
+disjunctive (multi-`W`) ERCs over `Fin 4` admit a locally-feasible `{0,1}` that
+is *not* a prefix of any consistent ranking (`¬ FeasiblePrefix`) and has *no*
+removable element — so `{S | Feasible E S}` is not accessible and cannot be an
+antimatroid for general ERC sets. Hence `Antimat.IsFeasible` stays `MChain`
+([merchant-riggle-2016]'s "beyond partial orders"); the local form is exact only
+on the simple-ERC fragment. -/
+theorem feasible_not_accessible :
+    ∃ (E : List (ERC 4)) (S : Finset (Fin 4)),
+      ERCSet.consistent E ∧ Feasible E S ∧ ¬ FeasiblePrefix E S ∧
+        S.Nonempty ∧ ¬ ∃ x ∈ S, Feasible E (S \ {x}) :=
+  ⟨[fun i => if i = 0 then .W else if i = 1 then .L else if i = 2 then .W else .e,
+    fun i => if i = 0 then .L else if i = 1 then .W else if i = 2 then .e else .W],
+   {0, 1}, by decide, by decide, by decide, by decide, by decide⟩
+
 -- ============================================================================
 -- § 11: Union Closure (Lemma 3)
 -- ============================================================================
