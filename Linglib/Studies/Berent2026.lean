@@ -15,7 +15,7 @@ algebraic, and amodal:
 1. **Abstract**: syllable structure constraints (sonority sequencing) persist
    under articulatory suppression (TMS, mechanical) and in print reading,
    engaging Broca's area rather than motor cortex. Formalized as gradient
-   markedness over the abstract `SonorityRank` type — the grammar sees only
+   markedness over the abstract `Sonority` type — the grammar sees only
    the ordering, not the articulatory features that correlate with it.
 
 2. **Algebraic**: identity restrictions (*XX ban, OCP) generalize to novel
@@ -36,7 +36,7 @@ The paper's central claims are metatheoretical — they argue about the
 machinery. The deepest formalization insight is that Lean's type system
 already embodies the distinctions Berent draws:
 
-- **Substance-free** = `SonorityRank` is an abstract ordered type, not
+- **Substance-free** = `Sonority` is an abstract ordered type, not
   defined by articulatory features (refactored in `Syllable.lean`)
 - **Algebraic** = `mkOCP` is parametrically polymorphic over `α`
   (added to `Constraints.lean`)
@@ -51,7 +51,7 @@ data supporting the doubling reversal is in
 [berent-2026]
 -/
 
-open Prosody (SonorityRank)
+open Prosody (Sonority)
 open OptimalityTheory
 open OptimalityTheory.Doubling
 
@@ -68,7 +68,7 @@ open Core.Optimization Constraints OptimalityTheory
 
     The behavioral gradient rise > plateau > fall ([berent-2026],
     Figure 1A; data from Berent et al. 2007) maps directly to this
-    classification on the abstract `SonorityRank` type. -/
+    classification on the abstract `Sonority` type. -/
 inductive OnsetProfile where
   | rise     -- C1 < C2: e.g. /bl/, /pr/ — least marked
   | plateau  -- C1 = C2: e.g. /bd/ — intermediate
@@ -76,9 +76,9 @@ inductive OnsetProfile where
   deriving DecidableEq, Repr
 
 /-- Classify a two-segment onset by its sonority profile.
-    Operates on `SonorityRank` — the abstract hierarchy — not on
+    Operates on `Sonority` — the abstract hierarchy — not on
     articulatory features. -/
-def onsetProfile (c1 c2 : SonorityRank) : OnsetProfile :=
+def onsetProfile (c1 c2 : Sonority) : OnsetProfile :=
   if c1.rank < c2.rank then .rise
   else if c1.rank == c2.rank then .plateau
   else .fall
@@ -89,7 +89,7 @@ def onsetProfile (c1 c2 : SonorityRank) : OnsetProfile :=
     Rise = 0 violations, plateau = 1, fall = 2. This captures the
     behavioral gradient (blif > bnif > bdif > lbif; [berent-2026],
     data from Berent et al. 2007). The gradient is determined entirely
-    by the abstract `SonorityRank` ordering — the grammar does not inspect
+    by the abstract `Sonority` ordering — the grammar does not inspect
     whether "rise" means "stop-before-liquid" vs. "nasal-before-vowel". -/
 def onsetSSP : NamedConstraint OnsetProfile :=
   mkMarkGrad "SSP-ONSET" fun
@@ -109,9 +109,9 @@ theorem plateau_lt_fall : onsetMarkedness .plateau < onsetMarkedness .fall := by
 theorem rise_unmarked : onsetMarkedness .rise = 0 := rfl
 
 /-- The sonority gradient is determined by abstract rank, not by features.
-    Two segments with the same `SonorityRank` are treated identically
+    Two segments with the same `Sonority` are treated identically
     regardless of their articulatory specification. -/
-theorem sonority_gradient_abstract (r1 r2 : SonorityRank) :
+theorem sonority_gradient_abstract (r1 r2 : Sonority) :
     onsetMarkedness (onsetProfile r1 r2) =
     if r1.rank < r2.rank then 0
     else if r1.rank == r2.rank then 1

@@ -30,10 +30,10 @@ namespace Prosody
 
 /-- The 0-indexed syllable containing mora `targetMora` (0-indexed), or
     `none` if `targetMora` exceeds the total mora count. -/
-def findSyllable (weights : List SyllWeight) (targetMora : Nat) : Option Nat :=
+def findSyllable (weights : List Syllable.Weight) (targetMora : Nat) : Option Nat :=
   go weights targetMora 0
 where
-  go : List SyllWeight → Nat → Nat → Option Nat
+  go : List Syllable.Weight → Nat → Nat → Option Nat
     | [], _, _ => none
     | w :: ws, target, idx =>
       if target < w.morae then some idx
@@ -44,7 +44,7 @@ where
 /-- The Antepenultimate Accent Rule ([mccawley-1968]): accent the syllable
     containing the antepenultimate (3rd-from-last) mora. Words with fewer than
     three morae accent the initial syllable. Returns the 0-indexed syllable. -/
-def defaultAccentAAR (weights : List SyllWeight) : Option Nat :=
+def defaultAccentAAR (weights : List Syllable.Weight) : Option Nat :=
   match weights with
   | [] => none
   | _ =>
@@ -58,7 +58,7 @@ def defaultAccentAAR (weights : List SyllWeight) : Option Nat :=
     (≥ 2μ), otherwise the antepenult. Monosyllables accent the only syllable;
     disyllables accent the penult (= initial). [kubozono-2006] argues this
     rule fits Japanese default accentuation better than `defaultAccentAAR`. -/
-def latinStressRule : List SyllWeight → Option Nat
+def latinStressRule : List Syllable.Weight → Option Nat
   | [] => none
   | [_] => some 0
   | [_, _] => some 0                    -- disyllable → always penult (= initial)

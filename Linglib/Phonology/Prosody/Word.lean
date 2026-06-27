@@ -123,7 +123,7 @@ def MorphStatus.isPrWdInternal (s : MorphStatus) : Bool := s.prWdInternal
     For example, Telugu *samudram* 'ocean' has profile [L, L, H]
     (sa.mu.dram). -/
 structure PrWd where
-  syllables : List SyllWeight
+  syllables : List Syllable.Weight
   deriving DecidableEq, Repr
 
 /-- Total mora count of a prosodic word. -/
@@ -166,7 +166,7 @@ structure MorphElement where
   /-- Weight of the initial syllable. Relevant for the Telugu weak
       alternation: the long form is triggered when a *light* initial
       syllable follows within the PrWd ([aitha-2026] §3.2). -/
-  initialWeight : SyllWeight
+  initialWeight : Syllable.Weight
   deriving DecidableEq, Repr
 
 /-- Does this element trigger the long stem form in Telugu weak nouns?
