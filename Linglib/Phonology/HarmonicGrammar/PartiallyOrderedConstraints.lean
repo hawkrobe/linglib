@@ -12,7 +12,7 @@ order, and the OT optimum under that ranking is the output. The induced
 distribution over outputs is uniform over consistent linear extensions.
 
 This module provides the substrate counterpart to the per-paper POC
-analyses: every linear extension is a `Equiv.Perm (Fin n)`, and every
+analyses: every linear extension is a `Ranking n`, and every
 finite set of consistent extensions sits inside `Finset.univ` for that
 permutation type. The probability of an output is then a ratio of `Finset`
 cardinalities — a clean computation, no measure theory required.
@@ -20,8 +20,8 @@ cardinalities — a clean computation, no measure theory required.
 ## Architecture
 
 POC sits in the substrate alongside `Cumulativity.SystemicProblem`, sharing
-its multi-input optimization model and its `OTRealizes` definition. The new
-content here is:
+its multi-input optimization model and its `realizedByRanking` definition. The
+new content here is:
 
 - `PartialOrderConstraints n`: a partial order on `Fin n` (constraint indices).
 - `IsConsistent p σ`: σ is a linear extension of p.
@@ -56,7 +56,7 @@ over the discrete partial order — rather than enumerating rankings by hand.
 
 namespace HarmonicGrammar
 
-open Core.Optimization
+open Core.Optimization OptimalityTheory
 
 
 open Finset
@@ -130,7 +130,7 @@ def discrete (n : ℕ) : PartialOrderConstraints n where
     `σ.symm a ≤ σ.symm b` (i.e., a appears at least as early as b in σ's
     enumeration). This is a total order; its unique consistent linear
     extension is σ itself (`fromPermutation_consistent_unique` below). -/
-def fromPermutation (σ : Equiv.Perm (Fin n)) : PartialOrderConstraints n where
+def fromPermutation (σ : Ranking n) : PartialOrderConstraints n where
   rel := fun a b => σ.symm a ≤ σ.symm b
   isPartialOrder :=
     { refl := fun _ => le_refl _
@@ -140,22 +140,22 @@ def fromPermutation (σ : Equiv.Perm (Fin n)) : PartialOrderConstraints n where
 /-- A permutation σ is **consistent** with the partial order p if σ⁻¹
     respects rel: whenever `rel a b` holds, σ ranks a at least as early
     as b (`σ.symm a ≤ σ.symm b`). σ is a linear extension of p. -/
-def IsConsistent (p : PartialOrderConstraints n) (σ : Equiv.Perm (Fin n)) :
+def IsConsistent (p : PartialOrderConstraints n) (σ : Ranking n) :
     Prop :=
   ∀ a b, p.rel a b → σ.symm a ≤ σ.symm b
 
-instance (p : PartialOrderConstraints n) (σ : Equiv.Perm (Fin n)) :
+instance (p : PartialOrderConstraints n) (σ : Ranking n) :
     Decidable (p.IsConsistent σ) := by
   unfold IsConsistent; infer_instance
 
 /-- The (decidable, finite) set of linear extensions of `p`. -/
 def consistentTotalOrders (p : PartialOrderConstraints n) :
-    Finset (Equiv.Perm (Fin n)) :=
+    Finset (Ranking n) :=
   Finset.univ.filter p.IsConsistent
 
 @[simp]
 theorem mem_consistentTotalOrders {p : PartialOrderConstraints n}
-    {σ : Equiv.Perm (Fin n)} :
+    {σ : Ranking n} :
     σ ∈ p.consistentTotalOrders ↔ p.IsConsistent σ := by
   simp [consistentTotalOrders]
 
@@ -166,13 +166,13 @@ theorem consistentTotalOrders_discrete (n : ℕ) :
   simp [consistentTotalOrders, IsConsistent, discrete]
 
 /-- σ is consistent with the partial order it induces. -/
-theorem isConsistent_fromPermutation (σ : Equiv.Perm (Fin n)) :
+theorem isConsistent_fromPermutation (σ : Ranking n) :
     (fromPermutation σ).IsConsistent σ := by
   intro a b h
   exact h
 
 /-- The σ-induced total order has σ as a consistent linear extension. -/
-theorem mem_consistentTotalOrders_fromPermutation (σ : Equiv.Perm (Fin n)) :
+theorem mem_consistentTotalOrders_fromPermutation (σ : Ranking n) :
     σ ∈ (fromPermutation σ).consistentTotalOrders :=
   mem_consistentTotalOrders.mpr (isConsistent_fromPermutation σ)
 
@@ -180,7 +180,7 @@ theorem mem_consistentTotalOrders_fromPermutation (σ : Equiv.Perm (Fin n)) :
     consistent linear extension. Any consistent τ must agree with σ
     pointwise (since τ.symm ∘ σ is a monotone bijection on `Fin n`, hence
     the identity by `fin_monotone_bij_eq_id`). -/
-theorem fromPermutation_consistent_unique {σ τ : Equiv.Perm (Fin n)}
+theorem fromPermutation_consistent_unique {σ τ : Ranking n}
     (hτ : (fromPermutation σ).IsConsistent τ) : τ = σ := by
   have hcomp : ⇑τ.symm ∘ ⇑σ = id := by
     apply fin_monotone_bij_eq_id
@@ -198,7 +198,7 @@ theorem fromPermutation_consistent_unique {σ τ : Equiv.Perm (Fin n)}
     _ = σ k := τ.apply_symm_apply (σ k)
 
 @[simp]
-theorem consistentTotalOrders_fromPermutation (σ : Equiv.Perm (Fin n)) :
+theorem consistentTotalOrders_fromPermutation (σ : Ranking n) :
     (fromPermutation σ).consistentTotalOrders = {σ} := by
   ext τ
   rw [mem_consistentTotalOrders, Finset.mem_singleton]
@@ -275,14 +275,14 @@ variable {Input Output : Type*} {n : ℕ}
     (`consistentTotalOrders_nonempty`), so this genuinely means target
     probability = 1 under POC sampling — not the vacuous empty case, which is
     why no explicit nonemptiness conjunct is needed. -/
-def POCRealizes (P : SystemicProblem Input Output n)
+def realizedByPOC (P : SystemicProblem Input Output n)
     (p : PartialOrderConstraints n) : Prop :=
-  ∀ σ ∈ p.consistentTotalOrders, P.OTRealizes σ
+  ∀ σ ∈ p.consistentTotalOrders, P.realizedByRanking σ
 
 /-- A `SystemicProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
 def IsPOCRealizable (P : SystemicProblem Input Output n) : Prop :=
-  ∃ p : PartialOrderConstraints n, P.POCRealizes p
+  ∃ p : PartialOrderConstraints n, P.realizedByPOC p
 
 end SystemicProblem
 
@@ -307,7 +307,7 @@ theorem ot_realizable_imp_poc_realizable {Input Output : Type*} {n : ℕ}
     P.IsOTRealizable → P.IsPOCRealizable := by
   rintro ⟨σ, hσ⟩
   refine ⟨PartialOrderConstraints.fromPermutation σ, ?_⟩
-  simpa [SystemicProblem.POCRealizes,
+  simpa [SystemicProblem.realizedByPOC,
     PartialOrderConstraints.consistentTotalOrders_fromPermutation] using hσ
 
 /-- **Categorical equivalence**: under categorical realizability,
@@ -335,14 +335,14 @@ variable {Input Output : Type*} [DecidableEq Output] {n : ℕ}
     in a `SystemicProblem`. POC analyses don't need a target — they're about
     distribution over outputs, not realization of a chosen one. -/
 def PicksAt (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (σ : Equiv.Perm (Fin n)) (i : Input) (o : Output) : Prop :=
+    (σ : Ranking n) (i : Input) (o : Output) : Prop :=
   o ∈ cands i ∧
   ∀ o' ∈ cands i, o' ≠ o →
     toLex (fun k : Fin n => vp i o (σ k)) <
     toLex (fun k : Fin n => vp i o' (σ k))
 
 instance (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (σ : Equiv.Perm (Fin n)) (i : Input) (o : Output) :
+    (σ : Ranking n) (i : Input) (o : Output) :
     Decidable (PicksAt cands vp σ i o) := by
   unfold PicksAt; infer_instance
 
@@ -361,7 +361,7 @@ def pocPredict (cands : Input → Finset Output) (vp : Input → Output → Fin 
     OT-pick: probability 1 if σ picks o, probability 0 otherwise. -/
 theorem pocPredict_fromPermutation
     (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (σ : Equiv.Perm (Fin n)) (i : Input) (o : Output) :
+    (σ : Ranking n) (i : Input) (o : Output) :
     pocPredict cands vp (fromPermutation σ) i o =
     if PicksAt cands vp σ i o then 1 else 0 := by
   simp only [pocPredict,
@@ -378,8 +378,8 @@ theorem pocPredict_discrete
     (i : Input) (o : Output) :
     pocPredict cands vp (discrete n) i o =
     ((Finset.univ.filter
-      (fun σ : Equiv.Perm (Fin n) => PicksAt cands vp σ i o)).card : ℚ) /
-    (Finset.univ : Finset (Equiv.Perm (Fin n))).card := by
+      (fun σ : Ranking n => PicksAt cands vp σ i o)).card : ℚ) /
+    (Finset.univ : Finset (Ranking n)).card := by
   simp only [pocPredict, consistentTotalOrders_discrete]
 
 end PartialOrderConstraints
@@ -421,7 +421,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
     (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
     (i : Input) (chosen other : Output)
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
-    (σ : Equiv.Perm (Fin n)) :
+    (σ : Ranking n) :
     PicksAt cands vp σ i chosen ↔
     ∃ x ∈ Finset.univ.filter (fun k : Fin n => vp i chosen k < vp i other k),
       (permDList σ (Finset.univ.filter
@@ -546,13 +546,13 @@ theorem picksAt_rate_eq
     (D Y : Finset (Fin n))
     (h_D : ∀ k, k ∈ D ↔ vp i chosen k ≠ vp i other k)
     (h_Y : ∀ k, k ∈ Y ↔ vp i chosen k < vp i other k) :
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
+    ((Finset.univ.filter (fun σ : Ranking n =>
       PicksAt cands vp σ i chosen)).card : ℚ) / (Nat.factorial n : ℚ) =
     ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
   have h_filter_eq :
-      (Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
+      (Finset.univ.filter (fun σ : Ranking n =>
         PicksAt cands vp σ i chosen)) =
-      (Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
+      (Finset.univ.filter (fun σ : Ranking n =>
         ∃ x ∈ Finset.univ.filter
           (fun k : Fin n => vp i chosen k < vp i other k),
         (Core.Optimization.PermSubsetCombinatorics.permDList σ
