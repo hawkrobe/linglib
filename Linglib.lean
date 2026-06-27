@@ -1316,6 +1316,7 @@ import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.Constraints.Weighted
 import Linglib.Phonology.ElementTheory
@@ -1346,11 +1347,6 @@ import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.OptimalityTheory.StratalCorr
 import Linglib.Phonology.OptimalityTheory.TCT
-import Linglib.Phonology.ParadigmUniformity.Antifaithfulness
-import Linglib.Phonology.ParadigmUniformity.Defs
-import Linglib.Phonology.ParadigmUniformity.LexicalConservatism
-import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
-import Linglib.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
@@ -1949,6 +1945,7 @@ import Linglib.Studies.AissenPolian2025
 import Linglib.Studies.Aitha2026
 import Linglib.Studies.AkinboFwangwar2026
 import Linglib.Studies.AlbrightHayes2003
+import Linglib.Studies.Alderete2001
 import Linglib.Studies.AlexandropoulouGotzner2024
 import Linglib.Studies.AlexandropoulouGotzner2024JoS
 import Linglib.Studies.AlexeyenkoZeijlstra2025
@@ -2469,6 +2466,7 @@ import Linglib.Studies.MartinezVera2026
 import Linglib.Studies.MaticNikolaeva2018
 import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Matthewson2016
+import Linglib.Studies.McCarthy2005
 import Linglib.Studies.McCarthyPrince1995
 import Linglib.Studies.McCollumEtAl2020
 import Linglib.Studies.McKayVanInwagen1977
@@ -2654,6 +2652,7 @@ import Linglib.Studies.Stassen1985
 import Linglib.Studies.Stassen2000
 import Linglib.Studies.Stassen2013Comparison
 import Linglib.Studies.Steedman2000
+import Linglib.Studies.Steriade1997
 import Linglib.Studies.Sternefeld1998
 import Linglib.Studies.Stojkovic2026
 import Linglib.Studies.Storme2026

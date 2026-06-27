@@ -24,7 +24,7 @@ The base-priority discipline is what distinguishes TCT from siblings:
 | Optimal Paradigms ([mccarthy-2005]) | Symmetric pairwise OO-Faith over paradigm | No — no privileged base |
 | Stratal OT ([kiparsky-2000]) | Cyclic stratal EVAL | Yes, but via *cycles* |
 | **TCT ([benua-1997])** | Parallel within-form, recursive across forms | Yes, by sub-grammar |
-| Lexical Conservatism ([steriade-2000]) | Anchor on attested wordform | Yes, but anchor optional |
+| Lexical Conservatism ([steriade-1997]) | Anchor on attested wordform | Yes, but anchor optional |
 
 We *encode* base priority by the type signature
 `TCTGrammar.baseEval : List α → List α` — there is no derivative slot,
@@ -53,9 +53,9 @@ This file: the *substrate* — Role enum, TCTGrammar structure, base-priority
 type-level fact, TetruSchema structure with named constraint slots, and
 the misapplication-unification theorem. Concrete evaluation (sub-grammar
 selection, candidate generation) is paper-specific and lives in study
-files. The paradigm-uniformity face of TCT (`Corr`-style API for
-within-paradigm OO-Faith) lives in
-`ParadigmUniformity/Transderivational.lean`.
+files. The paradigm-uniformity face of TCT (`Corr`-style 3-role diagram
+constructors for within-paradigm OO-Faith) lives with the case studies in
+`Studies/Benua1997.lean`.
 -/
 
 namespace OptimalityTheory.TCT

@@ -1,4 +1,5 @@
-import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
+import Linglib.Studies.McCarthy2005
+import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.OptimalityTheory.Predict
@@ -45,7 +46,7 @@ namespace MarcoRasin2026
 
 open Core.Optimization Constraints OptimalityTheory
 open OptimalityTheory
-open OptimalityTheory.ParadigmUniformity
+open McCarthy2005 (mkOPMaxV)
 open Prosody (Sonority)
 
 -- ============================================================================

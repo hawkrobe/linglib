@@ -338,9 +338,8 @@ def PicksAt (cands : Input → Finset Output) (vp : Input → Output → Fin n �
     (σ : Equiv.Perm (Fin n)) (i : Input) (o : Output) : Prop :=
   o ∈ cands i ∧
   ∀ o' ∈ cands i, o' ≠ o →
-    LexStrictlyBetter
-      (fun k : Fin n => vp i o (σ k))
-      (fun k : Fin n => vp i o' (σ k))
+    toLex (fun k : Fin n => vp i o (σ k)) <
+    toLex (fun k : Fin n => vp i o' (σ k))
 
 instance (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
     (σ : Equiv.Perm (Fin n)) (i : Input) (o : Output) :
@@ -390,7 +389,7 @@ end PartialOrderConstraints
 -- ============================================================================
 
 /-! For binary candidate sets `cands i = {chosen, other}`, `PicksAt σ i chosen`
-reduces to `LexStrictlyBetter (vp i chosen ∘ σ) (vp i other ∘ σ)` (the
+reduces to lex domination of `vp i chosen ∘ σ` over `vp i other ∘ σ` (the
 ∀-quantifier collapses to a single check). And that lex predicate is exactly
 "the highest-ranked constraint in the distinguishing set `D` favors `chosen`"
 — i.e., `head of permDList σ D ∈ Y` where `D = {k : vp chosen k ≠ vp other k}`
@@ -417,7 +416,7 @@ variable {Input : Type*} {n : ℕ}
 
     The bridge uses `permDList_head_eq_some_iff` + `permToList_split_at` +
     `permToList_eq_append_cons_imp_apply` (substrate) to translate
-    between LexStrictlyBetter's `∃k` form and the head-in-Y characterization. -/
+    between the lex `∃k` form and the head-in-Y characterization. -/
 theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Output]
     (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
     (i : Input) (chosen other : Output)
@@ -428,11 +427,11 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
       (permDList σ (Finset.univ.filter
         (fun k : Fin n => vp i chosen k ≠ vp i other k))).head? = some x := by
   classical
-  -- Step 1: PicksAt with binary cands reduces to LexStrictlyBetter on chosen vs other
+  -- Step 1: PicksAt with binary cands reduces to lex domination of chosen over other
   have h_picksAt_iff_lex :
       PicksAt cands vp σ i chosen ↔
-      HarmonicGrammar.LexStrictlyBetter
-        (fun k => vp i chosen (σ k)) (fun k => vp i other (σ k)) := by
+      ∃ k : Fin n, (∀ j, j < k → vp i chosen (σ j) = vp i other (σ j)) ∧
+        vp i chosen (σ k) < vp i other (σ k) := by
     unfold PicksAt
     constructor
     · rintro ⟨_, h_lex⟩
@@ -447,7 +446,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
       · exact absurd h h_o'_ne
       · subst h; exact h_lex
   rw [h_picksAt_iff_lex]
-  -- Step 2: LexStrictlyBetter ↔ head-in-Y characterization
+  -- Step 2: lex domination ↔ head-in-Y characterization
   set D := Finset.univ.filter (fun k : Fin n => vp i chosen k ≠ vp i other k) with hD_def
   set Y := Finset.univ.filter (fun k : Fin n => vp i chosen k < vp i other k) with hY_def
   have h_D_iff : ∀ k, k ∈ D ↔ vp i chosen k ≠ vp i other k := by
@@ -455,7 +454,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
   have h_Y_iff : ∀ k, k ∈ Y ↔ vp i chosen k < vp i other k := by
     intro k; simp [hY_def]
   constructor
-  · -- LexStrictlyBetter → head-in-Y
+  · -- lex domination → head-in-Y
     rintro ⟨k, h_below, h_lt⟩
     have h_σk_Y : σ k ∈ Y := (h_Y_iff (σ k)).mpr h_lt
     have h_σk_D : σ k ∈ D := (h_D_iff (σ k)).mpr (Nat.ne_of_lt h_lt)
@@ -477,7 +476,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
       rw [Fin.lt_def, ← h_idx_eq]; exact h_idx_lt_k
     rw [← h_σj]
     exact h_below_notD j h_j_lt_k
-  · -- head-in-Y → LexStrictlyBetter
+  · -- head-in-Y → lex domination
     rintro ⟨x, hx_Y, h_head⟩
     rw [permDList_head_eq_some_iff] at h_head
     obtain ⟨h_x_D, pre, suf, h_split, h_pre⟩ := h_head

@@ -157,8 +157,7 @@ theorem weightMap_eq_weightedViolations {n : Nat}
     homomorphism (preserves ⊕ conditionally).
 
     The proof delegates to `lex_imp_lower_violations` from `OTLimit.lean`,
-    which we can invoke directly because `LexStrictlyBetter` is
-    definitionally equal to `<` on `ViolationProfile n`. -/
+    which is stated over `<` on `ViolationProfile` directly. -/
 theorem weightMap_strictMono {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (hw : ExponentiallySeparated w M)
     (a b : ViolationProfile n)
