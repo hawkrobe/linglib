@@ -12,7 +12,7 @@ of output y given input x as:
 
   `Pr(y|x) = exp(Σ wᵢfᵢ(y,x)) / Z(x)`
 
-This IS `softmax(harmonyScoreR constraints, 1)` — the same `softmax` from
+This IS `softmax(harmonyScore constraints, 1)` — the same `softmax` from
 `Core.Agent.RationalAction` used throughout linglib for RSA pragmatics.
 The phonology–pragmatics connection is structural: both are log-linear
 models over weighted features, differing only in what the features measure.
@@ -50,14 +50,14 @@ open Core.Optimization Constraints HarmonicGrammar Core Finset Real
 -- ============================================================================
 
 /-- [goldwater-johnson-2003] eq (1) is `MaxEntGrammar.prob` by
-    definition — both are `softmax(harmonyScoreR, 1)`.
+    definition — both are `softmax(harmonyScore, 1)`.
 
     The same `softmax` function powers RSA pragmatic reasoning
     (`Core.Agent.RationalAction`): both phonological grammar and
     pragmatic inference are log-linear models over weighted features. -/
 theorem eq1_is_softmax {I O : Type} [Fintype O] [Nonempty O]
     (g : MaxEntGrammar I O) (i : I) (o : O) :
-    g.prob i o = softmax (fun o' => harmonyScoreR g.constraints (i, o')) o := rfl
+    g.prob i o = softmax (fun o' => harmonyScore g.constraints (i, o')) o := rfl
 
 -- ============================================================================
 -- § 2: Log-Likelihood and Concavity
@@ -157,6 +157,8 @@ theorem wolof_pos (i : Fin 5) : 0 < wolofWeights i := by
     produces `ExponentiallySeparated` weights. -/
 theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
   refine ⟨wolof_pos, fun k => ?_⟩
-  fin_cases k <;> native_decide
+  fin_cases k <;>
+    simp +decide only [wolofWeights, one_mul, Finset.sum_filter, Fin.sum_univ_five, Fin.isValue] <;>
+    norm_num
 
 end GoldwaterJohnson2003

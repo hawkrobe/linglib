@@ -99,8 +99,8 @@ theorem lse_aggregator_tendsto_winner_harmony {C : Type*} [DecidableEq C]
       (fun i : Fin ranking.length => (ranking.get i).eval c_opt)
       (fun i : Fin ranking.length => (ranking.get i).eval c)) :
     Tendsto (fun α : ℝ =>
-        lseFinset α cands (harmonyScoreR (otToWeighted ranking M))) atTop
-      (𝓝 (harmonyScoreR (otToWeighted ranking M) c_opt)) := by
+        lseFinset α cands (harmonyScore (otToWeighted ranking M))) atTop
+      (𝓝 (harmonyScore (otToWeighted ranking M) c_opt)) := by
   have hne : cands.Nonempty := ⟨c_opt, hc_opt⟩
   apply (argmax_winner_iff_lse_max_limit hne hc_opt).mp
   intro c' hc'

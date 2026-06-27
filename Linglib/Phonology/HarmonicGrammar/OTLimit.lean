@@ -313,9 +313,11 @@ private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → �
 private lemma harmonyScore_otToWeighted_eq {C : Type*}
     (ranking : List (NamedConstraint C)) (M : Nat) (c : C) :
     harmonyScore (otToWeighted ranking M) c =
-    -(weightedViolations (expWeights ranking.length M)
-      (fun i : Fin ranking.length => (ranking.get i).eval c)) := by
-  rw [harmonyScore_eq_neg_sum, neg_inj, weightedViolations]
+    -((weightedViolations (expWeights ranking.length M)
+      (fun i : Fin ranking.length => (ranking.get i).eval c) : ℚ) : ℝ) := by
+  rw [harmonyScore_eq_cast, neg_inj]
+  norm_cast
+  rw [weightedViolations]
   simp only [otToWeighted]
   rw [map_mapIdx_sum, mapIdx_sum_eq_fin_sum]
   simp only [expWeights]
@@ -331,16 +333,13 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
     (hlex : LexStrictlyBetter
       (fun i : Fin ranking.length => (ranking.get i).eval a)
       (fun i : Fin ranking.length => (ranking.get i).eval b)) :
-    harmonyScoreR (otToWeighted ranking M) a >
-    harmonyScoreR (otToWeighted ranking M) b := by
-  simp only [harmonyScoreR, gt_iff_lt]
-  have hlt : harmonyScore (otToWeighted ranking M) b <
-      harmonyScore (otToWeighted ranking M) a := by
-    rw [harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff]
-    exact lex_imp_lower_violations _ M _ _
-      (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
-      (expWeights_separated ranking.length M hM) hlex
-  exact_mod_cast hlt
+    harmonyScore (otToWeighted ranking M) a >
+    harmonyScore (otToWeighted ranking M) b := by
+  rw [gt_iff_lt, harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff,
+    Rat.cast_lt]
+  exact lex_imp_lower_violations _ M _ _
+    (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
+    (expWeights_separated ranking.length M hM) hlex
 
 -- ============================================================================
 -- § 5: MaxEnt → OT Limit
@@ -357,10 +356,10 @@ theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C))
     (c_opt : C)
     (h_opt : ∀ c, c ≠ c_opt →
-      harmonyScoreR constraints c < harmonyScoreR constraints c_opt) :
+      harmonyScore constraints c < harmonyScore constraints c_opt) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (α • harmonyScoreR constraints) c_opt - 1| < ε :=
-  softmax_argmax_limit (harmonyScoreR constraints) c_opt h_opt
+      |softmax (α • harmonyScore constraints) c_opt - 1| < ε :=
+  softmax_argmax_limit (harmonyScore constraints) c_opt h_opt
 
 /-- **MaxEnt → OT limit** ([smolensky-legendre-2006]): as α → ∞,
     MaxEnt probability concentrates on the OT winner.
@@ -380,7 +379,7 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
       (fun i : Fin ranking.length => (ranking.get i).eval c_opt)
       (fun i : Fin ranking.length => (ranking.get i).eval c)) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (α • harmonyScoreR (otToWeighted ranking M)) c_opt - 1| < ε := by
+      |softmax (α • harmonyScore (otToWeighted ranking M)) c_opt - 1| < ε := by
   apply softmax_argmax_limit
   intro c hc
   exact ot_lex_imp_higher_harmony ranking M hM c_opt c

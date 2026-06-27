@@ -1,135 +1,62 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Phonology.Constraints.Defs
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.Ring
 
 /-!
-# Weighted Constraints — Generic Foundation
+# Weighted constraints and harmony
 
-The shared foundation for any constraint framework that assigns numerical
-**weights** to constraints and aggregates them into a single scalar score:
-- Harmonic Grammar [smolensky-legendre-2006]
-- MaxEnt [goldwater-johnson-2003]
-- Noisy HG [boersma-pater-2016]
-- Normal MaxEnt [flemming-2021]
+The Harmonic Grammar layer over `Constraints.NamedConstraint`: a
+`WeightedConstraint` is a named constraint plus a rational weight, and the
+**harmony** of a candidate is the negated weighted sum of its violations,
+`H(c) = -Σⱼ wⱼ · Cⱼ(c)` [smolensky-legendre-2006].
 
-A `WeightedConstraint C` extends `NamedConstraint C` (from `Constraints.Defs`)
-with a rational `weight`. The `harmonyScore` of a candidate is the negated
-weighted sum of its violations: `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
+## Main definitions
 
-These definitions are framework-agnostic — they make no commitment to
-phonology, syntax, or any specific candidate type. Aggregator/Chooser
-modules in `Core.Optimization.*` consume them; framework-specific wrappers
-(MaxEnt, NHG, ...) live in their respective theory directories.
+* `WeightedConstraint C` — a `NamedConstraint C` plus a rational `weight`.
+* `harmonyScore` — the harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` (real-valued).
+* `harmonyDominates` — the strict harmony order on candidates (pullback of `<`).
 -/
 
 namespace Constraints
 
--- ============================================================================
--- § 1: Weighted Constraints
--- ============================================================================
+/-! ### Weighted constraints -/
 
-/-- A weighted constraint over candidates of type `C`.
-    Extends `NamedConstraint C` with a rational-valued weight. -/
+/-- A weighted constraint over candidates of type `C`. -/
 structure WeightedConstraint (C : Type*) extends NamedConstraint C where
   /-- Constraint weight (higher = more important). -/
   weight : ℚ
 
-variable {C : Type*}
+variable {C : Type*} (cs : List (WeightedConstraint C)) (c a b : C)
 
-/-- Harmony score: `H(c) = -Σⱼ wⱼ · Cⱼ(c)` (rational, computable).
+/-! ### Harmony -/
 
-    Negative because violations are penalized. With `wⱼ ≥ 0`, harmony
-    decreases monotonically as a candidate accumulates violations. -/
-def harmonyScore (constraints : List (WeightedConstraint C)) (c : C) : ℚ :=
-  constraints.foldl (λ acc con => acc - con.weight * (con.eval c : ℚ)) 0
+/-- Harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]): higher is more
+    grammatical. Real-valued for the `softmax` / `predict` API; weights are the
+    exact rationals cast pointwise into `ℝ`. -/
+def harmonyScore : ℝ := -(cs.map fun con => (con.weight : ℝ) * con.eval c).sum
 
-/-- A left-fold of subtractions telescopes to the initial value minus the
-    mapped sum. The shared algebraic identity behind `harmonyScore`. -/
-private theorem foldl_sub {α : Type*} (f : α → ℚ) (l : List α) (init : ℚ) :
-    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
-  induction l generalizing init with
+/-- `harmonyScore` as a negated `List.sum` — exposes the sum for `push_cast`
+    to the rational weighted-violation machinery. -/
+theorem harmonyScore_eq_neg_sum :
+    harmonyScore cs c = -(cs.map fun con => (con.weight : ℝ) * con.eval c).sum := rfl
+
+/-- `harmonyScore` is the real cast of the *rational* weighted sum — the bridge
+    for exact (ℚ) weighted-violation reasoning (`OTLimit`, `Separability`). -/
+theorem harmonyScore_eq_cast :
+    harmonyScore cs c = -((cs.map fun con => con.weight * (con.eval c : ℚ)).sum : ℝ) := by
+  simp only [harmonyScore, neg_inj]
+  induction cs with
   | nil => simp
-  | cons x xs ih => simp only [List.foldl_cons, List.map_cons, List.sum_cons, ih, sub_sub]
+  | cons x xs ih => simp only [List.map_cons, List.sum_cons, ih]; push_cast; ring
 
-/-- `harmonyScore` as a negated `List.sum`: `H(c) = -Σⱼ wⱼ · Cⱼ(c)`. Exposes
-    the score's `List.sum` structure so HG/MaxEnt/NHG proofs reason with
-    `List.sum` algebra instead of re-deriving the defining fold. -/
-theorem harmonyScore_eq_neg_sum
-    (constraints : List (WeightedConstraint C)) (c : C) :
-    harmonyScore constraints c =
-      -(constraints.map (fun con => con.weight * (con.eval c : ℚ))).sum := by
-  rw [harmonyScore, foldl_sub, zero_sub]
-
-/-- Harmony score as a real number, for interfacing with `softmax` and
-    other ℝ-valued machinery (rate-distortion bounds, `Real.exp`, etc.). -/
-noncomputable def harmonyScoreR
-    (constraints : List (WeightedConstraint C)) (c : C) : ℝ :=
-  (harmonyScore constraints c : ℝ)
-
--- ============================================================================
--- § 2: ℚ ↔ ℝ Cast Lemmas
--- ============================================================================
-
-/-! `harmonyScoreR` is just `(harmonyScore : ℝ)`. The lemmas below let
-study files state ranking facts in the computable ℚ world (where
-`decide` works) and lift them to the ℝ world where the
-softmax / `predict` API lives, without writing the
-`show (harmonyScore _ : ℝ) < … from by exact_mod_cast …` boilerplate. -/
-
-/-- The defining cast equation for `harmonyScoreR`: it is just the
-    real-valued cast of `harmonyScore`. -/
-theorem harmonyScoreR_eq_cast
-    (constraints : List (WeightedConstraint C)) (c : C) :
-    harmonyScoreR constraints c = (harmonyScore constraints c : ℝ) := rfl
-
-/-- `<` lifts from ℚ-valued `harmonyScore` to ℝ-valued `harmonyScoreR`. -/
-theorem harmonyScoreR_lt_iff_harmonyScore_lt
-    (constraints : List (WeightedConstraint C)) (a b : C) :
-    harmonyScoreR constraints a < harmonyScoreR constraints b ↔
-    harmonyScore constraints a < harmonyScore constraints b := by
-  unfold harmonyScoreR; exact Rat.cast_lt (K := ℝ)
-
-/-- `=` lifts from ℚ-valued `harmonyScore` to ℝ-valued `harmonyScoreR`. -/
-theorem harmonyScoreR_eq_iff_harmonyScore_eq
-    (constraints : List (WeightedConstraint C)) (a b : C) :
-    harmonyScoreR constraints a = harmonyScoreR constraints b ↔
-    harmonyScore constraints a = harmonyScore constraints b := by
-  unfold harmonyScoreR; exact (Rat.cast_injective (α := ℝ)).eq_iff
-
--- ============================================================================
--- § 3: Harmony Comparison Predicate
--- ============================================================================
-
-/-- `a` strictly dominates `b` in harmony when `H(a) > H(b)`.
-
-    A computable, decidable shorthand for the common pattern of
-    discharging score-comparison facts by `decide`
-    before lifting to the ℝ-valued `harmonyScoreR` for use with `softmax`.
-
-    Naming note: this is a strict harmony ordering, not a probability-mass
-    claim. Higher harmony does imply higher MaxEnt probability *under a
-    fixed partition function* (since `exp` is monotone), but mass-
-    distribution content (ganging, free-variation rates) is not captured
-    by a strict predicate. -/
-def harmonyDominates
-    (constraints : List (WeightedConstraint C)) (a b : C) : Prop :=
-  harmonyScore constraints a > harmonyScore constraints b
-
-instance (constraints : List (WeightedConstraint C)) (a b : C) :
-    Decidable (harmonyDominates constraints a b) :=
-  inferInstanceAs (Decidable (harmonyScore constraints a > harmonyScore constraints b))
-
-/-- Lift a `harmonyDominates` ranking fact (a ℚ-level harmony comparison,
-    typically discharged by `decide`) into the ℝ-level harmony comparison
-    required by `predict_softmax_lt_of_score_lt`.
-
-    Argument-order note: `harmonyDominates _ a b` says `H(a) > H(b)`, which
-    in `<` form reads `H(b) < H(a)` — hence the conclusion places `b` on
-    the left and `a` on the right. -/
-theorem harmonyScoreR_lt_of_dominates
-    {constraints : List (WeightedConstraint C)} {a b : C}
-    (h : harmonyDominates constraints a b) :
-    harmonyScoreR constraints b < harmonyScoreR constraints a :=
-  (harmonyScoreR_lt_iff_harmonyScore_lt _ _ _).mpr h
+/-- `a` outranks `b` in harmony, `H(a) > H(b)` — the pullback of `<` along
+    `harmonyScore`. Discharged by `norm_num` after unfolding; there is no
+    `Decidable` instance (`ℝ` comparison does not reduce). -/
+def harmonyDominates : Prop := harmonyScore cs b < harmonyScore cs a
 
 end Constraints

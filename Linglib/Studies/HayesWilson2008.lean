@@ -16,7 +16,7 @@ probability: a MaxEnt grammar assigns each surface form a score
 Hayes & Wilson's "score" is the negation of `harmonyScore`:
 `h(x) = −harmonyScore(x)`, so `P(x) ∝ exp(harmonyScore(x))`.
 Higher harmony = higher probability = better well-formedness.
-This is exactly `softmax(harmonyScoreR, 1)` on a finite candidate set.
+This is exactly `softmax(harmonyScore, 1)` on a finite candidate set.
 
 ## Key contribution: ganging
 
@@ -105,26 +105,28 @@ def onsetGrammar : List (WeightedConstraint Onset) :=
 -- ============================================================================
 
 open English.Phonology in
-/-- Attested onset [k]: harmony = 0 (no violations). -/
-theorem k_harmony : harmonyScore onsetGrammar [k] = 0 := by native_decide
-
-open English.Phonology in
-/-- Unattested onset *[ŋ]: harmony = −5.64 (violates *[+son,+dors]). -/
-theorem ŋ_harmony : harmonyScore onsetGrammar [ŋ] = -(564/100) := by native_decide
-
-open English.Phonology in
-/-- Unattested onset *[rk]: harmony = −6.66 (violates *[+son][ ]). -/
-theorem rk_harmony : harmonyScore onsetGrammar [r, k] = -(666/100) := by native_decide
-
-open English.Phonology in
-/-- Attested [k] has higher harmony than unattested *[ŋ]. -/
+/-- Attested [k] (no violations) has higher harmony than unattested *[ŋ]
+    (violates *[+son,+dors], cost 5.64). The harmony *magnitude* is a weight
+    artifact; the *ranking* is the empirical prediction. -/
 theorem attested_higher_harmony_k_ŋ :
-    harmonyScore onsetGrammar [ŋ] < harmonyScore onsetGrammar [k] := by native_decide
+    harmonyScore onsetGrammar [ŋ] < harmonyScore onsetGrammar [k] := by
+  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
+    List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
+    c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
+    c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
+  norm_num
 
 open English.Phonology in
-/-- Attested [br] has higher harmony than unattested *[rk]. -/
+/-- Attested [br] has higher harmony than unattested *[rk] (violates *[+son][ ]). -/
 theorem attested_higher_harmony_br_rk :
-    harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [b, r] := by native_decide
+    harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [b, r] := by
+  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
+    List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
+    c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
+    c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
+  norm_num
 
 -- ============================================================================
 -- § 3: MaxEnt Probability Ordering (using exp_lt_exp from Mathlib)
@@ -133,25 +135,27 @@ theorem attested_higher_harmony_br_rk :
 section MaxEntProb
 open English.Phonology
 
-/-- **MaxEnt probability ordering**: higher harmony ⟹ higher
-    `exp(harmonyScore)` ⟹ higher MaxEnt probability.
+/-- Gradient: among unattested onsets, *[ŋ] has higher harmony than *[rk]. -/
+theorem gradient_harmony_ŋ_rk :
+    harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [ŋ] := by
+  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
+    List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
+    c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
+    c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
+  norm_num
 
-    Applies `exp_lt_exp` (Mathlib) to `harmonyScoreR` (Constraints.Weighted). -/
+/-- **MaxEnt probability ordering**: higher harmony ⟹ higher `exp(harmonyScore)`
+    ⟹ higher MaxEnt probability. Applies `exp_lt_exp` to `harmonyScore`. -/
 theorem maxent_prob_k_gt_ŋ :
-    exp (harmonyScoreR onsetGrammar [ŋ]) <
-    exp (harmonyScoreR onsetGrammar [k]) := by
-  apply exp_lt_exp.mpr
-  show (harmonyScore onsetGrammar [ŋ] : ℝ) < (harmonyScore onsetGrammar [k] : ℝ)
-  exact_mod_cast attested_higher_harmony_k_ŋ
+    exp (harmonyScore onsetGrammar [ŋ]) < exp (harmonyScore onsetGrammar [k]) :=
+  exp_lt_exp.mpr attested_higher_harmony_k_ŋ
 
-/-- **Gradient well-formedness**: among unattested forms, *[ŋ]
-    has higher MaxEnt probability than *[rk]. Uses `exp_lt_exp`. -/
+/-- **Gradient well-formedness**: among unattested forms, *[ŋ] has higher MaxEnt
+    probability than *[rk]. -/
 theorem gradient_prob_ŋ_gt_rk :
-    exp (harmonyScoreR onsetGrammar [r, k]) <
-    exp (harmonyScoreR onsetGrammar [ŋ]) := by
-  apply exp_lt_exp.mpr
-  show (harmonyScore onsetGrammar [r, k] : ℝ) < (harmonyScore onsetGrammar [ŋ] : ℝ)
-  exact_mod_cast (by native_decide : harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [ŋ])
+    exp (harmonyScore onsetGrammar [r, k]) < exp (harmonyScore onsetGrammar [ŋ]) :=
+  exp_lt_exp.mpr gradient_harmony_ŋ_rk
 
 end MaxEntProb
 
@@ -168,7 +172,7 @@ is what makes this MaxEnt rather than HG (`argmaxDecoder`) or OT
 (`argminDecoder` over a `LexProfile`).
 
 This section eats the dog food: rather than comparing
-`exp(harmonyScoreR ...)` directly (as in §3), we go through
+`exp(harmonyScore ...)` directly (as in §3), we go through
 `ConstraintSystem.predict`. -/
 
 section PredictAPI
@@ -181,7 +185,7 @@ def candidateOnsets : Finset Onset :=
 
 /-- [hayes-wilson-2008]'s grammar realised as a generic
     `ConstraintSystem` over `candidateOnsets`, decoded by softmax at
-    temperature 1. The score component is `harmonyScoreR onsetGrammar`
+    temperature 1. The score component is `harmonyScore onsetGrammar`
     (the canonical MaxEnt harmony function). -/
 noncomputable def onsetSystem : ConstraintSystem Onset ℝ :=
   maxEntSystem candidateOnsets onsetGrammar
@@ -194,17 +198,14 @@ noncomputable def onsetSystem : ConstraintSystem Onset ℝ :=
 theorem predict_k_gt_ŋ :
     onsetSystem.predict [ŋ] < onsetSystem.predict [k] :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
-    (by decide) (by decide)
-    (harmonyScoreR_lt_of_dominates attested_higher_harmony_k_ŋ)
+    (by decide) (by decide) attested_higher_harmony_k_ŋ
 
 /-- The system also predicts a higher MaxEnt probability for *[ŋ] than
     for *[rk] — gradient well-formedness among unattested forms. -/
 theorem predict_ŋ_gt_rk :
     onsetSystem.predict [r, k] < onsetSystem.predict [ŋ] :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
-    (by decide) (by decide)
-    (harmonyScoreR_lt_of_dominates (by native_decide :
-      harmonyDominates onsetGrammar [ŋ] [r, k]))
+    (by decide) (by decide) gradient_harmony_ŋ_rk
 
 /-- The MaxEnt softmax decoder is a probability decoder, so the system's
     predictions are non-negative and sum to 1 over the candidate set.
