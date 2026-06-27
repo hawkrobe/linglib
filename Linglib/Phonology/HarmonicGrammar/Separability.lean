@@ -46,10 +46,10 @@ property (the backward direction).
 ## Bridge to List-based API (§11)
 
 The bridge theorems connect the Fin-indexed separability theory to the
-List-based MaxEnt API (`harmonyScore`/`harmonyScoreR` from `Basic.lean`):
+List-based MaxEnt API (`harmonyScore`/`harmonyScore` from `Basic.lean`):
 
 - `harmonyScoreR_as_finsum`: converts List-based harmony to Fin-indexed sum
-- `exp_harmonyScoreR_eq_me_separable`: `exp(harmonyScoreR) = meSeparable.eval`
+- `exp_harmonyScoreR_eq_me_separable`: `exp(harmonyScore) = meSeparable.eval`
 - `maxent_logit_as_finsum`: MaxEnt logit = weighted violation difference sum
 
 These enable applying separability results (independence → HZ, rescaling)
@@ -411,14 +411,14 @@ theorem inverse_not_always_hz :
 -- § 11: Bridge — List-Based MaxEnt ↔ Separable Harmony
 -- ============================================================================
 
--- The List-based MaxEnt API (`harmonyScore`, `harmonyScoreR` from Basic.lean)
+-- The List-based MaxEnt API (`harmonyScore`, `harmonyScore` from Basic.lean)
 -- and the Fin-indexed separability theory (`SeparableHarmony`, `meSeparable`)
 -- compute the same thing for MaxEnt grammars. These bridge theorems make the
 -- connection formal, enabling separability results (independence → HZ,
 -- constraint rescaling) to be applied to any `WeightedConstraint` list.
 
-private lemma list_map_sum_eq_finsum {α : Type*} (l : List α) (f : α → ℚ) :
-    (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
+private lemma list_map_sum_eq_finsum {α M : Type*} [AddCommMonoid M] (l : List α)
+    (f : α → M) : (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
   induction l with
   | nil => simp
   | cons head tail ih =>
@@ -428,7 +428,7 @@ private lemma list_map_sum_eq_finsum {α : Type*} (l : List α) (f : α → ℚ)
            (fun j : Fin (tail.length + 1) => f ((head :: tail).get j)) i
     rw [Fin.sum_univ_succ]; simp
 
-/-- **`harmonyScoreR` as a Fin-indexed weighted sum**:
+/-- **`harmonyScore` as a Fin-indexed weighted sum**:
     the List-based harmony score equals a negated Finset.sum over
     Fin-indexed constraint weights and violations.
 
@@ -436,20 +436,17 @@ private lemma list_map_sum_eq_finsum {α : Type*} (l : List α) (f : α → ℚ)
     theory to concrete `WeightedConstraint` lists. -/
 theorem harmonyScoreR_as_finsum {C : Type*}
     (constraints : List (WeightedConstraint C)) (c : C) :
-    harmonyScoreR constraints c =
+    harmonyScore constraints c =
     -(∑ i : Fin constraints.length,
       ((constraints.get i).weight : ℝ) * ((constraints.get i).eval c : ℝ)) := by
-  simp only [harmonyScoreR]
-  rw [harmonyScore_eq_neg_sum]
-  push_cast [list_map_sum_eq_finsum]
-  ring
+  simp only [harmonyScore, list_map_sum_eq_finsum]
 
 /-- **MaxEnt unnormalized probability is separable harmony**:
-    `exp(harmonyScoreR constraints c) = meSeparable.eval v` where
+    `exp(harmonyScore constraints c) = meSeparable.eval v` where
     weights and violations are drawn from the constraint list.
 
     Since `meSeparable.eval v = exp(-∑ wₖvₖ)` (`me_separable_eval`)
-    and `harmonyScoreR c = -∑ wₖvₖ` (`harmonyScoreR_as_finsum`),
+    and `harmonyScore c = -∑ wₖvₖ` (`harmonyScoreR_as_finsum`),
     the exponential of the List-based harmony is exactly the
     Fin-indexed separable harmony evaluation.
 
@@ -459,7 +456,7 @@ theorem harmonyScoreR_as_finsum {C : Type*}
     `WeightedConstraint` list. -/
 theorem exp_harmonyScoreR_eq_me_separable {C : Type*}
     (constraints : List (WeightedConstraint C)) (c : C) :
-    exp (harmonyScoreR constraints c) =
+    exp (harmonyScore constraints c) =
     (meSeparable constraints.length
       (fun i => ((constraints.get i).weight : ℝ))).eval
       (fun i => (constraints.get i).eval c) := by
@@ -476,8 +473,8 @@ theorem exp_harmonyScoreR_eq_me_separable {C : Type*}
     Composition: `logit_uniformity` → `harmonyScoreR_as_finsum` → algebra. -/
 theorem maxent_logit_as_finsum {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    log (softmax (harmonyScoreR constraints) a /
-         softmax (harmonyScoreR constraints) b) =
+    log (softmax (harmonyScore constraints) a /
+         softmax (harmonyScore constraints) b) =
     -(∑ i : Fin constraints.length,
       ((constraints.get i).weight : ℝ) *
       (((constraints.get i).eval a : ℝ) - ((constraints.get i).eval b : ℝ))) := by

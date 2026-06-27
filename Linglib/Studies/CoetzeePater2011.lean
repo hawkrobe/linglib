@@ -457,18 +457,12 @@ theorem nonneg_weights_preserve_ordering
     (wCT wMax wMaxPreV wMaxFin : ℚ) (hPreV : wMaxPreV ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preV, .delete⟩ := by
-  simp only [harmonyScore, mkWeightedConstraints, List.foldl,
-    starCT, mkMark, maxC, mkMax, maxPreV, mkMaxCtx, maxFinal]
-  have h1 : (TDOutput.delete == TDOutput.retain) = false := by decide
-  have h2 : (TDOutput.delete == TDOutput.delete) = true := by decide
-  have h3 : (Context.preC == Context.preV) = false := by decide
-  have h4 : (Context.preC == Context.pause) = false := by decide
-  have h5 : (Context.preV == Context.preV) = true := by decide
-  have h6 : (Context.preV == Context.pause) = false := by decide
-  simp only [h1, h2, h3, h4, h5, h6,
-    Bool.false_eq_true, and_true, and_false, ↓reduceIte,
-    Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero, zero_sub]
-  exact sub_le_self _ hPreV
+  simp only [harmonyScore, mkWeightedConstraints, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil, starCT, mkMark, maxC, mkMax, maxPreV, mkMaxCtx,
+    maxFinal, beq_iff_eq, reduceCtorEq, eq_self_iff_true, true_and, and_true,
+    ↓reduceIte, Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero,
+    zero_sub, add_zero, zero_add]
+  linarith [show (0 : ℝ) ≤ (wMaxPreV : ℝ) from by exact_mod_cast hPreV]
 
 /-- Analogously, non-negative MAX-FINAL weight ensures pre-C ≥ pause.
     H(del|preC) - H(del|pause) = wMaxFin ≥ 0. -/
@@ -476,18 +470,12 @@ theorem nonneg_weights_preserve_ordering_pause
     (wCT wMax wMaxPreV wMaxFin : ℚ) (hFin : wMaxFin ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.pause, .delete⟩ := by
-  simp only [harmonyScore, mkWeightedConstraints, List.foldl,
-    starCT, mkMark, maxC, mkMax, maxPreV, mkMaxCtx, maxFinal]
-  have h1 : (TDOutput.delete == TDOutput.retain) = false := by decide
-  have h2 : (TDOutput.delete == TDOutput.delete) = true := by decide
-  have h3 : (Context.preC == Context.preV) = false := by decide
-  have h4 : (Context.preC == Context.pause) = false := by decide
-  have h5 : (Context.pause == Context.preV) = false := by decide
-  have h6 : (Context.pause == Context.pause) = true := by decide
-  simp only [h1, h2, h3, h4, h5, h6,
-    Bool.false_eq_true, and_true, and_false, ↓reduceIte,
-    Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero, zero_sub]
-  exact sub_le_self _ hFin
+  simp only [harmonyScore, mkWeightedConstraints, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil, starCT, mkMark, maxC, mkMax, maxPreV, mkMaxCtx,
+    maxFinal, beq_iff_eq, reduceCtorEq, eq_self_iff_true, true_and, and_true,
+    ↓reduceIte, Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero,
+    zero_sub, add_zero, zero_add]
+  linarith [show (0 : ℝ) ≤ (wMaxFin : ℝ) from by exact_mod_cast hFin]
 
 /-! ### Tejano' impossibility -/
 
@@ -603,7 +591,7 @@ def aaveWeights : List (WeightedConstraint TDCandidate) :=
     the conditional probability `P(delete | ctx)`. -/
 noncomputable def aaveSystem (ctx : Context) : ConstraintSystem TDOutput ℝ where
   candidates := Finset.univ
-  score := fun o => harmonyScoreR aaveWeights ⟨ctx, o⟩
+  score := fun o => harmonyScore aaveWeights ⟨ctx, o⟩
   decoder := softmaxDecoder 1
 
 /-- In the pre-consonantal context, the AAVE system predicts deletion
@@ -613,7 +601,7 @@ theorem aave_preC_prefers_delete :
     (aaveSystem .preC).predict TDOutput.delete :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_dominates (by
+    ((by
       unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
         starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
       simp only [List.foldl, beq_iff_eq,
@@ -630,7 +618,7 @@ theorem aave_preV_prefers_retain :
     (aaveSystem .preV).predict TDOutput.retain :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_dominates (by
+    ((by
       unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
         starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
       simp only [List.foldl, beq_iff_eq,

@@ -79,7 +79,7 @@ noncomputable def nhgSigmaD {C : Type*}
     in the Gaussian RUM — *not* through Thurstone's psychophysics. -/
 noncomputable def nhgChoiceProb {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) : ℝ :=
-  gaussianChoiceProb (harmonyScoreR constraints a - harmonyScoreR constraints b)
+  gaussianChoiceProb (harmonyScore constraints a - harmonyScore constraints b)
     (nhgSigmaD constraints sigma a b)
 
 /-- NHG choice probability in closed form: `Φ((H(a) − H(b)) / σ_d)`
@@ -87,7 +87,7 @@ noncomputable def nhgChoiceProb {C : Type*}
 theorem nhg_choiceProb_eq {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) :
     nhgChoiceProb constraints sigma a b =
-    normalCDF ((harmonyScoreR constraints a - harmonyScoreR constraints b) /
+    normalCDF ((harmonyScore constraints a - harmonyScore constraints b) /
                nhgSigmaD constraints sigma a b) := by
   simp only [nhgChoiceProb, gaussianChoiceProb]
 
@@ -112,7 +112,7 @@ noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
     (`normalMaxEntSigmaD`) rather than NHG's context-dependent `σ_d`. -/
 noncomputable def normalMaxEntChoiceProb {C : Type*}
     (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (a b : C) : ℝ :=
-  gaussianChoiceProb (harmonyScoreR constraints a - harmonyScoreR constraints b)
+  gaussianChoiceProb (harmonyScore constraints a - harmonyScore constraints b)
     (normalMaxEntSigmaD epsilon)
 
 /-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
@@ -120,7 +120,7 @@ noncomputable def normalMaxEntChoiceProb {C : Type*}
 theorem normalMaxEnt_choiceProb_eq {C : Type*}
     (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (a b : C) :
     normalMaxEntChoiceProb constraints epsilon a b =
-    normalCDF ((harmonyScoreR constraints a - harmonyScoreR constraints b) /
+    normalCDF ((harmonyScore constraints a - harmonyScore constraints b) /
                normalMaxEntSigmaD epsilon) := by
   simp only [normalMaxEntChoiceProb, gaussianChoiceProb]
 
@@ -153,10 +153,10 @@ theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     Instantiation of `logit_uniformity` with harmony scores. -/
 theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    log (softmax (harmonyScoreR constraints) a /
-         softmax (harmonyScoreR constraints) b) =
-    harmonyScoreR constraints a - harmonyScoreR constraints b :=
-  logit_uniformity (harmonyScoreR constraints) a b
+    log (softmax (harmonyScore constraints) a /
+         softmax (harmonyScore constraints) b) =
+    harmonyScore constraints a - harmonyScore constraints b :=
+  logit_uniformity (harmonyScore constraints) a b
 
 /-- **Ratio independence** (IIA for MaxEnt): the probability ratio between
     two candidates depends only on their own harmony scores.
@@ -167,9 +167,9 @@ theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
     change the ratio. Corollary of `softmax_odds` with α = 1. -/
 theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    softmax (harmonyScoreR constraints) a /
-    softmax (harmonyScoreR constraints) b =
-    exp (harmonyScoreR constraints a - harmonyScoreR constraints b) := by
+    softmax (harmonyScore constraints) a /
+    softmax (harmonyScore constraints) b =
+    exp (harmonyScore constraints a - harmonyScore constraints b) := by
   rw [softmax_odds]
 
 -- ============================================================================
@@ -186,26 +186,16 @@ theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
 theorem harmonyScore_diff {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) :
     harmonyScore constraints a - harmonyScore constraints b =
-    -(constraints.map (fun con =>
-        con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum := by
-  simp only [harmonyScore_eq_neg_sum]
-  have h_sum : ∀ (l : List (WeightedConstraint C)),
-      (l.map (fun con => con.weight * (con.eval a : ℚ))).sum -
-      (l.map (fun con => con.weight * (con.eval b : ℚ))).sum =
-      (l.map (fun con => con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum := by
-    intro l
-    induction l with
-    | nil => simp
-    | cons _ _ ih => simp only [List.map, List.sum_cons]; linarith
-  linarith [h_sum constraints]
-
-/-- Harmony difference decomposition in ℝ. -/
-theorem harmonyScoreR_diff {C : Type*}
-    (constraints : List (WeightedConstraint C)) (a b : C) :
-    harmonyScoreR constraints a - harmonyScoreR constraints b =
     -((constraints.map (fun con =>
         con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum : ℝ) := by
-  simp only [harmonyScoreR, ← Rat.cast_sub, harmonyScore_diff, Rat.cast_neg]
+  have h_sum : (constraints.map (fun con => con.weight * (con.eval a : ℚ))).sum -
+      (constraints.map (fun con => con.weight * (con.eval b : ℚ))).sum =
+      (constraints.map (fun con => con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum := by
+    induction constraints with
+    | nil => simp
+    | cons _ _ ih => simp only [List.map, List.sum_cons]; linarith
+  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, ← h_sum]
+  push_cast; ring
 
 -- ============================================================================
 -- § 6: Censored NHG ([flemming-2021] §7.3)

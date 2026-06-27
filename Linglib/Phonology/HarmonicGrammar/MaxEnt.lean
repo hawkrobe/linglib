@@ -66,7 +66,7 @@ structure MaxEntGrammar (Input Output : Type*) where
     constraints. Uses `softmax` from `RationalAction` with α = 1. -/
 noncomputable def MaxEntGrammar.prob {I O : Type*} [Fintype O]
     (g : MaxEntGrammar I O) (i : I) (o : O) : ℝ :=
-  softmax (λ o' => harmonyScoreR g.constraints (i, o')) o
+  softmax (λ o' => harmonyScore g.constraints (i, o')) o
 
 -- ============================================================================
 -- § 2: Systemic Constraints
@@ -126,18 +126,18 @@ noncomputable def systemicScoreR {n : Nat} {O : Type*}
     H_joint(f) = Σᵢ H_classical(iᵢ, f(i)) + Σₖ (-wₖ · Sₖ(f))
 
     where `f : Fin n → O` is the full output tuple. -/
-def jointHarmonyScore {n : Nat} {I O : Type*}
+noncomputable def jointHarmonyScore {n : Nat} {I O : Type*}
     (inputs : Fin n → I)
     (classicalConstraints : List (WeightedConstraint (I × O)))
     (systemicConstraints : List (SystemicConstraint n O))
-    (f : Fin n → O) : ℚ :=
+    (f : Fin n → O) : ℝ :=
   let classical := (List.finRange n).foldl
     (λ acc i => acc + harmonyScore classicalConstraints (inputs i, f i)) 0
-  classical + systemicScore systemicConstraints f
+  classical + systemicScoreR systemicConstraints f
 
 /-- MaxEnt grammar with systemic constraints as a `CoupledSoftmax`.
 
-    - `componentScore i v = harmonyScoreR(classicalConstraints, (inputs i, v))`
+    - `componentScore i v = harmonyScore(classicalConstraints, (inputs i, v))`
     - `couplingScore f = systemicScoreR(systemicConstraints, f)`
 
     The joint probability is `softmax(totalScore, 1)` over all `Fin n → O`
@@ -149,7 +149,7 @@ noncomputable def maxEntCoupled {n : Nat} {I O : Type*} [Fintype O] [DecidableEq
     (systemicConstraints : List (SystemicConstraint n O)) :
     Core.CoupledSoftmax (Fin n) O :=
   Core.coupledSoftmaxOfMaxEnt inputs
-    (fun p => harmonyScoreR classicalConstraints p)
+    (fun p => harmonyScore classicalConstraints p)
     (fun f => systemicScoreR systemicConstraints f)
 
 /-- Marginal probability: marginalize the joint distribution to get
@@ -204,7 +204,7 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type*}
     (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
     (i : Fin n) (o : O) :
     marginalProb inputs classicalConstraints systemicConstraints i o =
-    softmax (λ o' => harmonyScoreR classicalConstraints (inputs i, o')) o :=
+    softmax (λ o' => harmonyScore classicalConstraints (inputs i, o')) o :=
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
     ⟨0, systemicScoreR_zero h_zero⟩ i o
 
@@ -222,7 +222,7 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type*}
 noncomputable def MaxEntGrammar.toSystem {I O : Type*} [Fintype O]
     (g : MaxEntGrammar I O) (i : I) : ConstraintSystem O ℝ where
   candidates := Finset.univ
-  score := fun o => harmonyScoreR g.constraints (i, o)
+  score := fun o => harmonyScore g.constraints (i, o)
   decoder := softmaxDecoder 1
 
 /-- The legacy `MaxEntGrammar.prob` agrees with the generic
@@ -243,7 +243,7 @@ namespace Constraints
 open Core.Optimization
 
 /-- Build a MaxEnt Harmonic Grammar system over a finite candidate set: the
-    harmony score `harmonyScoreR constraints c = -Σⱼ wⱼ · Cⱼ(c)`, soft-decoded
+    harmony score `harmonyScore constraints c = -Σⱼ wⱼ · Cⱼ(c)`, soft-decoded
     at temperature `α`. As `α → ∞`, `softmaxDecoder` converges to hard `argmax`
     (deterministic HG; see `softmax_argmax_limit` in `Core.Agent.RationalAction`).
     The default `α = 1` matches [goldwater-johnson-2003]'s MaxEnt formulation. -/
@@ -252,7 +252,7 @@ noncomputable def maxEntSystem {Cand : Type*}
     (α : ℝ := 1) :
     ConstraintSystem Cand ℝ where
   candidates := candidates
-  score := harmonyScoreR constraints
+  score := harmonyScore constraints
   decoder := softmaxDecoder α
 
 end Constraints
