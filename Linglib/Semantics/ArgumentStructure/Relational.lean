@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Quantification
+import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Possessives and relational nouns

@@ -1816,7 +1816,6 @@ import Linglib.Semantics.Probabilistic.SDS.ConceptNode
 import Linglib.Semantics.Probabilistic.SDS.GraphicalModel
 import Linglib.Semantics.Probabilistic.SDS.JointPosterior
 import Linglib.Semantics.Probabilistic.SDS.ScenarioMix
-import Linglib.Semantics.Quantification
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Quantification.BinominalDefs

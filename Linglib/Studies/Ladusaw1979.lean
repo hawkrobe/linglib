@@ -1,4 +1,3 @@
-import Linglib.Semantics.Quantification
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Quantification.Quantifier
