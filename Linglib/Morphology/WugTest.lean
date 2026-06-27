@@ -67,13 +67,13 @@ mutually incompatible on cells with a non-vacuous factor space, so a
 study that adopts a typed `Cell` can pose the discrimination as a
 single bridge theorem at any factor type with `[LT]`.
 
-## Bridge to `Phonology/ItemSpecificity/HasTokenFreq`
+## Bridge to a lexical frequency channel
 
-`HasTokenFreq` (in `Phonology/ItemSpecificity/Defs.lean`) is
-a *getter-only* class on fragment lexical entries — fragments are
-immutable data, so there is no setter. `HasFactor Cell ℝ` is a *lens*
-on paradigm cells, which the paradigm-level predicates below need to
-quantify over swapping a frequency without touching other factors.
+A fragment's token-frequency channel (plain `α → ℝ` data on lexical
+entries, e.g. `Japanese.Prosody.jTokenFreq`) is a *getter* — fragments
+are immutable data. `HasFactor Cell ℝ` is a *lens* on paradigm cells,
+which the paradigm-level predicates below need in order to quantify
+over swapping a frequency without touching other factors.
 
 Wug cells that wrap a fragment lexical entry typically store the
 manipulable factor as a separate field (e.g. `WugBKKCell.n2LogFreq`)
@@ -81,7 +81,7 @@ that **mirrors** the entry's `tokenLogFreq` for attested items and
 ranges freely on novel items. This is the right architecture for an
 experimental paradigm: the cell-level factor IS the experimentally
 manipulated value, not the lexicon-derived one. The connection to
-`HasTokenFreq` is by intent (downstream theories test whether the
+the frequency channel is by intent (downstream theories test whether the
 cell-level factor predicts the rate observable, with the cell-level
 factor *originating* in the lexicon channel for attested items), not
 by an automatic instance.
