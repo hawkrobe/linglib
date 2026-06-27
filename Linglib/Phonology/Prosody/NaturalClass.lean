@@ -39,9 +39,7 @@ namespace Prosody
 
 open Phonology (Segment)
 
--- ============================================================================
--- § 1: Natural Class Type
--- ============================================================================
+/-! ### Natural class -/
 
 /-- Natural-class partition for the 8-level Parker sonority scale.
     Refines the Clements 6-level hierarchy by splitting obstruents
@@ -64,9 +62,7 @@ def NatClass.parkerSonority : NatClass → Nat
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
--- ============================================================================
--- § 2: Segment Classification
--- ============================================================================
+/-! ### Segment classification -/
 
 /-- Classify a segment into the Parker 8-level scale.
     Follows the feature decomposition of `Sonority` but additionally
@@ -87,9 +83,7 @@ def natClassOf (s : Segment) : NatClass :=
 def parkerSonorityOf (s : Segment) : Nat :=
   (natClassOf s).parkerSonority
 
--- ============================================================================
--- § 3: Verification
--- ============================================================================
+/-! ### Bridge to the sonority hierarchy -/
 
 /-- Map NatClass to the abstract `Sonority`. This collapses the Parker
     voicing distinction within obstruents (vls/vds → stop, vlf/vdf → fricative),
