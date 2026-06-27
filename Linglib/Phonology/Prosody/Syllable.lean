@@ -4,35 +4,35 @@ import Linglib.Phonology.Segment
 /-!
 # Syllable structure
 
-Syllable constituency (onset–nucleus–coda), the sonority scale, and moraic
-weight, following the syllable chapter of *The Handbook of Phonological Theory*
+The syllable as a phonological object — sonority, constituency, and weight —
+following the syllable chapter of *The Handbook of Phonological Theory*
 ([goldsmith-2011]) and [hayes-2009].
 
 ## Main definitions
 
-* `SonorityRank` — the abstract sonority hierarchy, ordered as a `LinearOrder`.
-* `sonorityOf` — grounds a `Segment` in `SonorityRank` via its features.
-* `Syllable` — an onset–nucleus–coda triple.
-* `SyllWeight`, `Syllable.weight` — syllable weight as a mora count.
+* `Sonority` — the abstract sonority hierarchy (a `LinearOrder`);
+  `Sonority.ofSegment` grounds a `Segment` in it via its features.
+* `Syllable` — an onset–nucleus–coda triple, with `Syllable.moraCount`,
+  `Syllable.weight`, and the nested weight object `Syllable.Weight`.
+* `SyllabifiedForm` — a word parsed into syllables.
 
 ## Implementation notes
 
-Following [berent-2026], the sonority hierarchy is an abstract ordered type
-rather than a bundle of articulatory features: the synchronic grammar operates
-on the ordering alone, and the correlation with phonetic features ([±sonorant],
-[±approximant], …) is a diachronic fact. `sonorityOf` is the only place those
-features enter.
+Following [berent-2026], sonority is an abstract ordered type rather than a
+bundle of articulatory features: the grammar operates on the ordering alone,
+and `Sonority.ofSegment` is the only place phonetic features ([±sonorant],
+[±approximant], …) enter.
 -/
 
 namespace Prosody
 
 open Phonology (Segment)
 
-/-! ### Sonority scale -/
+/-! ### Sonority -/
 
 /-- The abstract sonority hierarchy: what the synchronic grammar operates on.
 
-    | Rank | Category  |
+    | Rank | Class     |
     |------|-----------|
     |  0   | Stop      |
     |  1   | Fricative |
@@ -44,7 +44,7 @@ open Phonology (Segment)
     The six levels follow [clements-1990]'s refinement of the basic 5-class
     hierarchy (splitting obstruents by [±continuant]); see
     `NatClass.parkerSonority` for the finer 8-level Parker scale. -/
-inductive SonorityRank where
+inductive Sonority where
   | stop
   | fricative
   | nasal
@@ -53,30 +53,19 @@ inductive SonorityRank where
   | vowel
   deriving DecidableEq, Repr
 
-namespace SonorityRank
+namespace Sonority
 
 /-- Numeric rank (0 = least sonorous). -/
-def rank : SonorityRank → Nat
+def rank : Sonority → Nat
   | .stop => 0 | .fricative => 1 | .nasal => 2
   | .liquid => 3 | .glide => 4 | .vowel => 5
 
-/-- `SonorityRank.rank` is injective. -/
-theorem rank_injective : Function.Injective SonorityRank.rank :=
-  fun a b h => by cases a <;> cases b <;> simp_all [SonorityRank.rank]
+instance : LinearOrder Sonority :=
+  LinearOrder.lift' rank fun a b h => by cases a <;> cases b <;> simp_all [rank]
 
-/-- The linear order on sonority ranks, lifted from the numeric ranking. -/
-instance : LinearOrder SonorityRank :=
-  LinearOrder.lift' SonorityRank.rank rank_injective
-
-end SonorityRank
-
-/-- Ground a segment in the sonority hierarchy by its phonetic features.
-
-    Following [hayes-2009], the hierarchy is decomposed by four features
-    ([±sonorant] > [±approximant] > [±consonantal] > [±syllabic]), with
-    [clements-1990]'s refinement splitting obstruents by [±continuant]. This is
-    the only bridge from phonetic substance to the abstract `SonorityRank`. -/
-def sonorityOf (s : Segment) : SonorityRank :=
+/-- The sonority of a segment, read off its phonetic features
+    ([hayes-2009], [clements-1990]). -/
+def ofSegment (s : Segment) : Sonority :=
   if s.HasValue .sonorant false then
     if s.HasValue .continuant true then .fricative else .stop
   else if s.HasValue .approximant false then .nasal
@@ -84,7 +73,9 @@ def sonorityOf (s : Segment) : SonorityRank :=
   else if s.HasValue .syllabic true then .vowel
   else .glide
 
-/-! ### Syllable constituents -/
+end Sonority
+
+/-! ### Syllables -/
 
 /-- A syllable: onset, nucleus, coda. -/
 structure Syllable where
@@ -92,34 +83,36 @@ structure Syllable where
   nucleus : List Segment
   coda    : List Segment
 
-/-! ### Syllable weight -/
+namespace Syllable
 
-/-- Syllable weight as a mora count. `SyllWeight` wraps the actual count rather
-    than a lossy 3-value enum, so the `MoraicSyllable → SyllWeight → PrWd`
-    pipeline preserves exact mora counts. The names `.light` (1μ), `.heavy` (2μ),
-    and `.superheavy` (3μ) abbreviate the common values. -/
-structure SyllWeight where
+/-- Syllable weight as a mora count. `Weight` wraps the actual count rather
+    than a lossy 3-value enum, so the `MoraicSyllable → Syllable.Weight → PrWd`
+    pipeline preserves exact mora counts. The names `.light` (1μ), `.heavy`
+    (2μ), and `.superheavy` (3μ) abbreviate the common values. -/
+structure Weight where
   /-- The mora count: 1μ = light (CV), 2μ = heavy (CVV, CVC),
       3μ = superheavy (CVVC, CVCC). -/
   morae : Nat
   deriving DecidableEq, Repr
 
-namespace SyllWeight
-abbrev light : SyllWeight := ⟨1⟩
-abbrev heavy : SyllWeight := ⟨2⟩
-abbrev superheavy : SyllWeight := ⟨3⟩
-end SyllWeight
+namespace Weight
+abbrev light : Weight := ⟨1⟩
+abbrev heavy : Weight := ⟨2⟩
+abbrev superheavy : Weight := ⟨3⟩
+end Weight
 
 /-- Mora count. `codaMoraic = true` means coda consonants contribute weight
     (the Weight-by-Position parameter of [hayes-1989]). -/
-def Syllable.moraCount (σ : Syllable) (codaMoraic : Bool := true) : Nat :=
+def moraCount (σ : Syllable) (codaMoraic : Bool := true) : Nat :=
   σ.nucleus.length + if codaMoraic then σ.coda.length else 0
 
 /-- Weight from the mora count. -/
-def Syllable.weight (σ : Syllable) (codaMoraic : Bool := true) : SyllWeight :=
+def weight (σ : Syllable) (codaMoraic : Bool := true) : Weight :=
   ⟨σ.moraCount codaMoraic⟩
 
-/-! ### Syllabified form -/
+end Syllable
+
+/-! ### Syllabified forms -/
 
 /-- A word parsed into syllables. -/
 structure SyllabifiedForm where

@@ -35,7 +35,7 @@ namespace Japanese.Prosody
 
 open Features.Prosody
 open _root_.Prosody (defaultAccentAAR latinStressRule accentToTones
-  LevelTone shortN2CompoundAccent longN2CompoundAccent SyllWeight)
+  LevelTone shortN2CompoundAccent longN2CompoundAccent Syllable.Weight)
 open BeckmanPierrehumbert1986
 
 -- ============================================================================
@@ -312,7 +312,7 @@ theorem si_maintains_kami_contrast :
 structure JLoanwordEntry where
   entry : JProsodicEntry
   /-- Syllable weight profile (left to right) -/
-  weights : List SyllWeight
+  weights : List Syllable.Weight
   deriving Repr
 
 /-- *kurisumasu* 'Christmas' — accent on antepenultimate mora (su).
