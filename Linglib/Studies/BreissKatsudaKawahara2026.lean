@@ -2,15 +2,14 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Linglib.Fragments.Japanese.Prosody
-import Linglib.Phonology.ParadigmUniformity.Defs
-import Linglib.Phonology.ParadigmUniformity.LexicalConservatism
-import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
+import Linglib.Phonology.Constraints.Lift
+import Linglib.Studies.Steriade1997
 import Linglib.Morphology.WugTest
 
 /-!
 # Breiss, Katsuda & Kawahara (2026): Token frequency modulates optional paradigm uniformity in Japanese voiced velar nasalisation
-[breiss-katsuda-kawahara-2026] [mccarthy-2005] [steriade-2000]
-[ito-mester-1996] [ito-mester-2003] [hibiya-1995]
+[breiss-katsuda-kawahara-2026] [mccarthy-2005] [steriade-1997]
+[kenstowicz-1996] [ito-mester-1996] [ito-mester-2003] [hibiya-1995]
 [coetzee-pater-2008] [paster-2019]
 
 The Japanese velar /g/ → [ŋ] alternation in N1+N2 nominal compounds is
@@ -58,11 +57,13 @@ PU prefers their shared segments to be alike. The PU pressure is
 *modulated* — not just on/off — by the token frequency of the N2.
 This puts the paper at the intersection of:
 
+- [kenstowicz-1996] *Base-Identity / Uniform Exponence* — the compound's
+  resemblance to its independently-attested free N2 is a Base-Identity effect,
+  the classical antecedent of the symmetric paradigm-uniformity lift.
 - [mccarthy-2005] (PU as the symmetric pairwise lift over members;
-  see `ParadigmUniformity/OptimalParadigms.lean`).
-- [steriade-2000] *Lexical Conservatism* (PU pressure is anchored
-  on attested wordforms; see
-  `ParadigmUniformity/LexicalConservatism.lean`).
+  see `Studies/McCarthy2005.lean`).
+- [steriade-1997] *Lexical Conservatism* (PU pressure is anchored
+  on attested wordforms; see `Studies/Steriade1997.lean`).
 - [coetzee-pater-2008] *Frequency-scaled weights* (the modulation
   channel — token-frequency drives a continuous weight; formalised as
   `scaledWeight` below).
@@ -78,7 +79,7 @@ two-direction story collapses to one direction in the bound case.
 ## Adjudication among rival frequency theories (the paper's §5)
 
 The companion modelling paper (Breiss, Katsuda & Kawahara,
-lingbuzz/009508) fits a MaxEnt grammar with [steriade-2000]'s
+lingbuzz/009508) fits a MaxEnt grammar with [steriade-1997]'s
 Lexical Conservatism. We do not formalise the fitting routine here.
 The paper's §5 weighs four rival accounts of token frequency in the
 grammar; only those locating it at the individual morpheme (here N2)
@@ -118,11 +119,11 @@ favouring a paradigm-anchored account.
 namespace BreissKatsudaKawahara2026
 
 open Japanese.Prosody
-open OptimalityTheory.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
+open Steriade1997 (lcParadigm mkLCFaith lc_unanchored_zero)
 open Morphology.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
   NovelShowsFreqGradient NovelInvariantInFrequency
   novelGradient_inconsistent_with_invariance)
-open Constraints OptimalityTheory
+open Constraints
 
 -- ============================================================================
 -- § 1: Real lexical entries from the paper
@@ -237,11 +238,10 @@ theorem free_zone_freq_independent :
     on the constraint — that is what makes the bound-case zero
     structural rather than stipulated.
 
-    Built via `lcParadigm` from
-    `Phonology/ParadigmUniformity/LexicalConservatism.lean`,
-    making this file a downstream consumer of the LC anchored-paradigm
+    Built via `lcParadigm` from `Studies/Steriade1997.lean`, making
+    this file a downstream consumer of the LC anchored-paradigm
     primitive. The anchor-presence channel is exactly what
-    [steriade-2000] introduced, and BKK's bound/free split is the
+    [steriade-1997] introduced, and BKK's bound/free split is the
     same architectural channel applied to a new domain. -/
 def n2Paradigm (c : JCompound) : List String :=
   lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none)
@@ -259,9 +259,8 @@ def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
   unfold stringMismatch; exact if_pos rfl
 
 /-- The PU constraint **as a `NamedConstraint`** — derived from
-    `mkLCFaith` from
-    `Phonology/ParadigmUniformity/LexicalConservatism.lean`.
-    The structural connection to [steriade-2000] is by
+    `mkLCFaith` from `Studies/Steriade1997.lean`.
+    The structural connection to [steriade-1997] is by
     *construction*: BKK's PU pressure IS LC-FAITH on the
     `lcParadigm`-built paradigm. The architectural difference from
     [mccarthy-2005] (OP) is that LC's paradigm is anchored on
