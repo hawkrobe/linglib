@@ -28,9 +28,8 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 ## Definitions
 
 - `otToWeighted`: convert OT ranking + violation bound to weighted constraints
-- `LexStrictlyBetter`: violation vector a lexicographically dominates b
 - `ExponentiallySeparated`: weight separation condition for HG–OT agreement
-- `lex_imp_harmony`: key lemma (lex dominance ⟹ higher harmony)
+- `ot_lex_imp_higher_harmony`: key lemma (lex dominance ⟹ higher harmony)
 - `maxent_ot_limit`: main limit theorem
 -/
 
@@ -40,9 +39,7 @@ open Constraints
 
 open Core Constraints Core.Optimization.Evaluation Real Finset
 
--- ============================================================================
--- § 1: OT → HG Weight Construction
--- ============================================================================
+/-! ### OT → HG weight construction -/
 
 /-- Convert an OT constraint ranking to weighted constraints.
 
@@ -70,24 +67,7 @@ theorem otToWeighted_eval {C : Type*} (ranking : List (NamedConstraint C)) (M : 
     (ranking.get i).eval c := by
   simp only [otToWeighted, List.get_eq_getElem, List.getElem_mapIdx, Fin.val_cast]
 
--- ============================================================================
--- § 2: Lexicographic Dominance (Fin n)
--- ============================================================================
-
-/-- Candidate a (violation vector va) **lexicographically beats** candidate b
-    (vb): at the first position where they differ, a has strictly fewer
-    violations.
-
-    This mirrors `Core.Optimization.Evaluation.lexLT` but on `Fin n → Nat`
-    rather than `List Nat`, enabling Finset-based reasoning. -/
-def LexStrictlyBetter {n : Nat} (va vb : Fin n → Nat) : Prop :=
-  ∃ k : Fin n,
-    (∀ i : Fin n, i < k → va i = vb i) ∧
-    va k < vb k
-
--- ============================================================================
--- § 3: Exponentially Separated Weights
--- ============================================================================
+/-! ### Exponentially separated weights -/
 
 /-- Weights are **exponentially separated** with violation bound M:
     each weight exceeds M times the sum of all lower-ranked weights.
@@ -149,9 +129,7 @@ theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
     ExponentiallySeparated (expWeights n M) M :=
   ⟨expWeights_pos n M, fun k => expWeights_bound n M hM k⟩
 
--- ============================================================================
--- § 3b: Ganging (complement of exponential separation)
--- ============================================================================
+/-! ### Ganging (complement of exponential separation) -/
 
 /-- **Ganging**: two constraints with individual weights w₁, w₂ each weaker
     than a third weight w₃, but jointly stronger.
@@ -201,9 +179,7 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
     exact Finset.sum_le_sum_of_subset_of_nonneg hsub (fun l _ _ => (hw.1 l).le)
   linarith
 
--- ============================================================================
--- § 4: HG–OT Agreement
--- ============================================================================
+/-! ### HG–OT agreement -/
 
 /-- Weighted violation sum (the positive part of harmony:
     `harmonyScore = -weightedViolations`). -/
@@ -227,9 +203,10 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (va vb : Fin n → Nat)
     (hM : ∀ i, va i ≤ M ∧ vb i ≤ M)
     (hw : ExponentiallySeparated w M)
-    (hlex : LexStrictlyBetter va vb) :
+    (hlex : toLex va < toLex vb) :
     weightedViolations w va < weightedViolations w vb := by
-  obtain ⟨k, h_agree, h_lt⟩ := hlex
+  obtain ⟨k, h_agree, h_lt⟩ :
+      ∃ k : Fin n, (∀ i, i < k → va i = vb i) ∧ va k < vb k := hlex
   simp only [weightedViolations]
   -- Suffices: 0 < Σ w_i · (vb_i − va_i)
   suffices hpos : (0 : ℝ) <
@@ -328,9 +305,8 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
     (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
     (a b : C)
     (hbound : ∀ con ∈ ranking, con.eval a ≤ M ∧ con.eval b ≤ M)
-    (hlex : LexStrictlyBetter
-      (fun i : Fin ranking.length => (ranking.get i).eval a)
-      (fun i : Fin ranking.length => (ranking.get i).eval b)) :
+    (hlex : toLex (fun i : Fin ranking.length => (ranking.get i).eval a) <
+            toLex (fun i : Fin ranking.length => (ranking.get i).eval b)) :
     harmonyScore (otToWeighted ranking M) a >
     harmonyScore (otToWeighted ranking M) b := by
   rw [gt_iff_lt, harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff]
@@ -338,9 +314,7 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
     (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
     (expWeights_separated ranking.length M hM) hlex
 
--- ============================================================================
--- § 5: MaxEnt → OT Limit
--- ============================================================================
+/-! ### MaxEnt → OT limit -/
 
 /-- **MaxEnt concentration on HG winner**: as α → ∞, MaxEnt probability
     concentrates on the candidate with the highest harmony score.
@@ -372,9 +346,9 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
     (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
     (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con.eval c ≤ M)
-    (hlex : ∀ c, c ≠ c_opt → LexStrictlyBetter
-      (fun i : Fin ranking.length => (ranking.get i).eval c_opt)
-      (fun i : Fin ranking.length => (ranking.get i).eval c)) :
+    (hlex : ∀ c, c ≠ c_opt →
+      toLex (fun i : Fin ranking.length => (ranking.get i).eval c_opt) <
+      toLex (fun i : Fin ranking.length => (ranking.get i).eval c)) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
       |softmax (α • harmonyScore (otToWeighted ranking M)) c_opt - 1| < ε := by
   apply softmax_argmax_limit
