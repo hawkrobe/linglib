@@ -186,16 +186,16 @@ theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
 theorem harmonyScore_diff {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) :
     harmonyScore constraints a - harmonyScore constraints b =
-    -((constraints.map (fun con =>
-        con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum : ℝ) := by
-  have h_sum : (constraints.map (fun con => con.weight * (con.eval a : ℚ))).sum -
-      (constraints.map (fun con => con.weight * (con.eval b : ℚ))).sum =
-      (constraints.map (fun con => con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum := by
+    -(constraints.map (fun con =>
+        con.weight * ((con.eval a : ℝ) - (con.eval b : ℝ)))).sum := by
+  have h_sum : (constraints.map (fun con => con.weight * (con.eval a : ℝ))).sum -
+      (constraints.map (fun con => con.weight * (con.eval b : ℝ))).sum =
+      (constraints.map (fun con => con.weight * ((con.eval a : ℝ) - (con.eval b : ℝ)))).sum := by
     induction constraints with
     | nil => simp
     | cons _ _ ih => simp only [List.map, List.sum_cons]; linarith
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, ← h_sum]
-  push_cast; ring
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, ← h_sum]
+  ring
 
 -- ============================================================================
 -- § 6: Censored NHG ([flemming-2021] §7.3)

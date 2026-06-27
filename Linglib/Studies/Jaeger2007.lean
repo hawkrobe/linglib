@@ -89,7 +89,7 @@ theorem maxent_convergence_guarantee {ι : Type*} [Fintype ι] [Nonempty ι]
     [jaeger-2007]: "Both StOT and ME diverge from classical OT in
     admitting ganging-up effects." -/
 theorem ganging_possible_without_separation :
-    Ganging (1 : ℚ) 1 (3/2) := by
+    Ganging (1 : ℝ) 1 (3/2) := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 -- ============================================================================
@@ -172,7 +172,7 @@ theorem ccvcc_three_violations :
     We represent this as learned weights (higher weight = higher priority).
     The exact values are from Jäger's simulation (Fig. 1). -/
 -- UNVERIFIED: exact converged weight values from Fig. 1
-def convergedWeights : SyllableConstraint → ℚ
+def convergedWeights : SyllableConstraint → ℝ
   | faith            => 13
   | starComplexOnset => 8
   | starComplexCoda  => 7

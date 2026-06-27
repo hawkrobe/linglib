@@ -170,7 +170,7 @@ def newFirst : NamedConstraint Candidate where
 
 /-- The two-constraint MaxEnt grammar parameterized by weights.
     `wH` weights `*HEAVY-FIRST`; `wN` weights `*NEW-FIRST`. -/
-def grammar (wH wN : ℚ) : List (WeightedConstraint Candidate) :=
+def grammar (wH wN : ℝ) : List (WeightedConstraint Candidate) :=
   [ { toNamedConstraint := heavyFirst, weight := wH }
   , { toNamedConstraint := newFirst,   weight := wN } ]
 
@@ -182,28 +182,28 @@ def grammar (wH wN : ℚ) : List (WeightedConstraint Candidate) :=
     `goalLast` on a pair: `+1` when the theme (`p.1`) is heavier (so
     placing it last avoids violation), `-1` when the goal (`p.2`) is
     heavier, `0` when they are equal. -/
-def heavyDiff (p : Pair) : ℚ :=
-  (if p.1.wordCount > p.2.wordCount then (1:ℚ) else 0) -
-  (if p.2.wordCount > p.1.wordCount then (1:ℚ) else 0)
+def heavyDiff (p : Pair) : ℝ :=
+  (if p.1.wordCount > p.2.wordCount then (1:ℝ) else 0) -
+  (if p.2.wordCount > p.1.wordCount then (1:ℝ) else 0)
 
 /-- The newness constraint's signed preference for `themeLast` over
     `goalLast` on a pair: `+1` when the theme is new and the goal given
     (so placing the theme last respects given-before-new), `-1` when
     the goal is new and the theme given, `0` otherwise. -/
-def newDiff (p : Pair) : ℚ :=
-  (if p.1.discourse = .new ∧ p.2.discourse = .given then (1:ℚ) else 0) -
-  (if p.2.discourse = .new ∧ p.1.discourse = .given then (1:ℚ) else 0)
+def newDiff (p : Pair) : ℝ :=
+  (if p.1.discourse = .new ∧ p.2.discourse = .given then (1:ℝ) else 0) -
+  (if p.2.discourse = .new ∧ p.1.discourse = .given then (1:ℝ) else 0)
 
 /-- The harmony-score difference decomposes additively into per-constraint
     signed preferences scaled by their weights. This is the foundational
     identity of the formalization — every prediction theorem below is a
     one-step consequence. -/
-lemma score_diff_eq_components (wH wN : ℚ) (p : Pair) :
+lemma score_diff_eq_components (wH wN : ℝ) (p : Pair) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
     harmonyScore (grammar wH wN) (p, .goalLast) =
-      ((wH * heavyDiff p + wN * newDiff p : ℚ) : ℝ) := by
+      wH * heavyDiff p + wN * newDiff p := by
   obtain ⟨th, gl⟩ := p
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
   simp only [grammar, heavyFirst, newFirst, heavyDiff, newDiff, List.map_cons,
     List.map_nil, List.sum_cons, List.sum_nil]
   push_cast
@@ -245,24 +245,24 @@ lemma newDiff_pos_iff {p : Pair} :
     the order placing the heavier constituent last strictly more
     probable. Symmetric in the heavier-side direction: when `heavyDiff p`
     is non-zero, its sign determines which order wins. -/
-theorem heaviness_independently_predicts {p : Pair} {wH : ℚ}
+theorem heaviness_independently_predicts {p : Pair} {wH : ℝ}
     (hH : 0 < wH) (h : 0 < heavyDiff p) :
     harmonyDominates (grammar wH 0) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH 0 p
   show harmonyScore _ _ > harmonyScore _ _
   rw [gt_iff_lt, ← sub_pos, hdiff]
-  exact_mod_cast (by linarith [mul_pos hH h] : (0:ℚ) < wH * heavyDiff p + 0 * newDiff p)
+  exact_mod_cast (by linarith [mul_pos hH h] : (0:ℝ) < wH * heavyDiff p + 0 * newDiff p)
 
 /-- **Newness independently predicts ordering.** With the heaviness
     weight zeroed out, a positive newness weight is enough to make
     the order placing the new constituent last strictly more probable. -/
-theorem newness_independently_predicts {p : Pair} {wN : ℚ}
+theorem newness_independently_predicts {p : Pair} {wN : ℝ}
     (hN : 0 < wN) (h : 0 < newDiff p) :
     harmonyDominates (grammar 0 wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components 0 wN p
   show harmonyScore _ _ > harmonyScore _ _
   rw [gt_iff_lt, ← sub_pos, hdiff]
-  exact_mod_cast (by linarith [mul_pos hN h] : (0:ℚ) < 0 * heavyDiff p + wN * newDiff p)
+  exact_mod_cast (by linarith [mul_pos hN h] : (0:ℝ) < 0 * heavyDiff p + wN * newDiff p)
 
 /-- **Both factors compose additively.** When neither factor opposes
     `themeLast` (both per-constraint contributions are non-negative)
@@ -271,7 +271,7 @@ theorem newness_independently_predicts {p : Pair} {wN : ℚ}
     interaction term is needed to reproduce the experiment's significant
     `heaviness × newness` term in logistic regression: it falls out of
     additive harmony plus the sigmoid shape of MaxEnt probability. -/
-theorem both_factors_compose {p : Pair} {wH wN : ℚ}
+theorem both_factors_compose {p : Pair} {wH wN : ℝ}
     (hH : 0 ≤ wH) (hN : 0 ≤ wN)
     (hHeavy : 0 ≤ heavyDiff p) (hNew : 0 ≤ newDiff p)
     (hStrict : 0 < wH * heavyDiff p ∨ 0 < wN * newDiff p) :
@@ -282,14 +282,14 @@ theorem both_factors_compose {p : Pair} {wH wN : ℚ}
   have h1 : 0 ≤ wH * heavyDiff p := mul_nonneg hH hHeavy
   have h2 : 0 ≤ wN * newDiff p := mul_nonneg hN hNew
   exact_mod_cast
-    (by rcases hStrict with hs | hs <;> linarith : (0:ℚ) < wH * heavyDiff p + wN * newDiff p)
+    (by rcases hStrict with hs | hs <;> linarith : (0:ℝ) < wH * heavyDiff p + wN * newDiff p)
 
 /-- **Tradeoff theorem.** When heaviness and newness conflict — one
     favors `themeLast`, the other `goalLast` — the prediction depends
     on which side has the larger weighted contribution. This is the
     constraint-based architecture [arnold-wasow-losongco-ginstrom-2000]
     argue for in §5. -/
-theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℚ}
+theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℝ}
     (h : 0 < wH * heavyDiff p + wN * newDiff p) :
     harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
@@ -317,9 +317,9 @@ probability shift. -/
     difference between orderings is determined entirely by the weighted
     heaviness term. -/
 theorem heaviness_dominates_when_newness_neutral
-    (wH wN : ℚ) {p : Pair} (hN : newDiff p = 0) :
+    (wH wN : ℝ) {p : Pair} (hN : newDiff p = 0) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) = ((wH * heavyDiff p : ℚ) : ℝ) := by
+    harmonyScore (grammar wH wN) (p, .goalLast) = wH * heavyDiff p := by
   rw [score_diff_eq_components, hN, mul_zero, add_zero]
 
 /-- **Constraint-interaction theorem (newness side).** When the
@@ -330,9 +330,9 @@ theorem heaviness_dominates_when_newness_neutral
     constant) is exactly this regime — and unsurprisingly newness
     showed a larger effect there than in the corpus study. -/
 theorem newness_dominates_when_heaviness_neutral
-    (wH wN : ℚ) {p : Pair} (hH : heavyDiff p = 0) :
+    (wH wN : ℝ) {p : Pair} (hH : heavyDiff p = 0) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) = ((wN * newDiff p : ℚ) : ℝ) := by
+    harmonyScore (grammar wH wN) (p, .goalLast) = wN * newDiff p := by
   rw [score_diff_eq_components, hH, mul_zero, zero_add]
 
 -- ============================================================================
@@ -353,27 +353,27 @@ def newThemeContrast : Pair :=
    { wordCount := 1, discourse := .given })
 
 @[simp] lemma heavyDiff_heavyGoalContrast : heavyDiff heavyGoalContrast = -1 := by
-  show (if (1:Nat) > 8 then (1:ℚ) else 0) -
-       (if (8:Nat) > 1 then (1:ℚ) else 0) = -1
+  show (if (1:Nat) > 8 then (1:ℝ) else 0) -
+       (if (8:Nat) > 1 then (1:ℝ) else 0) = -1
   rw [if_neg (by decide), if_pos (by decide)]; norm_num
 
 @[simp] lemma newDiff_heavyGoalContrast : newDiff heavyGoalContrast = 0 := by
   show (if (BinaryGivenness.new = .new ∧ BinaryGivenness.new = .given)
-          then (1:ℚ) else 0) -
+          then (1:ℝ) else 0) -
        (if (BinaryGivenness.new = .new ∧ BinaryGivenness.new = .given)
-          then (1:ℚ) else 0) = 0
+          then (1:ℝ) else 0) = 0
   simp
 
 @[simp] lemma heavyDiff_newThemeContrast : heavyDiff newThemeContrast = 0 := by
-  show (if (1:Nat) > 1 then (1:ℚ) else 0) -
-       (if (1:Nat) > 1 then (1:ℚ) else 0) = 0
+  show (if (1:Nat) > 1 then (1:ℝ) else 0) -
+       (if (1:Nat) > 1 then (1:ℝ) else 0) = 0
   simp
 
 @[simp] lemma newDiff_newThemeContrast : newDiff newThemeContrast = 1 := by
   show (if (BinaryGivenness.new = .new ∧ BinaryGivenness.given = .given)
-          then (1:ℚ) else 0) -
+          then (1:ℝ) else 0) -
        (if (BinaryGivenness.given = .new ∧ BinaryGivenness.new = .given)
-          then (1:ℚ) else 0) = 1
+          then (1:ℝ) else 0) = 1
   rw [if_pos ⟨rfl, rfl⟩, if_neg (by rintro ⟨h, _⟩; cases h)]; norm_num
 
 /-- **Non-reducibility witness.** The two contrast pairs jointly
@@ -417,7 +417,7 @@ theorem new_theme_predicts_themeLast :
     softmax probability infrastructure (`MaxEntGrammar.prob`, the
     `ConstraintSystem` bridge, `softmax_argmax_limit` for the OT limit,
     etc.) available without redefinition. -/
-def maxEntGrammar (wH wN : ℚ) (inputs : List Pair) :
+def maxEntGrammar (wH wN : ℝ) (inputs : List Pair) :
     MaxEntGrammar Pair Order where
   inputs := inputs
   gen := fun _ => [.themeLast, .goalLast]

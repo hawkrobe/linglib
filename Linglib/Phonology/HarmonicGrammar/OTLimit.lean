@@ -56,7 +56,7 @@ def otToWeighted {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat) :
     List (WeightedConstraint C) :=
   ranking.mapIdx fun i con =>
     { toNamedConstraint := con
-      weight := ((M + 1 : ℚ) ^ (ranking.length - 1 - i)) }
+      weight := ((M + 1 : ℝ) ^ (ranking.length - 1 - i)) }
 
 /-- The weighted constraints have the same length as the ranking. -/
 theorem otToWeighted_length {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat) :
@@ -95,14 +95,14 @@ def LexStrictlyBetter {n : Nat} (va vb : Fin n → Nat) : Prop :=
     This ensures that no combination of lower-constraint violations
     can override a single higher-constraint violation difference,
     matching OT's strict ranking semantics. -/
-def ExponentiallySeparated {n : Nat} (w : Fin n → ℚ) (M : Nat) : Prop :=
+def ExponentiallySeparated {n : Nat} (w : Fin n → ℝ) (M : Nat) : Prop :=
   (∀ i, 0 < w i) ∧
-  ∀ k : Fin n, (M : ℚ) * (univ.filter (· > k)).sum w < w k
+  ∀ k : Fin n, (M : ℝ) * (univ.filter (· > k)).sum w < w k
 
 /-- Concrete exponential weights: wᵢ = (M+1)^(n−1−i).
     Constraint 0 (highest-ranked) gets the largest weight (M+1)^(n−1). -/
-def expWeights (n : Nat) (M : Nat) : Fin n → ℚ :=
-  fun i => ((M + 1 : ℚ) ^ (n - 1 - i.val))
+def expWeights (n : Nat) (M : Nat) : Fin n → ℝ :=
+  fun i => ((M + 1 : ℝ) ^ (n - 1 - i.val))
 
 /-- Exponential weights are positive. -/
 theorem expWeights_pos (n : Nat) (M : Nat) (i : Fin n) :
@@ -128,7 +128,7 @@ private lemma expWeights_succ_eq' {n M : ℕ} {k : Fin n} (hk : k.val + 1 < n) :
   rw [show n - 1 - k.val = (n - 1 - (k.val + 1)) + 1 from by omega, pow_succ]; ring
 
 private lemma expWeights_bound (n M : ℕ) (hM : 0 < M) (k : Fin n) :
-    (↑M : ℚ) * (univ.filter (· > k)).sum (expWeights n M) <
+    (↑M : ℝ) * (univ.filter (· > k)).sum (expWeights n M) <
     expWeights n M k := by
   by_cases hk : k.val + 1 = n
   · have hempty : univ.filter (· > k) = (∅ : Finset (Fin n)) := by
@@ -162,7 +162,7 @@ theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
     of how many violations accumulate. In MaxEnt, constraint effects are
     *additive*, so multiple weak constraints can "gang up" to outweigh a
     strong one. -/
-def Ganging (w₁ w₂ w₃ : ℚ) : Prop :=
+def Ganging (w₁ w₂ w₃ : ℝ) : Prop :=
   0 < w₁ ∧ 0 < w₂ ∧ 0 < w₃ ∧
   w₁ < w₃ ∧ w₂ < w₃ ∧
   w₃ < w₁ + w₂
@@ -173,7 +173,7 @@ theorem ganging_example : Ganging 2 2 3 := by
 
 /-- With exponentially separated weights (M = 1), each constraint
     outweighs the total of all lower weights. -/
-theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
+theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℝ)
     (hw : ExponentiallySeparated w 1) (k : Fin n) :
     (univ.filter (· > k)).sum w < w k := by
   have h := hw.2 k
@@ -185,7 +185,7 @@ theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
     `j` can gang up against a higher-ranked `k`. Their combined weight is at
     most the total lower weight, which `no_ganging_when_separated` bounds
     strictly below `w k` — contradicting ganging's `w k < w i + w j`. -/
-theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℚ)
+theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
     (hw : ExponentiallySeparated w 1) (k i j : Fin n)
     (hi : k < i) (hj : k < j) (hij : i ≠ j) :
     ¬ Ganging (w i) (w j) (w k) := by
@@ -207,8 +207,8 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℚ)
 
 /-- Weighted violation sum (the positive part of harmony:
     `harmonyScore = -weightedViolations`). -/
-def weightedViolations {n : Nat} (w : Fin n → ℚ) (v : Fin n → Nat) : ℚ :=
-  univ.sum fun i => w i * (v i : ℚ)
+def weightedViolations {n : Nat} (w : Fin n → ℝ) (v : Fin n → Nat) : ℝ :=
+  univ.sum fun i => w i * (v i : ℝ)
 
 /-- **HG–OT agreement lemma** ([smolensky-legendre-2006]): with
     exponentially separated weights and bounded violations, lexicographic
@@ -223,7 +223,7 @@ def weightedViolations {n : Nat} (w : Fin n → ℚ) (v : Fin n → Nat) : ℚ :
     - At i = k: wₖ · (vb(k) − va(k)) ≥ wₖ  (since vb(k) > va(k))
     - For i > k: |wᵢ · (vb(i) − va(i))| ≤ wᵢ · M  (by `hM`)
     - Net: ≥ wₖ − M · Σᵢ₍ᵢ>ₖ₎ wᵢ > 0  (by `hw`) -/
-theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℚ) (M : Nat)
+theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (va vb : Fin n → Nat)
     (hM : ∀ i, va i ≤ M ∧ vb i ≤ M)
     (hw : ExponentiallySeparated w M)
@@ -232,11 +232,11 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℚ) (M : Nat)
   obtain ⟨k, h_agree, h_lt⟩ := hlex
   simp only [weightedViolations]
   -- Suffices: 0 < Σ w_i · (vb_i − va_i)
-  suffices hpos : (0 : ℚ) <
-      univ.sum (λ i => w i * ((vb i : ℚ) - (va i : ℚ))) by
-    have hlink : univ.sum (λ i => w i * (va i : ℚ)) +
-        univ.sum (λ i => w i * ((vb i : ℚ) - (va i : ℚ))) =
-        univ.sum (λ i => w i * (vb i : ℚ)) := by
+  suffices hpos : (0 : ℝ) <
+      univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) by
+    have hlink : univ.sum (λ i => w i * (va i : ℝ)) +
+        univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) =
+        univ.sum (λ i => w i * (vb i : ℝ)) := by
       rw [← Finset.sum_add_distrib]; congr 1; ext i; ring
     linarith
   -- Split the sum: f(k) + Σ_{i≠k} f(i)
@@ -266,34 +266,34 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℚ) (M : Nat)
   rw [hsplit, Finset.sum_union hdisj]
   -- Terms i < k: each is 0
   have hlt_zero : (univ.filter (· < k)).sum
-      (λ i => w i * ((vb i : ℚ) - (va i : ℚ))) = 0 := by
+      (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) = 0 := by
     apply Finset.sum_eq_zero; intro i hi
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
     rw [h_agree i hi, sub_self, mul_zero]
   -- Term at k: w_k · (vb_k − va_k) ≥ w_k > 0
-  have hk_bound : w k ≤ w k * ((vb k : ℚ) - (va k : ℚ)) := by
-    have h1 : (va k : ℚ) + 1 ≤ (vb k : ℚ) := by exact_mod_cast h_lt
+  have hk_bound : w k ≤ w k * ((vb k : ℝ) - (va k : ℝ)) := by
+    have h1 : (va k : ℝ) + 1 ≤ (vb k : ℝ) := by exact_mod_cast h_lt
     nlinarith [(hw.1 k).le]
   -- Terms i > k: each ≥ −w_i · M, so sum ≥ −M · Σ_{i>k} w_i
-  have hgt_bound : -(M : ℚ) * (univ.filter (· > k)).sum w ≤
+  have hgt_bound : -(M : ℝ) * (univ.filter (· > k)).sum w ≤
       (univ.filter (· > k)).sum
-        (λ i => w i * ((vb i : ℚ) - (va i : ℚ))) := by
+        (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) := by
     have h_each : ∀ i ∈ univ.filter (· > k),
-        -(w i * (M : ℚ)) ≤ w i * ((vb i : ℚ) - (va i : ℚ)) := by
+        -(w i * (M : ℝ)) ≤ w i * ((vb i : ℝ) - (va i : ℝ)) := by
       intro i hi
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-      have hva : (va i : ℚ) ≤ (M : ℚ) := by exact_mod_cast (hM i).1
+      have hva : (va i : ℝ) ≤ (M : ℝ) := by exact_mod_cast (hM i).1
       nlinarith [(hw.1 i).le]
-    have h_neg_sum : (univ.filter (· > k)).sum (λ i => -(w i * (M : ℚ))) =
-        -(M : ℚ) * (univ.filter (· > k)).sum w := by
-      trans (univ.filter (· > k)).sum (λ i => -(M : ℚ) * w i)
+    have h_neg_sum : (univ.filter (· > k)).sum (λ i => -(w i * (M : ℝ))) =
+        -(M : ℝ) * (univ.filter (· > k)).sum w := by
+      trans (univ.filter (· > k)).sum (λ i => -(M : ℝ) * w i)
       · apply Finset.sum_congr rfl; intro i _; ring
       · rw [← Finset.mul_sum]
     linarith [Finset.sum_le_sum h_each]
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
 
-private lemma mapIdx_sum_eq_fin_sum {α : Type*} (l : List α) (f : ℕ → α → ℚ) :
+private lemma mapIdx_sum_eq_fin_sum {α : Type*} (l : List α) (f : ℕ → α → ℝ) :
     (l.mapIdx f).sum = ∑ i : Fin l.length, f i (l.get i) := by
   induction l generalizing f with
   | nil => simp
@@ -303,7 +303,7 @@ private lemma mapIdx_sum_eq_fin_sum {α : Type*} (l : List α) (f : ℕ → α �
          ∑ i : Fin (xs.length + 1), (fun j : Fin (xs.length + 1) => f (↑j) ((x :: xs).get j)) i
     rw [Fin.sum_univ_succ]; simp
 
-private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → β) (g : β → ℚ) :
+private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → β) (g : β → ℝ) :
     (l.mapIdx f |>.map g).sum = (l.mapIdx (fun i x => g (f i x))).sum := by
   congr 1
   induction l generalizing f with
@@ -313,11 +313,9 @@ private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → �
 private lemma harmonyScore_otToWeighted_eq {C : Type*}
     (ranking : List (NamedConstraint C)) (M : Nat) (c : C) :
     harmonyScore (otToWeighted ranking M) c =
-    -((weightedViolations (expWeights ranking.length M)
-      (fun i : Fin ranking.length => (ranking.get i).eval c) : ℚ) : ℝ) := by
-  rw [harmonyScore_eq_cast, neg_inj]
-  norm_cast
-  rw [weightedViolations]
+    -(weightedViolations (expWeights ranking.length M)
+      (fun i : Fin ranking.length => (ranking.get i).eval c)) := by
+  rw [harmonyScore_eq_neg_sum, neg_inj, weightedViolations]
   simp only [otToWeighted]
   rw [map_mapIdx_sum, mapIdx_sum_eq_fin_sum]
   simp only [expWeights]
@@ -335,8 +333,7 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
       (fun i : Fin ranking.length => (ranking.get i).eval b)) :
     harmonyScore (otToWeighted ranking M) a >
     harmonyScore (otToWeighted ranking M) b := by
-  rw [gt_iff_lt, harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff,
-    Rat.cast_lt]
+  rw [gt_iff_lt, harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff]
   exact lex_imp_lower_violations _ M _ _
     (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
     (expWeights_separated ranking.length M hM) hlex

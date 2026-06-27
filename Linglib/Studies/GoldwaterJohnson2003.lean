@@ -132,7 +132,7 @@ theorem gradient {ι : Type*} [Fintype ι] [Nonempty ι]
     The five constraints in ranked order, with learned MaxEnt weights
     from Table 1 (nσ² ≈ 1,200,000). -/
 -- UNVERIFIED: exact weight values from Table 1
-def wolofWeights : Fin 5 → ℚ
+noncomputable def wolofWeights : Fin 5 → ℝ
   | 0 => 3389/100   -- *RTRHI (33.89)
   | 1 => 17          -- PARSE[RTR] (17.00)
   | 2 => 10          -- GESTURE[CONTOUR] (10.00)
@@ -141,7 +141,7 @@ def wolofWeights : Fin 5 → ℚ
 
 /-- All Wolof weights are positive. -/
 theorem wolof_pos (i : Fin 5) : 0 < wolofWeights i := by
-  fin_cases i <;> simp [wolofWeights]
+  fin_cases i <;> norm_num [wolofWeights]
 
 /-- **The learned Wolof weights are exponentially separated (M = 1)**:
     each weight exceeds the sum of all lower-ranked weights.

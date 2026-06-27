@@ -84,7 +84,7 @@ structure SystemicConstraint (n : Nat) (O : Type*) where
   /-- Constraint name. -/
   name : String
   /-- Constraint weight. -/
-  weight : ℚ
+  weight : ℝ
   /-- Evaluation function: how many violations does this output tuple incur? -/
   eval : (Fin n → O) → Nat
 
@@ -93,7 +93,7 @@ structure SystemicConstraint (n : Nat) (O : Type*) where
 
     For n inputs, evaluates `|{(i,j) : i < j ∧ f(i) = f(j)}|`. -/
 def homophonyAvoidance {n : Nat} {O : Type*} [DecidableEq O]
-    (w : ℚ) : SystemicConstraint n O where
+    (w : ℝ) : SystemicConstraint n O where
   name := "*HOMOPHONY"
   weight := w
   eval := λ f =>
@@ -107,18 +107,12 @@ def homophonyAvoidance {n : Nat} {O : Type*} [DecidableEq O]
 -- § 3: Joint Distribution with Systemic Constraints
 -- ============================================================================
 
-/-- Systemic constraint score for an output tuple (ℚ, computable).
+/-- Systemic constraint score for an output tuple.
     This is the coupling component: `Σₖ (-wₖ · Sₖ(f))`. -/
 def systemicScore {n : Nat} {O : Type*}
     (systemicConstraints : List (SystemicConstraint n O))
-    (f : Fin n → O) : ℚ :=
-  systemicConstraints.foldl (λ acc sc => acc - sc.weight * (sc.eval f : ℚ)) 0
-
-/-- Systemic constraint score as ℝ. -/
-noncomputable def systemicScoreR {n : Nat} {O : Type*}
-    (systemicConstraints : List (SystemicConstraint n O))
     (f : Fin n → O) : ℝ :=
-  (systemicScore systemicConstraints f : ℝ)
+  systemicConstraints.foldl (λ acc sc => acc - sc.weight * (sc.eval f : ℝ)) 0
 
 /-- Joint harmony score over the product space.
     Combines classical per-mapping scores with systemic tuple-level scores.
@@ -133,12 +127,12 @@ noncomputable def jointHarmonyScore {n : Nat} {I O : Type*}
     (f : Fin n → O) : ℝ :=
   let classical := (List.finRange n).foldl
     (λ acc i => acc + harmonyScore classicalConstraints (inputs i, f i)) 0
-  classical + systemicScoreR systemicConstraints f
+  classical + systemicScore systemicConstraints f
 
 /-- MaxEnt grammar with systemic constraints as a `CoupledSoftmax`.
 
     - `componentScore i v = harmonyScore(classicalConstraints, (inputs i, v))`
-    - `couplingScore f = systemicScoreR(systemicConstraints, f)`
+    - `couplingScore f = systemicScore(systemicConstraints, f)`
 
     The joint probability is `softmax(totalScore, 1)` over all `Fin n → O`
     output tuples. The marginal at position `i` recovers the individual
@@ -150,7 +144,7 @@ noncomputable def maxEntCoupled {n : Nat} {I O : Type*} [Fintype O] [DecidableEq
     Core.CoupledSoftmax (Fin n) O :=
   Core.coupledSoftmaxOfMaxEnt inputs
     (fun p => harmonyScore classicalConstraints p)
-    (fun f => systemicScoreR systemicConstraints f)
+    (fun f => systemicScore systemicConstraints f)
 
 /-- Marginal probability: marginalize the joint distribution to get
     the probability of a specific input→output mapping.
@@ -175,13 +169,11 @@ noncomputable def marginalProb {n : Nat} {I O : Type*} [Fintype O] [DecidableEq 
 
 /-- When all systemic constraint weights are zero, the systemic score
     is zero for every output tuple. -/
-private lemma systemicScoreR_zero {n : Nat} {O : Type*}
+private lemma systemicScore_zero {n : Nat} {O : Type*}
     {systemicConstraints : List (SystemicConstraint n O)}
     (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
     (f : Fin n → O) :
-    systemicScoreR systemicConstraints f = 0 := by
-  suffices h : systemicScore systemicConstraints f = 0 by
-    simp [systemicScoreR, h]
+    systemicScore systemicConstraints f = 0 := by
   induction systemicConstraints with
   | nil => rfl
   | cons sc rest ih =>
@@ -206,7 +198,7 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type*}
     marginalProb inputs classicalConstraints systemicConstraints i o =
     softmax (λ o' => harmonyScore classicalConstraints (inputs i, o')) o :=
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
-    ⟨0, systemicScoreR_zero h_zero⟩ i o
+    ⟨0, systemicScore_zero h_zero⟩ i o
 
 -- ============================================================================
 -- § 5: Bridge to Generic ConstraintSystem

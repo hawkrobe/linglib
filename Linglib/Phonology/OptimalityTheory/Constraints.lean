@@ -285,34 +285,34 @@ theorem mkMaxCtx_bounded {C : Type*} (name : String)
 open Constraints
 
 /-- Build a weighted MAX constraint with a given weight. -/
-def mkMaxW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
+def mkMaxW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMax name P, weight := w }
 
 /-- Build a weighted contextual MAX constraint. -/
 def mkMaxCtxW {C : Type*} (name : String)
     (D : C → Prop) [DecidablePred D]
-    (Ctx : C → Prop) [DecidablePred Ctx] (w : ℚ) :
+    (Ctx : C → Prop) [DecidablePred Ctx] (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMaxCtx name D Ctx, weight := w }
 
 /-- Build a weighted DEP constraint. -/
-def mkDepW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
+def mkDepW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkDep name P, weight := w }
 
 /-- Build a weighted IDENT constraint. -/
-def mkIdentW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
+def mkIdentW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkIdent name P, weight := w }
 
 /-- Build a weighted binary markedness constraint. -/
-def mkMarkW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
+def mkMarkW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMark name P, weight := w }
 
 /-- Build a weighted gradient markedness constraint. -/
-def mkMarkGradW {C : Type*} (name : String) (violations : C → Nat) (w : ℚ) :
+def mkMarkGradW {C : Type*} (name : String) (violations : C → Nat) (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMarkGrad name violations, weight := w }
 

@@ -20,14 +20,14 @@ semiring T. HG weights define a structure-preserving map from V to T.
 - 0̃ = ⊤ (V^∞ — the infinitely bad candidate, additive identity for `min`)
 - 1̃ = zero profile (∅ — the perfect candidate, multiplicative identity)
 
-**T** = `Tropical (WithTop ℚ≥0)` — the **tropical semiring**:
+**T** = `Tropical (WithTop ℝ≥0)` — the **tropical semiring**:
 - ⊕ = `min` of costs (choose winner)
 - ⊗ = `+` of costs (merge costs)
 - 0̃ = ∞ (infinitely bad, identity for `min`)
 - 1̃ = 0 (no cost, identity for `+`)
 
 OT evaluates in V; HG evaluates in T. The weight assignment
-w : Fin n → ℚ induces a map V → T via the weighted sum v ↦ Σ wᵢ · vᵢ.
+w : Fin n → ℝ induces a map V → T via the weighted sum v ↦ Σ wᵢ · vᵢ.
 This map always preserves ⊗ (merge/tropical multiplication — linearity
 of the dot product). It preserves ⊕ (min/tropical addition) when weights
 are exponentially separated — which is exactly the content of the HG–OT
@@ -94,14 +94,14 @@ noncomputable example (n : Nat) (a : ViolationProfile n) :
     min a a = a := min_self a
 
 -- ============================================================================
--- § 3: Weight Map V → ℚ (AddMonoidHom)
+-- § 3: Weight Map V → ℝ (AddMonoidHom)
 -- ============================================================================
 
 /-- The **weight map** ([riggle-2009] §4): an additive monoid
     homomorphism from the violation semiring's underlying monoid
-    `(ViolationProfile n, +, 0)` to `(ℚ, +, 0)`.
+    `(ViolationProfile n, +, 0)` to `(ℝ, +, 0)`.
 
-    Given weights `w : Fin n → ℚ`, the weight map sends a violation
+    Given weights `w : Fin n → ℝ`, the weight map sends a violation
     profile `v` to the weighted sum `Σ wᵢ · vᵢ`. This is the function
     that maps V to T — the violation semiring to the tropical semiring.
 
@@ -115,13 +115,13 @@ noncomputable example (n : Nat) (a : ViolationProfile n) :
     the dot product, regardless of weight magnitudes. The interesting
     condition (exponential separation) is needed for preserving
     **tropical addition** (⊕ = min) — see `weightMap_strictMono`. -/
-def weightMap {n : Nat} (w : Fin n → ℚ) : ViolationProfile n →+ ℚ where
-  toFun v := Finset.univ.sum fun i => w i * (v i : ℚ)
+def weightMap {n : Nat} (w : Fin n → ℝ) : ViolationProfile n →+ ℝ where
+  toFun v := Finset.univ.sum fun i => w i * (v i : ℝ)
   map_zero' := by simp
   map_add' a b := by
     simp only [← Finset.sum_add_distrib]
     congr 1; ext i
-    show w i * ((a i + b i : Nat) : ℚ) = w i * (a i : ℚ) + w i * (b i : ℚ)
+    show w i * ((a i + b i : Nat) : ℝ) = w i * (a i : ℝ) + w i * (b i : ℝ)
     push_cast; ring
 
 -- ============================================================================
@@ -135,7 +135,7 @@ def weightMap {n : Nat} (w : Fin n → ℚ) : ViolationProfile n →+ ℚ where
     algebraic objects) to the existing HG–OT agreement machinery
     (violation vectors as functions). -/
 theorem weightMap_eq_weightedViolations {n : Nat}
-    (w : Fin n → ℚ) (v : ViolationProfile n) :
+    (w : Fin n → ℝ) (v : ViolationProfile n) :
     weightMap w v = weightedViolations w v := rfl
 
 -- ============================================================================
@@ -159,7 +159,7 @@ theorem weightMap_eq_weightedViolations {n : Nat}
     The proof delegates to `lex_imp_lower_violations` from `OTLimit.lean`,
     which we can invoke directly because `LexStrictlyBetter` is
     definitionally equal to `<` on `ViolationProfile n`. -/
-theorem weightMap_strictMono {n : Nat} (w : Fin n → ℚ) (M : Nat)
+theorem weightMap_strictMono {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (hw : ExponentiallySeparated w M)
     (a b : ViolationProfile n)
     (hM : ∀ i, a i ≤ M ∧ b i ≤ M)
@@ -169,7 +169,7 @@ theorem weightMap_strictMono {n : Nat} (w : Fin n → ℚ) (M : Nat)
 
 /-- Non-strict monotonicity: `a ≤ b` lexicographically implies
     `weight(a) ≤ weight(b)` under exponential separation. -/
-theorem weightMap_mono {n : Nat} (w : Fin n → ℚ) (M : Nat)
+theorem weightMap_mono {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (hw : ExponentiallySeparated w M)
     (a b : ViolationProfile n)
     (hM : ∀ i, a i ≤ M ∧ b i ≤ M)
@@ -184,7 +184,7 @@ theorem weightMap_mono {n : Nat} (w : Fin n → ℚ) (M : Nat)
 
     This is the semiring-theoretic restatement of HG–OT agreement:
     `argmin_V ↦ argmin_T` when the weight map preserves both ⊗ and ⊕. -/
-theorem weightMap_preserves_minimum {n : Nat} (w : Fin n → ℚ) (M : Nat)
+theorem weightMap_preserves_minimum {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (hw : ExponentiallySeparated w M)
     (a : ViolationProfile n)
     (S : Finset (ViolationProfile n))
