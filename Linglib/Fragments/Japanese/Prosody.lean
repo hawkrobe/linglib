@@ -34,9 +34,69 @@ affix typology from [kawahara-2015].
 namespace Japanese.Prosody
 
 open Features.Prosody
-open _root_.Prosody (defaultAccentAAR latinStressRule accentToTones
-  LevelTone shortN2CompoundAccent longN2CompoundAccent Syllable.Weight)
+open _root_.Prosody (defaultAccentAAR latinStressRule Syllable.Weight)
 open BeckmanPierrehumbert1986
+
+/-! ### Accent-to-tone derivation and compound accent (Japanese-specific)
+
+The Japanese pitch-accent tonal melody and the compound-accent rules
+([kawahara-2015]). These are specific to Japanese — the tonal melody (accentual
+HL + initial rise) and the N1/N2 compound rules do not generalize — so they live
+here rather than in the language-neutral `Phonology.Prosody.Accent`. -/
+
+/-- A level tone for pitch-accent systems. Japanese uses only `H` (high) and
+    `L` (low) at the lexical level ([kawahara-2015]). -/
+inductive LevelTone where
+  | H
+  | L
+  deriving DecidableEq, Repr, BEq
+
+/-- Derive the surface tone of each mora from accent position and mora count
+    ([kawahara-2015]), returning one `LevelTone` per mora:
+    1. accentual HL — `H` on the accented mora, `L` on the next;
+    2. initial rise — `L` on mora 0, `H` on mora 1 (blocked by initial accent);
+    3. spreading — unspecified moras copy the rightmost specified tone. -/
+def accentToTones (accentMora : Option Nat) (nMorae : Nat) : List LevelTone :=
+  -- Steps 1+2: accentual HL + initial rise (`none` = still unspecified).
+  -- `nMorae = 0` needs no special case: `List.range 0 = []` flows through to `[]`.
+  let specified : List (Option LevelTone) := (List.range nMorae).map λ i =>
+    if accentMora == some i then some .H
+    else if accentMora == some (i - 1) && i ≥ 1 then some .L
+    else if i == 0 && accentMora != some 0 then some .L
+    else if i == 1 && accentMora != some 1 && accentMora != some 0 then some .H
+    else none
+  -- Step 3: spreading — fill `none`s from the rightmost specified tone (mora 0
+  -- is always specified, so the `.H` seed is never reached for well-formed input).
+  spread specified .H
+where
+  spread : List (Option LevelTone) → LevelTone → List LevelTone
+    | [], _ => []
+    | some t :: rest, _ => t :: spread rest t
+    | none :: rest, last => last :: spread rest last
+
+/-- Short-N2 compound accent ([kawahara-2015]): when the second member N2 is
+    short (≤ 2μ), accent may pre-accent the last syllable of N1, or N2 retains
+    its own accent. Pre-accenting N2s lose their accent to NonFinality(Ft) and
+    receive a new one, like dominant pre-accenting suffixes. -/
+def shortN2CompoundAccent (n1Morae : Nat) (n2Accent : Option Nat)
+    (preAccenting : Bool) : Option Nat :=
+  if preAccenting then
+    -- Pre-accenting: accent on last mora of N1
+    if n1Morae > 0 then some (n1Morae - 1) else none
+  else
+    -- Retain N2 accent (shifted by N1 length)
+    n2Accent.map (· + n1Morae)
+
+/-- Long-N2 compound accent ([kawahara-2015]): when N2 is long (≥ 3μ), an
+    unaccented or final-accented N2 accents its initial syllable; otherwise
+    N2's own accent is retained. -/
+def longN2CompoundAccent (n1Morae : Nat) (n2Accent : Option Nat)
+    (n2Morae : Nat) : Option Nat :=
+  match n2Accent with
+  | none => some n1Morae  -- unaccented N2 → accent N2-initial
+  | some pos =>
+    if pos + 1 == n2Morae then some n1Morae  -- final accent → accent N2-initial
+    else some (pos + n1Morae)                 -- retain N2 accent
 
 -- ============================================================================
 -- § 1: Lexical Accent
