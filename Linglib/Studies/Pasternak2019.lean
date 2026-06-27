@@ -68,7 +68,7 @@ do not exist. Corrected:
 
 - §4.2 two-dimensional ontology: a vertical-altitude axis would *extend*
   `Event.Mereology` (which already provides the
-  `Preorder (Event Time)` instance Pasternak's part-whole relation
+  `PartialOrder (Event Time)` instance Pasternak's part-whole relation
   consumes). Not a substrate gap; a refinement.
 - §5 `want`/`wish`/`regret`: `Semantics/Attitudes/Desire.lean`
   already provides `wantVF` (von Fintel-style) and
@@ -366,7 +366,7 @@ docstring, not as a redundant per-file Iff.rfl. -/
 theorem sortDetermined_isHomogeneous
     {Time : Type*} [LinearOrder Time] [Event.Mereology Time]
     (s : Features.Dynamicity) :
-    letI := Event.preorder Time
+    letI := Event.partialOrder Time
     MentalStateHomogeneity (fun e : Event Time => e.sort = s) := by
   exact fun e e' hle hPe =>
     (Event.Mereology.sort_preserved e' e hle).trans hPe
