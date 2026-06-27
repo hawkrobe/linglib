@@ -1351,6 +1351,7 @@ import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Mora
 import Linglib.Phonology.Prosody.Syllable
+import Linglib.Phonology.Prosody.Tree
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Segment
 import Linglib.Phonology.Subregular.Agree
@@ -1993,6 +1994,7 @@ import Linglib.Studies.BaleSchwarz2022
 import Linglib.Studies.BaleSchwarz2026
 import Linglib.Studies.BarAsherSiegal2026
 import Linglib.Studies.BarLev2021
+import Linglib.Studies.Bennett2018
 import Linglib.Studies.BarLevFox2020
 import Linglib.Studies.Barker1995
 import Linglib.Studies.BarkerPullum1990
