@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Weighted
-import Linglib.Phonology.Constraints.System
+import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Phonology.OptimalityTheory.Constraints

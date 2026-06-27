@@ -1,5 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.OTLimit
-import Linglib.Phonology.Constraints.System
+import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Subregular.LocalRewrite

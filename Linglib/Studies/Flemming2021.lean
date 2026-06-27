@@ -1,6 +1,7 @@
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Phonology.HarmonicGrammar.Separability
-import Linglib.Phonology.Constraints.System
+import Linglib.Phonology.Constraints.Weighted
+import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Probability.Choice.GumbelLuce
 
 /-!

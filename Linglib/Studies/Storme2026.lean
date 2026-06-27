@@ -1,5 +1,4 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Phonology.Constraints.System
 import Linglib.Phonology.Constraints.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Farsi.Phonology

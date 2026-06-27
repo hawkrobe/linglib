@@ -1,6 +1,6 @@
 import Linglib.Phonology.Constraints.Weighted
 import Linglib.Core.Optimization.Decoder
-import Linglib.Phonology.Constraints.System
+import Linglib.Core.Optimization.System
 import Linglib.Core.Probability.CoupledEvaluation
 
 /-!
@@ -237,3 +237,22 @@ theorem MaxEntGrammar.prob_eq_toSystem_predict {I O : Type*} [Fintype O] [Nonemp
   simp [softmaxDecoder, softmax, Finset.mem_univ, MaxEntGrammar.toSystem, one_mul]
 
 end HarmonicGrammar
+
+namespace Constraints
+
+open Core.Optimization
+
+/-- Build a MaxEnt Harmonic Grammar system over a finite candidate set: the
+    harmony score `harmonyScoreR constraints c = -Σⱼ wⱼ · Cⱼ(c)`, soft-decoded
+    at temperature `α`. As `α → ∞`, `softmaxDecoder` converges to hard `argmax`
+    (deterministic HG; see `softmax_argmax_limit` in `Core.Agent.RationalAction`).
+    The default `α = 1` matches [goldwater-johnson-2003]'s MaxEnt formulation. -/
+noncomputable def maxEntSystem {Cand : Type*}
+    (candidates : Finset Cand) (constraints : List (WeightedConstraint Cand))
+    (α : ℝ := 1) :
+    ConstraintSystem Cand ℝ where
+  candidates := candidates
+  score := harmonyScoreR constraints
+  decoder := softmaxDecoder α
+
+end Constraints
