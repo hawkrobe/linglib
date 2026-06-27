@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Tree
-import Linglib.Phonology.OptimalityTheory.DirectionalTableau
+import Linglib.Core.Optimization.Evaluation
 
 /-!
 # Bennett 2018: recursion of the prosodic word in Kaqchikel
@@ -26,8 +26,13 @@ once but satisfies `Match`; the flat parse satisfies `NoRecursion` but violates
 `Match`. With `Match ≫ NoRecursion`, the recursive parse is the optimum — a
 prediction the flat `List`-of-weights `Word` could not even state.
 
-The prosodic candidates are `ProsTree`s (`Phonology/Prosody/Tree.lean`) and the
-prediction is computed by the existing OT engine (`DirectionalTableau.optima`).
+The prosodic candidates are `ProsTree`s (`Phonology/Prosody/Tree.lean`); EVAL is
+mathlib's lexicographic minimum — `Core.Optimization`'s `argMinSet`, the
+computable form of `Order.Minimal` under the profile pullback
+`Order.Preimage profile LexLE`. Constraints are plain `ProsTree → ℕ` functions;
+the ranking is the order of entries in the profile. No `Constraint`/tableau
+wrapper is needed (cf. how mathlib selects optima — `Order.Minimal` + `Order.Lex`,
+not a bespoke decorated structure).
 
 ## Implementation note
 
@@ -39,7 +44,7 @@ built on `OptimalityTheory.Correspondence`, is future work.
 
 namespace Bennett2018
 
-open Prosody Features.Prosody RootedTree OptimalityTheory
+open Prosody Features.Prosody RootedTree Core.Optimization.Evaluation
 
 /-! ### Candidate prosodifications of a high-prefix + stem -/
 
@@ -72,34 +77,28 @@ end
     ω of its own, else 0. -/
 def matchStemViol (stem t : ProsTree) : Nat := if hasOmegaOver stem t then 0 else 1
 
-/-! ### The ranking and the prediction -/
+/-! ### The ranking and the prediction
 
-/-- `Match(Stem, ω)` — a faithfulness constraint. -/
-def matchStem : Constraint ProsTree := .ofCount "Match(Stem,ω)" .faithfulness (matchStemViol stemσ)
+EVAL is mathlib's lexicographic minimum: the optimum is the `LexLE`-least
+candidate under the violation profile. `argMinSet s f r = s.filter (f ·
+`r`-below all)` is the computable form of `Order.Minimal` under
+`Order.Preimage profile LexLE`. The ranking `Match(X⁰,ω) ≫ NoRecursion` is just
+the entry order in the profile. -/
 
-/-- `NoRecursion` — a markedness constraint. -/
-def noRec : Constraint ProsTree := .ofCount "NoRecursion" .markedness ProsTree.recursionCount
+/-- Violation profile, ranked `Match(X⁰,ω) ≫ NoRecursion`: a plain `ℕ`-vector
+    of the two constraint functions, compared by `LexLE`. -/
+def profile (t : ProsTree) : List Nat := [matchStemViol stemσ t, ProsTree.recursionCount t]
 
-/-- The Kaqchikel high-prefix tableau, ranked `Match ≫ NoRecursion`. -/
-def tableau : DirectionalTableau ProsTree where
-  candidates := {recParse, flatParse}
-  ranking := [matchStem, noRec]
-  nonempty := by decide
+/-- The two candidate prosodifications. -/
+def candidates : Finset ProsTree := {recParse, flatParse}
 
 -- The violation contrast: recursion costs `NoRecursion`, the flat parse costs `Match`.
-example : ProsTree.recursionCount recParse = 1 := by decide
-example : ProsTree.recursionCount flatParse = 0 := by decide
-example : matchStemViol stemσ recParse = 0 := by decide
-example : matchStemViol stemσ flatParse = 1 := by decide
+example : profile recParse = [0, 1] := by decide
+example : profile flatParse = [1, 0] := by decide
 
-/-- Under `Match(X⁰,ω) ≫ NoRecursion`, the **recursive** parse is the optimum —
-    Bennett's central result, that ω-recursion is forced. -/
-theorem recParse_optimal : tableau.IsOptimal recParse := by decide
-
-/-- The flat (non-recursive) parse is *not* optimal under this ranking. -/
-theorem flatParse_not_optimal : ¬ tableau.IsOptimal flatParse := by decide
-
-/-- Equivalently: the optimal set is exactly the recursive parse. -/
-theorem optima_eq : tableau.optima = {recParse} := by decide
+/-- Under `Match(X⁰,ω) ≫ NoRecursion`, the **recursive** parse is the unique
+    optimum — Bennett's central result, that ω-recursion is forced. The optimum
+    is mathlib's lex-minimum (`argMinSet` = computable `Order.Minimal`). -/
+theorem recParse_optimal : argMinSet candidates profile LexLE = {recParse} := by decide
 
 end Bennett2018

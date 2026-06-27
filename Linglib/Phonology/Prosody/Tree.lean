@@ -15,10 +15,12 @@ prosodic-level labels, so it inherits `Branching`, `DecidableEq`, `map`, and the
 hierarchy-specific reading: containment, recursion, and the yield. (ω-min/ω-max
 projections land with the first study that targets prosodic domains.)
 
-The size/shape constraints and the syntax→prosody Match constraints
-([ishihara-kalivoda-2022]) are OT constraints over `ProsTree`,
-evaluated by the existing `OptimalityTheory` engine; they live in
-`Phonology/Prosody/Constraints.lean` and `Match.lean`.
+Scoring functions are plain `ProsTree → ℕ` (e.g. `recursionCount`); a grammar is
+the lex-minimum of the candidates under their violation profile — mathlib's
+`Order.Minimal` (computably, `Core.Optimization`'s `argMinSet`) under
+`Order.Preimage profile LexLE`, with no bespoke constraint/tableau structure.
+The syntax→prosody Match constraints ([ishihara-kalivoda-2022]) build on the
+faithfulness machinery (`OptimalityTheory.Correspondence`, Max/Dep) — future work.
 
 ## Main definitions
 
