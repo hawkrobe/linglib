@@ -1,6 +1,6 @@
 import Linglib.Semantics.TypeTheoretic.Discourse
 import Linglib.Semantics.TypeTheoretic.WitnessQuantification
-import Linglib.Semantics.Quantification
+import Linglib.Semantics.Quantification.Counting
 import Mathlib.Data.Finset.Card
 
 /-!

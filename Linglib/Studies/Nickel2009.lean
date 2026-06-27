@@ -1,4 +1,5 @@
 import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Quantification.Generic
 import Linglib.Studies.Cohen1999
 
 /-!
@@ -235,6 +236,17 @@ theorem nickel_single_way_is_everyOn {α : Type*} (entities : Finset α)
     nickelGEN entities normalIn {w} restrictor scope ↔
       everyOn entities (fun e => restrictor e ∧ normalIn e w) scope := by
   simp [nickelGEN]
+
+/-! ### Generic-quantifier interface -/
+
+/-- Nickel's `nickelGEN` over the whole carrier is exactly the ways-of-normality
+    generalized quantifier `Quantification.genWays` — its `GQ`-interface form,
+    the [nickel-2009] instance of the shared schema in `Quantification.Generic`. -/
+theorem nickelGEN_univ_eq_genWays {α : Type*} [Fintype α]
+    (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] [∀ w, DecidablePred (fun e => normalIn e w)] :
+    nickelGEN Finset.univ normalIn ways R S ↔ Quantification.genWays normalIn ways R S := by
+  simp only [nickelGEN, Quantification.genWays, everyOn, and_comm]
 
 /-!
 ## Summary: Three Views of Normality
