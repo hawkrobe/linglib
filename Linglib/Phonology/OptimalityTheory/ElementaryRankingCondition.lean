@@ -90,11 +90,6 @@ instance (α : ERC n) : Decidable α.isContradictory :=
 
 /-! ### Rankings as permutations -/
 
-/-- A ranking of `n` constraints: a permutation of `Fin n` ([prince-2002]'s
-total domination order `≫`). `r i` is the constraint at rank position `i`
-(position `0` is most dominant); `r.symm k` is the rank position of `k`. -/
-abbrev Ranking (n : ℕ) := Equiv.Perm (Fin n)
-
 /-- Constraint `i` *dominates* constraint `j` under `r`: it sits at a lower
 (more dominant) rank position. -/
 def Ranking.dominates (r : Ranking n) (i j : Fin n) : Prop :=

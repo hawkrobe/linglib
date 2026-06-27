@@ -1,4 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Phonology.OptimalityTheory.Defs
 
 /-!
 # The Cumulativity Gap: HG ⊋ OT
@@ -55,7 +56,7 @@ gap per-paper.
 namespace HarmonicGrammar
 
 
-open Constraints Finset
+open Constraints Finset OptimalityTheory
 
 /-! ### Systemic optimization problem -/
 
@@ -96,16 +97,29 @@ def IsHGRealizable (P : SystemicProblem Input Output n) : Prop :=
 /-- A constraint permutation `σ` **OT-realizes** the target if, for every
     input, the target output strictly lex-dominates every alternative under
     the ranking `σ` (smallest σ-index = highest-ranked constraint). -/
-def OTRealizes (P : SystemicProblem Input Output n) (σ : Equiv.Perm (Fin n)) :
-    Prop :=
+def OTRealizes (P : SystemicProblem Input Output n) (σ : Ranking n) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
     toLex (fun k : Fin n => P.vp i (P.target i) (σ k)) <
     toLex (fun k : Fin n => P.vp i o (σ k))
 
-/-- A problem is **OT-realizable** if some constraint permutation realizes
+/-- A problem is **OT-realizable** if some constraint ranking realizes
     the target. -/
 def IsOTRealizable (P : SystemicProblem Input Output n) : Prop :=
-  ∃ σ : Equiv.Perm (Fin n), P.OTRealizes σ
+  ∃ σ : Ranking n, P.OTRealizes σ
+
+/-- **OT-realization is sole-winner per input.** `σ` OT-realizes `P` iff, for
+    every input, the target is the unique optimum of the OT tableau ranking that
+    input's candidates by their σ-permuted violation profiles — anchoring
+    `OTRealizes` to `Tableau.optimal`. -/
+theorem otRealizes_iff_optimal [DecidableEq Output]
+    (P : SystemicProblem Input Output n) (σ : Ranking n) :
+    P.OTRealizes σ ↔ ∀ i (hi : i ∈ P.inputs),
+      Tableau.optimal ⟨P.cands i, fun o => toLex (fun k => P.vp i o (σ k)),
+        ⟨P.target i, P.target_mem i hi⟩⟩ = {P.target i} := by
+  refine ⟨fun h i hi => ?_, fun h i hi o ho hne => ?_⟩
+  · exact (Tableau.optimal_eq_singleton_iff _ (P.target_mem i hi)).mpr
+      fun o ho hne => h i hi o ho hne
+  · exact (Tableau.optimal_eq_singleton_iff _ (P.target_mem i hi)).mp (h i hi) o ho hne
 
 end SystemicProblem
 
