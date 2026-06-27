@@ -412,26 +412,52 @@ theorem identity_dep_zero (s : List α) :
     (identity s).depViol .lhs .rhs = 0 :=
   depViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
 
-theorem identity_ident_zero [DecidableEq α] (s : List α) :
-    (identity s).identViol .lhs .rhs = 0 := by
-  simp only [identity, identViol, parallel_form_lhs, parallel_form_rhs,
-             parallel_edge_lhs_rhs]
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+/-- `IDENT` vanishes on a diagonal edge between **equal forms**: corresponding
+    positions hold the same segment. Unlike `MAX`/`DEP`, this needs
+    `c.form r₁ = c.form r₂`, not just equal length — an order-isomorphic edge
+    between distinct strings can still violate `IDENT`. -/
+theorem identViol_eq_zero_of_diag [DecidableEq α] (c : Corr Role α) (r₁ r₂ : Role)
+    (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    c.identViol r₁ r₂ = 0 := by
+  simp only [identViol]
+  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   intro p hp
   have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
   simp only [not_not]
-  exact congrArg (s[·]) (Fin.ext hpq)
+  have h? : (c.form r₁)[(p.1 : ℕ)]? = (c.form r₂)[(p.2 : ℕ)]? := by
+    rw [hpq]; exact congrArg (·[(p.2 : ℕ)]?) hform
+  rwa [List.getElem?_eq_getElem p.1.2, List.getElem?_eq_getElem p.2.2,
+       Option.some_inj] at h?
+
+/-- Featural `IDENT` vanishes on a diagonal edge between equal forms — the
+    `proj`-relativized form of `identViol_eq_zero_of_diag`. -/
+theorem identViolFeature_eq_zero_of_diag {F : Type*} [DecidableEq F] (proj : α → F)
+    (c : Corr Role α) (r₁ r₂ : Role)
+    (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    c.identViolFeature proj r₁ r₂ = 0 := by
+  simp only [identViolFeature]
+  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  intro p hp
+  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
+  simp only [not_not]
+  have h? : (c.form r₁)[(p.1 : ℕ)]? = (c.form r₂)[(p.2 : ℕ)]? := by
+    rw [hpq]; exact congrArg (·[(p.2 : ℕ)]?) hform
+  have he : (c.form r₁)[p.1] = (c.form r₂)[p.2] := by
+    rwa [List.getElem?_eq_getElem p.1.2, List.getElem?_eq_getElem p.2.2,
+         Option.some_inj] at h?
+  rw [he]
+
+theorem identity_ident_zero [DecidableEq α] (s : List α) :
+    (identity s).identViol .lhs .rhs = 0 :=
+  identViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
 
 theorem identity_identFeature_zero {F : Type*} [DecidableEq F] (proj : α → F)
     (s : List α) :
-    (identity s).identViolFeature proj .lhs .rhs = 0 := by
-  simp only [identity, identViolFeature, parallel_form_lhs, parallel_form_rhs,
-             parallel_edge_lhs_rhs]
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  intro p hp
-  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
-  simp only [not_not]
-  exact congrArg (fun i => proj s[i]) (Fin.ext hpq)
+    (identity s).identViolFeature proj .lhs .rhs = 0 :=
+  identViolFeature_eq_zero_of_diag proj (identity s) .lhs .rhs rfl
+    (parallel_edge_lhs_rhs s s)
 
 /-! ### Faithfulness as order-isomorphism -/
 
