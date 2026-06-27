@@ -1,5 +1,5 @@
 import Linglib.Phonology.Segment
-import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosody.Syllable
 
 /-!
 # Natural Classes and the Parker Sonority Scale
@@ -35,9 +35,9 @@ phenomena such as intrusive vowel insertion in Tarifit Berber
 ([afkir-zellou-2025]).
 -/
 
-namespace Prosody.Syllable
+namespace Prosody
 
-open Phonology (Segment Feature)
+open Phonology (Segment)
 
 -- ============================================================================
 -- § 1: Natural Class Type
@@ -109,4 +109,4 @@ theorem parker_strictly_monotone (a b : NatClass) (h : a ≠ b) :
     NatClass.parkerSonority a > NatClass.parkerSonority b := by
   cases a <;> cases b <;> simp_all [NatClass.parkerSonority]
 
-end Prosody.Syllable
+end Prosody

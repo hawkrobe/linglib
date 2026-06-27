@@ -7,7 +7,7 @@ Single source of truth for the Semitic-style notion of a *consonantal root*:
 an ordered melody of segments stored independently of vocalization or template.
 
 The segment type `α` is parametric. Studies of Tarifit Berber may instantiate
-`α := Prosody.Syllable.NatClass` (sonority-class roots, used by
+`α := Prosody.NatClass` (sonority-class roots, used by
 [afkir-zellou-2025]); studies of Hebrew or Amharic typically instantiate
 `α := String` for IPA symbols.
 

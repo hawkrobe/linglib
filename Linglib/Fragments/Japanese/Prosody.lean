@@ -1,5 +1,5 @@
 import Linglib.Features.Prosody
-import Linglib.Phonology.Prosodic.Accent
+import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.ItemSpecificity.Defs
 import Linglib.Studies.BeckmanPierrehumbert1986
 
@@ -34,9 +34,8 @@ affix typology from [kawahara-2015].
 namespace Japanese.Prosody
 
 open Features.Prosody
-open Prosody.Accent (defaultAccentAAR latinStressRule accentToTones
-  LevelTone shortN2CompoundAccent longN2CompoundAccent)
-open Prosody.Syllable (SyllWeight)
+open _root_.Prosody (defaultAccentAAR latinStressRule accentToTones
+  LevelTone shortN2CompoundAccent longN2CompoundAccent SyllWeight)
 open BeckmanPierrehumbert1986
 
 -- ============================================================================

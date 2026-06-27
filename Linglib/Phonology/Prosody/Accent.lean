@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosodic.Syllable
-import Linglib.Phonology.Prosodic.Foot
+import Linglib.Phonology.Prosody.Syllable
+import Linglib.Phonology.Prosody.Foot
 
 /-!
 # Accent Assignment and Tone Derivation
@@ -42,9 +42,8 @@ Two NonFinality constraints from [prince-smolensky-1993]:
 - **NonFinality(Ft)**: penalizes the head foot in word-final position.
 -/
 
-namespace Prosody.Accent
+namespace Prosody
 
-open Prosody.Syllable (SyllWeight MetricalParse ParseElement footMorae)
 
 -- ============================================================================
 -- § 1: Syllable-from-Mora Lookup
@@ -277,4 +276,4 @@ theorem nonfin_sigma_nonfinal :
 theorem nonfin_sigma_unaccented :
     nonFinalitySigma none 3 = 0 := rfl
 
-end Prosody.Accent
+end Prosody

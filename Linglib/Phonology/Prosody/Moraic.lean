@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosodic.Syllable
-import Linglib.Phonology.Prosodic.Word
+import Linglib.Phonology.Prosody.Syllable
+import Linglib.Phonology.Prosody.Word
 
 /-!
 # Moraic Phonology
@@ -22,10 +22,9 @@ in `Syllable`, which is essentially a segmental (X-theory) view.
 [hayes-1989]
 -/
 
-namespace Prosody.Moraic
+namespace Prosody
 
-open Phonology (Segment Feature)
-open Prosody.Syllable (Syllable SyllWeight SyllabifiedForm)
+open Phonology (Segment)
 
 -- ============================================================================
 -- § 1: Moraic Segment — a segment with its mora count
@@ -152,7 +151,7 @@ def MoraicSyllable.toSyllWeight (σ : MoraicSyllable) : SyllWeight :=
     This connects moraic representations to the prosodic word layer,
     enabling minimal word constraints, metrical parsing, and stress
     assignment to operate on moraically-derived weight profiles. -/
-def MoraicForm.toPrWd (f : MoraicForm) : Prosody.ProsodicWord.PrWd :=
+def MoraicForm.toPrWd (f : MoraicForm) : PrWd :=
   ⟨f.syllables.map MoraicSyllable.toSyllWeight⟩
 
 -- ============================================================================
@@ -245,4 +244,4 @@ theorem moraic_minword (f : MoraicForm) :
 theorem toSyllWeight_morae_faithful (σ : MoraicSyllable) :
     σ.toSyllWeight.morae = σ.moraCount := rfl
 
-end Prosody.Moraic
+end Prosody

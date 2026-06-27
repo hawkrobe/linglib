@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosody.Syllable
 
 /-!
 # Metrical Foot Structure
@@ -27,7 +27,7 @@ trochees, final in iambs.
 - OT constraints: `ftBinViolations`, `parseSylViolations`, `allFtLeftViolations`
 -/
 
-namespace Prosody.Syllable
+namespace Prosody
 
 -- `SyllWeight.morae` is now a field accessor — no separate function needed.
 
@@ -239,4 +239,4 @@ private abbrev parse_lllH : MetricalParse :=
 
 theorem lllH_ftbin : ftBinViolations parse_lllH = 2 := rfl
 
-end Prosody.Syllable
+end Prosody

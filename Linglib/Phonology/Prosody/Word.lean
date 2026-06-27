@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Foot
+import Linglib.Phonology.Prosody.Foot
 import Linglib.Features.Prosody
 
 /-!
@@ -43,9 +43,8 @@ profiles, minimal word constraints, and the morphosyntax-prosody
 mapping that determines PrWd boundaries.
 -/
 
-namespace Prosody.ProsodicWord
+namespace Prosody
 
-open Prosody.Syllable
 
 -- ============================================================================
 -- § 1: Morphological Status and PrWd Membership
@@ -263,4 +262,4 @@ theorem postp_lo_no_long :
 theorem postp_gurinci_no_long :
     (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm = false := rfl
 
-end Prosody.ProsodicWord
+end Prosody

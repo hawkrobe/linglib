@@ -25,9 +25,9 @@ sonority and syllable structure.
 [goldsmith-2011] [berent-2026]
 -/
 
-namespace Prosody.Syllable
+namespace Prosody
 
-open Phonology (Segment Feature)
+open Phonology (Segment)
 
 -- ============================================================================
 -- § 1: Sonority Scale
@@ -257,4 +257,4 @@ theorem cvc_is_heavy (σ : Syllable) (h1 : σ.nucleus.length = 1)
     σ.weight = .heavy := by
   simp only [Syllable.weight, Syllable.moraCount, h1, h2, ite_true]
 
-end Prosody.Syllable
+end Prosody

@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.CompensatoryLengthening
+import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -40,8 +40,8 @@ over segmental prosodic theories (X theory, CV theory).
 namespace Hayes1989
 
 open Phonology (Segment Feature Segment.ofSpecs)
-open Prosody.Moraic
-open Prosody.Moraic.CL
+open Prosody
+open Prosody.CL
 
 -- ============================================================================
 -- § 1: Segment Inventory (minimal, for derivations)

@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.OptimalityTheory.Predict
@@ -51,7 +51,7 @@ data supporting the doubling reversal is in
 [berent-2026]
 -/
 
-open Prosody.Syllable (SonorityRank)
+open Prosody (SonorityRank)
 open OptimalityTheory
 open OptimalityTheory.Doubling
 

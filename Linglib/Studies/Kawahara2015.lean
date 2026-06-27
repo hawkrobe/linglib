@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosodic.Accent
-import Linglib.Phonology.Prosodic.Moraic
+import Linglib.Phonology.Prosody.Accent
+import Linglib.Phonology.Prosody.Moraic
 import Linglib.Fragments.Japanese.Prosody
 
 /-!
@@ -27,8 +27,7 @@ epenthesis, rendaku, and vowel devoicing.
    retention; long N2 (≥3μ) triggers N2-initial accent or retention.
 -/
 
-open Prosody.Accent
-open Prosody.Syllable (SyllWeight)
+open Prosody
 
 namespace Kawahara2015
 
@@ -163,7 +162,7 @@ theorem long_n2_initial_avoids_final :
     syllables with short vowels are monomoraic (light). -/
 theorem japanese_wbp_active (o n c : Phonology.Segment) :
     -- CVC with WBP is heavy (e.g., /tan/ = 2μ)
-    (Prosody.Moraic.syllableToMoraic { wbp := true }
+    (Prosody.syllableToMoraic { wbp := true }
       ⟨[o], [n], [c]⟩).toSyllWeight = .heavy := rfl
 
 end Kawahara2015
