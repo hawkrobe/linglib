@@ -8,6 +8,7 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Core.Algebra.ConnesKreimer.Shuffle
 import Linglib.Core.Algebra.ConnesKreimer.ShuffleBialgebra
 import Linglib.Core.Algebra.Free
+import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.IdempotentPower
