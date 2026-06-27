@@ -40,6 +40,12 @@ floating features) chooses other `T` values.
 * `FloatingForm.floatIndicator`, `linksTo`, `tierValues` — indicator
   vectors for constraint evaluation.
 
+## Main results
+
+* `FloatingForm.gen_preserves_isPlanar` — GEN is closed on the no-crossing WFC
+  ([goldsmith-1976] / [pulleyblank-1986]): every one-step candidate of a planar
+  surface graph is itself planar.
+
 ## Implementation notes
 
 A `FloatingForm` carries an immutable **underlying** state (the inherited
@@ -168,8 +174,11 @@ abbrev IsDeleted (k : TierIdx) : Prop := ¬ f.IsAlive k
     on the surface. -/
 abbrev IsLinked (k : TierIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.fst = k
 
-/-- The upper-tier element at index `k` is floating (alive but unlinked). -/
-abbrev IsFloating (k : TierIdx) : Prop := f.IsAlive k ∧ ¬ f.IsLinked k
+/-- The upper-tier element at index `k` is floating: in-bounds, alive (not
+    deleted), and unlinked. The in-bounds guard mirrors the substrate's
+    `Graph.IsFloatingUpper`, so out-of-range indices are not spuriously
+    floating. -/
+abbrev IsFloating (k : TierIdx) : Prop := k < f.upper.len ∧ f.IsAlive k ∧ ¬ f.IsLinked k
 
 /-- A surface link `(k, i)` is **tautomorphic** iff its upper- and lower-tier
     endpoints share a morpheme. Out-of-range indices on either side make this
@@ -227,6 +236,23 @@ def gen : Finset (FloatingForm S T) :=
   let insertOps := ((floatIdxs ×ˢ segIdxs).filter
     (λ ⟨k, i⟩ => ¬ f.Crosses k i)).image (λ ⟨k, i⟩ => f.insertLink k i)
   insert f (deleteOps ∪ insertOps)
+
+/-- **GEN preserves the no-crossing WFC** ([goldsmith-1976] / [pulleyblank-1986]).
+    If the surface graph is planar, every one-step GEN candidate is too: deletes
+    shrink the surface link set (`IsNonCrossing.subset`), and each inserted link
+    passed the `¬ Crosses` filter (`IsNonCrossing.insert_of_not_indexCrosses`).
+    So `gen` is closed on the structural well-formedness condition. -/
+theorem gen_preserves_isPlanar (h : f.surfaceGraph.IsPlanar) :
+    ∀ g ∈ f.gen, g.surfaceGraph.IsPlanar := by
+  have h' : IsNonCrossing f.surfaceLinks := h
+  intro g hg
+  show IsNonCrossing g.surfaceLinks
+  simp only [gen, Finset.mem_insert, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
+    Finset.mem_product] at hg
+  rcases hg with rfl | ⟨k, _, rfl⟩ | ⟨⟨k, i⟩, ⟨_, hnx⟩, rfl⟩
+  · exact h'
+  · exact IsNonCrossing.subset (Finset.filter_subset _ _) h'
+  · exact IsNonCrossing.insert_of_not_indexCrosses h' hnx
 
 /-! ### Indicator vectors for constraint evaluation -/
 
