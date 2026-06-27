@@ -41,7 +41,7 @@ namespace Phonology
     some of these features to different nodes: [nasal] → soft palate,
     [continuant] → supralaryngeal, [lateral]/[strident] → coronal.
     The flat manner/root grouping has no single geometric counterpart
-    — see the subsumption theorems in `FeatureGeometry.lean` §6.
+    — see the subsumption theorems in `FeatureGeometry.lean`.
 
     A feature decomposition consistent with Hayes's sonority discussion:
     [±sonorant] > [±approximant] > [±consonantal] > [±syllabic],
