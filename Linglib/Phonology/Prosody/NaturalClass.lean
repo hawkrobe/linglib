@@ -1,5 +1,5 @@
 import Linglib.Phonology.Segment
-import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosody.Syllable
 
 /-!
 # Natural Classes and the Parker Sonority Scale
@@ -12,8 +12,8 @@ and [±voice]:
 | Class              | son | cont | voice | Rank |
 |--------------------|-----|------|-------|------|
 | Voiceless stops    |  −  |  −   |  −    |  1   |
-| Voiced stops       |  −  |  −   |  +    |  2   |
-| Voiceless fric.    |  −  |  +   |  −    |  3   |
+| Voiceless fric.    |  −  |  +   |  −    |  2   |
+| Voiced stops       |  −  |  −   |  +    |  3   |
 | Voiced fricatives  |  −  |  +   |  +    |  4   |
 | Nasals             |  +  |  −   |  ±    |  5   |
 | Liquids / Taps     |  +  |  +   |  ±    |  6   |
@@ -24,14 +24,20 @@ Sonorants (ranks 5–8) are distinguished by [±approximant], [±consonantal],
 and [±syllabic], exactly as in the Clements scale (`SonorityRank`). The
 Parker refinement adds [±voice] only within obstruents.
 
+Crucially, [parker-2002] ranks **voiced stops above voiceless fricatives**
+(`vds > vlf`) — his intensity-based experimental result and the inverse of
+the more common textbook ordering. Parker presents this as the *default
+universal* ranking, which "in specific languages may be reversed" (e.g.
+Imdlawn Tashlhiyt Berber ranks them the other way).
+
 This finer granularity is needed for sonority-conditioned gradient
 phenomena such as intrusive vowel insertion in Tarifit Berber
 ([afkir-zellou-2025]).
 -/
 
-namespace Prosody.Syllable
+namespace Prosody
 
-open Phonology (Segment Feature)
+open Phonology (Segment)
 
 -- ============================================================================
 -- § 1: Natural Class Type
@@ -51,9 +57,11 @@ inductive NatClass where
   | vowel  -- vowels: [+son, +approx, −cons, +syll]
   deriving DecidableEq, Repr
 
-/-- Parker (2002) 8-level sonority ranking. -/
+/-- Parker's default universal 8-level sonority ranking ([parker-2002]):
+    voiced stops outrank voiceless fricatives (`vds = 3 > vlf = 2`), per
+    Parker's intensity measurements. Reversible in particular languages. -/
 def NatClass.parkerSonority : NatClass → Nat
-  | .vls => 1 | .vds => 2 | .vlf => 3 | .vdf => 4
+  | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
 -- ============================================================================
@@ -101,4 +109,4 @@ theorem parker_strictly_monotone (a b : NatClass) (h : a ≠ b) :
     NatClass.parkerSonority a > NatClass.parkerSonority b := by
   cases a <;> cases b <;> simp_all [NatClass.parkerSonority]
 
-end Prosody.Syllable
+end Prosody

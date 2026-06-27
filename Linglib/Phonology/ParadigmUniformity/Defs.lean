@@ -33,12 +33,13 @@ The combinators here capture the *symmetric, anchorless* lift shared by
 OP and (sans anchor) LC; they do **not** themselves encode the recursive
 or polarity-flipped variants.
 
-## Connection to item-specificity theories
+## Connection to frequency-conditioned phonology
 
-The `Phonology/ItemSpecificity/` interface (`HasTokenFreq`)
-provides per-item frequency annotations; paradigm uniformity becomes
-one input to a frequency-conditioned grammar (the other being
-`IndexedConstraints`/`ScaledWeights`/`UseListed`/`RepresentationStrength`).
+A lexicon's per-item token-frequency (plain `α → ℝ` data, e.g.
+`Japanese.Prosody.jTokenFreq`) makes paradigm uniformity one input to a
+frequency-conditioned grammar; `Studies/BreissKatsudaKawahara2026.lean`
+combines LC paradigm uniformity with a frequency-scaled weight to that
+end.
 PU and item-specificity are orthogonal and frequently combined; the
 Breiss-Katsuda-Kawahara compound study
 ([breiss-katsuda-kawahara-2026]) is a test case discriminating

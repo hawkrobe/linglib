@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Moraic
+import Linglib.Phonology.Prosody.Moraic
 
 /-!
 # Compensatory Lengthening in Moraic Theory
@@ -24,10 +24,9 @@ line rearrangements.
 [hayes-1989]
 -/
 
-namespace Prosody.Moraic.CL
+namespace Prosody.CL
 
 open Phonology (Segment)
-open Prosody.Moraic
 
 -- ============================================================================
 -- § 1: CL Typology
@@ -196,4 +195,4 @@ theorem no_wbp_params_disable_cl (o n c : Segment) :
     let σ := syllableToMoraic { wbp := false } ⟨[o], [n], [c]⟩
     (deleteMoraic σ 1).2 = 0 := rfl
 
-end Prosody.Moraic.CL
+end Prosody.CL

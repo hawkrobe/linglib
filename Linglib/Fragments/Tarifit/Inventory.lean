@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.NaturalClass
+import Linglib.Phonology.Prosody.NaturalClass
 
 /-!
 # Tarifit Consonant Inventory
@@ -36,7 +36,7 @@ are from the paper's word list / online appendix.
 
 namespace Tarifit.Inventory
 
-open Prosody.Syllable
+open Prosody
 
 -- ============================================================================
 -- § 1: Word Type

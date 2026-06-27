@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Foot
+import Linglib.Phonology.Prosody.Foot
 import Linglib.Features.Prosody
 
 /-!
@@ -43,9 +43,8 @@ profiles, minimal word constraints, and the morphosyntax-prosody
 mapping that determines PrWd boundaries.
 -/
 
-namespace Prosody.ProsodicWord
+namespace Prosody
 
-open Prosody.Syllable
 
 -- ============================================================================
 -- § 1: Morphological Status and PrWd Membership
@@ -150,7 +149,7 @@ def PrWd.syllableCount (w : PrWd) : Nat :=
     the shortest standalone words are informal 2SG imperatives like
     *rā* 'come' (CVV = 2μ) and *pō* 'go' (CVV = 2μ). No word
     consists of a single light syllable. -/
-def PrWd.satisfiesMinWord (w : PrWd) (minMorae : Nat := 2) : Bool :=
+abbrev PrWd.satisfiesMinWord (w : PrWd) (minMorae : Nat := 2) : Prop :=
   w.moraCount ≥ minMorae
 
 -- ============================================================================
@@ -179,8 +178,8 @@ structure MorphElement where
     Postpositions never trigger the long form, even if they begin with
     a light syllable (e.g., *-gurinci* 'about', *-eduru* 'in front of'),
     because they are PrWd-external. -/
-def MorphElement.triggersLongForm (m : MorphElement) : Bool :=
-  m.status.isPrWdInternal && m.initialWeight == .light
+abbrev MorphElement.triggersLongForm (m : MorphElement) : Prop :=
+  m.status.isPrWdInternal ∧ m.initialWeight = .light
 
 -- ============================================================================
 -- § 5: PrWd-Sensitive Phonological Processes
@@ -216,21 +215,21 @@ theorem postp_is_external : MorphStatus.postposition.isPrWdInternal = false := r
 -- Minimal word examples
 
 /-- A single heavy syllable (CVV or CVC) = 2μ: satisfies bimoraic min. -/
-theorem heavy_satisfies_min : (PrWd.mk [.heavy]).satisfiesMinWord = true := rfl
+theorem heavy_satisfies_min : (PrWd.mk [.heavy]).satisfiesMinWord := by decide
 
 /-- A single light syllable (CV) = 1μ: violates bimoraic min. -/
-theorem light_violates_min : (PrWd.mk [.light]).satisfiesMinWord = false := rfl
+theorem light_violates_min : ¬ (PrWd.mk [.light]).satisfiesMinWord := by decide
 
 /-- Two light syllables (CV.CV) = 2μ: satisfies bimoraic min. -/
-theorem ll_satisfies_min : (PrWd.mk [.light, .light]).satisfiesMinWord = true := rfl
+theorem ll_satisfies_min : (PrWd.mk [.light, .light]).satisfiesMinWord := by decide
 
 -- Telugu postpositions satisfy min word independently
 
 /-- *-lō* 'in' (CVV = 2μ): satisfies min word as a separate PrWd. -/
-theorem lo_satisfies_min : (PrWd.mk [.heavy]).satisfiesMinWord = true := rfl
+theorem lo_satisfies_min : (PrWd.mk [.heavy]).satisfiesMinWord := by decide
 
 /-- *-kinda* 'below' (CVC.CV = 3μ): satisfies min word. -/
-theorem kinda_satisfies_min : (PrWd.mk [.heavy, .light]).satisfiesMinWord = true := rfl
+theorem kinda_satisfies_min : (PrWd.mk [.heavy, .light]).satisfiesMinWord := by decide
 
 -- Hiatus obligation
 
@@ -244,23 +243,23 @@ theorem postp_hiatus_optional :
 
 /-- ACC *-ni*: PrWd-internal, light → triggers long form. -/
 theorem acc_ni_triggers_long :
-    (MorphElement.mk "-ni" .inflectional .light).triggersLongForm = true := rfl
+    (MorphElement.mk "-ni" .inflectional .light).triggersLongForm := by decide
 
 /-- DAT *-ki*: PrWd-internal, light → triggers long form. -/
 theorem dat_ki_triggers_long :
-    (MorphElement.mk "-ki" .inflectional .light).triggersLongForm = true := rfl
+    (MorphElement.mk "-ki" .inflectional .light).triggersLongForm := by decide
 
 /-- 1SG *-ni*: PrWd-internal (agreement), light → triggers long form. -/
 theorem agr_1sg_triggers_long :
-    (MorphElement.mk "-ni" .agreement .light).triggersLongForm = true := rfl
+    (MorphElement.mk "-ni" .agreement .light).triggersLongForm := by decide
 
 /-- P *-lō* 'in': PrWd-external → does NOT trigger long form. -/
 theorem postp_lo_no_long :
-    (MorphElement.mk "-lō" .postposition .heavy).triggersLongForm = false := rfl
+    ¬ (MorphElement.mk "-lō" .postposition .heavy).triggersLongForm := by decide
 
 /-- P *-gurinci* 'about': PrWd-external → does NOT trigger long form,
     even though its initial syllable *gu-* is light. -/
 theorem postp_gurinci_no_long :
-    (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm = false := rfl
+    ¬ (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm := by decide
 
-end Prosody.ProsodicWord
+end Prosody

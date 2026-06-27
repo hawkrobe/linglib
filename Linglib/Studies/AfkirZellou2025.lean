@@ -4,7 +4,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Core.Optimization.System
 import Linglib.Core.Optimization.Decoder
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Phonology.Prosodic.NaturalClass
+import Linglib.Phonology.Prosody.NaturalClass
 import Linglib.Fragments.Tarifit.Inventory
 
 /-!
@@ -61,7 +61,7 @@ paper notes these as partly idiosyncratic (Table 7).
 namespace AfkirZellou2025
 
 open Core.Optimization Constraints OptimalityTheory
-open Prosody.Syllable
+open Prosody
 open Tarifit.Inventory
 open Core.Optimization Constraints OptimalityTheory
 

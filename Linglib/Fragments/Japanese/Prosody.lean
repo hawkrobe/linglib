@@ -1,6 +1,6 @@
 import Linglib.Features.Prosody
-import Linglib.Phonology.Prosodic.Accent
-import Linglib.Phonology.ItemSpecificity.Defs
+import Linglib.Phonology.Prosody.Accent
+import Mathlib.Data.Real.Basic
 import Linglib.Studies.BeckmanPierrehumbert1986
 
 /-!
@@ -34,9 +34,8 @@ affix typology from [kawahara-2015].
 namespace Japanese.Prosody
 
 open Features.Prosody
-open Prosody.Accent (defaultAccentAAR latinStressRule accentToTones
-  LevelTone shortN2CompoundAccent longN2CompoundAccent)
-open Prosody.Syllable (SyllWeight)
+open _root_.Prosody (defaultAccentAAR latinStressRule accentToTones
+  LevelTone shortN2CompoundAccent longN2CompoundAccent SyllWeight)
 open BeckmanPierrehumbert1986
 
 -- ============================================================================
@@ -111,8 +110,8 @@ def ame : JProsodicEntry :=
     Following CLAUDE.md's "infrastructure on demand", these annotations
     are kept on a thin extension structure rather than added to
     `JProsodicEntry`, so existing accent-only consumers are unaffected.
-    The `HasTokenFreq` typeclass instance below makes this entry
-    consumable by any module under `Phonology/ItemSpecificity/`. -/
+    The `jTokenFreq` accessor below exposes its token frequency as the
+    `ℝ`-valued channel that frequency-conditioned phonology reads. -/
 structure JLexicalEntry extends JProsodicEntry where
   /-- Token log-frequency in a reference corpus (e.g., BCCWJ). `0`
       conventionally means "log of 1 occurrence" — used as the no-info
@@ -126,14 +125,11 @@ structure JLexicalEntry extends JProsodicEntry where
   canStandAlone : Bool := true
   deriving Repr
 
-/-- `HasTokenFreq` instance routing `tokenLogFreq` through the
-    fragment-level `ℚ` field into the abstract `LogFreq := ℝ` interface
-    used by `Phonology/ItemSpecificity/`. `Rat.cast` is the
-    standard mathlib coercion. The instance is `noncomputable` because
-    `ℝ` is noncomputable; the `ℚ` field itself remains computable for
-    `decide`-style proofs. -/
-noncomputable instance : Constraints.ItemSpecificity.HasTokenFreq JLexicalEntry where
-  tokenLogFreq e := (e.tokenLogFreq : ℝ)
+/-- The token-log-frequency of a `JLexicalEntry`: the fragment-level
+    `ℚ` field cast to `ℝ` for frequency-conditioned phonology.
+    `noncomputable` because `ℝ` is; the `ℚ` field itself stays
+    computable for `decide`-style proofs. -/
+noncomputable def jTokenFreq (e : JLexicalEntry) : ℝ := (e.tokenLogFreq : ℝ)
 
 -- ============================================================================
 -- § 2c: Compounds
