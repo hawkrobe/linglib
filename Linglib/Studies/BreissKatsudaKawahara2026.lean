@@ -1,9 +1,7 @@
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 import Linglib.Fragments.Japanese.Prosody
-import Linglib.Phonology.ItemSpecificity.Defs
-import Linglib.Phonology.ItemSpecificity.ScaledWeights
-import Linglib.Phonology.ItemSpecificity.RepresentationStrength
-import Linglib.Phonology.ItemSpecificity.IndexedConstraints
-import Linglib.Phonology.ItemSpecificity.UseListed
 import Linglib.Phonology.ParadigmUniformity.Defs
 import Linglib.Phonology.ParadigmUniformity.LexicalConservatism
 import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
@@ -66,8 +64,8 @@ This puts the paper at the intersection of:
   on attested wordforms; see
   `ParadigmUniformity/LexicalConservatism.lean`).
 - [coetzee-pater-2008] *Frequency-scaled weights* (the modulation
-  channel — token-frequency drives a continuous weight; see
-  `ItemSpecificity/ScaledWeights.lean`).
+  channel — token-frequency drives a continuous weight; formalised as
+  `scaledWeight` below).
 
 The previous constraint-based account of [ito-mester-1996] /
 [ito-mester-2003] treats nasalisation as the result of a
@@ -77,13 +75,14 @@ alternation. BKK 2026's contribution is the **sign of the two
 frequency channels** and the **architectural commitment** that the
 two-direction story collapses to one direction in the bound case.
 
-## Connection to ItemSpecificity theories
+## Adjudication among rival frequency theories (the paper's §5)
 
 The companion modelling paper (Breiss, Katsuda & Kawahara,
 lingbuzz/009508) fits a MaxEnt grammar with [steriade-2000]'s
 Lexical Conservatism. We do not formalise the fitting routine here.
-The discrimination this study makes against the four siblings in
-`Phonology/ItemSpecificity/`:
+The paper's §5 weighs four rival accounts of token frequency in the
+grammar; only those locating it at the individual morpheme (here N2)
+survive the novel-compound data of Experiment 2:
 
 - **ScaledWeights** ([coetzee-pater-2008]): consistent with the
   data, with separate slopes per channel (positive on cpd freq,
@@ -119,8 +118,6 @@ favouring a paradigm-anchored account.
 namespace BreissKatsudaKawahara2026
 
 open Japanese.Prosody
-open Constraints.ItemSpecificity
-open Constraints.ItemSpecificity.Scaled (scaledWeight)
 open OptimalityTheory.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
 open Morphology.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
   NovelShowsFreqGradient NovelInvariantInFrequency
@@ -324,6 +321,12 @@ theorem dokuga_two_puviolations : cpdPuViolations cpd_dokuga = 2 :=
 -- § 5: Two opposite-sign frequency channels
 -- ============================================================================
 
+/-- Frequency-scaled constraint weight ([coetzee-pater-2008]): an affine
+    function of an item's log token-frequency. The "accessibility
+    scaling" channel — frequency scales a constraint's weight, the
+    representation held fixed. -/
+def scaledWeight (baseWeight slope x : ℝ) : ℝ := baseWeight + slope * x
+
 /-- The **N2-frequency-weighted PU pressure** on a compound: PU-FAITH
     violations multiplied by `scaledWeight` of the N2 token
     log-frequency. Higher N2 frequency → stronger weight → stronger
@@ -331,7 +334,7 @@ theorem dokuga_two_puviolations : cpdPuViolations cpd_dokuga = 2 :=
     *negative-on-nasalisation* channel (negative regression coefficient
     on N2 token frequency in [breiss-katsuda-kawahara-2026]). -/
 noncomputable def puPressure (slope : ℝ) (c : JCompound) : ℝ :=
-  (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) c.n2
+  (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) (jTokenFreq c.n2)
 
 /-- The **compound-frequency-weighted markedness pressure** *for*
     nasalisation: linear in compound log-frequency. Higher compound
@@ -377,7 +380,7 @@ theorem nasLogOdds_antitone_in_puPressure (n2Slope cpdSlope : ℝ)
     yields strictly *higher* PU pressure (when slope is positive). -/
 theorem puPressure_monotone_in_n2_freq (slope : ℝ) (hSlope : 0 ≤ slope)
     (c1 c2 : JCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
-    (hfreq : tokenLogFreq c1.n2 ≤ tokenLogFreq c2.n2) :
+    (hfreq : jTokenFreq c1.n2 ≤ jTokenFreq c2.n2) :
     puPressure slope c1 ≤ puPressure slope c2 := by
   unfold puPressure scaledWeight
   rw [hviol]
@@ -431,7 +434,7 @@ theorem bound_nasLogOdds_eq_markedness (n2Slope cpdSlope : ℝ) (c : JCompound)
 theorem novel_compounds_show_n2_gradient (slope : ℝ) (hSlope : 0 < slope)
     (c1 c2 : JCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
     (hviol_pos : 0 < cpdPuViolations c1)
-    (hfreq : tokenLogFreq c1.n2 < tokenLogFreq c2.n2) :
+    (hfreq : jTokenFreq c1.n2 < jTokenFreq c2.n2) :
     puPressure slope c1 < puPressure slope c2 := by
   unfold puPressure scaledWeight
   have hpos2 : (0 : ℝ) < (cpdPuViolations c2 : ℝ) := by

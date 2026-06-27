@@ -35,8 +35,8 @@ The paper's positional measures `SemSupVowel` and `SemSupSuffix` (paper §3.1 eq
 the paper's triphone indexing is not reproduced here, so they get no separate definitions.
 The paper's production matrix `G` (solving `SG = C`) is the substrate's `production`, its
 comprehension matrix `F` (solving `CF = S`) is `comprehension`. The DLM's
-no-stored-entries architecture sits against the `Phonology/ItemSpecificity/` frequency
-channels and [bybee-1985]'s `tokenFreq` (`Morphology/UsageBased/Network.lean`); cf. the
+no-stored-entries architecture sits against frequency-channel theories of a stored
+lexicon and [bybee-1985]'s `tokenFreq` (`Morphology/UsageBased/Network.lean`); cf. the
 channel discrimination in `Studies/BreissKatsudaKawahara2026.lean`.
 -/
 

@@ -39,9 +39,9 @@ lexical access). All such theories share the architectural concern
 of how form ↔ meaning links are *processed*; they may disagree on
 whether items are stored.
 
-This means `Phonology/ItemSpecificity/` (frequency channels
-parameterised by a stored lexicon: [zuraw-2000], [pater-2010],
-[coetzee-pater-2008], [moore-cantwell-2021]) and
+This means frequency-channel theories of a stored lexicon ([zuraw-2000],
+[pater-2010], [coetzee-pater-2008], [moore-cantwell-2021]; see
+`Studies/BreissKatsudaKawahara2026.lean`) and
 `Morphology/UsageBased/Network.lean` (Bybee 1985 dynamic
 network: [bybee-1985]) intentionally do **not** sit alongside
 DLM here — they make positive lexicon-architecture commitments and
