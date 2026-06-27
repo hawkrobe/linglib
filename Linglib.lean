@@ -1363,7 +1363,6 @@ import Linglib.Phonology.Prosodic.Foot
 import Linglib.Phonology.Prosodic.Moraic
 import Linglib.Phonology.Prosodic.NaturalClass
 import Linglib.Phonology.Prosodic.Syllable
-import Linglib.Phonology.Prosodic.Templates
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Phonology.Segment
 import Linglib.Phonology.Subregular.Agree

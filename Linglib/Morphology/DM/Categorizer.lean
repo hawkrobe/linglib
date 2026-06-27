@@ -381,7 +381,7 @@ def CatHead.satisfiesLicense (ch : CatHead) (req : Option GenderFeature) : Bool 
     ([kramer-2020]; [faust-2026] (11)).
 
     The predicate is `cat = .n ∧ phi.gender ≠ none`. Used by
-    `Prosody.Templates.RootTemplateMatch.intrusionLicensed` to filter
+    `Faust2026.Templates.RootTemplateMatch.intrusionLicensed` to filter
     `RootTemplateMatch` candidates with `intruder`-source associations. -/
 def CatHead.licensesIntrusion (ch : CatHead) : Bool :=
   decide (ch.cat = .n) && ch.phi.gender.isSome
