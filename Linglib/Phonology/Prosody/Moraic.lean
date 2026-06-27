@@ -135,15 +135,15 @@ def MoraicForm.totalMorae (f : MoraicForm) : Nat :=
   f.syllables.foldl (· + ·.moraCount) 0
 
 -- ============================================================================
--- § 6: Bridge to Syllable.SyllWeight and ProsodicWord
+-- § 6: Bridge to Syllable.Syllable.Weight and ProsodicWord
 -- ============================================================================
 
-/-- Convert moraic syllable to `SyllWeight` by extracting the mora count.
+/-- Convert moraic syllable to `Syllable.Weight` by extracting the mora count.
 
-    This is lossless: `σ.toSyllWeight.morae = σ.moraCount` by definition.
+    This is lossless: `σ.toWeight.morae = σ.moraCount` by definition.
     No classification into light/heavy/superheavy bins — the exact mora
     count passes through. -/
-def MoraicSyllable.toSyllWeight (σ : MoraicSyllable) : SyllWeight :=
+def MoraicSyllable.toWeight (σ : MoraicSyllable) : Syllable.Weight :=
   ⟨σ.moraCount⟩
 
 /-- Convert a moraic form to a `PrWd` (prosodic word) weight profile.
@@ -152,7 +152,7 @@ def MoraicSyllable.toSyllWeight (σ : MoraicSyllable) : SyllWeight :=
     enabling minimal word constraints, metrical parsing, and stress
     assignment to operate on moraically-derived weight profiles. -/
 def MoraicForm.toPrWd (f : MoraicForm) : PrWd :=
-  ⟨f.syllables.map MoraicSyllable.toSyllWeight⟩
+  ⟨f.syllables.map MoraicSyllable.toWeight⟩
 
 -- ============================================================================
 -- § 7: Bridge Theorems
@@ -188,51 +188,51 @@ theorem syllableToMoraic_moraCount_no_wbp (σ : Syllable) :
   simp [MoraCount.toNat]
 
 /-- **General bridge**: moraic weight classification agrees with segmental weight
-    classification for WBP languages. This connects `MoraicSyllable.toSyllWeight`
+    classification for WBP languages. This connects `MoraicSyllable.toWeight`
     to `Syllable.weight` — two independently defined weight functions that
     must agree for the moraic theory to be consistent with the segmental view. -/
 theorem syllableToMoraic_weight_wbp (σ : Syllable) :
-    (syllableToMoraic { wbp := true } σ).toSyllWeight = σ.weight true := by
-  unfold MoraicSyllable.toSyllWeight Syllable.weight
+    (syllableToMoraic { wbp := true } σ).toWeight = σ.weight true := by
+  unfold MoraicSyllable.toWeight Syllable.weight
   congr 1; exact syllableToMoraic_moraCount_wbp σ
 
 /-- General bridge for non-WBP languages. -/
 theorem syllableToMoraic_weight_no_wbp (σ : Syllable) :
-    (syllableToMoraic { wbp := false } σ).toSyllWeight = σ.weight false := by
-  unfold MoraicSyllable.toSyllWeight Syllable.weight
+    (syllableToMoraic { wbp := false } σ).toWeight = σ.weight false := by
+  unfold MoraicSyllable.toWeight Syllable.weight
   congr 1; exact syllableToMoraic_moraCount_no_wbp σ
 
 /-- `syllableToMoraic` preserves CV = light regardless of WBP. -/
 theorem syllableToMoraic_cv_light (params : MoraicParams) (o n : Segment) :
-    (syllableToMoraic params ⟨[o], [n], []⟩).toSyllWeight = .light := by
-  simp only [syllableToMoraic, MoraicSyllable.toSyllWeight,
+    (syllableToMoraic params ⟨[o], [n], []⟩).toWeight = .light := by
+  simp only [syllableToMoraic, MoraicSyllable.toWeight,
     MoraicSyllable.moraCount, MoraCount.toNat, List.map, List.append_nil,
     List.foldl]
 
 /-- A CV syllable (one monomoraic vowel, no coda) is light. -/
 theorem cv_moraic_light (v : Segment) :
-    (MoraicSyllable.mk [] [⟨v, .one⟩]).toSyllWeight = .light := rfl
+    (MoraicSyllable.mk [] [⟨v, .one⟩]).toWeight = .light := rfl
 
 /-- A CVV syllable (one bimoraic vowel) is heavy. -/
 theorem cvv_moraic_heavy (v : Segment) :
-    (MoraicSyllable.mk [] [⟨v, .two⟩]).toSyllWeight = .heavy := rfl
+    (MoraicSyllable.mk [] [⟨v, .two⟩]).toWeight = .heavy := rfl
 
 /-- A CVC syllable with WBP (coda has one mora) is heavy. -/
 theorem cvc_wbp_heavy (v c₁ c₂ : Segment) :
-    (MoraicSyllable.mk [c₁] [⟨v, .one⟩, ⟨c₂, .one⟩]).toSyllWeight = .heavy := rfl
+    (MoraicSyllable.mk [c₁] [⟨v, .one⟩, ⟨c₂, .one⟩]).toWeight = .heavy := rfl
 
 /-- A CVC syllable without WBP (coda has zero morae) is light. -/
 theorem cvc_no_wbp_light (v c₁ c₂ : Segment) :
-    (MoraicSyllable.mk [c₁] [⟨v, .one⟩, ⟨c₂, .zero⟩]).toSyllWeight = .light := rfl
+    (MoraicSyllable.mk [c₁] [⟨v, .one⟩, ⟨c₂, .zero⟩]).toWeight = .light := rfl
 
 /-- A CVVC syllable (long vowel + moraic coda) is superheavy. -/
 theorem cvvc_superheavy (v c₁ c₂ : Segment) :
-    (MoraicSyllable.mk [c₁] [⟨v, .two⟩, ⟨c₂, .one⟩]).toSyllWeight = .superheavy := rfl
+    (MoraicSyllable.mk [c₁] [⟨v, .two⟩, ⟨c₂, .one⟩]).toWeight = .superheavy := rfl
 
 /-- Geminate: one segment linked to two morae, straddling a syllable boundary.
     The first half contributes its mora(e) to the coda of σ₁. -/
 theorem geminate_makes_heavy (v seg : Segment) :
-    (MoraicSyllable.mk [] [⟨v, .one⟩, ⟨seg, .one⟩]).toSyllWeight = .heavy := rfl
+    (MoraicSyllable.mk [] [⟨v, .one⟩, ⟨seg, .one⟩]).toWeight = .heavy := rfl
 
 /-- The moraic minimal word: `satisfiesMinWord` holds iff there are ≥ 2 morae
     (the default). This connects moraic representations to PrWd's bimoraic
@@ -240,9 +240,9 @@ theorem geminate_makes_heavy (v seg : Segment) :
 theorem moraic_minword (f : MoraicForm) :
     f.toPrWd.satisfiesMinWord ↔ f.toPrWd.moraCount ≥ 2 := Iff.rfl
 
-/-- **Round-trip fidelity**: `toSyllWeight.morae` recovers the exact mora count.
-    No bounds needed — `SyllWeight` is now a `Nat` wrapper, not a lossy enum. -/
-theorem toSyllWeight_morae_faithful (σ : MoraicSyllable) :
-    σ.toSyllWeight.morae = σ.moraCount := rfl
+/-- **Round-trip fidelity**: `toWeight.morae` recovers the exact mora count.
+    No bounds needed — `Syllable.Weight` is now a `Nat` wrapper, not a lossy enum. -/
+theorem toWeight_morae_faithful (σ : MoraicSyllable) :
+    σ.toWeight.morae = σ.moraCount := rfl
 
 end Prosody
