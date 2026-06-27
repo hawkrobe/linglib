@@ -43,7 +43,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 - **Kamp (1975)**: `Studies/Kamp1975.lean` §3 (Kamp→Klein lineage,
   `kampPreorder` = `kleinPreorder` over Set.univ)
 - **Fine (1975)**: `Studies/Fine1975.lean` (supervaluation ↔ delineation duality)
-- **Kennedy (2007)**: `Studies/Kennedy2007Licensing.lean` (degree-based alternative)
+- **Kennedy (2007)**: `Studies/Kennedy2007.lean` (degree-based alternative)
 - **Hierarchy**: `Semantics/Comparison/Hierarchy.lean` (Klein ← Kennedy ← Measurement)
 - **Bochnak (2015)**: `Studies/Bochnak2015.lean` — typological attestation that
   the Klein-style degree-free type ⟨e, t⟩ is realized by a natural language

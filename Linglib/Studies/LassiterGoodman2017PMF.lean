@@ -106,7 +106,7 @@ borderline cases are *one* of several formalised positions in linglib:
   resolved by non-transitivity of st-consequence.
 * `Studies/Klein1980.lean` — comparison-class
   delineation.
-* `Studies/Kennedy2007Licensing.lean` —
+* `Studies/Kennedy2007.lean` —
   standard-of-comparison contextualism.
 
 Per linglib's "no bridge files" discipline, framework-comparison content
