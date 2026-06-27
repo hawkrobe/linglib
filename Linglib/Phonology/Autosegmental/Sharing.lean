@@ -62,7 +62,7 @@ two distinct elements cannot be identical to the same time point.
 
 namespace Autosegmental
 
-open Phonology (Segment Feature FeatureVal)
+open Phonology (Segment Feature)
 open Phonology.FeatureGeometry (GeomNode)
 
 /-! ### Feature agreement -/
