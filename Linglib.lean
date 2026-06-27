@@ -1475,7 +1475,7 @@ import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.SelfPacedReading
 import Linglib.Processing.VisualWorld
 import Linglib.Semantics.Alternatives.AltMeaning
-import Linglib.Semantics.Alternatives.Indirect
+import Linglib.Semantics.Alternatives.Competition
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Structural
