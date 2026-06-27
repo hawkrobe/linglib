@@ -13,8 +13,6 @@ into manner/root, laryngeal, and the labial/coronal/dorsal place articulators.
 ## Main definitions
 
 * `Feature`: the 26 binary distinctive features.
-* `FeatureVal`: a feature value (`some true` = [+F], `some false` = [−F],
-  `none` = unspecified).
 * `Feature.category`: the articulator category of a feature; the single source
   of truth for the `Feature.IsLaryngeal`, `Feature.IsDorsal`, and
   `Feature.IsPlace` predicates.
@@ -70,14 +68,9 @@ inductive Feature where
   | tense            -- tense vowel quality
   deriving DecidableEq, Repr
 
-/-- A feature value: `some true` = [+F], `some false` = [−F], `none` = unspecified. -/
-abbrev FeatureVal := Option Bool
-
 /-! ### Feature classification -/
 
-/-- Articulator category of a feature: manner/root, laryngeal, or one of the
-    three place articulators ([hayes-2009] Ch 4). Single source of truth for
-    the classification predicates below. -/
+/-- The articulator category of a feature: manner/root, laryngeal, or place. -/
 inductive Feature.Category where
   | manner | laryngeal | labial | coronal | dorsal
   deriving DecidableEq, Repr
