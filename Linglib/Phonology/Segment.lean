@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Order.Nat
 import Linglib.Phonology.Feature
 import Linglib.Features.Basic
 
@@ -22,8 +23,11 @@ in unfolded form (`Feature → Option Bool`), so the shared bundle algebra
 * `Segment.ofSpecs` / `Segment.matchesPattern` — natural-class construction and membership
 * `Segment.applyChanges` — SPE structural change, via `Features.Bundle.merge`
 * `Segment.IsVowel`, `IsConsonant`, `IsStop`, … — the natural-class predicates
+* `Sonority` — the abstract sonority scale (a `LinearOrder`), and
+  `SonorityClass` — the finer 8-level Parker refinement, both grounded in a
+  segment's features
 
-[hayes-2009] [chomsky-halle-1968]
+[hayes-2009] [chomsky-halle-1968] [clements-1990] [parker-2002]
 -/
 
 namespace Phonology
@@ -310,5 +314,117 @@ theorem fillFromContext_spec_self_of_specified
   cases s.spec g <;> rfl
 
 end Segment
+
+/-! ### Sonority -/
+
+/-- The abstract sonority hierarchy ([clements-1990]): what the synchronic
+    grammar operates on, ordering segments from least to most sonorous.
+
+    | Rank | Class     |
+    |------|-----------|
+    |  0   | Stop      |
+    |  1   | Fricative |
+    |  2   | Nasal     |
+    |  3   | Liquid    |
+    |  4   | Glide     |
+    |  5   | Vowel     |
+
+    For the finer 8-level scale that splits obstruents by voice, see
+    `SonorityClass`. -/
+inductive Sonority where
+  | stop
+  | fricative
+  | nasal
+  | liquid
+  | glide
+  | vowel
+  deriving DecidableEq, Repr
+
+namespace Sonority
+
+/-- Numeric rank (0 = least sonorous). -/
+def rank : Sonority → Nat
+  | .stop => 0 | .fricative => 1 | .nasal => 2
+  | .liquid => 3 | .glide => 4 | .vowel => 5
+
+instance : LinearOrder Sonority :=
+  LinearOrder.lift' rank fun a b h => by cases a <;> cases b <;> simp_all [rank]
+
+/-- The sonority of a segment, read off its features
+    ([hayes-2009], [clements-1990]). -/
+def ofSegment (s : Segment) : Sonority :=
+  if s.HasValue .sonorant false then
+    if s.HasValue .continuant true then .fricative else .stop
+  else if s.HasValue .approximant false then .nasal
+  else if s.HasValue .consonantal true then .liquid
+  else if s.HasValue .syllabic true then .vowel
+  else .glide
+
+end Sonority
+
+/-! ### The Parker sonority scale -/
+
+/-- The 8-level Parker sonority partition ([parker-2002]) — a refinement of
+    `Sonority` that splits obstruents by [±continuant] and [±voice]. This is the
+    sonority *scale*; it is distinct from the natural-class predicates above
+    (`Segment.IsVowel` &c.), which are feature membership.
+
+    Crucially [parker-2002] ranks voiced stops above voiceless fricatives
+    (`vds = 3 > vlf = 2`) — his intensity-based default universal, reversible in
+    particular languages. The finer granularity is needed for sonority-
+    conditioned gradient phenomena such as Tarifit intrusive vowels
+    ([afkir-zellou-2025]). -/
+inductive SonorityClass where
+  | vls    -- voiceless stops: [−son, −cont, −voice]
+  | vds    -- voiced stops: [−son, −cont, +voice]
+  | vlf    -- voiceless fricatives: [−son, +cont, −voice]
+  | vdf    -- voiced fricatives: [−son, +cont, +voice]
+  | nasal  -- nasals: [+son, −approx]
+  | liquid -- liquids/taps: [+son, +approx, +cons]
+  | glide  -- glides: [+son, +approx, −cons, −syll]
+  | vowel  -- vowels: [+son, +approx, −cons, +syll]
+  deriving DecidableEq, Repr
+
+namespace SonorityClass
+
+/-- Parker's default universal 8-level ranking ([parker-2002]): voiced stops
+    (`vds = 3`) outrank voiceless fricatives (`vlf = 2`). -/
+def parkerSonority : SonorityClass → Nat
+  | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
+  | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
+
+/-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`,
+    but additionally splitting obstruents by [±voice] ([parker-2002]). -/
+def ofSegment (s : Segment) : SonorityClass :=
+  if s.HasValue .sonorant false then
+    if s.HasValue .continuant true then
+      if s.HasValue .voice true then .vdf else .vlf
+    else
+      if s.HasValue .voice true then .vds else .vls
+  else if s.HasValue .approximant false then .nasal
+  else if s.HasValue .consonantal true then .liquid
+  else if s.HasValue .syllabic true then .vowel
+  else .glide
+
+/-- Coarsen to the substance-free `Sonority`, collapsing the voicing split. -/
+def toSonority : SonorityClass → Sonority
+  | .vls | .vds => .stop
+  | .vlf | .vdf => .fricative
+  | .nasal => .nasal
+  | .liquid => .liquid
+  | .glide => .glide
+  | .vowel => .vowel
+
+end SonorityClass
+
+/-- Parker sonority of a segment (convenience). -/
+def parkerSonorityOf (s : Segment) : Nat :=
+  (SonorityClass.ofSegment s).parkerSonority
+
+/-- Parker sonority is strictly monotone: the ranking is a total order. -/
+theorem parker_strictly_monotone (a b : SonorityClass) (h : a ≠ b) :
+    SonorityClass.parkerSonority a < SonorityClass.parkerSonority b ∨
+    SonorityClass.parkerSonority a > SonorityClass.parkerSonority b := by
+  cases a <;> cases b <;> simp_all [SonorityClass.parkerSonority]
 
 end Phonology
