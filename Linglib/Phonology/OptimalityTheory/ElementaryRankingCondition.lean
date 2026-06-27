@@ -330,6 +330,11 @@ orders ([merchant-riggle-2016]). -/
 def ERC.isSimple (α : ERC n) : Prop :=
   (∃! w, α w = .W) ∧ (∃! l, α l = .L)
 
+/-- An ERC set is *simple* if every member is a simple ERC: a set of Hasse edges,
+which therefore describes a partial order on the constraints rather than a general
+antimatroid ([merchant-riggle-2016]). -/
+def ERCSet.isSimpleSet (E : ERCSet n) : Prop := ∀ α ∈ E, α.isSimple
+
 /-- The simple ERC asserting constraint `i` must dominate constraint `j`; all
 other constraints are `e`. -/
 def simpleERC (i j : Fin n) : ERC n :=
@@ -382,5 +387,11 @@ theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     show (Equiv.swap i j).symm i < (Equiv.swap i j).symm j
     rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
     exact hgt
+
+/-- `simpleERC i j` (with `i ≠ j`) is a simple ERC: its unique `W` is `i` and its
+unique `L` is `j`. -/
+theorem simpleERC_isSimple {i j : Fin n} (hij : i ≠ j) : (simpleERC i j).isSimple :=
+  ⟨⟨i, simpleERC_apply_W, fun y hy => (simpleERC_eq_W_iff y).mp hy⟩,
+   ⟨j, simpleERC_apply_L hij, fun y hy => (simpleERC_eq_L_iff hij y).mp hy⟩⟩
 
 end OptimalityTheory
