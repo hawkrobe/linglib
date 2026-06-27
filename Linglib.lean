@@ -1330,7 +1330,6 @@ import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
-import Linglib.Phonology.Inventory
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Basic

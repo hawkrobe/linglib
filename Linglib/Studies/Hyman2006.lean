@@ -1,5 +1,4 @@
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Inventory
 
 /-!
 # Hyman 2006: Word-prosodic typology
@@ -48,7 +47,6 @@ Hyman's SA dimension.
 namespace Hyman2006
 
 open Tone
-open Phonology.Inventory
 
 -- ============================================================================
 -- § 1: Two Prototypes
@@ -241,6 +239,21 @@ theorem pa_languages_are_tonal :
 -- ============================================================================
 -- § 7: Connection to WALS
 -- ============================================================================
+
+/-- WALS Ch 13 tone system ([maddieson-2013]). **Theory-laden**: WALS defines
+    tone by level-inventory size, exactly the partition Hyman challenges with
+    his functional definition. Mapped to Hyman's binary +T/−T by
+    `wals13AToHasTone`; kept here with the critique that consumes it. -/
+inductive ToneSystem where
+  | none | simple | complex
+  deriving DecidableEq, Repr
+
+/-- WALS Ch 14 fixed stress location ([goedemans-van-der-hulst-2013]).
+    StressTyp framework: presupposes obligatory metrical heads — the
+    commitment Hyman's −SA systems (Bella Coola, French) violate. -/
+inductive StressLocation where
+  | noFixed | initial | second | third | antepenultimate | penultimate | ultimate
+  deriving DecidableEq, Repr
 
 /-- WALS F13A maps onto Hyman's binary tone dimension:
     `noTones` → −T; `simpleToneSystem`/`complexToneSystem` → +T. -/

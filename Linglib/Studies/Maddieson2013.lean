@@ -1,4 +1,3 @@
-import Linglib.Phonology.Inventory
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.German.Phonology
 import Linglib.Fragments.Finnish.Phonology
@@ -69,8 +68,14 @@ set_option autoImplicit false
 
 namespace Maddieson2013
 
-open Phonology.Inventory
 open Data.PHOIBLE
+
+/-- Consonant inventory size, WALS Ch 1 ([maddieson-2013]). Maddieson's
+    UPSID-based bins; the sole consumer is `inWALS1ABin` below, so this
+    classification lives with the paper that uses it. -/
+inductive CInventorySize where
+  | small | moderatelySmall | average | moderatelyLarge | large
+  deriving DecidableEq, Repr
 
 /-- Whether a consonant count falls in the WALS Ch 1 bin for a given
     `CInventorySize`. Uses Maddieson's bin boundaries.
