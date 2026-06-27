@@ -1,4 +1,5 @@
-import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.ArgumentStructure.Properties
 import Linglib.Semantics.Aspect.Incremental
@@ -70,7 +71,6 @@ on abstract domains.
 namespace Krifka1989
 
 open _root_.Mereology
-open Semantics.Events.CEM
 open Semantics.Plurality.Algebra (Materialization)
 open Semantics.ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
@@ -484,11 +484,10 @@ section Atomicity
 
 variable {α : Type*} [PartialOrder α]
 
-/-- K89 D17: y is a P-atom — y satisfies P and has no proper part also
-    satisfying P. Distinct from `Mereology.Atom` (which is the absolute
-    no-proper-part predicate, ignoring P): K89's notion is P-relative. -/
-def AtomicForP (P : α → Prop) (y : α) : Prop :=
-  P y ∧ ∀ z, z < y → ¬ P z
+/-- K89 D17: y is a P-atom — `Mereology.atomize P` (the P-relative `Minimal`):
+    y satisfies P and has no proper part also satisfying P. Distinct from
+    `Mereology.Atom` (the *absolute* no-proper-part predicate, ignoring P). -/
+abbrev AtomicForP (P : α → Prop) (y : α) : Prop := Mereology.atomize P y
 
 /-- K89 D18: ATM(P) — P has atomic reference: every P-instance has a
     P-atomic part. The licensing condition for time-span (*in*-X)
@@ -501,7 +500,11 @@ def ATM (P : α → Prop) : Prop :=
     proper P-parts), so it is its own atomic-part witness. -/
 theorem qua_implies_atm {P : α → Prop} (hQua : QUA P) : ATM P := by
   intro x hPx
-  exact ⟨x, le_refl x, hPx, fun z hzlt hPz => hQua hPz hPx hzlt.ne hzlt.le⟩
+  refine ⟨x, le_refl x, hPx, ?_⟩
+  intro z hPz hzx
+  rcases eq_or_lt_of_le hzx with rfl | hlt
+  · exact le_refl _
+  · exact (hQua hPz hPx hlt.ne hlt.le).elim
 
 /-! The ATM-but-not-QUA case is genuinely possible — that's this
     section's point. K89's *Ann drank wine in 0.43 seconds* shows that

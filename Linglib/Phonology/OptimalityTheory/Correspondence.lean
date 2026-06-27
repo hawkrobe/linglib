@@ -377,42 +377,87 @@ theorem reduplication_isSymmetric (input base reduplicant : List α) :
   rw [parallel_isSymmetric s₁ s₂ .lhs .rhs, parallel_edge_lhs_rhs]
   exact image_swap_diagDiag _ _
 
-theorem identity_max_zero (s : List α) :
-    (identity s).maxViol .lhs .rhs = 0 := by
-  rw [maxViol_eq_zero_iff]
+/-- `MAX` vanishes on a **diagonal** edge between equal forms: if `c.edge r₁ r₂`
+    is the parallel-pair diagonal and `c.form r₁ = c.form r₂`, every `r₁`
+    position has a correspondent. The role-agnostic core of `identity_max_zero`
+    — it also fires for total reduplication (`r₁, r₂` the base/reduplicant roles
+    with equal forms). -/
+theorem maxViol_eq_zero_of_diag (c : Corr Role α) (r₁ r₂ : Role)
+    (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    c.maxViol r₁ r₂ = 0 := by
+  have hlen : (c.form r₁).length = (c.form r₂).length := congrArg List.length hform
+  rw [maxViol_eq_zero_iff, hedge]
   intro i _
-  rw [show (identity s).edge .lhs .rhs = diagDiag s.length s.length from parallel_edge_lhs_rhs s s,
-      Finset.mem_image]
-  exact ⟨(i, i), (mem_diagDiag i i).mpr rfl, rfl⟩
+  rw [Finset.mem_image]
+  exact ⟨(i, ⟨(i : ℕ), hlen ▸ i.2⟩), (mem_diagDiag _ _).mpr rfl, rfl⟩
+
+/-- `DEP` vanishes on a diagonal edge between equal forms — the dual of
+    `maxViol_eq_zero_of_diag`: every `r₂` position has a correspondent. -/
+theorem depViol_eq_zero_of_diag (c : Corr Role α) (r₁ r₂ : Role)
+    (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    c.depViol r₁ r₂ = 0 := by
+  have hlen : (c.form r₁).length = (c.form r₂).length := congrArg List.length hform
+  rw [depViol_eq_zero_iff, hedge]
+  intro j _
+  rw [Finset.mem_image]
+  exact ⟨(⟨(j : ℕ), hlen.symm ▸ j.2⟩, j), (mem_diagDiag _ _).mpr rfl, rfl⟩
+
+theorem identity_max_zero (s : List α) :
+    (identity s).maxViol .lhs .rhs = 0 :=
+  maxViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
 
 theorem identity_dep_zero (s : List α) :
-    (identity s).depViol .lhs .rhs = 0 := by
-  rw [depViol_eq_zero_iff]
-  intro j _
-  rw [show (identity s).edge .lhs .rhs = diagDiag s.length s.length from parallel_edge_lhs_rhs s s,
-      Finset.mem_image]
-  exact ⟨(j, j), (mem_diagDiag j j).mpr rfl, rfl⟩
+    (identity s).depViol .lhs .rhs = 0 :=
+  depViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
 
-theorem identity_ident_zero [DecidableEq α] (s : List α) :
-    (identity s).identViol .lhs .rhs = 0 := by
-  simp only [identity, identViol, parallel_form_lhs, parallel_form_rhs,
-             parallel_edge_lhs_rhs]
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+/-- `IDENT` vanishes on a diagonal edge between **equal forms**: corresponding
+    positions hold the same segment. Unlike `MAX`/`DEP`, this needs
+    `c.form r₁ = c.form r₂`, not just equal length — an order-isomorphic edge
+    between distinct strings can still violate `IDENT`. -/
+theorem identViol_eq_zero_of_diag [DecidableEq α] (c : Corr Role α) (r₁ r₂ : Role)
+    (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    c.identViol r₁ r₂ = 0 := by
+  simp only [identViol]
+  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   intro p hp
   have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
   simp only [not_not]
-  exact congrArg (s[·]) (Fin.ext hpq)
+  have h? : (c.form r₁)[(p.1 : ℕ)]? = (c.form r₂)[(p.2 : ℕ)]? := by
+    rw [hpq]; exact congrArg (·[(p.2 : ℕ)]?) hform
+  rwa [List.getElem?_eq_getElem p.1.2, List.getElem?_eq_getElem p.2.2,
+       Option.some_inj] at h?
+
+/-- Featural `IDENT` vanishes on a diagonal edge between equal forms — the
+    `proj`-relativized form of `identViol_eq_zero_of_diag`. -/
+theorem identViolFeature_eq_zero_of_diag {F : Type*} [DecidableEq F] (proj : α → F)
+    (c : Corr Role α) (r₁ r₂ : Role)
+    (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    c.identViolFeature proj r₁ r₂ = 0 := by
+  simp only [identViolFeature]
+  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  intro p hp
+  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
+  simp only [not_not]
+  have h? : (c.form r₁)[(p.1 : ℕ)]? = (c.form r₂)[(p.2 : ℕ)]? := by
+    rw [hpq]; exact congrArg (·[(p.2 : ℕ)]?) hform
+  have he : (c.form r₁)[p.1] = (c.form r₂)[p.2] := by
+    rwa [List.getElem?_eq_getElem p.1.2, List.getElem?_eq_getElem p.2.2,
+         Option.some_inj] at h?
+  rw [he]
+
+theorem identity_ident_zero [DecidableEq α] (s : List α) :
+    (identity s).identViol .lhs .rhs = 0 :=
+  identViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
 
 theorem identity_identFeature_zero {F : Type*} [DecidableEq F] (proj : α → F)
     (s : List α) :
-    (identity s).identViolFeature proj .lhs .rhs = 0 := by
-  simp only [identity, identViolFeature, parallel_form_lhs, parallel_form_rhs,
-             parallel_edge_lhs_rhs]
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  intro p hp
-  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
-  simp only [not_not]
-  exact congrArg (fun i => proj s[i]) (Fin.ext hpq)
+    (identity s).identViolFeature proj .lhs .rhs = 0 :=
+  identViolFeature_eq_zero_of_diag proj (identity s) .lhs .rhs rfl
+    (parallel_edge_lhs_rhs s s)
 
 /-! ### Faithfulness as order-isomorphism -/
 
@@ -526,7 +571,7 @@ theorem length_eq_of_faithful (c : Corr Role α) (r₁ r₂ : Role)
 
 /-- Bridge a `Corr`-violation function into a `NamedConstraint` — the single
     plumbing point into `Constraint`'s evaluation machinery. -/
-def toConstraint (family : ConstraintFamily) (label : String)
+def toConstraint (family : Family) (label : String)
     (eval : Corr Role α → ℕ) : NamedConstraint (Corr Role α) where
   name := label
   family := family
@@ -549,6 +594,63 @@ def toMaxConstraint (r₁ r₂ : Role) (label : String) :
 def toDepConstraint (r₁ r₂ : Role) (label : String) :
     NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("DEP-" ++ label) (fun c => c.depViol r₁ r₂)
+
+/-! ### Faithfulness of the bridges: vanishing on the faithful candidate
+
+The faithfulness `to*Constraint` bridges assign zero violations to the fully
+faithful candidate `identity s` — the defining behaviour of a Correspondence-
+Theory faithfulness constraint ([mccarthy-prince-1995]). This is the content the
+`.faithfulness` tag abbreviates; the tag itself is documentary, so the math
+lives in these lemmas. Markedness is non-vacuously different
+(`exists_markedness_not_vanishesOnIdentity`). Anti-faithfulness ([alderete-1999])
+is out of scope — it demands disparity and is *maximal* on `identity`. -/
+
+@[simp] theorem toMaxConstraint_eval_identity (label : String) (s : List α) :
+    (toMaxConstraint Side.lhs Side.rhs label).eval (identity s) = 0 :=
+  identity_max_zero s
+
+@[simp] theorem toDepConstraint_eval_identity (label : String) (s : List α) :
+    (toDepConstraint Side.lhs Side.rhs label).eval (identity s) = 0 :=
+  identity_dep_zero s
+
+@[simp] theorem toIdentConstraint_eval_identity [DecidableEq α]
+    (label : String) (s : List α) :
+    (toIdentConstraint Side.lhs Side.rhs label).eval (identity s) = 0 :=
+  identity_ident_zero s
+
+@[simp] theorem toIdentFeatureConstraint_eval_identity {F : Type*} [DecidableEq F]
+    (proj : α → F) (label : String) (s : List α) :
+    (toIdentFeatureConstraint proj Side.lhs Side.rhs label).eval (identity s) = 0 :=
+  identity_identFeature_zero proj s
+
+/-- A correspondence constraint **vanishes on the faithful candidate** when it
+    scores no violations on any fully faithful `identity s` — the behavioural
+    invariant the `.faithfulness` tag abbreviates ([mccarthy-prince-1995]). -/
+def VanishesOnIdentity (c : NamedConstraint (Corr Side α)) : Prop :=
+  ∀ s : List α, c.eval (identity s) = 0
+
+theorem toMaxConstraint_vanishesOnIdentity (label : String) :
+    VanishesOnIdentity (α := α) (toMaxConstraint Side.lhs Side.rhs label) :=
+  toMaxConstraint_eval_identity label
+
+theorem toDepConstraint_vanishesOnIdentity (label : String) :
+    VanishesOnIdentity (α := α) (toDepConstraint Side.lhs Side.rhs label) :=
+  toDepConstraint_eval_identity label
+
+theorem toIdentConstraint_vanishesOnIdentity [DecidableEq α] (label : String) :
+    VanishesOnIdentity (α := α) (toIdentConstraint Side.lhs Side.rhs label) :=
+  toIdentConstraint_eval_identity label
+
+/-- **Markedness need not vanish on the faithful candidate.** A `*Struc`-style
+    constraint (one violation per output segment) fires on `identity s`, so the
+    split is non-vacuous: `VanishesOnIdentity` characterizes the faithfulness
+    constructors, not every constraint. -/
+theorem exists_markedness_not_vanishesOnIdentity [Inhabited α] :
+    ∃ c : NamedConstraint (Corr Side α),
+      c.family = .markedness ∧ ¬ VanishesOnIdentity c :=
+  ⟨mkMarkGrad "*Struc" (fun c => (c.form Side.rhs).length), rfl, fun h => by
+    have h1 := h [default]
+    simp [mkMarkGrad, identity] at h1⟩
 
 end Corr
 

@@ -235,7 +235,7 @@ def IsSumHom.toSupHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
   map_sup' := hf.map_sup
 
 /-- Every Mathlib `SupHom` satisfies `IsSumHom`. -/
-def SupHom.toIsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+@[reducible] def SupHom.toIsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (f : SupHom α β) : IsSumHom f.toFun where
   map_sup := f.map_sup'
 
@@ -695,7 +695,7 @@ class MereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
   /-- The underlying strict monotonicity proof. -/
   toStrictMono : StrictMono d
 
-def MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+@[reducible] def MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f) : MereoDim f :=
   ⟨hf.strictMono_of_injective hinj⟩
 
@@ -734,7 +734,7 @@ variable {Source Inter Measure : Type*}
     {f : Source → Inter} {μ : Inter → Measure}
 
 /-- The composed map is a MereoDim. -/
-def composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
+@[reducible] def composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
   MereoDim.comp dc.leg₂ dc.leg₁
 
 theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]

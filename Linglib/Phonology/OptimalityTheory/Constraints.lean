@@ -28,7 +28,7 @@ def myMax := mkMax "MAX-V" (fun c => c.deleted)
 ```
 
 rather than manually assembling the `NamedConstraint` record each time. The
-constructors enforce the correct `ConstraintFamily` classification.
+constructors enforce the correct `Family` classification.
 
 ## Contextual faithfulness
 
@@ -122,21 +122,6 @@ def mkIntegrity {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
   { name := name
     family := .faithfulness
     eval := λ c => if P c then 1 else 0 }
-
-/-- Anchor-left constraints are faithfulness constraints. -/
-theorem mkAnchorLeft_is_faithfulness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkAnchorLeft name P).family = .faithfulness := rfl
-
-/-- Anchor-right constraints are faithfulness constraints. -/
-theorem mkAnchorRight_is_faithfulness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkAnchorRight name P).family = .faithfulness := rfl
-
-/-- Integrity constraints are faithfulness constraints. -/
-theorem mkIntegrity_is_faithfulness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkIntegrity name P).family = .faithfulness := rfl
 
 -- ============================================================================
 -- § 2: Markedness Constraint Constructors (re-exported from Constraint)
@@ -271,65 +256,7 @@ def mkAlignGrad {C : Type*} (name : String) (violations : C → Nat) :
     eval := violations }
 
 -- ============================================================================
--- § 3: Classification Properties
--- ============================================================================
-
-/-- MAX constraints are faithfulness constraints. -/
-theorem mkMax_is_faithfulness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkMax name P).family = .faithfulness := rfl
-
-/-- DEP constraints are faithfulness constraints. -/
-theorem mkDep_is_faithfulness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkDep name P).family = .faithfulness := rfl
-
-/-- Markedness constraints are markedness constraints. -/
-theorem mkMark_is_markedness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkMark name P).family = .markedness := rfl
-
-/-- Contextual MAX constraints are faithfulness constraints. -/
-theorem mkMaxCtx_is_faithfulness {C : Type*} (name : String)
-    (D : C → Prop) [DecidablePred D]
-    (Ctx : C → Prop) [DecidablePred Ctx] :
-    (mkMaxCtx name D Ctx).family = .faithfulness := rfl
-
-/-- Forbidden-pair constraints are markedness constraints. -/
-theorem mkForbidPairsOnTier_is_markedness {C α β : Type*} (name : String)
-    (R : β → β → Prop) [DecidableRel R] (T : TierProjection α β)
-    (extract : C → List α) :
-    (mkForbidPairsOnTier name R T extract).family = .markedness := rfl
-
-/-- AGREE constraints are markedness constraints. -/
-theorem mkAgreeOnTier_is_markedness {C α β : Type*} [DecidableEq β]
-    (name : String) (T : TierProjection α β) (extract : C → List α) :
-    (mkAgreeOnTier name T extract).family = .markedness := rfl
-
-/-- Forbidden-singleton constraints are markedness constraints. -/
-theorem mkForbidSingletonOnTier_is_markedness {C α β : Type*} (name : String)
-    (P : β → Prop) [DecidablePred P] (T : TierProjection α β)
-    (extract : C → List α) :
-    (mkForbidSingletonOnTier name P T extract).family = .markedness := rfl
-
-/-- OCP constraints are markedness constraints. -/
-theorem mkOCP_is_markedness {C α : Type*} [DecidableEq α] (name : String)
-    (project : C → List α) :
-    (mkOCP name project).family = .markedness := rfl
-
-/-- TierProjection-driven OCP constraints are markedness constraints. -/
-theorem mkOCPOnTier_is_markedness {C α β : Type*} [DecidableEq β] (name : String)
-    (T : TierProjection α β) (extract : C → List α) :
-    (mkOCPOnTier name T extract).family = .markedness := rfl
-
-/-- ALIGN constraints are markedness constraints
-    ([mccarthy-prince-1993]). -/
-theorem mkAlign_is_markedness {C : Type*} (name : String)
-    (P : C → Prop) [DecidablePred P] :
-    (mkAlign name P).family = .markedness := rfl
-
--- ============================================================================
--- § 4: Violation Bounds
+-- § 3: Violation Bounds
 -- ============================================================================
 
 /-- Binary constraints have violations bounded by 1. -/
@@ -352,7 +279,7 @@ theorem mkMaxCtx_bounded {C : Type*} (name : String)
   simp only [mkMaxCtx]; split <;> omega
 
 -- ============================================================================
--- § 5: Weighted Constraint Constructors
+-- § 4: Weighted Constraint Constructors
 -- ============================================================================
 
 open Constraints

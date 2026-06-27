@@ -195,6 +195,16 @@ abbrev javMaxIOFromCorr : NamedConstraint (Corr RedupRole Seg) :=
 abbrev javMaxBRFromCorr : NamedConstraint (Corr RedupRole Seg) :=
   OptimalityTheory.Correspondence.Reduplication.maxBR
 
+/-- **Perfect copy is BR-faithful** (the keystone in action). The `under`
+    candidate copies the base exactly (base = reduplicant = `[bədah]`), so it
+    incurs zero MAX-BR — derived through the role-agnostic faithfulness keystone
+    `Corr.maxViol_eq_zero_of_diag` (the fully faithful candidate vanishes on a
+    faithfulness constraint, [mccarthy-prince-1995]), not by `decide` over the
+    toy table. -/
+theorem javMaxBR_under_zero : javMaxBRFromCorr.eval underCorr = 0 := by
+  show underCorr.maxViol .base .reduplicant = 0
+  exact Corr.maxViol_eq_zero_of_diag underCorr .base .reduplicant rfl rfl
+
 end JavaneseCorr
 
 -- ============================================================================

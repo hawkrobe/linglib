@@ -911,11 +911,10 @@ end K98PropositionalSubstrate
 
 section SpatialTracePullback
 
-open Semantics.Events.CEM
 open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
-variable [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
+variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
 variable [st : Trace Loc Time]
 
 /-- Bounded path predicate (QUA) ↦ telic VP via the σ-pullback. Backs
@@ -923,14 +922,14 @@ variable [st : Trace Loc Time]
 theorem walked_from_to_telic_propositional
     (hinj : Function.Injective st.σ)
     {P : Path Loc → Prop} (hP : QUA P) :
-    @QUA _ cem.evSemilatticeSup.toPartialOrder (P ∘ st.σ) :=
+    QUA (P ∘ st.σ) :=
   Trace.bounded_path_telic hinj hP
 
 /-- Unbounded path predicate (CUM) ↦ atelic VP via the σ-pullback. Backs
     the K98 §4.5 *walked towards X* analysis at the Bool-tag level. -/
 theorem walked_towards_atelic_propositional
     {P : Path Loc → Prop} (hP : CUM P) :
-    @CUM _ cem.evSemilatticeSup (P ∘ st.σ) :=
+    CUM (P ∘ st.σ) :=
   Trace.unbounded_path_atelic hP
 
 end SpatialTracePullback
@@ -939,8 +938,6 @@ end SpatialTracePullback
 
 section Expansiveness
 
-open Semantics.Events.CEM
-
 variable {α : Type*} [SemilatticeSup α]
 variable {Time : Type*} [LinearOrder Time]
 
@@ -948,9 +945,10 @@ variable {Time : Type*} [LinearOrder Time]
 abbrev expEv (θ : α → Event Time → Prop) : Prop :=
   EXP (Event.precedes (Time := Time)) θ
 
-/-- SEINC-as-property using `Event.precedes`. `EventCEM` provides the
-    required `[SemilatticeSup (Event Time)]`. -/
-abbrev seincEv [EventCEM Time] (θ : α → Event Time → Prop) : Prop :=
+/-- SEINC-as-property using `Event.precedes`. The derived
+    `[SemilatticeSup (Event Time)]` comes from `[ClassicalMereology (Event Time)]`. -/
+abbrev seincEv [Event.Mereology Time] [ClassicalMereology (Event Time)]
+    (θ : α → Event Time → Prop) : Prop :=
   SEINC (Event.precedes (Time := Time)) θ
 
 end Expansiveness
@@ -959,11 +957,11 @@ end Expansiveness
 
 section MovementInstances
 
-open Semantics.Events.CEM
 open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
-variable [EventCEM Time] [PartialOrder (Path Loc)] [SemilatticeSup (Path Loc)]
+variable [Event.Mereology Time] [ClassicalMereology (Event Time)]
+variable [PartialOrder (Path Loc)] [SemilatticeSup (Path Loc)]
 
 /-- SMR specialized to paths and events with concrete adjacency. -/
 abbrev smrPath (θ : Path Loc → Event Time → Prop) : Prop :=
