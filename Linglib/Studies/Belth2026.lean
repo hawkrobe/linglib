@@ -329,11 +329,6 @@ def latinTSLGrammar : Subregular.TSLGrammar 2 LatSeg :=
 def latinOCP : Constraints.NamedConstraint (List LatSeg) :=
   OptimalityTheory.mkOCPOnTier "OCP/[+cons]" LatSeg.consTier id
 
-/-- The OCP constraint is a markedness constraint by construction. -/
-theorem latinOCP_is_markedness :
-    latinOCP.family = Constraints.ConstraintFamily.markedness :=
-  OptimalityTheory.mkOCPOnTier_is_markedness _ _ _
-
 /-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
     that candidate is in `latinTSLGrammar.lang`. Specialization of
     `Subregular.mkOCPOnTier_zero_iff_in_ocp_lang` to the Latin

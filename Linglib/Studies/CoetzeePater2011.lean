@@ -200,24 +200,6 @@ def maxFinal : NamedConstraint TDCandidate :=
 def constraints : List (NamedConstraint TDCandidate) :=
   [starCT, maxC, maxPreV, maxFinal]
 
-/-! ### Constraint classification -/
-
-/-- *CT is a markedness constraint. -/
-theorem starCT_markedness : starCT.family = .markedness :=
-  mkMark_is_markedness _ _
-
-/-- MAX is a faithfulness constraint. -/
-theorem maxC_faithfulness : maxC.family = .faithfulness :=
-  mkMax_is_faithfulness _ _
-
-/-- MAX-PRE-V is a faithfulness constraint. -/
-theorem maxPreV_faithfulness : maxPreV.family = .faithfulness :=
-  mkMaxCtx_is_faithfulness _ _ _
-
-/-- MAX-FINAL is a faithfulness constraint. -/
-theorem maxFinal_faithfulness : maxFinal.family = .faithfulness :=
-  mkMaxCtx_is_faithfulness _ _ _
-
 /-- All violations are bounded by 1 (binary constraints). -/
 theorem all_violations_bounded (con : NamedConstraint TDCandidate)
     (h : con ∈ constraints) (c : TDCandidate) :

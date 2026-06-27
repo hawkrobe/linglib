@@ -214,11 +214,6 @@ def kikongoAgree : Constraints.NamedConstraint (List KSeg) :=
   OptimalityTheory.mkForbidPairsOnTier
     "AGREE-[nas]/CC" KSeg.forbidNasalStop (TierProjection.byClass KSeg.onTier) id
 
-/-- `kikongoAgree` is a markedness constraint by construction. -/
-theorem kikongoAgree_is_markedness :
-    kikongoAgree.family = Constraints.ConstraintFamily.markedness :=
-  OptimalityTheory.mkForbidPairsOnTier_is_markedness _ _ _ _
-
 /-- **Bridge**: `kikongoAgree` evaluates to zero on a candidate iff the
 candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
 characterizations of the same Kikongo phonotactic coincide — making the

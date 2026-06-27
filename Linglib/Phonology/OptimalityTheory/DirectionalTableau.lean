@@ -63,17 +63,17 @@ open Core.Optimization.Evaluation
     bridge. -/
 structure DirectionalConstraint (C : Type*) where
   name : String := ""
-  family : ConstraintFamily
+  family : Family
   eval : C → List Nat
 
 /-- A directional constraint whose violation vector is the singleton `[count c]` —
     the parallel-by-nature degenerate case (cf. `EvalMode.le_singleton`). -/
-def DirectionalConstraint.ofCount {C : Type*} (name : String) (family : ConstraintFamily)
+def DirectionalConstraint.ofCount {C : Type*} (name : String) (family : Family)
     (count : C → Nat) : DirectionalConstraint C :=
   { name, family, eval := fun c => [count c] }
 
 @[simp] theorem DirectionalConstraint.ofCount_eval {C : Type*} (name : String)
-    (family : ConstraintFamily) (count : C → Nat) (c : C) :
+    (family : Family) (count : C → Nat) (c : C) :
     (DirectionalConstraint.ofCount name family count).eval c = [count c] := rfl
 
 -- ============================================================================
