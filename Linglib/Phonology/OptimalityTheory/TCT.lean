@@ -34,14 +34,16 @@ modeling choice (one could equally have written
 *reflects* the architectural commitment of [benua-1997]'s "Priority
 of the Base", but does not *deduce* it.
 
-## TETRU schema
+## TETU-style misapplication schema (`TetruSchema`)
 
-The Emergence of the Relatively Unmarked: a constraint ranking of the
-form `M₁ ≫ OO-Ident ≫ M₂ ≫ IO-Faith` (Benua's analog of M&P's
-reduplicative TETU) produces *misapplication identity effects* —
-context-sensitive markedness `M₂` is violated in the derivative iff
-necessary to preserve OO-identity to the base. This unifies
+A constraint ranking of the form `M₁ ≫ OO-Ident ≫ M₂ ≫ IO-Faith` —
+[benua-1997]'s transderivational analog of [mccarthy-prince-1995]'s
+reduplicative TETU (The Emergence of The Unmarked) — produces *misapplication
+identity effects*: context-sensitive markedness `M₂` is violated in the
+derivative iff necessary to preserve OO-identity to the base. This unifies
 overapplication and underapplication as duals of a single mechanism.
+(`TetruSchema` / "TETRU" is this file's shorthand for the schema, not a term
+from [benua-1997].)
 
 The empirical case studies — Sundanese nasal harmony overapplication
 and Tiberian Hebrew spirantization underapplication — are formalized

@@ -602,7 +602,7 @@ faithful candidate `identity s` — the defining behaviour of a Correspondence-
 Theory faithfulness constraint ([mccarthy-prince-1995]). This is the content the
 `.faithfulness` tag abbreviates; the tag itself is documentary, so the math
 lives in these lemmas. Markedness is non-vacuously different
-(`exists_markedness_not_vanishesOnIdentity`). Anti-faithfulness ([alderete-1999])
+(`exists_markedness_not_vanishesOnIdentity`). Anti-faithfulness ([alderete-2001])
 is out of scope — it demands disparity and is *maximal* on `identity`. -/
 
 @[simp] theorem toMaxConstraint_eval_identity (label : String) (s : List α) :

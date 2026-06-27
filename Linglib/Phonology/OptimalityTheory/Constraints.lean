@@ -28,7 +28,8 @@ def myMax := mkMax "MAX-V" (fun c => c.deleted)
 ```
 
 rather than manually assembling the `NamedConstraint` record each time. The
-constructors enforce the correct `Family` classification.
+constructors tag each constraint with its `Family`; the substantive
+faithfulness distinctions (MAX vs DEP vs IDENT) live in `Correspondence`.
 
 ## Contextual faithfulness
 
@@ -89,39 +90,6 @@ def mkIdent {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
     family := .faithfulness
     eval := fun c => if P c then 1 else 0 }
 
--- ============================================================================
--- § 1b: Morpheme-Specific Constraint Constructors ([finley-2009])
--- ============================================================================
-
-/-- Build a LEFT-ANCHOR constraint: the morpheme's tonal specification must
-    be in correspondence with the left edge of the host.
-    `P c` holds when the left anchor is not satisfied.
-
-    Following [finley-2009]: morpheme-specific versions of
-    [mccarthy-prince-1995]'s ANCHOR constraints. -/
-def mkAnchorLeft {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
-    NamedConstraint C :=
-  { name := name
-    family := .faithfulness
-    eval := λ c => if P c then 1 else 0 }
-
-/-- Build a RIGHT-ANCHOR constraint: the morpheme's tonal specification must
-    be in correspondence with the right edge of the host. -/
-def mkAnchorRight {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
-    NamedConstraint C :=
-  { name := name
-    family := .faithfulness
-    eval := λ c => if P c then 1 else 0 }
-
-/-- Build an INTEGRITY constraint: the morpheme's tone must not have
-    multiple correspondents in the output.
-    Penalizes splitting of a single input tone across multiple output TBUs
-    when the one-to-one mapping is violated. -/
-def mkIntegrity {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
-    NamedConstraint C :=
-  { name := name
-    family := .faithfulness
-    eval := λ c => if P c then 1 else 0 }
 
 -- ============================================================================
 -- § 2: Markedness Constraint Constructors (re-exported from Constraint)
@@ -182,8 +150,8 @@ def mkForbidSingletonOnTier {C α β : Type*} (name : String) (P : β → Prop)
 def adjacentIdentical {α : Type*} [DecidableEq α] : List α → Nat :=
   countAdjacent (· = ·)
 
-/-- Build an OCP constraint: penalizes adjacent identical elements on a tier.
-    `project` extracts the relevant tier from a candidate.
+/-- Build an OCP constraint ([mccarthy-1986]): penalizes adjacent identical
+    elements on a tier. `project` extracts the relevant tier from a candidate.
 
     The OCP is parametrically polymorphic over the feature type `α` — it
     operates on identity vs. non-identity of adjacent elements, regardless
@@ -207,7 +175,7 @@ def mkOCP {C α : Type*} [DecidableEq α] (name : String) (project : C → List 
     mirroring `mkAgreeOnTier`'s `R := (· ≠ ·)` specialization. The two
     sit in the same constraint algebra and the equivalence is `rfl`.
 
-    [goldsmith-1976] [berent-2026] -/
+    [goldsmith-1976] [mccarthy-1986] [berent-2026] -/
 def mkOCPOnTier {C α β : Type*} [DecidableEq β]
     (name : String) (T : TierProjection α β) (extract : C → List α) :
     NamedConstraint C :=
@@ -248,13 +216,6 @@ def mkAlign {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
     family := .markedness
     eval := fun c => if P c then 1 else 0 }
 
-/-- Gradient ALIGN: counts edge-mismatch violations ([mccarthy-prince-1993]). -/
-def mkAlignGrad {C : Type*} (name : String) (violations : C → Nat) :
-    NamedConstraint C :=
-  { name := name
-    family := .markedness
-    eval := violations }
-
 -- ============================================================================
 -- § 3: Violation Bounds
 -- ============================================================================
@@ -288,13 +249,6 @@ open Constraints
 def mkMaxW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℝ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMax name P, weight := w }
-
-/-- Build a weighted contextual MAX constraint. -/
-def mkMaxCtxW {C : Type*} (name : String)
-    (D : C → Prop) [DecidablePred D]
-    (Ctx : C → Prop) [DecidablePred Ctx] (w : ℝ) :
-    WeightedConstraint C :=
-  { toNamedConstraint := mkMaxCtx name D Ctx, weight := w }
 
 /-- Build a weighted DEP constraint. -/
 def mkDepW {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] (w : ℝ) :
