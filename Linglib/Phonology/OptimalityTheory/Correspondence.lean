@@ -526,7 +526,7 @@ theorem length_eq_of_faithful (c : Corr Role α) (r₁ r₂ : Role)
 
 /-- Bridge a `Corr`-violation function into a `NamedConstraint` — the single
     plumbing point into `Constraint`'s evaluation machinery. -/
-def toConstraint (family : ConstraintFamily) (label : String)
+def toConstraint (family : Family) (label : String)
     (eval : Corr Role α → ℕ) : NamedConstraint (Corr Role α) where
   name := label
   family := family

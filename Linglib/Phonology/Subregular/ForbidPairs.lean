@@ -20,7 +20,29 @@ belongs to the corresponding TSL_2 language — for any choice of
 forbidden-pair relation `R`. The OCP-specific specialization (with
 `R := (· = ·)`) lives in `Subregular/OCP.lean` and is now a one-line
 corollary.
+
+## Main definitions
+
+* `Constraints.NamedConstraint.zeroSet` — the zero-violation language of a
+  constraint, the `NamedConstraint → Language` primitive these bridges
+  characterize. It lives here, not in `Constraints/Defs.lean`, so the
+  framework-neutral constraint vocabulary stays free of `Computability`.
 -/
+
+namespace Constraints
+
+variable {α : Type*}
+
+/-- The language of list candidates that satisfy `c` (zero violations), as a
+    `Language α`. Lets the `eval = 0` predicate compose with `Language.IsRegular`
+    and the project's subregular classifiers (`IsTierStrictlyLocal`, `IsBTC`). -/
+def NamedConstraint.zeroSet (c : NamedConstraint (List α)) : Language α :=
+  { w | c.eval w = 0 }
+
+theorem NamedConstraint.mem_zeroSet (c : NamedConstraint (List α)) (w : List α) :
+    w ∈ c.zeroSet ↔ c.eval w = 0 := Iff.rfl
+
+end Constraints
 
 namespace Subregular
 

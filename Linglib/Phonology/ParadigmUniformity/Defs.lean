@@ -57,7 +57,7 @@ open Constraints OptimalityTheory
     violations across all members. The form-level analogue of mathlib's
     `Finset.sum`. Used for markedness: `*CCC` penalising tri-consonantal
     clusters in each member, summed over the paradigm. -/
-def liftPerMember {Form : Type} (name : String) (family : ConstraintFamily)
+def liftPerMember {Form : Type} (name : String) (family : Family)
     (viol : Form → Nat) : NamedConstraint (List Form) :=
   { name, family, eval := fun paradigm => (paradigm.map viol).sum }
 
@@ -70,7 +70,7 @@ def liftPerMember {Form : Type} (name : String) (family : ConstraintFamily)
     Anchoring is *external*: pass a `compare` function that ranks
     base-anchored, attested-anchored, or symmetric comparisons; the
     lift is agnostic. -/
-def liftPairwise {Form : Type} (name : String) (family : ConstraintFamily)
+def liftPairwise {Form : Type} (name : String) (family : Family)
     (compare : Form → Form → Nat) : NamedConstraint (List Form) :=
   { name, family
     eval := fun paradigm =>

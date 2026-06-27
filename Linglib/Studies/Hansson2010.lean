@@ -257,11 +257,6 @@ def navajoAgree : Constraints.NamedConstraint (List NSeg) :=
   OptimalityTheory.mkAgreeOnTier
     "AGREE-[ant]/CC" (TierProjection.byClass NSeg.onTier) id
 
-/-- `navajoAgree` is a markedness constraint by construction. -/
-theorem navajoAgree_is_markedness :
-    navajoAgree.family = Constraints.ConstraintFamily.markedness :=
-  OptimalityTheory.mkAgreeOnTier_is_markedness _ _ _
-
 /-- **Bridge**: `navajoAgree` evaluates to zero on a candidate iff the
 candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
 characterizations of the same Navajo phonotactic coincide — making the
