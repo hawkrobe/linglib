@@ -39,7 +39,7 @@ discourse salience), with no separate feature for newness.
 -/
 
 open Features.InformationStructure
-open Semantics.Alternatives
+open Alternatives
 open Features.Prosody
 open Pragmatics.Expressives
 open Semantics.Presupposition
