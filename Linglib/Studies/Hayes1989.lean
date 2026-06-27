@@ -1,4 +1,5 @@
 import Linglib.Phonology.Prosody.CompensatoryLengthening
+import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -13,27 +14,29 @@ This study file formalizes the empirical core of Hayes 1989: the typology of
 compensatory lengthening (CL) and its three central arguments for moraic theory
 over segmental prosodic theories (X theory, CV theory).
 
-## Core Claims Formalized
+## Core claims formalized
 
 1. CL is governed by a **prosodic frame** provided by moraic structure (not by
    constraints on association line rearrangements).
 
-2. **Onset Deletion Asymmetry**: CL from coda deletion is common (38 rules,
-   26 languages); CL from onset deletion is unattested. Moraic theory derives
-   this from the universal non-moraicity of onsets.
+2. **Onset-deletion asymmetry**: CL from coda deletion is common; CL from onset
+   deletion is unattested. Moraic theory derives this from the universal
+   non-moraicity of onsets — onset deletion strands no μ
+   (`CL.deleteOnset_strandedCount`).
 
-3. **Weight Prerequisite**: CL occurs only in languages with a syllable weight
-   distinction. Moraic theory derives this from language-specific moraic
-   structure: only languages with bimoraic syllables have morae to strand.
+3. **Weight prerequisite**: CL occurs only in languages with a syllable-weight
+   distinction. Only languages with bimoraic syllables (`Syllable.ofCV … wbp`)
+   have a coda μ to strand.
 
-4. **Moraic Conservation**: CL conserves total mora count. This follows
-   automatically from the representations — no stipulation needed.
+4. **Moraic conservation**: CL conserves total mora count. Because a stranded μ
+   *survives* deletion, this follows from `CL.strand_moraCount` /
+   `CL.spread_moraCount` rather than stipulation.
 
-## Languages Covered
+## Languages covered
 
-- Latin (s-deletion: *kasnus → ka:nus; onset s-deletion: *smereo → mereo)
-- Middle English (vowel loss: ⟨talə⟩ → [ta:l])
-- Lardil (no WBP: CL impossible — derived from `syllableToMoraic`)
+- Latin (s-deletion: *kasnus → ka:nus*; onset s-deletion: *smereo → mereo*)
+- Middle English (vowel loss: *talə → ta:l*)
+- Lardil (no WBP: CL impossible)
 - Estonian (trimoraic syllables, Q1/Q2/Q3 quantity system)
 -/
 
@@ -43,9 +46,7 @@ open Phonology (Segment Feature Segment.ofSpecs)
 open Prosody
 open Prosody.CL
 
--- ============================================================================
--- § 1: Segment Inventory (minimal, for derivations)
--- ============================================================================
+/-! ### Segment inventory (minimal, for derivations) -/
 
 -- Vowels
 private def a : Segment := .ofSpecs [(.syllabic, true), (.sonorant, true),
@@ -68,203 +69,167 @@ private def n : Segment := .ofSpecs [(.consonantal, true), (.sonorant, true),
 private def l : Segment := .ofSpecs [(.consonantal, true), (.sonorant, true),
   (.approximant, true), (.lateral, true), (.coronal, true)]
 
--- ============================================================================
--- § 2: Latin ⟨s⟩-Deletion — Classical CL
--- ============================================================================
+/-! ### Latin s-deletion — classical CL -/
 
 section LatinSDeletion
 
-/-- Latin underlying form *kasnus 'gray':
-    σ₁ = ⟨kas⟩ (C=onset, a=nucleus[1μ], s=coda[1μ with WBP])
-    σ₂ = ⟨nus⟩
-
-    With WBP, the coda ⟨s⟩ bears one mora, making σ₁ heavy. -/
-def kasnus_σ₁ : MoraicSyllable := ⟨[k], [⟨a, .one⟩, ⟨s, .one⟩]⟩
-def kasnus_σ₂ : MoraicSyllable := ⟨[n], [⟨u, .one⟩, ⟨s, .one⟩]⟩
-def kasnus : MoraicForm := ⟨[kasnus_σ₁, kasnus_σ₂]⟩
+/-- Latin underlying form *kasnus 'gray': σ₁ = ⟨kas⟩ — onset ⟨k⟩, a nucleus μ,
+    and a coda ⟨s⟩ μ (Weight-by-Position), making σ₁ heavy. -/
+def kasnus_σ₁ : Syllable := ⟨[k], [Mora.of a, Mora.of s]⟩
+def kasnus_σ₂ : Syllable := ⟨[n], [Mora.of u, Mora.of s]⟩
+def kasnus : List Syllable := [kasnus_σ₁, kasnus_σ₂]
 
 /-- σ₁ of *kasnus is heavy (2 morae: nucleus + coda with WBP). -/
-theorem kasnus_σ₁_heavy : kasnus_σ₁.toWeight = .heavy := rfl
+theorem kasnus_σ₁_heavy : kasnus_σ₁.weight = .heavy := rfl
 
-/-- After ⟨s⟩-deletion from σ₁, one mora is stranded. -/
+/-- Deleting the coda ⟨s⟩ from σ₁ strands one mora. -/
 theorem kasnus_s_deletion_strands :
-    (deleteMoraic kasnus_σ₁ 1).2 = 1 := rfl
+    strandedCount (strand kasnus_σ₁ 1) = 1 := rfl
 
-/-- After spreading, the vowel ⟨a⟩ becomes long (2 morae).
-    Result: σ₁ = [kaː] with 2 morae — still heavy. -/
-def kaanus_σ₁ : MoraicSyllable :=
-  let (σ_del, stranded) := deleteMoraic kasnus_σ₁ 1
-  spreadToFill σ_del stranded .left
+/-- After spreading, the vowel ⟨a⟩ becomes long: σ₁ = [ka:] with 2 morae. -/
+def kaanus_σ₁ : Syllable := spread (strand kasnus_σ₁ 1) .left
 
-theorem kaanus_σ₁_heavy : kaanus_σ₁.toWeight = .heavy := rfl
+theorem kaanus_σ₁_heavy : kaanus_σ₁.weight = .heavy := rfl
 
-/-- Moraic conservation: *kasnus σ₁ and ka:nus σ₁ have the same mora count. -/
-theorem kasnus_conservation : kasnus_σ₁.moraCount = kaanus_σ₁.moraCount := rfl
+/-- Moraic conservation: *kasnus σ₁ and ka:nus σ₁ have the same mora count —
+    derived from the general stranding/spreading conservation lemmas. -/
+theorem kasnus_conservation : kasnus_σ₁.moraCount = kaanus_σ₁.moraCount := by
+  rw [kaanus_σ₁, spread_moraCount, strand_moraCount]
 
 /-- Latin *kosmis → ko:mis 'courteous': same pattern. -/
-def kosmis_σ₁ : MoraicSyllable := ⟨[k], [⟨o, .one⟩, ⟨s, .one⟩]⟩
+def kosmis_σ₁ : Syllable := ⟨[k], [Mora.of o, Mora.of s]⟩
 
 theorem kosmis_conservation :
-    kosmis_σ₁.moraCount =
-    (spreadToFill (deleteMoraic kosmis_σ₁ 1).1 (deleteMoraic kosmis_σ₁ 1).2 .left).moraCount :=
-  rfl
+    kosmis_σ₁.moraCount = (spread (strand kosmis_σ₁ 1) .left).moraCount := by
+  rw [spread_moraCount, strand_moraCount]
 
 end LatinSDeletion
 
--- ============================================================================
--- § 3: Latin Word-Initial ⟨s⟩-Deletion — No CL
--- ============================================================================
+/-! ### Latin word-initial s-deletion — no CL -/
 
 section LatinOnsetDeletion
 
 /-- Latin *smereo → mereo: ⟨s⟩ deletes word-initially (onset position).
-    Since onset ⟨s⟩ has no mora, no CL occurs. -/
-def smereo_σ₁ : MoraicSyllable := ⟨[s], [⟨e, .one⟩]⟩
+    Onset ⟨s⟩ bears no mora, so no CL occurs. -/
+def smereo_σ₁ : Syllable := ⟨[s], [Mora.of e]⟩
 
-/-- Onset deletion does not change the mora count. -/
+/-- Onset deletion strands no mora — the onset-deletion asymmetry. -/
 theorem smereo_onset_no_cl :
-    (deleteOnset smereo_σ₁ 0).moraCount = smereo_σ₁.moraCount := rfl
+    strandedCount (deleteOnset smereo_σ₁ 0) = strandedCount smereo_σ₁ := rfl
 
 /-- The mora count after onset deletion is still 1 (light syllable). -/
 theorem smereo_remains_light :
-    (deleteOnset smereo_σ₁ 0).toWeight = .light := rfl
+    (deleteOnset smereo_σ₁ 0).weight = .light := rfl
 
 end LatinOnsetDeletion
 
--- ============================================================================
--- § 4: Middle English Vowel Loss CL
--- ============================================================================
+/-! ### Middle English vowel-loss CL -/
 
 section MiddleEnglishVowelLoss
 
-/-- Middle English ⟨talə⟩ 'tale' (original disyllabic form):
-    σ₁ = ⟨ta⟩ (open, light), σ₂ = ⟨lə⟩ (open, light).
-
-    When word-final schwa deletes, Parasitic Delinking removes σ₂'s structure,
-    stranding a mora. Spreading from the left fills it, lengthening ⟨a⟩. -/
-def tale_σ₁ : MoraicSyllable := ⟨[t], [⟨a, .one⟩]⟩
-def tale_σ₂ : MoraicSyllable := ⟨[l], [⟨e, .one⟩]⟩  -- schwa (using ⟨e⟩)
-def tale_input : MoraicForm := ⟨[tale_σ₁, tale_σ₂]⟩
+/-- Middle English ⟨talə⟩ 'tale' (original disyllabic form): σ₁ = ⟨ta⟩ (open,
+    light), σ₂ = ⟨lə⟩ (open, light). When word-final schwa deletes, Parasitic
+    Delinking strands a mora, filled by leftward spreading that lengthens ⟨a⟩. -/
+def tale_σ₁ : Syllable := ⟨[t], [Mora.of a]⟩
+def tale_σ₂ : Syllable := ⟨[l], [Mora.of e]⟩  -- schwa (using ⟨e⟩)
+def tale_input : List Syllable := [tale_σ₁, tale_σ₂]
 
 /-- Input ⟨talə⟩ has 2 total morae (one per syllable). -/
-theorem tale_input_morae : tale_input.totalMorae = 2 := rfl
+theorem tale_input_morae : (Word.ofSyllables tale_input).moraCount = 2 := rfl
 
-/-- After schwa deletion from σ₂, one mora is stranded. -/
-theorem tale_schwa_strands :
-    (deleteMoraic tale_σ₂ 0).2 = 1 := rfl
+/-- Deleting σ₂'s schwa strands one mora. -/
+theorem tale_schwa_strands : strandedCount (strand tale_σ₂ 0) = 1 := rfl
 
-/-- CL result: ⟨a⟩ becomes long, ⟨l⟩ resyllabifies as coda.
-    Output σ = [taːl] with 2 morae. -/
-def tale_output : MoraicSyllable := ⟨[t], [⟨a, .two⟩, ⟨l, .zero⟩]⟩
+/-- CL result: ⟨a⟩ becomes long and ⟨l⟩ resyllabifies as a non-moraic coda
+    riding on the second mora. Output σ = [ta:l] with 2 morae. -/
+def tale_output : Syllable := ⟨[t], [Mora.of a, ⟨[a, l]⟩]⟩
 
 /-- Conservation: input total morae = output morae. -/
 theorem tale_conservation :
-    tale_input.totalMorae = tale_output.moraCount := rfl
+    (Word.ofSyllables tale_input).moraCount = tale_output.moraCount := rfl
 
 end MiddleEnglishVowelLoss
 
--- ============================================================================
--- § 5: Weight Prerequisite — CL Requires Bimoraic Syllables
--- ============================================================================
+/-! ### Weight prerequisite — CL requires bimoraic syllables -/
 
 section WeightPrerequisite
 
-/-- In a language without WBP (e.g., Lardil), `syllableToMoraic` produces
-    non-moraic codas. Deleting the coda strands zero morae → no CL. -/
-def lardil_cvc : MoraicSyllable :=
-  syllableToMoraic { wbp := false } ⟨[t], [a], [k]⟩
+/-- Without WBP (e.g. Lardil), `Syllable.ofCV` leaves the coda non-moraic
+    (riding on the nucleus μ). There is no coda μ to strand → no CL. -/
+def lardil_cvc : Syllable := Syllable.ofCV [t] [a] [k] false
 
-theorem lardil_cvc_is_light : lardil_cvc.toWeight = .light := rfl
+theorem lardil_cvc_is_light : lardil_cvc.weight = .light := rfl
 
-theorem lardil_no_cl_from_coda :
-    (deleteMoraic lardil_cvc 1).2 = 0 := rfl
+theorem lardil_no_cl_from_coda : strandedCount (strand lardil_cvc 1) = 0 := rfl
 
-/-- In a language with WBP (e.g., Latin), `syllableToMoraic` produces
-    moraic codas. Deleting the coda strands one mora → CL is possible. -/
-def latin_cvc : MoraicSyllable :=
-  syllableToMoraic { wbp := true } ⟨[t], [a], [k]⟩
+/-- With WBP (e.g. Latin), `Syllable.ofCV` gives the coda its own mora.
+    Stranding it strands one mora → CL is possible. -/
+def latin_cvc : Syllable := Syllable.ofCV [t] [a] [k] true
 
-theorem latin_cvc_is_heavy : latin_cvc.toWeight = .heavy := rfl
+theorem latin_cvc_is_heavy : latin_cvc.weight = .heavy := rfl
 
-theorem latin_cl_from_coda :
-    (deleteMoraic latin_cvc 1).2 = 1 := rfl
+theorem latin_cl_from_coda : strandedCount (strand latin_cvc 1) = 1 := rfl
 
-/-- The weight prerequisite: the difference between Latin (CL possible)
-    and Lardil (CL impossible) is exactly the WBP parameter. -/
+/-- The weight prerequisite: Latin (CL possible) vs Lardil (CL impossible) is
+    exactly the WBP parameter. -/
 theorem weight_determines_cl :
-    (deleteMoraic latin_cvc 1).2 ≠ (deleteMoraic lardil_cvc 1).2 := by
+    strandedCount (strand latin_cvc 1) ≠ strandedCount (strand lardil_cvc 1) := by
   rw [latin_cl_from_coda, lardil_no_cl_from_coda]; omega
 
 end WeightPrerequisite
 
--- ============================================================================
--- § 6: Estonian Trimoraic Syllables
--- ============================================================================
+/-! ### Estonian trimoraic syllables -/
 
 section EstonianTrimoraic
 
-/-- Estonian Q1/Q2/Q3 (short/long/overlong) syllables demonstrate the
-    three-way weight distinction that moraic theory encodes directly
-    as 1μ/2μ/3μ. -/
-def estonian_q1 : MoraicSyllable := ⟨[k], [⟨a, .one⟩]⟩           -- Q1: light
-def estonian_q2 : MoraicSyllable := ⟨[k], [⟨a, .two⟩]⟩           -- Q2: heavy
-def estonian_q3 : MoraicSyllable := ⟨[k], [⟨a, .two⟩, ⟨l, .one⟩]⟩ -- Q3: superheavy
+/-- Estonian Q1/Q2/Q3 (short/long/overlong) syllables realize the three-way
+    weight distinction as 1μ/2μ/3μ directly — a long vowel is two morae, an
+    overlong rime three. -/
+def estonian_q1 : Syllable := ⟨[k], [Mora.of a]⟩                          -- Q1: 1μ
+def estonian_q2 : Syllable := ⟨[k], [Mora.of a, Mora.of a]⟩               -- Q2: 2μ
+def estonian_q3 : Syllable := ⟨[k], [Mora.of a, Mora.of a, Mora.of l]⟩    -- Q3: 3μ
 
-theorem q1_is_light : estonian_q1.toWeight = .light := rfl
-theorem q2_is_heavy : estonian_q2.toWeight = .heavy := rfl
-theorem q3_is_superheavy : estonian_q3.toWeight = .superheavy := rfl
+theorem q1_is_light : estonian_q1.weight = .light := rfl
+theorem q2_is_heavy : estonian_q2.weight = .heavy := rfl
+theorem q3_is_superheavy : estonian_q3.weight = .superheavy := rfl
 
-/-- Q3 → Q2 grade shift: removing the third mora.
-    The moraic account: Q3 has 3 morae, Q2 has 2. The shift is simply
-    "remove the third mora," which automatically eliminates gemination
-    when the third mora belonged to a geminate consonant. -/
+/-- Q3 → Q2 grade shift: removing the third mora. -/
 theorem q3_to_q2_loses_one_mora :
     estonian_q3.moraCount = estonian_q2.moraCount + 1 := rfl
 
-/-- Estonian gemination loss: Q3 ⟨paːt.ti⟩ → Q2 ⟨paː.ti⟩.
-    σ₁ goes from 3μ to 2μ; the geminate loses its second mora. -/
-def paat_ti_q3 : MoraicSyllable := ⟨[k], [⟨a, .two⟩, ⟨t, .one⟩]⟩  -- 3μ
-def paa_ti_q2 : MoraicSyllable := ⟨[k], [⟨a, .two⟩]⟩               -- 2μ
+/-- Estonian gemination loss: Q3 ⟨pa:t.ti⟩ → Q2 ⟨pa:.ti⟩; σ₁ goes from 3μ to
+    2μ as the geminate loses its mora. -/
+def paat_ti_q3 : Syllable := ⟨[k], [Mora.of a, Mora.of a, Mora.of t]⟩
+def paa_ti_q2 : Syllable := ⟨[k], [Mora.of a, Mora.of a]⟩
 
 theorem gemination_loss_removes_mora :
     paat_ti_q3.moraCount = paa_ti_q2.moraCount + 1 := rfl
 
 end EstonianTrimoraic
 
--- ============================================================================
--- § 7: Integration — Prosodic Pipeline
--- ============================================================================
+/-! ### Integration — the prosodic pipeline -/
 
 section ProsodicPipeline
 
-/-- The full phonological pipeline for Latin *ka:nus* after CL:
-    moraic syllabification → weight profile → prosodic word.
-
-    This demonstrates the chain that moraic theory creates:
-    segments + WBP → `MoraicSyllable` → `Syllable.Weight` → `PrWd`
-
-    CL output: σ₁ = [ka:] (bimoraic = heavy), σ₂ = [nus] (bimoraic = heavy).
-    Weight profile: [H, H]. -/
-def kaanus_form : MoraicForm := ⟨[kaanus_σ₁, kasnus_σ₂]⟩
+/-- The full pipeline for Latin *ka:nus* after CL: moraic syllables → weight
+    profile → prosodic word. σ₁ = [ka:] (heavy), σ₂ = [nus] (heavy), so the
+    weight profile is [H, H]. -/
+def kaanus_form : List Syllable := [kaanus_σ₁, kasnus_σ₂]
 
 /-- CL output has the weight profile [heavy, heavy]. -/
 theorem kaanus_weight_profile :
-    kaanus_form.toPrWd = ⟨[.heavy, .heavy]⟩ := rfl
+    Word.ofSyllables kaanus_form = ⟨[.heavy, .heavy]⟩ := rfl
 
-/-- CL output satisfies the bimoraic minimal word constraint (4μ ≥ 2μ). -/
+/-- CL output satisfies the bimoraic minimal-word constraint (4μ ≥ 2μ). -/
 theorem kaanus_satisfies_minword :
-    kaanus_form.toPrWd.satisfiesMinWord := by decide
+    (Word.ofSyllables kaanus_form).satisfiesMinWord := by decide
 
 /-- Middle English: CL preserves the bimoraic minimum across syllable
-    restructuring. Input ⟨talə⟩ = [L, L] (2μ); output [ta:l] = [H] (2μ).
-    Both satisfy the bimoraic minimum.
-
-    This follows from Moraic Conservation (Rule (64), [hayes-1989]):
-    CL does not change total mora count, so it cannot cause a minimal word
-    violation that wasn't already present. -/
+    restructuring. Input ⟨talə⟩ = [L, L] (2μ); output [ta:l] = [H] (2μ). Both
+    satisfy the bimoraic minimum — a consequence of moraic conservation. -/
 theorem tale_minword_preserved :
-    tale_input.toPrWd.satisfiesMinWord ∧
-    (MoraicForm.mk [tale_output]).toPrWd.satisfiesMinWord :=
+    (Word.ofSyllables tale_input).satisfiesMinWord ∧
+    (Word.ofSyllables [tale_output]).satisfiesMinWord :=
   ⟨by decide, by decide⟩
 
 end ProsodicPipeline

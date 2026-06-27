@@ -36,8 +36,8 @@ where
   go : List Syllable.Weight → Nat → Nat → Option Nat
     | [], _, _ => none
     | w :: ws, target, idx =>
-      if target < w.morae then some idx
-      else go ws (target - w.morae) (idx + 1)
+      if target < w then some idx
+      else go ws (target - w) (idx + 1)
 
 /-! ### Antepenultimate Accent Rule -/
 
@@ -48,7 +48,7 @@ def defaultAccentAAR (weights : List Syllable.Weight) : Option Nat :=
   match weights with
   | [] => none
   | _ =>
-    let totalMorae := weights.foldl (· + ·.morae) 0
+    let totalMorae := weights.foldl (· + ·) 0
     let targetMora := if totalMorae ≥ 3 then totalMorae - 3 else 0
     findSyllable weights targetMora
 
@@ -62,7 +62,7 @@ def latinStressRule : List Syllable.Weight → Option Nat
   | [] => none
   | [_] => some 0
   | [_, _] => some 0                    -- disyllable → always penult (= initial)
-  | [_, ⟨0⟩, _] | [_, ⟨1⟩, _] => some 0  -- light penult → antepenult
+  | [_, 0, _] | [_, 1, _] => some 0      -- light penult → antepenult
   | [_, _, _] => some 1                 -- heavy+ penult → penult
   | _ :: rest@(_ :: _ :: _) =>           -- peel front, recurse, add 1
     (latinStressRule rest).map (· + 1)

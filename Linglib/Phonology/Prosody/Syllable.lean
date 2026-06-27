@@ -1,27 +1,23 @@
 import Mathlib.Order.Nat
-import Linglib.Phonology.Segment
+import Linglib.Phonology.Prosody.Mora
 
 /-!
-# Syllable structure
+# Syllables and sonority
 
-The syllable as a phonological object — sonority, constituency, and weight —
-following the syllable chapter of *The Handbook of Phonological Theory*
-([goldsmith-2011]) and [hayes-2009].
+The syllable (σ) — the second level of the prosodic hierarchy, a non-moraic
+onset over a spine of `Mora`s. Weight is the number of morae, so there is no
+separate weight type: `Syllable.Weight` is just `Nat`, and `Syllable.weight`
+reads it off `morae.length`. Plus the sonority scale, on which segments are
+ordered.
 
 ## Main definitions
 
 * `Sonority` — the abstract sonority hierarchy (a `LinearOrder`);
   `Sonority.ofSegment` grounds a `Segment` in it via its features.
-* `Syllable` — an onset–nucleus–coda triple, with `Syllable.moraCount`,
-  `Syllable.weight`, and the nested weight object `Syllable.Weight`.
-* `SyllabifiedForm` — a word parsed into syllables.
-
-## Implementation notes
-
-Following [berent-2026], sonority is an abstract ordered type rather than a
-bundle of articulatory features: the grammar operates on the ordering alone,
-and `Sonority.ofSegment` is the only place phonetic features ([±sonorant],
-[±approximant], …) enter.
+* `Syllable` — a `Mora`-spine syllable, with `Syllable.moraCount` / `weight`
+  and the smart constructor `Syllable.ofCV` from a segmental string.
+* `Syllable.Weight` — `Nat` (the mora count), with `.light`/`.heavy`/
+  `.superheavy` for readable weight profiles.
 -/
 
 namespace Prosody
@@ -77,45 +73,44 @@ end Sonority
 
 /-! ### Syllables -/
 
-/-- A syllable: onset, nucleus, coda. -/
+/-- σ — a syllable: a non-moraic onset over a spine of morae. Weight is the
+    number of morae (`moraCount`). -/
 structure Syllable where
-  onset   : List Segment
-  nucleus : List Segment
-  coda    : List Segment
+  onset : List Segment
+  morae : List Mora
 
 namespace Syllable
 
-/-- Syllable weight as a mora count. `Weight` wraps the actual count rather
-    than a lossy 3-value enum, so the `MoraicSyllable → Syllable.Weight → PrWd`
-    pipeline preserves exact mora counts. The names `.light` (1μ), `.heavy`
-    (2μ), and `.superheavy` (3μ) abbreviate the common values. -/
-structure Weight where
-  /-- The mora count: 1μ = light (CV), 2μ = heavy (CVV, CVC),
-      3μ = superheavy (CVVC, CVCC). -/
-  morae : Nat
-  deriving DecidableEq, Repr
+/-- Syllable weight is just the mora count — there is no separate weight type.
+    `.light` (1μ), `.heavy` (2μ), `.superheavy` (3μ) name the common values for
+    readable weight profiles in metrical and accentual computations. -/
+abbrev Weight := Nat
 
 namespace Weight
-abbrev light : Weight := ⟨1⟩
-abbrev heavy : Weight := ⟨2⟩
-abbrev superheavy : Weight := ⟨3⟩
+abbrev light : Weight := 1
+abbrev heavy : Weight := 2
+abbrev superheavy : Weight := 3
 end Weight
 
-/-- Mora count. `codaMoraic = true` means coda consonants contribute weight
-    (the Weight-by-Position parameter of [hayes-1989]). -/
-def moraCount (σ : Syllable) (codaMoraic : Bool := true) : Nat :=
-  σ.nucleus.length + if codaMoraic then σ.coda.length else 0
+/-- The number of morae — the syllable's weight. -/
+def moraCount (σ : Syllable) : Nat := σ.morae.length
 
-/-- Weight from the mora count. -/
-def weight (σ : Syllable) (codaMoraic : Bool := true) : Weight :=
-  ⟨σ.moraCount codaMoraic⟩
+/-- The syllable's weight (= its mora count). -/
+abbrev weight (σ : Syllable) : Weight := σ.moraCount
+
+/-- Build a syllable from a segmental onset–nucleus–coda string. Each nucleus
+    segment projects a mora; a coda segment projects a mora iff Weight-by-
+    Position is active ([hayes-1989]), otherwise it rides on the last nucleus
+    mora (a non-moraic coda). -/
+def ofCV (onset nucleus coda : List Segment) (wbp : Bool := true) : Syllable :=
+  let nuc := nucleus.map Mora.of
+  if wbp then
+    ⟨onset, nuc ++ coda.map Mora.of⟩
+  else
+    match nuc.reverse with
+    | last :: rest => ⟨onset, rest.reverse ++ [last.attach coda]⟩
+    | []           => ⟨onset, []⟩
 
 end Syllable
-
-/-! ### Syllabified forms -/
-
-/-- A word parsed into syllables. -/
-structure SyllabifiedForm where
-  syllables : List Syllable
 
 end Prosody

@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Accent
-import Linglib.Phonology.Prosody.Moraic
+import Linglib.Phonology.Prosody.Syllable
 import Linglib.Fragments.Japanese.Prosody
 
 /-!
@@ -162,7 +162,6 @@ theorem long_n2_initial_avoids_final :
     syllables with short vowels are monomoraic (light). -/
 theorem japanese_wbp_active (o n c : Phonology.Segment) :
     -- CVC with WBP is heavy (e.g., /tan/ = 2μ)
-    (Prosody.syllableToMoraic { wbp := true }
-      ⟨[o], [n], [c]⟩).toWeight = .heavy := rfl
+    (Prosody.Syllable.ofCV [o] [n] [c] true).weight = .heavy := rfl
 
 end Kawahara2015

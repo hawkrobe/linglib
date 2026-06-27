@@ -1,198 +1,130 @@
-import Linglib.Phonology.Prosody.Moraic
+import Linglib.Phonology.Prosody.Syllable
 
 /-!
-# Compensatory Lengthening in Moraic Theory
+# Compensatory lengthening
 
-Compensatory lengthening (CL) as the filling of stranded morae following
-segment deletion. This module formalizes the core theoretical claims of
-[hayes-1989]:
+Compensatory lengthening (CL) as the re-association of a stranded mora,
+following [hayes-1989]. Because a `Mora` is a node that *survives* the deletion
+of the segment it dominated (`Mora.stranded`), the core claims hold **by
+construction** rather than by stipulation:
 
-1. **Moraic Conservation**: CL processes conserve total mora count. Deletion
-   strands a mora; spreading fills it.
+* **Onset-deletion asymmetry** — onsets are not on the mora spine, so deleting
+  one strands no μ and cannot feed CL (`deleteOnset_strandedCount`), unlike
+  coda deletion (`strand`).
+* **Moraic conservation** — onset deletion, stranding a segment, and
+  re-associating its μ are each length-preserving on the spine, so the weight
+  is invariant (`deleteOnset_moraCount`, `strand_moraCount`, `spread_moraCount`).
 
-2. **Onset Deletion Asymmetry**: CL does not compensate for loss of onset
-   consonants, because onsets are universally non-moraic.
-
-3. **Weight Prerequisite**: CL occurs only in languages with a syllable
-   weight distinction (bimoraic syllables), because only such languages
-   have morae that can be stranded.
-
-The CL typology classifies seven attested CL types, all derivable from
-moraic representations without stipulating constraints on association
-line rearrangements.
-
-[hayes-1989]
+The empirical CL types (Latin *kasnus → ka:nus*, etc.) are exercised in
+`Studies/Hayes1989`.
 -/
 
 namespace Prosody.CL
 
 open Phonology (Segment)
 
--- ============================================================================
--- § 1: CL Typology
--- ============================================================================
+/-! ### The CL typology -/
 
-/-- The typology of compensatory lengthening processes
-    ([hayes-1989], §5.1).
-
-    Each type is defined by the deletion trigger and the spreading target.
-    All types share the core mechanism: deletion strands a mora, which is
-    then filled by spreading from an adjacent segment. -/
+/-- The seven attested compensatory-lengthening types ([hayes-1989]). Each is a
+    deletion trigger plus a spreading target; all share the mechanism *deletion
+    strands a mora, which is then re-associated to an adjacent segment*. -/
 inductive CLType where
-  /-- Vowel lengthens when a following coda consonant deletes.
-      Example: Latin *kasnus → ka:nus. -/
+  /-- Vowel lengthens when a following coda consonant deletes (Latin
+      *kasnus → ka:nus*). -/
   | classical
-  /-- Total assimilation of a consonant, formally equivalent to CL.
-      Example: asta → [atta] (progressive), asta → [assa] (regressive). -/
+  /-- Total consonant assimilation, formally equivalent to CL (*asta → atta*). -/
   | totalAssimilation
-  /-- Glide formation shortens a vowel, freeing a mora that
-      lengthens an adjacent segment. Example: tia → [tya:]. -/
+  /-- Glide formation frees a mora that lengthens a neighbour (*tia → tya:*). -/
   | glideFormation
-  /-- Prenasalization absorbs a mora from the following stop.
-      Example: Bantu amba → [a: m̌ba]. -/
+  /-- Prenasalization absorbs a mora from the following stop (Bantu
+      *amba → a:mba*). -/
   | prenasalization
-  /-- Non-adjacent CL via double flop. Deletion causes resyllabification,
-      which strands a mora accessible to a non-adjacent vowel.
-      Example: Ancient Greek *odwos → o:dos. -/
+  /-- Non-adjacent CL via double flop: deletion resyllabifies, stranding a mora
+      a non-adjacent vowel picks up (Ancient Greek *odwos → o:dos*). -/
   | doubleFlop
-  /-- Vowel in the following syllable deletes; the preceding vowel
-      lengthens via Parasitic Delinking.
-      Example: Middle English talə → [ta:l]. -/
+  /-- A following vowel deletes; the preceding vowel lengthens by Parasitic
+      Delinking (Middle English *talə → ta:l*). -/
   | vowelLoss
-  /-- A vowel deletes or shortens, with concomitant lengthening
-      of the following consonant. Example: Luganda aika → [akka]. -/
+  /-- A vowel shortens, lengthening the following consonant (Luganda
+      *aika → akka*). -/
   | inverseCL
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Deletion — segment removal that strands morae
--- ============================================================================
+/-! ### Stranding and spreading -/
 
-/-- Delete a segment from a moraic syllable at a given index in the
-    moraic tier. Returns the modified syllable and the number of stranded morae.
+/-- Delete the segment dominated by mora `i`, leaving the μ node **stranded**
+    (it survives, dominating nothing). The mora count is unchanged — this is the
+    engine of compensatory lengthening. -/
+def strand (σ : Syllable) (i : Nat) : Syllable :=
+  ⟨σ.onset, σ.morae.set i Mora.stranded⟩
 
-    Following [hayes-1989] §3: deletion on the segmental tier only —
-    the mora remains, becoming segmentally unaffiliated. -/
-def deleteMoraic (σ : MoraicSyllable) (idx : Nat) :
-    MoraicSyllable × Nat :=
-  match σ.moraic[idx]? with
-  | some ms =>
-    (⟨σ.onset, σ.moraic.eraseIdx idx⟩, ms.morae.toNat)
-  | none => (σ, 0)
+/-- Delete an onset segment. Onsets are not on the mora spine, so the weight is
+    untouched. -/
+def deleteOnset (σ : Syllable) (i : Nat) : Syllable :=
+  ⟨σ.onset.eraseIdx i, σ.morae⟩
 
-/-- Delete an onset consonant from a moraic syllable. Returns the modified
-    syllable. No morae are stranded because onsets are non-moraic. -/
-def deleteOnset (σ : MoraicSyllable) (idx : Nat) : MoraicSyllable :=
-  ⟨σ.onset.eraseIdx idx, σ.moraic⟩
-
--- ============================================================================
--- § 3: Spreading — filling stranded morae
--- ============================================================================
+/-- The number of stranded (segmentally unaffiliated) morae. -/
+def strandedCount (σ : Syllable) : Nat :=
+  σ.morae.countP fun μ => μ.dominates.isEmpty
 
 /-- Direction of spreading to fill a stranded mora. -/
 inductive SpreadDir where
-  /-- Spread from the left: the preceding segment acquires the stranded mora.
-      This is the typical case for classical CL and vowel loss CL. -/
   | left
-  /-- Spread from the right: the following segment acquires the stranded mora.
-      This is the typical case for inverse CL. -/
   | right
   deriving DecidableEq, Repr
 
-/-- Add `n` morae to a `MoraicSeg`, capping at `.two`. -/
-private def addMorae (ms : MoraicSeg) (n : Nat) : MoraicSeg :=
-  let newMorae := match n with
-    | 0 => ms.morae
-    | 1 => ms.morae.succ
-    | _ => .two  -- cap at bimoraic
-  ⟨ms.seg, newMorae⟩
+/-- Re-link stranded morae left-to-right, each one taking the melody (`mel`) of
+    the nearest non-stranded mora to its left. -/
+def relink : List Segment → List Mora → List Mora
+  | _,   []      => []
+  | mel, μ :: ms =>
+    if μ.dominates.isEmpty then ⟨mel⟩ :: relink mel ms
+    else μ :: relink μ.dominates ms
 
-/-- Apply spreading to fill stranded morae in a moraic syllable.
+theorem relink_length (mel : List Segment) (ms : List Mora) :
+    (relink mel ms).length = ms.length := by
+  induction ms generalizing mel with
+  | nil => rfl
+  | cons μ ms ih => simp only [relink]; split <;> simp [ih]
 
-    Following [hayes-1989]: CL is part of syllabification.
-    When a mora is stranded, syllabification principles fill it by spreading
-    from the nearest available segment. The direction of spreading is
-    language-specific (part of the syllabification algorithm).
+/-- Re-associate each stranded mora to the melody of its nearest non-stranded
+    neighbour on the given side. Length-preserving on the mora spine, so weight
+    is conserved (`spread_moraCount`). -/
+def spread (σ : Syllable) (dir : SpreadDir) : Syllable :=
+  match dir with
+  | .left  => ⟨σ.onset, relink [] σ.morae⟩
+  | .right => ⟨σ.onset, (relink [] σ.morae.reverse).reverse⟩
 
-    Handles 1 or 2 stranded morae (geminate deletion). -/
-def spreadToFill (σ : MoraicSyllable) (strandedMorae : Nat)
-    (dir : SpreadDir) : MoraicSyllable :=
-  if strandedMorae == 0 then σ
-  else match dir, σ.moraic.reverse, σ.moraic with
-  | .left, last :: rest, _ =>
-    ⟨σ.onset, rest.reverse ++ [addMorae last strandedMorae]⟩
-  | .right, _, first :: rest =>
-    ⟨σ.onset, addMorae first strandedMorae :: rest⟩
-  | _, _, _ => σ
+/-! ### The onset-deletion asymmetry -/
 
--- ============================================================================
--- § 4: Core Theorems
--- ============================================================================
+/-- **Onset-deletion asymmetry** ([hayes-1989]): deleting an onset segment
+    strands *no* mora — onsets are not on the mora spine — so it cannot feed
+    compensatory lengthening. Contrast `strand`, which leaves a stranded μ
+    behind (exercised on concrete syllables in `Studies/Hayes1989`). The
+    asymmetry is in the *stranded* count, not the mora count: in moraic theory
+    *both* onset and coda deletion preserve the total weight (next section),
+    but only coda deletion produces a stranded μ to lengthen. -/
+theorem deleteOnset_strandedCount (σ : Syllable) (i : Nat) :
+    strandedCount (deleteOnset σ i) = strandedCount σ := rfl
 
-/-- **Onset Deletion Asymmetry** ([hayes-1989], §5.2.1):
-    Deleting an onset consonant strands zero morae, because onset consonants
-    are universally non-moraic.
+/-! ### Moraic conservation by construction -/
 
-    This follows directly from the representation: onsets are `List Segment`
-    with no mora association. There is nothing to strand.
+/-- Onset deletion preserves the weight (it never touches the spine). -/
+theorem deleteOnset_moraCount (σ : Syllable) (i : Nat) :
+    (deleteOnset σ i).moraCount = σ.moraCount := rfl
 
-    This is the strongest theorem in the formalization — fully general over
-    all syllables and all onset indices. It is **derived** from the
-    representation, not stipulated. -/
-theorem onset_deletion_no_stranding (σ : MoraicSyllable) (idx : Nat) :
-    (deleteOnset σ idx).moraCount = σ.moraCount := by
-  simp only [deleteOnset, MoraicSyllable.moraCount]
+/-- Stranding a segment preserves the weight — the μ node survives, dominating
+    nothing, so the mora *count* is unchanged. This is what makes conservation
+    hold by construction rather than by arithmetic bookkeeping. -/
+theorem strand_moraCount (σ : Syllable) (i : Nat) :
+    (strand σ i).moraCount = σ.moraCount := by
+  simp [strand, Syllable.moraCount]
 
-/-- **Moraic Conservation** for single-mora CL
-    ([hayes-1989], Rule (64)):
-    Deleting a monomoraic segment and spreading left preserves total morae. -/
-theorem moraic_conservation_left (v c : Segment) :
-    let σ := MoraicSyllable.mk [] [⟨v, .one⟩, ⟨c, .one⟩]
-    let (σ_del, stranded) := deleteMoraic σ 1
-    σ.moraCount = (spreadToFill σ_del stranded .left).moraCount := rfl
-
-/-- Moraic conservation also holds for rightward spreading (inverse CL). -/
-theorem moraic_conservation_right (v c : Segment) :
-    let σ := MoraicSyllable.mk [] [⟨v, .one⟩, ⟨c, .one⟩]
-    let (σ_del, stranded) := deleteMoraic σ 0
-    σ.moraCount = (spreadToFill σ_del stranded .right).moraCount := rfl
-
-/-- **Weight prerequisite** ([hayes-1989], §6): deleting a non-moraic
-    coda (WBP inactive) strands zero morae. No CL is possible. -/
-theorem no_wbp_no_cl (v c₁ c₂ : Segment) :
-    (deleteMoraic ⟨[c₁], [⟨v, .one⟩, ⟨c₂, .zero⟩]⟩ 1).2 = 0 := rfl
-
-/-- Deleting a moraic coda (WBP active) strands one mora. CL is possible. -/
-theorem wbp_strands_mora (v c₁ c₂ : Segment) :
-    (deleteMoraic ⟨[c₁], [⟨v, .one⟩, ⟨c₂, .one⟩]⟩ 1).2 = 1 := rfl
-
-/-- **Vowel-loss directionality** ([hayes-1989], §5.2.2):
-    CL through vowel loss always lengthens the vowel to the **left** of the
-    deleted vowel, never to the right. In moraic theory this follows from
-    Parasitic Delinking + the No-Crossing Constraint (derived from temporal
-    precedence in `Autosegmental.no_crossing`,
-    [sagey-1986] §5.3): a stranded mora can only be picked up by
-    spreading leftward without crossing. -/
-theorem vowel_loss_leftward (v₁ v₂ : Segment) :
-    let σ₁ := MoraicSyllable.mk [] [⟨v₁, .one⟩]
-    let σ₂ := MoraicSyllable.mk [] [⟨v₂, .one⟩]
-    let (_, stranded) := deleteMoraic σ₂ 0
-    -- The stranded mora from σ₂ can fill σ₁ by leftward spreading
-    let σ₁_cl := spreadToFill σ₁ stranded .left
-    -- Conservation: σ₁ gains what σ₂ lost
-    σ₁_cl.moraCount = σ₁.moraCount + stranded := rfl
-
-/-- Syllabification with WBP (Rule (10)) produces moraic codas that can
-    trigger CL. This connects `MoraicParams` to the CL mechanism: the *same
-    parameter* that determines syllable weight also determines CL possibility
-    ([hayes-1989], §6). -/
-theorem wbp_params_enable_cl (o n c : Segment) :
-    let σ := syllableToMoraic { wbp := true } ⟨[o], [n], [c]⟩
-    (deleteMoraic σ 1).2 = 1 := rfl
-
-/-- Without WBP, syllabification produces non-moraic codas: no CL. -/
-theorem no_wbp_params_disable_cl (o n c : Segment) :
-    let σ := syllableToMoraic { wbp := false } ⟨[o], [n], [c]⟩
-    (deleteMoraic σ 1).2 = 0 := rfl
+/-- Spreading (re-associating stranded morae) is length-preserving on the
+    spine, so the weight is invariant. -/
+theorem spread_moraCount (σ : Syllable) (dir : SpreadDir) :
+    (spread σ dir).moraCount = σ.moraCount := by
+  cases dir <;>
+    simp [spread, Syllable.moraCount, relink_length, List.length_reverse]
 
 end Prosody.CL

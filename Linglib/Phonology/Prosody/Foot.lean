@@ -77,9 +77,9 @@ abbrev MetricalParse := List ParseElement
 def MetricalParse.feet (p : MetricalParse) : List (List Syllable.Weight) :=
   p.filterMap λ | .foot ws => some ws | .unfooted _ => none
 
-/-- Mora count of a single foot. -/
+/-- Mora count of a single foot (each weight *is* a mora count). -/
 def footMorae (ws : List Syllable.Weight) : Nat :=
-  ws.foldl (· + ·.morae) 0
+  ws.foldl (· + ·) 0
 
 /-- Total syllable count in a parse. -/
 def MetricalParse.syllableCount (p : MetricalParse) : Nat :=
@@ -115,7 +115,7 @@ def isWellFormedFoot (ft : FootType) (ws : List Syllable.Weight) : Prop :=
   | .iamb =>
     (ws.length = 1 ∧ footMorae ws = 2) ∨
     (ws.length = 2 ∧ 2 ≤ footMorae ws ∧ footMorae ws ≤ 3 ∧
-      (ws.headD ⟨0⟩).morae ≤ (ws.getLast?.getD ⟨0⟩).morae)
+      ws.headD 0 ≤ ws.getLast?.getD 0)
 
 instance (ft : FootType) (ws : List Syllable.Weight) :
     Decidable (isWellFormedFoot ft ws) := by
