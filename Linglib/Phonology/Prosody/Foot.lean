@@ -18,24 +18,21 @@ rhythmic unit. [hayes-1995] identifies three canonical foot types:
 The foot's *head* (prominent syllable) determines stress: initial in
 trochees, final in iambs.
 
-## Definitions
+## Main definitions
 
-- `Syllable.Weight.morae`: mora count from weight class
-- `FootType`: the three canonical foot types
-- `ParseElement`: element in a metrical parse (footed or unfooted)
-- `MetricalParse`: a complete metrical parse of a prosodic domain
-- OT constraints: `ftBinViolations`, `parseSylViolations`, `allFtLeftViolations`
+* `FootType` — the three canonical foot types.
+* `ParseElement` / `MetricalParse` — an element of, and a complete, metrical
+  parse of a prosodic domain.
+* `footMorae`, `isWellFormedFoot`, `isDegenerate` — foot weight and shape.
+* `ftBinViolations`, `parseSylViolations`, `allFtLeftViolations`,
+  `allFtRightViolations` — OT metrical constraints.
 -/
 
 namespace Prosody
 
--- `Syllable.Weight.morae` is now a field accessor — no separate function needed.
+/-! ### Foot type -/
 
--- ============================================================================
--- § 1: Foot Type
--- ============================================================================
-
-/-- The three canonical foot types ([hayes-1995], Ch. 3). -/
+/-- The three canonical foot types ([hayes-1995]). -/
 inductive FootType where
   /-- Moraic trochee: bimoraic with initial prominence.
       Well-formed shapes: (H) = 2μ, (LL) = 2μ.
@@ -51,9 +48,7 @@ inductive FootType where
   | iamb
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Metrical Parse
--- ============================================================================
+/-! ### Metrical parse -/
 
 /-- An element in a metrical parse: either a foot grouping syllables
     or an unparsed (stray) syllable. The list preserves left-to-right
@@ -69,9 +64,7 @@ inductive ParseElement where
     of footed and unfooted syllables. -/
 abbrev MetricalParse := List ParseElement
 
--- ============================================================================
--- § 4: Parse Properties
--- ============================================================================
+/-! ### Parse properties -/
 
 /-- Extract all feet from a parse. -/
 def MetricalParse.feet (p : MetricalParse) : List (List Syllable.Weight) :=
@@ -102,7 +95,7 @@ instance (ws : List Syllable.Weight) : Decidable (isDegenerate ws) := by
 /-- Is a foot well-formed for the given foot type?
 
     The iamb clause encodes Hayes' canonical right-prominent inventory
-    `{(H), (LL), (LH)}` ([hayes-1995], Ch. 6): a bimoraic monosyllable,
+    `{(H), (LL), (LH)}` ([hayes-1995]): a bimoraic monosyllable,
     or a disyllable that is right-heavy-or-even (first syllable no heavier
     than the second) with two or three morae. This excludes the degenerate
     monomoraic `(L)`, the left-heavy `(HL)`, and the trimoraic monosyllable
@@ -121,9 +114,7 @@ instance (ft : FootType) (ws : List Syllable.Weight) :
     Decidable (isWellFormedFoot ft ws) := by
   unfold isWellFormedFoot; cases ft <;> infer_instance
 
--- ============================================================================
--- § 5: OT Metrical Constraints
--- ============================================================================
+/-! ### OT metrical constraints -/
 
 /-- FT-BIN(μ): assign one violation for each foot that does not consist
     of exactly two morae ([kager-2007]).
@@ -166,77 +157,49 @@ def allFtRightViolations (p : MetricalParse) : Nat :=
     | .unfooted _ :: rest, pos => go rest (pos + 1)
   go p 0
 
--- ============================================================================
--- § 6: Verification Theorems
--- ============================================================================
+/-! ### Worked examples
 
--- Mora counts
+Anonymous `example`s rather than named lemmas: these lock in the non-trivial
+`isWellFormedFoot` inventory and the OT-constraint counts, but are not reusable
+API. -/
 
-theorem heavy_foot_bimoraic : footMorae [.heavy] = 2 := rfl
-theorem ll_foot_bimoraic : footMorae [.light, .light] = 2 := rfl
-theorem light_foot_monomoraic : footMorae [.light] = 1 := rfl
-theorem superheavy_foot_trimoraic : footMorae [.superheavy] = 3 := rfl
+-- Moraic trochee: the canonical {(H), (LL)} inventory.
+example : isWellFormedFoot .moraicTrochee [.heavy] := by decide
+example : isWellFormedFoot .moraicTrochee [.light, .light] := by decide
+example : ¬ isWellFormedFoot .moraicTrochee [.light] := by decide
 
--- Well-formedness
+-- Iamb: the canonical right-prominent inventory {(H), (LL), (LH)} only —
+-- excluding the degenerate (L), the left-heavy (HL), and the trimoraic (SH).
+example : isWellFormedFoot .iamb [.heavy] := by decide
+example : isWellFormedFoot .iamb [.light, .light] := by decide
+example : isWellFormedFoot .iamb [.light, .heavy] := by decide
+example : ¬ isWellFormedFoot .iamb [.light] := by decide
+example : ¬ isWellFormedFoot .iamb [.heavy, .light] := by decide
+example : ¬ isWellFormedFoot .iamb [.superheavy] := by decide
 
-theorem heavy_wellformed_mt :
-    isWellFormedFoot .moraicTrochee [.heavy] := by decide
+-- Degeneracy: only the monomoraic (L) foot is subminimal.
+example : isDegenerate [.light] := by decide
+example : ¬ isDegenerate [.heavy] := by decide
+example : ¬ isDegenerate [.light, .light] := by decide
 
-theorem ll_wellformed_mt :
-    isWellFormedFoot .moraicTrochee [.light, .light] := by decide
+-- OT metrical constraints on worked parses.
+/-- (ˈCV.CV).CV: one bimoraic foot (LL) + one stray light syllable. -/
+private abbrev parse_llU : MetricalParse := [.foot [.light, .light], .unfooted .light]
+example : ftBinViolations parse_llU = 0 := rfl
+example : parseSylViolations parse_llU = 1 := rfl
+example : allFtLeftViolations parse_llU = 0 := rfl
 
-theorem l_not_wellformed_mt :
-    ¬ isWellFormedFoot .moraicTrochee [.light] := by decide
+/-- (ˈLL)(ˌH): two bimoraic feet — the Telugu stem parse of *samudr-am*. -/
+private abbrev parse_llH : MetricalParse := [.foot [.light, .light], .foot [.heavy]]
+example : ftBinViolations parse_llH = 0 := rfl
+example : parseSylViolations parse_llH = 0 := rfl
+example : allFtLeftViolations parse_llH = 2 := rfl
 
--- Iamb: canonical inventory {(H), (LL), (LH)} only
-
-theorem h_wellformed_iamb : isWellFormedFoot .iamb [.heavy] := by decide
-theorem ll_wellformed_iamb : isWellFormedFoot .iamb [.light, .light] := by decide
-theorem lh_wellformed_iamb : isWellFormedFoot .iamb [.light, .heavy] := by decide
-
-theorem l_not_wellformed_iamb : ¬ isWellFormedFoot .iamb [.light] := by decide
-theorem hl_not_wellformed_iamb : ¬ isWellFormedFoot .iamb [.heavy, .light] := by decide
-theorem sh_not_wellformed_iamb : ¬ isWellFormedFoot .iamb [.superheavy] := by decide
-
--- Degeneracy
-
-theorem light_degenerate : isDegenerate [.light] := by decide
-theorem heavy_not_degenerate : ¬ isDegenerate [.heavy] := by decide
-theorem ll_not_degenerate : ¬ isDegenerate [.light, .light] := by decide
-
--- Example parses
-
-/-- (ˈCV.CV).CV: one bimoraic foot (LL) + one unparsed light syllable.
-    Models odd-numbered light-syllable strings with left-to-right
-    moraic trochees: the final syllable is stranded. -/
-private abbrev parse_llU : MetricalParse :=
-  [.foot [.light, .light], .unfooted .light]
-
-theorem llU_ftbin : ftBinViolations parse_llU = 0 := rfl
-theorem llU_parsesyl : parseSylViolations parse_llU = 1 := rfl
-theorem llU_allftleft : allFtLeftViolations parse_llU = 0 := rfl
-
-/-- (ˈLL)(ˌH): two bimoraic feet. Models the Telugu stem-level parse
-    of *samudr-am* 'ocean-n': (ˈsa.mu).(ˌdram). -/
-private abbrev parse_llH : MetricalParse :=
-  [.foot [.light, .light], .foot [.heavy]]
-
-theorem llH_ftbin : ftBinViolations parse_llH = 0 := rfl
-theorem llH_parsesyl : parseSylViolations parse_llH = 0 := rfl
-theorem llH_allftleft : allFtLeftViolations parse_llH = 2 := rfl
-
-/-- Competing parse: (ˈsa.mu).dram with final syllable unfooted.
-    Worse on PARSE-SYL than (ˈsa.mu).(ˌdram). -/
-private abbrev parse_llU_heavy : MetricalParse :=
-  [.foot [.light, .light], .unfooted .heavy]
-
-theorem llU_heavy_parsesyl : parseSylViolations parse_llU_heavy = 1 := rfl
-
-/-- Competing parse: two monomoraic feet (ˈsa).(ˌmu).(ˌdram).
-    Violates FT-BIN twice. -/
-private abbrev parse_lllH : MetricalParse :=
-  [.foot [.light], .foot [.light], .foot [.heavy]]
-
-theorem lllH_ftbin : ftBinViolations parse_lllH = 2 := rfl
+/-- Competing parses: a stray heavy (worse on PARSE-SYL), and three degenerate
+    feet (worse on FT-BIN). -/
+private abbrev parse_llU_heavy : MetricalParse := [.foot [.light, .light], .unfooted .heavy]
+example : parseSylViolations parse_llU_heavy = 1 := rfl
+private abbrev parse_lllH : MetricalParse := [.foot [.light], .foot [.light], .foot [.heavy]]
+example : ftBinViolations parse_lllH = 2 := rfl
 
 end Prosody
