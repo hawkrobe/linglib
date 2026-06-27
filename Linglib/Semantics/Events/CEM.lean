@@ -1,180 +1,90 @@
 import Linglib.Semantics.Mereology
-import Linglib.Semantics.Mereology
 import Linglib.Semantics.Events.Basic
-import Linglib.Features.Aktionsart
 
 /-!
-# Event Mereology
-[bach-1986] [champollion-2017]
+# Event mereology
 
-Event-specific mereological infrastructure built on top of the generic
-`Mereology` definitions. Specializes `CUM`, `QUA`, `IsSumHom`, etc.
-to event structures with `EventCEM`, thematic role homomorphisms, and
-Vendler class bridges.
+Event-specific mereological infrastructure built on the generic `Mereology`
+definitions. `EventCEM` makes the event domain a **classical extensional
+mereology** in the sense of [hovda-2009] — parthood is a partial order closed
+under unrestricted type-2 fusion (`Fusion2E`) with weak supplementation
+(`WeakSup`) — and additionally requires the temporal trace τ to be a sum
+homomorphism ([champollion-2017]; [bach-1986] for the underlying event algebra).
 
-Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
-`IsSumHom`, `Overlap`, `ExtMeasure`, `QMOD`) live in `Mereology`.
+Because a classical mereology has *unique* type-2 fusions, the binary sum `⊔`
+on events is the fusion of a pair rather than a stipulated operation: the
+join-semilattice structure consumers use is *derived* from the fusion axioms.
+
+## Main definitions
+
+* `EventCEM` — events as a classical extensional mereology with τ a sum hom.
+* `instSemilatticeSupEvent` — the derived binary-sum (`⊔`) structure on events.
+* `EventCEM.sup_isLUB` — the event sum is the mereological fusion (a least
+  upper bound), not a free operation.
+* `instIsSumHomRuntime` — τ (runtime) as a `Mereology.IsSumHom`.
+
+Generic mereological vocabulary (`CUM`, `QUA`, `IsSumHom`, `Overlap`, `IsFusion`,
+`ClassicalMereology`, …) lives in `Mereology`; consumers `open Mereology`.
 -/
 
 namespace Semantics.Events.CEM
 
-open Features
 open _root_.Mereology
 
--- Generic mereological vocabulary (CUM/QUA/AlgClosure/QMOD/ExtMeasure
--- /MereoDim/DimensionChain/...) lives in `Mereology`
--- (`Semantics/Mereology.lean`). Consumers do `open Mereology` to bring
--- it into scope rather than relying on re-exports here.
+/-! ### Events as a classical extensional mereology -/
 
-/-! ### Event CEM (Classical Extensional Mereology) -/
+/-- The binary sum `⊔` on events, derived from the classical-mereology fusion
+    axioms: `e₁ ⊔ e₂` is the unique type-2 fusion of `{e₁, e₂}`. Noncomputable
+    because the fusion is extracted by choice from `Fusion2E`. -/
+noncomputable instance instSemilatticeSupEvent (Time : Type*) [LinearOrder Time]
+    [Event.Mereology Time] [ClassicalMereology (Event Time)] :
+    SemilatticeSup (Event Time) :=
+  ClassicalMereology.toSemilatticeSup
 
-/-- Classical Extensional Mereology for events: enriches `Event.Mereology`
-    with binary sum (⊔) via `SemilatticeSup (Event Time)`.
-    [champollion-2017] Ch. 2: event domain forms a join semilattice. -/
-class EventCEM (Time : Type*) [LinearOrder Time]
-    extends Event.Mereology Time where
-  /-- Events form a join semilattice (binary sum ⊕ exists). -/
-  evSemilatticeSup : SemilatticeSup (Event Time)
-  /-- ≤ from SemilatticeSup agrees with partOf. -/
-  le_eq_partOf : ∀ (e₁ e₂ : Event Time),
-    @LE.le (Event Time) evSemilatticeSup.toLE e₁ e₂ ↔ partOf e₁ e₂
-  /-- Intervals form a join semilattice (for τ homomorphism). -/
-  intervalSemilatticeSup : SemilatticeSup (NonemptyInterval Time)
-  /-- τ is a sum homomorphism: τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
-      [champollion-2017] §2.5.1. -/
-  τ_hom : ∀ (e₁ e₂ : Event Time),
-    (@SemilatticeSup.sup _ evSemilatticeSup e₁ e₂).runtime =
-     @SemilatticeSup.sup _ intervalSemilatticeSup e₁.runtime e₂.runtime
+/-- The event domain is a **classical extensional mereology** ([hovda-2009]):
+    parthood (`Event.Mereology`) is a partial order closed under unrestricted
+    type-2 fusion with weak supplementation, and the temporal trace τ is a sum
+    homomorphism — the runtime of a sum is the (convex-hull) sum of the
+    runtimes ([champollion-2017]). -/
+class EventCEM (Time : Type*) [LinearOrder Time] extends
+    Event.Mereology Time, ClassicalMereology (Event Time) where
+  /-- τ is a sum homomorphism: τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂). -/
+  τ_hom : ∀ e₁ e₂ : Event Time,
+    (e₁ ⊔ e₂).runtime = e₁.runtime ⊔ e₂.runtime
 
--- Provide the SemilatticeSup instance from EventCEM
-noncomputable instance eventCEMSemilatticeSup (Time : Type*) [LinearOrder Time]
-    [cem : EventCEM Time] : SemilatticeSup (Event Time) :=
-  cem.evSemilatticeSup
+/-- The derived binary-sum structure on events, named so that `EventCEM`-typed
+    code can refer to it explicitly (`cem.evSemilatticeSup`). -/
+@[reducible] noncomputable def EventCEM.evSemilatticeSup {Time : Type*}
+    [LinearOrder Time] (cem : EventCEM Time) : SemilatticeSup (Event Time) :=
+  instSemilatticeSupEvent Time
 
-/-! ### Lexical Cumulativity -/
+/-- The event sum `e₁ ⊔ e₂` is the least upper bound of `{e₁, e₂}` under
+    parthood — i.e. the mereological fusion, not a stipulated operation. -/
+theorem EventCEM.sup_isLUB {Time : Type*} [LinearOrder Time] [EventCEM Time]
+    (e₁ e₂ : Event Time) : IsLUB {e₁, e₂} (e₁ ⊔ e₂) :=
+  Classical.choose_spec (ClassicalMereology.exists_isLUB_pair e₁ e₂)
 
-/-- Lexical cumulativity for event predicates: the event-specific
-    instantiation of CUM. A verb predicate V is lexically cumulative
-    iff for any two V-events, their sum is also a V-event.
-    [champollion-2017] §3.2: activities and states are lexically cumulative. -/
-def LexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
-    (P : Event Time → Prop) : Prop :=
-  ∀ (e₁ e₂ : Event Time), P e₁ → P e₂ →
-    P (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂)
+/-! ### Lexical cumulativity
 
-/-- LexCum is exactly CUM specialized to event predicates.
-    This bridges the abstract and event-specific formulations. -/
-theorem cum_iff_lexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
-    (P : Event Time → Prop) :
-    @CUM _ cem.evSemilatticeSup P ↔ LexCum Time P := by
-  constructor
-  · intro h e₁ e₂ h₁ h₂; exact h h₁ h₂
-  · intro h x hx y hy; exact h x y hx hy
+A verb predicate is lexically cumulative iff it is closed under event sum —
+exactly `Mereology.CUM` over `Event Time`. [champollion-2017] takes lexical
+cumulativity (of verbs, events, and roles) as a working hypothesis, *universal*
+over verbal predicates (telic ones included); it is `CUM` and is used directly,
+with no event-specific re-spelling. -/
 
-/-! ### Role Homomorphism (θ preserves ⊕) -/
+/-! ### Trace functions as sum-homomorphisms ([champollion-2017])
 
-/-- A thematic-role sum homomorphism: the function mapping each event
-    to its θ-role filler preserves ⊕.
-    [champollion-2017] §2.5.1 eq. 34–35: Agent(e₁ ⊕ e₂) = Agent(e₁) ⊕ Agent(e₂).
+[champollion-2017] calls τ (and the spatial trace σ, and the thematic-role
+extractors) *trace functions*. Their shared structural property is
+**sum-homomorphism**: the trace of a sum is the sum of the traces. Linglib uses
+`Mereology.IsSumHom` as the unifying abstraction, so dimension-polymorphic
+theorems (`StratifiedReference.lean`) instantiate uniformly across the traces.
+τ's instance is below; σ's is `instIsSumHomσ` in `Trace.lean`. -/
 
-    This is stated as: given a function `θ : Event Time → Entity` extracting
-    the unique role-filler, θ is a sum homomorphism. -/
-class RoleHom (Entity Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
-    [SemilatticeSup Entity] where
-  /-- Agent extraction function (partial: only defined for events with agents). -/
-  agentOf : Event Time → Entity
-  /-- Agent extraction preserves ⊕. -/
-  agent_hom : @IsSumHom _ _ cem.evSemilatticeSup _ agentOf
-  /-- Patient extraction function. -/
-  patientOf : Event Time → Entity
-  /-- Patient extraction preserves ⊕. -/
-  patient_hom : @IsSumHom _ _ cem.evSemilatticeSup _ patientOf
-  /-- Theme extraction function. -/
-  themeOf : Event Time → Entity
-  /-- Theme extraction preserves ⊕. -/
-  theme_hom : @IsSumHom _ _ cem.evSemilatticeSup _ themeOf
-
-/-! ### Trace Functions: τ, σ, θ as IsSumHom ([champollion-2017] §2.5) -/
-
-/-! ### Trace functions = sum-homomorphisms on `Event T`
-
-[champollion-2017] §2.5 calls τ, σ, and the thematic-role extractors
-"trace functions" — functions that trace each event into a different
-domain (time, space, entities). The structural property they share is
-**sum-homomorphism**: the trace of a sum equals the sum of the traces.
-Linglib uses `Mereology.IsSumHom` as the unifying abstraction; any function
-`f : Event Time → β` that admits an `IsSumHom` instance qualifies as a trace
-function for substrate purposes.
-
-The concrete trace functions in linglib are:
-- **τ** (runtime): instance below, derived from `EventCEM.τ_hom`.
-- **σ** (spatial extent): `instIsSumHomσ` in `Trace.lean`,
-  derived from `Trace.σ_map_sup`.
-- **agentOf / patientOf / themeOf**: instances below, derived from
-  `RoleHom.agent_hom / patient_hom / theme_hom`.
-
-This unification means SR theorems (`StratifiedReference.lean`) can be
-stated dimension-polymorphically as
-`(d : Event T → β) [IsSumHom d] → ...` and instantiate uniformly across all
-five trace functions, rather than per-trace.
--/
-
-/-- τ is a sum homomorphism: follows directly from EventCEM.τ_hom.
-    τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
-    [champollion-2017] §2.5.1: the runtime function preserves sums. -/
-theorem τ_is_sum_hom (Time : Type*) [LinearOrder Time] [cem : EventCEM Time] :
-    ∀ (e₁ e₂ : Event Time),
-      (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂).runtime =
-      @SemilatticeSup.sup _ cem.intervalSemilatticeSup e₁.runtime e₂.runtime :=
-  cem.τ_hom
-
-/-- τ (runtime extraction) as an `IsSumHom` instance, derived from `EventCEM.τ_hom`.
-    Enables `cum_pullback` to work automatically for τ without manually
-    threading the sum-homomorphism proof. -/
+/-- τ (runtime extraction) as a `Mereology.IsSumHom`, from `EventCEM.τ_hom`.
+    Lets `cum_pullback` fire for τ without threading the homomorphism proof. -/
 noncomputable instance instIsSumHomRuntime (Time : Type*) [LinearOrder Time]
-    [cem : EventCEM Time] :
-    @IsSumHom _ _ cem.evSemilatticeSup cem.intervalSemilatticeSup
-      (fun e => e.runtime) :=
-  @IsSumHom.mk _ _ cem.evSemilatticeSup cem.intervalSemilatticeSup
-    (fun e => e.runtime) (fun e₁ e₂ => cem.τ_hom e₁ e₂)
-
-/-- agentOf as an `IsSumHom` instance, derived from `RoleHom.agent_hom`.
-    Parallels `instIsSumHomRuntime` for τ — same mathlib pattern of
-    promoting a structure field to a resolvable typeclass instance. -/
-instance instIsSumHomAgent (Entity Time : Type*) [LinearOrder Time]
-    [cem : EventCEM Time] [SemilatticeSup Entity] [rh : RoleHom Entity Time] :
-    @IsSumHom _ _ cem.evSemilatticeSup _ rh.agentOf :=
-  rh.agent_hom
-
-/-- patientOf as an `IsSumHom` instance, derived from `RoleHom.patient_hom`. -/
-instance instIsSumHomPatient (Entity Time : Type*) [LinearOrder Time]
-    [cem : EventCEM Time] [SemilatticeSup Entity] [rh : RoleHom Entity Time] :
-    @IsSumHom _ _ cem.evSemilatticeSup _ rh.patientOf :=
-  rh.patient_hom
-
-/-- themeOf as an `IsSumHom` instance, derived from `RoleHom.theme_hom`. -/
-instance instIsSumHomTheme (Entity Time : Type*) [LinearOrder Time]
-    [cem : EventCEM Time] [SemilatticeSup Entity] [rh : RoleHom Entity Time] :
-    @IsSumHom _ _ cem.evSemilatticeSup _ rh.themeOf :=
-  rh.theme_hom
-
-/-! ### Bridges to Existing Types -/
-
-/-- Atelic Vendler classes are exactly states, activities, and semelfactives. -/
-theorem vendlerClass_atelic_cases
-    (c : VendlerClass) (h : c.telicity = .atelic) :
-    c = .state ∨ c = .activity ∨ c = .semelfactive := by
-  cases c <;> simp [VendlerClass.telicity] at h <;> first
-    | exact Or.inl rfl
-    | exact Or.inr (Or.inl rfl)
-    | exact Or.inr (Or.inr rfl)
-
-/-- Telic Vendler classes are exactly achievements and accomplishments. -/
-theorem vendlerClass_telic_cases
-    (c : VendlerClass) (h : c.telicity = .telic) :
-    c = .achievement ∨ c = .accomplishment := by
-  cases c <;> simp [VendlerClass.telicity] at h
-  · exact Or.inl rfl
-  · exact Or.inr rfl
+    [cem : EventCEM Time] : IsSumHom (fun e : Event Time => e.runtime) :=
+  ⟨fun e₁ e₂ => cem.τ_hom e₁ e₂⟩
 
 end Semantics.Events.CEM
