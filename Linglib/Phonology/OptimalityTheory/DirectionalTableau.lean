@@ -148,7 +148,7 @@ theorem optima_nonempty
 
 end DirectionalTableau
 
-/-! ### Smoke test (paper, fig. 3 — the divergent tie) -/
+/-! ### Smoke test ([lamont-2022b] — the divergent tie) -/
 
 section SmokeTest
 

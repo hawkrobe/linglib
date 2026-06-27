@@ -385,7 +385,7 @@ end HSDerivation
     carries a scalar `eval` for weighted aggregation; `Constraint C` carries a
     vector + term order, with which weighting is incoherent per Lamont 2022b).
 
-    The motivating consumer is paper, fig. 3 (`/kāk^H + rī^H + dō^H/`):
+    The motivating consumer is [mcpherson-lamont-2026] (`/kāk^H + rī^H + dō^H/`):
     parallel HS produces a divergent tie among three deletion candidates;
     directional `*FLOAT^→` breaks the tie by requiring leftmost-first
     deletion. -/
