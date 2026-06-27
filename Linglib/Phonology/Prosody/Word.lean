@@ -2,27 +2,27 @@ import Linglib.Phonology.Prosody.Foot
 import Linglib.Features.Prosody
 
 /-!
-# Prosodic Word (PrWd)
+# Prosodic Word (Word)
 [selkirk-1984]
 
-The prosodic word (PrWd, ω) is the prosodic constituent immediately
+The prosodic word (Word, ω) is the prosodic constituent immediately
 above the foot in the prosodic hierarchy:
 
     σ < f < **ω** < φ < ι
 
-PrWd is the domain for a cluster of phonological processes:
+Word is the domain for a cluster of phonological processes:
 - **Stress assignment** and metrical parsing
 - **Vowel harmony** (progressive harmony in Telugu)
 - **Minimal word constraints** (bimoraic minimum)
-- **Obligatory hiatus resolution** (within PrWd; optional across PrWd)
+- **Obligatory hiatus resolution** (within Word; optional across Word)
 
 ## Morphosyntax-Prosody Mapping
 
-Not all morphological elements are PrWd-internal. The mapping from
+Not all morphological elements are Word-internal. The mapping from
 morphosyntactic structure to prosodic structure determines which
-elements fall within the PrWd and which form their own domain:
+elements fall within the Word and which form their own domain:
 
-| Morphological status | PrWd membership | Example (Telugu)     |
+| Morphological status | Word membership | Example (Telugu)     |
 |----------------------|-----------------|----------------------|
 | Root                 | Internal        | samudr-              |
 | Derivational suffix  | Internal        | (not shown)          |
@@ -40,14 +40,14 @@ effects, and obligatory vs optional hiatus resolution
 and intonational structure. This module provides the *internal
 structure* of the prosodic word: syllable constituency, weight
 profiles, minimal word constraints, and the morphosyntax-prosody
-mapping that determines PrWd boundaries.
+mapping that determines Word boundaries.
 -/
 
 namespace Prosody
 
 
 -- ============================================================================
--- § 1: Morphological Status and PrWd Membership
+-- § 1: Morphological Status and Word Membership
 -- ============================================================================
 
 /-- Morphological status of an element relative to the prosodic word,
@@ -82,33 +82,33 @@ structure MorphStatus where
 
 namespace MorphStatus
 
-/-- Root morpheme: PrWd-internal, free-standing, not affixal. -/
+/-- Root morpheme: Word-internal, free-standing, not affixal. -/
 def root         : MorphStatus := ⟨true,  true,  false⟩
-/-- Derivational affix: PrWd-internal with the stem, bound, affixal. -/
+/-- Derivational affix: Word-internal with the stem, bound, affixal. -/
 def derivational : MorphStatus := ⟨true,  false, true⟩
-/-- Inflectional affix (case, number, tense): PrWd-internal, bound. -/
+/-- Inflectional affix (case, number, tense): Word-internal, bound. -/
 def inflectional : MorphStatus := ⟨true,  false, true⟩
-/-- Agreement marker: PrWd-internal (crucially, for Telugu nominal
+/-- Agreement marker: Word-internal (crucially, for Telugu nominal
     predicative agreement; [aitha-2026] §3.1). -/
 def agreement    : MorphStatus := ⟨true,  false, true⟩
-/-- Postposition: forms a **separate** PrWd. Evidence: not subject to
+/-- Postposition: forms a **separate** Word. Evidence: not subject to
     progressive vowel harmony, obeys minimal word constraint
     independently, hiatus resolution across boundary is optional
     ([aitha-2026] §3.2). Free-standing in many languages. -/
 def postposition : MorphStatus := ⟨false, true,  false⟩
-/-- Clitic: PrWd-external boundary element; phonologically bound but
+/-- Clitic: Word-external boundary element; phonologically bound but
     syntactically not an affix. -/
 def clitic       : MorphStatus := ⟨false, false, true⟩
 
 /-- Bound free-standing morpheme that occurs only inside compounds —
-    e.g., the "bound" N2 in Japanese compound nominals. PrWd-internal,
+    e.g., the "bound" N2 in Japanese compound nominals. Word-internal,
     not free, not strictly affixal (it's a stem-class member, just one
     that never surfaces alone). -/
 def boundStem    : MorphStatus := ⟨true,  false, false⟩
 
 end MorphStatus
 
-/-- Is this morphological element parsed inside the PrWd with the stem?
+/-- Is this morphological element parsed inside the Word with the stem?
     Direct projection of the `prWdInternal` axis. -/
 def MorphStatus.isPrWdInternal (s : MorphStatus) : Bool := s.prWdInternal
 
@@ -122,16 +122,20 @@ def MorphStatus.isPrWdInternal (s : MorphStatus) : Bool := s.prWdInternal
     The `syllables` field gives the weight profile in linear order.
     For example, Telugu *samudram* 'ocean' has profile [L, L, H]
     (sa.mu.dram). -/
-structure PrWd where
+structure Word where
   syllables : List Syllable.Weight
   deriving DecidableEq, Repr
 
-/-- Total mora count of a prosodic word. -/
-def PrWd.moraCount (w : PrWd) : Nat :=
-  w.syllables.foldl (· + ·.morae) 0
+/-- The weight profile of a sequence of fully-moraified syllables — the bridge
+    from the structural σ level (`Syllable`) up to the prosodic word. -/
+def Word.ofSyllables (σs : List Syllable) : Word := ⟨σs.map Syllable.weight⟩
+
+/-- Total mora count of a prosodic word (each weight *is* a mora count). -/
+def Word.moraCount (w : Word) : Nat :=
+  w.syllables.foldl (· + ·) 0
 
 /-- Number of syllables. -/
-def PrWd.syllableCount (w : PrWd) : Nat :=
+def Word.syllableCount (w : Word) : Nat :=
   w.syllables.length
 
 -- ============================================================================
@@ -149,7 +153,7 @@ def PrWd.syllableCount (w : PrWd) : Nat :=
     the shortest standalone words are informal 2SG imperatives like
     *rā* 'come' (CVV = 2μ) and *pō* 'go' (CVV = 2μ). No word
     consists of a single light syllable. -/
-abbrev PrWd.satisfiesMinWord (w : PrWd) (minMorae : Nat := 2) : Prop :=
+abbrev Word.satisfiesMinWord (w : Word) (minMorae : Nat := 2) : Prop :=
   w.moraCount ≥ minMorae
 
 -- ============================================================================
@@ -157,43 +161,43 @@ abbrev PrWd.satisfiesMinWord (w : PrWd) (minMorae : Nat := 2) : Prop :=
 -- ============================================================================
 
 /-- A morphological element with its prosodic properties.
-    Used to determine how it interacts with the stem's PrWd. -/
+    Used to determine how it interacts with the stem's Word. -/
 structure MorphElement where
   /-- Surface form (for documentation). -/
   form : String
-  /-- Morphological status (determines PrWd membership). -/
+  /-- Morphological status (determines Word membership). -/
   status : MorphStatus
   /-- Weight of the initial syllable. Relevant for the Telugu weak
       alternation: the long form is triggered when a *light* initial
-      syllable follows within the PrWd ([aitha-2026] §3.2). -/
+      syllable follows within the Word ([aitha-2026] §3.2). -/
   initialWeight : Syllable.Weight
   deriving DecidableEq, Repr
 
 /-- Does this element trigger the long stem form in Telugu weak nouns?
 
     The long form (-āni) surfaces when the element is:
-    1. PrWd-internal (inflectional suffix or agreement marker), AND
+    1. Word-internal (inflectional suffix or agreement marker), AND
     2. Its initial syllable is light (CV = 1μ)
 
     Postpositions never trigger the long form, even if they begin with
     a light syllable (e.g., *-gurinci* 'about', *-eduru* 'in front of'),
-    because they are PrWd-external. -/
+    because they are Word-external. -/
 abbrev MorphElement.triggersLongForm (m : MorphElement) : Prop :=
   m.status.isPrWdInternal ∧ m.initialWeight = .light
 
 -- ============================================================================
--- § 5: PrWd-Sensitive Phonological Processes
+-- § 5: Word-Sensitive Phonological Processes
 -- ============================================================================
 
-/-- Hiatus resolution obligation: within a PrWd, hiatus resolution
-    is **obligatory**; across PrWd boundaries, it is **optional**.
+/-- Hiatus resolution obligation: within a Word, hiatus resolution
+    is **obligatory**; across Word boundaries, it is **optional**.
 
     [aitha-2026] §3.2: Telugu *koṭṭu* 'to hit' + *-āli* 'OBLIG'
     → *koṭṭāli* (obligatory deletion of /u/ word-internally), but
     *kukka eduru* 'in front of the dog' allows optional retention. -/
 inductive HiatusObligation where
-  | obligatory   -- within PrWd
-  | optional     -- across PrWd boundary
+  | obligatory   -- within Word
+  | optional     -- across Word boundary
   deriving DecidableEq, Repr
 
 /-- Determine hiatus resolution obligation from the morphological
@@ -215,21 +219,21 @@ theorem postp_is_external : MorphStatus.postposition.isPrWdInternal = false := r
 -- Minimal word examples
 
 /-- A single heavy syllable (CVV or CVC) = 2μ: satisfies bimoraic min. -/
-theorem heavy_satisfies_min : (PrWd.mk [.heavy]).satisfiesMinWord := by decide
+theorem heavy_satisfies_min : (Word.mk [.heavy]).satisfiesMinWord := by decide
 
 /-- A single light syllable (CV) = 1μ: violates bimoraic min. -/
-theorem light_violates_min : ¬ (PrWd.mk [.light]).satisfiesMinWord := by decide
+theorem light_violates_min : ¬ (Word.mk [.light]).satisfiesMinWord := by decide
 
 /-- Two light syllables (CV.CV) = 2μ: satisfies bimoraic min. -/
-theorem ll_satisfies_min : (PrWd.mk [.light, .light]).satisfiesMinWord := by decide
+theorem ll_satisfies_min : (Word.mk [.light, .light]).satisfiesMinWord := by decide
 
 -- Telugu postpositions satisfy min word independently
 
-/-- *-lō* 'in' (CVV = 2μ): satisfies min word as a separate PrWd. -/
-theorem lo_satisfies_min : (PrWd.mk [.heavy]).satisfiesMinWord := by decide
+/-- *-lō* 'in' (CVV = 2μ): satisfies min word as a separate Word. -/
+theorem lo_satisfies_min : (Word.mk [.heavy]).satisfiesMinWord := by decide
 
 /-- *-kinda* 'below' (CVC.CV = 3μ): satisfies min word. -/
-theorem kinda_satisfies_min : (PrWd.mk [.heavy, .light]).satisfiesMinWord := by decide
+theorem kinda_satisfies_min : (Word.mk [.heavy, .light]).satisfiesMinWord := by decide
 
 -- Hiatus obligation
 
@@ -241,23 +245,23 @@ theorem postp_hiatus_optional :
 
 -- Triggering the long form
 
-/-- ACC *-ni*: PrWd-internal, light → triggers long form. -/
+/-- ACC *-ni*: Word-internal, light → triggers long form. -/
 theorem acc_ni_triggers_long :
     (MorphElement.mk "-ni" .inflectional .light).triggersLongForm := by decide
 
-/-- DAT *-ki*: PrWd-internal, light → triggers long form. -/
+/-- DAT *-ki*: Word-internal, light → triggers long form. -/
 theorem dat_ki_triggers_long :
     (MorphElement.mk "-ki" .inflectional .light).triggersLongForm := by decide
 
-/-- 1SG *-ni*: PrWd-internal (agreement), light → triggers long form. -/
+/-- 1SG *-ni*: Word-internal (agreement), light → triggers long form. -/
 theorem agr_1sg_triggers_long :
     (MorphElement.mk "-ni" .agreement .light).triggersLongForm := by decide
 
-/-- P *-lō* 'in': PrWd-external → does NOT trigger long form. -/
+/-- P *-lō* 'in': Word-external → does NOT trigger long form. -/
 theorem postp_lo_no_long :
     ¬ (MorphElement.mk "-lō" .postposition .heavy).triggersLongForm := by decide
 
-/-- P *-gurinci* 'about': PrWd-external → does NOT trigger long form,
+/-- P *-gurinci* 'about': Word-external → does NOT trigger long form,
     even though its initial syllable *gu-* is light. -/
 theorem postp_gurinci_no_long :
     ¬ (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm := by decide
