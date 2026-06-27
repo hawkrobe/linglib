@@ -1232,30 +1232,27 @@ theorem definite_vs_bp_always_contrast :
 end BarePluralAlways
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §8  Bridge to AlternativeSource
+-- §8  Bridge to an alternative list
 -- ═══════════════════════════════════════════════════════════════════════
 
 section AlternativeSourceBridge
 
-open Alternatives
+/-- The Italian ⟨some, all⟩ scale as a plain alternative list. -/
+def italyAlternatives : List ItalyUtt := [.some_, .all_]
 
-/-- AlternativeSource instance for the Italian ⟨some, all⟩ scale. -/
-instance : AlternativeSource ItalyUtt where
-  alternatives _ := [.some_, .all_]
-
-/-- Exhaustifying via AlternativeSource agrees with BlindScenario.strengthened.
+/-- Exhaustifying via the alternative list agrees with BlindScenario.strengthened.
 
     BlindScenario carries its own `alternatives` field; here we show that
-    deriving alternatives from the AlternativeSource typeclass produces
-    the same exhaustified meaning. The key: including the assertion in the
-    alternative list (AlternativeSource convention) doesn't change the
-    result — `exhIE` filters it out via the non-weaker check. -/
+    deriving alternatives from `italyAlternatives` produces the same
+    exhaustified meaning. The key: including the assertion in the
+    alternative list doesn't change the result — `exhIE` filters it out
+    via the non-weaker check. -/
 theorem strengthened_eq_alternativeSource :
     ∀ w : ItalyWorld₃,
       italianScenario.strengthened .some_ w =
       decide (w ∈ innocent.exh
         (altsFromPreds
-          ((AlternativeSource.alternatives ItalyUtt.some_).map italianScenario.meaning))
+          (italyAlternatives.map italianScenario.meaning))
         (predToFinset (italianScenario.meaning ItalyUtt.some_))) := by
   intro w; cases w <;> decide
 
