@@ -46,9 +46,7 @@ mapping that determines Word boundaries.
 namespace Prosody
 
 
--- ============================================================================
--- § 1: Morphological Status and Word Membership
--- ============================================================================
+/-! ### Morphological status and Word membership -/
 
 /-- Morphological status of an element relative to the prosodic word,
     decomposed into **orthogonal Boolean axes** rather than a flat
@@ -112,9 +110,7 @@ end MorphStatus
     Direct projection of the `prWdInternal` axis. -/
 def MorphStatus.isPrWdInternal (s : MorphStatus) : Bool := s.prWdInternal
 
--- ============================================================================
--- § 2: Prosodic Word Structure
--- ============================================================================
+/-! ### Prosodic word structure -/
 
 /-- A prosodic word: a sequence of syllables (by weight) that forms a
     single domain for stress assignment and phonological processes.
@@ -138,9 +134,7 @@ def Word.moraCount (w : Word) : Nat :=
 def Word.syllableCount (w : Word) : Nat :=
   w.syllables.length
 
--- ============================================================================
--- § 3: Minimal Word Constraint
--- ============================================================================
+/-! ### Minimal word constraint -/
 
 /-- Does a prosodic word satisfy the minimal word constraint?
 
@@ -156,9 +150,7 @@ def Word.syllableCount (w : Word) : Nat :=
 abbrev Word.satisfiesMinWord (w : Word) (minMorae : Nat := 2) : Prop :=
   w.moraCount ≥ minMorae
 
--- ============================================================================
--- § 4: Morphological Element
--- ============================================================================
+/-! ### Morphological element -/
 
 /-- A morphological element with its prosodic properties.
     Used to determine how it interacts with the stem's Word. -/
@@ -185,9 +177,7 @@ structure MorphElement where
 abbrev MorphElement.triggersLongForm (m : MorphElement) : Prop :=
   m.status.isPrWdInternal ∧ m.initialWeight = .light
 
--- ============================================================================
--- § 5: Word-Sensitive Phonological Processes
--- ============================================================================
+/-! ### Word-sensitive phonological processes -/
 
 /-- Hiatus resolution obligation: within a Word, hiatus resolution
     is **obligatory**; across Word boundaries, it is **optional**.
@@ -205,65 +195,41 @@ inductive HiatusObligation where
 def hiatusObligation (following : MorphStatus) : HiatusObligation :=
   if following.isPrWdInternal then .obligatory else .optional
 
--- ============================================================================
--- § 6: Verification
--- ============================================================================
+/-! ### Worked examples
 
--- Morphological status classification
+Anonymous `example`s lock in the morphological-status classification, the
+minimal-word constraint, and the Telugu long-form trigger;
+`agr_1sg_triggers_long` is named because it is reused elsewhere. -/
 
-theorem root_is_internal : MorphStatus.root.isPrWdInternal = true := rfl
-theorem infl_is_internal : MorphStatus.inflectional.isPrWdInternal = true := rfl
-theorem agr_is_internal : MorphStatus.agreement.isPrWdInternal = true := rfl
-theorem postp_is_external : MorphStatus.postposition.isPrWdInternal = false := rfl
+-- Morphological status: roots/inflection/agreement are Word-internal,
+-- postpositions external.
+example : MorphStatus.root.isPrWdInternal = true := rfl
+example : MorphStatus.inflectional.isPrWdInternal = true := rfl
+example : MorphStatus.agreement.isPrWdInternal = true := rfl
+example : MorphStatus.postposition.isPrWdInternal = false := rfl
 
--- Minimal word examples
+-- Minimal word (bimoraic): a heavy, or two lights, satisfies it; a single
+-- light does not. Telugu postpositions satisfy it independently — *-lō*
+-- (CVV = 2μ), *-kinda* (3μ).
+example : (Word.mk [.heavy]).satisfiesMinWord := by decide
+example : ¬ (Word.mk [.light]).satisfiesMinWord := by decide
+example : (Word.mk [.light, .light]).satisfiesMinWord := by decide
+example : (Word.mk [.heavy, .light]).satisfiesMinWord := by decide
 
-/-- A single heavy syllable (CVV or CVC) = 2μ: satisfies bimoraic min. -/
-theorem heavy_satisfies_min : (Word.mk [.heavy]).satisfiesMinWord := by decide
+-- Hiatus obligation: obligatory Word-internally, optional across a boundary.
+example : hiatusObligation .inflectional = .obligatory := rfl
+example : hiatusObligation .postposition = .optional := rfl
 
-/-- A single light syllable (CV) = 1μ: violates bimoraic min. -/
-theorem light_violates_min : ¬ (Word.mk [.light]).satisfiesMinWord := by decide
+-- Long-form trigger: Word-internal + light initial triggers it (ACC *-ni*,
+-- DAT *-ki*); postpositions never do, even *-gurinci* (light initial *gu-*).
+example : (MorphElement.mk "-ni" .inflectional .light).triggersLongForm := by decide
+example : (MorphElement.mk "-ki" .inflectional .light).triggersLongForm := by decide
+example : ¬ (MorphElement.mk "-lō" .postposition .heavy).triggersLongForm := by decide
+example : ¬ (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm := by decide
 
-/-- Two light syllables (CV.CV) = 2μ: satisfies bimoraic min. -/
-theorem ll_satisfies_min : (Word.mk [.light, .light]).satisfiesMinWord := by decide
-
--- Telugu postpositions satisfy min word independently
-
-/-- *-lō* 'in' (CVV = 2μ): satisfies min word as a separate Word. -/
-theorem lo_satisfies_min : (Word.mk [.heavy]).satisfiesMinWord := by decide
-
-/-- *-kinda* 'below' (CVC.CV = 3μ): satisfies min word. -/
-theorem kinda_satisfies_min : (Word.mk [.heavy, .light]).satisfiesMinWord := by decide
-
--- Hiatus obligation
-
-theorem infl_hiatus_obligatory :
-    hiatusObligation .inflectional = .obligatory := rfl
-
-theorem postp_hiatus_optional :
-    hiatusObligation .postposition = .optional := rfl
-
--- Triggering the long form
-
-/-- ACC *-ni*: Word-internal, light → triggers long form. -/
-theorem acc_ni_triggers_long :
-    (MorphElement.mk "-ni" .inflectional .light).triggersLongForm := by decide
-
-/-- DAT *-ki*: Word-internal, light → triggers long form. -/
-theorem dat_ki_triggers_long :
-    (MorphElement.mk "-ki" .inflectional .light).triggersLongForm := by decide
-
-/-- 1SG *-ni*: Word-internal (agreement), light → triggers long form. -/
+/-- 1SG *-ni*: Word-internal (agreement), light → triggers the long form. Named
+    because it is reused (the Telugu predicative-agreement argument). -/
 theorem agr_1sg_triggers_long :
     (MorphElement.mk "-ni" .agreement .light).triggersLongForm := by decide
-
-/-- P *-lō* 'in': Word-external → does NOT trigger long form. -/
-theorem postp_lo_no_long :
-    ¬ (MorphElement.mk "-lō" .postposition .heavy).triggersLongForm := by decide
-
-/-- P *-gurinci* 'about': Word-external → does NOT trigger long form,
-    even though its initial syllable *gu-* is light. -/
-theorem postp_gurinci_no_long :
-    ¬ (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm := by decide
 
 end Prosody
