@@ -1,4 +1,4 @@
-import Linglib.Semantics.Quantification
+import Linglib.Semantics.Quantification.Lattice
 import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!

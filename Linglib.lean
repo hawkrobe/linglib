@@ -1816,7 +1816,6 @@ import Linglib.Semantics.Probabilistic.SDS.ConceptNode
 import Linglib.Semantics.Probabilistic.SDS.GraphicalModel
 import Linglib.Semantics.Probabilistic.SDS.JointPosterior
 import Linglib.Semantics.Probabilistic.SDS.ScenarioMix
-import Linglib.Semantics.Quantification
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Quantification.BinominalDefs
@@ -1828,6 +1827,7 @@ import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Semantics.Quantification.Exceptive
 import Linglib.Semantics.Quantification.Exclusive
 import Linglib.Semantics.Quantification.Generators
+import Linglib.Semantics.Quantification.Generic
 import Linglib.Semantics.Quantification.Lattice
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Lindstrom
@@ -2373,8 +2373,6 @@ import Linglib.Studies.Keine2019
 import Linglib.Studies.Keine2020
 import Linglib.Studies.Kennedy1999
 import Linglib.Studies.Kennedy2007
-import Linglib.Studies.Kennedy2007Licensing
-import Linglib.Studies.Kennedy2007Typology
 import Linglib.Studies.Kennedy2015
 import Linglib.Studies.Kennedy2015PMF
 import Linglib.Studies.KennedyLevin2008
@@ -2914,5 +2912,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
+import Linglib.Data.Examples.Guerrini2026
 
 
