@@ -1316,7 +1316,6 @@ import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.Constraints.Iteration
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.Constraints.System
 import Linglib.Phonology.Constraints.Weighted
