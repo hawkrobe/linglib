@@ -95,7 +95,7 @@ variable {Input Output : Type*} {n : ℕ}
 
 /-- A weighting `w` **HG-realizes** the target if, for every input, the target
     output strictly minimizes the weighted violation sum among candidates. -/
-def HGRealizes (P : SystemicProblem Input Output n) (w : Fin n → ℚ) : Prop :=
+def HGRealizes (P : SystemicProblem Input Output n) (w : Fin n → ℝ) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
     weightedViolations w (P.vp i (P.target i)) <
     weightedViolations w (P.vp i o)
@@ -105,7 +105,7 @@ def HGRealizes (P : SystemicProblem Input Output n) (w : Fin n → ℚ) : Prop :
     standard HG framework; [coetzee-pater-2011] §4.4 discusses the
     consequences of admitting negative weights (e.g., Tejano' realizability). -/
 def IsHGRealizable (P : SystemicProblem Input Output n) : Prop :=
-  ∃ w : Fin n → ℚ, (∀ k, 0 ≤ w k) ∧ P.HGRealizes w
+  ∃ w : Fin n → ℝ, (∀ k, 0 ≤ w k) ∧ P.HGRealizes w
 
 /-- A constraint permutation `σ` **OT-realizes** the target if, for every
     input, the target output strictly lex-dominates every alternative under
@@ -133,11 +133,11 @@ end SystemicProblem
     evaluated at `v ∘ σ` — i.e., permuting weights is dual to permuting
     constraints. -/
 private lemma weightedViolations_perm_reindex {n : ℕ}
-    (σ : Equiv.Perm (Fin n)) (w : Fin n → ℚ) (v : Fin n → ℕ) :
+    (σ : Equiv.Perm (Fin n)) (w : Fin n → ℝ) (v : Fin n → ℕ) :
     weightedViolations (fun j => w (σ.symm j)) v =
     weightedViolations w (v ∘ σ) := by
   simp only [weightedViolations, Function.comp_apply]
-  rw [← Equiv.sum_comp σ (fun j => w (σ.symm j) * (v j : ℚ))]
+  rw [← Equiv.sum_comp σ (fun j => w (σ.symm j) * (v j : ℝ))]
   apply Finset.sum_congr rfl
   intro k _
   simp [Equiv.symm_apply_apply]
@@ -209,7 +209,7 @@ def lymanProblem : SystemicProblem (Fin 3) Bool 3 where
     individually less than `F`, so faithfulness wins for inputs with at most
     one markedness violation (bobu, webbu); the *sum* `M1 + M2 = 4 > 3 = F`
     overrides faithfulness for guddo. -/
-def lymanW : Fin 3 → ℚ
+def lymanW : Fin 3 → ℝ
   | ⟨0, _⟩ => 3
   | ⟨1, _⟩ => 2
   | ⟨2, _⟩ => 2

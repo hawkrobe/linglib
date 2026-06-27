@@ -415,7 +415,7 @@ theorem preC_always_ge :
 
 /-- Weighted version of the t/d-deletion constraints for MaxEnt.
     Weight parameterization enables dialect-specific fitting. -/
-def mkWeightedConstraints (wCT wMax wMaxPreV wMaxFin : ℚ) :
+def mkWeightedConstraints (wCT wMax wMaxPreV wMaxFin : ℝ) :
     List (WeightedConstraint TDCandidate) :=
   [ { toNamedConstraint := starCT, weight := wCT }
   , { toNamedConstraint := maxC, weight := wMax }
@@ -424,7 +424,7 @@ def mkWeightedConstraints (wCT wMax wMaxPreV wMaxFin : ℚ) :
 
 /-- MaxEnt harmony ordering is a decidable proxy for probability ordering:
     `H(a) > H(b) ⟺ P(a) > P(b)` by monotonicity of exp. -/
-theorem maxent_deletion_preferred (wCT wMax wMaxPreV wMaxFin : ℚ)
+theorem maxent_deletion_preferred (wCT wMax wMaxPreV wMaxFin : ℝ)
     (ctx : Context)
     (h : harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
            ⟨ctx, .delete⟩ >
@@ -434,7 +434,7 @@ theorem maxent_deletion_preferred (wCT wMax wMaxPreV wMaxFin : ℚ)
       ⟨ctx, .delete⟩ ⟨ctx, .retain⟩ := h
 
 /-- With AAVE weights from table (23) ME-HG row, deletion probability
-    ranks pre-C > pause > pre-V. Weights are exact ℚ transcriptions of
+    ranks pre-C > pause > pre-V. Weights are exact transcriptions of
     the one-decimal-place values reported in the paper:
     *CT = 100.6, MAX-P-V = 2.1, MAX-FIN = 0.2, MAX = 99.4. -/
 theorem maxent_aave_ordering :
@@ -454,7 +454,7 @@ theorem maxent_aave_ordering :
     Banning negative weights thus makes MaxEnt respect the same
     typological restriction as POC ([coetzee-pater-2011] §4.4). -/
 theorem nonneg_weights_preserve_ordering
-    (wCT wMax wMaxPreV wMaxFin : ℚ) (hPreV : wMaxPreV ≥ 0) :
+    (wCT wMax wMaxPreV wMaxFin : ℝ) (hPreV : wMaxPreV ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preV, .delete⟩ := by
   simp only [harmonyScore, mkWeightedConstraints, List.map_cons, List.map_nil,
@@ -467,7 +467,7 @@ theorem nonneg_weights_preserve_ordering
 /-- Analogously, non-negative MAX-FINAL weight ensures pre-C ≥ pause.
     H(del|preC) - H(del|pause) = wMaxFin ≥ 0. -/
 theorem nonneg_weights_preserve_ordering_pause
-    (wCT wMax wMaxPreV wMaxFin : ℚ) (hFin : wMaxFin ≥ 0) :
+    (wCT wMax wMaxPreV wMaxFin : ℝ) (hFin : wMaxFin ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.pause, .delete⟩ := by
   simp only [harmonyScore, mkWeightedConstraints, List.map_cons, List.map_nil,
@@ -516,7 +516,7 @@ theorem poc_cannot_generate_tejanoPrime :
 
     [coetzee-pater-2011] §4.4, table (23) -/
 theorem maxent_can_generate_tejanoPrime :
-    ∃ wCT wMax wMaxPreV wMaxFin : ℚ,
+    ∃ wCT wMax wMaxPreV wMaxFin : ℝ,
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
       ⟨.preV, .delete⟩ >
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
@@ -539,7 +539,7 @@ theorem maxent_can_generate_tejanoPrime :
     Right conjunct: MaxEnt can achieve pre-V > pre-C (negative weights). -/
 theorem framework_separation :
     deletionProb .preC ≥ deletionProb .preV ∧
-    (∃ wCT wMax wMaxPreV wMaxFin : ℚ,
+    (∃ wCT wMax wMaxPreV wMaxFin : ℝ,
       harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
         ⟨.preV, .delete⟩ >
       harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
@@ -583,7 +583,7 @@ softmax is the logistic function, so `predict .delete` is genuine
 conditional probability `P(delete | ctx)`. -/
 
 /-- The AAVE constraint weights from table (23) ME-HG row. -/
-def aaveWeights : List (WeightedConstraint TDCandidate) :=
+noncomputable def aaveWeights : List (WeightedConstraint TDCandidate) :=
   mkWeightedConstraints (1006/10) (994/10) (21/10) (2/10)
 
 /-- The AAVE MaxEnt model at a fixed context, packaged as a generic

@@ -113,7 +113,7 @@ theorem classical_symmetry_deleteV2 :
 theorem epenthesis_beats_deletion :
     harmonyScore classicalConstraints (.ae_ah, .deleteV1) <
     harmonyScore classicalConstraints (.ae_ah, .epenthesis) := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
     identConstraint, mkMaxW, mkDepW, mkMarkW, mkIdentW, mkMax, mkDep, mkMark, mkIdent,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
@@ -122,7 +122,7 @@ theorem epenthesis_beats_deletion :
 theorem coalescence_beats_faithful :
     harmonyScore classicalConstraints (.ae_ah, .faithful) <
     harmonyScore classicalConstraints (.ae_ah, .coalescence) := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
     identConstraint, mkMaxW, mkDepW, mkMarkW, mkIdentW, mkMax, mkDep, mkMark, mkIdent,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
@@ -131,7 +131,7 @@ theorem coalescence_beats_faithful :
 theorem epenthesis_beats_faithful :
     harmonyScore classicalConstraints (.ae_ah, .faithful) <
     harmonyScore classicalConstraints (.ae_ah, .epenthesis) := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
     identConstraint, mkMaxW, mkDepW, mkMarkW, mkIdentW, mkMax, mkDep, mkMark, mkIdent,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]

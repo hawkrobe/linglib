@@ -179,16 +179,16 @@ set_option maxHeartbeats 400000 in
     the \*Clash violation differences are column-insensitive (constant
     across paired contexts), so the weighted sum satisfies the
     constant-difference identity. -/
-theorem logit_uniformity_clash (w : Fin 6 → ℚ) (pair : Fin 4) :
-    (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).2 j : ℚ)) -
-    (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).1 j : ℚ)) =
+theorem logit_uniformity_clash (w : Fin 6 → ℝ) (pair : Fin 4) :
+    (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).2 j : ℝ)) -
+    (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).1 j : ℝ)) =
     w 2 := by
   have h_eq : ∀ j : Fin 6, j ≠ 2 →
-      w j * (schwaDiff (clashPairs pair).2 j : ℚ) =
-      w j * (schwaDiff (clashPairs pair).1 j : ℚ) := by
+      w j * (schwaDiff (clashPairs pair).2 j : ℝ) =
+      w j * (schwaDiff (clashPairs pair).1 j : ℝ) := by
     intro j hj; congr 1; exact_mod_cast (clash_pairs_identical_except_clash pair j hj).symm
-  have h_diff : (schwaDiff (clashPairs pair).2 2 : ℚ) -
-      (schwaDiff (clashPairs pair).1 2 : ℚ) = 1 := by exact_mod_cast clash_diff_is_one pair
+  have h_diff : (schwaDiff (clashPairs pair).2 2 : ℝ) -
+      (schwaDiff (clashPairs pair).1 2 : ℝ) = 1 := by exact_mod_cast clash_diff_is_one pair
   fin_cases pair <;> simp_all [clashPairs, schwaDiff, Fin.sum_univ_six]
 
 -- ============================================================================
@@ -322,7 +322,7 @@ private def table45C : List (WeightedConstraint Cand3) :=
 /-- Candidates b and c have equal harmony: H(b) = H(c) = −16. -/
 theorem table45_equal_harmony :
     harmonyScore table45C .b = harmonyScore table45C .c := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
   norm_num [table45C, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
 
 /-- NHG noise variances differ: σ²_d(b−a) = 5 ≠ 3 = σ²_d(c−a).

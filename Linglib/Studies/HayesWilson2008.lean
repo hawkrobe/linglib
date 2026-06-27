@@ -66,7 +66,7 @@ private def matchesPat (s : Segment) (p : Segment) : Bool :=
   s.matchesPattern p
 
 /-- Constraint #1 from Table (4): *[+sonorant, +dorsal]. Weight 5.64. -/
-def c1_star_son_dors : WeightedConstraint Onset :=
+noncomputable def c1_star_son_dors : WeightedConstraint Onset :=
   mkMarkGradW "*[+son,+dors]" (fun onset => onset.countP (matchesPat · son_dors_pat)) (564/100)
 
 /-- Bool helper for `c4_star_blank_cont`. -/
@@ -75,7 +75,7 @@ private def c4_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #4 from Table (4): *[ ][+continuant]. Weight 5.17. -/
-def c4_star_blank_cont : WeightedConstraint Onset :=
+noncomputable def c4_star_blank_cont : WeightedConstraint Onset :=
   mkMarkW "*[ ][+cont]" (fun o => c4_violated o = true) (517/100)
 
 /-- Bool helper for `c5_star_blank_voice`. -/
@@ -84,7 +84,7 @@ private def c5_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #5 from Table (4): *[ ][+voice, −sonorant]. Weight 5.37. -/
-def c5_star_blank_voice : WeightedConstraint Onset :=
+noncomputable def c5_star_blank_voice : WeightedConstraint Onset :=
   mkMarkW "*[ ][+voice]" (fun o => c5_violated o = true) (537/100)
 
 /-- Bool helper for `c6_star_son_blank`. -/
@@ -93,11 +93,11 @@ private def c6_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #6 from Table (4): *[+sonorant][ ]. Weight 6.66. -/
-def c6_star_son_blank : WeightedConstraint Onset :=
+noncomputable def c6_star_son_blank : WeightedConstraint Onset :=
   mkMarkW "*[+son][ ]" (fun o => c6_violated o = true) (666/100)
 
 /-- The subset grammar: 4 constraints from Table (4). -/
-def onsetGrammar : List (WeightedConstraint Onset) :=
+noncomputable def onsetGrammar : List (WeightedConstraint Onset) :=
   [c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
 
 -- ============================================================================
@@ -110,7 +110,7 @@ open English.Phonology in
     artifact; the *ranking* is the empirical prediction. -/
 theorem attested_higher_harmony_k_ŋ :
     harmonyScore onsetGrammar [ŋ] < harmonyScore onsetGrammar [k] := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
     c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
@@ -121,7 +121,7 @@ open English.Phonology in
 /-- Attested [br] has higher harmony than unattested *[rk] (violates *[+son][ ]). -/
 theorem attested_higher_harmony_br_rk :
     harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [b, r] := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
     c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
@@ -138,7 +138,7 @@ open English.Phonology
 /-- Gradient: among unattested onsets, *[ŋ] has higher harmony than *[rk]. -/
 theorem gradient_harmony_ŋ_rk :
     harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [ŋ] := by
-  rw [harmonyScore_eq_cast, harmonyScore_eq_cast, neg_lt_neg_iff, Rat.cast_lt]
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
     c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
