@@ -57,13 +57,20 @@ The design follows mathlib's `Matroid` pattern: bundled structure with
 ## Theorems
 
 - `Antimat_entailment` — Theorem 3: entailment → containment (proved)
+- `RCErc_single_eq_simpleERC` — two-element rooted circuits are simple ERCs (proved)
 - `Antimat_RCErc_inv` — Theorem 1: `Antimat ∘ RCErc = id` (stated; proof `sorry`)
-- `RCErc_Antimat_inv` — Theorem 2: `RCErc ∘ Antimat = id` (stated; proof `sorry`)
+- `RCErc_Antimat_inv` — Theorem 2: `RCErc ∘ Antimat = id` up to entailment
+  (stated; proof `sorry`)
 - `RCErc_entailment` — Theorem 4: containment → entailment (stated; proof `sorry`)
+
+The three `sorry`s are the general antimatroid → ERC direction, which rests on
+[dietrich-1987]'s rooted-circuit characterization of feasible sets.
 
 ## References
 
 [dilworth-1940] — Lattices with unique irreducible decompositions
+[monjardet-1985] — A use for frequently rediscovering a concept (antimatroids)
+[dietrich-1987] — A circuit set characterization of antimatroids
 [korte-lovasz-schrader-1991] — Greedoids
 [merchant-riggle-2016] — OT grammars, beyond partial orders:
 ERC sets and antimatroids
@@ -900,6 +907,21 @@ noncomputable def RCErc_single {n : Nat} (A : Antimatroid (Fin n))
 noncomputable def RCErc {n : Nat} (A : Antimatroid (Fin n)) : Set (ERC n) :=
   Set.range (RCErc_single A)
 
+/-- **Two-element rooted circuits are simple ERCs.** A rooted circuit with a
+two-element carrier `{w, l}` rooted at `l` maps under `RCErc_single` to the simple
+ERC `simpleERC w l` (the Hasse edge `w ≫ l`). Larger carriers instead give a
+*disjunctive*, multi-`W` ERC — one `L` (the root) requiring *some* element of
+`S \ {root}` to dominate it — which is exactly the "beyond partial orders" content
+that makes the local `Feasible` predicate inexact (`feasible_not_accessible`). -/
+theorem RCErc_single_eq_simpleERC {n : Nat} (A : Antimatroid (Fin n))
+    (rc : Antimatroid.RootedCircuit A) {w l : Fin n}
+    (hcarrier : rc.carrier = {w, l}) (hroot : rc.root = l) (hwl : w ≠ l) :
+    RCErc_single A rc = simpleERC w l := by
+  funext k
+  simp only [RCErc_single, simpleERC, hcarrier, hroot, Set.mem_insert_iff,
+    Set.mem_singleton_iff]
+  by_cases hkw : k = w <;> by_cases hkl : k = l <;> simp_all
+
 -- ============================================================================
 -- § 14: Isomorphism Theorems
 -- ============================================================================
@@ -908,27 +930,41 @@ noncomputable def RCErc {n : Nat} (A : Antimatroid (Fin n)) : Set (ERC n) :=
     `RCErc`. For any antimatroid `A`, rebuilding from `A`'s rooted-circuit
     ERCs recovers `A` — stated at the feasible-set level (`Antimat (RCErc A)`
     and `A` have the same feasible sets), since `Antimat`'s feasible sets are
-    by definition the maximal chains satisfying the ERC set. -/
+    by definition the maximal chains satisfying the ERC set.
+
+    The general proof rests on the rooted-circuit characterization of an
+    antimatroid's feasible sets ([dietrich-1987]; [merchant-riggle-2016]
+    Lemmas 7, 9), which is why this direction carries an honest `sorry`. -/
 theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n)) (S : Set (Fin n)) :
     A.IsFeasible S ↔
       ∃ r : Ranking n, (∀ α ∈ RCErc A, ERC.satisfiedBy r α) ∧
         ∃ k, maximalChain r k = S := by
   -- TODO: [merchant-riggle-2016] Theorem 1 (antimatroid → ERC direction of
   -- the isomorphism). Show A's feasible sets are exactly the maximal chains
-  -- consistent with A's rooted-circuit ERCs. Requires characterizing the
-  -- rooted circuits of A (the hard direction the paper proves via traces).
+  -- consistent with A's rooted-circuit ERCs. Requires [dietrich-1987]'s
+  -- rooted-circuit characterization (the hard direction via traces).
   sorry
 
-/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is a left inverse of
-    `Antimat`. For a consistent ERC set `E`, the rooted-circuit ERCs of
-    `Antimat E` are exactly `E`. -/
+/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is a left inverse of `Antimat`
+    *up to entailment*. For a consistent ERC set `E`, the rooted-circuit ERCs of
+    `Antimat E` pick out exactly `E`'s satisfying rankings — they are *logically
+    equivalent* to `E`, not literally equal.
+
+    Literal set equality (`RCErc (Antimat E) = {α | α ∈ E}`) is **false** by
+    transitive-reduction ambiguity: `RCErc (Antimat [a≫b, b≫c])` also contains the
+    implied edge `a≫c` (a rooted circuit of the chain antimatroid), a strict
+    superset of the two-edge input — yet both pick out the single order `a≫b≫c`.
+    Hence the statement is mutual entailment (same satisfying rankings), the form
+    [merchant-riggle-2016] actually proves. The general proof rests on
+    [dietrich-1987]'s rooted-circuit characterization (via Lemmas 7, 9), so it
+    carries an honest `sorry`. -/
 theorem RCErc_Antimat_inv {n : Nat} (E : List (ERC n))
     (hcons : ERCSet.consistent E) :
-    RCErc (Antimat E hcons) = { α | α ∈ E } := by
-  -- TODO: [merchant-riggle-2016] Theorem 2. Verify the faithful form before
-  -- discharging: the paper's inverse holds for ERC sets in rooted-circuit
-  -- canonical form, so this may be equality up to entailment-equivalence
-  -- rather than literal set equality.
+    ∀ r : Ranking n,
+      (∀ α ∈ RCErc (Antimat E hcons), ERC.satisfiedBy r α) ↔ ERCSet.satisfiedBy r E := by
+  -- TODO: [merchant-riggle-2016] Theorem 2 (logical-equivalence form). Needs the
+  -- rooted-circuit characterization of `Antimat E`'s feasible sets ([dietrich-1987];
+  -- [merchant-riggle-2016] Lemmas 7, 9).
   sorry
 
 /-- **Theorem 3** ([merchant-riggle-2016]): `Antimat` preserves
@@ -955,7 +991,8 @@ theorem RCErc_entailment {n : Nat} (A B : Antimatroid (Fin n))
       (∀ α ∈ RCErc B, ERC.satisfiedBy r α) := by
   -- TODO: [merchant-riggle-2016] Theorem 4 (mirror of `Antimat_entailment`).
   -- Feasible-set containment A ⊆ B becomes ERC entailment RCErc A ⊨ RCErc B;
-  -- needs the rooted-circuit ↔ feasible-set correspondence from Theorem 1.
+  -- needs the rooted-circuit ↔ feasible-set correspondence of Theorem 1
+  -- ([dietrich-1987]; [merchant-riggle-2016] Lemmas 7, 9).
   sorry
 
 end OptimalityTheory
