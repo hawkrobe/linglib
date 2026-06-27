@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosody.NaturalClass
+import Linglib.Phonology.Segment
 
 /-!
 # Tarifit Consonant Inventory
@@ -36,7 +36,7 @@ are from the paper's word list / online appendix.
 
 namespace Tarifit.Inventory
 
-open Prosody
+open Phonology
 
 -- ============================================================================
 -- § 1: Word Type
@@ -47,9 +47,9 @@ open Prosody
 structure TriconWord where
   ipa   : String
   gloss : String
-  c1    : NatClass
-  c2    : NatClass
-  c3    : NatClass
+  c1    : SonorityClass
+  c2    : SonorityClass
+  c3    : SonorityClass
   deriving DecidableEq, Repr
 
 /-- C1–C2 sonority profile: rising (C1 less sonorous than C2). -/
