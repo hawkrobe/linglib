@@ -1,4 +1,4 @@
-import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Events.Basic
 
 /-!
 # Event Adjacency and Temporal Precedence

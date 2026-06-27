@@ -40,7 +40,7 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 namespace TurkHirsch2026
 
 open Features.InformationStructure
-open Semantics.Alternatives
+open Alternatives
 open Semantics.Focus.Interpretation (PropFocusValue)
 
 -- ═══════════════════════════════════════════════════════════════════════

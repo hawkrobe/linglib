@@ -42,7 +42,7 @@ phonological realization `tous les NP` is also ambiguous with
 `[tous les NP.pl]`, and the unambiguous expression `les deux NP` (no
 more complex by node count) realizes the dual meaning. The blocked
 dual parse persists as an *unpronounceable alternative*, feeding
-indirect competition (`Semantics.Alternatives.Indirect`).
+indirect competition (`Alternatives.indirectFrom`).
 
 ## Generic shape
 
