@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosodic.Syllable
-import Linglib.Phonology.Prosodic.Word
+import Linglib.Phonology.Prosody.Syllable
+import Linglib.Phonology.Prosody.Word
 
 /-!
 # Moraic Phonology
@@ -22,10 +22,9 @@ in `Syllable`, which is essentially a segmental (X-theory) view.
 [hayes-1989]
 -/
 
-namespace Prosody.Moraic
+namespace Prosody
 
-open Phonology (Segment Feature)
-open Prosody.Syllable (Syllable SyllWeight SyllabifiedForm)
+open Phonology (Segment)
 
 -- ============================================================================
 -- § 1: Moraic Segment — a segment with its mora count
@@ -152,7 +151,7 @@ def MoraicSyllable.toSyllWeight (σ : MoraicSyllable) : SyllWeight :=
     This connects moraic representations to the prosodic word layer,
     enabling minimal word constraints, metrical parsing, and stress
     assignment to operate on moraically-derived weight profiles. -/
-def MoraicForm.toPrWd (f : MoraicForm) : Prosody.ProsodicWord.PrWd :=
+def MoraicForm.toPrWd (f : MoraicForm) : PrWd :=
   ⟨f.syllables.map MoraicSyllable.toSyllWeight⟩
 
 -- ============================================================================
@@ -235,14 +234,15 @@ theorem cvvc_superheavy (v c₁ c₂ : Segment) :
 theorem geminate_makes_heavy (v seg : Segment) :
     (MoraicSyllable.mk [] [⟨v, .one⟩, ⟨seg, .one⟩]).toSyllWeight = .heavy := rfl
 
-/-- The moraic minimal word: `satisfiesMinWord` checks ≥ 2 morae by default.
-    This connects moraic representations to PrWd's bimoraic minimum. -/
+/-- The moraic minimal word: `satisfiesMinWord` holds iff there are ≥ 2 morae
+    (the default). This connects moraic representations to PrWd's bimoraic
+    minimum. -/
 theorem moraic_minword (f : MoraicForm) :
-    f.toPrWd.satisfiesMinWord = decide (f.toPrWd.moraCount ≥ 2) := rfl
+    f.toPrWd.satisfiesMinWord ↔ f.toPrWd.moraCount ≥ 2 := Iff.rfl
 
 /-- **Round-trip fidelity**: `toSyllWeight.morae` recovers the exact mora count.
     No bounds needed — `SyllWeight` is now a `Nat` wrapper, not a lossy enum. -/
 theorem toSyllWeight_morae_faithful (σ : MoraicSyllable) :
     σ.toSyllWeight.morae = σ.moraCount := rfl
 
-end Prosody.Moraic
+end Prosody

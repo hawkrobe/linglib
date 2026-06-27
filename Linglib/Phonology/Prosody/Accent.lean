@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosodic.Syllable
-import Linglib.Phonology.Prosodic.Foot
+import Linglib.Phonology.Prosody.Syllable
+import Linglib.Phonology.Prosody.Foot
 
 /-!
 # Accent Assignment and Tone Derivation
@@ -18,7 +18,7 @@ Two rules that derive default accent position from syllable weight:
   ([mccawley-1968]).
 
 - **Latin Stress Rule (LSR)**: accent falls on the penultimate syllable
-  if heavy, otherwise on the antepenultimate. [kubozono-2008]
+  if heavy, otherwise on the antepenultimate. [kubozono-2006]
   argues the LSR better characterizes Japanese loanword accentuation,
   capitalizing on the cross-linguistic parallel with Latin stress
   ([hayes-1995]).
@@ -42,9 +42,8 @@ Two NonFinality constraints from [prince-smolensky-1993]:
 - **NonFinality(Ft)**: penalizes the head foot in word-final position.
 -/
 
-namespace Prosody.Accent
+namespace Prosody
 
-open Prosody.Syllable (SyllWeight MetricalParse ParseElement footMorae)
 
 -- ============================================================================
 -- § 1: Syllable-from-Mora Lookup
@@ -90,7 +89,7 @@ def defaultAccentAAR (weights : List SyllWeight) : Option Nat :=
     For monosyllables, accent the only syllable. For disyllables, always
     accent the penultimate (= initial) syllable.
 
-    [kubozono-2008] argues this rule better characterizes Japanese
+    [kubozono-2006] argues this rule better characterizes Japanese
     default accentuation than the AAR. -/
 def latinStressRule : List SyllWeight → Option Nat
   | [] => none
@@ -277,4 +276,4 @@ theorem nonfin_sigma_nonfinal :
 theorem nonfin_sigma_unaccented :
     nonFinalitySigma none 3 = 0 := rfl
 
-end Prosody.Accent
+end Prosody

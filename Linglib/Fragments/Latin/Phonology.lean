@@ -31,7 +31,7 @@ that consume this Fragment.
 **Vowel length is prosodic, not segmental.** The `[long]` feature is not
 in the `Phonology.Features` inventory (which follows
 [hayes-2009]'s decision to treat duration as a syllable-level
-property). Long vowels are encoded as two morae in `Prosody.Moraic`
+property). Long vowels are encoded as two morae in `Prosody`'s moraic layer
 rather than as distinct segments; consumers needing a surface short-vs-long
 contrast construct it at the syllable level.
 
