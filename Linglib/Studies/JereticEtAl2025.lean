@@ -1,7 +1,7 @@
 import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Alternatives.Source
-import Linglib.Semantics.Alternatives.Indirect
+import Linglib.Semantics.Alternatives.Competition
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Pragmatics.AvoidAmbiguity
 import Linglib.Fragments.French.Determiners
@@ -56,9 +56,9 @@ The prediction is computed via:
   denotation of DUAL (paper eq 39 / §8 eq 98b), grounded in the
   existing Harbour `dualF = ⟨−atomic, +minimal⟩` and bridged via
   `Number.dualPredOnLattice_eq_via_features`.
-- `Alternatives.Indirect.indirectFrom` lifts an indirect alternative
-  into an `AlternativeSource`, plugging into the
-  `Alternatives.Structural.violatesMP` competition operator.
+- `Alternatives.indirectFrom` lifts an indirect alternative
+  into an `Alternatives.Source`, plugging into the
+  `Alternatives.violatesMP` competition operator.
 - `Pragmatics.AvoidAmbiguity.Blocked` formalizes paper eq 37 as the
   blocking principle that renders `tous les NP.dual` unpronounceable.
 - The paper's MP-via-indirect-alts is a refinement of the
@@ -89,7 +89,7 @@ lexical *both*), generalized to "conceptual alternatives" by
 [buccola-kriz-chemla-2018]; this paper refines it: core concepts feed
 competition only when an *indirect* alternative — a pronounceable expression
 equivalent to the unpronounceable core-concept structure — is available
-(`Semantics/Alternatives/Indirect.lean`). Denotations live where their
+(`Alternatives.indirectFrom`). Denotations live where their
 semantic content does (e.g. `dualPredOnLattice` in `Features/Number.lean`
 for `dual`). -/
 
@@ -500,8 +500,8 @@ theorem accounts_diverge :
 The typological table above asserts that French *tous* is anti-dual via
 an indirect alternative. This section *exercises* the typeclass
 infrastructure end-to-end on a minimal sentence pair, demonstrating
-that `AlternativeSource` / `indirectFrom` /
-`Alternatives.Structural.violatesMP` compose correctly: each component
+that `Alternatives.Source` / `indirectFrom` /
+`Alternatives.violatesMP` compose correctly: each component
 plugs into the next and the final `violatesMP` predicate fires on real
 parse trees.
 
@@ -560,8 +560,9 @@ private def hasLesDeux (t : Tree Cat String) : Bool :=
     | .terminal _ "les_deux" => true
     | _ => false
 
-/-- French pronounceability: trees containing `tous_DUAL` are silent. -/
-private def frenchPron : Tree Cat String → Prop :=
+/-- French pronounceability: trees containing `tous_DUAL` are silent.
+Reducible so `decide` sees through to the underlying `hasDualMarker`. -/
+private abbrev frenchPron : Tree Cat String → Prop :=
   fun t => hasDualMarker t = false
 
 /-- Toy semantics. *tous V* asserts "all cups full" with trivial
@@ -594,8 +595,8 @@ cross-application of all the new infrastructure: `katzirSource frenchLex`
 provides the base structural alternatives, `frenchPron` flags silent
 witnesses, `meaning` checks semantic equivalence to the witness,
 `Tree.size` measures complexity. -/
-private def frenchIndirectSrc : AlternativeSource (Tree Cat String) :=
-  Indirect.indirectFrom (katzirSource frenchLex) frenchPron meaning Tree.size
+private def frenchIndirectSrc : Source (Tree Cat String) :=
+  indirectFrom (katzirSource frenchLex) frenchPron meaning Tree.size
 
 /-- *tous_DUAL V* is a Katzir alternative of *tous V* via the
 substitution Det → Det (replacing `tousLex` with `tousDualLex`). -/
@@ -613,23 +614,19 @@ private theorem tousDual_katzir_alt :
 *tous V*, witnessed by the silent *tous_DUAL V*. -/
 private theorem lesDeux_indirectAlt_tous :
     lesDeuxVerres ∈ frenchIndirectSrc tousVerres := by
-  refine ⟨?_, tousDualVerres, tousDual_katzir_alt, ?_, ?_⟩
-  · -- size lesDeuxVerres ≤ size tousVerres (both are 3)
-    decide
-  · -- ¬ frenchPron tousDualVerres
-    show ¬ (hasDualMarker tousDualVerres = false)
-    decide
-  · -- meaning lesDeuxVerres = meaning tousDualVerres
-    funext w
-    cases w <;> rfl
+  -- eq. 43: les deux is pronounceable, `≼ tous`, and means what the silent
+  -- witness tous_DUAL (an unpronounceable Katzir alternative) means.
+  refine ⟨by decide, by decide, tousDualVerres, tousDual_katzir_alt, by decide, ?_⟩
+  funext w; cases w <;> rfl
+
 
 /-- **Headline theorem of §7**: *tous V* violates Maximize Presupposition
 via competition with the indirect alternative *les deux V*, which is
 licensed by the silent witness *tous_DUAL V*.
 
 This is the end-to-end demonstration that the
-`AlternativeSource` / `indirectFrom` /
-`Alternatives.Structural.violatesMP` infrastructure is wired
+`Alternatives.Source` / `indirectFrom` /
+`Alternatives.violatesMP` infrastructure is wired
 correctly: the abstract pragmatic-competition operator fires on a
 real tree-based example with a real silent witness via a real indirect
 alternative, deriving the paper's anti-duality of *tous* (paper §4.1

@@ -22,11 +22,11 @@ connects it to existing domain-specific implementations:
    an instance (`phiMP`).
 
 2. **Structural alternatives** (`violatesMP` in
-   `Semantics.Alternatives.Structural`): MP defined over
+   `Semantics.Alternatives.Competition`): MP defined over
    syntactic trees, parametric in an
-   `Alternatives.AlternativeSource (Tree C W)`. The classical Katzir
+   `Alternatives.Source (Tree C W)`. The classical Katzir
    2007 source is `katzirSource lex`; the indirect-alternative source
-   `Alternatives.Indirect.indirectFrom`
+   `Alternatives.indirectFrom`
    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025])
    competes with unpronounceable Katzir witnesses (e.g. *les deux NP*
    competes with the silent *tous les NP.dual* via the Indirect

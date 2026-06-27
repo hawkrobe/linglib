@@ -58,7 +58,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 namespace Rooth1992Bridge
 
 open Features.InformationStructure
-open Semantics.Alternatives
+open Alternatives
 open Semantics.Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
 
 -- ═══════════════════════════════════════════════════════════════════════

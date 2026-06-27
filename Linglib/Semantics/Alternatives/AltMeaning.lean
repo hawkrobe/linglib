@@ -15,7 +15,7 @@ alternatives ([katzir-2007]) live in `Structural.lean`;
 [FoC]/[G] feature semantics live in `Semantics/Focus/`.
 -/
 
-namespace Semantics.Alternatives
+namespace Alternatives
 
 /-- Two-dimensional meaning in [rooth-1992]-style alternative semantics.
     Every expression has an O-value and an A-value.
@@ -39,4 +39,4 @@ def AltMeaning.unfeatured {α : Type*} (x : α) : AltMeaning α :=
 @[simp] theorem AltMeaning.unfeatured_aValue {α : Type*} (x : α) :
     (AltMeaning.unfeatured x).aValue = [x] := rfl
 
-end Semantics.Alternatives
+end Alternatives

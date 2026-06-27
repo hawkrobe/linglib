@@ -1,5 +1,6 @@
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Alternatives.Structural
+import Linglib.Semantics.Alternatives.Competition
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.LoGuercio2025
 
@@ -22,11 +23,11 @@ The mechanism parallels:
 - ACIs: compare CI content (Maximize Conventional Implicatures!)
 
 All three are instances of `violatesMaximize` from
-`Semantics/Alternatives/Structural.lean`, applied to different content
+`Semantics/Alternatives/Competition.lean`, applied to different content
 dimensions; `violatesMCIs` is the CI-content instantiation. The two
 structural-parallel theorems
 `violatesMaximize_of_violatesMP` and `violatesMP_of_violatesMaximize_sameAssertion`
-(in `Structural.lean`) discharge Lo Guercio's §4 diagnostic that "ACIs do
+(in `Competition.lean`) discharge Lo Guercio's §4 diagnostic that "ACIs do
 not require same assertive content, unlike antipresuppositions" — MP is
 literally Maximize-on-presupposition *plus* a same-assertion clause.
 
@@ -122,6 +123,7 @@ omission triggers an ACI only when honorification is locally relevant.
 namespace LoGuercio2025
 
 open Pragmatics.Expressives
+open Alternatives
 open Alternatives.Structural
 open Syntax
 open Data.Examples (LinguisticExample)
@@ -283,7 +285,7 @@ definition forces `hasEpithetStructure φ' = True`, i.e. φ' contains a
 DP. But `category_preservation` says no Katzir-reachable tree from the
 DP-free source has a DP. Contradiction. -/
 theorem outOfBlue_no_ACI :
-    ¬ violatesMCIs (W := EWord) (World := World)
+    ¬ violatesMCIs (World := World)
       (katzirSource epithetLex) expressiveCI johnArrived (fun _ => True) := by
   rintro ⟨φ', hφ', _himp, ⟨w, _h_host, h_alt⟩, _⟩
   -- h_alt : ¬ expressiveCI φ' w  ⟹  hasEpithetStructure φ' ∧ ¬ speakerBelieves w
@@ -315,9 +317,9 @@ distinguishing 1-child from multi-child DPs. Either route is a
 substrate refactor and is flagged in the Todo bullet for
 `expressiveCI`'s compositional-interpretation upgrade. -/
 theorem priorMention_yes_ACI
-    (priorSrc : Alternatives.AlternativeSource (Tree Cat EWord))
+    (priorSrc : Alternatives.Source (Tree Cat EWord))
     (h_reach : bastardJohnArrived ∈ priorSrc johnArrived) :
-    violatesMCIs (W := EWord) (World := World)
+    violatesMCIs (World := World)
       priorSrc expressiveCI johnArrived (fun _ => True) :=
   ⟨bastardJohnArrived, h_reach,
     epithet_ciStronger_than_bare.1,
@@ -335,11 +337,11 @@ This is the operational content of Lo Guercio's claim that ACI
 licensing depends on *whether the CI alternative is a formal
 alternative*, NOT on whether it is theoretically CI-stronger. -/
 theorem outOfBlue_vs_priorMention_contrast
-    (priorSrc : Alternatives.AlternativeSource (Tree Cat EWord))
+    (priorSrc : Alternatives.Source (Tree Cat EWord))
     (h_reach : bastardJohnArrived ∈ priorSrc johnArrived) :
-    ¬ violatesMCIs (W := EWord) (World := World)
+    ¬ violatesMCIs (World := World)
         (katzirSource epithetLex) expressiveCI johnArrived (fun _ => True) ∧
-    violatesMCIs (W := EWord) (World := World)
+    violatesMCIs (World := World)
         priorSrc expressiveCI johnArrived (fun _ => True) :=
   ⟨outOfBlue_no_ACI, priorMention_yes_ACI priorSrc h_reach⟩
 

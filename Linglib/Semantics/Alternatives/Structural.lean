@@ -157,13 +157,13 @@ def structuralAlternatives {C W : Type} (lex : List (Tree C W))
     (φ : Tree C W) : Set (Tree C W) :=
   {ψ | atMostAsComplex (substitutionSource lex φ) ψ φ}
 
-/-- The Katzir source as an `AlternativeSource`. Pragmatic competition
-operators (`violatesMP`, `violatesMaximize`, `violatesMCIs`) accept any
-`AlternativeSource (Tree C W)`; pass `katzirSource lex` to recover the
-classical Katzir 2007 competition. Other sources include
-`Indirect.indirectFrom` (Jeretič et al. 2025). -/
+/-- The Katzir source as an `Alternatives.Source`. Pragmatic competition
+operators (`violatesMP`, `violatesMaximize`, `violatesMCIs` in
+`Alternatives.Competition`) accept any `Source (Tree C W)`; pass
+`katzirSource lex` to recover the classical Katzir 2007 competition.
+Other sources include `Alternatives.indirectFrom` (Jeretič et al. 2025). -/
 def katzirSource {C W : Type} (lex : List (Tree C W)) :
-    Alternatives.AlternativeSource (Tree C W) :=
+    Alternatives.Source (Tree C W) :=
   structuralAlternatives lex
 
 /-- φ is always a structural alternative to itself (reflexivity of ≲). -/
@@ -718,162 +718,5 @@ theorem horn_alternatives_are_structural {C W : Type} [BEq C] [LawfulBEq C] [BEq
   unfold structuralAlternatives atMostAsComplex
   exact leafSubst_reachable α β c (List.mem_append_left _ _h_β_in_lex) φ
 
--- ═══════════════════════════════════════════════════════════════════════
--- §9  Maximize Content Principle (generalized)
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Generic "maximize content" principle parameterized over content dimension.
-
-Scalar inferences arise from comparing a sentence φ with formal alternatives
-φ' that are more informative along some content dimension. The same reasoning
-applies to three dimensions:
-
-- **At-issue content** → Scalar Implicatures (Conversational Principle, [katzir-2007])
-- **Presuppositional content** → Antipresuppositions (Maximize Presupposition, [schlenker-2012])
-- **CI content** → Anti-Conventional Implicatures (MCIs!, [lo-guercio-2025])
-
-All three are instances of: do not use φ if there is a formal alternative
-φ' ∈ F(φ) such that (a) φ' is strictly more informative along the relevant
-content dimension, (b) φ' is contextually relevant, and (c) ¬φ' is innocently
-excludable.
-
-`contentFn` maps each tree to its content along the relevant dimension.
-The content dimension is a `Prop`-valued predicate (felicity, entailment,
-or CI satisfaction), aligning with the `W → Prop` shape of
-`Pragmatics.Expressives.TwoDimProp.ci` so a single CI content function can
-flow from a Pottsian compositional interpretation into the operator.
-
-The competitor set is supplied as an `AlternativeSource` parameter so
-that the same operator works for Katzir alternatives
-(`katzirSource lex`), indirect alternatives
-(`Indirect.indirectFrom (katzirSource lex) …`,
-[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]),
-or any other source. -/
-def violatesMaximize {C W : Type} {World : Type*}
-    (src : Alternatives.AlternativeSource (Tree C W))
-    (contentFn : Tree C W → World → Prop)
-    (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Prop) : Prop :=
-  ∃ φ' ∈ src φ,
-    (∀ w, contentFn φ' w → contentFn φ w) ∧
-    (∃ w, contentFn φ w ∧ ¬ contentFn φ' w) ∧
-    weaklyAssertable φ'
-
-/-- The neo-Gricean conversational principle: `violatesMaximize` applied
-to at-issue (truth-conditional) content. [katzir-2007] def 21. -/
-abbrev violatesConversationalPrinciple {C W : Type} {World : Type*}
-    (src : Alternatives.AlternativeSource (Tree C W))
-    (meaning : Tree C W → World → Prop)
-    (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Prop) : Prop :=
-  violatesMaximize src meaning φ weaklyAssertable
-
-/-- Maximize Presupposition (the principle: [heim-1991]; reconstructed
-from Gricean reasoning by [schlenker-2012]): `violatesMaximize` applied
-to presuppositional content. Do not use φ if there is a competitor φ'
-(from `src`) with the same assertive content but stronger presupposition.
-
-Modeling note on the same-assertion clause. `assertionFn φ' w ↔
-assertionFn φ w` is required at *every* world. This is the right notion
-when `assertionFn` is the total at-issue content with presupposition
-factored out. If instead `assertionFn` were partial (undefined where φ'`s
-stronger presupposition fails), the standard antipresupposition condition
-asks for assertion-agreement only *where φ' is defined*, i.e.
-`∀ w, presupFn φ' w → (assertionFn φ' w ↔ assertionFn φ w)`. The
-unconditional form here is retained because the consumer
-`Studies/JereticEtAl2025.lean` (`tous_violatesMP_via_indirect`) supplies
-total `Prop`-valued content; switch to the guarded form if a partial
-`assertionFn` is ever used.
-
-Pass `katzirSource lex` for Katzir alternatives;
-`Indirect.indirectFrom (katzirSource lex) pron` for indirect alternatives
-([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
-def violatesMP {C W : Type} {World : Type*}
-    (src : Alternatives.AlternativeSource (Tree C W))
-    (presupFn : Tree C W → World → Prop)
-    (assertionFn : Tree C W → World → Prop)
-    (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Prop) : Prop :=
-  ∃ φ' ∈ src φ,
-    (∀ w, assertionFn φ' w ↔ assertionFn φ w) ∧
-    (∀ w, presupFn φ' w → presupFn φ w) ∧
-    (∃ w, presupFn φ w ∧ ¬ presupFn φ' w) ∧
-    weaklyAssertable φ'
-
-/-- Maximize Conventional Implicatures ([lo-guercio-2025]):
-`violatesMaximize` applied to CI content. Unlike MP!, does NOT require
-the same assertive content — CI content is independent of truth conditions.
-UNVERIFIED: the specific numbered definition in [lo-guercio-2025] (was
-cited as "def 15" from memory) is not checked against the PDF.
-
-Do not use φ if there is a formal alternative φ' ∈ F(φ) such that:
-a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger, in [gutzmann-2015]/[kaplan-1999]
-   felicity-set semantics: the set of contexts where φ' is felicitously
-   usable is a strict subset of those where φ is)
-b. φ' ∈ C (contextually relevant)
-c. ¬⟦φ'⟧ᵘ doesn't contradict the negation of CI content of any element in C -/
-abbrev violatesMCIs {C W : Type} {World : Type*}
-    (src : Alternatives.AlternativeSource (Tree C W))
-    (ciContentFn : Tree C W → World → Prop)
-    (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Prop) : Prop :=
-  violatesMaximize src ciContentFn φ weaklyAssertable
-
-/-! ### Structural relationships between MP and Maximize
-
-`violatesMP` differs from `violatesMaximize` on the same `presupFn` only
-by the additional same-assertion clause. The two theorems below make the
-relationship Lean-checkable, discharging the diagnostic prose in
-[lo-guercio-2025] §4 that "ACIs do not require same assertive content,
-unlike antipresuppositions." -/
-
-/-- Every `violatesMP` violation is also a `violatesMaximize` violation
-on the presuppositional axis (drops the same-assertion clause). -/
-theorem violatesMaximize_of_violatesMP {C W : Type} {World : Type*}
-    (src : Alternatives.AlternativeSource (Tree C W))
-    (presupFn assertionFn : Tree C W → World → Prop)
-    (φ : Tree C W) (weaklyAssertable : Tree C W → Prop) :
-    violatesMP src presupFn assertionFn φ weaklyAssertable →
-    violatesMaximize src presupFn φ weaklyAssertable := by
-  rintro ⟨φ', hφ', _hassert, himp, hstrict, hwa⟩
-  exact ⟨φ', hφ', himp, hstrict, hwa⟩
-
-/-- Conversely, a `violatesMaximize` violation on `presupFn` combined with
-same-assertion at every alternative gives a `violatesMP` violation. -/
-theorem violatesMP_of_violatesMaximize_sameAssertion {C W : Type} {World : Type*}
-    (src : Alternatives.AlternativeSource (Tree C W))
-    (presupFn assertionFn : Tree C W → World → Prop)
-    (φ : Tree C W) (weaklyAssertable : Tree C W → Prop)
-    (h_max : violatesMaximize src presupFn φ weaklyAssertable)
-    (h_assert : ∀ φ' ∈ src φ, ∀ w, assertionFn φ' w ↔ assertionFn φ w) :
-    violatesMP src presupFn assertionFn φ weaklyAssertable := by
-  rcases h_max with ⟨φ', hφ', himp, hstrict, hwa⟩
-  exact ⟨φ', hφ', h_assert φ' hφ', himp, hstrict, hwa⟩
-
--- ═══════════════════════════════════════════════════════════════════════
--- §10  Bridge to Economy of Structure ([katzir-singh-2015])
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- At-least-as-good-as relation (def 23, p. 680):
-φ ≲ ψ iff φ ≲_struct ψ ∧ ⟦φ⟧ ⊆ ⟦ψ⟧.
-
-This combines structural complexity (from def 19) with semantic
-entailment. It is the relation [katzir-singh-2015] use as the basis for
-the Answer Condition in `KatzirSingh2015.lean`, where the structural
-component appears abstractly as `Scenario.atLeastAsGood`'s
-`complexity : U → ℕ` comparison.
-
-Caveat: the structural component here is the *reachability* preorder
-`atMostAsComplex`, not a numeric operation-count, so this gives
-`KatzirSingh2015.lean`'s abstract `ℕ` parameter only its *qualitative*
-ordering content (which structures are at most as complex), not a literal
-step-count. A faithful numeric bridge would need a graded metric (see the
-`atMostAsComplex` docstring on why reachability ≠ count). -/
-def atLeastAsGoodAs {C W : Type} {World : Type*}
-    (lex : List (Tree C W))
-    (meaning : Tree C W → World → Prop)
-    (φ ψ : Tree C W) : Prop :=
-  atMostAsComplex (substitutionSource lex ψ) φ ψ ∧
-  ∀ w, meaning φ w → meaning ψ w
 
 end Alternatives.Structural
