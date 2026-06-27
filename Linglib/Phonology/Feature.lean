@@ -70,9 +70,7 @@ inductive Feature where
 
 /-! ### Feature classification -/
 
-/-- Articulator category of a feature: manner/root, laryngeal, or one of the
-    three place articulators ([hayes-2009] Ch 4). Single source of truth for
-    the classification predicates below. -/
+/-- The articulator category of a feature: manner/root, laryngeal, or place. -/
 inductive Feature.Category where
   | manner | laryngeal | labial | coronal | dorsal
   deriving DecidableEq, Repr
