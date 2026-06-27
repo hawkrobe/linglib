@@ -1,5 +1,4 @@
 import Linglib.Phonology.Constraints.Weighted
-import Linglib.Phonology.Constraints.System
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Prosodic.NaturalClass
 import Linglib.Fragments.Tarifit.Inventory
