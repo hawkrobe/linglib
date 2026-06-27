@@ -140,6 +140,19 @@ theorem tale_input_morae : (Word.ofSyllables tale_input).moraCount = 2 := rfl
 /-- Deleting σ₂'s schwa strands one mora. -/
 theorem tale_schwa_strands : strandedCount (strand tale_σ₂ 0) = 1 := rfl
 
+/-- Vowel loss is **heterosyllabic** CL (`CLType.vowelLoss`): the stranded mora
+    migrates left onto σ₁, lengthening ⟨a⟩ to ⟨a:⟩ so σ₁ becomes heavy. -/
+theorem tale_migrate_lengthens_σ₁ :
+    (migrateLeft tale_σ₁ tale_σ₂).1.weight = .heavy := rfl
+
+/-- The migration conserves total weight — derived from `migrateLeft_conserves`,
+    not a stipulated output. -/
+theorem tale_vowel_loss_conserves :
+    (migrateLeft tale_σ₁ tale_σ₂).1.moraCount
+      + (migrateLeft tale_σ₁ tale_σ₂).2.moraCount
+      = tale_σ₁.moraCount + tale_σ₂.moraCount :=
+  migrateLeft_conserves _ _ (by simp [tale_σ₂])
+
 /-- CL result: ⟨a⟩ becomes long and ⟨l⟩ resyllabifies as a non-moraic coda
     riding on the second mora. Output σ = [ta:l] with 2 morae. -/
 def tale_output : Syllable := ⟨[t], [Mora.of a, ⟨[a, l]⟩]⟩
