@@ -201,10 +201,11 @@ def newDiff (p : Pair) : ℚ :=
 lemma score_diff_eq_components (wH wN : ℚ) (p : Pair) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
     harmonyScore (grammar wH wN) (p, .goalLast) =
-      wH * heavyDiff p + wN * newDiff p := by
+      ((wH * heavyDiff p + wN * newDiff p : ℚ) : ℝ) := by
   obtain ⟨th, gl⟩ := p
-  simp only [grammar, harmonyScore, List.foldl, heavyFirst, newFirst,
-    heavyDiff, newDiff]
+  rw [harmonyScore_eq_cast, harmonyScore_eq_cast]
+  simp only [grammar, heavyFirst, newFirst, heavyDiff, newDiff, List.map_cons,
+    List.map_nil, List.sum_cons, List.sum_nil]
   push_cast
   ring
 
@@ -249,8 +250,8 @@ theorem heaviness_independently_predicts {p : Pair} {wH : ℚ}
     harmonyDominates (grammar wH 0) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH 0 p
   show harmonyScore _ _ > harmonyScore _ _
-  have : 0 < wH * heavyDiff p := mul_pos hH h
-  linarith
+  rw [gt_iff_lt, ← sub_pos, hdiff]
+  exact_mod_cast (by linarith [mul_pos hH h] : (0:ℚ) < wH * heavyDiff p + 0 * newDiff p)
 
 /-- **Newness independently predicts ordering.** With the heaviness
     weight zeroed out, a positive newness weight is enough to make
@@ -260,8 +261,8 @@ theorem newness_independently_predicts {p : Pair} {wN : ℚ}
     harmonyDominates (grammar 0 wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components 0 wN p
   show harmonyScore _ _ > harmonyScore _ _
-  have : 0 < wN * newDiff p := mul_pos hN h
-  linarith
+  rw [gt_iff_lt, ← sub_pos, hdiff]
+  exact_mod_cast (by linarith [mul_pos hN h] : (0:ℚ) < 0 * heavyDiff p + wN * newDiff p)
 
 /-- **Both factors compose additively.** When neither factor opposes
     `themeLast` (both per-constraint contributions are non-negative)
@@ -277,9 +278,11 @@ theorem both_factors_compose {p : Pair} {wH wN : ℚ}
     harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
   show harmonyScore _ _ > harmonyScore _ _
+  rw [gt_iff_lt, ← sub_pos, hdiff]
   have h1 : 0 ≤ wH * heavyDiff p := mul_nonneg hH hHeavy
   have h2 : 0 ≤ wN * newDiff p := mul_nonneg hN hNew
-  rcases hStrict with hs | hs <;> linarith
+  exact_mod_cast
+    (by rcases hStrict with hs | hs <;> linarith : (0:ℚ) < wH * heavyDiff p + wN * newDiff p)
 
 /-- **Tradeoff theorem.** When heaviness and newness conflict — one
     favors `themeLast`, the other `goalLast` — the prediction depends
@@ -291,7 +294,8 @@ theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℚ}
     harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
   show harmonyScore _ _ > harmonyScore _ _
-  linarith
+  rw [gt_iff_lt, ← sub_pos, hdiff]
+  exact_mod_cast h
 
 -- ============================================================================
 -- § 5: Constraint-Strength Interaction (the Paper's §5 Theoretical Claim)
@@ -315,7 +319,7 @@ probability shift. -/
 theorem heaviness_dominates_when_newness_neutral
     (wH wN : ℚ) {p : Pair} (hN : newDiff p = 0) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) = wH * heavyDiff p := by
+    harmonyScore (grammar wH wN) (p, .goalLast) = ((wH * heavyDiff p : ℚ) : ℝ) := by
   rw [score_diff_eq_components, hN, mul_zero, add_zero]
 
 /-- **Constraint-interaction theorem (newness side).** When the
@@ -328,7 +332,7 @@ theorem heaviness_dominates_when_newness_neutral
 theorem newness_dominates_when_heaviness_neutral
     (wH wN : ℚ) {p : Pair} (hH : heavyDiff p = 0) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) = wN * newDiff p := by
+    harmonyScore (grammar wH wN) (p, .goalLast) = ((wN * newDiff p : ℚ) : ℝ) := by
   rw [score_diff_eq_components, hH, mul_zero, zero_add]
 
 -- ============================================================================
@@ -393,7 +397,8 @@ theorem heavy_goal_predicts_goalLast :
       (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) := by
   have hdiff := score_diff_eq_components 1 0 heavyGoalContrast
   show harmonyScore _ _ > harmonyScore _ _
-  rw [heavyDiff_heavyGoalContrast] at hdiff
+  rw [heavyDiff_heavyGoalContrast, newDiff_heavyGoalContrast] at hdiff
+  norm_num at hdiff
   linarith
 
 /-- Pure-newness MaxEnt grammar predicts theme-last (given-first) when
