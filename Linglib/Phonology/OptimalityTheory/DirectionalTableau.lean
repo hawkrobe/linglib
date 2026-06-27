@@ -112,12 +112,11 @@ def IsOptimal (c : C) : Prop :=
 instance (c : C) : Decidable (t.IsOptimal c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The optimal set: candidates whose profile is `LexLE`-least. Computable. -/
+/-- The optimal set, as an `argMinSet` over `LexLE`. Computable. -/
 def optima : Finset C :=
-  t.candidates.filter (λ c => ∀ d ∈ t.candidates, LexLE (t.profile c) (t.profile d))
+  argMinSet t.candidates t.profile LexLE
 
-theorem mem_optima_iff (c : C) : c ∈ t.optima ↔ t.IsOptimal c := by
-  simp only [optima, Finset.mem_filter, IsOptimal]
+theorem mem_optima_iff (c : C) : c ∈ t.optima ↔ t.IsOptimal c := mem_argMinSet
 
 /-- Profiles have equal length when every constraint's violation vectors do
     (each `key` preserves length: `degree` keys are singletons, `lex`/`revLex`
