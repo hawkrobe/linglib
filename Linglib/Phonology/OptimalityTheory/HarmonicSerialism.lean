@@ -312,7 +312,7 @@ theorem converged_of_singleton_gen (D : HSDerivation C) (c : C)
   rw [dif_pos (Finset.singleton_nonempty c)]
   -- Tableau with a singleton candidate set: optimal = {c}
   ext x
-  simp only [LexMinProblem.lexMins, tableauFor, Finset.mem_filter, Finset.mem_singleton]
+  simp only [LexMinProblem.lexMins, argMinSet, tableauFor, Finset.mem_filter, Finset.mem_singleton]
   refine ⟨fun ⟨hx, _⟩ => hx, fun hx => ⟨hx, ?_⟩⟩
   intro c' hc'; subst hc'; subst hx; rfl
 

@@ -637,6 +637,28 @@ noncomputable example (n : Nat) :
 
 
 -- ============================================================================
+-- § 13b: Generic minimizer set under a relation
+-- ============================================================================
+
+/-- The elements of `s` whose image under `f` is `r`-minimal — `r`-below every
+    image in `s`. The shared selection primitive behind `LexMinProblem.lexMins`
+    (over `≤` on `Lex (Fin n → Nat)`) and `DirectionalTableau.optima`
+    (over `LexLE` on `List Nat`). -/
+def argMinSet {α P : Type*} [DecidableEq α] (s : Finset α) (f : α → P)
+    (r : P → P → Prop) [DecidableRel r] : Finset α :=
+  s.filter fun c => ∀ d ∈ s, r (f c) (f d)
+
+theorem mem_argMinSet {α P : Type*} [DecidableEq α] {s : Finset α} {f : α → P}
+    {r : P → P → Prop} [DecidableRel r] {c : α} :
+    c ∈ argMinSet s f r ↔ c ∈ s ∧ ∀ d ∈ s, r (f c) (f d) := by
+  simp only [argMinSet, Finset.mem_filter]
+
+theorem argMinSet_nonempty {α P : Type*} [DecidableEq α] {s : Finset α} {f : α → P}
+    {r : P → P → Prop} [DecidableRel r] (h : ∃ m ∈ s, ∀ d ∈ s, r (f m) (f d)) :
+    (argMinSet s f r).Nonempty :=
+  let ⟨m, hm, hmin⟩ := h; ⟨m, mem_argMinSet.mpr ⟨hm, hmin⟩⟩
+
+-- ============================================================================
 -- § 14: LexMinProblem — finite candidate set with a lex-comparable score
 -- ============================================================================
 
@@ -664,21 +686,19 @@ theorem LexMinProblem.exists_lexMin (t : LexMinProblem C n) :
   obtain ⟨c, hc_mem, hc_min⟩ := Finset.exists_min_image t.candidates t.profile t.nonempty
   exact ⟨c, hc_mem, hc_min⟩
 
-/-- The set of lex-minimizers. Computable via `instDecidableLexFinNatProfileLE`;
-    consumers can use `by decide` to verify lex-mins on concrete problems. -/
+/-- The set of lex-minimizers, as an `argMinSet` over `≤`. Computable via
+    `instDecidableLexFinNatProfileLE`; consumers can use `by decide` to verify
+    lex-mins on concrete problems. -/
 def LexMinProblem.lexMins (t : LexMinProblem C n) : Finset C :=
-  t.candidates.filter fun c =>
-    ∀ c' ∈ t.candidates, t.profile c ≤ t.profile c'
+  argMinSet t.candidates t.profile (· ≤ ·)
 
 /-- `c ∈ t.lexMins` iff `t.IsLexMin c`. -/
 theorem LexMinProblem.mem_lexMins_iff (t : LexMinProblem C n) (c : C) :
-    c ∈ t.lexMins ↔ t.IsLexMin c := by
-  simp only [LexMinProblem.lexMins, Finset.mem_filter, LexMinProblem.IsLexMin]
+    c ∈ t.lexMins ↔ t.IsLexMin c := mem_argMinSet
 
 /-- The lex-min set is always nonempty. -/
-theorem LexMinProblem.lexMins_nonempty (t : LexMinProblem C n) : t.lexMins.Nonempty := by
-  obtain ⟨c, hc⟩ := t.exists_lexMin
-  exact ⟨c, (t.mem_lexMins_iff c).mpr hc⟩
+theorem LexMinProblem.lexMins_nonempty (t : LexMinProblem C n) : t.lexMins.Nonempty :=
+  argMinSet_nonempty <| let ⟨c, hc⟩ := t.exists_lexMin; ⟨c, hc.1, hc.2⟩
 
 /-- Lex-minimizers belong to the candidate set. -/
 theorem LexMinProblem.lexMins_subset (t : LexMinProblem C n) (c : C) :
