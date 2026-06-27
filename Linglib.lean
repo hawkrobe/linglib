@@ -1828,6 +1828,7 @@ import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Semantics.Quantification.Exceptive
 import Linglib.Semantics.Quantification.Exclusive
 import Linglib.Semantics.Quantification.Generators
+import Linglib.Semantics.Quantification.Generic
 import Linglib.Semantics.Quantification.Lattice
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Lindstrom
