@@ -1,5 +1,5 @@
 import Linglib.Semantics.TypeTheoretic.Basic
-import Linglib.Semantics.Quantification
+import Linglib.Semantics.Quantification.Counting
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Powerset
 

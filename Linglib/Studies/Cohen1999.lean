@@ -127,6 +127,21 @@ theorem cohen_proportional {α : Type*} [Fintype α] :
   rw [cohen_iff_mostOn Finset.univ R₁ S₁ hR1, cohen_iff_mostOn Finset.univ R₂ S₂ hR2]
   exact mostOn_univ_proportional R₁ S₁ R₂ S₂ h1 h2 hcross
 
+/-! ### Generic-quantifier interface
+
+`cohenGEN` over the whole carrier IS the majority generalized quantifier
+`Quantification.most_sem`, slotting Cohen's absolute reading into the `GQ`
+framework (`Quantification.Generic`) alongside `genNormalcy` / `genWays`. -/
+
+/-- Cohen's absolute-reading GEN over the whole carrier is exactly the majority
+    generalized quantifier `most_sem` — the `GQ`-interface form of `cohenGEN`.
+    The bare `P(Q | P) > ½` truth condition only: the homogeneity presupposition
+    (`homogeneous`) and the relative reading are not part of it. -/
+theorem cohenGEN_univ_eq_most_sem {α : Type*} [Fintype α] (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] (hR : 0 < countOn Finset.univ R) :
+    cohenGEN Finset.univ R S ↔ Quantification.most_sem R S := by
+  rw [cohen_iff_mostOn Finset.univ R S hR, Quantification.mostOn_univ]
+
 /-- Cohen's "always": no exceptions — every restrictor-element satisfies the scope.
     For a non-empty restrictor domain this is exactly P(Q | P) = 1; stated as the
     decidable universal `everyOn` rather than the (non-kernel-decidable) ℚ equality. -/

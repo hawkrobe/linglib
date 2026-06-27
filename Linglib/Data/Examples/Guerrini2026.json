@@ -1,0 +1,770 @@
+[
+  {
+    "id": "guerrini2026_ex21a",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(21a)"},
+    "language": "stan1293",
+    "primaryText": "Large Language Models utilize Deep Learning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Large Language Models utilize Deep Learning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["flavor", "lawLike"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex21b",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(21b)"},
+    "language": "stan1293",
+    "primaryText": "A Large Language Model utilizes Deep Learning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A Large Language Model utilizes Deep Learning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "singularIndefinite"],
+      ["flavor", "lawLike"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex21c",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(21c)"},
+    "language": "stan1293",
+    "primaryText": "Large Language Models are popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Large Language Models are popular.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["flavor", "accidental"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex21d",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(21d)"},
+    "language": "stan1293",
+    "primaryText": "A Large Language Model is popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A Large Language Model is popular.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "singularIndefinite"],
+      ["flavor", "accidental"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex22a",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(22a)"},
+    "language": "ital1282",
+    "primaryText": "Gli LLM usano il Deep Learning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Large Language Models utilize Deep Learning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["flavor", "lawLike"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex22b",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(22b)"},
+    "language": "ital1282",
+    "primaryText": "Un LLM usa il Deep Learning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An LLM utilizes Deep Learning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "singularIndefinite"],
+      ["flavor", "lawLike"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex22c",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(22c)"},
+    "language": "ital1282",
+    "primaryText": "Gli LLM sono popolari.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Large Language Models are popular.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["flavor", "accidental"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex22d",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(22d)"},
+    "language": "ital1282",
+    "primaryText": "Un LLM è popolare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An LLM is popular.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "genericity"],
+      ["nominalForm", "singularIndefinite"],
+      ["flavor", "accidental"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex5a",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(5a)"},
+    "language": "stan1293",
+    "primaryText": "Birds are migrating.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds are migrating.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "episodic"],
+      ["nominalForm", "kindDenotingPlural"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex5b",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(5b)"},
+    "language": "stan1293",
+    "primaryText": "A bird is migrating.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A bird is migrating.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "unacceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "episodic"],
+      ["nominalForm", "singularIndefinite"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex6a",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "Students are scared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Students are scared.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "episodic"],
+      ["nominalForm", "kindDenotingPlural"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex6b",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(6b)"},
+    "language": "stan1293",
+    "primaryText": "A student is scared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A student is scared.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "unacceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "episodic"],
+      ["nominalForm", "singularIndefinite"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex110",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(110)"},
+    "language": "ital1282",
+    "primaryText": "I giornalisti investigativi hanno posto domande.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The investigative journalists asked questions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "italian-episodic"],
+      ["nominalExpression", "italianDefinitePlural"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex109",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(109)"},
+    "language": "ital1282",
+    "primaryText": "Giornalisti investigativi hanno posto domande.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Investigative journalists asked questions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "unacceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "italian-episodic"],
+      ["nominalExpression", "italianBarePlural"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex113",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(113)"},
+    "language": "ital1282",
+    "primaryText": "I candidati puntuali non vengono assunti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Punctual candidates don't get hired.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "acceptable"},
+      {"name": "law-like", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "italian-gen"],
+      ["nominalExpression", "italianDefinitePlural"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex114",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(114)"},
+    "language": "ital1282",
+    "primaryText": "Candidati puntuali non vengono assunti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Punctual candidates don't get hired.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "unacceptable"},
+      {"name": "law-like", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "italian-gen"],
+      ["nominalExpression", "italianBarePlural"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "guerrini2026_ex68a",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(68a)"},
+    "language": "stan1293",
+    "primaryText": "Wugs are black, white, green, and red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wugs are black, white, green, and red.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "cumulative", "judgment": "acceptable"},
+      {"name": "distributive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "cumulativity"]
+    ],
+    "comment": "Cumulative (each wug one color) and distributive (each wug all colors)."
+  },
+  {
+    "id": "guerrini2026_ex69",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(69)"},
+    "language": "stan1293",
+    "primaryText": "Wugs are always/often/typically black, white, green, and red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wugs are always/often/typically black, white, green, and red.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "cumulative", "judgment": "unacceptable"},
+      {"name": "distributive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "cumulativity"]
+    ],
+    "comment": "Q-adverb forces the Bona Fide Generic parse; only the distributive (simultaneous) reading survives."
+  },
+  {
+    "id": "guerrini2026_americanVoters",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(99)–(104)"},
+    "language": "stan1293",
+    "primaryText": "American voters",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "American voters",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "epistemic-adj"],
+      ["adjReading", "local"]
+    ],
+    "comment": "Local adjective reading -> kind -> DKP; nonlocal -> no kind -> no DKP."
+  },
+  {
+    "id": "guerrini2026_unidentifiedVoters",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(99)–(104)"},
+    "language": "stan1293",
+    "primaryText": "unidentified voters",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "unidentified voters",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "unacceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "epistemic-adj"],
+      ["adjReading", "nonlocal"]
+    ],
+    "comment": "Local adjective reading -> kind -> DKP; nonlocal -> no kind -> no DKP."
+  },
+  {
+    "id": "guerrini2026_investigativeJournalists",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(99)–(104)"},
+    "language": "stan1293",
+    "primaryText": "investigative journalists",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "investigative journalists",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "epistemic-adj"],
+      ["adjReading", "local"]
+    ],
+    "comment": "Local adjective reading -> kind -> DKP; nonlocal -> no kind -> no DKP."
+  },
+  {
+    "id": "guerrini2026_unknownJournalists",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(99)–(104)"},
+    "language": "stan1293",
+    "primaryText": "unknown journalists",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "unknown journalists",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "near-universal", "judgment": "unacceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "epistemic-adj"],
+      ["adjReading", "nonlocal"]
+    ],
+    "comment": "Local adjective reading -> kind -> DKP; nonlocal -> no kind -> no DKP."
+  },
+  {
+    "id": "guerrini2026_ex25a",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "*Lions are usually extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Lions are usually extinct.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "qadv"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["qAdvCompatible", "false"],
+      ["testedReading", "lawLike"]
+    ],
+    "comment": "Direct kind predicate; Gen absent, so the Q-adverb 'usually' is blocked."
+  },
+  {
+    "id": "guerrini2026_ex49",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(49)"},
+    "language": "stan1293",
+    "primaryText": "LLMs are usually popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "LLMs are usually popular.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "qadv"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["qAdvCompatible", "true"],
+      ["testedReading", "lawLike"]
+    ],
+    "comment": "Q-adverb replaces Gen in the Bona Fide Generic parse; the accidental reading is lost."
+  },
+  {
+    "id": "guerrini2026_ex89",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(89)"},
+    "language": "stan1293",
+    "primaryText": "Birds are all migrating.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds are all migrating.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "qadv"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["qAdvCompatible", "true"],
+      ["testedReading", "accidental"]
+    ],
+    "comment": "'all' replaces DIST-homogeneity; the episodic DKP parse is preserved."
+  },
+  {
+    "id": "guerrini2026_ex90",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(90)"},
+    "language": "stan1293",
+    "primaryText": "#Birds are always migrating.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "#Birds are always migrating.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "qadv"],
+      ["nominalForm", "kindDenotingPlural"],
+      ["qAdvCompatible", "false"],
+      ["testedReading", "accidental"]
+    ],
+    "comment": "'always' is a Q-adverb (Gen counterpart); there is no Gen in the DKP parse."
+  },
+  {
+    "id": "guerrini2026_birdsAllMig",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(89)"},
+    "language": "stan1293",
+    "primaryText": "Birds are all migrating.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds are all migrating.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "homogeneity-removal"],
+      ["remover", "all"]
+    ],
+    "comment": "'all' removes DIST homogeneity; episodic reading maintained."
+  },
+  {
+    "id": "guerrini2026_birdsAlwaysMig",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(90)"},
+    "language": "stan1293",
+    "primaryText": "Birds are always migrating.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds are always migrating.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "homogeneity-removal"],
+      ["remover", "always"]
+    ],
+    "comment": "'always' forces a habitual/generic reparse; episodic reading lost."
+  },
+  {
+    "id": "guerrini2026_studentsAllScared",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(§5.1)"},
+    "language": "stan1293",
+    "primaryText": "Students are all scared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Students are all scared.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "homogeneity-removal"],
+      ["remover", "all"]
+    ],
+    "comment": "'all' removes DIST homogeneity; stage-level episodic."
+  },
+  {
+    "id": "guerrini2026_studentsAlwaysScared",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(§5.1)"},
+    "language": "stan1293",
+    "primaryText": "Students are always scared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Students are always scared.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "homogeneity-removal"],
+      ["remover", "always"]
+    ],
+    "comment": "'always' forces a generic reading; not episodic."
+  },
+  {
+    "id": "guerrini2026_madrigalSg",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(133)–(136)"},
+    "language": "stan1293",
+    "primaryText": "The madrigal is popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The madrigal is popular.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "unacceptable"},
+      {"name": "cumulative", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "singular-kind"],
+      ["kindTermNumber", "singular"]
+    ],
+    "comment": "Singular kind is atomic; DIST/CKP inapplicable. Only law-like."
+  },
+  {
+    "id": "guerrini2026_madrigalPl",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(133)–(136)"},
+    "language": "stan1293",
+    "primaryText": "Madrigals are popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Madrigals are popular.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "acceptable"},
+      {"name": "cumulative", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "singular-kind"],
+      ["kindTermNumber", "plural"]
+    ],
+    "comment": "Accidental via DKP: actual madrigals happen to be popular."
+  },
+  {
+    "id": "guerrini2026_wugSg",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(133)–(136)"},
+    "language": "stan1293",
+    "primaryText": "The wug is white, green, black, and yellow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The wug is white, green, black, and yellow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "unacceptable"},
+      {"name": "cumulative", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "singular-kind"],
+      ["kindTermNumber", "singular"]
+    ],
+    "comment": "Atomic singular kind; only the 'all four colors' direct reading."
+  },
+  {
+    "id": "guerrini2026_wugPl",
+    "source": {"bibkey": "guerrini-2026", "paperLabel": "(133)–(136)"},
+    "language": "stan1293",
+    "primaryText": "Wugs are white, green, black, and yellow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wugs are white, green, black, and yellow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "acceptable"},
+      {"name": "cumulative", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "singular-kind"],
+      ["kindTermNumber", "plural"]
+    ],
+    "comment": "Cumulative available: each wug is one color."
+  },
+  {
+    "id": "guerrini2026_ex50a",
+    "source": {"bibkey": "greenberg-2004", "paperLabel": "(50a)"},
+    "reportedIn": {"bibkey": "guerrini-2026", "paperLabel": "(50a)"},
+    "language": "stan1293",
+    "primaryText": "Italian restaurants are closed today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Italian restaurants are closed today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "acceptable"},
+      {"name": "law-like", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "greenberg"],
+      ["nominalForm", "kindDenotingPlural"]
+    ],
+    "comment": "Both readings for the bare plural."
+  },
+  {
+    "id": "guerrini2026_ex50b",
+    "source": {"bibkey": "greenberg-2004", "paperLabel": "(50b)"},
+    "reportedIn": {"bibkey": "guerrini-2026", "paperLabel": "(50b)"},
+    "language": "stan1293",
+    "primaryText": "An Italian restaurant is closed today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An Italian restaurant is closed today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "unacceptable"},
+      {"name": "law-like", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "greenberg"],
+      ["nominalForm", "singularIndefinite"]
+    ],
+    "comment": "Only law-like for the singular indefinite."
+  },
+  {
+    "id": "guerrini2026_ex51a",
+    "source": {"bibkey": "greenberg-2007", "paperLabel": "(51a)"},
+    "reportedIn": {"bibkey": "guerrini-2026", "paperLabel": "(51a)"},
+    "language": "stan1293",
+    "primaryText": "Norwegian students with names ending in 's' wear thick green socks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Norwegian students with names ending in 's' wear thick green socks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "acceptable"},
+      {"name": "law-like", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "greenberg"],
+      ["nominalForm", "kindDenotingPlural"]
+    ],
+    "comment": "Accidental only (no law-like link)."
+  },
+  {
+    "id": "guerrini2026_ex51b",
+    "source": {"bibkey": "greenberg-2007", "paperLabel": "(51b)"},
+    "reportedIn": {"bibkey": "guerrini-2026", "paperLabel": "(51b)"},
+    "language": "stan1293",
+    "primaryText": "A Norwegian student with a name ending in 's' wears thick green socks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A Norwegian student with a name ending in 's' wears thick green socks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "accidental", "judgment": "unacceptable"},
+      {"name": "law-like", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "greenberg"],
+      ["nominalForm", "singularIndefinite"]
+    ],
+    "comment": "Infelicitous: no DKP, no law-like link."
+  }
+]
