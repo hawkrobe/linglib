@@ -28,9 +28,7 @@ see the subsumption theorems below.
 
 namespace Phonology.FeatureGeometry
 
--- ============================================================================
--- § 1: Geometric Nodes
--- ============================================================================
+/-! ### Geometric nodes -/
 
 /-- Class nodes in the feature geometry tree. -/
 inductive GeomNode where
@@ -44,12 +42,10 @@ inductive GeomNode where
   | dorsal         -- Dorsal articulator ([sagey-1986])
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Tree Structure
--- ============================================================================
+/-! ### Tree structure -/
 
 /-- Parent of each node in the geometry tree. The supralaryngeal node
-    ([clements-1985], diagram (4)) mediates between root and place. -/
+    ([clements-1985]) mediates between root and place. -/
 def GeomNode.parent : GeomNode → Option GeomNode
   | .root           => none
   | .laryngeal      => some .root
@@ -68,16 +64,7 @@ def GeomNode.allNodes : List GeomNode :=
 def GeomNode.children (n : GeomNode) : List GeomNode :=
   GeomNode.allNodes.filter (λ m => m.parent == some n)
 
-/-- Depth of a node in the tree (root = 0). -/
-def GeomNode.depth : GeomNode → Nat
-  | .root => 0
-  | .laryngeal | .supralaryngeal => 1
-  | .softPalate | .place => 2
-  | .labial | .coronal | .dorsal => 3
-
--- ============================================================================
--- § 4: Dominance
--- ============================================================================
+/-! ### Dominance -/
 
 /-- Does node `n` dominate node `m`? Reflexive-transitive closure of the
     parent relation, unrolled to depth 3 (the tree's maximum depth). -/
@@ -88,9 +75,7 @@ def GeomNode.depth : GeomNode → Nat
 
 end Phonology.FeatureGeometry
 
--- ============================================================================
--- § 3: Feature-to-Node Mapping
--- ============================================================================
+/-! ### Feature-to-node mapping -/
 
 namespace Phonology
 
@@ -122,20 +107,16 @@ open FeatureGeometry in
 
 end Phonology
 
--- ============================================================================
--- § 5–7: Natural Classes, Verification, Spreading/Delinking
--- ============================================================================
-
 namespace Phonology.FeatureGeometry
+
+/-! ### Natural classes -/
 
 /-- Features dominated by node `n` — a natural class in the feature-geometric
     sense: the features that pattern together under processes targeting `n`. -/
 def GeomNode.features (n : GeomNode) : List Feature :=
   Feature.allFeatures.filter (λ f => decide (GeomNode.Dominates n f.node))
 
--- ============================================================================
--- § 6: Verification Theorems
--- ============================================================================
+/-! ### Verification theorems -/
 
 -- Tree structure
 
@@ -145,22 +126,8 @@ theorem nonroot_has_parent (n : GeomNode) (h : n ≠ .root) :
     n.parent.isSome = true := by
   cases n <;> simp_all [GeomNode.parent]
 
-theorem parent_decreases_depth (n p : GeomNode) (h : n.parent = some p) :
-    p.depth < n.depth := by
-  cases n <;> simp [GeomNode.parent] at h <;> subst h <;> decide
-
 theorem allNodes_complete (n : GeomNode) : n ∈ GeomNode.allNodes := by
   cases n <;> simp [GeomNode.allNodes]
-
--- Depth
-
-theorem root_depth : GeomNode.root.depth = 0 := rfl
-theorem supralaryngeal_depth : GeomNode.supralaryngeal.depth = 1 := rfl
-theorem softPalate_depth : GeomNode.softPalate.depth = 2 := rfl
-theorem place_depth : GeomNode.place.depth = 2 := rfl
-theorem labial_depth : GeomNode.labial.depth = 3 := rfl
-theorem coronal_depth : GeomNode.coronal.depth = 3 := rfl
-theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 
 -- Natural class counts ([hayes-2009] complete inventory: 26 features)
 
@@ -203,19 +170,6 @@ theorem lateral_geometrically_under_place :
 theorem strident_geometrically_under_place :
     Feature.strident.DominatedBy .place := by decide
 
--- ============================================================================
--- § 7: Spreading / Delinking Predicates
--- ============================================================================
-
-/-- Can feature `f` spread under node `n`? True when `f` is dominated by `n`. -/
-@[reducible] def CanSpreadUnder (n : GeomNode) (f : Feature) : Prop :=
-  GeomNode.Dominates n f.node
-
-/-- Does delinking node `n` remove feature `f`? True when `n` dominates `f`'s
-    node and `n` is not Root (delinking Root = deleting the segment). -/
-@[reducible] def DelinkedBy (n : GeomNode) (f : Feature) : Prop :=
-  GeomNode.Dominates n f.node ∧ n ≠ .root
-
 end Phonology.FeatureGeometry
 
 /-!
@@ -244,10 +198,12 @@ independent.
 
 namespace Phonology.FeatureGeometry
 
+/-! ### Articulator nodes -/
+
 /-- Is this a place articulator node? The three place articulators —
     labial (lips), coronal (tongue blade/tip), dorsal (tongue body) —
     are the independent articulators whose combinations give rise to
-    complex segments ([sagey-1986] Ch. 2). The soft palate is an
+    complex segments ([sagey-1986]). The soft palate is an
     articulator in the vocal tract but sits outside the place node
     (as a sibling under supralaryngeal), so it does not participate
     in complex segment formation: a velar nasal [ŋ] is simple despite
@@ -259,19 +215,13 @@ def GeomNode.IsArticulator : GeomNode → Prop
 instance : DecidablePred GeomNode.IsArticulator := fun n => by
   cases n <;> unfold GeomNode.IsArticulator <;> infer_instance
 
--- ============================================================================
--- § 1: Articulator Nodes
--- ============================================================================
-
 /-- The articulator nodes in the geometry. -/
 def articulatorNodes : List GeomNode :=
   GeomNode.allNodes.filter (fun n => decide (GeomNode.IsArticulator n))
 
 theorem articulatorNodes_count : articulatorNodes.length = 3 := rfl
 
--- ============================================================================
--- § 4: Geometry of articulators (verification)
--- ============================================================================
+/-! ### Articulator geometry (verification) -/
 
 /-- Articulators are exactly the leaf-level nodes (no children). -/
 theorem articulators_are_leaves :
@@ -315,9 +265,7 @@ namespace Phonology
 
 open Phonology.FeatureGeometry (GeomNode articulatorNodes)
 
--- ============================================================================
--- § 2: Active articulators of a segment
--- ============================================================================
+/-! ### Active articulators of a segment -/
 
 /-- Which articulator nodes have at least one specified feature in segment `s`? -/
 def Segment.activeArticulators (s : Segment) : List GeomNode :=
@@ -328,9 +276,7 @@ def Segment.activeArticulators (s : Segment) : List GeomNode :=
 def Segment.articulatorCount (s : Segment) : Nat :=
   s.activeArticulators.length
 
--- ============================================================================
--- § 3: Segment classification + well-formedness
--- ============================================================================
+/-! ### Segment classification and well-formedness -/
 
 /-- A complex segment has two or more simultaneously active articulator
     nodes — e.g., labiovelars [k͡p] (labial + dorsal). -/
