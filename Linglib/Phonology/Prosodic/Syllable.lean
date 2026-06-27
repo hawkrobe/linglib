@@ -18,8 +18,9 @@ grammatical primitive. The grounding function `sonorityOf` maps
 segments to ranks via their features, but the SSP and markedness
 constraints see only `SonorityRank`.
 
-Source: [goldsmith-2011] "The Syllable" in *The Handbook of Phonological
-Theory* (Ch 6, pp. 164–196). Cross-referenced with Hayes §4.6 and §15.
+Source: the syllable chapter of *The Handbook of Phonological Theory*
+([goldsmith-2011]), cross-referenced with [hayes-2009]'s treatment of
+sonority and syllable structure.
 
 [goldsmith-2011] [berent-2026]
 -/

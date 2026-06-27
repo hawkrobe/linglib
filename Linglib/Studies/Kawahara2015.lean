@@ -46,7 +46,7 @@ open Japanese.Prosody
     containing the antepenultimate mora) while the LSR predicts accent
     on σ₁ (the antepenultimate syllable, because the penult is light).
 
-    [kubozono-2008] argues that LSR-conforming pronunciations
+    [kubozono-2006] argues that LSR-conforming pronunciations
     appear as variants even in the mismatch cases, suggesting the LSR
     may be the better characterization. -/
 theorem table1_exactly_two_mismatches :
