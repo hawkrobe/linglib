@@ -38,6 +38,17 @@ The design follows mathlib's `Matroid` pattern: bundled structure with
 - `Antimat` — maps a consistent ERC set to an antimatroid (Definition 6)
 - `RCErc` — maps an antimatroid to an ERC set (Definition 10)
 
+## Decidable feasibility and the simple-ERC fragment
+
+- `Feasible` — the decidable, `Finset`-valued *local* feasibility condition; a
+  sound over-approximation of the antimatroid family
+- `FeasiblePrefix` — the faithful, also-decidable family (`MChain` over `Finset`)
+- `feasible_not_accessible` — for general (disjunctive) ERCs `Feasible` strictly
+  over-approximates and is not even accessible
+- `feasible_iff_feasiblePrefix_of_simple` — on the simple-ERC fragment the two
+  coincide (Birkhoff order-ideal ↔ linear-extension-prefix correspondence)
+- `Antimat.ofSimple` — the resulting decidable antimatroid on a simple ERC set
+
 ## Lemmas
 
 - `maximalChain_dominance` — prefix sets are downward-closed under dominance
@@ -46,13 +57,20 @@ The design follows mathlib's `Matroid` pattern: bundled structure with
 ## Theorems
 
 - `Antimat_entailment` — Theorem 3: entailment → containment (proved)
+- `RCErc_single_eq_simpleERC` — two-element rooted circuits are simple ERCs (proved)
 - `Antimat_RCErc_inv` — Theorem 1: `Antimat ∘ RCErc = id` (stated; proof `sorry`)
-- `RCErc_Antimat_inv` — Theorem 2: `RCErc ∘ Antimat = id` (stated; proof `sorry`)
+- `RCErc_Antimat_inv` — Theorem 2: `RCErc ∘ Antimat = id` up to entailment
+  (stated; proof `sorry`)
 - `RCErc_entailment` — Theorem 4: containment → entailment (stated; proof `sorry`)
+
+The three `sorry`s are the general antimatroid → ERC direction, which rests on
+[dietrich-1987]'s rooted-circuit characterization of feasible sets.
 
 ## References
 
 [dilworth-1940] — Lattices with unique irreducible decompositions
+[monjardet-1985] — A use for frequently rediscovering a concept (antimatroids)
+[dietrich-1987] — A circuit set characterization of antimatroids
 [korte-lovasz-schrader-1991] — Greedoids
 [merchant-riggle-2016] — OT grammars, beyond partial orders:
 ERC sets and antimatroids
@@ -315,15 +333,20 @@ def MChain {n : Nat} (E : List (ERC n)) : Set (Fin n) → Prop :=
   fun S => ∃ r : Ranking n, ERCSet.satisfiedBy r E ∧
     ∃ k : Fin (n + 1), maximalChain r k = S
 
-/-! ### Local feasibility — the decidable rooted-circuit condition -/
+/-! ### Local feasibility — a decidable sound over-approximation -/
 
 /-- **Local feasibility** of a candidate prefix `S` against ERC set `E`: for
 every ERC, if `S` contains one of its losers then it contains one of its winners
-(one rooted circuit per loser). This is the *decidable*, `Finset`-valued, local
-form of `MChain`: `decide` reduces on it, unlike the existential `MChain` (which
-quantifies over rankings and compares `Set`s). The representation theorem
-relating the two (a prefix of a consistent ranking iff locally feasible) is the
-Merchant–Riggle content. -/
+(one rooted circuit per loser). Decidable and `decide`-reducing.
+
+`Feasible` is a *necessary* condition for antimatroid feasibility — implied by
+`FeasiblePrefix`/`MChain` (`feasible_of_satisfiedBy`) — but **strictly weaker for
+disjunctive (multi-`W`) ERCs**: two ERCs can mutually cover each other's losers
+inside `S` with no consistent global order realizing it
+(`feasible_not_accessible`). It is **exact** only on the simple-ERC fragment
+(each ERC one `W`/one `L` = a Hasse edge = a partial order,
+`feasible_iff_feasiblePrefix_of_simple`). The faithful, *also decidable* notion
+is `FeasiblePrefix`. -/
 def Feasible {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
   ∀ α ∈ E, (∃ l, α l = .L ∧ l ∈ S) → (∃ w, α w = .W ∧ w ∈ S)
 
@@ -335,9 +358,10 @@ instance {n : Nat} (E : List (ERC n)) : DecidablePred (Feasible E) :=
     Feasible E (∅ : Finset (Fin n)) := by
   intro α _ ⟨l, _, hl⟩; exact absurd hl (Finset.notMem_empty l)
 
-/-- **Local feasibility is union-closed** ([merchant-riggle-2016] Lemma 3) — *by
-construction*, retiring the 160-line ranking-merge proof for the local form. A
-loser in `S ∪ T` lies in one of them, whose winner then lies in `S ∪ T`. -/
+/-- **Local feasibility is union-closed** (a one-liner): a loser in `S ∪ T` lies
+in one of them, whose winner then lies in `S ∪ T`. (This is union-closure of the
+over-approximation; the faithful family's union-closure is `MChain.union_closed`,
+[merchant-riggle-2016] Lemma 3.) -/
 theorem Feasible.union_closed {n : Nat} (E : List (ERC n)) {S T : Finset (Fin n)}
     (hS : Feasible E S) (hT : Feasible E T) : Feasible E (S ∪ T) := by
   intro α hα ⟨l, hlL, hlST⟩
@@ -366,6 +390,52 @@ theorem feasible_of_satisfiedBy {n : Nat} {E : List (ERC n)} {r : Ranking n}
   obtain ⟨w, hwW, hdom⟩ := (ERC.satisfiedBy_iff_dominance r α).mp (hr α hα) l hlL
   exact ⟨w, hwW, by rw [mem_prefixFinset]; unfold Ranking.dominates at hdom; omega⟩
 
+/-! ### `FeasiblePrefix` — the faithful, decidable antimatroid feasibility -/
+
+/-- **Faithful feasibility**: `S` is the top-`k` constraints of *some* ranking
+satisfying `E` — the `Finset`-valued form of `MChain`. Decidable by finite search
+over `Ranking n` (a `Fintype`) and `Fin (n+1)`, so `decide` reduces — *and*
+unlike `Feasible` it is the genuine antimatroid family, not an over-approximation. -/
+def FeasiblePrefix {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
+  ∃ r : Ranking n, ERCSet.satisfiedBy r E ∧ ∃ k : Fin (n + 1), prefixFinset r k = S
+
+instance {n : Nat} (E : List (ERC n)) : DecidablePred (FeasiblePrefix E) :=
+  fun _ => Fintype.decidableExistsFintype
+
+/-- The faithful predicate implies the over-approximation (`feasible_of_satisfiedBy`). -/
+theorem feasible_of_feasiblePrefix {n : Nat} {E : List (ERC n)} {S : Finset (Fin n)}
+    (h : FeasiblePrefix E S) : Feasible E S := by
+  obtain ⟨r, hr, k, rfl⟩ := h; exact feasible_of_satisfiedBy hr k
+
+/-- `prefixFinset` coerces to `maximalChain`. -/
+@[simp] theorem prefixFinset_coe {n : Nat} (r : Ranking n) (k : Fin (n + 1)) :
+    (↑(prefixFinset r k) : Set (Fin n)) = maximalChain r k := by
+  ext i; simp [prefixFinset, maximalChain]
+
+/-- `FeasiblePrefix` is `MChain` over `Finset` — the decidable counterpart of the
+existential, `Set`-valued antimatroid family. -/
+theorem mChain_coe_iff_feasiblePrefix {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) :
+    MChain E (↑S) ↔ FeasiblePrefix E S := by
+  constructor
+  · rintro ⟨r, hr, k, hk⟩
+    exact ⟨r, hr, k, Finset.coe_inj.mp ((prefixFinset_coe r k).trans hk)⟩
+  · rintro ⟨r, hr, k, rfl⟩; exact ⟨r, hr, k, (prefixFinset_coe r k).symm⟩
+
+/-- **`Feasible` strictly over-approximates the antimatroid family.** Two
+disjunctive (multi-`W`) ERCs over `Fin 4` admit a locally-feasible `{0,1}` that
+is *not* a prefix of any consistent ranking (`¬ FeasiblePrefix`) and has *no*
+removable element — so `{S | Feasible E S}` is not accessible and cannot be an
+antimatroid for general ERC sets. Hence `Antimat.IsFeasible` stays `MChain`
+([merchant-riggle-2016]'s "beyond partial orders"); the local form is exact only
+on the simple-ERC fragment. -/
+theorem feasible_not_accessible :
+    ∃ (E : List (ERC 4)) (S : Finset (Fin 4)),
+      ERCSet.consistent E ∧ Feasible E S ∧ ¬ FeasiblePrefix E S ∧
+        S.Nonempty ∧ ¬ ∃ x ∈ S, Feasible E (S \ {x}) :=
+  ⟨[fun i => if i = 0 then .W else if i = 1 then .L else if i = 2 then .W else .e,
+    fun i => if i = 0 then .L else if i = 1 then .W else if i = 2 then .e else .W],
+   {0, 1}, by decide, by decide, by decide, by decide, by decide⟩
+
 -- ============================================================================
 -- § 11: Union Closure (Lemma 3)
 -- ============================================================================
@@ -385,10 +455,8 @@ theorem maximalChain_dominance {n : Nat} (r : Ranking n) (k : Fin (n + 1))
 
 -- Helpers for the union closure construction
 
-open Classical
-
 /-- Count elements in finset `s` ranked strictly below `i` by `r`. -/
-private noncomputable def countBelow {n : Nat} (r : Ranking n)
+private def countBelow {n : Nat} (r : Ranking n)
     (s : Finset (Fin n)) (i : Fin n) : Nat :=
   (s.filter (fun j => (r.symm j : Nat) < (r.symm i : Nat))).card
 
@@ -672,6 +740,144 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E) :
   union_closed := fun S T hS hT => MChain.union_closed E hcons S T hS hT
 
 -- ============================================================================
+-- § 12b: The simple-ERC fragment — Birkhoff order ideals
+-- ============================================================================
+
+/-! ### Simple-ERC feasibility coincides with the antimatroid family
+
+When every ERC is *simple* (one `W`, one `L` — a Hasse edge `w ≫ l`), the
+constraints carry a genuine partial order and the decidable local condition
+`Feasible` is exact: it agrees with the faithful `FeasiblePrefix`/`MChain` family.
+This is the Birkhoff correspondence between order ideals of a poset and the
+prefixes of its linear extensions ([merchant-riggle-2016]). For non-simple `E`
+the agreement fails (`feasible_not_accessible`). -/
+
+/-- **Birkhoff representation on the simple-ERC fragment.** With every ERC simple,
+local feasibility coincides with the genuine antimatroid family: a set is locally
+feasible iff it is a prefix of some consistent ranking. The forward direction is
+the order-ideal ↔ linear-extension-prefix correspondence — reorder a witnessing
+ranking `r₀` into the block `S` (in `r₀`'s order) followed by `Sᶜ` (in `r₀`'s
+order); winner-uniqueness makes every Hasse edge respected, so the result
+satisfies `E` and has `S` as its length-`|S|` prefix. -/
+theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : List (ERC n)}
+    (hcons : ERCSet.consistent E) (hsimple : ERCSet.isSimpleSet E) (S : Finset (Fin n)) :
+    Feasible E S ↔ FeasiblePrefix E S := by
+  refine ⟨fun hfeas => ?_, feasible_of_feasiblePrefix⟩
+  obtain ⟨r₀, hr₀⟩ := hcons
+  -- Two-block reordering of `r₀`: `S` first (in `r₀` order), then `Sᶜ`.
+  have hcard : S.card + Sᶜ.card = n := by
+    rw [Finset.card_add_card_compl]; exact Fintype.card_fin n
+  have hScard : S.card ≤ n := le_trans (Finset.card_le_univ S) (le_of_eq (Fintype.card_fin n))
+  let f : Fin n → Nat := fun i =>
+    if i ∈ S then countBelow r₀ S i else S.card + countBelow r₀ Sᶜ i
+  have hf_lt : ∀ i, f i < n := by
+    intro i; simp only [f]; split_ifs with h
+    · exact lt_of_lt_of_le (countBelow_lt_card r₀ S i h) hScard
+    · have := countBelow_lt_card r₀ Sᶜ i (Finset.mem_compl.mpr h); omega
+  let ff : Fin n → Fin n := fun i => ⟨f i, hf_lt i⟩
+  have hff_inj : Function.Injective ff := by
+    intro a b hab; simp only [ff, Fin.mk.injEq] at hab
+    by_cases ha : a ∈ S <;> by_cases hb : b ∈ S
+    · simp only [f, if_pos ha, if_pos hb] at hab
+      exact countBelow_injOn r₀ S a b ha hb hab
+    · exfalso; simp only [f, if_pos ha, if_neg hb] at hab
+      have := countBelow_lt_card r₀ S a ha; omega
+    · exfalso; simp only [f, if_neg ha, if_pos hb] at hab
+      have := countBelow_lt_card r₀ S b hb; omega
+    · simp only [f, if_neg ha, if_neg hb] at hab
+      exact countBelow_injOn r₀ Sᶜ a b
+        (Finset.mem_compl.mpr ha) (Finset.mem_compl.mpr hb) (by omega)
+  have hff_bij := Finite.injective_iff_bijective.mp hff_inj
+  let e := Equiv.ofBijective ff hff_bij
+  let r : Ranking n := e.symm
+  have hr : ∀ i, (r.symm i : Nat) = f i := by
+    intro i; show (e.symm.symm i : Nat) = f i; rw [Equiv.symm_symm]; rfl
+  refine ⟨r, ?_, ⟨S.card, Nat.lt_succ_of_le hScard⟩, ?_⟩
+  · -- `r` satisfies `E`.
+    intro α hα
+    rw [ERC.satisfiedBy_iff_dominance]
+    intro l hl_L
+    obtain ⟨⟨wα, hwαW, hwα_uniq⟩, _⟩ := hsimple α hα
+    obtain ⟨w, hwW, hw_dom₀⟩ := (ERC.satisfiedBy_iff_dominance r₀ α).mp (hr₀ α hα) l hl_L
+    have hdom₀ : (r₀.symm w : Nat) < (r₀.symm l : Nat) := hw_dom₀
+    refine ⟨w, hwW, ?_⟩
+    suffices h : f w < f l by
+      show r.symm w < r.symm l
+      rw [Fin.lt_def, hr w, hr l]; exact h
+    simp only [f]
+    by_cases hlS : l ∈ S
+    · obtain ⟨w', hw'W, hw'S⟩ := hfeas α hα ⟨l, hl_L, hlS⟩
+      obtain rfl : w = w' := (hwα_uniq w hwW).trans (hwα_uniq w' hw'W).symm
+      rw [if_pos hw'S, if_pos hlS]
+      exact countBelow_strict_mono r₀ S w l hw'S hlS hdom₀
+    · by_cases hwS : w ∈ S
+      · rw [if_pos hwS, if_neg hlS]
+        have := countBelow_lt_card r₀ S w hwS; omega
+      · rw [if_neg hwS, if_neg hlS]
+        have := countBelow_strict_mono r₀ Sᶜ w l
+          (Finset.mem_compl.mpr hwS) (Finset.mem_compl.mpr hlS) hdom₀
+        omega
+  · -- The length-`|S|` prefix of `r` is `S`.
+    ext i
+    rw [mem_prefixFinset, hr i]
+    show f i < S.card ↔ i ∈ S
+    simp only [f]
+    split_ifs with h
+    · exact iff_of_true (countBelow_lt_card r₀ S i h) h
+    · exact iff_of_false (by omega) h
+
+/-- The `Set`-level feasible family of the simple fragment: a set is the coercion
+of a locally-feasible `Finset` iff it is `MChain`-feasible. (Bridges the decidable
+`Finset` side to `Antimat`'s `Set`-valued `MChain` family.) -/
+theorem feasible_coe_iff_mChain {n : Nat} {E : List (ERC n)}
+    (hcons : ERCSet.consistent E) (hsimple : ERCSet.isSimpleSet E) (T : Set (Fin n)) :
+    (∃ S' : Finset (Fin n), (↑S' : Set (Fin n)) = T ∧ Feasible E S') ↔ MChain E T := by
+  constructor
+  · rintro ⟨S', rfl, hfeas⟩
+    exact (mChain_coe_iff_feasiblePrefix E S').mpr
+      ((feasible_iff_feasiblePrefix_of_simple hcons hsimple S').mp hfeas)
+  · rintro ⟨r, hr, k, hk⟩
+    exact ⟨prefixFinset r k, (prefixFinset_coe r k).trans hk, feasible_of_satisfiedBy hr k⟩
+
+/-- **The simple-ERC Birkhoff antimatroid.** A consistent set of simple ERCs
+yields an antimatroid on `Fin n` whose feasible sets are the *locally feasible*
+`Finset`s — the decidable form. On the simple fragment this family equals
+`Antimat E`'s `MChain` family (`feasible_coe_iff_mChain`), so accessibility and
+union closure transfer from `Antimat`; concrete membership is checked by `decide`
+via `ofSimple_isFeasible_coe`. This is the order-ideal antimatroid of the
+constraint partial order ([merchant-riggle-2016]). -/
+def Antimat.ofSimple {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E)
+    (hsimple : ERCSet.isSimpleSet E) : Antimatroid (Fin n) where
+  E := Set.univ
+  IsFeasible := fun T => ∃ S' : Finset (Fin n), (↑S' : Set (Fin n)) = T ∧ Feasible E S'
+  empty_feasible := (feasible_coe_iff_mChain hcons hsimple ∅).mpr (Antimat E hcons).empty_feasible
+  feasible_sub := fun T _ => Set.subset_univ T
+  ground_feasible :=
+    (feasible_coe_iff_mChain hcons hsimple Set.univ).mpr (Antimat E hcons).ground_feasible
+  augmentation := fun T hT hne => by
+    obtain ⟨x, hxE, hxT, hins⟩ := (Antimat E hcons).augmentation T
+      ((feasible_coe_iff_mChain hcons hsimple T).mp hT) hne
+    exact ⟨x, hxE, hxT, (feasible_coe_iff_mChain hcons hsimple _).mpr hins⟩
+  removal := fun T hT hTne => by
+    obtain ⟨x, hxT, hrem⟩ := (Antimat E hcons).removal T
+      ((feasible_coe_iff_mChain hcons hsimple T).mp hT) hTne
+    exact ⟨x, hxT, (feasible_coe_iff_mChain hcons hsimple _).mpr hrem⟩
+  union_closed := fun S T hS hT =>
+    (feasible_coe_iff_mChain hcons hsimple _).mpr
+      ((Antimat E hcons).union_closed S T
+        ((feasible_coe_iff_mChain hcons hsimple S).mp hS)
+        ((feasible_coe_iff_mChain hcons hsimple T).mp hT))
+
+/-- Concrete feasibility of `Antimat.ofSimple` is the decidable `Feasible` — the
+hook that lets `decide` settle membership queries. -/
+@[simp] theorem ofSimple_isFeasible_coe {n : Nat} {E : List (ERC n)}
+    (hcons : ERCSet.consistent E) (hsimple : ERCSet.isSimpleSet E) (S : Finset (Fin n)) :
+    (Antimat.ofSimple E hcons hsimple).IsFeasible (↑S : Set (Fin n)) ↔ Feasible E S := by
+  constructor
+  · rintro ⟨S', hS'eq, hfeas⟩; rwa [Finset.coe_inj.mp hS'eq] at hfeas
+  · intro h; exact ⟨S, rfl, h⟩
+
+-- ============================================================================
 -- § 13: RCErc — Antimatroid → ERC Set
 -- ============================================================================
 
@@ -701,6 +907,21 @@ noncomputable def RCErc_single {n : Nat} (A : Antimatroid (Fin n))
 noncomputable def RCErc {n : Nat} (A : Antimatroid (Fin n)) : Set (ERC n) :=
   Set.range (RCErc_single A)
 
+/-- **Two-element rooted circuits are simple ERCs.** A rooted circuit with a
+two-element carrier `{w, l}` rooted at `l` maps under `RCErc_single` to the simple
+ERC `simpleERC w l` (the Hasse edge `w ≫ l`). Larger carriers instead give a
+*disjunctive*, multi-`W` ERC — one `L` (the root) requiring *some* element of
+`S \ {root}` to dominate it — which is exactly the "beyond partial orders" content
+that makes the local `Feasible` predicate inexact (`feasible_not_accessible`). -/
+theorem RCErc_single_eq_simpleERC {n : Nat} (A : Antimatroid (Fin n))
+    (rc : Antimatroid.RootedCircuit A) {w l : Fin n}
+    (hcarrier : rc.carrier = {w, l}) (hroot : rc.root = l) (hwl : w ≠ l) :
+    RCErc_single A rc = simpleERC w l := by
+  funext k
+  simp only [RCErc_single, simpleERC, hcarrier, hroot, Set.mem_insert_iff,
+    Set.mem_singleton_iff]
+  by_cases hkw : k = w <;> by_cases hkl : k = l <;> simp_all
+
 -- ============================================================================
 -- § 14: Isomorphism Theorems
 -- ============================================================================
@@ -709,27 +930,41 @@ noncomputable def RCErc {n : Nat} (A : Antimatroid (Fin n)) : Set (ERC n) :=
     `RCErc`. For any antimatroid `A`, rebuilding from `A`'s rooted-circuit
     ERCs recovers `A` — stated at the feasible-set level (`Antimat (RCErc A)`
     and `A` have the same feasible sets), since `Antimat`'s feasible sets are
-    by definition the maximal chains satisfying the ERC set. -/
+    by definition the maximal chains satisfying the ERC set.
+
+    The general proof rests on the rooted-circuit characterization of an
+    antimatroid's feasible sets ([dietrich-1987]; [merchant-riggle-2016]
+    Lemmas 7, 9), which is why this direction carries an honest `sorry`. -/
 theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n)) (S : Set (Fin n)) :
     A.IsFeasible S ↔
       ∃ r : Ranking n, (∀ α ∈ RCErc A, ERC.satisfiedBy r α) ∧
         ∃ k, maximalChain r k = S := by
   -- TODO: [merchant-riggle-2016] Theorem 1 (antimatroid → ERC direction of
   -- the isomorphism). Show A's feasible sets are exactly the maximal chains
-  -- consistent with A's rooted-circuit ERCs. Requires characterizing the
-  -- rooted circuits of A (the hard direction the paper proves via traces).
+  -- consistent with A's rooted-circuit ERCs. Requires [dietrich-1987]'s
+  -- rooted-circuit characterization (the hard direction via traces).
   sorry
 
-/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is a left inverse of
-    `Antimat`. For a consistent ERC set `E`, the rooted-circuit ERCs of
-    `Antimat E` are exactly `E`. -/
+/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is a left inverse of `Antimat`
+    *up to entailment*. For a consistent ERC set `E`, the rooted-circuit ERCs of
+    `Antimat E` pick out exactly `E`'s satisfying rankings — they are *logically
+    equivalent* to `E`, not literally equal.
+
+    Literal set equality (`RCErc (Antimat E) = {α | α ∈ E}`) is **false** by
+    transitive-reduction ambiguity: `RCErc (Antimat [a≫b, b≫c])` also contains the
+    implied edge `a≫c` (a rooted circuit of the chain antimatroid), a strict
+    superset of the two-edge input — yet both pick out the single order `a≫b≫c`.
+    Hence the statement is mutual entailment (same satisfying rankings), the form
+    [merchant-riggle-2016] actually proves. The general proof rests on
+    [dietrich-1987]'s rooted-circuit characterization (via Lemmas 7, 9), so it
+    carries an honest `sorry`. -/
 theorem RCErc_Antimat_inv {n : Nat} (E : List (ERC n))
     (hcons : ERCSet.consistent E) :
-    RCErc (Antimat E hcons) = { α | α ∈ E } := by
-  -- TODO: [merchant-riggle-2016] Theorem 2. Verify the faithful form before
-  -- discharging: the paper's inverse holds for ERC sets in rooted-circuit
-  -- canonical form, so this may be equality up to entailment-equivalence
-  -- rather than literal set equality.
+    ∀ r : Ranking n,
+      (∀ α ∈ RCErc (Antimat E hcons), ERC.satisfiedBy r α) ↔ ERCSet.satisfiedBy r E := by
+  -- TODO: [merchant-riggle-2016] Theorem 2 (logical-equivalence form). Needs the
+  -- rooted-circuit characterization of `Antimat E`'s feasible sets ([dietrich-1987];
+  -- [merchant-riggle-2016] Lemmas 7, 9).
   sorry
 
 /-- **Theorem 3** ([merchant-riggle-2016]): `Antimat` preserves
@@ -756,7 +991,8 @@ theorem RCErc_entailment {n : Nat} (A B : Antimatroid (Fin n))
       (∀ α ∈ RCErc B, ERC.satisfiedBy r α) := by
   -- TODO: [merchant-riggle-2016] Theorem 4 (mirror of `Antimat_entailment`).
   -- Feasible-set containment A ⊆ B becomes ERC entailment RCErc A ⊨ RCErc B;
-  -- needs the rooted-circuit ↔ feasible-set correspondence from Theorem 1.
+  -- needs the rooted-circuit ↔ feasible-set correspondence of Theorem 1
+  -- ([dietrich-1987]; [merchant-riggle-2016] Lemmas 7, 9).
   sorry
 
 end OptimalityTheory

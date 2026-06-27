@@ -31,6 +31,7 @@ some `W`-constraint ([prince-2002] §0 (3)/(4)).
 * `ercOfProfiles` — the sign of a winner/loser violation-profile difference.
 * `ERC.satisfiedBy`, `ERCSet.consistent`, `ERCSet.entails` — the
   satisfaction/consistency/entailment algebra.
+* `ERCSet.linearExtensions` — the (decidable) `Finset` of satisfying rankings.
 * `satisfiedBy_ercOfProfiles_iff_le` — the bridge to the Core lex order.
 * `tableauERC` — the ERC of a winner-loser pair in a tableau.
 * `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`.
@@ -231,10 +232,17 @@ def ERCSet.consistent (E : ERCSet n) : Prop :=
 instance (E : ERCSet n) : Decidable (ERCSet.consistent E) :=
   Fintype.decidableExistsFintype
 
-/-- The rankings consistent with an ERC set — its *linear extensions* in the
-terminology of [merchant-riggle-2016]. -/
-def ERCSet.linearExtensions (E : ERCSet n) : Set (Ranking n) :=
-  { r | ERCSet.satisfiedBy r E }
+/-- The rankings consistent with an ERC set, as a `Finset` — its *linear
+extensions* in the terminology of [merchant-riggle-2016]. Decidable (hence a
+`Finset`) because `satisfiedBy` is. This is the canonical "satisfying rankings"
+object that partial-order grammars reduce to via
+`PartialOrderConstraints.consistentTotalOrders_eq_linearExtensions`. -/
+def ERCSet.linearExtensions (E : ERCSet n) : Finset (Ranking n) :=
+  Finset.univ.filter (fun r => ERCSet.satisfiedBy r E)
+
+@[simp] theorem ERCSet.mem_linearExtensions {E : ERCSet n} {r : Ranking n} :
+    r ∈ E.linearExtensions ↔ ERCSet.satisfiedBy r E := by
+  simp [ERCSet.linearExtensions]
 
 /-! ### Entailment -/
 
@@ -330,6 +338,11 @@ orders ([merchant-riggle-2016]). -/
 def ERC.isSimple (α : ERC n) : Prop :=
   (∃! w, α w = .W) ∧ (∃! l, α l = .L)
 
+/-- An ERC set is *simple* if every member is a simple ERC: a set of Hasse edges,
+which therefore describes a partial order on the constraints rather than a general
+antimatroid ([merchant-riggle-2016]). -/
+def ERCSet.isSimpleSet (E : ERCSet n) : Prop := ∀ α ∈ E, α.isSimple
+
 /-- The simple ERC asserting constraint `i` must dominate constraint `j`; all
 other constraints are `e`. -/
 def simpleERC (i j : Fin n) : ERC n :=
@@ -382,5 +395,11 @@ theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     show (Equiv.swap i j).symm i < (Equiv.swap i j).symm j
     rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
     exact hgt
+
+/-- `simpleERC i j` (with `i ≠ j`) is a simple ERC: its unique `W` is `i` and its
+unique `L` is `j`. -/
+theorem simpleERC_isSimple {i j : Fin n} (hij : i ≠ j) : (simpleERC i j).isSimple :=
+  ⟨⟨i, simpleERC_apply_W, fun y hy => (simpleERC_eq_W_iff y).mp hy⟩,
+   ⟨j, simpleERC_apply_L hij, fun y hy => (simpleERC_eq_L_iff hij y).mp hy⟩⟩
 
 end OptimalityTheory

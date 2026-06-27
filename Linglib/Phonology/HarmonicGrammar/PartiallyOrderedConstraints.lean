@@ -1,4 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.Cumulativity
+import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Mathlib.Order.Extension.Linear
 
@@ -26,6 +27,10 @@ new content here is:
 - `PartialOrderConstraints n`: a partial order on `Fin n` (constraint indices).
 - `IsConsistent p σ`: σ is a linear extension of p.
 - `consistentTotalOrders p`: the (decidable, finite) set of linear extensions.
+- `toERCSet p` / `consistentTotalOrders_eq_linearExtensions`: the simple-ERC
+  (Hasse-edge) encoding of `p`, identifying its consistent total orders with the
+  lex-grounded `ERCSet.linearExtensions` — so POC's "linear extension" is the ERC
+  one, not a third re-stipulation ([merchant-riggle-2016]; [prince-2002]).
 - `pocPredict P p i o`: the probability that POC sampling under p selects
   output o for input i, computed as a ratio of consistent extensions
   realizing o vs. all consistent extensions.
@@ -158,6 +163,61 @@ theorem mem_consistentTotalOrders {p : PartialOrderConstraints n}
     {σ : Ranking n} :
     σ ∈ p.consistentTotalOrders ↔ p.IsConsistent σ := by
   simp [consistentTotalOrders]
+
+/-! ### Grounding in the ERC lex API
+
+A partial order is a set of dominance requirements; each strict related pair
+`a ≠ b` with `rel a b` is the Hasse-style ERC `a ≫ b` (`simpleERC a b`,
+[merchant-riggle-2016]'s simple ERCs). Encoding `p` this way shows
+`consistentTotalOrders p` *is* the ERC linear-extension set
+`ERCSet.linearExtensions`, so the POC notion of "consistent total order" is not a
+third re-stipulation of "linear extension" but the lex-grounded ERC one
+([prince-2002]). -/
+
+/-- The simple-ERC encoding of a partial order: one ERC `a ≫ b` (`simpleERC a b`)
+for each strict related pair (`a ≠ b` with `rel a b`). Transitively-implied pairs
+are included as well; they are entailed by the covering pairs, so this set has the
+same linear extensions as the Hasse-edge encoding. Built by computable enumeration
+over `List.finRange` so it carries no `noncomputable` marker. -/
+def toERCSet (p : PartialOrderConstraints n) : ERCSet n :=
+  (List.finRange n).flatMap fun a =>
+    (List.finRange n).filterMap fun b =>
+      if a ≠ b ∧ p.rel a b then some (simpleERC a b) else none
+
+theorem mem_toERCSet {p : PartialOrderConstraints n} {α : ERC n} :
+    α ∈ p.toERCSet ↔ ∃ a b, a ≠ b ∧ p.rel a b ∧ simpleERC a b = α := by
+  simp only [toERCSet, List.mem_flatMap, List.mem_filterMap, List.mem_finRange, true_and]
+  constructor
+  · rintro ⟨a, b, hif⟩
+    split_ifs at hif with hc
+    exact ⟨a, b, hc.1, hc.2, Option.some.inj hif⟩
+  · rintro ⟨a, b, hab, hrel, rfl⟩
+    exact ⟨a, b, by rw [if_pos ⟨hab, hrel⟩]⟩
+
+/-- A ranking satisfies `p.toERCSet` exactly when it is a linear extension of `p`:
+the `a ≫ b` ERCs are the strict dominance requirements, and reflexive pairs impose
+nothing. -/
+theorem satisfiedBy_toERCSet {p : PartialOrderConstraints n} {σ : Ranking n} :
+    ERCSet.satisfiedBy σ p.toERCSet ↔ p.IsConsistent σ := by
+  constructor
+  · intro h a b hrel
+    rcases eq_or_ne a b with rfl | hab
+    · exact le_refl _
+    · exact le_of_lt ((simpleERC_satisfiedBy_iff hab σ).mp
+        (h _ (mem_toERCSet.mpr ⟨a, b, hab, hrel, rfl⟩)))
+  · intro hcons α hα
+    obtain ⟨a, b, hab, hrel, rfl⟩ := mem_toERCSet.mp hα
+    exact (simpleERC_satisfiedBy_iff hab σ).mpr
+      (lt_of_le_of_ne (hcons a b hrel) (fun heq => hab (σ.symm.injective heq)))
+
+/-- **POC consistency is ERC linear extension.** The consistent total orders of a
+partial order are exactly the linear extensions of its simple-ERC encoding —
+collapsing the POC `consistentTotalOrders` into the lex-grounded
+`ERCSet.linearExtensions` ([merchant-riggle-2016]; [prince-2002]). -/
+theorem consistentTotalOrders_eq_linearExtensions (p : PartialOrderConstraints n) :
+    p.consistentTotalOrders = p.toERCSet.linearExtensions := by
+  ext σ
+  rw [mem_consistentTotalOrders, ERCSet.mem_linearExtensions, satisfiedBy_toERCSet]
 
 /-- For the discrete partial order, every permutation is a linear extension. -/
 theorem consistentTotalOrders_discrete (n : ℕ) :
