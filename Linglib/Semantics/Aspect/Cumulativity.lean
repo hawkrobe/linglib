@@ -28,7 +28,6 @@ proof-factoring helpers, not part of the public API — mathlib pattern.
 namespace Semantics.Aspect.Cumulativity
 
 open _root_.Mereology
-open Semantics.Events.CEM
 open Semantics.ArgumentStructure
 open Semantics.Aspect.Incremental
 

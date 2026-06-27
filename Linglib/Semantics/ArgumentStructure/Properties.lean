@@ -1,4 +1,5 @@
-import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.Events.Basic
 
 /-!
 # Thematic-Role Properties on θ

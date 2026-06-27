@@ -1,4 +1,5 @@
-import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.Events.Basic
 
 /-!
 # Stratified Reference [champollion-2017]
@@ -88,7 +89,6 @@ property.
 
 namespace Semantics.Aspect.Stratified
 
-open Semantics.Events.CEM
 open _root_.Mereology
 open Features
 
