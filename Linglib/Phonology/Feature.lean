@@ -5,47 +5,37 @@ Authors: Robert Hawkins
 -/
 
 /-!
-# Phonological Features
+# Phonological features
 
-The distinctive-feature atom: the 26 binary features of [hayes-2009]
-*Introductory Phonology*, Ch 4, organized into manner (root), laryngeal, and
-place (labial, coronal, dorsal) categories, with the flat classification
-predicates and the exhaustive feature list.
+The distinctive-feature atom: the 26 binary features of [hayes-2009], grouped
+into manner/root, laryngeal, and the labial/coronal/dorsal place articulators.
 
-Prosodic features [stress] and [long] are excluded — Hayes treats stress as a
-syllable-level property (Ch 14), not a segmental feature.
+## Main definitions
+
+* `Feature`: the 26 binary distinctive features.
+* `FeatureVal`: a feature value (`some true` = [+F], `some false` = [−F],
+  `none` = unspecified).
+* `Feature.category`: the articulator category of a feature; the single source
+  of truth for the `Feature.IsLaryngeal`, `Feature.IsDorsal`, and
+  `Feature.IsPlace` predicates.
+* `Feature.allFeatures`: the exhaustive feature list (`allFeatures_complete`).
+
+## Implementation notes
+
+The stress and length features ([stress], [long]) are excluded: Hayes treats
+stress as a syllable-level property, not a segmental feature.
 
 `Segment` (the bundle over `Feature`) and its predicate API live in
-`Phonology/Segment.lean`.
-
-[hayes-2009]
+`Phonology/Segment.lean`; the hierarchical re-grouping of these features into
+autosegmental tiers lives in `Phonology/FeatureGeometry.lean`, bridged to the
+flat classification here by subsumption theorems.
 -/
 
 namespace Phonology
 
 /-! ### Feature inventory -/
 
-/-- Distinctive phonological features (binary-valued).
-
-    Complete segmental inventory from [hayes-2009]:
-
-    - **Manner (root)**: syllabic, consonantal, sonorant, approximant,
-      continuant, delayedRelease, nasal, lateral, strident, tap, trill
-    - **Laryngeal**: voice, spreadGlottis, constrGlottis
-    - **Place (Labial)**: labial, round, labiodental
-    - **Place (Coronal)**: coronal, anterior, distributed
-    - **Place (Dorsal)**: dorsal, high, low, front, back, tense
-
-    **Note**: The grouping above follows Hayes's flat classification.
-    The hierarchical feature geometry (`FeatureGeometry.lean`) re-maps
-    some of these features to different nodes: [nasal] → soft palate,
-    [continuant] → supralaryngeal, [lateral]/[strident] → coronal.
-    The flat manner/root grouping has no single geometric counterpart
-    — see the subsumption theorems in `FeatureGeometry.lean`.
-
-    A feature decomposition consistent with Hayes's sonority discussion:
-    [±sonorant] > [±approximant] > [±consonantal] > [±syllabic],
-    yielding 5 natural classes (obstruent, nasal, liquid, glide, vowel). -/
+/-- A binary distinctive phonological feature, following [hayes-2009]'s segmental inventory. -/
 inductive Feature where
   -- Manner / root
   | syllabic         -- [+syll] = vowels
