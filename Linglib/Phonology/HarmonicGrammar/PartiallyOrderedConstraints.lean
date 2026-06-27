@@ -20,8 +20,8 @@ cardinalities — a clean computation, no measure theory required.
 ## Architecture
 
 POC sits in the substrate alongside `Cumulativity.SystemicProblem`, sharing
-its multi-input optimization model and its `OTRealizes` definition. The new
-content here is:
+its multi-input optimization model and its `realizedByRanking` definition. The
+new content here is:
 
 - `PartialOrderConstraints n`: a partial order on `Fin n` (constraint indices).
 - `IsConsistent p σ`: σ is a linear extension of p.
@@ -275,14 +275,14 @@ variable {Input Output : Type*} {n : ℕ}
     (`consistentTotalOrders_nonempty`), so this genuinely means target
     probability = 1 under POC sampling — not the vacuous empty case, which is
     why no explicit nonemptiness conjunct is needed. -/
-def POCRealizes (P : SystemicProblem Input Output n)
+def realizedByPOC (P : SystemicProblem Input Output n)
     (p : PartialOrderConstraints n) : Prop :=
-  ∀ σ ∈ p.consistentTotalOrders, P.OTRealizes σ
+  ∀ σ ∈ p.consistentTotalOrders, P.realizedByRanking σ
 
 /-- A `SystemicProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
 def IsPOCRealizable (P : SystemicProblem Input Output n) : Prop :=
-  ∃ p : PartialOrderConstraints n, P.POCRealizes p
+  ∃ p : PartialOrderConstraints n, P.realizedByPOC p
 
 end SystemicProblem
 
@@ -307,7 +307,7 @@ theorem ot_realizable_imp_poc_realizable {Input Output : Type*} {n : ℕ}
     P.IsOTRealizable → P.IsPOCRealizable := by
   rintro ⟨σ, hσ⟩
   refine ⟨PartialOrderConstraints.fromPermutation σ, ?_⟩
-  simpa [SystemicProblem.POCRealizes,
+  simpa [SystemicProblem.realizedByPOC,
     PartialOrderConstraints.consistentTotalOrders_fromPermutation] using hσ
 
 /-- **Categorical equivalence**: under categorical realizability,

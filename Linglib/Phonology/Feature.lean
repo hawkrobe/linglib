@@ -40,8 +40,8 @@ namespace Phonology
     The hierarchical feature geometry (`FeatureGeometry.lean`) re-maps
     some of these features to different nodes: [nasal] → soft palate,
     [continuant] → supralaryngeal, [lateral]/[strident] → coronal.
-    The flat `isMajorClass` predicate has no single geometric counterpart
-    — see subsumption theorems in `FeatureGeometry.lean` §6.
+    The flat manner/root grouping has no single geometric counterpart
+    — see the subsumption theorems in `FeatureGeometry.lean` §6.
 
     A feature decomposition consistent with Hayes's sonority discussion:
     [±sonorant] > [±approximant] > [±consonantal] > [±syllabic],
@@ -85,57 +85,32 @@ abbrev FeatureVal := Option Bool
 
 /-! ### Feature classification -/
 
-/-- Is this a manner / root feature? -/
-def Feature.IsMajorClass : Feature → Prop
+/-- Articulator category of a feature: manner/root, laryngeal, or one of the
+    three place articulators ([hayes-2009] Ch 4). Single source of truth for
+    the classification predicates below. -/
+inductive Feature.Category where
+  | manner | laryngeal | labial | coronal | dorsal
+  deriving DecidableEq, Repr
+
+/-- The articulator category of each distinctive feature. -/
+def Feature.category : Feature → Feature.Category
   | .syllabic | .consonantal | .sonorant | .approximant
   | .continuant | .delayedRelease | .nasal | .lateral
-  | .strident | .tap | .trill => True
-  | _ => False
-
-instance : DecidablePred Feature.IsMajorClass := fun f => by
-  cases f <;> unfold Feature.IsMajorClass <;> infer_instance
+  | .strident | .tap | .trill                        => .manner
+  | .voice | .spreadGlottis | .constrGlottis         => .laryngeal
+  | .labial | .round | .labiodental                  => .labial
+  | .coronal | .anterior | .distributed              => .coronal
+  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
 /-- Is this a laryngeal feature? -/
-def Feature.IsLaryngeal : Feature → Prop
-  | .voice | .spreadGlottis | .constrGlottis => True
-  | _ => False
-
-instance : DecidablePred Feature.IsLaryngeal := fun f => by
-  cases f <;> unfold Feature.IsLaryngeal <;> infer_instance
-
-/-- Is this a place feature (any articulator node)? -/
-def Feature.IsPlace : Feature → Prop
-  | .labial | .round | .labiodental
-  | .coronal | .anterior | .distributed
-  | .dorsal | .high | .low | .front | .back | .tense => True
-  | _ => False
-
-instance : DecidablePred Feature.IsPlace := fun f => by
-  cases f <;> unfold Feature.IsPlace <;> infer_instance
-
-/-- Is this a labial place feature? -/
-def Feature.IsLabial : Feature → Prop
-  | .labial | .round | .labiodental => True
-  | _ => False
-
-instance : DecidablePred Feature.IsLabial := fun f => by
-  cases f <;> unfold Feature.IsLabial <;> infer_instance
-
-/-- Is this a coronal place feature? -/
-def Feature.IsCoronal : Feature → Prop
-  | .coronal | .anterior | .distributed => True
-  | _ => False
-
-instance : DecidablePred Feature.IsCoronal := fun f => by
-  cases f <;> unfold Feature.IsCoronal <;> infer_instance
+abbrev Feature.IsLaryngeal (f : Feature) : Prop := f.category = .laryngeal
 
 /-- Is this a dorsal place feature? -/
-def Feature.IsDorsal : Feature → Prop
-  | .dorsal | .high | .low | .front | .back | .tense => True
-  | _ => False
+abbrev Feature.IsDorsal (f : Feature) : Prop := f.category = .dorsal
 
-instance : DecidablePred Feature.IsDorsal := fun f => by
-  cases f <;> unfold Feature.IsDorsal <;> infer_instance
+/-- Is this a place feature (any articulator node)? -/
+abbrev Feature.IsPlace (f : Feature) : Prop :=
+  f.category = .labial ∨ f.category = .coronal ∨ f.category = .dorsal
 
 /-! ### Exhaustive feature list -/
 

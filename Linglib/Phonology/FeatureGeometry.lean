@@ -21,8 +21,8 @@ tiers ([clements-hume-1995]). The tree synthesizes three sources:
             ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
             └── Dorsal [±dor, ±high, ±low, ±front, ±back, ±tense]
 
-The flat classification predicates in `Feature.lean` (`isMajorClass`, `isPlace`)
-do not exactly correspond to any single geometric node —
+The flat classification predicates in `Feature.lean` (`IsPlace`, `IsLaryngeal`,
+`IsDorsal`) do not exactly correspond to any single geometric node —
 see the subsumption theorems below.
 -/
 
@@ -180,7 +180,7 @@ theorem dorsal_features_count : GeomNode.dorsal.features.length = 6 := rfl
 -- isLaryngeal matches the geometry exactly.
 -- isDorsal matches the geometry exactly.
 -- isPlace now matches the geometry exactly (includes labiodental, front, tense).
--- isMajorClass has no single geometric counterpart: its features are
+-- The manner/root features have no single geometric counterpart: they are
 -- distributed across root, supralaryngeal, softPalate, and coronal.
 
 theorem IsLaryngeal_iff_laryngeal_DominatedBy (f : Feature) :
@@ -192,7 +192,7 @@ theorem IsDorsal_iff_dorsal_DominatedBy (f : Feature) :
   cases f <;> decide
 
 -- IsPlace is a strict subset of geometric place dominance
--- (IsMajorClass features like lateral and strident are geometrically under coronal)
+-- (manner features like lateral and strident are geometrically under coronal)
 theorem IsPlace_implies_place_DominatedBy (f : Feature) :
     f.IsPlace → f.DominatedBy .place := by
   cases f <;> decide
