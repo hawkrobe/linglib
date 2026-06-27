@@ -57,21 +57,7 @@ namespace HarmonicGrammar
 
 open Constraints Finset
 
--- ============================================================================
--- § 1: Decidable Lex Comparison
--- ============================================================================
-
-/-- `LexStrictlyBetter` on `Fin n → ℕ` is decidable: the existential ranges
-    over `Fin n`, the witness predicates are over `Fin` with decidable
-    equality and decidable order. Required for `decide`-based realizability
-    checks on concrete instances. -/
-instance decLexStrictlyBetter {n : ℕ} (va vb : Fin n → ℕ) :
-    Decidable (LexStrictlyBetter va vb) := by
-  unfold LexStrictlyBetter; infer_instance
-
--- ============================================================================
--- § 2: Systemic Optimization Problem
--- ============================================================================
+/-! ### Systemic optimization problem -/
 
 /-- A multi-input optimization problem with a target mapping that a grammar
     must simultaneously realize for every input. The cumulativity gap lives
@@ -113,9 +99,8 @@ def IsHGRealizable (P : SystemicProblem Input Output n) : Prop :=
 def OTRealizes (P : SystemicProblem Input Output n) (σ : Equiv.Perm (Fin n)) :
     Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-    LexStrictlyBetter
-      (fun k : Fin n => P.vp i (P.target i) (σ k))
-      (fun k : Fin n => P.vp i o (σ k))
+    toLex (fun k : Fin n => P.vp i (P.target i) (σ k)) <
+    toLex (fun k : Fin n => P.vp i o (σ k))
 
 /-- A problem is **OT-realizable** if some constraint permutation realizes
     the target. -/
@@ -124,9 +109,7 @@ def IsOTRealizable (P : SystemicProblem Input Output n) : Prop :=
 
 end SystemicProblem
 
--- ============================================================================
--- § 3: Forward Containment — OT ⊆ HG
--- ============================================================================
+/-! ### Forward containment — OT ⊆ HG -/
 
 /-- Re-indexing weighted violations through a permutation. The weighting
     `w ∘ σ⁻¹` evaluated at violation profile `v` equals the weighting `w`
@@ -166,9 +149,7 @@ theorem ot_realizable_imp_hg_realizable {Input Output : Type*} {n : ℕ}
     · exact expWeights_separated n M hM
     · exact hσ i hi o ho hne
 
--- ============================================================================
--- § 4: Strict Containment Witness — Abstract Lyman's Law
--- ============================================================================
+/-! ### Strict containment witness — abstract Lyman's Law -/
 
 namespace Cumulativity
 
@@ -236,14 +217,13 @@ theorem lyman_isHGRealizable : lymanProblem.IsHGRealizable := by
 
     The first two conditions place `F` above both markedness constraints,
     contradicting the third. The proof is closed by `decide` over the six
-    permutations of `Fin 3` (using `decLexStrictlyBetter`). -/
+    permutations of `Fin 3` (the `<` on `ViolationProfile` is decidable). -/
 theorem lyman_not_isOTRealizable : ¬ lymanProblem.IsOTRealizable := by
   show ¬ ∃ σ : Equiv.Perm (Fin 3),
     ∀ i ∈ (Finset.univ : Finset (Fin 3)),
       ∀ o ∈ (Finset.univ : Finset Bool), o ≠ lymanTarget i →
-        LexStrictlyBetter
-          (fun k : Fin 3 => lymanVp i (lymanTarget i) (σ k))
-          (fun k : Fin 3 => lymanVp i o (σ k))
+        toLex (fun k : Fin 3 => lymanVp i (lymanTarget i) (σ k)) <
+        toLex (fun k : Fin 3 => lymanVp i o (σ k))
   decide
 
 end Cumulativity

@@ -95,9 +95,9 @@ theorem lse_aggregator_tendsto_winner_harmony {C : Type*} [DecidableEq C]
     (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
     (cands : Finset C) (c_opt : C) (hc_opt : c_opt ∈ cands)
     (hbound : ∀ c ∈ cands, ∀ con ∈ ranking, con.eval c ≤ M)
-    (hlex : ∀ c ∈ cands, c ≠ c_opt → LexStrictlyBetter
-      (fun i : Fin ranking.length => (ranking.get i).eval c_opt)
-      (fun i : Fin ranking.length => (ranking.get i).eval c)) :
+    (hlex : ∀ c ∈ cands, c ≠ c_opt →
+      toLex (fun i : Fin ranking.length => (ranking.get i).eval c_opt) <
+      toLex (fun i : Fin ranking.length => (ranking.get i).eval c)) :
     Tendsto (fun α : ℝ =>
         lseFinset α cands (harmonyScore (otToWeighted ranking M))) atTop
       (𝓝 (harmonyScore (otToWeighted ranking M) c_opt)) := by
