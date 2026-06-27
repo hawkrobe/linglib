@@ -1,4 +1,5 @@
 import Mathlib.Order.Nat
+import Mathlib.Data.List.Chain
 import Linglib.Phonology.Segment
 
 /-!
@@ -129,36 +130,30 @@ def Syllable.rhyme (σ : Syllable) : List Segment := σ.nucleus ++ σ.coda
 def Syllable.segments (σ : Syllable) : List Segment :=
   σ.onset ++ σ.nucleus ++ σ.coda
 
-def Syllable.hasOnset (σ : Syllable) : Bool := !σ.onset.isEmpty
-def Syllable.hasCoda (σ : Syllable) : Bool := !σ.coda.isEmpty
-def Syllable.isOpen (σ : Syllable) : Bool := σ.coda.isEmpty
-def Syllable.isClosed (σ : Syllable) : Bool := !σ.coda.isEmpty
+/-- The syllable has a (non-empty) onset. -/
+abbrev Syllable.hasOnset (σ : Syllable) : Prop := σ.onset ≠ []
+/-- The syllable has a (non-empty) coda. Equivalent to `isClosed`. -/
+abbrev Syllable.hasCoda (σ : Syllable) : Prop := σ.coda ≠ []
+/-- An *open* syllable has no coda. -/
+abbrev Syllable.isOpen (σ : Syllable) : Prop := σ.coda = []
+/-- A *closed* syllable has a coda — the negation of `isOpen`. -/
+abbrev Syllable.isClosed (σ : Syllable) : Prop := σ.coda ≠ []
 
 -- ============================================================================
 -- § 3: Sonority Sequencing Principle
 -- ============================================================================
 
-/-- Is a list of Nats monotonically non-decreasing? -/
-def monotoneRising : List Nat → Bool
-  | [] | [_] => true
-  | a :: b :: rest => (a ≤ b) && monotoneRising (b :: rest)
+/-- Does the onset obey SSP? Sonority rises (non-strictly) toward the
+    nucleus — the sonority-rank sequence is a `≤`-chain ([goldsmith-2011]). -/
+abbrev Syllable.sspOnset (σ : Syllable) : Prop :=
+  List.IsChain (· ≤ ·) (σ.onset.map (λ s => (sonorityOf s).rank))
 
-/-- Is a list of Nats monotonically non-increasing? -/
-def monotoneFalling : List Nat → Bool
-  | [] | [_] => true
-  | a :: b :: rest => (a ≥ b) && monotoneFalling (b :: rest)
-
-/-- Does the onset obey SSP? Sonority rises toward the nucleus. -/
-def Syllable.sspOnset (σ : Syllable) : Bool :=
-  monotoneRising (σ.onset.map (λ s => (sonorityOf s).rank))
-
-/-- Does the coda obey SSP? Sonority falls from the nucleus. -/
-def Syllable.sspCoda (σ : Syllable) : Bool :=
-  monotoneFalling (σ.coda.map (λ s => (sonorityOf s).rank))
+/-- Does the coda obey SSP? Sonority falls (non-strictly) from the nucleus. -/
+abbrev Syllable.sspCoda (σ : Syllable) : Prop :=
+  List.IsChain (· ≥ ·) (σ.coda.map (λ s => (sonorityOf s).rank))
 
 /-- Full SSP: onset rises, coda falls. -/
-def Syllable.sspValid (σ : Syllable) : Bool :=
-  σ.sspOnset && σ.sspCoda
+abbrev Syllable.sspValid (σ : Syllable) : Prop := σ.sspOnset ∧ σ.sspCoda
 
 -- ============================================================================
 -- § 4: Syllabified Form
@@ -217,12 +212,12 @@ def Syllable.weight (σ : Syllable) (codaMoraic : Bool := true) : SyllWeight :=
 /-- ONSET: every syllable must have an onset.
     Returns count of onsetless syllables. -/
 def onsetViolations (sf : SyllabifiedForm) : Nat :=
-  sf.syllables.filter (fun σ => !σ.hasOnset) |>.length
+  sf.syllables.filter (fun σ => σ.onset.isEmpty) |>.length
 
 /-- NOCODA: syllables should not have codas.
     Returns count of syllables with codas. -/
 def noCodaViolations (sf : SyllabifiedForm) : Nat :=
-  sf.syllables.filter Syllable.hasCoda |>.length
+  sf.syllables.filter (fun σ => !σ.coda.isEmpty) |>.length
 
 /-- *COMPLEXONSET: no complex (multi-segment) onsets.
     Returns count of syllables with onset length > 1. -/
@@ -237,14 +232,11 @@ def complexCodaViolations (sf : SyllabifiedForm) : Nat :=
 /-- SSP: every syllable obeys the Sonority Sequencing Principle.
     Returns count of syllables violating SSP. -/
 def sspViolations (sf : SyllabifiedForm) : Nat :=
-  sf.syllables.filter (fun σ => !σ.sspValid) |>.length
+  sf.syllables.filter (fun σ => !decide σ.sspValid) |>.length
 
 -- ============================================================================
 -- § 7: Verification Theorems
 -- ============================================================================
-
-theorem monotoneRising_singleton (n : Nat) : monotoneRising [n] = true := rfl
-theorem monotoneFalling_singleton (n : Nat) : monotoneFalling [n] = true := rfl
 
 theorem cv_is_light (σ : Syllable) (h1 : σ.nucleus.length = 1)
     (h2 : σ.coda = []) :

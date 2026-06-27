@@ -253,7 +253,7 @@ theorem kaanus_weight_profile :
 
 /-- CL output satisfies the bimoraic minimal word constraint (4μ ≥ 2μ). -/
 theorem kaanus_satisfies_minword :
-    kaanus_form.toPrWd.satisfiesMinWord = true := rfl
+    kaanus_form.toPrWd.satisfiesMinWord := by decide
 
 /-- Middle English: CL preserves the bimoraic minimum across syllable
     restructuring. Input ⟨talə⟩ = [L, L] (2μ); output [ta:l] = [H] (2μ).
@@ -263,9 +263,9 @@ theorem kaanus_satisfies_minword :
     CL does not change total mora count, so it cannot cause a minimal word
     violation that wasn't already present. -/
 theorem tale_minword_preserved :
-    tale_input.toPrWd.satisfiesMinWord = true ∧
-    (MoraicForm.mk [tale_output]).toPrWd.satisfiesMinWord = true :=
-  ⟨rfl, rfl⟩
+    tale_input.toPrWd.satisfiesMinWord ∧
+    (MoraicForm.mk [tale_output]).toPrWd.satisfiesMinWord :=
+  ⟨by decide, by decide⟩
 
 end ProsodicPipeline
 

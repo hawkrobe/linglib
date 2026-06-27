@@ -234,10 +234,11 @@ theorem cvvc_superheavy (v c₁ c₂ : Segment) :
 theorem geminate_makes_heavy (v seg : Segment) :
     (MoraicSyllable.mk [] [⟨v, .one⟩, ⟨seg, .one⟩]).toSyllWeight = .heavy := rfl
 
-/-- The moraic minimal word: `satisfiesMinWord` checks ≥ 2 morae by default.
-    This connects moraic representations to PrWd's bimoraic minimum. -/
+/-- The moraic minimal word: `satisfiesMinWord` holds iff there are ≥ 2 morae
+    (the default). This connects moraic representations to PrWd's bimoraic
+    minimum. -/
 theorem moraic_minword (f : MoraicForm) :
-    f.toPrWd.satisfiesMinWord = decide (f.toPrWd.moraCount ≥ 2) := rfl
+    f.toPrWd.satisfiesMinWord ↔ f.toPrWd.moraCount ≥ 2 := Iff.rfl
 
 /-- **Round-trip fidelity**: `toSyllWeight.morae` recovers the exact mora count.
     No bounds needed — `SyllWeight` is now a `Nat` wrapper, not a lossy enum. -/
