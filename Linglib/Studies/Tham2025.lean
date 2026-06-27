@@ -613,7 +613,7 @@ theorem crack_refutes_strict_hkl_matrix :
 -- ════════════════════════════════════════════════════
 
 /-! [kennedy-2007]'s `closedAdj_licensed` substrate (consumed in
-    `Studies/Kennedy2007Licensing.lean` for *full*,
+    `Studies/Kennedy2007.lean` for *full*,
     *wet*, *dry*, *straight*) extends to disturbance adjectives without
     modification. The convergence at `Boundedness` is the partner of the
     §9 divergence at `VendlerClass`: same substrate, different
