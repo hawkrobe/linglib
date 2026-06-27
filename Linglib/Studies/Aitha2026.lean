@@ -49,7 +49,7 @@ Telugu nouns exhibit two stem alternation patterns:
 - §3: Weak alternation — *ABA violation and syllable-weight conditioning
 - §4: Stem-level metrical parsing (OT tableau)
 - §5: Word-level phonology — NOM and DAT tableaux (Stratal OT)
-- §6: PrWd-based surface form prediction
+- §6: Word-based surface form prediction
 -/
 
 namespace Aitha2026
@@ -137,7 +137,7 @@ def strongSurface (p : StrongParadigm) (c : TeluguCase) : String :=
 /-- Stem form in weakly suppletive nouns. -/
 inductive WeakStemForm where
   | short  -- -am (before heavy σ or domain-finally)
-  | long   -- -āni (before light σ within PrWd)
+  | long   -- -āni (before light σ within Word)
   deriving DecidableEq, Repr
 
 /-- The weak noun paradigm for *samudram* 'ocean'.
@@ -297,24 +297,24 @@ theorem weak_pattern_from_paradigm :
     suffix or an agreement suffix.
 
     Data from [aitha-2026]'s full(er) paradigm including agreement:
-    - ACC *-ni*: light σ within PrWd → long (*samudr-āni-ni*)
-    - DAT *-ki*: light σ within PrWd → long (*samudr-āni-ki*)
-    - 1SG *-ni*: light σ within PrWd → long (*samudr-āni-ni*)
-    - 2SG *-vi*: light σ within PrWd → long (*samudr-āni-vi*)
+    - ACC *-ni*: light σ within Word → long (*samudr-āni-ni*)
+    - DAT *-ki*: light σ within Word → long (*samudr-āni-ki*)
+    - 1SG *-ni*: light σ within Word → long (*samudr-āni-ni*)
+    - 2SG *-vi*: light σ within Word → long (*samudr-āni-vi*)
     - NOM *-∅*: no following σ → short (*samudr-am-∅*)
     - GEN *-∅*: no following σ → short (*samudr-am-∅*)
     - 3SG *-∅*: no following σ → short (*samudr-am-∅*)
-    - P *-lō*: separate PrWd → short (*samudr-am-lō*)
-    - P *-gurinci*: separate PrWd → short (*samudr-am-gurinci*)
-    - P *-eduru*: separate PrWd → short (*samudr-am-eduru*)
+    - P *-lō*: separate Word → short (*samudr-am-lō*)
+    - P *-gurinci*: separate Word → short (*samudr-am-gurinci*)
+    - P *-eduru*: separate Word → short (*samudr-am-eduru*)
 
     Note: -gurinci and -eduru begin with light syllables, yet still
-    trigger the short form. The conditioning factor is PrWd membership,
+    trigger the short form. The conditioning factor is Word membership,
     not syllable weight of the following element per se. -/
 inductive FollowingContext where
   | noSuffix           -- NOM, GEN, 3SG: no overt suffix
   | lightWithinPrWd    -- ACC -ni, DAT -ki, 1SG -ni, 2SG -vi
-  | separatePrWd       -- postpositions (-lō, -gurinci, -eduru): separate PrWd
+  | separatePrWd       -- postpositions (-lō, -gurinci, -eduru): separate Word
   deriving DecidableEq, Repr
 
 /-- The phonological conditioning: long form iff followed by a light
@@ -333,7 +333,7 @@ theorem light_suffix_triggers_long :
 theorem no_suffix_triggers_short :
     weakFormPredicted .noSuffix = .short := rfl
 
-/-- Postposition in a separate PrWd → short form (regardless of
+/-- Postposition in a separate Word → short form (regardless of
     whether the postposition starts with a light or heavy syllable). -/
 theorem separate_prwd_triggers_short :
     weakFormPredicted .separatePrWd = .short := rfl
@@ -359,7 +359,7 @@ def AgrSuffix.toFollowing : AgrSuffix → FollowingContext
   | .sg3 => .noSuffix           -- -∅
 
 /-- 1SG *-ni* triggers the long form, just like ACC *-ni*.
-    Both are light syllables within PrWd — the conditioning is
+    Both are light syllables within Word — the conditioning is
     phonological, not morphosyntactic. -/
 theorem agr_1sg_triggers_long :
     weakFormPredicted (AgrSuffix.sg1).toFollowing = .long := rfl
@@ -531,7 +531,7 @@ def RichExponent.stressed (s : String) : RichExponent :=
 
 /-- The singular suffix *-ni* carries prespecified stress.
     This prespecification, interacting with FT-BIN(μ) and IDENT-STRESS
-    at the Word level, drives deletion of *-ni* when it is PrWd-final
+    at the Word level, drives deletion of *-ni* when it is Word-final
     and cannot form a binary foot. -/
 def sgNiExponent : RichExponent := .stressed "ni"
 
@@ -539,11 +539,11 @@ theorem sgNi_is_stressed :
     sgNiExponent.prosody.inherentStress = some true := rfl
 
 -- ────────────────────────────────────────────────────────────────────
--- § 5.1: NOM — PrWd-final stressed -ni (no following light suffix)
+-- § 5.1: NOM — Word-final stressed -ni (no following light suffix)
 -- ────────────────────────────────────────────────────────────────────
 
 /-- Word-level candidates for the NOM input (ˈsa.mu).(ˌdram).ní.
-    Stressed *-ni* is PrWd-final: no following suffix to pair with. -/
+    Stressed *-ni* is Word-final: no following suffix to pair with. -/
 inductive WordCandNom where
   /-- (ˈsa.mu).(ˌdram).ni — stress on *-ni* removed. -/
   | destress
@@ -585,18 +585,18 @@ def wordNomCands : List WordCandNom :=
 
 theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
 
-/-- Word level, NOM: PrWd-final stressed *-ni* is deleted.
+/-- Word level, NOM: Word-final stressed *-ni* is deleted.
     Surface: *samudr-am* (short form). -/
 theorem wordNom_optimal :
     (mkTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
       = {.deleteNi} := by native_decide
 
 -- ────────────────────────────────────────────────────────────────────
--- § 5.2: DAT — light -ki follows within PrWd
+-- § 5.2: DAT — light -ki follows within Word
 -- ────────────────────────────────────────────────────────────────────
 
 /-- Word-level candidates for the DAT input (ˈsa.mu).(ˌdram).ní.ki.
-    The light suffix *-ki* is PrWd-internal, so *-ni* can form a
+    The light suffix *-ki* is Word-internal, so *-ni* can form a
     bimoraic foot (ˌní.ki) — but the /mn/ boundary violates \*DIST-0. -/
 inductive WordCandDat where
   /-- (ˈsa.mu).(ˌdram).(ˌní.ki) — faithful. /mn/ boundary retained. -/
@@ -649,9 +649,9 @@ theorem wordDat_optimal :
 
 /-- The same constraint system derives both surface forms from the same
     underlying *-am-ni*. The difference is purely phonological: whether
-    a light suffix follows within the PrWd.
+    a light suffix follows within the Word.
 
-    - NOM (no suffix): *-ni* is PrWd-final → deleted → **short**
+    - NOM (no suffix): *-ni* is Word-final → deleted → **short**
     - DAT (*-ki* follows): *-ni* pairs with *-ki* → /mn/ repaired → **long**
 
     This completes the derivation that the `weakFormPredicted` function
@@ -772,7 +772,7 @@ open OptimalityTheory.Stratal
 
     - **Stem**: input `/samudr-am/`, optimal parse `(ˈsa.mu).(ˌdram)` (= `.ll_H`).
     - **Word**: stem output combined with prosodified `-ni` singular suffix
-      and a null NOM exponent; PrWd-final stressed `-ni` is deleted; output
+      and a null NOM exponent; Word-final stressed `-ni` is deleted; output
       `samudram` (= `.deleteNi`).
     - **Phrase**: no overt postposition follows, so no Phrase-level repairs
       are required. Surface = Word output. -/
@@ -844,7 +844,7 @@ theorem max_promoted_phrase_relative_to_word :
 end CrossStratumReranking
 
 -- ============================================================================
--- § 6: PrWd-Based Surface Form Prediction
+-- § 6: Word-Based Surface Form Prediction
 -- ============================================================================
 
 section PrWdIntegration
@@ -853,11 +853,11 @@ open Prosody
 
 /-- Predict the weak stem form from the following morphological element.
     Uses `MorphElement.triggersLongForm` from `ProsodicWord`: the long
-    form surfaces iff the following element is PrWd-internal AND begins
+    form surfaces iff the following element is Word-internal AND begins
     with a light syllable. -/
 def weakSurfaceFromPrWd : Option MorphElement → WeakStemForm
   | some m => if m.triggersLongForm then .long else .short
-  | none   => .short  -- no following element → PrWd-final → short
+  | none   => .short  -- no following element → Word-final → short
 
 -- Case suffixes
 
@@ -881,19 +881,19 @@ theorem agr_1sg_ni_long :
 theorem agr_2sg_vi_long :
     weakSurfaceFromPrWd (some ⟨"-vi", .agreement, .light⟩) = .long := rfl
 
--- Postpositions (PrWd-external → always short)
+-- Postpositions (Word-external → always short)
 
 theorem postp_lo_short :
     weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = .short := rfl
 
 /-- Postposition *-gurinci* 'about' begins with a light syllable, yet
-    triggers the short form — because it is PrWd-external. This is
-    the key evidence that the conditioning is PrWd membership, not
+    triggers the short form — because it is Word-external. This is
+    the key evidence that the conditioning is Word membership, not
     syllable weight alone. -/
 theorem postp_gurinci_short :
     weakSurfaceFromPrWd (some ⟨"-gurinci", .postposition, .light⟩) = .short := rfl
 
-/-- The PrWd-based prediction matches the original paradigm data for
+/-- The Word-based prediction matches the original paradigm data for
     all five cases in the canonical weak paradigm. -/
 theorem prwd_matches_paradigm :
     weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = .long ∧
@@ -903,9 +903,9 @@ theorem prwd_matches_paradigm :
     weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = .short :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-/-- The PrWd-based prediction agrees with the original `weakParadigm`
+/-- The Word-based prediction agrees with the original `weakParadigm`
     for all five cases. This closes the gap between the phonological
-    derivation (OT + PrWd) and the empirical data (paradigm). -/
+    derivation (OT + Word) and the empirical data (paradigm). -/
 theorem prwd_agrees_with_paradigm :
     (weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = weakParadigm .acc) ∧
     (weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = weakParadigm .dat) ∧
@@ -925,7 +925,7 @@ end PrWdIntegration
     1. Strong alternation: ABB pattern (contiguous on containment
        hierarchy) → case-conditioned contextual allomorphy (VI).
     2. Weak alternation: ABAB pattern (violates *ABA) → phonological
-       alternation conditioned by syllable weight within PrWd.
+       alternation conditioned by syllable weight within Word.
 
     The strong alternation depends on structural position (Elsewhere
     Condition + ACC feature); the weak alternation depends on linear
@@ -984,31 +984,29 @@ theorem central_argument :
 section MoraicCLConnection
 
 open Phonology (Segment)
-open Prosody (MoraicParams syllableToMoraic MoraicSyllable)
-open Prosody.CL (deleteMoraic spreadToFill)
+open Prosody (Syllable)
+open Prosody.CL (strand spread strandedCount)
 
-/-- Telugu has Weight by Position: coda consonants bear morae, making
-    CVC syllables heavy. This is assumed by the Stem-level parse, where
-    *dram* (CVC) is treated as heavy (2μ). -/
-def teluguMoraicParams : MoraicParams := { wbp := true }
+/-- Telugu has Weight by Position: coda consonants bear morae, making CVC
+    syllables heavy. This is assumed by the Stem-level parse, where *dram*
+    (CVC) is treated as heavy (2μ). -/
+def teluguWBP : Bool := true
 
 /-- In a WBP language like Telugu, deleting a coda consonant strands one
-    mora — this is [hayes-1989]'s **classical CL** (§5.1.1).
+    mora — this is [hayes-1989]'s **classical CL**.
 
-    This grounds the DAT `compLengthen` candidate: /m/ deletion from
-    /dram/ strands a mora, which spreads left to yield /drā/.
-    The CL repair is not a stipulated candidate — it is available
-    precisely because Telugu has WBP. -/
+    This grounds the DAT `compLengthen` candidate: /m/ deletion from /dram/
+    strands a mora, which spreads left to yield /drā/. The CL repair is not a
+    stipulated candidate — it is available precisely because Telugu has WBP. -/
 theorem telugu_coda_deletion_strands_mora (o n c : Segment) :
-    (deleteMoraic (syllableToMoraic teluguMoraicParams ⟨[o], [n], [c]⟩) 1).2 = 1 := rfl
+    strandedCount (strand (Syllable.ofCV [o] [n] [c] teluguWBP) 1) = 1 := rfl
 
-/-- Moraic conservation (Rule (64), [hayes-1989]): the mora stranded
-    by /m/ deletion is absorbed by leftward spreading to /a/, yielding /ā/
-    (2μ). Total mora count is unchanged. -/
+/-- Moraic conservation ([hayes-1989]): the mora stranded by /m/ deletion is
+    absorbed by leftward spreading to /a/, yielding /ā/ (2μ). Total mora count
+    is unchanged. -/
 theorem telugu_cl_conservation (o n c : Segment) :
-    let σ := syllableToMoraic teluguMoraicParams ⟨[o], [n], [c]⟩
-    let (σ_del, stranded) := deleteMoraic σ 1
-    σ.moraCount = (spreadToFill σ_del stranded .left).moraCount := rfl
+    let σ := Syllable.ofCV [o] [n] [c] teluguWBP
+    σ.moraCount = (spread (strand σ 1) .left).moraCount := rfl
 
 end MoraicCLConnection
 
@@ -1036,7 +1034,7 @@ theorem stemSystem_predict_ll_H :
 noncomputable def wordNomSystem : ConstraintSystem WordCandNom (LexProfile Nat 6) :=
   tableauSystem (mkTableau wordNomCands wordNomRanking wordNomCands_ne)
 
-/-- Probability 1 on `deleteNi`: PrWd-final stressed *-ni* is deleted. -/
+/-- Probability 1 on `deleteNi`: Word-final stressed *-ni* is deleted. -/
 theorem wordNomSystem_predict_deleteNi :
     wordNomSystem.predict WordCandNom.deleteNi = 1 :=
   tableauSystem_predict_unique_winner _ _ wordNom_optimal

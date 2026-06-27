@@ -259,7 +259,7 @@ theorem clitic_implies_ms_free (s : MorphStatus) (h : s.IsClitic) :
     morphStatusToMSBound s = .free := by
   cases s <;> simp_all [MorphStatus.IsClitic, morphStatusToMSBound]
 
-/-- Map PrWd membership to p-boundedness. -/
+/-- Map Word membership to p-boundedness. -/
 def prWdMembershipToPBound (isPrWdInternal : Bool) : PBoundedness :=
   if isPrWdInternal then .bound else .free
 
@@ -436,25 +436,25 @@ theorem clitic_implies_msfree (s : Morphology.MorphStatus)
     (h : s.IsClitic) : morphStatusToMSBound s = .free :=
   clitic_implies_ms_free s h
 
-/-! ### 2c. PrWd diagnostics determine p-boundedness
+/-! ### 2c. Word diagnostics determine p-boundedness
 
 [kalin-bjorkman-etal-2026] §3.2.2: prosodic diagnostics (vowel
 harmony scope, minimal word constraints, hiatus resolution) diagnose
 p-boundedness. This is formalized via the ProsodicWord bridge. -/
 
-/-- An inflectional suffix (PrWd-internal) combined with ms-boundedness
+/-- An inflectional suffix (Word-internal) combined with ms-boundedness
     from the ZP criteria yields canonical affix. -/
 theorem zpAffix_plus_prWdInternal :
     (wordhoodProfile .inflAffix
       (prWdMembershipToPBound true)).classify = .canonicalAffix := rfl
 
-/-- A clitic (ms-free) that is PrWd-internal (p-bound) yields
+/-- A clitic (ms-free) that is Word-internal (p-bound) yields
     simple clitic — the canonical configuration for Romance clitics. -/
 theorem zpClitic_plus_prWdInternal :
     (wordhoodProfile .simpleClitic
       (prWdMembershipToPBound true)).classify = .simpleClitic := rfl
 
-/-- An affix (ms-bound) that is PrWd-external (p-free) yields
+/-- An affix (ms-bound) that is Word-external (p-free) yields
     non-cohering affix — the configuration for Dutch non-cohering
     prefixes. -/
 theorem zpAffix_plus_prWdExternal :
