@@ -142,6 +142,54 @@ theorem lexLE_cons_cons_iff (x y : Nat) (xs ys : List Nat) :
   Iff.rfl
 
 -- ============================================================================
+-- § 3c: Fixed-Length Bridge — `LexLE` ↔ `Pi.Lex`
+-- ============================================================================
+
+/-- `Pi.Lex` over `Fin (n+1)` decomposes at index 0 (head-then-tail). -/
+theorem toLex_fin_le_succ {n : Nat} (f g : Fin (n + 1) → Nat) :
+    toLex f ≤ toLex g ↔
+      f 0 < g 0 ∨ (f 0 = g 0 ∧ toLex (λ i : Fin n => f i.succ) ≤ toLex (λ i : Fin n => g i.succ)) := by
+  constructor
+  · intro h
+    rcases h.lt_or_eq with hlt | heq
+    · obtain ⟨i, hb, hi⟩ := hlt
+      rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨i', rfl⟩
+      · exact Or.inl hi
+      · exact Or.inr ⟨hb 0 (Fin.succ_pos i'),
+          le_of_lt ⟨i', λ j hj => hb j.succ (Fin.succ_lt_succ_iff.mpr hj), hi⟩⟩
+    · have hfg : f = g := by simpa using congrArg ofLex heq
+      subst hfg; exact Or.inr ⟨rfl, le_refl _⟩
+  · rintro (hlt | ⟨h0, htail⟩)
+    · exact le_of_lt ⟨0, λ j hj => absurd hj (Fin.not_lt_zero j), hlt⟩
+    · rcases htail.lt_or_eq with htlt | hteq
+      · obtain ⟨i, hb, hi⟩ := htlt
+        refine le_of_lt ⟨i.succ, λ j hj => ?_, hi⟩
+        rcases Fin.eq_zero_or_eq_succ j with rfl | ⟨j', rfl⟩
+        · exact h0
+        · exact hb j' (Fin.succ_lt_succ_iff.mp hj)
+      · have htf : (λ i : Fin n => f i.succ) = (λ i : Fin n => g i.succ) := by
+          simpa using congrArg ofLex hteq
+        refine le_of_eq (congrArg toLex ?_)
+        funext i
+        rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨i', rfl⟩
+        · exact h0
+        · exact congrFun htf i'
+
+/-- The decidable variable-length `LexLE` on `List.ofFn` agrees with the
+    fixed-length lexicographic order `toLex` on `Fin n → Nat` (= `LexProfile
+    Nat n`). That order is mathlib's `MonomialOrder.lex` (by `rfl`), so this is
+    the bridge from the computable `LexLE` EVAL to the term order underlying
+    `[eisner-2000]`/`[lamont-2022b]`'s directional OT evaluation. -/
+theorem lexLE_ofFn : ∀ {n : Nat} (f g : Fin n → Nat),
+    LexLE (List.ofFn f) (List.ofFn g) ↔ toLex f ≤ toLex g
+  | 0, f, g => by
+    rw [show List.ofFn f = [] by simp, show List.ofFn g = [] by simp]
+    exact ⟨λ _ => le_of_eq (Subsingleton.elim _ _), λ _ => lexLE_nil _⟩
+  | n + 1, f, g => by
+    rw [List.ofFn_succ, List.ofFn_succ, lexLE_cons_cons_iff,
+        lexLE_ofFn (λ i => f i.succ) (λ i => g i.succ), toLex_fin_le_succ]
+
+-- ============================================================================
 -- § 4c: LexLE Transitivity — Total Preorder
 -- ============================================================================
 
@@ -223,7 +271,7 @@ theorem lexLE_antisymm : ∀ (a b : List Nat),
 /-- A non-empty list has a minimum element under `LexLE`, provided all
     profiles have equal length. This is the key ingredient for
     `optimal_nonempty`: the lex-min set is non-empty. -/
-theorem exists_lexLE_minimum {α : Type} (xs : List α) (hne : xs ≠ [])
+theorem exists_lexLE_minimum {α : Type*} (xs : List α) (hne : xs ≠ [])
     (f : α → List Nat)
     (hlen : ∀ a ∈ xs, ∀ b ∈ xs, (f a).length = (f b).length) :
     ∃ x ∈ xs, ∀ y ∈ xs, LexLE (f x) (f y) := by
@@ -252,6 +300,66 @@ theorem exists_lexLE_minimum {α : Type} (xs : List α) (hne : xs ≠ [])
           cases hy with
           | head => exact hma
           | tail _ h => exact hm_min y h⟩
+
+-- ============================================================================
+-- § 4e: Term Orders — degree / lex / reverse-lex on violation vectors
+-- ============================================================================
+
+/-- The term (monomial) order EVAL compares one constraint's violation vector
+    under: `degree` (total violations — the ungraded total-degree *preorder*,
+    `sum ≤`, ties equal-count candidates; this is parallel OT), `lex`
+    (`[eisner-2000]`/`[lamont-2022b]` left-to-right `*FLOAT^→`), and `revLex`
+    (right-to-left `*FLOAT^←`). `lex` is mathlib's `MonomialOrder.lex` on the
+    violation monomial (via `lexLE_ofFn`); `degree` is its augmentation. -/
+inductive TermOrder | degree | lex | revLex
+  deriving DecidableEq, Repr, Inhabited
+
+/-- `a` is at-least-as-harmonic as `b` under a term order (smaller = better). -/
+def TermOrder.le : TermOrder → List Nat → List Nat → Prop
+  | .degree, a, b => a.sum ≤ b.sum
+  | .lex,    a, b => LexLE a b
+  | .revLex, a, b => LexLE a.reverse b.reverse
+
+instance (o : TermOrder) (a b : List Nat) : Decidable (o.le a b) :=
+  match o with
+  | .degree => inferInstanceAs (Decidable (a.sum ≤ b.sum))
+  | .lex    => inferInstanceAs (Decidable (LexLE a b))
+  | .revLex => inferInstanceAs (Decidable (LexLE a.reverse b.reverse))
+
+@[simp] theorem TermOrder.le_degree (a b : List Nat) :
+    TermOrder.degree.le a b ↔ a.sum ≤ b.sum := Iff.rfl
+@[simp] theorem TermOrder.le_lex (a b : List Nat) :
+    TermOrder.lex.le a b ↔ LexLE a b := Iff.rfl
+@[simp] theorem TermOrder.le_revLex (a b : List Nat) :
+    TermOrder.revLex.le a b ↔ LexLE a.reverse b.reverse := Iff.rfl
+
+/-- Strict version of `TermOrder.le`. -/
+def TermOrder.lt (o : TermOrder) (a b : List Nat) : Prop := o.le a b ∧ ¬ o.le b a
+
+instance (o : TermOrder) (a b : List Nat) : Decidable (o.lt a b) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+theorem TermOrder.le_refl (o : TermOrder) (a : List Nat) : o.le a a := by
+  cases o
+  · exact Nat.le_refl _
+  · exact lexLE_refl _
+  · exact lexLE_refl _
+
+theorem TermOrder.le_trans (o : TermOrder) {a b c : List Nat}
+    (hab : o.le a b) (hbc : o.le b c) : o.le a c := by
+  cases o
+  · exact Nat.le_trans hab hbc
+  · exact lexLE_trans _ _ _ hab hbc
+  · exact lexLE_trans _ _ _ hab hbc
+
+/-- `degree` is total unconditionally; `lex`/`revLex` are total on equal-length
+    vectors (which holds per-constraint by construction). -/
+theorem TermOrder.le_total (o : TermOrder) (a b : List Nat)
+    (h : a.length = b.length) : o.le a b ∨ o.le b a := by
+  cases o
+  · exact Nat.le_total _ _
+  · exact lexLE_total a b h
+  · exact lexLE_total a.reverse b.reverse (by simp [h])
 
 -- ============================================================================
 -- § 10: LexNatList — Variable-Length Lexicographic Preorder

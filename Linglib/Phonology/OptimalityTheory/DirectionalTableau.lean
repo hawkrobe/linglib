@@ -1,217 +1,182 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.EvalMode
+import Linglib.Core.Optimization.Evaluation
 
 /-!
-# Directional Tableau — Position-Vector EVAL
+# Directional Tableau — Term-Order EVAL
 [eisner-2000] [eisner-2002] [lamont-2022b]
 
-Sibling to `Phonology/Constraint/OT/Basic.lean`'s parallel `Tableau`. Where
-parallel OT compares candidates by **count** of violations
-(`NamedConstraint.eval : C → Nat`), directional OT compares by
-**position vector** (`DirectionalConstraint.eval : C → List Nat`,
-indicator-coded with positions in left-to-right order). The actual
-comparison procedure is governed by an `EvalMode`.
+A constraint's violations form a **monomial** over the form's positions, and
+EVAL compares candidates by a **term (monomial) order** on it: `degree` (total
+violations — parallel OT), `lex` (`*FLOAT^→`), `revLex` (`*FLOAT^←`). Each
+constraint carries its *own* order ([lamont-2022b]: directionality is a property
+of EVAL), so a single tableau mixes counting and directional constraints.
 
-## Why a sibling, not an extension
+The term order is encoded computably as `Constraint.key` (the order-flattened
+violation vector); the whole ranked comparison is then `LexLE` on the
+concatenated keys (`profile`), so this is the variable-length analogue of
+`Core.Optimization.Evaluation.LexMinProblem`. The bridge to mathlib's
+`MonomialOrder.lex` is `Core.Optimization.Evaluation.lexLE_ofFn`.
 
-Per [lamont-2022b]: directional EVAL is theoretically
-incompatible with weighted aggregation (Harmonic Grammar, MaxEnt). A
-parallel constraint's count can be multiplied by a weight; a position
-vector cannot. The existing `NamedConstraint`/`Weighted`/`MaxEnt` stack
-is committed to scalar violations and cannot host directional
-constraints. So they live in parallel type hierarchies, with
-`EvalMode.le_singleton` providing the structural bridge for the
-degenerate (singleton-vector) case where the two coincide.
+## Main definitions
 
-## Scope
+* `Constraint C` — a violation function `C → List Nat` plus its `TermOrder`.
+* `DirectionalTableau C` — a finite candidate set ranked by such constraints.
+* `DirectionalTableau.optima` — the `Finset` of EVAL winners.
 
-This module ships:
-- `DirectionalConstraint C` — the constraint type (analog of `NamedConstraint C`)
-- `DirectionalTableau C` — the tableau type (analog of `Tableau C n`)
-- `DirectionalTableau.optimal` — optimal-set extraction via per-entry
-  `EvalMode.le`, lex-aggregated across constraints in ranking order
+## Main results
 
-It deliberately does NOT yet ship:
-- A `WeightedDirectional` analog (theoretically incoherent per above)
-- A `Stratal × Directional` composition
-- An n-step iteration combinator (handled by `Iteration.iterateGen` once
-  `HSDerivation` dispatches on `evalMode`; deferred to follow-up)
+* `DirectionalTableau.mem_optima_iff` — membership characterisation.
+* `DirectionalTableau.optima_nonempty` — a winner exists (uniform-length keys).
 -/
 
 namespace OptimalityTheory
 open Constraints
-
-
 open Core.Optimization.Evaluation
 
--- ============================================================================
--- § 1: DirectionalConstraint
--- ============================================================================
+/-! ### Constraints carrying a term order -/
 
-/-- A directional OT constraint. `eval c` returns the **indicator
-    vector** for candidate `c`: positions in left-to-right order,
-    with each entry recording the violation status at that position
-    (binary `{0, 1}` for the typical case, but `Nat` for gradient).
-
-    The constraint itself is direction-neutral; the *direction* of
-    evaluation is supplied by `EvalMode` at the tableau level (per
-    [lamont-2022b]'s reframing).
-
-    Distinct from `NamedConstraint C` which has `eval : C → Nat`
-    (count). These cannot interconvert without losing position
-    information; see `EvalMode.le_singleton` for the degenerate-case
-    bridge. -/
-structure DirectionalConstraint (C : Type*) where
+/-- A directional OT constraint: a violation vector plus the `TermOrder` EVAL
+    compares it under. `degree` recovers a counting constraint; `lex`/`revLex`
+    are the directional `[eisner-2000]`/`[lamont-2022b]` ones. -/
+structure Constraint (C : Type*) where
   name : String := ""
-  family : ConstraintFamily
+  family : Family
   eval : C → List Nat
+  order : TermOrder
 
-/-- A directional constraint whose violation vector is the singleton `[count c]` —
-    the parallel-by-nature degenerate case (cf. `EvalMode.le_singleton`). -/
-def DirectionalConstraint.ofCount {C : Type*} (name : String) (family : ConstraintFamily)
-    (count : C → Nat) : DirectionalConstraint C :=
-  { name, family, eval := fun c => [count c] }
+variable {C : Type*}
 
-@[simp] theorem DirectionalConstraint.ofCount_eval {C : Type*} (name : String)
-    (family : ConstraintFamily) (count : C → Nat) (c : C) :
-    (DirectionalConstraint.ofCount name family count).eval c = [count c] := rfl
+/-- A counting (`degree`-order) constraint whose violation is a single tally —
+    the parallel-OT degenerate case. -/
+def Constraint.ofCount (name : String) (family : Family)
+    (count : C → Nat) : Constraint C :=
+  { name, family, eval := λ c => [count c], order := .degree }
 
--- ============================================================================
--- § 2: Lex Comparison Across Constraints
--- ============================================================================
+/-- The constraint's comparison **key**: the violation vector flattened by its
+    term order, so that `LexLE` on keys realises `TermOrder.le`. -/
+def Constraint.key (con : Constraint C) (c : C) : List Nat :=
+  match con.order with
+  | .degree => [(con.eval c).sum]
+  | .lex    => con.eval c
+  | .revLex => (con.eval c).reverse
 
-/-- Lex-compare two profiles (each a `List` of indicator vectors, one
-    per constraint in ranking order) under an `EvalMode`. At the first
-    constraint position where the two profiles strictly differ under
-    `EvalMode.le m`, the better candidate wins. Equal throughout =
-    equal-harmony.
+/-- `LexLE` on a singleton reduces to `≤` on the entry. -/
+theorem lexLE_singleton (a b : Nat) : LexLE [a] [b] ↔ a ≤ b := by
+  rw [lexLE_cons_cons_iff]
+  constructor
+  · rintro (h | ⟨h, -⟩)
+    exacts [le_of_lt h, le_of_eq h]
+  · intro h
+    rcases lt_or_eq_of_le h with h | h
+    exacts [Or.inl h, Or.inr ⟨h, lexLE_nil _⟩]
 
-    Convention matches the parallel `Tableau` lex order: `LexLEByMode m
-    a b` iff `a` is at-least-as-harmonic as `b`. -/
-def LexLEByMode (m : EvalMode) :
-    List (List Nat) → List (List Nat) → Prop
-  | [], _ => True
-  | _ :: _, [] => False
-  | a :: as, b :: bs =>
-    -- a strictly more harmonic than b at this constraint: a wins
-    (EvalMode.le m a b ∧ ¬ EvalMode.le m b a) ∨
-    -- equal at this constraint: recurse
-    (EvalMode.le m a b ∧ EvalMode.le m b a ∧ LexLEByMode m as bs)
+/-- `LexLE` on keys is exactly the constraint's term order on its violations. -/
+theorem Constraint.key_le_iff (con : Constraint C) (a b : C) :
+    LexLE (con.key a) (con.key b) ↔ con.order.le (con.eval a) (con.eval b) := by
+  unfold Constraint.key
+  cases con.order
+  · simpa using lexLE_singleton (con.eval a).sum (con.eval b).sum
+  · simp [TermOrder.le]
+  · simp [TermOrder.le]
 
-instance (m : EvalMode) : ∀ (a b : List (List Nat)), Decidable (LexLEByMode m a b)
-  | [], _ => isTrue trivial
-  | _ :: _, [] => isFalse fun h => h
-  | _ :: as, _ :: bs =>
-    have : Decidable (LexLEByMode m as bs) := instDecidableLexLEByMode m as bs
-    inferInstanceAs (Decidable (_ ∨ _))
+/-! ### The tableau and its optimal set -/
 
--- ============================================================================
--- § 3: DirectionalTableau
--- ============================================================================
+variable [DecidableEq C]
 
-/-- A tableau where all constraints are `DirectionalConstraint` and
-    evaluated under a single `EvalMode`. The mode governs the
-    within-constraint comparison; `LexLEByMode` lifts that to the
-    across-constraints lex order in ranking position.
-
-    Single-mode (one `evalMode` for all constraints) is the simplest
-    case. Mixed-mode rankings — where parallel and directional
-    constraints coexist in one ranking — are a future extension and
-    require a sum-typed constraint or per-constraint mode field. -/
+/-- A finite candidate set ranked by term-ordered constraints. The ranked
+    comparison is `LexLE` on the concatenated keys; with all constraints of
+    `degree` order this is parallel OT, with `*FLOAT` of `lex` order it is
+    directional HS. -/
 structure DirectionalTableau (C : Type*) [DecidableEq C] where
   candidates : Finset C
-  ranking : List (DirectionalConstraint C)
-  evalMode : EvalMode
+  ranking : List (Constraint C)
   nonempty : candidates.Nonempty
 
 namespace DirectionalTableau
 
-variable {C : Type*} [DecidableEq C]
+variable (t : DirectionalTableau C)
 
-/-- The violation profile of candidate `c`: one indicator vector per
-    constraint in `ranking`, in ranking order. -/
-def profile (t : DirectionalTableau C) (c : C) : List (List Nat) :=
-  t.ranking.map (fun con => con.eval c)
+/-- The candidate's full violation profile: each constraint's key, concatenated
+    in ranking order. EVAL compares profiles by `LexLE`. -/
+def profile (c : C) : List Nat := (t.ranking.map (·.key c)).flatten
 
-/-- A candidate is **optimal** iff its profile is at-least-as-harmonic
-    (under `LexLEByMode t.evalMode`) as every other candidate's. -/
-def IsOptimal (t : DirectionalTableau C) (c : C) : Prop :=
-  c ∈ t.candidates ∧
-  ∀ c' ∈ t.candidates, LexLEByMode t.evalMode (t.profile c) (t.profile c')
+/-- `c` is **optimal** iff its profile is `LexLE`-least among the candidates. -/
+def IsOptimal (c : C) : Prop :=
+  c ∈ t.candidates ∧ ∀ d ∈ t.candidates, LexLE (t.profile c) (t.profile d)
 
-instance (t : DirectionalTableau C) (c : C) : Decidable (t.IsOptimal c) :=
+instance (c : C) : Decidable (t.IsOptimal c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The optimal set: all candidates whose profile is at-least-as-harmonic
-    as every other candidate's. Computable via `Finset.filter`. -/
-def optimal (t : DirectionalTableau C) : Finset C :=
-  t.candidates.filter fun c =>
-    ∀ c' ∈ t.candidates, LexLEByMode t.evalMode (t.profile c) (t.profile c')
+/-- The optimal set: candidates whose profile is `LexLE`-least. Computable. -/
+def optima : Finset C :=
+  t.candidates.filter (λ c => ∀ d ∈ t.candidates, LexLE (t.profile c) (t.profile d))
 
-theorem mem_optimal_iff (t : DirectionalTableau C) (c : C) :
-    c ∈ t.optimal ↔ t.IsOptimal c := by
-  simp only [optimal, Finset.mem_filter, IsOptimal]
+theorem mem_optima_iff (c : C) : c ∈ t.optima ↔ t.IsOptimal c := by
+  simp only [optima, Finset.mem_filter, IsOptimal]
+
+/-- Profiles have equal length when every constraint's violation vectors do
+    (each `key` preserves length: `degree` keys are singletons, `lex`/`revLex`
+    keys preserve length). -/
+theorem profile_length_eq {a b : C}
+    (h : ∀ con ∈ t.ranking, (con.eval a).length = (con.eval b).length) :
+    (t.profile a).length = (t.profile b).length := by
+  have key_len : ∀ con ∈ t.ranking, (con.key a).length = (con.key b).length := by
+    intro con hcon
+    unfold Constraint.key
+    split <;> simp [h con hcon]
+  simp only [profile, List.length_flatten, List.map_map]
+  exact congrArg List.sum (List.map_congr_left
+    (λ con hcon => by simpa using key_len con hcon))
+
+/-- **A winner exists** when every constraint assigns equal-length violation
+    vectors across the candidates (so profiles are `LexLE`-comparable). Delegates
+    to `exists_lexLE_minimum`. -/
+theorem optima_nonempty
+    (uniform : ∀ con ∈ t.ranking, ∀ a ∈ t.candidates, ∀ b ∈ t.candidates,
+      (con.eval a).length = (con.eval b).length) :
+    t.optima.Nonempty := by
+  obtain ⟨m, hm, hmin⟩ := exists_lexLE_minimum t.candidates.toList
+    (by simp only [ne_eq, Finset.toList_eq_nil]; exact t.nonempty.ne_empty) t.profile
+    (λ a ha b hb => t.profile_length_eq
+      (λ con hcon => uniform con hcon a (Finset.mem_toList.mp ha) b (Finset.mem_toList.mp hb)))
+  exact ⟨m, (mem_optima_iff t m).mpr
+    ⟨Finset.mem_toList.mp hm, λ d hd => hmin d (Finset.mem_toList.mpr hd)⟩⟩
 
 end DirectionalTableau
 
--- ============================================================================
--- § 4: Smoke Test (paper, fig. 3 spirit)
--- ============================================================================
+/-! ### Smoke test (paper, fig. 3 — the divergent tie) -/
 
 section SmokeTest
 
-/-- Three candidates representing depth-1 results of deleting one
-    floating H from `/H₁ H₂ H₃/` (paper, fig. 3 input). Each candidate's
-    indicator vector records remaining floating Hs at positions 0, 1, 2
-    (left-to-right). -/
-inductive DemoCand
-  | deletedAt0  -- remaining: positions 1, 2 → indicator [0, 1, 1]
-  | deletedAt1  -- remaining: positions 0, 2 → indicator [1, 0, 1]
-  | deletedAt2  -- remaining: positions 0, 1 → indicator [1, 1, 0]
+/-- Three depth-1 candidates of `/H₀ H₁ H₂/`: delete the floating H at position
+    0, 1, or 2. -/
+inductive DemoCand | deletedAt0 | deletedAt1 | deletedAt2
   deriving DecidableEq, Repr
 
-/-- *FLOAT for the demo: indicator vector of remaining floating H positions. -/
-def demoFloatStar : DirectionalConstraint DemoCand :=
-  { name := "*FLOAT"
-    family := .markedness
-    eval := fun
-      | .deletedAt0 => [0, 1, 1]
-      | .deletedAt1 => [1, 0, 1]
-      | .deletedAt2 => [1, 1, 0] }
+open DemoCand in
+/-- `*FLOAT`: indicator of the remaining floating H positions. -/
+def demoFloat : Constraint DemoCand :=
+  { name := "*FLOAT", family := .markedness, order := .lex
+    eval := λ | deletedAt0 => [0,1,1] | deletedAt1 => [1,0,1] | deletedAt2 => [1,1,0] }
 
-/-- DirectionalTableau under *FLOAT^→ (left-to-right). All three
-    candidates have the same total *FLOAT count (2 violations each), so
-    parallel evaluation would tie. Directional EVAL distinguishes them. -/
-def demoTableauLR : DirectionalTableau DemoCand :=
-  { candidates := {.deletedAt0, .deletedAt1, .deletedAt2}
-    ranking := [demoFloatStar]
-    evalMode := .directional .leftToRight
-    nonempty := by decide }
+def demoCands : Finset DemoCand := {.deletedAt0, .deletedAt1, .deletedAt2}
 
-/-- DirectionalTableau under *FLOAT^← (right-to-left). The mirror case. -/
-def demoTableauRL : DirectionalTableau DemoCand :=
-  { demoTableauLR with evalMode := .directional .rightToLeft }
+/-- Parallel (`degree`) ties all three — the divergent tie. -/
+example : (DirectionalTableau.mk demoCands [{ demoFloat with order := .degree }]
+    (by decide)).optima = demoCands := by decide
 
-/-- **Smoke test (paper, fig. 3 thesis)**: under directional left-to-right
-    EVAL, deleting the leftmost floating H wins — i.e., `.deletedAt0` is
-    the unique optimum. This validates that the substrate distinguishes
-    candidates that parallel OT cannot (all three have 2 violations on
-    *FLOAT). -/
-example : demoTableauLR.optimal = {DemoCand.deletedAt0} := by decide
+/-- Directional `*FLOAT^→` (`lex`) breaks the tie: delete the leftmost. -/
+example : (DirectionalTableau.mk demoCands [demoFloat] (by decide)).optima
+    = {DemoCand.deletedAt0} := by decide
 
-/-- **Mirror smoke test**: under directional right-to-left EVAL,
-    deleting the rightmost floating H wins. -/
-example : demoTableauRL.optimal = {DemoCand.deletedAt2} := by decide
-
-/-- **Parallel-can't-distinguish demonstration**. If we encode the same
-    candidates with their *count* of violations (`[2]` each, since each
-    has two remaining Hs), then under any `EvalMode` they tie in both
-    directions. The substrate correctly distinguishes them only because
-    directional EVAL preserves position order rather than collapsing to
-    a count. -/
-example : LexLEByMode .parallel [[2]] [[2]] := by decide
-
-example : LexLEByMode .parallel [[2]] [[2]] := by decide
+/-- `*FLOAT^←` (`revLex`): delete the rightmost. -/
+example : (DirectionalTableau.mk demoCands [{ demoFloat with order := .revLex }]
+    (by decide)).optima = {DemoCand.deletedAt2} := by decide
 
 end SmokeTest
 
