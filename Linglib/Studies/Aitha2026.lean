@@ -7,7 +7,6 @@ import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Prosody.CompensatoryLengthening
 open Morphology.Case.Allomorphy
 
@@ -851,10 +850,30 @@ section PrWdIntegration
 
 open Prosody
 
-/-- Predict the weak stem form from the following morphological element.
-    Uses `MorphElement.triggersLongForm` from `ProsodicWord`: the long
-    form surfaces iff the following element is Word-internal AND begins
-    with a light syllable. -/
+/-- Prosodic-word membership of a following element: parsed inside the host ω
+    (stem, derivational/inflectional/agreement suffixes) or forming its own ω
+    (postpositions). The conditioning dimension is prosodic, not morphosyntactic
+    ([aitha-2026] §3.2). -/
+inductive WordMembership where
+  | internal | external
+  deriving DecidableEq, Repr
+
+/-- A following morphological element: its ω-membership and the weight of its
+    initial syllable — the Telugu weak-noun long-form conditioning. -/
+structure MorphElement where
+  membership    : WordMembership
+  initialWeight : Syllable.Weight
+  deriving DecidableEq, Repr
+
+/-- The long stem form surfaces iff the following element is ω-internal and
+    begins with a light syllable; ω-external postpositions never trigger it,
+    even with a light initial syllable. -/
+abbrev MorphElement.triggersLongForm (m : MorphElement) : Prop :=
+  m.membership = .internal ∧ m.initialWeight = .light
+
+/-- Predict the weak stem form from the following morphological element: the
+    long form surfaces iff the following element is ω-internal AND begins with a
+    light syllable. -/
 def weakSurfaceFromPrWd : Option MorphElement → WeakStemForm
   | some m => if m.triggersLongForm then .long else .short
   | none   => .short  -- no following element → Word-final → short
@@ -862,10 +881,10 @@ def weakSurfaceFromPrWd : Option MorphElement → WeakStemForm
 -- Case suffixes
 
 theorem acc_ni_long :
-    weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = .long := rfl
+    weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = .long := rfl
 
 theorem dat_ki_long :
-    weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = .long := rfl
+    weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = .long := rfl
 
 theorem nom_null_short :
     weakSurfaceFromPrWd none = .short := rfl
@@ -876,42 +895,42 @@ theorem gen_null_short :
 -- Agreement suffixes (the decisive diagnostic)
 
 theorem agr_1sg_ni_long :
-    weakSurfaceFromPrWd (some ⟨"-ni", .agreement, .light⟩) = .long := rfl
+    weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = .long := rfl
 
 theorem agr_2sg_vi_long :
-    weakSurfaceFromPrWd (some ⟨"-vi", .agreement, .light⟩) = .long := rfl
+    weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = .long := rfl
 
 -- Postpositions (Word-external → always short)
 
 theorem postp_lo_short :
-    weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = .short := rfl
+    weakSurfaceFromPrWd (some ⟨.external, .heavy⟩) = .short := rfl
 
 /-- Postposition *-gurinci* 'about' begins with a light syllable, yet
     triggers the short form — because it is Word-external. This is
     the key evidence that the conditioning is Word membership, not
     syllable weight alone. -/
 theorem postp_gurinci_short :
-    weakSurfaceFromPrWd (some ⟨"-gurinci", .postposition, .light⟩) = .short := rfl
+    weakSurfaceFromPrWd (some ⟨.external, .light⟩) = .short := rfl
 
 /-- The Word-based prediction matches the original paradigm data for
     all five cases in the canonical weak paradigm. -/
 theorem prwd_matches_paradigm :
-    weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = .long ∧
-    weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = .long ∧
+    weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = .long ∧
+    weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = .long ∧
     weakSurfaceFromPrWd none = .short ∧
     weakSurfaceFromPrWd none = .short ∧
-    weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = .short :=
+    weakSurfaceFromPrWd (some ⟨.external, .heavy⟩) = .short :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- The Word-based prediction agrees with the original `weakParadigm`
     for all five cases. This closes the gap between the phonological
     derivation (OT + Word) and the empirical data (paradigm). -/
 theorem prwd_agrees_with_paradigm :
-    (weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = weakParadigm .acc) ∧
-    (weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = weakParadigm .dat) ∧
+    (weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = weakParadigm .acc) ∧
+    (weakSurfaceFromPrWd (some ⟨.internal, .light⟩) = weakParadigm .dat) ∧
     (weakSurfaceFromPrWd none = weakParadigm .nom) ∧
     (weakSurfaceFromPrWd none = weakParadigm .gen) ∧
-    (weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = weakParadigm .loc) :=
+    (weakSurfaceFromPrWd (some ⟨.external, .heavy⟩) = weakParadigm .loc) :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 end PrWdIntegration
