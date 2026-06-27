@@ -1,5 +1,6 @@
 import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Mathlib.Order.Extension.Linear
 
@@ -319,6 +320,62 @@ theorem consistentTotalOrders_nonempty (p : PartialOrderConstraints n) :
 theorem consistentTotalOrders_card_pos (p : PartialOrderConstraints n) :
     0 < p.consistentTotalOrders.card :=
   p.consistentTotalOrders_nonempty.card_pos
+
+/-! ### The order-ideal antimatroid of a POC
+
+A POC partial order's Hasse-edge encoding is a consistent set of *simple* ERCs, so
+it has a Birkhoff antimatroid (`Antimat.ofSimple`). Its feasible sets are exactly
+the order ideals of `p`, giving the antimatroid theory its first grammar-level
+consumer ([dilworth-1940]; [merchant-riggle-2016]). -/
+
+/-- `p.toERCSet` consists of simple ERCs (each is a `simpleERC` of a strict pair). -/
+theorem toERCSet_isSimpleSet (p : PartialOrderConstraints n) :
+    ERCSet.isSimpleSet p.toERCSet := by
+  intro α hα
+  obtain ⟨a, b, hab, _, rfl⟩ := mem_toERCSet.mp hα
+  exact simpleERC_isSimple hab
+
+/-- `p.toERCSet` is consistent: any linear extension of `p` satisfies it. -/
+theorem toERCSet_consistent (p : PartialOrderConstraints n) :
+    ERCSet.consistent p.toERCSet := by
+  obtain ⟨σ, hσ⟩ := p.consistentTotalOrders_nonempty
+  exact ⟨σ, satisfiedBy_toERCSet.mpr (mem_consistentTotalOrders.mp hσ)⟩
+
+/-- The **order-ideal antimatroid** of a POC partial order: the simple-ERC
+Birkhoff antimatroid (`Antimat.ofSimple`) of its Hasse-edge encoding. Its feasible
+sets are exactly the order ideals of `p` (`pocAntimatroid_isFeasible_iff`) — the
+Birkhoff correspondence between a partial order and its antimatroid
+([dilworth-1940]; [merchant-riggle-2016]). This is the first grammar-level
+consumer of the antimatroid theory. -/
+def pocAntimatroid (p : PartialOrderConstraints n) : Antimatroid (Fin n) :=
+  Antimat.ofSimple p.toERCSet p.toERCSet_consistent p.toERCSet_isSimpleSet
+
+/-- Local feasibility against `p.toERCSet` is exactly the order-ideal condition
+(downward-closed under `rel`): if `b ∈ S` and `a` dominates `b` (`rel a b`), then
+`a ∈ S`. -/
+theorem feasible_toERCSet_iff {p : PartialOrderConstraints n} {S : Finset (Fin n)} :
+    Feasible p.toERCSet S ↔ ∀ a b, p.rel a b → b ∈ S → a ∈ S := by
+  constructor
+  · intro h a b hrel hbS
+    rcases eq_or_ne a b with rfl | hab
+    · exact hbS
+    · obtain ⟨w, hwW, hwS⟩ :=
+        h (simpleERC a b) (mem_toERCSet.mpr ⟨a, b, hab, hrel, rfl⟩)
+          ⟨b, simpleERC_apply_L hab, hbS⟩
+      rwa [(simpleERC_eq_W_iff w).mp hwW] at hwS
+  · intro h α hα
+    obtain ⟨a, b, hab, hrel, rfl⟩ := mem_toERCSet.mp hα
+    rintro ⟨l, hlL, hlS⟩
+    rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
+    exact ⟨a, simpleERC_apply_W, h a b hrel hlS⟩
+
+/-- **The feasible sets of `pocAntimatroid` are the order ideals of `p`** — the
+Birkhoff correspondence, made concrete and decidable. -/
+@[simp] theorem pocAntimatroid_isFeasible_iff {p : PartialOrderConstraints n}
+    {S : Finset (Fin n)} :
+    (p.pocAntimatroid).IsFeasible (↑S : Set (Fin n)) ↔
+      ∀ a b, p.rel a b → b ∈ S → a ∈ S := by
+  simp only [pocAntimatroid, ofSimple_isFeasible_coe, feasible_toERCSet_iff]
 
 end PartialOrderConstraints
 
