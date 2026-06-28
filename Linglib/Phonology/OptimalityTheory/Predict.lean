@@ -8,9 +8,10 @@ import Linglib.Phonology.OptimalityTheory.Defs
 
 The OT-specific `predict` view: a `Tableau` is an `argminDecoder` over a
 `ViolationProfile`-valued score, i.e. a `Core.Optimization.ConstraintSystem`.
-This is the OT counterpart of the framework-neutral `maxEntSystem` constructor
-(in `HarmonicGrammar.MaxEnt`), kept on the OT layer so the neutral
-`Core.Optimization` machinery stays independent of the `Tableau` API.
+This is the OT counterpart of the Harmonic-Grammar `ConstraintSystem` (a
+`softmaxDecoder` over `harmonyScore con w`, built inline in HG study files),
+kept on the OT layer so the neutral `Core.Optimization` machinery stays
+independent of the `Tableau` API.
 
 A study file can keep its `Tableau`/`optimal` formulation and additionally
 expose the unified `ConstraintSystem.predict` distribution via `tableauSystem`.
