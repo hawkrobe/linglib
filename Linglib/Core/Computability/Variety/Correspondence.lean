@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Variety.Langs
 import Mathlib.Order.GaloisConnection.Defs
+import Mathlib.Algebra.Group.Pi.Lemmas
+import Mathlib.Data.Fintype.Option
 
 /-!
 # The Eilenberg correspondence as a Galois connection
@@ -172,16 +174,118 @@ theorem le_varietyToLang_langToVariety (𝒱 : LanguageVariety.{u}) :
     𝒱 ≤ varietyToLang (langToVariety 𝒱) :=
   eilenberg_galoisConnection.le_u_l 𝒱
 
-/-- Deep direction (Eilenberg): the syntactic monoids generate. TODO: needs the
-"`M` embeds in a finite product of syntactic monoids of its fibre languages" argument, which
-recovers `V.mem M` from membership of those syntactic monoids in `langToVariety (varietyToLang V)`. -/
-theorem le_langToVariety_varietyToLang (V : Pseudovariety.{u}) :
-    V ≤ langToVariety (varietyToLang V) := by
-  sorry
+/-- Two subsingleton monoids are (uniquely) isomorphic. -/
+private def mulEquivOfSubsingleton {A B : Type*} [Monoid A] [Monoid B]
+    [Subsingleton A] [Subsingleton B] : A ≃* B where
+  toFun _ := 1
+  invFun _ := 1
+  left_inv _ := Subsingleton.elim _ _
+  right_inv _ := Subsingleton.elim _ _
+  map_mul' _ _ := Subsingleton.elim _ _
 
-/-- Deep direction (Eilenberg): language reconstruction. TODO: recognition-by-products /
-projection-cylinder languages — every language in `varietyToLang (langToVariety 𝒱)` is recovered
-from the generators of `langToVariety 𝒱` by the closure operations available in `𝒱`. -/
+/-- Reindexing a dependent product of monoids along an equivalence of the index, as a `MulEquiv`. -/
+private def piCongrLeftMul {α β : Type*} (P : β → Type*) [∀ b, Mul (P b)] (e : α ≃ β) :
+    (∀ a, P (e a)) ≃* (∀ b, P b) :=
+  { Equiv.piCongrLeft P e with
+    map_mul' := fun f g => by
+      funext b
+      obtain ⟨a, rfl⟩ := e.surjective b
+      simp [Equiv.piCongrLeft_apply_apply] }
+
+/-- Splitting a dependent product of monoids over `Option`, as a `MulEquiv`. -/
+private def piOptionEquivProdMul {α : Type*} (f : Option α → Type*) [∀ i, Mul (f i)] :
+    (∀ i, f i) ≃* f none × ∀ a, f (some a) :=
+  { Equiv.piOptionEquivProd with map_mul' := fun _ _ => rfl }
+
+/-- A pseudovariety is closed under arbitrary **finite** dependent products: if every factor `f i`
+lies in `W`, then so does `∀ i, f i`. Proved by induction on the finite index type. -/
+private theorem pi_mem (W : Pseudovariety.{u}) {ι : Type u} [Finite ι] {f : ι → Type u}
+    [∀ i, Monoid (f i)] [∀ i, Finite (f i)] (h : ∀ i, W.mem (f i)) : W.mem (∀ i, f i) := by
+  refine Finite.induction_empty_option
+    (P := fun J => ∀ [Finite J] (g : J → Type u) [∀ i, Monoid (g i)] [∀ i, Finite (g i)],
+      (∀ i, W.mem (g i)) → W.mem (∀ i, g i)) ?_ ?_ ?_ ι f h
+  · -- transport along an equivalence of the index
+    intro α β e ihα _ g _ _ hg
+    haveI : Finite α := Finite.of_equiv β e.symm
+    exact W.mem_of_mulEquiv (piCongrLeftMul g e) (ihα (fun a => g (e a)) (fun a => hg (e a)))
+  · -- empty index: the product is the trivial monoid
+    intro _ g _ _ _
+    exact W.mem_of_mulEquiv (mulEquivOfSubsingleton (A := PUnit.{u + 1})) W.memUnit
+  · -- `Option` index: peel off one factor and use binary product closure
+    intro α _ ihα _ g _ _ hg
+    exact W.mem_of_mulEquiv (piOptionEquivProdMul g).symm
+      (W.prod (hg none) (ihα (fun a => g (some a)) (fun a => hg (some a))))
+
+/-- Monoid-side round-trip — the "syntactic monoids generate" half of Eilenberg's variety theorem,
+for **finite** monoids: every finite `M` in `V` lies in `langToVariety (varietyToLang V)`. The
+finiteness hypothesis is essential — `V.mem` is a total predicate, so `V` can hold of *infinite*
+monoids that the generated variety excludes (e.g. an infinite semilattice for `aperiodicVariety`),
+making the unrestricted `V ≤ …` false. Each fibre language `L_m = φ⁻¹{m}` of the surjection
+`φ : FreeMonoid M ↠ M` has syntactic monoid a quotient of `M` (a generator), and
+`⨅_m syntacticCon (L_m) = ker φ`, so `M` embeds into the finite product of those syntactic monoids. -/
+theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Monoid M] [Finite M]
+    (hM : V.mem M) : (langToVariety (varietyToLang V)).mem M := by
+  -- The evaluation map `φ : FreeMonoid M ↠ M`, sending a word to the product of its letters.
+  let φ : FreeMonoid M →* M := FreeMonoid.lift (id : M → M)
+  have hφ : Function.Surjective φ := fun m => ⟨FreeMonoid.of m, rfl⟩
+  -- The fibre language of each `m : M`.
+  let Lm : M → Language M := fun m => {w | φ (FreeMonoid.ofList w) = m}
+  have hrec : ∀ m, Language.Recognizes φ (Lm m) := fun m => ⟨{m}, rfl⟩
+  have hkerle : ∀ m, Con.ker φ ≤ (Lm m).syntacticCon := fun m =>
+    Language.ker_le_syntacticCon_of_recognizes (hrec m)
+  -- Each fibre language lies in `V.langs`, recognized by the finite monoid `M ∈ V`.
+  have hlangs : ∀ m, V.langs (Lm m) := fun m => V.langs_of_recognizes hM φ {m} (fun _ => Iff.rfl)
+  haveI : ∀ m, Finite (Lm m).syntacticMonoid := fun m =>
+    Language.finite_syntacticMonoid (hlangs m).1
+  -- Each fibre's syntactic monoid is a generator, hence in any `W` containing the generators.
+  intro W hW
+  have hWsyn : ∀ m, W.mem (Lm m).syntacticMonoid := fun m =>
+    hW _ ⟨M, Lm m, hlangs m, ⟨MulEquiv.refl _⟩⟩
+  -- The finite product of those syntactic monoids lies in `W`.
+  have hProd : W.mem (∀ m : M, (Lm m).syntacticMonoid) := pi_mem W hWsyn
+  -- The joint syntactic morphism and the fact that its kernel is exactly `ker φ`.
+  let Ψ : FreeMonoid M →* (∀ m : M, (Lm m).syntacticMonoid) :=
+    MonoidHom.pi (fun m => (Lm m).toSyntacticMonoid)
+  have hkereq : Con.ker φ = Con.ker Ψ := by
+    apply le_antisymm
+    · intro u v huv
+      rw [Con.ker_apply]
+      funext m
+      show (Lm m).toSyntacticMonoid u = (Lm m).toSyntacticMonoid v
+      exact (Language.toSyntacticMonoid_eq_iff (L := Lm m)).mpr (hkerle m huv)
+    · intro u v huv
+      have hu : (Lm (φ u)).toSyntacticMonoid u = (Lm (φ u)).toSyntacticMonoid v :=
+        congrFun (Con.ker_apply.mp huv) (φ u)
+      have hcon : (Lm (φ u)).syntacticCon u v :=
+        (Language.toSyntacticMonoid_eq_iff (L := Lm (φ u))).mp hu
+      have hmem := ((Language.syntacticCon_iff (Lm (φ u))).mp hcon) [] []
+      simp only [List.nil_append, List.append_nil] at hmem
+      have hmemu : u.toList ∈ Lm (φ u) := by
+        show φ (FreeMonoid.ofList u.toList) = φ u
+        rw [FreeMonoid.ofList_toList]
+      have hmemv : φ (FreeMonoid.ofList v.toList) = φ u := hmem.mp hmemu
+      rw [FreeMonoid.ofList_toList] at hmemv
+      exact Con.ker_apply.mpr hmemv.symm
+  -- `M ≃* (ker φ).Quotient = (ker Ψ).Quotient ↪ ∏`, an injective hom into the product.
+  let g : M →* (∀ m : M, (Lm m).syntacticMonoid) :=
+    (Con.kerLift Ψ).comp ((Con.quotientKerEquivOfSurjective φ hφ).symm.trans
+      (Con.congr hkereq)).toMonoidHom
+  have hginj : Function.Injective g := by
+    simp only [g, MonoidHom.coe_comp, MulEquiv.coe_toMonoidHom]
+    exact (Con.kerLift_injective Ψ).comp (MulEquiv.injective _)
+  exact W.sub (f := g) hginj hProd
+
+/-- The monoid-side round-trip as an equivalence on **finite** monoids: `langToVariety
+(varietyToLang V)` and `V` agree on finite monoids. -/
+theorem mem_langToVariety_varietyToLang_iff (V : Pseudovariety.{u}) {M : Type u} [Monoid M]
+    [Finite M] : (langToVariety (varietyToLang V)).mem M ↔ V.mem M :=
+  ⟨fun h => langToVariety_varietyToLang_le V M h, mem_langToVariety_varietyToLang V⟩
+
+/-- Language-side round-trip — the **deep half** of Eilenberg's variety theorem. TODO: requires
+(a) the residual closure axiom omitted from `LanguageVariety` and (b) recognition-by-products /
+projection-cylinder-language theory (absent from mathlib): every language in
+`varietyToLang (langToVariety 𝒱)` is rebuilt from the generators of `langToVariety 𝒱` using the
+closure operations available in `𝒱`. -/
 theorem varietyToLang_langToVariety_le (𝒱 : LanguageVariety.{u}) :
     varietyToLang (langToVariety 𝒱) ≤ 𝒱 := by
   sorry
