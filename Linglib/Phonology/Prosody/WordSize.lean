@@ -61,20 +61,35 @@ def feetList : List Tree → List (List Syllable.Weight)
 end
 
 mutual
-/-- Auxiliary for `unfootedCount`, threading whether we are already inside a foot. -/
-def unfootedAux (underFoot : Bool) : Tree → Nat
+/-- Auxiliary for `parseIntoViol`, threading whether we are already under an
+    `lvl`-node. -/
+def parseIntoAux (lvl : ProsodicLevel) (under : Bool) : Tree → Nat
   | .node a cs =>
-      let nowFoot := underFoot || decide (a.level = .f)
-      (if decide (a.level = .σ) && cs.isEmpty && !nowFoot then 1 else 0)
-        + unfootedAuxList nowFoot cs
+      let nowUnder := under || decide (a.level = lvl)
+      (if decide (a.level = .σ) && cs.isEmpty && !nowUnder then 1 else 0)
+        + parseIntoAuxList lvl nowUnder cs
 /-- Auxiliary over a list of subtrees. -/
-def unfootedAuxList (underFoot : Bool) : List Tree → Nat
+def parseIntoAuxList (lvl : ProsodicLevel) (under : Bool) : List Tree → Nat
   | []      => 0
-  | t :: ts => unfootedAux underFoot t + unfootedAuxList underFoot ts
+  | t :: ts => parseIntoAux lvl under t + parseIntoAuxList lvl under ts
 end
 
-/-- Syllables parsed into no foot (Parse-μ violations at the σ level). -/
-def unfootedCount (t : Tree) : Nat := unfootedAux false t
+/-- Parse-into-`lvl` violations ([ito-mester-2003]): syllables dominated by no
+    `lvl`-node. -/
+def parseIntoViol (lvl : ProsodicLevel) (t : Tree) : Nat := parseIntoAux lvl false t
+
+/-- Syllables parsed into no foot (Parse-μ at the σ level) — `parseIntoViol .f`. -/
+def unfootedCount (t : Tree) : Nat := parseIntoViol .f t
+
+mutual
+/-- Total mora count of a tree: the sum of its syllables' weights. -/
+def moraCount : Tree → Nat
+  | .node a cs => (if a.level = .σ then a.weight else 0) + moraCountList cs
+/-- Auxiliary over a list of subtrees. -/
+def moraCountList : List Tree → Nat
+  | []      => 0
+  | t :: ts => moraCount t + moraCountList ts
+end
 
 /-! ### Size predicates -/
 
