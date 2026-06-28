@@ -356,6 +356,7 @@ import Linglib.Data.Examples.Westergaard2009
 import Linglib.Data.Examples.Wurmbrand2014
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.HomogeneityProjection
+import Linglib.Data.Generalizations.Projectivity
 import Linglib.Data.PHOIBLE.Inventories.English
 import Linglib.Data.PHOIBLE.Inventories.Finnish
 import Linglib.Data.PHOIBLE.Inventories.French
@@ -2923,5 +2924,6 @@ import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Data.Examples.Guerrini2026
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
+import Linglib.Data.Examples.SolstadBott2024
 
 
