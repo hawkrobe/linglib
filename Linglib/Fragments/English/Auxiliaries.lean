@@ -38,7 +38,7 @@ the last audit):
 - Modality: `Studies/{Ferreira2023, Rubinstein2014,
   CarianiSantorio2018, AghaJeretic2022, AghaJeretic2026,
   CiardelliGuerrini2026, ImelGuoST2026, LiuRotter2025,
-  RotterLiu2025Concord, YingEtAl2025}`
+  RotterLiu2025, YingEtAl2025}`
 - Auxiliary diagnostics: `Studies/ZwickyPullum1983`
 - Argument structure / control: `Studies/
   Osborne2019`, `Studies/Osborne2019Control`
