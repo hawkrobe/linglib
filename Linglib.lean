@@ -2924,6 +2924,7 @@ import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Data.Examples.Guerrini2026
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
+import Linglib.Data.Examples.LiuRotter2025
 import Linglib.Data.Examples.SolstadBott2024
 
 
