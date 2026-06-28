@@ -1,6 +1,9 @@
 import Linglib.Processing.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Japanese.Morph
+import Linglib.Fragments.Sesotho.Morph
 import Linglib.Morphology.MorphRule
+import Linglib.Studies.Bybee1985
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
@@ -57,39 +60,36 @@ open Morphology (MorphCategory RespectsRelevanceHierarchy)
 
 /-! ### Japanese verb suffixes
 
-From SI §4.1, ordered from stem outward. The numbering follows
-[kaiser-yamamoto-2013] and the UD segmentation used in the paper.
+SI §4.1's Japanese suffix order ([kaiser-yamamoto-2013], UD segmentation) is the
+language's affix template, so it lives as Fragment data in
+`Fragments/Japanese/Morph.lean` (`Japanese.verbAffixTemplate`); here we derive
+the slot list from it rather than re-typing it. -/
 
-| Slot | Category | Morpheme | Example |
-|------|----------|----------|---------|
-| 1 | derivation | -su (suru) | derives verbs from Sino-Japanese |
-| 2 | valence | -(s)ase | causative |
-| 3 | voice | -are, -rare | passive/potential |
-| 4 | mood | -ta (desiderative) | "want to" |
-| 5 | agreement | -mas | politeness |
-| 6 | negation | -na | negation |
-| 7 | tense | -ta (past), -yoo | past/future |
--/
-
-/-- Japanese suffix slots from stem outward (SI Table 2). -/
+/-- Japanese suffix slots from stem outward, derived from the Fragment template
+`Japanese.verbAffixTemplate` (SI §4.1, [kaiser-yamamoto-2013]). -/
 def japaneseSuffixSlots : List MorphCategory :=
-  [ .derivation   -- 1. -su (suru)
-  , .valence      -- 2. -(s)ase (causative)
-  , .voice        -- 3. -are, -rare (passive/potential)
-  , .mood         -- 4. -ta (desiderative)
-  , .agreement .subj    -- 5. -mas (politeness, treated as subj agreement)
-  , .negation     -- 6. -na (negation)
-  , .tense        -- 7. -ta, -yoo (past/future)
-  ]
+  Japanese.verbAffixTemplate.suffixSlots
 
-/-- Japanese suffix order respects Bybee's hierarchy through the voice slot.
-
-The ordering is: derivation < valence < voice < mood, which
-matches the relevance hierarchy. Negation and tense come after mood,
-which is also consistent. -/
+/-- Japanese suffix order respects Bybee's hierarchy through the mood slot:
+derivation < valence < voice < mood. Beyond mood the order *breaks* —
+politeness (agreement), negation, then tense — so only this stem-adjacent
+prefix is checked; the full-order violation is `japanese_violates_surveyed_relevance`. -/
 theorem japanese_partial_bybee :
     let slots := [MorphCategory.derivation, .valence, .voice, .mood]
-    RespectsRelevanceHierarchy slots := by native_decide
+    RespectsRelevanceHierarchy slots := by decide
+
+/-- **Structural divergence from the survey.** Bybee's Ch 2 §6 data ranks tense
+more stem-relevant than mood (`Bybee1985.SurveyedCloser .tense .mood`, which by
+`Bybee1985.survey_order_iso_relevance` *is* the substrate relevance order on
+these categories), yet Japanese's causative/desiderative layering places `mood`
+closer to the stem than `tense` (slots 4 vs 7) — so its full suffix order is not
+sorted by the relevance hierarchy. A genuine cross-linguistic counterexample to
+the §6 morpheme-order corollary, stated as a failure of the substrate predicate,
+not a positional count. -/
+theorem japanese_violates_surveyed_relevance :
+    Bybee1985.SurveyedCloser .tense .mood ∧
+    ¬ RespectsRelevanceHierarchy japaneseSuffixSlots := by
+  decide
 
 -- ============================================================================
 -- §3: Sesotho Verb Template (SI §4.2)
@@ -97,53 +97,27 @@ theorem japanese_partial_bybee :
 
 /-! ### Sesotho verb affixes
 
-From SI §4.2 and [demuth-1992], [doke-mofokeng-1967].
+SI §4.2's Sesotho affix order ([demuth-1992], [doke-mofokeng-1967]) lives as
+Fragment data in `Fragments/Sesotho/Morph.lean` (`Sesotho.verbAffixTemplate`);
+the slot lists below are derived from it. -/
 
-**Prefixes** (from word edge inward toward stem):
-1. Subject agreement (sm)
-2. Negation (-sa-)
-3. Tense/Aspect/Mood (t')
-4. Object agreement (om) / Reflexive (rf)
-
-**Suffixes** (from stem outward):
-1. Reversive (rv) — valence
-2. Causative (c) — valence
-3. Neuter (nt) — valence
-4. Applicative (ap) — valence
-5. Completive (cl) — valence (reduplication of applicative)
-6. Reciprocal (rc) — voice
-7. Passive (p) — voice
-8. Tense (t^) — tense (perfect -il-)
-9. Mood (m^) — mood (imperative, subjunctive, indicative)
-10. Interrogative/Relative (wh/rl) — nonfinite
--/
-
-/-- Sesotho suffix template: morpheme categories from stem outward (SI §4.2). -/
+/-- Sesotho suffix template, stem-outward, from the Fragment
+`Sesotho.verbAffixTemplate` (SI §4.2). -/
 def sesothoSuffixSlots : List MorphCategory :=
-  [ .valence      -- 1. reversive
-  , .valence      -- 2. causative
-  , .valence      -- 3. neuter
-  , .valence      -- 4. applicative
-  , .valence      -- 5. completive (applicative reduplication)
-  , .voice        -- 6. reciprocal
-  , .voice        -- 7. passive
-  , .tense        -- 8. perfect (-il-)
-  , .mood         -- 9. imperative/subjunctive/indicative
-  , .nonfinite    -- 10. interrogative/relative
-  ]
+  Sesotho.verbAffixTemplate.suffixSlots
 
-/-- Sesotho prefix template: morpheme categories from word edge inward. -/
+/-- Sesotho prefix template, word-edge inward, from the Fragment
+`Sesotho.verbAffixTemplate`. -/
 def sesothoPrefixSlots : List MorphCategory :=
-  [ .agreement .subj    -- 1. subject agreement
-  , .negation     -- 2. negation
-  , .tense        -- 3. tense/aspect/mood
-  , .agreement .obj    -- 4. object agreement
-  ]
+  Sesotho.verbAffixTemplate.prefixSlots
 
-/-- Sesotho suffixes respect the relevance hierarchy:
-valence < voice < tense < mood < nonfinite. -/
+/-- Sesotho suffixes respect the relevance hierarchy
+(valence < voice < tense < mood < nonfinite) — sorted by the substrate
+relevance order, which on the surveyed categories *is* Bybee's §6 order
+(`Bybee1985.survey_order_iso_relevance`). Contrast
+`japanese_violates_surveyed_relevance`: same surveyed order, opposite outcome. -/
 theorem sesotho_suffixes_respect_bybee :
-    RespectsRelevanceHierarchy sesothoSuffixSlots := by native_decide
+    RespectsRelevanceHierarchy sesothoSuffixSlots := by decide
 
 -- ============================================================================
 -- §4: Memory-Surprisal Efficiency (SI Figures 6, 8)
@@ -213,13 +187,12 @@ functional suffix after derivation. This is consistent with both:
 
 /-- Japanese causative -(s)ase is in the valence slot (slot 2). -/
 theorem japanese_causative_is_valence :
-    japaneseSuffixSlots[1]? = some .valence := by native_decide
+    japaneseSuffixSlots[1]? = some .valence := by decide
 
 /-- The valence slot is the first functional slot (after derivation). -/
 theorem valence_is_innermost_functional :
     japaneseSuffixSlots[0]? = some .derivation ∧
-    japaneseSuffixSlots[1]? = some .valence := by
-  constructor <;> native_decide
+    japaneseSuffixSlots[1]? = some .valence := by decide
 
 /-! ### Bridge: Japanese -(s)ase = Song's COMPACT morphological causative
 
@@ -255,6 +228,6 @@ theorem relevance_hierarchy_implies_locality :
     -- are also efficient in memory-surprisal terms
     RespectsRelevanceHierarchy sesothoSuffixSlots ∧
     sesothoRealAUC100 < sesothoRandomAUC100 :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by native_decide⟩
 
 end HahnDegenFutrell2021

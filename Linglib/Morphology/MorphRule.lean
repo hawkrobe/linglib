@@ -277,10 +277,60 @@ def MorphCategory.peripherality : MorphCategory → Nat
   | .agreement _ => 8  -- any controller role lands at Bybee rank 8
   | .nonfinite   => 9
 
-/-- A morpheme ordering respects the relevance hierarchy if peripherality
-is non-decreasing from stem outward (stem-adjacent first). -/
+/-! ### The relevance order
+
+`peripherality` is a *rank function* — a numeric embedding. The object the
+hierarchy is really about is the **order** it induces: which categories are
+more stem-relevant than which. All relevance-hierarchy code — this file's
+`RespectsRelevanceHierarchy` and the consumers in `Studies/` — speaks in that
+order via `RelevanceLE` / `RelevanceLT`; the specific ℕ values of
+`peripherality` are an implementation detail (only their comparisons carry
+meaning, as `relevanceLE_iff_peripherality` records). -/
+
+/-- `a` is at least as stem-relevant as `b`: the rank order induced by
+`peripherality`. This is the unified relation relevance-hierarchy code uses. -/
+def MorphCategory.RelevanceLE (a b : MorphCategory) : Prop :=
+  a.peripherality ≤ b.peripherality
+
+/-- `a` is strictly more stem-relevant than `b`. -/
+def MorphCategory.RelevanceLT (a b : MorphCategory) : Prop :=
+  a.peripherality < b.peripherality
+
+instance : DecidableRel MorphCategory.RelevanceLE :=
+  fun a b => inferInstanceAs (Decidable (a.peripherality ≤ b.peripherality))
+
+instance : DecidableRel MorphCategory.RelevanceLT :=
+  fun a b => inferInstanceAs (Decidable (a.peripherality < b.peripherality))
+
+/-- The relevance order is reflexive. -/
+@[refl] theorem MorphCategory.RelevanceLE.refl (a : MorphCategory) : a.RelevanceLE a :=
+  le_refl _
+
+/-- The relevance order is transitive. -/
+theorem MorphCategory.RelevanceLE.trans {a b c : MorphCategory}
+    (h₁ : a.RelevanceLE b) (h₂ : b.RelevanceLE c) : a.RelevanceLE c :=
+  le_trans h₁ h₂
+
+/-- The relevance order is total: any two categories are comparable. -/
+theorem MorphCategory.RelevanceLE.total (a b : MorphCategory) :
+    a.RelevanceLE b ∨ b.RelevanceLE a :=
+  le_total _ _
+
+/-- Strict relevance order is the strict part of the order, as expected. -/
+theorem MorphCategory.RelevanceLT_iff {a b : MorphCategory} :
+    a.RelevanceLT b ↔ a.RelevanceLE b ∧ ¬ b.RelevanceLE a := by
+  unfold MorphCategory.RelevanceLT MorphCategory.RelevanceLE; omega
+
+/-- `peripherality` reflects the relevance order exactly: it is the canonical
+rank realizing the order, so the order carries precisely the information the
+rank does. -/
+theorem MorphCategory.relevanceLE_iff_peripherality {a b : MorphCategory} :
+    a.RelevanceLE b ↔ a.peripherality ≤ b.peripherality := Iff.rfl
+
+/-- A morpheme ordering respects the relevance hierarchy when its categories
+are sorted stem-outward by the relevance order. -/
 def RespectsRelevanceHierarchy (slots : List MorphCategory) : Prop :=
-  (slots.map MorphCategory.peripherality).Pairwise (· ≤ ·)
+  slots.Pairwise MorphCategory.RelevanceLE
 
 instance : DecidablePred RespectsRelevanceHierarchy := fun _ => by
   unfold RespectsRelevanceHierarchy; exact inferInstance

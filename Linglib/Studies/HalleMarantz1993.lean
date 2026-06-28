@@ -470,8 +470,8 @@ def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
     converge — connecting [baker-1985], [bybee-1985],
     and [halle-marantz-1993]. -/
 theorem tnsAgr_outside_gfRules (f : EngInflFeature) (r : GFRuleType) :
-    r.toMorphCategory.peripherality < f.toMorphCategory.peripherality := by
-  cases f <;> cases r <;> native_decide
+    r.toMorphCategory.RelevanceLT f.toMorphCategory := by
+  cases f <;> cases r <;> decide
 
 /-- English verb inflection is concatenative: affixes are linearly
     concatenated to the stem. This places it within the scope of

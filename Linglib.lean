@@ -112,6 +112,7 @@ import Linglib.Core.Computability.Subregular.Logic.WordModel
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.TransitionMonoid
+import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.List.Bookend
@@ -1104,6 +1105,7 @@ import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 import Linglib.Fragments.Quechua.TenseAspect
 import Linglib.Fragments.Romance.Clitics
 import Linglib.Fragments.Romanian.MoodChoice
+import Linglib.Fragments.Sesotho.Morph
 import Linglib.Fragments.Shan.ClassifierSystem
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Definiteness
@@ -1266,6 +1268,7 @@ import Linglib.Fragments.Yoruba.TenseAspect
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
 import Linglib.Fragments.Zulu.Plurals
+import Linglib.Morphology.AffixTemplate
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot
@@ -2919,5 +2922,6 @@ import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Data.Examples.Guerrini2026
+import Linglib.Data.Examples.TonhauserBeaverDegen2018
 
 

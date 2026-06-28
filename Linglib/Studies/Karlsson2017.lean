@@ -187,19 +187,19 @@ def bybeeSlots : List MorphCategory :=
 -- ============================================================================
 
 /-- Finnish nominal morphology has exactly 5 suffix slots. -/
-theorem five_slots : finnishNominalOrder.length = 5 := by native_decide
+theorem five_slots : finnishNominalOrder.length = 5 := by decide
 
 /-- Only 3 of 5 nominal slots have Bybee equivalents (stem, number, agreement). -/
-theorem three_bybee_mappable : bybeeSlots.length = 3 := by native_decide
+theorem three_bybee_mappable : bybeeSlots.length = 3 := by decide
 
 /-- The Bybee-mappable slots are: stem, number, agreement. -/
 theorem bybee_slots_are :
-    bybeeSlots = [.stem, .number, .agreement .poss] := by native_decide
+    bybeeSlots = [.stem, .number, .agreement .poss] := by decide
 
 /-- The Bybee-mappable nominal slots respect the relevance hierarchy:
     stem (0) < number (3) < agreement (8). -/
 theorem nominal_respects_bybee :
-    RespectsRelevanceHierarchy bybeeSlots := by native_decide
+    RespectsRelevanceHierarchy bybeeSlots := by decide
 
 /-- Case has no Bybee category — this is the gap that Finnish nominal
     morphology reveals in Bybee's verb-centric hierarchy. -/
@@ -213,7 +213,6 @@ theorem clitic_no_bybee_category :
 /-- Number (rank 3) is more stem-relevant than possessive agreement (rank 8),
     consistent with number appearing closer to the stem in Finnish. -/
 theorem number_closer_than_agreement :
-    MorphCategory.peripherality .number <
-    MorphCategory.peripherality (.agreement .poss) := by decide
+    MorphCategory.RelevanceLT .number (.agreement .poss) := by decide
 
 end Karlsson2017
