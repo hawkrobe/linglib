@@ -4,9 +4,9 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 /-!
 # The locality bridge: quantifier-free ⟹ strictly local
 
-The load-bearing subregular result ([dolatian-2020], after Chandlee, Heinz & Jardine): a
-quantifier-free logical transduction whose guards look only at a *bounded* context is
-**strictly local**. Here we prove the left-directed half against `Subregular`'s
+The load-bearing subregular result ([chandlee-2014], [chandlee-jardine-2019]): a quantifier-free
+logical transduction whose guards look only at a *bounded* context is **strictly local**. Here we
+prove the left-directed half against `Subregular`'s
 `IsLeftInputStrictlyLocal`: a transduction whose guards are *backward* (built from the variable
 and predecessors, no successor) with predecessor depth `≤ r` is `IsLeftInputStrictlyLocal (r + 1)`.
 
@@ -279,9 +279,9 @@ private theorem Transduction.applyAux_toISLRule_eq [DecidableEq α] {r : ℕ} {T
     congr 1
     rw [Transduction.emitAt_local hT hp, hw2]
 
-/-- **Locality bridge** (left half), [dolatian-2020] after Chandlee–Heinz–Jardine: a transduction
-whose guards look only backward with predecessor depth `≤ r` is `(r+1)`-Left-Input-Strictly-Local —
-its output depends on a bounded left window, the defining property of strict locality. -/
+/-- **Locality bridge** (left half), [chandlee-2014], [chandlee-jardine-2019]: a transduction whose
+guards look only backward with predecessor depth `≤ r` is `(r+1)`-Left-Input-Strictly-Local — its
+output depends on a bounded left window, the defining property of strict locality. -/
 theorem Transduction.leftLocal_isLeftISL [DecidableEq α] {r : ℕ} {T : Transduction α β}
     (hT : T.LeftLocal r) : IsLeftInputStrictlyLocal (r + 1) T.apply := by
   refine ⟨T.toISLRule r, ?_⟩
@@ -295,22 +295,22 @@ theorem Transduction.leftLocal_isLeftISL [DecidableEq α] {r : ℕ} {T : Transdu
 
 section Example
 
-private inductive Seg | t | d | a
+private inductive Sym | a | b | c
   deriving DecidableEq
 
 private def xv : Term (Fin 1) := .var 0
 
-/-- Post-vocalic stop voicing `t → d`: the guard looks only left (a predecessor vowel), so it is
-backward with radius 1. -/
-private def postVoicing : Transduction Seg Seg where
+/-- Relabel `b → c` immediately after an `a`: the guard looks only left (a predecessor `a`), so it
+is backward with radius 1. -/
+private def afterA : Transduction Sym Sym where
   copies := 1
-  clause _ := [(QF.conj (.atom (.label .a xv.pred)) (.atom (.label .t xv)), .d),
-               (.atom (.label .t xv), .t), (.atom (.label .d xv), .d), (.atom (.label .a xv), .a)]
+  clause _ := [(QF.conj (.atom (.label .a xv.pred)) (.atom (.label .b xv)), .c),
+               (.atom (.label .b xv), .b), (.atom (.label .c xv), .c), (.atom (.label .a xv), .a)]
 
 -- The induced 2-Left-ISL rule computes the same function on a sample — the bridge, concretely.
-example : (postVoicing.toISLRule 1).apply [Seg.a, .t, .a, .t]
-            = postVoicing.apply [Seg.a, .t, .a, .t] := by decide
-example : postVoicing.apply [Seg.a, .t, .a, .t] = [Seg.a, .d, .a, .d] := by decide
+example : (afterA.toISLRule 1).apply [Sym.a, .b, .a, .b]
+            = afterA.apply [Sym.a, .b, .a, .b] := by decide
+example : afterA.apply [Sym.a, .b, .a, .b] = [Sym.a, .c, .a, .c] := by decide
 
 end Example
 
