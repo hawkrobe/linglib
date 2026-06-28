@@ -2331,6 +2331,7 @@ import Linglib.Studies.ImelGuoST2026
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025
 import Linglib.Studies.Israel2001
+import Linglib.Studies.ItoMester2009
 import Linglib.Studies.Izvorski1997
 import Linglib.Studies.Jaeger2007
 import Linglib.Studies.Jardine2016
