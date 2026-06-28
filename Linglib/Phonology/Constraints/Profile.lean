@@ -29,11 +29,17 @@ abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
 
 variable {C : Type*} {n : Nat}
 
-/-- OT-named alias for `lexFinNatOf` — assemble a profile from a constraint
-    vector. -/
+/-- OT-named alias for `lexFinNatOf` — assemble a profile from a constraint set
+    `CON C n`. -/
 abbrev buildViolationProfile
-    (constraints : Fin n → C → Nat) (c : C) : ViolationProfile n :=
-  lexFinNatOf constraints c
+    (con : CON C n) (c : C) : ViolationProfile n :=
+  lexFinNatOf con c
+
+/-- The `ViolationProfile` a constraint set `CON` assigns to a candidate: the
+    vector of its `n` constraints' violation counts on `c`. An OT grammar ranks
+    these coordinates; an HG grammar weights them. -/
+abbrev CON.profile (con : CON C n) (c : C) : ViolationProfile n :=
+  buildViolationProfile con c
 
 /-- The zero profile is the bottom element: `0 ≤ p` for every profile `p`, so a
     candidate with no violations wins under any ranking. -/

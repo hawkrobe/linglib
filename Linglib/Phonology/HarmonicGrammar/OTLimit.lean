@@ -27,7 +27,7 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 
 ## Definitions
 
-- `otToWeighted`: convert OT ranking + violation bound to weighted constraints
+- `expWeights`: exponential weight vector for an OT ranking + violation bound
 - `ExponentiallySeparated`: weight separation condition for HG–OT agreement
 - `ot_lex_imp_higher_harmony`: key lemma (lex dominance ⟹ higher harmony)
 - `maxent_ot_limit`: main limit theorem
@@ -39,33 +39,14 @@ open Constraints
 
 open Core Constraints Core.Optimization.Evaluation Real Finset
 
-/-! ### OT → HG weight construction -/
+/-! ### OT → HG weights
 
-/-- Convert an OT constraint ranking to weighted constraints.
-
-    Each constraint at rank position i (0 = highest) receives weight
-    `(M+1)^(n−1−i)`, where n is the number of constraints and M is a
-    violation count bound. This exponential spacing ensures HG–OT agreement.
-
-    The `eval` function is preserved: the weighted constraint evaluates
-    candidates identically to the original named constraint. -/
-def otToWeighted {C : Type*} (ranking : List (Constraint C)) (M : Nat) :
-    List (Constraint.Weighted C) :=
-  ranking.mapIdx fun i con =>
-    { con := con
-      weight := ((M + 1 : ℝ) ^ (ranking.length - 1 - i)) }
-
-/-- The weighted constraints have the same length as the ranking. -/
-theorem otToWeighted_length {C : Type*} (ranking : List (Constraint C)) (M : Nat) :
-    (otToWeighted ranking M).length = ranking.length := by
-  simp [otToWeighted]
-
-/-- Each weighted constraint preserves the original eval function. -/
-theorem otToWeighted_eval {C : Type*} (ranking : List (Constraint C)) (M : Nat)
-    (i : Fin ranking.length) (c : C) :
-    ((otToWeighted ranking M).get (i.cast (otToWeighted_length ranking M).symm)).con c =
-    (ranking.get i) c := by
-  simp only [otToWeighted, List.get_eq_getElem, List.getElem_mapIdx, Fin.val_cast]
+An OT ranking is a `List (Constraint C)`; as a `CON C ranking.length` it is just
+`ranking.get`. The Harmonic-Grammar reading of that ranking with violation bound
+`M` weights coordinate `i` (0 = highest) by `(M+1)^(n−1−i)` — the `expWeights`
+vector below. So the HG harmony of an OT ranking is
+`harmonyScore ranking.get (expWeights ranking.length M)`, with no separate
+weighted-constraint object. -/
 
 /-! ### Exponentially separated weights -/
 
@@ -181,11 +162,6 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
 
 /-! ### HG–OT agreement -/
 
-/-- Weighted violation sum (the positive part of harmony:
-    `harmonyScore = -weightedViolations`). -/
-def weightedViolations {n : Nat} (w : Fin n → ℝ) (v : Fin n → Nat) : ℝ :=
-  univ.sum fun i => w i * (v i : ℝ)
-
 /-- **HG–OT agreement lemma** ([smolensky-legendre-2006]): with
     exponentially separated weights and bounded violations, lexicographic
     dominance implies strictly lower weighted violations.
@@ -270,47 +246,25 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
 
-private lemma mapIdx_sum_eq_fin_sum {α : Type*} (l : List α) (f : ℕ → α → ℝ) :
-    (l.mapIdx f).sum = ∑ i : Fin l.length, f i (l.get i) := by
-  induction l generalizing f with
-  | nil => simp
-  | cons x xs ih =>
-    rw [List.mapIdx_cons, List.sum_cons, ih]
-    show f 0 x + ∑ i, f (↑i + 1) (xs.get i) =
-         ∑ i : Fin (xs.length + 1), (fun j : Fin (xs.length + 1) => f (↑j) ((x :: xs).get j)) i
-    rw [Fin.sum_univ_succ]; simp
-
-private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → β) (g : β → ℝ) :
-    (l.mapIdx f |>.map g).sum = (l.mapIdx (fun i x => g (f i x))).sum := by
-  congr 1
-  induction l generalizing f with
-  | nil => simp
-  | cons x xs ih => simp only [List.mapIdx_cons, List.map_cons]; congr 1; exact ih _
-
-private lemma harmonyScore_otToWeighted_eq {C : Type*}
-    (ranking : List (Constraint C)) (M : Nat) (c : C) :
-    harmonyScore (otToWeighted ranking M) c =
-    -(weightedViolations (expWeights ranking.length M)
-      (fun i : Fin ranking.length => (ranking.get i) c)) := by
-  rw [harmonyScore_eq_neg_sum, neg_inj, weightedViolations]
-  simp only [otToWeighted]
-  rw [map_mapIdx_sum, mapIdx_sum_eq_fin_sum]
-  simp only [expWeights]
-
 /-- HG–OT agreement for a concrete candidate type: if candidate `a`
     lexicographically beats `b` on the violation profile induced by `ranking`,
-    then `a` has strictly higher harmony under `otToWeighted ranking M`,
-    provided M bounds all violation counts. -/
+    then `a` has strictly higher harmony than `b` under the ranking's exponential
+    weights `expWeights ranking.length M`, provided `M` bounds all violations.
+    With `harmonyScore con w c = -weightedViolations w (· c)`, the bridge to
+    `lex_imp_lower_violations` is definitional. -/
 theorem ot_lex_imp_higher_harmony {C : Type*}
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (a b : C)
     (hbound : ∀ con ∈ ranking, con a ≤ M ∧ con b ≤ M)
     (hlex : toLex (fun i : Fin ranking.length => (ranking.get i) a) <
             toLex (fun i : Fin ranking.length => (ranking.get i) b)) :
-    harmonyScore (otToWeighted ranking M) a >
-    harmonyScore (otToWeighted ranking M) b := by
-  rw [gt_iff_lt, harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff]
-  exact lex_imp_lower_violations _ M _ _
+    harmonyScore ranking.get (expWeights ranking.length M) a >
+    harmonyScore ranking.get (expWeights ranking.length M) b := by
+  show -weightedViolations (expWeights ranking.length M) (fun i => ranking.get i b) <
+       -weightedViolations (expWeights ranking.length M) (fun i => ranking.get i a)
+  rw [neg_lt_neg_iff]
+  exact lex_imp_lower_violations (expWeights ranking.length M) M
+    (fun i => ranking.get i a) (fun i => ranking.get i b)
     (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
     (expWeights_separated ranking.length M hM) hlex
 
@@ -323,14 +277,13 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
     The interesting content is in the *hypotheses*: showing that the
     HG winner equals the OT winner (§4). -/
 theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
-    [DecidableEq C]
-    (constraints : List (Constraint.Weighted C))
+    [DecidableEq C] {n : Nat} (con : CON C n) (w : Fin n → ℝ)
     (c_opt : C)
     (h_opt : ∀ c, c ≠ c_opt →
-      harmonyScore constraints c < harmonyScore constraints c_opt) :
+      harmonyScore con w c < harmonyScore con w c_opt) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (α • harmonyScore constraints) c_opt - 1| < ε :=
-  softmax_argmax_limit (harmonyScore constraints) c_opt h_opt
+      |softmax (α • harmonyScore con w) c_opt - 1| < ε :=
+  softmax_argmax_limit (harmonyScore con w) c_opt h_opt
 
 /-- **MaxEnt → OT limit** ([smolensky-legendre-2006]): as α → ∞,
     MaxEnt probability concentrates on the OT winner.
@@ -350,7 +303,7 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
       toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
       toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (α • harmonyScore (otToWeighted ranking M)) c_opt - 1| < ε := by
+      |softmax (α • harmonyScore ranking.get (expWeights ranking.length M)) c_opt - 1| < ε := by
   apply softmax_argmax_limit
   intro c hc
   exact ot_lex_imp_higher_harmony ranking M hM c_opt c

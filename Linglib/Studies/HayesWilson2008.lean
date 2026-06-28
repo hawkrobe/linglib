@@ -4,6 +4,8 @@ import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Fragments.English.Phonology
+import Linglib.Core.Optimization.System
+import Linglib.Core.Optimization.Decoder
 
 /-!
 # [hayes-wilson-2008]: A Maximum Entropy Model of Phonotactics
@@ -66,8 +68,8 @@ private def matchesPat (s : Segment) (p : Segment) : Bool :=
   s.matchesPattern p
 
 /-- Constraint #1 from Table (4): *[+sonorant, +dorsal]. Weight 5.64. -/
-noncomputable def c1_star_son_dors : Constraint.Weighted Onset :=
-  { con := fun onset => onset.countP (matchesPat · son_dors_pat), weight := 564/100 }
+def c1_star_son_dors : Constraint Onset :=
+  fun onset => onset.countP (matchesPat · son_dors_pat)
 
 /-- Bool helper for `c4_star_blank_cont`. -/
 private def c4_violated : Onset → Bool
@@ -75,8 +77,8 @@ private def c4_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #4 from Table (4): *[ ][+continuant]. Weight 5.17. -/
-noncomputable def c4_star_blank_cont : Constraint.Weighted Onset :=
-  Constraint.Weighted.binary (fun o => c4_violated o = true) (517/100)
+def c4_star_blank_cont : Constraint Onset :=
+  Constraint.binary (fun o => c4_violated o = true)
 
 /-- Bool helper for `c5_star_blank_voice`. -/
 private def c5_violated : Onset → Bool
@@ -84,8 +86,8 @@ private def c5_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #5 from Table (4): *[ ][+voice, −sonorant]. Weight 5.37. -/
-noncomputable def c5_star_blank_voice : Constraint.Weighted Onset :=
-  Constraint.Weighted.binary (fun o => c5_violated o = true) (537/100)
+def c5_star_blank_voice : Constraint Onset :=
+  Constraint.binary (fun o => c5_violated o = true)
 
 /-- Bool helper for `c6_star_son_blank`. -/
 private def c6_violated : Onset → Bool
@@ -93,12 +95,16 @@ private def c6_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #6 from Table (4): *[+sonorant][ ]. Weight 6.66. -/
-noncomputable def c6_star_son_blank : Constraint.Weighted Onset :=
-  Constraint.Weighted.binary (fun o => c6_violated o = true) (666/100)
+def c6_star_son_blank : Constraint Onset :=
+  Constraint.binary (fun o => c6_violated o = true)
 
-/-- The subset grammar: 4 constraints from Table (4). -/
-noncomputable def onsetGrammar : List (Constraint.Weighted Onset) :=
-  [c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
+/-- The subset grammar's constraint set: 4 constraints from Table (4). -/
+def onsetCon : CON Onset 4 :=
+  ![c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
+
+/-- The learned weights for the four Table (4) constraints: 5.64, 5.17, 5.37, 6.66. -/
+noncomputable def onsetW : Fin 4 → ℝ :=
+  ![564/100, 517/100, 537/100, 666/100]
 
 -- ============================================================================
 -- § 2: Harmony Predictions (using harmonyScore from Constraints.Defs)
@@ -109,22 +115,26 @@ open English.Phonology in
     (violates *[+son,+dors], cost 5.64). The harmony *magnitude* is a weight
     artifact; the *ranking* is the empirical prediction. -/
 theorem attested_higher_harmony_k_ŋ :
-    harmonyScore onsetGrammar [ŋ] < harmonyScore onsetGrammar [k] := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
-    c6_star_son_blank, Constraint.Weighted.binary, Constraint.binary, c4_violated,
+    harmonyScore onsetCon onsetW [ŋ] < harmonyScore onsetCon onsetW [k] := by
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff,
+    Fin.sum_univ_four, Fin.sum_univ_four]
+  simp +decide only [onsetCon, onsetW, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+    c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
+    c6_star_son_blank, Constraint.binary, c4_violated,
     c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
   norm_num
 
 open English.Phonology in
 /-- Attested [br] has higher harmony than unattested *[rk] (violates *[+son][ ]). -/
 theorem attested_higher_harmony_br_rk :
-    harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [b, r] := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
-    c6_star_son_blank, Constraint.Weighted.binary, Constraint.binary, c4_violated,
+    harmonyScore onsetCon onsetW [r, k] < harmonyScore onsetCon onsetW [b, r] := by
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff,
+    Fin.sum_univ_four, Fin.sum_univ_four]
+  simp +decide only [onsetCon, onsetW, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+    c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
+    c6_star_son_blank, Constraint.binary, c4_violated,
     c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
   norm_num
 
@@ -137,24 +147,26 @@ open English.Phonology
 
 /-- Gradient: among unattested onsets, *[ŋ] has higher harmony than *[rk]. -/
 theorem gradient_harmony_ŋ_rk :
-    harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [ŋ] := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
-    c6_star_son_blank, Constraint.Weighted.binary, Constraint.binary, c4_violated,
+    harmonyScore onsetCon onsetW [r, k] < harmonyScore onsetCon onsetW [ŋ] := by
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff,
+    Fin.sum_univ_four, Fin.sum_univ_four]
+  simp +decide only [onsetCon, onsetW, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+    c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
+    c6_star_son_blank, Constraint.binary, c4_violated,
     c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
   norm_num
 
 /-- **MaxEnt probability ordering**: higher harmony ⟹ higher `exp(harmonyScore)`
     ⟹ higher MaxEnt probability. Applies `exp_lt_exp` to `harmonyScore`. -/
 theorem maxent_prob_k_gt_ŋ :
-    exp (harmonyScore onsetGrammar [ŋ]) < exp (harmonyScore onsetGrammar [k]) :=
+    exp (harmonyScore onsetCon onsetW [ŋ]) < exp (harmonyScore onsetCon onsetW [k]) :=
   exp_lt_exp.mpr attested_higher_harmony_k_ŋ
 
 /-- **Gradient well-formedness**: among unattested forms, *[ŋ] has higher MaxEnt
     probability than *[rk]. -/
 theorem gradient_prob_ŋ_gt_rk :
-    exp (harmonyScore onsetGrammar [r, k]) < exp (harmonyScore onsetGrammar [ŋ]) :=
+    exp (harmonyScore onsetCon onsetW [r, k]) < exp (harmonyScore onsetCon onsetW [ŋ]) :=
   exp_lt_exp.mpr gradient_harmony_ŋ_rk
 
 end MaxEntProb
@@ -164,8 +176,8 @@ end MaxEntProb
 -- ============================================================================
 
 /-! Phonological MaxEnt is one instance of the framework-agnostic
-`ConstraintSystem` abstraction in `Constraints.System`. The same
-`maxEntSystem` constructor that scores phonological onsets here also
+`ConstraintSystem` abstraction in `Core.Optimization.System`. The same
+`ConstraintSystem` record that scores phonological onsets here also
 scores syntactic candidates in HG/MaxEnt syntax models, RSA utterances
 in soft-max pragmatic listeners, etc. The decoder (`softmaxDecoder 1`)
 is what makes this MaxEnt rather than HG (`argmaxDecoder`) or OT
@@ -185,10 +197,12 @@ def candidateOnsets : Finset Onset :=
 
 /-- [hayes-wilson-2008]'s grammar realised as a generic
     `ConstraintSystem` over `candidateOnsets`, decoded by softmax at
-    temperature 1. The score component is `harmonyScore onsetGrammar`
-    (the canonical MaxEnt harmony function). -/
-noncomputable def onsetSystem : ConstraintSystem Onset ℝ :=
-  maxEntSystem candidateOnsets onsetGrammar
+    temperature 1 (built inline). The score component is
+    `harmonyScore onsetCon onsetW` (the canonical MaxEnt harmony function). -/
+noncomputable def onsetSystem : ConstraintSystem Onset ℝ where
+  candidates := candidateOnsets
+  score := harmonyScore onsetCon onsetW
+  decoder := softmaxDecoder 1
 
 /-- The system literally predicts a higher MaxEnt probability for [k]
     than for *[ŋ]. Unlike `maxent_prob_k_gt_ŋ`, this is a comparison of

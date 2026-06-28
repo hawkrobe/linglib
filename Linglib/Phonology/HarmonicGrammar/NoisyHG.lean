@@ -21,6 +21,11 @@ the probit choice rule) — the Gaussian sibling of softmax. They ground directl
 that pure-math fact, not in Thurstone's psychophysics: Noisy HG and Thurstone Case V
 are sibling applications of the same probit RUM, neither depending on the other.
 
+A grammar here is a constraint set `con : CON C n` and a weight vector `w : Fin n → ℝ`
+(from `Constraints.Defs`); there is no weighted-constraint record. Violation-difference
+quantities (`violationDiffSqSum`, `nhgCovariance`) read only `con`; harmony quantities
+read `con` and `w`.
+
 ## MaxEnt logit-harmony identity
 
 For classical MaxEnt (Gumbel noise → softmax), the log-odds ratio between
@@ -39,32 +44,29 @@ namespace HarmonicGrammar
 
 open Core Real Constraints
 
+variable {C : Type*} {n : Nat}
+
 -- ============================================================================
 -- § 1: NHG Noise Variance
 -- ============================================================================
 
 /-- Sum of squared violation differences between two candidates.
     This determines the NHG noise variance: σ_d² = σ² · violationDiffSqSum. -/
-noncomputable def violationDiffSqSum {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (a b : C) : ℝ :=
-  constraints.foldl (λ acc con =>
-    acc + ((con.con a : ℝ) - (con.con b : ℝ)) ^ 2) 0
+noncomputable def violationDiffSqSum (con : CON C n) (a b : C) : ℝ :=
+  ∑ i, ((con i a : ℝ) - (con i b : ℝ)) ^ 2
 
 /-- Sum of squared violation differences (ℚ, computable).
     Use this for concrete examples with `decide`. -/
-def violationDiffSqSumQ {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (a b : C) : ℚ :=
-  constraints.foldl (λ acc con =>
-    acc + ((con.con a : ℚ) - (con.con b : ℚ)) ^ 2) 0
+def violationDiffSqSumQ (con : CON C n) (a b : C) : ℚ :=
+  ∑ i, ((con i a : ℚ) - (con i b : ℚ)) ^ 2
 
 /-- NHG noise standard deviation for binary choice:
     σ_d = σ · √(Σⱼ (cⱼ(a) − cⱼ(b))²).
 
     The noise is **context-dependent**: it scales with the violation
     difference profile, not just the per-weight noise σ. -/
-noncomputable def nhgSigmaD {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) : ℝ :=
-  sigma * Real.sqrt (violationDiffSqSum constraints a b)
+noncomputable def nhgSigmaD (con : CON C n) (sigma : ℝ) (a b : C) : ℝ :=
+  sigma * Real.sqrt (violationDiffSqSum con a b)
 
 -- ============================================================================
 -- § 2: NHG binary choice (Gaussian random utility model)
@@ -77,18 +79,16 @@ noncomputable def nhgSigmaD {C : Type*}
     probit choice rule) applied to the harmony gap, with the context-dependent
     NHG noise `σ_d = σ·√(Σⱼ(cⱼ(a)−cⱼ(b))²)` (`nhgSigmaD`). It grounds directly
     in the Gaussian RUM — *not* through Thurstone's psychophysics. -/
-noncomputable def nhgChoiceProb {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) : ℝ :=
-  gaussianChoiceProb (harmonyScore constraints a - harmonyScore constraints b)
-    (nhgSigmaD constraints sigma a b)
+noncomputable def nhgChoiceProb (con : CON C n) (w : Fin n → ℝ) (sigma : ℝ) (a b : C) : ℝ :=
+  gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
+    (nhgSigmaD con sigma a b)
 
 /-- NHG choice probability in closed form: `Φ((H(a) − H(b)) / σ_d)`
     ([flemming-2021] eq (15)). -/
-theorem nhg_choiceProb_eq {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) :
-    nhgChoiceProb constraints sigma a b =
-    normalCDF ((harmonyScore constraints a - harmonyScore constraints b) /
-               nhgSigmaD constraints sigma a b) := by
+theorem nhg_choiceProb_eq (con : CON C n) (w : Fin n → ℝ) (sigma : ℝ) (a b : C) :
+    nhgChoiceProb con w sigma a b =
+    normalCDF ((harmonyScore con w a - harmonyScore con w b) /
+               nhgSigmaD con sigma a b) := by
   simp only [nhgChoiceProb, gaussianChoiceProb]
 
 -- ============================================================================
@@ -110,17 +110,17 @@ noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
     Like NHG, the Gaussian random utility model (`gaussianChoiceProb`) applied
     to the harmony gap — but with the *constant* noise `σ_d = ε√2`
     (`normalMaxEntSigmaD`) rather than NHG's context-dependent `σ_d`. -/
-noncomputable def normalMaxEntChoiceProb {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (epsilon : ℝ) (a b : C) : ℝ :=
-  gaussianChoiceProb (harmonyScore constraints a - harmonyScore constraints b)
+noncomputable def normalMaxEntChoiceProb (con : CON C n) (w : Fin n → ℝ)
+    (epsilon : ℝ) (a b : C) : ℝ :=
+  gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
     (normalMaxEntSigmaD epsilon)
 
 /-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
     ([flemming-2021] eq (17)). -/
-theorem normalMaxEnt_choiceProb_eq {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (epsilon : ℝ) (a b : C) :
-    normalMaxEntChoiceProb constraints epsilon a b =
-    normalCDF ((harmonyScore constraints a - harmonyScore constraints b) /
+theorem normalMaxEnt_choiceProb_eq (con : CON C n) (w : Fin n → ℝ)
+    (epsilon : ℝ) (a b : C) :
+    normalMaxEntChoiceProb con w epsilon a b =
+    normalCDF ((harmonyScore con w a - harmonyScore con w b) /
                normalMaxEntSigmaD epsilon) := by
   simp only [normalMaxEntChoiceProb, gaussianChoiceProb]
 
@@ -151,12 +151,12 @@ theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     `log(P(a)/P(b)) = H(a) − H(b)`
 
     Instantiation of `logit_uniformity` with harmony scores. -/
-theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
-    (constraints : List (Constraint.Weighted C)) (a b : C) :
-    log (softmax (harmonyScore constraints) a /
-         softmax (harmonyScore constraints) b) =
-    harmonyScore constraints a - harmonyScore constraints b :=
-  logit_uniformity (harmonyScore constraints) a b
+theorem maxent_logit_harmony [Fintype C] [Nonempty C]
+    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    log (softmax (harmonyScore con w) a /
+         softmax (harmonyScore con w) b) =
+    harmonyScore con w a - harmonyScore con w b :=
+  logit_uniformity (harmonyScore con w) a b
 
 /-- **Ratio independence** (IIA for MaxEnt): the probability ratio between
     two candidates depends only on their own harmony scores.
@@ -165,11 +165,11 @@ theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
 
     Adding or removing other candidates from the competition doesn't
     change the ratio. Corollary of `softmax_odds` with α = 1. -/
-theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
-    (constraints : List (Constraint.Weighted C)) (a b : C) :
-    softmax (harmonyScore constraints) a /
-    softmax (harmonyScore constraints) b =
-    exp (harmonyScore constraints a - harmonyScore constraints b) := by
+theorem maxent_iia [Fintype C] [Nonempty C]
+    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    softmax (harmonyScore con w) a /
+    softmax (harmonyScore con w) b =
+    exp (harmonyScore con w a - harmonyScore con w b) := by
   rw [softmax_odds]
 
 -- ============================================================================
@@ -183,18 +183,11 @@ theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
 
     This is the bridge between abstract harmony scores and the constraint
     violation patterns used in empirical analyses (e.g., French schwa). -/
-theorem harmonyScore_diff {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (a b : C) :
-    harmonyScore constraints a - harmonyScore constraints b =
-    -(constraints.map (fun con =>
-        con.weight * ((con.con a : ℝ) - (con.con b : ℝ)))).sum := by
-  have h_sum : (constraints.map (fun con => con.weight * (con.con a : ℝ))).sum -
-      (constraints.map (fun con => con.weight * (con.con b : ℝ))).sum =
-      (constraints.map (fun con => con.weight * ((con.con a : ℝ) - (con.con b : ℝ)))).sum := by
-    induction constraints with
-    | nil => simp
-    | cons _ _ ih => simp only [List.map, List.sum_cons]; linarith
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, ← h_sum]
+theorem harmonyScore_diff (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    harmonyScore con w a - harmonyScore con w b =
+    -∑ i, w i * ((con i a : ℝ) - (con i b : ℝ)) := by
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
+  simp only [mul_sub, Finset.sum_sub_distrib]
   ring
 
 -- ============================================================================
@@ -246,28 +239,24 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
     non-diagonal covariance — not reducible to independent binary
     comparisons. This is why NHG violates IIA for 3+ candidates
     ([flemming-2021] §9). -/
-noncomputable def nhgCovariance {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b c : C) : ℝ :=
-  sigma ^ 2 * constraints.foldl (λ acc con =>
-    acc + ((con.con b : ℝ) - (con.con a : ℝ)) *
-          ((con.con c : ℝ) - (con.con a : ℝ))) 0
+noncomputable def nhgCovariance (con : CON C n) (sigma : ℝ) (a b c : C) : ℝ :=
+  sigma ^ 2 * ∑ i, ((con i b : ℝ) - (con i a : ℝ)) *
+                   ((con i c : ℝ) - (con i a : ℝ))
 
 /-- NHG covariance (ℚ, computable). -/
-def nhgCovarianceQ {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (a b c : C) : ℚ :=
-  constraints.foldl (λ acc con =>
-    acc + ((con.con b : ℚ) - (con.con a : ℚ)) *
-          ((con.con c : ℚ) - (con.con a : ℚ))) 0
+def nhgCovarianceQ (con : CON C n) (a b c : C) : ℚ :=
+  ∑ i, ((con i b : ℚ) - (con i a : ℚ)) *
+       ((con i c : ℚ) - (con i a : ℚ))
 
 /-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
     the variance `σ² · violationDiffSqSum`, recovering the binary case. -/
-theorem nhgCovariance_self {C : Type*}
-    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) :
-    nhgCovariance constraints sigma a b b =
-    sigma ^ 2 * violationDiffSqSum constraints b a := by
+theorem nhgCovariance_self (con : CON C n) (sigma : ℝ) (a b : C) :
+    nhgCovariance con sigma a b b =
+    sigma ^ 2 * violationDiffSqSum con b a := by
   simp only [nhgCovariance, violationDiffSqSum]
   congr 1
-  congr 1 with acc con
+  apply Finset.sum_congr rfl
+  intro i _
   ring
 
 end HarmonicGrammar

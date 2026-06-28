@@ -65,10 +65,4 @@ def mkAgreeOnTier {C α β : Type*} [DecidableEq β]
     (T : TierProjection α β) (extract : C → List α) : Constraint C :=
   mkForbidPairsOnTier (· ≠ ·) T extract
 
-/-- A weighted binary constraint (Harmonic Grammar): the common `{ con := binary P,
-weight }` case. Gradient/tier weighted constraints are the structure literal
-`{ con := mkOCP …, weight := w }`. -/
-def Constraint.Weighted.binary {C : Type*} (P : C → Prop) [DecidablePred P] (w : ℝ) :
-    Constraint.Weighted C := { con := Constraint.binary P, weight := w }
-
 end Constraints

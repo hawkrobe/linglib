@@ -1329,6 +1329,7 @@ import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.HarmonicGrammar.Cumulativity

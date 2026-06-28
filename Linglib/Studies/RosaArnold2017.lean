@@ -371,10 +371,10 @@ theorem dual_path_to_ordering :
     -- Path 2: thematic role creates a predictability contrast (Rosa & Arnold)
     nextMention_goal.percent > (100 - nextMention_goal.percent) ∧
     -- Path 1 (weight) independently predicts in Arnold et al.'s MaxEnt model
-    harmonyDominates (grammar 1 0)
+    harmonyDominates con (gW 1 0)
       (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) ∧
     -- Path 2 (newness) independently predicts in Arnold et al.'s MaxEnt model
-    harmonyDominates (grammar 0 1)
+    harmonyDominates con (gW 0 1)
       (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) := by
   refine ⟨by decide, by native_decide, ?_, ?_⟩
   · -- Path 1: heaviness alone, goal heavier than theme → goal-last more probable
