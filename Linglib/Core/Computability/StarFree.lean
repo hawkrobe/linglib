@@ -3,93 +3,70 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Algebra.Group.Aperiodic
-import Mathlib.Algebra.Group.PUnit
+import Linglib.Core.Computability.Variety.Langs
 
 /-!
 # Star-free languages
 
 A language is **star-free** when it is regular with an aperiodic syntactic monoid
-([schutzenberger-1965]) — the algebraic characterization of the star-free regular
-expressions (built from finite sets by `∪`, `·`, complement, *no* Kleene star),
-equivalently the counter-free / `FO[<]`-definable stringsets ([mcnaughton-papert-1971]).
-Taking the syntactic-monoid characterization as the definition mirrors the project's
-treatment of regularity (`Language.isRegular_iff_finite_syntacticMonoid`).
+([schutzenberger-1965]) — the algebraic characterization of the star-free regular expressions
+(built from finite sets by `∪`, `·`, complement, *no* Kleene star), equivalently the counter-free /
+`FO[<]`-definable stringsets ([mcnaughton-papert-1971]). Taking the syntactic-monoid
+characterization as the definition mirrors the project's treatment of regularity
+(`Language.isRegular_iff_finite_syntacticMonoid`).
+
+Star-free is the `V = Monoid.aperiodicVariety` instance of the Eilenberg correspondence: it is
+defined as `aperiodicVariety.langs`, so its closure properties are corollaries of the general
+keystone (`Monoid.Pseudovariety.langs_*`) rather than hand-written syntactic-monoid arguments.
 
 ## Main definitions
 
-* `Language.IsStarFree` — regular with an aperiodic syntactic monoid.
+* `Language.IsStarFree` — `Monoid.aperiodicVariety.langs`; equivalently regular with an aperiodic
+  syntactic monoid (`isStarFree_iff`).
 
 ## Main results
 
-* `Language.IsStarFree.compl` — star-free languages are closed under complement.
-* `Language.IsStarFree.inter` — star-free languages are closed under intersection (`⊓`).
-* `Language.IsStarFree.union` — star-free languages are closed under union (`⊔`, via De Morgan).
+* `Language.IsStarFree.compl` / `.inter` / `.union` — boolean closure.
+* `Language.IsStarFree.of_recognizes` — recognized by a finite aperiodic monoid ⟹ star-free.
+* `Language.IsStarFree.comap` — closure under inverse homomorphism.
 -/
 
 namespace Language
 
 variable {α : Type*} {L : Language α}
 
-/-- A language is **star-free** when it is regular and its syntactic monoid is aperiodic
-([schutzenberger-1965]). Star-free = `FO[<]`-definable = counter-free
-([mcnaughton-papert-1971]). -/
-def IsStarFree (L : Language α) : Prop :=
-  L.IsRegular ∧ Monoid.IsAperiodic L.syntacticMonoid
+/-- A language is **star-free** ([schutzenberger-1965]): the `Monoid.aperiodicVariety` instance of
+`Monoid.Pseudovariety.langs` — regular with an aperiodic syntactic monoid (`isStarFree_iff`).
+Star-free = `FO[<]`-definable = counter-free ([mcnaughton-papert-1971]). -/
+def IsStarFree (L : Language α) : Prop := Monoid.aperiodicVariety.langs L
+
+/-- Star-free unfolds to: regular with an aperiodic syntactic monoid. -/
+theorem isStarFree_iff : L.IsStarFree ↔ L.IsRegular ∧ Monoid.IsAperiodic L.syntacticMonoid :=
+  Iff.rfl
 
 theorem IsStarFree.isRegular (h : L.IsStarFree) : L.IsRegular := h.1
 
 theorem IsStarFree.isAperiodic (h : L.IsStarFree) :
     Monoid.IsAperiodic L.syntacticMonoid := h.2
 
-/-- **Star-free languages are closed under complement** — immediate from the
-complement-invariance of the syntactic monoid (`syntacticMonoid_compl`) and of regularity
-(`Language.IsRegular.compl`). -/
-theorem IsStarFree.compl (h : L.IsStarFree) : Lᶜ.IsStarFree := by
-  refine ⟨h.1.compl, ?_⟩
-  show Monoid.IsAperiodic (syntacticCon Lᶜ).Quotient
-  rw [syntacticCon_compl]
-  exact h.2
+/-- **Star-free languages are closed under complement.** -/
+theorem IsStarFree.compl (h : L.IsStarFree) : Lᶜ.IsStarFree :=
+  Monoid.aperiodicVariety.langs_compl h
 
-/-! ### Closure under intersection and union
-
-`Language α` carries its `BooleanAlgebra`, so intersection/union are the lattice meet/join
-`⊓`/`⊔` (defeq to set intersection/union); these are the forms `Language.IsRegular.inf` uses. -/
-
-/-- **Star-free languages are closed under intersection.** The syntactic monoid of `L ⊓ M`
-is a quotient of a submonoid of `L.syntacticMonoid × M.syntacticMonoid`, which is aperiodic
-(`Monoid.IsAperiodic.prod`); regularity is `Language.IsRegular.inf`. -/
+/-- **Star-free languages are closed under intersection.** -/
 theorem IsStarFree.inter {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
-    (L ⊓ M).IsStarFree := by
-  refine ⟨hL.1.inf hM.1, ?_⟩
-  set φ := (L.toSyntacticMonoid).prod M.toSyntacticMonoid with hφ
-  -- The product is aperiodic, hence so is its range submonoid, hence `(Con.ker φ).Quotient`.
-  have hprod : Monoid.IsAperiodic (L.syntacticMonoid × M.syntacticMonoid) := hL.2.prod hM.2
-  have hrange : Monoid.IsAperiodic (MonoidHom.mrange φ) :=
-    hprod.of_injective (MonoidHom.mrange φ).subtype_injective
-  have hker : Monoid.IsAperiodic (Con.ker φ).Quotient :=
-    hrange.of_mulEquiv (Con.quotientKerEquivRange φ).symm
-  -- The quotient map for `Con.ker φ ≤ (L ⊓ M).syntacticCon` is surjective.
-  have hle : Con.ker φ ≤ (L ⊓ M).syntacticCon := by
-    rw [hφ, ker_prod_toSyntacticMonoid]; exact inf_syntacticCon_le_syntacticCon_inf L M
-  exact hker.of_surjective (f := Con.map (Con.ker φ) _ hle)
-    (Con.lift_surjective_of_surjective _ Con.mk'_surjective)
+    (L ⊓ M).IsStarFree :=
+  Monoid.aperiodicVariety.langs_inf hL hM
 
-/-- **Star-free languages are closed under union** — by De Morgan, `L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ`. -/
+/-- **Star-free languages are closed under union.** -/
 theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
-    (L ⊔ M).IsStarFree := by
-  rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
-  exact (hL.compl.inter hM.compl).compl
-
-/-! ### Recognition by a finite aperiodic monoid -/
+    (L ⊔ M).IsStarFree :=
+  Monoid.aperiodicVariety.langs_sup hL hM
 
 /-- **A language recognized by a finite aperiodic monoid is star-free** — the algebraic
-characterization of star-free ([schutzenberger-1965]). When `η : FreeMonoid α →* M` with `M`
-finite and aperiodic and `L = η ⁻¹' P`, the syntactic congruence is coarser than `ker η`
-(`η`-equal words share every context), so `L.syntacticMonoid` is a quotient of a submonoid of
-`M` — hence finite and aperiodic. This is the engine for placing a constraint class inside
-`SF`: exhibit a finite aperiodic recognizer. -/
+characterization of star-free ([schutzenberger-1965]). The engine for placing a constraint class
+inside `SF`: exhibit a finite aperiodic recognizer. Stays universe-polymorphic in the recognizer
+`M` (the keystone `Monoid.Pseudovariety.langs_of_recognizes` is its fixed-universe form). -/
 theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
@@ -105,12 +82,8 @@ theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
   exact ⟨isRegular_of_finite_syntacticMonoid (Finite.of_surjective _ hsurj),
     hker.of_surjective hsurj⟩
 
-/-- **Star-free languages are closed under inverse homomorphism.** If `L` over `β` is star-free
-and `φ : FreeMonoid α →* FreeMonoid β` is any monoid hom, then the preimage language
-`{w | φ w ∈ L}` over `α` is star-free. The recognizer is `L.toSyntacticMonoid.comp φ` into the
-finite aperiodic `L.syntacticMonoid`, with `P` the set of `L`-classes containing a word of `L`
-(saturation of `L` by its syntactic congruence). This is the engine for transferring a star-free
-upper bound across a string-rewriting projection (e.g. tier erasure: `TSL ⊆ SF`). -/
+/-- **Star-free languages are closed under inverse homomorphism.** The engine for transferring a
+star-free upper bound across a string-rewriting projection (e.g. tier erasure: `TSL ⊆ SF`). -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
     Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
@@ -120,10 +93,8 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
   exact (mem_iff_of_syntacticCon ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
 
-/-- **The full language is star-free** — it is recognized by the trivial (one-element)
-monoid, which is aperiodic. -/
+/-- **The full language is star-free** — recognized by the trivial monoid. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
-  IsStarFree.of_recognizes (M := PUnit.{1}) Monoid.IsAperiodic.of_subsingleton 1 Set.univ
-    (fun _ => iff_of_true (Set.mem_univ _) (Set.mem_univ _))
+  Monoid.aperiodicVariety.langs_univ
 
 end Language
