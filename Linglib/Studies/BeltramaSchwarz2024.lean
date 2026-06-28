@@ -1,501 +1,342 @@
 import Linglib.Semantics.Numerals.Roundness
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
+import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Studies.BeltramaSoltBurnett2022
+import Linglib.Data.Examples.BeltramaSchwarz2024
+import Mathlib.Data.Sign.Defs
 import Mathlib.Tactic.NormNum
 
 /-!
-# [beltrama-schwarz-2024]: Empirical Data
-[beltrama-schwarz-2024]
+# [beltrama-schwarz-2024]: Social stereotypes affect imprecision resolution
 
-Experimental data from [beltrama-schwarz-2024], showing that speaker
-persona stereotypes affect imprecision resolution for round numerals.
+[beltrama-schwarz-2024] ask whether a speaker's social persona shifts how
+comprehenders resolve numeral imprecision, and find that it does — but
+*asymmetrically across tasks*. Two stereotypes anchor the high vs. low ends of
+the precision scale ([beltrama-2018], [beltrama-solt-burnett-2023]): a **Nerdy**
+persona (studious, articulate, introverted, uptight) indexes high Competence and
+precise speech; a **Chill** persona (laid-back, sociable, extroverted, care-free)
+indexes high Warmth and tolerant speech.
 
-## Experiments
+The puzzle this file formalizes is the *task asymmetry*. In an inference task
+(Experiment 1, a Covered-Screen paradigm) **both** personae move interpretation:
+Nerdy speakers' round numerals are read more strictly, Chill speakers' more
+loosely. In a judgment task (Experiment 2, a Truth-Value Judgment), only the
+**Chill** effect survives — the Nerdy strictness vanishes. [beltrama-schwarz-2024]
+(§7) attribute this to the *prejudiciality of rejection*: in a TVJ, calling a
+statement "wrong" commits the comprehender to blaming the speaker (an instance of
+testimonial (in)justice, [fricker-2007]), and comprehenders are reluctant to
+blame a speaker they read as conscientious. We make that the structural pivot:
+acceptance shifts always manifest; rejection shifts are suppressed exactly in
+tasks where rejection is prejudicial — which derives the asymmetry rather than
+stipulating it.
 
-1. **Experiment 1 (Covered Screen Task)**: Participants choose which of
-   two phone screens (COVERED vs VISIBLE) a speaker was looking at when
-   making a round-numeral statement. Both Nerdy and Chill personae
-   significantly affect choice rates.
+## Main definitions
+* `precisionField` — the [eckert-2008] indexical field linking `PrecisionMode`
+  to [fiske-cuddy-glick-2007] social dimensions; `personaPrecision` /
+  `personaDimension` read off the two personae.
+* `personaShift` — the precision-driven shift on the "reject the imprecise
+  reading" scale, derived from `personaPrecision` (a `SignType`).
+* `RejectionPrejudicial` / `predictedShift` — the prejudiciality mechanism: a
+  persona's shift, suppressed when it is a rejection-shift in a prejudicial task.
 
-2. **Experiment 2 (Truth-Value Judgment Task)**: Participants judge whether
-   a speaker's round-numeral statement is RIGHT or WRONG given a visible
-   phone screen. Only the Chill persona significantly affects judgments.
+## Main results
+* `bidirectionality`, `opposite_directions` — the persona ↔ precision mapping is
+  coherent and the two modes are exact opposites on every dimension.
+* `predictedShift_coveredScreen`, `predictedShift_truthValueJudgment`,
+  `nerdy_effect_is_task_dependent`, `acceptance_shift_never_blocked`,
+  `shift_blocked_iff` — the task asymmetry, derived from prejudiciality.
+* `roundness_gates_persona` — persona effects need a round numeral to act on.
+* the `#guard` over `Examples.all` checks each predicted shift against the
+  text-reported observed direction in every persona × task cell.
 
-## Key empirical generalization
+## Empirical findings (prose, per [beltrama-schwarz-2024])
+Effect sizes are documented here, not encoded as theorems (regression
+coefficients are not Lean content). Experiment 1 (Covered-Screen, n = 282, §4.5):
+in the critical Imprecise cell, COVERED (= precise/rejection) rates were higher
+for Nerdy than for the no-persona baseline (z = 6.62, p < .0001) and lower for
+Chill (z = 7.61, p < .0001); no persona contrast in the controls. Experiment 2
+(Truth-Value Judgment, n = 244, §5.3): WRONG (= rejection) rates were lower for
+Chill (z = 8.43, p < .0001) but did not differ from baseline for Nerdy (z = 0.15,
+p = .87). The pooled analysis (§6) found a Nerdy × Task interaction (β = 0.62,
+z = 1.99, p = .04): higher rejection for Nerdy than baseline in the Covered-Screen
+task (z = 4.40, p < .0001) but no difference in the TVJ (z = 1.51, p = .28).
 
-Speaker persona stereotypes modulate imprecision resolution
-bi-directionally in inference tasks (Exp 1) but asymmetrically in
-judgment tasks (Exp 2): Chill speakers increase tolerance for
-imprecision in both tasks, but Nerdy speakers only increase
-exactness demands in the inference task.
-
+## Implementation notes
+The illustrated stimulus (the "$200" ticket dialogue against a $207 screen) and
+the text-reported observed directions live in `Data.Examples.BeltramaSchwarz2024`;
+the structural predictions are checked against them by `#guard`. Persona ↔
+precision indexing reuses `Pragmatics.SocialMeaning` (the [eckert-2008] field and
+[burnett-2019]'s Eckert–Montague lift); speaker-conditioned halo width is the
+`Semantics.Numerals.Precision.speakerModulatedHalo` this paper motivates.
 -/
 
 namespace BeltramaSchwarz2024
 
 open SocialMeaning.IndexicalField
 open SocialMeaning.SCM
-open Semantics.Numerals.Precision
 open SocialMeaning.EckertMontague
+open Semantics.Numerals.Precision
+open Data.Examples (LinguisticExample)
 
--- ============================================================================
--- Conditions
--- ============================================================================
+/-! ### Conditions -/
 
-/-- Speaker persona condition (between-subjects).
-    Participants read a short vignette describing the speaker (§4.1). -/
+/-- Speaker persona condition (between-subjects, §4.1). The two stereotypes
+    anchor the high/low ends of the precision scale; `noPersona` is the
+    baseline with no social description. -/
 inductive PersonaCondition where
-  | nerdy      -- "studious, articulate, introverted, and uptight" (§4.1)
-  | chill      -- "laid-back, sociable, extroverted, and care-free" (§4.1)
-  | noPersona  -- no persona description provided (baseline)
+  | nerdy
+  | chill
+  | noPersona
   deriving DecidableEq, Repr
 
-/-- Screen fit condition (within-subjects, §4.1).
-    Determines the relationship between the speaker's round-numeral
-    statement and the amount shown on the VISIBLE phone screen.
-    In regression models, Match and Mismatch are collapsed into a binary
-    "Control" factor, with Imprecise as the critical level (§4.5, §5.3). -/
-inductive ScreenFit where
-  | match_     -- visible screen shows exact stated amount ($200 when "$200")
-  | mismatch   -- visible screen shows very different amount
-  | imprecise  -- visible screen shows close-but-not-exact amount ($207 when "$200")
-  deriving DecidableEq, Repr
-
-/-- Experimental task type. -/
+/-- Experimental task (§4 vs. §5): inferring the speaker's referent from a round
+    numeral (Covered-Screen) vs. judging an utterance true/false against a known
+    value (Truth-Value Judgment). -/
 inductive TaskType where
-  | coveredScreen        -- Exp 1: infer which phone the speaker saw
-  | truthValueJudgment   -- Exp 2: judge the statement RIGHT vs WRONG
+  | coveredScreen
+  | truthValueJudgment
   deriving DecidableEq, Repr
 
-/-- The trait descriptors used for each persona condition (§4.1).
-    Context sentences described the dialogue characters using these traits,
-    e.g. "Arthur and Rachel, who have been described as Nerdy people,
-    are looking for a plane ticket" (Figure 2). -/
+/-- Trait descriptors made explicit to participants for each persona (§4.1). -/
 def personaDescriptors : PersonaCondition → List String
   | .nerdy     => ["studious", "articulate", "introverted", "uptight"]
   | .chill     => ["laid-back", "sociable", "extroverted", "care-free"]
   | .noPersona => []
 
--- ============================================================================
--- Regression coefficients
--- ============================================================================
+/-! ### Persona-indexed precision (Hypothesis 1)
 
-/-- A coefficient from a mixed-effects logistic regression model.
-    Models fitted via `lmer_alt` from the afex package in R, which wraps
-    lme4 ([bates-etal-2015]; see footnote 6 of paper). -/
-structure RegressionCoefficient where
-  predictor : String
-  /-- Coefficient estimate (log-odds) -/
-  beta : ℚ
-  /-- Standard error -/
-  se : ℚ
-  /-- Significant at p < 0.05? -/
-  significant : Bool
-  deriving Repr
+The persona → precision link is an [eckert-2008] indexical field over the
+[fiske-cuddy-glick-2007] social dimensions: precise speech indexes Competence
+and anti-Solidarity (pedantic/uptight) but away from Warmth; approximate speech
+the reverse (§2). -/
 
--- Experiment 1: Covered Screen Task (§4)
+/-- The indexical field for numeral precision. The variable under study is the
+    semantic `PrecisionMode` itself, not a study-local proxy. -/
+def precisionField : IndexicalField PrecisionMode SocialDimension where
+  association
+    | .exact,       .competence     =>  1
+    | .exact,       .warmth         => -1
+    | .exact,       .antiSolidarity =>  1
+    | .approximate, .competence     => -1
+    | .approximate, .warmth         =>  1
+    | .approximate, .antiSolidarity => -1
+  order := .third
 
-/-- Experiment 1 participants (§4.4).
-    282 self-declared native English speakers recruited on Prolific. -/
-def exp1_n : Nat := 282
-
-/-- Experiment 1 regression model (§4.5).
-    DV: COVERED (1) vs VISIBLE (0).
-    Persona: treatment-coded, NoPersona as reference.
-    ScreenFit: binary (Control = Match+Mismatch collapsed vs Imprecise),
-    sum-coded. Maximal converging mixed-effects logistic regression. -/
-def exp1_chill : RegressionCoefficient :=
-  { predictor := "Chill", beta := -67/100, se := 13/100, significant := true }
-def exp1_nerdy : RegressionCoefficient :=
-  { predictor := "Nerdy", beta := 77/100, se := 14/100, significant := true }
-def exp1_screenFit : RegressionCoefficient :=
-  { predictor := "ScreenFit", beta := 0, se := 10/100, significant := false }
-
-/-- Experiment 1 Persona × ScreenFit interactions (§4.5).
-    Both are significant: persona effects are concentrated in the
-    Imprecise condition. In Control conditions, no significant persona
-    contrasts were found. -/
-def exp1_chillScreenFit : RegressionCoefficient :=
-  { predictor := "Chill:ScreenFit", beta := 66/100, se := 13/100, significant := true }
-def exp1_nerdyScreenFit : RegressionCoefficient :=
-  { predictor := "Nerdy:ScreenFit", beta := -78/100, se := 13/100, significant := true }
-
-def exp1_model : List RegressionCoefficient :=
-  [exp1_chill, exp1_nerdy, exp1_screenFit,
-   exp1_chillScreenFit, exp1_nerdyScreenFit]
-
--- Experiment 2: Truth-Value Judgment Task (§5)
-
-/-- Experiment 2 participants (§5.2).
-    244 recruited on Prolific. -/
-def exp2_n : Nat := 244
-
-/-- Experiment 2 regression model (§5.3).
-    DV: acceptance rate. The paper describes fitting on "WRONG choices" but
-    the positive Chill coefficient (β = 1.04) with the finding that Chill
-    speakers had *lower* WRONG rates (§5.3, Figure 6) indicates the
-    effective coding is acceptance (RIGHT = 1, WRONG = 0).
-    Persona: treatment-coded, NoPersona as reference.
-    ScreenFit: binary (Control vs Imprecise), sum-coded. -/
-def exp2_chill : RegressionCoefficient :=
-  { predictor := "Chill", beta := 104/100, se := 16/100, significant := true }
-def exp2_nerdy : RegressionCoefficient :=
-  { predictor := "Nerdy", beta := 2/100, se := 15/100, significant := false }
-
-/-- Experiment 2 Persona × ScreenFit interactions (§5.3).
-    Only Chill × ScreenFit is significant: the Chill tolerance effect
-    is concentrated in the Imprecise condition. -/
-def exp2_chillScreenFit : RegressionCoefficient :=
-  { predictor := "Chill:ScreenFit", beta := 100/100, se := 16/100, significant := true }
-def exp2_nerdyScreenFit : RegressionCoefficient :=
-  { predictor := "Nerdy:ScreenFit", beta := 3/100, se := 18/100, significant := false }
-
-def exp2_model : List RegressionCoefficient :=
-  [exp2_chill, exp2_nerdy, exp2_chillScreenFit, exp2_nerdyScreenFit]
-
--- Combined Analysis (§6)
-
-/-- The critical Nerdy × Task interaction (§6): the Covered Screen Task
-    features a higher rejection rate for Nerdy than No.Persona, but the
-    Truth Value Judgment task does not. This is the formal statistical
-    confirmation of the task asymmetry captured by `task_asymmetry_derived`. -/
-def combined_nerdyTask : RegressionCoefficient :=
-  { predictor := "Nerdy:Task", beta := 62/100, se := 31/100, significant := true }
-
--- ============================================================================
--- Stimuli properties (§4.1–4.2)
--- ============================================================================
-
-/-- All critical items use round dollar amounts.
-    Example from §2: "The ticket costs $200." -/
-def exampleStatedAmount : Nat := 200
-
-/-- The imprecise screen shows a close-but-not-exact amount.
-    Example from Figure 1: visible screen shows ~$207 when statement says $200. -/
-def exampleImpreciseAmount : Nat := 207
-
-/-- Stimulus numerals are round: high roundness grade. -/
-theorem stimulus_is_round :
-    Semantics.Numerals.Roundness.roundnessGrade exampleStatedAmount = .high := by native_decide
-
-/-- The imprecise value is non-round: zero roundness. -/
-theorem imprecise_value_is_nonround :
-    Semantics.Numerals.Roundness.roundnessGrade exampleImpreciseAmount = .none := by native_decide
-
-/-- Roundness scores differ maximally: 6 vs 0. -/
-theorem roundness_gap :
-    Semantics.Numerals.Roundness.roundnessScore exampleStatedAmount = 6 ∧
-    Semantics.Numerals.Roundness.roundnessScore exampleImpreciseAmount = 0 := by
-  constructor <;> native_decide
-
--- ============================================================================
--- Empirical generalizations
--- ============================================================================
-
-/-- Core finding: both persona conditions significantly affect Exp 1
-    (inference task). -/
-theorem exp1_both_personae_significant :
-    exp1_chill.significant = true ∧ exp1_nerdy.significant = true := by
-  exact ⟨rfl, rfl⟩
-
-/-- Key asymmetry: in Exp 2 (judgment task), only Chill is significant. -/
-theorem exp2_chill_only :
-    exp2_chill.significant = true ∧ exp2_nerdy.significant = false := by
-  exact ⟨rfl, rfl⟩
-
-/-- Chill decreases COVERED rate (negative β): Chill persona leads
-    listeners to favor the VISIBLE screen, treating the round numeral
-    as imprecise (§4.5). -/
-theorem chill_reduces_exactness_exp1 :
-    exp1_chill.beta < 0 := by native_decide
-
-/-- Nerdy increases COVERED rate (positive β): Nerdy persona leads
-    listeners to favor the COVERED screen, treating the round numeral
-    as exact (§4.5). -/
-theorem nerdy_increases_exactness_exp1 :
-    exp1_nerdy.beta > 0 := by native_decide
-
-/-- Chill increases RIGHT rate (positive β on RIGHT DV), i.e.,
-    increases tolerance for imprecision in truth-value judgments (§5.3). -/
-theorem chill_increases_tolerance_exp2 :
-    exp2_chill.beta > 0 := by native_decide
-
-/-- Nerdy has no significant effect on truth-value judgments (§5.3). -/
-theorem nerdy_null_in_exp2 :
-    exp2_nerdy.significant = false := rfl
-
-/-- Significant Persona × ScreenFit interactions in Exp 1 (§4.5):
-    persona effects are concentrated in the Imprecise condition. In Control
-    conditions, no significant persona contrasts were found. -/
-theorem exp1_interactions_significant :
-    exp1_chillScreenFit.significant = true ∧
-    exp1_nerdyScreenFit.significant = true := by
-  exact ⟨rfl, rfl⟩
-
-/-- Exp 2 interaction asymmetry (§5.3): only Chill × ScreenFit is
-    significant. Nerdy speakers show no interaction, consistent with
-    the null main effect. -/
-theorem exp2_chill_interaction_only :
-    exp2_chillScreenFit.significant = true ∧
-    exp2_nerdyScreenFit.significant = false := by
-  exact ⟨rfl, rfl⟩
-
-/-- No main effect of ScreenFit in Exp 1 (§4.5): COVERED rates do not
-    differ across Imprecise and Control conditions overall. The persona
-    effect is entirely driven by the interaction. -/
-theorem exp1_no_screenFit_main_effect :
-    exp1_screenFit.significant = false := rfl
-
-/-- The Chill main effect is larger in Exp 2 (|β| = 1.04) than in
-    Exp 1 (|β| = 0.67). -/
-theorem chill_effect_larger_in_exp2 :
-    exp2_chill.beta > -exp1_chill.beta := by native_decide
-
-/-- The combined analysis confirms the Nerdy × Task interaction is
-    significant, validating the prejudiciality-based explanation. -/
-theorem combined_nerdy_task_significant :
-    combined_nerdyTask.significant = true := rfl
-
-/-- The combined analysis interaction sign is positive (§6): Nerdy
-    speakers have higher rejection rates in CST than TVJ relative to
-    baseline, consistent with rejection being blocked in TVJ. -/
-theorem combined_nerdy_task_positive :
-    combined_nerdyTask.beta > 0 := by native_decide
-
--- ============================================================================
--- Precision indexical field
--- ============================================================================
-
-/-- The indexical field for numeral precision, parameterized by
-    `PrecisionMode` from `Semantics.Numerals.Precision` rather than
-    a study-local type — the sociolinguistic variable whose social meaning
-    is under study IS the semantic precision mode. -/
-def precisionField : IndexicalField PrecisionMode SocialDimension :=
-  { association := λ v d => match v, d with
-    | .exact,       .competence      =>  1
-    | .exact,       .warmth          => -1
-    | .exact,       .antiSolidarity  =>  1
-    | .approximate, .warmth          =>  1
-    | .approximate, .competence      => -1
-    | .approximate, .antiSolidarity  => -1
-  , order := .third }
-
-/-- The precision mode favored by a given persona condition. -/
+/-- The precision mode a persona favors (Nerdy precise, Chill approximate). -/
 def personaPrecision : PersonaCondition → Option PrecisionMode
   | .nerdy     => some .exact
   | .chill     => some .approximate
   | .noPersona => none
 
-/-- Persona conditions mapped to SCM social dimensions. -/
+/-- The SCM dimension a persona foregrounds (Nerdy Competence, Chill Warmth). -/
 def personaDimension : PersonaCondition → Option SocialDimension
   | .nerdy     => some .competence
   | .chill     => some .warmth
   | .noPersona => none
 
-/-- **Bidirectionality theorem**: production and comprehension mappings cohere. -/
+/-- Production and comprehension cohere: the precision mode a persona favors
+    positively indexes the dimension that persona foregrounds. -/
 theorem bidirectionality
     (p : PersonaCondition) (d : SocialDimension) (v : PrecisionMode)
     (hd : personaDimension p = some d) (hv : personaPrecision p = some v) :
     precisionField.indexes v d := by
   cases p with
   | nerdy =>
-    simp [personaDimension] at hd
-    simp [personaPrecision] at hv
-    subst hd; subst hv
-    show (1 : ℚ) > 0; norm_num
+    simp only [personaDimension, personaPrecision, Option.some.injEq] at hd hv
+    subst hd; subst hv; show (1 : ℚ) > 0; norm_num
   | chill =>
-    simp [personaDimension] at hd
-    simp [personaPrecision] at hv
-    subst hd; subst hv
-    show (1 : ℚ) > 0; norm_num
-  | noPersona =>
-    simp [personaDimension] at hd
+    simp only [personaDimension, personaPrecision, Option.some.injEq] at hd hv
+    subst hd; subst hv; show (1 : ℚ) > 0; norm_num
+  | noPersona => simp [personaDimension] at hd
 
-theorem scm_coherence_nerdy :
-    precisionField.indexes .exact .competence :=
+theorem scm_coherence_nerdy : precisionField.indexes .exact .competence :=
   bidirectionality .nerdy .competence .exact rfl rfl
 
-theorem scm_coherence_chill :
-    precisionField.indexes .approximate .warmth :=
+theorem scm_coherence_chill : precisionField.indexes .approximate .warmth :=
   bidirectionality .chill .warmth .approximate rfl rfl
 
-/-- Exact and approximate modes have opposite associations with every dimension. -/
+/-- Exact and approximate index opposite ways on every dimension. -/
 theorem opposite_directions (d : SocialDimension) :
-    precisionField.association .exact d =
-    - precisionField.association .approximate d := by
+    precisionField.association .exact d = - precisionField.association .approximate d := by
   cases d <;> simp [precisionField]
 
--- ============================================================================
--- Task asymmetry from prejudiciality
--- ============================================================================
+/-- The precision field as a [burnett-2019] grounded field over the SCM space. -/
+def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
+  fromIndexicalField precisionField
 
-inductive ResponseShift where
-  | towardRejection
-  | towardAcceptance
-  deriving DecidableEq, Repr
+/-- Precise speech indexes {competent, cold, antiSolidary}. -/
+theorem exact_scmProperties :
+    precisionGroundedField.indexedProperties .exact = {.competent, .cold, .antiSolidary} := by
+  decide
 
-def shiftDirection : PrecisionMode → ResponseShift
-  | .exact       => .towardRejection
-  | .approximate => .towardAcceptance
+/-- Approximate speech indexes {incompetent, warm, solidary}. -/
+theorem approx_scmProperties :
+    precisionGroundedField.indexedProperties .approximate = {.incompetent, .warm, .solidary} := by
+  decide
 
-def rejectionIsPrejudicial : TaskType → Prop
+/-! ### The precision shift
+
+A persona's precision mode induces a shift on the *reject-the-imprecise-reading*
+scale: precise interpretation pushes toward rejection (`+1`), tolerant
+interpretation toward acceptance (`-1`). The shift is derived from
+`personaPrecision`, not stipulated per persona. -/
+
+/-- A precision mode's directional pull on the rejection scale. -/
+def precisionShift : PrecisionMode → SignType
+  | .exact       =>  1   -- precise reading → reject imprecise descriptions
+  | .approximate => -1   -- tolerant reading → accept them
+
+/-- A persona's shift on the rejection scale, derived from its precision mode;
+    the baseline persona is neutral. -/
+def personaShift (p : PersonaCondition) : SignType :=
+  (personaPrecision p).elim 0 precisionShift
+
+/-- Nerdy and Chill pull in exactly opposite directions. -/
+theorem nerdy_chill_opposite_shift : personaShift .nerdy = - personaShift .chill := by
+  decide
+
+/-! ### Task asymmetry from the prejudiciality of rejection
+
+The pivot (§7): a *rejection* response is socially prejudicial in a Truth-Value
+Judgment (it blames the speaker, [fricker-2007]) but not in a Covered-Screen
+inference (it merely posits a different referent). A persona's shift manifests
+unless it is a rejection-shift in a prejudicial task — which suppresses Nerdy
+strictness in the TVJ while leaving Chill tolerance untouched. -/
+
+/-- Whether a "reject" response in this task is socially prejudicial. -/
+def RejectionPrejudicial : TaskType → Prop
   | .coveredScreen      => False
   | .truthValueJudgment => True
 
-instance (t : TaskType) : Decidable (rejectionIsPrejudicial t) :=
-  match t with
+instance : DecidablePred RejectionPrejudicial
   | .coveredScreen      => .isFalse id
   | .truthValueJudgment => .isTrue trivial
 
-def shiftManifests (shift : ResponseShift) (task : TaskType) : Prop :=
-  match shift with
-  | .towardAcceptance => True
-  | .towardRejection  => ¬ rejectionIsPrejudicial task
+/-- The shift that actually manifests in a task: a persona's `personaShift`,
+    suppressed to neutral exactly when it points toward rejection (`+1`) in a
+    task where rejection is prejudicial. -/
+def predictedShift (p : PersonaCondition) (t : TaskType) : SignType :=
+  if personaShift p = 1 ∧ RejectionPrejudicial t then 0 else personaShift p
 
-def personaEffectPredicted (persona : PersonaCondition) (task : TaskType) : Prop :=
-  match personaPrecision persona with
-  | none   => False
-  | some v => shiftManifests (shiftDirection v) task
+/-- Inference task: rejection is not prejudicial, so both shifts manifest. -/
+theorem predictedShift_coveredScreen :
+    predictedShift .nerdy .coveredScreen = 1 ∧
+    predictedShift .chill .coveredScreen = -1 := by decide
 
-theorem acceptance_never_blocked (task : TaskType) :
-    shiftManifests .towardAcceptance task := trivial
+/-- Judgment task: the Nerdy rejection-shift is blocked; the Chill
+    acceptance-shift survives. -/
+theorem predictedShift_truthValueJudgment :
+    predictedShift .nerdy .truthValueJudgment = 0 ∧
+    predictedShift .chill .truthValueJudgment = -1 := by decide
 
-theorem rejection_manifests_in_cst :
-    shiftManifests .towardRejection .coveredScreen :=
-  id
+/-- The Nerdy effect is task-dependent: present in inference, absent in judgment. -/
+theorem nerdy_effect_is_task_dependent :
+    predictedShift .nerdy .coveredScreen ≠ predictedShift .nerdy .truthValueJudgment := by
+  decide
 
-theorem rejection_blocked_in_tvjt :
-    ¬ shiftManifests .towardRejection .truthValueJudgment :=
-  fun h => h trivial
+/-- The Chill (acceptance) effect is task-invariant: never blocked. -/
+theorem acceptance_shift_never_blocked (t : TaskType) :
+    predictedShift .chill t = personaShift .chill := by
+  cases t <;> decide
 
-/-- Both personae's effects manifest in CST. -/
-theorem cst_both_manifest :
-    personaEffectPredicted .nerdy .coveredScreen ∧
-    personaEffectPredicted .chill .coveredScreen := by
-  constructor
-  · exact rejection_manifests_in_cst
-  · exact acceptance_never_blocked .coveredScreen
+/-- The blocking is structural: a shift is suppressed to neutral exactly when the
+    persona is neutral, or its shift points toward rejection in a prejudicial
+    task. The asymmetry follows from this, not from stipulated per-cell values. -/
+theorem shift_blocked_iff (p : PersonaCondition) (t : TaskType) :
+    predictedShift p t = 0 ↔
+      personaShift p = 0 ∨ (personaShift p = 1 ∧ RejectionPrejudicial t) := by
+  cases p <;> cases t <;> decide
 
-/-- Only Chill's effect manifests in TVJT. -/
-theorem tvjt_chill_only :
-    personaEffectPredicted .chill .truthValueJudgment ∧
-    ¬ personaEffectPredicted .nerdy .truthValueJudgment := by
-  constructor
-  · exact acceptance_never_blocked .truthValueJudgment
-  · exact rejection_blocked_in_tvjt
+/-! ### Roundness gating
 
-theorem noPersona_no_effect (task : TaskType) :
-    ¬ personaEffectPredicted .noPersona task :=
-  id
+Persona effects only have something to act on when the numeral is round enough
+to carry an imprecise reading: `$200` does, `$207` does not
+([krifka-2007]; `Semantics.Numerals.Precision`). -/
 
-/-- Combined task asymmetry matches empirical significance pattern:
-    theoretical prediction from prejudiciality aligns with both the main
-    effects and the interaction structure across experiments. -/
-theorem task_asymmetry_derived :
-    -- Theoretical prediction
-    (personaEffectPredicted .nerdy .coveredScreen ∧
-     personaEffectPredicted .chill .coveredScreen) ∧
-    (personaEffectPredicted .chill .truthValueJudgment ∧
-     ¬ personaEffectPredicted .nerdy .truthValueJudgment) ∧
-    -- Empirical main effects
-    (exp1_nerdy.significant = true ∧ exp1_chill.significant = true) ∧
-    (exp2_chill.significant = true ∧ exp2_nerdy.significant = false) ∧
-    -- Interactions confirm localization to Imprecise condition
-    (exp1_chillScreenFit.significant = true ∧
-     exp1_nerdyScreenFit.significant = true) ∧
-    (exp2_chillScreenFit.significant = true ∧
-     exp2_nerdyScreenFit.significant = false) :=
-  ⟨cst_both_manifest, tvjt_chill_only, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩,
-   ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+/-- The round numeral uttered in the illustrated stimulus (§2, Figure 1). -/
+def statedAmount : Nat := 200
 
--- ============================================================================
--- Roundness gating
--- ============================================================================
+/-- The close-but-not-exact amount shown on the Imprecise screen (Figure 1). -/
+def displayedAmount : Nat := 207
 
-/-- Whether imprecise readings are available for a numeral. -/
+/-- A numeral supports an imprecise reading. -/
 def impreciseReadingAvailable (n : Nat) : Prop :=
   inferPrecisionMode n = .approximate
 
 instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
   inferInstanceAs (Decidable (inferPrecisionMode n = .approximate))
 
-/-- Roundness gates persona effects: $200 supports imprecision, $207 does not. -/
-theorem roundness_gates_persona :
-    impreciseReadingAvailable exampleStatedAmount ∧
-    ¬ impreciseReadingAvailable exampleImpreciseAmount := by
-  constructor <;> native_decide
-
-/-- Multiples of 10 always have imprecise readings. -/
+/-- Any multiple of 10 carries an imprecise reading (general; derived from the
+    roundness keystone). -/
 theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
     impreciseReadingAvailable n := by
   unfold impreciseReadingAvailable inferPrecisionMode
   exact if_pos (Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10)
 
--- ============================================================================
--- Integration
--- ============================================================================
+/-- Roundness gates the persona effect: the round numeral supports imprecision,
+    the displayed value does not. -/
+theorem roundness_gates_persona :
+    impreciseReadingAvailable statedAmount ∧ ¬ impreciseReadingAvailable displayedAmount :=
+  ⟨div10_enables_imprecision statedAmount (by decide), by decide⟩
 
--- Eckert–Montague bridge
-
-/-! The precision field can be lifted to a grounded field over the SCM
-property space via `fromIndexicalField`, connecting it to
-[burnett-2019]'s persona-theoretic infrastructure. -/
-
-/-- The precision field converted to a grounded field over the SCM
-    property space. -/
-def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
-  fromIndexicalField precisionField
-
-/-- Exact indexes {competent, cold, antiSolidary}. -/
-theorem exact_scmProperties :
-    precisionGroundedField.indexedProperties .exact =
-      {.competent, .cold, .antiSolidary} := by
-  native_decide
-
-/-- Approximate indexes {incompetent, warm, solidary}. -/
-theorem approx_scmProperties :
-    precisionGroundedField.indexedProperties .approximate =
-      {.incompetent, .warm, .solidary} := by
-  native_decide
-
--- BSB2022 bridge
-
-/-! [beltrama-solt-burnett-2023]'s three-way variant contrast
-(precise/underspecified/approximate) refines B&S2024's binary distinction.
-The "underspecified" variant — a bare round numeral like "fifty" — is
-exactly the kind of stimulus B&S2024 studies: its precision is
-contextually determined. -/
-
-/-- BSB2022's round stimulus (50) has an imprecise reading available,
-    just like B&S2024's stimulus (200). Both are round numbers whose
-    precision resolution is the object of study. -/
+/-- [beltrama-solt-burnett-2023]'s round stimulus (50) is the same kind of
+    object: a round numeral whose precision resolution is under study. -/
 theorem bsb_stim_also_round :
-    impreciseReadingAvailable
-      BeltramaSoltBurnett2022.stimRound := by
-  native_decide
+    impreciseReadingAvailable BeltramaSoltBurnett2022.stimRound :=
+  div10_enables_imprecision BeltramaSoltBurnett2022.stimRound (by decide)
 
--- Speaker-conditioned precision
+/-! ### Speaker-modulated halo
 
-/-! The core finding of [beltrama-schwarz-2024] — that numeral
-precision is jointly determined by roundness AND speaker identity — is
-captured by `speakerModulatedHalo` in the theory layer
-(`Semantics.Numerals.Precision`). Nerdy speakers get narrower
-halos (multiplier < 1), Chill speakers get wider ones (multiplier > 1). -/
+The substrate map `speakerModulatedHalo` (motivated by this paper) widens or
+narrows a numeral's pragmatic halo by a speaker-specific multiplier; Chill
+speakers get a wider halo than Nerdy ones. -/
 
-/-- A larger multiplier produces a wider halo: the monotonicity that
-    connects the competence/warmth ordering to tolerance width. -/
+/-- A larger multiplier yields a wider halo — the monotonicity that ties the
+    Competence/Warmth ordering to tolerance width. -/
 theorem wider_halo_of_larger_multiplier (m₁ m₂ : ℚ) (n : Nat)
     (hm : m₁ < m₂) (hn : 0 < haloWidth n) :
     speakerModulatedHalo m₁ n < speakerModulatedHalo m₂ n := by
   unfold speakerModulatedHalo
   exact mul_lt_mul_of_pos_right hm hn
 
-/-- Round numbers have positive halo width, so speaker modulation
-    has a genuine effect. -/
-theorem round_has_positive_halo :
-    0 < haloWidth exampleStatedAmount := by native_decide
+/-- The round numeral has positive halo width, so speaker modulation bites. -/
+theorem round_has_positive_halo : 0 < haloWidth statedAmount := by
+  have hs : Semantics.Numerals.Roundness.roundnessScore 200 = 6 := by decide
+  unfold haloWidth statedAmount
+  rw [hs]; norm_num
+
+/-! ### Data: predicted shift matches observed direction
+
+The structural `predictedShift` is checked against the text-reported observed
+rejection direction in every persona × task cell of the illustrated stimulus. -/
+
+/-- A text-reported rejection direction as a sign on the rejection scale. -/
+def observedDirection (s : String) : SignType :=
+  if s == "higher" then 1 else if s == "lower" then -1 else 0
+
+private def parsePersona : String → Option PersonaCondition
+  | "nerdy"     => some .nerdy
+  | "chill"     => some .chill
+  | "noPersona" => some .noPersona
+  | _           => none
+
+private def parseTask : String → Option TaskType
+  | "coveredScreen"      => some .coveredScreen
+  | "truthValueJudgment" => some .truthValueJudgment
+  | _                    => none
+
+/-- The predicted shift equals the observed direction for a data row. -/
+def rowConfirmsPrediction (e : LinguisticExample) : Bool :=
+  match e.paperFeatures.lookup "persona" |>.bind parsePersona,
+        e.paperFeatures.lookup "task" |>.bind parseTask,
+        e.paperFeatures.lookup "rejectionVsBaseline" with
+  | some p, some t, some dir => decide (predictedShift p t = observedDirection dir)
+  | _, _, _ => false
+
+-- Build-checked: every persona × task cell's predicted shift matches the
+-- text-reported observed direction (§4.5, §5.3, §6).
+#guard Examples.all.all rowConfirmsPrediction
 
 end BeltramaSchwarz2024

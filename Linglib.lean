@@ -2928,5 +2928,6 @@ import Linglib.Data.Examples.LiuRotter2025
 import Linglib.Data.Examples.SolstadBott2024
 import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.DegenTonhauser2021
+import Linglib.Data.Examples.BeltramaSchwarz2024
 
 
