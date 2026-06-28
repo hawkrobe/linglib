@@ -1,6 +1,6 @@
 import Linglib.Discourse.AtIssueness
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Data.Examples.TonhauserBeaverDegen2018
+import Linglib.Data.Generalizations.Projectivity
 
 /-!
 # [tonhauser-beaver-degen-2018]: How Projective Is Projective Content?
@@ -22,8 +22,8 @@ correlation with item-level variance, not this identity (cf. the dependency's
 ## Main definitions
 * `gppProjection` — the GPP map, the complement of at-issueness (`Rat01.compl`).
 * `pottsProjection` — [potts-2005]'s rival: CI projects maximally, at-issueness-blind.
-* `ProjectionAccount` / `ProjectionDatum` / `allData` — the predict signature a
-  theory implements and the artifact-sourced pool it runs against.
+* both are `Generalizations.Projectivity.ProjectionAccount`s, run against the
+  pooled per-expression data (`allData`) in that hub.
 
 ## Main results
 * `gppProjection_antitone` — the GPP as order-reversal.
@@ -43,7 +43,7 @@ namespace TonhauserBeaverDegen2018
 open Discourse.AtIssueness
 open Core.Order (Rat01)
 open Pragmatics.Expressives
-open Data.Examples (LinguisticExample SourceRef)
+open Generalizations.Projectivity
 
 /-! ### The Gradient Projection Principle -/
 
@@ -165,71 +165,25 @@ theorem appositive_not_maximally_projective
   have := gpp_below_potts_of_atIssue h
   simpa [pottsProjection, Rat01.one] using this
 
-/-! ### Representing the data for theories to predict against
+/-! ### Predicting against the data
 
-The per-expression means (Exps 1a/1b plus main-clause controls) are
-artifact-sourced rows in `Data.Examples.TonhauserBeaverDegen2018`; `fromExample`
-lifts them to the `allData` pool any `ProjectionAccount` runs against. The means
-are continuous, so per-row predictions are *computed* (string `paperFeatures` and
-`ℚ` do not reduce in the kernel); the *provable* content is each account's
-systematic error — the GPP over-predicts content projecting below its
-not-at-issueness, Potts over-predicts everything sub-ceiling, and where both do
-the GPP is closer. -/
+`gppProjection` and `pottsProjection` are `Generalizations.Projectivity`
+`ProjectionAccount`s; the paper's per-expression means are pooled in that hub's
+`allData` (artifact-sourced rows in `Data.Examples.TonhauserBeaverDegen2018`). The
+means are continuous, so per-row predictions are *computed* over `allData` (string
+`paperFeatures` and `ℚ` do not reduce in the kernel); the *provable* content is
+each account's systematic error. -/
 
-/-- A theory of projection: predict a content's projectivity from its at-issueness. -/
-abbrev ProjectionAccount := AtIssuenessDegree → ProjectivityDegree
-
-/-- Observed projectivity and not-at-issueness means for one expression. -/
-structure ProjectionDatum where
-  expression     : String
-  projectivity   : ProjectivityDegree
-  notAtIssueness : Rat01
-  source         : SourceRef
-  deriving Repr
-
-/-- Parse a percent-integer string (e.g. `"96"`) into a `Rat01`; `none` if
-    non-numeric or out of range. -/
-def parsePercent (s : String) : Option Rat01 :=
-  match s.toNat? with
-  | some n =>
-      if h : n ≤ 100 then
-        some (ofPercent (n : ℚ) (by exact_mod_cast Nat.zero_le n) (by exact_mod_cast h))
-      else none
-  | none => none
-
-/-- Lift a `LinguisticExample` to a `ProjectionDatum` via its `expression`,
-    `projectivity`, and `notAtIssueness` keys; `none` if any is missing. -/
-def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
-  match e.paperFeatures.lookup "expression",
-        (e.paperFeatures.lookup "projectivity").bind parsePercent,
-        (e.paperFeatures.lookup "notAtIssueness").bind parsePercent with
-  | some expr, some p, some na =>
-      some { expression := expr, projectivity := p, notAtIssueness := na, source := e.source }
-  | _, _, _ => none
-
-/-- The observed projection pool, derived from the generated `Examples.all` rows. -/
-def allData : List ProjectionDatum :=
-  Examples.all.filterMap fromExample
-
-/-- An account's absolute error on an observation. -/
-def predictionError (acc : ProjectionAccount) (d : ProjectionDatum) : ℚ :=
-  |(acc (Rat01.compl d.notAtIssueness)).val - d.projectivity.val|
-
-/-- An account predicts an observation within tolerance `ε`. -/
-def predictsWithin (ε : ℚ) (acc : ProjectionAccount) (d : ProjectionDatum) : Prop :=
-  predictionError acc d ≤ ε
-
-instance (ε : ℚ) (acc : ProjectionAccount) (d : ProjectionDatum) :
-    Decidable (predictsWithin ε acc d) :=
-  inferInstanceAs (Decidable (_ ≤ _))
-
-/-- The GPP over-predicts every content projecting below its not-at-issueness —
-    the `establish`, `reveal`, and `confess` rows. -/
-theorem gpp_errs_below_diagonal (d : ProjectionDatum)
-    (h : d.projectivity.val < d.notAtIssueness.val) :
+/-- The GPP errs on any content whose projectivity differs from its
+    not-at-issueness — the off-diagonal rows (`establish` below it, occasion verbs
+    above it). -/
+theorem gpp_errs_off_diagonal (d : ProjectionDatum)
+    (h : d.projectivity.val ≠ d.notAtIssueness.val) :
     0 < predictionError gppProjection d := by
-  rw [predictionError, gppProjection, Rat01.compl_compl, abs_pos]
-  intro hc; linarith [sub_eq_zero.mp hc]
+  rw [predictionError, gppProjection, abs_pos]
+  intro hc; apply h
+  simp only [ProjectionDatum.notAtIssueness, Rat01.compl_val] at *
+  linarith [sub_eq_zero.mp hc]
 
 /-- Potts over-predicts every content below the ceiling (projectivity `< 1`). -/
 theorem potts_errs_subceiling (d : ProjectionDatum)
@@ -244,8 +198,8 @@ theorem potts_errs_subceiling (d : ProjectionDatum)
 theorem gpp_beats_potts_below_diagonal (d : ProjectionDatum)
     (h1 : d.projectivity.val < d.notAtIssueness.val) (h2 : d.notAtIssueness.val < 1) :
     predictionError gppProjection d < predictionError pottsProjection d := by
-  rw [predictionError, predictionError, gppProjection, Rat01.compl_compl]
-  simp only [pottsProjection_val]
+  rw [predictionError, predictionError, gppProjection]
+  simp only [pottsProjection_val, ProjectionDatum.notAtIssueness, Rat01.compl_val] at *
   rw [abs_of_pos (by linarith), abs_of_pos (by linarith)]
   linarith
 

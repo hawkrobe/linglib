@@ -1,0 +1,134 @@
+[
+ {
+  "id": "liurotter2025_poss_sm",
+  "source": {
+   "bibkey": "liu-rotter-2025",
+   "paperLabel": "(3) possibility SM"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "I may have gotten the wrong address.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "I may have gotten the wrong address.",
+  "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Possibility single-modal (SM) cell of the 2x2 FORCE x NUMBER design.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["force", "possibility"],
+   ["number", "SM"],
+   ["commitment", "522"],
+   ["grammaticality", "645"],
+   ["ses", "487"],
+   ["education", "494"],
+   ["formality", "484"],
+   ["politeness", "545"],
+   ["confidence", "436"],
+   ["friendliness", "503"],
+   ["warmth", "494"],
+   ["coolness", "456"],
+   ["rebelliousness", "309"]
+  ],
+  "comment": "Cell means (x100) from Table 1, n=541 trials. Likert 1-7. Commitment=interpretation (Q1) M=5.22 SD=0.98; grammaticality M=6.45 SD=1.09; SES M=4.87 SD=1.11; education M=4.94 SD=1.12; formality M=4.84 SD=1.38; politeness M=5.45 SD=1.11; confidence M=4.36 SD=1.51; friendliness M=5.03 SD=1.14; warmth M=4.94 SD=1.16; coolness M=4.56 SD=1.27; rebelliousness M=3.09 SD=1.34. Data: osf.io/47rkg."
+ },
+ {
+  "id": "liurotter2025_poss_mc",
+  "source": {
+   "bibkey": "liu-rotter-2025",
+   "paperLabel": "(3) possibility MC"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "I may possibly have gotten the wrong address.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "I may possibly have gotten the wrong address.",
+  "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Possibility modal-concord (MC) cell of the 2x2 FORCE x NUMBER design.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["force", "possibility"],
+   ["number", "MC"],
+   ["commitment", "511"],
+   ["grammaticality", "506"],
+   ["ses", "473"],
+   ["education", "469"],
+   ["formality", "473"],
+   ["politeness", "536"],
+   ["confidence", "403"],
+   ["friendliness", "492"],
+   ["warmth", "482"],
+   ["coolness", "429"],
+   ["rebelliousness", "311"]
+  ],
+  "comment": "Cell means (x100) from Table 1, n=542 trials. Likert 1-7. Commitment=interpretation (Q1) M=5.11 SD=0.96; grammaticality M=5.06 SD=2.05; SES M=4.73 SD=1.30; education M=4.69 SD=1.37; formality M=4.73 SD=1.61; politeness M=5.36 SD=1.17; confidence M=4.03 SD=1.61; friendliness M=4.92 SD=1.17; warmth M=4.82 SD=1.19; coolness M=4.29 SD=1.33; rebelliousness M=3.11 SD=1.33. Data: osf.io/47rkg."
+ },
+ {
+  "id": "liurotter2025_nece_sm",
+  "source": {
+   "bibkey": "liu-rotter-2025",
+   "paperLabel": "(3) necessity SM"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "I must have gotten the wrong address.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "I must have gotten the wrong address.",
+  "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Necessity single-modal (SM) cell of the 2x2 FORCE x NUMBER design.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["force", "necessity"],
+   ["number", "SM"],
+   ["commitment", "612"],
+   ["grammaticality", "641"],
+   ["ses", "487"],
+   ["education", "489"],
+   ["formality", "476"],
+   ["politeness", "528"],
+   ["confidence", "519"],
+   ["friendliness", "497"],
+   ["warmth", "486"],
+   ["coolness", "453"],
+   ["rebelliousness", "312"]
+  ],
+  "comment": "Cell means (x100) from Table 1, n=539 trials. Likert 1-7. Commitment=interpretation (Q1) M=6.12 SD=0.85; grammaticality M=6.41 SD=1.16; SES M=4.87 SD=1.18; education M=4.89 SD=1.19; formality M=4.76 SD=1.40; politeness M=5.28 SD=1.15; confidence M=5.19 SD=1.39; friendliness M=4.97 SD=1.15; warmth M=4.86 SD=1.17; coolness M=4.53 SD=1.27; rebelliousness M=3.12 SD=1.36. Data: osf.io/47rkg."
+ },
+ {
+  "id": "liurotter2025_nece_mc",
+  "source": {
+   "bibkey": "liu-rotter-2025",
+   "paperLabel": "(3) necessity MC"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "I must certainly have gotten the wrong address.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "I must certainly have gotten the wrong address.",
+  "context": "Somebody says S; participant rates speaker commitment (Q1) and grammaticality (Q2), then rates the speaker on social-background and persona dimensions. Necessity modal-concord (MC) cell of the 2x2 FORCE x NUMBER design.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["force", "necessity"],
+   ["number", "MC"],
+   ["commitment", "640"],
+   ["grammaticality", "490"],
+   ["ses", "485"],
+   ["education", "480"],
+   ["formality", "499"],
+   ["politeness", "539"],
+   ["confidence", "548"],
+   ["friendliness", "476"],
+   ["warmth", "462"],
+   ["coolness", "420"],
+   ["rebelliousness", "304"]
+  ],
+  "comment": "Cell means (x100) from Table 1, n=536 trials. Likert 1-7. Commitment=interpretation (Q1) M=6.40 SD=0.90; grammaticality M=4.90 SD=2.18; SES M=4.85 SD=1.40; education M=4.80 SD=1.46; formality M=4.99 SD=1.66; politeness M=5.39 SD=1.16; confidence M=5.48 SD=1.41; friendliness M=4.76 SD=1.21; warmth M=4.62 SD=1.25; coolness M=4.20 SD=1.32; rebelliousness M=3.04 SD=1.34. Data: osf.io/47rkg."
+ }
+]

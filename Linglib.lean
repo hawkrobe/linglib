@@ -356,6 +356,7 @@ import Linglib.Data.Examples.Westergaard2009
 import Linglib.Data.Examples.Wurmbrand2014
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.HomogeneityProjection
+import Linglib.Data.Generalizations.Projectivity
 import Linglib.Data.PHOIBLE.Inventories.English
 import Linglib.Data.PHOIBLE.Inventories.Finnish
 import Linglib.Data.PHOIBLE.Inventories.French
@@ -2361,7 +2362,6 @@ import Linglib.Studies.KampanarouAlexiadou2026
 import Linglib.Studies.KaoEtAl2014PMFHyperbole
 import Linglib.Studies.KaoEtAl2014PMFMetaphor
 import Linglib.Studies.KaoEtAl2015PMF
-import Linglib.Studies.KaoEtAl2016
 import Linglib.Studies.Karlsson2017
 import Linglib.Studies.Karttunen1971
 import Linglib.Studies.Karttunen1973
@@ -2463,7 +2463,6 @@ import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Studies.LuPanDegen2025
 import Linglib.Studies.LuckingGinzburg2022
 import Linglib.Studies.Lucy1994
-import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.MacuchSilvaEtAl2024
 import Linglib.Studies.Maddieson2013
 import Linglib.Studies.Magri2009
@@ -2528,7 +2527,6 @@ import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Studies.Osborne2019
 import Linglib.Studies.Osborne2019Control
 import Linglib.Studies.Osborne2019Ellipsis
-import Linglib.Studies.Osborne2019Islands
 import Linglib.Studies.OsborneGross2012.Data
 import Linglib.Studies.OsborneLi2023
 import Linglib.Studies.Ostrove2026
@@ -2590,7 +2588,7 @@ import Linglib.Studies.Rooth1992
 import Linglib.Studies.RosaArnold2017
 import Linglib.Studies.RoseWalker2004
 import Linglib.Studies.Ross1967
-import Linglib.Studies.RotterLiu2025Concord
+import Linglib.Studies.RotterLiu2025
 import Linglib.Studies.Rouillard2026
 import Linglib.Studies.Rubinstein2014
 import Linglib.Studies.Rudin2025
@@ -2924,5 +2922,9 @@ import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Data.Examples.Guerrini2026
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
+import Linglib.Data.Examples.LiuRotter2025
+import Linglib.Data.Examples.SolstadBott2024
+import Linglib.Data.Examples.RotterLiu2025
+import Linglib.Data.Examples.BeltramaSchwarz2024
 
 
