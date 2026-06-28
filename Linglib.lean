@@ -103,7 +103,9 @@ import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
+import Linglib.Core.Computability.Subregular.Logic.LocalityBridge
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
+import Linglib.Core.Computability.Subregular.Logic.Transduction
 import Linglib.Core.Computability.Subregular.Logic.WordModel
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.TierProjection
