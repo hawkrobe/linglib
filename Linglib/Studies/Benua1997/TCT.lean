@@ -57,10 +57,13 @@ the misapplication-unification theorem. Concrete evaluation (sub-grammar
 selection, candidate generation) is paper-specific and lives in study
 files. The paradigm-uniformity face of TCT (`Corr`-style 3-role diagram
 constructors for within-paradigm OO-Faith) lives with the case studies in
-`Studies/Benua1997.lean`.
+`Studies/Benua1997/Basic.lean`.
+
+TCT is [benua-1997]'s own framework with no second consumer, so it is anchored to
+this paper's study directory rather than the OT theory layer.
 -/
 
-namespace OptimalityTheory.TCT
+namespace Benua1997.TCT
 
 open OptimalityTheory.Correspondence (Corr)
 open Constraints OptimalityTheory
@@ -207,4 +210,4 @@ theorem TetruSchema.misapplication_wins {C : Type*} (s : TetruSchema C)
     exact hM1.symm
   · exact hOO
 
-end OptimalityTheory.TCT
+end Benua1997.TCT
