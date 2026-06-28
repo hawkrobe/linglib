@@ -1,5 +1,6 @@
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Slavic Verbalizer [stojkovic-2026]
@@ -198,27 +199,27 @@ theorem infStem_mem_group_forms :
 /-- NOHIATUS: assign * for adjacent vowels. In the pre-vocalic evaluation the
     monophthong `.uMono` realises [u] next to /-a-/, creating the hiatus this
     constraint penalises. -/
-def noHiatus : NamedConstraint VBLZCandidate :=
-  mkMark "NOHIATUS" fun c => c = .uMono
+def noHiatus : Constraint VBLZCandidate :=
+  Constraint.binary fun c => c = .uMono
 
 /-- SPECIFY(•→[F]): assign * for an unspecified base node. Only the fully
     faithful candidate (not in our candidate set) violates it, so it is
     vacuously satisfied here; included for faithfulness to the paper's set. -/
-def specify : NamedConstraint VBLZCandidate :=
-  mkMark "SPECIFY" fun _ => False
+def specify : Constraint VBLZCandidate :=
+  Constraint.binary fun _ => False
 
 /-- *SHARE[−back]: don't copy [−back] from an adjacent palatal.
     Violated by [ev] and [iv] (both share [−back]). -/
-def noShareBack : NamedConstraint VBLZCandidate :=
-  mkMark "*SHARE[−back]" fun c => c = .ev ∨ c = .iv
+def noShareBack : Constraint VBLZCandidate :=
+  Constraint.binary fun c => c = .ev ∨ c = .iv
 
 /-- DEP[+back]: don't epenthesise [+back]. Violated by [ov] and [uv]. -/
-def depBack : NamedConstraint VBLZCandidate :=
-  mkDep "DEP[+back]" fun c => c = .ov ∨ c = .uv
+def depBack : Constraint VBLZCandidate :=
+  Constraint.binary fun c => c = .ov ∨ c = .uv
 
 /-- DEP[−high]: don't epenthesise [−high]. Violated by [ov] and [ev] (mid vowels). -/
-def depMinusHigh : NamedConstraint VBLZCandidate :=
-  mkDep "DEP[−high]" fun c => c = .ov ∨ c = .ev
+def depMinusHigh : Constraint VBLZCandidate :=
+  Constraint.binary fun c => c = .ov ∨ c = .ev
 
 /-- DEP[+high]: don't epenthesise [+high]. Violated by [uv] and [iv] (high vowels).
 
@@ -226,16 +227,16 @@ def depMinusHigh : NamedConstraint VBLZCandidate :=
     ranking selects [ov]. The paper derives the same effect from the markedness
     of [+high] vs [−high] (p. 14: "The feature [−high] is cross-linguistically
     more likely to be unmarked compared to [+high]."). -/
-def depHigh : NamedConstraint VBLZCandidate :=
-  mkDep "DEP[+high]" fun c => c = .uv ∨ c = .iv
+def depHigh : Constraint VBLZCandidate :=
+  Constraint.binary fun c => c = .uv ∨ c = .iv
 
 /-- The four variable constraints (excluding the undominated NOHIATUS and vacuous
     SPECIFY), permuted in the factorial typology. -/
-def variableConstraints : List (NamedConstraint VBLZCandidate) :=
+def variableConstraints : List (Constraint VBLZCandidate) :=
   [noShareBack, depBack, depMinusHigh, depHigh]
 
 /-- All six constraints. -/
-def allConstraints : List (NamedConstraint VBLZCandidate) :=
+def allConstraints : List (Constraint VBLZCandidate) :=
   [noHiatus, specify, noShareBack, depBack, depMinusHigh, depHigh]
 
 /-! ### Group-specific rankings -/
@@ -248,7 +249,7 @@ def allConstraints : List (NamedConstraint VBLZCandidate) :=
 
     *SHARE[−back] high: sharing [−back] from palatals is banned. DEP[+high] high:
     [+high] epenthesis is costly, so the unmarked [−high] surfaces → mid [o]. -/
-def ovRanking : List (NamedConstraint VBLZCandidate) :=
+def ovRanking : List (Constraint VBLZCandidate) :=
   [noHiatus, specify, noShareBack, depHigh, depBack, depMinusHigh]
 
 /-- [ov]/[ev]-group ranking, adapted from [stojkovic-2026] (21). The paper's (21)
@@ -258,7 +259,7 @@ def ovRanking : List (NamedConstraint VBLZCandidate) :=
     DEP[+back] high: epenthesising [+back] is banned. After a palatal, sharing
     [−back] is the only option → [ev]; after a non-palatal, [−high] epenthesis
     yields [ov] (a separate, non-palatal evaluation — not modelled here). -/
-def ovEvRanking : List (NamedConstraint VBLZCandidate) :=
+def ovEvRanking : List (Constraint VBLZCandidate) :=
   [noHiatus, specify, depBack, depHigh, noShareBack, depMinusHigh]
 
 /-- [uv]-group ranking, adapted from [stojkovic-2026] (29). The paper's (29) is
@@ -269,7 +270,7 @@ def ovEvRanking : List (NamedConstraint VBLZCandidate) :=
     DEP[−high] high: epenthesising [−high] is banned → [+high] surfaces.
     *SHARE[−back] above DEP[+back]: epenthesising [+back] is cheaper than sharing
     [−back] → back vowel [u] surfaces. -/
-def uvRanking : List (NamedConstraint VBLZCandidate) :=
+def uvRanking : List (Constraint VBLZCandidate) :=
   [noHiatus, specify, depMinusHigh, noShareBack, depBack, depHigh]
 
 /-! ### Optimality theorems -/

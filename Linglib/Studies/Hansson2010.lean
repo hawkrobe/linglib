@@ -251,11 +251,11 @@ theorem controlNoSibilants_legal :
 sibilant-harmony phonotactic: AGREE-style markedness penalizing each
 tier-adjacent disagreeing sibilant pair on the sibilant tier. The OT-side
 counterpart of `navajoSibilantHarmony` — same tier predicate, packaged as
-a `NamedConstraint` via the `mkAgreeOnTier` specialization. The TSL
+a `Constraint` via the `mkAgreeOnTier` specialization. The TSL
 grammar characterizes the *language*; this constraint *evaluates* it. -/
-def navajoAgree : Constraints.NamedConstraint (List NSeg) :=
-  OptimalityTheory.mkAgreeOnTier
-    "AGREE-[ant]/CC" (TierProjection.byClass NSeg.onTier) id
+def navajoAgree : Constraints.Constraint (List NSeg) :=
+  Constraints.mkAgreeOnTier
+    (TierProjection.byClass NSeg.onTier) id
 
 /-- **Bridge**: `navajoAgree` evaluates to zero on a candidate iff the
 candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
@@ -263,8 +263,8 @@ characterizations of the same Navajo phonotactic coincide — making the
 co-extensiveness of the two analyses true by construction rather than a
 separately-proved equivalence. -/
 theorem navajoAgree_zero_iff_in_TSL (c : List NSeg) :
-    navajoAgree.eval c = 0 ↔ c ∈ navajoSibilantHarmony.lang :=
-  mkAgreeOnTier_zero_iff_in_agree_lang "AGREE-[ant]/CC" NSeg.onTier id c
+    navajoAgree c = 0 ↔ c ∈ navajoSibilantHarmony.lang :=
+  mkAgreeOnTier_zero_iff_in_agree_lang NSeg.onTier id c
 
 -- ============================================================================
 -- § 6: SP_2 vs TSL_2 — cross-framework comparison (after [mcmullin-2016])

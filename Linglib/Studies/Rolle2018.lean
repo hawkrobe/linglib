@@ -7,6 +7,7 @@ import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Core.Computability.TierProjection
 
 /-!
 # Rolle 2018 — Grammatical tone: CoP-scope and Matrix-Basemap Correspondence
@@ -340,9 +341,9 @@ theorem basemapViolations_eq_zero_imp
   simp only [Corr.parallel_form_lhs, Corr.parallel_form_rhs, not_not] at hne
   simpa using hne
 
-/-! ### NamedConstraint bridge -/
+/-! ### Constraint bridge -/
 
-/-- Wrap `basemapViolations` as a `NamedConstraint` for use in OT
+/-- Wrap `basemapViolations` as a `Constraint` for use in OT
     tableaux and cophonological evaluation.
 
     Given a fixed basemap output (the tonal tier of the basemap-faithful
@@ -356,10 +357,8 @@ theorem basemapViolations_eq_zero_imp
     just raw `List TRN`. -/
 def mkBasemapConstraint {C : Type}
     (basemapTier : List TRN)
-    (extractTier : C → List TRN) : NamedConstraint C where
-  name := "BM-FAITH"
-  family := .faithfulness
-  eval c := basemapViolations (extractTier c) basemapTier
+    (extractTier : C → List TRN) : Constraint C :=
+  fun c => basemapViolations (extractTier c) basemapTier
 
 /-! ### Dominance as basemap faithfulness -/
 

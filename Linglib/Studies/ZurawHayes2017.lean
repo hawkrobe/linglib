@@ -129,27 +129,27 @@ projection. The 2 prefix-indexed UNIFORMITY constraints are local. -/
 /-- C₁ = NasSub (markedness): per [zuraw-hayes-2017] ex. (3),
     "Assess one violation for any nasal + obstruent sequence, where + is
     a morpheme boundary within a word." Lifted from `Zuraw2010.nasSub`. -/
-def nasSub : NamedConstraint NasalSubCandidate :=
+def nasSub : Constraint NasalSubCandidate :=
   Zuraw2010.nasSub.comap NasalSubCandidate.project
 
 /-- C₂ = \*NC: per [zuraw-2010] ex. (17), "A [+nasal] segment must
     not be immediately followed by a [-voice, -sonorant] segment". Lifted
     from `Zuraw2010.starNC`. Violated by NO only for voiceless stems (k). -/
-def starNC : NamedConstraint NasalSubCandidate :=
+def starNC : Constraint NasalSubCandidate :=
   Zuraw2010.starNC.comap NasalSubCandidate.project
 
 /-- C₃ = \*[stemŋ]: penalizes stem-initial velar nasal. Lifted from
     `Zuraw2010.starInitVelar`. Violated by YES for k-initial stems
     (coalesced ŋ is velar). Z&H ex. (6c). -/
-def starStemVelar : NamedConstraint NasalSubCandidate :=
+def starStemVelar : Constraint NasalSubCandidate :=
   Zuraw2010.starInitVelar.comap NasalSubCandidate.project
 
 /-- C₄ = \*[stemŋ]/n: penalizes stem-initial velar or coronal nasal.
     Lifted from `Zuraw2010.starInitCorVel`. In the b vs k square, this
     coincides with C₃ (bilabial m is neither velar nor coronal), so on
-    the restricted domain `(c.eval ∘ project)` is identical for C₃ and C₄.
+    the restricted domain `(c ∘ project)` is identical for C₃ and C₄.
     Z&H ex. (6b). -/
-def starStemVelarCoronal : NamedConstraint NasalSubCandidate :=
+def starStemVelarCoronal : Constraint NasalSubCandidate :=
   Zuraw2010.starInitCorVel.comap NasalSubCandidate.project
 
 /-- C₅ = Unif-maŋ-other (faithfulness): one violation when the maŋ-other
@@ -158,8 +158,8 @@ def starStemVelarCoronal : NamedConstraint NasalSubCandidate :=
     not correspond to the same output segment." Restriction of Z&H's
     6-way prefix-indexed UNIFORMITY family to the maŋ-other cell.
     Z&H-local; replaces Zuraw 2010's \*ASSOC. -/
-def unifMang : NamedConstraint NasalSubCandidate :=
-  mkFaithGrad "Unif-maŋ-other" fun
+def unifMang : Constraint NasalSubCandidate :=
+  fun
     | (.mang_b, .yes) | (.mang_k, .yes) => 1
     | _ => 0
 
@@ -167,13 +167,13 @@ def unifMang : NamedConstraint NasalSubCandidate :=
     prefix coalesces with the stem-initial obstruent. Per Z&H ex. (5f),
     similar to Unif-maŋ-other but for paŋ-res. Restriction of Z&H's
     6-way prefix-indexed UNIFORMITY family to the paŋ-res cell. -/
-def unifPang : NamedConstraint NasalSubCandidate :=
-  mkFaithGrad "Unif-paŋ-res" fun
+def unifPang : Constraint NasalSubCandidate :=
+  fun
     | (.pang_b, .yes) | (.pang_k, .yes) => 1
     | _ => 0
 
 /-- The six constraints as a `Fin 6`-indexed family. -/
-def constraints : Fin 6 → NamedConstraint NasalSubCandidate
+def constraints : Fin 6 → Constraint NasalSubCandidate
   | ⟨0, _⟩ => nasSub
   | ⟨1, _⟩ => starNC
   | ⟨2, _⟩ => starStemVelar
@@ -445,19 +445,19 @@ not a substitution by something incompatible.
     Holds by definition (`comap` is `eval ∘ project` and `nasSub` is
     defined as `Zuraw2010.nasSub.comap NasalSubCandidate.project`). -/
 theorem nasSub_eq_zuraw_under_projection :
-    nasSub.eval = Zuraw2010.nasSub.eval ∘ NasalSubCandidate.project := rfl
+    nasSub = Zuraw2010.nasSub ∘ NasalSubCandidate.project := rfl
 
 /-- C₂ = \*NC agrees with Zuraw 2010 under the projection. -/
 theorem starNC_eq_zuraw_under_projection :
-    starNC.eval = Zuraw2010.starNC.eval ∘ NasalSubCandidate.project := rfl
+    starNC = Zuraw2010.starNC ∘ NasalSubCandidate.project := rfl
 
 /-- C₃ = \*[stemŋ] agrees with Zuraw's `starInitVelar` under the projection. -/
 theorem starStemVelar_eq_zuraw_under_projection :
-    starStemVelar.eval = Zuraw2010.starInitVelar.eval ∘ NasalSubCandidate.project := rfl
+    starStemVelar = Zuraw2010.starInitVelar ∘ NasalSubCandidate.project := rfl
 
 /-- C₄ = \*[stemŋ]/n agrees with Zuraw's `starInitCorVel` under the projection. -/
 theorem starStemVelarCoronal_eq_zuraw_under_projection :
-    starStemVelarCoronal.eval = Zuraw2010.starInitCorVel.eval ∘ NasalSubCandidate.project := rfl
+    starStemVelarCoronal = Zuraw2010.starInitCorVel ∘ NasalSubCandidate.project := rfl
 
 /-- **Cross-paper structural insight**: Z&H's prefix-indexed UNIFORMITY pair
     (`unifMang + unifPang`) is an additive *decomposition* of Zuraw 2010's
@@ -471,8 +471,8 @@ theorem starStemVelarCoronal_eq_zuraw_under_projection :
     analysis, the sum of the two prefix-UNIF weights `w₅ + w₆` plays the
     role Zuraw's single \*ASSOC weight plays in her grammar. -/
 theorem unif_sum_eq_assoc (c : NasalSubCandidate) :
-    unifMang.eval c + unifPang.eval c =
-    Zuraw2010.starAssoc.eval (NasalSubCandidate.project c) := by
+    unifMang c + unifPang c =
+    Zuraw2010.starAssoc (NasalSubCandidate.project c) := by
   rcases c with ⟨i, o⟩
   cases i <;> cases o <;> decide
 

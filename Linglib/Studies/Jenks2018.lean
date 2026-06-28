@@ -314,7 +314,7 @@ def indexStrength (c : IndexCandidate) : Nat :=
     to the binary indexed/non-indexed competition. Per paper p. 524,
     "Index! is a specific instance of Maximize Presupposition!
     (Heim 1990)". -/
-def indexConstraint : Constraints.NamedConstraint IndexCandidate :=
+def indexConstraint : Constraints.Constraint IndexCandidate :=
   Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
     1 indexStrength
 
@@ -322,8 +322,8 @@ def indexConstraint : Constraints.NamedConstraint IndexCandidate :=
     (a discourse antecedent exists), the indexed candidate has fewer
     Index! violations than the bare candidate. -/
 theorem index_prefers_indexed_when_available :
-    indexConstraint.eval { isIndexed := true,  indexAvailable := true } <
-    indexConstraint.eval { isIndexed := false, indexAvailable := true } := by
+    indexConstraint { isIndexed := true,  indexAvailable := true } <
+    indexConstraint { isIndexed := false, indexAvailable := true } := by
   decide
 
 /-- When no index can be supplied (no discourse antecedent), Index! is
@@ -331,8 +331,8 @@ theorem index_prefers_indexed_when_available :
     correctly leaving bare N as the only option in unique-definite
     contexts (paper §3.1; explains why ι^x is unavailable there). -/
 theorem index_neutral_when_unavailable :
-    indexConstraint.eval { isIndexed := true,  indexAvailable := false } =
-    indexConstraint.eval { isIndexed := false, indexAvailable := false } := by
+    indexConstraint { isIndexed := true,  indexAvailable := false } =
+    indexConstraint { isIndexed := false, indexAvailable := false } := by
   decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -381,7 +381,7 @@ def topicAwareIndexStrength (c : TopicCandidate) : Nat :=
 
 /-- The topic-aware Index! constraint. -/
 def topicAwareIndexConstraint :
-    Constraints.NamedConstraint TopicCandidate :=
+    Constraints.Constraint TopicCandidate :=
   Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
     1 topicAwareIndexStrength
 
@@ -394,9 +394,9 @@ def topicAwareIndexConstraint :
     Decision-procedure proof over the four relevant `TopicCandidate`
     configurations. -/
 theorem subject_topic_overrides_index :
-    topicAwareIndexConstraint.eval
+    topicAwareIndexConstraint
       { isIndexed := false, indexAvailable := true, isTopic := true } =
-    topicAwareIndexConstraint.eval
+    topicAwareIndexConstraint
       { isIndexed := true,  indexAvailable := true, isTopic := true } := by
   decide
 
@@ -404,9 +404,9 @@ theorem subject_topic_overrides_index :
     §5.2): the indexed candidate has strictly fewer violations than the
     bare candidate when an index is available. -/
 theorem non_topic_keeps_index_preference :
-    topicAwareIndexConstraint.eval
+    topicAwareIndexConstraint
       { isIndexed := true,  indexAvailable := true, isTopic := false } <
-    topicAwareIndexConstraint.eval
+    topicAwareIndexConstraint
       { isIndexed := false, indexAvailable := true, isTopic := false } := by
   decide
 

@@ -513,8 +513,8 @@ theorem beaver_cb_silent_on_psdh10_tie :
     further priorTopic parameter. The two totalizers don't agree on
     which of `Branicki`/`corner_cupboard` is "the" CB of u227. -/
 theorem beaver_cohere_sensitive_to_psdh10_tie_choice :
-    (cohere u227 (some "Branicki")).eval cand_u229 = 0 ∧
-    (cohere u227 (some "corner_cupboard")).eval cand_u229 = 1 := by
+    (cohere u227 (some "Branicki")) cand_u229 = 0 ∧
+    (cohere u227 (some "corner_cupboard")) cand_u229 = 1 := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- **ALIGN fires regardless** of which tie-member is fed in: u229's
@@ -525,7 +525,7 @@ theorem beaver_cohere_sensitive_to_psdh10_tie_choice :
     contrast lives entirely in COHERE's sensitivity to priorTopic;
     ALIGN is constant across the choice. -/
 theorem beaver_align_fires_on_psdh10 :
-    (align u227).eval cand_u229 = 1 := by decide
+    (align u227) cand_u229 = 1 := by decide
 
 /-- **`beaver_lex_min_on_psdh_10`** — the cross-framework headline.
     Beaver's COT lex-min, applied to PSDH (10), produces strictly
@@ -552,16 +552,16 @@ theorem beaver_align_fires_on_psdh10 :
     inverts it. -/
 theorem beaver_lex_min_on_psdh_10 :
     -- Branicki-as-prior interpretation: only ALIGN fires
-    (cohere u227 (some "Branicki")).eval cand_u229 +
-      (align u227).eval cand_u229 = 1 ∧
+    (cohere u227 (some "Branicki")) cand_u229 +
+      (align u227) cand_u229 = 1 ∧
     -- corner_cupboard-as-prior interpretation: COHERE + ALIGN both fire
-    (cohere u227 (some "corner_cupboard")).eval cand_u229 +
-      (align u227).eval cand_u229 = 2 ∧
+    (cohere u227 (some "corner_cupboard")) cand_u229 +
+      (align u227) cand_u229 = 2 ∧
     -- Branicki-prior strictly dominates corner_cupboard-prior (lex-min picks Branicki)
-    ((cohere u227 (some "Branicki")).eval cand_u229 +
-      (align u227).eval cand_u229) <
-    ((cohere u227 (some "corner_cupboard")).eval cand_u229 +
-      (align u227).eval cand_u229) := by
+    ((cohere u227 (some "Branicki")) cand_u229 +
+      (align u227) cand_u229) <
+    ((cohere u227 (some "corner_cupboard")) cand_u229 +
+      (align u227) cand_u229) := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-! ## §5.1.1 The structural underpinning
@@ -607,7 +607,7 @@ theorem beaver_lex_min_on_psdh_10 :
 theorem beaver_cohere_invariant_under_cb_equiv_candidates
     (priorTopic : Option String) (c : Beaver2004.Candidate String GrammaticalRole)
     (h : Discourse.Centering.cb u227 c.utt = Discourse.Centering.cb u227 u229) :
-    (cohere u227 priorTopic).eval c = (cohere u227 priorTopic).eval cand_u229 :=
+    (cohere u227 priorTopic) c = (cohere u227 priorTopic) cand_u229 :=
   Beaver2004.cohere_factors_through_cb u227 priorTopic c cand_u229 h
 
 -- ════════════════════════════════════════════════════

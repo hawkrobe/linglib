@@ -159,7 +159,7 @@ theorem sg_strictly_stronger {E : Type*} [PartialOrder E]
     entity-level precondition is that [Sg]'s presupposition (atomicity)
     is satisfied — see `mp_blocks_plural_at_atom`. -/
 theorem mp_selects_sg
-    (rest : List (NamedConstraint ContainmentPair))
+    (rest : List (Constraint ContainmentPair))
     (hNE : [ContainmentPair.maximal, .minimal] ≠ []) :
     ∀ c ∈ (mkTableau [.maximal, .minimal]
       (phiMP :: rest) hNE).optimal,
@@ -519,7 +519,7 @@ theorem number_competition_is_presuppositional :
     -- Same assertive content (NOT a scalar strength difference)
     presupStrength .maximal > presupStrength .minimal ∧
     -- The MP constraint penalizes [Pl] (= .minimal) more than [Sg] (= .maximal)
-    phiMP.eval .minimal > phiMP.eval .maximal :=
+    phiMP .minimal > phiMP .maximal :=
   ⟨by decide, by decide⟩
 
 -- ============================================================================

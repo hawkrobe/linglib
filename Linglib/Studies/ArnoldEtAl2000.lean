@@ -1,5 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Phonology.Constraints.Weighted
+import Linglib.Phonology.Constraints.Defs
 import Linglib.Features.Givenness
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
@@ -146,10 +146,8 @@ abbrev Candidate := Pair × Order
     is strictly heavier than the second. The OT-style markedness
     encoding of [behaghel-1909]'s law of growing constituents:
     avoid placing the longer constituent first. -/
-def heavyFirst : NamedConstraint Candidate where
-  name := "*HEAVY-FIRST"
-  family := .markedness
-  eval := fun ((th, gl), o) =>
+def heavyFirst : Constraint Candidate :=
+  fun ((th, gl), o) =>
     match o with
     | .themeLast => if gl.wordCount > th.wordCount then 1 else 0
     | .goalLast  => if th.wordCount > gl.wordCount then 1 else 0
@@ -158,10 +156,8 @@ def heavyFirst : NamedConstraint Candidate where
     while the second is discourse-given. A markedness encoding of the
     given-before-new principle the paper draws from
     [prince-1981]/[gundel-hedberg-zacharski-1993]. -/
-def newFirst : NamedConstraint Candidate where
-  name := "*NEW-FIRST"
-  family := .markedness
-  eval := fun ((th, gl), o) =>
+def newFirst : Constraint Candidate :=
+  fun ((th, gl), o) =>
     match o with
     | .themeLast =>
       if gl.discourse = .new ∧ th.discourse = .given then 1 else 0
@@ -170,9 +166,9 @@ def newFirst : NamedConstraint Candidate where
 
 /-- The two-constraint MaxEnt grammar parameterized by weights.
     `wH` weights `*HEAVY-FIRST`; `wN` weights `*NEW-FIRST`. -/
-def grammar (wH wN : ℝ) : List (WeightedConstraint Candidate) :=
-  [ { toNamedConstraint := heavyFirst, weight := wH }
-  , { toNamedConstraint := newFirst,   weight := wN } ]
+def grammar (wH wN : ℝ) : List (Constraint.Weighted Candidate) :=
+  [ { con := heavyFirst, weight := wH }
+  , { con := newFirst,   weight := wN } ]
 
 -- ============================================================================
 -- § 3: Per-Constraint Signed Preferences

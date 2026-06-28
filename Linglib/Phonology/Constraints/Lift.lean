@@ -29,16 +29,13 @@ variable {α : Type*}
 
 /-- Lift a per-element cost `viol` to a constraint over `List α` by summing it
     across the members. -/
-def liftPerMember (name : String) (family : Family) (viol : α → Nat) :
-    NamedConstraint (List α) :=
-  { name, family, eval := fun xs => (xs.map viol).sum }
+def liftPerMember (viol : α → Nat) : Constraint (List α) :=
+  fun xs => (xs.map viol).sum
 
 /-- Lift a per-ordered-pair cost `compare` to a constraint over `List α` by
     summing it over every ordered pair — the symmetric all-pairs lift behind
     paradigm-uniformity faithfulness. -/
-def liftPairwise (name : String) (family : Family) (compare : α → α → Nat) :
-    NamedConstraint (List α) :=
-  { name, family,
-    eval := fun xs => ((xs.product xs).map (fun (a, b) => compare a b)).sum }
+def liftPairwise (compare : α → α → Nat) : Constraint (List α) :=
+  fun xs => ((xs.product xs).map (fun (a, b) => compare a b)).sum
 
 end Constraints

@@ -1,7 +1,7 @@
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Phonology.Constraints.Weighted
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Fragments.English.Phonology
 
@@ -66,8 +66,8 @@ private def matchesPat (s : Segment) (p : Segment) : Bool :=
   s.matchesPattern p
 
 /-- Constraint #1 from Table (4): *[+sonorant, +dorsal]. Weight 5.64. -/
-noncomputable def c1_star_son_dors : WeightedConstraint Onset :=
-  mkMarkGradW "*[+son,+dors]" (fun onset => onset.countP (matchesPat · son_dors_pat)) (564/100)
+noncomputable def c1_star_son_dors : Constraint.Weighted Onset :=
+  { con := fun onset => onset.countP (matchesPat · son_dors_pat), weight := 564/100 }
 
 /-- Bool helper for `c4_star_blank_cont`. -/
 private def c4_violated : Onset → Bool
@@ -75,8 +75,8 @@ private def c4_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #4 from Table (4): *[ ][+continuant]. Weight 5.17. -/
-noncomputable def c4_star_blank_cont : WeightedConstraint Onset :=
-  mkMarkW "*[ ][+cont]" (fun o => c4_violated o = true) (517/100)
+noncomputable def c4_star_blank_cont : Constraint.Weighted Onset :=
+  Constraint.Weighted.binary (fun o => c4_violated o = true) (517/100)
 
 /-- Bool helper for `c5_star_blank_voice`. -/
 private def c5_violated : Onset → Bool
@@ -84,8 +84,8 @@ private def c5_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #5 from Table (4): *[ ][+voice, −sonorant]. Weight 5.37. -/
-noncomputable def c5_star_blank_voice : WeightedConstraint Onset :=
-  mkMarkW "*[ ][+voice]" (fun o => c5_violated o = true) (537/100)
+noncomputable def c5_star_blank_voice : Constraint.Weighted Onset :=
+  Constraint.Weighted.binary (fun o => c5_violated o = true) (537/100)
 
 /-- Bool helper for `c6_star_son_blank`. -/
 private def c6_violated : Onset → Bool
@@ -93,15 +93,15 @@ private def c6_violated : Onset → Bool
   | _ => false
 
 /-- Constraint #6 from Table (4): *[+sonorant][ ]. Weight 6.66. -/
-noncomputable def c6_star_son_blank : WeightedConstraint Onset :=
-  mkMarkW "*[+son][ ]" (fun o => c6_violated o = true) (666/100)
+noncomputable def c6_star_son_blank : Constraint.Weighted Onset :=
+  Constraint.Weighted.binary (fun o => c6_violated o = true) (666/100)
 
 /-- The subset grammar: 4 constraints from Table (4). -/
-noncomputable def onsetGrammar : List (WeightedConstraint Onset) :=
+noncomputable def onsetGrammar : List (Constraint.Weighted Onset) :=
   [c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
 
 -- ============================================================================
--- § 2: Harmony Predictions (using harmonyScore from Constraints.Weighted)
+-- § 2: Harmony Predictions (using harmonyScore from Constraints.Defs)
 -- ============================================================================
 
 open English.Phonology in
@@ -113,7 +113,7 @@ theorem attested_higher_harmony_k_ŋ :
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
-    c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
+    c6_star_son_blank, Constraint.Weighted.binary, Constraint.binary, c4_violated,
     c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
   norm_num
 
@@ -124,7 +124,7 @@ theorem attested_higher_harmony_br_rk :
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
-    c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
+    c6_star_son_blank, Constraint.Weighted.binary, Constraint.binary, c4_violated,
     c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
   norm_num
 
@@ -141,7 +141,7 @@ theorem gradient_harmony_ŋ_rk :
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [onsetGrammar, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice,
-    c6_star_son_blank, mkMarkGradW, mkMarkW, mkMarkGrad, mkMark, c4_violated,
+    c6_star_son_blank, Constraint.Weighted.binary, Constraint.binary, c4_violated,
     c5_violated, c6_violated, matchesPat, List.countP_cons, List.countP_nil]
   norm_num
 

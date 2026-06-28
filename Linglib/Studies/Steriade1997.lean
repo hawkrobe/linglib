@@ -85,9 +85,9 @@ def lcParadigm {Form : Type*} (candidate : Form) (anchor : Option Form) :
 /-- Build an LC-FAITH constraint: per-pair faithfulness mismatch summed over the
     LC paradigm. The same `liftPairwise` is reused; what distinguishes LC from OP
     is the paradigm-construction discipline (`lcParadigm`), not the lift. -/
-def mkLCFaith {Form : Type*} (name : String) (mismatch : Form → Form → Nat) :
-    NamedConstraint (List Form) :=
-  liftPairwise name .faithfulness mismatch
+def mkLCFaith {Form : Type*} (_name : String) (mismatch : Form → Form → Nat) :
+    Constraint (List Form) :=
+  liftPairwise mismatch
 
 /-! ### Unanchored paradigms have zero LC-FAITH violations -/
 
@@ -100,7 +100,7 @@ theorem lc_unanchored_zero {Form : Type*} (name : String)
     (mismatch : Form → Form → Nat)
     (h_diagonal : ∀ f : Form, mismatch f f = 0)
     (candidate : Form) :
-    (mkLCFaith name mismatch).eval (lcParadigm candidate none) = 0 := by
+    mkLCFaith name mismatch (lcParadigm candidate none) = 0 := by
   simp [mkLCFaith, lcParadigm, liftPairwise, List.product, h_diagonal]
 
 end Steriade1997

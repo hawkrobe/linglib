@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraints.Weighted
+import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Optimization.Decoder
 import Linglib.Core.Optimization.System
 import Linglib.Core.Probability.CoupledEvaluation
@@ -25,7 +25,7 @@ candidates by weighted constraint violations.
 ## Architecture
 
 - `MaxEntGrammar` packages inputs, candidate generation, and weighted constraints
-  (`WeightedConstraint` and `harmonyScore` come from `Constraints.Weighted`)
+  (`Constraint.Weighted` and `harmonyScore` come from `Constraints.Weighted`)
 - `SystemicConstraint` evaluates *tuples* of outputs (different type signature)
 - `jointHarmonyScore` combines classical + systemic scores over the product space
 - `marginalProb` marginalizes the joint to recover individual mapping probabilities
@@ -58,7 +58,7 @@ structure MaxEntGrammar (Input Output : Type*) where
   /-- Candidate generator: produces output candidates for each input. -/
   gen : Input → List Output
   /-- Weighted constraints evaluating input–output pairs. -/
-  constraints : List (WeightedConstraint (Input × Output))
+  constraints : List (Constraint.Weighted (Input × Output))
 
 /-- Classical MaxEnt probability: P(o | i) = softmax over gen(i).
 
@@ -122,7 +122,7 @@ def systemicScore {n : Nat} {O : Type*}
     where `f : Fin n → O` is the full output tuple. -/
 noncomputable def jointHarmonyScore {n : Nat} {I O : Type*}
     (inputs : Fin n → I)
-    (classicalConstraints : List (WeightedConstraint (I × O)))
+    (classicalConstraints : List (Constraint.Weighted (I × O)))
     (systemicConstraints : List (SystemicConstraint n O))
     (f : Fin n → O) : ℝ :=
   let classical := (List.finRange n).foldl
@@ -139,7 +139,7 @@ noncomputable def jointHarmonyScore {n : Nat} {I O : Type*}
     mapping probability under systemic pressure. -/
 noncomputable def maxEntCoupled {n : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
     (inputs : Fin n → I)
-    (classicalConstraints : List (WeightedConstraint (I × O)))
+    (classicalConstraints : List (Constraint.Weighted (I × O)))
     (systemicConstraints : List (SystemicConstraint n O)) :
     Core.CoupledSoftmax (Fin n) O :=
   Core.coupledSoftmaxOfMaxEnt inputs
@@ -158,7 +158,7 @@ noncomputable def maxEntCoupled {n : Nat} {I O : Type*} [Fintype O] [DecidableEq
 noncomputable def marginalProb {n : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
     [Nonempty O]
     (inputs : Fin n → I)
-    (classicalConstraints : List (WeightedConstraint (I × O)))
+    (classicalConstraints : List (Constraint.Weighted (I × O)))
     (systemicConstraints : List (SystemicConstraint n O))
     (i : Fin n) (o : O) : ℝ :=
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal i o
@@ -191,7 +191,7 @@ private lemma systemicScore_zero {n : Nat} {O : Type*}
 theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type*}
     [Fintype O] [DecidableEq O] [Nonempty O]
     (inputs : Fin n → I)
-    (classicalConstraints : List (WeightedConstraint (I × O)))
+    (classicalConstraints : List (Constraint.Weighted (I × O)))
     (systemicConstraints : List (SystemicConstraint n O))
     (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
     (i : Fin n) (o : O) :
@@ -240,7 +240,7 @@ open Core.Optimization
     (deterministic HG; see `softmax_argmax_limit` in `Core.Agent.RationalAction`).
     The default `α = 1` matches [goldwater-johnson-2003]'s MaxEnt formulation. -/
 noncomputable def maxEntSystem {Cand : Type*}
-    (candidates : Finset Cand) (constraints : List (WeightedConstraint Cand))
+    (candidates : Finset Cand) (constraints : List (Constraint.Weighted Cand))
     (α : ℝ := 1) :
     ConstraintSystem Cand ℝ where
   candidates := candidates

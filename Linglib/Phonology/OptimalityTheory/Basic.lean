@@ -119,11 +119,11 @@ variable {C : Type*} [DecidableEq C]
     ```
     where `{.winner}` is a `Finset` literal. -/
 def mkTableau (candidates : List C)
-    (ranking : List (NamedConstraint C))
+    (ranking : List (Constraint C))
     (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
   { candidates := candidates.toFinset
     profile := fun c => buildViolationProfile
-      (fun i c => (ranking.get i).eval c) c
+      (fun i => ranking.get i) c
     nonempty := by
       cases candidates with
       | nil => contradiction
@@ -131,7 +131,7 @@ def mkTableau (candidates : List C)
 
 /-- Candidates in `mkTableau ... .optimal` belong to the original list. -/
 theorem mkTableau_optimal_mem
-    (candidates : List C) (ranking : List (NamedConstraint C))
+    (candidates : List C) (ranking : List (Constraint C))
     (h : candidates ≠ []) (c : C) :
     c ∈ (mkTableau candidates ranking h).optimal → c ∈ candidates :=
   fun hc => List.mem_toFinset.mp (Tableau.optimal_subset _ c hc)
@@ -149,44 +149,44 @@ theorem mkTableau_optimal_mem
     `ViolationProfile.le_apply_zero` to extract the first component
     of the lexicographic comparison. -/
 theorem mkTableau_isOptimal_zero_first
-    (candidates : List C) (con : NamedConstraint C)
-    (rest : List (NamedConstraint C))
+    (candidates : List C) (con : Constraint C)
+    (rest : List (Constraint C))
     (h : candidates ≠ [])
-    (hExists : ∃ c₀ ∈ candidates, con.eval c₀ = 0)
+    (hExists : ∃ c₀ ∈ candidates, con c₀ = 0)
     : ∀ c, (mkTableau candidates (con :: rest) h).IsOptimal c →
-        con.eval c = 0 := by
+        con c = 0 := by
   intro c ⟨_, hc_all⟩
   obtain ⟨c₀, hc₀_mem, hc₀_zero⟩ := hExists
   have hle := hc_all c₀ (List.mem_toFinset.mpr hc₀_mem)
   have h0 := ViolationProfile.le_apply_zero hle
-  -- h0 is definitionally: con.eval c ≤ con.eval c₀
-  change con.eval c ≤ con.eval c₀ at h0
+  -- h0 is definitionally: con c ≤ con c₀
+  change con c ≤ con c₀ at h0
   rw [hc₀_zero] at h0
   exact Nat.le_zero.mp h0
 
 /-- `∈ .optimal` version of `mkTableau_isOptimal_zero_first`. -/
 theorem mkTableau_optimal_zero_first
-    (candidates : List C) (con : NamedConstraint C)
-    (rest : List (NamedConstraint C))
+    (candidates : List C) (con : Constraint C)
+    (rest : List (Constraint C))
     (h : candidates ≠ [])
-    (hExists : ∃ c₀ ∈ candidates, con.eval c₀ = 0)
+    (hExists : ∃ c₀ ∈ candidates, con c₀ = 0)
     : ∀ c ∈ (mkTableau candidates (con :: rest) h).optimal,
-        con.eval c = 0 :=
+        con c = 0 :=
   fun c hc => mkTableau_isOptimal_zero_first candidates con rest h hExists c
     ((Tableau.mem_optimal_iff _ c).mp hc)
 
 /-- If a candidate in `mkTableau` has 0 violations on every constraint,
     it is optimal. -/
 theorem mkTableau_zero_isOptimal
-    (candidates : List C) (ranking : List (NamedConstraint C))
+    (candidates : List C) (ranking : List (Constraint C))
     (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
-    (hzero : ∀ con ∈ ranking, con.eval c = 0) :
+    (hzero : ∀ con ∈ ranking, con c = 0) :
     c ∈ (mkTableau candidates ranking h).optimal := by
   rw [Tableau.mem_optimal_iff]
   refine ⟨List.mem_toFinset.mpr hc, fun c' _ => ?_⟩
   suffices hsuff : (mkTableau candidates ranking h).profile c = 0 by
     rw [hsuff]; exact ViolationProfile.zero_le _
-  show buildViolationProfile (fun i c => (ranking.get i).eval c) c = 0
+  show buildViolationProfile (fun i => ranking.get i) c = 0
   funext i
   exact hzero (ranking.get i) (List.get_mem ranking i)
 
@@ -200,9 +200,9 @@ theorem mkTableau_zero_isOptimal
     `permutations_subset` to show that elements of a permutation are
     elements of the original list. -/
 theorem mkTableau_zero_optimal_allRankings
-    (candidates : List C) (constraints : List (NamedConstraint C))
+    (candidates : List C) (constraints : List (Constraint C))
     (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
-    (hzero : ∀ con ∈ constraints, con.eval c = 0) :
+    (hzero : ∀ con ∈ constraints, con c = 0) :
     ∀ ranking ∈ permutations constraints,
       c ∈ (mkTableau candidates ranking h).optimal :=
   fun ranking hp => mkTableau_zero_isOptimal candidates ranking h c hc
@@ -220,7 +220,7 @@ theorem mkTableau_zero_optimal_allRankings
     constraint set. -/
 def mkFactorialOptima
     (candidates : List C)
-    (constraints : List (NamedConstraint C))
+    (constraints : List (Constraint C))
     (h : candidates ≠ [] := by decide) : List (Finset C) :=
   let allRankings := permutations constraints
   let optima := allRankings.map fun ranking =>
@@ -231,7 +231,7 @@ def mkFactorialOptima
     Equals `|mkFactorialOptima|`. -/
 def mkFactorialTypologySize
     (candidates : List C)
-    (constraints : List (NamedConstraint C))
+    (constraints : List (Constraint C))
     (h : candidates ≠ [] := by decide) : Nat :=
   (mkFactorialOptima candidates constraints h).length
 

@@ -1,4 +1,4 @@
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 
@@ -156,51 +156,51 @@ theorem dict_voicing_labial : dictRate_p > dictRate_b := by
     NB: In earlier commits this constraint was labeled \*NC; renamed
     for fidelity to the paper's notation, where \*NC is reserved for
     the voiceless-only constraint (see `starNC` below). -/
-def nasSub : NamedConstraint NSCand :=
-  mkMark "NasSub" fun c => c.2 = SubSt.no
+def nasSub : Constraint NSCand :=
+  Constraint.binary fun c => c.2 = SubSt.no
 
 /-- **\*NC**, after [pater-1999] (Austronesian NS) and
     [pater-2001] (revisited). Penalizes nasal + voiceless-obstruent
     sequences. Violated by NO for voiceless stems only. Per
     [zuraw-2010] ex. (17) (page 436): "\*NC: A [+nasal] segment
     must not be immediately followed by a [-voice, -sonorant] segment". -/
-def starNC : NamedConstraint NSCand :=
-  mkMark "*NC" fun c => c.1 ∈ [StemC.p, .t, .k] ∧ c.2 = .no
+def starNC : Constraint NSCand :=
+  Constraint.binary fun c => c.1 ∈ [StemC.p, .t, .k] ∧ c.2 = .no
 
 /-- **\*ASSOC**: penalizes adding a new association line (faithfulness).
     Per [zuraw-2010] (page 432, ex. 7), this is
     "*ASSOCIATE_hetero-morphemic" — the local restriction of a more
     general *ASSOC family that fires on association lines crossing
     morpheme boundaries. Violated by YES for every stem. -/
-def starAssoc : NamedConstraint NSCand :=
-  mkMark "*ASSOC" fun c => c.2 = SubSt.yes
+def starAssoc : Constraint NSCand :=
+  Constraint.binary fun c => c.2 = SubSt.yes
 
 /-- **\*\[ŋ**, after [prince-1997-stringency] and [delacy-2002]
     on stringency hierarchies; [zuraw-2010] ex. (19) (page 437).
     Stems must not begin with ŋ. Violated by YES for velar stems
     (k, g coalesce to stem-initial ŋ). -/
-def starInitVelar : NamedConstraint NSCand :=
-  mkMark "*[ŋ" fun c => c.1 ∈ [StemC.k, .g] ∧ c.2 = .yes
+def starInitVelar : Constraint NSCand :=
+  Constraint.binary fun c => c.1 ∈ [StemC.k, .g] ∧ c.2 = .yes
 
 /-- **\*\[n**: stringency-hierarchy member after
     [prince-1997-stringency], [delacy-2002]; [zuraw-2010]
     ex. (19) (page 437). Stems must not begin with n or backer.
     Violated by YES for coronal and velar stems. -/
-def starInitCorVel : NamedConstraint NSCand :=
-  mkMark "*[n" fun c => c.1 ∈ [StemC.t, .d, .k, .g] ∧ c.2 = .yes
+def starInitCorVel : Constraint NSCand :=
+  Constraint.binary fun c => c.1 ∈ [StemC.t, .d, .k, .g] ∧ c.2 = .yes
 
 /-- **\*\[m**: top of the stringency hierarchy after
     [prince-1997-stringency], [delacy-2002]; [zuraw-2010]
     ex. (19) (page 437). Stems must not begin with m or backer.
     Violated by YES for all stems (every coalesced output is
     stem-initial nasal of some place). -/
-def starInitAll : NamedConstraint NSCand :=
-  mkMark "*[m" fun c => c.2 = SubSt.yes
+def starInitAll : Constraint NSCand :=
+  Constraint.binary fun c => c.2 = SubSt.yes
 
 /-- The six constraints, indexed for substrate consumption.
     Order matches [zuraw-2010]'s §4.2 footnote 17 (page 446):
     NasSub, \*NC, \*ASSOC, \*[ŋ, \*[n, \*[m. -/
-def constraint : Fin 6 → NamedConstraint NSCand
+def constraint : Fin 6 → Constraint NSCand
   | 0 => nasSub
   | 1 => starNC
   | 2 => starAssoc
@@ -215,19 +215,19 @@ def constraint : Fin 6 → NamedConstraint NSCand
 /-- The stringent *\[N hierarchy assigns increasing violation counts to
     nasals at backer places: labial m=1, coronal n=2, velar ŋ=3. -/
 theorem stringency_violations :
-    starInitAll.eval (.p, .yes) + starInitCorVel.eval (.p, .yes) +
-      starInitVelar.eval (.p, .yes) = 1 ∧
-    starInitAll.eval (.t, .yes) + starInitCorVel.eval (.t, .yes) +
-      starInitVelar.eval (.t, .yes) = 2 ∧
-    starInitAll.eval (.k, .yes) + starInitCorVel.eval (.k, .yes) +
-      starInitVelar.eval (.k, .yes) = 3 := by decide
+    starInitAll (.p, .yes) + starInitCorVel (.p, .yes) +
+      starInitVelar (.p, .yes) = 1 ∧
+    starInitAll (.t, .yes) + starInitCorVel (.t, .yes) +
+      starInitVelar (.t, .yes) = 2 ∧
+    starInitAll (.k, .yes) + starInitCorVel (.k, .yes) +
+      starInitVelar (.k, .yes) = 3 := by decide
 
 /-- *ASSOC and *\[m have identical violation profiles on this candidate
     space. A coincidence of the 0/1-violation simplification rather than
     a deep identity: in [zuraw-2010]'s richer analysis, *ASSOC's
     flat penalty contrasts with *[m's stringency-hierarchy role. -/
 theorem assoc_eq_initAll (c : StemC) (s : SubSt) :
-    starAssoc.eval (c, s) = starInitAll.eval (c, s) := by
+    starAssoc (c, s) = starInitAll (c, s) := by
   cases c <;> cases s <;> rfl
 
 -- ============================================================================
@@ -238,7 +238,7 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) :
     `Input → Output → Fin n → ℕ` shape required by
     `PartialOrderConstraints.PicksAt` and `pocPredict`. -/
 def vp (c : StemC) (s : SubSt) (i : Fin 6) : ℕ :=
-  (constraint i).eval (c, s)
+  (constraint i) (c, s)
 
 /-- POC candidate set per stem: both YES and NO are available for every
     stem-initial obstruent. -/

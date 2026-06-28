@@ -12,7 +12,7 @@ comparison) and Harmonic Grammar (weighted aggregation, `[riggle-2009]`).
 
 * `ViolationProfile n` — `Lex (Fin n → Nat)`, a fixed-length violation vector.
 * `buildViolationProfile` — assemble a profile from a constraint vector.
-* `mkProfile` — assemble a profile from a ranked `NamedConstraint` list.
+* `mkProfile` — assemble a profile from a ranked `Constraint` list.
 
 ## Main results
 
@@ -47,10 +47,10 @@ theorem ViolationProfile.le_apply_zero
     {a b : ViolationProfile (n + 1)} (h : a ≤ b) : a 0 ≤ b 0 :=
   lexFinNat_le_apply_zero h
 
-/-- Build a `ViolationProfile ranking.length` from a ranked `NamedConstraint`
+/-- Build a `ViolationProfile ranking.length` from a ranked `Constraint`
     list — the fixed-length analog of the profile inside `OptimalityTheory.mkTableau`. -/
-def mkProfile (ranking : List (NamedConstraint C)) (c : C) :
+def mkProfile (ranking : List (Constraint C)) (c : C) :
     ViolationProfile ranking.length :=
-  buildViolationProfile (fun i => (ranking.get i).eval) c
+  buildViolationProfile (fun i => ranking.get i) c
 
 end Constraints

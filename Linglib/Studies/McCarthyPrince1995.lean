@@ -1,6 +1,7 @@
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Fragments.Akan.Phonology
 
 /-!
@@ -65,27 +66,25 @@ inductive JavaneseCand where
 
 /-- IDENT-BR: penalizes featural mismatch between base and reduplicant.
     Only the normal candidate has B ≠ R (B retains h, R lacks it). -/
-def javIdentBR : NamedConstraint JavaneseCand :=
-  mkIdent "IDENT-BR" (· = .normal)
+def javIdentBR : Constraint JavaneseCand :=
+  Constraint.binary (· = .normal)
 
 /-- *VhV: markedness constraint against intervocalic *h*.
     Violated by `under` (h in both B and R) and `normal` (h in B). -/
-def javStarVhV : NamedConstraint JavaneseCand :=
-  { name := "*VhV"
-    family := .markedness
-    eval := λ
-      | .over => 0
-      | .under => 1
-      | .normal => 1 }
+def javStarVhV : Constraint JavaneseCand :=
+  λ
+    | .over => 0
+    | .under => 1
+    | .normal => 1
 
 /-- MAX-IO: I-O faithfulness — penalizes deletion from the input.
     Only the `over` candidate deletes h from the input stem. -/
-def javMaxIO : NamedConstraint JavaneseCand :=
-  mkMax "MAX-IO" (· = .over)
+def javMaxIO : Constraint JavaneseCand :=
+  Constraint.binary (· = .over)
 
 /-- Skeletal ranking for overapplication (ex. 7):
     IDENT-BR, *VhV >> MAX-IO -/
-def javRanking : List (NamedConstraint JavaneseCand) :=
+def javRanking : List (Constraint JavaneseCand) :=
   [javIdentBR, javStarVhV, javMaxIO]
 
 def javCandidates : List JavaneseCand := [.over, .under, .normal]
@@ -168,31 +167,31 @@ def toCorr : JavaneseCand → Corr RedupRole Seg
   | .normal => normalCorr
 
 /-- **Structural derivation of MAX-IO**: the `Corr`-derived MAX-IO
-    violation count equals the original stipulated `javMaxIO.eval`.
-    The deletion-based stipulation (`mkMax "MAX-IO" (· = .over)`) now
+    violation count equals the original stipulated `javMaxIO`.
+    The deletion-based stipulation (`Constraint.binary (· = .over)`) now
     follows from the structural fact that `over`'s base lacks an
     input correspondent. -/
 theorem javMaxIO_eq_corr (c : JavaneseCand) :
-    javMaxIO.eval c = (toCorr c).maxViol .input .base := by
+    javMaxIO c = (toCorr c).maxViol .input .base := by
   cases c <;> decide
 
 /-- **Structural derivation of "IDENT-BR"**: the original constraint
-    (`mkIdent "IDENT-BR" (· = .normal)`) is empirically MAX-BR — it
+    (`Constraint.binary (· = .normal)`) is empirically MAX-BR — it
     penalizes the `normal` candidate's base-only `h` (which has no R
     correspondent). The structural count from `Corr.maxViol .base .reduplicant`
     matches the stipulation. -/
 theorem javIdentBR_eq_corr (c : JavaneseCand) :
-    javIdentBR.eval c = (toCorr c).maxViol .base .reduplicant := by
+    javIdentBR c = (toCorr c).maxViol .base .reduplicant := by
   cases c <;> decide
 
-/-- The Javanese tableau as `NamedConstraint (Corr RedupRole Seg)`s.
+/-- The Javanese tableau as `Constraint (Corr RedupRole Seg)`s.
     These are direct uses of the paper-agnostic
     `OptimalityTheory.Correspondence.Reduplication.maxIO` / `maxBR` — no
     Javanese-specific constraint construction needed. -/
-abbrev javMaxIOFromCorr : NamedConstraint (Corr RedupRole Seg) :=
+abbrev javMaxIOFromCorr : Constraint (Corr RedupRole Seg) :=
   OptimalityTheory.Correspondence.Reduplication.maxIO
 
-abbrev javMaxBRFromCorr : NamedConstraint (Corr RedupRole Seg) :=
+abbrev javMaxBRFromCorr : Constraint (Corr RedupRole Seg) :=
   OptimalityTheory.Correspondence.Reduplication.maxBR
 
 /-- **Perfect copy is BR-faithful** (the keystone in action). The `under`
@@ -201,7 +200,7 @@ abbrev javMaxBRFromCorr : NamedConstraint (Corr RedupRole Seg) :=
     `Corr.maxViol_eq_zero_of_diag` (the fully faithful candidate vanishes on a
     faithfulness constraint, [mccarthy-prince-1995]), not by `decide` over the
     toy table. -/
-theorem javMaxBR_under_zero : javMaxBRFromCorr.eval underCorr = 0 := by
+theorem javMaxBR_under_zero : javMaxBRFromCorr underCorr = 0 := by
   show underCorr.maxViol .base .reduplicant = 0
   exact Corr.maxViol_eq_zero_of_diag underCorr .base .reduplicant rfl rfl
 
@@ -232,41 +231,35 @@ inductive BalangaoCand where
 
 /-- MAX-IO: penalizes deletion from input.
     Only `totalFaithful` deletes a segment from the base. -/
-def balMaxIO : NamedConstraint BalangaoCand :=
-  { name := "MAX-IO"
-    family := .faithfulness
-    eval := λ
-      | .totalFaithful => 1
-      | .totalRedup => 0
-      | .partialRedup => 0 }
+def balMaxIO : Constraint BalangaoCand :=
+  λ
+    | .totalFaithful => 1
+    | .totalRedup => 0
+    | .partialRedup => 0
 
 /-- NO-CODA: markedness constraint against syllable codas.
     Violation counts from the tableau (ex. 106):
     - totalFaithful (tagta–tagta): 2 codas (medial g in each half)
     - totalRedup (tagtag–tagtag): 4 codas
     - partial (tagta–tagtag): 3 codas (2 in base, 1 in R medial) -/
-def balNoCoda : NamedConstraint BalangaoCand :=
-  { name := "NO-CODA"
-    family := .markedness
-    eval := λ
-      | .totalFaithful => 2
-      | .totalRedup => 4
-      | .partialRedup => 3 }
+def balNoCoda : Constraint BalangaoCand :=
+  λ
+    | .totalFaithful => 2
+    | .totalRedup => 4
+    | .partialRedup => 3
 
 /-- MAX-BR: B-R identity — penalizes incomplete copying.
     Only `partial` has a segment in the base without a correspondent
     in the reduplicant (the final coda). -/
-def balMaxBR : NamedConstraint BalangaoCand :=
-  { name := "MAX-BR"
-    family := .faithfulness
-    eval := λ
-      | .totalFaithful => 0
-      | .totalRedup => 0
-      | .partialRedup => 1 }
+def balMaxBR : Constraint BalangaoCand :=
+  λ
+    | .totalFaithful => 0
+    | .totalRedup => 0
+    | .partialRedup => 1
 
 /-- Ranking for emergence of the unmarked (ex. 107):
     MAX-IO >> NO-CODA >> MAX-BR -/
-def balRanking : List (NamedConstraint BalangaoCand) :=
+def balRanking : List (Constraint BalangaoCand) :=
   [balMaxIO, balNoCoda, balMaxBR]
 
 def balCandidates : List BalangaoCand :=
@@ -345,15 +338,15 @@ def toCorr : BalangaoCand → Corr RedupRole Seg
   | .partialRedup  => partialRedupCorr
 
 /-- **Structural derivation of MAX-IO**: the `Corr`-derived MAX-IO
-    violation count equals the original stipulated `balMaxIO.eval`. -/
+    violation count equals the original stipulated `balMaxIO`. -/
 theorem balMaxIO_eq_corr (c : BalangaoCand) :
-    balMaxIO.eval c = (toCorr c).maxViol .input .base := by
+    balMaxIO c = (toCorr c).maxViol .input .base := by
   cases c <;> decide
 
 /-- **Structural derivation of MAX-BR**: the `Corr`-derived MAX-BR
-    violation count equals the original stipulated `balMaxBR.eval`. -/
+    violation count equals the original stipulated `balMaxBR`. -/
 theorem balMaxBR_eq_corr (c : BalangaoCand) :
-    balMaxBR.eval c = (toCorr c).maxViol .base .reduplicant := by
+    balMaxBR c = (toCorr c).maxViol .base .reduplicant := by
   cases c <;> decide
 
 end BalangaoCorr
@@ -386,20 +379,14 @@ inductive BasicCand where
   | normal     -- IO=0, Phono=1 (marked in B only), BR=1
   deriving DecidableEq, Repr
 
-def basicIOFaith : NamedConstraint BasicCand :=
-  { name := "IO-Faith"
-    family := .faithfulness
-    eval := λ | .faithful => 0 | .over => 1 | .normal => 0 }
+def basicIOFaith : Constraint BasicCand :=
+  λ | .faithful => 0 | .over => 1 | .normal => 0
 
-def basicPhono : NamedConstraint BasicCand :=
-  { name := "Phono"
-    family := .markedness
-    eval := λ | .faithful => 2 | .over => 0 | .normal => 1 }
+def basicPhono : Constraint BasicCand :=
+  λ | .faithful => 2 | .over => 0 | .normal => 1
 
-def basicBRId : NamedConstraint BasicCand :=
-  { name := "BR-Id"
-    family := .faithfulness
-    eval := λ | .faithful => 0 | .over => 0 | .normal => 1 }
+def basicBRId : Constraint BasicCand :=
+  λ | .faithful => 0 | .over => 0 | .normal => 1
 
 def basicCandidates : List BasicCand := [.faithful, .over, .normal]
 theorem basicCandidates_ne : basicCandidates ≠ [] := by simp [basicCandidates]
@@ -537,13 +524,11 @@ inductive AkanCand where
     - over (tɕɪ–tɕa): 2 violations (coronal in each syllable of B+R)
     - normal (tɕɪ–ka): 0
     - under (kɪ–ka): 0 -/
-def akanOCP : NamedConstraint AkanCand :=
-  { name := "OCP(+cor)"
-    family := .markedness
-    eval := λ
-      | .over => 2
-      | .normal => 0
-      | .under => 0 }
+def akanOCP : Constraint AkanCand :=
+  λ
+    | .over => 2
+    | .normal => 0
+    | .under => 0
 
 /-- IDENT-BR(−cor): B-R identity for the [−coronal] feature.
     Penalizes featural mismatch between base and reduplicant
@@ -554,13 +539,11 @@ def akanOCP : NamedConstraint AkanCand :=
     - over (tɕɪ–tɕa): 0 (B = R)
     - normal (tɕɪ–ka): 1 (R ≠ B in coronal feature)
     - under (kɪ–ka): 0 (B = R) -/
-def akanIdentBR : NamedConstraint AkanCand :=
-  { name := "IDENT-BR(-cor)"
-    family := .faithfulness
-    eval := λ
-      | .over => 0
-      | .normal => 1
-      | .under => 0 }
+def akanIdentBR : Constraint AkanCand :=
+  λ
+    | .over => 0
+    | .normal => 1
+    | .under => 0
 
 /-- PAL: palatalization constraint — velars must be palatalized
     before front vowels. The underapplicational candidate kɪ–ka
@@ -570,13 +553,11 @@ def akanIdentBR : NamedConstraint AkanCand :=
     - over (tɕɪ–tɕa): 0
     - normal (tɕɪ–ka): 0
     - under (kɪ–ka): 1 (velar k before front vowel ɪ) -/
-def akanPAL : NamedConstraint AkanCand :=
-  { name := "PAL"
-    family := .markedness
-    eval := λ
-      | .over => 0
-      | .normal => 0
-      | .under => 1 }
+def akanPAL : Constraint AkanCand :=
+  λ
+    | .over => 0
+    | .normal => 0
+    | .under => 1
 
 /-- IDENT-IO(−cor): I-O faithfulness for the [−coronal] feature.
     Penalizes changing the coronal specification of an input segment.
@@ -587,17 +568,15 @@ def akanPAL : NamedConstraint AkanCand :=
     - over (tɕɪ–tɕa): 1 (input /k/ → output tɕ in base)
     - normal (tɕɪ–ka): 0
     - under (kɪ–ka): 0 -/
-def akanIdentIO : NamedConstraint AkanCand :=
-  { name := "IDENT-IO(-cor)"
-    family := .faithfulness
-    eval := λ
-      | .over => 1
-      | .normal => 0
-      | .under => 0 }
+def akanIdentIO : Constraint AkanCand :=
+  λ
+    | .over => 1
+    | .normal => 0
+    | .under => 0
 
 /-- Ranking for Akan underapplication (ex. 129, 131):
     OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor) -/
-def akanRanking : List (NamedConstraint AkanCand) :=
+def akanRanking : List (Constraint AkanCand) :=
   [akanOCP, akanIdentBR, akanPAL, akanIdentIO]
 
 def akanCandidates : List AkanCand := [.over, .normal, .under]
@@ -742,7 +721,7 @@ def toCorr : AkanCand → Corr RedupRole Seg
     the `(.input, .base)` edge. Input /k/ → base /tɕ/ is the only IO
     coronal mismatch; only `over` violates. -/
 theorem akanIdentIO_eq_corr (c : AkanCand) :
-    akanIdentIO.eval c =
+    akanIdentIO c =
       (toCorr c).identViolFeature coronal .input .base := by
   cases c <;> decide
 
@@ -751,7 +730,7 @@ theorem akanIdentIO_eq_corr (c : AkanCand) :
     mismatch (B has /k/ [-cor], R has /tɕ/ [+cor]); the vowels' coronal
     values agree (both [-cor] in this featural inventory). -/
 theorem akanIdentBR_eq_corr (c : AkanCand) :
-    akanIdentBR.eval c =
+    akanIdentBR c =
       (toCorr c).identViolFeature coronal .base .reduplicant := by
   cases c <;> decide
 
