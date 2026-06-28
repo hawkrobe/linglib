@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.GroupTheory.Congruence.Basic
-import Linglib.Core.Data.List.Destutter
+import Linglib.Core.Algebra.FreeMonoid.Destutter
 
 /-!
 # The Obligatory Contour Principle
@@ -26,10 +26,10 @@ and lives in the thresholded-TSL substrate, not here.
 
 * `OCP.IsClean` / `OCP.IsCleanOn` — OCP-cleanness, flat and on a projected tier.
 * `OCP.collapse` — the fusion repair (OCP-merger normal form).
-* `OCP.gconcat` — OCP-gluing concatenation `∘`, the OCP quotient monoid's multiplication.
-* `OCP.instMonoidSubtypeIsClean` — the OCP quotient monoid on `{l // IsClean l}`.
-* `OCP.collapseHom` — the bundled quotient map `FreeMonoid α →* {l // IsClean l}`.
-* `OCP.ocpQuotientEquiv` — the OCP quotient `FreeMonoid α ⧸ Con.ker collapseHom ≃* {l // IsClean l}`.
+* `OCP.gconcat` / `OCP.collapseHom` / `OCP.ocpCon` / `OCP.ocpQuotientEquiv` — the OCP quotient
+  monoid `(OCP-clean, gconcat, [])`, read off the theory-neutral
+  `Core.Algebra.FreeMonoid.Destutter` substrate (the `Monoid {l // IsClean l}` instance is
+  inherited from there).
 * `OCP.block` — the blocking repair (antigemination guard).
 
 ## Main results
@@ -37,9 +37,8 @@ and lives in the thresholded-TSL substrate, not here.
 * `collapse_eq_destutter` — the fusion repair is `List.destutter`.
 * `collapse_clean` / `collapse_eq_self_iff` — `collapse` is the retraction onto `IsClean`.
 * `collapse_sublist` — fusion never adds material.
-* `collapse_append` / `gconcat_assoc` — `collapse` is the quotient hom and `gconcat` the
-  quotient multiplication: `(OCP-clean, gconcat, [])` is the quotient `(List α, ++)/OCP`,
-  bundled as `collapseHom` over the `Monoid {l // IsClean l}` instance.
+* `collapse_append` — `collapse` is the quotient hom: `(OCP-clean, gconcat, [])` is the
+  quotient `(List α, ++)/OCP` (the monoid laws live on the substrate).
 * `block_eq_self` — antigemination: a rule is blocked when it would violate the OCP.
 -/
 
@@ -50,8 +49,9 @@ variable {α β : Type*}
 /-! ### The constraint -/
 
 /-- A tier is **OCP-clean** when no adjacent pair is identical. Adjacency-only, so
-weaker than `List.Nodup` (`[1, 2, 1]` is clean). -/
-def IsClean (xs : List α) : Prop :=
+weaker than `List.Nodup` (`[1, 2, 1]` is clean). A reducible alias of the substrate
+predicate, so the `Core.Algebra.FreeMonoid.Destutter` monoid instance transfers. -/
+abbrev IsClean (xs : List α) : Prop :=
   List.IsChain (· ≠ ·) xs
 
 @[simp] theorem isClean_nil : IsClean ([] : List α) := List.isChain_nil
@@ -122,16 +122,11 @@ theorem collapse_length_le (xs : List α) : (collapse xs).length ≤ xs.length :
 theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs :=
   (collapse_sublist xs).mem ha
 
-/-! ### The OCP quotient monoid
+/-! ### The OCP congruence: `collapse` as a quotient homomorphism
 
-The autosegmental free concatenation `⊙` (list `++`, the categorical coproduct) and the
-OCP-gluing concatenation `∘` (`gconcat`) are a **free monoid and its quotient**: `collapse`
-is the quotient homomorphism and `(OCP-clean, gconcat, [])` is `(List α, ++)/OCP`. This is
-the algebraic content of `ocp_not_isMonoidal`: OCP-cleanness is not a `++`-submonoid but is
-the `gconcat`-quotient monoid. It is bundled below as `collapseHom : FreeMonoid α →* {l //
-IsClean l}`, the quotient map; concretely `{l // IsClean l}` with this `Monoid` is
-`FreeMonoid α ⧸ Con.ker collapseHom`. The AR-level lift (links pushed forward along the
-run-collapse map) is future work. -/
+`collapse` descends to a homomorphism on the OCP quotient of `(List α, ++)`: collapsing
+each operand before appending is harmless. This is what makes `(OCP-clean, gconcat, [])` the
+quotient `(List α, ++)/OCP`, bundled below as `collapseHom` over the substrate monoid. -/
 
 /-- Collapsing the left operand before appending does not change the result. -/
 theorem collapse_append_left (x y : List α) :
@@ -149,76 +144,31 @@ theorem collapse_append (x y : List α) :
     collapse (x ++ y) = collapse (collapse x ++ collapse y) :=
   List.destutter_append_destutter x y
 
+/-! ### The bundled OCP quotient monoid (read off `Core.Algebra.FreeMonoid.Destutter`)
+
+The construction is theory-neutral (`List.destutterConcat`, `FreeMonoid.destutterHom`, the
+`Monoid {l // l.IsChain (· ≠ ·)}` instance); the names below read it as autosegmental tier
+fusion. The `Monoid {l // IsClean l}` instance is inherited from the substrate, since
+`IsClean` is a reducible alias of `List.IsChain (· ≠ ·)`. -/
+
 /-- **OCP-gluing concatenation** `∘`: concatenate, then merge the new boundary geminate. The
-multiplication of the OCP quotient monoid. -/
-def gconcat (x y : List α) : List α := collapse (x ++ y)
+multiplication of the OCP quotient monoid (`List.destutterConcat`). -/
+abbrev gconcat (x y : List α) : List α := List.destutterConcat x y
 
-/-- `gconcat` is associative — the quotient inherits `++`'s associativity through `collapse`. -/
-theorem gconcat_assoc (x y z : List α) :
-    gconcat (gconcat x y) z = gconcat x (gconcat y z) := by
-  simp only [gconcat, collapse_append_left, collapse_append_right, List.append_assoc]
+/-- The bundled OCP quotient map `FreeMonoid α →* {l // IsClean l}`
+(`FreeMonoid.destutterHom`), reading destutter normalization as OCP fusion. -/
+abbrev collapseHom : FreeMonoid α →* {l : List α // IsClean l} := FreeMonoid.destutterHom
 
-/-- `[]` is a left unit up to `collapse`; on OCP-clean lists a genuine left unit. -/
-theorem nil_gconcat (x : List α) : gconcat [] x = collapse x := by simp [gconcat]
+/-- The **OCP congruence** on the free monoid: the kernel of `collapseHom`
+(`FreeMonoid.destutterCon`). The OCP quotient monoid is `ocpCon.Quotient`. -/
+abbrev ocpCon : Con (FreeMonoid α) := FreeMonoid.destutterCon
 
-/-- `[]` is a right unit up to `collapse`; on OCP-clean lists a genuine right unit. -/
-theorem gconcat_nil (x : List α) : gconcat x [] = collapse x := by simp [gconcat]
-
-/-- `gconcat` lands in the OCP-clean set: the quotient is closed under its multiplication. -/
-theorem gconcat_clean (x y : List α) : IsClean (gconcat x y) := collapse_clean _
-
-/-- `collapse` carries `(List α, ++)` onto `(OCP-clean, gconcat)`: the quotient-hom equation. -/
-theorem collapse_gconcat (x y : List α) :
-    collapse (x ++ y) = gconcat (collapse x) (collapse y) := by
-  rw [gconcat, ← collapse_append]
-
-/-- `gconcat` outputs are OCP-clean fixed points of `collapse`. -/
-theorem collapse_collapse_gconcat (x y : List α) : collapse (gconcat x y) = gconcat x y := by
-  rw [gconcat, collapse_idempotent]
-
-/-! ### The bundled quotient monoid -/
-
-instance : Mul {l : List α // IsClean l} := ⟨fun a b => ⟨gconcat a b, gconcat_clean _ _⟩⟩
-
-instance : One {l : List α // IsClean l} := ⟨⟨[], isClean_nil⟩⟩
-
-@[simp] theorem coe_mul (a b : {l : List α // IsClean l}) :
-    ((a * b : {l : List α // IsClean l}) : List α) = gconcat a b := rfl
-
-omit [DecidableEq α] in
-@[simp] theorem coe_one : ((1 : {l : List α // IsClean l}) : List α) = [] := rfl
-
-/-- The OCP quotient monoid on the OCP-clean subtype: `gconcat` multiplication, `[]` unit. -/
-instance : Monoid {l : List α // IsClean l} where
-  mul_assoc a b c := Subtype.ext <| by simp [gconcat_assoc]
-  one_mul a := Subtype.ext <| by simp [nil_gconcat, collapse_idempotent_on_clean a.2]
-  mul_one a := Subtype.ext <| by simp [gconcat_nil, collapse_idempotent_on_clean a.2]
-
-/-- The bundled OCP quotient map. `collapse_append` is morally its `map_mul`: `{l // IsClean
-l}` with the `Monoid` instance above is `FreeMonoid α ⧸ Con.ker collapseHom`. -/
-def collapseHom : FreeMonoid α →* {l : List α // IsClean l} where
-  toFun l := ⟨collapse l.toList, collapse_clean _⟩
-  map_one' := Subtype.ext collapse_nil
-  map_mul' x y := Subtype.ext <| by simp [FreeMonoid.toList_mul, collapse_gconcat]
-
-/-! ### As a mathlib quotient monoid -/
-
-/-- The **OCP congruence** on the free monoid: the kernel of `collapseHom`. The OCP quotient
-monoid is `ocpCon.Quotient` — mathlib's `Con.Quotient`, a `Monoid` for free. -/
-def ocpCon : Con (FreeMonoid α) := Con.ker collapseHom
-
-/-- `collapseHom` is surjective: every OCP-clean list is its own collapse. -/
-theorem collapseHom_surjective :
-    Function.Surjective (collapseHom : FreeMonoid α →* {l : List α // IsClean l}) := fun c =>
-  ⟨FreeMonoid.ofList c.1, Subtype.ext (by
-    simp only [collapseHom, MonoidHom.coe_mk, OneHom.coe_mk, FreeMonoid.toList_ofList]
-    exact collapse_idempotent_on_clean c.2)⟩
-
-/-- **First isomorphism theorem for the OCP quotient.** The abstract quotient monoid
-`FreeMonoid α ⧸ OCP` is the concrete OCP-clean model `{l // IsClean l}` ([mccarthy-1986]). -/
-noncomputable def ocpQuotientEquiv :
+/-- **First isomorphism theorem for the OCP quotient** ([mccarthy-1986]). The abstract
+quotient monoid `FreeMonoid α ⧸ OCP` is the concrete OCP-clean model `{l // IsClean l}`
+(`FreeMonoid.destutterQuotientEquiv`). -/
+noncomputable abbrev ocpQuotientEquiv :
     (ocpCon (α := α)).Quotient ≃* {l : List α // IsClean l} :=
-  Con.quotientKerEquivOfSurjective collapseHom collapseHom_surjective
+  FreeMonoid.destutterQuotientEquiv
 
 /-! ### The blocking repair -/
 

@@ -114,7 +114,6 @@ theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]
     (mkOCP name project).eval c = 0 ↔ OCP.IsClean (project c) := by
   show countAdjacent (· = ·) (project c) = 0 ↔ _
   rw [countAdjacent_eq_zero_iff_isChain (· = ·)]
-  rfl
 
 /-- **Bridge** (full TSL_2 language form): a candidate's OCP score is zero iff
 its raw string is in the language of the TSL_2 grammar `TSLGrammar.ocp p`.
