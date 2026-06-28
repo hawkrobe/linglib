@@ -89,7 +89,7 @@ matches the relevance hierarchy. Negation and tense come after mood,
 which is also consistent. -/
 theorem japanese_partial_bybee :
     let slots := [MorphCategory.derivation, .valence, .voice, .mood]
-    RespectsRelevanceHierarchy slots := by native_decide
+    RespectsRelevanceHierarchy slots := by decide
 
 -- ============================================================================
 -- §3: Sesotho Verb Template (SI §4.2)
@@ -143,7 +143,7 @@ def sesothoPrefixSlots : List MorphCategory :=
 /-- Sesotho suffixes respect the relevance hierarchy:
 valence < voice < tense < mood < nonfinite. -/
 theorem sesotho_suffixes_respect_bybee :
-    RespectsRelevanceHierarchy sesothoSuffixSlots := by native_decide
+    RespectsRelevanceHierarchy sesothoSuffixSlots := by decide
 
 -- ============================================================================
 -- §4: Memory-Surprisal Efficiency (SI Figures 6, 8)
@@ -213,13 +213,12 @@ functional suffix after derivation. This is consistent with both:
 
 /-- Japanese causative -(s)ase is in the valence slot (slot 2). -/
 theorem japanese_causative_is_valence :
-    japaneseSuffixSlots[1]? = some .valence := by native_decide
+    japaneseSuffixSlots[1]? = some .valence := by decide
 
 /-- The valence slot is the first functional slot (after derivation). -/
 theorem valence_is_innermost_functional :
     japaneseSuffixSlots[0]? = some .derivation ∧
-    japaneseSuffixSlots[1]? = some .valence := by
-  constructor <;> native_decide
+    japaneseSuffixSlots[1]? = some .valence := by decide
 
 /-! ### Bridge: Japanese -(s)ase = Song's COMPACT morphological causative
 
@@ -255,6 +254,6 @@ theorem relevance_hierarchy_implies_locality :
     -- are also efficient in memory-surprisal terms
     RespectsRelevanceHierarchy sesothoSuffixSlots ∧
     sesothoRealAUC100 < sesothoRandomAUC100 :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by native_decide⟩
 
 end HahnDegenFutrell2021
