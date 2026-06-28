@@ -1,5 +1,7 @@
 import Linglib.Processing.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Japanese.Morph
+import Linglib.Fragments.Sesotho.Morph
 import Linglib.Morphology.MorphRule
 import Linglib.Studies.Bybee1985
 
@@ -58,30 +60,15 @@ open Morphology (MorphCategory RespectsRelevanceHierarchy)
 
 /-! ### Japanese verb suffixes
 
-From SI §4.1, ordered from stem outward. The numbering follows
-[kaiser-yamamoto-2013] and the UD segmentation used in the paper.
+SI §4.1's Japanese suffix order ([kaiser-yamamoto-2013], UD segmentation) is the
+language's affix template, so it lives as Fragment data in
+`Fragments/Japanese/Morph.lean` (`Japanese.verbAffixTemplate`); here we derive
+the slot list from it rather than re-typing it. -/
 
-| Slot | Category | Morpheme | Example |
-|------|----------|----------|---------|
-| 1 | derivation | -su (suru) | derives verbs from Sino-Japanese |
-| 2 | valence | -(s)ase | causative |
-| 3 | voice | -are, -rare | passive/potential |
-| 4 | mood | -ta (desiderative) | "want to" |
-| 5 | agreement | -mas | politeness |
-| 6 | negation | -na | negation |
-| 7 | tense | -ta (past), -yoo | past/future |
--/
-
-/-- Japanese suffix slots from stem outward (SI Table 2). -/
+/-- Japanese suffix slots from stem outward, derived from the Fragment template
+`Japanese.verbAffixTemplate` (SI §4.1, [kaiser-yamamoto-2013]). -/
 def japaneseSuffixSlots : List MorphCategory :=
-  [ .derivation   -- 1. -su (suru)
-  , .valence      -- 2. -(s)ase (causative)
-  , .voice        -- 3. -are, -rare (passive/potential)
-  , .mood         -- 4. -ta (desiderative)
-  , .agreement .subj    -- 5. -mas (politeness, treated as subj agreement)
-  , .negation     -- 6. -na (negation)
-  , .tense        -- 7. -ta, -yoo (past/future)
-  ]
+  Japanese.verbAffixTemplate.suffixSlots
 
 /-- Japanese suffix order respects Bybee's hierarchy through the mood slot:
 derivation < valence < voice < mood. Beyond mood the order *breaks* —
@@ -110,48 +97,19 @@ theorem japanese_violates_surveyed_relevance :
 
 /-! ### Sesotho verb affixes
 
-From SI §4.2 and [demuth-1992], [doke-mofokeng-1967].
+SI §4.2's Sesotho affix order ([demuth-1992], [doke-mofokeng-1967]) lives as
+Fragment data in `Fragments/Sesotho/Morph.lean` (`Sesotho.verbAffixTemplate`);
+the slot lists below are derived from it. -/
 
-**Prefixes** (from word edge inward toward stem):
-1. Subject agreement (sm)
-2. Negation (-sa-)
-3. Tense/Aspect/Mood (t')
-4. Object agreement (om) / Reflexive (rf)
-
-**Suffixes** (from stem outward):
-1. Reversive (rv) — valence
-2. Causative (c) — valence
-3. Neuter (nt) — valence
-4. Applicative (ap) — valence
-5. Completive (cl) — valence (reduplication of applicative)
-6. Reciprocal (rc) — voice
-7. Passive (p) — voice
-8. Tense (t^) — tense (perfect -il-)
-9. Mood (m^) — mood (imperative, subjunctive, indicative)
-10. Interrogative/Relative (wh/rl) — nonfinite
--/
-
-/-- Sesotho suffix template: morpheme categories from stem outward (SI §4.2). -/
+/-- Sesotho suffix template, stem-outward, from the Fragment
+`Sesotho.verbAffixTemplate` (SI §4.2). -/
 def sesothoSuffixSlots : List MorphCategory :=
-  [ .valence      -- 1. reversive
-  , .valence      -- 2. causative
-  , .valence      -- 3. neuter
-  , .valence      -- 4. applicative
-  , .valence      -- 5. completive (applicative reduplication)
-  , .voice        -- 6. reciprocal
-  , .voice        -- 7. passive
-  , .tense        -- 8. perfect (-il-)
-  , .mood         -- 9. imperative/subjunctive/indicative
-  , .nonfinite    -- 10. interrogative/relative
-  ]
+  Sesotho.verbAffixTemplate.suffixSlots
 
-/-- Sesotho prefix template: morpheme categories from word edge inward. -/
+/-- Sesotho prefix template, word-edge inward, from the Fragment
+`Sesotho.verbAffixTemplate`. -/
 def sesothoPrefixSlots : List MorphCategory :=
-  [ .agreement .subj    -- 1. subject agreement
-  , .negation     -- 2. negation
-  , .tense        -- 3. tense/aspect/mood
-  , .agreement .obj    -- 4. object agreement
-  ]
+  Sesotho.verbAffixTemplate.prefixSlots
 
 /-- Sesotho suffixes respect the relevance hierarchy
 (valence < voice < tense < mood < nonfinite) — sorted by the substrate
