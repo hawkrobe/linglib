@@ -1344,6 +1344,7 @@ import Linglib.Phonology.OptimalityTheory.Defs
 import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
