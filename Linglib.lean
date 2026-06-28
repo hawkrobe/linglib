@@ -1105,6 +1105,7 @@ import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 import Linglib.Fragments.Quechua.TenseAspect
 import Linglib.Fragments.Romance.Clitics
 import Linglib.Fragments.Romanian.MoodChoice
+import Linglib.Fragments.Sesotho.Morph
 import Linglib.Fragments.Shan.ClassifierSystem
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Definiteness
@@ -1267,6 +1268,7 @@ import Linglib.Fragments.Yoruba.TenseAspect
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
 import Linglib.Fragments.Zulu.Plurals
+import Linglib.Morphology.AffixTemplate
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot
