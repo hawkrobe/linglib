@@ -2485,6 +2485,7 @@ import Linglib.Studies.McPhersonLamont2026
 import Linglib.Studies.MeinhardtEtAl2024
 import Linglib.Studies.Mendes2025
 import Linglib.Studies.Merchant2013
+import Linglib.Studies.MerchantPrince2022
 import Linglib.Studies.MeyerFeiman2021
 import Linglib.Studies.Middleton2026
 import Linglib.Studies.Miestamo2005
