@@ -16,7 +16,7 @@ strongest *satisfied* presupposition.
 This module provides a general, domain-agnostic formulation of MP and
 connects it to existing domain-specific implementations:
 
-1. **OT formulation** (`mpConstraintOf`): MP as a `NamedConstraint C`
+1. **OT formulation** (`mpConstraintOf`): MP as a `Constraint C`
    parameterized by a presuppositional strength function. Violation
    count = maxStrength − strength(c). Wang2023's `mpConstraint` is
    an instance (`phiMP`).
@@ -88,35 +88,31 @@ strength function `strength : C → Nat`:
 - **`markednessPenalty`**: penalizes presuppositional strength directly.
   Violation count = `strength c`.
 
-These are antagonistic: for any candidate `c`, `mpConstraintOf.eval c +
-markednessPenalty.eval c = maxStrength` (when `strength c ≤ maxStrength`).
+These are antagonistic: for any candidate `c`, `mpConstraintOf … c +
+markednessPenalty … c = maxStrength` (when `strength c ≤ maxStrength`).
 -/
 
 /-- Build an MP constraint from a presuppositional strength function.
     Violation count = `maxStrength - strength c`: maximal presupposition
     → 0 violations, weaker presupposition → more. -/
 def mpConstraintOf {C : Type} (maxStrength : Nat)
-    (strength : C → Nat) : NamedConstraint C :=
-  { name := "MP!"
-  , family := .faithfulness
-  , eval := fun c => maxStrength - strength c }
+    (strength : C → Nat) : Constraint C :=
+  fun c => maxStrength - strength c
 
 /-- A markedness constraint penalizing presuppositional strength.
     Violation count = `strength c`: stronger presupposition → more
     violations. This is the generic form of Wang2023's `todConstraint`
     (Taboo of Directness). -/
 def markednessPenalty {C : Type}
-    (strength : C → Nat) : NamedConstraint C :=
-  { name := "Markedness"
-  , family := .markedness
-  , eval := strength }
+    (strength : C → Nat) : Constraint C :=
+  strength
 
 /-- Violation counts sum to maxStrength for any candidate whose
     strength does not exceed the maximum. -/
 theorem mp_markedness_complementary {C : Type} (maxStrength : Nat)
     (strength : C → Nat) (c : C) (h : strength c ≤ maxStrength) :
-    (mpConstraintOf maxStrength strength).eval c +
-    (markednessPenalty strength).eval c = maxStrength := by
+    (mpConstraintOf maxStrength strength) c +
+    (markednessPenalty strength) c = maxStrength := by
   simp only [mpConstraintOf, markednessPenalty]; omega
 
 -- ============================================================================
@@ -133,14 +129,14 @@ These hold for any candidate type and strength function.
 /-- MP assigns 0 violations to the maximally presupposing candidate. -/
 theorem mp_zero_at_max {C : Type} (maxStrength : Nat) (strength : C → Nat)
     (c : C) (hMax : strength c = maxStrength) :
-    (mpConstraintOf maxStrength strength).eval c = 0 := by
+    (mpConstraintOf maxStrength strength) c = 0 := by
   simp [mpConstraintOf, hMax]
 
 /-- Markedness assigns 0 violations to the minimally presupposing
     candidate. -/
 theorem markedness_zero_at_min {C : Type} (strength : C → Nat)
     (c : C) (hMin : strength c = 0) :
-    (markednessPenalty strength).eval c = 0 := by
+    (markednessPenalty strength) c = 0 := by
   simp [markednessPenalty, hMin]
 
 /-- **MP and markedness impose opposite orderings**: fewer MP violations
@@ -149,9 +145,9 @@ theorem markedness_zero_at_min {C : Type} (strength : C → Nat)
 theorem mp_reverses_markedness {C : Type} (maxStrength : Nat)
     (strength : C → Nat) (c₁ c₂ : C)
     (h₁ : strength c₁ ≤ maxStrength) (h₂ : strength c₂ ≤ maxStrength) :
-    (markednessPenalty strength).eval c₁ < (markednessPenalty strength).eval c₂ ↔
-    (mpConstraintOf maxStrength strength).eval c₁ >
-    (mpConstraintOf maxStrength strength).eval c₂ := by
+    (markednessPenalty strength) c₁ < (markednessPenalty strength) c₂ ↔
+    (mpConstraintOf maxStrength strength) c₁ >
+    (mpConstraintOf maxStrength strength) c₂ := by
   simp only [markednessPenalty, mpConstraintOf]; omega
 
 /-- **MP dominant → strongest wins**: when MP is the top-ranked constraint,
@@ -160,7 +156,7 @@ theorem mp_reverses_markedness {C : Type} (maxStrength : Nat)
     violations, forcing all winners to have 0 as well. -/
 theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
     (maxStrength : Nat) (strength : C → Nat)
-    (rest : List (NamedConstraint C))
+    (rest : List (Constraint C))
     (hNE : candidates ≠ [])
     (hBound : ∀ c ∈ candidates, strength c ≤ maxStrength)
     (hExists : ∃ c₀ ∈ candidates, strength c₀ = maxStrength) :
@@ -181,7 +177,7 @@ theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
     `tod_mp_only_minimal`. -/
 theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List C)
     (strength : C → Nat)
-    (rest : List (NamedConstraint C))
+    (rest : List (Constraint C))
     (hNE : candidates ≠ [])
     (hExists : ∃ c₀ ∈ candidates, strength c₀ = 0) :
     ∀ c ∈ (mkTableau candidates
@@ -216,21 +212,21 @@ connecting the general theorems to `phiPresup`.
 
 /-- The phi-feature MP constraint: `mpConstraintOf` instantiated with
     `presupStrength` over `ContainmentPair`. -/
-def phiMP : NamedConstraint ContainmentPair :=
+def phiMP : Constraint ContainmentPair :=
   mpConstraintOf ContainmentPair.maximal.specLevel presupStrength
 
 /-- `phiMP` evaluates to `maxSpec - presupStrength`. -/
 theorem phiMP_eval (c : ContainmentPair) :
-    phiMP.eval c = ContainmentPair.maximal.specLevel - presupStrength c := rfl
+    phiMP c = ContainmentPair.maximal.specLevel - presupStrength c := rfl
 
 /-- The phi-feature markedness constraint: `markednessPenalty` instantiated
     with `presupStrength`. This is the generic form of ToD. -/
-def phiMarkedness : NamedConstraint ContainmentPair :=
+def phiMarkedness : Constraint ContainmentPair :=
   markednessPenalty presupStrength
 
 /-- `phiMarkedness` evaluates to `presupStrength`. -/
 theorem phiMarkedness_eval (c : ContainmentPair) :
-    phiMarkedness.eval c = presupStrength c := rfl
+    phiMarkedness c = presupStrength c := rfl
 
 /-- Phi-feature competitors satisfy the **same-assertion condition**:
     all cells of `phiPresup` have identical (trivially true) at-issue
@@ -266,7 +262,7 @@ theorem phi_strength_nesting {E : Type*} {innerP outerP : E → Prop}
     [sauerland-2003] derives the preference for singular from
     exactly this principle. -/
 theorem phi_mp_selects_maximal (candidates : List ContainmentPair)
-    (rest : List (NamedConstraint ContainmentPair))
+    (rest : List (Constraint ContainmentPair))
     (hNE : candidates ≠ [])
     (hWF : ∀ c ∈ candidates, c.WellFormed)
     (hMax : ContainmentPair.maximal ∈ candidates) :
@@ -280,8 +276,8 @@ theorem phi_mp_selects_maximal (candidates : List ContainmentPair)
     This is the algebraic core of `tod_reverses_mp` in `Wang2023`. -/
 theorem phi_mp_reverses_markedness (c₁ c₂ : ContainmentPair)
     (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
-    phiMarkedness.eval c₁ < phiMarkedness.eval c₂ ↔
-    phiMP.eval c₁ > phiMP.eval c₂ :=
+    phiMarkedness c₁ < phiMarkedness c₂ ↔
+    phiMP c₁ > phiMP c₂ :=
   mp_reverses_markedness _ presupStrength c₁ c₂
     (wellFormed_specLevel_le_two c₁ hw₁)
     (wellFormed_specLevel_le_two c₂ hw₂)

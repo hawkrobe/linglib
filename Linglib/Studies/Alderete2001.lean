@@ -42,7 +42,7 @@ sibling: the same correspondence diagrams and edges, the opposite comparator.
 * `antifaith_plus_ident_eq_edge_card` — ¬IDENT and IDENT partition the edge.
 * `identity_antifaith_max` — the identity correspondence is maximally
   antifaith-violating.
-* `toAntifaithConstraint` — the `NamedConstraint` bridge.
+* `toAntifaithConstraint` — the `Constraint` bridge.
 
 ## Modeling note
 
@@ -100,15 +100,13 @@ theorem identity_antifaith_max [DecidableEq α] (s : List α) :
   simp only [Corr.identity, Corr.parallel_edge_lhs_rhs]
   exact (Corr.diagDiag_card s.length s.length).trans (min_self s.length)
 
-/-! ### NamedConstraint bridge -/
+/-! ### Constraint bridge -/
 
-/-- Wrap `antifaithViol` as a `NamedConstraint`. The dual of
+/-- Wrap `antifaithViol` as a `Constraint`. The dual of
     `Corr.toIdentConstraint`. -/
-def toAntifaithConstraint [DecidableEq α] (r₁ r₂ : Role)
-    (label : String) : NamedConstraint (Corr Role α) where
-  name := "¬IDENT-" ++ label
-  family := .faithfulness
-  eval c := antifaithViol c r₁ r₂
+def toAntifaithConstraint [DecidableEq α] (r₁ r₂ : Role) :
+    Constraint (Corr Role α) :=
+  fun c => antifaithViol c r₁ r₂
 
 /-! ### Worked example: English ablaut contrast -/
 

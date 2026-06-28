@@ -336,31 +336,26 @@ def krifkaQuadruplet : Finset (AntonymForm × Region) :=
     - Simple form + stereotypical meaning → 0 violations (match)
     - Complex form + non-stereotypical meaning → 0 violations (match)
     - Cross-assignment → 1 violation (mismatch) -/
-def mPrinciple : NamedConstraint (AntonymForm × Region) where
-  name := "M-Principle"
-  family := .markedness
-  eval
-    | (.positive,    .positive)    => 0  -- simple + stereotypical
-    | (.positive,    .plateauHigh) => 1  -- simple + non-stereotypical
-    | (.notNegative, .positive)    => 1  -- complex + stereotypical
-    | (.notNegative, .plateauHigh) => 0  -- complex + non-stereotypical
-    | (.negative,    .negative)    => 0
-    | (.negative,    .plateauLow)  => 1
-    | (.notPositive, .negative)    => 1
-    | (.notPositive, .plateauLow)  => 0
-    | _ => 0
+def mPrinciple : Constraint (AntonymForm × Region)
+  | (.positive,    .positive)    => 0  -- simple + stereotypical
+  | (.positive,    .plateauHigh) => 1  -- simple + non-stereotypical
+  | (.notNegative, .positive)    => 1  -- complex + stereotypical
+  | (.notNegative, .plateauHigh) => 0  -- complex + non-stereotypical
+  | (.negative,    .negative)    => 0
+  | (.negative,    .plateauLow)  => 1
+  | (.notPositive, .negative)    => 1
+  | (.notPositive, .plateauLow)  => 0
+  | _ => 0
 
 /-- **Economy** constraint: penalizes form complexity.
     Violation count = `AntonymForm.complexity`. -/
-def economyQ : NamedConstraint (AntonymForm × Region) where
-  name := "Economy"
-  family := .faithfulness
-  eval p := p.1.complexity
+def economyQ : Constraint (AntonymForm × Region) :=
+  λ p => p.1.complexity
 
 /-- Build the violation profile for a ranking of constraints. -/
-def biotProfile (ranking : List (NamedConstraint (AntonymForm × Region)))
+def biotProfile (ranking : List (Constraint (AntonymForm × Region)))
     (p : AntonymForm × Region) : List Nat :=
-  ranking.map fun c => c.eval p
+  ranking.map fun c => c p
 
 /-- **Main BiOT result**: M-Principle >> Economy derives Krifka's quadruplet
     assignment. Each form gets a unique meaning region:

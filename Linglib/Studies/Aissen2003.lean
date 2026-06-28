@@ -1,5 +1,6 @@
 import Linglib.Features.Prominence
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Syntax.Case.Dependent
 
 /-!
@@ -41,7 +42,7 @@ to a possible OT grammar.
 namespace Aissen2003
 
 open Features.Prominence
-open Constraints OptimalityTheory OptimalityTheory
+open Constraints OptimalityTheory
 
 open Core.Optimization.Evaluation (Finset.checkAll Finset.checkAny)
 
@@ -271,29 +272,29 @@ def scale2Cands : List Scale2Cand :=
   [⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩]
 
 /-- *Ø/High: penalize unmarked High objects. -/
-def starZeroHigh : NamedConstraint Scale2Cand :=
-  mkMark "*Ø/High" fun c => c.high = false
+def starZeroHigh : Constraint Scale2Cand :=
+  Constraint.binary fun c => c.high = false
 
 /-- *Ø/Low: penalize unmarked Low objects. -/
-def starZeroLow : NamedConstraint Scale2Cand :=
-  mkMark "*Ø/Low" fun c => c.low = false
+def starZeroLow : Constraint Scale2Cand :=
+  Constraint.binary fun c => c.low = false
 
 /-- *!/Low: penalize marked Low objects (economy). -/
-def starBangLow : NamedConstraint Scale2Cand :=
-  mkDep "*!/Low" fun c => c.low = true
+def starBangLow : Constraint Scale2Cand :=
+  Constraint.binary fun c => c.low = true
 
 /-- *!/High: penalize marked High objects (economy). -/
-def starBangHigh : NamedConstraint Scale2Cand :=
-  mkDep "*!/High" fun c => c.high = true
+def starBangHigh : Constraint Scale2Cand :=
+  Constraint.binary fun c => c.high = true
 
 /-- Iconicity family (fixed: *Ø/High >> *Ø/Low). -/
-def iconicity2 : List (NamedConstraint Scale2Cand) := [starZeroHigh, starZeroLow]
+def iconicity2 : List (Constraint Scale2Cand) := [starZeroHigh, starZeroLow]
 
 /-- Economy family (fixed: *!/Low >> *!/High). -/
-def economy2 : List (NamedConstraint Scale2Cand) := [starBangLow, starBangHigh]
+def economy2 : List (Constraint Scale2Cand) := [starBangLow, starBangHigh]
 
 /-- All consistent rankings: interleavings of the two families. -/
-def rankings2 : List (List (NamedConstraint Scale2Cand)) :=
+def rankings2 : List (List (Constraint Scale2Cand)) :=
   interleavings iconicity2 economy2
 
 /-- There are exactly 6 consistent rankings (C(4,2) = 6). -/
@@ -335,35 +336,35 @@ def animCands : List AnimCand :=
    ⟨false, false, true⟩, ⟨false, false, false⟩]
 
 /-- Iconicity: *Ø/Hu >> *Ø/An >> *Ø/In. -/
-def starZeroHu : NamedConstraint AnimCand :=
-  mkMark "*Ø/Hu" fun c => c.hu = false
+def starZeroHu : Constraint AnimCand :=
+  Constraint.binary fun c => c.hu = false
 
-def starZeroAn : NamedConstraint AnimCand :=
-  mkMark "*Ø/An" fun c => c.an = false
+def starZeroAn : Constraint AnimCand :=
+  Constraint.binary fun c => c.an = false
 
-def starZeroIn : NamedConstraint AnimCand :=
-  mkMark "*Ø/In" fun c => c.inan = false
+def starZeroIn : Constraint AnimCand :=
+  Constraint.binary fun c => c.inan = false
 
 /-- Economy: *!/In >> *!/An >> *!/Hu. -/
-def starBangIn : NamedConstraint AnimCand :=
-  mkDep "*!/In" fun c => c.inan = true
+def starBangIn : Constraint AnimCand :=
+  Constraint.binary fun c => c.inan = true
 
-def starBangAn : NamedConstraint AnimCand :=
-  mkDep "*!/An" fun c => c.an = true
+def starBangAn : Constraint AnimCand :=
+  Constraint.binary fun c => c.an = true
 
-def starBangHu : NamedConstraint AnimCand :=
-  mkDep "*!/Hu" fun c => c.hu = true
+def starBangHu : Constraint AnimCand :=
+  Constraint.binary fun c => c.hu = true
 
 /-- Iconicity family (fixed: *Ø/Hu >> *Ø/An >> *Ø/In). -/
-def animIconicity : List (NamedConstraint AnimCand) :=
+def animIconicity : List (Constraint AnimCand) :=
   [starZeroHu, starZeroAn, starZeroIn]
 
 /-- Economy family (fixed: *!/In >> *!/An >> *!/Hu). -/
-def animEconomy : List (NamedConstraint AnimCand) :=
+def animEconomy : List (Constraint AnimCand) :=
   [starBangIn, starBangAn, starBangHu]
 
 /-- All consistent rankings for the 3-element scale. -/
-def animRankings : List (List (NamedConstraint AnimCand)) :=
+def animRankings : List (List (Constraint AnimCand)) :=
   interleavings animIconicity animEconomy
 
 /-- There are exactly 20 consistent rankings (C(6,3) = 20). -/

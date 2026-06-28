@@ -44,8 +44,6 @@ open Core.Optimization.Evaluation
     compares it under. `degree` recovers a counting constraint; `lex`/`revLex`
     are the directional `[eisner-2000]`/`[lamont-2022b]` ones. -/
 structure Constraint (C : Type*) where
-  name : String := ""
-  family : Family
   eval : C → List Nat
   order : TermOrder
 
@@ -53,9 +51,8 @@ variable {C : Type*}
 
 /-- A counting (`degree`-order) constraint whose violation is a single tally —
     the parallel-OT degenerate case. -/
-def Constraint.ofCount (name : String) (family : Family)
-    (count : C → Nat) : Constraint C :=
-  { name, family, eval := λ c => [count c], order := .degree }
+def Constraint.ofCount (count : C → Nat) : Constraint C :=
+  { eval := λ c => [count c], order := .degree }
 
 /-- The constraint's comparison **key**: the violation vector flattened by its
     term order, so that `LexLE` on keys realises `TermOrder.le`. -/
@@ -160,7 +157,7 @@ inductive DemoCand | deletedAt0 | deletedAt1 | deletedAt2
 open DemoCand in
 /-- `*FLOAT`: indicator of the remaining floating H positions. -/
 def demoFloat : Constraint DemoCand :=
-  { name := "*FLOAT", family := .markedness, order := .lex
+  { order := .lex
     eval := λ | deletedAt0 => [0,1,1] | deletedAt1 => [1,0,1] | deletedAt2 => [1,1,0] }
 
 def demoCands : Finset DemoCand := {.deletedAt0, .deletedAt1, .deletedAt2}

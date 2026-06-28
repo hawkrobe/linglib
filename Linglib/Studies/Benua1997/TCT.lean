@@ -148,15 +148,15 @@ theorem TCTGrammar.base_invariant_under_derivative_eval {α} (input : List α)
     * `ioFaith` — Input-Output faithfulness. Lowest-ranked; can be violated
       to satisfy `m2` or `ooIdent`. -/
 structure TetruSchema (C : Type*) where
-  m1 : NamedConstraint C
-  ooIdent : NamedConstraint C
-  m2 : NamedConstraint C
-  ioFaith : NamedConstraint C
+  m1 : Constraint C
+  ooIdent : Constraint C
+  m2 : Constraint C
+  ioFaith : Constraint C
 
 /-- Convert a `TetruSchema` to a ranked list of constraints in dominance
     order: `[m1, ooIdent, m2, ioFaith]`. -/
 def TetruSchema.toRanking {C : Type*} (s : TetruSchema C) :
-    List (NamedConstraint C) :=
+    List (Constraint C) :=
   [s.m1, s.ooIdent, s.m2, s.ioFaith]
 
 @[simp] theorem TetruSchema.toRanking_length {C : Type*} (s : TetruSchema C) :
@@ -197,8 +197,8 @@ def TetruSchema.toRanking {C : Type*} (s : TetruSchema C) :
     overapplication and underapplication duals of one mechanism. -/
 theorem TetruSchema.misapplication_wins {C : Type*} (s : TetruSchema C)
     (canonical misapplied : C)
-    (hM1 : s.m1.eval canonical = s.m1.eval misapplied)
-    (hOO : s.ooIdent.eval misapplied < s.ooIdent.eval canonical) :
+    (hM1 : s.m1 canonical = s.m1 misapplied)
+    (hOO : s.ooIdent misapplied < s.ooIdent canonical) :
     mkProfile s.toRanking misapplied < mkProfile s.toRanking canonical := by
   -- First difference is at OO-Ident (index 1): the candidates tie on M₁
   -- (index 0), and `misapplied` strictly wins on OO-Ident — so its violation

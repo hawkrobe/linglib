@@ -204,15 +204,15 @@ theorem controlNoTrigger_legal :
 phonotactic: AGREE-style markedness penalizing each tier-adjacent
 `nasalC`-`voicedStop` pair on the harmonizing-class tier. The OT-side
 counterpart of `kikongoNasalHarmony` — same forbidden-pair relation,
-same tier predicate, packaged as a `NamedConstraint`. The TSL grammar
+same tier predicate, packaged as a `Constraint`. The TSL grammar
 characterizes the *language*; this constraint *evaluates* it.
 
 This case does *not* use `mkAgreeOnTier` (the symmetric `R := (· ≠ ·)`
 specialization) because Kikongo's forbidden pair is asymmetric — see the
 "What this file formalizes" docstring above. -/
-def kikongoAgree : Constraints.NamedConstraint (List KSeg) :=
-  OptimalityTheory.mkForbidPairsOnTier
-    "AGREE-[nas]/CC" KSeg.forbidNasalStop (TierProjection.byClass KSeg.onTier) id
+def kikongoAgree : Constraints.Constraint (List KSeg) :=
+  Constraints.mkForbidPairsOnTier
+    KSeg.forbidNasalStop (TierProjection.byClass KSeg.onTier) id
 
 /-- **Bridge**: `kikongoAgree` evaluates to zero on a candidate iff the
 candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
@@ -220,9 +220,9 @@ characterizations of the same Kikongo phonotactic coincide — making the
 co-extensiveness of the two analyses true by construction rather than a
 separately-proved equivalence. -/
 theorem kikongoAgree_zero_iff_in_TSL (c : List KSeg) :
-    kikongoAgree.eval c = 0 ↔ c ∈ kikongoNasalHarmony.lang :=
+    kikongoAgree c = 0 ↔ c ∈ kikongoNasalHarmony.lang :=
   mkForbidPairsOnTier_zero_iff_in_lang
-    "AGREE-[nas]/CC" KSeg.forbidNasalStop KSeg.onTier id c
+    KSeg.forbidNasalStop KSeg.onTier id c
 
 /-- **TSL_2 witness**: Kikongo nasal harmony is tier-strictly-local at
 window-size 2. -/

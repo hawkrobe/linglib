@@ -1,5 +1,5 @@
 import Linglib.Morphology.ConsonantalRoot
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
 
 /-!
 # Amharic Consonantal Roots
@@ -84,6 +84,6 @@ theorem wd_biradical : wd.biradical = true := rfl
     not violated at the root level. The biradical analysis (shared
     with [broselow-1984]) is therefore maintained. -/
 theorem wd_no_adjacent_identical :
-    OptimalityTheory.adjacentIdentical wd.segments = 0 := rfl
+    Constraints.adjacentIdentical wd.segments = 0 := rfl
 
 end Amharic

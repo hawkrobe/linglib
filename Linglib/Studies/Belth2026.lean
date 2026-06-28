@@ -1,5 +1,6 @@
 import Linglib.Phonology.Subregular.TierRule
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
@@ -56,7 +57,7 @@ This study formalizes:
   consonant tier in the [lambert-2022]/[heinz-rawal-tanner-2011]
   TSL formalism;
 - an OCP-on-tier OT constraint (`latinOCP`, via
-  `OptimalityTheory.mkOCPOnTier`) and an OT tableau bridge: each
+  `Constraints.mkOCPOnTier`) and an OT tableau bridge: each
   empirical contrast becomes a winner-loser pair, `tableauERC` extracts
   the Elementary Ranking Condition ([merchant-riggle-2016]), and
   the OT analysis is shown to track the rule-based analysis exactly,
@@ -323,11 +324,11 @@ def latinTSLGrammar : Subregular.TSLGrammar 2 LatSeg :=
 /-- Belth's tier-based dissimilation has a natural OCP twin: surface
     forms produced by the rule should not contain adjacent `[+lat]`
     segments on the consonant tier. We expose this connection via
-    `OptimalityTheory.mkOCPOnTier`, which already accepts a generic
+    `Constraints.mkOCPOnTier`, which already accepts a generic
     `Tier`. A tier-adjacent pair of identical liquids contributes
     one violation. -/
-def latinOCP : Constraints.NamedConstraint (List LatSeg) :=
-  OptimalityTheory.mkOCPOnTier "OCP/[+cons]" LatSeg.consTier id
+def latinOCP : Constraints.Constraint (List LatSeg) :=
+  Constraints.mkOCPOnTier LatSeg.consTier id
 
 /-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
     that candidate is in `latinTSLGrammar.lang`. Specialization of
@@ -335,9 +336,9 @@ def latinOCP : Constraints.NamedConstraint (List LatSeg) :=
     grammar. The two perspectives — markedness constraint with zero
     violations and TSL_2 grammar membership — coincide. -/
 theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
-    latinOCP.eval c = 0 ↔ c ∈ latinTSLGrammar.lang :=
+    latinOCP c = 0 ↔ c ∈ latinTSLGrammar.lang :=
   Subregular.mkOCPOnTier_zero_iff_in_ocp_lang
-    "OCP/[+cons]" LatSeg.IsCons id c
+    LatSeg.IsCons id c
 
 /-! The OT analysis uses a minimal two-constraint inventory:
 
@@ -360,11 +361,11 @@ def substL (val : LatSeg) : List LatSeg → List LatSeg :=
 
 /-- Markedness constraint penalizing each surface `[r]`: the
     default-`[l]` preference. -/
-def latinStarR : NamedConstraint (List LatSeg) :=
-  mkMarkGrad "*r" (fun c => (c.filter (· = LatSeg.r)).length)
+def latinStarR : Constraint (List LatSeg) :=
+  (fun c => (c.filter (· = LatSeg.r)).length)
 
 /-- The Latin ranking implied by allomorphy: OCP/[+cons] dominates \*r. -/
-def latinRanking : List (NamedConstraint (List LatSeg)) :=
+def latinRanking : List (Constraint (List LatSeg)) :=
   [latinOCP, latinStarR]
 
 /-- The two surface candidates for an underlying form. -/
@@ -375,7 +376,7 @@ def latCands (ur : List LatSeg) : List (List LatSeg) :=
 
 /-- Membership in `latinTSLGrammar.lang` is decidable: the bridge to the
     integer-valued OCP score (`latinOCP_zero_iff_in_TSL`) transports the
-    `Decidable (c.eval = 0)` instance to language membership. -/
+    `Decidable (latinOCP c = 0)` instance to language membership. -/
 instance (c : List LatSeg) : Decidable (c ∈ latinTSLGrammar.lang) :=
   decidable_of_iff _ (latinOCP_zero_iff_in_TSL c)
 

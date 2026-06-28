@@ -53,37 +53,37 @@ structure StratalDerivation (S W P : Type*) where
     Position 0 = highest-ranked. Returns `none` if the constraint is not
     active at this stratum. -/
 def findRank {C : Type*} (name : String)
-    (ranking : List (NamedConstraint C)) : Option Nat :=
+    (ranking : List (String × Constraint C)) : Option Nat :=
   go ranking 0
 where
-  go : List (NamedConstraint C) → Nat → Option Nat
+  go : List (String × Constraint C) → Nat → Option Nat
     | [], _ => none
-    | c :: cs, i => if c.name == name then some i else go cs (i + 1)
+    | c :: cs, i => if c.1 == name then some i else go cs (i + 1)
 
 /-- Cross-stratum promotion: `name` is ranked higher (closer to 0) in
-    `r₁ : List (NamedConstraint C₁)` than in `r₂ : List (NamedConstraint C₂)`.
+    `r₁ : List (String × Constraint C₁)` than in `r₂ : List (String × Constraint C₂)`.
     Different candidate types between strata are permitted — the constraint
     inventory is shared by *name*, not by candidate type (e.g. ONSET is
     promoted from Word to Phrase level in Telugu, [aitha-2026] §5.3). -/
 def isPromotedAcross {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) : Prop :=
+    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) : Prop :=
   match findRank name r₁, findRank name r₂ with
   | some p₁, some p₂ => p₁ < p₂
   | _, _ => False
 
 instance {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) :
+    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) :
     Decidable (isPromotedAcross name r₁ r₂) := by
   unfold isPromotedAcross; split <;> infer_instance
 
 /-- Cross-stratum demotion. Dual of `isPromotedAcross` (e.g. `*DIST-0` is
     demoted from Word to Phrase level in Telugu, [aitha-2026] §5.3). -/
 def isDemotedAcross {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) : Prop :=
+    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) : Prop :=
   isPromotedAcross name r₂ r₁
 
 instance {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) :
+    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) :
     Decidable (isDemotedAcross name r₁ r₂) := by
   unfold isDemotedAcross; infer_instance
 

@@ -1,6 +1,7 @@
 import Linglib.Studies.McCarthy2005
 import Linglib.Phonology.Constraints.Lift
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.OptimalityTheory.Predict
 
@@ -81,30 +82,30 @@ structure JTAForm where
 /-- *CCC: assign * for every sequence of three consonants.
     Violated by CəCC (initial) stems before C-initial suffixes:
     C₁əC₂C₃ + C → C₂C₃C = tri-consonantal cluster. -/
-def starCCC : NamedConstraint (List JTAForm) :=
-  liftPerMember "*CCC" .markedness fun f =>
+def starCCC : Constraint (List JTAForm) :=
+  liftPerMember fun f =>
     if f.schwa == .initial && f.suffix == .cInit then 1 else 0
 
 /-- *ə]σ: assign * for every schwa in an open syllable.
     Violated by CCəC (medial) stems before V-initial suffixes:
     C₁C₂ə.C₃V → schwa in open syllable. -/
-def starSchwaOpen : NamedConstraint (List JTAForm) :=
-  liftPerMember "*ə]σ" .markedness fun f =>
+def starSchwaOpen : Constraint (List JTAForm) :=
+  liftPerMember fun f =>
     if f.schwa == .medial && f.suffix == .vInit then 1 else 0
 
 /-- SONCON: assign * for a CCəC (medial) form when C₂ > C₃ in sonority.
     Parametrized over the sonority ranks of C₂ and C₃, using the
     `LinearOrder Sonority` instance from `Syllable`. -/
 def sonCon (c2 c3 : Phonology.Sonority) :
-    NamedConstraint (List JTAForm) :=
-  liftPerMember "SONCON" .markedness fun f =>
+    Constraint (List JTAForm) :=
+  liftPerMember fun f =>
     if c2 > c3 && f.schwa == .medial then 1 else 0
 
 /-- OP-MAX-V: assign * for each ordered pair of paradigm members with
     different schwa positions. Each positional mismatch = 1 violation.
     For n₁ medial and n₂ initial members: n₁·n₂ + n₂·n₁ = 2·n₁·n₂
     total violations (matching [mccarthy-2005]'s counting). -/
-def opMaxV : NamedConstraint (List JTAForm) :=
+def opMaxV : Constraint (List JTAForm) :=
   mkOPMaxV fun f1 f2 =>
     if f1.schwa != f2.schwa then 1 else 0
 
@@ -178,7 +179,7 @@ def adjOPpred := mkP [.initial, .initial, .initial] aSuf
 -- ============================================================================
 
 /-- McCarthy's ranking: *ə]σ, *CCC ≫ OP-MAX-V ≫ SONCON (for C₂ > C₃). -/
-def mccarthyRanking : List (NamedConstraint (List JTAForm)) :=
+def mccarthyRanking : List (Constraint (List JTAForm)) :=
   [starSchwaOpen, starCCC, opMaxV, sonCon .liquid .stop]
 
 set_option maxHeartbeats 800000 in
@@ -215,7 +216,7 @@ theorem op_fails_adjectives :
 -- ============================================================================
 
 /-- The four constraints used in McCarthy's OP analysis. -/
-def opConstraints : List (NamedConstraint (List JTAForm)) :=
+def opConstraints : List (Constraint (List JTAForm)) :=
   [starSchwaOpen, starCCC, opMaxV, sonCon .liquid .stop]
 
 /-- The uniform-initial adjective paradigm has **zero violations on all
@@ -231,7 +232,7 @@ def opConstraints : List (NamedConstraint (List JTAForm)) :=
     lexicographic order on Nat-valued profiles (`ViolationProfile.zero_le`),
     so permuting the ranking cannot change the outcome. -/
 theorem adjOPpred_zero_viols :
-    ∀ con ∈ opConstraints, con.eval adjOPpred = 0 := by decide
+    ∀ con ∈ opConstraints, con adjOPpred = 0 := by decide
 
 /-- Structural consequence of `adjOPpred_zero_viols`: the uniform-initial
     paradigm is optimal under **every** permutation of the four OP
@@ -301,14 +302,14 @@ inductive MorphCat where
     adjectives but not nouns. Penalizes initial (CəCC) forms in verbs
     and adjectives. Directly references morphosyntactic categories,
     violating the TCNP ([bobaljik-2008]). -/
-def templateMedial (cat : MorphCat) : NamedConstraint (List JTAForm) :=
-  liftPerMember "{CCəC}_{V,A}" .markedness fun f =>
+def templateMedial (cat : MorphCat) : Constraint (List JTAForm) :=
+  liftPerMember fun f =>
     match cat with
     | .verb | .adj => if f.schwa == .initial then 1 else 0
     | .noun => 0
 
 /-- Category-specific ranking: {CCəC}_{V,A} ≫ SONCON. -/
-def templateRanking (cat : MorphCat) : List (NamedConstraint (List JTAForm)) :=
+def templateRanking (cat : MorphCat) : List (Constraint (List JTAForm)) :=
   [templateMedial cat, sonCon .liquid .stop]
 
 /-- Template correctly selects medial (CCəC) for verbs.

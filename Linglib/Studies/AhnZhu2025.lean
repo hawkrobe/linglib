@@ -170,8 +170,8 @@ theorem diverges_from_jenks_on_bare_relational
     -- Ahn & Zhu: bare relational definite is felicitous (no *na* needed)
     bareDefiniteFelicitous (fun x => Rel z x) s ∧
     -- Jenks: Index! strictly prefers the indexed *na* form when an antecedent exists
-    Jenks2018.indexConstraint.eval { isIndexed := true,  indexAvailable := true } <
-      Jenks2018.indexConstraint.eval { isIndexed := false, indexAvailable := true } :=
+    Jenks2018.indexConstraint { isIndexed := true,  indexAvailable := true } <
+      Jenks2018.indexConstraint { isIndexed := false, indexAvailable := true } :=
   ⟨relational_bare_felicitous Rel z s hUnique,
    Jenks2018.index_prefers_indexed_when_available⟩
 

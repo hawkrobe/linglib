@@ -8,7 +8,6 @@ import Mathlib.Order.Hom.Set
 import Mathlib.Data.Fintype.Card
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Basic
-import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
 # Correspondence Theory
@@ -567,115 +566,115 @@ theorem length_eq_of_faithful (c : Corr Role α) (r₁ r₂ : Role)
   obtain ⟨e, _⟩ := exists_orderIso_of_faithful c r₁ r₂ hmax hdep hint huni hlin
   simpa using Fintype.card_congr e.toEquiv
 
-/-! ### NamedConstraint bridges -/
+/-! ### Constraint bridges
 
-/-- Bridge a `Corr`-violation function into a `NamedConstraint` — the single
-    plumbing point into `Constraint`'s evaluation machinery. -/
-def toConstraint (family : Family) (label : String)
-    (eval : Corr Role α → ℕ) : NamedConstraint (Corr Role α) where
-  name := label
-  family := family
-  eval := eval
+`Corr`-violation functions packaged as bare `Constraint (Corr Role α)` (`= Corr Role
+α → ℕ`). The faithfulness/markedness family is recovered structurally below
+(`VanishesOnIdentity` / `IsMarkedness`), not stamped by a tag. -/
 
-def toIdentConstraint [DecidableEq α] (r₁ r₂ : Role)
-    (label : String) : NamedConstraint (Corr Role α) :=
-  toConstraint .faithfulness ("IDENT-" ++ label) (fun c => c.identViol r₁ r₂)
+/-- IDENT over a `Corr`: featural-identity violations between roles `r₁`, `r₂`. -/
+def toIdentConstraint [DecidableEq α] (r₁ r₂ : Role) : Constraint (Corr Role α) :=
+  fun c => c.identViol r₁ r₂
 
+/-- IDENT[F] over a `Corr`: violations of the feature picked out by `proj`. -/
 def toIdentFeatureConstraint {F : Type*} [DecidableEq F]
-    (proj : α → F) (r₁ r₂ : Role) (label : String) :
-    NamedConstraint (Corr Role α) :=
-  toConstraint .faithfulness ("IDENT-" ++ label)
-    (fun c => c.identViolFeature proj r₁ r₂)
+    (proj : α → F) (r₁ r₂ : Role) : Constraint (Corr Role α) :=
+  fun c => c.identViolFeature proj r₁ r₂
 
-def toMaxConstraint (r₁ r₂ : Role) (label : String) :
-    NamedConstraint (Corr Role α) :=
-  toConstraint .faithfulness ("MAX-" ++ label) (fun c => c.maxViol r₁ r₂)
+/-- MAX over a `Corr`: deletion (input segments lacking a correspondent). -/
+def toMaxConstraint (r₁ r₂ : Role) : Constraint (Corr Role α) :=
+  fun c => c.maxViol r₁ r₂
 
-def toDepConstraint (r₁ r₂ : Role) (label : String) :
-    NamedConstraint (Corr Role α) :=
-  toConstraint .faithfulness ("DEP-" ++ label) (fun c => c.depViol r₁ r₂)
+/-- DEP over a `Corr`: epenthesis (output segments lacking a correspondent). -/
+def toDepConstraint (r₁ r₂ : Role) : Constraint (Corr Role α) :=
+  fun c => c.depViol r₁ r₂
 
 /-! ### Faithfulness of the bridges: vanishing on the faithful candidate
 
-The faithfulness `to*Constraint` bridges assign zero violations to the fully
-faithful candidate `identity s` — the defining behaviour of a Correspondence-
-Theory faithfulness constraint ([mccarthy-prince-1995]). This is the content the
-`.faithfulness` tag abbreviates; the tag itself is documentary, so the math
-lives in these lemmas. Markedness is non-vacuously different
-(`exists_markedness_not_vanishesOnIdentity`). Anti-faithfulness ([alderete-2001])
-is out of scope — it demands disparity and is *maximal* on `identity`. -/
+The MAX/DEP/IDENT bridges assign zero violations to the fully faithful candidate
+`identity s` — the defining behaviour of a Correspondence-Theory faithfulness
+constraint ([mccarthy-prince-1995]). This is the *structural* faithfulness now
+captured by `VanishesOnIdentity` (there is no `.faithfulness` tag). Markedness is
+non-vacuously different (`exists_markedness_not_vanishesOnIdentity`).
+Anti-faithfulness ([alderete-2001]) is out of scope — it demands disparity and is
+*maximal* on `identity`. -/
 
-@[simp] theorem toMaxConstraint_eval_identity (label : String) (s : List α) :
-    (toMaxConstraint Side.lhs Side.rhs label).eval (identity s) = 0 :=
+@[simp] theorem toMaxConstraint_eval_identity (s : List α) :
+    toMaxConstraint Side.lhs Side.rhs (identity s) = 0 :=
   identity_max_zero s
 
-@[simp] theorem toDepConstraint_eval_identity (label : String) (s : List α) :
-    (toDepConstraint Side.lhs Side.rhs label).eval (identity s) = 0 :=
+@[simp] theorem toDepConstraint_eval_identity (s : List α) :
+    toDepConstraint Side.lhs Side.rhs (identity s) = 0 :=
   identity_dep_zero s
 
-@[simp] theorem toIdentConstraint_eval_identity [DecidableEq α]
-    (label : String) (s : List α) :
-    (toIdentConstraint Side.lhs Side.rhs label).eval (identity s) = 0 :=
+@[simp] theorem toIdentConstraint_eval_identity [DecidableEq α] (s : List α) :
+    toIdentConstraint Side.lhs Side.rhs (identity s) = 0 :=
   identity_ident_zero s
 
 @[simp] theorem toIdentFeatureConstraint_eval_identity {F : Type*} [DecidableEq F]
-    (proj : α → F) (label : String) (s : List α) :
-    (toIdentFeatureConstraint proj Side.lhs Side.rhs label).eval (identity s) = 0 :=
+    (proj : α → F) (s : List α) :
+    toIdentFeatureConstraint proj Side.lhs Side.rhs (identity s) = 0 :=
   identity_identFeature_zero proj s
 
-/-- A correspondence constraint **vanishes on the faithful candidate** when it
-    scores no violations on any fully faithful `identity s` — the behavioural
-    invariant the `.faithfulness` tag abbreviates ([mccarthy-prince-1995]). -/
-def VanishesOnIdentity (c : NamedConstraint (Corr Side α)) : Prop :=
-  ∀ s : List α, c.eval (identity s) = 0
+/-- A correspondence constraint **vanishes on the faithful candidate** — scores no
+    violations on any fully faithful `identity s`. This is the *structural*
+    definition of a faithfulness constraint ([mccarthy-prince-1995]), replacing the
+    old `.faithfulness` tag. -/
+def VanishesOnIdentity (c : Constraint (Corr Side α)) : Prop :=
+  ∀ s : List α, c (identity s) = 0
 
-theorem toMaxConstraint_vanishesOnIdentity (label : String) :
-    VanishesOnIdentity (α := α) (toMaxConstraint Side.lhs Side.rhs label) :=
-  toMaxConstraint_eval_identity label
+/-- A correspondence constraint is **markedness** when it depends only on the `out`
+    form — it scores equal violations on candidates agreeing on `· .form out`. The
+    structural dual of `VanishesOnIdentity`, replacing the old `.markedness` tag. -/
+def IsMarkedness (out : Role) (c : Constraint (Corr Role α)) : Prop :=
+  ∀ c₁ c₂ : Corr Role α, c₁.form out = c₂.form out → c c₁ = c c₂
 
-theorem toDepConstraint_vanishesOnIdentity (label : String) :
-    VanishesOnIdentity (α := α) (toDepConstraint Side.lhs Side.rhs label) :=
-  toDepConstraint_eval_identity label
+theorem toMaxConstraint_vanishesOnIdentity :
+    VanishesOnIdentity (α := α) (toMaxConstraint Side.lhs Side.rhs) :=
+  toMaxConstraint_eval_identity
 
-theorem toIdentConstraint_vanishesOnIdentity [DecidableEq α] (label : String) :
-    VanishesOnIdentity (α := α) (toIdentConstraint Side.lhs Side.rhs label) :=
-  toIdentConstraint_eval_identity label
+theorem toDepConstraint_vanishesOnIdentity :
+    VanishesOnIdentity (α := α) (toDepConstraint Side.lhs Side.rhs) :=
+  toDepConstraint_eval_identity
 
-/-- **Markedness need not vanish on the faithful candidate.** A `*Struc`-style
-    constraint (one violation per output segment) fires on `identity s`, so the
-    split is non-vacuous: `VanishesOnIdentity` characterizes the faithfulness
-    constructors, not every constraint. -/
+theorem toIdentConstraint_vanishesOnIdentity [DecidableEq α] :
+    VanishesOnIdentity (α := α) (toIdentConstraint Side.lhs Side.rhs) :=
+  toIdentConstraint_eval_identity
+
+/-- **Markedness need not vanish on the faithful candidate.** \*Struc (one
+    violation per output segment) is markedness yet fires on `identity s`, so the
+    faith/mark split is non-vacuous — and structural, not tag-based. -/
 theorem exists_markedness_not_vanishesOnIdentity [Inhabited α] :
-    ∃ c : NamedConstraint (Corr Side α),
-      c.family = .markedness ∧ ¬ VanishesOnIdentity c :=
-  ⟨mkMarkGrad "*Struc" (fun c => (c.form Side.rhs).length), rfl, fun h => by
-    have h1 := h [default]
-    simp [mkMarkGrad, identity] at h1⟩
+    ∃ c : Constraint (Corr Side α),
+      IsMarkedness Side.rhs c ∧ ¬ VanishesOnIdentity c :=
+  ⟨fun c => (c.form Side.rhs).length,
+   fun _ _ h => by simp [h],
+   fun h => by have h1 := h [default]; simp [identity] at h1⟩
 
 end Corr
 
 /-! ### Reduplication constraints
 
-The canonical [mccarthy-prince-1995] reduplicative-faithfulness
-constraints as `NamedConstraint (Corr RedupRole α)`; study files import these
-names rather than re-rolling `Corr.toMaxConstraint .input .base "IO"`. -/
+The canonical [mccarthy-prince-1995] reduplicative-faithfulness constraints as
+`Constraint (Corr RedupRole α)`; study files import these names rather than
+re-rolling `Corr.toMaxConstraint .input .base`. -/
 
 namespace Reduplication
 
-def maxIO {α : Type*} : NamedConstraint (Corr RedupRole α) :=
-  Corr.toMaxConstraint .input .base "IO"
+def maxIO {α : Type*} : Constraint (Corr RedupRole α) :=
+  Corr.toMaxConstraint .input .base
 
-def maxBR {α : Type*} : NamedConstraint (Corr RedupRole α) :=
-  Corr.toMaxConstraint .base .reduplicant "BR"
+def maxBR {α : Type*} : Constraint (Corr RedupRole α) :=
+  Corr.toMaxConstraint .base .reduplicant
 
-def depIO {α : Type*} : NamedConstraint (Corr RedupRole α) :=
-  Corr.toDepConstraint .input .base "IO"
+def depIO {α : Type*} : Constraint (Corr RedupRole α) :=
+  Corr.toDepConstraint .input .base
 
-def identBR {α : Type*} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
-  Corr.toIdentConstraint .base .reduplicant "BR"
+def identBR {α : Type*} [DecidableEq α] : Constraint (Corr RedupRole α) :=
+  Corr.toIdentConstraint .base .reduplicant
 
-def identIO {α : Type*} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
-  Corr.toIdentConstraint .input .base "IO"
+def identIO {α : Type*} [DecidableEq α] : Constraint (Corr RedupRole α) :=
+  Corr.toIdentConstraint .input .base
 
 end Reduplication
 

@@ -100,24 +100,20 @@ structure VHCandidate where
   suffixOut : List Segment
   deriving DecidableEq
 
-/-- SPREAD as a `NamedConstraint`: penalizes unharmonized targets in the
+/-- SPREAD as a `Constraint`: penalizes unharmonized targets in the
     output suffix. Returns 0 when the stem has no trigger. -/
 def mkSpread (sys : System) :
-    NamedConstraint VHCandidate where
-  name := "SPREAD"
-  family := .markedness
-  eval := λ c =>
+    Constraint VHCandidate :=
+  λ c =>
     match triggerValue sys c.stem with
     | none => 0
     | some val => spreadViolations sys val c.suffixOut
 
-/-- IDENT-[F] as a `NamedConstraint`: penalizes feature changes from
+/-- IDENT-[F] as a `Constraint`: penalizes feature changes from
     underlying to surface suffix. -/
 def mkIdentHarmony (sys : System) :
-    NamedConstraint VHCandidate where
-  name := "IDENT"
-  family := .faithfulness
-  eval := λ c => identViolations sys c.suffixIn c.suffixOut
+    Constraint VHCandidate :=
+  λ c => identViolations sys c.suffixIn c.suffixOut
 
 /-- After harmonization, a target's harmony feature is set to `val`. -/
 theorem harmonizeOne_spec_feature (sys : System) (val : Bool)
@@ -179,7 +175,7 @@ theorem spreadSuffix_ot_motivation (sys : System)
     (stem suffix : List Segment) (val : Bool)
     (h_no_blockers : ∀ s ∈ suffix, sys.isBlocker s = false)
     (hv : triggerValue sys stem = some val) :
-    (mkSpread sys).eval ⟨stem, suffix, spreadSuffix sys val suffix⟩ = 0 := by
+    (mkSpread sys) ⟨stem, suffix, spreadSuffix sys val suffix⟩ = 0 := by
   simp only [mkSpread, hv]
   exact spreadSuffix_zero_spread sys val suffix h_no_blockers
 
@@ -189,12 +185,12 @@ theorem spreadSuffix_ot_motivation (sys : System)
 
 /-- SPREAD ≫ IDENT: harmony applies. This is the ranking for Hungarian
     and other suffix-controlled harmony languages. -/
-def spreadDominant : List (NamedConstraint VHCandidate) :=
+def spreadDominant : List (Constraint VHCandidate) :=
   [mkSpread hungarianPalatalHarmony, mkIdentHarmony hungarianPalatalHarmony]
 
 /-- IDENT ≫ SPREAD: harmony blocked. This ranking produces a language
     without vowel harmony (suffixes surface faithfully). -/
-def identDominant : List (NamedConstraint VHCandidate) :=
+def identDominant : List (Constraint VHCandidate) :=
   [mkIdentHarmony hungarianPalatalHarmony, mkSpread hungarianPalatalHarmony]
 
 -- ============================================================================

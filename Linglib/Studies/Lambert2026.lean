@@ -69,7 +69,7 @@ The multitier substrate is the prohibition reading of constraints scaled
 to Boolean closure. Cross-references the new file makes explicit (rather
 than silently diverging from existing linglib formalizations):
 
-* OT: linglib's `NamedConstraint` framework places no complexity bound;
+* OT: linglib's `Constraint` framework places no complexity bound;
   Lambert says all phonotactics live in `IsBTC`. The supraregular
   counter-witness theorem and the positive `mkForbidPairsOnTier ⊆ TSL_2`
   theorem are queued for a future `Phonology/Subregular/OTBound.lean`.

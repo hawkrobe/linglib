@@ -48,11 +48,11 @@ Two POC instances, one per stratum:
 ## Note on candidate-feature substrate
 
 We stipulate violation profiles via `vp` rather than defining
-`NamedConstraint` instances. This matches Anttila's own level of
+`Constraint` instances. This matches Anttila's own level of
 abstraction: the paper works directly with violation profiles
 ([anttila-1997] page 22: "knowing that the weak variant violates
 one constraint (\*L.L) while the strong variant violates two (\*H/I,
-\*Í) gives us the result directly"). True `NamedConstraint`
+\*Í) gives us the result directly"). True `Constraint`
 formalisations would require a Finnish syllable substrate (input
 forms with stress / weight / sonority features feeding into syllable
 structure) which doesn't yet exist in linglib.
@@ -78,7 +78,7 @@ From [anttila-1997] table 52 (page 22) and table 53 (page 23):
   these are decided by Set 1 (NoClash) and Set 2 (\*L̀ / \*H̀), which this
   file doesn't model. The categorical predictions follow from
   higher-stratum constraints decisively favoring one variant.
-- **`NamedConstraint` instances** for \*H/I, \*Í, \*L.L, etc. — would
+- **`Constraint` instances** for \*H/I, \*Í, \*L.L, etc. — would
   require a Finnish syllable substrate (see "Note on candidate-feature
   substrate" above).
 - **Observed-vs-predicted comparison theorems.** The paper's table 53

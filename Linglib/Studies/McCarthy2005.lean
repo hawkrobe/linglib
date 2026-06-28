@@ -45,8 +45,8 @@ open Constraints
     member-pair. OP faithfulness is *output-output* (intra-paradigm); the
     mismatch callback supplies the tier-restricted comparison. -/
 def mkOPMaxV {Form : Type*} (vowelMismatch : Form → Form → Nat) :
-    NamedConstraint (List Form) :=
-  liftPairwise "OP-MAX-V" .faithfulness vowelMismatch
+    Constraint (List Form) :=
+  liftPairwise vowelMismatch
 
 /-! ### Majority Rules -/
 

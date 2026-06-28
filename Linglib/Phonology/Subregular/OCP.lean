@@ -46,10 +46,10 @@ formalisations but the constraint and a retraction onto it, both characterising
 
 namespace Subregular
 
-open OptimalityTheory
+open Constraints OptimalityTheory
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
--- and `Core.Optimization.eval`, which are monomorphic in universe 0.
+-- and `Core.Optimization`, which are monomorphic in universe 0.
 variable {α : Type}
 
 /-- Forbidden 2-factors for the OCP: pairs `[some x, some x]` of two identical
@@ -86,11 +86,11 @@ raw string projects (under `TierProjection.byClass p`) to a list with no two
 adjacent identical elements. Identity-relation specialization of
 `mkForbidPairsOnTier_zero_iff_isChain`. -/
 theorem mkOCPOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
-    (name : String) (p : α → Prop) [DecidablePred p]
+    (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
+    (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
       ((extract c).filter (fun x => decide (p x))).IsChain (· ≠ ·) :=
-  mkForbidPairsOnTier_zero_iff_isChain name (· = ·) p extract c
+  mkForbidPairsOnTier_zero_iff_isChain (· = ·) p extract c
 
 /-- **Shared satisfaction predicate**: a candidate's OCP score is zero iff its
 tier-projection is `OCP.IsClean`. This is what makes the prohibition
@@ -98,11 +98,11 @@ reading (here) and the fusion repair (`OCP.collapse`) two faces of
 one principle rather than parallel formalisations — both characterise
 `OCP.IsClean`. -/
 theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
-    (name : String) (p : α → Prop) [DecidablePred p]
+    (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
+    (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
       OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
-  mkOCPOnTier_zero_iff_isChain name p extract c
+  mkOCPOnTier_zero_iff_isChain p extract c
 
 /-- **Shared satisfaction predicate** (off-tier): the optimality-theoretic OCP
 markedness constraint `mkOCP` scores zero iff its projection is
@@ -110,8 +110,8 @@ markedness constraint `mkOCP` scores zero iff its projection is
 `countAdjacent` form behind `mkOCP`, consumed by Berent2026/Belth2026) through the
 unified predicate. The flat-string companion of `mkOCPOnTier_zero_iff_isClean`. -/
 theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]
-    (name : String) (project : C → List α) (c : C) :
-    (mkOCP name project).eval c = 0 ↔ OCP.IsClean (project c) := by
+    (project : C → List α) (c : C) :
+    (mkOCP project) c = 0 ↔ OCP.IsClean (project c) := by
   show countAdjacent (· = ·) (project c) = 0 ↔ _
   rw [countAdjacent_eq_zero_iff_isChain (· = ·)]
 
@@ -121,22 +121,22 @@ The two perspectives on the OCP — optimality-theoretic constraint and
 subregular-complexity class — are co-extensive. Identity-relation
 specialization of `mkForbidPairsOnTier_zero_iff_in_lang`. -/
 theorem mkOCPOnTier_zero_iff_in_ocp_lang [DecidableEq α] {C : Type}
-    (name : String) (p : α → Prop) [DecidablePred p]
+    (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
+    (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
       extract c ∈ (TSLGrammar.ocp p).lang :=
-  mkForbidPairsOnTier_zero_iff_in_lang name (· = ·) p extract c
+  mkForbidPairsOnTier_zero_iff_in_lang (· = ·) p extract c
 
 /-- **Zero-set bridge** (OCP on tier): the `Language α`-form restatement
 of `mkOCPOnTier_zero_iff_in_ocp_lang` (with `extract := id`). The OCP
 markedness constraint's zero-set *is* the corresponding OCP-TSL_2
 language. Sibling of `mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean. -/
 theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
-    (name : String) (p : α → Prop) [DecidablePred p] :
-    (mkOCPOnTier name (TierProjection.byClass p) (id : List α → List α)).zeroSet =
+    (p : α → Prop) [DecidablePred p] :
+    (mkOCPOnTier (TierProjection.byClass p) (id : List α → List α)).zeroSet =
       (TSLGrammar.ocp p).lang := by
   ext w
-  exact mkOCPOnTier_zero_iff_in_ocp_lang name p id w
+  exact mkOCPOnTier_zero_iff_in_ocp_lang p id w
 
 /-! ### The repair is subregular -/
 
