@@ -525,6 +525,15 @@ because conditioning on the observed sentence requires resolving
 WHETHER the scenario is STARGAZING (favoring STAR-SUN) or STAGE
 (favoring STAR-PERSON), and both are plausible given the
 "astronomer" + "marry" + "star" observations.
+
+This conflict — two scenarios each plausibly supporting a different
+concept — is the SDS-native analog of the *distinctiveness* measure of
+[kao-levy-goodman-2016], whose phonetic-pun model scores funniness by the
+symmetrized KL divergence between the word-support distributions of a
+sentence's two meanings. SDS realizes the same "different evidence
+supports different interpretations" intuition structurally, as
+scenario/selectional disagreement, rather than as a post-hoc
+information-theoretic readout over hand-estimated word-relatedness scores.
 -/
 
 /-- The 4-concept inventory for the astronomer-married-star sentence

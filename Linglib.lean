@@ -2361,7 +2361,6 @@ import Linglib.Studies.KampanarouAlexiadou2026
 import Linglib.Studies.KaoEtAl2014PMFHyperbole
 import Linglib.Studies.KaoEtAl2014PMFMetaphor
 import Linglib.Studies.KaoEtAl2015PMF
-import Linglib.Studies.KaoEtAl2016
 import Linglib.Studies.Karlsson2017
 import Linglib.Studies.Karttunen1971
 import Linglib.Studies.Karttunen1973
@@ -2463,7 +2462,6 @@ import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Studies.LuPanDegen2025
 import Linglib.Studies.LuckingGinzburg2022
 import Linglib.Studies.Lucy1994
-import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.MacuchSilvaEtAl2024
 import Linglib.Studies.Maddieson2013
 import Linglib.Studies.Magri2009
@@ -2528,7 +2526,6 @@ import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Studies.Osborne2019
 import Linglib.Studies.Osborne2019Control
 import Linglib.Studies.Osborne2019Ellipsis
-import Linglib.Studies.Osborne2019Islands
 import Linglib.Studies.OsborneGross2012.Data
 import Linglib.Studies.OsborneLi2023
 import Linglib.Studies.Ostrove2026
@@ -2927,5 +2924,6 @@ import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.LiuRotter2025
 import Linglib.Data.Examples.SolstadBott2024
 import Linglib.Data.Examples.RotterLiu2025
+import Linglib.Data.Examples.BeltramaSchwarz2024
 
 
