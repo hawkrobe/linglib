@@ -26,10 +26,10 @@ once but satisfies `Match`; the flat parse satisfies `NoRecursion` but violates
 `Match`. With `Match ≫ NoRecursion`, the recursive parse is the optimum — a
 prediction the flat `List`-of-weights `Word` could not even state.
 
-The prosodic candidates are `ProsTree`s (`Phonology/Prosody/Tree.lean`); EVAL is
+The prosodic candidates are `Tree`s (`Phonology/Prosody/Tree.lean`); EVAL is
 mathlib's lexicographic minimum — `Core.Optimization`'s `argMinSet`, the
 computable form of `Order.Minimal` under the profile pullback
-`Order.Preimage profile LexLE`. Constraints are plain `ProsTree → ℕ` functions;
+`Order.Preimage profile LexLE`. Constraints are plain `Tree → ℕ` functions;
 the ranking is the order of entries in the profile. No `Constraint`/tableau
 wrapper is needed (cf. how mathlib selects optima — `Order.Minimal` + `Order.Lex`,
 not a bespoke decorated structure).
@@ -49,33 +49,33 @@ open Prosody Features.Prosody RootedTree Core.Optimization.Evaluation
 /-! ### Candidate prosodifications of a high-prefix + stem -/
 
 /-- A high-attaching prefix syllable (light). -/
-def prefσ : ProsTree := .node ⟨.σ, 1⟩ []
+def prefσ : Tree := .node ⟨.σ, 1⟩ []
 
 /-- The stem syllable (heavy). -/
-def stemσ : ProsTree := .node ⟨.σ, 2⟩ []
+def stemσ : Tree := .node ⟨.σ, 2⟩ []
 
 /-- Flat parse `[ω HighPref Stem]`: no recursion, but the stem has no ω of its own. -/
-def flatParse : ProsTree := .node ⟨.ω, 0⟩ [prefσ, stemσ]
+def flatParse : Tree := .node ⟨.ω, 0⟩ [prefσ, stemσ]
 
 /-- Recursive parse `[ω HighPref [ω Stem]]`: the stem keeps its ω; the prefix
     adjoins to a dominating ω ([bennett-2018]). -/
-def recParse : ProsTree := .node ⟨.ω, 0⟩ [prefσ, .node ⟨.ω, 0⟩ [stemσ]]
+def recParse : Tree := .node ⟨.ω, 0⟩ [prefσ, .node ⟨.ω, 0⟩ [stemσ]]
 
 /-! ### `Match(Stem, ω)` (stand-in) -/
 
 mutual
 /-- Does some ω-node dominate exactly the stem (i.e. have children `[stem]`)? -/
-def hasOmegaOver (stem : ProsTree) : ProsTree → Bool
+def hasOmegaOver (stem : Tree) : Tree → Bool
   | .node a cs => (decide (a.level = .ω) && decide (cs = [stem])) || hasOmegaOverList stem cs
 /-- Auxiliary over a list of subtrees. -/
-def hasOmegaOverList (stem : ProsTree) : List ProsTree → Bool
+def hasOmegaOverList (stem : Tree) : List Tree → Bool
   | [] => false
   | t :: ts => hasOmegaOver stem t || hasOmegaOverList stem ts
 end
 
 /-- `Match(Stem, ω)` violation: 1 if the stem is not exhaustively matched by an
     ω of its own, else 0. -/
-def matchStemViol (stem t : ProsTree) : Nat := if hasOmegaOver stem t then 0 else 1
+def matchStemViol (stem t : Tree) : Nat := if hasOmegaOver stem t then 0 else 1
 
 /-! ### The ranking and the prediction
 
@@ -87,10 +87,10 @@ the entry order in the profile. -/
 
 /-- Violation profile, ranked `Match(X⁰,ω) ≫ NoRecursion`: a plain `ℕ`-vector
     of the two constraint functions, compared by `LexLE`. -/
-def profile (t : ProsTree) : List Nat := [matchStemViol stemσ t, ProsTree.recursionCount t]
+def profile (t : Tree) : List Nat := [matchStemViol stemσ t, Tree.recursionCount t]
 
 /-- The two candidate prosodifications. -/
-def candidates : Finset ProsTree := {recParse, flatParse}
+def candidates : Finset Tree := {recParse, flatParse}
 
 -- The violation contrast: recursion costs `NoRecursion`, the flat parse costs `Match`.
 example : profile recParse = [0, 1] := by decide
