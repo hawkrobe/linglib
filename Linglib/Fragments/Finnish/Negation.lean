@@ -129,8 +129,7 @@ theorem connegative_negates : connegativeRule.semEffect true = false := rfl
 /-- Negation (rank 7) hosts agreement (rank 8) on the negative auxiliary —
     respecting Bybee's hierarchy within the neg aux word. -/
 theorem neg_aux_respects_bybee :
-    MorphCategory.peripherality .negation <
-    MorphCategory.peripherality (.agreement .subj) := by decide
+    MorphCategory.RelevanceLT .negation (.agreement .subj) := by decide
 
 /-- Finnish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Syntax.Negation.NegationProfile :=

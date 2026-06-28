@@ -213,7 +213,6 @@ theorem clitic_no_bybee_category :
 /-- Number (rank 3) is more stem-relevant than possessive agreement (rank 8),
     consistent with number appearing closer to the stem in Finnish. -/
 theorem number_closer_than_agreement :
-    MorphCategory.peripherality .number <
-    MorphCategory.peripherality (.agreement .poss) := by decide
+    MorphCategory.RelevanceLT .number (.agreement .poss) := by decide
 
 end Karlsson2017

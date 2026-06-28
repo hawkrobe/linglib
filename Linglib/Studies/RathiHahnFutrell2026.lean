@@ -422,9 +422,9 @@ semantic relevance drives co-occurrence regularity, but they are distinct
 constructs and can in principle diverge.
 
 The substrate's `Morphology.MorphCategory.peripherality` numerically
-encodes Bybee's hierarchy as constants (`MorphRule.lean:264-276`). The
-bridge `Bybee1985.toMorphCategory : BybeeCategory → MorphCategory`
-(`Bybee1985.lean:248-257`) connects the paper-typed enum to the substrate.
+encodes Bybee's hierarchy as constants in `MorphRule.lean`. The bridge
+`Bybee1985.toMorphCategory : BybeeCategory → MorphCategory` connects the
+paper-typed enum to the substrate.
 [rathi-hahn-futrell-2026]'s reframing makes those constants
 potentially derivable from MI on a large multilingual corpus.
 
@@ -434,29 +434,31 @@ data through `toMorphCategory ∘ peripherality`, so editing the data table
 drives the theorem (strong test: adding a feature group containing
 `nonfinite` (rank 9) breaks the theorem). -/
 
-/-- Polyexponent feature groups stay within the **core inflectional band**:
-    every category appearing in `polyexponentGroups` has substrate
-    peripherality ≤ 8 (the agreement rank). None involves the linglib-
-    extension categories `nonfinite` (rank 9), the lexical-derivational
-    `derivation` (rank 1), or the adjectival `degree` (rank 5).
+/-- Polyexponent feature groups stay within the **core verbal-inflectional
+    band** of the relevance order: every category appearing in
+    `polyexponentGroups` is no more stem-relevant than `aspect` and no less
+    stem-relevant than `agreement`. None falls at the stem-adjacent end
+    (`derivation`, `valence`, nominal `number`) or beyond agreement
+    (`nonfinite`).
 
-    The theorem engages the substrate primitives directly via
-    `toMorphCategory ∘ peripherality`, so:
-    - **Strong test passes**: adding a category with `peripherality > 8`
-      to any `polyexponentGroups` entry breaks compilation.
-    - **No silent disagreement**: the rank values come from
-      `MorphCategory.peripherality`, not a duplicate local table.
+    The theorem engages the substrate via `RelevanceLE`, so:
+    - **Strong test passes**: a category outside the `aspect..agreement` band
+      — nominal `.number` (more stem-relevant than aspect) or `.nonfinite`
+      (less relevant than agreement) — fails the `decide`. The lower bound
+      guards the bridge in particular: were `numberAgr` to map to nominal
+      `.number` rather than `.agreement`, this theorem would break.
+    - **No silent disagreement**: the order comes from the substrate
+      `RelevanceLE`, not a duplicate local table.
 
-    Note: in the substrate, all four agreement subtypes
-    (`personAgr`/`numberAgr`/`genderAgr`/`personAgrObj`) collapse to
-    `MorphCategory.agreement _` at rank 8. This is faithful to Bybee
-    (Ch 2 §3 collapses agreement subtypes; only object-person is reported
-    separately, and number-as-agreement vs nominal number is a
-    separate distinction the substrate flags). -/
+    Note: all four agreement subtypes (`personAgr`/`numberAgr`/`genderAgr`/
+    `personAgrObj`) collapse to `MorphCategory.agreement _` — faithful to
+    Bybee, who places verbal-number agreement at the low-relevance end with
+    person and gender (Ch 2 §3), distinct from nominal number, which the
+    substrate ranks separately, more stem-relevant. -/
 theorem polyexponent_categories_in_core_inflectional_range :
-    polyexponentGroups.all (fun g =>
-      g.categories.all (fun c => (toMorphCategory c).peripherality ≤ 8))
-    = true := by decide
+    ∀ g ∈ polyexponentGroups, ∀ c ∈ g.categories,
+      MorphCategory.RelevanceLE .aspect (toMorphCategory c)
+        ∧ (toMorphCategory c).RelevanceLE (.agreement .subj) := by decide
 
 /-! ### Mirror Principle ↔ ETH
 

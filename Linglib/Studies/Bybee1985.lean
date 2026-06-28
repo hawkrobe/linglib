@@ -24,11 +24,14 @@ here.
 meaning, Ch 3 paradigm organization (basic-derived, local markedness),
 Ch 4 lexical-derivational-inflectional CONTINUUM (which contradicts the
 substrate's discrete `MorphStatus` enum — flagged for future work), Part
-II aspect/tense/mood detail (Ch 6-9). See `Studies/
-HahnDegenFutrell2021.lean` for a downstream consumer of the §6 ordering
-data via `RespectsRelevanceHierarchy`. Ch 5's **dynamic network model**
-substrate now lives in `Morphology/UsageBased/Network.lean`;
-§5 below uses it on an English sing/sang/sung instance.
+II aspect/tense/mood detail (Ch 6-9). Bybee's Ch 2 §6 relevance ordering
+is independently exercised in `Studies/HahnDegenFutrell2021Morphology.lean`
+via the substrate's `RespectsRelevanceHierarchy` predicate (that file
+does not consume `orderPairs` directly); the `BybeeCategory` enum and
+`toMorphCategory` bridge below are consumed by
+`Studies/RathiHahnFutrell2026.lean`. Ch 5's **dynamic network model**
+substrate now lives in `Morphology/UsageBased/Network.lean`; the network
+section below uses it on the English irregular verb *eat/ate/eaten*.
 
 -/
 
@@ -36,9 +39,7 @@ namespace Bybee1985
 
 open Morphology
 
--- ============================================================================
--- §1: Bybee's Verbal Categories (Ch 2 §3, p. 20-23)
--- ============================================================================
+/-! ### Bybee's verbal categories (Ch 2 §3, p. 20-23) -/
 
 /-! Bybee discusses six core verbal-inflectional categories ordered by
 relevance to the verb stem (most relevant first): valence, voice, aspect,
@@ -63,9 +64,7 @@ inductive BybeeCategory where
   | genderAgr
   deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- §2: Cross-Linguistic Frequency Data (Ch 2 §5, Figures 1 + 2, pp. 30-31)
--- ============================================================================
+/-! ### Cross-linguistic frequency data (Ch 2 §5, Figures 1 + 2, pp. 30-31) -/
 
 /-! Figure 1 (p. 30) reports the percentage of the 50-language sample with
 **inflectional** expression of each category. Figure 2 (p. 31) reports the
@@ -130,9 +129,7 @@ theorem gender_lowest_when_derivOrInfl :
     ∀ c : BybeeCategory, derivOrInflCount50 .genderAgr ≤ derivOrInflCount50 c := by
   decide
 
--- ============================================================================
--- §3: Morpheme-Order Data (Ch 2 §6, pp. 34-35)
--- ============================================================================
+/-! ### Morpheme-order data (Ch 2 §6, pp. 34-35) -/
 
 /-! Bybee's second prediction (Ch 2 §6 p. 33): the morpheme-order corollary.
 "The most relevant to occur closest to the verb stem, and the least
@@ -198,16 +195,17 @@ examples in the entire 50-language sample. Bybee's summary (p. 35):
 categories, and between tense and the other categories, where there are
 almost no counter-examples to the predicted ordering." -/
 theorem aspect_categorical_against_tense_and_mood :
-    (orderPairs.head?.map (·.furtherCount) = some 0) ∧
-    (orderPairs[1]?.map (·.furtherCount) = some 0) := by
+    ∀ p ∈ orderPairs,
+      p.closer = .aspect → (p.further = .tense ∨ p.further = .mood) →
+      p.furtherCount = 0 := by
   decide
 
-/-- Mood-person ordering is genuinely freer: the mood-person pair is the
-*only* one in the survey where the predicted-counter / total ratio
-exceeds 1/10. -/
+/-- Mood-person ordering is genuinely freer: a pair's predicted-counter /
+total ratio exceeds 1/10 *iff* it is the mood-person pair — i.e. mood-
+person is the only pair in the survey above that threshold. -/
 theorem mood_person_ordering_is_freer :
-    ∀ p ∈ orderPairs, p.further = .personAgr ∧ p.closer = .mood
-      ∨ 10 * p.furtherCount ≤ p.total := by
+    ∀ p ∈ orderPairs,
+      p.total < 10 * p.furtherCount ↔ (p.closer = .mood ∧ p.further = .personAgr) := by
   decide
 
 /-- Across all six tested pairs, the predicted direction outnumbers the
@@ -215,7 +213,7 @@ counter-direction in every case (Ch 2 §6 summary, p. 35: "striking
 confirmation of the hierarchical ordering of aspect, tense, mood and
 person"). -/
 theorem predicted_outnumbers_counter :
-    orderPairs.all (λ p => p.furtherCount < p.closerCount) = true := by
+    ∀ p ∈ orderPairs, p.furtherCount < p.closerCount := by
   decide
 
 /-- Total testable observations across all six pairs: 125 language-pair
@@ -230,11 +228,9 @@ theorem ch2_section6_aggregate_counts :
     (orderPairs.map (·.furtherCount)).sum = 8 := by
   decide
 
--- ============================================================================
--- §4: Connection to Substrate `MorphCategory.peripherality`
--- ============================================================================
+/-! ### Connection to substrate `MorphCategory.peripherality` -/
 
-/-! `Core/Lexical/MorphRule.lean::MorphCategory.peripherality` numerically
+/-! `Morphology/MorphRule.lean::MorphCategory.peripherality` numerically
 encodes Bybee's relevance hierarchy: lower number = closer to stem = more
 relevant. The substrate is faithful to Bybee Ch 2 §3 (p. 20-23) for the
 six core categories Bybee discusses (valence < voice < aspect < tense <
@@ -242,47 +238,137 @@ mood < agreement). The substrate adds extensions (`derivation`, `degree`,
 `negation`, `nonfinite`) that are not part of Bybee's verbal hierarchy —
 those are flagged in `MorphRule.lean`'s docstring as linglib extensions. -/
 
-/-- Map Bybee's category enum to the substrate's `MorphCategory`. Object
-agreement and number-as-agreement collapse to the substrate's
-`.agreement` and `.number` respectively. -/
+/-- Map Bybee's category enum to the substrate's `MorphCategory`. All four
+agreement subtypes (`personAgr`, `numberAgr`, `genderAgr`, `personAgrObj`)
+collapse to `.agreement` — Bybee's verbal-number agreement belongs at the
+low-relevance (rank-8) end with person and gender, *not* with nominal
+`.number` (rank 3, "number marking on nouns"). Subject vs object agreement
+is preserved via the controller role. -/
 def toMorphCategory : BybeeCategory → MorphCategory
   | .valence       => .valence
   | .voice         => .voice
   | .aspect        => .aspect
   | .tense         => .tense
   | .mood          => .mood
-  | .numberAgr     => .number
+  | .numberAgr     => .agreement .subj
   | .personAgr     => .agreement .subj
   | .personAgrObj  => .agreement .obj
   | .genderAgr     => .agreement .subj
 
-/-- The substrate's `peripherality` ordering is **strictly monotonic** on
-the six categories Bybee discusses in Ch 2 §3 (excluding the agreement
-sub-types which collapse to a single rank). In other words, the
-substrate faithfully reproduces Bybee's high-relevance-end ordering:
+/-- The substrate's relevance order is **strictly increasing** along the six
+categories Bybee discusses in Ch 2 §3 (one agreement sub-type stands for the
+collapsed agreement rank). In other words, the substrate faithfully reproduces
+Bybee's high-relevance-end ordering:
 valence < voice < aspect < tense < mood < agreement. -/
 theorem substrate_matches_bybee_hierarchy :
-    List.Pairwise (· < ·)
+    List.Pairwise MorphCategory.RelevanceLT
       ([BybeeCategory.valence, .voice, .aspect, .tense, .mood, .personAgr].map
-        (λ c => (toMorphCategory c).peripherality)) := by
+        toMorphCategory) := by
   decide
 
-/-- The §6 morpheme-order data is exactly what `RespectsRelevanceHierarchy`
-predicts: when Bybee's predicted-closer category has lower
-peripherality than the predicted-further one, the substrate predicate
-agrees with the empirical-majority direction. -/
+/-- The Ch 2 §6 morpheme-order data is exactly what `RespectsRelevanceHierarchy`
+predicts: in the substrate relevance order, Bybee's predicted-closer category is
+never less stem-relevant than the predicted-further one, so the order agrees
+with the empirical-majority direction on every tested pair. -/
 theorem orderPairs_consistent_with_substrate :
-    orderPairs.all (λ p =>
-      decide ((toMorphCategory p.closer).peripherality
-              < (toMorphCategory p.further).peripherality)
-      || decide ((toMorphCategory p.closer).peripherality
-                 = (toMorphCategory p.further).peripherality))
-    = true := by
+    ∀ p ∈ orderPairs,
+      (toMorphCategory p.closer).RelevanceLE (toMorphCategory p.further) := by
   decide
 
--- ============================================================================
--- §5: Ch 5 Dynamic Network Model — derived from English Fragment
--- ============================================================================
+/-! ### Grounding the hierarchy in the survey
+
+The substrate's relevance order (`MorphCategory.RelevanceLT`, realized by the
+`peripherality` rank) is, on the four categories Bybee surveyed in Ch 2 §6
+(aspect, tense, mood, person), not a free choice. `SurveyedCloser` — the
+dominance order *derived from* `orderPairs` — coincides with it via
+`toMorphCategory` (`survey_order_iso_relevance`). So a consumer's
+`RespectsRelevanceHierarchy` check over these categories is grounded in Bybee's
+evidence by an order isomorphism, not by trust in a stipulated table. -/
+
+/-- `a` is *surveyed closer to the stem than* `b` when some tested Ch 2 §6 pair
+predicts `a` closer than `b` and the language counts confirm that direction
+(predicted majority). Derived from `orderPairs`, not stipulated. -/
+def SurveyedCloser (a b : BybeeCategory) : Prop :=
+  ∃ p ∈ orderPairs, p.closer = a ∧ p.further = b ∧ p.furtherCount < p.closerCount
+
+instance : DecidableRel SurveyedCloser := fun _ _ => by
+  unfold SurveyedCloser; exact inferInstance
+
+/-- A category is *surveyed* if it appears in any tested Ch 2 §6 pair. -/
+def Surveyed (c : BybeeCategory) : Prop :=
+  ∃ p ∈ orderPairs, p.closer = c ∨ p.further = c
+
+instance : DecidablePred Surveyed := fun _ => by
+  unfold Surveyed; exact inferInstance
+
+/-- `SurveyedCloser` is irreflexive: no tested pair ranks a category against
+itself. -/
+theorem surveyedCloser_irrefl : ∀ a : BybeeCategory, ¬ SurveyedCloser a a := by
+  decide
+
+/-- `SurveyedCloser` is transitive — the §6 survey tested every pair among its
+categories, so the confirmed dominances compose. -/
+theorem surveyedCloser_trans : ∀ a b c : BybeeCategory,
+    SurveyedCloser a b → SurveyedCloser b c → SurveyedCloser a c := by
+  decide
+
+/-- `SurveyedCloser` is total on the surveyed categories: any two distinct
+surveyed categories are ordered by the §6 data in exactly one direction. With
+irreflexivity and transitivity, the survey *alone* determines a strict total
+order on its four categories. -/
+theorem surveyedCloser_total : ∀ a b : BybeeCategory,
+    Surveyed a → Surveyed b → a ≠ b → SurveyedCloser a b ∨ SurveyedCloser b a := by
+  decide
+
+/-- **Grounding theorem.** The substrate's relevance order *strictly* honors
+every confirmed §6 dominance: whenever the survey places `a` closer than `b`,
+the substrate ranks `a` strictly more stem-relevant. So `toMorphCategory` is a
+strictly monotone map from the surveyed order into the relevance order. -/
+theorem relevance_honors_survey : ∀ a b : BybeeCategory,
+    SurveyedCloser a b →
+      (toMorphCategory a).RelevanceLT (toMorphCategory b) := by
+  decide
+
+/-- **Order isomorphism.** On the categories Bybee surveyed in Ch 2 §6, the
+data-derived `SurveyedCloser` order and the substrate's `RelevanceLT` order
+*coincide* via `toMorphCategory`: each holds exactly when the other does. The
+substrate hierarchy, restricted to the surveyed categories, is not merely
+consistent with Bybee's evidence — it *is* the order the §6 survey determines.
+This is the structural grounding the stipulated table only gestured at. -/
+theorem survey_order_iso_relevance : ∀ a b : BybeeCategory,
+    Surveyed a → Surveyed b →
+      (SurveyedCloser a b ↔ (toMorphCategory a).RelevanceLT (toMorphCategory b)) := by
+  decide
+
+/-- The canonical stem-outward ordering of the surveyed categories. Written as
+a literal but *validated against the data* below: it is fully sorted by
+`SurveyedCloser` (`bybeeSurveyedOrder_sorted`) and lists exactly the surveyed
+categories without repeats (`bybeeSurveyedOrder_complete`, `_nodup`), hence the
+unique enumeration the §6 survey forces. -/
+def bybeeSurveyedOrder : List BybeeCategory :=
+  [.aspect, .tense, .mood, .personAgr]
+
+theorem bybeeSurveyedOrder_sorted : bybeeSurveyedOrder.Pairwise SurveyedCloser := by
+  decide
+
+theorem bybeeSurveyedOrder_complete : ∀ c : BybeeCategory,
+    Surveyed c → c ∈ bybeeSurveyedOrder := by decide
+
+theorem bybeeSurveyedOrder_nodup : bybeeSurveyedOrder.Nodup := by decide
+
+/-- The surveyed order, mapped to substrate categories — exposed for consumers
+(`HahnDegenFutrell2021Morphology`, `Karlsson2017`, `RathiHahnFutrell2026`) to
+check their slot orders against Bybee's surveyed evidence rather than
+re-asserting the hierarchy. -/
+def bybeeSurveyedSlots : List MorphCategory :=
+  bybeeSurveyedOrder.map toMorphCategory
+
+/-- The data-derived surveyed order satisfies the substrate predicate, closing
+the loop between Bybee's §6 evidence and `RespectsRelevanceHierarchy`. -/
+theorem bybeeSurveyedSlots_respects_hierarchy :
+    RespectsRelevanceHierarchy bybeeSurveyedSlots := by decide
+
+/-! ### Ch 5 dynamic network model — derived from English Fragment -/
 
 /-! Bybee Ch 5 §8 (p. 124) illustrates the network architecture with
 the Spanish *dormir* paradigm: three stem allomorphs (`dwerm`, `dorm`,
@@ -298,8 +384,9 @@ Bybee-network claims is true by construction.
 Token frequencies default to 0 in the bridge — Bybee's verified per-
 lexeme counts (Francis & Kučera 1982) live in
 `Morphology/UsageBased/Network.lean`'s `strongStillStrong`
-/ `strongRegularized` datasets, which support the Ch 5 §6 irregularity-
-vs-frequency theorem. -/
+/ `strongRegularized` datasets, which support its Ch 5 §6 irregularity-
+vs-frequency theorem `strong_verbs_higher_frequency_than_regularized`
+(Bybee p. 120, counts across Sweet's Anglo Saxon Primer Class I/II/VII). -/
 
 open Morphology.UsageBased
 open English.Predicates.Verbal
@@ -331,43 +418,39 @@ def verbToBybeeNetwork (v : VerbEntry) : Network Unit :=
     from the Fragment, NOT stipulated. -/
 def eatNetwork : Network Unit := verbToBybeeNetwork eat
 
-/-- Sanity check: *eat*'s past form is *ate* (verified via the network's
-    presence test, which derives from the Fragment's `eat.formPast`
-    field). If `eat.formPast` were changed in `Verbal.lean` from "ate"
-    to anything else, this theorem would fail to type-check. -/
+/-- Sanity check: *eat*'s past form is present in the network as an entry,
+    derived from the Fragment's `eat.formPast` field (no string literal).
+    If `eat.formPast` changed in `Verbal.lean`, the `decide` tracks the
+    new value. -/
 theorem eat_past_in_network :
-    eatNetwork.entries.any (·.form == "ate") := by decide
+    ∃ e ∈ eatNetwork.entries, e.form = eat.formPast := by decide
 
-/-- *eat* and *ate* bear a morphological relation in `eat`'s network
-    (parallel semantic + phonological connections, Ch 5 §5 p. 118).
-    Derived from `eat`'s Fragment fields — the connection between
-    "eat" and "ate" exists *because* `eat.formPast = "ate"`. -/
-theorem eat_ate_morphologically_related :
-    eatNetwork.HasMorphologicalRelation "eat" "ate" := by decide
+/-- **Caveat on these relation theorems.** `verbToBybeeNetwork` connects
+    *every* pair of paradigm forms with both a semantic and a phonological
+    edge, so `HasMorphologicalRelation` holds for any two distinct forms of
+    the same verb by construction — it does not yet apply a real
+    shared-phonological-skeleton gate (see `verbToBybeeNetwork`). What the
+    theorems below genuinely test is that the network is *built from the
+    Fragment*: the related forms are `eat`'s actual fields (no string
+    literals), and a form outside the paradigm is correctly unrelated.
 
-theorem eat_eaten_morphologically_related :
-    eatNetwork.HasMorphologicalRelation "eat" "eaten" := by decide
-
-theorem ate_eaten_morphologically_related :
-    eatNetwork.HasMorphologicalRelation "ate" "eaten" := by decide
-
-/-- Maximally derive-don't-duplicate: even the form *strings* come
-    from Fragment fields. This theorem makes no string-literal
-    reference to "eat" or "ate" — if the Fragment fields change,
-    the theorem statement refers to whatever the new fields denote. -/
+    *eat* and its past form bear a morphological relation (parallel
+    semantic + phonological connections, Ch 5 §5 p. 118), derived from
+    `eat`'s Fragment fields — if `eat.formPast` changed, the statement
+    would refer to the new value. -/
 theorem eat_form_related_to_past_form :
     eatNetwork.HasMorphologicalRelation eat.form eat.formPast := by decide
 
-/-- The empirical anchor for Ch 5 §6's central claim — that high-
-    frequency Strong Verbs maintained their irregularity while low-
-    frequency ones regularized — lives in the substrate file as
-    `strong_verbs_higher_frequency_than_regularized` (Bybee p. 120,
-    verified Francis & Kučera 1982 counts across Sweet's Anglo Saxon
-    Primer Class I/II/VII). Re-stated here so the study file's
-    coverage is self-documenting. -/
-theorem ch5_section6_anchor_lives_in_substrate :
-    (strongStillStrong.map (·.tokenFreq)).sum * strongRegularized.length
-    > (strongRegularized.map (·.tokenFreq)).sum * strongStillStrong.length :=
-  strong_verbs_higher_frequency_than_regularized
+/-- *eat* and its past-participle form are likewise related, again derived
+    from the Fragment (`eat.formPastPart`) rather than a literal. -/
+theorem eat_form_related_to_pastPart_form :
+    eatNetwork.HasMorphologicalRelation eat.form eat.formPastPart := by decide
+
+/-- Negative rejection test: a form outside *eat*'s paradigm bears no
+    morphological relation to it. The relation genuinely requires both
+    endpoints to be connected forms in the network — it is not vacuously
+    true of arbitrary string pairs. -/
+theorem eat_unrelated_to_nonparadigm_form :
+    ¬ eatNetwork.HasMorphologicalRelation eat.form "swim" := by decide
 
 end Bybee1985

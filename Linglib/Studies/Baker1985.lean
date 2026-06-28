@@ -153,7 +153,7 @@ instance : DecidablePred MorphDomain.InScope := fun d => by
 
 /-- GF-rule morphemes are inside agreement per Bybee's hierarchy. -/
 theorem gfRule_inside_agreement (r : GFRuleType) :
-    r.toMorphCategory.peripherality < (MorphCategory.agreement .subj).peripherality := by
+    r.toMorphCategory.RelevanceLT (.agreement .subj) := by
   cases r <;> decide
 
 end Morphology.MirrorPrinciple
