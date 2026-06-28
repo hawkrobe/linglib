@@ -4,10 +4,9 @@ import Mathlib.Data.List.Basic
 # Word models
 
 The model-theoretic representation underlying logical characterizations of subregular
-functions: a string viewed as a finite labeled linear order ([dolatian-2020], after
-Büchi, Courcelle & Engelfriet, and Libkin). A **word model** is Dolatian's signature
-`⟨D, L, R⟩` — a domain `D` of positions, unary labels `L`, and the binary
-immediate-successor relation `R`; general precedence is the (FO-definable) transitive
+functions: a string viewed as a finite labeled linear order. A **word model** is the
+relational signature `⟨D, L, R⟩` — a domain `D` of positions, unary labels `L`, and the
+binary immediate-successor relation `R`; general precedence is the (FO-definable) transitive
 closure of successor and is not part of the quantifier-free fragment.
 
 The carrier is `List α` itself: a string *is* its word model. This is deliberately where

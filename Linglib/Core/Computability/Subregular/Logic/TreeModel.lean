@@ -3,17 +3,14 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 /-!
 # Tree models and quantifier-free logic over them
 
-The hierarchical counterpart of `Logic/WordModel.lean` ([dolatian-2020] §4.5, after Courcelle's
-relational tree models): morphological and prosodic structure as labeled trees, with the *same*
-model-theoretic apparatus used for strings. A **tree model** is a `RootedTree.Planar L` — a node-
-labeled rose tree — addressed by Gorn indices (`List ℕ`); its relations are dominance (parent/child)
-and sibling precedence. Quantifier-free terms navigate by `parent`/`child`/`sibSucc`/`sibPred`
-partial functions, giving the bounded reach that, as on strings, underlies tree-local computation.
+The hierarchical counterpart of `Logic/WordModel.lean`: the model-theoretic representation of finite
+labeled trees, the foundation for logical characterizations of tree-to-tree subregular maps. A
+**tree model** is a `RootedTree.Planar L` — a node-labeled rose tree — addressed by Gorn indices
+(`List ℕ`); its relations are dominance (parent/child) and sibling precedence. Quantifier-free terms
+navigate by `parent`/`child`/`sibSucc`/`sibPred` partial functions, giving the bounded reach that,
+as on strings, underlies tree-local computation.
 
-The model is generic over the label type `L`, so it instantiates uniformly to morphological
-structure (a tree of `root`/`stem`/`word`/affix categories) and to prosody (`Prosody.Tree`, a
-`Planar` of prosodic labels — that instantiation lives downstream, since `Core` cannot import
-`Phonology`). This genericity is Dolatian's point: one hierarchical apparatus for both.
+The model is generic over the label type `L`; downstream layers instantiate it.
 
 ## Main definitions
 
@@ -133,28 +130,28 @@ instance TreeQF.instDecidableRealize (t : TreeModel L) (ρ : V → List ℕ) :
 def TreeQF.isRoot (s : TreeTerm V) : TreeQF L V :=
   .conj (.atom (.defined s)) (.neg (.atom (.defined s.parent)))
 
-/-! ### Worked example: a morphological structure -/
+/-! ### Worked example -/
 
 section Example
 
-private inductive Cat | word | stem | root | affix
+private inductive Sym | a | b | c
   deriving DecidableEq
 
 open TreeTerm Planar
 
-/-- `[word [stem root affix] affix]` — a stem (root + suffix) with an outer suffix. -/
-private def w : TreeModel Cat :=
-  .node .word [.node .stem [.node .root [], .node .affix []], .node .affix []]
+/-- The tree `a[ b[c c], b ]`. -/
+private def t : TreeModel Sym :=
+  .node .a [.node .b [.node .c [], .node .c []], .node .b []]
 
 private def x : TreeTerm (Fin 1) := var 0
 
--- The node at `[0,0]` is a root whose mother is a stem; its right sibling is an affix.
-example : (TreeQF.atom (.label .root x)).Realize w (fun _ => [0, 0]) := by decide
-example : (TreeQF.atom (.label .stem x.parent)).Realize w (fun _ => [0, 0]) := by decide
-example : (TreeQF.atom (.label .affix x.sibSucc)).Realize w (fun _ => [0, 0]) := by decide
--- The root has no further-out sibling, and the word node is the root of the tree.
-example : ¬ (TreeQF.atom (.defined x.sibPred)).Realize w (fun _ => [0, 0]) := by decide
-example : (TreeQF.isRoot (L := Cat) x).Realize w (fun _ => []) := by decide
+-- The node at `[0,0]` is labelled `c`, its parent `b`, its right sibling `c`.
+example : (TreeQF.atom (.label .c x)).Realize t (fun _ => [0, 0]) := by decide
+example : (TreeQF.atom (.label .b x.parent)).Realize t (fun _ => [0, 0]) := by decide
+example : (TreeQF.atom (.label .c x.sibSucc)).Realize t (fun _ => [0, 0]) := by decide
+-- It has no left sibling, and the address `[]` names the root.
+example : ¬ (TreeQF.atom (.defined x.sibPred)).Realize t (fun _ => [0, 0]) := by decide
+example : (TreeQF.isRoot (L := Sym) x).Realize t (fun _ => []) := by decide
 
 end Example
 

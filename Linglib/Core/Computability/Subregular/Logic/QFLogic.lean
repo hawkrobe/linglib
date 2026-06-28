@@ -3,14 +3,14 @@ import Linglib.Core.Computability.Subregular.Logic.WordModel
 /-!
 # Quantifier-free logic over word models
 
-The quantifier-free (QF) fragment of the logic of word models ([dolatian-2020]). Terms are
-built from a variable by applying the successor/predecessor partial functions; formulas are
-boolean combinations of atomic label/equality/definedness tests. Because successor is a
-*function*, a QF term reaches a *bounded* neighbourhood of its variable with no quantifiers —
-the syntactic counterpart of strict locality. (Dolatian's `intervocalic(x) := ∃w,y[…]` becomes
-the QF `label V (pred x) ∧ label V (succ x)`.) The forthcoming locality bridge
-(`Logic/LocalityBridge.lean`) is that QF-definable transductions are exactly the
-Input-Strictly-Local functions of `Subregular`.
+The quantifier-free (QF) fragment of the logic of word models. Terms are built from a variable
+by applying the successor/predecessor partial functions; formulas are boolean combinations of
+atomic label/equality/definedness tests. Because successor is a *function*, a QF term reaches a
+*bounded* neighbourhood of its variable with no quantifiers — the syntactic counterpart of
+strict locality (an existential like `∃w,y[succ w x ∧ succ x y ∧ …]` collapses to the
+quantifier-free `… (pred x) ∧ … (succ x)`). The locality bridge (`Logic/LocalityBridge.lean`)
+makes this precise: QF-definable transductions are exactly the Input-Strictly-Local functions of
+`Subregular` ([chandlee-2014], [chandlee-jardine-2019]).
 
 ## Main definitions
 
@@ -102,25 +102,25 @@ def QF.initial (t : Term V) : QF α V :=
 def QF.final (t : Term V) : QF α V :=
   .conj (.atom (.defined t)) (.neg (.atom (.defined t.succ)))
 
-/-! ### Worked example: intervocalic position -/
+/-! ### Worked example -/
 
 section Example
 
-private inductive Seg | a | t deriving DecidableEq
+private inductive Sym | a | b deriving DecidableEq
 
-/-- `x` is intervocalic — flanked by `a`s — stated quantifier-free via `succ`/`pred` terms
-(no existential, contrast Dolatian's `∃w,y[…]`). -/
-private def intervocalic : QF Seg Unit :=
+/-- `x` is flanked by `a`s — a bounded two-sided context stated quantifier-free via `succ`/`pred`
+terms, with no existential. -/
+private def flankedByA : QF Sym Unit :=
   .conj (.atom (.label .a (.pred (.var ())))) (.atom (.label .a (.succ (.var ()))))
 
-private def ata : WordModel Seg := [Seg.a, Seg.t, Seg.a]
+private def aba : WordModel Sym := [Sym.a, Sym.b, Sym.a]
 
--- Position 1 (the `t`) is intervocalic; position 0 (initial `a`) is not (no predecessor).
-example : intervocalic.Realize ata (fun _ => 1) := by decide
-example : ¬ intervocalic.Realize ata (fun _ => 0) := by decide
+-- Position 1 (the `b`) is flanked by `a`s; position 0 is not (no predecessor).
+example : flankedByA.Realize aba (fun _ => 1) := by decide
+example : ¬ flankedByA.Realize aba (fun _ => 0) := by decide
 -- The edge predicates compute as expected.
-example : (QF.initial (α := Seg) (.var ())).Realize ata (fun _ => 0) := by decide
-example : (QF.final (α := Seg) (.var ())).Realize ata (fun _ => 2) := by decide
+example : (QF.initial (α := Sym) (.var ())).Realize aba (fun _ => 0) := by decide
+example : (QF.final (α := Sym) (.var ())).Realize aba (fun _ => 2) := by decide
 
 end Example
 
