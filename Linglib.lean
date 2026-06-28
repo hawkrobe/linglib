@@ -112,6 +112,7 @@ import Linglib.Core.Computability.Subregular.Logic.WordModel
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.TransitionMonoid
+import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.List.Bookend
