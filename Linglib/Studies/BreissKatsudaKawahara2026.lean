@@ -250,7 +250,7 @@ def n2Paradigm (c : JCompound) : List String :=
     off-diagonal. A whole-string identity check; **not** a velar-
     feature comparison. The architecturally faithful version would
     be a tier-restricted segment-by-segment comparison at the velar
-    position routed through `Phonology/FeatureGeometry.lean`,
+    position routed through `Phonology/Segmental/FeatureGeometry.lean`,
     but the qualitative architectural claims (sign of the channel,
     bound/free split) do not depend on the specific mismatch metric. -/
 def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
