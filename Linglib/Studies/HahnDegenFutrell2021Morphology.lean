@@ -1,6 +1,7 @@
 import Linglib.Processing.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Morphology.MorphRule
+import Linglib.Studies.Bybee1985
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
@@ -82,14 +83,26 @@ def japaneseSuffixSlots : List MorphCategory :=
   , .tense        -- 7. -ta, -yoo (past/future)
   ]
 
-/-- Japanese suffix order respects Bybee's hierarchy through the voice slot.
-
-The ordering is: derivation < valence < voice < mood, which
-matches the relevance hierarchy. Negation and tense come after mood,
-which is also consistent. -/
+/-- Japanese suffix order respects Bybee's hierarchy through the mood slot:
+derivation < valence < voice < mood. Beyond mood the order *breaks* —
+politeness (agreement), negation, then tense — so only this stem-adjacent
+prefix is checked; the full-order violation is `japanese_violates_surveyed_relevance`. -/
 theorem japanese_partial_bybee :
     let slots := [MorphCategory.derivation, .valence, .voice, .mood]
-    RespectsRelevanceHierarchy slots := by native_decide
+    RespectsRelevanceHierarchy slots := by decide
+
+/-- **Structural divergence from the survey.** Bybee's Ch 2 §6 data ranks tense
+more stem-relevant than mood (`Bybee1985.SurveyedCloser .tense .mood`, which by
+`Bybee1985.survey_order_iso_relevance` *is* the substrate relevance order on
+these categories), yet Japanese's causative/desiderative layering places `mood`
+closer to the stem than `tense` (slots 4 vs 7) — so its full suffix order is not
+sorted by the relevance hierarchy. A genuine cross-linguistic counterexample to
+the §6 morpheme-order corollary, stated as a failure of the substrate predicate,
+not a positional count. -/
+theorem japanese_violates_surveyed_relevance :
+    Bybee1985.SurveyedCloser .tense .mood ∧
+    ¬ RespectsRelevanceHierarchy japaneseSuffixSlots := by
+  decide
 
 -- ============================================================================
 -- §3: Sesotho Verb Template (SI §4.2)
@@ -140,10 +153,13 @@ def sesothoPrefixSlots : List MorphCategory :=
   , .agreement .obj    -- 4. object agreement
   ]
 
-/-- Sesotho suffixes respect the relevance hierarchy:
-valence < voice < tense < mood < nonfinite. -/
+/-- Sesotho suffixes respect the relevance hierarchy
+(valence < voice < tense < mood < nonfinite) — sorted by the substrate
+relevance order, which on the surveyed categories *is* Bybee's §6 order
+(`Bybee1985.survey_order_iso_relevance`). Contrast
+`japanese_violates_surveyed_relevance`: same surveyed order, opposite outcome. -/
 theorem sesotho_suffixes_respect_bybee :
-    RespectsRelevanceHierarchy sesothoSuffixSlots := by native_decide
+    RespectsRelevanceHierarchy sesothoSuffixSlots := by decide
 
 -- ============================================================================
 -- §4: Memory-Surprisal Efficiency (SI Figures 6, 8)
@@ -213,13 +229,12 @@ functional suffix after derivation. This is consistent with both:
 
 /-- Japanese causative -(s)ase is in the valence slot (slot 2). -/
 theorem japanese_causative_is_valence :
-    japaneseSuffixSlots[1]? = some .valence := by native_decide
+    japaneseSuffixSlots[1]? = some .valence := by decide
 
 /-- The valence slot is the first functional slot (after derivation). -/
 theorem valence_is_innermost_functional :
     japaneseSuffixSlots[0]? = some .derivation ∧
-    japaneseSuffixSlots[1]? = some .valence := by
-  constructor <;> native_decide
+    japaneseSuffixSlots[1]? = some .valence := by decide
 
 /-! ### Bridge: Japanese -(s)ase = Song's COMPACT morphological causative
 
@@ -255,6 +270,6 @@ theorem relevance_hierarchy_implies_locality :
     -- are also efficient in memory-surprisal terms
     RespectsRelevanceHierarchy sesothoSuffixSlots ∧
     sesothoRealAUC100 < sesothoRandomAUC100 :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by native_decide⟩
 
 end HahnDegenFutrell2021
