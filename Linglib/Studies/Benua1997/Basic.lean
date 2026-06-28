@@ -1,7 +1,7 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.TCT
+import Linglib.Studies.Benua1997.TCT
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.OptimalityTheory.StratalCorr
+import Linglib.Studies.Benua1997.StratalCorr
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Basic
 
@@ -49,7 +49,7 @@ markedness constraint M₂ is satisfied or violated by the base output.
 ## Architectural integration
 
 Consumes:
-- `Phonology.OptimalityTheory.TCT.Role` and `TetruSchema`
+- `Benua1997.TCT.Role` and `TetruSchema` (this paper's TCT framework, `TCT.lean`)
 - the local § 0 `diagramWithEdge` (general 3-role correspondence with explicit
   OO alignment), folded in from the former `ParadigmUniformity/Transderivational`
 - `Phonology.OptimalityTheory.Correspondence.Corr.identViol` (segmental)
@@ -64,7 +64,7 @@ machinery — the cross-linguistic point of [benua-1997] is that
 namespace Benua1997
 
 open OptimalityTheory.Correspondence (Corr)
-open OptimalityTheory.TCT (Role TetruSchema)
+open Benua1997.TCT (Role TetruSchema)
 open Constraints OptimalityTheory
 
 -- ============================================================================
@@ -489,8 +489,9 @@ the architecturally-distinct derivations producing identical phraseOutput.
 
 namespace StratalComparison
 
-open OptimalityTheory.Stratal (StratalDerivation StratalRole stratalDerivToCorr)
-open OptimalityTheory.StratalToTCT (project project_preserves_phrase_as_derivative
+open OptimalityTheory.Stratal (StratalDerivation)
+open Benua1997.StratalCorr (StratalRole stratalDerivToCorr)
+open Benua1997.StratalToTCT (project project_preserves_phrase_as_derivative
                              project_preserves_stem_as_base
                              project_preserves_underlying_as_input
                              project_oo_edge_eq_parallel)
@@ -568,7 +569,7 @@ theorem stratal_stem_is_tct_base :
     `(.base, .derivative)` correspondence. -/
 theorem stratal_chain_collapses_to_oo_edge :
     sundaneseStratalAsTCT.edge .base .derivative =
-      OptimalityTheory.Stratal.parallelEdge Sundanese.baseOutput
+      Benua1997.StratalCorr.parallelEdge Sundanese.baseOutput
         Sundanese.derivOutputOverapplied :=
   project_oo_edge_eq_parallel _ _ _ _
 

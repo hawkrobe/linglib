@@ -1348,8 +1348,6 @@ import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.OptimalityTheory.StratalCorr
-import Linglib.Phonology.OptimalityTheory.TCT
 import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
@@ -2028,7 +2026,9 @@ import Linglib.Studies.Belth2026
 import Linglib.Studies.Beltrama2025
 import Linglib.Studies.BeltramaSchwarz2024
 import Linglib.Studies.BeltramaSoltBurnett2022
-import Linglib.Studies.Benua1997
+import Linglib.Studies.Benua1997.Basic
+import Linglib.Studies.Benua1997.StratalCorr
+import Linglib.Studies.Benua1997.TCT
 import Linglib.Studies.Benz2025
 import Linglib.Studies.BenzSalzmann2025
 import Linglib.Studies.Berent2026

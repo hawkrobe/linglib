@@ -1,10 +1,14 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.OptimalityTheory.TCT
+import Linglib.Studies.Benua1997.TCT
 
 /-!
-# Stratal OT ↔ Corr ↔ TCT — Architectural Bridge
+# Benua (1997): the stratal ↔ TCT architectural equivalence
 [kiparsky-2000] [benua-1997]
+
+The stratal-OT ↔ TCT correspondence that [benua-1997] argues for, formalized over
+the shared `Corr Role α` substrate. (Paper-anchored to [benua-1997]; consumed only
+by this study, so it lives in the study directory, not the OT theory layer.)
 
 The substrate-level integration between Stratal OT ([kiparsky-2000])
 and TCT ([benua-1997]) over the unifying `Corr Role α` substrate.
@@ -58,7 +62,7 @@ the grammar bridge in shared types — currently `StratalDerivation` and
 `Corr TCT.Role α` live in non-communicating namespaces.
 -/
 
-namespace OptimalityTheory.Stratal
+namespace Benua1997.StratalCorr
 
 open OptimalityTheory.Correspondence (Corr Side)
 
@@ -159,17 +163,17 @@ def stratalDerivToCorr {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .pOut = phraseOut := rfl
 
-end OptimalityTheory.Stratal
+end Benua1997.StratalCorr
 
 -- ============================================================================
 -- § 4: StratalRole → TCT.Role projection
 -- ============================================================================
 
-namespace OptimalityTheory.StratalToTCT
+namespace Benua1997.StratalToTCT
 
 open OptimalityTheory.Correspondence (Corr)
-open OptimalityTheory.Stratal (StratalRole stratalDerivToCorr parallelEdge)
-open OptimalityTheory.TCT (Role)
+open Benua1997.StratalCorr (StratalRole stratalDerivToCorr parallelEdge)
+open Benua1997.TCT (Role)
 
 /-- The canonical projection from stratal roles to TCT roles, encoding
     Benua's identification:
@@ -253,4 +257,4 @@ theorem project_oo_edge_eq_parallel {α : Type*}
   rw [Corr.diagram_edge_pos _ _ (by decide)]
   rfl
 
-end OptimalityTheory.StratalToTCT
+end Benua1997.StratalToTCT
