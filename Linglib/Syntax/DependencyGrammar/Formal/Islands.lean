@@ -23,9 +23,8 @@ extraction that produces a risen catena with non-contiguous yield.
 
 * Predicates inherit the substrate-wide `Bool` convention from
   `Catena.lean` / `Discontinuity.lean`; statements are `... = true`.
-* The `OsborneIslandType` enum is consumed by `Studies/Osborne2019Islands.lean`,
-  which bridges the three cases (adjunct, subject, whIsland) that line up with
-  the Ross-1967 inventory in `ConstraintType` (`Studies/Ross1967.lean`).
+* The `OsborneIslandType` enum's three cases (adjunct, subject, whIsland) line
+  up with the Ross-1967 inventory in `ConstraintType` (`Studies/Ross1967.lean`).
 
 ## Todo
 
