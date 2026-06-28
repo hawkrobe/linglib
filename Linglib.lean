@@ -2923,5 +2923,6 @@ import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Data.Examples.Guerrini2026
+import Linglib.Data.Examples.TonhauserBeaverDegen2018
 
 

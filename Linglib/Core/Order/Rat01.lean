@@ -2,6 +2,8 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Linarith
+import Mathlib.Order.Monotone.Basic
 
 /-!
 # Core/Scales/Rat01.lean — rational unit interval
@@ -58,6 +60,29 @@ def exceeds (d θ : Rat01) : Prop := θ.val < d.val
 
 instance (d θ : Rat01) : Decidable (exceeds d θ) :=
   inferInstanceAs (Decidable (θ.val < d.val))
+
+/-- The complement `1 - r`, again in `[0, 1]`.
+
+    Models the relationship between a gradient property and its dual on the
+    same scale — e.g. not-at-issueness as the complement of at-issueness. -/
+def compl (r : Rat01) : Rat01 :=
+  ⟨1 - r.val, by linarith [r.le_one], by linarith [r.nonneg]⟩
+
+@[simp] theorem compl_val (r : Rat01) : (compl r).val = 1 - r.val := rfl
+
+@[simp] theorem compl_compl (r : Rat01) : compl (compl r) = r := by
+  apply Subtype.ext; simp
+
+theorem compl_zero : compl zero = one := by apply Subtype.ext; simp [zero, one]
+
+theorem compl_one : compl one = zero := by apply Subtype.ext; simp [zero, one]
+
+/-- The complement is order-reversing: a larger value has a smaller complement. -/
+theorem compl_antitone : Antitone compl := by
+  intro a b h
+  show 1 - b.val ≤ 1 - a.val
+  have : a.val ≤ b.val := h
+  linarith
 
 end Rat01
 
