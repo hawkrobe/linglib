@@ -1,4 +1,5 @@
 import Mathlib.Data.List.Basic
+import Linglib.Core.Computability.Subregular.Logic.Transduction
 
 /-!
 # Dolatian 2020: pre-inflectional vowel reduction and the Prosodic Stem
@@ -28,11 +29,22 @@ syllabification → PStem misalignment → PStem-cophonology → DHR — rather 
 constraint optimization. DHR is *derived* from the mechanism (see `dhr_iff`), not
 stipulated as a dialect × inflection table.
 
+Dolatian also formalizes the phonology *computationally*, as MSO/quantifier-free
+logical transductions over word models (§4), whose locality (QF ⟹ Input Strictly
+Local, hence learnable) is his central computational claim. The final section
+realizes the Eastern Armenian cophonology in that framework
+(`Core.Computability.Subregular.Logic`): DHR is the local rewrite `H → ∅ / _ C V`,
+and the cyclic derivation is transduction composition. Reproducing the *amusin*
+contrast segmentally recovers the serial result by a different route
+(`transduction_matches_trigger`).
+
 ## Main definitions
 
 * `Dolatian2020.pstemMisaligned` — the MStem boundary no longer coincides with a
   syllable boundary (V-initial suffix resyllabified the stem-final consonant).
 * `Dolatian2020.dhrApplies` — DHR derived from PStem expansion × dialect cophonology.
+* `Dolatian2020.dhrEast` / `dhrWest` — the dialect cophonologies as quantifier-free
+  logical transductions; `dhrEast` deletes the destressed high vowel before `C V`.
 -/
 
 namespace Dolatian2020
@@ -108,5 +120,67 @@ theorem dhr_iff (d : Dialect) (stem : List Seg) (suf : Suffix) :
     dhrApplies d stem suf = true ↔ d = .eArm ∧ pstemMisaligned stem suf = true := by
   cases d <;>
     simp [dhrApplies, Dialect.pstemReduces, pstemCophonologyTriggered]
+
+/-! ### The cophonology as a quantifier-free logical transduction
+
+[dolatian-2020]'s computational formalization (§4): the cophonology as an MSO/quantifier-free
+logical transduction over a word model. Eastern Armenian DHR is the local rewrite `H → ∅ / _ C V`
+— the stem-final high vowel drops when a following consonant resyllabifies into a V-initial
+suffix's onset — realized with `Core.Computability.Subregular.Logic`. The rewrite reads a bounded
+right context, so it is quantifier-free, hence subregular and learnable (Dolatian's thesis). -/
+
+section Transductions
+
+open Subregular.Logic
+
+/-- Segments refined with the high-vowel target `H` of DHR. -/
+inductive Phone | C | V | H
+  deriving DecidableEq, Repr
+
+private def x : Term (Fin 1) := .var 0
+
+/-- Eastern Armenian DHR as a logical transduction: delete a high vowel before `C V` (the
+resyllabification-and-expansion context); every other segment is faithful. A high vowel in that
+context matches no clause and is dropped. -/
+def dhrEast : Transduction Phone Phone where
+  copies := 1
+  clause _ :=
+    [ (QF.conj (.atom (.label .H x))
+        (QF.neg (QF.conj (.atom (.label .C x.succ)) (.atom (.label .V x.succ.succ)))), .H),
+      (.atom (.label .C x), .C), (.atom (.label .V x), .V) ]
+
+/-- Western Armenian: the PStem cophonology shifts stress but does not reduce, so the high vowel is
+faithful in every context ([dolatian-2020] (76)). -/
+def dhrWest : Transduction Phone Phone where
+  copies := 1
+  clause _ := [(.atom (.label .H x), .H), (.atom (.label .C x), .C), (.atom (.label .V x), .V)]
+
+/-- *amusin* a-mu-si-n, segmentally `V C V C H C` (the stem-final high vowel is `H`). -/
+def amusinP : List Phone := [.V, .C, .V, .C, .H, .C]
+/-- *-ov* (INST), V-initial. -/
+def ovP : List Phone := [.V, .C]
+/-- *-ner* (PL), C-initial. -/
+def nerP : List Phone := [.C, .V, .C]
+
+-- Eastern Armenian: the high vowel deletes before V-initial *-ov* (→ amusn-ov) but survives before
+-- C-initial *-ner* (→ amusin-ner) — Dolatian's (78), recovered at the segmental level.
+theorem dhrEast_ov : dhrEast.apply (amusinP ++ ovP) = [.V, .C, .V, .C, .C, .V, .C] := by decide
+theorem dhrEast_ner : dhrEast.apply (amusinP ++ nerP) = amusinP ++ nerP := by decide
+-- Western Armenian reduces in neither context.
+theorem dhrWest_ov : dhrWest.apply (amusinP ++ ovP) = amusinP ++ ovP := by decide
+
+/-- The transduction's segmental action agrees with the serial trigger `dhrApplies`: the form
+changes exactly when (Eastern, misaligned) DHR is predicted — the two formalizations coincide. -/
+theorem transduction_matches_trigger :
+    (dhrEast.apply (amusinP ++ ovP) ≠ amusinP ++ ovP ∧ dhrApplies .eArm amusin sufOv = true) ∧
+    (dhrEast.apply (amusinP ++ nerP) = amusinP ++ nerP ∧ dhrApplies .eArm amusin sufNer = false) := by
+  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> decide
+
+/-- Cyclicity ([dolatian-2020]: interactionist derivation = transduction composition): a further
+cophonology cycle composes with the first, and DHR is stable under re-application. -/
+theorem dhr_cyclic_stable :
+    dhrEast.applyComp dhrEast (amusinP ++ ovP) = dhrEast.apply (amusinP ++ ovP) := by decide
+
+end Transductions
 
 end Dolatian2020
