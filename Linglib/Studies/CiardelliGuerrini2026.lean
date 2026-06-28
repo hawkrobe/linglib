@@ -1,7 +1,6 @@
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Semantics.Exhaustification.FreeChoice
-import Linglib.Studies.RotterLiu2025Concord
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -490,38 +489,27 @@ theorem conjunctive_narrow_stronger {World : Type*}
   obtain ⟨w, hp, hq⟩ := h
   exact ⟨⟨w, hp⟩, ⟨w, hq⟩⟩
 
-/-! ### Bridge to Rotter & Liu 2025 modal concord data
+/-! ### Same-feature concord in the fragment
 
-[rotter-liu-2025] study "must have to VP" stacking, where two necessity modals
-yield a single-necessity reading (concord). This is the same phenomenon
-[ciardelli-guerrini-2026] exploit: one modal is semantically vacuous. The
-`ModalFeature.checks` infrastructure models it directly — one auxiliary carries
-`[i∀-MOD]`, the other `[u∀-MOD]`, and the i-feature checks the u-feature, leaving
-one semantic operator. -/
+[ciardelli-guerrini-2026]'s mechanism for the narrow-scope LF is that two
+auxiliaries carrying the same modal feature are checked by a single silent
+operator (the coordination structure for "you must A or you must B" → □(A ∨ B)),
+leaving one semantic operator. The fragment exhibits the precondition: `must` and
+`have to` both carry `[u∀-MOD]`, so a single `[i∀]` operator checks both. -/
 
-/-- "Must" and "have to" have the same modal feature (both `[u∀-MOD]`). Concord
-between them is predicted: same-force u-features. -/
+/-- `must` and `have to` carry the same modal feature (both `[u∀-MOD]`) — a
+same-force concord configuration. -/
 theorem must_haveTo_same_feature :
     must.toModalFeature = haveTo.toModalFeature := rfl
 
-/-- "Have to" carries `[u∀-MOD]`: necessity force, uninterpretable. -/
+/-- `have to` carries `[u∀-MOD]`: necessity force, uninterpretable. -/
 theorem haveTo_feature_eq :
     haveTo.toModalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
 
-/-- "Must have to" concord as a `ConcordDerivation` — derived from the Fragment. -/
+/-- The `must`/`have to` concord as a `ConcordDerivation`, derived from the
+Fragment: two `[u∀]` auxiliaries checked by one operator. -/
 def mustHaveToConcord : ConcordDerivation :=
   .fromAux must haveTo must_feature_eq haveTo_feature_eq rfl rfl rfl
-
-/-- **The concord prediction meets the [rotter-liu-2025] measurement.** The
-`ConcordDerivation` for "must have to" predicts a single-necessity reading; the
-experiment finds the meaning ratings of "must" and "must have to" essentially
-indistinguishable (`meaning_must_close_to_mustHaveTo`) — concord observed, not
-double necessity. -/
-theorem concord_predicts_mustHaveTo_single_necessity :
-    must.toModalFeature = haveTo.toModalFeature ∧
-    (RotterLiu2025Concord.meaningRating .must).mean
-      - (RotterLiu2025Concord.meaningRating .mustHaveTo).mean < 1/2 :=
-  ⟨must_haveTo_same_feature, RotterLiu2025Concord.meaning_must_close_to_mustHaveTo⟩
 
 /-- Cross-force concord fails: "must" `[u∀]` cannot be checked by a silent `[i∃-MOD]`
 operator. This predicts no concord between necessity and possibility modals. -/
