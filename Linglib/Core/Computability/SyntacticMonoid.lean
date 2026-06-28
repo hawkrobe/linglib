@@ -222,4 +222,38 @@ theorem isRegular_of_finite_syntacticMonoid (h : Finite L.syntacticMonoid) : L.I
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacticMonoid :=
   ⟨finite_syntacticMonoid, isRegular_of_finite_syntacticMonoid⟩
 
+/-! ### Complement- and intersection-invariance
+
+Generic syntactic-monoid facts about boolean combinations, used by any class defined through the
+syntactic monoid (e.g. `Language.IsStarFree`, and `Monoid.Pseudovariety.langs` in general). -/
+
+/-- The syntactic congruence is complement-invariant: a two-sided context distinguishes `u` from
+`v` for `L` exactly when it does for `Lᶜ`. -/
+theorem syntacticCon_compl (L : Language α) : Lᶜ.syntacticCon = L.syntacticCon :=
+  Con.ext fun u v => by
+    rw [syntacticCon_iff, syntacticCon_iff]
+    exact forall_congr' fun _ => forall_congr' fun _ => not_iff_not
+
+/-- The syntactic monoid is complement-invariant. -/
+theorem syntacticMonoid_compl (L : Language α) : Lᶜ.syntacticMonoid = L.syntacticMonoid := by
+  unfold syntacticMonoid; rw [syntacticCon_compl]
+
+/-- The meet of the two syntactic congruences refines that of the intersection: if no `L`-context
+and no `M`-context distinguishes `u` from `v`, then no `(L ⊓ M)`-context does either. -/
+theorem inf_syntacticCon_le_syntacticCon_inf (L M : Language α) :
+    L.syntacticCon ⊓ M.syntacticCon ≤ (L ⊓ M).syntacticCon := by
+  rw [Con.le_def]
+  intro u v huv x y
+  rw [Con.inf_iff_and, syntacticCon_iff, syntacticCon_iff] at huv
+  exact and_congr (huv.1 x y) (huv.2 x y)
+
+/-- The kernel of the pairing of the two syntactic morphisms is exactly the meet of the two
+syntactic congruences (a word's class in the product is the pair of its classes). -/
+theorem ker_prod_toSyntacticMonoid (L M : Language α) :
+    Con.ker (L.toSyntacticMonoid.prod M.toSyntacticMonoid) =
+      L.syntacticCon ⊓ M.syntacticCon :=
+  Con.ext fun u v => by
+    rw [Con.ker_apply, MonoidHom.prod_apply, MonoidHom.prod_apply, Prod.ext_iff,
+      toSyntacticMonoid_eq_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
+
 end Language
