@@ -106,6 +106,7 @@ import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Logic.LocalityBridge
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
 import Linglib.Core.Computability.Subregular.Logic.Transduction
+import Linglib.Core.Computability.Subregular.Logic.TreeModel
 import Linglib.Core.Computability.Subregular.Logic.WordModel
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.TierProjection
