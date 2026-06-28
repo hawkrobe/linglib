@@ -28,11 +28,13 @@ left as the two staged `sorry`s below.
 
 ## Main results
 
-* `Monoid.eilenberg_galoisConnection` — `langToVariety` is left adjoint to `varietyToLang`.
-* `Monoid.langToVariety_varietyToLang_le` / `Monoid.le_varietyToLang_langToVariety` — the two
-  composites that come for free from the Galois connection.
-* `Monoid.le_langToVariety_varietyToLang` / `Monoid.varietyToLang_langToVariety_le` — the two
-  converse (deep) inequalities, the content of Eilenberg's theorem, currently `sorry`.
+* `Monoid.varietyToLang_monotone` / `Monoid.langToVariety_monotone` — the maps are functors of the
+  thin (preorder) categories; bundled as `Monoid.varietyToLangHom` / `Monoid.langToVarietyHom`.
+* `Monoid.eilenberg_galoisConnection` — the adjunction `langToVariety ⊣ varietyToLang`.
+* `Monoid.mem_langToVariety_varietyToLang` / `Monoid.mem_langToVariety_varietyToLang_iff` — the
+  monoid-side round-trip (`langToVariety ∘ varietyToLang = id` on finite monoids), proven.
+* `Monoid.varietyToLang_langToVariety_le` — the language-side round-trip, the deep half of
+  Eilenberg's theorem, currently `sorry` (see implementation notes).
 
 ## Implementation notes
 
@@ -42,10 +44,13 @@ Eilenberg +variety additionally requires closure under left and right residuals 
 that axiom is omitted pending a `syntacticMonoid_leftQuotient` division lemma (TODO). The fragment is
 already enough to state and prove the Galois connection.
 
-Combined with the two free composites, the two staged converse inequalities
-(`le_langToVariety_varietyToLang` and `varietyToLang_langToVariety_le`) would upgrade the Galois
-connection to the Eilenberg order isomorphism — a `GaloisInsertion`/`GaloisCoinsertion` pair, hence
-an order iso once both `Preorder`s are refined to `PartialOrder`s by antisymmetry.
+The two preorders are thin categories (`CategoryTheory.Preorder.smallCategory`); the monotone maps
+above are the corresponding functors and the Galois connection is their adjunction. The monoid-side
+round-trip is proven (`mem_langToVariety_varietyToLang_iff`); refining the `Preorder`s to
+`PartialOrder`s and discharging the language-side round-trip (`varietyToLang_langToVariety_le`) would
+upgrade the adjunction to the Eilenberg order isomorphism (`OrderIso`). A literal
+`CategoryTheory.Adjunction` is obtainable from `eilenberg_galoisConnection` via mathlib's
+`GaloisConnection.adjunction`, kept out of this order-algebra file by design.
 
 Everything lives in a single fixed universe `u`: alphabets and monoids are all `Type u`, matching the
 universe-monomorphic `Pseudovariety` of `Linglib.Core.Algebra.Group.Pseudovariety`.
@@ -173,6 +178,25 @@ theorem langToVariety_varietyToLang_le (V : Pseudovariety.{u}) :
 theorem le_varietyToLang_langToVariety (𝒱 : LanguageVariety.{u}) :
     𝒱 ≤ varietyToLang (langToVariety 𝒱) :=
   eilenberg_galoisConnection.le_u_l 𝒱
+
+/-! ### Functoriality
+
+A preorder is a thin category (`CategoryTheory.Preorder.smallCategory`) and a functor between thin
+categories is exactly a monotone map, so the two maps are **functors** and the Galois connection is
+the **adjunction** `langToVariety ⊣ varietyToLang`. We record functoriality as `Monotone` and bundle
+the functors as `OrderHom`s; both monotonicities are immediate from the Galois connection. -/
+
+/-- `langToVariety` is a functor of the thin category of pseudovarieties (the left adjoint). -/
+theorem langToVariety_monotone : Monotone langToVariety := eilenberg_galoisConnection.monotone_l
+
+/-- `varietyToLang` is a functor of the thin category of language varieties (the right adjoint). -/
+theorem varietyToLang_monotone : Monotone varietyToLang := eilenberg_galoisConnection.monotone_u
+
+/-- `langToVariety` bundled as an `OrderHom` (a functor of thin categories). -/
+def langToVarietyHom : LanguageVariety.{u} →o Pseudovariety.{u} := ⟨langToVariety, langToVariety_monotone⟩
+
+/-- `varietyToLang` bundled as an `OrderHom` (a functor of thin categories). -/
+def varietyToLangHom : Pseudovariety.{u} →o LanguageVariety.{u} := ⟨varietyToLang, varietyToLang_monotone⟩
 
 /-- Two subsingleton monoids are (uniquely) isomorphic. -/
 private def mulEquivOfSubsingleton {A B : Type*} [Monoid A] [Monoid B]
