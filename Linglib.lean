@@ -11,6 +11,7 @@ import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
+import Linglib.Core.Algebra.Group.Pseudovariety
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
