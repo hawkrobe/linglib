@@ -132,15 +132,12 @@ def winnerDistinguishSubj : Finset (CaseForm × Strength) :=
 
     Same for both argument positions — Identify is role-independent.
     Tableau (18) and (29). -/
-def identify : NamedConstraint (CaseForm × Strength) :=
-  { name := "Identify"
-    family := .markedness
-    eval := λ p => match p with
-      | (.overt, .strong) => 0  -- overt marking identifies strong role
-      | (.zero, .weak)    => 0  -- zero matches weak/unmarked
-      | (.overt, .weak)   => 1  -- overt on weak = misidentification
-      | (.zero, .strong)  => 1  -- strong role unidentified
-  }
+def identify : Constraint (CaseForm × Strength) :=
+  λ p => match p with
+    | (.overt, .strong) => 0  -- overt marking identifies strong role
+    | (.zero, .weak)    => 0  -- zero matches weak/unmarked
+    | (.overt, .weak)   => 1  -- overt on weak = misidentification
+    | (.zero, .strong)  => 1  -- strong role unidentified
 
 /-- **Distinguish for subjects** (D_A): Unmarked weak subjects are
     confusable with objects. Strong subjects are inherently distinguishable.
@@ -149,13 +146,10 @@ def identify : NamedConstraint (CaseForm × Strength) :=
     Weak A is atypical (agent-like properties are low) → confusable with P.
     Strong A is typical → clearly agent, no marking needed.
     Tableau (21), p. 573. -/
-def distinguishSubj : NamedConstraint (CaseForm × Strength) :=
-  { name := "Distinguish(A)"
-    family := .markedness
-    eval := λ p => match p with
-      | (.zero, .weak) => 1  -- weak subject unmarked = indistinguishable
-      | _               => 0
-  }
+def distinguishSubj : Constraint (CaseForm × Strength) :=
+  λ p => match p with
+    | (.zero, .weak) => 1  -- weak subject unmarked = indistinguishable
+    | _               => 0
 
 /-- **Distinguish for objects** (D_P): Unmarked strong objects are
     confusable with subjects. Weak objects are inherently distinguishable.
@@ -165,28 +159,22 @@ def distinguishSubj : NamedConstraint (CaseForm × Strength) :=
     strong *patients* are atypical (agent-like), so Distinguish targets
     them — the same pattern as Identify.
     Tableau (32)/(35). -/
-def distinguishObj : NamedConstraint (CaseForm × Strength) :=
-  { name := "Distinguish(P)"
-    family := .markedness
-    eval := λ p => match p with
-      | (.zero, .strong) => 1  -- strong object unmarked = confusable
-      | _                 => 0
-  }
+def distinguishObj : Constraint (CaseForm × Strength) :=
+  λ p => match p with
+    | (.zero, .strong) => 1  -- strong object unmarked = confusable
+    | _                 => 0
 
 /-- **Economy** (*!): Penalizes any overt case marker.
     Same as [aissen-2003]'s economy family. -/
-def economy : NamedConstraint (CaseForm × Strength) :=
-  { name := "*!"
-    family := .faithfulness
-    eval := λ p => match p with
-      | (.overt, _) => 1
-      | (.zero, _)  => 0
-  }
+def economy : Constraint (CaseForm × Strength) :=
+  λ p => match p with
+    | (.overt, _) => 1
+    | (.zero, _)  => 0
 
 /-- Build the violation profile for a ranking. -/
-def profileFor (ranking : List (NamedConstraint (CaseForm × Strength)))
+def profileFor (ranking : List (Constraint (CaseForm × Strength)))
     (p : CaseForm × Strength) : List Nat :=
-  ranking.map λ c => c.eval p
+  ranking.map λ c => c p
 
 -- ============================================================================
 -- § 3: DSM — Subject Case (Divergence)
@@ -288,7 +276,7 @@ structure MarkingPattern where
 
 /-- Derive the marking pattern from a ranking's superoptimal Finset
     (the canonical `superoptimal` form). -/
-def markingPattern (ranking : List (NamedConstraint (CaseForm × Strength)))
+def markingPattern (ranking : List (Constraint (CaseForm × Strength)))
     : MarkingPattern :=
   let pairs := superoptimal allPairs (profileFor ranking)
   ⟨extractForm pairs .strong, extractForm pairs .weak⟩
@@ -356,40 +344,31 @@ def winnerSymDistinguish : Finset (SymForm × Strength) :=
 
 /-- Identify for 3-form system: form1 matches strong, form2 matches weak.
     Tableau (29), p. 576: ACC identifies strong P, PART identifies weak P. -/
-def identifySym : NamedConstraint (SymForm × Strength) :=
-  { name := "Identify"
-    family := .markedness
-    eval := λ p => match p with
-      | (.form1, .strong) => 0  -- form1 identifies strong
-      | (.form2, .weak)   => 0  -- form2 identifies weak
-      | (.zero, _)        => 1  -- zero doesn't identify
-      | (.form1, .weak)   => 1  -- form1 on weak = mismatch
-      | (.form2, .strong) => 1  -- form2 on strong = mismatch
-  }
+def identifySym : Constraint (SymForm × Strength) :=
+  λ p => match p with
+    | (.form1, .strong) => 0  -- form1 identifies strong
+    | (.form2, .weak)   => 0  -- form2 identifies weak
+    | (.zero, _)        => 1  -- zero doesn't identify
+    | (.form1, .weak)   => 1  -- form1 on weak = mismatch
+    | (.form2, .strong) => 1  -- form2 on strong = mismatch
 
 /-- Distinguish for objects in 3-form system: only (Ø, strong) violates.
     Both overt forms satisfy Distinguish identically. -/
-def distinguishObjSym : NamedConstraint (SymForm × Strength) :=
-  { name := "Distinguish(P)"
-    family := .markedness
-    eval := λ p => match p with
-      | (.zero, .strong) => 1
-      | _                 => 0
-  }
+def distinguishObjSym : Constraint (SymForm × Strength) :=
+  λ p => match p with
+    | (.zero, .strong) => 1
+    | _                 => 0
 
 /-- Economy for 3-form system. -/
-def economySym : NamedConstraint (SymForm × Strength) :=
-  { name := "*!"
-    family := .faithfulness
-    eval := λ p => match p with
-      | (.form1, _) => 1
-      | (.form2, _) => 1
-      | (.zero, _)  => 0
-  }
+def economySym : Constraint (SymForm × Strength) :=
+  λ p => match p with
+    | (.form1, _) => 1
+    | (.form2, _) => 1
+    | (.zero, _)  => 0
 
-def symProfileFor (ranking : List (NamedConstraint (SymForm × Strength)))
+def symProfileFor (ranking : List (Constraint (SymForm × Strength)))
     (p : SymForm × Strength) : List Nat :=
-  ranking.map λ c => c.eval p
+  ranking.map λ c => c p
 
 /-- **Distinguish cannot discriminate overt forms** (structural theorem).
     Both overt forms receive identical violations from Distinguish for
@@ -397,7 +376,7 @@ def symProfileFor (ranking : List (NamedConstraint (SymForm × Strength)))
     marking requires Identify. -/
 theorem distinguish_overt_indifferent :
     ∀ (s : Strength),
-      distinguishObjSym.eval (.form1, s) = distinguishObjSym.eval (.form2, s) := by
+      distinguishObjSym (.form1, s) = distinguishObjSym (.form2, s) := by
   intro s; cases s <;> rfl
 
 /-- I >> *! in 3-form system: form1 for strong, form2 for weak.
@@ -455,13 +434,10 @@ theorem symmetrical_requires_identify :
 /-- PaIP: Penalizes overt marking of the primary actant.
     Same violation profile as Economy — the difference is that PaIP
     only applies to the primary actant's position. -/
-def paip : NamedConstraint (CaseForm × Strength) :=
-  { name := "PaIP"
-    family := .faithfulness
-    eval := λ p => match p with
-      | (.overt, _) => 1
-      | (.zero, _)  => 0
-  }
+def paip : Constraint (CaseForm × Strength) :=
+  λ p => match p with
+    | (.overt, _) => 1
+    | (.zero, _)  => 0
 
 /-- **PaIP is ranking-independent under weak BiOT** (p. 580).
     PaIP has the same violation profile as Economy, so PaIP >> I/D
@@ -520,10 +496,10 @@ theorem alignment_correlation :
 /-- Economy has the same violation profile as Aissen's economy family:
     1 violation per overt marker, 0 for zero markers. -/
 theorem economy_matches_aissen :
-    (economy.eval (.overt, .strong) = 1) ∧
-    (economy.eval (.zero, .strong) = 0) ∧
-    (economy.eval (.overt, .weak) = 1) ∧
-    (economy.eval (.zero, .weak) = 0) := by
+    (economy (.overt, .strong) = 1) ∧
+    (economy (.zero, .strong) = 0) ∧
+    (economy (.overt, .weak) = 1) ∧
+    (economy (.zero, .weak) = 0) := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
 /-- DOM convergence is consistent with Aissen's monotonicity:

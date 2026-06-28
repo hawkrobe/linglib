@@ -9,7 +9,7 @@ import Linglib.Core.Computability.NonRegular.AnBn
 /-!
 # OT–Subregular Bridge: Bound and Counterexample
 
-A `NamedConstraint`'s zero-set — `{ w | c.eval w = 0 }` — sometimes lands
+A `Constraint`'s zero-set — `{ w | c w = 0 }` — sometimes lands
 in a subregular class (TSL_2, SP_2, …) and sometimes does not. This file
 makes the bound visible:
 
@@ -18,10 +18,10 @@ makes the bound visible:
    Restatement of `mkForbidPairsOnTier_zero_iff_in_lang` in `Language α`
    form so it composes with mathlib's `Language.IsRegular`.
 
-2. **Supraregular counterexample**: there is a `NamedConstraint (List AB)`
+2. **Supraregular counterexample**: there is a `Constraint (List AB)`
    whose zero-set is the classical non-regular language `{ aⁿ bⁿ | n ≥ 0 }`
    (`exists_namedConstraint_zeroSet_not_isRegular`). Shows the bridge
-   cannot be stated as "every NamedConstraint has a subregular zero-set"
+   cannot be stated as "every Constraint has a subregular zero-set"
    — only constraints in specific schema classes (forbidden-pair on
    tier, OCP on tier, agree on tier, …) inherit the bridge.
 
@@ -31,7 +31,7 @@ give distinct left quotients of `{ aⁿ bⁿ }`, so the range of
 `leftQuotient` is infinite, contradicting regularity. This is the
 classical Myhill–Nerode argument [nerode-1958] [myhill-1957].
 
-Phonologically the takeaway is *negative*: `NamedConstraint`s are too
+Phonologically the takeaway is *negative*: `Constraint`s are too
 expressive to be classified by subregular complexity alone. Phonologists
 who want a subregular guarantee on their constraint set must restrict to
 one of the schema-specific constructors with a known bridge —
@@ -47,7 +47,7 @@ subregular hierarchy.
 -/
 
 -- ============================================================================
--- § 1. (NamedConstraint zero-set API moved to Phonology/Constraint/OT/Basic.lean
+-- § 1. (Constraint zero-set API moved to Phonology/Constraint/OT/Basic.lean
 --       in PR-7d to make it visible to non-phonology consumers.)
 -- ============================================================================
 
@@ -69,12 +69,12 @@ corresponding TSL_2 grammar. Restatement of
 `Language α` form so downstream regularity arguments can use the
 zero-set side directly. -/
 theorem mkForbidPairsOnTier_zeroSet_eq
-    (name : String) (R : α → α → Prop) [DecidableRel R]
+    (R : α → α → Prop) [DecidableRel R]
     (p : α → Prop) [DecidablePred p] :
-    (mkForbidPairsOnTier name R (TierProjection.byClass p) (id : List α → List α)).zeroSet =
+    (mkForbidPairsOnTier R (TierProjection.byClass p) (id : List α → List α)).zeroSet =
       (TSLGrammar.ofForbiddenPairs R p).lang := by
   ext w
-  exact mkForbidPairsOnTier_zero_iff_in_lang name R p id w
+  exact mkForbidPairsOnTier_zero_iff_in_lang R p id w
 
 -- ============================================================================
 -- § 3. Supraregular counterexample: `{ aⁿ bⁿ | n ≥ 0 }`
@@ -88,33 +88,33 @@ theorem mkForbidPairsOnTier_zeroSet_eq
 -- § 4. Headline existence theorem
 -- ============================================================================
 
-/-- The supraregular `NamedConstraint`: violates iff the candidate is not
+/-- The supraregular `Constraint`: violates iff the candidate is not
 balanced. Built via `mkMarkGrad` (the escape-hatch constructor that
 admits arbitrary `Nat`-valued violation counts) — *not* via any of the
 schema constructors with a TSL_k/SP_k/BTC bridge. -/
-def supraregularConstraint : NamedConstraint (List AB) :=
-  mkMarkGrad "BAL" (fun w => if IsBalanced w then 0 else 1)
+def supraregularConstraint : Constraint (List AB) :=
+  (fun w => if IsBalanced w then 0 else 1)
 
 @[simp] lemma supraregularConstraint_eval (w : List AB) :
-    supraregularConstraint.eval w = if IsBalanced w then 0 else 1 := rfl
+    supraregularConstraint w = if IsBalanced w then 0 else 1 := rfl
 
 /-- The zero-set of `supraregularConstraint` is exactly `balancedAB` —
 the classical non-regular `{ aⁿ bⁿ }`. -/
 theorem supraregularConstraint_zeroSet :
     supraregularConstraint.zeroSet = balancedAB := by
   ext w
-  show supraregularConstraint.eval w = 0 ↔ IsBalanced w
+  show supraregularConstraint w = 0 ↔ IsBalanced w
   rw [supraregularConstraint_eval]
   by_cases h : IsBalanced w <;> simp [h]
 
-/-- **Headline**: there exists a `NamedConstraint` whose zero-set is not
+/-- **Headline**: there exists a `Constraint` whose zero-set is not
 regular. The OT→subregular bridge cannot be stated as "every
-NamedConstraint has a subregular zero-set" — class-specific schema
+Constraint has a subregular zero-set" — class-specific schema
 restrictions are necessary. The witness is built via the
 `mkMarkGrad` escape hatch with a `{ aⁿ bⁿ }`-membership predicate as
 the violation count. -/
 theorem exists_namedConstraint_zeroSet_not_isRegular :
-    ∃ c : NamedConstraint (List AB), ¬ c.zeroSet.IsRegular := by
+    ∃ c : Constraint (List AB), ¬ c.zeroSet.IsRegular := by
   refine ⟨supraregularConstraint, ?_⟩
   rw [supraregularConstraint_zeroSet]
   exact balancedAB_not_isRegular

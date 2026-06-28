@@ -1327,10 +1327,10 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.WellFormedAR
+import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.Constraints.Weighted
 import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Phonology.HarmonicGrammar.Deformation
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
@@ -1342,7 +1342,6 @@ import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Basic
-import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.OptimalityTheory.Correspondence

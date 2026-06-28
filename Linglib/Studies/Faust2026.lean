@@ -1,5 +1,6 @@
 import Linglib.Morphology.ConsonantalRoot
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
@@ -59,7 +60,7 @@ This file consumes and exercises the shared infrastructure:
   `Template`, `Association`, `RootTemplateMatch`, with derived
   `isMisaligned`, `allCSlotsFilled`, `satisfies`.
 - `Faust2026.Templates.starMisalign` — the \*Misalignment alignment
-  constraint, built via the generic `mkAlign` constructor.
+  constraint, built via the generic `Constraint.binary` constructor.
 - `OptimalityTheory.adjacentIdentical` — drives the root-level
   OCP, used to verify [faust-2026]'s OCP-related reanalysis.
 
@@ -74,7 +75,6 @@ namespace Faust2026.Templates
 
 open Morphology
 open Constraints OptimalityTheory
-open OptimalityTheory (mkAlign)
 
 -- ============================================================================
 -- § 1: CV Slots
@@ -330,10 +330,10 @@ theorem intrusionLicensed_with_intruder (m : RootTemplateMatch α)
 
 /-- The \*Misalignment constraint of [faust-2026] (2): a markedness
     constraint that fires on `RootTemplateMatch` candidates whose
-    `isMisaligned` predicate holds. Built via the generic `mkAlign`
-    constructor from `OptimalityTheory`. -/
-def starMisalign {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  mkAlign "*Misalign" RootTemplateMatch.isMisaligned
+    `isMisaligned` predicate holds. Built via the generic `Constraint.binary`
+    constructor from `Constraints`. -/
+def starMisalign {α : Type} : Constraint (RootTemplateMatch α) :=
+  Constraint.binary RootTemplateMatch.isMisaligned
 
 /-- The FILL constraint ([prince-smolensky-1993]): a markedness
     constraint penalizing unfilled C-slots in the template. Used by
@@ -341,15 +341,13 @@ def starMisalign {α : Type} : NamedConstraint (RootTemplateMatch α) :=
     a nonfinal root segment to a final [+c] slot satisfies FILL but
     violates \*Misalign, and the grammar prefers the FILL-violating
     candidate. -/
-def fill {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  OptimalityTheory.mkMark "FILL"
-    (fun m => ¬ RootTemplateMatch.allCSlotsFilled m)
+def fill {α : Type} : Constraint (RootTemplateMatch α) :=
+  Constraint.binary (fun m => ¬ RootTemplateMatch.allCSlotsFilled m)
 
 /-- NoCross ([goldsmith-1976]): a markedness constraint penalizing
     candidates whose intruder associations cross root associations. -/
-def noCross {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  OptimalityTheory.mkMark "NoCross"
-    (fun m => RootTemplateMatch.violatesNCC m)
+def noCross {α : Type} : Constraint (RootTemplateMatch α) :=
+  Constraint.binary (fun m => RootTemplateMatch.violatesNCC m)
 
 end Faust2026.Templates
 

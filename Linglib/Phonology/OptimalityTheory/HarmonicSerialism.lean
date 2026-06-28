@@ -50,7 +50,7 @@ deferred (cf. [pruitt-2023] §2.4).
 
 ## Sibling, not refactor
 
-This module does **not** modify `NamedConstraint` or `Tableau`
+This module does **not** modify `Constraint` or `Tableau`
 (load-bearing for `Weighted.lean`/`MaxEnt.lean`/`NoisyHG.lean` and ~30
 study files). The `stepOptimum` function builds an inner `Tableau` and
 reuses `Tableau.optimal` directly. Future directional dispatch
@@ -228,7 +228,7 @@ end Iteration
     length parameter is exposed. -/
 structure HSDerivation (C : Type*) [DecidableEq C] where
   gen : C → Finset C
-  ranking : List (NamedConstraint C)
+  ranking : List (Constraints.Constraint C)
 
 namespace HSDerivation
 
@@ -356,8 +356,8 @@ def toyGen : Toy → Finset Toy := fun c => {c}
 /-- Toy ranking: a single faithfulness constraint that is satisfied by
     every candidate (returns 0 always). Evaluation is then trivially
     parallel. -/
-def toyRanking : List (NamedConstraint Toy) :=
-  [{ name := "TOY-FAITH", family := .faithfulness, eval := fun _ => 0 }]
+def toyRanking : List (Constraints.Constraint Toy) :=
+  [fun _ => 0]
 
 /-- The toy HSDerivation. -/
 def toyDerivation : HSDerivation Toy :=
@@ -378,12 +378,13 @@ end HSDerivation
 -- ============================================================================
 
 /-! Directional HS ([lamont-2022b]): the constraint hierarchy is a list of
-    `Constraint C`, each carrying its own `TermOrder` (counting constraints
-    `.degree`, `*FLOAT^→` `.lex`, `*FLOAT^←` `.revLex`), evaluated via
+    `OptimalityTheory.Constraint C`, each carrying its own `TermOrder` (counting
+    constraints `.degree`, `*FLOAT^→` `.lex`, `*FLOAT^←` `.revLex`), evaluated via
     `DirectionalTableau`. Sibling to the parallel `HSDerivation` above; the two
-    are not unified because their constraint types differ (`NamedConstraint C`
-    carries a scalar `eval` for weighted aggregation; `Constraint C` carries a
-    vector + term order, with which weighting is incoherent per Lamont 2022b).
+    are not unified because their constraint types differ (the parallel
+    `Constraints.Constraint C = C → ℕ` is a scalar violation count amenable to
+    weighted aggregation; the directional `OptimalityTheory.Constraint C` carries
+    a vector + term order, with which weighting is incoherent per Lamont 2022b).
 
     The motivating consumer is [mcpherson-lamont-2026] (`/kāk^H + rī^H + dō^H/`):
     parallel HS produces a divergent tie among three deletion candidates;
@@ -392,7 +393,7 @@ end HSDerivation
 
 structure DirectionalHSDerivation (C : Type*) [DecidableEq C] where
   gen : C → Finset C
-  ranking : List (Constraint C)
+  ranking : List (OptimalityTheory.Constraint C)
 
 namespace DirectionalHSDerivation
 

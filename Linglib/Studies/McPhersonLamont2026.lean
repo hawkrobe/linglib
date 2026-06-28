@@ -60,7 +60,7 @@ step witnesses are `decide`-checked (no `sorry`).
 
 namespace McPhersonLamont2026
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Core.Optimization.Evaluation
 
 -- ============================================================================
@@ -94,8 +94,8 @@ inductive Cand
 
 /-- `MAX(H)` (paper, eq. 7c): assign one violation for every H tone
     deleted by GEN. -/
-def maxH : NamedConstraint Cand :=
-  mkFaithGrad "MAX(H)" fun
+def maxH : Constraints.Constraint Cand :=
+  fun
     | .nanWinner => 0   -- H docks rightward (preserved)
     | .nanLoser  => 1   -- H deleted
     | .kakWinner => 2   -- both Hs deleted
@@ -103,8 +103,8 @@ def maxH : NamedConstraint Cand :=
 
 /-- `DEP(link)/H` (paper, eq. 7a): assign one violation for every
     autosegmental link inserted by GEN associated with an H tone. -/
-def depLinkH : NamedConstraint Cand :=
-  mkFaithGrad "DEP(link)/H" fun
+def depLinkH : Constraints.Constraint Cand :=
+  fun
     | .nanWinner => 1   -- new H link inserted (docking)
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -112,8 +112,8 @@ def depLinkH : NamedConstraint Cand :=
 
 /-- `MAX(M)` (analog of paper eq. 7c for M tones): one violation per M
     tone deleted. -/
-def maxM : NamedConstraint Cand :=
-  mkFaithGrad "MAX(M)" fun
+def maxM : Constraints.Constraint Cand :=
+  fun
     | .nanWinner => 1   -- M overwritten by docking H
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -121,8 +121,8 @@ def maxM : NamedConstraint Cand :=
 
 /-- `MAX(link)/M` (analog of paper eq. 7b for M tones): one violation
     per M-tone autosegmental link deleted. -/
-def maxLinkM : NamedConstraint Cand :=
-  mkFaithGrad "MAX(link)/M" fun
+def maxLinkM : Constraints.Constraint Cand :=
+  fun
     | .nanWinner => 1
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -131,7 +131,7 @@ def maxLinkM : NamedConstraint Cand :=
 /-- The four-constraint ranking from [mcpherson-lamont-2026] eq. 59,
     in column order. `*FLOAT` is factored out per the paper because the
     relevant comparisons restrict to `*FLOAT`-satisfying candidates. -/
-def ranking : List (NamedConstraint Cand) := [maxH, depLinkH, maxM, maxLinkM]
+def ranking : List (Constraints.Constraint Cand) := [maxH, depLinkH, maxM, maxLinkM]
 
 abbrev numConstraints : Nat := 4
 
@@ -151,7 +151,7 @@ abbrev maxLinkMIdx   : Fin numConstraints := 3
     `ranking`, via `ercOfProfiles` (the canonical `ViolationProfile → ERC`
     bridge from [prince-2002]). -/
 private def ercFor (winner loser : Cand) : ERC numConstraints :=
-  ercOfProfiles (mkProfile ranking winner) (mkProfile ranking loser)
+  ercOfProfiles (Constraints.mkProfile ranking winner) (Constraints.mkProfile ranking loser)
 
 /-- ERC for the `/nān + rī^H + nā/` winner-loser pair. **Derived** from
     the candidates' violation profiles, not stipulated. -/
@@ -282,7 +282,7 @@ theorem weighted_HG_inadequate :
 
 namespace Fig3
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -579,7 +579,7 @@ end Fig3
 
 namespace Eq24
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -660,7 +660,7 @@ end Eq24
 
 namespace Eq21
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -727,7 +727,7 @@ end Eq21
 
 namespace Eq27
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -796,7 +796,7 @@ end Eq27
 
 namespace Eq30
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -878,7 +878,7 @@ end Eq30
 
 namespace Eq22
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone

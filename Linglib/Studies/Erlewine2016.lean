@@ -139,21 +139,17 @@ def AFCandidate.violatesXRef : AFCandidate → Bool
 
 /-- Spec-to-Spec Anti-Locality (highest-ranked): movement from Spec,XP
     to Spec,YP is banned when YP immediately dominates XP. -/
-def ssalConstraint : NamedConstraint AFCandidate :=
-  { name := "SSAL"
-    family := .markedness
-    eval := fun c => if c.violatesAntiLocality then 1 else 0 }
+def ssalConstraint : Constraint AFCandidate :=
+  fun c => if c.violatesAntiLocality then 1 else 0
 
 /-- XRef (cross-referencing, lower-ranked): every argument DP must be
     cross-referenced by a pronominal morpheme on the verb (Set A for
     ergative, Set B for absolutive). -/
-def xrefConstraint : NamedConstraint AFCandidate :=
-  { name := "XRef"
-    family := .faithfulness
-    eval := fun c => if c.violatesXRef then 1 else 0 }
+def xrefConstraint : Constraint AFCandidate :=
+  fun c => if c.violatesXRef then 1 else 0
 
 /-- The ranked constraint list for Kaqchikel AF: SSAL ≫ XRef. -/
-def afRanking : List (NamedConstraint AFCandidate) :=
+def afRanking : List (Constraint AFCandidate) :=
   [ssalConstraint, xrefConstraint]
 
 /-- The two candidates in the OT competition. -/
@@ -179,10 +175,10 @@ theorem af_survives :
 /-- The two candidates have different violation profiles: they disagree
     on at least one constraint. -/
 theorem candidates_differ :
-    ssalConstraint.eval .transitiveExtraction ≠
-      ssalConstraint.eval .agentFocusExtraction ∨
-    xrefConstraint.eval .transitiveExtraction ≠
-      xrefConstraint.eval .agentFocusExtraction := by decide
+    ssalConstraint .transitiveExtraction ≠
+      ssalConstraint .agentFocusExtraction ∨
+    xrefConstraint .transitiveExtraction ≠
+      xrefConstraint .agentFocusExtraction := by decide
 
 -- ============================================================================
 -- § 4: OT Evaluation Selects AF
@@ -213,22 +209,22 @@ theorem af_morphology :
     other violates — they are incomparable. OT's lexicographic ranking
     is what breaks the tie in favor of AF. -/
 theorem satisfaction_ordering_incomparable :
-    ¬(ssalConstraint.eval .transitiveExtraction ≤
-        ssalConstraint.eval .agentFocusExtraction ∧
-      xrefConstraint.eval .transitiveExtraction ≤
-        xrefConstraint.eval .agentFocusExtraction) ∧
-    ¬(ssalConstraint.eval .agentFocusExtraction ≤
-        ssalConstraint.eval .transitiveExtraction ∧
-      xrefConstraint.eval .agentFocusExtraction ≤
-        xrefConstraint.eval .transitiveExtraction) := by
+    ¬(ssalConstraint .transitiveExtraction ≤
+        ssalConstraint .agentFocusExtraction ∧
+      xrefConstraint .transitiveExtraction ≤
+        xrefConstraint .agentFocusExtraction) ∧
+    ¬(ssalConstraint .agentFocusExtraction ≤
+        ssalConstraint .transitiveExtraction ∧
+      xrefConstraint .agentFocusExtraction ≤
+        xrefConstraint .transitiveExtraction) := by
   decide
 
 /-- The transitive candidate is lexicographically worse because it
     violates the HIGHER-ranked constraint (SSAL, position 0).
     AF violates only the lower-ranked constraint (XRef, position 1). -/
 theorem transitive_worse_on_ssal :
-    ssalConstraint.eval .transitiveExtraction >
-      ssalConstraint.eval .agentFocusExtraction := by decide
+    ssalConstraint .transitiveExtraction >
+      ssalConstraint .agentFocusExtraction := by decide
 
 -- ============================================================================
 -- § 6: Anti-Locality Predicate Grounding
@@ -239,8 +235,8 @@ theorem transitive_worse_on_ssal :
     assigns 1 violation to the transitive candidate and 0 to AF,
     grounding the OT violation count in the structural predicate. -/
 theorem antilocality_grounded :
-    ssalConstraint.eval .transitiveExtraction = 1 ∧
-    ssalConstraint.eval .agentFocusExtraction = 0 :=
+    ssalConstraint .transitiveExtraction = 1 ∧
+    ssalConstraint .agentFocusExtraction = 0 :=
   ⟨rfl, rfl⟩
 
 /-- AF wins because it has 0 violations of the highest-ranked constraint.
@@ -249,7 +245,7 @@ theorem antilocality_grounded :
     dominates TP — exactly what the predicate bans. AF avoids this
     by not placing the agent in Spec,TP at all. -/
 theorem antilocality_drives_af :
-    ssalConstraint.eval .agentFocusExtraction = 0 ∧
+    ssalConstraint .agentFocusExtraction = 0 ∧
     (mkTableau afCandidates afRanking).optimal =
       {AFCandidate.agentFocusExtraction} :=
   ⟨rfl, af_is_optimal⟩

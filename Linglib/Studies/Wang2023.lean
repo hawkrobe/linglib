@@ -157,28 +157,24 @@ ToD IS the presuppositional strength ordering.
 /-- ToD constraint: penalizes presuppositional strength.
     Defined as `presupStrength` — ToD literally IS the strength
     ordering from `PhiFeatures`, applied as an OT penalty. -/
-def todConstraint : NamedConstraint ContainmentPair :=
-  { name := "ToD"
-  , family := .markedness
-  , eval := presupStrength }
+def todConstraint : Constraint ContainmentPair :=
+  presupStrength
 
 /-- MP! constraint: penalizes failure to maximize presupposition.
     Violation count = maxSpecLevel − presupStrength.
     `ContainmentPair.spec_maximal` proves maxSpecLevel = 2. -/
-def mpConstraint : NamedConstraint ContainmentPair :=
-  { name := "MP!"
-  , family := .faithfulness
-  , eval := fun c => ContainmentPair.maximal.specLevel - presupStrength c }
+def mpConstraint : Constraint ContainmentPair :=
+  fun c => ContainmentPair.maximal.specLevel - presupStrength c
 
 /-- ToD's evaluation IS `presupStrength` — not a reimplementation. -/
 theorem tod_eval_eq_presupStrength (c : ContainmentPair) :
-    todConstraint.eval c = presupStrength c := rfl
+    todConstraint c = presupStrength c := rfl
 
 /-- ToD prefers exactly the presuppositionally weaker cell.
     This is the bridge between OT evaluation and the `presupWeakerThan`
     ordering from `PhiFeatures`: fewer ToD violations ↔ weaker presupposition. -/
 theorem tod_prefers_weaker (c₁ c₂ : ContainmentPair) :
-    todConstraint.eval c₁ < todConstraint.eval c₂ ↔
+    todConstraint c₁ < todConstraint c₂ ↔
     presupWeakerThan c₁ c₂ = true := by
   simp [todConstraint, presupStrength, presupWeakerThan]
 
@@ -186,8 +182,8 @@ theorem tod_prefers_weaker (c₁ c₂ : ContainmentPair) :
     ToD prefers c₁ iff MP! prefers c₂. -/
 theorem tod_reverses_mp (c₁ c₂ : ContainmentPair)
     (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
-    todConstraint.eval c₁ < todConstraint.eval c₂ ↔
-    mpConstraint.eval c₁ > mpConstraint.eval c₂ := by
+    todConstraint c₁ < todConstraint c₂ ↔
+    mpConstraint c₁ > mpConstraint c₂ := by
   have h₁ := wellFormed_specLevel_le_two c₁ hw₁
   have h₂ := wellFormed_specLevel_le_two c₂ hw₂
   show presupStrength c₁ < presupStrength c₂ ↔
@@ -196,30 +192,30 @@ theorem tod_reverses_mp (c₁ c₂ : ContainmentPair)
   simp only [presupStrength, ContainmentPair.spec_maximal]; omega
 
 /-- ToD prefers the minimal (unmarked) cell: it has 0 violations. -/
-theorem tod_minimal_zero : todConstraint.eval .minimal = 0 := rfl
+theorem tod_minimal_zero : todConstraint .minimal = 0 := rfl
 
 /-- MP! prefers the maximal (most marked) cell: it has 0 violations. -/
-theorem mp_maximal_zero : mpConstraint.eval .maximal = 0 := rfl
+theorem mp_maximal_zero : mpConstraint .maximal = 0 := rfl
 
 /-- `mpConstraint` is an instance of the general `phiMP` from
-    `MaximizePresupposition`: same eval function, same name, same family.
+    `MaximizePresupposition`: the same violation-counting function.
     This connects Wang2023's domain-specific MP! to the general theory. -/
 theorem mpConstraint_eq_phiMP :
     mpConstraint = Semantics.Presupposition.MaximizePresupposition.phiMP := rfl
 
-/-- `todConstraint.eval` equals `markednessPenalty presupStrength`.eval.
+/-- `todConstraint` equals `markednessPenalty presupStrength`.
     ToD is an instance of the general markedness penalty from
     `MaximizePresupposition`. -/
 theorem todConstraint_eval_eq_markednessPenalty (c : ContainmentPair) :
-    todConstraint.eval c =
-    (Semantics.Presupposition.MaximizePresupposition.markednessPenalty presupStrength).eval c := rfl
+    todConstraint c =
+    (Semantics.Presupposition.MaximizePresupposition.markednessPenalty presupStrength) c := rfl
 
 /-- `tod_reverses_mp` is a corollary of the general
     `mp_reverses_markedness` theorem from `MaximizePresupposition`. -/
 theorem tod_reverses_mp_from_general (c₁ c₂ : ContainmentPair)
     (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
-    todConstraint.eval c₁ < todConstraint.eval c₂ ↔
-    mpConstraint.eval c₁ > mpConstraint.eval c₂ :=
+    todConstraint c₁ < todConstraint c₂ ↔
+    mpConstraint c₁ > mpConstraint c₂ :=
   Semantics.Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
 
 -- ============================================================================
@@ -311,17 +307,15 @@ private theorem ternaryCandidates_ne : ternaryCandidates ≠ [] := by
 /-- Weak ToD: penalizes only the most marked form (specLevel = max).
     Tolerates intermediate marking, unlike `todConstraint` which
     penalizes all marked forms proportionally. -/
-def wtodConstraint : NamedConstraint ContainmentPair :=
-  { name := "WToD"
-  , family := .markedness
-  , eval := fun c =>
-      if presupStrength c == ContainmentPair.maximal.specLevel then 1 else 0 }
+def wtodConstraint : Constraint ContainmentPair :=
+  fun c =>
+    if presupStrength c == ContainmentPair.maximal.specLevel then 1 else 0
 
 /-- SToD has the same eval function as todConstraint: both penalize
     by `presupStrength`. The ternary case uses `todConstraint` directly
     rather than defining a separate `stodConstraint`. -/
 theorem stod_eval_eq_tod (c : ContainmentPair) :
-    todConstraint.eval c = presupStrength c := rfl
+    todConstraint c = presupStrength c := rfl
 
 /-- WToD >> MP! >> SToD selects the intermediate (dual) cell.
     Moderate respect in articulated number systems. -/
@@ -469,7 +463,7 @@ open Constraints OptimalityTheory
 open Constraints OptimalityTheory
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
-    `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.
+    `optimal_zero_first` gives `todConstraint c = 0`, i.e.
     `presupStrength c = 0`. A case split on `ContainmentPair`'s fields
     shows `.minimal` is the only well-formed cell with specLevel 0. -/
 theorem tod_mp_only_minimal (candidates : List ContainmentPair)
@@ -502,27 +496,27 @@ theorem tod_mp_minimal_is_optimal (candidates : List ContainmentPair)
   apply not_lt.mp
   intro ⟨i, hlt_eq, hlt⟩
   -- i is the first position where c' < minimal; all j < i have c' j = minimal j
-  have h0 : todConstraint.eval ContainmentPair.minimal = 0 := rfl
-  have h2 : mpConstraint.eval ContainmentPair.minimal = 2 := rfl
+  have h0 : todConstraint ContainmentPair.minimal = 0 := rfl
+  have h2 : mpConstraint ContainmentPair.minimal = 2 := rfl
   -- `toLex f i` reduces to `f i` definitionally
-  change ([todConstraint, mpConstraint].get i).eval c' <
-         ([todConstraint, mpConstraint].get i).eval ContainmentPair.minimal at hlt
+  change ([todConstraint, mpConstraint].get i) c' <
+         ([todConstraint, mpConstraint].get i) ContainmentPair.minimal at hlt
   match i with
   | ⟨0, _⟩ =>
-    -- i = 0: c'.eval < minimal.eval on ToD, but minimal has 0 violations
+    -- i = 0: c' < minimal on ToD, but minimal has 0 violations
     simp only [List.get, todConstraint] at hlt
     exact absurd hlt (Nat.not_lt_zero _)
   | ⟨1, _⟩ =>
     -- i = 1: c' agrees on constraint 0, has fewer on constraint 1
-    have hc'_tod : todConstraint.eval c' = 0 := by
+    have hc'_tod : todConstraint c' = 0 := by
       have := hlt_eq ⟨0, Nat.zero_lt_succ _⟩ (show (⟨0, _⟩ : Fin 2) < ⟨1, _⟩ from Nat.zero_lt_one)
-      change todConstraint.eval c' = todConstraint.eval ContainmentPair.minimal at this
+      change todConstraint c' = todConstraint ContainmentPair.minimal at this
       simp [h0] at this; exact this
-    have hc'_mp : mpConstraint.eval c' = 2 := by
+    have hc'_mp : mpConstraint c' = 2 := by
       simp only [mpConstraint, todConstraint, presupStrength] at hc'_tod ⊢
       simp only [ContainmentPair.spec_maximal]; omega
     simp only [List.get] at hlt
-    change mpConstraint.eval c' < mpConstraint.eval ContainmentPair.minimal at hlt
+    change mpConstraint c' < mpConstraint ContainmentPair.minimal at hlt
     rw [hc'_mp, h2] at hlt
     exact lt_irrefl _ hlt
 

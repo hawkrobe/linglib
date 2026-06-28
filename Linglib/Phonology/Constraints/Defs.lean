@@ -3,70 +3,92 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.Simps.Basic
+import Mathlib.Data.Real.Basic
 
 /-!
-# Named Constraints
+# Constraints
 
-The framework-neutral constraint vocabulary shared by Optimality Theory and
-Harmonic Grammar: a `NamedConstraint` is a violation-counting function with a
-faithfulness/markedness label.
+A constraint is a **violation-counting function** `C → ℕ`
+([prince-smolensky-1993]). There is no stored "name" and no stored
+faithfulness/markedness tag: a constraint *is* its evaluation function.
+
+The faithfulness/markedness distinction is a **structural property**, derived —
+not stipulated — over a correspondence carrier (`OptimalityTheory.Correspondence`):
+*markedness* factors through the output; *faithfulness* vanishes on the identity
+candidate. A bare `C → ℕ` over an opaque candidate type has no family, by design.
 
 ## Main definitions
 
-* `Family` — the faithfulness/markedness distinction.
-* `NamedConstraint` — a named violation-counting constraint over candidates.
-* `mkMark` / `mkFaith` / `mkMarkGrad` / `mkFaithGrad` — constraint constructors.
-* `NamedConstraint.comap` — pull a constraint back along a candidate map.
+* `Constraint C` — a violation-counting function `C → ℕ`.
+* `Constraint.binary` — the indicator constraint of a decidable predicate.
+* `Constraint.comap` — pull a constraint back along a candidate map.
+* `Constraint.Weighted C` — a constraint paired with a real weight (Harmonic Grammar).
+* `harmonyScore` — the harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]).
 -/
 
 namespace Constraints
 
-/-- Constraint families in OT. -/
-inductive Family where
-  /-- Faithfulness: penalizes deviation from the input. -/
-  | faithfulness
-  /-- Markedness: penalizes marked structures in the output. -/
-  | markedness
-  deriving DecidableEq, Repr
-
-/-- A named OT constraint: a violation-counting function tagged with a
-    faithfulness/markedness family. -/
-structure NamedConstraint (C : Type*) where
-  /-- Documentary label; no evaluation reads it. Defaults to `""`. -/
-  name : String := ""
-  /-- Faithfulness/markedness classification. -/
-  family : Family
-  /-- Number of violations a candidate incurs. -/
-  eval : C → Nat
-
-/-! ### Constraint constructors -/
+/-- An OT / Harmonic-Grammar **constraint**: a violation-counting function on
+candidates ([prince-smolensky-1993]). The faithfulness/markedness family is a
+*structural* property (see `OptimalityTheory.Correspondence`), not a stored tag;
+a constraint over an opaque candidate type has no family. -/
+abbrev Constraint (C : Type*) := C → ℕ
 
 variable {C D : Type*}
 
-/-- A binary markedness constraint: `1` if `P c`, else `0`. `P` is a decidable
-    predicate, so call sites use propositional `=` rather than `Bool` `==`. -/
-def mkMark (name : String) (P : C → Prop) [DecidablePred P] : NamedConstraint C :=
-  { name, family := .markedness, eval := fun c => if P c then 1 else 0 }
+/-- The **binary** constraint of a decidable predicate: `1` when `P c`, else `0`.
+The shared shape of every binary markedness/faithfulness constraint — the
+faith/mark reading is recovered structurally, not from the constructor. -/
+def Constraint.binary (P : C → Prop) [DecidablePred P] : Constraint C :=
+  fun c => if P c then 1 else 0
 
-/-- A binary faithfulness constraint: `1` if `P c`, else `0`. The faithfulness
-    twin of `mkMark`. -/
-def mkFaith (name : String) (P : C → Prop) [DecidablePred P] : NamedConstraint C :=
-  { name, family := .faithfulness, eval := fun c => if P c then 1 else 0 }
+@[simp] theorem Constraint.binary_apply (P : C → Prop) [DecidablePred P] (c : C) :
+    Constraint.binary P c = if P c then 1 else 0 := rfl
 
-/-- A gradient markedness constraint with a `Nat`-valued violation count. -/
-def mkMarkGrad (name : String) (violations : C → Nat) : NamedConstraint C :=
-  { name, family := .markedness, eval := violations }
+/-- A binary constraint never assigns more than one violation. -/
+theorem Constraint.binary_le_one (P : C → Prop) [DecidablePred P] (c : C) :
+    Constraint.binary P c ≤ 1 := by
+  simp only [Constraint.binary]; split <;> omega
 
-/-- A gradient faithfulness constraint with a `Nat`-valued violation count. -/
-def mkFaithGrad (name : String) (violations : C → Nat) : NamedConstraint C :=
-  { name, family := .faithfulness, eval := violations }
+/-- Pull a constraint back along `f : C → D`: evaluate the `D`-constraint on the
+image. Lets a specific carrier reuse a constraint defined on a more general one. -/
+def Constraint.comap (f : C → D) (con : Constraint D) : Constraint C := con ∘ f
 
-/-- Pull a `NamedConstraint D` back along `f : C → D`: compose `eval` with `f`,
-    inherit `name` and `family`. Lets a specific carrier reuse a constraint
-    defined on a more general one. -/
-@[simps]
-def NamedConstraint.comap (f : C → D) (c : NamedConstraint D) : NamedConstraint C :=
-  { name := c.name, family := c.family, eval := c.eval ∘ f }
+@[simp] theorem Constraint.comap_apply (f : C → D) (con : Constraint D) (c : C) :
+    Constraint.comap f con c = con (f c) := rfl
+
+/-! ### Weighted constraints and harmony
+
+Harmonic Grammar weights each constraint by a real number; the **harmony** of a
+candidate is the negated weighted sum of its violations,
+`H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]). -/
+
+/-- A **weighted** constraint: a `Constraint` paired with a real weight (higher is
+more important). The Harmonic-Grammar counterpart of a bare `Constraint`.
+
+PROVISIONAL: a weight is the *grammar's* parameter — a weighting of `CON` — not
+part of what a constraint is (the same reason `name`/`family` left the constraint).
+This pair will give way to a CON-level weight vector `Fin n → ℝ`, with harmony as a
+linear functional `-⟪w, violations⟫` — the HG twin of `CON + Ranking` — once the
+`CON` object lands. TODO(CON): relocate the weight off the constraint. -/
+structure Constraint.Weighted (C : Type*) where
+  /-- The underlying violation-counting constraint. -/
+  con : Constraint C
+  /-- Constraint weight; higher is more important. -/
+  weight : ℝ
+
+/-- Harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)`: the negated weighted sum of violations
+([smolensky-legendre-2006]); higher is more grammatical. -/
+def harmonyScore (cs : List (Constraint.Weighted C)) (c : C) : ℝ :=
+  -(cs.map fun wc => wc.weight * (wc.con c : ℝ)).sum
+
+/-- `harmonyScore` as a negated `List.sum` (unfolding lemma for rewriting). -/
+theorem harmonyScore_eq_neg_sum (cs : List (Constraint.Weighted C)) (c : C) :
+    harmonyScore cs c = -(cs.map fun wc => wc.weight * (wc.con c : ℝ)).sum := rfl
+
+/-- `a` outranks `b` in harmony: `H(a) > H(b)`, the pullback of `<` along
+`harmonyScore`. No `Decidable` instance — `ℝ` comparison does not reduce. -/
+def harmonyDominates (cs : List (Constraint.Weighted C)) (a b : C) : Prop :=
+  harmonyScore cs b < harmonyScore cs a
 
 end Constraints

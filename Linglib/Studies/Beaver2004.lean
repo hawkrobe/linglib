@@ -142,16 +142,16 @@ variable {E R : Type}
     Substrate gap. Implementation tests the candidate's precomputed
     `agreementOK` flag rather than computing agreement from features
     on `Realization`. -/
-def agree : NamedConstraint (Candidate E R) :=
-  mkMark "AGREE" (fun c => ¬ c.agreementOK = true)
+def agree : Constraint (Candidate E R) :=
+  Constraint.binary (fun c => ¬ c.agreementOK = true)
 
 /-- **DISJOINT** (Beaver §3.2 p. 14, "mirroring Principle B from
     binding theory"): "Co-arguments of a predicate are disjoint."
 
     Substrate gap. Tests the candidate's precomputed `argDisjointOK`
     flag. -/
-def disjoint : NamedConstraint (Candidate E R) :=
-  mkMark "DISJOINT" (fun c => ¬ c.argDisjointOK = true)
+def disjoint : Constraint (Candidate E R) :=
+  Constraint.binary (fun c => ¬ c.argDisjointOK = true)
 
 /-- **PRO-TOP** ([beaver-2004] §3.2, "essentially the effect of
     Centering's Rule 1"): "The topic is pronominalized."
@@ -175,15 +175,15 @@ def disjoint : NamedConstraint (Candidate E R) :=
     unconditionally when CB exists and isn't pronominalized) is
     the correct restatement. -/
 def proTop [DecidableEq E] [CfRankerOf E R]
-    (prev : Utterance E R) : NamedConstraint (Candidate E R) :=
-  mkMark "PRO-TOP" (fun c => ¬ Rule1Gordon prev c.utt)
+    (prev : Utterance E R) : Constraint (Candidate E R) :=
+  Constraint.binary (fun c => ¬ Rule1Gordon prev c.utt)
 
 /-- **FAM-DEF** (Beaver §3.2 p. 15, "Heim 1982"): "Each definite NP is
     familiar."
 
     Substrate gap. Tests `famDefOK` flag. -/
-def famDef : NamedConstraint (Candidate E R) :=
-  mkMark "FAM-DEF" (fun c => ¬ c.famDefOK = true)
+def famDef : Constraint (Candidate E R) :=
+  Constraint.binary (fun c => ¬ c.famDefOK = true)
 
 /-- **COHERE** ([beaver-2004] §3.2, p. 15 statement; commentary
     p. 17): "The topic of the current sentence is the topic of the
@@ -199,8 +199,8 @@ def famDef : NamedConstraint (Candidate E R) :=
     Only when both are defined and equal is COHERE satisfied. -/
 def cohere [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E) :
-    NamedConstraint (Candidate E R) :=
-  mkMark "COHERE" (fun c =>
+    Constraint (Candidate E R) :=
+  Constraint.binary (fun c =>
     -- Violation iff (current topic is undefined) OR (defined and ≠ priorTopic).
     -- Phrased via Option equality: only "both defined and equal" satisfies.
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = priorTopic))
@@ -219,8 +219,8 @@ def cohere [DecidableEq E] [CfRankerOf E R]
     sentence." Per Beaver p. 16 (general policy on undefined topic),
     undefined topic counts as a violation — same shape as COHERE. -/
 def align [DecidableEq E] [CfRankerOf E R]
-    (prev : Utterance E R) : NamedConstraint (Candidate E R) :=
-  mkMark "ALIGN" (fun c =>
+    (prev : Utterance E R) : Constraint (Candidate E R) :=
+  Constraint.binary (fun c =>
     -- Violation iff (current topic undefined) OR (defined but ≠ cp).
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp))
 
@@ -228,7 +228,7 @@ def align [DecidableEq E] [CfRankerOf E R]
     `AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE > ALIGN`. -/
 def cotRanking [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E) :
-    List (NamedConstraint (Candidate E R)) :=
+    List (Constraint (Candidate E R)) :=
   [agree, disjoint, proTop prev, famDef, cohere prev priorTopic, align prev]
 
 -- ════════════════════════════════════════════════════
@@ -247,7 +247,7 @@ def cotRanking [DecidableEq E] [CfRankerOf E R]
 
     Mathlib analogue: a function `f` "factors through `g`" when
     `g x = g y → f x = f y`. Here `g = cb prev` (or `g = cb prev × cp`)
-    and `f = (cohere prev priorTopic).eval` (or `(align prev).eval`).
+    and `f = cohere prev priorTopic` (or `align prev`).
     The theorems are the formal statement of `Beaver.cohere ∘ Candidate
     = ψ ∘ cb prev` for some `ψ`, surfacing the cb-only dependence
     Beaver's substrate makes invisible. -/
@@ -255,7 +255,7 @@ def cotRanking [DecidableEq E] [CfRankerOf E R]
 /-- **COHERE factors through `cb`**. For fixed `prev` and `priorTopic`,
     Beaver's COHERE constraint cannot distinguish two candidates whose
     `cb prev c.utt` values agree. Pure `unfold + rw` proof: COHERE's
-    predicate references `cb prev c.utt` only; mkMark turns the
+    predicate references `cb prev c.utt` only; `Constraint.binary` turns the
     predicate into an if-then-else; equal cb's give equal evaluations.
 
     The cross-framework consequence (worked out in
@@ -268,9 +268,8 @@ def cotRanking [DecidableEq E] [CfRankerOf E R]
 theorem cohere_factors_through_cb [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E)
     (c1 c2 : Candidate E R) (h : cb prev c1.utt = cb prev c2.utt) :
-    (cohere prev priorTopic).eval c1 = (cohere prev priorTopic).eval c2 := by
-  unfold cohere mkMark
-  simp only [h]
+    (cohere prev priorTopic) c1 = (cohere prev priorTopic) c2 := by
+  simp only [cohere, Constraint.binary_apply, h]
 
 /-- **ALIGN factors through `cb` AND `cp`**. ALIGN's predicate
     references both `cb prev c.utt` and `c.utt.cp`; equal cb's AND
@@ -289,9 +288,8 @@ theorem align_factors_through_cb_and_cp [DecidableEq E] [CfRankerOf E R]
     (c1 c2 : Candidate E R)
     (h_cb : cb prev c1.utt = cb prev c2.utt)
     (h_cp : c1.utt.cp = c2.utt.cp) :
-    (align prev).eval c1 = (align prev).eval c2 := by
-  unfold align mkMark
-  simp only [h_cb, h_cp]
+    (align prev) c1 = (align prev) c2 := by
+  simp only [align, Constraint.binary_apply, h_cb, h_cp]
 
 -- ════════════════════════════════════════════════════
 -- § 3. Application: Beaver example (12) — RETAIN
@@ -354,24 +352,24 @@ theorem d12_priorTopic_jane : D12.priorTopic = some "Jane" := by decide
     COHERE not violated because the topic (cb b c_l_eq_i = Jane)
     matches the prior topic (cb a b = Jane). -/
 theorem d12_l_eq_i_violations :
-    (agree.eval D12.cand_l_eq_i = 0) ∧
-    (disjoint.eval D12.cand_l_eq_i = 0) ∧
-    ((proTop D12.b).eval D12.cand_l_eq_i = 0) ∧
-    (famDef.eval D12.cand_l_eq_i = 0) ∧
-    ((cohere D12.b D12.priorTopic).eval D12.cand_l_eq_i = 0) ∧
-    ((align D12.b).eval D12.cand_l_eq_i = 1) := by
+    (agree D12.cand_l_eq_i = 0) ∧
+    (disjoint D12.cand_l_eq_i = 0) ∧
+    ((proTop D12.b) D12.cand_l_eq_i = 0) ∧
+    (famDef D12.cand_l_eq_i = 0) ∧
+    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_i = 0) ∧
+    ((align D12.b) D12.cand_l_eq_i = 1) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Beaver tableau (13) line 2 (loser, l=j): COHERE and ALIGN both
     violated (topic shifts from Jane to Freda; topic not in subject
     position). -/
 theorem d12_l_eq_j_violations :
-    (agree.eval D12.cand_l_eq_j = 0) ∧
-    (disjoint.eval D12.cand_l_eq_j = 0) ∧
-    ((proTop D12.b).eval D12.cand_l_eq_j = 0) ∧
-    (famDef.eval D12.cand_l_eq_j = 0) ∧
-    ((cohere D12.b D12.priorTopic).eval D12.cand_l_eq_j = 1) ∧
-    ((align D12.b).eval D12.cand_l_eq_j = 1) := by
+    (agree D12.cand_l_eq_j = 0) ∧
+    (disjoint D12.cand_l_eq_j = 0) ∧
+    ((proTop D12.b) D12.cand_l_eq_j = 0) ∧
+    (famDef D12.cand_l_eq_j = 0) ∧
+    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_j = 1) ∧
+    ((align D12.b) D12.cand_l_eq_j = 1) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- **Beaver Theorem (20) witness on example (12)**: the COT-optimal
@@ -381,8 +379,8 @@ theorem d12_l_eq_j_violations :
     two that distinguish the candidates). -/
 theorem beaver_witness_d12_l_eq_i_wins :
     -- l=i wins on the highest-ranked discriminating constraint
-    ((cohere D12.b D12.priorTopic).eval D12.cand_l_eq_i) <
-    ((cohere D12.b D12.priorTopic).eval D12.cand_l_eq_j) := by decide
+    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_i) <
+    ((cohere D12.b D12.priorTopic) D12.cand_l_eq_j) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Application: Beaver (2) — Rule 1 overprediction
@@ -464,26 +462,26 @@ theorem d2_priorTopic_mary : D2.priorTopic = some "Mary" := by decide
     Beaver's CANONICAL ranking with PRO-TOP > FAM-DEF, this filters
     out the bound reading. -/
 theorem d2_bound_violates_proTop :
-    (proTop D2.b).eval D2.cand_bound = 1 := by decide
+    (proTop D2.b) D2.cand_bound = 1 := by decide
 
 /-- **Two-Marys candidate violates FAM-DEF** (the second "Mary" is
     a definite NP without familiar antecedent). -/
 theorem d2_two_marys_violates_famDef :
-    famDef.eval D2.cand_two_marys = 1 := by decide
+    famDef D2.cand_two_marys = 1 := by decide
 
 /-- Under canonical COT ranking (PRO-TOP > FAM-DEF), the two-Marys
     reading wins (matches BFP). PRO-TOP violation is more costly. -/
 theorem d2_canonical_ranking_picks_two_marys :
     -- Bound reading violates PRO-TOP (rank 3); two-Marys does not
-    (proTop D2.b).eval D2.cand_bound = 1 ∧
-    (proTop D2.b).eval D2.cand_two_marys = 0 := ⟨by decide, by decide⟩
+    (proTop D2.b) D2.cand_bound = 1 ∧
+    (proTop D2.b) D2.cand_two_marys = 0 := ⟨by decide, by decide⟩
 
 /-- **Beaver §4.1 demoted ranking** (his p. 26): `AGREE > DISJOINT >
     FAM-DEF > PRO-TOP > COHERE > ALIGN`. PRO-TOP demoted below
     FAM-DEF. -/
 def cotRankingDemoted [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (priorTopic : Option E) :
-    List (NamedConstraint (Candidate E R)) :=
+    List (Constraint (Candidate E R)) :=
   [agree, disjoint, famDef, proTop prev, cohere prev priorTopic, align prev]
 
 /-- **Beaver §4.1 prediction**: under the demoted ranking, the bound
@@ -496,8 +494,8 @@ def cotRankingDemoted [DecidableEq E] [CfRankerOf E R]
     constraints. -/
 theorem beaver_demoted_ranking_picks_bound_reading :
     -- Two-Marys violates FAM-DEF (now rank 3); bound does not
-    famDef.eval D2.cand_two_marys = 1 ∧
-    famDef.eval D2.cand_bound = 0 := ⟨by decide, by decide⟩
+    famDef D2.cand_two_marys = 1 ∧
+    famDef D2.cand_bound = 0 := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Theorem (20) BFP-equivalence: structural reuse
@@ -610,9 +608,9 @@ theorem d12_lex_picks_l_eq_i :
     utterance cheap-condition holds. -/
 theorem align_within_utterance_iff_cb_eq_cp [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) (c : Candidate E R) :
-    (align prev).eval c = 0 ↔
+    (align prev) c = 0 ↔
       ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp) := by
-  unfold align mkMark NamedConstraint.eval
+  simp only [align, Constraint.binary_apply]
   simp only [ite_eq_right_iff]
   constructor
   · intro h

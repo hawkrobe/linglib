@@ -1,6 +1,6 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Basic
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
 
 /-!
 # Doubling Theory: Identity vs. Reduplication
@@ -277,13 +277,13 @@ inductive DoublingParse where
     identical pairs on a feature tier, while `ocpXX` classifies the
     *parse* of a doubled form as phonological identity vs. morphological
     reduplication. -/
-def ocpXX : NamedConstraint DoublingParse :=
-  mkMark "OCP-XX" (· = .identity)
+def ocpXX : Constraint DoublingParse :=
+  Constraint.binary (· = .identity)
 
 /-- *RED: general markedness against reduplication.
     Violated by the reduplicative parse (morphological cost of RED). -/
-def starRED : NamedConstraint DoublingParse :=
-  mkMark "*RED" (· = .reduplication)
+def starRED : Constraint DoublingParse :=
+  Constraint.binary (· = .reduplication)
 
 /-- REALIZE-MORPH: faithfulness to the morphological specification.
     When the input specifies a morphological operation (e.g., plurality
@@ -293,8 +293,8 @@ def starRED : NamedConstraint DoublingParse :=
     morphological specification). Active only when the speaker's L1
     makes the reduplication interpretation available for the relevant
     morphological function (see `realizeMorphAvailable`). -/
-def realizeMorph : NamedConstraint DoublingParse :=
-  mkMax "REALIZE-MORPH" (· = .nonidentical)
+def realizeMorph : Constraint DoublingParse :=
+  Constraint.binary (· = .nonidentical)
 
 -- ============================================================================
 -- § 5: Rankings and Candidate Sets
@@ -302,13 +302,13 @@ def realizeMorph : NamedConstraint DoublingParse :=
 
 /-- Phonological ranking: only OCP-XX and *RED are active.
     REALIZE-MORPH is absent (no morphological specification). -/
-def phonRanking : List (NamedConstraint DoublingParse) :=
+def phonRanking : List (Constraint DoublingParse) :=
   [ocpXX, starRED]
 
 /-- Morphological ranking: OCP-XX >> REALIZE-MORPH >> *RED.
     Active when the morphological context licenses reduplication
     AND the speaker's L1 makes it available. -/
-def morphRanking : List (NamedConstraint DoublingParse) :=
+def morphRanking : List (Constraint DoublingParse) :=
   [ocpXX, realizeMorph, starRED]
 
 /-- Candidates in a phonological context or when reduplication is
@@ -336,7 +336,7 @@ def l1CandidatesFor (g : DoublingGrammar) (f : DoublingFunction) :
     REALIZE-MORPH is in the ranking only when the L1 makes it
     available for the relevant function. -/
 def l1RankingFor (g : DoublingGrammar) (f : DoublingFunction) :
-    List (NamedConstraint DoublingParse) :=
+    List (Constraint DoublingParse) :=
   if realizeMorphAvailable g f then morphRanking else phonRanking
 
 theorem l1CandidatesFor_ne (g : DoublingGrammar) (f : DoublingFunction) :

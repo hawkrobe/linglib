@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraints.Weighted
+import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Probability.SoftmaxTheory
 
@@ -49,22 +49,22 @@ open Core Constraints Core.Optimization.Evaluation Real Finset
 
     The `eval` function is preserved: the weighted constraint evaluates
     candidates identically to the original named constraint. -/
-def otToWeighted {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat) :
-    List (WeightedConstraint C) :=
+def otToWeighted {C : Type*} (ranking : List (Constraint C)) (M : Nat) :
+    List (Constraint.Weighted C) :=
   ranking.mapIdx fun i con =>
-    { toNamedConstraint := con
+    { con := con
       weight := ((M + 1 : ℝ) ^ (ranking.length - 1 - i)) }
 
 /-- The weighted constraints have the same length as the ranking. -/
-theorem otToWeighted_length {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat) :
+theorem otToWeighted_length {C : Type*} (ranking : List (Constraint C)) (M : Nat) :
     (otToWeighted ranking M).length = ranking.length := by
   simp [otToWeighted]
 
 /-- Each weighted constraint preserves the original eval function. -/
-theorem otToWeighted_eval {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat)
+theorem otToWeighted_eval {C : Type*} (ranking : List (Constraint C)) (M : Nat)
     (i : Fin ranking.length) (c : C) :
-    ((otToWeighted ranking M).get (i.cast (otToWeighted_length ranking M).symm)).eval c =
-    (ranking.get i).eval c := by
+    ((otToWeighted ranking M).get (i.cast (otToWeighted_length ranking M).symm)).con c =
+    (ranking.get i) c := by
   simp only [otToWeighted, List.get_eq_getElem, List.getElem_mapIdx, Fin.val_cast]
 
 /-! ### Exponentially separated weights -/
@@ -288,10 +288,10 @@ private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → �
   | cons x xs ih => simp only [List.mapIdx_cons, List.map_cons]; congr 1; exact ih _
 
 private lemma harmonyScore_otToWeighted_eq {C : Type*}
-    (ranking : List (NamedConstraint C)) (M : Nat) (c : C) :
+    (ranking : List (Constraint C)) (M : Nat) (c : C) :
     harmonyScore (otToWeighted ranking M) c =
     -(weightedViolations (expWeights ranking.length M)
-      (fun i : Fin ranking.length => (ranking.get i).eval c)) := by
+      (fun i : Fin ranking.length => (ranking.get i) c)) := by
   rw [harmonyScore_eq_neg_sum, neg_inj, weightedViolations]
   simp only [otToWeighted]
   rw [map_mapIdx_sum, mapIdx_sum_eq_fin_sum]
@@ -302,11 +302,11 @@ private lemma harmonyScore_otToWeighted_eq {C : Type*}
     then `a` has strictly higher harmony under `otToWeighted ranking M`,
     provided M bounds all violation counts. -/
 theorem ot_lex_imp_higher_harmony {C : Type*}
-    (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
+    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (a b : C)
-    (hbound : ∀ con ∈ ranking, con.eval a ≤ M ∧ con.eval b ≤ M)
-    (hlex : toLex (fun i : Fin ranking.length => (ranking.get i).eval a) <
-            toLex (fun i : Fin ranking.length => (ranking.get i).eval b)) :
+    (hbound : ∀ con ∈ ranking, con a ≤ M ∧ con b ≤ M)
+    (hlex : toLex (fun i : Fin ranking.length => (ranking.get i) a) <
+            toLex (fun i : Fin ranking.length => (ranking.get i) b)) :
     harmonyScore (otToWeighted ranking M) a >
     harmonyScore (otToWeighted ranking M) b := by
   rw [gt_iff_lt, harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff]
@@ -324,7 +324,7 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
     HG winner equals the OT winner (§4). -/
 theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     [DecidableEq C]
-    (constraints : List (WeightedConstraint C))
+    (constraints : List (Constraint.Weighted C))
     (c_opt : C)
     (h_opt : ∀ c, c ≠ c_opt →
       harmonyScore constraints c < harmonyScore constraints c_opt) :
@@ -343,12 +343,12 @@ theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     1. `ot_lex_imp_higher_harmony`: lex-better ⟹ higher harmony (HG–OT agreement)
     2. `softmax_argmax_limit`: MaxEnt concentrates on harmony maximizer -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
-    (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
+    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (c_opt : C)
-    (hbound : ∀ c : C, ∀ con ∈ ranking, con.eval c ≤ M)
+    (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)
     (hlex : ∀ c, c ≠ c_opt →
-      toLex (fun i : Fin ranking.length => (ranking.get i).eval c_opt) <
-      toLex (fun i : Fin ranking.length => (ranking.get i).eval c)) :
+      toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
+      toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
       |softmax (α • harmonyScore (otToWeighted ranking M)) c_opt - 1| < ε := by
   apply softmax_argmax_limit

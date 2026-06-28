@@ -445,12 +445,12 @@ end TiberianHebrew
     standard segmental IDENT-OO, the overapplied candidate strictly beats
     the canonical-harmony candidate. -/
 example (s : TetruSchema (Corr Role Seg))
-    (hM1 : s.m1.eval Sundanese.normalDiagram =
-           s.m1.eval Sundanese.overappliedDiagram)
+    (hM1 : s.m1 Sundanese.normalDiagram =
+           s.m1 Sundanese.overappliedDiagram)
     (hOO : ∀ c : Corr Role Seg,
-           s.ooIdent.eval c = identOOViol c) :
-    s.ooIdent.eval Sundanese.overappliedDiagram <
-    s.ooIdent.eval Sundanese.normalDiagram := by
+           s.ooIdent c = identOOViol c) :
+    s.ooIdent Sundanese.overappliedDiagram <
+    s.ooIdent Sundanese.normalDiagram := by
   rw [hOO, hOO]
   exact Sundanese.overapplied_beats_normal_on_OO_ident
 

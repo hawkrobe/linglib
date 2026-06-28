@@ -1,8 +1,8 @@
-import Linglib.Phonology.Constraints.Weighted
 import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Coetzee & Pater (2011): The Place of Variation in Phonological Theory
@@ -175,48 +175,44 @@ def candidatesFor (ctx : Context) : List TDCandidate :=
 /-- *CT (markedness): penalizes word-final consonant clusters ending in a
     coronal stop. Violated by the faithful (retaining) candidate.
     [coetzee-pater-2011] example (11). -/
-def starCT : NamedConstraint TDCandidate :=
-  mkMark "*CT" fun c => c.output == .retain
+def starCT : Constraint TDCandidate :=
+  Constraint.binary fun c => c.output == .retain
 
 /-- MAX (faithfulness): penalizes deletion of an input consonant.
     Violated by the deleting candidate in all contexts.
     [coetzee-pater-2011] example (11). -/
-def maxC : NamedConstraint TDCandidate :=
-  mkMax "MAX" fun c => c.output == .delete
+def maxC : Constraint TDCandidate :=
+  Constraint.binary fun c => c.output == .delete
 
 /-- MAX-PRE-V (contextual faithfulness): penalizes deletion specifically
     in pre-vocalic position, where perceptual cues for t/d are maximal.
     [coetzee-pater-2011] example (11). -/
-def maxPreV : NamedConstraint TDCandidate :=
-  mkMaxCtx "MAX-PRE-V" (fun c => c.output == .delete) (fun c => c.context == .preV)
+def maxPreV : Constraint TDCandidate :=
+  Constraint.binary (fun c => c.output == .delete && c.context == .preV)
 
 /-- MAX-FINAL (contextual faithfulness): penalizes deletion in
     phrase-final position, where consonantal release provides cues.
     [coetzee-pater-2011] example (11). -/
-def maxFinal : NamedConstraint TDCandidate :=
-  mkMaxCtx "MAX-FINAL" (fun c => c.output == .delete) (fun c => c.context == .pause)
+def maxFinal : Constraint TDCandidate :=
+  Constraint.binary (fun c => c.output == .delete && c.context == .pause)
 
 /-- The four constraints from the analysis. -/
-def constraints : List (NamedConstraint TDCandidate) :=
+def constraints : List (Constraint TDCandidate) :=
   [starCT, maxC, maxPreV, maxFinal]
 
 /-- All violations are bounded by 1 (binary constraints). -/
-theorem all_violations_bounded (con : NamedConstraint TDCandidate)
+theorem all_violations_bounded (con : Constraint TDCandidate)
     (h : con ∈ constraints) (c : TDCandidate) :
-    con.eval c ≤ 1 := by
+    con c ≤ 1 := by
   simp only [constraints, List.mem_cons, List.mem_nil_iff, or_false] at h
-  rcases h with rfl | rfl | rfl | rfl
-  · exact mkMark_bounded _ _ _
-  · exact mkMax_bounded _ _ _
-  · exact mkMaxCtx_bounded _ _ _ _
-  · exact mkMaxCtx_bounded _ _ _ _
+  rcases h with rfl | rfl | rfl | rfl <;> exact Constraint.binary_le_one _ _
 
 /-! ### Violation profiles -/
 
 /-- Violation profile for a candidate under the 4 constraints.
     Order: [*CT, MAX, MAX-PRE-V, MAX-FINAL]. -/
 def violationProfile (c : TDCandidate) : List Nat :=
-  constraints.map fun con => con.eval c
+  constraints.map fun con => con c
 
 /-- Retain always violates *CT once and nothing else. -/
 theorem retain_profile (ctx : Context) :
@@ -416,11 +412,11 @@ theorem preC_always_ge :
 /-- Weighted version of the t/d-deletion constraints for MaxEnt.
     Weight parameterization enables dialect-specific fitting. -/
 def mkWeightedConstraints (wCT wMax wMaxPreV wMaxFin : ℝ) :
-    List (WeightedConstraint TDCandidate) :=
-  [ { toNamedConstraint := starCT, weight := wCT }
-  , { toNamedConstraint := maxC, weight := wMax }
-  , { toNamedConstraint := maxPreV, weight := wMaxPreV }
-  , { toNamedConstraint := maxFinal, weight := wMaxFin } ]
+    List (Constraint.Weighted TDCandidate) :=
+  [ { con := starCT, weight := wCT }
+  , { con := maxC, weight := wMax }
+  , { con := maxPreV, weight := wMaxPreV }
+  , { con := maxFinal, weight := wMaxFin } ]
 
 /-- MaxEnt harmony ordering is a decidable proxy for probability ordering:
     `H(a) > H(b) ⟺ P(a) > P(b)` by monotonicity of exp. -/
@@ -442,9 +438,9 @@ theorem maxent_aave_ordering :
     harmonyScore w ⟨.preC, .delete⟩ > harmonyScore w ⟨.pause, .delete⟩ ∧
     harmonyScore w ⟨.pause, .delete⟩ > harmonyScore w ⟨.preV, .delete⟩ := by
   refine ⟨?_, ?_⟩ <;>
-    (simp only [harmonyScore, mkWeightedConstraints, starCT, mkMark, maxC, mkMax,
-       maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, and_true, ↓reduceIte,
-       Nat.cast_one]
+    (simp only [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
+       Constraint.binary, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+       beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
      norm_num)
 
 /-- With non-negative MAX-PRE-V weight, harmony of pre-C deletion ≥ pre-V
@@ -457,11 +453,8 @@ theorem nonneg_weights_preserve_ordering
     (wCT wMax wMaxPreV wMaxFin : ℝ) (hPreV : wMaxPreV ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preV, .delete⟩ := by
-  simp only [harmonyScore, mkWeightedConstraints, List.map_cons, List.map_nil,
-    List.sum_cons, List.sum_nil, starCT, mkMark, maxC, mkMax, maxPreV, mkMaxCtx,
-    maxFinal, beq_iff_eq, reduceCtorEq, eq_self_iff_true, true_and, and_true,
-    ↓reduceIte, Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero,
-    zero_sub, add_zero, zero_add]
+  simp [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
+    Constraint.binary]
   linarith [show (0 : ℝ) ≤ (wMaxPreV : ℝ) from by exact_mod_cast hPreV]
 
 /-- Analogously, non-negative MAX-FINAL weight ensures pre-C ≥ pause.
@@ -470,11 +463,8 @@ theorem nonneg_weights_preserve_ordering_pause
     (wCT wMax wMaxPreV wMaxFin : ℝ) (hFin : wMaxFin ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.pause, .delete⟩ := by
-  simp only [harmonyScore, mkWeightedConstraints, List.map_cons, List.map_nil,
-    List.sum_cons, List.sum_nil, starCT, mkMark, maxC, mkMax, maxPreV, mkMaxCtx,
-    maxFinal, beq_iff_eq, reduceCtorEq, eq_self_iff_true, true_and, and_true,
-    ↓reduceIte, Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero,
-    zero_sub, add_zero, zero_add]
+  simp [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
+    Constraint.binary]
   linarith [show (0 : ℝ) ≤ (wMaxFin : ℝ) from by exact_mod_cast hFin]
 
 /-! ### Tejano' impossibility -/
@@ -527,9 +517,9 @@ theorem maxent_can_generate_tejanoPrime :
       ⟨.preC, .delete⟩ ∧
     wMaxPreV < 0 := by
   refine ⟨994/10, 1006/10, -16/10, -8/10, ?_, ?_, by norm_num⟩ <;>
-    (simp only [harmonyScore, mkWeightedConstraints, starCT, mkMark, maxC, mkMax,
-       maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, and_true, ↓reduceIte,
-       Nat.cast_one]
+    (simp only [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
+       Constraint.binary, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+       beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
      norm_num)
 
 /-- Framework separation: POC/StOT and MaxEnt have different typological
@@ -583,7 +573,7 @@ softmax is the logistic function, so `predict .delete` is genuine
 conditional probability `P(delete | ctx)`. -/
 
 /-- The AAVE constraint weights from table (23) ME-HG row. -/
-noncomputable def aaveWeights : List (WeightedConstraint TDCandidate) :=
+noncomputable def aaveWeights : List (Constraint.Weighted TDCandidate) :=
   mkWeightedConstraints (1006/10) (994/10) (21/10) (2/10)
 
 /-- The AAVE MaxEnt model at a fixed context, packaged as a generic
@@ -603,9 +593,9 @@ theorem aave_preC_prefers_delete :
     (Finset.mem_univ _) (Finset.mem_univ _)
     ((by
       unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
-        starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
-      simp only [List.foldl, beq_iff_eq,
-        ↓reduceIte, Nat.cast_one]
+        starCT maxC maxPreV maxFinal Constraint.binary
+      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+        beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
       norm_num :
       harmonyDominates aaveWeights ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
 
@@ -620,9 +610,9 @@ theorem aave_preV_prefers_retain :
     (Finset.mem_univ _) (Finset.mem_univ _)
     ((by
       unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
-        starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
-      simp only [List.foldl, beq_iff_eq,
-        and_true, ↓reduceIte, Nat.cast_one]
+        starCT maxC maxPreV maxFinal Constraint.binary
+      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+        beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
       norm_num :
       harmonyDominates aaveWeights ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
 

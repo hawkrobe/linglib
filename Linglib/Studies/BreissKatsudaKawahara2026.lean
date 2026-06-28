@@ -258,7 +258,7 @@ def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
 @[simp] theorem stringMismatch_self (a : String) : stringMismatch a a = 0 := by
   unfold stringMismatch; exact if_pos rfl
 
-/-- The PU constraint **as a `NamedConstraint`** — derived from
+/-- The PU constraint **as a `Constraint`** — derived from
     `mkLCFaith` from `Studies/Steriade1997.lean`.
     The structural connection to [steriade-1997] is by
     *construction*: BKK's PU pressure IS LC-FAITH on the
@@ -266,12 +266,12 @@ def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
     [mccarthy-2005] (OP) is that LC's paradigm is anchored on
     attestation; OP's is symmetric over all members. § 10 below makes
     that contrast explicit. -/
-def puFaith : NamedConstraint (List String) :=
+def puFaith : Constraint (List String) :=
   mkLCFaith "PU-N2-FAITH" stringMismatch
 
 /-- Number of PU-FAITH violations on a compound's paradigm. -/
 def cpdPuViolations (c : JCompound) : Nat :=
-  puFaith.eval (n2Paradigm c)
+  puFaith (n2Paradigm c)
 
 /-- **Bound case is structurally zero.** A bound N2 produces a singleton
     paradigm `[c.form]`; the only ordered pair is `(c.form, c.form)`
@@ -283,7 +283,7 @@ theorem bound_cpdPuViolations_zero (c : JCompound)
     cpdPuViolations c = 0 := by
   have hpar : n2Paradigm c = lcParadigm c.form none := by
     unfold n2Paradigm; simp [hbound]
-  show puFaith.eval (n2Paradigm c) = 0
+  show puFaith (n2Paradigm c) = 0
   rw [hpar]
   exact lc_unanchored_zero "PU-N2-FAITH" stringMismatch stringMismatch_self c.form
 
@@ -298,7 +298,7 @@ theorem free_cpdPuViolations_eq_two (c : JCompound)
   have hpar : n2Paradigm c = [c.form, c.n2.form] := by
     show lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none) = _
     rw [if_pos hfree]; rfl
-  show puFaith.eval (n2Paradigm c) = 2
+  show puFaith (n2Paradigm c) = 2
   rw [hpar]
   show ((List.product [c.form, c.n2.form] [c.form, c.n2.form]).map
          (fun p => stringMismatch p.1 p.2)).sum = 2
@@ -627,12 +627,12 @@ def n2OpParadigm (c : JCompound) : List String :=
 /-- The OP-flavoured PU constraint, built from the same `liftPairwise`
     combinator. Differs from `puFaith` only in the *paradigm
     construction* (cf. `lcParadigm` vs. unconditional pair). -/
-def opPuFaith : NamedConstraint (List String) :=
-  liftPairwise "OP-PU-FAITH" .faithfulness stringMismatch
+def opPuFaith : Constraint (List String) :=
+  liftPairwise stringMismatch
 
 /-- OP-flavoured violation count on a compound. -/
 def cpdOpPuViolations (c : JCompound) : Nat :=
-  opPuFaith.eval (n2OpParadigm c)
+  opPuFaith (n2OpParadigm c)
 
 /-- **OP gives identical violation counts on bound and free
     compounds.** Whenever `c.form ≠ c.n2.form`, the OP paradigm
@@ -642,7 +642,7 @@ def cpdOpPuViolations (c : JCompound) : Nat :=
 theorem op_paradigm_uniform_in_bound_free (c : JCompound)
     (hdiff : c.form ≠ c.n2.form) :
     cpdOpPuViolations c = 2 := by
-  show opPuFaith.eval (n2OpParadigm c) = 2
+  show opPuFaith (n2OpParadigm c) = 2
   show ((List.product [c.form, c.n2.form] [c.form, c.n2.form]).map
          (fun p => stringMismatch p.1 p.2)).sum = 2
   simp only [List.product, List.flatMap_cons, List.flatMap_nil, List.map_cons,

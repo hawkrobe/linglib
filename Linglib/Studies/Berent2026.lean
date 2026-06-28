@@ -1,5 +1,6 @@
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.OptimalityTheory.Predict
 
@@ -57,7 +58,7 @@ open OptimalityTheory.Doubling
 
 namespace Berent2026
 
-open Core.Optimization Constraints OptimalityTheory
+open Core.Optimization Constraints OptimalityTheory Subregular
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient
@@ -84,21 +85,22 @@ def onsetProfile (c1 c2 : Sonority) : OnsetProfile :=
   else .fall
 
 /-- Onset markedness as an OT constraint: gradient violations by sonority
-    profile. Uses `mkMarkGrad` from the shared constraint library.
+    profile. A bare gradient `Constraint OnsetProfile` (a violation-counting
+    function `OnsetProfile → ℕ`).
 
     Rise = 0 violations, plateau = 1, fall = 2. This captures the
     behavioral gradient (blif > bnif > bdif > lbif; [berent-2026],
     data from Berent et al. 2007). The gradient is determined entirely
     by the abstract `Sonority` ordering — the grammar does not inspect
     whether "rise" means "stop-before-liquid" vs. "nasal-before-vowel". -/
-def onsetSSP : NamedConstraint OnsetProfile :=
-  mkMarkGrad "SSP-ONSET" fun
+def onsetSSP : Constraint OnsetProfile :=
+  fun
     | .rise => 0
     | .plateau => 1
     | .fall => 2
 
 /-- Gradient markedness of onset sonority profiles (convenience alias). -/
-abbrev onsetMarkedness := onsetSSP.eval
+abbrev onsetMarkedness := onsetSSP
 
 theorem rise_lt_plateau : onsetMarkedness .rise < onsetMarkedness .plateau := by
   decide

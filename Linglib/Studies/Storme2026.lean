@@ -1,6 +1,6 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Phonology.Constraints.Weighted
-import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Fragments.Farsi.Phonology
 
 /-!
@@ -65,22 +65,22 @@ instance : Fintype HiatusOutput where
 -- ============================================================================
 
 /-- MAX: penalizes deletion. 1 violation for deleteV1 or deleteV2, 0 otherwise. -/
-def maxConstraint : WeightedConstraint HiatusCandidate :=
-  mkMaxW "MAX" (fun (_, o) => o == .deleteV1 || o == .deleteV2) 2
+def maxConstraint : Constraint.Weighted HiatusCandidate :=
+  Constraint.Weighted.binary (fun (_, o) => o == .deleteV1 || o == .deleteV2) 2
 
 /-- DEP: penalizes epenthesis. 1 violation for epenthesis, 0 otherwise. -/
-def depConstraint : WeightedConstraint HiatusCandidate :=
-  mkDepW "DEP" (fun (_, o) => o == .epenthesis) 1
+def depConstraint : Constraint.Weighted HiatusCandidate :=
+  Constraint.Weighted.binary (fun (_, o) => o == .epenthesis) 1
 
 /-- \*VV: markedness constraint penalizing vowel hiatus.
     1 violation for faithful (hiatus preserved), 0 for all repairs. -/
-def starVV : WeightedConstraint HiatusCandidate :=
-  mkMarkW "*VV" (fun (_, o) => o == .faithful) 3
+def starVV : Constraint.Weighted HiatusCandidate :=
+  Constraint.Weighted.binary (fun (_, o) => o == .faithful) 3
 
 /-- IDENT: penalizes coalescence (feature change).
     1 violation for coalescence, 0 otherwise. -/
-def identConstraint : WeightedConstraint HiatusCandidate :=
-  mkIdentW "IDENT" (fun (_, o) => o == .coalescence) 2
+def identConstraint : Constraint.Weighted HiatusCandidate :=
+  Constraint.Weighted.binary (fun (_, o) => o == .coalescence) 2
 
 /-- The classical constraint set for Persian hiatus.
 
@@ -89,7 +89,7 @@ def identConstraint : WeightedConstraint HiatusCandidate :=
     The qualitative predictions (symmetry, symmetry-breaking) hold
     for any positive weights since they depend on constraint structure,
     not specific weight values. -/
-def classicalConstraints : List (WeightedConstraint HiatusCandidate) :=
+def classicalConstraints : List (Constraint.Weighted HiatusCandidate) :=
   [maxConstraint, depConstraint, starVV, identConstraint]
 
 -- ============================================================================
@@ -115,7 +115,7 @@ theorem epenthesis_beats_deletion :
     harmonyScore classicalConstraints (.ae_ah, .epenthesis) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
-    identConstraint, mkMaxW, mkDepW, mkMarkW, mkIdentW, mkMax, mkDep, mkMark, mkIdent,
+    identConstraint, Constraint.Weighted.binary, Constraint.binary,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   norm_num
 
@@ -124,7 +124,7 @@ theorem coalescence_beats_faithful :
     harmonyScore classicalConstraints (.ae_ah, .coalescence) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
-    identConstraint, mkMaxW, mkDepW, mkMarkW, mkIdentW, mkMax, mkDep, mkMark, mkIdent,
+    identConstraint, Constraint.Weighted.binary, Constraint.binary,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   norm_num
 
@@ -133,7 +133,7 @@ theorem epenthesis_beats_faithful :
     harmonyScore classicalConstraints (.ae_ah, .epenthesis) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
   simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
-    identConstraint, mkMaxW, mkDepW, mkMarkW, mkIdentW, mkMax, mkDep, mkMark, mkIdent,
+    identConstraint, Constraint.Weighted.binary, Constraint.binary,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   norm_num
 

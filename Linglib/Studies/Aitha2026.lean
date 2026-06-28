@@ -448,25 +448,22 @@ def StemCandidate.toParse : StemCandidate → MetricalParse
   | .ll_H  => [.foot [.light, .light], .foot [.heavy]]
 
 /-- FT-BIN(μ): penalizes non-bimoraic feet. -/
-def cFtBin : NamedConstraint StemCandidate :=
-  { name := "FT-BIN(μ)", family := .markedness
-  , eval := λ c => ftBinViolations c.toParse }
+def cFtBin : Constraint StemCandidate :=
+  λ c => ftBinViolations c.toParse
 
 /-- PARSE-SYL: penalizes unparsed syllables. -/
-def cParseSyl : NamedConstraint StemCandidate :=
-  { name := "PARSE-SYL", family := .markedness
-  , eval := λ c => parseSylViolations c.toParse }
+def cParseSyl : Constraint StemCandidate :=
+  λ c => parseSylViolations c.toParse
 
 /-- ALL-FT-LEFT: penalizes feet distant from the left edge. -/
-def cAllFtLeft : NamedConstraint StemCandidate :=
-  { name := "ALL-FT-LEFT", family := .markedness
-  , eval := λ c => allFtLeftViolations c.toParse }
+def cAllFtLeft : Constraint StemCandidate :=
+  λ c => allFtLeftViolations c.toParse
 
 /-- Stem-level constraint ranking: FT-BIN ≫ PARSE-SYL ≫ ALL-FT-LEFT.
 
     FT-BIN dominates PARSE-SYL: it is better to leave a syllable
     unparsed than to create a degenerate (monomoraic) foot. -/
-def stemRanking : List (NamedConstraint StemCandidate) :=
+def stemRanking : List (Constraint StemCandidate) :=
   [cFtBin, cParseSyl, cAllFtLeft]
 
 def stemCandidates : List StemCandidate := [.llU_H, .l_l_H, .ll_H]
@@ -480,10 +477,10 @@ theorem stemCandidates_ne : stemCandidates ≠ [] := by decide
     | (ˈsa).(ˌmu).(ˌdram)|   2*   |    0      |     0+1+2   |
     | ☞ (ˈsa.mu).(ˌdram) |   0    |    0      |     0+2     | -/
 theorem stem_ftbin_violations :
-    stemCandidates.map cFtBin.eval = [0, 2, 0] := by native_decide
+    stemCandidates.map cFtBin = [0, 2, 0] := by native_decide
 
 theorem stem_parsesyl_violations :
-    stemCandidates.map cParseSyl.eval = [1, 0, 0] := by native_decide
+    stemCandidates.map cParseSyl = [1, 0, 0] := by native_decide
 
 /-- The optimal Stem-level parse is (ˈsa.mu).(ˌdram): two well-formed
     moraic trochees, (LL)(H), with no unparsed syllables. -/
@@ -565,19 +562,13 @@ inductive WordCandNom where
     | deleteI\_coda  |        |        |   1\*    |      |   1    |  1  |
     | deleteIM       |        |        |          |  1\* |   2    |  2  |
     | ☞ deleteNi     |        |        |          |      |   1    |  2  | -/
-def wordNomRanking : List (NamedConstraint WordCandNom) :=
-  [ { name := "IDENT-STRESS", family := .faithfulness
-    , eval := λ | .destress => 1 | _ => 0 }
-  , { name := "FT-BIN(μ)", family := .markedness
-    , eval := λ | .degenerateFoot => 1 | _ => 0 }
-  , { name := "*COMPLEXCODA", family := .markedness
-    , eval := λ | .deleteI_coda => 1 | _ => 0 }
-  , { name := "ALIGN-RIGHT(Stem,σ)", family := .markedness
-    , eval := λ | .deleteIM => 1 | _ => 0 }
-  , { name := "MAX(μ)", family := .faithfulness
-    , eval := λ | .deleteI_coda => 1 | .deleteIM => 2 | .deleteNi => 1 | _ => 0 }
-  , { name := "MAX", family := .faithfulness
-    , eval := λ | .deleteI_coda => 1 | .deleteIM => 2 | .deleteNi => 2 | _ => 0 } ]
+def wordNomRanking : List (Constraint WordCandNom) :=
+  [ (λ | .destress => 1 | _ => 0)
+  , (λ | .degenerateFoot => 1 | _ => 0)
+  , (λ | .deleteI_coda => 1 | _ => 0)
+  , (λ | .deleteIM => 1 | _ => 0)
+  , (λ | .deleteI_coda => 1 | .deleteIM => 2 | .deleteNi => 1 | _ => 0)
+  , (λ | .deleteI_coda => 1 | .deleteIM => 2 | .deleteNi => 2 | _ => 0) ]
 
 def wordNomCands : List WordCandNom :=
   [.destress, .degenerateFoot, .deleteI_coda, .deleteIM, .deleteNi]
@@ -617,19 +608,13 @@ inductive WordCandDat where
     | resyllabify     |          |  1\* |        |        |        |     |
     | deleteNi        |          |      |        |   1\*  |   1    |  2  |
     | ☞ compLengthen  |          |      |        |        |   1    |  1  | -/
-def wordDatRanking : List (NamedConstraint WordCandDat) :=
-  [ { name := "*DIST-0", family := .markedness
-    , eval := λ | .faithful => 1 | _ => 0 }
-  , { name := "ALIGN-RIGHT(Stem,σ)", family := .markedness
-    , eval := λ | .resyllabify => 1 | _ => 0 }
-  , { name := "IDENT-STRESS", family := .faithfulness
-    , eval := λ _ => 0 }
-  , { name := "FT-BIN(μ)", family := .markedness
-    , eval := λ | .deleteNi => 1 | _ => 0 }
-  , { name := "MAX(μ)", family := .faithfulness
-    , eval := λ | .deleteNi => 1 | .compLengthen => 1 | _ => 0 }
-  , { name := "MAX", family := .faithfulness
-    , eval := λ | .deleteNi => 2 | .compLengthen => 1 | _ => 0 } ]
+def wordDatRanking : List (String × Constraint WordCandDat) :=
+  [ ("*DIST-0", λ | .faithful => 1 | _ => 0)
+  , ("AL-R",    λ | .resyllabify => 1 | _ => 0)
+  , ("ID-STR",  λ _ => 0)
+  , ("FT-BIN",  λ | .deleteNi => 1 | _ => 0)
+  , ("MAX(μ)",  λ | .deleteNi => 1 | .compLengthen => 1 | _ => 0)
+  , ("MAX",     λ | .deleteNi => 2 | .compLengthen => 1 | _ => 0) ]
 
 def wordDatCands : List WordCandDat :=
   [.faithful, .resyllabify, .deleteNi, .compLengthen]
@@ -639,7 +624,7 @@ theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
 /-- Word level, DAT: /mn/ boundary repaired by compensatory lengthening.
     Surface: *samudr-āni-ki* (long form). -/
 theorem wordDat_optimal :
-    (mkTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
+    (mkTableau wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
       = {.compLengthen} := by native_decide
 
 -- ────────────────────────────────────────────────────────────────────
@@ -659,7 +644,7 @@ theorem wordDat_optimal :
 theorem word_level_derives_alternation :
     (mkTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
       = {.deleteNi} ∧
-    (mkTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
+    (mkTableau wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
       = {.compLengthen} :=
   ⟨wordNom_optimal, wordDat_optimal⟩
 
@@ -729,15 +714,11 @@ inductive PhraseCandPostp where
     | deleteM       |              | 1   |         | 1    |
     | deleteN       |              | 1   |         |      |
     | ☞ faithful    |              |     | 1       |      | -/
-def phrasePostpRanking : List (NamedConstraint PhraseCandPostp) :=
-  [ { name := "IDENT-STRESS", family := .faithfulness
-    , eval := λ _ => 0 }
-  , { name := "MAX", family := .faithfulness
-    , eval := λ | .compLengthen => 1 | .deleteM => 1 | .deleteN => 1 | _ => 0 }
-  , { name := "*DIST-0", family := .markedness
-    , eval := λ | .faithful => 1 | _ => 0 }
-  , { name := "ALIGN-RIGHT(Stem,σ)", family := .markedness
-    , eval := λ | .compLengthen => 1 | .deleteM => 1 | _ => 0 } ]
+def phrasePostpRanking : List (String × Constraint PhraseCandPostp) :=
+  [ ("IDENT-STRESS", λ _ => 0)
+  , ("MAX",          λ | .compLengthen => 1 | .deleteM => 1 | .deleteN => 1 | _ => 0)
+  , ("*DIST-0",      λ | .faithful => 1 | _ => 0)
+  , ("AL-R",         λ | .compLengthen => 1 | .deleteM => 1 | _ => 0) ]
 
 def phrasePostpCands : List PhraseCandPostp :=
   [.compLengthen, .deleteM, .deleteN, .faithful]
@@ -748,7 +729,7 @@ theorem phrasePostpCands_ne : phrasePostpCands ≠ [] := by decide
     `*DIST-0` is demoted below MAX at Phrase level, so m-n contact
     is tolerated rather than repaired. Surface: *samudram nunci*. -/
 theorem phrasePostp_optimal :
-    (mkTableau phrasePostpCands phrasePostpRanking phrasePostpCands_ne).optimal
+    (mkTableau phrasePostpCands (phrasePostpRanking.map (·.2)) phrasePostpCands_ne).optimal
       = {.faithful} := by native_decide
 
 end PhraseLevel
@@ -1060,7 +1041,7 @@ theorem wordNomSystem_predict_deleteNi :
 
 /-- Word-level DAT tableau as a generic `ConstraintSystem`. -/
 noncomputable def wordDatSystem : ConstraintSystem WordCandDat (LexProfile Nat 6) :=
-  tableauSystem (mkTableau wordDatCands wordDatRanking wordDatCands_ne)
+  tableauSystem (mkTableau wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne)
 
 /-- Probability 1 on `compLengthen`: /m/ deletion + CL yields *-āni*. -/
 theorem wordDatSystem_predict_compLengthen :

@@ -47,7 +47,7 @@ namespace Tone
 
 open Autosegmental
 open Tone (TRN)
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 variable {S : Type*} [DecidableEq S] (f : FloatingForm S TRN)
 
@@ -68,22 +68,20 @@ abbrev ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
     `floatIndicator`, with one entry per underlying tone position
     recording whether that tone is currently floating. -/
 def starFloat : Constraint (FloatingForm S TRN) where
-  name := "*FLOAT"
-  family := .markedness
   eval := FloatingForm.floatIndicator
   order := .lex
 
 /-- `*FLOAT (count)`: count-based variant of `starFloat`, emitting the *total*
     floating-tone count as a singleton `[count]` rather than a position-aware vector. -/
 def starFloatCount : Constraint (FloatingForm S TRN) :=
-  .ofCount "*FLOAT (count)" .markedness (fun f => f.floatIndicator.sum)
+  .ofCount (fun f => f.floatIndicator.sum)
 
 /-! ### *TAUTDOCK -/
 
 /-- `*TAUTDOCK` (paper, eq. 15, after [wolf-2007]): one violation
     per GEN-inserted tautomorphic surface link. -/
 def starTautDock : Constraint (FloatingForm S TRN) :=
-  .ofCount "*TAUTDOCK" .markedness
+  .ofCount
     (fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ f.IsTautomorphic l)).card)
 
 /-! ### *CROWD (per-morpheme tone count) -/
@@ -100,7 +98,7 @@ def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
     tones (default 2), counting its surviving underlying tones plus tones docked onto
     its TBUs from other morphemes. -/
 def starCrowd (threshold : Nat := 2) : Constraint (FloatingForm S TRN) :=
-  .ofCount s!"*CROWD({threshold})" .markedness
+  .ofCount
     (fun f => (f.morphemes.filter (fun m => threshold < (tonesForMorpheme f m).card)).card)
 
 /-! ### *FALL (falling contours on multi-linked TBUs) -/
@@ -126,7 +124,7 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
 /-- `*FALL` (paper eq. 23): one violation per syllable with a falling contour
     (HM, HL, ML). -/
 def starFall : Constraint (FloatingForm S TRN) :=
-  .ofCount "*FALL" .markedness
+  .ofCount
     (fun f => f.countLower (fun i => HasFall (f.tierValues i)))
 
 /-! ### *M<L (M-then-L adjacency on the tier) -/
@@ -135,7 +133,7 @@ def starFall : Constraint (FloatingForm S TRN) :=
     tonal tier — adjacency measured over the surviving (non-deleted) tones in `ulTier`
     order (deletions skip positions). -/
 def starMlessL : Constraint (FloatingForm S TRN) :=
-  .ofCount "*M<L" .markedness (fun f =>
+  .ofCount (fun f =>
     let aliveValues : List TRN :=
       f.aliveTierIdxs.filterMap (fun k => (f.upper.get? k).map TierSpec.value)
     (aliveValues.zip aliveValues.tail).countP (fun p => decide (p = (TRN.M, TRN.L))))
@@ -145,7 +143,7 @@ def starMlessL : Constraint (FloatingForm S TRN) :=
 /-- `HAVETONE` (paper, eq. 17): one violation per syllable not
     associated to any tone. -/
 def haveTone : Constraint (FloatingForm S TRN) :=
-  .ofCount "HAVETONE" .markedness
+  .ofCount
     (fun f => f.countLower (fun i => (f.linksTo i).isEmpty = true))
 
 /-! ### Faithfulness — Generic over Tone Value -/
@@ -153,19 +151,19 @@ def haveTone : Constraint (FloatingForm S TRN) :=
 /-- `MAX(T)` (paper, eq. 7c): one violation per underlying tone of
     value `t` deleted by GEN. -/
 def maxTone (t : TRN) : Constraint (FloatingForm S TRN) :=
-  .ofCount s!"MAX({reprStr t})" .faithfulness
+  .ofCount
     (fun f => f.countUpper (fun k => f.IsDeleted k ∧ ToneHasValue f k t))
 
 /-- `DEP(link)/T` (paper, eq. 7a): one violation per surface link
     inserted by GEN whose linked tone has value `t`. -/
 def depLinkTone (t : TRN) : Constraint (FloatingForm S TRN) :=
-  .ofCount s!"DEP(link)/{reprStr t}" .faithfulness
+  .ofCount
     (fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ ToneHasValue f l.fst t)).card)
 
 /-- `MAX(link)/T` (paper, eq. 7b): one violation per underlying link of
     value `t` deleted by GEN. -/
 def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN) :=
-  .ofCount s!"MAX(link)/{reprStr t}" .faithfulness
+  .ofCount
     (fun f => (f.links.filter (fun l => f.IsDeletedLink l ∧ ToneHasValue f l.fst t)).card)
 
 /-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]): no input tone has
@@ -174,7 +172,7 @@ def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN) :=
     → `n - 1` violations. -/
 def integrityTone (m : Morpheme) (t : TRN) :
     Constraint (FloatingForm S TRN) :=
-  .ofCount s!"INTEGRITY-{reprStr t}({m.form})" .faithfulness
+  .ofCount
     (fun f => f.countUpper (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1)
 
 end Tone

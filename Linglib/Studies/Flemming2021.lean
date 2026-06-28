@@ -1,6 +1,6 @@
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Phonology.HarmonicGrammar.Separability
-import Linglib.Phonology.Constraints.Weighted
+import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Probability.Choice.GumbelLuce
 
@@ -68,7 +68,7 @@ open Core.Optimization Constraints HarmonicGrammar Core Real
     (`mcfaddenIntegral_eq_softmax`), the resulting choice probability is
     softmax — i.e., the standard MaxEnt formula. -/
 theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
-    (constraints : List (WeightedConstraint C)) (c : C) :
+    (constraints : List (Constraint.Weighted C)) (c : C) :
     mcfaddenIntegral (harmonyScore constraints) 1 c =
     softmax (harmonyScore constraints) c := by
   rw [mcfaddenIntegral_eq_softmax]
@@ -81,7 +81,7 @@ theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
 /-- Flemming's eq (10): `logit(P_a) = h_a − h_b`.
     The MaxEnt logit-harmony identity. Alias for `maxent_logit_harmony`. -/
 theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C]
-    (constraints : List (WeightedConstraint C)) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (a b : C) :
     log (softmax (harmonyScore constraints) a /
          softmax (harmonyScore constraints) b) =
     harmonyScore constraints a - harmonyScore constraints b :=
@@ -91,7 +91,7 @@ theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C]
     The probability ratio depends only on the candidates' own scores,
     not on any other candidates. Corollary of `softmax_odds` with α = 1. -/
 theorem iia {C : Type} [Fintype C] [Nonempty C]
-    (constraints : List (WeightedConstraint C)) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (a b : C) :
     softmax (harmonyScore constraints) a /
     softmax (harmonyScore constraints) b =
     exp (harmonyScore constraints a - harmonyScore constraints b) :=
@@ -105,7 +105,7 @@ theorem iia {C : Type} [Fintype C] [Nonempty C]
 
     Corollary of `softmax_binary` with α = 1. -/
 theorem eq9_maxent_binary_logistic
-    (constraints : List (WeightedConstraint (Fin 2))) :
+    (constraints : List (Constraint.Weighted (Fin 2))) :
     softmax (harmonyScore constraints) 0 =
     Real.sigmoid (harmonyScore constraints 0 - harmonyScore constraints 1) := by
   have h := softmax_binary (harmonyScore constraints) 1
@@ -225,7 +225,7 @@ theorem clash_increases_schwa (pair : Fin 4) :
     This is the study-local analogue of `violationDiffSqSumQ` from
     `NoisyHG.lean`: both compute `Σⱼ (cⱼ(ə) − cⱼ(∅))²`, but `schwaSqSum`
     operates on the pre-computed difference matrix `schwaDiff` (Table (35))
-    rather than a `WeightedConstraint` list. -/
+    rather than a `Constraint.Weighted` list. -/
 def schwaSqSum (ctx : Fin 8) : Nat :=
   (List.finRange 6).foldl (fun acc j => acc + (schwaDiff ctx j).natAbs ^ 2) 0
 
@@ -314,10 +314,10 @@ private inductive Cand3 | a | b | c deriving DecidableEq, Repr, Fintype
 
 private instance : Nonempty Cand3 := ⟨.a⟩
 
-private def table45C : List (WeightedConstraint Cand3) :=
-  [{ name := "C₁", family := .markedness, eval := fun | .a => 1 | _ => 0, weight := 15 },
-   { name := "C₂", family := .markedness, eval := fun | .b => 2 | .c => 1 | _ => 0, weight := 8 },
-   { name := "C₃", family := .markedness, eval := fun | .c => 1 | _ => 0, weight := 8 }]
+private def table45C : List (Constraint.Weighted Cand3) :=
+  [{ con := fun | .a => 1 | _ => 0, weight := 15 },
+   { con := fun | .b => 2 | .c => 1 | _ => 0, weight := 8 },
+   { con := fun | .c => 1 | _ => 0, weight := 8 }]
 
 /-- Candidates b and c have equal harmony: H(b) = H(c) = −16. -/
 theorem table45_equal_harmony :

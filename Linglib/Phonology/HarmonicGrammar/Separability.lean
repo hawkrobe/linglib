@@ -53,7 +53,7 @@ List-based MaxEnt API (`harmonyScore`/`harmonyScore` from `Basic.lean`):
 - `maxent_logit_as_finsum`: MaxEnt logit = weighted violation difference sum
 
 These enable applying separability results (independence → HZ, rescaling)
-to any `WeightedConstraint` list without re-proving in Fin-indexed form.
+to any `Constraint.Weighted` list without re-proving in Fin-indexed form.
 -/
 
 namespace HarmonicGrammar
@@ -415,7 +415,7 @@ theorem inverse_not_always_hz :
 -- and the Fin-indexed separability theory (`SeparableHarmony`, `meSeparable`)
 -- compute the same thing for MaxEnt grammars. These bridge theorems make the
 -- connection formal, enabling separability results (independence → HZ,
--- constraint rescaling) to be applied to any `WeightedConstraint` list.
+-- constraint rescaling) to be applied to any `Constraint.Weighted` list.
 
 private lemma list_map_sum_eq_finsum {α M : Type*} [AddCommMonoid M] (l : List α)
     (f : α → M) : (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
@@ -433,12 +433,12 @@ private lemma list_map_sum_eq_finsum {α M : Type*} [AddCommMonoid M] (l : List 
     Fin-indexed constraint weights and violations.
 
     This is the key List→Fin conversion for applying separability
-    theory to concrete `WeightedConstraint` lists. -/
+    theory to concrete `Constraint.Weighted` lists. -/
 theorem harmonyScoreR_as_finsum {C : Type*}
-    (constraints : List (WeightedConstraint C)) (c : C) :
+    (constraints : List (Constraint.Weighted C)) (c : C) :
     harmonyScore constraints c =
     -(∑ i : Fin constraints.length,
-      ((constraints.get i).weight : ℝ) * ((constraints.get i).eval c : ℝ)) := by
+      ((constraints.get i).weight : ℝ) * ((constraints.get i).con c : ℝ)) := by
   simp only [harmonyScore, list_map_sum_eq_finsum]
 
 /-- **MaxEnt unnormalized probability is separable harmony**:
@@ -453,13 +453,13 @@ theorem harmonyScoreR_as_finsum {C : Type*}
     This makes all separability theory — constraint independence → HZ
     (`separable_predicts_hz`), constraint rescaling
     (`separable_eq_me_rescaled`) — directly applicable to any
-    `WeightedConstraint` list. -/
+    `Constraint.Weighted` list. -/
 theorem exp_harmonyScoreR_eq_me_separable {C : Type*}
-    (constraints : List (WeightedConstraint C)) (c : C) :
+    (constraints : List (Constraint.Weighted C)) (c : C) :
     exp (harmonyScore constraints c) =
     (meSeparable constraints.length
       (fun i => ((constraints.get i).weight : ℝ))).eval
-      (fun i => (constraints.get i).eval c) := by
+      (fun i => (constraints.get i).con c) := by
   rw [me_separable_eval, harmonyScoreR_as_finsum]
 
 /-- **MaxEnt logit rate as Fin-indexed weighted violation differences**:
@@ -472,12 +472,12 @@ theorem exp_harmonyScoreR_eq_me_separable {C : Type*}
 
     Composition: `logit_uniformity` → `harmonyScoreR_as_finsum` → algebra. -/
 theorem maxent_logit_as_finsum {C : Type*} [Fintype C] [Nonempty C]
-    (constraints : List (WeightedConstraint C)) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (a b : C) :
     log (softmax (harmonyScore constraints) a /
          softmax (harmonyScore constraints) b) =
     -(∑ i : Fin constraints.length,
       ((constraints.get i).weight : ℝ) *
-      (((constraints.get i).eval a : ℝ) - ((constraints.get i).eval b : ℝ))) := by
+      (((constraints.get i).con a : ℝ) - ((constraints.get i).con b : ℝ))) := by
   rw [logit_uniformity, harmonyScoreR_as_finsum, harmonyScoreR_as_finsum,
     neg_sub_neg, ← sum_sub_distrib, ← sum_neg_distrib]
   apply Finset.sum_congr rfl; intro _ _; ring

@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraints.Weighted
+import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Probability.RandomUtility
 import Linglib.Core.Probability.LogitChoice
 
@@ -46,16 +46,16 @@ open Core Real Constraints
 /-- Sum of squared violation differences between two candidates.
     This determines the NHG noise variance: σ_d² = σ² · violationDiffSqSum. -/
 noncomputable def violationDiffSqSum {C : Type*}
-    (constraints : List (WeightedConstraint C)) (a b : C) : ℝ :=
+    (constraints : List (Constraint.Weighted C)) (a b : C) : ℝ :=
   constraints.foldl (λ acc con =>
-    acc + ((con.eval a : ℝ) - (con.eval b : ℝ)) ^ 2) 0
+    acc + ((con.con a : ℝ) - (con.con b : ℝ)) ^ 2) 0
 
 /-- Sum of squared violation differences (ℚ, computable).
     Use this for concrete examples with `decide`. -/
 def violationDiffSqSumQ {C : Type*}
-    (constraints : List (WeightedConstraint C)) (a b : C) : ℚ :=
+    (constraints : List (Constraint.Weighted C)) (a b : C) : ℚ :=
   constraints.foldl (λ acc con =>
-    acc + ((con.eval a : ℚ) - (con.eval b : ℚ)) ^ 2) 0
+    acc + ((con.con a : ℚ) - (con.con b : ℚ)) ^ 2) 0
 
 /-- NHG noise standard deviation for binary choice:
     σ_d = σ · √(Σⱼ (cⱼ(a) − cⱼ(b))²).
@@ -63,7 +63,7 @@ def violationDiffSqSumQ {C : Type*}
     The noise is **context-dependent**: it scales with the violation
     difference profile, not just the per-weight noise σ. -/
 noncomputable def nhgSigmaD {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) : ℝ :=
+    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) : ℝ :=
   sigma * Real.sqrt (violationDiffSqSum constraints a b)
 
 -- ============================================================================
@@ -78,14 +78,14 @@ noncomputable def nhgSigmaD {C : Type*}
     NHG noise `σ_d = σ·√(Σⱼ(cⱼ(a)−cⱼ(b))²)` (`nhgSigmaD`). It grounds directly
     in the Gaussian RUM — *not* through Thurstone's psychophysics. -/
 noncomputable def nhgChoiceProb {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) : ℝ :=
+    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) : ℝ :=
   gaussianChoiceProb (harmonyScore constraints a - harmonyScore constraints b)
     (nhgSigmaD constraints sigma a b)
 
 /-- NHG choice probability in closed form: `Φ((H(a) − H(b)) / σ_d)`
     ([flemming-2021] eq (15)). -/
 theorem nhg_choiceProb_eq {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) :
     nhgChoiceProb constraints sigma a b =
     normalCDF ((harmonyScore constraints a - harmonyScore constraints b) /
                nhgSigmaD constraints sigma a b) := by
@@ -111,14 +111,14 @@ noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
     to the harmony gap — but with the *constant* noise `σ_d = ε√2`
     (`normalMaxEntSigmaD`) rather than NHG's context-dependent `σ_d`. -/
 noncomputable def normalMaxEntChoiceProb {C : Type*}
-    (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (a b : C) : ℝ :=
+    (constraints : List (Constraint.Weighted C)) (epsilon : ℝ) (a b : C) : ℝ :=
   gaussianChoiceProb (harmonyScore constraints a - harmonyScore constraints b)
     (normalMaxEntSigmaD epsilon)
 
 /-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
     ([flemming-2021] eq (17)). -/
 theorem normalMaxEnt_choiceProb_eq {C : Type*}
-    (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (epsilon : ℝ) (a b : C) :
     normalMaxEntChoiceProb constraints epsilon a b =
     normalCDF ((harmonyScore constraints a - harmonyScore constraints b) /
                normalMaxEntSigmaD epsilon) := by
@@ -152,7 +152,7 @@ theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
 
     Instantiation of `logit_uniformity` with harmony scores. -/
 theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
-    (constraints : List (WeightedConstraint C)) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (a b : C) :
     log (softmax (harmonyScore constraints) a /
          softmax (harmonyScore constraints) b) =
     harmonyScore constraints a - harmonyScore constraints b :=
@@ -166,7 +166,7 @@ theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
     Adding or removing other candidates from the competition doesn't
     change the ratio. Corollary of `softmax_odds` with α = 1. -/
 theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
-    (constraints : List (WeightedConstraint C)) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (a b : C) :
     softmax (harmonyScore constraints) a /
     softmax (harmonyScore constraints) b =
     exp (harmonyScore constraints a - harmonyScore constraints b) := by
@@ -184,13 +184,13 @@ theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
     This is the bridge between abstract harmony scores and the constraint
     violation patterns used in empirical analyses (e.g., French schwa). -/
 theorem harmonyScore_diff {C : Type*}
-    (constraints : List (WeightedConstraint C)) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (a b : C) :
     harmonyScore constraints a - harmonyScore constraints b =
     -(constraints.map (fun con =>
-        con.weight * ((con.eval a : ℝ) - (con.eval b : ℝ)))).sum := by
-  have h_sum : (constraints.map (fun con => con.weight * (con.eval a : ℝ))).sum -
-      (constraints.map (fun con => con.weight * (con.eval b : ℝ))).sum =
-      (constraints.map (fun con => con.weight * ((con.eval a : ℝ) - (con.eval b : ℝ)))).sum := by
+        con.weight * ((con.con a : ℝ) - (con.con b : ℝ)))).sum := by
+  have h_sum : (constraints.map (fun con => con.weight * (con.con a : ℝ))).sum -
+      (constraints.map (fun con => con.weight * (con.con b : ℝ))).sum =
+      (constraints.map (fun con => con.weight * ((con.con a : ℝ) - (con.con b : ℝ)))).sum := by
     induction constraints with
     | nil => simp
     | cons _ _ ih => simp only [List.map, List.sum_cons]; linarith
@@ -247,22 +247,22 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
     comparisons. This is why NHG violates IIA for 3+ candidates
     ([flemming-2021] §9). -/
 noncomputable def nhgCovariance {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b c : C) : ℝ :=
+    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b c : C) : ℝ :=
   sigma ^ 2 * constraints.foldl (λ acc con =>
-    acc + ((con.eval b : ℝ) - (con.eval a : ℝ)) *
-          ((con.eval c : ℝ) - (con.eval a : ℝ))) 0
+    acc + ((con.con b : ℝ) - (con.con a : ℝ)) *
+          ((con.con c : ℝ) - (con.con a : ℝ))) 0
 
 /-- NHG covariance (ℚ, computable). -/
 def nhgCovarianceQ {C : Type*}
-    (constraints : List (WeightedConstraint C)) (a b c : C) : ℚ :=
+    (constraints : List (Constraint.Weighted C)) (a b c : C) : ℚ :=
   constraints.foldl (λ acc con =>
-    acc + ((con.eval b : ℚ) - (con.eval a : ℚ)) *
-          ((con.eval c : ℚ) - (con.eval a : ℚ))) 0
+    acc + ((con.con b : ℚ) - (con.con a : ℚ)) *
+          ((con.con c : ℚ) - (con.con a : ℚ))) 0
 
 /-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
     the variance `σ² · violationDiffSqSum`, recovering the binary case. -/
 theorem nhgCovariance_self {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) :
+    (constraints : List (Constraint.Weighted C)) (sigma : ℝ) (a b : C) :
     nhgCovariance constraints sigma a b b =
     sigma ^ 2 * violationDiffSqSum constraints b a := by
   simp only [nhgCovariance, violationDiffSqSum]

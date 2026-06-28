@@ -92,7 +92,7 @@ structure PhrasalCophonology (C : Type*) where
   /-- Predicate selecting which phase heads activate this cophonology. -/
   phaseSelector : SyntacticObject → Bool
   /-- Constraint subranking promoted within the matched phase. -/
-  subranking    : List (NamedConstraint C)
+  subranking    : List (String × Constraint C)
   /-- Optional human-readable name for diagnostics. -/
   name          : String := ""
 
@@ -113,7 +113,7 @@ def PhrasalCophonology.appliesTo {C : Type*}
     the difference relative to per-VI cophonology is the *trigger*
     (phase head match), not the constraint-merge mechanics. -/
 def phrasalCophonologicalEval {C : Type*} [DecidableEq C]
-    (defaultRanking : List (NamedConstraint C))
+    (defaultRanking : List (String × Constraint C))
     (pc : PhrasalCophonology C)
     (candidates : List C)
     (h : candidates ≠ []) : Finset C :=
@@ -122,12 +122,12 @@ def phrasalCophonologicalEval {C : Type*} [DecidableEq C]
 /-- A phrasal cophonology with empty subranking reduces to default OT.
     Lifts `cophonologicalEval_empty_sub`. -/
 theorem phrasalCophonologicalEval_empty_sub {C : Type*} [DecidableEq C]
-    (defaultRanking : List (NamedConstraint C))
+    (defaultRanking : List (String × Constraint C))
     (pc : PhrasalCophonology C)
     (candidates : List C) (h : candidates ≠ [])
     (hsub : pc.subranking = []) :
     phrasalCophonologicalEval defaultRanking pc candidates h
-      = (OptimalityTheory.mkTableau candidates defaultRanking h).optimal := by
+      = (OptimalityTheory.mkTableau candidates (defaultRanking.map (·.2)) h).optimal := by
   unfold phrasalCophonologicalEval
   rw [hsub]
   exact cophonologicalEval_empty_sub defaultRanking candidates h

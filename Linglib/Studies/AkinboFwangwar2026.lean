@@ -70,7 +70,7 @@ anchor combinators defined in §2 below.
 
 namespace AkinboFwangwar2026
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 open Autosegmental
 open Tone (TRN)
 open Tone (integrityTone)
@@ -164,15 +164,15 @@ def maxToneAuto (f : MwaghavulForm) : Nat :=
 
 /-- L-ANCHOR-Mᵥ as a `Constraint`. -/
 def lAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
-  .ofCount s!"L-ANCH-{reprStr t}({m.form})" .faithfulness (lAnchTone t m)
+  .ofCount (lAnchTone t m)
 
 /-- R-ANCHOR-Mᵥ as a `Constraint`. -/
 def rAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
-  .ofCount s!"R-ANCH-{reprStr t}({m.form})" .faithfulness (rAnchTone t m)
+  .ofCount (rAnchTone t m)
 
 /-- MAX-Tone as a `Constraint`. -/
 def maxToneC : Constraint MwaghavulForm :=
-  .ofCount "MAX-Tone" .faithfulness maxToneAuto
+  .ofCount maxToneAuto
 
 /-- INTEGRITY-Mᵥ for the verbaliser (canonical case). -/
 def integMv : Constraint MwaghavulForm := integrityTone vbzMorph TRN.M
@@ -241,12 +241,12 @@ def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
 /-- L-ANCHOR-`t`-from-`m`-across-roots as a `Constraint`. -/
 def lAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
     Constraint MwaghavulForm :=
-  .ofCount s!"L-ANCH-{reprStr t}({m.form},across)" .faithfulness (lAnchToneAcrossRoots t m rms)
+  .ofCount (lAnchToneAcrossRoots t m rms)
 
 /-- R-ANCHOR across roots as a `Constraint`. -/
 def rAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
     Constraint MwaghavulForm :=
-  .ofCount s!"R-ANCH-{reprStr t}({m.form},across)" .faithfulness (rAnchToneAcrossRoots t m rms)
+  .ofCount (rAnchToneAcrossRoots t m rms)
 
 end PerRoot
 
@@ -746,16 +746,16 @@ theorem dominant_coph_selects_basemap_faithful
     {C : Type} [DecidableEq C]
     (basemapTier : List TRN)
     (extractTier : C → List TRN)
-    (defaultRanking : List (NamedConstraint C))
+    (defaultRanking : List (String × Constraints.Constraint C))
     (candidates : List C) (h : candidates ≠ [])
     (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier)
     : let mxbmc := mkBasemapConstraint basemapTier extractTier
-      ∀ c ∈ cophonologicalEval defaultRanking [mxbmc] candidates h,
+      ∀ c ∈ cophonologicalEval defaultRanking [("MxBM-C", mxbmc)] candidates h,
         extractTier c = basemapTier := by
   intro mxbmc c hc
   simp only [cophonologicalEval, mergeRanking] at hc
-  have hExists : ∃ c₀ ∈ candidates, mxbmc.eval c₀ = 0 := by
+  have hExists : ∃ c₀ ∈ candidates, mxbmc c₀ = 0 := by
     obtain ⟨c₀, hc₀_mem, hc₀_eq⟩ := hFaithful
     exact ⟨c₀, hc₀_mem, by simp [mxbmc, mkBasemapConstraint, hc₀_eq,
       basemapViolations_self_eq_zero]⟩
@@ -775,7 +775,7 @@ theorem dominant_coph_agrees_with_tonalOverwrite
     {S C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq C]
     (host : List (TBU S)) (t defaultTone : TRN)
     (extractTier : C → List TRN)
-    (defaultRanking : List (NamedConstraint C))
+    (defaultRanking : List (String × Constraints.Constraint C))
     (candidates : List C) (h : candidates ≠ [])
     (hLen : ∀ c ∈ candidates,
       (extractTier c).length =
@@ -785,7 +785,7 @@ theorem dominant_coph_agrees_with_tonalOverwrite
     : let spec : Spec := ⟨"", [t], .whole⟩
       let baseTier := tonalTier (basemapOutput host spec defaultTone)
       let mxbmc := mkBasemapConstraint baseTier extractTier
-      ∀ c ∈ cophonologicalEval defaultRanking [mxbmc] candidates h,
+      ∀ c ∈ cophonologicalEval defaultRanking [("MxBM-C", mxbmc)] candidates h,
         extractTier c = tonalTier (tonalOverwrite host spec) := by
   intro spec baseTier mxbmc c hc
   have hFaith := dominant_coph_selects_basemap_faithful

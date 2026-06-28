@@ -37,10 +37,10 @@ downstream consumers reference.
 
 namespace Subregular
 
-open OptimalityTheory
+open Constraints OptimalityTheory
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
--- and `Core.Optimization.eval`, which are monomorphic in universe 0. See
+-- and `Core.Optimization`, which are monomorphic in universe 0. See
 -- the parallel comment in `OCP.lean`.
 variable {α : Type}
 
@@ -80,11 +80,11 @@ raw string projects (under `TierProjection.byClass p`) to a list with no two
 adjacent distinct elements — i.e. all on-tier elements are equal.
 Inequality-relation specialization of `mkForbidPairsOnTier_zero_iff_isChain`. -/
 theorem mkAgreeOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
-    (name : String) (p : α → Prop) [DecidablePred p]
+    (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkAgreeOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
+    (mkAgreeOnTier (TierProjection.byClass p) extract) c = 0 ↔
       ((extract c).filter (fun x => decide (p x))).IsChain (fun a b => ¬ a ≠ b) :=
-  mkForbidPairsOnTier_zero_iff_isChain name (· ≠ ·) p extract c
+  mkForbidPairsOnTier_zero_iff_isChain (· ≠ ·) p extract c
 
 /-- **Bridge** (full TSL_2 language form): a candidate's AGREE score is zero
 iff its raw string is in the language of the TSL_2 grammar
@@ -92,11 +92,11 @@ iff its raw string is in the language of the TSL_2 grammar
 constraint and subregular-complexity class — are co-extensive.
 Inequality-relation specialization of `mkForbidPairsOnTier_zero_iff_in_lang`. -/
 theorem mkAgreeOnTier_zero_iff_in_agree_lang [DecidableEq α] {C : Type}
-    (name : String) (p : α → Prop) [DecidablePred p]
+    (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkAgreeOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
+    (mkAgreeOnTier (TierProjection.byClass p) extract) c = 0 ↔
       extract c ∈ (TSLGrammar.agree p).lang :=
-  mkForbidPairsOnTier_zero_iff_in_lang name (· ≠ ·) p extract c
+  mkForbidPairsOnTier_zero_iff_in_lang (· ≠ ·) p extract c
 
 /-- **Zero-set bridge** (AGREE on tier): the `Language α`-form
 restatement of `mkAgreeOnTier_zero_iff_in_agree_lang` (with
@@ -105,10 +105,10 @@ corresponding AGREE-TSL_2 language. Sibling of
 `mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean and
 `mkOCPOnTier_zeroSet_eq` in OCP.lean. -/
 theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
-    (name : String) (p : α → Prop) [DecidablePred p] :
-    (mkAgreeOnTier name (TierProjection.byClass p) (id : List α → List α)).zeroSet =
+    (p : α → Prop) [DecidablePred p] :
+    (mkAgreeOnTier (TierProjection.byClass p) (id : List α → List α)).zeroSet =
       (TSLGrammar.agree p).lang := by
   ext w
-  exact mkAgreeOnTier_zero_iff_in_agree_lang name p id w
+  exact mkAgreeOnTier_zero_iff_in_agree_lang p id w
 
 end Subregular
