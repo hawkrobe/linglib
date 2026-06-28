@@ -1,6 +1,7 @@
 import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
+import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Mathlib.Order.Extension.Linear
 
@@ -708,6 +709,24 @@ theorem pocPredict_discrete_binary_rate
     ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
   rw [pocPredict_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin]
   exact picksAt_rate_eq cands vp i chosen other h_two h_ne D Y h_D h_Y
+
+/-! ### Bridge to the `Grammar` hub
+
+A partial order on constraints is the simple-ERC fragment of an OT grammar: its
+consistent total orders are exactly the legs of `Grammar.ofERCSet p.toERCSet`,
+routing POC through the canonical `Grammar` type rather than its own bespoke
+linear-extension plumbing ([merchant-riggle-2016]). The simple-ERC encoding is
+consistent via `toERCSet_consistent` (Szpilrajn, above). -/
+
+/-- The **grammar of a partial order**: the `Grammar` whose legs are `p`'s
+consistent total orders — the simple-ERC fragment of the hub. -/
+def toGrammar (p : PartialOrderConstraints n) : Grammar n :=
+  Grammar.ofERCSet p.toERCSet p.toERCSet_consistent
+
+@[simp] theorem toGrammar_legs (p : PartialOrderConstraints n) :
+    p.toGrammar.legs = p.consistentTotalOrders := by
+  show (Grammar.ofERCSet p.toERCSet p.toERCSet_consistent).legs = p.consistentTotalOrders
+  rw [Grammar.legs_ofERCSet, consistentTotalOrders_eq_linearExtensions]
 
 end PartialOrderConstraints
 
