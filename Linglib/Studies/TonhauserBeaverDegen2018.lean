@@ -1,436 +1,252 @@
 import Linglib.Discourse.AtIssueness
+import Linglib.Pragmatics.Expressives.Basic
+import Linglib.Data.Examples.TonhauserBeaverDegen2018
 
 /-!
 # [tonhauser-beaver-degen-2018]: How Projective Is Projective Content?
-[tonhauser-beaver-degen-2018] [potts-2005] [tonhauser-beaver-roberts-simons-2013]Empirical data from "How projective is projective content? Gradience in
-projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 
-## Key Findings
+The paper's central contribution is the **Gradient Projection Principle** (GPP):
 
-1. **Projectivity is gradient**, not binary. Even "strong" projective triggers
-   like NRRCs show mean projectivity ≈ .96, not 1.0.
-2. **Not-at-issueness is gradient** and **positively correlated** with
-   projectivity: r = .85 across 9 expression types (Exp 1a), r = .99
-   across 12 predicates (Exp 1b).
-3. **Appositives are not maximally projective**, contra [potts-2005].
-4. **Within-type variation**: different lexical items of the same type
-   yield different ratings.
+> "If content C is expressed by a constituent embedded under an
+> entailment-canceling operator, then C projects to the extent that it is not
+> at-issue."
 
-## Gradient Projection Principle (GPP)
+It makes gradient the binary *Projection Principle* of the pragmatic account
+([simons-tonhauser-beaver-roberts-2010], [roberts-2012]) — "projects iff not
+at-issue". This file formalizes the principle and its structural consequences,
+not the experimental tables, taking the tight reading of "to the extent that":
+projection degree equals not-at-issueness. The empirical claim is a gradient
+correlation with item-level variance, not this identity (cf. the dependency's
+`MonotoneAntiCorrelation` docstring).
 
-The paper's central theoretical contribution (p. 497, ex. 7):
+## Main definitions
+* `gppProjection` — the GPP map, the complement of at-issueness (`Rat01.compl`).
+* `pottsProjection` — [potts-2005]'s rival: CI projects maximally, at-issueness-blind.
+* `ProjectionAccount` / `ProjectionDatum` / `allData` — the predict signature a
+  theory implements and the artifact-sourced pool it runs against.
 
-  "If content C is expressed by a constituent embedded under an
-   entailment-canceling operator, then C projects to the extent that
-   it is not at-issue."
+## Main results
+* `gppProjection_antitone` — the GPP as order-reversal.
+* `gpp_excludes_atIssue` — recovers the binary Projection Principle as a threshold collapse.
+* `gpp_below_potts_of_atIssue`, `gpp_eq_potts_iff_backgrounded` — contra
+  [potts-2005]: the accounts agree only on fully-backgrounded content.
+* `gpp_beats_potts_below_diagonal` — on low-projectivity items the GPP beats Potts.
 
-This generalizes Simons et al.'s (2010) Pragmatic Account by replacing
-the binary at-issue/not-at-issue distinction with a gradient one.
-
-## Experiments
-
-- **Exp 1a**: 9 expression types — projectivity + not-at-issueness
-  (asking whether diagnostic). 190 participants.
-- **Exp 1b**: 12 clause-embedding predicates — same diagnostics.
-  235 participants (after exclusions).
-- **Exp 2a/2b**: Replications with direct dissent diagnostic (not formalized here).
-
-## Data
-
-Values are approximate means read from Figures 3 and 6. The paper reports
-ranges in text (e.g., projectivity .76–.96 for Exp 1a) but does not
-provide a table of exact per-expression means. Textually confirmed values
-are annotated.
-
-The scale is 0–1 (proportion of "yes" responses). The paper measures
-**not-at-issueness** via the "asking whether" diagnostic: higher values
-mean the content is MORE not-at-issue (more backgrounded).
-
+## Implementation notes
+Degrees and thresholds are the `Rat01` types from `Discourse.AtIssueness`; the GPP
+map is the `Rat01` complement. Potts's maximal projection is grounded in
+`Pragmatics.Expressives.TwoDimProp.ci_projects_through_neg`.
 -/
 
 namespace TonhauserBeaverDegen2018
 
--- ════════════════════════════════════════════════════
--- § Experiment 1a: Nine Expression Types
--- ════════════════════════════════════════════════════
-
-/-- The 9 expression types tested in Experiment 1a.
-
-    All are **non-SCF** (Strong Contextual Felicity = no), chosen to
-    isolate projectivity and at-issueness variation (p. 504).
-
-    - Class B (SCF=no, OLE=no): NRRC, nominal appositive, possessive NP
-    - Class C (SCF=no, OLE=yes): discover, know, be annoyed, stop
-    - Focus-sensitive: only
-    - Evaluative adjective: be stupid to -/
-inductive ExpressionType where
-  | nrrc              -- non-restrictive relative clause
-  | nominalAppositive -- nominal appositive
-  | possessiveNP      -- possessive NP (existence of possessor)
-  | discover          -- factive verb "discover"
-  | know              -- factive verb "know"
-  | annoyed           -- emotive factive "be annoyed"
-  | stop              -- change-of-state "stop"
-  | only              -- focus-sensitive "only"
-  | stupid            -- evaluative adjective "be stupid to"
-  deriving DecidableEq, Repr
-
-/-- Mean projectivity rating from Experiment 1a (0–1 scale).
-
-    Values approximate means from Figure 3. Text (p. 507) confirms:
-    - only = .76 (minimum)
-    - NRRC = .96 and be annoyed = .96 (maximum, "close to ceiling") -/
-def projectivityRating : ExpressionType → ℚ
-  | .nrrc              => 96/100  -- text: .96
-  | .nominalAppositive => 94/100
-  | .possessiveNP      => 93/100
-  | .discover          => 88/100
-  | .know              => 91/100
-  | .annoyed           => 96/100  -- text: .96
-  | .stop              => 88/100
-  | .only              => 76/100  -- text: .76
-  | .stupid            => 86/100
-
-/-- Mean not-at-issueness rating from Experiment 1a (0–1 scale).
-    Measured via the "asking whether" diagnostic.
-
-    Higher = more not-at-issue (more backgrounded).
-
-    Values approximate means from Figure 3. Text (p. 508) confirms:
-    - only = .73 (minimum)
-    - NRRC = .96 (maximum) -/
-def notAtIssuenessRating : ExpressionType → ℚ
-  | .nrrc              => 96/100  -- text: .96
-  | .nominalAppositive => 91/100
-  | .possessiveNP      => 93/100
-  | .discover          => 84/100
-  | .know              => 88/100
-  | .annoyed           => 94/100
-  | .stop              => 78/100
-  | .only              => 73/100  -- text: .73
-  | .stupid            => 82/100
-
-/-- At-issueness = 1 − not-at-issueness. Higher = more at-issue.
-    Derived from the paper's direct measurements. -/
-def atIssuenessRating (e : ExpressionType) : ℚ := 1 - notAtIssuenessRating e
-
--- ════════════════════════════════════════════════════
--- § Experiment 1b: Twelve Clause-Embedding Predicates
--- ════════════════════════════════════════════════════
-
-/-- The 12 clause-embedding predicates from Experiment 1b (p. 511).
-
-    Semantic classes (per paper):
-    - Emotive: be amused, be annoyed
-    - Cognitive: be aware, discover, find out, learn, notice, realize, establish
-    - Sensory: see
-    - Communication: confess, reveal -/
-inductive Predicate where
-  | beAmused
-  | beAnnoyed
-  | beAware
-  | confess
-  | discover
-  | establish
-  | findOut
-  | learn
-  | notice
-  | realize
-  | reveal
-  | see
-  deriving DecidableEq, Repr
-
-/-- Mean projectivity ratings for the 12 predicates from Exp 1b (0–1 scale).
-    Values approximate means from Figure 6. -/
-def verbProjectivity : Predicate → ℚ
-  | .establish  => 43/100
-  | .confess    => 65/100
-  | .reveal     => 77/100
-  | .learn      => 82/100
-  | .discover   => 86/100
-  | .findOut    => 90/100
-  | .see        => 90/100
-  | .beAmused   => 92/100
-  | .realize    => 92/100
-  | .beAware    => 93/100
-  | .notice     => 94/100
-  | .beAnnoyed  => 94/100
-
-/-- Mean not-at-issueness ratings for the 12 predicates from Exp 1b (0–1 scale).
-    Values approximate means from Figure 6. -/
-def verbNotAtIssueness : Predicate → ℚ
-  | .establish  => 47/100
-  | .confess    => 56/100
-  | .reveal     => 68/100
-  | .learn      => 73/100
-  | .discover   => 78/100
-  | .findOut    => 82/100
-  | .see        => 83/100
-  | .beAmused   => 85/100
-  | .realize    => 86/100
-  | .beAware    => 87/100
-  | .notice     => 88/100
-  | .beAnnoyed  => 89/100
-
-/-- At-issueness = 1 − not-at-issueness for predicates. -/
-def verbAtIssueness (p : Predicate) : ℚ := 1 - verbNotAtIssueness p
-
--- ════════════════════════════════════════════════════
--- § Regression Coefficients
--- ════════════════════════════════════════════════════
-
-/-- Regression coefficient: not-at-issueness predicts projectivity.
-    Exp 1a (p. 508–509): β = 0.37, SE = 0.10, t = 3.70, p < .003.
-    Exp 1b (p. 514): β = 0.34, SE = 0.04, t = 9.31, p < .0001.
-
-    The effect is significant in both experiments. -/
-structure RegressionEffect where
-  beta : ℚ
-  se : ℚ
-  deriving Repr
-
-def exp1aRegression : RegressionEffect := ⟨37/100, 10/100⟩
-def exp1bRegression : RegressionEffect := ⟨34/100, 4/100⟩
-
--- ════════════════════════════════════════════════════
--- § Correlation Coefficients
--- ════════════════════════════════════════════════════
-
-/-- Pearson r for not-at-issueness × projectivity (positive correlation).
-    "Collapsing" = computed over expression-type/predicate means.
-    "Not collapsing" = computed over individual items.
-
-    Exp 1a (p. 508): r = .85 (collapsing), r = .45 (not collapsing)
-    Exp 1b (p. 514): r = .99 (collapsing), r = .44 (not collapsing) -/
-structure CorrelationData where
-  collapsing : ℚ
-  notCollapsing : ℚ
-  deriving Repr
-
-def exp1aCorrelation : CorrelationData := ⟨85/100, 45/100⟩
-def exp1bCorrelation : CorrelationData := ⟨99/100, 44/100⟩
-
--- ════════════════════════════════════════════════════
--- § Verification Theorems: Exp 1a
--- ════════════════════════════════════════════════════
-
-/-- NRRC and be annoyed are tied for most projective (text: .96). -/
-theorem nrrc_annoyed_most_projective : ∀ e : ExpressionType,
-    projectivityRating e ≤ projectivityRating .nrrc := by
-  intro e; cases e <;> native_decide
-
-/-- only is the least projective at .76 (text confirms). -/
-theorem only_least_projective : ∀ e : ExpressionType,
-    projectivityRating .only ≤ projectivityRating e := by
-  intro e; cases e <;> native_decide
-
-/-- NRRC has the highest not-at-issueness at .96 (text confirms). -/
-theorem nrrc_most_notAtIssue : ∀ e : ExpressionType,
-    notAtIssuenessRating e ≤ notAtIssuenessRating .nrrc := by
-  intro e; cases e <;> native_decide
-
-/-- only has the lowest not-at-issueness at .73 (text confirms). -/
-theorem only_least_notAtIssue : ∀ e : ExpressionType,
-    notAtIssuenessRating .only ≤ notAtIssuenessRating e := by
-  intro e; cases e <;> native_decide
-
-/-- Appositives are not maximally projective, contra [potts-2005].
-    Potts predicted CI content (including appositives) should project
-    obligatorily. The data shows 94/100 — high but not 1.0. -/
-theorem appositives_not_maximally_projective :
-    projectivityRating .nominalAppositive < 1 := by native_decide
-
-/-- Within-type variation: factive predicates differ in projectivity.
-    discover (.88) vs know (.91) — both traditionally "factive" but
-    different ratings. -/
-theorem within_type_variation :
-    projectivityRating .discover ≠ projectivityRating .know := by
-  native_decide
-
-/-- GPP supported for Exp 1a extremes: only has highest at-issueness
-    and lowest projectivity; NRRC has lowest at-issueness and highest
-    projectivity. -/
-theorem gpp_extreme_pair_exp1a :
-    atIssuenessRating .only > atIssuenessRating .nrrc ∧
-    projectivityRating .only < projectivityRating .nrrc := by
-  native_decide
-
--- ════════════════════════════════════════════════════
--- § Verification Theorems: Exp 1b
--- ════════════════════════════════════════════════════
-
-/-- be annoyed has the highest projectivity among the 12 predicates.
-    (Tied with notice at .94.) -/
-theorem beAnnoyed_highest_verb_projectivity :
-    ∀ p : Predicate, verbProjectivity p ≤ verbProjectivity .beAnnoyed := by
-  intro p; cases p <;> native_decide
-
-/-- establish has the lowest projectivity (.43) — notably below .50,
-    suggesting it may not even be a projective trigger. -/
-theorem establish_lowest_verb_projectivity :
-    ∀ p : Predicate, verbProjectivity .establish ≤ verbProjectivity p := by
-  intro p; cases p <;> native_decide
-
-/-- establish is the only predicate with projectivity below the
-    midpoint .50, suggesting it may not be a projective trigger. -/
-theorem establish_below_midpoint :
-    verbProjectivity .establish < 1/2 := by native_decide
-
-/-- GPP supported for Exp 1b extremes: establish has highest
-    at-issueness and lowest projectivity. -/
-theorem gpp_extreme_pair_exp1b :
-    verbAtIssueness .establish > verbAtIssueness .beAnnoyed ∧
-    verbProjectivity .establish < verbProjectivity .beAnnoyed := by
-  native_decide
-
-/-- All predicates except establish have projectivity ≥ .65. -/
-theorem non_establish_above_65 : ∀ p : Predicate,
-    p ≠ .establish → 65/100 ≤ verbProjectivity p := by
-  intro p hp; cases p <;> first | native_decide | exact absurd rfl hp
-
--- ════════════════════════════════════════════════════
--- § Tukey Groupings
--- ════════════════════════════════════════════════════
-
-/-- The top group of Exp 1a (Table 1): {NRRC, annoyed, NomApp, possNP, know}
-    show no significant pairwise differences in projectivity.
-    These form the "high projectivity" cluster (.91–.96). -/
-theorem exp1a_top_group_tight_range :
-    projectivityRating .nrrc - projectivityRating .know ≤ 6/100 := by
-  native_decide
-
-/-- only is significantly different from all other expression types
-    (Table 1: all pairwise comparisons significant at p < .001). -/
-theorem only_separated_from_top :
-    projectivityRating .nrrc - projectivityRating .only ≥ 15/100 := by
-  native_decide
-
-/-- The top group of Exp 1b (Table 3): {annoyed, notice, aware, realize,
-    amused, findOut} show no significant pairwise differences.
-    These form the "high projectivity" cluster (.90–.94). -/
-theorem exp1b_top_group_tight_range :
-    verbProjectivity .beAnnoyed - verbProjectivity .findOut ≤ 5/100 := by
-  native_decide
-
-/-- establish is clearly separated from the top group
-    (Table 3: all pairwise comparisons significant at p < .001). -/
-theorem establish_separated_from_top :
-    verbProjectivity .beAnnoyed - verbProjectivity .establish ≥ 40/100 := by
-  native_decide
-
--- ════════════════════════════════════════════════════
--- § Bridge: Gradient At-Issueness ↔ Infrastructure
--- ════════════════════════════════════════════════════
-
 open Discourse.AtIssueness
+open Core.Order (Rat01)
+open Pragmatics.Expressives
+open Data.Examples (LinguisticExample SourceRef)
 
-/-- Lift an expression type's projectivity rating to a bounded degree. -/
-def ExpressionType.toProjectivityDegree (e : ExpressionType) : ProjectivityDegree :=
-  ⟨projectivityRating e,
-   by cases e <;> native_decide,
-   by cases e <;> native_decide⟩
+/-! ### The Gradient Projection Principle -/
 
-/-- Lift an expression type's at-issueness to a bounded degree. -/
-def ExpressionType.toAtIssuenessDegree (e : ExpressionType) : AtIssuenessDegree :=
-  ⟨atIssuenessRating e,
-   by cases e <;> native_decide,
-   by cases e <;> native_decide⟩
+/-- The GPP map: projection degree is the complement of at-issueness — content
+    projects to the extent it is not at-issue ([tonhauser-beaver-degen-2018]). -/
+def gppProjection (ai : AtIssuenessDegree) : ProjectivityDegree := Rat01.compl ai
 
-/-- Lift a predicate's projectivity rating to a bounded degree. -/
-def Predicate.toProjectivityDegree (p : Predicate) : ProjectivityDegree :=
-  ⟨verbProjectivity p,
-   by cases p <;> native_decide,
-   by cases p <;> native_decide⟩
+/-- The GPP as order-reversal: more at-issue content is no more projective. -/
+theorem gppProjection_antitone : Antitone gppProjection := Rat01.compl_antitone
 
-/-- Lift a predicate's at-issueness to a bounded degree. -/
-def Predicate.toAtIssuenessDegree (p : Predicate) : AtIssuenessDegree :=
-  ⟨verbAtIssueness p,
-   by cases p <;> native_decide,
-   by cases p <;> native_decide⟩
+/-- Fully not-at-issue content (at-issueness `0`) projects maximally. -/
+theorem gppProjection_zero : gppProjection Rat01.zero = Rat01.one := by
+  apply Subtype.ext; simp [gppProjection, Rat01.zero, Rat01.one]
 
-/-- Mean projectivity for Class B triggers (NRRC, appositive, possessive NP). -/
-def classBMeanProjectivity : ℚ :=
-  (projectivityRating ExpressionType.nrrc +
-   projectivityRating ExpressionType.nominalAppositive +
-   projectivityRating ExpressionType.possessiveNP) / 3
+/-- Fully at-issue content (at-issueness `1`) does not project. -/
+theorem gppProjection_one : gppProjection Rat01.one = Rat01.zero := by
+  apply Subtype.ext; simp [gppProjection, Rat01.zero, Rat01.one]
 
-/-- Mean projectivity for Class C triggers (discover, know, annoyed, stop). -/
-def classCMeanProjectivity : ℚ :=
-  (projectivityRating ExpressionType.discover +
-   projectivityRating ExpressionType.know +
-   projectivityRating ExpressionType.annoyed +
-   projectivityRating ExpressionType.stop) / 4
+/-! ### Recovering the binary Projection Principle
 
-/-- Class B triggers have higher mean projectivity than Class C triggers. -/
-theorem classB_higher_projectivity_than_classC :
-    classCMeanProjectivity < classBMeanProjectivity := by native_decide
+The binary principle ([simons-tonhauser-beaver-roberts-2010]) — projects iff not
+at-issue — is the threshold collapse of the gradient GPP. -/
 
-/-- Mean not-at-issueness for Class B triggers. -/
-def classBMeanNotAtIssueness : ℚ :=
-  (notAtIssuenessRating ExpressionType.nrrc +
-   notAtIssuenessRating ExpressionType.nominalAppositive +
-   notAtIssuenessRating ExpressionType.possessiveNP) / 3
+/-- The GPP projects past `θ` iff at-issueness is below the complementary threshold. -/
+theorem gpp_projects_iff (ai θ : Rat01) :
+    isProjective (gppProjection ai) θ ↔ ai.val < (Rat01.compl θ).val := by
+  simp only [isProjective, Rat01.exceeds, gppProjection, Rat01.compl_val]
+  constructor <;> intro h <;> linarith
 
-/-- Mean not-at-issueness for Class C triggers. -/
-def classCMeanNotAtIssueness : ℚ :=
-  (notAtIssuenessRating ExpressionType.discover +
-   notAtIssuenessRating ExpressionType.know +
-   notAtIssuenessRating ExpressionType.annoyed +
-   notAtIssuenessRating ExpressionType.stop) / 4
+/-- The binary Projection Principle: never both at-issue and projecting at
+    complementary thresholds. -/
+theorem gpp_excludes_atIssue (ai θ : Rat01) :
+    ¬ (isAtIssue ai (Rat01.compl θ) ∧ isProjective (gppProjection ai) θ) := by
+  rintro ⟨ha, hp⟩
+  simp only [isAtIssue, Rat01.exceeds, Rat01.compl_val] at ha
+  rw [gpp_projects_iff, Rat01.compl_val] at hp
+  linarith
 
-/-- Class B triggers are more not-at-issue than Class C triggers. -/
-theorem classB_higher_notAtIssueness_than_classC :
-    classCMeanNotAtIssueness < classBMeanNotAtIssueness := by native_decide
+/-! ### Contra Potts
 
-/-- With the default threshold of 0.5, all 9 expression types are
-    classified as not-at-issue. -/
-theorem all_expression_types_not_at_issue :
-    ∀ e : ExpressionType,
-      toClassical (ExpressionType.toAtIssuenessDegree e) defaultThreshold
-        = .notAtIssue := by
-  intro e; cases e <;> native_decide
+[potts-2005] predicts CI content (appositives, NRRCs, expressives) projects
+maximally and obligatorily — its CI dimension is unchanged by every
+entailment-canceling operator. The GPP ties projection to at-issueness, so any
+at-issue content projects below the ceiling; the two agree only for
+fully-backgrounded content. -/
 
-/-- For Exp 1b predicates, only establish is classified as at-issue
-    with the default threshold. -/
-theorem establish_at_issue_default :
-    toClassical (Predicate.toAtIssuenessDegree .establish) defaultThreshold
-      = .atIssue := by
-  native_decide
+/-- [potts-2005]'s prediction: CI content projects maximally (degree `1`),
+    regardless of at-issueness. -/
+def pottsProjection (_ : AtIssuenessDegree) : ProjectivityDegree := Rat01.one
 
-/-- All predicates except establish are classified as not-at-issue. -/
-theorem non_establish_not_at_issue (p : Predicate) (h : p ≠ .establish) :
-    toClassical (Predicate.toAtIssuenessDegree p) defaultThreshold
-      = .notAtIssue := by
-  cases p <;> first | native_decide | exact absurd rfl h
+@[simp] theorem pottsProjection_val (ai : AtIssuenessDegree) :
+    (pottsProjection ai).val = 1 := rfl
 
-/-- The GPP anti-monotonicity property holds for Exp 1b verb data. -/
-theorem exp1b_gpp_antimonotone :
-    ∀ (p q : Predicate),
-      verbAtIssueness p < verbAtIssueness q →
-      verbProjectivity q ≤ verbProjectivity p := by
-  intro p q; cases p <;> cases q <;> native_decide
+/-- Potts's prediction is at-issueness-blind — the same for all content, which
+    the GPP denies. -/
+theorem potts_atIssue_blind (ai₁ ai₂ : AtIssuenessDegree) :
+    pottsProjection ai₁ = pottsProjection ai₂ := rfl
 
-/-- Exp 1a is NOT fully anti-monotone: possNP and NomApp are non-monotone. -/
-theorem exp1a_non_monotone_witness :
-    notAtIssuenessRating ExpressionType.possessiveNP >
-      notAtIssuenessRating ExpressionType.nominalAppositive ∧
-    projectivityRating ExpressionType.possessiveNP <
-      projectivityRating ExpressionType.nominalAppositive := by
-  native_decide
+/-- Potts's maximal projection abstracts the operator-invariance of the CI
+    dimension: negation leaves CI content unchanged ([potts-2005]). -/
+theorem potts_ci_invariant_under_neg {W : Type*} (p : TwoDimProp W) :
+    (TwoDimProp.neg p).ci = p.ci := TwoDimProp.ci_projects_through_neg p
 
-/-- Among shared predicates, discover shows intermediate at-issueness. -/
-theorem shared_predicates_gradient :
-    verbProjectivity Predicate.beAnnoyed > 1/2 ∧
-    verbProjectivity Predicate.discover > 1/2 ∧
-    verbProjectivity Predicate.reveal > 1/2 ∧
-    verbProjectivity Predicate.see > 1/2 := by
-  native_decide
+/-- Contra [potts-2005]: any at-issue content (at-issueness `> 0`) projects
+    strictly below Potts's ceiling — the structural form of "appositives are not
+    maximally projective". -/
+theorem gpp_below_potts_of_atIssue {ai : AtIssuenessDegree} (h : 0 < ai.val) :
+    (gppProjection ai).val < (pottsProjection ai).val := by
+  simp only [gppProjection, pottsProjection, Rat01.compl_val, Rat01.one]; linarith
 
-theorem shared_predicates_intermediate_atissueness :
-    verbAtIssueness Predicate.discover > 0 ∧
-    verbAtIssueness Predicate.discover < 1/2 ∧
-    verbAtIssueness Predicate.beAnnoyed > 0 ∧
-    verbAtIssueness Predicate.beAnnoyed < 1/2 := by
-  native_decide
+/-- The GPP and Potts agree iff the content is fully backgrounded (at-issueness `0`). -/
+theorem gpp_eq_potts_iff_backgrounded (ai : AtIssuenessDegree) :
+    gppProjection ai = pottsProjection ai ↔ ai = Rat01.zero := by
+  constructor
+  · intro h
+    apply Subtype.ext
+    have hv : (gppProjection ai).val = (pottsProjection ai).val := by rw [h]
+    simp only [gppProjection, pottsProjection, Rat01.compl_val, Rat01.one] at hv
+    simp only [Rat01.zero]; linarith
+  · intro h; subst h; apply Subtype.ext
+    simp [gppProjection, pottsProjection, Rat01.zero, Rat01.one]
+
+/-- Potts files appositives in the independent CI dimension — the source of the
+    maximal-projection prediction the GPP refines. -/
+theorem appositive_potts_independent : appositiveProperties.independent = true := rfl
+
+/-! ### The GPP as a `MonotoneAntiCorrelation`
+
+`Discourse.AtIssueness.MonotoneAntiCorrelation` (built for this paper, consumed by
+`Studies/SolstadBott2024`) bundles anti-correlated pairs; the GPP produces one
+from any list of at-issueness values. -/
+
+/-- Any list of at-issueness values, paired with their GPP projection, forms a
+    `MonotoneAntiCorrelation`. -/
+def gppAntiCorrelation (ais : List ℚ) : MonotoneAntiCorrelation where
+  pairs := ais.map (fun a => ⟨a, 1 - a⟩)
+  anticorrelated := by
+    intro i j h
+    simp only [List.get_eq_getElem, List.getElem_map] at h ⊢
+    linarith
+
+/-! ### Illustrations from the paper
+
+The paper's qualitative findings instantiate the GPP: stated as hypotheses on
+at-issueness, the projectivity ordering follows from `gppProjection_antitone`. -/
+
+/-- Since `only` is more at-issue than an NRRC, the GPP predicts it projects no
+    more ([tonhauser-beaver-degen-2018]). -/
+theorem only_no_more_projective_than_nrrc
+    {onlyAI nrrcAI : AtIssuenessDegree} (h : nrrcAI ≤ onlyAI) :
+    gppProjection onlyAI ≤ gppProjection nrrcAI :=
+  gppProjection_antitone h
+
+/-- At-issue appositive content projects sub-maximally — the GPP reading of the
+    central result against [potts-2005]. -/
+theorem appositive_not_maximally_projective
+    {apposAI : AtIssuenessDegree} (h : 0 < apposAI.val) :
+    (gppProjection apposAI).val < 1 := by
+  have := gpp_below_potts_of_atIssue h
+  simpa [pottsProjection, Rat01.one] using this
+
+/-! ### Representing the data for theories to predict against
+
+The per-expression means (Exps 1a/1b plus main-clause controls) are
+artifact-sourced rows in `Data.Examples.TonhauserBeaverDegen2018`; `fromExample`
+lifts them to the `allData` pool any `ProjectionAccount` runs against. The means
+are continuous, so per-row predictions are *computed* (string `paperFeatures` and
+`ℚ` do not reduce in the kernel); the *provable* content is each account's
+systematic error — the GPP over-predicts content projecting below its
+not-at-issueness, Potts over-predicts everything sub-ceiling, and where both do
+the GPP is closer. -/
+
+/-- A theory of projection: predict a content's projectivity from its at-issueness. -/
+abbrev ProjectionAccount := AtIssuenessDegree → ProjectivityDegree
+
+/-- Observed projectivity and not-at-issueness means for one expression. -/
+structure ProjectionDatum where
+  expression     : String
+  projectivity   : ProjectivityDegree
+  notAtIssueness : Rat01
+  source         : SourceRef
+  deriving Repr
+
+/-- Parse a percent-integer string (e.g. `"96"`) into a `Rat01`; `none` if
+    non-numeric or out of range. -/
+def parsePercent (s : String) : Option Rat01 :=
+  match s.toNat? with
+  | some n =>
+      if h : n ≤ 100 then
+        some (ofPercent (n : ℚ) (by exact_mod_cast Nat.zero_le n) (by exact_mod_cast h))
+      else none
+  | none => none
+
+/-- Lift a `LinguisticExample` to a `ProjectionDatum` via its `expression`,
+    `projectivity`, and `notAtIssueness` keys; `none` if any is missing. -/
+def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
+  match e.paperFeatures.lookup "expression",
+        (e.paperFeatures.lookup "projectivity").bind parsePercent,
+        (e.paperFeatures.lookup "notAtIssueness").bind parsePercent with
+  | some expr, some p, some na =>
+      some { expression := expr, projectivity := p, notAtIssueness := na, source := e.source }
+  | _, _, _ => none
+
+/-- The observed projection pool, derived from the generated `Examples.all` rows. -/
+def allData : List ProjectionDatum :=
+  Examples.all.filterMap fromExample
+
+/-- An account's absolute error on an observation. -/
+def predictionError (acc : ProjectionAccount) (d : ProjectionDatum) : ℚ :=
+  |(acc (Rat01.compl d.notAtIssueness)).val - d.projectivity.val|
+
+/-- An account predicts an observation within tolerance `ε`. -/
+def predictsWithin (ε : ℚ) (acc : ProjectionAccount) (d : ProjectionDatum) : Prop :=
+  predictionError acc d ≤ ε
+
+instance (ε : ℚ) (acc : ProjectionAccount) (d : ProjectionDatum) :
+    Decidable (predictsWithin ε acc d) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+/-- The GPP over-predicts every content projecting below its not-at-issueness —
+    the `establish`, `reveal`, and `confess` rows. -/
+theorem gpp_errs_below_diagonal (d : ProjectionDatum)
+    (h : d.projectivity.val < d.notAtIssueness.val) :
+    0 < predictionError gppProjection d := by
+  rw [predictionError, gppProjection, Rat01.compl_compl, abs_pos]
+  intro hc; linarith [sub_eq_zero.mp hc]
+
+/-- Potts over-predicts every content below the ceiling (projectivity `< 1`). -/
+theorem potts_errs_subceiling (d : ProjectionDatum)
+    (h : d.projectivity.val < 1) :
+    0 < predictionError pottsProjection d := by
+  rw [predictionError, abs_pos]
+  simp only [pottsProjection_val]
+  intro hc; linarith [sub_eq_zero.mp hc]
+
+/-- Below both its not-at-issueness and the ceiling, the GPP is strictly closer to
+    the observation than Potts — the low-projectivity items the paper highlights. -/
+theorem gpp_beats_potts_below_diagonal (d : ProjectionDatum)
+    (h1 : d.projectivity.val < d.notAtIssueness.val) (h2 : d.notAtIssueness.val < 1) :
+    predictionError gppProjection d < predictionError pottsProjection d := by
+  rw [predictionError, predictionError, gppProjection, Rat01.compl_compl]
+  simp only [pottsProjection_val]
+  rw [abs_of_pos (by linarith), abs_of_pos (by linarith)]
+  linarith
 
 end TonhauserBeaverDegen2018
