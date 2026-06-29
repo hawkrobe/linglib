@@ -125,9 +125,11 @@ theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonic
 /-! ### Re-representations (preserving the head) -/
 
 /-- Re-represent as a prosodic tree ([selkirk-1980]; [ito-mester-2003]): a depth-1 `.f`
-    node over `.σ` leaves, the head σ marked via `Constituent.isHead`. -/
-def toProsTree (w : S → Syllable.Weight) (f : Foot S) : Tree :=
-  .node .ft ((List.finRange f.syllables.length).map (fun i =>
+    node over `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
+    itself is marked `isHead` when the foot heads its ω (the `isHead` argument; see
+    `Word.toProsTree`). -/
+def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : Tree :=
+  .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
     .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))
 
 /-- Re-represent as a metrical-grid row ([hayes-1995]): a head mark per position. -/
