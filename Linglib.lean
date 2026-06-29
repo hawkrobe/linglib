@@ -1430,6 +1430,7 @@ import Linglib.Pragmatics.RSA.Monotonicity
 import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
+import Linglib.Pragmatics.RSA.SimpAttr
 import Linglib.Pragmatics.RSA.Ranking
 import Linglib.Pragmatics.RSA.ReferenceGame
 import Linglib.Pragmatics.RSA.Sequential
