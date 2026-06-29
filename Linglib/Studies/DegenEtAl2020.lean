@@ -153,14 +153,12 @@ noncomputable def S1 (w : World) : PMF Utterance :=
 /-- **Main result**: S1 strictly prefers the overmodified "small blue" over the
     sufficient "small" — overmodification is rational under noisy perception. -/
 theorem csrsa_overmod_preferred : S1 target .small < S1 target .smallBlue := by
-  rw [S1, S1Belief_apply_lt_iff_score_lt]
-  simp only [ENNReal.rpow_one, mul_one, L0_small_target, L0_smallBlue_target]
+  simp only [S1, rsa, ENNReal.rpow_one, mul_one, L0_small_target, L0_smallBlue_target]
   rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
 
 /-- The sufficient "small" beats the redundant "blue" (the size principle). -/
 theorem csrsa_sufficient_beats_redundant : S1 target .blue < S1 target .small := by
-  rw [S1, S1Belief_apply_lt_iff_score_lt]
-  simp only [ENNReal.rpow_one, mul_one, L0_blue_target, L0_small_target]
+  simp only [S1, rsa, ENNReal.rpow_one, mul_one, L0_blue_target, L0_small_target]
   rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
 
 /-! ### φ grounded in the noise channels -/
@@ -233,8 +231,7 @@ noncomputable def boolS1 (w : World) : PMF Utterance :=
     identifies the target perfectly, so adding "blue" adds nothing. -/
 theorem bool_no_overmod_preference :
     ¬ (boolS1 target .small < boolS1 target .smallBlue) := by
-  rw [boolS1, S1Belief_apply_lt_iff_score_lt]
-  simp only [ENNReal.rpow_one, mul_one, boolL0_small_target, boolL0_smallBlue_target,
+  simp only [boolS1, rsa, ENNReal.rpow_one, mul_one, boolL0_small_target, boolL0_smallBlue_target,
     lt_self_iff_false, not_false_iff]
 
 /-! ### No-Brevity bridge -/
@@ -335,14 +332,12 @@ noncomputable def nomS1 (w : NomWorld) : PMF NomUtterance :=
 /-- Nominal **overspecification**: S1 prefers the subordinate "dalmatian" over the
     sufficient basic "dog" — the noun analogue of `csrsa_overmod_preferred`. -/
 theorem nominal_overspec_preferred : nomS1 .dalmatian .basic < nomS1 .dalmatian .sub := by
-  rw [nomS1, S1Belief_apply_lt_iff_score_lt]
-  simp only [ENNReal.rpow_one, mul_one, nomL0_basic, nomL0_sub]
+  simp only [nomS1, rsa, ENNReal.rpow_one, mul_one, nomL0_basic, nomL0_sub]
   rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
 
 /-- The basic "dog" beats the superordinate "animal". -/
 theorem nominal_basic_beats_super : nomS1 .dalmatian .super < nomS1 .dalmatian .basic := by
-  rw [nomS1, S1Belief_apply_lt_iff_score_lt]
-  simp only [ENNReal.rpow_one, mul_one, nomL0_super, nomL0_basic]
+  simp only [nomS1, rsa, ENNReal.rpow_one, mul_one, nomL0_super, nomL0_basic]
   rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
 
 /-- Boolean (crisp) typicality. -/
@@ -392,9 +387,8 @@ noncomputable def nomBoolS1 (w : NomWorld) : PMF NomUtterance :=
 /-- The Boolean model shows **no** overspecification preference. -/
 theorem nom_bool_no_overspec :
     ¬ (nomBoolS1 .dalmatian .basic < nomBoolS1 .dalmatian .sub) := by
-  rw [nomBoolS1, S1Belief_apply_lt_iff_score_lt]
-  simp only [ENNReal.rpow_one, mul_one, nomBoolL0_basic, nomBoolL0_sub, lt_self_iff_false,
-    not_false_iff]
+  simp only [nomBoolS1, rsa, ENNReal.rpow_one, mul_one, nomBoolL0_basic, nomBoolL0_sub,
+    lt_self_iff_false, not_false_iff]
 
 /-! ### The unified mechanism -/
 
