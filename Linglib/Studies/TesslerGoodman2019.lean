@@ -490,6 +490,60 @@ theorem endorsement_iff_exceeds_expected
     -- Goal: prior p * Zg < prior p * p.toNat * Zp ↔ Zg < p.toNat * Zp
     constructor <;> intro h <;> nlinarith
 
+/-! ### Symmetric priors put the endorsement boundary at the centre
+
+A prior invariant under bin-reflection `k ↦ 20 − k` has its mean at the central bin
+(50% prevalence). This makes the "robins are female" borderline a *theorem about
+symmetry* rather than a numerical coincidence. -/
+
+/-- The bin-reflection `k ↦ 20 − k` as a permutation of `Prevalence`. `Degree 20`
+    wraps `Fin 21`, so reflect `Fin.rev` on the underlying `.value` field. -/
+private def reflectPrev : Equiv.Perm Prevalence where
+  toFun k := ⟨Fin.rev k.value⟩
+  invFun k := ⟨Fin.rev k.value⟩
+  left_inv k := by simp only [Fin.rev_rev]
+  right_inv k := by simp only [Fin.rev_rev]
+
+private theorem reflectPrev_toNat (k : Prevalence) : (reflectPrev k).toNat = 20 - k.toNat := by
+  show (Fin.rev k.value).val = 20 - k.value.val
+  rw [Fin.val_rev]; omega
+
+/-- For a reflection-symmetric prior the prevalence-weighted total is the centre bin
+    times the mass: `∑ prior(k)·k = 10 · ∑ prior(k)` — reflect the index and average
+    with the original. -/
+private theorem wsum_symm {prior : Prevalence → ℝ}
+    (hsymm : ∀ k : Prevalence, prior (reflectPrev k) = prior k) :
+    ∑ k : Prevalence, prior k * (k.toNat : ℝ) = 10 * ∑ k : Prevalence, prior k := by
+  have hk : ∀ k : Prevalence, k.toNat ≤ 20 := fun k => Nat.lt_succ_iff.mp k.value.isLt
+  have key : (∑ k : Prevalence, prior k * (k.toNat : ℝ))
+           = ∑ k : Prevalence, prior k * ((20 : ℝ) - (k.toNat : ℝ)) := by
+    refine Fintype.sum_equiv reflectPrev _ _ (fun k => ?_)
+    rw [hsymm k, reflectPrev_toNat k, Nat.cast_sub (hk k)]; push_cast; ring
+  rw [Finset.sum_congr rfl (fun k _ => by ring :
+        ∀ k ∈ Finset.univ, prior k * ((20:ℝ) - (k.toNat:ℝ)) = 20 * prior k - prior k * (k.toNat:ℝ)),
+      Finset.sum_sub_distrib, ← Finset.mul_sum] at key
+  linarith [key]
+
+/-- **A reflection-symmetric prior has its mean exactly at the centre bin (50%).** -/
+theorem expectedBin_of_symmetric {prior : Prevalence → ℝ}
+    (hsymm : ∀ k : Prevalence, prior (reflectPrev k) = prior k)
+    (hZ : 0 < ∑ k : Prevalence, prior k) : expectedBin prior = 10 := by
+  unfold expectedBin
+  rw [wsum_symm hsymm, mul_div_assoc, div_self (ne_of_gt hZ), mul_one]
+
+/-- The "is female" prior — `Beta(10, 10)` with mixture weight `φ = 1` — is invariant
+    under bin-reflection, since `betaWeight a b k = betaWeight b a (20−k)` and here
+    `a = b = 10`. -/
+theorem isFemalePrior_symm (k : Prevalence) :
+    priorR isFemalePrior (reflectPrev k) = priorR isFemalePrior k := by
+  unfold priorR
+  congr 1
+  show isFemalePrior (reflectPrev k) = isFemalePrior k
+  have hk : k.toNat ≤ 20 := Nat.lt_succ_iff.mp k.value.isLt
+  have h20 : 20 - (20 - k.toNat) = k.toNat := by omega
+  simp only [isFemalePrior, mixturePrior, betaWeight, reflectPrev_toNat k, h20]
+  ring
+
 set_option maxHeartbeats 1000000 in
 /-- "Dogs bark" endorsed at 95% prevalence (Table 1: 95%; Figure 2, column 1: 0.88). -/
 theorem bark_endorsed :
@@ -617,10 +671,12 @@ theorem dontEatPeople_not_endorsed :
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
 set_option maxHeartbeats 1000000 in
-/-- "Robins are female" borderline at 50% prevalence (Figure 2, column 5: 0.50).
-    The unimodal prior peaks at 50% with φ = 1.0, so the prior expected
-    prevalence is exactly 50%. At the referent prevalence of 50%, the generic
-    is exactly as informative as silence — endorsement is 0.5. -/
+/-- "Robins are female" borderline at 50% prevalence (Figure 2, column 5: 0.50) — as
+    a **symmetry theorem**. The `Beta(10,10)`, `φ = 1` prior is reflection-symmetric
+    (`isFemalePrior_symm`), so its mean is exactly the centre bin
+    (`expectedBin_of_symmetric`: 50%); the 50%-referent then sits exactly on the
+    endorsement boundary, so the generic is no more informative than silence. Not a
+    numerical coincidence — a consequence of the prior's symmetry. -/
 theorem isFemale_borderline :
     ¬(isFemaleCfg.S1 () (prevPct 50) .generic > isFemaleCfg.S1 () (prevPct 50) .silent) := by
   have hp := priorR_nonneg_of isFemalePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
@@ -628,20 +684,53 @@ theorem isFemale_borderline :
     simp only [priorR]
     norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
-  have hZ : 0 < ∑ w : Prevalence, priorR isFemalePrior w := by
-    rw [sum_degree20]
-    norm_num [priorR, isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
-      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
-      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  have hZ : 0 < ∑ w : Prevalence, priorR isFemalePrior w :=
+    Finset.sum_pos' (fun i _ => hp i) ⟨prevPct 50, Finset.mem_univ _, hpp⟩
   show ¬((mkGenericCfg (priorR isFemalePrior) hp).S1 () (prevPct 50) .generic >
         (mkGenericCfg (priorR isFemalePrior) hp).S1 () (prevPct 50) .silent)
-  rw [endorsement_iff_exceeds_expected (priorR isFemalePrior) hp (prevPct 50) hpp hZ, not_lt]
-  unfold expectedBin
-  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
-    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
-    Fin.sum_univ_succ, Fin.sum_univ_zero]
+  rw [endorsement_iff_exceeds_expected (priorR isFemalePrior) hp (prevPct 50) hpp hZ, not_lt,
+      expectedBin_of_symmetric isFemalePrior_symm hZ]
+  norm_num [Degree.toNat]
 
+
+-- ============================================================================
+-- § 7b. Mathematical laws of the endorsement model
+-- ============================================================================
+
+/-! `endorsement_iff_exceeds_expected` says the endorsement decision is a single
+*threshold on the referent prevalence at the prior mean* `expectedBin`. The model's
+qualitative content is the behaviour of that threshold, derived below from the law
+alone — no prior-specific computation, no `decide`. -/
+
+/-- **Monotonicity in prevalence** (Figure 1C). At a fixed prior, endorsement is
+    monotone in the referent prevalence: once a prevalence exceeds the prior mean,
+    every higher prevalence is endorsed too. The endorsement curve is a step up at
+    `expectedBin prior`. -/
+theorem endorse_monotone {prior : Prevalence → ℝ} (hp : ∀ p, 0 ≤ prior p)
+    (p₁ p₂ : Prevalence) (hpos₁ : 0 < prior p₁) (hpos₂ : 0 < prior p₂)
+    (hZ : 0 < ∑ w : Prevalence, prior w) (hle : p₁.toNat ≤ p₂.toNat)
+    (h : (mkGenericCfg prior hp).S1 () p₁ .generic > (mkGenericCfg prior hp).S1 () p₁ .silent) :
+    (mkGenericCfg prior hp).S1 () p₂ .generic > (mkGenericCfg prior hp).S1 () p₂ .silent := by
+  rw [endorsement_iff_exceeds_expected prior hp p₁ hpos₁ hZ, gt_iff_lt] at h
+  rw [endorsement_iff_exceeds_expected prior hp p₂ hpos₂ hZ, gt_iff_lt]
+  exact lt_of_lt_of_le h (by exact_mod_cast hle)
+
+/-- **Prevalence asymmetry** ([leslie-2008]) as a theorem about prior *means*. At one
+    and the same referent prevalence `p`, a property whose prior mean lies below `p`
+    is endorsed while one whose prior mean lies at or above `p` is not. The asymmetry
+    is therefore not a fact about the prevalence (it is shared) but the ordering of
+    the two prior means `expectedBin prior₁ < p ≤ expectedBin prior₂` — exactly the
+    paper's explanation of "robins lay eggs" vs. "robins are female". -/
+theorem endorse_asymmetry_of_expected {prior₁ prior₂ : Prevalence → ℝ}
+    (hp₁ : ∀ p, 0 ≤ prior₁ p) (hp₂ : ∀ p, 0 ≤ prior₂ p) (p : Prevalence)
+    (hpos₁ : 0 < prior₁ p) (hpos₂ : 0 < prior₂ p)
+    (hZ₁ : 0 < ∑ w : Prevalence, prior₁ w) (hZ₂ : 0 < ∑ w : Prevalence, prior₂ w)
+    (hlo : expectedBin prior₁ < (p.toNat : ℝ)) (hhi : (p.toNat : ℝ) ≤ expectedBin prior₂) :
+    ((mkGenericCfg prior₁ hp₁).S1 () p .generic > (mkGenericCfg prior₁ hp₁).S1 () p .silent) ∧
+    ¬((mkGenericCfg prior₂ hp₂).S1 () p .generic > (mkGenericCfg prior₂ hp₂).S1 () p .silent) := by
+  refine ⟨?_, ?_⟩
+  · rw [endorsement_iff_exceeds_expected prior₁ hp₁ p hpos₁ hZ₁, gt_iff_lt]; exact hlo
+  · rw [endorsement_iff_exceeds_expected prior₂ hp₂ p hpos₂ hZ₂, not_lt]; exact hhi
 
 -- ============================================================================
 -- § 8. Prevalence Asymmetry ([leslie-2008])
