@@ -485,7 +485,7 @@ theorem stem_parsesyl_violations :
 /-- The optimal Stem-level parse is (ˈsa.mu).(ˌdram): two well-formed
     moraic trochees, (LL)(H), with no unparsed syllables. -/
 theorem stem_optimal :
-    (mkTableau stemCandidates stemRanking stemCandidates_ne).optimal
+    (Tableau.ofRanking stemCandidates stemRanking stemCandidates_ne).optimal
       = {.ll_H} := by native_decide
 
 -- ============================================================================
@@ -578,7 +578,7 @@ theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
 /-- Word level, NOM: Word-final stressed *-ni* is deleted.
     Surface: *samudr-am* (short form). -/
 theorem wordNom_optimal :
-    (mkTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
+    (Tableau.ofRanking wordNomCands wordNomRanking wordNomCands_ne).optimal
       = {.deleteNi} := by native_decide
 
 -- ────────────────────────────────────────────────────────────────────
@@ -624,7 +624,7 @@ theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
 /-- Word level, DAT: /mn/ boundary repaired by compensatory lengthening.
     Surface: *samudr-āni-ki* (long form). -/
 theorem wordDat_optimal :
-    (mkTableau wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
+    (Tableau.ofRanking wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
       = {.compLengthen} := by native_decide
 
 -- ────────────────────────────────────────────────────────────────────
@@ -642,9 +642,9 @@ theorem wordDat_optimal :
     (§3) stipulates: the alternation is now DERIVED from OT constraint
     interaction, not encoded by fiat. -/
 theorem word_level_derives_alternation :
-    (mkTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
+    (Tableau.ofRanking wordNomCands wordNomRanking wordNomCands_ne).optimal
       = {.deleteNi} ∧
-    (mkTableau wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
+    (Tableau.ofRanking wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
       = {.compLengthen} :=
   ⟨wordNom_optimal, wordDat_optimal⟩
 
@@ -729,7 +729,7 @@ theorem phrasePostpCands_ne : phrasePostpCands ≠ [] := by decide
     `*DIST-0` is demoted below MAX at Phrase level, so m-n contact
     is tolerated rather than repaired. Surface: *samudram nunci*. -/
 theorem phrasePostp_optimal :
-    (mkTableau phrasePostpCands (phrasePostpRanking.map (·.2)) phrasePostpCands_ne).optimal
+    (Tableau.ofRanking phrasePostpCands (phrasePostpRanking.map (·.2)) phrasePostpCands_ne).optimal
       = {.faithful} := by native_decide
 
 end PhraseLevel
@@ -1023,7 +1023,7 @@ open Core.Optimization Constraints
 
 /-- Stem-level metrical parse tableau as a generic `ConstraintSystem`. -/
 noncomputable def stemSystem : ConstraintSystem StemCandidate (LexProfile Nat 3) :=
-  tableauSystem (mkTableau stemCandidates stemRanking stemCandidates_ne)
+  tableauSystem (Tableau.ofRanking stemCandidates stemRanking stemCandidates_ne)
 
 /-- Probability 1 on (LL)(H): two well-formed moraic trochees. -/
 theorem stemSystem_predict_ll_H :
@@ -1032,7 +1032,7 @@ theorem stemSystem_predict_ll_H :
 
 /-- Word-level NOM tableau as a generic `ConstraintSystem`. -/
 noncomputable def wordNomSystem : ConstraintSystem WordCandNom (LexProfile Nat 6) :=
-  tableauSystem (mkTableau wordNomCands wordNomRanking wordNomCands_ne)
+  tableauSystem (Tableau.ofRanking wordNomCands wordNomRanking wordNomCands_ne)
 
 /-- Probability 1 on `deleteNi`: Word-final stressed *-ni* is deleted. -/
 theorem wordNomSystem_predict_deleteNi :
@@ -1041,7 +1041,7 @@ theorem wordNomSystem_predict_deleteNi :
 
 /-- Word-level DAT tableau as a generic `ConstraintSystem`. -/
 noncomputable def wordDatSystem : ConstraintSystem WordCandDat (LexProfile Nat 6) :=
-  tableauSystem (mkTableau wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne)
+  tableauSystem (Tableau.ofRanking wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne)
 
 /-- Probability 1 on `compLengthen`: /m/ deletion + CL yields *-āni*. -/
 theorem wordDatSystem_predict_compLengthen :

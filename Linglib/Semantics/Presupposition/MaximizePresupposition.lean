@@ -160,15 +160,15 @@ theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
     (hNE : candidates ≠ [])
     (hBound : ∀ c ∈ candidates, strength c ≤ maxStrength)
     (hExists : ∃ c₀ ∈ candidates, strength c₀ = maxStrength) :
-    ∀ c ∈ (mkTableau candidates
+    ∀ c ∈ (Tableau.ofRanking candidates
       (mpConstraintOf maxStrength strength :: rest) hNE).optimal,
       strength c = maxStrength := by
   intro c hc
-  have hZero := mkTableau_optimal_zero_first candidates
+  have hZero := Tableau.ofRanking_optimal_zero_first candidates
     (mpConstraintOf maxStrength strength) rest hNE
     (by obtain ⟨c₀, hm, hs⟩ := hExists
         exact ⟨c₀, hm, mp_zero_at_max maxStrength strength c₀ hs⟩) c hc
-  have hcBound := hBound c (mkTableau_optimal_mem candidates _ hNE c hc)
+  have hcBound := hBound c (Tableau.ofRanking_optimal_mem candidates _ hNE c hc)
   simp only [mpConstraintOf] at hZero; omega
 
 /-- **Markedness dominant → weakest wins**: when a markedness constraint
@@ -180,11 +180,11 @@ theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List
     (rest : List (Constraint C))
     (hNE : candidates ≠ [])
     (hExists : ∃ c₀ ∈ candidates, strength c₀ = 0) :
-    ∀ c ∈ (mkTableau candidates
+    ∀ c ∈ (Tableau.ofRanking candidates
       (markednessPenalty strength :: rest) hNE).optimal,
       strength c = 0 := by
   intro c hc
-  have hZero := mkTableau_optimal_zero_first candidates
+  have hZero := Tableau.ofRanking_optimal_zero_first candidates
     (markednessPenalty strength) rest hNE
     (by obtain ⟨c₀, hm, hs⟩ := hExists
         exact ⟨c₀, hm, markedness_zero_at_min strength c₀ hs⟩) c hc
@@ -266,7 +266,7 @@ theorem phi_mp_selects_maximal (candidates : List ContainmentPair)
     (hNE : candidates ≠ [])
     (hWF : ∀ c ∈ candidates, c.WellFormed)
     (hMax : ContainmentPair.maximal ∈ candidates) :
-    ∀ c ∈ (mkTableau candidates (phiMP :: rest) hNE).optimal,
+    ∀ c ∈ (Tableau.ofRanking candidates (phiMP :: rest) hNE).optimal,
       presupStrength c = ContainmentPair.maximal.specLevel :=
   mp_selects_strongest candidates _ presupStrength rest hNE
     (fun c hc => wellFormed_specLevel_le_two c (hWF c hc))

@@ -1,29 +1,33 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.Defs
+import Mathlib.Data.List.Permutation
 
 /-!
 # Tableau Construction and Factorial Typology
 
 The OT evaluation machinery built on the `Tableau` type (`OptimalityTheory.Defs`)
-and the violation-profile vocabulary (`Constraints.Profile`): a smart constructor
-for tableaux from ranked constraint lists, the structural optimality theorems,
-and factorial-typology computation.
+and the violation-profile vocabulary (`Constraints.Profile`): smart constructors
+for tableaux, the structural optimality theorems, and factorial-typology
+computation.
 
 ## Main definitions
 
-* `mkTableau` — build a `Tableau` from a candidate list and a ranked constraint
-  list.
-* `permutations` — all rankings of a constraint list (factorial typology).
+* `Tableau.ofRanking` — build a `Tableau` from a candidate list and a ranked
+  constraint list (list order = priority, position `0` most dominant).
+* `Tableau.ofPerm` — build a `Tableau` from a fixed constraint set `CON C n` under
+  a ranking `r : Ranking n` (priority position `p` reads constraint `r p`); the
+  `Equiv.Perm`-indexed form, definitionally the identity case of `ofRanking`.
 * `mkFactorialOptima` / `mkFactorialTypologySize` — the distinct optimal sets
-  predicted across all rankings, and their count.
+  predicted across all rankings (`List.permutations'`), and their count.
 
 ## Main results
 
-* `mkTableau_zero_isOptimal` / `mkTableau_zero_optimal_allRankings` — a
-  candidate with no violations wins under any (every) ranking.
-* `mkTableau_isOptimal_zero_first` — a satisfiable top constraint forces all
-  winners to satisfy it.
+* `Tableau.ofRanking_zero_isOptimal` / `Tableau.ofPerm_zero_isOptimal` /
+  `Tableau.ofRanking_zero_optimal_allRankings` — a candidate with no violations
+  wins under any (every) ranking.
+* `Tableau.ofRanking_isOptimal_zero_first` — a satisfiable top constraint forces
+  all winners to satisfy it.
 -/
 
 namespace OptimalityTheory
@@ -36,89 +40,28 @@ open Constraints
 
 variable {α : Type*}
 
-/-- Insert element `a` at every position in list `l`. -/
-private def insertEverywhere (a : α) : List α → List (List α)
-  | [] => [[a]]
-  | x :: xs =>
-    (a :: x :: xs) :: (insertEverywhere a xs).map (x :: ·)
-
-/-- All permutations of a list. -/
-def permutations : List α → List (List α)
-  | [] => [[]]
-  | x :: xs => (permutations xs).flatMap (insertEverywhere x)
-
-/-- Elements of `insertEverywhere a l` contain exactly `a` and the
-    elements of `l`. -/
-private theorem mem_of_mem_insertEverywhere (a : α) :
-    ∀ (l : List α) (l' : List α), l' ∈ insertEverywhere a l →
-      ∀ x, x ∈ l' → x = a ∨ x ∈ l := by
-  intro l
-  induction l with
-  | nil =>
-    intro l' h x hx
-    simp [insertEverywhere] at h
-    subst h
-    simp at hx
-    exact Or.inl hx
-  | cons y ys ih =>
-    intro l' h x hx
-    simp only [insertEverywhere, List.mem_cons, List.mem_map] at h
-    rcases h with rfl | ⟨t, ht, rfl⟩
-    · -- l' = a :: y :: ys
-      simp [List.mem_cons] at hx
-      rcases hx with rfl | rfl | hx
-      · exact Or.inl rfl
-      · exact Or.inr (.head _)
-      · exact Or.inr (.tail _ hx)
-    · -- l' = y :: t, where t ∈ insertEverywhere a ys
-      simp [List.mem_cons] at hx
-      rcases hx with rfl | hx
-      · exact Or.inr (.head _)
-      · rcases ih t ht x hx with rfl | hm
-        · exact Or.inl rfl
-        · exact Or.inr (.tail _ hm)
-
-/-- Elements of any permutation of `l` are elements of `l`. -/
-theorem mem_of_mem_permutations {x : α} :
-    ∀ {l l' : List α}, l' ∈ permutations l → x ∈ l' → x ∈ l := by
-  intro l
-  induction l with
-  | nil =>
-    intro l' hp hx
-    simp [permutations] at hp
-    subst hp; simp at hx
-  | cons y ys ih =>
-    intro l' hp hx
-    simp only [permutations, List.mem_flatMap] at hp
-    obtain ⟨p, hp_mem, hp_ins⟩ := hp
-    rcases mem_of_mem_insertEverywhere y p l' hp_ins x hx with rfl | hm
-    · exact .head _
-    · exact .tail _ (ih hp_mem hm)
-
-/-- A permutation of `constraints` has the same elements, so any
-    `con ∈ ranking` for `ranking ∈ permutations constraints` satisfies
-    `con ∈ constraints`. -/
-theorem permutations_subset {l l' : List α}
-    (hp : l' ∈ permutations l) : ∀ x ∈ l', x ∈ l :=
-  fun _ hx => mem_of_mem_permutations hp hx
+/-- A permutation of `l` — an element of mathlib's `List.permutations'` (the
+    structurally-recursive insert-everywhere enumeration that, unlike
+    `List.permutations`, reduces under `decide`) — has the same elements as `l`.
+    The factorial-typology layer ranges over `List.permutations'`; this lemma
+    feeds the all-rankings optimality result. -/
+theorem permutations_subset {l l' : List α} (hp : l' ∈ l.permutations') :
+    ∀ x ∈ l', x ∈ l :=
+  fun _ hx => (List.mem_permutations'.mp hp).mem_iff.mp hx
 
 -- ============================================================================
--- § 2: Tableau Construction
+-- § 2: Tableau Constructors
 -- ============================================================================
 
-variable {C : Type*} [DecidableEq C]
+variable {C : Type*} [DecidableEq C] {n : Nat}
 
-/-- Build a `Tableau C ranking.length` from a candidate list and ranking.
+/-- Build a `Tableau C ranking.length` from a candidate list and a ranked
+    constraint list: list order is priority (position `0` most dominant).
 
-    Candidates are deduplicated via `List.toFinset`; profiles are
-    fixed-length `ViolationProfile n` built via `buildViolationProfile`.
-
-    Study files use this as:
-    ```
-    (mkTableau candidates ranking h).optimal = {.winner}
-    ```
-    where `{.winner}` is a `Finset` literal. -/
-def mkTableau (candidates : List C)
+    Candidates are deduplicated via `List.toFinset`; profiles are fixed-length
+    `ViolationProfile` built via `buildViolationProfile`. Study files use this as
+    `(Tableau.ofRanking candidates ranking h).optimal = {.winner}`. -/
+def Tableau.ofRanking (candidates : List C)
     (ranking : List (Constraint C))
     (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
   { candidates := candidates.toFinset
@@ -129,11 +72,33 @@ def mkTableau (candidates : List C)
       | nil => contradiction
       | cons a _ => exact ⟨a, by simp⟩ }
 
-/-- Candidates in `mkTableau ... .optimal` belong to the original list. -/
-theorem mkTableau_optimal_mem
+/-- Build a `Tableau C n` from a fixed constraint set `con : CON C n` under a
+    ranking `r : Ranking n`: priority position `p` reads constraint `r p`, so
+    coordinate `0` of the lexicographic profile is the most dominant constraint.
+    The `Equiv.Perm`-indexed evaluation that the `ElementaryRankingCondition`
+    apparatus (`tableauERC`, `ERC.satisfiedBy`) ranges over. -/
+def Tableau.ofPerm (con : CON C n) (r : Ranking n)
+    (candidates : List C)
+    (h : candidates ≠ [] := by decide) : Tableau C n :=
+  { candidates := candidates.toFinset
+    profile := fun c => buildViolationProfile (fun p => con (r p)) c
+    nonempty := by
+      cases candidates with
+      | nil => contradiction
+      | cons a _ => exact ⟨a, by simp⟩ }
+
+/-- A list ranking is its own `CON` (via `List.get`) under the identity
+    permutation: the two constructors agree, definitionally. -/
+theorem Tableau.ofRanking_eq_ofPerm (candidates : List C)
+    (ranking : List (Constraint C)) (h : candidates ≠ []) :
+    Tableau.ofRanking candidates ranking h =
+      Tableau.ofPerm (fun j => ranking.get j) (Equiv.refl _) candidates h := rfl
+
+/-- Candidates in `(Tableau.ofRanking ...).optimal` belong to the original list. -/
+theorem Tableau.ofRanking_optimal_mem
     (candidates : List C) (ranking : List (Constraint C))
     (h : candidates ≠ []) (c : C) :
-    c ∈ (mkTableau candidates ranking h).optimal → c ∈ candidates :=
+    c ∈ (Tableau.ofRanking candidates ranking h).optimal → c ∈ candidates :=
   fun hc => List.mem_toFinset.mp (Tableau.optimal_subset _ c hc)
 
 -- ============================================================================
@@ -148,12 +113,12 @@ theorem mkTableau_optimal_mem
     the ranking, it forces all winners to satisfy it perfectly. Uses
     `ViolationProfile.le_apply_zero` to extract the first component
     of the lexicographic comparison. -/
-theorem mkTableau_isOptimal_zero_first
+theorem Tableau.ofRanking_isOptimal_zero_first
     (candidates : List C) (con : Constraint C)
     (rest : List (Constraint C))
     (h : candidates ≠ [])
     (hExists : ∃ c₀ ∈ candidates, con c₀ = 0)
-    : ∀ c, (mkTableau candidates (con :: rest) h).IsOptimal c →
+    : ∀ c, (Tableau.ofRanking candidates (con :: rest) h).IsOptimal c →
         con c = 0 := by
   intro c ⟨_, hc_all⟩
   obtain ⟨c₀, hc₀_mem, hc₀_zero⟩ := hExists
@@ -164,27 +129,27 @@ theorem mkTableau_isOptimal_zero_first
   rw [hc₀_zero] at h0
   exact Nat.le_zero.mp h0
 
-/-- `∈ .optimal` version of `mkTableau_isOptimal_zero_first`. -/
-theorem mkTableau_optimal_zero_first
+/-- `∈ .optimal` version of `Tableau.ofRanking_isOptimal_zero_first`. -/
+theorem Tableau.ofRanking_optimal_zero_first
     (candidates : List C) (con : Constraint C)
     (rest : List (Constraint C))
     (h : candidates ≠ [])
     (hExists : ∃ c₀ ∈ candidates, con c₀ = 0)
-    : ∀ c ∈ (mkTableau candidates (con :: rest) h).optimal,
+    : ∀ c ∈ (Tableau.ofRanking candidates (con :: rest) h).optimal,
         con c = 0 :=
-  fun c hc => mkTableau_isOptimal_zero_first candidates con rest h hExists c
+  fun c hc => Tableau.ofRanking_isOptimal_zero_first candidates con rest h hExists c
     ((Tableau.mem_optimal_iff _ c).mp hc)
 
-/-- If a candidate in `mkTableau` has 0 violations on every constraint,
+/-- If a candidate in `Tableau.ofRanking` has 0 violations on every constraint,
     it is optimal. -/
-theorem mkTableau_zero_isOptimal
+theorem Tableau.ofRanking_zero_isOptimal
     (candidates : List C) (ranking : List (Constraint C))
     (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
     (hzero : ∀ con ∈ ranking, con c = 0) :
-    c ∈ (mkTableau candidates ranking h).optimal := by
+    c ∈ (Tableau.ofRanking candidates ranking h).optimal := by
   rw [Tableau.mem_optimal_iff]
   refine ⟨List.mem_toFinset.mpr hc, fun c' _ => ?_⟩
-  suffices hsuff : (mkTableau candidates ranking h).profile c = 0 by
+  suffices hsuff : (Tableau.ofRanking candidates ranking h).profile c = 0 by
     rw [hsuff]; exact ViolationProfile.zero_le _
   show buildViolationProfile (fun i => ranking.get i) c = 0
   funext i
@@ -193,38 +158,51 @@ theorem mkTableau_zero_isOptimal
 /-- If a candidate has 0 violations on every constraint in a set, it is
     optimal under **every** permutation of those constraints.
 
-    This is the structural backbone of `adj_always_initial` in Marco &
-    Rasin (2026): the uniform-initial adjective paradigm has [0,0,0,0]
-    on all four OP constraints, so it wins regardless of ranking. The
-    proof reduces to `mkTableau_zero_isOptimal` after using
-    `permutations_subset` to show that elements of a permutation are
-    elements of the original list. -/
-theorem mkTableau_zero_optimal_allRankings
+    The structural backbone of `adj_always_initial` in [marco-rasin-2026]: the
+    uniform-initial adjective paradigm has [0,…,0] on all OP constraints, so it
+    wins regardless of ranking. Reduces to `Tableau.ofRanking_zero_isOptimal`
+    after `permutations_subset`. -/
+theorem Tableau.ofRanking_zero_optimal_allRankings
     (candidates : List C) (constraints : List (Constraint C))
     (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
     (hzero : ∀ con ∈ constraints, con c = 0) :
-    ∀ ranking ∈ permutations constraints,
-      c ∈ (mkTableau candidates ranking h).optimal :=
-  fun ranking hp => mkTableau_zero_isOptimal candidates ranking h c hc
+    ∀ ranking ∈ constraints.permutations',
+      c ∈ (Tableau.ofRanking candidates ranking h).optimal :=
+  fun ranking hp => Tableau.ofRanking_zero_isOptimal candidates ranking h c hc
     (fun con hcon => hzero con (permutations_subset hp con hcon))
+
+/-- The `Equiv.Perm`-indexed analogue: a candidate with 0 violations on every
+    constraint of `con` is optimal in `Tableau.ofPerm con r` under **every**
+    ranking `r` — permuting the coordinates of the all-zero profile leaves it
+    zero. n-agnostic and enumeration-free (no `decide`). -/
+theorem Tableau.ofPerm_zero_isOptimal
+    (con : CON C n) (candidates : List C)
+    (h : candidates ≠ []) (c : C) (hc : c ∈ candidates)
+    (hzero : ∀ i, con i c = 0) (r : Ranking n) :
+    c ∈ (Tableau.ofPerm con r candidates h).optimal := by
+  rw [Tableau.mem_optimal_iff]
+  refine ⟨List.mem_toFinset.mpr hc, fun c' _ => ?_⟩
+  suffices hsuff : (Tableau.ofPerm con r candidates h).profile c = 0 by
+    rw [hsuff]; exact ViolationProfile.zero_le _
+  show buildViolationProfile (fun p => con (r p)) c = 0
+  funext p
+  exact hzero (r p)
 
 -- ============================================================================
 -- § 4: Factorial Typology
 -- ============================================================================
 
-/-- For each permutation of `constraints`, compute the set of optimal
-    candidates as a `Finset`. Return the list of distinct optimal sets.
-
-    This is the core of OT factorial typology: the number of distinct
-    optimal sets equals the number of language types predicted by the
-    constraint set. -/
+/-- For each ranking (permutation, via `List.permutations'`) of `constraints`,
+    the set of optimal candidates as a `Finset`; the list of distinct optimal
+    sets. The number of distinct sets is the number of language types the
+    constraint set predicts. -/
 def mkFactorialOptima
     (candidates : List C)
     (constraints : List (Constraint C))
     (h : candidates ≠ [] := by decide) : List (Finset C) :=
-  let allRankings := permutations constraints
+  let allRankings := constraints.permutations'
   let optima := allRankings.map fun ranking =>
-    (mkTableau candidates ranking h).optimal
+    (Tableau.ofRanking candidates ranking h).optimal
   optima.eraseDups
 
 /-- Number of distinct language types predicted by the factorial typology.

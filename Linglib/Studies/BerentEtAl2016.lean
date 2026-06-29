@@ -124,7 +124,7 @@ theorem hebrew_diminutive_available :
     in a plurality context. The categorical prediction captures the
     direction of this gradient effect. -/
 theorem english_plurality_prefers_XX :
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor englishGrammar .plurality)
       (l1RankingFor englishGrammar .plurality)
       (l1CandidatesFor_ne englishGrammar .plurality)).optimal
@@ -136,7 +136,7 @@ theorem english_plurality_prefers_XX :
     predicts XY wins categorically; the data show absence of the
     XX preference seen in the plurality condition. -/
 theorem english_diminutive_prefers_XY :
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor englishGrammar .diminutive)
       (l1RankingFor englishGrammar .diminutive)
       (l1CandidatesFor_ne englishGrammar .diminutive)).optimal
@@ -149,7 +149,7 @@ theorem english_diminutive_prefers_XY :
     XY categorically; the data show attenuation or absence of the
     XX preference relative to the diminutive condition. -/
 theorem hebrew_plurality_prefers_XY :
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor hebrewGrammar .plurality)
       (l1RankingFor hebrewGrammar .plurality)
       (l1CandidatesFor_ne hebrewGrammar .plurality)).optimal
@@ -161,7 +161,7 @@ theorem hebrew_plurality_prefers_XY :
     transfer makes the reduplication parse available. The categorical
     prediction captures the direction of the effect. -/
 theorem hebrew_diminutive_prefers_XX :
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor hebrewGrammar .diminutive)
       (l1RankingFor hebrewGrammar .diminutive)
       (l1CandidatesFor_ne hebrewGrammar .diminutive)).optimal
@@ -184,23 +184,23 @@ theorem hebrew_diminutive_prefers_XX :
     encodes both positive and negative transfer from L1 morphology. -/
 theorem doubling_dissociation :
     -- English: prefer XX for plurality, XY for diminutive
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor englishGrammar .plurality)
       (l1RankingFor englishGrammar .plurality)
       (l1CandidatesFor_ne englishGrammar .plurality)).optimal
       = {.reduplication} ∧
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor englishGrammar .diminutive)
       (l1RankingFor englishGrammar .diminutive)
       (l1CandidatesFor_ne englishGrammar .diminutive)).optimal
       = {.nonidentical} ∧
     -- Hebrew: prefer XY for plurality, XX for diminutive
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor hebrewGrammar .plurality)
       (l1RankingFor hebrewGrammar .plurality)
       (l1CandidatesFor_ne hebrewGrammar .plurality)).optimal
       = {.nonidentical} ∧
-    (mkTableau
+    (Tableau.ofRanking
       (l1CandidatesFor hebrewGrammar .diminutive)
       (l1RankingFor hebrewGrammar .diminutive)
       (l1CandidatesFor_ne hebrewGrammar .diminutive)).optimal

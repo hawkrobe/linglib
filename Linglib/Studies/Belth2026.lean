@@ -404,33 +404,33 @@ theorem latinTSL_correct :
     [r] wins. -/
 theorem popularis_optimal_is_r :
     substL .r popularis_ur ∈
-      (mkTableau (latCands popularis_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands popularis_ur) latinRanking).optimal := by decide
 
 theorem popularis_loser_is_l :
     substL .l popularis_ur ∉
-      (mkTableau (latCands popularis_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands popularis_ur) latinRanking).optimal := by decide
 
 /-- *pluvalis*: same OCP-ranking-decides pattern as *popularis* (the
     consonant tier of `/pluv-a/` is `[p, l]`, so substituting `L → l`
     creates a tier-adjacent `(l, l)`). -/
 theorem pluvalis_optimal_is_r :
     substL .r pluvalis_ur ∈
-      (mkTableau (latCands pluvalis_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands pluvalis_ur) latinRanking).optimal := by decide
 
 /-- *navalis*, *floralis*, *legalis*: the [l]-candidate has OCP=0 (no
     tier-adjacent laterals) and \*r=0; the [r]-candidate has \*r=1.
     \*r breaks the tie in favour of [l]. -/
 theorem navalis_optimal_is_l :
     substL .l navalis_ur ∈
-      (mkTableau (latCands navalis_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands navalis_ur) latinRanking).optimal := by decide
 
 theorem floralis_optimal_is_l :
     substL .l floralis_ur ∈
-      (mkTableau (latCands floralis_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands floralis_ur) latinRanking).optimal := by decide
 
 theorem legalis_optimal_is_l :
     substL .l legalis_ur ∈
-      (mkTableau (latCands legalis_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands legalis_ur) latinRanking).optimal := by decide
 
 /-- *lunaris*: the OT analysis selects [l], not the empirical [r] —
     the same error the rule makes (§5). Both candidates have OCP=0
@@ -439,7 +439,7 @@ theorem legalis_optimal_is_l :
     [l]-candidate. -/
 theorem lunaris_optimal_is_l_INCORRECT :
     substL .l lunaris_ur ∈
-      (mkTableau (latCands lunaris_ur) latinRanking).optimal := by decide
+      (Tableau.ofRanking (latCands lunaris_ur) latinRanking).optimal := by decide
 
 -- ---- ERC analysis ----------------------------------------------------------
 
@@ -447,28 +447,28 @@ theorem lunaris_optimal_is_l_INCORRECT :
     the winner (W on constraint 0); \*r prefers the loser (L on constraint
     1). The full vector is ⟨W, L⟩ = `simpleERC 0 1`. -/
 def popularisERC : ERC 2 :=
-  tableauERC (mkTableau (latCands popularis_ur) latinRanking)
+  tableauERC (Tableau.ofRanking (latCands popularis_ur) latinRanking)
     (substL .r popularis_ur) (substL .l popularis_ur)
 
 /-- The ERC induced by *pluvalis*: same shape as popularis. -/
 def pluvalisERC : ERC 2 :=
-  tableauERC (mkTableau (latCands pluvalis_ur) latinRanking)
+  tableauERC (Tableau.ofRanking (latCands pluvalis_ur) latinRanking)
     (substL .r pluvalis_ur) (substL .l pluvalis_ur)
 
 /-- The ERC induced by *navalis* (winner [l], loser [r]): OCP indifferent,
     \*r prefers the winner. ⟨e, W⟩ — trivial (no L). -/
 def navalisERC : ERC 2 :=
-  tableauERC (mkTableau (latCands navalis_ur) latinRanking)
+  tableauERC (Tableau.ofRanking (latCands navalis_ur) latinRanking)
     (substL .l navalis_ur) (substL .r navalis_ur)
 
 /-- The ERC induced by *floralis*. -/
 def floralisERC : ERC 2 :=
-  tableauERC (mkTableau (latCands floralis_ur) latinRanking)
+  tableauERC (Tableau.ofRanking (latCands floralis_ur) latinRanking)
     (substL .l floralis_ur) (substL .r floralis_ur)
 
 /-- The ERC induced by *legalis*. -/
 def legalisERC : ERC 2 :=
-  tableauERC (mkTableau (latCands legalis_ur) latinRanking)
+  tableauERC (Tableau.ofRanking (latCands legalis_ur) latinRanking)
     (substL .l legalis_ur) (substL .r legalis_ur)
 
 /-- The ERC induced by *lunaris* (taking the empirical [r] as the winner):
@@ -477,7 +477,7 @@ def legalisERC : ERC 2 :=
     No ranking on the inventory ⟨OCP, \*r⟩ can satisfy this; the OT
     formulation thus reproduces exactly the rule's empirical limit. -/
 def lunarisERC : ERC 2 :=
-  tableauERC (mkTableau (latCands lunaris_ur) latinRanking)
+  tableauERC (Tableau.ofRanking (latCands lunaris_ur) latinRanking)
     (substL .r lunaris_ur) (substL .l lunaris_ur)
 
 theorem popularisERC_is_simple :

@@ -15,7 +15,7 @@ End-to-end OT analysis of Hungarian vowel harmony, connecting:
 2. **Harmony system** (`Subregular.Harmony`) — trigger/target/transparent predicates
 3. **OT constraints** (below) — SPREAD and IDENT derived from
    `System` (folded in from the former `Harmony/OT.lean`, this file's sole consumer)
-4. **Tableaux** (`Constraint`) — `mkTableau` + `optimal` select winner
+4. **Tableaux** (`Constraint`) — `Tableau.ofRanking` + `optimal` select winner
 5. **Hungarian fragments** (`Hungarian.VowelHarmony`) — concrete
    vowel segments and `hungarianPalatalHarmony`
 
@@ -253,20 +253,20 @@ theorem papírCands_ne : papírCands ≠ [] := by simp [papírCands]
 /-- *ház*: SPREAD ≫ IDENT selects back-harmonized suffix as unique winner.
     [siptar-torkenczy-2000] §3.2.2, class IA-b. -/
 theorem ház_back_optimal :
-    (mkTableau házCands spreadDominant házCands_ne).optimal
+    (Tableau.ofRanking házCands spreadDominant házCands_ne).optimal
       = {ház_back} := by native_decide
 
 /-- *tűz*: SPREAD ≫ IDENT selects front-harmonized suffix as unique winner.
     [siptar-torkenczy-2000] §3.2.2, class IA-f. -/
 theorem tűz_front_optimal :
-    (mkTableau tűzCands spreadDominant tűzCands_ne).optimal
+    (Tableau.ofRanking tűzCands spreadDominant tűzCands_ne).optimal
       = {tűz_front} := by native_decide
 
 /-- *papír*: neutral /i/ is transparent — back harmony passes through.
     SPREAD ≫ IDENT selects back-harmonized suffix, same as *ház*.
     [siptar-torkenczy-2000] §3.2.2, class IIB-b. -/
 theorem papír_transparency_optimal :
-    (mkTableau papírCands spreadDominant papírCands_ne).optimal
+    (Tableau.ofRanking papírCands spreadDominant papírCands_ne).optimal
       = {papír_back} := by native_decide
 
 -- ============================================================================
@@ -276,7 +276,7 @@ theorem papír_transparency_optimal :
 /-- Under IDENT ≫ SPREAD, the faithful candidate wins — no harmony applies.
     This is the predicted grammar for a language without vowel harmony. -/
 theorem faithful_wins_reversed :
-    (mkTableau házCands identDominant házCands_ne).optimal
+    (Tableau.ofRanking házCands identDominant házCands_ne).optimal
       = {ház_faithful} := by native_decide
 
 -- ============================================================================
@@ -299,7 +299,7 @@ theorem factorial_two_types :
 /-- The OT-optimal candidate for *ház* is identical to the output of
     `spreadSuffix` — the direct computation and the OT analysis agree. -/
 theorem ház_ot_matches_direct :
-    (mkTableau házCands spreadDominant házCands_ne).optimal
+    (Tableau.ofRanking házCands spreadDominant házCands_ne).optimal
       = {⟨[a_vowel], [archiphoneU],
           spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩} := by
   native_decide
@@ -308,7 +308,7 @@ theorem ház_ot_matches_direct :
     the trigger value extracted from the stem. Transparency is derived:
     `triggerValue` skips neutral /i/ and finds /a/. -/
 theorem papír_ot_matches_direct :
-    (mkTableau papírCands spreadDominant papírCands_ne).optimal
+    (Tableau.ofRanking papírCands spreadDominant papírCands_ne).optimal
       = {⟨[a_vowel, i_vowel], [archiphoneU],
           spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩} := by
   native_decide
@@ -327,7 +327,7 @@ open Core.Optimization Constraints
 
 /-- *ház* SPREAD ≫ IDENT tableau as a generic `ConstraintSystem`. -/
 noncomputable def házSystem : ConstraintSystem VHCandidate (LexProfile Nat 2) :=
-  tableauSystem (mkTableau házCands spreadDominant házCands_ne)
+  tableauSystem (Tableau.ofRanking házCands spreadDominant házCands_ne)
 
 /-- The OT prediction lifts to a probability claim: under SPREAD ≫ IDENT,
     the back-harmonized candidate is assigned probability 1. -/
@@ -343,7 +343,7 @@ theorem házSystem_predict_faithful_zero :
 
 /-- *tűz* under SPREAD ≫ IDENT: front-harmonized winner gets probability 1. -/
 noncomputable def tűzSystem : ConstraintSystem VHCandidate (LexProfile Nat 2) :=
-  tableauSystem (mkTableau tűzCands spreadDominant tűzCands_ne)
+  tableauSystem (Tableau.ofRanking tűzCands spreadDominant tűzCands_ne)
 
 theorem tűzSystem_predict_front :
     tűzSystem.predict tűz_front = 1 :=

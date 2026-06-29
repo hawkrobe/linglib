@@ -12,7 +12,7 @@ of each stratum feeding the next as input. The crucial property is
 in different strata's rankings, capturing level-ordering effects without ad
 hoc rules or extrinsic ordering.
 
-Per-stratum evaluation uses `OptimalityTheory.mkTableau` / `Tableau.optimal`
+Per-stratum evaluation uses `OptimalityTheory.Tableau.ofRanking` / `Tableau.optimal`
 in the consuming study file (e.g. the Telugu weak alternation, [aitha-2026]).
 This module provides the cross-stratal vocabulary: a `StratalDerivation`
 record of the per-stratum outputs, and the reranking predicates. The latter

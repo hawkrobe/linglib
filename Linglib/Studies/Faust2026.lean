@@ -967,7 +967,7 @@ theorem kljCandidates_ne : kljCandidates ≠ [] := by decide
     `isMisaligned`/`allCSlotsFilled` computations on the `RootTemplateMatch`
     values — no stipulated violation tables. -/
 theorem kala_wins_under_misalign_over_fill :
-    (mkTableau kljCandidates [starMisalign, fill] kljCandidates_ne).optimal
+    (Tableau.ofRanking kljCandidates [starMisalign, fill] kljCandidates_ne).optimal
     = {hebrewKlj_kala} := by decide
 
 /-- **Reversed ranking** FILL >> \*Misalign predicts the spreading
@@ -976,7 +976,7 @@ theorem kala_wins_under_misalign_over_fill :
     dominance is doing the empirical work; without it, template
     satisfaction would force the wrong winner. -/
 theorem kalal_predicted_under_reversed_ranking :
-    (mkTableau kljCandidates [fill, starMisalign] kljCandidates_ne).optimal
+    (Tableau.ofRanking kljCandidates [fill, starMisalign] kljCandidates_ne).optimal
     = {hebrewKlj_kalal} := by decide
 
 /-- **Factorial typology over {\*Misalign, FILL}**: the two rankings
@@ -1000,7 +1000,7 @@ when the third radical is /j/. -/
     is filled and \*Misalignment is satisfied — both constraints have
     zero violations, so it wins under any ranking. -/
 theorem kalat_unique_optimum :
-    (mkTableau [hebrewKlt_kalat] [starMisalign, fill]
+    (Tableau.ofRanking [hebrewKlt_kalat] [starMisalign, fill]
       (by decide)).optimal = {hebrewKlt_kalat} := by decide
 
 /-- (3b) [kalal] from √kll likewise wins as the unique optimum: the
@@ -1010,7 +1010,7 @@ theorem kalat_unique_optimum :
     \*[kalal] derivation from √klj — only the underlying root index
     differs, and that's exactly what \*Misalignment is sensitive to. -/
 theorem kalal_from_kll_unique_optimum :
-    (mkTableau [hebrewKll_kalal] [starMisalign, fill]
+    (Tableau.ofRanking [hebrewKll_kalal] [starMisalign, fill]
       (by decide)).optimal = {hebrewKll_kalal} := by decide
 
 /-! ### The Hebrew taQTiL intrusion case as a three-candidate tableau
@@ -1043,14 +1043,14 @@ theorem taqtilCandidates_ne : taqtilCandidates ≠ [] := by decide
     wins. This is [faust-2026]'s core analytical point about (10):
     intrusion lets the grammar "have it both ways". -/
 theorem tadmit_wins_under_misalign_over_fill :
-    (mkTableau taqtilCandidates [starMisalign, fill]
+    (Tableau.ofRanking taqtilCandidates [starMisalign, fill]
       taqtilCandidates_ne).optimal = {hebrewDmj_tadmit} := by decide
 
 /-- And it wins under the reversed ranking too — because intrusion
     satisfies *both* constraints, the ranking between them is irrelevant
     once the intrusion candidate is in the candidate set. -/
 theorem tadmit_wins_under_fill_over_misalign :
-    (mkTableau taqtilCandidates [fill, starMisalign]
+    (Tableau.ofRanking taqtilCandidates [fill, starMisalign]
       taqtilCandidates_ne).optimal = {hebrewDmj_tadmit} := by decide
 
 /-- The taQTiL factorial typology collapses to **one** language: when an

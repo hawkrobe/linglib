@@ -188,7 +188,7 @@ theorem candidates_differ :
     that avoids anti-locality wins, even though it loses Set A agreement.
     This is the central result of [erlewine-2016]. -/
 theorem af_is_optimal :
-    (mkTableau afCandidates afRanking).optimal =
+    (Tableau.ofRanking afCandidates afRanking).optimal =
       {AFCandidate.agentFocusExtraction} := by
   native_decide
 
@@ -246,7 +246,7 @@ theorem antilocality_grounded :
     by not placing the agent in Spec,TP at all. -/
 theorem antilocality_drives_af :
     ssalConstraint .agentFocusExtraction = 0 ∧
-    (mkTableau afCandidates afRanking).optimal =
+    (Tableau.ofRanking afCandidates afRanking).optimal =
       {AFCandidate.agentFocusExtraction} :=
   ⟨rfl, af_is_optimal⟩
 

@@ -246,7 +246,7 @@ private theorem binaryCandidates_ne : binaryCandidates ≠ [] := by
     constraints (ToD from politeness, MP! from presupposition theory)
     evaluated over the `ContainmentPair` structure from [harbour-2016]. -/
 theorem tod_mp_selects_minimal :
-    (mkTableau binaryCandidates [todConstraint, mpConstraint]
+    (Tableau.ofRanking binaryCandidates [todConstraint, mpConstraint]
       binaryCandidates_ne).optimal = {ContainmentPair.minimal} := by
   native_decide
 
@@ -254,13 +254,13 @@ theorem tod_mp_selects_minimal :
     Non-respect speech uses the strongest presupposition.
     This is the standard Maximize Presupposition from [heim-1991]. -/
 theorem mp_tod_selects_maximal :
-    (mkTableau binaryCandidates [mpConstraint, todConstraint]
+    (Tableau.ofRanking binaryCandidates [mpConstraint, todConstraint]
       binaryCandidates_ne).optimal = {ContainmentPair.maximal} := by
   native_decide
 
 /-- The optimal candidate under ToD >> MP! is semantically unmarked. -/
 theorem tod_mp_optimal_is_unmarked :
-    ∀ c ∈ (mkTableau binaryCandidates [todConstraint, mpConstraint]
+    ∀ c ∈ (Tableau.ofRanking binaryCandidates [todConstraint, mpConstraint]
       binaryCandidates_ne).optimal,
       isSemanticUnmarked c = true := by
   decide
@@ -320,7 +320,7 @@ theorem stod_eval_eq_tod (c : ContainmentPair) :
 /-- WToD >> MP! >> SToD selects the intermediate (dual) cell.
     Moderate respect in articulated number systems. -/
 theorem wtod_mp_stod_selects_dual :
-    (mkTableau ternaryCandidates
+    (Tableau.ofRanking ternaryCandidates
       [wtodConstraint, mpConstraint, todConstraint]
       ternaryCandidates_ne).optimal = {ContainmentPair.intermediate} := by
   native_decide
@@ -328,7 +328,7 @@ theorem wtod_mp_stod_selects_dual :
 /-- SToD >> MP! >> WToD selects the minimal (plural) cell.
     Maximal respect (French/Slovenian-type pattern). -/
 theorem stod_mp_wtod_selects_plural :
-    (mkTableau ternaryCandidates
+    (Tableau.ofRanking ternaryCandidates
       [todConstraint, mpConstraint, wtodConstraint]
       ternaryCandidates_ne).optimal = {ContainmentPair.minimal} := by
   native_decide
@@ -336,7 +336,7 @@ theorem stod_mp_wtod_selects_plural :
 /-- MP! >> SToD >> WToD selects the maximal (singular) cell.
     Normal non-honorific speech. -/
 theorem mp_stod_wtod_selects_singular :
-    (mkTableau ternaryCandidates
+    (Tableau.ofRanking ternaryCandidates
       [mpConstraint, todConstraint, wtodConstraint]
       ternaryCandidates_ne).optimal = {ContainmentPair.maximal} := by
   native_decide
@@ -388,7 +388,7 @@ locus, embeddability) is orthogonal — [iHON] may play a role in the
     2. The minimal cell is semantically unmarked
     3. All attested strategies target the minimal cell -/
 theorem ihon_redundant_for_recruitment :
-    (mkTableau binaryCandidates [todConstraint, mpConstraint]
+    (Tableau.ofRanking binaryCandidates [todConstraint, mpConstraint]
       binaryCandidates_ne).optimal = {ContainmentPair.minimal} ∧
     isSemanticUnmarked .minimal = true ∧
     (∀ s : HonStrategy, honStrategyCell s = .minimal) :=
@@ -470,12 +470,12 @@ theorem tod_mp_only_minimal (candidates : List ContainmentPair)
     (hWF : ∀ c ∈ candidates, c.WellFormed)
     (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
-    ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
+    ∀ c ∈ (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal := by
   intro c hc
-  have hZero := mkTableau_optimal_zero_first candidates todConstraint [mpConstraint] hNE
+  have hZero := Tableau.ofRanking_optimal_zero_first candidates todConstraint [mpConstraint] hNE
     ⟨.minimal, hMin, rfl⟩ c hc
-  have hcWF := hWF c (mkTableau_optimal_mem candidates _ hNE c hc)
+  have hcWF := hWF c (Tableau.ofRanking_optimal_mem candidates _ hNE c hc)
   rcases ContainmentPair.classification c hcWF with rfl | rfl | rfl
   · exact absurd hZero (by decide)
   · exact absurd hZero (by decide)
@@ -487,10 +487,10 @@ theorem tod_mp_minimal_is_optimal (candidates : List ContainmentPair)
     (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     ContainmentPair.minimal ∈
-      (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal := by
+      (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal := by
   rw [Tableau.mem_optimal_iff]
   refine ⟨List.mem_toFinset.mpr hMin, fun c' _ => ?_⟩
-  simp only [mkTableau, buildViolationProfile]
+  simp only [Tableau.ofRanking, buildViolationProfile]
   -- Goal: toLex (fun i => ..minimal..) ≤ toLex (fun i => ..c'..)
   -- Strategy: show ¬ (c' profile < minimal profile) using Pi.Lex
   apply not_lt.mp
@@ -531,8 +531,8 @@ theorem tod_mp_general (candidates : List ContainmentPair)
     (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     ContainmentPair.minimal ∈
-      (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
-    ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
+      (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal ∧
+    ∀ c ∈ (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal :=
   ⟨tod_mp_minimal_is_optimal candidates hMin hNE,
    tod_mp_only_minimal candidates hWF hMin hNE⟩
@@ -632,8 +632,8 @@ theorem ihon_structurally_redundant :
        (_ : ContainmentPair.minimal ∈ candidates)
        (hNE : candidates ≠ []),
        ContainmentPair.minimal ∈
-         (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
-       ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
+         (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal ∧
+       ∀ c ∈ (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal,
          c = .minimal) :=
   ⟨rfl, rfl, honLevel_all_wellFormed, tod_mp_general⟩
 

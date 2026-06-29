@@ -127,7 +127,7 @@ theorem phrasalCophonologicalEval_empty_sub {C : Type*} [DecidableEq C]
     (candidates : List C) (h : candidates ≠ [])
     (hsub : pc.subranking = []) :
     phrasalCophonologicalEval defaultRanking pc candidates h
-      = (OptimalityTheory.mkTableau candidates (defaultRanking.map (·.2)) h).optimal := by
+      = (OptimalityTheory.Tableau.ofRanking candidates (defaultRanking.map (·.2)) h).optimal := by
   unfold phrasalCophonologicalEval
   rw [hsub]
   exact cophonologicalEval_empty_sub defaultRanking candidates h

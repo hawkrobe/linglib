@@ -168,9 +168,9 @@ theorem ocp_passes_ab {α : Type} [DecidableEq α] (a b : α) (rest : List α)
     and [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016] for
     the experimental evidence. -/
 theorem amodal_doubling_reversal :
-    (mkTableau phonCandidates phonRanking).optimal
+    (Tableau.ofRanking phonCandidates phonRanking).optimal
       = {DoublingParse.nonidentical} ∧
-    (mkTableau morphCandidates morphRanking).optimal
+    (Tableau.ofRanking morphCandidates morphRanking).optimal
       = {DoublingParse.reduplication} :=
   doubling_reversal
 
@@ -189,7 +189,7 @@ open Core.Optimization Constraints
 
 /-- Phonological-context tableau as a generic `ConstraintSystem`. -/
 noncomputable def phonSystem : ConstraintSystem DoublingParse (LexProfile Nat 2) :=
-  tableauSystem (mkTableau phonCandidates phonRanking)
+  tableauSystem (Tableau.ofRanking phonCandidates phonRanking)
 
 /-- In phonological contexts, `.nonidentical` has probability 1. -/
 theorem phonSystem_predict_nonidentical :
@@ -198,7 +198,7 @@ theorem phonSystem_predict_nonidentical :
 
 /-- Morphological-context tableau as a generic `ConstraintSystem`. -/
 noncomputable def morphSystem : ConstraintSystem DoublingParse (LexProfile Nat 3) :=
-  tableauSystem (mkTableau morphCandidates morphRanking)
+  tableauSystem (Tableau.ofRanking morphCandidates morphRanking)
 
 /-- In morphological contexts where reduplication is available,
     `.reduplication` has probability 1. -/
