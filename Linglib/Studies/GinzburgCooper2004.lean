@@ -1,4 +1,4 @@
-import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.Gameboard.Defs
 import Linglib.Data.Examples.GinzburgCooper2004
 
 /-!
@@ -30,7 +30,7 @@ sign, and demonstrates the speaker/addressee IS asymmetry.
 
 namespace GinzburgCooper2004
 
-open Discourse.KOS
+open Discourse.Gameboard
 
 /-- The two readings of a clarification ellipsis.
 [ginzburg-cooper-2004] ex. 4b–c. -/
@@ -50,7 +50,7 @@ inductive CEReading where
 
 /-! ## 1994/2004 Clarification Ellipsis Apparatus
 
-This section was previously in `Discourse/KOS/Basic.lean`
+This section was previously in `Discourse/Gameboard/Basic.lean`
 §§6, 7, 8, 9, 10, 12, 15. It is paper-specific to
 [ginzburg-cooper-2004]: in [ginzburg-2012], the corresponding
 machinery uses dgb-params (record types built on the shared `CParam`)
@@ -64,7 +64,7 @@ content, demoted from substrate to consumer per the linglib pattern
 (cf. `Core/FormFrequency.lean → Studies/Haspelmath2021.lean §0`).
 
 The shared substrate primitives — `CParam`, `CParamSet`, `SubUtterance` —
-remain in `KOS/Defs.lean` since they survive into the 2012 framework as
+remain in `Gameboard/Defs.lean` since they survive into the 2012 framework as
 the dgb-params/sub-constituents apparatus.
 
 The four general theorems about coercion operations are namespaced under
@@ -267,7 +267,7 @@ def UttSkeleton.toLocProp (sk : UttSkeleton) : LocProp String where
 
 /-- Convert a `LocProp String` back to an `UttSkeleton`.
     Plain function (not `LocProp.toSkeleton`) because `LocProp` lives in
-    `Discourse.KOS` and dot notation looks there for the method, not in
+    `Discourse.Gameboard` and dot notation looks there for the method, not in
     `Apparatus`. Use as `locPropToSkeleton lp`. -/
 def locPropToSkeleton (lp : LocProp String) : UttSkeleton where
   phon := lp.phon

@@ -1,5 +1,5 @@
-import Linglib.Discourse.KOS.Defs
-import Linglib.Discourse.KOS.Grounding
+import Linglib.Discourse.Gameboard.Defs
+import Linglib.Discourse.Gameboard.Grounding
 import Linglib.Syntax.HPSG.Basic
 
 /-!
@@ -11,7 +11,7 @@ The Sign type has `dgb-params` and `q-params` — dialogue features living
 inside syntactic representations (Ch. 5, §5.2).
 
 This module provides the integration point between HPSG signs and KOS
-dialogue gameboards. Neither `HPSG/Basic.lean` nor `KOS/Basic.lean`
+dialogue gameboards. Neither `HPSG/Basic.lean` nor `Gameboard/Basic.lean`
 knows about the other; this module imports both and defines:
 
 1. **DialogueSign** — an HPSG sign extended with DGB-params and Q-params
@@ -25,9 +25,9 @@ continue to use plain HPSG signs. Theories that need the Ginzburg 2012
 architecture import this module.
 -/
 
-namespace Discourse.KOS.Grammar
+namespace Discourse.Gameboard.Grammar
 
-open Discourse.KOS
+open Discourse.Gameboard
 open HPSG
 
 -- ════════════════════════════════════════════════════
@@ -156,4 +156,4 @@ theorem who_no_grounding_needed : who.toLocProp.isFullyResolved := by decide
 /-- "left" has no dialogue features. -/
 theorem left_plain : left.dgbParams = [] ∧ left.qParams = [] := ⟨rfl, rfl⟩
 
-end Discourse.KOS.Grammar
+end Discourse.Gameboard.Grammar

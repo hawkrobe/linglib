@@ -1,14 +1,14 @@
-import Linglib.Discourse.KOS.Defs
-import Linglib.Discourse.KOS.Basic
-import Linglib.Discourse.KOS.InquiryCycle
-import Linglib.Discourse.KOS.Genre
-import Linglib.Discourse.KOS.Grounding
-import Linglib.Discourse.KOS.SelfRepair
-import Linglib.Discourse.KOS.NSUTaxonomy
-import Linglib.Discourse.KOS.Examples
-import Linglib.Discourse.KOS.Grammar
-import Linglib.Discourse.KOS.RepriseContent
-import Linglib.Discourse.KOS.Austinian
+import Linglib.Discourse.Gameboard.Defs
+import Linglib.Discourse.Gameboard.Basic
+import Linglib.Discourse.Gameboard.InquiryCycle
+import Linglib.Discourse.Gameboard.Genre
+import Linglib.Discourse.Gameboard.Grounding
+import Linglib.Discourse.Gameboard.SelfRepair
+import Linglib.Discourse.Gameboard.NSUTaxonomy
+import Linglib.Discourse.Gameboard.Examples
+import Linglib.Discourse.Gameboard.Grammar
+import Linglib.Discourse.Gameboard.RepriseContent
+import Linglib.Discourse.Gameboard.Austinian
 import Linglib.Discourse.Commitment.Table
 
 /-!
@@ -18,7 +18,7 @@ import Linglib.Discourse.Commitment.Table
 Canonical formalization of the KOS framework from
 *The Interactive Stance: Meaning for Conversation* (OUP 2012).
 
-This study consumes the KOS substrate at `Discourse/KOS/`,
+This study consumes the KOS substrate at `Discourse/Gameboard/`,
 which was rebuilt to faithfully match the book's Ch. 6 final shape
 (ex. 43 p. 175): `DGB` takes a `Cont` parameter, `pending` stores
 `LocProp Cont`, `qud` stores `InfoStruc QContent Cont`, `GenreType`
@@ -63,7 +63,7 @@ core that downstream work consumes.
 
 namespace Ginzburg2012
 
-open Discourse.KOS Question
+open Discourse.Gameboard Question
 
 -- ════════════════════════════════════════════════════════════
 -- § 1. The Turn-Taking Puzzle (Ch. 2)
@@ -137,7 +137,7 @@ theorem turn_taking_puzzle_why_parakeet :
 - **Conversational rules** (Ch. 4): `ask`, `assertRule`/`assertWithQUD`,
   `accept`, `qspec`, `check`, `confirm`, `qcoord`, `greet` — TIS → TIS
 
-The substrate provides all of this in `Discourse/KOS/`. This
+The substrate provides all of this in `Discourse/Gameboard/`. This
 section just imports the conventions; subsequent sections exercise them. -/
 
 /-- The TIS type structure as a sanity check: a TIS bundles a DGB with
@@ -154,7 +154,7 @@ example {P Fact QContent Cont : Type} (tis : TIS P Fact QContent Cont) :
 
 [ginzburg-2012] Ch. 4 §4.4.5 walks through the canonical
 Ask → Assert → Accept dialogue. We exercise the TTR-typed substrate
-from `KOS/Austinian.lean`, which instantiates `TIS` with
+from `Gameboard/Austinian.lean`, which instantiates `TIS` with
 `BCheckableAustinian` propositions and `TTRQuestionB` questions over
 a `Weather` situation type.
 
@@ -164,13 +164,13 @@ the substrate has been built to support them. -/
 /-- KOS's inquiry cycle works at TTR-typed content level: asserting
 "it is raining" resolves "is it raining?". -/
 theorem ttr_inquiry_cycle_resolves :
-    Discourse.KOS.Austinian.atis₂.dgb.qud = [] :=
-  Discourse.KOS.Austinian.atis_assert_resolves
+    Discourse.Gameboard.Austinian.atis₂.dgb.qud = [] :=
+  Discourse.Gameboard.Austinian.atis_assert_resolves
 
 /-- The same inquiry cycle in string-typed form (legacy worked example). -/
 theorem string_inquiry_cycle_resolves :
-    Discourse.KOS.Examples.tis₂.dgb.qud = [] :=
-  Discourse.KOS.Examples.inquiry_step2_qud_empty
+    Discourse.Gameboard.Examples.tis₂.dgb.qud = [] :=
+  Discourse.Gameboard.Examples.inquiry_step2_qud_empty
 
 -- ════════════════════════════════════════════════════════════
 -- § 4. Grounding Asymmetry: per-DGB stance (Ch. 4)
@@ -191,7 +191,7 @@ this divergence Lean-checkable. -/
 section GroundingAsymmetry
 
 -- DecidableSupport String String instance is provided by KOS.Examples
--- (transitively imported via the open Discourse.KOS at top of file).
+-- (transitively imported via the open Discourse.Gameboard at top of file).
 
 /-- Speaker's TIS after asserting "It's raining". -/
 def speakerAfterAssert : TIS String String String String :=
@@ -289,7 +289,7 @@ NSU subclass — short answers in the Ch. 7 taxonomy below. -/
 [fernandez-2006] for the BNC subcorpus study.
 
 The 16-class taxonomy + 4 functional groupings live in the substrate
-(`KOS/NSUTaxonomy.lean`) — they are framework infrastructure usable by
+(`Gameboard/NSUTaxonomy.lean`) — they are framework infrastructure usable by
 any KOS-aware study. This section just reuses them. The `freqTable`
 single-source-of-truth + `frequency_coherent` drift sentry replace the
 old aggregate-count theorems.
@@ -323,7 +323,7 @@ Form variation is morphological/intonational; reading variation is in
 what the CR is asking about (clausal confirmation, intended content,
 phonetic repetition, corrective alternative).
 
-Substrate has `RFReading` (4 readings) at `KOS/RepriseContent.lean`.
+Substrate has `RFReading` (4 readings) at `Gameboard/RepriseContent.lean`.
 This file declares CRForm locally; both could move to substrate when a
 second consumer materializes. -/
 
@@ -355,9 +355,9 @@ def allCRForms : List CRForm :=
 theorem allCRForms_count : allCRForms.length = 8 := rfl
 
 /-- The 4 CR readings. We re-export the substrate's `RFReading` from
-`KOS/RepriseContent.lean` rather than re-stipulating a parallel
+`Gameboard/RepriseContent.lean` rather than re-stipulating a parallel
 `CRReading` enum. -/
-abbrev CRReading := Discourse.KOS.RFReading
+abbrev CRReading := Discourse.Gameboard.RFReading
 
 -- ════════════════════════════════════════════════════════════
 -- § 9. Grounding via CCURs (§6.6–6.7)
@@ -375,7 +375,7 @@ LocProps:
    Clarification Context Update Rule — Parameter Identification (the
    default), Confirm, or Repeat — pushing a CR question on QUD
 
-The substrate `KOS/Grounding.lean::integrateLocPropCCUR` implements
+The substrate `Gameboard/Grounding.lean::integrateLocPropCCUR` implements
 this pipeline. This section exercises it on a worked example. -/
 
 section CCURExample
@@ -424,7 +424,7 @@ end CCURExample
 
 [ginzburg-2012] §8.2 (pp. 282–290) "Unifying Self- and Other-Correction".
 Per §6.3 footnote 31 p. 168 + §8.2: **MaxPending is the head of `Pending`**,
-not a separate field. The substrate `KOS/SelfRepair.lean` provides:
+not a separate field. The substrate `Gameboard/SelfRepair.lean` provides:
 
 - `pushMaxPending lp` — start a new in-construction LocProp at the head of Pending
 - `replaceMaxPending lp'` — backwards-looking appropriateness repair
@@ -529,7 +529,7 @@ theorem e2e_exhaustive (lp : LocProp String) (b : BeliefBase) :
 /-- The Grammar.jo lexical entry's `toLocProp` itself has unresolved
 cparams (it's a referential proper name). -/
 theorem grammar_jo_unresolved :
-    ¬ Discourse.KOS.Grammar.jo.toLocProp.isFullyResolved := by decide
+    ¬ Discourse.Gameboard.Grammar.jo.toLocProp.isFullyResolved := by decide
 
 end EndToEnd
 
@@ -650,7 +650,7 @@ theorem kos_vs_farkasbruce_architecture_differs
 (content moves dcS → cg → dcS, e.g. "I take that back"); **KOS's facts
 field is monotone** (operations only add, never remove). The KOS API
 literally has no `removeFact` operation — the type signature of every
-DGB-update primitive in `KOS/Basic.lean` preserves the inclusion
+DGB-update primitive in `Gameboard/Basic.lean` preserves the inclusion
 `dgb.facts ⊆ (op dgb).facts`.
 
 Witness: `addFact p` increases the facts list by one element. -/
@@ -722,7 +722,7 @@ category, losing only dialogue features (dgbParams, qParams, questDom).
 This is a structural-retract witness: KOS can be "forgotten down" to
 plain HPSG. -/
 theorem dialogueSign_extends_hpsg_faithfully {Cont : Type}
-    (ds : Discourse.KOS.Grammar.DialogueSign Cont) :
+    (ds : Discourse.Gameboard.Grammar.DialogueSign Cont) :
     ds.toSynsem.cat = ds.pos ∧ ds.toSynsem.head = ds.head :=
   ⟨rfl, rfl⟩
 
@@ -733,7 +733,7 @@ type-level prerequisite. The substantive Purver-Ginzburg claim is the
 **Reprise Content Hypothesis** (RCH): the q-params record on a LocProp
 licenses the queryable types observable in fragment-reprise data.
 
-The substrate `KOS/RepriseContent.lean` provides the WeakRCH/StrongRCH
+The substrate `Gameboard/RepriseContent.lean` provides the WeakRCH/StrongRCH
 predicates. The PurverGinzburg2004 study file proves the q-params
 predictor satisfies them. We re-export the structural connection here:
 *the LocProp design choice in KOS-2012 is what enables RCH satisfaction*. -/

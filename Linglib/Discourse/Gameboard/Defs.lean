@@ -33,7 +33,7 @@ The structural commitment is unchanged: every `LocProp` projects to a
 `TTRSign String Cont` projection (`LocProp.toTTRSign`), and TTRSign is
 itself `Type`-pinned in `Semantics/TypeTheoretic/Core.lean`
 (Cooper's "type-is-a-type" semantics requires `Type 0` for the carrier).
-Same pinning applies in `KOS/Austinian.lean` (where `BCheckableAustinian`
+Same pinning applies in `Gameboard/Austinian.lean` (where `BCheckableAustinian`
 and `TTRQuestionB` similarly require `Type`).
 
 Migrating `Cont` to `Type*` requires lifting the entire TTR substrate
@@ -69,7 +69,7 @@ tags carry information our consumers find useful.
 
 -/
 
-namespace Discourse.KOS
+namespace Discourse.Gameboard
 
 open Semantics.TypeTheoretic (TTRSign)
 
@@ -284,7 +284,7 @@ structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
   moves : List (IllocMove Fact QContent) := []
   /-- Ungrounded locutionary propositions: Ch. 6 ex. 43 (p. 175) final shape.
       Each LocProp carries cparams (dgb-params) that the integration protocol
-      (`integrateLocProp` in `KOS/Grounding.lean`) checks for resolution. -/
+      (`integrateLocProp` in `Gameboard/Grounding.lean`) checks for resolution. -/
   pending : List (LocProp Cont) := []
   /-- Partially ordered set of questions under discussion.
       [ginzburg-2012] §6.3 / §7.6 (location verified against Ch. 6/7 narrative; specific ex. number not directly cited) final shape: QUD entries are
@@ -327,7 +327,7 @@ type parameters (Participant, Fact, Cont) and richer co-propositionality
 machinery that we defer to consumer-driven enrichment.
 
 The relevance check (ex. 90 p. 105) and outcome predicate live in
-`KOS/Genre.lean`. -/
+`Gameboard/Genre.lean`. -/
 structure GenreType (Fact QContent : Type*) where
   /-- Genre name for identification -/
   name : String
@@ -339,7 +339,7 @@ structure GenreType (Fact QContent : Type*) where
   anticipatedMoves : List (IllocMove Fact QContent) := []
   /-- Optional explicit constraint on QUD content; supersedes qnud when set.
       `none` = unrestricted (like CasualChat). The `qudConstraint`-based
-      `genreRelevant` predicate (Ginzburg eq. 90) lives in `KOS/Genre.lean`. -/
+      `genreRelevant` predicate (Ginzburg eq. 90) lives in `Gameboard/Genre.lean`. -/
   qudConstraint : Option (List QContent → Bool) := none
 
 -- ════════════════════════════════════════════════════
@@ -354,7 +354,7 @@ stored struct. Pending stores `LocProp Cont`s in last-in-first-out order;
 MaxPending is `pending.head?`. The previous formaliser struct
 (`MaxPending` with `phonSoFar`/`cat`/`partialContent`) bore no resemblance
 to Ginzburg's notion and is now deleted. The accessor lives on `TIS`
-(see `KOS/SelfRepair.lean`).
+(see `Gameboard/SelfRepair.lean`).
 
 For incremental construction (§8.2.3 word-by-word), substrate operates
 on the head of Pending directly — the LocProp's `phon` field gets
@@ -386,4 +386,4 @@ structure TIS (Participant Fact QContent : Type*) (Cont : Type) where
 def TIS.initial {Participant Fact QContent : Type*} {Cont : Type} :
     TIS Participant Fact QContent Cont := {}
 
-end Discourse.KOS
+end Discourse.Gameboard

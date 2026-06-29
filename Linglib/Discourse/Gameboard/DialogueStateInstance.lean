@@ -1,5 +1,5 @@
 import Linglib.Discourse.DialogueState
-import Linglib.Discourse.KOS.Basic
+import Linglib.Discourse.Gameboard.Basic
 
 /-!
 # KOS's DGB as a lazy `LawfulDialogueState` instance
@@ -24,7 +24,7 @@ flow carries propositional content, and `LocProp`'s `Cont` is `Type`-pinned, so
 `W : Type`.
 -/
 
-namespace Discourse.KOS
+namespace Discourse.Gameboard
 
 open CommonGround (HasContextSet)
 open Discourse (DialogueEvent GroundingState groundedContent DialogueStep LawfulDialogueState)
@@ -131,4 +131,4 @@ example {S : Type} [LawfulDialogueState S W] (es : List (DialogueEvent W))
       = HasContextSet.toContextSet (DialogueStep.run es : S) :=
   completedTrace_agreement es h₁ h₂
 
-end Discourse.KOS
+end Discourse.Gameboard
