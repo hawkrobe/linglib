@@ -15,6 +15,8 @@ are *functions* that recover the same head.
 
 ## Main definitions
 
+* `isFootTree` / `IsFoot` — structural foot well-formedness on the prosodic-tree carrier
+  (an `f`-node over a non-empty list of σ-leaves; the Layeredness core).
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
@@ -29,6 +31,8 @@ are *functions* that recover the same head.
   weight-blind-characterizable, unlike a binary (syllabic) trochee.
 * `Foot.headFlags_toProsTree` — the prosodic-tree re-representation carries the same
   head profile as `toGrid` (head-preservation, the functorial spine).
+* `Foot.isFoot_toProsTree` — every `Foot`'s prosodic tree is a well-formed foot tree
+  (`IsFoot`): the functoriality/well-formedness bridge onto the carrier.
 -/
 
 namespace Prosody
@@ -39,6 +43,28 @@ open Features.Prosody
     its parent ω (the `isHead` flag, set when the word tree is built) — the `f`-level arm of
     `Prosody.Constituent`. -/
 abbrev Constituent.ft (isHead : Bool := false) : Constituent := { level := .f, isHead := isHead }
+
+/-! ### Carrier well-formedness -/
+
+/-- The structural `Bool` foot checker on the prosodic-tree carrier ([selkirk-1980];
+    matches `Foot.toProsTree`): an `f`-node dominating a non-empty list of σ-leaves. -/
+def isFootTree : Tree → Bool
+  | .node a cs => decide (a.level = .f) && !cs.isEmpty &&
+      cs.all (fun | .node b ds => decide (b.level = .σ) && ds.isEmpty)
+
+/-- A well-formed foot: an `f`-node dominating a non-empty list of σ-leaves — the
+    inviolable Layeredness + σ-Headedness core ([selkirk-1980]; [hayes-1995]). Foot
+    binarity (FtBin) and recursive internally-layered feet (contested — Golston 2021 vs
+    [martinez-paricio-kager-2015]) are violable and deferred; this is flat feet, the
+    sibling of `IsWord`'s Layeredness. -/
+def IsFoot (t : Tree) : Prop := isFootTree t
+
+instance (t : Tree) : Decidable (IsFoot t) :=
+  inferInstanceAs (Decidable (isFootTree t = true))
+
+-- A σ-leaf is a non-`f` node, so not a foot; a flat `f`-node over a σ-leaf is one.
+example : ¬ IsFoot (.node (.syl 2) []) := by decide
+example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
 
 /-! ### The canonical foot -/
 
@@ -151,11 +177,20 @@ theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     childHeadFlags (toProsTree w f) = toGrid f := by
   simp [childHeadFlags, toProsTree, toGrid, List.map_map, Function.comp]
 
--- `toProsTree` is moreover injective for injective `w` (a foot is recoverable from its
--- tree), giving the `Foot S ≃ {t // IsFootTree t}` embedding onto the depth-1 f/σ band
--- that bridges footing-on-`Foot` to OT-on-`Tree`. That equivalence is the next step in
--- the footing development, where the bridge is consumed; `headFlags_toProsTree` already
--- certifies the load-bearing head-preservation.
+/-- **Functoriality / well-formedness bridge**: a `Foot` record's prosodic-tree
+    re-representation is always a well-formed foot tree — `toProsTree` lands in the
+    depth-1 f/σ band that `isFootTree` carves out. With `headFlags_toProsTree`
+    (head-preservation) this is the load-bearing half of the `Foot S ≃ {t // IsFoot t}`
+    embedding that bridges footing-on-`Foot` to OT-on-`Tree`. -/
+theorem isFoot_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
+    IsFoot (f.toProsTree w) := by
+  have hpos : 0 < f.syllables.length := f.head.pos
+  unfold IsFoot isFootTree toProsTree
+  refine Bool.and_eq_true _ _ |>.mpr ⟨Bool.and_eq_true _ _ |>.mpr ⟨by decide, ?_⟩, ?_⟩
+  · simpa [List.isEmpty_map, List.finRange_eq_nil_iff] using hpos.ne'
+  · rw [List.all_map, List.all_eq_true]
+    intro i _
+    rfl
 
 end Foot
 
