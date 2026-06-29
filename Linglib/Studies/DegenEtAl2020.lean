@@ -3,8 +3,6 @@ import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.DaleReiter1995
-import Linglib.Studies.EngelhardtEtAl2006
-import Linglib.Studies.WesterbeekKoolenMaes2015
 
 /-!
 # [degen-etal-2020]
@@ -233,7 +231,7 @@ theorem φ_product_of_experts :
     (∀ w, φ .bigBlue w = φ .big w * φ .blue w) ∧
     (∀ w, φ .bigRed w = φ .big w * φ .red w) ∧
     (∀ w, φ .smallBlue w = φ .small w * φ .blue w) := by
-  refine ⟨fun w => ?_, fun w => ?_, fun w => ?_⟩ <;> cases w <;> native_decide
+  refine ⟨fun w => ?_, fun w => ?_, fun w => ?_⟩ <;> cases w <;> rfl
 
 -- ============================================================================
 -- §4. cs-RSA Config (α = 1, cost = 0)
@@ -280,24 +278,32 @@ def L0_q (u : Utterance) (w : World) : ℚ :=
 /-- L0(target | "small") = 2/3. Size is sufficient: sizeMatch = 4/5
     gives the target a much higher score than the distractors (sizeMismatch
     = 1/5 each), but not perfect (unlike Boolean L0 = 1). -/
-theorem L0_small_target : L0_q .small target = 2/3 := by native_decide
+theorem L0_small_target : L0_q .small target = 2/3 := by
+  norm_num [L0_q, φ, RSA.Noise.sizeMatch, RSA.Noise.sizeMismatch,
+    RSA.Noise.colorMatch, RSA.Noise.colorMismatch]
 
 /-- L0(target | "small blue") = 99/124. The redundant color modifier
     sharpens the posterior from 2/3 to 99/124 ≈ 0.798. The improvement
     comes from the PoE: color's high-discrimination channel (0.98) adds
     substantial signal on top of size's moderate discrimination (0.60). -/
-theorem L0_smallBlue_target : L0_q .smallBlue target = 99/124 := by native_decide
+theorem L0_smallBlue_target : L0_q .smallBlue target = 99/124 := by
+  norm_num [L0_q, φ, RSA.Noise.sizeMatch, RSA.Noise.sizeMismatch,
+    RSA.Noise.colorMatch, RSA.Noise.colorMismatch]
 
 /-- The overmodified form sharpens L0: L0(target | "small blue") >
     L0(target | "small"). This is the core mechanism — redundant modifiers
     carry real information through the noise channel. -/
 theorem L0_overmod_sharpens :
-    L0_q .smallBlue target > L0_q .small target := by native_decide
+    L0_q .smallBlue target > L0_q .small target := by
+  norm_num [L0_q, φ, RSA.Noise.sizeMatch, RSA.Noise.sizeMismatch,
+    RSA.Noise.colorMatch, RSA.Noise.colorMismatch]
 
 /-- L0(target | "blue") = 99/199. Color is redundant: two objects are blue
     (bigBlue and smallBlue), so the listener assigns equal probability
     to both. The target gets 99/199 ≈ 0.497, just under 1/2. -/
-theorem L0_blue_target : L0_q .blue target = 99/199 := by native_decide
+theorem L0_blue_target : L0_q .blue target = 99/199 := by
+  norm_num [L0_q, φ, RSA.Noise.sizeMatch, RSA.Noise.sizeMismatch,
+    RSA.Noise.colorMatch, RSA.Noise.colorMismatch]
 
 -- ============================================================================
 -- §6. Core Prediction: cs-RSA Prefers Overmodification
@@ -435,92 +441,16 @@ theorem noise_makes_the_difference :
     ¬(boolCfg.S1 () target .smallBlue > boolCfg.S1 () target .small) :=
   ⟨csrsa_overmod_preferred, bool_no_overmod_preference⟩
 
--- ============================================================================
--- §11. Experimental Data (Experiment 1, §3)
--- ============================================================================
+/-! ### Empirical findings (Exp 1)
 
-/-- Mixed-effects logistic regression result from the production experiment.
-    Positive β means more overmodification in the first condition. -/
-structure RegressionResult where
-  /-- Log-odds coefficient -/
-  β : Float
-  /-- Standard error -/
-  se : Float
-  /-- Significant at p < .05 -/
-  significant : Bool
-  deriving Repr
-
-/-- Main effect of sufficient property (color vs size, §3):
-    speakers are significantly more likely to add a redundant color
-    adjective than a redundant size adjective. β = 3.54, SE = .22,
-    p < .0001. Verified against running text. -/
-def exp1_main_effect : RegressionResult :=
-  { β := 3.54, se := 0.22, significant := true }
-
-/-- Scene variation × sufficient property interaction (§3):
-    the color > size asymmetry is modulated by scene variation.
-    β = 2.26, SE = .74, p < .003. Verified against running text. -/
-def exp1_interaction : RegressionResult :=
-  { β := 2.26, se := 0.74, significant := true }
-
-/-- The core empirical finding: color overmodification significantly
-    exceeds size overmodification. -/
-theorem color_overmod_exceeds_size :
-    exp1_main_effect.β > 0 ∧ exp1_main_effect.significant := by
-  constructor <;> native_decide
-
--- ============================================================================
--- §12. BDA-Fitted Parameters
--- ============================================================================
-
-/-- BDA-fitted noise parameter for a feature dimension.
-    The paper fits x_feature where match = x, mismatch = 1 − x. -/
-structure FittedNoiseParam where
-  /-- MAP estimate of the noise parameter x -/
-  map : Float
-  /-- Lower bound of 95% HDI -/
-  hdi_lo : Float
-  /-- Upper bound of 95% HDI -/
-  hdi_hi : Float
-  deriving Repr
-
-/-- Fitted color noise parameter (Figure 10):
-    MAP x_color = 0.88, 95% HDI = [0.85, 0.92].
-    Verified against Figure 10 caption. -/
-def fitted_x_color : FittedNoiseParam :=
-  { map := 0.88, hdi_lo := 0.85, hdi_hi := 0.92 }
-
-/-- Fitted size noise parameter (Figure 10):
-    MAP x_size = 0.79, 95% HDI = [0.76, 0.80].
-    Verified against Figure 10 caption. -/
-def fitted_x_size : FittedNoiseParam :=
-  { map := 0.79, hdi_lo := 0.76, hdi_hi := 0.80 }
-
-/-- Fitted cost parameters (Figure 10):
-    β_c(size) MAP = 0.02, β_c(color) MAP = 0.03 — near zero.
-    Verified against Figure 10 caption. -/
-structure FittedCostParams where
-  /-- Cost weight for size adjective -/
-  β_c_size : Float
-  /-- Cost weight for color adjective -/
-  β_c_color : Float
-  deriving Repr
-
-def fitted_cost : FittedCostParams := { β_c_size := 0.02, β_c_color := 0.03 }
-
-/-- BDA-fitted parameters confirm the noise discrimination ordering:
-    x_color > x_size, matching the `RSA.Noise` module's standard values.
-    This is the empirical validation of the noise channel asymmetry. -/
-theorem fitted_color_gt_size :
-    fitted_x_color.map > fitted_x_size.map := by native_decide
-
-/-- BDA-fitted cost parameters are near zero, empirically confirming
-    the No-Brevity regime. The model finds that utterance cost plays
-    essentially no role — speakers are driven by informativity (Q1)
-    rather than brevity (Q2). -/
-theorem fitted_cost_near_zero :
-    fitted_cost.β_c_size < 0.05 ∧ fitted_cost.β_c_color < 0.05 := by
-  constructor <;> native_decide
+The Exp 1 mixed-effects regression (main effect of sufficient property β = 3.54,
+SE = .22, p < .0001; scene-variation × property interaction β = 2.26, SE = .74,
+p < .003) and the BDA-fitted parameters (MAP x_color = .88, HDI [.85, .92];
+x_size = .79, HDI [.76, .80]; near-zero costs β_c ≈ .02/.03) are recorded in the
+module docstring's *Verified Data*. These are empirical effect sizes / fitted
+values, not model-derived quantities, so they live in prose rather than as Lean
+data — the model-side content is the structural predictions
+`csrsa_overmod_preferred` and `noise_grounds_asymmetry`. -/
 
 -- ============================================================================
 -- §13. Bridge: No-Brevity Regime
@@ -577,23 +507,14 @@ theorem noise_grounds_asymmetry :
 -- §15. Bridge: Explains Engelhardt et al. (2006)
 -- ============================================================================
 
-/-- cs-RSA explains the puzzle from [engelhardt-etal-2006]: speakers
-    over-describe ~31% of the time, listeners don't penalize it (Q2
-    violations tolerated), yet listeners implicitly detect the redundancy
-    (processing cost).
-
-    cs-RSA's answer: over-description is not a Q2 violation at all. In
-    a noisy world, redundant modifiers are genuinely informative (Q1).
-    The speaker is not being "over-informative" — they are being
-    appropriately informative given perceptual uncertainty. -/
-theorem explains_engelhardt :
-    -- Engelhardt: speakers over-describe
-    EngelhardtEtAl2006.exp1_target_1ref.modified > 0.2 ∧
-    -- Engelhardt: over-descriptions not penalized in judgment
-    ¬EngelhardtEtAl2006.exp2_target_1ref.significant ∧
-    -- cs-RSA explains: overmodification IS informative under noise
-    cfg.S1 () target .smallBlue > cfg.S1 () target .small := by
-  refine ⟨by native_decide, by decide, csrsa_overmod_preferred⟩
+/-! cs-RSA explains the puzzle from [engelhardt-etal-2006]: speakers
+over-describe ~31% of the time and listeners tolerate it (Q2 violations
+accepted), yet implicitly detect the redundancy. cs-RSA's answer: over-description
+is not a Q2 violation at all — in a noisy world redundant modifiers are genuinely
+informative (Q1). The model-side claim is exactly `csrsa_overmod_preferred`
+(overmodification raises the literal listener's posterior); the ~31% production
+rate and the tolerated-but-detected judgment pattern are empirical anchors
+recorded in the module docstring, not Lean data. -/
 
 -- ============================================================================
 -- §16. Bridge: Explanatory Chain
@@ -621,15 +542,13 @@ theorem explanatory_chain :
     QuantityViolation.overInformative.submaxim ∧
     -- No-Brevity is the weakest Q2
     DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 ∧
-    -- Engelhardt: speakers over-describe
-    EngelhardtEtAl2006.exp1_target_1ref.modified > 0.2 ∧
     -- Boolean RSA: no overmod preference
     ¬(boolCfg.S1 () target .smallBlue > boolCfg.S1 () target .small) ∧
     -- cs-RSA: noise makes overmodification rational
     cfg.S1 () target .smallBlue > cfg.S1 () target .small ∧
     -- Discrimination ordering grounds the asymmetry
     RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination :=
-  ⟨violations_independent, rfl, by native_decide,
+  ⟨violations_independent, rfl,
    bool_no_overmod_preference, csrsa_overmod_preferred,
    RSA.Noise.color_gt_size⟩
 
@@ -664,64 +583,17 @@ The paper tests this in two experiments:
 -- §18. Experiment 2: Color Typicality (§4)
 -- ============================================================================
 
-/-- More typical color → LESS color mention (§4.3: β = −4.17, SE = 0.45,
-    p < .0001). Log odds of including color modifier.
-
-    Interpretation: typical colors (yellow banana) carry less information
-    because the listener already expects them → speakers omit them.
-    Atypical colors (blue banana) are surprising and informative →
-    speakers include them. -/
-def exp2_typicality : RegressionResult :=
-  { β := -4.17, se := 0.45, significant := true }
-
-/-- Overinformative color → LESS color mention (§4.3: β = −5.56, SE = 0.33,
-    p < .0001). Speakers are less likely to include a color modifier when
-    it is redundant (overinformative) than when it is needed (informative). -/
-def exp2_informativeness : RegressionResult :=
-  { β := -5.56, se := 0.33, significant := true }
-
-/-- Color competitor absent → MORE color mention (§4.3: β = 0.71, SE = 0.16,
-    p < .0001). Speakers mention color more when no distractor shares the
-    target's color, consistent with the noise model's prediction that
-    unique colors are more discriminative. -/
-def exp2_color_competitor : RegressionResult :=
-  { β := 0.71, se := 0.16, significant := true }
-
-/-- All three predictors are significant in Exp 2: typicality, informativeness,
-    and color competitor presence. -/
-theorem exp2_all_significant :
-    exp2_typicality.significant ∧ exp2_informativeness.significant ∧
-    exp2_color_competitor.significant :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Typicality effect is negative: more typical → less color mention.
-    This is the within-dimension analogue of the cross-dimension asymmetry
-    in Exp 1: high-discrimination features (Exp 1: color > size) get
-    mentioned MORE, but within a feature, high-typicality values (Exp 2:
-    typical colors) get mentioned LESS because they're already expected. -/
-theorem exp2_typicality_negative :
-    exp2_typicality.β < 0 := by native_decide
-
--- ============================================================================
--- §18b. Bridge: Westerbeek, Koolen & Maes (2015) Typicality Effect
--- ============================================================================
-
-/-- [westerbeek-koolen-maes-2015] independently established the
-    same color typicality → color mention effect with a larger stimulus
-    set (42 target objects spanning the full typicality continuum).
-    Both findings are in the same direction: more typical color → less
-    color mention in referring expressions.
-
-    Degen et al. Exp 2: β = −4.17 (more typical → less color)
-    Westerbeek et al. Exp 1: β = −2.36 (more typical → less color)
-
-    The sign agreement is not coincidental — both arise from the same
-    mechanism: continuous semantics makes atypical colors more
-    informative than typical ones. -/
-theorem typicality_direction_consistent :
-    exp2_typicality.β < 0 ∧
-    WesterbeekKoolenMaes2015.exp1_typicality.β < 0 := by
-  constructor <;> native_decide
+/-! Exp 2 (§4.3) confirms the typicality account of color mention: more typical
+color → less color mention (β = −4.17, SE = .45), overinformative color → less
+mention (β = −5.56, SE = .33), and an absent color competitor → more mention
+(β = 0.71, SE = .16); all p < .0001. The negative typicality effect is the
+within-feature analogue of the cross-feature color>size asymmetry: high-typicality
+values are already expected, so mentioning them adds little information.
+[westerbeek-koolen-maes-2015] independently found the same direction (β = −2.36)
+with a 42-object stimulus set. These are empirical effect sizes (recorded in the
+module docstring); the model-side parallel — a graded `φ_typ ∈ [0,1]` plays for
+nouns the role noise plays for adjectives — is realized structurally below
+(`φ_typ`, `nominal_overspec_preferred`, `typicality_makes_the_difference`). -/
 
 -- ============================================================================
 -- §19. Experiment 2: Model Evaluation (§4.4)
@@ -741,134 +613,24 @@ Boolean type-level semantics. This is evidence that category membership
 is genuinely graded, not just noisy Boolean. -/
 
 -- ============================================================================
--- §20. Taxonomic Levels for Nominal Reference (§5)
+-- §20. Experiment 3: Nominal Choice (§5) — empirical findings
 -- ============================================================================
 
-/-- Taxonomic levels for head noun choice. Exp 3 tests whether speakers
-    choose subordinate, basic-level, or superordinate nouns in a reference
-    game. The cs-RSA model with typicality values predicts noun choice
-    across all three levels. -/
-inductive TaxonomicLevel where
-  /-- Subordinate: "dalmatian", "poodle", "avocado" -/
-  | subordinate
-  /-- Basic: "dog", "bird", "fruit" (Rosch's basic level) -/
-  | basic
-  /-- Superordinate: "animal", "furniture", "food" -/
-  | superordinate
-  deriving DecidableEq, Repr
-
-/-- Informativeness conditions for nominal reference (§5.1). The referent
-    is always uniquely identifiable — the conditions vary in what level
-    of the taxonomy is required for unique identification. -/
-inductive NominalCondition where
-  /-- Subordinate level needed to distinguish (e.g., among three dogs) -/
-  | subNecessary
-  /-- Basic level sufficient (e.g., one dog among cats and birds) -/
-  | basicSufficient
-  /-- Superordinate sufficient (e.g., one animal among non-animals) -/
-  | superSufficient
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- §21. Experiment 3: Nominal Choice (§5)
--- ============================================================================
-
-/-- Sub necessary vs mean of other conditions (§5.2: β = 2.11, SE = .17,
-    z = 12.66, p < .0001). Speakers strongly prefer subordinate nouns when
-    the subordinate level is needed for unique identification. -/
-def exp3_sub_necessary : RegressionResult :=
-  { β := 2.11, se := 0.17, significant := true }
-
-/-- Basic sufficient vs super sufficient (§5.2: β = .60, SE = .15,
-    z = 4.09, p < .0001). When both levels suffice, speakers prefer
-    basic-level nouns — consistent with Rosch's basic-level advantage. -/
-def exp3_basic_vs_super : RegressionResult :=
-  { β := 0.60, se := 0.15, significant := true }
-
-/-- Typicality predicts subordinate mention (§5.2: β = 4.82, SE = 1.35,
-    z = 3.58, p < .001). Higher typicality → MORE subordinate mention.
-
-    Direction is OPPOSITE to Exp 2's color typicality effect (β = −4.17):
-    - Exp 2: typical color → LESS mention (expected, so uninformative)
-    - Exp 3: typical exemplar → MORE subordinate mention (good fit for
-      the subordinate term → the term is more discriminative)
-
-    The difference reflects different roles of typicality: in Exp 2,
-    typicality reduces the information gained from mentioning a feature.
-    In Exp 3, typicality increases how well a noun fits, making it a
-    better descriptor for the cs-RSA meaning function. -/
-def exp3_typicality : RegressionResult :=
-  { β := 4.82, se := 1.35, significant := true }
-
-/-- Length disprefers subordinate mention (§5.2: β = −.95, SE = .27,
-    z = −3.54, p < .001). Longer subordinate terms ("dalmatian" vs "dog")
-    are used less — speakers face a real brevity pressure for nouns
-    that is absent for adjective modifiers (Exp 1: β_c ≈ 0). -/
-def exp3_length : RegressionResult :=
-  { β := -0.95, se := 0.27, significant := true }
-
-/-- Frequency does not predict subordinate mention (§5.2: β = .08,
-    SE = .11, z = .71, NS). Word frequency plays no role in noun
-    choice once typicality and length are controlled. -/
-def exp3_frequency : RegressionResult :=
-  { β := 0.08, se := 0.11, significant := false }
-
--- ============================================================================
--- §22. Experiment 3: BDA-Fitted Parameters (§5.3, Figure 19)
--- ============================================================================
-
-/-- BDA-fitted parameters for the nominal choice model (§5.3, Figure 19).
-
-    Key findings:
-    - β_fixed MAP = 0.004: empirical typicality strongly preferred over
-      Boolean type-level semantics (same as Exp 2)
-    - β_i MAP = 19.8: high rationality (α in RSA notation)
-    - β_t MAP = 0.57: typicality concentration < 1 (sublinear)
-    - β_F MAP = 0.02: frequency cost negligible
-    - β_L MAP = 2.69: length cost substantial (contrast with Exp 1's ≈ 0)
-
-    Model achieves r = .86 at the target/utterance/condition level and
-    r = .95 collapsed across targets. -/
-structure NominalModelParams where
-  /-- Interpolation weight: 0 = empirical typicality, 1 = Boolean -/
-  β_fixed : Float
-  /-- Rationality parameter (α in RSA notation) -/
-  β_i : Float
-  /-- Typicality concentration parameter -/
-  β_t : Float
-  /-- Frequency cost weight -/
-  β_F : Float
-  /-- Length cost weight -/
-  β_L : Float
-  deriving Repr
-
-/-- MAP estimates from BDA (§5.3, Figure 19). Verified against
-    figure caption. -/
-def exp3_fitted : NominalModelParams :=
-  { β_fixed := 0.004, β_i := 19.8, β_t := 0.57, β_F := 0.02, β_L := 2.69 }
-
-/-- Empirical typicality strongly preferred: β_fixed → 0.
-    Boolean semantics is a poor approximation — category membership is
-    genuinely graded, not binary + noise. -/
-theorem exp3_empirical_preferred :
-    exp3_fitted.β_fixed < 0.01 := by native_decide
-
-/-- Length cost is substantial: β_L = 2.69. Speakers do prefer shorter
-    nouns ("dog" over "dalmatian"), unlike modifiers where β_c ≈ 0.
-
-    In RSA terms: nominal choice is NOT in the No-Brevity regime.
-    The No-Brevity result from Exp 1 is specific to modifier adjectives,
-    not a general property of referring expressions. -/
-theorem exp3_length_cost_nonzero :
-    exp3_fitted.β_L > 1.0 := by native_decide
-
-/-- Frequency plays negligible role: both the regression (NS) and the
-    BDA (β_F MAP = 0.02) find no meaningful frequency effect. Speakers
-    choose nouns based on informativity, typicality, and length — not
-    based on how common the word is. -/
-theorem exp3_frequency_negligible :
-    ¬exp3_frequency.significant ∧ exp3_fitted.β_F < 0.05 := by
-  constructor <;> native_decide
+/-! Exp 3 (§5.2) tests head-noun choice across taxonomic levels. Speakers
+strongly prefer the subordinate term when it is needed for reference (β = 2.11,
+SE = .17) and the basic level when both basic and superordinate suffice (β = .60,
+SE = .15); higher object typicality → more subordinate mention (β = 4.82,
+SE = 1.35); longer terms are dispreferred (length β = −.95, SE = .27) while word
+frequency does not (β = .08, NS). The BDA (§5.3, Figure 19) prefers empirical
+typicality over Boolean semantics (β_fixed → .004), fits high rationality
+(β_i = 19.8), and — unlike the modifier model — a substantial length cost
+(β_L = 2.69): nominal choice is NOT in the No-Brevity regime. These empirical
+values are recorded in the module docstring; the model-side claim is the
+structural nominal cs-RSA below (`φ_typ`, `nominal_overspec_preferred`,
+`nominal_full_ordering`). Note the typicality sign flips between experiments —
+Exp 2: typical → less *color* mention (an expected feature is uninformative);
+Exp 3: typical → more *subordinate* mention (a better noun fit) — both consistent
+with continuous semantics. -/
 
 -- ============================================================================
 -- §23. Nominal Reference Scene (basic-sufficient condition, §5)
@@ -974,23 +736,27 @@ def nomL0_q (u : NomUtterance) (w : NomWorld) : ℚ :=
 /-- L0(dalmatian | "dalmatian") = 95/97 ≈ 0.979. Near-perfect
     identification — the subordinate term almost uniquely picks
     out the dalmatian via typicality. -/
-theorem nomL0_sub_target : nomL0_q .sub .dalmatian = 95/97 := by native_decide
+theorem nomL0_sub_target : nomL0_q .sub .dalmatian = 95/97 := by
+  norm_num [nomL0_q, φ_typ]
 
 /-- L0(dalmatian | "dog") = 8/9 ≈ 0.889. Good identification —
     the basic-level term discriminates well because the distractors
     (cat, bird) are very atypical dogs. -/
-theorem nomL0_basic_target : nomL0_q .basic .dalmatian = 8/9 := by native_decide
+theorem nomL0_basic_target : nomL0_q .basic .dalmatian = 8/9 := by
+  norm_num [nomL0_q, φ_typ]
 
 /-- L0(dalmatian | "animal") = 1/3. No discrimination — all three
     objects are equally typical animals. -/
-theorem nomL0_super_target : nomL0_q .super .dalmatian = 1/3 := by native_decide
+theorem nomL0_super_target : nomL0_q .super .dalmatian = 1/3 := by
+  norm_num [nomL0_q, φ_typ]
 
 /-- The subordinate term sharpens L0 beyond the basic term:
     L0("dalmatian") > L0("dog"). Overspecific nouns carry real
     information through the typicality channel, just as redundant
     modifiers carry information through the noise channel. -/
 theorem nomL0_overspec_sharpens :
-    nomL0_q .sub .dalmatian > nomL0_q .basic .dalmatian := by native_decide
+    nomL0_q .sub .dalmatian > nomL0_q .basic .dalmatian := by
+  norm_num [nomL0_q, φ_typ]
 
 -- ============================================================================
 -- §27. Core Prediction: Overspecification is Rational
@@ -1173,14 +939,18 @@ def S1_nom_cost (c : ℚ) (w : NomWorld) (u : NomUtterance) : ℚ :=
 theorem mod_cost_regime_existence :
     (∃ c : ℚ, 0 ≤ c ∧ S1_mod_cost c target .smallBlue > S1_mod_cost c target .small) ∧
     (∃ c : ℚ, 0 ≤ c ∧ S1_mod_cost c target .small > S1_mod_cost c target .smallBlue) :=
-  ⟨⟨0, le_refl 0, by native_decide⟩, ⟨1/4, by norm_num, by native_decide⟩⟩
+  ⟨⟨0, le_refl 0, by norm_num [S1_mod_cost, L0_q, φ, modCost, RSA.Noise.sizeMatch,
+        RSA.Noise.sizeMismatch, RSA.Noise.colorMatch, RSA.Noise.colorMismatch]⟩,
+   ⟨1/4, by norm_num, by norm_num [S1_mod_cost, L0_q, φ, modCost, RSA.Noise.sizeMatch,
+        RSA.Noise.sizeMismatch, RSA.Noise.colorMatch, RSA.Noise.colorMismatch]⟩⟩
 
 /-- **Nominal existence**: both the overspec regime and the basic-level
     regime are realizable by varying cost. -/
 theorem nom_cost_regime_existence :
     (∃ c : ℚ, 0 ≤ c ∧ S1_nom_cost c .dalmatian .sub > S1_nom_cost c .dalmatian .basic) ∧
     (∃ c : ℚ, 0 ≤ c ∧ S1_nom_cost c .dalmatian .basic > S1_nom_cost c .dalmatian .sub) :=
-  ⟨⟨0, le_refl 0, by native_decide⟩, ⟨1/5, by norm_num, by native_decide⟩⟩
+  ⟨⟨0, le_refl 0, by norm_num [S1_nom_cost, nomL0_q, φ_typ, nomCost]⟩,
+   ⟨1/5, by norm_num, by norm_num [S1_nom_cost, nomL0_q, φ_typ, nomCost]⟩⟩
 
 -- ── Differential robustness ─────────────────────────────────────────────────
 
@@ -1202,7 +972,10 @@ theorem differential_cost_robustness :
     S1_mod_cost (3/20) target .smallBlue > S1_mod_cost (3/20) target .small ∧
     -- Nouns: basic wins at c = 3/20
     S1_nom_cost (3/20) .dalmatian .basic > S1_nom_cost (3/20) .dalmatian .sub := by
-  constructor <;> native_decide
+  refine ⟨?_, ?_⟩
+  · norm_num [S1_mod_cost, L0_q, φ, modCost, RSA.Noise.sizeMatch,
+      RSA.Noise.sizeMismatch, RSA.Noise.colorMatch, RSA.Noise.colorMismatch]
+  · norm_num [S1_nom_cost, nomL0_q, φ_typ, nomCost]
 
 /-- The full crossover picture: both models transition from
     overinformative-preferred to sufficient-preferred, but at
@@ -1231,6 +1004,9 @@ theorem cost_crossover_table :
     -- c = 1/5: both flip to sufficient
     S1_mod_cost (1/5) target .small > S1_mod_cost (1/5) target .smallBlue ∧
     S1_nom_cost (1/5) .dalmatian .basic > S1_nom_cost (1/5) .dalmatian .sub := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    norm_num [S1_mod_cost, S1_nom_cost, L0_q, nomL0_q, φ, φ_typ, modCost, nomCost,
+      RSA.Noise.sizeMatch, RSA.Noise.sizeMismatch, RSA.Noise.colorMatch,
+      RSA.Noise.colorMismatch]
 
 end DegenEtAl2020
