@@ -65,7 +65,7 @@ private def son_dors_pat : Segment :=
   Segment.ofSpecs [(Feature.sonorant, true), (Feature.dorsal, true)]
 
 private def matchesPat (s : Segment) (p : Segment) : Bool :=
-  s.matchesPattern p
+  decide (p ≤ s)
 
 /-- Constraint #1 from Table (4): *[+sonorant, +dorsal]. Weight 5.64. -/
 def c1_star_son_dors : Constraint Onset :=

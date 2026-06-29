@@ -9,13 +9,13 @@ import Linglib.Phonology.Segmental.Defs
 # Basic theory of segments
 
 This file develops the theory of the segments defined in
-`Phonology/Segmental/Defs.lean`: that natural-class membership is the unification
-subsumption order, how the feature-change operations behave, and that Parker's
-sonority ranking is injective.
+`Phonology/Segmental/Defs.lean`. Natural-class membership is just the bundle order
+— a pattern `p` matches `s` exactly when `p ≤ s` ([shieber-1986]; [carpenter-1992])
+— so the results here are about the feature-change operations and the injectivity
+of the Parker sonority ranking.
 
 ## Main results
 
-* `Segment.matchesPattern_iff_le` — natural-class membership is bundle subsumption.
 * `Segment.setFeature_hasValue` &c. — the feature-change operations act as specified.
 * `Sonority.Class.parkerRank_injective` — the Parker scale ranks classes distinctly.
 -/
@@ -25,20 +25,6 @@ namespace Phonology
 namespace Segment
 
 variable (s : Segment)
-
-/-! ### Natural-class membership is subsumption -/
-
-/-- Matching a natural-class pattern is subsumption: `s` matches `p` exactly when
-    `p` refines to `s` ([shieber-1986]; [carpenter-1992]). -/
-theorem matchesPattern_iff_le {s p : Segment} : s.matchesPattern p = true ↔ p ≤ s := by
-  simp only [Segment.matchesPattern, List.all_eq_true, decide_eq_true_eq, Pi.le_def]
-  exact ⟨fun h f => h f (allFeatures_complete f), fun h f _ => h f⟩
-
-@[simp] theorem matchesPattern_iff_le' {s p : Segment} : s.MatchesPattern p ↔ p ≤ s :=
-  matchesPattern_iff_le
-
-/-- Every segment matches itself as a pattern (reflexivity of subsumption). -/
-@[simp] theorem matchesPattern_self : s.matchesPattern s = true := matchesPattern_iff_le.mpr le_rfl
 
 /-! ### Feature changes -/
 

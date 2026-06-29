@@ -134,20 +134,6 @@ def Segment.ofSpecs (specs : List (Feature × Bool)) : Segment :=
     | some (_, v) => some v
     | none => none
 
-/-- Bool: does segment `s` match natural-class pattern `p`? True when every
-    feature specified in `p` agrees with `s`; unspecified features in `p`
-    match anything — i.e. when `p` subsumes `s` (`matchesPattern_iff_le`). -/
-def Segment.matchesPattern (s : Segment) (p : Segment) : Bool :=
-  Feature.allFeatures.all fun f => decide (p f ≤ s f)
-
-/-- Prop wrapper around `matchesPattern` (mirrors `Segment.HasValue`). Lets
-    consumers write mathlib-style universally-quantified theorems with
-    Decidable inference via the Bool computation. -/
-def Segment.MatchesPattern (s p : Segment) : Prop := s.matchesPattern p = true
-
-instance (s p : Segment) : Decidable (Segment.MatchesPattern s p) :=
-  inferInstanceAs (Decidable (_ = _))
-
 /-- Merge feature changes from `change` into `s`: features specified in
     `change` override `s`'s values; unspecified features in `change` are
     preserved. Implements the SPE structural change `A → B` (when `B` is a
