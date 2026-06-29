@@ -5,7 +5,7 @@ import Linglib.Discourse.Gameboard.Genre
 import Linglib.Discourse.Gameboard.Grounding
 import Linglib.Discourse.Gameboard.SelfRepair
 import Linglib.Discourse.Gameboard.NSUTaxonomy
-import Linglib.Discourse.Gameboard.Examples
+import Linglib.Studies.Ginzburg2012.Examples
 import Linglib.Discourse.Gameboard.Grammar
 import Linglib.Discourse.Gameboard.RepriseContent
 import Linglib.Discourse.Gameboard.Austinian
@@ -169,8 +169,8 @@ theorem ttr_inquiry_cycle_resolves :
 
 /-- The same inquiry cycle in string-typed form (legacy worked example). -/
 theorem string_inquiry_cycle_resolves :
-    Discourse.Gameboard.Examples.tis₂.dgb.qud = [] :=
-  Discourse.Gameboard.Examples.inquiry_step2_qud_empty
+    Ginzburg2012.Examples.tis₂.dgb.qud = [] :=
+  Ginzburg2012.Examples.inquiry_step2_qud_empty
 
 -- ════════════════════════════════════════════════════════════
 -- § 4. Grounding Asymmetry: per-DGB stance (Ch. 4)

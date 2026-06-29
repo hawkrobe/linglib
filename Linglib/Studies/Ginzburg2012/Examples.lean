@@ -26,7 +26,7 @@ counterpart over `BCheckableAustinian S` and `TTRQuestionB R`.
 
 -/
 
-namespace Discourse.Gameboard.Examples
+namespace Ginzburg2012.Examples
 
 open Discourse.Gameboard Question
 
@@ -218,4 +218,4 @@ theorem rain_assert_resolves : rainTIS₂.dgb.qud = [] := by
 
 end PartitionExample
 
-end Discourse.Gameboard.Examples
+end Ginzburg2012.Examples
