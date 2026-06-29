@@ -78,11 +78,13 @@ noncomputable def S1 (score : St → U → EReal) [ViableSpeaker score] (s : St)
 
 /-- **Cross-utterance prediction**: the speaker prefers `u₂` to `u₁` at state `s`
 iff `u₂` has the higher utility. The partition function cancels. -/
+@[rsa]
 theorem S1_prefers_iff (score : St → U → EReal) [ViableSpeaker score] (s : St) (u₁ u₂ : U) :
     S1 score s u₁ < S1 score s u₂ ↔ score s u₁ < score s u₂ :=
   PMF.softmax_lt_iff_score_lt (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u₁ u₂
 
 /-- `≤` companion of `S1_prefers_iff`. -/
+@[rsa]
 theorem S1_prefers_le_iff (score : St → U → EReal) [ViableSpeaker score] (s : St) (u₁ u₂ : U) :
     S1 score s u₁ ≤ S1 score s u₂ ↔ score s u₁ ≤ score s u₂ :=
   PMF.softmax_le_iff_score_le (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u₁ u₂
@@ -126,6 +128,7 @@ noncomputable def L1 (S : W × Lat → PMF U) (joint : PMF (W × Lat)) (u : U)
 
 /-- **Cross-world prediction**: marginalising the latent, `L1` favours world `w₂`
 over `w₁` iff the conditional-joint sums favour it. -/
+@[rsa]
 theorem L1_world_prefers_iff [DecidableEq W] (S : W × Lat → PMF U) (joint : PMF (W × Lat))
     (u : U) (h : PMF.marginal S joint u ≠ 0) (w₁ w₂ : W) :
     (L1 S joint u h).fst w₁ < (L1 S joint u h).fst w₂
@@ -134,6 +137,7 @@ theorem L1_world_prefers_iff [DecidableEq W] (S : W × Lat → PMF U) (joint : P
   PMF.posterior_fst_lt_iff S joint u h w₁ w₂
 
 /-- `≤` companion of `L1_world_prefers_iff`. -/
+@[rsa]
 theorem L1_world_prefers_le_iff [DecidableEq W] (S : W × Lat → PMF U)
     (joint : PMF (W × Lat)) (u : U) (h : PMF.marginal S joint u ≠ 0) (w₁ w₂ : W) :
     (L1 S joint u h).fst w₁ ≤ (L1 S joint u h).fst w₂
@@ -143,6 +147,7 @@ theorem L1_world_prefers_le_iff [DecidableEq W] (S : W × Lat → PMF U)
 
 /-- **Cross-latent prediction**: marginalising the world, `L1` favours latent `l₂`
 over `l₁` iff the conditional-joint sums favour it. -/
+@[rsa]
 theorem L1_latent_prefers_iff [DecidableEq Lat] (S : W × Lat → PMF U)
     (joint : PMF (W × Lat)) (u : U) (h : PMF.marginal S joint u ≠ 0) (l₁ l₂ : Lat) :
     (L1 S joint u h).snd l₁ < (L1 S joint u h).snd l₂
@@ -272,6 +277,7 @@ end PowSpeaker
 /-- Posterior-mass comparison over events of the joint listener reduces to
 comparing prior-weighted speaker sums — `PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt`
 in the `L1` vocabulary. -/
+@[rsa]
 theorem L1_event_lt_iff {W Lat U : Type*} [Fintype (W × Lat)]
     (S : W × Lat → PMF U) (joint : PMF (W × Lat)) (u : U)
     (h : PMF.marginal S joint u ≠ 0) (A B : Finset (W × Lat)) :
@@ -281,6 +287,7 @@ theorem L1_event_lt_iff {W Lat U : Type*} [Fintype (W × Lat)]
 
 /-- At a uniform joint prior the prior cancels: event comparison reduces to
 comparing summed speaker probabilities. -/
+@[rsa]
 theorem L1_uniform_event_lt_iff {W Lat U : Type*} [Fintype W] [Fintype Lat]
     [Nonempty (W × Lat)] (S : W × Lat → PMF U) (u : U)
     (h : PMF.marginal S (PMF.uniformOfFintype (W × Lat)) u ≠ 0)
