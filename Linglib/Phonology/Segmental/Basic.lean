@@ -26,20 +26,6 @@ namespace Segment
 
 variable (s : Segment)
 
-/-! ### Specification -/
-
-/-- Specification is the bundle notion of carrying more than the unspecified
-    bottom. -/
-theorem specified_iff_specifies (f : Feature) : s.Specified f ↔ BundleLike.Specifies s f := by
-  simp only [Segment.Specified, BundleLike.Specifies, BundleLike.val,
-    ne_eq, Option.isSome_iff_ne_none]
-  rfl
-
-/-- Specification and unspecification are mutually exclusive and exhaustive. -/
-theorem specified_iff_not_unspecified (f : Feature) : s.Specified f ↔ ¬ s.Unspecified f := by
-  unfold Specified Unspecified
-  cases s f <;> simp
-
 /-! ### Natural-class membership is subsumption -/
 
 /-- Matching a natural-class pattern is subsumption: `s` matches `p` exactly when

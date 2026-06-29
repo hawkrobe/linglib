@@ -116,13 +116,6 @@ theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
     common to two segments is their meet. -/
 abbrev Segment := Feature → Flat Bool
 
-/-- Is feature `f` specified (either [+F] or [−F])? -/
-def Segment.Specified (s : Segment) (f : Feature) : Prop :=
-  (s f).isSome = true
-
-instance (s : Segment) : DecidablePred (Segment.Specified s) := fun _ =>
-  inferInstanceAs (Decidable (_ = true))
-
 /-- Does feature `f` have value `v`? -/
 def Segment.HasValue (s : Segment) (f : Feature) (v : Bool) : Prop :=
   s f = some v

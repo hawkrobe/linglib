@@ -114,9 +114,9 @@ theorem k_matches_nasalization_target :
 
 /-- Vowels and nasals lack [-del.rel.], so they don't trigger nasalization. -/
 theorem a_not_nasalization_target :
-    a.Specified Feature.delayedRelease = false := by decide
+    a.Unspecified Feature.delayedRelease := by decide
 
 theorem m_not_nasalization_target :
-    m.Specified Feature.delayedRelease = false := by decide
+    m.Unspecified Feature.delayedRelease := by decide
 
 end Korean.Phonology
