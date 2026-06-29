@@ -232,7 +232,8 @@ def moraCount (y : Yield) : Nat := y.sum
 
 /-- The minimal-word *size* constraint ([mccarthy-prince-1993]): at least
     `minMorae` morae (default 2, the moraic-trochee minimum). The *structural*
-    minimal word — that an ω properly contains a foot — is `Word.feet_ne_nil`. -/
+    minimal word — that an ω contains a foot — holds by construction of the recursive
+    `Prosody.Word` (its head projects to a foot: `Word.headFoot` is total). -/
 abbrev satisfiesMinWord (y : Yield) (minMorae : Nat := 2) : Prop := minMorae ≤ y.moraCount
 
 end Yield
