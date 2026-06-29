@@ -2,7 +2,6 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.DecEq
 import Linglib.Features.Prosody
 import Linglib.Phonology.Prosody.Syllable
-import Linglib.Phonology.Prosody.Word
 
 /-!
 # Prosodic trees
@@ -30,7 +29,7 @@ faithfulness machinery (`OptimalityTheory.Correspondence`, Max/Dep) — future w
 * `Prosody.Tree.Containment` — child level ≤ parent level ([ito-mester-2003]).
 * `Prosody.Tree.recursionCount` — parses of one element into the same level
   (= No-Recursion violations); recursion is *representable*, its cost is a constraint.
-* `Prosody.Tree.yield` — the terminal weight profile, as a `Word`.
+* `Prosody.Tree.yield` — the terminal weight profile, as a `Yield`.
 -/
 
 namespace Prosody
@@ -91,10 +90,10 @@ def recursionCountList : List Tree → Nat
   | t :: ts => recursionCount t + recursionCountList ts
 end
 
-/-- The terminal weight profile (σ-leaves, left to right) as a `Word` — the
-    σ → ω bridge to the unparsed weight profile. -/
-def yield (t : Tree) : Word :=
-  ⟨(t.nodes.filter (fun s => s.children.isEmpty)).map (fun s => s.label.weight)⟩
+/-- The terminal weight profile (σ-leaves, left to right) as a `Yield` — the
+    unparsed σ-weight string. (The headed ω parse is `Prosody.Word`.) -/
+def yield (t : Tree) : Yield :=
+  (t.nodes.filter (fun s => s.children.isEmpty)).map (fun s => s.label.weight)
 
 end Tree
 end Prosody

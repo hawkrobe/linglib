@@ -21,10 +21,8 @@ are *functions* that recover the same head.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
 * `Foot.IsSyllabicTrochee` / `IsMoraicTrochee` / `IsCanonicalIamb` — the *derived* inventory.
 * `Foot.toProsTree` / `Foot.toGrid` — re-representations that preserve the head.
-* `ParseElement` / `MetricalParse` — a metrical parse of a domain (legacy; the footing
-  work migrates this onto `Foot`/`Tree`).
-* `footMorae`, `ftBinViolations`, `parseSylViolations`, `allFt{Left,Right}Violations` —
-  parse-level OT constraints.
+* `footMorae` — mora count of a `Tree`-extracted weight-list foot (the flat metrical
+  parse is now `Prosody.Footing`).
 
 ## Main results
 
@@ -125,9 +123,11 @@ theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonic
 /-! ### Re-representations (preserving the head) -/
 
 /-- Re-represent as a prosodic tree ([selkirk-1980]; [ito-mester-2003]): a depth-1 `.f`
-    node over `.σ` leaves, the head σ marked via `Constituent.isHead`. -/
-def toProsTree (w : S → Syllable.Weight) (f : Foot S) : Tree :=
-  .node .ft ((List.finRange f.syllables.length).map (fun i =>
+    node over `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
+    itself is marked `isHead` when the foot heads its ω (the `isHead` argument; see
+    `Word.toProsTree`). -/
+def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : Tree :=
+  .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
     .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))
 
 /-- Re-represent as a metrical-grid row ([hayes-1995]): a head mark per position. -/
@@ -155,75 +155,13 @@ theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
 
 end Foot
 
-/-! ### Metrical parse
+/-! ### Foot mora count -/
 
-A flat parse of a prosodic domain. (Legacy weight-list representation; the footing
-work migrates this onto the headed `Foot`/`Tree` above.) -/
-
-/-- An element in a metrical parse: either a foot grouping syllables
-    or an unparsed (stray) syllable. The list preserves left-to-right
-    linear order within the prosodic domain. -/
-inductive ParseElement where
-  /-- A foot containing one or more syllables (represented by weight). -/
-  | foot : List Syllable.Weight → ParseElement
-  /-- An unparsed syllable not dominated by any foot. -/
-  | unfooted : Syllable.Weight → ParseElement
-  deriving DecidableEq, Repr
-
-/-- A metrical parse: a prosodic domain represented as a linear sequence
-    of footed and unfooted syllables. -/
-abbrev MetricalParse := List ParseElement
-
-/-- Extract all feet from a parse. -/
-def MetricalParse.feet (p : MetricalParse) : List (List Syllable.Weight) :=
-  p.filterMap λ | .foot ws => some ws | .unfooted _ => none
-
-/-- Mora count of a single foot (each weight *is* a mora count). -/
+/-- Mora count of a foot given as a weight-list (each weight *is* a mora count). The
+    moraic measure for `Tree`-extracted feet (`Phonology/Prosody/WordSize.lean`); for a
+    headed `Foot S`, use `Foot.moraCount`. -/
 def footMorae (ws : List Syllable.Weight) : Nat :=
   ws.foldl (· + ·) 0
-
-/-- Total syllable count in a parse. -/
-def MetricalParse.syllableCount (p : MetricalParse) : Nat :=
-  p.foldl (λ acc e => acc + match e with
-    | .foot ws => ws.length
-    | .unfooted _ => 1) 0
-
-/-- Number of unparsed syllables in a parse. -/
-def MetricalParse.unparsedCount (p : MetricalParse) : Nat :=
-  p.filter (λ | .unfooted _ => true | _ => false) |>.length
-
-/-! ### OT metrical constraints -/
-
-/-- FT-BIN(μ): assign one violation for each foot that does not consist
-    of exactly two morae ([kager-2007]). -/
-def ftBinViolations (p : MetricalParse) : Nat :=
-  p.feet.filter (λ ws => footMorae ws != 2) |>.length
-
-/-- PARSE-SYL: assign one violation for each syllable not parsed into
-    a foot ([kager-2007]). Drives exhaustive parsing. -/
-def parseSylViolations (p : MetricalParse) : Nat :=
-  p.unparsedCount
-
-/-- ALL-FT-LEFT: for each foot, count the syllables intervening between the
-    left edge of the domain and the left edge of the foot ([kager-2007]). -/
-def allFtLeftViolations (p : MetricalParse) : Nat :=
-  let rec go : List ParseElement → Nat → Nat
-    | [], _ => 0
-    | .foot ws :: rest, pos => pos + go rest (pos + ws.length)
-    | .unfooted _ :: rest, pos => go rest (pos + 1)
-  go p 0
-
-/-- ALL-FT-RIGHT: for each foot, count the syllables intervening between the
-    right edge of the foot and the right edge of the domain ([kager-2007]). -/
-def allFtRightViolations (p : MetricalParse) : Nat :=
-  let total := p.syllableCount
-  let rec go : List ParseElement → Nat → Nat
-    | [], _ => 0
-    | .foot ws :: rest, pos =>
-      let rightEdge := pos + ws.length
-      (total - rightEdge) + go rest rightEdge
-    | .unfooted _ :: rest, pos => go rest (pos + 1)
-  go p 0
 
 /-! ### Worked examples -/
 
@@ -237,21 +175,5 @@ example : (Foot.monosyllable 0).IsDegenerate := by decide
 -- The re-representations recover the head: a trochee marks position 0, an iamb 1.
 example : Foot.toGrid (Foot.trochee 1 1) = [true, false] := by decide
 example : Foot.toGrid (Foot.iamb 1 1) = [false, true] := by decide
-
--- OT metrical constraints on worked parses.
-/-- (ˈCV.CV).CV: one bimoraic foot (LL) + one stray light syllable. -/
-private abbrev parse_llU : MetricalParse := [.foot [.light, .light], .unfooted .light]
-example : ftBinViolations parse_llU = 0 := rfl
-example : parseSylViolations parse_llU = 1 := rfl
-example : allFtLeftViolations parse_llU = 0 := rfl
-
-/-- (ˈLL)(ˌH): two bimoraic feet — the Telugu stem parse of *samudr-am*. -/
-private abbrev parse_llH : MetricalParse := [.foot [.light, .light], .foot [.heavy]]
-example : ftBinViolations parse_llH = 0 := rfl
-example : parseSylViolations parse_llH = 0 := rfl
-example : allFtLeftViolations parse_llH = 2 := rfl
-
-private abbrev parse_lllH : MetricalParse := [.foot [.light], .foot [.light], .foot [.heavy]]
-example : ftBinViolations parse_lllH = 2 := rfl
 
 end Prosody

@@ -1330,6 +1330,7 @@ import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.Constraints.Directional
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
@@ -1357,6 +1358,7 @@ import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
+import Linglib.Phonology.Prosody.Footing
 import Linglib.Phonology.Prosody.Mora
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Tree
@@ -2435,6 +2437,7 @@ import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ladusaw1979
 import Linglib.Studies.Lahiri1998
+import Linglib.Studies.Lamont2022c
 import Linglib.Studies.Lakoff1970
 import Linglib.Studies.Lambert2026
 import Linglib.Studies.Landau2015
