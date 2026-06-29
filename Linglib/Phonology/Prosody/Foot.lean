@@ -1,5 +1,4 @@
 import Linglib.Phonology.Prosody.Syllable
-import Linglib.Phonology.Prosody.Tree
 
 /-!
 # Metrical feet
@@ -35,6 +34,10 @@ are *functions* that recover the same head.
 namespace Prosody
 
 open Features.Prosody
+
+/-- The foot node label `f` for the prosodic tree (`Prosody.Tree`), optionally the head of
+    its parent ω (set by `Word.toProsTree`) — the `f`-level arm of `Prosody.Constituent`. -/
+abbrev Constituent.ft (isHead : Bool := false) : Constituent := { level := .f, isHead := isHead }
 
 /-! ### The canonical foot -/
 
@@ -158,7 +161,7 @@ end Foot
 /-! ### Foot mora count -/
 
 /-- Mora count of a foot given as a weight-list (each weight *is* a mora count). The
-    moraic measure for `Tree`-extracted feet (`Phonology/Prosody/WordSize.lean`); for a
+    moraic measure for `Tree`-extracted feet (`Prosody.feet`, in `Word.lean`); for a
     headed `Foot S`, use `Foot.moraCount`. -/
 def footMorae (ws : List Syllable.Weight) : Nat :=
   ws.foldl (· + ·) 0

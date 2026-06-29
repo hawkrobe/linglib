@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosody.WordSize
-import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Prosody.Word
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Itô & Mester 2009: the extended prosodic word
@@ -28,45 +28,36 @@ and German function-word complexes use ω-adjunction, *contra* Selkirk's
 φ-attachment. This is a second OT consumer of prosodic-word recursion alongside
 `Studies/Bennett2018.lean` (Kaqchikel).
 
-Candidates are `Prosody.Tree`s; EVAL is mathlib's lexicographic minimum
-(`Core.Optimization`'s `argMinSet`, no OT-engine wrapper). `No-Recursion` is
-`Tree.recursionCount` and `Parse-into-ω` is `parseIntoViol .ω` from the shared
-machinery; `FtBin`-at-ω and `Lex-to-ω` are the function-word constraints below.
+Candidates are `Prosody.Tree`s; the constraints are `Constraints.Constraint Tree` values
+(`No-Recursion` is the carrier constraint `Prosody.noRec`, `Parse-into-ω` is
+`Prosody.parseInto .ω`; `FtBin`-at-ω and `Lex-to-ω` are the function-word constraints
+below), and EVAL is the OT engine `OptimalityTheory.Tableau.ofRanking … |>.optimal`.
 -/
 
 namespace ItoMester2009
 
-open Prosody Features.Prosody RootedTree Core.Optimization.Evaluation
+open Prosody Features.Prosody RootedTree Constraints OptimalityTheory
 
 /-! ### Function-word constraints -/
 
-mutual
-/-- `FtBin`-at-ω violations: ω-nodes whose mora count is below a foot (< 2). A
-    subminimal function word parsed as its own ω is penalised. -/
-def subminimalOmegaViol : Tree → Nat
-  | .node a cs =>
-      (if decide (a.level = .ω) && decide (moraCount (.node a cs) < 2) then 1 else 0)
-        + subminimalOmegaViolList cs
-/-- Auxiliary over a list of subtrees. -/
-def subminimalOmegaViolList : List Tree → Nat
-  | []      => 0
-  | t :: ts => subminimalOmegaViol t + subminimalOmegaViolList ts
-end
+/-- `FtBin`-at-ω ([ito-mester-2009]) as a `Constraint Tree`: ω-nodes whose mora count is
+    below a foot (< 2) — a subminimal function word parsed as its own ω. -/
+def subminimalOmega : Constraint Tree := fun t => go t where
+  go : Tree → Nat
+    | .node a cs =>
+        (if decide (a.level = .ω) && decide (moraCount (.node a cs) < 2) then 1 else 0)
+          + goList cs
+  goList : List Tree → Nat
+    | []      => 0
+    | t :: ts => go t + goList ts
 
-mutual
 /-- Is the lexical word `lex` realised as its own ω-node somewhere in the tree? -/
-def lexHasOmega (lex : Tree) : Tree → Bool
-  | .node a cs =>
-      (decide (a.level = .ω) && decide ((.node a cs : Tree) = lex)) || lexHasOmegaList lex cs
-/-- Auxiliary over a list of subtrees. -/
-def lexHasOmegaList (lex : Tree) : List Tree → Bool
-  | []      => false
-  | t :: ts => lexHasOmega lex t || lexHasOmegaList lex ts
-end
-
-/-- `Lex-to-ω` violation ([ito-mester-2009], after [mccarthy-prince-1993]'s
-    `Align(Lex, ω)`): 1 if the lexical word is not aligned with an ω of its own. -/
-def lexToOmegaViol (lex t : Tree) : Nat := if lexHasOmega lex t then 0 else 1
+def lexHasOmega (lex : Tree) : Tree → Bool := fun t => go t where
+  go : Tree → Bool
+    | .node a cs => (decide (a.level = .ω) && decide ((.node a cs : Tree) = lex)) || goList cs
+  goList : List Tree → Bool
+    | []      => false
+    | t :: ts => go t || goList ts
 
 /-! ### The four candidate prosodifications of *(fnc lex)* -/
 
@@ -84,25 +75,31 @@ def omegaAdjoined : Tree := .node .om [fncσ, lexω]
 /-- (d) φ-attached: `[φ fnc [ω lex]]`. -/
 def phiAttached : Tree := .node .ph [fncσ, lexω]
 
-/-- Violation profile, ranked `FtBin, Lex-to-ω ≫ Parse-into-ω ≫ No-Recursion`. -/
-def profile (t : Tree) : List Nat :=
-  [subminimalOmegaViol t, lexToOmegaViol lexω t, parseIntoViol .ω t, Tree.recursionCount t]
+/-- `Lex-to-ω` ([ito-mester-2009], after [mccarthy-prince-1993]'s `Align(Lex, ω)`) as a
+    `Constraint Tree`: 1 if the lexical word `lexω` is not aligned with an ω of its own. -/
+def lexToOmega : Constraint Tree := fun t => if lexHasOmega lexω t then 0 else 1
+
+/-! ### The ranking and the prediction
+
+EVAL is the OT tableau engine; the ranking is `FtBin, Lex-to-ω ≫ Parse-into-ω ≫
+No-Recursion` = `[subminimalOmega, lexToOmega, parseInto .ω, noRec]`. -/
+
+def candidates : List Tree := [fullOmega, amalgamated, omegaAdjoined, phiAttached]
 
 -- Each candidate violates exactly one constraint (the factorial typology).
-example : profile fullOmega    = [1, 0, 0, 0] := by decide
-example : profile amalgamated  = [0, 1, 0, 0] := by decide
-example : profile omegaAdjoined = [0, 0, 0, 1] := by decide
-example : profile phiAttached  = [0, 0, 1, 0] := by decide
-
-def candidates : Finset Tree := {fullOmega, amalgamated, omegaAdjoined, phiAttached}
+example : subminimalOmega fullOmega = 1 := by decide
+example : lexToOmega amalgamated = 1 := by decide
+example : parseInto .ω phiAttached = 1 := by decide
+example : noRec omegaAdjoined = 1 := by decide
 
 /-- The function-word complex is prosodified by **ω-adjunction** — the recursive
     `[ω fnc [ω lex]]` is the unique optimum, beating φ-attachment because
     `Parse-into-ω ≫ No-Recursion` ([ito-mester-2009], contra Selkirk's φ-attached). -/
 theorem omegaAdjunction_optimum :
-    argMinSet candidates profile LexLE = {omegaAdjoined} := by decide
+    (Tableau.ofRanking candidates [subminimalOmega, lexToOmega, parseInto .ω, noRec]).optimal
+      = {omegaAdjoined} := by decide
 
 /-- The winning structure is recursive: ω dominates ω. -/
-theorem winner_is_recursive : Tree.recursionCount omegaAdjoined = 1 := by decide
+theorem winner_is_recursive : noRec omegaAdjoined = 1 := by decide
 
 end ItoMester2009

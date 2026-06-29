@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Foot
-import Linglib.Phonology.Prosody.Tree
+import Linglib.Phonology.Constraints.Defs
 
 /-!
 # Prosodic words (ω)
@@ -34,6 +34,13 @@ re-represents this well-formed ω into that carrier.
 namespace Prosody
 
 open Features.Prosody
+
+/-- The ω node label for the prosodic tree (`Prosody.Tree`) — the ω-level arm of
+    `Prosody.Constituent`, used by `Word.toProsTree`. -/
+abbrev Constituent.om : Constituent := { level := .ω }
+/-- The φ node label. Interim home: the φ object `Prosody.Phrase` lands in a later PR and
+    will re-home this; for now φ-candidates ([ito-mester-2009]) need it here. -/
+abbrev Constituent.ph : Constituent := { level := .φ }
 
 /-! ### The recursive prosodic word -/
 
@@ -150,5 +157,117 @@ example : recW.headSyllable = 2 := by
     Foot.monosyllable]
 example : flatW.headSyllable = 2 := by
   simp [flatW, Word.headSyllable, Word.headFoot, stemFt, Foot.headSyllable, Foot.monosyllable]
+
+/-! ### Prosodic OT constraints over the `Tree` carrier
+
+The violable constraints scoring prosodic candidates are `Constraints.Constraint Tree`
+values ([prince-smolensky-1993]); a grammar ranks them and scores with the OT engine
+(`OptimalityTheory.Tableau.ofRanking`). They are defined on the **carrier** `Tree` (which
+holds the ill-formed candidates the typed `Word` can't represent); a typed ω reuses any of
+them via `Constraint.comap (Word.toProsTree wt)`. List-recursion auxes are local `where`s. -/
+
+open Constraints
+
+/-- **No-Recursion** ([ito-mester-2009]): parent–child pairs sharing a level (an element
+    parsed into the same category twice). -/
+def noRec : Constraint Tree := fun t => go t where
+  go : Tree → Nat
+    | .node a cs => (cs.filter (fun c => decide (c.label.level = a.level))).length + goList cs
+  goList : List Tree → Nat
+    | [] => 0
+    | c :: cs => go c + goList cs
+
+/-- **Parse-into-`lvl`** ([ito-mester-2003]): σ-leaves dominated by no `lvl`-node. -/
+def parseInto (lvl : ProsodicLevel) : Constraint Tree := fun t => go false t where
+  go (under : Bool) : Tree → Nat
+    | .node a cs =>
+        let u := under || decide (a.level = lvl)
+        (if decide (a.level = .σ) && cs.isEmpty && !u then 1 else 0) + goList u cs
+  goList (under : Bool) : List Tree → Nat
+    | [] => 0
+    | c :: cs => go under c + goList under cs
+
+/-- The σ-weight content of a foot node's direct σ-daughters. -/
+private def footContent (cs : List Tree) : List Syllable.Weight :=
+  cs.filterMap fun c => match c with
+    | .node a [] => if a.level = .σ then some a.weight else none
+    | _ => none
+
+/-- The feet of a prosodic tree: the σ-weight content of every `f`-node. -/
+def feet : Tree → List (List Syllable.Weight) := fun t => go t where
+  go : Tree → List (List Syllable.Weight)
+    | .node a cs => (if a.level = .f then [footContent cs] else []) ++ goList cs
+  goList : List Tree → List (List Syllable.Weight)
+    | [] => []
+    | t :: ts => go t ++ goList ts
+
+/-- Syllables parsed into no foot — `parseInto .f`. -/
+def unfootedCount (t : Tree) : Nat := parseInto .f t
+
+/-- Total mora count: the sum of the tree's σ-weights. -/
+def moraCount : Tree → Nat := fun t => go t where
+  go : Tree → Nat
+    | .node a cs => (if a.level = .σ then a.weight else 0) + goList cs
+  goList : List Tree → Nat
+    | [] => 0
+    | t :: ts => go t + goList ts
+
+/-! ### Word-size predicates -/
+
+variable {measure : List Syllable.Weight → ℕ} {t : Tree}
+
+/-- Minimal word ([mccarthy-prince-1993]): contains a well-formed foot (PrWd ⊇ Ft). -/
+def MinimalWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
+  ∃ f ∈ feet t, measure f = 2
+instance : Decidable (MinimalWord measure t) := by unfold MinimalWord; infer_instance
+
+/-- Maximal word ([uchihara-mendozaruiz-2021]): ≤ one well-formed foot, exhaustively
+    parsed — the upper size bound. -/
+def MaximalWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
+  (feet t).length ≤ 1 ∧ unfootedCount t = 0 ∧ ∀ f ∈ feet t, measure f = 2
+instance : Decidable (MaximalWord measure t) := by unfold MaximalWord; infer_instance
+
+/-- The perfect prosodic word ([ito-mester-2009]): ω coextensive with one well-formed foot. -/
+def PerfectWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
+  (feet t).length = 1 ∧ (∀ f ∈ feet t, measure f = 2) ∧ unfootedCount t = 0
+instance : Decidable (PerfectWord measure t) := by unfold PerfectWord; infer_instance
+
+/-- A perfect word is minimal. -/
+theorem PerfectWord.minimal (h : PerfectWord measure t) : MinimalWord measure t := by
+  obtain ⟨hlen, hwf, _⟩ := h
+  rcases hfeet : feet t with _ | ⟨f, fs⟩
+  · rw [hfeet] at hlen; simp at hlen
+  · exact ⟨f, by rw [hfeet]; simp, hwf f (by rw [hfeet]; simp)⟩
+
+/-- A perfect word is maximal. -/
+theorem PerfectWord.maximal (h : PerfectWord measure t) : MaximalWord measure t := by
+  obtain ⟨hlen, hwf, hu⟩ := h
+  exact ⟨hlen.le, hu, hwf⟩
+
+/-- The perfect word is exactly minimal-and-maximal. -/
+theorem perfectWord_iff_minimal_and_maximal :
+    PerfectWord measure t ↔ MinimalWord measure t ∧ MaximalWord measure t := by
+  refine ⟨fun h => ⟨h.minimal, h.maximal⟩, ?_⟩
+  rintro ⟨⟨f, hf, _⟩, hle, hu, hwf⟩
+  have h1 : 0 < (feet t).length := List.length_pos_of_mem hf
+  exact ⟨le_antisymm hle (by omega), hwf, hu⟩
+
+/-- Maximality entails minimality for a footed word ([uchihara-mendozaruiz-2021]). -/
+theorem MaximalWord.minimal (hne : feet t ≠ []) (h : MaximalWord measure t) :
+    MinimalWord measure t := by
+  obtain ⟨_, _, hwf⟩ := h
+  rcases hfeet : feet t with _ | ⟨f, fs⟩
+  · exact absurd hfeet hne
+  · exact ⟨f, by rw [hfeet]; simp, hwf f (by rw [hfeet]; simp)⟩
+
+/-! ### The carrier constraint, shared to the typed ω
+
+A `Constraint Tree` is shared to the typed `Word` for free via `Constraint.comap` along the
+`toProsTree` functor — *one* definition (`noRec` on the carrier) scoring both
+representations. On a concrete ω it agrees with `Word.recursionCount` (the wt-free
+specialization); the general identity `Word.recursionCount = noRec ∘ toProsTree` — the
+commuting square — lands with the functor development. -/
+
+example : (noRec.comap (Word.toProsTree id)) recW = Word.recursionCount recW := by decide
 
 end Prosody
