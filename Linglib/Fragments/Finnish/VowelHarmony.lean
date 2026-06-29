@@ -38,7 +38,7 @@ are skipped by `triggerValue` (not triggers) and `harmonizeOne` (not targets).
 namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature)
-open Phonology.FeatureGeometry (GeomNode)
+open Phonology.FeatureGeometry (Node)
 open Autosegmental (SharingRep agreeAt)
 open Subregular.Harmony (System HarmonyDir triggerValue
   harmonizeOne spreadSuffix)
