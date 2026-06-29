@@ -1348,7 +1348,6 @@ import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.Defs
-import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Grammar

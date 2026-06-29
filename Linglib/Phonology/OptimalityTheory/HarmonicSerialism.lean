@@ -1,7 +1,6 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.Defs
-import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 import Mathlib.Data.Finset.Union
 
 /-!
@@ -48,15 +47,16 @@ ranking constant and varies the candidate; Stratal OT varies the ranking
 and chains the candidate. Stratal HS combines both axes and is
 deferred (cf. [pruitt-2023] §2.4).
 
-## Sibling, not refactor
+## One tableau, including directional constraints
 
 This module does **not** modify `Constraint` or `Tableau`
 (load-bearing for `Weighted.lean`/`MaxEnt.lean`/`NoisyHG.lean` and ~30
 study files). The `stepOptimum` function builds an inner `Tableau` and
-reuses `Tableau.optimal` directly. Future directional dispatch
-([lamont-2022b]; [eisner-2000]) will land as a sibling
-`DirectionalTableau` consumer; deliberately not stubbed here, to avoid
-silently routing directional callers to the parallel optimum.
+reuses `Tableau.optimal` directly. Directional EVAL ([lamont-2022b];
+[eisner-2000]) needs no separate machinery: a directional constraint
+like `*FLOAT^→` is a position-indexed scalar block (`Tone.starFloatBlock`)
+spliced into the ranking and compared under the canonical lex order, so
+`HSDerivation` handles directional and parallel hierarchies alike.
 -/
 
 namespace OptimalityTheory
@@ -372,68 +372,5 @@ example (c : Toy) : toyDerivation.Converged c :=
 end SmokeTest
 
 end HSDerivation
-
--- ============================================================================
--- § 7: Directional Harmonic Serialism
--- ============================================================================
-
-/-! Directional HS ([lamont-2022b]): the constraint hierarchy is a list of
-    `OptimalityTheory.Constraint C`, each carrying its own `TermOrder` (counting
-    constraints `.degree`, `*FLOAT^→` `.lex`, `*FLOAT^←` `.revLex`), evaluated via
-    `DirectionalTableau`. Sibling to the parallel `HSDerivation` above; the two
-    are not unified because their constraint types differ (the parallel
-    `Constraints.Constraint C = C → ℕ` is a scalar violation count amenable to
-    weighted aggregation; the directional `OptimalityTheory.Constraint C` carries
-    a vector + term order, with which weighting is incoherent per Lamont 2022b).
-
-    The motivating consumer is [mcpherson-lamont-2026] (`/kāk^H + rī^H + dō^H/`):
-    parallel HS produces a divergent tie among three deletion candidates;
-    directional `*FLOAT^→` breaks the tie by requiring leftmost-first
-    deletion. -/
-
-structure DirectionalHSDerivation (C : Type*) [DecidableEq C] where
-  gen : C → Finset C
-  ranking : List (OptimalityTheory.Constraint C)
-
-namespace DirectionalHSDerivation
-
-variable {C : Type*} [DecidableEq C]
-
-/-- Build a `DirectionalTableau` from an explicit candidate set. -/
-def tableauFor (D : DirectionalHSDerivation C) (cands : Finset C)
-    (h : cands.Nonempty) : DirectionalTableau C :=
-  { candidates := cands
-    ranking := D.ranking
-    nonempty := h }
-
-/-- Filter a candidate set to its optimal subset under `D.ranking`. Routes
-    through `DirectionalTableau.optima` (Layered Grounding). Returns `∅` on
-    empty input. -/
-def evalFilter (D : DirectionalHSDerivation C) (cands : Finset C) : Finset C :=
-  if h : cands.Nonempty then (D.tableauFor cands h).optima else ∅
-
-/-- Optimal set for one HS step under directional EVAL. -/
-def stepOptimum (D : DirectionalHSDerivation C) (c : C) : Finset C :=
-  D.evalFilter (D.gen c)
-
-/-- A form `c` has **converged** under `D` iff its optimal set under
-    directional EVAL is `{c}`. -/
-def Converged (D : DirectionalHSDerivation C) (c : C) : Prop :=
-  D.stepOptimum c = ({c} : Finset C)
-
-instance (D : DirectionalHSDerivation C) (c : C) : Decidable (D.Converged c) :=
-  decEq (D.stepOptimum c) ({c} : Finset C)
-
-/-- N-step directional HS derivation. Wraps `iterateGen` with `D.gen`
-    and `D.evalFilter`. The caller supplies a `pick : Finset C → Option C`
-    tie-breaker; under directional EVAL ties should be rare or absent
-    (that's the whole point of using directional), but `pick` is still
-    needed for the fallback path — e.g. the order-minimal element when
-    `C` carries a `LinearOrder`. -/
-def derive (D : DirectionalHSDerivation C) (pick : Finset C → Option C)
-    (c : C) (steps : Nat) : Option C :=
-  iterateGen D.gen D.evalFilter pick c steps
-
-end DirectionalHSDerivation
 
 end OptimalityTheory
