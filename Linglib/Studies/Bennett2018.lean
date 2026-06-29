@@ -88,4 +88,8 @@ theorem recParse_optimal :
     (Tableau.ofRanking [recParse, flatParse] [matchStem, noRec]).optimal = {recParse} := by
   decide
 
+-- The optimum is a legal recursive prosodic word (ω-over-ω is well-formed; No-Recursion,
+-- which it violates, is a *violable* OT constraint, not part of `IsWord`).
+example : IsWord recParse := by decide
+
 end Bennett2018

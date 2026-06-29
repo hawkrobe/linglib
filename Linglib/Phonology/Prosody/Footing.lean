@@ -10,9 +10,9 @@ canonical, headed-`Foot`-based replacement for the old weight-list `MetricalPars
 each foot is a `Prosody.Foot` (so headedness/binarity come from `Foot.head`), and an
 unfooted σ is a bare `S`.
 
-The footing is the more primitive object in the prosodic hierarchy; the headed prosodic
-word ω (`Prosody.Word`) is a footing *enriched with a head foot* (its `Word.daughters`
-is the underlying footing). Quantity-sensitivity is a property of the σ-type `S`: a
+The footing is the more primitive object in the prosodic hierarchy; a well-formed prosodic
+word ω (`Prosody.Word`) is an ω-tree whose daughters are feet and stray syllables — a
+footing lifted into the tree carrier. Quantity-sensitivity is a property of the σ-type `S`: a
 quantity-insensitive footing uses `S = Unit` ([lamont-2022c]), a weight-sensitive one
 `S = Syllable.Weight`.
 

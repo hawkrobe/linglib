@@ -36,7 +36,8 @@ namespace Prosody
 open Features.Prosody
 
 /-- The foot node label `f` for the prosodic tree (`Prosody.Tree`), optionally the head of
-    its parent ω (set by `Word.toProsTree`) — the `f`-level arm of `Prosody.Constituent`. -/
+    its parent ω (the `isHead` flag, set when the word tree is built) — the `f`-level arm of
+    `Prosody.Constituent`. -/
 abbrev Constituent.ft (isHead : Bool := false) : Constituent := { level := .f, isHead := isHead }
 
 /-! ### The canonical foot -/
@@ -127,8 +128,8 @@ theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonic
 
 /-- Re-represent as a prosodic tree ([selkirk-1980]; [ito-mester-2003]): a depth-1 `.f`
     node over `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
-    itself is marked `isHead` when the foot heads its ω (the `isHead` argument; see
-    `Word.toProsTree`). -/
+    itself is marked `isHead` when the foot heads its ω (the `isHead` argument, set by the
+    caller building the word tree). -/
 def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : Tree :=
   .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
     .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))

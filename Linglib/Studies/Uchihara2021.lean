@@ -89,4 +89,7 @@ theorem winner_minimal_and_maximal :
     MinimalWord footMorae bimoraic ∧ MaximalWord footMorae bimoraic :=
   ⟨winner_perfect.minimal, winner_perfect.maximal⟩
 
+-- The optimum is a legal prosodic word: an ω over a single well-formed foot.
+example : IsWord bimoraic := by decide
+
 end Uchihara2021
