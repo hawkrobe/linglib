@@ -595,6 +595,7 @@ import Linglib.Discourse.Gunlogson
 import Linglib.Discourse.KOS.Austinian
 import Linglib.Discourse.KOS.Basic
 import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.KOS.DialogueStateInstance
 import Linglib.Discourse.KOS.Examples
 import Linglib.Discourse.KOS.Genre
 import Linglib.Discourse.KOS.Grammar
