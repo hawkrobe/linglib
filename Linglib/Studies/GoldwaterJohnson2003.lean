@@ -1,5 +1,4 @@
 import Linglib.Phonology.HarmonicGrammar.OTLimit
-import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
@@ -19,7 +18,9 @@ models over weighted features, differing only in what the features measure.
 
 ## Key contributions formalized here
 
-1. **MaxEnt = softmax** (§1): `MaxEntGrammar.prob` is eq (1) by definition.
+1. **MaxEnt = softmax** (§1): `gjProb` is eq (1) by definition — the conditional
+   probability is `softmax (harmonyScore con w (i, ·))`, a constraint set
+   `con : CON (I × O) n` weighted by `w : Fin n → ℝ` and softmax-decoded.
 
 2. **Log-likelihood** (§2): The learning objective is log pseudo-likelihood,
    which decomposes as `Σⱼ (H(yⱼ,xⱼ) − logSumExp(H(·,xⱼ)))` — the harmony
@@ -49,15 +50,24 @@ open Core.Optimization Constraints HarmonicGrammar Core Finset Real
 -- § 1: MaxEnt = softmax (eq (1))
 -- ============================================================================
 
-/-- [goldwater-johnson-2003] eq (1) is `MaxEntGrammar.prob` by
-    definition — both are `softmax(harmonyScore, 1)`.
+/-- [goldwater-johnson-2003] eq (1): the conditional probability of output
+    `o` given input `i` is the softmax of the harmony score over a constraint
+    set `con` weighted by `w` — `Pr(o ∣ i) ∝ exp(-harmonyScore con w (i, o))`.
+    Mirrors the per-mapping probability of a classical MaxEnt grammar (a
+    constraint set + weight vector, no record). -/
+noncomputable def gjProb {I O : Type} [Fintype O] {n : ℕ}
+    (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) : ℝ :=
+  softmax (fun o' => harmonyScore con w (i, o')) o
+
+/-- [goldwater-johnson-2003] eq (1) is `gjProb` by definition — both are
+    `softmax(harmonyScore con w, 1)`.
 
     The same `softmax` function powers RSA pragmatic reasoning
     (`Core.Agent.RationalAction`): both phonological grammar and
     pragmatic inference are log-linear models over weighted features. -/
-theorem eq1_is_softmax {I O : Type} [Fintype O] [Nonempty O]
-    (g : MaxEntGrammar I O) (i : I) (o : O) :
-    g.prob i o = softmax (fun o' => harmonyScore g.constraints (i, o')) o := rfl
+theorem eq1_is_softmax {I O : Type} [Fintype O] {n : ℕ}
+    (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) :
+    gjProb con w i o = softmax (fun o' => harmonyScore con w (i, o')) o := rfl
 
 -- ============================================================================
 -- § 2: Log-Likelihood and Concavity
@@ -69,22 +79,22 @@ theorem eq1_is_softmax {I O : Type} [Fintype O] [Nonempty O]
 
     Each term decomposes as `H(yⱼ, xⱼ) − logSumExp(H(·, xⱼ), 1)` via
     `softmax_exponential_family`. -/
-noncomputable def logPseudoLikelihood {I O : Type} [Fintype O] [Nonempty O]
-    (g : MaxEntGrammar I O)
+noncomputable def logPseudoLikelihood {I O : Type} [Fintype O] {n : ℕ}
+    (con : CON (I × O) n) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=
-  data.foldl (fun acc ⟨x, y⟩ => acc + Real.log (g.prob x y)) 0
+  data.foldl (fun acc ⟨x, y⟩ => acc + Real.log (gjProb con w x y)) 0
 
 /-- Regularized objective (eq (3)): log-likelihood minus L2 penalty.
 
     `J(w) = logPL(w) − Σᵢ (wᵢ − μᵢ)² / (2σᵢ²)`
 
-    [goldwater-johnson-2003] use μᵢ = 0, σᵢ = σ for all constraints. -/
-noncomputable def regularizedObjective {I O : Type} [Fintype O] [Nonempty O]
-    (g : MaxEntGrammar I O)
+    [goldwater-johnson-2003] use μᵢ = 0, σᵢ = σ for all constraints, so the
+    penalty is `Σⱼ wⱼ² / (2σ²)` over the grammar's weight vector. -/
+noncomputable def regularizedObjective {I O : Type} [Fintype O] {n : ℕ}
+    (con : CON (I × O) n) (w : Fin n → ℝ)
     (data : List (I × O))
     (σ : ℝ) : ℝ :=
-  logPseudoLikelihood g data -
-    g.constraints.foldl (fun acc c => acc + (c.weight : ℝ)^2 / (2 * σ^2)) 0
+  logPseudoLikelihood con w data - ∑ j, (w j) ^ 2 / (2 * σ ^ 2)
 
 /-- **Concavity of log-likelihood** (fn. 4): the log conditional likelihood
     of a single observation is concave in each weight, guaranteeing a
@@ -158,7 +168,7 @@ theorem wolof_pos (i : Fin 5) : 0 < wolofWeights i := by
 theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
   refine ⟨wolof_pos, fun k => ?_⟩
   fin_cases k <;>
-    simp +decide only [wolofWeights, one_mul, Finset.sum_filter, Fin.sum_univ_five, Fin.isValue] <;>
+    simp +decide only [wolofWeights, Finset.sum_filter, Fin.sum_univ_five] <;>
     norm_num
 
 end GoldwaterJohnson2003

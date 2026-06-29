@@ -1,5 +1,6 @@
-import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Core.Optimization.System
+import Linglib.Core.Optimization.Decoder
 import Linglib.Features.Givenness
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
@@ -68,9 +69,10 @@ contradicting the paper's findings.
 
 ## Bridges
 
-- `HarmonicGrammar.MaxEntGrammar` — the grammar packages as a generic
-  MaxEnt grammar (`maxEntGrammar`), making the softmax probability
-  machinery available without redefinition.
+- `Core.Optimization.ConstraintSystem` — the grammar packages as a generic
+  scored-choice system (`maxEntSystem`), pairing the constraint vector `con`
+  weighted by `gW wH wN` with a `softmaxDecoder`, making the softmax
+  probability machinery available without redefinition.
 - `Features.BinaryGivenness` — discourse-status partition. The paper
   collapses [prince-1981]'s three-way given/inferable/new into
   two categories (inferable → given). Focus marking is on a separate
@@ -101,7 +103,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Constraints Core.Optimization HarmonicGrammar Features
+open Constraints Core.Optimization Features
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================
@@ -164,11 +166,14 @@ def newFirst : Constraint Candidate :=
     | .goalLast  =>
       if th.discourse = .new ∧ gl.discourse = .given then 1 else 0
 
-/-- The two-constraint MaxEnt grammar parameterized by weights.
-    `wH` weights `*HEAVY-FIRST`; `wN` weights `*NEW-FIRST`. -/
-def grammar (wH wN : ℝ) : List (Constraint.Weighted Candidate) :=
-  [ { con := heavyFirst, weight := wH }
-  , { con := newFirst,   weight := wN } ]
+/-- The two-constraint set `*HEAVY-FIRST`, `*NEW-FIRST` as a `CON` over the
+    ordering candidates. The constraint functions are fixed; the weights live
+    in `gW`. -/
+def con : CON Candidate 2 := ![heavyFirst, newFirst]
+
+/-- The weight vector pairing with `con`: `wH` weights `*HEAVY-FIRST`
+    (coordinate 0); `wN` weights `*NEW-FIRST` (coordinate 1). -/
+def gW (wH wN : ℝ) : Fin 2 → ℝ := ![wH, wN]
 
 -- ============================================================================
 -- § 3: Per-Constraint Signed Preferences
@@ -195,13 +200,13 @@ def newDiff (p : Pair) : ℝ :=
     identity of the formalization — every prediction theorem below is a
     one-step consequence. -/
 lemma score_diff_eq_components (wH wN : ℝ) (p : Pair) :
-    harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) =
+    harmonyScore con (gW wH wN) (p, .themeLast) -
+    harmonyScore con (gW wH wN) (p, .goalLast) =
       wH * heavyDiff p + wN * newDiff p := by
   obtain ⟨th, gl⟩ := p
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
-  simp only [grammar, heavyFirst, newFirst, heavyDiff, newDiff, List.map_cons,
-    List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [con, gW, heavyFirst, newFirst, heavyDiff, newDiff, Fin.sum_univ_two,
+    Matrix.cons_val_zero, Matrix.cons_val_one]
   push_cast
   ring
 
@@ -243,10 +248,9 @@ lemma newDiff_pos_iff {p : Pair} :
     is non-zero, its sign determines which order wins. -/
 theorem heaviness_independently_predicts {p : Pair} {wH : ℝ}
     (hH : 0 < wH) (h : 0 < heavyDiff p) :
-    harmonyDominates (grammar wH 0) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates con (gW wH 0) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH 0 p
-  show harmonyScore _ _ > harmonyScore _ _
-  rw [gt_iff_lt, ← sub_pos, hdiff]
+  rw [harmonyDominates_iff, ← sub_pos, hdiff]
   exact_mod_cast (by linarith [mul_pos hH h] : (0:ℝ) < wH * heavyDiff p + 0 * newDiff p)
 
 /-- **Newness independently predicts ordering.** With the heaviness
@@ -254,10 +258,9 @@ theorem heaviness_independently_predicts {p : Pair} {wH : ℝ}
     the order placing the new constituent last strictly more probable. -/
 theorem newness_independently_predicts {p : Pair} {wN : ℝ}
     (hN : 0 < wN) (h : 0 < newDiff p) :
-    harmonyDominates (grammar 0 wN) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates con (gW 0 wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components 0 wN p
-  show harmonyScore _ _ > harmonyScore _ _
-  rw [gt_iff_lt, ← sub_pos, hdiff]
+  rw [harmonyDominates_iff, ← sub_pos, hdiff]
   exact_mod_cast (by linarith [mul_pos hN h] : (0:ℝ) < 0 * heavyDiff p + wN * newDiff p)
 
 /-- **Both factors compose additively.** When neither factor opposes
@@ -271,10 +274,9 @@ theorem both_factors_compose {p : Pair} {wH wN : ℝ}
     (hH : 0 ≤ wH) (hN : 0 ≤ wN)
     (hHeavy : 0 ≤ heavyDiff p) (hNew : 0 ≤ newDiff p)
     (hStrict : 0 < wH * heavyDiff p ∨ 0 < wN * newDiff p) :
-    harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates con (gW wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
-  show harmonyScore _ _ > harmonyScore _ _
-  rw [gt_iff_lt, ← sub_pos, hdiff]
+  rw [harmonyDominates_iff, ← sub_pos, hdiff]
   have h1 : 0 ≤ wH * heavyDiff p := mul_nonneg hH hHeavy
   have h2 : 0 ≤ wN * newDiff p := mul_nonneg hN hNew
   exact_mod_cast
@@ -287,10 +289,9 @@ theorem both_factors_compose {p : Pair} {wH wN : ℝ}
     argue for in §5. -/
 theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℝ}
     (h : 0 < wH * heavyDiff p + wN * newDiff p) :
-    harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates con (gW wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
-  show harmonyScore _ _ > harmonyScore _ _
-  rw [gt_iff_lt, ← sub_pos, hdiff]
+  rw [harmonyDominates_iff, ← sub_pos, hdiff]
   exact_mod_cast h
 
 -- ============================================================================
@@ -314,8 +315,8 @@ probability shift. -/
     heaviness term. -/
 theorem heaviness_dominates_when_newness_neutral
     (wH wN : ℝ) {p : Pair} (hN : newDiff p = 0) :
-    harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) = wH * heavyDiff p := by
+    harmonyScore con (gW wH wN) (p, .themeLast) -
+    harmonyScore con (gW wH wN) (p, .goalLast) = wH * heavyDiff p := by
   rw [score_diff_eq_components, hN, mul_zero, add_zero]
 
 /-- **Constraint-interaction theorem (newness side).** When the
@@ -327,8 +328,8 @@ theorem heaviness_dominates_when_newness_neutral
     showed a larger effect there than in the corpus study. -/
 theorem newness_dominates_when_heaviness_neutral
     (wH wN : ℝ) {p : Pair} (hH : heavyDiff p = 0) :
-    harmonyScore (grammar wH wN) (p, .themeLast) -
-    harmonyScore (grammar wH wN) (p, .goalLast) = wN * newDiff p := by
+    harmonyScore con (gW wH wN) (p, .themeLast) -
+    harmonyScore con (gW wH wN) (p, .goalLast) = wN * newDiff p := by
   rw [score_diff_eq_components, hH, mul_zero, zero_add]
 
 -- ============================================================================
@@ -389,10 +390,10 @@ theorem heaviness_and_newness_genuinely_independent :
     the goal is heavier than the theme. Direct application of the
     `heavyDiff`-symmetric independence theorem on the swapped pair. -/
 theorem heavy_goal_predicts_goalLast :
-    harmonyDominates (grammar 1 0)
+    harmonyDominates con (gW 1 0)
       (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) := by
   have hdiff := score_diff_eq_components 1 0 heavyGoalContrast
-  show harmonyScore _ _ > harmonyScore _ _
+  rw [harmonyDominates_iff]
   rw [heavyDiff_heavyGoalContrast, newDiff_heavyGoalContrast] at hdiff
   norm_num at hdiff
   linarith
@@ -400,24 +401,24 @@ theorem heavy_goal_predicts_goalLast :
 /-- Pure-newness MaxEnt grammar predicts theme-last (given-first) when
     the theme is new and the goal is given. -/
 theorem new_theme_predicts_themeLast :
-    harmonyDominates (grammar 0 1)
+    harmonyDominates con (gW 0 1)
       (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) :=
   newness_independently_predicts (by norm_num) (by rw [newDiff_newThemeContrast]; norm_num)
 
 -- ============================================================================
--- § 7: Bridge to the Generic MaxEntGrammar Machinery
+-- § 7: Bridge to the Generic ConstraintSystem Machinery
 -- ============================================================================
 
-/-- The two-constraint grammar packaged as a generic `MaxEntGrammar`
-    over pairs (input) and orderings (output). This makes the library's
-    softmax probability infrastructure (`MaxEntGrammar.prob`, the
-    `ConstraintSystem` bridge, `softmax_argmax_limit` for the OT limit,
-    etc.) available without redefinition. -/
-def maxEntGrammar (wH wN : ℝ) (inputs : List Pair) :
-    MaxEntGrammar Pair Order where
-  inputs := inputs
-  gen := fun _ => [.themeLast, .goalLast]
-  constraints := grammar wH wN
+/-- For a fixed input pair `p`, the two-constraint grammar packaged as a generic
+    `Core.Optimization.ConstraintSystem` over the orderings: the harmony score
+    `harmonyScore con (gW wH wN) (p, ·)` softmax-decoded over the finite candidate
+    set `{themeLast, goalLast}`. This makes the library's softmax probability
+    infrastructure (`ConstraintSystem.predict`, `predict_sum_eq_one`, etc.)
+    available without redefinition. -/
+noncomputable def maxEntSystem (wH wN : ℝ) (p : Pair) : ConstraintSystem Order ℝ where
+  candidates := Finset.univ
+  score := fun o => harmonyScore con (gW wH wN) (p, o)
+  decoder := softmaxDecoder 1
 
 -- ============================================================================
 -- § 8: Dependency Locality Bridge — Why DLM Alone Is Insufficient

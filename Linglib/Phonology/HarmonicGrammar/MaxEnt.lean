@@ -1,6 +1,4 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Core.Optimization.Decoder
-import Linglib.Core.Optimization.System
 import Linglib.Core.Probability.CoupledEvaluation
 
 /-!
@@ -24,8 +22,9 @@ candidates by weighted constraint violations.
 
 ## Architecture
 
-- `MaxEntGrammar` packages inputs, candidate generation, and weighted constraints
-  (`Constraint.Weighted` and `harmonyScore` come from `Constraints.Weighted`)
+- A classical MaxEnt grammar is a constraint set `con : CON (I × O) n` + weight
+  vector `w` (from `Constraints.Defs`), realized as a `ConstraintSystem` via
+  `CON.hgSystem`; its probability is `predict` (no grammar record).
 - `SystemicConstraint` evaluates *tuples* of outputs (different type signature)
 - `jointHarmonyScore` combines classical + systemic scores over the product space
 - `marginalProb` marginalizes the joint to recover individual mapping probabilities
@@ -40,33 +39,19 @@ equals its factor.
 
 namespace HarmonicGrammar
 
-open Core.Optimization
-
-
 open Constraints Core
 
 -- ============================================================================
--- § 1: MaxEnt Grammar (Classical — Individual Mappings)
+-- § 1: Classical MaxEnt
 -- ============================================================================
 
-/-- A MaxEnt grammar: inputs, candidate generation, and weighted constraints.
-    Probability of mapping input `i` to output `o` is proportional to
-    `exp(harmonyScore(i, o))`. -/
-structure MaxEntGrammar (Input Output : Type*) where
-  /-- The set of inputs (underlying forms). -/
-  inputs : List Input
-  /-- Candidate generator: produces output candidates for each input. -/
-  gen : Input → List Output
-  /-- Weighted constraints evaluating input–output pairs. -/
-  constraints : List (Constraint.Weighted (Input × Output))
-
-/-- Classical MaxEnt probability: P(o | i) = softmax over gen(i).
-
-    This is the standard MaxEnt phonology probability, without systemic
-    constraints. Uses `softmax` from `RationalAction` with α = 1. -/
-noncomputable def MaxEntGrammar.prob {I O : Type*} [Fintype O]
-    (g : MaxEntGrammar I O) (i : I) (o : O) : ℝ :=
-  softmax (λ o' => harmonyScore g.constraints (i, o')) o
+/-! Classical MaxEnt assigns `P(o ∣ i) ∝ exp(-harmonyScore con w (i, o))`. There is
+**no grammar record**: a MaxEnt grammar is a constraint set `con : CON (I × O) n`
+and a weight vector `w : Fin n → ℝ` held as plain values (the HG twin of an OT
+`Ranking`), and its probability *is* `(CON.hgSystem con w Finset.univ).predict` —
+softmax-decoded harmony, via the shared `Core.Optimization.ConstraintSystem`
+(`CON.hgSystem` below). The systemic extension (§2–4) scores output *tuples*
+jointly and so does not factor through the per-mapping `predict`. -/
 
 -- ============================================================================
 -- § 2: Systemic Constraints
@@ -120,13 +105,13 @@ def systemicScore {n : Nat} {O : Type*}
     H_joint(f) = Σᵢ H_classical(iᵢ, f(i)) + Σₖ (-wₖ · Sₖ(f))
 
     where `f : Fin n → O` is the full output tuple. -/
-noncomputable def jointHarmonyScore {n : Nat} {I O : Type*}
+noncomputable def jointHarmonyScore {n m : Nat} {I O : Type*}
     (inputs : Fin n → I)
-    (classicalConstraints : List (Constraint.Weighted (I × O)))
+    (classicalCon : CON (I × O) m) (classicalW : Fin m → ℝ)
     (systemicConstraints : List (SystemicConstraint n O))
     (f : Fin n → O) : ℝ :=
   let classical := (List.finRange n).foldl
-    (λ acc i => acc + harmonyScore classicalConstraints (inputs i, f i)) 0
+    (λ acc i => acc + harmonyScore classicalCon classicalW (inputs i, f i)) 0
   classical + systemicScore systemicConstraints f
 
 /-- MaxEnt grammar with systemic constraints as a `CoupledSoftmax`.
@@ -137,13 +122,13 @@ noncomputable def jointHarmonyScore {n : Nat} {I O : Type*}
     The joint probability is `softmax(totalScore, 1)` over all `Fin n → O`
     output tuples. The marginal at position `i` recovers the individual
     mapping probability under systemic pressure. -/
-noncomputable def maxEntCoupled {n : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
+noncomputable def maxEntCoupled {n m : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
     (inputs : Fin n → I)
-    (classicalConstraints : List (Constraint.Weighted (I × O)))
+    (classicalCon : CON (I × O) m) (classicalW : Fin m → ℝ)
     (systemicConstraints : List (SystemicConstraint n O)) :
     Core.CoupledSoftmax (Fin n) O :=
   Core.coupledSoftmaxOfMaxEnt inputs
-    (fun p => harmonyScore classicalConstraints p)
+    (fun p => harmonyScore classicalCon classicalW p)
     (fun f => systemicScore systemicConstraints f)
 
 /-- Marginal probability: marginalize the joint distribution to get
@@ -155,13 +140,13 @@ noncomputable def maxEntCoupled {n : Nat} {I O : Type*} [Fintype O] [DecidableEq
     probabilities that reflect systemic pressure. Defined through
     `CoupledSoftmax.marginal` so that factorization follows from
     `marginal_eq_independent_when_uncoupled`. -/
-noncomputable def marginalProb {n : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
+noncomputable def marginalProb {n m : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
     [Nonempty O]
     (inputs : Fin n → I)
-    (classicalConstraints : List (Constraint.Weighted (I × O)))
+    (classicalCon : CON (I × O) m) (classicalW : Fin m → ℝ)
     (systemicConstraints : List (SystemicConstraint n O))
     (i : Fin n) (o : O) : ℝ :=
-  (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal i o
+  (maxEntCoupled inputs classicalCon classicalW systemicConstraints).marginal i o
 
 -- ============================================================================
 -- § 4: Factorization Theorem
@@ -188,63 +173,16 @@ private lemma systemicScore_zero {n : Nat} {O : Type*}
     With zero systemic weights, the coupling score is constant (= 0),
     so `marginal_eq_independent_when_uncoupled` applies: the joint
     factorizes and each marginal equals its independent per-item softmax. -/
-theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type*}
+theorem marginal_eq_classical_when_no_systemic {n m : Nat} {I O : Type*}
     [Fintype O] [DecidableEq O] [Nonempty O]
     (inputs : Fin n → I)
-    (classicalConstraints : List (Constraint.Weighted (I × O)))
+    (classicalCon : CON (I × O) m) (classicalW : Fin m → ℝ)
     (systemicConstraints : List (SystemicConstraint n O))
     (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
     (i : Fin n) (o : O) :
-    marginalProb inputs classicalConstraints systemicConstraints i o =
-    softmax (λ o' => harmonyScore classicalConstraints (inputs i, o')) o :=
-  (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
+    marginalProb inputs classicalCon classicalW systemicConstraints i o =
+    softmax (λ o' => harmonyScore classicalCon classicalW (inputs i, o')) o :=
+  (maxEntCoupled inputs classicalCon classicalW systemicConstraints).marginal_eq_independent_when_uncoupled
     ⟨0, systemicScore_zero h_zero⟩ i o
 
--- ============================================================================
--- § 5: Bridge to Generic ConstraintSystem
--- ============================================================================
-
-/-- Realize a `MaxEntGrammar` (at a fixed input) as a generic
-    `ConstraintSystem` over the universal candidate set, decoded by
-    `softmaxDecoder` at temperature 1.
-
-    This shows the legacy MaxEnt API is a special case of the
-    framework-agnostic abstraction in `System.lean` — pick the universal
-    candidate set, the harmony score, and the Gumbel/softmax decoder. -/
-noncomputable def MaxEntGrammar.toSystem {I O : Type*} [Fintype O]
-    (g : MaxEntGrammar I O) (i : I) : ConstraintSystem O ℝ where
-  candidates := Finset.univ
-  score := fun o => harmonyScore g.constraints (i, o)
-  decoder := softmaxDecoder 1
-
-/-- The legacy `MaxEntGrammar.prob` agrees with the generic
-    `ConstraintSystem.predict` of the system produced by `toSystem`.
-    Equivalent by direct unfolding: both are softmax over the harmony
-    score on the universal candidate set. -/
-theorem MaxEntGrammar.prob_eq_toSystem_predict {I O : Type*} [Fintype O] [Nonempty O]
-    (g : MaxEntGrammar I O) (i : I) (o : O) :
-    g.prob i o = (g.toSystem i).predict o := by
-  classical
-  show softmax _ o = (softmaxDecoder 1).decode Finset.univ _ o
-  simp [softmaxDecoder, softmax, Finset.mem_univ, MaxEntGrammar.toSystem, one_mul]
-
 end HarmonicGrammar
-
-namespace Constraints
-
-open Core.Optimization
-
-/-- Build a MaxEnt Harmonic Grammar system over a finite candidate set: the
-    harmony score `harmonyScore constraints c = -Σⱼ wⱼ · Cⱼ(c)`, soft-decoded
-    at temperature `α`. As `α → ∞`, `softmaxDecoder` converges to hard `argmax`
-    (deterministic HG; see `softmax_argmax_limit` in `Core.Agent.RationalAction`).
-    The default `α = 1` matches [goldwater-johnson-2003]'s MaxEnt formulation. -/
-noncomputable def maxEntSystem {Cand : Type*}
-    (candidates : Finset Cand) (constraints : List (Constraint.Weighted Cand))
-    (α : ℝ := 1) :
-    ConstraintSystem Cand ℝ where
-  candidates := candidates
-  score := harmonyScore constraints
-  decoder := softmaxDecoder α
-
-end Constraints

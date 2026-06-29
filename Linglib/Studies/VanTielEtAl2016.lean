@@ -92,11 +92,11 @@ structure ScaleDatum where
   /-- Cloze task: % mentioning stronger term (Exp3, non-neutral, lenient) -/
   clozeNonNeutral : Option Nat
   /-- Log ratio of weaker/stronger term frequencies -/
-  freqRatio : Option Float
+  freqRatio : Option ℚ
   /-- LSA semantic relatedness (0-1) -/
-  lsaRelatedness : Option Float
+  lsaRelatedness : Option ℚ
   /-- Mean semantic distance rating (1-7 scale, Exp4) -/
-  semanticDistance : Float
+  semanticDistance : ℚ
   /-- Whether stronger term denotes an endpoint (bounded scale) -/
   bounded : Bool
   deriving Repr
@@ -110,8 +110,8 @@ def cheapFree : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 100, siRateExp2 := 93
   , clozeNeutral := some 0, clozeNonNeutral := some 0
-  , freqRatio := some (-0.66), lsaRelatedness := some 0.19
-  , semanticDistance := 5.52, bounded := true }
+  , freqRatio := some ((-66/100)), lsaRelatedness := some (19/100)
+  , semanticDistance := (552/100), bounded := true }
 
 /-- ⟨sometimes, always⟩ -/
 def sometimesAlways : ScaleDatum :=
@@ -119,8 +119,8 @@ def sometimesAlways : ScaleDatum :=
   , category := .adverb
   , siRateExp1 := 100, siRateExp2 := 86
   , clozeNeutral := some 80, clozeNonNeutral := some 90
-  , freqRatio := some (-1.05), lsaRelatedness := some 0.60
-  , semanticDistance := 5.70, bounded := true }
+  , freqRatio := some ((-105/100)), lsaRelatedness := some (60/100)
+  , semanticDistance := (570/100), bounded := true }
 
 /-- ⟨some, all⟩ - the "workhorse" of SI research -/
 def someAll : ScaleDatum :=
@@ -128,8 +128,8 @@ def someAll : ScaleDatum :=
   , category := .quantifier
   , siRateExp1 := 96, siRateExp2 := 89
   , clozeNeutral := some 67, clozeNonNeutral := some 87
-  , freqRatio := some (-0.12), lsaRelatedness := some 0.79
-  , semanticDistance := 5.83, bounded := true }
+  , freqRatio := some ((-12/100)), lsaRelatedness := some (79/100)
+  , semanticDistance := (583/100), bounded := true }
 
 /-- ⟨possible, certain⟩ -/
 def possibleCertain : ScaleDatum :=
@@ -137,8 +137,8 @@ def possibleCertain : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 92, siRateExp2 := 93
   , clozeNeutral := some 55, clozeNonNeutral := some 31
-  , freqRatio := some 0.10, lsaRelatedness := some 0.42
-  , semanticDistance := 5.65, bounded := true }
+  , freqRatio := some (10/100), lsaRelatedness := some (42/100)
+  , semanticDistance := (565/100), bounded := true }
 
 /-- ⟨may, will⟩ -/
 def mayWill : ScaleDatum :=
@@ -146,8 +146,8 @@ def mayWill : ScaleDatum :=
   , category := .auxiliaryVerb
   , siRateExp1 := 87, siRateExp2 := 89
   , clozeNeutral := some 83, clozeNonNeutral := some 80
-  , freqRatio := some 0.68, lsaRelatedness := some 0.51
-  , semanticDistance := 5.41, bounded := true }
+  , freqRatio := some (68/100), lsaRelatedness := some (51/100)
+  , semanticDistance := (541/100), bounded := true }
 
 /-- ⟨difficult, impossible⟩ -/
 def difficultImpossible : ScaleDatum :=
@@ -155,8 +155,8 @@ def difficultImpossible : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 79, siRateExp2 := 96
   , clozeNeutral := some 13, clozeNonNeutral := some 10
-  , freqRatio := some 0.46, lsaRelatedness := some 0.60
-  , semanticDistance := 6.22, bounded := true }
+  , freqRatio := some (46/100), lsaRelatedness := some (60/100)
+  , semanticDistance := (622/100), bounded := true }
 
 /-- ⟨rare, extinct⟩ -/
 def rareExtinct : ScaleDatum :=
@@ -164,8 +164,8 @@ def rareExtinct : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 79, siRateExp2 := 79
   , clozeNeutral := some 40, clozeNonNeutral := some 34
-  , freqRatio := some 1.05, lsaRelatedness := some 0.29
-  , semanticDistance := 5.83, bounded := true }
+  , freqRatio := some (105/100), lsaRelatedness := some (29/100)
+  , semanticDistance := (583/100), bounded := true }
 
 /-- ⟨may, have to⟩ -/
 def mayHaveTo : ScaleDatum :=
@@ -173,8 +173,8 @@ def mayHaveTo : ScaleDatum :=
   , category := .auxiliaryVerb
   , siRateExp1 := 75, siRateExp2 := 71
   , clozeNeutral := some 83, clozeNonNeutral := some 80
-  , freqRatio := some (-1.22), lsaRelatedness := some 0.64
-  , semanticDistance := 5.26, bounded := true }
+  , freqRatio := some ((-122/100)), lsaRelatedness := some (64/100)
+  , semanticDistance := (526/100), bounded := true }
 
 /-- ⟨warm, hot⟩ -/
 def warmHot : ScaleDatum :=
@@ -182,8 +182,8 @@ def warmHot : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 75, siRateExp2 := 64
   , clozeNeutral := some 70, clozeNonNeutral := some 38
-  , freqRatio := some (-0.28), lsaRelatedness := some 0.51
-  , semanticDistance := 5.00, bounded := false }
+  , freqRatio := some ((-28/100)), lsaRelatedness := some (51/100)
+  , semanticDistance := (500/100), bounded := false }
 
 /-- ⟨few, none⟩ -/
 def fewNone : ScaleDatum :=
@@ -191,8 +191,8 @@ def fewNone : ScaleDatum :=
   , category := .quantifier
   , siRateExp1 := 75, siRateExp2 := 54
   , clozeNeutral := some 20, clozeNonNeutral := some 30
-  , freqRatio := some 0.75, lsaRelatedness := some 0.47
-  , semanticDistance := 5.35, bounded := true }
+  , freqRatio := some (75/100), lsaRelatedness := some (47/100)
+  , semanticDistance := (535/100), bounded := true }
 
 /-- ⟨low, depleted⟩ -/
 def lowDepleted : ScaleDatum :=
@@ -200,8 +200,8 @@ def lowDepleted : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 71, siRateExp2 := 79
   , clozeNeutral := some 23, clozeNonNeutral := some 60
-  , freqRatio := some 2.29, lsaRelatedness := some 0.16
-  , semanticDistance := 4.87, bounded := true }
+  , freqRatio := some (229/100), lsaRelatedness := some (16/100)
+  , semanticDistance := (487/100), bounded := true }
 
 /-- ⟨hard, unsolvable⟩ -/
 def hardUnsolvable : ScaleDatum :=
@@ -209,8 +209,8 @@ def hardUnsolvable : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 71, siRateExp2 := 71
   , clozeNeutral := some 10, clozeNonNeutral := some 10
-  , freqRatio := some 2.87, lsaRelatedness := some 0.08
-  , semanticDistance := 5.26, bounded := true }
+  , freqRatio := some (287/100), lsaRelatedness := some (8/100)
+  , semanticDistance := (526/100), bounded := true }
 
 /-- ⟨allowed, obligatory⟩ -/
 def allowedObligatory : ScaleDatum :=
@@ -218,8 +218,8 @@ def allowedObligatory : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 67, siRateExp2 := 82
   , clozeNeutral := some 20, clozeNonNeutral := some 47
-  , freqRatio := some (-0.85), lsaRelatedness := some 0.02
-  , semanticDistance := 5.35, bounded := true }
+  , freqRatio := some ((-85/100)), lsaRelatedness := some (2/100)
+  , semanticDistance := (535/100), bounded := true }
 
 /-- ⟨scarce, unavailable⟩ -/
 def scarceUnavailable : ScaleDatum :=
@@ -227,8 +227,8 @@ def scarceUnavailable : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 62, siRateExp2 := 57
   , clozeNeutral := some 40, clozeNonNeutral := some 17
-  , freqRatio := some 0.29, lsaRelatedness := some 0.18
-  , semanticDistance := 4.78, bounded := true }
+  , freqRatio := some (29/100), lsaRelatedness := some (18/100)
+  , semanticDistance := (478/100), bounded := true }
 
 /-- ⟨try, succeed⟩ -/
 def trySucceed : ScaleDatum :=
@@ -236,8 +236,8 @@ def trySucceed : ScaleDatum :=
   , category := .mainVerb
   , siRateExp1 := 62, siRateExp2 := 39
   , clozeNeutral := some 37, clozeNonNeutral := some 57
-  , freqRatio := some 1.23, lsaRelatedness := some 0.35
-  , semanticDistance := 5.82, bounded := true }
+  , freqRatio := some (123/100), lsaRelatedness := some (35/100)
+  , semanticDistance := (582/100), bounded := true }
 
 /-- ⟨palatable, delicious⟩ -/
 def palatableDelicious : ScaleDatum :=
@@ -245,8 +245,8 @@ def palatableDelicious : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 58, siRateExp2 := 61
   , clozeNeutral := some 67, clozeNonNeutral := some 47
-  , freqRatio := some (-0.89), lsaRelatedness := some 0.32
-  , semanticDistance := 5.52, bounded := false }
+  , freqRatio := some ((-89/100)), lsaRelatedness := some (32/100)
+  , semanticDistance := (552/100), bounded := false }
 
 /-- ⟨memorable, unforgettable⟩ -/
 def memorableUnforgettable : ScaleDatum :=
@@ -254,8 +254,8 @@ def memorableUnforgettable : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 50, siRateExp2 := 54
   , clozeNeutral := some 23, clozeNonNeutral := some 60
-  , freqRatio := some 0.56, lsaRelatedness := some 0.29
-  , semanticDistance := 4.83, bounded := true }
+  , freqRatio := some (56/100), lsaRelatedness := some (29/100)
+  , semanticDistance := (483/100), bounded := true }
 
 /-- ⟨like, love⟩ -/
 def likeLove : ScaleDatum :=
@@ -263,8 +263,8 @@ def likeLove : ScaleDatum :=
   , category := .mainVerb
   , siRateExp1 := 50, siRateExp2 := 25
   , clozeNeutral := some 80, clozeNonNeutral := some 57
-  , freqRatio := some 0.23, lsaRelatedness := some 0.37
-  , semanticDistance := 5.74, bounded := false }
+  , freqRatio := some (23/100), lsaRelatedness := some (37/100)
+  , semanticDistance := (574/100), bounded := false }
 
 /-- ⟨good, perfect⟩ -/
 def goodPerfect : ScaleDatum :=
@@ -272,8 +272,8 @@ def goodPerfect : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 46, siRateExp2 := 39
   , clozeNeutral := some 60, clozeNonNeutral := some 23
-  , freqRatio := some 1.00, lsaRelatedness := some 0.42
-  , semanticDistance := 6.09, bounded := true }
+  , freqRatio := some (100/100), lsaRelatedness := some (42/100)
+  , semanticDistance := (609/100), bounded := true }
 
 /-- ⟨good, excellent⟩ -/
 def goodExcellent : ScaleDatum :=
@@ -281,8 +281,8 @@ def goodExcellent : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 37, siRateExp2 := 32
   , clozeNeutral := some 60, clozeNonNeutral := some 57
-  , freqRatio := some 1.34, lsaRelatedness := some 0.46
-  , semanticDistance := 5.48, bounded := false }
+  , freqRatio := some (134/100), lsaRelatedness := some (46/100)
+  , semanticDistance := (548/100), bounded := false }
 
 /-- ⟨cool, cold⟩ -/
 def coolCold : ScaleDatum :=
@@ -290,8 +290,8 @@ def coolCold : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 33, siRateExp2 := 46
   , clozeNeutral := some 23, clozeNonNeutral := some 40
-  , freqRatio := some (-0.21), lsaRelatedness := some 0.61
-  , semanticDistance := 4.30, bounded := false }
+  , freqRatio := some ((-21/100)), lsaRelatedness := some (61/100)
+  , semanticDistance := (430/100), bounded := false }
 
 /-- ⟨hungry, starving⟩ -/
 def hungryStarving : ScaleDatum :=
@@ -299,8 +299,8 @@ def hungryStarving : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 33, siRateExp2 := 25
   , clozeNeutral := some 63, clozeNonNeutral := some 40
-  , freqRatio := some 0.71, lsaRelatedness := some 0.52
-  , semanticDistance := 5.74, bounded := false }
+  , freqRatio := some (71/100), lsaRelatedness := some (52/100)
+  , semanticDistance := (574/100), bounded := false }
 
 /-- ⟨adequate, good⟩ -/
 def adequateGood : ScaleDatum :=
@@ -308,8 +308,8 @@ def adequateGood : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 29, siRateExp2 := 32
   , clozeNeutral := some 33, clozeNonNeutral := some 57
-  , freqRatio := some (-1.52), lsaRelatedness := some 0.27
-  , semanticDistance := 3.52, bounded := false }
+  , freqRatio := some ((-152/100)), lsaRelatedness := some (27/100)
+  , semanticDistance := (352/100), bounded := false }
 
 /-- ⟨unsettling, horrific⟩ -/
 def unsettlingHorrific : ScaleDatum :=
@@ -317,8 +317,8 @@ def unsettlingHorrific : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 29, siRateExp2 := 25
   , clozeNeutral := some 37, clozeNonNeutral := some 37
-  , freqRatio := some (-0.48), lsaRelatedness := none  -- NA in paper
-  , semanticDistance := 5.65, bounded := false }
+  , freqRatio := some ((-48/100)), lsaRelatedness := none  -- NA in paper
+  , semanticDistance := (565/100), bounded := false }
 
 /-- ⟨dislike, loathe⟩ -/
 def dislikeLoathe : ScaleDatum :=
@@ -326,8 +326,8 @@ def dislikeLoathe : ScaleDatum :=
   , category := .mainVerb
   , siRateExp1 := 29, siRateExp2 := 18
   , clozeNeutral := some 93, clozeNonNeutral := some 90
-  , freqRatio := some 0.46, lsaRelatedness := some 0.16
-  , semanticDistance := 5.87, bounded := false }
+  , freqRatio := some (46/100), lsaRelatedness := some (16/100)
+  , semanticDistance := (587/100), bounded := false }
 
 /-- ⟨believe, know⟩ -/
 def believeKnow : ScaleDatum :=
@@ -335,8 +335,8 @@ def believeKnow : ScaleDatum :=
   , category := .mainVerb
   , siRateExp1 := 21, siRateExp2 := 61
   , clozeNeutral := some 67, clozeNonNeutral := some 67
-  , freqRatio := some (-0.70), lsaRelatedness := some 0.46
-  , semanticDistance := 5.04, bounded := true }
+  , freqRatio := some ((-70/100)), lsaRelatedness := some (46/100)
+  , semanticDistance := (504/100), bounded := true }
 
 /-- ⟨start, finish⟩ -/
 def startFinish : ScaleDatum :=
@@ -344,8 +344,8 @@ def startFinish : ScaleDatum :=
   , category := .mainVerb
   , siRateExp1 := 21, siRateExp2 := 21
   , clozeNeutral := some 43, clozeNonNeutral := some 50
-  , freqRatio := some 0.70, lsaRelatedness := some 0.40
-  , semanticDistance := 4.95, bounded := true }
+  , freqRatio := some (70/100), lsaRelatedness := some (40/100)
+  , semanticDistance := (495/100), bounded := true }
 
 /-- ⟨participate, win⟩ -/
 def participateWin : ScaleDatum :=
@@ -353,8 +353,8 @@ def participateWin : ScaleDatum :=
   , category := .mainVerb
   , siRateExp1 := 21, siRateExp2 := 18
   , clozeNeutral := some 7, clozeNonNeutral := some 37
-  , freqRatio := some (-0.62), lsaRelatedness := some 0.21
-  , semanticDistance := 6.35, bounded := true }
+  , freqRatio := some ((-62/100)), lsaRelatedness := some (21/100)
+  , semanticDistance := (635/100), bounded := true }
 
 /-- ⟨wary, scared⟩ -/
 def waryScared : ScaleDatum :=
@@ -362,8 +362,8 @@ def waryScared : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 21, siRateExp2 := 14
   , clozeNeutral := some 40, clozeNonNeutral := some 37
-  , freqRatio := some (-0.48), lsaRelatedness := some 0.06
-  , semanticDistance := 4.39, bounded := false }
+  , freqRatio := some ((-48/100)), lsaRelatedness := some (6/100)
+  , semanticDistance := (439/100), bounded := false }
 
 /-- ⟨old, ancient⟩ -/
 def oldAncient : ScaleDatum :=
@@ -371,8 +371,8 @@ def oldAncient : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 17, siRateExp2 := 36
   , clozeNeutral := some 50, clozeNonNeutral := some 33
-  , freqRatio := some 1.08, lsaRelatedness := some 0.24
-  , semanticDistance := 5.39, bounded := false }
+  , freqRatio := some (108/100), lsaRelatedness := some (24/100)
+  , semanticDistance := (539/100), bounded := false }
 
 /-- ⟨big, enormous⟩ -/
 def bigEnormous : ScaleDatum :=
@@ -380,8 +380,8 @@ def bigEnormous : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 17, siRateExp2 := 21
   , clozeNeutral := some 83, clozeNonNeutral := some 37
-  , freqRatio := some 1.13, lsaRelatedness := some 0.21
-  , semanticDistance := 5.43, bounded := false }
+  , freqRatio := some (113/100), lsaRelatedness := some (21/100)
+  , semanticDistance := (543/100), bounded := false }
 
 /-- ⟨snug, tight⟩ -/
 def snugTight : ScaleDatum :=
@@ -389,8 +389,8 @@ def snugTight : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 12, siRateExp2 := 21
   , clozeNeutral := some 87, clozeNonNeutral := some 87
-  , freqRatio := some (-1.05), lsaRelatedness := some 0.30
-  , semanticDistance := 2.86, bounded := false }
+  , freqRatio := some ((-105/100)), lsaRelatedness := some (30/100)
+  , semanticDistance := (286/100), bounded := false }
 
 /-- ⟨attractive, stunning⟩ -/
 def attractiveStunning : ScaleDatum :=
@@ -398,8 +398,8 @@ def attractiveStunning : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 8, siRateExp2 := 21
   , clozeNeutral := some 53, clozeNonNeutral := some 72
-  , freqRatio := some 0.37, lsaRelatedness := some 0.07
-  , semanticDistance := 5.78, bounded := false }
+  , freqRatio := some (37/100), lsaRelatedness := some (7/100)
+  , semanticDistance := (578/100), bounded := false }
 
 /-- ⟨special, unique⟩ -/
 def specialUnique : ScaleDatum :=
@@ -407,8 +407,8 @@ def specialUnique : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 8, siRateExp2 := 14
   , clozeNeutral := some 50, clozeNonNeutral := some 30
-  , freqRatio := some 0.54, lsaRelatedness := some 0.32
-  , semanticDistance := 3.48, bounded := true }
+  , freqRatio := some (54/100), lsaRelatedness := some (32/100)
+  , semanticDistance := (348/100), bounded := true }
 
 /-- ⟨pretty, beautiful⟩ -/
 def prettyBeautiful : ScaleDatum :=
@@ -416,8 +416,8 @@ def prettyBeautiful : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 8, siRateExp2 := 11
   , clozeNeutral := some 73, clozeNonNeutral := some 50
-  , freqRatio := some (-0.46), lsaRelatedness := some 0.41
-  , semanticDistance := 5.04, bounded := false }
+  , freqRatio := some ((-46/100)), lsaRelatedness := some (41/100)
+  , semanticDistance := (504/100), bounded := false }
 
 /-- ⟨intelligent, brilliant⟩ -/
 def intelligentBrilliant : ScaleDatum :=
@@ -425,8 +425,8 @@ def intelligentBrilliant : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 8, siRateExp2 := 7
   , clozeNeutral := some 17, clozeNonNeutral := some 3
-  , freqRatio := some (-0.12), lsaRelatedness := some 0.27
-  , semanticDistance := 4.74, bounded := false }
+  , freqRatio := some ((-12/100)), lsaRelatedness := some (27/100)
+  , semanticDistance := (474/100), bounded := false }
 
 /-- ⟨funny, hilarious⟩ -/
 def funnyHilarious : ScaleDatum :=
@@ -434,8 +434,8 @@ def funnyHilarious : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 29
   , clozeNeutral := some 50, clozeNonNeutral := some 33
-  , freqRatio := some 1.17, lsaRelatedness := some 0.07
-  , semanticDistance := 5.04, bounded := false }
+  , freqRatio := some (117/100), lsaRelatedness := some (7/100)
+  , semanticDistance := (504/100), bounded := false }
 
 /-- ⟨dark, black⟩ -/
 def darkBlack : ScaleDatum :=
@@ -443,8 +443,8 @@ def darkBlack : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 29
   , clozeNeutral := some 30, clozeNonNeutral := some 27
-  , freqRatio := some (-0.49), lsaRelatedness := some 0.40
-  , semanticDistance := 4.04, bounded := true }
+  , freqRatio := some ((-49/100)), lsaRelatedness := some (40/100)
+  , semanticDistance := (404/100), bounded := true }
 
 /-- ⟨small, tiny⟩ -/
 def smallTiny : ScaleDatum :=
@@ -452,8 +452,8 @@ def smallTiny : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 25
   , clozeNeutral := some 80, clozeNonNeutral := some 27
-  , freqRatio := some 0.80, lsaRelatedness := some 0.54
-  , semanticDistance := 4.22, bounded := false }
+  , freqRatio := some (80/100), lsaRelatedness := some (54/100)
+  , semanticDistance := (422/100), bounded := false }
 
 /-- ⟨ugly, hideous⟩ -/
 def uglyHideous : ScaleDatum :=
@@ -461,8 +461,8 @@ def uglyHideous : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 18
   , clozeNeutral := some 37, clozeNonNeutral := some 31
-  , freqRatio := some 0.86, lsaRelatedness := some 0.48
-  , semanticDistance := 5.27, bounded := false }
+  , freqRatio := some (86/100), lsaRelatedness := some (48/100)
+  , semanticDistance := (527/100), bounded := false }
 
 /-- ⟨silly, ridiculous⟩ -/
 def sillyRidiculous : ScaleDatum :=
@@ -470,8 +470,8 @@ def sillyRidiculous : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 14
   , clozeNeutral := some 77, clozeNonNeutral := some 40
-  , freqRatio := some 0.01, lsaRelatedness := some 0.43
-  , semanticDistance := 4.17, bounded := false }
+  , freqRatio := some (1/100), lsaRelatedness := some (43/100)
+  , semanticDistance := (417/100), bounded := false }
 
 /-- ⟨tired, exhausted⟩ -/
 def tiredExhausted : ScaleDatum :=
@@ -479,8 +479,8 @@ def tiredExhausted : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 14
   , clozeNeutral := some 57, clozeNonNeutral := some 41
-  , freqRatio := some 0.92, lsaRelatedness := some 0.45
-  , semanticDistance := 5.13, bounded := false }
+  , freqRatio := some (92/100), lsaRelatedness := some (45/100)
+  , semanticDistance := (513/100), bounded := false }
 
 /-- ⟨content, happy⟩ - lowest SI rate (4%) -/
 def contentHappy : ScaleDatum :=
@@ -488,8 +488,8 @@ def contentHappy : ScaleDatum :=
   , category := .adjective
   , siRateExp1 := 4, siRateExp2 := 4
   , clozeNeutral := some 87, clozeNonNeutral := some 50
-  , freqRatio := some (-0.85), lsaRelatedness := some 0.13
-  , semanticDistance := 4.52, bounded := false }
+  , freqRatio := some ((-85/100)), lsaRelatedness := some (13/100)
+  , semanticDistance := (452/100), bounded := false }
 
 end Scales
 
@@ -574,7 +574,7 @@ theorem si_range :
     allScales.all (·.siRateExp1 ≤ 100) ∧
     allScales.any (·.siRateExp1 == 4) ∧
     allScales.any (·.siRateExp1 == 100) := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Bounded scales yield far more SIs than non-bounded scales.
 
@@ -584,12 +584,12 @@ Even though bounded scales have *fewer* items, their total is nearly 3× higher.
 The paper reports mean bounded ≈ 62% vs mean non-bounded ≈ 25%. -/
 theorem bounded_total_exceeds_nonbounded :
     (boundedScales.map (·.siRateExp1)).foldl (· + ·) 0 >
-    (nonBoundedScales.map (·.siRateExp1)).foldl (· + ·) 0 := by native_decide
+    (nonBoundedScales.map (·.siRateExp1)).foldl (· + ·) 0 := by decide
 
 /-- ⟨some, all⟩ — the "workhorse" of SI research — sits near the top at 96%,
 far above the mean. Generalizing from ⟨some, all⟩ to all scales is unjustified. -/
 theorem someAll_above_median :
-    Scales.someAll.siRateExp1 > 50 := by native_decide
+    Scales.someAll.siRateExp1 > 50 := by decide
 
 /-- In this sample, every closed-class scale is also bounded.
 This confound partially explains the nonsignificant grammatical-class effect:
@@ -597,7 +597,7 @@ closed-class scales look high-SI because they're all bounded, not because
 the search space for alternatives is smaller. -/
 theorem closed_class_subsumes_bounded :
     allScales.all (λ s => !s.category.isClosedClass || s.bounded) = true := by
-  native_decide
+  decide
 
 /-- Experiments 1 and 2 agree directionally: no scale reverses from high to low
 or vice versa (defined as >50% in one experiment and <15% in the other). -/
@@ -605,111 +605,53 @@ theorem exp1_exp2_directional_agreement :
     allScales.all (λ s =>
       !(s.siRateExp1 > 50 && s.siRateExp2 < 15) &&
       !(s.siRateExp2 > 50 && s.siRateExp1 < 15)) = true := by
-  native_decide
+  decide
+
+/-! ### Explaining diversity: distinctness, not availability
+
+The mixed model (Table 5) regressed SI rates on six predictors. Of these, only
+the two **distinctness** measures are significant: semantic distance (β = 0.65,
+SE = 0.27, Z = 2.36, p = .018, R² = .027) and boundedness (β = −1.87, SE = 0.40,
+Z = −4.72, p < .001, R² = .108 — the negative sign reflects bounded = 1 against a
+"no" = 1 dependent variable, i.e. bounded scales project *more*). The four
+**availability** measures are all null: association strength (β = 0.16, p = .611),
+grammatical class (β = −0.38, p = .606), relative word frequency (β = −0.15,
+p = .461), and LSA relatedness (β = 0.01, p = .355). The full model explains
+R² = .52 (.22 fixed); boundedness alone accounts for ≈ 10× the variance of all
+availability measures combined. Effect sizes stay in prose; the qualitative
+content is carried structurally by `bounded_total_exceeds_nonbounded` (the
+dominant distinctness factor, read directly off the SI data) and
+`closed_class_subsumes_bounded` (why the grammatical-class availability measure is
+confounded out once boundedness is in the model). -/
 
 -- ============================================================================
--- Regression Model (Table 5)
+-- The two-stage model of scalar inference (§6)
 -- ============================================================================
 
-/-- A row from the mixed-effects regression in Table 5.
+/-! Following [soames-1982] and [sauerland-2004], a scalar inference from φ[α] to
+¬φ[β] is computed in two steps. The *primary* step yields that the speaker does
+not believe the stronger alternative (¬Bel_S φ[β]). A *competence* assumption —
+the speaker is opinionated about φ[β] (Bel_S φ[β] ∨ Bel_S ¬φ[β]) — upgrades this
+to the scalar inference Bel_S ¬φ[β]. Scalar diversity is then variation in whether
+the competence step fires: it is better warranted when the scalemates are
+*distinct* (bounded or semantically distant), so that the speaker is plausibly
+opinionated about the stronger term — which is exactly why distinctness, not
+availability, predicts the rates. -/
 
-The model predicts SI rates from Exps 1–2 using six fixed-effect predictors
-(four availability measures, two distinctness measures) plus random slopes
-and intercepts for participants and items. -/
-structure RegressionRow where
-  /-- Name of the predictor -/
-  name : String
-  /-- Estimated coefficient -/
-  beta : ℚ
-  /-- Standard error -/
-  se : ℚ
-  /-- z-statistic -/
-  z : ℚ
-  /-- p-value (two-tailed) -/
-  p : ℚ
-  /-- Marginal R² (variance explained by this predictor alone) -/
-  r2 : ℚ
-  deriving Repr
+/-- The two-stage (epistemic) model: the primary inference together with the
+    competence assumption *yields* the scalar inference. The conclusion is derived
+    from the premises, not stipulated. -/
+theorem two_stage_inference {belStronger belNotStronger : Prop}
+    (primary : ¬ belStronger) (competence : belStronger ∨ belNotStronger) :
+    belNotStronger :=
+  competence.resolve_left primary
 
--- Availability predictors (§4): none significant
-
-/-- Association strength (lenient cloze, Exp 3): β=0.16, p=.611. -/
-def associationStrength : RegressionRow :=
-  { name := "association_strength"
-  , beta := 16/100, se := 31/100, z := 51/100
-  , p := 611/1000, r2 := 0 }
-
-/-- Grammatical class (open/closed): β=−0.38, p=.606.
-Confounded with boundedness — all closed-class scales in this sample
-are also bounded (see `closed_class_subsumes_bounded`). -/
-def grammaticalClass : RegressionRow :=
-  { name := "grammatical_class"
-  , beta := -38/100, se := 74/100, z := -52/100
-  , p := 606/1000, r2 := 1/1000 }
-
-/-- Relative word frequency (log ratio weaker/stronger): β=−0.15, p=.461. -/
-def relativeFrequency : RegressionRow :=
-  { name := "relative_frequency"
-  , beta := -15/100, se := 21/100, z := -74/100
-  , p := 461/1000, r2 := 3/1000 }
-
-/-- Semantic relatedness (LSA cosine): β=0.01, p=.355. -/
-def semanticRelatedness : RegressionRow :=
-  { name := "semantic_relatedness"
-  , beta := 1/100, se := 1/100, z := 93/100
-  , p := 355/1000, r2 := 6/1000 }
-
--- Distinctness predictors (§5): both significant
-
-/-- Semantic distance (7-point rating, Exp 4): β=0.65, p=.018. -/
-def semanticDistance : RegressionRow :=
-  { name := "semantic_distance"
-  , beta := 65/100, se := 27/100, z := 236/100
-  , p := 18/1000, r2 := 27/1000 }
-
-/-- Boundedness (stronger term is endpoint): β=−1.87, p<.001.
-Negative β because the coding is bounded=1, so bounded scales are
-associated with *higher* SI rates (higher positive response = lower
-log-odds of "no"). Largest single predictor: R²=10.8%. -/
-def boundedness : RegressionRow :=
-  { name := "boundedness"
-  , beta := -187/100, se := 40/100, z := -472/100
-  , p := 0, r2 := 108/1000 }  -- p reported as .000 in Table 5
-
-/-- All six predictor rows, for iteration. -/
-def regressionRows : List RegressionRow :=
-  [associationStrength, grammaticalClass, relativeFrequency,
-   semanticRelatedness, semanticDistance, boundedness]
-
--- ============================================================================
--- Regression Significance Theorems
--- ============================================================================
-
-/-- Both distinctness predictors are significant (p < .05). -/
-theorem distinctness_both_significant :
-    semanticDistance.p < 5/100 ∧ boundedness.p < 5/100 := by
-  constructor <;> native_decide
-
-/-- No availability predictor is significant (all p > .05). -/
-theorem availability_none_significant :
-    associationStrength.p > 5/100 ∧
-    grammaticalClass.p > 5/100 ∧
-    relativeFrequency.p > 5/100 ∧
-    semanticRelatedness.p > 5/100 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
-
-/-- Boundedness alone explains more variance than all four availability
-predictors combined. R²(boundedness) = 0.108 > 0 + 0.001 + 0.003 + 0.006 = 0.010. -/
-theorem boundedness_dominates_availability :
-    boundedness.r2 >
-    associationStrength.r2 + grammaticalClass.r2 +
-    relativeFrequency.r2 + semanticRelatedness.r2 := by native_decide
-
-/-- Distinctness explains >10× more variance than availability.
-(27 + 108)/1000 = 135/1000 vs (0 + 1 + 3 + 6)/1000 = 10/1000. -/
-theorem distinctness_exceeds_availability_tenfold :
-    (semanticDistance.r2 + boundedness.r2) * 1000 >
-    (associationStrength.r2 + grammaticalClass.r2 +
-     relativeFrequency.r2 + semanticRelatedness.r2) * 10000 := by native_decide
+/-- Competence is load-bearing: the primary step alone leaves the stronger
+    alternative epistemically open (the speaker may be agnostic), so no scalar
+    inference follows. Cross-scale variation in this step is where diversity
+    lives. -/
+theorem primary_underdetermines_si :
+    ∃ belStronger belNotStronger : Prop, ¬ belStronger ∧ ¬ belNotStronger :=
+  ⟨False, False, not_false, not_false⟩
 
 end VanTielEtAl2016

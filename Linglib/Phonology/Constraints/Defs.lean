@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Constraints
@@ -22,8 +23,9 @@ candidate. A bare `C → ℕ` over an opaque candidate type has no family, by de
 * `Constraint C` — a violation-counting function `C → ℕ`.
 * `Constraint.binary` — the indicator constraint of a decidable predicate.
 * `Constraint.comap` — pull a constraint back along a candidate map.
-* `Constraint.Weighted C` — a constraint paired with a real weight (Harmonic Grammar).
-* `harmonyScore` — the harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]).
+* `CON C n` — a grammar's constraint set: an indexed family of `n` constraints.
+* `weightedViolations` / `harmonyScore` — the Harmonic-Grammar weighted sum
+  `Σⱼ wⱼ · Cⱼ(c)` and its negation `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]).
 -/
 
 namespace Constraints
@@ -57,38 +59,48 @@ def Constraint.comap (f : C → D) (con : Constraint D) : Constraint C := con �
 @[simp] theorem Constraint.comap_apply (f : C → D) (con : Constraint D) (c : C) :
     Constraint.comap f con c = con (f c) := rfl
 
-/-! ### Weighted constraints and harmony
+/-- A grammar's **constraint set** `CON`: an indexed family of `n` constraints over
+candidates `C` ([prince-smolensky-1993]'s *CON*). A `CON` sends each candidate to a
+`ViolationProfile n` (`CON.profile`, in `Constraints.Profile`); an **OT** grammar then
+ranks the coordinates (a `Ranking n`), a **Harmonic Grammar** weights them (a
+`Fin n → ℝ` vector). Both feed the framework-neutral `Core.Optimization.ConstraintSystem`
+through different decoders (lexicographic argmin vs. softmax). -/
+abbrev CON (C : Type*) (n : ℕ) := Fin n → Constraint C
 
-Harmonic Grammar weights each constraint by a real number; the **harmony** of a
-candidate is the negated weighted sum of its violations,
-`H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]). -/
+/-! ### Harmony (Harmonic Grammar)
 
-/-- A **weighted** constraint: a `Constraint` paired with a real weight (higher is
-more important). The Harmonic-Grammar counterpart of a bare `Constraint`.
+A Harmonic Grammar weights each constraint in `CON` by a real number; the
+**harmony** of a candidate is the negated weighted sum of its violations,
+`H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]) — a real linear functional of
+the candidate's raw violation vector. The weight vector `w : Fin n → ℝ` is the
+*grammar's* parameter (the HG twin of an OT `Ranking n`); both act on one `CON`. -/
 
-PROVISIONAL: a weight is the *grammar's* parameter — a weighting of `CON` — not
-part of what a constraint is (the same reason `name`/`family` left the constraint).
-This pair will give way to a CON-level weight vector `Fin n → ℝ`, with harmony as a
-linear functional `-⟪w, violations⟫` — the HG twin of `CON + Ranking` — once the
-`CON` object lands. TODO(CON): relocate the weight off the constraint. -/
-structure Constraint.Weighted (C : Type*) where
-  /-- The underlying violation-counting constraint. -/
-  con : Constraint C
-  /-- Constraint weight; higher is more important. -/
-  weight : ℝ
+variable {n : ℕ}
 
-/-- Harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)`: the negated weighted sum of violations
-([smolensky-legendre-2006]); higher is more grammatical. -/
-def harmonyScore (cs : List (Constraint.Weighted C)) (c : C) : ℝ :=
-  -(cs.map fun wc => wc.weight * (wc.con c : ℝ)).sum
+/-- The **weighted violation sum** `Σⱼ wⱼ · Cⱼ(c)` of a raw violation vector under
+weight vector `w`: a real linear functional of the counts. The positive part of
+harmony (`harmonyScore = -weightedViolations …`); weight-monotonicity and the
+HG→OT exponential-separation results are stated on this. -/
+def weightedViolations (w : Fin n → ℝ) (v : Fin n → ℕ) : ℝ :=
+  ∑ j, w j * (v j : ℝ)
 
-/-- `harmonyScore` as a negated `List.sum` (unfolding lemma for rewriting). -/
-theorem harmonyScore_eq_neg_sum (cs : List (Constraint.Weighted C)) (c : C) :
-    harmonyScore cs c = -(cs.map fun wc => wc.weight * (wc.con c : ℝ)).sum := rfl
+/-- Harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]): the negated
+weighted sum of a candidate's violations under the grammar's weight vector `w`;
+higher is more grammatical. The HG reading of a constraint set `con` weighted by
+`w` — the twin of *ranking* `con` in OT. -/
+def harmonyScore (con : CON C n) (w : Fin n → ℝ) (c : C) : ℝ :=
+  -weightedViolations w (fun j => con j c)
 
-/-- `a` outranks `b` in harmony: `H(a) > H(b)`, the pullback of `<` along
-`harmonyScore`. No `Decidable` instance — `ℝ` comparison does not reduce. -/
-def harmonyDominates (cs : List (Constraint.Weighted C)) (a b : C) : Prop :=
-  harmonyScore cs b < harmonyScore cs a
+/-- `harmonyScore` as a negated `Finset.sum` (unfolding lemma for rewriting). -/
+theorem harmonyScore_eq_neg_sum (con : CON C n) (w : Fin n → ℝ) (c : C) :
+    harmonyScore con w c = -∑ j, w j * (con j c : ℝ) := rfl
+
+/-- `a` outranks `b` in harmony: `H(a) > H(b)`, the pullback of `>` along
+`harmonyScore con w` (`Order.Preimage`); inherits `IsStrictOrder` from ℝ's `>`. -/
+def harmonyDominates (con : CON C n) (w : Fin n → ℝ) : C → C → Prop :=
+  harmonyScore con w ⁻¹'o (· > ·)
+
+@[simp] theorem harmonyDominates_iff (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a := Iff.rfl
 
 end Constraints

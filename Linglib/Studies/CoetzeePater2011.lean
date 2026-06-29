@@ -2,6 +2,7 @@ import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Phonology.Constraints.Basic
+import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
@@ -409,24 +410,25 @@ theorem preC_always_ge :
 
 /-! ### MaxEnt model -/
 
-/-- Weighted version of the t/d-deletion constraints for MaxEnt.
-    Weight parameterization enables dialect-specific fitting. -/
-def mkWeightedConstraints (wCT wMax wMaxPreV wMaxFin : ℝ) :
-    List (Constraint.Weighted TDCandidate) :=
-  [ { con := starCT, weight := wCT }
-  , { con := maxC, weight := wMax }
-  , { con := maxPreV, weight := wMaxPreV }
-  , { con := maxFinal, weight := wMaxFin } ]
+/-- The four t/d-deletion constraints as a `CON` (constraint vector) for MaxEnt.
+    Index order matches `constraints`: 0 = *CT, 1 = MAX, 2 = MAX-PRE-V, 3 = MAX-FINAL. -/
+def tdCon : CON TDCandidate 4 :=
+  ![starCT, maxC, maxPreV, maxFinal]
+
+/-- MaxEnt weight vector for `tdCon`, in the same `[*CT, MAX, MAX-PRE-V, MAX-FINAL]`
+    order. Weight parameterization enables dialect-specific fitting. -/
+def tdW (wCT wMax wMaxPreV wMaxFin : ℝ) : Fin 4 → ℝ :=
+  ![wCT, wMax, wMaxPreV, wMaxFin]
 
 /-- MaxEnt harmony ordering is a decidable proxy for probability ordering:
     `H(a) > H(b) ⟺ P(a) > P(b)` by monotonicity of exp. -/
 theorem maxent_deletion_preferred (wCT wMax wMaxPreV wMaxFin : ℝ)
     (ctx : Context)
-    (h : harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    (h : harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
            ⟨ctx, .delete⟩ >
-         harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+         harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
            ⟨ctx, .retain⟩) :
-    harmonyDominates (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    harmonyDominates tdCon (tdW wCT wMax wMaxPreV wMaxFin)
       ⟨ctx, .delete⟩ ⟨ctx, .retain⟩ := h
 
 /-- With AAVE weights from table (23) ME-HG row, deletion probability
@@ -434,13 +436,14 @@ theorem maxent_deletion_preferred (wCT wMax wMaxPreV wMaxFin : ℝ)
     the one-decimal-place values reported in the paper:
     *CT = 100.6, MAX-P-V = 2.1, MAX-FIN = 0.2, MAX = 99.4. -/
 theorem maxent_aave_ordering :
-    let w := mkWeightedConstraints (1006/10) (994/10) (21/10) (2/10)
-    harmonyScore w ⟨.preC, .delete⟩ > harmonyScore w ⟨.pause, .delete⟩ ∧
-    harmonyScore w ⟨.pause, .delete⟩ > harmonyScore w ⟨.preV, .delete⟩ := by
+    let w := tdW (1006/10) (994/10) (21/10) (2/10)
+    harmonyScore tdCon w ⟨.preC, .delete⟩ > harmonyScore tdCon w ⟨.pause, .delete⟩ ∧
+    harmonyScore tdCon w ⟨.pause, .delete⟩ > harmonyScore tdCon w ⟨.preV, .delete⟩ := by
   refine ⟨?_, ?_⟩ <;>
-    (simp only [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
-       Constraint.binary, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-       beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
+    (simp only [harmonyScore_eq_neg_sum, tdCon, tdW, starCT, maxC, maxPreV, maxFinal,
+       Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one,
+       Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+       beq_iff_eq, ↓reduceIte, Nat.cast_one]
      norm_num)
 
 /-- With non-negative MAX-PRE-V weight, harmony of pre-C deletion ≥ pre-V
@@ -451,20 +454,18 @@ theorem maxent_aave_ordering :
     typological restriction as POC ([coetzee-pater-2011] §4.4). -/
 theorem nonneg_weights_preserve_ordering
     (wCT wMax wMaxPreV wMaxFin : ℝ) (hPreV : wMaxPreV ≥ 0) :
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preV, .delete⟩ := by
-  simp [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
-    Constraint.binary]
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin) ⟨.preV, .delete⟩ := by
+  simp [tdCon, tdW, starCT, maxC, maxPreV, maxFinal, Constraint.binary]
   linarith [show (0 : ℝ) ≤ (wMaxPreV : ℝ) from by exact_mod_cast hPreV]
 
 /-- Analogously, non-negative MAX-FINAL weight ensures pre-C ≥ pause.
     H(del|preC) - H(del|pause) = wMaxFin ≥ 0. -/
 theorem nonneg_weights_preserve_ordering_pause
     (wCT wMax wMaxPreV wMaxFin : ℝ) (hFin : wMaxFin ≥ 0) :
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.pause, .delete⟩ := by
-  simp [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
-    Constraint.binary]
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin) ⟨.pause, .delete⟩ := by
+  simp [tdCon, tdW, starCT, maxC, maxPreV, maxFinal, Constraint.binary]
   linarith [show (0 : ℝ) ≤ (wMaxFin : ℝ) from by exact_mod_cast hFin]
 
 /-! ### Tejano' impossibility -/
@@ -507,19 +508,20 @@ theorem poc_cannot_generate_tejanoPrime :
     [coetzee-pater-2011] §4.4, table (23) -/
 theorem maxent_can_generate_tejanoPrime :
     ∃ wCT wMax wMaxPreV wMaxFin : ℝ,
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
       ⟨.preV, .delete⟩ >
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
       ⟨.preV, .retain⟩ ∧
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
       ⟨.preC, .retain⟩ >
-    harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
       ⟨.preC, .delete⟩ ∧
     wMaxPreV < 0 := by
   refine ⟨994/10, 1006/10, -16/10, -8/10, ?_, ?_, by norm_num⟩ <;>
-    (simp only [harmonyScore, mkWeightedConstraints, starCT, maxC, maxPreV, maxFinal,
-       Constraint.binary, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-       beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
+    (simp only [harmonyScore_eq_neg_sum, tdCon, tdW, starCT, maxC, maxPreV, maxFinal,
+       Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one,
+       Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+       beq_iff_eq, ↓reduceIte, Nat.cast_one]
      norm_num)
 
 /-- Framework separation: POC/StOT and MaxEnt have different typological
@@ -530,13 +532,13 @@ theorem maxent_can_generate_tejanoPrime :
 theorem framework_separation :
     deletionProb .preC ≥ deletionProb .preV ∧
     (∃ wCT wMax wMaxPreV wMaxFin : ℝ,
-      harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+      harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
         ⟨.preV, .delete⟩ >
-      harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+      harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
         ⟨.preV, .retain⟩ ∧
-      harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+      harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
         ⟨.preC, .retain⟩ >
-      harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+      harmonyScore tdCon (tdW wCT wMax wMaxPreV wMaxFin)
         ⟨.preC, .delete⟩) := by
   refine ⟨poc_cannot_generate_tejanoPrime, ?_⟩
   obtain ⟨wCT, wMax, wMaxPreV, wMaxFin, h1, h2, _⟩ := maxent_can_generate_tejanoPrime
@@ -573,15 +575,15 @@ softmax is the logistic function, so `predict .delete` is genuine
 conditional probability `P(delete | ctx)`. -/
 
 /-- The AAVE constraint weights from table (23) ME-HG row. -/
-noncomputable def aaveWeights : List (Constraint.Weighted TDCandidate) :=
-  mkWeightedConstraints (1006/10) (994/10) (21/10) (2/10)
+noncomputable def aaveW : Fin 4 → ℝ :=
+  tdW (1006/10) (994/10) (21/10) (2/10)
 
 /-- The AAVE MaxEnt model at a fixed context, packaged as a generic
     `ConstraintSystem`. With only two candidates, `predict .delete` is
     the conditional probability `P(delete | ctx)`. -/
 noncomputable def aaveSystem (ctx : Context) : ConstraintSystem TDOutput ℝ where
   candidates := Finset.univ
-  score := fun o => harmonyScore aaveWeights ⟨ctx, o⟩
+  score := fun o => harmonyScore tdCon aaveW ⟨ctx, o⟩
   decoder := softmaxDecoder 1
 
 /-- In the pre-consonantal context, the AAVE system predicts deletion
@@ -592,12 +594,13 @@ theorem aave_preC_prefers_delete :
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
     ((by
-      unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
-        starCT maxC maxPreV maxFinal Constraint.binary
-      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-        beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
+      simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, aaveW, tdW, tdCon,
+        starCT, maxC, maxPreV, maxFinal, Constraint.binary, Fin.sum_univ_four,
+        Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+        Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+        beq_iff_eq, ↓reduceIte, Nat.cast_one]
       norm_num :
-      harmonyDominates aaveWeights ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
+      harmonyDominates tdCon aaveW ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
 
 /-- In the pre-vocalic context, the AAVE system predicts retention over
     deletion: pre-V deletion violates both MAX and MAX-PRE-V, costing
@@ -609,12 +612,13 @@ theorem aave_preV_prefers_retain :
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
     ((by
-      unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
-        starCT maxC maxPreV maxFinal Constraint.binary
-      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-        beq_iff_eq, and_true, ↓reduceIte, Nat.cast_one]
+      simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, aaveW, tdW, tdCon,
+        starCT, maxC, maxPreV, maxFinal, Constraint.binary, Fin.sum_univ_four,
+        Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+        Matrix.cons_val_two, Matrix.cons_val_three, Matrix.tail_cons,
+        beq_iff_eq, ↓reduceIte, Nat.cast_one]
       norm_num :
-      harmonyDominates aaveWeights ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
+      harmonyDominates tdCon aaveW ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
 
 /-- The per-context AAVE system is a probability distribution over
     `TDOutput`. Generic property of `softmaxDecoder`. -/

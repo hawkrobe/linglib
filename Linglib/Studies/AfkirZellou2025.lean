@@ -95,26 +95,25 @@ def mkCandidate (w : TriconWord) (sf : SurfaceForm) : TarifitCandidate :=
 -- ============================================================================
 
 /-- MAX-V (faithfulness): penalizes deletion of template schwa.
-    Violated once by vowelless production. -/
-def maxV : Constraint.Weighted TarifitCandidate :=
-  Constraint.Weighted.binary (fun c => c.surface == .vowelless) 3
+    Violated once by vowelless production. (Weight 3 in `tarifitW`.) -/
+def maxV : Constraint TarifitCandidate :=
+  Constraint.binary (fun c => c.surface = .vowelless)
 
 /-- *SONO-CC (markedness): penalizes vowelless clusters proportional to
     consonant sonority. Higher-sonority consonants in a bare CC cluster
     are more marked because they expect a vocalic nucleus.
     Violation count = c2.parkerSonority + c3.parkerSonority.
     Models the regression finding that lower C2/C3 sonority predicts
-    more vowelless production ([afkir-zellou-2025] Figure 19). -/
-def sonoCC : Constraint.Weighted TarifitCandidate :=
-  { con := fun c => match c.surface with
-      | .vowelless => c.c2.parkerSonority + c.c3.parkerSonority
-      | _ => 0
-    weight := 1 }
+    more vowelless production ([afkir-zellou-2025] Figure 19). (Weight 1.) -/
+def sonoCC : Constraint TarifitCandidate :=
+  fun c => match c.surface with
+    | .vowelless => c.c2.parkerSonority + c.c3.parkerSonority
+    | _ => 0
 
 /-- DEP-V (faithfulness): penalizes insertion of intrusive schwa.
-    Violated once by intrusive production. -/
-def depV : Constraint.Weighted TarifitCandidate :=
-  Constraint.Weighted.binary (fun c => c.surface == .intrusive) 2
+    Violated once by intrusive production. (Weight 2 in `tarifitW`.) -/
+def depV : Constraint TarifitCandidate :=
+  Constraint.binary (fun c => c.surface = .intrusive)
 
 /-- *SONO-PEAK (markedness): penalizes intrusive schwa in falling-sonority
     environments. The penalty is proportional to the sonority drop
@@ -123,27 +122,32 @@ def depV : Constraint.Weighted TarifitCandidate :=
     Zero violations for rising or plateauing onsets (Nat subtraction).
     Captures the regression finding (est. = 0.8, p < 0.001) that
     rising sonority predicts C1ǎC2 presence ([afkir-zellou-2025]
-    Figure 21). -/
-def sonoPeak : Constraint.Weighted TarifitCandidate :=
-  { con := fun c => match c.surface with
-      | .intrusive => c.c1.parkerSonority - c.c2.parkerSonority
-      | _ => 0
-    weight := 2 }
+    Figure 21). (Weight 2 in `tarifitW`.) -/
+def sonoPeak : Constraint TarifitCandidate :=
+  fun c => match c.surface with
+    | .intrusive => c.c1.parkerSonority - c.c2.parkerSonority
+    | _ => 0
 
 /-- *COMPLEX-ONSET (markedness): penalizes complex onsets with rising
     sonority in the faithful parse. The penalty is proportional to the
     sonority rise (c2.son - c1.son), modeling the pressure to break up
     clusters where C2 is much more sonorous than C1.
-    Zero violations for falling or plateauing onsets (Nat subtraction). -/
-def complexOnset : Constraint.Weighted TarifitCandidate :=
-  { con := fun c => match c.surface with
-      | .faithful => c.c2.parkerSonority - c.c1.parkerSonority
-      | _ => 0
-    weight := 1 }
+    Zero violations for falling or plateauing onsets (Nat subtraction).
+    (Weight 1 in `tarifitW`.) -/
+def complexOnset : Constraint TarifitCandidate :=
+  fun c => match c.surface with
+    | .faithful => c.c2.parkerSonority - c.c1.parkerSonority
+    | _ => 0
 
 /-- The MaxEnt constraint set for Tarifit schwa variation. -/
-def tarifitConstraints : List (Constraint.Weighted TarifitCandidate) :=
-  [maxV, sonoCC, depV, sonoPeak, complexOnset]
+def tarifitCon : CON TarifitCandidate 5 :=
+  ![maxV, sonoCC, depV, sonoPeak, complexOnset]
+
+/-- The constraint weights: MAX-V 3, *SONO-CC 1, DEP-V 2, *SONO-PEAK 2,
+    *COMPLEX-ONSET 1 — chosen to capture the paper's rising/falling/plateauing
+    onset findings and gradient vowelless accessibility. -/
+def tarifitW : Fin 5 → ℝ :=
+  ![3, 1, 2, 2, 1]
 
 -- ============================================================================
 -- § 3: Rising Onset — Intrusive Schwa Preferred
@@ -152,51 +156,39 @@ def tarifitConstraints : List (Constraint.Weighted TarifitCandidate) :=
 /-- /qrəβ/ (VLS–liquid, rise=5): intrusive > faithful > vowelless.
     Table 9 "almost exclusively" C1ǎC2 ([afkir-zellou-2025]). -/
 theorem qreb_intrusive_gt_faithful :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_qreb .intrusive) (mkCandidate w_qreb .faithful) := by
-  unfold harmonyDominates
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_qreb,
-    SonorityClass.parkerSonority, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority]
   norm_num
 
 theorem qreb_faithful_gt_vowelless :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_qreb .faithful) (mkCandidate w_qreb .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority]
   norm_num
 
 /-- /qməʕ/ (VLS–nasal, rise=4): intrusive > faithful.
     Table 9 "variably" C1ǎC2 ([afkir-zellou-2025]). -/
 theorem qmes_intrusive_gt_faithful :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_qmes .intrusive) (mkCandidate w_qmes .faithful) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_qmes, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qmes, SonorityClass.parkerSonority]
   norm_num
 
 /-- /srəm/ (VLF–liquid, rise=3): intrusive > faithful.
     Table 9 "almost exclusively" C1ǎC2 ([afkir-zellou-2025]). -/
 theorem srem_intrusive_gt_faithful :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_srem .intrusive) (mkCandidate w_srem .faithful) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_srem, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_srem, SonorityClass.parkerSonority]
   norm_num
 
 -- ============================================================================
@@ -207,39 +199,30 @@ theorem srem_intrusive_gt_faithful :
     Table 9 "never" C1ǎC2, Table 7 "often vowelless"
     ([afkir-zellou-2025]). -/
 theorem ntef_faithful_gt_vowelless :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_ntef .faithful) (mkCandidate w_ntef .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority]
   norm_num
 
 theorem ntef_vowelless_gt_intrusive :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_ntef .vowelless) (mkCandidate w_ntef .intrusive) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority]
   norm_num
 
 /-- /nqəβ/ (nasal–VLS, fall=4): faithful > vowelless.
     Table 9 "variably" C1ǎC2 — one of the few exceptions to the
     falling=never pattern ([afkir-zellou-2025] Table 9 note). -/
 theorem nqeb_faithful_gt_vowelless :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_nqeb .faithful) (mkCandidate w_nqeb .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_nqeb, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_nqeb, SonorityClass.parkerSonority]
   norm_num
 
 /-- /ħkəm/ (VLF–VLS, fall=2): faithful > intrusive > vowelless (model).
@@ -248,25 +231,19 @@ theorem nqeb_faithful_gt_vowelless :
     as winner but overpenalizes vowelless via *SONO-CC (C3=nasal, son=5);
     empirically vowelless > intrusive, noted as idiosyncratic in Table 7. -/
 theorem hkem_faithful_gt_intrusive :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_hkem .faithful) (mkCandidate w_hkem .intrusive) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_hkem, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_hkem, SonorityClass.parkerSonority]
   norm_num
 
 theorem hkem_faithful_gt_vowelless :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_hkem .faithful) (mkCandidate w_hkem .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_hkem, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_hkem, SonorityClass.parkerSonority]
   norm_num
 
 -- ============================================================================
@@ -279,50 +256,40 @@ theorem hkem_faithful_gt_vowelless :
     intrusive but overpenalizes vowelless; empirically this is one of the
     most frequently vowelless words. -/
 theorem skhef_faithful_gt_intrusive :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_skhef .faithful) (mkCandidate w_skhef .intrusive) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_skhef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_skhef,
+    SonorityClass.parkerSonority]
   norm_num
 
 theorem skhef_faithful_gt_vowelless :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_skhef .faithful) (mkCandidate w_skhef .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_skhef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_skhef,
+    SonorityClass.parkerSonority]
   norm_num
 
 /-- /sfən/ (VLF–VLF, plateau): faithful > intrusive > vowelless.
     Table 9 "never" C1ǎC2 ([afkir-zellou-2025]).
     Unlike /sχəf/, /sfən/ is not listed as frequently vowelless. -/
 theorem sfen_faithful_gt_intrusive :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_sfen .faithful) (mkCandidate w_sfen .intrusive) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_sfen, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_sfen, SonorityClass.parkerSonority]
   norm_num
 
 theorem sfen_faithful_gt_vowelless :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_sfen .faithful) (mkCandidate w_sfen .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_sfen, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_sfen, SonorityClass.parkerSonority]
   norm_num
 
 -- ============================================================================
@@ -337,41 +304,35 @@ theorem sfen_faithful_gt_vowelless :
     that lower C2/C3 sonority predicts more vowelless production
     ([afkir-zellou-2025] Figure 19). -/
 theorem vowelless_more_accessible_low_sonority :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_ntef .vowelless) (mkCandidate w_qreb .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_qreb, w_ntef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qreb, w_ntef,
+    SonorityClass.parkerSonority]
   norm_num
 
 /-- Among vowelless candidates, all-obstruent clusters have the highest
     harmony (least penalized). Consistent with Table 7: /sχəf/ and /skəf/
     are the most frequently vowelless words ([afkir-zellou-2025]). -/
 theorem vowelless_obstruent_gt_sonorant :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_skhef .vowelless) (mkCandidate w_srem .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_srem, w_skhef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_srem, w_skhef,
+    SonorityClass.parkerSonority]
   norm_num
 
 /-- /sχəf/ (all VLF) has higher vowelless harmony than /sfən/ (VLF–VLF–N),
     because C3=nasal(5) is more sonorous than C3=VLF(3). -/
 theorem vowelless_all_obstruent_gt_mixed :
-    harmonyDominates tarifitConstraints
+    harmonyDominates tarifitCon tarifitW
       (mkCandidate w_skhef .vowelless) (mkCandidate w_sfen .vowelless) := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_skhef, w_sfen, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
+    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_skhef, w_sfen,
+    SonorityClass.parkerSonority]
   norm_num
 
 -- ============================================================================
@@ -383,59 +344,44 @@ theorem vowelless_all_obstruent_gt_mixed :
     for falling/plateauing), and faithful violates no faithfulness
     constraint. -/
 theorem falling_faithful_zero :
-    harmonyScore tarifitConstraints (mkCandidate w_ntef .faithful) = 0 := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+    harmonyScore tarifitCon tarifitW (mkCandidate w_ntef .faithful) = 0 := by
+  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
+    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
+    Constraint.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority]
   norm_num
 
 theorem plateauing_faithful_zero :
-    harmonyScore tarifitConstraints (mkCandidate w_skhef .faithful) = 0 := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_skhef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+    harmonyScore tarifitCon tarifitW (mkCandidate w_skhef .faithful) = 0 := by
+  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
+    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
+    Constraint.binary, mkCandidate, w_skhef, SonorityClass.parkerSonority]
   norm_num
 
 /-- Rising onset intrusive: harmony = -2 (only DEP-V violation).
     *SONO-PEAK contributes 0 for rising onsets (Nat subtraction). -/
 theorem rising_intrusive_base_cost :
-    harmonyScore tarifitConstraints (mkCandidate w_qreb .intrusive) = -2 := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+    harmonyScore tarifitCon tarifitW (mkCandidate w_qreb .intrusive) = -2 := by
+  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
+    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
+    Constraint.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority]
   norm_num
 
 /-- Falling onset intrusive: additional *SONO-PEAK penalty.
     /ntəf/ intrusive: DEP-V (-2) + *SONO-PEAK 4 × (-2) = -10. -/
 theorem falling_intrusive_penalized :
-    harmonyScore tarifitConstraints (mkCandidate w_ntef .intrusive) = -10 := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+    harmonyScore tarifitCon tarifitW (mkCandidate w_ntef .intrusive) = -10 := by
+  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
+    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
+    Constraint.binary, mkCandidate, w_ntef, SonorityClass.parkerSonority]
   norm_num
 
 /-- Rising onset faithful: *COMPLEX-ONSET penalty proportional to rise.
     /qrəβ/ faithful: *COMPLEX-ONSET (6-1=5) × (-1) = -5. -/
 theorem rising_faithful_penalized :
-    harmonyScore tarifitConstraints (mkCandidate w_qreb .faithful) = -5 := by
-  try unfold harmonyDominates
-  simp only [harmonyScore_eq_neg_sum]
-  simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false,
-    Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+    harmonyScore tarifitCon tarifitW (mkCandidate w_qreb .faithful) = -5 := by
+  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
+    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
+    Constraint.binary, mkCandidate, w_qreb, SonorityClass.parkerSonority]
   norm_num
 
 -- ============================================================================
@@ -452,20 +398,20 @@ theorem rising_faithful_penalized :
 /-- Intrusive candidates never violate MAX-V, *SONO-CC, or *COMPLEX-ONSET.
     Their harmony depends only on DEP-V and *SONO-PEAK. -/
 theorem intrusive_disjoint (c : TarifitCandidate) (h : c.surface = .intrusive) :
-    maxV.con c = 0 ∧ sonoCC.con c = 0 ∧ complexOnset.con c = 0 := by
+    maxV c = 0 ∧ sonoCC c = 0 ∧ complexOnset c = 0 := by
   rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl⟩
 
 /-- Vowelless candidates never violate DEP-V, *SONO-PEAK, or *COMPLEX-ONSET.
     Their harmony depends only on MAX-V and *SONO-CC. -/
 theorem vowelless_disjoint (c : TarifitCandidate) (h : c.surface = .vowelless) :
-    depV.con c = 0 ∧ sonoPeak.con c = 0 ∧ complexOnset.con c = 0 := by
+    depV c = 0 ∧ sonoPeak c = 0 ∧ complexOnset c = 0 := by
   rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl⟩
 
 /-- Faithful candidates never violate MAX-V, DEP-V, *SONO-CC, or *SONO-PEAK.
     Their harmony depends only on *COMPLEX-ONSET. -/
 theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
-    maxV.con c = 0 ∧ depV.con c = 0 ∧ sonoCC.con c = 0 ∧
-    sonoPeak.con c = 0 := by
+    maxV c = 0 ∧ depV c = 0 ∧ sonoCC c = 0 ∧
+    sonoPeak c = 0 := by
   rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -492,7 +438,7 @@ instance : Fintype SurfaceForm where
     decoded by softmax at temperature 1. -/
 noncomputable def tarifitSystem (w : TriconWord) : ConstraintSystem SurfaceForm ℝ where
   candidates := Finset.univ
-  score := fun sf => harmonyScore tarifitConstraints (mkCandidate w sf)
+  score := fun sf => harmonyScore tarifitCon tarifitW (mkCandidate w sf)
   decoder := softmaxDecoder 1
 
 /-- Rising onset /qrəβ/: intrusive schwa (harmony −2) is softmax-preferred
@@ -513,14 +459,12 @@ theorem tarifitSystem_ntef_faithful_gt_intrusive :
     (tarifitSystem w_ntef).predict SurfaceForm.faithful :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (show harmonyDominates tarifitConstraints (mkCandidate w_ntef SurfaceForm.faithful)
+    (show harmonyDominates tarifitCon tarifitW (mkCandidate w_ntef SurfaceForm.faithful)
         (mkCandidate w_ntef SurfaceForm.intrusive) by
-      unfold harmonyDominates
-      simp only [harmonyScore_eq_neg_sum]
-      simp +decide only [tarifitConstraints, maxV, sonoCC, depV, sonoPeak, complexOnset,
-        Constraint.binary, Constraint.Weighted.binary, mkCandidate, w_ntef,
-        SonorityClass.parkerSonority, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-        ite_true, ite_false, Nat.reduceAdd, Nat.reduceSub, Nat.reduceMul]
+      simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ,
+        Fin.sum_univ_zero, Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW,
+        maxV, sonoCC, depV, sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_ntef,
+        SonorityClass.parkerSonority]
       norm_num)
 
 /-- The softmax decoder is a probability decoder, so the per-word system's

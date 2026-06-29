@@ -1,3 +1,4 @@
+import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Basic
@@ -29,9 +30,11 @@ distinct surface forms.
 
 ## Formalization
 
-We instantiate `MaxEntGrammar` with the Persian hiatus domain from
-`Farsi.Phonology`, define the classical and systemic constraints,
-and verify the key prediction: homophony avoidance breaks the symmetry.
+We instantiate the MaxEnt machinery — a classical constraint vector
+`classicalCon` with weight vector `classicalW`, plus the systemic
+\*HOMOPHONY constraint — over the Persian hiatus domain from
+`Farsi.Phonology`, and verify the key prediction: homophony avoidance
+breaks the symmetry.
 
 ## Constraints
 
@@ -65,32 +68,37 @@ instance : Fintype HiatusOutput where
 -- ============================================================================
 
 /-- MAX: penalizes deletion. 1 violation for deleteV1 or deleteV2, 0 otherwise. -/
-def maxConstraint : Constraint.Weighted HiatusCandidate :=
-  Constraint.Weighted.binary (fun (_, o) => o == .deleteV1 || o == .deleteV2) 2
+def maxConstraint : Constraint HiatusCandidate :=
+  Constraint.binary (fun (_, o) => o == .deleteV1 || o == .deleteV2)
 
 /-- DEP: penalizes epenthesis. 1 violation for epenthesis, 0 otherwise. -/
-def depConstraint : Constraint.Weighted HiatusCandidate :=
-  Constraint.Weighted.binary (fun (_, o) => o == .epenthesis) 1
+def depConstraint : Constraint HiatusCandidate :=
+  Constraint.binary (fun (_, o) => o == .epenthesis)
 
 /-- \*VV: markedness constraint penalizing vowel hiatus.
     1 violation for faithful (hiatus preserved), 0 for all repairs. -/
-def starVV : Constraint.Weighted HiatusCandidate :=
-  Constraint.Weighted.binary (fun (_, o) => o == .faithful) 3
+def starVV : Constraint HiatusCandidate :=
+  Constraint.binary (fun (_, o) => o == .faithful)
 
 /-- IDENT: penalizes coalescence (feature change).
     1 violation for coalescence, 0 otherwise. -/
-def identConstraint : Constraint.Weighted HiatusCandidate :=
-  Constraint.Weighted.binary (fun (_, o) => o == .coalescence) 2
+def identConstraint : Constraint HiatusCandidate :=
+  Constraint.binary (fun (_, o) => o == .coalescence)
 
-/-- The classical constraint set for Persian hiatus.
+/-- The classical constraint set for Persian hiatus, as a `CON` (constraint
+    vector). Index order: 0 = MAX, 1 = DEP, 2 = \*VV, 3 = IDENT. -/
+def classicalCon : CON HiatusCandidate 4 :=
+  ![maxConstraint, depConstraint, starVV, identConstraint]
+
+/-- MaxEnt weights for `classicalCon` (MAX = 2, DEP = 1, \*VV = 3, IDENT = 2).
 
     **Note**: weights are illustrative (chosen to make epenthesis the
     classical winner), not fitted to Storme's experimental data.
     The qualitative predictions (symmetry, symmetry-breaking) hold
     for any positive weights since they depend on constraint structure,
     not specific weight values. -/
-def classicalConstraints : List (Constraint.Weighted HiatusCandidate) :=
-  [maxConstraint, depConstraint, starVV, identConstraint]
+def classicalW : Fin 4 → ℝ :=
+  ![2, 1, 3, 2]
 
 -- ============================================================================
 -- § 2: Classical Harmony Scores
@@ -100,41 +108,44 @@ def classicalConstraints : List (Constraint.Weighted HiatusCandidate) :=
     H(ae.ah, deleteV1) = H(ah.ae, deleteV1) under classical constraints alone,
     because classical constraints only look at output structure. -/
 theorem classical_symmetry_deleteV1 :
-    harmonyScore classicalConstraints (.ae_ah, .deleteV1) =
-    harmonyScore classicalConstraints (.ah_ae, .deleteV1) := rfl
+    harmonyScore classicalCon classicalW (.ae_ah, .deleteV1) =
+    harmonyScore classicalCon classicalW (.ah_ae, .deleteV1) := rfl
 
 theorem classical_symmetry_deleteV2 :
-    harmonyScore classicalConstraints (.ae_ah, .deleteV2) =
-    harmonyScore classicalConstraints (.ah_ae, .deleteV2) := rfl
+    harmonyScore classicalCon classicalW (.ae_ah, .deleteV2) =
+    harmonyScore classicalCon classicalW (.ah_ae, .deleteV2) := rfl
 
 /-- The classical grammar ranks the repairs epenthesis ≻ {deletion, coalescence}
     ≻ faithful (weights chosen so epenthesis is the classical winner). The
     harmony *magnitudes* are weight artifacts; the *ranking* is the prediction. -/
 theorem epenthesis_beats_deletion :
-    harmonyScore classicalConstraints (.ae_ah, .deleteV1) <
-    harmonyScore classicalConstraints (.ae_ah, .epenthesis) := by
+    harmonyScore classicalCon classicalW (.ae_ah, .deleteV1) <
+    harmonyScore classicalCon classicalW (.ae_ah, .epenthesis) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
-    identConstraint, Constraint.Weighted.binary, Constraint.binary,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp +decide only [classicalCon, classicalW, maxConstraint, depConstraint, starVV,
+    identConstraint, Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three,
+    Matrix.tail_cons]
   norm_num
 
 theorem coalescence_beats_faithful :
-    harmonyScore classicalConstraints (.ae_ah, .faithful) <
-    harmonyScore classicalConstraints (.ae_ah, .coalescence) := by
+    harmonyScore classicalCon classicalW (.ae_ah, .faithful) <
+    harmonyScore classicalCon classicalW (.ae_ah, .coalescence) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
-    identConstraint, Constraint.Weighted.binary, Constraint.binary,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp +decide only [classicalCon, classicalW, maxConstraint, depConstraint, starVV,
+    identConstraint, Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three,
+    Matrix.tail_cons]
   norm_num
 
 theorem epenthesis_beats_faithful :
-    harmonyScore classicalConstraints (.ae_ah, .faithful) <
-    harmonyScore classicalConstraints (.ae_ah, .epenthesis) := by
+    harmonyScore classicalCon classicalW (.ae_ah, .faithful) <
+    harmonyScore classicalCon classicalW (.ae_ah, .epenthesis) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [classicalConstraints, maxConstraint, depConstraint, starVV,
-    identConstraint, Constraint.Weighted.binary, Constraint.binary,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp +decide only [classicalCon, classicalW, maxConstraint, depConstraint, starVV,
+    identConstraint, Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three,
+    Matrix.tail_cons]
   norm_num
 
 -- ============================================================================
@@ -160,7 +171,7 @@ def starHomophony : SystemicConstraint 4 HiatusOutput :=
 /-- Joint harmony score for a complete output tuple, combining classical
     per-mapping scores with the systemic \*HOMOPHONY penalty. -/
 noncomputable def persianJointScore (f : Fin 4 → HiatusOutput) : ℝ :=
-  jointHarmonyScore inputsIndexed classicalConstraints [starHomophony] f
+  jointHarmonyScore inputsIndexed classicalCon classicalW [starHomophony] f
 
 -- ============================================================================
 -- § 5: Symmetry-Breaking Prediction
@@ -215,8 +226,8 @@ theorem diverse_higher_joint_score :
     at the individual mapping level. (Restated from §2 for contrast with
     the non-separability result below.) -/
 theorem classical_cannot_distinguish :
-    harmonyScore classicalConstraints (.ae_ah, .deleteV1) =
-    harmonyScore classicalConstraints (.ah_ae, .deleteV1) :=
+    harmonyScore classicalCon classicalW (.ae_ah, .deleteV1) =
+    harmonyScore classicalCon classicalW (.ah_ae, .deleteV1) :=
   classical_symmetry_deleteV1
 
 /-- Under \*HOMOPHONY, the joint distribution over all four mappings is
@@ -231,8 +242,8 @@ theorem classical_cannot_distinguish :
 theorem joint_not_separable :
     ∃ (f g : Fin 4 → HiatusOutput),
       f ⟨1, by omega⟩ = g ⟨1, by omega⟩ ∧
-      persianJointScore f - harmonyScore classicalConstraints (inputsIndexed ⟨1, by omega⟩, f ⟨1, by omega⟩) ≠
-      persianJointScore g - harmonyScore classicalConstraints (inputsIndexed ⟨1, by omega⟩, g ⟨1, by omega⟩) := by
+      persianJointScore f - harmonyScore classicalCon classicalW (inputsIndexed ⟨1, by omega⟩, f ⟨1, by omega⟩) ≠
+      persianJointScore g - harmonyScore classicalCon classicalW (inputsIndexed ⟨1, by omega⟩, g ⟨1, by omega⟩) := by
   refine ⟨diverseTuple, homophonousTuple, ?_, ?_⟩
   · rfl
   · -- TODO: needs a `jointHarmonyScore_eq_cast` bridge (∑↑classical + ↑systemic =
@@ -256,11 +267,11 @@ joint factorises and each marginal equals the per-input
 `predict`. -/
 
 /-- The classical MaxEnt distribution at input `i`, packaged as a generic
-    `ConstraintSystem`. Score = `harmonyScore classicalConstraints (i, ·)`,
+    `ConstraintSystem`. Score = `harmonyScore classicalCon classicalW (i, ·)`,
     decoder = `softmaxDecoder 1`. -/
 noncomputable def stormeSystem (i : HiatusInput) : ConstraintSystem HiatusOutput ℝ where
   candidates := Finset.univ
-  score := fun o => harmonyScore classicalConstraints (i, o)
+  score := fun o => harmonyScore classicalCon classicalW (i, o)
   decoder := softmaxDecoder 1
 
 /-- For input /æ.ɑ/, the system predicts a higher MaxEnt probability for

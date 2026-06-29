@@ -93,7 +93,7 @@ structure EmbeddedSIDatum where
 def EmbeddedSIDatum.globalSIRate (d : EmbeddedSIDatum) : Nat := d.vt2016.siRateExp2
 
 /-- Semantic distance from [van-tiel-geurts-2016] Exp 4 (1–7 Likert). -/
-def EmbeddedSIDatum.semanticDistance (d : EmbeddedSIDatum) : Float :=
+def EmbeddedSIDatum.semanticDistance (d : EmbeddedSIDatum) : ℚ :=
   d.vt2016.semanticDistance
 
 /-- Boundedness from [van-tiel-geurts-2016] (author-annotated). -/

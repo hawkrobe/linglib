@@ -3,6 +3,8 @@ import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Probability.Choice.GumbelLuce
+import Linglib.Core.Optimization.System
+import Linglib.Core.Optimization.Decoder
 
 /-!
 # [flemming-2021]: Comparing MaxEnt and Noisy Harmonic Grammar
@@ -67,10 +69,10 @@ open Core.Optimization Constraints HarmonicGrammar Core Real
     candidate harmonies, and by McFadden's theorem
     (`mcfaddenIntegral_eq_softmax`), the resulting choice probability is
     softmax — i.e., the standard MaxEnt formula. -/
-theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
-    (constraints : List (Constraint.Weighted C)) (c : C) :
-    mcfaddenIntegral (harmonyScore constraints) 1 c =
-    softmax (harmonyScore constraints) c := by
+theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
+    (con : CON C n) (w : Fin n → ℝ) (c : C) :
+    mcfaddenIntegral (harmonyScore con w) 1 c =
+    softmax (harmonyScore con w) c := by
   rw [mcfaddenIntegral_eq_softmax]
   simp only [div_one, one_smul]
 
@@ -80,22 +82,22 @@ theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
 
 /-- Flemming's eq (10): `logit(P_a) = h_a − h_b`.
     The MaxEnt logit-harmony identity. Alias for `maxent_logit_harmony`. -/
-theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C]
-    (constraints : List (Constraint.Weighted C)) (a b : C) :
-    log (softmax (harmonyScore constraints) a /
-         softmax (harmonyScore constraints) b) =
-    harmonyScore constraints a - harmonyScore constraints b :=
-  maxent_logit_harmony constraints a b
+theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
+    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    log (softmax (harmonyScore con w) a /
+         softmax (harmonyScore con w) b) =
+    harmonyScore con w a - harmonyScore con w b :=
+  maxent_logit_harmony con w a b
 
 /-- MaxEnt ratio independence (IIA): `P(a)/P(b) = exp(H(a) − H(b))`.
     The probability ratio depends only on the candidates' own scores,
     not on any other candidates. Corollary of `softmax_odds` with α = 1. -/
-theorem iia {C : Type} [Fintype C] [Nonempty C]
-    (constraints : List (Constraint.Weighted C)) (a b : C) :
-    softmax (harmonyScore constraints) a /
-    softmax (harmonyScore constraints) b =
-    exp (harmonyScore constraints a - harmonyScore constraints b) :=
-  maxent_iia constraints a b
+theorem iia {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
+    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    softmax (harmonyScore con w) a /
+    softmax (harmonyScore con w) b =
+    exp (harmonyScore con w a - harmonyScore con w b) :=
+  maxent_iia con w a b
 
 /-- **MaxEnt binary logistic** ([flemming-2021] eq (9)/(11)):
     with two candidates, MaxEnt probability is the logistic function
@@ -104,11 +106,11 @@ theorem iia {C : Type} [Fintype C] [Nonempty C]
     `P(0) = 1 / (1 + e^{-(H(0) − H(1))})` = `Real.sigmoid(H(0) − H(1))`
 
     Corollary of `softmax_binary` with α = 1. -/
-theorem eq9_maxent_binary_logistic
-    (constraints : List (Constraint.Weighted (Fin 2))) :
-    softmax (harmonyScore constraints) 0 =
-    Real.sigmoid (harmonyScore constraints 0 - harmonyScore constraints 1) := by
-  have h := softmax_binary (harmonyScore constraints) 1
+theorem eq9_maxent_binary_logistic {n : ℕ}
+    (con : CON (Fin 2) n) (w : Fin n → ℝ) :
+    softmax (harmonyScore con w) 0 =
+    Real.sigmoid (harmonyScore con w 0 - harmonyScore con w 1) := by
+  have h := softmax_binary (harmonyScore con w) 1
   rw [one_smul, one_mul] at h
   rw [h]
 
@@ -225,7 +227,7 @@ theorem clash_increases_schwa (pair : Fin 4) :
     This is the study-local analogue of `violationDiffSqSumQ` from
     `NoisyHG.lean`: both compute `Σⱼ (cⱼ(ə) − cⱼ(∅))²`, but `schwaSqSum`
     operates on the pre-computed difference matrix `schwaDiff` (Table (35))
-    rather than a `Constraint.Weighted` list. -/
+    rather than a `CON` constraint set. -/
 def schwaSqSum (ctx : Fin 8) : Nat :=
   (List.finRange 6).foldl (fun acc j => acc + (schwaDiff ctx j).natAbs ^ 2) 0
 
@@ -314,22 +316,27 @@ private inductive Cand3 | a | b | c deriving DecidableEq, Repr, Fintype
 
 private instance : Nonempty Cand3 := ⟨.a⟩
 
-private def table45C : List (Constraint.Weighted Cand3) :=
-  [{ con := fun | .a => 1 | _ => 0, weight := 15 },
-   { con := fun | .b => 2 | .c => 1 | _ => 0, weight := 8 },
-   { con := fun | .c => 1 | _ => 0, weight := 8 }]
+private def tableCon : CON Cand3 3 :=
+  ![fun | .a => 1 | _ => 0,
+    fun | .b => 2 | .c => 1 | _ => 0,
+    fun | .c => 1 | _ => 0]
+
+private noncomputable def tableW : Fin 3 → ℝ := ![15, 8, 8]
 
 /-- Candidates b and c have equal harmony: H(b) = H(c) = −16. -/
 theorem table45_equal_harmony :
-    harmonyScore table45C .b = harmonyScore table45C .c := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
-  norm_num [table45C, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+    harmonyScore tableCon tableW .b = harmonyScore tableCon tableW .c := by
+  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, Fin.sum_univ_three,
+    Fin.sum_univ_three]
+  norm_num [tableCon, tableW, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
 
 /-- NHG noise variances differ: σ²_d(b−a) = 5 ≠ 3 = σ²_d(c−a).
     Equal-harmony candidates can have different NHG probabilities. -/
 theorem table45_nhg_variance_differs :
-    violationDiffSqSumQ table45C .a .b ≠ violationDiffSqSumQ table45C .a .c := by
-  norm_num [violationDiffSqSumQ, table45C, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+    violationDiffSqSumQ tableCon .a .b ≠ violationDiffSqSumQ tableCon .a .c := by
+  norm_num [violationDiffSqSumQ, tableCon, Fin.sum_univ_three, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
 
 /-- In MaxEnt, equal harmony implies equal probability: since
     `softmax(s, α, b) = exp(α·s(b)) / Σ exp(α·s(i))`, candidates with
@@ -339,8 +346,8 @@ theorem table45_nhg_variance_differs :
     P(b) = P(c) (both have H = −16), while NHG assigns P(b) ≠ P(c)
     because their noise variances differ (`table45_nhg_variance_differs`). -/
 theorem table45_maxent_equal_prob :
-    softmax (harmonyScore table45C) Cand3.b =
-    softmax (harmonyScore table45C) Cand3.c := by
+    softmax (harmonyScore tableCon tableW) Cand3.b =
+    softmax (harmonyScore tableCon tableW) Cand3.c := by
   simp only [softmax]
   rw [table45_equal_harmony]
 
@@ -351,16 +358,18 @@ theorem table45_maxent_equal_prob :
     reference, giving 3σ² — a different but equally valid demonstration
     that the covariance matrix is non-diagonal. -/
 theorem table45_nhg_covariance_value :
-    nhgCovarianceQ table45C .a .b .c = 3 := by
-  norm_num [nhgCovarianceQ, table45C, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+    nhgCovarianceQ tableCon .a .b .c = 3 := by
+  norm_num [nhgCovarianceQ, tableCon, Fin.sum_univ_three, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
 
 /-- NHG noise covariance is non-zero: Cov(ε_b−ε_a, ε_c−ε_a) ≠ 0.
     The multivariate normal over score differences has a non-diagonal
     covariance matrix, so binary comparisons don't determine the joint
     distribution — NHG violates IIA ([flemming-2021] §9). -/
 theorem table45_nhg_covariance_nonzero :
-    nhgCovarianceQ table45C .a .b .c ≠ 0 := by
-  norm_num [nhgCovarianceQ, table45C, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+    nhgCovarianceQ tableCon .a .b .c ≠ 0 := by
+  norm_num [nhgCovarianceQ, tableCon, Fin.sum_univ_three, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
 
 -- ============================================================================
 -- § 8: Square Instantiation — French Schwa × Separability
@@ -442,9 +451,12 @@ b and c despite equal harmony (`table45_nhg_variance_differs`,
 different `predict`. -/
 
 /-- Flemming's table-(45) MaxEnt grammar as a generic
-    `ConstraintSystem` over `Cand3`. -/
-private noncomputable def flemmingSystem : ConstraintSystem Cand3 ℝ :=
-  maxEntSystem Finset.univ table45C
+    `ConstraintSystem` over `Cand3`, decoded by softmax at temperature 1
+    (built inline). -/
+private noncomputable def flemmingSystem : ConstraintSystem Cand3 ℝ where
+  candidates := Finset.univ
+  score := harmonyScore tableCon tableW
+  decoder := softmaxDecoder 1
 
 /-- The MaxEnt system assigns equal probability to candidates b and c,
     matching `table45_maxent_equal_prob` but stated through the generic
