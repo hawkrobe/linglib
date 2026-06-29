@@ -234,9 +234,9 @@ def ofSyllables (σs : List Syllable) : Yield := σs.map Syllable.weight
 def moraCount (y : Yield) : Nat := y.sum
 
 /-- The minimal-word *size* constraint ([mccarthy-prince-1993]): at least
-    `minMorae` morae (default 2, the moraic-trochee minimum). The *structural*
-    minimal word — that an ω contains a foot — holds by construction of the recursive
-    `Prosody.Word` (its head projects to a foot: `Word.headFoot` is total). -/
+    `minMorae` morae (default 2, the moraic-trochee minimum) — the moraic *size* floor on a
+    prosodic word. Whether an ω must structurally contain a foot is a separate, non-presupposed
+    matter (footless languages have ω directly over σ, [dolatian-2020]). -/
 abbrev satisfiesMinWord (y : Yield) (minMorae : Nat := 2) : Prop := minMorae ≤ y.moraCount
 
 end Yield

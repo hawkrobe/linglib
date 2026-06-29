@@ -102,4 +102,8 @@ theorem omegaAdjunction_optimum :
 /-- The winning structure is recursive: ω dominates ω. -/
 theorem winner_is_recursive : noRec omegaAdjoined = 1 := by decide
 
+-- The ω-adjoined optimum is a legal recursive prosodic word: an ω over a stray function
+-- word and an embedded ω (the violated No-Recursion is a *violable* constraint, not `IsWord`).
+example : IsWord omegaAdjoined := by decide
+
 end ItoMester2009
