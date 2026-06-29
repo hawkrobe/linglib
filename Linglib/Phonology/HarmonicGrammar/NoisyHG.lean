@@ -46,9 +46,7 @@ open Core Real Constraints
 
 variable {C : Type*} {n : Nat}
 
--- ============================================================================
--- § 1: NHG Noise Variance
--- ============================================================================
+/-! ### NHG Noise Variance -/
 
 /-- Sum of squared violation differences between two candidates.
     This determines the NHG noise variance: σ_d² = σ² · violationDiffSqSum. -/
@@ -68,9 +66,7 @@ def violationDiffSqSumQ (con : CON C n) (a b : C) : ℚ :=
 noncomputable def nhgSigmaD (con : CON C n) (sigma : ℝ) (a b : C) : ℝ :=
   sigma * Real.sqrt (violationDiffSqSum con a b)
 
--- ============================================================================
--- § 2: NHG binary choice (Gaussian random utility model)
--- ============================================================================
+/-! ### NHG binary choice (Gaussian random utility model) -/
 
 /-- **NHG binary choice probability** ([flemming-2021]):
     `P(a ≻ b) = Φ((H(a) − H(b)) / σ_d)`.
@@ -91,9 +87,7 @@ theorem nhg_choiceProb_eq (con : CON C n) (w : Fin n → ℝ) (sigma : ℝ) (a b
                nhgSigmaD con sigma a b) := by
   simp only [nhgChoiceProb, gaussianChoiceProb]
 
--- ============================================================================
--- § 3: Normal MaxEnt
--- ============================================================================
+/-! ### Normal MaxEnt -/
 
 /-- Normal MaxEnt noise standard deviation: σ_d = ε√2 (constant).
 
@@ -124,9 +118,7 @@ theorem normalMaxEnt_choiceProb_eq (con : CON C n) (w : Fin n → ℝ)
                normalMaxEntSigmaD epsilon) := by
   simp only [normalMaxEntChoiceProb, gaussianChoiceProb]
 
--- ============================================================================
--- § 4: MaxEnt Logit-Harmony Identity
--- ============================================================================
+/-! ### MaxEnt Logit-Harmony Identity -/
 
 /-- **Logit uniformity** (MaxEnt diagnostic; [flemming-2021] §5.1):
     for softmax with α = 1, the log-odds between any two alternatives
@@ -172,9 +164,7 @@ theorem maxent_iia [Fintype C] [Nonempty C]
     exp (harmonyScore con w a - harmonyScore con w b) := by
   rw [softmax_odds]
 
--- ============================================================================
--- § 5: Harmony Difference Decomposition
--- ============================================================================
+/-! ### Harmony Difference Decomposition -/
 
 /-- **Harmony difference decomposition**: the harmony score difference
     equals the negated weighted sum of violation differences.
@@ -190,9 +180,7 @@ theorem harmonyScore_diff (con : CON C n) (w : Fin n → ℝ) (a b : C) :
   simp only [mul_sub, Finset.sum_sub_distrib]
   ring
 
--- ============================================================================
--- § 6: Censored NHG ([flemming-2021] §7.3)
--- ============================================================================
+/-! ### Censored NHG ([flemming-2021] §7.3) -/
 
 /-- Censored weight: noise is clamped so weights never go negative.
 
@@ -225,9 +213,7 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
   rw [max_eq_right (le_of_lt h_pos)]
   exact ne_of_lt h_pos
 
--- ============================================================================
--- § 7: Multi-Candidate NHG Covariance
--- ============================================================================
+/-! ### Multi-Candidate NHG Covariance -/
 
 /-- NHG noise covariance between two score differences relative to a
     reference candidate `a`:

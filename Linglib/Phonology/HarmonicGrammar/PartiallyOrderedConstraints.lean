@@ -68,9 +68,7 @@ open Core.Optimization OptimalityTheory
 
 open Finset
 
--- ============================================================================
--- § 1: Auxiliary — Strictly Monotone Bijection on Fin n is the Identity
--- ============================================================================
+/-! ### Auxiliary — Strictly Monotone Bijection on Fin n is the Identity -/
 
 /-- A strictly monotone endo-function on `Fin n` is the identity. Both
     inequalities `id ≤ f` and `f ≤ id` follow from `StrictMono.id_le` (using
@@ -96,9 +94,7 @@ private theorem fin_monotone_bij_eq_id {n : ℕ}
     · exact absurd (hbij.injective h) hab.ne
   exact fin_strictMono_eq_id f hstrict
 
--- ============================================================================
--- § 2: PartialOrderConstraints
--- ============================================================================
+/-! ### PartialOrderConstraints -/
 
 /-- A partial order on `Fin n` constraint indices. The OT case is a total
     order; the POC case allows incomparable pairs (multiple consistent
@@ -380,9 +376,7 @@ Birkhoff correspondence, made concrete and decidable. -/
 
 end PartialOrderConstraints
 
--- ============================================================================
--- § 3: POC Realizability of SystemicProblem
--- ============================================================================
+/-! ### POC Realizability of SystemicProblem -/
 
 namespace SystemicProblem
 
@@ -404,9 +398,7 @@ def IsPOCRealizable (P : SystemicProblem Input Output n) : Prop :=
 
 end SystemicProblem
 
--- ============================================================================
--- § 4: Containments — OT ⊆ POC, POC ⊆ OT (categorical)
--- ============================================================================
+/-! ### Containments — OT ⊆ POC, POC ⊆ OT (categorical) -/
 
 /-- **Trivial direction**: every POC-realized target is OT-realized
     (pick any single consistent extension). -/
@@ -438,9 +430,7 @@ theorem isOTRealizable_iff_isPOCRealizable {Input Output : Type*} {n : ℕ}
   ⟨ot_realizable_imp_poc_realizable P,
    poc_realizable_imp_ot_realizable P⟩
 
--- ============================================================================
--- § 5: Probabilistic POC — pocPredict
--- ============================================================================
+/-! ### Probabilistic POC — pocPredict -/
 
 namespace PartialOrderConstraints
 
@@ -502,9 +492,7 @@ theorem pocPredict_discrete
 
 end PartialOrderConstraints
 
--- ============================================================================
--- § 6: Bridge — PicksAt for binary candidates ↔ head-in-Y on permDList
--- ============================================================================
+/-! ### Bridge — PicksAt for binary candidates ↔ head-in-Y on permDList -/
 
 /-! For binary candidate sets `cands i = {chosen, other}`, `PicksAt σ i chosen`
 reduces to lex domination of `vp i chosen ∘ σ` over `vp i other ∘ σ` (the
@@ -635,9 +623,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
       rw [h_σk_x]
       exact (h_Y_iff x).mp hx_Y
 
--- ============================================================================
--- § 7: Closed-form rate for binary candidates
--- ============================================================================
+/-! ### Closed-form rate for binary candidates -/
 
 variable {Input Output : Type*} [DecidableEq Output] {n : ℕ}
 

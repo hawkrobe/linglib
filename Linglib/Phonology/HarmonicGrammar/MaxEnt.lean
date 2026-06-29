@@ -41,9 +41,7 @@ namespace HarmonicGrammar
 
 open Constraints Core
 
--- ============================================================================
--- § 1: Classical MaxEnt
--- ============================================================================
+/-! ### Classical MaxEnt -/
 
 /-! Classical MaxEnt assigns `P(o ∣ i) ∝ exp(-harmonyScore con w (i, o))`. There is
 **no grammar record**: a MaxEnt grammar is a constraint set `con : CON (I × O) n`
@@ -53,9 +51,7 @@ softmax-decoded harmony, via the shared `Core.Optimization.ConstraintSystem`
 (`CON.hgSystem` below). The systemic extension (§2–4) scores output *tuples*
 jointly and so does not factor through the per-mapping `predict`. -/
 
--- ============================================================================
--- § 2: Systemic Constraints
--- ============================================================================
+/-! ### Systemic Constraints -/
 
 /-- A systemic constraint evaluates a *tuple* of outputs — one per input —
     rather than individual input→output pairs.
@@ -88,9 +84,7 @@ def homophonyAvoidance {n : Nat} {O : Type*} [DecidableEq O]
       if i < j && f i == f j then [1] else []
     pairs.length
 
--- ============================================================================
--- § 3: Joint Distribution with Systemic Constraints
--- ============================================================================
+/-! ### Joint Distribution with Systemic Constraints -/
 
 /-- Systemic constraint score for an output tuple.
     This is the coupling component: `Σₖ (-wₖ · Sₖ(f))`. -/
@@ -148,9 +142,7 @@ noncomputable def marginalProb {n m : Nat} {I O : Type*} [Fintype O] [DecidableE
     (i : Fin n) (o : O) : ℝ :=
   (maxEntCoupled inputs classicalCon classicalW systemicConstraints).marginal i o
 
--- ============================================================================
--- § 4: Factorization Theorem
--- ============================================================================
+/-! ### Factorization Theorem -/
 
 /-- When all systemic constraint weights are zero, the systemic score
     is zero for every output tuple. -/
