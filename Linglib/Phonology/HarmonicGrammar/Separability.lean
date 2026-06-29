@@ -61,12 +61,10 @@ namespace HarmonicGrammar
 
 open Core Real Finset Constraints
 
--- ============================================================================
--- § 1: The 2×2 Square of Underlying Forms (§2.4)
--- ============================================================================
+/-! ### The 2×2 Square of Underlying Forms (§2.4) -/
 
 /-- A **square** of four underlying forms indexed by two binary factors
-    (row = top/bottom, column = left/right). This is's
+    (row = top/bottom, column = left/right). This is [magri-2025]'s
     eq. (12): the four forms `x^{TL}, x^{TR}, x^{BL}, x^{BR}` arranged
     so that rows and columns correspond to independent phonological
     dimensions (e.g., prefix identity × stem-initial obstruent quality).
@@ -82,9 +80,7 @@ structure Square (X : Type*) where
   /-- Bottom-right form (e.g., /paŋ+k/). -/
   br : X
 
--- ============================================================================
--- § 2: Constraint Independence (§2.4, Figure 4)
--- ============================================================================
+/-! ### Constraint Independence (§2.4, Figure 4) -/
 
 /-- A constraint `C` is **insensitive to the row dimension** of a square:
     it assigns the same violation count to forms that share a column.
@@ -108,9 +104,7 @@ def ConstraintIndependence {n : ℕ} {X : Type*}
   ∀ k : Fin n,
     InsensitiveToRow (constraints k) sq ∨ InsensitiveToCol (constraints k) sq
 
--- ============================================================================
--- § 3: HZ's Generalization as Constant Logit-Rate Differences (§2.2)
--- ============================================================================
+/-! ### HZ's Generalization as Constant Logit-Rate Differences (§2.2) -/
 
 /-- **HZ's generalization** (eq. 13): the difference between logit rates
     of application for two underlying forms in the same row (or column)
@@ -121,9 +115,7 @@ def ConstraintIndependence {n : ℕ} {X : Type*}
 def ConstantLogitDiff {X : Type*} (LR : X → ℝ) (sq : Square X) : Prop :=
   LR sq.tl - LR sq.tr = LR sq.bl - LR sq.br
 
--- ============================================================================
--- § 4: ME Predicts HZ's Generalization (§3)
--- ============================================================================
+/-! ### ME Predicts HZ's Generalization (§3) -/
 
 /-- **Independence of violation differences**: if a constraint is
     insensitive to a dimension, its violation differences are too.
@@ -167,9 +159,7 @@ theorem me_predicts_hz {n : ℕ} {X : Type*}
   · -- Column-insensitive: Δₖ(tl) = Δₖ(tr), Δₖ(bl) = Δₖ(br)
     simp only [hcol_t, hcol_b, sub_self]
 
--- ============================================================================
--- § 5: Separable Harmonies (§5.1)
--- ============================================================================
+/-! ### Separable Harmonies (§5.1) -/
 
 /-- An *n*-ary harmony function `H` is **separable** if it decomposes
     into a product of powers of unary functions, each attending to a
@@ -201,9 +191,7 @@ theorem SeparableHarmony.eval_zero {n : ℕ} (H : SeparableHarmony n) :
     H.eval (fun _ => 0) = 1 := by
   simp only [SeparableHarmony.eval, H.h_norm, one_rpow, prod_const_one]
 
--- ============================================================================
--- § 6: ME Harmony Is Separable (§5.1, eq. 29)
--- ============================================================================
+/-! ### ME Harmony Is Separable (§5.1, eq. 29) -/
 
 /-- The **ME separable harmony**: each `hₖ(x) = exp(−x)` (the
     exponential-of-opposite function from Figure 5a).
@@ -236,9 +224,7 @@ theorem me_separable_eval {n : ℕ} (w : Fin n → ℝ)
   rw [← sum_neg_distrib]
   congr 1; ext k; ring
 
--- ============================================================================
--- § 7: Constraint Rescaling (§5.3, eq. 33–34)
--- ============================================================================
+/-! ### Constraint Rescaling (§5.3, eq. 33–34) -/
 
 /-- **Constraint rescaling** (eq. 33): given a separable
     harmony with unary functions `hₖ`, the rescaled constraint is
@@ -294,9 +280,7 @@ theorem separable_eq_me_rescaled {n : ℕ} (H : SeparableHarmony n)
   rw [← sum_neg_distrib]
   congr 1; ext k; ring
 
--- ============================================================================
--- § 8: Forward Direction — Separable ⟹ HZ (§5.4)
--- ============================================================================
+/-! ### Forward Direction — Separable ⟹ HZ (§5.4) -/
 
 /-- **Separable harmonies predict HZ** (§5.4):
     for *any* separable harmony `H`, if the rescaled violation differences
@@ -331,9 +315,7 @@ theorem separable_predicts_hz {n : ℕ} {X : Type*}
     neg_sub_neg, ← sum_sub_distrib]
   congr 1; ext k; ring
 
--- ============================================================================
--- § 9: Backward Direction — HZ ⟹ Separable (§5.5, online appendices)
--- ============================================================================
+/-! ### Backward Direction — HZ ⟹ Separable (§5.5, online appendices) -/
 
 -- **HZ implies separability** (main result, §5.5):
 -- if an n-ary harmony function H predicts HZ's generalization for
@@ -347,9 +329,7 @@ theorem separable_predicts_hz {n : ℕ} {X : Type*}
 -- independent constraint sets" as a universal quantification over
 -- constraint sets and squares, which is deferred.
 
--- ============================================================================
--- § 10: Counterexample — Inverse Function (§4.4)
--- ============================================================================
+/-! ### Counterexample — Inverse Function (§4.4) -/
 
 /-- The **inverse function** `h(x) = 1/(1+x)` used in the non-separable
     harmony `H(v) = 1 / (1 + Σ wₖvₖ)` (eq. 27).
@@ -407,9 +387,7 @@ theorem inverse_not_always_hz :
   simp only [inverseFunction]
   norm_num
 
--- ============================================================================
--- § 11: Bridge — MaxEnt harmony ↔ Separable harmony
--- ============================================================================
+/-! ### Bridge — MaxEnt harmony ↔ Separable harmony -/
 
 -- `harmonyScore con w` is natively the negated Fin-indexed weighted-violation
 -- sum (`harmonyScore_eq_neg_sum`), so a MaxEnt grammar `(con, w)` is the
@@ -442,9 +420,7 @@ theorem maxent_logit_as_finsum {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
     -∑ i, w i * ((con i a : ℝ) - (con i b : ℝ)) := by
   rw [maxent_logit_harmony, harmonyScore_diff]
 
--- ============================================================================
--- § 12: Consistent Ordering from Monotone Transforms
--- ============================================================================
+/-! ### Consistent Ordering from Monotone Transforms -/
 
 /-- **Consistent ordering from constant logit-rate differences**: if a score
     function `d` satisfies `ConstantLogitDiff` and `f` is strictly monotone,

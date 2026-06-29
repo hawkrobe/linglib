@@ -29,18 +29,18 @@ two independent dequantization axes:
 ```
 
 - **Vertical axis** (temperature, `α → ∞`): Maslov dequantization of
-  the warped semiring (`Constraint/LogSumExp/Limit.lean`).
+  the warped semiring (`Core/Optimization/Dequantization/LogSumExp/Limit.lean`).
   `lseFinset α cands score → cands.sup' hne score`. The soft
   aggregator (sum-of-exponentials) becomes the hard one (max).
 - **Horizontal axis** (weight separation): exponential separation of
-  HG weights (`Constraint/OTLimit.lean`, `ViolationSemiring.lean`).
+  HG weights (`OTLimit.lean`, `ViolationSemiring.lean`).
   The weight map V → T preserves not just ⊗ but also ⊕, so the
   HG argmax coincides with the OT lex-min.
 
 Going around the lattice diagonally — MaxEnt → OT — is then the
 composition: dequantize the temperature *and* exponentially separate
 the weights. The composite limit theorem is `maxent_ot_limit` in
-`Constraint/OTLimit.lean`.
+`OTLimit.lean`.
 
 ## What this file adds
 
@@ -72,9 +72,7 @@ open Core.Optimization
 open Real Filter Topology Finset
 open Constraints
 
--- ============================================================================
--- § 1: The Soft Aggregator on Harmony Scores
--- ============================================================================
+/-! ### The Soft Aggregator on Harmony Scores -/
 
 /-- The `lseFinset α` aggregator applied to harmony scores converges to
     the OT winner's harmony as `α → ∞`.
@@ -90,7 +88,7 @@ open Constraints
     1. `ot_lex_imp_higher_harmony` (HG–OT agreement under exponentially
        separated weights)
     2. `argmax_winner_iff_lse_max_limit` (the dequantized argmax bridge,
-       § 4 of `Constraint/Semiring.lean`) -/
+       § 4 of `Core/Optimization/Semiring.lean`) -/
 theorem lse_aggregator_tendsto_winner_harmony {C : Type*} [DecidableEq C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (cands : Finset C) (c_opt : C) (hc_opt : c_opt ∈ cands)
