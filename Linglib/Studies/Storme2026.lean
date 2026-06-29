@@ -3,6 +3,7 @@ import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Fragments.Farsi.Phonology
+import Mathlib.Data.Fin.VecNotation
 
 /-!
 # [storme-2026]: Systemic Constraints in MaxEnt Grammars
@@ -162,7 +163,7 @@ def inputsIndexed : Fin 4 → HiatusInput
 /-- \*HOMOPHONY for the Persian hiatus paradigm:
     penalizes output tuples where distinct inputs produce identical outputs. -/
 def starHomophony : SystemicConstraint 4 HiatusOutput :=
-  homophonyAvoidance (w := 1)
+  homophonyAvoidance
 
 -- ============================================================================
 -- § 4: Joint Distribution
@@ -171,7 +172,7 @@ def starHomophony : SystemicConstraint 4 HiatusOutput :=
 /-- Joint harmony score for a complete output tuple, combining classical
     per-mapping scores with the systemic \*HOMOPHONY penalty. -/
 noncomputable def persianJointScore (f : Fin 4 → HiatusOutput) : ℝ :=
-  jointHarmonyScore inputsIndexed classicalCon classicalW [starHomophony] f
+  jointHarmonyScore inputsIndexed classicalCon classicalW ![1] ![starHomophony] f
 
 -- ============================================================================
 -- § 5: Symmetry-Breaking Prediction
@@ -198,15 +199,15 @@ def homophonousTuple : Fin 4 → HiatusOutput
     - homophonousTuple: all 4 positions use deleteV1 → C(4,2) = 6 collisions
     - diverseTuple: 3 positions use deleteV1, 1 uses deleteV2 → 3 collisions -/
 theorem homophony_violation_counts :
-    starHomophony.eval homophonousTuple = 6 ∧
-    starHomophony.eval diverseTuple = 3 := by decide
+    starHomophony homophonousTuple = 6 ∧
+    starHomophony diverseTuple = 3 := by decide
 
 /-- \*HOMOPHONY incurs more violations on the homophonous tuple than
     on the diverse tuple. This is the core mechanism by which systemic
     constraints break symmetry. -/
 theorem homophony_penalizes_uniform :
-    starHomophony.eval homophonousTuple ≥
-    starHomophony.eval diverseTuple := by decide
+    starHomophony homophonousTuple ≥
+    starHomophony diverseTuple := by decide
 
 /-- The diverse tuple has at least as high joint harmony as the
     homophonous tuple, because it incurs fewer \*HOMOPHONY violations
