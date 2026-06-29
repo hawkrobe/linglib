@@ -18,10 +18,8 @@ bundle), with the unspecified archisegment least and natural-class generalizatio
 as meet.
 
 This file collects definitions only — the feature inventory, the segment and its
-valuation/pattern/change API, the natural-class predicates, and the sonority
+valuation/construction/change API, the natural-class predicates, and the sonority
 scales. The theorems about them live in `Phonology/Segmental/Basic.lean`.
-
-[hayes-2009] [chomsky-halle-1968] [clements-1990] [parker-2002]
 -/
 
 namespace Phonology
@@ -65,15 +63,19 @@ inductive Feature where
   | tense            -- tense vowel quality
   deriving DecidableEq, Repr, Fintype
 
+namespace Feature
+
+variable (f : Feature)
+
 /-! ### Feature classification -/
 
 /-- The articulator category of a feature: manner/root, laryngeal, or place. -/
-inductive Feature.Category where
+inductive Category where
   | manner | laryngeal | labial | coronal | dorsal
   deriving DecidableEq, Repr
 
 /-- The articulator category of each distinctive feature. -/
-def Feature.category : Feature → Feature.Category
+def category : Feature → Category
   | .syllabic | .consonantal | .sonorant | .approximant
   | .continuant | .delayedRelease | .nasal | .lateral
   | .strident | .tap | .trill                        => .manner
@@ -83,17 +85,18 @@ def Feature.category : Feature → Feature.Category
   | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
 /-- Is this a laryngeal feature? -/
-abbrev Feature.IsLaryngeal (f : Feature) : Prop := f.category = .laryngeal
+abbrev IsLaryngeal : Prop := f.category = .laryngeal
 
 /-- Is this a dorsal place feature? -/
-abbrev Feature.IsDorsal (f : Feature) : Prop := f.category = .dorsal
+abbrev IsDorsal : Prop := f.category = .dorsal
 
 /-- Is this a place feature (any articulator node)? -/
-abbrev Feature.IsPlace (f : Feature) : Prop :=
-  f.category = .labial ∨ f.category = .coronal ∨ f.category = .dorsal
+abbrev IsPlace : Prop := f.category = .labial ∨ f.category = .coronal ∨ f.category = .dorsal
+
+/-! ### Enumeration -/
 
 /-- All 26 features in declaration order. -/
-def Feature.allFeatures : List Feature :=
+def allFeatures : List Feature :=
   [.syllabic, .consonantal, .sonorant, .approximant,
    .continuant, .delayedRelease, .nasal, .lateral, .strident, .tap, .trill,
    .voice, .spreadGlottis, .constrGlottis,
@@ -101,11 +104,12 @@ def Feature.allFeatures : List Feature :=
    .coronal, .anterior, .distributed,
    .dorsal, .high, .low, .front, .back, .tense]
 
-theorem allFeatures_length : Feature.allFeatures.length = 26 := rfl
+theorem allFeatures_length : allFeatures.length = 26 := rfl
 
-/-- Every `Feature` constructor appears in `allFeatures`. -/
-theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
-  cases f <;> simp [Feature.allFeatures]
+/-- Every feature appears in `allFeatures`. -/
+theorem allFeatures_complete : f ∈ allFeatures := by cases f <;> simp [allFeatures]
+
+end Feature
 
 /-! ### The segment bundle -/
 
@@ -116,20 +120,28 @@ theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
     common to two segments is their meet. -/
 abbrev Segment := Feature → Flat Bool
 
+namespace Segment
+
+variable (s : Segment)
+
+/-! ### Valuation -/
+
 /-- Does feature `f` have value `v`? -/
-def Segment.HasValue (s : Segment) (f : Feature) (v : Bool) : Prop :=
-  s f = some v
+def HasValue (f : Feature) (v : Bool) : Prop := s f = some v
 
-instance (s : Segment) (f : Feature) (v : Bool) :
-    Decidable (Segment.HasValue s f v) :=
-  inferInstanceAs (Decidable (_ = _))
+instance (f : Feature) (v : Bool) : Decidable (s.HasValue f v) := inferInstanceAs (Decidable (_ = _))
 
-/-! ### Pattern matching and feature changes -/
+/-- A segment is **unspecified** for feature `f` iff its value there is `none`. -/
+def Unspecified (f : Feature) : Prop := s f = none
 
-/-- Build a segment from a list of (feature, value) pairs.
-    Unmentioned features are unspecified (`none`), giving natural-class
-    semantics: `ofSpecs [(continuant, false)]` matches all [-cont] segments. -/
-def Segment.ofSpecs (specs : List (Feature × Bool)) : Segment :=
+instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidable (_ = none))
+
+/-! ### Construction -/
+
+/-- Build a segment from a list of (feature, value) pairs. Unmentioned features are
+    unspecified (`none`), giving natural-class semantics: `ofSpecs [(continuant,
+    false)]` matches all [-cont] segments. -/
+def ofSpecs (specs : List (Feature × Bool)) : Segment :=
   fun f => match specs.find? (λ p => p.1 == f) with
     | some (_, v) => some v
     | none => none
@@ -137,107 +149,78 @@ def Segment.ofSpecs (specs : List (Feature × Bool)) : Segment :=
 /-! ### Natural-class predicates
 
 Language-neutral natural-class membership predicates, by the SPE feature
-decompositions standard since [chomsky-halle-1968] and codified in textbook
-form by [hayes-2009]. Pure substrate: they project information already encoded
-in a segment, consumed by per-language Fragment files rather than redefined
-locally. -/
+decompositions standard since [chomsky-halle-1968] and codified in textbook form
+by [hayes-2009]. Pure substrate: they project information already encoded in a
+segment, consumed by per-language Fragment files rather than redefined locally. -/
 
 /-- A segment is a vowel iff it is [+syllabic]. -/
-def Segment.IsVowel (s : Segment) : Prop := s.HasValue .syllabic true
-
-instance (s : Segment) : Decidable s.IsVowel := by
-  unfold Segment.IsVowel; infer_instance
+def IsVowel : Prop := s.HasValue .syllabic true
+instance : Decidable s.IsVowel := by unfold IsVowel; infer_instance
 
 /-- A segment is a consonant iff it is [+consonantal]. -/
-def Segment.IsConsonant (s : Segment) : Prop := s.HasValue .consonantal true
-
-instance (s : Segment) : Decidable s.IsConsonant := by
-  unfold Segment.IsConsonant; infer_instance
+def IsConsonant : Prop := s.HasValue .consonantal true
+instance : Decidable s.IsConsonant := by unfold IsConsonant; infer_instance
 
 /-- A segment is an oral stop iff it is [+cons, -son, -cont]. -/
-def Segment.IsStop (s : Segment) : Prop :=
-  s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧
-    s.HasValue .continuant false
-
-instance (s : Segment) : Decidable s.IsStop := by
-  unfold Segment.IsStop; infer_instance
+def IsStop : Prop :=
+  s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧ s.HasValue .continuant false
+instance : Decidable s.IsStop := by unfold IsStop; infer_instance
 
 /-- A segment is a fricative iff it is [+cons, -son, +cont]. -/
-def Segment.IsFricative (s : Segment) : Prop :=
-  s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧
-    s.HasValue .continuant true
-
-instance (s : Segment) : Decidable s.IsFricative := by
-  unfold Segment.IsFricative; infer_instance
+def IsFricative : Prop :=
+  s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧ s.HasValue .continuant true
+instance : Decidable s.IsFricative := by unfold IsFricative; infer_instance
 
 /-- A segment is a nasal iff it is [+nasal]. -/
-def Segment.IsNasal (s : Segment) : Prop := s.HasValue .nasal true
+def IsNasal : Prop := s.HasValue .nasal true
+instance : Decidable s.IsNasal := by unfold IsNasal; infer_instance
 
-instance (s : Segment) : Decidable s.IsNasal := by
-  unfold Segment.IsNasal; infer_instance
-
-/-- A segment is a liquid iff it is [+cons, +son] and one of
-[+lateral], [+trill], [+tap] — admitting the lateral /l/, the trill /r/,
-and the flap /ɾ/ under a single textbook class. -/
-def Segment.IsLiquid (s : Segment) : Prop :=
+/-- A segment is a liquid iff it is [+cons, +son] and one of [+lateral], [+trill],
+    [+tap] — the lateral /l/, the trill /r/, and the flap /ɾ/ under one class. -/
+def IsLiquid : Prop :=
   s.HasValue .consonantal true ∧ s.HasValue .sonorant true ∧
     (s.HasValue .lateral true ∨ s.HasValue .trill true ∨ s.HasValue .tap true)
-
-instance (s : Segment) : Decidable s.IsLiquid := by
-  unfold Segment.IsLiquid; infer_instance
+instance : Decidable s.IsLiquid := by unfold IsLiquid; infer_instance
 
 /-- A segment is a glide iff it is [-cons, -syllabic, +approximant]. -/
-def Segment.IsGlide (s : Segment) : Prop :=
-  s.HasValue .consonantal false ∧ s.HasValue .syllabic false ∧
-    s.HasValue .approximant true
+def IsGlide : Prop :=
+  s.HasValue .consonantal false ∧ s.HasValue .syllabic false ∧ s.HasValue .approximant true
+instance : Decidable s.IsGlide := by unfold IsGlide; infer_instance
 
-instance (s : Segment) : Decidable s.IsGlide := by
-  unfold Segment.IsGlide; infer_instance
-
-/-! ### Underspecification
+/-! ### Feature changes
 
 The segment-level operations are thin lifts of the shared `Features.Bundle`
 algebra. Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
 [inkelas-orgun-1995], and [steriade-1995]; `fillFromContext` is default-fill,
-preserving existing values, per [kiparsky-1982] [archangeli-1988], while
+preserving existing values per [kiparsky-1982] [archangeli-1988], while
 `setFeature` overrides. The Latin coda /l/ analysis in [sen-2015] is a worked
 example. -/
 
-namespace Segment
+/-- Set feature `f` to value `v`, overriding any existing specification (the
+    `Features.Bundle.set` slot operation). For default-fill semantics that only
+    assign when `f` is currently unspecified, use `fillFromContext`. -/
+def setFeature (f : Feature) (v : Bool) : Segment := Features.Bundle.set f v s
 
-/-- A segment is **unspecified** for feature `f` iff its value there is `none`. -/
-def Unspecified (s : Segment) (f : Feature) : Prop := s f = none
-
-instance (s : Segment) (f : Feature) : Decidable (s.Unspecified f) :=
-  inferInstanceAs (Decidable (_ = none))
-
-/-- Set feature `f` to value `v`, overriding any existing specification
-    (the `Features.Bundle.set` slot operation). For default-fill semantics that
-    only assigns when `f` is currently unspecified, use `fillFromContext`. -/
-def setFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
-  Features.Bundle.set f v s
-
-/-- Categorical feature spreading from context: the target `s`, when
-    unspecified for `f`, takes the `f`-value of `ctx`; already-specified
-    targets and features other than `f` are untouched. When `ctx` is
-    itself unspecified for `f`, the target stays unspecified.
+/-- Categorical feature spreading from context: the target `s`, when unspecified
+    for `f`, takes the `f`-value of `ctx`; already-specified targets and features
+    other than `f` are untouched. When `ctx` is itself unspecified for `f`, the
+    target stays unspecified.
 
     This is a [keating-1988] *context rule*: the target acquires a categorical
-    feature value from its neighbour and that value blocks further
-    interactions. It is **distinct from** her gradient phonetic interpolation
-    (her unspecified /h/ example), in which an unspecified segment stays
-    unspecified and the phonetics builds a continuous trajectory through it;
-    gradient phonetic interpolation is out of scope at this categorical-featural
-    substrate. -/
-def fillFromContext (s : Segment) (f : Feature) (ctx : Segment) : Segment :=
+    feature value from its neighbour and that value blocks further interactions.
+    It is **distinct from** her gradient phonetic interpolation (her unspecified
+    /h/ example), in which an unspecified segment stays unspecified and the
+    phonetics builds a continuous trajectory through it; gradient phonetic
+    interpolation is out of scope at this categorical-featural substrate. -/
+def fillFromContext (f : Feature) (ctx : Segment) : Segment :=
   Features.Bundle.merge s (Function.update (⊥ : Segment) f (ctx f))
 
 end Segment
 
 /-! ### Sonority -/
 
-/-- The abstract sonority hierarchy ([clements-1990]): what the synchronic
-    grammar operates on, ordering segments from least to most sonorous.
+/-- The abstract sonority hierarchy ([clements-1990]): what the synchronic grammar
+    operates on, ordering segments from least to most sonorous.
 
     | Rank | Class     |
     |------|-----------|
@@ -269,8 +252,7 @@ def rank : Sonority → Nat
 instance : LinearOrder Sonority :=
   LinearOrder.lift' rank fun a b h => by cases a <;> cases b <;> simp_all [rank]
 
-/-- The sonority of a segment, read off its features
-    ([hayes-2009], [clements-1990]). -/
+/-- The sonority of a segment, read off its features ([hayes-2009], [clements-1990]). -/
 def ofSegment (s : Segment) : Sonority :=
   if s.HasValue .sonorant false then
     if s.HasValue .continuant true then .fricative else .stop
@@ -288,9 +270,8 @@ def ofSegment (s : Segment) : Sonority :=
 
     Crucially [parker-2002] ranks voiced stops above voiceless fricatives
     (`vds = 3 > vlf = 2`) — his intensity-based default universal, reversible in
-    particular languages. The finer granularity is needed for sonority-
-    conditioned gradient phenomena such as Tarifit intrusive vowels
-    ([afkir-zellou-2025]). -/
+    particular languages. The finer granularity is needed for sonority-conditioned
+    gradient phenomena such as Tarifit intrusive vowels ([afkir-zellou-2025]). -/
 inductive Class where
   | vls    -- voiceless stops: [−son, −cont, −voice]
   | vds    -- voiced stops: [−son, −cont, +voice]
@@ -308,8 +289,8 @@ def Class.parkerRank : Class → Nat
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
-/-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`,
-    but additionally splitting obstruents by [±voice] ([parker-2002]). -/
+/-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`, but
+    additionally splitting obstruents by [±voice] ([parker-2002]). -/
 def Class.ofSegment (s : Segment) : Class :=
   if s.HasValue .sonorant false then
     if s.HasValue .continuant true then
