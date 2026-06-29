@@ -22,7 +22,7 @@ at different nodes in different segments [cavirani-vandenwyngaerd-2026].
 ## Main definitions
 
 * `Element`, `Fundamental`, `Polarity` — the six elements as a 3×2 grid;
-  `Element.Antagonistic` — two distinct elements sharing a fundamental.
+  `Element.AntagonismFree` — at most one element per fundamental.
 * `MR` — a melodic representation, with `dock`/`compose`/`decompose` and the
   refinement order `Refines`.
 * `Segment` — a node-structured `MR`, with `Refines`, `NoAntagonisticHeads`
@@ -104,13 +104,12 @@ instance : DecidablePred IsDark := fun e => inferInstanceAs (Decidable (e.polari
 
 /-! ### Antagonism -/
 
-/-- Two distinct elements sharing a fundamental. -/
-def Antagonistic (e₁ e₂ : Element) : Prop := e₁ ≠ e₂ ∧ e₁.fundamental = e₂.fundamental
+/-- A finset of elements is **antagonism-free** when no two distinct members share a
+    fundamental — i.e. `fundamental` is injective on it (at most one per fundamental). -/
+def AntagonismFree (s : Finset Element) : Prop := Set.InjOn fundamental ↑s
 
-instance (e₁ e₂ : Element) : Decidable (Antagonistic e₁ e₂) := inferInstanceAs (Decidable (_ ∧ _))
-
-theorem Antagonistic.symm {e₁ e₂ : Element} (h : Antagonistic e₁ e₂) : Antagonistic e₂ e₁ :=
-  ⟨h.1.symm, h.2.symm⟩
+instance (s : Finset Element) : Decidable (AntagonismFree s) :=
+  inferInstanceAs (Decidable (Set.InjOn _ _))
 
 end Element
 
@@ -172,9 +171,9 @@ def ops : Finset Element :=
 /-! ### Antagonism -/
 
 /-- No two co-present elements share a fundamental. -/
-def AntagonismFree : Prop := ∀ e₁ ∈ m.elements, ∀ e₂ ∈ m.elements, ¬ Element.Antagonistic e₁ e₂
+def AntagonismFree : Prop := Element.AntagonismFree m.elements
 
-instance : Decidable (AntagonismFree m) := by unfold AntagonismFree; infer_instance
+instance : Decidable m.AntagonismFree := inferInstanceAs (Decidable (Element.AntagonismFree _))
 
 /-! ### Basic theorems -/
 
@@ -287,16 +286,15 @@ def headCount : ℕ :=
 /-- At most three heads — one per node. -/
 theorem headCount_le_three : s.headCount ≤ 3 := by unfold headCount; split_ifs <;> omega
 
-/-- The headed elements across all nodes (0–3 of them). -/
-def headList : List Element := [s.manner.head, s.place.head, s.laryngeal.head].reduceOption
+/-- The heads across all nodes (0–3), deduplicated. -/
+def headFinset : Finset Element := [s.manner.head, s.place.head, s.laryngeal.head].reduceOption.toFinset
 
 /-! ### Antagonism -/
 
 /-- **Backley's headedness constraint**: at most one head per fundamental ([backley-2017]). -/
-def NoAntagonisticHeads : Prop :=
-  ∀ e₁ ∈ s.headList, ∀ e₂ ∈ s.headList, ¬ Element.Antagonistic e₁ e₂
+def NoAntagonisticHeads : Prop := Element.AntagonismFree s.headFinset
 
-instance : Decidable (NoAntagonisticHeads s) := by unfold NoAntagonisticHeads; infer_instance
+instance : Decidable s.NoAntagonisticHeads := inferInstanceAs (Decidable (Element.AntagonismFree _))
 
 /-- Heads from different fundamentals (|A̲| manner, |I̲| place) are licit. -/
 example : NoAntagonisticHeads ⟨MR.headedSimplex .A, MR.headedSimplex .I, .empty⟩ := by decide
