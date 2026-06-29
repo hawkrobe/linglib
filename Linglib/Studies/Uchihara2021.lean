@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosody.WordSize
-import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Prosody.Word
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Uchihara & Mendoza Ruiz 2021: minimality, maximality, and the perfect word in Mixtec
@@ -17,25 +17,24 @@ the ideal word is the **perfect prosodic word**: ω coextensive with a single
 well-formed (bimoraic) foot. The typological prediction is that maximality always
 entails minimality, not conversely.
 
-We exercise the unified prosodic machinery: candidates are `Prosody.Tree`s, size
-notions come from `Phonology/Prosody/WordSize.lean`, and EVAL is mathlib's
-lexicographic minimum (`Core.Optimization`'s `argMinSet`, no OT-engine wrapper).
-The *same* profile `FtBin ≫ Parse` selects the bimoraic foot for both a too-small
-input (lengthening) and a too-big one (truncation); the winner is a `PerfectWord`.
+We exercise the unified prosodic machinery: candidates are `Prosody.Tree`s, the
+constraints are `Constraints.Constraint Tree` values (`FtBin` is the local `ftBin`,
+`Parse(μ)` is the carrier constraint `Prosody.parseInto .f`), the word-size notions are
+`Prosody.PerfectWord` / `MinimalWord` / `MaximalWord`, and EVAL is the OT engine
+`OptimalityTheory.Tableau.ofRanking … |>.optimal`. The *same* ranking `FtBin ≫ Parse`
+selects the bimoraic foot for both a too-small input (lengthening) and a too-big one
+(truncation); the winner is a `PerfectWord`.
 -/
 
 namespace Uchihara2021
 
-open Prosody Features.Prosody RootedTree Core.Optimization.Evaluation
+open Prosody Features.Prosody RootedTree Constraints OptimalityTheory
 
-/-! ### Constraint profile -/
+/-! ### Constraint ranking -/
 
-/-- `FtBin` violations over a tree: feet whose mora count is not 2. -/
-def ftBinViol (t : Tree) : Nat :=
-  ((feet t).filter (fun f => footMorae f != 2)).length
-
-/-- Violation profile, ranked `FtBin ≫ Parse(μ)` (unfooted syllables). -/
-def profile (t : Tree) : List Nat := [ftBinViol t, unfootedCount t]
+/-- `FtBin` ([uchihara-mendozaruiz-2021]) as a `Constraint Tree`: feet whose mora count is
+    not 2. (`Parse(μ)` is the carrier constraint `parseInto .f` — unfooted syllables.) -/
+def ftBin : Constraint Tree := fun t => ((feet t).filter (fun f => footMorae f != 2)).length
 
 /-! ### Minimality: a monomoraic input lengthens to a bimoraic foot -/
 
@@ -46,15 +45,16 @@ def degenerate : Tree := .node .om [.node .ft [.node (.syl .light) []]]
 /-- `[ta]` — an unfooted light syllable (`Parse` violation). -/
 def unfooted : Tree := .node .om [.node (.syl .light) []]
 
-def minCandidates : Finset Tree := {bimoraic, degenerate, unfooted}
+def minCandidates : List Tree := [bimoraic, degenerate, unfooted]
 
-example : profile bimoraic = [0, 0] := by decide
-example : profile degenerate = [1, 0] := by decide
-example : profile unfooted = [0, 1] := by decide
+example : ftBin degenerate = 1 := by decide
+example : parseInto .f unfooted = 1 := by decide
+example : ftBin bimoraic = 0 ∧ parseInto .f bimoraic = 0 := by decide
 
 /-- Minimality: from a monomoraic input the bimoraic foot is the unique optimum
     (lengthening beats both the degenerate foot and the unfooted syllable). -/
-theorem minimality_optimum : argMinSet minCandidates profile LexLE = {bimoraic} := by decide
+theorem minimality_optimum :
+    (Tableau.ofRanking minCandidates [ftBin, parseInto .f]).optimal = {bimoraic} := by decide
 
 /-! ### Maximality: a trimoraic input truncates to a bimoraic foot -/
 
@@ -65,16 +65,17 @@ def trimoraicFoot : Tree :=
 def footPlusStray : Tree :=
   .node .om [.node .ft [.node (.syl .heavy) []], .node (.syl .light) []]
 
-def maxCandidates : Finset Tree := {bimoraic, trimoraicFoot, footPlusStray}
+def maxCandidates : List Tree := [bimoraic, trimoraicFoot, footPlusStray]
 
-example : profile trimoraicFoot = [1, 0] := by decide
-example : profile footPlusStray = [0, 1] := by decide
+example : ftBin trimoraicFoot = 1 := by decide
+example : parseInto .f footPlusStray = 1 := by decide
 
 /-- Maximality: from a trimoraic input the bimoraic foot is again the unique
     optimum (truncation beats the trimoraic foot and the foot-plus-stray) — the
-    *same* `FtBin ≫ Parse` profile, hence "maximality from the minimality
+    *same* `FtBin ≫ Parse` ranking, hence "maximality from the minimality
     constraints" ([uchihara-mendozaruiz-2021]). -/
-theorem maximality_optimum : argMinSet maxCandidates profile LexLE = {bimoraic} := by decide
+theorem maximality_optimum :
+    (Tableau.ofRanking maxCandidates [ftBin, parseInto .f]).optimal = {bimoraic} := by decide
 
 /-! ### The winner is the perfect prosodic word -/
 

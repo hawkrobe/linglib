@@ -1,4 +1,7 @@
 import Linglib.Phonology.Prosody.Mora
+import Linglib.Core.Combinatorics.RootedTree.Planar
+import Linglib.Core.Combinatorics.RootedTree.DecEq
+import Linglib.Features.Prosody
 
 /-!
 # Syllables
@@ -237,5 +240,38 @@ def moraCount (y : Yield) : Nat := y.sum
 abbrev satisfiesMinWord (y : Yield) (minMorae : Nat := 2) : Prop := minMorae ≤ y.moraCount
 
 end Yield
+
+/-! ### The prosodic-tree carrier
+
+The recursive prosodic constituent ([ito-mester-2003]): the Core ordered rose tree
+`RootedTree.Planar` labeled by prosodic-level `Constituent`s — the **violable OT candidate
+carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω, a stray under
+φ) the headed `Prosody.Word` cannot represent. Its OT constraints are
+`Constraints.Constraint Tree` values, defined alongside `Prosody.Word`. Homed here because
+`Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
+`Planar`. -/
+
+open RootedTree Features.Prosody
+
+/-- A prosodic node: a hierarchy `level`, a mora `weight` (meaningful only at σ), and
+    `isHead` (meaningful at σ/foot). `weight`/`isHead` are inert where they don't apply
+    (algorithms guard on `level`), so a flat record + smart constructors. -/
+structure Constituent where
+  level  : ProsodicLevel
+  weight : Syllable.Weight := 0
+  isHead : Bool := false
+  deriving DecidableEq, Repr
+
+namespace Constituent
+/-- A syllable of the given `weight`, optionally the head of its foot — the σ node label.
+    The `f`/ω/φ node labels live with their objects (`Constituent.ft` in `Foot`,
+    `Constituent.om`/`.ph` in `Word`); `Syllable` only knows its own level. -/
+abbrev syl (weight : Syllable.Weight := 0) (isHead : Bool := false) : Constituent :=
+  { level := .σ, weight := weight, isHead := isHead }
+end Constituent
+
+/-- A prosodic tree: the Core ordered rose tree `RootedTree.Planar` labeled by
+    `Constituent`s. Ordered children give No-Tangling by construction. -/
+abbrev Tree := Planar Constituent
 
 end Prosody

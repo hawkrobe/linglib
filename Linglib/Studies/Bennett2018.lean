@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosody.Tree
-import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Prosody.Word
+import Linglib.Phonology.OptimalityTheory.Basic
 
 /-!
 # Bennett 2018: recursion of the prosodic word in Kaqchikel
@@ -26,25 +26,22 @@ once but satisfies `Match`; the flat parse satisfies `NoRecursion` but violates
 `Match`. With `Match ≫ NoRecursion`, the recursive parse is the optimum — a
 prediction the flat `List`-of-weights `Word` could not even state.
 
-The prosodic candidates are `Tree`s (`Phonology/Prosody/Tree.lean`); EVAL is
-mathlib's lexicographic minimum — `Core.Optimization`'s `argMinSet`, the
-computable form of `Order.Minimal` under the profile pullback
-`Order.Preimage profile LexLE`. Constraints are plain `Tree → ℕ` functions;
-the ranking is the order of entries in the profile. No `Constraint`/tableau
-wrapper is needed (cf. how mathlib selects optima — `Order.Minimal` + `Order.Lex`,
-not a bespoke decorated structure).
+The prosodic candidates are `Tree`s; the constraints are `Constraints.Constraint Tree`
+values (`NoRecursion` is the carrier constraint `Prosody.noRec`; `Match` is the local
+`matchStem`), and EVAL is the OT engine `OptimalityTheory.Tableau.ofRanking … |>.optimal`
+— the same machinery every OT study in the library uses.
 
 ## Implementation note
 
-`matchStemViol` here is a stand-in for the full `Match(X⁰, ω)` constraint: it
-penalises the stem morpheme not surfacing as its own ω, with the stem supplied
-as a parameter (the morpheme under analysis). The general syntax↔prosody Match,
-built on `OptimalityTheory.Correspondence`, is future work.
+`matchStem` here is a stand-in for the full `Match(X⁰, ω)` constraint: it penalises the
+stem morpheme not surfacing as its own ω, with the stem baked in (the morpheme under
+analysis). The general syntax↔prosody Match, built on `OptimalityTheory.Correspondence`,
+is future work.
 -/
 
 namespace Bennett2018
 
-open Prosody Features.Prosody RootedTree Core.Optimization.Evaluation
+open Prosody Features.Prosody RootedTree Constraints OptimalityTheory
 
 /-! ### Candidate prosodifications of a high-prefix + stem -/
 
@@ -63,42 +60,32 @@ def recParse : Tree := .node .om [prefσ, .node .om [stemσ]]
 
 /-! ### `Match(Stem, ω)` (stand-in) -/
 
-mutual
 /-- Does some ω-node dominate exactly the stem (i.e. have children `[stem]`)? -/
-def hasOmegaOver (stem : Tree) : Tree → Bool
-  | .node a cs => (decide (a.level = .ω) && decide (cs = [stem])) || hasOmegaOverList stem cs
-/-- Auxiliary over a list of subtrees. -/
-def hasOmegaOverList (stem : Tree) : List Tree → Bool
-  | [] => false
-  | t :: ts => hasOmegaOver stem t || hasOmegaOverList stem ts
-end
+def hasOmegaOver (stem : Tree) : Tree → Bool := fun t => go t where
+  go : Tree → Bool
+    | .node a cs => (decide (a.level = .ω) && decide (cs = [stem])) || goList cs
+  goList : List Tree → Bool
+    | [] => false
+    | t :: ts => go t || goList ts
 
-/-- `Match(Stem, ω)` violation: 1 if the stem is not exhaustively matched by an
-    ω of its own, else 0. -/
-def matchStemViol (stem t : Tree) : Nat := if hasOmegaOver stem t then 0 else 1
+/-- `Match(Stem, ω)` ([ishihara-kalivoda-2022]) as a `Constraint Tree`: 1 if the stem is
+    not exhaustively matched by an ω of its own, else 0. -/
+def matchStem : Constraint Tree := fun t => if hasOmegaOver stemσ t then 0 else 1
 
 /-! ### The ranking and the prediction
 
-EVAL is mathlib's lexicographic minimum: the optimum is the `LexLE`-least
-candidate under the violation profile. `argMinSet s f r = s.filter (f ·
-`r`-below all)` is the computable form of `Order.Minimal` under
-`Order.Preimage profile LexLE`. The ranking `Match(X⁰,ω) ≫ NoRecursion` is just
-the entry order in the profile. -/
-
-/-- Violation profile, ranked `Match(X⁰,ω) ≫ NoRecursion`: a plain `ℕ`-vector
-    of the two constraint functions, compared by `LexLE`. -/
-def profile (t : Tree) : List Nat := [matchStemViol stemσ t, Tree.recursionCount t]
-
-/-- The two candidate prosodifications. -/
-def candidates : Finset Tree := {recParse, flatParse}
+EVAL is the OT tableau engine: `Tableau.ofRanking candidates ranking |>.optimal` selects the
+lexicographic optimum under the constraint ranking (priority = list order). The ranking
+`Match(X⁰,ω) ≫ NoRecursion` is `[matchStem, noRec]`. -/
 
 -- The violation contrast: recursion costs `NoRecursion`, the flat parse costs `Match`.
-example : profile recParse = [0, 1] := by decide
-example : profile flatParse = [1, 0] := by decide
+example : matchStem recParse = 0 ∧ noRec recParse = 1 := by decide
+example : matchStem flatParse = 1 ∧ noRec flatParse = 0 := by decide
 
-/-- Under `Match(X⁰,ω) ≫ NoRecursion`, the **recursive** parse is the unique
-    optimum — Bennett's central result, that ω-recursion is forced. The optimum
-    is mathlib's lex-minimum (`argMinSet` = computable `Order.Minimal`). -/
-theorem recParse_optimal : argMinSet candidates profile LexLE = {recParse} := by decide
+/-- Under `Match(X⁰,ω) ≫ NoRecursion`, the **recursive** parse is the unique optimum —
+    Bennett's central result, that ω-recursion is forced. -/
+theorem recParse_optimal :
+    (Tableau.ofRanking [recParse, flatParse] [matchStem, noRec]).optimal = {recParse} := by
+  decide
 
 end Bennett2018

@@ -1358,9 +1358,7 @@ import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Footing
 import Linglib.Phonology.Prosody.Mora
 import Linglib.Phonology.Prosody.Syllable
-import Linglib.Phonology.Prosody.Tree
 import Linglib.Phonology.Prosody.Word
-import Linglib.Phonology.Prosody.WordSize
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory
