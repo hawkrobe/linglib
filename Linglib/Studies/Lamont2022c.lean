@@ -1,4 +1,5 @@
 import Linglib.Phonology.Prosody.Foot
+import Linglib.Phonology.Prosody.Footing
 import Linglib.Phonology.Constraints.Directional
 import Linglib.Core.Optimization.Evaluation
 
@@ -47,12 +48,12 @@ namespace Lamont2022c
 
 open Prosody Core.Optimization.Evaluation
 
-/-! ### Footings -/
+/-! ### Footings
 
-/-- A **footing**: a flat sequence of feet and unfooted (stray) syllables, with
-    zero-or-more feet and no designated head foot ([lamont-2022c], abstracting from
-    primary stress). Quantity-insensitive, so feet are `Foot Unit`. -/
-abbrev Footing := List (Foot Unit ⊕ Unit)
+A footing here is the canonical `Prosody.Footing Unit` (quantity-insensitive, so feet
+are `Foot Unit`): a flat sequence of feet and unfooted stray σ, no designated head foot
+([lamont-2022c], abstracting from primary stress). `Parse(σ)` reads `Footing.strayMarks`;
+`Trochee`/`Iamb` read each foot's head (`Foot.head`). -/
 
 /-- A monosyllabic foot `(σ́)`. -/
 def mono : Foot Unit := ⟨[()], 0⟩
@@ -60,20 +61,6 @@ def mono : Foot Unit := ⟨[()], 0⟩
 def troch : Foot Unit := ⟨[(), ()], 0⟩
 /-- A (right-headed) iamb `(σσ́)`. -/
 def iamb : Foot Unit := ⟨[(), ()], 1⟩
-
-/-- The feet of a footing, left to right. -/
-def feet (fc : Footing) : List (Foot Unit) := fc.filterMap Sum.getLeft?
-
-/-- The total number of syllables (footed + stray). -/
-def size (fc : Footing) : Nat :=
-  fc.foldl (fun acc d => acc + match d with | .inl f => f.syllables.length | .inr _ => 1) 0
-
-/-- Per-position stray flag: `1` at each unfooted σ, `0` at each footed σ, left to right.
-    This is the directional `Parse(σ)` violation vector. -/
-def strayVec (fc : Footing) : List Nat :=
-  fc.flatMap (fun d => match d with
-    | .inl f => List.replicate f.syllables.length 0
-    | .inr _ => [1])
 
 /-! ### The directional constraints
 
@@ -85,26 +72,26 @@ leftmost (= `Foot.IsTrochaic`, true of trochees and monosyllables); a monosyllab
 violates both, doing `FtBin`'s work. -/
 
 /-- `Parse(σ)` as a directional block over `n` σ-positions. -/
-def parse (n : Nat) : List (Constraints.Constraint Footing) :=
-  Constraints.directionalBlock n (fun (i : Fin n) (fc : Footing) => (strayVec fc).getD i.val 0 = 1)
+def parse (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
+  Constraints.directionalBlock n (fun (i : Fin n) (fc : Footing Unit) => (fc.strayMarks).getD i.val 0 = 1)
 
 /-- `Trochee`: one violation per foot whose head is rightmost (= `Foot.IsIambic`). -/
-def trochee (fc : Footing) : Nat :=
-  ((feet fc).filter (fun f => decide (f.head.val + 1 = f.syllables.length))).length
+def trochee (fc : Footing Unit) : Nat :=
+  ((fc.feet).filter (fun f => decide (f.head.val + 1 = f.syllables.length))).length
 /-- `Iamb`: one violation per foot whose head is leftmost (= `Foot.IsTrochaic`). -/
-def iambC (fc : Footing) : Nat :=
-  ((feet fc).filter (fun f => decide (f.head.val = 0))).length
+def iambC (fc : Footing Unit) : Nat :=
+  ((fc.feet).filter (fun f => decide (f.head.val = 0))).length
 
 /-- The violation vector of a footing under a ranking (a list of constraints), as the
     concatenated per-constraint violations — ordered lexicographically (`LexLE`). -/
-def profile (ranking : List (Constraints.Constraint Footing)) (fc : Footing) : List Nat :=
+def profile (ranking : List (Constraints.Constraint (Footing Unit))) (fc : Footing Unit) : List Nat :=
   ranking.map (fun c => c fc)
 
 /-- Murinbata ranking `Parse(σ) ≫ Trochee ≫ Iamb` ([street-mollinjin-1981]). -/
-def murinbata (n : Nat) : List (Constraints.Constraint Footing) :=
+def murinbata (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
   parse n ++ [fun fc => trochee fc, fun fc => iambC fc]
 /-- Pintupi ranking `Trochee ≫ Parse(σ) ≫ Iamb` ([hansen-hansen-1969]). -/
-def pintupi (n : Nat) : List (Constraints.Constraint Footing) :=
+def pintupi (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
   (fun fc => trochee fc) :: parse n ++ [fun fc => iambC fc]
 
 /-! ### The headline: exhaustive vs inexhaustive (the decisive step)
@@ -113,9 +100,9 @@ The same 5σ string at the step from `(σ́σ)(σ́σ)σ`: GEN can parse the fin
 a monosyllabic foot (`exhaustive`) or leave it (`faithful`, converged). -/
 
 /-- `(σ́σ)(σ́σ)σ` — two trochees and a final unfooted σ. -/
-def faithful : Footing := [.inl troch, .inl troch, .inr ()]
+def faithful : Footing Unit := [.inl troch, .inl troch, .inr ()]
 /-- `(σ́σ)(σ́σ)(σ́)` — the final σ parsed into a monosyllabic foot. -/
-def exhaustive : Footing := [.inl troch, .inl troch, .inl mono]
+def exhaustive : Footing Unit := [.inl troch, .inl troch, .inl mono]
 
 /-- **Murinbata** ([street-mollinjin-1981]): under `Parse(σ) ≫ Trochee`, the exhaustive
     parse wins — the final σ is footed into a monosyllable (final monosyllabic feet,
@@ -139,9 +126,9 @@ bounded by the disyllabic `(σ́σ)σσ` under `Parse(σ) ≫ Trochee ≫ Iamb` 
 ([martinez-paricio-kager-2015]). -/
 
 /-- `(σ́σ)σσ` — one leftmost trochee in `/σσσσ/`. -/
-def disyll4 : Footing := [.inl troch, .inr (), .inr ()]
+def disyll4 : Footing Unit := [.inl troch, .inr (), .inr ()]
 /-- `(σ́)σσσ` — one leftmost monosyllable in `/σσσσ/`. -/
-def monosyll4 : Footing := [.inl mono, .inr (), .inr (), .inr ()]
+def monosyll4 : Footing Unit := [.inl mono, .inr (), .inr (), .inr ()]
 
 /-- **`FtBin` obviation**: the disyllabic-foot candidate strictly beats the
     monosyllabic-foot candidate with no `FtBin` in CON — the monosyllable both fails
