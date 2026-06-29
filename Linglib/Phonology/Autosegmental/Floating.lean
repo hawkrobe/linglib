@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Morphology.MorphWord
-import Linglib.Phonology.Autosegmental.Graph
+import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image

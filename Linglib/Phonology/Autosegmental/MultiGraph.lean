@@ -85,25 +85,6 @@ theorem isPlanar_empty : (empty : MultiGraph τ).IsPlanar := by
 theorem inBounds_empty : (empty : MultiGraph τ).InBounds := by
   intro i j p hp; simp at hp
 
-/-! ### Shift algebra -/
-
-/-- Shift a link by `(δ₁, δ₂)`. -/
-def shiftLink (δ₁ δ₂ : ℕ) (p : ℕ × ℕ) : ℕ × ℕ := (p.1 + δ₁, p.2 + δ₂)
-
-@[simp] theorem shiftLink_apply (δ₁ δ₂ : ℕ) (p : ℕ × ℕ) :
-    shiftLink δ₁ δ₂ p = (p.1 + δ₁, p.2 + δ₂) := rfl
-
-@[simp] theorem shiftLink_zero : shiftLink 0 0 = (id : ℕ × ℕ → ℕ × ℕ) := by funext p; simp
-
-theorem shiftLink_comp (a₁ a₂ b₁ b₂ : ℕ) :
-    shiftLink a₁ a₂ ∘ shiftLink b₁ b₂ = shiftLink (a₁ + b₁) (a₂ + b₂) := by
-  funext p; simp only [Function.comp_apply, shiftLink_apply, Prod.mk.injEq]; omega
-
-/-- Shifting a link set preserves non-crossing (via `isNonCrossing_image`). -/
-theorem isNonCrossing_image_shiftLink (s : Finset (ℕ × ℕ)) (δ₁ δ₂ : ℕ) :
-    IsNonCrossing (s.image (shiftLink δ₁ δ₂)) ↔ IsNonCrossing s := by
-  grind [isNonCrossing_image, IsNonCrossing, MonovaryOn, shiftLink]
-
 /-! ### Concatenation ([jardine-heinz-2015], fiberwise coproduct) -/
 
 /-- Concatenation: tier-wise `LabeledTuple.concat`, and per-pair link union with

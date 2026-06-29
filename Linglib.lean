@@ -1320,14 +1320,12 @@ import Linglib.Phonology.Autosegmental.Collapse
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Embedding
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Autosegmental.Graph
 import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Autosegmental.MultiGraph
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
-import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Directional
@@ -1356,7 +1354,6 @@ import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Accent
-import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Footing
 import Linglib.Phonology.Prosody.Mora
