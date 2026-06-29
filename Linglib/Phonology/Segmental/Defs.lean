@@ -290,7 +290,7 @@ end Segment
     |  5   | Vowel     |
 
     For the finer 8-level scale that splits obstruents by voice, see
-    `SonorityClass`. -/
+    `Sonority.Class`. -/
 inductive Sonority where
   | stop
   | fricative
@@ -320,8 +320,6 @@ def ofSegment (s : Segment) : Sonority :=
   else if s.HasValue .syllabic true then .vowel
   else .glide
 
-end Sonority
-
 /-! ### The Parker sonority scale -/
 
 /-- The 8-level Parker sonority partition ([parker-2002]) — a refinement of
@@ -334,7 +332,7 @@ end Sonority
     particular languages. The finer granularity is needed for sonority-
     conditioned gradient phenomena such as Tarifit intrusive vowels
     ([afkir-zellou-2025]). -/
-inductive SonorityClass where
+inductive Class where
   | vls    -- voiceless stops: [−son, −cont, −voice]
   | vds    -- voiced stops: [−son, −cont, +voice]
   | vlf    -- voiceless fricatives: [−son, +cont, −voice]
@@ -345,17 +343,15 @@ inductive SonorityClass where
   | vowel  -- vowels: [+son, +approx, −cons, +syll]
   deriving DecidableEq, Repr
 
-namespace SonorityClass
-
 /-- Parker's default universal 8-level ranking ([parker-2002]): voiced stops
     (`vds = 3`) outrank voiceless fricatives (`vlf = 2`). -/
-def parkerSonority : SonorityClass → Nat
+def Class.parkerRank : Class → Nat
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
 /-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`,
     but additionally splitting obstruents by [±voice] ([parker-2002]). -/
-def ofSegment (s : Segment) : SonorityClass :=
+def Class.ofSegment (s : Segment) : Class :=
   if s.HasValue .sonorant false then
     if s.HasValue .continuant true then
       if s.HasValue .voice true then .vdf else .vlf
@@ -367,7 +363,7 @@ def ofSegment (s : Segment) : SonorityClass :=
   else .glide
 
 /-- Coarsen to the substance-free `Sonority`, collapsing the voicing split. -/
-def toSonority : SonorityClass → Sonority
+def Class.toSonority : Class → Sonority
   | .vls | .vds => .stop
   | .vlf | .vdf => .fricative
   | .nasal => .nasal
@@ -375,10 +371,6 @@ def toSonority : SonorityClass → Sonority
   | .glide => .glide
   | .vowel => .vowel
 
-end SonorityClass
-
-/-- Parker sonority of a segment (convenience). -/
-def parkerSonorityOf (s : Segment) : Nat :=
-  (SonorityClass.ofSegment s).parkerSonority
+end Sonority
 
 end Phonology

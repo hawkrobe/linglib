@@ -47,22 +47,22 @@ open Phonology
 structure TriconWord where
   ipa   : String
   gloss : String
-  c1    : SonorityClass
-  c2    : SonorityClass
-  c3    : SonorityClass
+  c1    : Sonority.Class
+  c2    : Sonority.Class
+  c3    : Sonority.Class
   deriving DecidableEq, Repr
 
 /-- C1–C2 sonority profile: rising (C1 less sonorous than C2). -/
 def TriconWord.isRising (w : TriconWord) : Bool :=
-  w.c1.parkerSonority < w.c2.parkerSonority
+  w.c1.parkerRank < w.c2.parkerRank
 
 /-- C1–C2 sonority profile: falling (C1 more sonorous than C2). -/
 def TriconWord.isFalling (w : TriconWord) : Bool :=
-  w.c1.parkerSonority > w.c2.parkerSonority
+  w.c1.parkerRank > w.c2.parkerRank
 
 /-- C1–C2 sonority profile: plateauing (equal sonority). -/
 def TriconWord.isPlateauing (w : TriconWord) : Bool :=
-  w.c1.parkerSonority == w.c2.parkerSonority
+  w.c1.parkerRank == w.c2.parkerRank
 
 -- ============================================================================
 -- § 2: Target Words

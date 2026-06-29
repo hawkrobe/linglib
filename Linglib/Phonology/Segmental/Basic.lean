@@ -6,15 +6,18 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Segmental.Defs
 
 /-!
-# Segments: basic theory
+# Basic theory of segments
 
-The theory of segments over the definitions in `Phonology/Segmental/Defs.lean`:
-that natural-class membership coincides with the bundle subsumption order, the
-behaviour of the feature-change operations, and the injectivity of the Parker
-sonority ranking.
+This file develops the theory of the segments defined in
+`Phonology/Segmental/Defs.lean`: that natural-class membership is the unification
+subsumption order, how the feature-change operations behave, and that Parker's
+sonority ranking is injective.
 
-[hayes-2009] [chomsky-halle-1968] [clements-1990] [parker-2002] [shieber-1986]
-[carpenter-1992]
+## Main results
+
+* `Segment.matchesPattern_iff_le` — natural-class membership is bundle subsumption.
+* `Segment.setFeature_hasValue` &c. — the feature-change operations act as specified.
+* `Sonority.Class.parkerRank_injective` — the Parker scale ranks classes distinctly.
 -/
 
 namespace Phonology
@@ -116,15 +119,15 @@ end Segment
 
 /-! ### Sonority -/
 
-namespace SonorityClass
+namespace Sonority.Class
 
-/-- The eight Parker classes receive distinct ranks: `parkerSonority` is injective
+/-- The eight Parker classes receive distinct ranks: `parkerRank` is injective
     ([parker-2002]). The ranking is Parker's reversible default, so this is the
-    faithful invariant — no fixed order on `SonorityClass` is implied. -/
-theorem parkerSonority_injective : Function.Injective parkerSonority := by
+    faithful invariant — no fixed order on `Sonority.Class` is implied. -/
+theorem parkerRank_injective : Function.Injective parkerRank := by
   intro a b h
-  cases a <;> cases b <;> simp_all [parkerSonority]
+  cases a <;> cases b <;> simp_all [parkerRank]
 
-end SonorityClass
+end Sonority.Class
 
 end Phonology
