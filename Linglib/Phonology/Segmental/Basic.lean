@@ -35,6 +35,11 @@ theorem specified_iff_specifies (f : Feature) : s.Specified f ↔ BundleLike.Spe
     ne_eq, Option.isSome_iff_ne_none]
   rfl
 
+/-- Specification and unspecification are mutually exclusive and exhaustive. -/
+theorem specified_iff_not_unspecified (f : Feature) : s.Specified f ↔ ¬ s.Unspecified f := by
+  unfold Specified Unspecified
+  cases s f <;> simp
+
 /-! ### Natural-class membership is subsumption -/
 
 /-- Matching a natural-class pattern is subsumption: `s` matches `p` exactly when
@@ -61,13 +66,6 @@ theorem matchesPattern_iff_le {s p : Segment} : s.matchesPattern p = true ↔ p 
   funext f
   simp only [Segment.applyChanges, Features.Bundle.merge]
   cases change f <;> rfl
-
-/-! ### Underspecification -/
-
-/-- Specification and unspecification are mutually exclusive and exhaustive. -/
-theorem specified_iff_not_unspecified (f : Feature) : s.Specified f ↔ ¬ s.Unspecified f := by
-  unfold Specified Unspecified
-  cases s f <;> simp
 
 /-! ### Effect on the modified feature -/
 
