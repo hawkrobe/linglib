@@ -54,7 +54,7 @@ theorem ViolationProfile.le_apply_zero
   lexFinNat_le_apply_zero h
 
 /-- Build a `ViolationProfile ranking.length` from a ranked `Constraint`
-    list — the fixed-length analog of the profile inside `OptimalityTheory.mkTableau`. -/
+    list — the fixed-length analog of the profile inside `OptimalityTheory.Tableau.ofRanking`. -/
 def mkProfile (ranking : List (Constraint C)) (c : C) :
     ViolationProfile ranking.length :=
   buildViolationProfile (fun i => ranking.get i) c

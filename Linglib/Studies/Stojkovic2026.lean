@@ -277,17 +277,17 @@ def uvRanking : List (Constraint VBLZCandidate) :=
 
 /-- The [ov]-group ranking selects [ov] as the unique optimum. -/
 theorem ov_optimal :
-    (mkTableau allCandidates ovRanking).optimal = {.ov} := by decide
+    (Tableau.ofRanking allCandidates ovRanking).optimal = {.ov} := by decide
 
 /-- The [ov]/[ev] ranking selects [ev] in the palatal context. (Non-palatally,
     [ev] and [iv] are unavailable — no palatal to share [−back] — and [ov] wins;
     that contextual split is not modelled in this single tableau.) -/
 theorem ev_optimal :
-    (mkTableau allCandidates ovEvRanking).optimal = {.ev} := by decide
+    (Tableau.ofRanking allCandidates ovEvRanking).optimal = {.ev} := by decide
 
 /-- The [uv]-group ranking selects [uv] as the unique optimum. -/
 theorem uv_optimal :
-    (mkTableau allCandidates uvRanking).optimal = {.uv} := by decide
+    (Tableau.ofRanking allCandidates uvRanking).optimal = {.uv} := by decide
 
 /-! ### Factorial typology -/
 

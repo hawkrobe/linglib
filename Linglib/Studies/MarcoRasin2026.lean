@@ -187,13 +187,13 @@ set_option maxHeartbeats 800000 in
     Majority Rules in action — the bare form aligns with the C-initial
     majority (5 medial vs 2 initial members). -/
 theorem op_correct_verbs :
-    (mkTableau verbCands mccarthyRanking verbCands_ne).optimal =
+    (Tableau.ofRanking verbCands mccarthyRanking verbCands_ne).optimal =
       {vA} := by decide
 
 /-- OP correctly selects CəCC for nouns (when C₂ > C₃). Single-member
     paradigm, so OP-MAX-V is vacuous; SONCON decides. -/
 theorem op_correct_nouns :
-    (mkTableau nounCands mccarthyRanking nounCands_ne).optimal =
+    (Tableau.ofRanking nounCands mccarthyRanking nounCands_ne).optimal =
       {nI} := by decide
 
 set_option maxHeartbeats 800000 in
@@ -202,13 +202,13 @@ set_option maxHeartbeats 800000 in
     cannot force medial schwa in the bare form. SONCON then favors
     initial. -/
 theorem op_wrong_adjectives :
-    (mkTableau adjCands mccarthyRanking adjCands_ne).optimal =
+    (Tableau.ofRanking adjCands mccarthyRanking adjCands_ne).optimal =
       {adjOPpred} := by decide
 
 set_option maxHeartbeats 800000 in
 /-- The attested adjective paradigm (bare=CCəC) is NOT selected by OP. -/
 theorem op_fails_adjectives :
-    (mkTableau adjCands mccarthyRanking adjCands_ne).optimal ≠
+    (Tableau.ofRanking adjCands mccarthyRanking adjCands_ne).optimal ≠
       {adjAttested} := by decide
 
 -- ============================================================================
@@ -236,15 +236,15 @@ theorem adjOPpred_zero_viols :
 
 /-- Structural consequence of `adjOPpred_zero_viols`: the uniform-initial
     paradigm is optimal under **every** permutation of the four OP
-    constraints. Uses `mkTableau_zero_optimal_allRankings` from the
+    constraints. Uses `Tableau.ofRanking_zero_optimal_allRankings` from the
     general OT infrastructure — no finitary enumeration needed. -/
 private theorem adjOPpred_mem : adjOPpred ∈ adjCands := by
   simp only [adjCands, adjOPpred, List.mem_cons]; tauto
 
 theorem adjOPpred_always_optimal :
-    ∀ ranking ∈ permutations opConstraints,
-      adjOPpred ∈ (mkTableau adjCands ranking adjCands_ne).optimal :=
-  mkTableau_zero_optimal_allRankings adjCands opConstraints adjCands_ne
+    ∀ ranking ∈ opConstraints.permutations',
+      adjOPpred ∈ (Tableau.ofRanking adjCands ranking adjCands_ne).optimal :=
+  Tableau.ofRanking_zero_optimal_allRankings adjCands opConstraints adjCands_ne
     adjOPpred adjOPpred_mem adjOPpred_zero_viols
 
 set_option maxHeartbeats 4000000 in
@@ -266,8 +266,8 @@ set_option maxHeartbeats 4000000 in
     derive category-distinct phonological behavior when two categories share
     paradigm structure but differ phonologically. -/
 theorem adj_always_initial :
-    ∀ ranking ∈ permutations opConstraints,
-      (mkTableau adjCands ranking adjCands_ne).optimal = {adjOPpred} := by
+    ∀ ranking ∈ opConstraints.permutations',
+      (Tableau.ofRanking adjCands ranking adjCands_ne).optimal = {adjOPpred} := by
   decide
 
 -- ============================================================================
@@ -280,13 +280,13 @@ theorem adj_always_initial :
     `op_wrong_adjectives` (tableau (19)), this shows OP fails
     **regardless of what constitutes a paradigm** for JTA adjectives. -/
 theorem op_wrong_adj_bare :
-    (mkTableau nounCands mccarthyRanking nounCands_ne).optimal =
+    (Tableau.ofRanking nounCands mccarthyRanking nounCands_ne).optimal =
       {nI} := op_correct_nouns
 
 /-- The attested adjective form (CCəC = medial) is NOT selected when
     adjectives are treated as having no paradigm. -/
 theorem op_wrong_adj_bare_not_attested :
-    (mkTableau nounCands mccarthyRanking nounCands_ne).optimal ≠
+    (Tableau.ofRanking nounCands mccarthyRanking nounCands_ne).optimal ≠
       {nM} := by decide
 
 -- ============================================================================
@@ -320,12 +320,12 @@ def verbTemplateCands : List (List JTAForm) := [verbUnifM, verbUnifI]
 theorem verbTemplateCands_ne : verbTemplateCands ≠ [] := by simp [verbTemplateCands]
 
 theorem template_correct_verbs :
-    (mkTableau verbTemplateCands (templateRanking .verb) verbTemplateCands_ne).optimal =
+    (Tableau.ofRanking verbTemplateCands (templateRanking .verb) verbTemplateCands_ne).optimal =
       {verbUnifM} := by decide
 
 /-- Template correctly selects initial (CəCC) for nouns (template inactive). -/
 theorem template_correct_nouns :
-    (mkTableau nounCands (templateRanking .noun) nounCands_ne).optimal =
+    (Tableau.ofRanking nounCands (templateRanking .noun) nounCands_ne).optimal =
       {nI} := by decide
 
 /-- Template correctly selects the attested adjective paradigm — the case
@@ -337,7 +337,7 @@ def adjTemplateCands : List (List JTAForm) :=
 theorem adjTemplateCands_ne : adjTemplateCands ≠ [] := by simp [adjTemplateCands]
 
 theorem template_correct_adjectives :
-    (mkTableau adjTemplateCands (templateRanking .adj) adjTemplateCands_ne).optimal =
+    (Tableau.ofRanking adjTemplateCands (templateRanking .adj) adjTemplateCands_ne).optimal =
       {mkP [.medial, .medial, .medial] aSuf} := by decide
 
 -- ============================================================================
@@ -354,7 +354,7 @@ open Core.Optimization Constraints
 
 /-- Verbal paradigm under McCarthy's OP ranking. -/
 noncomputable def verbSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
-  tableauSystem (mkTableau verbCands mccarthyRanking verbCands_ne)
+  tableauSystem (Tableau.ofRanking verbCands mccarthyRanking verbCands_ne)
 
 /-- OP correctly predicts the attested bare-medial verbal paradigm (10a). -/
 theorem verbSystem_predict_vA : verbSystem.predict vA = 1 :=
@@ -362,7 +362,7 @@ theorem verbSystem_predict_vA : verbSystem.predict vA = 1 :=
 
 /-- Nominal paradigm under McCarthy's OP ranking. -/
 noncomputable def nounSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
-  tableauSystem (mkTableau nounCands mccarthyRanking nounCands_ne)
+  tableauSystem (Tableau.ofRanking nounCands mccarthyRanking nounCands_ne)
 
 /-- OP correctly predicts CəCC for nouns when C₂ > C₃. -/
 theorem nounSystem_predict_nI : nounSystem.predict nI = 1 :=
@@ -372,7 +372,7 @@ theorem nounSystem_predict_nI : nounSystem.predict nI = 1 :=
     prediction here is the *wrong* uniform-initial paradigm — the formal
     content of [marco-rasin-2026]'s challenge. -/
 noncomputable def adjSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
-  tableauSystem (mkTableau adjCands mccarthyRanking adjCands_ne)
+  tableauSystem (Tableau.ofRanking adjCands mccarthyRanking adjCands_ne)
 
 /-- OP wrongly assigns probability 1 to the uniform-initial adjective
     paradigm. The attested CCəC pattern receives probability 0 — the
@@ -389,7 +389,7 @@ theorem adjSystem_predict_attested_zero :
 /-- Verbal paradigm under the category-specific template ranking. -/
 noncomputable def verbTemplateSystem :
     ConstraintSystem (List JTAForm) (LexProfile Nat 2) :=
-  tableauSystem (mkTableau verbTemplateCands (templateRanking .verb) verbTemplateCands_ne)
+  tableauSystem (Tableau.ofRanking verbTemplateCands (templateRanking .verb) verbTemplateCands_ne)
 
 theorem verbTemplateSystem_predict_unifM :
     verbTemplateSystem.predict verbUnifM = 1 :=
@@ -399,7 +399,7 @@ theorem verbTemplateSystem_predict_unifM :
     now correctly predicting the attested medial pattern with probability 1. -/
 noncomputable def adjTemplateSystem :
     ConstraintSystem (List JTAForm) (LexProfile Nat 2) :=
-  tableauSystem (mkTableau adjTemplateCands (templateRanking .adj) adjTemplateCands_ne)
+  tableauSystem (Tableau.ofRanking adjTemplateCands (templateRanking .adj) adjTemplateCands_ne)
 
 theorem adjTemplateSystem_predict_medial :
     adjTemplateSystem.predict (mkP [.medial, .medial, .medial] aSuf) = 1 :=

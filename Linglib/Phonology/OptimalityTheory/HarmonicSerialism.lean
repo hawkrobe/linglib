@@ -13,7 +13,7 @@ Bundles a one-step `gen` function and a constraint ranking into an
 `HSDerivation`. Owns the serial GEN/EVAL iteration combinator (§ 1 — a
 bespoke fuel-bounded search; the generic fixed-point / well-founded-
 termination theory it instantiates is mathlib's) and reuses the existing
-parallel `Tableau`/`mkTableau` machinery from `Basic.lean` (Layered
+parallel `Tableau`/`Tableau.ofRanking` machinery from `Basic.lean` (Layered
 Grounding — does not duplicate parallel optimization).
 
 ## NOTE on theoretical scope

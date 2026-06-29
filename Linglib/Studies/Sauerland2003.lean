@@ -161,7 +161,7 @@ theorem sg_strictly_stronger {E : Type*} [PartialOrder E]
 theorem mp_selects_sg
     (rest : List (Constraint ContainmentPair))
     (hNE : [ContainmentPair.maximal, .minimal] ≠ []) :
-    ∀ c ∈ (mkTableau [.maximal, .minimal]
+    ∀ c ∈ (Tableau.ofRanking [.maximal, .minimal]
       (phiMP :: rest) hNE).optimal,
     presupStrength c = ContainmentPair.maximal.specLevel :=
   phi_mp_selects_maximal _ rest hNE (by decide) (.head _)

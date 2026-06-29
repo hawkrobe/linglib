@@ -551,7 +551,7 @@ theorem framework_separation :
 theorem max_dominates_implies_no_deletion :
     ∀ ctx : Context,
     let ranking := [maxC, maxPreV, maxFinal, starCT]
-    let tab := mkTableau (candidatesFor ctx) ranking
+    let tab := Tableau.ofRanking (candidatesFor ctx) ranking
       (by simp [candidatesFor])
     tab.optimal = {⟨ctx, .retain⟩} := by
   intro ctx; cases ctx <;> decide
@@ -561,7 +561,7 @@ theorem max_dominates_implies_no_deletion :
 theorem ct_dominates_implies_deletion :
     ∀ ctx : Context,
     let ranking := [starCT, maxC, maxPreV, maxFinal]
-    let tab := mkTableau (candidatesFor ctx) ranking
+    let tab := Tableau.ofRanking (candidatesFor ctx) ranking
       (by simp [candidatesFor])
     tab.optimal = {⟨ctx, .delete⟩} := by
   intro ctx; cases ctx <;> decide

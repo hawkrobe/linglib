@@ -352,23 +352,23 @@ theorem l1CandidatesFor_ne (g : DoublingGrammar) (f : DoublingFunction) :
     OCP-XX bans identity; *RED is irrelevant since reduplication
     is not a candidate. -/
 theorem phon_prefers_XY :
-    (mkTableau phonCandidates phonRanking).optimal
+    (Tableau.ofRanking phonCandidates phonRanking).optimal
     = {.nonidentical} := by decide
 
 /-- In morphological contexts where reduplication is available,
     reduplication wins. OCP-XX bans identity; REALIZE-MORPH bans
     nonidentical; reduplication violates only low-ranked *RED. -/
 theorem morph_prefers_reduplication :
-    (mkTableau morphCandidates morphRanking).optimal
+    (Tableau.ofRanking morphCandidates morphRanking).optimal
     = {.reduplication} := by decide
 
 /-- The phonology--morphology reversal: context determines which
     constraints are active, producing opposite surface preferences
     from the same underlying OCP-XX. -/
 theorem doubling_reversal :
-    (mkTableau phonCandidates phonRanking).optimal
+    (Tableau.ofRanking phonCandidates phonRanking).optimal
       = {.nonidentical} ∧
-    (mkTableau morphCandidates morphRanking).optimal
+    (Tableau.ofRanking morphCandidates morphRanking).optimal
       = {.reduplication} := by
   exact ⟨phon_prefers_XY, morph_prefers_reduplication⟩
 

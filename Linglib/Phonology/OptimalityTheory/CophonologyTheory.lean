@@ -119,7 +119,7 @@ def cophonologicalEval {C : Type*} [DecidableEq C]
     (candidates : List C)
     (h : candidates ≠ [] := by decide) : Finset C :=
   let effective := mergeRanking defaultRanking subranking
-  (mkTableau candidates (effective.map (·.2)) h).optimal
+  (Tableau.ofRanking candidates (effective.map (·.2)) h).optimal
 
 /-- When the subranking is empty, cophonological evaluation reduces to
     standard OT evaluation. CPT is a proper generalization of OT. -/
@@ -127,8 +127,8 @@ theorem cophonologicalEval_empty_sub {C : Type*} [DecidableEq C]
     (defaultRanking : List (String × Constraint C))
     (candidates : List C) (h : candidates ≠ []) :
     cophonologicalEval defaultRanking [] candidates h =
-    (mkTableau candidates (defaultRanking.map (·.2)) h).optimal := by
-  show (mkTableau candidates ((mergeRanking defaultRanking []).map (·.2)) h).optimal = _
+    (Tableau.ofRanking candidates (defaultRanking.map (·.2)) h).optimal := by
+  show (Tableau.ofRanking candidates ((mergeRanking defaultRanking []).map (·.2)) h).optimal = _
   rw [mergeRanking_empty_sub]
 
 end OptimalityTheory.CophonologyTheory

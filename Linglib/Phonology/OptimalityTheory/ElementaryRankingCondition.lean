@@ -1,5 +1,6 @@
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.Defs
+import Linglib.Phonology.OptimalityTheory.Basic
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Data.Sign.Basic
 import Mathlib.Data.Fintype.Perm
@@ -328,6 +329,25 @@ theorem isOptimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
     exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_id_iff t w l).mpr (hmin l hl)⟩
   · rintro ⟨hmem, hsat⟩
     exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_id_iff t w l).mp (hsat l hl)⟩
+
+/-- **The `Sₙ` action on a fixed `CON` is the ERC theory.** A candidate `w` is the
+optimum of `Tableau.ofPerm con r` iff, for every competitor, the winner–loser ERC
+of the *canonical* (identity-ranked) tableau is satisfied by `r`. So factorial
+typology (`r` ranging over all rankings of `con`) and ERC consistency are two
+readouts of one symmetric-group action on `con` — `Tableau.ofPerm con r` is the
+shared object. -/
+theorem Tableau.ofPerm_isOptimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {n : ℕ}
+    (con : CON C n) (r : Ranking n) (candidates : List C) (h : candidates ≠ [])
+    (w : C) :
+    (Tableau.ofPerm con r candidates h).IsOptimal w ↔
+      w ∈ candidates.toFinset ∧
+        ∀ l ∈ candidates.toFinset,
+          (tableauERC (Tableau.ofPerm con (Equiv.refl _) candidates h) w l).satisfiedBy r := by
+  constructor
+  · rintro ⟨hmem, hmin⟩
+    exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_iff _ r w l).mpr (hmin l hl)⟩
+  · rintro ⟨hmem, hsat⟩
+    exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_iff _ r w l).mp (hsat l hl)⟩
 
 /-! ### Simple ERCs -/
 

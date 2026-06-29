@@ -303,7 +303,7 @@ theorem rankings2_count : rankings2.length = 6 := by native_decide
 /-- Compute optima for each consistent ranking. -/
 def optima2 : List (Finset Scale2Cand) :=
   rankings2.map λ ranking =>
-    (mkTableau scale2Cands ranking).optimal
+    (Tableau.ofRanking scale2Cands ranking).optimal
 
 /-- Distinct language types. -/
 def types2 : List (Finset Scale2Cand) := optima2.eraseDups
@@ -373,7 +373,7 @@ theorem anim_rankings_count : animRankings.length = 20 := by native_decide
 /-- Compute optima for each consistent ranking. -/
 def animOptima : List (Finset AnimCand) :=
   animRankings.map λ ranking =>
-    (mkTableau animCands ranking).optimal
+    (Tableau.ofRanking animCands ranking).optimal
 
 /-- Distinct language types. -/
 def animTypes : List (Finset AnimCand) := animOptima.eraseDups

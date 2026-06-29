@@ -98,7 +98,7 @@ theorem javCandidates_ne : javCandidates ≠ [] := by simp [javCandidates]
     output sacrifices faithfulness to achieve both identity and
     phonological well-formedness. -/
 theorem javanese_overapplication :
-    (mkTableau javCandidates javRanking javCandidates_ne).optimal
+    (Tableau.ofRanking javCandidates javRanking javCandidates_ne).optimal
     = {JavaneseCand.over} := by decide
 
 -- ============================================================================
@@ -273,7 +273,7 @@ theorem balCandidates_ne : balCandidates ≠ [] := by simp [balCandidates]
     generally permit codas — because B-R identity (MAX-BR) is low-ranked,
     the unmarked (coda-free) structure emerges in the reduplicant. -/
 theorem balangao_emergence_unmarked :
-    (mkTableau balCandidates balRanking balCandidates_ne).optimal
+    (Tableau.ofRanking balCandidates balRanking balCandidates_ne).optimal
     = {.partialRedup} := by decide
 
 -- ============================================================================
@@ -394,39 +394,39 @@ theorem basicCandidates_ne : basicCandidates ≠ [] := by simp [basicCandidates]
 /-- Non-application ranking (ex. 104): IO-Faith, BR-Id >> Phono.
     The faithful candidate wins — phonology cannot affect anything. -/
 theorem nonapplication_io_br_phono :
-    (mkTableau basicCandidates [basicIOFaith, basicBRId, basicPhono]
+    (Tableau.ofRanking basicCandidates [basicIOFaith, basicBRId, basicPhono]
       basicCandidates_ne).optimal = {.faithful} := by decide
 
 /-- Non-application (symmetric): BR-Id, IO-Faith >> Phono.
     Same outcome — faithful candidate wins regardless of IO/BR order. -/
 theorem nonapplication_br_io_phono :
-    (mkTableau basicCandidates [basicBRId, basicIOFaith, basicPhono]
+    (Tableau.ofRanking basicCandidates [basicBRId, basicIOFaith, basicPhono]
       basicCandidates_ne).optimal = {.faithful} := by decide
 
 /-- Emergence of the unmarked (ex. 105): IO-Faith >> Phono >> BR-Id.
     The normal candidate wins — phonology affects the reduplicant
     (low BR-Id), but the base is protected (high IO-Faith). -/
 theorem emergence_unmarked :
-    (mkTableau basicCandidates [basicIOFaith, basicPhono, basicBRId]
+    (Tableau.ofRanking basicCandidates [basicIOFaith, basicPhono, basicBRId]
       basicCandidates_ne).optimal = {BasicCand.normal} := by decide
 
 /-- Overapplication: Phono >> IO-Faith >> BR-Id.
     The over candidate wins — phonological unmarking applies to both
     B and R, sacrificing IO faithfulness. -/
 theorem overapplication_phono_io_br :
-    (mkTableau basicCandidates [basicPhono, basicIOFaith, basicBRId]
+    (Tableau.ofRanking basicCandidates [basicPhono, basicIOFaith, basicBRId]
       basicCandidates_ne).optimal = {BasicCand.over} := by decide
 
 /-- Overapplication: Phono >> BR-Id >> IO-Faith.
     Same outcome — phonology dominates. -/
 theorem overapplication_phono_br_io :
-    (mkTableau basicCandidates [basicPhono, basicBRId, basicIOFaith]
+    (Tableau.ofRanking basicCandidates [basicPhono, basicBRId, basicIOFaith]
       basicCandidates_ne).optimal = {BasicCand.over} := by decide
 
 /-- Overapplication: BR-Id >> Phono >> IO-Faith.
     B-R identity copies phonological effects to both B and R. -/
 theorem overapplication_br_phono_io :
-    (mkTableau basicCandidates [basicBRId, basicPhono, basicIOFaith]
+    (Tableau.ofRanking basicCandidates [basicBRId, basicPhono, basicIOFaith]
       basicCandidates_ne).optimal = {BasicCand.over} := by decide
 
 /-- **Factorial typology summary**: all 6 rankings of 3 constraints produce
@@ -590,7 +590,7 @@ theorem akanCandidates_ne : akanCandidates ≠ [] := by simp [akanCandidates]
     OCP blocks overapplication, IDENT-BR blocks normal application,
     leaving underapplication as the only surviving candidate. -/
 theorem akan_underapplication :
-    (mkTableau akanCandidates akanRanking akanCandidates_ne).optimal
+    (Tableau.ofRanking akanCandidates akanRanking akanCandidates_ne).optimal
     = {AkanCand.under} := by decide
 
 -- ============================================================================
@@ -749,7 +749,7 @@ open Core.Optimization Constraints
 
 /-- Javanese overapplication tableau as a generic `ConstraintSystem`. -/
 noncomputable def javaneseSystem : ConstraintSystem JavaneseCand (LexProfile Nat 3) :=
-  tableauSystem (mkTableau javCandidates javRanking javCandidates_ne)
+  tableauSystem (Tableau.ofRanking javCandidates javRanking javCandidates_ne)
 
 /-- The OT prediction lifts: the overapplicational candidate is assigned
     probability 1 under IDENT-BR, *VhV >> MAX-IO. -/
@@ -759,7 +759,7 @@ theorem javaneseSystem_predict_over :
 
 /-- Balangao emergence-of-the-unmarked tableau as a generic `ConstraintSystem`. -/
 noncomputable def balangaoSystem : ConstraintSystem BalangaoCand (LexProfile Nat 3) :=
-  tableauSystem (mkTableau balCandidates balRanking balCandidates_ne)
+  tableauSystem (Tableau.ofRanking balCandidates balRanking balCandidates_ne)
 
 /-- The OT prediction lifts: the partial-reduplicant candidate is assigned
     probability 1 under MAX-IO >> NO-CODA >> MAX-BR. -/
@@ -769,7 +769,7 @@ theorem balangaoSystem_predict_partial :
 
 /-- Akan underapplication tableau as a generic `ConstraintSystem`. -/
 noncomputable def akanSystem : ConstraintSystem AkanCand (LexProfile Nat 4) :=
-  tableauSystem (mkTableau akanCandidates akanRanking akanCandidates_ne)
+  tableauSystem (Tableau.ofRanking akanCandidates akanRanking akanCandidates_ne)
 
 /-- The OT prediction lifts: the underapplicational candidate is assigned
     probability 1 under OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor). -/
