@@ -8,7 +8,6 @@ import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Footing
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.Prosody.CompensatoryLengthening
 open Morphology.Case.Allomorphy
 
 /-!
@@ -995,7 +994,6 @@ section MoraicCLConnection
 
 open Phonology (Segment)
 open Prosody (Syllable)
-open Prosody.CL (strand spread strandedCount)
 
 /-- Telugu has Weight by Position: coda consonants bear morae, making CVC
     syllables heavy. This is assumed by the Stem-level parse, where *dram*
@@ -1009,14 +1007,14 @@ def teluguWBP : Bool := true
     strands a mora, which spreads left to yield /drā/. The CL repair is not a
     stipulated candidate — it is available precisely because Telugu has WBP. -/
 theorem telugu_coda_deletion_strands_mora (o n c : Segment) :
-    strandedCount (strand (Syllable.ofCV [o] [n] [c] teluguWBP) 1) = 1 := rfl
+    ((Syllable.ofCV [o] [n] [c] teluguWBP).strand 1).strandedCount = 1 := rfl
 
 /-- Moraic conservation ([hayes-1989]): the mora stranded by /m/ deletion is
     absorbed by leftward spreading to /a/, yielding /ā/ (2μ). Total mora count
     is unchanged. -/
 theorem telugu_cl_conservation (o n c : Segment) :
     let σ := Syllable.ofCV [o] [n] [c] teluguWBP
-    σ.moraCount = (spread (strand σ 1) .left).moraCount := rfl
+    σ.moraCount = ((σ.strand 1).relicense).moraCount := rfl
 
 end MoraicCLConnection
 

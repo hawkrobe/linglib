@@ -1354,7 +1354,6 @@ import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Accent
-import Linglib.Phonology.Prosody.CompensatoryLengthening
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Footing
 import Linglib.Phonology.Prosody.Mora
