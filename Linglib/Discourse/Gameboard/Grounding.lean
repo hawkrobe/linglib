@@ -1,4 +1,4 @@
-import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.Gameboard.Defs
 
 /-!
 # KOS: LocProp Grounding & CRification
@@ -58,7 +58,7 @@ predecessor to this protocol; it lives in
 single-consumer demotion).
 -/
 
-namespace Discourse.KOS
+namespace Discourse.Gameboard
 
 -- ════════════════════════════════════════════════════
 -- § 1. LocProp Resolution Predicates
@@ -317,4 +317,4 @@ theorem belief_resolution_grounds_via_ccur {Cont : Type} {QContent : Type*}
   rw [hws]
   rfl
 
-end Discourse.KOS
+end Discourse.Gameboard

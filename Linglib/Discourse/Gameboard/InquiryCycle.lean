@@ -1,4 +1,4 @@
-import Linglib.Discourse.KOS.Basic
+import Linglib.Discourse.Gameboard.Basic
 import Linglib.Semantics.Questions.Support
 
 /-!
@@ -28,15 +28,15 @@ conversational rules into a relation on (DGB, move) pairs.
 
 ## Genre relevance
 
-`genreRelevant` (eq. 90 p. 105) lives in the sibling `KOS/Genre.lean`.
+`genreRelevant` (eq. 90 p. 105) lives in the sibling `Gameboard/Genre.lean`.
 
 ## Grounding
 
 The LocProp grounding/CRification protocol (Ch. 6 §6.5–6.7) lives in
-the sibling `KOS/Grounding.lean`.
+the sibling `Gameboard/Grounding.lean`.
 -/
 
-namespace Discourse.KOS
+namespace Discourse.Gameboard
 
 open Question
 
@@ -229,4 +229,4 @@ def mCoherent {P Fact QContent : Type*} {Cont : Type}
     (dgb₀ : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Prop :=
   ∃ rule, rule ∈ rules ∧ (rule dgb₀).latestMove = some m
 
-end Discourse.KOS
+end Discourse.Gameboard

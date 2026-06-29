@@ -1,6 +1,6 @@
 import Linglib.Discourse.CommitmentSpace
-import Linglib.Discourse.KOS.Defs
-import Linglib.Discourse.KOS.Basic
+import Linglib.Discourse.Gameboard.Defs
+import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Commitment.Table
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Questions.Bias.Defs
@@ -418,7 +418,7 @@ both Krifka's eager-narrowing root behaviour and KOS's per-DGB asymmetry.
 
 section vsGinzburg2012
 
-open Discourse.KOS
+open Discourse.Gameboard
 
 /-- The contrast theorem: post-assertion, Krifka's `space.root` narrows
     to a singleton list `[commit speaker isRaining]` (immediate, with

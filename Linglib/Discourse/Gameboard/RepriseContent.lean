@@ -1,4 +1,4 @@
-import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.Gameboard.Defs
 
 /-!
 # The Reprise Content Hypothesis (RCH)
@@ -44,7 +44,7 @@ in `Studies/PurverGinzburg2004.lean`, which consumes this
 file.
 -/
 
-namespace Discourse.KOS
+namespace Discourse.Gameboard
 
 -- ════════════════════════════════════════════════════
 -- § 1. Reprise readings ([ginzburg-2012] Ch. 6 §6.2.1, Table 6.1)
@@ -58,7 +58,7 @@ by what they query.
 
 This enum mirrors the `CRReading` enum in
 `Studies/Ginzburg2012.lean`. We declare it here so that
-`KOS/RepriseContent.lean` does not import from `Studies/`. -/
+`Gameboard/RepriseContent.lean` does not import from `Studies/`. -/
 inductive RFReading where
   /-- "Are you asking/saying that p?" — confirms propositional content -/
   | clausalConfirmation
@@ -192,4 +192,4 @@ theorem qParamsPredictor_satisfies_strongRCH {Cont : Type} :
   intro ev qt
   exact Iff.rfl
 
-end Discourse.KOS
+end Discourse.Gameboard

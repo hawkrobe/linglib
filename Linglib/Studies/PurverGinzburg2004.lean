@@ -1,5 +1,5 @@
-import Linglib.Discourse.KOS.Defs
-import Linglib.Discourse.KOS.RepriseContent
+import Linglib.Discourse.Gameboard.Defs
+import Linglib.Discourse.Gameboard.RepriseContent
 
 /-!
 # Purver & Ginzburg (2004): Clarifying Noun Phrase Semantics
@@ -45,7 +45,7 @@ on the q-params record, not on a higher-order GQ denotation. RCH then
 ## What this file proves
 
 Two theorems about RCH (defined in
-`Pragmatics/Dialogue/KOS/RepriseContent.lean`):
+`Pragmatics/Dialogue/Gameboard/RepriseContent.lean`):
 
 1. `gq_reprise_type_mismatch`: a predictor that licenses only `.functional`
    queries — the GQ prediction — fails Weak RCH against any reprise event
@@ -56,13 +56,13 @@ Two theorems about RCH (defined in
    construction.
 
 Both theorems take a `RepriseEvent` carrying a host LocProp; the LocProp's
-new `qcparams` field (added in `KOS/Basic.lean`) is what makes the q-params
+new `qcparams` field (added in `Gameboard/Basic.lean`) is what makes the q-params
 record visible at the reprise interface.
 -/
 
 namespace PurverGinzburg2004
 
-open Discourse.KOS
+open Discourse.Gameboard
 
 -- ════════════════════════════════════════════════════
 -- § 1. A worked example: 'a thief broke in'
@@ -142,7 +142,7 @@ through the `qcparams` channel on the LocProp. The `qParamsPredictor`
 licenses exactly the queries that `reprisedContent` reports — every
 observed query is predicted, so Weak RCH holds. (Inherited from
 `qParamsPredictor_satisfies_weakRCH` in
-`KOS/RepriseContent.lean`; restated here for the empirical paper context.) -/
+`Gameboard/RepriseContent.lean`; restated here for the empirical paper context.) -/
 theorem qparams_split_satisfies_weakRCH :
     WeakRCH (qParamsPredictor : RchPredictor String) :=
   qParamsPredictor_satisfies_weakRCH

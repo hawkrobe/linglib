@@ -1,4 +1,4 @@
-import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.Gameboard.Defs
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Support
 
@@ -29,7 +29,7 @@ typeclass (Prop-valued, mathlib-shaped). With QUD now storing
 `f ⊨ is.q` projects through the InfoStruc's question field.
 -/
 
-namespace Discourse.KOS
+namespace Discourse.Gameboard
 
 open Question
 
@@ -226,4 +226,4 @@ unfolding doesn't align cleanly between the `supports` and
 `decSupports` fields; consumers requiring it can construct the
 instance locally. -/
 
-end Discourse.KOS
+end Discourse.Gameboard

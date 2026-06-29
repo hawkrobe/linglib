@@ -1,4 +1,4 @@
-import Linglib.Discourse.KOS.InquiryCycle
+import Linglib.Discourse.Gameboard.InquiryCycle
 import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!
@@ -6,7 +6,7 @@ import Linglib.Semantics.TypeTheoretic.Discourse
 [ginzburg-2012] [cooper-2023]
 
 The TTR-typed instantiation of KOS substrate. `LocProp ⊐ TTRSign` is
-already structural in `KOS/Defs.lean` (via `LocProp.toTTRSign` and the
+already structural in `Gameboard/Defs.lean` (via `LocProp.toTTRSign` and the
 `Coe` instance) — this file is not a "bridge" but a worked
 instantiation pattern: how do we exercise the KOS conversational rules
 when facts are TTR Austinian propositions and questions are TTR
@@ -24,7 +24,7 @@ question-bodies?
    `Weather` situation type.
 -/
 
-namespace Discourse.KOS.Austinian
+namespace Discourse.Gameboard.Austinian
 
 open Semantics.TypeTheoretic (BCheckableAustinian CheckableAustinian
   IsTrue IsFalse)
@@ -165,4 +165,4 @@ theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by
 
 end AustinianExample
 
-end Discourse.KOS.Austinian
+end Discourse.Gameboard.Austinian
