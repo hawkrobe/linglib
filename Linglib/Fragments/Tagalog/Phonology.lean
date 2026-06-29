@@ -153,20 +153,20 @@ theorem nasals_are_nasal :
 
 /-- All six stem-initial obstruents match the nasal-substitution target. -/
 theorem ns_target_matches_obstruents :
-    p.matchesPattern nasalSubstitution.target = true ∧
-    t.matchesPattern nasalSubstitution.target = true ∧
-    k.matchesPattern nasalSubstitution.target = true ∧
-    b.matchesPattern nasalSubstitution.target = true ∧
-    d.matchesPattern nasalSubstitution.target = true ∧
-    g.matchesPattern nasalSubstitution.target = true := by
+    nasalSubstitution.target ≤ p ∧
+    nasalSubstitution.target ≤ t ∧
+    nasalSubstitution.target ≤ k ∧
+    nasalSubstitution.target ≤ b ∧
+    nasalSubstitution.target ≤ d ∧
+    nasalSubstitution.target ≤ g := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- The three homorganic nasals do NOT match the obstruent target
     (sanity check: NS doesn't target nasals themselves). -/
 theorem ns_target_excludes_nasals :
-    m.matchesPattern nasalSubstitution.target = false ∧
-    n.matchesPattern nasalSubstitution.target = false ∧
-    ŋ.matchesPattern nasalSubstitution.target = false := by
+    ¬ nasalSubstitution.target ≤ m ∧
+    ¬ nasalSubstitution.target ≤ n ∧
+    ¬ nasalSubstitution.target ≤ ŋ := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Tagalog.Phonology

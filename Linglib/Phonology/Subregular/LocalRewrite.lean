@@ -73,7 +73,7 @@ inductive Effect where
 is deleted; `some s'` if features are merged into `s'`. -/
 def Effect.apply (e : Effect) (s : Segment) : Option Segment :=
   match e with
-  | .changeFeatures change => some (s.applyChanges change)
+  | .changeFeatures change => some (Features.Bundle.merge change s)
   | .delete => none
 
 /-! ### Rules -/
@@ -103,7 +103,7 @@ def matchRightContext : List ContextElem → List Segment → Bool
   | [], _ => true
   | .wordBoundary :: rest, [] => matchRightContext rest []
   | .wordBoundary :: _, _ :: _ => false  -- expected end of word
-  | .seg p :: rest, s :: rs => s.matchesPattern p && matchRightContext rest rs
+  | .seg p :: rest, s :: rs => decide (p ≤ s) && matchRightContext rest rs
   | .seg _ :: _, [] => false  -- expected segment, none follows
 
 /-- Match a left-context list against the prefix `left` to the left of
@@ -131,7 +131,7 @@ where
   go : List Segment → List Segment → List Segment
     | _, [] => []
     | left, s :: right =>
-      if s.matchesPattern r.target
+      if decide (r.target ≤ s)
           && matchLeftContext r.leftContext left
           && matchRightContext r.rightContext right then
         match r.effect.apply s with

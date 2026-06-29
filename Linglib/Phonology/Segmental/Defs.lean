@@ -116,13 +116,6 @@ theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
     common to two segments is their meet. -/
 abbrev Segment := Feature → Flat Bool
 
-/-- Is feature `f` specified (either [+F] or [−F])? -/
-def Segment.Specified (s : Segment) (f : Feature) : Prop :=
-  (s f).isSome = true
-
-instance (s : Segment) : DecidablePred (Segment.Specified s) := fun _ =>
-  inferInstanceAs (Decidable (_ = true))
-
 /-- Does feature `f` have value `v`? -/
 def Segment.HasValue (s : Segment) (f : Feature) (v : Bool) : Prop :=
   s f = some v
@@ -140,27 +133,6 @@ def Segment.ofSpecs (specs : List (Feature × Bool)) : Segment :=
   fun f => match specs.find? (λ p => p.1 == f) with
     | some (_, v) => some v
     | none => none
-
-/-- Bool: does segment `s` match natural-class pattern `p`? True when every
-    feature specified in `p` agrees with `s`; unspecified features in `p`
-    match anything — i.e. when `p` subsumes `s` (`matchesPattern_iff_le`). -/
-def Segment.matchesPattern (s : Segment) (p : Segment) : Bool :=
-  Feature.allFeatures.all fun f => decide (p f ≤ s f)
-
-/-- Prop wrapper around `matchesPattern` (mirrors `Segment.HasValue`). Lets
-    consumers write mathlib-style universally-quantified theorems with
-    Decidable inference via the Bool computation. -/
-def Segment.MatchesPattern (s p : Segment) : Prop := s.matchesPattern p = true
-
-instance (s p : Segment) : Decidable (Segment.MatchesPattern s p) :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- Merge feature changes from `change` into `s`: features specified in
-    `change` override `s`'s values; unspecified features in `change` are
-    preserved. Implements the SPE structural change `A → B` (when `B` is a
-    partial bundle) as the shared `Features.Bundle.merge`. -/
-def Segment.applyChanges (s change : Segment) : Segment :=
-  Features.Bundle.merge change s
 
 /-! ### Natural-class predicates
 
@@ -226,7 +198,7 @@ instance (s : Segment) : Decidable s.IsGlide := by
 
 The segment-level operations are thin lifts of the shared `Features.Bundle`
 algebra. Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
-[inkelas-orgun-1995], and [steriade-1995]; `fillFeature` is default-fill,
+[inkelas-orgun-1995], and [steriade-1995]; `fillFromContext` is default-fill,
 preserving existing values, per [kiparsky-1982] [archangeli-1988], while
 `setFeature` overrides. The Latin coda /l/ analysis in [sen-2015] is a worked
 example. -/
@@ -239,24 +211,11 @@ def Unspecified (s : Segment) (f : Feature) : Prop := s f = none
 instance (s : Segment) (f : Feature) : Decidable (s.Unspecified f) :=
   inferInstanceAs (Decidable (_ = none))
 
-/-- Remove the specification of feature `f` from `s` (the
-    `Features.Bundle.delete` slot operation). The result is unspecified for `f`
-    and agrees with `s` on every other feature. -/
-def unsetFeature (s : Segment) (f : Feature) : Segment :=
-  Features.Bundle.delete f s
-
 /-- Set feature `f` to value `v`, overriding any existing specification
     (the `Features.Bundle.set` slot operation). For default-fill semantics that
-    only assigns when `f` is currently unspecified, use `fillFeature`. -/
+    only assigns when `f` is currently unspecified, use `fillFromContext`. -/
 def setFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
   Features.Bundle.set f v s
-
-/-- Fill feature `f` with value `v` only if `s` is currently unspecified
-    for `f`; existing specifications are preserved. This implements the
-    default-fill semantics of feature-filling rules in lexical phonology
-    [kiparsky-1982] [archangeli-1988]. -/
-def fillFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
-  Features.Bundle.merge s (Features.Bundle.single f v)
 
 /-- Categorical feature spreading from context: the target `s`, when
     unspecified for `f`, takes the `f`-value of `ctx`; already-specified
@@ -290,7 +249,7 @@ end Segment
     |  5   | Vowel     |
 
     For the finer 8-level scale that splits obstruents by voice, see
-    `SonorityClass`. -/
+    `Sonority.Class`. -/
 inductive Sonority where
   | stop
   | fricative
@@ -320,8 +279,6 @@ def ofSegment (s : Segment) : Sonority :=
   else if s.HasValue .syllabic true then .vowel
   else .glide
 
-end Sonority
-
 /-! ### The Parker sonority scale -/
 
 /-- The 8-level Parker sonority partition ([parker-2002]) — a refinement of
@@ -334,7 +291,7 @@ end Sonority
     particular languages. The finer granularity is needed for sonority-
     conditioned gradient phenomena such as Tarifit intrusive vowels
     ([afkir-zellou-2025]). -/
-inductive SonorityClass where
+inductive Class where
   | vls    -- voiceless stops: [−son, −cont, −voice]
   | vds    -- voiced stops: [−son, −cont, +voice]
   | vlf    -- voiceless fricatives: [−son, +cont, −voice]
@@ -345,17 +302,15 @@ inductive SonorityClass where
   | vowel  -- vowels: [+son, +approx, −cons, +syll]
   deriving DecidableEq, Repr
 
-namespace SonorityClass
-
 /-- Parker's default universal 8-level ranking ([parker-2002]): voiced stops
     (`vds = 3`) outrank voiceless fricatives (`vlf = 2`). -/
-def parkerSonority : SonorityClass → Nat
+def Class.parkerRank : Class → Nat
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
 /-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`,
     but additionally splitting obstruents by [±voice] ([parker-2002]). -/
-def ofSegment (s : Segment) : SonorityClass :=
+def Class.ofSegment (s : Segment) : Class :=
   if s.HasValue .sonorant false then
     if s.HasValue .continuant true then
       if s.HasValue .voice true then .vdf else .vlf
@@ -367,7 +322,7 @@ def ofSegment (s : Segment) : SonorityClass :=
   else .glide
 
 /-- Coarsen to the substance-free `Sonority`, collapsing the voicing split. -/
-def toSonority : SonorityClass → Sonority
+def Class.toSonority : Class → Sonority
   | .vls | .vds => .stop
   | .vlf | .vdf => .fricative
   | .nasal => .nasal
@@ -375,10 +330,6 @@ def toSonority : SonorityClass → Sonority
   | .glide => .glide
   | .vowel => .vowel
 
-end SonorityClass
-
-/-- Parker sonority of a segment (convenience). -/
-def parkerSonorityOf (s : Segment) : Nat :=
-  (SonorityClass.ofSegment s).parkerSonority
+end Sonority
 
 end Phonology
