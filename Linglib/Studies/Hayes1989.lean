@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.CompensatoryLengthening
-import Linglib.Phonology.Prosody.Word
+import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -135,7 +135,7 @@ def tale_σ₂ : Syllable := ⟨[l], [Mora.of e]⟩  -- schwa (using ⟨e⟩)
 def tale_input : List Syllable := [tale_σ₁, tale_σ₂]
 
 /-- Input ⟨talə⟩ has 2 total morae (one per syllable). -/
-theorem tale_input_morae : (Word.ofSyllables tale_input).moraCount = 2 := rfl
+theorem tale_input_morae : (Yield.ofSyllables tale_input).moraCount = 2 := rfl
 
 /-- Deleting σ₂'s schwa strands one mora. -/
 theorem tale_schwa_strands : strandedCount (strand tale_σ₂ 0) = 1 := rfl
@@ -159,7 +159,7 @@ def tale_output : Syllable := ⟨[t], [Mora.of a, ⟨[a, l]⟩]⟩
 
 /-- Conservation: input total morae = output morae. -/
 theorem tale_conservation :
-    (Word.ofSyllables tale_input).moraCount = tale_output.moraCount := rfl
+    (Yield.ofSyllables tale_input).moraCount = tale_output.moraCount := rfl
 
 end MiddleEnglishVowelLoss
 
@@ -231,18 +231,18 @@ def kaanus_form : List Syllable := [kaanus_σ₁, kasnus_σ₂]
 
 /-- CL output has the weight profile [heavy, heavy]. -/
 theorem kaanus_weight_profile :
-    Word.ofSyllables kaanus_form = ⟨[.heavy, .heavy]⟩ := rfl
+    Yield.ofSyllables kaanus_form = [.heavy, .heavy] := rfl
 
 /-- CL output satisfies the bimoraic minimal-word constraint (4μ ≥ 2μ). -/
 theorem kaanus_satisfies_minword :
-    (Word.ofSyllables kaanus_form).satisfiesMinWord := by decide
+    (Yield.ofSyllables kaanus_form).satisfiesMinWord := by decide
 
 /-- Middle English: CL preserves the bimoraic minimum across syllable
     restructuring. Input ⟨talə⟩ = [L, L] (2μ); output [ta:l] = [H] (2μ). Both
     satisfy the bimoraic minimum — a consequence of moraic conservation. -/
 theorem tale_minword_preserved :
-    (Word.ofSyllables tale_input).satisfiesMinWord ∧
-    (Word.ofSyllables [tale_output]).satisfiesMinWord :=
+    (Yield.ofSyllables tale_input).satisfiesMinWord ∧
+    (Yield.ofSyllables [tale_output]).satisfiesMinWord :=
   ⟨by decide, by decide⟩
 
 end ProsodicPipeline

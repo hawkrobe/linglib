@@ -65,4 +65,27 @@ def ofCV (onset nucleus coda : List Segment) (wbp : Bool := true) : Syllable :=
 
 end Syllable
 
+/-! ### Yield -/
+
+/-- A **yield**: the terminal σ-weight string of a prosodic structure — the
+    unparsed input, or the leaves of a prosodic `Tree`. Distinct from the prosodic
+    word ω (`Prosody.Word`), which is a *headed constituent*: a yield is just the
+    weight profile, with no head and no constituency. -/
+abbrev Yield := List Syllable.Weight
+
+namespace Yield
+
+/-- The weight profile of fully-moraified syllables — the σ → yield bridge. -/
+def ofSyllables (σs : List Syllable) : Yield := σs.map Syllable.weight
+
+/-- Total mora count (each weight *is* a mora count). -/
+def moraCount (y : Yield) : Nat := y.sum
+
+/-- The minimal-word *size* constraint ([mccarthy-prince-1993]): at least
+    `minMorae` morae (default 2, the moraic-trochee minimum). The *structural*
+    minimal word — that an ω properly contains a foot — is `Word.feet_ne_nil`. -/
+abbrev satisfiesMinWord (y : Yield) (minMorae : Nat := 2) : Prop := minMorae ≤ y.moraCount
+
+end Yield
+
 end Prosody
