@@ -1,5 +1,3 @@
-import Linglib.Discourse.KOS.Defs
-
 /-!
 # Propositional Lexemes
 [ginzburg-2012] Appendix C (exx. 10–12)
@@ -24,8 +22,6 @@ regular affirmatives/negatives in languages that use verbal echo
 -/
 
 namespace English.PropositionalLexemes
-
-open Discourse.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. PropLexeme Structure

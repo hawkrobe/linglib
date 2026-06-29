@@ -8,7 +8,7 @@ import Linglib.Semantics.TypeTheoretic.Basic
 Pure type definitions for the KOS framework. No operations beyond the
 trivial constructors / accessors required for type families to compose.
 Operations live in sibling files (`Basic`, `InquiryCycle`, `Grounding`,
-`Genre`, `Move`).
+`Genre`).
 
 ## TTR-residence
 
@@ -34,9 +34,7 @@ The structural commitment is unchanged: every `LocProp` projects to a
 itself `Type`-pinned in `Semantics/TypeTheoretic/Core.lean`
 (Cooper's "type-is-a-type" semantics requires `Type 0` for the carrier).
 Same pinning applies in `KOS/Austinian.lean` (where `BCheckableAustinian`
-and `TTRQuestionB` similarly require `Type`) and in
-`KOS/CooperInfoState.lean` (where `InfoState` from TypeTheoretic requires
-all type parameters at `Type`).
+and `TTRQuestionB` similarly require `Type`).
 
 Migrating `Cont` to `Type*` requires lifting the entire TTR substrate
 to universe polymorphism — out of scope for this layer's cleanup.
@@ -46,7 +44,7 @@ Document, don't migrate.
 
 This file collects the load-bearing KOS types in dependency order:
 
-- §1. `IllocMove` — speech-act labels (Searle bridge in `Move.lean`)
+- §1. `IllocMove` — speech-act labels
 - §2. `CParam`, `CParamSet` — contextual parameters (Ginzburg-Cooper 2004 ex. 28,
        surviving as `dgb-params` in 2012). Shared between 2004 and 2012 study sites.
 - §3. `SubUtterance` — addressable sub-utterance (G-C 2004 §2). Shared.
@@ -108,11 +106,6 @@ inductive IllocMove (Fact QContent : Type*) where
   /-- Counter-greeting. -/
   | counterGreet : IllocMove Fact QContent
   deriving Repr, DecidableEq
-
-/-- Extract the propositional content from a move, if any. -/
-def IllocMove.factContent {Fact QContent : Type*} : IllocMove Fact QContent → Option Fact
-  | .assert p | .accept p | .check p | .confirm p => some p
-  | _ => none
 
 /-- Extract the question content from a move, if any. -/
 def IllocMove.questionContent {Fact QContent : Type*} : IllocMove Fact QContent → Option QContent
@@ -233,7 +226,7 @@ instance {Cont : Type} : Coe (LocProp Cont) (TTRSign String Cont) where
 /-- An information structure: a question paired with its focus-establishing
 constituents (FECs).
 
-[ginzburg-2012] Ch. 7, Appendix B (ex. 2): QUD entries are not bare
+[ginzburg-2012] Ch. 7 (p. 239): QUD entries are not bare
 questions but InfoStructs. The FEC records which sub-utterance(s)
 established the question — this is what enables NSU resolution.
 
@@ -252,12 +245,6 @@ structure InfoStruc (QContent : Type*) (Cont : Type) where
 def InfoStruc.fromQuestion {QContent : Type*} {Cont : Type} (q : QContent) :
     InfoStruc QContent Cont where
   q := q
-
-/-- Create an InfoStruc from a question and a wh-word sub-utterance. -/
-def InfoStruc.withFEC {QContent : Type*} {Cont : Type}
-    (q : QContent) (fec : LocProp Cont) : InfoStruc QContent Cont where
-  q := q
-  fec := [fec]
 
 -- ════════════════════════════════════════════════════
 -- § 6. Dialogue Gameboard
@@ -278,9 +265,11 @@ The type parameters make content types explicit:
 - `Cont`: type of locutionary content (e.g., `String` for surface form
   or `BCheckableAustinian S` for TTR-typed propositions)
 
-This shape matches Ginzburg's Ch. 6 final DGB (ex. 43 p. 175):
+This shape matches Ginzburg's Ch. 6 final DGB (ex. 43 p. 175), where
+`pending`/`moves` store `LocProp`s and `qud` is a poset of questions:
 - `pending` stores `LocProp` (with cparams, enabling CRification on form)
-- `qud` stores `InfoStruc` (questions paired with FECs, enabling NSU resolution)
+- `qud` stores `InfoStruc` (questions paired with FECs) — the InfoStruc-as-QUD
+  refinement is the Ch. 7 development (p. 239), not ex. 43 itself
 - `moves` keeps `IllocMove` for case-analysis convenience (the book's
   final form uses LocProps; converting incurs no fidelity cost since
   IllocMove constructors carry information LocProps would have to recover) -/
@@ -352,11 +341,6 @@ structure GenreType (Fact QContent : Type*) where
       `none` = unrestricted (like CasualChat). The `qudConstraint`-based
       `genreRelevant` predicate (Ginzburg eq. 90) lives in `KOS/Genre.lean`. -/
   qudConstraint : Option (List QContent → Bool) := none
-
-/-- The generic DGBType — the supertype of all genre types.
-[ginzburg-2012] ex. 86 (p. 103): `DGBTypefin GenreType`. -/
-def GenreType.generic {Fact QContent : Type*} : GenreType Fact QContent where
-  name := "generic"
 
 -- ════════════════════════════════════════════════════
 -- § 8. Total Information State
