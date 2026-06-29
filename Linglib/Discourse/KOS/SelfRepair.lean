@@ -17,8 +17,6 @@ operates on the head of Pending directly.
   swap the current head of Pending with a corrected LocProp
 - `TIS.clearMaxPending` — drop the head of Pending (abandon current
   incomplete utterance)
-- `TIS.extendMaxPendingPhon` — extend the head's `phon` field
-  (Ginzburg §8.2.3 incremental construction)
 - `TIS.pushMaxPending` — push a new LocProp onto Pending (start a new
   in-construction utterance; equivalent to `DGB.pushPending`)
 

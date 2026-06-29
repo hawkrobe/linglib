@@ -22,9 +22,6 @@ question-bodies?
    satisfies the question body (Ch. 4).
 - §4. A worked Austinian inquiry-cycle example over a tiny
    `Weather` situation type.
-
-The Cooper-2023 ↔ Ginzburg-2012 genealogical bridge
-(`tisToInfoState`) lives in the sibling `KOS/CooperInfoState.lean`.
 -/
 
 namespace Discourse.KOS.Austinian
@@ -59,10 +56,6 @@ def TTRQuestionB.polar (p : Bool) (name : String := "") : TTRQuestionB Unit wher
 def TTRQuestionB.wh {R : Type} (body : R → Bool) (name : String := "") : TTRQuestionB R where
   body := body
   name := name
-
-/-- A Bool-question is resolved when some element satisfies the body. -/
-def TTRQuestionB.isResolved {R : Type} (q : TTRQuestionB R) (domain : List R) : Bool :=
-  domain.any q.body
 
 -- ════════════════════════════════════════════════════
 -- § 2. Austinian-Fact DGB

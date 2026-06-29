@@ -92,18 +92,6 @@ def TIS.accept {P Fact QContent : Type*} {Cont : Type}
     TIS P Fact QContent Cont :=
   { tis with dgb := (tis.dgb.addFact p).recordMove (.accept p) }
 
-/-- **QSPEC rule**: a subquestion refines a QUD entry.
-
-Precondition: q₂ influences some q₁ on QUD (q₂ is a subquestion).
-Effect: push q₂ onto QUD (it becomes the new MaxQud).
-
-Ch. 4, "QSPEC" (p. 95, ex. 66 step 2). -/
-def TIS.qspec {P Fact QContent : Type*} {Cont : Type}
-    (tis : TIS P Fact QContent Cont) (q : QContent) :
-    TIS P Fact QContent Cont :=
-  { tis with
-    dgb := (tis.dgb.pushQud q).recordMove (.ask q) }
-
 /-- **Check rule**: addressee requests confirmation of an assertion.
 
 Ch. 4 (p. 95, ex. 68): a Check move pushes
@@ -200,11 +188,6 @@ theorem accept_preserves_qud {P Fact QContent : Type*} {Cont : Type}
 theorem accept_adds_fact {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     (tis.accept p).dgb.facts = p :: tis.dgb.facts := rfl
-
-/-- QSPEC pushes a subquestion. -/
-theorem qspec_pushes {P Fact QContent : Type*} {Cont : Type}
-    (tis : TIS P Fact QContent Cont) (q : QContent) :
-    (tis.qspec q).dgb.qud = (.fromQuestion q : InfoStruc QContent Cont) :: tis.dgb.qud := rfl
 
 /-- Check pushes a question onto QUD. -/
 theorem check_pushes_qud {P Fact QContent : Type*} {Cont : Type}
