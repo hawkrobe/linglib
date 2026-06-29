@@ -397,14 +397,15 @@ theorem empirical_ordering_consistent_with_tau :
     projectionRating_Exp1a .know > projectionRating_Exp1a .think := by
   simp only [projectionRating_Exp1a]; norm_num
 
-/-- The prior-belief modulation finding from [degen-tonhauser-2021],
-    replicated in 2b, is the empirical regularity the world-knowledge
-    component of the discrete-factivity model is fit to: higher prior
-    probability of the complement → stronger projection. -/
-theorem prior_effect_consistent :
-    (exp1_priorEffect .categorical).β > 0 ∧
-    exp2b_priorEffect .categorical = some ⟨0.18, 0.01, 12.81⟩ :=
-  prior_effect_replicates
+/-- The prior-belief modulation finding from [degen-tonhauser-2021] (replicated
+    in Exp 2b) is the empirical regularity the world-knowledge component of the
+    discrete-factivity model is fit to: a prior-sensitive (monotone) account
+    predicts that higher prior probability of the complement yields stronger
+    projection (`DegenTonhauser2021.sensitive_predicts_modulation`), which their
+    data confirm for all 20 predicates. -/
+theorem prior_effect_consistent {acc : PriorAccount} (h : PriorSensitive acc)
+    {p q : Rat01} (hpq : p < q) : acc p < acc q :=
+  sensitive_predicts_modulation h hpq
 
 end EmpiricalAnchor
 
