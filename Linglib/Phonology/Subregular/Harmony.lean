@@ -97,7 +97,7 @@ def HarmonyDir.toSide : HarmonyDir → Side
     segments undergo the change (`isTarget`) and which are opaque blockers
     (`isBlocker`). The trigger predicate is the inherited `targetIsContext`;
     the spreading feature is `feature` (the inherited `featureValue` is
-    `fun s => s.spec feature` by construction, set by `mk'`). -/
+    `fun s => s feature` by construction, set by `mk'`). -/
 structure System extends TierRule Segment where
   /-- The distinctive feature that spreads. -/
   feature   : Feature
@@ -125,7 +125,7 @@ def System.mk' (feature : Feature)
       side := direction.toSide
       targetIsContext := fun s => isTrigger s = true
       relation := .agree
-      featureValue := fun s => s.spec feature
+      featureValue := fun s => s feature
       default := none }
   feature := feature
   isTarget := fun s => isTarget s = true
@@ -180,7 +180,7 @@ def triggerValue (sys : System) (stem : List Segment) : Option Bool :=
 
 /-- Write harmonic value `v` into a segment's `feature` slot. -/
 def writeFeature (feature : Feature) (v : Bool) (s : Segment) : Segment :=
-  { spec := fun f => if f == feature then some v else s.spec f }
+  fun f => if f == feature then some v else s f
 
 /-- Apply harmony to a single segment: if the segment is a target, set
     the harmony feature to the given value; otherwise return unchanged. -/
@@ -221,7 +221,7 @@ def System.spreadRule (sys : System) : OSLRule 2 Segment Segment where
     else if sys.isTarget s then
       match window.getLast? with
       | some prev =>
-        match prev.spec sys.feature with
+        match prev sys.feature with
         | some v => [writeFeature sys.feature v s]
         | none   => [s]
       | none => [s]

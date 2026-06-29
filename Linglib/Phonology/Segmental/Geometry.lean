@@ -1,16 +1,11 @@
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Phonology.Segmental.Defs
+import Mathlib.Logic.Relation
 
 /-!
 # Feature Geometry [clements-1985] [sagey-1986]
 
-Hierarchical organization of phonological features following the standard
-feature geometry model — the hierarchical organization of autosegmental
-tiers ([clements-hume-1995]). The tree synthesizes three sources:
-
-- **[clements-1985]**: root, laryngeal, supralaryngeal, and place nodes
-- **[sagey-1986]**: articulator sub-nodes under Place (labial, coronal, dorsal);
-  soft palate node under Supralaryngeal
-- **[hayes-2009]**: complete 26-feature inventory mapped to geometric nodes
+The hierarchical organization of phonological features as autosegmental class
+nodes ([clements-hume-1995]):
 
     Root [±syll, ±cons, ±son, ±approx, ±del.rel., ±tap, ±trill]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]
@@ -21,9 +16,17 @@ tiers ([clements-hume-1995]). The tree synthesizes three sources:
             ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
             └── Dorsal [±dor, ±high, ±low, ±front, ±back, ±tense]
 
-The flat classification predicates in `Feature.lean` (`IsPlace`, `IsLaryngeal`,
-`IsDorsal`) do not exactly correspond to any single geometric node —
-see the subsumption theorems below.
+The constituency from Root down to the three Place articulators is the consensus
+of [clements-1985] and [sagey-1986]. The placement of the individual terminal
+features — notably `[continuant]`, `[nasal]`, and `[lateral]`/`[strident]` — is
+theory-specific and contested: [sagey-1986] argues `[continuant]` is an
+articulator-level property, against its Supralaryngeal placement here. That
+divergence is formalized in `Studies/Sagey1986.lean`.
+
+A feature's geometric node is distinct from its manner-class (`Feature.category`):
+a manner feature like `[lateral]` attaches geometrically under Coronal, so the
+flat predicates (`Feature.IsPlace` &c.) do not coincide with single-node
+dominance — see the subsumption theorems below.
 -/
 
 namespace Phonology.FeatureGeometry
@@ -66,12 +69,42 @@ def GeomNode.children (n : GeomNode) : List GeomNode :=
 
 /-! ### Dominance -/
 
-/-- Does node `n` dominate node `m`? Reflexive-transitive closure of the
-    parent relation, unrolled to depth 3 (the tree's maximum depth). -/
-@[reducible] def GeomNode.Dominates (n m : GeomNode) : Prop :=
-  n = m ∨ m.parent = some n ∨
-    (m.parent.bind GeomNode.parent) = some n ∨
-    ((m.parent.bind GeomNode.parent).bind GeomNode.parent) = some n
+/-- `n` dominates `m`: `n` is `m` or one of its ancestors — the reflexive-
+    transitive closure of "is the parent of", reached by walking up from `m`.
+    Depth-agnostic, unlike a fixed unrolling. -/
+def GeomNode.Dominates (n m : GeomNode) : Prop :=
+  Relation.ReflTransGen (fun a b => a.parent = some b) m n
+
+/-- Dominance unrolls to the bounded parent-chain: the geometry has depth ≤ 3,
+    so `n` dominates `m` iff `n` is reached within three steps up. This is the
+    decidable face of `Dominates` that the `decide`-checked facts below run
+    through. -/
+theorem GeomNode.dominates_iff (n m : GeomNode) :
+    n.Dominates m ↔ n = m ∨ m.parent = some n ∨
+      (m.parent.bind GeomNode.parent) = some n ∨
+      ((m.parent.bind GeomNode.parent).bind GeomNode.parent) = some n := by
+  unfold GeomNode.Dominates
+  constructor
+  · intro h
+    induction h with
+    | refl => exact Or.inl rfl
+    | @tail b c _ hbc ih =>
+      rcases ih with rfl | h | h | h
+      · exact Or.inr (Or.inl hbc)
+      · exact Or.inr (Or.inr (Or.inl (by rw [h, Option.bind_some]; exact hbc)))
+      · exact Or.inr (Or.inr (Or.inr (by rw [h, Option.bind_some]; exact hbc)))
+      · exfalso; revert h hbc; cases m <;> cases b <;> cases c <;> decide
+  · rintro (rfl | h | h | h)
+    · exact .refl
+    · exact .single h
+    · obtain ⟨p, hmp, hpn⟩ := Option.bind_eq_some_iff.mp h
+      exact Relation.ReflTransGen.tail (.single hmp) hpn
+    · obtain ⟨q, hq, hqn⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨p, hmp, hpq⟩ := Option.bind_eq_some_iff.mp hq
+      exact Relation.ReflTransGen.tail (.tail (.single hmp) hpq) hqn
+
+instance : DecidableRel GeomNode.Dominates := fun n m =>
+  decidable_of_iff _ (GeomNode.dominates_iff n m).symm
 
 end Phonology.FeatureGeometry
 
@@ -186,14 +219,16 @@ simple segments, not complex ones.
 
 **Contour segments** have two root nodes linked to a single timing slot,
 with articulations in sequence (e.g., affricates [ts], [tʃ]; prenasalized
-stops [ⁿd], [ᵐb]).
+stops [ⁿd], [ᵐb]). A single-bundle `Segment` has one value per feature and so
+cannot host two root nodes: only *complex* (simultaneous, one-root) segments are
+modeled here, via `activeArticulators`. Sequential contour structures need the
+multi-anchor autosegmental representation (`Autosegmental/`), where they belong
+([sagey-1986]).
 
-The distinction was established by [sagey-1986] and is now standard
-in phonological theory. The feature geometry predicts exactly which
-complex segments are possible: only those combining *distinct* articulator
-nodes. Palatal–velar stops are impossible because both use the dorsal
-articulator; labio-velars are possible because labial and dorsal are
-independent.
+The feature geometry predicts which complex segments are possible: only those
+combining *distinct* articulator nodes. Palatal–velar stops are impossible
+because both use the dorsal articulator; labio-velars are possible because
+labial and dorsal are independent.
 -/
 
 namespace Phonology.FeatureGeometry
@@ -270,7 +305,7 @@ open Phonology.FeatureGeometry (GeomNode articulatorNodes)
 /-- Which articulator nodes have at least one specified feature in segment `s`? -/
 def Segment.activeArticulators (s : Segment) : List GeomNode :=
   articulatorNodes.filter λ n =>
-    n.features.any λ f => s.spec f |>.isSome
+    n.features.any λ f => s f |>.isSome
 
 /-- Number of active articulator nodes in a segment. -/
 def Segment.articulatorCount (s : Segment) : Nat :=
@@ -286,15 +321,14 @@ def Segment.IsComplex (s : Segment) : Prop :=
 instance : DecidablePred Segment.IsComplex := fun _ =>
   inferInstanceAs (Decidable (_ ≥ _))
 
-/-- Complex segment well-formedness: active articulators must be distinct
-    nodes. This is trivially satisfied by `activeArticulators` (which returns
-    a duplicate-free sublist of `articulatorNodes`), but we state it
-    explicitly as the standard WFC. -/
-def Segment.ComplexWF (s : Segment) : Prop :=
-  let aa := s.activeArticulators
-  aa.length = aa.eraseDups.length
-
-instance : DecidablePred Segment.ComplexWF := fun _ =>
-  inferInstanceAs (Decidable (_ = _))
+/-- **The complex-segment well-formedness condition holds by construction**: a
+    segment's active articulators are always distinct, because they are filtered
+    from the duplicate-free `articulatorNodes`. The condition that articulations
+    occupy distinct articulator nodes is therefore not a separate constraint but a
+    theorem ([sagey-1986]). -/
+theorem Segment.activeArticulators_nodup (s : Segment) :
+    s.activeArticulators.Nodup := by
+  unfold Segment.activeArticulators
+  exact (by decide : articulatorNodes.Nodup).filter _
 
 end Phonology
