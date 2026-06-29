@@ -26,19 +26,6 @@ namespace Segment
 
 variable (s : Segment)
 
-/-! ### Feature changes -/
-
-/-- Applying the empty change list is the identity. -/
-@[simp] theorem applyChanges_ofSpecs_nil : s.applyChanges (Segment.ofSpecs []) = s := by
-  funext f; simp [Segment.applyChanges, Segment.ofSpecs, Features.Bundle.merge]
-
-/-- Applying the same change twice equals applying it once. -/
-@[simp] theorem applyChanges_idem (change : Segment) :
-    (s.applyChanges change).applyChanges change = s.applyChanges change := by
-  funext f
-  simp only [Segment.applyChanges, Features.Bundle.merge]
-  cases change f <;> rfl
-
 /-! ### Effect on the modified feature -/
 
 @[simp] theorem unsetFeature_unspecified (f : Feature) : (s.unsetFeature f).Unspecified f :=

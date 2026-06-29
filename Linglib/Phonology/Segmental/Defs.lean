@@ -134,13 +134,6 @@ def Segment.ofSpecs (specs : List (Feature × Bool)) : Segment :=
     | some (_, v) => some v
     | none => none
 
-/-- Merge feature changes from `change` into `s`: features specified in
-    `change` override `s`'s values; unspecified features in `change` are
-    preserved. Implements the SPE structural change `A → B` (when `B` is a
-    partial bundle) as the shared `Features.Bundle.merge`. -/
-def Segment.applyChanges (s change : Segment) : Segment :=
-  Features.Bundle.merge change s
-
 /-! ### Natural-class predicates
 
 Language-neutral natural-class membership predicates, by the SPE feature

@@ -73,7 +73,7 @@ inductive Effect where
 is deleted; `some s'` if features are merged into `s'`. -/
 def Effect.apply (e : Effect) (s : Segment) : Option Segment :=
   match e with
-  | .changeFeatures change => some (s.applyChanges change)
+  | .changeFeatures change => some (Features.Bundle.merge change s)
   | .delete => none
 
 /-! ### Rules -/
