@@ -71,18 +71,18 @@ def lexToOmegaViol (lex t : Tree) : Nat := if lexHasOmega lex t then 0 else 1
 /-! ### The four candidate prosodifications of *(fnc lex)* -/
 
 /-- The function word: one light syllable. -/
-def fncσ : Tree := .node ⟨.σ, .light⟩ []
+def fncσ : Tree := .node (.syl .light) []
 /-- The lexical word as a well-formed (bimoraic) ω. -/
-def lexω : Tree := .node ⟨.ω, 0⟩ [.node ⟨.f, 0⟩ [.node ⟨.σ, .heavy⟩ []]]
+def lexω : Tree := .node .om [.node .ft [.node (.syl .heavy) []]]
 
 /-- (a) full-ω: `[φ [ω fnc] [ω lex]]`. -/
-def fullOmega : Tree := .node ⟨.φ, 0⟩ [.node ⟨.ω, 0⟩ [fncσ], lexω]
+def fullOmega : Tree := .node .ph [.node .om [fncσ], lexω]
 /-- (b) amalgamated: `[ω fnc lex]` (lexical word loses its own ω). -/
-def amalgamated : Tree := .node ⟨.ω, 0⟩ [fncσ, .node ⟨.f, 0⟩ [.node ⟨.σ, .heavy⟩ []]]
+def amalgamated : Tree := .node .om [fncσ, .node .ft [.node (.syl .heavy) []]]
 /-- (c) ω-adjoined: `[ω fnc [ω lex]]` — recursive. -/
-def omegaAdjoined : Tree := .node ⟨.ω, 0⟩ [fncσ, lexω]
+def omegaAdjoined : Tree := .node .om [fncσ, lexω]
 /-- (d) φ-attached: `[φ fnc [ω lex]]`. -/
-def phiAttached : Tree := .node ⟨.φ, 0⟩ [fncσ, lexω]
+def phiAttached : Tree := .node .ph [fncσ, lexω]
 
 /-- Violation profile, ranked `FtBin, Lex-to-ω ≫ Parse-into-ω ≫ No-Recursion`. -/
 def profile (t : Tree) : List Nat :=

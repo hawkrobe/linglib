@@ -49,17 +49,17 @@ open Prosody Features.Prosody RootedTree Core.Optimization.Evaluation
 /-! ### Candidate prosodifications of a high-prefix + stem -/
 
 /-- A high-attaching prefix syllable (light). -/
-def prefσ : Tree := .node ⟨.σ, 1⟩ []
+def prefσ : Tree := .node (.syl 1) []
 
 /-- The stem syllable (heavy). -/
-def stemσ : Tree := .node ⟨.σ, 2⟩ []
+def stemσ : Tree := .node (.syl 2) []
 
 /-- Flat parse `[ω HighPref Stem]`: no recursion, but the stem has no ω of its own. -/
-def flatParse : Tree := .node ⟨.ω, 0⟩ [prefσ, stemσ]
+def flatParse : Tree := .node .om [prefσ, stemσ]
 
 /-- Recursive parse `[ω HighPref [ω Stem]]`: the stem keeps its ω; the prefix
     adjoins to a dominating ω ([bennett-2018]). -/
-def recParse : Tree := .node ⟨.ω, 0⟩ [prefσ, .node ⟨.ω, 0⟩ [stemσ]]
+def recParse : Tree := .node .om [prefσ, .node .om [stemσ]]
 
 /-! ### `Match(Stem, ω)` (stand-in) -/
 

@@ -24,8 +24,9 @@ faithfulness machinery (`OptimalityTheory.Correspondence`, Max/Dep) — future w
 
 ## Main definitions
 
-* `Prosody.PLabel` — a node label: a `ProsodicLevel`, plus a mora weight (σ only).
-* `Prosody.Tree` — `RootedTree.Planar PLabel`; the prosodic constituent.
+* `Prosody.Constituent` — a node: a `ProsodicLevel`, a mora `weight` (σ only), and
+  `isHead`; with smart constructors `om`/`ph`/`ft`/`syl`.
+* `Prosody.Tree` — `RootedTree.Planar Constituent`; the prosodic constituent.
 * `Prosody.Tree.Containment` — child level ≤ parent level ([ito-mester-2003]).
 * `Prosody.Tree.recursionCount` — parses of one element into the same level
   (= No-Recursion violations); recursion is *representable*, its cost is a constraint.
@@ -36,16 +37,33 @@ namespace Prosody
 
 open RootedTree Features.Prosody
 
-/-- A prosodic node label: a hierarchy `level`, plus a mora `weight` that is
-    meaningful only at the σ level (terminals). -/
-structure PLabel where
+/-- A prosodic node: a hierarchy `level`, a mora `weight` (meaningful only at σ),
+    and `isHead` — whether it heads its parent (meaningful at σ/foot). Unifies the
+    former `PLabel` with the (now-removed) `Features.Prosody.ProsodicConstituent`.
+    `weight`/`isHead` are inert at levels where they don't apply (every algorithm
+    guards on `level`), so a flat record with defaults — built via the smart
+    constructors below — is preferred over a per-level sum. -/
+structure Constituent where
   level  : ProsodicLevel
   weight : Syllable.Weight := 0
+  isHead : Bool := false
   deriving DecidableEq, Repr
 
+namespace Constituent
+/-- ω, a prosodic word. -/
+abbrev om : Constituent := { level := .ω }
+/-- φ, a phonological phrase. -/
+abbrev ph : Constituent := { level := .φ }
+/-- A foot, optionally the head of its parent. -/
+abbrev ft (isHead : Bool := false) : Constituent := { level := .f, isHead := isHead }
+/-- A syllable of the given `weight`, optionally the head of its foot. -/
+abbrev syl (weight : Syllable.Weight := 0) (isHead : Bool := false) : Constituent :=
+  { level := .σ, weight := weight, isHead := isHead }
+end Constituent
+
 /-- A prosodic tree: the Core ordered rose tree `RootedTree.Planar` labeled by
-    prosodic levels. Ordered children give No-Tangling by construction. -/
-abbrev Tree := Planar PLabel
+    `Constituent`s. Ordered children give No-Tangling by construction. -/
+abbrev Tree := Planar Constituent
 
 namespace Tree
 

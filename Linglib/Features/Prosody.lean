@@ -151,14 +151,6 @@ instance : LinearOrder ProsodicLevel :=
   LinearOrder.lift' ProsodicLevel.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [ProsodicLevel.toNat])
 
-/-- Head-prominence: each prosodic constituent has exactly one
-    prominent daughter (its head). K&S (32). -/
-structure ProsodicConstituent where
-  level : ProsodicLevel
-  /-- Whether this constituent is the head (most prominent) of its parent -/
-  isHead : Bool
-  deriving Repr
-
 -- ============================================================================
 -- § 4: Accent Specification Typology
 -- ============================================================================
