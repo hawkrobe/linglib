@@ -99,10 +99,10 @@ theorem shiftLink_comp (a₁ a₂ b₁ b₂ : ℕ) :
     shiftLink a₁ a₂ ∘ shiftLink b₁ b₂ = shiftLink (a₁ + b₁) (a₂ + b₂) := by
   funext p; simp only [Function.comp_apply, shiftLink_apply, Prod.mk.injEq]; omega
 
-/-- Shifting a link set preserves non-crossing. -/
+/-- Shifting a link set preserves non-crossing (via `isNonCrossing_image`). -/
 theorem isNonCrossing_image_shiftLink (s : Finset (ℕ × ℕ)) (δ₁ δ₂ : ℕ) :
     IsNonCrossing (s.image (shiftLink δ₁ δ₂)) ↔ IsNonCrossing s := by
-  grind [IsNonCrossing, Finset.coe_image, monovaryOn_image, MonovaryOn, shiftLink]
+  grind [isNonCrossing_image, IsNonCrossing, MonovaryOn, shiftLink]
 
 /-! ### Concatenation ([jardine-heinz-2015], fiberwise coproduct) -/
 

@@ -179,7 +179,7 @@ def eraseLink (i j : ℕ) : Graph α β :=
 
 /-- `insertLink` preserves planarity if the new link crosses nothing. -/
 theorem isPlanar_insertLink {i j : ℕ}
-    (hP : r.IsPlanar) (hNX : ¬ IndexCrosses r.links i j) :
+    (hP : r.IsPlanar) (hNX : ¬ IndexCrosses r.links (i, j)) :
     (r.insertLink i j).IsPlanar :=
   IsNonCrossing.insert_of_not_indexCrosses hP hNX
 
@@ -275,10 +275,10 @@ theorem concat_assoc (A B C : Graph α β) :
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
 /-- Shifting a link set preserves non-crossing: `shiftLink` is a coordinatewise
-    order-embedding, so by `monovaryOn_image` it preserves monovariance. -/
+    order-embedding, so via `isNonCrossing_image` it preserves monovariance. -/
 theorem isNonCrossing_image_shiftLink (s : Finset (ℕ × ℕ)) (δᵤ δₗ : ℕ) :
     IsNonCrossing (s.image (shiftLink δᵤ δₗ)) ↔ IsNonCrossing s := by
-  grind [IsNonCrossing, Finset.coe_image, monovaryOn_image, MonovaryOn, shiftLink]
+  grind [isNonCrossing_image, IsNonCrossing, MonovaryOn, shiftLink]
 
 /-- Concatenation preserves planarity, given `A.InBounds`: `A.links` and the
     shifted `B.links` are each non-crossing (`monovaryOn_union` +
