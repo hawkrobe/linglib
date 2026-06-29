@@ -198,7 +198,7 @@ instance (s : Segment) : Decidable s.IsGlide := by
 
 The segment-level operations are thin lifts of the shared `Features.Bundle`
 algebra. Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
-[inkelas-orgun-1995], and [steriade-1995]; `fillFeature` is default-fill,
+[inkelas-orgun-1995], and [steriade-1995]; `fillFromContext` is default-fill,
 preserving existing values, per [kiparsky-1982] [archangeli-1988], while
 `setFeature` overrides. The Latin coda /l/ analysis in [sen-2015] is a worked
 example. -/
@@ -211,24 +211,11 @@ def Unspecified (s : Segment) (f : Feature) : Prop := s f = none
 instance (s : Segment) (f : Feature) : Decidable (s.Unspecified f) :=
   inferInstanceAs (Decidable (_ = none))
 
-/-- Remove the specification of feature `f` from `s` (the
-    `Features.Bundle.delete` slot operation). The result is unspecified for `f`
-    and agrees with `s` on every other feature. -/
-def unsetFeature (s : Segment) (f : Feature) : Segment :=
-  Features.Bundle.delete f s
-
 /-- Set feature `f` to value `v`, overriding any existing specification
     (the `Features.Bundle.set` slot operation). For default-fill semantics that
-    only assigns when `f` is currently unspecified, use `fillFeature`. -/
+    only assigns when `f` is currently unspecified, use `fillFromContext`. -/
 def setFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
   Features.Bundle.set f v s
-
-/-- Fill feature `f` with value `v` only if `s` is currently unspecified
-    for `f`; existing specifications are preserved. This implements the
-    default-fill semantics of feature-filling rules in lexical phonology
-    [kiparsky-1982] [archangeli-1988]. -/
-def fillFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
-  Features.Bundle.merge s (Features.Bundle.single f v)
 
 /-- Categorical feature spreading from context: the target `s`, when
     unspecified for `f`, takes the `f`-value of `ctx`; already-specified

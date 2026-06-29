@@ -28,20 +28,8 @@ variable (s : Segment)
 
 /-! ### Effect on the modified feature -/
 
-@[simp] theorem unsetFeature_unspecified (f : Feature) : (s.unsetFeature f).Unspecified f :=
-  Function.update_self _ _ _
-
 @[simp] theorem setFeature_hasValue (f : Feature) (v : Bool) : (s.setFeature f v).HasValue f v :=
   Function.update_self _ _ _
-
-theorem fillFeature_hasValue_of_unspecified {f : Feature} (h : s.Unspecified f) (v : Bool) :
-    (s.fillFeature f v).HasValue f v := by
-  simp only [Segment.fillFeature, Segment.HasValue, Features.Bundle.merge,
-    Features.Bundle.single, show s f = none from h, Function.update_self]
-
-theorem fillFeature_apply_of_specified {f : Feature} {w : Bool} (h : s.HasValue f w) (v : Bool) :
-    (s.fillFeature f v) f = some w := by
-  simp only [Segment.fillFeature, Features.Bundle.merge, show s f = some w from h]
 
 theorem fillFromContext_apply_self_of_unspecified {f : Feature} (h : s.Unspecified f) (ctx : Segment) :
     (s.fillFromContext f ctx) f = ctx f := by
@@ -54,18 +42,9 @@ theorem fillFromContext_apply_self_of_specified {f : Feature} {w : Bool} (h : s.
 
 /-! ### Value preserved on other features -/
 
-@[simp] theorem unsetFeature_apply_of_ne {f g : Feature} (h : f ≠ g) : (s.unsetFeature f) g = s g :=
-  Function.update_of_ne (Ne.symm h) _ _
-
 @[simp] theorem setFeature_apply_of_ne {f g : Feature} (h : f ≠ g) (v : Bool) :
     (s.setFeature f v) g = s g :=
   Function.update_of_ne (Ne.symm h) _ _
-
-@[simp] theorem fillFeature_apply_of_ne {f g : Feature} (h : f ≠ g) (v : Bool) :
-    (s.fillFeature f v) g = s g := by
-  simp only [Segment.fillFeature, Features.Bundle.merge, Features.Bundle.single,
-    Function.update_of_ne (Ne.symm h)]
-  cases s g <;> rfl
 
 @[simp] theorem fillFromContext_apply_of_ne {f g : Feature} (h : f ≠ g) (ctx : Segment) :
     (s.fillFromContext f ctx) g = s g := by
