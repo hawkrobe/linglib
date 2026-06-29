@@ -588,6 +588,7 @@ import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.CommitmentSpace
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.CredenceThreshold
+import Linglib.Discourse.DialogueState
 import Linglib.Discourse.DisjunctiveUpdate
 import Linglib.Discourse.DistributionalCG
 import Linglib.Discourse.Gunlogson
