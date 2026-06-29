@@ -71,6 +71,7 @@ anchor combinators defined in §2 below.
 namespace AkinboFwangwar2026
 
 open OptimalityTheory
+open Constraints
 open Autosegmental
 open Tone (TRN)
 open Tone (integrityTone)
@@ -164,15 +165,15 @@ def maxToneAuto (f : MwaghavulForm) : Nat :=
 
 /-- L-ANCHOR-Mᵥ as a `Constraint`. -/
 def lAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
-  .ofCount (lAnchTone t m)
+  lAnchTone t m
 
 /-- R-ANCHOR-Mᵥ as a `Constraint`. -/
 def rAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
-  .ofCount (rAnchTone t m)
+  rAnchTone t m
 
 /-- MAX-Tone as a `Constraint`. -/
 def maxToneC : Constraint MwaghavulForm :=
-  .ofCount maxToneAuto
+  maxToneAuto
 
 /-- INTEGRITY-Mᵥ for the verbaliser (canonical case). -/
 def integMv : Constraint MwaghavulForm := integrityTone vbzMorph TRN.M
@@ -241,12 +242,12 @@ def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
 /-- L-ANCHOR-`t`-from-`m`-across-roots as a `Constraint`. -/
 def lAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
     Constraint MwaghavulForm :=
-  .ofCount (lAnchToneAcrossRoots t m rms)
+  lAnchToneAcrossRoots t m rms
 
 /-- R-ANCHOR across roots as a `Constraint`. -/
 def rAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
     Constraint MwaghavulForm :=
-  .ofCount (rAnchToneAcrossRoots t m rms)
+  rAnchToneAcrossRoots t m rms
 
 end PerRoot
 
@@ -297,51 +298,49 @@ def candF : MwaghavulForm :=
     deletedTier := {0}
     surfaceLinks := {(1, 0), (2, 1)} }
 
-def candidates : Finset MwaghavulForm := {candA, candB, candC, candD, candE, candF}
+def candidates : List MwaghavulForm := [candA, candB, candC, candD, candE, candF]
 
-theorem nonempty : candidates.Nonempty := by decide
+theorem candidates_ne : candidates ≠ [] := by decide
 
 /-- Ranking from paper §4.3 + p. 26: `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫
     R-ANCH-Mᵥ ≫ MAX-Tone`. -/
 def ranking : List (Constraint MwaghavulForm) :=
   [integMv, lAnchMv, rAnchMv, maxToneC]
 
-def tableau : DirectionalTableau MwaghavulForm where
-  candidates := candidates
-  ranking := ranking
-  nonempty := nonempty
+def tableau : Tableau MwaghavulForm ranking.length :=
+  Tableau.ofRanking candidates ranking candidates_ne
 
 /-- (24a) profile `[INTEG-Mᵥ, L-ANCH-Mᵥ, R-ANCH-Mᵥ, MAX-T] = [0, 2, 2, 0]`:
     M floating, both anchors fail (no gram-M TBU), no deletions. -/
 theorem candA_profile :
-    ranking.map (fun c => c.eval candA) = [[0], [2], [2], [0]] := by decide
+    ranking.map (fun c => c candA) = [0, 2, 2, 0] := by decide
 
 /-- (24b) profile `[0, 2, 2, 1]`: M deleted, anchors fail, MAX-T fires. -/
 theorem candB_profile :
-    ranking.map (fun c => c.eval candB) = [[0], [2], [2], [1]] := by decide
+    ranking.map (fun c => c candB) = [0, 2, 2, 1] := by decide
 
 /-- (24c) profile `[0, 1, 0, 0]`: M on σ1; L-ANCH = 1 (M not at left). -/
 theorem candC_profile :
-    ranking.map (fun c => c.eval candC) = [[0], [1], [0], [0]] := by decide
+    ranking.map (fun c => c candC) = [0, 1, 0, 0] := by decide
 
 /-- (24d) profile `[0, 0, 1, 0]`: M on σ0; R-ANCH = 1 (M not at right). -/
 theorem candD_profile :
-    ranking.map (fun c => c.eval candD) = [[0], [0], [1], [0]] := by decide
+    ranking.map (fun c => c candD) = [0, 0, 1, 0] := by decide
 
 /-- (24e) ☞ profile `[0, 0, 0, 1]`: M multi-linked, anchors satisfied;
     INTEG = 0 (1 alive vbz M); MAX-T = 1 (L deleted). The unique optimum. -/
 theorem candE_profile :
-    ranking.map (fun c => c.eval candE) = [[0], [0], [0], [1]] := by decide
+    ranking.map (fun c => c candE) = [0, 0, 0, 1] := by decide
 
 /-- (24f) profile `[1, 0, 0, 1]`: TWO M autosegments → INTEG = 1 (fatal
     under the ranking, even though anchors and MAX-T tie with (24e)). -/
 theorem candF_profile :
-    ranking.map (fun c => c.eval candF) = [[1], [0], [0], [1]] := by decide
+    ranking.map (fun c => c candF) = [1, 0, 0, 1] := by decide
 
 /-- **Headline**: `(24e)` is the unique optimum under
     `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone`. The copying variant
     (24f) is ruled out by INTEGRITY; (24a-d) lose on anchors. -/
-theorem optimal : tableau.optima = {candE} := by decide
+theorem optimal : tableau.optimal = {candE} := by decide
 
 end Tableau24
 
@@ -403,54 +402,52 @@ def candG : MwaghavulForm :=
     |>.insertLink 1 0
     |>.insertLink 2 2
 
-def candidates : Finset MwaghavulForm :=
-  {candA, candB, candC, candD, candE, candF, candG}
+def candidates : List MwaghavulForm :=
+  [candA, candB, candC, candD, candE, candF, candG]
 
-theorem nonempty : candidates.Nonempty := by decide
+theorem candidates_ne : candidates ≠ [] := by decide
 
 /-- Ranking from paper Tableau 25 (p. 27):
     `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
 def ranking : List (Constraint MwaghavulForm) :=
   [lAnchMv, rAnchHv, rAnchMv, lAnchHv, maxToneC]
 
-def tableau : DirectionalTableau MwaghavulForm where
-  candidates := candidates
-  ranking := ranking
-  nonempty := nonempty
+def tableau : Tableau MwaghavulForm ranking.length :=
+  Tableau.ofRanking candidates ranking candidates_ne
 
 /-- (25a) profile `[3, 3, 3, 3, 2]`: no verbaliser realised. -/
 theorem candA_profile :
-    ranking.map (fun c => c.eval candA) = [[3], [3], [3], [3], [2]] := by decide
+    ranking.map (fun c => c candA) = [3, 3, 3, 3, 2] := by decide
 
 /-- (25b) profile `[0, 3, 1, 3, 1]`: vbz M docked left; vbz H deleted. -/
 theorem candB_profile :
-    ranking.map (fun c => c.eval candB) = [[0], [3], [1], [3], [1]] := by decide
+    ranking.map (fun c => c candB) = [0, 3, 1, 3, 1] := by decide
 
 /-- (25c) profile `[3, 0, 3, 0, 2]`: vbz H spreading; vbz M deleted. -/
 theorem candC_profile :
-    ranking.map (fun c => c.eval candC) = [[3], [0], [3], [0], [2]] := by decide
+    ranking.map (fun c => c candC) = [3, 0, 3, 0, 2] := by decide
 
 /-- (25d) profile `[0, 3, 0, 3, 2]`: vbz M spreading; vbz H deleted. -/
 theorem candD_profile :
-    ranking.map (fun c => c.eval candD) = [[0], [3], [0], [3], [2]] := by decide
+    ranking.map (fun c => c candD) = [0, 3, 0, 3, 2] := by decide
 
 /-- (25e) ☞ profile `[0, 0, 1, 2, 1]`: M on σ0-σ1; H on σ2; lex H
     deleted. Winner. -/
 theorem candE_profile :
-    ranking.map (fun c => c.eval candE) = [[0], [0], [1], [2], [1]] := by decide
+    ranking.map (fun c => c candE) = [0, 0, 1, 2, 1] := by decide
 
 /-- (25f) profile `[0, 0, 2, 1, 1]`. -/
 theorem candF_profile :
-    ranking.map (fun c => c.eval candF) = [[0], [0], [2], [1], [1]] := by decide
+    ranking.map (fun c => c candF) = [0, 0, 2, 1, 1] := by decide
 
 /-- (25g) profile `[0, 0, 2, 2, 0]`: lex H NOT deleted (still on σ1). -/
 theorem candG_profile :
-    ranking.map (fun c => c.eval candG) = [[0], [0], [2], [2], [0]] := by decide
+    ranking.map (fun c => c candG) = [0, 0, 2, 2, 0] := by decide
 
 /-- **Headline**: (25e) is the unique optimum. (25a-d) lose on the
     top-tier anchors; (25f-g) tie with (25e) on top constraints but
     lose on R-ANCH-Mᵥ. -/
-theorem optimal : tableau.optima = {candE} := by decide
+theorem optimal : tableau.optimal = {candE} := by decide
 
 end Tableau25
 
@@ -532,30 +529,28 @@ def candG : MwaghavulForm :=
     |>.insertLink 2 0 |>.insertLink 2 2
     |>.insertLink 3 3
 
-def candidates : Finset MwaghavulForm :=
-  {candA, candB, candC, candD, candE, candF, candG}
+def candidates : List MwaghavulForm :=
+  [candA, candB, candC, candD, candE, candF, candG]
 
-theorem nonempty : candidates.Nonempty := by decide
+theorem candidates_ne : candidates ≠ [] := by decide
 
 /-- Ranking, same shape as Tableau 25 but with per-root anchors:
     `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
 def ranking : List (Constraint MwaghavulForm) :=
   [lAnchMv26, rAnchHv26, rAnchMv26, lAnchHv26, maxToneC]
 
-def tableau : DirectionalTableau MwaghavulForm where
-  candidates := candidates
-  ranking := ranking
-  nonempty := nonempty
+def tableau : Tableau MwaghavulForm ranking.length :=
+  Tableau.ofRanking candidates ranking candidates_ne
 
 /-- (26d) profile `[0, 0, 0, 0, 2]`: perfect realisation — vbz M on
     every TBU of RED, vbz H on every TBU of BASE. Both lex Ls deleted
     (MAX-T = 2). -/
 theorem candD_profile :
-    ranking.map (fun c => c.eval candD) = [[0], [0], [0], [0], [2]] := by decide
+    ranking.map (fun c => c candD) = [0, 0, 0, 0, 2] := by decide
 
 /-- **Headline**: (26d) is the unique optimum — the iconic M-on-RED +
     H-on-BASE disharmony pattern. -/
-theorem optimal : tableau.optima = {candD} := by decide
+theorem optimal : tableau.optimal = {candD} := by decide
 
 end Tableau26
 
