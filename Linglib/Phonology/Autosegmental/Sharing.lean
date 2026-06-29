@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Segmental.FeatureGeometry
+import Linglib.Phonology.Segmental.Geometry
 import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
@@ -22,8 +22,8 @@ tier-association object `AR` (`Graph.lean` / `AR.lean`) — a single segment
 backbone with a feature-agreement-consistency law, not two materialized tiers.
 A faithful re-grounding of feature spreading as `AR` association is future work;
 for now the two are kept as separate carriers. It builds on
-the feature geometry (`FeatureGeometry.lean`) and segment type
-(`Segment.lean`) to provide feature agreement predicates,
+the feature geometry (`Geometry.lean`) and segment type
+(`Defs.lean`) to provide feature agreement predicates,
 feature-sharing representations with consistency checking, and spread/delink
 operations.
 
@@ -69,7 +69,7 @@ open Phonology.FeatureGeometry (GeomNode)
 
 /-- Do `s1` and `s2` agree on all features dominated by node `n`? -/
 def agreeAt (s1 s2 : Segment) (n : GeomNode) : Bool :=
-  n.features.all fun f => s1.spec f == s2.spec f
+  n.features.all fun f => s1 f == s2 f
 
 /-- Place assimilation: agreement on all place features. -/
 def placeAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .place
@@ -125,8 +125,8 @@ def SharingRep.delink (r : SharingRep) (pos : Nat) (n : GeomNode) :
     assimilation): the entire node — including features `src` leaves
     unspecified — is copied. (The node-spreading analysis; single-feature
     spreading and underspecification-sensitive variants behave differently.) -/
-def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment where
-  spec f := if decide (f.DominatedBy n) then src.spec f else tgt.spec f
+def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment :=
+  fun f => if decide (f.DominatedBy n) then src f else tgt f
 
 /-- Spread node `n` from position `pos + 1` onto position `pos`, replacing
     the target's features under `n` with the trigger's values and recording
@@ -160,7 +160,7 @@ theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
     agreeAt (copyFeaturesUnder tgt src n) src n = true := by
   simp only [agreeAt, copyFeaturesUnder, GeomNode.features]
   exact all_filter_if_beq_self Feature.allFeatures
-    (fun f => decide (f.DominatedBy n)) src.spec tgt.spec
+    (fun f => decide (f.DominatedBy n)) src tgt
 
 /-! ### Verification theorems -/
 
@@ -174,7 +174,7 @@ private theorem list_all_beq_self {α : Type*} [BEq α] [LawfulBEq α]
 /-- Agreement is reflexive. -/
 theorem agreeAt_refl (s : Segment) (n : GeomNode) :
     agreeAt s s n = true :=
-  list_all_beq_self n.features s.spec
+  list_all_beq_self n.features s
 
 /-- Place assimilation checks 14 features (the place node's natural class). -/
 theorem place_assimilation_checks_14 :

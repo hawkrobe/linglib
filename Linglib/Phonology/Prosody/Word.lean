@@ -3,143 +3,152 @@ import Linglib.Phonology.Prosody.Tree
 
 /-!
 # Prosodic words (ω)
-[selkirk-1980] [nespor-vogel-1986] [liberman-prince-1977] [hayes-1995]
+[selkirk-1980] [nespor-vogel-1986] [liberman-prince-1977] [hayes-1995] [ito-mester-2009]
+[mccarthy-prince-1993]
 
-The canonical prosodic word ([selkirk-1980]; [nespor-vogel-1986]; [hayes-1995]): a
-flat, **headed** constituent over feet and stray syllables — the level above the foot
-in the prosodic hierarchy (σ < f < ω). Like the foot it is headed; its head is a
-*foot* (the head foot), and its Designated Terminal Element — the primary-stressed σ —
-is the head σ of that head foot (the head chain projects two levels;
-[liberman-prince-1977]). Headedness is **definitional**: an ω always contains its head
-foot, so the *minimal word* ([mccarthy-prince-1993]) — that an ω properly contains a
-foot — holds by construction. Exhaustive parsing, foot binarity, and alignment are
-violable constraints, not part of the type; stray (unfooted) syllables are real
-([selkirk-1996]) and are exactly what `Parse-σ` penalizes.
+The canonical prosodic word ω: a **recursive, headed** constituent. Its daughters are
+feet, **sub-words** (an ω-over-ω, the *extended prosodic word* / ω-adjunction of
+[ito-mester-2009]), and stray (unfooted) syllables; one daughter is the distinguished
+`head` (a constituent — a foot or a sub-word, never a stray). Recursion is **intrinsic
+to ω** ([ito-mester-2009]; cf. [mccarthy-prince-1993]: ω, unlike the *intrinsic* foot and
+syllable, is *extrinsic*/mapping-defined and so admits recursion), built directly into
+the type — a single nested inductive over `List (Word.Daughter S)`.
 
-Encoded as a **zipper**: the head foot is a distinguished field, with the other
-daughters (a `Foot`, or an unfooted stray σ) to its left and right. The trochee/iamb
-inventory and weight live on `Foot`; recursion (ω-over-ω) lives on `Prosody.Tree`. The
-re-representations into the prosodic tree and the metrical grid recover the same head.
+Because the `head` is a constituent, the head-projection chain (`headFoot` →
+`headSyllable`) bottoms out in a foot by construction, so the **minimal word**
+([mccarthy-prince-1993]) — that an ω contains a foot — is a total function, not a
+constraint. Foot binarity, exhaustive parsing, and `No-Recursion` are violable
+constraints, *not* part of the type; ill-formed candidates (a footless ω, a stray under
+φ) are exactly what a violable OT carrier (`Prosody.Tree`) represents, and `toProsTree`
+re-represents this well-formed ω into that carrier.
 
 ## Main definitions
 
-* `Word` — a headed prosodic word: a head `Foot` with `before`/`after` daughters.
-* `Word.feet` / `strays` / `headFoot` / `headSyllable` — the daughters and the ω-DTE.
-* `Word.IsLeftHeaded` / `IsRightHeaded` / `IsExhaustive` — derived stress/parse predicates.
-* `Word.toProsTree` / `toGrid` — re-representations recovering the head.
-
-## Main results
-
-* `Word.feet_ne_nil` — the minimal word ([mccarthy-prince-1993]): every ω contains a
-  foot, free from definitional headedness.
+* `Word` — the recursive headed ω; `Word.Daughter` / `Word.Head` (foot / sub-ω / stray).
+* `Word.headFoot` / `headSyllable` — the head-projection chain (the ω-DTE), recursive.
+* `Word.daughters` / `feet` / `strays` — the daughter list and its foot/stray parts.
+* `Word.recursionCount` — the `No-Recursion` violation count (ω-over-ω depth).
+* `Word.toProsTree` — re-representation into `Prosody.Tree`, marking the head daughter.
 -/
 
 namespace Prosody
 
 open Features.Prosody
 
-/-- A grid prominence level ([liberman-prince-1977]; [hayes-1995]): the head σ of the
-    head foot is `primary` (the ω-DTE), other foot-heads `secondary`, the rest
-    `unstressed`. -/
-inductive StressLevel where
-  | unstressed | secondary | primary
-  deriving DecidableEq, Repr
+/-! ### The recursive prosodic word -/
 
-/-! ### The canonical prosodic word -/
-
-/-- The canonical prosodic word ω ([selkirk-1980]; [hayes-1995]): a flat headed
-    constituent over feet and stray syllables, encoded as a zipper around its head
-    `head` foot. `before`/`after` carry the other daughters (a `Foot`, or an unfooted
-    stray σ); the head foot is always present, so an ω contains a foot by construction
-    (the minimal word). -/
-structure Word (S : Type*) where
-  before : List (Foot S ⊕ S)
-  head   : Foot S
-  after  : List (Foot S ⊕ S)
-  deriving DecidableEq, Repr
+/-- The canonical prosodic word ω ([selkirk-1980]; [hayes-1995]; [ito-mester-2009]): a
+    single nested inductive — a `head` constituent with `before`/`after` daughter lists,
+    each daughter a foot, a sub-word (ω-over-ω), or a stray σ. -/
+inductive Word (S : Type*) where
+  | mk (before : List (Foot S ⊕ Word S ⊕ S)) (head : Foot S ⊕ Word S)
+       (after : List (Foot S ⊕ Word S ⊕ S))
+  deriving Repr
 
 namespace Word
 variable {S : Type*}
 
-/-- The daughters in linear order: a foot, or an unfooted stray σ. -/
-def daughters (w : Word S) : List (Foot S ⊕ S) := w.before ++ .inl w.head :: w.after
+/-- A daughter of ω: a foot, a sub-word (ω-over-ω), or a stray (unfooted) σ. -/
+abbrev Daughter (S : Type*) := Foot S ⊕ Word S ⊕ S
+/-- The head of ω — a constituent (foot or sub-word), never a stray; this is what makes
+    `headFoot` total and the minimal word hold by construction. -/
+abbrev Head (S : Type*) := Foot S ⊕ Word S
 
-/-- The feet (head foot included), left to right. -/
-def feet (w : Word S) : List (Foot S) := w.daughters.filterMap Sum.getLeft?
+@[match_pattern] def Daughter.foot (f : Foot S) : Daughter S := .inl f
+@[match_pattern] def Daughter.sub  (w : Word S) : Daughter S := .inr (.inl w)
+@[match_pattern] def Daughter.leaf (s : S)      : Daughter S := .inr (.inr s)
+@[match_pattern] def Head.foot (f : Foot S) : Head S := .inl f
+@[match_pattern] def Head.sub  (w : Word S) : Head S := .inr w
 
-/-- The stray (unfooted) syllables, left to right. -/
-def strays (w : Word S) : List S := w.daughters.filterMap Sum.getRight?
+/-- The head viewed as a daughter (foot/sub, never a leaf). -/
+def Head.toDaughter : Head S → Daughter S
+  | Head.foot f => Daughter.foot f
+  | Head.sub w  => Daughter.sub w
 
-/-- The head foot — the primary-stress bearer. -/
-def headFoot (w : Word S) : Foot S := w.head
+/-- All daughters in linear order (head included). -/
+def daughters : Word S → List (Daughter S)
+  | .mk before head after => before ++ Head.toDaughter head :: after
 
-/-- The ω-DTE: the primary-stressed σ, the head σ of the head foot (the head chain,
-    two levels; [liberman-prince-1977]). -/
-def headSyllable (w : Word S) : S := w.head.headSyllable
+/-- The top-level feet (head foot included if the head is a foot). -/
+def feet (w : Word S) : List (Foot S) :=
+  w.daughters.filterMap (fun | Daughter.foot f => some f | _ => none)
 
-/-! ### Derived stress and parse predicates -/
+/-- The stray (unfooted) syllables. -/
+def strays (w : Word S) : List S :=
+  w.daughters.filterMap (fun | Daughter.leaf s => some s | _ => none)
 
-/-- Primary stress on the leftmost foot: no foot precedes the head foot (initial
-    stray σ are still allowed). -/
-def IsLeftHeaded (w : Word S) : Prop := w.before.filterMap Sum.getLeft? = []
-/-- Primary stress on the rightmost foot. -/
-def IsRightHeaded (w : Word S) : Prop := w.after.filterMap Sum.getLeft? = []
-/-- Fully parsed — no stray syllables (`Parse-σ`-clean; `Parse-σ` itself is violable). -/
-def IsExhaustive (w : Word S) : Prop := w.strays = []
+/-- A minimal ω consisting of a single foot. -/
+def ofFoot (f : Foot S) : Word S := .mk [] (Head.foot f) []
 
-instance (w : Word S) : Decidable w.IsLeftHeaded := by unfold IsLeftHeaded; infer_instance
-instance (w : Word S) : Decidable w.IsRightHeaded := by unfold IsRightHeaded; infer_instance
-instance [DecidableEq S] (w : Word S) : Decidable w.IsExhaustive := by
-  unfold IsExhaustive; infer_instance
+/-! ### The head-projection chain (the ω-DTE) -/
 
-/-- **The minimal word** ([mccarthy-prince-1993]), free from definitional headedness:
-    every ω contains a foot (its head foot). -/
-theorem feet_ne_nil (w : Word S) : w.feet ≠ [] := by
-  simp [feet, daughters, List.filterMap_append]
+/-- The head foot — descend the head chain through sub-words to the bottom foot. Total
+    by construction (a `Head` is a constituent), so every ω contains a foot: this *is*
+    the minimal word ([mccarthy-prince-1993]). -/
+def headFoot : Word S → Foot S
+  | .mk _ (Head.foot f) _ => f
+  | .mk _ (Head.sub w) _  => headFoot w
 
-/-! ### Re-representations (preserving the head) -/
+/-- The ω-DTE: the primary-stressed syllable, the head σ of the head foot
+    ([liberman-prince-1977]; the head chain projects to the bottom). -/
+def headSyllable (w : Word S) : S := w.headFoot.headSyllable
 
-/-- A non-head daughter → a prosodic subtree: a (non-head) foot, or a stray σ-leaf. -/
-def daughterTree (wt : S → Syllable.Weight) : (Foot S ⊕ S) → Tree
-  | .inl f => Foot.toProsTree wt f
-  | .inr s => .node (.syl (wt s) false) []
+/-! ### No-Recursion (ω-over-ω) -/
 
-/-- Re-represent as a prosodic tree ([selkirk-1980]; [ito-mester-2003]): an `.ω` node
-    over the daughters' subtrees, the **head foot** marked `isHead`, stray σ as
-    `.σ`-leaves directly under ω ([selkirk-1996]; permitted by `Tree.Containment`).
-    Composes `Foot.toProsTree`. -/
-def toProsTree (wt : S → Syllable.Weight) (w : Word S) : Tree :=
-  .node .om (w.before.map (daughterTree wt)
-    ++ Foot.toProsTree wt w.head true :: w.after.map (daughterTree wt))
+/-- The `No-Recursion` violation count ([ito-mester-2009]): the number of sub-word
+    daughters, recursively — i.e. how many times ω is parsed into ω. The list-recursion
+    aux is a local `where` (Lean can't auto-terminate recursion under `List.map`). -/
+def recursionCount : Word S → Nat
+  | .mk before head after => hRec head + lAux before + lAux after
+where
+  hRec : Head S → Nat
+    | Head.foot _ => 0
+    | Head.sub w  => 1 + recursionCount w
+  lAux : List (Daughter S) → Nat
+    | [] => 0
+    | Daughter.sub w :: ds => 1 + recursionCount w + lAux ds
+    | _ :: ds => lAux ds
 
-/-- A non-head daughter's grid row (foot-head → `secondary`, the rest `unstressed`). -/
-def daughterGrid : (Foot S ⊕ S) → List StressLevel
-  | .inl f => (Foot.toGrid f).map (fun b => if b then .secondary else .unstressed)
-  | .inr _ => [.unstressed]
+/-! ### Re-representation into the prosodic tree -/
 
-/-- Re-represent as the metrical grid ([hayes-1995]; [liberman-prince-1977]): one
-    `StressLevel` per σ. The head foot's head σ is `primary` (the ω-DTE), other
-    foot-heads `secondary`, the rest `unstressed`. `Foot.toGrid` is the within-foot
-    row; this projects the word-head over it. -/
-def toGrid (w : Word S) : List StressLevel :=
-  w.before.flatMap daughterGrid
-    ++ (Foot.toGrid w.head).map (fun b => if b then .primary else .unstressed)
-    ++ w.after.flatMap daughterGrid
+/-- Re-represent ω as a `Prosody.Tree` ([ito-mester-2009]): an `.ω` node over the
+    daughters' subtrees, the **head** daughter marked `isHead` (the head foot via
+    `Foot.toProsTree _ _ true`; a head sub-word recursively). Composes `Foot.toProsTree`. -/
+def toProsTree (wt : S → Syllable.Weight) : Word S → Tree
+  | .mk before head after => .node .om (lTree before ++ hTree head :: lTree after)
+where
+  hTree : Head S → Tree
+    | Head.foot f => Foot.toProsTree wt f true
+    | Head.sub w  => toProsTree wt w
+  lTree : List (Daughter S) → List Tree
+    | [] => []
+    | d :: ds => dTree d :: lTree ds
+  dTree : Daughter S → Tree
+    | Daughter.foot f => Foot.toProsTree wt f
+    | Daughter.sub w  => toProsTree wt w
+    | Daughter.leaf s => .node (.syl (wt s) false) []
 
 end Word
 
 /-! ### Worked examples -/
 
--- (ˈσσ)σ : a trochee heading the word, then a stray σ — Pintupi-style.
-private def w_trochStray : Word Nat := ⟨[], Foot.trochee 1 1, [.inr 1]⟩
-example : w_trochStray.IsLeftHeaded ∧ ¬ w_trochStray.IsExhaustive := by decide
-example : w_trochStray.feet = [Foot.trochee 1 1] := by decide
--- the head σ is the unique primary; the foot's weak σ and the stray are unstressed.
-example : w_trochStray.toGrid = [.primary, .unstressed, .unstressed] := by decide
+-- A heavy monosyllabic stem foot, a flat ω over it, and an ω-over-ω (extended PWord).
+private def stemFt : Foot Nat := Foot.monosyllable 2
+private def innerW : Word Nat := .mk [] (Word.Head.foot stemFt) []
+private def flatW  : Word Nat := .mk [Word.Daughter.leaf 1] (Word.Head.foot stemFt) []
+private def recW   : Word Nat := .mk [Word.Daughter.leaf 1] (Word.Head.sub innerW) []
 
--- (σσ)(ˈσσ) : two trochees, primary on the second — secondary on the first.
-private def w_twoFeet : Word Nat := ⟨[.inl (Foot.trochee 1 1)], Foot.trochee 1 1, []⟩
-example : w_twoFeet.IsRightHeaded := by decide
-example : w_twoFeet.toGrid = [.secondary, .unstressed, .primary, .unstressed] := by decide
+-- No-Recursion: the extended PWord scores one ω-over-ω; the flat ω scores zero.
+example : flatW.recursionCount = 0 := by
+  simp [flatW, Word.recursionCount, Word.recursionCount.hRec, Word.recursionCount.lAux]
+example : recW.recursionCount = 1 := by
+  simp [recW, innerW, Word.recursionCount, Word.recursionCount.hRec, Word.recursionCount.lAux]
+
+-- The head-projection chain descends to the stem foot's head σ (the ω-DTE).
+example : recW.headSyllable = 2 := by
+  simp [recW, innerW, Word.headSyllable, Word.headFoot, stemFt, Foot.headSyllable,
+    Foot.monosyllable]
+example : flatW.headSyllable = 2 := by
+  simp [flatW, Word.headSyllable, Word.headFoot, stemFt, Foot.headSyllable, Foot.monosyllable]
 
 end Prosody

@@ -38,8 +38,8 @@ namespace Farsi.Phonology
 
 /-- Persian /æ/ — low front unrounded vowel.
     [+syll, −cons, +son, +approx, +cont, −nasal, −lat, +dor, +low, +front, −back, −tense] -/
-def vowelAe : Segment where
-  spec := fun
+def vowelAe : Segment :=
+  fun
     | .syllabic => some true
     | .consonantal => some false
     | .sonorant => some true
@@ -56,8 +56,8 @@ def vowelAe : Segment where
 
 /-- Persian /ɑ/ — low back unrounded vowel.
     [+syll, −cons, +son, +approx, +cont, −nasal, −lat, +dor, +low, −front, +back, −tense] -/
-def vowelAh : Segment where
-  spec := fun
+def vowelAh : Segment :=
+  fun
     | .syllabic => some true
     | .consonantal => some false
     | .sonorant => some true

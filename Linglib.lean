@@ -1362,9 +1362,9 @@ import Linglib.Phonology.Prosody.Tree
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Prosody.WordSize
 import Linglib.Phonology.Segmental.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory
-import Linglib.Phonology.Segmental.Feature
-import Linglib.Phonology.Segmental.FeatureGeometry
+import Linglib.Phonology.Segmental.Geometry
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.Harmony
