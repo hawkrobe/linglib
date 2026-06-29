@@ -5,6 +5,7 @@ import Linglib.Morphology.Case.Allomorphy
 import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.Prosody.Foot
+import Linglib.Phonology.Prosody.Footing
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.CompensatoryLengthening
@@ -441,23 +442,32 @@ inductive StemCandidate where
   | ll_H
   deriving DecidableEq, Repr
 
-/-- Map each candidate to its `MetricalParse` representation. -/
-def StemCandidate.toParse : StemCandidate → MetricalParse
-  | .llU_H => [.foot [.light, .light], .unfooted .heavy]
-  | .l_l_H => [.foot [.light], .foot [.light], .foot [.heavy]]
-  | .ll_H  => [.foot [.light, .light], .foot [.heavy]]
+/-- Map each candidate to its canonical `Prosody.Footing` over weighted σ
+    (feet are `Prosody.Foot`s; an unfooted σ is a bare weight). -/
+def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
+  | .llU_H => [.inl ⟨[.light, .light], 0⟩, .inr .heavy]
+  | .l_l_H => [.inl ⟨[.light], 0⟩, .inl ⟨[.light], 0⟩, .inl ⟨[.heavy], 0⟩]
+  | .ll_H  => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
-/-- FT-BIN(μ): penalizes non-bimoraic feet. -/
+/-- ALL-FT-LEFT: per foot, the σ intervening from the left edge of the domain. -/
+def allFtLeftOf (fc : Footing Syllable.Weight) : Nat :=
+  let rec go : Footing Syllable.Weight → Nat → Nat
+    | [], _ => 0
+    | .inl f :: rest, pos => pos + go rest (pos + f.syllables.length)
+    | .inr _ :: rest, pos => go rest (pos + 1)
+  go fc 0
+
+/-- FT-BIN(μ): penalizes non-bimoraic feet (a foot whose morae ≠ 2). -/
 def cFtBin : Constraint StemCandidate :=
-  λ c => ftBinViolations c.toParse
+  λ c => (c.toFooting.feet.filter (fun f => decide (Foot.moraCount id f ≠ 2))).length
 
-/-- PARSE-SYL: penalizes unparsed syllables. -/
+/-- PARSE-SYL: penalizes unparsed (stray) syllables. -/
 def cParseSyl : Constraint StemCandidate :=
-  λ c => parseSylViolations c.toParse
+  λ c => c.toFooting.strays.length
 
 /-- ALL-FT-LEFT: penalizes feet distant from the left edge. -/
 def cAllFtLeft : Constraint StemCandidate :=
-  λ c => allFtLeftViolations c.toParse
+  λ c => allFtLeftOf c.toFooting
 
 /-- Stem-level constraint ranking: FT-BIN ≫ PARSE-SYL ≫ ALL-FT-LEFT.
 
@@ -477,16 +487,16 @@ theorem stemCandidates_ne : stemCandidates ≠ [] := by decide
     | (ˈsa).(ˌmu).(ˌdram)|   2*   |    0      |     0+1+2   |
     | ☞ (ˈsa.mu).(ˌdram) |   0    |    0      |     0+2     | -/
 theorem stem_ftbin_violations :
-    stemCandidates.map cFtBin = [0, 2, 0] := by native_decide
+    stemCandidates.map cFtBin = [0, 2, 0] := by decide
 
 theorem stem_parsesyl_violations :
-    stemCandidates.map cParseSyl = [1, 0, 0] := by native_decide
+    stemCandidates.map cParseSyl = [1, 0, 0] := by decide
 
 /-- The optimal Stem-level parse is (ˈsa.mu).(ˌdram): two well-formed
     moraic trochees, (LL)(H), with no unparsed syllables. -/
 theorem stem_optimal :
     (Tableau.ofRanking stemCandidates stemRanking stemCandidates_ne).optimal
-      = {.ll_H} := by native_decide
+      = {.ll_H} := by decide
 
 -- ============================================================================
 -- § 5: Word-Level Phonology (Stratal OT)

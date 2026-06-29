@@ -1,4 +1,5 @@
 import Linglib.Core.Probability.Posterior
+import Linglib.Pragmatics.RSA.SimpAttr
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Probability.Distributions.Uniform
@@ -61,6 +62,16 @@ Phase 1 of the RSA → mathlib-PMF migration: this file is a pure addition.
 code is unchanged. A subsequent phase migrates one RSA study end-to-end
 to demonstrate that `rsa_predict` reflection still applies to operator
 applications.
+
+## The `rsa` simp set
+
+The decomposition lemmas below are tagged `@[rsa]`. `simp [rsa]` rewrites an
+`S1`/`L1` *preference* goal to its structural score/posterior comparison — the
+partition factor cancels by rewriting, not by evaluating a normalisation. This is
+the migration API that replaces `rsa_predict` reflection with simplification: a
+migrated prediction is `by simp [rsa]` down to a condition closed by a *theorem*,
+not a `decide`/`norm_num` over a state-space sum. The set itself is registered in
+`RSA/SimpAttr.lean`.
 -/
 
 set_option autoImplicit false
@@ -172,6 +183,7 @@ on `u`, so it cancels.
 
 Direct lift from `PMF.normalize_lt_iff_lt`. The workhorse decomposition
 lemma for "speaker prefers `u₂` over `u₁` at world `w`" proofs. -/
+@[rsa]
 theorem S1Belief_apply_lt_iff_score_lt (L0 : U → PMF W) (costFactor : U → ℝ≥0∞)
     (α : ℝ) (w : W)
     (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
@@ -182,6 +194,7 @@ theorem S1Belief_apply_lt_iff_score_lt (L0 : U → PMF W) (costFactor : U → �
   PMF.normalize_lt_iff_lt _ _ _ _ _
 
 /-- The `≤` companion of `S1Belief_apply_lt_iff_score_lt`. -/
+@[rsa]
 theorem S1Belief_apply_le_iff_score_le (L0 : U → PMF W) (costFactor : U → ℝ≥0∞)
     (α : ℝ) (w : W)
     (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)

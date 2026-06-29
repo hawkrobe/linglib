@@ -1,205 +1,179 @@
 import Linglib.Phonology.Prosody.Syllable
+import Linglib.Phonology.Prosody.Tree
 
 /-!
-# Metrical Foot Structure
-[hayes-1995] [kager-2007]
+# Metrical feet
+[hayes-1995] [selkirk-1980] [kager-1999]
 
-Foot types, metrical parsing, and OT constraints on metrical structure.
-
-A metrical foot is a prosodic constituent grouping syllables into a
-rhythmic unit. [hayes-1995] identifies three canonical foot types:
-
-| Type              | Well-formed shapes | Stress system   |
-|-------------------|--------------------|-----------------|
-| Moraic trochee    | (H), (LL)         | Weight-sensitive |
-| Syllabic trochee  | (σσ)               | Weight-insensitive |
-| Iamb              | (LH), (LL), (H)   | Right-prominent  |
-
-The foot's *head* (prominent syllable) determines stress: initial in
-trochees, final in iambs.
+The canonical metrical foot ([selkirk-1980]; [nespor-vogel-1986]; [hayes-1995];
+[kager-1999]): a flat, **headed** constituent over syllable positions — a non-empty,
+ordered sequence of syllables with one distinguished `head` (the stressed daughter /
+Designated Terminal Element). Headedness (trochaic/iambic), binarity, and the
+trochee/iamb/moraic **inventory are all derived** from the structure, not stored — the
+moraic/syllabic split is a counting parameter on `moraCount`, not a different kind of
+foot. Re-representations into the prosodic tree (`Prosody.Tree`) and the metrical grid
+are *functions* that recover the same head.
 
 ## Main definitions
 
-* `FootType` — the three canonical foot types.
-* `ParseElement` / `MetricalParse` — an element of, and a complete, metrical
-  parse of a prosodic domain.
-* `footMorae`, `isWellFormedFoot`, `isDegenerate` — foot weight and shape.
-* `ftBinViolations`, `parseSylViolations`, `allFtLeftViolations`,
-  `allFtRightViolations` — OT metrical constraints.
+* `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
+* `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
+* `Foot.moraCount` — mora count under a weight reading (the quantity axis).
+* `Foot.IsSyllabicTrochee` / `IsMoraicTrochee` / `IsCanonicalIamb` — the *derived* inventory.
+* `Foot.toProsTree` / `Foot.toGrid` — re-representations that preserve the head.
+* `footMorae` — mora count of a `Tree`-extracted weight-list foot (the flat metrical
+  parse is now `Prosody.Footing`).
+
+## Main results
+
+* `Foot.itl_gap` — the Iambic/Trochaic Law ([hayes-1985]): a binary iamb need not be
+  weight-blind-characterizable, unlike a binary (syllabic) trochee.
+* `Foot.headFlags_toProsTree` — the prosodic-tree re-representation carries the same
+  head profile as `toGrid` (head-preservation, the functorial spine).
 -/
 
 namespace Prosody
 
-/-! ### Foot type -/
+open Features.Prosody
 
-/-- The three canonical foot types ([hayes-1995]). -/
-inductive FootType where
-  /-- Moraic trochee: bimoraic with initial prominence.
-      Well-formed shapes: (H) = 2μ, (LL) = 2μ.
-      Used in weight-sensitive stress (Turkish, Latin, Telugu). -/
-  | moraicTrochee
-  /-- Syllabic trochee: bisyllabic with initial prominence.
-      Well-formed shape: (σσ) regardless of weight.
-      Used in weight-insensitive stress (Czech, Pintupi). -/
-  | syllabicTrochee
-  /-- Iamb: prominence on the heavier/final syllable.
-      Well-formed shapes: (LH), (LL), (H).
-      Used in right-prominent stress (Creek, Yupik). -/
-  | iamb
+/-! ### The canonical foot -/
+
+/-- The canonical metrical foot ([selkirk-1980]; [hayes-1995]; [kager-1999]): a
+    non-empty, ordered sequence of syllable positions with one distinguished `head`
+    (the stressed daughter / DTE). The `Fin` index forces non-emptiness by construction.
+    The inventory and headedness are derived below, not stored. -/
+structure Foot (S : Type*) where
+  syllables : List S
+  head      : Fin syllables.length
   deriving DecidableEq, Repr
 
-/-! ### Metrical parse -/
+namespace Foot
+variable {S : Type*}
 
-/-- An element in a metrical parse: either a foot grouping syllables
-    or an unparsed (stray) syllable. The list preserves left-to-right
-    linear order within the prosodic domain. -/
-inductive ParseElement where
-  /-- A foot containing one or more syllables (represented by weight). -/
-  | foot : List Syllable.Weight → ParseElement
-  /-- An unparsed syllable not dominated by any foot. -/
-  | unfooted : Syllable.Weight → ParseElement
-  deriving DecidableEq, Repr
+/-- The head (stressed) syllable — the Designated Terminal Element. -/
+def headSyllable (f : Foot S) : S := f.syllables.get f.head
 
-/-- A metrical parse: a prosodic domain represented as a linear sequence
-    of footed and unfooted syllables. -/
-abbrev MetricalParse := List ParseElement
+/-- The number of dominated syllables. -/
+def length (f : Foot S) : ℕ := f.syllables.length
 
-/-! ### Parse properties -/
+/-- A monosyllabic foot `(σ́)`. -/
+def monosyllable (a : S) : Foot S := ⟨[a], 0⟩
+/-- A head-initial disyllable `(σ́σ)` — trochaic. -/
+def trochee (a b : S) : Foot S := ⟨[a, b], 0⟩
+/-- A head-final disyllable `(σσ́)` — iambic. -/
+def iamb (a b : S) : Foot S := ⟨[a, b], 1⟩
 
-/-- Extract all feet from a parse. -/
-def MetricalParse.feet (p : MetricalParse) : List (List Syllable.Weight) :=
-  p.filterMap λ | .foot ws => some ws | .unfooted _ => none
+/-! ### Derived shape predicates -/
 
-/-- Mora count of a single foot (each weight *is* a mora count). -/
+/-- Head-initial (trochaic). -/
+def IsTrochaic (f : Foot S) : Prop := f.head.val = 0
+/-- Head-final (iambic). -/
+def IsIambic (f : Foot S) : Prop := f.head.val + 1 = f.syllables.length
+/-- A binary (disyllabic) foot. -/
+def IsBinary (f : Foot S) : Prop := f.syllables.length = 2
+/-- A degenerate (monosyllabic) foot. -/
+def IsDegenerate (f : Foot S) : Prop := f.syllables.length = 1
+
+instance (f : Foot S) : Decidable f.IsTrochaic := by unfold IsTrochaic; infer_instance
+instance (f : Foot S) : Decidable f.IsIambic := by unfold IsIambic; infer_instance
+instance (f : Foot S) : Decidable f.IsBinary := by unfold IsBinary; infer_instance
+instance (f : Foot S) : Decidable f.IsDegenerate := by unfold IsDegenerate; infer_instance
+
+/-- Above the monosyllable, headedness is exclusive: a foot is not both trochaic and
+    iambic (at length 1 the sole σ is both head-initial and head-final). -/
+theorem not_trochaic_and_iambic (f : Foot S) (h : 1 < f.syllables.length) :
+    ¬ (f.IsTrochaic ∧ f.IsIambic) := by
+  rintro ⟨ht, hi⟩
+  unfold IsTrochaic at ht; unfold IsIambic at hi; omega
+
+/-! ### Quantity and the derived inventory -/
+
+/-- Mora count under a weight reading `w` — the quantity axis the moraic/syllabic
+    split parameterizes (`FtBin`-by-μ). -/
+def moraCount (w : S → ℕ) (f : Foot S) : ℕ := (f.syllables.map w).sum
+
+/-- Syllabic trochee `(σ́σ)`: head-initial and binary, weight-blind ([hayes-1995]). -/
+def IsSyllabicTrochee (f : Foot S) : Prop := f.IsTrochaic ∧ f.IsBinary
+/-- Moraic trochee `(H)`/`(LL)`: head-initial and bimoraic ([hayes-1995]). -/
+def IsMoraicTrochee (w : S → ℕ) (f : Foot S) : Prop := f.IsTrochaic ∧ moraCount w f = 2
+/-- Canonical iamb over Hayes' right-prominent inventory `{(H),(LL),(LH)}`
+    ([hayes-1995]): head-final, and either a bimoraic monosyllable or an even/right-heavy
+    bi-or-trimoraic disyllable. Unlike the trochee, the iamb references weight — the
+    quantity-sensitivity the Iambic/Trochaic Law predicts. -/
+def IsCanonicalIamb (w : S → ℕ) (f : Foot S) : Prop :=
+  f.IsIambic ∧
+    ((f.length = 1 ∧ moraCount w f = 2) ∨
+     (f.length = 2 ∧ 2 ≤ moraCount w f ∧ moraCount w f ≤ 3 ∧
+       (f.syllables.map w).headD 0 ≤ (f.syllables.map w).getLast?.getD 0))
+
+instance (f : Foot S) : Decidable f.IsSyllabicTrochee := by
+  unfold IsSyllabicTrochee; infer_instance
+instance (w : S → ℕ) (f : Foot S) : Decidable (IsMoraicTrochee w f) := by
+  unfold IsMoraicTrochee; infer_instance
+instance (w : S → ℕ) (f : Foot S) : Decidable (IsCanonicalIamb w f) := by
+  unfold IsCanonicalIamb; infer_instance
+
+/-- **The Iambic/Trochaic Law** ([hayes-1985], after Bolton 1894): a binary iamb is
+    *not* characterizable weight-blind — the head-final binary cell admits the
+    left-heavy `(H L̗)` that Hayes' canonical inventory excludes — whereas a binary
+    trochee is exactly `IsSyllabicTrochee` (weight-blind). Witness: `(H L̗)`. -/
+theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonicalIamb id f :=
+  ⟨Foot.iamb 2 1, by decide⟩
+
+/-! ### Re-representations (preserving the head) -/
+
+/-- Re-represent as a prosodic tree ([selkirk-1980]; [ito-mester-2003]): a depth-1 `.f`
+    node over `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
+    itself is marked `isHead` when the foot heads its ω (the `isHead` argument; see
+    `Word.toProsTree`). -/
+def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : Tree :=
+  .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
+    .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))
+
+/-- Re-represent as a metrical-grid row ([hayes-1995]): a head mark per position. -/
+def toGrid (f : Foot S) : List Bool :=
+  (List.finRange f.syllables.length).map (fun i => decide (i = f.head))
+
+/-- The σ-leaves' head flags. -/
+private def childHeadFlags : Tree → List Bool
+  | .node _ cs => cs.map (fun | .node a _ => a.isHead)
+
+@[simp] theorem toGrid_length (f : Foot S) :
+    (toGrid f).length = f.syllables.length := by simp [toGrid]
+
+/-- The two re-representations carry the **same head profile**: the prosodic tree's
+    σ-leaf head flags are exactly `toGrid f`. So both recover the foot's head. -/
+theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
+    childHeadFlags (toProsTree w f) = toGrid f := by
+  simp [childHeadFlags, toProsTree, toGrid, List.map_map, Function.comp]
+
+-- `toProsTree` is moreover injective for injective `w` (a foot is recoverable from its
+-- tree), giving the `Foot S ≃ {t // IsFootTree t}` embedding onto the depth-1 f/σ band
+-- that bridges footing-on-`Foot` to OT-on-`Tree`. That equivalence is the next step in
+-- the footing development, where the bridge is consumed; `headFlags_toProsTree` already
+-- certifies the load-bearing head-preservation.
+
+end Foot
+
+/-! ### Foot mora count -/
+
+/-- Mora count of a foot given as a weight-list (each weight *is* a mora count). The
+    moraic measure for `Tree`-extracted feet (`Phonology/Prosody/WordSize.lean`); for a
+    headed `Foot S`, use `Foot.moraCount`. -/
 def footMorae (ws : List Syllable.Weight) : Nat :=
   ws.foldl (· + ·) 0
 
-/-- Total syllable count in a parse. -/
-def MetricalParse.syllableCount (p : MetricalParse) : Nat :=
-  p.foldl (λ acc e => acc + match e with
-    | .foot ws => ws.length
-    | .unfooted _ => 1) 0
+/-! ### Worked examples -/
 
-/-- Number of unparsed syllables in a parse. -/
-def MetricalParse.unparsedCount (p : MetricalParse) : Nat :=
-  p.filter (λ | .unfooted _ => true | _ => false) |>.length
+-- Inventory falls out of the derived predicates (no `FootType` enum).
+example : (Foot.trochee 1 1).IsSyllabicTrochee := by decide
+example : (Foot.trochee 2 0 : Foot ℕ).IsMoraicTrochee id := by decide
+example : (Foot.iamb 1 2 : Foot ℕ).IsCanonicalIamb id := by decide
+example : ¬ (Foot.iamb 2 1 : Foot ℕ).IsCanonicalIamb id := by decide
+example : (Foot.monosyllable 0).IsDegenerate := by decide
 
-/-- Is a foot degenerate (subminimal)? A monomoraic foot (L) is
-    degenerate — it fails to meet the bimoraic minimum. -/
-def isDegenerate (ws : List Syllable.Weight) : Prop :=
-  footMorae ws < 2
-
-instance (ws : List Syllable.Weight) : Decidable (isDegenerate ws) := by
-  unfold isDegenerate; infer_instance
-
-/-- Is a foot well-formed for the given foot type?
-
-    The iamb clause encodes Hayes' canonical right-prominent inventory
-    `{(H), (LL), (LH)}` ([hayes-1995]): a bimoraic monosyllable,
-    or a disyllable that is right-heavy-or-even (first syllable no heavier
-    than the second) with two or three morae. This excludes the degenerate
-    monomoraic `(L)`, the left-heavy `(HL)`, and the trimoraic monosyllable
-    `(SH)` — the Iambic/Trochaic-Law asymmetry that the moraic-trochee
-    clause (`footMorae = 2`) lacks. -/
-def isWellFormedFoot (ft : FootType) (ws : List Syllable.Weight) : Prop :=
-  match ft with
-  | .moraicTrochee => footMorae ws = 2
-  | .syllabicTrochee => ws.length = 2
-  | .iamb =>
-    (ws.length = 1 ∧ footMorae ws = 2) ∨
-    (ws.length = 2 ∧ 2 ≤ footMorae ws ∧ footMorae ws ≤ 3 ∧
-      ws.headD 0 ≤ ws.getLast?.getD 0)
-
-instance (ft : FootType) (ws : List Syllable.Weight) :
-    Decidable (isWellFormedFoot ft ws) := by
-  unfold isWellFormedFoot; cases ft <;> infer_instance
-
-/-! ### OT metrical constraints -/
-
-/-- FT-BIN(μ): assign one violation for each foot that does not consist
-    of exactly two morae ([kager-2007]).
-
-    Well-formed moraic trochees: (H) = 2μ, (LL) = 2μ.
-    Violations: degenerate (L) = 1μ, superheavy (SH) = 3μ. -/
-def ftBinViolations (p : MetricalParse) : Nat :=
-  p.feet.filter (λ ws => footMorae ws != 2) |>.length
-
-/-- PARSE-SYL: assign one violation for each syllable not parsed into
-    a foot ([kager-2007]). Drives exhaustive parsing. -/
-def parseSylViolations (p : MetricalParse) : Nat :=
-  p.unparsedCount
-
-/-- ALL-FT-LEFT: for each foot, count the number of syllables
-    intervening between the left edge of the prosodic domain and the
-    left edge of the foot ([kager-2007]). Sum over all feet.
-
-    A foot at syllable position k (0-indexed) incurs k violations.
-    Drives left-to-right iterative footing. -/
-def allFtLeftViolations (p : MetricalParse) : Nat :=
-  let rec go : List ParseElement → Nat → Nat
-    | [], _ => 0
-    | .foot ws :: rest, pos => pos + go rest (pos + ws.length)
-    | .unfooted _ :: rest, pos => go rest (pos + 1)
-  go p 0
-
-/-- ALL-FT-RIGHT: for each foot, count the number of syllables
-    intervening between the right edge of the foot and the right edge
-    of the prosodic domain. Sum over all feet.
-
-    Drives right-to-left iterative footing. -/
-def allFtRightViolations (p : MetricalParse) : Nat :=
-  let total := p.syllableCount
-  let rec go : List ParseElement → Nat → Nat
-    | [], _ => 0
-    | .foot ws :: rest, pos =>
-      let rightEdge := pos + ws.length
-      (total - rightEdge) + go rest rightEdge
-    | .unfooted _ :: rest, pos => go rest (pos + 1)
-  go p 0
-
-/-! ### Worked examples
-
-Anonymous `example`s rather than named lemmas: these lock in the non-trivial
-`isWellFormedFoot` inventory and the OT-constraint counts, but are not reusable
-API. -/
-
--- Moraic trochee: the canonical {(H), (LL)} inventory.
-example : isWellFormedFoot .moraicTrochee [.heavy] := by decide
-example : isWellFormedFoot .moraicTrochee [.light, .light] := by decide
-example : ¬ isWellFormedFoot .moraicTrochee [.light] := by decide
-
--- Iamb: the canonical right-prominent inventory {(H), (LL), (LH)} only —
--- excluding the degenerate (L), the left-heavy (HL), and the trimoraic (SH).
-example : isWellFormedFoot .iamb [.heavy] := by decide
-example : isWellFormedFoot .iamb [.light, .light] := by decide
-example : isWellFormedFoot .iamb [.light, .heavy] := by decide
-example : ¬ isWellFormedFoot .iamb [.light] := by decide
-example : ¬ isWellFormedFoot .iamb [.heavy, .light] := by decide
-example : ¬ isWellFormedFoot .iamb [.superheavy] := by decide
-
--- Degeneracy: only the monomoraic (L) foot is subminimal.
-example : isDegenerate [.light] := by decide
-example : ¬ isDegenerate [.heavy] := by decide
-example : ¬ isDegenerate [.light, .light] := by decide
-
--- OT metrical constraints on worked parses.
-/-- (ˈCV.CV).CV: one bimoraic foot (LL) + one stray light syllable. -/
-private abbrev parse_llU : MetricalParse := [.foot [.light, .light], .unfooted .light]
-example : ftBinViolations parse_llU = 0 := rfl
-example : parseSylViolations parse_llU = 1 := rfl
-example : allFtLeftViolations parse_llU = 0 := rfl
-
-/-- (ˈLL)(ˌH): two bimoraic feet — the Telugu stem parse of *samudr-am*. -/
-private abbrev parse_llH : MetricalParse := [.foot [.light, .light], .foot [.heavy]]
-example : ftBinViolations parse_llH = 0 := rfl
-example : parseSylViolations parse_llH = 0 := rfl
-example : allFtLeftViolations parse_llH = 2 := rfl
-
-/-- Competing parses: a stray heavy (worse on PARSE-SYL), and three degenerate
-    feet (worse on FT-BIN). -/
-private abbrev parse_llU_heavy : MetricalParse := [.foot [.light, .light], .unfooted .heavy]
-example : parseSylViolations parse_llU_heavy = 1 := rfl
-private abbrev parse_lllH : MetricalParse := [.foot [.light], .foot [.light], .foot [.heavy]]
-example : ftBinViolations parse_lllH = 2 := rfl
+-- The re-representations recover the head: a trochee marks position 0, an iamb 1.
+example : Foot.toGrid (Foot.trochee 1 1) = [true, false] := by decide
+example : Foot.toGrid (Foot.iamb 1 1) = [false, true] := by decide
 
 end Prosody
