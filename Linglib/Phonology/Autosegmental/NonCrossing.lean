@@ -166,4 +166,28 @@ theorem indexCrosses_iff :
 
 end CandidateLinear
 
+/-! ### Link shift (the concatenation offset)
+
+The coordinate offset that places a morpheme's links past the preceding tiers under
+concatenation ([jardine-heinz-2015]). Shared by the bipartite `Graph` and the n-tier
+`MultiGraph`, which apply it to their one / each tier-pair respectively. -/
+
+/-- Shift a link's two endpoints by `(δ₁, δ₂)`. -/
+def shiftLink (δ₁ δ₂ : ℕ) (p : ℕ × ℕ) : ℕ × ℕ := (p.1 + δ₁, p.2 + δ₂)
+
+@[simp] theorem shiftLink_apply (δ₁ δ₂ : ℕ) (p : ℕ × ℕ) :
+    shiftLink δ₁ δ₂ p = (p.1 + δ₁, p.2 + δ₂) := rfl
+
+@[simp] theorem shiftLink_zero : shiftLink 0 0 = (id : ℕ × ℕ → ℕ × ℕ) := by funext p; simp
+
+theorem shiftLink_comp (a₁ a₂ b₁ b₂ : ℕ) :
+    shiftLink a₁ a₂ ∘ shiftLink b₁ b₂ = shiftLink (a₁ + b₁) (a₂ + b₂) := by
+  funext p; simp only [Function.comp_apply, shiftLink_apply, Prod.mk.injEq]; omega
+
+/-- Shifting a link set preserves non-crossing: `shiftLink` is a coordinatewise
+    order-embedding, so via `isNonCrossing_image` it preserves monovariance. -/
+theorem isNonCrossing_image_shiftLink (s : Finset (ℕ × ℕ)) (δ₁ δ₂ : ℕ) :
+    IsNonCrossing (s.image (shiftLink δ₁ δ₂)) ↔ IsNonCrossing s := by
+  grind [isNonCrossing_image, IsNonCrossing, MonovaryOn, shiftLink]
+
 end Autosegmental
