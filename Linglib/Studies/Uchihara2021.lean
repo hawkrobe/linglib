@@ -40,11 +40,11 @@ def profile (t : Tree) : List Nat := [ftBinViol t, unfootedCount t]
 /-! ### Minimality: a monomoraic input lengthens to a bimoraic foot -/
 
 /-- `(taa)` — one heavy syllable footed: the bimoraic perfect word. -/
-def bimoraic : Tree := .node ⟨.ω, 0⟩ [.node ⟨.f, 0⟩ [.node ⟨.σ, .heavy⟩ []]]
+def bimoraic : Tree := .node .om [.node .ft [.node (.syl .heavy) []]]
 /-- `(ta)` — a degenerate monomoraic foot (`FtBin` violation). -/
-def degenerate : Tree := .node ⟨.ω, 0⟩ [.node ⟨.f, 0⟩ [.node ⟨.σ, .light⟩ []]]
+def degenerate : Tree := .node .om [.node .ft [.node (.syl .light) []]]
 /-- `[ta]` — an unfooted light syllable (`Parse` violation). -/
-def unfooted : Tree := .node ⟨.ω, 0⟩ [.node ⟨.σ, .light⟩ []]
+def unfooted : Tree := .node .om [.node (.syl .light) []]
 
 def minCandidates : Finset Tree := {bimoraic, degenerate, unfooted}
 
@@ -60,10 +60,10 @@ theorem minimality_optimum : argMinSet minCandidates profile LexLE = {bimoraic} 
 
 /-- `(taa.ta)` — a trimoraic foot (`FtBin` violation). -/
 def trimoraicFoot : Tree :=
-  .node ⟨.ω, 0⟩ [.node ⟨.f, 0⟩ [.node ⟨.σ, .heavy⟩ [], .node ⟨.σ, .light⟩ []]]
+  .node .om [.node .ft [.node (.syl .heavy) [], .node (.syl .light) []]]
 /-- `(taa).ta` — a bimoraic foot plus an unfooted syllable (`Parse` violation). -/
 def footPlusStray : Tree :=
-  .node ⟨.ω, 0⟩ [.node ⟨.f, 0⟩ [.node ⟨.σ, .heavy⟩ []], .node ⟨.σ, .light⟩ []]
+  .node .om [.node .ft [.node (.syl .heavy) []], .node (.syl .light) []]
 
 def maxCandidates : Finset Tree := {bimoraic, trimoraicFoot, footPlusStray}
 
@@ -80,12 +80,12 @@ theorem maximality_optimum : argMinSet maxCandidates profile LexLE = {bimoraic} 
 
 /-- The shared optimum is the perfect prosodic word: ω coextensive with one
     well-formed (moraic-trochee) foot. -/
-theorem winner_perfect : PerfectWord .moraicTrochee bimoraic := by decide
+theorem winner_perfect : PerfectWord footMorae bimoraic := by decide
 
 /-- Hence the optimum is both minimal and maximal (Itô & Mester's perfect word =
     minimal ∧ maximal). -/
 theorem winner_minimal_and_maximal :
-    MinimalWord .moraicTrochee bimoraic ∧ MaximalWord .moraicTrochee bimoraic :=
+    MinimalWord footMorae bimoraic ∧ MaximalWord footMorae bimoraic :=
   ⟨winner_perfect.minimal, winner_perfect.maximal⟩
 
 end Uchihara2021
