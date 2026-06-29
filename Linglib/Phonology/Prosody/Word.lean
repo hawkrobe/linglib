@@ -1,5 +1,6 @@
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Core.Order.Branching
 
 /-!
 # Prosodic words (ω)
@@ -269,5 +270,158 @@ specialization); the general identity `Word.recursionCount = noRec ∘ toProsTre
 commuting square — lands with the functor development. -/
 
 example : (noRec.comap (Word.toProsTree id)) recW = Word.recursionCount recW := by decide
+
+/-! ### `Word` induction via the Core `Branching` machinery
+
+`Word` is a heterogeneous recursive tree, so it reuses Core's `Branching` tree-recursion
+(the same machinery `Planar` rides): its **children** are its sub-word daughters, well-founded
+because children strictly shrink `sizeOf`. This unlocks `Branching.inductionOn` — strong
+induction over the sub-words — without a hand-rolled eliminator or a mutual rewrite. -/
+
+namespace Word
+variable {S : Type*}
+
+open Core.Order
+
+/-- The sub-words of an ω (its recursive ω-over-ω daughters) — `Word`'s children for the
+    Core `Branching` tree-recursion machinery. -/
+def subWords (w : Word S) : List (Word S) :=
+  w.daughters.filterMap fun d => match d with | Daughter.sub w' => some w' | _ => none
+
+instance : Branching (Word S) := ⟨subWords⟩
+
+/-- A sub-word daughter is strictly smaller than its mother: the `sizeOf` decrease that
+    makes `Word`'s child relation well-founded. -/
+theorem sizeOf_lt_of_mem_subWords {c t : Word S} (h : c ∈ subWords t) :
+    sizeOf c < sizeOf t := by
+  obtain ⟨before, head, after⟩ := t
+  rw [subWords, daughters, List.mem_filterMap] at h
+  obtain ⟨d, hd, hdc⟩ := h
+  rcases d with f | w' | s
+  · simp at hdc
+  · obtain rfl : c = w' := by simpa using hdc.symm
+    rw [List.mem_append, List.mem_cons] at hd
+    rcases hd with hb | hh | ha
+    · have hb' := List.sizeOf_lt_of_mem hb
+      simp only [Word.mk.sizeOf_spec, Sum.inl.sizeOf_spec, Sum.inr.sizeOf_spec] at hb' ⊢
+      omega
+    · rcases head with hf | hw
+      · simp [Head.toDaughter, Daughter.foot] at hh
+      · obtain rfl : c = hw := by simpa [Head.toDaughter, Daughter.sub, Head.sub] using hh
+        simp only [Word.mk.sizeOf_spec, Sum.inr.sizeOf_spec]
+        omega
+    · have ha' := List.sizeOf_lt_of_mem ha
+      simp only [Word.mk.sizeOf_spec, Sum.inl.sizeOf_spec, Sum.inr.sizeOf_spec] at ha' ⊢
+      omega
+  · simp at hdc
+
+instance : IsFiniteBranching (Word S) :=
+  .ofMeasure sizeOf (fun hc => sizeOf_lt_of_mem_subWords hc)
+
+/-! ### The commuting square: `recursionCount = noRec ∘ toProsTree` -/
+
+open RootedTree
+
+private theorem noRec_eq_go (t : Tree) : noRec t = noRec.go t := rfl
+
+private theorem noRec_go_leaf (a : Constituent) : noRec.go (.node a []) = 0 := by
+  simp [noRec.go, noRec.goList]
+
+/-- A list of leaf nodes contributes no No-Recursion violations. -/
+private theorem noRec_goList_leafMap {β : Type*} (l : List β) (lab : β → Constituent) :
+    noRec.goList (l.map (fun x => Planar.node (lab x) [])) = 0 := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih => simp only [List.map_cons, noRec.goList, ih, Nat.add_zero, noRec_go_leaf]
+
+private theorem noRec_goList_append (xs ys : List Tree) :
+    noRec.goList (xs ++ ys) = noRec.goList xs + noRec.goList ys := by
+  induction xs with
+  | nil => simp [noRec.goList]
+  | cons x xs ih => simp only [List.cons_append, noRec.goList, ih]; omega
+
+/-- A foot subtree (a depth-1 `f`-node over σ-leaves) scores no No-Recursion violations. -/
+private theorem noRec_go_foot (wt : S → Syllable.Weight) (f : Foot S) (b : Bool) :
+    noRec.go (Foot.toProsTree wt f b) = 0 := by
+  rw [Foot.toProsTree, noRec.go]
+  have hf : ((List.finRange f.syllables.length).map (fun i =>
+      Planar.node (Constituent.syl (wt (f.syllables.get i)) (decide (i = f.head))) [])).filter
+      (fun c => decide (c.label.level = (Constituent.ft b).level)) = [] := by
+    rw [List.filter_eq_nil_iff]; intro c hc
+    simp only [List.mem_map] at hc; obtain ⟨i, _, rfl⟩ := hc; simp
+  rw [hf, noRec_goList_leafMap]; rfl
+
+@[simp] private theorem foot_toProsTree_label (wt : S → Syllable.Weight) (f : Foot S) (b : Bool) :
+    (Foot.toProsTree wt f b).label = Constituent.ft b := rfl
+
+private theorem toProsTree_label (wt : S → Syllable.Weight) (w : Word S) :
+    (w.toProsTree wt).label = Constituent.om := by obtain ⟨before, head, after⟩ := w; rfl
+
+private theorem noRec_node_om (cs : List Tree) :
+    noRec (.node Constituent.om cs) =
+      (cs.filter (fun c => decide (c.label.level = ProsodicLevel.ω))).length
+        + noRec.goList cs := rfl
+
+private theorem mem_subWords_of_mem_daughters {w' t : Word S}
+    (h : Daughter.sub w' ∈ daughters t) : w' ∈ subWords t := by
+  rw [subWords, List.mem_filterMap]; exact ⟨Daughter.sub w', h, rfl⟩
+
+/-- The per-daughter-list half of the commuting square: a daughter list's No-Recursion count
+    splits into the ω-children it contributes (its sub-words) plus the recursive count of each
+    child's subtree — exactly what `noRec` reads off the re-represented tree. -/
+private theorem lAux_filter_goList (wt : S → Syllable.Weight) :
+    ∀ ds : List (Daughter S),
+      (∀ w', Daughter.sub w' ∈ ds → recursionCount w' = noRec (w'.toProsTree wt)) →
+      recursionCount.lAux ds =
+        ((toProsTree.lTree wt ds).filter
+          (fun c => decide (c.label.level = ProsodicLevel.ω))).length
+        + noRec.goList (toProsTree.lTree wt ds)
+  | [], _ => by simp [recursionCount.lAux, toProsTree.lTree, noRec.goList]
+  | d :: ds, IH => by
+    have ih := lAux_filter_goList wt ds (fun w' h => IH w' (List.mem_cons_of_mem _ h))
+    rcases d with f | w' | s
+    · simp only [recursionCount.lAux, toProsTree.lTree, toProsTree.dTree, noRec.goList,
+        List.filter_cons, foot_toProsTree_label, noRec_go_foot, ih]; simp
+    · have hsub := IH w' (List.mem_cons_self ..)
+      simp only [recursionCount.lAux, toProsTree.lTree, toProsTree.dTree, noRec.goList,
+        List.filter_cons, toProsTree_label, ← noRec_eq_go, ← hsub, ih]
+      simp only [decide_true, if_true, List.length_cons]; omega
+    · simp only [recursionCount.lAux, toProsTree.lTree, toProsTree.dTree, noRec.goList,
+        List.filter_cons, Planar.label_node, noRec_go_leaf, ih]; simp
+
+/-- **The commuting square** ([ito-mester-2009]): the typed ω's No-Recursion count IS the
+    carrier constraint `noRec` pulled back along the `toProsTree` functor. `recursionCount`
+    is thus the wt-free ergonomic specialization of `noRec.comap (Word.toProsTree wt)`; the
+    functor preserves the constraint. Proved by strong induction over the sub-words
+    (`Branching.inductionOn`). -/
+theorem recursionCount_eq_noRec_toProsTree (wt : S → Syllable.Weight) (w : Word S) :
+    recursionCount w = noRec (w.toProsTree wt) := by
+  induction w using Core.Order.Branching.inductionOn with
+  | ih w IH =>
+    obtain ⟨before, head, after⟩ := w
+    have IH : ∀ c ∈ subWords (Word.mk before head after),
+        recursionCount c = noRec (c.toProsTree wt) := IH
+    have IHbefore : ∀ w', Daughter.sub w' ∈ before →
+        recursionCount w' = noRec (w'.toProsTree wt) :=
+      fun w' h => IH w' (mem_subWords_of_mem_daughters (List.mem_append_left _ h))
+    have IHafter : ∀ w', Daughter.sub w' ∈ after →
+        recursionCount w' = noRec (w'.toProsTree wt) :=
+      fun w' h => IH w' (mem_subWords_of_mem_daughters
+        (List.mem_append_right _ (List.mem_cons_of_mem _ h)))
+    rw [recursionCount, toProsTree, noRec_node_om, lAux_filter_goList wt before IHbefore,
+        lAux_filter_goList wt after IHafter, List.filter_append, List.length_append,
+        noRec_goList_append]
+    rcases head with f | w'
+    · simp only [recursionCount.hRec, toProsTree.hTree, noRec.goList, List.filter_cons,
+        foot_toProsTree_label, noRec_go_foot]
+      simp; omega
+    · have hsub : recursionCount w' = noRec (w'.toProsTree wt) :=
+        IH w' (mem_subWords_of_mem_daughters
+          (List.mem_append_right _ (List.mem_cons_self ..)))
+      simp only [recursionCount.hRec, toProsTree.hTree, noRec.goList, List.filter_cons,
+        toProsTree_label, ← noRec_eq_go, ← hsub]
+      simp only [decide_true, if_true, List.length_cons]; omega
+
+end Word
 
 end Prosody
