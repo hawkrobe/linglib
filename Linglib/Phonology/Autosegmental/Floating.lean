@@ -214,11 +214,11 @@ def deleteLink (k : TierIdx) (i : SegIdx) : FloatingForm S T :=
 /-! ### Well-formedness: no crossing lines -/
 
 /-- A candidate link `(k, i)` would **cross** an existing surface link.
-    Wraps the substrate `IndexCrosses` defined over `Finset (ℕ × ℕ)`;
+    Wraps the substrate `IndexCrosses` on the candidate link `(k, i)`;
     `IsNonCrossing` (via mathlib's `MonovaryOn`) provides the set-level
     NCC and inherits mathlib's lemma library. -/
 abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
-  IndexCrosses f.surfaceLinks k i
+  IndexCrosses f.surfaceLinks (k, i)
 
 /-! ### GEN: one-step candidate generation -/
 
