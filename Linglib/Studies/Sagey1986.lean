@@ -40,7 +40,7 @@ the consensus geometry:
 -/
 
 open Phonology (Segment Feature)
-open Phonology.FeatureGeometry (GeomNode)
+open Phonology.FeatureGeometry (Node)
 open Autosegmental (agreeAt)
 
 namespace Autosegmental
@@ -285,8 +285,8 @@ namespace Sagey1986
     marked, not reducible to anterior/posterior order. This distinction is
     Sagey-specific — modern phonology does not uniformly adopt it. -/
 structure MajorMinor where
-  major : GeomNode
-  minor : GeomNode
+  major : Node
+  minor : Node
   major_is_articulator : major.IsArticulator
   minor_is_articulator : minor.IsArticulator
   distinct : major ≠ minor
@@ -328,7 +328,7 @@ inductive DegreeOfClosure where
     specification; the anterior closure's is predictable ([sagey-1986] §3.4,
     p.258). -/
 structure ArticulatorSpec where
-  node : GeomNode
+  node : Node
   closure : DegreeOfClosure
   node_is_articulator : node.IsArticulator = true
 
@@ -354,7 +354,7 @@ def click_posterior : ArticulatorSpec where
     cross-linguistically simpler and more common than place assimilation:
     it involves spreading a smaller constituent. -/
 theorem nasal_assimilation_scope :
-    GeomNode.softPalate.features.length < GeomNode.place.features.length := by
+    Node.softPalate.features.length < Node.place.features.length := by
   decide
 
 /-- Nasality is NOT under the place node — spreading place does not
