@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Basic
-import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Limits
 import Linglib.Pragmatics.RSA.Monotonicity
@@ -352,20 +351,30 @@ noncomputable def malariaCfg : RSA.RSAConfig Utterance Prevalence :=
 /-- Prevalence 100% satisfies the generic for all thresholds. -/
 theorem generic_top_true :
     ∀ θ : GenThreshold, genericMeaning θ (prevPct 100) = true := by
-  native_decide
+  decide
 
 /-- Generic meaning at prevalence 0% is false for all thresholds. -/
 theorem generic_zero_false :
     ∀ θ : GenThreshold, genericMeaning θ (prevPct 0) = false := by
-  native_decide
+  decide
 
 /-- The bimodal "lays eggs" prior peaks at zero prevalence. -/
 theorem laysEggs_peaks_at_zero :
-    laysEggsPrior (prevPct 0) > laysEggsPrior (prevPct 50) := by native_decide
+    laysEggsPrior (prevPct 0) > laysEggsPrior (prevPct 50) := by
+  norm_num [laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
 
 /-- The unimodal "is female" prior peaks at 50%. -/
 theorem isFemale_peaks_at_50 :
-    isFemalePrior (prevPct 50) > isFemalePrior (prevPct 0) := by native_decide
+    isFemalePrior (prevPct 50) > isFemalePrior (prevPct 0) := by
+  norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+
+/-- Expand a sum over `Degree 20` (≃ `Fin 21`) into a `Fin 21` sum, so that
+    concrete prior expectations evaluate by `Fin.sum_univ_succ` + `norm_num`. -/
+private theorem sum_degree20 {M : Type*} [AddCommMonoid M] (f : Degree 20 → M) :
+    ∑ w, f w = ∑ i : Fin 21, f ⟨i⟩ :=
+  (Equiv.sum_comp ⟨(⟨·⟩), Degree.value, fun _ => rfl, fun ⟨_⟩ => rfl⟩ f).symm
 
 -- ============================================================================
 -- § 7. Endorsement Predictions (S1 — the paper's primary model)
@@ -385,50 +394,6 @@ the referent prevalence (in threshold-count units) exceeds the prior
 expected prevalence. This is the paper's central insight: the SAME
 prevalence can produce different endorsement rates depending on the
 prior (Figure 2). -/
-
-/-- "Dogs bark" endorsed at 95% prevalence (Table 1: 95%; Figure 2, column 1: 0.88). -/
-theorem bark_endorsed :
-    barkCfg.S1 () (prevPct 95) .generic > barkCfg.S1 () (prevPct 95) .silent := by
-  rsa_predict
-
-/-- "Robins lay eggs" endorsed at 50% prevalence (Figure 2, column 4: 0.95).
-    Despite only 50% prevalence, the bimodal prior (peaked at 0 and 50%)
-    makes the generic highly informative — it rules out the absent component. -/
-theorem laysEggs_endorsed :
-    laysEggsCfg.S1 () (prevPct 50) .generic > laysEggsCfg.S1 () (prevPct 50) .silent := by
-  rsa_predict
-
-/-- "Mosquitos carry malaria" endorsed at 10% prevalence (Figure 2, column 6: 0.97).
-    The prior expects near-zero prevalence, so even low prevalence is
-    highly informative. This is the model's explanation of "striking property"
-    generics: rare properties have low prior expectations. -/
-theorem malaria_endorsed :
-    malariaCfg.S1 () (prevPct 10) .generic > malariaCfg.S1 () (prevPct 10) .silent := by
-  rsa_predict
-
-/-- "Kangaroos have spots" NOT endorsed at 10% prevalence (Figure 2, column 2: 0.02).
-    Even though the prior has a null component, φ = 0.7 means 70% of the prior
-    mass comes from the stable Beta(5,1) peaked near 100%. At 10% prevalence,
-    the generic is uninformative relative to this high-prevalence expectation. -/
-theorem spots_not_endorsed :
-    ¬(haveSpotsCfg.S1 () (prevPct 10) .generic > haveSpotsCfg.S1 () (prevPct 10) .silent) := by
-  rsa_predict
-
-/-- "Sharks don't eat people" NOT endorsed at 80% prevalence (Figure 2, column 3: 0.41).
-    Even though 80% is high in absolute terms, the prior (φ=1, Beta(10,1))
-    concentrates nearly all mass above 80%. The generic is uninformative
-    because the listener already expects very high prevalence. -/
-theorem dontEatPeople_not_endorsed :
-    ¬(dontEatPeopleCfg.S1 () (prevPct 80) .generic > dontEatPeopleCfg.S1 () (prevPct 80) .silent) := by
-  rsa_predict
-
-/-- "Robins are female" borderline at 50% prevalence (Figure 2, column 5: 0.50).
-    The unimodal prior peaks at 50% with φ = 1.0, so the prior expected
-    prevalence is exactly 50%. At the referent prevalence of 50%, the generic
-    is exactly as informative as silence — endorsement is 0.5. -/
-theorem isFemale_borderline :
-    ¬(isFemaleCfg.S1 () (prevPct 50) .generic > isFemaleCfg.S1 () (prevPct 50) .silent) := by
-  rsa_predict
 
 -- ============================================================================
 -- § 7a. Endorsement Condition Simplification (Appendix A)
@@ -524,6 +489,248 @@ theorem endorsement_iff_exceeds_expected
         div_lt_div_iff₀ hZ (by rwa [htg] at hg_pos), div_lt_iff₀ hZ]
     -- Goal: prior p * Zg < prior p * p.toNat * Zp ↔ Zg < p.toNat * Zp
     constructor <;> intro h <;> nlinarith
+
+/-! ### Symmetric priors put the endorsement boundary at the centre
+
+A prior invariant under bin-reflection `k ↦ 20 − k` has its mean at the central bin
+(50% prevalence). This makes the "robins are female" borderline a *theorem about
+symmetry* rather than a numerical coincidence. -/
+
+/-- The bin-reflection `k ↦ 20 − k` as a permutation of `Prevalence`. `Degree 20`
+    wraps `Fin 21`, so reflect `Fin.rev` on the underlying `.value` field. -/
+private def reflectPrev : Equiv.Perm Prevalence where
+  toFun k := ⟨Fin.rev k.value⟩
+  invFun k := ⟨Fin.rev k.value⟩
+  left_inv k := by simp only [Fin.rev_rev]
+  right_inv k := by simp only [Fin.rev_rev]
+
+private theorem reflectPrev_toNat (k : Prevalence) : (reflectPrev k).toNat = 20 - k.toNat := by
+  show (Fin.rev k.value).val = 20 - k.value.val
+  rw [Fin.val_rev]; omega
+
+/-- For a reflection-symmetric prior the prevalence-weighted total is the centre bin
+    times the mass: `∑ prior(k)·k = 10 · ∑ prior(k)` — reflect the index and average
+    with the original. -/
+private theorem wsum_symm {prior : Prevalence → ℝ}
+    (hsymm : ∀ k : Prevalence, prior (reflectPrev k) = prior k) :
+    ∑ k : Prevalence, prior k * (k.toNat : ℝ) = 10 * ∑ k : Prevalence, prior k := by
+  have hk : ∀ k : Prevalence, k.toNat ≤ 20 := fun k => Nat.lt_succ_iff.mp k.value.isLt
+  have key : (∑ k : Prevalence, prior k * (k.toNat : ℝ))
+           = ∑ k : Prevalence, prior k * ((20 : ℝ) - (k.toNat : ℝ)) := by
+    refine Fintype.sum_equiv reflectPrev _ _ (fun k => ?_)
+    rw [hsymm k, reflectPrev_toNat k, Nat.cast_sub (hk k)]; push_cast; ring
+  rw [Finset.sum_congr rfl (fun k _ => by ring :
+        ∀ k ∈ Finset.univ, prior k * ((20:ℝ) - (k.toNat:ℝ)) = 20 * prior k - prior k * (k.toNat:ℝ)),
+      Finset.sum_sub_distrib, ← Finset.mul_sum] at key
+  linarith [key]
+
+/-- **A reflection-symmetric prior has its mean exactly at the centre bin (50%).** -/
+theorem expectedBin_of_symmetric {prior : Prevalence → ℝ}
+    (hsymm : ∀ k : Prevalence, prior (reflectPrev k) = prior k)
+    (hZ : 0 < ∑ k : Prevalence, prior k) : expectedBin prior = 10 := by
+  unfold expectedBin
+  rw [wsum_symm hsymm, mul_div_assoc, div_self (ne_of_gt hZ), mul_one]
+
+/-- The "is female" prior — `Beta(10, 10)` with mixture weight `φ = 1` — is invariant
+    under bin-reflection, since `betaWeight a b k = betaWeight b a (20−k)` and here
+    `a = b = 10`. -/
+theorem isFemalePrior_symm (k : Prevalence) :
+    priorR isFemalePrior (reflectPrev k) = priorR isFemalePrior k := by
+  unfold priorR
+  congr 1
+  show isFemalePrior (reflectPrev k) = isFemalePrior k
+  have hk : k.toNat ≤ 20 := Nat.lt_succ_iff.mp k.value.isLt
+  have h20 : 20 - (20 - k.toNat) = k.toNat := by omega
+  simp only [isFemalePrior, mixturePrior, betaWeight, reflectPrev_toNat k, h20]
+  ring
+
+set_option maxHeartbeats 1000000 in
+/-- "Dogs bark" endorsed at 95% prevalence (Table 1: 95%; Figure 2, column 1: 0.88). -/
+theorem bark_endorsed :
+    barkCfg.S1 () (prevPct 95) .generic > barkCfg.S1 () (prevPct 95) .silent := by
+  have hp := priorR_nonneg_of barkPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR barkPrior (prevPct 95) := by
+    simp only [priorR]
+    norm_num [barkPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR barkPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, barkPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR barkPrior) hp).S1 () (prevPct 95) .generic >
+       (mkGenericCfg (priorR barkPrior) hp).S1 () (prevPct 95) .silent
+  rw [endorsement_iff_exceeds_expected (priorR barkPrior) hp (prevPct 95) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, barkPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
+
+set_option maxHeartbeats 1000000 in
+/-- "Robins lay eggs" endorsed at 50% prevalence (Figure 2, column 4: 0.95).
+    Despite only 50% prevalence, the bimodal prior (peaked at 0 and 50%)
+    makes the generic highly informative — it rules out the absent component. -/
+theorem laysEggs_endorsed :
+    laysEggsCfg.S1 () (prevPct 50) .generic > laysEggsCfg.S1 () (prevPct 50) .silent := by
+  have hp := priorR_nonneg_of laysEggsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR laysEggsPrior (prevPct 50) := by
+    simp only [priorR]
+    norm_num [laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR laysEggsPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR laysEggsPrior) hp).S1 () (prevPct 50) .generic >
+       (mkGenericCfg (priorR laysEggsPrior) hp).S1 () (prevPct 50) .silent
+  rw [endorsement_iff_exceeds_expected (priorR laysEggsPrior) hp (prevPct 50) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
+
+set_option maxHeartbeats 1000000 in
+/-- "Mosquitos carry malaria" endorsed at 10% prevalence (Figure 2, column 6: 0.97).
+    The prior expects near-zero prevalence, so even low prevalence is
+    highly informative. This is the model's explanation of "striking property"
+    generics: rare properties have low prior expectations. -/
+theorem malaria_endorsed :
+    malariaCfg.S1 () (prevPct 10) .generic > malariaCfg.S1 () (prevPct 10) .silent := by
+  have hp := priorR_nonneg_of carriesMalariaPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR carriesMalariaPrior (prevPct 10) := by
+    simp only [priorR]
+    norm_num [carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR carriesMalariaPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR carriesMalariaPrior) hp).S1 () (prevPct 10) .generic >
+       (mkGenericCfg (priorR carriesMalariaPrior) hp).S1 () (prevPct 10) .silent
+  rw [endorsement_iff_exceeds_expected (priorR carriesMalariaPrior) hp (prevPct 10) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
+
+set_option maxHeartbeats 1000000 in
+/-- "Kangaroos have spots" NOT endorsed at 10% prevalence (Figure 2, column 2: 0.02).
+    Even though the prior has a null component, φ = 0.7 means 70% of the prior
+    mass comes from the stable Beta(5,1) peaked near 100%. At 10% prevalence,
+    the generic is uninformative relative to this high-prevalence expectation. -/
+theorem spots_not_endorsed :
+    ¬(haveSpotsCfg.S1 () (prevPct 10) .generic > haveSpotsCfg.S1 () (prevPct 10) .silent) := by
+  have hp := priorR_nonneg_of haveSpotsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR haveSpotsPrior (prevPct 10) := by
+    simp only [priorR]
+    norm_num [haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR haveSpotsPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show ¬((mkGenericCfg (priorR haveSpotsPrior) hp).S1 () (prevPct 10) .generic >
+        (mkGenericCfg (priorR haveSpotsPrior) hp).S1 () (prevPct 10) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR haveSpotsPrior) hp (prevPct 10) hpp hZ, not_lt]
+  unfold expectedBin
+  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
+
+set_option maxHeartbeats 1000000 in
+/-- "Sharks don't eat people" NOT endorsed at 80% prevalence (Figure 2, column 3: 0.41).
+    Even though 80% is high in absolute terms, the prior (φ=1, Beta(10,1))
+    concentrates nearly all mass above 80%. The generic is uninformative
+    because the listener already expects very high prevalence. -/
+theorem dontEatPeople_not_endorsed :
+    ¬(dontEatPeopleCfg.S1 () (prevPct 80) .generic > dontEatPeopleCfg.S1 () (prevPct 80) .silent) := by
+  have hp := priorR_nonneg_of dontEatPeoplePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR dontEatPeoplePrior (prevPct 80) := by
+    simp only [priorR]
+    norm_num [dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR dontEatPeoplePrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show ¬((mkGenericCfg (priorR dontEatPeoplePrior) hp).S1 () (prevPct 80) .generic >
+        (mkGenericCfg (priorR dontEatPeoplePrior) hp).S1 () (prevPct 80) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR dontEatPeoplePrior) hp (prevPct 80) hpp hZ, not_lt]
+  unfold expectedBin
+  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
+
+set_option maxHeartbeats 1000000 in
+/-- "Robins are female" borderline at 50% prevalence (Figure 2, column 5: 0.50) — as
+    a **symmetry theorem**. The `Beta(10,10)`, `φ = 1` prior is reflection-symmetric
+    (`isFemalePrior_symm`), so its mean is exactly the centre bin
+    (`expectedBin_of_symmetric`: 50%); the 50%-referent then sits exactly on the
+    endorsement boundary, so the generic is no more informative than silence. Not a
+    numerical coincidence — a consequence of the prior's symmetry. -/
+theorem isFemale_borderline :
+    ¬(isFemaleCfg.S1 () (prevPct 50) .generic > isFemaleCfg.S1 () (prevPct 50) .silent) := by
+  have hp := priorR_nonneg_of isFemalePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR isFemalePrior (prevPct 50) := by
+    simp only [priorR]
+    norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR isFemalePrior w :=
+    Finset.sum_pos' (fun i _ => hp i) ⟨prevPct 50, Finset.mem_univ _, hpp⟩
+  show ¬((mkGenericCfg (priorR isFemalePrior) hp).S1 () (prevPct 50) .generic >
+        (mkGenericCfg (priorR isFemalePrior) hp).S1 () (prevPct 50) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR isFemalePrior) hp (prevPct 50) hpp hZ, not_lt,
+      expectedBin_of_symmetric isFemalePrior_symm hZ]
+  norm_num [Degree.toNat]
+
+
+-- ============================================================================
+-- § 7b. Mathematical laws of the endorsement model
+-- ============================================================================
+
+/-! `endorsement_iff_exceeds_expected` says the endorsement decision is a single
+*threshold on the referent prevalence at the prior mean* `expectedBin`. The model's
+qualitative content is the behaviour of that threshold, derived below from the law
+alone — no prior-specific computation, no `decide`. -/
+
+/-- **Monotonicity in prevalence** (Figure 1C). At a fixed prior, endorsement is
+    monotone in the referent prevalence: once a prevalence exceeds the prior mean,
+    every higher prevalence is endorsed too. The endorsement curve is a step up at
+    `expectedBin prior`. -/
+theorem endorse_monotone {prior : Prevalence → ℝ} (hp : ∀ p, 0 ≤ prior p)
+    (p₁ p₂ : Prevalence) (hpos₁ : 0 < prior p₁) (hpos₂ : 0 < prior p₂)
+    (hZ : 0 < ∑ w : Prevalence, prior w) (hle : p₁.toNat ≤ p₂.toNat)
+    (h : (mkGenericCfg prior hp).S1 () p₁ .generic > (mkGenericCfg prior hp).S1 () p₁ .silent) :
+    (mkGenericCfg prior hp).S1 () p₂ .generic > (mkGenericCfg prior hp).S1 () p₂ .silent := by
+  rw [endorsement_iff_exceeds_expected prior hp p₁ hpos₁ hZ, gt_iff_lt] at h
+  rw [endorsement_iff_exceeds_expected prior hp p₂ hpos₂ hZ, gt_iff_lt]
+  exact lt_of_lt_of_le h (by exact_mod_cast hle)
+
+/-- **Prevalence asymmetry** ([leslie-2008]) as a theorem about prior *means*. At one
+    and the same referent prevalence `p`, a property whose prior mean lies below `p`
+    is endorsed while one whose prior mean lies at or above `p` is not. The asymmetry
+    is therefore not a fact about the prevalence (it is shared) but the ordering of
+    the two prior means `expectedBin prior₁ < p ≤ expectedBin prior₂` — exactly the
+    paper's explanation of "robins lay eggs" vs. "robins are female". -/
+theorem endorse_asymmetry_of_expected {prior₁ prior₂ : Prevalence → ℝ}
+    (hp₁ : ∀ p, 0 ≤ prior₁ p) (hp₂ : ∀ p, 0 ≤ prior₂ p) (p : Prevalence)
+    (hpos₁ : 0 < prior₁ p) (hpos₂ : 0 < prior₂ p)
+    (hZ₁ : 0 < ∑ w : Prevalence, prior₁ w) (hZ₂ : 0 < ∑ w : Prevalence, prior₂ w)
+    (hlo : expectedBin prior₁ < (p.toNat : ℝ)) (hhi : (p.toNat : ℝ) ≤ expectedBin prior₂) :
+    ((mkGenericCfg prior₁ hp₁).S1 () p .generic > (mkGenericCfg prior₁ hp₁).S1 () p .silent) ∧
+    ¬((mkGenericCfg prior₂ hp₂).S1 () p .generic > (mkGenericCfg prior₂ hp₂).S1 () p .silent) := by
+  refine ⟨?_, ?_⟩
+  · rw [endorsement_iff_exceeds_expected prior₁ hp₁ p hpos₁ hZ₁, gt_iff_lt]; exact hlo
+  · rw [endorsement_iff_exceeds_expected prior₂ hp₂ p hpos₂ hZ₂, not_lt]; exact hhi
 
 -- ============================================================================
 -- § 8. Prevalence Asymmetry ([leslie-2008])
@@ -674,22 +881,76 @@ noncomputable def drinksCoffeeCfg : RSA.RSAConfig Utterance Prevalence :=
   mkGenericCfg (priorR drinksCoffeePrior) (priorR_nonneg_of _ <|
     mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
+set_option maxHeartbeats 1000000 in
 /-- "John runs" endorsed at 75% frequency (moderate freq exceeds moderate prior). -/
 theorem runs_endorsed_at_high_freq :
     runsCfg.S1 () (prevPct 75) .generic > runsCfg.S1 () (prevPct 75) .silent := by
-  rsa_predict
+  have hp := priorR_nonneg_of runsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR runsPrior (prevPct 75) := by
+    simp only [priorR]
+    norm_num [runsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR runsPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, runsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR runsPrior) hp).S1 () (prevPct 75) .generic >
+       (mkGenericCfg (priorR runsPrior) hp).S1 () (prevPct 75) .silent
+  rw [endorsement_iff_exceeds_expected (priorR runsPrior) hp (prevPct 75) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, runsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- "John climbs mountains" endorsed at 25% frequency (low freq exceeds rare-activity prior). -/
 theorem climbs_mountains_endorsed_at_low_freq :
     climbsMountainsCfg.S1 () (prevPct 25) .generic >
     climbsMountainsCfg.S1 () (prevPct 25) .silent := by
-  rsa_predict
+  have hp := priorR_nonneg_of climbsMountainsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR climbsMountainsPrior (prevPct 25) := by
+    simp only [priorR]
+    norm_num [climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR climbsMountainsPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR climbsMountainsPrior) hp).S1 () (prevPct 25) .generic >
+       (mkGenericCfg (priorR climbsMountainsPrior) hp).S1 () (prevPct 25) .silent
+  rw [endorsement_iff_exceeds_expected (priorR climbsMountainsPrior) hp (prevPct 25) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- "John drinks coffee" NOT endorsed at 25% frequency (low freq below high-frequency prior). -/
 theorem drinks_coffee_not_endorsed_at_low_freq :
     ¬(drinksCoffeeCfg.S1 () (prevPct 25) .generic >
       drinksCoffeeCfg.S1 () (prevPct 25) .silent) := by
-  rsa_predict
+  have hp := priorR_nonneg_of drinksCoffeePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR drinksCoffeePrior (prevPct 25) := by
+    simp only [priorR]
+    norm_num [drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR drinksCoffeePrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show ¬((mkGenericCfg (priorR drinksCoffeePrior) hp).S1 () (prevPct 25) .generic >
+        (mkGenericCfg (priorR drinksCoffeePrior) hp).S1 () (prevPct 25) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR drinksCoffeePrior) hp (prevPct 25) hpp hZ, not_lt]
+  unfold expectedBin
+  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
 /-- Habitual prior asymmetry: at the same 25% frequency, "climbs mountains" is endorsed
     but "drinks coffee" is not — paralleling the generic prevalence asymmetry. -/
@@ -770,26 +1031,81 @@ noncomputable def rareWeakCfg : RSA.RSAConfig Utterance Prevalence :=
   mkGenericCfg (priorR rareWeakPrior) (priorR_nonneg_of _ <|
     mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
+set_option maxHeartbeats 1000000 in
 /-- Rare-weak cause endorsed at 20% causal rate: low prior expectation
     makes even 20% informative. -/
 theorem rareWeak_endorsed_at_20pct :
     rareWeakCfg.S1 () (prevPct 20) .generic >
     rareWeakCfg.S1 () (prevPct 20) .silent := by
-  rsa_predict
+  have hp := priorR_nonneg_of rareWeakPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR rareWeakPrior (prevPct 20) := by
+    simp only [priorR]
+    norm_num [rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR rareWeakPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR rareWeakPrior) hp).S1 () (prevPct 20) .generic >
+       (mkGenericCfg (priorR rareWeakPrior) hp).S1 () (prevPct 20) .silent
+  rw [endorsement_iff_exceeds_expected (priorR rareWeakPrior) hp (prevPct 20) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- Common-strong cause NOT endorsed at 20% causal rate: high prior
     expectation (peaked near 100%) makes 20% uninformative. -/
 theorem commonStrong_not_endorsed_at_20pct :
     ¬(commonStrongCfg.S1 () (prevPct 20) .generic >
       commonStrongCfg.S1 () (prevPct 20) .silent) := by
-  rsa_predict
+  have hp := priorR_nonneg_of commonStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR commonStrongPrior (prevPct 20) := by
+    simp only [priorR]
+    norm_num [commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR commonStrongPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show ¬((mkGenericCfg (priorR commonStrongPrior) hp).S1 () (prevPct 20) .generic >
+        (mkGenericCfg (priorR commonStrongPrior) hp).S1 () (prevPct 20) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR commonStrongPrior) hp (prevPct 20) hpp hZ, not_lt]
+  unfold expectedBin
+  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- Rare-weak cause endorsed at 70% causal rate. -/
 theorem rareWeak_endorsed_at_70pct :
     rareWeakCfg.S1 () (prevPct 70) .generic >
     rareWeakCfg.S1 () (prevPct 70) .silent := by
-  rsa_predict
+  have hp := priorR_nonneg_of rareWeakPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR rareWeakPrior (prevPct 70) := by
+    simp only [priorR]
+    norm_num [rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR rareWeakPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR rareWeakPrior) hp).S1 () (prevPct 70) .generic >
+       (mkGenericCfg (priorR rareWeakPrior) hp).S1 () (prevPct 70) .silent
+  rw [endorsement_iff_exceeds_expected (priorR rareWeakPrior) hp (prevPct 70) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- Common-strong cause NOT endorsed at 50% causal rate: high prior
     (Beta(10,1), φ=0.75) puts expected rate near 70%, so 50% is uninformative.
     Note: the paper tests at 20% and 70%. At 70%, the comparison is borderline
@@ -798,29 +1114,100 @@ theorem rareWeak_endorsed_at_70pct :
 theorem commonStrong_not_endorsed_at_50pct :
     ¬(commonStrongCfg.S1 () (prevPct 50) .generic >
       commonStrongCfg.S1 () (prevPct 50) .silent) := by
-  rsa_predict
+  have hp := priorR_nonneg_of commonStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR commonStrongPrior (prevPct 50) := by
+    simp only [priorR]
+    norm_num [commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR commonStrongPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show ¬((mkGenericCfg (priorR commonStrongPrior) hp).S1 () (prevPct 50) .generic >
+        (mkGenericCfg (priorR commonStrongPrior) hp).S1 () (prevPct 50) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR commonStrongPrior) hp (prevPct 50) hpp hZ, not_lt]
+  unfold expectedBin
+  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- Rare-strong cause NOT endorsed at 20% causal rate (Figure 11B: ~35% endorsement).
     Despite fewer competing causes than common-strong, the prior still
     concentrates enough mass above 20% (via Beta(10,1)) to make 20% uninformative. -/
 theorem rareStrong_not_endorsed_at_20pct :
     ¬(rareStrongCfg.S1 () (prevPct 20) .generic >
       rareStrongCfg.S1 () (prevPct 20) .silent) := by
-  rsa_predict
+  have hp := priorR_nonneg_of rareStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR rareStrongPrior (prevPct 20) := by
+    simp only [priorR]
+    norm_num [rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR rareStrongPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show ¬((mkGenericCfg (priorR rareStrongPrior) hp).S1 () (prevPct 20) .generic >
+        (mkGenericCfg (priorR rareStrongPrior) hp).S1 () (prevPct 20) .silent)
+  rw [endorsement_iff_exceeds_expected (priorR rareStrongPrior) hp (prevPct 20) hpp hZ, not_lt]
+  unfold expectedBin
+  rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- Rare-strong cause endorsed at 70% causal rate (Figure 11B: ~90% endorsement). -/
 theorem rareStrong_endorsed_at_70pct :
     rareStrongCfg.S1 () (prevPct 70) .generic >
     rareStrongCfg.S1 () (prevPct 70) .silent := by
-  rsa_predict
+  have hp := priorR_nonneg_of rareStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR rareStrongPrior (prevPct 70) := by
+    simp only [priorR]
+    norm_num [rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR rareStrongPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR rareStrongPrior) hp).S1 () (prevPct 70) .generic >
+       (mkGenericCfg (priorR rareStrongPrior) hp).S1 () (prevPct 70) .silent
+  rw [endorsement_iff_exceeds_expected (priorR rareStrongPrior) hp (prevPct 70) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
+set_option maxHeartbeats 1000000 in
 /-- Common-weak cause endorsed at 70% causal rate (Figure 11B: ~75% endorsement).
     With Beta(2,8) peaked near 20%, a referent rate of 70% far exceeds
     the prior expectation. -/
 theorem commonWeak_endorsed_at_70pct :
     commonWeakCfg.S1 () (prevPct 70) .generic >
     commonWeakCfg.S1 () (prevPct 70) .silent := by
-  rsa_predict
+  have hp := priorR_nonneg_of commonWeakPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
+  have hpp : 0 < priorR commonWeakPrior (prevPct 70) := by
+    simp only [priorR]
+    norm_num [commonWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
+  have hZ : 0 < ∑ w : Prevalence, priorR commonWeakPrior w := by
+    rw [sum_degree20]
+    norm_num [priorR, commonWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+      List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+      Fin.sum_univ_succ, Fin.sum_univ_zero]
+  show (mkGenericCfg (priorR commonWeakPrior) hp).S1 () (prevPct 70) .generic >
+       (mkGenericCfg (priorR commonWeakPrior) hp).S1 () (prevPct 70) .silent
+  rw [endorsement_iff_exceeds_expected (priorR commonWeakPrior) hp (prevPct 70) hpp hZ]
+  unfold expectedBin
+  rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
+  norm_num [priorR, commonWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
+    Fin.sum_univ_succ, Fin.sum_univ_zero]
 
 /-- Causal prior asymmetry (Experiment 3B): at 20% referent rate, only
     rare-weak is endorsed; the other three conditions are not.
