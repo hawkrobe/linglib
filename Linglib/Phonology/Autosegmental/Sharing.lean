@@ -63,12 +63,12 @@ two distinct elements cannot be identical to the same time point.
 namespace Autosegmental
 
 open Phonology (Segment Feature)
-open Phonology.FeatureGeometry (GeomNode)
+open Phonology.FeatureGeometry (Node)
 
 /-! ### Feature agreement -/
 
 /-- Do `s1` and `s2` agree on all features dominated by node `n`? -/
-def agreeAt (s1 s2 : Segment) (n : GeomNode) : Bool :=
+def agreeAt (s1 s2 : Segment) (n : Node) : Bool :=
   n.features.all fun f => s1 f == s2 f
 
 /-- Place assimilation: agreement on all place features. -/
@@ -83,7 +83,7 @@ def totalAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .supralaryngeal
     dominated by `node`. -/
 structure Sharing where
   left : Nat
-  node : GeomNode
+  node : Node
   deriving DecidableEq, Repr
 
 /-! ### Autosegmental representation -/
@@ -108,12 +108,12 @@ def SharingRep.consistent (r : SharingRep) : Bool :=
 /-! ### Operations -/
 
 /-- Spread node `n` rightward from position `pos`. -/
-def SharingRep.spread (r : SharingRep) (pos : Nat) (n : GeomNode) :
+def SharingRep.spread (r : SharingRep) (pos : Nat) (n : Node) :
     SharingRep :=
   { r with sharing := ⟨pos, n⟩ :: r.sharing }
 
 /-- Remove sharing at position `pos` for node `n`. -/
-def SharingRep.delink (r : SharingRep) (pos : Nat) (n : GeomNode) :
+def SharingRep.delink (r : SharingRep) (pos : Nat) (n : Node) :
     SharingRep :=
   { r with sharing := r.sharing.filter fun s =>
       !(s.left == pos && s.node == n) }
@@ -125,13 +125,13 @@ def SharingRep.delink (r : SharingRep) (pos : Nat) (n : GeomNode) :
     assimilation): the entire node — including features `src` leaves
     unspecified — is copied. (The node-spreading analysis; single-feature
     spreading and underspecification-sensitive variants behave differently.) -/
-def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment :=
+def copyFeaturesUnder (tgt src : Segment) (n : Node) : Segment :=
   fun f => if decide (f.DominatedBy n) then src f else tgt f
 
 /-- Spread node `n` from position `pos + 1` onto position `pos`, replacing
     the target's features under `n` with the trigger's values and recording
     the sharing link. -/
-def SharingRep.spreadFeatures (r : SharingRep) (pos : Nat) (n : GeomNode) :
+def SharingRep.spreadFeatures (r : SharingRep) (pos : Nat) (n : Node) :
     SharingRep :=
   match r.segments[pos]?, r.segments[pos + 1]? with
   | some tgt, some src =>
@@ -156,9 +156,9 @@ private theorem all_filter_if_beq_self {α β : Type*} [BEq β] [LawfulBEq β]
 
 /-- After copying features under node `n`, the result agrees with the source
     at that node. -/
-theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
+theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : Node) :
     agreeAt (copyFeaturesUnder tgt src n) src n = true := by
-  simp only [agreeAt, copyFeaturesUnder, GeomNode.features]
+  simp only [agreeAt, copyFeaturesUnder, Node.features]
   exact all_filter_if_beq_self Feature.allFeatures
     (fun f => decide (f.DominatedBy n)) src tgt
 
@@ -172,18 +172,18 @@ private theorem list_all_beq_self {α : Type*} [BEq α] [LawfulBEq α]
   | cons _ _ ih => simp [List.all_cons]
 
 /-- Agreement is reflexive. -/
-theorem agreeAt_refl (s : Segment) (n : GeomNode) :
+theorem agreeAt_refl (s : Segment) (n : Node) :
     agreeAt s s n = true :=
   list_all_beq_self n.features s
 
 /-- Place assimilation checks 14 features (the place node's natural class). -/
 theorem place_assimilation_checks_14 :
-    GeomNode.place.features.length = 14 := by decide
+    Node.place.features.length = 14 := by decide
 
 /-- Total assimilation checks 16 features (the supralaryngeal node's natural class,
     including [nasal] via the soft palate node). -/
 theorem total_assimilation_checks_16 :
-    GeomNode.supralaryngeal.features.length = 16 := by decide
+    Node.supralaryngeal.features.length = 16 := by decide
 
 private theorem filter_all_pass (l : List Sharing) (p : Sharing → Bool)
     (h : l.all p = true) : l.filter p = l := by
@@ -197,7 +197,7 @@ private theorem filter_all_pass (l : List Sharing) (p : Sharing → Bool)
 
 /-- Spreading and then delinking returns the original representation when the
     position/node pair was not already present in the sharing list. -/
-theorem spread_delink_not_present (r : SharingRep) (pos : Nat) (n : GeomNode)
+theorem spread_delink_not_present (r : SharingRep) (pos : Nat) (n : Node)
     (h : (r.sharing.all fun s => !(s.left == pos && s.node == n)) = true) :
     (r.spread pos n).delink pos n = r := by
   cases r with | mk segs shs =>
