@@ -501,10 +501,10 @@ theorem within_feature_monotonicity_but_not_across :
     4. [giles-etal-2026] ground the scale parameters in d' measured
        via psychophysical staircases
 
-    [degen-etal-2020] already proves the factoring holds for the
-    concrete φ (`φ_product_of_experts`). This bridge connects to the
-    ABSTRACT infrastructure that shows the factoring is forced by
-    independence — not an ad hoc modelling choice. -/
+    [degen-etal-2020] builds the factoring into the concrete φ (the
+    Product-of-Experts construction of `DegenEtAl2020.φ`). This bridge
+    connects to the ABSTRACT infrastructure that shows the factoring is
+    forced by independence — not an ad hoc modelling choice. -/
 noncomputable def poeNoiseScales : Core.MultidimStimulus (Fin 2) (fun _ => Bool) where
   scale
     | 0, true  => ↑RSA.Noise.sizeMatch

@@ -45,8 +45,8 @@ The cs-RSA model ([degen-etal-2020]) explains redundant modification
 via noisy perception. The derivation proceeds in four steps:
 
 1. **Model structure**: The cs-RSA meaning function φ decomposes into
-   independent per-feature noise channels (proven in DegenEtAl2020:
-   `φ_product_of_experts`).
+   independent per-feature noise channels (the Product-of-Experts
+   construction of `DegenEtAl2020.φ`).
 
 2. **Parameterization**: Each noise channel has match/mismatch parameters
    that determine its discrimination (noise gap). The cs-RSA model's
@@ -191,18 +191,19 @@ theorem difficulty_predicts_redundancy :
 -- ============================================================================
 
 /-! The cs-RSA model's meaning function φ ([degen-etal-2020]) is a
-product of independent per-feature noise channels (proven in
-`DegenEtAl2020.φ_product_of_experts`). The φ function uses `RSA.Noise`
-parameter values by construction — this is structural, not coincidental
+product of independent per-feature noise channels (the Product-of-Experts
+construction of `DegenEtAl2020.φ`). The φ function uses the `ℝ≥0∞` `RSA.Noise`
+parameters by construction — this is structural, not coincidental
 (proven in `DegenEtAl2020.φ_grounded_in_noise`). -/
 
-/-- The cs-RSA φ function uses RSA.Noise parameters by construction.
+/-- The cs-RSA φ function uses `RSA.Noise` parameters by construction (the
+    `ℝ≥0∞` channel siblings, since `DegenEtAl2020.φ` is `PMF`-valued).
     Re-exported from the study file for local use. -/
 theorem csrsa_params_match_noise :
-    DegenEtAl2020.φ .blue .smallBlue = RSA.Noise.colorMatch ∧
-    DegenEtAl2020.φ .blue .bigRed = RSA.Noise.colorMismatch ∧
-    DegenEtAl2020.φ .small .smallBlue = RSA.Noise.sizeMatch ∧
-    DegenEtAl2020.φ .small .bigBlue = RSA.Noise.sizeMismatch :=
+    DegenEtAl2020.φ .blue .smallBlue = RSA.Noise.colorMatch_e ∧
+    DegenEtAl2020.φ .blue .bigRed = RSA.Noise.colorMismatch_e ∧
+    DegenEtAl2020.φ .small .smallBlue = RSA.Noise.sizeMatch_e ∧
+    DegenEtAl2020.φ .small .bigBlue = RSA.Noise.sizeMismatch_e :=
   DegenEtAl2020.φ_grounded_in_noise
 
 -- ============================================================================
