@@ -80,12 +80,12 @@ theorem maximality_optimum : argMinSet maxCandidates profile LexLE = {bimoraic} 
 
 /-- The shared optimum is the perfect prosodic word: ω coextensive with one
     well-formed (moraic-trochee) foot. -/
-theorem winner_perfect : PerfectWord .moraicTrochee bimoraic := by decide
+theorem winner_perfect : PerfectWord footMorae bimoraic := by decide
 
 /-- Hence the optimum is both minimal and maximal (Itô & Mester's perfect word =
     minimal ∧ maximal). -/
 theorem winner_minimal_and_maximal :
-    MinimalWord .moraicTrochee bimoraic ∧ MaximalWord .moraicTrochee bimoraic :=
+    MinimalWord footMorae bimoraic ∧ MaximalWord footMorae bimoraic :=
   ⟨winner_perfect.minimal, winner_perfect.maximal⟩
 
 end Uchihara2021
