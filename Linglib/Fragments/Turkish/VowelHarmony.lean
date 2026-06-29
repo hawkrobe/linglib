@@ -1,5 +1,5 @@
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Segmental.FeatureGeometry
+import Linglib.Phonology.Segmental.Geometry
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Subregular.Harmony
@@ -187,7 +187,7 @@ theorem göz_labial : triggerValue labialHarmony [ö_vowel] = some true := by
     a [+back] stem surfaces [+back] — the value propagated from the preceding
     output segment, the genuine subregular semantics. -/
 theorem palatal_transduce_spreads_back :
-    ((palatalHarmony.transduce [a_vowel, e_vowel])[1]?).bind (·.spec .back)
+    ((palatalHarmony.transduce [a_vowel, e_vowel])[1]?).bind (fun s => s .back)
       = some true := by decide
 
 -- Cross-backness: a and e disagree on dorsal features

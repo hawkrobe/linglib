@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.FeatureGeometry
+import Linglib.Phonology.Segmental.Geometry
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Subregular.LocalRewrite
@@ -14,9 +14,9 @@ PhD dissertation, Massachusetts Institute of Technology.
 [sagey-1986] proposes a hierarchical feature geometry organized by
 vocal tract articulator, establishing the labial, coronal, dorsal, and
 soft palate nodes that are now standard in phonological theory
-(`Phonology/Segmental/FeatureGeometry.lean`). The geometry predicts which
+(`Phonology/Segmental/Geometry.lean`). The geometry predicts which
 multiply-articulated (complex) segments are possible in human language
-(`Phonology/Segmental/FeatureGeometry.lean`).
+(`Phonology/Segmental/Geometry.lean`).
 
 This study file formalizes Sagey-specific contributions that go beyond
 the consensus geometry:
@@ -382,8 +382,10 @@ def nupe_kp_segment : Segment :=
 /-- The Nupe /k͡p/ is a complex segment (two active place articulators). -/
 theorem nupe_kp_is_complex : Segment.IsComplex nupe_kp_segment := by decide
 
-/-- The Nupe /k͡p/ is well-formed: labial ≠ dorsal. -/
-theorem nupe_kp_wf : Segment.ComplexWF nupe_kp_segment := by decide
+/-- The Nupe /k͡p/ is well-formed: its active articulators (labial, dorsal) are
+    distinct — an instance of the by-construction guarantee. -/
+theorem nupe_kp_wf : nupe_kp_segment.activeArticulators.Nodup :=
+  Segment.activeArticulators_nodup _
 
 /-- A simple /p/ (labial only) is not complex. -/
 def simple_p : Segment :=
@@ -405,8 +407,10 @@ def velar_nasal : Segment :=
 
 theorem velar_nasal_not_complex : ¬ Segment.IsComplex velar_nasal := by decide
 
-/-- The velar nasal is well-formed (only one place articulator: dorsal). -/
-theorem velar_nasal_wf : Segment.ComplexWF velar_nasal := by decide
+/-- The velar nasal is well-formed (only one place articulator: dorsal), its
+    active articulators trivially distinct. -/
+theorem velar_nasal_wf : velar_nasal.activeArticulators.Nodup :=
+  Segment.activeArticulators_nodup _
 
 -- ============================================================================
 -- § 5: Impossible Complex Segments (Ch. 2)

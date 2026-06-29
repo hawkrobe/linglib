@@ -122,6 +122,12 @@ variable {α : Type*}
 instance [DecidableEq α] : DecidableEq (Flat α) :=
   inferInstanceAs (DecidableEq (Option α))
 
+instance [BEq α] : BEq (Flat α) :=
+  inferInstanceAs (BEq (Option α))
+
+instance [BEq α] [LawfulBEq α] : LawfulBEq (Flat α) :=
+  inferInstanceAs (LawfulBEq (Option α))
+
 instance [Repr α] : Repr (Flat α) :=
   inferInstanceAs (Repr (Option α))
 
