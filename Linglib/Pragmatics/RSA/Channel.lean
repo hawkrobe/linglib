@@ -1,4 +1,5 @@
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.ENNReal.Real
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Linglib.Features.PropertyDomain
@@ -65,6 +66,8 @@ binary symmetric channels) is a future direction; the current
 
 namespace RSA.Noise
 
+open scoped ENNReal
+
 -- The Unified Noise Channel
 
 /--
@@ -127,6 +130,15 @@ def materialDiscrimination : ℚ := materialMatch - materialMismatch  -- 0.40
 def orientationMatch : ℚ := 99/100
 def orientationMismatch : ℚ := 1/100
 def orientationDiscrimination : ℚ := orientationMatch - orientationMismatch  -- 0.98
+
+/-- `ℝ≥0∞` siblings of the color/size channel parameters, grounded in the `ℚ`
+    values above (`*_e_eq` below). These feed `PMF`-based RSA models built on the
+    mathlib probability API (`RSA.L0OfMeaning` / `RSA.S1Belief`), where the
+    literal-listener meaning is `ℝ≥0∞`-valued. -/
+def colorMatch_e : ℝ≥0∞ := ENNReal.ofReal (colorMatch : ℝ)
+def colorMismatch_e : ℝ≥0∞ := ENNReal.ofReal (colorMismatch : ℝ)
+def sizeMatch_e : ℝ≥0∞ := ENNReal.ofReal (sizeMatch : ℝ)
+def sizeMismatch_e : ℝ≥0∞ := ENNReal.ofReal (sizeMismatch : ℝ)
 
 -- Discrimination Ordering
 
