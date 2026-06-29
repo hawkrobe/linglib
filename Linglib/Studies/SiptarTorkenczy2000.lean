@@ -67,7 +67,7 @@ private theorem feature_beq_self (f : Feature) : (f == f) = true := by
 def spreadViolations (sys : System) (triggerVal : Bool)
     (suffix : List Segment) : Nat :=
   suffix.filter (λ s =>
-    sys.isTarget s && !((s.spec sys.feature) == some triggerVal)
+    sys.isTarget s && !((s sys.feature) == some triggerVal)
   ) |>.length
 
 /-- IDENT-[F] violations: count positions where the harmony feature
@@ -75,15 +75,15 @@ def spreadViolations (sys : System) (triggerVal : Bool)
 
     **Derived from `Corr.identViol`** on the `(false, true)` edge of a
     binary parallel-pair correspondence between the feature-projected
-    tiers `input.map (·.spec sys.feature)` and
-    `output.map (·.spec sys.feature)`. This structurally identifies
+    tiers `input.map (· sys.feature)` and
+    `output.map (· sys.feature)`. This structurally identifies
     IDENT-[F] as IDENT-IO of [mccarthy-prince-1995] restricted to
     the harmony feature. -/
 def identViolations (sys : System)
     (input output : List Segment) : Nat :=
   (Corr.parallel
-    (input.map  (·.spec sys.feature))
-    (output.map (·.spec sys.feature))).identViol .lhs .rhs
+    (input.map  (· sys.feature))
+    (output.map (· sys.feature))).identViol .lhs .rhs
 
 /-- A vowel harmony candidate for OT evaluation.
 
@@ -118,7 +118,7 @@ def mkIdentHarmony (sys : System) :
 /-- After harmonization, a target's harmony feature is set to `val`. -/
 theorem harmonizeOne_spec_feature (sys : System) (val : Bool)
     (s : Segment) (ht : sys.isTarget s) :
-    (harmonizeOne sys val s).spec sys.feature = some val := by
+    (harmonizeOne sys val s) sys.feature = some val := by
   simp only [harmonizeOne, if_pos ht, writeFeature, feature_beq_self, if_true]
 
 /-- `harmonizeOne` never creates SPREAD violations: the result either
@@ -127,7 +127,7 @@ theorem harmonizeOne_spec_feature (sys : System) (val : Bool)
 private theorem harmonizeOne_no_spread (sys : System) (val : Bool)
     (s : Segment) :
     (sys.isTarget (harmonizeOne sys val s) &&
-     !((harmonizeOne sys val s).spec sys.feature == some val)) = false := by
+     !((harmonizeOne sys val s) sys.feature == some val)) = false := by
   by_cases ht : sys.isTarget s
   · rw [harmonizeOne_spec_feature sys val s ht]; simp
   · rw [harmonizeOne_nontarget ht]; simp [ht]
@@ -136,7 +136,7 @@ private theorem harmonizeOne_no_spread (sys : System) (val : Bool)
     cons equals the count on the tail. -/
 private theorem spreadViolations_cons_ok (sys : System) (val : Bool)
     (s : Segment) (rest : List Segment)
-    (hp : (sys.isTarget s && !((s.spec sys.feature) == some val)) = false) :
+    (hp : (sys.isTarget s && !((s sys.feature) == some val)) = false) :
     spreadViolations sys val (s :: rest) = spreadViolations sys val rest := by
   simp only [spreadViolations, List.filter_cons, hp, Bool.false_eq_true, ↓reduceIte]
 

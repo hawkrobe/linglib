@@ -166,8 +166,8 @@ def surfaceL (ctx : Segment) : Segment := lOnset.fillFromContext .back ctx
 segment's [back] value, by `fillFromContext` applied to an unspecified
 target. -/
 theorem surfaceL_inherits_back (ctx : Segment) :
-    (surfaceL ctx).spec .back = ctx.spec .back :=
-  Segment.fillFromContext_spec_self_of_unspecified lOnset lOnset_unspecified_back ctx
+    (surfaceL ctx) .back = ctx .back :=
+  Segment.fillFromContext_apply_self_of_unspecified lOnset lOnset_unspecified_back ctx
 
 /-- Onset /l/ before /i/ surfaces clear ([−back]): /i/ is [−back]. -/
 theorem surfaceL_before_i : (surfaceL i).HasValue .back false := by decide
@@ -209,12 +209,12 @@ def surfaceGem (ctx : Segment) : Segment := lGeminate.fillFromContext .back ctx
 to an already-specified target. -/
 theorem surfaceCoda_invariant (ctx : Segment) :
     (surfaceCoda ctx).HasValue .back true :=
-  Segment.fillFromContext_spec_self_of_specified lCoda lCoda_back ctx
+  Segment.fillFromContext_apply_self_of_specified lCoda lCoda_back ctx
 
 /-- Geminate /l/ stays [−back] for any context. -/
 theorem surfaceGem_invariant (ctx : Segment) :
     (surfaceGem ctx).HasValue .back false :=
-  Segment.fillFromContext_spec_self_of_specified lGeminate lGeminate_front ctx
+  Segment.fillFromContext_apply_self_of_specified lGeminate lGeminate_front ctx
 
 /-- Concrete witness: coda /l/ followed by the front vowel /i/ stays dark,
 contrasting with `surfaceL_before_i` where onset /l/ surfaces clear. -/
@@ -233,9 +233,9 @@ and every other feature on onset /l/ pass through unchanged. -/
 
 /-- Onset /l/'s [+high] dorsal articulation survives interpolation. -/
 theorem surfaceL_high (ctx : Segment) : (surfaceL ctx).HasValue .high true := by
-  have h : (surfaceL ctx).spec .high = lOnset.spec .high :=
-    Segment.fillFromContext_spec_of_ne lOnset (by decide : (Feature.back) ≠ .high) ctx
-  show (surfaceL ctx).spec .high = some true
+  have h : (surfaceL ctx) .high = lOnset .high :=
+    Segment.fillFromContext_apply_of_ne lOnset (by decide : (Feature.back) ≠ .high) ctx
+  show (surfaceL ctx) .high = some true
   rw [h]
   decide
 

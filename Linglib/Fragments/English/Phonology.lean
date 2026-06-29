@@ -186,7 +186,7 @@ theorem k_is_voiceless_velar_stop :
 
     Co-located with the Hayes-2009 SPE-style segments above (which are a
     different, theory-laden representation): SPE features are inferential
-    primitives in `Phonology/Segmental/Feature.lean`; PHOIBLE
+    primitives in `Phonology/Segmental/Defs.lean`; PHOIBLE
     inventory is the consensus-data alternative. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.English.eng
