@@ -47,9 +47,7 @@ namespace HarmonicGrammar.ViolationSemiring
 
 open Core.Optimization.Evaluation Constraints
 
--- ============================================================================
--- § 1: The Violation Semiring V
--- ============================================================================
+/-! ### The Violation Semiring V -/
 
 /-- The **violation semiring** ([riggle-2009] Definition 2, Example 2):
     `Tropical (WithTop (ViolationProfile n))` for n ranked constraints.
@@ -66,36 +64,24 @@ abbrev VS (n : Nat) := Tropical (WithTop (ViolationProfile n))
 /-- The violation semiring is a commutative semiring. -/
 noncomputable instance (n : Nat) : CommSemiring (VS n) := inferInstance
 
--- ============================================================================
--- § 2: Monotonicity — Dijkstra's Principle
--- ============================================================================
+/-! ### Monotonicity — Dijkstra's Principle -/
 
 /-- **Dijkstra's principle** for violation profiles
     ([riggle-2009] §4, [dijkstra-1959]):
     merging violations can only make things worse (or keep them equal).
 
-    In Riggle's terms: the ⊎ (merge) operator is **monotone** —
-    A ⊎ B ≥ A for all violation profiles A, B. Equivalently, the
-    ⊗ (min) operator is **idempotent** — A ⊗ A = A.
-
-    This is the structural property that makes shortest-path algorithms
-    applicable to OT optimization: "every piece of an optimal
+    In Riggle's terms: the ⊗ (merge) operator is **monotone** —
+    A ⊗ B ≥ A for all violation profiles A, B. Equivalently, the
+    ⊕ (min) operator is **idempotent** — A ⊕ A = A (`min_self`). An
+    idempotent ⊕ together with a monotone ⊗ make the violation semiring an
+    **idempotent semiring** (dioid) — the structure that makes shortest-path
+    algorithms applicable to OT optimization: "every piece of an optimal
     input–output mapping is itself an optimal mapping." -/
 theorem merge_monotone (n : Nat) (a b : ViolationProfile n) :
     a ≤ a + b :=
   le_add_of_nonneg_right (ViolationProfile.zero_le b)
 
-/-- The ⊗ (min) operation is idempotent: A ⊗ A = A. This is a direct
-    consequence of `LinearOrder` and is the property Riggle identifies
-    as guaranteeing reflexivity and antisymmetry of the harmonic ordering.
-    Idempotency of ⊗ together with monotonicity of ⊎ make the violation
-    semiring a **Kleene algebra** suitable for shortest-path computation. -/
-noncomputable example (n : Nat) (a : ViolationProfile n) :
-    min a a = a := min_self a
-
--- ============================================================================
--- § 3: Weight Map V → ℝ (AddMonoidHom)
--- ============================================================================
+/-! ### Weight Map V → ℝ (AddMonoidHom) -/
 
 /-- The **weight map** ([riggle-2009] §4): an additive monoid
     homomorphism from the violation semiring's underlying monoid
@@ -124,9 +110,7 @@ def weightMap {n : Nat} (w : Fin n → ℝ) : ViolationProfile n →+ ℝ where
     show w i * ((a i + b i : Nat) : ℝ) = w i * (a i : ℝ) + w i * (b i : ℝ)
     push_cast; ring
 
--- ============================================================================
--- § 4: Bridge to Existing HG Code
--- ============================================================================
+/-! ### Bridge to Existing HG Code -/
 
 /-- `weightMap` is definitionally equal to `weightedViolations`
     from `HarmonicGrammar.OTLimit`.
@@ -138,9 +122,7 @@ theorem weightMap_eq_weightedViolations {n : Nat}
     (w : Fin n → ℝ) (v : ViolationProfile n) :
     weightMap w v = weightedViolations w v := rfl
 
--- ============================================================================
--- § 5: Order-Preservation (⊕-compatibility)
--- ============================================================================
+/-! ### Order-Preservation (⊕-compatibility) -/
 
 /-- **The weight map is strictly order-preserving** when weights are
     exponentially separated ([riggle-2009] §4,

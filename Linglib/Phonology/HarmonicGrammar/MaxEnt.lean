@@ -43,9 +43,7 @@ namespace HarmonicGrammar
 
 open Constraints Core
 
--- ============================================================================
--- § 1: Classical MaxEnt
--- ============================================================================
+/-! ### Classical MaxEnt -/
 
 /-! Classical MaxEnt assigns `P(o ∣ i) ∝ exp(-harmonyScore con w (i, o))`. There is
 **no grammar record**: a MaxEnt grammar is a constraint set `con : CON (I × O) n`
@@ -55,9 +53,7 @@ softmax-decoded harmony, via the shared `Core.Optimization.ConstraintSystem`
 (`CON.hgSystem` below). The systemic extension (§2–4) scores output *tuples*
 jointly and so does not factor through the per-mapping `predict`. -/
 
--- ============================================================================
--- § 2: Systemic Constraints
--- ============================================================================
+/-! ### Systemic Constraints -/
 
 /-- A **systemic constraint** evaluates a whole output *tuple* — one output per
     input — rather than an individual input→output pair, so it cannot be
@@ -73,9 +69,7 @@ def homophonyAvoidance {n : Nat} {O : Type*} [DecidableEq O] :
   fun f =>
     (Finset.univ.filter fun p : Fin n × Fin n => p.1 < p.2 ∧ f p.1 = f p.2).card
 
--- ============================================================================
--- § 3: Joint Distribution with Systemic Constraints
--- ============================================================================
+/-! ### Joint Distribution with Systemic Constraints -/
 
 /-- **Systemic harmony** of an output tuple: `-∑ⱼ swⱼ · sconⱼ(f)`, the negated
     weighted sum of the systemic constraints' tuple-violation counts. The
@@ -124,9 +118,7 @@ noncomputable def marginalProb {n m k : Nat} {I O : Type*} [Fintype O] [Decidabl
     (i : Fin n) (o : O) : ℝ :=
   (maxEntCoupled inputs classicalCon classicalW sw scon).marginal i o
 
--- ============================================================================
--- § 4: Factorization Theorem
--- ============================================================================
+/-! ### Factorization Theorem -/
 
 /-- When all systemic weights are zero, the systemic score vanishes on every
     output tuple. -/
