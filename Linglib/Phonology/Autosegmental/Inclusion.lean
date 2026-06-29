@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 import Mathlib.CategoryTheory.Monoidal.Functor
-import Linglib.Phonology.Autosegmental.Graph
 import Linglib.Phonology.Autosegmental.MultiGraph
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.MultiAR
