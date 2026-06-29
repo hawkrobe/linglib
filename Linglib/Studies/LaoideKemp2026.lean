@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Autosegmental.WellFormedAR
+import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Embedding
 
 /-!
@@ -517,7 +517,7 @@ alone — the formal content of strict modularity (no look-ahead). -/
 private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment) (j : Nat) :
     (withHist X).surfaceGraph.IsLinkedLower j ↔ ∃ a, (a, j) ∈ X.toGraph.links := by
   have hlinks : (withHist X).surfaceGraph.links =
-      X.toGraph.links.image (Graph.shiftLink 1 0) := by
+      X.toGraph.links.image (shiftLink 1 0) := by
     show (historicExponent.concat X.toGraph).links = _
     rw [Graph.links_concat]
     simp [historicExponent]
@@ -528,14 +528,14 @@ private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment) (j : Na
     refine ⟨q.1, ?_⟩
     have hqj : q.2 = j := by
       have h2 := congrArg Prod.snd hqp
-      simp only [Graph.shiftLink_apply, Nat.add_zero] at h2
+      simp only [shiftLink_apply, Nat.add_zero] at h2
       rw [h2]; exact hpj
     rw [← hqj]; exact hq
   · rintro ⟨a, ha⟩
     show ∃ p ∈ (withHist X).surfaceGraph.links, p.snd = j
     refine ⟨(a + 1, j), ?_, rfl⟩
     rw [hlinks, Finset.mem_image]
-    exact ⟨(a, j), ha, by simp [Graph.shiftLink]⟩
+    exact ⟨(a, j), ha, by simp [shiftLink]⟩
 
 /-- A link to a low skeletal slot (`j < stem.lower.len`) is unaffected
     by appending a suffix: the suffix's links are shifted to slots
@@ -554,7 +554,7 @@ private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment) {j
       rw [Finset.mem_image] at h
       obtain ⟨q, _, hqe⟩ := h
       have hsnd := congrArg Prod.snd hqe
-      simp only [Graph.shiftLink_apply] at hsnd
+      simp only [shiftLink_apply] at hsnd
       omega
   · rintro ⟨a, ha⟩
     exact ⟨a, Finset.mem_union.2 (Or.inl ha)⟩
@@ -623,20 +623,20 @@ private theorem mem_surfaceLinks_concat (stem suffix : FloatingForm CVKind Segme
     (k, j) ∈ (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceLinks ↔
       (k, j) ∈ (withHist stem).surfaceLinks := by
   have hsB : (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceLinks =
-      (stem.toGraph.concat suffix.toGraph).links.image (Graph.shiftLink 1 0) := by
+      (stem.toGraph.concat suffix.toGraph).links.image (shiftLink 1 0) := by
     show (historicExponent.concat (stem.toGraph.concat suffix.toGraph)).links = _
     rw [Graph.links_concat]; simp [historicExponent]
   have hsA : (withHist stem).surfaceLinks =
-      stem.toGraph.links.image (Graph.shiftLink 1 0) := by
+      stem.toGraph.links.image (shiftLink 1 0) := by
     show (historicExponent.concat stem.toGraph).links = _
     rw [Graph.links_concat]; simp [historicExponent]
   rw [hsB, hsA, Graph.links_concat, Finset.image_union, Finset.mem_union]
   have hfalse : (k, j) ∉ (suffix.toGraph.links.image
-      (Graph.shiftLink stem.upper.len stem.lower.len)).image (Graph.shiftLink 1 0) := by
+      (shiftLink stem.upper.len stem.lower.len)).image (shiftLink 1 0) := by
     rw [Finset.image_image, Finset.mem_image]
     rintro ⟨⟨a, b⟩, _, he⟩
     have hsnd := congrArg Prod.snd he
-    simp only [Function.comp_apply, Graph.shiftLink_apply] at hsnd
+    simp only [Function.comp_apply, shiftLink_apply] at hsnd
     omega
   tauto
 
@@ -686,13 +686,13 @@ private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Se
   · intro i hi
     simp only [decide_eq_false_iff_not]
     intro hmem
-    have hsA : (withHist stem).surfaceLinks = stem.toGraph.links.image (Graph.shiftLink 1 0) := by
+    have hsA : (withHist stem).surfaceLinks = stem.toGraph.links.image (shiftLink 1 0) := by
       show (historicExponent.concat stem.toGraph).links = _
       rw [Graph.links_concat]; simp [historicExponent]
     rw [hsA, Finset.mem_image] at hmem
     obtain ⟨⟨a, b⟩, hab, he⟩ := hmem
     have hfst := congrArg Prod.fst he
-    simp only [Graph.shiftLink_apply] at hfst
+    simp only [shiftLink_apply] at hfst
     have hin := hib (a, b) hab
     omega
 

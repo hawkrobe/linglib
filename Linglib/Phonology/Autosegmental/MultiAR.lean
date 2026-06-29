@@ -107,7 +107,7 @@ def concat (A B : MultiAR τ) : MultiAR τ where
 @[simp] theorem concat_links (A B : MultiAR τ) (i j : Fin n) :
     (A.concat B).links i j =
       A.links i j ∪ (B.links i j).image
-        (MultiGraph.shiftLink (A.tiers i).len (A.tiers j).len) := rfl
+        (shiftLink (A.tiers i).len (A.tiers j).len) := rfl
 
 /-- The tensor unit. -/
 def empty : MultiAR τ where
@@ -139,7 +139,7 @@ variable {A A' B B' : MultiAR τ}
 def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') where
   fT i := LabeledTuple.Hom.concatMap (f.fT i) (g.fT i)
   links_preserve i j {p q} hp hq h := by
-    simp only [concat_links, Finset.mem_union, Finset.mem_image, MultiGraph.shiftLink,
+    simp only [concat_links, Finset.mem_union, Finset.mem_image, shiftLink,
       Prod.exists, Prod.mk.injEq, LabeledTuple.Hom.concatMap_toFun] at h ⊢
     rcases h with hA | ⟨a, b, hab, hai, hbj⟩
     · obtain ⟨hpi, hqj⟩ := A.inBounds i j (p, q) hA
