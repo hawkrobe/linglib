@@ -56,21 +56,11 @@ theorem DGB.initial_no_latestMove {Participant Fact QContent : Type*} {Cont : Ty
 /-- Push a bare question onto the QUD stack, wrapping it in an
 `InfoStruc` with no FECs.
 
-Ch. 4: when a question is asked, it becomes the maximal element of QUD.
-For questions paired with focus-establishing constituents, use
-`pushQudInfoStruc` directly. -/
+Ch. 4: when a question is asked, it becomes the maximal element of QUD. -/
 def DGB.pushQud {P Fact QContent : Type*} {Cont : Type}
     (dgb : DGB P Fact QContent Cont) (q : QContent) :
     DGB P Fact QContent Cont :=
   { dgb with qud := (.fromQuestion q) :: dgb.qud }
-
-/-- Push a fully-formed `InfoStruc` (question + FECs) onto QUD.
-Used when the introducing utterance carries focus-establishing constituents
-that downstream NSU resolution will consume (Ch. 7). -/
-def DGB.pushQudInfoStruc {P Fact QContent : Type*} {Cont : Type}
-    (dgb : DGB P Fact QContent Cont) (is : InfoStruc QContent Cont) :
-    DGB P Fact QContent Cont :=
-  { dgb with qud := is :: dgb.qud }
 
 /-- Remove resolved questions from QUD.
 
@@ -110,41 +100,7 @@ def DGB.assertFact {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fac
   (dgb.addFact p).downdateQud
 
 -- ════════════════════════════════════════════════════
--- § 3. DGB Content Mapping
--- ════════════════════════════════════════════════════
-
-/-- Map over a DGB's fact type, preserving structure. -/
-def DGB.mapFacts {Participant Fact Fact' QContent : Type*} {Cont : Type} (f : Fact → Fact')
-    (dgb : DGB Participant Fact QContent Cont) :
-    DGB Participant Fact' QContent Cont where
-  spkr := dgb.spkr
-  addr := dgb.addr
-  facts := dgb.facts.map f
-  moves := []  -- moves are not mapped (content types change)
-  pending := dgb.pending
-  qud := dgb.qud
-
-/-- Map over a DGB's question type, preserving structure (FECs are dropped
-since they reference the same Cont). -/
-def DGB.mapQud {Participant Fact QContent QContent' : Type*} {Cont : Type}
-    (f : QContent → QContent')
-    (dgb : DGB Participant Fact QContent Cont) :
-    DGB Participant Fact QContent' Cont where
-  spkr := dgb.spkr
-  addr := dgb.addr
-  facts := dgb.facts
-  moves := []  -- moves are not mapped (content types change)
-  pending := dgb.pending
-  qud := dgb.qud.map (fun is => { q := f is.q, fec := is.fec })
-
-/-- Mapping facts preserves fact count. -/
-theorem DGB.mapFacts_length {Participant Fact Fact' QContent : Type*} {Cont : Type}
-    (f : Fact → Fact') (dgb : DGB Participant Fact QContent Cont) :
-    (dgb.mapFacts f).facts.length = dgb.facts.length := by
-  simp only [DGB.mapFacts, List.length_map]
-
--- ════════════════════════════════════════════════════
--- § 4. HasContextSet Bridge
+-- § 3. HasContextSet Bridge
 -- ════════════════════════════════════════════════════
 
 open CommonGround in
@@ -167,7 +123,7 @@ theorem tis_contextSet_eq_dgb {W Participant QContent : Type*} {Cont : Type}
     HasContextSet.toContextSet tis = HasContextSet.toContextSet tis.dgb := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. QUD Downdate Properties + Non-Resolve-Cond
+-- § 4. QUD Downdate Properties + Non-Resolve-Cond
 -- ════════════════════════════════════════════════════
 
 /-- Downdate never increases QUD size. -/
@@ -234,7 +190,7 @@ theorem downdateQud_restores_nonResolveCond
   simp [this] at hist2
 
 -- ════════════════════════════════════════════════════
--- § 6. Partition-Based Answerhood
+-- § 5. Partition-Based Answerhood
 -- ════════════════════════════════════════════════════
 
 /-! ## Partition-Based Support

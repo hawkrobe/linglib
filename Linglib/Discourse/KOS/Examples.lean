@@ -1,6 +1,4 @@
 import Linglib.Discourse.KOS.InquiryCycle
-import Linglib.Discourse.KOS.Genre
-import Linglib.Discourse.KOS.Grounding
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!

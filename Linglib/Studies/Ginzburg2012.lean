@@ -9,7 +9,6 @@ import Linglib.Discourse.KOS.Examples
 import Linglib.Discourse.KOS.Grammar
 import Linglib.Discourse.KOS.RepriseContent
 import Linglib.Discourse.KOS.Austinian
-import Linglib.Discourse.KOS.CooperInfoState
 import Linglib.Discourse.Commitment.Table
 
 /-!

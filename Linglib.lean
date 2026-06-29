@@ -593,14 +593,12 @@ import Linglib.Discourse.DistributionalCG
 import Linglib.Discourse.Gunlogson
 import Linglib.Discourse.KOS.Austinian
 import Linglib.Discourse.KOS.Basic
-import Linglib.Discourse.KOS.CooperInfoState
 import Linglib.Discourse.KOS.Defs
 import Linglib.Discourse.KOS.Examples
 import Linglib.Discourse.KOS.Genre
 import Linglib.Discourse.KOS.Grammar
 import Linglib.Discourse.KOS.Grounding
 import Linglib.Discourse.KOS.InquiryCycle
-import Linglib.Discourse.KOS.Move
 import Linglib.Discourse.KOS.NSUTaxonomy
 import Linglib.Discourse.KOS.RepriseContent
 import Linglib.Discourse.KOS.SelfRepair
