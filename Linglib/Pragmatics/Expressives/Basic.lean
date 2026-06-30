@@ -179,6 +179,13 @@ theorem pureQuote_loses_ci_info :
   intro h; simpa using congrFun h ()
 
 
+/-! ### Connectives
+
+Both dimensions are `W → Prop`, so each connective is built from that type's order
+structure: the **at-issue** tier carries the full Heyting algebra (`ᶜ`, `⊓`, `⊔`, `⇨`), while
+the **CI** tier always takes the meet `⊓` — CIs project by conjunction through every
+connective rather than tracking the at-issue operation. -/
+
 /--
 Negation: negates at-issue content; CI projects unchanged.
 
@@ -189,8 +196,7 @@ Negation: negates at-issue content; CI projects unchanged.
 This distinguishes CIs from presuppositions.
 -/
 def neg (p : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := λ w => ¬p.atIssue w
-  , ci := p.ci }  -- CI projects through negation
+  { p with atIssue := p.atIssueᶜ }  -- at-issue complemented; CI projects unchanged
 
 /-- Negation flips the at-issue dimension. -/
 @[simp] theorem neg_atIssue (p : TwoDimProp W) (w : W) :
@@ -204,8 +210,7 @@ Conjunction: at-issue content conjoins; both CIs project.
 - ci: Speaker thinks John is bastard and Pete is jerk
 -/
 def and (p q : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := λ w => p.atIssue w ∧ q.atIssue w
-  , ci := λ w => p.ci w ∧ q.ci w }  -- Both CIs project
+  { atIssue := p.atIssue ⊓ q.atIssue, ci := p.ci ⊓ q.ci }
 
 /-- Conjunction's at-issue dimension. -/
 @[simp] theorem and_atIssue (p q : TwoDimProp W) (w : W) :
@@ -221,8 +226,7 @@ Disjunction: at-issue content disjoins; both CIs project.
 CIs project through disjunction rather than being disjoined.
 -/
 def or (p q : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := λ w => p.atIssue w ∨ q.atIssue w
-  , ci := λ w => p.ci w ∧ q.ci w }  -- Both CIs project (conjunction, not disjunction)
+  { atIssue := p.atIssue ⊔ q.atIssue, ci := p.ci ⊓ q.ci }  -- at-issue joins; CIs still meet
 
 /-- Disjunction's at-issue dimension. -/
 @[simp] theorem or_atIssue (p q : TwoDimProp W) (w : W) :
@@ -240,8 +244,7 @@ Implication: at-issue content forms conditional; both CIs project.
 - ci: Speaker thinks John is bastard (projects from antecedent)
 -/
 def imp (p q : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := λ w => p.atIssue w → q.atIssue w
-  , ci := λ w => p.ci w ∧ q.ci w }  -- Both CIs project
+  { atIssue := p.atIssue ⇨ q.atIssue, ci := p.ci ⊓ q.ci }
 
 /-- Implication's at-issue dimension. -/
 @[simp] theorem imp_atIssue (p q : TwoDimProp W) (w : W) :
