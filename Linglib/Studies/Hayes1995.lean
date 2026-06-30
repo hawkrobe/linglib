@@ -30,7 +30,7 @@ extrametricality ([hayes-1995] (14a–b)), which adjusts final-syllable weight, 
 
 namespace Hayes1995
 
-open Prosody Features.Prosody RootedTree
+open Prosody RootedTree
 
 /-! ### The moraic-trochee parse
 
@@ -57,15 +57,15 @@ def parseCells : Yield → List Tree
 
 /-- Is this ω-daughter an `f`-level foot? -/
 def isFootChild : Tree → Bool
-  | .node a _ => decide (a.level = .f)
+  | .node a _ => a.isFt
 
 /-- **End Rule Right**: mark the rightmost foot as the head foot. The first foot with no foot
     to its right (scanning left to right) is promoted; everything else is left untouched. -/
 def markHeadFoot : List Tree → List Tree
   | [] => []
   | .node a ds :: rest =>
-      if a.level = .f && !rest.any isFootChild then
-        .node { a with isHead := true } ds :: rest
+      if a.isFt && !rest.any isFootChild then
+        .node (.ft true) ds :: rest
       else
         .node a ds :: markHeadFoot rest
 
@@ -99,6 +99,12 @@ theorem gridColumns_mudarris : gridColumns (parse mudarris) = [1, 3, 1] := by de
     `ʔinkasara` parses as `(ʔìn)(ká.sa)ra` — the heavy initial is its own foot (secondary `2`),
     the count restarts, the next two lights foot, and the antepenult `ka` takes primary `3`. -/
 theorem gridColumns_Pinkasara : gridColumns (parse Pinkasara) = [2, 3, 1, 1] := by decide
+
+/-- **The head terminal is the antepenult head σ** ([liberman-prince-1977]): `kataba`'s head
+    terminal — its primary stress, Liberman & Prince's designated terminal element — is the head
+    syllable of the rightmost (head) foot, read off the grid's live column as an *element*, not
+    just a height (cf. `gridColumns_kataba`'s `[3, 1, 1]`). -/
+theorem headTerminals_kataba : headTerminals (parse kataba) = [.node (.syl 1 true) []] := by decide
 
 /-! ### The Continuous Column Constraint blocks final promotion
 

@@ -41,7 +41,7 @@ is future work.
 
 namespace Bennett2018
 
-open Prosody Features.Prosody RootedTree Constraints OptimalityTheory
+open Prosody RootedTree Constraints OptimalityTheory
 
 /-! ### Candidate prosodifications of a high-prefix + stem -/
 
@@ -63,7 +63,7 @@ def recParse : Tree := .node .om [prefσ, .node .om [stemσ]]
 /-- Does some ω-node dominate exactly the stem (i.e. have children `[stem]`)? -/
 def hasOmegaOver (stem : Tree) : Tree → Bool := fun t => go t where
   go : Tree → Bool
-    | .node a cs => (decide (a.level = .ω) && decide (cs = [stem])) || goList cs
+    | .node a cs => (a.isOm && decide (cs = [stem])) || goList cs
   goList : List Tree → Bool
     | [] => false
     | t :: ts => go t || goList ts

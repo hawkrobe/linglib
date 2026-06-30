@@ -121,38 +121,7 @@ def TerminalContour.ynQuestion : TerminalContour := ⟨.H, .H_pct⟩
 def TerminalContour.calling : TerminalContour := ⟨.H, .L_pct⟩
 
 -- ============================================================================
--- § 3: Prosodic Hierarchy
--- ============================================================================
-
-/-- Prosodic hierarchy levels.
-
-    σ < f < ω < AP < φ < ι
-
-    [beckman-pierrehumbert-1986] establish the accentual phrase (AP)
-    as the domain of pitch accent distribution (at most one accent per AP,
-    §2.2) and the phonological phrase (φ, equivalent to the intermediate
-    phrase / ip in ToBI notation) as the domain of catathesis (§3–4).
-
-    Used by [kratzer-selkirk-2020] spellout constraints. -/
-inductive ProsodicLevel where
-  | σ   -- syllable
-  | f   -- foot
-  | ω   -- prosodic word
-  | AP  -- accentual phrase ([beckman-pierrehumbert-1986])
-  | φ   -- phonological phrase / intermediate phrase (ip)
-  | ι   -- intonational phrase
-  deriving DecidableEq, Repr
-
-/-- Numeric encoding for the prosodic hierarchy ordering. -/
-def ProsodicLevel.toNat : ProsodicLevel → Nat
-  | .σ => 0 | .f => 1 | .ω => 2 | .AP => 3 | .φ => 4 | .ι => 5
-
-instance : LinearOrder ProsodicLevel :=
-  LinearOrder.lift' ProsodicLevel.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [ProsodicLevel.toNat])
-
--- ============================================================================
--- § 4: Accent Specification Typology
+-- § 3: Accent Specification Typology
 -- ============================================================================
 
 /--

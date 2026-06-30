@@ -1,5 +1,5 @@
 import Linglib.Features.Prosody
-import Linglib.Phonology.Prosody.Accent
+import Linglib.Phonology.Prosody.Syllable
 import Mathlib.Data.Real.Basic
 import Linglib.Studies.BeckmanPierrehumbert1986
 
@@ -34,15 +34,58 @@ affix typology from [kawahara-2015].
 namespace Japanese.Prosody
 
 open Features.Prosody
-open _root_.Prosody (defaultAccentAAR latinStressRule Syllable.Weight)
+open _root_.Prosody (Syllable.Weight)
 open BeckmanPierrehumbert1986
+
+/-! ### Default-accent rules (formerly `Phonology/Prosody/Accent`)
+
+Language-neutral accent-placement rules over a syllable-weight profile, used in the Japanese
+accent analysis below ([mccawley-1968]; [hayes-1995]; [kubozono-2006]; [prince-smolensky-1993]). -/
+
+/-- The 0-indexed syllable containing mora `targetMora` (0-indexed), or `none` if it exceeds the
+    total mora count. -/
+private def findSyllable (weights : List Syllable.Weight) (targetMora : Nat) : Option Nat :=
+  go weights targetMora 0
+where
+  go : List Syllable.Weight → Nat → Nat → Option Nat
+    | [], _, _ => none
+    | w :: ws, target, idx => if target < w then some idx else go ws (target - w) (idx + 1)
+
+/-- The Antepenultimate Accent Rule ([mccawley-1968]): accent the syllable containing the
+    antepenultimate (3rd-from-last) mora; words with fewer than three morae accent the initial
+    syllable. Returns the 0-indexed syllable. -/
+def defaultAccentAAR (weights : List Syllable.Weight) : Option Nat :=
+  match weights with
+  | [] => none
+  | _ =>
+    let totalMorae := weights.foldl (· + ·) 0
+    let targetMora := if totalMorae ≥ 3 then totalMorae - 3 else 0
+    findSyllable weights targetMora
+
+/-- The Latin Stress Rule ([hayes-1995]): accent the penult if heavy (≥ 2μ), else the antepenult.
+    Monosyllables accent the only syllable; disyllables the penult (= initial). [kubozono-2006]
+    argues it fits Japanese default accentuation better than `defaultAccentAAR`. -/
+def latinStressRule : List Syllable.Weight → Option Nat
+  | [] => none
+  | [_] => some 0
+  | [_, _] => some 0
+  | [_, 0, _] | [_, 1, _] => some 0
+  | [_, _, _] => some 1
+  | _ :: rest@(_ :: _ :: _) => (latinStressRule rest).map (· + 1)
+
+/-- NonFinality(σ) ([prince-smolensky-1993]): `1` if accent is on the word-final syllable, else
+    `0` — drives the avoidance of final accent in Japanese compounds and loanwords
+    ([kawahara-2015]). -/
+def nonFinalitySigma (accentSyll : Option Nat) (nSyll : Nat) : Nat :=
+  match accentSyll with
+  | some pos => if pos + 1 == nSyll then 1 else 0
+  | none => 0
 
 /-! ### Accent-to-tone derivation and compound accent (Japanese-specific)
 
 The Japanese pitch-accent tonal melody and the compound-accent rules
-([kawahara-2015]). These are specific to Japanese — the tonal melody (accentual
-HL + initial rise) and the N1/N2 compound rules do not generalize — so they live
-here rather than in the language-neutral `Phonology.Prosody.Accent`. -/
+([kawahara-2015]) — the accentual HL + initial rise and the N1/N2 compound rules,
+which build on the default-accent placement above. -/
 
 /-- A level tone for pitch-accent systems. Japanese uses only `H` (high) and
     `L` (low) at the lexical level ([kawahara-2015]). -/
