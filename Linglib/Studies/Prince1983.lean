@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosody.Word
+import Linglib.Phonology.Prosody.Grid
 
 /-!
 # Relating to the grid: the End Rule ([prince-1983])

@@ -1355,6 +1355,7 @@ import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Footing
+import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Prosody.Mora
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Word
@@ -2299,6 +2300,7 @@ import Linglib.Studies.HaugDalrymple2020
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.HayKennedyLevin1999
 import Linglib.Studies.Hayes1989
+import Linglib.Studies.Hayes1995
 import Linglib.Studies.HayesWilson2008
 import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.Heim1982.Basic
