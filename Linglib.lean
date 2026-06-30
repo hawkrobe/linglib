@@ -1352,7 +1352,6 @@ import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Stratal
-import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Prosody.Mora
@@ -2022,6 +2021,7 @@ import Linglib.Studies.BeckmanPierrehumbert1986
 import Linglib.Studies.BejarRezac2003
 import Linglib.Studies.BejarRezac2009
 import Linglib.Studies.BellerGerstenberg2025
+import Linglib.Studies.BeckerEtAl2025
 import Linglib.Studies.Belnap1970
 import Linglib.Studies.Belnap1982
 import Linglib.Studies.Belth2026

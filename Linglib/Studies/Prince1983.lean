@@ -19,7 +19,7 @@ the grid records *where* the prominence peak is, not the bracketing that produce
 
 namespace Prince1983
 
-open Prosody Features.Prosody RootedTree
+open Prosody RootedTree
 
 /-! ### Uniform metrical words
 
@@ -27,15 +27,15 @@ Every foot is binary; the head sits consistently on the right (iambic) or the le
 and the head foot likewise — so the head-projection chain runs to one edge of the word. -/
 
 /-- A head (strong) syllable. -/
-def σh : Tree := .node { level := .σ, isHead := true } []
+def σh : Tree := .node (.syl 0 true) []
 /-- A weak syllable. -/
-def σw : Tree := .node { level := .σ, isHead := false } []
+def σw : Tree := .node (.syl 0 false) []
 /-- A head (strong) foot over `cs`. -/
-def ftH (cs : List Tree) : Tree := .node { level := .f, isHead := true } cs
+def ftH (cs : List Tree) : Tree := .node (.ft true) cs
 /-- A weak foot over `cs`. -/
-def ftW (cs : List Tree) : Tree := .node { level := .f, isHead := false } cs
+def ftW (cs : List Tree) : Tree := .node (.ft false) cs
 /-- A prosodic word over `cs`. -/
-def om (cs : List Tree) : Tree := .node { level := .ω } cs
+def om (cs : List Tree) : Tree := .node .om cs
 
 /-- A uniformly **right-strong** word: the head foot is rightmost and every foot is iambic
     (head syllable rightmost), so prominence climbs toward the right edge. -/
@@ -72,5 +72,14 @@ theorem endRuleRight_rightStrong : EndRuleRight rightStrong := by decide
 
 /-- **End Rule (left):** a uniformly left-strong word is strongest at its left edge. -/
 theorem endRuleLeft_leftStrong : EndRuleLeft leftStrong := by decide
+
+/-- **The End-Rule peak IS the head terminal** ([prince-1983]; [liberman-prince-1977]): the
+    rightmost column End Rule Right promotes is the head foot's head σ — the head terminal
+    (Liberman & Prince's designated terminal element) as a *node*, not just the tallest height. -/
+theorem headTerminals_rightStrong : headTerminals rightStrong = [σh] := by decide
+
+/-- And its prominence is the grid peak: on a uniform (non-recursive headed) word the head
+    terminal's height is the peak — the concrete instance of `Prosody.headHeights_eq_peak`. -/
+theorem endRulePeak_is_head : headHeights rightStrong = [gridPeak rightStrong] := by decide
 
 end Prince1983

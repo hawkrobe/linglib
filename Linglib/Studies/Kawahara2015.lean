@@ -1,4 +1,3 @@
-import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Fragments.Japanese.Prosody
 

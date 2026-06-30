@@ -30,13 +30,13 @@ and German function-word complexes use ω-adjunction, *contra* Selkirk's
 
 Candidates are `Prosody.Tree`s; the constraints are `Constraints.Constraint Tree` values
 (`No-Recursion` is the carrier constraint `Prosody.noRec`, `Parse-into-ω` is
-`Prosody.parseInto .ω`; `FtBin`-at-ω and `Lex-to-ω` are the function-word constraints
+`Prosody.parseInto (·.isOm)`; `FtBin`-at-ω and `Lex-to-ω` are the function-word constraints
 below), and EVAL is the OT engine `OptimalityTheory.Tableau.ofRanking … |>.optimal`.
 -/
 
 namespace ItoMester2009
 
-open Prosody Features.Prosody RootedTree Constraints OptimalityTheory
+open Prosody RootedTree Constraints OptimalityTheory
 
 /-! ### Function-word constraints -/
 
@@ -45,7 +45,7 @@ open Prosody Features.Prosody RootedTree Constraints OptimalityTheory
 def subminimalOmega : Constraint Tree := fun t => go t where
   go : Tree → Nat
     | .node a cs =>
-        (if decide (a.level = .ω) && decide (moraCount (.node a cs) < 2) then 1 else 0)
+        (if a.isOm && decide (moraCount (.node a cs) < 2) then 1 else 0)
           + goList cs
   goList : List Tree → Nat
     | []      => 0
@@ -54,7 +54,7 @@ def subminimalOmega : Constraint Tree := fun t => go t where
 /-- Is the lexical word `lex` realised as its own ω-node somewhere in the tree? -/
 def lexHasOmega (lex : Tree) : Tree → Bool := fun t => go t where
   go : Tree → Bool
-    | .node a cs => (decide (a.level = .ω) && decide ((.node a cs : Tree) = lex)) || goList cs
+    | .node a cs => (a.isOm && decide ((.node a cs : Tree) = lex)) || goList cs
   goList : List Tree → Bool
     | []      => false
     | t :: ts => go t || goList ts
@@ -82,21 +82,21 @@ def lexToOmega : Constraint Tree := fun t => if lexHasOmega lexω t then 0 else 
 /-! ### The ranking and the prediction
 
 EVAL is the OT tableau engine; the ranking is `FtBin, Lex-to-ω ≫ Parse-into-ω ≫
-No-Recursion` = `[subminimalOmega, lexToOmega, parseInto .ω, noRec]`. -/
+No-Recursion` = `[subminimalOmega, lexToOmega, parseInto (·.isOm), noRec]`. -/
 
 def candidates : List Tree := [fullOmega, amalgamated, omegaAdjoined, phiAttached]
 
 -- Each candidate violates exactly one constraint (the factorial typology).
 example : subminimalOmega fullOmega = 1 := by decide
 example : lexToOmega amalgamated = 1 := by decide
-example : parseInto .ω phiAttached = 1 := by decide
+example : parseInto (·.isOm) phiAttached = 1 := by decide
 example : noRec omegaAdjoined = 1 := by decide
 
 /-- The function-word complex is prosodified by **ω-adjunction** — the recursive
     `[ω fnc [ω lex]]` is the unique optimum, beating φ-attachment because
     `Parse-into-ω ≫ No-Recursion` ([ito-mester-2009], contra Selkirk's φ-attached). -/
 theorem omegaAdjunction_optimum :
-    (Tableau.ofRanking candidates [subminimalOmega, lexToOmega, parseInto .ω, noRec]).optimal
+    (Tableau.ofRanking candidates [subminimalOmega, lexToOmega, parseInto (·.isOm), noRec]).optimal
       = {omegaAdjoined} := by decide
 
 /-- The winning structure is recursive: ω dominates ω. -/

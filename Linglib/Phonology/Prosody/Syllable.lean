@@ -1,7 +1,6 @@
 import Linglib.Phonology.Prosody.Mora
 import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.DecEq
-import Linglib.Features.Prosody
 
 /-!
 # Syllables
@@ -251,23 +250,54 @@ carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω
 `Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
 `Planar`. -/
 
-open RootedTree Features.Prosody
+open RootedTree
 
-/-- A prosodic node: a hierarchy `level`, a mora `weight` (meaningful only at σ), and
-    `isHead` (meaningful at σ/foot). `weight`/`isHead` are inert where they don't apply
-    (algorithms guard on `level`), so a flat record + smart constructors. -/
-structure Constituent where
-  level  : ProsodicLevel
-  weight : Syllable.Weight := 0
-  isHead : Bool := false
+/-- A prosodic node — the **level is the constructor**: a σ carries its mora `weight` and `isHead`,
+    a foot only `isHead`, ω/φ neither. Constructor defaults match the former smart constructors, so
+    node literals are unchanged; illegal nodes (a weight on a foot, a head on ω) are
+    unrepresentable. -/
+inductive Constituent
+  /-- A syllable of the given `weight`, optionally the head of its foot. -/
+  | syl (weight : Syllable.Weight := 0) (isHead : Bool := false)
+  /-- A foot, optionally the head foot of its word. -/
+  | ft (isHead : Bool := false)
+  /-- A prosodic word ω. -/
+  | om
+  /-- A phonological phrase φ — interim, until `Prosody.Phrase` lands. -/
+  | ph
   deriving DecidableEq, Repr
 
 namespace Constituent
-/-- A syllable of the given `weight`, optionally the head of its foot — the σ node label.
-    The `f`/ω/φ node labels live with their objects (`Constituent.ft` in `Foot`,
-    `Constituent.om`/`.ph` in `Word`); `Syllable` only knows its own level. -/
-abbrev syl (weight : Syllable.Weight := 0) (isHead : Bool := false) : Constituent :=
-  { level := .σ, weight := weight, isHead := isHead }
+
+/-- Whether a node heads its parent (a σ heads its foot, a foot heads its word); `false` for ω/φ. -/
+def isHead : Constituent → Bool
+  | .syl _ h => h | .ft h => h | .om | .ph => false
+
+/-- The mora weight of a σ node; `none` for non-σ nodes. -/
+def weight? : Constituent → Option Syllable.Weight
+  | .syl w _ => some w | _ => none
+
+/-- A syllable (σ) node. -/
+def isSyl : Constituent → Bool | .syl .. => true | _ => false
+/-- A foot (f) node. -/
+def isFt : Constituent → Bool | .ft _ => true | _ => false
+/-- A prosodic-word (ω) node. -/
+def isOm : Constituent → Bool | .om => true | _ => false
+
+/-- Two nodes at the same prosodic level (the same constructor, ignoring weight/head) — the
+    same-category test the No-Recursion family reads off the carrier. -/
+def sameLevel : Constituent → Constituent → Bool
+  | .syl .., .syl .. | .ft _, .ft _ | .om, .om | .ph, .ph => true
+  | _, _ => false
+
+/-- The level family is exclusive: a foot is not a syllable. -/
+theorem isSyl_eq_false_of_isFt {x : Constituent} (h : x.isFt = true) : x.isSyl = false := by
+  cases x <;> simp_all [isFt, isSyl]
+
+/-- The level family is exclusive: a prosodic word is not a syllable. -/
+theorem isSyl_eq_false_of_isOm {x : Constituent} (h : x.isOm = true) : x.isSyl = false := by
+  cases x <;> simp_all [isOm, isSyl]
+
 end Constituent
 
 /-- A prosodic tree: the Core ordered rose tree `RootedTree.Planar` labeled by

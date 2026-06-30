@@ -37,20 +37,13 @@ are *functions* that recover the same head.
 
 namespace Prosody
 
-open Features.Prosody
-
-/-- The foot node label `f` for the prosodic tree (`Prosody.Tree`), optionally the head of
-    its parent ω (the `isHead` flag, set when the word tree is built) — the `f`-level arm of
-    `Prosody.Constituent`. -/
-abbrev Constituent.ft (isHead : Bool := false) : Constituent := { level := .f, isHead := isHead }
-
 /-! ### Carrier well-formedness -/
 
 /-- The structural `Bool` foot checker on the prosodic-tree carrier ([selkirk-1980];
     matches `Foot.toProsTree`): an `f`-node dominating a non-empty list of σ-leaves. -/
 def isFootTree : Tree → Bool
-  | .node a cs => decide (a.level = .f) && !cs.isEmpty &&
-      cs.all (fun | .node b ds => decide (b.level = .σ) && ds.isEmpty)
+  | .node a cs => a.isFt && !cs.isEmpty &&
+      cs.all (fun | .node b ds => b.isSyl && ds.isEmpty)
 
 /-- A well-formed foot: an `f`-node dominating a non-empty list of σ-leaves — the
     inviolable Layeredness + σ-Headedness core ([selkirk-1980]; [hayes-1995]). Foot
@@ -175,7 +168,7 @@ private def childHeadFlags : Tree → List Bool
     σ-leaf head flags are exactly `toGrid f`. So both recover the foot's head. -/
 theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     childHeadFlags (toProsTree w f) = toGrid f := by
-  simp [childHeadFlags, toProsTree, toGrid, List.map_map, Function.comp]
+  simp [childHeadFlags, toProsTree, toGrid, List.map_map, Function.comp, Constituent.isHead]
 
 /-- **Functoriality / well-formedness bridge**: a `Foot` record's prosodic-tree
     re-representation is always a well-formed foot tree — `toProsTree` lands in the
