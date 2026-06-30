@@ -6,6 +6,7 @@ import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Semantics.Spatial.Trace
 import Linglib.Features.Aktionsart
+import Linglib.Data.Examples.Krifka1998
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Basic
 import Mathlib.Data.Fintype.Basic
@@ -38,6 +39,8 @@ This file inlines the §4 movement-relation predicates (formerly in
 * `telic_licenses_inX` / `durative_atelic_licenses_forX` — §3 for/in diagnostics.
 * `walked_from_to_telic_propositional` / `walked_towards_atelic_propositional` —
   σ-pullback backing the *walked from X to Y* / *walked towards X* analyses.
+* `pathShapeToTelicity_matches_motionData` — the substrate reproduces the §4.5
+  path-shape → telicity judgments of the `Data.Examples.Krifka1998` motion rows.
 
 ## TODO
 
@@ -380,6 +383,54 @@ theorem walked_towards_atelic_propositional
   Trace.unbounded_path_atelic hP
 
 end SpatialTracePullback
+
+/-! ### K98 §4.5 motion data: path shape predicts telicity
+
+    Each `Data.Examples.Krifka1998` motion VP row tags its path shape and the
+    paper's telicity judgment; the substrate `pathShapeToTelicity` reproduces
+    every judgment. -/
+
+section MotionData
+
+open Data.Examples (LinguisticExample)
+open Semantics.Spatial.Path (PathShape)
+open Semantics.Spatial.Trace (pathShapeToTelicity)
+
+/-- A motion VP datum: the path shape K98 assigns and the telicity it predicts. -/
+structure MotionDatum where
+  pathShape : PathShape
+  expectedTelicity : Telicity
+  deriving DecidableEq, Repr
+
+private def parsePathShape : String → Option PathShape
+  | "bounded" => some .bounded
+  | "source" => some .source
+  | "unbounded" => some .unbounded
+  | _ => none
+
+private def parseTelicity : String → Option Telicity
+  | "telic" => some .telic
+  | "atelic" => some .atelic
+  | _ => none
+
+/-- Lift a `Data.Examples.Krifka1998` row to a `MotionDatum` via its
+    `pathShape` / `expectedTelicity` paper features. -/
+def fromExample (e : LinguisticExample) : Option MotionDatum := do
+  let ps ← parsePathShape (← e.paperFeatures.lookup "pathShape")
+  let tel ← parseTelicity (← e.paperFeatures.lookup "expectedTelicity")
+  some { pathShape := ps, expectedTelicity := tel }
+
+/-- The K98 §4.5 motion VP data, lifted from the JSON example rows. -/
+def motionData : List MotionDatum :=
+  Examples.all.filterMap fromExample
+
+/-- Substrate prediction: `pathShapeToTelicity` reproduces the paper's telicity
+    judgment for every motion VP (bounded/source → telic, unbounded → atelic). -/
+theorem pathShapeToTelicity_matches_motionData :
+    ∀ d ∈ motionData, pathShapeToTelicity d.pathShape = d.expectedTelicity := by
+  decide
+
+end MotionData
 
 /-! ### EXP / SEINC instances on `Event Time` (K98 §4.1) -/
 
