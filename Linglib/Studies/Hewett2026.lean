@@ -54,7 +54,7 @@ open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus
   low_licensed_with_any high_licensed_of_assignsTheta)
 open Morphology.DM (CategorizedRoot Categorizer)
 open Morphology.MirrorPrinciple (MorphDomain)
-open Wood2015 (StType)
+open Wood2015 (Construction)
 
 /-! ### Semitic verbal templates (binyanim) -/
 
@@ -341,11 +341,14 @@ theorem severing_instantiated (cr : CategorizedRoot) (rl : RootLabel) :
 
 Formalizer's bridge, not content of [hewett-2026] (which cites [wood-2015] only in
 passing, as a language where Voice is overt): Semitic templates and Icelandic -st
-both realize Voice heads, but carve up the `VoiceFlavor` space complementarily —
-each Semitic template realizes a single flavor, including the θ-assigning ones,
-while -st spells out only non-agentive flavors. The Icelandic coverage set is
-derived from [wood-2015]'s `StType.voiceFlavor`, so the complementarity theorem
-relates the two studies' actual Voice mappings. -/
+relate to Voice differently. Each Semitic template *realizes* a single Voice flavor
+(including the θ-assigning ones); -st is a clitic that merely *co-occurs* with a
+Voice flavor without realizing it ([wood-2015]). Read as coverage sets over
+`VoiceFlavor`, the Semitic image and the set of flavors -st appears with overlap on
+the non-thematic and agentive flavors (the latter because -st appears in agentive
+figure reflexives) but diverge elsewhere. The Icelandic set is derived from
+[wood-2015]'s `Construction.voiceFlavor`, so the theorem relates the two studies' actual
+mappings. -/
 
 /-- The Voice flavors Semitic templates realize: the image of `toVoiceFlavor`. -/
 def semiticVoiceFlavors : List VoiceFlavor :=
@@ -356,30 +359,31 @@ def semiticVoiceFlavors : List VoiceFlavor :=
 theorem template_flavors_in_coverage (t : SemiticTemplate) :
     t.toVoiceFlavor ∈ semiticVoiceFlavors := by cases t <;> decide
 
-/-- The Voice flavors Icelandic -st realizes, derived from [wood-2015]'s
-    `StType.voiceFlavor`. -/
+/-- The host-clause Voice flavors Icelandic -st co-occurs with, derived from
+    [wood-2015]'s `Construction.voiceFlavor`. -/
 def icelandicStFlavors : List VoiceFlavor :=
-  [StType.anticausative.voiceFlavor, StType.middle.voiceFlavor,
-   StType.reflexive.voiceFlavor, StType.subjectExp.voiceFlavor]
+  [Construction.anticausative.voiceFlavor, Construction.middle.voiceFlavor,
+   Construction.reflexive.voiceFlavor, Construction.subjectExp.voiceFlavor]
 
 /-- Every -st configuration's flavor is in the Icelandic coverage set (inherent and
     reciprocal reuse flavors of the four representatives). -/
-theorem stType_flavors_in_coverage (st : StType) :
+theorem stType_flavors_in_coverage (st : Construction) :
     st.voiceFlavor ∈ icelandicStFlavors := by cases st <;> decide
 
-/-- The two coverage sets share only `.nonThematic` (Semitic medio-passive,
-    Icelandic anticausative -st); Semitic alone realizes the θ-assigning and
-    passive flavors, Icelandic -st alone the expletive, reflexive, and
-    experiencer flavors. -/
+/-- The two coverage sets overlap on `.nonThematic` (Semitic medio-passive,
+    Icelandic anticausative -st) and `.agentive` (Semitic active templates,
+    Icelandic figure reflexives — -st co-occurs with agentive Voice); Semitic
+    alone realizes the causer and passive flavors, Icelandic -st alone appears
+    with the expletive Voice of the generic middle. -/
 theorem voice_coverage_complementary :
     (.nonThematic : VoiceFlavor) ∈ semiticVoiceFlavors ∧
     (.nonThematic : VoiceFlavor) ∈ icelandicStFlavors ∧
-    (.agentive : VoiceFlavor) ∉ icelandicStFlavors ∧
+    (.agentive : VoiceFlavor) ∈ semiticVoiceFlavors ∧
+    (.agentive : VoiceFlavor) ∈ icelandicStFlavors ∧
     (.causer : VoiceFlavor) ∉ icelandicStFlavors ∧
     (.passive : VoiceFlavor) ∉ icelandicStFlavors ∧
-    (.expletive : VoiceFlavor) ∉ semiticVoiceFlavors ∧
-    (.reflexive : VoiceFlavor) ∉ semiticVoiceFlavors ∧
-    (.experiencer : VoiceFlavor) ∉ semiticVoiceFlavors := by decide
+    (.expletive : VoiceFlavor) ∈ icelandicStFlavors ∧
+    (.expletive : VoiceFlavor) ∉ semiticVoiceFlavors := by decide
 
 /-- The Semitic XaYaZ ~ tXaYYaZ alternation instantiates [kratzer-1996]'s causative
     alternation: `toVoiceHead` maps the two templates to the canonical heads, so the

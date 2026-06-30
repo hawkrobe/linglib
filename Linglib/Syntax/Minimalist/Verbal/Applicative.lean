@@ -28,7 +28,6 @@ The high/low distinction is read off the Merge complement's category via the hea
 - `ApplType.RequiresEventSemantics`, `IsLow`: structural predicates read off the complement.
 - `ApplHead.Licensed`: licensing of an applicative by a Voice head.
 - `ApplHead.SpecCanBearCase`: case-based blocking of SpecApplP ([wood-2015]).
-- `ApplType.toSO`: the applicative realized as an actual `SO.merge`.
 
 ## References
 
@@ -56,8 +55,8 @@ def ApplType.complement : ApplType → Cat
   | .lowSource    => .D
 
 /-- The complement constituent an applicative Merges with — a leaf headed by `a.complement`. -/
-def ApplType.complementSO (a : ApplType) (id : Nat := 0) : SO :=
-  SO.mkLeaf a.complement [] id
+def ApplType.complementSO (a : ApplType) : SO :=
+  SO.mkLeaf a.complement [] 0
 
 /-- The Merge complement's categorial features, read via the §1.13 head function `SO.outerCatC`. -/
 def ApplType.complementFeatures (a : ApplType) : CatFeatures :=
@@ -79,24 +78,6 @@ def ApplType.RequiresThemeInComplement (a : ApplType) : Prop := a.IsLow
 
 instance : DecidablePred ApplType.RequiresThemeInComplement :=
   fun a => inferInstanceAs (Decidable a.IsLow)
-
-/-! ### Semantic relations -/
-
-/-- The semantic relation an applicative head contributes ([pylkkanen-2008]). -/
-inductive ApplSemantics where
-  /-- Individual–event relation (high Appl). -/
-  | eventRelation
-  /-- `HAVE` relation (low recipient). -/
-  | possessionTo
-  /-- `HAVE-FROM` relation (low source). -/
-  | possessionFrom
-  deriving DecidableEq, Repr
-
-/-- The semantic contribution of each applicative type. -/
-def ApplType.semantics : ApplType → ApplSemantics
-  | .high         => .eventRelation
-  | .lowRecipient => .possessionTo
-  | .lowSource    => .possessionFrom
 
 /-! ### The applicative head -/
 
@@ -162,7 +143,8 @@ theorem possessive_dative_survives_anticausative :
 
 /-- The asymmetry: ethical blocked but possessive survives in middles. -/
 theorem ethical_possessive_middle_asymmetry :
-    ¬ applHigh.Licensed voiceMiddle ∧ applLowRecipient.Licensed voiceMiddle := by decide
+    ¬ applHigh.Licensed voiceMiddle ∧ applLowRecipient.Licensed voiceMiddle :=
+  ⟨ethical_dative_blocked_in_middle, possessive_dative_survives_middle⟩
 
 /-! ### Case-based blocking of SpecApplP ([wood-2015]) -/
 
@@ -172,19 +154,5 @@ def ApplHead.SpecCanBearCase {α : Type*} [HasCase α] (appl : ApplHead) (x : α
 
 instance {α : Type*} [HasCase α] (appl : ApplHead) (x : α) :
     Decidable (appl.SpecCanBearCase x) := inferInstanceAs (Decidable (_ → _))
-
-/-- The caseless clitic -st (`caseOf = none`) cannot occupy SpecApplP ([wood-2015]). -/
-theorem caseless_blocked_in_specAppl :
-    ¬ applLowRecipient.SpecCanBearCase (none : Option Case) := by decide
-
-/-- A case-bearing DP can occupy SpecApplP. -/
-theorem caseful_ok_in_specAppl :
-    applLowRecipient.SpecCanBearCase (some Case.dat) := by decide
-
-/-! ### The applicative as a Merge -/
-
-/-- An applicative as an actual Merge: the `Appl` head `SO.merge`d with `a.complementSO`. -/
-noncomputable def ApplType.toSO (a : ApplType) (applId complId : Nat := 0) : SO :=
-  SO.merge (SO.mkLeaf .Appl [a.complement] applId) (a.complementSO complId)
 
 end Minimalist
