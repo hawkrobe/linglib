@@ -442,4 +442,185 @@ example : Word.minimalProjections ⟨recursiveW, by decide⟩ = [.node Constitue
 example : Word.maximalProjections ⟨perfectW, by decide⟩ = [perfectW] := by decide
 example : Word.minimalProjections ⟨perfectW, by decide⟩ = [perfectW] := by decide
 
+/-! ### The metrical grid
+
+The **metrical grid** ([liberman-prince-1977]) is the prominence representation dual to the
+prosodic tree: a column of marks over each syllable, taller columns standing for greater
+relative prominence (primary > secondary > unstressed). The *Relative Prominence Projection
+Rule* (Liberman & Prince 1977, canonized in Prince's 1983 *Relating to the Grid*) reads the
+grid off a tree by projecting one mark per syllable, plus one more for each layer of
+headedness above it.
+
+`gridColumns` makes the projection constructive: a σ-leaf's column height is `1` plus the
+number of *contiguous head-edges* on the path up from the leaf — the run of consecutive heads
+(stressed daughters, `Constituent.isHead`) starting at the leaf and broken by the first
+non-head edge. A head syllable inside a head foot inside a head … reaches a tall column; a
+non-head resets to the floor of `1`. `toGrid` stacks the columns into rows (row `r` marks the
+syllables whose column exceeds `r`); the determinate level-by-level indexing follows
+Halle & Vergnaud 1987 / [hayes-1995] (a determinate grid, not Prince's abstract strata).
+
+The projection is **one-way**, a plain function rather than a structure-preserving functor:
+distinct trees can share a grid (`toGrid_not_injective`), so the bare grid records prominence,
+not bracketing — the *pure* grid of [liberman-prince-1977]/[prince-1983]. Our `Tree` already is the
+*bracketed* grid that [hayes-1995] and Halle & Vergnaud keep in order to retain constituency;
+`toGrid` is the forgetful map onto the pure grid, its non-injectivity exactly the brackets it
+drops. There are no law-bearing tree morphisms for it
+to act on; its lawfulness is instead the **Continuous Column Constraint**
+(`toGrid_isContinuous`): no column has a gap, a *theorem* about the projection here rather
+than a stipulated filter. -/
+
+/-- A **metrical grid**: rows of head-marks, bottom row first. Row `r`, position `i` is
+    `true` iff syllable `i` reaches grid level `r`. -/
+abbrev Grid := List (List Bool)
+
+/-- The **grid-column heights** of a tree's σ-frontier, left to right
+    ([liberman-prince-1977]): each σ-leaf's height is `1` plus the contiguous run of
+    head-edges above it. A top-down fold (cf. `parseInto`) threading `count`, the number of
+    contiguous head-edges from the current node upward: a head child extends the run
+    (`count + 1`), a non-head child resets it to `0`, and each σ-leaf emits `count + 1`. -/
+def gridColumns (t : Tree) : List ℕ := go 0 t where
+  go (count : ℕ) : Tree → List ℕ
+    | .node a cs =>
+        if decide (a.level = .σ) && cs.isEmpty then [count + 1]
+        else goList count cs
+  goList (count : ℕ) : List Tree → List ℕ
+    | []      => []
+    | c :: cs => go (if c.label.isHead then count + 1 else 0) c ++ goList count cs
+
+private theorem gridColumns.goList_eq (count : ℕ) (cs : List Tree) :
+    gridColumns.goList count cs =
+      cs.flatMap (fun c => gridColumns.go (if c.label.isHead then count + 1 else 0) c) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [gridColumns.goList, List.flatMap_cons, ih]
+
+/-- On a σ-leaf the fold emits a single column of height `count + 1`. -/
+private theorem gridColumns.go_leaf (count : ℕ) (a : Constituent) (h : a.level = .σ) :
+    gridColumns.go count (.node a []) = [count + 1] := by
+  simp [gridColumns.go, h]
+
+/-- The σ-leaf case keyed on `Constituent.syl`, for rewriting under a `flatMap` binder. -/
+private theorem gridColumns.go_syl (count : ℕ) (wt : Syllable.Weight) (hd : Bool) :
+    gridColumns.go count (.node (Constituent.syl wt hd) []) = [count + 1] :=
+  gridColumns.go_leaf count _ rfl
+
+/-- The **metrical grid** of a tree ([liberman-prince-1977]): the `gridColumns` heights stacked
+    into rows, row `r` marking the syllables whose column exceeds `r` (so a height-`h` column
+    is marked on exactly rows `0 … h-1`). Determinate level indexing à la Halle & Vergnaud
+    1987 / [hayes-1995]. -/
+def toGrid (t : Tree) : Grid :=
+  (List.range ((gridColumns t).foldr max 0)).map
+    (fun r => (gridColumns t).map (fun h => decide (r < h)))
+
+/-- One row is a **submask** of another (the row below it): every position marked in `upper`
+    is marked in `lower`. -/
+private def rowSubmask (upper lower : List Bool) : Bool :=
+  (upper.zip lower).all (fun p => !p.1 || p.2)
+
+/-- The `Bool` Continuous-Column checker: each row is a submask of the row below it. -/
+private def isContinuousGrid : Grid → Bool
+  | []              => true
+  | [_]             => true
+  | lower :: upper :: rest => rowSubmask upper lower && isContinuousGrid (upper :: rest)
+
+/-- The **Continuous Column Constraint** ([prince-1983]; [hayes-1995]): a grid has no gap in any column — if
+    a syllable is marked at level `r` it is marked at every lower level. Equivalently (the
+    `Bool` checker), each row is a submask of the row below it. A well-formed metrical grid
+    satisfies CCC; here it is a *theorem* of `toGrid` (`toGrid_isContinuous`), not a filter. -/
+def IsContinuous (g : Grid) : Prop := isContinuousGrid g
+
+instance (g : Grid) : Decidable (IsContinuous g) :=
+  inferInstanceAs (Decidable (isContinuousGrid g = true))
+
+private theorem rowSubmask_gt (cols : List ℕ) (r : ℕ) :
+    rowSubmask (cols.map (fun h => decide (r + 1 < h))) (cols.map (fun h => decide (r < h)))
+      = true := by
+  rw [rowSubmask, List.zip_map', List.all_map, List.all_eq_true]
+  intro h _
+  simp only [Function.comp_apply]
+  by_cases hr : r + 1 < h
+  · simp [hr, Nat.lt_of_succ_lt hr]
+  · simp [hr]
+
+private theorem isContinuousGrid_range' (F : ℕ → List Bool)
+    (h : ∀ r, rowSubmask (F (r + 1)) (F r) = true) (k n : ℕ) :
+    isContinuousGrid ((List.range' k n).map F) = true := by
+  induction n generalizing k with
+  | zero => rfl
+  | succ m ih =>
+    cases m with
+    | zero => rfl
+    | succ m' =>
+      have hcons : (List.range' k (m' + 2)).map F
+          = F k :: F (k + 1) :: (List.range' (k + 2) m').map F := by
+        simp only [List.range'_succ, List.map_cons]
+      have htail : (List.range' (k + 1) (m' + 1)).map F
+          = F (k + 1) :: (List.range' (k + 2) m').map F := by
+        simp only [List.range'_succ, List.map_cons]
+      rw [hcons, isContinuousGrid, h k, Bool.true_and, ← htail]
+      exact ih (k + 1)
+
+/-- **The Continuous Column Constraint holds by construction.** Every grid `toGrid` produces
+    has gapless columns: a height-`h` column is marked on a contiguous bottom run `0 … h-1`,
+    because row `r` is `· > r`. CCC is thus a *theorem* of the projection ([prince-1983]; [hayes-1995]),
+    not a stipulated well-formedness filter. -/
+theorem toGrid_isContinuous (t : Tree) : IsContinuous (toGrid t) := by
+  show isContinuousGrid (toGrid t) = true
+  rw [toGrid, List.range_eq_range']
+  exact isContinuousGrid_range' _ (fun r => rowSubmask_gt _ r) 0 _
+
+/-- **Head-preservation through the grid** (the depth-1 / foot case, generalizing
+    `Foot.headFlags_toProsTree`). A foot's prosodic tree projects to columns of height `2` at
+    the head σ and `1` elsewhere: the grid records exactly the foot's headedness. -/
+theorem gridColumns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    gridColumns (f.toProsTree w) = (Foot.toGrid f).map (fun b => if b then 2 else 1) := by
+  have hroot : gridColumns (f.toProsTree w)
+      = gridColumns.goList 0 ((List.finRange f.syllables.length).map
+          (fun i => (.node (Constituent.syl (w (f.syllables.get i)) (decide (i = f.head)))
+            [] : Tree))) := rfl
+  rw [hroot, gridColumns.goList_eq, List.flatMap_map]
+  simp only [gridColumns.go_syl, RootedTree.Planar.label_node, Constituent.syl]
+  rw [← List.map_eq_flatMap, Foot.toGrid, List.map_map]
+  refine List.map_congr_left fun i _ => ?_
+  simp only [Function.comp_apply]
+  by_cases hi : i = f.head <;> simp [hi]
+
+/-- The grid's **head row** recovers the foot's head profile: a foot's σ reaches grid level
+    `2` exactly at its head, so the `> 1` row of `toGrid` equals `Foot.toGrid f`. Combined
+    with `Foot.headFlags_toProsTree` (`Foot.toGrid f` = the prosodic tree's σ-leaf head
+    flags), the grid's head row equals those head flags — head-preservation, now through the
+    grid projection rather than the tree re-representation. -/
+theorem foot_headRow {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    (gridColumns (f.toProsTree w)).map (fun h => decide (1 < h)) = Foot.toGrid f := by
+  rw [gridColumns_toProsTree, List.map_map]
+  refine List.map_id'' (fun b => ?_) _
+  cases b <;> rfl
+
+/-- **The grid loses constituency** ([liberman-prince-1977]). `toGrid` is not injective:
+    distinct prosodic trees can project to the same grid. Witnesses — a single unstressed σ
+    parsed into a foot vs. left bare under ω — share the column profile `[1]`, so the grid
+    cannot recover whether a syllable is footed. Relating the grid to the bracketed tree
+    surfaces the incompatibility: the grid encodes prominence, not bracketing. -/
+theorem toGrid_not_injective :
+    ∃ t₁ t₂ : Tree, t₁ ≠ t₂ ∧ toGrid t₁ = toGrid t₂ :=
+  ⟨.node .om [.node .ft [.node (.syl 1) []]], .node .om [.node (.syl 1) []],
+    by decide, by decide⟩
+
+/-! #### Worked example
+
+A three-syllable ω with a head foot (primary), a non-head foot (secondary), and a stray σ
+(unstressed) projects to the column profile `[3, 2, 1]` and the staircase grid — the
+canonical Liberman & Prince display. -/
+
+private def exWord : Tree :=
+  .node .om
+    [ .node (.ft true)  [.node (.syl 1 true) []],
+      .node (.ft false) [.node (.syl 1 true) []],
+      .node (.syl 1 false) [] ]
+
+example : gridColumns exWord = [3, 2, 1] := by decide
+example : toGrid exWord =
+    [[true, true, true], [true, true, false], [true, false, false]] := by decide
+example : IsContinuous (toGrid exWord) := by decide
+
 end Prosody
