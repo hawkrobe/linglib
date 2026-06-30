@@ -55,8 +55,8 @@ def ApplType.complement : ApplType → Cat
   | .lowSource    => .D
 
 /-- The complement constituent an applicative Merges with — a leaf headed by `a.complement`. -/
-def ApplType.complementSO (a : ApplType) (id : Nat := 0) : SO :=
-  SO.mkLeaf a.complement [] id
+def ApplType.complementSO (a : ApplType) : SO :=
+  SO.mkLeaf a.complement [] 0
 
 /-- The Merge complement's categorial features, read via the §1.13 head function `SO.outerCatC`. -/
 def ApplType.complementFeatures (a : ApplType) : CatFeatures :=
@@ -143,7 +143,8 @@ theorem possessive_dative_survives_anticausative :
 
 /-- The asymmetry: ethical blocked but possessive survives in middles. -/
 theorem ethical_possessive_middle_asymmetry :
-    ¬ applHigh.Licensed voiceMiddle ∧ applLowRecipient.Licensed voiceMiddle := by decide
+    ¬ applHigh.Licensed voiceMiddle ∧ applLowRecipient.Licensed voiceMiddle :=
+  ⟨ethical_dative_blocked_in_middle, possessive_dative_survives_middle⟩
 
 /-! ### Case-based blocking of SpecApplP ([wood-2015]) -/
 

@@ -54,7 +54,7 @@ open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus
   low_licensed_with_any high_licensed_of_assignsTheta)
 open Morphology.DM (CategorizedRoot Categorizer)
 open Morphology.MirrorPrinciple (MorphDomain)
-open Wood2015 (StType)
+open Wood2015 (Construction)
 
 /-! ### Semitic verbal templates (binyanim) -/
 
@@ -347,7 +347,7 @@ Voice flavor without realizing it ([wood-2015]). Read as coverage sets over
 `VoiceFlavor`, the Semitic image and the set of flavors -st appears with overlap on
 the non-thematic and agentive flavors (the latter because -st appears in agentive
 figure reflexives) but diverge elsewhere. The Icelandic set is derived from
-[wood-2015]'s `StType.voiceFlavor`, so the theorem relates the two studies' actual
+[wood-2015]'s `Construction.voiceFlavor`, so the theorem relates the two studies' actual
 mappings. -/
 
 /-- The Voice flavors Semitic templates realize: the image of `toVoiceFlavor`. -/
@@ -360,14 +360,14 @@ theorem template_flavors_in_coverage (t : SemiticTemplate) :
     t.toVoiceFlavor ∈ semiticVoiceFlavors := by cases t <;> decide
 
 /-- The host-clause Voice flavors Icelandic -st co-occurs with, derived from
-    [wood-2015]'s `StType.voiceFlavor`. -/
+    [wood-2015]'s `Construction.voiceFlavor`. -/
 def icelandicStFlavors : List VoiceFlavor :=
-  [StType.anticausative.voiceFlavor, StType.middle.voiceFlavor,
-   StType.reflexive.voiceFlavor, StType.subjectExp.voiceFlavor]
+  [Construction.anticausative.voiceFlavor, Construction.middle.voiceFlavor,
+   Construction.reflexive.voiceFlavor, Construction.subjectExp.voiceFlavor]
 
 /-- Every -st configuration's flavor is in the Icelandic coverage set (inherent and
     reciprocal reuse flavors of the four representatives). -/
-theorem stType_flavors_in_coverage (st : StType) :
+theorem stType_flavors_in_coverage (st : Construction) :
     st.voiceFlavor ∈ icelandicStFlavors := by cases st <;> decide
 
 /-- The two coverage sets overlap on `.nonThematic` (Semitic medio-passive,
