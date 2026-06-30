@@ -71,8 +71,7 @@ variable {W : Type*} (ge : Set W → Set W → Prop)
 def RightUnion : Prop := ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
 
 /-- Determination by singletons: `A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}`. -/
-def DeterminedBySingletons : Prop :=
-  ∀ (A : Set W) (b : W), ge A {b} → ∃ a ∈ A, ge {a} {b}
+def DeterminedBySingletons : Prop := ∀ (A : Set W) (b : W), ge A {b} → ∃ a ∈ A, ge {a} {b}
 
 end Axioms
 
@@ -204,13 +203,11 @@ section
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
-def FinAddMeasure.inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop :=
-  m.mu A ≥ m.mu B
+def FinAddMeasure.inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop := m.mu A ≥ m.mu B
 
 /-- Measure-induced ≿ is reflexive. -/
 theorem FinAddMeasure.inducedGe_axiomR (m : FinAddMeasure K W) :
-    Reflexive m.inducedGe :=
-  fun _ => le_refl _
+    Reflexive m.inducedGe := fun _ => le_refl _
 
 /-- Measure-induced ≿ satisfies monotonicity.
     A ⊆ B → B = A ∪ (B \ A) → μ(B) = μ(A) + μ(B \ A) ≥ μ(A). -/
@@ -224,8 +221,7 @@ theorem FinAddMeasure.inducedGe_axiomT (m : FinAddMeasure K W) :
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
 @[simp] theorem FinAddMeasure.mu_empty (m : FinAddMeasure K W) : m.mu ∅ = 0 := by
-  have hempty := m.additive ∅ ∅ disjoint_bot_left
-  rw [Set.empty_union] at hempty; linarith
+  have h := m.additive ∅ ∅ disjoint_bot_left; rw [Set.empty_union] at h; linarith
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
 theorem FinAddMeasure.mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
@@ -256,8 +252,7 @@ def FinAddMeasure.toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
   refl := m.inducedGe_axiomR
   mono := m.inducedGe_axiomT
   bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by
-    show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
+  nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.mu_qadd
@@ -293,8 +288,7 @@ section
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
-def QualAddMeasure.inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop :=
-  m.mu A ≥ m.mu B
+def QualAddMeasure.inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop := m.mu A ≥ m.mu B
 
 /-- Monotonicity for qualitatively additive measures:
     A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
@@ -312,24 +306,22 @@ def QualAddMeasure.toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W whe
   refl := fun _ => le_refl _
   mono := m.inducedGe_axiomT
   bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by
-    show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
+  nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.qualAdd
 
-end
-
 /-- Every finitely additive measure is qualitatively additive.
     Proof: μ(A) = μ(A \ B) + μ(A ∩ B) and μ(B) = μ(B \ A) + μ(A ∩ B),
     so μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A). -/
-def FinAddMeasure.toQualAdd {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
-    {W : Type*} (m : FinAddMeasure K W) : QualAddMeasure K W where
+def FinAddMeasure.toQualAdd (m : FinAddMeasure K W) : QualAddMeasure K W where
   mu := m.mu
   nonneg := m.nonneg
   mu_empty := m.mu_empty
   total := m.total
   qualAdd := m.mu_qadd
+
+end
 
 /-! ### World-ordering lifts
 
@@ -358,8 +350,7 @@ theorem dominationLift_axiomR (hRefl : ∀ w, ge_w w w) : Reflexive (dominationL
 
 /-- The l-lifting of a reflexive relation is monotone. -/
 theorem dominationLift_axiomT (hRefl : ∀ w, ge_w w w) :
-    ∀ A B : Set W, A ⊆ B → dominationLift ge_w B A :=
-  fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
+    ∀ A B : Set W, A ⊆ B → dominationLift ge_w B A := fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
 
 /-- The l-lifting satisfies right-union. -/
 theorem dominationLift_axiomJ : RightUnion (dominationLift ge_w) :=
@@ -381,15 +372,13 @@ theorem matchingLift_axiomT (hRefl : ∀ w, ge_w w w) :
   fun _ _ hAB => ⟨id, fun b hbA => ⟨hAB hbA, hRefl b⟩, fun _ _ _ _ h => h⟩
 
 /-- The l-lifting of a reflexive preorder yields a System W (soundness). -/
-def dominationLiftSystemW (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) :
-    EpistemicSystemW W where
+def dominationLiftSystemW (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) : EpistemicSystemW W where
   ge := dominationLift ge_w
   refl := dominationLift_axiomR hRefl
   mono := dominationLift_axiomT hRefl
 
 /-- The m-lifting of a reflexive preorder yields a System W. -/
-def matchingLiftSystemW (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) :
-    EpistemicSystemW W where
+def matchingLiftSystemW (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) : EpistemicSystemW W where
   ge := matchingLift ge_w
   refl := matchingLift_axiomR hRefl
   mono := matchingLift_axiomT hRefl
@@ -435,8 +424,7 @@ noncomputable def seqCount {W : Type*} (s : W) (Es : List (Set W)) : ℕ :=
 
 /-- A **balanced** pair of event-sequences ([harrison-trainor-holliday-icard-2016]):
     every state lies in equally many events on the left as on the right. -/
-def Balanced {W : Type*} (Es Fs : List (Set W)) : Prop :=
-  ∀ s : W, seqCount s Es = seqCount s Fs
+def Balanced {W : Type*} (Es Fs : List (Set W)) : Prop := ∀ s : W, seqCount s Es = seqCount s Fs
 
 /-- **Finite Cancellation** (Scott's axiom; [harrison-trainor-holliday-icard-2016]):
     for every balanced pair `⟨…, X⟩` / `⟨…, Y⟩` whose premise comparisons all hold,
@@ -458,10 +446,8 @@ def GeneralizedFiniteCancellation {W : Type*} (ge : Set W → Set W → Prop) : 
 
 /-- GFC implies FC (the `r = 1` instance). -/
 theorem FiniteCancellation.of_gfc {W : Type*} {ge : Set W → Set W → Prop}
-    (h : GeneralizedFiniteCancellation ge) : FiniteCancellation ge := by
-  intro prem X Y hbal hprem
-  refine h prem X Y 1 le_rfl ?_ hprem
-  simpa [List.replicate_one] using hbal
+    (h : GeneralizedFiniteCancellation ge) : FiniteCancellation ge :=
+  fun prem X Y hbal hprem => h prem X Y 1 le_rfl (by simpa [List.replicate_one] using hbal) hprem
 
 /-- A **GFC order** ([harrison-trainor-holliday-icard-2018], after
     [harrison-trainor-holliday-icard-2016]): reflexivity, positivity,
