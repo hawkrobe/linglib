@@ -134,9 +134,9 @@ def cIamb : Constraint FootingCand := fun c => match c.toTree with
 /-- **`*V:]φ`** ([becker-etal-2025] (3)): one mark for a long vowel in the **phrase**-final σ (for a
     one-word phrase, the word-final σ). -/
 def cStarV : Constraint FootingCand := fun c =>
-  match (Grid.columnsLive c.toTree).getLast? with
-  | some col => if decide (col.leaf.label.weight? = some 2) then 1 else 0
-  | none     => 0
+  match (Grid.terminals c.toTree).getLast? with
+  | some leaf => if decide (leaf.label.weight? = some 2) then 1 else 0
+  | none      => 0
 
 def candidates : List FootingCand := [.twoIambs, .iambStrays, .iambTrochee]
 theorem candidates_ne : candidates ≠ [] := by decide
