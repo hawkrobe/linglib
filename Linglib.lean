@@ -2299,6 +2299,7 @@ import Linglib.Studies.HaugDalrymple2020
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.HayKennedyLevin1999
 import Linglib.Studies.Hayes1989
+import Linglib.Studies.Hayes1995
 import Linglib.Studies.HayesWilson2008
 import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.Heim1982.Basic
