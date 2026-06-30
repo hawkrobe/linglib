@@ -1,5 +1,6 @@
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Core.Order.Branching
 
 /-!
 # Prosodic words (ω)
@@ -29,8 +30,15 @@ here abstract the foot level. Prominence-head marking is likewise a refinement, 
 * `IsWord` / `Word` — the Layeredness predicate and the carrier subtype it cuts out.
 * `Word.recursionCount` — the `No-Recursion` violation count, read off the carrier (`noRec`).
 * `noRec` / `parseInto` — the violable OT constraints over the carrier (`Constraint Tree`).
+* `maximalProjections` / `minimalProjections` / `IsMinimalProj` — the topmost / bottommost
+  ℓ-nodes of the carrier, and the intrinsic minimal-projection predicate.
 * `feet` / `moraCount` / `unfootedCount` — carrier folds extracting feet, morae, stray σ.
 * `MinimalWord` / `MaximalWord` / `PerfectWord` — the word-size notions over the carrier.
+
+## Main results
+
+* `noLevelRec_imp_max_eq_min` — under transitive No-Recursion at `ℓ`, the maximal and
+  minimal ℓ-projections coincide (every ℓ-node is at once topmost and bottommost).
 -/
 
 namespace Prosody
@@ -62,6 +70,219 @@ def noRec : Constraint Tree := fun t => go t where
   goList : List Tree → Nat
     | [] => 0
     | c :: cs => go c + goList cs
+
+/-! #### Maximal and minimal projections
+
+The **projections** of a level `ℓ` ([ito-mester-2009]) are the same family of carrier folds
+as `noRec` — `noRec` looks at same-level *parent–child* pairs, the projections at the
+*extremal* same-level nodes. The **maximal** ℓ-projections are the topmost ℓ-nodes (no
+ℓ-ancestor), read off by an `under`-flag fold (cf. `parseInto`) that prunes a subtree once
+the first ℓ is hit; the **minimal** ℓ-projections are the bottommost ℓ-nodes (no
+ℓ-descendant). The asymmetry is intentional: maximality is *context-relative* (membership in
+`maximalProjections ℓ root`), whereas minimality is *intrinsic* to a node (`IsMinimalProj`),
+so only the latter carries a one-argument predicate. The intonational utterance υ is just the
+maximal ι-projection. `List` (not `Finset`) keeps the duplicate-position counts that
+Match-style correspondence ([selkirk-1996]) reads. -/
+
+/-- The **maximal ℓ-projections** of `t`: the topmost ℓ-nodes (those with no ℓ-ancestor),
+    in tree order. A top-down `under`-flag fold (cf. `parseInto`) pruning a subtree once the
+    first ℓ is hit. -/
+def maximalProjections (ℓ : ProsodicLevel) (t : Tree) : List Tree := go false t where
+  go (under : Bool) : Tree → List Tree
+    | .node a cs =>
+        if !under && decide (a.level = ℓ) then [.node a cs]
+        else goList (under || decide (a.level = ℓ)) cs
+  goList (under : Bool) : List Tree → List Tree
+    | []      => []
+    | c :: cs => go under c ++ goList under cs
+
+/-- `ℓ` occurs somewhere in `t` (the root included). -/
+def anyAtLevel (ℓ : ProsodicLevel) : Tree → Bool := go where
+  go : Tree → Bool
+    | .node a cs => decide (a.level = ℓ) || goList cs
+  goList : List Tree → Bool
+    | []      => false
+    | c :: cs => go c || goList cs
+
+/-- The intrinsic minimal-ℓ test: an ℓ-node no proper descendant of which is ℓ. -/
+def isMinimalProj (ℓ : ProsodicLevel) : Tree → Bool
+  | .node a cs => decide (a.level = ℓ) && !(cs.any (anyAtLevel ℓ))
+
+/-- The **minimal ℓ-projections** of `t`: the bottommost ℓ-nodes (those with no
+    ℓ-descendant), in tree order. -/
+def minimalProjections (ℓ : ProsodicLevel) (t : Tree) : List Tree := go t where
+  go : Tree → List Tree
+    | .node a cs => (if isMinimalProj ℓ (.node a cs) then [.node a cs] else []) ++ goList cs
+  goList : List Tree → List Tree
+    | []      => []
+    | c :: cs => go c ++ goList cs
+
+/-- A **minimal ℓ-projection**: an ℓ-node none of whose proper descendants is ℓ — the
+    intrinsic, context-free dual of (context-relative) maximality. -/
+def IsMinimalProj (ℓ : ProsodicLevel) (t : Tree) : Prop := isMinimalProj ℓ t
+
+instance (ℓ : ProsodicLevel) (t : Tree) : Decidable (IsMinimalProj ℓ t) :=
+  inferInstanceAs (Decidable (isMinimalProj ℓ t = true))
+
+/-- **Transitive No-Recursion at `ℓ`**: no ℓ-node properly dominates an ℓ-node — every
+    ℓ-node is a minimal projection. This — not `noRec` — is what collapses the maximal and
+    minimal ℓ-projections (`noLevelRec_imp_max_eq_min`): `noRec t = 0` forbids only *direct*
+    ℓ-over-ℓ, while `ω(f(ω))` recurses through an intervening foot (`noRec = 0`, yet
+    maximal ≠ minimal); the one-step `noRec` is the shadow this casts on the strictly-layered
+    trees `IsWord` carves out. -/
+def noLevelRec (ℓ : ProsodicLevel) : Tree → Bool := go where
+  go : Tree → Bool
+    | .node a cs => (!decide (a.level = ℓ) || isMinimalProj ℓ (.node a cs)) && goList cs
+  goList : List Tree → Bool
+    | []      => true
+    | c :: cs => go c && goList cs
+
+/-! ##### Properties
+
+Each `where`-aux `goList` is the matching `List` combinator over its `go`
+(`flatMap`/`any`/`all`), proved once below so every projection lemma is a single
+`Branching.inductionOn` over the carrier (the principle `Tree` already rides,
+`Core/Order/Branching.lean`) plus standard `List` reasoning. -/
+
+private theorem maximalProjections.goList_eq (ℓ : ProsodicLevel) (under : Bool) (cs : List Tree) :
+    maximalProjections.goList ℓ under cs = cs.flatMap (maximalProjections.go ℓ under) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [maximalProjections.goList, List.flatMap_cons, ih]
+
+private theorem minimalProjections.goList_eq (ℓ : ProsodicLevel) (cs : List Tree) :
+    minimalProjections.goList ℓ cs = cs.flatMap (minimalProjections.go ℓ) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [minimalProjections.goList, List.flatMap_cons, ih]
+
+private theorem anyAtLevel.goList_eq (ℓ : ProsodicLevel) (cs : List Tree) :
+    anyAtLevel.goList ℓ cs = cs.any (anyAtLevel ℓ) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [anyAtLevel.goList, List.any_cons, ih]; rfl
+
+private theorem noLevelRec.goList_eq (ℓ : ProsodicLevel) (cs : List Tree) :
+    noLevelRec.goList ℓ cs = cs.all (noLevelRec.go ℓ) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [noLevelRec.goList, List.all_cons, ih]
+
+private theorem mem_maxProj_go {ℓ : ProsodicLevel} {s : Tree} :
+    ∀ (under : Bool) (t : Tree), s ∈ maximalProjections.go ℓ under t → s.label.level = ℓ := by
+  intro under t
+  induction t using Core.Order.Branching.inductionOn generalizing under with
+  | ih t IH =>
+    obtain ⟨a, cs⟩ := t
+    intro hs
+    rw [maximalProjections.go] at hs
+    split at hs
+    · rename_i hcond
+      rw [List.mem_singleton] at hs; subst hs
+      simp only [Bool.and_eq_true, decide_eq_true_eq] at hcond
+      simpa using hcond.2
+    · rw [maximalProjections.goList_eq, List.mem_flatMap] at hs
+      obtain ⟨c, hc, hsc⟩ := hs
+      exact IH c (by simpa using hc) _ hsc
+
+/-- Every maximal ℓ-projection is an ℓ-node. -/
+theorem mem_maximalProjections_level {ℓ : ProsodicLevel} {s t : Tree}
+    (h : s ∈ maximalProjections ℓ t) : s.label.level = ℓ := mem_maxProj_go _ _ h
+
+private theorem isMin_go {ℓ : ProsodicLevel} {s : Tree} :
+    ∀ t : Tree, s ∈ minimalProjections.go ℓ t → IsMinimalProj ℓ s := by
+  intro t
+  induction t using Core.Order.Branching.inductionOn with
+  | ih t IH =>
+    obtain ⟨a, cs⟩ := t
+    intro hs
+    rw [minimalProjections.go, List.mem_append, minimalProjections.goList_eq,
+      List.mem_flatMap] at hs
+    rcases hs with h | ⟨c, hc, hsc⟩
+    · split at h
+      · rename_i hcond; rw [List.mem_singleton] at h; subst h; exact hcond
+      · simp only [List.not_mem_nil] at h
+    · exact IH c (by simpa using hc) hsc
+
+/-- Minimality is **intrinsic**: a node returned as a minimal ℓ-projection of any tree is
+    itself a minimal ℓ-projection (`IsMinimalProj`) — it does not depend on the ambient tree.
+    The maximal/minimal asymmetry: a node is maximal only *relative* to an ambient tree
+    (its ℓ-ancestors), but minimal *in itself*. -/
+theorem isMinimalProj_of_mem_minimalProjections {ℓ : ProsodicLevel} {s t : Tree}
+    (h : s ∈ minimalProjections ℓ t) : IsMinimalProj ℓ s := isMin_go _ h
+
+/-- A minimal ℓ-projection is an ℓ-node. -/
+theorem isMinimalProj_level {ℓ : ProsodicLevel} {s : Tree} (h : IsMinimalProj ℓ s) :
+    s.label.level = ℓ := by
+  obtain ⟨a, cs⟩ := s
+  simp only [IsMinimalProj, isMinimalProj, Bool.and_eq_true, decide_eq_true_eq] at h
+  simpa using h.1
+
+/-- Every minimal ℓ-projection is an ℓ-node. -/
+theorem mem_minimalProjections_level {ℓ : ProsodicLevel} {s t : Tree}
+    (h : s ∈ minimalProjections ℓ t) : s.label.level = ℓ :=
+  isMinimalProj_level (isMin_go _ h)
+
+/-- The intonational utterance υ is the maximal ι-projection: an ι-rooted tree is its own
+    sole maximal ι-projection. -/
+theorem utterance_eq_maximal_iota {t : Tree} (h : t.label.level = .ι) :
+    maximalProjections .ι t = [t] := by
+  obtain ⟨a, cs⟩ := t
+  simp only [RootedTree.Planar.label_node] at h
+  unfold maximalProjections maximalProjections.go
+  simp [h]
+
+private theorem noAny_go (ℓ : ProsodicLevel) :
+    ∀ t : Tree, anyAtLevel.go ℓ t = false → minimalProjections.go ℓ t = [] := by
+  intro t
+  induction t using Core.Order.Branching.inductionOn with
+  | ih t IH =>
+    obtain ⟨a, cs⟩ := t
+    intro h
+    simp only [anyAtLevel.go, Bool.or_eq_false_iff] at h
+    simp only [minimalProjections.go, isMinimalProj, h.1, Bool.false_and]
+    show minimalProjections.goList ℓ cs = []
+    rw [minimalProjections.goList_eq, List.flatMap_eq_nil_iff]
+    intro c hc
+    rw [anyAtLevel.goList_eq, List.any_eq_false] at h
+    exact IH c (by simpa using hc) (by simpa [anyAtLevel] using h.2 c hc)
+
+private theorem maxMin_go (ℓ : ProsodicLevel) :
+    ∀ t : Tree, noLevelRec.go ℓ t = true →
+      maximalProjections.go ℓ false t = minimalProjections.go ℓ t := by
+  intro t
+  induction t using Core.Order.Branching.inductionOn with
+  | ih t IH =>
+    obtain ⟨a, cs⟩ := t
+    intro h
+    simp only [noLevelRec.go, Bool.and_eq_true] at h
+    obtain ⟨h1, h2⟩ := h
+    by_cases hl : a.level = ℓ
+    · have hmin : isMinimalProj ℓ (.node a cs) = true := by simpa [hl] using h1
+      have hgoList : minimalProjections.goList ℓ cs = [] := by
+        rw [minimalProjections.goList_eq, List.flatMap_eq_nil_iff]
+        intro c hc
+        have hany : cs.any (anyAtLevel ℓ) = false := by simpa [isMinimalProj, hl] using hmin
+        rw [List.any_eq_false] at hany
+        exact noAny_go ℓ c (by simpa [anyAtLevel] using hany c hc)
+      simp only [maximalProjections.go, Bool.not_false, Bool.true_and, hl, decide_true,
+        if_true, minimalProjections.go, hmin, if_true, hgoList, List.append_nil]
+    · simp only [maximalProjections.go, Bool.not_false, Bool.true_and, hl, decide_false,
+        Bool.or_false, minimalProjections.go, isMinimalProj, Bool.false_and]
+      show maximalProjections.goList ℓ false cs = minimalProjections.goList ℓ cs
+      rw [maximalProjections.goList_eq, minimalProjections.goList_eq]
+      refine List.flatMap_congr fun c hc => ?_
+      rw [noLevelRec.goList_eq, List.all_eq_true] at h2
+      exact IH c (by simpa using hc) (h2 c (by simpa using hc))
+
+/-- **No-Recursion collapses the projections.** Under transitive No-Recursion at `ℓ`
+    (`noLevelRec`: no ℓ-node properly dominates an ℓ-node), the topmost and bottommost
+    ℓ-nodes coincide — every ℓ-node is at once maximal and minimal. The naive `noRec t = 0`
+    (no *direct* ℓ-over-ℓ) does **not** suffice — `ω(f(ω))` has `noRec = 0` yet maximal ≠
+    minimal — but on the strictly-layered words `IsWord` cuts out, the two conditions agree. -/
+theorem noLevelRec_imp_max_eq_min {ℓ : ProsodicLevel} {t : Tree}
+    (h : noLevelRec ℓ t = true) : maximalProjections ℓ t = minimalProjections ℓ t :=
+  maxMin_go ℓ t h
 
 /-- **Parse-into-`lvl`** ([ito-mester-2003]): σ-leaves dominated by no `lvl`-node. -/
 def parseInto (lvl : ProsodicLevel) : Constraint Tree := fun t => go false t where
@@ -137,6 +358,14 @@ namespace Word
     the carrier fold `noRec` read off the underlying tree. -/
 def recursionCount (w : Word) : ℕ := noRec w.val
 
+/-- The maximal ω-projections of a word: its topmost ω-nodes. A flat word is its own sole
+    maximal projection; a recursive ω-over-ω ([ito-mester-2009]) has the outer ω. -/
+def maximalProjections (w : Word) : List Tree := Prosody.maximalProjections .ω w.val
+
+/-- The minimal ω-projections of a word: its innermost ω-nodes — the bottommost cores of
+    an ω-over-ω recursion ([ito-mester-2009]). -/
+def minimalProjections (w : Word) : List Tree := Prosody.minimalProjections .ω w.val
+
 end Word
 
 /-! ### Word-size predicates -/
@@ -204,5 +433,13 @@ example : ¬ IsWord (.node .om [.node .ph []] : Tree) := by decide
 -- one ω-over-ω, the flat one zero.
 example : Word.recursionCount ⟨recursiveW, by decide⟩ = 1 := by decide
 example : Word.recursionCount ⟨perfectW, by decide⟩ = 0 := by decide
+
+-- The ω-over-ω word has the outer ω as its sole maximal projection and the inner ω as its
+-- sole minimal projection; the perfect (flat) word is both at once.
+example : Word.maximalProjections ⟨recursiveW, by decide⟩ = [recursiveW] := by decide
+example : Word.minimalProjections ⟨recursiveW, by decide⟩ = [.node Constituent.om [exFoot]] := by
+  decide
+example : Word.maximalProjections ⟨perfectW, by decide⟩ = [perfectW] := by decide
+example : Word.minimalProjections ⟨perfectW, by decide⟩ = [perfectW] := by decide
 
 end Prosody
