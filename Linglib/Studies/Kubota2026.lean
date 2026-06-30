@@ -73,7 +73,7 @@ open Semantics.Presupposition (PartialProp)
 /-- The evaluative stance an outlook marker expresses ([kubota-2026] (1)-(2)): how the
 speaker situates the prejacent relative to a salient counterstance. -/
 inductive StanceType where
-  /-- Negative/pessimistic: the prejacent is undesirable or implausible
+  /-- Low evaluation ([kubota-2026]'s term): the prejacent is undesirable or implausible
       (*nanka* 'anything like', *dōse* 'anyway'). -/
   | negative
   /-- Minimum standard: the least one could settle for (*semete*/*kurai* 'at least'). -/
@@ -119,13 +119,14 @@ an attested claim of unrestricted selection. -/
 /-- *dōse* 'anyway' — pessimistic outlook ([kubota-2026] (3a)). -/
 def dōse : Marker := ⟨Japanese.OutlookMarkers.dōse, .negative, ModalFlavor.all⟩
 def shosen : Marker := ⟨Japanese.OutlookMarkers.shosen, .negative, ModalFlavor.all⟩
-/-- *yahari* 'after all/as expected' — read as emphatic confirmation; [kubota-2026] (1a)
-    clusters it with the *dōse*/*shosen* group, so the stance is not firmly licensed. -/
+/-- *yahari* 'after all/as expected' — emphatic confirmation of an expectation; [kubota-2026]
+    (11)-(12) contrast *yahari* 'as expected' against *mushiro* 'rather' (contrary), which
+    supports the `.emphasis` reading. -/
 def yahari : Marker := ⟨Japanese.OutlookMarkers.yahari, .emphasis, ModalFlavor.all⟩
-/-- *kekkyoku* 'after all/in the end' — conclusive/resignative; [kubota-2026] (1a) groups it
-    with *dōse*/*shosen* ('anyway'), so it is classified `.negative` with them rather than as
-    emphasis. -/
-def kekkyoku : Marker := ⟨Japanese.OutlookMarkers.kekkyoku, .negative, ModalFlavor.all⟩
+/-- *kekkyoku* 'after all/in the end' — conclusive/resignative. [kubota-2026] gives no
+    per-word stance table (the (1)-(2) groupings are by gloss and source, not stance — note
+    *yahari*, in the same (1a) group, is emphasis), so this assignment is tentative. -/
+def kekkyoku : Marker := ⟨Japanese.OutlookMarkers.kekkyoku, .emphasis, ModalFlavor.all⟩
 def masani : Marker := ⟨Japanese.OutlookMarkers.masani, .emphasis, ModalFlavor.all⟩
 def mushiro : Marker := ⟨Japanese.OutlookMarkers.mushiro, .contrary, ModalFlavor.all⟩
 def kaette : Marker := ⟨Japanese.OutlookMarkers.kaette, .contrary, ModalFlavor.all⟩
