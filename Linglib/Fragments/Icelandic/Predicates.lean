@@ -17,13 +17,17 @@ This is the same discipline applied to other Fragment lexicons in
 linglib: textbook-consensus lexical data on this side; competing
 analyses on the Studies side.
 
-Note on classification: the morphological reflex *-st* (historically
-*sik* → *-sk* → *-st*) realizes Voice across at least six descriptive
-categories that [wood-2015] identifies — anticausative, middle,
-reflexive, inherent, subject-experiencer, reciprocal — plus *-na*-marked
-anticausatives like *brotna*. The *-st* / *-na* contrast and the
-parameters that distinguish these categories are formalized in the
-Wood2015 study file, not here.
+Note on classification: in [wood-2015]'s analysis *-st* (historically
+*sik* → *-sk* → *-st*) is **not** an exponent of Voice. It is a defective
+`[−participant]` clitic — a featural subset of the reflexive pronoun —
+that merges in a specifier/argument position and cliticizes to the verb.
+It appears across the descriptive categories [wood-2015] distinguishes
+(anticausative, generic middle, figure reflexive, reflexive, inherent,
+subject-experiencer, reciprocal); the Voice/v exponents proper are *-na*
+(Voice{∅}), *-Ø* (the elsewhere Voice exponent), and *-ka* (v), with
+*-na*-marked anticausatives like *brotna*. The merge-site classification
+and the *-st* / *-na* contrast are formalized in the Wood2015 study file,
+not here.
 -/
 
 namespace Icelandic.Predicates
@@ -91,11 +95,11 @@ def lesast : IcelandicStVerb :=
     gloss := "read"
     hasActiveVariant := true }
 
-/-- *baða* / *baðast* 'bathe'. -/
-def badast : IcelandicStVerb :=
-  { activeForm := some "baða"
-    stForm := "baðast"
-    gloss := "bathe"
+/-- *setja* / *setjast* 'sit down' — a posture verb. -/
+def setjast : IcelandicStVerb :=
+  { activeForm := some "setja"
+    stForm := "setjast"
+    gloss := "sit down"
     hasActiveVariant := true }
 
 /-- *klæða* / *klæðast* 'dress'. -/
@@ -140,7 +144,7 @@ def kyssast : IcelandicStVerb :=
     (stType, marking, root structure) over the same ten verbs in the
     same order. -/
 def allStVerbs : List IcelandicStVerb :=
-  [opnast, splundrast, seljast, lesast, badast, klaedast,
+  [opnast, splundrast, seljast, lesast, setjast, klaedast,
    nalgast, minnast, leidast, kyssast]
 
 -- ============================================================================

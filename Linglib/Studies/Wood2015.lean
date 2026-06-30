@@ -4,64 +4,59 @@ import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Fragments.Icelandic.Predicates
 
 /-!
-# [wood-2015] — Icelandic Morphosyntax and Argument Structure
+# [wood-2015] — Icelandic *-st* as a specifier-merged clitic
 [wood-2015] [kratzer-1996] [pylkkanen-2008] [schaefer-2008] [cuervo-2003] [alexiadou-schaefer-2015] [wood-marantz-2017]
 
-[wood-2015] establishes that Icelandic *-st* (from historical
-reflexive *sik*) is the morphological reflex of non-agentive Voice
-across multiple syntactic configurations, not a single "reflexive"
-or "anticausative" morpheme.
+[wood-2015]'s central thesis is that Icelandic *-st* (historically the
+reflexive *sik* → *-sk* → *-st*) is **not** an exponent of a Voice head. It
+is a defective person clitic — a `[−participant]` feature bundle, a featural
+subset of the reflexive pronoun — that **merges in a specifier position** and
+cliticizes to the verb. Its many "uses" (anticausative, generic middle, figure
+reflexive, reflexive, subject-experiencer, reciprocal, inherent) arise from
+*where* it merges, not from *-st* spelling out different Voice flavors. The
+genuine Voice/v exponents are *-na* (Voice{∅}), *-Ø* (the elsewhere Voice
+exponent), and *-ka* (v).
+
+This file models that thesis: the primitive is *-st*'s **merge site**
+(`StSite`), and the construction typology and anti-affixal predictions are
+derived from it.
 
 ## Layer position
 
-This file is the canonical Wood-2015 study site. The Icelandic
-Fragment (`Icelandic.Predicates`) carries only consensus
-lexical data — verb forms, glosses, presence/absence of an active
-variant. Wood's analytical apparatus lives here:
+The Icelandic Fragment (`Icelandic.Predicates`) carries only consensus lexical
+data — verb forms, glosses, presence of an active variant. Wood's analytical
+apparatus lives here: the merge-site classification (`StSite`, `StType.site`),
+the host-clause Voice flavor each construction shows (`StType.voiceFlavor`),
+the anticausative exponent inventory (`AnticausativeMarking`), and per-verb
+projection bundles (`StVerbInfo`).
 
-- the six-way *-st* classification (`StType`),
-- the anticausative-marking enum *-st* / *-na* / *-ka* / unmarked
-  (`AnticausativeMarking`),
-- the mapping from *-st* types to Voice flavors,
-- per-verb projection bundles (`StVerbInfo`) carrying stType, marking,
-  and root structure for each verb.
+## Key claims formalized
 
-The ±D notation is sourced from [alexiadou-schaefer-2015]
-(*External Arguments in Transitivity Alternations*, OUP) and refined
-in [wood-marantz-2017]. Earlier versions of this fragment
-attributed ±θ/±D to [schaefer-2008] alone, which was imprecise.
+1. **-st is a specifier-occupant, not a head exponent** (Ch. 2). *-st* checks a
+   `[D]` feature in a specifier; *-na* / *-Ø* / *-ka* spell out heads.
+   `st_not_head_exponent`, `na_ka_distinct_loci`.
 
-## Key Claims Formalized
+2. **Merge site — not Voice flavor — distinguishes the constructions**
+   (Ch. 3–6). An agentive Voice already fills SpecVoiceP with its agent, so
+   *-st* can occupy SpecVoiceP only under non-agentive Voice; under agentive
+   Voice it merges lower, in SpecpP. `agentive_st_merges_low`.
 
-1. **Voice–CAUSE independence** (Ch. 3): The causal relation is shared
-   across causative and anticausative alternants; Voice contributes
-   only whether an external argument is introduced. Modeled here using
-   [cuervo-2003]'s VerbHead decomposition ([wood-2015]
-   himself uses a single v head; the multi-head decomposition is a
-   linglib modeling convenience that captures the same independence
-   structurally — see `Syntax/Minimalist/Voice.lean` §5).
+3. **-st co-occurs with agentive Voice** (Ch. 4: figure reflexives), which an
+   exponent of *non-agentive* Voice never could — the core evidence against the
+   affixal view. `st_not_single_voice_exponent`.
 
-2. **-st as elsewhere exponent of Voice** (Ch. 3, §3.3–3.5): -st
-   spells out non-agentive Voice across anticausative, middle,
-   reflexive, experiencer, inherent, and reciprocal configurations.
-   The morphological uniformity masks syntactic diversity.
+4. **Voice–CAUSE independence** (Ch. 3): the causal head is shared across the
+   causative/anticausative alternation; only Voice's vDO differs. Modeled with
+   [cuervo-2003]'s decomposition — [wood-2015] uses a single allosemic v;
+   the multi-head notation is a linglib modeling convenience (see `Voice.lean`).
+   `opna_alternation`.
 
-3. **Voice projection locus** (Ch. 3): [wood-2015]'s
-   Voice_{D}/Voice_{∅} distinction is captured structurally by
-   `VoiceProjectionLocus` (in `Voice.lean`), with
-   `AnticausativeMarking.voiceLocus` projecting from each
-   morphological exponent (-st, -na, -ka) to its locus.
+5. **-na / -ka complementarity** (Ch. 3): *-na* spells out Voice{∅}, *-ka*
+   spells out v; they never co-occur. `na_ka_distinct_loci`.
 
-4. **-st and -na complementarity** (Ch. 3, §3.3): -st and -na spell out
-   different Voice projections (Voice_{D} vs Voice_{∅}) and never
-   co-occur. -ka is an exponent of v, not Voice.
-
-5. **Applicative interaction** (Ch. 5): [wood-2015] shows -st
-   cannot merge in SpecApplP because Appl assigns dative case
-   and -st lacks case features. The high/low Appl interaction
-   theorems below follow [pylkkanen-2008] and [schaefer-2008],
-   not [wood-2015]'s Icelandic-specific analysis (which argues
-   Icelandic lacks true high applicatives).
+6. **-st blocked from SpecApplP** (Ch. 5): Appl assigns dative and *-st* is
+   caseless, so *-st* cannot occupy SpecApplP, though applied datives are
+   otherwise retained. `st_blocked_from_specApplP`, `dative_voice_asymmetry`.
 -/
 
 namespace Wood2015
@@ -69,42 +64,70 @@ namespace Wood2015
 open Minimalist
 open Icelandic.Predicates
 
--- ============================================================================
--- § 0: Wood-Apparatus (the analytical layer over the Fragment)
--- ============================================================================
+/-! ### The *-st* clitic and its merge site -/
 
-/-- Classification of Icelandic *-st* constructions ([wood-2015]).
-    Each type maps to a distinct Voice configuration. -/
-inductive StType where
-  | anticausative    -- Voice[−θ, +D]: *opnast*, *splundrast*
-  | middle           -- Voice[−θ, −D]: *seljast*, *lesast*
-  | reflexive        -- Voice[+θ, +D] + binding: *baðast*, *klæðast*
-  | inherent         -- Lexicalized: *nálgast*, *minnast*
-  | subjectExp       -- Voice_EXP: *leiðast*
-  | reciprocal       -- Voice[+θ, +D] + reciprocal: *kyssast*
+/-- Where the *-st* clitic merges ([wood-2015]). *-st* is a defective
+    `[−participant]` person bundle that occupies a specifier and checks its
+    head's `[D]` feature; the construction it yields is fixed by which
+    specifier that is. -/
+inductive StSite where
+  /-- SpecVoiceP of Voice{D} — anticausatives and dative-subject experiencers
+      ([wood-2015] §3.5, §5.4). -/
+  | specVoiceD
+  /-- SpecpP of the figure/ground head p{D} — figure reflexives, including
+      "covert" ones like *klæðast* ([wood-2015] Ch. 4, §6.6). -/
+  | specLittleP
+  /-- A lower vP-internal specifier — reciprocals and the reflexive/middle
+      residue ([wood-2015] §6.3, §6.5). -/
+  | specLow
   deriving DecidableEq, Repr
 
-/-- Map each *-st* type to its Voice flavor. -/
+/-- [wood-2015]'s descriptive classification of *-st* constructions. Each is
+    distinguished by *-st*'s merge site (`StType.site`), not by a Voice flavor
+    *-st* would spell out. -/
+inductive StType where
+  | anticausative    -- *opnast* 'open'
+  | middle           -- generic middle / modal passive: *seljast* 'sell'
+  | figureReflexive  -- *klæðast* 'dress', *setjast* 'sit down'
+  | reflexive        -- non-figure reflexive residue
+  | inherent         -- lexicalized, no active variant: *nálgast*, *minnast*
+  | subjectExp       -- dative-subject psych: *leiðast* 'be bored'
+  | reciprocal       -- *kyssast* 'kiss (each other)'
+  deriving DecidableEq, Repr
+
+/-- The specifier *-st* occupies in each construction ([wood-2015]).
+    Anticausatives and subject-experiencers put *-st* in SpecVoiceP; figure
+    reflexives in SpecpP; the rest in a lower specifier. -/
+def StType.site : StType → StSite
+  | .anticausative   => .specVoiceD
+  | .subjectExp      => .specVoiceD
+  | .figureReflexive => .specLittleP
+  | .reflexive       => .specLittleP
+  | .middle          => .specLow
+  | .reciprocal      => .specLow
+  | .inherent        => .specLow
+
+/-- The Voice flavor of the *host clause* in each *-st* construction — the
+    flavor *-st* co-occurs with, **not** one *-st* realizes ([wood-2015]).
+    Anticausative and subject-experiencer clauses have non-thematic Voice (for
+    the psych verbs the experiencer is an applicative dative, §5.4); figure
+    reflexives and reciprocals are agentive (§4); the generic middle is
+    expletive (§6.3). -/
 def StType.voiceFlavor : StType → VoiceFlavor
-  | .anticausative => .nonThematic
-  | .middle        => .expletive
-  | .reflexive     => .reflexive
-  | .inherent      => .nonThematic   -- lexicalized; syntactically non-thematic
-  | .subjectExp    => .experiencer
-  | .reciprocal    => .reflexive     -- same Voice as reflexive, different binding
+  | .anticausative   => .nonThematic
+  | .subjectExp      => .nonThematic
+  | .inherent        => .nonThematic
+  | .middle          => .expletive
+  | .figureReflexive => .agentive
+  | .reflexive       => .agentive
+  | .reciprocal      => .agentive
 
-/-- How an anticausative is morphologically marked
-    ([wood-2015] Ch. 3, §3.3).
+/-! ### The anticausative exponent inventory (*-na* / *-Ø* / *-ka*) -/
 
-    - *-st* spells out Voice_{D};
-    - *-na* spells out specifierless Voice_{∅};
-    - *-ka* spells out v (not Voice);
-    - *unmarked*: zero alternation, compatible with either Voice_{D}
-      or Voice_{∅}, distinguished by independent diagnostics.
-
-    Per [wood-2015] Ch. 3, §3.3, *-st* and *-na* never co-occur
-    because they spell out different Voice types; *-na* and *-ka*
-    never co-occur because *-na* requires v to be null/pruned. -/
+/-- How an anticausative alternation is morphologically marked ([wood-2015]
+    §3.3). *-st* is set apart from the others: *-na*, *-Ø* (unmarked), and
+    *-ka* are **exponents of heads**, while *-st* realizes no head — it
+    occupies a specifier. -/
 inductive AnticausativeMarking where
   | st
   | na
@@ -112,365 +135,197 @@ inductive AnticausativeMarking where
   | ka
   deriving DecidableEq, Repr
 
-/-- Each anticausative-marking morpheme picks out a position in
-    Voice/v space ([wood-2015] Ch. 3, §3.3). The structural
-    distinction is visible to pattern matching, not hidden behind
-    string equality on labels like `"Voice_{D}"`. -/
-def AnticausativeMarking.voiceLocus :
-    AnticausativeMarking → VoiceProjectionLocus
-  | .st       => .voiceD
-  | .na       => .voiceBare
-  | .unmarked => .voiceDOrBare
-  | .ka       => .vHead
+/-- The head a marker spells out, if any ([wood-2015] §3.3). *-st* spells out
+    no head (`none`): it is a clitic in a specifier, not an exponent. *-na*
+    spells out specifierless Voice{∅}; *-Ø* is the elsewhere Voice exponent
+    (compatible with either Voice projection); *-ka* spells out v. -/
+def AnticausativeMarking.exponentOf : AnticausativeMarking → Option VoiceProjectionLocus
+  | .st       => none
+  | .na       => some .voiceBare
+  | .unmarked => some .voiceDOrBare
+  | .ka       => some .vHead
 
-/-- PF realization of Voice in Icelandic.
+/-- A marker is a *head exponent* when it spells out a Voice or v head — every
+    marker except *-st*. -/
+def AnticausativeMarking.IsHeadExponent (m : AnticausativeMarking) : Prop :=
+  m.exponentOf.isSome = true
 
-    *-st* is the elsewhere exponent for Voice — it appears whenever
-    Voice is non-agentive (modulo antipassive, which is unproductive
-    in Icelandic). -/
-def voiceToSuffix : VoiceFlavor → Option String
-  | .agentive    => none           -- active: no suffix
-  | .causer      => none           -- causative: no suffix
-  | .antipassive => none           -- not productive in Icelandic
-  | _            => some "-st"     -- elsewhere
+instance : DecidablePred AnticausativeMarking.IsHeadExponent :=
+  fun _ => inferInstanceAs (Decidable (_ = true))
 
--- ============================================================================
--- § 0b: Per-Verb Wood-Projections ([wood-2015])
--- ============================================================================
+/-! ### Per-verb projections -/
 
-/-- Wood-2015 analytical projection of a single Icelandic *-st* verb.
-    Bundles the apparatus the slim Fragment doesn't carry: *-st*
-    classification, anticausative marking, root-structure decomposition
-    ([cuervo-2003]-style notation per `Voice.lean` §5–§6), and the
-    possessive-dative diagnostic. -/
+/-- Wood's per-verb projection: the lexical entry plus the analytical apparatus
+    the Fragment omits — the *-st* classification, the anticausative marker, and
+    the [cuervo-2003]-style event decomposition. -/
 structure StVerbInfo where
-  /-- The lexical fragment entry. -/
+  /-- The lexical Fragment entry. -/
   verb : IcelandicStVerb
-  /-- Wood's *-st* classification. -/
+  /-- Wood's construction classification. -/
   stType : StType
-  /-- Anticausative-marking morpheme. Default *-st*. -/
+  /-- The anticausative-marking morpheme (default *-st*). -/
   marking : AnticausativeMarking := .st
-  /-- [cuervo-2003]-style event decomposition. -/
+  /-- [cuervo-2003]-style lower event structure (without Voice's vDO). -/
   rootStructure : List VerbHead
-  /-- Does this verb license possessive datives (Wood Ch. 5 diagnostic)? -/
-  licensesPossessiveDative : Bool := false
   deriving Repr, BEq, DecidableEq
 
-/-- *opna* / *opnast* 'open' — anticausative *-st* ([wood-2015] Ch. 3).
-    Active: *Jón opnaði dyrnar* 'John opened the door';
-    *-st*: *Dyrnar opnuðust* 'The door opened'. -/
+/-- *opna* / *opnast* 'open' — anticausative *-st* ([wood-2015] §3.5.1).
+    Active *Jón opnaði dyrnar*; *-st* *Dyrnar opnuðust* 'the door opened'. -/
 def opnast_info : StVerbInfo :=
-  { verb := opnast
-    stType := .anticausative
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    licensesPossessiveDative := true }
+  { verb := opnast, stType := .anticausative, rootStructure := [.vCAUSE, .vGO, .vBE] }
 
-/-- *splundra* / *splundrast* 'shatter' — anticausative *-st*
-    ([wood-2015] Ch. 3, §3.5). Central example for the
-    Voice–CAUSE independence argument. -/
+/-- *splundra* / *splundrast* 'shatter' — anticausative *-st* ([wood-2015]). -/
 def splundrast_info : StVerbInfo :=
-  { verb := splundrast
-    stType := .anticausative
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    licensesPossessiveDative := true }
+  { verb := splundrast, stType := .anticausative, rootStructure := [.vCAUSE, .vGO, .vBE] }
 
-/-- *brjóta* / *brotna* 'break' — anticausative with *-na*, NOT *-st*
-    ([wood-2015] Ch. 3, §3.3.2). Comparison case: *-na* spells
-    out specifierless Voice_{∅} whereas *-st* picks Voice_{D}. -/
+/-- *brjóta* / *brotna* 'break' — anticausative marked with *-na*, the exponent
+    of Voice{∅} ([wood-2015] §3.3.2). Contrast with the *-st* anticausatives. -/
 def brotna_info : StVerbInfo :=
-  { verb := brotna
-    stType := .anticausative
-    marking := .na
+  { verb := brotna, stType := .anticausative, marking := .na,
     rootStructure := [.vCAUSE, .vGO, .vBE] }
 
-/-- *selja* / *seljast* 'sell' — middle *-st* ([wood-2015]). -/
+/-- *selja* / *seljast* 'sell' — generic middle *-st* ([wood-2015] §6.3). -/
 def seljast_info : StVerbInfo :=
-  { verb := seljast
-    stType := .middle
-    rootStructure := [.vCAUSE, .vGO, .vBE] }
+  { verb := seljast, stType := .middle, rootStructure := [.vCAUSE, .vGO, .vBE] }
 
-/-- *lesa* / *lesast* 'read' — middle *-st* ([wood-2015]). -/
+/-- *lesa* / *lesast* 'read' — modal-passive *-st*, a generic-middle variant
+    with an implicit agent ([wood-2015] §6.3: *Biblían á að lesast*). -/
 def lesast_info : StVerbInfo :=
-  { verb := lesast
-    stType := .middle
-    rootStructure := [.vCAUSE, .vGO, .vBE] }
+  { verb := lesast, stType := .middle, rootStructure := [.vCAUSE, .vGO, .vBE] }
 
-/-- *baða* / *baðast* 'bathe' — reflexive *-st* ([wood-2015]). -/
-def badast_info : StVerbInfo :=
-  { verb := badast
-    stType := .reflexive
-    rootStructure := [.vCAUSE, .vGO, .vBE] }
+/-- *setja* / *setjast* 'sit down' — figure reflexive *-st* in SpecpP, a posture
+    verb ([wood-2015] §4). -/
+def setjast_info : StVerbInfo :=
+  { verb := setjast, stType := .figureReflexive, rootStructure := [.vGO, .vBE] }
 
-/-- *klæða* / *klæðast* 'dress' — reflexive *-st* ([wood-2015]). -/
+/-- *klæða* / *klæðast* 'dress' — a (covert) figure reflexive, *-st* in SpecpP
+    ([wood-2015] §6.6). -/
 def klaedast_info : StVerbInfo :=
-  { verb := klaedast
-    stType := .reflexive
-    rootStructure := [.vCAUSE, .vGO, .vBE] }
+  { verb := klaedast, stType := .figureReflexive, rootStructure := [.vGO, .vBE] }
 
-/-- *nálgast* 'approach' — inherent *-st* ([wood-2015]).
-    No active variant; *-st* is lexicalized. -/
+/-- *nálgast* 'approach' — inherent *-st*, lexicalized, no active variant
+    ([wood-2015] §2.3.4). -/
 def nalgast_info : StVerbInfo :=
-  { verb := nalgast
-    stType := .inherent
-    rootStructure := [.vGO] }
+  { verb := nalgast, stType := .inherent, rootStructure := [.vGO] }
 
-/-- *minnast* 'remember' — inherent *-st* ([wood-2015]).
-    No active variant. -/
+/-- *minnast* 'remember' — inherent *-st*, no active variant ([wood-2015]). -/
 def minnast_info : StVerbInfo :=
-  { verb := minnast
-    stType := .inherent
-    rootStructure := [.vBE] }
+  { verb := minnast, stType := .inherent, rootStructure := [.vBE] }
 
-/-- *leiðast* 'be bored' — subject-experiencer *-st* ([wood-2015]).
-    *Mér leiðist í skólanum* 'I am bored in school'. -/
+/-- *leiðast* 'be bored' — dative-subject experiencer; Voice is non-thematic and
+    the experiencer is an applied dative ([wood-2015] §5.4:
+    *Henni leiddist Ólafur* 'she was bored by Ólafur'). -/
 def leidast_info : StVerbInfo :=
-  { verb := leidast
-    stType := .subjectExp
-    rootStructure := [.vBE] }
+  { verb := leidast, stType := .subjectExp, rootStructure := [.vBE] }
 
-/-- *kyssa* / *kyssast* 'kiss' — reciprocal *-st* ([wood-2015]).
-    *Þau kyssast* 'They kissed (each other)'. -/
+/-- *kyssa* / *kyssast* 'kiss' — reciprocal *-st* ([wood-2015] §6.5:
+    *Jóna og Siggi kysstust* 'Jóna and Siggi kissed'). -/
 def kyssast_info : StVerbInfo :=
-  { verb := kyssast
-    stType := .reciprocal
-    rootStructure := [.vCAUSE, .vGO, .vBE] }
+  { verb := kyssast, stType := .reciprocal, rootStructure := [] }
 
-/-- All *-st* verb projections (excludes *brotna* which is *-na*-marked). -/
+/-- All *-st*-marked verb projections, in the order of the Fragment roster
+    (excludes *brotna*, which is *-na*-marked). -/
 def allStInfo : List StVerbInfo :=
   [opnast_info, splundrast_info, seljast_info, lesast_info,
-   badast_info, klaedast_info, nalgast_info, minnast_info,
+   setjast_info, klaedast_info, nalgast_info, minnast_info,
    leidast_info, kyssast_info]
 
--- ============================================================================
--- § 1: Voice–CAUSE Independence (Ch. 3)
--- ============================================================================
+/-! ### *-st* is a specifier-occupant, not a Voice exponent -/
 
-/-- The causal relation is shared across causative and anticausative
-    alternants ([wood-2015] Ch. 3). Modeled using
-    [cuervo-2003]'s VerbHead decomposition: causative
-    [vDO, vCAUSE, vGO, vBE]; anticausative [vCAUSE, vGO, vBE]. -/
-theorem cause_shared_across_alternation :
-    let causativeDecomp := buildDecomposition voiceAgent opnast_info.rootStructure
-    let anticausativeDecomp := buildDecomposition voiceAnticausative opnast_info.rootStructure
-    hasCause causativeDecomp = true ∧
-    hasCause anticausativeDecomp = true := by
+/-- Wood's thesis in one line: *-st* spells out no Voice or v head ([wood-2015]
+    Ch. 2). It occupies a specifier; the head exponents are *-na* / *-Ø* / *-ka*. -/
+theorem st_not_head_exponent : ¬ AnticausativeMarking.st.IsHeadExponent := by decide
+
+/-- *-na* (Voice{∅}) and *-ka* (v) spell out different heads, so they never
+    co-occur ([wood-2015] §3.3): the genuine exponents partition Voice/v space. -/
+theorem na_ka_distinct_loci :
+    AnticausativeMarking.na.exponentOf = some .voiceBare ∧
+    AnticausativeMarking.ka.exponentOf = some .vHead ∧
+    AnticausativeMarking.na.exponentOf ≠ AnticausativeMarking.ka.exponentOf := by
   decide
 
-/-- The causative alternation for *opna* / *opnast*: same root,
-    different Voice. -/
+/-- On the same alternation class, *brotna* takes the head exponent *-na*
+    (Voice{∅}) while *opnast* takes *-st*, which spells out no head — the
+    *-st* / *-na* contrast read off real verbs ([wood-2015] §3.3.2). -/
+theorem brotna_na_vs_opnast_st :
+    brotna_info.marking.exponentOf = some .voiceBare ∧
+    ¬ opnast_info.marking.IsHeadExponent := by decide
+
+/-! ### Merge site, not Voice flavor, distinguishes the constructions -/
+
+/-- An agentive Voice already fills SpecVoiceP with its agent, so under agentive
+    Voice *-st* must merge *lower* than SpecVoiceP — in SpecpP, the figure
+    reflexive ([wood-2015]: "since Voice is agentive, -st would not be able to
+    merge in SpecVoiceP"). Derived from `site` / `voiceFlavor`, not stipulated. -/
+theorem agentive_st_merges_low (t : StType) :
+    t.voiceFlavor = .agentive → t.site ≠ .specVoiceD := by
+  cases t <;> decide
+
+/-- *-st* is not the exponent of a single Voice head: it co-occurs both with a
+    θ-assigning Voice (figure reflexives have an agent) and with a non-θ Voice
+    (anticausatives). No Voice head has both profiles, so the affixal view is
+    refuted ([wood-2015] Ch. 4). -/
+theorem st_not_single_voice_exponent :
+    StType.figureReflexive.voiceFlavor.thetaRole.isSome = true ∧
+    StType.anticausative.voiceFlavor.thetaRole = none := by decide
+
+/-! ### Voice–CAUSE independence (Ch. 3) -/
+
+/-- The causal head is shared across the causative/anticausative alternation of
+    *opna* / *opnast*: agentive Voice prepends vDO (causative), non-thematic
+    Voice does not (inchoative), but CAUSE is present in both ([wood-2015]
+    Ch. 3, in [cuervo-2003] decomposition). -/
 theorem opna_alternation :
     isCausative (buildDecomposition voiceAgent opnast_info.rootStructure) = true ∧
-    isInchoative (buildDecomposition voiceAnticausative opnast_info.rootStructure) = true := by
+    isInchoative (buildDecomposition voiceAnticausative opnast_info.rootStructure) = true ∧
+    hasCause (buildDecomposition voiceAnticausative opnast_info.rootStructure) = true := by
   decide
 
-/-- Voice alone determines causativity for change-of-state roots. -/
-theorem voice_alone_determines_causativity :
-    buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE] =
-      [.vDO, .vCAUSE, .vGO, .vBE] ∧
-    buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE] =
-      [.vCAUSE, .vGO, .vBE] := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 2: -st as Elsewhere Exponent (Ch. 3, §3.3–3.5)
--- ============================================================================
-
-/-- *-st* spells out Voice across all six construction types.
-    Despite morphological uniformity, the underlying Voice
-    configurations differ in ±θ/±D parameters. -/
-theorem st_covers_all_types :
-    voiceToSuffix (StType.voiceFlavor .anticausative) = some "-st" ∧
-    voiceToSuffix (StType.voiceFlavor .middle) = some "-st" ∧
-    voiceToSuffix (StType.voiceFlavor .reflexive) = some "-st" ∧
-    voiceToSuffix (StType.voiceFlavor .subjectExp) = some "-st" ∧
-    voiceToSuffix (StType.voiceFlavor .inherent) = some "-st" ∧
-    voiceToSuffix (StType.voiceFlavor .reciprocal) = some "-st" :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Despite shared morphology, the Voice configurations differ.
-    Anticausative and middle Voice do NOT assign θ; reflexive does.
-    Stated using the canonical Voice constants from `Voice.lean`. -/
-theorem st_hides_theta_diversity :
-    ¬ voiceAnticausative.AssignsTheta ∧
-    ¬ voiceMiddle.AssignsTheta ∧
-    voiceReflexive.AssignsTheta := by decide
-
-/-- Lookup table for `StType.voiceFlavor` on the four
-    typologically-distinct cells. Bundled into a single theorem so
-    the table appears as one proof obligation. -/
-theorem stType_voiceFlavor_table :
-    StType.voiceFlavor .anticausative = .nonThematic ∧
-    StType.voiceFlavor .middle = .expletive ∧
-    StType.voiceFlavor .reflexive = .reflexive ∧
-    StType.voiceFlavor .subjectExp = .experiencer :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- *-st* spells out all non-agentive Voice flavors. -/
-theorem st_spells_out_nonagentive :
-    voiceToSuffix .nonThematic = some "-st" ∧
-    voiceToSuffix .expletive = some "-st" ∧
-    voiceToSuffix .reflexive = some "-st" ∧
-    voiceToSuffix .experiencer = some "-st" := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Active Voice gets no suffix. -/
-theorem active_no_suffix : voiceToSuffix .agentive = none := rfl
-
--- ============================================================================
--- § 3: ±θ/±D Parameterization
--- ([alexiadou-schaefer-2015], [wood-marantz-2017])
--- ============================================================================
-
-/-- The six *-st* types occupy distinct cells in the ±θ/±D space.
-    [wood-2015]'s Voice_{D}/Voice_{∅} distinction maps to the ±D
-    axis (`selectsSpecifier`); Voice semantics (Ø vs AGENT) maps to
-    the ±λx axis. -/
+/-- The constructions occupy distinct cells of the ±D / ±λx Voice space
+    ([alexiadou-schaefer-2015]): anticausative and
+    subject-experiencer host a non-thematic [+D, −λx] Voice, figure reflexives a
+    thematic [+D, +λx] Voice, the generic middle a specifierless [−D] Voice. -/
 theorem parametric_diversity :
-    -- [−θ, +D]: anticausative
-    (VoiceFlavor.toParams (StType.voiceFlavor .anticausative)).selectsSpecifier = some true ∧
-    (VoiceFlavor.toParams (StType.voiceFlavor .anticausative)).extArgSemantics = some .expletive ∧
-    -- [−θ, −D]: middle
-    (VoiceFlavor.toParams (StType.voiceFlavor .middle)).selectsSpecifier = some false ∧
-    (VoiceFlavor.toParams (StType.voiceFlavor .middle)).extArgSemantics = some .expletive ∧
-    -- [+θ, +D]: reflexive
-    (VoiceFlavor.toParams (StType.voiceFlavor .reflexive)).selectsSpecifier = some true ∧
-    (VoiceFlavor.toParams (StType.voiceFlavor .reflexive)).extArgSemantics = some .thematicArgument ∧
-    -- [+θ, +D]: experiencer
-    (VoiceFlavor.toParams (StType.voiceFlavor .subjectExp)).selectsSpecifier = some true ∧
-    (VoiceFlavor.toParams (StType.voiceFlavor .subjectExp)).extArgSemantics = some .thematicArgument :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    (StType.anticausative.voiceFlavor.toParams).extArgSemantics = some .expletive ∧
+    (StType.subjectExp.voiceFlavor.toParams).extArgSemantics = some .expletive ∧
+    (StType.figureReflexive.voiceFlavor.toParams).extArgSemantics = some .thematicArgument ∧
+    (StType.middle.voiceFlavor.toParams).selectsSpecifier = some false := by
+  decide
 
--- ============================================================================
--- § 4: High vs Low Applicative Interaction
--- ([pylkkanen-2008], [schaefer-2008])
--- ============================================================================
+/-! ### Applicatives and applied datives (Ch. 5) -/
 
-/-- High applicatives are blocked when Voice has no event semantics
-    ([pylkkanen-2008], [schaefer-2008]). Note: [wood-2015]
-    Ch. 5 argues Icelandic lacks true high applicatives; the asymmetry
-    formalized here follows the cross-linguistic typology. -/
-theorem ethical_blocked_in_middle :
-    ¬ applHigh.Licensed voiceMiddle := by decide
-
-/-- Low applicatives survive when Voice has no event semantics
-    because they relate to the theme, not the event
-    ([pylkkanen-2008]). -/
-theorem possessive_survives_middle :
-    applLowRecipient.Licensed voiceMiddle := by decide
-
-/-- In anticausatives, possessive datives also survive. -/
-theorem possessive_survives_anticausative :
-    applLowRecipient.Licensed voiceAnticausative := by decide
-
-/-- High applicatives ARE licensed with agentive Voice. -/
-theorem ethical_ok_in_active :
-    applHigh.Licensed voiceAgent := by decide
-
-/-- The full asymmetry: high applicatives require Voice with event
-    semantics; low applicatives are independent of Voice
-    ([pylkkanen-2008], [schaefer-2008]). -/
-theorem dative_voice_asymmetry :
-    ¬ applHigh.Licensed voiceMiddle ∧
-    applHigh.Licensed voiceAgent ∧
-    applLowRecipient.Licensed voiceMiddle ∧
-    applLowRecipient.Licensed voiceAgent := by decide
-
--- ============================================================================
--- § 5: Theta Role Predictions
--- ============================================================================
-
-/-- Reflexive Voice predicts agent θ-role (agent acts on self). -/
-theorem reflexive_predicts_agent :
-    VoiceFlavor.thetaRole .reflexive = some .agent := rfl
-
-/-- Experiencer Voice predicts experiencer θ-role. -/
-theorem experiencer_predicts_experiencer :
-    VoiceFlavor.thetaRole .experiencer = some .experiencer := rfl
-
-/-- Anticausative Voice predicts no external θ-role. -/
-theorem anticausative_predicts_none :
-    VoiceFlavor.thetaRole .nonThematic = none := rfl
-
-/-- Middle Voice predicts no external θ-role. -/
-theorem middle_predicts_none :
-    VoiceFlavor.thetaRole .expletive = none := rfl
-
--- ============================================================================
--- § 6: -st Blocked from SpecApplP ([wood-2015] Ch. 5, §5.3.2)
--- ============================================================================
-
-/-- [wood-2015]'s key applicative claim: *-st* cannot merge in
-    SpecApplP because Appl assigns dative case and *-st* lacks case
-    features. -/
+/-- *-st* cannot occupy SpecApplP: Appl assigns dative and *-st* is caseless
+    (`caseOf = none`), whereas a case-bearing DP can ([wood-2015] §5.3.2). This
+    instantiates the substrate `ApplHead.SpecCanBearCase` mechanism for *-st*. -/
 theorem st_blocked_from_specApplP :
     ¬ applLowRecipient.SpecCanBearCase (none : Option Case) ∧
     applLowRecipient.SpecCanBearCase (some Case.dat) := by decide
 
-/-- In ditransitive *-st* alternations, Appl datives are retained
-    because Appl assigns case independently of Voice
-    ([wood-2015] Ch. 5, §5.3.1). -/
-theorem appl_dative_retained_with_st :
+/-- Applied datives are otherwise retained under *-st*: Appl licenses its dative
+    independently of Voice. The high/low asymmetry — a high (ethical) applicative
+    needs an event-semantic Voice and is blocked in middles, a low (recipient)
+    applicative is not — follows [pylkkanen-2008] / [schaefer-2008], not
+    [wood-2015]'s Icelandic-specific claim that Icelandic lacks true high
+    applicatives ([wood-2015] §5.2.1, §5.3.1). -/
+theorem dative_voice_asymmetry :
+    ¬ applHigh.Licensed voiceMiddle ∧
+    applHigh.Licensed voiceAgent ∧
+    applLowRecipient.Licensed voiceMiddle ∧
     applLowRecipient.Licensed voiceAnticausative := by decide
 
--- ============================================================================
--- § 7: -st/-na Complementary Distribution (Ch. 3)
--- ============================================================================
+/-! ### Consistency over the verb roster -/
 
-/-- *-st* and *-na* spell out different Voice projection loci
-    ([wood-2015] Ch. 3). *-st* picks out Voice_{D}; *-na* picks
-    out Voice_{∅}. They never co-occur. Stated structurally over
-    `VoiceProjectionLocus`, so the inequality is genuine pattern
-    distinction (not a string-equality coincidence on labels). -/
-theorem st_na_different_voice_loci :
-    AnticausativeMarking.voiceLocus .st ≠
-    AnticausativeMarking.voiceLocus .na := by decide
-
-/-- *-ka* spells out v, distinct from both Voice exponents. -/
-theorem ka_distinct_from_voice_exponents :
-    AnticausativeMarking.voiceLocus .ka ≠
-    AnticausativeMarking.voiceLocus .st ∧
-    AnticausativeMarking.voiceLocus .ka ≠
-    AnticausativeMarking.voiceLocus .na := by decide
-
-/-- *brotna* is *-na* marked, not *-st* marked. -/
-theorem brotna_is_na : brotna_info.marking = .na := rfl
-
-/-- All *-st* verbs in `allStInfo` carry the `.st` marking. -/
-theorem all_st_info_are_st_marked :
-    allStInfo.all (fun i => i.marking == .st) = true := by decide
-
-/-- Different anticausative roots select different Voice types:
-    *opnast* takes *-st* (Voice_{D}), *brotna* takes *-na* (Voice_{∅}).
-    The marking choice is lexically determined per root. -/
-theorem anticausative_marking_varies :
-    opnast_info.marking = .st ∧
-    brotna_info.marking = .na := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 8: Fragment Consistency (over `StVerbInfo`)
--- ============================================================================
-
-/-- All anticausative *-st* verbs have inchoative root structure
-    (no vDO, with vGO + vBE per [cuervo-2003]). -/
-theorem anticausative_is_inchoative :
-    (allStInfo.filter (fun i => i.stType == .anticausative)).all
+/-- Every anticausative *-st* verb has an inchoative event structure (change +
+    result, no agentive vDO; [cuervo-2003]). -/
+theorem anticausatives_inchoative :
+    (allStInfo.filter (·.stType == .anticausative)).all
       (fun i => isInchoative i.rootStructure) = true := by decide
 
-/-- All anticausative *-st* verbs have change-of-state root structure
-    (contains vGO; finer projection than `isInchoative`). -/
-theorem anticausative_verbs_are_cos :
-    (allStInfo.filter (fun i => i.stType == .anticausative)).all
-      (fun i => i.rootStructure.contains .vGO) = true := by decide
-
-/-- Inherent *-st* verbs lack active variants. -/
-theorem inherent_no_active :
-    (allStInfo.filter (fun i => i.stType == .inherent)).all
+/-- Inherent and subject-experiencer *-st* verbs lack an active variant — their
+    *-st* is lexicalized, or (for the psych verbs) the sole argument is a dative
+    ([wood-2015] §2.3.4, §5.4). -/
+theorem lexicalized_lack_active :
+    (allStInfo.filter (fun i => i.stType == .inherent || i.stType == .subjectExp)).all
       (fun i => !i.verb.hasActiveVariant) = true := by decide
-
-/-- Subject-experiencer *-st* verbs lack active variants. -/
-theorem subjectexp_no_active :
-    (allStInfo.filter (fun i => i.stType == .subjectExp)).all
-      (fun i => !i.verb.hasActiveVariant) = true := by decide
-
-/-- Ten *-st* verb info entries (excludes *brotna*, which is *-na*-marked). -/
-theorem info_count : allStInfo.length = 10 := rfl
 
 end Wood2015

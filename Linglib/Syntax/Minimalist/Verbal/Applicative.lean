@@ -28,7 +28,6 @@ The high/low distinction is read off the Merge complement's category via the hea
 - `ApplType.RequiresEventSemantics`, `IsLow`: structural predicates read off the complement.
 - `ApplHead.Licensed`: licensing of an applicative by a Voice head.
 - `ApplHead.SpecCanBearCase`: case-based blocking of SpecApplP ([wood-2015]).
-- `ApplType.toSO`: the applicative realized as an actual `SO.merge`.
 
 ## References
 
@@ -79,24 +78,6 @@ def ApplType.RequiresThemeInComplement (a : ApplType) : Prop := a.IsLow
 
 instance : DecidablePred ApplType.RequiresThemeInComplement :=
   fun a => inferInstanceAs (Decidable a.IsLow)
-
-/-! ### Semantic relations -/
-
-/-- The semantic relation an applicative head contributes ([pylkkanen-2008]). -/
-inductive ApplSemantics where
-  /-- Individual–event relation (high Appl). -/
-  | eventRelation
-  /-- `HAVE` relation (low recipient). -/
-  | possessionTo
-  /-- `HAVE-FROM` relation (low source). -/
-  | possessionFrom
-  deriving DecidableEq, Repr
-
-/-- The semantic contribution of each applicative type. -/
-def ApplType.semantics : ApplType → ApplSemantics
-  | .high         => .eventRelation
-  | .lowRecipient => .possessionTo
-  | .lowSource    => .possessionFrom
 
 /-! ### The applicative head -/
 
@@ -172,19 +153,5 @@ def ApplHead.SpecCanBearCase {α : Type*} [HasCase α] (appl : ApplHead) (x : α
 
 instance {α : Type*} [HasCase α] (appl : ApplHead) (x : α) :
     Decidable (appl.SpecCanBearCase x) := inferInstanceAs (Decidable (_ → _))
-
-/-- The caseless clitic -st (`caseOf = none`) cannot occupy SpecApplP ([wood-2015]). -/
-theorem caseless_blocked_in_specAppl :
-    ¬ applLowRecipient.SpecCanBearCase (none : Option Case) := by decide
-
-/-- A case-bearing DP can occupy SpecApplP. -/
-theorem caseful_ok_in_specAppl :
-    applLowRecipient.SpecCanBearCase (some Case.dat) := by decide
-
-/-! ### The applicative as a Merge -/
-
-/-- An applicative as an actual Merge: the `Appl` head `SO.merge`d with `a.complementSO`. -/
-noncomputable def ApplType.toSO (a : ApplType) (applId complId : Nat := 0) : SO :=
-  SO.merge (SO.mkLeaf .Appl [a.complement] applId) (a.complementSO complId)
 
 end Minimalist
