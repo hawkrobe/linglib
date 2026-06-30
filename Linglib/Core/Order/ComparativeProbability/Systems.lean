@@ -117,7 +117,7 @@ on `Set W`), so the instances below register its relation as a comparative-
 probability order, and the validity patterns V1–V13 transfer from
 `ComparativeProbability.Patterns` by instance resolution. -/
 
-namespace EpistemicSystemFA
+section
 
 variable {W : Type*} (sys : EpistemicSystemFA W)
 
@@ -129,13 +129,16 @@ instance : ComparativeProbability.IsQualitativeAdditive sys.ge := ⟨sys.additiv
 
 instance : ComparativeProbability.IsNontrivial sys.ge := ⟨sys.nonTrivial⟩
 
-end EpistemicSystemFA
+end
 
 /-! ### Consequences of the FA axioms -/
 
+section
+variable {W : Type*} (sys : EpistemicSystemFA W)
+
 /-- **Add common context**: for `C` disjoint from both `X` and `Y`,
     `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
-lemma ge_union_context {W : Type*} (sys : EpistemicSystemFA W) (X Y C : Set W)
+lemma ge_union_context (X Y C : Set W)
     (hCX : Disjoint C X) (hCY : Disjoint C Y) :
     sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
   rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
@@ -151,8 +154,7 @@ lemma ge_union_context {W : Type*} (sys : EpistemicSystemFA W) (X Y C : Set W)
     disjoint right parts merge into their union, even with pivot overlaps.
     Derivation: add context to each side, transit through `X₂ ∪ Y₁`, then
     restore the pivot `X₂ ∩ Y₁` via Axiom A. -/
-lemma ge_generalized_merge {W : Type*} (sys : EpistemicSystemFA W)
-    {X₁ Y₁ X₂ Y₂ : Set W}
+lemma ge_generalized_merge {X₁ Y₁ X₂ Y₂ : Set W}
     (h1 : sys.ge X₁ Y₁) (h2 : sys.ge X₂ Y₂)
     (hX : Disjoint X₁ X₂) (hY : Disjoint Y₁ Y₂) :
     sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
@@ -182,17 +184,17 @@ lemma ge_generalized_merge {W : Type*} (sys : EpistemicSystemFA W)
 
 /-- **Mono-domination**: a valid comparison `X ≿ Y` with `X ⊆ P` and `Q ⊆ Y`
     proves `P ≿ Q`. -/
-lemma ge_mono_dominated {W : Type*} (sys : EpistemicSystemFA W)
-    {X Y P Q : Set W} (h : sys.ge X Y) (hXP : X ⊆ P) (hQY : Q ⊆ Y) :
+lemma ge_mono_dominated {X Y P Q : Set W} (h : sys.ge X Y) (hXP : X ⊆ P) (hQY : Q ⊆ Y) :
     sys.ge P Q :=
   sys.trans _ _ _ (sys.mono X P hXP) (sys.trans _ _ _ h (sys.mono Q Y hQY))
 
 /-- `P ≿ ∅` always (monotonicity). -/
-lemma ge_empty_target {W : Type*} (sys : EpistemicSystemFA W) (P : Set W) :
-    sys.ge P ∅ :=
+lemma ge_empty_target (P : Set W) : sys.ge P ∅ :=
   sys.mono ∅ P (Set.empty_subset P)
 
--- ── Measure Semantics ───────────────────────────
+end
+
+/-! ### Measure semantics -/
 
 /-- A finitely additive probability measure on subsets of `W`, valued in an
     ordered field `K`. The value type is left generic: instantiate at `ℚ` for the
@@ -209,22 +211,22 @@ structure FinAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedRi
   /-- Normalization -/
   total : mu Set.univ = 1
 
-namespace FinAddMeasure
+section
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
-def inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop :=
+def FinAddMeasure.inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop :=
   m.mu A ≥ m.mu B
 
 /-- Measure-induced ≿ is reflexive. -/
-theorem inducedGe_axiomR (m : FinAddMeasure K W) :
+theorem FinAddMeasure.inducedGe_axiomR (m : FinAddMeasure K W) :
     Reflexive m.inducedGe :=
   fun _ => le_refl _
 
 /-- Measure-induced ≿ satisfies monotonicity.
     A ⊆ B → B = A ∪ (B \ A) → μ(B) = μ(A) + μ(B \ A) ≥ μ(A). -/
-theorem inducedGe_axiomT (m : FinAddMeasure K W) :
+theorem FinAddMeasure.inducedGe_axiomT (m : FinAddMeasure K W) :
     ∀ A B : Set W, A ⊆ B → m.inducedGe B A := by
   intro A B hAB
   show m.mu B ≥ m.mu A
@@ -233,25 +235,25 @@ theorem inducedGe_axiomT (m : FinAddMeasure K W) :
 
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
-@[simp] theorem mu_empty (m : FinAddMeasure K W) : m.mu ∅ = 0 := by
+@[simp] theorem FinAddMeasure.mu_empty (m : FinAddMeasure K W) : m.mu ∅ = 0 := by
   have hempty := m.additive ∅ ∅ disjoint_bot_left
   rw [Set.empty_union] at hempty; linarith
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
-theorem mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
+theorem FinAddMeasure.mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m.mu A ≤ m.mu B := by
   have hunion := m.additive A (B \ A) disjoint_sdiff_self_right
   rw [Set.union_sdiff_cancel h] at hunion; linarith [m.nonneg (B \ A)]
 
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
-theorem mu_compl (m : FinAddMeasure K W) (A : Set W) :
+theorem FinAddMeasure.mu_compl (m : FinAddMeasure K W) (A : Set W) :
     m.mu A + m.mu Aᶜ = 1 := by
   have hunion := m.additive A Aᶜ disjoint_compl_right
   rw [Set.union_compl_self] at hunion; linarith [m.total]
 
 /-- Qualitative additivity for a finitely additive measure: splitting `A` and `B`
     into the shared part `A ∩ B` and the private parts cancels the shared part. -/
-theorem mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
+theorem FinAddMeasure.mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
     m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A) := by
   have key : ∀ X Y : Set W, m.mu X = m.mu (X \ Y) + m.mu (X ∩ Y) := fun X Y => by
     conv_lhs => rw [(Set.sdiff_union_inter X Y).symm]
@@ -261,7 +263,7 @@ theorem mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
 /-- Every finitely additive measure satisfies the FA axioms.
     A fortiori from [holliday-icard-2013] Theorem 6 soundness,
     since every finitely additive measure is qualitatively additive. -/
-def toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
+def FinAddMeasure.toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := m.inducedGe_axiomR
   mono := m.inducedGe_axiomT
@@ -272,9 +274,9 @@ def toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.mu_qadd
 
-end FinAddMeasure
+end
 
--- ── Qualitatively Additive Measures ──────────────
+/-! ### Qualitatively additive measures -/
 
 /-- A qualitatively additive measure on subsets of W.
     Unlike `FinAddMeasure`, this does NOT require μ(A ∪ B) = μ(A) + μ(B)
@@ -298,17 +300,17 @@ structure QualAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedR
   /-- Qualitative additivity: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A) -/
   qualAdd : ∀ A B, mu A ≥ mu B ↔ mu (A \ B) ≥ mu (B \ A)
 
-namespace QualAddMeasure
+section
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
-def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop :=
+def QualAddMeasure.inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop :=
   m.mu A ≥ m.mu B
 
 /-- Monotonicity for qualitatively additive measures:
     A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
-theorem inducedGe_axiomT (m : QualAddMeasure K W) :
+theorem QualAddMeasure.inducedGe_axiomT (m : QualAddMeasure K W) :
     ∀ A B : Set W, A ⊆ B → m.inducedGe B A := by
   intro A B hAB
   show m.mu B ≥ m.mu A
@@ -317,7 +319,7 @@ theorem inducedGe_axiomT (m : QualAddMeasure K W) :
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
     every qualitatively additive measure model satisfies the FA axioms. -/
-def toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W where
+def QualAddMeasure.toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
   mono := m.inducedGe_axiomT
@@ -328,7 +330,7 @@ def toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W where
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.qualAdd
 
-end QualAddMeasure
+end
 
 /-- Every finitely additive measure is qualitatively additive.
     Proof: μ(A) = μ(A \ B) + μ(A ∩ B) and μ(B) = μ(B \ A) + μ(A ∩ B),
@@ -413,7 +415,7 @@ order (monotone, transitive, qualitatively additive, non-trivial), so the
 validity patterns V1–V13 transfer for free from `ComparativeProbability.Patterns`
 by instance resolution — no per-measure arithmetic. -/
 
-namespace FinAddMeasure
+section
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
   (m : FinAddMeasure K W)
@@ -426,7 +428,7 @@ instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toSy
 
 instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toSystemFA.nonTrivial⟩
 
-end FinAddMeasure
+end
 
 /-! ### Generalized finite cancellation and GFC orders
 
@@ -492,15 +494,15 @@ structure GFCOrder (W : Type*) where
   /-- Generalized finite cancellation. -/
   gfc : GeneralizedFiniteCancellation ge
 
-namespace GFCOrder
+section
 
 variable {W : Type*} (G : GFCOrder W)
 
 /-- A GFC order satisfies finite cancellation. -/
-theorem fc : FiniteCancellation G.ge := FiniteCancellation.of_gfc G.gfc
+theorem GFCOrder.fc : FiniteCancellation G.ge := FiniteCancellation.of_gfc G.gfc
 
 /-- Transitivity is derived from cancellation (balanced sequence `⟨A,B,C⟩`/`⟨B,C,A⟩`). -/
-theorem trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge A C := by
+theorem GFCOrder.trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge A C := by
   refine G.fc [(A, B), (B, C)] C A (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]; omega
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
@@ -510,7 +512,7 @@ theorem trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge A C := by
 
 /-- Monotonicity is derived from positivity + cancellation
     (balanced sequence `⟨B∖A, A⟩`/`⟨∅, B⟩`). -/
-theorem mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
+theorem GFCOrder.mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
   refine G.fc [(B \ A, ∅)] A B (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
       Set.mem_empty_iff_false, if_false, Set.mem_sdiff]
@@ -523,7 +525,7 @@ theorem mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
 
 /-- Complement reversal is derived from cancellation
     (balanced sequence `⟨A, Aᶜ⟩`/`⟨B, Bᶜ⟩`). -/
-theorem complRev {A B : Set W} (hAB : G.ge A B) : G.ge Bᶜ Aᶜ := by
+theorem GFCOrder.complRev {A B : Set W} (hAB : G.ge A B) : G.ge Bᶜ Aᶜ := by
   refine G.fc [(A, B)] Aᶜ Bᶜ (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
       Set.mem_compl_iff]
@@ -532,18 +534,18 @@ theorem complRev {A B : Set W} (hAB : G.ge A B) : G.ge Bᶜ Aᶜ := by
     rcases hp with rfl
     exact hAB
 
-end GFCOrder
+end
 
 /-! #### Measures induce GFC orders -/
 
-namespace FinAddMeasure
+section
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
   {W : Type*} [Fintype W] (m : FinAddMeasure K W)
 
 omit [Fintype W] in
 /-- The measure of a finite set is the sum of its singleton measures. -/
-lemma muFinsetSum (S : Finset W) :
+lemma FinAddMeasure.muFinsetSum (S : Finset W) :
     m.mu (↑S : Set W) = ∑ i ∈ S, m.mu {i} := by
   classical
   induction S using Finset.induction_on with
@@ -554,7 +556,7 @@ lemma muFinsetSum (S : Finset W) :
     rw [Finset.coe_insert, Set.insert_eq, m.additive _ _ hdisj, ih, Finset.sum_insert ha]
 
 open scoped Classical in
-private lemma muEqSumIte (E : Set W) :
+private lemma FinAddMeasure.muEqSumIte (E : Set W) :
     m.mu E = ∑ s, if s ∈ E then m.mu {s} else 0 := by
   classical
   have h : m.mu E = ∑ i ∈ E.toFinset, m.mu {i} := by
@@ -564,7 +566,7 @@ private lemma muEqSumIte (E : Set W) :
   refine Finset.sum_congr ?_ (fun _ _ => rfl)
   ext s; simp [Set.mem_toFinset]
 
-private lemma muListSum (L : List (Set W)) :
+private lemma FinAddMeasure.muListSum (L : List (Set W)) :
     (L.map m.mu).sum = ∑ s, m.mu {s} * (seqCount s L : K) := by
   classical
   induction L with
@@ -579,13 +581,13 @@ private lemma muListSum (L : List (Set W)) :
     · simp only [hs, if_true]; rw [mul_add, mul_one]
     · simp [hs]
 
-private lemma muListSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : Balanced L₁ L₂) :
+private lemma FinAddMeasure.muListSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : Balanced L₁ L₂) :
     (L₁.map m.mu).sum = (L₂.map m.mu).sum := by
   rw [muListSum m L₁, muListSum m L₂]
   exact Finset.sum_congr rfl (fun s _ => by rw [h s])
 
 omit [Fintype W] in
-private lemma sum_mono {prem : List (Set W × Set W)}
+private lemma FinAddMeasure.sum_mono {prem : List (Set W × Set W)}
     (hprem : ∀ p ∈ prem, m.inducedGe p.1 p.2) :
     ((prem.map Prod.snd).map m.mu).sum ≤ ((prem.map Prod.fst).map m.mu).sum := by
   induction prem with
@@ -598,7 +600,7 @@ private lemma sum_mono {prem : List (Set W × Set W)}
 /-- Every finitely additive measure's induced order is a GFC order: the
     Scott / Alon–Lehrer soundness direction (a single measure `μ` is the
     nonempty set `{μ}`). -/
-def toGFCOrder : GFCOrder W where
+def FinAddMeasure.toGFCOrder : GFCOrder W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
   positivity := fun A => by simpa [inducedGe, m.mu_empty] using m.nonneg A
@@ -613,6 +615,6 @@ def toGFCOrder : GFCOrder W where
     have hkey : (r : K) * m.mu X ≤ (r : K) * m.mu Y := by nlinarith [sum_mono m hprem]
     exact le_of_mul_le_mul_left hkey hr0
 
-end FinAddMeasure
+end
 
 end ComparativeProbability
