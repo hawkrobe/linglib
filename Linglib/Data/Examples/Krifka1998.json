@@ -1,0 +1,82 @@
+[
+  {
+    "id": "krifka1998_arrive_at_store",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 arrive (bounded path)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary arrived at the store in five minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary arrived at the store in five minutes.",
+    "context": "Inherently directed motion with a specified goal: the path is bounded (has an endpoint), so the VP is telic and accepts the in-X adverbial.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pathShape", "bounded"],
+      ["expectedTelicity", "telic"]
+    ],
+    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings, eq. numbers dropped pending PDF check.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_leave_the_house",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 leave (source path)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary left the house in a moment.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary left the house in a moment.",
+    "context": "Leave verb specifying a source: the path is bounded at its origin, so the VP is telic and accepts the in-X adverbial.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pathShape", "source"],
+      ["expectedTelicity", "telic"]
+    ],
+    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_run_to_park",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 run to (bounded PP)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary ran to the park in ten minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary ran to the park in ten minutes.",
+    "context": "Manner-of-motion verb plus a goal PP: the directional to-PP supplies a bounded path, so the otherwise atelic verb yields a telic VP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pathShape", "bounded"],
+      ["expectedTelicity", "telic"]
+    ],
+    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_run_towards_park",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 run towards (unbounded PP)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary ran towards the park for ten minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary ran towards the park for ten minutes.",
+    "context": "Manner-of-motion verb plus a towards-PP: direction without a goal supplies an unbounded path, so the VP is atelic and takes for-X, not in-X.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pathShape", "unbounded"],
+      ["expectedTelicity", "atelic"]
+    ],
+    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings.",
+    "metaLanguage": "stan1293"
+  }
+]
