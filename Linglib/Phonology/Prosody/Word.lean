@@ -24,7 +24,8 @@ here abstract the foot level. Prominence-head marking is likewise a refinement, 
 
 ## Main definitions
 
-* `isFootTree` / `isWordTree` — structural `Bool` well-formedness checkers (decide-reducible).
+* `isWordTree` — the structural `Bool` Layeredness checker (decide-reducible; the foot arm
+  reuses `Foot.isFootTree`).
 * `IsWord` / `Word` — the Layeredness predicate and the carrier subtype it cuts out.
 * `Word.recursionCount` — the `No-Recursion` violation count, read off the carrier (`noRec`).
 * `noRec` / `parseInto` — the violable OT constraints over the carrier (`Constraint Tree`).
@@ -104,14 +105,8 @@ def moraCount : Tree → Nat := fun t => go t where
 subtype. Both checkers mirror the `go`/`goList` structural recursion of `noRec`, so they
 are `decide`-reducible — a winner can be certified `IsWord by decide`. -/
 
-/-- A well-formed **foot** subtree: an `f`-node dominating a non-empty list of σ-leaves
-    ([selkirk-1980]; matches `Foot.toProsTree`). -/
-def isFootTree : Tree → Bool
-  | .node a cs => decide (a.level = .f) && !cs.isEmpty &&
-      cs.all (fun | .node b ds => decide (b.level = .σ) && ds.isEmpty)
-
 /-- The structural Layeredness checker: an ω-node every daughter of which is a well-formed
-    foot, a recursive ω (the ω-over-ω arm), or a stray σ-leaf. -/
+    foot (`isFootTree`, in `Foot`), a recursive ω (the ω-over-ω arm), or a stray σ-leaf. -/
 def isWordTree : Tree → Bool := fun t => go t where
   go : Tree → Bool
     | .node a cs => decide (a.level = .ω) && goList cs
