@@ -176,7 +176,7 @@ noncomputable def kratzerDefault {W : Type*} [Fintype W] [DecidableEq W]
 open ComparativeProbability in
 /-- In finite W, if every singleton in A has measure 0, then μ(A) = 0. -/
 private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
-    (m : FinAddMeasure W) (A : Set W)
+    (m : FinAddMeasure ℚ W) (A : Set W)
     (h : ∀ w ∈ A, m.mu {w} = 0) : m.mu A = 0 := by
   classical
   suffices key : ∀ (s : Finset W), (∀ w ∈ s, m.mu {w} = 0) → m.mu ↑s = 0 by
@@ -245,7 +245,7 @@ open ComparativeProbability in
 /-- If μ({w}) > 0 and μ(A) = 1, then w ∈ A.
     Worlds with positive measure satisfy all probability-1 beliefs. -/
 private theorem mem_of_mu_singleton_pos {W : Type*}
-    (m : FinAddMeasure W) (w : W) (A : Set W)
+    (m : FinAddMeasure ℚ W) (w : W) (A : Set W)
     (hw : 0 < m.mu {w}) (hA : m.mu A = 1) : w ∈ A := by
   by_contra hw_not
   have hAc : m.mu Aᶜ = 0 := by have := m.mu_compl A; linarith

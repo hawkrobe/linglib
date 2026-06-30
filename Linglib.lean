@@ -1355,6 +1355,7 @@ import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Accent
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Footing
+import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Prosody.Mora
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Word

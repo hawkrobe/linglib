@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosody.Word
+import Linglib.Phonology.Prosody.Grid
 
 /-!
 # Moraic trochees in Cairene Arabic ([hayes-1995] §4.1.3)

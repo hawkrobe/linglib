@@ -91,17 +91,6 @@ def Cancellation (n : ℕ) (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
 -- § 3. Easy Direction: representable → cancellation
 -- ═══════════════════════════════════════════════════════════════
 
-private lemma mu_finset_sum {n : ℕ} (m : FinAddMeasure (Fin n))
-    (S : Finset (Fin n)) : m.mu ↑S = S.sum (fun i => m.mu {i}) := by
-  induction S using Finset.induction_on with
-  | empty => simp [Finset.coe_empty, m.mu_empty]
-  | @insert a S ha ih =>
-    have hdisj : Disjoint ({a} : Set (Fin n)) ↑S :=
-      Set.disjoint_singleton_left.mpr (fun h => ha (Finset.mem_coe.mp h))
-    have hins : (↑(insert a S) : Set (Fin n)) = ({a} : Set (Fin n)) ∪ ↑S := by
-      rw [Finset.coe_insert, Set.insert_eq]
-    rw [hins, m.additive _ _ hdisj, ih, Finset.sum_insert ha]
-
 private lemma list_sum_pos {l : List ℚ}
     (hnn : ∀ x ∈ l, (0 : ℚ) ≤ x) (hp : ∃ x ∈ l, (0 : ℚ) < x) :
     (0 : ℚ) < l.sum := by
@@ -119,23 +108,23 @@ private lemma list_sum_pos {l : List ℚ}
 /-- The portfolio value (weighted sum of measure differences) equals the
     dot product of singleton measures with the weighted comparison sums.
     Proved by list induction on the portfolio; the key step connects
-    comparison vectors to measure differences via `mu_finset_sum`. -/
+    comparison vectors to measure differences via `FinAddMeasure.muFinsetSum`. -/
 private lemma finset_sum_as_univ {n : ℕ} (S : Finset (Fin n)) (f : Fin n → ℚ) :
     S.sum f = Finset.univ.sum (fun i => if i ∈ S then f i else 0) := by
   rw [← Finset.sum_filter]; congr 1; ext x; simp
 
-private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure (Fin n))
+private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     (L R : Finset (Fin n)) (hd : Disjoint L R) :
     m.mu ↑L - m.mu ↑R =
     Finset.univ.sum (fun i : Fin n =>
       m.mu {i} * ((comparisonVec n L R i : ℤ) : ℚ)) := by
-  rw [mu_finset_sum m L, mu_finset_sum m R, finset_sum_as_univ L, finset_sum_as_univ R,
+  rw [m.muFinsetSum L, m.muFinsetSum R, finset_sum_as_univ L, finset_sum_as_univ R,
       ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [comparisonVec]
   by_cases hL : i ∈ L <;> by_cases hR : i ∈ R <;> simp_all [Finset.disjoint_left.mp hd]
 
-private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
+private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     (P : Portfolio n) :
     (P.map (fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right))).sum =
     Finset.univ.sum (fun i => m.mu {i} * Portfolio.weightedSum P i) := by
@@ -163,7 +152,7 @@ private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
     by neutrality. -/
 theorem representable_implies_cancellation {n : ℕ}
     {ge : Set (Fin n) → Set (Fin n) → Prop}
-    (m : FinAddMeasure (Fin n))
+    (m : FinAddMeasure ℚ (Fin n))
     (hm : ∀ A B, ge A B ↔ m.inducedGe A B) :
     Cancellation n ge := by
   intro P hValid hNeutral ⟨wc, hwc_mem, hwc_strict⟩
@@ -241,7 +230,7 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   -- Normalization: all atoms in univ
   have h_total : atomMu p Set.univ = 1 := by
     simp only [atomMu, Set.mem_univ, ite_true, hsum]
-  let m : FinAddMeasure (Fin n) := ⟨atomMu p, h_nonneg, h_additive, h_total⟩
+  let m : FinAddMeasure ℚ (Fin n) := ⟨atomMu p, h_nonneg, h_additive, h_total⟩
   -- Representation via reduce_to_disjoint
   refine ⟨m, reduce_to_disjoint sys m (fun C D hdisj => ?_)⟩
   -- Convert Sets C, D to Finsets via filter

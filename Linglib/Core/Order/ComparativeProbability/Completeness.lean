@@ -100,7 +100,7 @@ private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
     the dominated-set count, affinely renormalised so μ(∅) = 0 and μ(Ω) = 1. -/
 theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
-    ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+    ∃ (m : QualAddMeasure ℚ W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
   classical
   set E : ℚ := (belowCount sys ∅ : ℚ) with hE
   set N : ℚ := (Fintype.card (Finset W) : ℚ) with hN
@@ -128,8 +128,8 @@ theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
     and right-union (J). Proved by Finset induction on B.toFinset. -/
 private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
     {ge : Set W → Set W → Prop}
-    (hT : EpistemicAxiom.T ge)
-    (hJ : EpistemicAxiom.J ge)
+    (hT : ∀ A B : Set W, A ⊆ B → ge B A)
+    (hJ : RightUnion ge)
     (A B : Set W) (h : ∀ b ∈ B, ge A {b}) : ge A B := by
   classical
   suffices ∀ (s : Finset W), (∀ b, b ∈ s → ge A {b}) → ge A (↑s) by
@@ -162,8 +162,8 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
 theorem exists_dominationLift_repr {W : Type*} [Fintype W]
     (sys : EpistemicSystemW W)
     (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C)
-    (hJ : EpistemicAxiom.J sys.ge)
-    (hDS : EpistemicAxiom.DS sys.ge) :
+    (hJ : RightUnion sys.ge)
+    (hDS : DeterminedBySingletons sys.ge) :
     ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
       ∀ A B, sys.ge A B ↔ dominationLift ge_w A B := by
   refine ⟨fun u v => sys.ge {u} {v}, fun w => sys.refl {w}, fun A B => ?_⟩
@@ -200,7 +200,7 @@ private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
 /-- **Algebraic bridge**: Axiom A and the finite additivity property
     of `AdditiveScale` are equivalent for any comparison on sets. -/
 theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
-    EpistemicAxiom.A ge ↔
+    (∀ A B : Set W, ge A B ↔ ge (A \ B) (B \ A)) ↔
     (∀ A B C : Set W, (∀ x, x ∈ A → x ∉ C) → (∀ x, x ∈ B → x ∉ C) →
       (ge A B ↔ ge (A ∪ C) (B ∪ C))) := by
   constructor
