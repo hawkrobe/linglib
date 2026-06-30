@@ -3,14 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Phonology.OCP
 import Linglib.Phonology.Autosegmental.Realization
 
 /-!
 # OCP-merging collapse of autosegmental representations
 
-[jardine-2019]'s tone realization `g_T` is **OCP-merging**: `g_T(Hⁿ)` is a *single*
-H node multiply associated to the `n` morae, not `n` separate H nodes. The
+A merging tone realization ([jardine-2019]; the melody-merging naming function of
+[jardine-heinz-2015], Mende example) is **OCP-merging**: a tonal melody `Hⁿ` realizes as a
+*single* H node multiply associated to the `n` morae, not `n` separate H nodes. The
 project's `Autosegmental.realize` (`Realization.lean`) instead uses the bridge-only
 `concat` (the categorical coproduct), which keeps the `n` H nodes apart. This file
 supplies the missing merge as a post-processing retraction on the upper tier:
@@ -20,7 +22,7 @@ supplies the missing merge as a post-processing retraction on the upper tier:
   `(k, j)` is repointed to `(ρ k, j)`, where `ρ` (`runIdx`) sends an upper position to
   the index of its run in the collapsed tier. The lower tier is untouched, so a merged
   node keeps *all* the morae its run was associated with (multiple association).
-* `realizeMerged := collapseAR ∘ realize` — the OCP-merging realization `g_T`.
+* `realizeMerged := collapseAR ∘ realize` — the OCP-merging realization.
 
 The upper-tier collapse is exactly `OCP.collapse` (= `List.destutter (· ≠ ·)`); the
 link pushforward is the `SimpleGraph.map`/`Quiver.Push` idiom
@@ -29,7 +31,7 @@ link pushforward is the `SimpleGraph.map`/`Quiver.Push` idiom
 
 ## The AR-level OCP quotient monoid
 
-`collapseAR` is the AR-level lift of `OCP.collapseHom`: a retraction onto the OCP-clean
+`collapseAR` is the AR-level lift of `FreeMonoid.destutterHom`: a retraction onto the OCP-clean
 ARs that descends to a quotient of the concat monoid `AR α β`. The key congruence is
 `collapseAR_concat` — the AR shadow of `OCP.collapse_append`, whose links half reduces to
 `runIdx` commuting with the collapse-collapse seam (`runIdx_append_collapse_left/right`,
@@ -44,6 +46,14 @@ in turn the boundary-length lemma `List.destutter_append_length_clean`). It bund
 * `collapseAR_id_on_clean` — `collapseAR` retracts onto its OCP-clean fixed points.
 * `instMonoidCleanAR` / `collapseARHom` / `ocpARQuotientEquiv` — the AR-level OCP quotient
   monoid, its bundled hom, and the first-isomorphism equivalence.
+* `upperHom` / `upperHomClean_comp_collapseARHom` — the upper-tier projection and the
+  decategorification square: the AR-level OCP quotient maps onto the tier-level one.
+* `autosegment_mul_self` / `ocpPresentation` — the tier-level OCP-clean monoid is presented
+  by idempotent autosegments `⟨α | a · a = a⟩`; the OCP is a monoidal **quotient**, the
+  counterpart to the No-Crossing Constraint's monoidal **subcategory** (`ncc_isMonoidal`).
+* `collapse_not_reflective` — that quotient does *not* categorify: `collapse` is not a
+  reflector (a morphism can split a geminate), so the OCP quotient lives on the object monoid,
+  not the category — the precise sense in which OCP and NCC differ.
 -/
 
 namespace Autosegmental
@@ -242,7 +252,7 @@ theorem collapseGraph_concat {A B : Graph α β}
 /-! ### Collapse on ARs -/
 
 /-- **OCP-merging collapse** on ARs: `collapseGraph` repackaged with its in-bounds
-    proof. The AR-level lift of `OCP.collapseHom` — the run-collapse carrying the
+    proof. The AR-level lift of `FreeMonoid.destutterHom` — the run-collapse carrying the
     association lines the flat tier-string discards. -/
 def collapseAR (A : AR α β) : AR α β where
   toGraph := collapseGraph A.toGraph
@@ -269,7 +279,7 @@ theorem collapseAR_concat (A B : AR α β) :
 The base object `AR α β` carries the concatenation monoid (`AR.instMonoid`); `collapseAR`
 is the OCP retraction onto its OCP-clean fixed points. `collapseAR_concat` is the
 homomorphism law, so `collapseAR` bundles as `collapseARHom : AR α β →* {A // IsCleanAR A}`
-— the AR-level lift of `OCP.collapseHom`, carrying the association lines the flat
+— the AR-level lift of `FreeMonoid.destutterHom`, carrying the association lines the flat
 tier-string discards. As a mathlib quotient, `{A // IsCleanAR A}` is
 `AR α β ⧸ Con.ker collapseARHom` (`ocpARQuotientEquiv`). -/
 
@@ -355,7 +365,7 @@ instance instMonoidCleanAR : Monoid {A : AR α β // IsCleanAR A} where
     rw [← AR.mul_eq_concat, mul_one, collapseAR_id_on_clean A.2]
 
 /-- The bundled AR-level OCP quotient map. `collapseAR_concat` is its `map_mul`; the AR-level
-    lift of `OCP.collapseHom`. -/
+    lift of `FreeMonoid.destutterHom`. -/
 def collapseARHom : AR α β →* {A : AR α β // IsCleanAR A} where
   toFun A := ⟨collapseAR A, isCleanAR_collapseAR _⟩
   map_one' := Subtype.ext collapseAR_one
@@ -376,18 +386,189 @@ theorem collapseARHom_surjective :
 
 /-- **First isomorphism theorem for the AR-level OCP quotient.** The abstract quotient
     `AR α β ⧸ OCP` is the concrete OCP-clean model `{A // IsCleanAR A}` ([jardine-2019]'s
-    OCP-merging realization, now carrying the association lines). -/
-noncomputable def ocpARQuotientEquiv :
+    OCP-merging realization, now carrying the association lines). Computable: an OCP-clean AR
+    is its own collapse, the right inverse. -/
+def ocpARQuotientEquiv :
     (ocpConAR (α := α) (β := β)).Quotient ≃* {A : AR α β // IsCleanAR A} :=
-  Con.quotientKerEquivOfSurjective collapseARHom collapseARHom_surjective
+  Con.quotientKerEquivOfRightInverse collapseARHom (·.1)
+    (fun C => Subtype.ext (collapseAR_id_on_clean C.2))
+
+/-! ### The decategorification square: the OCP as a monoidal quotient
+
+Forgetting morphisms and the lower tier, the upper-tier projection `upperHom : AR α β →*
+FreeMonoid α` (concatenation appends upper tiers) carries the AR-level OCP quotient down to
+the *tier-level* one, and the square
+
+```
+        (AR α β, concat)  ──collapseARHom──►  {A // IsCleanAR A}
+              │                                      │
+        upperHom │                                   │ upperHomClean
+              ▼                                       ▼
+        FreeMonoid α ──destutterHom──►  {l // IsClean l}  ≃  PresentedMonoid ⟨α | a · a = a⟩
+```
+
+commutes (`upperHomClean_comp_collapseARHom`). The bottom-right model is the monoid
+**presented by idempotent autosegments** `⟨α | a · a = a⟩` (`ocpPresentation`, via
+`FreeMonoid.presentedMonoidEquiv`): each autosegment is idempotent (`autosegment_mul_self`),
+which *is* the OCP. This is the precise sense in which the OCP is "monoidal" — a monoidal
+**quotient**, in contrast to the No-Crossing Constraint, which is a monoidal **subcategory**
+(`ncc_isMonoidal`); the OCP-clean objects are *not* closed under the monoidal product
+(`ocp_not_isMonoidal`), so no sub-object will do. The square is a `MonoidHom` identity in the
+decategorified monoid `(AR α β, concat)`; the `IsMonoidal` facts live one level up, in the
+monoidal category `(AR α β, ⊗ = coproduct)`. -/
+
+/-- The upper tier of a collapse is the tier-level collapse of the upper tier: the engine of
+the decategorification square. -/
+@[simp] theorem upper_collapseAR (A : AR α β) :
+    (collapseAR A).upper.toList = collapse A.upper.toList := by
+  simp [collapseAR, collapseGraph_upper, LabeledTuple.toList_ofList]
+
+/-- **Upper-tier projection** as a monoid hom `AR α β →* FreeMonoid α`: morpheme
+concatenation appends upper tiers (`AR.concat_upper`, `LabeledTuple.toList_concat`). The
+decategorification of an autosegmental representation to its melodic tier string. -/
+def upperHom : AR α β →* FreeMonoid α where
+  toFun A := FreeMonoid.ofList A.upper.toList
+  map_one' := rfl
+  map_mul' A B := by
+    simp only [AR.mul_eq_concat, AR.concat_upper, LabeledTuple.toList_concat,
+      FreeMonoid.ofList_append]
+
+omit [DecidableEq α] in
+@[simp] theorem upperHom_apply (A : AR α β) :
+    upperHom A = FreeMonoid.ofList A.upper.toList := rfl
+
+/-- The projection restricts to OCP-clean representations onto OCP-clean tiers: `IsCleanAR`
+is by definition cleanness of the upper tier. -/
+def upperHomClean : {A : AR α β // IsCleanAR A} →* {l : List α // IsClean l} where
+  toFun A := ⟨A.1.upper.toList, A.2⟩
+  map_one' := rfl
+  map_mul' A B := Subtype.ext <| by
+    show (collapseAR (A.1.concat B.1)).upper.toList =
+      List.destutterConcat A.1.upper.toList B.1.upper.toList
+    rw [upper_collapseAR, AR.concat_upper, LabeledTuple.toList_concat]
+    rfl
+
+/-- **The decategorification square commutes.** Projecting to the upper tier intertwines the
+AR-level OCP quotient map with the tier-level one (`FreeMonoid.destutterHom`): collapse then
+project equals project then collapse. -/
+theorem upperHomClean_comp_collapseARHom :
+    upperHomClean.comp (collapseARHom (α := α) (β := β))
+      = FreeMonoid.destutterHom.comp upperHom := by
+  refine MonoidHom.ext fun A => Subtype.ext ?_
+  show (collapseAR A).upper.toList = (FreeMonoid.ofList A.upper.toList).toList.destutter (· ≠ ·)
+  rw [upper_collapseAR, FreeMonoid.toList_ofList]
+  rfl
+
+/-! #### The OCP-clean tier monoid is presented by idempotent autosegments -/
+
+/-- A single autosegment as a (trivially) OCP-clean tier. -/
+def autosegment (a : α) : {l : List α // IsClean l} := ⟨[a], isClean_singleton a⟩
+
+/-- **The OCP, as a monoid equation.** Fusion-gluing an autosegment to a copy of itself
+returns the one autosegment: each generator is idempotent, `a · a = a`. This is the
+*tier-string* shadow of OCP-driven fusion ([mccarthy-1986]'s gemination); the multiple
+association it creates — one melody node linked to several timing slots — lives at the AR
+level (`collapseARHom`), which the tier-string projection discards. -/
+@[simp] theorem autosegment_mul_self (a : α) :
+    autosegment a * autosegment a = autosegment a :=
+  Subtype.ext (by simp [autosegment, List.coe_mul, List.destutterConcat, List.destutter_pair])
+
+/-- **The OCP-clean tier monoid is the presented monoid `⟨α | a · a = a⟩`**
+(`FreeMonoid.presentedMonoidEquiv`), with `collapse` computing its normal forms — the
+bottom-right corner of the decategorification square. With `ocp_not_isMonoidal`, this is the
+precise content of "the OCP is monoidal": a monoidal *quotient*, the counterpart to the
+No-Crossing Constraint's monoidal *subcategory* (`ncc_isMonoidal`). -/
+def ocpPresentation :
+    {l : List α // IsClean l} ≃* PresentedMonoid (FreeMonoid.destutterRel α) :=
+  FreeMonoid.presentedMonoidEquiv.symm
+
+/-! #### The OCP quotient does not categorify: `collapse` is not a reflector
+
+`collapseAR` is an idempotent retraction on *objects* (`collapseAR_idempotent`,
+`collapseAR_id_on_clean`), so one might hope OCP-clean were a *reflective subcategory* of `AR`
+with `collapseAR` the reflector — the exact categorical dual of `ncc_isMonoidal`. It is
+**not**. An autosegmental morphism is an arbitrary label-preserving position map, so it can
+send a morpheme-internal geminate to two *distinct* like nodes of a clean target; the
+collapse, having already merged the geminate into one node, cannot separate them, so no
+universal factorization exists. The OCP quotient is therefore irreducibly decategorified: it
+lives on the object monoid `(AR, concat)`, not on the category. -/
+
+/-- Source with an upper-tier geminate `[true, true]` (not OCP-clean). -/
+private abbrev gemSrc : AR Bool Unit := ⟨⟨.ofList [true, true], .empty, ∅⟩, by decide⟩
+
+/-- Clean target `[true, false, true]`: the two `true`s are non-adjacent. -/
+private abbrev cleanTgt : AR Bool Unit := ⟨⟨.ofList [true, false, true], .empty, ∅⟩, by decide⟩
+
+/-- The **geminate-splitting morphism** `[true, true] ⟶ [true, false, true]`, sending the two
+`true` nodes to the *distinct* clean positions 0 and 2 — a valid label-preserving morphism. -/
+private abbrev splitHom : gemSrc ⟶ cleanTgt :=
+  { fU := { toFun := fun i => if i.val = 0 then ⟨0, by decide⟩ else ⟨2, by decide⟩
+            label_comp := by decide }
+    fL := { toFun := id, label_comp := rfl }
+    links_preserve := by intro i j _ _ h; simp at h }
+
+/-- **`collapse` is not a reflector.** OCP-clean is not a reflective subcategory of `AR`:
+there is a clean target `B` and a morphism `g : A ⟶ B` injective on the upper tier (it keeps
+a geminate apart) out of a source `A` whose collapse strictly merges that tier. Such a `g`
+cannot factor through the collapse — the dual of `ncc_isMonoidal` fails, and the OCP quotient
+exists only after decategorification. -/
+theorem collapse_not_reflective :
+    ∃ (A B : AR Bool Unit) (g : A ⟶ B),
+      IsCleanAR B ∧ Function.Injective g.fU.toFun ∧
+        (collapseAR A).upper.len < A.upper.len :=
+  ⟨gemSrc, cleanTgt, splitHom, by decide, by decide, by decide⟩
+
+/-! #### J&H Theorem 5 and the tier asymmetry
+
+[jardine-heinz-2015] build the OCP merge *into* their concatenation `◦`, and their **Theorem
+5** is that `◦` preserves the OCP. Here `◦` is `gconcatAR` (collapse after the bare coproduct
+`concat`), and Theorem 5 is `isCleanAR_gconcatAR`: OCP-clean ARs are closed under
+fusion-concatenation, where they are *not* closed under the bare coproduct
+(`ocp_not_isMonoidal`). That is the genuine sub-vs-quotient asymmetry — the NCC survives the
+coproduct (`ncc_isMonoidal`), the OCP needs the merge.
+
+The merge acts on the *upper* (melody) tier only: `collapseAR` leaves the lower (timing) tier
+untouched (`collapseAR_lower`). So the two tier projections carry different algebra — the
+upper is destuttered (`upper_collapseAR`, the OCP quotient), the lower is **free**, invariant
+under collapse (`lowerHom_collapseAR`). This is [jardine-heinz-2015]'s §7 prediction in
+algebraic form: the melody tier fuses, so contour tones are *bounded*; the timing tier does
+not, so spreading is *unbounded*. -/
+
+/-- **[jardine-heinz-2015] Theorem 5.** OCP-clean ARs are closed under fusion-concatenation
+`◦` (`gconcatAR`): the merge built into `◦` preserves the OCP, where the bare coproduct
+`concat` does not (`ocp_not_isMonoidal`). The positive half of the sub-vs-quotient dichotomy. -/
+theorem isCleanAR_gconcatAR (A B : AR α β) : IsCleanAR (gconcatAR A B) :=
+  isCleanAR_collapseAR _
+
+/-- `collapseAR` leaves the lower (timing) tier untouched: the merge is upper-tier only. -/
+@[simp] theorem collapseAR_lower (A : AR α β) : (collapseAR A).lower = A.lower := rfl
+
+/-- **Lower-tier projection** as a monoid hom `AR α β →* FreeMonoid β`: concatenation appends
+lower tiers. The timing-tier decategorification, dual to `upperHom`. -/
+def lowerHom : AR α β →* FreeMonoid β where
+  toFun A := FreeMonoid.ofList A.lower.toList
+  map_one' := rfl
+  map_mul' A B := by
+    simp only [AR.mul_eq_concat, AR.concat_lower, LabeledTuple.toList_concat,
+      FreeMonoid.ofList_append]
+
+omit [DecidableEq α] in
+@[simp] theorem lowerHom_apply (A : AR α β) :
+    lowerHom A = FreeMonoid.ofList A.lower.toList := rfl
+
+/-- **The timing tier is free.** Unlike the melody tier — which `collapse` destutters
+(`upper_collapseAR`) — the lower tier is *invariant* under collapse: it is not quotiented.
+The algebraic form of the spreading/contour asymmetry ([jardine-heinz-2015] §7). -/
+@[simp] theorem lowerHom_collapseAR (A : AR α β) : lowerHom (collapseAR A) = lowerHom A := by
+  simp [lowerHom]
 
 /-! ### The OCP-merging realization -/
 
 variable {S : Type*}
 
-/-- **The OCP-merging realization** `g_T` ([jardine-2019]): realize the string via the
+/-- **The OCP-merging realization** ([jardine-2019]): realize the string via the
     bridge-only `concat`, then fuse adjacent identical upper nodes
-    (`collapseAR ∘ realize`). Unlike `realize`, `realizeMerged gT (Hⁿ)` is a single H
+    (`collapseAR ∘ realize`). Unlike `realize`, `realizeMerged g₀ (Hⁿ)` is a single H
     node multiply associated — the merge that renders unbounded tone plateauing a
     *local* AR pattern. -/
 def realizeMerged (g₀ : S → AR α β) (w : List S) : AR α β := collapseAR (realize g₀ w)
