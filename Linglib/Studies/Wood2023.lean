@@ -63,7 +63,7 @@ namespace Wood2023
 open Morphology.DM.Allosemy
 open Icelandic.Nominalizations
 open Icelandic.Predicates
-open Wood2015 (opnast_info)
+open Wood2015 (opnastInfo)
 
 -- ============================================================================
 -- § 1: Reading Derivation from Allosemes (Ch. 5)
@@ -299,12 +299,12 @@ theorem vaeda_all_restrictions :
 /-- *opnun* 'opening' connects to *opnast* 'open-ST' (anticausative).
     The nominalization is built on the same root as the -st verb;
     the -st voice morphology does not appear in the nominal
-    (nominalizations lack Voice). The Wood-2015 stType for *opnast*
-    is sourced from `opnast_info` in the Wood2015 study file (the
+    (nominalizations lack Voice). The Wood-2015 construction for *opnast*
+    is sourced from `opnastInfo` in the Wood2015 study file (the
     Fragment carries only consensus lexical data). -/
 theorem opnun_connects_to_st_verb :
     opnun.stVerb = some opnast ∧
-    opnast_info.stType = Wood2015.StType.anticausative := ⟨rfl, rfl⟩
+    opnastInfo.construction = Wood2015.Construction.anticausative := ⟨rfl, rfl⟩
 
 /-- Anticausative -st verbs can be nominalized: the nominalization
     lacks Voice (hence no -st), but retains the root's meaning.
@@ -317,9 +317,9 @@ theorem st_verb_nominalization_drops_voice :
 
 /-- The Voice flavor of the -st verb is irrelevant for the nominal:
     nominalizations derive readings from v/n allosemy, not from Voice.
-    The voice flavor is read from `Wood2015.opnast_info`. -/
+    The voice flavor is read from `Wood2015.opnastInfo`. -/
 theorem voice_irrelevant_for_nom_reading :
-    opnast_info.stType.voiceFlavor = .nonThematic ∧
+    opnastInfo.construction.voiceFlavor = .nonThematic ∧
     opnun.availableReadings.contains .complexEvent = true ∧
     opnun.availableReadings.contains .simpleEntity = true := by decide
 

@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Voice Head Flavors
-[chomsky-2001] [coon-2019] [cuervo-2003] [harley-2014] [kratzer-1996] [legate-2003] [schaefer-2008] [wood-2015]
+[chomsky-2001] [coon-2019] [cuervo-2003] [harley-2014] [kratzer-1996] [legate-2003] [martin-schaefer-kastner-2025] [schaefer-2008] [wood-2015]
 
 Voice heads introduce (or fail to introduce) external arguments.
 The key typology from [schaefer-2008]:
@@ -14,8 +14,8 @@ The key typology from [schaefer-2008]:
 - **NonThematic**: Semantically vacuous — no θ-role, but has a [D] feature
   requiring PF realization (anticausative SE in Romance; Muñoz [munoz-perez-2026])
 - **Expletive**: No specifier, no semantics (middle voice, dispositionals)
-- **Reflexive**: [+θ, +D] with reflexive binding ([wood-2015] Icelandic -st)
-- **Experiencer**: [+θ, +D] introducing experiencer ([wood-2015] subject-exp -st)
+- **Reflexive**: [+θ, +D] with reflexive binding (Romance *se*; [martin-schaefer-kastner-2025])
+- **Experiencer**: [+θ, +D] introducing an experiencer external argument (psych causatives)
 
 ## Key Claim
 
@@ -60,8 +60,9 @@ namespace Minimalist
     non-thematic Voice has no semantics (anticausative SE);
     expletive Voice has neither specifier nor semantics (middles);
     passive Voice checks Case without assigning θ ([collins-2005]: *by*);
-    reflexive Voice introduces agent that binds internal argument ([wood-2015]);
-    experiencer Voice introduces experiencer external argument ([wood-2015]). -/
+    reflexive Voice introduces an agent that binds the internal argument
+    (Romance *se*; [martin-schaefer-kastner-2025]);
+    experiencer Voice introduces an experiencer external argument. -/
 inductive VoiceFlavor where
   | agentive     -- Introduces external argument with agent θ-role ([kratzer-1996])
   | causer       -- Introduces causer ([schaefer-2008]: Voice_CAUSE)
@@ -70,8 +71,8 @@ inductive VoiceFlavor where
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
   | passive      -- Checks Case but does not assign θ ([collins-2005]: *by* heads VoiceP)
   | antipassive  -- Introduces agent with absolutive (not ergative) case; demotes object to oblique ([scott-2023])
-  | reflexive    -- [+θ, +D]: introduces agent, binds internal argument (Icelandic -st reflexive; [wood-2015])
-  | experiencer  -- [+θ, +D]: introduces experiencer external argument ([wood-2015] subject-experiencer -st)
+  | reflexive    -- [+θ, +D]: agent binds the internal argument (Romance se)
+  | experiencer  -- [+θ, +D]: introduces an experiencer external argument (psych causatives)
   deriving DecidableEq, Repr
 
 /-- The default phasehood for each Voice flavor under the
@@ -228,15 +229,19 @@ def voiceImpersonal : VoiceHead :=
 def voicePassive : VoiceHead :=
   { flavor := .passive, hasD := true, checksCase := true }
 
-/-- Reflexive Voice ([wood-2015]): introduces agent that is coreferent
-    with the internal argument. [+θ, +D], phase head (assigns θ).
-    Icelandic -st spells out this Voice in reflexive constructions. -/
+/-- Reflexive Voice: introduces an agent coreferent with the internal
+    argument. [+θ, +D], phase head (assigns θ). Realized e.g. by Romance
+    reflexive *se* ([martin-schaefer-kastner-2025]). NB [wood-2015]'s
+    Icelandic reflexive *-st* is a clitic in SpecpP (a figure reflexive),
+    **not** an exponent of this head — see `Wood2015`. -/
 def voiceReflexive : VoiceHead :=
   { flavor := .reflexive, hasD := true }
 
-/-- Experiencer Voice ([wood-2015]): introduces experiencer external
-    argument. [+θ, +D], phase head. Icelandic subject-experiencer -st verbs
-    (e.g., *leiðast* 'be bored'). -/
+/-- Experiencer Voice: introduces an experiencer external argument in
+    Spec,VoiceP. [+θ, +D], phase head. NB this is **not** [wood-2015]'s
+    Icelandic dative-subject experiencer (e.g. *leiðast* 'be bored'), where
+    Voice is non-thematic and the experiencer is an applied dative — see
+    `Wood2015`. -/
 def voiceExperiencer : VoiceHead :=
   { flavor := .experiencer, hasD := true }
 
