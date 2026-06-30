@@ -100,7 +100,7 @@ private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
     the dominated-set count, affinely renormalised so μ(∅) = 0 and μ(Ω) = 1. -/
 theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
-    ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+    ∃ (m : QualAddMeasure ℚ W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
   classical
   set E : ℚ := (belowCount sys ∅ : ℚ) with hE
   set N : ℚ := (Fintype.card (Finset W) : ℚ) with hN

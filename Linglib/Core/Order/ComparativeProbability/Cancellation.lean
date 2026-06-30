@@ -113,7 +113,7 @@ private lemma finset_sum_as_univ {n : ℕ} (S : Finset (Fin n)) (f : Fin n → �
     S.sum f = Finset.univ.sum (fun i => if i ∈ S then f i else 0) := by
   rw [← Finset.sum_filter]; congr 1; ext x; simp
 
-private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure (Fin n))
+private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     (L R : Finset (Fin n)) (hd : Disjoint L R) :
     m.mu ↑L - m.mu ↑R =
     Finset.univ.sum (fun i : Fin n =>
@@ -124,7 +124,7 @@ private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure (Fin n))
   simp only [comparisonVec]
   by_cases hL : i ∈ L <;> by_cases hR : i ∈ R <;> simp_all [Finset.disjoint_left.mp hd]
 
-private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
+private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
     (P : Portfolio n) :
     (P.map (fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right))).sum =
     Finset.univ.sum (fun i => m.mu {i} * Portfolio.weightedSum P i) := by
@@ -152,7 +152,7 @@ private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
     by neutrality. -/
 theorem representable_implies_cancellation {n : ℕ}
     {ge : Set (Fin n) → Set (Fin n) → Prop}
-    (m : FinAddMeasure (Fin n))
+    (m : FinAddMeasure ℚ (Fin n))
     (hm : ∀ A B, ge A B ↔ m.inducedGe A B) :
     Cancellation n ge := by
   intro P hValid hNeutral ⟨wc, hwc_mem, hwc_strict⟩
@@ -230,7 +230,7 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   -- Normalization: all atoms in univ
   have h_total : atomMu p Set.univ = 1 := by
     simp only [atomMu, Set.mem_univ, ite_true, hsum]
-  let m : FinAddMeasure (Fin n) := ⟨atomMu p, h_nonneg, h_additive, h_total⟩
+  let m : FinAddMeasure ℚ (Fin n) := ⟨atomMu p, h_nonneg, h_additive, h_total⟩
   -- Representation via reduce_to_disjoint
   refine ⟨m, reduce_to_disjoint sys m (fun C D hdisj => ?_)⟩
   -- Convert Sets C, D to Finsets via filter

@@ -49,15 +49,17 @@ relation classes); `dominationLift`/`matchingLift` are the Smyth (upper
 powerdomain) order and its injection refinement — order constructions mathlib
 lacks; `FinAddMeasure.inducedGe` is `Order.Preimage m.mu (· ≥ ·)`. `FinAddMeasure`
 overlaps mathlib's `MeasureTheory.AddContent` (an `AddCommMonoid`-valued
-finitely-additive content — here morally `AddContent (univ : Set (Set W)) ℚ` plus
+finitely-additive content — here morally `AddContent (univ : Set (Set W)) K` plus
 non-negativity and normalization) and could be re-founded on it.
 
-The value type is **ℚ**, not the paper's real `[0,1]`-valued measures
-([holliday-icard-2013], §4; [kraft-pratt-seidenberg-1959]). On a *finite* state
-space the two agree — a feasible system of rational linear inequalities has a
-rational solution, so an order is representable by a real measure iff by a
-rational one — and ℚ buys a constructive representation theory: the Scott/KPS
-direction is built on a computable rational Farkas/Fourier-Motzkin
+`FinAddMeasure`/`QualAddMeasure` are **generic over an ordered field `K`**
+(`[Field K] [LinearOrder K] [IsStrictOrderedRing K]`): instantiate at **ℝ** for
+the paper's literal `[0,1]`-valued measures ([holliday-icard-2013], §4;
+[kraft-pratt-seidenberg-1959]), or at **ℚ** for the constructive representation
+theory. On a *finite* state space the two agree — a feasible system of rational
+linear inequalities has a rational solution, so an order is representable by a
+real measure iff by a rational one — and only ℚ is computable: the Scott/KPS
+direction rides a computable rational Farkas/Fourier-Motzkin
 (`Core/Order/FourierMotzkin.lean`, deliberately avoiding mathlib's noncomputable
 real hyperplane-separation Farkas) and `decide`-checked finite models
 (`Representability.lean`), both of which a real value type would block.
@@ -232,10 +234,14 @@ lemma ge_empty_target {W : Type*} (sys : EpistemicSystemFA W) (P : Set W) :
 
 -- ── Measure Semantics ───────────────────────────
 
-/-- A finitely additive probability measure on subsets of W. -/
-structure FinAddMeasure (W : Type*) where
+/-- A finitely additive probability measure on subsets of `W`, valued in an
+    ordered field `K`. The value type is left generic: instantiate at `ℚ` for the
+    constructive, `decide`-able representation theory and at `ℝ` for the paper's
+    literal `[0,1]`-valued measures (see the module docstring). -/
+structure FinAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+    (W : Type*) where
   /-- The measure function -/
-  mu : Set W → ℚ
+  mu : Set W → K
   /-- Non-negativity -/
   nonneg : ∀ A, 0 ≤ mu A
   /-- Finite additivity: μ(A ∪ B) = μ(A) + μ(B) for disjoint A, B -/
@@ -245,20 +251,20 @@ structure FinAddMeasure (W : Type*) where
 
 namespace FinAddMeasure
 
-variable {W : Type*}
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
-def inducedGe (m : FinAddMeasure W) (A B : Set W) : Prop :=
+def inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop :=
   m.mu A ≥ m.mu B
 
 /-- Measure-induced ≿ is reflexive. -/
-theorem inducedGe_axiomR (m : FinAddMeasure W) :
+theorem inducedGe_axiomR (m : FinAddMeasure K W) :
     EpistemicAxiom.R m.inducedGe :=
   fun _ => le_refl _
 
 /-- Measure-induced ≿ satisfies monotonicity.
     A ⊆ B → B = A ∪ (B \ A) → μ(B) = μ(A) + μ(B \ A) ≥ μ(A). -/
-theorem inducedGe_axiomT (m : FinAddMeasure W) :
+theorem inducedGe_axiomT (m : FinAddMeasure K W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
@@ -267,25 +273,25 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
 
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
-@[simp] theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
+@[simp] theorem mu_empty (m : FinAddMeasure K W) : m.mu ∅ = 0 := by
   have hempty := m.additive ∅ ∅ disjoint_bot_left
   rw [Set.empty_union] at hempty; linarith
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
-theorem mu_mono (m : FinAddMeasure W) {A B : Set W} (h : A ⊆ B) :
+theorem mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m.mu A ≤ m.mu B := by
   have hunion := m.additive A (B \ A) disjoint_sdiff_self_right
   rw [Set.union_sdiff_cancel h] at hunion; linarith [m.nonneg (B \ A)]
 
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
-theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
+theorem mu_compl (m : FinAddMeasure K W) (A : Set W) :
     m.mu A + m.mu Aᶜ = 1 := by
   have hunion := m.additive A Aᶜ disjoint_compl_right
   rw [Set.union_compl_self] at hunion; linarith [m.total]
 
 /-- Qualitative additivity for a finitely additive measure: splitting `A` and `B`
     into the shared part `A ∩ B` and the private parts cancels the shared part. -/
-theorem mu_qadd (m : FinAddMeasure W) (A B : Set W) :
+theorem mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
     m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A) := by
   have key : ∀ X Y : Set W, m.mu X = m.mu (X \ Y) + m.mu (X ∩ Y) := fun X Y => by
     conv_lhs => rw [(Set.sdiff_union_inter X Y).symm]
@@ -295,7 +301,7 @@ theorem mu_qadd (m : FinAddMeasure W) (A B : Set W) :
 /-- Every finitely additive measure satisfies the FA axioms.
     A fortiori from [holliday-icard-2013] Theorem 6 soundness,
     since every finitely additive measure is qualitatively additive. -/
-def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
+def toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := m.inducedGe_axiomR
   mono := m.inducedGe_axiomT
@@ -319,9 +325,10 @@ end FinAddMeasure
     with respect to qualitatively additive measure models. The completeness
     construction (`exists_qualAddMeasure_repr`) realises μ(∅) = 0 by an
     affine renormalisation of the dominated-set count. -/
-structure QualAddMeasure (W : Type*) where
+structure QualAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+    (W : Type*) where
   /-- The measure function -/
-  mu : Set W → ℚ
+  mu : Set W → K
   /-- Non-negativity -/
   nonneg : ∀ A, 0 ≤ mu A
   /-- The impossible proposition has measure zero -/
@@ -333,15 +340,15 @@ structure QualAddMeasure (W : Type*) where
 
 namespace QualAddMeasure
 
-variable {W : Type*}
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
-def inducedGe (m : QualAddMeasure W) (A B : Set W) : Prop :=
+def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop :=
   m.mu A ≥ m.mu B
 
 /-- Monotonicity for qualitatively additive measures:
     A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
-theorem inducedGe_axiomT (m : QualAddMeasure W) :
+theorem inducedGe_axiomT (m : QualAddMeasure K W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
@@ -350,7 +357,7 @@ theorem inducedGe_axiomT (m : QualAddMeasure W) :
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
     every qualitatively additive measure model satisfies the FA axioms. -/
-def toSystemFA (m : QualAddMeasure W) : EpistemicSystemFA W where
+def toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
   mono := m.inducedGe_axiomT
@@ -366,7 +373,8 @@ end QualAddMeasure
 /-- Every finitely additive measure is qualitatively additive.
     Proof: μ(A) = μ(A \ B) + μ(A ∩ B) and μ(B) = μ(B \ A) + μ(A ∩ B),
     so μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A). -/
-def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : QualAddMeasure W where
+def FinAddMeasure.toQualAdd {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+    {W : Type*} (m : FinAddMeasure K W) : QualAddMeasure K W where
   mu := m.mu
   nonneg := m.nonneg
   mu_empty := m.mu_empty
@@ -467,7 +475,8 @@ by instance resolution — no per-measure arithmetic. -/
 
 namespace FinAddMeasure
 
-variable {W : Type*} (m : FinAddMeasure W)
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
+  (m : FinAddMeasure K W)
 
 instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.inducedGe_axiomT⟩
 
@@ -589,7 +598,8 @@ end GFCOrder
 
 namespace FinAddMeasure
 
-variable {W : Type*} [Fintype W] (m : FinAddMeasure W)
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+  {W : Type*} [Fintype W] (m : FinAddMeasure K W)
 
 omit [Fintype W] in
 /-- The measure of a finite set is the sum of its singleton measures. -/
@@ -615,7 +625,7 @@ private lemma muEqSumIte (E : Set W) :
   ext s; simp [Set.mem_toFinset]
 
 private lemma muListSum (L : List (Set W)) :
-    (L.map m.mu).sum = ∑ s, m.mu {s} * (seqCount s L : ℚ) := by
+    (L.map m.mu).sum = ∑ s, m.mu {s} * (seqCount s L : K) := by
   classical
   induction L with
   | nil => simp [seqCount]
@@ -658,9 +668,9 @@ def toGFCOrder : GFCOrder W where
     have hsum := muListSum_eq_of_balanced m hbal
     simp only [List.map_append, List.sum_append, List.map_replicate, List.sum_replicate,
       nsmul_eq_mul] at hsum
-    have hr0 : (0 : ℚ) < r := by exact_mod_cast Nat.lt_of_lt_of_le Nat.one_pos hr
+    have hr0 : (0 : K) < r := by exact_mod_cast Nat.lt_of_lt_of_le Nat.one_pos hr
     show m.mu X ≤ m.mu Y
-    have hkey : (r : ℚ) * m.mu X ≤ (r : ℚ) * m.mu Y := by nlinarith [sum_mono m hprem]
+    have hkey : (r : K) * m.mu X ≤ (r : K) * m.mu Y := by nlinarith [sum_mono m hprem]
     exact le_of_mul_le_mul_left hkey hr0
 
 end FinAddMeasure

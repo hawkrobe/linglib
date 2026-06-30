@@ -33,7 +33,7 @@ namespace ComparativeProbability
 /-- An FA system is **representable** when some finitely additive probability
     measure induces exactly its comparison relation. -/
 def Representable {W : Type*} (sys : EpistemicSystemFA W) : Prop :=
-  ∃ m : FinAddMeasure W, ∀ A B, sys.ge A B ↔ m.inducedGe A B
+  ∃ m : FinAddMeasure ℚ W, ∀ A B, sys.ge A B ↔ m.inducedGe A B
 
 -- ── KPS Counterexample Infrastructure ──────────────
 
@@ -119,11 +119,11 @@ noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
          kpsRank (toFS (A \ B)) ≥ kpsRank (toFS (B \ A))
     rw [toFS_diff, toFS_diff]; exact kps_additive_finset (toFS A) (toFS B)
 
-private theorem mu_pair (m : FinAddMeasure (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
+private theorem mu_pair (m : FinAddMeasure ℚ (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
     m.mu ({a, b} : Set (Fin 5)) = m.mu {a} + m.mu {b} := by
   rw [Set.insert_eq a {b}, m.additive {a} {b} (Set.disjoint_singleton.mpr hab)]
 
-private theorem mu_triple (m : FinAddMeasure (Fin 5)) (a b c : Fin 5)
+private theorem mu_triple (m : FinAddMeasure ℚ (Fin 5)) (a b c : Fin 5)
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     m.mu ({a, b, c} : Set (Fin 5)) = m.mu {a} + m.mu {b} + m.mu {c} := by
   rw [Set.insert_eq a ({b, c} : Set (Fin 5)), m.additive {a} {b, c}
@@ -193,7 +193,7 @@ attribute [local instance] Classical.propDecidable
 /-- Agreement on disjoint pairs suffices for full representability (Axiom A
     reduces every comparison to a disjoint one). -/
 theorem reduce_to_disjoint {W : Type*} (sys : EpistemicSystemFA W)
-    (m : FinAddMeasure W)
+    (m : FinAddMeasure ℚ W)
     (h : ∀ C D : Set W, Disjoint C D → (sys.ge C D ↔ m.inducedGe C D)) :
     ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
   intro A B
@@ -295,7 +295,7 @@ private theorem set_fin1_eq (A : Set (Fin 1)) : A = ∅ ∨ A = Set.univ := by
   · right; ext x; simp [Fin.eq_zero x, h]
   · left; ext x; exact ⟨fun hx => absurd (Fin.eq_zero x ▸ hx) h, fun hx => hx.elim⟩
 
-private noncomputable def measure_fin1 : FinAddMeasure (Fin 1) where
+private noncomputable def measure_fin1 : FinAddMeasure ℚ (Fin 1) where
   mu := fun A => if (0 : Fin 1) ∈ A then 1 else 0
   nonneg := fun A => by split <;> norm_num
   additive := fun A B hdisj => by
@@ -319,7 +319,7 @@ theorem representable_fin1 (sys : EpistemicSystemFA (Fin 1)) : Representable sys
 -- ── Card 2: Infrastructure ──────────────────────────
 
 private noncomputable def measure_fin2 (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    FinAddMeasure (Fin 2) where
+    FinAddMeasure ℚ (Fin 2) where
   mu := fun A =>
     (if (0 : Fin 2) ∈ A then a else 0) + (if (1 : Fin 2) ∈ A then 1 - a else 0)
   nonneg := fun A => add_nonneg (by split <;> [exact ha; exact le_refl _])
@@ -506,7 +506,7 @@ def transportFA {W α : Type*} (e : W ≃ α)
     (by rw [Equiv.range_eq_univ]; exact sys.nonTrivial)
 
 def transportMeasure {W α : Type*}
-    (e : W ≃ α) (m : FinAddMeasure α) : FinAddMeasure W where
+    (e : W ≃ α) (m : FinAddMeasure ℚ α) : FinAddMeasure ℚ W where
   mu := fun A => m.mu (e '' A)
   nonneg := fun A => m.nonneg _
   additive := fun A B hdisj => by
@@ -514,7 +514,7 @@ def transportMeasure {W α : Type*}
   total := by rw [Set.image_univ_of_surjective e.surjective]; exact m.total
 
 theorem transfer_repr {W α : Type*}
-    (e : W ≃ α) (sys : EpistemicSystemFA W) (m : FinAddMeasure α)
+    (e : W ≃ α) (sys : EpistemicSystemFA W) (m : FinAddMeasure ℚ α)
     (hm : ∀ A B : Set α, (transportFA e sys).ge A B ↔ m.inducedGe A B) :
     ∀ A B : Set W, sys.ge A B ↔ (transportMeasure e m).inducedGe A B := by
   intro A B

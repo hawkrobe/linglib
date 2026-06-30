@@ -50,7 +50,7 @@ section MeasureSemantics
 
 attribute [local instance] Classical.propDecidable
 
-private noncomputable def uf3 : FinAddMeasure (Fin 3) where
+private noncomputable def uf3 : FinAddMeasure ℚ (Fin 3) where
   mu := λ A =>
     (if (0 : Fin 3) ∈ A then (1:ℚ)/3 else 0) +
     (if (1 : Fin 3) ∈ A then (1:ℚ)/3 else 0) +
@@ -93,7 +93,7 @@ private theorem uf3_mu_compl' (A : Set (Fin 3)) : uf3.mu Aᶜ = 1 - uf3.mu A := 
 /-- I1 is invalid for measure semantics: with uniform measure on Fin 3,
     {0} ≿ {1} and {0} ≿ {2} but ¬({0} ≿ {1,2}). -/
 theorem measure_not_I1 :
-    ∃ m : FinAddMeasure (Fin 3), ¬patternI1 m.inducedGe := by
+    ∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI1 m.inducedGe := by
   refine ⟨uf3, λ hI1 => ?_⟩
   have h01 : uf3.inducedGe {(0 : Fin 3)} {1} := by
     unfold FinAddMeasure.inducedGe; rw [uf3_mu_0, uf3_mu_1]
@@ -106,7 +106,7 @@ theorem measure_not_I1 :
 /-- I2 is invalid for measure semantics: with uniform measure on Fin 3,
     {0,1} ≿ {0,1}ᶜ but ¬({0,1} ≿ univ). -/
 theorem measure_not_I2 :
-    ∃ m : FinAddMeasure (Fin 3), ¬patternI2 m.inducedGe := by
+    ∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI2 m.inducedGe := by
   refine ⟨uf3, λ hI2 => ?_⟩
   have hge : uf3.inducedGe ({0, 1} : Set (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ := by
     simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3_mu_compl']; linarith
@@ -116,7 +116,7 @@ theorem measure_not_I2 :
 /-- I3 is invalid for measure semantics: with uniform measure on Fin 3,
     Probably({0,1}) but ¬({0,1} ≿ univ). -/
 theorem measure_not_I3 :
-    ∃ m : FinAddMeasure (Fin 3), ¬patternI3 m.inducedGe := by
+    ∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI3 m.inducedGe := by
   refine ⟨uf3, λ hI3 => ?_⟩
   have hprob : Probably uf3.inducedGe ({0, 1} : Set (Fin 3)) := by
     refine ⟨by simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3_mu_compl']; linarith,
