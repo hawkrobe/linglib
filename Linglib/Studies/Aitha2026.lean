@@ -5,7 +5,6 @@ import Linglib.Morphology.Case.Allomorphy
 import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.Prosody.Foot
-import Linglib.Phonology.Prosody.Footing
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
 open Morphology.Case.Allomorphy

@@ -202,6 +202,34 @@ end Foot
 def footMorae (ws : List Syllable.Weight) : Nat :=
   ws.foldl (· + ·) 0
 
+/-! ### Footings
+[lamont-2022c] [kager-2007]
+
+A **footing**: a flat parse into feet and stray (unfooted) syllables, no designated head
+([lamont-2022c]); the σ-type `S` carries quantity (`Unit` insensitive, `Syllable.Weight` not).
+A prosodic word ω (`Prosody.Word`) is the headed refinement of a footing. -/
+
+/-- A footing: a flat sequence of feet and stray (unfooted) syllables, no designated head
+    ([lamont-2022c]). -/
+abbrev Footing (S : Type*) := List (Foot S ⊕ S)
+
+namespace Footing
+variable {S : Type*} (fc : Footing S)
+
+/-- The feet, left to right. -/
+def feet : List (Foot S) := fc.filterMap Sum.getLeft?
+
+/-- The stray (unfooted) syllables, left to right. -/
+def strays : List S := fc.filterMap Sum.getRight?
+
+/-- The total number of syllables, footed and stray. -/
+def size : Nat := (fc.map (Sum.elim Foot.length (fun _ => 1))).sum
+
+/-- The `Parse(σ)` violation profile ([lamont-2022c]): `1` at each stray σ, `0` at each footed. -/
+def strayMarks : List Nat := fc.flatMap (Sum.elim (List.replicate ·.length 0) (fun _ => [1]))
+
+end Footing
+
 /-! ### Worked examples -/
 
 -- Inventory falls out of the derived predicates (no `FootType` enum).

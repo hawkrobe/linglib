@@ -1,5 +1,4 @@
 import Linglib.Phonology.Prosody.Foot
-import Linglib.Phonology.Prosody.Footing
 import Linglib.Phonology.Constraints.Directional
 import Linglib.Core.Optimization.Evaluation
 
