@@ -139,16 +139,17 @@ variable {W : Type*} (sys : EpistemicSystemFA W)
 /-- **Add common context**: for `C` disjoint from both `X` and `Y`,
     `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
 lemma ge_union_context (X Y C : Set W)
-    (hCX : Disjoint C X) (hCY : Disjoint C Y) :
+    (hCX : Disjoint C X := by grind) (hCY : Disjoint C Y := by grind) :
     sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
   rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
-  have hCXl := Set.disjoint_left.mp hCX
-  have hCYl := Set.disjoint_left.mp hCY
-  have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
-    ext x; simp only [Set.mem_sdiff, Set.mem_union]; have := @hCXl x; tauto
-  have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
-    ext x; simp only [Set.mem_sdiff, Set.mem_union]; have := @hCYl x; tauto
-  rw [e1, e2]
+  congr! 1 <;> grind
+
+/-- Forward form of `ge_union_context`: context `C` disjoint from both sides
+    preserves `≿`. -/
+lemma ge_add_context {X Y C : Set W} (h : sys.ge X Y)
+    (hCX : Disjoint C X := by grind) (hCY : Disjoint C Y := by grind) :
+    sys.ge (X ∪ C) (Y ∪ C) :=
+  (ge_union_context sys X Y C hCX hCY).mp h
 
 /-- **Generalized merge**: two valid comparisons with disjoint left parts and
     disjoint right parts merge into their union, even with pivot overlaps.
@@ -158,29 +159,16 @@ lemma ge_generalized_merge {X₁ Y₁ X₂ Y₂ : Set W}
     (h1 : sys.ge X₁ Y₁) (h2 : sys.ge X₂ Y₂)
     (hX : Disjoint X₁ X₂) (hY : Disjoint Y₁ Y₂) :
     sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
-  have hXl : ∀ x, x ∈ X₁ → x ∉ X₂ := fun x hx => Set.disjoint_left.mp hX hx
-  have hYl : ∀ x, x ∈ Y₂ → x ∉ Y₁ := fun x hy2 hy1 => Set.disjoint_left.mp hY hy1 hy2
-  -- context C₁ = X₂ \ Y₁ added to (X₁ ≿ Y₁); C₂ = Y₁ \ X₂ added to (X₂ ≿ Y₂)
-  have step1 : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₁ ∪ (X₂ \ Y₁)) :=
-    (ge_union_context sys X₁ Y₁ (X₂ \ Y₁) (Set.disjoint_left.mpr fun x hx hx1 => hXl x hx1 hx.1)
-      (Set.disjoint_left.mpr fun x hx hxY1 => hx.2 hxY1)).mp h1
-  have step2 : sys.ge (X₂ ∪ (Y₁ \ X₂)) (Y₂ ∪ (Y₁ \ X₂)) :=
-    (ge_union_context sys X₂ Y₂ (Y₁ \ X₂) (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
-      (Set.disjoint_left.mpr fun x hx hxY2 => hYl x hxY2 hx.1)).mp h2
-  rw [show Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) by ext x; simp only [Set.mem_union, Set.mem_sdiff]; tauto]
-    at step1
-  have htrans : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₂ ∪ (Y₁ \ X₂)) := sys.trans _ _ _ step1 step2
-  set P : Set W := X₂ ∩ Y₁ with hP
-  have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
-    ext x; have := hXl x; simp only [Set.mem_union, Set.mem_sdiff, hP, Set.mem_inter_iff, not_and]; tauto
-  have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
-    ext x; have := hYl x; simp only [Set.mem_union, Set.mem_sdiff, hP, Set.mem_inter_iff, not_and]; tauto
-  rw [hLHS, hRHS] at htrans
-  have key := (ge_union_context sys ((X₁ ∪ X₂) \ P) ((Y₁ ∪ Y₂) \ P) P
-    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)
-    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)).mp htrans
-  rwa [Set.sdiff_union_of_subset (Set.inter_subset_left.trans Set.subset_union_right),
-    Set.sdiff_union_of_subset (Set.inter_subset_right.trans Set.subset_union_left)] at key
+  -- split each side around the pivot `X₂ ∩ Y₁`
+  rw [show X₁ ∪ X₂ = (X₁ ∪ (X₂ \ Y₁)) ∪ (X₂ ∩ Y₁) by grind,
+    show Y₁ ∪ Y₂ = (Y₂ ∪ (Y₁ \ X₂)) ∪ (X₂ ∩ Y₁) by grind]
+  -- the pivot is common context; strip it, then transit through `X₂ ∪ Y₁`
+  refine ge_add_context sys ?_
+  refine sys.trans _ (X₂ ∪ Y₁) _ ?_ ?_
+  · rw [show X₂ ∪ Y₁ = Y₁ ∪ (X₂ \ Y₁) by grind]
+    exact ge_add_context sys h1
+  · rw [show X₂ ∪ Y₁ = X₂ ∪ (Y₁ \ X₂) by grind]
+    exact ge_add_context sys h2
 
 /-- **Mono-domination**: a valid comparison `X ≿ Y` with `X ⊆ P` and `Q ⊆ Y`
     proves `P ≿ Q`. -/
