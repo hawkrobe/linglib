@@ -1666,7 +1666,6 @@ import Linglib.Semantics.Epistemicity
 import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
-import Linglib.Semantics.Events.InitialFinalParts
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Exhaustification.Combinators
@@ -2926,5 +2925,6 @@ import Linglib.Data.Examples.SolstadBott2024
 import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.DegenTonhauser2021
 import Linglib.Data.Examples.BeltramaSchwarz2024
+import Linglib.Data.Examples.Krifka1998
 
 

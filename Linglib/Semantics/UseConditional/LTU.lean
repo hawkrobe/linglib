@@ -404,7 +404,7 @@ theorem toTwoDim_multidimApp {C W : Type*}
     toTwoDim (multidimApp f a) evalU =
     TwoDimProp.and (toTwoDim f evalU) (toTwoDim a evalU) := by
   ext w
-  · simp only [toTwoDim, multidimApp, TwoDimProp.and]
-  · simp only [toTwoDim, multidimApp, TwoDimProp.and, hConj]
+  · simp only [toTwoDim, multidimApp, TwoDimProp.and_atIssue]
+  · simp only [toTwoDim, multidimApp, TwoDimProp.and_ci, hConj]
 
 end Semantics.UseConditional
