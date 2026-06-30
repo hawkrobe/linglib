@@ -1,4 +1,6 @@
-/-
+import Linglib.Semantics.Presupposition.Basic
+
+/-!
 # Two-Dimensional Semantics for Conventional Implicatures
 [potts-2005] [wang-2025]
 
@@ -27,10 +29,7 @@ Key CI expressions:
 - Expressives: ⟦bastard⟧ : ⟨eᵃ, tᶜ⟩
 - Appositives: via comma feature
 - Supplementary adverbs: ⟦luckily⟧ : ⟨tᵃ, tᶜ⟩
-
 -/
-
-import Linglib.Semantics.Presupposition.Basic
 
 namespace Pragmatics.Expressives
 
@@ -177,10 +176,7 @@ downstream peripheral content must be re-introduced (by `applyMQ`'s `R`).
 theorem pureQuote_loses_ci_info :
     ∃ (p₁ p₂ : TwoDimProp Unit), p₁.ci ≠ p₂.ci ∧ pureQuote p₁ = pureQuote p₂ := by
   refine ⟨⟨λ _ => True, λ _ => True⟩, ⟨λ _ => True, λ _ => False⟩, ?_, rfl⟩
-  intro h
-  have : (fun (_ : Unit) => True) = (fun _ => False) := h
-  have : True = False := congrFun this ()
-  exact (this ▸ trivial : False)
+  intro h; simpa using congrFun h ()
 
 
 /--
@@ -228,6 +224,14 @@ def or (p q : TwoDimProp W) : TwoDimProp W :=
   { atIssue := λ w => p.atIssue w ∨ q.atIssue w
   , ci := λ w => p.ci w ∧ q.ci w }  -- Both CIs project (conjunction, not disjunction)
 
+/-- Disjunction's at-issue dimension. -/
+@[simp] theorem or_atIssue (p q : TwoDimProp W) (w : W) :
+    (or p q).atIssue w ↔ p.atIssue w ∨ q.atIssue w := Iff.rfl
+
+/-- Disjunction propagates both CIs. -/
+@[simp] theorem or_ci (p q : TwoDimProp W) (w : W) :
+    (or p q).ci w ↔ p.ci w ∧ q.ci w := Iff.rfl
+
 /--
 Implication: at-issue content forms conditional; both CIs project.
 
@@ -238,6 +242,10 @@ Implication: at-issue content forms conditional; both CIs project.
 def imp (p q : TwoDimProp W) : TwoDimProp W :=
   { atIssue := λ w => p.atIssue w → q.atIssue w
   , ci := λ w => p.ci w ∧ q.ci w }  -- Both CIs project
+
+/-- Implication's at-issue dimension. -/
+@[simp] theorem imp_atIssue (p q : TwoDimProp W) (w : W) :
+    (imp p q).atIssue w ↔ (p.atIssue w → q.atIssue w) := Iff.rfl
 
 
 /--
@@ -257,31 +265,12 @@ are not filtered; they project to the root.
 "If the king of France is bald,..." - presupposes king exists (filtered)
 "If that bastard calls,..." - CI projects (speaker thinks he's bastard)
 -/
-theorem ci_projects_from_antecedent (p q : TwoDimProp W) (w : W) :
+@[simp] theorem ci_projects_from_antecedent (p q : TwoDimProp W) (w : W) :
     (imp p q).ci w ↔ (p.ci w ∧ q.ci w) := Iff.rfl
-
-/--
-Double negation preserves CI.
-
-CIs are unaffected by truth-functional operators.
--/
-theorem ci_double_neg (p : TwoDimProp W) :
-    (neg (neg p)).ci = p.ci := rfl
-
-/--
-At-issue independence: CI content is independent of at-issue truth value.
-
-The at-issue content can be true, false, or unknown; CI still holds.
--/
-theorem ci_independent_of_atIssue (p : TwoDimProp W) (w : W)
-    (h_ci : p.ci w) :
-    -- CI holds regardless of at-issue value
-    (p.atIssue w → p.ci w) ∧
-    (¬p.atIssue w → p.ci w) :=
-  ⟨λ _ => h_ci, λ _ => h_ci⟩
 
 end TwoDimProp
 
+variable {W : Type*}
 
 /--
 Properties of secondary (non-at-issue) meaning expressions.
@@ -307,7 +296,7 @@ structure SecondaryMeaningProperties where
   allowsPerspectiveShift : Bool
   /-- Requires a salient issue/counterstance in prior discourse -/
   requiresDiscourseAntecedent : Bool
-  deriving Repr
+  deriving Repr, DecidableEq
 
 /--
 Expressives satisfy all six [potts-2007] properties and do NOT typically
@@ -348,7 +337,7 @@ This is Potts' mechanism for appositives:
 
 Formally: comma : ⟨⟨eᵃ,tᵃ⟩, ⟨eᵃ,tᶜ⟩⟩
 -/
-def comma {W : Type*} (pred : W → Prop) (entity : W → Prop) : TwoDimProp W :=
+def comma (pred : W → Prop) (entity : W → Prop) : TwoDimProp W :=
   { atIssue := entity  -- Entity denotation passes through
   , ci := pred }       -- Predicate becomes CI content
 
@@ -359,7 +348,7 @@ Supplementary adverb application.
 
 Formally: comma₂ : ⟨⟨tᵃ,tᵃ⟩, ⟨tᵃ,tᶜ⟩⟩
 -/
-def supplementaryAdverb {W : Type*}
+def supplementaryAdverb
     (adverbMeaning : (W → Prop) → (W → Prop))  -- The adverb's at-issue meaning
     (prop : W → Prop) : TwoDimProp W :=
   { atIssue := prop              -- Base proposition unchanged
@@ -367,57 +356,34 @@ def supplementaryAdverb {W : Type*}
 
 
 /--
-CI informativeness ordering.
-
-φ has stronger CI than ψ iff the contexts where φ is felicitous
-are a proper subset of contexts where ψ is felicitous.
-
-⟦φ⟧ᵘ ⊂ ⟦ψ⟧ᵘ
+CI informativeness ordering: `φ` has a stronger CI than `ψ` when `φ`'s CI strictly entails
+`ψ`'s — i.e. `φ.ci < ψ.ci` in the pointwise entailment order that `W → Prop` inherits from
+`Prop`. Concretely, `φ.ci` implies `ψ.ci` at every world, but some world satisfies `ψ.ci`
+and not `φ.ci`.
 
 Example:
 - "That bastard John" is CI-stronger than "John"
 - "That fucking bastard John" is CI-stronger than "That bastard John"
 -/
-def ciStrongerThan {W : Type*} (φ ψ : TwoDimProp W) : Prop :=
-  -- φ's CI entails ψ's CI (more restrictive)
-  (∀ w, φ.ci w → ψ.ci w) ∧
-  -- But not vice versa (strictly stronger)
-  (∃ w, ψ.ci w ∧ ¬φ.ci w)
+def ciStrongerThan (φ ψ : TwoDimProp W) : Prop := φ.ci < ψ.ci
 
-/--
-CI equivalence: same CI content.
--/
-def ciEquiv {W : Type*} (φ ψ : TwoDimProp W) : Prop :=
-  ∀ w, φ.ci w ↔ ψ.ci w
+/-- CI equivalence: same CI content. -/
+def ciEquiv (φ ψ : TwoDimProp W) : Prop := φ.ci = ψ.ci
 
-/-- CI-stronger-than is irreflexive: no proposition is strictly CI-stronger than itself. -/
-theorem ciStrongerThan_irrefl {W : Type*} (φ : TwoDimProp W) :
-    ¬ ciStrongerThan φ φ :=
-  fun ⟨_, _, hw, hw'⟩ => hw' hw
+/-- CI-stronger-than is irreflexive (the strict entailment order on `W → Prop`). -/
+theorem ciStrongerThan_irrefl (φ : TwoDimProp W) : ¬ ciStrongerThan φ φ := lt_irrefl _
 
 /-- CI-stronger-than is transitive. -/
-theorem ciStrongerThan_trans {W : Type*} (φ ψ χ : TwoDimProp W)
-    (h1 : ciStrongerThan φ ψ) (h2 : ciStrongerThan ψ χ) :
-    ciStrongerThan φ χ := by
-  obtain ⟨h2e, w, hwc, hwp⟩ := h2
-  refine ⟨fun w h => h2e w (h1.1 w h), w, hwc, ?_⟩
-  intro hφ
-  exact hwp (h1.1 w hφ)
+theorem ciStrongerThan_trans {φ ψ χ : TwoDimProp W}
+    (h1 : ciStrongerThan φ ψ) (h2 : ciStrongerThan ψ χ) : ciStrongerThan φ χ := lt_trans h1 h2
 
-/-- CI-stronger-than is asymmetric: if φ is CI-stronger than ψ, ψ is not CI-stronger than φ. -/
-theorem ciStrongerThan_asymm {W : Type*} (φ ψ : TwoDimProp W)
-    (h : ciStrongerThan φ ψ) : ¬ ciStrongerThan ψ φ := by
-  obtain ⟨_, w, hwp, hwf⟩ := h
-  intro ⟨he, _⟩
-  exact hwf (he w hwp)
+/-- CI-stronger-than is asymmetric. -/
+theorem ciStrongerThan_asymm {φ ψ : TwoDimProp W}
+    (h : ciStrongerThan φ ψ) : ¬ ciStrongerThan ψ φ := lt_asymm h
 
-
--- ============================================================================
--- CI Bifurcation for De Re Presupposition ([wang-2025])
--- ============================================================================
 
 /-!
-## CI Lift: Presupposition → Two-Dimensional Meaning
+## CI Lift: Presupposition → Two-Dimensional Meaning ([wang-2025])
 
 [wang-2025] analyze de re presupposition by bifurcating a [gutzmann-2015]
 presuppositional meaning into two dimensions using [potts-2005]'s CI type system:
@@ -446,20 +412,20 @@ assertion becomes at-issue content (composes truth-functionally).
 
 This is the ⟦CI⟧ operator from [wang-2025].
 -/
-def ciLift {W : Type*} (presup assertion : W → Prop) : TwoDimProp W :=
+def ciLift (presup assertion : W → Prop) : TwoDimProp W :=
   { atIssue := assertion
   , ci := presup }
 
 /--
 CI lift preserves the assertion as at-issue content.
 -/
-theorem ciLift_atIssue {W : Type*} (presup assertion : W → Prop) :
+theorem ciLift_atIssue (presup assertion : W → Prop) :
     (ciLift presup assertion).atIssue = assertion := rfl
 
 /--
 CI lift maps presupposition to CI dimension.
 -/
-theorem ciLift_ci {W : Type*} (presup assertion : W → Prop) :
+theorem ciLift_ci (presup assertion : W → Prop) :
     (ciLift presup assertion).ci = presup := rfl
 
 /--
@@ -467,7 +433,7 @@ De re reading: when CommonGround entails the presupposition, the CI dimension is
 at all CommonGround worlds. This means the presupposition is resolved against the CommonGround
 regardless of what is embedded under an attitude verb.
 -/
-theorem deRe_from_ciLift {W : Type*} (presup : W → Prop)
+theorem deRe_from_ciLift (presup : W → Prop)
     (assertion : W → Prop)
     (cg : W → Prop)
     (h : ∀ w, cg w → presup w) :
@@ -481,13 +447,13 @@ at-issue content but preserves the presupposition (as CI).
 This matches both Potts' CI projection and standard presupposition projection
 through negation.
 -/
-theorem ciLift_neg_preserves_presup {W : Type*} (presup assertion : W → Prop) :
+theorem ciLift_neg_preserves_presup (presup assertion : W → Prop) :
     (TwoDimProp.neg (ciLift presup assertion)).ci = presup := rfl
 
 /--
 Round-trip: CI lift then extract components recovers the original predicates.
 -/
-theorem ciLift_roundtrip {W : Type*} (presup assertion : W → Prop) :
+theorem ciLift_roundtrip (presup assertion : W → Prop) :
     (ciLift presup assertion).ci = presup ∧
     (ciLift presup assertion).atIssue = assertion :=
   ⟨rfl, rfl⟩

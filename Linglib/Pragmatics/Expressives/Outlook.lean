@@ -65,8 +65,10 @@ def toTwoDimProp (m : Outlook W O) (o : O) : TwoDimProp W := ⟨m.prejacent, m.e
 /-- The CI content attributed when the judge has outlook `o`. -/
 def ciFrom (m : Outlook W O) (o : O) : W → Prop := m.evaluation o
 
-@[simp] theorem toPartialProp_presup (m : Outlook W O) : m.toPartialProp.presup = m.counterstance := rfl
-@[simp] theorem toPartialProp_assertion (m : Outlook W O) : m.toPartialProp.assertion = m.prejacent := rfl
+@[simp] theorem toPartialProp_presup (m : Outlook W O) :
+    m.toPartialProp.presup = m.counterstance := rfl
+@[simp] theorem toPartialProp_assertion (m : Outlook W O) :
+    m.toPartialProp.assertion = m.prejacent := rfl
 @[simp] theorem toTwoDimProp_atIssue (m : Outlook W O) (o : O) :
     (m.toTwoDimProp o).atIssue = m.prejacent := rfl
 @[simp] theorem toTwoDimProp_ci (m : Outlook W O) (o : O) :
@@ -84,7 +86,9 @@ theorem ci_projects_through_neg (m : Outlook W O) (o : O) :
 /-! ### Rigidity: the pure-expressive corner -/
 
 /-- An outlook is **rigid** when its CI ignores the outlook — the perspective-insensitive
-(pure-expressive) case. Perspective shift is exactly the failure of this. -/
+(pure-expressive) case. Perspective shift is exactly the failure of this. This is the
+canonical rigidity predicate of `Semantics.Intensional.Rigidity` (`Intension.IsRigid`)
+applied to `evaluation`: constancy of the CI tier across the outlook index. -/
 def IsRigid (m : Outlook W O) : Prop := ∀ o₁ o₂, m.evaluation o₁ = m.evaluation o₂
 
 /-- A rigid outlook's CI is invariant under a change of outlook: no perspective shift. -/
