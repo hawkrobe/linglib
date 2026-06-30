@@ -205,19 +205,6 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
 def FinAddMeasure.inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop := m.mu A ≥ m.mu B
 
-/-- Measure-induced ≿ is reflexive. -/
-theorem FinAddMeasure.inducedGe_axiomR (m : FinAddMeasure K W) :
-    Reflexive m.inducedGe := fun _ => le_refl _
-
-/-- Measure-induced ≿ satisfies monotonicity.
-    A ⊆ B → B = A ∪ (B \ A) → μ(B) = μ(A) + μ(B \ A) ≥ μ(A). -/
-theorem FinAddMeasure.inducedGe_axiomT (m : FinAddMeasure K W) :
-    ∀ A B : Set W, A ⊆ B → m.inducedGe B A := by
-  intro A B hAB
-  show m.mu B ≥ m.mu A
-  rw [(Set.union_sdiff_cancel hAB).symm, m.additive A (B \ A) disjoint_sdiff_self_right]
-  exact le_add_of_nonneg_right (m.nonneg (B \ A))
-
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
 @[simp] theorem FinAddMeasure.mu_empty (m : FinAddMeasure K W) : m.mu ∅ = 0 := by
@@ -249,8 +236,8 @@ theorem FinAddMeasure.mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
     since every finitely additive measure is qualitatively additive. -/
 def FinAddMeasure.toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
   ge := m.inducedGe
-  refl := m.inducedGe_axiomR
-  mono := m.inducedGe_axiomT
+  refl := fun _ => le_refl _
+  mono := fun _ _ h => m.mu_mono h
   bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
   nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
@@ -290,13 +277,11 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
 def QualAddMeasure.inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop := m.mu A ≥ m.mu B
 
-/-- Monotonicity for qualitatively additive measures:
-    A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
-theorem QualAddMeasure.inducedGe_axiomT (m : QualAddMeasure K W) :
-    ∀ A B : Set W, A ⊆ B → m.inducedGe B A := by
-  intro A B hAB
+/-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. From qualAdd + μ(∅) = 0 + nonneg. -/
+theorem QualAddMeasure.mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
+    m.mu A ≤ m.mu B := by
   show m.mu B ≥ m.mu A
-  rw [m.qualAdd B A, Set.sdiff_eq_empty.mpr hAB, m.mu_empty]; exact m.nonneg (B \ A)
+  rw [m.qualAdd B A, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
 
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
@@ -304,7 +289,7 @@ theorem QualAddMeasure.inducedGe_axiomT (m : QualAddMeasure K W) :
 def QualAddMeasure.toSystemFA (m : QualAddMeasure K W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
-  mono := m.inducedGe_axiomT
+  mono := fun _ _ h => m.mu_mono h
   bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
   nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
@@ -397,9 +382,9 @@ section
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
   (m : FinAddMeasure K W)
 
-instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.inducedGe_axiomT⟩
+instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.toSystemFA.mono⟩
 
-instance : IsTrans (Set W) m.inducedGe := ⟨fun _ _ _ hab hbc => le_trans hbc hab⟩
+instance : IsTrans (Set W) m.inducedGe := ⟨m.toSystemFA.trans⟩
 
 instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toSystemFA.additive⟩
 
