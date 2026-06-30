@@ -12,8 +12,8 @@ to movement relations or any particular thematic-role analysis — and
 are consumed by:
 
 - `Studies/Krifka1998.lean` Part II for K98 §4
-  adjacency-respecting θ relations (ADJ/SMR/MR)
-- `InitialFinalParts.lean` (initial/final parts via precedence)
+  adjacency-respecting θ relations (ADJ/SMR/MR) and the K98 §2.5
+  initial/final-part / telicity predicates
 - `MeasureAdverbialDerivation.lean` (planned, K98 §3.5 cτ minimal-
   convex-time derivation)
 -/
