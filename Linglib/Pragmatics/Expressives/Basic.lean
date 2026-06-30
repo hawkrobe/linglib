@@ -54,50 +54,6 @@ speaker. -/
 @[simps] def pureQuote (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, ⊤⟩
 
 /--
-Pure quotation with strip witness.
-
-`pureQuote` is information-losing — once the CI is flattened to `λ _ => True`,
-the original CI cannot be recovered from the result alone. `PureQuoted` records
-both the stripped result AND the original, so downstream operators (in
-particular `MQContext.applyMQ` for the strip-then-mix pattern of
-[kirk-giannini-2024] §3) can refer to what was discarded.
-
-This is the substrate K-G's CI-projection-failure theorems need: rather than
-proving `(pureQuote p).ci w := trivial` (which is vacuously true regardless
-of input), they can compare the stripped output against the recorded original.
--/
-structure PureQuoted (W : Type*) where
-  /-- The stripped output: at-issue preserved, CI flattened. -/
-  result : TwoDimProp W
-  /-- The original input, retained for downstream comparison. -/
-  original : TwoDimProp W
-  /-- The result is the original with CI stripped via `pureQuote`. -/
-  is_strip : result = pureQuote original
-
-/--
-Build a `PureQuoted` witness from an input proposition.
-
-Bundles the existing `pureQuote p` with a record of the original `p` and a
-trivial proof of the strip relation.
--/
-def pureQuoteRich (p : TwoDimProp W) : PureQuoted W :=
-  { result := pureQuote p, original := p, is_strip := rfl }
-
-@[simp] theorem pureQuoteRich_result (p : TwoDimProp W) :
-    (pureQuoteRich p).result = pureQuote p := rfl
-
-@[simp] theorem pureQuoteRich_original (p : TwoDimProp W) :
-    (pureQuoteRich p).original = p := rfl
-
-/-- The rich operator preserves at-issue between original and result. -/
-theorem pureQuoteRich_atIssue_preserved (p : TwoDimProp W) :
-    (pureQuoteRich p).result.atIssue = (pureQuoteRich p).original.atIssue := rfl
-
-/-- The rich operator strips the original CI: result.ci is constantly `⊤`. -/
-theorem pureQuoteRich_ci_stripped (p : TwoDimProp W) (w : W) :
-    (pureQuoteRich p).result.ci w := trivial
-
-/--
 **Pure quotation is information-losing.**
 
 Two propositions with identical at-issue content but different CI dimensions

@@ -181,26 +181,17 @@ theorem gd_reporter_not_attributed :
   intro h; cases h
 
 /--
-**The strip-then-remix structure (paper p.21-22).** A `TwoDimProp`
-carrying the original CI is pure-quoted (stripping the CI per
-`pureQuoteRich`), then `MQContext.applyMQ` re-introduces peripheral
-content as utterance attribution. The strip witness records what was
-discarded; the new R-layer holds what replaced it.
+**The strip-then-remix structure (paper p.21-22).** A `TwoDimProp` carrying the original CI is
+pure-quoted (stripping the CI to `⊤` — an information-losing step, `pureQuote_loses_ci_info`),
+then `MQContext.applyMQ` re-introduces peripheral content as utterance attribution. The
+remixed R-layer holds the new attribution, not the original CI.
 -/
 theorem gd_strip_then_remix_loses_original_ci :
     let original : TwoDimProp ProjWorld :=
       { atIssue := λ _ => True, ci := gdOriginalCI }
-    -- The strip is information-losing (substantive — proved via
-    -- substrate's `pureQuote_loses_ci_info`): two inputs with
-    -- different CI dimensions produce identical `pureQuote` outputs.
-    -- Therefore the original CI cannot be recovered from the stripped
-    -- result alone — `pureQuoteRich` retains it as a witness.
-    (TwoDimProp.pureQuoteRich original).original.ci = original.ci ∧
-    -- After remix via 𝔐, the R-layer is the new utterance attribution
-    -- (NOT the original CI):
+    -- After remix via 𝔐, the R-layer is the new utterance attribution, not the original CI:
     (MQProp.applyMQ reporterCtx .goddamnedKeys).rContent .hypothetical ≠
       original.ci .hypothetical := by
-  refine ⟨rfl, ?_⟩
   -- gdOriginalCI = constant True, but gdUttRel .jones at .hypothetical = False
   simp [reporterCtx, gdUttRel, gdOriginalCI]
 
