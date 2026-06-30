@@ -10,7 +10,7 @@ reversal**: when an iamb would leave a phrase-final long vowel, the last two syl
 trochee instead ([becker-etal-2025] §3.1; [hayes-1995] §5.3b). The **last foot is the head foot**
 of the word, and the **primary stress is the head of the head foot** ([becker-etal-2025] p. 2365)
 — i.e. the syllable reached from the word ω by an all-head descent: the **head terminal**
-(Liberman & Prince's *designated terminal element*, `Prosody.headTerminals`).
+(Liberman & Prince's *designated terminal element*, `Prosody.Grid.headTerminals`).
 
 The paper's title result — *incoherent* stress ([gordon-2016]) — is that the default High tone does
 **not** dock on this head terminal but surfaces displaced, on the last syllable of a tone domain
@@ -63,12 +63,12 @@ def annatto : Tree :=
 
 /-! ### The grid: secondary stress on every foot head, primary on the head foot's
 
-Reading `gridColumns ∘` the footing recovers the stress profile: `1` unstressed, `2` a secondary
+Reading `Grid.columns ∘` the footing recovers the stress profile: `1` unstressed, `2` a secondary
 (a non-head foot's head), `3` the primary (the head foot's head). -/
 
-theorem gridColumns_fell    : gridColumns fell    = [1, 2, 1, 3, 1] := by decide
-theorem gridColumns_weFell  : gridColumns weFell  = [1, 2, 1, 2, 3, 1] := by decide
-theorem gridColumns_annatto : gridColumns annatto = [1, 3, 1] := by decide
+theorem gridColumns_fell    : Grid.columns fell    = [1, 2, 1, 3, 1] := by decide
+theorem gridColumns_weFell  : Grid.columns weFell  = [1, 2, 1, 2, 3, 1] := by decide
+theorem gridColumns_annatto : Grid.columns annatto = [1, 3, 1] := by decide
 
 /-! ### Primary stress is the head terminal ([becker-etal-2025] p. 2365)
 
@@ -82,19 +82,19 @@ theorem isHeaded_weFell  : IsHeaded weFell  := by decide
 theorem isHeaded_annatto : IsHeaded annatto := by decide
 
 /-- 's/he fell': the head terminal is the long `kí:` (head of the rightmost iamb). -/
-theorem headTerminals_fell : headTerminals fell = [.node (.syl 2 true) []] := by decide
+theorem headTerminals_fell : Grid.headTerminals fell = [.node (.syl 2 true) []] := by decide
 
 /-- 'we fell': the head terminal is the reversed trochee's initial short `kí`. -/
-theorem headTerminals_weFell : headTerminals weFell = [.node (.syl 1 true) []] := by decide
+theorem headTerminals_weFell : Grid.headTerminals weFell = [.node (.syl 1 true) []] := by decide
 
 /-- 'annatto': the head terminal is the long `mí:`. -/
-theorem headTerminals_annatto : headTerminals annatto = [.node (.syl 2 true) []] := by decide
+theorem headTerminals_annatto : Grid.headTerminals annatto = [.node (.syl 2 true) []] := by decide
 
 /-- The same fact **declaratively** ([liberman-prince-1977]): `kí:` is the head terminal of `fell`
-    — reached from ω by an all-head descent (ω → head foot → head σ), `IsHeadTerminal` — via the
-    spec↔fold bridge `mem_headTerminals_iff`, not just by computing the list. -/
-theorem isHeadTerminal_fell : IsHeadTerminal fell (.node (.syl 2 true) []) :=
-  mem_headTerminals_iff.mp (by decide)
+    — reached from ω by an all-head descent (ω → head foot → head σ), `Grid.IsHeadTerminal` — via the
+    spec↔fold bridge `Grid.mem_headTerminals_iff`, not just by computing the list. -/
+theorem isHeadTerminal_fell : Grid.IsHeadTerminal fell (.node (.syl 2 true) []) :=
+  Grid.mem_headTerminals_iff.mp (by decide)
 
 /-! ### The trochaic reversal is OT-optimal ([becker-etal-2025] §3.1, Table 2)
 
@@ -134,7 +134,7 @@ def cIamb : Constraint FootingCand := fun c => match c.toTree with
 /-- **`*V:]φ`** ([becker-etal-2025] (3)): one mark for a long vowel in the **phrase**-final σ (for a
     one-word phrase, the word-final σ). -/
 def cStarV : Constraint FootingCand := fun c =>
-  match (gridColumnsLive c.toTree).getLast? with
+  match (Grid.columnsLive c.toTree).getLast? with
   | some col => if decide (col.leaf.label.weight? = some 2) then 1 else 0
   | none     => 0
 
