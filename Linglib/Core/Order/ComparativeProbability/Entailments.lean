@@ -544,47 +544,37 @@ private theorem matchingLift_complement_reversal {W : Type*} [Finite W]
     rw [hgk1, hgk2] at heq
     exact matchingLift_chain_origin_eq hfmem hinj_f hb1 hb2 hk1A hk2A heq
 
-/-! #### GFC preorder, then V11/V12
+/-! #### V11/V12 from transitivity and complement reversal
 
-The m-lifting of a reflexive, transitive world ordering on finite `W` is a GFC
-preorder ([harrison-trainor-holliday-icard-2018], Theorem 3.2): the injection
-extension `≿ⁱ` (= `matchingLift`) satisfies all three GFC axiom groups — preorder (G),
-monotonicity (F), and complement reversal (C). V11 and V12 then follow from the
-abstract `patternV11_of`/`patternV12_of`, with the GFC components registered as
-local `IsTrans`/`IsComplementReversing` instances. -/
-
-def matchingLift_toGFCPreorder {W : Type*} [Finite W] (ge_w : W → W → Prop)
-    (hRefl : ∀ w, ge_w w w)
-    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
-    GFCPreorder W where
-  ge := matchingLift ge_w
-  refl := matchingLift_axiomR hRefl
-  trans := fun _ _ _ => matchingLift_trans hTrans
-  mono := matchingLift_axiomT hRefl
-  complRev := fun _ _ h => matchingLift_complement_reversal hRefl hTrans h
+The m-lifting of a reflexive, transitive world ordering on finite `W` is
+transitive (`matchingLift_trans`) and complement-reversing
+(`matchingLift_complement_reversal`); V11 and V12 then follow from the abstract
+`patternV11_of`/`patternV12_of` with those registered as local
+`IsTrans`/`IsComplementReversing` instances. The injection extension `≿ⁱ`
+(= `matchingLift`) is moreover the genuine generalized-finite-cancellation order
+of [harrison-trainor-holliday-icard-2018] (`ComparativeProbability.GFCOrder`). -/
 
 /-- The m-lift's transitivity, packaged for the abstract pattern layer. -/
 def matchingLift_isTrans {W : Type*} [Finite W] (ge_w : W → W → Prop)
-    (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     IsTrans (Set W) (matchingLift ge_w) :=
-  ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).trans⟩
+  ⟨fun _ _ _ => matchingLift_trans hTrans⟩
 
 /-- The m-lift's complement reversal, packaged for the abstract pattern layer. -/
 def matchingLift_isComplementReversing {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     IsComplementReversing (matchingLift ge_w) :=
-  ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).complRev⟩
+  ⟨fun _ _ h => matchingLift_complement_reversal hRefl hTrans h⟩
 
 /-- V12 is valid for the m-lifting on finite posets (Fact 5 in
-    [holliday-icard-2013]): every m-lift is a `GFCPreorder`, so `patternV12_of`
-    supplies the pattern. -/
+    [holliday-icard-2013]): the m-lift is transitive and complement-reversing,
+    so `patternV12_of` supplies the pattern. -/
 theorem matchingLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV12 (matchingLift ge_w) := by
-  haveI := matchingLift_isTrans ge_w hRefl hTrans
+  haveI := matchingLift_isTrans ge_w hTrans
   haveI := matchingLift_isComplementReversing ge_w hRefl hTrans
   exact patternV12_of
 
@@ -594,7 +584,7 @@ theorem matchingLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV11 (matchingLift ge_w) := by
-  haveI := matchingLift_isTrans ge_w hRefl hTrans
+  haveI := matchingLift_isTrans ge_w hTrans
   haveI := matchingLift_isComplementReversing ge_w hRefl hTrans
   exact patternV11_of
 
@@ -690,7 +680,7 @@ theorem matchingLift_not_I3 :
   simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at h0 h1
   have := hinj 0 1 (Set.mem_insert 0 {1}) (Or.inr rfl) (by omega); omega
 
-/-! #### GFC preorder -/
+/-! #### Non-totality of the m-lifting -/
 
 /-- The m-lifting is NOT total, even for total preorders on worlds.
     Counterexample: W = Fin 4, ge_w = (· ≥ ·), A = {3, 0}, B = {2, 1}.

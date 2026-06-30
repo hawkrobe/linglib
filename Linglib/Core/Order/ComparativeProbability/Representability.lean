@@ -108,7 +108,8 @@ noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
   refl := λ A => le_refl (kpsRankSet A)
   mono := λ {A B} hAB => kps_mono_finset _ _ ((toFS_subset A B).mp hAB)
   bottom := by
-    simp only [EpistemicAxiom.F, kpsGe, kpsRankSet, toFS_univ, toFS_empty]; exact kps_bottom_finset
+    simp only [EpistemicAxiom.Bot, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
+    exact kps_bottom_finset
   nonTrivial := by
     simp only [EpistemicAxiom.BT, kpsGe, kpsRankSet, toFS_univ, toFS_empty]; decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)

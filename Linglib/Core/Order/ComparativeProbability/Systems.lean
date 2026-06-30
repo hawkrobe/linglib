@@ -1,38 +1,66 @@
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Tauto
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Epistemic Comparative Likelihood
 
 [holliday-icard-2013] [halpern-2003] [van-der-hoek-1996]
+[harrison-trainor-holliday-icard-2016] [harrison-trainor-holliday-icard-2018]
 
-Epistemic likelihood scales: comparative-likelihood orders on propositions
-(`Set W`), their axiom hierarchy, and their measure semantics.
+Comparative-likelihood orders on propositions (`Set W`): an axiom hierarchy,
+finitely- and qualitatively-additive measure semantics, the two world-ordering
+lifts, and the generalized cancellation theory of imprecise (multi-prior)
+comparative probability.
 
 [holliday-icard-2013] study the logic of "at least as likely as" (≿) on
-propositions, defining a hierarchy of axiom systems (W ⊂ F ⊂ FA) whose
-qualitative additivity axiom is the epistemic counterpart of finite additivity.
+propositions, whose qualitative-additivity axiom is the qualitative counterpart
+of finite additivity.
 
-**Axiom hierarchy** ([holliday-icard-2013], Figure 3; axioms in Figures 4–6):
+**Axiom systems.** The bundled `EpistemicSystemW ⊂ F ⊂ FA` are a *coarse staging*
+toward [holliday-icard-2013]'s logic **FA** (their Figure 6: `Ex, Bot, BT, Tot,
+Tran, A` over the base modal logic `K`); only `EpistemicSystemFA` reproduces a
+named logic of the paper (`Ex` and `K` are automatic for the `Set W` relation
+rendering). The intermediate `EpistemicSystemW`/`F` are *not* the paper's logics
+`W`/`F`: the paper's `W` already carries `Mon`, `Tran`, `BT`, and the `W`-to-`F`
+step there is totality `Tot`; its full landscape (Figure 3, the "Logical
+landscape") is developed in the companion *On the logic of comparative
+likelihood*. The local labels `R`/`T` are mnemonic — the paper writes `Mon` for
+monotonicity, and its `R` is the regularity axiom `◇φ ↔ ¬(⊥ ≿ φ)`.
 
-| System | Axioms                  | Semantics                          |
-|--------|-------------------------|------------------------------------|
-| W      | R, T                   | World-ordering + l-lifting         |
-| F      | W + Bot, BT            | + bottom, non-triviality           |
-| FA     | F + Tot, Tran, A       | Qualitatively additive measures    |
-| FP∞    | FA + Scott cancellation | Finitely additive measures         |
+**Generalized Finite Cancellation.** `GFCOrder` is the genuine GFC order of
+[harrison-trainor-holliday-icard-2018], after [harrison-trainor-holliday-icard-2016]
+(Ríos Insua 1992; Alon–Lehrer 2014): reflexivity, positivity, non-triviality, and
+the `GeneralizedFiniteCancellation` balanced-sequence axiom characterizing
+representability by a *set* of measures. Its `trans`/`mono`/`complRev` are
+*derived* from the cancellation axiom, and every `FinAddMeasure` induces one
+(`FinAddMeasure.toGFCOrder`, the Scott/Alon–Lehrer soundness direction).
 
-**Bridge**: Axiom A (epistemic qualitative additivity) is equivalent to
-disjoint-augmentation invariance — the same law-shape that `AdditiveScale.fa`
-(`Core/Scales/Comparative.lean`) imposes on degree carriers. The equivalence
-is `axiomA_iff_fa` in `Completeness.lean`.
+**Bridge**: Axiom A (qualitative additivity) is equivalent to disjoint-augmentation
+invariance — the law-shape `AdditiveScale.fa` (`Core/Order/ComparativeScale.lean`)
+imposes on degree carriers (`axiomA_iff_fa`, `Completeness.lean`).
 
-References:
-- Holliday, W. & Icard, T. (2013). Measure Semantics and Qualitative
-  Semantics for Epistemic Modals. SALT 23: 514–534.
-- Halpern, J. (2003). Reasoning about Uncertainty. MIT Press.
-- van der Hoek, W. (1996). Qualitative modalities. IJUFKS 4(1).
+**Upstreaming (`Core/Order` candidate).** The `Set W` axioms specialise the
+`BooleanAlgebra`-general mixin classes of `Defs.lean` (mathlib's `IsTrans`-style
+relation classes); `dominationLift`/`matchingLift` are the Smyth (upper
+powerdomain) order and its injection refinement — order constructions mathlib
+lacks; `FinAddMeasure.inducedGe` is `Order.Preimage m.mu (· ≥ ·)`. `FinAddMeasure`
+overlaps mathlib's `MeasureTheory.AddContent` (an `AddCommMonoid`-valued
+finitely-additive content — here morally `AddContent (univ : Set (Set W)) ℚ` plus
+non-negativity and normalization) and could be re-founded on it.
+
+The value type is **ℚ**, not the paper's real `[0,1]`-valued measures
+([holliday-icard-2013], §4; [kraft-pratt-seidenberg-1959]). On a *finite* state
+space the two agree — a feasible system of rational linear inequalities has a
+rational solution, so an order is representable by a real measure iff by a
+rational one — and ℚ buys a constructive representation theory: the Scott/KPS
+direction is built on a computable rational Farkas/Fourier-Motzkin
+(`Core/Order/FourierMotzkin.lean`, deliberately avoiding mathlib's noncomputable
+real hyperplane-separation Farkas) and `decide`-checked finite models
+(`Representability.lean`), both of which a real value type would block.
 -/
 
 namespace ComparativeProbability
@@ -41,16 +69,19 @@ namespace ComparativeProbability
 
 namespace EpistemicAxiom
 
-/-- Axiom R: reflexivity — A ≿ A. -/
+/-- Axiom R (mnemonic): reflexivity — A ≿ A. (In [holliday-icard-2013], `R` names
+    the regularity axiom `◇φ ↔ ¬(⊥ ≿ φ)`; reflexivity is unnamed there.) -/
 def R {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A, ge A A
 
-/-- Axiom T: monotonicity — A ⊆ B → B ≿ A. -/
+/-- Axiom T (mnemonic): monotonicity — A ⊆ B → B ≿ A. ([holliday-icard-2013]
+    write this `Mon`.) -/
 def T {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, A ⊆ B → ge B A
 
-/-- Axiom F: Ω ≿ ∅ — tautology is at least as likely as contradiction. -/
-def F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+/-- Axiom Bot ([holliday-icard-2013]): Ω ≿ ∅ — tautology is at least as likely as
+    contradiction. -/
+def Bot {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ge Set.univ ∅
 
 /-- Axiom BT: ¬(∅ ≿ Ω) — contradiction is NOT at least as likely as tautology.
@@ -71,9 +102,11 @@ def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
 
-/-- Axiom DS: determination by singletons ([halpern-2003], Thm. 7.5.1a) —
-    A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The comparison can be witnessed
-    by a single element of the dominating set. -/
+/-- Axiom DS: determination by singletons — A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The
+    comparison can be witnessed by a single element of the dominating set; this
+    is a structural property of the l-lifting (see `dominationLift_axiomDS`),
+    used by the completeness construction for the l-lifting logic
+    ([halpern-2003]; [holliday-icard-2013]). -/
 def DS {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ (A : Set W) (b : W), ge A {b} → ∃ a ∈ A, ge {a} {b}
 
@@ -81,51 +114,46 @@ end EpistemicAxiom
 
 -- ── Logic Hierarchy ─────────────────────────────
 
-/-- System W: the weakest epistemic likelihood logic.
-    Reflexivity + monotonicity. -/
+/-- Staging system W: reflexivity + monotonicity (weaker than
+    [holliday-icard-2013]'s logic `W`; see the module docstring). -/
 structure EpistemicSystemW (W : Type*) where
+  /-- The "at least as likely as" relation on propositions. -/
   ge : Set W → Set W → Prop
+  /-- Reflexivity. -/
   refl : EpistemicAxiom.R ge
+  /-- Monotonicity: supersets are at least as likely. -/
   mono : EpistemicAxiom.T ge
 
-/-- System F: System W + Bot + BT.
-    Bot (Ω ≿ ∅) is redundant with monotonicity. BT (¬(∅ ≿ Ω)) is the
-    non-triviality condition that excludes degenerate orderings. -/
+/-- Staging system F: adds `Bot` (Ω ≿ ∅, redundant with monotonicity) and `BT`,
+    the non-triviality condition that excludes degenerate orderings. -/
 structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
-  bottom : EpistemicAxiom.F ge
+  /-- Bottom: the tautology is at least as likely as the contradiction. -/
+  bottom : EpistemicAxiom.Bot ge
+  /-- Non-triviality: the contradiction is not at least as likely as the tautology. -/
   nonTrivial : EpistemicAxiom.BT ge
 
-/-- System FA: System F + totality + transitivity + qualitative additivity.
+/-- System FA: staging system F + totality + transitivity + qualitative additivity.
     Sound and complete for **qualitatively additive** measure semantics
-    ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]).
-    Strictly weaker than FP∞ (finitely additive measures) for |W| ≥ 5
-    (Kraft, [kraft-pratt-seidenberg-1959], Theorem 8).
-
-    Totality and transitivity are part of the FA logic in [holliday-icard-2013]: FA = Bot + BT + Tot + Tran + A. -/
+    ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]). Strictly weaker than
+    FP∞ (finitely additive measures) for |W| ≥ 5 ([holliday-icard-2013], Theorem 8,
+    after [kraft-pratt-seidenberg-1959]). This reproduces the paper's logic FA
+    (Figure 6: `Ex, Bot, BT, Tot, Tran, A`; `Ex` is automatic for `Set W`). -/
 structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
+  /-- Totality: any two propositions are comparable. -/
   total : ∀ A B : Set W, ge A B ∨ ge B A
+  /-- Transitivity. -/
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
+  /-- Qualitative additivity (Axiom A). -/
   additive : EpistemicAxiom.A ge
 
 /-! ### FA systems carry the comparative-probability mixins
 
 The `EpistemicAxiom.*` predicates are the `Set W` spellings of the
-Boolean-algebra-general `ComparativeProbability` mixin classes; the
-instances below make every FA system's relation a comparative-probability
-order, so the validity patterns V1–V13 transfer from
-`ComparativeProbability.Patterns` by instance resolution. -/
-
-theorem isLikelihoodMono_iff_axiomT {W : Type*} {ge : Set W → Set W → Prop} :
-    ComparativeProbability.IsLikelihoodMono ge ↔ EpistemicAxiom.T ge :=
-  ⟨fun h A B hAB => h.mono A B hAB, fun h => ⟨h⟩⟩
-
-theorem isQualitativeAdditive_iff_axiomA {W : Type*} {ge : Set W → Set W → Prop} :
-    ComparativeProbability.IsQualitativeAdditive ge ↔ EpistemicAxiom.A ge :=
-  ⟨fun h => h.qadd, fun h => ⟨h⟩⟩
-
-theorem isNontrivial_iff_axiomBT {W : Type*} {ge : Set W → Set W → Prop} :
-    ComparativeProbability.IsNontrivial ge ↔ EpistemicAxiom.BT ge :=
-  ⟨fun h => h.bot_not_ge_top, fun h => ⟨h⟩⟩
+Boolean-algebra-general `ComparativeProbability` mixin classes (`a ≤ b` is
+defeq `a ⊆ b` on `Set W`), so the instances below register every FA system's
+relation as a comparative-probability order by definitional unfolding, and the
+validity patterns V1–V13 transfer from `ComparativeProbability.Patterns` by
+instance resolution. -/
 
 namespace EpistemicSystemFA
 
@@ -152,9 +180,9 @@ lemma ge_union_context {W : Type*} (sys : EpistemicSystemFA W) (X Y C : Set W)
   have hCXl := Set.disjoint_left.mp hCX
   have hCYl := Set.disjoint_left.mp hCY
   have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
-    ext x; simp only [Set.mem_diff, Set.mem_union]; have := @hCXl x; tauto
+    ext x; simp only [Set.mem_sdiff, Set.mem_union]; have := @hCXl x; tauto
   have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
-    ext x; simp only [Set.mem_diff, Set.mem_union]; have := @hCYl x; tauto
+    ext x; simp only [Set.mem_sdiff, Set.mem_union]; have := @hCYl x; tauto
   rw [e1, e2]
 
 /-- **Generalized merge**: two valid comparisons with disjoint left parts and
@@ -175,20 +203,20 @@ lemma ge_generalized_merge {W : Type*} (sys : EpistemicSystemFA W)
   have step2 : sys.ge (X₂ ∪ (Y₁ \ X₂)) (Y₂ ∪ (Y₁ \ X₂)) :=
     (ge_union_context sys X₂ Y₂ (Y₁ \ X₂) (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
       (Set.disjoint_left.mpr fun x hx hxY2 => hYl x hxY2 hx.1)).mp h2
-  rw [show Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) by ext x; simp only [Set.mem_union, Set.mem_diff]; tauto]
+  rw [show Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) by ext x; simp only [Set.mem_union, Set.mem_sdiff]; tauto]
     at step1
   have htrans : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₂ ∪ (Y₁ \ X₂)) := sys.trans _ _ _ step1 step2
   set P : Set W := X₂ ∩ Y₁ with hP
   have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
-    ext x; have := hXl x; simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]; tauto
+    ext x; have := hXl x; simp only [Set.mem_union, Set.mem_sdiff, hP, Set.mem_inter_iff, not_and]; tauto
   have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
-    ext x; have := hYl x; simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]; tauto
+    ext x; have := hYl x; simp only [Set.mem_union, Set.mem_sdiff, hP, Set.mem_inter_iff, not_and]; tauto
   rw [hLHS, hRHS] at htrans
   have key := (ge_union_context sys ((X₁ ∪ X₂) \ P) ((Y₁ ∪ Y₂) \ P) P
     (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)
     (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)).mp htrans
-  rwa [Set.diff_union_of_subset (Set.inter_subset_left.trans Set.subset_union_right),
-    Set.diff_union_of_subset (Set.inter_subset_right.trans Set.subset_union_left)] at key
+  rwa [Set.sdiff_union_of_subset (Set.inter_subset_left.trans Set.subset_union_right),
+    Set.sdiff_union_of_subset (Set.inter_subset_right.trans Set.subset_union_left)] at key
 
 /-- **Mono-domination**: a valid comparison `X ≿ Y` with `X ⊆ P` and `Q ⊆ Y`
     proves `P ≿ Q`. -/
@@ -201,43 +229,6 @@ lemma ge_mono_dominated {W : Type*} (sys : EpistemicSystemFA W)
 lemma ge_empty_target {W : Type*} (sys : EpistemicSystemFA W) (P : Set W) :
     sys.ge P ∅ :=
   sys.mono ∅ P (Set.empty_subset P)
-
--- ── GFC Order ([harrison-trainor-holliday-icard-2018] Definition 2.7) ──
-
-/-- A **GFC preorder** on propositions: a preorder on `Set W` that is
-    monotone (supersets are at least as likely) and complement-reversing
-    (A ≿ B → Bᶜ ≿ Aᶜ).
-
-    [harrison-trainor-holliday-icard-2018] Definition 2.7. The acronym
-    "GFC" reflects the three axiom groups: (G) preorder, (F) faithfulness
-    (monotonicity), (C) complement reversal.
-
-    The m-lifting (≿ⁱ) of any reflexive, transitive world ordering is a
-    GFC preorder (Theorem 3.2). Note that GFC preorders are NOT necessarily
-    total — `matchingLift_not_total` gives a counterexample. -/
-structure GFCPreorder (W : Type*) where
-  ge : Set W → Set W → Prop
-  refl : EpistemicAxiom.R ge
-  trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
-  mono : EpistemicAxiom.T ge
-  complRev : ∀ A B : Set W, ge A B → ge Bᶜ Aᶜ
-
-/-- Every GFC preorder yields System W (the weakest epistemic logic). -/
-def GFCPreorder.toSystemW {W : Type*} (g : GFCPreorder W) : EpistemicSystemW W where
-  ge := g.ge
-  refl := g.refl
-  mono := g.mono
-
-/-- Every System FA model is a GFC preorder: complement reversal comes from
-    qualitative additivity via the comparative-probability layer
-    (`instComplementReversingOfQualitativeAdditive`). -/
-def EpistemicSystemFA.toGFCPreorder {W : Type*} (sys : EpistemicSystemFA W) :
-    GFCPreorder W where
-  ge := sys.ge
-  refl := sys.refl
-  trans := sys.trans
-  mono := sys.mono
-  complRev := ComparativeProbability.complRev
 
 -- ── Measure Semantics ───────────────────────────
 
@@ -271,12 +262,12 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  rw [(Set.union_diff_cancel hAB).symm, m.additive A (B \ A) disjoint_sdiff_self_right]
+  rw [(Set.union_sdiff_cancel hAB).symm, m.additive A (B \ A) disjoint_sdiff_self_right]
   exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
-theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
+@[simp] theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
   have hempty := m.additive ∅ ∅ disjoint_bot_left
   rw [Set.empty_union] at hempty; linarith
 
@@ -284,7 +275,7 @@ theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
 theorem mu_mono (m : FinAddMeasure W) {A B : Set W} (h : A ⊆ B) :
     m.mu A ≤ m.mu B := by
   have hunion := m.additive A (B \ A) disjoint_sdiff_self_right
-  rw [Set.union_diff_cancel h] at hunion; linarith [m.nonneg (B \ A)]
+  rw [Set.union_sdiff_cancel h] at hunion; linarith [m.nonneg (B \ A)]
 
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
 theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
@@ -296,13 +287,10 @@ theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
     into the shared part `A ∩ B` and the private parts cancels the shared part. -/
 theorem mu_qadd (m : FinAddMeasure W) (A B : Set W) :
     m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A) := by
-  have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
-    conv_lhs => rw [(Set.diff_union_inter A B).symm]
+  have key : ∀ X Y : Set W, m.mu X = m.mu (X \ Y) + m.mu (X ∩ Y) := fun X Y => by
+    conv_lhs => rw [(Set.sdiff_union_inter X Y).symm]
     exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.2)
-  have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
-    conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) by rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
-    exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.1)
-  rw [hmuA, hmuB]; exact add_le_add_iff_right (m.mu (A ∩ B))
+  rw [key A B, key B A, Set.inter_comm B A]; exact add_le_add_iff_right (m.mu (A ∩ B))
 
 /-- Every finitely additive measure satisfies the FA axioms.
     A fortiori from [holliday-icard-2013] Theorem 6 soundness,
@@ -312,7 +300,8 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   refl := m.inducedGe_axiomR
   mono := m.inducedGe_axiomT
   bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
+  nonTrivial := by
+    show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.mu_qadd
@@ -356,7 +345,7 @@ theorem inducedGe_axiomT (m : QualAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  rw [m.qualAdd B A, Set.diff_eq_empty.mpr hAB, m.mu_empty]; exact m.nonneg (B \ A)
+  rw [m.qualAdd B A, Set.sdiff_eq_empty.mpr hAB, m.mu_empty]; exact m.nonneg (B \ A)
 
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
@@ -366,7 +355,8 @@ def toSystemFA (m : QualAddMeasure W) : EpistemicSystemFA W where
   refl := fun _ => le_refl _
   mono := m.inducedGe_axiomT
   bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
+  nonTrivial := by
+    show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.qualAdd
@@ -385,11 +375,12 @@ def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : QualAddMeasure W
 
 -- ── World-Ordering Semantics ────────────────────
 
-/-- The *l*-lifting: a preorder on worlds induces a comparison on
-    propositions. A ≿ B iff for every b ∈ B, ∃ a ∈ A with a ≥_w b.
-    [holliday-icard-2013] Definition 6; see also their injection-based
-    *m*-lifting (Definition 7), which yields a complete logic for
-    world-ordering models. -/
+/-- The *l*-lifting (Lewis's lifting; [holliday-icard-2013], §5): a preorder on
+    worlds induces a comparison on propositions. A ≿ B iff for every b ∈ B,
+    ∃ a ∈ A with a ≥_w b. See also their injection-based *m*-lifting (`matchingLift`,
+    §9), which yields a complete logic for world-ordering models.
+
+    This is the **Smyth (upper powerdomain) order** lifted from `ge_w`. -/
 def dominationLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
 
@@ -431,9 +422,9 @@ theorem dominationLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
     let ⟨a, ha, hab⟩ := hAb b rfl
     ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
 
--- ── m-Lifting ([holliday-icard-2013] Definition 7) ──
+-- ── m-Lifting ([holliday-icard-2013], §9) ──
 
-/-- The *m*-lifting ([holliday-icard-2013], Definition 7): an injection-based
+/-- The *m*-lifting ([holliday-icard-2013], §9): an injection-based
     alternative to `dominationLift`. A ≿ B iff there exists an injection
     f : B ↪ A such that f(b) ≥_w b for all b ∈ B.
 
@@ -485,6 +476,192 @@ instance : IsTrans (Set W) m.inducedGe := ⟨fun _ _ _ hab hbc => le_trans hbc h
 instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toSystemFA.additive⟩
 
 instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toSystemFA.nonTrivial⟩
+
+end FinAddMeasure
+
+/-! ### Generalized finite cancellation and GFC orders
+
+The cancellation theory of imprecise (multi-prior) comparative probability,
+following [harrison-trainor-holliday-icard-2016] (after Ríos Insua 1992 and
+Alon–Lehrer 2014) and used by [harrison-trainor-holliday-icard-2018]. A pair of
+event-sequences is *balanced* when every state lies in equally many events on
+each side; **Finite Cancellation** (Scott) and its **Generalized** strengthening
+are the cancellation axioms whose `Refl + Positivity + Non-triviality` companions
+characterize representability by a single, resp. a *set* of, additive measures. -/
+
+open scoped Classical in
+/-- Indicator count of a state across an event sequence. -/
+noncomputable def seqCount {W : Type*} (s : W) (Es : List (Set W)) : ℕ :=
+  (Es.map (fun E => if s ∈ E then (1 : ℕ) else 0)).sum
+
+/-- A **balanced** pair of event-sequences ([harrison-trainor-holliday-icard-2016]):
+    every state lies in equally many events on the left as on the right. -/
+def Balanced {W : Type*} (Es Fs : List (Set W)) : Prop :=
+  ∀ s : W, seqCount s Es = seqCount s Fs
+
+/-- **Finite Cancellation** (Scott's axiom; [harrison-trainor-holliday-icard-2016]):
+    for every balanced pair `⟨…, X⟩` / `⟨…, Y⟩` whose premise comparisons all hold,
+    `Y ≿ X`. (`prem` carries the paired premise events; `X`/`Y` are the heads.) -/
+def FiniteCancellation {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+  ∀ (prem : List (Set W × Set W)) (X Y : Set W),
+    Balanced (X :: prem.map Prod.fst) (Y :: prem.map Prod.snd) →
+    (∀ p ∈ prem, ge p.1 p.2) → ge Y X
+
+/-- **Generalized Finite Cancellation** (Ríos Insua; Alon–Lehrer; the form of
+    [harrison-trainor-holliday-icard-2016]): like `FiniteCancellation`, but the
+    distinguished pair may be repeated `r ≥ 1` times. Strictly stronger than
+    `FiniteCancellation` for incomplete relations; equivalent under totality. -/
+def GeneralizedFiniteCancellation {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+  ∀ (prem : List (Set W × Set W)) (X Y : Set W) (r : ℕ), 1 ≤ r →
+    Balanced (List.replicate r X ++ prem.map Prod.fst)
+             (List.replicate r Y ++ prem.map Prod.snd) →
+    (∀ p ∈ prem, ge p.1 p.2) → ge Y X
+
+/-- GFC implies FC (the `r = 1` instance). -/
+theorem FiniteCancellation.of_gfc {W : Type*} {ge : Set W → Set W → Prop}
+    (h : GeneralizedFiniteCancellation ge) : FiniteCancellation ge := by
+  intro prem X Y hbal hprem
+  refine h prem X Y 1 le_rfl ?_ hprem
+  simpa [List.replicate_one] using hbal
+
+/-- A **GFC order** ([harrison-trainor-holliday-icard-2018], after
+    [harrison-trainor-holliday-icard-2016]): reflexivity, positivity,
+    non-triviality, and generalized finite cancellation. These four axioms
+    characterize representability by a nonempty set of additive measures
+    (`E ≿ F ↔ ∀ μ ∈ P, μ E ≥ μ F`). Transitivity, monotonicity, and complement
+    reversal are *derived* from cancellation (`GFCOrder.trans`/`mono`/`complRev`),
+    not stipulated. -/
+structure GFCOrder (W : Type*) where
+  /-- The "at least as likely as" relation on propositions. -/
+  ge : Set W → Set W → Prop
+  /-- Reflexivity. -/
+  refl : ∀ A, ge A A
+  /-- Positivity: every proposition is at least as likely as the contradiction. -/
+  positivity : ∀ A, ge A ∅
+  /-- Non-triviality: the contradiction is not at least as likely as the tautology. -/
+  nonTriviality : ¬ ge ∅ Set.univ
+  /-- Generalized finite cancellation. -/
+  gfc : GeneralizedFiniteCancellation ge
+
+namespace GFCOrder
+
+variable {W : Type*} (G : GFCOrder W)
+
+/-- A GFC order satisfies finite cancellation. -/
+theorem fc : FiniteCancellation G.ge := FiniteCancellation.of_gfc G.gfc
+
+/-- Transitivity is derived from cancellation (balanced sequence `⟨A,B,C⟩`/`⟨B,C,A⟩`). -/
+theorem trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C) : G.ge A C := by
+  refine G.fc [(A, B), (B, C)] C A (fun s => ?_) (fun p hp => ?_)
+  · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]; omega
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl
+    · exact hAB
+    · exact hBC
+
+/-- Monotonicity is derived from positivity + cancellation
+    (balanced sequence `⟨B∖A, A⟩`/`⟨∅, B⟩`). -/
+theorem mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
+  refine G.fc [(B \ A, ∅)] A B (fun s => ?_) (fun p hp => ?_)
+  · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      Set.mem_empty_iff_false, if_false, Set.mem_sdiff]
+    by_cases hsA : s ∈ A
+    · simp [hsA, hAB hsA]
+    · by_cases hsB : s ∈ B <;> simp [hsA, hsB]
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl
+    exact G.positivity _
+
+/-- Complement reversal is derived from cancellation
+    (balanced sequence `⟨A, Aᶜ⟩`/`⟨B, Bᶜ⟩`). -/
+theorem complRev {A B : Set W} (hAB : G.ge A B) : G.ge Bᶜ Aᶜ := by
+  refine G.fc [(A, B)] Aᶜ Bᶜ (fun s => ?_) (fun p hp => ?_)
+  · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      Set.mem_compl_iff]
+    by_cases hsA : s ∈ A <;> by_cases hsB : s ∈ B <;> simp [hsA, hsB]
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl
+    exact hAB
+
+end GFCOrder
+
+/-! #### Measures induce GFC orders -/
+
+namespace FinAddMeasure
+
+variable {W : Type*} [Fintype W] (m : FinAddMeasure W)
+
+omit [Fintype W] in
+/-- The measure of a finite set is the sum of its singleton measures. -/
+lemma muFinsetSum (S : Finset W) :
+    m.mu (↑S : Set W) = ∑ i ∈ S, m.mu {i} := by
+  classical
+  induction S using Finset.induction_on with
+  | empty => simp
+  | @insert a S ha ih =>
+    have hdisj : Disjoint ({a} : Set W) ↑S :=
+      Set.disjoint_singleton_left.mpr (fun h => ha (Finset.mem_coe.mp h))
+    rw [Finset.coe_insert, Set.insert_eq, m.additive _ _ hdisj, ih, Finset.sum_insert ha]
+
+open scoped Classical in
+private lemma muEqSumIte (E : Set W) :
+    m.mu E = ∑ s, if s ∈ E then m.mu {s} else 0 := by
+  classical
+  have h : m.mu E = ∑ i ∈ E.toFinset, m.mu {i} := by
+    conv_lhs => rw [← Set.coe_toFinset E]
+    exact muFinsetSum m E.toFinset
+  rw [h, ← Finset.sum_filter]
+  refine Finset.sum_congr ?_ (fun _ _ => rfl)
+  ext s; simp [Set.mem_toFinset]
+
+private lemma muListSum (L : List (Set W)) :
+    (L.map m.mu).sum = ∑ s, m.mu {s} * (seqCount s L : ℚ) := by
+  classical
+  induction L with
+  | nil => simp [seqCount]
+  | cons E L ih =>
+    rw [List.map_cons, List.sum_cons, ih, muEqSumIte m E, ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl (fun s _ => ?_)
+    have hsc : seqCount s (E :: L) = (if s ∈ E then 1 else 0) + seqCount s L := by
+      simp [seqCount]
+    rw [hsc]; push_cast
+    by_cases hs : s ∈ E
+    · simp only [hs, if_true]; rw [mul_add, mul_one]
+    · simp [hs]
+
+private lemma muListSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : Balanced L₁ L₂) :
+    (L₁.map m.mu).sum = (L₂.map m.mu).sum := by
+  rw [muListSum m L₁, muListSum m L₂]
+  exact Finset.sum_congr rfl (fun s _ => by rw [h s])
+
+omit [Fintype W] in
+private lemma sum_mono {prem : List (Set W × Set W)}
+    (hprem : ∀ p ∈ prem, m.inducedGe p.1 p.2) :
+    ((prem.map Prod.snd).map m.mu).sum ≤ ((prem.map Prod.fst).map m.mu).sum := by
+  induction prem with
+  | nil => simp
+  | cons p ps ih =>
+    simp only [List.map_cons, List.sum_cons]
+    exact add_le_add (hprem p (List.mem_cons_self ..))
+      (ih (fun q hq => hprem q (List.mem_cons_of_mem _ hq)))
+
+/-- Every finitely additive measure's induced order is a GFC order: the
+    Scott / Alon–Lehrer soundness direction (a single measure `μ` is the
+    nonempty set `{μ}`). -/
+def toGFCOrder : GFCOrder W where
+  ge := m.inducedGe
+  refl := fun _ => le_refl _
+  positivity := fun A => by simpa [inducedGe, m.mu_empty] using m.nonneg A
+  nonTriviality := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
+  gfc := by
+    intro prem X Y r hr hbal hprem
+    have hsum := muListSum_eq_of_balanced m hbal
+    simp only [List.map_append, List.sum_append, List.map_replicate, List.sum_replicate,
+      nsmul_eq_mul] at hsum
+    have hr0 : (0 : ℚ) < r := by exact_mod_cast Nat.lt_of_lt_of_le Nat.one_pos hr
+    show m.mu X ≤ m.mu Y
+    have hkey : (r : ℚ) * m.mu X ≤ (r : ℚ) * m.mu Y := by nlinarith [sum_mono m hprem]
+    exact le_of_mul_le_mul_left hkey hr0
 
 end FinAddMeasure
 
