@@ -29,7 +29,6 @@ at-issue operation — and `ciStrongerThan` is the strict order `<` on that tier
 
 namespace Pragmatics.Expressives
 
-
 /-- A two-dimensional meaning ([potts-2005]): two predicates over worlds, the at-issue
 (truth-conditional) content `atIssue` and the conventional-implicature (use-conditional)
 content `ci`. E.g. "that bastard John is late" has `atIssue` "John is late" and `ci` "the
@@ -45,61 +44,14 @@ namespace TwoDimProp
 
 variable {W : Type*}
 
+/-- Combine at-issue content with CI content. -/
+@[simps] def withCI (p c : W → Prop) : TwoDimProp W := ⟨p, c⟩
 
-/--
-Create a proposition with no CI content.
-
-Most ordinary expressions have trivial CI content (always satisfied).
--/
-def ofAtIssue (p : W → Prop) : TwoDimProp W :=
-  { atIssue := p, ci := λ _ => True }
-
-/--
-Create a pure CI (no at-issue contribution).
-
-Some expressions ONLY contribute CI content.
-Example: "damn" in "the damn dog" doesn't change truth conditions.
--/
-def pureCI (c : W → Prop) : TwoDimProp W :=
-  { atIssue := λ _ => True, ci := c }
-
-/--
-Combine at-issue content with CI content.
--/
-def withCI (p : W → Prop) (c : W → Prop) : TwoDimProp W :=
-  { atIssue := p, ci := c }
-
-/-- `withCI` projects to its at-issue argument. -/
-@[simp] theorem withCI_atIssue (p c : W → Prop) :
-    (withCI p c).atIssue = p := rfl
-
-/-- `withCI` projects to its CI argument. -/
-@[simp] theorem withCI_ci (p c : W → Prop) :
-    (withCI p c).ci = c := rfl
-
-/--
-Pure quotation: strips CI content, preserving only at-issue content.
-
-When an expression is purely quoted, its CI content (expressives, slurs,
-NRRCs) does not project. The quoted material is "frozen" — its peripheral
-content is blocked from passing up the tree.
-
-This operation is the semantic reflex of pure quotation blocking peripheral
-content passage ([kirk-giannini-2024], Appendix Remark 6).
-
-Example: In "He said 'that bastard Jones left'", the expressive
-'bastard' is inside pure quotation and does not project to the speaker.
--/
-def pureQuote (p : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := p.atIssue, ci := λ _ => True }
-
-/-- Pure quotation neutralizes CI content. -/
-@[simp] theorem pureQuote_strips_ci (p : TwoDimProp W) (w : W) :
-    (pureQuote p).ci w := trivial
-
-/-- Pure quotation preserves at-issue content. -/
-@[simp] theorem pureQuote_preserves_atIssue (p : TwoDimProp W) :
-    (pureQuote p).atIssue = p.atIssue := rfl
+/-- Pure quotation strips CI content to `⊤`, preserving only at-issue content: a quoted
+expressive does not project ([kirk-giannini-2024]). E.g. in "He said 'that bastard Jones
+left'" the expressive 'bastard' is frozen inside the quotation and not attributed to the
+speaker. -/
+@[simps] def pureQuote (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, ⊤⟩
 
 /--
 Pure quotation with strip witness.
@@ -139,12 +91,11 @@ def pureQuoteRich (p : TwoDimProp W) : PureQuoted W :=
 
 /-- The rich operator preserves at-issue between original and result. -/
 theorem pureQuoteRich_atIssue_preserved (p : TwoDimProp W) :
-    (pureQuoteRich p).result.atIssue = (pureQuoteRich p).original.atIssue := by
-  simp
+    (pureQuoteRich p).result.atIssue = (pureQuoteRich p).original.atIssue := rfl
 
-/-- The rich operator strips the original CI: result.ci is constantly True. -/
+/-- The rich operator strips the original CI: result.ci is constantly `⊤`. -/
 theorem pureQuoteRich_ci_stripped (p : TwoDimProp W) (w : W) :
-    (pureQuoteRich p).result.ci w := by simp
+    (pureQuoteRich p).result.ci w := trivial
 
 /--
 **Pure quotation is information-losing.**
@@ -164,7 +115,6 @@ theorem pureQuote_loses_ci_info :
     ∃ (p₁ p₂ : TwoDimProp Unit), p₁.ci ≠ p₂.ci ∧ pureQuote p₁ = pureQuote p₂ := by
   refine ⟨⟨λ _ => True, λ _ => True⟩, ⟨λ _ => True, λ _ => False⟩, ?_, rfl⟩
   intro h; simpa using congrFun h ()
-
 
 /-! ### Connectives
 
@@ -236,7 +186,6 @@ def imp (p q : TwoDimProp W) : TwoDimProp W :=
 /-- Implication's at-issue dimension. -/
 @[simp] theorem imp_atIssue (p q : TwoDimProp W) (w : W) :
     (imp p q).atIssue w ↔ (p.atIssue w → q.atIssue w) := Iff.rfl
-
 
 /--
 CI projects through negation.
@@ -316,35 +265,6 @@ def appositiveProperties : SecondaryMeaningProperties :=
   , allowsPerspectiveShift := false
   , requiresDiscourseAntecedent := false }
 
-
-/--
-The comma feature type-shifts at-issue content to CI content.
-
-This is Potts' mechanism for appositives:
-- "Laura, a doctor, recommended aspirin"
-- "a doctor" is at-issue predicate
-- comma shifts it to CI: "Laura is a doctor" becomes CI content
-
-Formally: comma : ⟨⟨eᵃ,tᵃ⟩, ⟨eᵃ,tᶜ⟩⟩
--/
-def comma (pred : W → Prop) (entity : W → Prop) : TwoDimProp W :=
-  { atIssue := entity  -- Entity denotation passes through
-  , ci := pred }       -- Predicate becomes CI content
-
-/--
-Supplementary adverb application.
-
-"Luckily, John won" = John won + CI(speaker considers it lucky)
-
-Formally: comma₂ : ⟨⟨tᵃ,tᵃ⟩, ⟨tᵃ,tᶜ⟩⟩
--/
-def supplementaryAdverb
-    (adverbMeaning : (W → Prop) → (W → Prop))  -- The adverb's at-issue meaning
-    (prop : W → Prop) : TwoDimProp W :=
-  { atIssue := prop              -- Base proposition unchanged
-  , ci := adverbMeaning prop }   -- Adverb meaning becomes CI
-
-
 /--
 CI informativeness ordering: `φ` has a stronger CI than `ψ` when `φ`'s CI strictly entails
 `ψ`'s — i.e. `φ.ci < ψ.ci` in the pointwise entailment order that `W → Prop` inherits from
@@ -371,7 +291,6 @@ theorem ciStrongerThan_trans {φ ψ χ : TwoDimProp W}
 theorem ciStrongerThan_asymm {φ ψ : TwoDimProp W}
     (h : ciStrongerThan φ ψ) : ¬ ciStrongerThan ψ φ := lt_asymm h
 
-
 /-!
 ## CI Lift: Presupposition → Two-Dimensional Meaning ([wang-2025])
 
@@ -393,30 +312,10 @@ This provides a new cross-module connection between:
 
 -/
 
-/--
-CI lift: type-shift a presupposition/assertion pair into a
-two-dimensional meaning.
-
-The presupposition becomes CI content (projects universally), while the
-assertion becomes at-issue content (composes truth-functionally).
-
-This is the ⟦CI⟧ operator from [wang-2025].
--/
-def ciLift (presup assertion : W → Prop) : TwoDimProp W :=
-  { atIssue := assertion
-  , ci := presup }
-
-/--
-CI lift preserves the assertion as at-issue content.
--/
-theorem ciLift_atIssue (presup assertion : W → Prop) :
-    (ciLift presup assertion).atIssue = assertion := rfl
-
-/--
-CI lift maps presupposition to CI dimension.
--/
-theorem ciLift_ci (presup assertion : W → Prop) :
-    (ciLift presup assertion).ci = presup := rfl
+/-- CI lift: type-shift a presupposition/assertion pair into a two-dimensional meaning — the
+presupposition becomes (universally projecting) CI content, the assertion becomes at-issue
+content. The ⟦CI⟧ operator of [wang-2025]. -/
+@[simps] def ciLift (presup assertion : W → Prop) : TwoDimProp W := ⟨assertion, presup⟩
 
 /--
 De re reading: when CommonGround entails the presupposition, the CI dimension is satisfied
