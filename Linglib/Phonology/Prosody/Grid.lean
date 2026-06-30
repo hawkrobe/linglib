@@ -24,9 +24,9 @@ bracketed grid of Halle & Vergnaud 1987 / [hayes-1995] — our
   bit (whether its leaf is a head terminal).
 * `Grid.columns` / `Grid.peak` / `Grid.ofTree` — its height image: heights, the peak (the head terminal's
   prominence), the stacked rows.
-* `Grid.headTerminals` / `Grid.headHeights` / `IsHeaded` — the head terminals (DTEs) as nodes / as heights,
-  and the unique-head-terminal predicate.
-* `Grid.IsContinuous` / `IsCulminative` — the grid well-formedness invariants.
+* `Grid.headTerminals` / `Grid.headHeights` / `Grid.IsHeaded` — the head terminals (DTEs) as nodes /
+  as heights, and the unique-head-terminal predicate.
+* `Grid.IsContinuous` / `Grid.IsCulminative` — the grid well-formedness invariants.
 
 ## Main results
 * `Grid.ofTree_isContinuous` — the Continuous Column Constraint, by construction.
@@ -42,8 +42,10 @@ namespace Prosody
 /-- A metrical grid: rows of head-marks, bottom row first. -/
 abbrev Grid := List (List Bool)
 
+namespace Grid
+
 /-- A metrical-grid column: a σ-leaf with its head-projection height and liveness. -/
-structure Grid.Column where
+structure Column where
   /-- The σ-leaf carrying the column. -/
   leaf : Tree
   /-- The column's head-projection height. -/
@@ -52,91 +54,91 @@ structure Grid.Column where
   live : Bool
 
 /-- Carry a column up one edge, bumping its height and liveness. -/
-private def Grid.bumpLive (isHead : Bool) : Grid.Column → Grid.Column :=
+private def bumpLive (isHead : Bool) : Column → Column :=
   fun c => { c with height := c.height + (if isHead && c.live then 1 else 0), live := isHead && c.live }
 
 variable (t : Tree)
 
-/-- The live grid: one `Grid.Column` per σ-leaf, tracking head-terminal liveness. -/
-def Grid.columnsLive : List Grid.Column := go t where
-  go : Tree → List Grid.Column
+/-- The live grid: one `Column` per σ-leaf, tracking head-terminal liveness. -/
+def columnsLive : List Column := go t where
+  go : Tree → List Column
     | .node a cs => if a.isSyl && cs.isEmpty then [⟨.node a cs, 1, true⟩] else goList cs
-  goList : List Tree → List Grid.Column
+  goList : List Tree → List Column
     | []      => []
-    | c :: cs => (go c).map (Grid.bumpLive c.label.isHead) ++ goList cs
+    | c :: cs => (go c).map (bumpLive c.label.isHead) ++ goList cs
 
 /-- **The fold's recursion** ([liberman-prince-1977]): a σ-leaf is its own column; every other
     node's columns are its children's, each carried up (`bumpLive`) along the edge to it. -/
-@[simp] theorem Grid.columnsLive_node (a : Constituent) (cs : List Tree) :
-    Grid.columnsLive (.node a cs)
+@[simp] theorem columnsLive_node (a : Constituent) (cs : List Tree) :
+    columnsLive (.node a cs)
       = if a.isSyl ∧ cs = [] then [⟨.node a cs, 1, true⟩]
-        else cs.flatMap (fun c => (Grid.columnsLive c).map (Grid.bumpLive c.label.isHead)) := by
-  have hg : ∀ ds : List Tree, Grid.columnsLive.goList ds
-      = ds.flatMap (fun c => (Grid.columnsLive c).map (Grid.bumpLive c.label.isHead)) := fun ds => by
+        else cs.flatMap (fun c => (columnsLive c).map (bumpLive c.label.isHead)) := by
+  have hg : ∀ ds : List Tree, columnsLive.goList ds
+      = ds.flatMap (fun c => (columnsLive c).map (bumpLive c.label.isHead)) := fun ds => by
     induction ds with
     | nil => rfl
-    | cons c ds ih => simp only [Grid.columnsLive.goList, List.flatMap_cons, ih, Grid.columnsLive]
+    | cons c ds ih => simp only [columnsLive.goList, List.flatMap_cons, ih, columnsLive]
   by_cases h : a.isSyl = true ∧ cs = []
   · obtain ⟨hσ, rfl⟩ := h
-    simp [Grid.columnsLive, Grid.columnsLive.go, hσ]
+    simp [columnsLive, columnsLive.go, hσ]
   · rw [if_neg h]
     have hb : (a.isSyl && cs.isEmpty) = false := by
       rcases Bool.eq_false_or_eq_true (a.isSyl && cs.isEmpty) with h' | h'
       · rw [Bool.and_eq_true, List.isEmpty_iff] at h'; exact absurd h' h
       · exact h'
-    rw [show Grid.columnsLive (.node a cs) = Grid.columnsLive.goList cs from by
-          simp [Grid.columnsLive, Grid.columnsLive.go, hb], hg]
+    rw [show columnsLive (.node a cs) = columnsLive.goList cs from by
+          simp [columnsLive, columnsLive.go, hb], hg]
 
 /-- The grid-column heights of a tree. -/
-def Grid.columns : List ℕ := (Grid.columnsLive t).map (·.height)
+def columns : List ℕ := (columnsLive t).map (·.height)
 
 /-- The tallest grid column. -/
-def Grid.peak : ℕ := (Grid.columns t).foldr max 0
+def peak : ℕ := (columns t).foldr max 0
 
 /-- The head terminals' prominences. -/
-def Grid.headHeights : List ℕ := ((Grid.columnsLive t).filter (·.live)).map (·.height)
+def headHeights : List ℕ := ((columnsLive t).filter (·.live)).map (·.height)
 
 /-- A tree is headed when it has a unique head terminal. -/
-def IsHeaded : Prop := (Grid.headHeights t).length = 1
+def IsHeaded : Prop := (headHeights t).length = 1
 
 instance : Decidable (IsHeaded t) := by unfold IsHeaded; infer_instance
 
 /-- `leaf` is a head terminal of `t`, reached from the root by an all-head descent. -/
-inductive Grid.IsHeadTerminal : Tree → Tree → Prop
-  | leaf (wt hd) : Grid.IsHeadTerminal (.node (.syl wt hd) []) (.node (.syl wt hd) [])
+inductive IsHeadTerminal : Tree → Tree → Prop
+  | leaf (wt hd) : IsHeadTerminal (.node (.syl wt hd) []) (.node (.syl wt hd) [])
   | head {a cs c leaf} : c ∈ cs → c.label.isHead →
-      Grid.IsHeadTerminal c leaf → Grid.IsHeadTerminal (.node a cs) leaf
+      IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
 /-- The **head terminals** (DTEs) — Liberman & Prince's *designated terminal elements*: the
     σ-leaves reached from the root by an all-head descent. The head-child recursion mirroring
-    `Grid.IsHeadTerminal`, structural (so `decide` computes it) via `Planar.fold`. -/
-def Grid.headTerminals (t : Tree) : List Tree :=
+    `IsHeadTerminal`, structural (so `decide` computes it) via `Planar.fold`. -/
+def headTerminals (t : Tree) : List Tree :=
   t.fold fun a ps =>
     if a.isSyl ∧ ps = [] then [.node a []]
     else (ps.filter (·.1.label.isHead)).flatMap (·.2)
 
 /-- Head terminals recurse through the head children: a σ-leaf is its own; otherwise a non-head
     edge drops a child's terminals while a head edge keeps them. -/
-@[simp] theorem Grid.headTerminals_node (a : Constituent) (cs : List Tree) :
-    Grid.headTerminals (.node a cs)
+@[simp] theorem headTerminals_node (a : Constituent) (cs : List Tree) :
+    headTerminals (.node a cs)
       = if a.isSyl ∧ cs = [] then [.node a []]
-        else (cs.filter (·.label.isHead)).flatMap Grid.headTerminals := by
-  conv_lhs => rw [Grid.headTerminals, RootedTree.Planar.fold_node]
+        else (cs.filter (·.label.isHead)).flatMap headTerminals := by
+  conv_lhs => rw [headTerminals, RootedTree.Planar.fold_node]
   simp only [List.map_eq_nil_iff]
   split
   · rfl
   · rw [List.filter_map, List.flatMap_map]; rfl
 
 /-- The head terminal as a single element, if the tree is headed. -/
-def Grid.headTerminal (t : Tree) : Option Tree := (Grid.headTerminals t).head?
+def headTerminal (t : Tree) : Option Tree := (headTerminals t).head?
 
-/-- The fold `Grid.headTerminals` computes the relation `Grid.IsHeadTerminal`. -/
-theorem Grid.mem_headTerminals_iff {t leaf : Tree} :
-    leaf ∈ Grid.headTerminals t ↔ Grid.IsHeadTerminal t leaf := by
+/-- The fold `headTerminals` computes the relation `IsHeadTerminal`. -/
+theorem mem_headTerminals_iff {t leaf : Tree} :
+    leaf ∈ headTerminals t ↔ IsHeadTerminal t leaf := by
   induction t using Core.Order.Branching.inductionOn with
   | ih t IH =>
     obtain ⟨a, cs⟩ := t
-    rw [Grid.headTerminals_node]
+    rw [headTerminals_node]
     split
     · rename_i hσ; obtain ⟨hσ, rfl⟩ := hσ
       obtain ⟨w, hd, rfl⟩ : ∃ w hd, a = .syl w hd := by cases a <;> simp_all [Constituent.isSyl]
@@ -164,46 +166,46 @@ private theorem List.filter_flatMap_eq {β γ : Type*} (p : β → Bool) (f : β
 
 /-- The structural head terminals are exactly the leaves of the *live* grid columns: the all-head
     descent and `columnsLive`'s `live` bit pick out the same σ-leaves. -/
-private theorem Grid.headTerminals_eq_live :
-    Grid.headTerminals t = ((Grid.columnsLive t).filter (·.live)).map (·.leaf) := by
+private theorem headTerminals_eq_live :
+    headTerminals t = ((columnsLive t).filter (·.live)).map (·.leaf) := by
   induction t using Core.Order.Branching.inductionOn with
   | ih t IH =>
     obtain ⟨a, cs⟩ := t
-    rw [Grid.headTerminals_node, Grid.columnsLive_node]
+    rw [headTerminals_node, columnsLive_node]
     by_cases h : a.isSyl = true ∧ cs = []
     · obtain ⟨hσ, rfl⟩ := h; simp [hσ]
     · rw [if_neg h, if_neg h, List.filter_flatMap_eq, List.filter_flatMap, List.map_flatMap]
       refine List.flatMap_congr fun c hc => ?_
       rw [List.filter_map, List.map_map]
       cases hh : c.label.isHead <;>
-        simp [Grid.bumpLive, Function.comp_def, IH c (by simpa using hc)]
+        simp [bumpLive, Function.comp_def, IH c (by simpa using hc)]
 
 /-- A tree is headed iff it has a single head terminal. -/
-theorem isHeaded_iff_headTerminals : IsHeaded t ↔ (Grid.headTerminals t).length = 1 := by
-  rw [IsHeaded, Grid.headHeights, List.length_map, Grid.headTerminals_eq_live, List.length_map]
+theorem isHeaded_iff_headTerminals : IsHeaded t ↔ (headTerminals t).length = 1 := by
+  rw [IsHeaded, headHeights, List.length_map, headTerminals_eq_live, List.length_map]
 
 /-- The metrical grid of a tree, as stacked rows. -/
-def Grid.ofTree : Grid :=
-  (List.range (Grid.peak t)).map
-    (fun r => (Grid.columns t).map (fun h => decide (r < h)))
+def ofTree : Grid :=
+  (List.range (peak t)).map
+    (fun r => (columns t).map (fun h => decide (r < h)))
 
 /-! ### The Continuous Column Constraint -/
 
 /-- Whether one row is a submask of the row below. -/
-private def Grid.rowSubmask (upper lower : List Bool) : Bool :=
+private def rowSubmask (upper lower : List Bool) : Bool :=
   (upper.zip lower).all (fun p => !p.1 || p.2)
 
 /-- The Continuous Column Constraint ([prince-1983]; [hayes-1995]): no column has a gap. -/
-def Grid.IsContinuous (g : Grid) : Prop := g.IsChain (fun lower upper => Grid.rowSubmask upper lower = true)
+def IsContinuous (g : Grid) : Prop := g.IsChain (fun lower upper => rowSubmask upper lower = true)
 
-instance (g : Grid) : Decidable (Grid.IsContinuous g) := by unfold Grid.IsContinuous; infer_instance
+instance (g : Grid) : Decidable (IsContinuous g) := by unfold IsContinuous; infer_instance
 
-/-- `Grid.ofTree` always satisfies the Continuous Column Constraint ([prince-1983]; [hayes-1995]). -/
-theorem Grid.ofTree_isContinuous (t : Tree) : Grid.IsContinuous (Grid.ofTree t) := by
-  rw [Grid.IsContinuous, Grid.ofTree, List.isChain_map, List.isChain_iff_getElem]
+/-- `ofTree` always satisfies the Continuous Column Constraint ([prince-1983]; [hayes-1995]). -/
+theorem ofTree_isContinuous (t : Tree) : IsContinuous (ofTree t) := by
+  rw [IsContinuous, ofTree, List.isChain_map, List.isChain_iff_getElem]
   intro i _
   simp only [List.getElem_range]
-  rw [Grid.rowSubmask, List.zip_map', List.all_map, List.all_eq_true]
+  rw [rowSubmask, List.zip_map', List.all_map, List.all_eq_true]
   intro h _
   by_cases hr : i + 1 < h <;> simp [hr]
   omega
@@ -213,48 +215,48 @@ theorem Grid.ofTree_isContinuous (t : Tree) : Grid.IsContinuous (Grid.ofTree t) 
 Re-representing a `Foot` as a tree and reading its grid recovers its head — the depth-1 core. -/
 
 /-- The live fold on a σ-leaf: one live column at height `1`. -/
-private theorem Grid.columnsLive.go_syl (wt : Syllable.Weight) (hd : Bool) :
-    Grid.columnsLive.go (.node (Constituent.syl wt hd) [])
+private theorem columnsLive.go_syl (wt : Syllable.Weight) (hd : Bool) :
+    columnsLive.go (.node (Constituent.syl wt hd) [])
       = [⟨.node (Constituent.syl wt hd) [], 1, true⟩] := rfl
 
 /-- The `goList` fold as a `flatMap` over children. -/
-private theorem Grid.columnsLive.goList_eq (cs : List Tree) :
-    Grid.columnsLive.goList cs
-      = cs.flatMap (fun c => (Grid.columnsLive.go c).map (Grid.bumpLive c.label.isHead)) := by
+private theorem columnsLive.goList_eq (cs : List Tree) :
+    columnsLive.goList cs
+      = cs.flatMap (fun c => (columnsLive.go c).map (bumpLive c.label.isHead)) := by
   induction cs with
   | nil => rfl
-  | cons c cs ih => simp only [Grid.columnsLive.goList, List.flatMap_cons, ih]
+  | cons c cs ih => simp only [columnsLive.goList, List.flatMap_cons, ih]
 
 /-- The live grid of a non-σ node is the bumped concatenation of its children's. -/
-private theorem Grid.columnsLive.node_of_ne_σ {a : Constituent} {cs : List Tree}
+private theorem columnsLive.node_of_ne_σ {a : Constituent} {cs : List Tree}
     (ha : a.isSyl = false) :
-    Grid.columnsLive (.node a cs)
-      = cs.flatMap (fun c => (Grid.columnsLive.go c).map (Grid.bumpLive c.label.isHead)) := by
-  rw [← Grid.columnsLive.goList_eq]
-  simp [Grid.columnsLive, Grid.columnsLive.go, ha]
+    columnsLive (.node a cs)
+      = cs.flatMap (fun c => (columnsLive.go c).map (bumpLive c.label.isHead)) := by
+  rw [← columnsLive.goList_eq]
+  simp [columnsLive, columnsLive.go, ha]
 
 /-- A foot's grid is `2` at the head σ, `1` elsewhere. -/
-theorem Grid.columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
-    Grid.columns (f.toProsTree w) = (Foot.toGrid f).map (fun b => if b then 2 else 1) := by
-  rw [Grid.columns, Foot.toProsTree,
-      Grid.columnsLive.node_of_ne_σ (a := Constituent.ft false) (by decide), List.flatMap_map]
-  simp only [Grid.columnsLive.go_syl, RootedTree.Planar.label_node, Constituent.isHead,
-    List.map_cons, List.map_nil, Grid.bumpLive]
+theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    columns (f.toProsTree w) = (Foot.toGrid f).map (fun b => if b then 2 else 1) := by
+  rw [columns, Foot.toProsTree,
+      columnsLive.node_of_ne_σ (a := Constituent.ft false) (by decide), List.flatMap_map]
+  simp only [columnsLive.go_syl, RootedTree.Planar.label_node, Constituent.isHead,
+    List.map_cons, List.map_nil, bumpLive]
   rw [← List.map_eq_flatMap, Foot.toGrid, List.map_map, List.map_map]
   refine List.map_congr_left fun i _ => ?_
   by_cases hi : i = f.head <;> simp [hi]
 
 /-- The grid's head row recovers `Foot.toGrid`. -/
-theorem Grid.foot_headRow {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
-    (Grid.columns (f.toProsTree w)).map (fun h => decide (1 < h)) = Foot.toGrid f := by
-  rw [Grid.columns_toProsTree, List.map_map]
+theorem foot_headRow {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    (columns (f.toProsTree w)).map (fun h => decide (1 < h)) = Foot.toGrid f := by
+  rw [columns_toProsTree, List.map_map]
   refine List.map_id'' (fun b => ?_) _
   cases b <;> rfl
 
 /-- A foot's grid peaks at `2`. -/
-theorem Grid.peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
-    Grid.peak (f.toProsTree w) = 2 := by
-  rw [Grid.peak, Grid.columns_toProsTree]
+theorem peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    peak (f.toProsTree w) = 2 := by
+  rw [peak, columns_toProsTree]
   refine Nat.le_antisymm (List.max_le_of_forall_le _ 2 ?_) (List.le_max_of_le' 0 ?_ le_rfl)
   · rintro x hx
     obtain ⟨b, _, rfl⟩ := List.mem_map.mp hx
@@ -264,12 +266,12 @@ theorem Grid.peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S
 
 /-! ### What the grid forgets
 
-The projection is one-way: it drops constituency (`Grid.ofTree_not_injective`) and, under recursion,
-[liberman-prince-1977]'s order-invariant culminativity (`Grid.not_culminative_under_recursion`). -/
+The projection is one-way: it drops constituency (`ofTree_not_injective`) and, under recursion,
+[liberman-prince-1977]'s order-invariant culminativity (`not_culminative_under_recursion`). -/
 
-/-- `Grid.ofTree` is not injective: the grid forgets constituency. -/
-theorem Grid.ofTree_not_injective :
-    ∃ t₁ t₂ : Tree, t₁ ≠ t₂ ∧ Grid.ofTree t₁ = Grid.ofTree t₂ :=
+/-- `ofTree` is not injective: the grid forgets constituency. -/
+theorem ofTree_not_injective :
+    ∃ t₁ t₂ : Tree, t₁ ≠ t₂ ∧ ofTree t₁ = ofTree t₂ :=
   ⟨.node .om [.node .ft [.node (.syl 1) []]], .node .om [.node (.syl 1) []],
     by decide, by decide⟩
 
@@ -281,22 +283,22 @@ instance (cols : List ℕ) : Decidable (IsCulminative cols) := by
   unfold IsCulminative; infer_instance
 
 /-- Recursion can break culminativity. -/
-theorem Grid.not_culminative_under_recursion :
-    ∃ t : Tree, IsWord t ∧ ¬ IsCulminative (Grid.columns t) :=
+theorem not_culminative_under_recursion :
+    ∃ t : Tree, IsWord t ∧ ¬ IsCulminative (columns t) :=
   ⟨.node .om
       [ .node (.ft true) [.node (.syl 1 true) []],
         .node .om [.node (.ft true) [.node (.syl 1 true) []]] ],
     by decide, by decide⟩
 
 /-- A flat word stays culminative. -/
-theorem Grid.culminative_flat :
-    IsCulminative (Grid.columns
+theorem culminative_flat :
+    IsCulminative (columns
       (.node .om [ .node (.ft true)  [.node (.syl 1 true) []],
                    .node (.ft false) [.node (.syl 1 true) []] ])) := by decide
 
 /-! ### The word peak and the head terminal
 
-The ω analogue of `Grid.peak_toProsTree`: on a non-recursive headed word the grid peak *is* the
+The ω analogue of `peak_toProsTree`: on a non-recursive headed word the grid peak *is* the
 head terminal (Liberman & Prince's designated terminal element) — primary stress reads off the
 grid. Recursion is the sole obstruction, and (unlike the foot) culminativity alone is not enough. -/
 
@@ -346,18 +348,18 @@ private theorem isWord_children {a : Constituent} {cs : List Tree}
   · exact Or.inr h
 
 /-- The live fold on any σ-leaf: one live column at height `1`. -/
-private theorem Grid.columnsLive.go_leaf {sb : Constituent} (h : sb.isSyl = true) :
-    Grid.columnsLive.go (.node sb []) = [⟨.node sb [], 1, true⟩] := by
-  simp [Grid.columnsLive.go, h]
+private theorem columnsLive.go_leaf {sb : Constituent} (h : sb.isSyl = true) :
+    columnsLive.go (.node sb []) = [⟨.node sb [], 1, true⟩] := by
+  simp [columnsLive.go, h]
 
 /-- Column-height bounds for a non-recursive word: `≤ 3`, live `≥ 2`, and height `3` ⇒ live. -/
-private theorem Grid.columnsLive_bounded {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
-    ∀ col ∈ Grid.columnsLive t,
+private theorem columnsLive_bounded {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
+    ∀ col ∈ columnsLive t,
       col.height ≤ 3 ∧ (col.live = true → 2 ≤ col.height) ∧ (col.height = 3 → col.live = true) := by
   obtain ⟨a, cs⟩ := t
   obtain ⟨ha, hchild⟩ := isWord_children hw hr
   intro col hcol
-  rw [Grid.columnsLive.node_of_ne_σ (a := a) (Constituent.isSyl_eq_false_of_isOm ha),
+  rw [columnsLive.node_of_ne_σ (a := a) (Constituent.isSyl_eq_false_of_isOm ha),
     List.mem_flatMap] at hcol
   obtain ⟨c, hc, hcol⟩ := hcol
   rw [List.mem_map] at hcol
@@ -366,9 +368,9 @@ private theorem Grid.columnsLive_bounded {t : Tree} (hw : IsWord t) (hr : noRec 
   · obtain ⟨cl, ccs⟩ := c
     simp only [isFootTree, Bool.and_eq_true] at hfoot
     obtain ⟨⟨hclf, _⟩, hleaves⟩ := hfoot
-    have hgoc : Grid.columnsLive.go (.node cl ccs)
-        = ccs.flatMap (fun s => (Grid.columnsLive.go s).map (Grid.bumpLive s.label.isHead)) :=
-      Grid.columnsLive.node_of_ne_σ (a := cl) (Constituent.isSyl_eq_false_of_isFt hclf)
+    have hgoc : columnsLive.go (.node cl ccs)
+        = ccs.flatMap (fun s => (columnsLive.go s).map (bumpLive s.label.isHead)) :=
+      columnsLive.node_of_ne_σ (a := cl) (Constituent.isSyl_eq_false_of_isFt hclf)
     rw [hgoc, List.mem_flatMap] at hcol0
     obtain ⟨s, hs, hcol0⟩ := hcol0
     have hsleaf := List.all_eq_true.mp hleaves s hs
@@ -376,30 +378,30 @@ private theorem Grid.columnsLive_bounded {t : Tree} (hw : IsWord t) (hr : noRec 
     simp only [Bool.and_eq_true, List.isEmpty_iff] at hsleaf
     obtain ⟨hsσ, hsds⟩ := hsleaf
     subst hsds
-    rw [Grid.columnsLive.go_leaf hsσ, List.map_cons, List.map_nil, List.mem_singleton] at hcol0
+    rw [columnsLive.go_leaf hsσ, List.map_cons, List.map_nil, List.mem_singleton] at hcol0
     subst hcol0
     cases hclh : cl.isHead <;> cases hsbh : sb.isHead <;>
-      simp [Grid.bumpLive, RootedTree.Planar.label_node, hclh, hsbh]
+      simp [bumpLive, RootedTree.Planar.label_node, hclh, hsbh]
   · obtain ⟨cb, cbs⟩ := c
     simp only [RootedTree.Planar.label_node] at hlev
     simp only [RootedTree.Planar.children_node] at hchildren
     subst hchildren
-    rw [Grid.columnsLive.go_leaf hlev, List.mem_singleton] at hcol0
+    rw [columnsLive.go_leaf hlev, List.mem_singleton] at hcol0
     subst hcol0
     cases hcbh : cb.isHead <;>
-      simp [Grid.bumpLive, RootedTree.Planar.label_node, hcbh]
+      simp [bumpLive, RootedTree.Planar.label_node, hcbh]
 
 /-- On a non-recursive headed word, the head terminal is the grid peak ([liberman-prince-1977]). -/
-theorem Grid.headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : noRec t = 0) :
-    Grid.headHeights t = [Grid.peak t] := by
-  have facts := Grid.columnsLive_bounded hw hr
-  rw [IsHeaded, Grid.headHeights, List.length_map] at hh
+theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : noRec t = 0) :
+    headHeights t = [peak t] := by
+  have facts := columnsLive_bounded hw hr
+  rw [IsHeaded, headHeights, List.length_map] at hh
   obtain ⟨c0, hc0⟩ := List.length_eq_one_iff.mp hh
-  have hc0mf : c0 ∈ (Grid.columnsLive t).filter (·.live) := by rw [hc0]; simp
+  have hc0mf : c0 ∈ (columnsLive t).filter (·.live) := by rw [hc0]; simp
   rw [List.mem_filter] at hc0mf
   obtain ⟨hc0mem, hc0live⟩ := hc0mf
-  have hpeak : c0.height = Grid.peak t := by
-    rw [Grid.peak, Grid.columns]
+  have hpeak : c0.height = peak t := by
+    rw [peak, columns]
     refine le_antisymm
       (List.le_max_of_le' 0 (List.mem_map.mpr ⟨c0, hc0mem, rfl⟩) (le_refl c0.height))
       (List.max_le_of_forall_le _ c0.height fun x hx => ?_)
@@ -409,24 +411,24 @@ theorem Grid.headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (h
     obtain ⟨hle3, _, h3⟩ := facts col hcm
     rcases (show col.height ≤ 2 ∨ col.height = 3 by omega) with h2 | h3eq
     · exact le_trans h2 (hc0ge2 hc0live)
-    · have hmem : col ∈ (Grid.columnsLive t).filter (·.live) :=
+    · have hmem : col ∈ (columnsLive t).filter (·.live) :=
         List.mem_filter.mpr ⟨hcm, h3 h3eq⟩
       rw [hc0, List.mem_singleton] at hmem
-      exact le_of_eq (congrArg Grid.Column.height hmem)
-  rw [Grid.headHeights, hc0]; simp [hpeak]
+      exact le_of_eq (congrArg Column.height hmem)
+  rw [headHeights, hc0]; simp [hpeak]
 
 /-- Under recursion the peak can desert the head terminal, even when culminative
     ([ito-mester-2009]). -/
-theorem Grid.head_below_peak_under_recursion :
-    ∃ t : Tree, IsWord t ∧ IsHeaded t ∧ IsCulminative (Grid.columns t)
-      ∧ Grid.headHeights t ≠ [Grid.peak t] :=
+theorem head_below_peak_under_recursion :
+    ∃ t : Tree, IsWord t ∧ IsHeaded t ∧ IsCulminative (columns t)
+      ∧ headHeights t ≠ [peak t] :=
   ⟨.node .om [ .node (.syl 1 true) [],
                .node .om [.node (.ft true) [.node (.syl 1 true) []]] ],
     by decide, by decide, by decide, by decide⟩
 
 /-- Without Layeredness the peak can desert the head terminal too. -/
-theorem Grid.head_below_peak_unlayered :
-    ∃ t : Tree, IsHeaded t ∧ noRec t = 0 ∧ ¬ IsWord t ∧ Grid.headHeights t ≠ [Grid.peak t] :=
+theorem head_below_peak_unlayered :
+    ∃ t : Tree, IsHeaded t ∧ noRec t = 0 ∧ ¬ IsWord t ∧ headHeights t ≠ [peak t] :=
   ⟨.node .om [ .node Constituent.ph [.node (.ft true) [.node (.syl 1 true) []]],
                .node (.syl 1 true) [] ],
     by decide, by decide, by decide, by decide⟩
@@ -442,10 +444,12 @@ private def exWord : Tree :=
       .node (.ft false) [.node (.syl 1 true) []],
       .node (.syl 1 false) [] ]
 
-example : Grid.columns exWord = [3, 2, 1] := by decide
-example : Grid.peak exWord = 3 := by decide
-example : Grid.ofTree exWord =
+example : columns exWord = [3, 2, 1] := by decide
+example : peak exWord = 3 := by decide
+example : ofTree exWord =
     [[true, true, true], [true, true, false], [true, false, false]] := by decide
-example : Grid.IsContinuous (Grid.ofTree exWord) := by decide
+example : IsContinuous (ofTree exWord) := by decide
+
+end Grid
 
 end Prosody

@@ -20,7 +20,7 @@ The metrically most prominent syllable is thereby dissociated from the high-tone
 This file formalizes the **default-length metrical spine** the tonal analysis is anchored to: the
 left-to-right iambic footing (with final trochaic reversal) of words in isolation, and the
 certification that the primary stress is exactly the grid's head terminal. That a word has a
-*unique* head terminal (`Prosody.IsHeaded`) is metrical culminativity — Liberman & Prince's DTE
+*unique* head terminal (`Prosody.Grid.IsHeaded`) is metrical culminativity — Liberman & Prince's DTE
 uniqueness ([hyman-2006]). The paper's `Culminativity-H` (§4.2) is a *distinct, tonal* constraint
 ("one violation per High tone domain with more than one foot head"), part of the deferred tone
 layer. Also deferred alongside tone: lexical long vowels (Max-μ, monosyllabic feet, §3.1), word
@@ -72,14 +72,14 @@ theorem gridColumns_annatto : Grid.columns annatto = [1, 3, 1] := by decide
 
 /-! ### Primary stress is the head terminal ([becker-etal-2025] p. 2365)
 
-Each word has a **unique head terminal** (`IsHeaded` — metrical culminativity, Liberman & Prince's
+Each word has a **unique head terminal** (`Grid.IsHeaded` — metrical culminativity, Liberman & Prince's
 DTE uniqueness; cf. [hyman-2006]), and it is exactly the head syllable of the head foot — the long
 `kí:`/`mí:`, or the reversed-trochee's initial `kí`. The primary stress is read off the grid's live
 column as an *element*. -/
 
-theorem isHeaded_fell    : IsHeaded fell    := by decide
-theorem isHeaded_weFell  : IsHeaded weFell  := by decide
-theorem isHeaded_annatto : IsHeaded annatto := by decide
+theorem isHeaded_fell    : Grid.IsHeaded fell    := by decide
+theorem isHeaded_weFell  : Grid.IsHeaded weFell  := by decide
+theorem isHeaded_annatto : Grid.IsHeaded annatto := by decide
 
 /-- 's/he fell': the head terminal is the long `kí:` (head of the rightmost iamb). -/
 theorem headTerminals_fell : Grid.headTerminals fell = [.node (.syl 2 true) []] := by decide
