@@ -1,15 +1,9 @@
-import Linglib.Semantics.ArgumentStructure.Properties
-import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
-import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Events.Adjacency
-import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Semantics.Spatial.Trace
 import Linglib.Features.Aktionsart
 import Linglib.Data.Examples.Krifka1998
 import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Lattice.Basic
-import Mathlib.Data.Fintype.Basic
 
 /-!
 # [krifka-1998] *The Origins of Telicity*
