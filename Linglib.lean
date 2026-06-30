@@ -2555,6 +2555,7 @@ import Linglib.Studies.PottsEtAl2016
 import Linglib.Studies.PottsLevy2015
 import Linglib.Studies.PrasertsonSmithCulbertson2026
 import Linglib.Studies.Preminger2014
+import Linglib.Studies.Prince1983
 import Linglib.Studies.PullumGazdar1982
 import Linglib.Studies.PurverGinzburg2004
 import Linglib.Studies.Pustejovsky1995
