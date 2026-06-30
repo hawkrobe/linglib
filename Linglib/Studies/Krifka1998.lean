@@ -98,15 +98,6 @@ theorem durative_atelic_licenses_forX (c : VendlerClass)
 
 /-! ### Concrete `IsSincVerb` Toy + Applied Propagation -/
 
-/-! `eat_apples_cum_propositional` / `eat_two_apples_qua_propositional` are
-    parametric over abstract θ; here a constructive `IsSincVerb` instance
-    *fires* both, showing K98 §3.3's typeclass-bundled postulates admit
-    non-axiomatic realizations.
-
-    The toy: a 3-apple universe `Finset (Fin 3)` (⊔ = ∪, < = ⊊), with the
-    identity theme `eatThemeToy a e := a = e` giving the SINC bijection. It is
-    a toy, not a faithful denotation of *eat*. -/
-
 section ToyEatInstance
 
 /-- Toy 3-apple universe: `Finset (Fin 3)` with ⊔ = ∪ and ≤/< as ⊆/⊊. -/
@@ -120,48 +111,17 @@ def eatThemeToy (a : Apple) (e : EatEvent) : Prop := a = e
 
 /-- The SINC structure for `eatThemeToy`; every condition follows from the identity. -/
 private def eatThemeToy_sinc : SINC eatThemeToy where
-  mso := by
-    intro x e e' hθ hlt
-    refine ⟨e', ?_, rfl⟩
-    rw [hθ]; exact hlt
-  uo := by
-    intro x e e' hθ hle
-    refine ⟨e', ?_, rfl, ?_⟩
-    · rw [hθ]; exact hle
-    · intro z _ hz; exact hz
-  mse := by
-    intro x e y hθ hlt
-    refine ⟨y, ?_, rfl⟩
-    rw [← hθ]; exact hlt
-  ue := by
-    intro x e y hθ hle
-    refine ⟨y, ?_, rfl, ?_⟩
-    · rw [← hθ]; exact hle
-    · intro e'' _ he''; exact he''.symm
-  extended := by
-    refine ⟨{0, 1}, {0}, {0, 1}, {0}, ?_, ?_, rfl, rfl⟩ <;> decide
-
-/-- UP for `eatThemeToy`: identity-as-relation gives x = y trivially. -/
-private theorem eatThemeToy_up : UP eatThemeToy := by
-  intro x y e hx hy
-  show x = y
-  rw [hx, hy]
-
-/-- CumTheta for `eatThemeToy`: identity-as-relation preserves sums. -/
-private theorem eatThemeToy_cumTheta : CumTheta eatThemeToy := by
-  intro x y e e' hx hy
-  show x ⊔ y = e ⊔ e'
-  rw [hx, hy]
+  mso := fun x e e' hθ hlt => ⟨e', by rw [hθ]; exact hlt, rfl⟩
+  uo := fun x e e' hθ hle => ⟨e', by rw [hθ]; exact hle, rfl, fun z _ hz => hz⟩
+  mse := fun x e y hθ hlt => ⟨y, by rw [← hθ]; exact hlt, rfl⟩
+  ue := fun x e y hθ hle => ⟨y, by rw [← hθ]; exact hle, rfl, by intro e'' _ he''; exact he''.symm⟩
+  extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, rfl, rfl⟩
 
 /-- `eatThemeToy` is a strictly incremental verb-theme relation (via `IsSincVerb.mk'`). -/
 instance : IsSincVerb eatThemeToy :=
-  IsSincVerb.mk' eatThemeToy_sinc eatThemeToy_up eatThemeToy_cumTheta
-
-/-- `[IsIncVerb eatThemeToy]` synthesises from the `IsSincVerb` instance (K98 §3.6). -/
-example : IsIncVerb eatThemeToy := inferInstance
-
-/-- `[IsCumThetaVerb eatThemeToy]` synthesises transitively from `IsSincVerb`. -/
-example : IsCumThetaVerb eatThemeToy := inferInstance
+  IsSincVerb.mk' eatThemeToy_sinc
+    (by intro x y e hx hy; rw [hx, hy])
+    (by intro x y e e' hx hy; show x ⊔ y = e ⊔ e'; rw [hx, hy])
 
 /-! #### Concrete OBJ predicates -/
 
@@ -193,17 +153,6 @@ theorem eat_some_apples_toy_cum : CUM (VP eatThemeToy someApples) :=
   cum_propagation someApples_cum
 
 end ToyEatInstance
-
-/-! ## Part II — K98 §4: Telicity by Precedence and Adjacency -/
-
-/-! ### K98 §2.5 — Initial/final parts and telicity (TEL)
-
-K98 §2.5 eq. 36 defines the initial/final parts of an event via the precedence
-relation `«E`; eq. 37 defines telicity (TEL): every P-part of a P-event is both
-an initial and a final part of it. TEL is strictly weaker than `QUA` — every
-quantized predicate is telic (`isTelic_of_qua`), but not conversely (K98's
-3-to-4-pm predicate). Generic over a part order and a precedence relation,
-mirroring the §4 substrate; specialize with `Event.precedes`. -/
 
 section Telicity
 
@@ -329,11 +278,7 @@ theorem walked_towards_atelic_propositional
 
 end SpatialTracePullback
 
-/-! ### K98 §4.5 motion data: path shape predicts telicity
-
-    Each `Data.Examples.Krifka1998` motion VP row tags its path shape and the
-    paper's telicity judgment; the substrate `pathShapeToTelicity` reproduces
-    every judgment. -/
+/-! ### K98 §4.5 motion data: path shape predicts telicity -/
 
 section MotionData
 
