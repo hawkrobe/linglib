@@ -105,40 +105,50 @@ inductive IsHeadTerminal : Tree → Tree → Prop
   | head {a cs c leaf} : c ∈ cs → c.label.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
-/-- The `live` leaves of `cells t (r, l)` are exactly the head terminals — once the descent so far
-    is itself all-head (`l = true`). -/
-theorem mem_liveLeaves {t : Tree} (leaf : Tree) :
-    ∀ {r : ℕ} {l : Bool},
-      leaf ∈ ((cells t (r, l)).filter (·.2.2)).map (·.1) ↔ l = true ∧ IsHeadTerminal t leaf := by
+/-- Soundness of the `live` bit: a still-`live` cell of `cells t (r, l)` had an all-head descent so
+    far (`l = true`), its leaf is a head terminal of `t`, and its height is at least `r + 1`. The one
+    induction over `cells` that the live-cell facts all read off. -/
+theorem live_cell_sound {t : Tree} : ∀ {r : ℕ} {l : Bool} {x : Tree × ℕ × Bool},
+    x ∈ cells t (r, l) → x.2.2 = true → l = true ∧ IsHeadTerminal t x.1 ∧ r + 1 ≤ x.2.1 := by
   induction t using Core.Order.Branching.inductionOn with
   | ih t IH =>
     obtain ⟨a, cs⟩ := t
-    intro r l
-    rw [cells_node]
-    split
+    intro r l x hx hlive
+    rw [cells_node] at hx
+    split at hx
     · rename_i hσ; obtain ⟨hσ, rfl⟩ := hσ
       obtain ⟨w, hd, rfl⟩ : ∃ w hd, a = .syl w hd := by cases a <;> simp_all [Constituent.isSyl]
-      cases l <;> simp only [List.filter_cons, List.filter_nil, List.map_cons, List.map_nil,
-        List.mem_singleton, List.not_mem_nil, if_true, if_false, Bool.false_eq_true, false_and,
-        true_and]
-      constructor
-      · rintro rfl; exact .leaf w hd
-      · rintro h; cases h with
-        | leaf => rfl
-        | head hc => cases hc
-    · rename_i hσ
-      simp only [List.filter_flatMap, List.map_flatMap, List.mem_flatMap]
-      constructor
-      · rintro ⟨c, hc, hmem⟩
-        rw [IH c (by simpa using hc)] at hmem
-        obtain ⟨hlive, hht⟩ := hmem
-        refine ⟨?_, .head hc ?_ hht⟩ <;>
-          · by_cases hh : c.label.isHead = true <;> simp_all
-      · rintro ⟨rfl, h⟩
-        cases h with
-        | leaf => simp [Constituent.isSyl] at hσ
-        | head hc hhd hsub =>
-          exact ⟨_, hc, by rw [IH _ (by simpa using hc), if_pos hhd]; exact ⟨rfl, hsub⟩⟩
+      rw [List.mem_singleton] at hx; subst hx
+      exact ⟨hlive, .leaf w hd, le_rfl⟩
+    · rw [List.mem_flatMap] at hx
+      obtain ⟨c, hc, hx⟩ := hx
+      by_cases hh : c.label.isHead = true
+      · rw [if_pos hh] at hx
+        obtain ⟨hl, hht, hle⟩ := IH c (by simpa using hc) hx hlive
+        exact ⟨hl, .head hc hh hht, by omega⟩
+      · rw [if_neg hh] at hx
+        exact absurd (IH c (by simpa using hc) hx hlive).1 (by simp)
+
+/-- The `live` leaves of `cells t (r, l)` are exactly the head terminals — once the descent so far
+    is itself all-head (`l = true`). Soundness is `live_cell_sound`; completeness is the descent. -/
+theorem mem_liveLeaves {t : Tree} (leaf : Tree) {r : ℕ} {l : Bool} :
+    leaf ∈ ((cells t (r, l)).filter (·.2.2)).map (·.1) ↔ l = true ∧ IsHeadTerminal t leaf := by
+  rw [List.mem_map]
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    rw [List.mem_filter] at hx
+    exact ⟨(live_cell_sound hx.1 hx.2).1, (live_cell_sound hx.1 hx.2).2.1⟩
+  · rintro ⟨rfl, h⟩
+    induction h generalizing r with
+    | leaf w hd =>
+      exact ⟨(.node (.syl w hd) [], r + 1, true),
+        by rw [List.mem_filter]; exact ⟨by simp [cells_node, Constituent.isSyl], rfl⟩, rfl⟩
+    | head hc hhd _ ih =>
+      obtain ⟨x, hxmem, hxleaf⟩ := ih (r := r + 1)
+      rw [List.mem_filter] at hxmem
+      refine ⟨x, ?_, hxleaf⟩
+      rw [List.mem_filter, cells_node, if_neg (by rintro ⟨_, rfl⟩; exact List.not_mem_nil hc)]
+      exact ⟨List.mem_flatMap.2 ⟨_, hc, by rw [if_pos hhd]; exact hxmem.1⟩, hxmem.2⟩
 
 /-- `headTerminals` computes the relation `IsHeadTerminal`. -/
 theorem mem_headTerminals_iff {t leaf : Tree} :
@@ -287,23 +297,11 @@ private theorem isWord_children {a : Constituent} {cs : List Tree}
   · exact Or.inr h
 
 /-- A live cell only deepens its seed: a still-`live` cell of `cells t (r, l)` had an all-head
-    descent so far (`l = true`) and height at least `r + 1`. -/
-theorem live_seed_le {t : Tree} : ∀ {r : ℕ} {l : Bool} {x : Tree × ℕ × Bool},
-    x ∈ cells t (r, l) → x.2.2 = true → l = true ∧ r + 1 ≤ x.2.1 := by
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
-    intro r l x hx hlive
-    rw [cells_node] at hx
-    split at hx
-    · simp only [List.mem_singleton] at hx; subst hx; exact ⟨hlive, le_rfl⟩
-    · rw [List.mem_flatMap] at hx
-      obtain ⟨c, hc, hx⟩ := hx
-      by_cases hh : c.label.isHead = true
-      · rw [if_pos hh] at hx; obtain ⟨hl, hle⟩ := IH c (by simpa using hc) hx hlive
-        exact ⟨hl, by omega⟩
-      · rw [if_neg hh] at hx; obtain ⟨hl, _⟩ := IH c (by simpa using hc) hx hlive
-        exact absurd hl (by simp)
+    descent so far (`l = true`) and height at least `r + 1` — `live_cell_sound` forgetting the
+    head terminal. -/
+theorem live_seed_le {t : Tree} {r : ℕ} {l : Bool} {x : Tree × ℕ × Bool}
+    (hx : x ∈ cells t (r, l)) (hlive : x.2.2 = true) : l = true ∧ r + 1 ≤ x.2.1 :=
+  ⟨(live_cell_sound hx hlive).1, (live_cell_sound hx hlive).2.2⟩
 
 /-- In a word the head terminal sits below ω, so its height is at least `2`. -/
 theorem two_le_headHeight_of_word {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
