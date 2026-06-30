@@ -33,9 +33,8 @@ on abstract domains.
 
 * **K89 GRAD propositional chain**: `SINC + ExtMeasure + MeasureProportional →
   GRAD` was deleted in 0.231.55 (formerly in `Events/GradualChange.lean`,
-  zero-consumer). Bool-tag proxy `predictsGRAD` survives in
-  `Studies/Krifka1998.lean` § 7. Future K89 §4 propositional-faithfulness
-  pass needs to rebuild.
+  zero-consumer); the Bool-tag proxy in `Studies/Krifka1998.lean` is also gone.
+  A future K89 §4 propositional-faithfulness pass needs to rebuild it.
 * **K89↔Champollion `forAdverbial_subsumes_qmod` bridge**: also dropped in
   0.231.55 as dead. ~5 LOC over `forAdverbialMeaning` + `QMOD` to
   re-derive when a Champollion replication wants the cross-framework bridge.
