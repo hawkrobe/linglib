@@ -231,19 +231,6 @@ theorem FinAddMeasure.mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
     exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.2)
   rw [key A B, key B A, Set.inter_comm B A]; exact add_le_add_iff_right (m.mu (A ∩ B))
 
-/-- Every finitely additive measure satisfies the FA axioms.
-    A fortiori from [holliday-icard-2013] Theorem 6 soundness,
-    since every finitely additive measure is qualitatively additive. -/
-def FinAddMeasure.toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W where
-  ge := m.inducedGe
-  refl := fun _ => le_refl _
-  mono := fun _ _ h => m.mu_mono h
-  bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by simp only [inducedGe, m.mu_empty, m.total, not_le]; exact one_pos
-  total := fun A B => le_total (m.mu B) (m.mu A)
-  trans := fun _ _ _ hab hbc => le_trans hbc hab
-  additive := m.mu_qadd
-
 end
 
 /-! ### Qualitatively additive measures -/
@@ -305,6 +292,12 @@ def FinAddMeasure.toQualAdd (m : FinAddMeasure K W) : QualAddMeasure K W where
   mu_empty := m.mu_empty
   total := m.total
   qualAdd := m.mu_qadd
+
+/-- A finitely additive measure satisfies the FA axioms, via `toQualAdd`:
+    [holliday-icard-2013] Theorem 6 soundness, since finite additivity ⊆ qualitative
+    additivity. -/
+def FinAddMeasure.toSystemFA (m : FinAddMeasure K W) : EpistemicSystemFA W :=
+  m.toQualAdd.toSystemFA
 
 end
 
