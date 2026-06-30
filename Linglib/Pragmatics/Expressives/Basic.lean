@@ -1,57 +1,44 @@
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Two-Dimensional Semantics for Conventional Implicatures
+# Two-dimensional semantics for conventional implicatures
 [potts-2005] [wang-2025]
 
-Formalization of [potts-2005] "The Logic of Conventional Implicatures" (LCI).
+Following [potts-2005], a `TwoDimProp` splits a meaning into two independent predicates over
+worlds: **at-issue** content (truth-conditional, composes normally) and **conventional
+implicature** content (use-conditional, projecting to the root). CIs project through the
+truth-functional connectives and are blocked only by pure quotation ([kirk-giannini-2024];
+see `pureQuote`).
 
-## Insight
+The at-issue tier carries the Heyting algebra of `W → Prop` (`ᶜ`/`⊓`/`⊔`/`⇨`); the CI tier
+always takes the meet `⊓` — CIs conjoin through every connective rather than tracking the
+at-issue operation — and `ciStrongerThan` is the strict order `<` on that tier. `ciLift`
+([wang-2025]) bridges `Semantics.Presupposition.PartialProp` into this type.
 
-Natural language meanings have TWO dimensions:
-1. **At-issue content**: Truth-conditional, composes normally
-2. **CI content**: Use-conditional, "floats up" to root
+## Main definitions
 
-These dimensions are INDEPENDENT:
-- CIs don't affect truth conditions
-- CIs project through truth-functional operators (negation, conditionals, etc.)
-- Exception: quotation blocks CI projection ([kirk-giannini-2024] §3;
-  [potts-2005] also acknowledges this). See `pureQuote`.
+* `TwoDimProp` — a two-dimensional meaning (at-issue and CI predicates over worlds).
+* `neg`, `and`, `or`, `imp` — the connectives (at-issue Heyting op, CI meet).
+* `SecondaryMeaningProperties` — the [potts-2007] expressive diagnostics, plus two fields
+  distinguishing outlook markers ([kubota-2026]).
 
-## The LCI Type System
+## References
 
-Potts uses superscripts to track dimensions:
-- τᵃ: at-issue type
-- τᶜ: CI type
-- ⟨σᵃ, τᶜ⟩: CI-functor (takes at-issue, returns CI)
-
-Key CI expressions:
-- Expressives: ⟦bastard⟧ : ⟨eᵃ, tᶜ⟩
-- Appositives: via comma feature
-- Supplementary adverbs: ⟦luckily⟧ : ⟨tᵃ, tᶜ⟩
+[potts-2005] [potts-2007] [wang-2025] [kirk-giannini-2024]
 -/
 
 namespace Pragmatics.Expressives
 
 
-/--
-A two-dimensional meaning following [potts-2005].
-
-The key insight: linguistic expressions contribute to TWO independent
-dimensions of meaning that compose by different rules.
-
-- `atIssue`: Truth-conditional content (what is said)
-- `ci`: Conventional implicature (use-conditional content)
-
-Example: "That bastard John is late"
-- atIssue: John is late
-- ci: Speaker has negative attitude toward John
--/
+/-- A two-dimensional meaning ([potts-2005]): two predicates over worlds, the at-issue
+(truth-conditional) content `atIssue` and the conventional-implicature (use-conditional)
+content `ci`. E.g. "that bastard John is late" has `atIssue` "John is late" and `ci` "the
+speaker disdains John". -/
 @[ext]
 structure TwoDimProp (W : Type*) where
-  /-- At-issue (truth-conditional) content -/
+  /-- At-issue (truth-conditional) content. -/
   atIssue : W → Prop
-  /-- Conventional implicature (use-conditional) content -/
+  /-- Conventional-implicature (use-conditional) content. -/
   ci : W → Prop
 
 namespace TwoDimProp
