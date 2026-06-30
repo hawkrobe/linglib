@@ -228,6 +228,53 @@ theorem mapList_eq_listMap {β : Type*} (f : α → β) (cs : List (Planar α)) 
 theorem map_leaf {β : Type*} (f : α → β) (a : α) :
     map f (leaf a) = leaf (f a) := rfl
 
+/-! ### Paramorphism
+
+The general structural-recursion combinator for planar trees. `fold f t` recurses with `f` seeing
+the root label and each child *paired with its own fold* — the pairing (paramorphism, not a bare
+catamorphism `α → List β → β`) lets `f` branch on child labels, e.g. follow a distinguished child.
+Downstream rose-tree folds are then one-liners (`Planar.fold …`) rather than hand-rolled `mutual`
+pairs.
+
+Structural (mutual with the child-list aux), so it reduces — `decide`/`rfl` compute through it. The
+result `β` shares the label universe (so the paired aux `List (Planar α × β)` stays in one
+universe); ample for the usual `β = List (Planar α)`. -/
+
+universe u
+
+mutual
+/-- Paramorphism on a planar tree: `f` receives the root label and each child paired with its
+    `fold`. -/
+def fold {α β : Type u} (f : α → List (Planar α × β) → β) : Planar α → β
+  | .node a cs => f a (foldList f cs)
+/-- Auxiliary: each child paired with its `fold`. -/
+def foldList {α β : Type u} (f : α → List (Planar α × β) → β) :
+    List (Planar α) → List (Planar α × β)
+  | [] => []
+  | c :: cs => (c, fold f c) :: foldList f cs
+end
+
+@[simp] theorem foldList_nil {α β : Type u} (f : α → List (Planar α × β) → β) :
+    foldList f ([] : List (Planar α)) = [] := rfl
+
+@[simp] theorem foldList_cons {α β : Type u} (f : α → List (Planar α × β) → β)
+    (c : Planar α) (cs : List (Planar α)) :
+    foldList f (c :: cs) = (c, fold f c) :: foldList f cs := rfl
+
+/-- `foldList f` pairs each child with its `fold`. Bridge to `List.map`. -/
+theorem foldList_eq {α β : Type u} (f : α → List (Planar α × β) → β) (cs : List (Planar α)) :
+    foldList f cs = cs.map (fun c => (c, fold f c)) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [foldList_cons, List.map_cons, ih]
+
+/-- The defining recursion of `fold`: at a node, apply `f` to the label and the children paired
+    with their folds. -/
+@[simp] theorem fold_node {α β : Type u} (f : α → List (Planar α × β) → β) (a : α)
+    (cs : List (Planar α)) :
+    fold f (Planar.node a cs) = f a (cs.map fun c => (c, fold f c)) := by
+  rw [show fold f (Planar.node a cs) = f a (foldList f cs) from rfl, foldList_eq]
+
 mutual
 /-- Functoriality: `map id = id`. -/
 @[simp] theorem map_id : ∀ (t : Planar α), map id t = t
