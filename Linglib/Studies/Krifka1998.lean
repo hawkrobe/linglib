@@ -57,12 +57,16 @@ Part II (§4 movement):
   `walked_towards_atelic_propositional` — σ-pullback theorems backing
   the K98 §4.5 *walked from X to Y* / *walked towards X* analyses
 
+The `### K98 §2.5` section defines the INI/FIN initial/final-part predicates
+and the propositional `TEL` predicate (`IsTelic`), with `isTelic_of_qua`
+giving Krifka's `QUA → TEL` direction; `Telicity.toMereoTag .telic = .qua`
+remains the coarse tag-level collapse used by the Vendler bridge.
+
 ## TODO
 
-* **TEL substrate**: K98 §2.5 eq. 37 defines TEL strictly weaker than
-  QUA. Linglib's `Telicity.toMereoTag .telic = .qua` collapse is an
-  approximation; a faithful TEL would need INI/FIN initial/final-part
-  predicates over events.
+* **TEL ⊋ QUA strict witness**: the telic-but-not-QUA half of K98 §2.5
+  (the run-time-3-to-4-pm predicate) needs a concrete event model and is
+  not yet exhibited; `isTelic_of_qua` proves only the `QUA → TEL` half.
 * **TANG_H tangentiality** (K98 eq. 17) on directed paths. Without it,
   `MR` admits telekinetic non-meeting concatenations (K98 eq. 70.c).
   Adding TANG_H requires a `DirectedPath` substrate not yet in linglib.
@@ -197,17 +201,16 @@ theorem love_state : love.toVerb.vendlerClass = some .state := rfl
     via `Telicity.toMereoTag`. The chain is:
     VendlerClass → Telicity → MereoTag → CUM/QUA mereological property.
 
-    **Caveat: TEL ⊃ QUA in K98, but collapsed here.** K98 §2.5 (eq. 37,
-    page 9) defines TEL_E (telicity) strictly weaker than QUA
-    (quantization): every QUA predicate is TEL, but not every TEL
-    predicate is QUA (K98 gives the run-time-3-4pm counterexample on
-    page 9). The `Telicity.toMereoTag .telic = .qua` collapse used here
-    is faithful for the typical Vendler-class accomplishments and
-    achievements (which are both TEL and QUA), but a complete K98
-    formalization would need a separate propositional `TEL` predicate
-    distinct from `QUA`. Adding `def TEL` requires INI/FIN initial/final-
-    part predicates over events, which linglib's K98 theory doesn't
-    house — deferred. -/
+    **Caveat: TEL ⊋ QUA in K98, but collapsed here.** K98 §2.5 eq. 37
+    defines TEL_E (telicity) strictly weaker than QUA (quantization):
+    every QUA predicate is TEL, but not every TEL predicate is QUA (K98
+    gives the run-time-3-to-4-pm counterexample). The
+    `Telicity.toMereoTag .telic = .qua` collapse used here is faithful for
+    the typical Vendler-class accomplishments and achievements (which are
+    both TEL and QUA): `isTelic_of_qua` proves the `QUA → TEL` direction
+    those classes rely on. The full TEL ⊋ QUA gap (a telic non-QUA
+    predicate) is not collapsed by `toMereoTag`; the `IsTelic` predicate in
+    the `### K98 §2.5` section above states the distinct, weaker notion. -/
 
 /-- Accomplishments are telic, hence (under the TEL = QUA collapse) QUA. -/
 theorem accomplishment_is_qua :
@@ -838,6 +841,73 @@ theorem motion_vendler_path_coherence :
     (run.toVerb.vendlerClass = some .activity ∧
       LevinClass.mannerOfMotion.pathSpec = none) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+/-! ### K98 §2.5 — Initial/final parts and telicity (TEL)
+
+K98 §2.5 eq. 36 defines the initial and final parts of an event via the
+precedence relation `«E`; eq. 37 defines telicity (TEL) of a predicate:
+every P-part of a P-event is both an initial and a final part of it. TEL is
+strictly weaker than `QUA` — every quantized predicate is telic
+(`isTelic_of_qua`), but not conversely: K98's run-time-3-to-4-pm predicate
+is telic without being quantized. Generic over a part order and a
+precedence relation, mirroring the §4 substrate below; specialize with
+`Event.precedes`. (Migrated here from the orphaned
+`Semantics/Events/InitialFinalParts.lean`, which no module imported.) -/
+
+section Telicity
+
+variable {β : Type*} [PartialOrder β] (precedes : β → β → Prop)
+
+/-- K98 §2.5 eq. 36 INI: `e'` is an initial part of `e` iff `e' ≤ e` and no
+    part of `e` precedes `e'`. Krifka prints the outer relation as `≤D`, but
+    the event signature carries only event parthood and the prose says *part
+    of e* — so both relations are the single part order `≤`. -/
+def IsInitialPart (e' e : β) : Prop :=
+  e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
+
+/-- K98 §2.5 eq. 36 FIN: `e'` is a final part of `e` iff `e' ≤ e` and no
+    part of `e` follows `e'`. -/
+def IsFinalPart (e' e : β) : Prop :=
+  e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e' e''
+
+/-- The whole is an initial part of itself when no part of it precedes it. -/
+theorem isInitialPart_self (e : β) (h : ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e) :
+    IsInitialPart precedes e e :=
+  ⟨le_rfl, h⟩
+
+/-- The whole is a final part of itself when no part of it follows it. -/
+theorem isFinalPart_self (e : β) (h : ¬ ∃ e'', e'' ≤ e ∧ precedes e e'') :
+    IsFinalPart precedes e e :=
+  ⟨le_rfl, h⟩
+
+/-- K98 §2.5 eq. 37 propositional telicity (TEL): a predicate `P` is telic
+    iff every P-instance `e'` that is part of a P-instance `e` is both an
+    initial and a final part of `e`. K98: "all parts of e that fall under X
+    are initial and final parts of e." Telicity is a property of the
+    predicate `P`, not of any particular event. -/
+def IsTelic (P : β → Prop) : Prop :=
+  ∀ e e', P e → P e' → e' ≤ e → IsInitialPart precedes e' e ∧ IsFinalPart precedes e' e
+
+/-- K98 §2.5: "it is obvious that quantized predicates are telic" — the `⊇`
+    half of TEL ⊋ QUA. A `QUA` predicate has no proper P-parts, so its only
+    P-part `e' ≤ e` is `e` itself, which is its own initial and final part —
+    *provided* no part of `e` precedes `e`. That proviso is K98 eq. 35
+    (mereologically comparable events never precede each other), supplied
+    here as `hax`. The strict witness (a telic non-QUA predicate, K98's
+    3-to-4-pm case) needs a concrete event model and is not proved here.
+    Note `Event.precedes` does *not* satisfy `hax` — `isBefore` uses `≤`, so
+    it is reflexive on punctual events; a Krifka-faithful strict precedence
+    (`isBefore` with `<`) would. -/
+theorem isTelic_of_qua {P : β → Prop}
+    (hax : ∀ a b : β, a ≤ b → ¬ precedes a b ∧ ¬ precedes b a) (hQ : QUA P) :
+    IsTelic precedes P := by
+  intro e e' hPe hPe' hle
+  have heq : e' = e := by by_contra hne; exact hQ hPe' hPe hne hle
+  rw [heq]
+  exact ⟨isInitialPart_self precedes e fun ⟨e'', h, hp⟩ => (hax e'' e h).1 hp,
+         isFinalPart_self precedes e fun ⟨e'', h, hp⟩ => (hax e'' e h).2 hp⟩
+
+end Telicity
 
 /-! ### K98 §4 propositional substrate -/
 
