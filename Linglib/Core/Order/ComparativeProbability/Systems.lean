@@ -43,7 +43,10 @@ The measures are generic over an ordered field `K`: `ℝ` gives the paper's lite
 two agree (rational and real linear feasibility coincide), and only `ℚ` supports
 the constructive Farkas (`FourierMotzkin.lean`) and `decide`-checked models
 (`Representability.lean`) behind the representation theorems. `FinAddMeasure`
-overlaps mathlib's `MeasureTheory.AddContent` and could be re-founded on it;
+overlaps mathlib's `MeasureTheory.AddContent` at the additive-content level only:
+AddContent's order lemmas (`addContent_mono`, subadditivity) need
+`CanonicallyOrderedAdd`, which an ordered field is not, so monotonicity here goes
+through the explicit `nonneg` field instead — it stays bespoke.
 `FinAddMeasure.inducedGe` is `Order.Preimage m.mu (· ≥ ·)`.
 
 ## References
