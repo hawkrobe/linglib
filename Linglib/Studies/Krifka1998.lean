@@ -50,11 +50,12 @@ namespace Krifka1998
 
 open Features
 open _root_.Mereology
-open Semantics.ArgumentStructure (UP CumTheta IsCumThetaVerb)
-open Semantics.Aspect.Incremental (SINC IsSincVerb IsIncVerb)
+open Semantics.ArgumentStructure (IsCumThetaVerb)
+open Semantics.Aspect.Incremental (SINC IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 open Semantics.Spatial (Trace)
-open Features (forXPrediction inXPrediction)
+
+variable {α β : Type*}
 
 /-! ### K98 §3.3 propagation (typeclass form)
 
@@ -62,7 +63,7 @@ open Features (forXPrediction inXPrediction)
 
 section PropositionalPropagation
 
-variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+variable [SemilatticeSup α] [SemilatticeSup β]
 
 /-- *eat apples* (K98 §3.3): a CUM object through any θ propagates to a CUM VP. -/
 theorem eat_apples_cum_propositional
@@ -156,7 +157,7 @@ end ToyEatInstance
 
 section Telicity
 
-variable {β : Type*} [PartialOrder β] (precedes : β → β → Prop)
+variable [PartialOrder β] (precedes : β → β → Prop)
 
 /-- K98 §2.5 eq. 36 INI: `e' ≤ e` and no part of `e` precedes `e'` (printed `≤D` read as `≤`). -/
 def IsInitialPart (e' e : β) : Prop :=
@@ -199,18 +200,18 @@ section K98PropositionalSubstrate
 open Semantics.ArgumentStructure (MO)
 
 /-- K98 §4.1 eq. 63 EXP: θ-arguments of temporally-ordered events do not overlap. -/
-def EXP {α β : Type*} [SemilatticeSup α]
+def EXP [PartialOrder α]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e e' : β),
     θ x e → θ y e' → precedes e e' → ¬ Overlap x y
 
 /-- K98 §4.1 eq. 65 SEINC: strictly expansive incremental. EXP ∧ MO. -/
-def SEINC {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+def SEINC [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   EXP precedes θ ∧ MO θ
 
 /-- K98 §4.2 eq. 68 ADJ: sub-event temporal adjacency ↔ sub-path spatial adjacency. -/
-def ADJ {α β : Type*} [PartialOrder α] [PartialOrder β]
+def ADJ [PartialOrder α] [PartialOrder β]
     (adjα : α → α → Prop) (adjβ : β → β → Prop)
     (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (y z : α) (e' e'' : β),
@@ -218,20 +219,18 @@ def ADJ {α β : Type*} [PartialOrder α] [PartialOrder β]
     θ y e' → θ z e'' → (adjβ e' e'' ↔ adjα y z)
 
 /-- K98 §4.2 eq. 69 SMR: ADJ + MO + first-arg constrained to paths. -/
-def SMR {α β : Type*} [PartialOrder α] [PartialOrder β]
-    [SemilatticeSup α] [SemilatticeSup β]
+def SMR [SemilatticeSup α] [SemilatticeSup β]
     (adjα : α → α → Prop) (adjβ : β → β → Prop)
     (isPath : α → Prop) (θ : α → β → Prop) : Prop :=
   ADJ adjα adjβ θ ∧ MO θ ∧ ∀ x e, θ x e → isPath x
 
 /-- K98 §4.3 eq. 71: smallest θ-extension closed under precedence-respecting sums. -/
-abbrev MovementClosure {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+abbrev MovementClosure [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop :=
   Semantics.Aspect.PrecedenceClosure precedes θ'
 
 /-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is the `MovementClosure` of some SMR θ'. -/
-def MR {α β : Type*} [PartialOrder α] [PartialOrder β]
-    [SemilatticeSup α] [SemilatticeSup β]
+def MR [SemilatticeSup α] [SemilatticeSup β]
     (adjα : α → α → Prop) (adjβ : β → β → Prop) (precedes : β → β → Prop)
     (isPath : α → Prop) (θ : α → β → Prop) : Prop :=
   ∃ θ' : α → β → Prop,
@@ -239,8 +238,7 @@ def MR {α β : Type*} [PartialOrder α] [PartialOrder β]
     ∀ x e, θ x e ↔ MovementClosure precedes θ' x e
 
 /-- Every SMR is itself an MR, given closure under precedence-respecting sums. -/
-theorem mr_of_smr {α β : Type*} [PartialOrder α] [PartialOrder β]
-    [SemilatticeSup α] [SemilatticeSup β]
+theorem mr_of_smr [SemilatticeSup α] [SemilatticeSup β]
     {adjα : α → α → Prop} {adjβ : β → β → Prop} {precedes : β → β → Prop}
     {isPath : α → Prop} {θ : α → β → Prop}
     (h : SMR adjα adjβ isPath θ)
@@ -324,8 +322,7 @@ end MotionData
 
 section Expansiveness
 
-variable {α : Type*} [SemilatticeSup α]
-variable {Time : Type*} [LinearOrder Time]
+variable [SemilatticeSup α] {Time : Type*} [LinearOrder Time]
 
 /-- EXP-as-property of any θ : α → Event Time → Prop using `Event.precedes`. -/
 abbrev expEv (θ : α → Event Time → Prop) : Prop :=
@@ -346,7 +343,7 @@ open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)]
-variable [PartialOrder (Path Loc)] [SemilatticeSup (Path Loc)]
+variable [SemilatticeSup (Path Loc)]
 
 /-- SMR specialized to paths and events with concrete adjacency. -/
 abbrev smrPath (θ : Path Loc → Event Time → Prop) : Prop :=
