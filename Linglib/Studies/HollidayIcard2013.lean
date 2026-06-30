@@ -51,9 +51,9 @@ theorem disjunction_problem {W : Type*} (ge_w : W → W → Prop)
 
 /-- Measure semantics refutes each of I1–I3 (uniform measure on three worlds). -/
 theorem measures_refute_I_patterns :
-    (∃ m : FinAddMeasure (Fin 3), ¬patternI1 m.inducedGe) ∧
-    (∃ m : FinAddMeasure (Fin 3), ¬patternI2 m.inducedGe) ∧
-    (∃ m : FinAddMeasure (Fin 3), ¬patternI3 m.inducedGe) :=
+    (∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI1 m.inducedGe) ∧
+    (∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI2 m.inducedGe) ∧
+    (∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI3 m.inducedGe) :=
   ⟨measure_not_I1, measure_not_I2, measure_not_I3⟩
 
 /-- The l-lifting also misses two valid patterns: V11 and V13 fail. -/
@@ -92,7 +92,7 @@ theorem mLift_refutes_I_patterns :
 /-- **Theorem 6** ([van-der-hoek-1996]): every FA system is represented by a
     qualitatively additive measure. -/
 theorem fa_qualAdd_complete {W : Type*} [Fintype W] (sys : EpistemicSystemFA W) :
-    ∃ m : QualAddMeasure W, ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+    ∃ m : QualAddMeasure ℚ W, ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
   exists_qualAddMeasure_repr sys
 
 /-! ### Theorem 8: FA = FP∞ exactly below five worlds -/

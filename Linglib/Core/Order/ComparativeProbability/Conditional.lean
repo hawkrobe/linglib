@@ -36,7 +36,7 @@ namespace ComparativeProbability
     Popper's axioms ([halpern-2003], Ch. 3, Cond1–Cond4). A set B is
     **normal** if P(B|B) ≠ 0; for normal B, P(B|B) = 1. The only
     abnormal set (for finite W with positive singletons) is ∅. -/
-structure CondMeasure (W : Type*) extends FinAddMeasure W where
+structure CondMeasure (W : Type*) extends FinAddMeasure ℚ W where
   /-- Conditional measure: `condMu A B = P(A | B)` -/
   condMu : Set W → Set W → ℚ
   /-- P1: non-negativity -/
@@ -95,7 +95,7 @@ end CondMeasure
     In Lean's ℚ arithmetic, division by zero yields 0, so the abnormal
     case is handled automatically. -/
 noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
-    (m : FinAddMeasure W) : CondMeasure W where
+    (m : FinAddMeasure ℚ W) : CondMeasure W where
   toFinAddMeasure := m
   condMu := fun A B => m.mu (A ∩ B) / m.mu B
   cond_nonneg := fun A B => div_nonneg (m.nonneg _) (m.nonneg _)
@@ -169,7 +169,7 @@ theorem jeffreyUpdate_total {W : Type*} (m : CondMeasure W)
 /-- **Jeffrey's rule yields a measure**: for a partition of normal cells, the
     Jeffrey update is a finitely additive probability measure. -/
 def jeffreyMeasure {W : Type*} (m : CondMeasure W) (ev : EvidencePartition W)
-    (hnorm : ∀ E ∈ ev.cells, m.condMu E E ≠ 0) : FinAddMeasure W where
+    (hnorm : ∀ E ∈ ev.cells, m.condMu E E ≠ 0) : FinAddMeasure ℚ W where
   mu := jeffreyUpdate m ev
   nonneg := jeffreyUpdate_nonneg m ev
   additive := jeffreyUpdate_additive m ev
@@ -197,7 +197,7 @@ theorem bayesian_is_jeffrey {W : Type*} (m : CondMeasure W) (B A : Set W) :
     for each fixed B. -/
 theorem condMeasure_reflexive_per_evidence {W : Type*}
     (m : CondMeasure W) (B : Set W) :
-    EpistemicAxiom.R (fun A C => m.condGe A C B) :=
+    Reflexive (fun A C => m.condGe A C B) :=
   fun _ => le_refl _
 
 end ComparativeProbability
