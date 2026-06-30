@@ -64,18 +64,14 @@ section PropositionalPropagation
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
-/-- *eat apples* propositional: K98 §3.3 CUM propagation. Given any
-    `[IsCumThetaVerb θ]` (eat's role — and any of the K98 verb classes
-    via upward instances) and a CUM object (apples), VP is CUM. -/
+/-- *eat apples* (K98 §3.3): a CUM object through any θ propagates to a CUM VP. -/
 theorem eat_apples_cum_propositional
     {θ : α → β → Prop} [IsCumThetaVerb θ]
     {Apples : α → Prop} (hApples : CUM Apples) :
     CUM (VP θ Apples) :=
   cum_propagation hApples
 
-/-- *eat two apples* propositional: K98 §3.3 QUA propagation. Given
-    `[IsSincVerb θ]` (eat's role, bundling SINC + UP) and a QUA
-    object (two apples), VP is QUA. -/
+/-- *eat two apples* (K98 §3.3): a QUA object through a SINC verb gives a QUA VP. -/
 theorem eat_two_apples_qua_propositional
     {θ : α → β → Prop} [IsSincVerb θ]
     {TwoApples : α → Prop} (hTwoApples : QUA TwoApples) :
@@ -94,8 +90,7 @@ theorem telic_licenses_inX (c : VendlerClass) (h : c.telicity = .telic) :
     inXPrediction c = .accept := by
   cases c <;> simp_all [VendlerClass.telicity, inXPrediction]
 
-/-- Durative atelic VPs (CUM + durative) license "for X" adverbials.
-    Semelfactives are atelic but punctual — "for X" coerces to iterative. -/
+/-- Durative atelic (CUM) VPs license "for X" adverbials. -/
 theorem durative_atelic_licenses_forX (c : VendlerClass)
     (h : c.telicity = .atelic) (hd : c.duration = .durative) :
     forXPrediction c = .accept := by
@@ -114,23 +109,16 @@ theorem durative_atelic_licenses_forX (c : VendlerClass)
 
 section ToyEatInstance
 
-/-- Toy 3-apple universe. `Finset (Fin 3)` carries `SemilatticeSup`
-    automatically (join is `Finset.union`); `≤`/`<` are `⊆`/`⊊`. -/
+/-- Toy 3-apple universe: `Finset (Fin 3)` with ⊔ = ∪ and ≤/< as ⊆/⊊. -/
 abbrev Apple : Type := Finset (Fin 3)
 
-/-- Toy "eating event" — identified with the set of apples eaten.
-    Same powerset lattice as `Apple`, yielding the bijection that
-    SINC requires. -/
+/-- Toy eating event, identified with the set of apples eaten (same lattice as `Apple`). -/
 abbrev EatEvent : Type := Finset (Fin 3)
 
-/-- The identity-as-relation theme: `eatThemeToy a e` iff the apple
-    set `a` equals the apple set eaten in event `e`. The canonical
-    SINC example, exhibiting a 1-1 correspondence between proper
-    sub-objects (subsets of `a`) and proper sub-events. -/
+/-- The identity theme `eatThemeToy a e := a = e`, the canonical SINC example. -/
 def eatThemeToy (a : Apple) (e : EatEvent) : Prop := a = e
 
-/-- The SINC structure for `eatThemeToy`: all five conditions follow from
-    the identity, with `extended` witnessed by `{0} ⊂ {0, 1}`. -/
+/-- The SINC structure for `eatThemeToy`; every condition follows from the identity. -/
 private def eatThemeToy_sinc : SINC eatThemeToy where
   mso := by
     intro x e e' hθ hlt
@@ -165,42 +153,30 @@ private theorem eatThemeToy_cumTheta : CumTheta eatThemeToy := by
   show x ⊔ y = e ⊔ e'
   rw [hx, hy]
 
-/-- `eatThemeToy` is a strictly incremental verb-theme relation.
-    Constructed via the `IsSincVerb.mk'` smart constructor, which
-    derives the inherited `inc : INC eatThemeToy` field automatically
-    via `inc_of_sinc`. -/
+/-- `eatThemeToy` is a strictly incremental verb-theme relation (via `IsSincVerb.mk'`). -/
 instance : IsSincVerb eatThemeToy :=
   IsSincVerb.mk' eatThemeToy_sinc eatThemeToy_up eatThemeToy_cumTheta
 
-/-- Synthesis test: `[IsIncVerb eatThemeToy]` is auto-synthesised from
-    the `IsSincVerb` instance via the `extends` chain (K98 §3.6:
-    "every SINC verb is also INC"). Fires without explicit derivation. -/
+/-- `[IsIncVerb eatThemeToy]` synthesises from the `IsSincVerb` instance (K98 §3.6). -/
 example : IsIncVerb eatThemeToy := inferInstance
 
-/-- Synthesis test: `[IsCumThetaVerb eatThemeToy]` is auto-synthesised
-    from the `IsSincVerb` instance via the `extends` chain transitively. -/
+/-- `[IsCumThetaVerb eatThemeToy]` synthesises transitively from `IsSincVerb`. -/
 example : IsCumThetaVerb eatThemeToy := inferInstance
 
 /-! #### Concrete OBJ predicates -/
 
-/-- "two specific apples" — the singleton predicate `λ a, a = {0, 1}`.
-    QUA: no proper subset of `{0, 1}` is also `{0, 1}`. -/
+/-- "two specific apples": the singleton predicate `(· = {0, 1})`, QUA. -/
 def twoApples : Apple → Prop := fun a => a = ({0, 1} : Finset (Fin 3))
 
-/-- "(some) apples" — non-emptiness in the powerset lattice. CUM:
-    nonempty ∪ nonempty is nonempty. The natural bare-plural
-    interpretation in this toy. -/
+/-- "(some) apples": non-emptiness, the toy's CUM bare plural. -/
 def someApples : Apple → Prop := fun a => a.Nonempty
 
-/-- `twoApples` is QUA: a proper part of `{0, 1}` cannot also equal
-    `{0, 1}`. This is the standard "exact-cardinality NPs are
-    quantized" property at the K89/K98 level. -/
+/-- `twoApples` is QUA: a singleton predicate is trivially an antichain. -/
 theorem twoApples_qua : QUA twoApples :=
   -- `twoApples` is the singleton predicate `(· = {0,1})`, trivially an antichain.
   Mereology.qua_of_forall fun x y hx hlt hy => by rw [hx, hy] at hlt; exact hlt.ne rfl
 
-/-- `someApples` is CUM: nonempty ⊔ nonempty = nonempty. Bare plurals
-    propagate cumulativity (K89 §3 / K98 §3.3). -/
+/-- `someApples` is CUM: nonempty ⊔ nonempty is nonempty. -/
 theorem someApples_cum : CUM someApples := by
   intro x hx y _hy
   -- hx : x.Nonempty ⇒ x ⊔ y = x ∪ y is nonempty
@@ -208,17 +184,11 @@ theorem someApples_cum : CUM someApples := by
 
 /-! #### K98 §3.3 propagation theorems fire on the toy -/
 
-/-- *eat two apples* on the toy: SINC + UP verb + QUA object → QUA VP.
-    Direct invocation of substrate's typeclass-canonical
-    `qua_propagation`; `[IsSincVerb eatThemeToy]` synthesises
-    automatically from the instance above. -/
+/-- *eat two apples* on the toy: SINC verb + QUA object → QUA VP. -/
 theorem eat_two_apples_toy_qua : QUA (VP eatThemeToy twoApples) :=
   qua_propagation twoApples_qua
 
-/-- *eat (some) apples* on the toy: CumTheta verb + CUM object → CUM VP.
-    Direct invocation of substrate's `cum_propagation`;
-    `[IsCumThetaVerb eatThemeToy]` synthesises from `[IsSincVerb …]`
-    via `instIsCumThetaVerbOfIsSincVerb`. -/
+/-- *eat (some) apples* on the toy: CumTheta verb + CUM object → CUM VP. -/
 theorem eat_some_apples_toy_cum : CUM (VP eatThemeToy someApples) :=
   cum_propagation someApples_cum
 
@@ -239,15 +209,11 @@ section Telicity
 
 variable {β : Type*} [PartialOrder β] (precedes : β → β → Prop)
 
-/-- K98 §2.5 eq. 36 INI: `e'` is an initial part of `e` iff `e' ≤ e` and no
-    part of `e` precedes `e'`. Krifka prints the outer relation as `≤D`, but
-    the event signature carries only event parthood and the prose says *part
-    of e* — so both relations are the single part order `≤`. -/
+/-- K98 §2.5 eq. 36 INI: `e' ≤ e` and no part of `e` precedes `e'` (printed `≤D` read as `≤`). -/
 def IsInitialPart (e' e : β) : Prop :=
   e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
 
-/-- K98 §2.5 eq. 36 FIN: `e'` is a final part of `e` iff `e' ≤ e` and no
-    part of `e` follows `e'`. -/
+/-- K98 §2.5 eq. 36 FIN: `e' ≤ e` and no part of `e` follows `e'`. -/
 def IsFinalPart (e' e : β) : Prop :=
   e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e' e''
 
@@ -261,17 +227,11 @@ theorem isFinalPart_self (e : β) (h : ¬ ∃ e'', e'' ≤ e ∧ precedes e e'')
     IsFinalPart precedes e e :=
   ⟨le_rfl, h⟩
 
-/-- K98 §2.5 eq. 37 telicity (TEL): a predicate `P` is telic iff every P-part
-    `e'` of a P-instance `e` is both an initial and a final part of `e`.
-    Telicity is a property of `P`, not of any particular event. -/
+/-- K98 §2.5 eq. 37 TEL: every P-part of a P-instance is its initial and final part. -/
 def IsTelic (P : β → Prop) : Prop :=
   ∀ e e', P e → P e' → e' ≤ e → IsInitialPart precedes e' e ∧ IsFinalPart precedes e' e
 
-/-- K98 §2.5: quantized predicates are telic (the `QUA → TEL` half of
-    TEL ⊋ QUA). A `QUA` predicate's only P-part of `e` is `e` itself, which is
-    its own initial and final part provided no part of `e` precedes it — K98
-    eq. 35, here `hax`. `Event.precedes` does not satisfy `hax` (`isBefore`
-    uses `≤`, so it is reflexive on points; the strict `<` form would). -/
+/-- K98 §2.5: quantized predicates are telic (`QUA → TEL`), given `hax` (K98 eq. 35). -/
 theorem isTelic_of_qua {P : β → Prop}
     (hax : ∀ a b : β, a ≤ b → ¬ precedes a b ∧ ¬ precedes b a) (hQ : QUA P) :
     IsTelic precedes P := by
@@ -289,8 +249,7 @@ section K98PropositionalSubstrate
 
 open Semantics.ArgumentStructure (MO)
 
-/-- K98 §4.1 eq. 63 EXP: expansion. If x is θ-related to e and y to a
-    temporally-following e', then x and y do not overlap. -/
+/-- K98 §4.1 eq. 63 EXP: θ-arguments of temporally-ordered events do not overlap. -/
 def EXP {α β : Type*} [SemilatticeSup α]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e e' : β),
@@ -301,9 +260,7 @@ def SEINC {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   EXP precedes θ ∧ MO θ
 
-/-- K98 §4.2 eq. 68 ADJ: temporal adjacency on sub-events ↔ spatial
-    adjacency on sub-paths. The Lean form adds extra `z ≤ x` and
-    `e'' ≤ e` premises vs the printed equation. -/
+/-- K98 §4.2 eq. 68 ADJ: sub-event temporal adjacency ↔ sub-path spatial adjacency. -/
 def ADJ {α β : Type*} [PartialOrder α] [PartialOrder β]
     (adjα : α → α → Prop) (adjβ : β → β → Prop)
     (θ : α → β → Prop) : Prop :=
@@ -318,16 +275,12 @@ def SMR {α β : Type*} [PartialOrder α] [PartialOrder β]
     (isPath : α → Prop) (θ : α → β → Prop) : Prop :=
   ADJ adjα adjβ θ ∧ MO θ ∧ ∀ x e, θ x e → isPath x
 
-/-- K98 §4.3 eq. 71 closure: smallest relation containing θ' and closed
-    under precedence-respecting sums. K98's TANG_H clause (eq. 17) is
-    OMITTED — see module TODO. Specialization of
-    `Semantics.Aspect.PrecedenceClosure` with `cond := precedes`. -/
+/-- K98 §4.3 eq. 71: smallest θ-extension closed under precedence-respecting sums. -/
 abbrev MovementClosure {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop :=
   Semantics.Aspect.PrecedenceClosure precedes θ'
 
-/-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is a movement relation iff
-    there exists an SMR θ' such that θ is the `MovementClosure` of θ'. -/
+/-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is the `MovementClosure` of some SMR θ'. -/
 def MR {α β : Type*} [PartialOrder α] [PartialOrder β]
     [SemilatticeSup α] [SemilatticeSup β]
     (adjα : α → α → Prop) (adjβ : β → β → Prop) (precedes : β → β → Prop)
@@ -361,16 +314,14 @@ variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
 variable [st : Trace Loc Time]
 
-/-- Bounded path predicate (QUA) ↦ telic VP via the σ-pullback. Backs
-    the K98 §4.5 *walked from X to Y* analysis at the Bool-tag level. -/
+/-- Bounded path (QUA) ↦ telic VP via the σ-pullback (K98 §4.5 *walked from X to Y*). -/
 theorem walked_from_to_telic_propositional
     (hinj : Function.Injective st.σ)
     {P : Path Loc → Prop} (hP : QUA P) :
     QUA (P ∘ st.σ) :=
   Trace.bounded_path_telic hinj hP
 
-/-- Unbounded path predicate (CUM) ↦ atelic VP via the σ-pullback. Backs
-    the K98 §4.5 *walked towards X* analysis at the Bool-tag level. -/
+/-- Unbounded path (CUM) ↦ atelic VP via the σ-pullback (K98 §4.5 *walked towards X*). -/
 theorem walked_towards_atelic_propositional
     {P : Path Loc → Prop} (hP : CUM P) :
     CUM (P ∘ st.σ) :=
@@ -407,8 +358,7 @@ private def parseTelicity : String → Option Telicity
   | "atelic" => some .atelic
   | _ => none
 
-/-- Lift a `Data.Examples.Krifka1998` row to a `MotionDatum` via its
-    `pathShape` / `expectedTelicity` paper features. -/
+/-- Lift a `Data.Examples.Krifka1998` row to a `MotionDatum` via its paper features. -/
 def fromExample (e : LinguisticExample) : Option MotionDatum := do
   let ps ← parsePathShape (← e.paperFeatures.lookup "pathShape")
   let tel ← parseTelicity (← e.paperFeatures.lookup "expectedTelicity")
@@ -418,8 +368,7 @@ def fromExample (e : LinguisticExample) : Option MotionDatum := do
 def motionData : List MotionDatum :=
   Examples.all.filterMap fromExample
 
-/-- Substrate prediction: `pathShapeToTelicity` reproduces the paper's telicity
-    judgment for every motion VP (bounded/source → telic, unbounded → atelic). -/
+/-- `pathShapeToTelicity` reproduces the paper's telicity for every motion VP. -/
 theorem pathShapeToTelicity_matches_motionData :
     ∀ d ∈ motionData, pathShapeToTelicity d.pathShape = d.expectedTelicity := by
   decide
@@ -437,8 +386,7 @@ variable {Time : Type*} [LinearOrder Time]
 abbrev expEv (θ : α → Event Time → Prop) : Prop :=
   EXP (Event.precedes (Time := Time)) θ
 
-/-- SEINC-as-property using `Event.precedes`. The derived
-    `[SemilatticeSup (Event Time)]` comes from `[ClassicalMereology (Event Time)]`. -/
+/-- SEINC-as-property of θ over `Event Time` using `Event.precedes`. -/
 abbrev seincEv [Event.Mereology Time] [ClassicalMereology (Event Time)]
     (θ : α → Event Time → Prop) : Prop :=
   SEINC (Event.precedes (Time := Time)) θ
