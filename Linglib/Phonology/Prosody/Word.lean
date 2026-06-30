@@ -1,6 +1,7 @@
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Order.Branching
+import Mathlib.Data.List.MinMax
 
 /-!
 # Prosodic words (ω)
@@ -504,12 +505,17 @@ private theorem gridColumns.go_syl (count : ℕ) (wt : Syllable.Weight) (hd : Bo
     gridColumns.go count (.node (Constituent.syl wt hd) []) = [count + 1] :=
   gridColumns.go_leaf count _ rfl
 
+/-- The **grid peak** ([liberman-prince-1977]): the height of the tallest column — the
+    prominence of the Designated Terminal Element, the primary-stress syllable. A tree with no
+    σ-frontier has peak `0`. (`toGrid` stacks exactly `gridPeak t` rows.) -/
+def gridPeak (t : Tree) : ℕ := (gridColumns t).foldr max 0
+
 /-- The **metrical grid** of a tree ([liberman-prince-1977]): the `gridColumns` heights stacked
     into rows, row `r` marking the syllables whose column exceeds `r` (so a height-`h` column
-    is marked on exactly rows `0 … h-1`). Determinate level indexing à la Halle & Vergnaud
-    1987 / [hayes-1995]. -/
+    is marked on exactly rows `0 … h-1`), `gridPeak t` rows in all. Determinate level indexing
+    à la Halle & Vergnaud 1987 / [hayes-1995]. -/
 def toGrid (t : Tree) : Grid :=
-  (List.range ((gridColumns t).foldr max 0)).map
+  (List.range (gridPeak t)).map
     (fun r => (gridColumns t).map (fun h => decide (r < h)))
 
 /-- One row is a **submask** of another (the row below it): every position marked in `upper`
@@ -596,6 +602,20 @@ theorem foot_headRow {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
   refine List.map_id'' (fun b => ?_) _
   cases b <;> rfl
 
+/-- **Head-preservation through the grid peak** ([liberman-prince-1977]): the height-axis
+    member of the head-preservation family, the foot-case analogue of `gridColumns_toProsTree`.
+    A single foot's prosodic tree peaks at `2` — its head σ is the unique tallest column, one
+    head-edge above the σ floor of `1` (column height = head-chain length, read at the peak). -/
+theorem gridPeak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    gridPeak (f.toProsTree w) = 2 := by
+  rw [gridPeak, gridColumns_toProsTree]
+  refine Nat.le_antisymm (List.max_le_of_forall_le _ 2 ?_) (List.le_max_of_le' 0 ?_ le_rfl)
+  · rintro x hx
+    obtain ⟨b, _, rfl⟩ := List.mem_map.mp hx
+    cases b <;> decide
+  · exact List.mem_map.mpr ⟨true,
+      List.mem_map.mpr ⟨f.head, List.mem_finRange _, decide_eq_true_eq.mpr rfl⟩, rfl⟩
+
 /-- **The grid loses constituency** ([liberman-prince-1977]). `toGrid` is not injective:
     distinct prosodic trees can project to the same grid. Witnesses — a single unstressed σ
     parsed into a foot vs. left bare under ω — share the column profile `[1]`, so the grid
@@ -619,6 +639,7 @@ private def exWord : Tree :=
       .node (.syl 1 false) [] ]
 
 example : gridColumns exWord = [3, 2, 1] := by decide
+example : gridPeak exWord = 3 := by decide
 example : toGrid exWord =
     [[true, true, true], [true, true, false], [true, false, false]] := by decide
 example : IsContinuous (toGrid exWord) := by decide
