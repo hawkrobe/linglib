@@ -456,12 +456,15 @@ number of *contiguous head-edges* on the path up from the leaf — the run of co
 (stressed daughters, `Constituent.isHead`) starting at the leaf and broken by the first
 non-head edge. A head syllable inside a head foot inside a head … reaches a tall column; a
 non-head resets to the floor of `1`. `toGrid` stacks the columns into rows (row `r` marks the
-syllables whose column exceeds `r`); the determinate level-by-level indexing is the bracketed
-grid of Halle & Vergnaud 1987 and [hayes-1995].
+syllables whose column exceeds `r`); the determinate level-by-level indexing follows
+Halle & Vergnaud 1987 / [hayes-1995] (a determinate grid, not Prince's abstract strata).
 
 The projection is **one-way**, a plain function rather than a structure-preserving functor:
-distinct trees can share a grid (`toGrid_not_injective`), so constituency is genuinely lost —
-the grid records prominence, not bracketing. There are no law-bearing tree morphisms for it
+distinct trees can share a grid (`toGrid_not_injective`), so the bare grid records prominence,
+not bracketing — the *pure* grid of [liberman-prince-1977]/[prince-1983]. Our `Tree` already is the
+*bracketed* grid that [hayes-1995] and Halle & Vergnaud keep in order to retain constituency;
+`toGrid` is the forgetful map onto the pure grid, its non-injectivity exactly the brackets it
+drops. There are no law-bearing tree morphisms for it
 to act on; its lawfulness is instead the **Continuous Column Constraint**
 (`toGrid_isContinuous`): no column has a gap, a *theorem* about the projection here rather
 than a stipulated filter. -/
@@ -520,7 +523,7 @@ private def isContinuousGrid : Grid → Bool
   | [_]             => true
   | lower :: upper :: rest => rowSubmask upper lower && isContinuousGrid (upper :: rest)
 
-/-- The **Continuous Column Constraint** ([hayes-1995]): a grid has no gap in any column — if
+/-- The **Continuous Column Constraint** ([prince-1983]; [hayes-1995]): a grid has no gap in any column — if
     a syllable is marked at level `r` it is marked at every lower level. Equivalently (the
     `Bool` checker), each row is a submask of the row below it. A well-formed metrical grid
     satisfies CCC; here it is a *theorem* of `toGrid` (`toGrid_isContinuous`), not a filter. -/
@@ -559,7 +562,7 @@ private theorem isContinuousGrid_range' (F : ℕ → List Bool)
 
 /-- **The Continuous Column Constraint holds by construction.** Every grid `toGrid` produces
     has gapless columns: a height-`h` column is marked on a contiguous bottom run `0 … h-1`,
-    because row `r` is `· > r`. CCC is thus a *theorem* of the projection ([hayes-1995]),
+    because row `r` is `· > r`. CCC is thus a *theorem* of the projection ([prince-1983]; [hayes-1995]),
     not a stipulated well-formedness filter. -/
 theorem toGrid_isContinuous (t : Tree) : IsContinuous (toGrid t) := by
   show isContinuousGrid (toGrid t) = true
