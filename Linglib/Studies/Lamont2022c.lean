@@ -137,4 +137,37 @@ theorem ftbin_obviated :
     LexLE (profile (murinbata 4) disyll4) (profile (murinbata 4) monosyll4)
     ∧ ¬ LexLE (profile (murinbata 4) monosyll4) (profile (murinbata 4) disyll4) := by decide
 
+/-! ### The footing functor: head (= stress) survives into grid and tree
+
+Lamont's `Trochee`/`Iamb` read each foot's head off `Foot.head`. Re-representing a foot
+into the prosodic `Tree` (`Foot.toProsTree`) and the metrical grid (`Foot.toGrid`)
+recovers *exactly* that head — `Foot.headFlags_toProsTree` proves the tree's σ-leaves
+carry the same head profile as the grid — and the tree always lands in the well-formed
+f/σ band (`Foot.isFoot_toProsTree`). So the head, the stress these constraints penalise,
+survives both re-representations. QI footing strips weight, so the tree reads any
+constant σ-weight. -/
+
+/-- QI footing is weight-blind: a `Foot Unit`'s σ read one (light) mora. -/
+def qiWeight : Unit → Syllable.Weight := fun _ => Syllable.Weight.light
+
+/-- **Well-formedness through the functor**: every QI foot Lamont assembles re-represents
+    as a well-formed prosodic-tree foot (`Foot.isFoot_toProsTree`) — the flat `Footing`
+    candidates are built from feet that are legal `f`-over-σ subtrees of the OT `Tree`
+    carrier. -/
+theorem qiFeet_areFootTrees :
+    IsFoot (mono.toProsTree qiWeight) ∧ IsFoot (troch.toProsTree qiWeight)
+      ∧ IsFoot (iamb.toProsTree qiWeight) :=
+  ⟨Foot.isFoot_toProsTree qiWeight mono, Foot.isFoot_toProsTree qiWeight troch,
+   Foot.isFoot_toProsTree qiWeight iamb⟩
+
+/-- **Head survives into grid and tree**: the metrical grid marks the foot head — leftmost
+    for the trochee (the foot Lamont's `Iamb` penalises), rightmost for the iamb (the foot
+    `Trochee` penalises) — and the prosodic tree carries the *same* head profile, reduced
+    here through `Foot.headFlags_toProsTree`. The trochaic vs iambic stress survives the
+    functor identically. -/
+theorem head_survives :
+    Foot.toGrid troch = [true, false] ∧ Foot.toGrid iamb = [false, true] := by
+  rw [← Foot.headFlags_toProsTree qiWeight troch, ← Foot.headFlags_toProsTree qiWeight iamb]
+  decide
+
 end Lamont2022c
