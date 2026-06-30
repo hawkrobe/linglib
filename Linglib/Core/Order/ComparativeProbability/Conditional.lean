@@ -197,7 +197,7 @@ theorem bayesian_is_jeffrey {W : Type*} (m : CondMeasure W) (B A : Set W) :
     for each fixed B. -/
 theorem condMeasure_reflexive_per_evidence {W : Type*}
     (m : CondMeasure W) (B : Set W) :
-    EpistemicAxiom.R (fun A C => m.condGe A C B) :=
+    Reflexive (fun A C => m.condGe A C B) :=
   fun _ => le_refl _
 
 end ComparativeProbability

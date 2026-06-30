@@ -6,156 +6,116 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Fintype.Powerset
 
 /-!
-# Epistemic Comparative Likelihood
+# Comparative probability
 
-[holliday-icard-2013] [halpern-2003] [van-der-hoek-1996]
-[harrison-trainor-holliday-icard-2016] [harrison-trainor-holliday-icard-2018]
+Comparative-likelihood orders `≿` on propositions (`Set W`) — "`A` is at least as
+likely as `B`" — after [holliday-icard-2013]: an axiom hierarchy, finitely- and
+qualitatively-additive measure semantics, the two world-ordering lifts, and the
+generalized finite cancellation theory of imprecise (multi-prior) comparative
+probability.
 
-Comparative-likelihood orders on propositions (`Set W`): an axiom hierarchy,
-finitely- and qualitatively-additive measure semantics, the two world-ordering
-lifts, and the generalized cancellation theory of imprecise (multi-prior)
-comparative probability.
+## Main definitions
 
-[holliday-icard-2013] study the logic of "at least as likely as" (≿) on
-propositions, whose qualitative-additivity axiom is the qualitative counterpart
-of finite additivity.
+* `RightUnion`, `DeterminedBySingletons` — the two likelihood axioms with no
+  mathlib/`Defs` analog (the rest are `Reflexive` and the `Defs.lean` mixins).
+* `EpistemicSystemW`/`F`/`FA` — bundled axiom systems; `EpistemicSystemFA` is
+  [holliday-icard-2013]'s logic FA.
+* `FinAddMeasure`/`QualAddMeasure` — finitely- and qualitatively-additive
+  probability measures over an ordered field, with their induced orders.
+* `dominationLift`/`matchingLift` — the l- and m-liftings of a world preorder.
+* `GeneralizedFiniteCancellation` and `GFCOrder` — the cancellation axiom and the
+  GFC order of [harrison-trainor-holliday-icard-2016].
 
-**Axiom systems.** The bundled `EpistemicSystemW ⊂ F ⊂ FA` are a *coarse staging*
-toward [holliday-icard-2013]'s logic **FA** (their Figure 6: `Ex, Bot, BT, Tot,
-Tran, A` over the base modal logic `K`); only `EpistemicSystemFA` reproduces a
-named logic of the paper (`Ex` and `K` are automatic for the `Set W` relation
-rendering). The intermediate `EpistemicSystemW`/`F` are *not* the paper's logics
-`W`/`F`: the paper's `W` already carries `Mon`, `Tran`, `BT`, and the `W`-to-`F`
-step there is totality `Tot`; its full landscape (Figure 3, the "Logical
-landscape") is developed in the companion *On the logic of comparative
-likelihood*. The local labels `R`/`T` are mnemonic — the paper writes `Mon` for
-monotonicity, and its `R` is the regularity axiom `◇φ ↔ ¬(⊥ ≿ φ)`.
+## Main statements
 
-**Generalized Finite Cancellation.** `GFCOrder` is the genuine GFC order of
-[harrison-trainor-holliday-icard-2018], after [harrison-trainor-holliday-icard-2016]
-(Ríos Insua 1992; Alon–Lehrer 2014): reflexivity, positivity, non-triviality, and
-the `GeneralizedFiniteCancellation` balanced-sequence axiom characterizing
-representability by a *set* of measures. Its `trans`/`mono`/`complRev` are
-*derived* from the cancellation axiom, and every `FinAddMeasure` induces one
-(`FinAddMeasure.toGFCOrder`, the Scott/Alon–Lehrer soundness direction).
+* `FinAddMeasure.toSystemFA`, `QualAddMeasure.toSystemFA` — measures satisfy FA.
+* `FinAddMeasure.toGFCOrder` — a measure induces a GFC order.
+* `GFCOrder.trans`/`mono`/`complRev` — derived from cancellation, not stipulated.
 
-**Bridge**: Axiom A (qualitative additivity) is equivalent to disjoint-augmentation
-invariance — the law-shape `AdditiveScale.fa` (`Core/Order/ComparativeScale.lean`)
-imposes on degree carriers (`axiomA_iff_fa`, `Completeness.lean`).
+## Implementation notes
 
-**Upstreaming (`Core/Order` candidate).** The `Set W` axioms specialise the
-`BooleanAlgebra`-general mixin classes of `Defs.lean` (mathlib's `IsTrans`-style
-relation classes); `dominationLift`/`matchingLift` are the Smyth (upper
-powerdomain) order and its injection refinement — order constructions mathlib
-lacks; `FinAddMeasure.inducedGe` is `Order.Preimage m.mu (· ≥ ·)`. `FinAddMeasure`
-overlaps mathlib's `MeasureTheory.AddContent` (an `AddCommMonoid`-valued
-finitely-additive content — here morally `AddContent (univ : Set (Set W)) K` plus
-non-negativity and normalization) and could be re-founded on it.
+`EpistemicSystemW`/`F` are coarse staging toward `EpistemicSystemFA`, not
+[holliday-icard-2013]'s logics `W`/`F` (whose `W`-to-`F` step is totality);
+labels `R`/`T` are mnemonic for the paper's `Mon` and reflexivity.
 
-`FinAddMeasure`/`QualAddMeasure` are **generic over an ordered field `K`**
-(`[Field K] [LinearOrder K] [IsStrictOrderedRing K]`): instantiate at **ℝ** for
-the paper's literal `[0,1]`-valued measures ([holliday-icard-2013], §4;
-[kraft-pratt-seidenberg-1959]), or at **ℚ** for the constructive representation
-theory. On a *finite* state space the two agree — a feasible system of rational
-linear inequalities has a rational solution, so an order is representable by a
-real measure iff by a rational one — and only ℚ is computable: the Scott/KPS
-direction rides a computable rational Farkas/Fourier-Motzkin
-(`Core/Order/FourierMotzkin.lean`, deliberately avoiding mathlib's noncomputable
-real hyperplane-separation Farkas) and `decide`-checked finite models
-(`Representability.lean`), both of which a real value type would block.
+The measures are generic over an ordered field `K`: `ℝ` gives the paper's literal
+`[0,1]`-valued measures, `ℚ` the computable theory. On a finite state space the
+two agree (rational and real linear feasibility coincide), and only `ℚ` supports
+the constructive Farkas (`FourierMotzkin.lean`) and `decide`-checked models
+(`Representability.lean`) behind the representation theorems. `FinAddMeasure`
+overlaps mathlib's `MeasureTheory.AddContent` and could be re-founded on it;
+`FinAddMeasure.inducedGe` is `Order.Preimage m.mu (· ≥ ·)`.
+
+## References
+
+[holliday-icard-2013], [halpern-2003], [van-der-hoek-1996],
+[kraft-pratt-seidenberg-1959], [harrison-trainor-holliday-icard-2016],
+[harrison-trainor-holliday-icard-2018]
 -/
 
 namespace ComparativeProbability
 
--- ── Axioms (Figures 4–6) ────────────────────────
+/-! ### Axioms
 
-namespace EpistemicAxiom
+Two likelihood-relation axioms of [holliday-icard-2013] with no mathlib or
+`Defs.lean` analog. The remaining axioms are mathlib's `Reflexive` and the
+`Defs.lean` mixin classes `IsLikelihoodMono` (monotonicity, the paper's `Mon`),
+`IsQualitativeAdditive`, and `IsNontrivial`; the systems below carry those as
+plain propositional fields. -/
 
-/-- Axiom R (mnemonic): reflexivity — A ≿ A. (In [holliday-icard-2013], `R` names
-    the regularity axiom `◇φ ↔ ¬(⊥ ≿ φ)`; reflexivity is unnamed there.) -/
-def R {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ∀ A, ge A A
+section Axioms
+variable {W : Type*} (ge : Set W → Set W → Prop)
 
-/-- Axiom T (mnemonic): monotonicity — A ⊆ B → B ≿ A. ([holliday-icard-2013]
-    write this `Mon`.) -/
-def T {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ∀ A B, A ⊆ B → ge B A
+/-- Right-union (axiom `J` of [holliday-icard-2013], Figure 4):
+`A ≿ B → A ≿ C → A ≿ B ∪ C`. -/
+def RightUnion : Prop := ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
 
-/-- Axiom Bot ([holliday-icard-2013]): Ω ≿ ∅ — tautology is at least as likely as
-    contradiction. -/
-def Bot {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ge Set.univ ∅
-
-/-- Axiom BT: ¬(∅ ≿ Ω) — contradiction is NOT at least as likely as tautology.
-    The non-triviality condition from [holliday-icard-2013].
-    Without this, the degenerate ordering (all sets equivalent) would satisfy
-    FA but admit no finitely additive measure representation (since μ(∅) = 0
-    but μ(Ω) = 1). -/
-def BT {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ¬ge ∅ Set.univ
-
-/-- Axiom A: qualitative additivity — A ≿ B ↔ (A \ B) ≿ (B \ A).
-    The comparative likelihood factors through disjoint parts. -/
-def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ∀ A B, ge A B ↔ ge (A \ B) (B \ A)
-
-/-- Axiom J ([holliday-icard-2013], Figure 4): right-union —
-    φ ≿ ψ ∧ φ ≿ χ → φ ≿ (ψ ∨ χ). -/
-def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
-
-/-- Axiom DS: determination by singletons — A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The
-    comparison can be witnessed by a single element of the dominating set; this
-    is a structural property of the l-lifting (see `dominationLift_axiomDS`),
-    used by the completeness construction for the l-lifting logic
-    ([halpern-2003]; [holliday-icard-2013]). -/
-def DS {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+/-- Determination by singletons: `A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}`. -/
+def DeterminedBySingletons : Prop :=
   ∀ (A : Set W) (b : W), ge A {b} → ∃ a ∈ A, ge {a} {b}
 
-end EpistemicAxiom
+end Axioms
 
--- ── Logic Hierarchy ─────────────────────────────
+/-! ### Axiom systems
 
-/-- Staging system W: reflexivity + monotonicity (weaker than
-    [holliday-icard-2013]'s logic `W`; see the module docstring). -/
+`EpistemicSystemW`/`F` are coarse staging toward `EpistemicSystemFA`. Fields hold
+the bare propositions; the matching `Defs.lean` mixin instances are below. -/
+
+/-- A reflexive, monotone likelihood relation (weaker than [holliday-icard-2013]'s
+logic `W`; see the module docstring). -/
 structure EpistemicSystemW (W : Type*) where
   /-- The "at least as likely as" relation on propositions. -/
   ge : Set W → Set W → Prop
   /-- Reflexivity. -/
-  refl : EpistemicAxiom.R ge
+  refl : Reflexive ge
   /-- Monotonicity: supersets are at least as likely. -/
-  mono : EpistemicAxiom.T ge
+  mono : ∀ A B : Set W, A ⊆ B → ge B A
 
-/-- Staging system F: adds `Bot` (Ω ≿ ∅, redundant with monotonicity) and `BT`,
-    the non-triviality condition that excludes degenerate orderings. -/
+/-- Adds `Ω ≿ ∅` and non-triviality. -/
 structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
-  /-- Bottom: the tautology is at least as likely as the contradiction. -/
-  bottom : EpistemicAxiom.Bot ge
-  /-- Non-triviality: the contradiction is not at least as likely as the tautology. -/
-  nonTrivial : EpistemicAxiom.BT ge
+  /-- The tautology is at least as likely as the contradiction. -/
+  bottom : ge Set.univ ∅
+  /-- Non-triviality: excludes the degenerate all-equivalent order. -/
+  nonTrivial : ¬ ge ∅ Set.univ
 
-/-- System FA: staging system F + totality + transitivity + qualitative additivity.
-    Sound and complete for **qualitatively additive** measure semantics
-    ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]). Strictly weaker than
-    FP∞ (finitely additive measures) for |W| ≥ 5 ([holliday-icard-2013], Theorem 8,
-    after [kraft-pratt-seidenberg-1959]). This reproduces the paper's logic FA
-    (Figure 6: `Ex, Bot, BT, Tot, Tran, A`; `Ex` is automatic for `Set W`). -/
+/-- [holliday-icard-2013]'s logic FA: a total, transitive, qualitatively additive
+likelihood order. Sound and complete for qualitatively additive measure semantics
+(Theorem 6; [van-der-hoek-1996]), and strictly weaker than finite additivity for
+`|W| ≥ 5` (Theorem 8, after [kraft-pratt-seidenberg-1959]). -/
 structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
   /-- Totality: any two propositions are comparable. -/
   total : ∀ A B : Set W, ge A B ∨ ge B A
   /-- Transitivity. -/
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
-  /-- Qualitative additivity (Axiom A). -/
-  additive : EpistemicAxiom.A ge
+  /-- Qualitative additivity: `A ≿ B ↔ (A \ B) ≿ (B \ A)`. -/
+  additive : ∀ A B : Set W, ge A B ↔ ge (A \ B) (B \ A)
 
 /-! ### FA systems carry the comparative-probability mixins
 
-The `EpistemicAxiom.*` predicates are the `Set W` spellings of the
-Boolean-algebra-general `ComparativeProbability` mixin classes (`a ≤ b` is
-defeq `a ⊆ b` on `Set W`), so the instances below register every FA system's
-relation as a comparative-probability order by definitional unfolding, and the
-validity patterns V1–V13 transfer from `ComparativeProbability.Patterns` by
-instance resolution. -/
+An FA system's fields are defeq the `Defs.lean` mixin classes (`a ≤ b` is `a ⊆ b`
+on `Set W`), so the instances below register its relation as a comparative-
+probability order, and the validity patterns V1–V13 transfer from
+`ComparativeProbability.Patterns` by instance resolution. -/
 
 namespace EpistemicSystemFA
 
@@ -259,13 +219,13 @@ def inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop :=
 
 /-- Measure-induced ≿ is reflexive. -/
 theorem inducedGe_axiomR (m : FinAddMeasure K W) :
-    EpistemicAxiom.R m.inducedGe :=
+    Reflexive m.inducedGe :=
   fun _ => le_refl _
 
 /-- Measure-induced ≿ satisfies monotonicity.
     A ⊆ B → B = A ∪ (B \ A) → μ(B) = μ(A) + μ(B \ A) ≥ μ(A). -/
 theorem inducedGe_axiomT (m : FinAddMeasure K W) :
-    EpistemicAxiom.T m.inducedGe := by
+    ∀ A B : Set W, A ⊆ B → m.inducedGe B A := by
   intro A B hAB
   show m.mu B ≥ m.mu A
   rw [(Set.union_sdiff_cancel hAB).symm, m.additive A (B \ A) disjoint_sdiff_self_right]
@@ -349,7 +309,7 @@ def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop :=
 /-- Monotonicity for qualitatively additive measures:
     A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
 theorem inducedGe_axiomT (m : QualAddMeasure K W) :
-    EpistemicAxiom.T m.inducedGe := by
+    ∀ A B : Set W, A ⊆ B → m.inducedGe B A := by
   intro A B hAB
   show m.mu B ≥ m.mu A
   rw [m.qualAdd B A, Set.sdiff_eq_empty.mpr hAB, m.mu_empty]; exact m.nonneg (B \ A)
@@ -381,90 +341,70 @@ def FinAddMeasure.toQualAdd {K : Type*} [Field K] [LinearOrder K] [IsStrictOrder
   total := m.total
   qualAdd := m.mu_qadd
 
--- ── World-Ordering Semantics ────────────────────
+/-! ### World-ordering lifts
 
-/-- The *l*-lifting (Lewis's lifting; [holliday-icard-2013], §5): a preorder on
-    worlds induces a comparison on propositions. A ≿ B iff for every b ∈ B,
-    ∃ a ∈ A with a ≥_w b. See also their injection-based *m*-lifting (`matchingLift`,
-    §9), which yields a complete logic for world-ordering models.
+The l-lifting (Lewis's lifting; [holliday-icard-2013], §5) and its injection
+refinement, the m-lifting (§9). The l-lifting is the **Smyth (upper powerdomain)
+order**; the m-lifting requires *distinct* dominators (an injection), which avoids
+the disjunction problem (invalidates I1–I3) while validating V1–V13 (Fact 5). -/
 
-    This is the **Smyth (upper powerdomain) order** lifted from `ge_w`. -/
-def dominationLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
+section Lift
+
+variable {W : Type*} {ge_w : W → W → Prop}
+
+/-- The l-lifting: `A ≿ B` iff every `b ∈ B` is dominated by some `a ∈ A`. -/
+def dominationLift (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
 
-/-- l-lifting from a reflexive relation satisfies Axiom R. -/
-theorem dominationLift_axiomR {W : Type*} {ge_w : W → W → Prop}
-    (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.R (dominationLift ge_w) :=
+/-- The m-lifting: `A ≿ B` iff some injection `f : B ↪ A` dominates pointwise. -/
+def matchingLift (ge_w : W → W → Prop) (A B : Set W) : Prop :=
+  ∃ (f : W → W),
+    (∀ b, b ∈ B → f b ∈ A ∧ ge_w (f b) b) ∧
+    (∀ b₁ b₂, b₁ ∈ B → b₂ ∈ B → f b₁ = f b₂ → b₁ = b₂)
+
+/-- The l-lifting of a reflexive relation is reflexive. -/
+theorem dominationLift_axiomR (hRefl : ∀ w, ge_w w w) : Reflexive (dominationLift ge_w) :=
   fun _ b hb => ⟨b, hb, hRefl b⟩
 
-/-- l-lifting from a reflexive relation satisfies Axiom T.
-    If A ⊆ B and b ∈ A, then b ∈ B, so take a = b. -/
-theorem dominationLift_axiomT {W : Type*} {ge_w : W → W → Prop}
-    (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.T (dominationLift ge_w) :=
+/-- The l-lifting of a reflexive relation is monotone. -/
+theorem dominationLift_axiomT (hRefl : ∀ w, ge_w w w) :
+    ∀ A B : Set W, A ⊆ B → dominationLift ge_w B A :=
   fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
 
-/-- The *l*-lifting from a reflexive preorder yields System W.
-    Soundness direction: world-ordering models with the l-lifting
-    validate System W ([halpern-2003]; [holliday-icard-2013]). -/
-def dominationLiftSystemW {W : Type*} (ge_w : W → W → Prop)
-    (hRefl : ∀ w, ge_w w w) :
+/-- The l-lifting satisfies right-union. -/
+theorem dominationLift_axiomJ : RightUnion (dominationLift ge_w) :=
+  fun _ _ _ hAB hAC b hb => hb.elim (hAB b) (hAC b)
+
+/-- The l-lifting satisfies determination by singletons. -/
+theorem dominationLift_axiomDS : DeterminedBySingletons (dominationLift ge_w) :=
+  fun _ b hAb =>
+    let ⟨a, ha, hab⟩ := hAb b rfl
+    ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
+
+/-- The m-lifting of a reflexive relation is reflexive. -/
+theorem matchingLift_axiomR (hRefl : ∀ w, ge_w w w) : Reflexive (matchingLift ge_w) :=
+  fun _ => ⟨id, fun b hb => ⟨hb, hRefl b⟩, fun _ _ _ _ h => h⟩
+
+/-- The m-lifting of a reflexive relation is monotone. -/
+theorem matchingLift_axiomT (hRefl : ∀ w, ge_w w w) :
+    ∀ A B : Set W, A ⊆ B → matchingLift ge_w B A :=
+  fun _ _ hAB => ⟨id, fun b hbA => ⟨hAB hbA, hRefl b⟩, fun _ _ _ _ h => h⟩
+
+/-- The l-lifting of a reflexive preorder yields a System W (soundness). -/
+def dominationLiftSystemW (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
   ge := dominationLift ge_w
   refl := dominationLift_axiomR hRefl
   mono := dominationLift_axiomT hRefl
 
-/-- l-lifting satisfies Axiom J (right-union).
-    If every b ∈ B is dominated and every c ∈ C is dominated, then
-    every element of B ∪ C is dominated. -/
-theorem dominationLift_axiomJ {W : Type*} {ge_w : W → W → Prop} :
-    EpistemicAxiom.J (dominationLift ge_w) :=
-  fun _ _ _ hAB hAC b hb => hb.elim (hAB b) (hAC b)
-
-/-- l-lifting satisfies Axiom DS (determination by singletons).
-    If A ≿ {b} via the lift, some a ∈ A has ge_w a b, so {a} ≿ {b}. -/
-theorem dominationLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
-    EpistemicAxiom.DS (dominationLift ge_w) :=
-  fun _ b hAb =>
-    let ⟨a, ha, hab⟩ := hAb b rfl
-    ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
-
--- ── m-Lifting ([holliday-icard-2013], §9) ──
-
-/-- The *m*-lifting ([holliday-icard-2013], §9): an injection-based
-    alternative to `dominationLift`. A ≿ B iff there exists an injection
-    f : B ↪ A such that f(b) ≥_w b for all b ∈ B.
-
-    The key difference from `dominationLift` (l-lifting) is that dominators
-    must be **distinct**: each element of B is matched to a unique element
-    of A. This avoids the "disjunction problem" (I1–I3 become invalid),
-    while validating all 13 validity patterns V1–V13 (Fact 5). -/
-def matchingLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
-  ∃ (f : W → W),
-    (∀ b, b ∈ B → f b ∈ A ∧ ge_w (f b) b) ∧
-    (∀ b₁ b₂, b₁ ∈ B → b₂ ∈ B → f b₁ = f b₂ → b₁ = b₂)
-
-/-- m-lift from a reflexive relation satisfies Axiom R. -/
-theorem matchingLift_axiomR {W : Type*} {ge_w : W → W → Prop}
-    (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.R (matchingLift ge_w) :=
-  fun _ => ⟨id, fun b hb => ⟨hb, hRefl b⟩, fun _ _ _ _ h => h⟩
-
-/-- m-lift from a reflexive relation satisfies Axiom T.
-    If A ⊆ B and b ∈ A, then b ∈ B, so take f = id. -/
-theorem matchingLift_axiomT {W : Type*} {ge_w : W → W → Prop}
-    (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.T (matchingLift ge_w) :=
-  fun _ _ hAB => ⟨id, fun b hbA => ⟨hAB hbA, hRefl b⟩, fun _ _ _ _ h => h⟩
-
-/-- m-lifting from a reflexive preorder yields System W. -/
-def matchingLiftSystemW {W : Type*} (ge_w : W → W → Prop)
-    (hRefl : ∀ w, ge_w w w) :
+/-- The m-lifting of a reflexive preorder yields a System W. -/
+def matchingLiftSystemW (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
   ge := matchingLift ge_w
   refl := matchingLift_axiomR hRefl
   mono := matchingLift_axiomT hRefl
+
+end Lift
 
 /-! ### Connection to the `ComparativeProbability` theory
 
