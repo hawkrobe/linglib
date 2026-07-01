@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
-import Linglib.Core.Algebra.RootedTree.PreLie.KBucketSum
 import Mathlib.Data.Multiset.Powerset
 
 set_option autoImplicit false
@@ -20,11 +19,17 @@ independently.
 
 ## Architecture
 
-The proof introduces `hostBucketSum`, a Multiset aggregator analogous
-to `forestPairSum` but splitting guests by a 2-bucket partition between
-two arbitrary host forests (rather than between a head tree and its
-tail). The bridge `hostBucketSum_eq_insertionForest` is proved by
-induction on `host_A`.
+The substrate is `kBucketSum` (§0): a polymorphic k-way bucketed
+enumeration that assigns each guest to one of `idx` buckets, then
+applies a leaf function to the final assignment. Its key identity
+`kBucketSum_assignment_rewrite` collapses the per-guest recursion into a
+single bind over all bucket assignments.
+
+`hostBucketSum` (§1) is the 2-bucket (`Bool`-indexed) instance splitting
+guests between two arbitrary host forests, with a parallel
+cartesian-product leaf; `hostBucketSum_assignment_rewrite` is derived
+from the general identity via `hostBucketSum_eq_kBucketSum`. The bridge
+`hostBucketSum_eq_insertionForest` is proved by induction on `host_A`.
 
 This is the planar-level companion to the `Nonplanar.insertionMultiset_add_host`
 combinatorial identity used in `GrossmanLarsonAssoc.lean`'s
@@ -42,6 +47,124 @@ namespace Planar
 namespace Pathed
 
 variable {α : Type*}
+
+/-! ## §0: `kBucketSum` — k-way bucketed enumeration substrate
+
+Polymorphic substrate generalising the bucket-aggregator patterns used
+in planar multi-graft proofs (Foissy 2021, Marcolli-Chomsky-Berwick
+2025, Oudom-Guin 2004). For each item in `remaining`, a choice from
+`idx` selects a bucket; items accumulate into the per-bucket lists
+`pres`. At empty `remaining`, the leaf function consumes the final
+assignment. `hostBucketSum` (§1, 2 buckets) and `hostTripleSum` (§3,
+3 buckets) are instances. -/
+
+section KBucketSum
+
+universe u v w
+
+variable {τ : Type u} {ι : Type v} {ω : Type w}
+
+/-- The slice of items from `Ts` whose assignment in `assn` equals `t`. -/
+def bucketSlice [DecidableEq τ] (Ts : List ι) (assn : List τ) (t : τ) : List ι :=
+  (Ts.zip assn).filterMap fun p => if p.snd = t then some p.fst else none
+
+@[simp] theorem bucketSlice_nil_left [DecidableEq τ] (assn : List τ) (t : τ) :
+    bucketSlice ([] : List ι) assn t = [] := by
+  unfold bucketSlice; simp
+
+@[simp] theorem bucketSlice_nil_right [DecidableEq τ] (Ts : List ι) (t : τ) :
+    bucketSlice Ts ([] : List τ) t = [] := by
+  unfold bucketSlice; simp
+
+theorem bucketSlice_cons_cons [DecidableEq τ]
+    (x : ι) (Ts : List ι) (s : τ) (assn : List τ) (t : τ) :
+    bucketSlice (x :: Ts) (s :: assn) t =
+      (if s = t then [x] else []) ++ bucketSlice Ts assn t := by
+  unfold bucketSlice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  by_cases h : s = t
+  · simp [h]
+  · simp [h]
+
+/-- The `Bool`-`true` bucket slice keeps the items whose bit is set. -/
+theorem bucketSlice_bool_true (Ts : List ι) (assn : List Bool) :
+    bucketSlice Ts assn true =
+      (Ts.zip assn).filterMap (fun p => if p.snd then some p.fst else none) := rfl
+
+/-- The `Bool`-`false` bucket slice keeps the items whose bit is unset. -/
+theorem bucketSlice_bool_false (Ts : List ι) (assn : List Bool) :
+    bucketSlice Ts assn false =
+      (Ts.zip assn).filterMap (fun p => if p.snd then none else some p.fst) := by
+  unfold bucketSlice; congr 1; funext p; cases p.snd <;> rfl
+
+/-- k-way bucketed enumeration. For each item in `remaining`, bind over
+    `idx` to choose a bucket; the accumulator `pres t` for that bucket
+    grows by one item. At empty `remaining`, apply `leaf`. -/
+def kBucketSum [DecidableEq τ] (idx : List τ)
+    (leaf : (τ → List ι) → Multiset ω) (pres : τ → List ι) :
+    List ι → Multiset ω
+  | []         => leaf pres
+  | x :: rest  =>
+      (Multiset.ofList idx).bind fun t =>
+        kBucketSum idx leaf (Function.update pres t (pres t ++ [x])) rest
+
+theorem kBucketSum_nil_remaining [DecidableEq τ] (idx : List τ)
+    (leaf : (τ → List ι) → Multiset ω) (pres : τ → List ι) :
+    kBucketSum idx leaf pres [] = leaf pres := rfl
+
+theorem kBucketSum_cons_remaining [DecidableEq τ] (idx : List τ)
+    (leaf : (τ → List ι) → Multiset ω) (pres : τ → List ι)
+    (x : ι) (rest : List ι) :
+    kBucketSum idx leaf pres (x :: rest) =
+      (Multiset.ofList idx).bind fun t =>
+        kBucketSum idx leaf (Function.update pres t (pres t ++ [x])) rest := rfl
+
+/-- **Key identity**: `kBucketSum` over remaining items `Ts` equals a
+    single bind over all length-`Ts.length` assignments (drawn from
+    `idx`) of the leaf applied to the accumulators augmented by the
+    per-bucket slice of `Ts`. -/
+theorem kBucketSum_assignment_rewrite [DecidableEq τ] (idx : List τ)
+    (leaf : (τ → List ι) → Multiset ω) :
+    ∀ (pres : τ → List ι) (Ts : List ι),
+    kBucketSum idx leaf pres Ts =
+      (Multiset.ofList (listChoices idx Ts.length)).bind fun assn =>
+        leaf (fun t => pres t ++ bucketSlice Ts assn t) := by
+  intro pres Ts
+  induction Ts generalizing pres with
+  | nil =>
+    rw [kBucketSum_nil_remaining]
+    simp only [List.length_nil, listChoices_zero, Multiset.coe_singleton,
+               Multiset.singleton_bind, bucketSlice_nil_left, List.append_nil]
+  | cons x rest ih =>
+    rw [kBucketSum_cons_remaining]
+    conv_rhs =>
+      rw [show (x :: rest).length = rest.length + 1 from rfl, listChoices_succ]
+      rw [show (Multiset.ofList (idx.flatMap fun t =>
+                  (listChoices idx rest.length).map (t :: ·)) :
+                Multiset (List τ)) =
+              (Multiset.ofList idx).bind fun t =>
+                Multiset.ofList ((listChoices idx rest.length).map (t :: ·))
+              from by rw [← Multiset.coe_bind]]
+      rw [Multiset.bind_assoc]
+    refine Multiset.bind_congr fun t _ => ?_
+    rw [show (Multiset.ofList ((listChoices idx rest.length).map (t :: ·)) :
+              Multiset (List τ)) =
+            (Multiset.ofList (listChoices idx rest.length)).map (t :: ·)
+            from rfl]
+    rw [Multiset.bind_map]
+    rw [ih (Function.update pres t (pres t ++ [x]))]
+    refine Multiset.bind_congr fun assn _ => ?_
+    congr 1
+    funext t'
+    rw [bucketSlice_cons_cons]
+    by_cases h : t = t'
+    · subst h
+      rw [if_pos rfl, Function.update_self]
+      simp [List.append_assoc]
+    · rw [if_neg h, Function.update_of_ne (Ne.symm h)]
+      simp
+
+end KBucketSum
 
 /-! ## §1: `hostBucketSum` aggregator
 
@@ -72,66 +195,12 @@ theorem hostBucketSum_nil_remaining (host_A host_B : List (Planar α))
         fun p => p.fst ++ p.snd := by
   unfold hostBucketSum; rfl
 
-theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
+private theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
     (pre_A pre_B : List (Planar α)) (x : Planar α) (rest : List (Planar α)) :
     hostBucketSum host_A host_B pre_A pre_B (x :: rest) =
       (Multiset.ofList [true, false]).bind fun b =>
         if b then hostBucketSum host_A host_B (pre_A ++ [x]) pre_B rest
         else hostBucketSum host_A host_B pre_A (pre_B ++ [x]) rest := rfl
-
-/-- Assignment rewrite: `hostBucketSum` accumulating into `pre_A`/`pre_B`
-    over remaining guests `Ts` equals the sum over `[true, false]`-
-    assignments of `Ts` of `hostBucketSum` on empty remaining with the
-    accumulators augmented by the partition. Mirrors
-    `forestPairSum_assignment_rewrite` in `Insertion.lean`. -/
-theorem hostBucketSum_assignment_rewrite
-    (host_A host_B : List (Planar α)) :
-    ∀ (pre_A pre_B Ts : List (Planar α)),
-    hostBucketSum host_A host_B pre_A pre_B Ts =
-      (Multiset.ofList (listChoices [true, false] Ts.length)).bind fun α =>
-        hostBucketSum host_A host_B
-          (pre_A ++ (Ts.zip α).filterMap (fun p => if p.snd then some p.fst else none))
-          (pre_B ++ (Ts.zip α).filterMap (fun p => if p.snd then none else some p.fst))
-          [] := by
-  intro pre_A pre_B Ts
-  induction Ts generalizing pre_A pre_B with
-  | nil =>
-    simp [listChoices_zero, List.filterMap_nil, List.append_nil]
-  | cons x rest ih =>
-    rw [hostBucketSum_cons_remaining]
-    conv_rhs =>
-      rw [show (x :: rest).length = rest.length + 1 from rfl, listChoices_succ]
-      rw [show (Multiset.ofList ([true, false].flatMap fun v =>
-                  (listChoices [true, false] rest.length).map (v :: ·)) :
-                Multiset (List Bool)) =
-              (Multiset.ofList [true, false]).bind fun v =>
-                Multiset.ofList ((listChoices [true, false] rest.length).map (v :: ·))
-              from by rw [← Multiset.coe_bind]]
-      rw [Multiset.bind_assoc]
-    refine Multiset.bind_congr fun b _ => ?_
-    cases b with
-    | true =>
-      rw [if_pos rfl]
-      rw [show (Multiset.ofList ((listChoices [true, false] rest.length).map (true :: ·)) :
-                Multiset (List Bool)) =
-              (Multiset.ofList (listChoices [true, false] rest.length)).map (true :: ·)
-              from rfl]
-      rw [Multiset.bind_map]
-      rw [ih (pre_A ++ [x]) pre_B]
-      refine Multiset.bind_congr fun α _ => ?_
-      rw [List.append_assoc, List.singleton_append]
-      rfl
-    | false =>
-      rw [if_neg (by decide : (false : Bool) ≠ true)]
-      rw [show (Multiset.ofList ((listChoices [true, false] rest.length).map (false :: ·)) :
-                Multiset (List Bool)) =
-              (Multiset.ofList (listChoices [true, false] rest.length)).map (false :: ·)
-              from rfl]
-      rw [Multiset.bind_map]
-      rw [ih pre_A (pre_B ++ [x])]
-      refine Multiset.bind_congr fun α _ => ?_
-      rw [List.append_assoc, List.singleton_append]
-      rfl
 
 /-- `hostBucketSum` as a `kBucketSum` instance: 2 buckets indexed by `Bool`,
     parallel cartesian-product leaf. -/
@@ -162,6 +231,27 @@ theorem hostBucketSum_eq_kBucketSum
       congr 1
       funext c
       cases c <;> simp [Function.update_self]
+
+/-- Assignment rewrite: `hostBucketSum` accumulating into `pre_A`/`pre_B`
+    over remaining guests `Ts` equals the sum over `[true, false]`-
+    assignments of `Ts` of `hostBucketSum` on empty remaining with the
+    accumulators augmented by the partition. Specialises the general
+    `kBucketSum_assignment_rewrite` to the 2-bucket `Bool` instance. -/
+theorem hostBucketSum_assignment_rewrite
+    (host_A host_B : List (Planar α)) :
+    ∀ (pre_A pre_B Ts : List (Planar α)),
+    hostBucketSum host_A host_B pre_A pre_B Ts =
+      (Multiset.ofList (listChoices [true, false] Ts.length)).bind fun α =>
+        hostBucketSum host_A host_B
+          (pre_A ++ (Ts.zip α).filterMap (fun p => if p.snd then some p.fst else none))
+          (pre_B ++ (Ts.zip α).filterMap (fun p => if p.snd then none else some p.fst))
+          [] := by
+  intro pre_A pre_B Ts
+  rw [hostBucketSum_eq_kBucketSum, kBucketSum_assignment_rewrite]
+  refine Multiset.bind_congr fun assn _ => ?_
+  rw [hostBucketSum_eq_kBucketSum, kBucketSum_nil_remaining]
+  simp only [bucketSlice_bool_true, bucketSlice_bool_false, Bool.false_eq_true,
+             if_true, reduceIte]
 
 /-! ## §2: Base case — `hostBucketSum [] host_B [] [] guests = insertionForest host_B guests`
 
@@ -312,48 +402,6 @@ private theorem hostTripleSum_cons_remaining
         + hostTripleSum T F_A host_B pre_T (pre_FA ++ [x]) pre_B rest
         + hostTripleSum T F_A host_B pre_T pre_FA (pre_B ++ [x]) rest := rfl
 
-/-- 3-element bucket label for `hostTripleSum`'s `kBucketSum` form:
-    T-bucket, F_A-bucket, host_B-bucket. -/
-private inductive TripleIdx where
-  | t : TripleIdx
-  | fa : TripleIdx
-  | b : TripleIdx
-deriving DecidableEq
-
-/-- `hostTripleSum` as a `kBucketSum` instance: 3 buckets indexed by `TripleIdx`,
-    parallel triple-bind leaf (T-bucket via `insertion T`, F_A-bucket via
-    `insertionForest F_A`, host_B-bucket via `insertionForest host_B`). -/
-private theorem hostTripleSum_eq_kBucketSum
-    (T : Planar α) (F_A host_B pre_T pre_FA pre_B Ts : List (Planar α)) :
-    hostTripleSum T F_A host_B pre_T pre_FA pre_B Ts =
-      kBucketSum [TripleIdx.t, TripleIdx.fa, TripleIdx.b]
-        (fun pres' =>
-          (insertion T (pres' .t)).bind fun T' =>
-            (insertionForest F_A (pres' .fa)).bind fun F' =>
-              (insertionForest host_B (pres' .b)).map fun B => T' :: F' ++ B)
-        (fun
-          | .t => pre_T
-          | .fa => pre_FA
-          | .b => pre_B) Ts := by
-  induction Ts generalizing pre_T pre_FA pre_B with
-  | nil =>
-    rw [hostTripleSum_nil_remaining, kBucketSum_nil_remaining]
-  | cons x rest ih =>
-    rw [hostTripleSum_cons_remaining, kBucketSum_cons_remaining]
-    rw [ih (pre_T ++ [x]) pre_FA pre_B,
-        ih pre_T (pre_FA ++ [x]) pre_B,
-        ih pre_T pre_FA (pre_B ++ [x])]
-    show _ + _ + _ = (Multiset.ofList [TripleIdx.t, TripleIdx.fa, TripleIdx.b]).bind _
-    rw [show (Multiset.ofList [TripleIdx.t, TripleIdx.fa, TripleIdx.b] :
-              Multiset TripleIdx) =
-            TripleIdx.t ::ₘ TripleIdx.fa ::ₘ TripleIdx.b ::ₘ 0 from rfl]
-    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind,
-        Multiset.zero_bind, add_zero, add_assoc]
-    refine congr_arg₂ HAdd.hAdd ?_ (congr_arg₂ HAdd.hAdd ?_ ?_)
-    · congr 1; funext i; cases i <;> simp [Function.update_self]
-    · congr 1; funext i; cases i <;> simp [Function.update_self]
-    · congr 1; funext i; cases i <;> simp [Function.update_self]
-
 /-- Helper: `(M ×ˢ N).map (uncurry ++) = M.bind fun a => N.map fun b => a ++ b`. -/
 private theorem product_map_append_eq_bind_map
     (M N : Multiset (List (Planar α))) :
@@ -393,7 +441,7 @@ theorem insertionForest_cons_assignment (T : Planar α)
 /-- **Lemma X (listChoices append-decomposition)**: enumerating length-`(n+1)`
     bit vectors and applying `g` equals enumerating length-`n` bit vectors and
     summing `g (α ++ [true]) + g (α ++ [false])`. Multiset-level, NOT list-level. -/
-theorem listChoices_succ_append_bind {γ : Type*}
+private theorem listChoices_succ_append_bind {γ : Type*}
     (n : Nat) (g : List Bool → Multiset γ) :
     (Multiset.ofList (listChoices [true, false] (n + 1))).bind g =
       (Multiset.ofList (listChoices [true, false] n)).bind fun a =>
@@ -411,17 +459,8 @@ theorem listChoices_succ_append_bind {γ : Type*}
     rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
     rfl
   | succ n ih =>
-    -- LHS = bind over listChoices [t,f] (n+2) of g
-    --     = bind v over [t,f]: bind α' over listChoices [t,f] (n+1): g (v :: α')
-    -- IH gives: bind α' over listChoices [t,f] (n+1): g_v (α') = bind α over listChoices [t,f] n: g_v (α ++ [t]) + g_v (α ++ [f])
-    -- where g_v α' = g (v :: α'). So:
-    -- LHS = bind v: bind α over listChoices [t,f] n: g (v :: α ++ [t]) + g (v :: α ++ [f])
-    -- After bind_bind: = bind α: bind v: g (v :: α ++ [t]) + g (v :: α ++ [f])
-    --                = bind α: g (t :: α ++ [t]) + g (t :: α ++ [f]) + g (f :: α ++ [t]) + g (f :: α ++ [f])
-    --
-    -- RHS = bind α' over listChoices [t,f] (n+1): g (α' ++ [t]) + g (α' ++ [f])
-    --     = bind v: bind α over listChoices [t,f] n: g (v :: α ++ [t]) + g (v :: α ++ [f])
-    -- After bind_bind: = same as LHS.
+    -- Peel the leading bit `v` off both sides (via `key`), apply the IH under
+    -- it, then reassociate the two binds so `v` and the appended bit commute.
     have key : ∀ (h : List Bool → Multiset γ),
         (Multiset.ofList (listChoices [true, false] (n + 2))).bind h =
           (Multiset.ofList [true, false]).bind fun v =>
@@ -445,25 +484,10 @@ theorem listChoices_succ_append_bind {γ : Type*}
               from rfl]
       rw [Multiset.bind_map]
     rw [key g]
-    -- Apply IH on the inner bind for each v:
     conv_lhs =>
       rhs; ext v
       rw [ih (fun a => g (v :: a))]
-    -- Now LHS = bind v: bind α over n: g (v :: (α ++ [t])) + g (v :: (α ++ [f]))
-    -- Reformulate: g (v :: α ++ [t]) = g (v :: (α ++ [t]))  -- same thing by associativity of cons-then-append
-    -- Want RHS form: bind α over n: bind v: g ((v :: α) ++ [t]) + g ((v :: α) ++ [f])
-    -- = bind α: bind v: g (v :: α ++ [t]) + g (v :: α ++ [f])  -- by cons_append
-    -- These will agree after bind_bind.
     rw [Multiset.bind_bind]
-    -- LHS now: bind α over n: bind v: g (v :: (α ++ [t])) + g (v :: (α ++ [f]))
-    -- RHS:    bind α' over listChoices [t,f] (n+1): g (α' ++ [t]) + g (α' ++ [f])
-    --       = bind v: bind α over n: g (v :: α ++ [t]) + g (v :: α ++ [f])    -- by key
-    --       = bind α over n: bind v: g (v :: α ++ [t]) + g (v :: α ++ [f])    -- bind_bind
-    -- These should match. Let me compute RHS:
-    conv_rhs =>
-      rhs; ext a
-      rw [show g (a ++ [true]) + g (a ++ [false]) =
-              g (a ++ [true]) + g (a ++ [false]) from rfl]
     rw [show (Multiset.ofList (listChoices [true, false] (n + 1))) =
             (Multiset.ofList [true, false]).bind fun v =>
               (Multiset.ofList (listChoices [true, false] n)).map (v :: ·)
@@ -471,149 +495,14 @@ theorem listChoices_succ_append_bind {γ : Type*}
       rw [show (n + 1) = n + 1 from rfl, listChoices_succ]
       rw [← Multiset.coe_bind]
       rfl]
-    -- RHS = (bind v: (ofList listChoices n).map (v :: ·)).bind fun a => g (a ++ [t]) + g (a ++ [f])
     rw [Multiset.bind_assoc]
-    -- RHS = bind v: ((ofList listChoices n).map (v :: ·)).bind fun a => g (a ++ [t]) + g (a ++ [f])
     conv_rhs =>
       rhs; ext v
       rw [Multiset.bind_map]
-    -- RHS = bind v: bind α over n: g ((v :: α) ++ [t]) + g ((v :: α) ++ [f])
     rw [Multiset.bind_bind]
     refine Multiset.bind_congr fun a _ => ?_
     refine Multiset.bind_congr fun v _ => ?_
-    -- Goal: g (v :: (a ++ [true])) + g (v :: (a ++ [false])) = g ((v :: a) ++ [true]) + g ((v :: a) ++ [false])
     rfl
-
-/-- **Length-additive splitting**: a bind over length-`(m+n)` bit vectors equals a
-    nested bind: outer over length-`m`, inner over length-`n`, with the leaf
-    function applied to the concatenation.
-
-    Companion to `listChoices_succ_append_bind` (which splits off a single bit
-    from the end). Original consumer was the A3.3 basis-level proof in
-    `InsertionAssoc.lean` (deleted 2026-05-16); kept as a general utility.
-
-    Proof: induction on `n`. Base `n = 0` reduces via `List.append_nil`; step
-    `n + 1` peels off one bit via `listChoices_succ_append_bind` on both sides
-    and rebinds via `List.append_assoc`. -/
-theorem listChoices_append_bind {γ : Type*}
-    (m n : Nat) (g : List Bool → Multiset γ) :
-    (Multiset.ofList (listChoices [true, false] (m + n))).bind g =
-      (Multiset.ofList (listChoices [true, false] m)).bind fun a =>
-        (Multiset.ofList (listChoices [true, false] n)).bind fun b =>
-          g (a ++ b) := by
-  induction n generalizing g with
-  | zero =>
-    -- m + 0 = m. Inner bind over length-0 = singleton {[]}, so g (a ++ []) = g a.
-    show (Multiset.ofList (listChoices [true, false] m)).bind g =
-         (Multiset.ofList (listChoices [true, false] m)).bind fun a =>
-           (Multiset.ofList (listChoices [true, false] 0)).bind fun b => g (a ++ b)
-    refine Multiset.bind_congr fun a _ => ?_
-    rw [listChoices_zero]
-    show g a =
-         (Multiset.ofList ([[]] : List (List Bool))).bind fun b => g (a ++ b)
-    rw [show (Multiset.ofList ([[]] : List (List Bool)) : Multiset (List Bool)) =
-            (([] : List Bool) ::ₘ 0) from rfl]
-    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero, List.append_nil]
-  | succ n ih =>
-    -- m + (n+1) = (m + n) + 1. Apply listChoices_succ_append_bind on LHS to peel
-    -- the last bit, then IH, then re-pack via listChoices_succ_append_bind on the
-    -- RHS inner bind (in reverse).
-    rw [show m + (n + 1) = (m + n) + 1 from by omega]
-    rw [listChoices_succ_append_bind (m + n) g]
-    rw [ih (fun a => g (a ++ [true]) + g (a ++ [false]))]
-    refine Multiset.bind_congr fun a _ => ?_
-    rw [listChoices_succ_append_bind n (fun b => g (a ++ b))]
-    refine Multiset.bind_congr fun b _ => ?_
-    -- Goal: g (a ++ b ++ [t]) + g (a ++ b ++ [f]) = g (a ++ (b ++ [t])) + g (a ++ (b ++ [f]))
-    rw [List.append_assoc, List.append_assoc]
-
-/-- **Polymorphic length-additive splitting**: a bind over length-`(m+n)`
-    enumerations equals a nested bind, outer over length-`m` and inner over
-    length-`n`, with the leaf function applied to the concatenation.
-
-    Generalizes `listChoices_append_bind` (the Bool case) to arbitrary
-    `xs : List β`. The proof inducts on `m`, peeling one element off the
-    front via `listChoices_succ` (rather than the back, as in the Bool
-    version which uses `listChoices_succ_append_bind`).
-
-    Used by `RHS_eq_canonical_msform` to split a length-`(pre_T_B.length +
-    T_orig-count)` choice into a `pre_T_B.length` prefix (`choice_T`) and
-    a `T_orig-count` suffix (`choice_T_orig`). -/
-theorem listChoices_split_bind {β γ : Type*} (xs : List β) :
-    ∀ (m n : Nat) (g : List β → Multiset γ),
-    (Multiset.ofList (listChoices xs (m + n))).bind g =
-      (Multiset.ofList (listChoices xs m)).bind fun a =>
-        (Multiset.ofList (listChoices xs n)).bind fun b =>
-          g (a ++ b) := by
-  intro m
-  induction m with
-  | zero =>
-    intro n g
-    -- 0 + n = n. Outer bind over length-0 collapses to {[]}.
-    rw [Nat.zero_add]
-    rw [show listChoices xs 0 = [[]] from rfl]
-    rw [show (Multiset.ofList ([[]] : List (List β)) : Multiset _) = ({[]} : Multiset _) from rfl]
-    rw [Multiset.singleton_bind]
-    refine Multiset.bind_congr fun b _ => ?_
-    rw [List.nil_append]
-  | succ k ih =>
-    intro n g
-    -- (k+1) + n = (k+n) + 1. Peel front via listChoices_succ.
-    rw [show k + 1 + n = (k + n) + 1 from by omega]
-    rw [listChoices_succ]
-    rw [show (Multiset.ofList (xs.flatMap fun v => (listChoices xs (k + n)).map (v :: ·)) :
-              Multiset (List β)) =
-            (Multiset.ofList xs).bind fun v =>
-              Multiset.ofList ((listChoices xs (k + n)).map (v :: ·))
-            from by rw [← Multiset.coe_bind]]
-    rw [Multiset.bind_assoc]
-    conv_lhs =>
-      rhs; ext v
-      rw [show (Multiset.ofList ((listChoices xs (k + n)).map (v :: ·)) : Multiset (List β)) =
-              (Multiset.ofList (listChoices xs (k + n))).map (v :: ·) from rfl]
-      rw [Multiset.bind_map]
-    -- LHS: bind v: bind a: g (v :: a) (where a is length-(k+n)).
-    -- Apply IH with substituted g(v ::·).
-    conv_lhs =>
-      rhs; ext v
-      rw [ih n (fun a => g (v :: a))]
-    -- RHS: rewrite (k+1) via listChoices_succ.
-    rw [show listChoices xs (k + 1) =
-            xs.flatMap fun v => (listChoices xs k).map (v :: ·) from rfl]
-    rw [show (Multiset.ofList (xs.flatMap fun v => (listChoices xs k).map (v :: ·)) :
-              Multiset (List β)) =
-            (Multiset.ofList xs).bind fun v =>
-              Multiset.ofList ((listChoices xs k).map (v :: ·))
-            from by rw [← Multiset.coe_bind]]
-    rw [Multiset.bind_assoc]
-    conv_rhs =>
-      rhs; ext v
-      rw [show (Multiset.ofList ((listChoices xs k).map (v :: ·)) : Multiset (List β)) =
-              (Multiset.ofList (listChoices xs k)).map (v :: ·) from rfl]
-      rw [Multiset.bind_map]
-    -- Both sides now: bind v: bind a': bind b: g(v :: (a' ++ b)) vs g((v :: a') ++ b)
-    -- These match by List.cons_append.
-    refine Multiset.bind_congr fun v _ => ?_
-    refine Multiset.bind_congr fun a' _ => ?_
-    refine Multiset.bind_congr fun b _ => ?_
-    rw [List.cons_append]
-
-/-- `.map`-variant of `listChoices_split_bind`. When the consumer is `.map g`
-    instead of `.bind g`, the same length-additive splitting holds, with the
-    inner `.bind` becoming a `.map`. Derived from `listChoices_split_bind` by
-    rewriting the outer `.map` as `.bind` over a singleton multiset and
-    converting back. -/
-theorem listChoices_split_map {β γ : Type*} (xs : List β)
-    (m n : Nat) (g : List β → γ) :
-    (Multiset.ofList (listChoices xs (m + n))).map g =
-      (Multiset.ofList (listChoices xs m)).bind fun a =>
-        (Multiset.ofList (listChoices xs n)).map fun b => g (a ++ b) := by
-  rw [show ((Multiset.ofList (listChoices xs (m + n))).map g) =
-        (Multiset.ofList (listChoices xs (m + n))).bind (fun x => ({g x} : Multiset γ)) from
-      (Multiset.bind_singleton _ g).symm,
-      listChoices_split_bind xs m n]
-  refine Multiset.bind_congr fun a _ => ?_
-  rw [Multiset.bind_singleton]
 
 /-- Length lemma: every element of `listChoices xs n` has length exactly `n`.
     Used in the cons case of `hostBucketSum_eq_hostTripleSum_aux` to invoke
@@ -670,53 +559,16 @@ private theorem hostBucketSum_eq_hostTripleSum_aux
     --             vs (insertionForest F_A (zip α ff)).bind fun F' => (insertionForest host_B pre_B).map fun B => T' :: F' ++ B
     -- These differ only by (T' :: F') ++ B vs T' :: F' ++ B  — same by List.cons_append (definitional).
   | cons x rest ih =>
-    -- LHS = hostBucketSum cons: bind [t,f] -> if true: hostBucketSum (T :: F_A) host_B (pre_A ++ [x]) pre_B rest
-    --                                       if false: hostBucketSum (T :: F_A) host_B pre_A (pre_B ++ [x]) rest
+    -- The new guest x's T-vs-F_A bit appends to the pre_A splitting via
+    -- `listChoices_succ_append_bind`; the B-branch keeps pre_A's splitting.
     rw [hostBucketSum_cons_remaining]
-    -- RHS: bind α (over |pre_A|): hostTripleSum T F_A host_B (zip α ft) (zip α ff) pre_B (x :: rest)
-    --    = bind α: hostTripleSum T F_A host_B ... ... ... (x :: rest)
-    --    = bind α: (hostTripleSum T F_A host_B (... ++ [x]) ... pre_B rest)
-    --             + (hostTripleSum T F_A host_B ... (... ++ [x]) pre_B rest)
-    --             + (hostTripleSum T F_A host_B ... ... (pre_B ++ [x]) rest)
-    -- so RHS = (bind α: triple T-add) + (bind α: triple FA-add) + (bind α: triple B-add)
-    --        = "(T or FA bucket within pre_A's split, then add x to it) — but x is new guest"
-    -- Wait: in the cons of remaining, x is consumed; pre_A doesn't change.
-    -- So actually for adding x to T-bucket: pre_T ← pre_T ++ [x]
-    -- For F_A-bucket: pre_FA ← pre_FA ++ [x]
-    -- For B-bucket: pre_B ← pre_B ++ [x]
-    -- After distributing, RHS becomes a bind over (α : assigns existing pre_A) of three additions (x → T, x → F_A, or x → B).
-    -- Two of these (T-add, F_A-add) extend the SAME α-splitting of pre_A, but with x appended on different sides.
-    -- Equivalently: an (|pre_A| + 1)-length α' that decomposes as α (on pre_A) appended with one bit for x.
-    -- Therefore: bind α (over |pre_A|): triple(T-add) + triple(F_A-add)
-    --         = bind α' (over |pre_A| + 1): triple(zip α' ft, zip α' ff, pre_B, rest)
-    --         = bind α' (over |pre_A ++ [x]|): triple(zip α' ft on (pre_A ++ [x]), zip α' ff on (pre_A ++ [x]), pre_B, rest)
-    -- That's exactly `ih (pre_A ++ [x]) pre_B`.
-    -- Similarly the B-add branch matches `ih pre_A (pre_B ++ [x])` but with pre_A's α-splitting on |pre_A| unchanged.
-    -- Hmm but in `ih pre_A (pre_B ++ [x])`, the α is over |pre_A|, same as RHS.
-    -- Specifically:
-    --   LHS true-branch (after ih (pre_A ++ [x]) pre_B):
-    --     bind α' (over |pre_A| + 1): hostTripleSum (zip α' ft on (pre_A ++ [x])) (zip α' ff on ...) pre_B rest
-    --   RHS T-add part: bind α (over |pre_A|): hostTripleSum (zip α ft on pre_A ++ [x]) (zip α ff on pre_A) pre_B rest
-    --   RHS F_A-add part: bind α (over |pre_A|): hostTripleSum (zip α ft on pre_A) (zip α ff on pre_A ++ [x]) pre_B rest
-    -- The combination of RHS T-add + F_A-add over all α should equal the bind α' over |pre_A| + 1 case.
-    -- Because (α ++ [true]) handles T-add, (α ++ [false]) handles F_A-add.
-    -- Reduce bind over [t, f]
     rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
     rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
-    -- LHS = hostBucketSum (T :: F_A) host_B (pre_A ++ [x]) pre_B rest
-    --     + hostBucketSum (T :: F_A) host_B pre_A (pre_B ++ [x]) rest
     rw [ih (pre_A ++ [x]) pre_B, ih pre_A (pre_B ++ [x])]
-    -- LHS = (bind α' over (pre_A ++ [x]).length: hostTripleSum on (pre_A ++ [x]) (pre_B) rest)
-    --     + (bind α over pre_A.length: hostTripleSum on (pre_A) (pre_B ++ [x]) rest)
     rw [show (pre_A ++ [x]).length = pre_A.length + 1 from by simp]
-    -- Apply listChoices_succ_append_bind to first piece
     rw [listChoices_succ_append_bind pre_A.length]
-    -- Combine the two binds via ← bind_add
     rw [← Multiset.bind_add]
-    -- LHS = bind assn: (g(assn ++ [t]) + g(assn ++ [f])) + (hostTripleSum on (pre_A) (pre_B ++ [x]) rest)
-    -- where g assn' = hostTripleSum on (pre_A ++ [x]).zip assn' ft, ff parts
-    -- Now match per-assn with RHS
     apply Multiset.bind_congr
     intros assn hassn
     -- Get assn.length = pre_A.length
@@ -774,7 +626,7 @@ Requires `listChoices_succ_cons_bind` (the cons-prepending analog of
 
 /-- Cons-prepending analog of `listChoices_succ_append_bind`. The bit
     for the cons-front guest goes at the FRONT of α rather than the back. -/
-theorem listChoices_succ_cons_bind {γ : Type*}
+private theorem listChoices_succ_cons_bind {γ : Type*}
     (n : Nat) (g : List Bool → Multiset γ) :
     (Multiset.ofList (listChoices [true, false] (n + 1))).bind g =
       (Multiset.ofList (listChoices [true, false] n)).bind fun α =>
@@ -956,32 +808,6 @@ theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α
     rw [show T :: F_A ++ host_B = T :: (F_A ++ host_B) from rfl]
     rw [insertionForest_cons_assignment]
 
-/-- **Generalized assignment-decomposition of `insertionForest`**: for any host
-    forest decomposition `F1 ++ F2`, the multi-graft into the concatenated host
-    equals the sum over `[true, false]`-assignments of `X` into an `F1`-bucket
-    and an `F2`-bucket, with each side multi-grafted independently and the two
-    output forests concatenated.
-
-    Generalizes `insertionForest_cons_assignment` (which handles `T :: F` shape)
-    to arbitrary `F1 ++ F2`. Composes `hostBucketSum_eq_insertionForest` (in
-    reverse), `hostBucketSum_assignment_rewrite`, `hostBucketSum_nil_remaining`,
-    and `product_map_append_eq_bind_map`. -/
-private theorem insertionForest_append
-    (F1 F2 X : List (Planar α)) :
-    insertionForest (F1 ++ F2) X =
-      (Multiset.ofList (listChoices [true, false] X.length)).bind fun α =>
-        (insertionForest F1
-            ((X.zip α).filterMap (fun p => if p.snd then some p.fst else none))).bind
-          fun F1' =>
-            (insertionForest F2
-                ((X.zip α).filterMap (fun p => if p.snd then none else some p.fst))).map
-              fun F2' => F1' ++ F2' := by
-  rw [← hostBucketSum_eq_insertionForest F1 F2 X,
-      hostBucketSum_assignment_rewrite F1 F2 [] [] X]
-  refine Multiset.bind_congr fun α _ => ?_
-  rw [hostBucketSum_nil_remaining, List.nil_append, List.nil_append]
-  exact product_map_append_eq_bind_map _ _
-
 /-! ## §5: Host-Perm invariance at the multiset-of-multiset level
 
 `insertionForest` is invariant under permutation of host trees, but only at
@@ -1030,25 +856,15 @@ private theorem hostTripleSum_singleton_swap_msform
   | nil =>
     rw [hostTripleSum_nil_remaining, hostTripleSum_nil_remaining]
     rw [insertionForest_singleton T₂ pre_FA, insertionForest_singleton T₁ pre_T]
-    -- Collapse `(s.map f).bind g = s.bind (g ∘ f)` on both sides via conv navigation.
+    -- Collapse the nested map/bind on both sides, then swap the two binds.
     conv_lhs => rw [Multiset.map_bind]; rhs; ext T₁'; rw [Multiset.bind_map]
     conv_rhs => rw [Multiset.map_bind]; rhs; ext T₂'; rw [Multiset.bind_map]
-    -- LHS = bind T₁': bind T₂': (insertionForest F pre_B).map B => msform (T₁' :: [T₂'] ++ B)
-    --     = bind T₁': map msform of (bind T₂': (insertionForest F pre_B).map B => T₁' :: [T₂'] ++ B)
-    -- Wait — after map_bind + bind_map, we still have the outer .map msform at level 2.
-    -- Let me push further.
     conv_lhs => rhs; ext T₁'; rw [Multiset.map_bind]; rhs; ext T₂'; rw [Multiset.map_map]
     conv_rhs => rhs; ext T₂'; rw [Multiset.map_bind]; rhs; ext T₁'; rw [Multiset.map_map]
-    -- LHS = bind T₁': bind T₂': (insertionForest F pre_B).map (msform ∘ (T₁' :: [T₂'] ++ ·))
-    -- RHS = bind T₂': bind T₁': (insertionForest F pre_B).map (msform ∘ (T₂' :: [T₁'] ++ ·))
-    -- Swap LHS binds via Multiset.bind_bind.
     rw [Multiset.bind_bind]
-    -- Now LHS = bind T₂': bind T₁': (insertionForest F pre_B).map (msform ∘ (T₁' :: [T₂'] ++ ·))
-    -- RHS = bind T₂': bind T₁': (insertionForest F pre_B).map (msform ∘ (T₂' :: [T₁'] ++ ·))
     refine Multiset.bind_congr fun T₂' _ => ?_
     refine Multiset.bind_congr fun T₁' _ => ?_
     refine Multiset.map_congr rfl fun B _ => ?_
-    -- Goal: msform (T₁' :: [T₂'] ++ B) = msform (T₂' :: [T₁'] ++ B)
     show (Multiset.ofList ((T₁' :: [T₂'] ++ B).map Nonplanar.mk) :
             Multiset (Nonplanar α)) =
          Multiset.ofList ((T₂' :: [T₁'] ++ B).map Nonplanar.mk)
@@ -1059,21 +875,11 @@ private theorem hostTripleSum_singleton_swap_msform
   | cons x rest ih =>
     rw [hostTripleSum_cons_remaining, hostTripleSum_cons_remaining]
     rw [Multiset.map_add, Multiset.map_add, Multiset.map_add, Multiset.map_add]
-    -- LHS_summands:
-    --   1: (triple T₁ [T₂] F (pre_T ++ [x]) pre_FA pre_B rest).map _   -- x → T₁
-    --   2: (triple T₁ [T₂] F pre_T (pre_FA ++ [x]) pre_B rest).map _   -- x → T₂
-    --   3: (triple T₁ [T₂] F pre_T pre_FA (pre_B ++ [x]) rest).map _   -- x → F
-    -- RHS_summands (with pre_T ↔ pre_FA swap):
-    --   1': (triple T₂ [T₁] F (pre_FA ++ [x]) pre_T pre_B rest).map _  -- x → T₂
-    --   2': (triple T₂ [T₁] F pre_FA (pre_T ++ [x]) pre_B rest).map _  -- x → T₁
-    --   3': (triple T₂ [T₁] F pre_FA pre_T (pre_B ++ [x]) rest).map _  -- x → F
+    -- Each x-placement maps (via IH) to a RHS summand under the T/F_A-bucket
+    -- swap; the three match up to commutativity of `+`.
     rw [ih (pre_T ++ [x]) pre_FA pre_B,
         ih pre_T (pre_FA ++ [x]) pre_B,
         ih pre_T pre_FA (pre_B ++ [x])]
-    -- Now LHS = (triple T₂ [T₁] F pre_FA (pre_T ++ [x]) pre_B rest).map _   -- = RHS_2'
-    --        + (triple T₂ [T₁] F (pre_FA ++ [x]) pre_T pre_B rest).map _   -- = RHS_1'
-    --        + (triple T₂ [T₁] F pre_FA pre_T (pre_B ++ [x]) rest).map _   -- = RHS_3'
-    --      = RHS_1' + RHS_2' + RHS_3' by commutativity.
     ac_rfl
 
 /-- **Adjacent host swap**: `insertionForest` is invariant under swapping two
@@ -1166,7 +972,7 @@ the `C.powerset.bind` form on the RHS. -/
 /-- The complementary `filter_t / filter_f` operations on a bit-vector
     over a list `l` partition `l` (as multisets) when their lengths match:
     `↑(filter_t l assn) + ↑(filter_f l assn) = ↑l`. -/
-theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
+private theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
     (l : List β) (assn : List Bool) (hlen : assn.length = l.length) :
     ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
         Multiset β) +
@@ -1187,7 +993,6 @@ theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
       simp only [List.zip_cons_cons, List.filterMap_cons]
       cases b with
       | true =>
-        simp only [if_pos rfl]
         show (a ::ₘ ((l_rest.zip assn_rest).filterMap
                 (fun p => if p.snd = true then some p.fst else none) :
                 Multiset β)) +
@@ -1212,7 +1017,7 @@ theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
         exact ih assn_rest hlen'
 
 /-- Corollary: `↑(filter_f l assn) = ↑l - ↑(filter_t l assn)`, given matching length. -/
-theorem filterMap_f_eq_sub {β : Type*} [DecidableEq β]
+private theorem filterMap_f_eq_sub {β : Type*} [DecidableEq β]
     (l : List β) (assn : List Bool) (hlen : assn.length = l.length) :
     ((l.zip assn).filterMap (fun p => if p.snd then none else some p.fst) :
         Multiset β) =
@@ -1232,7 +1037,7 @@ theorem mem_listChoices_bool_length :
 /-- **Bit-vector ↔ powerset bridge (paired form, first-component map only)**:
     enumerating bit-vectors and mapping to `↑(filter_t)` gives the powerset
     of `↑l`. (No second component yet — see paired version below.) -/
-theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
+private theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
     (l : List β) :
     (Multiset.ofList (listChoices [true, false] l.length)).map (fun assn =>
       ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
@@ -1294,7 +1099,6 @@ theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
                 (fun p => if p.snd then some p.fst else none) : Multiset β))
           rw [show (a :: l_rest).zip (true :: assn') = (a, true) :: l_rest.zip assn' from rfl]
           rw [List.filterMap_cons]
-          simp only [if_pos rfl]
           rfl]
     rw [show ((fun assn : List Bool =>
               (((a :: l_rest).zip assn).filterMap
@@ -1421,71 +1225,28 @@ private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁
     · exact hperm_l₁.trans (hperm_rest.cons a)
     · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
 
-/-- Filter_t preserves `Forall₂ PlanarEquiv` on guests. -/
-private theorem filter_t_preserves_planarEquiv
+/-- A bucket slice preserves `Forall₂ PlanarEquiv` on guests: equivalent guest
+    lists yield equivalent slices, for either bucket. -/
+private theorem bucketSlice_preserves_planarEquiv
     {Ts Ts' : List (Planar α)} (h : List.Forall₂ PlanarEquiv Ts Ts')
-    (assn : List Bool) :
-    List.Forall₂ PlanarEquiv
-      ((Ts.zip assn).filterMap (fun p => if p.snd then some p.fst else none))
-      ((Ts'.zip assn).filterMap (fun p => if p.snd then some p.fst else none)) := by
+    (assn : List Bool) (t : Bool) :
+    List.Forall₂ PlanarEquiv (bucketSlice Ts assn t) (bucketSlice Ts' assn t) := by
   induction h generalizing assn with
-  | nil =>
-    rw [show ([] : List (Planar α)).zip assn = [] from rfl]
-    exact List.Forall₂.nil
+  | nil => simp [bucketSlice]
   | @cons T T' Ts_tail Ts'_tail hd_pe _tail_pe ih =>
     cases assn with
-    | nil =>
-      rw [show (T :: Ts_tail).zip ([] : List Bool) = [] from rfl,
-          show (T' :: Ts'_tail).zip ([] : List Bool) = [] from rfl]
-      exact List.Forall₂.nil
+    | nil => simp [bucketSlice]
     | cons b assn_rest =>
-      rw [show (T :: Ts_tail).zip (b :: assn_rest) = (T, b) :: Ts_tail.zip assn_rest from rfl,
-          show (T' :: Ts'_tail).zip (b :: assn_rest) =
-              (T', b) :: Ts'_tail.zip assn_rest from rfl]
-      simp only [List.filterMap_cons]
-      cases b with
-      | true =>
-        simp only [if_pos rfl]
-        exact List.Forall₂.cons hd_pe (ih assn_rest)
-      | false =>
-        simp only [if_neg (by decide : (false : Bool) ≠ true)]
-        exact ih assn_rest
-
-/-- Filter_f preserves `Forall₂ PlanarEquiv` on guests. -/
-private theorem filter_f_preserves_planarEquiv
-    {Ts Ts' : List (Planar α)} (h : List.Forall₂ PlanarEquiv Ts Ts')
-    (assn : List Bool) :
-    List.Forall₂ PlanarEquiv
-      ((Ts.zip assn).filterMap (fun p => if p.snd then none else some p.fst))
-      ((Ts'.zip assn).filterMap (fun p => if p.snd then none else some p.fst)) := by
-  induction h generalizing assn with
-  | nil =>
-    rw [show ([] : List (Planar α)).zip assn = [] from rfl]
-    exact List.Forall₂.nil
-  | @cons T T' Ts_tail Ts'_tail hd_pe _tail_pe ih =>
-    cases assn with
-    | nil =>
-      rw [show (T :: Ts_tail).zip ([] : List Bool) = [] from rfl,
-          show (T' :: Ts'_tail).zip ([] : List Bool) = [] from rfl]
-      exact List.Forall₂.nil
-    | cons b assn_rest =>
-      rw [show (T :: Ts_tail).zip (b :: assn_rest) = (T, b) :: Ts_tail.zip assn_rest from rfl,
-          show (T' :: Ts'_tail).zip (b :: assn_rest) =
-              (T', b) :: Ts'_tail.zip assn_rest from rfl]
-      simp only [List.filterMap_cons]
-      cases b with
-      | true =>
-        simp only [if_pos rfl]
-        exact ih assn_rest
-      | false =>
-        simp only [if_neg (by decide : (false : Bool) ≠ true)]
-        exact List.Forall₂.cons hd_pe (ih assn_rest)
+      rw [bucketSlice_cons_cons, bucketSlice_cons_cons]
+      by_cases hb : b = t
+      · rw [if_pos hb, if_pos hb]; exact List.Forall₂.cons hd_pe (ih assn_rest)
+      · rw [if_neg hb, if_neg hb]; exact ih assn_rest
 
 /-- **Forest version of guest-PlanarEquiv invariance**: `Forall₂ PlanarEquiv`
     on guests preserves `(insertionForest F Ts).map (List.map mk)`.
     Mirrors `insertionForest_planarEquiv_host` (Insertion.lean §6) but for
     the guest list. -/
-theorem insertionForest_planarEquiv_guests
+private theorem insertionForest_planarEquiv_guests
     (F : List (Planar α)) {Ts Ts' : List (Planar α)}
     (h : List.Forall₂ PlanarEquiv Ts Ts') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
@@ -1504,8 +1265,15 @@ theorem insertionForest_planarEquiv_guests
     rw [hlen]
     rw [Multiset.map_bind, Multiset.map_bind]
     refine Multiset.bind_congr fun assn _ => ?_
-    have h_ft := filter_t_preserves_planarEquiv h assn
-    have h_ff := filter_f_preserves_planarEquiv h assn
+    have h_ft : List.Forall₂ PlanarEquiv
+        ((Ts.zip assn).filterMap (fun p => if p.snd then some p.fst else none))
+        ((Ts'.zip assn).filterMap (fun p => if p.snd then some p.fst else none)) :=
+      bucketSlice_preserves_planarEquiv h assn true
+    have h_ff : List.Forall₂ PlanarEquiv
+        ((Ts.zip assn).filterMap (fun p => if p.snd then none else some p.fst))
+        ((Ts'.zip assn).filterMap (fun p => if p.snd then none else some p.fst)) := by
+      rw [← bucketSlice_bool_false Ts assn, ← bucketSlice_bool_false Ts' assn]
+      exact bucketSlice_preserves_planarEquiv h assn false
     rw [Multiset.map_bind, Multiset.map_bind]
     simp only [Multiset.map_map, Function.comp, List.map_cons]
     let f_T : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
