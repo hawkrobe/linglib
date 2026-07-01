@@ -25,7 +25,7 @@ terms of **subtrees, containment, and the head's sister** — exactly the invari
 decidable P2 substrate (`subtrees`/`Acc`/`containsOrEq`/`areSistersIn`/`cCommandsIn`,
 #797–798) and the selection head (`selHead`, #800). So the whole phase domain is a
 **filter over the already-lifted subterm API** — no section, no `Quot.out`, no fresh
-`PlanarEquiv` proof, and every notion `decide`s.
+`PermEquiv` proof, and every notion `decide`s.
 
 The keystone identity: the **interior Φ°_ℓ (Def 1.14.3) is the phase head's
 c-command domain**, `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} = Acc.filter (cCommandsIn …
@@ -57,7 +57,7 @@ The head function on `SO` is `selHead` (#800); a phase is relative to a tree `T`
 a phase-head leaf `ℓ` (the study supplies *which* leaf, per the per-analysis
 discipline — C / C+v / +D / +Voice). Every notion is a filter over the invariant
 subterm API (`subtrees`/`Acc`/`containsOrEq`/`areSistersIn`/`cCommandsIn`), so it
-`decide`s — no section, no `Quot.out`, no fresh `PlanarEquiv` proof. -/
+`decide`s — no section, no `Quot.out`, no fresh `PermEquiv` proof. -/
 
 /-- **L_Φ(T)** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.1): `ℓ` is a
     **phase head** in `T` when its projection path γ_ℓ is nontrivial — the leaf

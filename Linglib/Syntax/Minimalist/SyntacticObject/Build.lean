@@ -34,15 +34,15 @@ open RootedTree
 /-! ### Computable planar construction DSL -/
 
 /-- Planar builder: a lexical leaf. -/
-abbrev SO.leafP (tok : LIToken) : Planar SOLabel := .node (Sum.inl tok) []
+abbrev SO.leafP (tok : LIToken) : Tree SOLabel := .node (Sum.inl tok) []
 /-- Planar builder: the bare trace leaf. -/
-abbrev SO.traceP : Planar SOLabel := .node (Sum.inr ()) []
+abbrev SO.traceP : Tree SOLabel := .node (Sum.inr ()) []
 /-- Planar builder: a bare binary node. -/
-abbrev SO.nodeP (l r : Planar SOLabel) : Planar SOLabel := .node (Sum.inr ()) [l, r]
+abbrev SO.nodeP (l r : Tree SOLabel) : Tree SOLabel := .node (Sum.inr ()) [l, r]
 
 /-- Build a syntactic object from a planar tree, discharging well-formedness by
     `decide` (concrete trees) — the computable entry point for `decide`-based studies. -/
-def SO.ofPlanar (p : Planar SOLabel) (h : isSOPlanar p = true := by first | rfl | decide) : SO :=
+def SO.ofPlanar (p : Tree SOLabel) (h : isSOPlanar p = true := by first | rfl | decide) : SO :=
   ⟨Nonplanar.mk p, h⟩
 
 @[simp] theorem SO.ofPlanar_leafP (tok : LIToken) :
@@ -111,7 +111,7 @@ def SO.mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SO :
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
 def SO.getLIToken (s : SO) : Option LIToken :=
-  match Nonplanar.rootLabel s.val with
+  match Nonplanar.rootValue s.val with
   | .inl tok => some tok
   | .inr () => none
 
@@ -121,7 +121,7 @@ def SO.getLIToken (s : SO) : Option LIToken :=
 @[simp] theorem SO.getLIToken_traceLeaf : SO.traceLeaf.getLIToken = none := rfl
 
 @[simp] theorem SO.getLIToken_node (l r : SO) : (SO.node l r).getLIToken = none := by
-  rw [SO.getLIToken, SO.node_val, Nonplanar.rootLabel_node]
+  rw [SO.getLIToken, SO.node_val, Nonplanar.rootValue_node]
 
 /-- A trace is the unique bare trace leaf (chain identity is workspace-level). -/
 def SO.isTrace (s : SO) : Prop := s = SO.traceLeaf
@@ -131,7 +131,7 @@ instance (s : SO) : Decidable (SO.isTrace s) := inferInstanceAs (Decidable (_ = 
 @[simp] theorem SO.isTrace_traceLeaf : SO.isTrace SO.traceLeaf := rfl
 
 /-- Leaf count (number of leaves + traces). -/
-def SO.leafCount (s : SO) : Nat := Nonplanar.leafCount s.val
+def SO.leafCount (s : SO) : Nat := Nonplanar.numLeaves s.val
 
 /-- Is `s` a leaf (lexical or trace)? A leaf has a single vertex; a bare binary node
     has ≥ 2 leaves. -/
@@ -153,7 +153,7 @@ instance : Repr SO where
     | none => if s.isLeaf then f!"SO.traceLeaf" else f!"⟨SO node, {s.leafCount} leaves⟩"
 
 /-- Internal-node count = leaf count − 1 (full binary tree). -/
-def SO.nodeCount (s : SO) : Nat := Nonplanar.leafCount s.val - 1
+def SO.nodeCount (s : SO) : Nat := Nonplanar.numLeaves s.val - 1
 
 @[simp] theorem SO.leafCount_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).leafCount = 1 := rfl
 @[simp] theorem SO.leafCount_traceLeaf : SO.traceLeaf.leafCount = 1 := rfl

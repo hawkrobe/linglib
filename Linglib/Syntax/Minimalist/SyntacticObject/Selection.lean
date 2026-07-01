@@ -18,7 +18,7 @@ The carrier-free selection combinators `selStep`/`selSide` (commutative —
 `selStep_comm`/`selSide_comm`) live here: they operate purely on selection states
 (`Option (LIToken × List Cat)`), so they are shared by the `SO`-carrier tree
 recursion below and the legacy section-based `Selection.lean`. Only the tree
-recursion is re-homed onto `Planar SOLabel` + the `SO` lift, exactly as `subtreesN`
+recursion is re-homed onto `Tree SOLabel` + the `SO` lift, exactly as `subtreesN`
 (P2a-ii). **Index-free traces** (P1): a bare trace leaf gets the canonical saturated
 value `(mkTraceToken 0, [])` — `selCheck` reads only the token's category (`.N`) and
 `outerSel` (`[]`), both index-independent, so this is behaviour-equivalent to the
@@ -127,24 +127,24 @@ theorem selStep_eq_some {x y : Option (LIToken × List Cat)} {hd : LIToken}
     features, or `none` outside the endocentric domain. Lexical leaf ↦ its token +
     `outerSel`; bare trace leaf ↦ canonical `(mkTraceToken 0, [])` (index-free);
     bare binary node ↦ `selStep` of the daughters. -/
-def selCheckPlanar : Planar SOLabel → Option (LIToken × List Cat)
+def selCheckPlanar : Tree SOLabel → Option (LIToken × List Cat)
   | .node (.inl tok) _     => some (tok, tok.item.outerSel)
   | .node (.inr ()) []     => some (mkTraceToken 0, [])
   | .node (.inr ()) [l, r] => selStep (selCheckPlanar l) (selCheckPlanar r)
   | .node (.inr ()) _      => none
 
 /-- A non-binary, non-leaf bare node has no selection value. -/
-private theorem selCheckPlanar_node_none {cs : List (Planar SOLabel)}
+private theorem selCheckPlanar_node_none {cs : List (Tree SOLabel)}
     (h0 : cs.length ≠ 0) (h2 : cs.length ≠ 2) :
-    selCheckPlanar (Planar.node (Sum.inr ()) cs) = none := by
+    selCheckPlanar (Tree.node (Sum.inr ()) cs) = none := by
   match cs with
   | [] => exact absurd rfl h0
   | [_] => rfl
   | [_, _] => exact absurd rfl h2
   | _ :: _ :: _ :: _ => rfl
 
-private theorem selCheckPlanar_planarStep {t s : Planar SOLabel}
-    (hstep : Planar.PlanarStep t s) : selCheckPlanar t = selCheckPlanar s := by
+private theorem selCheckPlanar_permStep {t s : Tree SOLabel}
+    (hstep : Tree.PermStep t s) : selCheckPlanar t = selCheckPlanar s := by
   induction hstep with
   | @swapAtRoot a l r pre post =>
     cases a with
@@ -183,29 +183,29 @@ private theorem selCheckPlanar_planarStep {t s : Planar SOLabel}
             simp only [List.length_append, List.length_cons]; omega
           rw [selCheckPlanar_node_none (by simp) h2, selCheckPlanar_node_none (by simp) h2']
 
-/-- `selCheckPlanar` is `PlanarEquiv`-invariant, so it descends to the quotient. -/
-theorem selCheckPlanar_planarEquiv {t s : Planar SOLabel}
-    (h : Planar.PlanarEquiv t s) : selCheckPlanar t = selCheckPlanar s := by
+/-- `selCheckPlanar` is `PermEquiv`-invariant, so it descends to the quotient. -/
+theorem selCheckPlanar_permEquiv {t s : Tree SOLabel}
+    (h : Tree.PermEquiv t s) : selCheckPlanar t = selCheckPlanar s := by
   induction h with
-  | rel _ _ hstep => exact selCheckPlanar_planarStep hstep
+  | rel _ _ hstep => exact selCheckPlanar_permStep hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
 /-- Selection check lifted to the nonplanar carrier. -/
 def selCheckN : Nonplanar SOLabel → Option (LIToken × List Cat) :=
-  Nonplanar.lift selCheckPlanar (fun _ _ h => selCheckPlanar_planarEquiv h)
+  Nonplanar.lift selCheckPlanar (fun _ _ h => selCheckPlanar_permEquiv h)
 
-@[simp] theorem selCheckN_mk (p : Planar SOLabel) : selCheckN (Nonplanar.mk p) = selCheckPlanar p :=
+@[simp] theorem selCheckN_mk (p : Tree SOLabel) : selCheckN (Nonplanar.mk p) = selCheckPlanar p :=
   rfl
 
 theorem selCheckN_node (a b : Nonplanar SOLabel) :
     selCheckN (Nonplanar.node (Sum.inr ()) {a, b}) = selStep (selCheckN a) (selCheckN b) := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (Planar.node (Sum.inr ()) [pa, pb]) := by
+           = Nonplanar.mk (Tree.node (Sum.inr ()) [pa, pb]) := by
     rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_planar_list]
+          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
   show selCheckN (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
       = selStep (selCheckN (Nonplanar.mk pa)) (selCheckN (Nonplanar.mk pb))
   rw [key]; simp only [selCheckN_mk, selCheckPlanar]
