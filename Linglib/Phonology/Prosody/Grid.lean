@@ -260,20 +260,20 @@ variable (a : Constituent) (cs : List Tree)
 
 theorem columns_node : columns (.node a cs) =
     if a.isSyl ∧ cs = [] then [1]
-    else cs.flatMap fun c => (MarkedGrid.edge c.label.isHead (project c)).toGrid := by
-  rw [columns, project_node]; split <;> simp [MarkedGrid.toGrid_juxtapose, List.flatMap_map]
+    else cs.flatMap fun c => (edge c.label.isHead (project c)).toGrid := by
+  rw [columns, project_node]; split <;> simp [toGrid_juxtapose, List.flatMap_map]
 
 theorem headHeights_node : headHeights (.node a cs) =
     if a.isSyl ∧ cs = [] then [1]
     else cs.flatMap fun c => if c.label.isHead then (headHeights c).map (· + 1) else [] := by
   rw [headHeights, project_node]; split <;>
-    simp [headHeights, MarkedGrid.headHeights_juxtapose, List.flatMap_map, MarkedGrid.headHeights_edge]
+    simp [headHeights, headHeights_juxtapose, List.flatMap_map, headHeights_edge]
 
 theorem headTerminals_node : headTerminals (.node a cs) =
     if a.isSyl ∧ cs = [] then [.node a []]
     else cs.flatMap fun c => if c.label.isHead then headTerminals c else [] := by
   rw [headTerminals, project_node]; split <;>
-    simp [headTerminals, MarkedGrid.headTerminals_juxtapose, List.flatMap_map, MarkedGrid.headTerminals_edge]
+    simp [headTerminals, headTerminals_juxtapose, List.flatMap_map, headTerminals_edge]
 
 /-! ### The head terminals compute the head-terminal relation -/
 
@@ -314,8 +314,8 @@ theorem peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
         List.flatMap_map, Foot.toGrid, List.map_map, List.map_eq_flatMap]
     refine List.flatMap_congr fun i _ => ?_
     by_cases hi : i = f.head <;>
-      simp [project_node, Constituent.isSyl, Constituent.isHead, MarkedGrid.edge,
-        MarkedGrid.promote, MarkedGrid.clear, MarkedGrid.toGrid, MarkedGrid.cell, hi]
+      simp [project_node, Constituent.isSyl, Constituent.isHead, edge,
+        promote, clear, toGrid, cell, hi]
   rw [hcols]
   refine Nat.le_antisymm (peak_le fun x hx => ?_) (le_peak ?_)
   · obtain ⟨b, _, rfl⟩ := List.mem_map.mp hx
@@ -385,10 +385,10 @@ private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c �
       have hd := RootedTree.Planar.depth_le_depthMaxList hch
       cases hh : ch.label.isHead with
       | false =>
-        simp only [hh, MarkedGrid.edge_false, MarkedGrid.toGrid_clear] at hc
+        simp only [hh, edge_false, toGrid_clear] at hc
         have := IH ch hch c hc; omega
       | true =>
-        simp only [hh, MarkedGrid.edge_true, MarkedGrid.promote, MarkedGrid.toGrid, List.map_map,
+        simp only [hh, edge_true, promote, toGrid, List.map_map,
           List.mem_map] at hc
         obtain ⟨x, hx, rfl⟩ := hc
         have := IH ch hch x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
@@ -409,12 +409,12 @@ theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid Tree} {c : ℕ}
   cases h with
   | false => exact .inl (by simpa using hc)
   | true =>
-    simp only [MarkedGrid.edge_true, MarkedGrid.promote, MarkedGrid.toGrid, List.map_map,
+    simp only [edge_true, promote, toGrid, List.map_map,
       List.mem_map] at hc
     obtain ⟨x, hx, rfl⟩ := hc
     by_cases hs : x.onSpine = true
     · refine .inr ?_
-      simp only [MarkedGrid.edge_true, MarkedGrid.headHeights_promote, List.mem_map]
+      simp only [edge_true, headHeights_promote, List.mem_map]
       exact ⟨x.height, List.mem_map.mpr ⟨x, List.mem_filter.mpr ⟨hx, hs⟩, rfl⟩, by simp [hs]⟩
     · simp only [Bool.not_eq_true] at hs
       exact .inl (List.mem_map.mpr ⟨x, hx, by simp [hs]⟩)
@@ -433,7 +433,7 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
   · exact .inl (le_trans (toGrid_bounds c hcol).2 (depth_word_child_le (hchild ch hch)))
   · refine .inr ?_
     rw [headHeights_node, if_neg (by simp [hσ]), List.mem_flatMap]
-    exact ⟨ch, hch, by rwa [MarkedGrid.headHeights_edge] at hhead⟩
+    exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩
 
 /-- In a word the head terminal sits below ω, so its height is at least `2`. -/
 theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
