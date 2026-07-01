@@ -27,6 +27,7 @@ import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Features.PropertyDomain
+import Linglib.Semantics.Gradability.Dimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Gradability.MLScale
@@ -159,7 +160,7 @@ inductive SpatialConfigType where
 structure GradableAdjEntry where
   form : String
   scaleType : Boundedness
-  dimension : Features.PerceptualDimension
+  dimension : Semantics.Gradability.Dimension
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
   spatialConfigType : Option SpatialConfigType := none

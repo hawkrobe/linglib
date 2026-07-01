@@ -358,7 +358,7 @@ structure MAlternativeSet where
   /-- The unmarked (cheaper) form -/
   unmarked : String
   /-- The dimension they share (e.g., .height) -/
-  dimension : Features.PerceptualDimension
+  dimension : Semantics.Gradability.Dimension
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/

@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.HasMeasure
-import Linglib.Semantics.Aspect.Dimension
+import Linglib.Semantics.Gradability.Dimension
 import Linglib.Features.Aktionsart
 
 /-!
@@ -39,7 +39,7 @@ structure DegreeAchievementScale where
   /-- The scalar dimension the base adjective measures. Its boundedness is the
       order-mixin profile of the dimension's degree type, recovered by the derived
       `scaleBoundedness` below — not stored. -/
-  dimension : ScalarTelicity.Dimension
+  dimension : Semantics.Gradability.Dimension
   /-- Citation form of the base adjective (if deadjectival). -/
   baseAdjective : Option String := none
   deriving Repr, BEq
@@ -56,7 +56,8 @@ instance : Inhabited DegreeAchievementScale where
     [kennedy-levin-2008]. Scales with a maximum → telic; scales without → atelic.
 
     Delegates to `Dimension.defaultTelicity` — a scale with a maximal degree gives
-    a telic verb — grounded to the order mixin in `ScalarTelicity`. -/
+    a telic verb — grounded to the order mixin by
+    `Semantics.Gradability.Dimension.defaultTelicity_telic_iff_hasGreatest`. -/
 def DegreeAchievementScale.defaultTelicity (s : DegreeAchievementScale) : Telicity :=
   s.dimension.defaultTelicity
 
@@ -95,14 +96,14 @@ end
 theorem default_vendler_is_dynamic (s : DegreeAchievementScale) :
     s.defaultVendlerClass = .accomplishment ∨ s.defaultVendlerClass = .activity := by
   simp only [DegreeAchievementScale.defaultVendlerClass,
-    ScalarTelicity.Dimension.defaultVendlerClass]
+    Semantics.Gradability.Dimension.defaultVendlerClass]
   cases s.dimension.boundedness <;> simp
 
 /-- defaultTelicity agrees with the telicity of defaultVendlerClass. -/
 theorem telicity_vendler_agree (s : DegreeAchievementScale) :
     s.defaultVendlerClass.telicity = s.defaultTelicity := by
   simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity,
-    ScalarTelicity.Dimension.defaultVendlerClass, ScalarTelicity.Dimension.defaultTelicity]
+    Semantics.Gradability.Dimension.defaultVendlerClass, Semantics.Gradability.Dimension.defaultTelicity]
   cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 -- ════════════════════════════════════════════════════
