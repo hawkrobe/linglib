@@ -323,6 +323,27 @@ def depth : RoseTree α → ℕ :=
     simp only [map_node, depth_node, List.map_map]
     exact congrArg (1 + ·) (congrArg (List.foldr max 0) (List.map_congr_left ih))
 
+/-- Each child's depth is at most the children's max depth. -/
+theorem depth_le_foldr_max {c : RoseTree α} {cs : List (RoseTree α)} (h : c ∈ cs) :
+    c.depth ≤ (cs.map depth).foldr max 0 := by
+  induction cs with
+  | nil => cases h
+  | cons a as ih =>
+    simp only [List.map_cons, List.foldr_cons]
+    rcases List.mem_cons.mp h with rfl | h
+    · exact Nat.le_max_left _ _
+    · exact Nat.le_trans (ih h) (Nat.le_max_right _ _)
+
+/-- The children's max depth is at most any common bound on the children. -/
+theorem foldr_max_depth_le {cs : List (RoseTree α)} {n : ℕ} (h : ∀ c ∈ cs, c.depth ≤ n) :
+    (cs.map depth).foldr max 0 ≤ n := by
+  induction cs with
+  | nil => exact Nat.zero_le n
+  | cons a as ih =>
+    simp only [List.map_cons, List.foldr_cons]
+    exact Nat.max_le.mpr ⟨h a (List.mem_cons_self ..),
+      ih fun c hc => h c (List.mem_cons_of_mem _ hc)⟩
+
 /-! ### `map` preserves the counts -/
 
 theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl

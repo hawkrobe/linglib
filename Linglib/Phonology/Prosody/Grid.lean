@@ -213,18 +213,28 @@ theorem rows_isContinuous (g : Grid) : Marks.IsContinuous (rows g) := by
 
 open MarkedGrid
 
+/-- One RPPR step: pair the node's label with its grid, so a parent can read the
+    head flag off each child. -/
+private def projectStep (a : Constituent) (ps : List (Constituent × MarkedGrid Tree)) :
+    Constituent × MarkedGrid Tree :=
+  (a, if a.isSyl ∧ ps = [] then cell (.node a [])
+      else juxtapose (ps.map fun p => edge p.1.isHead p.2))
+
 /-- The **Relative Prominence Projection Rule** ([liberman-prince-1977]) as a homomorphism
     `Tree → MarkedGrid`: a σ-leaf is one `cell`; any other node juxtaposes its children, projecting
     across head edges and clearing the spine across the rest. -/
-def project : Tree → MarkedGrid Tree := RootedTree.Planar.fold fun a ps =>
-  if a.isSyl ∧ ps = [] then cell (.node a [])
-  else juxtapose (ps.map fun (c, mg) => edge c.label.isHead mg)
+def project (t : Tree) : MarkedGrid Tree := (t.fold projectStep).2
+
+private theorem fold_projectStep (t : Tree) :
+    t.fold projectStep = (t.value, project t) := by
+  cases t with | node a cs => rfl
 
 @[simp] theorem project_node (a : Constituent) (cs : List Tree) :
     project (.node a cs) = if a.isSyl ∧ cs = [] then cell (.node a [])
-      else juxtapose (cs.map fun c => edge c.label.isHead (project c)) := by
-  conv_lhs => rw [project, RootedTree.Planar.fold_node]
-  simp [List.map_eq_nil_iff, List.map_map, Function.comp_def]; rfl
+      else juxtapose (cs.map fun c => edge c.value.isHead (project c)) := by
+  conv_lhs => rw [project, RoseTree.fold_node]
+  simp only [fold_projectStep, projectStep, List.map_eq_nil_iff, List.map_map,
+    Function.comp_def]
 
 /-! ## Reading the grid off a tree (the forgetful maps) -/
 
@@ -265,15 +275,15 @@ once, so the downstream proofs never re-walk the fold. -/
 variable (a : Constituent) (cs : List Tree)
 
 theorem columns_node : columns (.node a cs) = if a.isSyl ∧ cs = [] then [1]
-    else cs.flatMap fun c => (edge c.label.isHead (project c)).toGrid := by
+    else cs.flatMap fun c => (edge c.value.isHead (project c)).toGrid := by
   simp [columns, apply_ite MarkedGrid.toGrid, List.flatMap_map]
 
 theorem headHeights_node : headHeights (.node a cs) = if a.isSyl ∧ cs = [] then [1]
-    else cs.flatMap fun c => if c.label.isHead then (headHeights c).map (· + 1) else [] := by
+    else cs.flatMap fun c => if c.value.isHead then (headHeights c).map (· + 1) else [] := by
   simp [headHeights, apply_ite MarkedGrid.headHeights, List.flatMap_map]
 
 theorem headTerminals_node : headTerminals (.node a cs) = if a.isSyl ∧ cs = [] then [.node a []]
-    else cs.flatMap fun c => if c.label.isHead then headTerminals c else [] := by
+    else cs.flatMap fun c => if c.value.isHead then headTerminals c else [] := by
   simp [headTerminals, apply_ite MarkedGrid.headTerminals, List.flatMap_map]
 
 /-! ### The head terminals compute the head-terminal relation -/
@@ -281,7 +291,7 @@ theorem headTerminals_node : headTerminals (.node a cs) = if a.isSyl ∧ cs = []
 /-- `leaf` is a head terminal of `t`, reached from the root by an all-head descent. -/
 inductive IsHeadTerminal : Tree → Tree → Prop
   | leaf {a : Constituent} (ha : a.isSyl = true) : IsHeadTerminal (.node a []) (.node a [])
-  | head {a cs c leaf} : c ∈ cs → c.label.isHead →
+  | head {a cs c leaf} : c ∈ cs → c.value.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
 /-- **Soundness of `headTerminals`** ([liberman-prince-1977]): every head terminal the projection
@@ -296,7 +306,7 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
   | branch a cs hne IH =>
     rw [headTerminals_node, if_neg hne, List.mem_flatMap] at h
     obtain ⟨c, hc, hmem⟩ := h
-    by_cases hh : c.label.isHead = true
+    by_cases hh : c.value.isHead = true
     · rw [if_pos hh] at hmem; exact .head hc hh (IH c hc hmem)
     · rw [if_neg hh] at hmem; exact absurd hmem List.not_mem_nil
 
@@ -350,14 +360,14 @@ stress" — the peak sits atop a foot head. -/
 
 /-- Non-recursive word children (feet and stray σ) have depth at most `2` — the ω→f→σ hierarchy. -/
 private theorem depth_word_child_le {ch : Tree}
-    (h : isFootTree ch = true ∨ (ch.label.isSyl = true ∧ ch.children = [])) : ch.depth ≤ 2 := by
+    (h : isFootTree ch = true ∨ (ch.value.isSyl = true ∧ ch.children = [])) : ch.depth ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
   · obtain ⟨chl, chcs⟩ := ch
     simp only [isFootTree, Bool.and_eq_true, List.all_eq_true] at hfoot
     obtain ⟨_, hleaves⟩ := hfoot
-    rw [RootedTree.Planar.depth_node]
-    have : RootedTree.Planar.depthMaxList chcs ≤ 1 :=
-      RootedTree.Planar.depthMaxList_le fun c hc => by
+    rw [RoseTree.depth_node]
+    have : (chcs.map RoseTree.depth).foldr max 0 ≤ 1 :=
+      RoseTree.foldr_max_depth_le fun c hc => by
         obtain ⟨cl, ccs⟩ := c
         have hc' := hleaves _ hc
         simp only [Bool.and_eq_true, List.isEmpty_iff] at hc'
@@ -365,7 +375,7 @@ private theorem depth_word_child_le {ch : Tree}
         exact le_of_eq rfl
     omega
   · obtain ⟨chl, chcs⟩ := ch
-    simp only [RootedTree.Planar.children_node] at hcs; subst hcs
+    simp only [RoseTree.children_node] at hcs; subst hcs
     exact Nat.le_succ_of_le (le_of_eq rfl)
 
 /-- Grid column heights are positive and bounded by the tree depth: the RPPR count is `≥ 1` and
@@ -373,15 +383,15 @@ private theorem depth_word_child_le {ch : Tree}
 private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.depth := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
-    rw [columns_node, if_pos ⟨ha, rfl⟩, RootedTree.Planar.depth_node]
+    rw [columns_node, if_pos ⟨ha, rfl⟩, RoseTree.depth_node]
     intro c hc; simp only [List.mem_singleton] at hc; omega
   | branch a cs hne IH =>
-    rw [columns_node, if_neg hne, RootedTree.Planar.depth_node]
+    rw [columns_node, if_neg hne, RoseTree.depth_node]
     intro c hc
     rw [List.mem_flatMap] at hc
     obtain ⟨ch, hch, hc⟩ := hc
-    have hd := RootedTree.Planar.depth_le_depthMaxList hch
-    cases hh : ch.label.isHead with
+    have hd := RoseTree.depth_le_foldr_max hch
+    cases hh : ch.value.isHead with
     | false =>
       simp only [hh, edge_false, toGrid_clear] at hc
       have := IH ch hch c hc; omega

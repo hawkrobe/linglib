@@ -1,6 +1,5 @@
 import Linglib.Phonology.Prosody.Mora
-import Linglib.Core.Combinatorics.RootedTree.Planar
-import Linglib.Core.Combinatorics.RootedTree.DecEq
+import Linglib.Core.Data.RoseTree.Basic
 
 /-!
 # Syllables
@@ -243,14 +242,12 @@ end Yield
 /-! ### The prosodic-tree carrier
 
 The recursive prosodic constituent ([ito-mester-2003]): the Core ordered rose tree
-`RootedTree.Planar` labeled by prosodic-level `Constituent`s — the **violable OT candidate
+`RoseTree` labeled by prosodic-level `Constituent`s — the **violable OT candidate
 carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω, a stray under
 φ) the headed `Prosody.Word` cannot represent. Its OT constraints are
 `Constraints.Constraint Tree` values, defined alongside `Prosody.Word`. Homed here because
 `Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
-`Planar`. -/
-
-open RootedTree
+`RoseTree`. -/
 
 /-- A prosodic node — the **level is the constructor**: a σ carries its mora `weight` and `isHead`,
     a foot only `isHead`, ω/φ neither. Constructor defaults match the former smart constructors, so
@@ -300,9 +297,9 @@ theorem isSyl_eq_false_of_isOm {x : Constituent} (h : x.isOm = true) : x.isSyl =
 
 end Constituent
 
-/-- A prosodic tree: the Core ordered rose tree `RootedTree.Planar` labeled by
+/-- A prosodic tree: the Core ordered rose tree `RoseTree` labeled by
     `Constituent`s. Ordered children give No-Tangling by construction. -/
-abbrev Tree := Planar Constituent
+abbrev Tree := RoseTree Constituent
 
 /-- A σ-leaf — the metrical terminal: a syllable of weight `w`, head-marked `h`. -/
 abbrev Tree.σ (w : Syllable.Weight := 0) (h : Bool := false) : Tree := .node (.syl w h) []
@@ -326,7 +323,7 @@ theorem Tree.recLeafBranch {motive : Tree → Prop}
     (leaf : ∀ a, a.isSyl → motive (.node a []))
     (branch : ∀ a cs, ¬(a.isSyl ∧ cs = []) → (∀ c ∈ cs, motive c) → motive (.node a cs))
     (t : Tree) : motive t := by
-  induction t using Planar.recAux with
+  induction t using RoseTree.rec' with
   | node a cs ih =>
     by_cases h : a.isSyl ∧ cs = []
     · obtain ⟨ha, rfl⟩ := h; exact leaf a ha
