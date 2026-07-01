@@ -41,72 +41,48 @@ open Features (NegationType)
 
 /-! ### Two-threshold model for contrary antonyms -/
 
-/--
-A threshold pair for contrary antonyms.
-
-For contrary pairs like happy/unhappy:
-- theta_pos: threshold for positive form (degree > theta_pos -> "happy")
-- theta_neg: threshold for negative form (degree < theta_neg -> "unhappy")
-- Constraint: theta_neg <= theta_pos (gap exists when theta_neg < theta_pos)
--/
+/-- The two thresholds of a contrary antonym pair (*happy*/*unhappy*): `pos` for the
+positive form (true when `degree > pos`) and `neg` for the negative form (true when
+`degree < neg`). When `neg < pos` a gap region `[neg, pos]` — "neither" — lies between
+them; that strict inequality is taken as a hypothesis where a gap is needed
+(`contrary_gap_exists`, `gap_nonempty`), not stored as an invariant. -/
 structure ThresholdPair (max : Nat) where
   pos : Threshold max
   neg : Threshold max
-  gap_exists : neg ≤ pos := by decide
-  deriving Repr
+  deriving Repr, DecidableEq, BEq
 
-instance {n : Nat} [NeZero n] : Inhabited (ThresholdPair n) :=
-  have h : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
-  ⟨{ pos := ⟨⟨0, h⟩⟩, neg := ⟨⟨0, h⟩⟩, gap_exists := le_refl _ }⟩
+/-! ### Negation semantics
 
-instance {n : Nat} : BEq (ThresholdPair n) where
-  beq t1 t2 := t1.pos == t2.pos && t1.neg == t2.neg
+The two-threshold model for contrary antonyms: the general threshold semantics of
+`Semantics/Degree/Basic` (`positiveMeaning`/`negativeMeaning`/`antonymMeaning`) read
+through a `ThresholdPair`'s two poles. -/
 
-instance {n : Nat} : DecidableEq (ThresholdPair n) :=
-  λ t1 t2 =>
-    if hp : t1.pos = t2.pos then
-      if hn : t1.neg = t2.neg then
-        .isTrue (by
-          rcases t1 with ⟨p1, n1, g1⟩
-          rcases t2 with ⟨p2, n2, g2⟩
-          dsimp at hp hn
-          subst hp; subst hn
-          exact congrArg _ (proof_irrel g1 g2))
-      else
-        .isFalse (λ h => hn (congrArg ThresholdPair.neg h))
-    else
-      .isFalse (λ h => hp (congrArg ThresholdPair.pos h))
+section TwoThreshold
+variable {max : Nat} (d : Degree max)
 
-/-! ### Negation semantics -/
+/-- Contradictory negation *not happy* — `d ≤ θ` (`Semantics.Degree.antonymMeaning`). -/
+abbrev contradictoryNeg (θ : Threshold max) : Prop := Semantics.Degree.antonymMeaning d θ
 
-/-- Contradictory negation: "not happy" = degree ≤ theta.
-    Alias for `Semantics.Degree.antonymMeaning` — same comparison,
-    named for its role in the contradictory/contrary distinction. -/
-abbrev contradictoryNeg {max : Nat} (d : Degree max) (θ : Threshold max) : Prop :=
-  Semantics.Degree.antonymMeaning d θ
+/-- Contrary negation *unhappy* — `d < θ_neg` (`Semantics.Degree.negativeMeaning`). -/
+abbrev contraryNeg (θ_neg : Threshold max) : Prop := Semantics.Degree.negativeMeaning d θ_neg
 
-/-- Contrary negation: "unhappy" = degree < theta_neg.
-    Alias for `Semantics.Degree.negativeMeaning`. -/
-abbrev contraryNeg {max : Nat} (d : Degree max) (θ_neg : Threshold max) : Prop :=
-  Semantics.Degree.negativeMeaning d θ_neg
-
-/-- Check if a degree is in the gap region (neither positive nor negative). -/
-abbrev inGapRegion {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+/-- The gap region: `d` is neither positive nor negative (`neg ≤ d ≤ pos`). -/
+abbrev inGapRegion (tp : ThresholdPair max) : Prop :=
   (tp.neg : Degree max) ≤ d ∧ d ≤ (tp.pos : Degree max)
 
-/-- Positive meaning in the two-threshold model: degree > theta_pos.
-    Alias for `Semantics.Degree.positiveMeaning` projected through `tp.pos`. -/
-abbrev positiveMeaning' {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+/-- Positive form *happy* at the pair's upper threshold — `d > pos`. -/
+abbrev positiveMeaning' (tp : ThresholdPair max) : Prop :=
   Semantics.Degree.positiveMeaning d tp.pos
 
-/-- Negative meaning in the two-threshold model: degree < theta_neg.
-    Alias for `Semantics.Degree.negativeMeaning` projected through `tp.neg`. -/
-abbrev contraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+/-- Negative form *unhappy* at the pair's lower threshold — `d < neg`. -/
+abbrev contraryNegMeaning (tp : ThresholdPair max) : Prop :=
   Semantics.Degree.negativeMeaning d tp.neg
 
-/-- Negation of contrary negative: "not unhappy" = degree >= theta_neg. -/
-abbrev notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+/-- *not unhappy* — the complement of the negative form (`neg ≤ d`). -/
+abbrev notContraryNegMeaning (tp : ThresholdPair max) : Prop :=
   (tp.neg : Degree max) ≤ d
+
+end TwoThreshold
 
 /-! ### Antonym relations -/
 

@@ -128,7 +128,6 @@ abbrev happyθ : Threshold 4 := thr 2
 def happyTP : ThresholdPair 4 where
   pos := thr 2
   neg := thr 1
-  gap_exists := by decide
 
 theorem happy_gap_strict :
     (happyTP.neg : HappyDeg) < (happyTP.pos : HappyDeg) := by decide
