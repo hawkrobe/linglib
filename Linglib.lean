@@ -748,6 +748,7 @@ import Linglib.Fragments.English.Distributives
 import Linglib.Fragments.English.Evidentiality
 import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.GradableAdjectives
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -2751,6 +2752,7 @@ import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
+import Linglib.Syntax.Adjective.Basic
 import Linglib.Syntax.Adposition.Basic
 import Linglib.Syntax.Adposition.Order
 import Linglib.Syntax.Adposition.Spatial
