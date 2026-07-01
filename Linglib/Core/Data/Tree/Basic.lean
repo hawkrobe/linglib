@@ -267,6 +267,83 @@ def height : Tree α → ℕ :=
     height (node a cs) = ((cs.map height).map (· + 1)).foldr max 0 := by
   simp only [height, fold_node]
 
+/-! ### Arity and the leaf test -/
+
+/-- The arity of the root: its number of children. A leaf has arity `0`. -/
+def arity (t : Tree α) : ℕ := t.children.length
+
+@[simp] theorem arity_node (a : α) (cs : List (Tree α)) : arity (node a cs) = cs.length := rfl
+
+@[simp] theorem arity_map (f : α → β) (t : Tree α) : (map f t).arity = t.arity := by
+  cases t with
+  | node a cs => simp [arity, map_node]
+
+/-- Whether the root is a leaf (has no children). -/
+def isLeaf (t : Tree α) : Bool := t.children.isEmpty
+
+@[simp] theorem isLeaf_node_nil (a : α) : isLeaf (node a []) = true := rfl
+
+@[simp] theorem isLeaf_node_cons (a : α) (c : Tree α) (cs : List (Tree α)) :
+    isLeaf (node a (c :: cs)) = false := rfl
+
+@[simp] theorem isLeaf_map (f : α → β) (t : Tree α) : (map f t).isLeaf = t.isLeaf := by
+  cases t with
+  | node a cs => cases cs <;> simp [isLeaf, map_node]
+
+/-! ### Smart constructors -/
+
+/-- A **unary** node: a single child. -/
+def unary (a : α) (c : Tree α) : Tree α := node a [c]
+/-- A **binary** node: two ordered children. -/
+def binary (a : α) (l r : Tree α) : Tree α := node a [l, r]
+/-- An **n-ary** node: a list of children. -/
+def nary (a : α) (cs : List (Tree α)) : Tree α := node a cs
+
+@[simp] theorem leaf_def (a : α) : leaf a = node a [] := rfl
+@[simp] theorem unary_def (a : α) (c : Tree α) : unary a c = node a [c] := rfl
+@[simp] theorem binary_def (a : α) (l r : Tree α) : binary a l r = node a [l, r] := rfl
+@[simp] theorem nary_def (a : α) (cs : List (Tree α)) : nary a cs = node a cs := rfl
+
+/-! ### `depth` — longest root-to-leaf path in vertices
+
+`depth = height + 1`: a leaf has depth `1` (`height` counts edges, `depth`
+counts the vertices on the longest path). -/
+
+def depth : Tree α → ℕ :=
+  fold fun _ ds => 1 + ds.foldr max 0
+
+@[simp] theorem depth_node (a : α) (cs : List (Tree α)) :
+    depth (node a cs) = 1 + (cs.map depth).foldr max 0 := by
+  simp only [depth, fold_node]
+
+@[simp] theorem depth_map (f : α → β) (t : Tree α) : (map f t).depth = t.depth := by
+  induction t with
+  | node a cs ih =>
+    simp only [map_node, depth_node, List.map_map]
+    exact congrArg (1 + ·) (congrArg (List.foldr max 0) (List.map_congr_left ih))
+
+/-! ### `map` preserves the counts -/
+
+theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
+
+@[simp] theorem numNodes_map (f : α → β) (t : Tree α) : (map f t).numNodes = t.numNodes := by
+  induction t with
+  | node a cs ih =>
+    simp only [map_node, numNodes_node, List.map_map]
+    exact congrArg (1 + ·) (congrArg List.sum (List.map_congr_left ih))
+
+@[simp] theorem numLeaves_map (f : α → β) (t : Tree α) : (map f t).numLeaves = t.numLeaves := by
+  induction t with
+  | node a cs ih =>
+    simp only [map_node, numLeaves_node, List.map_map]
+    exact congrArg (max 1 ·) (congrArg List.sum (List.map_congr_left ih))
+
+@[simp] theorem height_map (f : α → β) (t : Tree α) : (map f t).height = t.height := by
+  induction t with
+  | node a cs ih =>
+    simp only [map_node, height_node, List.map_map]
+    exact congrArg (List.foldr max 0) (List.map_congr_left fun c hc => congrArg (· + 1) (ih c hc))
+
 /-! ### Instances -/
 
 instance [Inhabited α] : Inhabited (Tree α) := ⟨leaf default⟩
