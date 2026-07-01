@@ -1,0 +1,287 @@
+/-
+Copyright (c) 2026 The Linglib Authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Linglib contributors
+-/
+import Mathlib.Data.List.Basic
+import Mathlib.Algebra.BigOperators.Group.List.Basic
+
+/-!
+# N-ary rooted trees (rose trees)
+
+An **n-ary rooted tree** (rose tree) over `α`: a distinguished root carrying a
+value in `α`, and an ordered list of child subtrees. A leaf is `node a []`.
+This is the n-ary generalization of `BinaryTree` (`Mathlib.Data.Tree.Basic`),
+matching Haskell's `Data.Tree` (`Node a [Tree a]`).
+
+The children are an ordered `List`, not a `Multiset` or a `WType` branching
+family: `List`-valued children are positivity-clean, keep the type computable,
+and give the ergonomic `map`/traversal API that the unordered (`Multiset`) and
+`WType` encodings do not. The **unordered** rooted tree — the carrier of the
+free pre-Lie algebra and the Connes–Kreimer Hopf algebra — is a *quotient* of
+this type by child permutation, built downstream; it does not belong at this
+data-structure layer.
+
+## The recursion principle
+
+The type is nested through `List`, so the auto-generated recursor hands a
+per-`List` motive rather than a `∀ c ∈ children, motive c` hypothesis. The
+`Tree.rec'` eliminator (registered `@[induction_eliminator]`) packages the
+`(tree, list-of-trees)` shape once, so downstream `map`/`depth`/`numNodes`
+recurse and prove with a single `List`-shaped induction hypothesis instead of a
+hand-written `mutual` block per operation.
+
+## Upstreaming
+
+Intended shape for the reserved `Mathlib.Data.Tree` n-ary `Tree` slot (freed by
+the `Tree → BinaryTree` rename). Self-contained: no linguistics, no order/command
+imports. Dependency-light, `sorry`-free, no `noncomputable`.
+-/
+
+/-- An **n-ary rooted tree** (rose tree): a root `value : α` and an ordered list
+of child subtrees. A leaf is `node a []`. -/
+inductive Tree (α : Type*) where
+  | node (value : α) (children : List (Tree α))
+  deriving Repr
+
+compile_inductive% Tree
+
+namespace Tree
+
+variable {α : Type*} {β : Type*} {γ : Type*}
+
+/-! ### Projections -/
+
+/-- The value at the root. -/
+def value : Tree α → α
+  | .node a _ => a
+
+/-- The ordered list of child subtrees at the root. -/
+def children : Tree α → List (Tree α)
+  | .node _ cs => cs
+
+@[simp] theorem value_node (a : α) (cs : List (Tree α)) : (node a cs).value = a := rfl
+
+@[simp] theorem children_node (a : α) (cs : List (Tree α)) :
+    (node a cs).children = cs := rfl
+
+/-- A **leaf**: a root with no children. -/
+def leaf (a : α) : Tree α := .node a []
+
+@[simp] theorem children_leaf (a : α) : (leaf a).children = [] := rfl
+
+/-! ### Decidable equality
+
+`deriving DecidableEq` does not fire through the nested `List` occurrence (still
+true as of Lean v4.32.0-rc1), so the instance is built by mutual recursion on the
+tree and its child list. -/
+
+section DecidableEq
+variable [DecidableEq α]
+
+mutual
+
+/-- Decidable equality on trees (mutual with the child-list case). -/
+protected def decEq : (t s : Tree α) → Decidable (t = s)
+  | node a cs, node b ds =>
+    if hab : a = b then
+      match Tree.decEqList cs ds with
+      | isTrue h => isTrue (by rw [hab, h])
+      | isFalse h => isFalse fun he => by injection he with _ hcd; exact h hcd
+    else
+      isFalse fun he => by injection he with hab' _; exact hab hab'
+
+/-- Decidable equality on child lists (mutual with the tree case). -/
+protected def decEqList : (ts ss : List (Tree α)) → Decidable (ts = ss)
+  | [], [] => isTrue rfl
+  | [], _ :: _ => isFalse (by simp)
+  | _ :: _, [] => isFalse (by simp)
+  | c :: cs, d :: ds =>
+    match Tree.decEq c d with
+    | isFalse h => isFalse fun he => by injection he with hcd _; exact h hcd
+    | isTrue h =>
+      match Tree.decEqList cs ds with
+      | isTrue h2 => isTrue (by rw [h, h2])
+      | isFalse h2 => isFalse fun he => by injection he with _ htl; exact h2 htl
+
+end
+
+instance instDecidableEq : DecidableEq (Tree α) := Tree.decEq
+
+end DecidableEq
+
+/-! ### The recursion principle -/
+
+/-- **Structural induction** for `Tree`: to prove `motive t` for all `t`, prove
+it for `node a cs` given `motive c` for every child `c ∈ cs`. Packages the
+nested-`List` recursion so downstream defs/proofs use a single `List`-shaped
+hypothesis. -/
+@[elab_as_elim, induction_eliminator]
+def rec' {motive : Tree α → Sort*}
+    (node : ∀ (a : α) (cs : List (Tree α)),
+      (∀ c ∈ cs, motive c) → motive (Tree.node a cs)) :
+    ∀ t, motive t
+  | .node a cs => node a cs fun c _hc => rec' node c
+termination_by t => sizeOf t
+decreasing_by
+  have := List.sizeOf_lt_of_mem _hc
+  simp only [Tree.node.sizeOf_spec]
+  omega
+
+/-! ### Catamorphism
+
+`fold f` is the workhorse: every structural operation (`map`, `numNodes`,
+`height`, …) is a one-line `fold` specialization, and their reduction lemmas fall
+out of `fold_node`. -/
+
+mutual
+/-- Catamorphism: replace each `node a cs` by `f a (folded children)`. -/
+def fold (f : α → List β → β) : Tree α → β
+  | .node a cs => f a (foldList f cs)
+/-- Auxiliary: fold across a list of children. -/
+def foldList (f : α → List β → β) : List (Tree α) → List β
+  | [] => []
+  | c :: cs => fold f c :: foldList f cs
+end
+
+theorem foldList_eq (f : α → List β → β) (cs : List (Tree α)) :
+    foldList f cs = cs.map (fold f) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [show foldList f (c :: cs) = fold f c :: foldList f cs from rfl,
+      ih, List.map_cons]
+
+@[simp] theorem fold_node (f : α → List β → β) (a : α) (cs : List (Tree α)) :
+    fold f (node a cs) = f a (cs.map (fold f)) := by
+  rw [show fold f (node a cs) = f a (foldList f cs) from rfl, foldList_eq]
+
+/-! ### Functoriality -/
+
+/-- Relabel every node by `f`, preserving shape. -/
+def map (f : α → β) : Tree α → Tree β :=
+  fold fun a cs => Tree.node (f a) cs
+
+@[simp] theorem map_node (f : α → β) (a : α) (cs : List (Tree α)) :
+    map f (node a cs) = node (f a) (cs.map (map f)) := by
+  simp only [map, fold_node]
+
+theorem id_map (t : Tree α) : map id t = t := by
+  induction t with
+  | node a cs ih =>
+    rw [map_node, id_eq]
+    congr 1
+    exact (List.map_congr_left ih).trans (List.map_id cs)
+
+theorem comp_map (f : α → β) (g : β → γ) (t : Tree α) :
+    map (g ∘ f) t = map g (map f t) := by
+  induction t with
+  | node a cs ih =>
+    rw [map_node, map_node, map_node, Function.comp_apply, List.map_map]
+    congr 1
+    exact List.map_congr_left ih
+
+/-! ### Traversal
+
+Effectful traversal: act on the root, then the children left-to-right — the
+`Traversable` action for `Tree`. -/
+
+section Traverse
+universe u
+
+mutual
+/-- Traverse a tree with an applicative action, root then children in order. -/
+def traverse {m : Type u → Type u} [Applicative m] {α β : Type u} (f : α → m β) :
+    Tree α → m (Tree β)
+  | .node a cs => Tree.node <$> f a <*> traverseList f cs
+/-- Auxiliary: traverse a list of child subtrees. -/
+def traverseList {m : Type u → Type u} [Applicative m] {α β : Type u} (f : α → m β) :
+    List (Tree α) → m (List (Tree β))
+  | [] => pure []
+  | c :: cs => (· :: ·) <$> traverse f c <*> traverseList f cs
+end
+
+@[simp] theorem traverse_node {m : Type u → Type u} [Applicative m] {α β : Type u}
+    (f : α → m β) (a : α) (cs : List (Tree α)) :
+    traverse f (node a cs) = Tree.node <$> f a <*> traverseList f cs := rfl
+
+private theorem traverseList_pure_of {m : Type u → Type u} [Applicative m] [LawfulApplicative m]
+    {α : Type u} :
+    ∀ (cs : List (Tree α)), (∀ c ∈ cs, traverse (pure : α → m α) c = pure c) →
+      traverseList (pure : α → m α) cs = pure cs
+  | [], _ => rfl
+  | c :: cs, h => by
+    rw [show traverseList (pure : α → m α) (c :: cs)
+          = (· :: ·) <$> traverse (pure : α → m α) c <*> traverseList (pure : α → m α) cs
+        from rfl,
+      h c (List.mem_cons_self ..),
+      traverseList_pure_of cs fun d hd => h d (List.mem_cons_of_mem _ hd)]
+    simp [map_pure]
+
+theorem traverse_pure {m : Type u → Type u} [Applicative m] [LawfulApplicative m]
+    {α : Type u} (t : Tree α) :
+    traverse (pure : α → m α) t = pure t := by
+  induction t with
+  | node a cs ih =>
+    rw [traverse_node, traverseList_pure_of cs ih]
+    simp [map_pure]
+
+end Traverse
+
+/-! ### Counting -/
+
+/-- The total number of nodes (vertices). A leaf counts as `1`. -/
+def numNodes : Tree α → ℕ :=
+  fold fun _ ns => 1 + ns.sum
+
+@[simp] theorem numNodes_node (a : α) (cs : List (Tree α)) :
+    numNodes (node a cs) = 1 + (cs.map numNodes).sum := by
+  simp only [numNodes, fold_node]
+
+theorem numNodes_pos (t : Tree α) : 0 < numNodes t := by
+  cases t with
+  | node a cs => rw [numNodes_node]; omega
+
+/-- The number of leaves (childless nodes). A single leaf counts as `1`. -/
+def numLeaves : Tree α → ℕ :=
+  fold fun _ ns => max 1 ns.sum
+
+@[simp] theorem numLeaves_node (a : α) (cs : List (Tree α)) :
+    numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
+  simp only [numLeaves, fold_node]
+
+@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by
+  rw [leaf, numLeaves_node]; simp
+
+theorem numLeaves_pos (t : Tree α) : 0 < numLeaves t := by
+  cases t with
+  | node a cs =>
+    rw [numLeaves_node]
+    exact Nat.lt_of_lt_of_le Nat.one_pos (Nat.le_max_left _ _)
+
+/-- The **height** (length of the longest root-to-leaf path in edges): a leaf has
+height `0`, an internal node is one more than the maximum child height. -/
+def height : Tree α → ℕ :=
+  fold fun _ ds => (ds.map (· + 1)).foldr max 0
+
+@[simp] theorem height_node (a : α) (cs : List (Tree α)) :
+    height (node a cs) = ((cs.map height).map (· + 1)).foldr max 0 := by
+  simp only [height, fold_node]
+
+/-! ### Instances -/
+
+instance [Inhabited α] : Inhabited (Tree α) := ⟨leaf default⟩
+
+/-! ### Sanity checks -/
+
+example : numNodes (leaf 0 : Tree ℕ) = 1 := by simp [leaf]
+example : numNodes (node 0 [leaf 1, leaf 2] : Tree ℕ) = 3 := by simp [leaf]
+example : numLeaves (node 0 [leaf 1, node 2 [leaf 3, leaf 4]] : Tree ℕ) = 3 := by simp [leaf]
+example : height (leaf 0 : Tree ℕ) = 0 := by simp [leaf]
+example : height (node 0 [leaf 1, leaf 2] : Tree ℕ) = 1 := by simp [leaf]
+example : height (node 0 [node 1 [leaf 2]] : Tree ℕ) = 2 := by simp [leaf]
+example : map (· + 1) (node 0 [leaf 1] : Tree ℕ) = node 1 [leaf 2] := by simp [leaf]
+example : traverse (m := Id) (· + 1) (node 0 [leaf 1] : Tree ℕ) = node 1 [leaf 2] := rfl
+example : (node 0 [leaf 1] : Tree ℕ) = node 0 [leaf 1] := by decide
+example : (node 0 [leaf 1] : Tree ℕ) ≠ node 0 [leaf 2] := by decide
+
+end Tree
