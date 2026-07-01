@@ -19,7 +19,7 @@ Defined as a sum over functions `Ts → V(T)` of `multiGraft`, taken as
 a `Multiset` to make the sum-over-choices commutative.
 
 Sibling to `Graft.lean` (path-based multi-graft primitive). Lives under
-namespace `RootedTree.Planar.Pathed`.
+namespace `Tree.Pathed`.
 
 ## File scope
 
@@ -27,10 +27,10 @@ namespace `RootedTree.Planar.Pathed`.
 - §2: `insertion` — Foissy 2021 Theorem 5.1, single-tree host.
 - §3: `insertionForest` — forest host + identity/nil lemmas.
 - §4: Pair-list `Perm`-invariance for `multiGraft`.
-- §5: Guest-list invariance for `insertion` (`insertion_planarEquiv_guests`).
+- §5: Guest-list invariance for `insertion` (`insertion_permEquiv_guests`).
 - §5.5: Validity discharge for `listChoices`-derived pair lists.
 - §6: Host invariance via the `swapPathAt` path-relabel bijection.
-- §7: Forest invariance (`insertionForest_planarEquiv_host`,
+- §7: Forest invariance (`insertionForest_permEquiv_host`,
   `insertionForest_perm_guests`).
 - §8: Singleton-host insertion.
 
@@ -39,11 +39,11 @@ namespace `RootedTree.Planar.Pathed`.
 `[UPSTREAM]` candidate. **Sorry-free**.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace Tree
 
 namespace Pathed
+
+open RootedTree
 
 variable {α : Type*}
 
@@ -68,11 +68,11 @@ def listChoices {β : Type*} : List β → Nat → List (List β)
 
 /-- Foissy 2021 Theorem 5.1 multi-graft on a single-tree host. Sum over
     `(v₁, …, vₙ) ∈ V(T)ⁿ` of `multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
-def insertion (T : Planar α) (Ts : List (Planar α)) : Multiset (Planar α) :=
+def insertion (T : Tree α) (Ts : List (Tree α)) : Multiset (Tree α) :=
   Multiset.ofList <| (listChoices (vertices T) Ts.length).map
     fun choice => multiGraft T (choice.zip Ts)
 
-theorem insertion_def (T : Planar α) (Ts : List (Planar α)) :
+theorem insertion_def (T : Tree α) (Ts : List (Tree α)) :
     insertion T Ts =
       Multiset.ofList ((listChoices (vertices T) Ts.length).map
         fun choice => multiGraft T (choice.zip Ts)) := rfl
@@ -81,8 +81,8 @@ theorem insertion_def (T : Planar α) (Ts : List (Planar α)) :
 
 /-- Multi-graft into a host forest. Disjoint pattern cases for clean
     auto-generated equation lemmas. -/
-def insertionForest : List (Planar α) → List (Planar α) →
-    Multiset (List (Planar α))
+def insertionForest : List (Tree α) → List (Tree α) →
+    Multiset (List (Tree α))
   | [],     []         => ({[]} : Multiset _)
   | [],     _ :: _     => 0
   | T :: F, []         => ({T :: F} : Multiset _)
@@ -100,30 +100,30 @@ def insertionForest : List (Planar α) → List (Planar α) →
   termination_by F _ => F.length
 
 @[simp] theorem insertionForest_nil_nil :
-    insertionForest ([] : List (Planar α)) [] =
-      ({[]} : Multiset (List (Planar α))) := by
+    insertionForest ([] : List (Tree α)) [] =
+      ({[]} : Multiset (List (Tree α))) := by
   unfold insertionForest; rfl
 
 @[simp] theorem insertionForest_empty_host_nonempty_guests
-    (T_g : Planar α) (Ts : List (Planar α)) :
-    insertionForest ([] : List (Planar α)) (T_g :: Ts) = 0 := by
+    (T_g : Tree α) (Ts : List (Tree α)) :
+    insertionForest ([] : List (Tree α)) (T_g :: Ts) = 0 := by
   unfold insertionForest; rfl
 
 @[simp] theorem insertionForest_cons_host_nil_guests
-    (T : Planar α) (F : List (Planar α)) :
-    insertionForest (T :: F) ([] : List (Planar α)) =
-      ({T :: F} : Multiset (List (Planar α))) := by
+    (T : Tree α) (F : List (Tree α)) :
+    insertionForest (T :: F) ([] : List (Tree α)) =
+      ({T :: F} : Multiset (List (Tree α))) := by
   unfold insertionForest; rfl
 
-theorem insertionForest_nil_guests (F : List (Planar α)) :
-    insertionForest F [] = ({F} : Multiset (List (Planar α))) := by
+theorem insertionForest_nil_guests (F : List (Tree α)) :
+    insertionForest F [] = ({F} : Multiset (List (Tree α))) := by
   cases F
   · exact insertionForest_nil_nil
   · exact insertionForest_cons_host_nil_guests _ _
 
 theorem insertionForest_cons_cons
-    (T : Planar α) (F : List (Planar α))
-    (T_g : Planar α) (Ts : List (Planar α)) :
+    (T : Tree α) (F : List (Tree α))
+    (T_g : Tree α) (Ts : List (Tree α)) :
     insertionForest (T :: F) (T_g :: Ts) =
       (Multiset.ofList (listChoices [true, false] (T_g :: Ts).length)).bind
         fun assignment =>
@@ -139,36 +139,36 @@ theorem insertionForest_cons_cons
 
 /-! ## §4: Pair-list `Perm` invariance for `multiGraft`
 
-`multiGraft T pairs` is `PlanarEquiv`-invariant under permutation of the
+`multiGraft T pairs` is `PermEquiv`-invariant under permutation of the
 pair list: grafts at distinct paths commute, and grafts at the same
-path are root-list permutations (lift via `planarEquiv_root_perm`).
+path are root-list permutations (lift via `permEquiv_root_perm`).
 
 Path-based reformulation of the legacy `multiGraft_perm_pair` /
 `multiGraftList_perm_pair`. -/
 
 mutual
-/-- `PlanarEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
+/-- `PermEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
     follows from a `List.Perm` between `pairs` and `pairs'`. Mutual
     recursion on `T` with the children-list aux. -/
-private theorem multiGraft_perm_pair : ∀ (T : Planar α)
-    {pairs pairs' : List (Path × Planar α)},
+private theorem multiGraft_perm_pair : ∀ (T : Tree α)
+    {pairs pairs' : List (Path × Tree α)},
     pairs.Perm pairs' →
-    PlanarEquiv (multiGraft T pairs) (multiGraft T pairs')
+    PermEquiv (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
     rw [multiGraft_node, multiGraft_node]
-    exact (planarEquiv_root_perm
+    exact (permEquiv_root_perm
             ((h.filterMap rootPrependFilter).append_right _)).trans
-          (planarEquiv_node_componentwise
+          (permEquiv_node_componentwise
             (List.rel_append
-              (List.forall₂_same.mpr fun _ _ => PlanarEquiv.refl _)
+              (List.forall₂_same.mpr fun _ _ => PermEquiv.refl _)
               (multiGraftChildren_perm_pair cs h)))
 /-- List-level companion to `multiGraft_perm_pair`: pair-list `Perm`
-    lifts to `Forall₂ PlanarEquiv` on the children list output of
+    lifts to `Forall₂ PermEquiv` on the children list output of
     `multiGraftChildren`. -/
-private theorem multiGraftChildren_perm_pair : ∀ (cs : List (Planar α))
-    {pairs pairs' : List (Path × Planar α)},
+private theorem multiGraftChildren_perm_pair : ∀ (cs : List (Tree α))
+    {pairs pairs' : List (Path × Tree α)},
     pairs.Perm pairs' →
-    List.Forall₂ PlanarEquiv
+    List.Forall₂ PermEquiv
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
   | [],      _, _, _ => List.Forall₂.nil
   | c :: cs, pairs, pairs', h => by
@@ -180,12 +180,12 @@ end
 
 /-! ### Forall₂-version of `multiGraft_perm_pair`
 
-For `insertion_planarEquiv_guests` we need: when `Ts ~ᶠ Ts'` (Forall₂
-PlanarEquiv) and we zip with the same choice, the resulting pair lists
-satisfy a Forall₂ relation (same fst, PlanarEquiv snd). Then this lifts
-to `multiGraft T pairs ~ multiGraft T pairs'` (`PlanarEquiv`).
+For `insertion_permEquiv_guests` we need: when `Ts ~ᶠ Ts'` (Forall₂
+PermEquiv) and we zip with the same choice, the resulting pair lists
+satisfy a Forall₂ relation (same fst, PermEquiv snd). Then this lifts
+to `multiGraft T pairs ~ multiGraft T pairs'` (`PermEquiv`).
 
-Path-based version of the legacy `multiGraft_planarEquiv_pair_Forall₂`. -/
+Path-based version of the legacy `multiGraft_permEquiv_pair_Forall₂`. -/
 
 private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
     (choice : List β) :
@@ -203,41 +203,41 @@ private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
       exact List.Forall₂.cons ⟨rfl, hTT'⟩ (ih hrest)
 
 mutual
-/-- `PlanarEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
-    follows from pair-`Forall₂` (same fst, `PlanarEquiv` snds). -/
-private theorem multiGraft_planarEquiv_pair_Forall₂ : ∀ (T : Planar α)
-    {pairs pairs' : List (Path × Planar α)},
-    List.Forall₂ (fun p p' : Path × Planar α =>
-        p.fst = p'.fst ∧ PlanarEquiv p.snd p'.snd) pairs pairs' →
-    PlanarEquiv (multiGraft T pairs) (multiGraft T pairs')
+/-- `PermEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
+    follows from pair-`Forall₂` (same fst, `PermEquiv` snds). -/
+private theorem multiGraft_permEquiv_pair_Forall₂ : ∀ (T : Tree α)
+    {pairs pairs' : List (Path × Tree α)},
+    List.Forall₂ (fun p p' : Path × Tree α =>
+        p.fst = p'.fst ∧ PermEquiv p.snd p'.snd) pairs pairs' →
+    PermEquiv (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
     rw [multiGraft_node, multiGraft_node]
-    apply planarEquiv_node_componentwise
+    apply permEquiv_node_componentwise
     apply List.rel_append
-    · -- root-prepended children: Forall₂ PlanarEquiv after filterMap
-      refine List.rel_filterMap (P := PlanarEquiv) ?_ h
+    · -- root-prepended children: Forall₂ PermEquiv after filterMap
+      refine List.rel_filterMap (P := PermEquiv) ?_ h
       rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
       simp only at hfst
       subst hfst
       cases xfst with
       | nil       => exact Option.Rel.some hsnd
       | cons _ _  => exact Option.Rel.none
-    · -- children: Forall₂ PlanarEquiv on multiGraftChildren output
-      exact multiGraftChildren_planarEquiv_pair_Forall₂ cs h
+    · -- children: Forall₂ PermEquiv on multiGraftChildren output
+      exact multiGraftChildren_permEquiv_pair_Forall₂ cs h
 
 /-- List-level companion. -/
-private theorem multiGraftChildren_planarEquiv_pair_Forall₂ :
-    ∀ (cs : List (Planar α))
-    {pairs pairs' : List (Path × Planar α)},
-    List.Forall₂ (fun p p' : Path × Planar α =>
-        p.fst = p'.fst ∧ PlanarEquiv p.snd p'.snd) pairs pairs' →
-    List.Forall₂ PlanarEquiv
+private theorem multiGraftChildren_permEquiv_pair_Forall₂ :
+    ∀ (cs : List (Tree α))
+    {pairs pairs' : List (Path × Tree α)},
+    List.Forall₂ (fun p p' : Path × Tree α =>
+        p.fst = p'.fst ∧ PermEquiv p.snd p'.snd) pairs pairs' →
+    List.Forall₂ PermEquiv
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
   | [],      _, _, _ => List.Forall₂.nil
   | c :: cs, pairs, pairs', h => by
     rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs]
     refine List.Forall₂.cons ?_ ?_
-    · apply multiGraft_planarEquiv_pair_Forall₂
+    · apply multiGraft_permEquiv_pair_Forall₂
       refine List.rel_filterMap ?_ h
       rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
       simp only at hfst
@@ -248,7 +248,7 @@ private theorem multiGraftChildren_planarEquiv_pair_Forall₂ :
         cases k with
         | zero   => exact Option.Rel.some ⟨rfl, hsnd⟩
         | succ _ => exact Option.Rel.none
-    · apply multiGraftChildren_planarEquiv_pair_Forall₂
+    · apply multiGraftChildren_permEquiv_pair_Forall₂
       refine List.rel_filterMap ?_ h
       rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
       simp only at hfst
@@ -270,26 +270,19 @@ pairSum t (pre ++ [(v, x)]) rest` lets us prove `Ts`-perm invariance by
 `Perm` induction.
 
 Path-based reformulation of the legacy `pairSum` / `insertion_perm_guests`
-machinery. The pair type changes from `Vertex t × Planar α` to
-`Path × Planar α`. -/
+machinery. The pair type changes from `Vertex t × Tree α` to
+`Path × Tree α`. -/
 
 /-- Multi-graft aggregator with an explicit pair pre (path-based). -/
-private def pairSum (t : Planar α)
-    (pre : List (Path × Planar α))
-    (Ts : List (Planar α)) : Multiset (Nonplanar α) :=
+private def pairSum (t : Tree α)
+    (pre : List (Path × Tree α))
+    (Ts : List (Tree α)) : Multiset (Nonplanar α) :=
   Multiset.ofList ((listChoices (vertices t) Ts.length).map
     fun c => Nonplanar.mk (multiGraft t (pre ++ c.zip Ts)))
 
-private theorem pairSum_nil (t : Planar α)
-    (pre : List (Path × Planar α)) :
-    pairSum t pre [] =
-      ({Nonplanar.mk (multiGraft t pre)} : Multiset (Nonplanar α)) := by
-  unfold pairSum
-  simp [listChoices_zero]
-
-private theorem pairSum_cons (t : Planar α)
-    (pre : List (Path × Planar α))
-    (x : Planar α) (rest : List (Planar α)) :
+private theorem pairSum_cons (t : Tree α)
+    (pre : List (Path × Tree α))
+    (x : Tree α) (rest : List (Tree α)) :
     pairSum t pre (x :: rest) =
       (Multiset.ofList (vertices t)).bind fun v =>
         pairSum t (pre ++ [(v, x)]) rest := by
@@ -311,9 +304,9 @@ private theorem pairSum_cons (t : Planar α)
 
 /-- `pairSum` is invariant under `List.Perm` of the pre: pair-list order
     doesn't matter at the nonplanar level. -/
-private theorem pairSum_pre_perm (t : Planar α)
-    {pre pre' : List (Path × Planar α)}
-    (h : pre.Perm pre') (Ts : List (Planar α)) :
+private theorem pairSum_pre_perm (t : Tree α)
+    {pre pre' : List (Path × Tree α)}
+    (h : pre.Perm pre') (Ts : List (Tree α)) :
     pairSum t pre Ts = pairSum t pre' Ts := by
   unfold pairSum
   congr 1
@@ -324,9 +317,9 @@ private theorem pairSum_pre_perm (t : Planar α)
 
 /-- Two unfoldings of `pairSum_cons` packed into a normal form for the
     swap proof. -/
-private theorem pairSum_cons_cons (t : Planar α)
-    (pre : List (Path × Planar α))
-    (x y : Planar α) (rest : List (Planar α)) :
+private theorem pairSum_cons_cons (t : Tree α)
+    (pre : List (Path × Tree α))
+    (x y : Tree α) (rest : List (Tree α)) :
     pairSum t pre (x :: y :: rest) =
       (Multiset.ofList (vertices t)).bind fun v₀ =>
         (Multiset.ofList (vertices t)).bind fun v₁ =>
@@ -339,9 +332,9 @@ private theorem pairSum_cons_cons (t : Planar α)
   simp [List.append_assoc]
 
 /-- `pairSum` is invariant under swap of the first two guests. -/
-private theorem pairSum_swap (t : Planar α)
-    (pre : List (Path × Planar α))
-    (a b : Planar α) (l : List (Planar α)) :
+private theorem pairSum_swap (t : Tree α)
+    (pre : List (Path × Tree α))
+    (a b : Tree α) (l : List (Tree α)) :
     pairSum t pre (b :: a :: l) = pairSum t pre (a :: b :: l) := by
   rw [pairSum_cons_cons, pairSum_cons_cons]
   rw [Multiset.bind_bind]
@@ -349,9 +342,9 @@ private theorem pairSum_swap (t : Planar α)
   exact pairSum_pre_perm t (List.Perm.append_left pre (List.Perm.swap _ _ _)) l
 
 /-- `pairSum t pre Ts` is invariant under `List.Perm` of `Ts`. -/
-private theorem pairSum_perm_guests (t : Planar α)
-    (pre : List (Path × Planar α))
-    {Ts Ts' : List (Planar α)} (h : Ts.Perm Ts') :
+private theorem pairSum_perm_guests (t : Tree α)
+    (pre : List (Path × Tree α))
+    {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
     pairSum t pre Ts = pairSum t pre Ts' := by
   induction h generalizing pre with
   | nil => rfl
@@ -363,17 +356,17 @@ private theorem pairSum_perm_guests (t : Planar α)
   | trans _ _ ih₁ ih₂ => exact (ih₁ pre).trans (ih₂ pre)
 
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
-private theorem insertion_perm_guests (t : Planar α)
-    {Ts Ts' : List (Planar α)} (h : Ts.Perm Ts') :
+private theorem insertion_perm_guests (t : Tree α)
+    {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t Ts').map Nonplanar.mk := by
   have := pairSum_perm_guests t [] h
   unfold pairSum at this
   simpa [insertion_def, Multiset.map_coe, List.map_map, Function.comp_def] using this
 
-/-- Guest-list `Forall₂ PlanarEquiv` lifts to `insertion mk`-equality. -/
-theorem insertion_planarEquiv_guests (t : Planar α)
-    {Ts Ts' : List (Planar α)} (h : List.Forall₂ PlanarEquiv Ts Ts') :
+/-- Guest-list `Forall₂ PermEquiv` lifts to `insertion mk`-equality. -/
+theorem insertion_permEquiv_guests (t : Tree α)
+    {Ts Ts' : List (Tree α)} (h : List.Forall₂ PermEquiv Ts Ts') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t Ts').map Nonplanar.mk := by
   have hlen : Ts.length = Ts'.length := h.length_eq
@@ -384,8 +377,8 @@ theorem insertion_planarEquiv_guests (t : Planar α)
   intro choice _
   apply Nonplanar.mk_eq_mk_iff.mpr
   -- multiGraft t (choice.zip Ts) ~ multiGraft t (choice.zip Ts')
-  -- via List.Forall₂ for the pair (fst eq, snd planarEquiv)
-  exact multiGraft_planarEquiv_pair_Forall₂ t (zip_pair_Forall₂ choice h)
+  -- via List.Forall₂ for the pair (fst eq, snd permEquiv)
+  exact multiGraft_permEquiv_pair_Forall₂ t (zip_pair_Forall₂ choice h)
 
 /-! ## §5.5: Validity discharge for `listChoices`-derived pair lists
 
@@ -420,10 +413,10 @@ theorem mem_of_mem_listChoices {β : Type*}
     `choice ∈ listChoices (vertices T) Ts.length`. Discharges the validity
     hypothesis of the graft operations for `listChoices`-derived pair lists. -/
 theorem forall_zip_isValidPath_of_listChoices
-    (T : Planar α) (Ts : List (Planar α))
+    (T : Tree α) (Ts : List (Tree α))
     (choice : List Path)
     (h_choice : choice ∈ listChoices (vertices T) Ts.length)
-    (pair : Path × Planar α) (h_pair : pair ∈ choice.zip Ts) :
+    (pair : Path × Tree α) (h_pair : pair ∈ choice.zip Ts) :
     IsValidPath pair.fst T := by
   have h_fst_mem : pair.fst ∈ choice := (List.of_mem_zip h_pair).1
   exact forall_isValidPath T (mem_of_mem_listChoices (vertices T) Ts.length
@@ -431,7 +424,7 @@ theorem forall_zip_isValidPath_of_listChoices
 
 /-! ## §6: Host invariance via path-swap bijection
 
-`insertion T Ts` is `mk`-invariant under `PlanarEquiv` of the host: the
+`insertion T Ts` is `mk`-invariant under `PermEquiv` of the host: the
 original blocker for the path-based refactor.
 
 Strategy:
@@ -441,12 +434,12 @@ Strategy:
    `node a (pre ++ r :: l :: post)`. Reduces to a `List.Perm` of two
    appendable middle blocks, via `verticesAux_append` + a
    `List.perm_append_comm`.
-3. `multiGraft_swap_planarEquiv` — the multiGraft results differ only by
+3. `multiGraft_swap_permEquiv` — the multiGraft results differ only by
    the swap of l/r in the root children list; lift via
-   `PlanarStep.swapAtRoot`.
+   `PermStep.swapAtRoot`.
 4. Combine via listChoices Perm-respect → `insertion_swap_invariant`.
-5. Lift via `PlanarStep` (recurse case) and `PlanarEquiv = EqvGen
-   PlanarStep`. -/
+5. Lift via `PermStep` (recurse case) and `PermEquiv = EqvGen
+   PermStep`. -/
 
 /-- Swap the first index `n ↔ n+1` of a path. Acts as identity on paths
     starting outside `{n, n+1}` and on the root path `[]`. -/
@@ -475,7 +468,7 @@ private theorem swapPathAt_cons_of_ne (n i : ℕ) (rest : Path)
 /-- For paths produced by `verticesAux start cs` with all indices
     bounded below `n`, `swapPathAt n` acts as the identity. -/
 private theorem map_swapPathAt_verticesAux_below
-    (n start : ℕ) (cs : List (Planar α)) (h : start + cs.length ≤ n) :
+    (n start : ℕ) (cs : List (Tree α)) (h : start + cs.length ≤ n) :
     (verticesAux start cs).map (swapPathAt n) = verticesAux start cs := by
   induction cs generalizing start with
   | nil => rfl
@@ -493,7 +486,7 @@ private theorem map_swapPathAt_verticesAux_below
 /-- For paths produced by `verticesAux start cs` with all indices
     bounded above `n + 1`, `swapPathAt n` acts as the identity. -/
 private theorem map_swapPathAt_verticesAux_above
-    (n start : ℕ) (cs : List (Planar α)) (h : n + 1 < start) :
+    (n start : ℕ) (cs : List (Tree α)) (h : n + 1 < start) :
     (verticesAux start cs).map (swapPathAt n) = verticesAux start cs := by
   induction cs generalizing start with
   | nil => rfl
@@ -509,11 +502,11 @@ private theorem map_swapPathAt_verticesAux_above
 /-- Vertices of `node a (pre ++ l :: r :: post)` mapped through
     `swapPathAt pre.length` is a `List.Perm` of vertices of
     `node a (pre ++ r :: l :: post)`. -/
-private theorem vertices_swap_perm (a : α) (pre : List (Planar α))
-    (l r : Planar α) (post : List (Planar α)) :
-    ((vertices (Planar.node a (pre ++ l :: r :: post))).map
+private theorem vertices_swap_perm (a : α) (pre : List (Tree α))
+    (l r : Tree α) (post : List (Tree α)) :
+    ((vertices (Tree.node a (pre ++ l :: r :: post))).map
         (swapPathAt pre.length)).Perm
-      (vertices (Planar.node a (pre ++ r :: l :: post))) := by
+      (vertices (Tree.node a (pre ++ r :: l :: post))) := by
   set n := pre.length with hn
   rw [vertices_node, vertices_node]
   -- Expand verticesAux via _append, plus verticesAux_cons twice
@@ -548,19 +541,19 @@ private theorem vertices_swap_perm (a : α) (pre : List (Planar α))
   refine List.Perm.append_right _ ?_
   exact List.perm_append_comm
 
-/-! ### §6.2 substrate: pair-relabel + planarEquiv prefix-cons-lift -/
+/-! ### §6.2 substrate: pair-relabel + permEquiv prefix-cons-lift -/
 
 /-- The path-relabel function for swapAtRoot. -/
-private def pathRelabelSwap (n : ℕ) : Path × Planar α → Path × Planar α :=
+private def pathRelabelSwap (n : ℕ) : Path × Tree α → Path × Tree α :=
   Prod.map (swapPathAt n) id
 
-@[simp] private theorem pathRelabelSwap_fst (n : ℕ) (p : Path × Planar α) :
+@[simp] private theorem pathRelabelSwap_fst (n : ℕ) (p : Path × Tree α) :
     (pathRelabelSwap n p).fst = swapPathAt n p.fst := rfl
 
-@[simp] private theorem pathRelabelSwap_snd (n : ℕ) (p : Path × Planar α) :
+@[simp] private theorem pathRelabelSwap_snd (n : ℕ) (p : Path × Tree α) :
     (pathRelabelSwap n p).snd = p.snd := rfl
 
-/-- Path bijection induced by `PlanarStep.recurse`: lift an inner path
+/-- Path bijection induced by `PermStep.recurse`: lift an inner path
     bijection `f` (applicable to vertices of the changed subtree at child
     position `n`) to the whole tree. Identity on paths not going through
     child `n`. -/
@@ -583,7 +576,7 @@ private theorem pathLiftRecurse_cons_of_ne (n i : ℕ) (f : Path → Path) (rest
 /-- `pathLiftRecurse n f` acts as identity on paths produced by
     `verticesAux start cs` when those paths' first indices are all below `n`. -/
 private theorem map_pathLiftRecurse_verticesAux_below
-    (n start : ℕ) (f : Path → Path) (cs : List (Planar α))
+    (n start : ℕ) (f : Path → Path) (cs : List (Tree α))
     (h : start + cs.length ≤ n) :
     (verticesAux start cs).map (pathLiftRecurse n f) = verticesAux start cs := by
   induction cs generalizing start with
@@ -601,7 +594,7 @@ private theorem map_pathLiftRecurse_verticesAux_below
 /-- `pathLiftRecurse n f` acts as identity on paths produced by
     `verticesAux start cs` when those paths' first indices are all above `n`. -/
 private theorem map_pathLiftRecurse_verticesAux_above
-    (n start : ℕ) (f : Path → Path) (cs : List (Planar α))
+    (n start : ℕ) (f : Path → Path) (cs : List (Tree α))
     (h : n < start) :
     (verticesAux start cs).map (pathLiftRecurse n f) = verticesAux start cs := by
   induction cs generalizing start with
@@ -615,14 +608,14 @@ private theorem map_pathLiftRecurse_verticesAux_above
       exact pathLiftRecurse_cons_of_ne n start f q (by omega : start ≠ n)
     · exact ih (start + 1) h'
 
-/-- Vertices Perm under `PlanarStep.recurse`: given a path bijection on
+/-- Vertices Perm under `PermStep.recurse`: given a path bijection on
     the changed subtree, lift to a Perm on the bigger tree's vertices. -/
-private theorem vertices_recurse_perm (a : α) (pre : List (Planar α))
-    (old new : Planar α) (post : List (Planar α)) (f : Path → Path)
+private theorem vertices_recurse_perm (a : α) (pre : List (Tree α))
+    (old new : Tree α) (post : List (Tree α)) (f : Path → Path)
     (hf : ((vertices old).map f).Perm (vertices new)) :
-    ((vertices (Planar.node a (pre ++ old :: post))).map
+    ((vertices (Tree.node a (pre ++ old :: post))).map
         (pathLiftRecurse pre.length f)).Perm
-      (vertices (Planar.node a (pre ++ new :: post))) := by
+      (vertices (Tree.node a (pre ++ new :: post))) := by
   set n := pre.length with hn_eq
   rw [vertices_node, vertices_node,
       verticesAux_append, verticesAux_append, Nat.zero_add,
@@ -646,31 +639,31 @@ private theorem vertices_recurse_perm (a : α) (pre : List (Planar α))
   rw [h_map_eq]
   exact hf.map _
 
-/-- Helper: `PlanarEquiv` of two trees with a common children prefix.
+/-- Helper: `PermEquiv` of two trees with a common children prefix.
     Lifts `(node a cs) ~ (node a ds)` to `(node a (pre ++ cs)) ~ (node a (pre ++ ds))`
-    by iterated `planarEquiv_cons_lift`. -/
-private theorem planarEquiv_append_left_node {a : α} (pre : List (Planar α))
-    {cs ds : List (Planar α)}
-    (h : PlanarEquiv (.node a cs) (.node a ds)) :
-    PlanarEquiv (.node a (pre ++ cs)) (.node a (pre ++ ds)) := by
+    by iterated `permEquiv_cons_lift`. -/
+private theorem permEquiv_append_left_node {a : α} (pre : List (Tree α))
+    {cs ds : List (Tree α)}
+    (h : PermEquiv (.node a cs) (.node a ds)) :
+    PermEquiv (.node a (pre ++ cs)) (.node a (pre ++ ds)) := by
   induction pre with
   | nil => exact h
-  | cons p pre' ih => exact planarEquiv_cons_lift p ih
+  | cons p pre' ih => exact permEquiv_cons_lift p ih
 
-/-- `multiGraft` is `PlanarEquiv`-invariant under a `PlanarStep.recurse`:
+/-- `multiGraft` is `PermEquiv`-invariant under a `PermStep.recurse`:
     if the inner subtree change `old → new` admits a path-bijection `f`
     that turns `multiGraft old` into `multiGraft new ∘ relabel-via-f`, then
     the same holds for the host with prefix `pre` and suffix `post`, using
     `pathLiftRecurse pre.length f`. -/
-private theorem multiGraft_recurse_planarEquiv (a : α)
-    {old new : Planar α} (f : Path → Path)
-    (hf : ∀ sub_pairs, PlanarEquiv (multiGraft old sub_pairs)
+private theorem multiGraft_recurse_permEquiv (a : α)
+    {old new : Tree α} (f : Path → Path)
+    (hf : ∀ sub_pairs, PermEquiv (multiGraft old sub_pairs)
                                     (multiGraft new (sub_pairs.map (Prod.map f id)))) :
-    ∀ (pre : List (Planar α)) (post : List (Planar α))
-      (pairs : List (Path × Planar α)),
-    PlanarEquiv
-      (multiGraft (Planar.node a (pre ++ old :: post)) pairs)
-      (multiGraft (Planar.node a (pre ++ new :: post))
+    ∀ (pre : List (Tree α)) (post : List (Tree α))
+      (pairs : List (Path × Tree α)),
+    PermEquiv
+      (multiGraft (Tree.node a (pre ++ old :: post)) pairs)
+      (multiGraft (Tree.node a (pre ++ new :: post))
                   (pairs.map (Prod.map (pathLiftRecurse pre.length f) id))) := by
   intro pre post pairs
   induction pre generalizing pairs with
@@ -723,8 +716,8 @@ private theorem multiGraft_recurse_planarEquiv (a : α)
     -- Goal: node a (RP ++ multiGraft old cP :: mGC post csP) ~PE~
     --        node a (RP ++ multiGraft new cP' :: mGC post csP) where
     --        cP' = (pairs.map ...).filterMap headChildFilter = cP.map (Prod.map f id)
-    exact planarEquiv_append_left_node _
-      (planarEquiv_recurse_lift [] _ h_old)
+    exact permEquiv_append_left_node _
+      (permEquiv_recurse_lift [] _ h_old)
   | cons c pre' ih =>
     rw [show (c :: pre') ++ old :: post = c :: (pre' ++ old :: post) from rfl,
         show (c :: pre') ++ new :: post = c :: (pre' ++ new :: post) from rfl,
@@ -815,31 +808,31 @@ private theorem multiGraft_recurse_planarEquiv (a : α)
     rw [← h_RP, ← h_cP]
     -- Goal: node a (RP ++ multiGraft c cP :: mGC (pre' ++ old :: post) csP) ~PE~
     --        node a (RP ++ multiGraft c cP :: mGC (pre' ++ new :: post) csP_relabeled)
-    exact planarEquiv_append_left_node _ (planarEquiv_cons_lift _ h_ih)
+    exact permEquiv_append_left_node _ (permEquiv_cons_lift _ h_ih)
 
-/-- `multiGraft` is `PlanarEquiv`-invariant under swap of two adjacent
+/-- `multiGraft` is `PermEquiv`-invariant under swap of two adjacent
     root children, with pairs relabeled via `swapPathAt`. The proof
     decomposes both sides into matching children lists (up to a single
-    swap), then applies `PlanarStep.swapAtRoot`.
+    swap), then applies `PermStep.swapAtRoot`.
 
     Sub-lemmas for the filter equalities are proved inline as `have`
     statements to ensure the inline-match expressions unify with the
     matcher generated by `multiGraft_node`. -/
-private theorem multiGraft_swap_planarEquiv
-    (a : α) (pre : List (Planar α)) (l r : Planar α)
-    (post : List (Planar α)) (pairs : List (Path × Planar α)) :
-    PlanarEquiv
-      (multiGraft (Planar.node a (pre ++ l :: r :: post)) pairs)
-      (multiGraft (Planar.node a (pre ++ r :: l :: post))
+private theorem multiGraft_swap_permEquiv
+    (a : α) (pre : List (Tree α)) (l r : Tree α)
+    (post : List (Tree α)) (pairs : List (Path × Tree α)) :
+    PermEquiv
+      (multiGraft (Tree.node a (pre ++ l :: r :: post)) pairs)
+      (multiGraft (Tree.node a (pre ++ r :: l :: post))
                   (pairs.map (pathRelabelSwap pre.length))) := by
   -- The cleanest path: induct on pre, peeling off one child at a time.
   -- Base case (pre = []) does the actual swap; inductive case lifts via
-  -- planarEquiv_cons_lift.
+  -- permEquiv_cons_lift.
   induction pre generalizing pairs with
   | nil =>
     simp only [List.nil_append, List.length_nil]
     rw [multiGraft_node, multiGraft_node]
-    -- Build sub-perms and combine via planarEquiv_root_perm.
+    -- Build sub-perms and combine via permEquiv_root_perm.
     have h_RP_perm : (pairs.filterMap fun pair => match pair.fst with
                                                     | []     => some pair.snd
                                                     | _ :: _ => none).Perm
@@ -930,7 +923,7 @@ private theorem multiGraft_swap_planarEquiv
                 | succ k => simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
       rw [h_l, h_r, h_post]
       exact List.Perm.swap _ _ _
-    exact planarEquiv_root_perm (List.Perm.append h_RP_perm h_mGC_perm)
+    exact permEquiv_root_perm (List.Perm.append h_RP_perm h_mGC_perm)
   | cons c pre' ih =>
     -- pre = c :: pre'. n = pre'.length + 1.
     -- Strategy: peel off `c` via multiGraftChildren_cons_cs, identify the
@@ -999,7 +992,7 @@ private theorem multiGraft_swap_planarEquiv
                     swapPathAt_cons_of_ne pre'.length j rest hjne hjne2]
     -- Use IH on pre' with input = pairs.filterMap tailChildFilter.
     have h_ih := ih (pairs.filterMap tailChildFilter)
-    -- IH: PlanarEquiv (multiGraft (node a (pre' ++ l :: r :: post)) X_pre)
+    -- IH: PermEquiv (multiGraft (node a (pre' ++ l :: r :: post)) X_pre)
     --                 (multiGraft (node a (pre' ++ r :: l :: post)) (X_pre.map ...))
     -- Unfold both sides of IH to expose mGC.
     rw [multiGraft_node, multiGraft_node] at h_ih
@@ -1040,31 +1033,31 @@ private theorem multiGraft_swap_planarEquiv
                     swapPathAt_cons_of_ne pre'.length j rest hj1 hj2]
     rw [h_empty_RP_lhs, List.nil_append] at h_ih
     rw [h_empty_RP_rhs, List.nil_append] at h_ih
-    -- Now h_ih has form: PlanarEquiv (node a (mGC ... X_pre)) (node a (mGC ... X_pre_relabeled))
+    -- Now h_ih has form: PermEquiv (node a (mGC ... X_pre)) (node a (mGC ... X_pre_relabeled))
     -- Use h_X_pre to rewrite X_pre_relabeled inside.
     rw [← h_X_pre] at h_ih
     -- Lift IH through cons (multiGraft c X_l ::) and append_left (RP ++).
-    have h_after_cons : PlanarEquiv
-        (Planar.node a (multiGraft c (pairs.filterMap headChildFilter) ::
+    have h_after_cons : PermEquiv
+        (Tree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
                          multiGraftChildren (pre' ++ l :: r :: post)
                            (pairs.filterMap tailChildFilter)))
-        (Planar.node a (multiGraft c (pairs.filterMap headChildFilter) ::
+        (Tree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
                          multiGraftChildren (pre' ++ r :: l :: post)
                            ((pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
                              tailChildFilter))) :=
-      planarEquiv_cons_lift _ h_ih
-    have h_after_append := planarEquiv_append_left_node
+      permEquiv_cons_lift _ h_ih
+    have h_after_append := permEquiv_append_left_node
                             (pairs.filterMap rootPrependFilter) h_after_cons
     -- Goal's RHS uses relabeled forms; rewrite back to unrelabeled to match
     -- h_after_append.
     rw [← h_RP, ← h_X_l]
     exact h_after_append
 
-/-! ### §6.3 substrate for `insertion_planarEquiv_host`
+/-! ### §6.3 substrate for `insertion_permEquiv_host`
 
-The `swapAtRoot` case of `insertion_planarStep_host` needs to lift a Perm
+The `swapAtRoot` case of `insertion_permStep_host` needs to lift a Perm
 of vertices into a Perm of choice lists (via `listChoices`), then combine
-with `multiGraft_swap_planarEquiv` to get equal `mk`-mapped insertion
+with `multiGraft_swap_permEquiv` to get equal `mk`-mapped insertion
 outputs. Helpers below build this bridge. -/
 
 /-- `listChoices` is compatible with `List.map`: applying `f` element-wise
@@ -1100,14 +1093,14 @@ private theorem listChoices_perm {β : Type*} {xs ys : List β}
 
 /-- Generic lifting: a path bijection `f` that turns vertices of `t` into a
     `Perm` of vertices of `t'` and turns `multiGraft t pairs` into a
-    `PlanarEquiv` of `multiGraft t' (pairs.map (Prod.map f id))` lifts to
+    `PermEquiv` of `multiGraft t' (pairs.map (Prod.map f id))` lifts to
     `mk`-equality of `insertion t Ts` and `insertion t' Ts`. -/
-private theorem insertion_eq_of_pathBij {t t' : Planar α}
+private theorem insertion_eq_of_pathBij {t t' : Tree α}
     (f : Path → Path)
     (hf_perm : ((vertices t).map f).Perm (vertices t'))
-    (hf_graft : ∀ pairs, PlanarEquiv (multiGraft t pairs)
+    (hf_graft : ∀ pairs, PermEquiv (multiGraft t pairs)
                                       (multiGraft t' (pairs.map (Prod.map f id))))
-    (Ts : List (Planar α)) :
+    (Ts : List (Tree α)) :
     (insertion t Ts).map Nonplanar.mk = (insertion t' Ts).map Nonplanar.mk := by
   rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe,
       List.map_map, List.map_map]
@@ -1142,64 +1135,64 @@ private theorem insertion_eq_of_pathBij {t t' : Planar α}
     exact this
   exact step1.trans step2
 
-/-- Every `PlanarStep` admits a path bijection that respects both vertex
-    enumeration (up to `Perm`) and `multiGraft` (up to `PlanarEquiv` after
+/-- Every `PermStep` admits a path bijection that respects both vertex
+    enumeration (up to `Perm`) and `multiGraft` (up to `PermEquiv` after
     `Prod.map f id` relabel). For `swapAtRoot` the bijection is
     `swapPathAt pre.length`; for `recurse` it is `pathLiftRecurse pre.length`
     of the inner bijection. -/
-private theorem exists_pathBijection_planarStep :
-    ∀ {t t' : Planar α}, PlanarStep t t' →
+private theorem exists_pathBijection_permStep :
+    ∀ {t t' : Tree α}, PermStep t t' →
     ∃ f : Path → Path,
       ((vertices t).map f).Perm (vertices t') ∧
-      ∀ pairs, PlanarEquiv (multiGraft t pairs)
+      ∀ pairs, PermEquiv (multiGraft t pairs)
                             (multiGraft t' (pairs.map (Prod.map f id))) := by
   intro t t' h
   induction h with
   | @swapAtRoot a l r pre post =>
     exact ⟨swapPathAt pre.length, vertices_swap_perm a pre l r post,
-           fun pairs => multiGraft_swap_planarEquiv a pre l r post pairs⟩
+           fun pairs => multiGraft_swap_permEquiv a pre l r post pairs⟩
   | @recurse a pre old new post h_inner ih =>
     obtain ⟨f', hf_perm', hf_graft'⟩ := ih
     exact ⟨pathLiftRecurse pre.length f',
            vertices_recurse_perm a pre old new post f' hf_perm',
-           fun pairs => multiGraft_recurse_planarEquiv a f' hf_graft' pre post pairs⟩
+           fun pairs => multiGraft_recurse_permEquiv a f' hf_graft' pre post pairs⟩
 
-/-- `insertion T Ts` is `mk`-invariant under a single `PlanarStep` of the
-    host. Direct application of `exists_pathBijection_planarStep` +
+/-- `insertion T Ts` is `mk`-invariant under a single `PermStep` of the
+    host. Direct application of `exists_pathBijection_permStep` +
     `insertion_eq_of_pathBij`. -/
-private theorem insertion_planarStep_host (Ts : List (Planar α))
-    {t t' : Planar α} (h : PlanarStep t t') :
+private theorem insertion_permStep_host (Ts : List (Tree α))
+    {t t' : Tree α} (h : PermStep t t') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t' Ts).map Nonplanar.mk := by
-  obtain ⟨f, hf_perm, hf_graft⟩ := exists_pathBijection_planarStep h
+  obtain ⟨f, hf_perm, hf_graft⟩ := exists_pathBijection_permStep h
   exact insertion_eq_of_pathBij f hf_perm hf_graft Ts
 
-/-- `insertion T Ts` is `mk`-invariant under `PlanarEquiv` of the host. -/
-private theorem insertion_planarEquiv_host (Ts : List (Planar α))
-    {t t' : Planar α} (h : PlanarEquiv t t') :
+/-- `insertion T Ts` is `mk`-invariant under `PermEquiv` of the host. -/
+private theorem insertion_permEquiv_host (Ts : List (Tree α))
+    {t t' : Tree α} (h : PermEquiv t t') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t' Ts).map Nonplanar.mk := by
   induction h with
-  | rel _ _ hstep => exact insertion_planarStep_host Ts hstep
+  | rel _ _ hstep => exact insertion_permStep_host Ts hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-- `List.Forall₂ PlanarEquiv` lifts to `List` equality after mapping by
+/-- `List.Forall₂ PermEquiv` lifts to `List` equality after mapping by
     `Nonplanar.mk` — used for the `Ts = []` base case of forest host
     invariance. -/
-private theorem map_mk_eq_of_forall2_planarEquiv {F F' : List (Planar α)}
-    (h : List.Forall₂ PlanarEquiv F F') :
+private theorem map_mk_eq_of_forall2_permEquiv {F F' : List (Tree α)}
+    (h : List.Forall₂ PermEquiv F F') :
     F.map Nonplanar.mk = F'.map Nonplanar.mk := by
   induction h with
   | nil => rfl
   | cons hd_pe _ ih => simp [Nonplanar.mk_eq_mk_iff.mpr hd_pe, ih]
 
-/-- Forest host invariance: `Forall₂ PlanarEquiv F F'` lifts to
+/-- Forest host invariance: `Forall₂ PermEquiv F F'` lifts to
     `mk`-equality of `insertionForest F Ts` and `insertionForest F' Ts`. -/
-theorem insertionForest_planarEquiv_host
-    (Ts : List (Planar α)) {F F' : List (Planar α)}
-    (h : List.Forall₂ PlanarEquiv F F') :
+theorem insertionForest_permEquiv_host
+    (Ts : List (Tree α)) {F F' : List (Tree α)}
+    (h : List.Forall₂ PermEquiv F F') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
       (insertionForest F' Ts).map (List.map Nonplanar.mk) := by
   induction h generalizing Ts with
@@ -1212,7 +1205,7 @@ theorem insertionForest_planarEquiv_host
     | nil =>
       simp [insertionForest_cons_host_nil_guests, Multiset.map_singleton,
             List.map_cons, Nonplanar.mk_eq_mk_iff.mpr hd_pe,
-            map_mk_eq_of_forall2_planarEquiv tail_pe]
+            map_mk_eq_of_forall2_permEquiv tail_pe]
     | cons T_g Ts_inner =>
       rw [insertionForest_cons_cons, insertionForest_cons_cons]
       rw [Multiset.map_bind, Multiset.map_bind]
@@ -1232,11 +1225,11 @@ theorem insertionForest_planarEquiv_host
       change (insertion T _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
              (insertion T' _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
       rw [← Multiset.bind_map, ← Multiset.bind_map]
-      rw [insertion_planarEquiv_host _ hd_pe]
+      rw [insertion_permEquiv_host _ hd_pe]
       refine Multiset.bind_congr fun mk_T_ins _ => ?_
       show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk) =
            (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-      rw [show (fun F_ins : List (Planar α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
+      rw [show (fun F_ins : List (Tree α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
               ((fun L : List (Nonplanar α) => mk_T_ins :: L) ∘ List.map Nonplanar.mk) from rfl]
       rw [← Multiset.map_map, ← Multiset.map_map]
       rw [ih]
@@ -1253,9 +1246,9 @@ induction on the Perm structure (the swap case becomes a clean
 /-- Aggregator: at the leaf (no remaining guests), produce the inner
     forest insertion using `pre_T` for `T` and `pre_F` for the tail.
     At a cons, bind over `[true, false]` and extend either bucket. -/
-private def forestPairSum (F : List (Planar α)) :
-    List (Planar α) → List (Planar α) → List (Planar α) →
-      Multiset (List (Planar α))
+private def forestPairSum (F : List (Tree α)) :
+    List (Tree α) → List (Tree α) → List (Tree α) →
+      Multiset (List (Tree α))
   | pre_T, pre_F, []       =>
       match F with
       | []          =>
@@ -1272,7 +1265,7 @@ private def forestPairSum (F : List (Planar α)) :
 
 /-- Equation lemma: `forestPairSum F pre_T pre_F []` for `F = T :: F_tail`. -/
 private theorem forestPairSum_cons_F_nil_remaining
-    (T : Planar α) (F_tail pre_T pre_F : List (Planar α)) :
+    (T : Tree α) (F_tail pre_T pre_F : List (Tree α)) :
     forestPairSum (T :: F_tail) pre_T pre_F [] =
       (insertion T pre_T).bind fun T' =>
         (insertionForest F_tail pre_F).map fun F' => T' :: F' := by
@@ -1280,7 +1273,7 @@ private theorem forestPairSum_cons_F_nil_remaining
 
 /-- Equation lemma: `forestPairSum F pre_T pre_F (x :: rest)`. -/
 private theorem forestPairSum_cons_remaining
-    (F pre_T pre_F : List (Planar α)) (x : Planar α) (rest : List (Planar α)) :
+    (F pre_T pre_F : List (Tree α)) (x : Tree α) (rest : List (Tree α)) :
     forestPairSum F pre_T pre_F (x :: rest) =
       (Multiset.ofList [true, false]).bind fun b =>
         if b then forestPairSum F (pre_T ++ [x]) pre_F rest
@@ -1291,8 +1284,8 @@ private theorem forestPairSum_cons_remaining
     `forestPairSum` on the empty remaining list with the accumulators
     augmented by the partition of `Ts.zip α`. This rephrases the
     recursive accumulator-build as a single bind over `listChoices`. -/
-private theorem forestPairSum_assignment_rewrite (F : List (Planar α)) :
-    ∀ (pre_T pre_F : List (Planar α)) (Ts : List (Planar α)),
+private theorem forestPairSum_assignment_rewrite (F : List (Tree α)) :
+    ∀ (pre_T pre_F : List (Tree α)) (Ts : List (Tree α)),
     forestPairSum F pre_T pre_F Ts =
       (Multiset.ofList (listChoices [true, false] Ts.length)).bind fun α =>
         forestPairSum F
@@ -1343,28 +1336,28 @@ private theorem forestPairSum_assignment_rewrite (F : List (Planar α)) :
 
 /-- `forestPairSum [] [] [] [] = {[]}`. -/
 private theorem forestPairSum_nil_F_nil_pre_nil_Ts :
-    forestPairSum ([] : List (Planar α)) [] [] [] =
-      ({[]} : Multiset (List (Planar α))) := by
+    forestPairSum ([] : List (Tree α)) [] [] [] =
+      ({[]} : Multiset (List (Tree α))) := by
   unfold forestPairSum; rfl
 
 /-- `forestPairSum []` with a non-empty `pre_T` is `0`. -/
 private theorem forestPairSum_nil_F_zero_of_pre_T_cons
-    (a : Planar α) (pre_T pre_F : List (Planar α)) :
-    forestPairSum ([] : List (Planar α)) (a :: pre_T) pre_F [] = 0 := by
+    (a : Tree α) (pre_T pre_F : List (Tree α)) :
+    forestPairSum ([] : List (Tree α)) (a :: pre_T) pre_F [] = 0 := by
   unfold forestPairSum; rfl
 
 /-- `forestPairSum []` with empty `pre_T` but non-empty `pre_F` is `0`. -/
 private theorem forestPairSum_nil_F_zero_of_pre_F_cons
-    (a : Planar α) (pre_F : List (Planar α)) :
-    forestPairSum ([] : List (Planar α)) [] (a :: pre_F) [] = 0 := by
+    (a : Tree α) (pre_F : List (Tree α)) :
+    forestPairSum ([] : List (Tree α)) [] (a :: pre_F) [] = 0 := by
   unfold forestPairSum; rfl
 
 /-- For the empty host `F = []`, if either accumulator is non-empty,
     `forestPairSum [] pre_T pre_F Ts = 0` regardless of `Ts`. -/
 private theorem forestPairSum_nil_F_eq_zero
-    (pre_T pre_F : List (Planar α)) (Ts : List (Planar α))
+    (pre_T pre_F : List (Tree α)) (Ts : List (Tree α))
     (h : pre_T ≠ [] ∨ pre_F ≠ []) :
-    forestPairSum ([] : List (Planar α)) pre_T pre_F Ts = 0 := by
+    forestPairSum ([] : List (Tree α)) pre_T pre_F Ts = 0 := by
   induction Ts generalizing pre_T pre_F with
   | nil =>
     rcases h with h | h
@@ -1394,8 +1387,8 @@ private theorem forestPairSum_nil_F_eq_zero
       cases pre_T <;> simp at h_eq
 
 /-- Bridge: `forestPairSum F [] [] Ts = insertionForest F Ts`. -/
-private theorem forestPairSum_eq_insertionForest (F : List (Planar α))
-    (Ts : List (Planar α)) :
+private theorem forestPairSum_eq_insertionForest (F : List (Tree α))
+    (Ts : List (Tree α)) :
     forestPairSum F [] [] Ts = insertionForest F Ts := by
   cases F with
   | nil =>
@@ -1417,7 +1410,7 @@ private theorem forestPairSum_eq_insertionForest (F : List (Planar α))
     | nil =>
       rw [forestPairSum_cons_F_nil_remaining, insertionForest_cons_host_nil_guests,
           insertionForest_nil_guests]
-      have h_ins_T : insertion T [] = ({T} : Multiset (Planar α)) := by
+      have h_ins_T : insertion T [] = ({T} : Multiset (Tree α)) := by
         rw [insertion_def]
         simp [listChoices_zero, multiGraft_nil]
       rw [h_ins_T, Multiset.singleton_bind, Multiset.map_singleton]
@@ -1431,13 +1424,13 @@ private theorem forestPairSum_eq_insertionForest (F : List (Planar α))
     Takes `ih_F` (forest-Perm invariance on `F_tail`) as an explicit
     argument to cut circularity with the outer induction on `F`. -/
 private theorem forestPairSum_pre_perm_mk
-    (T : Planar α) (F_tail : List (Planar α))
-    (ih_F : ∀ {Ts Ts' : List (Planar α)} (_ : Ts.Perm Ts'),
+    (T : Tree α) (F_tail : List (Tree α))
+    (ih_F : ∀ {Ts Ts' : List (Tree α)} (_ : Ts.Perm Ts'),
             (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
             (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
-    {pre_T pre_T' pre_F pre_F' : List (Planar α)}
+    {pre_T pre_T' pre_F pre_F' : List (Tree α)}
     (hT : pre_T.Perm pre_T') (hF : pre_F.Perm pre_F')
-    (Ts : List (Planar α)) :
+    (Ts : List (Tree α)) :
     (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map Nonplanar.mk) =
     (forestPairSum (T :: F_tail) pre_T' pre_F' Ts).map (List.map Nonplanar.mk) := by
   induction Ts generalizing pre_T pre_T' pre_F pre_F' with
@@ -1449,18 +1442,18 @@ private theorem forestPairSum_pre_perm_mk
     -- = (insertion T pre_T).bind fun T' =>
     --     (insertionForest F_tail pre_F).map (fun F' => mk T' :: F'.map mk)
     -- Refactor: factor mk T' out, then use insertion_perm_guests + ih_F
-    rw [show (fun T' : Planar α =>
+    rw [show (fun T' : Tree α =>
               ((insertionForest F_tail pre_F).map fun F' => T' :: F').map (List.map Nonplanar.mk)) =
-            (fun T' : Planar α =>
+            (fun T' : Tree α =>
               ((insertionForest F_tail pre_F).map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L))
             from by
           funext T'
           rw [Multiset.map_map, Multiset.map_map]
           rfl]
-    rw [show (fun T' : Planar α =>
+    rw [show (fun T' : Tree α =>
               ((insertionForest F_tail pre_F').map fun F' => T' :: F').map (List.map Nonplanar.mk)) =
-            (fun T' : Planar α =>
+            (fun T' : Tree α =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L))
             from by
@@ -1473,14 +1466,14 @@ private theorem forestPairSum_pre_perm_mk
     -- (insertion T pre_T).bind (fun T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk T' :: L))
     -- = ((insertion T pre_T).map mk).bind (fun mk_T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk_T' :: L))
     -- via Multiset.bind_map reversed
-    rw [show (insertion T pre_T).bind (fun T' : Planar α =>
+    rw [show (insertion T pre_T).bind (fun T' : Tree α =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L)) =
             ((insertion T pre_T).map Nonplanar.mk).bind (fun mk_T' =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => mk_T' :: L))
             from by rw [Multiset.bind_map]]
-    rw [show (insertion T pre_T').bind (fun T' : Planar α =>
+    rw [show (insertion T pre_T').bind (fun T' : Tree α =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L)) =
             ((insertion T pre_T').map Nonplanar.mk).bind (fun mk_T' =>
@@ -1501,8 +1494,8 @@ private theorem forestPairSum_pre_perm_mk
 
 /-- Two-step unfolding: `forestPairSum F pre_T pre_F (x :: y :: rest)`
     as a nested bind over `[true, false] × [true, false]`. -/
-private theorem forestPairSum_cons_cons_unfold (F : List (Planar α))
-    (pre_T pre_F : List (Planar α)) (x y : Planar α) (rest : List (Planar α)) :
+private theorem forestPairSum_cons_cons_unfold (F : List (Tree α))
+    (pre_T pre_F : List (Tree α)) (x y : Tree α) (rest : List (Tree α)) :
     forestPairSum F pre_T pre_F (x :: y :: rest) =
       (Multiset.ofList [true, false]).bind fun b_x =>
         (Multiset.ofList [true, false]).bind fun b_y =>
@@ -1528,11 +1521,11 @@ private theorem forestPairSum_cons_cons_unfold (F : List (Planar α))
 
 /-- Adjacent swap of remaining guests preserves `forestPairSum` (mk-mapped). -/
 private theorem forestPairSum_swap_mk
-    (T : Planar α) (F_tail : List (Planar α))
-    (ih_F : ∀ {Ts Ts' : List (Planar α)} (_ : Ts.Perm Ts'),
+    (T : Tree α) (F_tail : List (Tree α))
+    (ih_F : ∀ {Ts Ts' : List (Tree α)} (_ : Ts.Perm Ts'),
             (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
             (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
-    (pre_T pre_F : List (Planar α)) (a b : Planar α) (rest : List (Planar α)) :
+    (pre_T pre_F : List (Tree α)) (a b : Tree α) (rest : List (Tree α)) :
     (forestPairSum (T :: F_tail) pre_T pre_F (a :: b :: rest)).map (List.map Nonplanar.mk) =
     (forestPairSum (T :: F_tail) pre_T pre_F (b :: a :: rest)).map (List.map Nonplanar.mk) := by
   rw [forestPairSum_cons_cons_unfold, forestPairSum_cons_cons_unfold]
@@ -1583,12 +1576,12 @@ private theorem forestPairSum_swap_mk
 
 /-- `List.Perm` of remaining guests preserves `forestPairSum` (mk-mapped). -/
 private theorem forestPairSum_perm_remaining_mk
-    (T : Planar α) (F_tail : List (Planar α))
-    (ih_F : ∀ {Ts Ts' : List (Planar α)} (_ : Ts.Perm Ts'),
+    (T : Tree α) (F_tail : List (Tree α))
+    (ih_F : ∀ {Ts Ts' : List (Tree α)} (_ : Ts.Perm Ts'),
             (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
             (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
-    (pre_T pre_F : List (Planar α))
-    {Ts Ts' : List (Planar α)} (h : Ts.Perm Ts') :
+    (pre_T pre_F : List (Tree α))
+    {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
     (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map Nonplanar.mk) =
     (forestPairSum (T :: F_tail) pre_T pre_F Ts').map (List.map Nonplanar.mk) := by
   induction h generalizing pre_T pre_F with
@@ -1609,7 +1602,7 @@ private theorem forestPairSum_perm_remaining_mk
 /-- Forest guest invariance: `List.Perm` of guests lifts to
     `mk`-equality of `insertionForest`. -/
 theorem insertionForest_perm_guests
-    (F : List (Planar α)) {Ts Ts' : List (Planar α)} (h : Ts.Perm Ts') :
+    (F : List (Tree α)) {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
       (insertionForest F Ts').map (List.map Nonplanar.mk) := by
   induction F generalizing Ts Ts' with
@@ -1646,8 +1639,8 @@ with each output wrapped in a singleton list. Used downstream to handle
 
 /-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
     the identity. -/
-theorem insertion_nil_guests (T : Planar α) :
-    insertion T ([] : List (Planar α)) = ({T} : Multiset (Planar α)) := by
+theorem insertion_nil_guests (T : Tree α) :
+    insertion T ([] : List (Tree α)) = ({T} : Multiset (Tree α)) := by
   rw [insertion_def]
   simp only [List.length_nil, listChoices_zero, List.zip_nil_right,
              multiGraft_nil, List.map_cons, List.map_nil,
@@ -1656,8 +1649,8 @@ theorem insertion_nil_guests (T : Planar α) :
 /-- `forestPairSum [T] pre (a :: pre_F_rest) gs = 0`. With a non-empty `pre_F`
     accumulator, the inner `insertionForest [] (a :: pre_F_rest ++ ...)` is 0,
     and the recursion preserves the non-empty invariant. -/
-private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Planar α) (a : Planar α) :
-    ∀ (pre pre_F_rest gs : List (Planar α)),
+private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Tree α) (a : Tree α) :
+    ∀ (pre pre_F_rest gs : List (Tree α)),
     forestPairSum [T] pre (a :: pre_F_rest) gs = 0 := by
   intro pre pre_F_rest gs
   induction gs generalizing pre pre_F_rest with
@@ -1665,9 +1658,9 @@ private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Planar α) (a :
     rw [forestPairSum_cons_F_nil_remaining]
     rw [insertionForest_empty_host_nonempty_guests]
     -- Goal: (insertion T pre).bind (fun T' => (0 : Multiset _).map (fun F' => T' :: F')) = 0
-    rw [show (fun T' : Planar α =>
-              ((0 : Multiset (List (Planar α))).map (fun F' => T' :: F'))) =
-            (fun (_ : Planar α) => (0 : Multiset (List (Planar α)))) from by
+    rw [show (fun T' : Tree α =>
+              ((0 : Multiset (List (Tree α))).map (fun F' => T' :: F'))) =
+            (fun (_ : Tree α) => (0 : Multiset (List (Tree α)))) from by
           funext T'
           rw [Multiset.map_zero]]
     exact Multiset.bind_zero _
@@ -1685,8 +1678,8 @@ private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Planar α) (a :
     The single-host `[T]` only allows one bucket assignment (all guests to T);
     the empty `pre_F` accumulator stays empty. Helper for `insertionForest_singleton`.
 -/
-private theorem forestPairSum_singleton_host_no_pre_F (T : Planar α) :
-    ∀ (pre gs : List (Planar α)),
+private theorem forestPairSum_singleton_host_no_pre_F (T : Tree α) :
+    ∀ (pre gs : List (Tree α)),
     forestPairSum [T] pre [] gs = (insertion T (pre ++ gs)).map (fun T' => [T']) := by
   intro pre gs
   induction gs generalizing pre with
@@ -1694,9 +1687,9 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : Planar α) :
     rw [forestPairSum_cons_F_nil_remaining, insertionForest_nil_nil, List.append_nil]
     -- Goal: (insertion T pre).bind (fun T' => ({[]}).map (fun F' => T' :: F')) =
     --       (insertion T pre).map (fun T' => [T'])
-    rw [show (fun T' : Planar α =>
-              ({([] : List (Planar α))} : Multiset (List (Planar α))).map (fun F' => T' :: F')) =
-            (fun T' : Planar α => ({[T']} : Multiset (List (Planar α)))) from by
+    rw [show (fun T' : Tree α =>
+              ({([] : List (Tree α))} : Multiset (List (Tree α))).map (fun F' => T' :: F')) =
+            (fun T' : Tree α => ({[T']} : Multiset (List (Tree α)))) from by
           funext T'
           rw [Multiset.map_singleton]]
     exact Multiset.bind_singleton (s := insertion T pre) (fun T' => [T'])
@@ -1706,7 +1699,7 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : Planar α) :
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
     rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
     rw [ih (pre ++ [g])]
-    rw [show ([] : List (Planar α)) ++ [g] = [g] from rfl]
+    rw [show ([] : List (Tree α)) ++ [g] = [g] from rfl]
     rw [forestPairSum_singleton_host_pre_F_nonempty T g pre [] rest]
     rw [add_zero]
     -- (pre ++ [g]) ++ rest = pre ++ (g :: rest)
@@ -1718,7 +1711,7 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : Planar α) :
     lift. This lets us match `hostTripleSum T [T_other] F` patterns by
     converting `(insertionForest [T_other] pre).bind` to `(insertion T_other pre).bind`
     (via `Multiset.bind_map`). -/
-theorem insertionForest_singleton (T : Planar α) (gs : List (Planar α)) :
+theorem insertionForest_singleton (T : Tree α) (gs : List (Tree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
   rw [show insertionForest [T] gs = forestPairSum [T] [] [] gs from
         (forestPairSum_eq_insertionForest _ _).symm]
@@ -1726,6 +1719,4 @@ theorem insertionForest_singleton (T : Planar α) (gs : List (Planar α)) :
 
 end Pathed
 
-end Planar
-
-end RootedTree
+end Tree
