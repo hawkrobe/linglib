@@ -1,6 +1,8 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Discourse.CommonGround
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Gradability.Delineation
 
 /-!
 # [rudolph-kocurek-2024]: Metalinguistic Gradability
@@ -22,13 +24,23 @@ some (A∧¬B)-interpretation ranked ≤ i dominates every (B∧¬A)-interpretat
 1. **Framework** — `SemanticOrdering`, `MFormula`, the basic (`eval`) and revised
    (`evalRevised`) semantics, assertoric content with its two entailment notions
    (truth- vs acceptance-preservation), distance functions and degree modifiers
-   (*very much*, *sorta*, *mostly*), metalinguistic conditionals, No Reversal,
-   and the common-ground wiring (`MetalinguisticCG`).
+   (*very much*, *sorta*, *mostly*), metalinguistic conditionals, and No
+   Reversal — whose bridge to [klein-1980] is stated on the substrate's
+   `Delineation.comparativeSem` (`eval_mc_iff_delineation_of_noReversal`).
+   The common ground (`MetalinguisticCG`) is the substrate's `ContextSet` at
+   the enriched ordering-world index: assertion is `ContextSet.update`, the
+   Stalnaker laws are inherited, and the classical projection is a monotone
+   `Set.image`.
 2. **Degree theory** ([kocurek-2024-supplement] §C) — the matching relation ∼ on
    interpretation sets and the ordering ⊐: Facts 8 and 11–13 (∼ is an equivalence,
    ⊐ transitive and total off ∼, extremal degrees), packaged as a mathlib `Setoid`
-   with `MetaDegree` as its `Quotient`; Facts 9–10 (`me_iff_same_degree`,
-   `mc_iff_degree_gt`) connect the degree structure back to `evalRevised`.
+   with `MetaDegree` as its `Quotient`, carrying `LinearOrder` and
+   `BoundedOrder` instances; Facts 9–10 (`me_iff_same_degree`,
+   `mc_iff_degree_gt`) connect the degree structure back to `evalRevised`,
+   and `mc_iff_comparativeSem` cashes out the paper's degree-theoretic claim:
+   the revised MC is the degree substrate's `Degree.comparativeSem` over the
+   metalinguistic measure `formulaDeg` — metagradability instantiates the
+   substrate's central object `μ : E → D`.
 3. **Finite models** — four small models verifying the paper's predictions:
    the §4.4 entailment patterns (supplement Fact 3), borderline equatives and
    nonclassical acceptance-preservation (paralleling informational entailment
@@ -363,6 +375,12 @@ def noReversal {I W Pred Entity : Type*}
     (interpFn i').ext P w e2 = true →
     (interpFn i').ext P w e1 = true
 
+instance {I W Pred Entity : Type*} [Fintype I]
+    (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I)
+    (P : Pred) (w : W) (e1 e2 : Entity) :
+    Decidable (noReversal interpFn ord P w e1 e2) := by
+  unfold noReversal; infer_instance
+
 /-! ### Revised Semantics ([kocurek-2024-supplement] §B) -/
 
 /-- Evaluate a formula under the revised MC semantics ([kocurek-2024-supplement] §B).
@@ -485,29 +503,63 @@ structure OrderingWorldPair (I W : Type*) where
   ord : SemanticOrdering I
   world : W
 
-/-- The metalinguistic common ground: a set of ordering-world pairs.
-
-Generalizes Stalnaker's context set (= set of worlds) to include
-interpretive commitments. Projects to a classical context set via
-existential quantification over orderings. -/
-abbrev MetalinguisticCG (I W : Type*) := OrderingWorldPair I W → Prop
+/-- The metalinguistic common ground IS the substrate's `ContextSet`, taken at
+the enriched index type: the Stalnaker generalization is "same object, richer
+worlds", so `ContextSet.update` and its laws apply unchanged. -/
+abbrev MetalinguisticCG (I W : Type*) := ContextSet (OrderingWorldPair I W)
 
 namespace MetalinguisticCG
 
 variable {I W : Type*}
 
-/-- Project to a classical context set by existentially quantifying
-over semantic orderings. A world w is in the context set iff some
-ordering paired with w is in the metalinguistic CommonGround. -/
+/-- Project to a classical context set: forget the ordering coordinate
+(`Set.image` of the world projection). A world survives iff some ordering
+paired with it does. -/
 def toContextSet (cg : MetalinguisticCG I W) : ContextSet W :=
-  λ w => ∃ ord, cg ⟨ord, w⟩
+  OrderingWorldPair.world '' cg
 
-/-- Update with assertoric content: keep pairs where |A| holds. -/
-def updateAssertoric {Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (cg : MetalinguisticCG I W) (φ : MFormula Pred Entity) :
+variable {Pred Entity : Type*} [Fintype I]
+  (interpFn : I → Interpretation W Pred Entity)
+
+/-- The proposition a formula expresses over the enriched index: the
+ordering-world pairs at which its assertoric content holds. -/
+def assertoricProp (φ : MFormula Pred Entity) : Set (OrderingWorldPair I W) :=
+  {pair | assertoricContent interpFn φ pair.ord pair.world = true}
+
+/-- Assertion is the substrate's `ContextSet.update` with the assertoric
+proposition — not a new operation. -/
+def updateAssertoric (cg : MetalinguisticCG I W) (φ : MFormula Pred Entity) :
     MetalinguisticCG I W :=
-  λ pair => cg pair ∧ assertoricContent interpFn φ pair.ord pair.world = true
+  ContextSet.update cg (assertoricProp interpFn φ)
+
+/-- Stalnaker's law at the enriched type: assertion restricts the common
+ground (inherited from `ContextSet.update_restricts`). -/
+theorem updateAssertoric_restricts (cg : MetalinguisticCG I W)
+    (φ : MFormula Pred Entity) : updateAssertoric interpFn cg φ ⊆ cg :=
+  ContextSet.update_restricts _ _
+
+/-- Assertion order is irrelevant (inherited from `ContextSet.update_comm`). -/
+theorem updateAssertoric_comm (cg : MetalinguisticCG I W)
+    (φ ψ : MFormula Pred Entity) :
+    updateAssertoric interpFn (updateAssertoric interpFn cg φ) ψ =
+      updateAssertoric interpFn (updateAssertoric interpFn cg ψ) φ :=
+  ContextSet.update_comm _ _ _
+
+/-- Reassertion is idempotent (inherited from `ContextSet.update_idem`). -/
+theorem updateAssertoric_idem (cg : MetalinguisticCG I W)
+    (φ : MFormula Pred Entity) :
+    updateAssertoric interpFn (updateAssertoric interpFn cg φ) φ =
+      updateAssertoric interpFn cg φ :=
+  ContextSet.update_idem _ _
+
+/-- The projection is monotone, so assertion restricts the projected classical
+context set too: the enriched update is Stalnaker-conservative. (That the
+update does NOT factor through the projection — interpretive commitments do
+real work — is the paper's expressivist thesis.) -/
+theorem toContextSet_updateAssertoric_subset (cg : MetalinguisticCG I W)
+    (φ : MFormula Pred Entity) :
+    toContextSet (updateAssertoric interpFn cg φ) ⊆ toContextSet cg :=
+  Set.image_mono (updateAssertoric_restricts interpFn cg φ)
 
 end MetalinguisticCG
 
@@ -535,6 +587,42 @@ private theorem bGuard (a b c : Bool) :
 private theorem bGuardNeg (a d c : Bool) :
     (!(a && !d)) = true ∨ c = true ↔ (a = true → d = false → c = true) := by
   cases a <;> cases d <;> cases c <;> simp
+
+private theorem bGuard3 (a b d c : Bool) :
+    (!(a && b && !d)) = true ∨ c = true ↔
+      (a = true → b = true → d = false → c = true) := by
+  cases a <;> cases b <;> cases d <;> cases c <;> simp
+
+/-- Prop-level characterization of the basic MC (`eval` on `.mc A B`). -/
+theorem eval_mc_iff {I W Pred Entity : Type*} [Fintype I]
+    (interpFn : I → Interpretation W Pred Entity)
+    (A B : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (i : I) (w : W) :
+    eval interpFn (.mc A B) ord i w = true ↔
+    ∃ i' : I,
+      ord.le i' i ∧
+      eval interpFn A ord i' w = true ∧
+      eval interpFn B ord i' w = false ∧
+      ∀ i'' : I, ord.le i'' i → eval interpFn B ord i'' w = true →
+        eval interpFn A ord i'' w = false → ord.lt i'' i' := by
+  show (bAny I fun i' => ord.leB i' i && eval interpFn A ord i' w &&
+       !(eval interpFn B ord i' w) &&
+       bAll I (fun i'' => !(ord.leB i'' i && eval interpFn B ord i'' w &&
+          !(eval interpFn A ord i'' w)) || ord.ltB i'' i')) = true ↔ _
+  simp only [bAny, bAll, decide_eq_true_eq, Bool.and_eq_true, Bool.or_eq_true]
+  constructor
+  · rintro ⟨i', ⟨⟨h_le, h_A⟩, h_nB⟩, h_dom⟩
+    have h_B : eval interpFn B ord i' w = false := by
+      revert h_nB; cases eval interpFn B ord i' w <;> simp
+    refine ⟨i', (leB_iff ord i' i).mp h_le, h_A, h_B, fun i'' h'' hB'' hA'' => ?_⟩
+    have := h_dom i''
+    rw [bGuard3] at this
+    exact (ltB_iff ord i'' i').mp (this ((leB_iff ord i'' i).mpr h'') hB'' hA'')
+  · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
+    refine ⟨i', ⟨⟨(leB_iff ord i' i).mpr h_le, h_A⟩, by simp [h_B]⟩, fun i'' => ?_⟩
+    rw [bGuard3]
+    intro h'' hB'' hA''
+    exact (ltB_iff ord i'' i').mpr (h_dom i'' ((leB_iff ord i'' i).mp h'') hB'' hA'')
 
 /-- Prop-level characterization of revised MC (`evalRevised` on `.mc A B`).
 Converts Boolean `bAny`/`bAll` wrappers to standard Prop quantifiers. -/
@@ -581,6 +669,68 @@ theorem evalRevised_mc_iff {I W Pred Entity : Type*} [Fintype I]
     · exact Or.inr fun i'' => by
         rw [bGuardNeg]; intro h_le'' h_A''
         exact (ltB_iff ord i'' i').mpr (h2 i'' ((leB_iff ord i'' i).mp h_le'') h_A'')
+
+/-! ### The No Reversal bridge to delineation ([klein-1980]) -/
+
+/-- The delineation induced by a ranked family of interpretations: a comparison
+class is admissible iff it is the extension of `P` at some interpretation
+ranked at or below `i`, and `x` is "P-in-C" iff `x ∈ C`. Instantiates
+[klein-1980]'s comparison-class parameter with the paper's interpretation
+rankings, so the substrate's `Delineation.comparativeSem` can consume it. -/
+def interpretationDelineation {I W Pred Entity : Type*}
+    (interpFn : I → Interpretation W Pred Entity)
+    (ord : SemanticOrdering I) (P : Pred) (w : W) (i : I) :
+    Semantics.Gradability.Delineation.ComparisonClass Entity → Entity → Prop :=
+  fun C x =>
+    (∃ i', ord.le i' i ∧ C = {y | (interpFn i').ext P w y = true}) ∧ x ∈ C
+
+/-- Unfolding lemma: the delineation comparative over the interpretation-induced
+delineation is the ∃-witness clause of the MC — the decidable form used on
+finite models. -/
+theorem delineation_comparativeSem_iff {I W Pred Entity : Type*}
+    (interpFn : I → Interpretation W Pred Entity)
+    (ord : SemanticOrdering I) (P : Pred) (w : W) (i : I) (a b : Entity) :
+    Semantics.Gradability.Delineation.comparativeSem
+      (interpretationDelineation interpFn ord P w i) a b ↔
+    ∃ i', ord.le i' i ∧ (interpFn i').ext P w a = true ∧
+      (interpFn i').ext P w b = false := by
+  constructor
+  · rintro ⟨C, ⟨⟨i', h_le, rfl⟩, h_aC⟩, h_nb⟩
+    refine ⟨i', h_le, h_aC, ?_⟩
+    cases hb : (interpFn i').ext P w b
+    · rfl
+    · exact absurd ⟨⟨i', h_le, rfl⟩, hb⟩ h_nb
+  · rintro ⟨i', h_le, h_a, h_b⟩
+    refine ⟨{y | (interpFn i').ext P w y = true}, ⟨⟨i', h_le, rfl⟩, h_a⟩, ?_⟩
+    rintro ⟨-, h_bC⟩
+    simp only [Set.mem_setOf_eq, h_b] at h_bC
+    exact Bool.noConfusion h_bC
+
+/-- **The §7 bridge, in the substrate's vocabulary**: under No Reversal, the
+metalinguistic comparative for a gradable predicate IS [klein-1980]'s
+delineation comparative (`Delineation.comparativeSem`) over the
+interpretation-induced delineation — the paper's eq. (128): NR makes the
+domination clause of the MC semantics redundant. NR plays the role of Klein's
+monotone-delineation constraint, restricted to ranked interpretations. -/
+theorem eval_mc_iff_delineation_of_noReversal {I W Pred Entity : Type*} [Fintype I]
+    (interpFn : I → Interpretation W Pred Entity)
+    (ord : SemanticOrdering I) (P : Pred) (w : W) (i : I) (a b : Entity)
+    (hnr : noReversal interpFn ord P w b a) :
+    eval interpFn (.mc (.atom P a) (.atom P b)) ord i w = true ↔
+    Semantics.Gradability.Delineation.comparativeSem
+      (interpretationDelineation interpFn ord P w i) a b := by
+  rw [eval_mc_iff, delineation_comparativeSem_iff]
+  constructor
+  · rintro ⟨i', h_le, h_A, h_B, -⟩
+    exact ⟨i', h_le, h_A, h_B⟩
+  · rintro ⟨i', h_le, h_a, h_b⟩
+    refine ⟨i', h_le, h_a, h_b, fun i'' h'' hB'' hA'' => ?_⟩
+    have h_not : ¬ ord.le i' i'' := fun hle' => by
+      have := hnr i'' i' hle' hB'' hA'' h_a
+      simp [h_b] at this
+    rcases ord.le_total i'' i' with h1 | h2
+    · exact ⟨h1, h_not⟩
+    · exact absurd h2 h_not
 
 /-! ### Field and Denotation Sets -/
 
@@ -1341,30 +1491,130 @@ theorem me_iff_same_degree {I W Pred Entity : Type*}
     cases heq1 : evalRevised interpFn (.mc A B) ord i w <;>
     cases heq2 : evalRevised interpFn (.mc B A) ord i w <;> simp_all
 
-/-! ### Fact 13: Extremal Degrees -/
+/-! ### The metalinguistic degree scale
 
-/-- Fact 13a: the full field I_i is the maximum degree.
-deg(⊤) = {I_i}: the tautology's denotation is the whole field,
-and nothing is strictly better than I_i. -/
-theorem field_is_max {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X : Finset I)
-    (hX : X ⊆ field ord i) :
-    ¬ strictlyBetter ord i X (field ord i) ∨
-    degreeEquiv ord i X (field ord i) := by
-  left
-  rintro ⟨i', hi', _⟩
+Facts 11–13 make `MetaDegree` a bounded linear order — i.e., a *scale* in the
+degree substrate's sense. The instances below package that, and
+`mc_iff_comparativeSem` cashes it out: the revised MC is the degree
+substrate's binary comparative over the measure function `formulaDeg`. -/
+
+section Scale
+
+variable {I : Type*} [Fintype I] [DecidableEq I] (ord : SemanticOrdering I) (i : I)
+
+instance (X Y : Finset I) : Decidable (equivCond1 ord X Y) := by
+  unfold equivCond1; infer_instance
+
+instance (X Y : Finset I) : Decidable (equivCond2 ord i X Y) := by
+  unfold equivCond2; infer_instance
+
+instance (X Y : Finset I) : Decidable (degreeEquiv ord i X Y) := by
+  unfold degreeEquiv; infer_instance
+
+instance (X Y : Finset I) : Decidable (strictlyBetter ord i X Y) := by
+  unfold strictlyBetter; infer_instance
+
+/-- Fact 13a: nothing is strictly better than the full field `I_i`
+(packaged as `OrderTop` below). -/
+theorem not_strictlyBetter_field (X : Finset I) (hX : X ⊆ field ord i) :
+    ¬ strictlyBetter ord i X (field ord i) := by
+  rintro ⟨i', hi', -⟩
   exact (Finset.mem_sdiff.mp hi').2 (hX (Finset.mem_sdiff.mp hi').1)
 
-/-- Fact 13b: the empty set is the minimum degree.
-deg(⊥) = {∅}: the contradiction's denotation is empty,
-and nothing is strictly worse than ∅. -/
-theorem empty_is_min {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X : Finset I) :
-    ¬ strictlyBetter ord i (∅ : Finset I) X ∨
-    degreeEquiv ord i X ∅ := by
-  left
-  rintro ⟨i', hi', _⟩
+/-- Fact 13b: the empty set is strictly better than nothing
+(packaged as `OrderBot` below). -/
+theorem not_strictlyBetter_empty (X : Finset I) :
+    ¬ strictlyBetter ord i (∅ : Finset I) X := by
+  rintro ⟨i', hi', -⟩
   simp at hi'
+
+/-- Fact 11 packaged as a congruence: ⊐ is invariant under ∼ on both sides. -/
+theorem strictlyBetter_congr {X X' Y Y' : Finset I}
+    (hXf : X ⊆ field ord i) (hX'f : X' ⊆ field ord i)
+    (hYf : Y ⊆ field ord i) (hY'f : Y' ⊆ field ord i)
+    (hX : degreeEquiv ord i X X') (hY : degreeEquiv ord i Y Y') :
+    strictlyBetter ord i X Y ↔ strictlyBetter ord i X' Y' :=
+  ⟨fun h => strictlyBetter_respects_right ord i X' Y Y' hX'f hYf hY'f
+      (strictlyBetter_respects_left ord i X Y X' hXf hYf hX'f h hX) hY,
+   fun h => strictlyBetter_respects_right ord i X Y' Y hXf hY'f hYf
+      (strictlyBetter_respects_left ord i X' Y' X hX'f hY'f hXf h
+        (degreeEquiv_symm ord i X X' hX)) (degreeEquiv_symm ord i Y Y' hY)⟩
+
+instance : DecidableEq (MetaDegree I ord i) := fun d₁ d₂ =>
+  Quotient.recOnSubsingleton₂ d₁ d₂ fun X Y =>
+    decidable_of_iff (degreeEquiv ord i X.1 Y.1)
+      ⟨fun h => Quotient.sound h, fun h => Quotient.exact h⟩
+
+/-- The scale order: `deg X ≤ deg Y` iff X is not strictly better than Y
+(well-defined on ∼-classes by `strictlyBetter_congr`). -/
+protected def MetaDegree.le (d₁ d₂ : MetaDegree I ord i) : Prop :=
+  Quotient.lift₂ (fun X Y => ¬ strictlyBetter ord i X.1 Y.1)
+    (fun a₁ b₁ a₂ b₂ h₁ h₂ => propext (not_congr
+      (strictlyBetter_congr ord i a₁.2 a₂.2 b₁.2 b₂.2 h₁ h₂))) d₁ d₂
+
+/-- `MetaDegree` is a linear order: Fact 12, packaged. Irreflexivity,
+transitivity, and totality of ⊐ become the order axioms on the quotient. -/
+instance : LinearOrder (MetaDegree I ord i) where
+  le := MetaDegree.le ord i
+  le_refl d := Quotient.inductionOn d fun X => strictlyBetter_irrefl ord i X.1
+  le_trans d₁ d₂ d₃ := Quotient.inductionOn₃ d₁ d₂ d₃ fun X Y Z h₁ h₂ hXZ => by
+    rcases strictlyBetter_total ord i X.1 Y.1 X.2 Y.2 with heq | hXY | hYX
+    · exact h₂ (strictlyBetter_respects_left ord i X.1 Z.1 Y.1 X.2 Z.2 Y.2 hXZ heq)
+    · exact h₁ hXY
+    · exact h₂ (strictlyBetter_trans ord i Y.1 X.1 Z.1 hYX hXZ)
+  le_antisymm d₁ d₂ := Quotient.inductionOn₂ d₁ d₂ fun X Y h₁ h₂ => by
+    rcases strictlyBetter_total ord i X.1 Y.1 X.2 Y.2 with heq | hXY | hYX
+    · exact Quotient.sound heq
+    · exact absurd hXY h₁
+    · exact absurd hYX h₂
+  le_total d₁ d₂ := Quotient.inductionOn₂ d₁ d₂ fun X Y => by
+    by_cases h : strictlyBetter ord i X.1 Y.1
+    · exact Or.inr fun hYX => strictlyBetter_irrefl ord i X.1
+        (strictlyBetter_trans ord i X.1 Y.1 X.1 h hYX)
+    · exact Or.inl h
+  toDecidableLE d₁ d₂ := Quotient.recOnSubsingleton₂ d₁ d₂ fun X Y =>
+    inferInstanceAs (Decidable (¬ strictlyBetter ord i X.1 Y.1))
+
+/-- Fact 13, packaged: the tautology's degree is ⊤, the contradiction's ⊥. -/
+instance : BoundedOrder (MetaDegree I ord i) where
+  top := deg ord i (field ord i) (Finset.Subset.refl _)
+  le_top d := Quotient.inductionOn d fun X => not_strictlyBetter_field ord i X.1 X.2
+  bot := deg ord i ∅ (Finset.empty_subset _)
+  bot_le d := Quotient.inductionOn d fun X => not_strictlyBetter_empty ord i X.1
+
+@[simp] theorem deg_le_deg_iff {X Y : Finset I}
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+    deg ord i X hX ≤ deg ord i Y hY ↔ ¬ strictlyBetter ord i X Y := Iff.rfl
+
+/-- The strict order on metalinguistic degrees is exactly ⊐ (arguments
+flipped): Y's degree lies below X's iff X is strictly better. -/
+theorem deg_lt_deg_iff {X Y : Finset I}
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+    deg ord i Y hY < deg ord i X hX ↔ strictlyBetter ord i X Y := by
+  rw [lt_iff_le_not_ge]
+  constructor
+  · rintro ⟨-, h⟩
+    exact not_not.mp h
+  · intro h
+    exact ⟨fun hYX => strictlyBetter_irrefl ord i Y
+        (strictlyBetter_trans ord i Y X Y hYX h), not_not.mpr h⟩
+
+/-- **The paper's (59), in the substrate's vocabulary**: the revised
+metalinguistic comparative IS the degree substrate's binary comparative
+(`Degree.comparativeSem`, positive direction) over the metalinguistic measure
+function `formulaDeg`. Metagradability thereby instantiates the degree
+substrate's central object — a measure `μ : E → D` into a bounded linear
+scale — with `E` the formulas and `D` the `MetaDegree` scale. -/
+theorem mc_iff_comparativeSem {W Pred Entity : Type*}
+    (interpFn : I → Interpretation W Pred Entity)
+    (A B : MFormula Pred Entity) (w : W) :
+    evalRevised interpFn (.mc A B) ord i w = true ↔
+    Degree.comparativeSem (fun φ => formulaDeg interpFn φ ord i w) A B .positive := by
+  rw [mc_iff_degree_gt]
+  simp only [Degree.comparativeSem, gt_iff_lt]
+  exact (deg_lt_deg_iff ord i (Finset.filter_subset _ _) (Finset.filter_subset _ _)).symm
+
+end Scale
 
 /-! ### Types (shared across models) -/
 
@@ -1603,24 +1853,20 @@ There is no interpretation where Ben is tall but Ann is not. -/
 theorem ben_not_taller :
     ∀ (i : I3), eval interpNR (.mc Tb Ta) ord₃ i .w0 = false := by decide
 
-/-- Bridge: under NR, the full MC (eq. 48, with domination clause)
-gives the same result as the delineation comparative (eq. 128,
-just ∃ i' ≤ i : Fa ∧ ¬Fb, without domination clause).
+/-- NR also holds with the roles swapped (vacuously: Ben's extension never
+outruns Ann's), which is the direction `eval_mc_iff_delineation_of_noReversal`
+consumes. -/
+theorem nr_tall_ben_ann :
+    noReversal interpNR ord₃ .tall .w0 .ben .ann := by decide
 
-NR makes clause (ii) of the MC redundant: if Fa is true and Fb is
-false at i, then for any i' ≤ i where Fb becomes true, Fa must also
-be true — so there are no (Fb∧¬Fa)-witnesses to worry about.
-
-This connects metalinguistic comparatives to [klein-1980]'s
-delineation comparative (see `Delineation.lean`). -/
-theorem mc_equals_delineation_under_nr :
-    ∀ (i : I3),
-      -- Full MC with domination clause
-      eval interpNR (.mc Ta Tb) ord₃ i .w0 =
-      -- Delineation: just check for a witness (no domination needed)
-      (decide (∃ i' : I3, ord₃.le i' i ∧
-        (interpNR i').ext .tall .w0 .ann = true ∧
-        (interpNR i').ext .tall .w0 .ben = false) : Bool) := by decide
+/-- The general §7 bridge, instantiated on the NR model: the MC *is* the
+substrate's delineation comparative. -/
+example (i : I3) :
+    eval interpNR (.mc Ta Tb) ord₃ i .w0 = true ↔
+    Semantics.Gradability.Delineation.comparativeSem
+      (interpretationDelineation interpNR ord₃ .tall .w0 i) .ann .ben :=
+  eval_mc_iff_delineation_of_noReversal interpNR ord₃ .tall .w0 i .ann .ben
+    nr_tall_ben_ann
 
 /-- NR-violating model: Ann and Ben "swap" across interpretations.
 - i₀: Ann tall, Ben not
@@ -1644,10 +1890,11 @@ i₀, violating the domination clause), but the simple delineation
 condition (∃ Fa∧¬Fb) is TRUE (i₀ is a witness). -/
 theorem mc_delineation_diverge_without_nr :
     eval interpNR_bad (.mc Ta Tb) ord₃ .i2 .w0 = false ∧
-    (decide (∃ i' : I3, ord₃.le i' .i2 ∧
-      (interpNR_bad i').ext .tall .w0 .ann = true ∧
-      (interpNR_bad i').ext .tall .w0 .ben = false) : Bool) = true :=
-  ⟨by decide, by decide⟩
+    Semantics.Gradability.Delineation.comparativeSem
+      (interpretationDelineation interpNR_bad ord₃ .tall .w0 .i2) .ann .ben :=
+  ⟨by decide,
+   (delineation_comparativeSem_iff interpNR_bad ord₃ .tall .w0 .i2 .ann .ben).mpr
+     (by decide)⟩
 
 /-! ### Metalinguistic Conditional (§6.3) -/
 

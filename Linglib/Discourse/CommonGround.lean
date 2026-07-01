@@ -74,6 +74,15 @@ theorem update_assoc (c p q : Set W) :
     update (update c p) q = update c (update p q) :=
   Set.inter_assoc c p q
 
+/-- Successive updates commute: assertion order is irrelevant. -/
+theorem update_comm (c p q : Set W) :
+    update (update c p) q = update (update c q) p :=
+  Set.inter_right_comm c p q
+
+/-- Updating twice with the same proposition is updating once. -/
+theorem update_idem (c p : Set W) : update (update c p) p = update c p := by
+  simp [update, Set.inter_assoc]
+
 /-- Updating the trivial context with `p` gives `p`. -/
 theorem trivial_update (p : Set W) : update trivial p = p :=
   Set.univ_inter p
