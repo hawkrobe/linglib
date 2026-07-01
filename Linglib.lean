@@ -119,6 +119,9 @@ import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
+import Linglib.Core.Data.Tree.Basic
+import Linglib.Core.Data.Tree.Get
+import Linglib.Core.Data.Tree.Traversable
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
