@@ -39,7 +39,7 @@ namespace `Tree.Pathed`.
 `[UPSTREAM]` candidate. **Sorry-free**.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -1719,4 +1719,4 @@ theorem insertionForest_singleton (T : Tree α) (gs : List (Tree α)) :
 
 end Pathed
 
-end Tree
+end RootedTree.Tree

@@ -38,6 +38,8 @@ the `Tree → BinaryTree` rename). Self-contained: no linguistics, no order/comm
 imports. Dependency-light, `sorry`-free, no `noncomputable`.
 -/
 
+namespace RootedTree
+
 /-- An **n-ary rooted tree** (rose tree): a root `value : α` and an ordered list
 of child subtrees. A leaf is `node a []`. -/
 inductive Tree (α : Type*) where
@@ -362,3 +364,5 @@ example : (node 0 [leaf 1] : Tree ℕ) = node 0 [leaf 1] := by decide
 example : (node 0 [leaf 1] : Tree ℕ) ≠ node 0 [leaf 2] := by decide
 
 end Tree
+
+end RootedTree

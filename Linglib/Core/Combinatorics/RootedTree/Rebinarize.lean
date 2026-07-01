@@ -14,7 +14,7 @@ Each contracted unary node removes exactly one vertex, so
 `numNodes (contractUnary t) + unaryCount t = numNodes t`.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α : Type*}
 
@@ -142,7 +142,7 @@ theorem contractUnary_permEquiv {t s : Tree α} (h : PermEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-end Tree
+end RootedTree.Tree
 
 /-! ### Nonplanar `contractUnary` / `unaryCount` -/
 

@@ -45,7 +45,7 @@ visible "Externalization" form (PF interface) and can be derived from
 T/^p via tree-binarization at the algebra layer.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α : Type*}
 
@@ -198,4 +198,4 @@ example [Inhabited Nat] : remainderTrace (shallowTotalCut testTree) =
 
 end Tests
 
-end Tree
+end RootedTree.Tree

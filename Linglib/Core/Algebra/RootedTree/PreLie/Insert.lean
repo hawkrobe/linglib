@@ -58,7 +58,7 @@ Sibling files:
 `[UPSTREAM]` candidate. Sorry-free, no `noncomputable`.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -646,4 +646,4 @@ theorem bind_filterMap_preserve?_swap (t₁ t₂ t₃ : Tree α) :
 
 end Pathed
 
-end Tree
+end RootedTree.Tree

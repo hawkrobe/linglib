@@ -24,7 +24,7 @@ a trace leaf inflates `#V` without contributing an accessible term.
 * `Forest.alphaC` / `Forest.sigmaC` — the trace-aware workspace measures.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α β : Type*}
 
@@ -184,7 +184,7 @@ theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (Tree (α ⊕
   rw [traceLeafCount_node_inl, traceDepthSum_node]
   exact Nat.le_add_left _ _
 
-end Tree
+end RootedTree.Tree
 
 namespace RootedTree
 

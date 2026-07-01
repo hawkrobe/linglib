@@ -54,7 +54,7 @@ arity.
 `[UPSTREAM]` candidate. No sorries.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α : Type*}
 
@@ -356,7 +356,7 @@ instance instSetoid : Setoid (Tree α) where
   r := PermEquiv
   iseqv := PermEquiv.isEquivalence
 
-end Tree
+end RootedTree.Tree
 
 /-! ## Nonplanar — the quotient type -/
 
@@ -600,7 +600,7 @@ Setup for `Nonplanar.map`: lift `Tree.map` through the quotient by
 showing it preserves the equivalence relation. Done in two steps:
 elementary `PermStep` preservation, then closure under `EqvGen`. -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α β γ : Type*}
 
@@ -625,7 +625,7 @@ theorem permEquiv_map (f : α → β) {t s : Tree α} (h : PermEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-end Tree
+end RootedTree.Tree
 
 namespace RootedTree.Nonplanar
 

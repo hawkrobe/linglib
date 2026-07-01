@@ -71,7 +71,7 @@ Sibling files:
 
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α : Type*}
 
@@ -245,7 +245,7 @@ example (T₁ T₂ : Tree Nat) :
 
 end Tests
 
-end Tree
+end RootedTree.Tree
 
 /-! # Descent of `insertSum` through `Nonplanar.mk`
 

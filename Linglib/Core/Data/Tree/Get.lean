@@ -18,7 +18,7 @@ general (unordered-search) rose tree. The Gorn path replaces the `PosNum` path,
 so this file needs no `Num` dependency.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α : Type*}
 
@@ -57,4 +57,4 @@ def getD (t : Tree α) (path : List ℕ) (v : α) : α :=
 
 @[simp] theorem getD_nil (t : Tree α) (v : α) : t.getD [] v = t.value := rfl
 
-end Tree
+end RootedTree.Tree

@@ -40,7 +40,7 @@ Oudom-Guin Prop 2.7.iii proof.
 `[UPSTREAM]` candidate. **Sorry-free**.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -1350,4 +1350,4 @@ theorem insertionForest_msform_invariance_guests
 
 end Pathed
 
-end Tree
+end RootedTree.Tree

@@ -33,7 +33,7 @@ including the raw (`Tree`-level multiset, not quotient-level) forms of the
 last two.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -962,4 +962,4 @@ theorem insertionForest_bind_singleton (A B : List (Tree α))
 
 end Pathed
 
-end Tree
+end RootedTree.Tree

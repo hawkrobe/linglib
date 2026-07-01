@@ -16,7 +16,7 @@ through the child list via `traverseList`, so each is proved with a small
 list-level helper fed the per-child induction hypothesis from `Tree.rec'`.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 universe u v w
 
@@ -119,4 +119,4 @@ instance : LawfulTraversable Tree where
 
 end Laws
 
-end Tree
+end RootedTree.Tree

@@ -31,7 +31,7 @@ All three statements are validated computationally on concrete trees
 (multi-vertex hosts, repeated guests, empty edge cases) prior to proof.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -737,4 +737,4 @@ theorem insertion_node_split (a : α) (cs gs : List (Tree α)) :
 
 end Pathed
 
-end Tree
+end RootedTree.Tree

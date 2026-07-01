@@ -37,7 +37,7 @@ that need it; no global `Vertex` def is needed.
 `[UPSTREAM]` candidate. Sorry-free, no `noncomputable`.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -184,4 +184,4 @@ end
 
 end Pathed
 
-end Tree
+end RootedTree.Tree

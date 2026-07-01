@@ -24,7 +24,7 @@ only adds the *nonplanar* decider:
   noncomputable `Nonplanar.node`.
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 variable {α : Type*} [DecidableEq α]
 
@@ -384,7 +384,7 @@ end
 theorem eqv_iff_permEquiv : ∀ (t s : Tree α), eqv t s = true ↔ PermEquiv t s :=
   fun t s => ⟨eqv_to_permEquiv t s, permEquiv_to_eqv⟩
 
-end Tree
+end RootedTree.Tree
 
 namespace RootedTree.Nonplanar
 

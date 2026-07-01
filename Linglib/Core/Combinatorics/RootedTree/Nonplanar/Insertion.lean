@@ -127,7 +127,7 @@ theorem toList_map_quotientOut_add_perm (M N : Multiset (Nonplanar α)) :
     `insertionForest host guests` has length equal to the host length.
     `insertionForest` produces `T' :: F'` lists by recursion on the host;
     each step prepends one tree and recurses on the tail. -/
-private theorem _root_.Tree.Pathed.insertionForest_length
+private theorem _root_.RootedTree.Tree.Pathed.insertionForest_length
     {α : Type*} :
     ∀ (host guests : List (Tree α)) {L : List (Tree α)},
       L ∈ Tree.Pathed.insertionForest host guests → L.length = host.length
@@ -191,7 +191,7 @@ preserves the head value by structure). -/
 /-- **Root-value preservation**: `Tree.value (multiGraft T pairs) =
     Tree.value T`. Follows directly from `multiGraft_node`, which
     rebuilds the root with the same value `a`. -/
-private theorem _root_.Tree.value_multiGraft
+private theorem _root_.RootedTree.Tree.value_multiGraft
     (T : Tree α) (pairs : List (Tree.Pathed.Path × Tree α)) :
     (Tree.Pathed.multiGraft T pairs).value = T.value := by
   cases T with

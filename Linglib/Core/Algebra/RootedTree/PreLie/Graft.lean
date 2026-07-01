@@ -96,7 +96,7 @@ A3.3 cons-case Phase 4.2). The headline `vertices_multiGraft_decomp`
 `bind_finRange_singleton_eq` (validity-based per-`k` decomp).
 -/
 
-namespace Tree
+namespace RootedTree.Tree
 
 namespace Pathed
 
@@ -4142,4 +4142,4 @@ theorem rootInner_cons (outer : List (Path × Tree α))
 
 end Pathed
 
-end Tree
+end RootedTree.Tree
