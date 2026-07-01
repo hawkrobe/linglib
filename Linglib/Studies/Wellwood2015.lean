@@ -1,4 +1,4 @@
-import Linglib.Semantics.Measurement
+import Linglib.Semantics.Degree.Measurement
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.ArgumentStructure.Properties
 import Linglib.Semantics.ArgumentStructure.LF

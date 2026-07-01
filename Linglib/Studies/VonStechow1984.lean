@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Abstraction
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Differential
-import Linglib.Semantics.Gradability.Delineation
+import Linglib.Semantics.Degree.Gradability.Delineation
 import Mathlib.Tactic.Linarith
 
 /-!

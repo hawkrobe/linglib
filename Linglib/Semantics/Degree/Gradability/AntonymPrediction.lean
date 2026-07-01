@@ -1,6 +1,6 @@
-import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.Antonymy
-import Linglib.Semantics.Gradability.AntonymQuadruplet
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Antonymy
+import Linglib.Semantics.Degree.Gradability.AntonymQuadruplet
 import Linglib.Core.Logic.Aristotelian.Basic
 /-!
 # Antonym Prediction — Two Extensional Denotations + Prediction Skeleton
@@ -173,7 +173,7 @@ def predictionForAntonymy : NegationType → Asymmetry
 
 /-- Read prediction off a Fragment lexical entry's `antonymRelation`. Defaults
     to `.symmetric` for entries without an explicit antonymy classification. -/
-def predictionForEntry (e : GradableAdjEntry) : Asymmetry :=
+def predictionForEntry (e : GradableAdjective) : Asymmetry :=
   e.antonymRelation.elim .symmetric predictionForAntonymy
 
 end Semantics.Gradability

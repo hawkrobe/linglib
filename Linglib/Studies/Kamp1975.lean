@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Classification
+import Linglib.Semantics.Degree.Gradability.Classification
 import Linglib.Core.Logic.Truth3
 import Mathlib.Data.Set.Basic
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Classification
+import Linglib.Semantics.Degree.Gradability.Classification
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Studies.Kamp1975
 import Linglib.Studies.Partee2010

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
@@ -86,7 +86,7 @@ the paper's argument is that disturbance predicates are a uniform class.
 namespace Tham2025
 
 open Core.Order (Boundedness LicensingPipeline)
-open Semantics.Gradability (DimensionBindingType GradableAdjEntry
+open Semantics.Gradability (DimensionBindingType GradableAdjective
   adjMeasure closedAdj_licensed conjunctiveBinding disjunctiveBinding)
 open Semantics.Gradability.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Semantics.Gradability.Dimension
+import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Semantics.Degree.MeasureFunction
 import Linglib.Semantics.Degree.Bounds
 import Mathlib.Order.BoundedOrder.Basic

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Core.Order.Boundedness
