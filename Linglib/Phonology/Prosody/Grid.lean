@@ -183,18 +183,18 @@ namespace Grid
 
 /-! ### The pure grid: peak, culminativity, rendering -/
 
+variable {g : Grid}
+
 /-- The prominence peak: the tallest column. -/
 def peak (g : Grid) : ℕ := g.foldr max 0
 
 @[simp] theorem peak_nil : peak [] = 0 := rfl
 
 /-- Every column is at most the peak. -/
-theorem le_peak {g : Grid} {h : ℕ} (hh : h ∈ g) : h ≤ peak g :=
-  List.le_max_of_le' 0 hh le_rfl
+theorem le_peak {h : ℕ} (hh : h ∈ g) : h ≤ peak g := List.le_max_of_le' 0 hh le_rfl
 
 /-- The peak is bounded by any common bound on the columns. -/
-theorem peak_le {g : Grid} {n : ℕ} (h : ∀ x ∈ g, x ≤ n) : peak g ≤ n :=
-  List.max_le_of_forall_le _ n h
+theorem peak_le {n : ℕ} (h : ∀ x ∈ g, x ≤ n) : peak g ≤ n := List.max_le_of_forall_le _ n h
 
 /-- Culminativity ([liberman-prince-1977]; [hayes-1995]): exactly one column is tallest. Note this
     is strictly stronger than having a unique head terminal (`IsHeaded`) — two columns can tie. -/
