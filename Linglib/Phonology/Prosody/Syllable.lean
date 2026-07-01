@@ -304,11 +304,11 @@ end Constituent
     `Constituent`s. Ordered children give No-Tangling by construction. -/
 abbrev Tree := Planar Constituent
 
-/-- A σ-leaf — the metrical terminal: a syllable of weight `w`, head-marked `h`, with no children. -/
+/-- A σ-leaf — the metrical terminal: a syllable of weight `w`, head-marked `h`. -/
 abbrev Tree.σ (w : Syllable.Weight := 0) (h : Bool := false) : Tree := .node (.syl w h) []
 
 /-- A foot node over `cs`, optionally the head foot of its word. -/
-abbrev Tree.ft (h : Bool := false) (cs : List Tree) : Tree := .node (.ft h) cs
+abbrev Tree.ft (h : Bool) (cs : List Tree) : Tree := .node (.ft h) cs
 
 /-- A prosodic-word (ω) node over `cs`. -/
 abbrev Tree.om (cs : List Tree) : Tree := .node .om cs
@@ -319,7 +319,7 @@ abbrev Tree.om (cs : List Tree) : Tree := .node .om cs
     reduce the σ-leaf `if` the reader equations carry (via `if_pos ⟨ha, rfl⟩` / `if_neg hne`)
     instead of `split`ting it. -/
 @[elab_as_elim]
-def Tree.recLeafBranch {motive : Tree → Prop}
+theorem Tree.recLeafBranch {motive : Tree → Prop}
     (leaf : ∀ a, a.isSyl → motive (.node a []))
     (branch : ∀ a cs, ¬(a.isSyl ∧ cs = []) → (∀ c ∈ cs, motive c) → motive (.node a cs))
     (t : Tree) : motive t := by

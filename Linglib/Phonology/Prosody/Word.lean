@@ -135,7 +135,8 @@ Each `where`-aux `goList` is the matching `List` combinator over its `go`
 `Branching.inductionOn` over the carrier (the principle `Tree` already rides,
 `Core/Order/Branching.lean`) plus standard `List` reasoning. -/
 
-private theorem maximalProjections.goList_eq (p : Constituent → Bool) (under : Bool) (cs : List Tree) :
+private theorem maximalProjections.goList_eq (p : Constituent → Bool) (under : Bool)
+    (cs : List Tree) :
     maximalProjections.goList p under cs = cs.flatMap (maximalProjections.go p under) := by
   induction cs with
   | nil => rfl

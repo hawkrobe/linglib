@@ -40,7 +40,10 @@ a homomorphism from the tree into the head-marked grid, built from a small algeb
 * `Grid.peak_toProsTree` — head-preservation for a foot (its grid peaks at the head σ).
 * `Grid.headHeights_eq_peak` — on a non-recursive headed word the head terminal's height is the
   grid peak: metrical primary stress is the tallest column.
-* `Grid.ofTree_not_injective` / `Grid.not_culminative_under_recursion` — what the projection forgets.
+* `Grid.ofTree_not_injective` / `Grid.not_culminative_under_recursion` — what the projection
+  forgets: constituency, and order-invariant culminativity under recursion.
+* `Grid.head_below_peak_under_recursion` / `Grid.head_below_peak_unlayered` — the peak can desert
+  the head terminal under recursion or without Layeredness.
 -/
 
 namespace Prosody
@@ -67,9 +70,9 @@ structure Column (α : Type*) where
   /-- Whether this column is (so far) the head terminal. -/
   onSpine : Bool
 
-/-- A grid whose columns carry the head-spine (the head terminals, [liberman-prince-1977]). This is the pure
-    grid *plus a head marking* — it deliberately does not record the full bracketing (that is `Tree`;
-    `Grid.ofTree_not_injective` is the honest statement that heights lose it). -/
+/-- A grid whose columns carry the head-spine (the head terminals, [liberman-prince-1977]) — the
+    pure grid *plus a head marking*. It deliberately does not record the full bracketing (that is
+    `Tree`; `Grid.ofTree_not_injective` is the honest statement that heights lose it). -/
 abbrev MarkedGrid (α : Type*) := List (Column α)
 
 /-! ## Marks: the Continuous Column Constraint -/
@@ -114,7 +117,8 @@ def juxtapose : MarkedGrid α := bs.flatten
 
 /-- The **head-projection step** of the RPPR ([liberman-prince-1977]): a head edge raises the head
     by one grid mark — bump every head-spine column. -/
-def promote : MarkedGrid α := b.map fun c => { c with height := c.height + if c.onSpine then 1 else 0 }
+def promote : MarkedGrid α :=
+  b.map fun c => { c with height := c.height + if c.onSpine then 1 else 0 }
 
 /-- A weak edge: heights freeze, the head-spine marking is dropped. -/
 def clear : MarkedGrid α := b.map fun c => { c with onSpine := false }
@@ -149,10 +153,12 @@ def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
 @[simp] theorem toGrid_juxtapose : (juxtapose bs).toGrid = bs.flatMap (·.toGrid) := by
   simp [juxtapose, toGrid, List.flatMap_def]
 
-@[simp] theorem headHeights_juxtapose : (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
+@[simp] theorem headHeights_juxtapose :
+    (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
   simp [juxtapose, headHeights, List.flatMap_def, Function.comp_def]
 
-@[simp] theorem headTerminals_juxtapose : (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
+@[simp] theorem headTerminals_juxtapose :
+    (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
   simp [juxtapose, headTerminals, List.flatMap_def, Function.comp_def]
 
 @[simp] theorem headHeights_edge (h : Bool) : (edge h b).headHeights =
@@ -356,12 +362,13 @@ private theorem depth_word_child_le {ch : Tree}
     simp only [isFootTree, Bool.and_eq_true, List.all_eq_true] at hfoot
     obtain ⟨_, hleaves⟩ := hfoot
     rw [RootedTree.Planar.depth_node]
-    have : RootedTree.Planar.depthMaxList chcs ≤ 1 := RootedTree.Planar.depthMaxList_le fun c hc => by
-      obtain ⟨cl, ccs⟩ := c
-      have hc' := hleaves _ hc
-      simp only [Bool.and_eq_true, List.isEmpty_iff] at hc'
-      obtain ⟨_, rfl⟩ := hc'
-      exact le_of_eq rfl
+    have : RootedTree.Planar.depthMaxList chcs ≤ 1 :=
+      RootedTree.Planar.depthMaxList_le fun c hc => by
+        obtain ⟨cl, ccs⟩ := c
+        have hc' := hleaves _ hc
+        simp only [Bool.and_eq_true, List.isEmpty_iff] at hc'
+        obtain ⟨_, rfl⟩ := hc'
+        exact le_of_eq rfl
     omega
   · obtain ⟨chl, chcs⟩ := ch
     simp only [RootedTree.Planar.children_node] at hcs; subst hcs
@@ -458,8 +465,8 @@ theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : n
     · rw [hv, List.mem_singleton] at hmem; omega
   rw [hv, le_antisymm (headHeight_le_peak hvmem) hge]
 
-/-- Under recursion the peak can desert the head terminal, even when culminative
-    ([ito-mester-2009] for recursive ω; the peak≠head-terminal consequence is a property of this model). -/
+/-- Under recursion the peak can desert the head terminal, even when culminative ([ito-mester-2009]
+    for recursive ω; the peak≠head-terminal consequence is a property of this model). -/
 theorem head_below_peak_under_recursion :
     ∃ t : Tree, IsWord t ∧ IsHeaded t ∧ IsCulminative (columns t)
       ∧ headHeights t ≠ [peak (columns t)] :=
