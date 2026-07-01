@@ -1,6 +1,6 @@
 import Linglib.Features.Dimension
-import Linglib.Semantics.Gradability.Delineation
-import Linglib.Semantics.Measurement.Basic
+import Linglib.Semantics.Degree.Gradability.Delineation
+import Linglib.Semantics.Degree.Measurement.Basic
 
 /-!
 # Degree Semantics Hierarchy
@@ -32,7 +32,7 @@ function can induce.
 
 ## Theorems in this file
 
-1. **measure_to_degree**: every `MeasureFn` induces a `HasMeasure` instance
+1. **measure_to_degree**: every `MeasureFn` forgets to a plain degree function
 2. **degree_to_delineation**: every degree function induces a Klein delineation
 3. **ordering_faithful**: the induced delineation's ordering = degree comparison
 4. **degree_delineations_are_linear**: all degree-induced delineations are linear
@@ -50,23 +50,22 @@ namespace Semantics.Gradability.Hierarchy
 open Semantics.Gradability.Delineation
 open Semantics.Measurement (MeasureFn)
 open Features.Dimension (Dimension)
-open Semantics.Degree (HasMeasure)
 -- ════════════════════════════════════════════════════
 -- § 1. Measurement → Degree
 -- ════════════════════════════════════════════════════
 
 /-! A `MeasureFn E` carries a typed dimension (mass, volume, cardinality, ...)
     and a non-negative measure `apply : E → ℚ`. Forgetting the dimension and
-    non-negativity constraint yields a `HasMeasure E` instance: the degree of
-    an entity is its measure value.
+    non-negativity constraint yields a plain degree function `E → ℚ`: the
+    degree of an entity is its measure value.
 
     This is [scontras-2014]'s key insight: measure terms (kilo, liter)
     and CARD are all instances of the same degree-assigning operation. -/
 
-/-- Every measure function induces a degree assignment.
-    This is `MeasureFn.toHasDegree` — restated here for the hierarchy. -/
-def measure_to_degree {E : Type} (μ : MeasureFn E) : HasMeasure E ℚ :=
-  μ.toHasDegree
+/-- Every measure function induces a degree assignment: forget the dimension
+    tag and the non-negativity invariant, keeping the bare `μ : E → ℚ`. -/
+def measure_to_degree {E : Type*} (μ : MeasureFn E) : E → ℚ :=
+  μ.apply
 
 -- ════════════════════════════════════════════════════
 -- § 2. Degree → Delineation

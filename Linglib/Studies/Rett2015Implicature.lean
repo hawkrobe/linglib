@@ -1,7 +1,8 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Pragmatics.Implicature.Basic
 import Linglib.Pragmatics.Implicature.Markedness
-import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Studies.Rett2015
 
 /-!
@@ -57,7 +58,7 @@ namespace Rett2015Implicature
 
 open Implicature
 open Implicature.Markedness
-open Semantics.Degree (AdjectivalConstruction)
+open Degree (AdjectivalConstruction)
 open Semantics.Gradability
 
 

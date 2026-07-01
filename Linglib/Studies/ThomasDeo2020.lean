@@ -1,11 +1,12 @@
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Gradability.Construction
 
 /-!
 # Granularity and *Just*: Degree Morphology [thomas-deo-2020]
 
 Grounds the approximative readings of *just* with degree constructions in
-the granularity semantics of `Semantics.Degree.Granularity`: with
+the granularity semantics of `Degree.Granularity`: with
 equatives the negative component of *just* is vacuous (`just_vacuous_iff`,
 "just as tall as" ≈ "exactly"), while with comparatives it forces failure
 at coarser grains (`just_rules_out`, "just taller than" ≈ "barely").
@@ -20,8 +21,8 @@ at coarser grains (`just_rules_out`, "just taller than" ≈ "barely").
 
 namespace ThomasDeo2020
 
-open Semantics.Degree.Granularity
-open Semantics.Degree (AdjectivalConstruction)
+open Degree.Granularity
+open Degree (AdjectivalConstruction)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Formal Grounding

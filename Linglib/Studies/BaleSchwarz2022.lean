@@ -1,7 +1,7 @@
 import Linglib.Features.Acceptability
 import Linglib.Features.Dimension
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!

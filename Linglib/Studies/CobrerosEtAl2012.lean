@@ -417,7 +417,7 @@ theorem tcs_categorical_vs_product_bounded
     tall, c is classically not-tall). Any Klein-style sound delineation
     derived from `M.interp .tall` would impose a scalar relation
     `R b c` on this pair (per
-    `Semantics/Comparison/Delineation.lean::IsSoundDelineation`),
+    `Semantics/Degree/Gradability/Delineation.lean::IsSoundDelineation`),
     over-generating where TCS says `b` and `c` are *both equally
     borderline* and the scalar relation should be unwarranted.
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.GradableNouns
+import Linglib.Semantics.Degree.Gradability.GradableNouns
 
 /-!
 # Morzycki (2009)
@@ -44,7 +44,7 @@ predict the acceptability pattern recorded in the data below.
 namespace Morzycki2009
 
 open Semantics.Gradability.GradableNouns
-open Semantics.Degree (deg)
+open Degree (deg)
 -- ═══════════════════════════════════════════════════════════════
 -- Data: Bigness Generalization (§2.2)
 -- ═══════════════════════════════════════════════════════════════

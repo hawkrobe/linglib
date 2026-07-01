@@ -77,11 +77,11 @@ re-exported below.
 namespace Heim2001
 
 open Set
-open Semantics.Degree.Abstraction
+open Degree.Abstraction
   (lowDegP_forall lowDegP_exists highDegP_forall highDegP_exists
    forall_more_high_to_low forall_more_low_to_high exists_more_scope_collapse
    negatedDegreePredicate negatedDegreePredicate_eq)
-open Semantics.Degree (comparativeSem)
+open Degree (comparativeSem)
 open Minimalist.DegreeMovement
   (IsHeimKennedy ScopeBinding not_isHeimKennedy_QP_above_bound_DegP)
 
@@ -306,7 +306,7 @@ theorem verbClass_predicts_highDegPAvailable :
 -- complement `R` twice in the semantic calculation (paper ex. (59)),
 -- giving evidence for DegP-movement independent of VP-ellipsis. The
 -- semantic decomposition `λR. λx. max{d : R(x,d)} > max{d : ∃y ≠ x. R(y,d)}`
--- is formalized as `Semantics.Degree.Superlative.absoluteSuperlative`;
+-- is formalized as `Degree.Superlative.absoluteSuperlative`;
 -- consumers should reference the substrate definition directly.
 --
 -- The contrast "Kim climbed the highest mountain" / "KIM climbed the

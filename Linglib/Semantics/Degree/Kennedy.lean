@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Defs
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Kennedy 2007: Interpretive Economy
@@ -35,7 +36,7 @@ meanings are favoured).
   whenever the scale has an endpoint.
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 open Core.Order (Boundedness)
 
@@ -108,4 +109,4 @@ def IsClassA (b : Boundedness) : Prop :=
 instance : DecidablePred IsClassA :=
   fun b => inferInstanceAs (Decidable (interpretiveEconomy b).RequiresComparisonClass)
 
-end Semantics.Degree
+end Degree

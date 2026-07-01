@@ -7,25 +7,22 @@ import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Predicate
 
 /-!
-# Core/Scales/Bounds.lean — bounded-scale theorems + maxOnScale
+# Bounded-scale theorems + maxOnScale
 [rett-2026]
 
 Two clusters of theorems:
 
-1. **Typeclass-driven licensing** (§4 of legacy Scale.lean):
+1. **Typeclass-driven licensing**:
    `open_no_upward_ceiling`, `upperBound_admits_optimum`, etc. — show how
    Mathlib boundedness typeclasses (`NoMaxOrder`, `OrderTop`, `OrderBot`,
    `NoMinOrder`) interact with monotonicity to admit/block optima.
 
-2. **Order-sensitive maximality** (§6b of legacy Scale.lean):
+2. **Order-sensitive maximality**:
    `maxOnScale c X`, `isAmbidirectional` — Rett 2026's MAX operator (the
    dominance direction is the reified `Comparison`) + ambidirectionality predicate.
-
-This file is part of the Phase A decomposition of the legacy
-`Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 open Core.Order
 
@@ -224,4 +221,4 @@ theorem maxOnScale_ge_atMost (b : α) :
     maxOnScale .ge {d | d ≤ b} = {b} :=
   maxOnScale_atLeast_singleton id b
 
-end Semantics.Degree
+end Degree

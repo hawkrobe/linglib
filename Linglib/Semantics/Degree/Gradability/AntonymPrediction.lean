@@ -1,15 +1,21 @@
-import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.Antonymy
-import Linglib.Semantics.Gradability.AntonymQuadruplet
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Antonymy
 import Linglib.Core.Logic.Aristotelian.Basic
 /-!
-# Antonym Prediction — Two Extensional Denotations + Prediction Skeleton
+# Antonym Forms — Surface Quadruplet, Two Denotations, Prediction Skeleton
 
-[cruse-1986] [horn-1989] [krifka-2007b]
+[cruse-1986] [horn-1989] [krifka-2007b] [tessler-franke-2019]
 
-For the four-form quadruplet of a negated antonymic adjective pair (see
-`AntonymQuadruplet.lean`), the literature contests two extensional
-denotations:
+Given an antonymic adjective pair (positive / negative — e.g., *happy* /
+*unhappy*), sentential negation generates **four surface forms**:
+
+    {happy, not happy, unhappy, not unhappy}
+
+`AntonymForm` enumerates them; `AntonymForm.complexity` gives each form's
+default morphological-syntactic complexity, matching [krifka-2007b]'s
+ordering and [tessler-franke-2019]'s cost function. For the quadruplet,
+the literature contests two extensional denotations:
 
 - **Contradictory denotation** — single threshold `θ`. Both poles share `θ`;
   *not unhappy* reduces (DNE) to *happy*. Captured by
@@ -39,12 +45,50 @@ primitives via `Iff.rfl` bridges that survive substrate transparency
 
 namespace Semantics.Gradability
 
-open Semantics.Degree (Degree Threshold)
+open Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
-open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning)
+open Degree (positiveMeaning)
 
 -- ============================================================================
--- § 1. Two Extensional Denotations
+-- § 1. The Four Surface Forms
+-- ============================================================================
+
+/-- The four surface forms generated from an antonymic adjective pair
+    `(positive, negative)` by sentential negation. Four-cell substrate;
+    no semantic commitment — a paper claiming all four forms collapse to
+    two (contradictory analysis) and a paper claiming a four-way gap
+    (contrary analysis) both consume this enum and provide their own
+    denotations. -/
+inductive AntonymForm where
+  | positive       -- "happy"
+  | notPositive    -- "not happy"
+  | negative       -- "unhappy"
+  | notNegative    -- "not unhappy"
+  deriving Repr, DecidableEq, Fintype
+
+/-- Default morphological-syntactic complexity of each form: count of
+    negation operators (morphological *un-* + syntactic *not*), scaled to
+    [krifka-2007b]'s integer ordering 0 < 2 < 3 < 5. Matches
+    [tessler-franke-2019]'s `utteranceCost` exactly.
+
+    Per-paper analyses may override the cost (TF2020 uses a `ℚ`-valued
+    coercion of this; Krifka's Economy constraint reads it directly). -/
+def AntonymForm.complexity : AntonymForm → Nat
+  | .positive    => 0   -- monomorphemic
+  | .negative    => 2   -- un- prefix (morphologically complex)
+  | .notPositive => 3   -- syntactic not (syntactically complex)
+  | .notNegative => 5   -- not + un- (both)
+
+/-- The complexity ordering is strictly monotone across the quadruplet in
+    the canonical order positive < negative < notPositive < notNegative. -/
+theorem AntonymForm.complexity_strictMono :
+    complexity .positive < complexity .negative ∧
+    complexity .negative < complexity .notPositive ∧
+    complexity .notPositive < complexity .notNegative := by
+  decide
+
+-- ============================================================================
+-- § 2. Two Extensional Denotations
 -- ============================================================================
 
 /-- **Contradictory denotation** of an antonym form on a single threshold `θ`.
@@ -75,7 +119,7 @@ abbrev AntonymForm.strengthenedDenot {max : Nat} (tp : ThresholdPair max)
   | .notNegative => notContraryNegMeaning d tp   -- d ≥ tp.neg
 
 -- ============================================================================
--- § 2. Anchor Theorems
+-- § 3. Anchor Theorems
 -- ============================================================================
 
 /-- Under the contradictory denotation, the `negative`-`notPositive` and
@@ -132,7 +176,7 @@ theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
   · rw [disjoint_iff]
     funext d
     simp only [AntonymForm.strengthenedDenot, positiveMeaning', contraryNegMeaning,
-      Semantics.Degree.positiveMeaning, Semantics.Degree.negativeMeaning,
+      Degree.positiveMeaning, Degree.negativeMeaning,
       Pi.inf_apply, Pi.bot_apply, inf_Prop_eq]
     exact eq_false (fun ⟨h1, h2⟩ => absurd (h1.trans h2) (lt_asymm h))
   · rw [codisjoint_iff]
@@ -140,14 +184,14 @@ theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
     intro hco
     have hd := congrFun hco d
     simp only [AntonymForm.strengthenedDenot, positiveMeaning', contraryNegMeaning,
-      notContraryNegMeaning, Semantics.Degree.positiveMeaning, Semantics.Degree.negativeMeaning,
+      notContraryNegMeaning, Degree.positiveMeaning, Degree.negativeMeaning,
       Pi.sup_apply, Pi.top_apply, sup_Prop_eq] at hd hd1 hd2
     rcases of_eq_true hd with hp | hn
     · exact hd2 hp
     · exact absurd hn (not_lt.mpr hd1)
 
 -- ============================================================================
--- § 3. Prediction Skeleton
+-- § 4. Prediction Skeleton
 -- ============================================================================
 
 /-- **Anchored prediction skeleton.** Map an antonymy type to predicted
@@ -173,7 +217,7 @@ def predictionForAntonymy : NegationType → Asymmetry
 
 /-- Read prediction off a Fragment lexical entry's `antonymRelation`. Defaults
     to `.symmetric` for entries without an explicit antonymy classification. -/
-def predictionForEntry (e : GradableAdjEntry) : Asymmetry :=
+def predictionForEntry (e : GradableAdjective) : Asymmetry :=
   e.antonymRelation.elim .symmetric predictionForAntonymy
 
 end Semantics.Gradability

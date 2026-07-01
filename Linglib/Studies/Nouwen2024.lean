@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Intensification
+import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Pragmatics.RSA.Composition
 import Linglib.Tactics.RSAPredict
@@ -388,7 +388,7 @@ def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
 
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
-    Option Semantics.Gradability.GradableAdjEntry :=
+    Option Semantics.Gradability.GradableAdjective :=
   English.Predicates.Adjectival.lookup e.adjBase
 
 /-- Bridge: pleasant's Fragment entry has positive evaluative valence,
@@ -605,13 +605,13 @@ namespace RSA.Nouwen2024
 
 instance : NeZero (6 : Nat) := ⟨by omega⟩
 
-abbrev Height := Semantics.Degree.Degree 6
-abbrev Threshold := Semantics.Degree.Threshold 6
+abbrev Height := Degree.Degree 6
+abbrev Threshold := Degree.Threshold 6
 
-open Semantics.Degree (deg thr)
+open Degree (deg thr)
 open Features (EvaluativeValence)
 open Semantics.Gradability.Intensification (EvaluativeMeasure)
-open Semantics.Degree (positiveMeaning)
+open Degree (positiveMeaning)
 
 /-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ, specialized to scale 6. -/
 def tallMeaning (θ : Threshold) (h : Height) : Bool :=
@@ -706,7 +706,7 @@ private lemma muHorrible_eq (h : Height) :
     (Semantics.Gradability.Intensification.muHorrible 6).mu h.toNat =
     (muHorrible h : ℚ) := by
   unfold Semantics.Gradability.Intensification.muHorrible muHorrible
-  fin_cases h <;> simp [Semantics.Degree.Degree.toNat] <;> norm_num
+  fin_cases h <;> simp [Degree.Degree.toNat] <;> norm_num
 
 /--
 The local horribly_warm meaning agrees with theory-layer `intensifiedMeaning`
@@ -725,7 +725,7 @@ private lemma muPleasant_eq (h : Height) :
     (Semantics.Gradability.Intensification.muPleasant 6).mu h.toNat =
     (muPleasant h : ℚ) := by
   unfold Semantics.Gradability.Intensification.muPleasant muPleasant
-  fin_cases h <;> simp [Semantics.Degree.Degree.toNat] <;> norm_num
+  fin_cases h <;> simp [Degree.Degree.toNat] <;> norm_num
 
 /--
 The local pleasantly_warm meaning agrees with theory-layer `intensifiedMeaning`

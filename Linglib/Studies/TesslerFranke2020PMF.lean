@@ -31,9 +31,9 @@ set_option autoImplicit false
 namespace TesslerFranke2020.PMF
 
 open scoped ENNReal
-open Semantics.Degree (Degree Threshold deg thr)
+open Degree (Degree Threshold deg thr)
 open Features (NegationType)
-open Semantics.Degree (positiveMeaning negativeMeaning)
+open Degree (positiveMeaning negativeMeaning)
 
 /-! ## §0. Domain types -/
 
@@ -60,7 +60,7 @@ abbrev NegLexicon := NegationType
 @[reducible] def LatentState := HThreshold × HThreshold × NegLexicon
 
 /-- Utterance meaning parameterized by thresholds and lexicon, grounded in
-shared `Semantics.Degree` predicates. -/
+shared `Degree` predicates. -/
 def utteranceMeaning (θ₁ θ₂ : HThreshold) (L : NegLexicon)
     (u : Utterance) (d : HappinessDeg) : Bool :=
   match u with

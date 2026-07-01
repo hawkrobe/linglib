@@ -1,8 +1,8 @@
-import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 
 /-!
 # [sassoon-2013]
@@ -65,7 +65,7 @@ namespace Sassoon2013
 open Semantics.Gradability (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
   deMorgan_disjunctive_conjunctive predictedBinding)
-open Semantics.Degree (interpretiveEconomy)
+open Degree (interpretiveEconomy)
 open Core.Order (Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. Multidimensional Adjective Data

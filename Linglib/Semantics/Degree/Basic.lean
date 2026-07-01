@@ -12,8 +12,9 @@ where needed. Kennedy 2007's interpretive economy lives in the sibling
 
 ## Main definitions
 
-* `positiveMeaning`, `negativeMeaning`, `antonymMeaning` — concrete
-  threshold-comparison predicates on `Degree max` / `Threshold max`
+* `positiveMeaning` (*tall*), `negativeMeaning` (*short*), `notPositiveMeaning`
+  (*not tall*) — the three opposition relations as concrete threshold-comparison
+  predicates on `Degree max` / `Threshold max`
 
 ## Main theorems
 
@@ -29,9 +30,7 @@ serves the same clients; this module is imported by
 `Studies/` files.
 -/
 
-namespace Semantics.Degree
-
-open Semantics.Degree (Degree Threshold)
+namespace Degree
 
 /-! ### Concrete threshold-based meanings
 
@@ -44,16 +43,18 @@ section Concrete
 
 variable {max : Nat}
 
-/-- Positive form: `t < d`. -/
+/-- Positive form (*tall*): `t < d`. -/
 def positiveMeaning (d : Degree max) (t : Threshold max) : Prop :=
   (t : Degree max) < d
 
-/-- Negative form: `d < t`. -/
+/-- Polar antonym (*short*): `d < t`, evaluated against the antonym's own
+threshold (which may sit below the positive's — see `Gradability.ThresholdPair`). -/
 def negativeMeaning (d : Degree max) (t : Threshold max) : Prop :=
   d < (t : Degree max)
 
-/-- Antonym: `d ≤ t`. -/
-def antonymMeaning (d : Degree max) (t : Threshold max) : Prop :=
+/-- Contradictory negation (*not tall*): `d ≤ t`, the complement of
+`positiveMeaning`. Not the polar antonym — that is `negativeMeaning`. -/
+def notPositiveMeaning (d : Degree max) (t : Threshold max) : Prop :=
   d ≤ (t : Degree max)
 
 instance (d : Degree max) (t : Threshold max) : Decidable (positiveMeaning d t) :=
@@ -62,7 +63,7 @@ instance (d : Degree max) (t : Threshold max) : Decidable (positiveMeaning d t) 
 instance (d : Degree max) (t : Threshold max) : Decidable (negativeMeaning d t) :=
   inferInstanceAs (Decidable (_ < _))
 
-instance (d : Degree max) (t : Threshold max) : Decidable (antonymMeaning d t) :=
+instance (d : Degree max) (t : Threshold max) : Decidable (notPositiveMeaning d t) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
 /-- Monotonicity of `positiveMeaning` in the threshold: a higher threshold
@@ -76,4 +77,4 @@ theorem positiveMeaning_monotone (d : Degree max) (θ_weak θ_strong : Threshold
 
 end Concrete
 
-end Semantics.Degree
+end Degree

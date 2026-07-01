@@ -22,9 +22,9 @@ commensurable scales; differentials specify the interval gap.
 * `subcomparative` — cross-dimensional comparison ([schwarzschild-wilkinson-2002]).
 -/
 
-namespace Semantics.Degree.Intervals
+namespace Degree.Intervals
 
-open Semantics.Degree
+open Degree
 
 /-! ### Intervals as degrees -/
 
@@ -103,4 +103,4 @@ theorem negativeInterval_membership {Entity D : Type*} [LinearOrder D] [BoundedO
     (negativeInterval μ x).fst ≤ d ↔ μ x ≤ d :=
   Iff.rfl
 
-end Semantics.Degree.Intervals
+end Degree.Intervals

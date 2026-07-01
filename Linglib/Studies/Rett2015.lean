@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Construction
 
 /-!
 # Evaluativity: Empirical Patterns
@@ -12,13 +13,13 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
 
-`AdjectivalConstruction` is defined in `Semantics.Degree.Defs`.
+`AdjectivalConstruction` is defined in `Semantics/Degree/Gradability/Construction.lean`.
 
 -/
 
 namespace Rett2015.Evaluativity
 
-open Semantics.Degree (AdjectivalConstruction)
+open Degree (AdjectivalConstruction)
 
 -- Evaluativity Judgments
 

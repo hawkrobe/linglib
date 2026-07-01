@@ -51,7 +51,7 @@ quantify over the scale's maximum (or its absence).
 
 ## Sections
 
-1. `MeasureFunction` — time-indexed measure (K&L footnote 9)
+1. `MeasureFunction` — time-indexed measure ([hay-kennedy-levin-1999] eq. 11)
 2. `differenceFunction` — m clamped at d as new minimum (K&L eq. 23)
 3. `measureOfChange` — `m_Δ(x)(e)` (K&L eq. 25)
 4. `MeasureFunction.toHasScalarResult` — bridge to Beavers substrate
@@ -59,12 +59,12 @@ quantify over the scale's maximum (or its absence).
 
 -/
 
-namespace Semantics.Degree.MeasureFunction
+namespace Degree.MeasureFunction
 
 open Semantics.ArgumentStructure.Affectedness
 
 -- ════════════════════════════════════════════════════
--- § 1. MeasureFunction (K&L 2008 footnote 9)
+-- § 1. MeasureFunction ([hay-kennedy-levin-1999] eq. 11)
 -- ════════════════════════════════════════════════════
 
 set_option linter.dupNamespace false in
@@ -92,7 +92,7 @@ set_option linter.dupNamespace false in
     `[SetLike]` (typeclass) interfaces.
 
     The duplicated `MeasureFunction` namespace (file-level
-    `Semantics.Degree.MeasureFunction` + the type itself) is harmless
+    `Degree.MeasureFunction` + the type itself) is harmless
     here — same pattern as mathlib's `Function` files. The `set_option
     linter.dupNamespace false in` immediately above silences the
     namespace-duplication warning for this single declaration. -/
@@ -273,4 +273,4 @@ def HasLatentScale.ofHasMeasureFunction
     HasLatentScale α (Event Time) where
   latentScale _ _ := True
 
-end Semantics.Degree.MeasureFunction
+end Degree.MeasureFunction

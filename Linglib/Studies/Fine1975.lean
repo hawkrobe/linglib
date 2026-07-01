@@ -1,6 +1,6 @@
 import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Semantics.Degree.HasMeasure
-import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Defs
+import Linglib.Semantics.Degree.Gradability.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -39,13 +39,13 @@ P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
 
 [klein-1980]'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
 is the existential dual of supervaluation. See
-`Semantics/Comparison/Delineation.lean`.
+`Semantics/Degree/Gradability/Delineation.lean`.
 -/
 
 namespace Fine1975
 
 open Core.Duality (Truth3)
-open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat)
+open Degree (Degree Threshold Degree.toNat Threshold.toNat)
 open Semantics.Gradability (ThresholdPair inGapRegion)
 open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)
 

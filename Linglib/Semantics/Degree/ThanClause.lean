@@ -23,7 +23,7 @@ the degree set against which the matrix predicate is evaluated.
 
 -/
 
-namespace Semantics.Degree.ThanClause
+namespace Degree.ThanClause
 
 -- ════════════════════════════════════════════════════
 -- § 1. Than-Clause Denotation
@@ -88,7 +88,7 @@ theorem phrasal_clausal_equivalence {Entity D : Type*} [Preorder D]
     and Schwarzschild calls "positive interval". -/
 theorem thanClause_eq_posExt {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (b : Entity) :
-    thanClauseDenotation μ b = Semantics.Degree.posExt μ b :=
+    thanClauseDenotation μ b = Degree.posExt μ b :=
   rfl
 
-end Semantics.Degree.ThanClause
+end Degree.ThanClause

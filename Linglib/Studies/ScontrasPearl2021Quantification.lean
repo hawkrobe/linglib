@@ -312,7 +312,7 @@ theorem lowerBound_preserves_negation_scope :
 /-- [kennedy-2015]'s resolution: exact meaning is basic, lower-bound is derived
     via type-shift. Both meanings are grammatically available. -/
 theorem typeshift_resolves_tension :
-    Semantics.Degree.typeLower bareMeaning 2 2 ↔
+    Degree.typeLower bareMeaning 2 2 ↔
     atLeastMeaning 2 2 :=
   Semantics.Numerals.typeLower_bareMeaning_iff 2 2
 

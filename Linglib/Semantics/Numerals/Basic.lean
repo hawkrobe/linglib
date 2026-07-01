@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Syntax.Numeral.Basic
 import Mathlib.Order.Interval.Set.Basic
@@ -232,41 +232,41 @@ theorem classB_includes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → P
   exact h
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
-    of `Semantics.Degree.eqOver_imp_geOver`. -/
+    of `Degree.eqOver_imp_geOver`. -/
 theorem classB_entailed_by_bare (m n : Nat) :
     bareMeaning m n → atLeastMeaning m n :=
-  Semantics.Degree.eqOver_imp_geOver id m n
+  Degree.eqOver_imp_geOver id m n
 
 /-- Exact bare numerals are not upward-monotone: the `id`-specialization of
-    `Semantics.Degree.eqOver_not_upward_monotone` (witness `d = 3`, `d' = 4`). -/
+    `Degree.eqOver_not_upward_monotone` (witness `d = 3`, `d' = 4`). -/
 theorem bare_not_upward_monotone :
     ¬ ∀ m m' n, m ≤ m' → bareMeaning m n → bareMeaning m' n := by
   intro h
-  exact Semantics.Degree.eqOver_not_upward_monotone (W := Nat) id (d := 3) (d' := 4)
+  exact Degree.eqOver_not_upward_monotone (W := Nat) id (d := 3) (d' := 4)
     (by decide) (by decide) (w := 3) rfl
     (fun x y hxy hex => h x y 3 hxy hex)
 
 /-- Bare numerals are not downward-monotone either, so they fail the
     Horn-scale criterion in both directions. The `id`-specialization of
-    `Semantics.Degree.eqOver_not_downward_monotone`. -/
+    `Degree.eqOver_not_downward_monotone`. -/
 theorem bare_not_downward_monotone :
     ¬ ∀ m m' n, m' ≤ m → bareMeaning m n → bareMeaning m' n := by
   intro h
-  exact Semantics.Degree.eqOver_not_downward_monotone (W := Nat) id (d := 3) (d' := 2)
+  exact Degree.eqOver_not_downward_monotone (W := Nat) id (d := 3) (d' := 2)
     (by decide) (by decide) (w := 3) rfl
     (fun x y hyx hex => h x y 3 hyx hex)
 
 /-- "At least `m`" is strictly weaker than "bare `m`" — the `id`-specialization
-    of `Semantics.Degree.geOver_strictly_weaker_than_eqOver` (witness `d' = m+1`). -/
+    of `Degree.geOver_strictly_weaker_than_eqOver` (witness `d' = m+1`). -/
 theorem atLeast_strictly_weaker_than_bare (m : Nat) :
     atLeastMeaning m (m + 1) ∧ ¬ bareMeaning m (m + 1) :=
-  Semantics.Degree.geOver_strictly_weaker_than_eqOver id (Nat.lt_succ_self m) (w := m + 1) rfl
+  Degree.geOver_strictly_weaker_than_eqOver id (Nat.lt_succ_self m) (w := m + 1) rfl
 
 /-- "More than `m`" and "bare `m`" have disjoint denotations — the
-    `id`-specialization of `Semantics.Degree.gtOver_disjoint_eqOver`. -/
+    `id`-specialization of `Degree.gtOver_disjoint_eqOver`. -/
 theorem moreThan_disjoint_from_bare (m n : Nat) :
     ¬ (bareMeaning m n ∧ moreThanMeaning m n) :=
-  Semantics.Degree.gtOver_disjoint_eqOver id m n
+  Degree.gtOver_disjoint_eqOver id m n
 
 -- ============================================================================
 -- Section 6: Type-Shifting ([kennedy-2015] §3.1)
@@ -274,20 +274,20 @@ theorem moreThan_disjoint_from_bare (m n : Nat) :
 
 /-! ## De-Fregean type-shifting: exact → lower-bound
 
-The general operation `Semantics.Degree.typeLower` (`∃ d' ≥ d, exact d' w`) and
+The general operation `Degree.typeLower` (`∃ d' ≥ d, exact d' w`) and
 its collapse `typeLower_eqOver_iff` (existentially lowering `Comparison.eq.over μ`
 yields `Comparison.ge.over μ`) live in `Semantics/Degree/Predicate.lean`.
 Numerals are the `id`-instantiation: `typeLower bareMeaning m n ↔ atLeastMeaning m n`
 follows by definitional unfolding (`bareMeaning ≡ Comparison.eq.over id`,
 `atLeastMeaning ≡ Comparison.ge.over id`).
 
-The general theorem `Semantics.Degree.distinct_no_universal_witness` rules out
+The general theorem `Degree.distinct_no_universal_witness` rules out
 the alternative universal-closure reading of Partee's iota. -/
 
-/-- The numeral instantiation of `Semantics.Degree.typeLower_eqOver_iff`. -/
+/-- The numeral instantiation of `Degree.typeLower_eqOver_iff`. -/
 theorem typeLower_bareMeaning_iff (m n : Nat) :
-    Semantics.Degree.typeLower bareMeaning m n ↔ atLeastMeaning m n :=
-  Semantics.Degree.typeLower_eqOver_iff id m n
+    Degree.typeLower bareMeaning m n ↔ atLeastMeaning m n :=
+  Degree.typeLower_eqOver_iff id m n
 
 -- ============================================================================
 -- Section 7: EXH–Type-Shift Duality ([spector-2013] §6.2 vs [kennedy-2015])

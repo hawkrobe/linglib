@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.ClauseEmbedding
+import Linglib.Semantics.Degree.Gradability.ClauseEmbedding
 import Linglib.Semantics.Verb.Basic
 
 /-!

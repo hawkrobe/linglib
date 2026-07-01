@@ -4,7 +4,7 @@ import Linglib.Discourse.QUDStack
 import Linglib.Discourse.Strategy
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Rat01
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 /-!

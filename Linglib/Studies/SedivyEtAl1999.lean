@@ -136,7 +136,7 @@ def adjDomain : Features.PropertyDomain := .size
     against a comparison class ([kennedy-2007], [kennedy-mcnally-2005]) —
     the structural prerequisite for Bierwisch's lexical account of the
     contrast effect (§5 of [sedivy-etal-1999]). -/
-def adjClass : Semantics.Degree.AdjectiveClass := .relativeGradable
+def adjClass : Degree.AdjectiveClass := .relativeGradable
 
 theorem adjClass_is_relative : adjClass.IsRelative := rfl
 
@@ -291,7 +291,7 @@ theorem trivial_satisfies_pattern :
 adopted in §5 of [sedivy-etal-1999]) places a free comparison-class
 variable in the lexical entry of every scalar adjective. Scalar adjectives
 are relative gradable adjectives ([kennedy-2007]); `adjClass_is_relative`
-records this via `Semantics.Degree.AdjectiveClass.IsRelative`.
+records this via `Degree.AdjectiveClass.IsRelative`.
 
 Note: Exp 1B nonetheless found contrast effects with intersective adjectives,
 attributed to *referential narrowing* rather than comparison-class binding.

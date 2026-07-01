@@ -1,10 +1,10 @@
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Kennedy
-import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.Intensification
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 
 /-!
 # Beltrama 2025: Evaluation, thresholds, and practical commitments
@@ -41,8 +41,8 @@ the grammar of adjectival mildness. *Natural Language Semantics* 33, 169--205.
 namespace Beltrama2025
 
 open Core.Order (Boundedness)
-open Semantics.Degree (PositiveStandard interpretiveEconomy positiveMeaning)
-open Semantics.Degree (AdjectiveClass)
+open Degree (PositiveStandard interpretiveEconomy positiveMeaning)
+open Degree (AdjectiveClass)
 
 -- ============================================================================
 -- § 1. Empirical Profile (Table 1)
@@ -414,7 +414,7 @@ theorem mpa_good_same_valence :
 -- § 12. Integration: DegPType.sufficiency (*enough* parallel)
 -- ============================================================================
 
-open Semantics.Degree (DegPType)
+open Degree (DegPType)
 
 /-- MPAs encode the same necessity component as *enough*
     ([beltrama-2025] §5.3; Nadathur 2023): the minimum degree
