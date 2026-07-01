@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
+import Linglib.Semantics.Degree.Defs
 import Linglib.Processing.VisualWorld
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.SedivyEtAl1999
@@ -120,9 +121,9 @@ Two prior accounts of the contrastive inference effect:
    [bierwisch-1989]): scalar adjectives carry a free
    comparison-class variable, bound by visual context, which makes
    the contrast pair pragmatically informative. Predicts an effect
-   for scalar but *not* for color or material (color and material do
-   not require a comparison class — see
-   `Features.PropertyDomain.requiresComparisonClass`).
+   for scalar but *not* for color or material (color and material are
+   non-gradable, so require no comparison class — see `AdjType.toClass`
+   and `AdjectiveClass.IsRelative`).
 
 2. **Perceptual discrimination** ([kursat-degen-2021],
    [giles-etal-2026]): high perceptual discriminability makes a
@@ -150,15 +151,13 @@ is observable independent of any contrast manipulation.
   channel) cannot satisfy `SatisfiesRonderosPattern` because it would
   predict equal contrast effects for all adjective types — a useful
   negative result that could itself be a theorem.
-- **Connection to `Semantics/Gradability/`**: Ronderos's
-  semantic factor (scalar = gradable + comparison-class-dependent;
-  color/material = non-gradable) is currently mediated only through
-  `Features.PropertyDomain.requiresComparisonClass`. A deeper bridge
-  would tie `AdjType.scalar` to the
-  `Semantics.Gradability.Classification` subsective/comparison-class
-  hierarchy, so the "scalar requires a comparison class" claim is
-  derivable from gradability theory rather than projected via the
-  domain table.
+- **Connection to `Semantics/Degree/`**: Ronderos's semantic factor
+  (scalar = gradable + comparison-class-dependent; color/material =
+  non-gradable) is derived through `AdjType.toClass`, which maps each
+  adjective type to a Kennedy-style `Semantics.Degree.AdjectiveClass`.
+  The "scalar requires a comparison class" claim then follows from
+  `AdjectiveClass.IsRelative`, grounded in gradability theory rather
+  than projected via a perceptual-domain table.
 -/
 
 namespace RonderosEtAl2024
@@ -195,6 +194,16 @@ def AdjType.toDomain : AdjType → Features.PropertyDomain
   | .color    => .color
   | .scalar   => .size
   | .material => .material
+
+/-- Map an adjective type to its Kennedy-style scale-structure class
+    ([kennedy-2007], [kennedy-mcnally-2005]). Ronderos's semantic factor:
+    scalar adjectives are gradable and interpreted against a comparison
+    class (`relativeGradable`); color and material encode non-gradable
+    properties (`nonGradable`), interpreted in absolute terms. -/
+def AdjType.toClass : AdjType → Semantics.Degree.AdjectiveClass
+  | .scalar   => .relativeGradable
+  | .color    => .nonGradable
+  | .material => .nonGradable
 
 -- ============================================================================
 -- §2. Cell
@@ -428,12 +437,11 @@ infrastructure (`Features.PropertyDomain`, `RSA.Noise`,
 
 /-- **Agreement with [sedivy-etal-1999] on scalar adjectives.**
     Both studies place the scalar contrast effect on the size domain,
-    which `Features.PropertyDomain` flags as requiring comparison-class
-    binding. -/
+    and scalar adjectives are relative gradable adjectives — interpreted
+    against a comparison class ([kennedy-2007]). -/
 theorem scalar_shares_sedivy_domain :
     AdjType.toDomain .scalar = SedivyEtAl1999.adjDomain ∧
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .scalar) = true :=
+    (AdjType.toClass .scalar).IsRelative :=
   ⟨rfl, rfl⟩
 
 /-- **Disagreement with the comparison-class-only mechanism on color.**
@@ -441,8 +449,7 @@ theorem scalar_shares_sedivy_domain :
     Bierwisch/Sedivy mechanism alone predicts no contrast effect for
     color), yet Ronderos finds a robust color contrast effect. -/
 theorem color_does_not_require_comparison_class :
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .color) = false := rfl
+    ¬ (AdjType.toClass .color).IsRelative := by decide
 
 /-- **Material fails the comparison-class route.** Material adjectives,
     like color, do not require comparison-class binding — so the
@@ -451,8 +458,7 @@ theorem color_does_not_require_comparison_class :
     is insufficient for color, however; see
     `color_does_not_require_comparison_class`.) -/
 theorem material_does_not_require_comparison_class :
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .material) = false := rfl
+    ¬ (AdjType.toClass .material).IsRelative := by decide
 
 /-- **Effect ordering aligns with noise discrimination.** The
     perceptual-discrimination route predicts the cross-category
@@ -487,31 +493,28 @@ theorem adjType_to_noise_discrimination :
     `Features.PropertyDomain.noiseDiscrimination` (perceptual route): all
     three adjective types have *some* discrimination value, but only
     those above the material level produce a contrast effect. The
-    baseline-restrictiveness family is keyed off
-    `Features.PropertyDomain.requiresComparisonClass` (semantic route):
-    only the scalar (size) domain returns `true`, predicting the
-    no-contrast baseline disadvantage to be uniquely scalar.
+    baseline-restrictiveness family is keyed off `AdjType.toClass` /
+    `AdjectiveClass.IsRelative` (semantic route): only the scalar type is
+    a relative gradable adjective — requiring a comparison class — predicting
+    the no-contrast baseline disadvantage to be uniquely scalar.
 
     This theorem records the two-mechanism factorisation as a typed
     statement: the scalar adjective type is the *unique* one whose
-    domain requires a comparison class; color and material are the
+    class is relative gradable; color and material are the
     *two* whose domains have noise discrimination strictly above the
     material baseline (where "above the material baseline" means
     "strictly larger" — material is at the floor). The two
     mechanisms therefore make orthogonal predictions, and Ronderos's
     pattern is the joint envelope. -/
 theorem two_mechanisms_factorise :
-    -- Semantic route: scalar uniquely requires comparison class
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .scalar) = true ∧
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .color) = false ∧
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .material) = false ∧
+    -- Semantic route: scalar uniquely is relative gradable (needs a CC)
+    (AdjType.toClass .scalar).IsRelative ∧
+    ¬ (AdjType.toClass .color).IsRelative ∧
+    ¬ (AdjType.toClass .material).IsRelative ∧
     -- Perceptual route: color and scalar strictly above material
     RSA.Noise.colorDiscrimination > RSA.Noise.materialDiscrimination ∧
     RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination :=
-  ⟨rfl, rfl, rfl,
+  ⟨rfl, by decide, by decide,
    lt_trans RSA.Noise.size_gt_material RSA.Noise.color_gt_size,
    RSA.Noise.size_gt_material⟩
 

@@ -47,8 +47,8 @@ central claims against the degree substrate and the English adjective Fragment.
 * `k2007_matrix_agrees_with_typology`, `k2007_modifier_data_agrees`,
   `pipeline_agrees_with_measure` — the matrix agrees with the per-adjective
   typology data and with the `DirectedMeasure` / `LicensingPipeline` substrate.
-* `tall_cc_convergence` (etc.) — scale-structure and property-domain paths
-  agree on comparison-class sensitivity for each Fragment adjective.
+* `tall_requires_cc`, `full_no_cc` (etc.) — comparison-class sensitivity
+  read off each Fragment adjective's scale structure.
 -/
 
 namespace Kennedy2007
@@ -619,47 +619,31 @@ theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree 
 
 /-! #### Scale structure → comparison-class sensitivity
 
-[kennedy-2007]'s scale structure and `PropertyDomain.requiresComparisonClass`
-are two independent classifications that converge on the same prediction for
-whether an adjective's standard depends on contextual domain information:
+Whether an adjective's standard depends on contextual domain information is
+read off its scale structure ([kennedy-2007]): `scaleType → interpretiveEconomy
+→ PositiveStandard → PositiveStandard.RequiresComparisonClass`. An open scale
+yields a contextual **s** (requires a comparison class); a closed scale fixes
+the standard at an endpoint via Interpretive Economy.
 
-- **Scale-structure path** ([kennedy-2007]): `scaleType → interpretiveEconomy
-  → PositiveStandard → PositiveStandard.RequiresComparisonClass`.
-  Open scale → contextual **s** → requires a comparison class.
-- **Domain path** ([sedivy-etal-1999]): `dimension.domain →
-  PropertyDomain.requiresComparisonClass`.
+Kennedy argues that the comparison class is descriptively real but NOT a
+semantic argument of *pos*; it feeds into **s** contextually rather than as a
+constituent of logical form. -/
 
-Kennedy argues (§2.3) that the comparison class is descriptively real but NOT a
-semantic argument of *pos*; `requiresComparisonClass` tracks whether contextual
-domain information is needed — compatible with that view, since the information
-feeds into **s** contextually rather than as a constituent of logical form. For
-every concrete Fragment adjective, the two paths agree. -/
+/-- "tall": open scale ⇒ CC-dependence. -/
+theorem tall_requires_cc :
+    (interpretiveEconomy tall.scaleType).RequiresComparisonClass := trivial
 
-/-- "tall": both paths predict CC-dependence. -/
-theorem tall_cc_convergence :
-    (interpretiveEconomy tall.scaleType).RequiresComparisonClass ∧
-    tall.dimension.domain.requiresComparisonClass = true :=
-  ⟨trivial, rfl⟩
+/-- "full": maximum-standard (closed scale) ⇒ CC-independence. -/
+theorem full_no_cc :
+    ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass := id
 
-/-- "full": both paths predict CC-independence. -/
-theorem full_no_cc_convergence :
-    ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass ∧
-    full.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+/-- "wet": lower-bounded ⇒ endpoint standard ⇒ CC-independence. -/
+theorem wet_no_cc :
+    ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass := id
 
-/-- "wet": both paths predict CC-independence
-    (lower-bounded → endpoint standard; state domain). -/
-theorem wet_no_cc_convergence :
-    ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass ∧
-    wet.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
-
-/-- "dry": both paths predict CC-independence
-    (upper-bounded → endpoint standard; state domain). -/
-theorem dry_no_cc_convergence :
-    ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass ∧
-    dry.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+/-- "dry": upper-bounded ⇒ endpoint standard ⇒ CC-independence. -/
+theorem dry_no_cc :
+    ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass := id
 
 /-! #### MPA licensing ([beltrama-2025]) -/
 
@@ -683,8 +667,7 @@ theorem mpa_good_same_licensing :
     Economy, distinct from *good*'s exception. -/
 theorem mpa_ie_exception :
     (interpretiveEconomy decent.scaleType) = .minEndpoint ∧
-    ¬ (interpretiveEconomy decent.scaleType).RequiresComparisonClass ∧
-    decent.dimension.domain.requiresComparisonClass = true := ⟨rfl, id, rfl⟩
+    ¬ (interpretiveEconomy decent.scaleType).RequiresComparisonClass := ⟨rfl, id⟩
 
 /-! #### Modifier-class matrix consistency (eq. (61)) -/
 
