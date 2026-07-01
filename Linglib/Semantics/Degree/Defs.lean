@@ -23,10 +23,11 @@ Klein-style delineation [klein-1980] has no measure function and lives in
 ## Main definitions
 
 * `Degree max`, `Threshold max` — discrete bounded scale types (`Fin`-backed).
-* `DegPType`, `StandardType` — DegP compositional taxonomy.
-* `ModifierDirection` — amplifier / downtoner axis.
-* `AdjectivalConstruction` — surface-construction type for evaluativity.
+* `DegPType` — DegP compositional taxonomy.
 * `PositiveStandard`, `AdjectiveClass` — Kennedy-style classification carriers.
+
+Adjectival surface-construction types (`AdjectivalConstruction`) live in
+`Gradability/Construction.lean`.
 -/
 
 namespace Degree
@@ -128,53 +129,6 @@ inductive DegPType where
   /-- *enough*. -/
   | sufficiency
   deriving DecidableEq, Repr
-
-/-- The standard of comparison: what the degree is compared to. -/
-inductive StandardType where
-  /-- "taller than Bill" — explicit standard. -/
-  | explicit
-  /-- "tall" — contextually determined standard. -/
-  | contextual
-  /-- "full" — scale endpoint as standard. -/
-  | absolute
-  deriving DecidableEq, Repr
-
-/-- Degree modifier direction — the same axis as NPI scalar direction.
-Lexical instantiations of named modifiers (*slightly*, *very*, *quite*,
-etc.) live in consuming Studies files. -/
-inductive ModifierDirection where
-  /-- *very*, *extremely* — raises the threshold. -/
-  | amplifier
-  /-- *slightly*, *kind of* — lowers the threshold. -/
-  | downtoner
-  deriving DecidableEq, Repr
-
-/-- Degree construction type. Used by evaluativity analyses to track which
-surface constructions trigger evaluative readings. -/
-inductive AdjectivalConstruction where
-  /-- "Kim is tall" — unmarked form. -/
-  | positive
-  /-- "Kim is taller than Sam". -/
-  | comparative
-  /-- "Kim is as tall as Sam". -/
-  | equative
-  /-- "Kim is 6 feet tall" — explicit measure phrase. -/
-  | measurePhrase
-  /-- "How tall is Kim?". -/
-  | degreeQuestion
-  deriving Repr, DecidableEq
-
-/-- User-facing rendering, distinct from `Repr` (which prefixes the
-namespace). Consumed by Studies files that string-interpolate construction
-names into diagnostic messages — see e.g.
-`Studies/Rett2015Implicature.lean`. -/
-instance : ToString AdjectivalConstruction where
-  toString
-    | .positive => "positive"
-    | .comparative => "comparative"
-    | .equative => "equative"
-    | .measurePhrase => "measurePhrase"
-    | .degreeQuestion => "degreeQuestion"
 
 /-! ### Kennedy-style classification carriers -/
 

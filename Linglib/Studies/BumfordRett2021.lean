@@ -1,5 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
+import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
@@ -454,7 +455,7 @@ def utterancePolarity : Utterance → Option Polarity
   | .null     => none
 
 /-- Construction labels for each simulation, connecting to the
-    `AdjectivalConstruction` type from `Degree.Defs`. -/
+    `AdjectivalConstruction` type from `Semantics/Degree/Gradability/Construction.lean`. -/
 abbrev posConstruction  : AdjectivalConstruction := .positive
 abbrev eqConstruction   : AdjectivalConstruction := .equative
 abbrev compConstruction : AdjectivalConstruction := .comparative
