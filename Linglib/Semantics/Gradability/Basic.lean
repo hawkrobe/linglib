@@ -1,32 +1,6 @@
-/-
-# Gradable Adjective Infrastructure
-
-Types and operations for gradable adjective semantics (tall, happy, expensive).
-
-## Key Components
-
-- `NegationType`: Contradictory vs. contrary antonyms
-- `ThresholdPair`: Two thresholds for contrary antonyms with gap
-- `GradableAdjective`: the gradable adjective — syntactic `Adjective` + degree semantics
-- `InformationalStrength`: Weak/strong adjective distinction
-- Negation and gap-region predicates
-
-## Architecture
-
-Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`.
-The canonical threshold semantics (`positiveMeaning`, `negativeMeaning`) live
-in `Semantics/Degree/Basic.lean`. This module adds adjective-specific
-infrastructure on top: antonymy, two-threshold models, and lexical entries.
-
-For the adjective classification hierarchy (intersective, subsective, privative,
-extensional), see `Classification.lean`.
--/
-
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Bounds
-import Linglib.Semantics.Degree.HasMeasure
-import Linglib.Features.PropertyDomain
 import Linglib.Semantics.Gradability.Dimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -35,14 +9,37 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Syntax.Adjective.Basic
 
+/-!
+# Gradable adjectives
+
+Adjective-specific degree semantics, layered on the syntactic `Adjective`
+(`Syntax/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
+classification, the two-threshold model for contrary antonyms, multidimensional
+binding ([sassoon-2013]), and the bridge from a concrete `Degree` scale to the
+abstract `DirectedMeasure`.
+
+## Main definitions
+
+* `GradableAdjective` — a syntactic `Adjective` refined with the degree-semantic
+  layer; `scaleType`, `standard`, and `adjectiveClass` are derived views.
+* `ThresholdPair` — the two thresholds of a contrary antonym pair, with a gap.
+* `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024]).
+* `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
+* `adjMeasure` — a `GradableAdjective` read as a `DirectedMeasure` over a scale.
+
+Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`; the
+threshold semantics (`positiveMeaning`, `negativeMeaning`) in `Semantics/Degree/Basic`.
+The intersective/subsective/privative classification lives in `Classification.lean`.
+-/
+
 namespace Semantics.Gradability
 
 open Core.Order (Boundedness)
-open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds)
-open Semantics.Degree (PositiveStandard AdjectiveClass interpretiveEconomy)
+open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds
+  PositiveStandard AdjectiveClass interpretiveEconomy)
 open Features (NegationType)
 
--- Two-Threshold Model for Contrary Antonyms
+/-! ### Two-threshold model for contrary antonyms -/
 
 /--
 A threshold pair for contrary antonyms.
@@ -80,9 +77,7 @@ instance {n : Nat} : DecidableEq (ThresholdPair n) :=
     else
       .isFalse (λ h => hp (congrArg ThresholdPair.pos h))
 
--- ════════════════════════════════════════════════════
--- Negation Semantics
--- ════════════════════════════════════════════════════
+/-! ### Negation semantics -/
 
 /-- Contradictory negation: "not happy" = degree ≤ theta.
     Alias for `Semantics.Degree.antonymMeaning` — same comparison,
@@ -113,16 +108,12 @@ abbrev contraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) 
 abbrev notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
   (tp.neg : Degree max) ≤ d
 
--- ════════════════════════════════════════════════════
--- Antonym Relations
--- ════════════════════════════════════════════════════
+/-! ### Antonym relations -/
 
 /-- The relation between a positive form and its antonym. -/
 abbrev AntonymRelation := NegationType
 
--- ════════════════════════════════════════════════════
--- Informational Strength
--- ════════════════════════════════════════════════════
+/-! ### Informational strength -/
 
 /--
 Informational strength of a gradable adjective within its scale.
@@ -144,9 +135,7 @@ inductive InformationalStrength where
   | strong  -- gigantic, tiny, pristine, filthy
   deriving Repr, DecidableEq
 
--- ════════════════════════════════════════════════════
--- Adjective Lexical Entry
--- ════════════════════════════════════════════════════
+/-! ### The gradable adjective -/
 
 /-- Spatial configuration type for adjectives in resultative constructions
     ([levin-2026]). Only adjectives describing spatially instantiated
@@ -221,9 +210,7 @@ instance (g : GradableAdjective) : Decidable g.IsRelative := by
 
 end GradableAdjective
 
--- ════════════════════════════════════════════════════
--- Multidimensional Adjective Semantics
--- ════════════════════════════════════════════════════
+/-! ### Multidimensional adjectives ([sassoon-2013]) -/
 
 /--
 How a multidimensional adjective binds its dimensions ([sassoon-2013]).
@@ -238,7 +225,8 @@ inductive DimensionBindingType where
   | mixed
   deriving Repr, DecidableEq
 
-variable {α : Type}
+section Binding
+variable {α : Type*}
 
 /-- Conjunctive binding: ∀Q ∈ DIM(P,c). Q(x). -/
 def conjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
@@ -281,6 +269,8 @@ theorem deMorgan_disjunctive_conjunctive
       conjunctiveBinding (dims.map λ d a => !d a) x :=
   not_any_eq_all_not_map dims x
 
+end Binding
+
 /-- The predicted binding type for a negative antonym,
     given its positive counterpart's binding type.
     Follows from De Morgan under the negation theory of antonymy. -/
@@ -301,12 +291,11 @@ def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingTyp
   | .contextual   => .mixed
   | .functional   => .mixed   -- evaluative; context-dependent like contextual
 
--- ════════════════════════════════════════════════════
--- Marginality Scales Account ([dinis-jacinto-2026])
--- ════════════════════════════════════════════════════
+/-! ### Marginality scales ([dinis-jacinto-2026]) -/
 
-open Core.Order
-open Semantics.Degree
+-- The tail of the file works with the full `DirectedMeasure`/order API.
+open Core.Order Semantics.Degree
+
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
     Semantics.Degree.DirectedMeasure α W where
   ml : Semantics.Gradability.MLScale α
@@ -320,15 +309,11 @@ theorem marginality_entails_standard {α : Type*} [LinearOrder α]
     (h : marginalityPositive ml norm degree) : norm < degree :=
   h.1
 
--- ════════════════════════════════════════════════════
--- Degree ↔ DirectedMeasure Bridge
--- ════════════════════════════════════════════════════
+/-! ### Degree–DirectedMeasure bridge
 
-/-! ### Connecting concrete `Degree max` to abstract `DirectedMeasure`
-
-`Degree max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`),
-so the abstract theorems in `MeasurementScale.lean` apply directly to concrete
-RSA degree computations. -/
+`Degree max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`), so the
+abstract theorems in `MeasurementScale.lean` apply directly to concrete RSA degree
+computations. -/
 
 def adjMeasure {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjective) : DirectedMeasure (Degree max) W :=
