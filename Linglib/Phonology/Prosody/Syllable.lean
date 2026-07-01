@@ -313,6 +313,9 @@ abbrev Tree.ft (h : Bool) (cs : List Tree) : Tree := .node (.ft h) cs
 /-- A prosodic-word (ω) node over `cs`. -/
 abbrev Tree.om (cs : List Tree) : Tree := .node .om cs
 
+/-- A phonological-phrase (φ) node over `cs` — interim, until `Prosody.Phrase` lands. -/
+abbrev Tree.ph (cs : List Tree) : Tree := .node .ph cs
+
 /-- **Leaf/branch induction on a prosodic tree.** A σ-leaf is a base case; every other node — a
     foot, word, phrase, or degenerate/ill-formed node — is a branch, carrying the induction
     hypothesis over its children and the fact that it is *not* a σ-leaf. This is what lets proofs

@@ -62,18 +62,18 @@ def lexHasOmega (lex : Tree) : Tree → Bool := fun t => go t where
 /-! ### The four candidate prosodifications of *(fnc lex)* -/
 
 /-- The function word: one light syllable. -/
-def fncσ : Tree := Tree.σ .light
+def fncσ : Tree := .σ .light
 /-- The lexical word as a well-formed (bimoraic) ω. -/
-def lexω : Tree := Tree.om [Tree.ft false [Tree.σ .heavy]]
+def lexω : Tree := .om [.ft false [.σ .heavy]]
 
 /-- (a) full-ω: `[φ [ω fnc] [ω lex]]`. -/
-def fullOmega : Tree := .node .ph [Tree.om [fncσ], lexω]
+def fullOmega : Tree := .ph [.om [fncσ], lexω]
 /-- (b) amalgamated: `[ω fnc lex]` (lexical word loses its own ω). -/
-def amalgamated : Tree := Tree.om [fncσ, Tree.ft false [Tree.σ .heavy]]
+def amalgamated : Tree := .om [fncσ, .ft false [.σ .heavy]]
 /-- (c) ω-adjoined: `[ω fnc [ω lex]]` — recursive. -/
-def omegaAdjoined : Tree := Tree.om [fncσ, lexω]
+def omegaAdjoined : Tree := .om [fncσ, lexω]
 /-- (d) φ-attached: `[φ fnc [ω lex]]`. -/
-def phiAttached : Tree := .node .ph [fncσ, lexω]
+def phiAttached : Tree := .ph [fncσ, lexω]
 
 /-- `Lex-to-ω` ([ito-mester-2009], after [mccarthy-prince-1993]'s `Align(Lex, ω)`) as a
     `Constraint Tree`: 1 if the lexical word `lexω` is not aligned with an ω of its own. -/

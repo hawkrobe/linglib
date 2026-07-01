@@ -39,11 +39,11 @@ def ftBin : Constraint Tree := fun t => ((feet t).filter (fun f => footMorae f !
 /-! ### Minimality: a monomoraic input lengthens to a bimoraic foot -/
 
 /-- `(taa)` — one heavy syllable footed: the bimoraic perfect word. -/
-def bimoraic : Tree := Tree.om [Tree.ft false [Tree.σ .heavy]]
+def bimoraic : Tree := .om [.ft false [.σ .heavy]]
 /-- `(ta)` — a degenerate monomoraic foot (`FtBin` violation). -/
-def degenerate : Tree := Tree.om [Tree.ft false [Tree.σ .light]]
+def degenerate : Tree := .om [.ft false [.σ .light]]
 /-- `[ta]` — an unfooted light syllable (`Parse` violation). -/
-def unfooted : Tree := Tree.om [Tree.σ .light]
+def unfooted : Tree := .om [.σ .light]
 
 def minCandidates : List Tree := [bimoraic, degenerate, unfooted]
 
@@ -60,10 +60,10 @@ theorem minimality_optimum :
 
 /-- `(taa.ta)` — a trimoraic foot (`FtBin` violation). -/
 def trimoraicFoot : Tree :=
-  Tree.om [Tree.ft false [Tree.σ .heavy, Tree.σ .light]]
+  .om [.ft false [.σ .heavy, .σ .light]]
 /-- `(taa).ta` — a bimoraic foot plus an unfooted syllable (`Parse` violation). -/
 def footPlusStray : Tree :=
-  Tree.om [Tree.ft false [Tree.σ .heavy], Tree.σ .light]
+  .om [.ft false [.σ .heavy], .σ .light]
 
 def maxCandidates : List Tree := [bimoraic, trimoraicFoot, footPlusStray]
 

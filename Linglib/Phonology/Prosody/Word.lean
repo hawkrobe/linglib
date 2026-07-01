@@ -445,15 +445,15 @@ theorem MaximalWord.minimal (hne : feet t ≠ []) (h : MaximalWord measure t) :
 /-! ### Worked examples -/
 
 -- A bimoraic foot, the perfect word over it, and a recursive (ω-over-ω) word.
-private def exFoot : Tree := Tree.ft false [Tree.σ 2]
-private def perfectW : Tree := Tree.om [exFoot]
-private def recursiveW : Tree := Tree.om [Tree.σ 1, Tree.om [exFoot]]
+private def exFoot : Tree := .ft false [.σ 2]
+private def perfectW : Tree := .om [exFoot]
+private def recursiveW : Tree := .om [.σ 1, .om [exFoot]]
 
 -- Well-formedness: a flat ω over a foot and a recursive ω are both legal words — ω-over-ω
 -- is admitted (No-Recursion is violable). A φ-node inside an ω violates Layeredness.
 example : IsWord perfectW := by decide
 example : IsWord recursiveW := by decide
-example : ¬ IsWord (Tree.om [.node .ph []] : Tree) := by decide
+example : ¬ IsWord (.om [.node .ph []] : Tree) := by decide
 
 -- `recursionCount` reads the No-Recursion cost off the carrier: the recursive word scores
 -- one ω-over-ω, the flat one zero.
