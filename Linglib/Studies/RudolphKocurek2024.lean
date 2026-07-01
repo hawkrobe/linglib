@@ -1,6 +1,8 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Discourse.CommonGround
+import Linglib.Core.Order.TotalPreorder
+import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Gradability.Delineation
 
@@ -53,67 +55,13 @@ structure Interpretation (W : Type*) (Pred : Type*) (Entity : Type*) where
   /-- Extension of predicate P at world w: the entities P applies to. -/
   ext : Pred → W → Entity → Bool
 
-/-- A semantic ordering is a total preorder on a set of interpretations,
-representing a speaker's relative interpretive commitments: `le i j` means
-the speaker is at least as committed to j as to i. Bundled with decidability
-so that finite models compute (`decide`). -/
-structure SemanticOrdering (I : Type*) where
-  /-- The preorder relation: `le i j` means i is ranked no higher than j. -/
-  le : I → I → Prop
-  /-- Reflexivity and transitivity, as mathlib's unbundled relation class. -/
-  isPreorder : IsPreorder I le
-  /-- Totality, as mathlib's unbundled relation class. Registered as
-  instances, so the mathlib relation API applies to `ord.le` directly. -/
-  total : Std.Total le
-  /-- Decidability of the ordering relation -/
-  decRel : DecidableRel le
+open Core.Order (TotalPreorder)
 
-attribute [instance] SemanticOrdering.isPreorder SemanticOrdering.total
-  SemanticOrdering.decRel
-
-namespace SemanticOrdering
-
-variable {I : Type*} (ord : SemanticOrdering I)
-
-/-- Reflexivity (mathlib's `Std.Refl`, field-style). -/
-theorem le_refl (i : I) : ord.le i i := Std.Refl.refl i
-
-/-- Transitivity (mathlib's `IsTrans`, field-style). -/
-theorem le_trans (i j k : I) : ord.le i j → ord.le j k → ord.le i k :=
-  IsTrans.trans i j k
-
-/-- Totality (mathlib's `Std.Total`, field-style). -/
-theorem le_total (i j : I) : ord.le i j ∨ ord.le j i := Std.Total.total i j
-
-/-- Strict ordering: i is ranked strictly below j. -/
-def lt (i j : I) : Prop := ord.le i j ∧ ¬ ord.le j i
-
-instance decRelLt : DecidableRel ord.lt := fun _ _ =>
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Equivalence: i and j are ranked at the same level. -/
-def equiv (i j : I) : Prop := ord.le i j ∧ ord.le j i
-
-instance decRelEquiv : DecidableRel ord.equiv := fun _ _ =>
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- ¬(a < b) → b ≤ a (by totality). -/
-theorem le_of_not_lt {a b : I} (h : ¬ ord.lt a b) : ord.le b a :=
-  Classical.byContradiction fun hba => h ⟨(ord.le_total a b).resolve_right hba, hba⟩
-
-end SemanticOrdering
-
-/-- Construct a `SemanticOrdering` from a Bool-valued table — the convenient
-form for concrete models defined by pattern matching. -/
-def SemanticOrdering.ofBool {I : Type*} (f : I → I → Bool)
-    (h_refl : ∀ i, f i i = true)
-    (h_trans : ∀ i j k, f i j = true → f j k = true → f i k = true)
-    (h_total : ∀ i j, f i j = true ∨ f j i = true) :
-    SemanticOrdering I where
-  le i j := f i j = true
-  isPreorder := { refl := h_refl, trans := h_trans }
-  total := ⟨h_total⟩
-  decRel _ _ := inferInstance
+/-- A semantic ordering — the paper's ranking of interpretations by strength
+of interpretive commitment ([rudolph-kocurek-2024] §4.2) — IS the substrate's
+bundled decidable total preorder (`Core.Order.TotalPreorder`), the same frame
+object that ranks worlds in Lewisian plausibility semantics. -/
+abbrev SemanticOrdering (I : Type*) := TotalPreorder I
 
 /-! ### Formulas -/
 
@@ -196,6 +144,27 @@ theorem eval_mc_iff (A B : MFormula Pred Entity) (ord : SemanticOrdering I)
         ¬ Eval interpFn A ord i'' w → ord.lt i'' i' :=
   Iff.rfl
 
+/-- **Grounding in the comparative-probability substrate**: the metalinguistic
+comparative is the *strict l-lifting* of the semantic ordering
+([holliday-icard-2013]; Lewis's lifting), applied to the cone at or below the
+evaluation index — ≻ is comparative possibility over interpretations rather
+than worlds, and the ∃∀ clause of the paper's semantics is exactly the
+strict Smyth order via `strict_dominationLift_iff`. -/
+theorem eval_mc_iff_strict_dominationLift (A B : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (i : I) (w : W) :
+    Eval interpFn (.mc A B) ord i w ↔
+    ComparativeProbability.Strict
+      (ComparativeProbability.dominationLift (fun a b => ord.le b a))
+      {x | ord.le x i ∧ Eval interpFn A ord x w ∧ ¬ Eval interpFn B ord x w}
+      {x | ord.le x i ∧ Eval interpFn B ord x w ∧ ¬ Eval interpFn A ord x w} := by
+  rw [eval_mc_iff,
+    ComparativeProbability.strict_dominationLift_iff (fun a b => ord.le_total b a)]
+  constructor
+  · rintro ⟨x, h1, h2, h3, hdom⟩
+    exact ⟨x, ⟨h1, h2, h3⟩, fun b ⟨hb1, hb2, hb3⟩ => hdom b hb1 hb2 hb3⟩
+  · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
+    exact ⟨x, h1, h2, h3, fun b hb1 hb2 hb3 => hdom b ⟨hb1, hb2, hb3⟩⟩
+
 /-! ### General entailment facts
 
 Of the supplement's Fact 3 entailment patterns, those that follow directly from
@@ -223,19 +192,14 @@ theorem eval_me_comm (φ ψ : MFormula Pred Entity) (ord : SemanticOrdering I)
 
 /-! ### Assertoric Content -/
 
-/-- Is interpretation i maximal in the ordering? -/
-def IsMaximal (ord : SemanticOrdering I) (i : I) : Prop := ∀ i', ¬ ord.lt i i'
-
-instance [Fintype I] (ord : SemanticOrdering I) (i : I) :
-    Decidable (IsMaximal ord i) := by unfold IsMaximal; infer_instance
-
-/-- Assertoric content: A is true at all ≤-maximal interpretations. A speaker
-accepts A iff on every ordering-world pair they leave open, A holds at every
-top-ranked interpretation. Acceptance-preservation — entailment at the level
-of assertoric content — is nonclassical (see `mc_disj_not_accepted`). -/
+/-- Assertoric content: A is true at all ≤-maximal interpretations — the
+substrate's `TotalPreorder.AcceptedAt` acceptance operator. A speaker accepts
+A iff on every ordering-world pair they leave open, A holds at every
+top-ranked interpretation. Acceptance-preservation is nonclassical (see
+`mc_disj_not_accepted`). -/
 def AssertoricContent [Fintype I] (φ : MFormula Pred Entity)
     (ord : SemanticOrdering I) (w : W) : Prop :=
-  ∀ i, IsMaximal ord i → Eval interpFn φ ord i w
+  ord.AcceptedAt (fun i => Eval interpFn φ ord i w)
 
 instance [Fintype I] (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (w : W) :
     Decidable (AssertoricContent interpFn φ ord w) := by
@@ -1443,7 +1407,7 @@ inductive I3 | i0 | i1 | i2
 
 /-- Linear ordering: i0 ≤ i1 ≤ i2. -/
 def ord₃ : SemanticOrdering I3 :=
-  SemanticOrdering.ofBool
+  .ofBool
     (λ i j => match i, j with
       | .i0, _ => true
       | .i1, .i0 => false
@@ -1490,7 +1454,7 @@ inductive I2 | j0 | j1
 
 /-- Tied ordering: j0 ≡ j1 (both maximal). -/
 def tiedOrd : SemanticOrdering I2 :=
-  SemanticOrdering.ofBool
+  .ofBool
     (λ _ _ => true)
     (by intro i; cases i <;> rfl)
     (by intro i j k _ _; cases i <;> cases j <;> cases k <;> rfl)
@@ -1744,7 +1708,7 @@ inductive I4 | i | j | k | l
 j and k are tied at the middle level — this is essential for the
 equatives La ≈ Pa and Pa ≈ Ca to hold (witnesses block each other). -/
 def ord₄ : SemanticOrdering I4 :=
-  SemanticOrdering.ofBool
+  .ofBool
     (λ x y => match x, y with
       | .l, _ => true
       | .j, .l => false

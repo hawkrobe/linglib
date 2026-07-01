@@ -341,6 +341,27 @@ theorem dominationLift_axiomT (hRefl : ∀ w, ge_w w w) :
 theorem dominationLift_axiomJ : RightUnion (dominationLift ge_w) :=
   fun _ _ _ hAB hAC b hb => hb.elim (hAB b) (hAC b)
 
+/-- Over a **total** relation, the strict l-lifting collapses to Lewis's
+∃∀ comparative possibility: some A-point strictly dominates every B-point.
+This is the form the metalinguistic comparative takes in
+[rudolph-kocurek-2024] (there bounded to the cone below an evaluation index,
+with worlds read as semantic interpretations). -/
+theorem strict_dominationLift_iff (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
+    (A B : Set W) :
+    ComparativeProbability.Strict (dominationLift ge_w) A B ↔
+    ∃ a ∈ A, ∀ b ∈ B, ge_w a b ∧ ¬ ge_w b a := by
+  constructor
+  · rintro ⟨-, hn⟩
+    unfold dominationLift at hn
+    push Not at hn
+    obtain ⟨a, haA, ha⟩ := hn
+    exact ⟨a, haA, fun b hbB =>
+      ⟨(hTotal a b).resolve_right (ha b hbB), ha b hbB⟩⟩
+  · rintro ⟨a, haA, ha⟩
+    refine ⟨fun b hbB => ⟨a, haA, (ha b hbB).1⟩, fun h => ?_⟩
+    obtain ⟨b, hbB, hba⟩ := h a haA
+    exact (ha b hbB).2 hba
+
 /-- The l-lifting satisfies determination by singletons. -/
 theorem dominationLift_axiomDS : DeterminedBySingletons (dominationLift ge_w) :=
   fun _ b hAb =>
