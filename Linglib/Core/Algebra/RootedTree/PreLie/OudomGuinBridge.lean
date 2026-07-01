@@ -153,7 +153,7 @@ Proof strategy (mirrors Q3's per-tprod closure):
 
 The proof structure is wired below; the two substrate lemmas
 `ckIso_circ_intertwine_insertion` and `GL_product_split_mul_ι` are
-stated as `sorry` pending dedicated combinatorial work. -/
+both proved sorry-free below. -/
 
 /-! ### Sub-substrates for Q5c's substrate 1
 
@@ -175,8 +175,7 @@ will use:
    `Nonplanar.insertionMultiset_add_host` (powerset of `{v}` collapses to
    the Leibniz split) + bilinear extension.
 
-Each is a standalone combinatorial lemma; closure roadmap is in the
-docstring. All three are currently `sorry`-fenced. -/
+Each is a standalone combinatorial lemma; all three are proved below. -/
 
 /-- Helper: `listChoices V 1 = V.map (fun v => [v])`. By induction on `V`. -/
 private theorem listChoices_one {β : Type*} (V : List β) :
@@ -577,7 +576,7 @@ private theorem ckIso_ι_ofMultiset (m : Multiset (Nonplanar α)) :
     Bilinearity-in-`v` extends this to the full substrate 1 via
     `Finsupp.induction_linear` on `v`.
 
-    Proof by `SymmetricAlgebra.induction` on X. **TODO**: 4 cases:
+    Proof by `SymmetricAlgebra.induction` on X, in 4 cases:
     * `algebraMap r`: `(r•1) ○ ι(ofTree t) = 0` (counit kills primitive);
       RHS: `insertion 1 (of' {t}) = 0`.
     * `ι w`: by Finsupp.induction_linear on w. Basis case `w = ofTree s`
@@ -807,7 +806,7 @@ private theorem ckIso_circ_intertwine_basis_v
       (after `comul_ι` + `circ_one_right`); IHs at X_1 and X_2; then
       **sub-substrate 1.3** (GL Leibniz) on RHS.
 
-    Pending: sub-substrates 1.1, 1.2, 1.3 above. -/
+    Uses sub-substrates 1.1, 1.2, 1.3 above. -/
 private theorem ckIso_circ_intertwine_insertion
     (X : SymmetricAlgebra ℤ (InsertionAlgebra α))
     (v : InsertionAlgebra α) :
@@ -919,13 +918,9 @@ private theorem ckIso_circ_intertwine_insertion
 /-! ### Substrate 2: GL guest-splitting identity (OG Prop 2.7(ii) GL side)
 
 The four-term identity below is the GL-side analog of Oudom-Guin's
-splitting lemma (Prop 2.7(ii)). Originally flagged as "abandoned"
-during the 2026-05-17 audit because its singleton-`{v}` reduction
-needed `Nonplanar.insertionMultiset_assoc` (the A3.3 keystone), at
-that point unproved. With the singleton case
-`Nonplanar.insertionMultiset_singleton_assoc` since closed
-sorry-free, this is now the live route for the per-tprod `m+1`
-induction of `gl_product_eq_oudomGuinStar`. -/
+splitting lemma (Prop 2.7(ii)). It is the route for the per-tprod
+`m+1` induction of `gl_product_eq_oudomGuinStar_tprod`, using the
+singleton case `Nonplanar.insertionMultiset_singleton_assoc`. -/
 
 /-- **Helper for substrate 2**: iterated single-guest insertion
     `ins (ins F (of' C)) (op of'{v})` splits into a "single-shot"
@@ -1141,11 +1136,7 @@ private theorem swap_sum_map_sum {β γ δ : Type*} [AddCommMonoid δ]
 private theorem sum_bind_singleton {γ δ : Type*} [AddCommMonoid δ]
     (s : Multiset γ) (f : γ → δ) :
     (s.bind fun x => ({f x} : Multiset δ)).sum = (s.map f).sum := by
-  induction s using Multiset.induction with
-  | empty => rfl
-  | cons a s ih =>
-    rw [Multiset.cons_bind, Multiset.singleton_add, Multiset.sum_cons,
-        Multiset.map_cons, Multiset.sum_cons, ← ih]
+  rw [Multiset.bind_singleton]
 
 /-- Helper: `mk`-image of the t-bucket of a List (Planar α). -/
 private theorem zip_filter_t_map_mk (L : List (Planar α)) (m : List Bool) :
@@ -1357,8 +1348,7 @@ private theorem GL_T2_reindexing_key
     rw [sum_bind_singleton, sum_bind_singleton, sum_bind_singleton] at h_apply
     exact h_apply
   rw [Multiset.map_congr rfl h_per_mask]
-  -- §6 SKIPPED: keep single mask sum (sum of A + B). We bridge both sides at once.
-  -- §7: now bridge each mask-sum to a powerset sum via `listChoices_bridge_powerset_paired`.
+  -- Bridge each mask-sum to a powerset sum via `listChoices_bridge_powerset_paired`.
   -- For both summands, we go from a function of `assn → ...` to a function of `(s_t, s_f) → ...`
   -- via the bridge.
   -- §7a: define the per-pair consumer FUN1 for the first mask sum.
@@ -1537,14 +1527,10 @@ private theorem GL_T2_reindexing_key
             (fun Y' => g C₁ Y')).sum
   rfl
 
-/-- **Substrate 2 for Q5c** — REACTIVATED (2026-06-12). The GL-side
-    analog of OG Prop 2.7(ii)'s guest-splitting identity. Originally
-    flagged DEPRECATED on 2026-05-17 because its proof required the
-    singleton-`{v}` case of `Nonplanar.insertionMultiset_assoc` (then
-    the A3.3 keystone sorry). With the singleton case
-    `Nonplanar.insertionMultiset_singleton_assoc` since closed
-    sorry-free, this is now the live route for the per-tprod `m+1`
-    induction step of `gl_product_eq_oudomGuinStar`.
+/-- **Substrate 2 for Q5c**: the GL-side analog of OG Prop 2.7(ii)'s
+    guest-splitting identity. It is the per-tprod `m+1` induction step of
+    `gl_product_eq_oudomGuinStar_tprod`, using the singleton case
+    `Nonplanar.insertionMultiset_singleton_assoc`.
 
     The four terms (T1 + T2 = T3 + T4):
     * T1 = `F * op (G * of'{v})` — single-shot CK multiplication.
@@ -2158,7 +2144,6 @@ private theorem gl_product_eq_oudomGuinStar_tprod
     intro a
     -- Local AddCommGroup instance for CK to enable map_sub/map_neg.
     letI : AddCommGroup (ConnesKreimer ℤ (Nonplanar α)) := ConnesKreimer.addCommGroupOf
-    -- ===== STAGE-BOUNDARY (target 2 partial closure) =====
     -- Set up tprod (m+1) split + algHomL split.
     have h_a_eq : a = Fin.snoc (Fin.init a) (a (Fin.last m)) :=
       (Fin.snoc_init_self a).symm
@@ -2669,12 +2654,12 @@ theorem gl_product_eq_oudomGuinStar
 
 Combining `oudomGuinStar_assoc` (Q3, proved sorry-free in
 `OudomGuinCirc.lean`) with `gl_product_eq_oudomGuinStar` (Q5c,
-sorry-fenced above) closes `mul_assoc_basis` for `R = ℤ`. -/
+proved above) closes `mul_assoc_basis` for `R = ℤ`. -/
 
 /-- **Q6 (for R = ℤ)**: associativity of the Grossman-Larson product on basis.
 
-    Q3 (`oudomGuinStar_assoc`) is proved; the remaining gate is Q5c
-    (`gl_product_eq_oudomGuinStar`). -/
+    Both Q3 (`oudomGuinStar_assoc`) and Q5c (`gl_product_eq_oudomGuinStar`)
+    are proved sorry-free; this theorem combines them. -/
 theorem GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((GrossmanLarson.of' F₁ : GrossmanLarson ℤ α) *
