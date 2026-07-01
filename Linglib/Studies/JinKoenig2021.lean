@@ -1025,14 +1025,14 @@ theorem unless_licensing :
 - **Positive**: Q(Z, D) — Z has property Q to degree D
 - **Negative**: ¬Q(Z, D'), D' > D — Z does NOT have Q to degree D'
 
-In the degree semantics of `Semantics.Degree`:
+In the degree semantics of `Degree`:
   comparativeSem μ a b .positive ↔ μ(a) > μ(b)
 
 This entails: ∃D (= μ(b)) such that Q(Z, D), and ∃D' (= μ(a)) > D
 such that ¬Q(Z, D'). The dual predication over distinct degrees is
 what licenses EN in the complement of comparatives. -/
 
-open Semantics.Degree (comparativeSem)
+open Degree (comparativeSem)
 
 /-- A comparative entails dual degree predication: Y exceeds Z on
     the scale, so Q(Z, μ(Z)) holds but ¬Q(Z, μ(Y)) — dual inference
@@ -1048,7 +1048,7 @@ theorem comparative_dual_degrees {Entity : Type*} {α : Type*} [LinearOrder α]
 theorem comparative_antonymy_preserves_dual {Entity : Type*} {α : Type*}
     [LinearOrder α] (μ : Entity → α) (a b : Entity) :
     comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
-  Semantics.Degree.taller_shorter_antonymy μ a b
+  Degree.taller_shorter_antonymy μ a b
 
 /-- Comparatives map to the comparative licensing condition. -/
 theorem comparative_licensing :
@@ -1154,7 +1154,7 @@ theorem zarma_en_determined_by_aspect :
 | logicalOperator         | Modality.Kratzer             | not_impossible_activates_p   |
 |                         | Conditionals.Basic           | unless_modus_ponens          |
 |                         | (conjunction + negation)     | without_entails_not_p        |
-| comparative             | Semantics.Degree           | comparative_dual_degrees     |
+| comparative             | Degree           | comparative_dual_degrees     |
 -/
 
 /-- All four licensing conditions have at least one bridge theorem

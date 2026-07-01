@@ -73,7 +73,7 @@ namespace BumfordRett2021
 
 open RSA
 open Rett2015Implicature (Polarity)
-open Semantics.Degree (AdjectivalConstruction)
+open Degree (AdjectivalConstruction)
 
 -- ============================================================================
 -- § 1. World Type: Height × CC Center

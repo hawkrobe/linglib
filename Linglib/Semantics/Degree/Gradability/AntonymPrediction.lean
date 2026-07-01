@@ -39,9 +39,9 @@ primitives via `Iff.rfl` bridges that survive substrate transparency
 
 namespace Semantics.Gradability
 
-open Semantics.Degree (Degree Threshold)
+open Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
-open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning)
+open Degree (positiveMeaning negativeMeaning antonymMeaning)
 
 -- ============================================================================
 -- § 1. Two Extensional Denotations
@@ -132,7 +132,7 @@ theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
   · rw [disjoint_iff]
     funext d
     simp only [AntonymForm.strengthenedDenot, positiveMeaning', contraryNegMeaning,
-      Semantics.Degree.positiveMeaning, Semantics.Degree.negativeMeaning,
+      Degree.positiveMeaning, Degree.negativeMeaning,
       Pi.inf_apply, Pi.bot_apply, inf_Prop_eq]
     exact eq_false (fun ⟨h1, h2⟩ => absurd (h1.trans h2) (lt_asymm h))
   · rw [codisjoint_iff]
@@ -140,7 +140,7 @@ theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
     intro hco
     have hd := congrFun hco d
     simp only [AntonymForm.strengthenedDenot, positiveMeaning', contraryNegMeaning,
-      notContraryNegMeaning, Semantics.Degree.positiveMeaning, Semantics.Degree.negativeMeaning,
+      notContraryNegMeaning, Degree.positiveMeaning, Degree.negativeMeaning,
       Pi.sup_apply, Pi.top_apply, sup_Prop_eq] at hd hd1 hd2
     rcases of_eq_true hd with hp | hn
     · exact hd2 hp

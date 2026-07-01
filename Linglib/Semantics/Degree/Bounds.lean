@@ -25,7 +25,7 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 open Core.Order
 
@@ -224,4 +224,4 @@ theorem maxOnScale_ge_atMost (b : α) :
     maxOnScale .ge {d | d ≤ b} = {b} :=
   maxOnScale_atLeast_singleton id b
 
-end Semantics.Degree
+end Degree

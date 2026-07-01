@@ -35,7 +35,7 @@ The intersective/subsective/privative classification lives in `Classification.le
 namespace Semantics.Gradability
 
 open Core.Order (Boundedness)
-open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds
+open Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds
   PositiveStandard AdjectiveClass interpretiveEconomy)
 open Features (NegationType)
 
@@ -60,11 +60,11 @@ through a `ThresholdPair`'s two poles. -/
 section TwoThreshold
 variable {max : Nat} (d : Degree max)
 
-/-- Contradictory negation *not happy* — `d ≤ θ` (`Semantics.Degree.antonymMeaning`). -/
-abbrev contradictoryNeg (θ : Threshold max) : Prop := Semantics.Degree.antonymMeaning d θ
+/-- Contradictory negation *not happy* — `d ≤ θ` (`Degree.antonymMeaning`). -/
+abbrev contradictoryNeg (θ : Threshold max) : Prop := Degree.antonymMeaning d θ
 
-/-- Contrary negation *unhappy* — `d < θ_neg` (`Semantics.Degree.negativeMeaning`). -/
-abbrev contraryNeg (θ_neg : Threshold max) : Prop := Semantics.Degree.negativeMeaning d θ_neg
+/-- Contrary negation *unhappy* — `d < θ_neg` (`Degree.negativeMeaning`). -/
+abbrev contraryNeg (θ_neg : Threshold max) : Prop := Degree.negativeMeaning d θ_neg
 
 /-- The gap region: `d` is neither positive nor negative (`neg ≤ d ≤ pos`). -/
 abbrev inGapRegion (tp : ThresholdPair max) : Prop :=
@@ -72,11 +72,11 @@ abbrev inGapRegion (tp : ThresholdPair max) : Prop :=
 
 /-- Positive form *happy* at the pair's upper threshold — `d > pos`. -/
 abbrev positiveMeaning' (tp : ThresholdPair max) : Prop :=
-  Semantics.Degree.positiveMeaning d tp.pos
+  Degree.positiveMeaning d tp.pos
 
 /-- Negative form *unhappy* at the pair's lower threshold — `d < neg`. -/
 abbrev contraryNegMeaning (tp : ThresholdPair max) : Prop :=
-  Semantics.Degree.negativeMeaning d tp.neg
+  Degree.negativeMeaning d tp.neg
 
 /-- *not unhappy* — the complement of the negative form (`neg ≤ d`). -/
 abbrev notContraryNegMeaning (tp : ThresholdPair max) : Prop :=
@@ -261,7 +261,7 @@ theorem negate_involutive (b : DimensionBindingType) :
 /-- [sassoon-2013] Hypothesis 3: standard type predicts binding type.
     Total (max standard) → conjunctive, partial (min standard) → disjunctive,
     relative (contextual) → mixed. -/
-def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingType
+def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .maxEndpoint  => .conjunctive
   | .minEndpoint  => .disjunctive
   | .contextual   => .mixed
@@ -270,10 +270,10 @@ def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingTyp
 /-! ### Marginality scales ([dinis-jacinto-2026]) -/
 
 -- The tail of the file works with the full `DirectedMeasure`/order API.
-open Core.Order Semantics.Degree
+open Core.Order Degree
 
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
-    Semantics.Degree.DirectedMeasure α W where
+    Degree.DirectedMeasure α W where
   ml : Semantics.Gradability.MLScale α
 
 def marginalityPositive {α : Type*} [LinearOrder α]

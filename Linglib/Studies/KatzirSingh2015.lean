@@ -248,7 +248,7 @@ grade to all of his students. Kim is a professor."
 The QUD is good (we don't know Kim's grade). But "some" is needlessly
 weak: "all" is equally complex and semantically stronger.
 
-Connects to Semantics.Degree: the ⟦all⟧ ⊆ ⟦some⟧ entailment that drives
+Connects to Degree: the ⟦all⟧ ⊆ ⟦some⟧ entailment that drives
 the Answer Condition is the same relationship captured by
 `Alternatives.Quantifiers.entails.all.some_ = true`. -/
 

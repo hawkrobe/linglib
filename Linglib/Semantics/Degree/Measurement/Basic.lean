@@ -188,7 +188,7 @@ per (entity, codomain) pair. For entities with multiple measurable dimensions,
 use `MeasureFn` directly — the typeclass projection is the specialization for
 when a single dimension is contextually salient. -/
 @[reducible]
-def MeasureFn.toHasDegree {E : Type*} (μ : MeasureFn E) : Semantics.Degree.HasMeasure E ℚ :=
+def MeasureFn.toHasDegree {E : Type*} (μ : MeasureFn E) : Degree.HasMeasure E ℚ :=
   { degree := μ.apply }
 
 -- ============================================================================

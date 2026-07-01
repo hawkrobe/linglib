@@ -50,7 +50,7 @@ namespace Semantics.Gradability.Hierarchy
 open Semantics.Gradability.Delineation
 open Semantics.Measurement (MeasureFn)
 open Features.Dimension (Dimension)
-open Semantics.Degree (HasMeasure)
+open Degree (HasMeasure)
 -- ════════════════════════════════════════════════════
 -- § 1. Measurement → Degree
 -- ════════════════════════════════════════════════════

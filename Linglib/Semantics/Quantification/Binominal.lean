@@ -154,7 +154,7 @@ property of N₂. -/
 
 section EM
 open Semantics.Gradability.Intensification (EvaluativeMeasure intensifiedMeaning)
-open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat)
+open Degree (Degree Threshold Degree.toNat Threshold.toNat)
 /-- EM semantics: N₁ as evaluative modifier of a contextual property of N₂.
 
 "a hell of a game" = the game x such that the contextually-salient
@@ -243,7 +243,7 @@ Uses `muHorrible 10` as the evaluative measure for *hell*:
 
 section EMBIExample
 open Semantics.Gradability.Intensification (muHorrible EvaluativeMeasure)
-open Semantics.Degree (Degree deg thr)
+open Degree (Degree deg thr)
 /-- Quality measure for EM: contextually-determined goodness as a doctor.
 George (9) is an outstanding doctor; Sarah (6) is decent; Floyd (3) is poor. -/
 def doctorQuality : GradableNouns.Person → Degree 10
@@ -263,7 +263,7 @@ def hellEval : EvaluativeMeasure 10 := muHorrible 10
 theorem george_hell_of_doctor :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .george = true := by
   simp only [emSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
-             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat]
+             Degree.Degree.toNat, Degree.Threshold.toNat]
   norm_num
 
 /-- Sarah is not "a hell of a doctor": quality (6) yields
@@ -271,7 +271,7 @@ theorem george_hell_of_doctor :
 theorem sarah_not_hell_of_doctor :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .sarah = false := by
   simp only [emSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
-             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat]
+             Degree.Degree.toNat, Degree.Threshold.toNat]
   norm_num
 
 /-- George is "a hell of a good doctor": good(9 > 5) ✓ AND
@@ -280,8 +280,8 @@ theorem george_hell_of_good_doctor :
     biSemantics hellEval doctorQuality (thr 5) (thr 3) isDoctorB .george = true := by
   simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
              Semantics.Gradability.Intensification.intensifiedMeaning,
-             Semantics.Degree.positiveMeaning,
-             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat,
+             Degree.positiveMeaning,
+             Degree.Degree.toNat, Degree.Threshold.toNat,
              Bool.and_eq_true, decide_eq_true_eq]
   refine ⟨trivial, ?_, ?_⟩
   · decide
@@ -293,8 +293,8 @@ theorem sarah_not_hell_of_good_doctor :
     biSemantics hellEval doctorQuality (thr 5) (thr 3) isDoctorB .sarah = false := by
   simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
              Semantics.Gradability.Intensification.intensifiedMeaning,
-             Semantics.Degree.positiveMeaning,
-             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat,
+             Degree.positiveMeaning,
+             Degree.Degree.toNat, Degree.Threshold.toNat,
              Bool.and_eq_false_iff, decide_eq_false_iff_not]
   right
   push Not
@@ -328,7 +328,7 @@ The worked example witnesses both directions of independence:
     idiot-doctor) but fails `emSemantics` (she is not a hell-of-a-doctor). -/
 theorem ebnp_not_entails_em :
     ebnpSemantics exampleIdiot isDoctorB .sarah = true ∧
-    emSemantics hellEval doctorQuality (Semantics.Degree.thr 3) isDoctorB .sarah = false :=
+    emSemantics hellEval doctorQuality (Degree.thr 3) isDoctorB .sarah = false :=
   ⟨by decide, sarah_not_hell_of_doctor⟩
 
 end Quantification.Binominal

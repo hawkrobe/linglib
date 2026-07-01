@@ -233,13 +233,13 @@ worked examples from `Semantics/Lexical/Noun/Binominal`. -/
 theorem entailment_summary :
     -- BI entails EM (bi_entails_em instantiated)
     (biSemantics (Semantics.Gradability.Intensification.muHorrible 10)
-      doctorQuality (Semantics.Degree.thr 5) (Semantics.Degree.thr 3) isDoctor .george = true →
+      doctorQuality (Degree.thr 5) (Degree.thr 3) isDoctor .george = true →
      emSemantics (Semantics.Gradability.Intensification.muHorrible 10)
-      doctorQuality (Semantics.Degree.thr 3) isDoctor .george = true) ∧
+      doctorQuality (Degree.thr 3) isDoctor .george = true) ∧
     -- EBNP and EM have different truth conditions
     (ebnpSemantics exampleIdiot isDoctor .sarah = true ∧
      emSemantics (Semantics.Gradability.Intensification.muHorrible 10)
-      doctorQuality (Semantics.Degree.thr 3) isDoctor .sarah = false) := by
+      doctorQuality (Degree.thr 3) isDoctor .sarah = false) := by
   constructor
   · exact bi_entails_em _ _ _ _ _ _
   · constructor <;> native_decide

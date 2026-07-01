@@ -65,12 +65,12 @@ set_option autoImplicit false
 
 namespace Krifka2007
 
-open Semantics.Degree (Degree Threshold deg thr)
+open Degree (Degree Threshold deg thr)
 open Semantics.Gradability (ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning contradictoryNeg
   AntonymForm contradictoryDenot_synonymy strengthenedDenot_breaks_synonymy)
 open Semantics.Gradability.Antonymy
-open Semantics.Degree (positiveMeaning)
+open Degree (positiveMeaning)
 open Data.Examples
 open Features (NegationType)
 open Pragmatics.Bidirectional (superoptimal superoptimalSet

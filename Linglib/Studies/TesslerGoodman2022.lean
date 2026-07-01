@@ -99,8 +99,8 @@ set_option autoImplicit false
 
 namespace TesslerGoodman2022
 
-open Semantics.Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
-open Semantics.Degree (positiveMeaning negativeMeaning)
+open Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
+open Degree (positiveMeaning negativeMeaning)
 
 -- ============================================================================
 -- § 1. Domain Types
@@ -627,11 +627,11 @@ the CC is pragmatic/contextual, not a constituent of the logical form.
     bounded scale → endpoint standard → s fixed by scale → nothing to infer
 
 The chain connects three independent modules:
-1. `Semantics.Degree.interpretiveEconomy` (Theory: scale → standard type)
-2. `Semantics.Degree.PositiveStandard.RequiresComparisonClass` (Theory: standard → domain-dependent?)
+1. `Degree.interpretiveEconomy` (Theory: scale → standard type)
+2. `Degree.PositiveStandard.RequiresComparisonClass` (Theory: standard → domain-dependent?)
 3. `RSAConfig.L1_latent` with `Latent = ComparisonClass` (this file: infer CC) -/
 
-open Semantics.Degree (interpretiveEconomy PositiveStandard IsClassA)
+open Degree (interpretiveEconomy PositiveStandard IsClassA)
 
 /-- Height is an open-scale dimension: "tall" is relative (Class A). -/
 theorem height_is_classA : IsClassA Core.Order.Boundedness.open_ := trivial

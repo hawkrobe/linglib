@@ -65,7 +65,7 @@ namespace Sassoon2013
 open Semantics.Gradability (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
   deMorgan_disjunctive_conjunctive predictedBinding)
-open Semantics.Degree (interpretiveEconomy)
+open Degree (interpretiveEconomy)
 open Core.Order (Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. Multidimensional Adjective Data

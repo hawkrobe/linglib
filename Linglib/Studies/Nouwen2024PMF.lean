@@ -125,7 +125,7 @@ namespace RSA.Nouwen2024.PMF
 
 open scoped ENNReal
 open RSA.Nouwen2024
-open Semantics.Degree (deg thr)
+open Degree (deg thr)
 /-! ## §1. Height prior as a PMF -/
 
 /-- Height prior weights as `ℝ≥0∞`. Reuses `heightPrior : Height → ℚ` from
