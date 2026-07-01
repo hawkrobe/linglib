@@ -386,7 +386,7 @@ def generateMAlternatives (adj1 adj2 : GradableAdjWithMorphology)
       some {
         marked := markedForm
         unmarked := unmarkedForm
-        dimension := adj1.dimension
+        dimension := adj1.dimension.getD .unspecified
         costDifference := Markedness.costDifference
         construction := construction
       }

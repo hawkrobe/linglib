@@ -273,17 +273,21 @@ open English.Predicates.Adjectival (decent acceptable adequate good)
 
 /-- All MPA fragment entries use the value dimension. -/
 theorem mpa_entries_value_dimension :
-    decent.dimension = .value ∧
-    acceptable.dimension = .value ∧
-    adequate.dimension = .value := ⟨rfl, rfl, rfl⟩
+    decent.dimension = some .value ∧
+    acceptable.dimension = some .value ∧
+    adequate.dimension = some .value := ⟨rfl, rfl, rfl⟩
 
-/-- All MPA fragment entries have lower-bounded scales. -/
-theorem mpa_entries_lower_bounded :
-    decent.scaleType = .lowerBounded ∧
-    acceptable.scaleType = .lowerBounded ∧
-    adequate.scaleType = .lowerBounded := ⟨rfl, rfl, rfl⟩
+/-- All MPA fragment entries are the mildly-positive class: an open `.value`
+    scale carrying a functional (necessity) standard via `standardOverride`.
+    Beltrama's necessity standard is the *standard*, not the scale boundedness —
+    so the entries derive an open scale, not a lower-bounded one. -/
+theorem mpa_entries_mildly_positive :
+    decent.adjectiveClass = .mildlyPositive ∧
+    acceptable.adjectiveClass = .mildlyPositive ∧
+    adequate.adjectiveClass = .mildlyPositive := ⟨rfl, rfl, rfl⟩
 
-/-- *good* shares the same scale structure as MPAs. -/
+/-- *good* shares the same (open `.value`) scale structure as MPAs, differing
+    only in standard type (contextual vs functional). -/
 theorem good_same_scale_as_mpas :
     good.scaleType = decent.scaleType ∧
     good.dimension = decent.dimension := ⟨rfl, rfl⟩
@@ -371,21 +375,21 @@ theorem mpa_not_relative :
 -- ============================================================================
 
 open Core.Order (LicensingPipeline)
-/-- MPAs (lower-bounded scale) are licensed for degree modification by
-    [kennedy-2007]'s scale-structure licensing pipeline. This is
-    consistent with MPAs combining with *barely* and moderate modifiers,
-    while their resistance to *very*/*extremely* is pragmatic (§6.2),
-    not structural. -/
-theorem mpa_licensed_by_pipeline :
-    LicensingPipeline.IsLicensed decent.scaleType ∧
-    LicensingPipeline.IsLicensed acceptable.scaleType ∧
-    LicensingPipeline.IsLicensed adequate.scaleType := ⟨trivial, trivial, trivial⟩
+/-- MPAs sit on the open `.value` scale, so [kennedy-2007]'s scale-structure
+    pipeline does *not* endpoint-license them — they pattern with relative
+    adjectives on scale shape. Their compatibility with *barely* and moderate
+    modifiers (§6.2), and MPA behavior generally, comes from the functional
+    standard, not from a scale endpoint. -/
+theorem mpa_not_endpoint_licensed :
+    ¬ LicensingPipeline.IsLicensed decent.scaleType ∧
+    ¬ LicensingPipeline.IsLicensed acceptable.scaleType ∧
+    ¬ LicensingPipeline.IsLicensed adequate.scaleType := ⟨id, id, id⟩
 
-/-- *good* is also licensed (same scale structure). The difference
-    between MPAs and *good* is in standard type, not in structural
-    licensing. -/
-theorem good_also_licensed :
-    LicensingPipeline.IsLicensed good.scaleType := trivial
+/-- *good* is likewise not endpoint-licensed (same open scale). The difference
+    between MPAs and *good* is in standard type (functional vs contextual), not
+    in structural licensing. -/
+theorem good_not_endpoint_licensed :
+    ¬ LicensingPipeline.IsLicensed good.scaleType := id
 
 -- ============================================================================
 -- § 11. Integration: Evaluative Valence

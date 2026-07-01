@@ -524,12 +524,13 @@ theorem all_valences_agree :
 -- Derived Structural Properties
 -- ════════════════════════════════════════════════════
 
-/-- All intensifier bases except necessity-standard evaluatives have open
-    scales (§2.1, fn. 3: "I will restrict my attention to adjectives with
-    open-ended scales"). "Decent" is the one exception: it has a lower-bounded
-    scale ([kennedy-mcnally-2005] necessity standard). Derived from Fragment. -/
-theorem non_necessity_bases_open_scale :
-    (allEntries.filter (λ e => e.adjBase != "decent")).all (λ e =>
+/-- All intensifier bases have open scales (§2.1, fn. 3: "I will restrict my
+    attention to adjectives with open-ended scales"). Derived from the Fragment.
+    *Decent* also derives an open `.value` scale: its necessity standard
+    ([kennedy-mcnally-2005]) is a `standardOverride`, not scale boundedness, so it
+    no longer needs the exception the earlier lower-bounded modeling required. -/
+theorem all_bases_open_scale :
+    allEntries.all (λ e =>
       match e.fragmentEntry with
       | some a => a.scaleType == .open_
       | none => false) = true := by
