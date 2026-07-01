@@ -1,10 +1,10 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Bounds
-import Linglib.Semantics.Gradability.Dimension
+import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
-import Linglib.Semantics.Gradability.MLScale
+import Linglib.Semantics.Degree.Gradability.MLScale
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Syntax.Adjective.Basic
