@@ -52,7 +52,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionCompose
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
-import Linglib.Core.Algebra.RootedTree.PreLie.KBucketSum
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
