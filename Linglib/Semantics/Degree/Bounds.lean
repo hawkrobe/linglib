@@ -96,7 +96,8 @@ theorem open_scale_unlicensable [NoMaxOrder α] [NoMinOrder α]
 
 Whether a scale has a greatest degree, stated *structurally* via mathlib's
 `OrderTop` / `NoMaxOrder` mixins rather than as stored data — the order-theoretic
-facts that telicity and licensing derive from (see `Semantics/Aspect/ScalarTelicity.lean`). -/
+facts that telicity and licensing derive from (see `Semantics/Gradability/Dimension.lean`
+and `Studies/KennedyLevin2008.lean`). -/
 
 /-- "Has a greatest element", as a proposition — usable when an `OrderTop`
     instance is not in hand (e.g. under a quantifier). -/
