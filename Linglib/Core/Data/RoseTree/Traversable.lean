@@ -3,24 +3,24 @@ Copyright (c) 2026 The Linglib Authors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Linglib contributors
 -/
-import Linglib.Core.Data.Tree.Basic
+import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.Control.Applicative
 import Mathlib.Control.Traversable.Basic
 
 /-!
 # Traversable rose tree
 
-`Traversable` and `LawfulTraversable` instances for the n-ary `Tree`, mirroring
+`Traversable` and `LawfulTraversable` instances for the n-ary `RoseTree`, mirroring
 `Mathlib.Data.Tree.Traversable` for `BinaryTree`. The lawfulness lemmas recurse
 through the child list via `traverseList`, so each is proved with a small
-list-level helper fed the per-child induction hypothesis from `Tree.rec'`.
+list-level helper fed the per-child induction hypothesis from `RoseTree.rec'`.
 -/
 
-namespace RootedTree.Tree
+namespace RoseTree
 
 universe u v w
 
-instance : Traversable Tree where
+instance : Traversable RoseTree where
   map := map
   traverse := traverse
 
@@ -31,7 +31,7 @@ variable {α : Type u}
 /-! ### `traverse_eq_map_id` -/
 
 private theorem traverseList_eq_map_id {β : Type u} (f : α → β) :
-    ∀ (cs : List (Tree α)),
+    ∀ (cs : List (RoseTree α)),
       (∀ c ∈ cs, traverse ((pure : β → Id β) ∘ f) c = pure (map f c)) →
       traverseList ((pure : β → Id β) ∘ f) cs = pure (cs.map (map f))
   | [], _ => rfl
@@ -43,7 +43,7 @@ private theorem traverseList_eq_map_id {β : Type u} (f : α → β) :
       traverseList_eq_map_id f cs fun d hd => h d (List.mem_cons_of_mem _ hd)]
     simp
 
-lemma traverse_eq_map_id {β : Type u} (f : α → β) (t : Tree α) :
+lemma traverse_eq_map_id {β : Type u} (f : α → β) (t : RoseTree α) :
     traverse ((pure : β → Id β) ∘ f) t = pure (map f t) := by
   induction t with
   | node a cs ih =>
@@ -54,7 +54,7 @@ lemma traverse_eq_map_id {β : Type u} (f : α → β) (t : Tree α) :
 
 private theorem comp_traverseList {F G : Type u → Type u} [Applicative F] [Applicative G]
     [LawfulApplicative G] {β γ : Type u} (f : β → F γ) (g : α → G β) :
-    ∀ (cs : List (Tree α)),
+    ∀ (cs : List (RoseTree α)),
       (∀ c ∈ cs, traverse (Functor.Comp.mk ∘ (f <$> ·) ∘ g) c =
         Functor.Comp.mk ((·.traverse f) <$> traverse g c)) →
       traverseList (Functor.Comp.mk ∘ (f <$> ·) ∘ g) cs =
@@ -74,7 +74,7 @@ private theorem comp_traverseList {F G : Type u → Type u} [Applicative F] [App
     rfl
 
 lemma comp_traverse {F G : Type u → Type u} [Applicative F] [Applicative G]
-    [LawfulApplicative G] {β γ : Type u} (f : β → F γ) (g : α → G β) (t : Tree α) :
+    [LawfulApplicative G] {β γ : Type u} (f : β → F γ) (g : α → G β) (t : RoseTree α) :
     t.traverse (Functor.Comp.mk ∘ (f <$> ·) ∘ g) =
       Functor.Comp.mk ((·.traverse f) <$> (t.traverse g)) := by
   induction t with
@@ -89,7 +89,7 @@ lemma comp_traverse {F G : Type u → Type u} [Applicative F] [Applicative G]
 private theorem naturalityList {F G : Type u → Type u} [Applicative F] [Applicative G]
     [LawfulApplicative F] [LawfulApplicative G] (η : ApplicativeTransformation F G) {β : Type u}
     (f : α → F β) :
-    ∀ (cs : List (Tree α)),
+    ∀ (cs : List (RoseTree α)),
       (∀ c ∈ cs, η (traverse f c) = traverse (η.app β ∘ f) c) →
       η (traverseList f cs) = traverseList (η.app β ∘ f) cs
   | [], _ => by
@@ -102,13 +102,13 @@ private theorem naturalityList {F G : Type u → Type u} [Applicative F] [Applic
 
 lemma naturality {F G : Type u → Type u} [Applicative F] [Applicative G] [LawfulApplicative F]
     [LawfulApplicative G] (η : ApplicativeTransformation F G) {β : Type u} (f : α → F β)
-    (t : Tree α) : η (t.traverse f) = t.traverse (η.app β ∘ f : α → G β) := by
+    (t : RoseTree α) : η (t.traverse f) = t.traverse (η.app β ∘ f : α → G β) := by
   induction t with
   | node a cs ih =>
     rw [traverse_node, η.preserves_seq, η.preserves_map, naturalityList η f cs ih, traverse_node,
       Function.comp_apply]
 
-instance : LawfulTraversable Tree where
+instance : LawfulTraversable RoseTree where
   map_const := rfl
   id_map := id_map
   comp_map := comp_map
@@ -119,4 +119,4 @@ instance : LawfulTraversable Tree where
 
 end Laws
 
-end RootedTree.Tree
+end RoseTree

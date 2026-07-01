@@ -19,7 +19,7 @@ Defined as a sum over functions `Ts → V(T)` of `multiGraft`, taken as
 a `Multiset` to make the sum-over-choices commutative.
 
 Sibling to `Graft.lean` (path-based multi-graft primitive). Lives under
-namespace `Tree.Pathed`.
+namespace `RoseTree.Pathed`.
 
 ## File scope
 
@@ -39,7 +39,7 @@ namespace `Tree.Pathed`.
 `[UPSTREAM]` candidate. **Sorry-free**.
 -/
 
-namespace RootedTree.Tree
+namespace RoseTree
 
 namespace Pathed
 
@@ -68,11 +68,11 @@ def listChoices {β : Type*} : List β → Nat → List (List β)
 
 /-- Foissy 2021 Theorem 5.1 multi-graft on a single-tree host. Sum over
     `(v₁, …, vₙ) ∈ V(T)ⁿ` of `multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
-def insertion (T : Tree α) (Ts : List (Tree α)) : Multiset (Tree α) :=
+def insertion (T : RoseTree α) (Ts : List (RoseTree α)) : Multiset (RoseTree α) :=
   Multiset.ofList <| (listChoices (vertices T) Ts.length).map
     fun choice => multiGraft T (choice.zip Ts)
 
-theorem insertion_def (T : Tree α) (Ts : List (Tree α)) :
+theorem insertion_def (T : RoseTree α) (Ts : List (RoseTree α)) :
     insertion T Ts =
       Multiset.ofList ((listChoices (vertices T) Ts.length).map
         fun choice => multiGraft T (choice.zip Ts)) := rfl
@@ -81,8 +81,8 @@ theorem insertion_def (T : Tree α) (Ts : List (Tree α)) :
 
 /-- Multi-graft into a host forest. Disjoint pattern cases for clean
     auto-generated equation lemmas. -/
-def insertionForest : List (Tree α) → List (Tree α) →
-    Multiset (List (Tree α))
+def insertionForest : List (RoseTree α) → List (RoseTree α) →
+    Multiset (List (RoseTree α))
   | [],     []         => ({[]} : Multiset _)
   | [],     _ :: _     => 0
   | T :: F, []         => ({T :: F} : Multiset _)
@@ -100,30 +100,30 @@ def insertionForest : List (Tree α) → List (Tree α) →
   termination_by F _ => F.length
 
 @[simp] theorem insertionForest_nil_nil :
-    insertionForest ([] : List (Tree α)) [] =
-      ({[]} : Multiset (List (Tree α))) := by
+    insertionForest ([] : List (RoseTree α)) [] =
+      ({[]} : Multiset (List (RoseTree α))) := by
   unfold insertionForest; rfl
 
 @[simp] theorem insertionForest_empty_host_nonempty_guests
-    (T_g : Tree α) (Ts : List (Tree α)) :
-    insertionForest ([] : List (Tree α)) (T_g :: Ts) = 0 := by
+    (T_g : RoseTree α) (Ts : List (RoseTree α)) :
+    insertionForest ([] : List (RoseTree α)) (T_g :: Ts) = 0 := by
   unfold insertionForest; rfl
 
 @[simp] theorem insertionForest_cons_host_nil_guests
-    (T : Tree α) (F : List (Tree α)) :
-    insertionForest (T :: F) ([] : List (Tree α)) =
-      ({T :: F} : Multiset (List (Tree α))) := by
+    (T : RoseTree α) (F : List (RoseTree α)) :
+    insertionForest (T :: F) ([] : List (RoseTree α)) =
+      ({T :: F} : Multiset (List (RoseTree α))) := by
   unfold insertionForest; rfl
 
-theorem insertionForest_nil_guests (F : List (Tree α)) :
-    insertionForest F [] = ({F} : Multiset (List (Tree α))) := by
+theorem insertionForest_nil_guests (F : List (RoseTree α)) :
+    insertionForest F [] = ({F} : Multiset (List (RoseTree α))) := by
   cases F
   · exact insertionForest_nil_nil
   · exact insertionForest_cons_host_nil_guests _ _
 
 theorem insertionForest_cons_cons
-    (T : Tree α) (F : List (Tree α))
-    (T_g : Tree α) (Ts : List (Tree α)) :
+    (T : RoseTree α) (F : List (RoseTree α))
+    (T_g : RoseTree α) (Ts : List (RoseTree α)) :
     insertionForest (T :: F) (T_g :: Ts) =
       (Multiset.ofList (listChoices [true, false] (T_g :: Ts).length)).bind
         fun assignment =>
@@ -150,8 +150,8 @@ mutual
 /-- `PermEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
     follows from a `List.Perm` between `pairs` and `pairs'`. Mutual
     recursion on `T` with the children-list aux. -/
-private theorem multiGraft_perm_pair : ∀ (T : Tree α)
-    {pairs pairs' : List (Path × Tree α)},
+private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
+    {pairs pairs' : List (Path × RoseTree α)},
     pairs.Perm pairs' →
     PermEquiv (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
@@ -165,8 +165,8 @@ private theorem multiGraft_perm_pair : ∀ (T : Tree α)
 /-- List-level companion to `multiGraft_perm_pair`: pair-list `Perm`
     lifts to `Forall₂ PermEquiv` on the children list output of
     `multiGraftChildren`. -/
-private theorem multiGraftChildren_perm_pair : ∀ (cs : List (Tree α))
-    {pairs pairs' : List (Path × Tree α)},
+private theorem multiGraftChildren_perm_pair : ∀ (cs : List (RoseTree α))
+    {pairs pairs' : List (Path × RoseTree α)},
     pairs.Perm pairs' →
     List.Forall₂ PermEquiv
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
@@ -205,9 +205,9 @@ private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
 mutual
 /-- `PermEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
     follows from pair-`Forall₂` (same fst, `PermEquiv` snds). -/
-private theorem multiGraft_permEquiv_pair_Forall₂ : ∀ (T : Tree α)
-    {pairs pairs' : List (Path × Tree α)},
-    List.Forall₂ (fun p p' : Path × Tree α =>
+private theorem multiGraft_permEquiv_pair_Forall₂ : ∀ (T : RoseTree α)
+    {pairs pairs' : List (Path × RoseTree α)},
+    List.Forall₂ (fun p p' : Path × RoseTree α =>
         p.fst = p'.fst ∧ PermEquiv p.snd p'.snd) pairs pairs' →
     PermEquiv (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
@@ -227,9 +227,9 @@ private theorem multiGraft_permEquiv_pair_Forall₂ : ∀ (T : Tree α)
 
 /-- List-level companion. -/
 private theorem multiGraftChildren_permEquiv_pair_Forall₂ :
-    ∀ (cs : List (Tree α))
-    {pairs pairs' : List (Path × Tree α)},
-    List.Forall₂ (fun p p' : Path × Tree α =>
+    ∀ (cs : List (RoseTree α))
+    {pairs pairs' : List (Path × RoseTree α)},
+    List.Forall₂ (fun p p' : Path × RoseTree α =>
         p.fst = p'.fst ∧ PermEquiv p.snd p'.snd) pairs pairs' →
     List.Forall₂ PermEquiv
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
@@ -270,19 +270,19 @@ pairSum t (pre ++ [(v, x)]) rest` lets us prove `Ts`-perm invariance by
 `Perm` induction.
 
 Path-based reformulation of the legacy `pairSum` / `insertion_perm_guests`
-machinery. The pair type changes from `Vertex t × Tree α` to
-`Path × Tree α`. -/
+machinery. The pair type changes from `Vertex t × RoseTree α` to
+`Path × RoseTree α`. -/
 
 /-- Multi-graft aggregator with an explicit pair pre (path-based). -/
-private def pairSum (t : Tree α)
-    (pre : List (Path × Tree α))
-    (Ts : List (Tree α)) : Multiset (Nonplanar α) :=
+private def pairSum (t : RoseTree α)
+    (pre : List (Path × RoseTree α))
+    (Ts : List (RoseTree α)) : Multiset (Nonplanar α) :=
   Multiset.ofList ((listChoices (vertices t) Ts.length).map
     fun c => Nonplanar.mk (multiGraft t (pre ++ c.zip Ts)))
 
-private theorem pairSum_cons (t : Tree α)
-    (pre : List (Path × Tree α))
-    (x : Tree α) (rest : List (Tree α)) :
+private theorem pairSum_cons (t : RoseTree α)
+    (pre : List (Path × RoseTree α))
+    (x : RoseTree α) (rest : List (RoseTree α)) :
     pairSum t pre (x :: rest) =
       (Multiset.ofList (vertices t)).bind fun v =>
         pairSum t (pre ++ [(v, x)]) rest := by
@@ -304,9 +304,9 @@ private theorem pairSum_cons (t : Tree α)
 
 /-- `pairSum` is invariant under `List.Perm` of the pre: pair-list order
     doesn't matter at the nonplanar level. -/
-private theorem pairSum_pre_perm (t : Tree α)
-    {pre pre' : List (Path × Tree α)}
-    (h : pre.Perm pre') (Ts : List (Tree α)) :
+private theorem pairSum_pre_perm (t : RoseTree α)
+    {pre pre' : List (Path × RoseTree α)}
+    (h : pre.Perm pre') (Ts : List (RoseTree α)) :
     pairSum t pre Ts = pairSum t pre' Ts := by
   unfold pairSum
   congr 1
@@ -317,9 +317,9 @@ private theorem pairSum_pre_perm (t : Tree α)
 
 /-- Two unfoldings of `pairSum_cons` packed into a normal form for the
     swap proof. -/
-private theorem pairSum_cons_cons (t : Tree α)
-    (pre : List (Path × Tree α))
-    (x y : Tree α) (rest : List (Tree α)) :
+private theorem pairSum_cons_cons (t : RoseTree α)
+    (pre : List (Path × RoseTree α))
+    (x y : RoseTree α) (rest : List (RoseTree α)) :
     pairSum t pre (x :: y :: rest) =
       (Multiset.ofList (vertices t)).bind fun v₀ =>
         (Multiset.ofList (vertices t)).bind fun v₁ =>
@@ -332,9 +332,9 @@ private theorem pairSum_cons_cons (t : Tree α)
   simp [List.append_assoc]
 
 /-- `pairSum` is invariant under swap of the first two guests. -/
-private theorem pairSum_swap (t : Tree α)
-    (pre : List (Path × Tree α))
-    (a b : Tree α) (l : List (Tree α)) :
+private theorem pairSum_swap (t : RoseTree α)
+    (pre : List (Path × RoseTree α))
+    (a b : RoseTree α) (l : List (RoseTree α)) :
     pairSum t pre (b :: a :: l) = pairSum t pre (a :: b :: l) := by
   rw [pairSum_cons_cons, pairSum_cons_cons]
   rw [Multiset.bind_bind]
@@ -342,9 +342,9 @@ private theorem pairSum_swap (t : Tree α)
   exact pairSum_pre_perm t (List.Perm.append_left pre (List.Perm.swap _ _ _)) l
 
 /-- `pairSum t pre Ts` is invariant under `List.Perm` of `Ts`. -/
-private theorem pairSum_perm_guests (t : Tree α)
-    (pre : List (Path × Tree α))
-    {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
+private theorem pairSum_perm_guests (t : RoseTree α)
+    (pre : List (Path × RoseTree α))
+    {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     pairSum t pre Ts = pairSum t pre Ts' := by
   induction h generalizing pre with
   | nil => rfl
@@ -356,8 +356,8 @@ private theorem pairSum_perm_guests (t : Tree α)
   | trans _ _ ih₁ ih₂ => exact (ih₁ pre).trans (ih₂ pre)
 
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
-private theorem insertion_perm_guests (t : Tree α)
-    {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
+private theorem insertion_perm_guests (t : RoseTree α)
+    {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t Ts').map Nonplanar.mk := by
   have := pairSum_perm_guests t [] h
@@ -365,8 +365,8 @@ private theorem insertion_perm_guests (t : Tree α)
   simpa [insertion_def, Multiset.map_coe, List.map_map, Function.comp_def] using this
 
 /-- Guest-list `Forall₂ PermEquiv` lifts to `insertion mk`-equality. -/
-theorem insertion_permEquiv_guests (t : Tree α)
-    {Ts Ts' : List (Tree α)} (h : List.Forall₂ PermEquiv Ts Ts') :
+theorem insertion_permEquiv_guests (t : RoseTree α)
+    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ PermEquiv Ts Ts') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t Ts').map Nonplanar.mk := by
   have hlen : Ts.length = Ts'.length := h.length_eq
@@ -413,10 +413,10 @@ theorem mem_of_mem_listChoices {β : Type*}
     `choice ∈ listChoices (vertices T) Ts.length`. Discharges the validity
     hypothesis of the graft operations for `listChoices`-derived pair lists. -/
 theorem forall_zip_isValidPath_of_listChoices
-    (T : Tree α) (Ts : List (Tree α))
+    (T : RoseTree α) (Ts : List (RoseTree α))
     (choice : List Path)
     (h_choice : choice ∈ listChoices (vertices T) Ts.length)
-    (pair : Path × Tree α) (h_pair : pair ∈ choice.zip Ts) :
+    (pair : Path × RoseTree α) (h_pair : pair ∈ choice.zip Ts) :
     IsValidPath pair.fst T := by
   have h_fst_mem : pair.fst ∈ choice := (List.of_mem_zip h_pair).1
   exact forall_isValidPath T (mem_of_mem_listChoices (vertices T) Ts.length
@@ -468,7 +468,7 @@ private theorem swapPathAt_cons_of_ne (n i : ℕ) (rest : Path)
 /-- For paths produced by `verticesAux start cs` with all indices
     bounded below `n`, `swapPathAt n` acts as the identity. -/
 private theorem map_swapPathAt_verticesAux_below
-    (n start : ℕ) (cs : List (Tree α)) (h : start + cs.length ≤ n) :
+    (n start : ℕ) (cs : List (RoseTree α)) (h : start + cs.length ≤ n) :
     (verticesAux start cs).map (swapPathAt n) = verticesAux start cs := by
   induction cs generalizing start with
   | nil => rfl
@@ -486,7 +486,7 @@ private theorem map_swapPathAt_verticesAux_below
 /-- For paths produced by `verticesAux start cs` with all indices
     bounded above `n + 1`, `swapPathAt n` acts as the identity. -/
 private theorem map_swapPathAt_verticesAux_above
-    (n start : ℕ) (cs : List (Tree α)) (h : n + 1 < start) :
+    (n start : ℕ) (cs : List (RoseTree α)) (h : n + 1 < start) :
     (verticesAux start cs).map (swapPathAt n) = verticesAux start cs := by
   induction cs generalizing start with
   | nil => rfl
@@ -502,11 +502,11 @@ private theorem map_swapPathAt_verticesAux_above
 /-- Vertices of `node a (pre ++ l :: r :: post)` mapped through
     `swapPathAt pre.length` is a `List.Perm` of vertices of
     `node a (pre ++ r :: l :: post)`. -/
-private theorem vertices_swap_perm (a : α) (pre : List (Tree α))
-    (l r : Tree α) (post : List (Tree α)) :
-    ((vertices (Tree.node a (pre ++ l :: r :: post))).map
+private theorem vertices_swap_perm (a : α) (pre : List (RoseTree α))
+    (l r : RoseTree α) (post : List (RoseTree α)) :
+    ((vertices (RoseTree.node a (pre ++ l :: r :: post))).map
         (swapPathAt pre.length)).Perm
-      (vertices (Tree.node a (pre ++ r :: l :: post))) := by
+      (vertices (RoseTree.node a (pre ++ r :: l :: post))) := by
   set n := pre.length with hn
   rw [vertices_node, vertices_node]
   -- Expand verticesAux via _append, plus verticesAux_cons twice
@@ -544,13 +544,13 @@ private theorem vertices_swap_perm (a : α) (pre : List (Tree α))
 /-! ### §6.2 substrate: pair-relabel + permEquiv prefix-cons-lift -/
 
 /-- The path-relabel function for swapAtRoot. -/
-private def pathRelabelSwap (n : ℕ) : Path × Tree α → Path × Tree α :=
+private def pathRelabelSwap (n : ℕ) : Path × RoseTree α → Path × RoseTree α :=
   Prod.map (swapPathAt n) id
 
-@[simp] private theorem pathRelabelSwap_fst (n : ℕ) (p : Path × Tree α) :
+@[simp] private theorem pathRelabelSwap_fst (n : ℕ) (p : Path × RoseTree α) :
     (pathRelabelSwap n p).fst = swapPathAt n p.fst := rfl
 
-@[simp] private theorem pathRelabelSwap_snd (n : ℕ) (p : Path × Tree α) :
+@[simp] private theorem pathRelabelSwap_snd (n : ℕ) (p : Path × RoseTree α) :
     (pathRelabelSwap n p).snd = p.snd := rfl
 
 /-- Path bijection induced by `PermStep.recurse`: lift an inner path
@@ -576,7 +576,7 @@ private theorem pathLiftRecurse_cons_of_ne (n i : ℕ) (f : Path → Path) (rest
 /-- `pathLiftRecurse n f` acts as identity on paths produced by
     `verticesAux start cs` when those paths' first indices are all below `n`. -/
 private theorem map_pathLiftRecurse_verticesAux_below
-    (n start : ℕ) (f : Path → Path) (cs : List (Tree α))
+    (n start : ℕ) (f : Path → Path) (cs : List (RoseTree α))
     (h : start + cs.length ≤ n) :
     (verticesAux start cs).map (pathLiftRecurse n f) = verticesAux start cs := by
   induction cs generalizing start with
@@ -594,7 +594,7 @@ private theorem map_pathLiftRecurse_verticesAux_below
 /-- `pathLiftRecurse n f` acts as identity on paths produced by
     `verticesAux start cs` when those paths' first indices are all above `n`. -/
 private theorem map_pathLiftRecurse_verticesAux_above
-    (n start : ℕ) (f : Path → Path) (cs : List (Tree α))
+    (n start : ℕ) (f : Path → Path) (cs : List (RoseTree α))
     (h : n < start) :
     (verticesAux start cs).map (pathLiftRecurse n f) = verticesAux start cs := by
   induction cs generalizing start with
@@ -610,12 +610,12 @@ private theorem map_pathLiftRecurse_verticesAux_above
 
 /-- Vertices Perm under `PermStep.recurse`: given a path bijection on
     the changed subtree, lift to a Perm on the bigger tree's vertices. -/
-private theorem vertices_recurse_perm (a : α) (pre : List (Tree α))
-    (old new : Tree α) (post : List (Tree α)) (f : Path → Path)
+private theorem vertices_recurse_perm (a : α) (pre : List (RoseTree α))
+    (old new : RoseTree α) (post : List (RoseTree α)) (f : Path → Path)
     (hf : ((vertices old).map f).Perm (vertices new)) :
-    ((vertices (Tree.node a (pre ++ old :: post))).map
+    ((vertices (RoseTree.node a (pre ++ old :: post))).map
         (pathLiftRecurse pre.length f)).Perm
-      (vertices (Tree.node a (pre ++ new :: post))) := by
+      (vertices (RoseTree.node a (pre ++ new :: post))) := by
   set n := pre.length with hn_eq
   rw [vertices_node, vertices_node,
       verticesAux_append, verticesAux_append, Nat.zero_add,
@@ -642,8 +642,8 @@ private theorem vertices_recurse_perm (a : α) (pre : List (Tree α))
 /-- Helper: `PermEquiv` of two trees with a common children prefix.
     Lifts `(node a cs) ~ (node a ds)` to `(node a (pre ++ cs)) ~ (node a (pre ++ ds))`
     by iterated `permEquiv_cons_lift`. -/
-private theorem permEquiv_append_left_node {a : α} (pre : List (Tree α))
-    {cs ds : List (Tree α)}
+private theorem permEquiv_append_left_node {a : α} (pre : List (RoseTree α))
+    {cs ds : List (RoseTree α)}
     (h : PermEquiv (.node a cs) (.node a ds)) :
     PermEquiv (.node a (pre ++ cs)) (.node a (pre ++ ds)) := by
   induction pre with
@@ -656,14 +656,14 @@ private theorem permEquiv_append_left_node {a : α} (pre : List (Tree α))
     the same holds for the host with prefix `pre` and suffix `post`, using
     `pathLiftRecurse pre.length f`. -/
 private theorem multiGraft_recurse_permEquiv (a : α)
-    {old new : Tree α} (f : Path → Path)
+    {old new : RoseTree α} (f : Path → Path)
     (hf : ∀ sub_pairs, PermEquiv (multiGraft old sub_pairs)
                                     (multiGraft new (sub_pairs.map (Prod.map f id)))) :
-    ∀ (pre : List (Tree α)) (post : List (Tree α))
-      (pairs : List (Path × Tree α)),
+    ∀ (pre : List (RoseTree α)) (post : List (RoseTree α))
+      (pairs : List (Path × RoseTree α)),
     PermEquiv
-      (multiGraft (Tree.node a (pre ++ old :: post)) pairs)
-      (multiGraft (Tree.node a (pre ++ new :: post))
+      (multiGraft (RoseTree.node a (pre ++ old :: post)) pairs)
+      (multiGraft (RoseTree.node a (pre ++ new :: post))
                   (pairs.map (Prod.map (pathLiftRecurse pre.length f) id))) := by
   intro pre post pairs
   induction pre generalizing pairs with
@@ -819,11 +819,11 @@ private theorem multiGraft_recurse_permEquiv (a : α)
     statements to ensure the inline-match expressions unify with the
     matcher generated by `multiGraft_node`. -/
 private theorem multiGraft_swap_permEquiv
-    (a : α) (pre : List (Tree α)) (l r : Tree α)
-    (post : List (Tree α)) (pairs : List (Path × Tree α)) :
+    (a : α) (pre : List (RoseTree α)) (l r : RoseTree α)
+    (post : List (RoseTree α)) (pairs : List (Path × RoseTree α)) :
     PermEquiv
-      (multiGraft (Tree.node a (pre ++ l :: r :: post)) pairs)
-      (multiGraft (Tree.node a (pre ++ r :: l :: post))
+      (multiGraft (RoseTree.node a (pre ++ l :: r :: post)) pairs)
+      (multiGraft (RoseTree.node a (pre ++ r :: l :: post))
                   (pairs.map (pathRelabelSwap pre.length))) := by
   -- The cleanest path: induct on pre, peeling off one child at a time.
   -- Base case (pre = []) does the actual swap; inductive case lifts via
@@ -1038,10 +1038,10 @@ private theorem multiGraft_swap_permEquiv
     rw [← h_X_pre] at h_ih
     -- Lift IH through cons (multiGraft c X_l ::) and append_left (RP ++).
     have h_after_cons : PermEquiv
-        (Tree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
+        (RoseTree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
                          multiGraftChildren (pre' ++ l :: r :: post)
                            (pairs.filterMap tailChildFilter)))
-        (Tree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
+        (RoseTree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
                          multiGraftChildren (pre' ++ r :: l :: post)
                            ((pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
                              tailChildFilter))) :=
@@ -1095,12 +1095,12 @@ private theorem listChoices_perm {β : Type*} {xs ys : List β}
     `Perm` of vertices of `t'` and turns `multiGraft t pairs` into a
     `PermEquiv` of `multiGraft t' (pairs.map (Prod.map f id))` lifts to
     `mk`-equality of `insertion t Ts` and `insertion t' Ts`. -/
-private theorem insertion_eq_of_pathBij {t t' : Tree α}
+private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
     (f : Path → Path)
     (hf_perm : ((vertices t).map f).Perm (vertices t'))
     (hf_graft : ∀ pairs, PermEquiv (multiGraft t pairs)
                                       (multiGraft t' (pairs.map (Prod.map f id))))
-    (Ts : List (Tree α)) :
+    (Ts : List (RoseTree α)) :
     (insertion t Ts).map Nonplanar.mk = (insertion t' Ts).map Nonplanar.mk := by
   rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe,
       List.map_map, List.map_map]
@@ -1141,7 +1141,7 @@ private theorem insertion_eq_of_pathBij {t t' : Tree α}
     `swapPathAt pre.length`; for `recurse` it is `pathLiftRecurse pre.length`
     of the inner bijection. -/
 private theorem exists_pathBijection_permStep :
-    ∀ {t t' : Tree α}, PermStep t t' →
+    ∀ {t t' : RoseTree α}, PermStep t t' →
     ∃ f : Path → Path,
       ((vertices t).map f).Perm (vertices t') ∧
       ∀ pairs, PermEquiv (multiGraft t pairs)
@@ -1160,16 +1160,16 @@ private theorem exists_pathBijection_permStep :
 /-- `insertion T Ts` is `mk`-invariant under a single `PermStep` of the
     host. Direct application of `exists_pathBijection_permStep` +
     `insertion_eq_of_pathBij`. -/
-private theorem insertion_permStep_host (Ts : List (Tree α))
-    {t t' : Tree α} (h : PermStep t t') :
+private theorem insertion_permStep_host (Ts : List (RoseTree α))
+    {t t' : RoseTree α} (h : PermStep t t') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t' Ts).map Nonplanar.mk := by
   obtain ⟨f, hf_perm, hf_graft⟩ := exists_pathBijection_permStep h
   exact insertion_eq_of_pathBij f hf_perm hf_graft Ts
 
 /-- `insertion T Ts` is `mk`-invariant under `PermEquiv` of the host. -/
-private theorem insertion_permEquiv_host (Ts : List (Tree α))
-    {t t' : Tree α} (h : PermEquiv t t') :
+private theorem insertion_permEquiv_host (Ts : List (RoseTree α))
+    {t t' : RoseTree α} (h : PermEquiv t t') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t' Ts).map Nonplanar.mk := by
   induction h with
@@ -1181,7 +1181,7 @@ private theorem insertion_permEquiv_host (Ts : List (Tree α))
 /-- `List.Forall₂ PermEquiv` lifts to `List` equality after mapping by
     `Nonplanar.mk` — used for the `Ts = []` base case of forest host
     invariance. -/
-private theorem map_mk_eq_of_forall2_permEquiv {F F' : List (Tree α)}
+private theorem map_mk_eq_of_forall2_permEquiv {F F' : List (RoseTree α)}
     (h : List.Forall₂ PermEquiv F F') :
     F.map Nonplanar.mk = F'.map Nonplanar.mk := by
   induction h with
@@ -1191,7 +1191,7 @@ private theorem map_mk_eq_of_forall2_permEquiv {F F' : List (Tree α)}
 /-- Forest host invariance: `Forall₂ PermEquiv F F'` lifts to
     `mk`-equality of `insertionForest F Ts` and `insertionForest F' Ts`. -/
 theorem insertionForest_permEquiv_host
-    (Ts : List (Tree α)) {F F' : List (Tree α)}
+    (Ts : List (RoseTree α)) {F F' : List (RoseTree α)}
     (h : List.Forall₂ PermEquiv F F') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
       (insertionForest F' Ts).map (List.map Nonplanar.mk) := by
@@ -1229,7 +1229,7 @@ theorem insertionForest_permEquiv_host
       refine Multiset.bind_congr fun mk_T_ins _ => ?_
       show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk) =
            (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-      rw [show (fun F_ins : List (Tree α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
+      rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
               ((fun L : List (Nonplanar α) => mk_T_ins :: L) ∘ List.map Nonplanar.mk) from rfl]
       rw [← Multiset.map_map, ← Multiset.map_map]
       rw [ih]
@@ -1246,9 +1246,9 @@ induction on the Perm structure (the swap case becomes a clean
 /-- Aggregator: at the leaf (no remaining guests), produce the inner
     forest insertion using `pre_T` for `T` and `pre_F` for the tail.
     At a cons, bind over `[true, false]` and extend either bucket. -/
-private def forestPairSum (F : List (Tree α)) :
-    List (Tree α) → List (Tree α) → List (Tree α) →
-      Multiset (List (Tree α))
+private def forestPairSum (F : List (RoseTree α)) :
+    List (RoseTree α) → List (RoseTree α) → List (RoseTree α) →
+      Multiset (List (RoseTree α))
   | pre_T, pre_F, []       =>
       match F with
       | []          =>
@@ -1265,7 +1265,7 @@ private def forestPairSum (F : List (Tree α)) :
 
 /-- Equation lemma: `forestPairSum F pre_T pre_F []` for `F = T :: F_tail`. -/
 private theorem forestPairSum_cons_F_nil_remaining
-    (T : Tree α) (F_tail pre_T pre_F : List (Tree α)) :
+    (T : RoseTree α) (F_tail pre_T pre_F : List (RoseTree α)) :
     forestPairSum (T :: F_tail) pre_T pre_F [] =
       (insertion T pre_T).bind fun T' =>
         (insertionForest F_tail pre_F).map fun F' => T' :: F' := by
@@ -1273,7 +1273,7 @@ private theorem forestPairSum_cons_F_nil_remaining
 
 /-- Equation lemma: `forestPairSum F pre_T pre_F (x :: rest)`. -/
 private theorem forestPairSum_cons_remaining
-    (F pre_T pre_F : List (Tree α)) (x : Tree α) (rest : List (Tree α)) :
+    (F pre_T pre_F : List (RoseTree α)) (x : RoseTree α) (rest : List (RoseTree α)) :
     forestPairSum F pre_T pre_F (x :: rest) =
       (Multiset.ofList [true, false]).bind fun b =>
         if b then forestPairSum F (pre_T ++ [x]) pre_F rest
@@ -1284,8 +1284,8 @@ private theorem forestPairSum_cons_remaining
     `forestPairSum` on the empty remaining list with the accumulators
     augmented by the partition of `Ts.zip α`. This rephrases the
     recursive accumulator-build as a single bind over `listChoices`. -/
-private theorem forestPairSum_assignment_rewrite (F : List (Tree α)) :
-    ∀ (pre_T pre_F : List (Tree α)) (Ts : List (Tree α)),
+private theorem forestPairSum_assignment_rewrite (F : List (RoseTree α)) :
+    ∀ (pre_T pre_F : List (RoseTree α)) (Ts : List (RoseTree α)),
     forestPairSum F pre_T pre_F Ts =
       (Multiset.ofList (listChoices [true, false] Ts.length)).bind fun α =>
         forestPairSum F
@@ -1336,28 +1336,28 @@ private theorem forestPairSum_assignment_rewrite (F : List (Tree α)) :
 
 /-- `forestPairSum [] [] [] [] = {[]}`. -/
 private theorem forestPairSum_nil_F_nil_pre_nil_Ts :
-    forestPairSum ([] : List (Tree α)) [] [] [] =
-      ({[]} : Multiset (List (Tree α))) := by
+    forestPairSum ([] : List (RoseTree α)) [] [] [] =
+      ({[]} : Multiset (List (RoseTree α))) := by
   unfold forestPairSum; rfl
 
 /-- `forestPairSum []` with a non-empty `pre_T` is `0`. -/
 private theorem forestPairSum_nil_F_zero_of_pre_T_cons
-    (a : Tree α) (pre_T pre_F : List (Tree α)) :
-    forestPairSum ([] : List (Tree α)) (a :: pre_T) pre_F [] = 0 := by
+    (a : RoseTree α) (pre_T pre_F : List (RoseTree α)) :
+    forestPairSum ([] : List (RoseTree α)) (a :: pre_T) pre_F [] = 0 := by
   unfold forestPairSum; rfl
 
 /-- `forestPairSum []` with empty `pre_T` but non-empty `pre_F` is `0`. -/
 private theorem forestPairSum_nil_F_zero_of_pre_F_cons
-    (a : Tree α) (pre_F : List (Tree α)) :
-    forestPairSum ([] : List (Tree α)) [] (a :: pre_F) [] = 0 := by
+    (a : RoseTree α) (pre_F : List (RoseTree α)) :
+    forestPairSum ([] : List (RoseTree α)) [] (a :: pre_F) [] = 0 := by
   unfold forestPairSum; rfl
 
 /-- For the empty host `F = []`, if either accumulator is non-empty,
     `forestPairSum [] pre_T pre_F Ts = 0` regardless of `Ts`. -/
 private theorem forestPairSum_nil_F_eq_zero
-    (pre_T pre_F : List (Tree α)) (Ts : List (Tree α))
+    (pre_T pre_F : List (RoseTree α)) (Ts : List (RoseTree α))
     (h : pre_T ≠ [] ∨ pre_F ≠ []) :
-    forestPairSum ([] : List (Tree α)) pre_T pre_F Ts = 0 := by
+    forestPairSum ([] : List (RoseTree α)) pre_T pre_F Ts = 0 := by
   induction Ts generalizing pre_T pre_F with
   | nil =>
     rcases h with h | h
@@ -1387,8 +1387,8 @@ private theorem forestPairSum_nil_F_eq_zero
       cases pre_T <;> simp at h_eq
 
 /-- Bridge: `forestPairSum F [] [] Ts = insertionForest F Ts`. -/
-private theorem forestPairSum_eq_insertionForest (F : List (Tree α))
-    (Ts : List (Tree α)) :
+private theorem forestPairSum_eq_insertionForest (F : List (RoseTree α))
+    (Ts : List (RoseTree α)) :
     forestPairSum F [] [] Ts = insertionForest F Ts := by
   cases F with
   | nil =>
@@ -1410,7 +1410,7 @@ private theorem forestPairSum_eq_insertionForest (F : List (Tree α))
     | nil =>
       rw [forestPairSum_cons_F_nil_remaining, insertionForest_cons_host_nil_guests,
           insertionForest_nil_guests]
-      have h_ins_T : insertion T [] = ({T} : Multiset (Tree α)) := by
+      have h_ins_T : insertion T [] = ({T} : Multiset (RoseTree α)) := by
         rw [insertion_def]
         simp [listChoices_zero, multiGraft_nil]
       rw [h_ins_T, Multiset.singleton_bind, Multiset.map_singleton]
@@ -1424,13 +1424,13 @@ private theorem forestPairSum_eq_insertionForest (F : List (Tree α))
     Takes `ih_F` (forest-Perm invariance on `F_tail`) as an explicit
     argument to cut circularity with the outer induction on `F`. -/
 private theorem forestPairSum_pre_perm_mk
-    (T : Tree α) (F_tail : List (Tree α))
-    (ih_F : ∀ {Ts Ts' : List (Tree α)} (_ : Ts.Perm Ts'),
+    (T : RoseTree α) (F_tail : List (RoseTree α))
+    (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
             (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
             (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
-    {pre_T pre_T' pre_F pre_F' : List (Tree α)}
+    {pre_T pre_T' pre_F pre_F' : List (RoseTree α)}
     (hT : pre_T.Perm pre_T') (hF : pre_F.Perm pre_F')
-    (Ts : List (Tree α)) :
+    (Ts : List (RoseTree α)) :
     (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map Nonplanar.mk) =
     (forestPairSum (T :: F_tail) pre_T' pre_F' Ts).map (List.map Nonplanar.mk) := by
   induction Ts generalizing pre_T pre_T' pre_F pre_F' with
@@ -1442,18 +1442,18 @@ private theorem forestPairSum_pre_perm_mk
     -- = (insertion T pre_T).bind fun T' =>
     --     (insertionForest F_tail pre_F).map (fun F' => mk T' :: F'.map mk)
     -- Refactor: factor mk T' out, then use insertion_perm_guests + ih_F
-    rw [show (fun T' : Tree α =>
+    rw [show (fun T' : RoseTree α =>
               ((insertionForest F_tail pre_F).map fun F' => T' :: F').map (List.map Nonplanar.mk)) =
-            (fun T' : Tree α =>
+            (fun T' : RoseTree α =>
               ((insertionForest F_tail pre_F).map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L))
             from by
           funext T'
           rw [Multiset.map_map, Multiset.map_map]
           rfl]
-    rw [show (fun T' : Tree α =>
+    rw [show (fun T' : RoseTree α =>
               ((insertionForest F_tail pre_F').map fun F' => T' :: F').map (List.map Nonplanar.mk)) =
-            (fun T' : Tree α =>
+            (fun T' : RoseTree α =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L))
             from by
@@ -1466,14 +1466,14 @@ private theorem forestPairSum_pre_perm_mk
     -- (insertion T pre_T).bind (fun T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk T' :: L))
     -- = ((insertion T pre_T).map mk).bind (fun mk_T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk_T' :: L))
     -- via Multiset.bind_map reversed
-    rw [show (insertion T pre_T).bind (fun T' : Tree α =>
+    rw [show (insertion T pre_T).bind (fun T' : RoseTree α =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L)) =
             ((insertion T pre_T).map Nonplanar.mk).bind (fun mk_T' =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => mk_T' :: L))
             from by rw [Multiset.bind_map]]
-    rw [show (insertion T pre_T').bind (fun T' : Tree α =>
+    rw [show (insertion T pre_T').bind (fun T' : RoseTree α =>
               ((insertionForest F_tail pre_F').map (List.map Nonplanar.mk)).map
                 (fun L => Nonplanar.mk T' :: L)) =
             ((insertion T pre_T').map Nonplanar.mk).bind (fun mk_T' =>
@@ -1494,8 +1494,8 @@ private theorem forestPairSum_pre_perm_mk
 
 /-- Two-step unfolding: `forestPairSum F pre_T pre_F (x :: y :: rest)`
     as a nested bind over `[true, false] × [true, false]`. -/
-private theorem forestPairSum_cons_cons_unfold (F : List (Tree α))
-    (pre_T pre_F : List (Tree α)) (x y : Tree α) (rest : List (Tree α)) :
+private theorem forestPairSum_cons_cons_unfold (F : List (RoseTree α))
+    (pre_T pre_F : List (RoseTree α)) (x y : RoseTree α) (rest : List (RoseTree α)) :
     forestPairSum F pre_T pre_F (x :: y :: rest) =
       (Multiset.ofList [true, false]).bind fun b_x =>
         (Multiset.ofList [true, false]).bind fun b_y =>
@@ -1521,11 +1521,11 @@ private theorem forestPairSum_cons_cons_unfold (F : List (Tree α))
 
 /-- Adjacent swap of remaining guests preserves `forestPairSum` (mk-mapped). -/
 private theorem forestPairSum_swap_mk
-    (T : Tree α) (F_tail : List (Tree α))
-    (ih_F : ∀ {Ts Ts' : List (Tree α)} (_ : Ts.Perm Ts'),
+    (T : RoseTree α) (F_tail : List (RoseTree α))
+    (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
             (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
             (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
-    (pre_T pre_F : List (Tree α)) (a b : Tree α) (rest : List (Tree α)) :
+    (pre_T pre_F : List (RoseTree α)) (a b : RoseTree α) (rest : List (RoseTree α)) :
     (forestPairSum (T :: F_tail) pre_T pre_F (a :: b :: rest)).map (List.map Nonplanar.mk) =
     (forestPairSum (T :: F_tail) pre_T pre_F (b :: a :: rest)).map (List.map Nonplanar.mk) := by
   rw [forestPairSum_cons_cons_unfold, forestPairSum_cons_cons_unfold]
@@ -1576,12 +1576,12 @@ private theorem forestPairSum_swap_mk
 
 /-- `List.Perm` of remaining guests preserves `forestPairSum` (mk-mapped). -/
 private theorem forestPairSum_perm_remaining_mk
-    (T : Tree α) (F_tail : List (Tree α))
-    (ih_F : ∀ {Ts Ts' : List (Tree α)} (_ : Ts.Perm Ts'),
+    (T : RoseTree α) (F_tail : List (RoseTree α))
+    (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
             (insertionForest F_tail Ts).map (List.map Nonplanar.mk) =
             (insertionForest F_tail Ts').map (List.map Nonplanar.mk))
-    (pre_T pre_F : List (Tree α))
-    {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
+    (pre_T pre_F : List (RoseTree α))
+    {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map Nonplanar.mk) =
     (forestPairSum (T :: F_tail) pre_T pre_F Ts').map (List.map Nonplanar.mk) := by
   induction h generalizing pre_T pre_F with
@@ -1602,7 +1602,7 @@ private theorem forestPairSum_perm_remaining_mk
 /-- Forest guest invariance: `List.Perm` of guests lifts to
     `mk`-equality of `insertionForest`. -/
 theorem insertionForest_perm_guests
-    (F : List (Tree α)) {Ts Ts' : List (Tree α)} (h : Ts.Perm Ts') :
+    (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
       (insertionForest F Ts').map (List.map Nonplanar.mk) := by
   induction F generalizing Ts Ts' with
@@ -1639,8 +1639,8 @@ with each output wrapped in a singleton list. Used downstream to handle
 
 /-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
     the identity. -/
-theorem insertion_nil_guests (T : Tree α) :
-    insertion T ([] : List (Tree α)) = ({T} : Multiset (Tree α)) := by
+theorem insertion_nil_guests (T : RoseTree α) :
+    insertion T ([] : List (RoseTree α)) = ({T} : Multiset (RoseTree α)) := by
   rw [insertion_def]
   simp only [List.length_nil, listChoices_zero, List.zip_nil_right,
              multiGraft_nil, List.map_cons, List.map_nil,
@@ -1649,8 +1649,8 @@ theorem insertion_nil_guests (T : Tree α) :
 /-- `forestPairSum [T] pre (a :: pre_F_rest) gs = 0`. With a non-empty `pre_F`
     accumulator, the inner `insertionForest [] (a :: pre_F_rest ++ ...)` is 0,
     and the recursion preserves the non-empty invariant. -/
-private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Tree α) (a : Tree α) :
-    ∀ (pre pre_F_rest gs : List (Tree α)),
+private theorem forestPairSum_singleton_host_pre_F_nonempty (T : RoseTree α) (a : RoseTree α) :
+    ∀ (pre pre_F_rest gs : List (RoseTree α)),
     forestPairSum [T] pre (a :: pre_F_rest) gs = 0 := by
   intro pre pre_F_rest gs
   induction gs generalizing pre pre_F_rest with
@@ -1658,9 +1658,9 @@ private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Tree α) (a : T
     rw [forestPairSum_cons_F_nil_remaining]
     rw [insertionForest_empty_host_nonempty_guests]
     -- Goal: (insertion T pre).bind (fun T' => (0 : Multiset _).map (fun F' => T' :: F')) = 0
-    rw [show (fun T' : Tree α =>
-              ((0 : Multiset (List (Tree α))).map (fun F' => T' :: F'))) =
-            (fun (_ : Tree α) => (0 : Multiset (List (Tree α)))) from by
+    rw [show (fun T' : RoseTree α =>
+              ((0 : Multiset (List (RoseTree α))).map (fun F' => T' :: F'))) =
+            (fun (_ : RoseTree α) => (0 : Multiset (List (RoseTree α)))) from by
           funext T'
           rw [Multiset.map_zero]]
     exact Multiset.bind_zero _
@@ -1678,8 +1678,8 @@ private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Tree α) (a : T
     The single-host `[T]` only allows one bucket assignment (all guests to T);
     the empty `pre_F` accumulator stays empty. Helper for `insertionForest_singleton`.
 -/
-private theorem forestPairSum_singleton_host_no_pre_F (T : Tree α) :
-    ∀ (pre gs : List (Tree α)),
+private theorem forestPairSum_singleton_host_no_pre_F (T : RoseTree α) :
+    ∀ (pre gs : List (RoseTree α)),
     forestPairSum [T] pre [] gs = (insertion T (pre ++ gs)).map (fun T' => [T']) := by
   intro pre gs
   induction gs generalizing pre with
@@ -1687,9 +1687,9 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : Tree α) :
     rw [forestPairSum_cons_F_nil_remaining, insertionForest_nil_nil, List.append_nil]
     -- Goal: (insertion T pre).bind (fun T' => ({[]}).map (fun F' => T' :: F')) =
     --       (insertion T pre).map (fun T' => [T'])
-    rw [show (fun T' : Tree α =>
-              ({([] : List (Tree α))} : Multiset (List (Tree α))).map (fun F' => T' :: F')) =
-            (fun T' : Tree α => ({[T']} : Multiset (List (Tree α)))) from by
+    rw [show (fun T' : RoseTree α =>
+              ({([] : List (RoseTree α))} : Multiset (List (RoseTree α))).map (fun F' => T' :: F')) =
+            (fun T' : RoseTree α => ({[T']} : Multiset (List (RoseTree α)))) from by
           funext T'
           rw [Multiset.map_singleton]]
     exact Multiset.bind_singleton (s := insertion T pre) (fun T' => [T'])
@@ -1699,7 +1699,7 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : Tree α) :
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
     rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
     rw [ih (pre ++ [g])]
-    rw [show ([] : List (Tree α)) ++ [g] = [g] from rfl]
+    rw [show ([] : List (RoseTree α)) ++ [g] = [g] from rfl]
     rw [forestPairSum_singleton_host_pre_F_nonempty T g pre [] rest]
     rw [add_zero]
     -- (pre ++ [g]) ++ rest = pre ++ (g :: rest)
@@ -1711,7 +1711,7 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : Tree α) :
     lift. This lets us match `hostTripleSum T [T_other] F` patterns by
     converting `(insertionForest [T_other] pre).bind` to `(insertion T_other pre).bind`
     (via `Multiset.bind_map`). -/
-theorem insertionForest_singleton (T : Tree α) (gs : List (Tree α)) :
+theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
   rw [show insertionForest [T] gs = forestPairSum [T] [] [] gs from
         (forestPairSum_eq_insertionForest _ _).symm]
@@ -1719,4 +1719,4 @@ theorem insertionForest_singleton (T : Tree α) (gs : List (Tree α)) :
 
 end Pathed
 
-end RootedTree.Tree
+end RoseTree

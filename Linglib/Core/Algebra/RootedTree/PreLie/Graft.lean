@@ -11,13 +11,13 @@ import Mathlib.Data.Multiset.Filter
 set_option autoImplicit false
 
 /-!
-# Multi-path multi-tree grafting and vertex decomposition for `Tree α`
+# Multi-path multi-tree grafting and vertex decomposition for `RoseTree α`
 [foissy-typed-decorated-rooted-trees-2018]
 [foissy-introduction-hopf-algebras-trees]
 
 `multiGraft T pairs` grafts trees onto `T` at multiple paths
 **simultaneously**, with paths interpreted in the *original* `T`
-(Foissy 2021 convention). The pair list `List (Path × Tree α)` allows
+(Foissy 2021 convention). The pair list `List (Path × RoseTree α)` allows
 multiple grafts at the same vertex (preserving pair-list order, which
 matters at the root and at each common host vertex; commutativity at the
 multiset boundary is upstream in `Insertion.lean`).
@@ -96,7 +96,7 @@ A3.3 cons-case Phase 4.2). The headline `vertices_multiGraft_decomp`
 `bind_finRange_singleton_eq` (validity-based per-`k` decomp).
 -/
 
-namespace RootedTree.Tree
+namespace RoseTree
 
 namespace Pathed
 
@@ -106,8 +106,8 @@ variable {α : Type*}
     well-founded measure witnessing termination of the tree recursions
     below (`vertices_multiGraft_decomp`, `multiGraft_split_lifted_aux`,
     `multiGraft_cons_pair`), which descend into the `i`-th child. -/
-private theorem numNodes_lt_of_getElem {a : α} {cs : List (Tree α)} {i : ℕ}
-    (hi : i < cs.length) : (cs[i]'hi).numNodes < (Tree.node a cs).numNodes := by
+private theorem numNodes_lt_of_getElem {a : α} {cs : List (RoseTree α)} {i : ℕ}
+    (hi : i < cs.length) : (cs[i]'hi).numNodes < (RoseTree.node a cs).numNodes := by
   rw [numNodes_node]
   have hsum : ∀ {l : List ℕ} {x : ℕ}, x ∈ l → x ≤ l.sum := by
     intro l x hx
@@ -134,48 +134,48 @@ Each helper carries unfolding `@[simp]` lemmas on every pattern so that
 `simp` can reduce them where `rfl` would otherwise fail. -/
 
 /-- Extract pair as root prepend iff its path is empty. -/
-def rootPrependFilter (pair : Path × Tree α) : Option (Tree α) :=
+def rootPrependFilter (pair : Path × RoseTree α) : Option (RoseTree α) :=
   match pair.fst with
   | []     => some pair.snd
   | _ :: _ => none
 
-@[simp] theorem rootPrependFilter_of_nil (T : Tree α) :
-    rootPrependFilter ((([], T) : Path × Tree α)) = some T := rfl
+@[simp] theorem rootPrependFilter_of_nil (T : RoseTree α) :
+    rootPrependFilter ((([], T) : Path × RoseTree α)) = some T := rfl
 
-@[simp] theorem rootPrependFilter_of_cons (i : ℕ) (rest : Path) (T : Tree α) :
-    rootPrependFilter ((i :: rest, T) : Path × Tree α) = none := rfl
+@[simp] theorem rootPrependFilter_of_cons (i : ℕ) (rest : Path) (T : RoseTree α) :
+    rootPrependFilter ((i :: rest, T) : Path × RoseTree α) = none := rfl
 
 /-- Extract pair as head-child pair iff its path starts with `0`,
     stripping the leading index. -/
-def headChildFilter (pair : Path × Tree α) : Option (Path × Tree α) :=
+def headChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) :=
   match pair.fst with
   | 0 :: rest => some (rest, pair.snd)
   | _         => none
 
-@[simp] theorem headChildFilter_of_nil (T : Tree α) :
-    headChildFilter ((([], T) : Path × Tree α)) = none := rfl
+@[simp] theorem headChildFilter_of_nil (T : RoseTree α) :
+    headChildFilter ((([], T) : Path × RoseTree α)) = none := rfl
 
-@[simp] theorem headChildFilter_of_zero_cons (rest : Path) (T : Tree α) :
-    headChildFilter ((0 :: rest, T) : Path × Tree α) = some (rest, T) := rfl
+@[simp] theorem headChildFilter_of_zero_cons (rest : Path) (T : RoseTree α) :
+    headChildFilter ((0 :: rest, T) : Path × RoseTree α) = some (rest, T) := rfl
 
-@[simp] theorem headChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : Tree α) :
-    headChildFilter (((k + 1) :: rest, T) : Path × Tree α) = none := rfl
+@[simp] theorem headChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : RoseTree α) :
+    headChildFilter (((k + 1) :: rest, T) : Path × RoseTree α) = none := rfl
 
 /-- Extract pair as tail-child pair iff its path starts with `k+1`,
     decrementing the leading index by one. -/
-def tailChildFilter (pair : Path × Tree α) : Option (Path × Tree α) :=
+def tailChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) :=
   match pair.fst with
   | (k + 1) :: rest => some (k :: rest, pair.snd)
   | _               => none
 
-@[simp] theorem tailChildFilter_of_nil (T : Tree α) :
-    tailChildFilter ((([], T) : Path × Tree α)) = none := rfl
+@[simp] theorem tailChildFilter_of_nil (T : RoseTree α) :
+    tailChildFilter ((([], T) : Path × RoseTree α)) = none := rfl
 
-@[simp] theorem tailChildFilter_of_zero_cons (rest : Path) (T : Tree α) :
-    tailChildFilter ((0 :: rest, T) : Path × Tree α) = none := rfl
+@[simp] theorem tailChildFilter_of_zero_cons (rest : Path) (T : RoseTree α) :
+    tailChildFilter ((0 :: rest, T) : Path × RoseTree α) = none := rfl
 
-@[simp] theorem tailChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : Tree α) :
-    tailChildFilter (((k + 1) :: rest, T) : Path × Tree α) = some (k :: rest, T) := rfl
+@[simp] theorem tailChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : RoseTree α) :
+    tailChildFilter (((k + 1) :: rest, T) : Path × RoseTree α) = some (k :: rest, T) := rfl
 
 /-! ## §2: `multiGraft` mutual definition -/
 
@@ -184,31 +184,31 @@ mutual
     path. Pairs whose path is `[]` graft at the root (prepended to the
     children list in pair-list order). Pairs whose path is `i :: rest`
     descend into the i-th child with the projected pair `(rest, _)`. -/
-def multiGraft : Tree α → List (Path × Tree α) → Tree α
+def multiGraft : RoseTree α → List (Path × RoseTree α) → RoseTree α
   | .node a cs, pairs =>
-      Tree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs)
+      RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs)
 /-- Auxiliary: descend pair list into children. Pairs with first index
     `0` apply to the head child (with the rest of the path); pairs with
     first index `k+1` are forwarded to the tail (with the rest of the
     list and index decremented). -/
 def multiGraftChildren :
-    List (Tree α) → List (Path × Tree α) → List (Tree α)
+    List (RoseTree α) → List (Path × RoseTree α) → List (RoseTree α)
   | [],      _     => []
   | c :: cs, pairs =>
       multiGraft c (pairs.filterMap headChildFilter) ::
         multiGraftChildren cs (pairs.filterMap tailChildFilter)
 end
 
-@[simp] theorem multiGraft_node (a : α) (cs : List (Tree α))
-    (pairs : List (Path × Tree α)) :
-    multiGraft (Tree.node a cs) pairs =
-      Tree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs) := rfl
+@[simp] theorem multiGraft_node (a : α) (cs : List (RoseTree α))
+    (pairs : List (Path × RoseTree α)) :
+    multiGraft (RoseTree.node a cs) pairs =
+      RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs) := rfl
 
-@[simp] theorem multiGraftChildren_nil_cs (pairs : List (Path × Tree α)) :
-    multiGraftChildren ([] : List (Tree α)) pairs = [] := rfl
+@[simp] theorem multiGraftChildren_nil_cs (pairs : List (Path × RoseTree α)) :
+    multiGraftChildren ([] : List (RoseTree α)) pairs = [] := rfl
 
-@[simp] theorem multiGraftChildren_cons_cs (c : Tree α) (cs : List (Tree α))
-    (pairs : List (Path × Tree α)) :
+@[simp] theorem multiGraftChildren_cons_cs (c : RoseTree α) (cs : List (RoseTree α))
+    (pairs : List (Path × RoseTree α)) :
     multiGraftChildren (c :: cs) pairs =
       multiGraft c (pairs.filterMap headChildFilter) ::
         multiGraftChildren cs (pairs.filterMap tailChildFilter) := rfl
@@ -217,13 +217,13 @@ end
 
 mutual
 /-- Empty pair list: `multiGraft` is the identity. -/
-theorem multiGraft_nil : ∀ (T : Tree α), multiGraft T [] = T
+theorem multiGraft_nil : ∀ (T : RoseTree α), multiGraft T [] = T
   | .node a cs => by
-    show Tree.node a ([] ++ multiGraftChildren cs []) = Tree.node a cs
+    show RoseTree.node a ([] ++ multiGraftChildren cs []) = RoseTree.node a cs
     rw [List.nil_append, multiGraftChildren_nil_pairs cs]
 /-- Empty pair list: `multiGraftChildren` is the identity on the
     children list. -/
-theorem multiGraftChildren_nil_pairs : ∀ (cs : List (Tree α)),
+theorem multiGraftChildren_nil_pairs : ∀ (cs : List (RoseTree α)),
     multiGraftChildren cs [] = cs
   | [] => rfl
   | c :: cs => by
@@ -242,7 +242,7 @@ A single-pair `multiGraft` is exactly `insertAt`. The proof splits into:
 - §4.3 Top-level `multiGraft_singleton` combines these. -/
 
 private theorem multiGraftChildren_singleton_nilPath :
-    ∀ (cs : List (Tree α)) (T₂ : Tree α),
+    ∀ (cs : List (RoseTree α)) (T₂ : RoseTree α),
     multiGraftChildren cs [([], T₂)] = cs
   | [], _ => rfl
   | c :: cs, _ => by
@@ -252,16 +252,16 @@ private theorem multiGraftChildren_singleton_nilPath :
 mutual
 /-- Single-pair `multiGraft` is `insertAt`. Bridges the multi-graft
     primitive to the single-vertex insertion in `Insert.lean`. -/
-theorem multiGraft_singleton : ∀ (T : Tree α) (p : Path) (T₂ : Tree α),
+theorem multiGraft_singleton : ∀ (T : RoseTree α) (p : Path) (T₂ : RoseTree α),
     multiGraft T [(p, T₂)] = insertAt p T₂ T
   | .node a cs, [], T₂ => by
-    show Tree.node a ([T₂] ++ multiGraftChildren cs [([], T₂)]) =
-         Tree.node a (T₂ :: cs)
+    show RoseTree.node a ([T₂] ++ multiGraftChildren cs [([], T₂)]) =
+         RoseTree.node a (T₂ :: cs)
     rw [multiGraftChildren_singleton_nilPath cs T₂]
     rfl
   | .node a cs, j :: rest, T₂ => by
-    show Tree.node a ([] ++ multiGraftChildren cs [(j :: rest, T₂)]) =
-         insertAt (j :: rest) T₂ (Tree.node a cs)
+    show RoseTree.node a ([] ++ multiGraftChildren cs [(j :: rest, T₂)]) =
+         insertAt (j :: rest) T₂ (RoseTree.node a cs)
     rw [List.nil_append, multiGraftChildren_singleton_cons cs j rest T₂]
     by_cases hj : j < cs.length
     · rw [insertAt_cons_of_lt _ _ _ _ _ hj]
@@ -269,13 +269,13 @@ theorem multiGraft_singleton : ∀ (T : Tree α) (p : Path) (T₂ : Tree α),
     · rw [insertAt_cons_of_not_lt _ _ _ _ _ hj]
       simp [hj]
 private theorem multiGraftChildren_singleton_cons :
-    ∀ (cs : List (Tree α)) (j : ℕ) (rest : Path) (T₂ : Tree α),
+    ∀ (cs : List (RoseTree α)) (j : ℕ) (rest : Path) (T₂ : RoseTree α),
     multiGraftChildren cs [(j :: rest, T₂)] =
       if hj : j < cs.length then
         cs.set j (insertAt rest T₂ (cs[j]'hj))
       else cs
   | [], j, rest, T₂ => by
-    show ([] : List (Tree α)) = _
+    show ([] : List (RoseTree α)) = _
     simp
   | c :: cs, 0, rest, T₂ => by
     show multiGraft c [(rest, T₂)] :: multiGraftChildren cs [] = _
@@ -307,7 +307,7 @@ at the current level. -/
     the leading index. The resulting paths address vertices in the
     `i`-th child. -/
 def descentToChild (i : ℕ) :
-    List (Path × Tree α) → List (Path × Tree α)
+    List (Path × RoseTree α) → List (Path × RoseTree α)
   | []                          => []
   | ([], _) :: rest             => descentToChild i rest
   | (j :: rest_p, T) :: rest    =>
@@ -317,44 +317,44 @@ def descentToChild (i : ℕ) :
 @[simp] theorem descentToChild_nil (i : ℕ) :
     descentToChild (α := α) i [] = [] := rfl
 
-@[simp] theorem descentToChild_cons_nilPath (i : ℕ) (T : Tree α)
-    (rest : List (Path × Tree α)) :
+@[simp] theorem descentToChild_cons_nilPath (i : ℕ) (T : RoseTree α)
+    (rest : List (Path × RoseTree α)) :
     descentToChild i (([], T) :: rest) = descentToChild i rest := rfl
 
 theorem descentToChild_cons_consPath (i j : ℕ) (rest_p : Path)
-    (T : Tree α) (rest : List (Path × Tree α)) :
+    (T : RoseTree α) (rest : List (Path × RoseTree α)) :
     descentToChild i ((j :: rest_p, T) :: rest) =
       (if i = j then (rest_p, T) :: descentToChild i rest
        else descentToChild i rest) := rfl
 
 @[simp] theorem descentToChild_cons_consPath_eq (i : ℕ) (rest_p : Path)
-    (T : Tree α) (rest : List (Path × Tree α)) :
+    (T : RoseTree α) (rest : List (Path × RoseTree α)) :
     descentToChild i ((i :: rest_p, T) :: rest) =
       (rest_p, T) :: descentToChild i rest := by
   rw [descentToChild_cons_consPath, if_pos rfl]
 
 theorem descentToChild_cons_consPath_ne (i j : ℕ) (rest_p : Path)
-    (T : Tree α) (rest : List (Path × Tree α)) (h : i ≠ j) :
+    (T : RoseTree α) (rest : List (Path × RoseTree α)) (h : i ≠ j) :
     descentToChild i ((j :: rest_p, T) :: rest) =
       descentToChild i rest := by
   rw [descentToChild_cons_consPath, if_neg h]
 
 /-- Number of pairs whose path is `[]` — the root-prepend count at the
     current level. Determines the `+N` shift of every original-T child index. -/
-def rootPrependCount (pairs : List (Path × Tree α)) : ℕ :=
+def rootPrependCount (pairs : List (Path × RoseTree α)) : ℕ :=
   (pairs.filter (fun pair => pair.fst = [])).length
 
 @[simp] theorem rootPrependCount_nil :
     rootPrependCount (α := α) [] = 0 := rfl
 
-@[simp] theorem rootPrependCount_cons_nilPath (T : Tree α)
-    (rest : List (Path × Tree α)) :
+@[simp] theorem rootPrependCount_cons_nilPath (T : RoseTree α)
+    (rest : List (Path × RoseTree α)) :
     rootPrependCount (([], T) :: rest) = rootPrependCount rest + 1 := by
   unfold rootPrependCount
   simp
 
 @[simp] theorem rootPrependCount_cons_consPath (j : ℕ) (rest_p : Path)
-    (T : Tree α) (rest : List (Path × Tree α)) :
+    (T : RoseTree α) (rest : List (Path × RoseTree α)) :
     rootPrependCount ((j :: rest_p, T) :: rest) = rootPrependCount rest := by
   unfold rootPrependCount
   simp
@@ -367,16 +367,16 @@ not in `vertices T` (no validity hypothesis). -/
 
 /-- Recursive path transformer: at each level, shift the child index by
     the root-prepend count, then descend with the projected pair list. -/
-def transport : List (Path × Tree α) → Path → Path
+def transport : List (Path × RoseTree α) → Path → Path
   | _, []           => []
   | pairs, i :: rest =>
       (i + rootPrependCount pairs) ::
         transport (descentToChild i pairs) rest
 
-@[simp] theorem transport_nil_path (pairs : List (Path × Tree α)) :
+@[simp] theorem transport_nil_path (pairs : List (Path × RoseTree α)) :
     transport pairs [] = [] := rfl
 
-@[simp] theorem transport_cons_path (pairs : List (Path × Tree α))
+@[simp] theorem transport_cons_path (pairs : List (Path × RoseTree α))
     (i : ℕ) (rest : Path) :
     transport pairs (i :: rest) =
       (i + rootPrependCount pairs) ::
@@ -398,13 +398,13 @@ and `some (transport pairs f)` otherwise. -/
 
 /-- The list of pair source paths (in pair-list order; may contain
     duplicates if multiple pairs share a source). -/
-def pairSources (pairs : List (Path × Tree α)) : List Path :=
+def pairSources (pairs : List (Path × RoseTree α)) : List Path :=
   pairs.map Prod.fst
 
 @[simp] theorem pairSources_nil : pairSources (α := α) [] = [] := rfl
 
-@[simp] theorem pairSources_cons (p : Path) (T : Tree α)
-    (rest : List (Path × Tree α)) :
+@[simp] theorem pairSources_cons (p : Path) (T : RoseTree α)
+    (rest : List (Path × RoseTree α)) :
     pairSources ((p, T) :: rest) = p :: pairSources rest := rfl
 
 /-- The preserve-or-drop function for the multi-pair case.
@@ -413,7 +413,7 @@ def pairSources (pairs : List (Path × Tree α)) : List Path :=
       cumulative ancestor-source shifts).
 
     Mirrors `preserve?` for the single-pair case. -/
-def preserveMulti (pairs : List (Path × Tree α)) (f : Path) : Option Path :=
+def preserveMulti (pairs : List (Path × RoseTree α)) (f : Path) : Option Path :=
   if f ∈ pairSources pairs then none else some (transport pairs f)
 
 @[simp] theorem preserveMulti_empty (f : Path) :
@@ -432,7 +432,7 @@ each mapped under `transport pairs`. -/
     composed with `map (transport pairs)`. Direct from the `if-none-else-some`
     shape of `preserveMulti`. -/
 theorem filterMap_preserveMulti_eq_filter_map_transport
-    (pairs : List (Path × Tree α)) (vs : Multiset Path) :
+    (pairs : List (Path × RoseTree α)) (vs : Multiset Path) :
     vs.filterMap (preserveMulti pairs) =
       (vs.filter (· ∉ pairSources pairs)).map (transport pairs) := by
   refine Multiset.induction_on vs (by simp) (fun a s ih => ?_)
@@ -455,7 +455,7 @@ theorem filterMap_preserveMulti_eq_filter_map_transport
 /-- The preserved + sourceSelf classes of `vertices (multiGraft T pairs)`
     together equal `vertices T` mapped under `transport pairs`. -/
 theorem preserved_add_sourceSelf_eq_vertices_map_transport
-    (pairs : List (Path × Tree α)) (vs : Multiset Path) :
+    (pairs : List (Path × RoseTree α)) (vs : Multiset Path) :
     vs.filterMap (preserveMulti pairs) +
       (vs.filter (· ∈ pairSources pairs)).map (transport pairs) =
     vs.map (transport pairs) := by
@@ -473,11 +473,11 @@ have distinct sources, every `posₖ = 0`. -/
 
 /-- Position of pair `k` among pairs sharing the same source path
     (counting only earlier pairs in pair-list order). -/
-def posInGroup (pairs : List (Path × Tree α)) (k : Fin pairs.length) : ℕ :=
+def posInGroup (pairs : List (Path × RoseTree α)) (k : Fin pairs.length) : ℕ :=
   ((pairs.take k.val).filter (fun pair => pair.fst = pairs[k].fst)).length
 
 /-- The path of vertex `q ∈ vertices (pairs[k].snd)` in `multiGraft T pairs`. -/
-def liftMulti (pairs : List (Path × Tree α)) (k : Fin pairs.length)
+def liftMulti (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
     (q : Path) : Path :=
   transport pairs pairs[k].fst ++ (posInGroup pairs k :: q)
 
@@ -497,22 +497,22 @@ These bridge the multiGraft recursion (on filterMap headChildFilter / tailChildF
 to the path-arithmetic operations (descentToChild, rootPrependCount, transport). -/
 
 /-- Length of the root-prepends list equals `rootPrependCount`. -/
-@[simp] theorem length_filterMap_rootPrependFilter : ∀ (pairs : List (Path × Tree α)),
+@[simp] theorem length_filterMap_rootPrependFilter : ∀ (pairs : List (Path × RoseTree α)),
     (pairs.filterMap rootPrependFilter).length = rootPrependCount pairs
   | [] => rfl
   | ([], T) :: rest => by
-    have h : List.filterMap rootPrependFilter ((([], T) :: rest) : List (Path × Tree α))
+    have h : List.filterMap rootPrependFilter ((([], T) :: rest) : List (Path × RoseTree α))
              = T :: rest.filterMap rootPrependFilter := rfl
     rw [h, List.length_cons, length_filterMap_rootPrependFilter rest,
         rootPrependCount_cons_nilPath]
   | (i :: rest_p, T) :: rest => by
-    have h : List.filterMap rootPrependFilter (((i :: rest_p, T) :: rest) : List (Path × Tree α))
+    have h : List.filterMap rootPrependFilter (((i :: rest_p, T) :: rest) : List (Path × RoseTree α))
              = rest.filterMap rootPrependFilter := rfl
     rw [h, length_filterMap_rootPrependFilter rest,
         rootPrependCount_cons_consPath]
 
 /-- `descentToChild 0 pairs` agrees with `pairs.filterMap headChildFilter`. -/
-theorem descentToChild_zero : ∀ (pairs : List (Path × Tree α)),
+theorem descentToChild_zero : ∀ (pairs : List (Path × RoseTree α)),
     descentToChild 0 pairs = pairs.filterMap headChildFilter
   | [] => rfl
   | ([], T) :: rest => by
@@ -529,7 +529,7 @@ theorem descentToChild_zero : ∀ (pairs : List (Path × Tree α)),
 /-- `descentToChild (i+1) pairs` agrees with descending into the `i`-th child of
     `pairs.filterMap tailChildFilter`. The shift `(k+1) :: rest ↦ k :: rest`
     on tail-child paths exactly cancels the `+1` in the descent index. -/
-theorem descentToChild_succ (i : ℕ) : ∀ (pairs : List (Path × Tree α)),
+theorem descentToChild_succ (i : ℕ) : ∀ (pairs : List (Path × RoseTree α)),
     descentToChild (i + 1) pairs = descentToChild i (pairs.filterMap tailChildFilter)
   | [] => rfl
   | ([], T) :: rest => by
@@ -543,14 +543,14 @@ theorem descentToChild_succ (i : ℕ) : ∀ (pairs : List (Path × Tree α)),
     by_cases h : i = k
     · subst h
       rw [descentToChild_cons_consPath_eq (i + 1) rest_p T rest,
-          show ((((i + 1) :: rest_p, T) :: rest : List (Path × Tree α)).filterMap
+          show ((((i + 1) :: rest_p, T) :: rest : List (Path × RoseTree α)).filterMap
                 tailChildFilter) = (i :: rest_p, T) :: rest.filterMap tailChildFilter
             from by simp [tailChildFilter_of_succ_cons],
           descentToChild_cons_consPath_eq i rest_p T (rest.filterMap tailChildFilter),
           descentToChild_succ i rest]
     · have h' : ¬ (i + 1 = k + 1) := fun heq => h (by omega)
       rw [descentToChild_cons_consPath_ne (i + 1) (k + 1) rest_p T rest h',
-          show ((((k + 1) :: rest_p, T) :: rest : List (Path × Tree α)).filterMap
+          show ((((k + 1) :: rest_p, T) :: rest : List (Path × RoseTree α)).filterMap
                 tailChildFilter) = (k :: rest_p, T) :: rest.filterMap tailChildFilter
             from by simp [tailChildFilter_of_succ_cons],
           descentToChild_cons_consPath_ne i k rest_p T (rest.filterMap tailChildFilter) h,
@@ -559,7 +559,7 @@ theorem descentToChild_succ (i : ℕ) : ∀ (pairs : List (Path × Tree α)),
 /-- A path `rest` is a source of the descended pair list iff `i :: rest` is a
     source of the original pair list. -/
 theorem descent_pairSources_iff (i : ℕ) (rest : Path) :
-    ∀ (pairs : List (Path × Tree α)),
+    ∀ (pairs : List (Path × RoseTree α)),
     rest ∈ pairSources (descentToChild i pairs) ↔ (i :: rest) ∈ pairSources pairs
   | [] => by simp
   | ([], T) :: pairs' => by
@@ -584,7 +584,7 @@ theorem descent_pairSources_iff (i : ℕ) (rest : Path) :
 /-- The decomposition of `preserveMulti` over a `cons` path: descending into
     child `i` strips the leading `i` and shifts the next index by the
     `rootPrependCount`. -/
-theorem preserveMulti_cons (pairs : List (Path × Tree α)) (i : ℕ) (rest : Path) :
+theorem preserveMulti_cons (pairs : List (Path × RoseTree α)) (i : ℕ) (rest : Path) :
     preserveMulti pairs (i :: rest) =
       (preserveMulti (descentToChild i pairs) rest).map
         ((i + rootPrependCount pairs) :: ·) := by
@@ -599,8 +599,8 @@ theorem preserveMulti_cons (pairs : List (Path × Tree α)) (i : ℕ) (rest : Pa
 /-- Membership in `descentToChild i pairs` — a pair `(rest, T)` appears iff
     the original `(i :: rest, T)` appears in `pairs`. The .snd is preserved
     under descent; the .fst loses its leading `i`. -/
-theorem mem_descentToChild_iff (i : ℕ) (rest : Path) (T : Tree α) :
-    ∀ (pairs : List (Path × Tree α)),
+theorem mem_descentToChild_iff (i : ℕ) (rest : Path) (T : RoseTree α) :
+    ∀ (pairs : List (Path × RoseTree α)),
     (rest, T) ∈ descentToChild i pairs ↔ (i :: rest, T) ∈ pairs
   | [] => by simp
   | ([], T') :: pairs' => by
@@ -643,9 +643,9 @@ theorem mem_descentToChild_iff (i : ℕ) (rest : Path) (T : Tree α) :
     every descended pair (under child `i`) has its source valid in `cs[i]`.
     Used by the main `vertices_multiGraft_decomp` proof to derive the IH
     hypothesis on each child. -/
-theorem descentToChild_valid_of_node (a : α) (cs : List (Tree α))
-    (pairs : List (Path × Tree α))
-    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst (Tree.node a cs))
+theorem descentToChild_valid_of_node (a : α) (cs : List (RoseTree α))
+    (pairs : List (Path × RoseTree α))
+    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst (RoseTree.node a cs))
     (i : Fin cs.length) :
     ∀ pair ∈ descentToChild i.val pairs, IsValidPath pair.fst cs[i.val] := by
   intro pair hmem
@@ -668,7 +668,7 @@ on each `cs[i]`, which is structurally smaller than `node a cs`). -/
     Pure structural unfolding — does not yet apply the main theorem's 3-class
     decomposition; the main theorem applies that after unfolding. -/
 private theorem verticesAux_multiGraftChildren_unfold :
-    ∀ (cs : List (Tree α)) (pairs : List (Path × Tree α)) (offset : ℕ),
+    ∀ (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)) (offset : ℕ),
     ((verticesAux offset (multiGraftChildren cs pairs) : List Path) : Multiset Path) =
       (Multiset.ofList (List.finRange cs.length)).bind fun i =>
         ((vertices (multiGraft cs[i.val] (descentToChild i.val pairs)) : List Path) :
@@ -722,7 +722,7 @@ private theorem verticesAux_multiGraftChildren_unfold :
         from rfl,
         Multiset.cons_bind]
     -- Reduce the head term.
-    rw [show ((c :: cs') : List (Tree α))[(0 : Fin (cs'.length + 1)).val] = c from rfl,
+    rw [show ((c :: cs') : List (RoseTree α))[(0 : Fin (cs'.length + 1)).val] = c from rfl,
         show offset + (0 : Fin (cs'.length + 1)).val = offset from by
           show offset + 0 = offset; omega]
     -- Tail bind: convert via Multiset.bind_map.
@@ -755,7 +755,7 @@ Three helpers needed by the headline proof:
     indices, each prepended with `(offset + i)`. Proof is by structural
     induction on `cs` (no mutual recursion needed). -/
 private theorem verticesAux_unfold :
-    ∀ (cs : List (Tree α)) (offset : ℕ),
+    ∀ (cs : List (RoseTree α)) (offset : ℕ),
     ((verticesAux offset cs : List Path) : Multiset Path) =
       (Multiset.ofList (List.finRange cs.length)).bind fun i =>
         ((vertices cs[i.val] : List Path) : Multiset Path).map ((offset + i.val) :: ·)
@@ -773,7 +773,7 @@ private theorem verticesAux_unfold :
     rw [verticesAux_unfold cs' (offset + 1)]
     -- RHS: bind over Fin (c :: cs').length = Fin (cs'.length + 1).
     show _ = (Multiset.ofList (List.finRange (cs'.length + 1))).bind fun i =>
-              ((vertices ((c :: cs') : List (Tree α))[i.val] : List Path) :
+              ((vertices ((c :: cs') : List (RoseTree α))[i.val] : List Path) :
                 Multiset Path).map ((offset + i.val) :: ·)
     rw [List.finRange_succ]
     rw [show ((Multiset.ofList ((0 : Fin (cs'.length + 1)) ::
@@ -782,7 +782,7 @@ private theorem verticesAux_unfold :
               Multiset.ofList ((List.finRange cs'.length).map Fin.succ))
         from rfl,
         Multiset.cons_bind]
-    rw [show ((c :: cs') : List (Tree α))[(0 : Fin (cs'.length + 1)).val] = c from rfl,
+    rw [show ((c :: cs') : List (RoseTree α))[(0 : Fin (cs'.length + 1)).val] = c from rfl,
         show offset + (0 : Fin (cs'.length + 1)).val = offset from by
           show offset + 0 = offset; omega]
     rw [show Multiset.ofList ((List.finRange cs'.length).map Fin.succ) =
@@ -796,7 +796,7 @@ private theorem verticesAux_unfold :
 /-- Pointwise bridge: `(preserveMulti (descentToChild i pairs) f).map ((N + i) :: ·) =
     preserveMulti pairs (i :: f)`, where `N = rootPrependCount pairs`. Direct
     consequence of `preserveMulti_cons` after commuting addition. -/
-private theorem preserveMulti_cons_post_map (pairs : List (Path × Tree α))
+private theorem preserveMulti_cons_post_map (pairs : List (Path × RoseTree α))
     (i : ℕ) (f : Path) :
     (preserveMulti (descentToChild i pairs) f).map
       ((rootPrependCount pairs + i) :: ·) = preserveMulti pairs (i :: f) := by
@@ -806,7 +806,7 @@ private theorem preserveMulti_cons_post_map (pairs : List (Path × Tree α))
 /-- Pointwise bridge: `(N + i) :: transport (descentToChild i pairs) f =
     transport pairs (i :: f)`, where `N = rootPrependCount pairs`. Direct
     consequence of `transport_cons_path` after commuting addition. -/
-private theorem transport_cons_descent (pairs : List (Path × Tree α))
+private theorem transport_cons_descent (pairs : List (Path × RoseTree α))
     (i : ℕ) (f : Path) :
     (rootPrependCount pairs + i) :: transport (descentToChild i pairs) f =
       transport pairs (i :: f) := by
@@ -831,26 +831,26 @@ LHS bind to match RHS via `Multiset.bind_congr` after `transport_cons_descent`. 
 
 /-- Number of pairs in `pairs` whose first index is `i`. Equals
     `(descentToChild i pairs).length`. -/
-private def descentCount (i : ℕ) (pairs : List (Path × Tree α)) : ℕ :=
+private def descentCount (i : ℕ) (pairs : List (Path × RoseTree α)) : ℕ :=
   (pairs.filter (fun pair => pair.fst.head? = some i)).length
 
 @[simp] private theorem descentCount_nil (i : ℕ) :
     descentCount (α := α) i [] = 0 := rfl
 
-@[simp] private theorem descentCount_cons_nilPath (i : ℕ) (T : Tree α)
-    (rest : List (Path × Tree α)) :
+@[simp] private theorem descentCount_cons_nilPath (i : ℕ) (T : RoseTree α)
+    (rest : List (Path × RoseTree α)) :
     descentCount i (([], T) :: rest) = descentCount i rest := by
   unfold descentCount
   simp [List.filter_cons]
 
 @[simp] private theorem descentCount_cons_consPath_eq (i : ℕ) (rest_p : Path)
-    (T : Tree α) (rest : List (Path × Tree α)) :
+    (T : RoseTree α) (rest : List (Path × RoseTree α)) :
     descentCount i ((i :: rest_p, T) :: rest) = descentCount i rest + 1 := by
   unfold descentCount
   simp [List.filter_cons]
 
 private theorem descentCount_cons_consPath_ne (i j : ℕ) (rest_p : Path)
-    (T : Tree α) (rest : List (Path × Tree α)) (h : i ≠ j) :
+    (T : RoseTree α) (rest : List (Path × RoseTree α)) (h : i ≠ j) :
     descentCount i ((j :: rest_p, T) :: rest) = descentCount i rest := by
   unfold descentCount
   rw [List.filter_cons]
@@ -859,7 +859,7 @@ private theorem descentCount_cons_consPath_ne (i j : ℕ) (rest_p : Path)
 /-- `(descentToChild i pairs).length = descentCount i pairs`. The descent
     operation matches the count of pairs with the right head. -/
 private theorem descentToChild_length_eq (i : ℕ) :
-    ∀ (pairs : List (Path × Tree α)),
+    ∀ (pairs : List (Path × RoseTree α)),
     (descentToChild i pairs).length = descentCount i pairs
   | [] => rfl
   | ([], _) :: rest => by
@@ -875,7 +875,7 @@ private theorem descentToChild_length_eq (i : ℕ) :
 
 /-- `descentToChild` distributes over `++`. -/
 private theorem descentToChild_append (i : ℕ) :
-    ∀ (xs ys : List (Path × Tree α)),
+    ∀ (xs ys : List (Path × RoseTree α)),
     descentToChild i (xs ++ ys) = descentToChild i xs ++ descentToChild i ys
   | [], ys => by simp [descentToChild]
   | ([], T) :: xs', ys => by
@@ -892,7 +892,7 @@ private theorem descentToChild_append (i : ℕ) :
 
 /-- `descentCount` distributes over `++`. -/
 private theorem descentCount_append (i : ℕ) :
-    ∀ (xs ys : List (Path × Tree α)),
+    ∀ (xs ys : List (Path × RoseTree α)),
     descentCount i (xs ++ ys) = descentCount i xs + descentCount i ys
   | [], _ => by simp
   | x :: xs', ys => by
@@ -905,13 +905,13 @@ private theorem descentCount_append (i : ℕ) :
 /-- The descent-corresponding index. Given `pairs[k].fst.head? = some i`,
     `descentIdxOf i pairs k` is the position of `k` among the descent-i pairs
     (0-indexed). -/
-private def descentIdxOf (i : ℕ) (pairs : List (Path × Tree α))
+private def descentIdxOf (i : ℕ) (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) : ℕ :=
   descentCount i (pairs.take k.val)
 
 /-- `descentIdxOf` is bounded by `descentCount` of the full list, when
     `pairs[k].fst.head? = some i`. -/
-private theorem descentIdxOf_lt (i : ℕ) (pairs : List (Path × Tree α))
+private theorem descentIdxOf_lt (i : ℕ) (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (h : pairs[k.val].fst.head? = some i) :
     descentIdxOf i pairs k < descentCount i pairs := by
   unfold descentIdxOf descentCount
@@ -927,7 +927,7 @@ private theorem descentIdxOf_lt (i : ℕ) (pairs : List (Path × Tree α))
 /-- `descentToChild` of the prefix is the prefix of `descentToChild`.
     Together with `descentToChild_length_eq` this characterizes
     `descentToChild i pairs` index-by-index. -/
-private theorem descentToChild_take (i : ℕ) (pairs : List (Path × Tree α)) (m : ℕ) :
+private theorem descentToChild_take (i : ℕ) (pairs : List (Path × RoseTree α)) (m : ℕ) :
     descentToChild i (pairs.take m) =
       (descentToChild i pairs).take (descentCount i (pairs.take m)) := by
   -- Decompose pairs as pairs.take m ++ pairs.drop m, apply descentToChild_append.
@@ -940,7 +940,7 @@ private theorem descentToChild_take (i : ℕ) (pairs : List (Path × Tree α)) (
 /-- The element of `descentToChild i pairs` at index `descentIdxOf i pairs k`
     (when `pairs[k].fst = i :: rest`) is `(rest, pairs[k].snd)`. -/
 private theorem descentToChild_getElem_at_descentIdxOf (i : ℕ)
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length) (rest : Path)
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length) (rest : Path)
     (h : pairs[k.val].fst = i :: rest) :
     (descentToChild i pairs)[descentIdxOf i pairs k]'(by
         rw [descentToChild_length_eq]
@@ -1004,7 +1004,7 @@ private theorem descentToChild_getElem_at_descentIdxOf (i : ℕ)
 /-- Position invariance: for `pairs[k].fst = i :: rest`, the descent-corresponding
     index `descentIdxOf i pairs k` has the same `posInGroup` in `descentToChild i pairs`
     as `k` does in `pairs`. -/
-private theorem posInGroup_descent_invariance (i : ℕ) (pairs : List (Path × Tree α))
+private theorem posInGroup_descent_invariance (i : ℕ) (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (rest : Path) (h : pairs[k.val].fst = i :: rest) :
     posInGroup (descentToChild i pairs)
         ⟨descentIdxOf i pairs k, by
@@ -1059,8 +1059,8 @@ private theorem posInGroup_descent_invariance (i : ℕ) (pairs : List (Path × T
     the head pair's source matches `i`, otherwise it's preserved.
     Subsumes the per-shape versions (nil-head / matching cons / non-matching
     cons) via the `if`-discriminator. -/
-private theorem descentIdxOf_cons_succ (i : ℕ) (p : Path × Tree α)
-    (rest : List (Path × Tree α)) (k : Fin rest.length) :
+private theorem descentIdxOf_cons_succ (i : ℕ) (p : Path × RoseTree α)
+    (rest : List (Path × RoseTree α)) (k : Fin rest.length) :
     descentIdxOf i (p :: rest) (Fin.succ k) =
       descentIdxOf i rest k + (if p.fst.head? = some i then 1 else 0) := by
   unfold descentIdxOf
@@ -1076,7 +1076,7 @@ private theorem descentIdxOf_cons_succ (i : ℕ) (p : Path × Tree α)
 
 /-- `descentIdxOf` at index zero on any non-empty pair list is zero — no
     pairs precede the head. -/
-private theorem descentIdxOf_at_zero (i : ℕ) (pairs : List (Path × Tree α))
+private theorem descentIdxOf_at_zero (i : ℕ) (pairs : List (Path × RoseTree α))
     (h0 : 0 < pairs.length) :
     descentIdxOf i pairs ⟨0, h0⟩ = 0 := by
   unfold descentIdxOf
@@ -1110,7 +1110,7 @@ corresponding LHS part:
 /-- `liftMulti` at a root-pair (`pairs[k].fst = []`): the lifted path is
     just `posInGroup pairs k :: q`. Direct from `transport_empty_path` +
     the definition of `liftMulti`. -/
-private theorem liftMulti_at_root (pairs : List (Path × Tree α))
+private theorem liftMulti_at_root (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (h : pairs[k.val].fst = [])
     (q : Path) :
     liftMulti pairs k q = posInGroup pairs k :: q := by
@@ -1123,7 +1123,7 @@ private theorem liftMulti_at_root (pairs : List (Path × Tree α))
     index is `descentIdxOf i pairs k`. Combines `transport_cons_path`
     (head shift) with `posInGroup_descent_invariance` + the descent
     `getElem` characterization. -/
-private theorem liftMulti_at_child_descent (pairs : List (Path × Tree α))
+private theorem liftMulti_at_child_descent (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (i : ℕ) (rest : Path) (h : pairs[k.val].fst = i :: rest)
     (q : Path) :
     liftMulti pairs k q =
@@ -1148,8 +1148,8 @@ private theorem liftMulti_at_child_descent (pairs : List (Path × Tree α))
 
 /-- `posInGroup` recursive characterization at index `0`: the head pair has
     no earlier same-source pairs, so its position in its group is always `0`. -/
-private theorem posInGroup_cons_zero (p : Path) (T : Tree α)
-    (rest : List (Path × Tree α)) :
+private theorem posInGroup_cons_zero (p : Path) (T : RoseTree α)
+    (rest : List (Path × RoseTree α)) :
     posInGroup ((p, T) :: rest)
       ⟨0, Nat.succ_pos _⟩ = 0 := by
   unfold posInGroup
@@ -1157,8 +1157,8 @@ private theorem posInGroup_cons_zero (p : Path) (T : Tree α)
 
 /-- `posInGroup` at a successor index, when the head pair has source `[]`
     and the indexed pair also has source `[]`: the count grows by one. -/
-private theorem posInGroup_cons_succ_root (T : Tree α)
-    (pairs' : List (Path × Tree α)) (k : Fin pairs'.length)
+private theorem posInGroup_cons_succ_root (T : RoseTree α)
+    (pairs' : List (Path × RoseTree α)) (k : Fin pairs'.length)
     (h : pairs'[k.val].fst = []) :
     posInGroup (([], T) :: pairs') k.succ = posInGroup pairs' k + 1 := by
   unfold posInGroup
@@ -1169,15 +1169,15 @@ private theorem posInGroup_cons_succ_root (T : Tree α)
           (fun pair => pair.fst = (([], T) :: pairs')[k.val + 1].fst)).length =
        ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length + 1
   rw [show (([], T) :: pairs').take (k.val + 1) =
-          (([], T) : Path × Tree α) :: pairs'.take k.val from rfl,
+          (([], T) : Path × RoseTree α) :: pairs'.take k.val from rfl,
       show (([], T) :: pairs')[k.val + 1] = pairs'[k.val] from rfl,
       h, List.filter_cons]
   simp
 
 /-- `posInGroup` at a successor index, when the head pair has source `[]`
     but the indexed pair has non-`[]` source: the count is unchanged. -/
-private theorem posInGroup_cons_succ_root_of_ne (T : Tree α)
-    (pairs' : List (Path × Tree α)) (k : Fin pairs'.length)
+private theorem posInGroup_cons_succ_root_of_ne (T : RoseTree α)
+    (pairs' : List (Path × RoseTree α)) (k : Fin pairs'.length)
     (h : pairs'[k.val].fst ≠ []) :
     posInGroup (([], T) :: pairs') k.succ = posInGroup pairs' k := by
   unfold posInGroup
@@ -1188,15 +1188,15 @@ private theorem posInGroup_cons_succ_root_of_ne (T : Tree α)
           (fun pair => pair.fst = (([], T) :: pairs')[k.val + 1].fst)).length =
        ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length
   rw [show (([], T) :: pairs').take (k.val + 1) =
-          (([], T) : Path × Tree α) :: pairs'.take k.val from rfl,
+          (([], T) : Path × RoseTree α) :: pairs'.take k.val from rfl,
       show (([], T) :: pairs')[k.val + 1] = pairs'[k.val] from rfl,
       List.filter_cons]
   simp [Ne.symm h]
 
 /-- `posInGroup` at a successor index, when the head pair has non-`[]`
     source: the count is unchanged regardless of the indexed pair's source. -/
-private theorem posInGroup_cons_succ_child (i : ℕ) (rest_p : Path) (T : Tree α)
-    (pairs' : List (Path × Tree α)) (k : Fin pairs'.length) :
+private theorem posInGroup_cons_succ_child (i : ℕ) (rest_p : Path) (T : RoseTree α)
+    (pairs' : List (Path × RoseTree α)) (k : Fin pairs'.length) :
     posInGroup ((i :: rest_p, T) :: pairs') k.succ =
     posInGroup pairs' k +
       (if (i :: rest_p : Path) = pairs'[k.val].fst then 1 else 0) := by
@@ -1210,7 +1210,7 @@ private theorem posInGroup_cons_succ_child (i : ℕ) (rest_p : Path) (T : Tree �
        ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length +
          (if (i :: rest_p : Path) = pairs'[k.val].fst then 1 else 0)
   rw [show ((i :: rest_p, T) :: pairs').take (k.val + 1) =
-          ((i :: rest_p, T) : Path × Tree α) :: pairs'.take k.val from rfl,
+          ((i :: rest_p, T) : Path × RoseTree α) :: pairs'.take k.val from rfl,
       show ((i :: rest_p, T) :: pairs')[k.val + 1] = pairs'[k.val] from rfl,
       List.filter_cons]
   by_cases h : (i :: rest_p : Path) = pairs'[k.val].fst
@@ -1220,7 +1220,7 @@ private theorem posInGroup_cons_succ_child (i : ℕ) (rest_p : Path) (T : Tree �
 /-- `verticesAux` shifts uniformly: `verticesAux (offset+1) cs` equals
     `verticesAux offset cs` with each path's head index incremented by 1.
     Stated as a Multiset equality via `verticesAux_unfold`. -/
-private theorem verticesAux_succ (cs : List (Tree α)) (offset : ℕ) :
+private theorem verticesAux_succ (cs : List (RoseTree α)) (offset : ℕ) :
     (↑(verticesAux (offset + 1) cs) : Multiset Path) =
       (↑(verticesAux offset cs) : Multiset Path).map
         (fun p => match p with | [] => [] | h :: q => (h + 1) :: q) := by
@@ -1239,7 +1239,7 @@ The conditional bind over `Fin pairs.length`-indices, contributing
 `(vertices pairs[k].snd).map ((offset + posInGroup pairs k) :: ·)` for
 root pairs (and `0` otherwise), equals `↑(verticesAux offset rootPrepends)`.
 Strengthened with `offset` to support induction on `pairs`. -/
-private theorem root_bind_eq : ∀ (pairs : List (Path × Tree α)) (offset : ℕ),
+private theorem root_bind_eq : ∀ (pairs : List (Path × RoseTree α)) (offset : ℕ),
     ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
         if pairs[k.val].fst = [] then
           ((vertices pairs[k.val].snd : List Path) : Multiset Path).map
@@ -1248,7 +1248,7 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × Tree α)) (offset : �
       (↑(verticesAux offset (pairs.filterMap rootPrependFilter)) : Multiset Path)
   | [], offset => by
     show ((↑(List.finRange 0) : Multiset (Fin 0)).bind _) =
-         (↑(verticesAux offset ([] : List (Tree α))) : Multiset Path)
+         (↑(verticesAux offset ([] : List (RoseTree α))) : Multiset Path)
     rw [List.finRange_zero, verticesAux_nil]
     show ((0 : Multiset (Fin 0)).bind _) = (↑([] : List Path) : Multiset Path)
     rw [Multiset.zero_bind]; rfl
@@ -1287,7 +1287,7 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × Tree α)) (offset : �
     · -- Sub-case A: head is a root pair.
       subst hp
       -- Head contributes (vertices T).map (offset :: ·).
-      rw [show (if (([], T) : Path × Tree α).fst = [] then
+      rw [show (if (([], T) : Path × RoseTree α).fst = [] then
                   ((vertices T : List Path) : Multiset Path).map
                     ((offset + posInGroup (([], T) :: pairs') 0) :: ·)
                 else 0) =
@@ -1326,15 +1326,15 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × Tree α)) (offset : �
            (↑(verticesAux (offset + 1) (pairs'.filterMap rootPrependFilter))
               : Multiset Path) =
            (↑(verticesAux offset
-              ((([], T) :: pairs' : List (Path × Tree α)).filterMap rootPrependFilter))
+              ((([], T) :: pairs' : List (Path × RoseTree α)).filterMap rootPrependFilter))
               : Multiset Path)
-      rw [show (([], T) :: pairs' : List (Path × Tree α)).filterMap rootPrependFilter
+      rw [show (([], T) :: pairs' : List (Path × RoseTree α)).filterMap rootPrependFilter
               = T :: pairs'.filterMap rootPrependFilter from rfl,
           verticesAux_cons]
       rw [← Multiset.coe_add, ← Multiset.map_coe]
     · -- Sub-case B: head is a child pair. Head contributes 0.
       have hp_fst_ne : (p, T).fst ≠ [] := hp
-      rw [show (if ((p, T) : Path × Tree α).fst = [] then _
+      rw [show (if ((p, T) : Path × RoseTree α).fst = [] then _
                 else (0 : Multiset Path)) = 0 from if_neg hp_fst_ne, Multiset.zero_add]
       -- For tail: posInGroup new ⟨k'+1, _⟩ for root k' = posInGroup pairs' ⟨k', _⟩
       -- (since p ≠ [] doesn't match []).
@@ -1375,9 +1375,9 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × Tree α)) (offset : �
       -- is not a root pair).
       show (↑(verticesAux offset (pairs'.filterMap rootPrependFilter)) : Multiset Path) =
            (↑(verticesAux offset
-              (((i :: rest_p, T) :: pairs' : List (Path × Tree α)).filterMap
+              (((i :: rest_p, T) :: pairs' : List (Path × RoseTree α)).filterMap
                 rootPrependFilter)) : Multiset Path)
-      rw [show ((i :: rest_p, T) :: pairs' : List (Path × Tree α)).filterMap
+      rw [show ((i :: rest_p, T) :: pairs' : List (Path × RoseTree α)).filterMap
               rootPrependFilter = pairs'.filterMap rootPrependFilter from rfl]
 
 /-! ### Descent-pair bridge
@@ -1394,7 +1394,7 @@ expression. Threading `n` as an independent parameter and `h_len` as the
 identification lets the recursion in B re-bind `F'` cleanly. The sole
 caller passes `(descentToChild i.val pairs).length` and `rfl`. -/
 private theorem bind_descent_eq_aux (i : ℕ) :
-    ∀ (pairs : List (Path × Tree α)) (n : ℕ)
+    ∀ (pairs : List (Path × RoseTree α)) (n : ℕ)
       (_h_len : (descentToChild i pairs).length = n)
       {β : Type*} (F : Fin n → Multiset β),
     ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
@@ -1651,7 +1651,7 @@ Original consumer was the deprecated `composePairs` partition theorem
 bookkeeping substrate. -/
 
 /-- Auxiliary walker: structural recursion on the prefix path. -/
-def stripLiftMultiAux : Path → ℕ → List (Path × Tree α) → Path → Option Path
+def stripLiftMultiAux : Path → ℕ → List (Path × RoseTree α) → Path → Option Path
   | [], _, _, [] => none
   | [], posIG, _, h :: q => if h = posIG then some q else none
   | _ :: _, _, _, [] => none
@@ -1662,7 +1662,7 @@ def stripLiftMultiAux : Path → ℕ → List (Path × Tree α) → Path → Opt
 
 /-- Operational inverse of `liftMulti`: `stripLiftMulti pairs k p = some q`
     iff `p = liftMulti pairs k q`. Computable. -/
-def stripLiftMulti (pairs : List (Path × Tree α)) (k : Fin pairs.length)
+def stripLiftMulti (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
     (p : Path) : Option Path :=
   stripLiftMultiAux pairs[k.val].fst (posInGroup pairs k) pairs p
 
@@ -1670,7 +1670,7 @@ def stripLiftMulti (pairs : List (Path × Tree α)) (k : Fin pairs.length)
     when the input path equals `transport outer e ++ (posIG :: q)`.
     Proof by structural induction on `e`. -/
 theorem stripLiftMultiAux_eq_some_iff
-    (e : Path) (posIG : ℕ) (outer : List (Path × Tree α)) (p q : Path) :
+    (e : Path) (posIG : ℕ) (outer : List (Path × RoseTree α)) (p q : Path) :
     stripLiftMultiAux e posIG outer p = some q ↔
       p = transport outer e ++ (posIG :: q) := by
   induction e generalizing outer p with
@@ -1706,14 +1706,14 @@ theorem stripLiftMultiAux_eq_some_iff
 
 /-- **Iff-characterization**: `stripLiftMulti pairs k p = some q` exactly
     when `p` is the lifted image of `q` under `liftMulti pairs k`. -/
-theorem stripLiftMulti_eq_some_iff (pairs : List (Path × Tree α))
+theorem stripLiftMulti_eq_some_iff (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (p q : Path) :
     stripLiftMulti pairs k p = some q ↔ p = liftMulti pairs k q := by
   unfold stripLiftMulti liftMulti
   exact stripLiftMultiAux_eq_some_iff pairs[k.val].fst (posInGroup pairs k) pairs p q
 
 /-- **Correctness**: stripping a lifted vertex recovers the original. -/
-theorem stripLiftMulti_liftMulti (pairs : List (Path × Tree α))
+theorem stripLiftMulti_liftMulti (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (q : Path) :
     stripLiftMulti pairs k (liftMulti pairs k q) = some q := by
   rw [stripLiftMulti_eq_some_iff]
@@ -1727,7 +1727,7 @@ preserved/sourceSelf inner vertices. -/
 
 /-- Recursive Option-valued inverse of `transport`: strips the
     `rootPrependCount`-offset at each level, recursing into descended pairs. -/
-def untransport : List (Path × Tree α) → Path → Option Path
+def untransport : List (Path × RoseTree α) → Path → Option Path
   | _, [] => some []
   | outer, h :: q =>
       if h ≥ rootPrependCount outer then
@@ -1735,13 +1735,13 @@ def untransport : List (Path × Tree α) → Path → Option Path
           ((h - rootPrependCount outer) :: ·)
       else none
 
-@[simp] theorem untransport_nil (outer : List (Path × Tree α)) :
+@[simp] theorem untransport_nil (outer : List (Path × RoseTree α)) :
     untransport outer [] = some [] := rfl
 
 /-- **Iff-characterization**: `untransport outer p = some v` iff
     `p = transport outer v`. Proof by structural induction on `p`. -/
 theorem untransport_eq_some_iff
-    (outer : List (Path × Tree α)) (p v : Path) :
+    (outer : List (Path × RoseTree α)) (p v : Path) :
     untransport outer p = some v ↔ p = transport outer v := by
   induction p generalizing outer v with
   | nil =>
@@ -1789,7 +1789,7 @@ theorem untransport_eq_some_iff
           omega
 
 /-- **Correctness**: untransporting a transported vertex recovers the original. -/
-theorem untransport_transport (outer : List (Path × Tree α)) (v : Path) :
+theorem untransport_transport (outer : List (Path × RoseTree α)) (v : Path) :
     untransport outer (transport outer v) = some v := by
   rw [untransport_eq_some_iff]
 
@@ -1815,7 +1815,7 @@ corollaries (§10) follow as direct consequences. -/
     Specializes to `vertices_insertAt_decomp` for single-pair lists
     (corollary in §10). -/
 theorem vertices_multiGraft_decomp :
-    ∀ (T : Tree α) (pairs : List (Path × Tree α))
+    ∀ (T : RoseTree α) (pairs : List (Path × RoseTree α))
       (_h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T),
     ((vertices (multiGraft T pairs) : List Path) : Multiset Path) =
       ((vertices T : Multiset Path).filterMap (preserveMulti pairs))
@@ -1965,10 +1965,10 @@ theorem vertices_multiGraft_decomp :
     have hcoe_singleton : (↑([[]] : List Path) : Multiset Path) =
         ({([] : Path)} : Multiset Path) := rfl
     have step9 : Multiset.filterMap (preserveMulti pairs)
-                    (↑(vertices (Tree.node a cs)) : Multiset Path)
+                    (↑(vertices (RoseTree.node a cs)) : Multiset Path)
                   + Multiset.map (transport pairs)
                       (Multiset.filter (fun x => x ∈ pairSources pairs)
-                        (↑(vertices (Tree.node a cs)) : Multiset Path)) =
+                        (↑(vertices (RoseTree.node a cs)) : Multiset Path)) =
         (↑([[]] : List Path) : Multiset Path)
         + Multiset.filterMap (preserveMulti pairs)
             (↑(verticesAux 0 cs) : Multiset Path)
@@ -2173,7 +2173,7 @@ T-vertex. -/
 /-- For any vertex `v_T ∈ vertices T`, the transported path `transport pairs v_T`
     is a vertex of `multiGraft T pairs`. -/
 theorem transport_mem_vertices_multiGraft
-    (T : Tree α) (pairs : List (Path × Tree α))
+    (T : RoseTree α) (pairs : List (Path × RoseTree α))
     (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T)
     (v_T : Path) (h_v_T : v_T ∈ vertices T) :
     transport pairs v_T ∈ vertices (multiGraft T pairs) := by
@@ -2195,7 +2195,7 @@ substrate. -/
     The source path is at every level shifted by `0` (the only pair
     contributes to descent, never to root-prepends, except at the end
     where it's an empty descent). -/
-theorem transport_singleton_self : ∀ (e : Path) (T₂ : Tree α),
+theorem transport_singleton_self : ∀ (e : Path) (T₂ : RoseTree α),
     transport [(e, T₂)] e = e
   | [], _ => rfl
   | i :: rest, T₂ => by
@@ -2209,7 +2209,7 @@ theorem transport_singleton_self : ∀ (e : Path) (T₂ : Tree α),
 /-- Single-pair `transport` agrees with `preserveOf` for `f ≠ e`. The
     diagonal is captured by `preserveMulti = preserve?` (see
     `preserveMulti_singleton`). -/
-theorem transport_singleton_of_ne : ∀ (e : Path) (T₂ : Tree α) (f : Path)
+theorem transport_singleton_of_ne : ∀ (e : Path) (T₂ : RoseTree α) (f : Path)
     (_hne : f ≠ e), transport [(e, T₂)] f = preserveOf e f
   | [],            _,   [],            h => absurd rfl h.symm
   | [],            T₂,  j :: rest_f,   _ => by
@@ -2245,7 +2245,7 @@ theorem transport_singleton_of_ne : ∀ (e : Path) (T₂ : Tree α) (f : Path)
 /-- `preserveMulti [(e, T₂)] = preserve? e`. Combines
     `transport_singleton_of_ne` (off-diagonal) with `preserve?_self`
     (diagonal). -/
-theorem preserveMulti_singleton (e : Path) (T₂ : Tree α) (f : Path) :
+theorem preserveMulti_singleton (e : Path) (T₂ : RoseTree α) (f : Path) :
     preserveMulti [(e, T₂)] f = preserve? e f := by
   show (if f ∈ pairSources [(e, T₂)] then none else some (transport [(e, T₂)] f))
        = preserve? e f
@@ -2259,11 +2259,11 @@ theorem preserveMulti_singleton (e : Path) (T₂ : Tree α) (f : Path) :
 /-- `liftMulti [(e, T₂)] ⟨0, _⟩ q = lift e q`. The single pair's
     `posInGroup` is `0` (no earlier same-source pairs) and its
     `transport`ed source is `e` itself (`transport_singleton_self`). -/
-theorem liftMulti_singleton (e : Path) (T₂ : Tree α) (q : Path) :
+theorem liftMulti_singleton (e : Path) (T₂ : RoseTree α) (q : Path) :
     liftMulti [(e, T₂)] ⟨0, by simp⟩ q = lift e q := by
   show transport [(e, T₂)] (([(e, T₂)] : List _)[0]'(by simp)).fst ++
        (posInGroup [(e, T₂)] ⟨0, by simp⟩ :: q) = e ++ 0 :: q
-  rw [show (([(e, T₂)] : List (Path × Tree α))[0]'(by simp)).fst = e from rfl,
+  rw [show (([(e, T₂)] : List (Path × RoseTree α))[0]'(by simp)).fst = e from rfl,
       transport_singleton_self e T₂,
       show posInGroup [(e, T₂)] ⟨0, by simp⟩ = 0 from by
         unfold posInGroup; simp]
@@ -2287,7 +2287,7 @@ This is Phase 3.1 substrate for the A3.3 cons-case proof
     `(offset + i.val)`. The validity hypothesis is supplied per-child via
     `descentToChild`. -/
 theorem verticesAux_multiGraftChildren_decomp
-    (cs : List (Tree α)) (pairs : List (Path × Tree α))
+    (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α))
     (h_valid_per_child : ∀ (i : Fin cs.length),
         ∀ pair ∈ descentToChild i.val pairs, IsValidPath pair.fst cs[i.val])
     (offset : ℕ) :
@@ -2314,14 +2314,14 @@ theorem verticesAux_multiGraftChildren_decomp
     prepended by `(offset + i.val)`. Proof by induction on `n`, with the
     `n+1` case unfolding `List.finRange_succ` and shifting the offset. -/
 private theorem verticesAux_finRange_map {n : ℕ}
-    (f : Fin n → Tree α) (offset : ℕ) :
+    (f : Fin n → RoseTree α) (offset : ℕ) :
     ((verticesAux offset ((List.finRange n).map f) : List Path) :
         Multiset Path) =
       (Multiset.ofList (List.finRange n)).bind fun i =>
         ((vertices (f i) : List Path) : Multiset Path).map ((offset + i.val) :: ·) := by
   induction n generalizing offset with
   | zero =>
-    rw [show (List.finRange 0).map f = ([] : List (Tree α)) from rfl,
+    rw [show (List.finRange 0).map f = ([] : List (RoseTree α)) from rfl,
         verticesAux_nil]
     show ((↑([] : List Path)) : Multiset Path) = _
     rw [show (List.finRange 0 : List (Fin 0)) = [] from rfl]
@@ -2368,8 +2368,8 @@ private theorem verticesAux_finRange_map {n : ℕ}
     (`scratch/a33_cons_plan.md`) consumes when decomposing
     `vertices(T_ins :: F_ins)` into the 4-class V-partition by `QuadIdx`. -/
 theorem vertices_forest_eq_partition
-    (cs : List (Tree α))
-    (per_tree_pairs : Fin cs.length → List (Path × Tree α))
+    (cs : List (RoseTree α))
+    (per_tree_pairs : Fin cs.length → List (Path × RoseTree α))
     (h_valid : ∀ (i : Fin cs.length),
         ∀ pair ∈ per_tree_pairs i, IsValidPath pair.fst cs[i.val])
     (offset : ℕ) :
@@ -2412,7 +2412,7 @@ C-elements iterate via the `q`-relative-to-modified-subtree update. -/
     consequence of `posInGroup`'s definition (filter-by-source) on a pair with
     `pairs[k].fst = []`. -/
 private theorem posInGroup_lt_rootPrependCount
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length)
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
     (h_fst : pairs[k.val].fst = []) :
     posInGroup pairs k < rootPrependCount pairs := by
   unfold posInGroup rootPrependCount
@@ -2455,7 +2455,7 @@ straightforward but the proofs require care with dependent-type rewrites
     of the `arr[i]'h` form. Consumers convert via `List.get?_eq_some` /
     `List.getElem_eq_iff`. -/
 private theorem rootPrepends_at_posInGroup_eq_snd
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length)
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
     (h_fst : pairs[k.val].fst = []) :
     (pairs.filterMap rootPrependFilter)[posInGroup pairs k]? = some pairs[k.val].snd := by
   induction pairs with
@@ -2467,7 +2467,7 @@ private theorem rootPrepends_at_posInGroup_eq_snd
     | zero =>
       have h_p_fst : p_fst = [] := h_fst
       subst h_p_fst
-      have h_pos : posInGroup ((([], p_snd) :: rest) : List (Path × Tree α))
+      have h_pos : posInGroup ((([], p_snd) :: rest) : List (Path × RoseTree α))
                      ⟨0, hk_lt⟩ = 0 :=
         posInGroup_cons_zero ([] : Path) p_snd rest
       rw [h_pos]
@@ -2475,7 +2475,7 @@ private theorem rootPrepends_at_posInGroup_eq_snd
     | succ k_pred =>
       have hk_lt' : k_pred < rest.length := by
         simp [List.length_cons] at hk_lt; omega
-      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] =
+      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] =
           rest[k_pred] := List.getElem_cons_succ ..
       have h_rest_fst : rest[k_pred].fst = [] := by rw [← h_idx_eq]; exact h_fst
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
@@ -2484,7 +2484,7 @@ private theorem rootPrepends_at_posInGroup_eq_snd
         subst h_p_fst
         have h_fin_eq : (⟨k_pred + 1, hk_lt⟩ : Fin (([], p_snd) :: rest).length) =
             Fin.succ ⟨k_pred, hk_lt'⟩ := rfl
-        have h_snd_eq : (((([], p_snd) :: rest) : List (Path × Tree α))[k_pred + 1].snd) =
+        have h_snd_eq : (((([], p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1].snd) =
             rest[k_pred].snd := by rw [h_idx_eq]
         rw [h_snd_eq, h_fin_eq, posInGroup_cons_succ_root p_snd rest ⟨k_pred, hk_lt'⟩ h_rest_fst]
         show (p_snd :: rest.filterMap rootPrependFilter)[posInGroup rest ⟨k_pred, hk_lt'⟩ + 1]? = some rest[k_pred].snd
@@ -2494,7 +2494,7 @@ private theorem rootPrepends_at_posInGroup_eq_snd
         subst h_p_fst
         have h_fin_eq : (⟨k_pred + 1, hk_lt⟩ : Fin ((p_h :: p_rest, p_snd) :: rest).length) =
             Fin.succ ⟨k_pred, hk_lt'⟩ := rfl
-        have h_snd_eq : (((p_h :: p_rest, p_snd) :: rest : List (Path × Tree α))[k_pred + 1].snd) =
+        have h_snd_eq : (((p_h :: p_rest, p_snd) :: rest : List (Path × RoseTree α))[k_pred + 1].snd) =
             rest[k_pred].snd := by rw [h_idx_eq]
         rw [h_snd_eq, h_fin_eq]
         have h_pos := posInGroup_cons_succ_child p_h p_rest p_snd rest ⟨k_pred, hk_lt'⟩
@@ -2508,8 +2508,8 @@ private theorem rootPrepends_at_posInGroup_eq_snd
     replaced by `newSnd`. Structural induction on `pairs` parallel to
     `rootPrepends_at_posInGroup_eq_snd`. -/
 private theorem filterMap_rootPrepend_set_root
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length)
-    (h_fst : pairs[k.val].fst = []) (newSnd : Tree α) :
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
+    (h_fst : pairs[k.val].fst = []) (newSnd : RoseTree α) :
     (pairs.set k.val (([] : Path), newSnd)).filterMap rootPrependFilter =
     (pairs.filterMap rootPrependFilter).set (posInGroup pairs k) newSnd := by
   induction pairs with
@@ -2525,16 +2525,16 @@ private theorem filterMap_rootPrepend_set_root
       -- filterMap of LHS: newSnd :: rest.filterMap _
       -- posInGroup _ 0 = 0; (filterMap rest).set 0 newSnd = newSnd :: tail of filterMap.
       -- filterMap of original: p_snd :: rest.filterMap _; .set 0 newSnd: newSnd :: rest.filterMap _.
-      have h_pos : posInGroup ((([], p_snd) :: rest) : List (Path × Tree α))
+      have h_pos : posInGroup ((([], p_snd) :: rest) : List (Path × RoseTree α))
                      ⟨0, hk_lt⟩ = 0 := posInGroup_cons_zero ([] : Path) p_snd rest
       rw [h_pos]
-      show (((([], newSnd) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter) =
-           (((([], p_snd) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter).set 0 newSnd
+      show (((([], newSnd) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter) =
+           (((([], p_snd) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter).set 0 newSnd
       rfl
     | succ k_pred =>
       have hk_lt' : k_pred < rest.length := by
         simp [List.length_cons] at hk_lt; omega
-      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] =
+      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] =
           rest[k_pred] := List.getElem_cons_succ ..
       have h_rest_fst : rest[k_pred].fst = [] := by rw [← h_idx_eq]; exact h_fst
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
@@ -2553,11 +2553,11 @@ private theorem filterMap_rootPrepend_set_root
         -- Goal: (((([], p_snd) :: rest).set (k_pred + 1) ([], newSnd)).filterMap _ =
         --       (([], p_snd) :: rest).filterMap _).set (posInGroup rest _ + 1) newSnd
         show ((([], p_snd) :: rest.set k_pred (([] : Path), newSnd) :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
              ((p_snd :: rest.filterMap rootPrependFilter).set
                (posInGroup rest ⟨k_pred, hk_lt'⟩ + 1) newSnd)
         rw [show ((([], p_snd) :: rest.set k_pred (([] : Path), newSnd) :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
               p_snd :: (rest.set k_pred (([] : Path), newSnd)).filterMap rootPrependFilter
               from rfl]
         rw [List.set_cons_succ]
@@ -2575,11 +2575,11 @@ private theorem filterMap_rootPrepend_set_root
         rw [h_rest_fst, if_neg (by exact List.cons_ne_nil _ _), Nat.add_zero] at h_pos
         rw [h_pos]
         show (((p_h :: p_rest, p_snd) :: rest.set k_pred (([] : Path), newSnd) :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
              ((rest.filterMap rootPrependFilter).set
                (posInGroup rest ⟨k_pred, hk_lt'⟩) newSnd)
         rw [show (((p_h :: p_rest, p_snd) :: rest.set k_pred (([] : Path), newSnd) :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
               (rest.set k_pred (([] : Path), newSnd)).filterMap rootPrependFilter
               from rfl]
         rw [ih_applied]
@@ -2587,8 +2587,8 @@ private theorem filterMap_rootPrepend_set_root
 /-- Auxiliary: setting `pairs[k]` (with empty fst) to `([], newSnd)` (also
     empty fst) leaves `filterMap headChildFilter` unchanged. -/
 private theorem filterMap_headChild_set_root
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length)
-    (h_fst : pairs[k.val].fst = []) (newSnd : Tree α) :
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
+    (h_fst : pairs[k.val].fst = []) (newSnd : RoseTree α) :
     (pairs.set k.val (([] : Path), newSnd)).filterMap headChildFilter =
     pairs.filterMap headChildFilter := by
   induction pairs with
@@ -2604,21 +2604,21 @@ private theorem filterMap_headChild_set_root
     | succ k_pred =>
       have hk_lt' : k_pred < rest.length := by
         simp [List.length_cons] at hk_lt; omega
-      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] =
+      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] =
           rest[k_pred] := List.getElem_cons_succ ..
       have h_rest_fst : rest[k_pred].fst = [] := by rw [← h_idx_eq]; exact h_fst
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
       show (((p_fst, p_snd) :: rest.set k_pred (([] : Path), newSnd) :
-            List (Path × Tree α)).filterMap headChildFilter) =
-           (((p_fst, p_snd) :: rest : List (Path × Tree α)).filterMap headChildFilter)
+            List (Path × RoseTree α)).filterMap headChildFilter) =
+           (((p_fst, p_snd) :: rest : List (Path × RoseTree α)).filterMap headChildFilter)
       rw [List.filterMap_cons, List.filterMap_cons]
       rw [ih_applied]
 
 /-- Auxiliary: setting `pairs[k]` (with empty fst) to `([], newSnd)` (also
     empty fst) leaves `filterMap tailChildFilter` unchanged. -/
 private theorem filterMap_tailChild_set_root
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length)
-    (h_fst : pairs[k.val].fst = []) (newSnd : Tree α) :
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
+    (h_fst : pairs[k.val].fst = []) (newSnd : RoseTree α) :
     (pairs.set k.val (([] : Path), newSnd)).filterMap tailChildFilter =
     pairs.filterMap tailChildFilter := by
   induction pairs with
@@ -2634,13 +2634,13 @@ private theorem filterMap_tailChild_set_root
     | succ k_pred =>
       have hk_lt' : k_pred < rest.length := by
         simp [List.length_cons] at hk_lt; omega
-      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] =
+      have h_idx_eq : (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] =
           rest[k_pred] := List.getElem_cons_succ ..
       have h_rest_fst : rest[k_pred].fst = [] := by rw [← h_idx_eq]; exact h_fst
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
       show (((p_fst, p_snd) :: rest.set k_pred (([] : Path), newSnd) :
-            List (Path × Tree α)).filterMap tailChildFilter) =
-           (((p_fst, p_snd) :: rest : List (Path × Tree α)).filterMap tailChildFilter)
+            List (Path × RoseTree α)).filterMap tailChildFilter) =
+           (((p_fst, p_snd) :: rest : List (Path × RoseTree α)).filterMap tailChildFilter)
       rw [List.filterMap_cons, List.filterMap_cons]
       rw [ih_applied]
 
@@ -2648,8 +2648,8 @@ private theorem filterMap_tailChild_set_root
     empty fst), the multiGraftChildren is unchanged: descent filters drop empty-fst
     entries either way. -/
 private theorem multiGraftChildren_set_root_unchanged
-    (cs : List (Tree α)) (pairs : List (Path × Tree α)) (k : Fin pairs.length)
-    (h_fst : pairs[k.val].fst = []) (newSnd : Tree α) :
+    (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
+    (h_fst : pairs[k.val].fst = []) (newSnd : RoseTree α) :
     multiGraftChildren cs (pairs.set k.val (([] : Path), newSnd)) =
     multiGraftChildren cs pairs := by
   induction cs generalizing pairs with
@@ -2666,7 +2666,7 @@ private theorem multiGraftChildren_set_root_unchanged
 
 /-- `multiGraftChildren cs pairs` has the same length as `cs`. -/
 private theorem multiGraftChildren_length :
-    ∀ (cs : List (Tree α)) (pairs : List (Path × Tree α)),
+    ∀ (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)),
     (multiGraftChildren cs pairs).length = cs.length
   | [], _ => rfl
   | c :: cs', pairs => by
@@ -2676,7 +2676,7 @@ private theorem multiGraftChildren_length :
 /-- Indexing `multiGraftChildren cs pairs` at `j` gives `multiGraft cs[j]
     (descentToChild j pairs)`. Stated via get? to avoid dependent typing. -/
 private theorem multiGraftChildren_getElem?
-    (cs : List (Tree α)) (pairs : List (Path × Tree α)) (j : ℕ) (h : j < cs.length) :
+    (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)) (j : ℕ) (h : j < cs.length) :
     (multiGraftChildren cs pairs)[j]? =
       some (multiGraft (cs[j]'h) (descentToChild j pairs)) := by
   induction cs generalizing pairs j with
@@ -2698,9 +2698,9 @@ private theorem multiGraftChildren_getElem?
 /-- Setting `pairs[k]` to `(j :: rest_path, X)` (preserving its first index `j`)
     and descending into child `j` equals first descending then setting the
     descent-corresponding index. -/
-private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path × Tree α))
+private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path × RoseTree α))
     (k : Fin pairs.length) (rest_path : Path) (h : pairs[k.val].fst = j :: rest_path)
-    (X : Tree α) :
+    (X : RoseTree α) :
     descentToChild j (pairs.set k.val (j :: rest_path, X)) =
       (descentToChild j pairs).set (descentIdxOf j pairs k) (rest_path, X) := by
   induction pairs with
@@ -2712,11 +2712,11 @@ private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path ×
     | zero =>
       have h_p_fst : p_fst = j :: rest_path := h
       subst h_p_fst
-      show descentToChild j (((j :: rest_path, X) :: rest) : List (Path × Tree α)) =
+      show descentToChild j (((j :: rest_path, X) :: rest) : List (Path × RoseTree α)) =
           (descentToChild j (((j :: rest_path, p_snd) :: rest) :
-              List (Path × Tree α))).set
+              List (Path × RoseTree α))).set
             (descentIdxOf j (((j :: rest_path, p_snd) :: rest) :
-              List (Path × Tree α)) ⟨0, hk_lt⟩) (rest_path, X)
+              List (Path × RoseTree α)) ⟨0, hk_lt⟩) (rest_path, X)
       rw [descentToChild_cons_consPath_eq, descentToChild_cons_consPath_eq,
           descentIdxOf_at_zero]
       rfl
@@ -2724,15 +2724,15 @@ private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path ×
       have hk_lt' : k_pred < rest.length := by
         simp only [List.length_cons] at hk_lt; omega
       have h_idx_eq :
-          (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] = rest[k_pred] :=
+          (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] = rest[k_pred] :=
         List.getElem_cons_succ ..
       have h_rest_fst : rest[k_pred].fst = j :: rest_path := by
         rw [← h_idx_eq]; exact h
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
       show descentToChild j ((((p_fst, p_snd) :: rest.set k_pred (j :: rest_path, X)) :
-            List (Path × Tree α))) =
-          (descentToChild j (((p_fst, p_snd) :: rest) : List (Path × Tree α))).set
-            (descentIdxOf j (((p_fst, p_snd) :: rest) : List (Path × Tree α))
+            List (Path × RoseTree α))) =
+          (descentToChild j (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))).set
+            (descentIdxOf j (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))
               ⟨k_pred + 1, hk_lt⟩) (rest_path, X)
       have h_fin_eq : (⟨k_pred + 1, hk_lt⟩ : Fin (((p_fst, p_snd) :: rest).length)) =
           Fin.succ ⟨k_pred, hk_lt'⟩ := rfl
@@ -2747,13 +2747,13 @@ private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path ×
           rw [descentToChild_cons_consPath_eq j p_rest p_snd
                 (rest.set k_pred (j :: rest_path, X)),
               descentToChild_cons_consPath_eq j p_rest p_snd rest, ih_applied]
-          rw [show ((j :: p_rest, p_snd) : Path × Tree α).fst.head? = some j from rfl,
+          rw [show ((j :: p_rest, p_snd) : Path × RoseTree α).fst.head? = some j from rfl,
               if_pos rfl]
           exact List.set_cons_succ.symm
         · rw [descentToChild_cons_consPath_ne j p_h p_rest p_snd
                 (rest.set k_pred (j :: rest_path, X)) hjh,
               descentToChild_cons_consPath_ne j p_h p_rest p_snd rest hjh, ih_applied]
-          rw [show ((p_h :: p_rest, p_snd) : Path × Tree α).fst.head? = some p_h from rfl]
+          rw [show ((p_h :: p_rest, p_snd) : Path × RoseTree α).fst.head? = some p_h from rfl]
           rw [if_neg (by intro heq; injection heq with h1; exact hjh h1.symm)]
           simp
 
@@ -2761,8 +2761,8 @@ private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path ×
     unchanged for any `j' ≠ j` — descents into other children don't see the modified
     pair. -/
 private theorem descentToChild_set_same_head_ne (j j' : ℕ) (h_jj : j ≠ j')
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length) (rest_path : Path)
-    (h : pairs[k.val].fst = j :: rest_path) (X : Tree α) :
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length) (rest_path : Path)
+    (h : pairs[k.val].fst = j :: rest_path) (X : RoseTree α) :
     descentToChild j' (pairs.set k.val (j :: rest_path, X)) = descentToChild j' pairs := by
   induction pairs with
   | nil => exact absurd k.isLt (by simp)
@@ -2773,22 +2773,22 @@ private theorem descentToChild_set_same_head_ne (j j' : ℕ) (h_jj : j ≠ j')
     | zero =>
       have h_p_fst : p_fst = j :: rest_path := h
       subst h_p_fst
-      show descentToChild j' (((j :: rest_path, X) :: rest) : List (Path × Tree α)) =
-          descentToChild j' (((j :: rest_path, p_snd) :: rest) : List (Path × Tree α))
+      show descentToChild j' (((j :: rest_path, X) :: rest) : List (Path × RoseTree α)) =
+          descentToChild j' (((j :: rest_path, p_snd) :: rest) : List (Path × RoseTree α))
       rw [descentToChild_cons_consPath_ne j' j rest_path X rest (Ne.symm h_jj),
           descentToChild_cons_consPath_ne j' j rest_path p_snd rest (Ne.symm h_jj)]
     | succ k_pred =>
       have hk_lt' : k_pred < rest.length := by
         simp only [List.length_cons] at hk_lt; omega
       have h_idx_eq :
-          (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] = rest[k_pred] :=
+          (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] = rest[k_pred] :=
         List.getElem_cons_succ ..
       have h_rest_fst : rest[k_pred].fst = j :: rest_path := by
         rw [← h_idx_eq]; exact h
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
       show descentToChild j' ((((p_fst, p_snd) :: rest.set k_pred (j :: rest_path, X)) :
-            List (Path × Tree α))) =
-          descentToChild j' (((p_fst, p_snd) :: rest) : List (Path × Tree α))
+            List (Path × RoseTree α))) =
+          descentToChild j' (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))
       cases p_fst with
       | nil =>
         rw [descentToChild_cons_nilPath, descentToChild_cons_nilPath]
@@ -2809,9 +2809,9 @@ private theorem descentToChild_set_same_head_ne (j j' : ℕ) (h_jj : j ≠ j')
     changes only at the `j`-th position (when `j < cs.length`): the new value is
     `multiGraft cs[j]` of the descented pair list with the corresponding descent
     index updated. -/
-private theorem multiGraftChildren_set_same_head (cs : List (Tree α))
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length) (j : ℕ) (rest_path : Path)
-    (h : pairs[k.val].fst = j :: rest_path) (X : Tree α) (h_j_lt : j < cs.length) :
+private theorem multiGraftChildren_set_same_head (cs : List (RoseTree α))
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length) (j : ℕ) (rest_path : Path)
+    (h : pairs[k.val].fst = j :: rest_path) (X : RoseTree α) (h_j_lt : j < cs.length) :
     multiGraftChildren cs (pairs.set k.val (j :: rest_path, X)) =
     (multiGraftChildren cs pairs).set j
       (multiGraft (cs[j]'h_j_lt)
@@ -2837,9 +2837,9 @@ private theorem multiGraftChildren_set_same_head (cs : List (Tree α))
     non-existent child of `cs`), setting `pairs[k]` while preserving the first
     index leaves `multiGraftChildren cs` unchanged: the modified pair is only
     visible to descents into out-of-range children. -/
-private theorem multiGraftChildren_set_invalid_head (cs : List (Tree α))
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length) (j : ℕ) (rest_path : Path)
-    (h : pairs[k.val].fst = j :: rest_path) (X : Tree α) (h_j_ge : cs.length ≤ j) :
+private theorem multiGraftChildren_set_invalid_head (cs : List (RoseTree α))
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length) (j : ℕ) (rest_path : Path)
+    (h : pairs[k.val].fst = j :: rest_path) (X : RoseTree α) (h_j_ge : cs.length ≤ j) :
     multiGraftChildren cs (pairs.set k.val (j :: rest_path, X)) =
     multiGraftChildren cs pairs := by
   apply List.ext_getElem?
@@ -2856,8 +2856,8 @@ private theorem multiGraftChildren_set_invalid_head (cs : List (Tree α))
 /-- When `pairs[k].fst ≠ []`, the new pair (with the same first index) is also
     excluded by `rootPrependFilter`, so the root-prepend filterMap is unchanged. -/
 private theorem filterMap_rootPrepend_set_nonRoot
-    (pairs : List (Path × Tree α)) (k : Fin pairs.length)
-    (newPair : Path × Tree α) (h_old : pairs[k.val].fst ≠ [])
+    (pairs : List (Path × RoseTree α)) (k : Fin pairs.length)
+    (newPair : Path × RoseTree α) (h_old : pairs[k.val].fst ≠ [])
     (h_new : newPair.fst ≠ []) :
     (pairs.set k.val newPair).filterMap rootPrependFilter =
     pairs.filterMap rootPrependFilter := by
@@ -2881,13 +2881,13 @@ private theorem filterMap_rootPrepend_set_nonRoot
       have hk_lt' : k_pred < rest.length := by
         simp only [List.length_cons] at hk_lt; omega
       have h_idx_eq :
-          (((p_fst, p_snd) :: rest) : List (Path × Tree α))[k_pred + 1] = rest[k_pred] :=
+          (((p_fst, p_snd) :: rest) : List (Path × RoseTree α))[k_pred + 1] = rest[k_pred] :=
         List.getElem_cons_succ ..
       have h_rest_fst_ne : rest[k_pred].fst ≠ [] := by rw [← h_idx_eq]; exact h_old
       have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst_ne
       show ((((p_fst, p_snd) :: rest.set k_pred newPair) :
-            List (Path × Tree α)).filterMap rootPrependFilter) =
-          (((p_fst, p_snd) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter
+            List (Path × RoseTree α)).filterMap rootPrependFilter) =
+          (((p_fst, p_snd) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter
       rw [List.filterMap_cons, List.filterMap_cons]
       rw [ih_applied]
 
@@ -2901,7 +2901,7 @@ private theorem filterMap_rootPrepend_set_nonRoot
     proof (`scratch/a33_cons_plan.md`). Single-graft only; multi-graft variants
     iterate this via the `q`-relative-to-modified-subtree update.
 
-    Proof: structural induction on `T = Tree.node a cs`.
+    Proof: structural induction on `T = RoseTree.node a cs`.
     - Case (a) `pairs[k.val].fst = []`: `liftMulti = posInGroup k :: q`.
       Both sides land at the `posInGroup k`-th rootPrepend, modified to
       `insertAt q c pairs[k.val].snd`.
@@ -2913,8 +2913,8 @@ private theorem filterMap_rootPrepend_set_nonRoot
       `multiGraftChildren_set_same_head` (or `_invalid_head` when `j ≥ cs.length`,
       where both sides are no-ops). -/
 theorem multiGraft_split_lifted_aux :
-    ∀ (T : Tree α) (pairs : List (Path × Tree α))
-    (k : Fin pairs.length) (q : Path) (c : Tree α),
+    ∀ (T : RoseTree α) (pairs : List (Path × RoseTree α))
+    (k : Fin pairs.length) (q : Path) (c : RoseTree α),
     insertAt (liftMulti pairs k q) c (multiGraft T pairs) =
     multiGraft T (pairs.set k.val
       (pairs[k.val].fst, insertAt q c pairs[k.val].snd))
@@ -2964,7 +2964,7 @@ theorem multiGraft_split_lifted_aux :
         | cons jh jt => exact ⟨jh, jt, rfl⟩
       have h_old_ne : pairs[k.val].fst ≠ [] := by rw [h_fst_eq]; simp
       have h_new_ne :
-          ((j :: rest_path, insertAt q c pairs[k.val].snd) : Path × Tree α).fst ≠ [] := by simp
+          ((j :: rest_path, insertAt q c pairs[k.val].snd) : Path × RoseTree α).fst ≠ [] := by simp
       have h_pair_subst :
           (pairs[k.val].fst, insertAt q c pairs[k.val].snd) =
             (j :: rest_path, insertAt q c pairs[k.val].snd) := by rw [h_fst_eq]
@@ -3055,7 +3055,7 @@ cons-case proof (`scratch/a33_phase4_2_session_prompt_16.md`). -/
     (the new pair has empty path, so both `headChildFilter` and `tailChildFilter`
     drop it). Used in the `v = []` case of `multiGraft_cons_pair`. -/
 private theorem multiGraftChildren_cons_nilPath_pair
-    (cs : List (Tree α)) (pairs : List (Path × Tree α)) (c : Tree α) :
+    (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)) (c : RoseTree α) :
     multiGraftChildren cs (([], c) :: pairs) = multiGraftChildren cs pairs := by
   induction cs generalizing pairs with
   | nil => rfl
@@ -3074,21 +3074,21 @@ private theorem multiGraftChildren_cons_nilPath_pair
     substrate for A3.3's cons-case proof
     (`scratch/a33_phase4_2_session_prompt_16.md`). -/
 theorem multiGraft_cons_pair :
-    ∀ (T : Tree α) (pairs : List (Path × Tree α))
-      (v : Path) (c : Tree α),
+    ∀ (T : RoseTree α) (pairs : List (Path × RoseTree α))
+      (v : Path) (c : RoseTree α),
     multiGraft T ((v, c) :: pairs) =
       insertAt (transport pairs v) c (multiGraft T pairs)
   | .node a cs, pairs, [], c => by
     -- Case v = []: new pair is a root prepend at position 0.
     rw [transport_nil_path, multiGraft_node, multiGraft_node]
-    show Tree.node a (c :: pairs.filterMap rootPrependFilter ++
+    show RoseTree.node a (c :: pairs.filterMap rootPrependFilter ++
                           multiGraftChildren cs (([], c) :: pairs)) = _
     rw [multiGraftChildren_cons_nilPath_pair, insertAt_nil]
     rfl
   | .node a cs, pairs, j :: rest, c => by
     -- Case v = j :: rest. Recurse into the j-th child if j < cs.length.
     rw [transport_cons_path, multiGraft_node, multiGraft_node]
-    show Tree.node a (pairs.filterMap rootPrependFilter ++
+    show RoseTree.node a (pairs.filterMap rootPrependFilter ++
                           multiGraftChildren cs ((j :: rest, c) :: pairs)) = _
     set N := rootPrependCount pairs with hN_def
     set rootPrepends := pairs.filterMap rootPrependFilter with hRP_def
@@ -3177,9 +3177,9 @@ See `scratch/multigraft_compose_plan.md` for full specification.
 
 **Statement:**
 ```
-theorem multiGraft_compose (T : Tree α)
-    (outer_pairs : List (Path × Tree α))
-    (inner_pairs : List (Path × Tree α))
+theorem multiGraft_compose (T : RoseTree α)
+    (outer_pairs : List (Path × RoseTree α))
+    (inner_pairs : List (Path × RoseTree α))
     (h_outer_valid : ∀ p ∈ outer_pairs, IsValidPath p.fst T)
     (h_inner_valid : ∀ p ∈ inner_pairs, IsValidPath p.fst (multiGraft T outer_pairs)) :
     multiGraft (multiGraft T outer_pairs) inner_pairs =
@@ -3249,7 +3249,7 @@ Returns the original outer unchanged on invalid inputs (defensive). -/
 
     Recursive on the outer list (as opposed to a filter over `List.finRange`):
     avoids dependent-type issues when proving recursive equation lemmas. -/
-def rootPrependPairIdx : (outer : List (Path × Tree α)) → ℕ → Option (Fin outer.length)
+def rootPrependPairIdx : (outer : List (Path × RoseTree α)) → ℕ → Option (Fin outer.length)
   | [], _ => none
   | ([], _) :: rest, 0 => some (0 : Fin (rest.length + 1))
   | ([], _) :: rest, i + 1 => (rootPrependPairIdx rest i).map Fin.succ
@@ -3263,7 +3263,7 @@ relates the returned `Fin` index to `posInGroup`, used in the lifted-at-root
 subcase of `absorbInnerPair_eq_insertAt`. -/
 
 private theorem rootPrependPairIdx_ne_none_of_lt :
-    ∀ (outer : List (Path × Tree α)) (i : ℕ),
+    ∀ (outer : List (Path × RoseTree α)) (i : ℕ),
     i < rootPrependCount outer → rootPrependPairIdx outer i ≠ none
   | [], i, h => absurd h (by simp)
   | ([], T) :: rest, 0, _ => by simp [rootPrependPairIdx]
@@ -3293,13 +3293,13 @@ private theorem rootPrependPairIdx_ne_none_of_lt :
     subcase of `absorbInnerPair_eq_insertAt` to bridge through
     `multiGraft_split_lifted_aux` + `liftMulti_at_root`. -/
 private theorem posInGroup_of_rootPrependPairIdx :
-    ∀ (outer : List (Path × Tree α)) (i : ℕ) (k : Fin outer.length),
+    ∀ (outer : List (Path × RoseTree α)) (i : ℕ) (k : Fin outer.length),
     rootPrependPairIdx outer i = some k →
     outer[k.val].fst = [] ∧ posInGroup outer k = i
   | [], _, k, _ => absurd k.isLt (by simp)
   | ([], T) :: rest, 0, k, h => by
     -- rootPrependPairIdx (([], T) :: rest) 0 = some 0 by def
-    show ((([], T) :: rest) : List (Path × Tree α))[k.val].fst = [] ∧
+    show ((([], T) :: rest) : List (Path × RoseTree α))[k.val].fst = [] ∧
          posInGroup (([], T) :: rest) k = 0
     have h_def : rootPrependPairIdx (([], T) :: rest) 0 =
                  some (0 : Fin (rest.length + 1)) := rfl
@@ -3321,8 +3321,8 @@ private theorem posInGroup_of_rootPrependPairIdx :
       obtain ⟨h_fst', h_pos'⟩ :=
         posInGroup_of_rootPrependPairIdx rest i k' h_inner
       refine ⟨?_, ?_⟩
-      · show ((([], T) :: rest) : List (Path × Tree α))[(Fin.succ k').val].fst = []
-        show ((([], T) :: rest) : List (Path × Tree α))[k'.val + 1].fst = []
+      · show ((([], T) :: rest) : List (Path × RoseTree α))[(Fin.succ k').val].fst = []
+        show ((([], T) :: rest) : List (Path × RoseTree α))[k'.val + 1].fst = []
         rw [List.getElem_cons_succ]
         exact h_fst'
       · rw [posInGroup_cons_succ_root T rest k' h_fst']
@@ -3342,8 +3342,8 @@ private theorem posInGroup_of_rootPrependPairIdx :
       obtain ⟨h_fst', h_pos'⟩ :=
         posInGroup_of_rootPrependPairIdx rest i k' h_inner
       refine ⟨?_, ?_⟩
-      · show (((j :: rp, T) :: rest) : List (Path × Tree α))[(Fin.succ k').val].fst = []
-        show (((j :: rp, T) :: rest) : List (Path × Tree α))[k'.val + 1].fst = []
+      · show (((j :: rp, T) :: rest) : List (Path × RoseTree α))[(Fin.succ k').val].fst = []
+        show (((j :: rp, T) :: rest) : List (Path × RoseTree α))[k'.val + 1].fst = []
         rw [List.getElem_cons_succ]
         exact h_fst'
       · rw [posInGroup_cons_succ_child j rp T rest k']
@@ -3362,7 +3362,7 @@ private theorem posInGroup_of_rootPrependPairIdx :
     than just `.snd`, so that `descentToChild j (walkAndReplace ...) = modified`
     holds without needing a fst-preserve precondition. -/
 private def walkAndReplace (j : ℕ) :
-    List (Path × Tree α) → List (Path × Tree α) → ℕ → List (Path × Tree α)
+    List (Path × RoseTree α) → List (Path × RoseTree α) → ℕ → List (Path × RoseTree α)
   | [], _, _ => []
   | (p, T) :: rest, modified, k' =>
     if p.head? = some j then
@@ -3380,8 +3380,8 @@ private def walkAndReplace (j : ℕ) :
     - `modified.length = descented.length`: SET case at descented level.
       Walk through `outer`, substituting `.snd` at j-headed pair positions with
       corresponding modified positions (no-op at non-modified positions). -/
-def liftBackToOuter (descented modified : List (Path × Tree α))
-    (j : ℕ) (outer : List (Path × Tree α)) : List (Path × Tree α) :=
+def liftBackToOuter (descented modified : List (Path × RoseTree α))
+    (j : ℕ) (outer : List (Path × RoseTree α)) : List (Path × RoseTree α) :=
   if modified.length = descented.length + 1 then
     match modified with
     | (q, T) :: _ => (j :: q, T) :: outer
@@ -3397,8 +3397,8 @@ def liftBackToOuter (descented modified : List (Path × Tree α))
     - p = i :: rest, i ≥ rootPrependCount outer: descend into T's child at index
       (i - rootPrependCount outer). Recurse on the descended outer pairs, then
       lift back via `liftBackToOuter`. -/
-def absorbInnerPair (outer : List (Path × Tree α))
-    (p : Path) (c : Tree α) : List (Path × Tree α) :=
+def absorbInnerPair (outer : List (Path × RoseTree α))
+    (p : Path) (c : RoseTree α) : List (Path × RoseTree α) :=
   match p with
   | [] =>
     -- Root vertex: preserved (or sourceSelf if [] ∈ pairSources outer).
@@ -3425,7 +3425,7 @@ termination_by p
 Properties used in the descent case of `absorbInnerPair_eq_insertAt`. -/
 
 @[simp] private theorem walkAndReplace_length (j : ℕ) :
-    ∀ (outer modified : List (Path × Tree α)) (k' : ℕ),
+    ∀ (outer modified : List (Path × RoseTree α)) (k' : ℕ),
     (walkAndReplace j outer modified k').length = outer.length
   | [], _, _ => rfl
   | (p, T) :: rest, modified, k' => by
@@ -3446,8 +3446,8 @@ Properties used in the descent case of `absorbInnerPair_eq_insertAt`. -/
 Equation lemmas for the SET-at-root and descent cases of `absorbInnerPair`,
 plus the length dichotomy: result length is `X.length` or `X.length + 1`. -/
 
-private theorem absorbInnerPair_lifted_at_root_eq (outer : List (Path × Tree α))
-    (i : ℕ) (rest : Path) (c : Tree α) (h_lt : i < rootPrependCount outer) :
+private theorem absorbInnerPair_lifted_at_root_eq (outer : List (Path × RoseTree α))
+    (i : ℕ) (rest : Path) (c : RoseTree α) (h_lt : i < rootPrependCount outer) :
     absorbInnerPair outer (i :: rest) c =
       (match rootPrependPairIdx outer i with
        | some k => outer.set k.val (outer[k.val].fst, insertAt rest c outer[k.val].snd)
@@ -3455,8 +3455,8 @@ private theorem absorbInnerPair_lifted_at_root_eq (outer : List (Path × Tree α
   conv_lhs => unfold absorbInnerPair
   simp only [if_pos h_lt]
 
-private theorem absorbInnerPair_descent_eq (outer : List (Path × Tree α))
-    (i : ℕ) (rest : Path) (c : Tree α) (h_ge : ¬ i < rootPrependCount outer) :
+private theorem absorbInnerPair_descent_eq (outer : List (Path × RoseTree α))
+    (i : ℕ) (rest : Path) (c : RoseTree α) (h_ge : ¬ i < rootPrependCount outer) :
     absorbInnerPair outer (i :: rest) c =
       liftBackToOuter (descentToChild (i - rootPrependCount outer) outer)
                       (absorbInnerPair (descentToChild (i - rootPrependCount outer) outer) rest c)
@@ -3464,8 +3464,8 @@ private theorem absorbInnerPair_descent_eq (outer : List (Path × Tree α))
   conv_lhs => unfold absorbInnerPair
   simp only [if_neg h_ge]
 
-private theorem liftBackToOuter_length (descented modified : List (Path × Tree α))
-    (j : ℕ) (outer : List (Path × Tree α)) :
+private theorem liftBackToOuter_length (descented modified : List (Path × RoseTree α))
+    (j : ℕ) (outer : List (Path × RoseTree α)) :
     (liftBackToOuter descented modified j outer).length =
     (if modified.length = descented.length + 1 then outer.length + 1 else outer.length) := by
   unfold liftBackToOuter
@@ -3482,13 +3482,13 @@ private theorem liftBackToOuter_length (descented modified : List (Path × Tree 
   · rw [if_neg h_len, if_neg h_len]
     exact walkAndReplace_length j outer modified 0
 
-private theorem absorbInnerPair_nil_eq (X : List (Path × Tree α)) (c : Tree α) :
+private theorem absorbInnerPair_nil_eq (X : List (Path × RoseTree α)) (c : RoseTree α) :
     absorbInnerPair X [] c = ([], c) :: X := by
   unfold absorbInnerPair
   rfl
 
 private theorem absorbInnerPair_length_dichotomy :
-    ∀ (X : List (Path × Tree α)) (p : Path) (c : Tree α),
+    ∀ (X : List (Path × RoseTree α)) (p : Path) (c : RoseTree α),
     (absorbInnerPair X p c).length = X.length ∨
     (absorbInnerPair X p c).length = X.length + 1
   | X, [], c => by
@@ -3528,7 +3528,7 @@ private lemma cons_head_ne (p_h j : ℕ) (p_tail : Path) (h : p_h ≠ j) :
 /-- `walkAndReplace_descentToChild_self_aux`: descent-to-j of the walked outer
     equals `modified.drop k'`, under the length precondition. -/
 private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
-    ∀ (outer modified : List (Path × Tree α)) (k' : ℕ),
+    ∀ (outer modified : List (Path × RoseTree α)) (k' : ℕ),
     modified.length = k' + (descentToChild j outer).length →
     descentToChild j (walkAndReplace j outer modified k') = modified.drop k'
   | [], modified, k', h => by
@@ -3554,7 +3554,7 @@ private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
       obtain ⟨p_tail, h_p_eq⟩ := h_p_form
       subst h_p_eq
       have h_dC_unfold : descentToChild j (((j :: p_tail, T) :: rest) :
-                          List (Path × Tree α)) =
+                          List (Path × RoseTree α)) =
                          (p_tail, T) :: descentToChild j rest :=
         descentToChild_cons_consPath_eq j p_tail T rest
       rw [h_dC_unfold] at h
@@ -3580,7 +3580,7 @@ private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
     · -- else branch: ¬ p.head? = some j
       rw [if_neg h_p]
       have h_dC_drop : descentToChild j (((p, T) :: walkAndReplace j rest modified k') :
-                        List (Path × Tree α)) =
+                        List (Path × RoseTree α)) =
                        descentToChild j (walkAndReplace j rest modified k') := by
         cases p with
         | nil => exact descentToChild_cons_nilPath j T (walkAndReplace j rest modified k')
@@ -3593,7 +3593,7 @@ private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
                   (walkAndReplace j rest modified k') (Ne.symm h_ph_ne)
       rw [h_dC_drop]
       have h_dC_drop_orig : descentToChild j (((p, T) :: rest) :
-                              List (Path × Tree α)) = descentToChild j rest := by
+                              List (Path × RoseTree α)) = descentToChild j rest := by
         cases p with
         | nil => exact descentToChild_cons_nilPath j T rest
         | cons p_h p_tail =>
@@ -3606,7 +3606,7 @@ private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
       exact walkAndReplace_descentToChild_self_aux j rest modified k' h
 
 private theorem walkAndReplace_descentToChild_self (j : ℕ)
-    (outer modified : List (Path × Tree α))
+    (outer modified : List (Path × RoseTree α))
     (h : modified.length = (descentToChild j outer).length) :
     descentToChild j (walkAndReplace j outer modified 0) = modified := by
   have := walkAndReplace_descentToChild_self_aux j outer modified 0 (by simp; exact h)
@@ -3614,12 +3614,12 @@ private theorem walkAndReplace_descentToChild_self (j : ℕ)
 
 /-- For `i ≠ j`, descent-to-i of the walked outer equals descent-to-i of original outer. -/
 private theorem walkAndReplace_descentToChild_other (i j : ℕ) (h_ij : i ≠ j) :
-    ∀ (outer modified : List (Path × Tree α)) (k' : ℕ),
+    ∀ (outer modified : List (Path × RoseTree α)) (k' : ℕ),
     descentToChild i (walkAndReplace j outer modified k') = descentToChild i outer
   | [], _, _ => rfl
   | (p, T) :: rest, modified, k' => by
     show descentToChild i (walkAndReplace j ((p, T) :: rest) modified k') =
-         descentToChild i (((p, T) :: rest) : List (Path × Tree α))
+         descentToChild i (((p, T) :: rest) : List (Path × RoseTree α))
     unfold walkAndReplace
     by_cases h_p : p.head? = some j
     · -- p has form j :: p_tail
@@ -3635,16 +3635,16 @@ private theorem walkAndReplace_descentToChild_other (i j : ℕ) (h_ij : i ≠ j)
       cases h_inner : modified[k']? with
       | none =>
         show descentToChild i ((((j :: p_tail, T) :: walkAndReplace j rest modified (k' + 1)) :
-              List (Path × Tree α))) =
-             descentToChild i (((j :: p_tail, T) :: rest) : List (Path × Tree α))
+              List (Path × RoseTree α))) =
+             descentToChild i (((j :: p_tail, T) :: rest) : List (Path × RoseTree α))
         rw [descentToChild_cons_consPath_ne i j p_tail T _ h_ij,
             descentToChild_cons_consPath_ne i j p_tail T rest h_ij]
         exact walkAndReplace_descentToChild_other i j h_ij rest modified (k' + 1)
       | some pair =>
         obtain ⟨q, T'⟩ := pair
         show descentToChild i ((((j :: q, T') :: walkAndReplace j rest modified (k' + 1)) :
-              List (Path × Tree α))) =
-             descentToChild i (((j :: p_tail, T) :: rest) : List (Path × Tree α))
+              List (Path × RoseTree α))) =
+             descentToChild i (((j :: p_tail, T) :: rest) : List (Path × RoseTree α))
         rw [descentToChild_cons_consPath_ne i j q T' _ h_ij,
             descentToChild_cons_consPath_ne i j p_tail T rest h_ij]
         exact walkAndReplace_descentToChild_other i j h_ij rest modified (k' + 1)
@@ -3670,13 +3670,13 @@ private theorem walkAndReplace_descentToChild_other (i j : ℕ) (h_ij : i ≠ j)
 
 /-- `walkAndReplace` preserves filterMap rootPrependFilter (no empty-fst pairs added). -/
 private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
-    ∀ (outer modified : List (Path × Tree α)) (k' : ℕ),
+    ∀ (outer modified : List (Path × RoseTree α)) (k' : ℕ),
     (walkAndReplace j outer modified k').filterMap rootPrependFilter =
     outer.filterMap rootPrependFilter
   | [], _, _ => rfl
   | (p, T) :: rest, modified, k' => by
     show (walkAndReplace j ((p, T) :: rest) modified k').filterMap rootPrependFilter =
-         (((p, T) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter
+         (((p, T) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter
     unfold walkAndReplace
     by_cases h_p : p.head? = some j
     · rw [if_pos h_p]
@@ -3691,16 +3691,16 @@ private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
       cases h_inner : modified[k']? with
       | none =>
         show ((((j :: p_tail, T) :: walkAndReplace j rest modified (k' + 1)) :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
-             (((j :: p_tail, T) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
+             (((j :: p_tail, T) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter
         show ((walkAndReplace j rest modified (k' + 1)).filterMap rootPrependFilter) =
              (rest.filterMap rootPrependFilter)
         exact walkAndReplace_filterMap_rootPrepend j rest modified (k' + 1)
       | some pair =>
         obtain ⟨q, T'⟩ := pair
         show ((((j :: q, T') :: walkAndReplace j rest modified (k' + 1)) :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
-             (((j :: p_tail, T) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
+             (((j :: p_tail, T) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter
         show ((walkAndReplace j rest modified (k' + 1)).filterMap rootPrependFilter) =
              (rest.filterMap rootPrependFilter)
         exact walkAndReplace_filterMap_rootPrepend j rest modified (k' + 1)
@@ -3708,15 +3708,15 @@ private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
       cases p with
       | nil =>
         show ((((([], T) :: walkAndReplace j rest modified k') :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
-             ((([], T) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter)
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
+             ((([], T) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter)
         show (T :: (walkAndReplace j rest modified k').filterMap rootPrependFilter) =
              (T :: rest.filterMap rootPrependFilter)
         rw [walkAndReplace_filterMap_rootPrepend j rest modified k']
       | cons p_h p_tail =>
         show ((((p_h :: p_tail, T) :: walkAndReplace j rest modified k') :
-              List (Path × Tree α)).filterMap rootPrependFilter) =
-             (((p_h :: p_tail, T) :: rest) : List (Path × Tree α)).filterMap rootPrependFilter
+              List (Path × RoseTree α)).filterMap rootPrependFilter) =
+             (((p_h :: p_tail, T) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter
         show ((walkAndReplace j rest modified k').filterMap rootPrependFilter) =
              (rest.filterMap rootPrependFilter)
         exact walkAndReplace_filterMap_rootPrepend j rest modified k'
@@ -3724,8 +3724,8 @@ private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
 /-! ### §11.1.9: `liftBackToOuter` structural properties -/
 
 private theorem liftBackToOuter_filterMap_rootPrepend
-    (descented modified : List (Path × Tree α))
-    (j : ℕ) (outer : List (Path × Tree α)) :
+    (descented modified : List (Path × RoseTree α))
+    (j : ℕ) (outer : List (Path × RoseTree α)) :
     (liftBackToOuter descented modified j outer).filterMap rootPrependFilter =
     outer.filterMap rootPrependFilter := by
   unfold liftBackToOuter
@@ -3735,15 +3735,15 @@ private theorem liftBackToOuter_filterMap_rootPrepend
     | nil => rfl
     | cons head_pair tail =>
       obtain ⟨q, T⟩ := head_pair
-      show ((((j :: q, T) :: outer) : List (Path × Tree α)).filterMap rootPrependFilter) =
+      show ((((j :: q, T) :: outer) : List (Path × RoseTree α)).filterMap rootPrependFilter) =
            outer.filterMap rootPrependFilter
       rfl
   · rw [if_neg h_len]
     exact walkAndReplace_filterMap_rootPrepend j outer modified 0
 
 private theorem liftBackToOuter_descentToChild_other (i : ℕ)
-    (descented modified : List (Path × Tree α))
-    (j : ℕ) (outer : List (Path × Tree α)) (h_ij : i ≠ j) :
+    (descented modified : List (Path × RoseTree α))
+    (j : ℕ) (outer : List (Path × RoseTree α)) (h_ij : i ≠ j) :
     descentToChild i (liftBackToOuter descented modified j outer) =
     descentToChild i outer := by
   unfold liftBackToOuter
@@ -3753,7 +3753,7 @@ private theorem liftBackToOuter_descentToChild_other (i : ℕ)
     | nil => rfl
     | cons head_pair tail =>
       obtain ⟨q, T⟩ := head_pair
-      show descentToChild i ((((j :: q, T) :: outer) : List (Path × Tree α))) =
+      show descentToChild i ((((j :: q, T) :: outer) : List (Path × RoseTree α))) =
            descentToChild i outer
       rw [descentToChild_cons_consPath_ne i j q T outer h_ij]
   · rw [if_neg h_len]
@@ -3762,7 +3762,7 @@ private theorem liftBackToOuter_descentToChild_other (i : ℕ)
 /-- `absorbInnerPair_prepend_structure`: when length increases by 1 (PREPEND case),
     the result is `head_pair :: X` (some new pair prepended to outer X). -/
 private theorem absorbInnerPair_prepend_structure :
-    ∀ (X : List (Path × Tree α)) (p : Path) (c : Tree α),
+    ∀ (X : List (Path × RoseTree α)) (p : Path) (c : RoseTree α),
     (absorbInnerPair X p c).length = X.length + 1 →
     ∃ q T, absorbInnerPair X p c = (q, T) :: X
   | X, [], c, _ => ⟨[], c, absorbInnerPair_nil_eq X c⟩
@@ -3799,8 +3799,8 @@ termination_by _ p _ _ => p
 
 /-- The key lemma: descent-to-j of `liftBackToOuter` equals `modified`. -/
 private theorem liftBackToOuter_descentToChild_self
-    (descented modified : List (Path × Tree α))
-    (j : ℕ) (outer : List (Path × Tree α))
+    (descented modified : List (Path × RoseTree α))
+    (j : ℕ) (outer : List (Path × RoseTree α))
     (h_descented_eq : descented = descentToChild j outer)
     (h_modified_struct : modified.length = descented.length + 1 ∨
                          modified.length = descented.length)
@@ -3813,7 +3813,7 @@ private theorem liftBackToOuter_descentToChild_self
     rw [if_pos h_len]
     obtain ⟨q, T, h_modif⟩ := h_modified_prepend h_len
     rw [h_modif]
-    show descentToChild j ((((j :: q, T) :: outer) : List (Path × Tree α))) =
+    show descentToChild j ((((j :: q, T) :: outer) : List (Path × RoseTree α))) =
          (q, T) :: descented
     rw [descentToChild_cons_consPath_eq j q T outer]
     rw [h_descented_eq]
@@ -3837,8 +3837,8 @@ its empty-path PREPEND ends up FIRST in the result list — matching the planar
 order of root prepends in the LHS `mG (mG T outer) inner`). foldl + PREPEND would
 reverse inner-order; foldr + PREPEND preserves it. -/
 
-def composePairs : List (Path × Tree α) →
-    List (Path × Tree α) → List (Path × Tree α)
+def composePairs : List (Path × RoseTree α) →
+    List (Path × RoseTree α) → List (Path × RoseTree α)
   | outer, []           => outer
   | outer, (p, c) :: rest =>
       -- Compose rest first (recursive), then absorb (p, c) with re-addressed path.
@@ -3846,11 +3846,11 @@ def composePairs : List (Path × Tree α) →
       -- when rest is applied to mG T outer (yielding mG T (composePairs outer rest)).
       absorbInnerPair (composePairs outer rest) (transport rest p) c
 
-@[simp] theorem composePairs_nil (outer : List (Path × Tree α)) :
+@[simp] theorem composePairs_nil (outer : List (Path × RoseTree α)) :
     composePairs outer [] = outer := rfl
 
-@[simp] theorem composePairs_cons (outer : List (Path × Tree α))
-    (p : Path) (c : Tree α) (rest : List (Path × Tree α)) :
+@[simp] theorem composePairs_cons (outer : List (Path × RoseTree α))
+    (p : Path) (c : RoseTree α) (rest : List (Path × RoseTree α)) :
     composePairs outer ((p, c) :: rest) =
       absorbInnerPair (composePairs outer rest) (transport rest p) c := rfl
 
@@ -3876,8 +3876,8 @@ This holds (as PLANAR equality, no validity hypothesis) by case analysis on `p`:
   no-op on both sides. -/
 
 /-- Equation lemma: empty-path case of `absorbInnerPair`. -/
-@[simp] theorem absorbInnerPair_nil_path (outer : List (Path × Tree α))
-    (c : Tree α) :
+@[simp] theorem absorbInnerPair_nil_path (outer : List (Path × RoseTree α))
+    (c : RoseTree α) :
     absorbInnerPair outer [] c = ([], c) :: outer := by
   unfold absorbInnerPair
   rfl
@@ -3886,8 +3886,8 @@ This holds (as PLANAR equality, no validity hypothesis) by case analysis on `p`:
     `i < rootPrependCount outer` and `rootPrependPairIdx outer i = some k`,
     the absorb operation modifies `outer[k]` by inserting `c` at `rest` in
     its tree component. -/
-private theorem absorbInnerPair_lifted_at_root (outer : List (Path × Tree α))
-    (i : ℕ) (rest : Path) (c : Tree α) (k : Fin outer.length)
+private theorem absorbInnerPair_lifted_at_root (outer : List (Path × RoseTree α))
+    (i : ℕ) (rest : Path) (c : RoseTree α) (k : Fin outer.length)
     (h_lt : i < rootPrependCount outer)
     (h_idx : rootPrependPairIdx outer i = some k) :
     absorbInnerPair outer (i :: rest) c =
@@ -3901,7 +3901,7 @@ private theorem absorbInnerPair_lifted_at_root (outer : List (Path × Tree α))
     `posInGroup_of_rootPrependPairIdx`, and the descent case via IH on rest +
     `liftBackToOuter` correctness (descentToChild_self/other, filterMap_rootPrepend). -/
 theorem absorbInnerPair_eq_insertAt :
-    ∀ (T : Tree α) (outer : List (Path × Tree α)) (p : Path) (c : Tree α),
+    ∀ (T : RoseTree α) (outer : List (Path × RoseTree α)) (p : Path) (c : RoseTree α),
     multiGraft T (absorbInnerPair outer p c) = insertAt p c (multiGraft T outer)
   | T, outer, [], c => by
     -- Empty-path case: by multiGraft_cons_pair + transport_nil_path.
@@ -3936,7 +3936,7 @@ theorem absorbInnerPair_eq_insertAt :
         rw [h_rp_eq]
         have h_rp_len : rootPrepends.length = N := by
           rw [hRP_def, length_filterMap_rootPrependFilter]
-        have h_ch_len : ∀ (xs : List (Path × Tree α)),
+        have h_ch_len : ∀ (xs : List (Path × RoseTree α)),
             (multiGraftChildren cs xs).length = cs.length := fun xs =>
           multiGraftChildren_length cs xs
         have h_N_le_i : N ≤ i := Nat.le_of_not_lt h_lt
@@ -4040,8 +4040,8 @@ termination_by _ _ p _ => p
 
     Currently depends on `absorbInnerPair_eq_insertAt` (§11.3) being closed. -/
 theorem multiGraft_compose
-    (T : Tree α) (outer_pairs : List (Path × Tree α))
-    (inner_pairs : List (Path × Tree α))
+    (T : RoseTree α) (outer_pairs : List (Path × RoseTree α))
+    (inner_pairs : List (Path × RoseTree α))
     (_h_outer_valid : ∀ p ∈ outer_pairs, IsValidPath p.fst T)
     (h_inner_valid : ∀ p ∈ inner_pairs,
         IsValidPath p.fst (multiGraft T outer_pairs)) :
@@ -4100,25 +4100,25 @@ as generic vertex-decomposition primitives; revive if a future basis-
 level analysis needs them. -/
 
 /-- Inner pairs lifted at outer[k], with paths stripped to outer[k].snd vertices. -/
-noncomputable def liftedInnerAt (outer inner : List (Path × Tree α))
-    (k : Fin outer.length) : List (Path × Tree α) :=
+noncomputable def liftedInnerAt (outer inner : List (Path × RoseTree α))
+    (k : Fin outer.length) : List (Path × RoseTree α) :=
   inner.filterMap fun p => (stripLiftMulti outer k p.fst).map (·, p.snd)
 
 /-- Inner pairs in the preserved/sourceSelf class, with paths
     untransported back to T-coordinates. -/
-noncomputable def rootInner (outer inner : List (Path × Tree α)) :
-    List (Path × Tree α) :=
+noncomputable def rootInner (outer inner : List (Path × RoseTree α)) :
+    List (Path × RoseTree α) :=
   inner.filterMap fun p => (untransport outer p.fst).map (·, p.snd)
 
-@[simp] theorem liftedInnerAt_nil (outer : List (Path × Tree α))
+@[simp] theorem liftedInnerAt_nil (outer : List (Path × RoseTree α))
     (k : Fin outer.length) :
     liftedInnerAt outer [] k = [] := rfl
 
-@[simp] theorem rootInner_nil (outer : List (Path × Tree α)) :
+@[simp] theorem rootInner_nil (outer : List (Path × RoseTree α)) :
     rootInner outer [] = [] := rfl
 
-theorem liftedInnerAt_cons (outer : List (Path × Tree α))
-    (p : Path × Tree α) (rest : List (Path × Tree α))
+theorem liftedInnerAt_cons (outer : List (Path × RoseTree α))
+    (p : Path × RoseTree α) (rest : List (Path × RoseTree α))
     (k : Fin outer.length) :
     liftedInnerAt outer (p :: rest) k =
       ((stripLiftMulti outer k p.fst).map (·, p.snd)).toList ++
@@ -4129,8 +4129,8 @@ theorem liftedInnerAt_cons (outer : List (Path × Tree α))
   | none => simp
   | some _ => simp
 
-theorem rootInner_cons (outer : List (Path × Tree α))
-    (p : Path × Tree α) (rest : List (Path × Tree α)) :
+theorem rootInner_cons (outer : List (Path × RoseTree α))
+    (p : Path × RoseTree α) (rest : List (Path × RoseTree α)) :
     rootInner outer (p :: rest) =
       ((untransport outer p.fst).map (·, p.snd)).toList ++
       rootInner outer rest := by
@@ -4142,4 +4142,4 @@ theorem rootInner_cons (outer : List (Path × Tree α))
 
 end Pathed
 
-end RootedTree.Tree
+end RoseTree

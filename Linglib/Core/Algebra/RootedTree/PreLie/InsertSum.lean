@@ -13,7 +13,7 @@ import Mathlib.Tactic.Abel
 set_option autoImplicit false
 
 /-!
-# Single-tree pre-Lie product `insertSum` on `Tree α` and `Nonplanar α`
+# Single-tree pre-Lie product `insertSum` on `RoseTree α` and `Nonplanar α`
 [foissy-typed-decorated-rooted-trees-2018]
 [chapoton-livernet-2001]
 [marcolli-chomsky-berwick-2025]
@@ -25,7 +25,7 @@ grafting `T₂` as a new child of some vertex of `T₁`:
   T₁ ◁ T₂ = Σ_{v ∈ V(T₁)} graft(v, T₁, T₂)
 
 This file contains both the ordered definition (Foissy 2018 Prop 2.2,
-Chapoton-Livernet) on `Tree α` and its descent through `Nonplanar.mk`
+Chapoton-Livernet) on `RoseTree α` and its descent through `Nonplanar.mk`
 to the nonplanar carrier.
 
 ## Reference
@@ -71,13 +71,13 @@ Sibling files:
 
 -/
 
-namespace RootedTree.Tree
+namespace RoseTree
 
 variable {α : Type*}
 
 /-! ### `insertSum` — the vertex-grafting product
 
-Mutually recursive on `(Tree, List Tree)`. Each summand of
+Mutually recursive on `(RoseTree, List RoseTree)`. Each summand of
 `insertSum T₁ T₂` corresponds to a choice of vertex `v` in `T₁`; the
 corresponding tree replaces `v`'s children list `cs` with `T₂ :: cs`.
 This is a paramorphic recursion — the original children list is reused
@@ -85,18 +85,18 @@ to rebuild the grafted node — so it is written by hand rather than as a
 `fold`. -/
 
 mutual
-/-- The pre-Lie product `T₁ ◁ T₂` on `Tree α` (vertex grafting): the
+/-- The pre-Lie product `T₁ ◁ T₂` on `RoseTree α` (vertex grafting): the
     multiset of all trees obtained by grafting `T₂` as a new child of
     some vertex of `T₁`. -/
-def insertSum : Tree α → Tree α → Multiset (Tree α)
+def insertSum : RoseTree α → RoseTree α → Multiset (RoseTree α)
   | .node a cs, T₂ =>
-      ((Tree.node a (T₂ :: cs)) : Tree α) ::ₘ
+      ((RoseTree.node a (T₂ :: cs)) : RoseTree α) ::ₘ
         (insertSumList cs T₂).map (fun cs' => .node a cs')
 /-- Auxiliary: graft `T₂` inside one of the entries of a children list,
     returning the multiset of resulting children-lists (one per vertex
     inside the list). -/
-def insertSumList : List (Tree α) → Tree α →
-    Multiset (List (Tree α))
+def insertSumList : List (RoseTree α) → RoseTree α →
+    Multiset (List (RoseTree α))
   | [], _ => 0
   | c :: cs, T₂ =>
       (insertSum c T₂).map (fun c' => c' :: cs)
@@ -108,30 +108,30 @@ end
     clashing with mathlib's `LeftPreLieRing` notation. -/
 scoped infixl:65 " ◁ " => insertSum
 
-@[simp] theorem insertSum_node (a : α) (cs : List (Tree α))
-    (T₂ : Tree α) :
-    (Tree.node a cs) ◁ T₂ =
-      ((Tree.node a (T₂ :: cs)) : Tree α) ::ₘ
+@[simp] theorem insertSum_node (a : α) (cs : List (RoseTree α))
+    (T₂ : RoseTree α) :
+    (RoseTree.node a cs) ◁ T₂ =
+      ((RoseTree.node a (T₂ :: cs)) : RoseTree α) ::ₘ
         (insertSumList cs T₂).map (fun cs' => .node a cs') := by
   unfold insertSum; rfl
 
-@[simp] theorem insertSumList_nil (T₂ : Tree α) :
-    insertSumList ([] : List (Tree α)) T₂ = 0 := by
+@[simp] theorem insertSumList_nil (T₂ : RoseTree α) :
+    insertSumList ([] : List (RoseTree α)) T₂ = 0 := by
   conv_lhs => unfold insertSumList
 
-@[simp] theorem insertSumList_cons (c : Tree α) (cs : List (Tree α))
-    (T₂ : Tree α) :
+@[simp] theorem insertSumList_cons (c : RoseTree α) (cs : List (RoseTree α))
+    (T₂ : RoseTree α) :
     insertSumList (c :: cs) T₂ =
       (insertSum c T₂).map (fun c' => c' :: cs)
         + (insertSumList cs T₂).map (fun cs' => c :: cs') := by
   conv_lhs => unfold insertSumList
 
 /-- A leaf has exactly one summand: graft `T₂` at the root. -/
-@[simp] theorem insertSum_leaf (a : α) (T₂ : Tree α) :
-    Tree.leaf a ◁ T₂ =
-      ({Tree.node a [T₂]} : Multiset (Tree α)) := by
-  show insertSum (Tree.node a []) T₂ =
-       ({Tree.node a [T₂]} : Multiset (Tree α))
+@[simp] theorem insertSum_leaf (a : α) (T₂ : RoseTree α) :
+    RoseTree.leaf a ◁ T₂ =
+      ({RoseTree.node a [T₂]} : Multiset (RoseTree α)) := by
+  show insertSum (RoseTree.node a []) T₂ =
+       ({RoseTree.node a [T₂]} : Multiset (RoseTree α))
   rw [insertSum_node, insertSumList_nil, Multiset.map_zero]
   rfl
 
@@ -149,10 +149,10 @@ into `T₁`. -/
     `pre.length :: q` in `pre ++ (c :: cs')`" with "the path `q` in
     `c`, lifted through the `pre`-prefixed children-list set". -/
 private theorem pathInsertAt_at_pre_length (a : α)
-    (pre cs' : List (Tree α)) (c : Tree α) (q : Pathed.Path)
-    (T₂ : Tree α) :
-    Pathed.insertAt (pre.length :: q) T₂ (Tree.node a (pre ++ (c :: cs')))
-      = Tree.node a (pre ++ (Pathed.insertAt q T₂ c :: cs')) := by
+    (pre cs' : List (RoseTree α)) (c : RoseTree α) (q : Pathed.Path)
+    (T₂ : RoseTree α) :
+    Pathed.insertAt (pre.length :: q) T₂ (RoseTree.node a (pre ++ (c :: cs')))
+      = RoseTree.node a (pre ++ (Pathed.insertAt q T₂ c :: cs')) := by
   have hpre_lt : pre.length < (pre ++ (c :: cs')).length := by
     rw [List.length_append, List.length_cons]; omega
   rw [Pathed.insertAt_cons_of_lt _ _ _ _ _ hpre_lt]
@@ -164,24 +164,24 @@ private theorem pathInsertAt_at_pre_length (a : α)
 mutual
 /-- **Decomposition lemma**: `T₁ ◁ T₂` equals the multiset of
     `Pathed.insertAt p T₂ T₁` for `p` ranging over `Pathed.vertices T₁`. -/
-theorem insertSum_eq_coe_map_insertAt : ∀ (T₁ T₂ : Tree α),
+theorem insertSum_eq_coe_map_insertAt : ∀ (T₁ T₂ : RoseTree α),
     T₁ ◁ T₂ =
       ((Pathed.vertices T₁).map (fun p => Pathed.insertAt p T₂ T₁)
-        : Multiset (Tree α))
+        : Multiset (RoseTree α))
   | .node a cs, T₂ => by
     rw [insertSum_node, Pathed.vertices_node]
     have aux := insertSumList_eq_coe_map_pathInsertAt_aux a [] cs T₂
     simp only [List.nil_append, List.length_nil] at aux
     rw [aux, List.map_cons, ← Multiset.cons_coe, Pathed.insertAt_nil]
 /-- Auxiliary: with `pre` siblings before the cs-tail being grafted in,
-    children-list grafting through `pre`-prefixed `Tree.node a`
+    children-list grafting through `pre`-prefixed `RoseTree.node a`
     equals the path-based insertions at offset `pre.length` into the
-    original host `Tree.node a (pre ++ cs)`. -/
+    original host `RoseTree.node a (pre ++ cs)`. -/
 theorem insertSumList_eq_coe_map_pathInsertAt_aux :
-    ∀ (a : α) (pre cs : List (Tree α)) (T₂ : Tree α),
-    (insertSumList cs T₂).map (fun cs' => Tree.node a (pre ++ cs'))
+    ∀ (a : α) (pre cs : List (RoseTree α)) (T₂ : RoseTree α),
+    (insertSumList cs T₂).map (fun cs' => RoseTree.node a (pre ++ cs'))
       = ((Pathed.verticesAux pre.length cs).map
-          (fun p => Pathed.insertAt p T₂ (Tree.node a (pre ++ cs)))
+          (fun p => Pathed.insertAt p T₂ (RoseTree.node a (pre ++ cs)))
           : Multiset _)
   | _, _, [], _ => by
     rw [insertSumList_nil, Pathed.verticesAux_nil]
@@ -213,13 +213,13 @@ Each vertex of `T₁` contributes one summand. Both counts fall out of the
 so no `numNodes`-mirroring induction is needed. -/
 
 /-- The number of summands in `T₁ ◁ T₂` equals `(vertices T₁).length`. -/
-theorem card_insertSum_eq_length_vertices (T₁ T₂ : Tree α) :
+theorem card_insertSum_eq_length_vertices (T₁ T₂ : RoseTree α) :
     Multiset.card (T₁ ◁ T₂) = (Pathed.vertices T₁).length := by
   rw [insertSum_eq_coe_map_insertAt, Multiset.coe_card, List.length_map]
 
 /-- The number of summands in `T₁ ◁ T₂` equals `T₁.numNodes`
     (total vertex count). -/
-theorem card_insertSum_eq_numNodes (T₁ T₂ : Tree α) :
+theorem card_insertSum_eq_numNodes (T₁ T₂ : RoseTree α) :
     Multiset.card (T₁ ◁ T₂) = T₁.numNodes := by
   rw [card_insertSum_eq_length_vertices, Pathed.length_vertices_eq_numNodes]
 
@@ -227,29 +227,29 @@ theorem card_insertSum_eq_numNodes (T₁ T₂ : Tree α) :
 
 section Tests
 
-example : (Tree.leaf 1 : Tree Nat) ◁ Tree.leaf 2
-    = ({Tree.node 1 [Tree.leaf 2]} : Multiset (Tree Nat)) := by
+example : (RoseTree.leaf 1 : RoseTree Nat) ◁ RoseTree.leaf 2
+    = ({RoseTree.node 1 [RoseTree.leaf 2]} : Multiset (RoseTree Nat)) := by
   rw [insertSum_leaf]
 
 /-- A binary tree has 3 vertices, hence 3 grafting summands. -/
 example : Multiset.card
-    ((Tree.binary 1 (Tree.leaf 2) (Tree.leaf 3) : Tree Nat) ◁
-      Tree.leaf 4) = 3 := by
+    ((RoseTree.binary 1 (RoseTree.leaf 2) (RoseTree.leaf 3) : RoseTree Nat) ◁
+      RoseTree.leaf 4) = 3 := by
   rw [card_insertSum_eq_numNodes]
   decide
 
 /-- The grafting decomposition: each summand corresponds to a path. -/
-example (T₁ T₂ : Tree Nat) :
+example (T₁ T₂ : RoseTree Nat) :
     Multiset.card (T₁ ◁ T₂) = (Pathed.vertices T₁).length :=
   card_insertSum_eq_length_vertices T₁ T₂
 
 end Tests
 
-end RootedTree.Tree
+end RoseTree
 
 /-! # Descent of `insertSum` through `Nonplanar.mk`
 
-The descent layer: lift `Tree.insertSum` to `Nonplanar α` via
+The descent layer: lift `RoseTree.insertSum` to `Nonplanar α` via
 `Quotient.lift₂`, requiring invariance under `PermEquiv` on both
 arguments. -/
 
@@ -268,78 +268,78 @@ grafting (in `insertSum c T₂`) plus a per-tail grafting (in
 two halves are clean two-summand decompositions with simpler wrappers
 than the raw `Multiset.map_map` form. -/
 
-private theorem insertSumList_cons_proj (a : α) (c : Tree α)
-    (cs : List (Tree α)) (T₂ : Tree α) :
-    (Tree.insertSumList (c :: cs) T₂).map
-        (fun cs' => (Nonplanar.mk (Tree.node a cs') : Nonplanar α)) =
-      (Tree.insertSum c T₂).map
-          (fun c' => Nonplanar.mk (Tree.node a (c' :: cs))) +
-        (Tree.insertSumList cs T₂).map
-          (fun cs' => Nonplanar.mk (Tree.node a (c :: cs'))) := by
-  rw [Tree.insertSumList_cons, Multiset.map_add, Multiset.map_map,
+private theorem insertSumList_cons_proj (a : α) (c : RoseTree α)
+    (cs : List (RoseTree α)) (T₂ : RoseTree α) :
+    (RoseTree.insertSumList (c :: cs) T₂).map
+        (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+      (RoseTree.insertSum c T₂).map
+          (fun c' => Nonplanar.mk (RoseTree.node a (c' :: cs))) +
+        (RoseTree.insertSumList cs T₂).map
+          (fun cs' => Nonplanar.mk (RoseTree.node a (c :: cs'))) := by
+  rw [RoseTree.insertSumList_cons, Multiset.map_add, Multiset.map_map,
       Multiset.map_map]
   rfl
 
 /-- Companion: `(insertSum (node a cs) T₂).map mk` decomposes as the head
     `mk (node a (T₂ :: cs))` plus the projected tail
     `(insertSumList cs T₂).map (fun cs' => mk (node a cs'))`. -/
-private theorem insertSum_node_proj (a : α) (cs : List (Tree α)) (T₂ : Tree α) :
-    (Tree.insertSum (Tree.node a cs) T₂).map Nonplanar.mk =
-      Nonplanar.mk (Tree.node a (T₂ :: cs)) ::ₘ
-        (Tree.insertSumList cs T₂).map
-          (fun cs' => Nonplanar.mk (Tree.node a cs')) := by
-  rw [Tree.insertSum_node, Multiset.map_cons, Multiset.map_map]
+private theorem insertSum_node_proj (a : α) (cs : List (RoseTree α)) (T₂ : RoseTree α) :
+    (RoseTree.insertSum (RoseTree.node a cs) T₂).map Nonplanar.mk =
+      Nonplanar.mk (RoseTree.node a (T₂ :: cs)) ::ₘ
+        (RoseTree.insertSumList cs T₂).map
+          (fun cs' => Nonplanar.mk (RoseTree.node a cs')) := by
+  rw [RoseTree.insertSum_node, Multiset.map_cons, Multiset.map_map]
   rfl
 
 /-- Wrapper-shift helper: `(M.map (fun c' => mk (node a (c' :: cs)))) =
     ((M.map mk).map (fun n => mk (node a (n.out :: cs))))`. Used when we
     want to factor the `c' :: cs` wrapper through `mk` so that the inner
     multiset becomes `M.map mk` (a form we can substitute via the IH). -/
-private theorem map_node_cons_via_mk (a : α) (cs : List (Tree α))
-    {M : Multiset (Tree α)} :
-    M.map (fun c' => Nonplanar.mk (Tree.node a (c' :: cs))) =
+private theorem map_node_cons_via_mk (a : α) (cs : List (RoseTree α))
+    {M : Multiset (RoseTree α)} :
+    M.map (fun c' => Nonplanar.mk (RoseTree.node a (c' :: cs))) =
       (M.map Nonplanar.mk).map
         (fun n : Nonplanar α =>
-          Nonplanar.mk (Tree.node a (n.out :: cs))) := by
+          Nonplanar.mk (RoseTree.node a (n.out :: cs))) := by
   rw [Multiset.map_map]
   apply Multiset.map_congr rfl
   intro c' _
   apply Nonplanar.mk_eq_mk_iff.mpr
-  apply Tree.permEquiv_recurse_lift [] cs
+  apply RoseTree.permEquiv_recurse_lift [] cs
   exact (Quotient.exact (Quotient.out_eq (Nonplanar.mk c'))).symm
 
 /-- Wrapper-shift helper for sibling-cons: factor a sibling-cons wrapper
     through `mk ∘ node a` so the IH on `(M.map (mk ∘ node a))`
     substitutes cleanly. -/
-private theorem map_node_sibling_cons_via_mk (a : α) (p : Tree α)
-    {M : Multiset (List (Tree α))} :
-    M.map (fun cs' => Nonplanar.mk (Tree.node a (p :: cs'))) =
-      (M.map (fun cs' => Nonplanar.mk (Tree.node a cs'))).map
+private theorem map_node_sibling_cons_via_mk (a : α) (p : RoseTree α)
+    {M : Multiset (List (RoseTree α))} :
+    M.map (fun cs' => Nonplanar.mk (RoseTree.node a (p :: cs'))) =
+      (M.map (fun cs' => Nonplanar.mk (RoseTree.node a cs'))).map
         (fun n : Nonplanar α =>
-          Nonplanar.mk (Tree.node a (p :: n.out.children))) := by
+          Nonplanar.mk (RoseTree.node a (p :: n.out.children))) := by
   rw [Multiset.map_map]
   apply Multiset.map_congr rfl
   intro cs' _
   apply Nonplanar.mk_eq_mk_iff.mpr
-  have hbase : Tree.PermEquiv (Tree.node a cs')
-               (Nonplanar.mk (Tree.node a cs')).out :=
-    (Quotient.exact (Quotient.out_eq (Nonplanar.mk (Tree.node a cs')))).symm
-  have hvalue : (Nonplanar.mk (Tree.node a cs')).out.value = a := by
-    have := Tree.value_permEquiv hbase
-    simp only [Tree.value_node] at this
+  have hbase : RoseTree.PermEquiv (RoseTree.node a cs')
+               (Nonplanar.mk (RoseTree.node a cs')).out :=
+    (Quotient.exact (Quotient.out_eq (Nonplanar.mk (RoseTree.node a cs')))).symm
+  have hvalue : (Nonplanar.mk (RoseTree.node a cs')).out.value = a := by
+    have := RoseTree.value_permEquiv hbase
+    simp only [RoseTree.value_node] at this
     exact this.symm
-  have hform : (Nonplanar.mk (Tree.node a cs')).out =
-      Tree.node a (Nonplanar.mk (Tree.node a cs')).out.children := by
-    generalize (Nonplanar.mk (Tree.node a cs')).out = q at hvalue
+  have hform : (Nonplanar.mk (RoseTree.node a cs')).out =
+      RoseTree.node a (Nonplanar.mk (RoseTree.node a cs')).out.children := by
+    generalize (Nonplanar.mk (RoseTree.node a cs')).out = q at hvalue
     cases q with
     | node b qs =>
-      simp only [Tree.value_node] at hvalue
+      simp only [RoseTree.value_node] at hvalue
       rw [hvalue]
       rfl
-  have hbase' : Tree.PermEquiv (Tree.node a cs')
-      (Tree.node a (Nonplanar.mk (Tree.node a cs')).out.children) := by
+  have hbase' : RoseTree.PermEquiv (RoseTree.node a cs')
+      (RoseTree.node a (Nonplanar.mk (RoseTree.node a cs')).out.children) := by
     rw [← hform]; exact hbase
-  exact Tree.permEquiv_cons_lift p hbase'
+  exact RoseTree.permEquiv_cons_lift p hbase'
 
 /-! ### Right invariance — `T₂ → T₂'`
 
@@ -348,42 +348,42 @@ for any T₁. Mutually inducted with the children-list version
 `insertSumList`. -/
 
 mutual
-private theorem insertSum_permEquiv_right_aux : ∀ (T₁ T₂ T₂' : Tree α)
-    (_ : Tree.PermEquiv T₂ T₂'),
-    (Tree.insertSum T₁ T₂).map Nonplanar.mk =
-      (Tree.insertSum T₁ T₂').map Nonplanar.mk
+private theorem insertSum_permEquiv_right_aux : ∀ (T₁ T₂ T₂' : RoseTree α)
+    (_ : RoseTree.PermEquiv T₂ T₂'),
+    (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
+      (RoseTree.insertSum T₁ T₂').map Nonplanar.mk
   | .node a cs, T₂, T₂', h => by
     rw [insertSum_node_proj, insertSum_node_proj]
     congr 1
     · apply Nonplanar.mk_eq_mk_iff.mpr
-      exact Tree.permEquiv_recurse_lift [] cs h
+      exact RoseTree.permEquiv_recurse_lift [] cs h
     · exact insertSumList_permEquiv_right_aux a cs T₂ T₂' h
-private theorem insertSumList_permEquiv_right_aux : ∀ (a : α) (cs : List (Tree α))
-    (T₂ T₂' : Tree α) (_ : Tree.PermEquiv T₂ T₂'),
-    (Tree.insertSumList cs T₂).map
-        (fun cs' => (Nonplanar.mk (Tree.node a cs') : Nonplanar α)) =
-    (Tree.insertSumList cs T₂').map
-        (fun cs' => Nonplanar.mk (Tree.node a cs'))
+private theorem insertSumList_permEquiv_right_aux : ∀ (a : α) (cs : List (RoseTree α))
+    (T₂ T₂' : RoseTree α) (_ : RoseTree.PermEquiv T₂ T₂'),
+    (RoseTree.insertSumList cs T₂).map
+        (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+    (RoseTree.insertSumList cs T₂').map
+        (fun cs' => Nonplanar.mk (RoseTree.node a cs'))
   | _, [], _, _, _ => by
-    rw [Tree.insertSumList_nil, Tree.insertSumList_nil]
+    rw [RoseTree.insertSumList_nil, RoseTree.insertSumList_nil]
   | a, c :: cs, T₂, T₂', h => by
     rw [insertSumList_cons_proj, insertSumList_cons_proj]
     congr 1
     · have ih := insertSum_permEquiv_right_aux c T₂ T₂' h
-      rw [map_node_cons_via_mk a cs (M := Tree.insertSum c T₂),
-          map_node_cons_via_mk a cs (M := Tree.insertSum c T₂'),
+      rw [map_node_cons_via_mk a cs (M := RoseTree.insertSum c T₂),
+          map_node_cons_via_mk a cs (M := RoseTree.insertSum c T₂'),
           ih]
     · have ih_list := insertSumList_permEquiv_right_aux a cs T₂ T₂' h
-      rw [map_node_sibling_cons_via_mk a c (M := Tree.insertSumList cs T₂),
-          map_node_sibling_cons_via_mk a c (M := Tree.insertSumList cs T₂'),
+      rw [map_node_sibling_cons_via_mk a c (M := RoseTree.insertSumList cs T₂),
+          map_node_sibling_cons_via_mk a c (M := RoseTree.insertSumList cs T₂'),
           ih_list]
 end
 
 /-- Right invariance for `insertSum`. -/
-theorem insertSum_permEquiv_right (T₁ : Tree α) {T₂ T₂' : Tree α}
-    (h : Tree.PermEquiv T₂ T₂') :
-    (Tree.insertSum T₁ T₂).map Nonplanar.mk =
-      (Tree.insertSum T₁ T₂').map Nonplanar.mk :=
+theorem insertSum_permEquiv_right (T₁ : RoseTree α) {T₂ T₂' : RoseTree α}
+    (h : RoseTree.PermEquiv T₂ T₂') :
+    (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
+      (RoseTree.insertSum T₁ T₂').map Nonplanar.mk :=
   insertSum_permEquiv_right_aux T₁ T₂ T₂' h
 
 /-! ### List-side `mk`-projection of `insertSumList`
@@ -391,96 +391,96 @@ theorem insertSum_permEquiv_right (T₁ : Tree α) {T₂ T₂' : Tree α}
 Two key properties of `(insertSumList cs T₂).map (mk ∘ .node a)`:
 Perm-invariance in `cs` and componentwise `PermEquiv`-invariance. -/
 
-private theorem insertSumList_proj_perm_aux (a : α) (T₂ : Tree α) :
-    ∀ {cs cs' : List (Tree α)},
+private theorem insertSumList_proj_perm_aux (a : α) (T₂ : RoseTree α) :
+    ∀ {cs cs' : List (RoseTree α)},
       cs.Perm cs' →
-      (Tree.insertSumList cs T₂).map
-          (fun cs' => (Nonplanar.mk (Tree.node a cs') : Nonplanar α)) =
-      (Tree.insertSumList cs' T₂).map
-          (fun cs' => Nonplanar.mk (Tree.node a cs')) := by
+      (RoseTree.insertSumList cs T₂).map
+          (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+      (RoseTree.insertSumList cs' T₂).map
+          (fun cs' => Nonplanar.mk (RoseTree.node a cs')) := by
   intro cs cs' h
   induction h with
   | nil => rfl
   | @cons x cs cs' hperm ih =>
     rw [insertSumList_cons_proj, insertSumList_cons_proj]
     have head_eq :
-        (Tree.insertSum x T₂).map
-          (fun c' => Nonplanar.mk (Tree.node a (c' :: cs))) =
-        (Tree.insertSum x T₂).map
-          (fun c' => Nonplanar.mk (Tree.node a (c' :: cs'))) := by
+        (RoseTree.insertSum x T₂).map
+          (fun c' => Nonplanar.mk (RoseTree.node a (c' :: cs))) =
+        (RoseTree.insertSum x T₂).map
+          (fun c' => Nonplanar.mk (RoseTree.node a (c' :: cs'))) := by
       apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_root_perm
+      apply RoseTree.permEquiv_root_perm
       exact List.Perm.cons c' hperm
     rw [head_eq,
-        map_node_sibling_cons_via_mk a x (M := Tree.insertSumList cs T₂),
-        map_node_sibling_cons_via_mk a x (M := Tree.insertSumList cs' T₂),
+        map_node_sibling_cons_via_mk a x (M := RoseTree.insertSumList cs T₂),
+        map_node_sibling_cons_via_mk a x (M := RoseTree.insertSumList cs' T₂),
         ih]
   | @swap x y cs =>
     have lhs_eq :
-        (Tree.insertSumList (x :: y :: cs) T₂).map
-            (fun cs' => Nonplanar.mk (Tree.node a cs')) =
-          (Tree.insertSum x T₂).map
-              (fun c' => Nonplanar.mk (Tree.node a (c' :: y :: cs))) +
-            (Tree.insertSumList (y :: cs) T₂).map
-              (fun cs' => Nonplanar.mk (Tree.node a (x :: cs'))) := by
+        (RoseTree.insertSumList (x :: y :: cs) T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs')) =
+          (RoseTree.insertSum x T₂).map
+              (fun c' => Nonplanar.mk (RoseTree.node a (c' :: y :: cs))) +
+            (RoseTree.insertSumList (y :: cs) T₂).map
+              (fun cs' => Nonplanar.mk (RoseTree.node a (x :: cs'))) := by
       exact insertSumList_cons_proj a x (y :: cs) T₂
     have rhs_eq :
-        (Tree.insertSumList (y :: x :: cs) T₂).map
-            (fun cs' => Nonplanar.mk (Tree.node a cs')) =
-          (Tree.insertSum y T₂).map
-              (fun c' => Nonplanar.mk (Tree.node a (c' :: x :: cs))) +
-            (Tree.insertSumList (x :: cs) T₂).map
-              (fun cs' => Nonplanar.mk (Tree.node a (y :: cs'))) := by
+        (RoseTree.insertSumList (y :: x :: cs) T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs')) =
+          (RoseTree.insertSum y T₂).map
+              (fun c' => Nonplanar.mk (RoseTree.node a (c' :: x :: cs))) +
+            (RoseTree.insertSumList (x :: cs) T₂).map
+              (fun cs' => Nonplanar.mk (RoseTree.node a (y :: cs'))) := by
       exact insertSumList_cons_proj a y (x :: cs) T₂
     have lhs_inner :
-        (Tree.insertSumList (y :: cs) T₂).map
-            (fun cs' => Nonplanar.mk (Tree.node a (x :: cs'))) =
-          (Tree.insertSum y T₂).map
-              (fun c' => Nonplanar.mk (Tree.node a (x :: c' :: cs))) +
-            (Tree.insertSumList cs T₂).map
-              (fun cs' => Nonplanar.mk (Tree.node a (x :: y :: cs'))) := by
-      rw [Tree.insertSumList_cons, Multiset.map_add, Multiset.map_map,
+        (RoseTree.insertSumList (y :: cs) T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a (x :: cs'))) =
+          (RoseTree.insertSum y T₂).map
+              (fun c' => Nonplanar.mk (RoseTree.node a (x :: c' :: cs))) +
+            (RoseTree.insertSumList cs T₂).map
+              (fun cs' => Nonplanar.mk (RoseTree.node a (x :: y :: cs'))) := by
+      rw [RoseTree.insertSumList_cons, Multiset.map_add, Multiset.map_map,
           Multiset.map_map]
       rfl
     have rhs_inner :
-        (Tree.insertSumList (x :: cs) T₂).map
-            (fun cs' => Nonplanar.mk (Tree.node a (y :: cs'))) =
-          (Tree.insertSum x T₂).map
-              (fun c' => Nonplanar.mk (Tree.node a (y :: c' :: cs))) +
-            (Tree.insertSumList cs T₂).map
-              (fun cs' => Nonplanar.mk (Tree.node a (y :: x :: cs'))) := by
-      rw [Tree.insertSumList_cons, Multiset.map_add, Multiset.map_map,
+        (RoseTree.insertSumList (x :: cs) T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a (y :: cs'))) =
+          (RoseTree.insertSum x T₂).map
+              (fun c' => Nonplanar.mk (RoseTree.node a (y :: c' :: cs))) +
+            (RoseTree.insertSumList cs T₂).map
+              (fun cs' => Nonplanar.mk (RoseTree.node a (y :: x :: cs'))) := by
+      rw [RoseTree.insertSumList_cons, Multiset.map_add, Multiset.map_map,
           Multiset.map_map]
       rfl
     rw [lhs_eq, rhs_eq, lhs_inner, rhs_inner]
-    have hAB' : (Tree.insertSum x T₂).map
-                  (fun c' => Nonplanar.mk (Tree.node a (c' :: y :: cs))) =
-                (Tree.insertSum x T₂).map
-                  (fun c' => Nonplanar.mk (Tree.node a (y :: c' :: cs))) := by
+    have hAB' : (RoseTree.insertSum x T₂).map
+                  (fun c' => Nonplanar.mk (RoseTree.node a (c' :: y :: cs))) =
+                (RoseTree.insertSum x T₂).map
+                  (fun c' => Nonplanar.mk (RoseTree.node a (y :: c' :: cs))) := by
       apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_root_perm
+      apply RoseTree.permEquiv_root_perm
       exact List.Perm.swap _ _ _
-    have hBA' : (Tree.insertSum y T₂).map
-                  (fun c' => Nonplanar.mk (Tree.node a (x :: c' :: cs))) =
-                (Tree.insertSum y T₂).map
-                  (fun c' => Nonplanar.mk (Tree.node a (c' :: x :: cs))) := by
+    have hBA' : (RoseTree.insertSum y T₂).map
+                  (fun c' => Nonplanar.mk (RoseTree.node a (x :: c' :: cs))) =
+                (RoseTree.insertSum y T₂).map
+                  (fun c' => Nonplanar.mk (RoseTree.node a (c' :: x :: cs))) := by
       apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_root_perm
+      apply RoseTree.permEquiv_root_perm
       exact List.Perm.swap _ _ _
-    have hCC' : (Tree.insertSumList cs T₂).map
-                  (fun cs' => Nonplanar.mk (Tree.node a (x :: y :: cs'))) =
-                (Tree.insertSumList cs T₂).map
-                  (fun cs' => Nonplanar.mk (Tree.node a (y :: x :: cs'))) := by
+    have hCC' : (RoseTree.insertSumList cs T₂).map
+                  (fun cs' => Nonplanar.mk (RoseTree.node a (x :: y :: cs'))) =
+                (RoseTree.insertSumList cs T₂).map
+                  (fun cs' => Nonplanar.mk (RoseTree.node a (y :: x :: cs'))) := by
       apply Multiset.map_congr rfl
       intro cs' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_root_perm
+      apply RoseTree.permEquiv_root_perm
       exact List.Perm.swap _ _ _
     rw [hAB', hBA', hCC']
     abel
@@ -488,57 +488,57 @@ private theorem insertSumList_proj_perm_aux (a : α) (T₂ : Tree α) :
 
 /-! ### Left invariance — `T₁ → T₁'` via PermStep induction -/
 
-private theorem insertSumList_permStep_at_aux : ∀ (a : α) (T₂ : Tree α)
-    (pre : List (Tree α)) (post : List (Tree α)) (old new : Tree α),
-    (Tree.insertSum old T₂).map Nonplanar.mk =
-      (Tree.insertSum new T₂).map Nonplanar.mk →
+private theorem insertSumList_permStep_at_aux : ∀ (a : α) (T₂ : RoseTree α)
+    (pre : List (RoseTree α)) (post : List (RoseTree α)) (old new : RoseTree α),
+    (RoseTree.insertSum old T₂).map Nonplanar.mk =
+      (RoseTree.insertSum new T₂).map Nonplanar.mk →
     Nonplanar.mk old = Nonplanar.mk new →
-    (Tree.insertSumList (pre ++ old :: post) T₂).map
-        (fun cs' => (Nonplanar.mk (Tree.node a cs') : Nonplanar α)) =
-    (Tree.insertSumList (pre ++ new :: post) T₂).map
-        (fun cs' => Nonplanar.mk (Tree.node a cs'))
+    (RoseTree.insertSumList (pre ++ old :: post) T₂).map
+        (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+    (RoseTree.insertSumList (pre ++ new :: post) T₂).map
+        (fun cs' => Nonplanar.mk (RoseTree.node a cs'))
   | a, T₂, [], post, old, new, ih_sub, h_mk => by
     simp only [List.nil_append]
     rw [insertSumList_cons_proj, insertSumList_cons_proj]
     congr 1
-    · rw [map_node_cons_via_mk a post (M := Tree.insertSum old T₂),
-          map_node_cons_via_mk a post (M := Tree.insertSum new T₂),
+    · rw [map_node_cons_via_mk a post (M := RoseTree.insertSum old T₂),
+          map_node_cons_via_mk a post (M := RoseTree.insertSum new T₂),
           ih_sub]
     · apply Multiset.map_congr rfl
       intro cs' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_recurse_lift [] cs'
+      apply RoseTree.permEquiv_recurse_lift [] cs'
       exact Nonplanar.mk_eq_mk_iff.mp h_mk
   | a, T₂, p :: pre', post, old, new, ih_sub, h_mk => by
-    show (Tree.insertSumList (p :: (pre' ++ old :: post)) T₂).map
-            (fun cs' => Nonplanar.mk (Tree.node a cs')) =
-         (Tree.insertSumList (p :: (pre' ++ new :: post)) T₂).map
-            (fun cs' => Nonplanar.mk (Tree.node a cs'))
+    show (RoseTree.insertSumList (p :: (pre' ++ old :: post)) T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs')) =
+         (RoseTree.insertSumList (p :: (pre' ++ new :: post)) T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs'))
     rw [insertSumList_cons_proj, insertSumList_cons_proj]
     congr 1
     · apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_recurse_lift (c' :: pre') post
+      apply RoseTree.permEquiv_recurse_lift (c' :: pre') post
       exact Nonplanar.mk_eq_mk_iff.mp h_mk
     · have ih_tail := insertSumList_permStep_at_aux a T₂ pre' post old new ih_sub h_mk
       rw [map_node_sibling_cons_via_mk a p
-            (M := Tree.insertSumList (pre' ++ old :: post) T₂),
+            (M := RoseTree.insertSumList (pre' ++ old :: post) T₂),
           map_node_sibling_cons_via_mk a p
-            (M := Tree.insertSumList (pre' ++ new :: post) T₂),
+            (M := RoseTree.insertSumList (pre' ++ new :: post) T₂),
           ih_tail]
 
 /-- Left invariance for `insertSum` under a single `PermStep` on T₁. -/
-theorem insertSum_permStep_left {T₁ T₁' : Tree α}
-    (h : Tree.PermStep T₁ T₁') (T₂ : Tree α) :
-    (Tree.insertSum T₁ T₂).map Nonplanar.mk =
-      (Tree.insertSum T₁' T₂).map Nonplanar.mk := by
+theorem insertSum_permStep_left {T₁ T₁' : RoseTree α}
+    (h : RoseTree.PermStep T₁ T₁') (T₂ : RoseTree α) :
+    (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
+      (RoseTree.insertSum T₁' T₂).map Nonplanar.mk := by
   induction h with
   | @swapAtRoot a l r pre post =>
     rw [insertSum_node_proj, insertSum_node_proj]
     congr 1
     · apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_root_perm
+      apply RoseTree.permEquiv_root_perm
       apply List.Perm.cons
       exact List.Perm.append_left pre (List.Perm.swap r l post)
     · have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
@@ -546,21 +546,21 @@ theorem insertSum_permStep_left {T₁ T₁' : Tree α}
       exact insertSumList_proj_perm_aux a T₂ hperm
   | @recurse a pre old new post hsub ih =>
     have h_mk : Nonplanar.mk old = Nonplanar.mk new :=
-      Nonplanar.mk_eq_mk_iff.mpr (Tree.PermEquiv.of_step hsub)
+      Nonplanar.mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step hsub)
     rw [insertSum_node_proj, insertSum_node_proj]
     congr 1
     · apply Nonplanar.mk_eq_mk_iff.mpr
-      apply Tree.permEquiv_recurse_lift (T₂ :: pre) post
-      exact Tree.PermEquiv.of_step hsub
+      apply RoseTree.permEquiv_recurse_lift (T₂ :: pre) post
+      exact RoseTree.PermEquiv.of_step hsub
     · exact insertSumList_permStep_at_aux a T₂ pre post old new ih h_mk
 
 /-! ### EqvGen lift to `PermEquiv` -/
 
 /-- Left invariance under `PermEquiv` on T₁. Standard `EqvGen` recipe. -/
-theorem insertSum_permEquiv_left {T₁ T₁' : Tree α}
-    (h : Tree.PermEquiv T₁ T₁') (T₂ : Tree α) :
-    (Tree.insertSum T₁ T₂).map Nonplanar.mk =
-      (Tree.insertSum T₁' T₂).map Nonplanar.mk := by
+theorem insertSum_permEquiv_left {T₁ T₁' : RoseTree α}
+    (h : RoseTree.PermEquiv T₁ T₁') (T₂ : RoseTree α) :
+    (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
+      (RoseTree.insertSum T₁' T₂).map Nonplanar.mk := by
   induction h with
   | rel _ _ hstep => exact insertSum_permStep_left hstep T₂
   | refl _ => rfl
@@ -570,17 +570,17 @@ theorem insertSum_permEquiv_left {T₁ T₁' : Tree α}
 /-! ### Native `Nonplanar.insertSum` via `Quotient.lift₂` -/
 
 /-- The **vertex-grafting pre-Lie product on `Nonplanar α`**: lifted from
-    the ordered `Tree.insertSum` via `Quotient.lift₂`, using the
+    the ordered `RoseTree.insertSum` via `Quotient.lift₂`, using the
     invariance lemmas from §5 and §7. -/
 def insertSum : Nonplanar α → Nonplanar α → Multiset (Nonplanar α) :=
   Quotient.lift₂
-    (fun (t₁ t₂ : Tree α) => (Tree.insertSum t₁ t₂).map Nonplanar.mk)
+    (fun (t₁ t₂ : RoseTree α) => (RoseTree.insertSum t₁ t₂).map Nonplanar.mk)
     (fun a₁ a₂ b₁ b₂ h₁ h₂ => by
-      have step1 : (Tree.insertSum a₁ a₂).map Nonplanar.mk =
-                   (Tree.insertSum b₁ a₂).map Nonplanar.mk :=
+      have step1 : (RoseTree.insertSum a₁ a₂).map Nonplanar.mk =
+                   (RoseTree.insertSum b₁ a₂).map Nonplanar.mk :=
         insertSum_permEquiv_left h₁ a₂
-      have step2 : (Tree.insertSum b₁ a₂).map Nonplanar.mk =
-                   (Tree.insertSum b₁ b₂).map Nonplanar.mk :=
+      have step2 : (RoseTree.insertSum b₁ a₂).map Nonplanar.mk =
+                   (RoseTree.insertSum b₁ b₂).map Nonplanar.mk :=
         insertSum_permEquiv_right b₁ h₂
       exact step1.trans step2)
 
@@ -593,9 +593,9 @@ scoped infixl:65 " ◁ " => Nonplanar.insertSum
 /-- Quotient unfolding: `Nonplanar.insertSum (mk t₁) (mk t₂)` is the
     multiset of nonplanar grafting summands obtained by projecting the
     ordered grafting summands. -/
-@[simp] theorem mk_insertSum (t₁ t₂ : Tree α) :
+@[simp] theorem mk_insertSum (t₁ t₂ : RoseTree α) :
     Nonplanar.insertSum (Nonplanar.mk t₁) (Nonplanar.mk t₂) =
-      (Tree.insertSum t₁ t₂).map Nonplanar.mk := rfl
+      (RoseTree.insertSum t₁ t₂).map Nonplanar.mk := rfl
 
 /-- The number of summands of `T₁ ◁ T₂` equals `T₁.numNodes`, i.e., the
     nonplanar tree-vertex count of T₁. -/
@@ -603,9 +603,9 @@ theorem card_insertSum_eq_numNodes (T₁ T₂ : Nonplanar α) :
     Multiset.card (Nonplanar.insertSum T₁ T₂) = T₁.numNodes := by
   refine Quotient.inductionOn₂ T₁ T₂ ?_
   intro t₁ t₂
-  show Multiset.card ((Tree.insertSum t₁ t₂).map Nonplanar.mk) =
+  show Multiset.card ((RoseTree.insertSum t₁ t₂).map Nonplanar.mk) =
     (Nonplanar.mk t₁).numNodes
-  rw [Multiset.card_map, Tree.card_insertSum_eq_numNodes, numNodes_mk]
+  rw [Multiset.card_map, RoseTree.card_insertSum_eq_numNodes, numNodes_mk]
 
 /-! ### Sanity tests -/
 
@@ -613,14 +613,14 @@ section Tests
 
 /-- A leaf grafted onto a leaf gives the canonical 1-vertex grafting summand. -/
 example : Nonplanar.insertSum (Nonplanar.leaf 1 : Nonplanar Nat) (Nonplanar.leaf 2)
-    = ({Nonplanar.mk (Tree.node 1 [Tree.leaf 2])} : Multiset (Nonplanar Nat)) := by
-  show (Tree.insertSum (Tree.leaf 1) (Tree.leaf 2)).map Nonplanar.mk = _
-  rw [Tree.insertSum_leaf, Multiset.map_singleton]
+    = ({Nonplanar.mk (RoseTree.node 1 [RoseTree.leaf 2])} : Multiset (Nonplanar Nat)) := by
+  show (RoseTree.insertSum (RoseTree.leaf 1) (RoseTree.leaf 2)).map Nonplanar.mk = _
+  rw [RoseTree.insertSum_leaf, Multiset.map_singleton]
 
 /-- A nonplanar binary tree has 3 vertices, hence 3 grafting summands. -/
 example : Multiset.card
     (Nonplanar.insertSum
-      (Nonplanar.mk (Tree.binary 1 (Tree.leaf 2) (Tree.leaf 3)))
+      (Nonplanar.mk (RoseTree.binary 1 (RoseTree.leaf 2) (RoseTree.leaf 3)))
       (Nonplanar.leaf 4 : Nonplanar Nat)) = 3 := by
   rw [card_insertSum_eq_numNodes, numNodes_mk]
   decide

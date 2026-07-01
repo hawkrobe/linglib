@@ -5,12 +5,12 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 set_option autoImplicit false
 
 /-!
-# Δ^c (trace-aware admissible-cut) coproduct on `Tree (α ⊕ β)`
+# Δ^c (trace-aware admissible-cut) coproduct on `RoseTree (α ⊕ β)`
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **trace-preserving variant** of the Connes-Kreimer admissible-cut
 coproduct on n-ary rooted trees, parameterized by a trace encoder
-`τ : Tree (α ⊕ β) → β`. For a tree T:
+`τ : RoseTree (α ⊕ β) → β`. For a tree T:
 
   Δ^c_τ(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderTrace c)
 
@@ -21,7 +21,7 @@ where cut sites simply disappear (the parent loses a child).
 
 ## Carrier and encoder
 
-The carrier is `Tree (α ⊕ β)` directly: original-decoration vertices
+The carrier is `RoseTree (α ⊕ β)` directly: original-decoration vertices
 sit on `Sum.inl`, trace-marker vertices on `Sum.inr`. Output trees from
 Δ^c only ever introduce trace markers as leaves; this is provable as a
 property rather than baked into the carrier (no `DecoratedTree` wrapper).
@@ -34,7 +34,7 @@ information they want about the cut subtree:
   a single Unit-labeled leaf, identical for every cut. Distinct from
   MCB's Δ^d (Definition 1.2.5, p. 31), which is deletion-then-rebinarize
   and would require separate substrate.
-- **Identity trace**: `τ = id` if β = Tree (α ⊕ β) — placeholder
+- **Identity trace**: `τ = id` if β = RoseTree (α ⊕ β) — placeholder
   carries the full cut subtree as label. Closest match to the book's
   notation `F̄_v`.
 - **Quotient trace**: `τ` projects to syntactic features, semantic
@@ -42,8 +42,8 @@ information they want about the cut subtree:
 
 ## Embedding α-only trees
 
-The substrate is encoder-free: an α-only tree T : Tree α is embedded
-into Tree (α ⊕ β) via `Tree.map Sum.inl T`. No separate
+The substrate is encoder-free: an α-only tree T : RoseTree α is embedded
+into RoseTree (α ⊕ β) via `RoseTree.map Sum.inl T`. No separate
 `mapDecoration` primitive.
 
 ## MCB anchors
@@ -98,7 +98,7 @@ variable {R : Type*} [CommSemiring R] {α β : Type*}
 /-! ### `traceLeaf` — placeholder for a cut subtree -/
 
 /-- The trace-marker placeholder leaf carrying the encoded label `b : β`. -/
-def traceLeaf (b : β) : Tree (α ⊕ β) := .node (Sum.inr b) []
+def traceLeaf (b : β) : RoseTree (α ⊕ β) := .node (Sum.inr b) []
 
 /-! ### Δ^c extraction policy -/
 
@@ -106,19 +106,19 @@ def traceLeaf (b : β) : Tree (α ⊕ β) := .node (Sum.inr b) []
     subtrees, extract whole leaving a single `traceLeaf (τ t)` in the
     parent's child slot. For `Sum.inr`-rooted (trace) subtrees, decline
     to extract. -/
-def extractC (τ : Tree (α ⊕ β) → β) :
-    Tree (α ⊕ β) → Option (List (Tree (α ⊕ β)))
+def extractC (τ : RoseTree (α ⊕ β) → β) :
+    RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β)))
   | t@(.node (Sum.inl _) _) => some [traceLeaf (τ t)]
   | .node (Sum.inr _) _ => none
 
-@[simp] theorem extractC_inl (τ : Tree (α ⊕ β) → β)
-    (a : α) (cs : List (Tree (α ⊕ β))) :
-    extractC τ (Tree.node (Sum.inl a) cs) =
-      some [traceLeaf (τ (Tree.node (Sum.inl a) cs))] := rfl
+@[simp] theorem extractC_inl (τ : RoseTree (α ⊕ β) → β)
+    (a : α) (cs : List (RoseTree (α ⊕ β))) :
+    extractC τ (RoseTree.node (Sum.inl a) cs) =
+      some [traceLeaf (τ (RoseTree.node (Sum.inl a) cs))] := rfl
 
-@[simp] theorem extractC_inr (τ : Tree (α ⊕ β) → β)
-    (b : β) (cs : List (Tree (α ⊕ β))) :
-    extractC τ (Tree.node (Sum.inr b) cs) = none := rfl
+@[simp] theorem extractC_inr (τ : RoseTree (α ⊕ β) → β)
+    (b : β) (cs : List (RoseTree (α ⊕ β))) :
+    extractC τ (RoseTree.node (Sum.inr b) cs) = none := rfl
 
 /-! ### `cutSummandsCP` — Δ^c cut enumeration via the generic `cutSummandsG`
 
@@ -128,16 +128,16 @@ Defined as `cutSummandsG (extractC τ)`. The generic-side simp lemmas
 
 /-- The Δ^c cut summands: cuts at non-trace subtrees with trace
     placeholders, skipping cuts at trace leaves. -/
-def cutSummandsCP (τ : Tree (α ⊕ β) → β) :
-    Tree (α ⊕ β) → Multiset (Forest (Tree (α ⊕ β)) × Tree (α ⊕ β)) :=
+def cutSummandsCP (τ : RoseTree (α ⊕ β) → β) :
+    RoseTree (α ⊕ β) → Multiset (Forest (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :=
   cutSummandsG (extractC τ)
 
-theorem cutSummandsCP_def (τ : Tree (α ⊕ β) → β) (T : Tree (α ⊕ β)) :
+theorem cutSummandsCP_def (τ : RoseTree (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
     cutSummandsCP τ T = cutSummandsG (extractC τ) T := rfl
 
-@[simp] theorem cutSummandsCP_node (τ : Tree (α ⊕ β) → β)
-    (a : α ⊕ β) (cs : List (Tree (α ⊕ β))) :
-    cutSummandsCP τ (Tree.node a cs) =
+@[simp] theorem cutSummandsCP_node (τ : RoseTree (α ⊕ β) → β)
+    (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
+    cutSummandsCP τ (RoseTree.node a cs) =
       (cutListSummandsG (extractC τ) cs).map (fun p => (p.1, .node a p.2)) := by
   rw [cutSummandsCP_def, cutSummandsG_node]
 
@@ -147,10 +147,10 @@ Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
 
 /-- The **tree-level Δ^c** coproduct: explicit `T ⊗ 1` term plus the sum
     of cut-summand tensors with trace-preserving remainders. -/
-noncomputable def comulCTreePlanar (τ : Tree (α ⊕ β) → β)
-    (T : Tree (α ⊕ β)) :
-    ConnesKreimer R (Tree (α ⊕ β)) ⊗[R] ConnesKreimer R (Tree (α ⊕ β)) :=
-  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Tree (α ⊕ β)))
+noncomputable def comulCTreePlanar (τ : RoseTree (α ⊕ β) → β)
+    (T : RoseTree (α ⊕ β)) :
+    ConnesKreimer R (RoseTree (α ⊕ β)) ⊗[R] ConnesKreimer R (RoseTree (α ⊕ β)) :=
+  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (RoseTree (α ⊕ β)))
   + ((cutSummandsCP τ T).map
       (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
@@ -158,17 +158,17 @@ noncomputable def comulCTreePlanar (τ : Tree (α ⊕ β) → β)
 
 /-- The **forest-level Δ^c**: multiplicative product of tree-level
     coproducts over the components of the forest. -/
-noncomputable def comulCForestPlanar (τ : Tree (α ⊕ β) → β)
-    (F : Forest (Tree (α ⊕ β))) :
-    ConnesKreimer R (Tree (α ⊕ β)) ⊗[R] ConnesKreimer R (Tree (α ⊕ β)) :=
+noncomputable def comulCForestPlanar (τ : RoseTree (α ⊕ β) → β)
+    (F : Forest (RoseTree (α ⊕ β))) :
+    ConnesKreimer R (RoseTree (α ⊕ β)) ⊗[R] ConnesKreimer R (RoseTree (α ⊕ β)) :=
   (F.map (comulCTreePlanar (R := R) τ)).prod
 
-@[simp] theorem comulCForestPlanar_zero (τ : Tree (α ⊕ β) → β) :
-    comulCForestPlanar (R := R) τ (0 : Forest (Tree (α ⊕ β))) = 1 := by
+@[simp] theorem comulCForestPlanar_zero (τ : RoseTree (α ⊕ β) → β) :
+    comulCForestPlanar (R := R) τ (0 : Forest (RoseTree (α ⊕ β))) = 1 := by
   simp only [comulCForestPlanar, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulCForestPlanar_add (τ : Tree (α ⊕ β) → β)
-    (F G : Forest (Tree (α ⊕ β))) :
+@[simp] theorem comulCForestPlanar_add (τ : RoseTree (α ⊕ β) → β)
+    (F G : Forest (RoseTree (α ⊕ β))) :
     comulCForestPlanar (R := R) τ (F + G) =
       comulCForestPlanar (R := R) τ F * comulCForestPlanar (R := R) τ G := by
   unfold comulCForestPlanar
@@ -177,36 +177,36 @@ noncomputable def comulCForestPlanar (τ : Tree (α ⊕ β) → β)
 /-! ### comulCMonoidHomP and comulCAlgHomP — AlgHom packaging -/
 
 /-- `comulCForestPlanar τ` as a monoid hom from
-    `Multiplicative (Forest (Tree (α ⊕ β)))`. -/
-noncomputable def comulCMonoidHomP (τ : Tree (α ⊕ β) → β) :
-    Multiplicative (Forest (Tree (α ⊕ β))) →*
-      (ConnesKreimer R (Tree (α ⊕ β)) ⊗[R]
-        ConnesKreimer R (Tree (α ⊕ β))) where
+    `Multiplicative (Forest (RoseTree (α ⊕ β)))`. -/
+noncomputable def comulCMonoidHomP (τ : RoseTree (α ⊕ β) → β) :
+    Multiplicative (Forest (RoseTree (α ⊕ β))) →*
+      (ConnesKreimer R (RoseTree (α ⊕ β)) ⊗[R]
+        ConnesKreimer R (RoseTree (α ⊕ β))) where
   toFun F := comulCForestPlanar (R := R) τ F.toAdd
   map_one' := comulCForestPlanar_zero τ
   map_mul' F G := comulCForestPlanar_add τ F.toAdd G.toAdd
 
-/-- The **Δ^c coproduct on `ConnesKreimer R (Tree (α ⊕ β))`** as an
+/-- The **Δ^c coproduct on `ConnesKreimer R (RoseTree (α ⊕ β))`** as an
     algebra hom, parameterized by the trace encoder `τ`. -/
-noncomputable def comulCAlgHomP (τ : Tree (α ⊕ β) → β) :
-    ConnesKreimer R (Tree (α ⊕ β)) →ₐ[R]
-      ConnesKreimer R (Tree (α ⊕ β)) ⊗[R]
-        ConnesKreimer R (Tree (α ⊕ β)) :=
+noncomputable def comulCAlgHomP (τ : RoseTree (α ⊕ β) → β) :
+    ConnesKreimer R (RoseTree (α ⊕ β)) →ₐ[R]
+      ConnesKreimer R (RoseTree (α ⊕ β)) ⊗[R]
+        ConnesKreimer R (RoseTree (α ⊕ β)) :=
   AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Tree (α ⊕ β))) ⊗[R]
-      (ConnesKreimer R (Tree (α ⊕ β))))
-    (Forest (Tree (α ⊕ β))) (comulCMonoidHomP τ)
+    ((ConnesKreimer R (RoseTree (α ⊕ β))) ⊗[R]
+      (ConnesKreimer R (RoseTree (α ⊕ β))))
+    (Forest (RoseTree (α ⊕ β))) (comulCMonoidHomP τ)
 
-@[simp] theorem comulCAlgHomP_apply_of' (τ : Tree (α ⊕ β) → β)
-    (F : Forest (Tree (α ⊕ β))) :
+@[simp] theorem comulCAlgHomP_apply_of' (τ : RoseTree (α ⊕ β) → β)
+    (F : Forest (RoseTree (α ⊕ β))) :
     comulCAlgHomP (R := R) τ (of' F) = comulCForestPlanar τ F := by
   show AddMonoidAlgebra.lift R _ _ (comulCMonoidHomP τ)
         (Finsupp.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
   rfl
 
-@[simp] theorem comulCAlgHomP_apply_ofTree (τ : Tree (α ⊕ β) → β)
-    (T : Tree (α ⊕ β)) :
+@[simp] theorem comulCAlgHomP_apply_ofTree (τ : RoseTree (α ⊕ β) → β)
+    (T : RoseTree (α ⊕ β)) :
     comulCAlgHomP (R := R) τ (ofTree T) = comulCTreePlanar τ T := by
   unfold ofTree
   rw [comulCAlgHomP_apply_of']
@@ -218,37 +218,37 @@ noncomputable def comulCAlgHomP (τ : Tree (α ⊕ β) → β) :
 section Tests
 
 /-- A leaf has exactly one cut summand: the empty cut `(0, leaf)`. -/
-example (τ : Tree (Unit ⊕ Unit) → Unit) :
-    cutSummandsCP τ (Tree.leaf (Sum.inl ()) : Tree (Unit ⊕ Unit))
-      = {((0 : Forest (Tree (Unit ⊕ Unit))),
-          (Tree.leaf (Sum.inl ()) : Tree (Unit ⊕ Unit)))} := by
-  rw [Tree.leaf, cutSummandsCP_node, cutListSummandsG_nil]
+example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
+    cutSummandsCP τ (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit))
+      = {((0 : Forest (RoseTree (Unit ⊕ Unit))),
+          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)))} := by
+  rw [RoseTree.leaf, cutSummandsCP_node, cutListSummandsG_nil]
   rfl
 
 /-- The trace-extract branch sits in the augmented per-child action for
     a `Sum.inl`-rooted subtree. Witness that Δ^c (placeholder leaf)
     differs from Δ^ρ (admissible-cut pruning). -/
-example (τ : Tree (Unit ⊕ Unit) → Unit) :
-    (({Tree.leaf (Sum.inl ())} : Forest (Tree (Unit ⊕ Unit))),
-      [traceLeaf (τ (Tree.leaf (Sum.inl ())))]) ∈
+example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
+    (({RoseTree.leaf (Sum.inl ())} : Forest (RoseTree (Unit ⊕ Unit))),
+      [traceLeaf (τ (RoseTree.leaf (Sum.inl ())))]) ∈
         augActionG (extractC τ)
-          (Tree.leaf (Sum.inl ()) : Tree (Unit ⊕ Unit)) := by
-  rw [Tree.leaf, augActionG_eq_some _ _ _ (extractC_inl τ () [])]
+          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)) := by
+  rw [RoseTree.leaf, augActionG_eq_some _ _ _ (extractC_inl τ () [])]
   exact Multiset.mem_cons_self _ _
 
 /-- Trace-marker leaves are NOT extracted: `extractC τ` returns `none`,
     so the per-child action only inherits cuts from `cutSummandsG`. -/
-example (b : Unit) (τ : Tree (Unit ⊕ Unit) → Unit) :
-    augActionG (extractC τ) (traceLeaf b : Tree (Unit ⊕ Unit))
-      = (cutSummandsG (extractC τ) (Tree.node (Sum.inr b) [])).map
+example (b : Unit) (τ : RoseTree (Unit ⊕ Unit) → Unit) :
+    augActionG (extractC τ) (traceLeaf b : RoseTree (Unit ⊕ Unit))
+      = (cutSummandsG (extractC τ) (RoseTree.node (Sum.inr b) [])).map
           (fun p => (p.1, [p.2])) :=
   augActionG_eq_none _ _ (extractC_inr τ b [])
 
 /-- The `traceLeaf` placeholder is a `Sum.inr`-labeled leaf. -/
-example (b : β) : (traceLeaf b : Tree (α ⊕ β)).arity = 0 := rfl
+example (b : β) : (traceLeaf b : RoseTree (α ⊕ β)).arity = 0 := rfl
 
 example (b : β) :
-    (traceLeaf b : Tree (α ⊕ β)).value = Sum.inr b := rfl
+    (traceLeaf b : RoseTree (α ⊕ β)).value = Sum.inr b := rfl
 
 end Tests
 

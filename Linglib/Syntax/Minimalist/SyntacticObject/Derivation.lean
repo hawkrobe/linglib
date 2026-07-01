@@ -163,7 +163,7 @@ the surface left-to-right order is not recoverable from it. But a `Derivation` *
 the planarization choices: `emL`/`im` place material on the LEFT edge, `emR` on the
 right — exactly MCB's externalization section `σ_L`, here fixed by the derivation ("the
 language `L`") rather than a noncanonical `Quot.out`. The fold below replays the steps on
-an **ordered `Tree SOLabel` accumulator**, giving a fully **computable** PF: it never
+an **ordered `RoseTree SOLabel` accumulator**, giving a fully **computable** PF: it never
 calls the noncomputable `SO.node`/`SO.replace` (it uses planar tree surgery + a
 `Nonplanar.mk` equality test), so surface orders `decide`. Index-free traces are sound
 here: traces are unpronounced, dropped by `planarYield`.
@@ -175,14 +175,14 @@ to reproduce attested orders. The `decide` demos below exercise concrete derivat
 
 /-- Planar form of a leaf/trace `SO` (the only items merged in canonical derivations);
     `none` for a complex `SO` (no recorded internal order). -/
-def SO.toPlanarLeaf? (s : SO) : Option (Tree SOLabel) :=
+def SO.toPlanarLeaf? (s : SO) : Option (RoseTree SOLabel) :=
   match s.getLIToken with
   | some tok => some (SO.leafP tok)
   | none     => if s = SO.traceLeaf then some SO.traceP else none
 
 /-- Plain left-to-right token yield of an *already-ordered* planar tree; traces
     (`Sum.inr ()`) are unpronounced and contribute nothing. -/
-def planarYield : Tree SOLabel → List LIToken
+def planarYield : RoseTree SOLabel → List LIToken
   | .node (.inl tok) _   => [tok]
   | .node (.inr ()) []   => []
   | .node (.inr ()) [l, r] => planarYield l ++ planarYield r
@@ -191,17 +191,17 @@ def planarYield : Tree SOLabel → List LIToken
 /-- "Projects to `target`": a planar subtree whose nonplanar projection is the `SO`
     `target` — the predicate the `im` replay uses to locate a mover. Computable
     (`DecidableEq (Nonplanar …)`), so it `decide`s. -/
-def projEqP (target : SO) (s : Tree SOLabel) : Bool := decide (Nonplanar.mk s = target.val)
+def projEqP (target : SO) (s : RoseTree SOLabel) : Bool := decide (Nonplanar.mk s = target.val)
 
 /-- Leftmost (root-first) subtree satisfying `p`. -/
-def planarFindP? (p : Tree SOLabel → Bool) : Tree SOLabel → Option (Tree SOLabel)
+def planarFindP? (p : RoseTree SOLabel → Bool) : RoseTree SOLabel → Option (RoseTree SOLabel)
   | t@(.node _ [])     => if p t then some t else none
   | t@(.node _ [l, r]) => if p t then some t else (planarFindP? p l).or (planarFindP? p r)
   | t@(.node _ _)      => if p t then some t else none
 
 /-- Replace every subtree satisfying `p` by `rep`. -/
-def planarReplaceWhereP (p : Tree SOLabel → Bool) (rep : Tree SOLabel) :
-    Tree SOLabel → Tree SOLabel
+def planarReplaceWhereP (p : RoseTree SOLabel → Bool) (rep : RoseTree SOLabel) :
+    RoseTree SOLabel → RoseTree SOLabel
   | t@(.node _ [])     => if p t then rep else t
   | t@(.node a [l, r]) =>
       if p t then rep
@@ -210,12 +210,12 @@ def planarReplaceWhereP (p : Tree SOLabel → Bool) (rep : Tree SOLabel) :
 
 /-- Internal Merge on the ordered accumulator: raise the leftmost subtree projecting to
     `mover` to the LEFT edge, leaving the bare trace `SO.traceP`. `none` if absent. -/
-def moveLeftPlanarP (acc : Tree SOLabel) (mover : SO) : Option (Tree SOLabel) :=
+def moveLeftPlanarP (acc : RoseTree SOLabel) (mover : SO) : Option (RoseTree SOLabel) :=
   (planarFindP? (projEqP mover) acc).map fun s =>
     SO.nodeP s (planarReplaceWhereP (projEqP mover) SO.traceP acc)
 
 /-- One externalization step on the ordered accumulator (mirrors `SO.Step.apply`). -/
-def externStepP (acc? : Option (Tree SOLabel)) (step : SO.Step) : Option (Tree SOLabel) :=
+def externStepP (acc? : Option (RoseTree SOLabel)) (step : SO.Step) : Option (RoseTree SOLabel) :=
   acc?.bind fun acc => match step with
     | .emL item  => item.toPlanarLeaf?.map (fun p => SO.nodeP p acc)
     | .emR item  => item.toPlanarLeaf?.map (fun p => SO.nodeP acc p)
@@ -225,7 +225,7 @@ namespace SO.Derivation
 
 /-- The derivation's ordered planar representative (MCB `σ_L` for this derivation),
     or `none` if a merged item is complex / a mover is missing. -/
-def externalizeP? (d : SO.Derivation) : Option (Tree SOLabel) :=
+def externalizeP? (d : SO.Derivation) : Option (RoseTree SOLabel) :=
   d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl externStepP (some init)
 
 /-- Surface (pronounced) tokens, left-to-right; traces dropped. Empty if
@@ -245,7 +245,7 @@ end SO.Derivation
 /-! ### Π-bridge faithfulness: `Nonplanar.mk externalizeP? = final`
 
 [marcolli-chomsky-berwick-2025] §1.12. The externalization replay (`externStepP` on an
-ordered `Tree SOLabel` accumulator) is *faithful* to the abstract derived object: each
+ordered `RoseTree SOLabel` accumulator) is *faithful* to the abstract derived object: each
 planar op's `Nonplanar.mk` equals the corresponding noncomputable `SO` op, so whenever
 the replay succeeds its nonplanar projection is exactly `final`. This upgrades
 `surfaceCats`/`surfacePhon` from "validated by `decide` demos" to "provably the word
@@ -253,13 +253,13 @@ order of the actual derived SO" — the guarantee the word-order studies (Cinque
 ColeHermon2008, Chomsky1995, …) rely on. -/
 
 /-- `isSOPlanar` of a bare binary node is the conjunction of the children's. -/
-private theorem isSOPlanar_nodeP {a b : Tree SOLabel}
+private theorem isSOPlanar_nodeP {a b : RoseTree SOLabel}
     (ha : isSOPlanar a = true) (hb : isSOPlanar b = true) : isSOPlanar (SO.nodeP a b) = true := by
   simp only [isSOPlanar, isSOPlanarList, ha, hb, List.length_cons, List.length_nil,
     Nat.reduceAdd, Nat.reduceBEq, Bool.or_true, Bool.and_self]
 
 /-- `Nonplanar.mk` of the planar binary builder is the bare binary nonplanar node. -/
-private theorem mk_nodeP (a b : Tree SOLabel) :
+private theorem mk_nodeP (a b : RoseTree SOLabel) :
     Nonplanar.mk (SO.nodeP a b) = Nonplanar.node (Sum.inr ()) {Nonplanar.mk a, Nonplanar.mk b} := by
   rw [show ({Nonplanar.mk a, Nonplanar.mk b} : Multiset (Nonplanar SOLabel))
         = Multiset.ofList ([a, b].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
@@ -269,13 +269,13 @@ private theorem SO.node_ne_traceLeaf (l r : SO) : SO.node l r ≠ SO.traceLeaf :
   intro heq
   have ha : (SO.node l r).val.rootChildren = SO.traceLeaf.val.rootChildren := by rw [heq]
   rw [SO.node_val, Nonplanar.rootChildren_node] at ha
-  simp only [SO.traceLeaf, Nonplanar.leaf_def, Nonplanar.rootChildren_mk, Tree.children,
+  simp only [SO.traceLeaf, Nonplanar.leaf_def, Nonplanar.rootChildren_mk, RoseTree.children,
     Multiset.insert_eq_cons] at ha
   exact Multiset.cons_ne_zero ha
 
 /-- **Lemma 1.** A successful `toPlanarLeaf?` projects (under `Nonplanar.mk`) back to the
     `SO` it came from, and is a well-formed planar leaf. -/
-private theorem toPlanarLeaf?_mk {s : SO} {ip : Tree SOLabel} (h : s.toPlanarLeaf? = some ip) :
+private theorem toPlanarLeaf?_mk {s : SO} {ip : RoseTree SOLabel} (h : s.toPlanarLeaf? = some ip) :
     Nonplanar.mk ip = s.val ∧ isSOPlanar ip = true := by
   induction s using SO.ind with
   | lex tok =>
@@ -291,11 +291,11 @@ private theorem toPlanarLeaf?_mk {s : SO} {ip : Tree SOLabel} (h : s.toPlanarLea
     exact absurd h (by simp)
 
 /-- **Lemma 2.** `projEqP target s` certifies that `s` projects to `target`. -/
-private theorem projEqP_eq {target : SO} {s : Tree SOLabel} (h : projEqP target s = true) :
+private theorem projEqP_eq {target : SO} {s : RoseTree SOLabel} (h : projEqP target s = true) :
     Nonplanar.mk s = target.val := of_decide_eq_true h
 
 /-- **Lemma 3a.** A subtree raised by `planarFindP?` satisfies the predicate. -/
-private theorem planarFindP?_pred {p : Tree SOLabel → Bool} {t s : Tree SOLabel}
+private theorem planarFindP?_pred {p : RoseTree SOLabel → Bool} {t s : RoseTree SOLabel}
     (h : planarFindP? p t = some s) : p s = true := by
   fun_induction planarFindP? p t generalizing s with
   | case1 _ hp => obtain rfl := Option.some.inj h; exact hp
@@ -309,7 +309,7 @@ private theorem planarFindP?_pred {p : Tree SOLabel → Bool} {t s : Tree SOLabe
   | case6 => exact absurd h (by simp)
 
 /-- A bare binary node's children are both well-formed when the node is. -/
-private theorem isSOPlanar_pair_children {l r : Tree SOLabel}
+private theorem isSOPlanar_pair_children {l r : RoseTree SOLabel}
     (ht : isSOPlanar (SO.nodeP l r) = true) : isSOPlanar l = true ∧ isSOPlanar r = true := by
   rw [SO.nodeP, isSOPlanar, isSOPlanarList, isSOPlanarList, isSOPlanarList,
     Bool.and_eq_true, Bool.and_eq_true, Bool.and_eq_true] at ht
@@ -317,7 +317,7 @@ private theorem isSOPlanar_pair_children {l r : Tree SOLabel}
 
 /-- **Lemma 3b.** A subtree raised by `planarFindP?` from a well-formed tree is itself
     well-formed. -/
-private theorem planarFindP?_isSOPlanar {p : Tree SOLabel → Bool} {t s : Tree SOLabel}
+private theorem planarFindP?_isSOPlanar {p : RoseTree SOLabel → Bool} {t s : RoseTree SOLabel}
     (h : planarFindP? p t = some s) (ht : isSOPlanar t = true) : isSOPlanar s = true := by
   fun_induction planarFindP? p t generalizing s with
   | case1 => obtain rfl := Option.some.inj h; exact ht
@@ -337,8 +337,8 @@ private theorem planarFindP?_isSOPlanar {p : Tree SOLabel → Bool} {t s : Tree 
   | case6 => exact absurd h (by simp)
 
 /-- Under `isSOPlanar`, a node has either no children or exactly two. -/
-private theorem isSOPlanar_length {a : SOLabel} {cs : List (Tree SOLabel)}
-    (ht : isSOPlanar (Tree.node a cs) = true) : cs.length = 0 ∨ cs.length = 2 := by
+private theorem isSOPlanar_length {a : SOLabel} {cs : List (RoseTree SOLabel)}
+    (ht : isSOPlanar (RoseTree.node a cs) = true) : cs.length = 0 ∨ cs.length = 2 := by
   cases a with
   | inl _ =>
     rw [isSOPlanar] at ht
@@ -350,7 +350,7 @@ private theorem isSOPlanar_length {a : SOLabel} {cs : List (Tree SOLabel)}
     exact ht.1
 
 /-- `projEqP` reflects (in)equality of the nonplanar projection to the target. -/
-private theorem not_projEqP {target : SO} {s : Tree SOLabel}
+private theorem not_projEqP {target : SO} {s : RoseTree SOLabel}
     (h : ¬ projEqP target s = true) : Nonplanar.mk s ≠ target.val := by
   rw [projEqP, decide_eq_true_eq] at h; exact h
 
@@ -360,7 +360,7 @@ private theorem not_projEqP {target : SO} {s : Tree SOLabel}
     and stays well-formed. The two `if`-conditions agree (`projEqP target s = true ↔
     Nonplanar.mk s = target.val`), and the recursive bare-binary case lines up with
     `replaceN_node`'s else branch (`{·,·}` multiset built from the two daughters). -/
-private theorem replaceWhereP_mk (target : SO) {t : Tree SOLabel} (ht : isSOPlanar t = true) :
+private theorem replaceWhereP_mk (target : SO) {t : RoseTree SOLabel} (ht : isSOPlanar t = true) :
     Nonplanar.mk (planarReplaceWhereP (projEqP target) SO.traceP t)
         = replaceN target.val SO.traceLeaf.val (Nonplanar.mk t)
       ∧ isSOPlanar (planarReplaceWhereP (projEqP target) SO.traceP t) = true := by
@@ -370,9 +370,9 @@ private theorem replaceWhereP_mk (target : SO) {t : Tree SOLabel} (ht : isSOPlan
     rw [projEqP_eq hp, replaceN_self]; rfl
   | case2 b hp =>
     refine ⟨?_, ht⟩
-    rw [show Nonplanar.mk (Tree.node b []) = Nonplanar.leaf b from rfl,
+    rw [show Nonplanar.mk (RoseTree.node b []) = Nonplanar.leaf b from rfl,
       replaceN_leaf, if_neg]
-    rw [show Nonplanar.leaf b = Nonplanar.mk (Tree.node b []) from rfl]
+    rw [show Nonplanar.leaf b = Nonplanar.mk (RoseTree.node b []) from rfl]
     exact not_projEqP hp
   | case3 _ _ _ hp =>
     refine ⟨?_, rfl⟩
@@ -389,7 +389,7 @@ private theorem replaceWhereP_mk (target : SO) {t : Tree SOLabel} (ht : isSOPlan
     refine ⟨?_, isSOPlanar_nodeP ihls ihrs⟩
     have hne : Nonplanar.node (Sum.inr ()) {Nonplanar.mk l, Nonplanar.mk r} ≠ target.val := by
       rw [← mk_nodeP]; exact not_projEqP hp
-    rw [show Tree.node (Sum.inr ()) [planarReplaceWhereP (projEqP target) SO.traceP l,
+    rw [show RoseTree.node (Sum.inr ()) [planarReplaceWhereP (projEqP target) SO.traceP l,
           planarReplaceWhereP (projEqP target) SO.traceP r]
         = SO.nodeP (planarReplaceWhereP (projEqP target) SO.traceP l)
           (planarReplaceWhereP (projEqP target) SO.traceP r) from rfl,
@@ -405,7 +405,7 @@ private theorem replaceWhereP_mk (target : SO) {t : Tree SOLabel} (ht : isSOPlan
 
 /-- **Lemma 6: per-step faithfulness.** A successful replay step on a well-formed
     accumulator stays well-formed and projects to the abstract `SO.Step.apply`. -/
-private theorem externStepP_step {acc : SO} {accp p' : Tree SOLabel} {step : SO.Step}
+private theorem externStepP_step {acc : SO} {accp p' : RoseTree SOLabel} {step : SO.Step}
     (h : externStepP (some accp) step = some p') (hwf : isSOPlanar accp = true)
     (hmk : Nonplanar.mk accp = acc.val) :
     isSOPlanar p' = true ∧ Nonplanar.mk p' = (step.apply acc).val := by
@@ -451,7 +451,7 @@ private theorem foldl_externStepP_none (steps : List SO.Step) :
 
 /-- **Lemma 7: foldl faithfulness.** A successful replay fold from a well-formed,
     faithful accumulator projects to the abstract `final`-style fold of `SO.Step.apply`. -/
-private theorem foldl_externStepP_mk : ∀ (steps : List SO.Step) {acc : SO} {accp p : Tree SOLabel},
+private theorem foldl_externStepP_mk : ∀ (steps : List SO.Step) {acc : SO} {accp p : RoseTree SOLabel},
     steps.foldl externStepP (some accp) = some p → isSOPlanar accp = true →
     Nonplanar.mk accp = acc.val →
     Nonplanar.mk p = (steps.foldl (fun so st => st.apply so) acc).val
@@ -472,7 +472,7 @@ private theorem foldl_externStepP_mk : ∀ (steps : List SO.Step) {acc : SO} {ac
     derived syntactic object — the guarantee the word-order studies depend on. The replay
     is partial by design (EM of a complex item / a missing mover ⇒ `none`, making the claim
     vacuous there); on the canonical leaf/trace derivations the studies build, it succeeds. -/
-theorem SO.Derivation.externalizeP?_faithful (d : SO.Derivation) {p : Tree SOLabel}
+theorem SO.Derivation.externalizeP?_faithful (d : SO.Derivation) {p : RoseTree SOLabel}
     (h : d.externalizeP? = some p) : Nonplanar.mk p = d.final.val := by
   rw [SO.Derivation.externalizeP?] at h
   rcases hinit : d.initial.toPlanarLeaf? with _ | init

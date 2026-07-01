@@ -68,7 +68,7 @@ For trees `T₁, T₂ : Nonplanar α`:
   the iterated single-tree insertion**: those don't commute (see
   `feedback_inserttree_does_not_commute.md`). The correct definition
   is `F • G_forest = Σ_{f : G_forest → V(F)} of' (F with each T ∈ G
-  grafted at f(T))`, implemented as `Tree.Pathed.insertionForest` in
+  grafted at f(T))`, implemented as `RoseTree.Pathed.insertionForest` in
   `MultiGraft.lean` and lifted to `H` as `insertion` below.
 
 The Grossman-Larson product is given by Foissy 2021 Theorem 5.1:
@@ -303,8 +303,8 @@ that defined `insertForest` via `Multiset.foldr` of `insertTree` was
 based on this misreading and has been removed.
 
 **Implementation status**: defined via Foissy 2021 Theorem 5.1's
-combinatorial formula at the `Tree` level (`PreLie/MultiGraft.lean`'s
-`Tree.Pathed.insertionForest`), descended through `Nonplanar.mk`
+combinatorial formula at the `RoseTree` level (`PreLie/MultiGraft.lean`'s
+`RoseTree.Pathed.insertionForest`), descended through `Nonplanar.mk`
 (`Nonplanar.insertionMultiset`), then bilinear-extended via
 `Finsupp.linearCombination`. The substrate invariance theorems
 (PermEquiv on host/guest, Perm on multiset arguments) are stated

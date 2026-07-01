@@ -22,7 +22,7 @@ The cardinality of the automorphism group of a rooted nonplanar tree
 Connes-Kreimer / Grossman-Larson pairing
 (`Linglib/Core/Algebra/RootedTree/GrossmanLarsonPairing.lean`).
 
-## Tree-level formula
+## RoseTree-level formula
 
 For a node with children-multiset `M = {c₁ × k₁, c₂ × k₂, …}` (distinct
 trees `cᵢ` with multiplicities `kᵢ`):
@@ -49,10 +49,10 @@ top-level multiset of constituent trees.
 `[UPSTREAM]` candidate. Eventual mathlib home would be
 `Mathlib.Combinatorics.RootedTree.Aut`. **Sorry-free.**
 
-`Nonplanar.autCard` descends from `treeAutCard` on the `Tree α`
+`Nonplanar.autCard` descends from `treeAutCard` on the `RoseTree α`
 representative, defined by structural recursion over the children list
 (`(cs.map treeAutCard).prod` aggregates the children product; no aux
-twin — `Tree`'s nested-`List` recursion is handled by the equation
+twin — `RoseTree`'s nested-`List` recursion is handled by the equation
 compiler and its `@[induction_eliminator]`). `PermStep`-invariance is
 established via the standard swap/recurse case split, and the lift to
 `Nonplanar` uses `Nonplanar.lift`. `autCard_node` bridges to the
@@ -69,9 +69,9 @@ namespace Nonplanar
 
 variable {α : Type*}
 
-/-! ### Tree-representative substrate
+/-! ### RoseTree-representative substrate
 
-`treeAutCard` computes `|Aut(mk t)|` on a planar `Tree` representative
+`treeAutCard` computes `|Aut(mk t)|` on a planar `RoseTree` representative
 `t`; `PermEquiv`-invariance (below) lets it descend to `Nonplanar.autCard`
 through the quotient. -/
 
@@ -82,16 +82,16 @@ noncomputable def multinomialFactor (M : Multiset (Nonplanar α)) : ℕ :=
   M.toFinset.prod fun t => Nat.factorial (M.count t)
 
 /-- The automorphism count `|Aut(mk t)|` of the nonplanar tree represented
-    by a planar `Tree` `t`. Substrate for `Nonplanar.autCard` (which lifts
+    by a planar `RoseTree` `t`. Substrate for `Nonplanar.autCard` (which lifts
     it through the `PermEquiv` quotient). At a node, the product of the
     children's counts times `multinomialFactor` on the multiset of
     nonplanar-`mk` children (counting symmetric rearrangements). -/
-noncomputable def treeAutCard : Tree α → ℕ
+noncomputable def treeAutCard : RoseTree α → ℕ
   | .node _ cs =>
       (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk))
 
-theorem treeAutCard_node (a : α) (cs : List (Tree α)) :
-    treeAutCard (Tree.node a cs) =
+theorem treeAutCard_node (a : α) (cs : List (RoseTree α)) :
+    treeAutCard (RoseTree.node a cs) =
       (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk)) := by
   rw [treeAutCard]
 
@@ -102,7 +102,7 @@ theorem treeAutCard_node (a : α) (cs : List (Tree α)) :
     and the `mk`-multiset via `Multiset.coe_eq_coe` are both fixed); a
     recursive step rewrites one child by a `PermEquiv`-equal subtree (so
     `treeAutCard` matches by the IH and `mk` by `mk_eq_mk_iff`). -/
-private theorem treeAutCard_permStep {t s : Tree α} (h : Tree.PermStep t s) :
+private theorem treeAutCard_permStep {t s : RoseTree α} (h : RoseTree.PermStep t s) :
     treeAutCard t = treeAutCard s := by
   induction h with
   | @swapAtRoot a l r pre post =>
@@ -113,13 +113,13 @@ private theorem treeAutCard_permStep {t s : Tree α} (h : Tree.PermStep t s) :
   | @recurse a pre old new post _hstep ih =>
     rw [treeAutCard_node, treeAutCard_node]
     have hmk : (mk old : Nonplanar α) = mk new :=
-      mk_eq_mk_iff.mpr (Tree.PermEquiv.of_step _hstep)
+      mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step _hstep)
     congr 1
     · simp only [List.map_append, List.map_cons, List.prod_append, List.prod_cons, ih]
     · simp only [List.map_append, List.map_cons, hmk]
 
 /-- `treeAutCard` is invariant under `PermEquiv`. By induction on `EqvGen`. -/
-theorem treeAutCard_permEquiv {t s : Tree α} (h : Tree.PermEquiv t s) :
+theorem treeAutCard_permEquiv {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
     treeAutCard t = treeAutCard s := by
   induction h with
   | rel _ _ hstep => exact treeAutCard_permStep hstep
@@ -138,7 +138,7 @@ private theorem multinomialFactor_pos (M : Multiset (Nonplanar α)) :
 
 /-- `treeAutCard` is positive: at a node, `multinomialFactor` is positive
     (factorials) and the children product is positive by the IH. -/
-theorem treeAutCard_pos (t : Tree α) : 0 < treeAutCard t := by
+theorem treeAutCard_pos (t : RoseTree α) : 0 < treeAutCard t := by
   induction t with
   | node a cs ih =>
     rw [treeAutCard_node]
@@ -158,12 +158,12 @@ theorem treeAutCard_pos (t : Tree α) : 0 < treeAutCard t := by
 noncomputable def autCard : Nonplanar α → ℕ :=
   Nonplanar.lift treeAutCard (fun _ _ h => treeAutCard_permEquiv h)
 
-@[simp] theorem autCard_mk (t : Tree α) : autCard (mk t) = treeAutCard t := rfl
+@[simp] theorem autCard_mk (t : RoseTree α) : autCard (mk t) = treeAutCard t := rfl
 
 /-- A leaf has trivial aut group. -/
 @[simp] theorem autCard_leaf (a : α) : autCard (Nonplanar.leaf a : Nonplanar α) = 1 := by
-  show treeAutCard (Tree.leaf a) = 1
-  rw [Tree.leaf_def, treeAutCard_node]
+  show treeAutCard (RoseTree.leaf a) = 1
+  rw [RoseTree.leaf_def, treeAutCard_node]
   simp [multinomialFactor]
 
 /-- The automorphism group of any tree is non-trivial (contains identity).
@@ -244,7 +244,7 @@ private theorem ofList_map_mk_qout (lst : List (Nonplanar α)) :
   induction F using Quotient.inductionOn with
   | h lst =>
     -- Convert `Quotient.mk _ lst` to `Multiset.ofList lst` (definitionally equal).
-    show treeAutCard (Tree.node a (lst.map Quotient.out)) =
+    show treeAutCard (RoseTree.node a (lst.map Quotient.out)) =
         forestAutCard (Multiset.ofList lst)
     rw [treeAutCard_node, prod_out_treeAutCard lst, ofList_map_mk_qout lst]
     -- LHS: (lst.map autCard).prod * multinomialFactor (Multiset.ofList lst).

@@ -12,7 +12,7 @@ import Mathlib.Tactic.Abel
 set_option autoImplicit false
 
 /-!
-# Path-based single-vertex insertion and vertex decomposition for `Tree α`
+# Path-based single-vertex insertion and vertex decomposition for `RoseTree α`
 [foissy-typed-decorated-rooted-trees-2018]
 [chapoton-livernet-2001]
 
@@ -58,7 +58,7 @@ Sibling files:
 `[UPSTREAM]` candidate. Sorry-free, no `noncomputable`.
 -/
 
-namespace RootedTree.Tree
+namespace RoseTree
 
 namespace Pathed
 
@@ -69,7 +69,7 @@ variable {α : Type*}
 /-- Insert `T₂` as a new first child at the vertex addressed by path `p`
     in `T`. Returns `T` unchanged if `p` is out of bounds (no-op
     fallback for invalid paths). -/
-def insertAt : Path → Tree α → Tree α → Tree α
+def insertAt : Path → RoseTree α → RoseTree α → RoseTree α
   | [],        T₂, .node a cs => .node a (T₂ :: cs)
   | i :: rest, T₂, .node a cs =>
       if h : i < cs.length then
@@ -77,18 +77,18 @@ def insertAt : Path → Tree α → Tree α → Tree α
       else
         .node a cs
 
-@[simp] theorem insertAt_nil (T₂ : Tree α) (a : α) (cs : List (Tree α)) :
-    insertAt [] T₂ (Tree.node a cs) = Tree.node a (T₂ :: cs) := rfl
+@[simp] theorem insertAt_nil (T₂ : RoseTree α) (a : α) (cs : List (RoseTree α)) :
+    insertAt [] T₂ (RoseTree.node a cs) = RoseTree.node a (T₂ :: cs) := rfl
 
-@[simp] theorem insertAt_cons_of_lt (i : ℕ) (rest : Path) (T₂ : Tree α)
-    (a : α) (cs : List (Tree α)) (h : i < cs.length) :
-    insertAt (i :: rest) T₂ (Tree.node a cs) =
-      Tree.node a (cs.set i (insertAt rest T₂ (cs[i]'h))) := by
+@[simp] theorem insertAt_cons_of_lt (i : ℕ) (rest : Path) (T₂ : RoseTree α)
+    (a : α) (cs : List (RoseTree α)) (h : i < cs.length) :
+    insertAt (i :: rest) T₂ (RoseTree.node a cs) =
+      RoseTree.node a (cs.set i (insertAt rest T₂ (cs[i]'h))) := by
   simp [insertAt, h]
 
-theorem insertAt_cons_of_not_lt (i : ℕ) (rest : Path) (T₂ : Tree α)
-    (a : α) (cs : List (Tree α)) (h : ¬ i < cs.length) :
-    insertAt (i :: rest) T₂ (Tree.node a cs) = Tree.node a cs := by
+theorem insertAt_cons_of_not_lt (i : ℕ) (rest : Path) (T₂ : RoseTree α)
+    (a : α) (cs : List (RoseTree α)) (h : ¬ i < cs.length) :
+    insertAt (i :: rest) T₂ (RoseTree.node a cs) = RoseTree.node a cs := by
   simp [insertAt, h]
 
 /-! ## §2: `lift` — embedding `T₂` into the post-graft tree
@@ -222,13 +222,13 @@ identity proof in `Algebra.lean`. -/
 
     Within each non-empty case, sub-case on `index < cs.length` (in
     bounds — meaningful insertion) vs out-of-bounds (both no-op). -/
-theorem insertAt_commute_diff : ∀ (e f : Path) (_h : f ≠ e) (t₁ t₂ t₃ : Tree α),
+theorem insertAt_commute_diff : ∀ (e f : Path) (_h : f ≠ e) (t₁ t₂ t₃ : RoseTree α),
     Pathed.insertAt (preserveOf e f) t₃ (Pathed.insertAt e t₂ t₁) =
       Pathed.insertAt (preserveOf f e) t₂ (Pathed.insertAt f t₃ t₁)
   | [], [], h, _, _, _ => absurd rfl h.symm
   | [], j :: rest_f, _, .node a cs, t₂, t₃ => by
-    show Pathed.insertAt ((j + 1) :: rest_f) t₃ (Tree.node a (t₂ :: cs)) =
-      Pathed.insertAt [] t₂ (Pathed.insertAt (j :: rest_f) t₃ (Tree.node a cs))
+    show Pathed.insertAt ((j + 1) :: rest_f) t₃ (RoseTree.node a (t₂ :: cs)) =
+      Pathed.insertAt [] t₂ (Pathed.insertAt (j :: rest_f) t₃ (RoseTree.node a cs))
     by_cases hj : j < cs.length
     · have hj' : j + 1 < (t₂ :: cs).length := by simp; omega
       rw [Pathed.insertAt_cons_of_lt _ _ _ _ _ hj',
@@ -240,8 +240,8 @@ theorem insertAt_commute_diff : ∀ (e f : Path) (_h : f ≠ e) (t₁ t₂ t₃ 
           Pathed.insertAt_cons_of_not_lt _ _ _ _ _ hj,
           Pathed.insertAt_nil]
   | i :: rest_e, [], _, .node a cs, t₂, t₃ => by
-    show Pathed.insertAt [] t₃ (Pathed.insertAt (i :: rest_e) t₂ (Tree.node a cs)) =
-      Pathed.insertAt ((i + 1) :: rest_e) t₂ (Tree.node a (t₃ :: cs))
+    show Pathed.insertAt [] t₃ (Pathed.insertAt (i :: rest_e) t₂ (RoseTree.node a cs)) =
+      Pathed.insertAt ((i + 1) :: rest_e) t₂ (RoseTree.node a (t₃ :: cs))
     by_cases hi : i < cs.length
     · have hi' : i + 1 < (t₃ :: cs).length := by simp; omega
       rw [Pathed.insertAt_cons_of_lt _ _ _ _ _ hi,
@@ -321,20 +321,20 @@ theorem insertAt_commute_diff : ∀ (e f : Path) (_h : f ≠ e) (t₁ t₂ t₃ 
     Pure path arithmetic, no IsValidPath hypotheses needed — the no-op
     fallback of `Pathed.insertAt` handles invalid paths uniformly on
     both sides. -/
-theorem insertAt_lift_eq_nested : ∀ (e : Path) (t₁ t₂ t₃ : Tree α) (q : Path),
+theorem insertAt_lift_eq_nested : ∀ (e : Path) (t₁ t₂ t₃ : RoseTree α) (q : Path),
     Pathed.insertAt (lift e q) t₃ (Pathed.insertAt e t₂ t₁) =
       Pathed.insertAt e (Pathed.insertAt q t₃ t₂) t₁
   | [], .node a cs, t₂, t₃, q => by
-    show Pathed.insertAt (0 :: q) t₃ (Tree.node a (t₂ :: cs)) =
-         Tree.node a (Pathed.insertAt q t₃ t₂ :: cs)
+    show Pathed.insertAt (0 :: q) t₃ (RoseTree.node a (t₂ :: cs)) =
+         RoseTree.node a (Pathed.insertAt q t₃ t₂ :: cs)
     simp
   | i :: rest_e, .node a cs, t₂, t₃, q => by
     have hlift : lift (i :: rest_e) q = i :: lift rest_e q := by
       show (i :: rest_e) ++ 0 :: q = i :: (rest_e ++ 0 :: q); rfl
     by_cases h : i < cs.length
     · rw [hlift,
-          show Pathed.insertAt (i :: rest_e) t₂ (Tree.node a cs)
-              = Tree.node a (cs.set i (Pathed.insertAt rest_e t₂ (cs[i]'h)))
+          show Pathed.insertAt (i :: rest_e) t₂ (RoseTree.node a cs)
+              = RoseTree.node a (cs.set i (Pathed.insertAt rest_e t₂ (cs[i]'h)))
             from Pathed.insertAt_cons_of_lt i rest_e t₂ a cs h]
       have hlen : i < (cs.set i (Pathed.insertAt rest_e t₂ (cs[i]'h))).length := by
         rw [List.length_set]; exact h
@@ -342,8 +342,8 @@ theorem insertAt_lift_eq_nested : ∀ (e : Path) (t₁ t₂ t₃ : Tree α) (q :
           List.getElem_set_self, List.set_set,
           insertAt_lift_eq_nested rest_e (cs[i]'h) t₂ t₃ q,
           show Pathed.insertAt (i :: rest_e) (Pathed.insertAt q t₃ t₂)
-                (Tree.node a cs)
-              = Tree.node a (cs.set i (Pathed.insertAt rest_e
+                (RoseTree.node a cs)
+              = RoseTree.node a (cs.set i (Pathed.insertAt rest_e
                   (Pathed.insertAt q t₃ t₂) (cs[i]'h)))
             from Pathed.insertAt_cons_of_lt i rest_e _ a cs h]
     · rw [hlift,
@@ -368,7 +368,7 @@ counterpart. -/
     applying `preserve? []` via `filterMap` to `verticesAux i cs`
     shifts each first-index by +1, yielding `verticesAux (i+1) cs`.
     Pure path-arithmetic, proved by structural induction on `cs`. -/
-private theorem filterMap_preserveNil_verticesAux (i : ℕ) (cs : List (Tree α)) :
+private theorem filterMap_preserveNil_verticesAux (i : ℕ) (cs : List (RoseTree α)) :
     List.filterMap (preserve? ([] : Path)) (verticesAux i cs) = verticesAux (i + 1) cs := by
   induction cs generalizing i with
   | nil => rfl
@@ -388,7 +388,7 @@ private theorem filterMap_preserveNil_verticesAux (i : ℕ) (cs : List (Tree α)
 /-- Splits `verticesAux offset (cs.set i X)` into prefix-block, swapped i-block, and
     suffix-block. Pure path arithmetic via `List.set_eq_take_append_cons_drop` plus
     `verticesAux_append`. -/
-private theorem verticesAux_set (i offset : ℕ) (X : Tree α) (cs : List (Tree α))
+private theorem verticesAux_set (i offset : ℕ) (X : RoseTree α) (cs : List (RoseTree α))
     (hi : i < cs.length) :
     verticesAux offset (cs.set i X) =
       verticesAux offset (cs.take i)
@@ -406,7 +406,7 @@ private theorem verticesAux_set (i offset : ℕ) (X : Tree α) (cs : List (Tree 
     as identity. Every path is `(offset + k) :: q` with `offset + k ≠ i`, so
     `preserve? (i :: rest) ((offset + k) :: q) = some ((offset + k) :: q)`. -/
 private theorem filterMap_preserve?_cons_disjoint :
-    ∀ (i : ℕ) (rest : Path) (offset : ℕ) (cs : List (Tree α)),
+    ∀ (i : ℕ) (rest : Path) (offset : ℕ) (cs : List (RoseTree α)),
       (i < offset ∨ offset + cs.length ≤ i) →
       List.filterMap (preserve? (i :: rest)) (verticesAux offset cs) = verticesAux offset cs
   | _, _, _, [], _ => rfl
@@ -436,7 +436,7 @@ private theorem filterMap_preserve?_cons_disjoint :
     path in `t₁`. The preserved class uses `filterMap preserve? e`
     (skipping `e` itself); sourceSelf is the singleton `{e}`; lifted is
     `map (lift e) (vertices t₂)`. -/
-theorem vertices_insertAt_decomp : ∀ (e : Path) (t₁ t₂ : Tree α)
+theorem vertices_insertAt_decomp : ∀ (e : Path) (t₁ t₂ : RoseTree α)
     (_he : IsValidPath e t₁),
     ((vertices (Pathed.insertAt e t₂ t₁) : List _) : Multiset Path) =
       ((vertices t₁ : Multiset Path).filterMap (preserve? e))
@@ -449,9 +449,9 @@ theorem vertices_insertAt_decomp : ∀ (e : Path) (t₁ t₂ : Tree α)
     --        = (verticesAux 0 cs).filterMap (preserve? [])    -- [] gives none
     --        = verticesAux 1 cs                                -- bridge lemma
     --      + {[]} + (vertices t₂).map (0 :: ·)
-    show ((vertices (Pathed.insertAt [] t₂ (Tree.node a cs)) : List _) :
+    show ((vertices (Pathed.insertAt [] t₂ (RoseTree.node a cs)) : List _) :
             Multiset Path) =
-        ((vertices (Tree.node a cs) : Multiset Path).filterMap (preserve? []))
+        ((vertices (RoseTree.node a cs) : Multiset Path).filterMap (preserve? []))
           + ({[]} : Multiset Path)
           + ((vertices t₂ : Multiset Path).map (lift []))
     rw [Pathed.insertAt_nil, vertices_node, verticesAux_cons]
@@ -460,7 +460,7 @@ theorem vertices_insertAt_decomp : ∀ (e : Path) (t₁ t₂ : Tree α)
             : List Path) : Multiset Path) = _
     rw [show (0 : ℕ) + 1 = 1 from rfl]
     -- vertices (node a cs) = [] :: verticesAux 0 cs
-    rw [show ((vertices (Tree.node a cs) : Multiset Path).filterMap (preserve? []))
+    rw [show ((vertices (RoseTree.node a cs) : Multiset Path).filterMap (preserve? []))
           = (↑([] :: verticesAux 0 cs) : Multiset Path).filterMap (preserve? []) from rfl]
     -- Convert Multiset.filterMap to List.filterMap via Multiset.filterMap_coe
     rw [Multiset.filterMap_coe]
@@ -518,9 +518,9 @@ theorem vertices_insertAt_decomp : ∀ (e : Path) (t₁ t₂ : Tree α)
       apply filterMap_preserve?_cons_disjoint
       left; omega
     -- Step 1: unfold both sides of the goal.
-    show ((vertices (Pathed.insertAt (i :: rest) t₂ (Tree.node a cs)) : List _) :
+    show ((vertices (Pathed.insertAt (i :: rest) t₂ (RoseTree.node a cs)) : List _) :
             Multiset Path) =
-        ((vertices (Tree.node a cs) : Multiset Path).filterMap (preserve? (i :: rest)))
+        ((vertices (RoseTree.node a cs) : Multiset Path).filterMap (preserve? (i :: rest)))
           + ({sourceSelf (i :: rest)} : Multiset Path)
           + ((vertices t₂ : Multiset Path).map (lift (i :: rest)))
     rw [Pathed.insertAt_cons_of_lt _ _ _ _ _ hi]
@@ -594,7 +594,7 @@ The pointwise bridge is `insertAt_commute_diff`: at distinct paths
 grafting `t₃` at `f` then `t₂` at the `e`-image. The diagonal `e = f` is
 discarded by `preserve?_self = none` on both sides. -/
 
-theorem bind_filterMap_preserve?_swap (t₁ t₂ t₃ : Tree α) :
+theorem bind_filterMap_preserve?_swap (t₁ t₂ t₃ : RoseTree α) :
     Multiset.bind (↑(vertices t₁) : Multiset Path) (fun e =>
         Multiset.filterMap (fun f =>
           (preserve? e f).map (fun pos => Pathed.insertAt pos t₃
@@ -626,24 +626,24 @@ theorem bind_filterMap_preserve?_swap (t₁ t₂ t₃ : Tree α) :
   have step1 : ∀ e f : Path,
       (((preserve? e f).map (fun pos => Pathed.insertAt pos t₃
                                           (Pathed.insertAt e t₂ t₁))).map
-          (fun b : Tree α => ({b} : Multiset (Tree α)))).getD 0
+          (fun b : RoseTree α => ({b} : Multiset (RoseTree α)))).getD 0
       = (((preserve? f e).map (fun pos => Pathed.insertAt pos t₂
                                             (Pathed.insertAt f t₃ t₁))).map
-          (fun b : Tree α => ({b} : Multiset (Tree α)))).getD 0 := by
+          (fun b : RoseTree α => ({b} : Multiset (RoseTree α)))).getD 0 := by
     intros e f; rw [hpw e f]
   rw [show (fun e : Path =>
             (↑(vertices t₁) : Multiset Path).bind (fun f =>
               (((preserve? e f).map (fun pos => Pathed.insertAt pos t₃
                                                   (Pathed.insertAt e t₂ t₁))).map
-                (fun b : Tree α => ({b} : Multiset (Tree α)))).getD 0)) =
+                (fun b : RoseTree α => ({b} : Multiset (RoseTree α)))).getD 0)) =
           (fun e =>
             (↑(vertices t₁) : Multiset Path).bind (fun f =>
               (((preserve? f e).map (fun pos => Pathed.insertAt pos t₂
                                                   (Pathed.insertAt f t₃ t₁))).map
-                (fun b : Tree α => ({b} : Multiset (Tree α)))).getD 0)) from
+                (fun b : RoseTree α => ({b} : Multiset (RoseTree α)))).getD 0)) from
         funext fun e => Multiset.bind_congr (fun f _ => step1 e f)]
   rw [Multiset.bind_bind]
 
 end Pathed
 
-end RootedTree.Tree
+end RoseTree

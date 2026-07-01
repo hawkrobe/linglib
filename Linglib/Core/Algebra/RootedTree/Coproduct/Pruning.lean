@@ -1,16 +1,16 @@
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Data.Tree.Basic
+import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 set_option autoImplicit false
 
 /-!
-# Δ^ρ (admissible-cut, root-component pruning) coproduct on `Tree α`
+# Δ^ρ (admissible-cut, root-component pruning) coproduct on `RoseTree α`
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **admissible-cut, root-component pruning** variant of the
-Connes-Kreimer coproduct on ordered (planar) n-ary rooted trees `Tree α`.
+Connes-Kreimer coproduct on ordered (planar) n-ary rooted trees `RoseTree α`.
 For a tree T:
 
   Δ^ρ(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderDeletion c)
@@ -63,7 +63,7 @@ new root):
   Δ^ρ ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^ρ
 
 The B+ operator only well-defines on `Multiset (Nonplanar α) → Nonplanar α`
-(unordered children of a new root). On `Tree α` with `Multiset`
+(unordered children of a new root). On `RoseTree α` with `Multiset`
 forests, B+ would need a canonical ordering. Hence the sorry-free
 coassoc proof for Δ^ρ lives in `Coproduct/PruningNonplanar.lean` on
 `RootedTree.Nonplanar α`. (Note: this Foissy clean coassoc strategy
@@ -99,14 +99,14 @@ mutual
 /-- Multiset of (cut forest, deletion remainder) pairs for a tree.
     Each summand corresponds to one admissible cut on T under the
     deletion semantics. -/
-def cutSummandsP : Tree α →
-    Multiset (Forest (Tree α) × Tree α)
+def cutSummandsP : RoseTree α →
+    Multiset (Forest (RoseTree α) × RoseTree α)
   | .node a cs => (cutListSummandsP cs).map (fun p => (p.1, .node a p.2))
 /-- Auxiliary: cut summands for a list of children. The remainder is a
     list (children of the parent that survived the cut). -/
-def cutListSummandsP : List (Tree α) →
-    Multiset (Forest (Tree α) × List (Tree α))
-  | [] => {((0 : Forest (Tree α)), ([] : List (Tree α)))}
+def cutListSummandsP : List (RoseTree α) →
+    Multiset (Forest (RoseTree α) × List (RoseTree α))
+  | [] => {((0 : Forest (RoseTree α)), ([] : List (RoseTree α)))}
   | t :: ts =>
       ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
         (fun p => match p.1.2 with
@@ -114,26 +114,26 @@ def cutListSummandsP : List (Tree α) →
           | Option.some r => (p.1.1 + p.2.1, r :: p.2.2))
 /-- Auxiliary: per-child action — either extract whole (`none` remainder)
     or recurse with a cut (`some remainder`). -/
-def augActionP : Tree α →
-    Multiset (Forest (Tree α) × Option (Tree α))
-  | t => (({t} : Forest (Tree α)), Option.none) ::ₘ
+def augActionP : RoseTree α →
+    Multiset (Forest (RoseTree α) × Option (RoseTree α))
+  | t => (({t} : Forest (RoseTree α)), Option.none) ::ₘ
          (cutSummandsP t).map (fun p => (p.1, Option.some p.2))
 end
 
 /-- Recursive formula on a node: cutSummandsP unfolds via cutListSummandsP. -/
-@[simp] theorem cutSummandsP_node (a : α) (cs : List (Tree α)) :
-    cutSummandsP (Tree.node a cs) =
+@[simp] theorem cutSummandsP_node (a : α) (cs : List (RoseTree α)) :
+    cutSummandsP (RoseTree.node a cs) =
       (cutListSummandsP cs).map (fun p => (p.1, .node a p.2)) := by
   unfold cutSummandsP; rfl
 
 /-- Recursive formula for cutListSummandsP on empty list. -/
 @[simp] theorem cutListSummandsP_nil :
-    cutListSummandsP ([] : List (Tree α)) =
-      {((0 : Forest (Tree α)), ([] : List (Tree α)))} := by
+    cutListSummandsP ([] : List (RoseTree α)) =
+      {((0 : Forest (RoseTree α)), ([] : List (RoseTree α)))} := by
   unfold cutListSummandsP; rfl
 
 /-- Recursive formula for cutListSummandsP on a cons list. -/
-@[simp] theorem cutListSummandsP_cons (t : Tree α) (ts : List (Tree α)) :
+@[simp] theorem cutListSummandsP_cons (t : RoseTree α) (ts : List (RoseTree α)) :
     cutListSummandsP (t :: ts) =
       ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
         (fun p => match p.1.2 with
@@ -142,8 +142,8 @@ end
   conv_lhs => unfold cutListSummandsP
 
 /-- Recursive formula for augActionP. -/
-@[simp] theorem augActionP_eq (t : Tree α) :
-    augActionP t = (({t} : Forest (Tree α)), Option.none) ::ₘ
+@[simp] theorem augActionP_eq (t : RoseTree α) :
+    augActionP t = (({t} : Forest (RoseTree α)), Option.none) ::ₘ
                    (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
   conv_lhs => unfold augActionP
 
@@ -153,9 +153,9 @@ Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
 
 /-- The **tree-level Δ^ρ** coproduct: explicit `T ⊗ 1` term plus
     the sum of cut-summand tensors. -/
-noncomputable def comulTreePlanarP (T : Tree α) :
-    ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α) :=
-  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Tree α))
+noncomputable def comulTreePlanarP (T : RoseTree α) :
+    ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α) :=
+  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (RoseTree α))
   + ((cutSummandsP T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
 /-! ### comulForestPlanarP — forest-level Δ^ρ
@@ -165,15 +165,15 @@ Multiplicative extension over the disjoint-union product on forests:
 
 /-- The **forest-level Δ^ρ**: multiplicative product of tree-level
     coproducts over the components of the forest. -/
-noncomputable def comulForestPlanarP (F : Forest (Tree α)) :
-    ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α) :=
+noncomputable def comulForestPlanarP (F : Forest (RoseTree α)) :
+    ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α) :=
   (F.map (comulTreePlanarP (R := R))).prod
 
 @[simp] theorem comulForestPlanarP_zero :
-    comulForestPlanarP (R := R) (0 : Forest (Tree α)) = 1 := by
+    comulForestPlanarP (R := R) (0 : Forest (RoseTree α)) = 1 := by
   simp only [comulForestPlanarP, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulForestPlanarP_add (F G : Forest (Tree α)) :
+@[simp] theorem comulForestPlanarP_add (F G : Forest (RoseTree α)) :
     comulForestPlanarP (R := R) (F + G) =
       comulForestPlanarP (R := R) F * comulForestPlanarP (R := R) G := by
   unfold comulForestPlanarP
@@ -184,29 +184,29 @@ noncomputable def comulForestPlanarP (F : Forest (Tree α)) :
 Package the multiplicative extension as a `MonoidHom`, then lift to the
 full `AlgHom` via `AddMonoidAlgebra.lift`. -/
 
-/-- comulForestPlanarP as a monoid hom from `Multiplicative (Forest (Tree α))`. -/
+/-- comulForestPlanarP as a monoid hom from `Multiplicative (Forest (RoseTree α))`. -/
 noncomputable def comulMonoidHomP :
-    Multiplicative (Forest (Tree α)) →*
-      (ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α)) where
+    Multiplicative (Forest (RoseTree α)) →*
+      (ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α)) where
   toFun F := comulForestPlanarP (R := R) F.toAdd
   map_one' := comulForestPlanarP_zero
   map_mul' F G := comulForestPlanarP_add F.toAdd G.toAdd
 
-/-- The **Δ^ρ coproduct on `ConnesKreimer R (Tree α)`** as an algebra hom. -/
+/-- The **Δ^ρ coproduct on `ConnesKreimer R (RoseTree α)`** as an algebra hom. -/
 noncomputable def comulAlgHomP :
-    ConnesKreimer R (Tree α) →ₐ[R]
-      ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α) :=
+    ConnesKreimer R (RoseTree α) →ₐ[R]
+      ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α) :=
   AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Tree α)) ⊗[R] (ConnesKreimer R (Tree α)))
-    (Forest (Tree α)) comulMonoidHomP
+    ((ConnesKreimer R (RoseTree α)) ⊗[R] (ConnesKreimer R (RoseTree α)))
+    (Forest (RoseTree α)) comulMonoidHomP
 
-@[simp] theorem comulAlgHomP_apply_of' (F : Forest (Tree α)) :
+@[simp] theorem comulAlgHomP_apply_of' (F : Forest (RoseTree α)) :
     comulAlgHomP (R := R) (α := α) (of' F) = comulForestPlanarP F := by
   show AddMonoidAlgebra.lift R _ _ comulMonoidHomP (Finsupp.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
   rfl
 
-@[simp] theorem comulAlgHomP_apply_ofTree (T : Tree α) :
+@[simp] theorem comulAlgHomP_apply_ofTree (T : RoseTree α) :
     comulAlgHomP (R := R) (α := α) (ofTree T) = comulTreePlanarP T := by
   unfold ofTree
   rw [comulAlgHomP_apply_of']

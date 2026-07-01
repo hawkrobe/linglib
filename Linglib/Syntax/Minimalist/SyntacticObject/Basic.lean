@@ -68,11 +68,11 @@ mutual
     be a leaf; a bare (`inr ()`) node is either a **trace leaf** (childless) or a
     **binary internal** node with well-formed children. Permutation-friendly so it
     lifts to the nonplanar quotient. -/
-def isSOPlanar : Tree SOLabel → Bool
+def isSOPlanar : RoseTree SOLabel → Bool
   | .node (.inl _) cs  => cs.isEmpty
   | .node (.inr ()) cs => (cs.length == 0 || cs.length == 2) && isSOPlanarList cs
 /-- Auxiliary: all children well-formed. -/
-def isSOPlanarList : List (Tree SOLabel) → Bool
+def isSOPlanarList : List (RoseTree SOLabel) → Bool
   | []      => true
   | c :: cs => isSOPlanar c && isSOPlanarList cs
 end
@@ -80,7 +80,7 @@ end
 /-! ### `isSOPlanar` is `PermEquiv`-invariant (so it lifts) -/
 
 /-- `isSOPlanarList` is a conjunction over children, hence permutation-invariant. -/
-private theorem isSOPlanarList_perm (cs ds : List (Tree SOLabel)) (h : cs.Perm ds) :
+private theorem isSOPlanarList_perm (cs ds : List (RoseTree SOLabel)) (h : cs.Perm ds) :
     isSOPlanarList cs = isSOPlanarList ds := by
   induction h with
   | nil => rfl
@@ -89,14 +89,14 @@ private theorem isSOPlanarList_perm (cs ds : List (Tree SOLabel)) (h : cs.Perm d
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
 /-- Replacing one child by an `isSOPlanar`-equal child preserves `isSOPlanarList`. -/
-private theorem isSOPlanarList_replace (pre post : List (Tree SOLabel))
-    {old new : Tree SOLabel} (h : isSOPlanar old = isSOPlanar new) :
+private theorem isSOPlanarList_replace (pre post : List (RoseTree SOLabel))
+    {old new : RoseTree SOLabel} (h : isSOPlanar old = isSOPlanar new) :
     isSOPlanarList (pre ++ old :: post) = isSOPlanarList (pre ++ new :: post) := by
   induction pre with
   | nil => simp only [List.nil_append, isSOPlanarList]; rw [h]
   | cons hd tl ih => simp only [List.cons_append, isSOPlanarList]; rw [ih]
 
-private theorem isSOPlanar_permStep {t s : Tree SOLabel} (h : Tree.PermStep t s) :
+private theorem isSOPlanar_permStep {t s : RoseTree SOLabel} (h : RoseTree.PermStep t s) :
     isSOPlanar t = isSOPlanar s := by
   induction h with
   | swapAtRoot =>
@@ -115,7 +115,7 @@ private theorem isSOPlanar_permStep {t s : Tree SOLabel} (h : Tree.PermStep t s)
                  isSOPlanarList_replace pre post ih]
 
 /-- `isSOPlanar` is invariant under `PermEquiv`, hence descends to the quotient. -/
-theorem isSOPlanar_permEquiv {t s : Tree SOLabel} (h : Tree.PermEquiv t s) :
+theorem isSOPlanar_permEquiv {t s : RoseTree SOLabel} (h : RoseTree.PermEquiv t s) :
     isSOPlanar t = isSOPlanar s := by
   induction h with
   | rel _ _ hstep => exact isSOPlanar_permStep hstep
@@ -129,7 +129,7 @@ theorem isSOPlanar_permEquiv {t s : Tree SOLabel} (h : Tree.PermEquiv t s) :
 def isSO : Nonplanar SOLabel → Bool :=
   Nonplanar.lift isSOPlanar (fun _ _ h => isSOPlanar_permEquiv h)
 
-@[simp] theorem isSO_mk (t : Tree SOLabel) : isSO (Nonplanar.mk t) = isSOPlanar t := rfl
+@[simp] theorem isSO_mk (t : RoseTree SOLabel) : isSO (Nonplanar.mk t) = isSOPlanar t := rfl
 
 /-- A tree on the carrier is a **syntactic object** ([marcolli-chomsky-berwick-2025]
     §1.1): binary, nonplanar; leaves are lexical (`Sum.inl tok`) or traces
@@ -191,10 +191,10 @@ noncomputable def SO.node (l r : SO) : SO :=
 @[simp] theorem SO.node_val (l r : SO) :
     (SO.node l r).val = Nonplanar.node (Sum.inr ()) {l.val, r.val} := rfl
 
-/-- **Construction bridge**: a `node` of two `mk`-built objects is the single `Tree`
+/-- **Construction bridge**: a `node` of two `mk`-built objects is the single `RoseTree`
     binary node `mk (.node (inr ()) [pl, pr])` — built *without* the smart `node`'s
     `Quotient.out`, so concrete results are `decide`-able. -/
-theorem SO.node_mk (pl pr : Tree SOLabel)
+theorem SO.node_mk (pl pr : RoseTree SOLabel)
     (hl : IsSO (Nonplanar.mk pl)) (hr : IsSO (Nonplanar.mk pr)) :
     (SO.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩).val
       = Nonplanar.mk (.node (Sum.inr ()) [pl, pr]) := by
@@ -207,7 +207,7 @@ theorem SO.node_mk (pl pr : Tree SOLabel)
 
 /-- Every member of an `isSOPlanarList`-true list is itself `isSOPlanar`: the
     children of a well-formed node are well-formed. -/
-theorem isSOPlanar_of_mem {cs : List (Tree SOLabel)} (h : isSOPlanarList cs = true) :
+theorem isSOPlanar_of_mem {cs : List (RoseTree SOLabel)} (h : isSOPlanarList cs = true) :
     ∀ c ∈ cs, isSOPlanar c = true := by
   induction cs with
   | nil => intro _ hc; exact absurd hc List.not_mem_nil
@@ -230,7 +230,7 @@ theorem SO.ind {motive : SO → Prop}
     (trace : motive SO.traceLeaf)
     (node : ∀ l r : SO, motive l → motive r → motive (SO.node l r))
     (s : SO) : motive s := by
-  suffices H : ∀ n (p : Tree SOLabel) (hp : IsSO (Nonplanar.mk p)),
+  suffices H : ∀ n (p : RoseTree SOLabel) (hp : IsSO (Nonplanar.mk p)),
       p.numNodes = n → motive ⟨Nonplanar.mk p, hp⟩ by
     obtain ⟨t, ht⟩ := s
     refine Quotient.inductionOn (motive := fun t => ∀ (ht : IsSO t), motive ⟨t, ht⟩)
@@ -239,7 +239,7 @@ theorem SO.ind {motive : SO → Prop}
   induction n using Nat.strong_induction_on with
   | _ n IH =>
     rintro ⟨lbl, cs⟩ hp hw
-    have hpl : isSOPlanar (Tree.node lbl cs) = true := hp
+    have hpl : isSOPlanar (RoseTree.node lbl cs) = true := hp
     cases lbl with
     | inl tok =>
       rw [isSOPlanar] at hpl
@@ -255,11 +255,11 @@ theorem SO.ind {motive : SO → Prop}
       · simp at hlen
       · have hl : isSOPlanar pl = true := isSOPlanar_of_mem hlist pl (by simp)
         have hr : isSOPlanar pr = true := isSOPlanar_of_mem hlist pr (by simp)
-        have hnode : (⟨Nonplanar.mk (Tree.node (Sum.inr ()) [pl, pr]), hp⟩ : SO)
+        have hnode : (⟨Nonplanar.mk (RoseTree.node (Sum.inr ()) [pl, pr]), hp⟩ : SO)
             = SO.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩ :=
           Subtype.ext (SO.node_mk pl pr hl hr).symm
         rw [hnode]
-        simp only [Tree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
+        simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
           List.sum_nil] at hw
         exact node _ _ (IH pl.numNodes (by omega) pl hl rfl) (IH pr.numNodes (by omega) pr hr rfl)
       · simp at hlen

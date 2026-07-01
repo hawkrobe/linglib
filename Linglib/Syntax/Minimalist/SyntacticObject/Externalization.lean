@@ -69,7 +69,7 @@ theorem exoYield_comm (a b : List LIToken) : exoYield a b = exoYield b a := by
     projecting (selector) daughter on the `side`-convention side (`placeYield`), with
     the exocentric fallback `exoYield`. Section-free and **computable** (no `Quot.out`):
     the order is selection-determined, so it is `PermEquiv`-invariant. -/
-def linearizeP (side : ConventionDir) : Tree SOLabel → List LIToken
+def linearizeP (side : ConventionDir) : RoseTree SOLabel → List LIToken
   | .node (.inl tok) _     => [tok]
   | .node (.inr ()) []     => []
   | .node (.inr ()) [l, r] =>
@@ -81,17 +81,17 @@ def linearizeP (side : ConventionDir) : Tree SOLabel → List LIToken
 
 /-- A non-binary, non-trace bare node has empty yield (1 or ≥3 children fall to the
     catch-all). The yield analogue of `selCheckPlanar_node_none`. -/
-private theorem linearizeP_node_default (side : ConventionDir) {cs : List (Tree SOLabel)}
+private theorem linearizeP_node_default (side : ConventionDir) {cs : List (RoseTree SOLabel)}
     (h0 : cs.length ≠ 0) (h2 : cs.length ≠ 2) :
-    linearizeP side (Tree.node (Sum.inr ()) cs) = [] := by
+    linearizeP side (RoseTree.node (Sum.inr ()) cs) = [] := by
   match cs with
   | [] => exact absurd rfl h0
   | [_] => rfl
   | [_, _] => exact absurd rfl h2
   | _ :: _ :: _ :: _ => rfl
 
-private theorem linearizeP_permStep (side : ConventionDir) {t s : Tree SOLabel}
-    (hstep : Tree.PermStep t s) : linearizeP side t = linearizeP side s := by
+private theorem linearizeP_permStep (side : ConventionDir) {t s : RoseTree SOLabel}
+    (hstep : RoseTree.PermStep t s) : linearizeP side t = linearizeP side s := by
   induction hstep with
   | @swapAtRoot a l r pre post =>
     cases a with
@@ -126,7 +126,7 @@ private theorem linearizeP_permStep (side : ConventionDir) {t s : Tree SOLabel}
     | inr u =>
       cases u
       have hsc : selCheckPlanar old = selCheckPlanar new :=
-        selCheckPlanar_permEquiv (Tree.PermEquiv.of_step _hstep)
+        selCheckPlanar_permEquiv (RoseTree.PermEquiv.of_step _hstep)
       cases pre with
       | nil => cases post with
         | nil => simp only [List.nil_append, linearizeP]
@@ -147,8 +147,8 @@ private theorem linearizeP_permStep (side : ConventionDir) {t s : Tree SOLabel}
 
 /-- `linearizeP side` is `PermEquiv`-invariant, so it descends to the quotient: the
     surface order is projection-determined, not representative-position-determined. -/
-theorem linearizeP_permEquiv (side : ConventionDir) {t s : Tree SOLabel}
-    (h : Tree.PermEquiv t s) : linearizeP side t = linearizeP side s := by
+theorem linearizeP_permEquiv (side : ConventionDir) {t s : RoseTree SOLabel}
+    (h : RoseTree.PermEquiv t s) : linearizeP side t = linearizeP side s := by
   induction h with
   | rel _ _ hstep => exact linearizeP_permStep side hstep
   | refl _ => rfl
@@ -159,7 +159,7 @@ theorem linearizeP_permEquiv (side : ConventionDir) {t s : Tree SOLabel}
 def linearizeN (side : ConventionDir) : Nonplanar SOLabel → List LIToken :=
   Nonplanar.lift (linearizeP side) (fun _ _ h => linearizeP_permEquiv side h)
 
-@[simp] theorem linearizeN_mk (side : ConventionDir) (p : Tree SOLabel) :
+@[simp] theorem linearizeN_mk (side : ConventionDir) (p : RoseTree SOLabel) :
     linearizeN side (Nonplanar.mk p) = linearizeP side p := rfl
 
 theorem linearizeN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
@@ -170,7 +170,7 @@ theorem linearizeN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
        | none       => exoYield (linearizeN side a) (linearizeN side b)) := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (Tree.node (Sum.inr ()) [pa, pb]) := by
+           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
     rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
           = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
   show linearizeN side (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})

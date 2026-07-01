@@ -12,7 +12,7 @@ set_option autoImplicit false
 /-!
 # Nonplanar multi-tree insertion
 
-Lift of `Tree.Pathed.insertionForest` through `Nonplanar.mk`.
+Lift of `RoseTree.Pathed.insertionForest` through `Nonplanar.mk`.
 
 Given two multisets of nonplanar trees `F` (host forest) and `G` (guest
 forest), `Nonplanar.insertionMultiset F G` produces the multiset of all
@@ -49,12 +49,12 @@ variable {α : Type*}
     the multiset of all forests obtained by inserting `G`'s trees at
     vertices of `F`'s trees. Defined via list representatives
     (`Multiset.toList`) + tree representatives (`Quotient.out`) +
-    `Tree.Pathed.insertionForest`. -/
+    `RoseTree.Pathed.insertionForest`. -/
 noncomputable def insertionMultiset (F G : Multiset (Nonplanar α)) :
     Multiset (Multiset (Nonplanar α)) :=
-  let hostTrees : List (Tree α) := F.toList.map Quotient.out
-  let guestTrees : List (Tree α) := G.toList.map Quotient.out
-  (Tree.Pathed.insertionForest hostTrees guestTrees).map
+  let hostTrees : List (RoseTree α) := F.toList.map Quotient.out
+  let guestTrees : List (RoseTree α) := G.toList.map Quotient.out
+  (RoseTree.Pathed.insertionForest hostTrees guestTrees).map
     fun L => Multiset.ofList (L.map Nonplanar.mk)
 
 /-- With no guests, the multi-graft leaves `F` unchanged:
@@ -63,10 +63,10 @@ theorem insertionMultiset_zero_right (F : Multiset (Nonplanar α)) :
     insertionMultiset F 0 = ({F} : Multiset (Multiset (Nonplanar α))) := by
   unfold insertionMultiset
   rw [Multiset.toList_zero]
-  show (Tree.Pathed.insertionForest (F.toList.map Quotient.out) []).map
+  show (RoseTree.Pathed.insertionForest (F.toList.map Quotient.out) []).map
         (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
                     Multiset (Nonplanar α))) = ({F} : Multiset _)
-  rw [Tree.Pathed.insertionForest_nil_guests, Multiset.map_singleton]
+  rw [RoseTree.Pathed.insertionForest_nil_guests, Multiset.map_singleton]
   congr 1
   have h_map_id : (F.toList.map Quotient.out).map Nonplanar.mk = F.toList := by
     induction F.toList with
@@ -90,8 +90,8 @@ theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (Nonplanar α))
   have h_toList : G.toList ≠ [] := fun h_eq => h (Multiset.toList_eq_nil.mp h_eq)
   rcases hg : G.toList with _ | ⟨g, gs⟩
   · exact absurd hg h_toList
-  · show (Tree.Pathed.insertionForest [] (Quotient.out g :: gs.map Quotient.out)).map _ = 0
-    rw [Tree.Pathed.insertionForest_empty_host_nonempty_guests, Multiset.map_zero]
+  · show (RoseTree.Pathed.insertionForest [] (Quotient.out g :: gs.map Quotient.out)).map _ = 0
+    rw [RoseTree.Pathed.insertionForest_empty_host_nonempty_guests, Multiset.map_zero]
 
 /-! ## §2: toList helpers
 
@@ -127,21 +127,21 @@ theorem toList_map_quotientOut_add_perm (M N : Multiset (Nonplanar α)) :
     `insertionForest host guests` has length equal to the host length.
     `insertionForest` produces `T' :: F'` lists by recursion on the host;
     each step prepends one tree and recurses on the tail. -/
-private theorem _root_.RootedTree.Tree.Pathed.insertionForest_length
+private theorem _root_.RoseTree.Pathed.insertionForest_length
     {α : Type*} :
-    ∀ (host guests : List (Tree α)) {L : List (Tree α)},
-      L ∈ Tree.Pathed.insertionForest host guests → L.length = host.length
+    ∀ (host guests : List (RoseTree α)) {L : List (RoseTree α)},
+      L ∈ RoseTree.Pathed.insertionForest host guests → L.length = host.length
   | [],     [],         L, hL => by
-    rw [Tree.Pathed.insertionForest_nil_nil] at hL
+    rw [RoseTree.Pathed.insertionForest_nil_nil] at hL
     rw [Multiset.mem_singleton.mp hL]
   | [],     _ :: _,     L, hL => by
-    rw [Tree.Pathed.insertionForest_empty_host_nonempty_guests] at hL
+    rw [RoseTree.Pathed.insertionForest_empty_host_nonempty_guests] at hL
     exact absurd hL (Multiset.notMem_zero L)
   | T :: F, [],         L, hL => by
-    rw [Tree.Pathed.insertionForest_cons_host_nil_guests] at hL
+    rw [RoseTree.Pathed.insertionForest_cons_host_nil_guests] at hL
     rw [Multiset.mem_singleton.mp hL]
   | T :: F, T_g :: Ts,  L, hL => by
-    rw [Tree.Pathed.insertionForest_cons_cons] at hL
+    rw [RoseTree.Pathed.insertionForest_cons_cons] at hL
     -- L ∈ bind of bind of map; unfold mem step by step.
     rw [Multiset.mem_bind] at hL
     obtain ⟨assignment, _hass, hL⟩ := hL
@@ -151,7 +151,7 @@ private theorem _root_.RootedTree.Tree.Pathed.insertionForest_length
     obtain ⟨F', hF'mem, hL_eq⟩ := hL
     -- L = T' :: F', with F' from the inner insertionForest F (sub-guests).
     have hF'len : F'.length = F.length :=
-      Tree.Pathed.insertionForest_length F _ hF'mem
+      RoseTree.Pathed.insertionForest_length F _ hF'mem
     rw [← hL_eq, List.length_cons, hF'len, List.length_cons]
   termination_by host _ => host.length
 
@@ -161,7 +161,7 @@ private theorem _root_.RootedTree.Tree.Pathed.insertionForest_length
     Proof: `insertionMultiset A B` is built from
     `insertionForest (A.toList.map Q.out) (B.toList.map Q.out)`; every
     output list `L` has `L.length = (A.toList.map Q.out).length = A.card`
-    (via `Tree.Pathed.insertionForest_length`); and the cardinality of
+    (via `RoseTree.Pathed.insertionForest_length`); and the cardinality of
     the lifted `Multiset.ofList (L.map mk)` equals `L.length`. -/
 theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (Nonplanar α))
     {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset A B) :
@@ -170,7 +170,7 @@ theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (Nonplanar α))
   rw [Multiset.mem_map] at hF'
   obtain ⟨L, hL_mem, hL_eq⟩ := hF'
   have hLlen : L.length = (A.toList.map Quotient.out).length :=
-    Tree.Pathed.insertionForest_length _ _ hL_mem
+    RoseTree.Pathed.insertionForest_length _ _ hL_mem
   rw [← hL_eq]
   -- F'.card = (Multiset.ofList (L.map mk)).card = (L.map mk).length = L.length.
   show (Multiset.ofList (L.map Nonplanar.mk)).card = A.card
@@ -185,22 +185,22 @@ T.rootValue`: grafting guests into a tree only modifies its subtrees,
 never its root value.
 
 The proof descends through the tree substrate using
-`Tree.Pathed.insertionForest_singleton` and `multiGraft_node` (which
+`RoseTree.Pathed.insertionForest_singleton` and `multiGraft_node` (which
 preserves the head value by structure). -/
 
-/-- **Root-value preservation**: `Tree.value (multiGraft T pairs) =
-    Tree.value T`. Follows directly from `multiGraft_node`, which
+/-- **Root-value preservation**: `RoseTree.value (multiGraft T pairs) =
+    RoseTree.value T`. Follows directly from `multiGraft_node`, which
     rebuilds the root with the same value `a`. -/
-private theorem _root_.RootedTree.Tree.value_multiGraft
-    (T : Tree α) (pairs : List (Tree.Pathed.Path × Tree α)) :
-    (Tree.Pathed.multiGraft T pairs).value = T.value := by
+private theorem _root_.RoseTree.value_multiGraft
+    (T : RoseTree α) (pairs : List (RoseTree.Pathed.Path × RoseTree α)) :
+    (RoseTree.Pathed.multiGraft T pairs).value = T.value := by
   cases T with
-  | node a cs => rw [Tree.Pathed.multiGraft_node, Tree.value_node, Tree.value_node]
+  | node a cs => rw [RoseTree.Pathed.multiGraft_node, RoseTree.value_node, RoseTree.value_node]
 
 /-- **Singleton-host root preservation**: every forest in
     `insertionMultiset {T} B` is a singleton `{T'}` and `T'.rootValue =
     T.rootValue`. Descends through `insertionForest_singleton` +
-    `Tree.value_multiGraft`. -/
+    `RoseTree.value_multiGraft`. -/
 theorem insertionMultiset_singleton_rootValue
     (T : Nonplanar α) (B : Multiset (Nonplanar α))
     {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset {T} B) :
@@ -215,7 +215,7 @@ theorem insertionMultiset_singleton_rootValue
     rw [Multiset.toList_singleton]; rfl
   rw [h_toList] at hL_mem
   -- Use `insertionForest_singleton`.
-  rw [Tree.Pathed.insertionForest_singleton] at hL_mem
+  rw [RoseTree.Pathed.insertionForest_singleton] at hL_mem
   rw [Multiset.mem_map] at hL_mem
   obtain ⟨T'_tr, hT'_tr_mem, hT'_tr_eq⟩ := hL_mem
   -- T'_tr ∈ insertion (Q.out T) gs, so T'_tr = multiGraft (Q.out T) (choice.zip gs)
@@ -223,18 +223,18 @@ theorem insertionMultiset_singleton_rootValue
   refine ⟨Nonplanar.mk T'_tr, ?_, ?_⟩
   · -- F' = {Nonplanar.mk T'_tr}: L = [T'_tr], so F' = ofList [mk T'_tr] = {mk T'_tr}.
     rw [← hL_eq, ← hT'_tr_eq]
-    show (Multiset.ofList (([T'_tr] : List (Tree α)).map Nonplanar.mk) :
+    show (Multiset.ofList (([T'_tr] : List (RoseTree α)).map Nonplanar.mk) :
             Multiset (Nonplanar α)) = {Nonplanar.mk T'_tr}
     rfl
   · -- Root value preservation through the tree substrate.
     -- T'_tr ∈ insertion T.out (...): T'_tr = multiGraft T.out pairs for some pairs.
     rw [Nonplanar.rootValue_mk]
     -- Unfold `insertion` to extract the choice and reduce value-equality.
-    rw [Tree.Pathed.insertion_def, Multiset.mem_coe, List.mem_map] at hT'_tr_mem
+    rw [RoseTree.Pathed.insertion_def, Multiset.mem_coe, List.mem_map] at hT'_tr_mem
     obtain ⟨choice, _hchoice_mem, hchoice_eq⟩ := hT'_tr_mem
     rw [← hchoice_eq]
     -- Now: value (multiGraft T.out (choice.zip ...)) = T.rootValue
-    rw [Tree.value_multiGraft]
+    rw [RoseTree.value_multiGraft]
     -- value T.out = rootValue T via `rootValue_mk T.out_eq`.
     -- (Quotient.out T).value = (mk (Quotient.out T)).rootValue by `rootValue_mk`;
     -- mk (Quotient.out T) = T by `T.out_eq`.

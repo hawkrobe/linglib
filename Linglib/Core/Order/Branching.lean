@@ -35,7 +35,7 @@ class + `Is…` Prop mixin, like `RootedTree` + `IsPredArchimedean`).
 Known instance candidates across the library (2026-06-06 audit):
 `Syntax.Tree` (constituency), `NanoTree` (Nanosyntax features),
 `CFGTree` (CFG derivations — `subtreeAt` is classical Gorn
-addressing), `Core.Combinatorics.RootedTree.Planar` (Hopf-algebra
+addressing), `RoseTree` (Hopf-algebra
 trees), `FreeMagma` (bare phrase structure), Dependency-Grammar
 positions.
 -/

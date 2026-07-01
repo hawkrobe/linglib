@@ -17,11 +17,11 @@ This file provides the **carrier and counit** generic over a tree type T
 (parameterized over `Type*`) — nothing here pattern-matches on the tree
 carrier. The intended specializations:
 
-- `T = Tree α` — n-ary rooted trees (the root-level carrier in
-  `Linglib/Core/Data/Tree/Basic.lean`; the sibling coproduct files
+- `T = RoseTree α` — n-ary rooted trees (the root-level carrier in
+  `Linglib/Core/Data/RoseTree/Basic.lean`; the sibling coproduct files
   instantiate here).
 - `T = RootedTree.Nonplanar α` — n-ary nonplanar rooted trees
-  (`Nonplanar α := Quotient Tree.instSetoid`, a quotient of `Tree α`).
+  (`Nonplanar α := Quotient RoseTree.instSetoid`, a quotient of `RoseTree α`).
 
 The product structure (algebra) doesn't depend on which T is used —
 forests are multisets, multiset addition is commutative (Hopf

@@ -34,15 +34,15 @@ open RootedTree
 /-! ### Computable planar construction DSL -/
 
 /-- Planar builder: a lexical leaf. -/
-abbrev SO.leafP (tok : LIToken) : Tree SOLabel := .node (Sum.inl tok) []
+abbrev SO.leafP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inl tok) []
 /-- Planar builder: the bare trace leaf. -/
-abbrev SO.traceP : Tree SOLabel := .node (Sum.inr ()) []
+abbrev SO.traceP : RoseTree SOLabel := .node (Sum.inr ()) []
 /-- Planar builder: a bare binary node. -/
-abbrev SO.nodeP (l r : Tree SOLabel) : Tree SOLabel := .node (Sum.inr ()) [l, r]
+abbrev SO.nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel := .node (Sum.inr ()) [l, r]
 
 /-- Build a syntactic object from a planar tree, discharging well-formedness by
     `decide` (concrete trees) — the computable entry point for `decide`-based studies. -/
-def SO.ofPlanar (p : Tree SOLabel) (h : isSOPlanar p = true := by first | rfl | decide) : SO :=
+def SO.ofPlanar (p : RoseTree SOLabel) (h : isSOPlanar p = true := by first | rfl | decide) : SO :=
   ⟨Nonplanar.mk p, h⟩
 
 @[simp] theorem SO.ofPlanar_leafP (tok : LIToken) :
