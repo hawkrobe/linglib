@@ -3,15 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.GroupTheory.Congruence.Basic
-import Linglib.Core.Algebra.FreeMonoid.Destutter
+import Linglib.Core.Data.List.Destutter
 
 /-!
 # The Obligatory Contour Principle
 
 The categorical, strict-identity, single-tier OCP: the ban on two *identical* adjacent
-autosegments on one tier ([mccarthy-1986]), on a projected tier for `IsCleanOn`
+autosegments on one tier ([leben-1973], [mccarthy-1986]), on a projected tier for `IsCleanOn`
 ([chandlee-jardine-2019]). As a stringset the constraint is tier-based strictly local
 (TSL₂, [heinz-rawal-tanner-2011]), characterised in `OCP`. The
 fusion repair `collapse` is mathlib's
@@ -26,10 +24,6 @@ and lives in the thresholded-TSL substrate, not here.
 
 * `OCP.IsClean` / `OCP.IsCleanOn` — OCP-cleanness, flat and on a projected tier.
 * `OCP.collapse` — the fusion repair (OCP-merger normal form).
-* `OCP.gconcat` / `OCP.collapseHom` / `OCP.ocpCon` / `OCP.ocpQuotientEquiv` — the OCP quotient
-  monoid `(OCP-clean, gconcat, [])`, read off the theory-neutral
-  `Core.Algebra.FreeMonoid.Destutter` substrate (the `Monoid {l // IsClean l}` instance is
-  inherited from there).
 * `OCP.block` — the blocking repair (antigemination guard).
 
 ## Main results
@@ -37,8 +31,10 @@ and lives in the thresholded-TSL substrate, not here.
 * `collapse_eq_destutter` — the fusion repair is `List.destutter`.
 * `collapse_clean` / `collapse_eq_self_iff` — `collapse` is the retraction onto `IsClean`.
 * `collapse_sublist` — fusion never adds material.
-* `collapse_append` — `collapse` is the quotient hom: `(OCP-clean, gconcat, [])` is the
-  quotient `(List α, ++)/OCP` (the monoid laws live on the substrate).
+* `collapse_append` — `collapse` is the OCP congruence: collapsing each operand before `++`
+  is harmless, so `collapse` descends to the OCP quotient of `(List α, ++)` (the quotient
+  monoid and its presentation `⟨α | a · a = a⟩` live on the `Core.Algebra.FreeMonoid.Destutter`
+  substrate; the autosegmental reading is in `Autosegmental.Collapse`).
 * `block_eq_self` — antigemination: a rule is blocked when it would violate the OCP.
 -/
 
@@ -50,7 +46,8 @@ variable {α β : Type*}
 
 /-- A tier is **OCP-clean** when no adjacent pair is identical. Adjacency-only, so
 weaker than `List.Nodup` (`[1, 2, 1]` is clean). A reducible alias of the substrate
-predicate, so the `Core.Algebra.FreeMonoid.Destutter` monoid instance transfers. -/
+predicate `List.IsChain (· ≠ ·)`, so the substrate's `Monoid {l // l.IsChain (· ≠ ·)}`
+applies to OCP-clean tiers downstream. -/
 abbrev IsClean (xs : List α) : Prop :=
   List.IsChain (· ≠ ·) xs
 
@@ -125,8 +122,9 @@ theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs
 /-! ### The OCP congruence: `collapse` as a quotient homomorphism
 
 `collapse` descends to a homomorphism on the OCP quotient of `(List α, ++)`: collapsing
-each operand before appending is harmless. This is what makes `(OCP-clean, gconcat, [])` the
-quotient `(List α, ++)/OCP`, bundled below as `collapseHom` over the substrate monoid. -/
+each operand before appending is harmless. This is what makes the OCP-clean tiers under
+fusion-concatenation (`List.destutterConcat`) the quotient `(List α, ++)/OCP` — bundled on
+the `Core.Algebra.FreeMonoid.Destutter` substrate as `FreeMonoid.destutterHom`. -/
 
 /-- Collapsing the left operand before appending does not change the result. -/
 theorem collapse_append_left (x y : List α) :
@@ -144,33 +142,16 @@ theorem collapse_append (x y : List α) :
     collapse (x ++ y) = collapse (collapse x ++ collapse y) :=
   List.destutter_append_destutter x y
 
-/-! ### The bundled OCP quotient monoid (read off `Core.Algebra.FreeMonoid.Destutter`)
+/-! ### The blocking repair
 
-The construction is theory-neutral (`List.destutterConcat`, `FreeMonoid.destutterHom`, the
-`Monoid {l // l.IsChain (· ≠ ·)}` instance); the names below read it as autosegmental tier
-fusion. The `Monoid {l // IsClean l}` instance is inherited from the substrate, since
-`IsClean` is a reducible alias of `List.IsChain (· ≠ ·)`. -/
-
-/-- **OCP-gluing concatenation** `∘`: concatenate, then merge the new boundary geminate. The
-multiplication of the OCP quotient monoid (`List.destutterConcat`). -/
-abbrev gconcat (x y : List α) : List α := List.destutterConcat x y
-
-/-- The bundled OCP quotient map `FreeMonoid α →* {l // IsClean l}`
-(`FreeMonoid.destutterHom`), reading destutter normalization as OCP fusion. -/
-abbrev collapseHom : FreeMonoid α →* {l : List α // IsClean l} := FreeMonoid.destutterHom
-
-/-- The **OCP congruence** on the free monoid: the kernel of `collapseHom`
-(`FreeMonoid.destutterCon`). The OCP quotient monoid is `ocpCon.Quotient`. -/
-abbrev ocpCon : Con (FreeMonoid α) := FreeMonoid.destutterCon
-
-/-- **First isomorphism theorem for the OCP quotient** ([mccarthy-1986]). The abstract
-quotient monoid `FreeMonoid α ⧸ OCP` is the concrete OCP-clean model `{l // IsClean l}`
-(`FreeMonoid.destutterQuotientEquiv`). -/
-noncomputable abbrev ocpQuotientEquiv :
-    (ocpCon (α := α)).Quotient ≃* {l : List α // IsClean l} :=
-  FreeMonoid.destutterQuotientEquiv
-
-/-! ### The blocking repair -/
+The substrate provides the OCP quotient monoid (OCP-clean tiers under fusion-concatenation,
+`List.destutterConcat`) and its identification with the monoid presented by idempotent
+autosegments `⟨α | a · a = a⟩`
+(`Core.Algebra.FreeMonoid.Destutter`). The autosegmental reading of that quotient — the
+decategorification square against the categorical representation, contrasting the OCP (a
+monoidal quotient) with the No-Crossing Constraint (a monoidal subcategory) — lives
+downstream in `Autosegmental.Collapse`, which can see both `Autosegmental.ncc_isMonoidal` and
+`Autosegmental.ocp_not_isMonoidal`. -/
 
 variable (rule : List α → List α)
 

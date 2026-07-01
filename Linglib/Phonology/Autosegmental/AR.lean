@@ -536,6 +536,10 @@ open CategoryTheory MonoidalCategory
   leftUnitor X := eqToIso (one_mul X)
   rightUnitor X := eqToIso (mul_one X)
 
+/-- The monoidal product **is** the object-monoid multiplication (both are `concat`): the
+    explicit bridge between the categorical `⊗` and the decategorified `*`. -/
+@[simp] theorem tensorObj_eq_mul (A B : AR α β) : A ⊗ B = A * B := rfl
+
 instance : MonoidalCategory (AR α β) :=
   MonoidalCategory.ofTensorHom
     (id_tensorHom_id := Hom.concatMap_id)
@@ -571,8 +575,8 @@ def isPlanar : ObjectProperty (AR α β) := fun A => A.toGraph.IsPlanar
 
 /-- Planarity is a **monoidal property**: the unit is planar and `concat`
     preserves planarity (using the left factor's in-boundedness via
-    `Graph.isPlanar_concat`). This is the categorical content of the NCC's
-    morpheme-modularity ([bermudez-otero-2012]). -/
+    `Graph.isPlanar_concat`). This is the categorical content of [jardine-heinz-2015]'s
+    NCC-preservation result (their Theorem 4: every concatenation satisfies the NCC). -/
 instance instIsMonoidalIsPlanar : (isPlanar (α := α) (β := β)).IsMonoidal where
   prop_unit := Graph.isPlanar_empty
   prop_tensor X₁ _X₂ h₁ h₂ := Graph.isPlanar_concat X₁.inBounds h₁ h₂
@@ -612,12 +616,15 @@ instance [DecidableEq α] (A : AR α β) : Decidable (upperOCPClean A) :=
     smallest label/backbone pair admitting two equal upper elements. -/
 private def ocpWitness : AR Bool Unit := ⟨⟨.ofList [true], .empty, ∅⟩, by decide⟩
 
-/-- The OCP is **not** morpheme-modular: concatenation can create an adjacent
-    identical autosegment pair at the morpheme boundary — a violation present in
-    neither factor. Witnessed by two single-autosegment reps (`⟨[true], [], ∅⟩`)
-    whose concatenation has upper tier `[true, true]`. The OCP-clean ARs are
-    therefore not closed under `⊗`; the boundary violation is what forces a repair
-    (`OCP.collapse`; see `collapse_repairs_boundary`). -/
+/-- OCP-cleanness is **not** closed under the bare coproduct `⊗` (`concat`): concatenation
+    can abut an identical autosegment pair at the morpheme boundary — a violation present in
+    neither factor. Witnessed by two single-autosegment reps (`⟨[true], [], ∅⟩`) whose
+    concatenation has upper tier `[true, true]`. This is why [jardine-heinz-2015] build the
+    melody-tier *merge* into their concatenation `◦`: the bare coproduct here is `◦` with the
+    merge stripped out, and the merge restores the OCP (their Theorem 5; `OCP.collapse` as the
+    repair, `collapse_repairs_boundary`; `Collapse.isCleanAR_gconcatAR` for closure under `◦`).
+    So the OCP is a monoidal *quotient* (closed under fusion-`◦`), not a monoidal *sub*-object
+    (closed under the coproduct) — the dual situation to the NCC (`ncc_isMonoidal`). -/
 theorem ocp_not_isMonoidal : ¬ (upperOCPClean (α := Bool) (β := Unit)).IsMonoidal := by
   intro h
   haveI := h.toTensorLE
@@ -627,10 +634,11 @@ theorem ocp_not_isMonoidal : ¬ (upperOCPClean (α := Bool) (β := Unit)).IsMono
   revert hc
   decide
 
-/-- The discriminating dichotomy: the monoidal structure of `WellFormedAR` classifies the
-    NCC as morpheme-modular (closed under `⊗`) and the OCP as not
-    (boundary-spanning). The two halves cannot be interchanged — that is what
-    makes the monoidal product load-bearing rather than decorative. -/
+/-- The discriminating dichotomy ([jardine-heinz-2015] Theorems 4 vs 5): under the bare
+    coproduct `⊗` the NCC is preserved (closed, a monoidal *sub*-object) but the OCP is not
+    (boundary-spanning). The OCP is recovered only as a *quotient*, by the fusion merge that
+    `◦` builds in. The two halves cannot be interchanged — that is what makes the monoidal
+    product load-bearing rather than decorative. -/
 theorem ncc_modular_ocp_not :
     (isPlanar (α := Bool) (β := Unit)).IsMonoidal ∧
     ¬ (upperOCPClean (α := Bool) (β := Unit)).IsMonoidal :=

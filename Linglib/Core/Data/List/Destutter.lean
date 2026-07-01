@@ -23,6 +23,8 @@ proofs go through `destutter'` boundary scaffolding. Candidates for
 * `List.destutter_head?` — `destutter` preserves the head.
 * `List.destutter_append_length_clean` — the clean-clean boundary length: two `(· ≠ ·)`
   chains concatenated and destuttered merge exactly one element iff the seam matches.
+* `List.destutterConcat` — append then destutter; the multiplication of the destutter
+  quotient monoid, with its associativity and unit laws (pure `List` facts).
 -/
 
 namespace List
@@ -185,5 +187,37 @@ theorem destutter_append_length_clean {l m : List α}
     · have := length_pos_of_ne_nil (l := m) (by rintro rfl; simp at h)
       omega
     · omega
+
+/-! ### Append-then-destutter
+
+`destutterConcat` — append, then collapse the single run that may form at the seam — is the
+multiplication of the destutter quotient monoid (built on the free monoid in
+`Mathlib.Algebra.FreeMonoid.Destutter`). Associativity and the unit laws reduce to the
+`++`-congruences above, so they are pure `List` facts and live here. -/
+
+/-- **Append then destutter**: concatenate, then collapse the single run that may form at
+the seam. The multiplication of the destutter quotient monoid. -/
+def destutterConcat (x y : List α) : List α := (x ++ y).destutter (· ≠ ·)
+
+/-- `destutterConcat` outputs are stutter-free. -/
+theorem isChain_destutterConcat (x y : List α) :
+    (destutterConcat x y).IsChain (· ≠ ·) := isChain_destutter (· ≠ ·) (x ++ y)
+
+/-- `destutterConcat` is associative — inherited from `++` through `destutter`. -/
+theorem destutterConcat_assoc (x y z : List α) :
+    destutterConcat (destutterConcat x y) z = destutterConcat x (destutterConcat y z) := by
+  simp only [destutterConcat, destutter_append_left, destutter_append_right, List.append_assoc]
+
+theorem nil_destutterConcat (x : List α) :
+    destutterConcat [] x = x.destutter (· ≠ ·) := rfl
+
+theorem destutterConcat_nil (x : List α) :
+    destutterConcat x [] = x.destutter (· ≠ ·) := by simp [destutterConcat]
+
+/-- `destutter (· ≠ ·)` carries `(List α, ++)` onto `(·, destutterConcat)`. -/
+theorem destutter_append_eq_destutterConcat (x y : List α) :
+    (x ++ y).destutter (· ≠ ·)
+      = destutterConcat (x.destutter (· ≠ ·)) (y.destutter (· ≠ ·)) := by
+  rw [destutterConcat, ← destutter_append_destutter]
 
 end List
