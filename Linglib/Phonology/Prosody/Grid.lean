@@ -45,10 +45,34 @@ a homomorphism from the tree into the DTE-marked grid, built from a small algebr
 
 namespace Prosody
 
-/-! ## The rendered grid and the Continuous Column Constraint -/
+/-! ## The tower carriers
+
+The four objects of the tower (see the module header): the rendered `Marks`, the pure `Grid`, and
+the DTE-marked grid `MarkedGrid` built from `Column`s. Operations follow, one namespace each. -/
 
 /-- A rendered metrical grid: rows of head-marks, bottom row first. -/
 abbrev Marks := List (List Bool)
+
+/-- A metrical grid ([hayes-1995] §3.2): the beat count (column height) over each position, left to
+    right. Absolute heights carry no significance; only relative prominence does. -/
+abbrev Grid := List ℕ
+
+/-- One column of a marked grid: the σ-leaf it sits over, its mark count (`height`), and whether it
+    lies on the current head-spine (the designated terminal element so far, [liberman-prince-1977]). -/
+structure Column (α : Type*) where
+  /-- The σ-leaf under this column. -/
+  terminal : α
+  /-- The column height = number of grid marks. -/
+  height : ℕ
+  /-- Whether this column is (so far) the designated terminal element. -/
+  onSpine : Bool
+
+/-- A grid whose columns carry the head-spine (the DTE, [liberman-prince-1977]). This is the pure
+    grid *plus a DTE marking* — it deliberately does not record the full bracketing (that is `Tree`;
+    `Grid.ofTree_not_injective` is the honest statement that heights lose it). -/
+abbrev MarkedGrid (α : Type*) := List (Column α)
+
+/-! ## Marks: the Continuous Column Constraint -/
 
 namespace Marks
 
@@ -65,13 +89,99 @@ instance (m : Marks) : Decidable (IsContinuous m) := by unfold IsContinuous; inf
 
 end Marks
 
-/-! ## The pure grid -/
+/-! ## The DTE-marked grid: the marked-grid algebra -/
 
-/-- A metrical grid ([hayes-1995] §3.2): the beat count (column height) over each position, left to
-    right. Absolute heights carry no significance; only relative prominence does. -/
-abbrev Grid := List ℕ
+namespace MarkedGrid
+variable {α : Type*} (b : MarkedGrid α)
+
+/-- Forget the marking: the underlying pure grid of column heights. -/
+def toGrid : Grid := b.map (·.height)
+
+/-- The terminals under the columns, left to right. -/
+def terminals : List α := b.map (·.terminal)
+
+/-- The head-spine columns' heights — the designated terminal elements' prominences. -/
+def headHeights : Grid := (b.filter (·.onSpine)).map (·.height)
+
+/-- The head-spine terminals — the designated terminal elements. -/
+def headTerminals : List α := (b.filter (·.onSpine)).map (·.terminal)
+
+/-- A single terminal: one column of height `1`, on its own head-spine. -/
+def cell (x : α) : MarkedGrid α := [⟨x, 1, true⟩]
+
+/-- Juxtapose sibling constituents. -/
+def juxtapose (bs : List (MarkedGrid α)) : MarkedGrid α := bs.flatten
+
+/-- The **head-projection step** of the RPPR ([liberman-prince-1977]): a head edge raises the head
+    by one grid mark — bump every head-spine column. -/
+def promote : MarkedGrid α :=
+  b.map (fun c => { c with height := c.height + if c.onSpine then 1 else 0 })
+
+/-- A weak edge: heights freeze, the head-spine marking is dropped. -/
+def clear : MarkedGrid α :=
+  b.map (fun c => { c with onSpine := false })
+
+/-- One edge of the descent: a head edge projects, any other clears the spine. -/
+def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
+  if isHead then b.promote else b.clear
+
+@[simp] theorem edge_true : edge true b = b.promote := rfl
+@[simp] theorem edge_false : edge false b = b.clear := rfl
+
+/-! ### The algebra of the marked grid -/
+
+@[simp] theorem toGrid_cell (x : α) : (cell x).toGrid = [1] := rfl
+@[simp] theorem headHeights_cell (x : α) : (cell x).headHeights = [1] := rfl
+@[simp] theorem headTerminals_cell (x : α) : (cell x).headTerminals = [x] := rfl
+
+@[simp] theorem toGrid_clear : (clear b).toGrid = b.toGrid := by
+  simp [clear, toGrid, List.map_map]
+
+@[simp] theorem headHeights_clear : (clear b).headHeights = [] := by
+  simp [clear, headHeights, List.filter_map]
+
+@[simp] theorem headTerminals_clear : (clear b).headTerminals = [] := by
+  simp [clear, headTerminals, List.filter_map]
+
+@[simp] theorem headHeights_promote :
+    (promote b).headHeights = b.headHeights.map (· + 1) := by
+  induction b with
+  | nil => rfl
+  | cons c b ih => obtain ⟨_, _, d⟩ := c; cases d <;> simp_all [promote, headHeights]
+
+@[simp] theorem headTerminals_promote :
+    (promote b).headTerminals = b.headTerminals := by
+  simp only [headTerminals, promote, List.filter_map, List.map_map, Function.comp_def]
+
+@[simp] theorem toGrid_juxtapose (bs : List (MarkedGrid α)) :
+    (juxtapose bs).toGrid = bs.flatMap (·.toGrid) := by
+  simp only [juxtapose, toGrid, List.map_flatten, List.flatMap_def]
+
+@[simp] theorem headHeights_juxtapose (bs : List (MarkedGrid α)) :
+    (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
+  simp only [juxtapose, headHeights, List.flatten_eq_flatMap, List.filter_flatMap,
+    List.map_flatMap, id_eq]
+
+@[simp] theorem headTerminals_juxtapose (bs : List (MarkedGrid α)) :
+    (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
+  simp only [juxtapose, headTerminals, List.flatten_eq_flatMap, List.filter_flatMap,
+    List.map_flatMap, id_eq]
+
+@[simp] theorem headHeights_edge (h : Bool) (b : MarkedGrid α) :
+    (edge h b).headHeights = if h then b.headHeights.map (· + 1) else [] := by
+  cases h <;> simp [edge]
+
+@[simp] theorem headTerminals_edge (h : Bool) (b : MarkedGrid α) :
+    (edge h b).headTerminals = if h then b.headTerminals else [] := by
+  cases h <;> simp [edge]
+
+end MarkedGrid
+
+/-! ## Grid: peak, the RPPR projection, and the readers -/
 
 namespace Grid
+
+/-! ### The pure grid: peak, culminativity, rendering -/
 
 /-- The prominence peak: the tallest column. -/
 def peak (g : Grid) : ℕ := g.foldr max 0
@@ -107,112 +217,8 @@ theorem rows_isContinuous (g : Grid) : Marks.IsContinuous (rows g) := by
   by_cases hr : i + 1 < h <;> simp [hr]
   omega
 
-end Grid
+/-! ### The RPPR projection -/
 
-/-! ## The DTE-marked grid and the RPPR projection -/
-
-/-- One column of a marked grid: the σ-leaf it sits over, its mark count (`height`), and whether it
-    lies on the current head-spine (the designated terminal element so far, [liberman-prince-1977]). -/
-structure Column (α : Type*) where
-  /-- The σ-leaf under this column. -/
-  terminal : α
-  /-- The column height = number of grid marks. -/
-  height : ℕ
-  /-- Whether this column is (so far) the designated terminal element. -/
-  onSpine : Bool
-
-/-- A grid whose columns carry the head-spine (the DTE, [liberman-prince-1977]). This is the pure
-    grid *plus a DTE marking* — it deliberately does not record the full bracketing (that is `Tree`;
-    `Grid.ofTree_not_injective` is the honest statement that heights lose it). -/
-abbrev MarkedGrid (α : Type*) := List (Column α)
-
-namespace MarkedGrid
-variable {α : Type*}
-
-/-- Forget the marking: the underlying pure grid of column heights. -/
-def toGrid (b : MarkedGrid α) : Grid := b.map (·.height)
-
-/-- The terminals under the columns, left to right. -/
-def terminals (b : MarkedGrid α) : List α := b.map (·.terminal)
-
-/-- The head-spine columns' heights — the designated terminal elements' prominences. -/
-def headHeights (b : MarkedGrid α) : Grid := (b.filter (·.onSpine)).map (·.height)
-
-/-- The head-spine terminals — the designated terminal elements. -/
-def headTerminals (b : MarkedGrid α) : List α := (b.filter (·.onSpine)).map (·.terminal)
-
-/-- A single terminal: one column of height `1`, on its own head-spine. -/
-def cell (x : α) : MarkedGrid α := [⟨x, 1, true⟩]
-
-/-- Juxtapose sibling constituents. -/
-def juxtapose (bs : List (MarkedGrid α)) : MarkedGrid α := bs.flatten
-
-/-- The **head-projection step** of the RPPR ([liberman-prince-1977]): a head edge raises the head
-    by one grid mark — bump every head-spine column. -/
-def promote (b : MarkedGrid α) : MarkedGrid α :=
-  b.map (fun c => { c with height := c.height + if c.onSpine then 1 else 0 })
-
-/-- A weak edge: heights freeze, the head-spine marking is dropped. -/
-def clear (b : MarkedGrid α) : MarkedGrid α :=
-  b.map (fun c => { c with onSpine := false })
-
-/-- One edge of the descent: a head edge projects, any other clears the spine. -/
-def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
-  if isHead then b.promote else b.clear
-
-@[simp] theorem edge_true (b : MarkedGrid α) : edge true b = b.promote := rfl
-@[simp] theorem edge_false (b : MarkedGrid α) : edge false b = b.clear := rfl
-
-/-! ### The algebra of the marked grid -/
-
-@[simp] theorem toGrid_cell (x : α) : (cell x).toGrid = [1] := rfl
-@[simp] theorem headHeights_cell (x : α) : (cell x).headHeights = [1] := rfl
-@[simp] theorem headTerminals_cell (x : α) : (cell x).headTerminals = [x] := rfl
-
-@[simp] theorem toGrid_clear (b : MarkedGrid α) : (clear b).toGrid = b.toGrid := by
-  simp [clear, toGrid, List.map_map]
-
-@[simp] theorem headHeights_clear (b : MarkedGrid α) : (clear b).headHeights = [] := by
-  simp [clear, headHeights, List.filter_map]
-
-@[simp] theorem headTerminals_clear (b : MarkedGrid α) : (clear b).headTerminals = [] := by
-  simp [clear, headTerminals, List.filter_map]
-
-@[simp] theorem headHeights_promote (b : MarkedGrid α) :
-    (promote b).headHeights = b.headHeights.map (· + 1) := by
-  induction b with
-  | nil => rfl
-  | cons c b ih => obtain ⟨_, _, d⟩ := c; cases d <;> simp_all [promote, headHeights]
-
-@[simp] theorem headTerminals_promote (b : MarkedGrid α) :
-    (promote b).headTerminals = b.headTerminals := by
-  simp only [headTerminals, promote, List.filter_map, List.map_map, Function.comp_def]
-
-@[simp] theorem toGrid_juxtapose (bs : List (MarkedGrid α)) :
-    (juxtapose bs).toGrid = bs.flatMap (·.toGrid) := by
-  simp only [juxtapose, toGrid, List.map_flatten, List.flatMap_def]
-
-@[simp] theorem headHeights_juxtapose (bs : List (MarkedGrid α)) :
-    (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
-  simp only [juxtapose, headHeights, List.flatten_eq_flatMap, List.filter_flatMap,
-    List.map_flatMap, id_eq]
-
-@[simp] theorem headTerminals_juxtapose (bs : List (MarkedGrid α)) :
-    (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
-  simp only [juxtapose, headTerminals, List.flatten_eq_flatMap, List.filter_flatMap,
-    List.map_flatMap, id_eq]
-
-@[simp] theorem headHeights_edge (h : Bool) (b : MarkedGrid α) :
-    (edge h b).headHeights = if h then b.headHeights.map (· + 1) else [] := by
-  cases h <;> simp [edge]
-
-@[simp] theorem headTerminals_edge (h : Bool) (b : MarkedGrid α) :
-    (edge h b).headTerminals = if h then b.headTerminals else [] := by
-  cases h <;> simp [edge]
-
-end MarkedGrid
-
-namespace Grid
 open MarkedGrid
 
 /-- The **Relative Prominence Projection Rule** ([liberman-prince-1977]) as a homomorphism
