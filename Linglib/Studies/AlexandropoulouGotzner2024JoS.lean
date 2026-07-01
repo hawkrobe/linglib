@@ -40,12 +40,12 @@ Glossa paper builds on the JoS findings as established results.
 
 - `Semantics/Gradability/Theory.lean` — `ThresholdPair`,
   `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`.
-- `Semantics/Gradability/AntonymQuadruplet.lean` — `AntonymForm`
+- `Semantics/Degree/Gradability/AntonymPrediction.lean` — `AntonymForm`
   (the four-form quadruplet enum, theory-neutral substrate).
 - `Semantics/Gradability/AntonymPrediction.lean` —
   `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot`,
   `predictionForAntonymy`, `predictionForEntry`, anchor theorems.
-- `Semantics/Degree/Basic.lean` — `antonymMeaning`.
+- `Semantics/Degree/Basic.lean` — `notPositiveMeaning`.
 - `Features/Antonymy.lean` — `NegationType`, `Asymmetry`.
 - `Fragments/English/Predicates/Adjectival.lean` — lexical entries
   (transitively, via the Glossa companion file).
@@ -84,7 +84,7 @@ open Features (NegationType Asymmetry)
 open Semantics.Gradability (GradableAdjective ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm
   predictionForAntonymy predictionForEntry)
-open Degree (antonymMeaning)
+open Degree (notPositiveMeaning)
 open English.Predicates.Adjectival
   (large clean gigantic)
 
@@ -208,13 +208,13 @@ theorem krifka_agrees_with_horn_where_committed :
     derives it pragmatically from a contradictory base via the M-principle.
 
     The two views are empirically indistinguishable at the level of their
-    composed output: A&G's `antonymMeaning d tp.pos` (the literal denotation
+    composed output: A&G's `notPositiveMeaning d tp.pos` (the literal denotation
     of "not positive" projected through the positive threshold) **is**
     `AntonymForm.strengthenedDenot tp .notPositive d` definitionally.
 
     The `Iff.rfl` proofs below are **intentional** and load-bearing: their
     fragility under substrate change *is* the point. If `contradictoryNeg`
-    ever stops being a `def`-equal alias for `antonymMeaning` (e.g. through
+    ever stops being a `def`-equal alias for `notPositiveMeaning` (e.g. through
     a regression of the Bool→Prop substrate evolution in
     `Semantics/Gradability/Theory.lean`), these theorems will
     break loudly — surfacing the substrate drift at the cross-paper bridge
@@ -227,7 +227,7 @@ theorem krifka_agrees_with_horn_where_committed :
     `Theory.lean::contradictoryNeg`. -/
 theorem ag_negative_strengthening_eq_krifka {max : Nat}
     (d : Degree max) (tp : ThresholdPair max) :
-    antonymMeaning d tp.pos ↔
+    notPositiveMeaning d tp.pos ↔
     AntonymForm.strengthenedDenot tp .notPositive d :=
   Iff.rfl
 
@@ -238,7 +238,7 @@ theorem ag_negative_strengthening_eq_krifka {max : Nat}
 theorem ag_quadruplet_eq_krifka_strengthened {max : Nat}
     (d : Degree max) (tp : ThresholdPair max) :
     (positiveMeaning' d tp ↔ AntonymForm.strengthenedDenot tp .positive d) ∧
-    (antonymMeaning d tp.pos ↔ AntonymForm.strengthenedDenot tp .notPositive d) ∧
+    (notPositiveMeaning d tp.pos ↔ AntonymForm.strengthenedDenot tp .notPositive d) ∧
     (contraryNegMeaning d tp ↔ AntonymForm.strengthenedDenot tp .negative d) ∧
     (notContraryNegMeaning d tp ↔ AntonymForm.strengthenedDenot tp .notNegative d) :=
   ⟨Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl⟩

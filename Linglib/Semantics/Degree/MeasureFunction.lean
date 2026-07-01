@@ -51,7 +51,7 @@ quantify over the scale's maximum (or its absence).
 
 ## Sections
 
-1. `MeasureFunction` — time-indexed measure (K&L footnote 9)
+1. `MeasureFunction` — time-indexed measure ([hay-kennedy-levin-1999] eq. 11)
 2. `differenceFunction` — m clamped at d as new minimum (K&L eq. 23)
 3. `measureOfChange` — `m_Δ(x)(e)` (K&L eq. 25)
 4. `MeasureFunction.toHasScalarResult` — bridge to Beavers substrate
@@ -64,7 +64,7 @@ namespace Degree.MeasureFunction
 open Semantics.ArgumentStructure.Affectedness
 
 -- ════════════════════════════════════════════════════
--- § 1. MeasureFunction (K&L 2008 footnote 9)
+-- § 1. MeasureFunction ([hay-kennedy-levin-1999] eq. 11)
 -- ════════════════════════════════════════════════════
 
 set_option linter.dupNamespace false in

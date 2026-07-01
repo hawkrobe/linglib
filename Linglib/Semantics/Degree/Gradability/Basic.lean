@@ -54,14 +54,14 @@ structure ThresholdPair (max : Nat) where
 /-! ### Negation semantics
 
 The two-threshold model for contrary antonyms: the general threshold semantics of
-`Semantics/Degree/Basic` (`positiveMeaning`/`negativeMeaning`/`antonymMeaning`) read
+`Semantics/Degree/Basic` (`positiveMeaning`/`negativeMeaning`/`notPositiveMeaning`) read
 through a `ThresholdPair`'s two poles. -/
 
 section TwoThreshold
 variable {max : Nat} (d : Degree max)
 
-/-- Contradictory negation *not happy* — `d ≤ θ` (`Degree.antonymMeaning`). -/
-abbrev contradictoryNeg (θ : Threshold max) : Prop := Degree.antonymMeaning d θ
+/-- Contradictory negation *not happy* — `d ≤ θ` (`Degree.notPositiveMeaning`). -/
+abbrev contradictoryNeg (θ : Threshold max) : Prop := Degree.notPositiveMeaning d θ
 
 /-- Contrary negation *unhappy* — `d < θ_neg` (`Degree.negativeMeaning`). -/
 abbrev contraryNeg (θ_neg : Threshold max) : Prop := Degree.negativeMeaning d θ_neg

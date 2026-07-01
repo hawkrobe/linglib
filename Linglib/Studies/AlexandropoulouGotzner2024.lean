@@ -31,7 +31,7 @@ theorem (lexical commitment ↔ output of pragmatic strengthening) lives there.
 
 ## Substrate consumed
 
-- `Semantics/Degree/Basic.lean` — `positiveMeaning`, `antonymMeaning`,
+- `Semantics/Degree/Basic.lean` — `positiveMeaning`, `notPositiveMeaning`,
   `positiveMeaning_monotone` (all `Prop`-valued, decidable).
 - `Semantics/Gradability/Theory.lean` — `ThresholdPair`,
   `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`,
@@ -63,7 +63,7 @@ open Core.Order (Boundedness)
 open Degree (Degree Threshold deg thr)
 open Semantics.Gradability (GradableAdjective ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
-open Degree (positiveMeaning antonymMeaning positiveMeaning_monotone)
+open Degree (positiveMeaning notPositiveMeaning positiveMeaning_monotone)
 open English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
 
@@ -167,14 +167,14 @@ theorem gap_iff_neither {max : Nat}
     lemma in `Antonymy.lean`. -/
 theorem contradictory_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
-    positiveMeaning d θ ∨ antonymMeaning d θ :=
+    positiveMeaning d θ ∨ notPositiveMeaning d θ :=
   Semantics.Gradability.Antonymy.contradictory_exhaustive d θ
 
-/-- `antonymMeaning` is the propositional complement of `positiveMeaning`.
+/-- `notPositiveMeaning` is the propositional complement of `positiveMeaning`.
     Delegates to the substrate lemma in `Antonymy.lean`. -/
 theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
-    antonymMeaning d θ ↔ ¬ positiveMeaning d θ :=
+    notPositiveMeaning d θ ↔ ¬ positiveMeaning d θ :=
   Semantics.Gradability.Antonymy.contradictory_is_complement d θ
 
 -- ============================================================================
@@ -226,7 +226,7 @@ theorem precision_entails_standard (d : Deg5)
     *necessary* condition for negative strengthening (Glossa §1, Horn 1989)
     but does not derive the pragmatic inference. -/
 theorem defaultTP_witnesses_overlap_at_zero :
-    antonymMeaning (deg 0 : Deg5) defaultTP.pos ∧
+    notPositiveMeaning (deg 0 : Deg5) defaultTP.pos ∧
     contraryNegMeaning (deg 0 : Deg5) defaultTP :=
   ⟨by decide, by decide⟩
 
@@ -243,7 +243,7 @@ theorem defaultTP_gap_at_two :
     (i) "not positive ⇒ negative" overlap (deg 0) and
     (ii) "not negative ⇏ positive" gap (deg 2). -/
 theorem polarity_asymmetry_witnesses :
-    (∃ d : Deg5, antonymMeaning d defaultTP.pos ∧ contraryNegMeaning d defaultTP) ∧
+    (∃ d : Deg5, notPositiveMeaning d defaultTP.pos ∧ contraryNegMeaning d defaultTP) ∧
     (∃ d : Deg5, notContraryNegMeaning d defaultTP ∧
                  ¬ positiveMeaning' d defaultTP ∧
                  ¬ contraryNegMeaning d defaultTP) :=
@@ -256,7 +256,7 @@ theorem polarity_asymmetry_witnesses :
     (ii) "not negative" does not entail "positive" (deg 2 is a
          counterexample to *not small* ⇒ *large*). -/
 theorem contrary_nonentailment_witnesses :
-    (∃ d : Deg5, antonymMeaning d defaultTP.pos ∧ ¬ contraryNegMeaning d defaultTP) ∧
+    (∃ d : Deg5, notPositiveMeaning d defaultTP.pos ∧ ¬ contraryNegMeaning d defaultTP) ∧
     (∃ d : Deg5, notContraryNegMeaning d defaultTP ∧ ¬ positiveMeaning' d defaultTP) :=
   ⟨⟨deg 2, by decide, by decide⟩,
    ⟨deg 2, by decide, by decide⟩⟩
@@ -275,7 +275,7 @@ theorem strength_invariance :
     region — no gap. Hence symmetric negation. Demonstrated at θ = thr 2
     on `Deg5` via `contradictory_complement`. -/
 theorem absolute_symmetric (d : Deg5) :
-    positiveMeaning d (thr 2 : Thr5) ∨ antonymMeaning d (thr 2 : Thr5) :=
+    positiveMeaning d (thr 2 : Thr5) ∨ notPositiveMeaning d (thr 2 : Thr5) :=
   contradictory_complement d (thr 2)
 
 -- ============================================================================
