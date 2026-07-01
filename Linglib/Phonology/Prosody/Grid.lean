@@ -45,6 +45,26 @@ a homomorphism from the tree into the DTE-marked grid, built from a small algebr
 
 namespace Prosody
 
+/-! ## The rendered grid and the Continuous Column Constraint -/
+
+/-- A rendered metrical grid: rows of head-marks, bottom row first. -/
+abbrev Marks := List (List Bool)
+
+namespace Marks
+
+/-- Whether one row is a submask of the row below. -/
+private def rowSubmask (upper lower : List Bool) : Bool :=
+  (upper.zip lower).all (fun p => !p.1 || p.2)
+
+/-- The Continuous Column Constraint ([prince-1983]; [hayes-1995] §3.4.2 (9)): no column has a gap.
+    A *violable* predicate on an arbitrary rendered grid. -/
+def IsContinuous (m : Marks) : Prop :=
+  m.IsChain (fun lower upper => rowSubmask upper lower = true)
+
+instance (m : Marks) : Decidable (IsContinuous m) := by unfold IsContinuous; infer_instance
+
+end Marks
+
 /-! ## The pure grid -/
 
 /-- A metrical grid ([hayes-1995] §3.2): the beat count (column height) over each position, left to
@@ -71,30 +91,6 @@ theorem peak_le {g : Grid} {n : ℕ} (h : ∀ x ∈ g, x ≤ n) : peak g ≤ n :
 def IsCulminative (g : Grid) : Prop := g.countP (· == peak g) = 1
 
 instance (g : Grid) : Decidable (IsCulminative g) := by unfold IsCulminative; infer_instance
-
-end Grid
-
-/-! ## The rendered grid and the Continuous Column Constraint -/
-
-/-- A rendered metrical grid: rows of head-marks, bottom row first. -/
-abbrev Marks := List (List Bool)
-
-namespace Marks
-
-/-- Whether one row is a submask of the row below. -/
-private def rowSubmask (upper lower : List Bool) : Bool :=
-  (upper.zip lower).all (fun p => !p.1 || p.2)
-
-/-- The Continuous Column Constraint ([prince-1983]; [hayes-1995] §3.4.2 (9)): no column has a gap.
-    A *violable* predicate on an arbitrary rendered grid. -/
-def IsContinuous (m : Marks) : Prop :=
-  m.IsChain (fun lower upper => rowSubmask upper lower = true)
-
-instance (m : Marks) : Decidable (IsContinuous m) := by unfold IsContinuous; infer_instance
-
-end Marks
-
-namespace Grid
 
 /-- Render a grid as stacked rows of marks: row `r` carries a mark over every column taller than
     `r`. -/
