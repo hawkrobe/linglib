@@ -1,12 +1,12 @@
-import Linglib.Semantics.Degree.Comparison.Metalinguistic
+import Linglib.Studies.RudolphKocurek2024.Metalinguistic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Basic
 
 /-!
 # Metalinguistic Degrees
-[rudolph-kocurek-2024]
+[rudolph-kocurek-2024] [kocurek-2024-supplement]
 
-Degree-theoretic formulation of metalinguistic gradability (Supplement §C).
+Degree-theoretic formulation of metalinguistic gradability ([kocurek-2024-supplement] §C).
 The revised semantics (`evalRevised`) induces a degree structure on
 sentences: the **metalinguistic degree** of a sentence A (relative to
 an index ⟨≤, i, w⟩) is the equivalence class of its denotation set
@@ -22,13 +22,13 @@ an index ⟨≤, i, w⟩) is the equivalence class of its denotation set
 This connects the expressivist framework to a proper algebraic structure
 backed by Mathlib's `Setoid`, `Quotient`, and order theory. The metalinguistic
 degree construction parallels [klein-1980]'s emergent degrees
-(see `Hierarchy.lean:nondistinct_iff_equal_measure`), but operates on
+(see `Semantics/Degree/Gradability/Hierarchy.lean:nondistinct_iff_equal_measure`), but operates on
 *interpretations* rather than *entities*.
 -/
 
-namespace Semantics.Comparison.MetalinguisticDegree
+namespace RudolphKocurek2024.MetalinguisticDegree
 
-open Semantics.Comparison.Metalinguistic
+open RudolphKocurek2024.Metalinguistic
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -70,7 +70,7 @@ def fieldComplement {I : Type} [Fintype I] [DecidableEq I]
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. The ∼ Equivalence Relation (Supplement §C, p. 9)
+-- § 2. The ∼ Equivalence Relation ([kocurek-2024-supplement] §C, p. 9)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Condition (i) of the ∼ equivalence: every element of X\Y is
@@ -105,7 +105,7 @@ either (i) their symmetric difference elements are pairwise matched
 in rank, or (ii) every unmatched element is dominated by both an
 element in the overlap and an element outside both sets.
 
-This mirrors the revised ME truth conditions (Supplement §B) applied
+This mirrors the revised ME truth conditions ([kocurek-2024-supplement] §B) applied
 to sets rather than formulas. -/
 def degreeEquiv {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I)
@@ -169,12 +169,12 @@ theorem degreeEquiv_symm {I : Type} [Fintype I] [DecidableEq I]
       exact ⟨i'', by rwa [Finset.union_comm] at hi''mem, hi''le⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. The ⊐ Ordering on Sets (Supplement §C, p. 10)
+-- § 4. The ⊐ Ordering on Sets ([kocurek-2024-supplement] §C, p. 10)
 -- ════════════════════════════════════════════════════════════════
 
 /-- X ⊐ Y: interpretation set X is strictly better than Y.
 
-Mirrors the revised MC truth conditions (Supplement §B):
+Mirrors the revised MC truth conditions ([kocurek-2024-supplement] §B):
 ∃ i' ∈ I_i such that i' ∈ X \ Y and either
 (a) all elements of X ∩ Y are strictly below i', or
 (b) all elements of I_i \ (X ∪ Y) are strictly below i',
@@ -903,4 +903,4 @@ theorem empty_is_min {I : Type} [Fintype I] [DecidableEq I]
   simp at hi'
 
 
-end Semantics.Comparison.MetalinguisticDegree
+end RudolphKocurek2024.MetalinguisticDegree

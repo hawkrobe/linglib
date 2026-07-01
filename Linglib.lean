@@ -1551,8 +1551,6 @@ import Linglib.Semantics.Classifier.Basic
 import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
 import Linglib.Semantics.Classifier.TypeN
-import Linglib.Semantics.Degree.Comparison.Metalinguistic
-import Linglib.Semantics.Degree.Comparison.MetalinguisticDegree
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Continuation
@@ -2592,7 +2590,9 @@ import Linglib.Studies.Rouillard2026
 import Linglib.Studies.Rubinstein2014
 import Linglib.Studies.Rudin2025
 import Linglib.Studies.Rudin2025LI
-import Linglib.Studies.RudolphKocurek2024
+import Linglib.Studies.RudolphKocurek2024.Basic
+import Linglib.Studies.RudolphKocurek2024.Metalinguistic
+import Linglib.Studies.RudolphKocurek2024.MetalinguisticDegree
 import Linglib.Studies.RumbergLauer2023
 import Linglib.Studies.RuytenbeekEtAl2017
 import Linglib.Studies.Saab2026

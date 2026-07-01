@@ -1,5 +1,5 @@
-import Linglib.Semantics.Degree.Comparison.Metalinguistic
-import Linglib.Semantics.Degree.Comparison.MetalinguisticDegree
+import Linglib.Studies.RudolphKocurek2024.Metalinguistic
+import Linglib.Studies.RudolphKocurek2024.MetalinguisticDegree
 
 /-!
 # [rudolph-kocurek-2024]: Metalinguistic Gradability
@@ -18,7 +18,7 @@ entailment predictions (§4.4), assertoric content (§3.3), nonclassicality
 of acceptance-preservation (§4.4), degree modifiers `very`/`sorta`/
 `mostly` (§6.1), metalinguistic conditionals (§6.3), the No Reversal
 bridge to delineation comparatives (§7), and the **revised semantics**
-for ME transitivity (Supplement §B).
+for ME transitivity ([kocurek-2024-supplement] §B).
 
 ## Models
 
@@ -54,26 +54,26 @@ MC and delineation diverge without this constraint.
 - k: Ann is a philosopher only (0,1,0)
 - l: Ann is a linguist and philosopher, not a psychologist (1,1,0)
 
-Counterexample to ME transitivity in the basic semantics (Supplement §B):
+Counterexample to ME transitivity in the basic semantics ([kocurek-2024-supplement] §B):
 La ≈ Pa and Pa ≈ Ca hold, but La ≈ Ca fails (La ≻ Ca holds vacuously).
 The revised semantics (`evalRevised`) blocks La ≻ Ca and restores
 transitivity.
 
 ## Connections
 
-- **Theory layer**: `Semantics/Comparison/Metalinguistic.lean`
+- **Framework modules** (this paper's system): `Studies/RudolphKocurek2024/Metalinguistic.lean`
   (SemanticOrdering, MFormula, eval, evalRevised, evalGen, evalMCond,
   assertoricContent, DistanceFunction, evalVery/evalSorta/evalMostly,
   noReversal, MetalinguisticCG)
-- **Delineation**: `Semantics/Comparison/Delineation.lean`
+- **Delineation**: `Semantics/Degree/Gradability/Delineation.lean`
   ([klein-1980]'s comparison class approach — connected via No Reversal)
-- **Hierarchy**: `Semantics/Comparison/Hierarchy.lean`
+- **Hierarchy**: `Semantics/Degree/Gradability/Hierarchy.lean`
   (Klein ← Kennedy ← Measurement strict hierarchy)
 -/
 
 namespace RudolphKocurek2024
 
-open Semantics.Comparison.Metalinguistic
+open RudolphKocurek2024.Metalinguistic
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -428,7 +428,7 @@ The key consequence of NR: when it holds, `Fa ≻ Gb` simplifies to the
 **delineation comparative** `∃ i' ≤ i : Fa∧¬Gb` — the universal clause
 of eq. (48) becomes redundant. This connects metalinguistic
 comparatives to [klein-1980]'s supervaluation comparative
-(see `Semantics/Comparison/Delineation.lean`) and
+(see `Semantics/Degree/Gradability/Delineation.lean`) and
 [kamp-1975]'s completion-based approach. -/
 theorem nr_trivial_single_entity :
     noReversal interp₃ ord₃ .linguist .w0 .ann .ann := by
@@ -590,13 +590,13 @@ theorem mcond_m1_tied :
       evalMCond interp₂ La (.mc La NLa) tiedOrd i .w0 = true := by native_decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 12. ME Transitivity: Basic vs Revised Semantics (Supplement §B)
+-- § 12. ME Transitivity: Basic vs Revised Semantics ([kocurek-2024-supplement] §B)
 -- ════════════════════════════════════════════════════════════════
 
 /-! ### ME transitivity counterexample
 
 The basic semantics fails to validate ME transitivity:
-`A ≈ B, B ≈ C ⊭ A ≈ C` (Supplement §B). Model 4 provides a minimal
+`A ≈ B, B ≈ C ⊭ A ≈ C` ([kocurek-2024-supplement] §B). Model 4 provides a minimal
 counterexample.
 
 Key insight: the (La∧¬Ca)-witness l has no matching (Ca∧¬La)-witness,
@@ -726,15 +726,15 @@ theorem revised_agrees_model1 :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 13. Degree Theory (Supplement §C) — Finite Verifications
+-- § 13. Degree Theory ([kocurek-2024-supplement] §C) — Finite Verifications
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Comparison.MetalinguisticDegree
+open RudolphKocurek2024.MetalinguisticDegree
 
 /-! ### Degree theory on finite models
 
 Finite model verifications that the degree-theoretic formulation
-(Supplement §C) correctly tracks the revised semantics on Models 1–4.
+([kocurek-2024-supplement] §C) correctly tracks the revised semantics on Models 1–4.
 The key bridge theorems (Facts 9–10) are stated in
 `MetalinguisticDegree.lean`; here we verify their instances on
 concrete models via `native_decide`. -/

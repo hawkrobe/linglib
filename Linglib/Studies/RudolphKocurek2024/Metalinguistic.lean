@@ -4,7 +4,11 @@ import Linglib.Semantics.Intensional.Rigidity
 
 /-!
 # Metalinguistic Gradability
-[rudolph-kocurek-2024]
+[rudolph-kocurek-2024] [kocurek-2024-supplement]
+
+Framework module of `Studies/RudolphKocurek2024/` (single-paper anchor;
+graduates to the theory layer only when a second paper-anchored study
+consumes it).
 
 Semantic expressivist framework for metalinguistic comparatives ("Ann is more
 a linguist than a philosopher"), metalinguistic equatives, degree modifiers
@@ -37,7 +41,7 @@ Ordinary sentences ignore ≤; metalinguistic operators quantify over it.
 - `sorta A` := ¬very(¬A) — true on some reasonably close interpretation
 - `mostly A` := ∃ reasonably high level where A is uniformly true
 - `A → B` (metalinguistic conditional): restricts ordering to A-interps
-- `evalRevised`: revised MC for ME transitivity (Supplement §B) —
+- `evalRevised`: revised MC for ME transitivity ([kocurek-2024-supplement] §B) —
   strengthened domination clause blocks vacuous comparatives
 
 ## Entailment
@@ -52,7 +56,7 @@ Two notions:
 entailment for epistemic modals ([yalcin-2007]).
 -/
 
-namespace Semantics.Comparison.Metalinguistic
+namespace RudolphKocurek2024.Metalinguistic
 
 -- ════════════════════════════════════════════════════════════════
 -- § 0. Helpers
@@ -358,7 +362,7 @@ the **delineation comparative**: ∃ i' ≤ i with Fa∧¬Gb — the second clau
 of the MC semantics (about dominating all (B∧¬A)-witnesses) becomes
 redundant. This connects metalinguistic comparatives to
 [klein-1980] and [kamp-1975]. See
-`Semantics/Comparison/Delineation.lean` for the delineation
+`Semantics/Degree/Gradability/Delineation.lean` for the delineation
 framework. -/
 def noReversal {I W Pred Entity : Type}
     (interpFn : I → Interpretation W Pred Entity)
@@ -373,11 +377,10 @@ def noReversal {I W Pred Entity : Type}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 5a. Revised Semantics (Supplement §B)
+-- § 5a. Revised Semantics ([kocurek-2024-supplement] §B)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Evaluate a formula under the revised MC semantics (Supplement §B of
-[rudolph-kocurek-2024]).
+/-- Evaluate a formula under the revised MC semantics ([kocurek-2024-supplement] §B).
 
 The basic semantics (`eval`) fails ME transitivity: `A ≈ B, B ≈ C ⊭ A ≈ C`.
 The revised semantics strengthens the MC: the (A∧¬B)-witness must dominate
@@ -390,7 +393,7 @@ Formally (simplified form): `A ≻ B` iff ∃ i' ≤ i with A∧¬B at i', and
 either (a) ∀ i'' ≤ i: ⟦B⟧^{i''} → i'' < i', or
 (b) ∀ i'' ≤ i: ⟦¬A⟧^{i''} → i'' < i'.
 
-Properties (Supplement §B):
+Properties ([kocurek-2024-supplement] §B):
 - All basic entailment patterns (Fact 3 a-n) are preserved (Fact 5)
 - ME transitivity is validated: `A ≈ B, B ≈ C ⊨ A ≈ C` (Fact 6)
 - Interdefinable with basic semantics (Fact 7):
@@ -604,4 +607,4 @@ theorem evalRevised_mc_iff {I W Pred Entity : Type} [Fintype I]
         exact (ltB_iff ord i'' i').mpr (h2 i'' ((leB_iff ord i'' i).mp h_le'') h_A'')
 
 
-end Semantics.Comparison.Metalinguistic
+end RudolphKocurek2024.Metalinguistic

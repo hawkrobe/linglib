@@ -39,7 +39,7 @@ P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
 
 [klein-1980]'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
 is the existential dual of supervaluation. See
-`Semantics/Comparison/Delineation.lean`.
+`Semantics/Degree/Gradability/Delineation.lean`.
 -/
 
 namespace Fine1975
