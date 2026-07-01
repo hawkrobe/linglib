@@ -213,6 +213,7 @@ import Linglib.Core.Order.ComparativeProbability.Patterns
 import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Core.Order.ComparativeScale
+import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.FourierMotzkin
