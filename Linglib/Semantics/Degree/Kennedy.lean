@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Defs
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Kennedy 2007: Interpretive Economy
