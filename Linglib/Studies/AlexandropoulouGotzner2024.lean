@@ -61,7 +61,7 @@ namespace AlexandropoulouGotzner2024
 
 open Core.Order (Boundedness)
 open Semantics.Degree (Degree Threshold deg thr)
-open Semantics.Gradability (GradableAdjEntry ThresholdPair inGapRegion
+open Semantics.Gradability (GradableAdjective ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
 open Semantics.Degree (positiveMeaning antonymMeaning positiveMeaning_monotone)
 open English.Predicates.Adjectival
@@ -76,10 +76,10 @@ open English.Predicates.Adjectival
     uses size (large/small/gigantic/tiny) as the relative case and cleanliness
     (clean/dirty/pristine/filthy) as the absolute case. -/
 structure AdjQuadruple where
-  weakPos    : GradableAdjEntry
-  weakNeg    : GradableAdjEntry
-  strongPos  : GradableAdjEntry
-  strongNeg  : GradableAdjEntry
+  weakPos    : GradableAdjective
+  weakNeg    : GradableAdjective
+  strongPos  : GradableAdjective
+  strongNeg  : GradableAdjective
   deriving Repr
 
 def sizeQuad : AdjQuadruple where

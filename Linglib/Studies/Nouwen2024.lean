@@ -388,7 +388,7 @@ def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
 
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
-    Option Semantics.Gradability.GradableAdjEntry :=
+    Option Semantics.Gradability.GradableAdjective :=
   English.Predicates.Adjectival.lookup e.adjBase
 
 /-- Bridge: pleasant's Fragment entry has positive evaluative valence,

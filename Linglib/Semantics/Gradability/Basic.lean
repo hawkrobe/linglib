@@ -7,7 +7,7 @@ Types and operations for gradable adjective semantics (tall, happy, expensive).
 
 - `NegationType`: Contradictory vs. contrary antonyms
 - `ThresholdPair`: Two thresholds for contrary antonyms with gap
-- `GradableAdjEntry`: Lexical entry bundling form + scale structure + antonym
+- `GradableAdjective`: the gradable adjective — syntactic `Adjective` + degree semantics
 - `InformationalStrength`: Weak/strong adjective distinction
 - Negation and gap-region predicates
 
@@ -32,12 +32,14 @@ import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Gradability.MLScale
 import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Kennedy
 import Linglib.Syntax.Adjective.Basic
 
 namespace Semantics.Gradability
 
 open Core.Order (Boundedness)
 open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds)
+open Semantics.Degree (PositiveStandard AdjectiveClass interpretiveEconomy)
 open Features (NegationType)
 
 -- Two-Threshold Model for Contrary Antonyms
@@ -155,16 +157,22 @@ inductive SpatialConfigType where
   | surfaceOrient   -- flat: orientation relative to reference surface
   deriving DecidableEq, Repr
 
-/-- A gradable adjective lexical entry: the general `GradableAdjective`
-    (`Syntax/Adjective`) extended with the fields specific to this fragment's
-    Kennedy-style entries — the lexical `antonymRelation`, resultative
-    `spatialConfigType` ([levin-2026]), and `evaluativeValence` ([nouwen-2024]).
-    Surface form and the scalar `dimension` are inherited `Adjective` fields; the
-    scale shape (`scaleType`), positive `standard`, and Kennedy `adjectiveClass`
-    are the inherited *derived* views (the old stored `scaleType` conflated shape
-    with pole — see `Syntax/Adjective/Basic.lean`). -/
-structure GradableAdjEntry extends GradableAdjective where
+/-- A **gradable adjective**: the syntactic `Adjective` (`Syntax/Adjective`) refined
+    with the degree-**semantic** layer that becomes relevant in this module — the
+    Kennedy `standardOverride`, and the lexical-semantic facets `antonymRelation`,
+    resultative `spatialConfigType` ([levin-2026]), and `evaluativeValence`
+    ([nouwen-2024]). The scale shape (`scaleType`), positive `standard`, and Kennedy
+    `adjectiveClass` are *derived views* below — the fix for the old stored `scaleType`
+    that conflated scale shape with pole (`wet`/`dry` share one closed `.wetness`
+    scale, differing only in pole). -/
+structure GradableAdjective extends Adjective where
+  /-- Override the Kennedy default standard (the `good`/MPA residual: an open-shape
+      scale that nonetheless takes a functional/contextual standard, [beltrama-2025]).
+      `none` = take the derived default. -/
+  standardOverride : Option PositiveStandard := none
+  /-- Lexical antonym's logical relation (contrary vs contradictory). -/
   antonymRelation : Option AntonymRelation := none
+  /-- Resultative spatial-configuration class ([levin-2026]). -/
   spatialConfigType : Option SpatialConfigType := none
   /-- Evaluative valence of the adjective, when applicable.
       Determines intensifier degree class ([nouwen-2024]):
@@ -172,6 +180,46 @@ structure GradableAdjEntry extends GradableAdjective where
       positive-evaluative bases yield M-degree intensifiers. -/
   evaluativeValence : Option Features.EvaluativeValence := none
   deriving Repr
+
+namespace GradableAdjective
+
+/-- The scale's intrinsic shape — read off the `dimension` key, not stored
+    (`.open_` for a non-gradable, which has no scale). -/
+def scaleType (g : GradableAdjective) : Boundedness :=
+  (g.dimension.map Dimension.boundedness).getD .open_
+
+/-- The effective positive standard: the default from (scale shape, pole),
+    overridable by `standardOverride`. This is the quantity the old `scaleType` field
+    conflated — it separates `wet` (closed + lower ⇒ min) from `dry` (closed + upper ⇒
+    max), and lets `good` (open shape) take a contextual standard rather than a bogus
+    bound. ([kennedy-2007]'s Interpretive Economy on the open/singly-bounded cases.) -/
+def standard (g : GradableAdjective) : PositiveStandard :=
+  g.standardOverride.getD <|
+    match g.dimension.map Dimension.boundedness, g.isLowerEndpoint with
+    | some .closed, true  => .minEndpoint
+    | some .closed, false => .maxEndpoint
+    | some b,       _     => interpretiveEconomy b
+    | none,         _     => .contextual
+
+/-- Kennedy's adjective class — derived from `standard`, not stored; `.nonGradable`
+    exactly when there is no `dimension` ([kennedy-2007], [kennedy-mcnally-2005]). -/
+def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
+  match g.dimension with
+  | none => .nonGradable
+  | some _ =>
+    match g.standard with
+    | .contextual  => .relativeGradable
+    | .minEndpoint => .absoluteMinimum
+    | .maxEndpoint => .absoluteMaximum
+    | .functional  => .mildlyPositive
+
+/-- Comparison-class dependence — the relative/absolute distinction, derived. -/
+def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass.IsRelative
+
+instance (g : GradableAdjective) : Decidable g.IsRelative := by
+  unfold IsRelative; infer_instance
+
+end GradableAdjective
 
 -- ════════════════════════════════════════════════════
 -- Multidimensional Adjective Semantics
@@ -283,17 +331,17 @@ so the abstract theorems in `MeasurementScale.lean` apply directly to concrete
 RSA degree computations. -/
 
 def adjMeasure {max : Nat} {W : Type*} (μ : W → Degree max)
-    (entry : GradableAdjEntry) : DirectedMeasure (Degree max) W :=
+    (entry : GradableAdjective) : DirectedMeasure (Degree max) W :=
   DirectedMeasure.adjective μ entry.scaleType
 
 theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
-    (entry : GradableAdjEntry) (h : entry.scaleType = .closed) :
+    (entry : GradableAdjective) (h : entry.scaleType = .closed) :
     (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, DirectedMeasure.adjective,
         DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
 theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
-    (entry : GradableAdjEntry) (h : entry.scaleType = .open_) :
+    (entry : GradableAdjective) (h : entry.scaleType = .open_) :
     ¬ (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, DirectedMeasure.adjective,
         DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
