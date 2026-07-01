@@ -1,12 +1,14 @@
-import Linglib.Morphology.DegreeContainment
+import Linglib.Syntax.Adjective.Basic
 
 /-!
 # Latin Adjective Degree Forms
 [bobaljik-2012]
 
 Latin comparative and superlative morphology, used for cross-linguistic
-verification of [bobaljik-2012]'s *ABA constraint and pattern
-inventory.
+verification of [bobaljik-2012]'s *ABA constraint and pattern inventory. Latin
+adjectives instantiate the general `Adjective` object (`Syntax/Adjective/Basic.lean`),
+carrying their morphology in the `comparison` facet; the data here is purely
+morphological (no scale `dimension`).
 
 Latin exhibits all three attested degree suppletion patterns:
 
@@ -19,80 +21,69 @@ No Latin adjective shows an *ABA pattern.
 
 namespace Latin.Adjectives
 
-open Morphology.DegreeContainment
+open Morphology.DegreeContainment (DegreePattern aaa abb abc)
 
 -- ============================================================================
--- § 1: Latin Adjective Entry
--- ============================================================================
-
-/-- A Latin adjective entry with positive, comparative, and superlative
-    forms plus the suppletive pattern. Minimal structure — Latin data
-    here is purely morphological (no scale type, dimension, etc.). -/
-structure LatinAdjEntry where
-  pos  : String
-  cmpr : String
-  sprl : String
-  suppletion : DegreePattern
-  deriving DecidableEq, Repr, BEq
-
--- ============================================================================
--- § 2: Regular Adjectives (AAA)
+-- § 1: Regular Adjectives (AAA)
 -- ============================================================================
 
 /-- *longus – longior – longissimus* ('long'): regular synthetic
     comparative and superlative with productive suffixes *-ior*/*-issimus*. -/
-def longus : LatinAdjEntry :=
-  { pos := "longus", cmpr := "longior", sprl := "longissimus"
-  , suppletion := aaa }
+def longus : Adjective :=
+  { form := "longus"
+  , comparison := { formComp := "longior", formSuper := "longissimus", suppletion := aaa } }
 
 /-- *altus – altior – altissimus* ('tall/high/deep'): regular. -/
-def altus : LatinAdjEntry :=
-  { pos := "altus", cmpr := "altior", sprl := "altissimus"
-  , suppletion := aaa }
+def altus : Adjective :=
+  { form := "altus"
+  , comparison := { formComp := "altior", formSuper := "altissimus", suppletion := aaa } }
 
 /-- *fortis – fortior – fortissimus* ('brave/strong'): regular. -/
-def fortis : LatinAdjEntry :=
-  { pos := "fortis", cmpr := "fortior", sprl := "fortissimus"
-  , suppletion := aaa }
+def fortis : Adjective :=
+  { form := "fortis"
+  , comparison := { formComp := "fortior", formSuper := "fortissimus", suppletion := aaa } }
 
 -- ============================================================================
--- § 3: Suppletive Adjectives
+-- § 2: Suppletive Adjectives
 -- ============================================================================
 
 /-- *bonus – melior – optimus* ('good – better – best'): three distinct
-    roots (ABC). The paradigmatic example of ABC suppletion
-    ([bobaljik-2012]). -/
-def bonus : LatinAdjEntry :=
-  { pos := "bonus", cmpr := "melior", sprl := "optimus"
-  , suppletion := abc }
+    roots (ABC), the paradigmatic ABC example ([bobaljik-2012]). Both grades
+    suppletive. -/
+def bonus : Adjective :=
+  { form := "bonus"
+  , comparison := { formComp := "melior", formSuper := "optimus", suppletion := abc
+                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
-/-- *malus – peior – pessimus* ('bad – worse – worst'): three distinct
-    roots (ABC). -/
-def malus : LatinAdjEntry :=
-  { pos := "malus", cmpr := "peior", sprl := "pessimus"
-  , suppletion := abc }
+/-- *malus – peior – pessimus* ('bad – worse – worst'): three distinct roots (ABC). -/
+def malus : Adjective :=
+  { form := "malus"
+  , comparison := { formComp := "peior", formSuper := "pessimus", suppletion := abc
+                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
-/-- *magnus – maior – maximus* ('great – greater – greatest'): ABB.
-    The comparative and superlative share the suppletive root *mai-*/*max-*. -/
-def magnus : LatinAdjEntry :=
-  { pos := "magnus", cmpr := "maior", sprl := "maximus"
-  , suppletion := abb }
+/-- *magnus – maior – maximus* ('great – greater – greatest'): ABB — the
+    comparative and superlative share the suppletive root *mai-*/*max-*. -/
+def magnus : Adjective :=
+  { form := "magnus"
+  , comparison := { formComp := "maior", formSuper := "maximus", suppletion := abb
+                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
-/-- *parvus – minor – minimus* ('small – smaller – smallest'): ABB.
-    Suppletive root *min-* shared across comparative and superlative. -/
-def parvus : LatinAdjEntry :=
-  { pos := "parvus", cmpr := "minor", sprl := "minimus"
-  , suppletion := abb }
+/-- *parvus – minor – minimus* ('small – smaller – smallest'): ABB, suppletive
+    root *min-* shared across comparative and superlative. -/
+def parvus : Adjective :=
+  { form := "parvus"
+  , comparison := { formComp := "minor", formSuper := "minimus", suppletion := abb
+                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
 -- ============================================================================
--- § 4: Fragment Inventory
+-- § 3: Fragment Inventory
 -- ============================================================================
 
-def allEntries : List LatinAdjEntry :=
+def allEntries : List Adjective :=
   [longus, altus, fortis, bonus, malus, magnus, parvus]
 
 -- ============================================================================
--- § 5: Contiguity Verification
+-- § 4: Contiguity Verification
 -- ============================================================================
 
 /-- All Latin entries satisfy contiguity (no *ABA). -/
