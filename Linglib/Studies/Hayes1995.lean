@@ -124,22 +124,22 @@ theorem toGrid_kataba :
 /-- **The grid is well-formed** ([hayes-1995] §3.4.2 (9)): `kataba`'s grid satisfies the Continuous
     Column Constraint — a consumer of the derived `Prosody.Grid.ofTree_isContinuous`, here doing the
     work that makes the inward peak the *only* legal reading. -/
-theorem cairene_grid_continuous : Grid.IsContinuous (Grid.ofTree (parse kataba)) := Grid.ofTree_isContinuous _
+theorem cairene_grid_continuous : Marks.IsContinuous (Grid.ofTree (parse kataba)) := Grid.ofTree_isContinuous _
 
 /-- The grid `kataba` would have if End Rule Right promoted the stray final light: a word-layer
     mark on the final column (`[hayes-1995] (17)`, *(x)(x.)*) with no foot-layer mark beneath. -/
-def promotedKataba : Grid := [[true, true, true], [true, false, false], [false, false, true]]
+def promotedKataba : Marks := [[true, true, true], [true, false, false], [false, false, true]]
 
 /-- **Promoting the final light violates the CCC** ([hayes-1995] (16d), (17)): the final
     column of `promotedKataba` is marked on layer 2 with nothing on layer 1 — a gap. This is
     exactly why End Rule Right cannot reach the edge, and the peak retracts inward. -/
-theorem promotedKataba_not_continuous : ¬ Grid.IsContinuous promotedKataba := by decide
+theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := by decide
 
 /-- **The peak retracts off the right edge** ([hayes-1995] (16d)): the final stray light of
     `kataba` is strictly weaker than the primary — unlike a uniform right-strong word
     ([prince-1983]), whose grid peaks at the edge. The blocked promotion above is why. -/
 theorem kataba_final_below_peak :
-    (Grid.columns (parse kataba)).getLast?.getD 0 < Grid.peak (parse kataba) := by
+    (Grid.columns (parse kataba)).getLast?.getD 0 < Grid.peak (Grid.columns (parse kataba)) := by
   decide
 
 end Hayes1995

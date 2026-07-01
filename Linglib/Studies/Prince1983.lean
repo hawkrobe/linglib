@@ -80,6 +80,7 @@ theorem headTerminals_rightStrong : Grid.headTerminals rightStrong = [σh] := by
 
 /-- And its prominence is the grid peak: on a uniform (non-recursive headed) word the head
     terminal's height is the peak — the concrete instance of `Prosody.Grid.headHeights_eq_peak`. -/
-theorem endRulePeak_is_head : Grid.headHeights rightStrong = [Grid.peak rightStrong] := by decide
+theorem endRulePeak_is_head :
+    Grid.headHeights rightStrong = [Grid.peak (Grid.columns rightStrong)] := by decide
 
 end Prince1983
