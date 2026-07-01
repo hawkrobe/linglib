@@ -67,7 +67,7 @@ import Linglib.Core.Combinatorics.RootedTree.DecEq
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
 import Linglib.Core.Combinatorics.RootedTree.Planar
-import Linglib.Core.Combinatorics.RootedTree.PlanarCut
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.Rebinarize
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Computability.ContextFreeGrammar.Closure

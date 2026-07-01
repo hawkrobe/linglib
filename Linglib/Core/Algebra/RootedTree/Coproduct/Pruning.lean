@@ -1,5 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Combinatorics.RootedTree.PlanarCut
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
