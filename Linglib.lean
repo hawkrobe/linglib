@@ -2751,6 +2751,7 @@ import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
+import Linglib.Syntax.Adjective.Basic
 import Linglib.Syntax.Adposition.Basic
 import Linglib.Syntax.Adposition.Order
 import Linglib.Syntax.Adposition.Spatial
