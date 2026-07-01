@@ -98,11 +98,8 @@ instance decRelEquiv : DecidableRel ord.equiv := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- ¬(a < b) → b ≤ a (by totality). -/
-theorem le_of_not_lt {a b : I} : ¬ ord.lt a b → ord.le b a := by
-  intro h
-  rcases ord.le_total a b with hab | hba
-  · exact Classical.byContradiction fun hba => h ⟨hab, hba⟩
-  · exact hba
+theorem le_of_not_lt {a b : I} (h : ¬ ord.lt a b) : ord.le b a :=
+  Classical.byContradiction fun hba => h ⟨(ord.le_total a b).resolve_right hba, hba⟩
 
 end SemanticOrdering
 
