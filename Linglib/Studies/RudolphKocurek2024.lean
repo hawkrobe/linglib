@@ -7,141 +7,118 @@ import Linglib.Semantics.Degree.Gradability.Delineation
 /-!
 # [rudolph-kocurek-2024]: Metalinguistic Gradability
 
-Semantic expressivist framework for metalinguistic comparatives ("Ann is more a
-linguist than a philosopher"), equatives, degree modifiers, and conditionals
-[rudolph-kocurek-2024], together with the revised semantics and degree-theoretic
-formulation of its technical supplement [kocurek-2024-supplement].
+Semantic expressivism for metalinguistic comparatives ("Ann is more a linguist
+than a philosopher"), equatives, degree modifiers, and conditionals
+[rudolph-kocurek-2024], with the revised semantics and degree-theoretic
+formulation of its supplement [kocurek-2024-supplement]. Speakers express
+interpretive as well as factual commitments: truth is evaluated at ⟨≤, i, w⟩
+where ≤ is a total preorder over interpretations, and `A ≻ B` holds iff some
+(A∧¬B)-interpretation ranked ≤ i dominates every (B∧¬A)-interpretation.
 
-Speakers express not only factual commitments (about the world) but also
-**interpretive commitments** (about how to interpret language): the common ground
-is generalized from sets of worlds to sets of ordering-world pairs ⟨≤, w⟩, where
-≤ is a total preorder over interpretations (a **semantic ordering**). Truth is
-evaluated at a triple ⟨≤, i, w⟩; the metalinguistic comparative `A ≻ B` holds iff
-some (A∧¬B)-interpretation ranked ≤ i dominates every (B∧¬A)-interpretation.
+## Main definitions
 
-## Contents
+* `SemanticOrdering`, `MFormula`, `Eval`, `EvalRevised` — the language with its
+  basic (§4.2) and revised (supplement §B) semantics.
+* `AssertoricContent`, `MetalinguisticCG` — acceptance and the common ground:
+  the substrate's `ContextSet` at the ordering-world index, with assertion as
+  `ContextSet.update` and the Stalnaker laws inherited.
+* `DistanceFunction`, `EvalVery`, `EvalSorta`, `EvalMostly`, `EvalMCond` —
+  degree modifiers (§6.1) and metalinguistic conditionals (§6.3).
+* `degreeEquiv`, `strictlyBetter`, `MetaDegree` — the supplement's §C degree
+  theory: metalinguistic degrees as a `Quotient` carrying `LinearOrder` and
+  `BoundedOrder` instances.
 
-1. **Framework** — `SemanticOrdering`, `MFormula`, the basic (`eval`) and revised
-   (`evalRevised`) semantics, assertoric content with its two entailment notions
-   (truth- vs acceptance-preservation), distance functions and degree modifiers
-   (*very much*, *sorta*, *mostly*), metalinguistic conditionals, and No
-   Reversal — whose bridge to [klein-1980] is stated on the substrate's
-   `Delineation.comparativeSem` (`eval_mc_iff_delineation_of_noReversal`).
-   The common ground (`MetalinguisticCG`) is the substrate's `ContextSet` at
-   the enriched ordering-world index: assertion is `ContextSet.update`, the
-   Stalnaker laws are inherited, and the classical projection is a monotone
-   `Set.image`.
-2. **Degree theory** ([kocurek-2024-supplement] §C) — the matching relation ∼ on
-   interpretation sets and the ordering ⊐: Facts 8 and 11–13 (∼ is an equivalence,
-   ⊐ transitive and total off ∼, extremal degrees), packaged as a mathlib `Setoid`
-   with `MetaDegree` as its `Quotient`, carrying `LinearOrder` and
-   `BoundedOrder` instances; Facts 9–10 (`me_iff_same_degree`,
-   `mc_iff_degree_gt`) connect the degree structure back to `evalRevised`,
-   and `mc_iff_comparativeSem` cashes out the paper's degree-theoretic claim:
-   the revised MC is the degree substrate's `Degree.comparativeSem` over the
-   metalinguistic measure `formulaDeg` — metagradability instantiates the
-   substrate's central object `μ : E → D`.
-3. **Finite models** — four small models verifying the paper's predictions:
-   the §4.4 entailment patterns (supplement Fact 3), borderline equatives and
-   nonclassical acceptance-preservation (paralleling informational entailment
-   for epistemic modals, [yalcin-2007]), degree modifiers (§6.1), metalinguistic
-   conditionals (§6.3), the No Reversal bridge to [klein-1980] delineation
-   (§7; see `Semantics/Degree/Gradability/Delineation.lean`), and the
-   supplement's ME-transitivity counterexample with its revised-semantics
-   repair (§B).
+## Main results
+
+* `eval_mc_iff_delineation_of_noReversal` — under No Reversal (§7) the MC is
+  [klein-1980]'s `Delineation.comparativeSem`.
+* `mc_iff_degree_gt`, `me_iff_same_degree` — Facts 9–10: ≻ and ≈ are degree
+  order and degree equality.
+* `mc_iff_comparativeSem` — the paper's degree-theoretic claim, in substrate
+  vocabulary: the revised MC is `Degree.comparativeSem` over the metalinguistic
+  measure `formulaDeg`.
+* Four finite models witness the §4.4 entailment patterns, nonclassical
+  acceptance-preservation ([yalcin-2007]), and the supplement's ME-transitivity
+  counterexample and its revised-semantics repair.
 -/
 
 namespace RudolphKocurek2024
 
-/-! ### Helpers -/
-
-/-- Boolean universal quantification over a finite type. -/
-private def bAll (I : Type*) [Fintype I] (p : I → Bool) : Bool :=
-  decide (∀ i : I, p i = true)
-
-/-- Boolean existential quantification over a finite type. -/
-private def bAny (I : Type*) [Fintype I] (p : I → Bool) : Bool :=
-  decide (∃ i : I, p i = true)
-
 /-! ### Interpretations and Semantic Orderings -/
 
 /-- An interpretation maps predicate symbols to world-indexed extensions.
-
-For the finite decidable models we work with, an interpretation is simply
-a function from predicates and entities to Bool at each world. -/
+For the finite decidable models we work with, an extension is a Boolean
+lookup table. -/
 structure Interpretation (W : Type*) (Pred : Type*) (Entity : Type*) where
-  /-- Extension of predicate P at world w: the set of entities P applies to. -/
+  /-- Extension of predicate P at world w: the entities P applies to. -/
   ext : Pred → W → Entity → Bool
 
-/-- A semantic ordering is a total preorder on a set of interpretations.
-
-Represents a speaker's relative interpretive commitments: `le i j` means
-the speaker is at least as committed to j as to i.
-
-`le` is Prop-valued with `DecidableRel` for decidable computation.
-Use `ofBool` for the common case of defining orderings via pattern matching. -/
+/-- A semantic ordering is a total preorder on a set of interpretations,
+representing a speaker's relative interpretive commitments: `le i j` means
+the speaker is at least as committed to j as to i. Bundled with decidability
+so that finite models compute (`decide`). -/
 structure SemanticOrdering (I : Type*) where
   /-- The preorder relation: `le i j` means i is ranked no higher than j. -/
   le : I → I → Prop
-  /-- Reflexivity -/
-  le_refl : ∀ (i : I), le i i
-  /-- Transitivity -/
-  le_trans : ∀ (i j k : I), le i j → le j k → le i k
-  /-- Totality: any two interpretations are comparable -/
-  le_total : ∀ (i j : I), le i j ∨ le j i
+  /-- Reflexivity and transitivity, as mathlib's unbundled relation class. -/
+  isPreorder : IsPreorder I le
+  /-- Totality, as mathlib's unbundled relation class. Registered as
+  instances, so the mathlib relation API applies to `ord.le` directly. -/
+  total : Std.Total le
   /-- Decidability of the ordering relation -/
   decRel : DecidableRel le
 
-attribute [instance] SemanticOrdering.decRel
+attribute [instance] SemanticOrdering.isPreorder SemanticOrdering.total
+  SemanticOrdering.decRel
 
 namespace SemanticOrdering
 
 variable {I : Type*} (ord : SemanticOrdering I)
 
-/-- Bool-valued le for computation (eval, decide). -/
-def leB (i j : I) : Bool := decide (ord.le i j)
+/-- Reflexivity (mathlib's `Std.Refl`, field-style). -/
+theorem le_refl (i : I) : ord.le i i := Std.Refl.refl i
 
-/-- Strict ordering (Prop): i is ranked strictly below j. -/
+/-- Transitivity (mathlib's `IsTrans`, field-style). -/
+theorem le_trans (i j k : I) : ord.le i j → ord.le j k → ord.le i k :=
+  IsTrans.trans i j k
+
+/-- Totality (mathlib's `Std.Total`, field-style). -/
+theorem le_total (i j : I) : ord.le i j ∨ ord.le j i := Std.Total.total i j
+
+/-- Strict ordering: i is ranked strictly below j. -/
 def lt (i j : I) : Prop := ord.le i j ∧ ¬ ord.le j i
 
-/-- Decidability of the strict ordering. -/
-instance decRelLt : DecidableRel ord.lt :=
-  fun i j => show Decidable (ord.le i j ∧ ¬ ord.le j i) from inferInstance
+instance decRelLt : DecidableRel ord.lt := fun _ _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Bool-valued strict ordering for computation. -/
-def ltB (i j : I) : Bool := ord.leB i j && !ord.leB j i
+/-- Equivalence: i and j are ranked at the same level. -/
+def equiv (i j : I) : Prop := ord.le i j ∧ ord.le j i
 
-/-- Bool-valued equivalence for computation. -/
-def equivB (i j : I) : Bool := ord.leB i j && ord.leB j i
+instance decRelEquiv : DecidableRel ord.equiv := fun _ _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- ¬(a < b) → b ≤ a (by totality). -/
-theorem le_of_not_lt {a b : I} : ¬ ord.lt a b → ord.le b a := by
-  intro h
-  rcases ord.le_total a b with hab | hba
-  · exact Classical.byContradiction fun hba => h ⟨hab, hba⟩
-  · exact hba
+theorem le_of_not_lt {a b : I} (h : ¬ ord.lt a b) : ord.le b a :=
+  Classical.byContradiction fun hba => h ⟨(ord.le_total a b).resolve_right hba, hba⟩
 
 end SemanticOrdering
 
-/-- Construct a `SemanticOrdering` from a Bool-valued function.
-Convenient for defining concrete orderings via pattern matching. -/
+/-- Construct a `SemanticOrdering` from a Bool-valued table — the convenient
+form for concrete models defined by pattern matching. -/
 def SemanticOrdering.ofBool {I : Type*} (f : I → I → Bool)
     (h_refl : ∀ i, f i i = true)
     (h_trans : ∀ i j k, f i j = true → f j k = true → f i k = true)
     (h_total : ∀ i j, f i j = true ∨ f j i = true) :
     SemanticOrdering I where
   le i j := f i j = true
-  le_refl := h_refl
-  le_trans := h_trans
-  le_total := h_total
+  isPreorder := { refl := h_refl, trans := h_trans }
+  total := ⟨h_total⟩
   decRel _ _ := inferInstance
 
-/-! ### Evaluation Index and Formulas -/
+/-! ### Formulas -/
 
-/-- A metalinguistic formula over predicates and entities.
-
-The language includes atomic predication, boolean connectives,
-and the metalinguistic comparative ≻ (`.mc`). -/
+/-- A metalinguistic formula: atomic predication, boolean connectives, and
+the metalinguistic comparative ≻ (`.mc`). -/
 inductive MFormula (Pred Entity : Type*) where
   | atom : Pred → Entity → MFormula Pred Entity
   | neg : MFormula Pred Entity → MFormula Pred Entity
@@ -150,43 +127,74 @@ inductive MFormula (Pred Entity : Type*) where
   | mc : MFormula Pred Entity → MFormula Pred Entity → MFormula Pred Entity
   deriving DecidableEq
 
-namespace MFormula
-
-variable {Pred Entity : Type*}
-
 /-- Metalinguistic equative: A ≈ B := ¬(A ≻ B) ∧ ¬(B ≻ A). -/
-def me (A B : MFormula Pred Entity) : MFormula Pred Entity :=
+def MFormula.me {Pred Entity : Type*} (A B : MFormula Pred Entity) :
+    MFormula Pred Entity :=
   .conj (.neg (.mc A B)) (.neg (.mc B A))
-
-end MFormula
 
 /-! ### Semantics (§4.2 of the paper) -/
 
-/-- Evaluate a formula at an index ⟨≤, i, w⟩.
+section Semantics
 
-- Atomic: true iff the entity is in the predicate's extension at w under i.
-- MC (A ≻ B): true iff ∃ i' ≤ i with (A∧¬B) true at i', and
-  ∀ i'' ≤ i, (B∧¬A) true at i'' implies i'' < i'. -/
-def eval {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) : Bool :=
+variable {I W Pred Entity : Type*} (interpFn : I → Interpretation W Pred Entity)
+
+/-- Truth of a formula relative to a raw ordering relation `le` — used directly
+by the metalinguistic conditional, whose restricted ordering `≤_A` need not be
+total. `Eval` specializes it to a `SemanticOrdering`.
+
+- Atomic: the entity is in the predicate's extension at `w` under `i`.
+- MC (`A ≻ B`): some (A∧¬B)-interpretation ranked ≤ i strictly dominates every
+  (B∧¬A)-interpretation ranked ≤ i. -/
+def EvalGen (φ : MFormula Pred Entity) (le : I → I → Prop) (i : I) (w : W) : Prop :=
   match φ with
-  | .atom P e => (interpFn i).ext P w e
-  | .neg A => !eval interpFn A ord i w
-  | .conj A B => eval interpFn A ord i w && eval interpFn B ord i w
-  | .disj A B => eval interpFn A ord i w || eval interpFn B ord i w
+  | .atom P e => (interpFn i).ext P w e = true
+  | .neg A => ¬ EvalGen A le i w
+  | .conj A B => EvalGen A le i w ∧ EvalGen B le i w
+  | .disj A B => EvalGen A le i w ∨ EvalGen B le i w
   | .mc A B =>
-    -- ∃ i' ≤ i : ⟦A ∧ ¬B⟧^{i'} = 1 ∧ ∀ i'' ≤ i : ⟦B ∧ ¬A⟧^{i''} = 1 → i'' < i'
-    bAny I λ i' =>
-      ord.leB i' i &&
-      eval interpFn A ord i' w &&
-      !(eval interpFn B ord i' w) &&
-      bAll I λ i'' =>
-        !(ord.leB i'' i &&
-          eval interpFn B ord i'' w &&
-          !(eval interpFn A ord i'' w)) ||
-        (ord.ltB i'' i')
+      ∃ i', le i' i ∧ EvalGen A le i' w ∧ ¬ EvalGen B le i' w ∧
+        ∀ i'', le i'' i → EvalGen B le i'' w →
+          ¬ EvalGen A le i'' w → le i'' i' ∧ ¬ le i' i''
+
+instance EvalGen.instDec [Fintype I]
+    (φ : MFormula Pred Entity) (le : I → I → Prop) [DecidableRel le] (i : I) (w : W) :
+    Decidable (EvalGen interpFn φ le i w) :=
+  match φ with
+  | .atom _ _ => inferInstanceAs (Decidable (_ = true))
+  | .neg A =>
+      haveI := EvalGen.instDec A le i w
+      inferInstanceAs (Decidable (¬ EvalGen interpFn A le i w))
+  | .conj A B =>
+      haveI := EvalGen.instDec A le i w
+      haveI := EvalGen.instDec B le i w
+      inferInstanceAs (Decidable (EvalGen interpFn A le i w ∧ EvalGen interpFn B le i w))
+  | .disj A B =>
+      haveI := EvalGen.instDec A le i w
+      haveI := EvalGen.instDec B le i w
+      inferInstanceAs (Decidable (EvalGen interpFn A le i w ∨ EvalGen interpFn B le i w))
+  | .mc A B =>
+      haveI : ∀ j v, Decidable (EvalGen interpFn A le j v) :=
+        (EvalGen.instDec A le · ·)
+      haveI : ∀ j v, Decidable (EvalGen interpFn B le j v) :=
+        (EvalGen.instDec B le · ·)
+      inferInstanceAs (Decidable (∃ i', le i' i ∧ EvalGen interpFn A le i' w ∧
+        ¬ EvalGen interpFn B le i' w ∧ ∀ i'', le i'' i → EvalGen interpFn B le i'' w →
+          ¬ EvalGen interpFn A le i'' w → le i'' i' ∧ ¬ le i' i''))
+
+/-- Truth at an index ⟨≤, i, w⟩: `EvalGen` at the ordering's `le`. The
+domination clause's `le i'' i' ∧ ¬ le i' i''` is definitionally `ord.lt`. -/
+abbrev Eval (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
+  EvalGen interpFn φ ord.le i w
+
+/-- Characterization of the MC case — definitional, recorded as the rewriting
+interface so proofs never unfold `EvalGen` by name. -/
+theorem eval_mc_iff (A B : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) :
+    Eval interpFn (.mc A B) ord i w ↔
+    ∃ i', ord.le i' i ∧ Eval interpFn A ord i' w ∧ ¬ Eval interpFn B ord i' w ∧
+      ∀ i'', ord.le i'' i → Eval interpFn B ord i'' w →
+        ¬ Eval interpFn A ord i'' w → ord.lt i'' i' :=
+  Iff.rfl
 
 /-! ### General entailment facts
 
@@ -195,317 +203,327 @@ the shape of the semantics are proved here for arbitrary models; the remainder
 are established mathematically in [kocurek-2024-supplement] and witnessed on
 the finite models below. -/
 
-/-- Fact 3(f): ≻ is irreflexive — ⊨ ¬(A ≻ A). A witness interpretation would
-have to make A both true and false. -/
-theorem eval_mc_self_eq_false {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
-    eval interpFn (.mc φ φ) ord i w = false := by
-  simp only [eval, bAny, decide_eq_false_iff_not]
-  rintro ⟨i', h⟩
-  rcases h' : eval interpFn φ ord i' w <;> simp [h'] at h
+/-- Fact 3(f): ≻ is irreflexive — a witness would make A both true and false. -/
+theorem not_eval_mc_self (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) : ¬ Eval interpFn (.mc φ φ) ord i w := by
+  rw [eval_mc_iff]
+  rintro ⟨_, _, hA, hnA, _⟩
+  exact hnA hA
 
 /-- Fact 3(k): ≈ is reflexive — ⊨ A ≈ A. -/
-theorem eval_me_self_eq_true {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
-    eval interpFn (φ.me φ) ord i w = true := by
-  show (!eval interpFn (.mc φ φ) ord i w && !eval interpFn (.mc φ φ) ord i w) = true
-  simp [eval_mc_self_eq_false]
+theorem eval_me_self (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) : Eval interpFn (φ.me φ) ord i w :=
+  ⟨not_eval_mc_self interpFn φ ord i w, not_eval_mc_self interpFn φ ord i w⟩
 
 /-- ≈ is symmetric in its arguments (Fact 3(l) is the entailment form). -/
-theorem eval_me_comm {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ ψ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
-    eval interpFn (φ.me ψ) ord i w = eval interpFn (ψ.me φ) ord i w := by
-  show (!eval interpFn (.mc φ ψ) ord i w && !eval interpFn (.mc ψ φ) ord i w) = _
-  exact Bool.and_comm _ _
+theorem eval_me_comm (φ ψ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) :
+    Eval interpFn (φ.me ψ) ord i w ↔ Eval interpFn (ψ.me φ) ord i w :=
+  and_comm
 
-/-! ### Assertoric Content and Entailment -/
+/-! ### Assertoric Content -/
 
 /-- Is interpretation i maximal in the ordering? -/
-def isMaximal {I : Type*} [Fintype I] (ord : SemanticOrdering I) (i : I) : Bool :=
-  bAll I λ i' => !ord.ltB i i'
+def IsMaximal (ord : SemanticOrdering I) (i : I) : Prop := ∀ i', ¬ ord.lt i i'
 
-/-- Assertoric content: A is true at all ≤-maximal interpretations.
+instance [Fintype I] (ord : SemanticOrdering I) (i : I) :
+    Decidable (IsMaximal ord i) := by unfold IsMaximal; infer_instance
 
-|A|^{≤,w} = 1 iff ∀ i, i is maximal → ⟦A⟧^{≤,i,w} = 1.
-A speaker accepts A iff on every ordering-world pair they leave open,
-A is true at every top-ranked interpretation. -/
-def assertoricContent {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (w : W) : Bool :=
-  bAll I λ i => !(isMaximal ord i) || eval interpFn φ ord i w
+/-- Assertoric content: A is true at all ≤-maximal interpretations. A speaker
+accepts A iff on every ordering-world pair they leave open, A holds at every
+top-ranked interpretation. Acceptance-preservation — entailment at the level
+of assertoric content — is nonclassical (see `mc_disj_not_accepted`). -/
+def AssertoricContent [Fintype I] (φ : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (w : W) : Prop :=
+  ∀ i, IsMaximal ord i → Eval interpFn φ ord i w
 
-/-- Truth-preservation (⊨): for all ⟨≤, i, w⟩, if premises are true then
-conclusion is true. Classical; validates Observations 1, 2, 4, 5. -/
-def truthPreserves {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (premises : List (MFormula Pred Entity))
-    (conclusion : MFormula Pred Entity) : Prop :=
-  ∀ (ord : SemanticOrdering I) (i : I) (w : W),
-    (premises.all (λ φ => eval interpFn φ ord i w)) = true →
-    eval interpFn conclusion ord i w = true
+instance [Fintype I] (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (w : W) :
+    Decidable (AssertoricContent interpFn φ ord w) := by
+  unfold AssertoricContent; infer_instance
 
-/-- Acceptance-preservation (⊩): for all ⟨≤, w⟩, if assertoric content of
-all premises holds, then assertoric content of conclusion holds.
-Nonclassical; validates Observation 3 (A ∧ ¬B ⊩ A ≻ B). -/
-def acceptancePreserves {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (premises : List (MFormula Pred Entity))
-    (conclusion : MFormula Pred Entity) : Prop :=
-  ∀ (ord : SemanticOrdering I) (w : W),
-    (premises.all (λ φ => assertoricContent interpFn φ ord w)) = true →
-    assertoricContent interpFn conclusion ord w = true
+end Semantics
 
 /-! ### Distance Functions and Degree Modifiers (§6.1) -/
 
-/-- A distance function for a semantic ordering.
-
-Maps each interpretation to the set of interpretations "reasonably close"
-to it. Used to define `very much`, `sorta`, `mostly`. -/
+/-- A distance function for a semantic ordering: maps each interpretation to
+the interpretations \"reasonably close\" to it. Grounds `very much`, `sorta`,
+`mostly`. -/
 structure DistanceFunction (I : Type*) (ord : SemanticOrdering I) where
-  /-- d(i) = the set of interpretations reasonably close to i.
-  `close i i'` means i' is reasonably close to i. -/
-  close : I → I → Bool
+  /-- `close i i'` means i' is reasonably close to i. -/
+  close : I → I → Prop
+  /-- Decidability of closeness -/
+  decClose : DecidableRel close
   /-- Centered: i ∈ d(i) -/
-  centered : ∀ (i : I), close i i = true
+  centered : ∀ i, close i i
   /-- Top-bounded: if i' ∈ d(i), then i' ≤ i -/
-  topBounded : ∀ (i i' : I), close i i' = true → ord.le i' i
+  topBounded : ∀ i i', close i i' → ord.le i' i
   /-- Convex: if i' ∈ d(i) and i' ≤ i'' ≤ i, then i'' ∈ d(i) -/
-  convex : ∀ (i i' i'' : I),
-    close i i' = true → ord.le i' i'' → ord.le i'' i →
-    close i i'' = true
+  convex : ∀ i i' i'', close i i' → ord.le i' i'' → ord.le i'' i → close i i''
   /-- Noncontractive: if i' ∈ d(i) and i' ≤ j ≤ i, then i' ∈ d(j) -/
-  noncontractive : ∀ (i i' j : I),
-    close i i' = true → ord.le i' j → ord.le j i →
-    close j i' = true
+  noncontractive : ∀ i i' j, close i i' → ord.le i' j → ord.le j i → close j i'
 
-/-- "Far below": i ≪ j iff i ≤ j and i ∉ d(j).
-i is ranked below j and not even reasonably close. -/
-def farBelow {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord)
-    (i j : I) : Bool :=
-  ord.leB i j && !d.close j i
+attribute [instance] DistanceFunction.decClose
 
-/-- Much more (A ≫ B): like A ≻ B but with ≪ instead of <.
+/-- \"Far below\": i ≪ j iff i ≤ j and i is not even reasonably close to j. -/
+def FarBelow {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord)
+    (i j : I) : Prop :=
+  ord.le i j ∧ ¬ d.close j i
 
-⟦A ≫ B⟧ = 1 iff ∃ i' ≤ i with (A∧¬B) true at i', and
-∀ i'' ≤ i with (B∧¬A) true at i'', i'' ≪ i'. -/
-def evalMuchMore {I W Pred Entity : Type*} [Fintype I]
+instance {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord) :
+    DecidableRel (FarBelow ord d) := fun _ _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
+
+section Modifiers
+
+variable {I W Pred Entity : Type*} [Fintype I]
+  (interpFn : I → Interpretation W Pred Entity)
+
+/-- Much more (A ≫ B): like A ≻ B but with ≪ in place of <. -/
+def EvalMuchMore (φ ψ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+  ∃ i', ord.le i' i ∧ Eval interpFn φ ord i' w ∧ ¬ Eval interpFn ψ ord i' w ∧
+    ∀ i'', ord.le i'' i → Eval interpFn ψ ord i'' w →
+      ¬ Eval interpFn φ ord i'' w → FarBelow ord d i'' i'
+
+instance (φ ψ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (d : DistanceFunction I ord) (i : I) (w : W) :
+    Decidable (EvalMuchMore interpFn φ ψ ord d i w) := by
+  unfold EvalMuchMore; infer_instance
+
+/-- very A := A ≫ ¬A — every reasonably close interpretation makes A true. -/
+abbrev EvalVery (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+  EvalMuchMore interpFn φ (.neg φ) ord d i w
+
+/-- sorta A := ¬ very ¬A — some reasonably close interpretation makes A true. -/
+abbrev EvalSorta (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+  ¬ EvalVery interpFn (.neg φ) ord d i w
+
+/-- mostly A (eq. 97 of [rudolph-kocurek-2024]): some reasonably high level
+strictly below the top makes A uniformly true, and every A-false level below
+the current interpretation sits below it. Compatible with A and with ¬A
+(unlike `very`); entails `sorta A`; `mostly A ∧ mostly ¬A` is contradictory. -/
+def EvalMostly (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+  ∃ i', ord.lt i' i ∧ d.close i i' ∧
+    (∀ j, ord.equiv j i' → Eval interpFn φ ord j w) ∧
+    ∀ i'', ord.lt i'' i → (∀ j, ord.equiv j i'' → ¬ Eval interpFn φ ord j w) →
+      ord.lt i'' i'
+
+instance (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (d : DistanceFunction I ord) (i : I) (w : W) :
+    Decidable (EvalMostly interpFn φ ord d i w) := by
+  unfold EvalMostly; infer_instance
+
+end Modifiers
+
+/-! ### No Reversal and the delineation bridge ([klein-1980], §7) -/
+
+/-- No Reversal constraint (van Benthem 1990; §7 of [rudolph-kocurek-2024]):
+below any interpretation where e₁ falls under P and e₂ does not, every
+interpretation admitting e₂ also admits e₁. The order-restricted analogue of
+Klein's monotone-delineation constraint. -/
+def NoReversal {I W Pred Entity : Type*}
     (interpFn : I → Interpretation W Pred Entity)
-    (φ ψ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (d : DistanceFunction I ord)
-    (i : I) (w : W) : Bool :=
-  bAny I λ i' =>
-    ord.leB i' i &&
-    eval interpFn φ ord i' w &&
-    !(eval interpFn ψ ord i' w) &&
-    bAll I λ i'' =>
-      !(ord.leB i'' i &&
-        eval interpFn ψ ord i'' w &&
-        !(eval interpFn φ ord i'' w)) ||
-      farBelow ord d i'' i'
-
-/-- very A := A ≫ ¬A.
-True iff every reasonably close interpretation makes A true.
-
-Reduces to: ∀ i' ∈ d(i), ⟦A⟧^{i',w} = 1. -/
-def evalVery {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (d : DistanceFunction I ord)
-    (i : I) (w : W) : Bool :=
-  evalMuchMore interpFn φ (.neg φ) ord d i w
-
-/-- sorta A := ¬ very ¬A.
-True iff some reasonably close interpretation makes A true.
-
-Reduces to: ∃ i' ∈ d(i), ⟦A⟧^{i',w} = 1. -/
-def evalSorta {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (d : DistanceFunction I ord)
-    (i : I) (w : W) : Bool :=
-  !evalVery interpFn (.neg φ) ord d i w
-
-/-- mostly A (eq. 97 of [rudolph-kocurek-2024]).
-True iff there is a reasonably high level (strictly below the top,
-within the distance threshold) where A is uniformly true, and all
-A-false levels below the current interpretation are ranked below it.
-
-`mostly A` is compatible with A and with ¬A (unlike `very`). It entails
-`sorta A`. And `mostly A ∧ mostly ¬A` is contradictory. -/
-def evalMostly {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (d : DistanceFunction I ord)
-    (i : I) (w : W) : Bool :=
-  bAny I λ i' =>
-    ord.ltB i' i &&
-    d.close i i' &&
-    -- (ii) all j at the same rank as i' satisfy A
-    bAll I (λ j => !(ord.equivB j i') || eval interpFn φ ord j w) &&
-    -- (iii) all A-false levels below i are below i'
-    bAll I (λ i'' =>
-      !(ord.ltB i'' i &&
-        bAll I (λ j => !(ord.equivB j i'') || !(eval interpFn φ ord j w))) ||
-      ord.ltB i'' i')
-
-/-- No Reversal constraint (van Benthem 1990; §7 of [rudolph-kocurek-2024]).
-
-If entity e₁ is in the extension of P and e₂ is not at interpretation i,
-then for all i' ≤ i where e₂ enters the extension, e₁ must also be in
-the extension.
-
-When NR holds for gradable adjectives, the MC `Fa ≻ Gb` simplifies to
-the **delineation comparative**: ∃ i' ≤ i with Fa∧¬Gb — the second clause
-of the MC semantics (about dominating all (B∧¬A)-witnesses) becomes
-redundant. This connects metalinguistic comparatives to
-[klein-1980] and [kamp-1975]. See
-`Semantics/Degree/Gradability/Delineation.lean` for the delineation
-framework. -/
-def noReversal {I W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (ord : SemanticOrdering I)
-    (P : Pred) (w : W) (e1 e2 : Entity) : Prop :=
-  ∀ (i i' : I),
-    ord.le i' i →
-    (interpFn i).ext P w e1 = true →
-    (interpFn i).ext P w e2 = false →
-    (interpFn i').ext P w e2 = true →
-    (interpFn i').ext P w e1 = true
+    (ord : SemanticOrdering I) (P : Pred) (w : W) (e1 e2 : Entity) : Prop :=
+  ∀ i i', ord.le i' i →
+    (interpFn i).ext P w e1 = true → (interpFn i).ext P w e2 = false →
+    (interpFn i').ext P w e2 = true → (interpFn i').ext P w e1 = true
 
 instance {I W Pred Entity : Type*} [Fintype I]
     (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I)
     (P : Pred) (w : W) (e1 e2 : Entity) :
-    Decidable (noReversal interpFn ord P w e1 e2) := by
-  unfold noReversal; infer_instance
+    Decidable (NoReversal interpFn ord P w e1 e2) := by
+  unfold NoReversal; infer_instance
+
+section Delineation
+
+variable {I W Pred Entity : Type*}
+  (interpFn : I → Interpretation W Pred Entity)
+  (ord : SemanticOrdering I) (P : Pred) (w : W)
+
+/-- The delineation induced by a ranked family of interpretations: a comparison
+class is admissible iff it is the extension of `P` at some interpretation
+ranked at or below `i`, and `x` is \"P-in-C\" iff `x ∈ C`. Instantiates
+[klein-1980]'s comparison-class parameter with the paper's interpretation
+rankings, so the substrate's `Delineation.comparativeSem` can consume it. -/
+def interpretationDelineation (i : I) :
+    Semantics.Gradability.Delineation.ComparisonClass Entity → Entity → Prop :=
+  fun C x =>
+    (∃ i', ord.le i' i ∧ C = {y | (interpFn i').ext P w y = true}) ∧ x ∈ C
+
+/-- Unfolding lemma: the delineation comparative over the interpretation-induced
+delineation is the ∃-witness clause of the MC — the decidable form used on
+finite models. -/
+theorem delineation_comparativeSem_iff (i : I) (a b : Entity) :
+    Semantics.Gradability.Delineation.comparativeSem
+      (interpretationDelineation interpFn ord P w i) a b ↔
+    ∃ i', ord.le i' i ∧ (interpFn i').ext P w a = true ∧
+      (interpFn i').ext P w b = false := by
+  constructor
+  · rintro ⟨C, ⟨⟨i', h_le, rfl⟩, h_aC⟩, h_nb⟩
+    refine ⟨i', h_le, h_aC, ?_⟩
+    cases hb : (interpFn i').ext P w b
+    · rfl
+    · exact absurd ⟨⟨i', h_le, rfl⟩, hb⟩ h_nb
+  · rintro ⟨i', h_le, h_a, h_b⟩
+    refine ⟨{y | (interpFn i').ext P w y = true}, ⟨⟨i', h_le, rfl⟩, h_a⟩, ?_⟩
+    rintro ⟨-, h_bC⟩
+    simp only [Set.mem_setOf_eq, h_b] at h_bC
+    exact Bool.noConfusion h_bC
+
+/-- **The §7 bridge, in the substrate's vocabulary**: under No Reversal, the
+metalinguistic comparative for a gradable predicate IS [klein-1980]'s
+delineation comparative (`Delineation.comparativeSem`) over the
+interpretation-induced delineation — the paper's eq. (128): NR makes the
+domination clause of the MC semantics redundant. -/
+theorem eval_mc_iff_delineation_of_noReversal [Fintype I] (i : I) (a b : Entity)
+    (hnr : NoReversal interpFn ord P w b a) :
+    Eval interpFn (.mc (.atom P a) (.atom P b)) ord i w ↔
+    Semantics.Gradability.Delineation.comparativeSem
+      (interpretationDelineation interpFn ord P w i) a b := by
+  rw [eval_mc_iff, delineation_comparativeSem_iff]
+  constructor
+  · rintro ⟨i', h_le, h_A, h_B, -⟩
+    refine ⟨i', h_le, h_A, ?_⟩
+    cases hb : (interpFn i').ext P w b
+    · rfl
+    · exact absurd hb h_B
+  · rintro ⟨i', h_le, h_a, h_b⟩
+    refine ⟨i', h_le, h_a,
+      fun h => absurd (show (interpFn i').ext P w b = true from h) (by simp [h_b]),
+      fun i'' h'' hB'' hA'' => ?_⟩
+    have hA2 : (interpFn i'').ext P w a = false := by
+      cases ha : (interpFn i'').ext P w a
+      · rfl
+      · exact absurd ha hA''
+    have h_not : ¬ ord.le i' i'' := fun hle' => by
+      have := hnr i'' i' hle' hB'' hA2 h_a
+      simp [h_b] at this
+    rcases ord.le_total i'' i' with h1 | h2
+    · exact ⟨h1, h_not⟩
+    · exact absurd h2 h_not
+
+end Delineation
 
 /-! ### Revised Semantics ([kocurek-2024-supplement] §B) -/
 
-/-- Evaluate a formula under the revised MC semantics ([kocurek-2024-supplement] §B).
+section Revised
 
-The basic semantics (`eval`) fails ME transitivity: `A ≈ B, B ≈ C ⊭ A ≈ C`.
-The revised semantics strengthens the MC: the (A∧¬B)-witness must dominate
-either **all B-interpretations** or **all ¬A-interpretations**, not merely
-all (B∧¬A)-interpretations. This prevents cases where the basic MC holds
-vacuously due to the absence of (B∧¬A)-witnesses while (A∧B) or (¬A∧¬B)
-interpretations remain undominated.
+variable {I W Pred Entity : Type*} (interpFn : I → Interpretation W Pred Entity)
 
-Formally (simplified form): `A ≻ B` iff ∃ i' ≤ i with A∧¬B at i', and
-either (a) ∀ i'' ≤ i: ⟦B⟧^{i''} → i'' < i', or
-(b) ∀ i'' ≤ i: ⟦¬A⟧^{i''} → i'' < i'.
+/-- Truth under the revised MC semantics ([kocurek-2024-supplement] §B). The
+basic semantics fails ME transitivity; the revision strengthens the MC: the
+(A∧¬B)-witness must dominate either all B-interpretations or all
+¬A-interpretations, blocking vacuous comparatives.
 
-Properties ([kocurek-2024-supplement] §B):
-- All basic entailment patterns (Fact 3 a-n) are preserved (Fact 5)
-- ME transitivity is validated: `A ≈ B, B ≈ C ⊨ A ≈ C` (Fact 6)
-- Interdefinable with basic semantics (Fact 7):
-  `A >_basic B = (A∧¬B) >_revised (B∧¬A)` -/
-def evalRevised {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) : Bool :=
+Properties ([kocurek-2024-supplement] §B): all basic entailment patterns
+(Fact 3 a–n) are preserved (Fact 5); ME transitivity is validated (Fact 6);
+interdefinable with the basic semantics (Fact 7). -/
+def EvalRevised (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
   match φ with
-  | .atom P e => (interpFn i).ext P w e
-  | .neg A => !evalRevised interpFn A ord i w
-  | .conj A B => evalRevised interpFn A ord i w && evalRevised interpFn B ord i w
-  | .disj A B => evalRevised interpFn A ord i w || evalRevised interpFn B ord i w
+  | .atom P e => (interpFn i).ext P w e = true
+  | .neg A => ¬ EvalRevised A ord i w
+  | .conj A B => EvalRevised A ord i w ∧ EvalRevised B ord i w
+  | .disj A B => EvalRevised A ord i w ∨ EvalRevised B ord i w
   | .mc A B =>
-    bAny I λ i' =>
-      ord.leB i' i &&
-      evalRevised interpFn A ord i' w &&
-      !(evalRevised interpFn B ord i' w) &&
-      (-- (a): witness dominates all B-interpretations
-       bAll I (λ i'' =>
-         !(ord.leB i'' i && evalRevised interpFn B ord i'' w) ||
-         ord.ltB i'' i')
-       ||
-       -- (b): witness dominates all ¬A-interpretations
-       bAll I (λ i'' =>
-         !(ord.leB i'' i && !(evalRevised interpFn A ord i'' w)) ||
-         ord.ltB i'' i'))
+      ∃ i', ord.le i' i ∧ EvalRevised A ord i' w ∧
+        ¬ EvalRevised B ord i' w ∧
+        ((∀ i'', ord.le i'' i → EvalRevised B ord i'' w → ord.lt i'' i') ∨
+         (∀ i'', ord.le i'' i → ¬ EvalRevised A ord i'' w → ord.lt i'' i'))
+
+instance EvalRevised.instDec [Fintype I]
+    (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
+    Decidable (EvalRevised interpFn φ ord i w) :=
+  match φ with
+  | .atom _ _ => inferInstanceAs (Decidable (_ = true))
+  | .neg A =>
+      haveI := EvalRevised.instDec A ord i w
+      inferInstanceAs (Decidable (¬ EvalRevised interpFn A ord i w))
+  | .conj A B =>
+      haveI := EvalRevised.instDec A ord i w
+      haveI := EvalRevised.instDec B ord i w
+      inferInstanceAs (Decidable (EvalRevised interpFn A ord i w ∧
+        EvalRevised interpFn B ord i w))
+  | .disj A B =>
+      haveI := EvalRevised.instDec A ord i w
+      haveI := EvalRevised.instDec B ord i w
+      inferInstanceAs (Decidable (EvalRevised interpFn A ord i w ∨
+        EvalRevised interpFn B ord i w))
+  | .mc A B =>
+      haveI : ∀ j v, Decidable (EvalRevised interpFn A ord j v) :=
+        (EvalRevised.instDec A ord · ·)
+      haveI : ∀ j v, Decidable (EvalRevised interpFn B ord j v) :=
+        (EvalRevised.instDec B ord · ·)
+      inferInstanceAs (Decidable (∃ i', ord.le i' i ∧
+        EvalRevised interpFn A ord i' w ∧ ¬ EvalRevised interpFn B ord i' w ∧
+        ((∀ i'', ord.le i'' i → EvalRevised interpFn B ord i'' w → ord.lt i'' i') ∨
+         (∀ i'', ord.le i'' i → ¬ EvalRevised interpFn A ord i'' w → ord.lt i'' i'))))
+
+/-- Characterization of the revised MC case — definitional. -/
+theorem evalRevised_mc_iff (A B : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) :
+    EvalRevised interpFn (.mc A B) ord i w ↔
+    ∃ i', ord.le i' i ∧ EvalRevised interpFn A ord i' w ∧
+      ¬ EvalRevised interpFn B ord i' w ∧
+      ((∀ i'', ord.le i'' i → EvalRevised interpFn B ord i'' w → ord.lt i'' i') ∨
+       (∀ i'', ord.le i'' i → ¬ EvalRevised interpFn A ord i'' w → ord.lt i'' i')) :=
+  Iff.rfl
+
+end Revised
 
 /-! ### Metalinguistic Conditional (§6.3) -/
 
-/-- Evaluate a formula with a raw ordering relation.
+section MCond
 
-Like `eval`, but takes `le : I → I → Bool` directly rather than
-a `SemanticOrdering`. Needed for metalinguistic conditionals, where
-the consequent is evaluated relative to a restricted ordering ≤_A
-that may not satisfy totality (since non-A interpretations are
-dropped). Agrees with `eval` when given `ord.le`. -/
-def evalGen {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (le : I → I → Bool) (i : I) (w : W) : Bool :=
-  match φ with
-  | .atom P e => (interpFn i).ext P w e
-  | .neg A => !evalGen interpFn A le i w
-  | .conj A B => evalGen interpFn A le i w && evalGen interpFn B le i w
-  | .disj A B => evalGen interpFn A le i w || evalGen interpFn B le i w
-  | .mc A B =>
-    bAny I λ i' =>
-      le i' i &&
-      evalGen interpFn A le i' w &&
-      !(evalGen interpFn B le i' w) &&
-      bAll I λ i'' =>
-        !(le i'' i &&
-          evalGen interpFn B le i'' w &&
-          !(evalGen interpFn A le i'' w)) ||
-        (le i'' i' && !(le i' i''))
+variable {I W Pred Entity : Type*} [Fintype I]
+  (interpFn : I → Interpretation W Pred Entity)
 
-/-- Restrict an ordering relation to A-interpretations (§6.3).
+/-- Restrict an ordering relation to A-interpretations (§6.3): drops non-A
+interpretations, so the result satisfies reflexivity (at A-interpretations)
+and transitivity but not totality — hence the consequent of a conditional is
+evaluated via `EvalGen` rather than `Eval`. -/
+def restrictLE (A : MFormula Pred Entity) (le : I → I → Prop) (w : W) :
+    I → I → Prop :=
+  fun i j => le i j ∧ EvalGen interpFn A le i w ∧ EvalGen interpFn A le j w
 
-≤_A = {⟨i, j⟩ | i ≤ j ∧ ⟦A⟧^{≤,i,w} = 1 ∧ ⟦A⟧^{≤,j,w} = 1}
+instance (A : MFormula Pred Entity) (le : I → I → Prop) [DecidableRel le] (w : W) :
+    DecidableRel (restrictLE interpFn A le w) := fun _ _ => by
+  unfold restrictLE; infer_instance
 
-Drops non-A interpretations from the ordering. The resulting relation
-satisfies reflexivity (at A-interps) and transitivity, but not totality
-— hence the consequent is evaluated via `evalGen` rather than `eval`. -/
-def restrictLE {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A : MFormula Pred Entity)
-    (le : I → I → Bool) (w : W) : I → I → Bool :=
-  λ i j => le i j && evalGen interpFn A le i w && evalGen interpFn A le j w
+/-- Metalinguistic conditional (eq. 120 of [rudolph-kocurek-2024]): the
+antecedent is evaluated with the full ordering, the consequent with the
+A-restricted ordering ≤_A. For non-metagradable A and B this reduces to
+interpretation-strict implication.
 
-/-- Metalinguistic conditional (eq. 120 of [rudolph-kocurek-2024]).
+Key properties: C1 (conditionals entail weak comparatives), M1
+(⊨ A → (A ≻ ¬A), see `mcond_m1`), failure of modus tollens for acceptance. -/
+def EvalMCond (A B : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) : Prop :=
+  ∀ i', ord.le i' i → EvalGen interpFn A ord.le i' w →
+    EvalGen interpFn B (restrictLE interpFn A ord.le w) i' w
 
-⟦A → B⟧^{≤,i,w} = 1 iff ∀ i' ≤ i : ⟦A⟧^{≤,i',w} = 1 → ⟦B⟧^{≤_A,i',w} = 1
+instance (A B : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
+    Decidable (EvalMCond interpFn A B ord i w) := by
+  unfold EvalMCond; infer_instance
 
-The antecedent A is evaluated with the full ordering ≤. The consequent
-B is evaluated with the A-restricted ordering ≤_A. When A and B are
-non-metagradable (contain no ≻), ⟦B⟧^{≤_A} = ⟦B⟧^{≤}, so the
-conditional reduces to interpretation-strict implication: every ranked
-A-interpretation is a B-interpretation.
-
-Key properties:
-- C1: (A → B) ⊨ (B ≥ A) — conditionals entail weak comparatives
-- M1: ⊨ A → (A ≻ ¬A) — classically valid
-- M2: A → B, ¬B ⊮ ¬A — modus tollens fails for acceptance -/
-def evalMCond {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) : Bool :=
-  let le := ord.leB
-  let leA := restrictLE interpFn A le w
-  bAll I λ i' =>
-    !(le i' i && evalGen interpFn A le i' w) ||
-    evalGen interpFn B leA i' w
+end MCond
 
 /-! ### Connection to Common Ground -/
 
 open CommonGround (ContextSet HasContextSet)
 
-/-- An ordering-world pair: the enriched index for metalinguistic CommonGround.
-
-The common ground is a set of ordering-world pairs ⟨≤, w⟩ compatible
-with speakers' factual AND interpretive commitments. -/
+/-- An ordering-world pair: the enriched index for the metalinguistic common
+ground — a Stalnakerian \"world\" that fixes interpretive as well as factual
+commitments. -/
 structure OrderingWorldPair (I W : Type*) where
   ord : SemanticOrdering I
   world : W
 
 /-- The metalinguistic common ground IS the substrate's `ContextSet`, taken at
-the enriched index type: the Stalnaker generalization is "same object, richer
-worlds", so `ContextSet.update` and its laws apply unchanged. -/
+the enriched index type: the Stalnaker generalization is \"same object, richer
+worlds\", so `ContextSet.update` and its laws apply unchanged. -/
 abbrev MetalinguisticCG (I W : Type*) := ContextSet (OrderingWorldPair I W)
 
 namespace MetalinguisticCG
@@ -524,7 +542,7 @@ variable {Pred Entity : Type*} [Fintype I]
 /-- The proposition a formula expresses over the enriched index: the
 ordering-world pairs at which its assertoric content holds. -/
 def assertoricProp (φ : MFormula Pred Entity) : Set (OrderingWorldPair I W) :=
-  {pair | assertoricContent interpFn φ pair.ord pair.world = true}
+  {pair | AssertoricContent interpFn φ pair.ord pair.world}
 
 /-- Assertion is the substrate's `ContextSet.update` with the assertoric
 proposition — not a new operation. -/
@@ -567,185 +585,21 @@ end MetalinguisticCG
 instance {I W : Type*} : HasContextSet (MetalinguisticCG I W) W where
   toContextSet := MetalinguisticCG.toContextSet
 
-/-! ### Prop-Level Characterization of the Revised MC -/
+section DegreeTheory
 
--- Bridge between leB/ltB and Prop-valued le/lt
-private theorem leB_iff {I : Type*} (ord : SemanticOrdering I) (i j : I) :
-    ord.leB i j = true ↔ ord.le i j := by
-  simp [SemanticOrdering.leB, decide_eq_true_eq]
-
-private theorem ltB_iff {I : Type*} (ord : SemanticOrdering I) (i j : I) :
-    ord.ltB i j = true ↔ ord.lt i j := by
-  simp [SemanticOrdering.ltB, SemanticOrdering.leB, SemanticOrdering.lt,
-    Bool.and_eq_true, decide_eq_true_eq, decide_eq_false_iff_not]
-
--- Converts Bool disjunction to implication form
-private theorem bGuard (a b c : Bool) :
-    (!(a && b)) = true ∨ c = true ↔ (a = true → b = true → c = true) := by
-  cases a <;> cases b <;> cases c <;> simp
-
-private theorem bGuardNeg (a d c : Bool) :
-    (!(a && !d)) = true ∨ c = true ↔ (a = true → d = false → c = true) := by
-  cases a <;> cases d <;> cases c <;> simp
-
-private theorem bGuard3 (a b d c : Bool) :
-    (!(a && b && !d)) = true ∨ c = true ↔
-      (a = true → b = true → d = false → c = true) := by
-  cases a <;> cases b <;> cases d <;> cases c <;> simp
-
-/-- Prop-level characterization of the basic MC (`eval` on `.mc A B`). -/
-theorem eval_mc_iff {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    eval interpFn (.mc A B) ord i w = true ↔
-    ∃ i' : I,
-      ord.le i' i ∧
-      eval interpFn A ord i' w = true ∧
-      eval interpFn B ord i' w = false ∧
-      ∀ i'' : I, ord.le i'' i → eval interpFn B ord i'' w = true →
-        eval interpFn A ord i'' w = false → ord.lt i'' i' := by
-  show (bAny I fun i' => ord.leB i' i && eval interpFn A ord i' w &&
-       !(eval interpFn B ord i' w) &&
-       bAll I (fun i'' => !(ord.leB i'' i && eval interpFn B ord i'' w &&
-          !(eval interpFn A ord i'' w)) || ord.ltB i'' i')) = true ↔ _
-  simp only [bAny, bAll, decide_eq_true_eq, Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · rintro ⟨i', ⟨⟨h_le, h_A⟩, h_nB⟩, h_dom⟩
-    have h_B : eval interpFn B ord i' w = false := by
-      revert h_nB; cases eval interpFn B ord i' w <;> simp
-    refine ⟨i', (leB_iff ord i' i).mp h_le, h_A, h_B, fun i'' h'' hB'' hA'' => ?_⟩
-    have := h_dom i''
-    rw [bGuard3] at this
-    exact (ltB_iff ord i'' i').mp (this ((leB_iff ord i'' i).mpr h'') hB'' hA'')
-  · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
-    refine ⟨i', ⟨⟨(leB_iff ord i' i).mpr h_le, h_A⟩, by simp [h_B]⟩, fun i'' => ?_⟩
-    rw [bGuard3]
-    intro h'' hB'' hA''
-    exact (ltB_iff ord i'' i').mpr (h_dom i'' ((leB_iff ord i'' i).mp h'') hB'' hA'')
-
-/-- Prop-level characterization of revised MC (`evalRevised` on `.mc A B`).
-Converts Boolean `bAny`/`bAll` wrappers to standard Prop quantifiers. -/
-theorem evalRevised_mc_iff {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    evalRevised interpFn (.mc A B) ord i w = true ↔
-    ∃ i' : I,
-      ord.le i' i ∧
-      evalRevised interpFn A ord i' w = true ∧
-      evalRevised interpFn B ord i' w = false ∧
-      ((∀ i'' : I, ord.le i'' i → evalRevised interpFn B ord i'' w = true →
-         ord.lt i'' i') ∨
-       (∀ i'' : I, ord.le i'' i → evalRevised interpFn A ord i'' w = false →
-         ord.lt i'' i')) := by
-  -- evalRevised (.mc A B) reduces to bAny/bAll over leB/ltB
-  show (bAny I fun i' => ord.leB i' i && evalRevised interpFn A ord i' w &&
-       !(evalRevised interpFn B ord i' w) &&
-       (bAll I (fun i'' => !(ord.leB i'' i && evalRevised interpFn B ord i'' w) ||
-          ord.ltB i'' i') ||
-        bAll I (fun i'' => !(ord.leB i'' i && !(evalRevised interpFn A ord i'' w)) ||
-          ord.ltB i'' i')))
-    = true ↔ _
-  simp only [bAny, bAll, decide_eq_true_eq, Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · rintro ⟨i', ⟨⟨h_le, h_A⟩, h_nB⟩, h_dom⟩
-    have h_B : evalRevised interpFn B ord i' w = false := by
-      revert h_nB; cases evalRevised interpFn B ord i' w <;> simp
-    refine ⟨i', (leB_iff ord i' i).mp h_le, h_A, h_B, ?_⟩
-    rcases h_dom with h1 | h2
-    · exact Or.inl fun i'' h_le'' h_B'' => by
-        have := h1 i''; rw [bGuard] at this
-        exact (ltB_iff ord i'' i').mp (this ((leB_iff ord i'' i).mpr h_le'') h_B'')
-    · exact Or.inr fun i'' h_le'' h_A'' => by
-        have := h2 i''; rw [bGuardNeg] at this
-        exact (ltB_iff ord i'' i').mp (this ((leB_iff ord i'' i).mpr h_le'') h_A'')
-  · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
-    refine ⟨i', ⟨⟨(leB_iff ord i' i).mpr h_le, h_A⟩, by simp [h_B]⟩, ?_⟩
-    rcases h_dom with h1 | h2
-    · exact Or.inl fun i'' => by
-        rw [bGuard]; intro h_le'' h_B''
-        exact (ltB_iff ord i'' i').mpr (h1 i'' ((leB_iff ord i'' i).mp h_le'') h_B'')
-    · exact Or.inr fun i'' => by
-        rw [bGuardNeg]; intro h_le'' h_A''
-        exact (ltB_iff ord i'' i').mpr (h2 i'' ((leB_iff ord i'' i).mp h_le'') h_A'')
-
-/-! ### The No Reversal bridge to delineation ([klein-1980]) -/
-
-/-- The delineation induced by a ranked family of interpretations: a comparison
-class is admissible iff it is the extension of `P` at some interpretation
-ranked at or below `i`, and `x` is "P-in-C" iff `x ∈ C`. Instantiates
-[klein-1980]'s comparison-class parameter with the paper's interpretation
-rankings, so the substrate's `Delineation.comparativeSem` can consume it. -/
-def interpretationDelineation {I W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (ord : SemanticOrdering I) (P : Pred) (w : W) (i : I) :
-    Semantics.Gradability.Delineation.ComparisonClass Entity → Entity → Prop :=
-  fun C x =>
-    (∃ i', ord.le i' i ∧ C = {y | (interpFn i').ext P w y = true}) ∧ x ∈ C
-
-/-- Unfolding lemma: the delineation comparative over the interpretation-induced
-delineation is the ∃-witness clause of the MC — the decidable form used on
-finite models. -/
-theorem delineation_comparativeSem_iff {I W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (ord : SemanticOrdering I) (P : Pred) (w : W) (i : I) (a b : Entity) :
-    Semantics.Gradability.Delineation.comparativeSem
-      (interpretationDelineation interpFn ord P w i) a b ↔
-    ∃ i', ord.le i' i ∧ (interpFn i').ext P w a = true ∧
-      (interpFn i').ext P w b = false := by
-  constructor
-  · rintro ⟨C, ⟨⟨i', h_le, rfl⟩, h_aC⟩, h_nb⟩
-    refine ⟨i', h_le, h_aC, ?_⟩
-    cases hb : (interpFn i').ext P w b
-    · rfl
-    · exact absurd ⟨⟨i', h_le, rfl⟩, hb⟩ h_nb
-  · rintro ⟨i', h_le, h_a, h_b⟩
-    refine ⟨{y | (interpFn i').ext P w y = true}, ⟨⟨i', h_le, rfl⟩, h_a⟩, ?_⟩
-    rintro ⟨-, h_bC⟩
-    simp only [Set.mem_setOf_eq, h_b] at h_bC
-    exact Bool.noConfusion h_bC
-
-/-- **The §7 bridge, in the substrate's vocabulary**: under No Reversal, the
-metalinguistic comparative for a gradable predicate IS [klein-1980]'s
-delineation comparative (`Delineation.comparativeSem`) over the
-interpretation-induced delineation — the paper's eq. (128): NR makes the
-domination clause of the MC semantics redundant. NR plays the role of Klein's
-monotone-delineation constraint, restricted to ranked interpretations. -/
-theorem eval_mc_iff_delineation_of_noReversal {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (ord : SemanticOrdering I) (P : Pred) (w : W) (i : I) (a b : Entity)
-    (hnr : noReversal interpFn ord P w b a) :
-    eval interpFn (.mc (.atom P a) (.atom P b)) ord i w = true ↔
-    Semantics.Gradability.Delineation.comparativeSem
-      (interpretationDelineation interpFn ord P w i) a b := by
-  rw [eval_mc_iff, delineation_comparativeSem_iff]
-  constructor
-  · rintro ⟨i', h_le, h_A, h_B, -⟩
-    exact ⟨i', h_le, h_A, h_B⟩
-  · rintro ⟨i', h_le, h_a, h_b⟩
-    refine ⟨i', h_le, h_a, h_b, fun i'' h'' hB'' hA'' => ?_⟩
-    have h_not : ¬ ord.le i' i'' := fun hle' => by
-      have := hnr i'' i' hle' hB'' hA'' h_a
-      simp [h_b] at this
-    rcases ord.le_total i'' i' with h1 | h2
-    · exact ⟨h1, h_not⟩
-    · exact absurd h2 h_not
+variable {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
+  (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I) (i : I)
 
 /-! ### Field and Denotation Sets -/
 
 /-- The field I_i: the set of interpretations ranked at or below i. -/
-def field {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) : Finset I :=
+def field : Finset I :=
   Finset.univ.filter (λ j => ord.le j i)
 
 /-- The denotation of a formula: the set of interpretations in I_i
 where the formula is true (under the revised semantics). -/
-def denotation {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) : Finset I :=
-  (field ord i).filter (λ j => evalRevised interpFn φ ord j w)
+def denotation (φ : MFormula Pred Entity) (w : W) : Finset I :=
+  (field ord i).filter (λ j => EvalRevised interpFn φ ord j w)
 
 /-! ### The ∼ Equivalence Relation ([kocurek-2024-supplement] §C, p. 9) -/
 
@@ -754,8 +608,7 @@ matched by an element of Y\X at least as high, and vice versa.
 
 This is the same as the basic ME matching condition applied to
 interpretation sets rather than formulas. -/
-def equivCond1 {I : Type*} [DecidableEq I]
-    (ord : SemanticOrdering I) (X Y : Finset I) : Prop :=
+def equivCond1 (X Y : Finset I) : Prop :=
   (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'') ∧
   (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'')
 
@@ -766,9 +619,7 @@ an element of X ∩ Y and an element of X̄ ∩ Ȳ (relative to I_i).
 This handles the "Figure 1" situation where A ↔ ¬B always holds
 at top-ranked interpretations: if every A-or-B-but-not-both
 interpretation is matched by both an A∧B and a ¬A∧¬B interpretation. -/
-def equivCond2 {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I)
-    (X Y : Finset I) : Prop :=
+def equivCond2 (X Y : Finset I) : Prop :=
   ∀ i' ∈ (X ∪ Y) \ (X ∩ Y),
     (∃ i'' ∈ X ∩ Y, ord.le i' i'') ∧
     (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'')
@@ -782,17 +633,14 @@ element in the overlap and an element outside both sets.
 
 This mirrors the revised ME truth conditions ([kocurek-2024-supplement] §B) applied
 to sets rather than formulas. -/
-def degreeEquiv {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I)
-    (X Y : Finset I) : Prop :=
+def degreeEquiv (X Y : Finset I) : Prop :=
   equivCond1 ord X Y ∨ equivCond2 ord i X Y
 
 /-! ### Fact 8: ∼ is an Equivalence Relation -/
 
 /-- Fact 8a: ∼ is reflexive.
 X \ X = ∅, so all conditions are vacuously satisfied. -/
-theorem degreeEquiv_refl {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X : Finset I) :
+theorem degreeEquiv_refl (X : Finset I) :
     degreeEquiv ord i X X := by
   left
   constructor <;> intro i' h <;> simp at h
@@ -801,8 +649,7 @@ theorem degreeEquiv_refl {I : Type*} [Fintype I] [DecidableEq I]
 Both conditions are symmetric in X and Y: condition (i) swaps the
 two conjuncts, and condition (ii) is invariant under X ↔ Y since
 X ∩ Y = Y ∩ X and X ∪ Y = Y ∪ X. -/
-theorem degreeEquiv_symm {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y : Finset I) :
+theorem degreeEquiv_symm (X Y : Finset I) :
     degreeEquiv ord i X Y → degreeEquiv ord i Y X := by
   intro h
   rcases h with h1 | h2
@@ -828,9 +675,7 @@ Mirrors the revised MC truth conditions ([kocurek-2024-supplement] §B):
 (a) all elements of X ∩ Y are strictly below i', or
 (b) all elements of I_i \ (X ∪ Y) are strictly below i',
 and in both cases all elements of Y \ X are strictly below i'. -/
-def strictlyBetter {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I)
-    (X Y : Finset I) : Prop :=
+def strictlyBetter (X Y : Finset I) : Prop :=
   ∃ i' ∈ X \ Y,
     i' ∈ field ord i ∧
     (∀ i'' ∈ Y \ X, ord.lt i'' i') ∧
@@ -839,9 +684,9 @@ def strictlyBetter {I : Type*} [Fintype I] [DecidableEq I]
 
 /-! ### Order-Theoretic Helpers -/
 
+omit [Fintype I] in
 /-- Every nonempty Finset has a maximal element under a total preorder. -/
-private lemma exists_le_max {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (S : Finset I) (hS : S.Nonempty) :
+private lemma exists_le_max (S : Finset I) (hS : S.Nonempty) :
     ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
   induction S using Finset.cons_induction with
   | empty => exact absurd hS (by simp)
@@ -861,30 +706,29 @@ private lemma exists_le_max {I : Type*} [Fintype I] [DecidableEq I]
       exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
         simp [hS'] at hs; exact hs ▸ ord.le_refl _⟩
 
+omit [Fintype I] [DecidableEq I] in
 /-- a ≤ b ∧ b < c → a < c. -/
-private lemma le_lt_trans' {I : Type*} (ord : SemanticOrdering I) (a b c : I) :
+private lemma le_lt_trans' (a b c : I) :
     ord.le a b → ord.lt b c → ord.lt a c :=
   fun hab ⟨hbc, hncb⟩ =>
     ⟨ord.le_trans a b c hab hbc, fun hca => hncb (ord.le_trans c a b hca hab)⟩
 
+omit [Fintype I] [DecidableEq I] in
 /-- a < b ∧ b ≤ c → a < c. -/
-private lemma lt_le_trans' {I : Type*} (ord : SemanticOrdering I) (a b c : I) :
+private lemma lt_le_trans' (a b c : I) :
     ord.lt a b → ord.le b c → ord.lt a c :=
   fun ⟨hab, hnba⟩ hbc =>
     ⟨ord.le_trans a b c hab hbc, fun hca => hnba (ord.le_trans b c a hbc hca)⟩
 
+omit [Fintype I] [DecidableEq I] in
 /-- lt is irreflexive. -/
-private lemma lt_irrefl' {I : Type*} (ord : SemanticOrdering I) (m : I) :
+private lemma lt_irrefl' (m : I) :
     ¬ ord.lt m m :=
   fun ⟨_, h⟩ => h (ord.le_refl m)
 
-/-- b ≠ true → b = false. -/
-private theorem bool_eq_false_of_ne_true {b : Bool} (h : ¬ (b = true)) :
-    b = false := by cases b <;> simp_all
-
+omit [Fintype I] in
 /-- If m dominates X ∩ Y and Y \ X, it dominates all of Y. -/
-private lemma dom_all_of_inter_sdiff {I : Type*} [DecidableEq I]
-    (ord : SemanticOrdering I) (m : I) (X Y : Finset I)
+private lemma dom_all_of_inter_sdiff (m : I) (X Y : Finset I)
     (h_cap : ∀ c ∈ X ∩ Y, ord.lt c m)
     (h_sdiff : ∀ y ∈ Y \ X, ord.lt y m) :
     ∀ y ∈ Y, ord.lt y m := by
@@ -893,9 +737,8 @@ private lemma dom_all_of_inter_sdiff {I : Type*} [DecidableEq I]
   · exact h_cap y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
   · exact h_sdiff y (Finset.mem_sdiff.mpr ⟨hy, hyx⟩)
 
-/-- If m dominates Y \ X and field \ (X ∪ Y), it dominates field \ X. -/
-private lemma dom_fX_of_sdiff_comp {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (m : I) (X Y : Finset I)
+/-- If m dominates Y \ X and field ord i \ (X ∪ Y), it dominates field ord i \ X. -/
+private lemma dom_fX_of_sdiff_comp (m : I) (X Y : Finset I)
     (h_yx : ∀ y ∈ Y \ X, ord.lt y m)
     (h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m) :
     ∀ c ∈ field ord i \ X, ord.lt c m := by
@@ -905,9 +748,9 @@ private lemma dom_fX_of_sdiff_comp {I : Type*} [Fintype I] [DecidableEq I]
   · exact h_comp c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
       fun h => Finset.mem_union.mp h |>.elim (Finset.mem_sdiff.mp hc).2 hc_y⟩)
 
+omit [Fintype I] in
 /-- (X ∪ Y) \ (X ∩ Y) = (X \ Y) ∪ (Y \ X). -/
-private lemma mem_symdiff_iff {I : Type*} [DecidableEq I]
-    (X Y : Finset I) (s : I) :
+private lemma mem_symdiff_iff (X Y : Finset I) (s : I) :
     s ∈ (X ∪ Y) \ (X ∩ Y) ↔ s ∈ (X \ Y) ∪ (Y \ X) := by
   simp only [Finset.mem_sdiff, Finset.mem_union, Finset.mem_inter]
   constructor
@@ -918,9 +761,9 @@ private lemma mem_symdiff_iff {I : Type*} [DecidableEq I]
     · exact ⟨Or.inl hx, fun ⟨_, hy⟩ => hny hy⟩
     · exact ⟨Or.inr hy, fun ⟨hx, _⟩ => hnx hx⟩
 
+omit [Fintype I] in
 /-- X ≠ Y → (X \ Y) ∪ (Y \ X) is nonempty. -/
-private lemma symdiff_nonempty {I : Type*} [DecidableEq I]
-    (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y \ X)).Nonempty := by
+private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y \ X)).Nonempty := by
   by_contra h_empty
   rw [Finset.not_nonempty_iff_eq_empty] at h_empty
   apply h; ext x
@@ -940,8 +783,7 @@ private lemma symdiff_nonempty {I : Type*} [DecidableEq I]
 
 /-- Fact 12a: ⊐ is irreflexive on sets.
 i' ∈ X \ X is impossible, so no witness exists. -/
-theorem strictlyBetter_irrefl {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X : Finset I) :
+theorem strictlyBetter_irrefl (X : Finset I) :
     ¬ strictlyBetter ord i X X := by
   intro ⟨i', hi', _, _, _⟩
   simp at hi'
@@ -951,8 +793,7 @@ Under equivCond1, any witness i' ∈ X\Y is matched by i'' ∈ Y\X with
 i' ≤ i'', contradicting i'' < i'. Under equivCond2, the witness is
 dominated by an X∩Y or field\(X∪Y) element, contradicting the inner
 disjunct of ⊐. -/
-theorem degreeEquiv_not_strictlyBetter {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y : Finset I) :
+theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
     degreeEquiv ord i X Y → ¬ strictlyBetter ord i X Y := by
   intro h_eq ⟨i', h_sdiff, _, h_ymx, h_inner⟩
   rcases h_eq with ⟨h_match, _⟩ | h2
@@ -973,10 +814,9 @@ theorem degreeEquiv_not_strictlyBetter {I : Type*} [Fintype I] [DecidableEq I]
 If X ⊐ Y and Y ∼ Z (with all sets in the field), then X ⊐ Z.
 Under left inner: m dominates all of Y, m ∉ Z is forced, and
 matching through Y∼Z extends domination to Z\Y.
-Under right inner: m dominates field\X; if m ∉ Z, Z\X ⊆ field\X;
+Under right inner: m dominates field\X; if m ∉ Z, Z\X ⊆ field ord i\X;
 if m ∈ Z, use Y∼Z to find alternative witness in X\Z. -/
-theorem strictlyBetter_respects_right {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I)
+theorem strictlyBetter_respects_right (X Y Z : Finset I)
     (_hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i Y Z →
     strictlyBetter ord i X Z := by
@@ -1008,7 +848,7 @@ theorem strictlyBetter_respects_right {I : Type*} [Fintype I] [DecidableEq I]
       by_cases hc_y : c ∈ Y
       · exact m_dom_Y c hc_y
       · exact z_ny_lt c (Finset.mem_inter.mp hc).2 hc_y
-  · -- RIGHT INNER: m dominates field \ X
+  · -- RIGHT INNER: m dominates field ord i \ X
     have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
     -- Helper: w ∈ X forced when m_dom_fX w gives lt w m, contradicting le m w
     have forced_in_X (w : I) (hw_f : w ∈ field ord i) (hle : ord.le m w) :
@@ -1032,7 +872,7 @@ theorem strictlyBetter_respects_right {I : Type*} [Fintype I] [DecidableEq I]
         obtain ⟨y₀, hy₀, hle⟩ := hyz_b m (Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩)
         exact ⟨y₀, Finset.mem_sdiff.mpr ⟨forced_in_X y₀ (hYf (Finset.mem_sdiff.mp hy₀).1) hle,
           (Finset.mem_sdiff.mp hy₀).2⟩, hYf (Finset.mem_sdiff.mp hy₀).1, hle⟩
-      · -- cond2: ∃ c₂ ∈ field\(Y∪Z), le m c₂; c₂ ∈ X forced
+      · -- cond2: ∃ c₂ ∈ field ord i\(Y∪Z), le m c₂; c₂ ∈ X forced
         obtain ⟨_, ⟨c₂, hc₂, hle⟩⟩ := hyz2 m
           (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inr hm_z),
             fun h => hm_ny (Finset.mem_inter.mp h).1⟩)
@@ -1052,11 +892,10 @@ If X ⊐ Y and X ∼ Z (with all sets in the field), then Z ⊐ Y.
 Under left inner: m dominates all of Y; use X∼Z to find
 a witness in Z\Y (either m itself or a matched element).
 Under right inner: m dominates field\X; m ∈ Z is forced
-(matching m ∈ X\Z through X∼Z yields z ∈ field\X < m,
+(matching m ∈ X\Z through X∼Z yields z ∈ field ord i\X < m,
 contradicting le m z); elements of Y\Z ∩ X use X∼Z
 matching to field\X for domination. -/
-theorem strictlyBetter_respects_left {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I)
+theorem strictlyBetter_respects_left (X Y Z : Finset I)
     (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i X Z →
     strictlyBetter ord i Z Y := by
@@ -1092,7 +931,7 @@ theorem strictlyBetter_respects_left {I : Type*} [Fintype I] [DecidableEq I]
             fun h => hm_z (Finset.mem_inter.mp h).2⟩)
         exact ⟨z₁, Finset.mem_sdiff.mpr ⟨(Finset.mem_inter.mp hz₁).2, not_in_Y z₁ hle⟩,
           hXf (Finset.mem_inter.mp hz₁).1, hle⟩
-  · -- RIGHT INNER: m dominates field \ X
+  · -- RIGHT INNER: m dominates field ord i \ X
     have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
     -- c ∈ X\Z → lt c m (via X∼Z matching to field\X, then m_dom_fX)
     have lt_via_xz : ∀ c, c ∈ X → c ∉ Z → ord.lt c m := by
@@ -1129,8 +968,7 @@ If m₂ ≤ m₁: m₁ cannot be in Z (else m₁ ∈ Z\Y with ¬(m₁ < m₂)),
 so m₁ ∈ X\Z is the witness for X⊐Z.
 If m₁ ≤ m₂: m₂ must be in X (else m₂ ∈ Y\X with ¬(m₂ < m₁)),
 so m₂ ∈ X\Z is the witness for X⊐Z. -/
-theorem strictlyBetter_trans {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I) :
+theorem strictlyBetter_trans (X Y Z : Finset I) :
     strictlyBetter ord i X Y → strictlyBetter ord i Y Z →
     strictlyBetter ord i X Z := by
   rintro ⟨m₁, hm₁_sd, hm₁_f, hm₁_yx, hm₁_inner⟩
@@ -1215,8 +1053,7 @@ The proof finds the maximum element m of the symmetric difference
 (X\Y)∪(Y\X), then case-splits on whether all elements on the
 other side are strictly below m. If yes, we get ⊐; if no, we
 get ∼ via one of the two equivalence conditions. -/
-theorem strictlyBetter_total {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y : Finset I)
+theorem strictlyBetter_total (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
     degreeEquiv ord i X Y ∨ strictlyBetter ord i X Y ∨
     strictlyBetter ord i Y X := by
@@ -1292,8 +1129,7 @@ Indirect proof: if ¬(X∼Z), totality gives X⊐Z or Z⊐X.
 - X⊐Z: respects_right(X,Z,Y) with Z∼Y gives X⊐Y, contradicting X∼Y.
 - Z⊐X: respects_right(Z,X,Y) with X∼Y gives Z⊐Y, contradicting Y∼Z.
 This avoids the direct Schröder-Bernstein bouncing chain argument. -/
-theorem degreeEquiv_trans {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I)
+theorem degreeEquiv_trans (X Y Z : Finset I)
     (hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     degreeEquiv ord i X Y → degreeEquiv ord i Y Z →
     degreeEquiv ord i X Z := by
@@ -1312,9 +1148,8 @@ theorem degreeEquiv_trans {I : Type*} [Fintype I] [DecidableEq I]
 
 /-- The metalinguistic setoid: ∼ as a Mathlib `Setoid` on field-subsets.
 The carrier is `{X : Finset I // X ⊆ field ord i}` because
-transitivity requires the ⊆ field hypothesis (via totality). -/
-def metalinguisticSetoid {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) :
+transitivity requires the ⊆ field ord i hypothesis (via totality). -/
+def metalinguisticSetoid :
     Setoid {X : Finset I // X ⊆ field ord i} where
   r X Y := degreeEquiv ord i X.1 Y.1
   iseqv := {
@@ -1323,6 +1158,8 @@ def metalinguisticSetoid {I : Type*} [Fintype I] [DecidableEq I]
     trans := fun {X Y Z} hxy hyz =>
       degreeEquiv_trans ord i X.1 Y.1 Z.1 X.2 Y.2 Z.2 hxy hyz
   }
+
+end DegreeTheory
 
 /-! ### Metalinguistic Degree Type -/
 
@@ -1343,14 +1180,6 @@ def deg {I : Type*} [Fintype I] [DecidableEq I]
     MetaDegree I ord i :=
   Quotient.mk (metalinguisticSetoid ord i) ⟨X, hX⟩
 
-/-- The metalinguistic degree of a formula's denotation. -/
-def formulaDeg {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    MetaDegree I ord i :=
-  deg ord i (denotation interpFn φ ord i w) (Finset.filter_subset _ _)
-
 /-! ### Facts 9–10: Correspondence with Revised Semantics -/
 
 /-- Membership in `field`: j ∈ I_i iff j ≤ i. -/
@@ -1365,131 +1194,99 @@ private theorem mem_denotation_iff {I W Pred Entity : Type*}
     {interpFn : I → Interpretation W Pred Entity}
     {φ : MFormula Pred Entity}
     {ord : SemanticOrdering I} {i j : I} {w : W} :
-    j ∈ denotation interpFn φ ord i w ↔
-    ord.le j i ∧ evalRevised interpFn φ ord j w = true := by
+    j ∈ denotation interpFn ord i φ w ↔
+    ord.le j i ∧ EvalRevised interpFn φ ord j w := by
   simp [denotation, field]
 
-/-- Fact 10: revised MC holds iff denotation of A ⊐ denotation of B.
-⟦A ≻ B⟧^{≤,i,w}_revised = 1 iff ⟦A⟧_i ⊐ ⟦B⟧_i. -/
-theorem mc_iff_degree_gt {I W Pred Entity : Type*}
-    [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    evalRevised interpFn (.mc A B) ord i w = true ↔
-    strictlyBetter ord i (denotation interpFn A ord i w)
-      (denotation interpFn B ord i w) := by
+section DegreeBridges
+
+variable {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
+  (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I) (i : I)
+
+/-- The metalinguistic degree of a formula's denotation. -/
+def formulaDeg (φ : MFormula Pred Entity) (w : W) : MetaDegree I ord i :=
+  deg ord i (denotation interpFn ord i φ w) (Finset.filter_subset _ _)
+
+/-- Fact 10: revised MC holds iff denotation of A ⊐ denotation of B. -/
+theorem mc_iff_degree_gt (A B : MFormula Pred Entity) (w : W) :
+    EvalRevised interpFn (.mc A B) ord i w ↔
+    strictlyBetter ord i (denotation interpFn ord i A w)
+      (denotation interpFn ord i B w) := by
   rw [evalRevised_mc_iff]
   constructor
-  · -- Forward: ∃ i' with le, A true, B false, domination → strictlyBetter
-    rintro ⟨i', h_le, h_A, h_B, h_dom⟩
-    refine ⟨i', ?_, ?_, ?_, ?_⟩
-    · -- i' ∈ denotation A \ denotation B
-      exact Finset.mem_sdiff.mpr
+  · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
+    refine ⟨i', Finset.mem_sdiff.mpr
         ⟨mem_denotation_iff.mpr ⟨h_le, h_A⟩,
-         fun h => absurd (mem_denotation_iff.mp h).2 (by simp [h_B])⟩
-    · -- i' ∈ field
-      exact mem_field_iff.mpr h_le
-    · -- ∀ i'' ∈ Y \ X, lt i'' i'
-      intro i'' h_mem
+         fun h => h_B (mem_denotation_iff.mp h).2⟩,
+      mem_field_iff.mpr h_le, ?_, ?_⟩
+    · intro i'' h_mem
       obtain ⟨h_inY, h_ninX⟩ := Finset.mem_sdiff.mp h_mem
       obtain ⟨h_le'', h_B''⟩ := mem_denotation_iff.mp h_inY
       rcases h_dom with h1 | h2
       · exact h1 i'' h_le'' h_B''
-      · exact h2 i'' h_le'' (bool_eq_false_of_ne_true fun h =>
-          h_ninX (mem_denotation_iff.mpr ⟨h_le'', h⟩))
-    · -- inner disjunct
-      rcases h_dom with h1 | h2
-      · left; intro i'' h_mem
-        obtain ⟨h_le'', h_B''⟩ := mem_denotation_iff.mp (Finset.mem_inter.mp h_mem).2
-        exact h1 i'' h_le'' h_B''
-      · right; intro i'' h_mem
+      · exact h2 i'' h_le'' fun h_A'' => h_ninX (mem_denotation_iff.mpr ⟨h_le'', h_A''⟩)
+    · rcases h_dom with h1 | h2
+      · exact Or.inl fun i'' h_mem =>
+          h1 i'' (mem_denotation_iff.mp (Finset.mem_inter.mp h_mem).2).1
+            (mem_denotation_iff.mp (Finset.mem_inter.mp h_mem).2).2
+      · refine Or.inr fun i'' h_mem => ?_
         have h_sd := Finset.mem_sdiff.mp h_mem
-        have h_le'' := mem_field_iff.mp h_sd.1
-        exact h2 i'' h_le'' (bool_eq_false_of_ne_true fun h =>
-          h_sd.2 (Finset.mem_union.mpr (Or.inl (mem_denotation_iff.mpr ⟨h_le'', h⟩))))
-  · -- Backward: strictlyBetter → evalRevised_mc conditions
-    rintro ⟨i', h_sdiff, h_field, h_ymx, h_inner⟩
+        exact h2 i'' (mem_field_iff.mp h_sd.1) fun h_A'' =>
+          h_sd.2 (Finset.mem_union.mpr
+            (Or.inl (mem_denotation_iff.mpr ⟨mem_field_iff.mp h_sd.1, h_A''⟩)))
+  · rintro ⟨i', h_sdiff, h_field, h_ymx, h_inner⟩
     obtain ⟨h_inX, h_ninY⟩ := Finset.mem_sdiff.mp h_sdiff
     obtain ⟨h_le, h_A⟩ := mem_denotation_iff.mp h_inX
-    have h_B : evalRevised interpFn B ord i' w = false :=
-      bool_eq_false_of_ne_true fun h =>
-        h_ninY (mem_denotation_iff.mpr ⟨h_le, h⟩)
+    have h_B : ¬ EvalRevised interpFn B ord i' w :=
+      fun h => h_ninY (mem_denotation_iff.mpr ⟨h_le, h⟩)
     refine ⟨i', h_le, h_A, h_B, ?_⟩
     rcases h_inner with h1 | h2
-    · -- X ∩ Y all below → all B-true in field below
-      left; intro i'' h_le'' h_B''
-      by_cases h_A'' : evalRevised interpFn A ord i'' w = true
+    · left; intro i'' h_le'' h_B''
+      by_cases h_A'' : EvalRevised interpFn A ord i'' w
       · exact h1 i'' (Finset.mem_inter.mpr
           ⟨mem_denotation_iff.mpr ⟨h_le'', h_A''⟩,
            mem_denotation_iff.mpr ⟨h_le'', h_B''⟩⟩)
       · exact h_ymx i'' (Finset.mem_sdiff.mpr
           ⟨mem_denotation_iff.mpr ⟨h_le'', h_B''⟩,
            fun h => h_A'' (mem_denotation_iff.mp h).2⟩)
-    · -- field \ (X ∪ Y) all below → all A-false in field below
-      right; intro i'' h_le'' h_A''
-      by_cases h_B'' : evalRevised interpFn B ord i'' w = true
+    · right; intro i'' h_le'' h_A''
+      by_cases h_B'' : EvalRevised interpFn B ord i'' w
       · exact h_ymx i'' (Finset.mem_sdiff.mpr
           ⟨mem_denotation_iff.mpr ⟨h_le'', h_B''⟩,
-           fun h => absurd (mem_denotation_iff.mp h).2 (by simp [h_A''])⟩)
+           fun h => h_A'' (mem_denotation_iff.mp h).2⟩)
       · exact h2 i'' (Finset.mem_sdiff.mpr
           ⟨mem_field_iff.mpr h_le'',
-           fun h => Finset.mem_union.mp h |>.elim
-             (fun h => absurd (mem_denotation_iff.mp h).2 (by simp [h_A'']))
-             (fun h => absurd (mem_denotation_iff.mp h).2 (by simp [h_B'']))⟩)
+           fun h => (Finset.mem_union.mp h).elim
+             (fun h => h_A'' (mem_denotation_iff.mp h).2)
+             (fun h => h_B'' (mem_denotation_iff.mp h).2)⟩)
 
-/-- Fact 9: ME holds iff denotations have the same degree.
-⟦A ≈ B⟧^{≤,i,w}_revised = 1 iff ⟦A⟧_i ∼ ⟦B⟧_i.
-This connects the Boolean evaluation function `evalRevised` to the
-algebraic degree structure. Forward direction uses `strictlyBetter_total`. -/
-theorem me_iff_same_degree {I W Pred Entity : Type*}
-    [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    evalRevised interpFn (A.me B) ord i w = true ↔
-    degreeEquiv ord i (denotation interpFn A ord i w)
-      (denotation interpFn B ord i w) := by
-  set X := denotation interpFn A ord i w
-  set Y := denotation interpFn B ord i w
-  -- ME = ¬MC(A,B) ∧ ¬MC(B,A)
-  have h_unfold : evalRevised interpFn (A.me B) ord i w =
-    (!(evalRevised interpFn (.mc A B) ord i w) &&
-     !(evalRevised interpFn (.mc B A) ord i w)) := rfl
-  have hX : X ⊆ field ord i := by
-    intro j hj; exact Finset.mem_of_subset (Finset.filter_subset _ _) hj
-  have hY : Y ⊆ field ord i := by
-    intro j hj; exact Finset.mem_of_subset (Finset.filter_subset _ _) hj
+/-- Fact 9: ME holds iff denotations have the same degree — the Boolean-free
+bridge from `EvalRevised` to the algebraic degree structure. Forward direction
+uses `strictlyBetter_total`. -/
+theorem me_iff_same_degree (A B : MFormula Pred Entity) (w : W) :
+    EvalRevised interpFn (A.me B) ord i w ↔
+    degreeEquiv ord i (denotation interpFn ord i A w)
+      (denotation interpFn ord i B w) := by
+  have hX : denotation interpFn ord i A w ⊆ field ord i := Finset.filter_subset _ _
+  have hY : denotation interpFn ord i B w ⊆ field ord i := Finset.filter_subset _ _
   constructor
-  · -- Forward: ME → degreeEquiv via totality.
-    -- If ¬MC(A,B) and ¬MC(B,A), then by mc_iff_degree_gt,
-    -- ¬(X ⊐ Y) and ¬(Y ⊐ X). By totality, X ∼ Y.
-    intro h_me
-    rw [h_unfold] at h_me
-    have h_nmc1 : evalRevised interpFn (.mc A B) ord i w ≠ true := by
-      intro h; simp [h] at h_me
-    have h_nmc2 : evalRevised interpFn (.mc B A) ord i w ≠ true := by
-      intro h; simp [h] at h_me
-    have h_nsb1 : ¬ strictlyBetter ord i X Y :=
-      fun h => h_nmc1 ((mc_iff_degree_gt interpFn A B ord i w).mpr h)
-    have h_nsb2 : ¬ strictlyBetter ord i Y X :=
-      fun h => h_nmc2 ((mc_iff_degree_gt interpFn B A ord i w).mpr h)
-    rcases strictlyBetter_total ord i X Y hX hY with h | h | h
+  · intro h
+    obtain ⟨h1, h2⟩ : ¬ EvalRevised interpFn (.mc A B) ord i w ∧
+        ¬ EvalRevised interpFn (.mc B A) ord i w := h
+    rcases strictlyBetter_total ord i _ _ hX hY with h | h | h
     · exact h
-    · exact absurd h h_nsb1
-    · exact absurd h h_nsb2
-  · -- Backward: degreeEquiv → ME
-    intro h_eq
-    rw [h_unfold]
-    have h1 : evalRevised interpFn (.mc A B) ord i w ≠ true :=
-      fun h => degreeEquiv_not_strictlyBetter ord i X Y h_eq
-        ((mc_iff_degree_gt interpFn A B ord i w).mp h)
-    have h2 : evalRevised interpFn (.mc B A) ord i w ≠ true :=
-      fun h => degreeEquiv_not_strictlyBetter ord i Y X
-        (degreeEquiv_symm ord i X Y h_eq)
-        ((mc_iff_degree_gt interpFn B A ord i w).mp h)
-    cases heq1 : evalRevised interpFn (.mc A B) ord i w <;>
-    cases heq2 : evalRevised interpFn (.mc B A) ord i w <;> simp_all
+    · exact absurd ((mc_iff_degree_gt interpFn ord i A B w).mpr h) h1
+    · exact absurd ((mc_iff_degree_gt interpFn ord i B A w).mpr h) h2
+  · intro h_eq
+    exact show ¬ EvalRevised interpFn (.mc A B) ord i w ∧
+        ¬ EvalRevised interpFn (.mc B A) ord i w from
+      ⟨fun h => degreeEquiv_not_strictlyBetter ord i _ _ h_eq
+          ((mc_iff_degree_gt interpFn ord i A B w).mp h),
+       fun h => degreeEquiv_not_strictlyBetter ord i _ _
+          (degreeEquiv_symm ord i _ _ h_eq)
+          ((mc_iff_degree_gt interpFn ord i B A w).mp h)⟩
+
+end DegreeBridges
 
 /-! ### The metalinguistic degree scale
 
@@ -1500,7 +1297,8 @@ substrate's binary comparative over the measure function `formulaDeg`. -/
 
 section Scale
 
-variable {I : Type*} [Fintype I] [DecidableEq I] (ord : SemanticOrdering I) (i : I)
+variable {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
+  (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I) (i : I)
 
 instance (X Y : Finset I) : Decidable (equivCond1 ord X Y) := by
   unfold equivCond1; infer_instance
@@ -1605,11 +1403,9 @@ metalinguistic comparative IS the degree substrate's binary comparative
 function `formulaDeg`. Metagradability thereby instantiates the degree
 substrate's central object — a measure `μ : E → D` into a bounded linear
 scale — with `E` the formulas and `D` the `MetaDegree` scale. -/
-theorem mc_iff_comparativeSem {W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity) (w : W) :
-    evalRevised interpFn (.mc A B) ord i w = true ↔
-    Degree.comparativeSem (fun φ => formulaDeg interpFn φ ord i w) A B .positive := by
+theorem mc_iff_comparativeSem (A B : MFormula Pred Entity) (w : W) :
+    EvalRevised interpFn (.mc A B) ord i w ↔
+    Degree.comparativeSem (fun φ => formulaDeg interpFn ord i φ w) A B .positive := by
   rw [mc_iff_degree_gt]
   simp only [Degree.comparativeSem, gt_iff_lt]
   exact (deg_lt_deg_iff ord i (Finset.filter_subset _ _) (Finset.filter_subset _ _)).symm
@@ -1674,17 +1470,17 @@ At i₂, Ann is both a linguist and a philosopher, yet "Ann is more a
 linguist than a philosopher" is true — the (La∧¬Pa)-interpretation i₁
 outranks the (Pa∧¬La)-interpretation i₀. -/
 theorem obs1a_mc_consistent_with_both :
-    eval interp₃ La_mc_Pa ord₃ .i2 .w0 = true ∧
-    eval interp₃ La ord₃ .i2 .w0 = true ∧
-    eval interp₃ Pa ord₃ .i2 .w0 = true := by decide
+    Eval interp₃ La_mc_Pa ord₃ .i2 .w0 ∧
+    Eval interp₃ La ord₃ .i2 .w0 ∧
+    Eval interp₃ Pa ord₃ .i2 .w0 := by decide
 
 /-- Observation 2: A ≻ B, B ⊨ A.
 If the MC holds and Ann is a philosopher, she is a linguist. -/
 theorem obs2_mc_B_entails_A :
     ∀ (i : I3),
-      eval interp₃ La_mc_Pa ord₃ i .w0 = true →
-      eval interp₃ Pa ord₃ i .w0 = true →
-      eval interp₃ La ord₃ i .w0 = true := by decide
+      Eval interp₃ La_mc_Pa ord₃ i .w0 →
+      Eval interp₃ Pa ord₃ i .w0 →
+      Eval interp₃ La ord₃ i .w0 := by decide
 
 /-! ### Model 2: Two interpretations (tied) for borderline cases -/
 
@@ -1710,7 +1506,7 @@ With tied interpretations where one makes La true and the other
 makes La false, "Ann is (exactly) as much a linguist as not"
 is coherent — it expresses a borderline case. -/
 theorem obs5_me_neg_consistent :
-    eval interp₂ (La.me (.neg La)) tiedOrd .j0 .w0 = true := by decide
+    Eval interp₂ (La.me (.neg La)) tiedOrd .j0 .w0 := by decide
 
 /-- ¬La -/
 abbrev NLa : MFormula Pred Entity := .neg La
@@ -1730,12 +1526,12 @@ def interp₃' : I3 → Interpretation W Pred Entity
   | .i2 => ⟨λ P _ _ => match P with | .linguist => true  | .philosopher => false⟩
 
 theorem obs3_acceptance :
-    assertoricContent interp₃' (.conj La (.neg Pa)) ord₃ .w0 = true →
-    assertoricContent interp₃' La_mc_Pa ord₃ .w0 = true := by decide
+    AssertoricContent interp₃' (.conj La (.neg Pa)) ord₃ .w0 →
+    AssertoricContent interp₃' La_mc_Pa ord₃ .w0 := by decide
 
 /-- The tautology La ∨ ¬La has assertoric content 1 on the tied model. -/
 theorem tautology_accepted :
-    assertoricContent interp₂ (.disj La (.neg La)) tiedOrd .w0 = true := by
+    AssertoricContent interp₂ (.disj La (.neg La)) tiedOrd .w0 := by
   decide
 
 /-- Nonclassicality of acceptance-preservation:
@@ -1746,7 +1542,7 @@ direction of MC holds because the interpretations are tied.
 This is the key result paralleling informational entailment for
 epistemic modals ([yalcin-2007]). -/
 theorem mc_disj_not_accepted :
-    assertoricContent interp₂ (.disj (.mc La (.neg La)) (.mc (.neg La) La))
+    AssertoricContent interp₂ (.disj (.mc La (.neg La)) (.mc (.neg La) La))
       tiedOrd .w0 = false := by decide
 
 /-! ### Degree Modifiers (§6.1) -/
@@ -1757,14 +1553,15 @@ same level or one level below.
 - d(i₁) = {i₀, i₁}
 - d(i₂) = {i₁, i₂} -/
 def dist₃ : DistanceFunction I3 ord₃ where
-  close := λ i i' => match i, i' with
+  close i i' := (match i, i' with
     | .i0, .i0 => true
     | .i1, .i0 => true
     | .i1, .i1 => true
     | .i2, .i1 => true
     | .i2, .i2 => true
-    | _, _ => false
-  centered := by intro i; cases i <;> rfl
+    | _, _ => false : Bool) = true
+  decClose _ _ := inferInstanceAs (Decidable (_ = true))
+  centered := by decide
   topBounded := by decide
   convex := by decide
   noncontractive := by decide
@@ -1772,33 +1569,33 @@ def dist₃ : DistanceFunction I3 ord₃ where
 /-- very La is true at i₂: all interpretations reasonably close to i₂
 (namely i₁ and i₂) make La true. -/
 theorem very_la_at_top :
-    evalVery interp₃ La ord₃ dist₃ .i2 .w0 = true := by decide
+    EvalVery interp₃ La ord₃ dist₃ .i2 .w0 := by decide
 
 /-- very La is false at i₁: i₀ is reasonably close to i₁ but
 makes La false. -/
 theorem very_la_false_at_mid :
-    evalVery interp₃ La ord₃ dist₃ .i1 .w0 = false := by decide
+    ¬ EvalVery interp₃ La ord₃ dist₃ .i1 .w0 := by decide
 
 /-- sorta La holds at i₁: some close interpretation (i₁ itself) makes
 La true, even though another close interpretation (i₀) does not. -/
 theorem sorta_la_at_mid :
-    evalSorta interp₃ La ord₃ dist₃ .i1 .w0 = true := by decide
+    EvalSorta interp₃ La ord₃ dist₃ .i1 .w0 := by decide
 
 /-- sorta La is false at i₀: d(i₀) = {i₀}, and La is false at i₀. -/
 theorem sorta_la_false_at_bot :
-    evalSorta interp₃ La ord₃ dist₃ .i0 .w0 = false := by decide
+    ¬ EvalSorta interp₃ La ord₃ dist₃ .i0 .w0 := by decide
 
 /-! ### Degree Modifier: mostly (§6.1) -/
 
 /-- mostly La is true at i₂: there is a reasonably high level (i₁) where
 La is uniformly true, and the only A-false level (i₀) is below it. -/
 theorem mostly_la_at_top :
-    evalMostly interp₃ La ord₃ dist₃ .i2 .w0 = true := by decide
+    EvalMostly interp₃ La ord₃ dist₃ .i2 .w0 := by decide
 
 /-- mostly La is false at i₁: i₀ is the only candidate level below i₁ in
 d(i₁), but La is false at i₀. -/
 theorem mostly_la_false_at_mid :
-    evalMostly interp₃ La ord₃ dist₃ .i1 .w0 = false := by decide
+    ¬ EvalMostly interp₃ La ord₃ dist₃ .i1 .w0 := by decide
 
 /-! ### Bridge: No Reversal and Ordinary Comparison (§7) -/
 
@@ -1840,29 +1637,29 @@ Compare with `nr_trivial_single_entity` above, which holds vacuously
 on a single-entity model. Here NR constrains the relationship between
 two distinct entities' extensions across the ordering. -/
 theorem nr_tall_ann_ben :
-    noReversal interpNR ord₃ .tall .w0 .ann .ben := by
+    NoReversal interpNR ord₃ .tall .w0 .ann .ben := by
   intro i i' _ h1 h2 h3; cases i <;> cases i' <;> simp [interpNR] at *
 
 /-- Ann is taller than Ben: the MC `tall(ann) ≻ tall(ben)` is true
 at i₁ and i₂. Witness: i₁ (Ann is tall, Ben is not). -/
 theorem ann_taller_i1 :
-    eval interpNR (.mc Ta Tb) ord₃ .i1 .w0 = true := by decide
+    Eval interpNR (.mc Ta Tb) ord₃ .i1 .w0 := by decide
 
 /-- The reverse MC — Ben taller than Ann — is false everywhere.
 There is no interpretation where Ben is tall but Ann is not. -/
 theorem ben_not_taller :
-    ∀ (i : I3), eval interpNR (.mc Tb Ta) ord₃ i .w0 = false := by decide
+    ∀ (i : I3), ¬ Eval interpNR (.mc Tb Ta) ord₃ i .w0 := by decide
 
 /-- NR also holds with the roles swapped (vacuously: Ben's extension never
 outruns Ann's), which is the direction `eval_mc_iff_delineation_of_noReversal`
 consumes. -/
 theorem nr_tall_ben_ann :
-    noReversal interpNR ord₃ .tall .w0 .ben .ann := by decide
+    NoReversal interpNR ord₃ .tall .w0 .ben .ann := by decide
 
 /-- The general §7 bridge, instantiated on the NR model: the MC *is* the
 substrate's delineation comparative. -/
 example (i : I3) :
-    eval interpNR (.mc Ta Tb) ord₃ i .w0 = true ↔
+    Eval interpNR (.mc Ta Tb) ord₃ i .w0 ↔
     Semantics.Gradability.Delineation.comparativeSem
       (interpretationDelineation interpNR ord₃ .tall .w0 i) .ann .ben :=
   eval_mc_iff_delineation_of_noReversal interpNR ord₃ .tall .w0 i .ann .ben
@@ -1881,7 +1678,7 @@ def interpNR_bad : I3 → Interpretation W Pred1 Entity2
 Ben is tall at i₁ and Ann is not, but at i₀ ≤ i₁ where Ann is tall,
 Ben is not — a reversal. -/
 theorem nr_fails_bad :
-    ¬ noReversal interpNR_bad ord₃ .tall .w0 .ben .ann := by
+    ¬ NoReversal interpNR_bad ord₃ .tall .w0 .ben .ann := by
   intro h; exact absurd (h .i1 .i0 rfl rfl rfl rfl) (by decide)
 
 /-- Without NR, MC and delineation diverge: the MC `Ta ≻ Tb` is
@@ -1889,7 +1686,7 @@ FALSE at i₂ (the (Tb∧¬Ta)-witness i₁ outranks the (Ta∧¬Tb)-witness
 i₀, violating the domination clause), but the simple delineation
 condition (∃ Fa∧¬Fb) is TRUE (i₀ is a witness). -/
 theorem mc_delineation_diverge_without_nr :
-    eval interpNR_bad (.mc Ta Tb) ord₃ .i2 .w0 = false ∧
+    ¬ Eval interpNR_bad (.mc Ta Tb) ord₃ .i2 .w0 ∧
     Semantics.Gradability.Delineation.comparativeSem
       (interpretationDelineation interpNR_bad ord₃ .tall .w0 .i2) .ann .ben :=
   ⟨by decide,
@@ -1906,7 +1703,7 @@ This shows → is NOT the material conditional — La and Pa are
 both true at i₂, but the conditional is false because it quantifies
 over all ranked La-interpretations, not just the current one. -/
 theorem mcond_la_pa_false :
-    evalMCond interp₃ La Pa ord₃ .i2 .w0 = false := by decide
+    ¬ EvalMCond interp₃ La Pa ord₃ .i2 .w0 := by decide
 
 /-- Observation M1 (§6.3): ⊨ A → (A ≻ ¬A).
 
@@ -1919,7 +1716,7 @@ This parallels the validity of epistemic "if p then probably p"
 ([yalcin-2007]). -/
 theorem mcond_m1 :
     ∀ (i : I3),
-      evalMCond interp₃ La (.mc La NLa) ord₃ i .w0 = true := by decide
+      EvalMCond interp₃ La (.mc La NLa) ord₃ i .w0 := by decide
 
 /-! ### ME Transitivity: Basic vs Revised Semantics ([kocurek-2024-supplement] §B) -/
 
@@ -1994,25 +1791,25 @@ abbrev Ca₄ : MFormula Pred3 Entity := .atom .psychologist .ann
 The (La∧¬Pa)-witness j and (Pa∧¬La)-witness k are tied at the middle
 level, blocking both MC directions. -/
 theorem me_basic_la_pa :
-    eval interp₄ (La₄.me Pa₄) ord₄ .i .w0 = true := by decide
+    Eval interp₄ (La₄.me Pa₄) ord₄ .i .w0 := by decide
 
 /-- B ≈ C holds: Ann is as much a philosopher as a psychologist.
 The (Pa∧¬Ca)-witnesses k, l and (Ca∧¬Pa)-witness j are balanced:
 k is tied with j, blocking both MC directions. -/
 theorem me_basic_pa_ca :
-    eval interp₄ (Pa₄.me Ca₄) ord₄ .i .w0 = true := by decide
+    Eval interp₄ (Pa₄.me Ca₄) ord₄ .i .w0 := by decide
 
 /-- A ≈ C FAILS: basic semantics predicts Ann is MORE a linguist
 than a psychologist. ME transitivity is violated. -/
 theorem me_basic_la_ca_fails :
-    eval interp₄ (La₄.me Ca₄) ord₄ .i .w0 = false := by decide
+    ¬ Eval interp₄ (La₄.me Ca₄) ord₄ .i .w0 := by decide
 
 /-- The failure mechanism: La ≻ Ca holds in the basic semantics.
 The (La∧¬Ca)-witness l dominates all (Ca∧¬La)-interpretations
 vacuously — there are none (Ca is true only at i and j, where La
 is also true). -/
 theorem mc_basic_la_gt_ca :
-    eval interp₄ (.mc La₄ Ca₄) ord₄ .i .w0 = true := by decide
+    Eval interp₄ (.mc La₄ Ca₄) ord₄ .i .w0 := by decide
 
 /-! #### Revised semantics: transitivity restored -/
 
@@ -2020,20 +1817,20 @@ theorem mc_basic_la_gt_ca :
 witness l cannot dominate all Ca-interpretations (i and j are above
 it) or all ¬La-interpretations (k is above it). -/
 theorem mc_revised_la_ca_blocked :
-    evalRevised interp₄ (.mc La₄ Ca₄) ord₄ .i .w0 = false := by decide
+    ¬ EvalRevised interp₄ (.mc La₄ Ca₄) ord₄ .i .w0 := by decide
 
 /-- ME transitivity is restored: A ≈ C holds under the revised
 semantics, as required by transitivity from A ≈ B and B ≈ C. -/
 theorem me_revised_la_ca :
-    evalRevised interp₄ (La₄.me Ca₄) ord₄ .i .w0 = true := by decide
+    EvalRevised interp₄ (La₄.me Ca₄) ord₄ .i .w0 := by decide
 
 /-- The revised semantics preserves A ≈ B (no regression). -/
 theorem me_revised_la_pa :
-    evalRevised interp₄ (La₄.me Pa₄) ord₄ .i .w0 = true := by decide
+    EvalRevised interp₄ (La₄.me Pa₄) ord₄ .i .w0 := by decide
 
 /-- The revised semantics preserves B ≈ C (no regression). -/
 theorem me_revised_pa_ca :
-    evalRevised interp₄ (Pa₄.me Ca₄) ord₄ .i .w0 = true := by decide
+    EvalRevised interp₄ (Pa₄.me Ca₄) ord₄ .i .w0 := by decide
 
 /-! #### Agreement on Model 1 -/
 
@@ -2043,7 +1840,7 @@ clause matters — on a linear ordering with no ties at critical levels,
 the basic witnesses satisfy the revised conditions too. -/
 theorem revised_agrees_model1 :
     ∀ (x : I3),
-      eval interp₃ La_mc_Pa ord₃ x .w0 =
-      evalRevised interp₃ La_mc_Pa ord₃ x .w0 := by decide
+      (Eval interp₃ La_mc_Pa ord₃ x .w0 ↔
+       EvalRevised interp₃ La_mc_Pa ord₃ x .w0) := by decide
 
 end RudolphKocurek2024
