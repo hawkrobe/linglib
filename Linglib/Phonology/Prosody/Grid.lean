@@ -37,7 +37,7 @@ a homomorphism from the tree into the DTE-marked grid, built from a small algebr
 
 ## Main results
 * `Grid.ofTree_isContinuous` — the Continuous Column Constraint, by construction (free).
-* `Grid.columns_toProsTree` / `Grid.peak_toProsTree` — head-preservation for a foot.
+* `Grid.peak_toProsTree` — head-preservation for a foot (its grid peaks at the head σ).
 * `Grid.headHeights_eq_peak` — on a non-recursive headed word the head terminal's height is the
   grid peak: metrical primary stress is the tallest column.
 * `Grid.ofTree_not_injective` / `Grid.not_culminative_under_recursion` — what the projection forgets.
@@ -329,22 +329,20 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
 
 /-! ## Head-preservation: the foot commuting square
 
-Reading a `Foot`'s grid recovers its head — the depth-1 core of the transport story. -/
+Reading a `Foot`'s grid recovers its head — the depth-1 core of the transport story: its column
+heights are `2` at the head σ and `1` elsewhere, so the grid peaks at `2`. -/
 
-/-- A foot's grid is `2` at the head σ, `1` elsewhere. -/
-theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
-    columns (f.toProsTree w) = (Foot.toGrid f).map (fun b => if b then 2 else 1) := by
-  rw [Foot.toProsTree, columns_node, if_neg (by simp [Constituent.isSyl]),
-      List.flatMap_map, Foot.toGrid, List.map_map, List.map_eq_flatMap]
-  refine List.flatMap_congr fun i _ => ?_
-  by_cases hi : i = f.head <;>
-    simp [project_node, Constituent.isSyl, Constituent.isHead, MarkedGrid.edge,
-      MarkedGrid.promote, MarkedGrid.clear, MarkedGrid.toGrid, MarkedGrid.cell, hi]
-
-/-- A foot's grid peaks at `2`. -/
+/-- A foot's grid peaks at `2` — its head σ carries the primary mark ([liberman-prince-1977]). -/
 theorem peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     peak (columns (f.toProsTree w)) = 2 := by
-  rw [columns_toProsTree]
+  have hcols : columns (f.toProsTree w) = (Foot.toGrid f).map (fun b => if b then 2 else 1) := by
+    rw [Foot.toProsTree, columns_node, if_neg (by simp [Constituent.isSyl]),
+        List.flatMap_map, Foot.toGrid, List.map_map, List.map_eq_flatMap]
+    refine List.flatMap_congr fun i _ => ?_
+    by_cases hi : i = f.head <;>
+      simp [project_node, Constituent.isSyl, Constituent.isHead, MarkedGrid.edge,
+        MarkedGrid.promote, MarkedGrid.clear, MarkedGrid.toGrid, MarkedGrid.cell, hi]
+  rw [hcols]
   refine Nat.le_antisymm (peak_le fun x hx => ?_) (le_peak ?_)
   · obtain ⟨b, _, rfl⟩ := List.mem_map.mp hx
     cases b <;> decide
@@ -378,72 +376,6 @@ metrical primary stress is the tallest column. Recursion is the sole obstruction
 [hayes-1995] §3.4.2(C)'s "the higher grid mark may only be assigned to a syllable that already bears
 stress" — the peak sits atop a foot head. -/
 
-/-- `isWordTree.goList` as a `List.all` over children. -/
-private theorem isWordTree.goList_all (cs : List Tree) :
-    isWordTree.goList cs
-      = cs.all (fun c => isFootTree c || isWordTree.go c
-          || (c.label.isSyl && c.children.isEmpty)) := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => simp only [isWordTree.goList, List.all_cons, ih]
-
-/-- A non-recursive word is an ω over well-formed feet and stray σ-leaves. -/
-private theorem isWord_children {a : Constituent} {cs : List Tree}
-    (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
-    a.isOm = true ∧ ∀ c ∈ cs, isFootTree c = true ∨ (c.label.isSyl = true ∧ c.children = []) := by
-  simp only [IsWord, isWordTree, isWordTree.go, Bool.and_eq_true,
-    isWordTree.goList_all, List.all_eq_true] at hw
-  obtain ⟨ha, hall⟩ := hw
-  obtain rfl : a = .om := by cases a <;> simp_all [Constituent.isOm]
-  have hr' : (cs.filter (fun c => Constituent.sameLevel c.label .om)).length = 0 := by
-    have e : noRec (.node (.om : Constituent) cs)
-        = (cs.filter (fun c => Constituent.sameLevel c.label .om)).length + noRec.goList cs := rfl
-    rw [hr] at e; omega
-  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.label .om = false := by
-    intro c hc
-    by_contra h
-    rw [Bool.not_eq_false] at h
-    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.label .om) := by
-      rw [List.mem_filter]; exact ⟨hc, h⟩
-    rw [List.length_eq_zero_iff] at hr'
-    rw [hr'] at hmem; exact List.not_mem_nil hmem
-  refine ⟨ha, fun c hc => ?_⟩
-  have hdisj := hall c hc
-  have hsl := hnoω c hc
-  obtain ⟨cl, ccs⟩ := c
-  simp only [RootedTree.Planar.label_node] at hsl
-  have hcω : cl.isOm = false := by
-    cases cl <;> simp_all [Constituent.sameLevel, Constituent.isOm]
-  rw [show isWordTree.go (.node cl ccs)
-        = (cl.isOm && isWordTree.goList ccs) from rfl, hcω] at hdisj
-  simp only [Bool.false_and, Bool.or_false, Bool.or_eq_true, Bool.and_eq_true,
-    RootedTree.Planar.children_node, List.isEmpty_iff,
-    RootedTree.Planar.label_node] at hdisj ⊢
-  rcases hdisj with h | h
-  · exact Or.inl h
-  · exact Or.inr h
-
-/-- The depth of a child is at most the max child depth. -/
-private theorem depth_le_depthMaxList {c : Tree} {cs : List Tree} (h : c ∈ cs) :
-    c.depth ≤ RootedTree.Planar.depthMaxList cs := by
-  induction cs with
-  | nil => cases h
-  | cons a as ih =>
-    rw [show RootedTree.Planar.depthMaxList (a :: as)
-          = max a.depth (RootedTree.Planar.depthMaxList as) from rfl]
-    rcases List.mem_cons.mp h with rfl | h
-    · exact le_max_left _ _
-    · exact le_trans (ih h) (le_max_right _ _)
-
-private theorem depthMaxList_le {cs : List Tree} {n : ℕ} (h : ∀ c ∈ cs, c.depth ≤ n) :
-    RootedTree.Planar.depthMaxList cs ≤ n := by
-  induction cs with
-  | nil => exact Nat.zero_le n
-  | cons a as ih =>
-    rw [show RootedTree.Planar.depthMaxList (a :: as)
-          = max a.depth (RootedTree.Planar.depthMaxList as) from rfl]
-    exact max_le (h a (List.mem_cons_self ..)) (ih fun c hc => h c (List.mem_cons_of_mem _ hc))
-
 /-- Non-recursive word children (feet and stray σ) have depth at most `2` — the ω→f→σ hierarchy. -/
 private theorem depth_word_child_le {ch : Tree}
     (h : isFootTree ch = true ∨ (ch.label.isSyl = true ∧ ch.children = [])) : ch.depth ≤ 2 := by
@@ -453,7 +385,7 @@ private theorem depth_word_child_le {ch : Tree}
     obtain ⟨_, hleaves⟩ := hfoot
     rw [show (RootedTree.Planar.node chl chcs).depth
           = 1 + RootedTree.Planar.depthMaxList chcs from rfl]
-    have : RootedTree.Planar.depthMaxList chcs ≤ 1 := depthMaxList_le fun c hc => by
+    have : RootedTree.Planar.depthMaxList chcs ≤ 1 := RootedTree.Planar.depthMaxList_le fun c hc => by
       obtain ⟨cl, ccs⟩ := c
       have hc' := hleaves _ hc
       simp only [Bool.and_eq_true, List.isEmpty_iff] at hc'
@@ -477,7 +409,7 @@ private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c �
     · intro c hc
       rw [List.mem_flatMap] at hc
       obtain ⟨ch, hch, hc⟩ := hc
-      have hd := depth_le_depthMaxList hch
+      have hd := RootedTree.Planar.depth_le_depthMaxList hch
       cases hh : ch.label.isHead with
       | false =>
         simp only [hh, MarkedGrid.edge_false, MarkedGrid.toGrid_clear] at hc
@@ -572,23 +504,6 @@ theorem head_below_peak_unlayered :
   ⟨.node .om [ .node Constituent.ph [.node (.ft true) [.node (.syl 1 true) []]],
                .node (.syl 1 true) [] ],
     by decide, by decide, by decide, by decide⟩
-
-/-! ### Worked example
-
-A three-syllable ω — head foot (primary), weak foot (secondary), stray σ (unstressed) — projects
-to `[3, 2, 1]` and the canonical staircase. -/
-
-private def exWord : Tree :=
-  .node .om
-    [ .node (.ft true)  [.node (.syl 1 true) []],
-      .node (.ft false) [.node (.syl 1 true) []],
-      .node (.syl 1 false) [] ]
-
-example : columns exWord = [3, 2, 1] := by decide
-example : peak (columns exWord) = 3 := by decide
-example : ofTree exWord =
-    [[true, true, true], [true, true, false], [true, false, false]] := by decide
-example : Marks.IsContinuous (ofTree exWord) := by decide
 
 end Grid
 

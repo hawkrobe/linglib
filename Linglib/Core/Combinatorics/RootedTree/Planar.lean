@@ -117,6 +117,26 @@ def depthMaxList : List (Planar α) → Nat
   | t :: ts => max (depth t) (depthMaxList ts)
 end
 
+/-- Each child's depth is at most the children's max depth. -/
+theorem depth_le_depthMaxList {c : Planar α} {cs : List (Planar α)} (h : c ∈ cs) :
+    c.depth ≤ depthMaxList cs := by
+  induction cs with
+  | nil => cases h
+  | cons a as ih =>
+    rw [show depthMaxList (a :: as) = max a.depth (depthMaxList as) from rfl]
+    rcases List.mem_cons.mp h with rfl | h
+    · exact le_max_left _ _
+    · exact (ih h).trans (le_max_right _ _)
+
+/-- The children's max depth is bounded by any common bound on the child depths. -/
+theorem depthMaxList_le {cs : List (Planar α)} {n : ℕ} (h : ∀ c ∈ cs, c.depth ≤ n) :
+    depthMaxList cs ≤ n := by
+  induction cs with
+  | nil => exact Nat.zero_le n
+  | cons a as ih =>
+    rw [show depthMaxList (a :: as) = max a.depth (depthMaxList as) from rfl]
+    exact max_le (h a (List.mem_cons_self ..)) (ih fun c hc => h c (List.mem_cons_of_mem _ hc))
+
 /-- The **arity** of the root vertex: number of children. Leaves have
     arity 0. -/
 def arity : Planar α → Nat

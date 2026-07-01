@@ -331,6 +331,52 @@ def IsWord (t : Tree) : Prop := isWordTree t
 instance (t : Tree) : Decidable (IsWord t) :=
   inferInstanceAs (Decidable (isWordTree t = true))
 
+/-- `isWordTree.goList` as a `List.all` over children. -/
+theorem isWordTree.goList_all (cs : List Tree) :
+    isWordTree.goList cs
+      = cs.all (fun c => isFootTree c || isWordTree.go c
+          || (c.label.isSyl && c.children.isEmpty)) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [isWordTree.goList, List.all_cons, ih]
+
+/-- A non-recursive word is an ω over well-formed feet and stray σ-leaves — the structural content
+    of `IsWord ∧ noRec = 0`, used to read the grid off a word. -/
+theorem isWord_children {a : Constituent} {cs : List Tree}
+    (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
+    a.isOm = true ∧ ∀ c ∈ cs, isFootTree c = true ∨ (c.label.isSyl = true ∧ c.children = []) := by
+  simp only [IsWord, isWordTree, isWordTree.go, Bool.and_eq_true,
+    isWordTree.goList_all, List.all_eq_true] at hw
+  obtain ⟨ha, hall⟩ := hw
+  obtain rfl : a = .om := by cases a <;> simp_all [Constituent.isOm]
+  have hr' : (cs.filter (fun c => Constituent.sameLevel c.label .om)).length = 0 := by
+    have e : noRec (.node (.om : Constituent) cs)
+        = (cs.filter (fun c => Constituent.sameLevel c.label .om)).length + noRec.goList cs := rfl
+    rw [hr] at e; omega
+  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.label .om = false := by
+    intro c hc
+    by_contra h
+    rw [Bool.not_eq_false] at h
+    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.label .om) := by
+      rw [List.mem_filter]; exact ⟨hc, h⟩
+    rw [List.length_eq_zero_iff] at hr'
+    rw [hr'] at hmem; exact List.not_mem_nil hmem
+  refine ⟨ha, fun c hc => ?_⟩
+  have hdisj := hall c hc
+  have hsl := hnoω c hc
+  obtain ⟨cl, ccs⟩ := c
+  simp only [RootedTree.Planar.label_node] at hsl
+  have hcω : cl.isOm = false := by
+    cases cl <;> simp_all [Constituent.sameLevel, Constituent.isOm]
+  rw [show isWordTree.go (.node cl ccs)
+        = (cl.isOm && isWordTree.goList ccs) from rfl, hcω] at hdisj
+  simp only [Bool.false_and, Bool.or_false, Bool.or_eq_true, Bool.and_eq_true,
+    RootedTree.Planar.children_node, List.isEmpty_iff,
+    RootedTree.Planar.label_node] at hdisj ⊢
+  rcases hdisj with h | h
+  · exact Or.inl h
+  · exact Or.inr h
+
 /-- A well-formed prosodic word: the prosodic-tree carrier restricted to the legal
     recursive ω-trees (`IsWord`). -/
 abbrev Word := {t : Tree // IsWord t}
