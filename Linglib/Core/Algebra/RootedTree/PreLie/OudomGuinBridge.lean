@@ -922,6 +922,30 @@ splitting lemma (Prop 2.7(ii)). It is the route for the per-tprod
 `m+1` induction of `gl_product_eq_oudomGuinStar_tprod`, using the
 singleton case `Nonplanar.insertionMultiset_singleton_assoc`. -/
 
+/-- A finite (multiset) sum of linear maps, applied to a point, is the
+    sum of the pointwise applications. -/
+private theorem multiset_sum_linMap_apply {M N : Type*}
+    [AddCommMonoid M] [AddCommMonoid N] [Module ℤ M] [Module ℤ N]
+    (s : Multiset (M →ₗ[ℤ] N)) (x : M) :
+    s.sum x = (s.map (fun f => f x)).sum := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons a s ih =>
+    rw [Multiset.sum_cons, LinearMap.add_apply, ih, Multiset.map_cons, Multiset.sum_cons]
+
+/-- Extensionality for `ℤ`-linear maps out of `GrossmanLarson` (an
+    `AddMonoidAlgebra` on forests): agreement on every basis vector
+    `of' A` forces equality. -/
+private theorem gl_lhom_ext_of' {M : Type*} [AddCommMonoid M] [Module ℤ M]
+    {f g : GrossmanLarson ℤ α →ₗ[ℤ] M}
+    (h : ∀ A : Forest (Nonplanar α),
+      f (GrossmanLarson.of' A) = g (GrossmanLarson.of' A)) : f = g := by
+  refine Finsupp.lhom_ext' fun A => LinearMap.ext_ring ?_
+  have hA := h A
+  simp only [GrossmanLarson.of', ConnesKreimer.of'_apply] at hA
+  simp only [LinearMap.comp_apply, Finsupp.lsingle_apply]
+  exact hA
+
 /-- **Helper for substrate 2**: iterated single-guest insertion
     `ins (ins F (of' C)) (op of'{v})` splits into a "single-shot"
     `ins F (of' (C + {v}))` term plus a sum over `Y ∈ NIM C {v}`
@@ -936,132 +960,30 @@ private theorem GL_iterated_insertion_singleton_v
       GrossmanLarson.insertion F (ConnesKreimer.of' (C + {v})) +
       ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
         (fun Y => GrossmanLarson.insertion F (ConnesKreimer.of' Y))).sum := by
-  -- Define helper LinearMaps for cleaner manipulation.
-  set ins : GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α :=
-    GrossmanLarson.insertion with hins
-  -- Linearize F. Both sides are F-linear by bilinearity of `insertion`.
-  refine Finsupp.induction_linear F ?_ ?_ ?_
-  · -- F = 0: both sides reduce to 0.
-    show ins (ins 0 (ConnesKreimer.of' C))
-          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
-        ins 0 (ConnesKreimer.of' (C + {v})) +
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins 0 (ConnesKreimer.of' Y))).sum
-    have h_ins_zero : ∀ Y : GrossmanLarson ℤ α, ins 0 Y = 0 := fun Y =>
-      (ins.flip Y).map_zero
-    rw [h_ins_zero, h_ins_zero, h_ins_zero, zero_add]
-    symm
-    apply Multiset.sum_eq_zero
-    intro x hx
-    rw [Multiset.mem_map] at hx
-    obtain ⟨Y, _, hY_eq⟩ := hx
-    rw [← hY_eq]
-    exact h_ins_zero _
-  · -- F = F₁ + F₂: by linearity in F on both sides.
-    intro F₁ F₂ ih₁ ih₂
-    let F₁' : GrossmanLarson ℤ α := F₁
-    let F₂' : GrossmanLarson ℤ α := F₂
-    show ins (ins (F₁' + F₂') (ConnesKreimer.of' C))
-          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
-        ins (F₁' + F₂') (ConnesKreimer.of' (C + {v})) +
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins (F₁' + F₂') (ConnesKreimer.of' Y))).sum
-    -- Use a uniform "insertion respects + in first arg" helper:
-    have hins_add_left : ∀ (X Y : GrossmanLarson ℤ α) (Z : GrossmanLarson ℤ α),
-        ins (X + Y) Z = ins X Z + ins Y Z := fun X Y Z => by
-      rw [show ins (X + Y) = ins X + ins Y from ins.map_add X Y]
-      rfl
-    have hinner : ins (F₁' + F₂') (ConnesKreimer.of' C : GrossmanLarson ℤ α) =
-        ins F₁' (ConnesKreimer.of' C : GrossmanLarson ℤ α) +
-        ins F₂' (ConnesKreimer.of' C : GrossmanLarson ℤ α) :=
-      hins_add_left F₁' F₂' _
-    rw [show ins (F₁' + F₂') (ConnesKreimer.of' C) =
-            ins F₁' (ConnesKreimer.of' C : GrossmanLarson ℤ α) +
-            ins F₂' (ConnesKreimer.of' C : GrossmanLarson ℤ α) from hinner]
-    rw [hins_add_left]
-    rw [ih₁, ih₂]
-    rw [show ins (F₁' + F₂') (ConnesKreimer.of' (C + {v})) =
-            ins F₁' (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) +
-            ins F₂' (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) from
-        hins_add_left F₁' F₂' _]
-    have h_split_sum :
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins (F₁' + F₂') (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum =
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins F₁' (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum +
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins F₂' (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum := by
-      rw [← Multiset.sum_map_add]
-      apply congr_arg Multiset.sum
-      apply Multiset.map_congr rfl
-      intro Y _
-      exact hins_add_left F₁' F₂' _
-    rw [h_split_sum]
-    abel
-  · -- F = single A r — basis case.
-    intro A r
-    let F_single : GrossmanLarson ℤ α := Finsupp.single A r
-    show ins (ins F_single (ConnesKreimer.of' C))
-          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
-        ins F_single (ConnesKreimer.of' (C + {v})) +
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins F_single (ConnesKreimer.of' Y))).sum
-    -- ins is bilinear; reduce F_single = r • of' A.
-    have hF : F_single = r • (GrossmanLarson.of' A : GrossmanLarson ℤ α) := by
-      show (Finsupp.single A r : GrossmanLarson ℤ α) =
-            r • (GrossmanLarson.of' A : GrossmanLarson ℤ α)
-      show (Finsupp.single A r : ConnesKreimer ℤ (Nonplanar α)) =
-            r • (ConnesKreimer.of' A : ConnesKreimer ℤ _)
-      rw [ConnesKreimer.of'_apply]
-      exact (Finsupp.smul_single_one A r).symm
-    rw [hF]
-    -- Helper: insertion respects smul in first arg.
-    have hins_smul_left : ∀ (X Z : GrossmanLarson ℤ α),
-        ins (r • X) Z = r • ins X Z := fun X Z => by
-      rw [show ins (r • X) = r • ins X from ins.map_smul r X]
-      rfl
-    rw [hins_smul_left]
-    -- Now LHS has `ins (r • ins (of'A) (of'C)) (op of'{v}) = r • ins (ins (of'A) (of'C)) (op of'{v})`
-    rw [show ins (r • ins (GrossmanLarson.of' A : GrossmanLarson ℤ α)
-                  (ConnesKreimer.of' C : GrossmanLarson ℤ α))
-              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
-            r • ins (ins (GrossmanLarson.of' A : GrossmanLarson ℤ α)
-                  (ConnesKreimer.of' C : GrossmanLarson ℤ α))
-              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) from
-        hins_smul_left _ _]
-    rw [hins_smul_left]
-    -- Sum side: pull r out.
-    have h_smul_sum :
-        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins (r • (GrossmanLarson.of' A : GrossmanLarson ℤ α))
-            (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum =
-        r • ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
-          (fun Y => ins (GrossmanLarson.of' A : GrossmanLarson ℤ α)
-            (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum := by
-      rw [Multiset.smul_sum, Multiset.map_map]
-      apply congr_arg Multiset.sum
-      apply Multiset.map_congr rfl
-      intro Y _
-      exact hins_smul_left _ _
-    rw [h_smul_sum, ← smul_add]
-    -- Reduce to basis identity at F = of' A.
-    congr 1
-    -- Basis identity: ins(ins(of'A)(of'C))(op of'{v}) = ins(of'A)(of'(C+{v})) +
-    --                                                  Σ_{Y ∈ NIM C {v}} ins(of'A)(of'Y)
-    rw [hins]
+  -- Both sides are ℤ-linear in `F`; package them as linear maps and reduce
+  -- to the basis `F = of' A` via `Finsupp.lhom_ext'`.
+  have hmaps :
+      (GrossmanLarson.insertion.flip
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))).comp
+          (GrossmanLarson.insertion.flip (ConnesKreimer.of' C : GrossmanLarson ℤ α)) =
+        GrossmanLarson.insertion.flip (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) +
+          ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+            (fun Y =>
+              GrossmanLarson.insertion.flip (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum := by
+    refine gl_lhom_ext_of' fun A => ?_
+    simp only [LinearMap.comp_apply, LinearMap.flip_apply, LinearMap.add_apply,
+      multiset_sum_linMap_apply, Multiset.map_map, Function.comp]
+    -- Basis identity at `F = of' A`, via `insertionMultiset_singleton_assoc`.
     show GrossmanLarson.insertion
         (GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
           (GrossmanLarson.of' C : GrossmanLarson ℤ α))
         (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) = _
     rw [GrossmanLarson.insertion_of'_of']
-    -- Inner: insertionBasis A C = (NIM A C).map of'.sum.
     show GrossmanLarson.insertion
         (((Nonplanar.insertionMultiset A C).map
           fun F' => GrossmanLarson.of' (R := ℤ) F').sum)
         (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) = _
-    -- Push insertion through the sum via insertion_sum_left.
     rw [GrossmanLarson.insertion_sum_left, Multiset.map_map]
-    -- Per X ∈ NIM A C, insertion (of' X) (of' {v}) = insertionBasis X {v}.
     have h_per_X : ∀ X : Forest (Nonplanar α),
         GrossmanLarson.insertion (GrossmanLarson.of' X)
             (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) =
@@ -1070,8 +992,6 @@ private theorem GL_iterated_insertion_singleton_v
       intro X
       rw [GrossmanLarson.insertion_of'_of']
       rfl
-    -- Rewrite the inner expression. After Multiset.map_map, the goal's map function
-    -- has shape (fun X => insertion (of' X) (of'{v}) : GrossmanLarson ℤ α).
     rw [show ((fun (Y : GrossmanLarson ℤ α) =>
               GrossmanLarson.insertion Y
                 (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α)) ∘
@@ -1081,7 +1001,6 @@ private theorem GL_iterated_insertion_singleton_v
               fun F' => GrossmanLarson.of' (R := ℤ) F').sum) from by
         funext X
         exact h_per_X X]
-    -- Push the outer sum: ((bind).map of').sum form.
     rw [show ((Nonplanar.insertionMultiset A C).map
               (fun X => ((Nonplanar.insertionMultiset X ({v} : Multiset _)).map
                 fun F' => GrossmanLarson.of' (R := ℤ) F').sum)).sum =
@@ -1089,19 +1008,16 @@ private theorem GL_iterated_insertion_singleton_v
                 fun X => Nonplanar.insertionMultiset X ({v} : Multiset _)).map
               fun F' => GrossmanLarson.of' (R := ℤ) F').sum from by
           rw [Multiset.map_bind, Multiset.sum_bind]]
-    -- Apply insertionMultiset_singleton_assoc.
     rw [Nonplanar.insertionMultiset_singleton_assoc]
     rw [Multiset.map_add, Multiset.sum_add]
     congr 1
-    · -- Left: NIM A (C + {v}) → ins (of' A) (of' (C+{v})) = insertionBasis A (C+{v}).
-      rw [show GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+    · rw [show GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
                   (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) =
               GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
                 (GrossmanLarson.of' (C + {v}) : GrossmanLarson ℤ α) from rfl,
           GrossmanLarson.insertion_of'_of']
       rfl
-    · -- Right: (NIM C {v}).bind (NIM A ·) → Σ_{Y ∈ NIM C {v}} ins (of'A) (of'Y).
-      rw [Multiset.map_bind, Multiset.sum_bind]
+    · rw [Multiset.map_bind, Multiset.sum_bind]
       apply congr_arg Multiset.sum
       apply Multiset.map_congr rfl
       intro Y _
@@ -1109,6 +1025,9 @@ private theorem GL_iterated_insertion_singleton_v
               (GrossmanLarson.of' Y : GrossmanLarson ℤ α) from rfl,
           GrossmanLarson.insertion_of'_of']
       rfl
+  have hF := LinearMap.congr_fun hmaps F
+  simpa only [LinearMap.comp_apply, LinearMap.flip_apply, LinearMap.add_apply,
+    multiset_sum_linMap_apply, Multiset.map_map, Function.comp] using hF
 
 /-- Generic "swap two outer sums" lemma. Used in `GL_T2_reindexing_key`. -/
 private theorem swap_sum_map_sum {β γ δ : Type*} [AddCommMonoid δ]
