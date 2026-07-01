@@ -1548,8 +1548,8 @@ import Linglib.Semantics.Classifier.Basic
 import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
 import Linglib.Semantics.Classifier.TypeN
-import Linglib.Semantics.Comparison.Metalinguistic
-import Linglib.Semantics.Comparison.MetalinguisticDegree
+import Linglib.Semantics.Degree.Comparison.Metalinguistic
+import Linglib.Semantics.Degree.Comparison.MetalinguisticDegree
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Continuation
@@ -1723,8 +1723,8 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Semantics.Lexical.LevinTheory
 import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.Lexical.VerbSmuggling
-import Linglib.Semantics.Measurement
-import Linglib.Semantics.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measurement.Basic
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Modality.Assert

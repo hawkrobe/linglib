@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Degree.Gradability.GradableNouns
-import Linglib.Semantics.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement.Basic
 import Linglib.Semantics.Degree.Gradability.Intensification
 
 /-!
