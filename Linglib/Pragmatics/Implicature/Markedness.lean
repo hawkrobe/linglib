@@ -74,11 +74,11 @@ def prefixedMorphology (form : String) (pfx : String := "un") : Morphology :=
 /--
 Extended gradable adjective entry with morphological information.
 
-Extends `GradableAdjEntry` with:
+Extends `GradableAdjective` with:
 - Morphological structure for markedness computation
 - Polarity indicator (positive vs negative pole)
 -/
-structure GradableAdjWithMorphology extends GradableAdjEntry where
+structure GradableAdjWithMorphology extends GradableAdjective where
   /-- Morphological structure -/
   morphology : Morphology
   /-- Is this the positive pole of the scale? -/
@@ -226,7 +226,7 @@ def costDifference : ℚ := 1
 "tall" with morphology: simple, positive pole
 -/
 def tall_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjEntry := tall
+  toGradableAdjective := tall
   morphology := simpleMorphology "tall"
   isPositivePole := true
 
@@ -234,7 +234,7 @@ def tall_with_morphology : GradableAdjWithMorphology where
 "short" with morphology: simple, negative pole
 -/
 def short_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjEntry := short
+  toGradableAdjective := short
   morphology := simpleMorphology "short"
   isPositivePole := false
 
@@ -242,7 +242,7 @@ def short_with_morphology : GradableAdjWithMorphology where
 "happy" with morphology: simple, positive pole
 -/
 def happy_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjEntry := happy
+  toGradableAdjective := happy
   morphology := simpleMorphology "happy"
   isPositivePole := true
 
@@ -250,7 +250,7 @@ def happy_with_morphology : GradableAdjWithMorphology where
 "unhappy" with morphology: prefixed, negative pole
 -/
 def unhappy_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjEntry := unhappy
+  toGradableAdjective := unhappy
   morphology := prefixedMorphology "unhappy"
   isPositivePole := false
 

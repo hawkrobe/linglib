@@ -1,32 +1,23 @@
 import Linglib.Semantics.Gradability.Dimension
-import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Kennedy
 import Linglib.Morphology.DegreeContainment
 
 /-!
 # Adjective
 
-Lexical core for the adjective as a grammatical object, modeled on `Syntax/Pronoun/`:
-the general `Adjective` structure (the lexical core every adjective shares) and the
-`GradableAdjective` specialization (which `extends Adjective` with the degree-semantic
-lexical fields). The general concept gets the plain name; specializations `extends` it.
+The syntactic core of the adjective as a grammatical object, modeled on
+`Syntax/Pronoun/`: surface form, the scalar `dimension` **key** it measures + the
+lexicalized pole, comparison morphology, and lexical antonymy. The dimension is
+carried as a key (cf. `Pronoun` importing `Person`/`Number`), not interpreted here.
 
-The scale an adjective measures is the `Semantics.Gradability.Dimension` **key**
-(imported as a field, cf. `Pronoun` importing `Person`/`Number`); its boundedness,
-comparison-class dependence, and telicity are *derived views* of that key, not stored.
-The degree **denotation** (`DirectedMeasure`) lives downstream in `Semantics/Gradability`.
+Gradability is **not** a type split — it is the derived predicate `IsGradable`
+(`dimension.isSome`); a non-gradable adjective (*wooden*, *former*, *medical*) is the
+same type with `dimension = none`.
 
-## The `scaleType` decomposition
-
-The old `GradableAdjEntry.scaleType : Boundedness` conflated three independent facts and
-contradicted `Dimension.boundedness` (`wet`/`dry` share one closed `.wetness` scale, yet
-stored `.lowerBounded`/`.upperBounded`). They are separated here:
-
-* **shape** — `dimension.boundedness` (derived);
-* **pole** — `isLowerEndpoint` (the *only* thing distinguishing `wet` from `dry`);
-* **standard** — `GradableAdjective.standard`, derived from (shape, pole) with an
-  `Option PositiveStandard` override for the `good`/MPA residual ([kennedy-2007],
-  [kennedy-mcnally-2005]).
+The **degree-semantic** layer lives one layer up, in `Semantics/Gradability`, where the
+scale's boundedness, positive standard, and Kennedy class *become relevant*: the
+`GradableAdjective` refinement there `extends Adjective` with the `standardOverride`
+and derives `scaleType`/`standard`/`adjectiveClass` from the (shape, pole, override).
+This file deliberately does not depend on the Degree/Kennedy semantics.
 
 ## Deferred (earn their consumers, cf. `Pronoun`'s deferred capability tower)
 
@@ -34,8 +25,6 @@ stored `.lowerBounded`/`.upperBounded`). They are separated here:
   sets them (φ with no setter would be dead fields).
 * Dixon `PCClass` view (`Dimension.pcClass`) — waits on a lightweight `PCClass` home
   (it currently sits in the heavy `Morphology/RootTypology.lean`).
-* `MultidimAdjective` (Sassoon multidimensionality) and the gradable facets
-  (`evaluativeValence`/`spatialConfigType`/`informationalStrength`/subjectivity).
 * The `Modifier`/`Gradable` capability classes — built at the second-carrier trigger
   (an `Adverb`/degree-word struct), exactly as `Pronoun` deferred `Proform`.
 
@@ -44,8 +33,6 @@ noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 -/
 
 open Semantics.Gradability (Dimension)
-open Semantics.Degree (PositiveStandard AdjectiveClass interpretiveEconomy)
-open Core.Order (Boundedness)
 open Morphology.DegreeContainment (DegreePattern)
 
 set_option autoImplicit false
@@ -75,13 +62,18 @@ structure Adjective.ComparisonFacet where
 /-- No comparison marking (the default). -/
 def Adjective.ComparisonFacet.regular : Adjective.ComparisonFacet := {}
 
-/-! ### The general adjective object -/
+/-! ### The adjective object -/
 
-/-- The general adjective object: the lexical core every adjective shares — surface
-    form, the scalar `dimension` key + lexicalized pole, comparison morphology, and
-    lexical antonymy. Carries no denotation of its own (cf. `Pronoun`); the degree
-    meaning is derived in `Semantics/Gradability`. Specializations `extends` it.
-    Coexists with `namespace Adjective` (a type and a namespace may share a name). -/
+/-- The adjective lexeme: the syntactic core every adjective shares — surface form,
+    the scalar `dimension` key + lexicalized pole, comparison morphology, and lexical
+    antonymy. Carries no denotation of its own (cf. `Pronoun`); the degree-semantic
+    interpretation of `dimension`/pole is derived one layer up, on `GradableAdjective`
+    in `Semantics/Gradability`.
+
+    Gradability is **not** a type split: it is the derived predicate `IsGradable`
+    (`dimension.isSome`); a non-gradable adjective is the same type with
+    `dimension = none`. Coexists with `namespace Adjective` (a type and a namespace may
+    share a name). -/
 structure Adjective where
   /-- Surface form (citation/positive-grade). -/
   form : String
@@ -100,15 +92,6 @@ structure Adjective where
   antonymForm : Option String := none
   deriving Repr, DecidableEq, BEq
 
-/-- A gradable adjective: `Adjective` plus the degree-semantic lexical fields
-    (Kennedy). Its well-formedness requires a `dimension`. -/
-structure GradableAdjective extends Adjective where
-  /-- Override the Kennedy default standard (the `good`/MPA residual: an open-shape
-      scale that nonetheless takes a functional/contextual standard, [beltrama-2025]).
-      `none` = take the derived default. -/
-  standardOverride : Option PositiveStandard := none
-  deriving Repr, BEq
-
 namespace Adjective
 
 /-- Gradable iff it carries a scalar dimension — derived (cf. `Pronoun.category`). -/
@@ -121,42 +104,3 @@ instance (a : Adjective) : Decidable a.IsGradable := by unfold IsGradable; infer
 def suppletion (a : Adjective) : DegreePattern := a.comparison.suppletion
 
 end Adjective
-
-namespace GradableAdjective
-
-/-- The scale's intrinsic shape — read off the `dimension` key, not stored. -/
-def scaleType (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map Dimension.boundedness).getD .open_
-
-/-- The effective positive standard: the default from (scale shape, pole),
-    overridable by `standardOverride`. This is the quantity the old `scaleType` field
-    conflated — it separates `wet` (closed + lower ⇒ min) from `dry` (closed + upper ⇒
-    max), and lets `good` (open shape) take a contextual standard rather than a bogus
-    bound. ([kennedy-2007]'s Interpretive Economy on the open/singly-bounded cases.) -/
-def standard (g : GradableAdjective) : PositiveStandard :=
-  g.standardOverride.getD <|
-    match g.dimension.map Dimension.boundedness, g.isLowerEndpoint with
-    | some .closed, true  => .minEndpoint
-    | some .closed, false => .maxEndpoint
-    | some b,       _     => interpretiveEconomy b
-    | none,         _     => .contextual
-
-/-- Kennedy's adjective class — derived from `standard`, not stored
-    ([kennedy-2007], [kennedy-mcnally-2005]). -/
-def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
-  match g.dimension with
-  | none => .nonGradable
-  | some _ =>
-    match g.standard with
-    | .contextual  => .relativeGradable
-    | .minEndpoint => .absoluteMinimum
-    | .maxEndpoint => .absoluteMaximum
-    | .functional  => .mildlyPositive
-
-/-- Comparison-class dependence — the relative/absolute distinction, derived. -/
-def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass.IsRelative
-
-instance (g : GradableAdjective) : Decidable g.IsRelative := by
-  unfold IsRelative; infer_instance
-
-end GradableAdjective

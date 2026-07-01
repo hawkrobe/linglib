@@ -81,7 +81,7 @@ namespace AlexandropoulouGotzner2024JoS
 
 open Semantics.Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
-open Semantics.Gradability (GradableAdjEntry ThresholdPair positiveMeaning'
+open Semantics.Gradability (GradableAdjective ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm
   predictionForAntonymy predictionForEntry)
 open Semantics.Degree (antonymMeaning)
@@ -101,7 +101,7 @@ inductive AGCase where
 
 /-! `Asymmetry` (asymmetric/symmetric direction enum), `predictionForAntonymy`
     (NegationType → Asymmetry skeleton), and `predictionForEntry`
-    (GradableAdjEntry → Asymmetry projection) are now substrate, in
+    (GradableAdjective → Asymmetry projection) are now substrate, in
     `Features/Antonymy.lean` and `Semantics/Gradability/AntonymPrediction.lean`
     respectively. The substrate-anchor theorems
     `Semantics.Gradability.contradictoryDenot_synonymy` and
@@ -113,7 +113,7 @@ inductive AGCase where
     prediction signatures below derive their per-case answers by reading
     `antonymRelation` off this representative — the Fragment is the single
     source of truth, not a parallel hardcoded enum in this file. -/
-def AGCase.representative : AGCase → GradableAdjEntry
+def AGCase.representative : AGCase → GradableAdjective
   | .weakRelative   => large
   | .weakAbsolute   => clean
   | .strongGradable => gigantic

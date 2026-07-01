@@ -2,18 +2,19 @@ import Linglib.Semantics.Gradability.Basic
 
 /-! # Adjectival Predicate Lexicon Fragment
 
-Gradable adjective entries following [kennedy-2007]. Each entry stores its surface
-form, scalar `dimension`, lexicalized pole (`isLowerEndpoint`) or `standardOverride`,
-and antonym data; the scale shape (`scaleType`), positive `standard`, and Kennedy
-`adjectiveClass` are *derived* views of the `Syntax/Adjective` API (`GradableAdjEntry
-extends GradableAdjective`), not stored — the fix for the old `scaleType` field that
-conflated scale shape with pole (`wet`/`dry` share one closed `.wetness` scale). The
-derived Kennedy classification is exercised at the end of this file.
+Gradable adjective entries following [kennedy-2007], typed with
+`Semantics.Gradability.GradableAdjective` (the syntactic `Syntax/Adjective` lexeme
+refined with the degree-semantic layer). Each entry stores its surface form, scalar
+`dimension`, lexicalized pole (`isLowerEndpoint`) or `standardOverride`, and antonym
+data; the scale shape (`scaleType`), positive `standard`, and Kennedy `adjectiveClass`
+are *derived* views, not stored — the fix for the old `scaleType` field that conflated
+scale shape with pole (`wet`/`dry` share one closed `.wetness` scale). The derived
+Kennedy classification is exercised at the end of this file.
 -/
 
 namespace English.Predicates.Adjectival
 
-open Semantics.Gradability (AntonymRelation GradableAdjEntry)
+open Semantics.Gradability (AntonymRelation GradableAdjective)
 open Core.Order (Boundedness)
 open Features (EvaluativeValence)
 open Features (NegationType)
@@ -22,10 +23,10 @@ open Features (NegationType)
 /-- [kennedy-2007]
 An adjectival predicate entry.
 
-This is an alias for `GradableAdjEntry` from the Theory module, re-exported
+This is an alias for `GradableAdjective` from the Theory module, re-exported
 here for the Fragments organization.
 -/
-abbrev AdjectivalPredicateEntry := GradableAdjEntry
+abbrev AdjectivalPredicateEntry := GradableAdjective
 
 
 /-- "tall" — open scale, contrary to "short" -/

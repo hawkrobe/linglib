@@ -173,7 +173,7 @@ def predictionForAntonymy : NegationType → Asymmetry
 
 /-- Read prediction off a Fragment lexical entry's `antonymRelation`. Defaults
     to `.symmetric` for entries without an explicit antonymy classification. -/
-def predictionForEntry (e : GradableAdjEntry) : Asymmetry :=
+def predictionForEntry (e : GradableAdjective) : Asymmetry :=
   e.antonymRelation.elim .symmetric predictionForAntonymy
 
 end Semantics.Gradability
