@@ -60,10 +60,10 @@ bridge theorem all live in `AlexandropoulouGotzner2024JoS.lean`.
 namespace AlexandropoulouGotzner2024
 
 open Core.Order (Boundedness)
-open Semantics.Degree (Degree Threshold deg thr)
+open Degree (Degree Threshold deg thr)
 open Semantics.Gradability (GradableAdjective ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
-open Semantics.Degree (positiveMeaning antonymMeaning positiveMeaning_monotone)
+open Degree (positiveMeaning antonymMeaning positiveMeaning_monotone)
 open English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
 

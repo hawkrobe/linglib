@@ -32,7 +32,7 @@ endpoint-licensing pipeline with `Boundedness`, `MereoTag`, and `EpistemicTag`.
 -/
 
 open Core.Order (Boundedness ScalePolarity LicensingPipeline)
-open Semantics.Degree (HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
+open Degree (HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
 open Features (Telicity VendlerClass)
 
 namespace Semantics.Gradability

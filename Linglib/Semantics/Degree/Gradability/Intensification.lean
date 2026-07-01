@@ -34,8 +34,8 @@ for the RSA pragmatic model.
 namespace Semantics.Gradability.Intensification
 
 open Features (EvaluativeValence)
-open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open Semantics.Degree (positiveMeaning)
+open Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
+open Degree (positiveMeaning)
 
 -- Evaluative Measure Functions
 

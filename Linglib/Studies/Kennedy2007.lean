@@ -53,7 +53,7 @@ central claims against the degree substrate and the English adjective Fragment.
 
 namespace Kennedy2007
 
-open Semantics.Degree
+open Degree
 
 /-! ### Scale structure and Interpretive Economy
 
@@ -297,7 +297,7 @@ structure AdjectiveTypologyDatum where
   /-- The adjective -/
   adjective : String
   /-- Its classification -/
-  classification : Semantics.Degree.AdjectiveClass
+  classification : Degree.AdjectiveClass
   /-- The underlying scale name (e.g., "height", "fullness") -/
   scale : String
   /-- Scale structure (Kennedy 2007's 4-way typology), the canonical

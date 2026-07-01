@@ -70,9 +70,9 @@ against Fragment `formComp` entries.
 
 namespace Bresnan1973
 
-open Semantics.Degree (DegPType)
-open Semantics.Degree.ThanClause (ThanClauseType)
-open Semantics.Degree (comparativeSem)
+open Degree (DegPType)
+open Degree.ThanClause (ThanClauseType)
+open Degree (comparativeSem)
 open Core.Order (ScalePolarity Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. QP Structure (Det + Q)

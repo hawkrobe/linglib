@@ -43,10 +43,10 @@ image `μ '' {x | R x}`, connecting to `gc_sSup_Iic` under
 
 -/
 
-namespace Semantics.Degree.Abstraction
+namespace Degree.Abstraction
 
 open Core.Order
-open Semantics.Degree
+open Degree
 -- ════════════════════════════════════════════════════
 -- § 1. Degree Predicates and Maximality
 -- ════════════════════════════════════════════════════
@@ -281,7 +281,7 @@ theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
 theorem heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     heimComparativeWithMeasure μ a b ↔
-      Semantics.Degree.comparativeSem μ a b .positive :=
+      Degree.comparativeSem μ a b .positive :=
   Iff.rfl
 
 -- ─── Galois Connection ────────────────────────────
@@ -306,4 +306,4 @@ theorem heim_kennedy_via_galois {Entity D : Type*} [LinearOrder D]
     posExt μ b ⊂ posExt μ a :=
   (posExt_ssubset_iff μ b a).symm
 
-end Semantics.Degree.Abstraction
+end Degree.Abstraction

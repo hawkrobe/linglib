@@ -27,7 +27,7 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 open Core.Order
 
@@ -300,4 +300,4 @@ theorem leOver_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (Comparison
     `isMaxInf_atMost_iff_eq`) live in
     `Semantics/Entailment/Extremum.lean`. -/
 
-end Semantics.Degree
+end Degree

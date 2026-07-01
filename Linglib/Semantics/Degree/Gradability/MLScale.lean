@@ -9,7 +9,7 @@ relation M. From R (= `<`) and M one derives L (largely smaller than):
 L(x,y) := x < y ∧ ¬ M x y. Five axioms govern M; Theorem 2.2 derives
 M-TRANSITIVITY and M-BOUNDEDNESS as consequences.
 
-This sits alongside `DirectedMeasure` (in `Semantics.Degree`): a `DirectedMeasure`
+This sits alongside `DirectedMeasure` (in `Degree`): a `DirectedMeasure`
 determines licensing from boundedness, while an `MLScale` adds granularity
 structure (marginal vs. large difference) on the same `LinearOrder`.
 

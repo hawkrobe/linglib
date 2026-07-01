@@ -22,7 +22,7 @@ not just an ordinal or interval scale. Hence "3 inches taller" ✓ but
 
 -/
 
-namespace Semantics.Degree.Differential
+namespace Degree.Differential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Differential Semantics
@@ -148,4 +148,4 @@ def subcomparativeAdmissibility : List SubcomparativeAdmissibilityDatum :=
 #guard subcomparativeAdmissibility.all (λ d =>
   d.acceptable == admitsSubcomparative d.level)
 
-end Semantics.Degree.Differential
+end Degree.Differential
