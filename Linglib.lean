@@ -1695,6 +1695,7 @@ import Linglib.Semantics.Degree.Gradability.Antonymy
 import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Semantics.Degree.Gradability.Classification
 import Linglib.Semantics.Degree.Gradability.ClauseEmbedding
+import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Semantics.Degree.Gradability.Delineation
 import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Semantics.Degree.Gradability.GradableNouns

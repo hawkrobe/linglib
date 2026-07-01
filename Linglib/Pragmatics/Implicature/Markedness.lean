@@ -23,6 +23,7 @@ The key point: these are objective, measurable properties. Different theories
 -/
 
 import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Rat.Defs
 

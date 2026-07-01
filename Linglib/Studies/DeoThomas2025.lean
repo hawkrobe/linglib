@@ -31,6 +31,7 @@ import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Granularity
 import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Semantics.Degree.Granularity
+import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Data.Examples.DeoThomas2025
 import Linglib.Studies.ThomasDeo2020
 
