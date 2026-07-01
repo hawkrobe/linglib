@@ -41,7 +41,7 @@ file is a candidate factoring of Foissy's specific recursion.
 - **Auxiliary depth lemma** (`cutSummandsN_subtree_depth_lt`): every tree
   appearing in a cut forest of `T` has strictly smaller depth than `T`.
   Lifted from a tree-level mutual structural-induction proof.
-- **Auxiliary weight lemma** (`cutSummandsN_rem_weight_lt`): for nontrivial
+- **Auxiliary weight lemma** (`cutSummandsN_rem_numNodes_lt`): for nontrivial
   cuts, the remainder has strictly smaller weight than the source. Substrate
   for the `weight`-recursive right antipode.
 - **Multiplicity-1 uniqueness** (`cutSummandsN_filter_card_zero`): the empty
@@ -214,7 +214,7 @@ which recurses on `cf` (depth strictly decreases). -/
 mutual
 
 /-- Vertex conservation for cuts of tree-level trees: `cf.weight_sum + rem.numNodes = T.numNodes`. -/
-private theorem cutSummandsP_weight_eq :
+private theorem cutSummandsP_numNodes_eq :
     ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
       (cf, rem) ∈ cutSummandsP T → (cf.map RoseTree.numNodes).sum + rem.numNodes = T.numNodes
   | .node a children, cf, rem, h_mem => by
@@ -224,12 +224,12 @@ private theorem cutSummandsP_weight_eq :
     have h_rem : (RoseTree.node a rem' : RoseTree α) = rem := congrArg Prod.snd h_eq
     rw [← h_cf, ← h_rem]
     -- (cf', rem') ∈ cutListSummandsP children, weight conservation by IH.
-    have hc := cutListSummandsP_weight_eq children cf' rem' h_mem'
+    have hc := cutListSummandsP_numNodes_eq children cf' rem' h_mem'
     rw [RoseTree.numNodes_node, RoseTree.numNodes_node]
     omega
 
 /-- Vertex conservation for cuts of tree-level lists. -/
-private theorem cutListSummandsP_weight_eq :
+private theorem cutListSummandsP_numNodes_eq :
     ∀ (cs : List (RoseTree α)) (cf : Forest (RoseTree α)) (rem_list : List (RoseTree α)),
       (cf, rem_list) ∈ cutListSummandsP cs →
         (cf.map RoseTree.numNodes).sum + (rem_list.map RoseTree.numNodes).sum =
@@ -265,7 +265,7 @@ private theorem cutListSummandsP_weight_eq :
     rw [List.map_cons, List.sum_cons]
     -- Goal: ... = c.numNodes + (cs'.map RoseTree.numNodes).sum
     -- IH on cs': (cf_cs'.map weight).sum + (rem_cs'.map weight).sum = (cs'.map weight).sum.
-    have ih_cs' := cutListSummandsP_weight_eq cs' cf_cs' rem_cs' h_cf_cs'
+    have ih_cs' := cutListSummandsP_numNodes_eq cs' cf_cs' rem_cs' h_cf_cs'
     rw [augActionP_eq, Multiset.mem_cons] at h_aug
     rcases h_aug with h_aug | h_aug
     · -- aug = ({c}, none). aug_F = {c}, aug_opt = none, rem_list = rem_cs'.
@@ -289,7 +289,7 @@ private theorem cutListSummandsP_weight_eq :
         exact (congrArg Prod.snd h_eq).symm
       rw [← h_aug_F, h_rem_list]
       -- IH on cutSummandsP c: (s.1.map weight).sum + s.2.numNodes = c.numNodes.
-      have ih_c := cutSummandsP_weight_eq c s.1 s.2 h_s_mem
+      have ih_c := cutSummandsP_numNodes_eq c s.1 s.2 h_s_mem
       simp [List.map_cons, List.sum_cons]
       omega
 
@@ -298,7 +298,7 @@ end
 /-- For nontrivial cuts (cf nonempty), the remainder has strictly smaller
     weight than the source tree. Substrate for the right-antipode
     well-founded recursion. -/
-private theorem cutSummandsN_rem_weight_lt (T : Nonplanar α)
+private theorem cutSummandsN_rem_numNodes_lt (T : Nonplanar α)
     (cf : Forest (Nonplanar α)) (rem : Nonplanar α)
     (h_mem : (cf, rem) ∈ cutSummandsN T) (h_nonempty : cf ≠ 0) :
     rem.numNodes < T.numNodes := by
@@ -314,7 +314,7 @@ private theorem cutSummandsN_rem_weight_lt (T : Nonplanar α)
   rw [Nonplanar.numNodes_mk, ← h_rem, Nonplanar.numNodes_mk]
   -- Goal: rem_p.numNodes < T₀.numNodes.
   -- Use tree-level conservation: cf_p.numNodes + rem_p.numNodes = T₀.numNodes (where cf_p.numNodes = sum).
-  have h_eq := cutSummandsP_weight_eq T₀ cf_p rem_p h_mem_p
+  have h_eq := cutSummandsP_numNodes_eq T₀ cf_p rem_p h_mem_p
   -- Need cf_p ≠ 0 (from cf ≠ 0, since cf = cf_p.map mk).
   have h_cf_p_ne : cf_p ≠ 0 := by
     intro h_zero
@@ -503,12 +503,12 @@ the monoid `left_inv_eq_right_inv` argument in the convolution algebra
 `WithConv (H →ₗ[R] H)`. See §5 below.
 
 The right antipode recurses on `rem` (which has strictly smaller weight for
-nontrivial cuts, by `cutSummandsN_rem_weight_lt`) instead of on `cf`. -/
+nontrivial cuts, by `cutSummandsN_rem_numNodes_lt`) instead of on `cf`. -/
 
 set_option linter.unusedVariables false in
 /-- The **right antipode on a single nonplanar tree**: defined to satisfy the
     lTensor axiom by direct cancellation. Recurses on `rem` for nontrivial
-    cuts (well-founded by `cutSummandsN_rem_weight_lt`). -/
+    cuts (well-founded by `cutSummandsN_rem_numNodes_lt`). -/
 noncomputable def antipodeRightTreeN (T : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) :=
   -ofTree T - ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
@@ -517,7 +517,7 @@ noncomputable def antipodeRightTreeN (T : Nonplanar α) :
     else 0)).sum
 termination_by T.numNodes
 decreasing_by
-  apply cutSummandsN_rem_weight_lt T pf.1 pf.2 h_mem
+  apply cutSummandsN_rem_numNodes_lt T pf.1 pf.2 h_mem
   rwa [ne_eq, ← Multiset.card_eq_zero]
 
 /-! ### Multiplicative extension to forests for R -/

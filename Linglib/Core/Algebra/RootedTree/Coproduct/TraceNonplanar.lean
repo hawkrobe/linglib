@@ -1817,7 +1817,7 @@ forests, sets up the graded subspaces, and packages MCB Lemma 1.2.10
 as a theorem combining the Δ^c bialgebra structure (`bialgebraC`, for
 trace-coherent encoders) with grading compatibility. Both grading
 halves are fully proved (edge conservation through the trace cut
-machinery: `cutSummandsCN_weight`). -/
+machinery: `cutSummandsCN_numNodes`). -/
 
 section MCBLemma1_2_10
 variable {R'' : Type*} [CommRing R''] {α'' β'' : Type*}
@@ -1856,7 +1856,7 @@ private theorem edgeCount_singleton {X : Type*} (T : Nonplanar X) :
   rw [Multiset.map_singleton, Multiset.sum_singleton]
 
 /-- `Σ (wᵢ − 1) + card = Σ wᵢ` for tree-level forests (each `wᵢ ≥ 1`). -/
-private theorem sum_map_weight_sub_one_add_card {γ : Type*}
+private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
     (F : Multiset (RoseTree γ)) :
     ((F.map (fun t => RoseTree.numNodes t - 1)).sum + Multiset.card F =
       (F.map RoseTree.numNodes).sum) := by
@@ -1871,8 +1871,8 @@ private theorem sum_map_weight_sub_one_add_card {γ : Type*}
 /-- **Edge conservation for Δ^c cut summands**: the trace marker replaces
     the cut subtree by a unit-weight leaf, so crown edges plus trunk
     weight recover the tree weight exactly. Descends
-    `cutSummandsG_weight` (`Coproduct/Defs.lean`) through `Nonplanar.mk`. -/
-private theorem cutSummandsCN_weight (τ : Nonplanar (α'' ⊕ β'') → β'')
+    `cutSummandsG_numNodes` (`Coproduct/Defs.lean`) through `Nonplanar.mk`. -/
+private theorem cutSummandsCN_numNodes (τ : Nonplanar (α'' ⊕ β'') → β'')
     (T : Nonplanar (α'' ⊕ β'')) :
     ∀ p ∈ cutSummandsCN τ T,
       Forest.edgeCount p.1 + p.2.numNodes = T.numNodes := by
@@ -1898,8 +1898,8 @@ private theorem cutSummandsCN_weight (τ : Nonplanar (α'' ⊕ β'') → β'')
       | inr b =>
         rw [ConnesKreimer.extractC_inr] at h
         exact absurd h (by simp)
-  have h := ConnesKreimer.cutSummandsG_weight _ hext T₀ q hq
-  have hsub := sum_map_weight_sub_one_add_card q.1
+  have h := ConnesKreimer.cutSummandsG_numNodes _ hext T₀ q hq
+  have hsub := sum_map_numNodes_sub_one_add_card q.1
   show Forest.edgeCount (q.1.map Nonplanar.mk) +
       (Nonplanar.mk q.2).numNodes = (Nonplanar.mk T₀).numNodes
   rw [Nonplanar.numNodes_mk, Nonplanar.numNodes_mk]
@@ -1965,7 +1965,7 @@ private theorem comulCTreeN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
   · refine multiset_sum_mem _ ?_
     intro c hc
     obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hc
-    have hcons := cutSummandsCN_weight τ T p hp
+    have hcons := cutSummandsCN_numNodes τ T p hp
     have hpos := Nonplanar.numNodes_pos p.2
     refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
     rw [edgeCount_singleton]
@@ -2043,7 +2043,7 @@ theorem mcb_lemma_1_2_10
   refine ⟨edgeCount_add, ?_⟩
   · -- Δ^c preserves grading exactly: each cut summand splits the edges
     -- (the trace marker replaces the cut subtree by a unit-weight leaf,
-    -- `cutSummandsCN_weight`), and the homogeneous tensor spans multiply
+    -- `cutSummandsCN_numNodes`), and the homogeneous tensor spans multiply
     -- additively (`gradedTensorSpan_mul`).
     intro n F hF
     rw [comulCAlgHomN_apply_of']
