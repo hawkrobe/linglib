@@ -136,7 +136,7 @@ def MFormula.me {Pred Entity : Type*} (A B : MFormula Pred Entity) :
 
 section Semantics
 
-variable {I W Pred Entity : Type*}
+variable {I W Pred Entity : Type*} (interpFn : I → Interpretation W Pred Entity)
 
 /-- Truth of a formula relative to a raw ordering relation `le` — used directly
 by the metalinguistic conditional, whose restricted ordering `≤_A` need not be
@@ -145,50 +145,46 @@ total. `Eval` specializes it to a `SemanticOrdering`.
 - Atomic: the entity is in the predicate's extension at `w` under `i`.
 - MC (`A ≻ B`): some (A∧¬B)-interpretation ranked ≤ i strictly dominates every
   (B∧¬A)-interpretation ranked ≤ i. -/
-def EvalGen (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity) (le : I → I → Prop) (i : I) (w : W) : Prop :=
+def EvalGen (φ : MFormula Pred Entity) (le : I → I → Prop) (i : I) (w : W) : Prop :=
   match φ with
   | .atom P e => (interpFn i).ext P w e = true
-  | .neg A => ¬ EvalGen interpFn A le i w
-  | .conj A B => EvalGen interpFn A le i w ∧ EvalGen interpFn B le i w
-  | .disj A B => EvalGen interpFn A le i w ∨ EvalGen interpFn B le i w
+  | .neg A => ¬ EvalGen A le i w
+  | .conj A B => EvalGen A le i w ∧ EvalGen B le i w
+  | .disj A B => EvalGen A le i w ∨ EvalGen B le i w
   | .mc A B =>
-      ∃ i', le i' i ∧ EvalGen interpFn A le i' w ∧ ¬ EvalGen interpFn B le i' w ∧
-        ∀ i'', le i'' i → EvalGen interpFn B le i'' w →
-          ¬ EvalGen interpFn A le i'' w → le i'' i' ∧ ¬ le i' i''
+      ∃ i', le i' i ∧ EvalGen A le i' w ∧ ¬ EvalGen B le i' w ∧
+        ∀ i'', le i'' i → EvalGen B le i'' w →
+          ¬ EvalGen A le i'' w → le i'' i' ∧ ¬ le i' i''
 
-instance EvalGen.instDec [Fintype I] (interpFn : I → Interpretation W Pred Entity)
+instance EvalGen.instDec [Fintype I]
     (φ : MFormula Pred Entity) (le : I → I → Prop) [DecidableRel le] (i : I) (w : W) :
     Decidable (EvalGen interpFn φ le i w) :=
   match φ with
   | .atom _ _ => inferInstanceAs (Decidable (_ = true))
   | .neg A =>
-      haveI := EvalGen.instDec interpFn A le i w
+      haveI := EvalGen.instDec A le i w
       inferInstanceAs (Decidable (¬ EvalGen interpFn A le i w))
   | .conj A B =>
-      haveI := EvalGen.instDec interpFn A le i w
-      haveI := EvalGen.instDec interpFn B le i w
+      haveI := EvalGen.instDec A le i w
+      haveI := EvalGen.instDec B le i w
       inferInstanceAs (Decidable (EvalGen interpFn A le i w ∧ EvalGen interpFn B le i w))
   | .disj A B =>
-      haveI := EvalGen.instDec interpFn A le i w
-      haveI := EvalGen.instDec interpFn B le i w
+      haveI := EvalGen.instDec A le i w
+      haveI := EvalGen.instDec B le i w
       inferInstanceAs (Decidable (EvalGen interpFn A le i w ∨ EvalGen interpFn B le i w))
   | .mc A B =>
       haveI : ∀ j v, Decidable (EvalGen interpFn A le j v) :=
-        (EvalGen.instDec interpFn A le · ·)
+        (EvalGen.instDec A le · ·)
       haveI : ∀ j v, Decidable (EvalGen interpFn B le j v) :=
-        (EvalGen.instDec interpFn B le · ·)
+        (EvalGen.instDec B le · ·)
       inferInstanceAs (Decidable (∃ i', le i' i ∧ EvalGen interpFn A le i' w ∧
         ¬ EvalGen interpFn B le i' w ∧ ∀ i'', le i'' i → EvalGen interpFn B le i'' w →
           ¬ EvalGen interpFn A le i'' w → le i'' i' ∧ ¬ le i' i''))
 
 /-- Truth at an index ⟨≤, i, w⟩: `EvalGen` at the ordering's `le`. The
 domination clause's `le i'' i' ∧ ¬ le i' i''` is definitionally `ord.lt`. -/
-abbrev Eval (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
+abbrev Eval (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
   EvalGen interpFn φ ord.le i w
-
-variable (interpFn : I → Interpretation W Pred Entity)
 
 /-- Characterization of the MC case — definitional, recorded as the rewriting
 interface so proofs never unfold `EvalGen` by name. -/
@@ -413,6 +409,10 @@ end Delineation
 
 /-! ### Revised Semantics ([kocurek-2024-supplement] §B) -/
 
+section Revised
+
+variable {I W Pred Entity : Type*} (interpFn : I → Interpretation W Pred Entity)
+
 /-- Truth under the revised MC semantics ([kocurek-2024-supplement] §B). The
 basic semantics fails ME transitivity; the revision strengthens the MC: the
 (A∧¬B)-witness must dominate either all B-interpretations or all
@@ -421,59 +421,57 @@ basic semantics fails ME transitivity; the revision strengthens the MC: the
 Properties ([kocurek-2024-supplement] §B): all basic entailment patterns
 (Fact 3 a–n) are preserved (Fact 5); ME transitivity is validated (Fact 6);
 interdefinable with the basic semantics (Fact 7). -/
-def EvalRevised {I W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
+def EvalRevised (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
   match φ with
   | .atom P e => (interpFn i).ext P w e = true
-  | .neg A => ¬ EvalRevised interpFn A ord i w
-  | .conj A B => EvalRevised interpFn A ord i w ∧ EvalRevised interpFn B ord i w
-  | .disj A B => EvalRevised interpFn A ord i w ∨ EvalRevised interpFn B ord i w
+  | .neg A => ¬ EvalRevised A ord i w
+  | .conj A B => EvalRevised A ord i w ∧ EvalRevised B ord i w
+  | .disj A B => EvalRevised A ord i w ∨ EvalRevised B ord i w
   | .mc A B =>
-      ∃ i', ord.le i' i ∧ EvalRevised interpFn A ord i' w ∧
-        ¬ EvalRevised interpFn B ord i' w ∧
-        ((∀ i'', ord.le i'' i → EvalRevised interpFn B ord i'' w → ord.lt i'' i') ∨
-         (∀ i'', ord.le i'' i → ¬ EvalRevised interpFn A ord i'' w → ord.lt i'' i'))
+      ∃ i', ord.le i' i ∧ EvalRevised A ord i' w ∧
+        ¬ EvalRevised B ord i' w ∧
+        ((∀ i'', ord.le i'' i → EvalRevised B ord i'' w → ord.lt i'' i') ∨
+         (∀ i'', ord.le i'' i → ¬ EvalRevised A ord i'' w → ord.lt i'' i'))
 
-instance EvalRevised.instDec {I W Pred Entity : Type*} [Fintype I]
-    (interpFn : I → Interpretation W Pred Entity)
+instance EvalRevised.instDec [Fintype I]
     (φ : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
     Decidable (EvalRevised interpFn φ ord i w) :=
   match φ with
   | .atom _ _ => inferInstanceAs (Decidable (_ = true))
   | .neg A =>
-      haveI := EvalRevised.instDec interpFn A ord i w
+      haveI := EvalRevised.instDec A ord i w
       inferInstanceAs (Decidable (¬ EvalRevised interpFn A ord i w))
   | .conj A B =>
-      haveI := EvalRevised.instDec interpFn A ord i w
-      haveI := EvalRevised.instDec interpFn B ord i w
+      haveI := EvalRevised.instDec A ord i w
+      haveI := EvalRevised.instDec B ord i w
       inferInstanceAs (Decidable (EvalRevised interpFn A ord i w ∧
         EvalRevised interpFn B ord i w))
   | .disj A B =>
-      haveI := EvalRevised.instDec interpFn A ord i w
-      haveI := EvalRevised.instDec interpFn B ord i w
+      haveI := EvalRevised.instDec A ord i w
+      haveI := EvalRevised.instDec B ord i w
       inferInstanceAs (Decidable (EvalRevised interpFn A ord i w ∨
         EvalRevised interpFn B ord i w))
   | .mc A B =>
       haveI : ∀ j v, Decidable (EvalRevised interpFn A ord j v) :=
-        (EvalRevised.instDec interpFn A ord · ·)
+        (EvalRevised.instDec A ord · ·)
       haveI : ∀ j v, Decidable (EvalRevised interpFn B ord j v) :=
-        (EvalRevised.instDec interpFn B ord · ·)
+        (EvalRevised.instDec B ord · ·)
       inferInstanceAs (Decidable (∃ i', ord.le i' i ∧
         EvalRevised interpFn A ord i' w ∧ ¬ EvalRevised interpFn B ord i' w ∧
         ((∀ i'', ord.le i'' i → EvalRevised interpFn B ord i'' w → ord.lt i'' i') ∨
          (∀ i'', ord.le i'' i → ¬ EvalRevised interpFn A ord i'' w → ord.lt i'' i'))))
 
 /-- Characterization of the revised MC case — definitional. -/
-theorem evalRevised_mc_iff {I W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
+theorem evalRevised_mc_iff (A B : MFormula Pred Entity) (ord : SemanticOrdering I)
+    (i : I) (w : W) :
     EvalRevised interpFn (.mc A B) ord i w ↔
     ∃ i', ord.le i' i ∧ EvalRevised interpFn A ord i' w ∧
       ¬ EvalRevised interpFn B ord i' w ∧
       ((∀ i'', ord.le i'' i → EvalRevised interpFn B ord i'' w → ord.lt i'' i') ∨
        (∀ i'', ord.le i'' i → ¬ EvalRevised interpFn A ord i'' w → ord.lt i'' i')) :=
   Iff.rfl
+
+end Revised
 
 /-! ### Metalinguistic Conditional (§6.3) -/
 
@@ -589,7 +587,8 @@ instance {I W : Type*} : HasContextSet (MetalinguisticCG I W) W where
 
 section DegreeTheory
 
-variable {I : Type*} [Fintype I] [DecidableEq I] (ord : SemanticOrdering I) (i : I)
+variable {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
+  (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I) (i : I)
 
 /-! ### Field and Denotation Sets -/
 
@@ -599,10 +598,7 @@ def field : Finset I :=
 
 /-- The denotation of a formula: the set of interpretations in I_i
 where the formula is true (under the revised semantics). -/
-def denotation {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) : Finset I :=
+def denotation (φ : MFormula Pred Entity) (w : W) : Finset I :=
   (field ord i).filter (λ j => EvalRevised interpFn φ ord j w)
 
 /-! ### The ∼ Equivalence Relation ([kocurek-2024-supplement] §C, p. 9) -/
@@ -1184,14 +1180,6 @@ def deg {I : Type*} [Fintype I] [DecidableEq I]
     MetaDegree I ord i :=
   Quotient.mk (metalinguisticSetoid ord i) ⟨X, hX⟩
 
-/-- The metalinguistic degree of a formula's denotation. -/
-def formulaDeg {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    MetaDegree I ord i :=
-  deg ord i (denotation interpFn φ ord i w) (Finset.filter_subset _ _)
-
 /-! ### Facts 9–10: Correspondence with Revised Semantics -/
 
 /-- Membership in `field`: j ∈ I_i iff j ≤ i. -/
@@ -1206,19 +1194,24 @@ private theorem mem_denotation_iff {I W Pred Entity : Type*}
     {interpFn : I → Interpretation W Pred Entity}
     {φ : MFormula Pred Entity}
     {ord : SemanticOrdering I} {i j : I} {w : W} :
-    j ∈ denotation interpFn φ ord i w ↔
+    j ∈ denotation interpFn ord i φ w ↔
     ord.le j i ∧ EvalRevised interpFn φ ord j w := by
   simp [denotation, field]
 
+section DegreeBridges
+
+variable {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
+  (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I) (i : I)
+
+/-- The metalinguistic degree of a formula's denotation. -/
+def formulaDeg (φ : MFormula Pred Entity) (w : W) : MetaDegree I ord i :=
+  deg ord i (denotation interpFn ord i φ w) (Finset.filter_subset _ _)
+
 /-- Fact 10: revised MC holds iff denotation of A ⊐ denotation of B. -/
-theorem mc_iff_degree_gt {I W Pred Entity : Type*}
-    [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
+theorem mc_iff_degree_gt (A B : MFormula Pred Entity) (w : W) :
     EvalRevised interpFn (.mc A B) ord i w ↔
-    strictlyBetter ord i (denotation interpFn A ord i w)
-      (denotation interpFn B ord i w) := by
+    strictlyBetter ord i (denotation interpFn ord i A w)
+      (denotation interpFn ord i B w) := by
   rw [evalRevised_mc_iff]
   constructor
   · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
@@ -1270,32 +1263,30 @@ theorem mc_iff_degree_gt {I W Pred Entity : Type*}
 /-- Fact 9: ME holds iff denotations have the same degree — the Boolean-free
 bridge from `EvalRevised` to the algebraic degree structure. Forward direction
 uses `strictlyBetter_total`. -/
-theorem me_iff_same_degree {I W Pred Entity : Type*}
-    [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
+theorem me_iff_same_degree (A B : MFormula Pred Entity) (w : W) :
     EvalRevised interpFn (A.me B) ord i w ↔
-    degreeEquiv ord i (denotation interpFn A ord i w)
-      (denotation interpFn B ord i w) := by
-  have hX : denotation interpFn A ord i w ⊆ field ord i := Finset.filter_subset _ _
-  have hY : denotation interpFn B ord i w ⊆ field ord i := Finset.filter_subset _ _
+    degreeEquiv ord i (denotation interpFn ord i A w)
+      (denotation interpFn ord i B w) := by
+  have hX : denotation interpFn ord i A w ⊆ field ord i := Finset.filter_subset _ _
+  have hY : denotation interpFn ord i B w ⊆ field ord i := Finset.filter_subset _ _
   constructor
   · intro h
     obtain ⟨h1, h2⟩ : ¬ EvalRevised interpFn (.mc A B) ord i w ∧
         ¬ EvalRevised interpFn (.mc B A) ord i w := h
     rcases strictlyBetter_total ord i _ _ hX hY with h | h | h
     · exact h
-    · exact absurd ((mc_iff_degree_gt interpFn A B ord i w).mpr h) h1
-    · exact absurd ((mc_iff_degree_gt interpFn B A ord i w).mpr h) h2
+    · exact absurd ((mc_iff_degree_gt interpFn ord i A B w).mpr h) h1
+    · exact absurd ((mc_iff_degree_gt interpFn ord i B A w).mpr h) h2
   · intro h_eq
     exact show ¬ EvalRevised interpFn (.mc A B) ord i w ∧
         ¬ EvalRevised interpFn (.mc B A) ord i w from
       ⟨fun h => degreeEquiv_not_strictlyBetter ord i _ _ h_eq
-          ((mc_iff_degree_gt interpFn A B ord i w).mp h),
+          ((mc_iff_degree_gt interpFn ord i A B w).mp h),
        fun h => degreeEquiv_not_strictlyBetter ord i _ _
           (degreeEquiv_symm ord i _ _ h_eq)
-          ((mc_iff_degree_gt interpFn B A ord i w).mp h)⟩
+          ((mc_iff_degree_gt interpFn ord i B A w).mp h)⟩
+
+end DegreeBridges
 
 /-! ### The metalinguistic degree scale
 
@@ -1306,7 +1297,8 @@ substrate's binary comparative over the measure function `formulaDeg`. -/
 
 section Scale
 
-variable {I : Type*} [Fintype I] [DecidableEq I] (ord : SemanticOrdering I) (i : I)
+variable {I W Pred Entity : Type*} [Fintype I] [DecidableEq I]
+  (interpFn : I → Interpretation W Pred Entity) (ord : SemanticOrdering I) (i : I)
 
 instance (X Y : Finset I) : Decidable (equivCond1 ord X Y) := by
   unfold equivCond1; infer_instance
@@ -1411,11 +1403,9 @@ metalinguistic comparative IS the degree substrate's binary comparative
 function `formulaDeg`. Metagradability thereby instantiates the degree
 substrate's central object — a measure `μ : E → D` into a bounded linear
 scale — with `E` the formulas and `D` the `MetaDegree` scale. -/
-theorem mc_iff_comparativeSem {W Pred Entity : Type*}
-    (interpFn : I → Interpretation W Pred Entity)
-    (A B : MFormula Pred Entity) (w : W) :
+theorem mc_iff_comparativeSem (A B : MFormula Pred Entity) (w : W) :
     EvalRevised interpFn (.mc A B) ord i w ↔
-    Degree.comparativeSem (fun φ => formulaDeg interpFn φ ord i w) A B .positive := by
+    Degree.comparativeSem (fun φ => formulaDeg interpFn ord i φ w) A B .positive := by
   rw [mc_iff_degree_gt]
   simp only [Degree.comparativeSem, gt_iff_lt]
   exact (deg_lt_deg_iff ord i (Finset.filter_subset _ _) (Finset.filter_subset _ _)).symm
