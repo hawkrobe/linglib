@@ -264,22 +264,17 @@ once, so the downstream proofs never re-walk the fold. -/
 
 variable (a : Constituent) (cs : List Tree)
 
-theorem columns_node : columns (.node a cs) =
-    if a.isSyl ∧ cs = [] then [1]
+theorem columns_node : columns (.node a cs) = if a.isSyl ∧ cs = [] then [1]
     else cs.flatMap fun c => (edge c.label.isHead (project c)).toGrid := by
-  rw [columns, project_node]; split <;> simp [toGrid_juxtapose, List.flatMap_map]
+  simp [columns, apply_ite MarkedGrid.toGrid, List.flatMap_map]
 
-theorem headHeights_node : headHeights (.node a cs) =
-    if a.isSyl ∧ cs = [] then [1]
+theorem headHeights_node : headHeights (.node a cs) = if a.isSyl ∧ cs = [] then [1]
     else cs.flatMap fun c => if c.label.isHead then (headHeights c).map (· + 1) else [] := by
-  rw [headHeights, project_node]; split <;>
-    simp [headHeights, headHeights_juxtapose, List.flatMap_map, headHeights_edge]
+  simp [headHeights, apply_ite MarkedGrid.headHeights, List.flatMap_map]
 
-theorem headTerminals_node : headTerminals (.node a cs) =
-    if a.isSyl ∧ cs = [] then [.node a []]
+theorem headTerminals_node : headTerminals (.node a cs) = if a.isSyl ∧ cs = [] then [.node a []]
     else cs.flatMap fun c => if c.label.isHead then headTerminals c else [] := by
-  rw [headTerminals, project_node]; split <;>
-    simp [headTerminals, headTerminals_juxtapose, List.flatMap_map, headTerminals_edge]
+  simp [headTerminals, apply_ite MarkedGrid.headTerminals, List.flatMap_map]
 
 /-! ### The head terminals compute the head-terminal relation -/
 
