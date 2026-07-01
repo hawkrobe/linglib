@@ -1603,7 +1603,6 @@ import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Degree.Intervals
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Semantics.Degree.Little

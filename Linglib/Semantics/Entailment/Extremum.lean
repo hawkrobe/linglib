@@ -1,6 +1,6 @@
 import Mathlib.Order.Bounds.Image
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.DirectedMeasure
 
 /-!

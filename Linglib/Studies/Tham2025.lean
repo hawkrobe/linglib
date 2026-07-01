@@ -7,7 +7,7 @@ import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Solt2018Multidim
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 
 /-!
 # [tham-2025]
