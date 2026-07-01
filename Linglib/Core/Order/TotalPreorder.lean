@@ -22,14 +22,18 @@ must be first-class data.
 
 ## Implementation notes
 
-Mathlib has no bundled order-on-a-carrier object (its `Preord` bundles a
-*type* with one order); its two idioms for an-order-as-data are a raw relation
-with unbundled relation classes — the founding used here — or a term
-`p : Preorder α` consumed via `letI`. The alternative `extends Preorder α`
-shape would transport the `Preorder` API but makes `lt` an opaque field,
-where consumers need the transparent `le a b ∧ ¬ le b a` for `decide` and for
-destructuring. Same-rank equivalence is mathlib's `AntisymmRel` rather than a
-new definition. -/
+The canonical form of an ordering-as-data is the model-theoretic one: a
+`Language.order.Structure` modeling the total-preorder theory
+(`Core/Logic/FirstOrder/TotalPreorder.lean`, where `toStructure`/`ofModel`
+exchange the two presentations). This bundle is that object's decidable,
+proof-transparent working presentation. Mathlib has no bundled
+order-on-a-carrier object (its `Preord` bundles a *type* with one order);
+among term-level presentations, a raw relation with unbundled relation
+classes — the founding used here — beats `extends Preorder α`, which would
+transport the `Preorder` API but makes `lt` an opaque field where consumers
+need the transparent `le a b ∧ ¬ le b a` for `decide` and destructuring.
+Same-rank equivalence is mathlib's `AntisymmRel` rather than a new
+definition. -/
 
 namespace Core.Order
 
