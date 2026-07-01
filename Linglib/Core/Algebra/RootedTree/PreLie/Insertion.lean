@@ -19,52 +19,24 @@ Defined as a sum over functions `Ts → V(T)` of `multiGraft`, taken as
 a `Multiset` to make the sum-over-choices commutative.
 
 Sibling to `Graft.lean` (path-based multi-graft primitive). Lives under
-namespace `RootedTree.Planar.Pathed` for now; the `Pathed`
-sub-namespace will be hoisted to `RootedTree.Planar` once the legacy
-`Vertex.lean` consumers (`InsertSum.lean`, `Algebra.lean`,
-`VertexBijection.lean`) migrate to the path-based representation.
+namespace `RootedTree.Planar.Pathed`.
 
 ## File scope
 
 - §1: `listChoices` — choice-list enumeration (representation-independent).
 - §2: `insertion` — Foissy 2021 Theorem 5.1, single-tree host.
-- §3: `insertionForest` — forest host (Foissy 2021 §5.1) + identity/nil lemmas.
-- §4: Pair-list `Perm`-invariance (`multiGraft_perm_pair`).
-- §5: Guest-list invariance (`insertion_perm_guests`,
-  `insertion_planarEquiv_guests`).
-- §6: Host invariance substrate — `swapPathAt` path-relabel
-  bijection, `vertices_swap_perm`, `multiGraft_swap_planarEquiv`,
-  `insertion_planarEquiv_host`.
-- §7: Forest invariance variants.
+- §3: `insertionForest` — forest host + identity/nil lemmas.
+- §4: Pair-list `Perm`-invariance for `multiGraft`.
+- §5: Guest-list invariance for `insertion` (`insertion_planarEquiv_guests`).
+- §5.5: Validity discharge for `listChoices`-derived pair lists.
+- §6: Host invariance via the `swapPathAt` path-relabel bijection.
+- §7: Forest invariance (`insertionForest_planarEquiv_host`,
+  `insertionForest_perm_guests`).
+- §8: Singleton-host insertion.
 
 ## Status
 
 `[UPSTREAM]` candidate. **Sorry-free**.
-
-- §1–§5: sorry-free.
-- §6 (`multiGraft_swap_planarEquiv`, `insertion_planarEquiv_host`):
-  sorry-free. Architecture: `PlanarStep.exists_pathBijection` gives, for
-  any `PlanarStep t t'`, a path bijection `f` satisfying both
-  `((vertices t).map f).Perm (vertices t')` and the `multiGraft`-equivalent
-  after pair relabel. Built by induction on the step (swap uses
-  `swapPathAt n`; recurse uses `pathLiftRecurse n` of inner bijection).
-  `insertion_eq_of_pathBij` is the generic lifter from path bijection to
-  `mk`-equality of insertions. Together they yield
-  `insertion_planarStep_host` in two lines; the outer `EqvGen` induction
-  finishes `insertion_planarEquiv_host`.
-- §7 (`insertionForest_planarEquiv_host`): sorry-free. Induction on
-  `Forall₂ PlanarEquiv`; cons case lifts via `Multiset.map_bind` +
-  `Multiset.bind_map` + `insertion_planarEquiv_host` (head) + IH (tail).
-- §7 (`insertionForest_perm_guests`): sorry-free. Outer induction on
-  `F`; cons-`F` case routes through `forestPairSum`, a Multiset
-  aggregator that splits the guest list into `pre_T` (going to the head
-  host) and `pre_F` (going to the tail forest). The bridge
-  `forestPairSum_eq_insertionForest` reduces to the canonical
-  `insertionForest`; Perm invariance is then established via
-  `forestPairSum_pre_perm_mk` (Perm of accumulators, using
-  `insertion_perm_guests` for the head + the outer F-IH for the tail) +
-  `forestPairSum_swap_mk` (adjacent swap via `Multiset.bind_bind` + the
-  pre-perm lemma) + induction on `List.Perm`.
 -/
 
 namespace RootedTree
@@ -178,7 +150,7 @@ mutual
 /-- `PlanarEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
     follows from a `List.Perm` between `pairs` and `pairs'`. Mutual
     recursion on `T` with the children-list aux. -/
-theorem multiGraft_perm_pair : ∀ (T : Planar α)
+private theorem multiGraft_perm_pair : ∀ (T : Planar α)
     {pairs pairs' : List (Path × Planar α)},
     pairs.Perm pairs' →
     PlanarEquiv (multiGraft T pairs) (multiGraft T pairs')
@@ -193,7 +165,7 @@ theorem multiGraft_perm_pair : ∀ (T : Planar α)
 /-- List-level companion to `multiGraft_perm_pair`: pair-list `Perm`
     lifts to `Forall₂ PlanarEquiv` on the children list output of
     `multiGraftChildren`. -/
-theorem multiGraftChildren_perm_pair : ∀ (cs : List (Planar α))
+private theorem multiGraftChildren_perm_pair : ∀ (cs : List (Planar α))
     {pairs pairs' : List (Path × Planar α)},
     pairs.Perm pairs' →
     List.Forall₂ PlanarEquiv
@@ -391,7 +363,7 @@ private theorem pairSum_perm_guests (t : Planar α)
   | trans _ _ ih₁ ih₂ => exact (ih₁ pre).trans (ih₂ pre)
 
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
-theorem insertion_perm_guests (t : Planar α)
+private theorem insertion_perm_guests (t : Planar α)
     {Ts Ts' : List (Planar α)} (h : Ts.Perm Ts') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t Ts').map Nonplanar.mk := by
@@ -415,22 +387,14 @@ theorem insertion_planarEquiv_guests (t : Planar α)
   -- via List.Forall₂ for the pair (fst eq, snd planarEquiv)
   exact multiGraft_planarEquiv_pair_Forall₂ t (zip_pair_Forall₂ choice h)
 
-/-! ## §5.5: Validity discharge for `multiGraft_compose` at canonical shapes
+/-! ## §5.5: Validity discharge for `listChoices`-derived pair lists
 
-When the outer-pair list has the canonical shape `choice.zip Ts` with
-`choice ∈ listChoices (vertices T) Ts.length`, the validity hypothesis
-of `multiGraft_compose` (every pair's `.fst` is a valid path in the
-host) discharges automatically via `forall_isValidPath` lifted from
-`mem_of_mem_listChoices`.
-
-Why this lives here and not in `Graft.lean`: `listChoices` is defined in
-`Insertion.lean` §1, but `multiGraft_compose` is defined in `Graft.lean`
-§11. The validity bridge crossing between them belongs here.
-
-**Consumer status (2026-05-16)**: previously used by the A3.3 basis-level
-helpers (deleted with `InsertionAssoc.lean`). These specializations
-remain as general-purpose validity-discharge utilities for any caller
-working with `listChoices`-derived pair lists. -/
+Every element of a `listChoices`-enumerated choice is a member of the
+alphabet (`mem_of_mem_listChoices`), so a pair list of the canonical
+shape `choice.zip Ts` automatically satisfies the validity hypothesis
+that graft operations require (`forall_zip_isValidPath_of_listChoices`).
+These utilities are consumed by `InsertionNodeDecomp` and
+`InsertionCompose`. -/
 
 /-- Every element of a `choice ∈ listChoices xs n` is a member of `xs`.
     Lifts membership-in-an-enumerated-choice to membership-in-the-alphabet. -/
@@ -453,9 +417,8 @@ theorem mem_of_mem_listChoices {β : Type*}
     · exact ih rest hrest_mem h_v
 
 /-- Every path in a `choice.zip Ts` pair list is a valid path in `T`, when
-    `choice ∈ listChoices (vertices T) Ts.length`. Discharges the
-    `h_outer_valid` hypothesis of `multiGraft_compose` for the canonical
-    A3.3 outer pair shape. -/
+    `choice ∈ listChoices (vertices T) Ts.length`. Discharges the validity
+    hypothesis of the graft operations for `listChoices`-derived pair lists. -/
 theorem forall_zip_isValidPath_of_listChoices
     (T : Planar α) (Ts : List (Planar α))
     (choice : List Path)
@@ -465,279 +428,6 @@ theorem forall_zip_isValidPath_of_listChoices
   have h_fst_mem : pair.fst ∈ choice := (List.of_mem_zip h_pair).1
   exact forall_isValidPath T (mem_of_mem_listChoices (vertices T) Ts.length
     choice h_choice pair.fst h_fst_mem)
-
-/-- Auto-discharge variant of `multiGraft_compose` for the canonical A3.3
-    outer-pair shape `choice_o.zip outer_Ts` with `choice_o ∈ listChoices
-    (vertices T) outer_Ts.length`. The inner pair list's validity is
-    passed as a hypothesis. -/
-theorem multiGraft_compose_at_choice
-    (T : Planar α) (outer_Ts : List (Planar α))
-    (choice_o : List Path)
-    (h_choice_o : choice_o ∈ listChoices (vertices T) outer_Ts.length)
-    (inner_pairs : List (Path × Planar α))
-    (h_inner_valid : ∀ p ∈ inner_pairs,
-        IsValidPath p.fst (multiGraft T (choice_o.zip outer_Ts))) :
-    multiGraft (multiGraft T (choice_o.zip outer_Ts)) inner_pairs =
-      multiGraft T (composePairs (choice_o.zip outer_Ts) inner_pairs) := by
-  apply multiGraft_compose T (choice_o.zip outer_Ts) inner_pairs
-  · intro pair h_pair
-    exact forall_zip_isValidPath_of_listChoices T outer_Ts choice_o h_choice_o pair h_pair
-  · exact h_inner_valid
-
-/-- Doubly auto-discharged variant: both outer and inner choices come from
-    `listChoices`-derived enumerations. Specifically for the A3.3 TRUE-side
-    shape where `inner = (v_c :: ch).zip (c :: filter_t)` with `v_c ∈
-    vertices T'` and `ch ∈ listChoices (vertices T') filter_t.length`. -/
-theorem multiGraft_compose_at_choice_inner_zip
-    (T : Planar α) (outer_Ts : List (Planar α))
-    (choice_o : List Path)
-    (h_choice_o : choice_o ∈ listChoices (vertices T) outer_Ts.length)
-    (inner_Ts : List (Planar α))
-    (choice_i : List Path)
-    (h_choice_i : choice_i ∈ listChoices
-        (vertices (multiGraft T (choice_o.zip outer_Ts))) inner_Ts.length) :
-    multiGraft (multiGraft T (choice_o.zip outer_Ts)) (choice_i.zip inner_Ts) =
-      multiGraft T (composePairs (choice_o.zip outer_Ts) (choice_i.zip inner_Ts)) := by
-  apply multiGraft_compose_at_choice T outer_Ts choice_o h_choice_o
-  intro pair h_pair
-  have h_fst_mem : pair.fst ∈ choice_i := (List.of_mem_zip h_pair).1
-  exact forall_isValidPath _
-    (mem_of_mem_listChoices _ inner_Ts.length choice_i h_choice_i pair.fst h_fst_mem)
-
-/-- Cons-form specialization for the A3.3 TRUE-side pattern: the inner
-    pair list has shape `(v_c, c) :: ch.zip filter_t` where `v_c ∈ vertices T'`
-    and `ch ∈ listChoices (vertices T') filter_t.length`. The output of
-    `multiGraft_compose_at_choice` becomes a single `multiGraft T` with
-    `composePairs` building the combined pair list. -/
-theorem multiGraft_compose_cons_pair_at_choice
-    (T : Planar α) (outer_Ts : List (Planar α))
-    (choice_o : List Path)
-    (h_choice_o : choice_o ∈ listChoices (vertices T) outer_Ts.length)
-    (filter_t : List (Planar α)) (c : Planar α)
-    (v_c : Path)
-    (h_v_c : v_c ∈ vertices (multiGraft T (choice_o.zip outer_Ts)))
-    (ch : List Path)
-    (h_ch : ch ∈ listChoices
-        (vertices (multiGraft T (choice_o.zip outer_Ts))) filter_t.length) :
-    multiGraft (multiGraft T (choice_o.zip outer_Ts))
-        ((v_c, c) :: ch.zip filter_t) =
-      multiGraft T (composePairs (choice_o.zip outer_Ts)
-        ((v_c, c) :: ch.zip filter_t)) := by
-  apply multiGraft_compose_at_choice T outer_Ts choice_o h_choice_o
-  intro pair h_pair
-  rcases List.mem_cons.mp h_pair with rfl | h_pair
-  · exact forall_isValidPath _ h_v_c
-  · have h_fst_mem : pair.fst ∈ ch := (List.of_mem_zip h_pair).1
-    exact forall_isValidPath _
-      (mem_of_mem_listChoices _ filter_t.length ch h_ch pair.fst h_fst_mem)
-
-/-- Distribute `vertices_multiGraft_decomp`'s 3-class partition through a
-    bind over `Multiset.ofList (vertices (multiGraft T pairs))`. The v_c
-    bind in the A3.3 TRUE-side helper has exactly this shape; after this
-    rewrite, the bind splits into 3 binds (one per class), each ready for
-    per-class absorption (Sessions 2-3 substrate). -/
-theorem vc_partition_via_bind
-    {γ : Type*}
-    (T : Planar α) (pairs : List (Path × Planar α))
-    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T)
-    (f : Path → Multiset γ) :
-    (((vertices (multiGraft T pairs) : List Path) : Multiset Path)).bind f =
-      ((vertices T : Multiset Path).filterMap (preserveMulti pairs)).bind f +
-      (((vertices T : Multiset Path).filter
-          (· ∈ pairSources pairs)).map (transport pairs)).bind f +
-      ((Multiset.ofList (List.finRange pairs.length)).bind
-          (fun k => (vertices pairs[k].snd : Multiset Path).map
-            (liftMulti pairs k))).bind f := by
-  rw [vertices_multiGraft_decomp T pairs h_valid]
-  rw [Multiset.add_bind, Multiset.add_bind]
-
-/-- F-side analog: distribute `vertices_forest_eq_partition`'s per-tree
-    3-class partition through a bind over `Multiset.ofList (verticesAux 0
-    (forest as constructed))`. Specifically the A3.3 FALSE-side helper
-    binds over the F'-side vertex enumeration, which has this shape with
-    `cs = F_A` (preserved + sourceSelf) and per-tree lifted into pre_FA_B.
-
-    NOTE: the FALSE side of A3.3 actually binds over `perKFChoice F'` not
-    raw vertices of F'; see `perKFChoice_eq_forest_bind` (Session 4
-    substrate) for the bridge from `perKFChoice` enumeration to vertex
-    enumeration with per-tree (i, v) pairs. This lemma is the raw vertex
-    form; pair with the forthcoming bridge to get the `perKFChoice` form. -/
-theorem vc_partition_forest_via_bind
-    {γ : Type*}
-    (cs : List (Planar α))
-    (per_tree_pairs : Fin cs.length → List (Path × Planar α))
-    (h_valid : ∀ (i : Fin cs.length),
-        ∀ pair ∈ per_tree_pairs i, IsValidPath pair.fst cs[i.val])
-    (offset : ℕ)
-    (f : Path → Multiset γ) :
-    (((verticesAux offset
-        ((List.finRange cs.length).map fun i =>
-          multiGraft cs[i.val] (per_tree_pairs i)) : List Path) :
-          Multiset Path)).bind f =
-      (Multiset.ofList (List.finRange cs.length)).bind fun i =>
-        ((((vertices cs[i.val] : Multiset Path).filterMap
-              (preserveMulti (per_tree_pairs i)))
-          + (((vertices cs[i.val] : Multiset Path).filter
-                (· ∈ pairSources (per_tree_pairs i))).map
-              (transport (per_tree_pairs i)))
-          + ((Multiset.ofList (List.finRange (per_tree_pairs i).length)).bind
-              (fun k => (vertices ((per_tree_pairs i)[k.val].snd) :
-                Multiset Path).map (liftMulti (per_tree_pairs i) k)))
-        ).map ((offset + i.val) :: ·)).bind f := by
-  rw [vertices_forest_eq_partition cs per_tree_pairs h_valid offset]
-  rw [Multiset.bind_assoc]
-
-/-- Decompose `insertion T (c :: filter_t)` by extracting the leading vertex
-    `v_c` as a bind variable. The first vertex choice routes `c`; the
-    remaining `filter_t.length` choices route the rest of the guests. -/
-theorem insertion_cons_pair_eq_bind
-    (T : Planar α) (c : Planar α) (filter_t : List (Planar α)) :
-    insertion T (c :: filter_t) =
-      ((vertices T : List Path) : Multiset Path).bind (fun v_c =>
-        Multiset.ofList ((listChoices (vertices T) filter_t.length).map (fun ch =>
-          multiGraft T ((v_c, c) :: ch.zip filter_t)))) := by
-  rw [insertion_def]
-  show Multiset.ofList ((listChoices (vertices T) (c :: filter_t).length).map
-        (fun choice => multiGraft T (choice.zip (c :: filter_t)))) = _
-  rw [show (c :: filter_t).length = filter_t.length + 1 from rfl, listChoices_succ,
-      List.map_flatMap]
-  rw [show ((vertices T : List Path) : Multiset Path) =
-        Multiset.ofList (vertices T) from rfl, ← Multiset.coe_bind]
-  refine Multiset.bind_congr fun v_c _ => ?_
-  rw [show (List.map (v_c :: ·) (listChoices (vertices T) filter_t.length)).map
-            (fun choice => multiGraft T (choice.zip (c :: filter_t))) =
-          (listChoices (vertices T) filter_t.length).map (fun ch =>
-            multiGraft T ((v_c, c) :: ch.zip filter_t)) from by
-    rw [List.map_map]
-    rfl]
-
-/-- Combined form for `insertion (multiGraft T pairs) (c :: filter_t)` binding
-    into a function `K`: the v_c bind splits into preserved + sourceSelf + lifted
-    via `vc_partition_via_bind`, with each class producing a sub-bind over
-    `ch ∈ listChoices (vertices (multiGraft T pairs)) filter_t.length`. -/
-theorem insertion_cons_pair_at_multiGraft_bind
-    {γ : Type*}
-    (T : Planar α) (pairs : List (Path × Planar α))
-    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T)
-    (c : Planar α) (filter_t : List (Planar α))
-    (K : Planar α → Multiset γ) :
-    (insertion (multiGraft T pairs) (c :: filter_t)).bind K =
-    -- preserved + sourceSelf class (v_c originates from T via transport pairs)
-    (((vertices T : List Path) : Multiset Path).map (transport pairs)).bind (fun v_c =>
-      (Multiset.ofList ((listChoices (vertices (multiGraft T pairs)) filter_t.length).map
-          (fun ch =>
-            multiGraft (multiGraft T pairs) ((v_c, c) :: ch.zip filter_t)))).bind K)
-    +
-    -- lifted class (v_c originates from pairs[k].snd via liftMulti pairs k)
-    ((Multiset.ofList (List.finRange pairs.length)).bind
-        (fun k => (vertices pairs[k].snd : Multiset Path).map
-          (liftMulti pairs k))).bind (fun v_c =>
-      (Multiset.ofList ((listChoices (vertices (multiGraft T pairs)) filter_t.length).map
-          (fun ch =>
-            multiGraft (multiGraft T pairs) ((v_c, c) :: ch.zip filter_t)))).bind K) := by
-  rw [insertion_cons_pair_eq_bind]
-  rw [Multiset.bind_assoc]
-  rw [vc_partition_via_bind T pairs h_valid]
-  rw [← preserved_add_sourceSelf_eq_vertices_map_transport pairs
-        ((vertices T : List Path) : Multiset Path)]
-  rw [Multiset.add_bind]
-
-/-! ## §5.6: A3.3 substrate — Session 3 auto-discharge specializations
-
-Specializations of `insertion_cons_pair_at_multiGraft_bind` for the canonical
-A3.3 outer-pair shape `pairs = choice.zip Ts` with
-`choice ∈ listChoices (vertices T) Ts.length`. The validity hypothesis is
-auto-discharged via `forall_zip_isValidPath_of_listChoices`.
-
-Used by `LHS_TRUE_eq_T_buckets` (and Session 4's analog) to split the inner
-`(insertion T' (c :: filter_t)).bind K` into preserved+sourceSelf and lifted
-classes WITHOUT requiring the proof to discharge validity inline. -/
-
-/-- Auto-discharge specialization of `insertion_cons_pair_at_multiGraft_bind`
-    for the canonical A3.3 shape `pairs = choice.zip Ts`. The validity
-    hypothesis is supplied internally via `forall_zip_isValidPath_of_listChoices`. -/
-theorem insertion_cons_pair_at_multiGraft_bind_at_choice
-    {γ : Type*}
-    (T : Planar α) (Ts : List (Planar α))
-    (choice : List Path)
-    (h_choice : choice ∈ listChoices (vertices T) Ts.length)
-    (c : Planar α) (filter_t : List (Planar α))
-    (K : Planar α → Multiset γ) :
-    (insertion (multiGraft T (choice.zip Ts)) (c :: filter_t)).bind K =
-    -- preserved + sourceSelf class (v_c originates from T via transport (choice.zip Ts))
-    (((vertices T : List Path) : Multiset Path).map (transport (choice.zip Ts))).bind
-        (fun v_c =>
-      (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
-              filter_t.length).map (fun ch =>
-            multiGraft (multiGraft T (choice.zip Ts))
-              ((v_c, c) :: ch.zip filter_t)))).bind K)
-    +
-    -- lifted class (v_c originates from (choice.zip Ts)[k].snd via liftMulti)
-    ((Multiset.ofList (List.finRange (choice.zip Ts).length)).bind
-        (fun k => (vertices (choice.zip Ts)[k].snd : Multiset Path).map
-          (liftMulti (choice.zip Ts) k))).bind (fun v_c =>
-      (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
-              filter_t.length).map (fun ch =>
-            multiGraft (multiGraft T (choice.zip Ts))
-              ((v_c, c) :: ch.zip filter_t)))).bind K) := by
-  apply insertion_cons_pair_at_multiGraft_bind T (choice.zip Ts) _ c filter_t K
-  intro pair h_pair
-  exact forall_zip_isValidPath_of_listChoices T Ts choice h_choice pair h_pair
-
-/-- Unfold `(insertion T Ts).bind K` to its choice-bind form, exposing the
-    `choice ∈ listChoices (vertices T) Ts.length` bind variable so that
-    `mG T (choice.zip Ts)` is substituted into K. Bridge from the abstract
-    `insertion T Ts` form to the concrete pair-list-choice form needed for
-    `insertion_cons_pair_at_multiGraft_bind_at_choice`.
-
-    Proof: unfold `insertion_def`, then `← Multiset.map_coe + Multiset.bind_map`
-    to expose choice as the bind variable. -/
-theorem insertion_outer_bind_at_choice_eq
-    {γ : Type*}
-    (T : Planar α) (Ts : List (Planar α)) (K : Planar α → Multiset γ) :
-    (insertion T Ts).bind K =
-      (Multiset.ofList (listChoices (vertices T) Ts.length)).bind
-        (fun choice => K (multiGraft T (choice.zip Ts))) := by
-  rw [insertion_def, ← Multiset.map_coe, Multiset.bind_map]
-
-/-- Bundled substrate for Session 4: the bind-over-listChoices composed with
-    the inner cons-pair split. Discharges `h_choice` internally via
-    `Multiset.mem_coe`. The `K` parameter is universally quantified over the
-    choice (so it can carry context from outer binds in the calling proof).
-
-    Use this when the goal has form `(Mset.ofList (lC vT Ts.length)).bind
-    (fun choice => (insertion (mG T (choice.zip Ts)) (c :: filter_t)).bind
-    (K choice))` and you want to split the inner bind into preserved+lifted
-    classes without manually peeling the choice-bind via `Multiset.bind_congr`. -/
-theorem listChoices_bind_insertion_inner_split
-    {γ : Type*}
-    (T : Planar α) (Ts : List (Planar α))
-    (c : Planar α) (filter_t : List (Planar α))
-    (K : List Path → Planar α → Multiset γ) :
-    (Multiset.ofList (listChoices (vertices T) Ts.length)).bind (fun choice =>
-      (insertion (multiGraft T (choice.zip Ts)) (c :: filter_t)).bind (K choice)) =
-    -- preserved + sourceSelf class (per choice)
-    (Multiset.ofList (listChoices (vertices T) Ts.length)).bind (fun choice =>
-      (((vertices T : List Path) : Multiset Path).map (transport (choice.zip Ts))).bind
-          (fun v_c =>
-        (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
-                filter_t.length).map (fun ch =>
-              multiGraft (multiGraft T (choice.zip Ts))
-                ((v_c, c) :: ch.zip filter_t)))).bind (K choice)))
-    +
-    -- lifted class (per choice)
-    (Multiset.ofList (listChoices (vertices T) Ts.length)).bind (fun choice =>
-      ((Multiset.ofList (List.finRange (choice.zip Ts).length)).bind
-          (fun k => (vertices (choice.zip Ts)[k].snd : Multiset Path).map
-            (liftMulti (choice.zip Ts) k))).bind (fun v_c =>
-        (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
-                filter_t.length).map (fun ch =>
-              multiGraft (multiGraft T (choice.zip Ts))
-                ((v_c, c) :: ch.zip filter_t)))).bind (K choice))) := by
-  rw [← Multiset.bind_add]
-  refine Multiset.bind_congr fun choice h_choice => ?_
-  exact insertion_cons_pair_at_multiGraft_bind_at_choice T Ts choice
-    (Multiset.mem_coe.mp h_choice) c filter_t (K choice)
 
 /-! ## §6: Host invariance via path-swap bijection
 
@@ -760,41 +450,27 @@ Strategy:
 
 /-- Swap the first index `n ↔ n+1` of a path. Acts as identity on paths
     starting outside `{n, n+1}` and on the root path `[]`. -/
-def swapPathAt (n : ℕ) : Path → Path
+private def swapPathAt (n : ℕ) : Path → Path
   | []        => []
   | i :: rest =>
       if i = n then (n + 1) :: rest
       else if i = n + 1 then n :: rest
       else i :: rest
 
-@[simp] theorem swapPathAt_nil (n : ℕ) : swapPathAt n [] = [] := rfl
+@[simp] private theorem swapPathAt_nil (n : ℕ) : swapPathAt n [] = [] := rfl
 
-theorem swapPathAt_cons_eq (n : ℕ) (rest : Path) :
+private theorem swapPathAt_cons_eq (n : ℕ) (rest : Path) :
     swapPathAt n (n :: rest) = (n + 1) :: rest := by
   simp [swapPathAt]
 
-theorem swapPathAt_cons_eq_succ (n : ℕ) (rest : Path) :
+private theorem swapPathAt_cons_eq_succ (n : ℕ) (rest : Path) :
     swapPathAt n ((n + 1) :: rest) = n :: rest := by
-  simp [swapPathAt, Nat.succ_ne_self]
+  simp [swapPathAt]
 
-theorem swapPathAt_cons_of_ne (n i : ℕ) (rest : Path)
+private theorem swapPathAt_cons_of_ne (n i : ℕ) (rest : Path)
     (h1 : i ≠ n) (h2 : i ≠ n + 1) :
     swapPathAt n (i :: rest) = i :: rest := by
   simp [swapPathAt, h1, h2]
-
-@[simp] theorem swapPathAt_involution (n : ℕ) (p : Path) :
-    swapPathAt n (swapPathAt n p) = p := by
-  cases p with
-  | nil => rfl
-  | cons i rest =>
-    by_cases h1 : i = n
-    · subst h1
-      rw [swapPathAt_cons_eq, swapPathAt_cons_eq_succ]
-    · by_cases h2 : i = n + 1
-      · subst h2
-        rw [swapPathAt_cons_eq_succ, swapPathAt_cons_eq]
-      · rw [swapPathAt_cons_of_ne n i rest h1 h2,
-            swapPathAt_cons_of_ne n i rest h1 h2]
 
 /-- For paths produced by `verticesAux start cs` with all indices
     bounded below `n`, `swapPathAt n` acts as the identity. -/
@@ -833,7 +509,7 @@ private theorem map_swapPathAt_verticesAux_above
 /-- Vertices of `node a (pre ++ l :: r :: post)` mapped through
     `swapPathAt pre.length` is a `List.Perm` of vertices of
     `node a (pre ++ r :: l :: post)`. -/
-theorem vertices_swap_perm (a : α) (pre : List (Planar α))
+private theorem vertices_swap_perm (a : α) (pre : List (Planar α))
     (l r : Planar α) (post : List (Planar α)) :
     ((vertices (Planar.node a (pre ++ l :: r :: post))).map
         (swapPathAt pre.length)).Perm
@@ -1098,10 +774,10 @@ private theorem multiGraft_recurse_planarEquiv (a : α)
         · simp [hp, tailChildFilter,
                 pathLiftRecurse_cons_of_ne (pre'.length + 1) i f rest h1]
           cases i with
-          | zero => simp [tailChildFilter]
+          | zero => simp
           | succ j =>
             have hjne : j ≠ pre'.length := by intro heq; apply h1; omega
-            simp [tailChildFilter, pathLiftRecurse_cons_of_ne pre'.length j f rest hjne]
+            simp [pathLiftRecurse_cons_of_ne pre'.length j f rest hjne]
     -- Apply IH on pre' with input csP (= pairs.filterMap tailChildFilter).
     -- IH gives PE on multiGrafts; unfold via multiGraft_node and discard empty rootPrepends
     -- (tailChildFilter only produces non-empty fsts).
@@ -1132,8 +808,8 @@ private theorem multiGraft_recurse_planarEquiv (a : α)
         · simp [hp, tailChildFilter,
                 pathLiftRecurse_cons_of_ne (pre'.length + 1) i f rest h1]
           cases i with
-          | zero => simp [tailChildFilter]
-          | succ j => simp [tailChildFilter, rootPrependFilter]
+          | zero => simp
+          | succ j => simp [rootPrependFilter]
     rw [h_RP_lhs, List.nil_append] at h_ih
     rw [h_RP_rhs, List.nil_append] at h_ih
     rw [← h_RP, ← h_cP]
@@ -1149,7 +825,7 @@ private theorem multiGraft_recurse_planarEquiv (a : α)
     Sub-lemmas for the filter equalities are proved inline as `have`
     statements to ensure the inline-match expressions unify with the
     matcher generated by `multiGraft_node`. -/
-theorem multiGraft_swap_planarEquiv
+private theorem multiGraft_swap_planarEquiv
     (a : α) (pre : List (Planar α)) (l r : Planar α)
     (post : List (Planar α)) (pairs : List (Path × Planar α)) :
     PlanarEquiv
@@ -1412,7 +1088,7 @@ theorem listChoices_map {β γ : Type*} (f : β → γ) (xs : List β) (n : Nat)
 
 /-- `listChoices` respects `List.Perm` of the source: a Perm of `xs` and
     `ys` lifts to a Perm of `listChoices xs n` and `listChoices ys n`. -/
-theorem listChoices_perm {β : Type*} {xs ys : List β}
+private theorem listChoices_perm {β : Type*} {xs ys : List β}
     (h : xs.Perm ys) (n : Nat) :
     (listChoices xs n).Perm (listChoices ys n) := by
   induction n with
@@ -1499,7 +1175,7 @@ private theorem insertion_planarStep_host (Ts : List (Planar α))
   exact insertion_eq_of_pathBij f hf_perm hf_graft Ts
 
 /-- `insertion T Ts` is `mk`-invariant under `PlanarEquiv` of the host. -/
-theorem insertion_planarEquiv_host (Ts : List (Planar α))
+private theorem insertion_planarEquiv_host (Ts : List (Planar α))
     {t t' : Planar α} (h : PlanarEquiv t t') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t' Ts).map Nonplanar.mk := by
@@ -1969,7 +1645,7 @@ with each output wrapped in a singleton list. Used downstream to handle
 `hostTripleSum T [T'] F` patterns at the singleton-F_A level. -/
 
 /-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
-    the identity. Public version of the InsertionAddHost.lean private helper. -/
+    the identity. -/
 theorem insertion_nil_guests (T : Planar α) :
     insertion T ([] : List (Planar α)) = ({T} : Multiset (Planar α)) := by
   rw [insertion_def]
