@@ -1,11 +1,11 @@
-import Linglib.Core.Combinatorics.RootedTree.Planar
+import Linglib.Core.Data.RoseTree.Basic
 
 /-!
 # Tree models and quantifier-free logic over them
 
 The hierarchical counterpart of `Logic/WordModel.lean`: the model-theoretic representation of finite
 labeled trees, the foundation for logical characterizations of tree-to-tree subregular maps. A
-**tree model** is a `RootedTree.Planar L` — a node-labeled rose tree — addressed by Gorn indices
+**tree model** is a `RoseTree L` — a node-labeled rose tree — addressed by Gorn indices
 (`List ℕ`); its relations are dominance (parent/child) and sibling precedence. Quantifier-free terms
 navigate by `parent`/`child`/`sibSucc`/`sibPred` partial functions, giving the bounded reach that,
 as on strings, underlies tree-local computation.
@@ -24,13 +24,11 @@ The model is generic over the label type `L`; downstream layers instantiate it.
 
 namespace Subregular.Logic
 
-open RootedTree
-
 variable {L V : Type*}
 
 /-- A **tree model**: a node-labeled rose tree, addressed by Gorn indices (`List ℕ`). The carrier is
-`RootedTree.Planar L` itself — a labeled tree *is* its model, as a string is its word model. -/
-abbrev TreeModel (L : Type*) := Planar L
+`RoseTree L` itself — a labeled tree *is* its model, as a string is its word model. -/
+abbrev TreeModel (L : Type*) := RoseTree L
 
 namespace TreeModel
 
@@ -43,7 +41,7 @@ def nodeAt : TreeModel L → List ℕ → Option (TreeModel L)
       | some c => nodeAt c rest
 
 /-- The label at a Gorn address, `none` off the tree. -/
-def labelAt? (t : TreeModel L) (a : List ℕ) : Option L := (t.nodeAt a).map Planar.label
+def labelAt? (t : TreeModel L) (a : List ℕ) : Option L := (t.nodeAt a).map RoseTree.value
 
 /-- The address, if it names a node of `t`; otherwise `none`. -/
 def posOf (t : TreeModel L) (a : List ℕ) : Option (List ℕ) :=
@@ -137,7 +135,7 @@ section Example
 private inductive Sym | a | b | c
   deriving DecidableEq
 
-open TreeTerm Planar
+open TreeTerm RoseTree
 
 /-- The tree `a[ b[c c], b ]`. -/
 private def t : TreeModel Sym :=
