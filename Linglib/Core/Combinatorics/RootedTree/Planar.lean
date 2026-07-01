@@ -117,6 +117,10 @@ def depthMaxList : List (Planar α) → Nat
   | t :: ts => max (depth t) (depthMaxList ts)
 end
 
+/-- Node equation for `depth`: one edge above the deepest child. -/
+theorem depth_node (a : α) (cs : List (Planar α)) :
+    depth (.node a cs) = 1 + depthMaxList cs := rfl
+
 /-- Each child's depth is at most the children's max depth. -/
 theorem depth_le_depthMaxList {c : Planar α} {cs : List (Planar α)} (h : c ∈ cs) :
     c.depth ≤ depthMaxList cs := by

@@ -279,7 +279,7 @@ theorem headTerminals_node : headTerminals (.node a cs) =
 
 /-- `leaf` is a head terminal of `t`, reached from the root by an all-head descent. -/
 inductive IsHeadTerminal : Tree → Tree → Prop
-  | leaf (wt hd) : IsHeadTerminal (.node (.syl wt hd) []) (.node (.syl wt hd) [])
+  | leaf {a : Constituent} (ha : a.isSyl = true) : IsHeadTerminal (.node a []) (.node a [])
   | head {a cs c leaf} : c ∈ cs → c.label.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
@@ -288,18 +288,16 @@ inductive IsHeadTerminal : Tree → Tree → Prop
     lists give the converse concretely, so the full iff is not needed.) -/
 theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
     IsHeadTerminal t leaf := by
-  induction t using RootedTree.Planar.recAux with
-  | node a cs IH =>
-    rw [headTerminals_node] at h
-    split at h
-    · rename_i hσ; obtain ⟨hσ, rfl⟩ := hσ
-      obtain ⟨w, hd, rfl⟩ : ∃ w hd, a = .syl w hd := by cases a <;> simp_all [Constituent.isSyl]
-      rw [List.mem_singleton] at h; subst h; exact .leaf w hd
-    · rw [List.mem_flatMap] at h
-      obtain ⟨c, hc, hmem⟩ := h
-      by_cases hh : c.label.isHead = true
-      · rw [if_pos hh] at hmem; exact .head hc hh (IH c hc hmem)
-      · rw [if_neg hh] at hmem; exact absurd hmem List.not_mem_nil
+  induction t using Tree.recLeafBranch with
+  | leaf a ha =>
+    rw [headTerminals_node, if_pos ⟨ha, rfl⟩, List.mem_singleton] at h
+    subst h; exact .leaf ha
+  | branch a cs hne IH =>
+    rw [headTerminals_node, if_neg hne, List.mem_flatMap] at h
+    obtain ⟨c, hc, hmem⟩ := h
+    by_cases hh : c.label.isHead = true
+    · rw [if_pos hh] at hmem; exact .head hc hh (IH c hc hmem)
+    · rw [if_neg hh] at hmem; exact absurd hmem List.not_mem_nil
 
 /-! ## Head-preservation: the foot commuting square
 
@@ -357,8 +355,7 @@ private theorem depth_word_child_le {ch : Tree}
   · obtain ⟨chl, chcs⟩ := ch
     simp only [isFootTree, Bool.and_eq_true, List.all_eq_true] at hfoot
     obtain ⟨_, hleaves⟩ := hfoot
-    rw [show (RootedTree.Planar.node chl chcs).depth
-          = 1 + RootedTree.Planar.depthMaxList chcs from rfl]
+    rw [RootedTree.Planar.depth_node]
     have : RootedTree.Planar.depthMaxList chcs ≤ 1 := RootedTree.Planar.depthMaxList_le fun c hc => by
       obtain ⟨cl, ccs⟩ := c
       have hc' := hleaves _ hc
@@ -373,26 +370,25 @@ private theorem depth_word_child_le {ch : Tree}
 /-- Grid column heights are positive and bounded by the tree depth: the RPPR count is `≥ 1` and
     grows by at most one per head edge. -/
 private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.depth := by
-  induction t using RootedTree.Planar.recAux with
-  | node a cs IH =>
-    rw [columns_node, show RootedTree.Planar.depth (.node a cs)
-          = 1 + RootedTree.Planar.depthMaxList cs from rfl]
-    split
-    · intro c hc; simp only [List.mem_singleton] at hc; omega
-    · intro c hc
-      rw [List.mem_flatMap] at hc
-      obtain ⟨ch, hch, hc⟩ := hc
-      have hd := RootedTree.Planar.depth_le_depthMaxList hch
-      cases hh : ch.label.isHead with
-      | false =>
-        simp only [hh, edge_false, toGrid_clear] at hc
-        have := IH ch hch c hc; omega
-      | true =>
-        simp only [hh, edge_true, promote, toGrid, List.map_map,
-          List.mem_map] at hc
-        obtain ⟨x, hx, rfl⟩ := hc
-        have := IH ch hch x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
-        by_cases hs : x.onSpine <;> simp [hs] <;> omega
+  induction t using Tree.recLeafBranch with
+  | leaf a ha =>
+    rw [columns_node, if_pos ⟨ha, rfl⟩, RootedTree.Planar.depth_node]
+    intro c hc; simp only [List.mem_singleton] at hc; omega
+  | branch a cs hne IH =>
+    rw [columns_node, if_neg hne, RootedTree.Planar.depth_node]
+    intro c hc
+    rw [List.mem_flatMap] at hc
+    obtain ⟨ch, hch, hc⟩ := hc
+    have hd := RootedTree.Planar.depth_le_depthMaxList hch
+    cases hh : ch.label.isHead with
+    | false =>
+      simp only [hh, edge_false, toGrid_clear] at hc
+      have := IH ch hch c hc; omega
+    | true =>
+      simp only [hh, edge_true, promote, toGrid, List.map_map, List.mem_map] at hc
+      obtain ⟨x, hx, rfl⟩ := hc
+      have := IH ch hch x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
+      by_cases hs : x.onSpine <;> simp [hs] <;> omega
 
 /-- Head-terminal heights are a sublist of the columns. -/
 theorem headHeights_sublist_columns (t : Tree) : (headHeights t).Sublist (columns t) :=

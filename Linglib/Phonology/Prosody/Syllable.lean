@@ -304,4 +304,29 @@ end Constituent
     `Constituent`s. Ordered children give No-Tangling by construction. -/
 abbrev Tree := Planar Constituent
 
+/-- A σ-leaf — the metrical terminal: a syllable of weight `w`, head-marked `h`, with no children. -/
+abbrev Tree.σ (w : Syllable.Weight := 0) (h : Bool := false) : Tree := .node (.syl w h) []
+
+/-- A foot node over `cs`, optionally the head foot of its word. -/
+abbrev Tree.ft (h : Bool := false) (cs : List Tree) : Tree := .node (.ft h) cs
+
+/-- A prosodic-word (ω) node over `cs`. -/
+abbrev Tree.om (cs : List Tree) : Tree := .node .om cs
+
+/-- **Leaf/branch induction on a prosodic tree.** A σ-leaf is a base case; every other node — a
+    foot, word, phrase, or degenerate/ill-formed node — is a branch, carrying the induction
+    hypothesis over its children and the fact that it is *not* a σ-leaf. This is what lets proofs
+    reduce the σ-leaf `if` the reader equations carry (via `if_pos ⟨ha, rfl⟩` / `if_neg hne`)
+    instead of `split`ting it. -/
+@[elab_as_elim]
+def Tree.recLeafBranch {motive : Tree → Prop}
+    (leaf : ∀ a, a.isSyl → motive (.node a []))
+    (branch : ∀ a cs, ¬(a.isSyl ∧ cs = []) → (∀ c ∈ cs, motive c) → motive (.node a cs))
+    (t : Tree) : motive t := by
+  induction t using Planar.recAux with
+  | node a cs ih =>
+    by_cases h : a.isSyl ∧ cs = []
+    · obtain ⟨ha, rfl⟩ := h; exact leaf a ha
+    · exact branch a cs h ih
+
 end Prosody
