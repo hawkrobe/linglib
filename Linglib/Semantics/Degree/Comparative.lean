@@ -37,7 +37,7 @@ consumers in `Studies/Hoeksema1983.lean`.
 * `comparative_iff_posExt_ssubset` — comparison as extent inclusion ([kennedy-1999]).
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 open Core.Order (ScalePolarity Comparison)
 
@@ -248,4 +248,4 @@ theorem negatedEquative_iff_posExt_ssubset [LinearOrder D] (μ : Entity → D) (
 
 end Equative
 
-end Semantics.Degree
+end Degree

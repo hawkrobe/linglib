@@ -38,9 +38,9 @@ is simpler and better motivated than competing scope-based analyses.
 
 namespace VonStechow1984
 
-open Semantics.Degree (comparativeSem equativeSem ScaleDirection)
-open Semantics.Degree.Abstraction (IsMaxDeg)
-open Semantics.Degree.Differential (differentialComparative factorEquative)
+open Degree (comparativeSem equativeSem ScaleDirection)
+open Degree.Abstraction (IsMaxDeg)
+open Degree.Differential (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 
 Migrated from `Semantics/Degree/Intensional.lean` (single-paper
@@ -675,7 +675,7 @@ structure TooCounterfactualDatum where
   sentence : String
   differential : String
   counterfactualBase : String
-  degPType : Semantics.Degree.DegPType
+  degPType : Degree.DegPType
   deriving Repr
 
 def tooData : List TooCounterfactualDatum :=

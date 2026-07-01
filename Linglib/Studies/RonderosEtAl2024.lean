@@ -154,7 +154,7 @@ is observable independent of any contrast manipulation.
 - **Connection to `Semantics/Degree/`**: Ronderos's semantic factor
   (scalar = gradable + comparison-class-dependent; color/material =
   non-gradable) is derived through `AdjType.toClass`, which maps each
-  adjective type to a Kennedy-style `Semantics.Degree.AdjectiveClass`.
+  adjective type to a Kennedy-style `Degree.AdjectiveClass`.
   The "scalar requires a comparison class" claim then follows from
   `AdjectiveClass.IsRelative`, grounded in gradability theory rather
   than projected via a perceptual-domain table.
@@ -200,7 +200,7 @@ def AdjType.toDomain : AdjType → Features.PropertyDomain
     scalar adjectives are gradable and interpreted against a comparison
     class (`relativeGradable`); color and material encode non-gradable
     properties (`nonGradable`), interpreted in absolute terms. -/
-def AdjType.toClass : AdjType → Semantics.Degree.AdjectiveClass
+def AdjType.toClass : AdjType → Degree.AdjectiveClass
   | .scalar   => .relativeGradable
   | .color    => .nonGradable
   | .material => .nonGradable

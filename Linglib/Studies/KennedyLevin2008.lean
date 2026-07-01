@@ -334,7 +334,7 @@ dimensions the K&L verbs measure. -/
 open Semantics.ArgumentStructure.Affectedness
 open Semantics.ArgumentStructure.Affectedness.Hierarchy
 open Semantics.Gradability (Dimension)
-open Semantics.Degree.MeasureFunction
+open Degree.MeasureFunction
 
 /-! #### Telicity from the scale's order structure (order-theoretic K&L thesis)
 

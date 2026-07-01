@@ -29,7 +29,7 @@ Klein-style delineation [klein-1980] has no measure function and lives in
 * `PositiveStandard`, `AdjectiveClass` — Kennedy-style classification carriers.
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 /-! ### Discrete bounded scales
 
@@ -240,4 +240,4 @@ def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
 instance : DecidablePred AdjectiveClass.IsRelative :=
   fun c => decEq c .relativeGradable
 
-end Semantics.Degree
+end Degree

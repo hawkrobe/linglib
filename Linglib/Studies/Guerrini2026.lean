@@ -277,7 +277,7 @@ truth conditions are extensional (`DIST` over the actual kind extension), hence
 *stronger* than any threshold generic. Prevalence is the bridge quantity. -/
 
 open TesslerGoodman2019 (genericMeaning GenThreshold)
-open Semantics.Degree (deg thr)
+open Degree (deg thr)
 
 /-- Prevalence of `P` among the atoms of an extension at `w`:
     `|{a ∈ ext | P a w}| / |ext|`. (Generalizes to

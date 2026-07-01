@@ -488,7 +488,7 @@ def epistemicBoundedness : Core.Order.Boundedness := .closed
     (upward monotone: higher credence → more likely to satisfy). Reversed
     entries (`uncertain`, `unlikely`) are negative (downward monotone). -/
 def epistemicAsDirectedMeasure (cr : AgentCredence E W) (_entry : EpistemicEntry)
-    : Semantics.Degree.DirectedMeasure ℚ (E × (W → Bool)) where
+    : Degree.DirectedMeasure ℚ (E × (W → Bool)) where
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
 
@@ -544,7 +544,7 @@ satisfies System FA (and hence all of W ⊂ F ⊂ FA).
 /-- Threshold semantics is upward monotone in the credence ordering:
     if `cr a φ ≥ θ` and `cr a φ ≤ cr a ψ`, then `cr a ψ ≥ θ`.
 
-    This is an instance of `Semantics.Degree.IsUpwardMonotone` applied to the
+    This is an instance of `Degree.IsUpwardMonotone` applied to the
     epistemic scale. The family of propositions `P(θ) = meetsThreshold θ`
     is upward monotone in credence — higher credence always satisfies
     lower thresholds.

@@ -85,7 +85,7 @@ open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Features
 open Core.Order
-open Semantics.Degree
+open Degree
 open Entailment
 open English.TemporalExpressions
 
@@ -326,7 +326,7 @@ theorem gTIAPropertyOpenNeg_downwardMonotone {μ : NonemptyInterval Time → α}
 
 `MIP_Licensed` and `MIP_LicensedDown` are defined in
     `Semantics/Entailment/Extremum.lean` and reused here. They
-    combine `Semantics.Degree.AdmitsOptimum P` (non-constancy: the *atelic*
+    combine `Degree.AdmitsOptimum P` (non-constancy: the *atelic*
     failure mode) with the per-world existence of a `Set.IsLeast` /
     `Set.IsGreatest` (mathlib): a most-informative numeral exists at some
     world. The two conjuncts capture two separate failure modes:

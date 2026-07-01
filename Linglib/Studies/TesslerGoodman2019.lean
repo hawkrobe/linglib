@@ -19,7 +19,7 @@ as gradable adjectives. The scale is **prevalence** rather than height/degree:
 
     ⟦gen⟧(p, θ) = 1 if prevalence p > threshold θ
 
-This IS `positiveMeaning` from `Semantics.Degree` — the generic meaning is
+This IS `positiveMeaning` from `Degree` — the generic meaning is
 grounded in scalar adjective semantics by construction, not by bridge theorem.
 
 ## Model
@@ -102,11 +102,11 @@ set_option autoImplicit false
 
 namespace TesslerGoodman2019
 
-open Semantics.Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
-open Semantics.Degree (positiveMeaning)
+open Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
+open Degree (positiveMeaning)
 
 -- ============================================================================
--- § 1. Domain Types (reusing Semantics.Degree — same types as LassiterGoodman2017)
+-- § 1. Domain Types (reusing Degree — same types as LassiterGoodman2017)
 -- ============================================================================
 
 /-- Discretized prevalence: 0%, 5%, ..., 100% (21 values).
@@ -149,7 +149,7 @@ inductive Utterance where
 
 /-- ⟦gen⟧(p, θ) = p > θ.
 
-    This IS `positiveMeaning` from `Semantics.Degree` — the generic meaning
+    This IS `positiveMeaning` from `Degree` — the generic meaning
     function is literally the positive scalar adjective meaning applied to the
     prevalence scale. Grounded by construction. -/
 def genericMeaning (θ : GenThreshold) (p : Prevalence) : Bool :=

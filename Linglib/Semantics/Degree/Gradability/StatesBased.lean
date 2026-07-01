@@ -31,7 +31,7 @@ confidence ordering (CSW observation (72)).
 
 ## Architecture
 
-`StatesBasedEntry` extends `ComparativeScale` (from `Semantics.Degree`) with a
+`StatesBasedEntry` extends `ComparativeScale` (from `Degree`) with a
 contrast point. The background ordering is the ambient `[Preorder S]`.
 This is a competing theory to the standard threshold model in `Theory.lean`; the
 bridge theorem `statesBased_iff_kennedy` shows when they agree.

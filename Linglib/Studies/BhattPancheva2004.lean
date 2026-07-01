@@ -75,8 +75,8 @@ open Minimalist.DegreeMovement
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
 open Core.Order (Comparison)
-open Semantics.Degree (gtOverSet_eq_singleton_of_isGreatest)
-open Semantics.Degree.ThanClause (thanClauseDenotation thanClauseMax thanClauseMax_isGreatest)
+open Degree (gtOverSet_eq_singleton_of_isGreatest)
+open Degree.ThanClause (thanClauseDenotation thanClauseMax thanClauseMax_isGreatest)
 open Semantics.Polarity (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
 

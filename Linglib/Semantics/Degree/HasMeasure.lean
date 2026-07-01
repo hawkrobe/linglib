@@ -14,7 +14,7 @@ newtype wrappers (mathlib `Additive`/`Multiplicative` precedent). When an `Entit
 multiple measures, consumers disambiguate via explicit `(α := …)` or named instances.
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 /-- Typeclass for entities that carry a measurement on some scale — the
     formal-semantics measure function `μ : E → α`.
@@ -28,4 +28,4 @@ class HasMeasure (E : Type*) (α : Type*) where
 abbrev HasMeasure.measure {E α : Type*} [HasMeasure E α] : E → α :=
   HasMeasure.degree
 
-end Semantics.Degree
+end Degree

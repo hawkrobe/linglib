@@ -29,9 +29,7 @@ serves the same clients; this module is imported by
 `Studies/` files.
 -/
 
-namespace Semantics.Degree
-
-open Semantics.Degree (Degree Threshold)
+namespace Degree
 
 /-! ### Concrete threshold-based meanings
 
@@ -76,4 +74,4 @@ theorem positiveMeaning_monotone (d : Degree max) (θ_weak θ_strong : Threshold
 
 end Concrete
 
-end Semantics.Degree
+end Degree

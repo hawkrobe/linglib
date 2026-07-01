@@ -96,7 +96,7 @@ open Semantics.Polarity.Licensing
 
 open Entailment
 open Core.Order (Comparison)
-open Semantics.Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
+open Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
 open Semantics.Polarity (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
 

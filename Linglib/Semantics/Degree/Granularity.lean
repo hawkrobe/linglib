@@ -38,7 +38,7 @@ This reversal explains why approximative *just* yields different readings:
   component derived from the reversal.
 -/
 
-namespace Semantics.Degree.Granularity
+namespace Degree.Granularity
 
 -- ════════════════════════════════════════════════════
 -- § 1. Granularity Intervals (eqs. 43, 45, 49)
@@ -258,4 +258,4 @@ theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂)
 
 end GranularityQuestion
 
-end Semantics.Degree.Granularity
+end Degree.Granularity

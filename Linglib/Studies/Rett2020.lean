@@ -24,7 +24,7 @@ reference point is selected (all of B vs MAX of B).
 ## Level
 
 **Level 2 (interval sets)**: operates on `SentDenotation` directly, using
-`maxOnScale` from `Semantics.Degree` to select the informative bound.
+`maxOnScale` from `Degree` to select the informative bound.
 
 ## Bridges
 
@@ -47,7 +47,7 @@ open Core.Order
 open NonemptyInterval
 open Features
 open Features.ChangeOfState
-open Semantics.Degree (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
+open Degree (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
 variable {Time : Type*} [LinearOrder Time]
 
 -- ============================================================================

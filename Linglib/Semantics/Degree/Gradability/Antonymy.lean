@@ -30,10 +30,10 @@ set_option autoImplicit false
 
 namespace Semantics.Gradability.Antonymy
 
-open Semantics.Degree (Degree Threshold Threshold.toNat)
+open Degree (Degree Threshold Threshold.toNat)
 open Semantics.Gradability (ThresholdPair contradictoryNeg
   positiveMeaning' contraryNegMeaning notContraryNegMeaning inGapRegion)
-open Semantics.Degree (positiveMeaning antonymMeaning)
+open Degree (positiveMeaning antonymMeaning)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Contradictory Negation: Involutory (DNE holds)
@@ -75,7 +75,7 @@ theorem contradictory_exhaustive {max : Nat}
     (d : Degree max) (tp : ThresholdPair max) :
     inGapRegion d tp ↔ notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
   simp only [inGapRegion, notContraryNegMeaning, positiveMeaning',
-             Semantics.Degree.positiveMeaning, not_lt]
+             Degree.positiveMeaning, not_lt]
 
 /-- When the gap is strict (θ_neg < θ_pos), there exists a degree that is
     "not unhappy" but NOT "happy" — double negation through contrary fails.
@@ -84,7 +84,7 @@ theorem contrary_gap_exists {max : Nat} (tp : ThresholdPair max)
     (h : (tp.neg : Degree max) < (tp.pos : Degree max)) :
     ∃ d : Degree max, notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
   refine ⟨↑tp.neg, le_refl _, ?_⟩
-  simp only [positiveMeaning', Semantics.Degree.positiveMeaning, not_lt]
+  simp only [positiveMeaning', Degree.positiveMeaning, not_lt]
   exact le_of_lt h
 
 /-- The gap region is nonempty when θ_neg < θ_pos. -/

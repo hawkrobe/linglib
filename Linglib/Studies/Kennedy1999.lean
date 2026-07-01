@@ -24,11 +24,11 @@ the degree argument.
 3. **Cross-polar anomaly**: "Kim is as tall as Lee is short" is anomalous
    because the equative tries to compare a positive extent with a negative
    extent — structurally incompatible (proved always-false in
-   `Semantics.Degree.crossExtent_always_false`).
+   `Degree.crossExtent_always_false`).
 
 4. **Antonymy biconditional**: "BK is longer than The Idiot iff The Idiot is
    shorter than BK" is DERIVED from extent complementarity, not stipulated
-   as a lexical property (proved in `Semantics.Degree.antonymy_biconditional`).
+   as a lexical property (proved in `Degree.antonymy_biconditional`).
 
 5. **DegP projection**: Degree morphemes head their own syntactic phrase.
    This has been refined by [heim-2001] (sentential operator approach)
@@ -61,10 +61,10 @@ distribution), [bhatt-pancheva-2004] and [lechner-2004]
 
 namespace Kennedy1999
 
-open Semantics.Degree (comparativeSem equativeSem
+open Degree (comparativeSem equativeSem
   comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset
   equativeSem_iff_posExt_subset)
-open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_false posExt_subset_iff negExt_subset_iff extent_galois_antitone)
+open Degree (posExt negExt crossExtentInclusion crossExtent_always_false posExt_subset_iff negExt_subset_iff extent_galois_antitone)
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Polar Anomaly Data
 -- ════════════════════════════════════════════════════
@@ -140,7 +140,7 @@ theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
 
 /-- "A is taller than B" iff B's positive extent is strictly contained
     in A's. Bridges the consensus comparative to the algebraic
-    `posExt_ssubset_iff` from `Semantics.Degree`. -/
+    `posExt_ssubset_iff` from `Degree`. -/
 theorem comparative_extent_bridge {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=
@@ -187,12 +187,12 @@ theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
     who treats -er as a sentential operator rather than a DegP head.
     Both agree that degree binding is syntactic.
 
-    Note: the degree head inventory matches `Semantics.Degree.DegPType`
+    Note: the degree head inventory matches `Degree.DegPType`
     from `Degree/Defs.lean`, which is the current consensus enumeration.
     This historical structure records Kennedy's specific proposal that
     these heads project a full DegP phrase. -/
 structure HistoricalDegP where
-  head : Semantics.Degree.DegPType
+  head : Degree.DegPType
   adjective : String
   deriving Repr
 

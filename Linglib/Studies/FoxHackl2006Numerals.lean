@@ -33,7 +33,7 @@ construction, no bridge lemma needed.
 
 namespace FoxHackl2006Numerals
 
-open Semantics.Degree
+open Degree
 open Entailment
 open Semantics.Numerals
 open Core.Order (Comparison)

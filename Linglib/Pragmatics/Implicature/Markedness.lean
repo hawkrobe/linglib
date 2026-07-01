@@ -29,7 +29,7 @@ import Mathlib.Data.Rat.Defs
 namespace Implicature.Markedness
 
 open Semantics.Gradability
-open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
+open Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
 open Semantics.Gradability (ThresholdPair)
 open Features (NegationType)
 open English.Predicates.Adjectival (tall short happy unhappy)
@@ -334,7 +334,7 @@ Whether antonyms have the same truth conditions depends on the construction:
 - Polar-INVARIANT: "as tall as" = "as short as" → M-alternatives exist
 -/
 
-open Semantics.Degree (AdjectivalConstruction)
+open Degree (AdjectivalConstruction)
 
 /-- Polar variance: do antonyms have the same truth conditions in this construction? -/
 inductive PolarVariance where
