@@ -13,7 +13,7 @@ splits a syntactic object into a *crown forest* `p.1` (the extracted
 subtrees) and a *trunk* `p.2` (the contraction quotient, carrying one
 trace-marker leaf per cut). The two primitive conservation laws are:
 
-* **weight** (`cutSummandsCN_weight`): `Σ #V(crown) + #V(trunk) = #V(T) + #cuts`
+* **weight** (`cutSummandsCN_numNodes`): `Σ #V(crown) + #V(trunk) = #V(T) + #cuts`
   — extracting a subtree removes its vertices but leaves one replacement
   trace leaf per cut.
 * **trace leaves** (`cutSummandsCN_traceLeafCount`): `Σ #trace(crown) + #trace(trunk)
@@ -30,7 +30,7 @@ and `cut_leafCount_conservation`.
 
 * `ConnesKreimer.cutSummandsG_traceLeafCount` — trace-leaf conservation at
   the planar level (mutual with the list/per-child auxiliaries).
-* `cutSummandsCN_traceLeafCount`, `cutSummandsCN_weight` — descended to
+* `cutSummandsCN_traceLeafCount`, `cutSummandsCN_numNodes` — descended to
   `Nonplanar`.
 * `cutSummandsCN_lexical_conservation` — exact non-trace-vertex conservation.
 * `Cut.numContractions` — `#cuts = card` of the crown forest.
@@ -245,7 +245,7 @@ private theorem extractC_traceLeafCount_sum_one (τ : RoseTree (α ⊕ β) → �
     | inr b => rw [extractC_inr] at h; exact absurd h (by simp)
 
 /-- The Δ^c node-count conservation (tree level), specializing the generic
-    `cutSummandsG_weight` to `extractC`. -/
+    `cutSummandsG_numNodes` to `extractC`. -/
 private theorem extractC_numNodes_sum_one (τ : RoseTree (α ⊕ β) → β) :
     ∀ t r, extractC τ t = some r → (r.map RoseTree.numNodes).sum = 1 := by
   intro t r h
@@ -288,7 +288,7 @@ theorem cutSummandsCN_traceLeafCount (τ : Nonplanar (α ⊕ β) → β)
 /-- **Weight (vertex) conservation** for the nonplanar Δ^c cuts: crown
     vertices plus trunk vertices recover the tree vertices plus one
     replacement trace leaf per cut (MCB Lemma 1.6.3). -/
-theorem cutSummandsCN_weight (τ : Nonplanar (α ⊕ β) → β)
+theorem cutSummandsCN_numNodes (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
       (p.1.map Nonplanar.numNodes).sum + p.2.numNodes =
@@ -298,7 +298,7 @@ theorem cutSummandsCN_weight (τ : Nonplanar (α ⊕ β) → β)
   intro p hp
   rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  have hcons := ConnesKreimer.cutSummandsG_weight _
+  have hcons := ConnesKreimer.cutSummandsG_numNodes _
     (ConnesKreimer.extractC_numNodes_sum_one (τ ∘ Nonplanar.mk)) T₀ q hq
   show ((q.1.map Nonplanar.mk).map Nonplanar.numNodes).sum +
       (Nonplanar.mk q.2).numNodes =
@@ -335,7 +335,7 @@ theorem cutSummandsCN_lexical_conservation (τ : Nonplanar (α ⊕ β) → β)
       (p.1.map Nonplanar.traceLeafCount).sum + p.2.traceLeafCount + T.numNodes =
         (p.1.map Nonplanar.numNodes).sum + p.2.numNodes + T.traceLeafCount := by
   intro p hp
-  have hw := cutSummandsCN_weight τ T p hp
+  have hw := cutSummandsCN_numNodes τ T p hp
   have ht := cutSummandsCN_traceLeafCount τ T p hp
   omega
 
@@ -493,7 +493,7 @@ variable {α β : Type*}
 
 /-- A lexical-rooted (`Sum.inl`) nonplanar tree has a non-trace vertex
     (its root), so its trace leaves number strictly fewer than its vertices. -/
-theorem traceLeafCount_lt_weight_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
+theorem traceLeafCount_lt_numNodes_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
     (h : t.rootValue = Sum.inl a) : t.traceLeafCount < t.numNodes := by
   obtain ⟨t₀, rfl⟩ : ∃ t₀ : RoseTree (α ⊕ β), t = Nonplanar.mk t₀ :=
     ⟨t.out, (Quotient.out_eq t).symm⟩
@@ -527,7 +527,7 @@ variable {α β : Type*}
 
 /-- Crown components of a Δ^c cut are lexical-rooted, hence have strictly
     more vertices than trace leaves. -/
-theorem cutSummandsCN_crown_traceLeafCount_lt_weight (τ : Nonplanar (α ⊕ β) → β)
+theorem cutSummandsCN_crown_traceLeafCount_lt_numNodes (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, ∀ Tv ∈ p.1, Tv.traceLeafCount < Tv.numNodes := by
   obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
@@ -571,17 +571,17 @@ theorem cutSummandsCN_accCountC_single (τ : Nonplanar (α ⊕ β) → β)
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (Tv : Nonplanar (α ⊕ β)) (hcard : p.1 = {Tv}) :
     T.accCountC = Tv.accCountC + p.2.accCountC + 1 := by
-  have hw := cutSummandsCN_weight τ T p hp
+  have hw := cutSummandsCN_numNodes τ T p hp
   have hl := cutSummandsCN_traceLeafCount τ T p hp
   have hTv_lt : Tv.traceLeafCount < Tv.numNodes :=
-    cutSummandsCN_crown_traceLeafCount_lt_weight τ T p hp Tv
+    cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tv
       (by rw [hcard]; exact Multiset.mem_singleton_self Tv)
   have hT_root : T.rootValue = Sum.inl a₀ := by
     rw [hT, Nonplanar.rootValue_node]
   have hT_lt : T.traceLeafCount < T.numNodes :=
-    Nonplanar.traceLeafCount_lt_weight_of_rootInl T a₀ hT_root
+    Nonplanar.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT_root
   have hp2_lt : p.2.traceLeafCount < p.2.numNodes :=
-    Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+    Nonplanar.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_rootValue τ T p hp).trans hT_root)
   rw [hcard] at hw hl
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw hl
@@ -597,20 +597,20 @@ theorem cutSummandsCN_accCountC_pair (τ : Nonplanar (α ⊕ β) → β)
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (Tv Tw : Nonplanar (α ⊕ β)) (hcard : p.1 = {Tv, Tw}) :
     T.accCountC = Tv.accCountC + Tw.accCountC + p.2.accCountC + 2 := by
-  have hw := cutSummandsCN_weight τ T p hp
+  have hw := cutSummandsCN_numNodes τ T p hp
   have hl := cutSummandsCN_traceLeafCount τ T p hp
   have hTv_lt : Tv.traceLeafCount < Tv.numNodes :=
-    cutSummandsCN_crown_traceLeafCount_lt_weight τ T p hp Tv
+    cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tv
       (by rw [hcard]; exact Multiset.mem_cons_self Tv {Tw})
   have hTw_lt : Tw.traceLeafCount < Tw.numNodes :=
-    cutSummandsCN_crown_traceLeafCount_lt_weight τ T p hp Tw
+    cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tw
       (by rw [hcard]; exact Multiset.mem_cons_of_mem (Multiset.mem_singleton_self Tw))
   have hT_root : T.rootValue = Sum.inl a₀ := by
     rw [hT, Nonplanar.rootValue_node]
   have hT_lt : T.traceLeafCount < T.numNodes :=
-    Nonplanar.traceLeafCount_lt_weight_of_rootInl T a₀ hT_root
+    Nonplanar.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT_root
   have hp2_lt : p.2.traceLeafCount < p.2.numNodes :=
-    Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+    Nonplanar.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_rootValue τ T p hp).trans hT_root)
   rw [hcard] at hw hl
   simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,

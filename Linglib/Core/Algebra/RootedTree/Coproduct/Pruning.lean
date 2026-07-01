@@ -147,36 +147,36 @@ end
                    (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
   conv_lhs => unfold augActionP
 
-/-! ### comulTreePlanarP — tree-level Δ^ρ
+/-! ### comulTreeP — tree-level Δ^ρ
 
 Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
 
 /-- The **tree-level Δ^ρ** coproduct: explicit `T ⊗ 1` term plus
     the sum of cut-summand tensors. -/
-noncomputable def comulTreePlanarP (T : RoseTree α) :
+noncomputable def comulTreeP (T : RoseTree α) :
     ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α) :=
   ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (RoseTree α))
   + ((cutSummandsP T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
-/-! ### comulForestPlanarP — forest-level Δ^ρ
+/-! ### comulForestP — forest-level Δ^ρ
 
 Multiplicative extension over the disjoint-union product on forests:
 Δ(F + G) = Δ(F) · Δ(G). -/
 
 /-- The **forest-level Δ^ρ**: multiplicative product of tree-level
     coproducts over the components of the forest. -/
-noncomputable def comulForestPlanarP (F : Forest (RoseTree α)) :
+noncomputable def comulForestP (F : Forest (RoseTree α)) :
     ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α) :=
-  (F.map (comulTreePlanarP (R := R))).prod
+  (F.map (comulTreeP (R := R))).prod
 
-@[simp] theorem comulForestPlanarP_zero :
-    comulForestPlanarP (R := R) (0 : Forest (RoseTree α)) = 1 := by
-  simp only [comulForestPlanarP, Multiset.map_zero, Multiset.prod_zero]
+@[simp] theorem comulForestP_zero :
+    comulForestP (R := R) (0 : Forest (RoseTree α)) = 1 := by
+  simp only [comulForestP, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulForestPlanarP_add (F G : Forest (RoseTree α)) :
-    comulForestPlanarP (R := R) (F + G) =
-      comulForestPlanarP (R := R) F * comulForestPlanarP (R := R) G := by
-  unfold comulForestPlanarP
+@[simp] theorem comulForestP_add (F G : Forest (RoseTree α)) :
+    comulForestP (R := R) (F + G) =
+      comulForestP (R := R) F * comulForestP (R := R) G := by
+  unfold comulForestP
   rw [Multiset.map_add, Multiset.prod_add]
 
 /-! ### comulMonoidHom and comulAlgHom
@@ -184,13 +184,13 @@ noncomputable def comulForestPlanarP (F : Forest (RoseTree α)) :
 Package the multiplicative extension as a `MonoidHom`, then lift to the
 full `AlgHom` via `AddMonoidAlgebra.lift`. -/
 
-/-- comulForestPlanarP as a monoid hom from `Multiplicative (Forest (RoseTree α))`. -/
+/-- comulForestP as a monoid hom from `Multiplicative (Forest (RoseTree α))`. -/
 noncomputable def comulMonoidHomP :
     Multiplicative (Forest (RoseTree α)) →*
       (ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α)) where
-  toFun F := comulForestPlanarP (R := R) F.toAdd
-  map_one' := comulForestPlanarP_zero
-  map_mul' F G := comulForestPlanarP_add F.toAdd G.toAdd
+  toFun F := comulForestP (R := R) F.toAdd
+  map_one' := comulForestP_zero
+  map_mul' F G := comulForestP_add F.toAdd G.toAdd
 
 /-- The **Δ^ρ coproduct on `ConnesKreimer R (RoseTree α)`** as an algebra hom. -/
 noncomputable def comulAlgHomP :
@@ -201,16 +201,16 @@ noncomputable def comulAlgHomP :
     (Forest (RoseTree α)) comulMonoidHomP
 
 @[simp] theorem comulAlgHomP_apply_of' (F : Forest (RoseTree α)) :
-    comulAlgHomP (R := R) (α := α) (of' F) = comulForestPlanarP F := by
+    comulAlgHomP (R := R) (α := α) (of' F) = comulForestP F := by
   show AddMonoidAlgebra.lift R _ _ comulMonoidHomP (Finsupp.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
   rfl
 
 @[simp] theorem comulAlgHomP_apply_ofTree (T : RoseTree α) :
-    comulAlgHomP (R := R) (α := α) (ofTree T) = comulTreePlanarP T := by
+    comulAlgHomP (R := R) (α := α) (ofTree T) = comulTreeP T := by
   unfold ofTree
   rw [comulAlgHomP_apply_of']
-  unfold comulForestPlanarP
+  unfold comulForestP
   simp only [Multiset.map_singleton, Multiset.prod_singleton]
 
 end ConnesKreimer
