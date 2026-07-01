@@ -1551,8 +1551,6 @@ import Linglib.Semantics.Classifier.Basic
 import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
 import Linglib.Semantics.Classifier.TypeN
-import Linglib.Semantics.Degree.Comparison.Metalinguistic
-import Linglib.Semantics.Degree.Comparison.MetalinguisticDegree
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Continuation
