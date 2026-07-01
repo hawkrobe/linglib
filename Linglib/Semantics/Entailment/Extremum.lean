@@ -59,7 +59,7 @@ not their primary formulation.
 
 namespace Entailment
 
-open Semantics.Degree
+open Degree
 open Core.Order (Comparison)
 variable {α : Type*} [LinearOrder α]
 
@@ -265,7 +265,7 @@ entailment-theoretic MIP layer. -/
 
 /-- The maximally informative degree of a directed measure's derived
     property is the true measure value, whichever the direction. -/
-theorem _root_.Semantics.Degree.DirectedMeasure.isMaxInf_degreeProperty_iff
+theorem _root_.Degree.DirectedMeasure.isMaxInf_degreeProperty_iff
     {W : Type*} (dm : DirectedMeasure α W) (m : α) (w : W)
     (hSurj : Function.Surjective dm.μ) :
     IsMaxInf dm.degreeProperty m w ↔ dm.μ w = m := by
@@ -280,7 +280,7 @@ theorem _root_.Semantics.Degree.DirectedMeasure.isMaxInf_degreeProperty_iff
 /-- Direction-invariance, bundled: two directed measures sharing a measure
     function agree on maximal informativity regardless of direction or
     boundedness — the constructor-level form of `mip_direction_invariant`. -/
-theorem _root_.Semantics.Degree.DirectedMeasure.isMaxInf_degreeProperty_congr
+theorem _root_.Degree.DirectedMeasure.isMaxInf_degreeProperty_congr
     {W : Type*} (dm₁ dm₂ : DirectedMeasure α W) (hμ : dm₁.μ = dm₂.μ)
     (m : α) (w : W) (hSurj : Function.Surjective dm₁.μ) :
     IsMaxInf dm₁.degreeProperty m w ↔ IsMaxInf dm₂.degreeProperty m w := by

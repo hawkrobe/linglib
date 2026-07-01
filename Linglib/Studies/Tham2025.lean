@@ -92,7 +92,7 @@ open Semantics.Gradability.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Lexical
-open Semantics.Degree (interpretiveEconomy)
+open Degree (interpretiveEconomy)
 open English.Predicates
 
 -- ════════════════════════════════════════════════════
@@ -487,7 +487,7 @@ theorem scratch_adj_verb_scale_agree :
 
 /-- Disturbance adjectives are licensed for degree modification by the
     Kennedy pipeline, just like *full* and *clean*. -/
-theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Semantics.Degree.Degree max) :
+theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Degree.Degree max) :
     (adjMeasure μ Adjectival.cracked).IsLicensed :=
   closedAdj_licensed μ Adjectival.cracked rfl
 theorem cracked_pipeline_licensed :
@@ -624,7 +624,7 @@ theorem crack_refutes_strict_hkl_matrix :
     `Boundedness` level — both are `.closed`, hence both license degree
     modification. -/
 theorem cracked_licensing_converges_with_kennedy2007
-    {max : Nat} {W : Type*} (μ : W → Semantics.Degree.Degree max) :
+    {max : Nat} {W : Type*} (μ : W → Degree.Degree max) :
     (adjMeasure μ Adjectival.cracked).IsLicensed ↔
     (adjMeasure μ Adjectival.full).IsLicensed :=
   iff_of_true (closedAdj_licensed μ Adjectival.cracked rfl)
@@ -999,14 +999,14 @@ theorem solt_tham_share_substrate_bounded_by_one :
     of the closed scale is load-bearing for which prediction. -/
 theorem cracked_ie_max_vs_tham_lower_bound :
     interpretiveEconomy Adjectival.cracked.scaleType =
-      Semantics.Degree.PositiveStandard.maxEndpoint ∧
+      Degree.PositiveStandard.maxEndpoint ∧
     crack.simplePredicationObjective = true ∧
     -- The two endpoints of a closed scale are distinct standards,
     -- yet both are required for different aspects of *cracked*'s
     -- meaning per Tham §3.4 (lower = physical instantiation,
     -- upper = spatial extent).
-    Semantics.Degree.PositiveStandard.maxEndpoint ≠
-      Semantics.Degree.PositiveStandard.minEndpoint := by
+    Degree.PositiveStandard.maxEndpoint ≠
+      Degree.PositiveStandard.minEndpoint := by
   refine ⟨rfl, rfl, ?_⟩; decide
 
 -- ════════════════════════════════════════════════════

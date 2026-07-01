@@ -52,7 +52,7 @@ disambiguate the two, favoring Analysis 1.
 ## Formal Connections
 
 - **LITTLE as extent complement**: `littlePred` maps `posExt` to `negExt`,
-  connecting to [kennedy-1999]'s extent algebra in `Semantics.Degree`.
+  connecting to [kennedy-1999]'s extent algebra in `Degree`.
 - **Cross-polar anomaly = algebraic impossibility**: same-dimension
   cross-polar comparison requires `crossExtentInclusion`, which
   `crossExtent_always_false` proves is impossible on any linear order.
@@ -64,11 +64,11 @@ disambiguate the two, favoring Analysis 1.
 
 namespace Buring2007
 
-open Semantics.Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
-open Semantics.Degree.Little (littlePred little_posExt_eq_negExt little_involution
+open Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
+open Degree.Little (littlePred little_posExt_eq_negExt little_involution
   little_reverses_comparison)
-open Semantics.Degree.Intervals (subcomparative negativeInterval)
-open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_false)
+open Degree.Intervals (subcomparative negativeInterval)
+open Degree (posExt negExt crossExtentInclusion crossExtent_always_false)
 -- ════════════════════════════════════════════════════
 -- § 1. LITTLE: Degree Negation on Extents
 -- ════════════════════════════════════════════════════
@@ -88,8 +88,8 @@ open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_fal
 theorem little_positive_to_negative {Entity D : Type*}
     [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) :
-    (negativeInterval μ x).fst = (Semantics.Degree.Intervals.positiveInterval μ x).snd := by
-  simp [negativeInterval, Semantics.Degree.Intervals.positiveInterval]
+    (negativeInterval μ x).fst = (Degree.Intervals.positiveInterval μ x).snd := by
+  simp [negativeInterval, Degree.Intervals.positiveInterval]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Cross-Polar Anomaly: Algebraic Impossibility

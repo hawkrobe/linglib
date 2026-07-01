@@ -34,7 +34,7 @@ dependency: 2006 imports 2001).
 
 namespace FoxHackl2006
 
-open Semantics.Degree.Abstraction (negatedDegreePredicate)
+open Degree.Abstraction (negatedDegreePredicate)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Basic Degree Question Data

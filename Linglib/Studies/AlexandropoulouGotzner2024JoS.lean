@@ -79,12 +79,12 @@ derivation of the predictions from first principles.
 
 namespace AlexandropoulouGotzner2024JoS
 
-open Semantics.Degree (Degree Threshold)
+open Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
 open Semantics.Gradability (GradableAdjective ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm
   predictionForAntonymy predictionForEntry)
-open Semantics.Degree (antonymMeaning)
+open Degree (antonymMeaning)
 open English.Predicates.Adjectival
   (large clean gigantic)
 

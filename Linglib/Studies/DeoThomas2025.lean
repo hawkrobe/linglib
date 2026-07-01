@@ -260,7 +260,7 @@ theorem all_flavors_attested :
 -- E. Construction → Flavor Bridge ([thomas-deo-2020])
 -- ============================================================================
 
-open Semantics.Degree (AdjectivalConstruction)
+open Degree (AdjectivalConstruction)
 
 /-- Derive *just* flavor from adjectival construction type.
     [thomas-deo-2020] predict:
@@ -446,7 +446,7 @@ theorem refinement_implies_wider {W : Type*}
 /-! ### The full chain: finer granularity → wider question
 
 Composes the two independently proved steps:
-1. `finer_granularity_refines` (from `Semantics.Degree.Granularity`):
+1. `finer_granularity_refines` (from `Degree.Granularity`):
    if ε₁ ∣ ε₂, the ε₁-partition refines the ε₂-partition
 2. `refinement_implies_wider` (proved above):
    strict partition refinement → issue width
@@ -455,7 +455,7 @@ This is the formal content of the lexical entry (36): *just* selects
 the widest answerable construal, which — when alternatives vary by
 granularity — is the finest one the speaker can answer. -/
 
-open Semantics.Degree.Granularity (granQUD finer_granularity_refines)
+open Degree.Granularity (granQUD finer_granularity_refines)
 
 /-- The complete granularity–width chain ([deo-thomas-2025] §3.1.2–3.2).
 

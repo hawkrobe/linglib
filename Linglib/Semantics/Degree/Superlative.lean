@@ -25,7 +25,7 @@ operators: wide scope yields relative, narrow scope yields absolute.
 
 -/
 
-namespace Semantics.Degree.Superlative
+namespace Degree.Superlative
 
 -- ════════════════════════════════════════════════════
 -- § 1. Absolute Superlative
@@ -104,7 +104,7 @@ theorem superlative_iff_universal_comparative {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (C : Set Entity) (x : Entity) :
     absoluteSuperlative μ C x ↔
       x ∈ C ∧ ∀ y ∈ C, y ≠ x →
-        Semantics.Degree.comparativeSem μ x y .positive :=
+        Degree.comparativeSem μ x y .positive :=
   Iff.rfl
 
-end Semantics.Degree.Superlative
+end Degree.Superlative

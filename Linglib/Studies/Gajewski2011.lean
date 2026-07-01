@@ -616,7 +616,7 @@ theorem bridge_hoeksema_gtOverSet_strawsonAA
     (defined : Set D → Entity → Prop) :
     IsStrawsonAntiAdditive (Core.Order.Comparison.gt.overSet μ) defined :=
   antiAdditive_implies_strawsonAA _
-    (Semantics.Degree.gtOverSet_isAntiAdditive μ) _
+    (Degree.gtOverSet_isAntiAdditive μ) _
 
 /-! ## Strong-NPI registry consistency
 

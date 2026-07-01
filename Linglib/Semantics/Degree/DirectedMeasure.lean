@@ -37,7 +37,7 @@ Mathlib typeclass instances cannot be stored in record fields; the enum
 and the typeclass system serve different roles and both are real.
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 open Core.Order
 
@@ -127,4 +127,4 @@ theorem classA_blocked (μ : W → α) :
 
 end DirectedMeasure
 
-end Semantics.Degree
+end Degree

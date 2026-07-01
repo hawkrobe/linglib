@@ -573,7 +573,7 @@ theorem max_eq_comparativeSem {Entity Time Measured : Type*} [LinearOrder Time]
     (hb : role b eb ∧ P eb)
     (hb_unique : ∀ e, role b e → P e → e = eb) :
     comparativeTruth role P extract μ a b ↔
-      Semantics.Degree.comparativeSem
+      Degree.comparativeSem
         (μ ∘ extract) ea eb .positive :=
   comparativeTruth_max ha ha_unique hb hb_unique
 

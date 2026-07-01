@@ -41,7 +41,7 @@ itself. A faithful sortal formalization (typed `PosExt D` / `NegExt D`
 with a partial DEG) is not provided here.
 -/
 
-namespace Semantics.Degree
+namespace Degree
 
 variable {Entity D : Type*}
 
@@ -101,7 +101,7 @@ theorem compl_posExt [LinearOrder D] (μ : Entity → D) (x : Entity) :
 /-- Order-reversing equivalence between `posExt`- and `negExt`-inclusions.
     The Galois-antitone framing is `compl_subset_compl` specialized at
     `Iic`/`Ioi` via `compl_posExt`. Linglib's
-    `Semantics.Degree.Little.littlePred` defines
+    `Degree.Little.littlePred` defines
     [heim-2006]'s LITTLE as predicate complement; LITTLE is *not*
     this map (it operates on type ⟨d,t⟩, not the powerset lattice),
     but the algebraic shadow of LITTLE *is* this antitone identity. -/
@@ -124,4 +124,4 @@ theorem crossExtent_always_false [LinearOrder D]
     (μ : Entity → D) (a b : Entity) : ¬ crossExtentInclusion μ a b :=
   fun h => absurd (h (min_le_left (μ a) (μ b))) (not_lt.mpr (min_le_right _ _))
 
-end Semantics.Degree
+end Degree

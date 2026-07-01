@@ -26,9 +26,9 @@ inverts the measured region.
 * `little_reverses_comparison` — LITTLE flips comparison direction
 -/
 
-namespace Semantics.Degree.Little
+namespace Degree.Little
 
-open Semantics.Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
+open _root_.Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
 
 /-- LITTLE on degree predicates: complementation. -/
 def littlePred {D : Type*} (P : D → Prop) : D → Prop :=
@@ -41,8 +41,8 @@ complement of the degree predicate for 'tall', exactly the relation
 between `posExt` and `negExt` from [kennedy-1999]. -/
 theorem little_posExt_eq_negExt {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (x : Entity) (d : D) :
-    littlePred (· ∈ Semantics.Degree.posExt μ x) d ↔ d ∈ Semantics.Degree.negExt μ x := by
-  simp [littlePred, Semantics.Degree.posExt, Semantics.Degree.negExt]
+    littlePred (· ∈ Degree.posExt μ x) d ↔ d ∈ Degree.negExt μ x := by
+  simp [littlePred, Degree.posExt, Degree.negExt]
 
 /-- LITTLE is an involution: double degree negation cancels. -/
 theorem little_involution {D : Type*} (P : D → Prop) (d : D) :
@@ -56,4 +56,4 @@ theorem little_reverses_comparison {Entity α : Type*} [LinearOrder α]
     comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
   taller_shorter_antonymy μ a b
 
-end Semantics.Degree.Little
+end Degree.Little

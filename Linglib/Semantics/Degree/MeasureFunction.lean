@@ -59,7 +59,7 @@ quantify over the scale's maximum (or its absence).
 
 -/
 
-namespace Semantics.Degree.MeasureFunction
+namespace Degree.MeasureFunction
 
 open Semantics.ArgumentStructure.Affectedness
 
@@ -92,7 +92,7 @@ set_option linter.dupNamespace false in
     `[SetLike]` (typeclass) interfaces.
 
     The duplicated `MeasureFunction` namespace (file-level
-    `Semantics.Degree.MeasureFunction` + the type itself) is harmless
+    `Degree.MeasureFunction` + the type itself) is harmless
     here — same pattern as mathlib's `Function` files. The `set_option
     linter.dupNamespace false in` immediately above silences the
     namespace-duplication warning for this single declaration. -/
@@ -273,4 +273,4 @@ def HasLatentScale.ofHasMeasureFunction
     HasLatentScale α (Event Time) where
   latentScale _ _ := True
 
-end Semantics.Degree.MeasureFunction
+end Degree.MeasureFunction
