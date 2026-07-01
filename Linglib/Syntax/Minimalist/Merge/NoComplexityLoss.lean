@@ -11,13 +11,13 @@ some component map `Φ₀` is nondecreasing in **degree**.
 
 ## Grading choice: vertex count
 
-M-C-B grade by leaf count `#L`. We grade by `Nonplanar.weight` (vertex
+M-C-B grade by leaf count `#L`. We grade by `Nonplanar.numNodes` (vertex
 count) — the canonical Connes–Kreimer grading. The deletion coproduct
-conserves weight **exactly** (`cutSummandsN_weight`) for every cut, with
+conserves weight **exactly** (`cutSummandsN_numNodes`) for every cut, with
 none of the nullary-node corrections that leaf count incurs when a node
 loses all its children under a multi-edge cut. NCL is a *nondecreasing*
 condition, and weight delivers every conclusion leaf count would: the
-Merge node's weight strictly exceeds each operand's (`weight_node` adds
+Merge node's weight strictly exceeds each operand's (`numNodes_node` adds
 the root), and every deletion quotient's weight is strictly smaller than
 its source (a nonempty crown carries positive weight). So the
 weight-graded NCL is both cleaner and strictly-more-robust than a
@@ -30,7 +30,7 @@ leaf-count port.
 - `em_case1_satisfiesNCL`: EM Case 1 `{S, S'} + F̂ → {M(S,S')} + F̂` via
   `S, S' ↦ M(S,S')`, spectators fixed.
 - `im_satisfiesNCL`: IM `{T} → {M(Q, β)}` (Q = T/β via a single-edge cut)
-  via the constant map; weight follows from `cutSummandsN_weight`.
+  via the constant map; weight follows from `cutSummandsN_numNodes`.
 - `InducedMapNCL`/`DLPerComponent`: MCB Def 1.6.2 strict form + the
   per-component degree-loss function (eq. 1.6.4).
 - `sideward_{2b,3a,3b}_violatesInducedMapNCL`: under the canonical induced
@@ -50,7 +50,7 @@ open RootedTree RootedTree.ConnesKreimer
 def NCLBetween {α : Type*} (F F' : Forest (Nonplanar α)) : Prop :=
   ∃ (Φ₀ : ∀ T, T ∈ F → Nonplanar α),
     (∀ T (h : T ∈ F), Φ₀ T h ∈ F') ∧
-    (∀ T (h : T ∈ F), (Φ₀ T h).weight ≥ T.weight)
+    (∀ T (h : T ∈ F), (Φ₀ T h).numNodes ≥ T.numNodes)
 
 /-- **M-C-B Prop 1.6.10, EM Case-1 direction.** The EM workspace equation
     carries a component map satisfying NCL: `S, S' ↦ M(S, S')` (weight
@@ -84,9 +84,9 @@ theorem em_case1_satisfiesNCL {α : Type*} [DecidableEq (Nonplanar α)]
       exact Multiset.mem_add.mpr (Or.inr hT_Fhat)
   -- (b) weight nondecreasing
   · intro T _
-    show (if T = S ∨ T = S' then Nonplanar.node lbl {S, S'} else T).weight ≥ T.weight
+    show (if T = S ∨ T = S' then Nonplanar.node lbl {S, S'} else T).numNodes ≥ T.numNodes
     by_cases hcase : T = S ∨ T = S'
-    · rw [if_pos hcase, Nonplanar.weight_node,
+    · rw [if_pos hcase, Nonplanar.numNodes_node,
           show ({S, S'} : Forest (Nonplanar α)) = S ::ₘ {S'} from rfl,
           Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton]
       rcases hcase with rfl | rfl <;> omega
@@ -95,8 +95,8 @@ theorem em_case1_satisfiesNCL {α : Type*} [DecidableEq (Nonplanar α)]
 /-- **M-C-B Prop 1.6.10, IM positive direction.** The IM workspace
     transformation `{T} → {M(Q, β)}` (Q = T/β the deletion-quotient of the
     single-edge cut `p0` extracting β) carries the constant component map
-    `T ↦ M(Q, β)`, with `(M(Q, β)).weight = 1 + Q.weight + β.weight =
-    1 + T.weight ≥ T.weight` by `cutSummandsN_weight`.
+    `T ↦ M(Q, β)`, with `(M(Q, β)).numNodes = 1 + Q.numNodes + β.numNodes =
+    1 + T.numNodes ≥ T.numNodes` by `cutSummandsN_numNodes`.
 
     Quoting M-C-B (book p. 72): "For Internal Merge, similarly,
     deg(T_v, T/T_v) = deg(T)." (Under the weight grading the Merge node
@@ -113,15 +113,15 @@ theorem im_satisfiesNCL {α : Type*} (lbl : α) (β T Q : Nonplanar α)
   refine ⟨fun _ _ => Nonplanar.node lbl {Q, β}, ?_, ?_⟩
   -- (a) image is in {M(Q, β)}
   · intro _ _; exact Multiset.mem_singleton.mpr rfl
-  -- (b) weight nondecreasing: (M(Q, β)).weight = 1 + T.weight ≥ T.weight
+  -- (b) weight nondecreasing: (M(Q, β)).numNodes = 1 + T.numNodes ≥ T.numNodes
   · intro T' hT'
     rw [Multiset.mem_singleton] at hT'
     subst T'
-    show (Nonplanar.node lbl {Q, β}).weight ≥ T.weight
-    rw [Nonplanar.weight_node,
+    show (Nonplanar.node lbl {Q, β}).numNodes ≥ T.numNodes
+    rw [Nonplanar.numNodes_node,
         show ({Q, β} : Forest (Nonplanar α)) = Q ::ₘ {β} from rfl,
         Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton]
-    have h_cons := cutSummandsN_weight T p0 hp0
+    have h_cons := cutSummandsN_numNodes T p0 hp0
     rw [h_cf] at h_cons
     simp only [Multiset.map_singleton, Multiset.sum_singleton] at h_cons
     rw [h_remainder] at h_cons
@@ -131,7 +131,7 @@ theorem im_satisfiesNCL {α : Type*} (lbl : α) (β T Q : Nonplanar α)
 
 /-- **MCB Definition 1.6.2 (book p. 64), strict form.** The canonical
     induced map `Φ_0 : π_0(F) → π_0(Φ(F))` is named explicitly. NCL holds
-    iff every component `T ∈ F` has `(Φ_0 T).weight ≥ T.weight`.
+    iff every component `T ∈ F` has `(Φ_0 T).numNodes ≥ T.numNodes`.
 
     Compare `NCLBetween` (existential: "some map works"). The strict form
     is needed for the negative direction: a Sideward operation might satisfy
@@ -140,7 +140,7 @@ theorem im_satisfiesNCL {α : Type*} (lbl : α) (β T Q : Nonplanar α)
 def InducedMapNCL {α : Type*} (F F' : Forest (Nonplanar α))
     (Φ_0 : ∀ T, T ∈ F → Nonplanar α) : Prop :=
   (∀ T (h : T ∈ F), Φ_0 T h ∈ F') ∧
-  (∀ T (h : T ∈ F), (Φ_0 T h).weight ≥ T.weight)
+  (∀ T (h : T ∈ F), (Φ_0 T h).numNodes ≥ T.numNodes)
 
 /-- Strict form ⇒ existential form. -/
 theorem NCLBetween_of_InducedMapNCL {α : Type*}
@@ -154,7 +154,7 @@ theorem NCLBetween_of_InducedMapNCL {α : Type*}
     clamped by ℕ-subtraction. -/
 def DLPerComponent {α : Type*} {F : Forest (Nonplanar α)}
     (Φ_0 : ∀ T, T ∈ F → Nonplanar α) (T : Nonplanar α) (h : T ∈ F) : Int :=
-  ((Φ_0 T h).weight : Int) - T.weight
+  ((Φ_0 T h).numNodes : Int) - T.numNodes
 
 /-- NCL inequality (eq. 1.6.3) per component restated via `DLPerComponent`. -/
 theorem DLPerComponent_nonneg_iff_NCL {α : Type*}
@@ -188,14 +188,14 @@ theorem sideward_2b_violatesInducedMapNCL {α : Type*} [DecidableEq (Nonplanar �
     Multiset.mem_cons_of_mem (Multiset.mem_singleton.mpr rfl)
   have h_neq : T_j ≠ T_i := fun h => h_distinct h.symm
   have h_ineq :
-      (if T_j = T_i then Nonplanar.node lbl {T_i, β} else T_j_q).weight ≥ T_j.weight :=
+      (if T_j = T_i then Nonplanar.node lbl {T_i, β} else T_j_q).numNodes ≥ T_j.numNodes :=
     h_ncl.2 T_j h_T_j_mem
   rw [if_neg h_neq] at h_ineq
-  have h_cons := cutSummandsN_weight T_j p_j hp_j
+  have h_cons := cutSummandsN_numNodes T_j p_j hp_j
   rw [h_cf] at h_cons
   simp only [Multiset.map_singleton, Multiset.sum_singleton] at h_cons
   rw [h_rd] at h_cons
-  have h_β_pos := β.weight_pos
+  have h_β_pos := β.numNodes_pos
   omega
 
 /-- **MCB Prop 1.6.10 negative — Sideward 3(a) violates InducedMapNCL.**
@@ -203,7 +203,7 @@ theorem sideward_2b_violatesInducedMapNCL {α : Type*} [DecidableEq (Nonplanar �
     extracting both `a` and `b`. The canonical map sends `T_i ↦ T_i/(a⊔b)`,
     which has lost both subtrees, so its weight is strictly smaller. (Weight
     conservation is exact here even though leaf count would not be —
-    `cutSummandsN_weight` holds for the 2-edge crown directly.) -/
+    `cutSummandsN_numNodes` holds for the 2-edge crown directly.) -/
 theorem sideward_3a_violatesInducedMapNCL {α : Type*}
     (lbl : α) (T_i a b T_iq : Nonplanar α)
     (p_i : Forest (Nonplanar α) × Nonplanar α) (hp_i : p_i ∈ cutSummandsN T_i)
@@ -213,13 +213,13 @@ theorem sideward_3a_violatesInducedMapNCL {α : Type*}
                     ({Nonplanar.node lbl {a, b}, T_iq} : Forest (Nonplanar α))
         (fun _ _ => T_iq) := by
   intro h_ncl
-  have h_ineq : T_iq.weight ≥ T_i.weight := h_ncl.2 T_i (Multiset.mem_singleton.mpr rfl)
-  have h_cons := cutSummandsN_weight T_i p_i hp_i
+  have h_ineq : T_iq.numNodes ≥ T_i.numNodes := h_ncl.2 T_i (Multiset.mem_singleton.mpr rfl)
+  have h_cons := cutSummandsN_numNodes T_i p_i hp_i
   rw [h_cf, show ({a, b} : Forest (Nonplanar α)) = a ::ₘ {b} from rfl,
       Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton,
       h_rd] at h_cons
-  have h_a_pos := a.weight_pos
-  have h_b_pos := b.weight_pos
+  have h_a_pos := a.numNodes_pos
+  have h_b_pos := b.numNodes_pos
   omega
 
 /-- **MCB Prop 1.6.10 negative — Sideward 3(b) violates InducedMapNCL.**
@@ -235,14 +235,14 @@ theorem sideward_3b_violatesInducedMapNCL {α : Type*} [DecidableEq (Nonplanar �
                     ({Nonplanar.node lbl {a, b}, T_iq, T_jq} : Forest (Nonplanar α))
         (fun T _ => if T = T_i then T_iq else T_jq) := by
   intro h_ncl
-  have h_ineq : (if T_i = T_i then T_iq else T_jq).weight ≥ T_i.weight :=
+  have h_ineq : (if T_i = T_i then T_iq else T_jq).numNodes ≥ T_i.numNodes :=
     h_ncl.2 T_i (Multiset.mem_cons_self _ _)
   rw [if_pos rfl] at h_ineq
-  have h_cons := cutSummandsN_weight T_i p_i hp_i
+  have h_cons := cutSummandsN_numNodes T_i p_i hp_i
   rw [h_cf_i] at h_cons
   simp only [Multiset.map_singleton, Multiset.sum_singleton] at h_cons
   rw [h_rd_i] at h_cons
-  have h_a_pos := a.weight_pos
+  have h_a_pos := a.numNodes_pos
   omega
 
 end Minimalist.Merge

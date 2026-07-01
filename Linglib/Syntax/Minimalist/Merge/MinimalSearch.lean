@@ -130,7 +130,7 @@ def swNetCost (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : �
 /-- A Sideward Merge of a lexical-rooted object has strictly positive net cost
     (MCB Prop 1.5.1) — the uncancelled extraction depth. -/
 theorem swNetCost_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) (a₀ : α)
-    (hT : T.rootLabel = Sum.inl a₀)
+    (hT : T.rootValue = Sum.inl a₀)
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) :
     0 < swNetCost p := by
@@ -181,7 +181,7 @@ theorem mergeOpCEps_zero_sideward (τ : Nonplanar (α ⊕ β) → β) {c : ℕ} 
     extraction `p` of a lexical-rooted object: the uncancelled depth makes
     `swNetCost p > 0`, so the operator is annihilated at ε = 0. -/
 theorem mergeOpCEps_zero_sideward_of_cut (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) (a₀ : α) (hT : T.rootLabel = Sum.inl a₀)
+    (T : Nonplanar (α ⊕ β)) (a₀ : α) (hT : T.rootValue = Sum.inl a₀)
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) (lbl : α ⊕ β) (S S' : Nonplanar (α ⊕ β)) :
     mergeOpCEps τ (0 : R) (swNetCost p) lbl S S' = 0 :=
