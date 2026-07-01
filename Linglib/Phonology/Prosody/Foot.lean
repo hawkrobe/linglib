@@ -74,9 +74,6 @@ structure Foot (S : Type*) where
 namespace Foot
 variable {S : Type*}
 
-/-- The head (stressed) syllable — the head terminal. -/
-def headSyllable (f : Foot S) : S := f.syllables.get f.head
-
 /-- The number of dominated syllables. -/
 def length (f : Foot S) : ℕ := f.syllables.length
 

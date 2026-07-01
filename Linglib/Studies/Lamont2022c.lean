@@ -76,10 +76,10 @@ def parse (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
 
 /-- `Trochee`: one violation per foot whose head is rightmost (= `Foot.IsIambic`). -/
 def trochee (fc : Footing Unit) : Nat :=
-  ((fc.feet).filter (fun f => decide (f.head.val + 1 = f.syllables.length))).length
+  ((fc.feet).filter (fun f => decide f.IsIambic)).length
 /-- `Iamb`: one violation per foot whose head is leftmost (= `Foot.IsTrochaic`). -/
 def iambC (fc : Footing Unit) : Nat :=
-  ((fc.feet).filter (fun f => decide (f.head.val = 0))).length
+  ((fc.feet).filter (fun f => decide f.IsTrochaic)).length
 
 /-- The violation vector of a footing under a ranking (a list of constraints), as the
     concatenated per-constraint violations — ordered lexicographically (`LexLE`). -/
