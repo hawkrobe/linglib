@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Order.Antisymmetrization
 import Mathlib.Order.Defs.Unbundled
 
 /-!
@@ -18,7 +19,17 @@ must be first-class data.
   from a Boolean table, for finite models).
 * `IsMaximal`, `AcceptedAt` — top-ranked points, and truth of a predicate
   throughout them (Stalnaker-style acceptance on a plausibility frame).
--/
+
+## Implementation notes
+
+Mathlib has no bundled order-on-a-carrier object (its `Preord` bundles a
+*type* with one order); its two idioms for an-order-as-data are a raw relation
+with unbundled relation classes — the founding used here — or a term
+`p : Preorder α` consumed via `letI`. The alternative `extends Preorder α`
+shape would transport the `Preorder` API but makes `lt` an opaque field,
+where consumers need the transparent `le a b ∧ ¬ le b a` for `decide` and for
+destructuring. Same-rank equivalence is mathlib's `AntisymmRel` rather than a
+new definition. -/
 
 namespace Core.Order
 
@@ -57,8 +68,9 @@ def lt (a b : α) : Prop := ord.le a b ∧ ¬ ord.le b a
 instance decRelLt : DecidableRel ord.lt := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Equivalence: a and b are ranked at the same level. -/
-def equiv (a b : α) : Prop := ord.le a b ∧ ord.le b a
+/-- Equivalence: a and b are ranked at the same level — mathlib's
+`AntisymmRel` (whose `AntisymmRel.setoid` is the level-quotient). -/
+abbrev equiv (a b : α) : Prop := AntisymmRel ord.le a b
 
 instance decRelEquiv : DecidableRel ord.equiv := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
