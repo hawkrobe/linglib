@@ -137,7 +137,7 @@ def adjDomain : Features.PropertyDomain := .size
     stipulation: it follows from `Features.PropertyDomain.requiresComparisonClass`
     by reduction. -/
 theorem adjDomain_requires_comparison_class :
-    Features.PropertyDomain.requiresComparisonClass adjDomain = true := rfl
+    Features.PropertyDomain.requiresComparisonClass adjDomain := trivial
 
 -- ============================================================================
 -- §2. Norming Data (Table 5)

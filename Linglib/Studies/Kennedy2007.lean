@@ -632,34 +632,36 @@ whether an adjective's standard depends on contextual domain information:
 Kennedy argues (§2.3) that the comparison class is descriptively real but NOT a
 semantic argument of *pos*; `requiresComparisonClass` tracks whether contextual
 domain information is needed — compatible with that view, since the information
-feeds into **s** contextually rather than as a constituent of logical form. For
-every concrete Fragment adjective, the two paths agree. -/
+feeds into **s** contextually rather than as a constituent of logical form. The
+two paths agree on the canonical adjectives sampled below, but the coarse domain
+heuristic can diverge from scale structure — `mpa_ie_exception` exhibits a
+mildly-positive adjective (*decent*) where they disagree. -/
 
 /-- "tall": both paths predict CC-dependence. -/
 theorem tall_cc_convergence :
     (interpretiveEconomy tall.scaleType).RequiresComparisonClass ∧
-    tall.dimension.domain.requiresComparisonClass = true :=
-  ⟨trivial, rfl⟩
+    tall.dimension.domain.requiresComparisonClass :=
+  ⟨trivial, trivial⟩
 
 /-- "full": both paths predict CC-independence. -/
 theorem full_no_cc_convergence :
     ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass ∧
-    full.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+    ¬ full.dimension.domain.requiresComparisonClass :=
+  ⟨id, id⟩
 
 /-- "wet": both paths predict CC-independence
     (lower-bounded → endpoint standard; state domain). -/
 theorem wet_no_cc_convergence :
     ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass ∧
-    wet.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+    ¬ wet.dimension.domain.requiresComparisonClass :=
+  ⟨id, id⟩
 
 /-- "dry": both paths predict CC-independence
     (upper-bounded → endpoint standard; state domain). -/
 theorem dry_no_cc_convergence :
     ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass ∧
-    dry.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+    ¬ dry.dimension.domain.requiresComparisonClass :=
+  ⟨id, id⟩
 
 /-! #### MPA licensing ([beltrama-2025]) -/
 
@@ -684,7 +686,7 @@ theorem mpa_good_same_licensing :
 theorem mpa_ie_exception :
     (interpretiveEconomy decent.scaleType) = .minEndpoint ∧
     ¬ (interpretiveEconomy decent.scaleType).RequiresComparisonClass ∧
-    decent.dimension.domain.requiresComparisonClass = true := ⟨rfl, id, rfl⟩
+    decent.dimension.domain.requiresComparisonClass := ⟨rfl, id, trivial⟩
 
 /-! #### Modifier-class matrix consistency (eq. (61)) -/
 

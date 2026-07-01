@@ -159,7 +159,7 @@ inductive SpatialConfigType where
 structure GradableAdjEntry where
   form : String
   scaleType : Boundedness
-  dimension : Features.Dimension
+  dimension : Features.PerceptualDimension
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
   spatialConfigType : Option SpatialConfigType := none

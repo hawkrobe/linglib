@@ -433,16 +433,16 @@ infrastructure (`Features.PropertyDomain`, `RSA.Noise`,
 theorem scalar_shares_sedivy_domain :
     AdjType.toDomain .scalar = SedivyEtAl1999.adjDomain ∧
     Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .scalar) = true :=
-  ⟨rfl, rfl⟩
+      (AdjType.toDomain .scalar) :=
+  ⟨rfl, trivial⟩
 
 /-- **Disagreement with the comparison-class-only mechanism on color.**
     Color does *not* require comparison-class binding (so the
     Bierwisch/Sedivy mechanism alone predicts no contrast effect for
     color), yet Ronderos finds a robust color contrast effect. -/
 theorem color_does_not_require_comparison_class :
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .color) = false := rfl
+    ¬ Features.PropertyDomain.requiresComparisonClass
+      (AdjType.toDomain .color) := id
 
 /-- **Material fails the comparison-class route.** Material adjectives,
     like color, do not require comparison-class binding — so the
@@ -451,8 +451,8 @@ theorem color_does_not_require_comparison_class :
     is insufficient for color, however; see
     `color_does_not_require_comparison_class`.) -/
 theorem material_does_not_require_comparison_class :
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .material) = false := rfl
+    ¬ Features.PropertyDomain.requiresComparisonClass
+      (AdjType.toDomain .material) := id
 
 /-- **Effect ordering aligns with noise discrimination.** The
     perceptual-discrimination route predicts the cross-category
@@ -489,8 +489,8 @@ theorem adjType_to_noise_discrimination :
     those above the material level produce a contrast effect. The
     baseline-restrictiveness family is keyed off
     `Features.PropertyDomain.requiresComparisonClass` (semantic route):
-    only the scalar (size) domain returns `true`, predicting the
-    no-contrast baseline disadvantage to be uniquely scalar.
+    only the scalar (size) domain requires a comparison class, predicting
+    the no-contrast baseline disadvantage to be uniquely scalar.
 
     This theorem records the two-mechanism factorisation as a typed
     statement: the scalar adjective type is the *unique* one whose
@@ -503,15 +503,15 @@ theorem adjType_to_noise_discrimination :
 theorem two_mechanisms_factorise :
     -- Semantic route: scalar uniquely requires comparison class
     Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .scalar) = true ∧
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .color) = false ∧
-    Features.PropertyDomain.requiresComparisonClass
-      (AdjType.toDomain .material) = false ∧
+      (AdjType.toDomain .scalar) ∧
+    ¬ Features.PropertyDomain.requiresComparisonClass
+      (AdjType.toDomain .color) ∧
+    ¬ Features.PropertyDomain.requiresComparisonClass
+      (AdjType.toDomain .material) ∧
     -- Perceptual route: color and scalar strictly above material
     RSA.Noise.colorDiscrimination > RSA.Noise.materialDiscrimination ∧
     RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination :=
-  ⟨rfl, rfl, rfl,
+  ⟨trivial, id, id,
    lt_trans RSA.Noise.size_gt_material RSA.Noise.color_gt_size,
    RSA.Noise.size_gt_material⟩
 
