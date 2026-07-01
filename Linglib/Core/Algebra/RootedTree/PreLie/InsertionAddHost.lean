@@ -9,9 +9,9 @@ import Mathlib.Data.Multiset.Powerset
 set_option autoImplicit false
 
 /-!
-# Host-append decomposition for planar multi-tree insertion
+# Host-append decomposition for `RoseTree`-level multi-tree insertion
 
-The planar substrate for `Nonplanar.insertionMultiset_add_host`:
+The `RoseTree`-level substrate for `Nonplanar.insertionMultiset_add_host`:
 multi-graft into a concatenated host list `host_A ++ host_B`
 decomposes as a sum over boolean assignments of guests to either
 `host_A` or `host_B`, with each side recursively multi-grafted
@@ -31,7 +31,7 @@ cartesian-product leaf; `hostBucketSum_assignment_rewrite` is derived
 from the general identity via `hostBucketSum_eq_kBucketSum`. The bridge
 `hostBucketSum_eq_insertionForest` is proved by induction on `host_A`.
 
-This is the planar-level companion to the `Nonplanar.insertionMultiset_add_host`
+This is the `RoseTree`-level companion to the `Nonplanar.insertionMultiset_add_host`
 combinatorial identity used in `GrossmanLarsonAssoc.lean`'s
 Oudom-Guin Prop 2.7.iii proof.
 
@@ -40,18 +40,18 @@ Oudom-Guin Prop 2.7.iii proof.
 `[UPSTREAM]` candidate. **Sorry-free**.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace RoseTree
 
 namespace Pathed
+
+open RootedTree
 
 variable {α : Type*}
 
 /-! ## §0: `kBucketSum` — k-way bucketed enumeration substrate
 
 Polymorphic substrate generalising the bucket-aggregator patterns used
-in planar multi-graft proofs (Foissy 2021, Marcolli-Chomsky-Berwick
+in `RoseTree`-level multi-graft proofs (Foissy 2021, Marcolli-Chomsky-Berwick
 2025, Oudom-Guin 2004). For each item in `remaining`, a choice from
 `idx` selects a bucket; items accumulate into the per-bucket lists
 `pres`. At empty `remaining`, the leaf function consumes the final
@@ -177,9 +177,9 @@ each side's `insertionForest` is concatenated. -/
     the cartesian product of `insertionForest host_A pre_A` and
     `insertionForest host_B pre_B`, joined by list concatenation.
     At a cons, bind over `[true, false]` and extend either bucket. -/
-def hostBucketSum (host_A host_B : List (Planar α)) :
-    List (Planar α) → List (Planar α) → List (Planar α) →
-      Multiset (List (Planar α))
+def hostBucketSum (host_A host_B : List (RoseTree α)) :
+    List (RoseTree α) → List (RoseTree α) → List (RoseTree α) →
+      Multiset (List (RoseTree α))
   | pre_A, pre_B, []       =>
       ((insertionForest host_A pre_A) ×ˢ (insertionForest host_B pre_B)).map
         fun p => p.fst ++ p.snd
@@ -188,15 +188,15 @@ def hostBucketSum (host_A host_B : List (Planar α)) :
         if b then hostBucketSum host_A host_B (pre_A ++ [x]) pre_B rest
         else hostBucketSum host_A host_B pre_A (pre_B ++ [x]) rest
 
-theorem hostBucketSum_nil_remaining (host_A host_B : List (Planar α))
-    (pre_A pre_B : List (Planar α)) :
+theorem hostBucketSum_nil_remaining (host_A host_B : List (RoseTree α))
+    (pre_A pre_B : List (RoseTree α)) :
     hostBucketSum host_A host_B pre_A pre_B [] =
       ((insertionForest host_A pre_A) ×ˢ (insertionForest host_B pre_B)).map
         fun p => p.fst ++ p.snd := by
   unfold hostBucketSum; rfl
 
-private theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
-    (pre_A pre_B : List (Planar α)) (x : Planar α) (rest : List (Planar α)) :
+private theorem hostBucketSum_cons_remaining (host_A host_B : List (RoseTree α))
+    (pre_A pre_B : List (RoseTree α)) (x : RoseTree α) (rest : List (RoseTree α)) :
     hostBucketSum host_A host_B pre_A pre_B (x :: rest) =
       (Multiset.ofList [true, false]).bind fun b =>
         if b then hostBucketSum host_A host_B (pre_A ++ [x]) pre_B rest
@@ -205,7 +205,7 @@ private theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
 /-- `hostBucketSum` as a `kBucketSum` instance: 2 buckets indexed by `Bool`,
     parallel cartesian-product leaf. -/
 theorem hostBucketSum_eq_kBucketSum
-    (host_A host_B pre_A pre_B Ts : List (Planar α)) :
+    (host_A host_B pre_A pre_B Ts : List (RoseTree α)) :
     hostBucketSum host_A host_B pre_A pre_B Ts =
       kBucketSum [true, false]
         (fun pres' =>
@@ -238,8 +238,8 @@ theorem hostBucketSum_eq_kBucketSum
     accumulators augmented by the partition. Specialises the general
     `kBucketSum_assignment_rewrite` to the 2-bucket `Bool` instance. -/
 theorem hostBucketSum_assignment_rewrite
-    (host_A host_B : List (Planar α)) :
-    ∀ (pre_A pre_B Ts : List (Planar α)),
+    (host_A host_B : List (RoseTree α)) :
+    ∀ (pre_A pre_B Ts : List (RoseTree α)),
     hostBucketSum host_A host_B pre_A pre_B Ts =
       (Multiset.ofList (listChoices [true, false] Ts.length)).bind fun α =>
         hostBucketSum host_A host_B
@@ -264,8 +264,8 @@ which collapses to `insertionForest host_B guests`. -/
 /-- When `pre_A = []` is non-empty, the leaf of `hostBucketSum []` is
     `0`. Helper for the base case of the bridge. -/
 private theorem hostBucketSum_nil_A_nonempty_pre_A_zero
-    (host_B : List (Planar α)) (a : Planar α) (pre_A pre_B : List (Planar α)) :
-    hostBucketSum ([] : List (Planar α)) host_B (a :: pre_A) pre_B [] = 0 := by
+    (host_B : List (RoseTree α)) (a : RoseTree α) (pre_A pre_B : List (RoseTree α)) :
+    hostBucketSum ([] : List (RoseTree α)) host_B (a :: pre_A) pre_B [] = 0 := by
   rw [hostBucketSum_nil_remaining]
   rw [insertionForest_empty_host_nonempty_guests]
   rw [Multiset.zero_product]
@@ -275,9 +275,9 @@ private theorem hostBucketSum_nil_A_nonempty_pre_A_zero
     remaining `Ts`. By induction on `Ts`, the recursive cases stay in
     the "pre_A non-empty" regime. -/
 private theorem hostBucketSum_nil_A_pre_A_cons_zero
-    (host_B : List (Planar α)) :
-    ∀ (a : Planar α) (pre_A pre_B Ts : List (Planar α)),
-    hostBucketSum ([] : List (Planar α)) host_B (a :: pre_A) pre_B Ts = 0 := by
+    (host_B : List (RoseTree α)) :
+    ∀ (a : RoseTree α) (pre_A pre_B Ts : List (RoseTree α)),
+    hostBucketSum ([] : List (RoseTree α)) host_B (a :: pre_A) pre_B Ts = 0 := by
   intro a pre_A pre_B Ts
   induction Ts generalizing pre_A pre_B with
   | nil => exact hostBucketSum_nil_A_nonempty_pre_A_zero host_B a pre_A pre_B
@@ -301,18 +301,18 @@ private theorem hostBucketSum_nil_A_pre_A_cons_zero
     the "true" branch contributes 0 (pre_A becomes non-empty), the "false"
     branch advances `pre_B` by one element. -/
 private theorem hostBucketSum_nil_A_pre_B_remaining
-    (host_B : List (Planar α)) :
-    ∀ (pre_B remaining : List (Planar α)),
-    hostBucketSum ([] : List (Planar α)) host_B [] pre_B remaining =
+    (host_B : List (RoseTree α)) :
+    ∀ (pre_B remaining : List (RoseTree α)),
+    hostBucketSum ([] : List (RoseTree α)) host_B [] pre_B remaining =
       insertionForest host_B (pre_B ++ remaining) := by
   intro pre_B remaining
   induction remaining generalizing pre_B with
   | nil =>
     rw [hostBucketSum_nil_remaining, insertionForest_nil_nil]
     -- {[]} ×ˢ insertionForest host_B pre_B = (insertionForest host_B pre_B).map (Prod.mk [])
-    rw [show (({[]} : Multiset (List (Planar α))) ×ˢ insertionForest host_B pre_B)
+    rw [show (({[]} : Multiset (List (RoseTree α))) ×ˢ insertionForest host_B pre_B)
             = (insertionForest host_B pre_B).map (Prod.mk []) from by
-          rw [show ({[]} : Multiset (List (Planar α))) = ([] : List (Planar α)) ::ₘ 0 from rfl]
+          rw [show ({[]} : Multiset (List (RoseTree α))) = ([] : List (RoseTree α)) ::ₘ 0 from rfl]
           rw [Multiset.cons_product, Multiset.zero_product, add_zero]]
     rw [Multiset.map_map]
     show (insertionForest host_B pre_B).map (fun x => [] ++ x) = insertionForest host_B (pre_B ++ [])
@@ -329,7 +329,7 @@ private theorem hostBucketSum_nil_A_pre_B_remaining
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
     rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
     -- True branch: pre_A = [] ++ [x] = [x] ≠ [], so it's 0.
-    rw [show ([] : List (Planar α)) ++ [x] = x :: [] from rfl]
+    rw [show ([] : List (RoseTree α)) ++ [x] = x :: [] from rfl]
     rw [hostBucketSum_nil_A_pre_A_cons_zero host_B x [] pre_B rest]
     rw [zero_add]
     -- False branch: hostBucketSum [] host_B [] (pre_B ++ [x]) rest = (IH) insertionForest host_B (pre_B ++ [x] ++ rest)
@@ -341,8 +341,8 @@ private theorem hostBucketSum_nil_A_pre_B_remaining
 
 /-- Bridge base case: `hostBucketSum [] host_B [] [] guests = insertionForest host_B guests`. -/
 private theorem hostBucketSum_nil_A
-    (host_B guests : List (Planar α)) :
-    hostBucketSum ([] : List (Planar α)) host_B [] [] guests =
+    (host_B guests : List (RoseTree α)) :
+    hostBucketSum ([] : List (RoseTree α)) host_B [] [] guests =
       insertionForest host_B guests := by
   have := hostBucketSum_nil_A_pre_B_remaining host_B [] guests
   rw [List.nil_append] at this
@@ -350,7 +350,7 @@ private theorem hostBucketSum_nil_A
 
 /-! ## §3: 3-bucket aggregator and the full bridge
 
-The headline planar identity. Combined with the Nonplanar lift below
+The headline `RoseTree`-level identity. Combined with the Nonplanar lift below
 (via `Quotient.out` + host-Perm invariance lifted through `Nonplanar.mk`),
 this yields the substrate for `Nonplanar.insertionMultiset_add_host`.
 
@@ -374,9 +374,9 @@ We then prove:
     host_B-bucket (eventually multi-grafted into forest host_B). At the
     leaf, three independent `insertion`/`insertionForest` computations
     combine via list concatenation `T' :: F' ++ B`. -/
-private def hostTripleSum (T : Planar α) (F_A host_B : List (Planar α)) :
-    List (Planar α) → List (Planar α) → List (Planar α) →
-      List (Planar α) → Multiset (List (Planar α))
+private def hostTripleSum (T : RoseTree α) (F_A host_B : List (RoseTree α)) :
+    List (RoseTree α) → List (RoseTree α) → List (RoseTree α) →
+      List (RoseTree α) → Multiset (List (RoseTree α))
   | pre_T, pre_FA, pre_B, [] =>
       (insertion T pre_T).bind fun T' =>
         (insertionForest F_A pre_FA).bind fun F' =>
@@ -387,7 +387,7 @@ private def hostTripleSum (T : Planar α) (F_A host_B : List (Planar α)) :
         + hostTripleSum T F_A host_B pre_T pre_FA (pre_B ++ [x]) rest
 
 private theorem hostTripleSum_nil_remaining
-    (T : Planar α) (F_A host_B pre_T pre_FA pre_B : List (Planar α)) :
+    (T : RoseTree α) (F_A host_B pre_T pre_FA pre_B : List (RoseTree α)) :
     hostTripleSum T F_A host_B pre_T pre_FA pre_B [] =
       (insertion T pre_T).bind fun T' =>
         (insertionForest F_A pre_FA).bind fun F' =>
@@ -395,8 +395,8 @@ private theorem hostTripleSum_nil_remaining
   unfold hostTripleSum; rfl
 
 private theorem hostTripleSum_cons_remaining
-    (T : Planar α) (F_A host_B pre_T pre_FA pre_B : List (Planar α))
-    (x : Planar α) (rest : List (Planar α)) :
+    (T : RoseTree α) (F_A host_B pre_T pre_FA pre_B : List (RoseTree α))
+    (x : RoseTree α) (rest : List (RoseTree α)) :
     hostTripleSum T F_A host_B pre_T pre_FA pre_B (x :: rest) =
       hostTripleSum T F_A host_B (pre_T ++ [x]) pre_FA pre_B rest
         + hostTripleSum T F_A host_B pre_T (pre_FA ++ [x]) pre_B rest
@@ -404,7 +404,7 @@ private theorem hostTripleSum_cons_remaining
 
 /-- Helper: `(M ×ˢ N).map (uncurry ++) = M.bind fun a => N.map fun b => a ++ b`. -/
 private theorem product_map_append_eq_bind_map
-    (M N : Multiset (List (Planar α))) :
+    (M N : Multiset (List (RoseTree α))) :
     (M ×ˢ N).map (fun p => p.fst ++ p.snd) =
       M.bind fun a => N.map fun b => a ++ b := by
   show (Multiset.product M N).map (fun p => p.fst ++ p.snd) =
@@ -417,8 +417,8 @@ private theorem product_map_append_eq_bind_map
 
 /-- Uniform decomposition of `insertionForest (T :: F) X` over `[true, false]`-assignments
     of `X`'s elements to the T-bucket or F-bucket. Works for empty X via singleton bind. -/
-theorem insertionForest_cons_assignment (T : Planar α)
-    (F : List (Planar α)) (X : List (Planar α)) :
+theorem insertionForest_cons_assignment (T : RoseTree α)
+    (F : List (RoseTree α)) (X : List (RoseTree α)) :
     insertionForest (T :: F) X =
       (Multiset.ofList (listChoices [true, false] X.length)).bind fun α =>
         (insertion T
@@ -528,8 +528,8 @@ theorem mem_listChoices_length {β : Type*} (xs : List β) :
     F_A-piece of `hostTripleSum T F_A host_B pre_T pre_FA pre_B remaining`.
     By induction on `remaining`. -/
 private theorem hostBucketSum_eq_hostTripleSum_aux
-    (T : Planar α) (F_A host_B : List (Planar α)) :
-    ∀ (pre_A pre_B remaining : List (Planar α)),
+    (T : RoseTree α) (F_A host_B : List (RoseTree α)) :
+    ∀ (pre_A pre_B remaining : List (RoseTree α)),
     hostBucketSum (T :: F_A) host_B pre_A pre_B remaining =
       (Multiset.ofList (listChoices [true, false] pre_A.length)).bind fun α =>
         hostTripleSum T F_A host_B
@@ -591,16 +591,16 @@ private theorem hostBucketSum_eq_hostTripleSum_aux
     -- Reduce the singleton filterMap using `if_pos rfl` and `if_neg`:
     -- For (x, true): filter_true → some x → [x]; filter_false → none → [].
     -- For (x, false): filter_true → none → []; filter_false → some x → [x].
-    have h_true_t : ([(x, true)] : List (Planar α × Bool)).filterMap
+    have h_true_t : ([(x, true)] : List (RoseTree α × Bool)).filterMap
         (fun p => if p.snd then some p.fst else none) = [x] := by
       simp
-    have h_true_f : ([(x, true)] : List (Planar α × Bool)).filterMap
+    have h_true_f : ([(x, true)] : List (RoseTree α × Bool)).filterMap
         (fun p => if p.snd then none else some p.fst) = [] := by
       simp
-    have h_false_t : ([(x, false)] : List (Planar α × Bool)).filterMap
+    have h_false_t : ([(x, false)] : List (RoseTree α × Bool)).filterMap
         (fun p => if p.snd then some p.fst else none) = [] := by
       simp
-    have h_false_f : ([(x, false)] : List (Planar α × Bool)).filterMap
+    have h_false_f : ([(x, false)] : List (RoseTree α × Bool)).filterMap
         (fun p => if p.snd then none else some p.fst) = [x] := by
       simp
     rw [List.filterMap_append, List.filterMap_append, List.filterMap_append, List.filterMap_append,
@@ -653,8 +653,8 @@ private theorem listChoices_succ_cons_bind {γ : Type*}
 /-- **Generalized cross-form**: `hostTripleSum` recasts as a per-guest decision
     of "T-bucket vs not-T-bucket", with the not-T portion handled by `hostBucketSum
     F_A host_B` (which itself is a per-not-T-guest 2-way decision F_A vs host_B). -/
-private theorem hostTripleSum_T_split (T : Planar α) (F_A host_B : List (Planar α)) :
-    ∀ (pre_T pre_FA pre_B remaining : List (Planar α)),
+private theorem hostTripleSum_T_split (T : RoseTree α) (F_A host_B : List (RoseTree α)) :
+    ∀ (pre_T pre_FA pre_B remaining : List (RoseTree α)),
     hostTripleSum T F_A host_B pre_T pre_FA pre_B remaining =
       (Multiset.ofList (listChoices [true, false] remaining.length)).bind fun α =>
         (insertion T
@@ -688,7 +688,7 @@ private theorem hostTripleSum_T_split (T : Planar α) (F_A host_B : List (Planar
     rw [listChoices_succ_cons_bind]
     -- LHS now: 3 sums combined; RHS: bind β: F(true :: β) + F(false :: β)
     -- Combine the LHS binds via ← bind_add (twice), then prove per-β
-    rw [show (∀ (s : Multiset (List Bool)) (f g h : List Bool → Multiset (List (Planar α))),
+    rw [show (∀ (s : Multiset (List Bool)) (f g h : List Bool → Multiset (List (RoseTree α))),
           s.bind f + s.bind g + s.bind h = s.bind fun a => f a + g a + h a) from by
         intros s f g h
         rw [← Multiset.bind_add, ← Multiset.bind_add]]
@@ -756,7 +756,7 @@ private theorem hostTripleSum_T_split (T : Planar α) (F_A host_B : List (Planar
           rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]]
     -- Distribute (HBS₁ + HBS₂).map (T' :: ·) = HBS₁.map (T' :: ·) + HBS₂.map (T' :: ·)
     -- and (insertion T x).bind T' => (X + Y).map ... = (insertion T x).bind T' => X.map ... + (insertion T x).bind T' => Y.map ...
-    rw [show ∀ X Y : Multiset (List (Planar α)),
+    rw [show ∀ X Y : Multiset (List (RoseTree α)),
             (insertion T (pre_T ++ ((gs.zip β).filterMap
                 (fun p => if p.snd then some p.fst else none)))).bind (fun T' =>
               ((X + Y).map (fun L => T' :: L)))
@@ -775,7 +775,7 @@ private theorem hostTripleSum_T_split (T : Planar α) (F_A host_B : List (Planar
     -- and they should match.
     ac_rfl
 
-theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α)) :
+theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (RoseTree α)) :
     hostBucketSum host_A host_B [] [] guests =
       insertionForest (host_A ++ host_B) guests := by
   induction host_A generalizing guests with
@@ -825,7 +825,7 @@ configuration symmetric in (T₁, T₂) at the multiset level. -/
 /-- Helper: `msform L = Multiset.ofList (L.map mk)`. The output level
     of `Nonplanar.insertionMultiset`'s inner map. Cons distributes:
     `msform (T :: L) = mk T ::ₘ msform L`. -/
-private theorem msform_cons (T : Planar α) (L : List (Planar α)) :
+private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
     (Multiset.ofList ((T :: L).map Nonplanar.mk) : Multiset (Nonplanar α)) =
       Nonplanar.mk T ::ₘ Multiset.ofList (L.map Nonplanar.mk) := by
   rw [List.map_cons]
@@ -845,8 +845,8 @@ private theorem msform_cons (T : Planar α) (L : List (Planar α)) :
       (T₁-bucket on LHS ↔ F_A-bucket on RHS, T₂-bucket on LHS ↔ T-bucket on RHS,
       F-bucket unchanged). Combination via commutativity of `+`. -/
 private theorem hostTripleSum_singleton_swap_msform
-    (T₁ T₂ : Planar α) (F : List (Planar α)) :
-    ∀ (pre_T pre_FA pre_B remaining : List (Planar α)),
+    (T₁ T₂ : RoseTree α) (F : List (RoseTree α)) :
+    ∀ (pre_T pre_FA pre_B remaining : List (RoseTree α)),
     (hostTripleSum T₁ [T₂] F pre_T pre_FA pre_B remaining).map
         (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
     (hostTripleSum T₂ [T₁] F pre_FA pre_T pre_B remaining).map
@@ -890,7 +890,7 @@ private theorem hostTripleSum_singleton_swap_msform
     `hostTripleSum_T_split` + `hostBucketSum_eq_insertionForest`), then apply
     `hostTripleSum_singleton_swap_msform`, then bridge back. -/
 private theorem insertionForest_swap_host_msform
-    (T₁ T₂ : Planar α) (F gs : List (Planar α)) :
+    (T₁ T₂ : RoseTree α) (F gs : List (RoseTree α)) :
     (insertionForest (T₁ :: T₂ :: F) gs).map
         (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
     (insertionForest (T₂ :: T₁ :: F) gs).map
@@ -925,7 +925,7 @@ private theorem insertionForest_swap_host_msform
     (and similar Nonplanar-side lifts) to bridge `(A + B).toList.map Q.out`
     with `A.toList.map Q.out ++ B.toList.map Q.out`. -/
 theorem insertionForest_perm_host_msform
-    {host host' : List (Planar α)} (h : host.Perm host') (gs : List (Planar α)) :
+    {host host' : List (RoseTree α)} (h : host.Perm host') (gs : List (RoseTree α)) :
     (insertionForest host gs).map
         (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
     (insertionForest host' gs).map
@@ -943,11 +943,11 @@ theorem insertionForest_perm_host_msform
     -- Combine the two .map's: .map msform ∘ .map (T' :: ·) = .map (msform ∘ (T' :: ·)).
     rw [Multiset.map_map, Multiset.map_map]
     -- Convert (msform ∘ (T' :: ·)) = ((mk T' ::ₘ ·) ∘ msform) via msform_cons.
-    rw [show ((fun L : List (Planar α) =>
+    rw [show ((fun L : List (RoseTree α) =>
               (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) ∘
-                (fun F' : List (Planar α) => T' :: F')) =
+                (fun F' : List (RoseTree α) => T' :: F')) =
             ((fun M : Multiset (Nonplanar α) => Nonplanar.mk T' ::ₘ M) ∘
-              (fun L : List (Planar α) =>
+              (fun L : List (RoseTree α) =>
                 (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α)))) from by
           funext F'
           exact msform_cons T' F']
@@ -1184,12 +1184,12 @@ theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
 /-! ## §7: Guest-multiset invariance at the msform level
 
 `(insertionForest host gs).map msform` depends only on the multiset image
-of `gs.map mk`, not on the planar representatives or order. This combines
-guest-Perm invariance + guest-PlanarEquiv invariance into a single lemma
+of `gs.map mk`, not on the `RoseTree` representatives or order. This combines
+guest-Perm invariance + guest-PermEquiv invariance into a single lemma
 matching the level used by `Nonplanar.insertionMultiset`. -/
 
 /-- General `Perm` lifting: if `(l₁.map f).Perm (l₂.map f)`, there exists
-    a planar list `l_mid` such that `l₁.Perm l_mid` and `l_mid.map f = l₂.map f`
+    a `RoseTree` list `l_mid` such that `l₁.Perm l_mid` and `l_mid.map f = l₂.map f`
     AS LISTS (so `Forall₂ (mk · = mk ·) l_mid l₂` follows). -/
 private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁) :
     ∀ {l₂ l₁ : List α₁}, (l₁.map f).Perm (l₂.map f) →
@@ -1225,12 +1225,12 @@ private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁
     · exact hperm_l₁.trans (hperm_rest.cons a)
     · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
 
-/-- A bucket slice preserves `Forall₂ PlanarEquiv` on guests: equivalent guest
+/-- A bucket slice preserves `Forall₂ PermEquiv` on guests: equivalent guest
     lists yield equivalent slices, for either bucket. -/
-private theorem bucketSlice_preserves_planarEquiv
-    {Ts Ts' : List (Planar α)} (h : List.Forall₂ PlanarEquiv Ts Ts')
+private theorem bucketSlice_preserves_permEquiv
+    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ PermEquiv Ts Ts')
     (assn : List Bool) (t : Bool) :
-    List.Forall₂ PlanarEquiv (bucketSlice Ts assn t) (bucketSlice Ts' assn t) := by
+    List.Forall₂ PermEquiv (bucketSlice Ts assn t) (bucketSlice Ts' assn t) := by
   induction h generalizing assn with
   | nil => simp [bucketSlice]
   | @cons T T' Ts_tail Ts'_tail hd_pe _tail_pe ih =>
@@ -1242,13 +1242,13 @@ private theorem bucketSlice_preserves_planarEquiv
       · rw [if_pos hb, if_pos hb]; exact List.Forall₂.cons hd_pe (ih assn_rest)
       · rw [if_neg hb, if_neg hb]; exact ih assn_rest
 
-/-- **Forest version of guest-PlanarEquiv invariance**: `Forall₂ PlanarEquiv`
+/-- **Forest version of guest-PermEquiv invariance**: `Forall₂ PermEquiv`
     on guests preserves `(insertionForest F Ts).map (List.map mk)`.
-    Mirrors `insertionForest_planarEquiv_host` (Insertion.lean §6) but for
+    Mirrors `insertionForest_permEquiv_host` (Insertion.lean §6) but for
     the guest list. -/
-private theorem insertionForest_planarEquiv_guests
-    (F : List (Planar α)) {Ts Ts' : List (Planar α)}
-    (h : List.Forall₂ PlanarEquiv Ts Ts') :
+private theorem insertionForest_permEquiv_guests
+    (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)}
+    (h : List.Forall₂ PermEquiv Ts Ts') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
     (insertionForest F Ts').map (List.map Nonplanar.mk) := by
   induction F generalizing Ts Ts' with
@@ -1265,15 +1265,15 @@ private theorem insertionForest_planarEquiv_guests
     rw [hlen]
     rw [Multiset.map_bind, Multiset.map_bind]
     refine Multiset.bind_congr fun assn _ => ?_
-    have h_ft : List.Forall₂ PlanarEquiv
+    have h_ft : List.Forall₂ PermEquiv
         ((Ts.zip assn).filterMap (fun p => if p.snd then some p.fst else none))
         ((Ts'.zip assn).filterMap (fun p => if p.snd then some p.fst else none)) :=
-      bucketSlice_preserves_planarEquiv h assn true
-    have h_ff : List.Forall₂ PlanarEquiv
+      bucketSlice_preserves_permEquiv h assn true
+    have h_ff : List.Forall₂ PermEquiv
         ((Ts.zip assn).filterMap (fun p => if p.snd then none else some p.fst))
         ((Ts'.zip assn).filterMap (fun p => if p.snd then none else some p.fst)) := by
       rw [← bucketSlice_bool_false Ts assn, ← bucketSlice_bool_false Ts' assn]
-      exact bucketSlice_preserves_planarEquiv h assn false
+      exact bucketSlice_preserves_permEquiv h assn false
     rw [Multiset.map_bind, Multiset.map_bind]
     simp only [Multiset.map_map, Function.comp, List.map_cons]
     let f_T : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
@@ -1287,7 +1287,7 @@ private theorem insertionForest_planarEquiv_guests
     change (insertion T_h _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
            (insertion T_h _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
     rw [← Multiset.bind_map, ← Multiset.bind_map]
-    rw [insertion_planarEquiv_guests T_h h_ft]
+    rw [insertion_permEquiv_guests T_h h_ft]
     refine Multiset.bind_congr fun mk_T_ins _ => ?_
     show (insertionForest F_h ((Ts.zip assn).filterMap
               (fun p => if p.snd then none else some p.fst))).map
@@ -1295,19 +1295,19 @@ private theorem insertionForest_planarEquiv_guests
          (insertionForest F_h ((Ts'.zip assn).filterMap
               (fun p => if p.snd then none else some p.fst))).map
             (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
-    rw [show (fun F_ins : List (Planar α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
+    rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
             ((fun L : List (Nonplanar α) => mk_T_ins :: L) ∘ List.map Nonplanar.mk) from rfl]
     rw [← Multiset.map_map, ← Multiset.map_map]
     rw [ih_F h_ff]
 
 /-- **Combined guest invariance** at the multiset-of-multiset level. -/
 theorem insertionForest_msform_invariance_guests
-    (host : List (Planar α)) {gs1 gs2 : List (Planar α)}
+    (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
     (h : (gs1.map Nonplanar.mk).Perm (gs2.map Nonplanar.mk)) :
     (insertionForest host gs1).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
     (insertionForest host gs2).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
   obtain ⟨gs_mid, hperm_planar, hmap_eq⟩ := perm_lift_through_map Nonplanar.mk h
-  have h_forall : List.Forall₂ PlanarEquiv gs_mid gs2 := by
+  have h_forall : List.Forall₂ PermEquiv gs_mid gs2 := by
     have hlen : gs_mid.length = gs2.length := by
       have := congrArg List.length hmap_eq
       simpa using this
@@ -1334,12 +1334,12 @@ theorem insertionForest_msform_invariance_guests
     insertionForest_perm_guests host hperm_planar
   have step2 : (insertionForest host gs_mid).map (List.map Nonplanar.mk) =
                (insertionForest host gs2).map (List.map Nonplanar.mk) :=
-    insertionForest_planarEquiv_guests host h_forall
+    insertionForest_permEquiv_guests host h_forall
   have h_combined : (insertionForest host gs1).map (List.map Nonplanar.mk) =
                     (insertionForest host gs2).map (List.map Nonplanar.mk) :=
     step1.trans step2
-  have hwrap : ∀ (s : Multiset (List (Planar α))),
-      s.map (fun L : List (Planar α) =>
+  have hwrap : ∀ (s : Multiset (List (RoseTree α))),
+      s.map (fun L : List (RoseTree α) =>
         (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) =
       (s.map (List.map Nonplanar.mk)).map (fun L : List (Nonplanar α) =>
         (Multiset.ofList L : Multiset (Nonplanar α))) := by
@@ -1350,6 +1350,4 @@ theorem insertionForest_msform_invariance_guests
 
 end Pathed
 
-end Planar
-
-end RootedTree
+end RoseTree

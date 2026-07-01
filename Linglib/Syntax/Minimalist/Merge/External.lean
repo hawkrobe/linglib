@@ -22,7 +22,7 @@ distribute the prim/cut split of each factor, and evaluate the 4 cross-terms via
 `mergePost_basis_tensor`. Only the `prim × prim` cross-term survives; the other
 three vanish because no proper cut extracts a whole tree as its crown
 (`cutSummandsN_crown_ne_singleton`) and vertex conservation
-(`cutSummandsN_weight`) forbids two crowns from reassembling `{S, S'}`.
+(`cutSummandsN_numNodes`) forbids two crowns from reassembling `{S, S'}`.
 
 **Lemma 1.4.1 with residual workspace F̂** (`mergeOp_factor_out_singleton`,
 `mergeOp_pair_residual`, MCB "Case 1"). Under `CutAvoidingForestN ({S, S'}) F̂`
@@ -65,7 +65,7 @@ open RootedTree RootedTree.ConnesKreimer
     distributing gives 4 cross-terms. Only `prim × prim` survives
     `mergePost`; the three sum-bearing terms vanish via
     `cutSummandsN_crown_ne_singleton` (no proper cut's crown is `{S}` or `{S'}`)
-    and `cutSummandsN_weight` (two proper crowns under-count `{S, S'}`'s
+    and `cutSummandsN_numNodes` (two proper crowns under-count `{S, S'}`'s
     vertices). -/
 theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
     [DecidableEq (Nonplanar α)] (lbl : α) (S S' : Nonplanar α) :
@@ -162,16 +162,16 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
             * (of' (R := R) p'.1 ⊗ₜ[R] ofTree p'.2)) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor, if_neg]
     intro hcontra
-    have hwS := cutSummandsN_weight S p hp
-    have hwS' := cutSummandsN_weight S' p' hp'
-    have hp2 := p.2.weight_pos
-    have hp2' := p'.2.weight_pos
-    have hfw : ((p.1 + p'.1).map Nonplanar.weight).sum
-             = (({S, S'} : Forest (Nonplanar α)).map Nonplanar.weight).sum := by
+    have hwS := cutSummandsN_numNodes S p hp
+    have hwS' := cutSummandsN_numNodes S' p' hp'
+    have hp2 := p.2.numNodes_pos
+    have hp2' := p'.2.numNodes_pos
+    have hfw : ((p.1 + p'.1).map Nonplanar.numNodes).sum
+             = (({S, S'} : Forest (Nonplanar α)).map Nonplanar.numNodes).sum := by
       rw [hcontra]
     rw [Multiset.map_add, Multiset.sum_add,
-        show (({S, S'} : Forest (Nonplanar α)).map Nonplanar.weight).sum
-            = S.weight + S'.weight from by
+        show (({S, S'} : Forest (Nonplanar α)).map Nonplanar.numNodes).sum
+            = S.numNodes + S'.numNodes from by
           simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
                      Multiset.map_singleton, Multiset.sum_singleton]] at hfw
     omega

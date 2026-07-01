@@ -124,18 +124,18 @@ def FootingCand.toTree : FootingCand → Tree
 
 /-- **Parse-σ** ([becker-etal-2025] (1)): one mark per unparsed (stray) σ — a σ-leaf under ω. -/
 def cParse : Constraint FootingCand := fun c => match c.toTree with
-  | .node _ cs => (cs.filter (fun d => d.label.isSyl)).length
+  | .node _ cs => (cs.filter (fun d => d.value.isSyl)).length
 
 /-- **Iamb** ([becker-etal-2025] (2)): one mark per foot that is not right-headed (head σ ≠ final). -/
 def cIamb : Constraint FootingCand := fun c => match c.toTree with
   | .node _ cs => (cs.filter (fun d => match d with
-      | .node a ds => a.isFt && !((ds.getLast?.map (·.label.isHead)).getD false))).length
+      | .node a ds => a.isFt && !((ds.getLast?.map (·.value.isHead)).getD false))).length
 
 /-- **`*V:]φ`** ([becker-etal-2025] (3)): one mark for a long vowel in the **phrase**-final σ (for a
     one-word phrase, the word-final σ). -/
 def cStarV : Constraint FootingCand := fun c =>
   match (Grid.terminals c.toTree).getLast? with
-  | some leaf => if decide (leaf.label.weight? = some 2) then 1 else 0
+  | some leaf => if decide (leaf.value.weight? = some 2) then 1 else 0
   | none      => 0
 
 def candidates : List FootingCand := [.twoIambs, .iambStrays, .iambTrochee]

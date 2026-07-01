@@ -66,10 +66,8 @@ import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Combinatorics.RootedTree.DecEq
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
-import Linglib.Core.Combinatorics.RootedTree.Planar
-import Linglib.Core.Combinatorics.RootedTree.PlanarCut
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.Rebinarize
-import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
@@ -119,9 +117,9 @@ import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
-import Linglib.Core.Data.Tree.Basic
-import Linglib.Core.Data.Tree.Get
-import Linglib.Core.Data.Tree.Traversable
+import Linglib.Core.Data.RoseTree.Basic
+import Linglib.Core.Data.RoseTree.Get
+import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra

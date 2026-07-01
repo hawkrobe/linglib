@@ -3,12 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Combinatorics.RootedTree.Planar
+import Linglib.Core.Data.RoseTree.Basic
 
 set_option autoImplicit false
 
 /-!
-# Path-based vertex addressing for `Planar α`
+# Path-based vertex addressing for `RoseTree α`
 [foissy-typed-decorated-rooted-trees-2018]
 [chapoton-livernet-2001]
 
@@ -19,9 +19,9 @@ child indices from the root. The non-dependent representation lets
 `vertices` outputs without the `have h := List.map_append; rw [h]`
 workarounds that the dependent-typed version forced.
 
-Lives under namespace `RootedTree.Planar.Pathed` to coexist with the old
-`Vertex.lean` (also `RootedTree.Planar`-scoped) during the migration. Once
-consumers move over, the `Pathed` sub-namespace will be hoisted up.
+Lives under namespace `RoseTree.Pathed`; the `Pathed` sub-namespace keeps the
+path-addressing API from colliding with the core `RoseTree` surface and will be
+hoisted up once the old dependent `Vertex` machinery is retired.
 
 ## File scope
 
@@ -37,9 +37,7 @@ that need it; no global `Vertex` def is needed.
 `[UPSTREAM]` candidate. Sorry-free, no `noncomputable`.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace RoseTree
 
 namespace Pathed
 
@@ -53,18 +51,18 @@ abbrev Path : Type := List ℕ
 /-- `IsValidPath p T` means `p` addresses an existing vertex in `T`.
     Recurses on the path: empty path is always valid; `i :: rest` requires
     `i` to be in bounds and `rest` to be valid in the i-th child. -/
-def IsValidPath : Path → Planar α → Prop
+def IsValidPath : Path → RoseTree α → Prop
   | [],        _           => True
   | i :: rest, .node _ cs  => ∃ h : i < cs.length, IsValidPath rest cs[i]
 
-@[simp] theorem isValidPath_nil (T : Planar α) : IsValidPath ([] : Path) T := trivial
+@[simp] theorem isValidPath_nil (T : RoseTree α) : IsValidPath ([] : Path) T := trivial
 
-@[simp] theorem isValidPath_cons (i : ℕ) (rest : Path) (a : α) (cs : List (Planar α)) :
-    IsValidPath (i :: rest) (Planar.node a cs) ↔
+@[simp] theorem isValidPath_cons (i : ℕ) (rest : Path) (a : α) (cs : List (RoseTree α)) :
+    IsValidPath (i :: rest) (RoseTree.node a cs) ↔
       ∃ h : i < cs.length, IsValidPath rest cs[i] := Iff.rfl
 
 /-- Decidability of `IsValidPath`, by recursion on the path. -/
-def decValidPath : ∀ (p : Path) (T : Planar α), Decidable (IsValidPath p T)
+def decValidPath : ∀ (p : Path) (T : RoseTree α), Decidable (IsValidPath p T)
   | [],        _          => .isTrue trivial
   | i :: rest, .node _ cs =>
     if h : i < cs.length then
@@ -74,7 +72,7 @@ def decValidPath : ∀ (p : Path) (T : Planar α), Decidable (IsValidPath p T)
     else
       .isFalse (by rintro ⟨h', _⟩; exact h h')
 
-instance (p : Path) (T : Planar α) : Decidable (IsValidPath p T) :=
+instance (p : Path) (T : RoseTree α) : Decidable (IsValidPath p T) :=
   decValidPath p T
 
 /-! ## §2: Vertex enumeration
@@ -89,30 +87,30 @@ old `Vertex.lean` — exchange of the dependent inductive for a path list. -/
 
 mutual
 /-- All valid paths into `T` in root-first order. -/
-def vertices : Planar α → List Path
+def vertices : RoseTree α → List Path
   | .node _ cs => [] :: verticesAux 0 cs
 /-- Auxiliary: paths into a children list, with a starting index. The
     paths returned are already prefixed with the corresponding child
     index. -/
-def verticesAux : ℕ → List (Planar α) → List Path
+def verticesAux : ℕ → List (RoseTree α) → List Path
   | _, []      => []
   | i, c :: cs =>
       (vertices c).map (i :: ·) ++ verticesAux (i + 1) cs
 end
 
-@[simp] theorem vertices_node (a : α) (cs : List (Planar α)) :
-    vertices (Planar.node a cs) = [] :: verticesAux 0 cs := rfl
+@[simp] theorem vertices_node (a : α) (cs : List (RoseTree α)) :
+    vertices (RoseTree.node a cs) = [] :: verticesAux 0 cs := rfl
 
 @[simp] theorem verticesAux_nil (i : ℕ) :
-    verticesAux i ([] : List (Planar α)) = [] := rfl
+    verticesAux i ([] : List (RoseTree α)) = [] := rfl
 
-@[simp] theorem verticesAux_cons (i : ℕ) (c : Planar α) (cs : List (Planar α)) :
+@[simp] theorem verticesAux_cons (i : ℕ) (c : RoseTree α) (cs : List (RoseTree α)) :
     verticesAux i (c :: cs) =
       (vertices c).map (i :: ·) ++ verticesAux (i + 1) cs := rfl
 
 /-- `verticesAux` distributes over list `++`. The right summand's start
     index shifts by the left list's length. -/
-theorem verticesAux_append (i : ℕ) (xs ys : List (Planar α)) :
+theorem verticesAux_append (i : ℕ) (xs ys : List (RoseTree α)) :
     verticesAux i (xs ++ ys) =
       verticesAux i xs ++ verticesAux (i + xs.length) ys := by
   induction xs generalizing i with
@@ -125,29 +123,24 @@ theorem verticesAux_append (i : ℕ) (xs ys : List (Planar α)) :
 
 /-! ### Length theorem
 
-The total number of enumerated paths equals the tree's weight (total
-vertex count). Mirrors `length_vertices_eq_weight` in the dependent-typed
-substrate. -/
+The total number of enumerated paths equals the tree's node count
+(`numNodes`). Mirrors the dependent-typed substrate's `length_vertices`
+result, now stated directly against `numNodes` — no `weightList` aux-twin
+is needed, the child sum is `(cs.map numNodes).sum`. -/
 
 mutual
-theorem length_vertices_eq_weight : ∀ (T : Planar α),
-    (vertices T).length = T.weight
-  | .node a cs => by
-    rw [vertices_node]
-    simp only [List.length_cons]
-    rw [length_verticesAux_eq_weightList 0 cs]
-    show weightList cs + 1 = (Planar.node a cs).weight
-    show weightList cs + 1 = 1 + weightList cs
+theorem length_vertices_eq_numNodes : ∀ (T : RoseTree α),
+    (vertices T).length = T.numNodes
+  | .node _ cs => by
+    rw [vertices_node, List.length_cons, length_verticesAux 0 cs, numNodes_node]
     omega
-theorem length_verticesAux_eq_weightList : ∀ (i : ℕ) (cs : List (Planar α)),
-    (verticesAux i cs).length = weightList cs
-  | _, []      => rfl
+theorem length_verticesAux : ∀ (i : ℕ) (cs : List (RoseTree α)),
+    (verticesAux i cs).length = (cs.map numNodes).sum
+  | _, []      => by simp
   | i, c :: cs => by
-    rw [verticesAux_cons]
-    simp only [List.length_append, List.length_map]
-    rw [length_vertices_eq_weight c, length_verticesAux_eq_weightList (i + 1) cs]
-    show c.weight + weightList cs = weightList (c :: cs)
-    rfl
+    rw [verticesAux_cons, List.length_append, List.length_map,
+        length_vertices_eq_numNodes c, length_verticesAux (i + 1) cs]
+    simp
 end
 
 /-! ### Validity sanity check
@@ -157,7 +150,7 @@ a mutual recursion through an aux that decomposes paths in
 `verticesAux i₀ cs` as `(i₀ + k) :: rest` with `rest ∈ vertices cs[k]`. -/
 
 mutual
-theorem forall_isValidPath : ∀ (T : Planar α) {p : Path},
+theorem forall_isValidPath : ∀ (T : RoseTree α) {p : Path},
     p ∈ vertices T → IsValidPath p T
   | .node _ cs, p, hp => by
     rw [vertices_node, List.mem_cons] at hp
@@ -167,7 +160,7 @@ theorem forall_isValidPath : ∀ (T : Planar α) {p : Path},
       have : p = k :: rest := by simpa [Nat.zero_add] using heq
       subst this
       exact ⟨hk, hrest⟩
-theorem forall_isValidPath_aux : ∀ (cs : List (Planar α)) (i₀ : ℕ) {p : Path},
+theorem forall_isValidPath_aux : ∀ (cs : List (RoseTree α)) (i₀ : ℕ) {p : Path},
     p ∈ verticesAux i₀ cs →
     ∃ (k : ℕ) (rest : Path),
       p = (i₀ + k) :: rest ∧ ∃ h : k < cs.length, IsValidPath rest cs[k]
@@ -191,6 +184,4 @@ end
 
 end Pathed
 
-end Planar
-
-end RootedTree
+end RoseTree

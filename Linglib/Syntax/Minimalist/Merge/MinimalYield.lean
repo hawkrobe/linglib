@@ -129,7 +129,7 @@ theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : Nonplanar (α ⊕ β
 /-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ`, `σᶜ` by one
     (Δᶜ counting): the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
 theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : Nonplanar (α ⊕ β)}
-    (hβ : β_t.traceLeafCount < β_t.weight) (hQ : Q.traceLeafCount < Q.weight)
+    (hβ : β_t.traceLeafCount < β_t.numNodes) (hQ : Q.traceLeafCount < Q.numNodes)
     (h : T.accCountC = β_t.accCountC + Q.accCountC + 1) :
     Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
         = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
@@ -163,7 +163,7 @@ theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
     (cutSummandsCN_crown_traceLeafCount_lt_weight τ _ p hp β_t
       (by rw [hcard]; exact Multiset.mem_singleton_self β_t))
     (Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_rootLabel τ _ p hp).trans (by rw [Nonplanar.rootLabel_node])))
+      ((cutSummandsCN_trunk_rootValue τ _ p hp).trans (by rw [Nonplanar.rootValue_node])))
     (cutSummandsCN_accCountC_single τ _ a₀ F₀ rfl p hp β_t hcard)
 
 /-! ### Sideward Merge -/

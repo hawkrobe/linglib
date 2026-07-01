@@ -160,7 +160,7 @@ both proved sorry-free below. -/
 Three combinatorial bridges that substrate 1 (`ckIso_circ_intertwine_insertion`)
 will use:
 
-1. **Planar bridge**: `Planar.Pathed.insertion T [s] = Planar.insertSum T s`.
+1. **`RoseTree`-level bridge**: `RoseTree.Pathed.insertion T [s] = RoseTree.insertSum T s`.
    Foissy's multi-graft on single-host-single-guest reduces to the simpler
    `insertSum`. Uses `multiGraft_singleton` + `listChoices xs 1 = xs.map [·]`
    + `insertSum_eq_coe_map_insertAt`.
@@ -179,7 +179,7 @@ Each is a standalone combinatorial lemma; all three are proved below. -/
 
 /-- Helper: `listChoices V 1 = V.map (fun v => [v])`. By induction on `V`. -/
 private theorem listChoices_one {β : Type*} (V : List β) :
-    Planar.Pathed.listChoices V 1 = V.map (fun v => [v]) := by
+    RoseTree.Pathed.listChoices V 1 = V.map (fun v => [v]) := by
   induction V with
   | nil => rfl
   | cons head tail _ =>
@@ -188,14 +188,15 @@ private theorem listChoices_one {β : Type*} (V : List β) :
         [head] :: tail.map (fun v => [v])
     congr 1
 
-/-- **Sub-substrate 1.1**: Planar Foissy multi-graft on single guest
+omit [DecidableEq (Nonplanar α)] in
+/-- **Sub-substrate 1.1**: `RoseTree`-level Foissy multi-graft on single guest
     reduces to `insertSum`. Uses `listChoices V 1 = V.map [·]`,
     `multiGraft_singleton`, and `insertSum_eq_coe_map_insertAt`. -/
-private theorem planar_insertion_singleton_guest_eq_insertSum
-    (T s : Planar α) :
-    Planar.Pathed.insertion T [s] = Planar.insertSum T s := by
-  rw [Planar.Pathed.insertion_def]
-  rw [Planar.insertSum_eq_coe_map_insertAt]
+private theorem tree_insertion_singleton_guest_eq_insertSum
+    (T s : RoseTree α) :
+    RoseTree.Pathed.insertion T [s] = RoseTree.insertSum T s := by
+  rw [RoseTree.Pathed.insertion_def]
+  rw [RoseTree.insertSum_eq_coe_map_insertAt]
   simp only [List.length_singleton]
   rw [listChoices_one, List.map_map]
   -- Now: Multiset.ofList ((vertices T).map (fun v => multiGraft T ([v].zip [s])))
@@ -204,25 +205,26 @@ private theorem planar_insertion_singleton_guest_eq_insertSum
   congr 1
   apply List.map_congr_left
   intro v _hv
-  show Planar.Pathed.multiGraft T [(v, s)] = Planar.Pathed.insertAt v s T
-  exact Planar.Pathed.multiGraft_singleton T v s
+  show RoseTree.Pathed.multiGraft T [(v, s)] = RoseTree.Pathed.insertAt v s T
+  exact RoseTree.Pathed.multiGraft_singleton T v s
 
+omit [DecidableEq (Nonplanar α)] in
 /-- Helper: `insertionForest [T] [s'] = (insertion T [s']).map (fun T' => [T'])`.
     Reduces the bind over `[true, false]` assignments: `[true]` contributes
     `(insertion T [s']).map (fun T' => [T'])`, `[false]` contributes `0`
     (because `insertionForest [] [s'] = 0`). -/
-private theorem insertionForest_singleton_singleton (T s' : Planar α) :
-    Planar.Pathed.insertionForest [T] [s'] =
-      (Planar.Pathed.insertion T [s']).map (fun T' => [T']) := by
-  rw [Planar.Pathed.insertionForest_cons_cons]
+private theorem insertionForest_singleton_singleton (T s' : RoseTree α) :
+    RoseTree.Pathed.insertionForest [T] [s'] =
+      (RoseTree.Pathed.insertion T [s']).map (fun T' => [T']) := by
+  rw [RoseTree.Pathed.insertionForest_cons_cons]
   -- listChoices [true, false] 1 = [[true], [false]] by computation.
   show ((Multiset.ofList [[true], [false]]).bind fun assignment =>
-        (Planar.Pathed.insertion T
+        (RoseTree.Pathed.insertion T
           (([s'].zip assignment).filterMap fun p => if p.snd then some p.fst else none)).bind
-          fun T' => (Planar.Pathed.insertionForest []
+          fun T' => (RoseTree.Pathed.insertionForest []
               (([s'].zip assignment).filterMap fun p => if p.snd then none else some p.fst)).map
             fun F' => T' :: F') =
-      (Planar.Pathed.insertion T [s']).map (fun T' => [T'])
+      (RoseTree.Pathed.insertion T [s']).map (fun T' => [T'])
   rw [show (Multiset.ofList [[true], [false]] : Multiset (List Bool)) =
         ([true] ::ₘ {[false]}) from rfl]
   rw [Multiset.cons_bind, Multiset.singleton_bind]
@@ -237,16 +239,17 @@ private theorem insertionForest_singleton_singleton (T s' : Planar α) :
   --   filterMap (¬snd → some fst) = [s']
   --   (insertion T []).bind (fun T' => (insertionForest [] [s']).map (fun F' => T' :: F'))
   --   = 0  (since insertionForest [] [s'] = 0).
-  show (Planar.Pathed.insertion T [s']).bind
-        (fun T' => (Planar.Pathed.insertionForest [] []).map (fun F' => T' :: F'))
-      + (Planar.Pathed.insertion T []).bind
-        (fun T' => (Planar.Pathed.insertionForest [] [s']).map (fun F' => T' :: F')) =
-      (Planar.Pathed.insertion T [s']).map (fun T' => [T'])
-  rw [Planar.Pathed.insertionForest_nil_nil,
-      Planar.Pathed.insertionForest_empty_host_nonempty_guests]
+  show (RoseTree.Pathed.insertion T [s']).bind
+        (fun T' => (RoseTree.Pathed.insertionForest [] []).map (fun F' => T' :: F'))
+      + (RoseTree.Pathed.insertion T []).bind
+        (fun T' => (RoseTree.Pathed.insertionForest [] [s']).map (fun F' => T' :: F')) =
+      (RoseTree.Pathed.insertion T [s']).map (fun T' => [T'])
+  rw [RoseTree.Pathed.insertionForest_nil_nil,
+      RoseTree.Pathed.insertionForest_empty_host_nonempty_guests]
   simp only [Multiset.map_singleton, Multiset.bind_singleton, Multiset.map_zero,
              Multiset.bind_zero, add_zero]
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **Sub-substrate 1.2**: Nonplanar multi-graft on singleton host/guest
     reduces to the singletonization of `insertSum`. Descends 1.1 through
     `Quotient.mk`. -/
@@ -258,15 +261,15 @@ private theorem nonplanar_insertionMultiset_singletons (t s : Nonplanar α) :
   unfold Nonplanar.insertionMultiset
   simp only [Multiset.toList_singleton]
   -- After simp: List.map Quotient.out [t] = [Quotient.out t] = [t.out]; same for s.
-  show (Planar.Pathed.insertionForest [Quotient.out t] [Quotient.out s]).map
+  show (RoseTree.Pathed.insertionForest [Quotient.out t] [Quotient.out s]).map
         (fun L => (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) =
       (Nonplanar.insertSum t s).map fun r => ({r} : Multiset (Nonplanar α))
   -- Step 2: Reduce insertionForest [t.out] [s.out] via the helper.
   rw [insertionForest_singleton_singleton, Multiset.map_map]
   -- Step 3: Sub-substrate 1.1 reduces insertion to insertSum.
-  rw [planar_insertion_singleton_guest_eq_insertSum]
+  rw [tree_insertion_singleton_guest_eq_insertSum]
   -- Goal:
-  --   (Planar.insertSum t.out s.out).map
+  --   (RoseTree.insertSum t.out s.out).map
   --       (Function.comp (fun L => Multiset.ofList (L.map mk)) (fun T' => [T']))
   --   = (Nonplanar.insertSum t s).map (fun r => {r})
   -- Step 4: Reduce insertSum t s via Quotient.out_eq + Nonplanar.mk_insertSum.
@@ -283,30 +286,37 @@ are definitionally equal). The forwarded `AddCommMonoid` and `Module ℤ`
 instances make `op`/`unop` ℤ-linear; the lemmas below let `simp` cleanly
 push `op`/`unop` through `+`, `0`, and `•`. -/
 
+omit [DecidableEq (Nonplanar α)] in
 @[local simp]
 private theorem op_zero :
     GrossmanLarson.op (0 : ConnesKreimer ℤ (Nonplanar α)) = (0 : GrossmanLarson ℤ α) := rfl
 
+omit [DecidableEq (Nonplanar α)] in
 @[local simp]
 private theorem op_add (x y : ConnesKreimer ℤ (Nonplanar α)) :
     GrossmanLarson.op (x + y) = GrossmanLarson.op x + GrossmanLarson.op y := rfl
 
+omit [DecidableEq (Nonplanar α)] in
 @[local simp]
 private theorem op_smul (r : ℤ) (x : ConnesKreimer ℤ (Nonplanar α)) :
     GrossmanLarson.op (r • x) = r • GrossmanLarson.op x := rfl
 
+omit [DecidableEq (Nonplanar α)] in
 @[local simp]
 private theorem unop_zero :
     GrossmanLarson.unop (0 : GrossmanLarson ℤ α) = (0 : ConnesKreimer ℤ (Nonplanar α)) := rfl
 
+omit [DecidableEq (Nonplanar α)] in
 @[local simp]
 private theorem unop_add (x y : GrossmanLarson ℤ α) :
     GrossmanLarson.unop (x + y) = GrossmanLarson.unop x + GrossmanLarson.unop y := rfl
 
+omit [DecidableEq (Nonplanar α)] in
 @[local simp]
 private theorem unop_smul (r : ℤ) (x : GrossmanLarson ℤ α) :
     GrossmanLarson.unop (r • x) = r • GrossmanLarson.unop x := rfl
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **Basis form of sub-substrate 1.3**: GL Leibniz at basis level.
 
     For `F_A, F_B : Forest, v : Nonplanar α`:
@@ -366,6 +376,7 @@ private theorem GL_insertion_leibniz_basis_form
   -- unop (of' F_X) = of' F_X by definitional equality.
   rfl
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **Helper for 1.3**: Leibniz rule with right argument forced to be a
     Forest-basis element. Bilinear-in-A extension of the basis form via
     `Finsupp.induction_linear` on A (following `insertion_mul_distrib_gen`'s
@@ -401,7 +412,7 @@ private theorem GL_insertion_leibniz_basis_right
           GrossmanLarson.unop (GrossmanLarson.insertion
             (GrossmanLarson.op (ConnesKreimer.of' F_B : ConnesKreimer ℤ _))
             (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))))
-    simp only [zero_mul, mul_zero, op_zero, unop_zero,
+    simp only [zero_mul, op_zero, unop_zero,
                (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_zero,
                LinearMap.zero_apply, add_zero]
   · -- additive
@@ -467,10 +478,11 @@ private theorem GL_insertion_leibniz_basis_right
     rw [GL_insertion_leibniz_basis_form, op_smul,
         (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_smul,
         LinearMap.smul_apply]
-    simp only [smul_add, unop_smul, smul_mul_assoc, mul_smul_comm, op_smul]
+    simp only [smul_add, unop_smul, smul_mul_assoc, op_smul]
     rw [add_comm]
     rfl
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **Sub-substrate 1.3**: GL Leibniz rule for `insertion` w.r.t. CK product
     on first argument (single guest). Bilinear-in-B extension of
     `GL_insertion_leibniz_basis_right` (which already handles general A). -/
@@ -499,7 +511,7 @@ private theorem GL_insertion_leibniz_left_singleton_guest
           (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))))
     simp only [mul_zero, op_zero,
                (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_zero,
-               LinearMap.zero_apply, unop_zero, add_zero, zero_add]
+               LinearMap.zero_apply, unop_zero, add_zero]
   · -- B = B₁ + B₂
     intro B₁ B₂ ih₁ ih₂
     let B₁' : ConnesKreimer ℤ (Nonplanar α) := B₁
@@ -522,7 +534,7 @@ private theorem GL_insertion_leibniz_left_singleton_guest
     simp only [mul_add, op_add,
                (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_add,
                LinearMap.add_apply, unop_add]
-    simp only [mul_add, ← op_add]
+    simp only [← op_add]
     congr 1
     ring
   · -- B = single F_B r
@@ -550,7 +562,7 @@ private theorem GL_insertion_leibniz_left_singleton_guest
         LinearMap.smul_apply, GL_insertion_leibniz_basis_right, op_smul,
         (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_smul,
         LinearMap.smul_apply]
-    simp only [smul_add, unop_smul, smul_mul_assoc, mul_smul_comm, op_smul]
+    simp only [smul_add, unop_smul, mul_smul_comm, op_smul]
 
 /-- **Helper**: `ckIso (ι (ofMultiset m)) = sum over m of of' {r}`. Used in
     the `ι w` case of `ckIso_circ_intertwine_basis_v`. -/
@@ -711,7 +723,7 @@ private theorem ckIso_circ_intertwine_basis_v
         rw [hw]
         rw [(SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_smul r _]
         rw [oudomGuinCirc_eq_ofConv]
-        simp only [_root_.map_smul, WithConv.ofConv_smul, LinearMap.smul_apply]
+        simp only [_root_.map_smul, WithConv.ofConv_smul]
         rw [← oudomGuinCirc_eq_ofConv]
         exact ckIsoSymmetricAlgebra.toLinearEquiv.map_smul r _
       have rhs_reduce : GrossmanLarson.unop ((GrossmanLarson.insertion
@@ -724,8 +736,7 @@ private theorem ckIso_circ_intertwine_basis_v
                     (InsertionAlgebra.ofTree s)))))
                 (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) := by
         rw [hw]
-        simp only [_root_.map_smul, op_smul, unop_smul, LinearMap.smul_apply,
-                   LinearMap.map_smul]
+        simp only [_root_.map_smul, op_smul, unop_smul, LinearMap.smul_apply]
       rw [lhs_reduce, rhs_reduce]
       -- Reduce to basis-basis case.
       congr 1
@@ -922,6 +933,7 @@ splitting lemma (Prop 2.7(ii)). It is the route for the per-tprod
 `m+1` induction of `gl_product_eq_oudomGuinStar_tprod`, using the
 singleton case `Nonplanar.insertionMultiset_singleton_assoc`. -/
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **Helper for substrate 2**: iterated single-guest insertion
     `ins (ins F (of' C)) (op of'{v})` splits into a "single-shot"
     `ins F (of' (C + {v}))` term plus a sum over `Y ∈ NIM C {v}`
@@ -1138,12 +1150,13 @@ private theorem sum_bind_singleton {γ δ : Type*} [AddCommMonoid δ]
     (s.bind fun x => ({f x} : Multiset δ)).sum = (s.map f).sum := by
   rw [Multiset.bind_singleton]
 
-/-- Helper: `mk`-image of the t-bucket of a List (Planar α). -/
-private theorem zip_filter_t_map_mk (L : List (Planar α)) (m : List Bool) :
+omit [DecidableEq (Nonplanar α)] in
+/-- Helper: `mk`-image of the t-bucket of a List (RoseTree α). -/
+private theorem zip_filter_t_map_mk (L : List (RoseTree α)) (m : List Bool) :
     ((L.map Nonplanar.mk).zip m).filterMap
         (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none) =
       ((L.zip m).filterMap
-        (fun p : Planar α × Bool => if p.snd then some p.fst else none)).map
+        (fun p : RoseTree α × Bool => if p.snd then some p.fst else none)).map
           Nonplanar.mk := by
   induction L generalizing m with
   | nil => rfl
@@ -1158,12 +1171,13 @@ private theorem zip_filter_t_map_mk (L : List (Planar α)) (m : List Bool) :
         rw [ih m]; rfl
       | false => exact ih m
 
-/-- Helper: `mk`-image of the f-bucket of a List (Planar α). -/
-private theorem zip_filter_f_map_mk (L : List (Planar α)) (m : List Bool) :
+omit [DecidableEq (Nonplanar α)] in
+/-- Helper: `mk`-image of the f-bucket of a List (RoseTree α). -/
+private theorem zip_filter_f_map_mk (L : List (RoseTree α)) (m : List Bool) :
     ((L.map Nonplanar.mk).zip m).filterMap
         (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst) =
       ((L.zip m).filterMap
-        (fun p : Planar α × Bool => if p.snd then none else some p.fst)).map
+        (fun p : RoseTree α × Bool => if p.snd then none else some p.fst)).map
           Nonplanar.mk := by
   induction L generalizing m with
   | nil => rfl
@@ -1178,10 +1192,11 @@ private theorem zip_filter_f_map_mk (L : List (Planar α)) (m : List Bool) :
           (x :: ((L.zip m).filterMap _)).map Nonplanar.mk
         rw [ih m]; rfl
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **T2 reindexing key step**: the multiset-level reindexing that
     expresses `F * insertion (op (of' B)) (op of'{v})` (expanded via
     `mul_of'_sum_form` over `NIM B {v}`) as a sum over `B.powerset`.
-    This is the planar bucket-split lemma after descent through
+    This is the `RoseTree`-level bucket-split lemma after descent through
     `listChoices_bridge_powerset_paired`.
 
     Stated abstractly to be reusable: for any consumer `g`, the LHS sum
@@ -1200,22 +1215,22 @@ private theorem GL_T2_reindexing_key
         ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
             (fun Y' => g C₁ Y')).sum).sum := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
-  -- Canonical planar reps.
-  set B_pl : List (Planar α) := B.toList.map Quotient.out with hB_pl_def
-  set ov : Planar α := Quotient.out v with hov_def
-  -- Mask filterMaps (Planar α).
-  set tp : Planar α × Bool → Option (Planar α) :=
+  -- Canonical `RoseTree`-level reps.
+  set B_pl : List (RoseTree α) := B.toList.map Quotient.out with hB_pl_def
+  set ov : RoseTree α := Quotient.out v with hov_def
+  -- Mask filterMaps (RoseTree α).
+  set tp : RoseTree α × Bool → Option (RoseTree α) :=
     fun p => if p.snd then some p.fst else none with htp_def
-  set fp : Planar α × Bool → Option (Planar α) :=
+  set fp : RoseTree α × Bool → Option (RoseTree α) :=
     fun p => if p.snd then none else some p.fst with hfp_def
-  -- msform : List (Planar α) → Multiset (Nonplanar α).
-  set msform : List (Planar α) → Multiset (Nonplanar α) :=
+  -- msform : List (RoseTree α) → Multiset (Nonplanar α).
+  set msform : List (RoseTree α) → Multiset (Nonplanar α) :=
     fun L => (↑(L.map Nonplanar.mk) : Multiset (Nonplanar α)) with hmsform_def
   -- §0: every B' ∈ iF B_pl [ov] has length B_pl.length.
-  have hB'_len : ∀ B' ∈ Planar.Pathed.insertionForest B_pl [ov],
+  have hB'_len : ∀ B' ∈ RoseTree.Pathed.insertionForest B_pl [ov],
       B'.length = B_pl.length := by
     intro B' hB'
-    rw [Planar.Pathed.insertionForest_singleton_guest_set] at hB'
+    rw [RoseTree.Pathed.insertionForest_singleton_guest_set] at hB'
     rw [Multiset.mem_bind] at hB'
     obtain ⟨k, _, hk⟩ := hB'
     rw [Multiset.mem_map] at hk
@@ -1228,9 +1243,9 @@ private theorem GL_T2_reindexing_key
   have hB_eq_msform_Bpl : B = msform B_pl := by
     show B = (↑(B_pl.map Nonplanar.mk) : Multiset (Nonplanar α))
     rw [h_B_pl_map_mk]; exact B.coe_toList.symm
-  -- §1: rewrite NIM B {v} as the canonical planar bind.
+  -- §1: rewrite NIM B {v} as the canonical `RoseTree`-level bind.
   have hNIM_B : Nonplanar.insertionMultiset B ({v} : Multiset _) =
-      (Planar.Pathed.insertionForest B_pl [ov]).map msform := by
+      (RoseTree.Pathed.insertionForest B_pl [ov]).map msform := by
     apply Nonplanar.insertionMultiset_eq_of_reps
     · show (Multiset.ofList ((B.toList.map Quotient.out).map Nonplanar.mk) :
             Multiset (Nonplanar α)) = B
@@ -1240,16 +1255,16 @@ private theorem GL_T2_reindexing_key
             Multiset (Nonplanar α)) = ({v} : Multiset _)
       rw [show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]; rfl
   -- §2: per-B' powerset bridge: rewrite the inner powerset.map sum via masks.
-  have h_powerset_per_B' : ∀ B' ∈ Planar.Pathed.insertionForest B_pl [ov],
+  have h_powerset_per_B' : ∀ B' ∈ RoseTree.Pathed.insertionForest B_pl [ov],
       ((msform B').powerset.map (fun D => g D (msform B' - D))).sum =
-      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+      ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
         (fun assn => g (msform ((B'.zip assn).filterMap tp))
                        (msform ((B'.zip assn).filterMap fp)))).sum := by
     intro B' hB'
     have hlen := hB'_len B' hB'
     have h_len_mk : (B'.map Nonplanar.mk).length = B_pl.length := by
       rw [List.length_map]; exact hlen
-    have h_bridge := Planar.Pathed.listChoices_bridge_powerset_paired
+    have h_bridge := RoseTree.Pathed.listChoices_bridge_powerset_paired
       (l := B'.map Nonplanar.mk)
     rw [h_len_mk] at h_bridge
     have h_post := congr_arg
@@ -1265,7 +1280,7 @@ private theorem GL_T2_reindexing_key
     -- So flip h_sum_eq.
     show (((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α))).powerset.map
             (fun D => g D ((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α)) - D))).sum =
-          ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+          ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
             (fun assn => g (msform ((B'.zip assn).filterMap tp))
                            (msform ((B'.zip assn).filterMap fp)))).sum
     -- Reshape h_sum_eq RHS to use D : Multiset (Nonplanar α).
@@ -1301,17 +1316,17 @@ private theorem GL_T2_reindexing_key
   -- Now: ((iF B_pl [ov]).map ((fun X' => ...) ∘ msform)).sum
   -- Equivalent (by composition unfolding): ((iF B_pl [ov]).map (fun B' => (msform B').powerset.map ...).sum)).sum
   -- Use Multiset.map_congr with the composition-form lhs.
-  rw [show ((Planar.Pathed.insertionForest B_pl [ov]).map
+  rw [show ((RoseTree.Pathed.insertionForest B_pl [ov]).map
             ((fun X' => (X'.powerset.map fun D => g D (X' - D)).sum) ∘ msform)).sum =
-        ((Planar.Pathed.insertionForest B_pl [ov]).map
+        ((RoseTree.Pathed.insertionForest B_pl [ov]).map
           (fun B' => ((msform B').powerset.map (fun D => g D (msform B' - D))).sum)).sum
       from rfl]
   -- Per-B' rewrite via h_powerset_per_B'.
-  rw [show ((Planar.Pathed.insertionForest B_pl [ov]).map
+  rw [show ((RoseTree.Pathed.insertionForest B_pl [ov]).map
               (fun B' => ((msform B').powerset.map (fun D => g D (msform B' - D))).sum)).sum =
-            ((Planar.Pathed.insertionForest B_pl [ov]).map
+            ((RoseTree.Pathed.insertionForest B_pl [ov]).map
               (fun B' =>
-                ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+                ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
                   (fun assn => g (msform ((B'.zip assn).filterMap tp))
                                  (msform ((B'.zip assn).filterMap fp)))).sum)).sum
         from by
@@ -1320,27 +1335,27 @@ private theorem GL_T2_reindexing_key
       intro B' hB'
       exact h_powerset_per_B' B' hB']
   -- §4: swap outer/inner sums.
-  rw [swap_sum_map_sum (Planar.Pathed.insertionForest B_pl [ov])
-    (Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length))
+  rw [swap_sum_map_sum (RoseTree.Pathed.insertionForest B_pl [ov])
+    (Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length))
     (fun assn B' => g (msform ((B'.zip assn).filterMap tp))
                       (msform ((B'.zip assn).filterMap fp)))]
   -- §5: per-mask, apply the bucket-split.
   have h_per_mask : ∀ assn ∈
-      (Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length) :
+      (Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length) :
         Multiset (List Bool)),
-      ((Planar.Pathed.insertionForest B_pl [ov]).map
+      ((RoseTree.Pathed.insertionForest B_pl [ov]).map
           (fun B' => g (msform ((B'.zip assn).filterMap tp))
                        (msform ((B'.zip assn).filterMap fp)))).sum =
-        ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+        ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
             (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum +
-        ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+        ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
             (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum := by
     intro assn h_mem
-    have h_mem' : assn ∈ Planar.Pathed.listChoices [true, false] B_pl.length := by
+    have h_mem' : assn ∈ RoseTree.Pathed.listChoices [true, false] B_pl.length := by
       rwa [Multiset.mem_coe] at h_mem
     have hlen : assn.length = B_pl.length :=
-      Planar.Pathed.mem_listChoices_length [true, false] B_pl.length assn h_mem'
-    have hbucket := Planar.Pathed.insertionForest_singleton_bucket_split
+      RoseTree.Pathed.mem_listChoices_length [true, false] B_pl.length assn h_mem'
+    have hbucket := RoseTree.Pathed.insertionForest_singleton_bucket_split
       B_pl assn ov
       (fun L R => ({g (msform L) (msform R)} : Multiset (GrossmanLarson ℤ α))) hlen
     have h_apply := congr_arg Multiset.sum hbucket
@@ -1369,12 +1384,12 @@ private theorem GL_T2_reindexing_key
   -- Then sum over masks = sum over (mskform * mskform) pairs = (via bridge) sum over (s, B-s) pairs.
   -- We use `insertionMultiset_eq_of_reps` to recover NIM (msform L) {v} from (iF L [ov]).map msform.
   have h_assn_to_FUN1 : ∀ assn,
-      ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+      ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
           (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum =
         FUN1 (msform ((B_pl.zip assn).filterMap tp),
               msform ((B_pl.zip assn).filterMap fp)) := by
     intro assn
-    show ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+    show ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
             (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum =
         ((Nonplanar.insertionMultiset
           (msform ((B_pl.zip assn).filterMap tp)) ({v} : Multiset _)).map
@@ -1382,7 +1397,7 @@ private theorem GL_T2_reindexing_key
     -- Use `insertionMultiset_eq_of_reps` to compute NIM(msform L_t) {v}.
     rw [show Nonplanar.insertionMultiset
           (msform ((B_pl.zip assn).filterMap tp)) ({v} : Multiset _) =
-          (Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map msform from by
+          (RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map msform from by
         apply Nonplanar.insertionMultiset_eq_of_reps
         · rfl
         · show (Multiset.ofList ([Nonplanar.mk ov]) : Multiset (Nonplanar α)) = ({v} : Multiset _)
@@ -1390,19 +1405,19 @@ private theorem GL_T2_reindexing_key
     rw [Multiset.map_map]
     rfl
   have h_assn_to_FUN2 : ∀ assn,
-      ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+      ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
           (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum =
         FUN2 (msform ((B_pl.zip assn).filterMap tp),
               msform ((B_pl.zip assn).filterMap fp)) := by
     intro assn
-    show ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+    show ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
             (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum =
         ((Nonplanar.insertionMultiset
           (msform ((B_pl.zip assn).filterMap fp)) ({v} : Multiset _)).map
             (fun Y' => g (msform ((B_pl.zip assn).filterMap tp)) Y')).sum
     rw [show Nonplanar.insertionMultiset
           (msform ((B_pl.zip assn).filterMap fp)) ({v} : Multiset _) =
-          (Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map msform from by
+          (RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map msform from by
         apply Nonplanar.insertionMultiset_eq_of_reps
         · rfl
         · show (Multiset.ofList ([Nonplanar.mk ov]) : Multiset (Nonplanar α)) = ({v} : Multiset _)
@@ -1411,13 +1426,13 @@ private theorem GL_T2_reindexing_key
     rfl
   -- §7c: rewrite the mask-sums in this FUN1/FUN2 form.
   rw [show
-      (((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+      (((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
         (fun assn =>
-          ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+          ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
               (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum +
-          ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+          ((RoseTree.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
               (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum))).sum =
-      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+      ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
         (fun assn =>
           FUN1 (msform ((B_pl.zip assn).filterMap tp),
                 msform ((B_pl.zip assn).filterMap fp)) +
@@ -1434,7 +1449,7 @@ private theorem GL_T2_reindexing_key
   --   (lc).map (assn ↦ ((filter_t over B.toList), (filter_f over B.toList))) =
   --   (↑B.toList).powerset.map (s ↦ (s, ↑B.toList - s)) = B.powerset.map (s ↦ (s, B - s))
   -- since ↑B.toList = B.
-  -- BUT our per-mask function uses `(B_pl.zip assn).filterMap tp` (planar) — not `(B.toList.zip assn).filterMap tpN`.
+  -- BUT our per-mask function uses `(B_pl.zip assn).filterMap tp` (`RoseTree`-level) — not `(B.toList.zip assn).filterMap tpN`.
   -- We need to bridge between these.
   -- `msform ((B_pl.zip assn).filterMap tp) = ↑(((B_pl.zip assn).filterMap tp).map mk)`
   --                                      = ↑((B_pl.map mk).zip assn).filter_tN  [by zip_filter_t_map_mk reverse]
@@ -1463,13 +1478,13 @@ private theorem GL_T2_reindexing_key
     rw [List.length_map]
     rfl
   rw [show
-      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+      ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
         (fun assn =>
           FUN1 (msform ((B_pl.zip assn).filterMap tp),
                 msform ((B_pl.zip assn).filterMap fp)) +
           FUN2 (msform ((B_pl.zip assn).filterMap tp),
                 msform ((B_pl.zip assn).filterMap fp)))).sum =
-      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B.toList.length)).map
+      ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B.toList.length)).map
         (fun assn =>
           FUN1 (((B.toList.zip assn).filterMap
                   (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none) :
@@ -1490,7 +1505,7 @@ private theorem GL_T2_reindexing_key
     rw [h_to_BtoList_t, h_to_BtoList_f]]
   -- §9: now apply the bridge on `l := B.toList`. The bridge pair function is:
   --   F(s_t, s_f) := FUN1(s_t, s_f) + FUN2(s_t, s_f).
-  have h_bridge := Planar.Pathed.listChoices_bridge_powerset_paired
+  have h_bridge := RoseTree.Pathed.listChoices_bridge_powerset_paired
     (β := Nonplanar α) (l := B.toList)
   -- Apply Multiset.map (uncurry of FUN1 + FUN2) to both sides.
   have h_compose := congr_arg
@@ -1501,7 +1516,7 @@ private theorem GL_T2_reindexing_key
   -- is defeq to `fun assn => let ...; FUN1 (s_t, s_f) + FUN2 (s_t, s_f)`, but `rw` doesn't
   -- auto-eta. Substitute via show.
   have h_compose_sum := congr_arg Multiset.sum h_compose
-  show (((Multiset.ofList (Planar.Pathed.listChoices [true, false] B.toList.length)).map
+  show (((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B.toList.length)).map
         ((fun pr : Multiset (Nonplanar α) × Multiset (Nonplanar α) =>
             FUN1 pr + FUN2 pr) ∘
           (fun assn : List Bool =>
@@ -1527,6 +1542,7 @@ private theorem GL_T2_reindexing_key
             (fun Y' => g C₁ Y')).sum
   rfl
 
+omit [DecidableEq (Nonplanar α)] in
 /-- **Substrate 2 for Q5c**: the GL-side analog of OG Prop 2.7(ii)'s
     guest-splitting identity. It is the per-tprod `m+1` induction step of
     `gl_product_eq_oudomGuinStar_tprod`, using the singleton case
@@ -1546,7 +1562,7 @@ private theorem GL_T2_reindexing_key
     then `GL_iterated_insertion_singleton_v` to split each iterated
     insertion. The match against T2 then uses `GL_T2_reindexing_key`
     (a multiset reindexing identity proved by descent from the
-    planar bucket-split lemma `insertionForest_singleton_bucket_split`). -/
+    `RoseTree`-level bucket-split lemma `insertionForest_singleton_bucket_split`). -/
 private theorem GL_product_split_mul_ι
     (F : GrossmanLarson ℤ α)
     (G : ConnesKreimer ℤ (Nonplanar α))
@@ -2569,7 +2585,8 @@ private theorem gl_product_eq_oudomGuinStar_tprod
         have h := congrArg GrossmanLarson.unop h_GL_split
         rw [unop_add, unop_add] at h
         -- The last term has unop ∘ op = id (definitional).
-        convert h using 2 <;> simp only [GrossmanLarson.unop_op, GrossmanLarson.op_unop]
+        convert h using 2
+        simp only [GrossmanLarson.unop_op]
       -- Now use h_SL_split_additive to combine.
       -- h_SL_split_additive (CK):
       --   ckIso(X★(D·ι(ofTree t))) + ckIso(X★(D○ι(ofTree t)))
@@ -2639,15 +2656,13 @@ theorem gl_product_eq_oudomGuinStar
     have := congrArg
       (fun (f : TensorAlgebra ℤ (InsertionAlgebra α) →ₗ[ℤ] GrossmanLarson ℤ α) => f z)
       h_LM
-    simp only [hf_LHS, hf_RHS, LinearMap.comp_apply, oudomGuinStarL_apply,
-               AlgEquiv.toLinearMap_apply] at this
+    simp only [hf_LHS, hf_RHS, LinearMap.comp_apply] at this
     -- `this` should now state the desired equation.
     exact this
   -- Apply TA_linearMap_ext_tprod.
   apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
   intro m a
-  simp only [hf_LHS, hf_RHS, LinearMap.comp_apply, oudomGuinStarL_apply,
-             AlgEquiv.toLinearMap_apply]
+  simp only [hf_LHS, hf_RHS]
   exact gl_product_eq_oudomGuinStar_tprod X m a
 
 /-! ## §3: Q6 — `mul_assoc_basis` for `R = ℤ` via Q3 + Q5

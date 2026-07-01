@@ -102,7 +102,7 @@ private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 3
 private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The `[PP to Mary]` constituent as a planar subtree. -/
-private def ppToMaryP : Planar SOLabel := SO.nodeP (SO.leafP tok_to) (SO.leafP tok_mary)
+private def ppToMaryP : RoseTree SOLabel := SO.nodeP (SO.leafP tok_to) (SO.leafP tok_mary)
 
 -- ============================================================================
 -- § 2: Oblique Dative Derivation

@@ -39,7 +39,7 @@ function *applied*, and P3/P4 retire them.
 `Nonplanar.node`, `mergeOp`, and the coproduct are `noncomputable` (the Hopf
 machinery round-trips through `Quotient.out`). So `SO.merge`/`SO.intMerge` are
 `noncomputable`, and studies must **state result trees directly** (built computably
-via `Nonplanar.mk ∘ Planar.node`, then `decide` on `IsSO`) and relate them to Merge
+via `Nonplanar.mk ∘ RoseTree.node`, then `decide` on `IsSO`) and relate them to Merge
 by theorem — never compute Merge under `decide`. `merge_mk` is the construction
 bridge; the `#eval`-free `decide` examples at the end confirm the discipline holds
 on this carrier (the P1 spike, now as carrier tests).

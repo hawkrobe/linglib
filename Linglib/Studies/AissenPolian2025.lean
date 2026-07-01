@@ -922,10 +922,10 @@ private def Agt : SyntacticObject := SO.lexLeaf tAgt
 Object is PossP (non-specific) or DP (specific). -/
 
 -- Non-specific possessive object: [PossP Psr Psm]
-private def possPp : Planar SOLabel := SO.nodeP (SO.leafP tPsr) (SO.leafP tPsm)
+private def possPp : RoseTree SOLabel := SO.nodeP (SO.leafP tPsr) (SO.leafP tPsm)
 
 -- Specific possessive object: [DP D° [PossP Psr Psm]]
-private def dpObjp : Planar SOLabel := SO.nodeP (SO.leafP tD₀) possPp
+private def dpObjp : RoseTree SOLabel := SO.nodeP (SO.leafP tD₀) possPp
 
 -- (9a) Unaccusative + non-specific: [TP T° [VP V° [PossP Psr Psm]]]
 private def treeUnaccPossP : SyntacticObject :=
@@ -1043,9 +1043,9 @@ private def tC₀ : LIToken := ⟨.simple .C [], 8⟩
 private def C₀ : SyntacticObject := SO.lexLeaf tC₀
 
 -- Planar bodies of the unaccusative trees, reused under the CP node.
-private def treeUnaccDPp : Planar SOLabel :=
+private def treeUnaccDPp : RoseTree SOLabel :=
   SO.nodeP (SO.leafP tT₀) (SO.nodeP (SO.leafP tV₀) dpObjp)
-private def treeUnaccPossPp : Planar SOLabel :=
+private def treeUnaccPossPp : RoseTree SOLabel :=
   SO.nodeP (SO.leafP tT₀) (SO.nodeP (SO.leafP tV₀) possPp)
 
 -- CP wrapping unaccusative + DP:

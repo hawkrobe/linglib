@@ -22,7 +22,7 @@ The cardinality of the automorphism group of a rooted nonplanar tree
 Connes-Kreimer / Grossman-Larson pairing
 (`Linglib/Core/Algebra/RootedTree/GrossmanLarsonPairing.lean`).
 
-## Tree-level formula
+## RoseTree-level formula
 
 For a node with children-multiset `M = {c₁ × k₁, c₂ × k₂, …}` (distinct
 trees `cᵢ` with multiplicities `kᵢ`):
@@ -49,11 +49,13 @@ top-level multiset of constituent trees.
 `[UPSTREAM]` candidate. Eventual mathlib home would be
 `Mathlib.Combinatorics.RootedTree.Aut`. **Sorry-free.**
 
-`Nonplanar.autCard` descends from `Planar.autCard`, defined by mutual
-structural recursion through the children list (`autCardList`
-aggregator). `PlanarStep`-invariance is established via the standard
-swap/recurse case split, and the lift to `Nonplanar` uses
-`Nonplanar.lift`. `autCard_node` bridges to the
+`Nonplanar.autCard` descends from `treeAutCard` on the `RoseTree α`
+representative, defined by structural recursion over the children list
+(`(cs.map treeAutCard).prod` aggregates the children product; no aux
+twin — `RoseTree`'s nested-`List` recursion is handled by the equation
+compiler and its `@[induction_eliminator]`). `PermStep`-invariance is
+established via the standard swap/recurse case split, and the lift to
+`Nonplanar` uses `Nonplanar.lift`. `autCard_node` bridges to the
 `forestAutCard`-as-Finset-product form via `Finset.prod_multiset_map_count`
 (turning the all-children prod into a `∏ distinct, c ^ count`-form) +
 `Finset.prod_mul_distrib`.
@@ -63,11 +65,15 @@ swap/recurse case split, and the lift to `Nonplanar` uses
 
 namespace RootedTree
 
+namespace Nonplanar
+
 variable {α : Type*}
 
-/-! ## §1: Planar substrate -/
+/-! ### RoseTree-representative substrate
 
-namespace Planar
+`treeAutCard` computes `|Aut(mk t)|` on a planar `RoseTree` representative
+`t`; `PermEquiv`-invariance (below) lets it descend to `Nonplanar.autCard`
+through the quotient. -/
 
 /-- Symmetry-factor at one node: `∏_{distinct c ∈ M} (M.count c)!`. Uses
     `Classical.decEq` for `Multiset.toFinset` and `Multiset.count`. -/
@@ -75,96 +81,53 @@ noncomputable def multinomialFactor (M : Multiset (Nonplanar α)) : ℕ :=
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   M.toFinset.prod fun t => Nat.factorial (M.count t)
 
-mutual
-/-- Planar version of `Nonplanar.autCard`. Defined by mutual structural
-    recursion on the planar tree (with `autCardList` aggregating the
-    children product), using `multinomialFactor` on the multiset of
-    nonplanar-mk children to count "symmetric" rearrangements; the
-    `autCardList cs` factor is the product over all children with
-    multiplicity (which equals
-    `∏ distinct c, autCard c ^ count c` by
-    `Finset.prod_multiset_map_count`). -/
-noncomputable def autCard : Planar α → ℕ
+/-- The automorphism count `|Aut(mk t)|` of the nonplanar tree represented
+    by a planar `RoseTree` `t`. Substrate for `Nonplanar.autCard` (which lifts
+    it through the `PermEquiv` quotient). At a node, the product of the
+    children's counts times `multinomialFactor` on the multiset of
+    nonplanar-`mk` children (counting symmetric rearrangements). -/
+noncomputable def treeAutCard : RoseTree α → ℕ
   | .node _ cs =>
-      autCardList cs *
-        multinomialFactor (Multiset.ofList (cs.map Nonplanar.mk))
-/-- Mutual aux: product of `autCard` over a children list. -/
-noncomputable def autCardList : List (Planar α) → ℕ
-  | []      => 1
-  | c :: cs => autCard c * autCardList cs
-end
+      (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk))
 
-@[simp] theorem autCard_node_planar (a : α) (cs : List (Planar α)) :
-    autCard (Planar.node a cs) =
-      autCardList cs *
-        multinomialFactor (Multiset.ofList (cs.map Nonplanar.mk)) := rfl
+theorem treeAutCard_node (a : α) (cs : List (RoseTree α)) :
+    treeAutCard (RoseTree.node a cs) =
+      (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk)) := by
+  rw [treeAutCard]
 
-@[simp] theorem autCardList_nil :
-    autCardList ([] : List (Planar α)) = 1 := rfl
+/-! #### `treeAutCard` is `PermEquiv`-invariant -/
 
-@[simp] theorem autCardList_cons (c : Planar α) (cs : List (Planar α)) :
-    autCardList (c :: cs) = autCard c * autCardList cs := rfl
-
-/-- `autCardList cs = (cs.map autCard).prod` — bridge to mathlib's
-    `List.prod` over a `List.map`. -/
-theorem autCardList_eq_prod_map (cs : List (Planar α)) :
-    autCardList cs = (cs.map autCard).prod := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [autCardList_cons, List.map_cons, List.prod_cons, ih]
-
-/-! ### `autCard` is `PlanarEquiv`-invariant -/
-
-/-- `autCardList` is invariant under list permutation (it is `List.prod`
-    of `List.map autCard` up to `autCardList_eq_prod_map`). -/
-private theorem autCardList_perm {cs ds : List (Planar α)}
-    (h : List.Perm cs ds) :
-    autCardList cs = autCardList ds := by
-  rw [autCardList_eq_prod_map, autCardList_eq_prod_map]
-  exact (h.map autCard).prod_eq
-
-/-- The mk-multiset is invariant under list permutation. -/
-private theorem mk_multiset_perm {cs ds : List (Planar α)} (h : List.Perm cs ds) :
-    (Multiset.ofList (cs.map Nonplanar.mk) :
-        Multiset (Nonplanar α)) = Multiset.ofList (ds.map Nonplanar.mk) :=
-  Multiset.coe_eq_coe.mpr (h.map _)
-
-/-- `Planar.autCard` is invariant under `PlanarStep`. -/
-private theorem autCard_planarStep {t s : Planar α} (h : PlanarStep t s) :
-    autCard t = autCard s := by
+/-- `treeAutCard` is invariant under `PermStep`: a root swap permutes the
+    children list (so `(cs.map treeAutCard).prod` via `List.Perm.prod_eq`
+    and the `mk`-multiset via `Multiset.coe_eq_coe` are both fixed); a
+    recursive step rewrites one child by a `PermEquiv`-equal subtree (so
+    `treeAutCard` matches by the IH and `mk` by `mk_eq_mk_iff`). -/
+private theorem treeAutCard_permStep {t s : RoseTree α} (h : RoseTree.PermStep t s) :
+    treeAutCard t = treeAutCard s := by
   induction h with
   | @swapAtRoot a l r pre post =>
-    -- Children lists are permutations: same `autCardList` and same mk-multiset.
-    rw [autCard_node_planar, autCard_node_planar]
-    have hperm : List.Perm (pre ++ l :: r :: post) (pre ++ r :: l :: post) :=
-      List.Perm.append_left pre (List.Perm.swap r l post)
-    rw [autCardList_perm hperm, mk_multiset_perm hperm]
+    rw [treeAutCard_node, treeAutCard_node]
+    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
+      (List.Perm.swap r l post).append_left pre
+    rw [(hperm.map treeAutCard).prod_eq, Multiset.coe_eq_coe.mpr (hperm.map mk)]
   | @recurse a pre old new post _hstep ih =>
-    -- Children lists agree componentwise except at the spot where old → new.
-    have hmk : (Nonplanar.mk old : Nonplanar α) = Nonplanar.mk new :=
-      Nonplanar.mk_eq_mk_iff.mpr (PlanarEquiv.of_step _hstep)
-    -- autCardList legs match by ih.
-    have hlist : autCardList (pre ++ old :: post)
-               = autCardList (pre ++ new :: post) := by
-      rw [autCardList_eq_prod_map, autCardList_eq_prod_map]
-      rw [List.map_append, List.map_append, List.map_cons, List.map_cons,
-          List.prod_append, List.prod_append, List.prod_cons, List.prod_cons, ih]
-    have hmsmk : (Multiset.ofList ((pre ++ old :: post).map Nonplanar.mk) :
-                    Multiset (Nonplanar α)) =
-                 Multiset.ofList ((pre ++ new :: post).map Nonplanar.mk) := by
-      rw [List.map_append, List.map_cons, List.map_append, List.map_cons, hmk]
-    rw [autCard_node_planar, autCard_node_planar, hlist, hmsmk]
+    rw [treeAutCard_node, treeAutCard_node]
+    have hmk : (mk old : Nonplanar α) = mk new :=
+      mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step _hstep)
+    congr 1
+    · simp only [List.map_append, List.map_cons, List.prod_append, List.prod_cons, ih]
+    · simp only [List.map_append, List.map_cons, hmk]
 
-/-- `Planar.autCard` is invariant under `PlanarEquiv`. -/
-theorem autCard_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
-    autCard t = autCard s := by
+/-- `treeAutCard` is invariant under `PermEquiv`. By induction on `EqvGen`. -/
+theorem treeAutCard_permEquiv {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
+    treeAutCard t = treeAutCard s := by
   induction h with
-  | rel _ _ hstep => exact autCard_planarStep hstep
+  | rel _ _ hstep => exact treeAutCard_permStep hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### Positivity of `Planar.autCard` -/
+/-! #### Positivity of `treeAutCard` -/
 
 /-- Every factor in `multinomialFactor M` is positive (each is a factorial). -/
 private theorem multinomialFactor_pos (M : Multiset (Nonplanar α)) :
@@ -173,28 +136,16 @@ private theorem multinomialFactor_pos (M : Multiset (Nonplanar α)) :
   unfold multinomialFactor
   exact Finset.prod_pos fun _ _ => Nat.factorial_pos _
 
-mutual
-/-- `Planar.autCard` is positive. By structural induction: a node's
-    autCard is `autCardList * multinomialFactor`; the second factor
-    is positive (factorials), and the first is positive iff every child's
-    autCard is positive (IH). -/
-theorem autCard_pos_planar : ∀ (t : Planar α), 0 < autCard t
-  | .node _ cs => by
-    rw [autCard_node_planar]
-    exact Nat.mul_pos (autCardList_pos cs) (multinomialFactor_pos _)
-/-- Mutual aux: `autCardList` is positive. -/
-theorem autCardList_pos : ∀ (cs : List (Planar α)), 0 < autCardList cs
-  | []      => by rw [autCardList_nil]; exact Nat.one_pos
-  | c :: cs => by
-    rw [autCardList_cons]
-    exact Nat.mul_pos (autCard_pos_planar c) (autCardList_pos cs)
-end
+/-- `treeAutCard` is positive: at a node, `multinomialFactor` is positive
+    (factorials) and the children product is positive by the IH. -/
+theorem treeAutCard_pos (t : RoseTree α) : 0 < treeAutCard t := by
+  induction t with
+  | node a cs ih =>
+    rw [treeAutCard_node]
+    refine Nat.mul_pos ?_ (multinomialFactor_pos _)
+    exact List.prod_pos_iff_forall_pos_nat.mpr (by simpa using ih)
 
-end Planar
-
-/-! ## §2: Nonplanar `autCard` via lift -/
-
-namespace Nonplanar
+/-! ### Nonplanar automorphism count via lift -/
 
 /-- The cardinality `|Aut(t)|` of the automorphism group of a rooted
     nonplanar tree `t`.
@@ -203,26 +154,24 @@ namespace Nonplanar
     `autCard t = ∏ distinct c ∈ M, (M.count c)! * (autCard c)^(M.count c)`
     (see `autCard_node`). A leaf has `autCard = 1` (`autCard_leaf`).
 
-    Defined by lifting `Planar.autCard` through the `PlanarEquiv`
-    quotient. -/
+    Defined by lifting `treeAutCard` through the `PermEquiv` quotient. -/
 noncomputable def autCard : Nonplanar α → ℕ :=
-  Nonplanar.lift Planar.autCard (fun _ _ h => Planar.autCard_planarEquiv h)
+  Nonplanar.lift treeAutCard (fun _ _ h => treeAutCard_permEquiv h)
 
-@[simp] theorem autCard_mk (t : Planar α) : autCard (mk t) = Planar.autCard t := rfl
+@[simp] theorem autCard_mk (t : RoseTree α) : autCard (mk t) = treeAutCard t := rfl
 
 /-- A leaf has trivial aut group. -/
 @[simp] theorem autCard_leaf (a : α) : autCard (Nonplanar.leaf a : Nonplanar α) = 1 := by
-  show Planar.autCard (Planar.leaf a) = 1
-  unfold Planar.leaf
-  rw [Planar.autCard_node_planar, Planar.autCardList_nil]
-  simp [Planar.multinomialFactor]
+  show treeAutCard (RoseTree.leaf a) = 1
+  rw [RoseTree.leaf_def, treeAutCard_node]
+  simp [multinomialFactor]
 
 /-- The automorphism group of any tree is non-trivial (contains identity).
     Stated as positivity of the cardinality. Descends from
-    `Planar.autCard_pos_planar` via the quotient. -/
+    `treeAutCard_pos` via the quotient. -/
 theorem autCard_pos (t : Nonplanar α) : 0 < autCard t := by
   induction t using Quotient.inductionOn with
-  | h p => exact Planar.autCard_pos_planar p
+  | h p => exact treeAutCard_pos p
 
 /-- The cardinality `|Aut(F)|` of the automorphism group of a forest
     `F` (multiset of nonplanar trees), defined as the product over
@@ -257,64 +206,57 @@ theorem forestAutCard_pos (F : Multiset (Nonplanar α)) : 0 < forestAutCard F :=
   exact Finset.prod_pos fun t _ =>
     Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
 
-/-- The "all children with multiplicity" prod factor in `autCard`, in
-    nonplanar form. -/
-private theorem autCardList_qout_eq (lst : List (Nonplanar α)) :
-    Planar.autCardList (lst.map Quotient.out) =
-      (lst.map autCard).prod := by
-  induction lst with
-  | nil => rfl
-  | cons x xs ih =>
-    -- ((x :: xs).map Quotient.out) = Quotient.out x :: xs.map Quotient.out
-    -- autCardList (Q.out x :: rest.map Q.out) = autCard (Q.out x) * autCardList rest
-    rw [show (x :: xs).map autCard = autCard x :: xs.map autCard from rfl,
-        List.prod_cons]
-    rw [show ((x :: xs).map Quotient.out : List (Planar α)) =
-              Quotient.out x :: xs.map Quotient.out from rfl,
-        Planar.autCardList_cons, ih]
-    -- Goal: Planar.autCard (Q.out x) * (xs.map autCard).prod = autCard x * (xs.map autCard).prod
-    congr 1
-    -- autCard x = autCard (mk (Q.out x)) = Planar.autCard (Q.out x).
-    conv_rhs => rw [← x.out_eq]
-    rfl
+/-- `treeAutCard` of a representative equals `autCard` of its class. -/
+private theorem treeAutCard_out (x : Nonplanar α) :
+    treeAutCard x.out = autCard x := by
+  conv_rhs => rw [← x.out_eq]
+  rfl
+
+/-- The `treeAutCard`-product over `Quotient.out`-representatives of a list
+    of nonplanar trees equals the `autCard`-product over the list. -/
+private theorem prod_out_treeAutCard (lst : List (Nonplanar α)) :
+    ((lst.map Quotient.out).map treeAutCard).prod = (lst.map autCard).prod := by
+  congr 1
+  rw [List.map_map]
+  exact List.map_congr_left fun x _ => treeAutCard_out x
 
 /-- The mk-multiset of `Q.out`-lifted list of nonplanar trees equals the
     original list. -/
 private theorem ofList_map_mk_qout (lst : List (Nonplanar α)) :
-    (Multiset.ofList (((lst.map Quotient.out).map Nonplanar.mk)) :
+    (Multiset.ofList (((lst.map Quotient.out).map mk)) :
         Multiset (Nonplanar α)) = Multiset.ofList lst := by
   rw [List.map_map]
   congr 1
   exact (List.map_congr_left (fun x _ => x.out_eq)).trans (List.map_id lst)
 
 /-- `autCard` on the smart `node` constructor: the recursive definition.
-    Proof: induct on `F` to get a list rep `lst`; unfold `node`, then
-    `Planar.autCard` on the planar node; the autCardList factor lifts to
-    `(lst.map autCard).prod`; the multinomialFactor factor lifts to
-    `multinomialFactor F`. Combine via `Finset.prod_multiset_map_count`
-    (to express `(F.map autCard).prod` as a Finset prod over
-    `F.toFinset`) and `Finset.prod_mul_distrib` (to recombine the two
-    legs into `forestAutCard F`). -/
+    Proof: induct on `F` to get a list rep `lst`; `treeAutCard` on the
+    tree node splits into a children-product factor (which lifts to
+    `(lst.map autCard).prod` via `prod_out_treeAutCard`) and a
+    `multinomialFactor` factor (which lifts to `multinomialFactor F` via
+    `ofList_map_mk_qout`). Combine via `Finset.prod_multiset_map_count`
+    (to express `(F.map autCard).prod` as a Finset prod over `F.toFinset`)
+    and `Finset.prod_mul_distrib` (to recombine the two legs into
+    `forestAutCard F`). -/
 @[simp] theorem autCard_node (a : α) (F : Multiset (Nonplanar α)) :
     autCard (Nonplanar.node a F) = forestAutCard F := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   induction F using Quotient.inductionOn with
   | h lst =>
     -- Convert `Quotient.mk _ lst` to `Multiset.ofList lst` (definitionally equal).
-    show Planar.autCard (Planar.node a (lst.map Quotient.out)) =
+    show treeAutCard (RoseTree.node a (lst.map Quotient.out)) =
         forestAutCard (Multiset.ofList lst)
-    rw [Planar.autCard_node_planar, autCardList_qout_eq lst, ofList_map_mk_qout lst]
+    rw [treeAutCard_node, prod_out_treeAutCard lst, ofList_map_mk_qout lst]
     -- LHS: (lst.map autCard).prod * multinomialFactor (Multiset.ofList lst).
     -- RHS: forestAutCard (Multiset.ofList lst) =
     --      (Multiset.ofList lst).toFinset.prod fun t => (count t)! * autCard t ^ count t.
-    unfold forestAutCard Planar.multinomialFactor
+    unfold forestAutCard multinomialFactor
     -- (lst.map autCard).prod = ((Multiset.ofList lst).map autCard).prod
     --                       = ∏ t ∈ toFinset, autCard t ^ count t.
     have hprod_lst : ((Multiset.ofList lst).map autCard).prod
                   = ((Multiset.ofList lst).toFinset).prod
                       fun t => autCard t ^ (Multiset.ofList lst).count t :=
       Finset.prod_multiset_map_count (Multiset.ofList lst) autCard
-    -- Massage LHS prod via Multiset coercion: (lst.map autCard).prod = Multiset.prod ↑(...).
     have hcoe : (lst.map autCard).prod = ((Multiset.ofList lst).map autCard).prod := rfl
     rw [hcoe, hprod_lst]
     -- Combine the two Finset prods via Finset.prod_mul_distrib.
@@ -379,11 +321,11 @@ private theorem pascal_choose_sum_aux
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Pull `a` out of each Finset prod via `prod_eq_prod_diff_singleton_mul`.
   have ha_toFin : a ∈ H'.toFinset := Multiset.mem_toFinset.mpr ha_in_H'
-  rw [Finset.prod_eq_prod_diff_singleton_mul ha_toFin
+  rw [Finset.prod_eq_prod_sdiff_singleton_mul ha_toFin
         (f := fun t => (H'.count t).choose ((a ::ₘ F').count t)),
-      Finset.prod_eq_prod_diff_singleton_mul ha_toFin
+      Finset.prod_eq_prod_sdiff_singleton_mul ha_toFin
         (f := fun t => (H'.count t).choose (F'.count t)),
-      Finset.prod_eq_prod_diff_singleton_mul ha_toFin
+      Finset.prod_eq_prod_sdiff_singleton_mul ha_toFin
         (f := fun t => ((a ::ₘ H').count t).choose ((a ::ₘ F').count t))]
   -- At each `t ∈ H'.toFinset \ {a}`, the three products agree (count_cons on a t ≠ a).
   have h_diff_LHS1 :

@@ -4,7 +4,7 @@ import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 set_option autoImplicit false
 
 /-!
-# Planar double-cut coassociativity for Δ^c (combinatorial core of MCB 1.2.10)
+# RoseTree double-cut coassociativity for Δ^c (combinatorial core of MCB 1.2.10)
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The combinatorial heart of Δ^c coassociativity: both `(Δ^c ⊗ id) ∘ Δ^c` and
@@ -37,7 +37,7 @@ namespace DoubleCut
 
 variable {α β : Type*}
 
-abbrev FP (α : Type*) := Forest (Planar α)
+abbrev FP (α : Type*) := Forest (RoseTree α)
 abbrev Pair (α : Type*) := FP α × FP α
 
 /-! ### Generic multiset convolution over an additive monoid
@@ -113,35 +113,35 @@ theorem convFP_eq (s acc : Multiset (Pair (α ⊕ β))) :
   unfold convFP mconv
   apply Multiset.map_congr rfl; rintro ⟨x, y⟩ _; rfl
 
-/-- Planar tree-cut enumerator (crown forest, trunk forest). -/
-def treeCutsP (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+/-- RoseTree tree-cut enumerator (crown forest, trunk forest). -/
+def treeCutsP (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     Multiset (Pair (α ⊕ β)) :=
   ({t}, 0) ::ₘ (cutSummandsCP τ t).map (fun p => (p.1, {p.2}))
 
 /-- Forest-cut enumerator: convolution over the component trees. -/
-def forestCutsP (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) :
+def forestCutsP (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) :
     Multiset (Pair (α ⊕ β)) :=
   (F.map (treeCutsP τ)).foldr convFP {(0, 0)}
 
 /-- LHS double-cut: re-cut the crown. -/
-def dcLHSP (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+def dcLHSP (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     Multiset (FP (α ⊕ β) × FP (α ⊕ β) × FP (α ⊕ β)) :=
   (treeCutsP τ t).bind (fun AB =>
     (forestCutsP τ AB.1).map (fun A12 => (A12.1, A12.2, AB.2)))
 
 /-- RHS double-cut: re-cut the trunk. -/
-def dcRHSP (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+def dcRHSP (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     Multiset (FP (α ⊕ β) × FP (α ⊕ β) × FP (α ⊕ β)) :=
   (treeCutsP τ t).bind (fun AB =>
     (forestCutsP τ AB.2).map (fun B12 => (AB.1, B12.1, B12.2)))
 
 /-- Forest double-cut LHS (outer is a forest cut). -/
-def dcForestLHSP (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) :
+def dcForestLHSP (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) :
     Multiset (FP (α ⊕ β) × FP (α ⊕ β) × FP (α ⊕ β)) :=
   (forestCutsP τ F).bind (fun AB =>
     (forestCutsP τ AB.1).map (fun A12 => (A12.1, A12.2, AB.2)))
 
-def dcForestRHSP (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) :
+def dcForestRHSP (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) :
     Multiset (FP (α ⊕ β) × FP (α ⊕ β) × FP (α ⊕ β)) :=
   (forestCutsP τ F).bind (fun AB =>
     (forestCutsP τ AB.2).map (fun B12 => (AB.1, B12.1, B12.2)))
@@ -154,22 +154,22 @@ def proj3 (q : FP (α ⊕ β) × FP (α ⊕ β) × FP (α ⊕ β)) :
 
 /-! ### Basic recursions for forestCutsP -/
 
-theorem forestCutsP_zero (τ : Planar (α ⊕ β) → β) :
+theorem forestCutsP_zero (τ : RoseTree (α ⊕ β) → β) :
     forestCutsP τ (0 : FP (α ⊕ β)) = {(0, 0)} := by
   unfold forestCutsP; simp
 
-theorem forestCutsP_cons (τ : Planar (α ⊕ β) → β)
-    (t : Planar (α ⊕ β)) (F : FP (α ⊕ β)) :
+theorem forestCutsP_cons (τ : RoseTree (α ⊕ β) → β)
+    (t : RoseTree (α ⊕ β)) (F : FP (α ⊕ β)) :
     forestCutsP τ (t ::ₘ F) = convFP (treeCutsP τ t) (forestCutsP τ F) := by
   unfold forestCutsP
   rw [Multiset.map_cons, Multiset.foldr_cons]
 
-theorem forestCutsP_singleton (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+theorem forestCutsP_singleton (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     forestCutsP τ {t} = treeCutsP τ t := by
   rw [show ({t} : FP (α ⊕ β)) = t ::ₘ 0 from rfl, forestCutsP_cons, forestCutsP_zero]
   exact mconv_zero_right _
 
-theorem forestCutsP_add (τ : Planar (α ⊕ β) → β) (F G : FP (α ⊕ β)) :
+theorem forestCutsP_add (τ : RoseTree (α ⊕ β) → β) (F G : FP (α ⊕ β)) :
     forestCutsP τ (F + G) = convFP (forestCutsP τ F) (forestCutsP τ G) := by
   induction F using Multiset.induction with
   | empty => rw [zero_add, forestCutsP_zero]; exact (mconv_zero_left _).symm
@@ -238,14 +238,14 @@ theorem proj3_mconv (X Y : Multiset (Triple (α ⊕ β))) :
 /-! ### The two second-cut maps are monoid homs -/
 
 /-- LHS second cut: re-cut the crown `p.1`, carrying trunk `p.2`. -/
-def hL (τ : Planar (α ⊕ β) → β) (p : Pair (α ⊕ β)) : Multiset (Triple (α ⊕ β)) :=
+def hL (τ : RoseTree (α ⊕ β) → β) (p : Pair (α ⊕ β)) : Multiset (Triple (α ⊕ β)) :=
   (forestCutsP τ p.1).map (fun A12 => (A12.1, A12.2, p.2))
 
 /-- RHS second cut: re-cut the trunk `p.2`, carrying crown `p.1`. -/
-def hR (τ : Planar (α ⊕ β) → β) (p : Pair (α ⊕ β)) : Multiset (Triple (α ⊕ β)) :=
+def hR (τ : RoseTree (α ⊕ β) → β) (p : Pair (α ⊕ β)) : Multiset (Triple (α ⊕ β)) :=
   (forestCutsP τ p.2).map (fun B12 => (p.1, B12.1, B12.2))
 
-theorem hL_hom (τ : Planar (α ⊕ β) → β) (p q : Pair (α ⊕ β)) :
+theorem hL_hom (τ : RoseTree (α ⊕ β) → β) (p q : Pair (α ⊕ β)) :
     hL τ (p + q) = mconv (hL τ p) (hL τ q) := by
   show (forestCutsP τ (p.1 + q.1)).map (fun A12 => (A12.1, A12.2, p.2 + q.2)) = _
   rw [forestCutsP_add]
@@ -254,7 +254,7 @@ theorem hL_hom (τ : Planar (α ⊕ β) → β) (p q : Pair (α ⊕ β)) :
     (fun A12 : Pair (α ⊕ β) => (A12.1, A12.2, p.2 + q.2)) ?_ _ _
   intro x y; rfl
 
-theorem hR_hom (τ : Planar (α ⊕ β) → β) (p q : Pair (α ⊕ β)) :
+theorem hR_hom (τ : RoseTree (α ⊕ β) → β) (p q : Pair (α ⊕ β)) :
     hR τ (p + q) = mconv (hR τ p) (hR τ q) := by
   show (forestCutsP τ (p.2 + q.2)).map (fun B12 => (p.1 + q.1, B12.1, B12.2)) = _
   rw [forestCutsP_add]
@@ -265,39 +265,39 @@ theorem hR_hom (τ : Planar (α ⊕ β) → β) (p q : Pair (α ⊕ β)) :
 
 /-! ### Double-cut enumerators as binds of `hL`/`hR` -/
 
-theorem dcLHSP_eq_bind (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+theorem dcLHSP_eq_bind (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     dcLHSP τ t = (treeCutsP τ t).bind (hL τ) := rfl
 
-theorem dcRHSP_eq_bind (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+theorem dcRHSP_eq_bind (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     dcRHSP τ t = (treeCutsP τ t).bind (hR τ) := rfl
 
-theorem dcForestLHSP_eq_bind (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) :
+theorem dcForestLHSP_eq_bind (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) :
     dcForestLHSP τ F = (forestCutsP τ F).bind (hL τ) := rfl
 
-theorem dcForestRHSP_eq_bind (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) :
+theorem dcForestRHSP_eq_bind (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) :
     dcForestRHSP τ F = (forestCutsP τ F).bind (hR τ) := rfl
 
 /-! ### Multiplicativity of the forest double-cut -/
 
-theorem dcForestLHSP_cons (τ : Planar (α ⊕ β) → β)
-    (t : Planar (α ⊕ β)) (F : FP (α ⊕ β)) :
+theorem dcForestLHSP_cons (τ : RoseTree (α ⊕ β) → β)
+    (t : RoseTree (α ⊕ β)) (F : FP (α ⊕ β)) :
     dcForestLHSP τ (t ::ₘ F) = mconv (dcLHSP τ t) (dcForestLHSP τ F) := by
   rw [dcForestLHSP_eq_bind, forestCutsP_cons, mconv_hom_bind (hL τ) (hL_hom τ),
       ← dcLHSP_eq_bind, ← dcForestLHSP_eq_bind]
 
-theorem dcForestRHSP_cons (τ : Planar (α ⊕ β) → β)
-    (t : Planar (α ⊕ β)) (F : FP (α ⊕ β)) :
+theorem dcForestRHSP_cons (τ : RoseTree (α ⊕ β) → β)
+    (t : RoseTree (α ⊕ β)) (F : FP (α ⊕ β)) :
     dcForestRHSP τ (t ::ₘ F) = mconv (dcRHSP τ t) (dcForestRHSP τ F) := by
   rw [dcForestRHSP_eq_bind, forestCutsP_cons, mconv_hom_bind (hR τ) (hR_hom τ),
       ← dcRHSP_eq_bind, ← dcForestRHSP_eq_bind]
 
-theorem dcForestLHSP_zero (τ : Planar (α ⊕ β) → β) :
+theorem dcForestLHSP_zero (τ : RoseTree (α ⊕ β) → β) :
     dcForestLHSP τ (0 : FP (α ⊕ β)) = {(0, 0, 0)} := by
   rw [dcForestLHSP_eq_bind, forestCutsP_zero, Multiset.singleton_bind]
   show (forestCutsP τ 0).map (fun A12 => (A12.1, A12.2, (0 : FP (α ⊕ β)))) = _
   rw [forestCutsP_zero, Multiset.map_singleton]
 
-theorem dcForestRHSP_zero (τ : Planar (α ⊕ β) → β) :
+theorem dcForestRHSP_zero (τ : RoseTree (α ⊕ β) → β) :
     dcForestRHSP τ (0 : FP (α ⊕ β)) = {(0, 0, 0)} := by
   rw [dcForestRHSP_eq_bind, forestCutsP_zero, Multiset.singleton_bind]
   show (forestCutsP τ 0).map (fun B12 => ((0 : FP (α ⊕ β)), B12.1, B12.2)) = _
@@ -305,7 +305,7 @@ theorem dcForestRHSP_zero (τ : Planar (α ⊕ β) → β) :
 
 /-! ### Forest coassoc from per-component tree coassoc -/
 
-theorem coassFP_of_components (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β))
+theorem coassFP_of_components (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β))
     (H : ∀ t ∈ F, (dcLHSP τ t).map proj3 = (dcRHSP τ t).map proj3) :
     (dcForestLHSP τ F).map proj3 = (dcForestRHSP τ F).map proj3 := by
   induction F using Multiset.induction with
@@ -322,34 +322,34 @@ distinct from `forestCutsP` (deletion). `treeCutsP`/`dcLHSP`/`dcRHSP` of a
 `node a cs` decompose over it. -/
 
 /-- Children-list cut enumerator: `cutListSummandsG (extractC τ)`. -/
-abbrev Cl (τ : Planar (α ⊕ β) → β) (cs : List (Planar (α ⊕ β))) :
-    Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β))) :=
+abbrev Cl (τ : RoseTree (α ⊕ β) → β) (cs : List (RoseTree (α ⊕ β))) :
+    Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :=
   cutListSummandsG (extractC τ) cs
 
 /-- `treeCutsP` of a node: full cut, plus root-preserving cuts coming
     from the children-list cut wrapped with `node a`. -/
-theorem treeCutsP_node (τ : Planar (α ⊕ β) → β) (a : α ⊕ β) (cs : List (Planar (α ⊕ β))) :
-    treeCutsP τ (Planar.node a cs) =
-      (({Planar.node a cs}, 0) : Pair (α ⊕ β)) ::ₘ
-        (Cl τ cs).map (fun p => ((p.1, {Planar.node a p.2}) : Pair (α ⊕ β))) := by
+theorem treeCutsP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
+    treeCutsP τ (RoseTree.node a cs) =
+      (({RoseTree.node a cs}, 0) : Pair (α ⊕ β)) ::ₘ
+        (Cl τ cs).map (fun p => ((p.1, {RoseTree.node a p.2}) : Pair (α ⊕ β))) := by
   unfold treeCutsP
   rw [cutSummandsCP_node, Multiset.map_map]
   rfl
 
 /-- LHS double cut of a node: the full-cut boundary triple, the
     "split-at-root" middle terms, and the genuine children-crown re-cuts. -/
-theorem dcLHSP_node (τ : Planar (α ⊕ β) → β) (a : α ⊕ β) (cs : List (Planar (α ⊕ β))) :
-    dcLHSP τ (Planar.node a cs) =
-      ((({Planar.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β))) ::ₘ
-        (Cl τ cs).map (fun p => (p.1, ({Planar.node a p.2} : FP (α ⊕ β)), (0 : FP (α ⊕ β)))))
+theorem dcLHSP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
+    dcLHSP τ (RoseTree.node a cs) =
+      ((({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β))) ::ₘ
+        (Cl τ cs).map (fun p => (p.1, ({RoseTree.node a p.2} : FP (α ⊕ β)), (0 : FP (α ⊕ β)))))
       + (Cl τ cs).bind (fun p =>
           (forestCutsP τ p.1).map
-            (fun c12 => (c12.1, c12.2, ({Planar.node a p.2} : FP (α ⊕ β))))) := by
+            (fun c12 => (c12.1, c12.2, ({RoseTree.node a p.2} : FP (α ⊕ β))))) := by
   rw [dcLHSP_eq_bind, treeCutsP_node, Multiset.cons_bind, Multiset.bind_map]
-  have h1 : hL τ (({Planar.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β))) =
-      (({Planar.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β))) ::ₘ
-        (Cl τ cs).map (fun p => (p.1, ({Planar.node a p.2} : FP (α ⊕ β)), (0 : FP (α ⊕ β)))) := by
-    show (forestCutsP τ {Planar.node a cs}).map
+  have h1 : hL τ (({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β))) =
+      (({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β))) ::ₘ
+        (Cl τ cs).map (fun p => (p.1, ({RoseTree.node a p.2} : FP (α ⊕ β)), (0 : FP (α ⊕ β)))) := by
+    show (forestCutsP τ {RoseTree.node a cs}).map
         (fun A12 => (A12.1, A12.2, (0 : FP (α ⊕ β)))) = _
     rw [forestCutsP_singleton, treeCutsP_node, Multiset.map_cons, Multiset.map_map]
     rfl
@@ -358,21 +358,21 @@ theorem dcLHSP_node (τ : Planar (α ⊕ β) → β) (a : α ⊕ β) (cs : List 
 
 /-- RHS double cut of a node: the full-cut boundary triple plus, for each
     children-cut, re-cutting the trunk tree `node a remainder`. -/
-theorem dcRHSP_node (τ : Planar (α ⊕ β) → β) (a : α ⊕ β) (cs : List (Planar (α ⊕ β))) :
-    dcRHSP τ (Planar.node a cs) =
-      {(({Planar.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β)))}
+theorem dcRHSP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
+    dcRHSP τ (RoseTree.node a cs) =
+      {(({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β)))}
       + (Cl τ cs).bind (fun p =>
-          (treeCutsP τ (Planar.node a p.2)).map (fun B12 => (p.1, B12.1, B12.2))) := by
+          (treeCutsP τ (RoseTree.node a p.2)).map (fun B12 => (p.1, B12.1, B12.2))) := by
   rw [dcRHSP_eq_bind, treeCutsP_node, Multiset.cons_bind, Multiset.bind_map]
-  have h1 : hR τ (({Planar.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β))) =
-      {(({Planar.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β)))} := by
+  have h1 : hR τ (({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β))) =
+      {(({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β)))} := by
     show (forestCutsP τ (0 : FP (α ⊕ β))).map
-        (fun B12 => (({Planar.node a cs} : FP (α ⊕ β)), B12.1, B12.2)) = _
+        (fun B12 => (({RoseTree.node a cs} : FP (α ⊕ β)), B12.1, B12.2)) = _
     rw [forestCutsP_zero, Multiset.map_singleton]
   rw [h1]
   congr 1
   apply Multiset.bind_congr; intro p _
-  show (forestCutsP τ {Planar.node a p.2}).map (fun B12 => (p.1, B12.1, B12.2)) = _
+  show (forestCutsP τ {RoseTree.node a p.2}).map (fun B12 => (p.1, B12.1, B12.2)) = _
   rw [forestCutsP_singleton]
 
 /-! ### Children-list convolution `clconv` and `Cl` as a monoid hom
@@ -383,11 +383,11 @@ theorem dcRHSP_node (τ : Planar (α ⊕ β) → β) (a : α ⊕ β) (cs : List 
 with unit `{(0, [])}`. -/
 
 /-- The children-list cut combiner: add crown forests, append remainders. -/
-def clconv (S T : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
-    Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β))) :=
+def clconv (S T : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
+    Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :=
   (S ×ˢ T).map (fun pr => (pr.1.1 + pr.2.1, pr.1.2 ++ pr.2.2))
 
-theorem clconv_bind (S T : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem clconv_bind (S T : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     clconv S T = S.bind (fun s => T.map (fun t => (s.1 + t.1, s.2 ++ t.2))) := by
   unfold clconv
   show ((S.bind fun a => T.map (Prod.mk a)).map _) = _
@@ -395,23 +395,23 @@ theorem clconv_bind (S T : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β))
   apply Multiset.bind_congr; intro s _
   rw [Multiset.map_map]; rfl
 
-theorem clconv_unit_left (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
-    clconv {((0 : FP (α ⊕ β)), ([] : List (Planar (α ⊕ β))))} S = S := by
+theorem clconv_unit_left (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
+    clconv {((0 : FP (α ⊕ β)), ([] : List (RoseTree (α ⊕ β))))} S = S := by
   rw [clconv_bind, Multiset.singleton_bind]
   conv_rhs => rw [← Multiset.map_id' S]
   apply Multiset.map_congr rfl; rintro ⟨F, l⟩ _
   simp only [zero_add, List.nil_append]
 
-theorem clconv_unit_right (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
-    clconv S {((0 : FP (α ⊕ β)), ([] : List (Planar (α ⊕ β))))} = S := by
+theorem clconv_unit_right (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
+    clconv S {((0 : FP (α ⊕ β)), ([] : List (RoseTree (α ⊕ β))))} = S := by
   rw [clconv_bind]
-  rw [show (fun s : FP (α ⊕ β) × List (Planar (α ⊕ β)) =>
-        ({((0 : FP (α ⊕ β)), ([] : List (Planar (α ⊕ β))))} : Multiset _).map
+  rw [show (fun s : FP (α ⊕ β) × List (RoseTree (α ⊕ β)) =>
+        ({((0 : FP (α ⊕ β)), ([] : List (RoseTree (α ⊕ β))))} : Multiset _).map
           (fun t => (s.1 + t.1, s.2 ++ t.2))) = (fun s => {s}) from by
     funext s; rw [Multiset.map_singleton]; simp only [add_zero, List.append_nil]]
   rw [Multiset.bind_singleton, Multiset.map_id']
 
-theorem clconv_assoc (S T U : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem clconv_assoc (S T U : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     clconv (clconv S T) U = clconv S (clconv T U) := by
   conv_lhs => rw [clconv_bind, clconv_bind, Multiset.bind_assoc]
   conv_rhs => rw [clconv_bind]
@@ -422,17 +422,17 @@ theorem clconv_assoc (S T U : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ �
   apply Multiset.map_congr rfl; intro u _
   simp only [Function.comp_apply, add_assoc, List.append_assoc]
 
-theorem Cl_nil (τ : Planar (α ⊕ β) → β) :
-    Cl τ ([] : List (Planar (α ⊕ β))) =
-      {((0 : FP (α ⊕ β)), ([] : List (Planar (α ⊕ β))))} := cutListSummandsG_nil _
+theorem Cl_nil (τ : RoseTree (α ⊕ β) → β) :
+    Cl τ ([] : List (RoseTree (α ⊕ β))) =
+      {((0 : FP (α ⊕ β)), ([] : List (RoseTree (α ⊕ β))))} := cutListSummandsG_nil _
 
-theorem Cl_cons (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) (ts : List (Planar (α ⊕ β))) :
+theorem Cl_cons (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) (ts : List (RoseTree (α ⊕ β))) :
     Cl τ (t :: ts) = clconv (augActionG (extractC τ) t) (Cl τ ts) := by
   rw [show Cl τ (t :: ts) = cutListSummandsG (extractC τ) (t :: ts) from rfl,
       cutListSummandsG_cons]
   rfl
 
-theorem Cl_append (τ : Planar (α ⊕ β) → β) (l₁ l₂ : List (Planar (α ⊕ β))) :
+theorem Cl_append (τ : RoseTree (α ⊕ β) → β) (l₁ l₂ : List (RoseTree (α ⊕ β))) :
     Cl τ (l₁ ++ l₂) = clconv (Cl τ l₁) (Cl τ l₂) := by
   induction l₁ with
   | nil => rw [List.nil_append, Cl_nil, clconv_unit_left]
@@ -479,37 +479,37 @@ theorem mconv_prod_hom {M A : Type*} [AddCommMonoid M]
 multiplicative over `clconv`. -/
 
 /-- Projection of a (crown, mid, remainder-list) triple to nonplanar. -/
-def proj3L (q : FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β))) :
+def proj3L (q : FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :
     Multiset (Nonplanar (α ⊕ β)) × Multiset (Nonplanar (α ⊕ β)) ×
       Multiset (Nonplanar (α ⊕ β)) :=
   (q.1.map Nonplanar.mk, q.2.1.map Nonplanar.mk,
     Multiset.ofList (q.2.2.map Nonplanar.mk))
 
-theorem proj3L_add (a a' b b' : FP (α ⊕ β)) (l l' : List (Planar (α ⊕ β))) :
+theorem proj3L_add (a a' b b' : FP (α ⊕ β)) (l l' : List (RoseTree (α ⊕ β))) :
     proj3L (a + a', b + b', l ++ l') = proj3L (a, b, l) + proj3L (a', b', l') := by
   unfold proj3L
   rw [Multiset.map_add, Multiset.map_add, List.map_append]
   rfl
 
 /-- LHS children-list double cut: re-cut crown `p.1`, keep remainder `p.2`. -/
-def dcl (τ : Planar (α ⊕ β) → β) (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
-    Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β))) :=
+def dcl (τ : RoseTree (α ⊕ β) → β) (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
+    Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :=
   S.bind (fun p => (forestCutsP τ p.1).map (fun c12 => (c12.1, c12.2, p.2)))
 
 /-- RHS children-list double cut: keep crown `p.1`, re-cut remainder `p.2`. -/
-def dcr (τ : Planar (α ⊕ β) → β) (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
-    Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β))) :=
+def dcr (τ : RoseTree (α ⊕ β) → β) (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
+    Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :=
   S.bind (fun p => (Cl τ p.2).map (fun q => (p.1, q.1, q.2)))
 
-theorem dclN_eq (τ : Planar (α ⊕ β) → β)
-    (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem dclN_eq (τ : RoseTree (α ⊕ β) → β)
+    (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     (dcl τ S).map proj3L =
       S.bind (fun p => (forestCutsP τ p.1).map (fun c12 => proj3L (c12.1, c12.2, p.2))) := by
   unfold dcl; rw [Multiset.map_bind]
   apply Multiset.bind_congr; intro p _; rw [Multiset.map_map]; rfl
 
-theorem dcrN_eq (τ : Planar (α ⊕ β) → β)
-    (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem dcrN_eq (τ : RoseTree (α ⊕ β) → β)
+    (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     (dcr τ S).map proj3L =
       S.bind (fun p => (Cl τ p.2).map (fun q => proj3L (p.1, q.1, q.2))) := by
   unfold dcr; rw [Multiset.map_bind]
@@ -517,7 +517,7 @@ theorem dcrN_eq (τ : Planar (α ⊕ β) → β)
 
 /-- Per-element hom for `dcl`: re-cutting a combined crown with a combined
     remainder is the `mconv` of the parts. -/
-private theorem hΦl (τ : Planar (α ⊕ β) → β) (s t : FP (α ⊕ β) × List (Planar (α ⊕ β))) :
+private theorem hΦl (τ : RoseTree (α ⊕ β) → β) (s t : FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :
     (forestCutsP τ (s.1 + t.1)).map (fun c12 => proj3L (c12.1, c12.2, s.2 ++ t.2))
       = mconv ((forestCutsP τ s.1).map (fun c12 => proj3L (c12.1, c12.2, s.2)))
               ((forestCutsP τ t.1).map (fun c12 => proj3L (c12.1, c12.2, t.2))) := by
@@ -530,7 +530,7 @@ private theorem hΦl (τ : Planar (α ⊕ β) → β) (s t : FP (α ⊕ β) × L
 
 /-- Per-element hom for `dcr`: re-cutting the appended remainder with a
     combined crown is the `mconv` of the parts. -/
-private theorem hΦr (τ : Planar (α ⊕ β) → β) (s t : FP (α ⊕ β) × List (Planar (α ⊕ β))) :
+private theorem hΦr (τ : RoseTree (α ⊕ β) → β) (s t : FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :
     (Cl τ (s.2 ++ t.2)).map (fun q => proj3L (s.1 + t.1, q.1, q.2))
       = mconv ((Cl τ s.2).map (fun q => proj3L (s.1, q.1, q.2)))
               ((Cl τ t.2).map (fun q => proj3L (t.1, q.1, q.2))) := by
@@ -542,8 +542,8 @@ private theorem hΦr (τ : Planar (α ⊕ β) → β) (s t : FP (α ⊕ β) × L
   apply Multiset.map_congr rfl; rintro ⟨qs, qt⟩ _
   exact proj3L_add s.1 t.1 qs.1 qt.1 qs.2 qt.2
 
-theorem dclN_clconv (τ : Planar (α ⊕ β) → β)
-    (S T : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem dclN_clconv (τ : RoseTree (α ⊕ β) → β)
+    (S T : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     (dcl τ (clconv S T)).map proj3L =
       mconv ((dcl τ S).map proj3L) ((dcl τ T).map proj3L) := by
   rw [dclN_eq, dclN_eq, dclN_eq]
@@ -552,8 +552,8 @@ theorem dclN_clconv (τ : Planar (α ⊕ β) → β)
     (fun p => (forestCutsP τ p.1).map (fun c12 => proj3L (c12.1, c12.2, p.2)))
     (fun a b => (a.1 + b.1, a.2 ++ b.2)) (fun s t => hΦl τ s t) S T
 
-theorem dcrN_clconv (τ : Planar (α ⊕ β) → β)
-    (S T : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem dcrN_clconv (τ : RoseTree (α ⊕ β) → β)
+    (S T : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     (dcr τ (clconv S T)).map proj3L =
       mconv ((dcr τ S).map proj3L) ((dcr τ T).map proj3L) := by
   rw [dcrN_eq, dcrN_eq, dcrN_eq]
@@ -569,28 +569,28 @@ on the list using `clconv`-multiplicativity, the per-child `coassA`, and
 the tail IH. `coassA` (per-child) reduces to `coassL` of the child's
 children with `TraceCoherent` reconciling the extract-whole marker. -/
 
-/-- Planar trace coherence: `τ` of a cut trunk equals `τ` of the tree. The
+/-- RoseTree trace coherence: `τ` of a cut trunk equals `τ` of the tree. The
     descent of `TraceCoherent` (Nonplanar) along `Nonplanar.mk`. -/
-def TraceCoherentP (τ : Planar (α ⊕ β) → β) : Prop :=
-  ∀ t : Planar (α ⊕ β), ∀ p ∈ cutSummandsCP τ t, τ p.2 = τ t
+def TraceCoherentP (τ : RoseTree (α ⊕ β) → β) : Prop :=
+  ∀ t : RoseTree (α ⊕ β), ∀ p ∈ cutSummandsCP τ t, τ p.2 = τ t
 
 /-- Children-list cut of a singleton list is the per-child augmented action. -/
-theorem Cl_singleton (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+theorem Cl_singleton (τ : RoseTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     Cl τ [t] = augActionG (extractC τ) t := by
-  rw [show ([t] : List (Planar (α ⊕ β))) = t :: [] from rfl, Cl_cons, Cl_nil,
+  rw [show ([t] : List (RoseTree (α ⊕ β))) = t :: [] from rfl, Cl_cons, Cl_nil,
       clconv_unit_right]
 
 /-- Projecting a triple whose remainder is a singleton `[node a' l]` equals
     nonplanar `node a'`-wrapping the projection with raw remainder `l`. -/
-theorem proj3L_list_wrap (a' : α ⊕ β) (x y : FP (α ⊕ β)) (l : List (Planar (α ⊕ β))) :
-    proj3L (x, y, [Planar.node a' l])
+theorem proj3L_list_wrap (a' : α ⊕ β) (x y : FP (α ⊕ β)) (l : List (RoseTree (α ⊕ β))) :
+    proj3L (x, y, [RoseTree.node a' l])
       = ((proj3L (x, y, l)).1, (proj3L (x, y, l)).2.1,
           ({Nonplanar.node a' (proj3L (x, y, l)).2.2} : Multiset (Nonplanar (α ⊕ β)))) := by
   unfold proj3L
   simp only [List.map_cons, List.map_nil]
-  rw [show (Multiset.ofList [Nonplanar.mk (Planar.node a' l)])
-        = ({Nonplanar.mk (Planar.node a' l)} : Multiset (Nonplanar (α ⊕ β))) from rfl,
-      ← Nonplanar.node_mk_planar_list]
+  rw [show (Multiset.ofList [Nonplanar.mk (RoseTree.node a' l)])
+        = ({Nonplanar.mk (RoseTree.node a' l)} : Multiset (Nonplanar (α ⊕ β))) from rfl,
+      ← Nonplanar.node_mk_tree_list]
 
 /-- Splitting a `bind` whose body is a sum. -/
 private theorem bind_add_split {γ : Type*} (S : Multiset γ)
@@ -602,8 +602,8 @@ private theorem bind_add_split {γ : Type*} (S : Multiset γ)
 
 /-- Splitting a `bind` over `FP × FP × List`-triples whose body is a `cons`. -/
 private theorem bind_cons_splitL {γ : Type*} (S : Multiset γ)
-    (x : γ → FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β)))
-    (h : γ → Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+    (x : γ → FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β)))
+    (h : γ → Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     S.bind (fun p => x p ::ₘ h p) = S.map x + S.bind h := by
   induction S using Multiset.induction with
   | empty => simp
@@ -613,8 +613,8 @@ private theorem bind_cons_splitL {γ : Type*} (S : Multiset γ)
 
 /-- The `[node a']`-wrapped `dcl` of the children cut, projected, equals the
     nonplanar `node a'`-wrap of the projected `dcl`. -/
-theorem dcl_INH_wrap (τ : Planar (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : List (Planar (α ⊕ β))) :
-    (dcl τ ((Cl τ cs'').map (fun p => (p.1, ([Planar.node a' p.2] : List (Planar (α ⊕ β))))))).map proj3L
+theorem dcl_INH_wrap (τ : RoseTree (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : List (RoseTree (α ⊕ β))) :
+    (dcl τ ((Cl τ cs'').map (fun p => (p.1, ([RoseTree.node a' p.2] : List (RoseTree (α ⊕ β))))))).map proj3L
       = ((dcl τ (Cl τ cs'')).map proj3L).map
           (fun z => (z.1, z.2.1, ({Nonplanar.node a' z.2.2} : Multiset (Nonplanar (α ⊕ β))))) := by
   rw [dclN_eq, dclN_eq, Multiset.bind_map, Multiset.map_bind]
@@ -625,9 +625,9 @@ theorem dcl_INH_wrap (τ : Planar (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : L
 
 /-- The non-extract-whole part of the trunk re-cut, projected, equals the
     nonplanar `node a'`-wrap of the projected `dcr`. -/
-theorem dcr_nonEW_wrap (τ : Planar (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : List (Planar (α ⊕ β))) :
+theorem dcr_nonEW_wrap (τ : RoseTree (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : List (RoseTree (α ⊕ β))) :
     ((Cl τ cs'').bind (fun p => (Cl τ p.2).map
-        (fun p'' => (p.1, p''.1, ([Planar.node a' p''.2] : List (Planar (α ⊕ β))))))).map proj3L
+        (fun p'' => (p.1, p''.1, ([RoseTree.node a' p''.2] : List (RoseTree (α ⊕ β))))))).map proj3L
       = ((dcr τ (Cl τ cs'')).map proj3L).map
           (fun z => (z.1, z.2.1, ({Nonplanar.node a' z.2.2} : Multiset (Nonplanar (α ⊕ β))))) := by
   rw [dcrN_eq, Multiset.map_bind, Multiset.map_bind]
@@ -637,15 +637,15 @@ theorem dcr_nonEW_wrap (τ : Planar (α ⊕ β) → β) (a' : α ⊕ β) (cs'' :
   exact proj3L_list_wrap a' p.1 p''.1 p''.2
 
 /-- `dcl` distributes over a `cons` outer cut. -/
-theorem dcl_cons (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) (l : List (Planar (α ⊕ β)))
-    (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem dcl_cons (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) (l : List (RoseTree (α ⊕ β)))
+    (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     dcl τ ((F, l) ::ₘ S)
       = (forestCutsP τ F).map (fun c12 => (c12.1, c12.2, l)) + dcl τ S := by
   unfold dcl; rw [Multiset.cons_bind]
 
 /-- `dcr` distributes over a `cons` outer cut. -/
-theorem dcr_cons (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) (l : List (Planar (α ⊕ β)))
-    (S : Multiset (FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
+theorem dcr_cons (τ : RoseTree (α ⊕ β) → β) (F : FP (α ⊕ β)) (l : List (RoseTree (α ⊕ β)))
+    (S : Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
     dcr τ ((F, l) ::ₘ S)
       = (Cl τ l).map (fun q => (F, q.1, q.2)) + dcr τ S := by
   unfold dcr; rw [Multiset.cons_bind]
@@ -655,8 +655,8 @@ theorem dcr_cons (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) (l : List
     `cutListSummandsG`/`augActionG`. `coassL` is the engine of the per-tree
     node step; `coassA` is the coherence-using combinatorial core. -/
 mutual
-theorem coassL (τ : Planar (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
-    ∀ cs : List (Planar (α ⊕ β)),
+theorem coassL (τ : RoseTree (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
+    ∀ cs : List (RoseTree (α ⊕ β)),
       (dcl τ (Cl τ cs)).map proj3L = (dcr τ (Cl τ cs)).map proj3L
   | [] => by
     rw [Cl_nil]
@@ -665,8 +665,8 @@ theorem coassL (τ : Planar (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
     simp only [Multiset.map_singleton]
   | c :: cs' => by
     rw [Cl_cons, dclN_clconv, dcrN_clconv, coassA τ hτ c, coassL τ hτ cs']
-theorem coassA (τ : Planar (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
-    ∀ c : Planar (α ⊕ β),
+theorem coassA (τ : RoseTree (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
+    ∀ c : RoseTree (α ⊕ β),
       (dcl τ (augActionG (extractC τ) c)).map proj3L
         = (dcr τ (augActionG (extractC τ) c)).map proj3L
   | .node a' cs'' => by
@@ -674,89 +674,89 @@ theorem coassA (τ : Planar (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
     cases a' with
     | inr b' =>
       -- extractC = none: `Aa c = INH`, no extract-whole, no coherence needed.
-      rw [show augActionG (extractC τ) (Planar.node (Sum.inr b') cs'')
-            = (Cl τ cs'').map (fun p => (p.1, ([Planar.node (Sum.inr b') p.2]
-                : List (Planar (α ⊕ β))))) from by
+      rw [show augActionG (extractC τ) (RoseTree.node (Sum.inr b') cs'')
+            = (Cl τ cs'').map (fun p => (p.1, ([RoseTree.node (Sum.inr b') p.2]
+                : List (RoseTree (α ⊕ β))))) from by
           rw [augActionG_eq_none _ _ (extractC_inr τ b' cs''), cutSummandsG_node,
               Multiset.map_map]; rfl]
       have hdcrINH : dcr τ ((Cl τ cs'').map
-            (fun p => (p.1, ([Planar.node (Sum.inr b') p.2] : List (Planar (α ⊕ β))))))
+            (fun p => (p.1, ([RoseTree.node (Sum.inr b') p.2] : List (RoseTree (α ⊕ β))))))
           = (Cl τ cs'').bind (fun p => (Cl τ p.2).map
-              (fun p'' => (p.1, p''.1, [Planar.node (Sum.inr b') p''.2]))) := by
+              (fun p'' => (p.1, p''.1, [RoseTree.node (Sum.inr b') p''.2]))) := by
         unfold dcr; rw [Multiset.bind_map]
         apply Multiset.bind_congr; intro p _
-        rw [show Cl τ [Planar.node (Sum.inr b') p.2] = (Cl τ p.2).map
-              (fun p'' => (p''.1, [Planar.node (Sum.inr b') p''.2])) from by
+        rw [show Cl τ [RoseTree.node (Sum.inr b') p.2] = (Cl τ p.2).map
+              (fun p'' => (p''.1, [RoseTree.node (Sum.inr b') p''.2])) from by
             rw [Cl_singleton, augActionG_eq_none _ _ (extractC_inr τ b' p.2),
                 cutSummandsG_node, Multiset.map_map]; rfl,
           Multiset.map_map]
         rfl
       rw [dcl_INH_wrap, hdcrINH, dcr_nonEW_wrap, hcoassL]
     | inl a'' =>
-      have hAa : augActionG (extractC τ) (Planar.node (Sum.inl a'') cs'')
-          = (({Planar.node (Sum.inl a'') cs''} : FP (α ⊕ β)),
-              [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))]) ::ₘ
-              (Cl τ cs'').map (fun p => (p.1, [Planar.node (Sum.inl a'') p.2])) := by
+      have hAa : augActionG (extractC τ) (RoseTree.node (Sum.inl a'') cs'')
+          = (({RoseTree.node (Sum.inl a'') cs''} : FP (α ⊕ β)),
+              [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))]) ::ₘ
+              (Cl τ cs'').map (fun p => (p.1, [RoseTree.node (Sum.inl a'') p.2])) := by
         rw [augActionG_eq_some _ _ _ (extractC_inl τ a'' cs''), cutSummandsG_node,
             Multiset.map_map]; rfl
-      have hCltl : Cl τ [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))]
-          = {((0 : FP (α ⊕ β)), [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))])} := by
+      have hCltl : Cl τ [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))]
+          = {((0 : FP (α ⊕ β)), [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))])} := by
         rw [Cl_singleton]
         show augActionG (extractC τ)
-              (Planar.node (Sum.inr (τ (Planar.node (Sum.inl a'') cs''))) [])
+              (RoseTree.node (Sum.inr (τ (RoseTree.node (Sum.inl a'') cs''))) [])
             = {((0 : FP (α ⊕ β)),
-                [Planar.node (Sum.inr (τ (Planar.node (Sum.inl a'') cs''))) []])}
+                [RoseTree.node (Sum.inr (τ (RoseTree.node (Sum.inl a'') cs''))) []])}
         rw [augActionG_eq_none _ _ (extractC_inr τ _ []), cutSummandsG_node,
             cutListSummandsG_nil]; rfl
       have hdcrINH : dcr τ ((Cl τ cs'').map
-            (fun p => (p.1, [Planar.node (Sum.inl a'') p.2])))
-          = (Cl τ cs'').map (fun p => (p.1, ({Planar.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
-                [traceLeaf (τ (Planar.node (Sum.inl a'') p.2))]))
+            (fun p => (p.1, [RoseTree.node (Sum.inl a'') p.2])))
+          = (Cl τ cs'').map (fun p => (p.1, ({RoseTree.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
+                [traceLeaf (τ (RoseTree.node (Sum.inl a'') p.2))]))
             + (Cl τ cs'').bind (fun p => (Cl τ p.2).map
-                (fun p'' => (p.1, p''.1, [Planar.node (Sum.inl a'') p''.2]))) := by
+                (fun p'' => (p.1, p''.1, [RoseTree.node (Sum.inl a'') p''.2]))) := by
         have step1 : dcr τ ((Cl τ cs'').map
-              (fun p => (p.1, [Planar.node (Sum.inl a'') p.2])))
+              (fun p => (p.1, [RoseTree.node (Sum.inl a'') p.2])))
             = (Cl τ cs'').bind (fun p =>
-                (p.1, ({Planar.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
-                  [traceLeaf (τ (Planar.node (Sum.inl a'') p.2))]) ::ₘ
+                (p.1, ({RoseTree.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
+                  [traceLeaf (τ (RoseTree.node (Sum.inl a'') p.2))]) ::ₘ
                 (Cl τ p.2).map (fun p'' =>
-                  (p.1, p''.1, [Planar.node (Sum.inl a'') p''.2]))) := by
+                  (p.1, p''.1, [RoseTree.node (Sum.inl a'') p''.2]))) := by
           unfold dcr; rw [Multiset.bind_map]
           apply Multiset.bind_congr; intro p _
-          show (Cl τ [Planar.node (Sum.inl a'') p.2]).map
+          show (Cl τ [RoseTree.node (Sum.inl a'') p.2]).map
               (fun q => (p.1, q.1, q.2)) = _
-          rw [show Cl τ [Planar.node (Sum.inl a'') p.2]
-                = (({Planar.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
-                    [traceLeaf (τ (Planar.node (Sum.inl a'') p.2))]) ::ₘ
+          rw [show Cl τ [RoseTree.node (Sum.inl a'') p.2]
+                = (({RoseTree.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
+                    [traceLeaf (τ (RoseTree.node (Sum.inl a'') p.2))]) ::ₘ
                   (Cl τ p.2).map (fun p'' =>
-                    (p''.1, [Planar.node (Sum.inl a'') p''.2])) from by
+                    (p''.1, [RoseTree.node (Sum.inl a'') p''.2])) from by
               rw [Cl_singleton, augActionG_eq_some _ _ _ (extractC_inl τ a'' p.2),
                   cutSummandsG_node, Multiset.map_map]; rfl,
             Multiset.map_cons, Multiset.map_map]
           rfl
         rw [step1, bind_cons_splitL]
       -- Coherence: the trunk extract-whole markers collapse to `[tl]`.
-      have hcoh : ((Cl τ cs'').map (fun p : FP (α ⊕ β) × List (Planar (α ⊕ β)) => (p.1,
-              ({Planar.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
-              [traceLeaf (τ (Planar.node (Sum.inl a'') p.2))]))).map proj3L
-          = ((Cl τ cs'').map (fun p : FP (α ⊕ β) × List (Planar (α ⊕ β)) => (p.1,
-              ({Planar.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
-              [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))]))).map proj3L := by
+      have hcoh : ((Cl τ cs'').map (fun p : FP (α ⊕ β) × List (RoseTree (α ⊕ β)) => (p.1,
+              ({RoseTree.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
+              [traceLeaf (τ (RoseTree.node (Sum.inl a'') p.2))]))).map proj3L
+          = ((Cl τ cs'').map (fun p : FP (α ⊕ β) × List (RoseTree (α ⊕ β)) => (p.1,
+              ({RoseTree.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
+              [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))]))).map proj3L := by
         rw [Multiset.map_map, Multiset.map_map]
         apply Multiset.map_congr rfl; intro p hp
         simp only [Function.comp_apply]
-        rw [show τ (Planar.node (Sum.inl a'') p.2) = τ (Planar.node (Sum.inl a'') cs'') from
-          hτ (Planar.node (Sum.inl a'') cs'') (p.1, Planar.node (Sum.inl a'') p.2)
+        rw [show τ (RoseTree.node (Sum.inl a'') p.2) = τ (RoseTree.node (Sum.inl a'') cs'') from
+          hτ (RoseTree.node (Sum.inl a'') cs'') (p.1, RoseTree.node (Sum.inl a'') p.2)
             (by rw [cutSummandsCP_node]; exact Multiset.mem_map.mpr ⟨p, hp, rfl⟩)]
       -- The extract-whole re-cut of `{c}` expands to the boundary plus interior.
-      have hΦdcl : ((forestCutsP τ {Planar.node (Sum.inl a'') cs''}).map
+      have hΦdcl : ((forestCutsP τ {RoseTree.node (Sum.inl a'') cs''}).map
             (fun c12 => (c12.1, c12.2,
-              [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))]))).map proj3L
-          = proj3L (({Planar.node (Sum.inl a'') cs''} : FP (α ⊕ β)), (0 : FP (α ⊕ β)),
-              [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))]) ::ₘ
-            ((Cl τ cs'').map (fun p : FP (α ⊕ β) × List (Planar (α ⊕ β)) => (p.1,
-              ({Planar.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
-              [traceLeaf (τ (Planar.node (Sum.inl a'') cs''))]))).map proj3L := by
+              [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))]))).map proj3L
+          = proj3L (({RoseTree.node (Sum.inl a'') cs''} : FP (α ⊕ β)), (0 : FP (α ⊕ β)),
+              [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))]) ::ₘ
+            ((Cl τ cs'').map (fun p : FP (α ⊕ β) × List (RoseTree (α ⊕ β)) => (p.1,
+              ({RoseTree.node (Sum.inl a'') p.2} : FP (α ⊕ β)),
+              [traceLeaf (τ (RoseTree.node (Sum.inl a'') cs''))]))).map proj3L := by
         rw [forestCutsP_singleton, treeCutsP_node, Multiset.map_cons, Multiset.map_map,
             Multiset.map_cons]
         rfl
@@ -782,51 +782,51 @@ private theorem bind_cons_split {γ : Type*}
 /-- Projecting a `node a`-wrapped triple equals nonplanar-wrapping the
     projected triple. -/
 private theorem proj3_node_wrap (a : α ⊕ β)
-    (q : FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β))) :
-    proj3 (q.1, q.2.1, ({Planar.node a q.2.2} : FP (α ⊕ β)))
+    (q : FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :
+    proj3 (q.1, q.2.1, ({RoseTree.node a q.2.2} : FP (α ⊕ β)))
       = ((proj3L q).1, (proj3L q).2.1,
           ({Nonplanar.node a (proj3L q).2.2} : Multiset (Nonplanar (α ⊕ β)))) := by
   unfold proj3 proj3L
   simp only [Multiset.map_singleton]
-  rw [Nonplanar.node_mk_planar_list]
+  rw [Nonplanar.node_mk_tree_list]
 
 /-- The `node a`-wrap on planar triples, projected, equals the nonplanar
     `node a`-wrap on projected triples. -/
 private theorem map_node_wrap_proj3 (a : α ⊕ β)
-    (M : Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (Planar (α ⊕ β)))) :
-    (M.map (fun q => (q.1, q.2.1, ({Planar.node a q.2.2} : FP (α ⊕ β))))).map proj3
+    (M : Multiset (FP (α ⊕ β) × FP (α ⊕ β) × List (RoseTree (α ⊕ β)))) :
+    (M.map (fun q => (q.1, q.2.1, ({RoseTree.node a q.2.2} : FP (α ⊕ β))))).map proj3
       = (M.map proj3L).map (fun z => (z.1, z.2.1,
           ({Nonplanar.node a z.2.2} : Multiset (Nonplanar (α ⊕ β))))) := by
   rw [Multiset.map_map, Multiset.map_map]
   apply Multiset.map_congr rfl; intro q _
   exact proj3_node_wrap a q
 
-theorem coassT (τ : Planar (α ⊕ β) → β) (hτ : TraceCoherentP τ) (t : Planar (α ⊕ β)) :
+theorem coassT (τ : RoseTree (α ⊕ β) → β) (hτ : TraceCoherentP τ) (t : RoseTree (α ⊕ β)) :
     (dcLHSP τ t).map proj3 = (dcRHSP τ t).map proj3 := by
   obtain ⟨a, cs⟩ := t
   -- Core: the two genuine remainder re-cuts agree (= `coassL` wrapped by `node a`).
   have hcore : ((Cl τ cs).bind (fun p => (forestCutsP τ p.1).map
-        (fun c12 => (c12.1, c12.2, ({Planar.node a p.2} : FP (α ⊕ β)))))).map proj3
+        (fun c12 => (c12.1, c12.2, ({RoseTree.node a p.2} : FP (α ⊕ β)))))).map proj3
       = ((Cl τ cs).bind (fun p => (Cl τ p.2).map
-        (fun q => (p.1, q.1, ({Planar.node a q.2} : FP (α ⊕ β)))))).map proj3 := by
+        (fun q => (p.1, q.1, ({RoseTree.node a q.2} : FP (α ⊕ β)))))).map proj3 := by
     rw [show ((Cl τ cs).bind (fun p => (forestCutsP τ p.1).map
-            (fun c12 => (c12.1, c12.2, ({Planar.node a p.2} : FP (α ⊕ β))))))
+            (fun c12 => (c12.1, c12.2, ({RoseTree.node a p.2} : FP (α ⊕ β))))))
           = ((dcl τ (Cl τ cs)).map
-              (fun q => (q.1, q.2.1, ({Planar.node a q.2.2} : FP (α ⊕ β))))) from by
+              (fun q => (q.1, q.2.1, ({RoseTree.node a q.2.2} : FP (α ⊕ β))))) from by
         unfold dcl; rw [Multiset.map_bind]
         apply Multiset.bind_congr; intro p _; rw [Multiset.map_map]; rfl,
       show ((Cl τ cs).bind (fun p => (Cl τ p.2).map
-            (fun q => (p.1, q.1, ({Planar.node a q.2} : FP (α ⊕ β))))))
+            (fun q => (p.1, q.1, ({RoseTree.node a q.2} : FP (α ⊕ β))))))
           = ((dcr τ (Cl τ cs)).map
-              (fun q => (q.1, q.2.1, ({Planar.node a q.2.2} : FP (α ⊕ β))))) from by
+              (fun q => (q.1, q.2.1, ({RoseTree.node a q.2.2} : FP (α ⊕ β))))) from by
         unfold dcr; rw [Multiset.map_bind]
         apply Multiset.bind_congr; intro p _; rw [Multiset.map_map]; rfl]
     rw [map_node_wrap_proj3, map_node_wrap_proj3, coassL τ hτ cs]
   rw [dcLHSP_node, dcRHSP_node]
-  rw [show (fun p : FP (α ⊕ β) × List (Planar (α ⊕ β)) =>
-        (treeCutsP τ (Planar.node a p.2)).map (fun B12 => (p.1, B12.1, B12.2)))
-        = (fun p => (p.1, ({Planar.node a p.2} : FP (α ⊕ β)), (0 : FP (α ⊕ β))) ::ₘ
-            (Cl τ p.2).map (fun q => (p.1, q.1, ({Planar.node a q.2} : FP (α ⊕ β))))) from by
+  rw [show (fun p : FP (α ⊕ β) × List (RoseTree (α ⊕ β)) =>
+        (treeCutsP τ (RoseTree.node a p.2)).map (fun B12 => (p.1, B12.1, B12.2)))
+        = (fun p => (p.1, ({RoseTree.node a p.2} : FP (α ⊕ β)), (0 : FP (α ⊕ β))) ::ₘ
+            (Cl τ p.2).map (fun q => (p.1, q.1, ({RoseTree.node a q.2} : FP (α ⊕ β))))) from by
       funext p
       rw [treeCutsP_node, Multiset.map_cons, Multiset.map_map]; rfl]
   rw [bind_cons_split, Multiset.map_add, Multiset.map_add, Multiset.map_add,

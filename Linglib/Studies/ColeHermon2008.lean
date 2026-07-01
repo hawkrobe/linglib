@@ -128,7 +128,7 @@ def vp : SyntacticObject :=
   SO.ofPlanar (SO.nodeP (SO.leafP tok_mangatuk) (SO.leafP tok_biangi))
 
 /-- The VP as a planar subtree (for embedding in larger result trees). -/
-private def vpP : Planar SOLabel := SO.nodeP (SO.leafP tok_mangatuk) (SO.leafP tok_biangi)
+private def vpP : RoseTree SOLabel := SO.nodeP (SO.leafP tok_mangatuk) (SO.leafP tok_biangi)
 
 -- ============================================================================
 -- § 2: Toba Batak VOS Derivation

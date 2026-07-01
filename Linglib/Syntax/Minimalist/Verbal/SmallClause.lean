@@ -128,28 +128,26 @@ round-trips through `Quotient.out`), so `decide`/`rfl` can't read back the
 shape of a `merge`-built tree. These two lemmas give the structural facts
 study files need — a binary node has the summed leaf count of its children
 and exactly one more internal node — by quotient induction, mirroring
-`Nonplanar.weight_node`. -/
+`Nonplanar.numNodes_node`. -/
 
 open RootedTree in
-private theorem Nonplanar.leafCount_node_pair {α : Type*} (a : α)
+private theorem Nonplanar.numLeaves_node_pair {α : Type*} (a : α)
     (c d : Nonplanar α) :
-    (Nonplanar.node a {c, d}).leafCount = c.leafCount + d.leafCount := by
+    (Nonplanar.node a {c, d}).numLeaves = c.numLeaves + d.numLeaves := by
   refine Quotient.inductionOn₂ c d fun pc pd => ?_
-  show (Nonplanar.mk
-    (.node a [Quotient.out (Nonplanar.mk pc), Quotient.out (Nonplanar.mk pd)])).leafCount = _
-  rw [Nonplanar.leafCount_mk, Planar.leafCount_node_of_ne_nil _ _ (by simp),
-    Planar.leafCountList_cons, Planar.leafCountList_cons, Planar.leafCountList_nil,
-    show (Quotient.out (Nonplanar.mk pc)).leafCount = Nonplanar.leafCount (Nonplanar.mk pc) from
-      (Nonplanar.leafCount_mk _).symm.trans (congrArg Nonplanar.leafCount (Quotient.out_eq _)),
-    show (Quotient.out (Nonplanar.mk pd)).leafCount = Nonplanar.leafCount (Nonplanar.mk pd) from
-      (Nonplanar.leafCount_mk _).symm.trans (congrArg Nonplanar.leafCount (Quotient.out_eq _)),
-    Nat.add_zero]
-  rfl
+  show (Nonplanar.node a {Nonplanar.mk pc, Nonplanar.mk pd}).numLeaves
+      = (Nonplanar.mk pc).numLeaves + (Nonplanar.mk pd).numLeaves
+  rw [show ({Nonplanar.mk pc, Nonplanar.mk pd} : Multiset (Nonplanar α))
+        = Multiset.ofList ([pc, pd].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
+  simp only [Nonplanar.numLeaves_mk, RoseTree.numLeaves_node, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil]
+  have hc := RoseTree.numLeaves_pos pc
+  omega
 
 /-- Leaf count of a binary Merge node is the sum of its children's. -/
 theorem SO.leafCount_node (l r : SyntacticObject) :
     (SO.node l r).leafCount = l.leafCount + r.leafCount := by
-  rw [SO.leafCount, SO.node_val, Nonplanar.leafCount_node_pair]; rfl
+  rw [SO.leafCount, SO.node_val, Nonplanar.numLeaves_node_pair]; rfl
 
 /-- Leaf count of a Merge is the sum of its children's (`SO.merge = SO.node`). -/
 @[simp] theorem SO.leafCount_merge (l r : SyntacticObject) :

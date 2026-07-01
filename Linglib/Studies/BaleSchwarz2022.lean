@@ -573,7 +573,7 @@ theorem copular_bare_mp_anomalous :
 
 "The sample weighs 0.9 grams per milliliter"
 
-Tree structure (eq. 20):
+RoseTree structure (eq. 20):
 ```
         S
        / \

@@ -36,13 +36,13 @@ instance (x y : SO) : Decidable (SO.immediatelyContains x y) :=
 @[simp] theorem SO.immediatelyContains_lexLeaf (tok : LIToken) (y : SO) :
     ¬ SO.immediatelyContains (SO.lexLeaf tok) y := by
   simp only [SO.immediatelyContains, SO.lexLeaf, Nonplanar.leaf, Nonplanar.rootChildren_mk,
-    Planar.leaf, Planar.children, List.map_nil, Multiset.coe_nil, Multiset.notMem_zero,
+    RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil, Multiset.notMem_zero,
     not_false_iff]
 
 @[simp] theorem SO.immediatelyContains_traceLeaf (y : SO) :
     ¬ SO.immediatelyContains SO.traceLeaf y := by
   simp only [SO.immediatelyContains, SO.traceLeaf, Nonplanar.leaf, Nonplanar.rootChildren_mk,
-    Planar.leaf, Planar.children, List.map_nil, Multiset.coe_nil, Multiset.notMem_zero,
+    RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil, Multiset.notMem_zero,
     not_false_iff]
 
 @[simp] theorem SO.immediatelyContains_node (l r y : SO) :
@@ -56,20 +56,20 @@ instance (x y : SO) : Decidable (SO.immediatelyContains x y) :=
 
 `Nonplanar.rootChildren` is single-level, so deep enumeration is built fresh at the
 planar level and lifted. The result is a multiset of *nonplanar* subtrees; its
-`PlanarEquiv`-invariance lets it descend to the quotient. -/
+`PermEquiv`-invariance lets it descend to the quotient. -/
 
 mutual
 /-- All subtrees of a planar tree (incl. the root), as nonplanar trees. -/
-def subtreesNPlanar : Planar SOLabel → Multiset (Nonplanar SOLabel)
+def subtreesNPlanar : RoseTree SOLabel → Multiset (Nonplanar SOLabel)
   | .node a cs => Nonplanar.mk (.node a cs) ::ₘ subtreesNPlanarList cs
 /-- Auxiliary: union of subtree-multisets across a child list. -/
-def subtreesNPlanarList : List (Planar SOLabel) → Multiset (Nonplanar SOLabel)
+def subtreesNPlanarList : List (RoseTree SOLabel) → Multiset (Nonplanar SOLabel)
   | []      => 0
   | c :: cs => subtreesNPlanar c + subtreesNPlanarList cs
 end
 
 /-- `subtreesNPlanarList` is a multiset sum, hence permutation-invariant. -/
-private theorem subtreesNPlanarList_perm {cs ds : List (Planar SOLabel)}
+private theorem subtreesNPlanarList_perm {cs ds : List (RoseTree SOLabel)}
     (h : cs.Perm ds) : subtreesNPlanarList cs = subtreesNPlanarList ds := by
   induction h with
   | nil => rfl
@@ -78,44 +78,44 @@ private theorem subtreesNPlanarList_perm {cs ds : List (Planar SOLabel)}
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
 /-- Replacing one child by a subtree-equal child preserves the list sum. -/
-private theorem subtreesNPlanarList_replace (pre post : List (Planar SOLabel))
-    {old new : Planar SOLabel} (h : subtreesNPlanar old = subtreesNPlanar new) :
+private theorem subtreesNPlanarList_replace (pre post : List (RoseTree SOLabel))
+    {old new : RoseTree SOLabel} (h : subtreesNPlanar old = subtreesNPlanar new) :
     subtreesNPlanarList (pre ++ old :: post) = subtreesNPlanarList (pre ++ new :: post) := by
   induction pre with
   | nil => simp only [List.nil_append, subtreesNPlanarList]; rw [h]
   | cons hd tl ih => simp only [List.cons_append, subtreesNPlanarList]; rw [ih]
 
-private theorem subtreesNPlanar_planarStep {t s : Planar SOLabel}
-    (hstep : Planar.PlanarStep t s) : subtreesNPlanar t = subtreesNPlanar s := by
+private theorem subtreesNPlanar_permStep {t s : RoseTree SOLabel}
+    (hstep : RoseTree.PermStep t s) : subtreesNPlanar t = subtreesNPlanar s := by
   induction hstep with
   | @swapAtRoot a l r pre post =>
     simp only [subtreesNPlanar]
-    rw [Nonplanar.mk_step Planar.PlanarStep.swapAtRoot,
+    rw [Nonplanar.mk_step RoseTree.PermStep.swapAtRoot,
         subtreesNPlanarList_perm (List.Perm.append_left pre (.swap r l post))]
   | @recurse a pre old new post hstep ih =>
     simp only [subtreesNPlanar]
-    rw [Nonplanar.mk_step (Planar.PlanarStep.recurse hstep),
+    rw [Nonplanar.mk_step (RoseTree.PermStep.recurse hstep),
         subtreesNPlanarList_replace pre post ih]
 
-/-- `subtreesNPlanar` is `PlanarEquiv`-invariant, so it descends to `Nonplanar`. -/
-theorem subtreesNPlanar_planarEquiv {t s : Planar SOLabel}
-    (h : Planar.PlanarEquiv t s) : subtreesNPlanar t = subtreesNPlanar s := by
+/-- `subtreesNPlanar` is `PermEquiv`-invariant, so it descends to `Nonplanar`. -/
+theorem subtreesNPlanar_permEquiv {t s : RoseTree SOLabel}
+    (h : RoseTree.PermEquiv t s) : subtreesNPlanar t = subtreesNPlanar s := by
   induction h with
-  | rel _ _ hstep => exact subtreesNPlanar_planarStep hstep
+  | rel _ _ hstep => exact subtreesNPlanar_permStep hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
 /-- All subtrees of a nonplanar tree (incl. the root). -/
 def subtreesN : Nonplanar SOLabel → Multiset (Nonplanar SOLabel) :=
-  Nonplanar.lift subtreesNPlanar (fun _ _ h => subtreesNPlanar_planarEquiv h)
+  Nonplanar.lift subtreesNPlanar (fun _ _ h => subtreesNPlanar_permEquiv h)
 
-@[simp] theorem subtreesN_mk (t : Planar SOLabel) :
+@[simp] theorem subtreesN_mk (t : RoseTree SOLabel) :
     subtreesN (Nonplanar.mk t) = subtreesNPlanar t := rfl
 
 theorem subtreesN_leaf (a : SOLabel) : subtreesN (Nonplanar.leaf a) = {Nonplanar.leaf a} := by
-  show subtreesNPlanar (Planar.leaf a) = _
-  simp only [Planar.leaf, subtreesNPlanar, subtreesNPlanarList]
+  show subtreesNPlanar (RoseTree.leaf a) = _
+  simp only [RoseTree.leaf, subtreesNPlanar, subtreesNPlanarList]
   rfl
 
 /-- `subtreesN` on a bare binary node: the node plus the subtrees of each child. -/
@@ -124,10 +124,10 @@ theorem subtreesN_node (a b : Nonplanar SOLabel) :
       = Nonplanar.node (Sum.inr ()) {a, b} ::ₘ (subtreesN a + subtreesN b) := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (Planar.node (Sum.inr ()) [pa, pb]) := by
+           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
     rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
           = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl,
-        Nonplanar.node_mk_planar_list]
+        Nonplanar.node_mk_tree_list]
   show subtreesN (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
       = Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
         ::ₘ (subtreesN (Nonplanar.mk pa) + subtreesN (Nonplanar.mk pb))
@@ -148,7 +148,7 @@ theorem subtreesN_node (a b : Nonplanar SOLabel) :
 theorem self_mem_subtreesN (u : Nonplanar SOLabel) : u ∈ subtreesN u := by
   refine Quotient.inductionOn u fun p => ?_
   obtain ⟨lbl, cs⟩ := p
-  show Nonplanar.mk (Planar.node lbl cs) ∈ subtreesNPlanar (Planar.node lbl cs)
+  show Nonplanar.mk (RoseTree.node lbl cs) ∈ subtreesNPlanar (RoseTree.node lbl cs)
   rw [subtreesNPlanar]; exact Multiset.mem_cons_self _ _
 
 /-! ### `SO.subtrees` / `SO.Acc` -/
@@ -218,27 +218,27 @@ theorem SO.subtrees_subset_of_mem {w s : SO} (h : w ∈ s.subtrees) :
 /-! ### Cardinality (MCB's vertex/accessible-term counts, Def 1.2.2 eq. 1.2.5) -/
 
 mutual
-/-- `subtreesN` has one element per vertex: its cardinality is the weight. -/
-theorem subtreesNPlanar_card (p : Planar SOLabel) :
-    (subtreesNPlanar p).card = p.weight := by
+/-- `subtreesN` has one element per vertex: its cardinality is the node count. -/
+theorem subtreesNPlanar_card (p : RoseTree SOLabel) :
+    (subtreesNPlanar p).card = p.numNodes := by
   obtain ⟨a, cs⟩ := p
-  rw [subtreesNPlanar, Multiset.card_cons, subtreesNPlanarList_card, Planar.weight]; omega
+  rw [subtreesNPlanar, Multiset.card_cons, subtreesNPlanarList_card, RoseTree.numNodes_node]; omega
 /-- Auxiliary list version. -/
-theorem subtreesNPlanarList_card (cs : List (Planar SOLabel)) :
-    (subtreesNPlanarList cs).card = Planar.weightList cs := by
+theorem subtreesNPlanarList_card (cs : List (RoseTree SOLabel)) :
+    (subtreesNPlanarList cs).card = (cs.map RoseTree.numNodes).sum := by
   match cs with
   | [] => rfl
   | c :: cs => rw [subtreesNPlanarList, Multiset.card_add, subtreesNPlanar_card,
-                   subtreesNPlanarList_card, Planar.weightList]
+                   subtreesNPlanarList_card, List.map_cons, List.sum_cons]
 end
 
 theorem subtreesN_card (u : Nonplanar SOLabel) :
-    (subtreesN u).card = Nonplanar.weight u :=
+    (subtreesN u).card = Nonplanar.numNodes u :=
   Quotient.inductionOn u subtreesNPlanar_card
 
 /-- **`subtrees` enumerates the vertices** ([marcolli-chomsky-berwick-2025] Def 1.2.2:
     `subtrees = Acc'(T)`, so its size is `#V(T)`, the MCB workspace-size primitive). -/
-theorem SO.subtrees_card (s : SO) : (s.subtrees).card = Nonplanar.weight s.val := by
+theorem SO.subtrees_card (s : SO) : (s.subtrees).card = Nonplanar.numNodes s.val := by
   rw [SO.subtrees, Multiset.card_pmap, subtreesN_card]
 
 /-! ### Accessible terms `Acc(T)` (Def 1.2.2) -/
@@ -250,34 +250,34 @@ theorem SO.subtrees_card (s : SO) : (s.subtrees).card = Nonplanar.weight s.val :
 def SO.Acc (s : SO) : Multiset SO := s.subtrees - {s}
 
 /-- **MCB counting identity** (eq. 1.2.5, one-component case): `#Acc(T) = #V(T) − 1`. -/
-theorem SO.Acc_card (s : SO) : (s.Acc).card = Nonplanar.weight s.val - 1 := by
+theorem SO.Acc_card (s : SO) : (s.Acc).card = Nonplanar.numNodes s.val - 1 := by
   rw [SO.Acc, Multiset.card_sub (Multiset.singleton_le.mpr (SO.self_mem_subtrees s)),
       SO.subtrees_card, Multiset.card_singleton]
 
 @[simp] theorem SO.Acc_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).Acc = 0 := by
   rw [← Multiset.card_eq_zero, SO.Acc_card,
-      show (SO.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl, Nonplanar.weight_leaf]
+      show (SO.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl, Nonplanar.numNodes_leaf]
 
 @[simp] theorem SO.Acc_traceLeaf : SO.traceLeaf.Acc = 0 := by
   rw [← Multiset.card_eq_zero, SO.Acc_card,
-      show SO.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl, Nonplanar.weight_leaf]
+      show SO.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl, Nonplanar.numNodes_leaf]
 
 /-! ### Containment / dominance -/
 
 /-- Weight of a bare binary node is one more than the sum of its daughters'. -/
 theorem weight_node_pair (a b : Nonplanar SOLabel) :
-    Nonplanar.weight (Nonplanar.node (Sum.inr ()) {a, b})
-      = Nonplanar.weight a + Nonplanar.weight b + 1 := by
+    Nonplanar.numNodes (Nonplanar.node (Sum.inr ()) {a, b})
+      = Nonplanar.numNodes a + Nonplanar.numNodes b + 1 := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (Planar.node (Sum.inr ()) [pa, pb]) := by
+           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
     rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_planar_list]
-  show Nonplanar.weight (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
-      = Nonplanar.weight (Nonplanar.mk pa) + Nonplanar.weight (Nonplanar.mk pb) + 1
+          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
+  show Nonplanar.numNodes (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
+      = Nonplanar.numNodes (Nonplanar.mk pa) + Nonplanar.numNodes (Nonplanar.mk pb) + 1
   rw [key]
-  show (Planar.node (Sum.inr ()) [pa, pb]).weight = pa.weight + pb.weight + 1
-  simp only [Planar.weight, Planar.weightList]; omega
+  show (RoseTree.node (Sum.inr ()) [pa, pb]).numNodes = pa.numNodes + pb.numNodes + 1
+  simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]; omega
 
 /-- **Containment (dominance)** is the transitive closure of immediate containment
     ([marcolli-chomsky-berwick-2025] §1.1; the legacy `contains`). -/
@@ -296,7 +296,7 @@ theorem SO.contains_trans {x y z : SO} (hxy : SO.contains x y) (hyz : SO.contain
 
 /-- Immediate containment strictly decreases weight. -/
 theorem SO.immediatelyContains_lt_weight {x y : SO} (h : SO.immediatelyContains x y) :
-    Nonplanar.weight y.val < Nonplanar.weight x.val := by
+    Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
   rcases SO.exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
   · exact absurd h (SO.immediatelyContains_lexLeaf tok y)
   · exact absurd h (SO.immediatelyContains_traceLeaf y)
@@ -306,7 +306,7 @@ theorem SO.immediatelyContains_lt_weight {x y : SO} (h : SO.immediatelyContains 
 
 /-- Containment strictly decreases weight; hence it is irreflexive. -/
 theorem SO.contains_lt_weight {x y : SO} (h : SO.contains x y) :
-    Nonplanar.weight y.val < Nonplanar.weight x.val := by
+    Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
   induction h with
   | imm _ _ himm => exact SO.immediatelyContains_lt_weight himm
   | trans _ _ _ himm _ ih => exact lt_trans ih (SO.immediatelyContains_lt_weight himm)
@@ -398,7 +398,7 @@ theorem SO.containsOrEq_trans {x y z : SO}
     · exact Or.inr hxy
     · exact Or.inr (SO.contains_trans hxy hyz)
 
-/-! ### Tree-relative c-command ([reinhart-1976]) -/
+/-! ### RoseTree-relative c-command ([reinhart-1976]) -/
 
 /-- `x` and `y` are **sisters in** `root`: distinct co-daughters of some subtree. -/
 def SO.areSistersIn (root x y : SO) : Prop :=
@@ -425,7 +425,7 @@ instance (root x y : SO) : Decidable (SO.asymCCommandsIn root x y) :=
 /-! ### `decide` demonstrations
 
 The containment / c-command decision procedures reduce on concrete trees built
-via `Nonplanar.mk ∘ Planar.node` (not the noncomputable `SO.node`), confirming the
+via `Nonplanar.mk ∘ RoseTree.node` (not the noncomputable `SO.node`), confirming the
 "state result trees directly" discipline carries through to the relational layer. -/
 
 private def demoL : SO := ⟨Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) []), by decide⟩

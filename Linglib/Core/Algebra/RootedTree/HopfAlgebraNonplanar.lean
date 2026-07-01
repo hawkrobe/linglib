@@ -40,12 +40,12 @@ file is a candidate factoring of Foissy's specific recursion.
 
 - **Auxiliary depth lemma** (`cutSummandsN_subtree_depth_lt`): every tree
   appearing in a cut forest of `T` has strictly smaller depth than `T`.
-  Lifted from a planar mutual structural-induction proof.
+  Lifted from a tree-level mutual structural-induction proof.
 - **Auxiliary weight lemma** (`cutSummandsN_rem_weight_lt`): for nontrivial
   cuts, the remainder has strictly smaller weight than the source. Substrate
   for the `weight`-recursive right antipode.
 - **Multiplicity-1 uniqueness** (`cutSummandsN_filter_card_zero`): the empty
-  cut `(0, T)` appears with multiplicity exactly 1. Mutual planar structural
+  cut `(0, T)` appears with multiplicity exactly 1. Mutual tree-level structural
   induction (with auxiliary `cutListSummandsP` version) plus a
   `multiset_filter_product` helper. Substrate for the right-antipode
   cancellation.
@@ -53,7 +53,7 @@ file is a candidate factoring of Foissy's specific recursion.
   `Nonplanar.depth`, using the closed form
   `S(T) = -Σ over cutSummandsN T of (Π S(Tᵢ)) · ofTree rem`.
 - **Right antipode** (`antipodeRightTreeN`): well-founded recursion on
-  `Nonplanar.weight`, using the dual form `R(T) = -ofTree T - Σ_{cf ≠ 0}
+  `Nonplanar.numNodes`, using the dual form `R(T) = -ofTree T - Σ_{cf ≠ 0}
   of'(cf) · R(rem)`. The lTensor cancellation falls out of `_unfold` plus
   `cutSummandsN_filter_card_zero`.
 - **Antipodes as AlgHoms** (`antipodeAlgHomN`, `antipodeRightAlgHomN`):
@@ -87,17 +87,17 @@ noncomputable instance : CommRing (ConnesKreimer R (Nonplanar α)) :=
 
 Substrate for the well-founded antipode definition. The depth of any tree
 appearing in a cut forest of `T` is strictly less than `T.depth`. Proved
-mutually on the planar substrate, then descended via the planar
+mutually on the tree-level substrate, then descended via the tree-level
 representation. -/
 
-/-! ### Planar mutual induction -/
+/-! ### RoseTree mutual induction -/
 
 mutual
 
 /-- For any `(cf, rem) ∈ cutSummandsP T`, every tree `T_i ∈ cf` has depth
     bounded by `T.depth`. Mutual with `cutListSummandsP_subtree_depth_le`. -/
 private theorem cutSummandsP_subtree_depth_le :
-    ∀ (T : Planar α) (cf : Forest (Planar α)) (rem : Planar α),
+    ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
       (cf, rem) ∈ cutSummandsP T → ∀ T_i ∈ cf, T_i.depth ≤ T.depth
   | .node a children, cf, rem, h_mem, T_i, h_T_i => by
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem
@@ -106,18 +106,18 @@ private theorem cutSummandsP_subtree_depth_le :
     have h_cf : cf' = cf := congrArg Prod.fst h_eq
     rw [← h_cf] at h_T_i
     -- (cf', rem') ∈ cutListSummandsP children, T_i ∈ cf'.
-    have hbd : T_i.depth ≤ Planar.depthMaxList children :=
+    have hbd : T_i.depth ≤ (children.map RoseTree.depth).foldr max 0 :=
       cutListSummandsP_subtree_depth_le children cf' rem' h_mem' T_i h_T_i
-    show T_i.depth ≤ 1 + Planar.depthMaxList children
+    rw [RoseTree.depth_node]
     omega
 
 /-- For any `(cf, rem_list) ∈ cutListSummandsP cs`, every tree `T_i ∈ cf`
-    has depth bounded by `Planar.depthMaxList cs`. Mutual with
+    has depth bounded by the children's max depth. Mutual with
     `cutSummandsP_subtree_depth_le`. -/
 private theorem cutListSummandsP_subtree_depth_le :
-    ∀ (cs : List (Planar α)) (cf : Forest (Planar α)) (rem_list : List (Planar α)),
+    ∀ (cs : List (RoseTree α)) (cf : Forest (RoseTree α)) (rem_list : List (RoseTree α)),
       (cf, rem_list) ∈ cutListSummandsP cs → ∀ T_i ∈ cf,
-        T_i.depth ≤ Planar.depthMaxList cs
+        T_i.depth ≤ (cs.map RoseTree.depth).foldr max 0
   | [], cf, rem_list, h_mem, T_i, h_T_i => by
     rw [cutListSummandsP_nil, Multiset.mem_singleton] at h_mem
     -- h_mem : (cf, rem_list) = (0, [])
@@ -138,7 +138,7 @@ private theorem cutListSummandsP_subtree_depth_le :
         exact (congrArg Prod.fst h_eq).symm
     rw [h_cf_eq, Multiset.mem_add] at h_T_i
     -- T_i ∈ aug_F or T_i ∈ cf_cs'.
-    show T_i.depth ≤ max c.depth (Planar.depthMaxList cs')
+    show T_i.depth ≤ max c.depth ((cs'.map RoseTree.depth).foldr max 0)
     rcases h_T_i with h_in_aug | h_in_cf_cs'
     · -- T_i ∈ aug_F. Either aug_F = {c} (extract whole) or aug_F = s.1 for s ∈ cutSummandsP c.
       rw [augActionP_eq, Multiset.mem_cons] at h_aug
@@ -162,7 +162,7 @@ private theorem cutListSummandsP_subtree_depth_le :
 
 end
 
-/-! ### Nonplanar version (descent via planar rep) -/
+/-! ### Nonplanar version (descent via tree-level rep) -/
 
 /-- For any `(cf, rem) ∈ cutSummandsN T` (any tree `T : Nonplanar α`), every
     tree `T_i ∈ cf` has strictly smaller depth than `T`. The strict bound
@@ -173,8 +173,8 @@ theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
     (cf : Forest (Nonplanar α)) (rem : Nonplanar α)
     (h_mem : (cf, rem) ∈ cutSummandsN T)
     (T_i : Nonplanar α) (h_T_i : T_i ∈ cf) : T_i.depth < T.depth := by
-  -- Pick a planar rep T = mk T₀.
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=
+  -- Pick a tree-level rep T = mk T₀.
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsN_mk, Multiset.mem_map] at h_mem
   obtain ⟨⟨cf_p, rem_p⟩, h_mem_p, h_proj⟩ := h_mem
@@ -187,19 +187,19 @@ theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
   obtain ⟨T_i_p, h_T_i_p_mem, rfl⟩ := h_T_i
   show (Nonplanar.mk T_i_p).depth < T₀.depth
   rw [Nonplanar.depth_mk]
-  -- Use planar lemma: T_i_p.depth ≤ T₀.depth - 1.
+  -- Use tree-level lemma: T_i_p.depth ≤ T₀.depth - 1.
   -- Strategy: T₀ = .node a children for some a, children. cf_p ∈ cutListSummandsP children.
-  -- T_i_p ∈ cf_p means T_i_p.depth ≤ depthMaxList children = T₀.depth - 1.
+  -- T_i_p ∈ cf_p means T_i_p.depth ≤ (children's max depth) = T₀.depth - 1.
   match T₀, h_mem_p with
   | .node a children, h_mem_p =>
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem_p
     obtain ⟨⟨cf_p', rem_p'⟩, h_mem_p', h_eq⟩ := h_mem_p
     have h_cf_eq : cf_p' = cf_p := congrArg Prod.fst h_eq
     rw [← h_cf_eq] at h_T_i_p_mem
-    have hbd : T_i_p.depth ≤ Planar.depthMaxList children :=
+    have hbd : T_i_p.depth ≤ (children.map RoseTree.depth).foldr max 0 :=
       cutListSummandsP_subtree_depth_le children cf_p' rem_p' h_mem_p' T_i_p h_T_i_p_mem
-    show T_i_p.depth < (Planar.node a children).depth
-    show T_i_p.depth < 1 + Planar.depthMaxList children
+    show T_i_p.depth < (RoseTree.node a children).depth
+    rw [RoseTree.depth_node]
     omega
 
 /-! ### Weight conservation (vertex count) for cuts
@@ -211,43 +211,29 @@ weight equals `T`'s weight. Substrate for the lTensor sorry closure: the
 decreases for nontrivial cuts), in contrast to the standard antipode
 which recurses on `cf` (depth strictly decreases). -/
 
-/-- `Planar.weightList` agrees with `(·.map weight).sum` on lists.
-    Bridge between the recursive `weightList` definition and the multiset-style
-    sum used in the cut-conservation lemmas. -/
-private theorem Planar.weightList_eq_sum_map (cs : List (Planar α)) :
-    Planar.weightList cs = (cs.map Planar.weight).sum := by
-  induction cs with
-  | nil => rfl
-  | cons t ts ih =>
-    show Planar.weight t + Planar.weightList ts =
-         ((t :: ts).map Planar.weight).sum
-    rw [List.map_cons, List.sum_cons, ih]
-
 mutual
 
-/-- Vertex conservation for cuts of planar trees: `cf.weight_sum + rem.weight = T.weight`. -/
+/-- Vertex conservation for cuts of tree-level trees: `cf.weight_sum + rem.numNodes = T.numNodes`. -/
 private theorem cutSummandsP_weight_eq :
-    ∀ (T : Planar α) (cf : Forest (Planar α)) (rem : Planar α),
-      (cf, rem) ∈ cutSummandsP T → (cf.map Planar.weight).sum + rem.weight = T.weight
+    ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
+      (cf, rem) ∈ cutSummandsP T → (cf.map RoseTree.numNodes).sum + rem.numNodes = T.numNodes
   | .node a children, cf, rem, h_mem => by
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem
     obtain ⟨⟨cf', rem'⟩, h_mem', h_eq⟩ := h_mem
     have h_cf : cf' = cf := congrArg Prod.fst h_eq
-    have h_rem : (Planar.node a rem' : Planar α) = rem := congrArg Prod.snd h_eq
+    have h_rem : (RoseTree.node a rem' : RoseTree α) = rem := congrArg Prod.snd h_eq
     rw [← h_cf, ← h_rem]
     -- (cf', rem') ∈ cutListSummandsP children, weight conservation by IH.
     have hc := cutListSummandsP_weight_eq children cf' rem' h_mem'
-    show (cf'.map Planar.weight).sum + (1 + Planar.weightList rem')
-       = 1 + Planar.weightList children
-    rw [Planar.weightList_eq_sum_map, Planar.weightList_eq_sum_map]
+    rw [RoseTree.numNodes_node, RoseTree.numNodes_node]
     omega
 
-/-- Vertex conservation for cuts of planar lists. -/
+/-- Vertex conservation for cuts of tree-level lists. -/
 private theorem cutListSummandsP_weight_eq :
-    ∀ (cs : List (Planar α)) (cf : Forest (Planar α)) (rem_list : List (Planar α)),
+    ∀ (cs : List (RoseTree α)) (cf : Forest (RoseTree α)) (rem_list : List (RoseTree α)),
       (cf, rem_list) ∈ cutListSummandsP cs →
-        (cf.map Planar.weight).sum + (rem_list.map Planar.weight).sum =
-          (cs.map Planar.weight).sum
+        (cf.map RoseTree.numNodes).sum + (rem_list.map RoseTree.numNodes).sum =
+          (cs.map RoseTree.numNodes).sum
   | [], cf, rem_list, h_mem => by
     rw [cutListSummandsP_nil, Multiset.mem_singleton] at h_mem
     have h_cf : cf = 0 := congrArg Prod.fst h_mem
@@ -268,16 +254,16 @@ private theorem cutListSummandsP_weight_eq :
     -- - none case: rem_list = rem_cs'.
     -- - some r case: rem_list = r :: rem_cs', where r = "the recurse-into-cut remainder for c".
     -- We need to handle both branches.
-    -- Conservation on aug_F: weight of aug_F = c.weight (extract whole) or = c.weight - r.weight
+    -- Conservation on aug_F: weight of aug_F = c.numNodes (extract whole) or = c.numNodes - r.numNodes
     --                                          (recurse, conservation on cutSummandsP c).
     rw [h_cf_eq, Multiset.map_add, Multiset.sum_add]
     -- Goal: (aug_F.map weight).sum + (cf_cs'.map weight).sum + (rem_list.map weight).sum
     --     = ((c :: cs').map weight).sum
-    show (aug_F.map Planar.weight).sum + (cf_cs'.map Planar.weight).sum +
-           (rem_list.map Planar.weight).sum
-       = ((c :: cs').map Planar.weight).sum
+    show (aug_F.map RoseTree.numNodes).sum + (cf_cs'.map RoseTree.numNodes).sum +
+           (rem_list.map RoseTree.numNodes).sum
+       = ((c :: cs').map RoseTree.numNodes).sum
     rw [List.map_cons, List.sum_cons]
-    -- Goal: ... = c.weight + (cs'.map Planar.weight).sum
+    -- Goal: ... = c.numNodes + (cs'.map RoseTree.numNodes).sum
     -- IH on cs': (cf_cs'.map weight).sum + (rem_cs'.map weight).sum = (cs'.map weight).sum.
     have ih_cs' := cutListSummandsP_weight_eq cs' cf_cs' rem_cs' h_cf_cs'
     rw [augActionP_eq, Multiset.mem_cons] at h_aug
@@ -302,7 +288,7 @@ private theorem cutListSummandsP_weight_eq :
         rw [← h_aug_opt] at h_eq
         exact (congrArg Prod.snd h_eq).symm
       rw [← h_aug_F, h_rem_list]
-      -- IH on cutSummandsP c: (s.1.map weight).sum + s.2.weight = c.weight.
+      -- IH on cutSummandsP c: (s.1.map weight).sum + s.2.numNodes = c.numNodes.
       have ih_c := cutSummandsP_weight_eq c s.1 s.2 h_s_mem
       simp [List.map_cons, List.sum_cons]
       omega
@@ -315,19 +301,19 @@ end
 private theorem cutSummandsN_rem_weight_lt (T : Nonplanar α)
     (cf : Forest (Nonplanar α)) (rem : Nonplanar α)
     (h_mem : (cf, rem) ∈ cutSummandsN T) (h_nonempty : cf ≠ 0) :
-    rem.weight < T.weight := by
-  -- Pick a planar rep T = mk T₀.
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=
+    rem.numNodes < T.numNodes := by
+  -- Pick a tree-level rep T = mk T₀.
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsN_mk, Multiset.mem_map] at h_mem
   obtain ⟨⟨cf_p, rem_p⟩, h_mem_p, h_proj⟩ := h_mem
   -- h_proj : projSummand (cf_p, rem_p) = (cf, rem), i.e., (cf_p.map mk, mk rem_p) = (cf, rem).
   have h_cf : cf_p.map Nonplanar.mk = cf := congrArg Prod.fst h_proj
   have h_rem : Nonplanar.mk rem_p = rem := congrArg Prod.snd h_proj
-  show rem.weight < (Nonplanar.mk T₀).weight
-  rw [Nonplanar.weight_mk, ← h_rem, Nonplanar.weight_mk]
-  -- Goal: rem_p.weight < T₀.weight.
-  -- Use planar conservation: cf_p.weight + rem_p.weight = T₀.weight (where cf_p.weight = sum).
+  show rem.numNodes < (Nonplanar.mk T₀).numNodes
+  rw [Nonplanar.numNodes_mk, ← h_rem, Nonplanar.numNodes_mk]
+  -- Goal: rem_p.numNodes < T₀.numNodes.
+  -- Use tree-level conservation: cf_p.numNodes + rem_p.numNodes = T₀.numNodes (where cf_p.numNodes = sum).
   have h_eq := cutSummandsP_weight_eq T₀ cf_p rem_p h_mem_p
   -- Need cf_p ≠ 0 (from cf ≠ 0, since cf = cf_p.map mk).
   have h_cf_p_ne : cf_p ≠ 0 := by
@@ -335,17 +321,15 @@ private theorem cutSummandsN_rem_weight_lt (T : Nonplanar α)
     apply h_nonempty
     rw [← h_cf, h_zero, Multiset.map_zero]
   -- Total weight of cf_p ≥ |cf_p| ≥ 1 (each tree has weight ≥ 1).
-  have h_cf_pos : (cf_p.map Planar.weight).sum ≥ 1 := by
+  have h_cf_pos : (cf_p.map RoseTree.numNodes).sum ≥ 1 := by
     obtain ⟨T_i, h_T_i⟩ := Multiset.exists_mem_of_ne_zero h_cf_p_ne
-    have h_T_i_pos : T_i.weight ≥ 1 := by
-      cases T_i with
-      | node a cs => show 1 + Planar.weightList cs ≥ 1; omega
-    -- (cf_p.map weight).sum ≥ T_i.weight (since T_i ∈ cf_p)
-    have h_in_s : T_i.weight ∈ cf_p.map Planar.weight :=
+    have h_T_i_pos : T_i.numNodes ≥ 1 := RoseTree.numNodes_pos T_i
+    -- (cf_p.map weight).sum ≥ T_i.numNodes (since T_i ∈ cf_p)
+    have h_in_s : T_i.numNodes ∈ cf_p.map RoseTree.numNodes :=
       Multiset.mem_map_of_mem _ h_T_i
-    have h_le : T_i.weight ≤ (cf_p.map Planar.weight).sum :=
-      Multiset.single_le_sum (s := cf_p.map Planar.weight)
-        (fun _ _ => Nat.zero_le _) T_i.weight h_in_s
+    have h_le : T_i.numNodes ≤ (cf_p.map RoseTree.numNodes).sum :=
+      Multiset.single_le_sum (s := cf_p.map RoseTree.numNodes)
+        (fun _ _ => Nat.zero_le _) T_i.numNodes h_in_s
     omega
   omega
 
@@ -353,7 +337,7 @@ private theorem cutSummandsN_rem_weight_lt (T : Nonplanar α)
 
 Substrate for the lTensor closure (§6 below). The empty cut `(0, T)`
 appears with multiplicity exactly 1 in `cutSummandsN T` (and in `cutSummandsP T₀`
-for any planar rep). This is the combinatorial fact that the right antipode
+for any tree-level rep). This is the combinatorial fact that the right antipode
 recursion needs to cancel cleanly. -/
 
 /-- Helper: filtering a Multiset cartesian product by a conjunctive predicate
@@ -389,7 +373,7 @@ mutual
 /-- The empty cut `(0, T)` appears with multiplicity exactly 1 in
     `cutSummandsP T`. Mutual structural induction with the list version. -/
 private lemma cutSummandsP_filter_card_zero :
-    ∀ (T : Planar α),
+    ∀ (T : RoseTree α),
       (cutSummandsP T).filter (fun pf => pf.1.card = 0) = {(0, T)}
   | .node a children => by
     rw [cutSummandsP_node, Multiset.filter_map]
@@ -400,24 +384,24 @@ private lemma cutSummandsP_filter_card_zero :
 /-- The empty cut `(0, [])` appears with multiplicity exactly 1 in
     `cutListSummandsP cs`. Mutual with `cutSummandsP_filter_card_zero`. -/
 private lemma cutListSummandsP_filter_card_zero :
-    ∀ (cs : List (Planar α)),
+    ∀ (cs : List (RoseTree α)),
       (cutListSummandsP cs).filter (fun pf => pf.1.card = 0) = {(0, cs)}
   | [] => by
     rw [cutListSummandsP_nil, Multiset.filter_singleton]
-    rw [if_pos (by simp : ((0, ([] : List (Planar α))) :
-      Forest (Planar α) × List (Planar α)).1.card = 0)]
+    rw [if_pos (by simp : ((0, ([] : List (RoseTree α))) :
+      Forest (RoseTree α) × List (RoseTree α)).1.card = 0)]
   | c :: cs' => by
     rw [cutListSummandsP_cons, Multiset.filter_map]
     -- The filter has predicate ((·.1.card = 0) ∘ (match-on-aug-opt)). We'll convert
     -- it to the conjunctive form `p.1.1.card = 0 ∧ p.2.1.card = 0` via filter_congr,
     -- then apply filter_product. Use congrArg to lift through the Multiset.map.
     apply Eq.trans (b := Multiset.map _ ({((0, some c), (0, cs'))} :
-      Multiset ((Forest (Planar α) × Option (Planar α)) ×
-                Forest (Planar α) × List (Planar α))))
+      Multiset ((Forest (RoseTree α) × Option (RoseTree α)) ×
+                Forest (RoseTree α) × List (RoseTree α))))
     · apply congrArg
       refine Eq.trans (Multiset.filter_congr (q := fun
-        (p : (Forest (Planar α) × Option (Planar α)) ×
-              Forest (Planar α) × List (Planar α)) =>
+        (p : (Forest (RoseTree α) × Option (RoseTree α)) ×
+              Forest (RoseTree α) × List (RoseTree α)) =>
         p.1.1.card = 0 ∧ p.2.1.card = 0) (fun p _ => ?_)) ?_
       · -- Per-element iff: (((·.1.card = 0) ∘ match) p) ↔ (p.1.1.card = 0 ∧ p.2.1.card = 0)
         cases h : p.1.2 with
@@ -425,15 +409,15 @@ private lemma cutListSummandsP_filter_card_zero :
         | some r => simp [Function.comp, h, Multiset.card_add]
       · -- Now filter the product by the conjunctive predicate; apply filter_product.
         rw [multiset_filter_product
-              (fun (pf : Forest (Planar α) × Option (Planar α)) => pf.1.card = 0)
-              (fun (pf : Forest (Planar α) × List (Planar α)) => pf.1.card = 0)]
+              (fun (pf : Forest (RoseTree α) × Option (RoseTree α)) => pf.1.card = 0)
+              (fun (pf : Forest (RoseTree α) × List (RoseTree α)) => pf.1.card = 0)]
         -- For augActionP filter, factor through cutSummandsP_filter_card_zero c (mutual call).
         have h_aug : (augActionP c).filter (fun pf => pf.1.card = 0) = {(0, some c)} := by
           rw [augActionP_eq, Multiset.filter_cons]
-          rw [if_neg (by simp : ¬({c} : Forest (Planar α)).card = 0)]
+          rw [if_neg (by simp : ¬({c} : Forest (RoseTree α)).card = 0)]
           rw [Multiset.zero_add, Multiset.filter_map]
           refine Eq.trans (congrArg (Multiset.map _) (Multiset.filter_congr
-            (q := fun (s : Forest (Planar α) × Planar α) => s.1.card = 0)
+            (q := fun (s : Forest (RoseTree α) × RoseTree α) => s.1.card = 0)
             (fun s _ => Iff.rfl))) ?_
           rw [cutSummandsP_filter_card_zero c, Multiset.map_singleton]
         rw [h_aug, cutListSummandsP_filter_card_zero cs', Multiset.product_singleton]
@@ -445,13 +429,13 @@ private lemma cutListSummandsP_filter_card_zero :
 end
 
 /-- The empty cut `(0, T)` appears with multiplicity exactly 1 in
-    `cutSummandsN T`. Descent from the planar uniqueness lemma. Public: consumed
+    `cutSummandsN T`. Descent from the tree-level uniqueness lemma. Public: consumed
     by `Minimalist.Merge.mergeOp_factor_out_singleton` to isolate the surviving
     empty-cut summand. -/
 lemma cutSummandsN_filter_card_zero (T : Nonplanar α) :
     (cutSummandsN T).filter (fun pf => pf.1.card = 0) = {(0, T)} := by
-  -- Pick a planar rep T = mk T₀.
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=
+  -- Pick a tree-level rep T = mk T₀.
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
   rw [cutSummandsN_mk, Multiset.filter_map]
   -- Beta-reduce composed predicate: (·.1.card = 0) ∘ projSummand
@@ -531,7 +515,7 @@ noncomputable def antipodeRightTreeN (T : Nonplanar α) :
     if h_card : pf.1.card ≠ 0 then
       of' pf.1 * antipodeRightTreeN pf.2
     else 0)).sum
-termination_by T.weight
+termination_by T.numNodes
 decreasing_by
   apply cutSummandsN_rem_weight_lt T pf.1 pf.2 h_mem
   rwa [ne_eq, ← Multiset.card_eq_zero]

@@ -369,7 +369,7 @@ def IsMaxDeg (S : Set ℚ) (δ : ℚ) : Prop :=
     4. ⟦DegP⟧ = λs. hot(s) ∧ A(μ)(s) > δ                  (eq. 62)
     5. ∃s[Holder(s)(a) ∧ hot(s) ∧ A(μ)(s) > δ]             (eq. 65)
 
-    Tree (97) — adjectival with modifiers via PM:
+    RoseTree (97) — adjectival with modifiers via PM:
     ⟦more patient with Mary on the playground⟧ =
       λs. A(μ)(s) > δ ∧ patient(s) ∧ with(s)(m) ∧ on(s)(p)
 -/

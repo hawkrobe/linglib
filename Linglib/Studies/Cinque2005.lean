@@ -129,9 +129,9 @@ NP-containing constituent (which contains the earlier `SO.traceLeaf`), built wit
 the planar DSL so the surface orders `decide`. -/
 
 /-- The four leaf tokens, used to build pied-piping movers planar-first. -/
-private def pN : Planar SOLabel := SO.leafP ⟨.simple .N [], 1⟩
-private def pA : Planar SOLabel := SO.leafP ⟨.simple .A [], 2⟩
-private def pNum : Planar SOLabel := SO.leafP ⟨.simple .Num [], 3⟩
+private def pN : RoseTree SOLabel := SO.leafP ⟨.simple .N [], 1⟩
+private def pA : RoseTree SOLabel := SO.leafP ⟨.simple .A [], 2⟩
+private def pNum : RoseTree SOLabel := SO.leafP ⟨.simple .Num [], 3⟩
 
 /-- The pied-piped `[N [A t]]` mover (N raised around A, then the whole `[A t]`
     with N on top). -/
@@ -202,7 +202,7 @@ enumerate the **whole** legal derivation space and show its surface orders are
 2012's leftward-movement characterization).
 
 The enumeration runs on the substrate's ordered planar externalization type
-`Planar SOLabel` (what the externalization replay produces) with `planarYield`
+`RoseTree SOLabel` (what the externalization replay produces) with `planarYield`
 (the substrate's planar yield, traces dropped). Building the base bottom-up, at
 each of the three specs (around A, Num, Dem) we optionally raise an N-containing
 **proper** subtree to the left edge — leftward movement of an N-containing
@@ -215,37 +215,37 @@ private def tokD : LIToken := ⟨.simple .D [], 4⟩
 
 /-- Does the planar structure contain the noun leaf? (Canonical SO trees are
     binary: a leaf is `.node _ []`, an internal node `.node _ [l, r]`.) -/
-private def pHasN : Planar SOLabel → Bool
+private def pHasN : RoseTree SOLabel → Bool
   | .node (.inl t) _ => t == tokN
   | .node (.inr ()) [l, r] => pHasN l || pHasN r
   | .node (.inr ()) _ => false
 
 /-- All subtrees of a binary planar tree (the node itself and, recursively, its
     daughters' subtrees) — replaces the deleted `planarSubtrees`. -/
-private def pSubtrees : Planar SOLabel → List (Planar SOLabel)
+private def pSubtrees : RoseTree SOLabel → List (RoseTree SOLabel)
   | t@(.node _ []) => [t]
   | t@(.node _ [l, r]) => t :: (pSubtrees l ++ pSubtrees r)
   | t@(.node _ _) => [t]
 
 /-- Eligible movers: N-containing proper subtrees (no remnant movement; can't
     raise the whole node to its own spec). -/
-private def pMovers (cur : Planar SOLabel) : List (Planar SOLabel) :=
+private def pMovers (cur : RoseTree SOLabel) : List (RoseTree SOLabel) :=
   (pSubtrees cur).filter (fun s => pHasN s && s != cur)
 
 /-- Raise the first subtree equal to `s` to the LEFT edge, leaving the bare trace
     `SO.traceP` (planar leftward movement) — `none` if `s` is absent. -/
-private def pMoveLeft (s : Planar SOLabel) (cur : Planar SOLabel) : Option (Planar SOLabel) :=
+private def pMoveLeft (s : RoseTree SOLabel) (cur : RoseTree SOLabel) : Option (RoseTree SOLabel) :=
   if (pSubtrees cur).contains s then
     some (SO.nodeP s (planarReplaceWhereP (· == s) SO.traceP cur))
   else none
 
 /-- At a spec: keep, or raise one eligible mover (leftward). -/
-private def pOpt (cur : Planar SOLabel) : List (Planar SOLabel) :=
+private def pOpt (cur : RoseTree SOLabel) : List (RoseTree SOLabel) :=
   cur :: (pMovers cur).filterMap (fun s => pMoveLeft s cur)
 
 /-- The whole legal derivation space (planar externalizations): merge A, Num, Dem
     head-initially with an optional raise at each spec. -/
-private def space : List (Planar SOLabel) :=
+private def space : List (RoseTree SOLabel) :=
   ([SO.leafP tokN].map (fun c => SO.nodeP (SO.leafP tokA) c)).flatMap pOpt
     |>.map (fun c => SO.nodeP (SO.leafP tokNum) c) |>.flatMap pOpt
     |>.map (fun c => SO.nodeP (SO.leafP tokD) c)   |>.flatMap pOpt
@@ -348,27 +348,27 @@ compositional reading of (7b) gives. The two theorems below show it is **not**
 Cinque's count and does **not** track frequency. -/
 
 /-- Leftmost leaf token of a planar tree (root-first), if any. -/
-private def pLeftmostTok : Planar SOLabel → Option LIToken
+private def pLeftmostTok : RoseTree SOLabel → Option LIToken
   | .node (.inl t) _ => some t
   | .node (.inr ()) (c :: _) => pLeftmostTok c
   | .node _ _ => none
 
 /-- Local markedness of a single raise: `0` for *whose-picture* pied-piping
     (NP leftmost in the mover), `1` for a bare raise or *picture-of-who*. -/
-private def moveMark (s : Planar SOLabel) : Nat :=
+private def moveMark (s : RoseTree SOLabel) : Nat :=
   match s with
   | .node (.inl _) _ => 1
   | _ => if pLeftmostTok s == some tokN then 0 else 1
 
 /-- One spec step carrying accumulated local marked-move cost. -/
-private def stepCost (build : Planar SOLabel → Planar SOLabel) (p : Planar SOLabel × Nat) :
-    List (Planar SOLabel × Nat) :=
+private def stepCost (build : RoseTree SOLabel → RoseTree SOLabel) (p : RoseTree SOLabel × Nat) :
+    List (RoseTree SOLabel × Nat) :=
   (build p.1, p.2) :: (pMovers p.1).filterMap (fun s =>
     (pMoveLeft s p.1).map (fun m => (build m, p.2 + moveMark s)))
 
 /-- The legal derivation space (as in `space`) carrying accumulated local
     marked-move cost. -/
-private def spaceCost : List (Planar SOLabel × Nat) :=
+private def spaceCost : List (RoseTree SOLabel × Nat) :=
   [(SO.nodeP (SO.leafP tokA) (SO.leafP tokN), 0)]
     |>.flatMap (stepCost (fun c => SO.nodeP (SO.leafP tokNum) c))
     |>.flatMap (stepCost (fun c => SO.nodeP (SO.leafP tokD) c))

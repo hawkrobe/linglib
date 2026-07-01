@@ -1,4 +1,3 @@
-import Linglib.Core.Combinatorics.RootedTree.Planar
 import Mathlib.Algebra.MonoidAlgebra.Basic
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Multiset.Basic
@@ -6,21 +5,23 @@ import Mathlib.Data.Multiset.Basic
 set_option autoImplicit false
 
 /-!
-# Connes-Kreimer Hopf algebra carrier on n-ary planar rooted trees
+# Connes-Kreimer Hopf algebra carrier on n-ary rooted trees
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **Connes-Kreimer Hopf algebra** on a tree type T is the formal
 R-linear combinations of forests (multisets of trees), with product =
 forest disjoint union and coproduct = sum over admissible cuts (defined
-in `CoproductDeletion.lean` for Δ^ρ, `CoproductTrace.lean` for Δ^c).
+in `Coproduct/Pruning.lean` for Δ^ρ, `Coproduct/Trace.lean` for Δ^c).
 
 This file provides the **carrier and counit** generic over a tree type T
-(parameterized over `Type u`). The intended specializations:
+(parameterized over `Type*`) — nothing here pattern-matches on the tree
+carrier. The intended specializations:
 
-- `T = RootedTree.Planar α` — n-ary planar rooted trees (this file).
-- `T = RootedTree.Nonplanar α` — n-ary nonplanar (future Phase A.4).
-- `T = subtype of Planar` — binary, at-most-n-ary, exactly-n-ary
-  (subtypes from `Subtypes.lean`).
+- `T = RoseTree α` — n-ary rooted trees (the root-level carrier in
+  `Linglib/Core/Data/RoseTree/Basic.lean`; the sibling coproduct files
+  instantiate here).
+- `T = RootedTree.Nonplanar α` — n-ary nonplanar rooted trees
+  (`Nonplanar α := Quotient RoseTree.instSetoid`, a quotient of `RoseTree α`).
 
 The product structure (algebra) doesn't depend on which T is used —
 forests are multisets, multiset addition is commutative (Hopf

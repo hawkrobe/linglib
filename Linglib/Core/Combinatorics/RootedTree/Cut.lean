@@ -1,9 +1,9 @@
-import Linglib.Core.Combinatorics.RootedTree.Planar
+import Linglib.Core.Data.RoseTree.Basic
 
 set_option autoImplicit false
 
 /-!
-# Admissible cuts on planar n-ary rooted trees
+# Admissible cuts on n-ary rooted trees
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 An **admissible cut** of a tree T is a subset of edges such that every
@@ -24,9 +24,9 @@ deleting the selected edges, T decomposes into:
     a single trace-leaf labeled `default`; the parent's arity is preserved.
     Used at the C-I (semantic) interface for FormCopy.
 
-This file provides admissible cuts on `RootedTree.Planar α` (the
-list-based n-ary planar carrier from `Planar.lean`). The cuts work
-uniformly across arities — the binary case inherits as a subtype.
+This file provides admissible cuts on the n-ary rooted-tree carrier
+`RoseTree α` (`RoseTree/Basic.lean`). The cuts work uniformly across arities —
+the binary case inherits as a subtype.
 
 ## Status
 
@@ -45,9 +45,7 @@ visible "Externalization" form (PF interface) and can be derived from
 T/^p via tree-binarization at the algebra layer.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace RoseTree
 
 variable {α : Type*}
 
@@ -63,22 +61,22 @@ mutual
 /-- An admissible cut on a tree T: at the root vertex, a per-child
     cut decision for each child. (For a leaf, the empty list of
     children gives the unique trivial cut.) -/
-inductive Cut : Planar α → Type _
+inductive Cut : RoseTree α → Type _
   /-- A cut on a tree, given as a per-child decision list (matching
       the children list of the root by length). -/
-  | mk {a : α} {cs : List (Planar α)} (decisions : ChildCutList cs) : Cut (.node a cs)
+  | mk {a : α} {cs : List (RoseTree α)} (decisions : ChildCutList cs) : Cut (.node a cs)
 /-- A per-child cut decision: either `extract` (cut the edge and
     extract this subtree whole) or `recurse cut` (keep this edge,
     apply `cut` to the subtree). -/
-inductive ChildCut : Planar α → Type _
+inductive ChildCut : RoseTree α → Type _
   /-- Extract this subtree whole. -/
-  | extract (t : Planar α) : ChildCut t
+  | extract (t : RoseTree α) : ChildCut t
   /-- Don't cut at this edge; recurse into the subtree. -/
-  | recurse {t : Planar α} (c : Cut t) : ChildCut t
+  | recurse {t : RoseTree α} (c : Cut t) : ChildCut t
 /-- A list of `ChildCut` decisions, indexed by the children list. -/
-inductive ChildCutList : List (Planar α) → Type _
+inductive ChildCutList : List (RoseTree α) → Type _
   | nil : ChildCutList []
-  | cons {t : Planar α} {ts : List (Planar α)} (d : ChildCut t) (ds : ChildCutList ts) :
+  | cons {t : RoseTree α} {ts : List (RoseTree α)} (d : ChildCut t) (ds : ChildCutList ts) :
       ChildCutList (t :: ts)
 end
 
@@ -90,10 +88,10 @@ and extracts nothing. -/
 mutual
 /-- The empty cut on a tree: recurse into every child with the empty
     cut, never extract. -/
-def emptyCut : (t : Planar α) → Cut t
+def emptyCut : (t : RoseTree α) → Cut t
   | .node _ cs => .mk (emptyCutList cs)
 /-- The all-recurse decision list for a list of children. -/
-def emptyCutList : (cs : List (Planar α)) → ChildCutList cs
+def emptyCutList : (cs : List (RoseTree α)) → ChildCutList cs
   | [] => .nil
   | t :: ts => .cons (.recurse (emptyCut t)) (emptyCutList ts)
 end
@@ -103,10 +101,10 @@ end
     sense extracting the whole tree as a single piece is not directly
     representable in this Cut type; it lives at the bialgebra layer
     via the explicit `T ⊗ 1` term.) -/
-def shallowTotalCut (t : Planar α) : Cut t :=
+def shallowTotalCut (t : RoseTree α) : Cut t :=
   match t with
   | .node _ cs =>
-    let rec go : (cs : List (Planar α)) → ChildCutList cs
+    let rec go : (cs : List (RoseTree α)) → ChildCutList cs
       | [] => .nil
       | t :: ts => .cons (.extract t) (go ts)
     .mk (go cs)
@@ -119,14 +117,14 @@ emerges at the Hopf algebra layer via `Multiset.ofList`). -/
 
 mutual
 /-- The list of subtrees extracted by a cut. -/
-def cutForest : {t : Planar α} → Cut t → List (Planar α)
+def cutForest : {t : RoseTree α} → Cut t → List (RoseTree α)
   | _, .mk decisions => cutForestList decisions
 /-- Auxiliary: extracted subtrees from a child-decision list. -/
-def cutForestList : {cs : List (Planar α)} → ChildCutList cs → List (Planar α)
+def cutForestList : {cs : List (RoseTree α)} → ChildCutList cs → List (RoseTree α)
   | _, .nil => []
   | _, .cons d ds => cutForestChild d ++ cutForestList ds
 /-- Auxiliary: extracted subtrees from a single child-decision. -/
-def cutForestChild : {t : Planar α} → ChildCut t → List (Planar α)
+def cutForestChild : {t : RoseTree α} → ChildCut t → List (RoseTree α)
   | _, .extract t => [t]
   | _, .recurse c => cutForest c
 end
@@ -143,11 +141,11 @@ Two remainder flavors per MCB §1.11.6:
 
 mutual
 /-- Deletion remainder T/^p: cut subtrees disappear; parent loses children. -/
-def remainderDeletion : {t : Planar α} → Cut t → Planar α
+def remainderDeletion : {t : RoseTree α} → Cut t → RoseTree α
   | .node a _, .mk decisions => .node a (remainderDeletionList decisions)
 /-- Auxiliary: deletion remainder for a child-decision list — extracted
     children disappear from the list. -/
-def remainderDeletionList : {cs : List (Planar α)} → ChildCutList cs → List (Planar α)
+def remainderDeletionList : {cs : List (RoseTree α)} → ChildCutList cs → List (RoseTree α)
   | _, .nil => []
   | _, .cons d ds =>
     match d with
@@ -158,11 +156,11 @@ end
 mutual
 /-- Trace remainder T/^c: cut subtrees replaced with `default`-leaves.
     Arity of all vertices preserved. -/
-def remainderTrace [Inhabited α] : {t : Planar α} → Cut t → Planar α
+def remainderTrace [Inhabited α] : {t : RoseTree α} → Cut t → RoseTree α
   | .node a _, .mk decisions => .node a (remainderTraceList decisions)
 /-- Auxiliary: trace remainder for a child-decision list. -/
 def remainderTraceList [Inhabited α] :
-    {cs : List (Planar α)} → ChildCutList cs → List (Planar α)
+    {cs : List (RoseTree α)} → ChildCutList cs → List (RoseTree α)
   | _, .nil => []
   | _, .cons d ds =>
     match d with
@@ -177,7 +175,7 @@ and `remainderTrace` behave as expected. -/
 
 section Tests
 
-private def testTree : Planar Nat :=
+private def testTree : RoseTree Nat :=
   binary 0 (leaf 1) (leaf 2)
 -- testTree = node 0 [node 1 [], node 2 []]
 
@@ -200,6 +198,4 @@ example [Inhabited Nat] : remainderTrace (shallowTotalCut testTree) =
 
 end Tests
 
-end Planar
-
-end RootedTree
+end RoseTree

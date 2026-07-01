@@ -24,18 +24,18 @@ forest-append bucketing (`InsertionAddHost.lean`).
 * `insertionForest_eq_multiGraftChildren_choices`: the vertex-choice form
   of `insertionForest` — grafting into a host forest `cs` is the sum over
   `verticesAux 0 cs`-choices of `multiGraftChildren`.
-* `insertion_node_split`: the headline planar decomposition of
+* `insertion_node_split`: the headline `RoseTree`-level decomposition of
   `insertion (node a cs) gs` by root-vs-subtree guest masks.
 
 All three statements are validated computationally on concrete trees
 (multi-vertex hosts, repeated guests, empty edge cases) prior to proof.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace RoseTree
 
 namespace Pathed
+
+open RootedTree
 
 variable {α : Type*}
 
@@ -203,9 +203,9 @@ private theorem length_filterMap_zip_true {X : Type*}
     rw [List.zip_cons_cons, List.filterMap_cons]
     cases b with
     | true =>
-      simp [List.count_cons, ih gs (by simpa using hg)]
+      simp [ih gs (by simpa using hg)]
     | false =>
-      simp [List.count_cons, ih gs (by simpa using hg)]
+      simp [ih gs (by simpa using hg)]
 
 /-- The `false`-bucket of a mask-zip has length `m.count false`. -/
 private theorem length_filterMap_zip_false {X : Type*}
@@ -224,14 +224,14 @@ private theorem length_filterMap_zip_false {X : Type*}
     rw [List.zip_cons_cons, List.filterMap_cons]
     cases b with
     | true =>
-      simp [List.count_cons, ih gs (by simpa using hg)]
+      simp [ih gs (by simpa using hg)]
     | false =>
-      simp [List.count_cons, ih gs (by simpa using hg)]
+      simp [ih gs (by simpa using hg)]
 
 /-- `multiGraftChildren` depends on its pair list only through the two
     child filters. -/
-private theorem multiGraftChildren_congr {cs : List (Planar α)}
-    {pairs₁ pairs₂ : List (Path × Planar α)}
+private theorem multiGraftChildren_congr {cs : List (RoseTree α)}
+    {pairs₁ pairs₂ : List (Path × RoseTree α)}
     (h₁ : pairs₁.filterMap headChildFilter = pairs₂.filterMap headChildFilter)
     (h₂ : pairs₁.filterMap tailChildFilter = pairs₂.filterMap tailChildFilter) :
     multiGraftChildren cs pairs₁ = multiGraftChildren cs pairs₂ := by
@@ -248,7 +248,7 @@ private def bumpHead : Path → Path
   | h :: q => (h + 1) :: q
 
 /-- `verticesAux` shifts uniformly at the list level. -/
-private theorem verticesAux_succ_list (cs : List (Planar α)) (i : ℕ) :
+private theorem verticesAux_succ_list (cs : List (RoseTree α)) (i : ℕ) :
     verticesAux (i + 1) cs = (verticesAux i cs).map bumpHead := by
   induction cs generalizing i with
   | nil => rfl
@@ -259,7 +259,7 @@ private theorem verticesAux_succ_list (cs : List (Planar α)) (i : ℕ) :
 
 /-- Paths enumerated by `verticesAux` are nonempty. -/
 private theorem ne_nil_of_mem_verticesAux {p : Path} {i : ℕ}
-    {cs : List (Planar α)} (hp : p ∈ verticesAux i cs) : p ≠ [] := by
+    {cs : List (RoseTree α)} (hp : p ∈ verticesAux i cs) : p ≠ [] := by
   induction cs generalizing i with
   | nil => simp at hp
   | cons c cs ih =>
@@ -300,7 +300,7 @@ private theorem filterMap_zip_mergeMask_left {X Z : Type*}
     | true =>
       obtain ⟨u, us, rfl⟩ : ∃ u us', us = u :: us' := by
         cases us with
-        | nil => simp [List.count_cons] at hu
+        | nil => simp at hu
         | cons u us' => exact ⟨u, us', rfl⟩
       show ((u :: mergeMask m us ws).zip (g :: gs)).filterMap F =
         ((u :: us).zip (g :: (gs.zip m).filterMap
@@ -312,7 +312,7 @@ private theorem filterMap_zip_mergeMask_left {X Z : Type*}
     | false =>
       obtain ⟨w, ws, rfl⟩ : ∃ w ws', ws = w :: ws' := by
         cases ws with
-        | nil => simp [List.count_cons] at hw
+        | nil => simp at hw
         | cons w ws' => exact ⟨w, ws', rfl⟩
       show ((w :: mergeMask m us ws).zip (g :: gs)).filterMap F =
         (us.zip ((gs.zip m).filterMap
@@ -347,7 +347,7 @@ private theorem filterMap_zip_mergeMask_right {X Z : Type*}
     | true =>
       obtain ⟨u, us, rfl⟩ : ∃ u us', us = u :: us' := by
         cases us with
-        | nil => simp [List.count_cons] at hu
+        | nil => simp at hu
         | cons u us' => exact ⟨u, us', rfl⟩
       show ((u :: mergeMask m us ws).zip (g :: gs)).filterMap F =
         (ws.zip ((gs.zip m).filterMap
@@ -360,7 +360,7 @@ private theorem filterMap_zip_mergeMask_right {X Z : Type*}
     | false =>
       obtain ⟨w, ws, rfl⟩ : ∃ w ws', ws = w :: ws' := by
         cases ws with
-        | nil => simp [List.count_cons] at hw
+        | nil => simp at hw
         | cons w ws' => exact ⟨w, ws', rfl⟩
       show ((w :: mergeMask m us ws).zip (g :: gs)).filterMap F =
         ((w :: ws).zip (g :: (gs.zip m).filterMap
@@ -375,7 +375,7 @@ private theorem filterMap_zip_mergeMask_right {X Z : Type*}
 /-- `0`-prefixed paths zipped with guests pass through `headChildFilter`
     intact (with the leading `0` stripped). -/
 private theorem filterMap_zip_zeroCons_headChild :
-    ∀ (us : List Path) (gs : List (Planar α)),
+    ∀ (us : List Path) (gs : List (RoseTree α)),
     ((us.map (List.cons 0)).zip gs).filterMap headChildFilter = us.zip gs := by
   intro us gs
   induction us generalizing gs with
@@ -392,7 +392,7 @@ private theorem filterMap_zip_zeroCons_headChild :
 /-- `bumpHead`-shifted nonempty paths zipped with guests pass through
     `tailChildFilter` intact (undoing the bump). -/
 private theorem filterMap_zip_bumpHead_tailChild :
-    ∀ (ws : List Path) (gs : List (Planar α)),
+    ∀ (ws : List Path) (gs : List (RoseTree α)),
     (∀ p ∈ ws, p ≠ []) →
     ((ws.map bumpHead).zip gs).filterMap tailChildFilter = ws.zip gs := by
   intro ws gs hne
@@ -416,7 +416,7 @@ private theorem filterMap_zip_bumpHead_tailChild :
 
 /-- Replicate-`[]` zipped with guests passes through `rootPrependFilter`
     intact (the empty paths give `some snd`). -/
-private theorem filterMap_zip_replicate_rootPrepend (gs : List (Planar α)) :
+private theorem filterMap_zip_replicate_rootPrepend (gs : List (RoseTree α)) :
     ((List.replicate gs.length ([] : Path)).zip gs).filterMap
         rootPrependFilter = gs := by
   induction gs with
@@ -431,7 +431,7 @@ private theorem filterMap_zip_replicate_rootPrepend (gs : List (Planar α)) :
     a forest vertex (a `verticesAux 0 cs` path) of the simultaneous
     `multiGraftChildren`. -/
 theorem insertionForest_eq_multiGraftChildren_choices
-    (cs gs : List (Planar α)) :
+    (cs gs : List (RoseTree α)) :
     insertionForest cs gs =
       Multiset.ofList ((listChoices (verticesAux 0 cs) gs.length).map
         fun ch => multiGraftChildren cs (ch.zip gs)) := by
@@ -442,11 +442,11 @@ theorem insertionForest_eq_multiGraftChildren_choices
     cases gs with
     | nil =>
       rw [insertionForest_nil_nil]
-      show ({[]} : Multiset (List (Planar α))) = _
+      show ({[]} : Multiset (List (RoseTree α))) = _
       rfl
     | cons g gs =>
       rw [insertionForest_empty_host_nonempty_guests]
-      show (0 : Multiset (List (Planar α))) = _
+      show (0 : Multiset (List (RoseTree α))) = _
       rw [verticesAux_nil, show (g :: gs).length = gs.length + 1 from rfl,
           listChoices_succ]
       simp
@@ -458,7 +458,7 @@ theorem insertionForest_eq_multiGraftChildren_choices
     -- Move RHS map to bind-singleton form
     rw [show (Multiset.ofList ((listChoices (verticesAux 0 (c :: cs)) gs.length).map
             fun ch => multiGraftChildren (c :: cs) (ch.zip gs)) :
-            Multiset (List (Planar α))) =
+            Multiset (List (RoseTree α))) =
           (Multiset.ofList (listChoices (verticesAux 0 (c :: cs)) gs.length)).bind
             fun ch => ({multiGraftChildren (c :: cs) (ch.zip gs)} : Multiset _) from by
         rw [← Multiset.map_coe]
@@ -479,9 +479,9 @@ theorem insertionForest_eq_multiGraftChildren_choices
       mem_listChoices_length [true, false] gs.length m hm'
     -- LHS per-m: (insertion c gs_t).bind T' => (insertionForest cs gs_f).map (T' :: ·)
     -- Set abbreviations for the buckets
-    set gs_t : List (Planar α) := (gs.zip m).filterMap
+    set gs_t : List (RoseTree α) := (gs.zip m).filterMap
       fun p => if p.snd then some p.fst else none with hgst
-    set gs_f : List (Planar α) := (gs.zip m).filterMap
+    set gs_f : List (RoseTree α) := (gs.zip m).filterMap
       fun p => if p.snd then none else some p.fst with hgsf
     -- Lengths: gs_t.length = m.count true (and similarly for false)
     have hglen : gs.length = m.length := hmlen.symm
@@ -520,7 +520,7 @@ theorem insertionForest_eq_multiGraftChildren_choices
     rw [hgst_len]
     -- Convert this ofList.map to ofList.bind singleton
     rw [show (Multiset.ofList ((listChoices (vertices c) (m.count true)).map
-            (fun ch => multiGraft c (ch.zip gs_t))) : Multiset (Planar α)) =
+            (fun ch => multiGraft c (ch.zip gs_t))) : Multiset (RoseTree α)) =
           (Multiset.ofList (listChoices (vertices c) (m.count true))).bind
             (fun u' => ({multiGraft c (u'.zip gs_t)} : Multiset _)) from by
         rw [← Multiset.map_coe]
@@ -535,7 +535,7 @@ theorem insertionForest_eq_multiGraftChildren_choices
     rw [hgsf_len]
     rw [show (Multiset.ofList ((listChoices (verticesAux 0 cs) (m.count false)).map
             (fun ch => multiGraftChildren cs (ch.zip gs_f))) :
-            Multiset (List (Planar α))) =
+            Multiset (List (RoseTree α))) =
           (Multiset.ofList (listChoices (verticesAux 0 cs) (m.count false))).bind
             (fun w' => ({multiGraftChildren cs (w'.zip gs_f)} : Multiset _)) from by
         rw [← Multiset.map_coe]
@@ -566,7 +566,7 @@ theorem insertionForest_eq_multiGraftChildren_choices
     have hw'map_len : (w'.map bumpHead).length = m.count false := by
       rw [List.length_map]; exact hw'len
     -- ne_nil for w'.map bumpHead entries (all are (h+1) :: q)
-    have hw'bump_ne : ∀ p ∈ w'.map bumpHead, ∀ (g : Planar α),
+    have hw'bump_ne : ∀ p ∈ w'.map bumpHead, ∀ (g : RoseTree α),
         headChildFilter (p, g) = none := by
       intro p hp g
       obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
@@ -577,7 +577,7 @@ theorem insertionForest_eq_multiGraftChildren_choices
         show headChildFilter (bumpHead (h :: r), g) = none
         rw [show bumpHead (h :: r) = (h + 1) :: r from rfl]
         exact headChildFilter_of_succ_cons h r g
-    have hu'zero_ne : ∀ p ∈ u'.map (List.cons 0), ∀ (g : Planar α),
+    have hu'zero_ne : ∀ p ∈ u'.map (List.cons 0), ∀ (g : RoseTree α),
         tailChildFilter (p, g) = none := by
       intro p hp g
       obtain ⟨q, _, rfl⟩ := List.mem_map.mp hp
@@ -609,12 +609,12 @@ theorem insertionForest_eq_multiGraftChildren_choices
     split by a boolean mask into root-guests (prepended as new children,
     in guest order) and subtree-guests (an `insertionForest` into the
     child forest). -/
-theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
-    insertion (Planar.node a cs) gs =
+theorem insertion_node_split (a : α) (cs gs : List (RoseTree α)) :
+    insertion (RoseTree.node a cs) gs =
       (Multiset.ofList (listChoices [true, false] gs.length)).bind fun m =>
         (insertionForest cs ((gs.zip m).filterMap
             fun p => if p.2 then none else some p.1)).map
-          fun cs' => Planar.node a
+          fun cs' => RoseTree.node a
             (((gs.zip m).filterMap
               fun p => if p.2 then some p.1 else none) ++ cs') := by
   rw [insertion_def, vertices_node]
@@ -623,10 +623,10 @@ theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
         from rfl]
   -- Convert LHS map to bind-singleton form
   rw [show (Multiset.ofList ((listChoices ([[]] ++ verticesAux 0 cs) gs.length).map
-          fun choice => multiGraft (Planar.node a cs) (choice.zip gs)) :
-          Multiset (Planar α)) =
+          fun choice => multiGraft (RoseTree.node a cs) (choice.zip gs)) :
+          Multiset (RoseTree α)) =
         (Multiset.ofList (listChoices ([[]] ++ verticesAux 0 cs) gs.length)).bind
-          (fun choice => ({multiGraft (Planar.node a cs) (choice.zip gs)}
+          (fun choice => ({multiGraft (RoseTree.node a cs) (choice.zip gs)}
             : Multiset _)) from by
       rw [← Multiset.map_coe]
       rw [show ((listChoices ([[]] ++ verticesAux 0 cs) gs.length) :
@@ -650,9 +650,9 @@ theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
           ({List.replicate (m.count true) ([] : Path)} : Multiset _) from rfl]
   rw [Multiset.singleton_bind]
   -- Set abbreviations for buckets
-  set gs_t : List (Planar α) := (gs.zip m).filterMap
+  set gs_t : List (RoseTree α) := (gs.zip m).filterMap
     fun p => if p.snd then some p.fst else none with hgst
-  set gs_f : List (Planar α) := (gs.zip m).filterMap
+  set gs_f : List (RoseTree α) := (gs.zip m).filterMap
     fun p => if p.snd then none else some p.fst with hgsf
   have hgst_len : gs_t.length = m.count true :=
     length_filterMap_zip_true gs m hglen
@@ -663,13 +663,13 @@ theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
     rw [List.length_replicate]
   -- ne_nil hypotheses for the kill-lemmas
   -- replicate-side ([]-paths): headChildFilter/tailChildFilter kill.
-  have hrep_hcf_ne : ∀ p ∈ List.replicate (m.count true) ([] : Path), ∀ (g : Planar α),
+  have hrep_hcf_ne : ∀ p ∈ List.replicate (m.count true) ([] : Path), ∀ (g : RoseTree α),
       headChildFilter (p, g) = none := by
     intro p hp g
     rw [List.mem_replicate] at hp
     rcases hp with ⟨_, rfl⟩
     exact headChildFilter_of_nil g
-  have hrep_tcf_ne : ∀ p ∈ List.replicate (m.count true) ([] : Path), ∀ (g : Planar α),
+  have hrep_tcf_ne : ∀ p ∈ List.replicate (m.count true) ([] : Path), ∀ (g : RoseTree α),
       tailChildFilter (p, g) = none := by
     intro p hp g
     rw [List.mem_replicate] at hp
@@ -683,11 +683,11 @@ theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
   -- RHS form: ofList ((listChoices ... (m.count false)).map (fun ch => node a (gs_t ++ multiGraftChildren cs (ch.zip gs_f))))
   -- Convert RHS to bind-singleton form
   rw [show (Multiset.ofList ((listChoices (verticesAux 0 cs) (m.count false)).map
-            ((fun cs' => Planar.node a (gs_t ++ cs')) ∘
+            ((fun cs' => RoseTree.node a (gs_t ++ cs')) ∘
               fun ch => multiGraftChildren cs (ch.zip gs_f))) :
-            Multiset (Planar α)) =
+            Multiset (RoseTree α)) =
           (Multiset.ofList (listChoices (verticesAux 0 cs) (m.count false))).bind
-            (fun w => ({Planar.node a
+            (fun w => ({RoseTree.node a
               (gs_t ++ multiGraftChildren cs (w.zip gs_f))} : Multiset _)) from by
       rw [← Multiset.map_coe]
       rw [show ((listChoices (verticesAux 0 cs) (m.count false)) :
@@ -704,7 +704,7 @@ theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
     ne_nil_of_mem_verticesAux
       (mem_of_mem_listChoices (verticesAux 0 cs) (m.count false) w hwmem p hp)
   -- w-side (nonempty paths): rootPrependFilter kills.
-  have hw_rpf_ne : ∀ p ∈ w, ∀ (g : Planar α), rootPrependFilter (p, g) = none := by
+  have hw_rpf_ne : ∀ p ∈ w, ∀ (g : RoseTree α), rootPrependFilter (p, g) = none := by
     intro p hp g
     have : p ≠ [] := hwne p hp
     cases p with
@@ -737,6 +737,4 @@ theorem insertion_node_split (a : α) (cs gs : List (Planar α)) :
 
 end Pathed
 
-end Planar
-
-end RootedTree
+end RoseTree

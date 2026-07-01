@@ -294,7 +294,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Core statement at basis `z = of' C`, strong induction on total weight.
   suffices core : ∀ (n : ℕ) (C : Forest (Nonplanar α)),
-      (C.map Nonplanar.weight).sum = n →
+      (C.map Nonplanar.numNodes).sum = n →
       ∀ x y : ConnesKreimer R (Nonplanar α),
       GrossmanLarson.pairing (R := R)
           (GrossmanLarson.product x y) (ConnesKreimer.of' C) =
@@ -355,21 +355,21 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
         subst hC'0
         -- Weight bookkeeping: (rootChildren T) is one lighter than T.
         have hwT : ((T ::ₘ (0 : Forest (Nonplanar α))).map
-            Nonplanar.weight).sum = T.weight := by
+            Nonplanar.numNodes).sum = T.numNodes := by
           rw [Multiset.map_cons, Multiset.map_zero, Multiset.sum_cons,
               Multiset.sum_zero]
           omega
-        have hTn : T.weight = n := by rw [← hwT, hC]
-        have hwW : T.weight =
-            1 + ((Nonplanar.rootChildren T).map Nonplanar.weight).sum := by
+        have hTn : T.numNodes = n := by rw [← hwT, hC]
+        have hwW : T.numNodes =
+            1 + ((Nonplanar.rootChildren T).map Nonplanar.numNodes).sum := by
           conv_lhs => rw [← Nonplanar.node_eta T]
-          rw [Nonplanar.weight_node]
-        have hWlt : ((Nonplanar.rootChildren T).map Nonplanar.weight).sum < n := by
+          rw [Nonplanar.numNodes_node]
+        have hWlt : ((Nonplanar.rootChildren T).map Nonplanar.numNodes).sum < n := by
           omega
         -- Convert `of' {T}` to `B⁺_a (of' W)`.
         have hofT : (ConnesKreimer.of' (R := R) (T ::ₘ (0 : Forest (Nonplanar α))) :
             ConnesKreimer R (Nonplanar α)) =
-            bPlusLin (R := R) (Nonplanar.rootLabel T)
+            bPlusLin (R := R) (Nonplanar.rootValue T)
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) := by
           rw [bPlusLin_of', Nonplanar.node_eta]
           rfl
@@ -377,19 +377,19 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
         -- LHS: the B⁺/B⁻ recurrence.
         rw [show GrossmanLarson.pairing (R := R)
               (GrossmanLarson.product x y)
-              (bPlusLin (R := R) (Nonplanar.rootLabel T)
+              (bPlusLin (R := R) (Nonplanar.rootValue T)
                 (ConnesKreimer.of' (Nonplanar.rootChildren T))) =
             GrossmanLarson.pairing (R := R) (GrossmanLarson.unop
               ((GrossmanLarson.op x : GrossmanLarson R α) * GrossmanLarson.op y))
-              (bPlusLin (R := R) (Nonplanar.rootLabel T)
+              (bPlusLin (R := R) (Nonplanar.rootValue T)
                 (ConnesKreimer.of' (Nonplanar.rootChildren T))) from rfl]
         rw [GrossmanLarson.pairing_apply_bPlus_gl_mul]
         -- RHS: the Hochschild cocycle + adjoint.
         rw [show comulAlgHomN (R := R)
-              (bPlusLin (R := R) (Nonplanar.rootLabel T)
+              (bPlusLin (R := R) (Nonplanar.rootValue T)
                 (ConnesKreimer.of' (Nonplanar.rootChildren T))) =
             comulTreeN (R := R)
-              (Nonplanar.node (Nonplanar.rootLabel T)
+              (Nonplanar.node (Nonplanar.rootValue T)
                 (Nonplanar.rootChildren T)) from by
           rw [bPlusLin_of', comulAlgHomN_apply_ofTree]]
         rw [comulTreeN_node_cocycle, map_add, pairing₂_tmul_tmul,
@@ -400,39 +400,39 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
           (comulAlgHomN_apply_of' _).symm]
         rw [← IH _ hWlt (Nonplanar.rootChildren T) rfl
-            (GrossmanLarson.bMinusLin (R := R) (Nonplanar.rootLabel T) x) y]
+            (GrossmanLarson.bMinusLin (R := R) (Nonplanar.rootValue T) x) y]
         rw [show (ConnesKreimer.ofTree (R := R)
-              (Nonplanar.node (Nonplanar.rootLabel T)
+              (Nonplanar.node (Nonplanar.rootValue T)
                 (Nonplanar.rootChildren T)) :
               ConnesKreimer R (Nonplanar α)) =
-            bPlusLin (R := R) (Nonplanar.rootLabel T)
+            bPlusLin (R := R) (Nonplanar.rootValue T)
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
           (bPlusLin_of' _ _).symm]
         rw [← GrossmanLarson.bMinusLin_pairing_adjoint, pairing_apply_one]
         rw [show GrossmanLarson.pairing (R := R)
               (GrossmanLarson.product
-                (GrossmanLarson.bMinusLin (R := R) (Nonplanar.rootLabel T) x) y)
+                (GrossmanLarson.bMinusLin (R := R) (Nonplanar.rootValue T) x) y)
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) =
             GrossmanLarson.pairing (R := R) (GrossmanLarson.unop
               ((GrossmanLarson.op (GrossmanLarson.bMinusLin (R := R)
-                  (Nonplanar.rootLabel T) x) : GrossmanLarson R α) *
+                  (Nonplanar.rootValue T) x) : GrossmanLarson R α) *
                 GrossmanLarson.op y))
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from rfl]
         ring
       · -- Multi-tree: C = T ::ₘ C' with C' ≠ 0; split and use both
         -- product rules + the induction hypothesis at both factors.
         -- Weight bookkeeping.
-        have hsum : T.weight + (C'.map Nonplanar.weight).sum = n := by
+        have hsum : T.numNodes + (C'.map Nonplanar.numNodes).sum = n := by
           rw [← hC, Multiset.map_cons, Multiset.sum_cons]
-        have hT2pos : 0 < Nonplanar.weight T₂ := Nonplanar.weight_pos T₂
-        have hC'ge : Nonplanar.weight T₂ ≤ (C'.map Nonplanar.weight).sum :=
+        have hT2pos : 0 < Nonplanar.numNodes T₂ := Nonplanar.numNodes_pos T₂
+        have hC'ge : Nonplanar.numNodes T₂ ≤ (C'.map Nonplanar.numNodes).sum :=
           Multiset.single_le_sum (fun _ _ => Nat.zero_le _) _
             (Multiset.mem_map_of_mem _ hT₂)
-        have hTpos : 0 < T.weight := Nonplanar.weight_pos T
-        have hTlt : ((({T} : Forest (Nonplanar α))).map Nonplanar.weight).sum < n := by
+        have hTpos : 0 < T.numNodes := Nonplanar.numNodes_pos T
+        have hTlt : ((({T} : Forest (Nonplanar α))).map Nonplanar.numNodes).sum < n := by
           rw [Multiset.map_singleton, Multiset.sum_singleton]
           omega
-        have hC'lt : (C'.map Nonplanar.weight).sum < n := by omega
+        have hC'lt : (C'.map Nonplanar.numNodes).sum < n := by omega
         -- Reduce x, y to basis vectors (both sides are bilinear in (x, y)).
         refine Finsupp.induction_linear x ?_ ?_ ?_
         · show GrossmanLarson.pairing (R := R)

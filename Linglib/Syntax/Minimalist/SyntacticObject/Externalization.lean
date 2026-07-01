@@ -13,7 +13,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.RepOrder
 single-carrier program: the **externalization section** on the `SO` carrier, recast as
 a **selection-induced planar order**. By Lemma 1.13.7 the externalization section σ_L
 *is* the selection structure, so the surface order is computable, section-free, and
-`PlanarEquiv`-liftable exactly like `selCheck` (P3a) — there is no `Quot.out` and the
+`PermEquiv`-liftable exactly like `selCheck` (P3a) — there is no `Quot.out` and the
 `HeadFunction.section_ : FreeCommMagma.Section` field disappears on `SO`.
 
 At a bare binary node the **projecting (selector) daughter** (computed by `selSide`,
@@ -21,7 +21,7 @@ At a bare binary node the **projecting (selector) daughter** (computed by `selSi
 initial vs head-final, Lemma 1.13.5). Exocentric nodes — off `Dom(h)`, where σ_L is
 explicitly noncanonical — are ordered by the canonical `cmpList cmpTok` comparison
 (`RepOrder.lean`), the list analogue of the legacy `smallerFirst`; this keeps the order
-fully computable and `PlanarEquiv`-invariant.
+fully computable and `PermEquiv`-invariant.
 
 The §1.13 **head function** on `SO` is the selection head (`SO.head := SO.selHead`,
 already P3a); the head at an internal vertex `v` (a subterm) is `v.head`.
@@ -68,8 +68,8 @@ theorem exoYield_comm (a b : List LIToken) : exoYield a b = exoYield b a := by
     (`[tok]`); a bare trace leaf is unpronounced (`[]`); a bare binary node places the
     projecting (selector) daughter on the `side`-convention side (`placeYield`), with
     the exocentric fallback `exoYield`. Section-free and **computable** (no `Quot.out`):
-    the order is selection-determined, so it is `PlanarEquiv`-invariant. -/
-def linearizeP (side : ConventionDir) : Planar SOLabel → List LIToken
+    the order is selection-determined, so it is `PermEquiv`-invariant. -/
+def linearizeP (side : ConventionDir) : RoseTree SOLabel → List LIToken
   | .node (.inl tok) _     => [tok]
   | .node (.inr ()) []     => []
   | .node (.inr ()) [l, r] =>
@@ -81,17 +81,17 @@ def linearizeP (side : ConventionDir) : Planar SOLabel → List LIToken
 
 /-- A non-binary, non-trace bare node has empty yield (1 or ≥3 children fall to the
     catch-all). The yield analogue of `selCheckPlanar_node_none`. -/
-private theorem linearizeP_node_default (side : ConventionDir) {cs : List (Planar SOLabel)}
+private theorem linearizeP_node_default (side : ConventionDir) {cs : List (RoseTree SOLabel)}
     (h0 : cs.length ≠ 0) (h2 : cs.length ≠ 2) :
-    linearizeP side (Planar.node (Sum.inr ()) cs) = [] := by
+    linearizeP side (RoseTree.node (Sum.inr ()) cs) = [] := by
   match cs with
   | [] => exact absurd rfl h0
   | [_] => rfl
   | [_, _] => exact absurd rfl h2
   | _ :: _ :: _ :: _ => rfl
 
-private theorem linearizeP_planarStep (side : ConventionDir) {t s : Planar SOLabel}
-    (hstep : Planar.PlanarStep t s) : linearizeP side t = linearizeP side s := by
+private theorem linearizeP_permStep (side : ConventionDir) {t s : RoseTree SOLabel}
+    (hstep : RoseTree.PermStep t s) : linearizeP side t = linearizeP side s := by
   induction hstep with
   | @swapAtRoot a l r pre post =>
     cases a with
@@ -126,7 +126,7 @@ private theorem linearizeP_planarStep (side : ConventionDir) {t s : Planar SOLab
     | inr u =>
       cases u
       have hsc : selCheckPlanar old = selCheckPlanar new :=
-        selCheckPlanar_planarEquiv (Planar.PlanarEquiv.of_step _hstep)
+        selCheckPlanar_permEquiv (RoseTree.PermEquiv.of_step _hstep)
       cases pre with
       | nil => cases post with
         | nil => simp only [List.nil_append, linearizeP]
@@ -145,21 +145,21 @@ private theorem linearizeP_planarStep (side : ConventionDir) {t s : Planar SOLab
           rw [linearizeP_node_default side (by simp) h2,
               linearizeP_node_default side (by simp) h2']
 
-/-- `linearizeP side` is `PlanarEquiv`-invariant, so it descends to the quotient: the
+/-- `linearizeP side` is `PermEquiv`-invariant, so it descends to the quotient: the
     surface order is projection-determined, not representative-position-determined. -/
-theorem linearizeP_planarEquiv (side : ConventionDir) {t s : Planar SOLabel}
-    (h : Planar.PlanarEquiv t s) : linearizeP side t = linearizeP side s := by
+theorem linearizeP_permEquiv (side : ConventionDir) {t s : RoseTree SOLabel}
+    (h : RoseTree.PermEquiv t s) : linearizeP side t = linearizeP side s := by
   induction h with
-  | rel _ _ hstep => exact linearizeP_planarStep side hstep
+  | rel _ _ hstep => exact linearizeP_permStep side hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
 /-- Linearization lifted to the nonplanar carrier. -/
 def linearizeN (side : ConventionDir) : Nonplanar SOLabel → List LIToken :=
-  Nonplanar.lift (linearizeP side) (fun _ _ h => linearizeP_planarEquiv side h)
+  Nonplanar.lift (linearizeP side) (fun _ _ h => linearizeP_permEquiv side h)
 
-@[simp] theorem linearizeN_mk (side : ConventionDir) (p : Planar SOLabel) :
+@[simp] theorem linearizeN_mk (side : ConventionDir) (p : RoseTree SOLabel) :
     linearizeN side (Nonplanar.mk p) = linearizeP side p := rfl
 
 theorem linearizeN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
@@ -170,9 +170,9 @@ theorem linearizeN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
        | none       => exoYield (linearizeN side a) (linearizeN side b)) := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (Planar.node (Sum.inr ()) [pa, pb]) := by
+           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
     rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_planar_list]
+          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
   show linearizeN side (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
       = (match selSide (selCheckN (Nonplanar.mk pa)) (selCheckN (Nonplanar.mk pb)) with
          | some true  =>

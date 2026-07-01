@@ -22,7 +22,7 @@ view that the paper-anchored study files are written in; it is not a claim that
 movement *is* substitution.
 
 Built the established way (`subtreesN`): a planar recursion with quotient-level `target`
-matching, proved `PlanarEquiv`-invariant and lifted, then closed under `IsSO` via
+matching, proved `PermEquiv`-invariant and lifted, then closed under `IsSO` via
 `SO.ind`. It is **noncomputable** (it rebuilds via `Nonplanar.node`); concrete results
 are related by the reduction lemmas (`replace_lexLeaf`/`_traceLeaf`/`_node`), not by
 `decide`.
@@ -38,20 +38,20 @@ mutual
 /-- Structural substitution on a planar `SO`-tree: replace every subtree equal (in the
     nonplanar quotient) to `target` by `replacement`, rebuilding the surrounding tree. -/
 noncomputable def replacePlanar (target replacement : Nonplanar SOLabel) :
-    Planar SOLabel → Nonplanar SOLabel
+    RoseTree SOLabel → Nonplanar SOLabel
   | .node a cs =>
-      if Nonplanar.mk (Planar.node a cs) = target then replacement
+      if Nonplanar.mk (RoseTree.node a cs) = target then replacement
       else Nonplanar.node a (replacePlanarList target replacement cs)
 /-- Auxiliary: substitute in each child, collecting the results as a multiset. -/
 noncomputable def replacePlanarList (target replacement : Nonplanar SOLabel) :
-    List (Planar SOLabel) → Multiset (Nonplanar SOLabel)
+    List (RoseTree SOLabel) → Multiset (Nonplanar SOLabel)
   | []      => 0
   | c :: cs => replacePlanar target replacement c ::ₘ replacePlanarList target replacement cs
 end
 
 /-- `replacePlanarList` is a multiset built child-by-child, hence permutation-invariant. -/
 private theorem replacePlanarList_perm (target replacement : Nonplanar SOLabel)
-    {cs ds : List (Planar SOLabel)} (h : cs.Perm ds) :
+    {cs ds : List (RoseTree SOLabel)} (h : cs.Perm ds) :
     replacePlanarList target replacement cs = replacePlanarList target replacement ds := by
   induction h with
   | nil => rfl
@@ -61,7 +61,7 @@ private theorem replacePlanarList_perm (target replacement : Nonplanar SOLabel)
 
 /-- Replacing one child by a `replacePlanar`-equal child preserves the list result. -/
 private theorem replacePlanarList_replace (target replacement : Nonplanar SOLabel)
-    (pre post : List (Planar SOLabel)) {old new : Planar SOLabel}
+    (pre post : List (RoseTree SOLabel)) {old new : RoseTree SOLabel}
     (h : replacePlanar target replacement old = replacePlanar target replacement new) :
     replacePlanarList target replacement (pre ++ old :: post)
       = replacePlanarList target replacement (pre ++ new :: post) := by
@@ -69,25 +69,25 @@ private theorem replacePlanarList_replace (target replacement : Nonplanar SOLabe
   | nil => simp only [List.nil_append, replacePlanarList]; rw [h]
   | cons hd tl ih => simp only [List.cons_append, replacePlanarList]; rw [ih]
 
-private theorem replacePlanar_planarStep (target replacement : Nonplanar SOLabel)
-    {t s : Planar SOLabel} (hstep : Planar.PlanarStep t s) :
+private theorem replacePlanar_permStep (target replacement : Nonplanar SOLabel)
+    {t s : RoseTree SOLabel} (hstep : RoseTree.PermStep t s) :
     replacePlanar target replacement t = replacePlanar target replacement s := by
   induction hstep with
   | @swapAtRoot a l r pre post =>
     simp only [replacePlanar]
-    rw [Nonplanar.mk_step Planar.PlanarStep.swapAtRoot,
+    rw [Nonplanar.mk_step RoseTree.PermStep.swapAtRoot,
         replacePlanarList_perm target replacement (List.Perm.append_left pre (.swap r l post))]
   | @recurse a pre old new post hstep ih =>
     simp only [replacePlanar]
-    rw [Nonplanar.mk_step (Planar.PlanarStep.recurse hstep),
+    rw [Nonplanar.mk_step (RoseTree.PermStep.recurse hstep),
         replacePlanarList_replace target replacement pre post ih]
 
-/-- `replacePlanar` is `PlanarEquiv`-invariant, so it descends to the quotient. -/
-theorem replacePlanar_planarEquiv (target replacement : Nonplanar SOLabel)
-    {t s : Planar SOLabel} (h : Planar.PlanarEquiv t s) :
+/-- `replacePlanar` is `PermEquiv`-invariant, so it descends to the quotient. -/
+theorem replacePlanar_permEquiv (target replacement : Nonplanar SOLabel)
+    {t s : RoseTree SOLabel} (h : RoseTree.PermEquiv t s) :
     replacePlanar target replacement t = replacePlanar target replacement s := by
   induction h with
-  | rel _ _ hstep => exact replacePlanar_planarStep target replacement hstep
+  | rel _ _ hstep => exact replacePlanar_permStep target replacement hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
@@ -96,9 +96,9 @@ theorem replacePlanar_planarEquiv (target replacement : Nonplanar SOLabel)
 noncomputable def replaceN (target replacement : Nonplanar SOLabel) :
     Nonplanar SOLabel → Nonplanar SOLabel :=
   Nonplanar.lift (replacePlanar target replacement)
-    (fun _ _ h => replacePlanar_planarEquiv target replacement h)
+    (fun _ _ h => replacePlanar_permEquiv target replacement h)
 
-@[simp] theorem replaceN_mk (target replacement : Nonplanar SOLabel) (p : Planar SOLabel) :
+@[simp] theorem replaceN_mk (target replacement : Nonplanar SOLabel) (p : RoseTree SOLabel) :
     replaceN target replacement (Nonplanar.mk p) = replacePlanar target replacement p := rfl
 
 /-! ### Reduction lemmas on leaves and bare binary nodes -/
@@ -106,12 +106,12 @@ noncomputable def replaceN (target replacement : Nonplanar SOLabel) :
 theorem replaceN_leaf (target replacement : Nonplanar SOLabel) (x : SOLabel) :
     replaceN target replacement (Nonplanar.leaf x)
       = if Nonplanar.leaf x = target then replacement else Nonplanar.leaf x := by
-  show replacePlanar target replacement (Planar.leaf x) = _
+  show replacePlanar target replacement (RoseTree.leaf x) = _
   have hz : Nonplanar.node x (0 : Multiset (Nonplanar SOLabel)) = Nonplanar.leaf x := by
     rw [show (0 : Multiset (Nonplanar SOLabel)) = Multiset.ofList ([].map Nonplanar.mk) from rfl,
-        Nonplanar.node_mk_planar_list]; rfl
-  have hcond : Nonplanar.mk (Planar.node x []) = Nonplanar.leaf x := rfl
-  simp only [Planar.leaf, replacePlanar, replacePlanarList, hz, hcond]
+        Nonplanar.node_mk_tree_list]; rfl
+  have hcond : Nonplanar.mk (RoseTree.node x []) = Nonplanar.leaf x := rfl
+  simp only [RoseTree.leaf, replacePlanar, replacePlanarList, hz, hcond]
 
 theorem replaceN_node (target replacement : Nonplanar SOLabel) (a b : Nonplanar SOLabel) :
     replaceN target replacement (Nonplanar.node (Sum.inr ()) {a, b})
@@ -119,9 +119,9 @@ theorem replaceN_node (target replacement : Nonplanar SOLabel) (a b : Nonplanar 
         else Nonplanar.node (Sum.inr ()) {replaceN target replacement a, replaceN target replacement b} := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (Planar.node (Sum.inr ()) [pa, pb]) := by
+           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
     rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_planar_list]
+          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
   show replaceN target replacement (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
       = if Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb} = target then replacement
         else Nonplanar.node (Sum.inr ())
@@ -134,7 +134,7 @@ theorem replaceN_node (target replacement : Nonplanar SOLabel) (a b : Nonplanar 
 theorem replaceN_self (t r : Nonplanar SOLabel) : replaceN t r t = r := by
   refine Quotient.inductionOn t fun p => ?_
   obtain ⟨a, cs⟩ := p
-  show replacePlanar (Nonplanar.mk (Planar.node a cs)) r (Planar.node a cs) = r
+  show replacePlanar (Nonplanar.mk (RoseTree.node a cs)) r (RoseTree.node a cs) = r
   simp only [replacePlanar, if_pos]
 
 /-! ### `IsSO` closure and `SO.replace` -/

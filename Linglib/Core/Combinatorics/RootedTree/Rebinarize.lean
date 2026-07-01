@@ -11,214 +11,164 @@ of MCB's deletion quotient `T/ᵈF_v`: delete the cut subtrees (leaving the
 not-necessarily-binary `T/ᵖF_v`), then `contractUnary` to rebinarize.
 
 Each contracted unary node removes exactly one vertex, so
-`weight (contractUnary t) + unaryCount t = weight t`.
+`numNodes (contractUnary t) + unaryCount t = numNodes t`.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace RoseTree
 
 variable {α : Type*}
 
-/-! ### Definitions -/
+/-! ### Contracting unary nodes
 
-mutual
-/-- Contract every unary node into its child (rebinarize to maximal binary). -/
-def contractUnary : Planar α → Planar α
-  | .node a []              => .node a []
-  | .node _ [c]             => contractUnary c
-  | .node a (c₁ :: c₂ :: cs) => .node a (contractUnaryList (c₁ :: c₂ :: cs))
-/-- Auxiliary: `contractUnary` across a list of children. -/
-def contractUnaryList : List (Planar α) → List (Planar α)
-  | []      => []
-  | c :: cs => contractUnary c :: contractUnaryList cs
-end
+`contractUnary` is a catamorphism over `RoseTree.fold`: rebuild each node from its
+already-contracted children, but a lone child *replaces* the parent — that is
+where a unary node collapses. -/
 
-mutual
-/-- The number of unary (single-child) nodes in a tree. -/
-def unaryCount : Planar α → Nat
-  | .node _ []              => 0
-  | .node _ [c]             => 1 + unaryCount c
-  | .node _ (c₁ :: c₂ :: cs) => unaryCountList (c₁ :: c₂ :: cs)
-/-- Auxiliary: total unary-node count across a list of trees. -/
-def unaryCountList : List (Planar α) → Nat
-  | []      => 0
-  | c :: cs => unaryCount c + unaryCountList cs
-end
+/-- Rebuild a node from its (contracted) children: a single child replaces the
+node, otherwise the node is kept. -/
+def contractCombine (a : α) : List (RoseTree α) → RoseTree α
+  | [c] => c
+  | cs  => node a cs
 
-@[simp] theorem contractUnaryList_cons (c : Planar α) (cs : List (Planar α)) :
-    contractUnaryList (c :: cs) = contractUnary c :: contractUnaryList cs := rfl
+@[simp] theorem contractCombine_singleton (a : α) (c : RoseTree α) :
+    contractCombine a [c] = c := rfl
 
-@[simp] theorem unaryCountList_cons (c : Planar α) (cs : List (Planar α)) :
-    unaryCountList (c :: cs) = unaryCount c + unaryCountList cs := rfl
+theorem contractCombine_nil (a : α) : contractCombine a ([] : List (RoseTree α)) = node a [] := rfl
 
-/-! ### Weight conservation: each contracted unary node drops one vertex -/
+theorem contractCombine_cons₂ (a : α) (c d : RoseTree α) (cs : List (RoseTree α)) :
+    contractCombine a (c :: d :: cs) = node a (c :: d :: cs) := rfl
 
-mutual
-theorem weight_contractUnary_add :
-    ∀ (t : Planar α), weight (contractUnary t) + unaryCount t = weight t
-  | .node a []              => rfl
-  | .node a [c]             => by
-    have ih := weight_contractUnary_add c
-    show weight (contractUnary c) + (1 + unaryCount c) = 1 + weight c
-    omega
-  | .node a (c₁ :: c₂ :: cs) => by
-    have ihl := weightList_contractUnaryList_add (c₁ :: c₂ :: cs)
-    show (1 + weightList (contractUnaryList (c₁ :: c₂ :: cs)))
-        + unaryCountList (c₁ :: c₂ :: cs) = 1 + weightList (c₁ :: c₂ :: cs)
-    omega
-theorem weightList_contractUnaryList_add :
-    ∀ (cs : List (Planar α)),
-      weightList (contractUnaryList cs) + unaryCountList cs = weightList cs
-  | []      => rfl
-  | c :: cs => by
-    have ih := weight_contractUnary_add c
-    have ihl := weightList_contractUnaryList_add cs
-    show (weight (contractUnary c) + weightList (contractUnaryList cs))
-        + (unaryCount c + unaryCountList cs) = weight c + weightList cs
-    omega
-end
+/-- Contract every unary node into its child (rebinarize to maximal binary),
+MCB's Δᵈ (Def. 1.2.5). -/
+def contractUnary : RoseTree α → RoseTree α :=
+  fold contractCombine
 
-/-! ### Bridges to `List.map` / `List.sum` and the ≥2-child reductions -/
+@[simp] theorem contractUnary_node (a : α) (cs : List (RoseTree α)) :
+    contractUnary (node a cs) = contractCombine a (cs.map contractUnary) := by
+  simp only [contractUnary, fold_node]
 
-theorem contractUnaryList_eq_map (cs : List (Planar α)) :
-    contractUnaryList cs = cs.map contractUnary := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [contractUnaryList_cons, List.map_cons, ih]
-
-theorem unaryCountList_eq_sum_map (cs : List (Planar α)) :
-    unaryCountList cs = (cs.map unaryCount).sum := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [unaryCountList_cons, List.map_cons, List.sum_cons, ih]
-
-theorem contractUnary_node_of_two_le (a : α) (L : List (Planar α)) (h : 2 ≤ L.length) :
-    contractUnary (.node a L) = .node a (contractUnaryList L) := by
-  rcases L with _ | ⟨c, _ | ⟨d, cs⟩⟩
+/-- On a node with ≥ 2 children `contractUnary` keeps the root and recurses. -/
+theorem contractUnary_node_of_two_le (a : α) (cs : List (RoseTree α)) (h : 2 ≤ cs.length) :
+    contractUnary (node a cs) = node a (cs.map contractUnary) := by
+  rw [contractUnary_node]
+  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
   · simp at h
   · simp at h
   · rfl
 
-theorem unaryCount_node_of_two_le (a : α) (L : List (Planar α)) (h : 2 ≤ L.length) :
-    unaryCount (.node a L) = unaryCountList L := by
-  rcases L with _ | ⟨c, _ | ⟨d, cs⟩⟩
-  · simp at h
-  · simp at h
-  · rfl
+/-- The number of unary (single-child) nodes. -/
+def unaryCount : RoseTree α → ℕ :=
+  fold fun _ ns => (if ns.length = 1 then 1 else 0) + ns.sum
 
-private theorem two_le_length_append_of {pre post : List (Planar α)} {x : Planar α}
-    (h : ¬ (pre = [] ∧ post = [])) : 2 ≤ (pre ++ x :: post).length := by
-  rcases pre with _ | ⟨p, ps⟩ <;> rcases post with _ | ⟨q, qs⟩
-  · exact absurd ⟨rfl, rfl⟩ h
-  · simp only [List.length_append, List.length_nil, List.length_cons]; omega
-  · simp only [List.length_append, List.length_nil, List.length_cons]; omega
-  · simp only [List.length_append, List.length_cons]; omega
+@[simp] theorem unaryCount_node (a : α) (cs : List (RoseTree α)) :
+    unaryCount (node a cs) = (if cs.length = 1 then 1 else 0) + (cs.map unaryCount).sum := by
+  simp only [unaryCount, fold_node, List.length_map]
 
-/-! ### `unaryCount` is `PlanarEquiv`-invariant -/
+/-! ### Node-count conservation: each contracted unary node drops one vertex -/
 
-private theorem unaryCountList_perm {cs ds : List (Planar α)} (h : cs.Perm ds) :
-    unaryCountList cs = unaryCountList ds := by
+private theorem numNodes_contractCombine (a : α) (cs : List (RoseTree α)) :
+    (contractCombine a cs).numNodes = (if cs.length = 1 then 0 else 1) + (cs.map numNodes).sum := by
+  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
+  · simp [contractCombine_nil]
+  · simp
+  · rw [contractCombine_cons₂, numNodes_node, if_neg (by simp only [List.length_cons]; omega)]
+
+/-- Every contracted unary node removes exactly one vertex. A single
+`RoseTree.rec'` induction: the per-child hypotheses combine over the child list via
+`List.sum_map_add`; the two `if`s (`contractCombine` drops the root of a lone
+child, `unaryCount` counts it) always sum to one. -/
+theorem numNodes_contractUnary_add (t : RoseTree α) :
+    (contractUnary t).numNodes + t.unaryCount = t.numNodes := by
+  induction t with
+  | node a cs ih =>
+    have key : ((cs.map contractUnary).map numNodes).sum + (cs.map unaryCount).sum
+        = (cs.map numNodes).sum := by
+      rw [List.map_map, ← List.sum_map_add]
+      exact congrArg List.sum (List.map_congr_left fun c hc => ih c hc)
+    rw [contractUnary_node, numNodes_contractCombine, unaryCount_node, numNodes_node,
+      List.length_map]
+    split_ifs <;> omega
+
+/-! ### `unaryCount` is `PermEquiv`-invariant -/
+
+private theorem unaryCount_permStep {t s : RoseTree α} (h : PermStep t s) :
+    t.unaryCount = s.unaryCount := by
   induction h with
-  | nil => rfl
-  | cons _ _ ih => simp only [unaryCountList_cons]; omega
-  | swap _ _ _ => simp only [unaryCountList_cons]; omega
-  | trans _ _ ih1 ih2 => exact ih1.trans ih2
-
-theorem unaryCount_planarStep {t s : Planar α} (hstep : PlanarStep t s) :
-    unaryCount t = unaryCount s := by
-  induction hstep with
   | @swapAtRoot a l r pre post =>
-    rw [unaryCount_node_of_two_le a (pre ++ l :: r :: post)
-          (two_le_length_append_of (by simp)),
-        unaryCount_node_of_two_le a (pre ++ r :: l :: post)
-          (two_le_length_append_of (by simp))]
-    exact unaryCountList_perm ((List.Perm.swap r l post).append_left pre)
+    simp only [unaryCount_node, List.length_append, List.length_cons]
+    congr 1
+    exact (((List.Perm.swap r l post).append_left pre).map unaryCount).sum_eq
   | @recurse a pre old new post _ ih =>
-    by_cases h1 : pre = [] ∧ post = []
-    · obtain ⟨rfl, rfl⟩ := h1
-      show 1 + unaryCount old = 1 + unaryCount new
-      omega
-    · rw [unaryCount_node_of_two_le a (pre ++ old :: post) (two_le_length_append_of h1),
-          unaryCount_node_of_two_le a (pre ++ new :: post) (two_le_length_append_of h1),
-          unaryCountList_eq_sum_map, unaryCountList_eq_sum_map,
-          List.map_append, List.map_append, List.map_cons, List.map_cons,
-          List.sum_append, List.sum_append, List.sum_cons, List.sum_cons, ih]
+    simp only [unaryCount_node, List.length_append, List.length_cons, List.map_append,
+      List.map_cons, List.sum_append, List.sum_cons, ih]
 
-theorem unaryCount_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
-    unaryCount t = unaryCount s := by
+theorem unaryCount_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
+    t.unaryCount = s.unaryCount := by
   induction h with
-  | rel _ _ hstep => exact unaryCount_planarStep hstep
+  | rel _ _ hstep => exact unaryCount_permStep hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### `contractUnary` is `PlanarEquiv`-invariant -/
+/-! ### `contractUnary` is `PermEquiv`-invariant -/
 
-theorem contractUnary_planarStep {t s : Planar α} (hstep : PlanarStep t s) :
-    PlanarEquiv (contractUnary t) (contractUnary s) := by
-  induction hstep with
+private theorem two_le_length_append_of {pre post : List (RoseTree α)} {x : RoseTree α}
+    (h : ¬ (pre = [] ∧ post = [])) : 2 ≤ (pre ++ x :: post).length := by
+  rcases pre with _ | ⟨p, ps⟩ <;> rcases post with _ | ⟨q, qs⟩
+  · exact absurd ⟨rfl, rfl⟩ h
+  all_goals simp only [List.length_append, List.length_nil, List.length_cons]; omega
+
+theorem contractUnary_permStep {t s : RoseTree α} (h : PermStep t s) :
+    PermEquiv (contractUnary t) (contractUnary s) := by
+  induction h with
   | @swapAtRoot a l r pre post =>
-    rw [contractUnary_node_of_two_le a (pre ++ l :: r :: post)
-          (two_le_length_append_of (by simp)),
-        contractUnary_node_of_two_le a (pre ++ r :: l :: post)
-          (two_le_length_append_of (by simp)),
-        contractUnaryList_eq_map, contractUnaryList_eq_map]
-    exact planarEquiv_root_perm
-      ((List.Perm.append_left pre (List.Perm.swap r l post)).map contractUnary)
+    rw [contractUnary_node_of_two_le a (pre ++ l :: r :: post) (two_le_length_append_of (by simp)),
+        contractUnary_node_of_two_le a (pre ++ r :: l :: post) (two_le_length_append_of (by simp))]
+    exact permEquiv_root_perm (((List.Perm.swap r l post).append_left pre).map contractUnary)
   | @recurse a pre old new post _ ih =>
     by_cases h1 : pre = [] ∧ post = []
     · obtain ⟨rfl, rfl⟩ := h1
       exact ih
     · rw [contractUnary_node_of_two_le a (pre ++ old :: post) (two_le_length_append_of h1),
-          contractUnary_node_of_two_le a (pre ++ new :: post) (two_le_length_append_of h1),
-          contractUnaryList_eq_map, contractUnaryList_eq_map,
-          List.map_append, List.map_append, List.map_cons, List.map_cons]
-      apply planarEquiv_node_componentwise
-      generalize pre.map contractUnary = P
-      induction P with
-      | nil =>
-        exact List.Forall₂.cons ih
-          (List.forall₂_same.mpr (fun _ _ => PlanarEquiv.refl _))
-      | cons p ps ihp => exact List.Forall₂.cons (PlanarEquiv.refl p) ihp
+          contractUnary_node_of_two_le a (pre ++ new :: post) (two_le_length_append_of h1)]
+      simp only [List.map_append, List.map_cons]
+      exact permEquiv_recurse_lift (pre.map contractUnary) (post.map contractUnary) ih
 
-theorem contractUnary_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
-    PlanarEquiv (contractUnary t) (contractUnary s) := by
+theorem contractUnary_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
+    PermEquiv (contractUnary t) (contractUnary s) := by
   induction h with
-  | rel _ _ hstep => exact contractUnary_planarStep hstep
-  | refl _ => exact PlanarEquiv.refl _
+  | rel _ _ hstep => exact contractUnary_permStep hstep
+  | refl _ => exact PermEquiv.refl _
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-end Planar
+end RoseTree
 
 /-! ### Nonplanar `contractUnary` / `unaryCount` -/
 
-namespace Nonplanar
+namespace RootedTree.Nonplanar
 
 variable {α : Type*}
 
 /-- The number of unary nodes of a nonplanar tree. -/
-def unaryCount : Nonplanar α → Nat :=
-  Nonplanar.lift Planar.unaryCount (fun _ _ h => Planar.unaryCount_planarEquiv h)
+def unaryCount : Nonplanar α → ℕ :=
+  Nonplanar.lift RoseTree.unaryCount (fun _ _ h => RoseTree.unaryCount_permEquiv h)
 
-@[simp] theorem unaryCount_mk (t : Planar α) : (mk t).unaryCount = t.unaryCount := rfl
+@[simp] theorem unaryCount_mk (t : RoseTree α) : (mk t).unaryCount = t.unaryCount := rfl
 
 /-- Rebinarize: contract every unary node (MCB Δᵈ, Def. 1.2.5). -/
 def contractUnary : Nonplanar α → Nonplanar α :=
-  Quotient.map Planar.contractUnary (fun _ _ h => Planar.contractUnary_planarEquiv h)
+  Quotient.map RoseTree.contractUnary (fun _ _ h => RoseTree.contractUnary_permEquiv h)
 
-@[simp] theorem contractUnary_mk (t : Planar α) :
-    contractUnary (mk t) = mk (Planar.contractUnary t) := rfl
+@[simp] theorem contractUnary_mk (t : RoseTree α) :
+    contractUnary (mk t) = mk (RoseTree.contractUnary t) := rfl
 
 /-- Each contracted unary node drops one vertex. -/
-theorem weight_contractUnary_add (t : Nonplanar α) :
-    (contractUnary t).weight + t.unaryCount = t.weight := by
+theorem numNodes_contractUnary_add (t : Nonplanar α) :
+    (contractUnary t).numNodes + t.unaryCount = t.numNodes := by
   refine Quotient.inductionOn t fun p => ?_
-  show (mk (Planar.contractUnary p)).weight + (mk p).unaryCount = (mk p).weight
-  rw [weight_mk, unaryCount_mk, weight_mk]
-  exact Planar.weight_contractUnary_add p
+  show (mk (RoseTree.contractUnary p)).numNodes + (mk p).unaryCount = (mk p).numNodes
+  rw [numNodes_mk, unaryCount_mk, numNodes_mk]
+  exact RoseTree.numNodes_contractUnary_add p
 
-end Nonplanar
-
-end RootedTree
+end RootedTree.Nonplanar

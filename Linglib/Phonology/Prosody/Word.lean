@@ -57,7 +57,7 @@ open Constraints
     parsed into the same category twice). -/
 def noRec : Constraint Tree := fun t => go t where
   go : Tree → Nat
-    | .node a cs => (cs.filter (fun c => Constituent.sameLevel c.label a)).length + goList cs
+    | .node a cs => (cs.filter (fun c => Constituent.sameLevel c.value a)).length + goList cs
   goList : List Tree → Nat
     | [] => 0
     | c :: cs => go c + goList cs
@@ -161,9 +161,9 @@ private theorem noLevelRec.goList_eq (p : Constituent → Bool) (cs : List Tree)
   | cons c cs ih => simp only [noLevelRec.goList, List.all_cons, ih]
 
 private theorem mem_maxProj_go {p : Constituent → Bool} {s : Tree} :
-    ∀ (under : Bool) (t : Tree), s ∈ maximalProjections.go p under t → p s.label = true := by
+    ∀ (under : Bool) (t : Tree), s ∈ maximalProjections.go p under t → p s.value = true := by
   intro under t
-  induction t using RootedTree.Planar.recAux generalizing under with
+  induction t using RoseTree.rec' generalizing under with
   | node a cs IH =>
     intro hs
     rw [maximalProjections.go] at hs
@@ -178,12 +178,12 @@ private theorem mem_maxProj_go {p : Constituent → Bool} {s : Tree} :
 
 /-- Every maximal `p`-projection is a `p`-node. -/
 theorem mem_maximalProjections_level {p : Constituent → Bool} {s t : Tree}
-    (h : s ∈ maximalProjections p t) : p s.label = true := mem_maxProj_go _ _ h
+    (h : s ∈ maximalProjections p t) : p s.value = true := mem_maxProj_go _ _ h
 
 private theorem isMin_go {p : Constituent → Bool} {s : Tree} :
     ∀ t : Tree, s ∈ minimalProjections.go p t → IsMinimalProj p s := by
   intro t
-  induction t using RootedTree.Planar.recAux with
+  induction t using RoseTree.rec' with
   | node a cs IH =>
     intro hs
     rw [minimalProjections.go, List.mem_append, minimalProjections.goList_eq,
@@ -203,20 +203,20 @@ theorem isMinimalProj_of_mem_minimalProjections {p : Constituent → Bool} {s t 
 
 /-- A minimal `p`-projection is a `p`-node. -/
 theorem isMinimalProj_level {p : Constituent → Bool} {s : Tree} (h : IsMinimalProj p s) :
-    p s.label = true := by
+    p s.value = true := by
   obtain ⟨a, cs⟩ := s
   simp only [IsMinimalProj, isMinimalProj, Bool.and_eq_true] at h
   simpa using h.1
 
 /-- Every minimal `p`-projection is a `p`-node. -/
 theorem mem_minimalProjections_level {p : Constituent → Bool} {s t : Tree}
-    (h : s ∈ minimalProjections p t) : p s.label = true :=
+    (h : s ∈ minimalProjections p t) : p s.value = true :=
   isMinimalProj_level (isMin_go _ h)
 
 private theorem noAny_go (p : Constituent → Bool) :
     ∀ t : Tree, anyAtLevel.go p t = false → minimalProjections.go p t = [] := by
   intro t
-  induction t using RootedTree.Planar.recAux with
+  induction t using RoseTree.rec' with
   | node a cs IH =>
     intro h
     simp only [anyAtLevel.go, Bool.or_eq_false_iff] at h
@@ -231,7 +231,7 @@ private theorem maxMin_go (p : Constituent → Bool) :
     ∀ t : Tree, noLevelRec.go p t = true →
       maximalProjections.go p false t = minimalProjections.go p t := by
   intro t
-  induction t using RootedTree.Planar.recAux with
+  induction t using RoseTree.rec' with
   | node a cs IH =>
     intro h
     simp only [noLevelRec.go, Bool.and_eq_true] at h
@@ -314,7 +314,7 @@ def isWordTree : Tree → Bool := fun t => go t where
   goList : List Tree → Bool
     | [] => true
     | c :: cs =>
-        (isFootTree c || go c || (c.label.isSyl && c.children.isEmpty))
+        (isFootTree c || go c || (c.value.isSyl && c.children.isEmpty))
           && goList cs
 
 /-- A well-formed prosodic word: an ω-node dominating only feet, recursive ω's, and stray σ
@@ -332,7 +332,7 @@ instance (t : Tree) : Decidable (IsWord t) :=
 theorem isWordTree.goList_all (cs : List Tree) :
     isWordTree.goList cs
       = cs.all (fun c => isFootTree c || isWordTree.go c
-          || (c.label.isSyl && c.children.isEmpty)) := by
+          || (c.value.isSyl && c.children.isEmpty)) := by
   induction cs with
   | nil => rfl
   | cons c cs ih => simp only [isWordTree.goList, List.all_cons, ih]
@@ -341,20 +341,20 @@ theorem isWordTree.goList_all (cs : List Tree) :
     of `IsWord ∧ noRec = 0`, used to read the grid off a word. -/
 theorem isWord_children {a : Constituent} {cs : List Tree}
     (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
-    a.isOm = true ∧ ∀ c ∈ cs, isFootTree c = true ∨ (c.label.isSyl = true ∧ c.children = []) := by
+    a.isOm = true ∧ ∀ c ∈ cs, isFootTree c = true ∨ (c.value.isSyl = true ∧ c.children = []) := by
   simp only [IsWord, isWordTree, isWordTree.go, Bool.and_eq_true,
     isWordTree.goList_all, List.all_eq_true] at hw
   obtain ⟨ha, hall⟩ := hw
   obtain rfl : a = .om := by cases a <;> simp_all [Constituent.isOm]
-  have hr' : (cs.filter (fun c => Constituent.sameLevel c.label .om)).length = 0 := by
+  have hr' : (cs.filter (fun c => Constituent.sameLevel c.value .om)).length = 0 := by
     have e : noRec (.node (.om : Constituent) cs)
-        = (cs.filter (fun c => Constituent.sameLevel c.label .om)).length + noRec.goList cs := rfl
+        = (cs.filter (fun c => Constituent.sameLevel c.value .om)).length + noRec.goList cs := rfl
     rw [hr] at e; omega
-  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.label .om = false := by
+  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.value .om = false := by
     intro c hc
     by_contra h
     rw [Bool.not_eq_false] at h
-    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.label .om) := by
+    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.value .om) := by
       rw [List.mem_filter]; exact ⟨hc, h⟩
     rw [List.length_eq_zero_iff] at hr'
     rw [hr'] at hmem; exact List.not_mem_nil hmem
@@ -362,14 +362,14 @@ theorem isWord_children {a : Constituent} {cs : List Tree}
   have hdisj := hall c hc
   have hsl := hnoω c hc
   obtain ⟨cl, ccs⟩ := c
-  simp only [RootedTree.Planar.label_node] at hsl
+  simp only [RoseTree.value_node] at hsl
   have hcω : cl.isOm = false := by
     cases cl <;> simp_all [Constituent.sameLevel, Constituent.isOm]
   rw [show isWordTree.go (.node cl ccs)
         = (cl.isOm && isWordTree.goList ccs) from rfl, hcω] at hdisj
   simp only [Bool.false_and, Bool.or_false, Bool.or_eq_true, Bool.and_eq_true,
-    RootedTree.Planar.children_node, List.isEmpty_iff,
-    RootedTree.Planar.label_node] at hdisj ⊢
+    RoseTree.children_node, List.isEmpty_iff,
+    RoseTree.value_node] at hdisj ⊢
   rcases hdisj with h | h
   · exact Or.inl h
   · exact Or.inr h
