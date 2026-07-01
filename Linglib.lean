@@ -1689,7 +1689,6 @@ import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Degree.Gradability.AntonymPrediction
-import Linglib.Semantics.Degree.Gradability.AntonymQuadruplet
 import Linglib.Semantics.Degree.Gradability.Antonymy
 import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Semantics.Degree.Gradability.Classification

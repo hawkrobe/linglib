@@ -161,7 +161,7 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
       `EpistemicThreshold.isProbabilistic` is a strengthening of this
       (Monotone, not StrictMono).
 
-    The bundled-typeclass form is `Core/Scales/MereoDim.lean::MereoDim`
+    The bundled-typeclass form is `MereoDim` in `Semantics/Mereology.lean`
     (with `[PartialOrder]` carriers); the unbundled-Prop form is here
     (with `[Preorder]`, more permissive). Use `MereoDim` when typeclass
     inference is desired; use `admissibleMeasure` when the witness is

@@ -23,7 +23,7 @@ models are formalized here; the pragmatic derivation connecting them is in
 
 The core operations (`contradictoryNeg`, `contraryNeg`, `inGapRegion`,
 `ThresholdPair`, `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`)
-are defined in `Adjective.Theory`.
+are defined in `Gradability/Basic.lean`.
 -/
 
 set_option autoImplicit false
@@ -33,7 +33,7 @@ namespace Semantics.Gradability.Antonymy
 open Degree (Degree Threshold Threshold.toNat)
 open Semantics.Gradability (ThresholdPair contradictoryNeg
   positiveMeaning' contraryNegMeaning notContraryNegMeaning inGapRegion)
-open Degree (positiveMeaning antonymMeaning)
+open Degree (positiveMeaning notPositiveMeaning)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Contradictory Negation: Involutory (DNE holds)
@@ -44,7 +44,7 @@ open Degree (positiveMeaning antonymMeaning)
 @[simp] theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     contradictoryNeg d θ ↔ ¬ positiveMeaning d θ := by
-  simp only [contradictoryNeg, antonymMeaning, positiveMeaning, not_lt]
+  simp only [contradictoryNeg, notPositiveMeaning, positiveMeaning, not_lt]
 
 /-- Double contradictory negation eliminates: "not [not happy]" = "happy".
 

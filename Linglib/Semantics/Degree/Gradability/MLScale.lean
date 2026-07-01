@@ -12,9 +12,6 @@ M-TRANSITIVITY and M-BOUNDEDNESS as consequences.
 This sits alongside `DirectedMeasure` (in `Degree`): a `DirectedMeasure`
 determines licensing from boundedness, while an `MLScale` adds granularity
 structure (marginal vs. large difference) on the same `LinearOrder`.
-
-- Dinis, B. & Jacinto, B. (2026). Marginality scales for gradable
-  adjectives. *Linguistics and Philosophy* 49:101–131.
 -/
 
 namespace Semantics.Gradability
