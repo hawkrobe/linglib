@@ -7,47 +7,39 @@ import Linglib.Semantics.Degree.Gradability.Delineation
 /-!
 # [rudolph-kocurek-2024]: Metalinguistic Gradability
 
-Semantic expressivist framework for metalinguistic comparatives ("Ann is more a
-linguist than a philosopher"), equatives, degree modifiers, and conditionals
-[rudolph-kocurek-2024], together with the revised semantics and degree-theoretic
-formulation of its technical supplement [kocurek-2024-supplement].
+Semantic expressivism for metalinguistic comparatives ("Ann is more a linguist
+than a philosopher"), equatives, degree modifiers, and conditionals
+[rudolph-kocurek-2024], with the revised semantics and degree-theoretic
+formulation of its supplement [kocurek-2024-supplement]. Speakers express
+interpretive as well as factual commitments: truth is evaluated at ⟨≤, i, w⟩
+where ≤ is a total preorder over interpretations, and `A ≻ B` holds iff some
+(A∧¬B)-interpretation ranked ≤ i dominates every (B∧¬A)-interpretation.
 
-Speakers express not only factual commitments (about the world) but also
-**interpretive commitments** (about how to interpret language): the common ground
-is generalized from sets of worlds to sets of ordering-world pairs ⟨≤, w⟩, where
-≤ is a total preorder over interpretations (a **semantic ordering**). Truth is
-evaluated at a triple ⟨≤, i, w⟩; the metalinguistic comparative `A ≻ B` holds iff
-some (A∧¬B)-interpretation ranked ≤ i dominates every (B∧¬A)-interpretation.
+## Main definitions
 
-## Contents
+* `SemanticOrdering`, `MFormula`, `Eval`, `EvalRevised` — the language with its
+  basic (§4.2) and revised (supplement §B) semantics.
+* `AssertoricContent`, `MetalinguisticCG` — acceptance and the common ground:
+  the substrate's `ContextSet` at the ordering-world index, with assertion as
+  `ContextSet.update` and the Stalnaker laws inherited.
+* `DistanceFunction`, `EvalVery`, `EvalSorta`, `EvalMostly`, `EvalMCond` —
+  degree modifiers (§6.1) and metalinguistic conditionals (§6.3).
+* `degreeEquiv`, `strictlyBetter`, `MetaDegree` — the supplement's §C degree
+  theory: metalinguistic degrees as a `Quotient` carrying `LinearOrder` and
+  `BoundedOrder` instances.
 
-1. **Framework** — `SemanticOrdering`, `MFormula`, the basic (`Eval`) and revised
-   (`EvalRevised`) semantics, assertoric content and its nonclassical acceptance-preservation, distance functions and degree modifiers
-   (*very much*, *sorta*, *mostly*), metalinguistic conditionals, and No
-   Reversal — whose bridge to [klein-1980] is stated on the substrate's
-   `Delineation.comparativeSem` (`eval_mc_iff_delineation_of_noReversal`).
-   The common ground (`MetalinguisticCG`) is the substrate's `ContextSet` at
-   the enriched ordering-world index: assertion is `ContextSet.update`, the
-   Stalnaker laws are inherited, and the classical projection is a monotone
-   `Set.image`.
-2. **Degree theory** ([kocurek-2024-supplement] §C) — the matching relation ∼ on
-   interpretation sets and the ordering ⊐: Facts 8 and 11–13 (∼ is an equivalence,
-   ⊐ transitive and total off ∼, extremal degrees), packaged as a mathlib `Setoid`
-   with `MetaDegree` as its `Quotient`, carrying `LinearOrder` and
-   `BoundedOrder` instances; Facts 9–10 (`me_iff_same_degree`,
-   `mc_iff_degree_gt`) connect the degree structure back to `EvalRevised`,
-   and `mc_iff_comparativeSem` cashes out the paper's degree-theoretic claim:
-   the revised MC is the degree substrate's `Degree.comparativeSem` over the
-   metalinguistic measure `formulaDeg` — metagradability instantiates the
-   substrate's central object `μ : E → D`.
-3. **Finite models** — four small models verifying the paper's predictions:
-   the §4.4 entailment patterns (supplement Fact 3), borderline equatives and
-   nonclassical acceptance-preservation (paralleling informational entailment
-   for epistemic modals, [yalcin-2007]), degree modifiers (§6.1), metalinguistic
-   conditionals (§6.3), the No Reversal bridge to [klein-1980] delineation
-   (§7; see `Semantics/Degree/Gradability/Delineation.lean`), and the
-   supplement's ME-transitivity counterexample with its revised-semantics
-   repair (§B).
+## Main results
+
+* `eval_mc_iff_delineation_of_noReversal` — under No Reversal (§7) the MC is
+  [klein-1980]'s `Delineation.comparativeSem`.
+* `mc_iff_degree_gt`, `me_iff_same_degree` — Facts 9–10: ≻ and ≈ are degree
+  order and degree equality.
+* `mc_iff_comparativeSem` — the paper's degree-theoretic claim, in substrate
+  vocabulary: the revised MC is `Degree.comparativeSem` over the metalinguistic
+  measure `formulaDeg`.
+* Four finite models witness the §4.4 entailment patterns, nonclassical
+  acceptance-preservation ([yalcin-2007]), and the supplement's ME-transitivity
+  counterexample and its revised-semantics repair.
 -/
 
 namespace RudolphKocurek2024
