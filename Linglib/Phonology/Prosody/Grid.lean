@@ -305,22 +305,24 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
 Reading a `Foot`'s grid recovers its head — the depth-1 core of the transport story: its column
 heights are `2` at the head σ and `1` elsewhere, so the grid peaks at `2`. -/
 
+/-- **Head-preservation for a foot** ([liberman-prince-1977]): projecting a foot's prosodic tree
+    recovers its metrical grid — the commuting square `columns ∘ toProsTree = toGrid`. -/
+theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
+    columns (f.toProsTree w) = Foot.toGrid f := by
+  rw [Foot.toProsTree, columns_node, if_neg (by simp [Constituent.isSyl]),
+      List.flatMap_map, Foot.toGrid, List.map_eq_flatMap]
+  refine List.flatMap_congr fun i _ => ?_
+  by_cases hi : i = f.head <;>
+    simp [project_node, Constituent.isSyl, Constituent.isHead, edge,
+      promote, clear, toGrid, cell, hi]
+
 /-- A foot's grid peaks at `2` — its head σ carries the primary mark ([liberman-prince-1977]). -/
 theorem peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     peak (columns (f.toProsTree w)) = 2 := by
-  have hcols : columns (f.toProsTree w) = (Foot.toGrid f).map (fun b => if b then 2 else 1) := by
-    rw [Foot.toProsTree, columns_node, if_neg (by simp [Constituent.isSyl]),
-        List.flatMap_map, Foot.toGrid, List.map_map, List.map_eq_flatMap]
-    refine List.flatMap_congr fun i _ => ?_
-    by_cases hi : i = f.head <;>
-      simp [project_node, Constituent.isSyl, Constituent.isHead, edge,
-        promote, clear, toGrid, cell, hi]
-  rw [hcols]
+  rw [columns_toProsTree, Foot.toGrid]
   refine Nat.le_antisymm (peak_le fun x hx => ?_) (le_peak ?_)
-  · obtain ⟨b, _, rfl⟩ := List.mem_map.mp hx
-    cases b <;> decide
-  · exact List.mem_map.mpr ⟨true,
-      List.mem_map.mpr ⟨f.head, List.mem_finRange _, decide_eq_true_eq.mpr rfl⟩, rfl⟩
+  · obtain ⟨i, _, rfl⟩ := List.mem_map.mp hx; split <;> decide
+  · exact List.mem_map.mpr ⟨f.head, List.mem_finRange _, by simp⟩
 
 /-! ## What the grid forgets
 
