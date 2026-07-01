@@ -1,5 +1,5 @@
 import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Gradability.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic

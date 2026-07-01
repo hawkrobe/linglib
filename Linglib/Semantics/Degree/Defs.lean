@@ -16,7 +16,8 @@ Foundational definitions for degree-based analyses of gradable expressions
 * the Kennedy-style classification enums (`PositiveStandard`, `AdjectiveClass`, …).
 
 Positive-form semantics is in `Basic.lean`; Kennedy 2007's interpretive economy is in
-`Kennedy.lean`; the abstract `μ : E → α` measure typeclass is in `HasMeasure.lean`.
+`Kennedy.lean`. The abstract theory works with plain measure functions `μ : E → α`
+into a linear order — there is no measure typeclass.
 Klein-style delineation [klein-1980] has no measure function and lives in
 `Gradability/Delineation.lean`.
 

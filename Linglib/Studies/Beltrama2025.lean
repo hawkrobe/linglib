@@ -4,7 +4,7 @@ import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 
 /-!
 # Beltrama 2025: Evaluation, thresholds, and practical commitments

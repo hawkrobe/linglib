@@ -27,7 +27,7 @@ For **theorems about concrete scales** — proving facts about a particular
 type — use Mathlib typeclasses directly:
 
 - **Measurement scale**: `[LinearOrder α]`
-- **Dense measurement scale** ([fox-2007] UDM): `[LinearOrder α] [DenselyOrdered α]`
+- **Dense measurement scale** ([fox-hackl-2006] UDM): `[LinearOrder α] [DenselyOrdered α]`
 - **Upper-bounded scale**: `[LinearOrder α] [OrderTop α]`
 - **Lower-bounded scale**: `[LinearOrder α] [OrderBot α]`
 - **Open scale**: `[LinearOrder α] [NoMaxOrder α] [NoMinOrder α]`

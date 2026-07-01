@@ -6,8 +6,8 @@ import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Comparison
 
 /-!
-# Core/Scales/Predicate.lean — degree predicates + monotonicity
-[fox-2007] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010] [partee-1987]
+# Degree predicates + monotonicity
+[fox-hackl-2006] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010] [partee-1987]
 
 Predicate transformers over a measure function `μ : W → α`:
 
@@ -116,7 +116,7 @@ theorem closed_isLicensed : Boundedness.closed.IsLicensed := trivial
 theorem open_notLicensed : ¬ Boundedness.open_.IsLicensed := id
 
 -- ════════════════════════════════════════════════════
--- § 6. Degree Properties ([fox-2007] §2)
+-- § 6. Degree Properties ([fox-hackl-2006])
 -- ════════════════════════════════════════════════════
 
 /-! ### Degree properties as `Comparison.over`
@@ -136,7 +136,7 @@ semantics.
 
 The key divergence: on ℕ, `>` collapses to `≥` with successor, so both
 have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
-This is the UDM prediction ([fox-2007] §2). -/
+This is the UDM prediction ([fox-hackl-2006]). -/
 
 /-- "At least" is downward monotone: weaker thresholds are easier to satisfy. -/
 theorem geOver_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (Comparison.ge.over μ) :=
