@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Syntax.Numeral.Basic
 import Mathlib.Order.Interval.Set.Basic

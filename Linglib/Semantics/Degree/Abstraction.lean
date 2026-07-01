@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
 

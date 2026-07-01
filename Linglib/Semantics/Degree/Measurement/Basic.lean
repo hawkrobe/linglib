@@ -1,6 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Core.Order.Comparison
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Features.Dimension
@@ -60,8 +60,8 @@ CARD Num-head itself lives at the syntactic level.
 
 ### Connection to Scale Infrastructure
 
-The `HasMeasure` (legacy `HasMeasure`) typeclass in `Core/Scales/HasMeasure.lean`
-gives `E → α`. This module adds:
+The degree substrate works with plain measure functions `μ : E → α` into a
+linear order. This module adds:
 
 - typed dimensions (what μ measures), via `Features.Dimension.Dimension`
 - multiple measure functions per entity (a box has weight AND volume AND
@@ -177,22 +177,7 @@ def IsQuantityUniform {E : Type*} (P : E → Prop) (μ : MeasureFn E) : Prop :=
   ∀ x y, P x → P y → μ.apply x = μ.apply y
 
 -- ============================================================================
--- § 5. Bridge to HasMeasure
--- ============================================================================
-
-/-- A `MeasureFn` induces a `HasMeasure` instance: the degree of an entity
-is its measure value.
-
-Note: `HasMeasure` (= `HasMeasure`) is a typeclass with one designated degree
-per (entity, codomain) pair. For entities with multiple measurable dimensions,
-use `MeasureFn` directly — the typeclass projection is the specialization for
-when a single dimension is contextually salient. -/
-@[reducible]
-def MeasureFn.toHasDegree {E : Type*} (μ : MeasureFn E) : Degree.HasMeasure E ℚ :=
-  { degree := μ.apply }
-
--- ============================================================================
--- § 6. Quantizing Nouns ([scontras-2014], Ch. 3)
+-- § 5. Quantizing Nouns ([scontras-2014], Ch. 3)
 -- ============================================================================
 
 /-- Classification of quantizing nouns (Scontras Ch. 3): nouns that turn
@@ -282,7 +267,7 @@ theorem containerNoun_licensesMeasure_iff_measure (r : ContainerReading) :
   cases r <;> simp [licensesMeasureReading]
 
 -- ============================================================================
--- § 7. Measure-term exact meaning vs Kennedy's max-quantifier semantics
+-- § 6. Measure-term exact meaning vs Kennedy's max-quantifier semantics
 -- ============================================================================
 
 /-! ### Formalization-internal observation
@@ -339,7 +324,7 @@ theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
   Entailment.isMaxInf_atLeast_of_hit cardFn n x hHit
 
 -- ============================================================================
--- § 8. Bridges to Mereology (Krifka) and admissibleMeasure (Wellwood)
+-- § 7. Bridges to Mereology (Krifka) and admissibleMeasure (Wellwood)
 -- ============================================================================
 
 /-! `MeasureFn` is the concrete Scontras-flavored substrate (a function plus a

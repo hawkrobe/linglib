@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.MeasureFunction
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

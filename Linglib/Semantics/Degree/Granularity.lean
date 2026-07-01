@@ -1,6 +1,6 @@
 import Mathlib.Order.Basic
 import Mathlib.Algebra.Order.Group.Defs
-import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUDStack
