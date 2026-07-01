@@ -338,7 +338,8 @@ def wetTypology : AdjectiveTypologyDatum :=
   { adjective := "wet"
   , classification := .absoluteMinimum
   , scale := "wetness"
-  , scaleType := .lowerBounded  -- matches `Adjectival.wet.scaleType`
+  , scaleType := .lowerBounded  -- Kennedy's datum; the Fragment models this as
+                                -- closed + lower pole (same absoluteMinimum class)
   , naturalWithSlightly := true  -- "slightly wet"
   , naturalWithCompletely := false  -- "??completely wet"
   , thresholdShifts := false
@@ -360,7 +361,8 @@ def bentTypology : AdjectiveTypologyDatum :=
   { adjective := "bent"
   , classification := .absoluteMinimum
   , scale := "bentness"
-  , scaleType := .lowerBounded  -- matches `Adjectival.bent.scaleType`
+  , scaleType := .lowerBounded  -- Kennedy's datum; the Fragment models this as
+                                -- closed + lower pole (same absoluteMinimum class)
   , naturalWithSlightly := true   -- "slightly bent"
   , naturalWithCompletely := false -- "??completely bent" (odd)
   , thresholdShifts := false
@@ -560,17 +562,15 @@ theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Degree max)
     (adjMeasure μ full).IsLicensed :=
   closedAdj_licensed μ full rfl
 
-/-- "wet" (lower-bounded) → DirectedMeasure licenses. -/
+/-- "wet" (closed scale) → DirectedMeasure licenses. -/
 theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ wet).IsLicensed := by
-  simp only [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.IsLicensed, wet, Boundedness.IsLicensed]
+    (adjMeasure μ wet).IsLicensed :=
+  closedAdj_licensed μ wet rfl
 
-/-- "dry" (upper-bounded) → DirectedMeasure licenses. -/
+/-- "dry" (closed scale) → DirectedMeasure licenses. -/
 theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ dry).IsLicensed := by
-  simp only [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.IsLicensed, dry, Boundedness.IsLicensed]
+    (adjMeasure μ dry).IsLicensed :=
+  closedAdj_licensed μ dry rfl
 
 /-! #### DirectedMeasure → data bridges -/
 
@@ -601,11 +601,11 @@ theorem adj_pipeline_tall :
 theorem adj_pipeline_full :
     LicensingPipeline.IsLicensed full.scaleType := trivial
 
-/-- "wet" through the universal pipeline: lowerBounded → licensed. -/
+/-- "wet" through the universal pipeline: closed (endpoint) → licensed. -/
 theorem adj_pipeline_wet :
     LicensingPipeline.IsLicensed wet.scaleType := trivial
 
-/-- "dry" through the universal pipeline: upperBounded → licensed. -/
+/-- "dry" through the universal pipeline: closed (endpoint) → licensed. -/
 theorem adj_pipeline_dry :
     LicensingPipeline.IsLicensed dry.scaleType := trivial
 
@@ -637,37 +637,41 @@ theorem tall_requires_cc :
 theorem full_no_cc :
     ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass := id
 
-/-- "wet": lower-bounded ⇒ endpoint standard ⇒ CC-independence. -/
+/-- "wet": closed scale ⇒ endpoint standard ⇒ CC-independence. -/
 theorem wet_no_cc :
     ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass := id
 
-/-- "dry": upper-bounded ⇒ endpoint standard ⇒ CC-independence. -/
+/-- "dry": closed scale ⇒ endpoint standard ⇒ CC-independence. -/
 theorem dry_no_cc :
     ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass := id
 
-/-! #### MPA licensing ([beltrama-2025]) -/
+/-! #### MPA classification ([beltrama-2025]) -/
 
-/-- MPAs (lower-bounded scale) are licensed by the pipeline, just like *wet*.
-    Their resistance to *very*/*extremely* is pragmatic (conflicts with the
-    middling inference), not structural. -/
-theorem mpa_licensed :
-    LicensingPipeline.IsLicensed decent.scaleType ∧
-    LicensingPipeline.IsLicensed acceptable.scaleType ∧
-    LicensingPipeline.IsLicensed adequate.scaleType := ⟨trivial, trivial, trivial⟩
+/-- MPAs are the mildly-positive class: an open `.value` scale carrying a
+    functional (necessity) standard via `standardOverride`. Their special status
+    is the standard, not scale boundedness — so on scale shape they pattern with
+    the relative adjectives (not endpoint-licensed), and their resistance to
+    *very*/*extremely* is pragmatic (conflicts with the middling inference). -/
+theorem mpa_mildly_positive :
+    decent.adjectiveClass = .mildlyPositive ∧
+    acceptable.adjectiveClass = .mildlyPositive ∧
+    adequate.adjectiveClass = .mildlyPositive := ⟨rfl, rfl, rfl⟩
 
-/-- MPAs and *good* have the same scale-structure licensing status
-    (both lower-bounded → licensed). Their difference is in standard type
-    (functional vs contextual), not in structural licensing. -/
+/-- MPAs and *good* share scale-structure licensing status: both sit on the open
+    `.value` scale, so neither is endpoint-licensed. Their difference is in
+    standard type (functional vs contextual), not in structural licensing. -/
 theorem mpa_good_same_licensing :
     LicensingPipeline.IsLicensed decent.scaleType ↔
     LicensingPipeline.IsLicensed good.scaleType := Iff.rfl
 
-/-- IE path diverges for MPAs: lower-bounded → minEndpoint, but MPAs actually
-    receive a functional standard. This is a genuine exception to Interpretive
-    Economy, distinct from *good*'s exception. -/
+/-- IE path diverges for MPAs: the open-scale shape-default is a *contextual*
+    standard (`interpretiveEconomy .open_`), yet MPAs actually receive a
+    *functional* standard via `standardOverride`. A genuine exception to
+    Interpretive Economy, distinct from *good*'s (which keeps the contextual
+    default). -/
 theorem mpa_ie_exception :
-    (interpretiveEconomy decent.scaleType) = .minEndpoint ∧
-    ¬ (interpretiveEconomy decent.scaleType).RequiresComparisonClass := ⟨rfl, id⟩
+    interpretiveEconomy decent.scaleType = .contextual ∧
+    decent.standard = .functional := ⟨rfl, rfl⟩
 
 /-! #### Modifier-class matrix consistency (eq. (61)) -/
 
@@ -723,17 +727,22 @@ theorem tall_scaleType_consistency :
 theorem full_scaleType_consistency :
     fullTypology.scaleType = full.scaleType := rfl
 
-/-- "wet" (lower-bounded): Data scaleType matches Fragment scaleType. -/
-theorem wet_scaleType_consistency :
-    wetTypology.scaleType = wet.scaleType := rfl
+/-- "wet": Fragment's derived Kennedy class matches the paper typology datum.
+    The raw `Boundedness` labels now differ — the Fragment models wetness as one
+    closed scale with `wet` at the lower pole, where Kennedy's datum labels it
+    lower-bounded — but both yield the same absolute-minimum class. -/
+theorem wet_class_consistency :
+    wet.adjectiveClass = wetTypology.classification := rfl
 
 /-- "straight" (closed): Data scaleType matches Fragment scaleType. -/
 theorem straight_scaleType_consistency :
     straightTypology.scaleType = straight.scaleType := rfl
 
-/-- "bent" (lower-bounded): Data scaleType matches Fragment scaleType. -/
-theorem bent_scaleType_consistency :
-    bentTypology.scaleType = bent.scaleType := rfl
+/-- "bent": Fragment's derived Kennedy class matches the paper typology datum
+    (closed + lower pole vs Kennedy's lower-bounded label; same absolute-minimum
+    class). -/
+theorem bent_class_consistency :
+    bent.adjectiveClass = bentTypology.classification := rfl
 
 /-- "tall" (open scale): pipeline blocked = "completely" doesn't work with RGA. -/
 theorem tall_completely_agrees :

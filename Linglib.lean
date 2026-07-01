@@ -748,7 +748,6 @@ import Linglib.Fragments.English.Distributives
 import Linglib.Fragments.English.Evidentiality
 import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Fragments.English.GradableAdjectives
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Fragments.English.Modifiers.Adjectives

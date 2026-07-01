@@ -32,6 +32,7 @@ import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Gradability.MLScale
 import Linglib.Semantics.Degree.Basic
+import Linglib.Syntax.Adjective.Basic
 
 namespace Semantics.Gradability
 
@@ -154,14 +155,15 @@ inductive SpatialConfigType where
   | surfaceOrient   -- flat: orientation relative to reference surface
   deriving DecidableEq, Repr
 
-/-- A gradable adjective lexical entry.
-    Bundles surface form, scale structure, and antonym information.
-    The actual threshold is NOT part of the lexical entry — it's contextual. -/
-structure GradableAdjEntry where
-  form : String
-  scaleType : Boundedness
-  dimension : Semantics.Gradability.Dimension
-  antonymForm : Option String := none
+/-- A gradable adjective lexical entry: the general `GradableAdjective`
+    (`Syntax/Adjective`) extended with the fields specific to this fragment's
+    Kennedy-style entries — the lexical `antonymRelation`, resultative
+    `spatialConfigType` ([levin-2026]), and `evaluativeValence` ([nouwen-2024]).
+    Surface form and the scalar `dimension` are inherited `Adjective` fields; the
+    scale shape (`scaleType`), positive `standard`, and Kennedy `adjectiveClass`
+    are the inherited *derived* views (the old stored `scaleType` conflated shape
+    with pole — see `Syntax/Adjective/Basic.lean`). -/
+structure GradableAdjEntry extends GradableAdjective where
   antonymRelation : Option AntonymRelation := none
   spatialConfigType : Option SpatialConfigType := none
   /-- Evaluative valence of the adjective, when applicable.

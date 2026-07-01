@@ -745,7 +745,7 @@ theorem blocked_wrong_verb_class :
 
 /-- Blocked: adjective not spatially instantiated (*red* has no spatial config). -/
 private def red_ : AdjectivalPredicateEntry where
-  form := "red"; scaleType := .closed; dimension := .color
+  form := "red"; dimension := some .color
 
 theorem blocked_wrong_adjective :
     isLicensed .pushPull red_ .recoverableInContext .projectile = false := by
