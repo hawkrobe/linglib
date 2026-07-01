@@ -3795,7 +3795,6 @@ private theorem absorbInnerPair_prepend_structure :
         | cons head_pair tail =>
           obtain ⟨q, T⟩ := head_pair
           exact ⟨(i - rootPrependCount X) :: q, T, rfl⟩
-termination_by _ p _ _ => p
 
 /-- The key lemma: descent-to-j of `liftBackToOuter` equals `modified`. -/
 private theorem liftBackToOuter_descentToChild_self

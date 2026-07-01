@@ -69,7 +69,7 @@ For trees `T₁, T₂ : Nonplanar α`:
   `feedback_inserttree_does_not_commute.md`). The correct definition
   is `F • G_forest = Σ_{f : G_forest → V(F)} of' (F with each T ∈ G
   grafted at f(T))`, implemented as `RoseTree.Pathed.insertionForest` in
-  `MultiGraft.lean` and lifted to `H` as `insertion` below.
+  `PreLie/Insertion.lean` and lifted to `H` as `insertion` below.
 
 The Grossman-Larson product is given by Foissy 2021 Theorem 5.1:
 ```
@@ -179,7 +179,7 @@ multiplicity), sum over each grafting summand `S' ∈ Nonplanar.insertSum
 S T` (`S` host, `T` graft, summed over vertices of `S`) the basis
 vector for the resulting forest `S ::ₘ F.erase S` with `S` replaced by
 `S'`. The convention `Nonplanar.insertSum T_host T_graft` is fixed by
-`PreLie/Defs.lean` (verified against test + `card_insertSum_eq_weight`). -/
+`PreLie/InsertSum.lean` (verified against test + `card_insertSum_eq_numNodes`). -/
 
 /-- Forest-level single-tree insertion: graft `T` at one vertex of one
     tree of `F`, summed over (tree, vertex). -/
@@ -303,13 +303,13 @@ that defined `insertForest` via `Multiset.foldr` of `insertTree` was
 based on this misreading and has been removed.
 
 **Implementation status**: defined via Foissy 2021 Theorem 5.1's
-combinatorial formula at the `RoseTree` level (`PreLie/MultiGraft.lean`'s
+combinatorial formula at the `RoseTree` level (`PreLie/Insertion.lean`'s
 `RoseTree.Pathed.insertionForest`), descended through `Nonplanar.mk`
 (`Nonplanar.insertionMultiset`), then bilinear-extended via
 `Finsupp.linearCombination`. The substrate invariance theorems
-(PermEquiv on host/guest, Perm on multiset arguments) are stated
-as `sorry`'d theorems in `MultiGraftNonplanar.lean`. Closing those
-substrate sorries unblocks all of R.5.3/4/5 + R.6 + R.7. -/
+(PermEquiv on host/guest, Perm on multiset arguments) are proved
+sorry-free in `PreLie/Insertion.lean` and
+`Combinatorics/RootedTree/Nonplanar/Insertion.lean`. -/
 
 /-- Basis-level multi-graft on Multiset forests: each pair `(F_basis,
     G_basis)` produces a multiset of grafted forests, summed as basis
