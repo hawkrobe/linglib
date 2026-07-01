@@ -40,26 +40,26 @@ open Prosody Constraints OptimalityTheory
 /-- *[(a.lá:)(ma.kí:)li]* 's/he fell' ([becker-etal-2025] Fig. 1): two iambs and a stray final σ.
     The rightmost foot `(ma.kí:)` heads the word, so the long `kí:` is the primary stress. -/
 def fell : Tree :=
-  .node .om
-    [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.ft true)  [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.syl 1 false) [] ]
+  Tree.om
+    [ Tree.ft false [Tree.σ 1 false, Tree.σ 2 true],
+      Tree.ft true  [Tree.σ 1 false, Tree.σ 2 true],
+      Tree.σ 1 false ]
 
 /-- *[(tsi.ha:)(la.ma:)(kí.li)]* 'we (exclusive) fell' ([becker-etal-2025] Fig. 2): even-parity, so
     the final two short syllables reverse to a **trochee** `(kí.li)` — the head foot — and the
     initial `kí` is the primary stress. -/
 def weFell : Tree :=
-  .node .om
-    [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.ft true)  [.node (.syl 1 true)  [], .node (.syl 1 false) []] ]
+  Tree.om
+    [ Tree.ft false [Tree.σ 1 false, Tree.σ 2 true],
+      Tree.ft false [Tree.σ 1 false, Tree.σ 2 true],
+      Tree.ft true  [Tree.σ 1 true, Tree.σ 1 false] ]
 
 /-- *[(u.mí:)ŋi]* 'annatto' ([becker-etal-2025] Fig. 3): one iamb and a stray final σ; the long
     `mí:` is the primary stress. -/
 def annatto : Tree :=
-  .node .om
-    [ .node (.ft true) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.syl 1 false) [] ]
+  Tree.om
+    [ Tree.ft true [Tree.σ 1 false, Tree.σ 2 true],
+      Tree.σ 1 false ]
 
 /-! ### The grid: secondary stress on every foot head, primary on the head foot's
 
@@ -82,18 +82,18 @@ theorem isHeaded_weFell  : Grid.IsHeaded weFell  := by decide
 theorem isHeaded_annatto : Grid.IsHeaded annatto := by decide
 
 /-- 's/he fell': the head terminal is the long `kí:` (head of the rightmost iamb). -/
-theorem headTerminals_fell : Grid.headTerminals fell = [.node (.syl 2 true) []] := by decide
+theorem headTerminals_fell : Grid.headTerminals fell = [Tree.σ 2 true] := by decide
 
 /-- 'we fell': the head terminal is the reversed trochee's initial short `kí`. -/
-theorem headTerminals_weFell : Grid.headTerminals weFell = [.node (.syl 1 true) []] := by decide
+theorem headTerminals_weFell : Grid.headTerminals weFell = [Tree.σ 1 true] := by decide
 
 /-- 'annatto': the head terminal is the long `mí:`. -/
-theorem headTerminals_annatto : Grid.headTerminals annatto = [.node (.syl 2 true) []] := by decide
+theorem headTerminals_annatto : Grid.headTerminals annatto = [Tree.σ 2 true] := by decide
 
 /-- The same fact **declaratively** ([liberman-prince-1977]): `kí:` is the head terminal of `fell`
     — reached from ω by an all-head descent (ω → head foot → head σ), `Grid.IsHeadTerminal` — lifted
     from the computed list by `Grid.headTerminal_sound`, not just by computing the list. -/
-theorem isHeadTerminal_fell : Grid.IsHeadTerminal fell (.node (.syl 2 true) []) :=
+theorem isHeadTerminal_fell : Grid.IsHeadTerminal fell (Tree.σ 2 true) :=
   Grid.headTerminal_sound (by decide)
 
 /-! ### The trochaic reversal is OT-optimal ([becker-etal-2025] §3.1, Table 2)
@@ -115,12 +115,12 @@ inductive FootingCand where
 
 /-- Each candidate as a footed tree (rightmost foot the head). -/
 def FootingCand.toTree : FootingCand → Tree
-  | .twoIambs    => .node .om [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-                                .node (.ft true)  [.node (.syl 1 false) [], .node (.syl 2 true) []] ]
-  | .iambStrays  => .node .om [ .node (.ft true)  [.node (.syl 1 false) [], .node (.syl 2 true) []],
-                                .node (.syl 1 false) [], .node (.syl 1 false) [] ]
-  | .iambTrochee => .node .om [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-                                .node (.ft true)  [.node (.syl 1 true)  [], .node (.syl 1 false) []] ]
+  | .twoIambs    => Tree.om [ Tree.ft false [Tree.σ 1 false, Tree.σ 2 true],
+                                Tree.ft true  [Tree.σ 1 false, Tree.σ 2 true] ]
+  | .iambStrays  => Tree.om [ Tree.ft true  [Tree.σ 1 false, Tree.σ 2 true],
+                                Tree.σ 1 false, Tree.σ 1 false ]
+  | .iambTrochee => Tree.om [ Tree.ft false [Tree.σ 1 false, Tree.σ 2 true],
+                                Tree.ft true  [Tree.σ 1 true, Tree.σ 1 false] ]
 
 /-- **Parse-σ** ([becker-etal-2025] (1)): one mark per unparsed (stray) σ — a σ-leaf under ω. -/
 def cParse : Constraint FootingCand := fun c => match c.toTree with

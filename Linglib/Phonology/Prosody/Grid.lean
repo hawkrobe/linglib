@@ -330,15 +330,15 @@ recursion, order-invariant culminativity (`not_culminative_under_recursion`). -/
 /-- `ofTree` is not injective: the grid forgets constituency ([hayes-1995] §3.8). -/
 theorem ofTree_not_injective :
     ∃ t₁ t₂ : Tree, t₁ ≠ t₂ ∧ ofTree t₁ = ofTree t₂ :=
-  ⟨.node .om [.node .ft [.node (.syl 1) []]], .node .om [.node (.syl 1) []],
+  ⟨Tree.om [Tree.ft false [Tree.σ 1]], Tree.om [Tree.σ 1],
     by decide, by decide⟩
 
 /-- Recursion can break culminativity. -/
 theorem not_culminative_under_recursion :
     ∃ t : Tree, IsWord t ∧ ¬ IsCulminative (columns t) :=
-  ⟨.node .om
-      [ .node (.ft true) [.node (.syl 1 true) []],
-        .node .om [.node (.ft true) [.node (.syl 1 true) []]] ],
+  ⟨Tree.om
+      [ Tree.ft true [Tree.σ 1 true],
+        Tree.om [Tree.ft true [Tree.σ 1 true]] ],
     by decide, by decide⟩
 
 /-! ## The word peak is the head terminal
@@ -463,15 +463,15 @@ theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : n
 theorem head_below_peak_under_recursion :
     ∃ t : Tree, IsWord t ∧ IsHeaded t ∧ IsCulminative (columns t)
       ∧ headHeights t ≠ [peak (columns t)] :=
-  ⟨.node .om [ .node (.syl 1 true) [],
-               .node .om [.node (.ft true) [.node (.syl 1 true) []]] ],
+  ⟨Tree.om [ Tree.σ 1 true,
+               Tree.om [Tree.ft true [Tree.σ 1 true]] ],
     by decide, by decide, by decide, by decide⟩
 
 /-- Without Layeredness the peak can desert the head terminal too. -/
 theorem head_below_peak_unlayered :
     ∃ t : Tree, IsHeaded t ∧ noRec t = 0 ∧ ¬ IsWord t ∧ headHeights t ≠ [peak (columns t)] :=
-  ⟨.node .om [ .node Constituent.ph [.node (.ft true) [.node (.syl 1 true) []]],
-               .node (.syl 1 true) [] ],
+  ⟨Tree.om [ .node Constituent.ph [Tree.ft true [Tree.σ 1 true]],
+               Tree.σ 1 true ],
     by decide, by decide, by decide, by decide⟩
 
 end Grid

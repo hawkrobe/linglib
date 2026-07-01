@@ -27,15 +27,15 @@ Every foot is binary; the head sits consistently on the right (iambic) or the le
 and the head foot likewise — so the head-projection chain runs to one edge of the word. -/
 
 /-- A head (strong) syllable. -/
-def σh : Tree := .node (.syl 0 true) []
+def σh : Tree := Tree.σ 0 true
 /-- A weak syllable. -/
-def σw : Tree := .node (.syl 0 false) []
+def σw : Tree := Tree.σ 0 false
 /-- A head (strong) foot over `cs`. -/
-def ftH (cs : List Tree) : Tree := .node (.ft true) cs
+def ftH (cs : List Tree) : Tree := Tree.ft true cs
 /-- A weak foot over `cs`. -/
-def ftW (cs : List Tree) : Tree := .node (.ft false) cs
+def ftW (cs : List Tree) : Tree := Tree.ft false cs
 /-- A prosodic word over `cs`. -/
-def om (cs : List Tree) : Tree := .node .om cs
+def om (cs : List Tree) : Tree := Tree.om cs
 
 /-- A uniformly **right-strong** word: the head foot is rightmost and every foot is iambic
     (head syllable rightmost), so prominence climbs toward the right edge. -/

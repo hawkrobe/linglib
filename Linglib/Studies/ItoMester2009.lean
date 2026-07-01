@@ -62,16 +62,16 @@ def lexHasOmega (lex : Tree) : Tree → Bool := fun t => go t where
 /-! ### The four candidate prosodifications of *(fnc lex)* -/
 
 /-- The function word: one light syllable. -/
-def fncσ : Tree := .node (.syl .light) []
+def fncσ : Tree := Tree.σ .light
 /-- The lexical word as a well-formed (bimoraic) ω. -/
-def lexω : Tree := .node .om [.node .ft [.node (.syl .heavy) []]]
+def lexω : Tree := Tree.om [Tree.ft false [Tree.σ .heavy]]
 
 /-- (a) full-ω: `[φ [ω fnc] [ω lex]]`. -/
-def fullOmega : Tree := .node .ph [.node .om [fncσ], lexω]
+def fullOmega : Tree := .node .ph [Tree.om [fncσ], lexω]
 /-- (b) amalgamated: `[ω fnc lex]` (lexical word loses its own ω). -/
-def amalgamated : Tree := .node .om [fncσ, .node .ft [.node (.syl .heavy) []]]
+def amalgamated : Tree := Tree.om [fncσ, Tree.ft false [Tree.σ .heavy]]
 /-- (c) ω-adjoined: `[ω fnc [ω lex]]` — recursive. -/
-def omegaAdjoined : Tree := .node .om [fncσ, lexω]
+def omegaAdjoined : Tree := Tree.om [fncσ, lexω]
 /-- (d) φ-attached: `[φ fnc [ω lex]]`. -/
 def phiAttached : Tree := .node .ph [fncσ, lexω]
 

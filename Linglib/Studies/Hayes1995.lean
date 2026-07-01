@@ -45,15 +45,15 @@ stray. Foot heads are marked as the parse builds them; `markHeadFoot` then promo
 def parseCells : Yield → List Tree
   | [] => []
   | [w] =>
-      if Syllable.Weight.heavy ≤ w then [.node (.ft false) [.node (.syl w true) []]]
-      else [.node (.syl w false) []]
+      if Syllable.Weight.heavy ≤ w then [Tree.ft false [Tree.σ w true]]
+      else [Tree.σ w false]
   | w :: w2 :: rest =>
       if Syllable.Weight.heavy ≤ w then
-        .node (.ft false) [.node (.syl w true) []] :: parseCells (w2 :: rest)
+        Tree.ft false [Tree.σ w true] :: parseCells (w2 :: rest)
       else if Syllable.Weight.heavy ≤ w2 then
-        .node (.syl w false) [] :: parseCells (w2 :: rest)
+        Tree.σ w false :: parseCells (w2 :: rest)
       else
-        .node (.ft false) [.node (.syl w true) [], .node (.syl w2 false) []] :: parseCells rest
+        Tree.ft false [Tree.σ w true, Tree.σ w2 false] :: parseCells rest
 
 /-- Is this ω-daughter an `f`-level foot? -/
 def isFootChild : Tree → Bool
@@ -65,13 +65,13 @@ def markHeadFoot : List Tree → List Tree
   | [] => []
   | .node a ds :: rest =>
       if a.isFt && !rest.any isFootChild then
-        .node (.ft true) ds :: rest
+        Tree.ft true ds :: rest
       else
         .node a ds :: markHeadFoot rest
 
 /-- The Cairene parse ([hayes-1995] §4.1.3): a prosodic word over moraic trochees built left to
     right, the rightmost foot heading the word. -/
-def parse (y : Yield) : Tree := .node .om (markHeadFoot (parseCells y))
+def parse (y : Yield) : Tree := Tree.om (markHeadFoot (parseCells y))
 
 /-! ### Quantity-sensitive stress
 
@@ -104,7 +104,7 @@ theorem gridColumns_Pinkasara : Grid.columns (parse Pinkasara) = [2, 3, 1, 1] :=
     terminal — its primary stress, Liberman & Prince's head terminal — is the head
     syllable of the rightmost (head) foot, read off the grid's live column as an *element*, not
     just a height (cf. `gridColumns_kataba`'s `[3, 1, 1]`). -/
-theorem headTerminals_kataba : Grid.headTerminals (parse kataba) = [.node (.syl 1 true) []] := by decide
+theorem headTerminals_kataba : Grid.headTerminals (parse kataba) = [Tree.σ 1 true] := by decide
 
 /-! ### The Continuous Column Constraint blocks final promotion
 
