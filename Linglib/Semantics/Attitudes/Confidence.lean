@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.StatesBased
+import Linglib.Semantics.Degree.Gradability.StatesBased
 
 /-!
 # Confidence and Certainty as Gradable Attitudes

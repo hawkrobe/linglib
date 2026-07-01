@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Semantics.Gradability.Classification
+import Linglib.Semantics.Degree.Gradability.Classification
 
 /-!
 # Modification-time coercion (NVP + HPP)

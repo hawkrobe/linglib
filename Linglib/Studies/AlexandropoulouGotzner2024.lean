@@ -1,5 +1,5 @@
-import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.Antonymy
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Antonymy
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
 # [alexandropoulou-gotzner-2024] — Gradable Adjective Interpretation Under Negation: The Role of Competition

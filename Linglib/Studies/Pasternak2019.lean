@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.StatesBased
+import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Studies.Wellwood2015

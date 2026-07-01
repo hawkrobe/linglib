@@ -1,5 +1,5 @@
-import Linglib.Semantics.Comparison.Metalinguistic
-import Linglib.Semantics.Comparison.MetalinguisticDegree
+import Linglib.Semantics.Degree.Comparison.Metalinguistic
+import Linglib.Semantics.Degree.Comparison.MetalinguisticDegree
 
 /-!
 # [rudolph-kocurek-2024]: Metalinguistic Gradability

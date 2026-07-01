@@ -1,6 +1,6 @@
-import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.Antonymy
-import Linglib.Semantics.Gradability.AntonymQuadruplet
+import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Antonymy
+import Linglib.Semantics.Degree.Gradability.AntonymQuadruplet
 import Linglib.Core.Logic.Aristotelian.Basic
 /-!
 # Antonym Prediction — Two Extensional Denotations + Prediction Skeleton

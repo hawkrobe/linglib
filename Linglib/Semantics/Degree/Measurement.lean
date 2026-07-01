@@ -1,6 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Features.Aktionsart
-import Linglib.Semantics.Gradability.StatesBased
+import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Kinds.MeaningPreservation
 
 /-!

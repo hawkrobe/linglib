@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Mathlib.Data.Rat.Defs

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Dimension
+import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Morphology.DegreeContainment
 
 /-!

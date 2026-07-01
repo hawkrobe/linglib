@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.ComparativeScale
-import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Basic
 import Mathlib.Order.Bounds.Basic
 
 /-!

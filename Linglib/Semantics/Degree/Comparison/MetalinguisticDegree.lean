@@ -1,4 +1,4 @@
-import Linglib.Semantics.Comparison.Metalinguistic
+import Linglib.Semantics.Degree.Comparison.Metalinguistic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Basic
 

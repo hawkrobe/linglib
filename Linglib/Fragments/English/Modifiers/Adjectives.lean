@@ -22,7 +22,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.PropertyDomain
 import Linglib.Morphology.Exponence
 import Linglib.Morphology.DegreeContainment
-import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Morphology.Word
 
 namespace English.Modifiers.Adjectives

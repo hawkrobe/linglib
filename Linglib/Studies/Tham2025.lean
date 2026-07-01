@@ -1,4 +1,4 @@
-import Linglib.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
