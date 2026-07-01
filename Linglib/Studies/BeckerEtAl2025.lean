@@ -91,10 +91,10 @@ theorem headTerminals_weFell : Grid.headTerminals weFell = [.node (.syl 1 true) 
 theorem headTerminals_annatto : Grid.headTerminals annatto = [.node (.syl 2 true) []] := by decide
 
 /-- The same fact **declaratively** ([liberman-prince-1977]): `kí:` is the head terminal of `fell`
-    — reached from ω by an all-head descent (ω → head foot → head σ), `Grid.IsHeadTerminal` — via the
-    spec↔fold bridge `Grid.mem_headTerminals_iff`, not just by computing the list. -/
+    — reached from ω by an all-head descent (ω → head foot → head σ), `Grid.IsHeadTerminal` — lifted
+    from the computed list by `Grid.headTerminal_sound`, not just by computing the list. -/
 theorem isHeadTerminal_fell : Grid.IsHeadTerminal fell (.node (.syl 2 true) []) :=
-  Grid.mem_headTerminals_iff.mp (by decide)
+  Grid.headTerminal_sound (by decide)
 
 /-! ### The trochaic reversal is OT-optimal ([becker-etal-2025] §3.1, Table 2)
 

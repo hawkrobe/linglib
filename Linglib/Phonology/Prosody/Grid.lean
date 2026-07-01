@@ -172,35 +172,26 @@ def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
 
 @[simp] theorem toGrid_cell (x : α) : (cell x).toGrid = [1] := rfl
 @[simp] theorem headHeights_cell (x : α) : (cell x).headHeights = [1] := rfl
-@[simp] theorem terminals_cell (x : α) : (cell x).terminals = [x] := rfl
 @[simp] theorem headTerminals_cell (x : α) : (cell x).headTerminals = [x] := rfl
 
 @[simp] theorem toGrid_clear (b : MarkedGrid α) : (clear b).toGrid = b.toGrid := by
-  simp [clear, toGrid, List.map_map, Function.comp]
+  simp [clear, toGrid, List.map_map]
 
 @[simp] theorem headHeights_clear (b : MarkedGrid α) : (clear b).headHeights = [] := by
-  simp [clear, headHeights, List.filter_map, Function.comp]
+  simp [clear, headHeights, List.filter_map]
 
 @[simp] theorem headTerminals_clear (b : MarkedGrid α) : (clear b).headTerminals = [] := by
-  simp [clear, headTerminals, List.filter_map, Function.comp]
+  simp [clear, headTerminals, List.filter_map]
 
 @[simp] theorem headHeights_promote (b : MarkedGrid α) :
     (promote b).headHeights = b.headHeights.map (· + 1) := by
   induction b with
   | nil => rfl
-  | cons c b ih =>
-    obtain ⟨x, h, d⟩ := c
-    simp only [promote, headHeights, List.map_cons, List.filter_cons, List.map_map] at ih ⊢
-    cases d <;> simp_all
+  | cons c b ih => obtain ⟨_, _, d⟩ := c; cases d <;> simp_all [promote, headHeights]
 
 @[simp] theorem headTerminals_promote (b : MarkedGrid α) :
     (promote b).headTerminals = b.headTerminals := by
-  induction b with
-  | nil => rfl
-  | cons c b ih =>
-    obtain ⟨x, h, d⟩ := c
-    simp only [promote, headTerminals, List.map_cons, List.filter_cons] at ih ⊢
-    cases d <;> simp_all
+  simp only [headTerminals, promote, List.filter_map, List.map_map, Function.comp_def]
 
 @[simp] theorem toGrid_juxtapose (bs : List (MarkedGrid α)) :
     (juxtapose bs).toGrid = bs.flatMap (·.toGrid) := by
@@ -208,13 +199,13 @@ def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
 
 @[simp] theorem headHeights_juxtapose (bs : List (MarkedGrid α)) :
     (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
-  simp only [juxtapose, headHeights, List.filter_flatten, List.map_flatten, List.flatMap_def,
-    List.map_map]; rfl
+  simp only [juxtapose, headHeights, List.flatten_eq_flatMap, List.filter_flatMap,
+    List.map_flatMap, id_eq]
 
 @[simp] theorem headTerminals_juxtapose (bs : List (MarkedGrid α)) :
     (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
-  simp only [juxtapose, headTerminals, List.filter_flatten, List.map_flatten, List.flatMap_def,
-    List.map_map]; rfl
+  simp only [juxtapose, headTerminals, List.flatten_eq_flatMap, List.filter_flatMap,
+    List.map_flatMap, id_eq]
 
 @[simp] theorem headHeights_edge (h : Bool) (b : MarkedGrid α) :
     (edge h b).headHeights = if h then b.headHeights.map (· + 1) else [] := by
@@ -270,9 +261,6 @@ def IsHeaded : Prop := (headHeights t).length = 1
 
 instance : Decidable (IsHeaded t) := by unfold IsHeaded; infer_instance
 
-/-- The head terminal as a single element, if the tree is headed. -/
-def headTerminal : Option Tree := (headTerminals t).head?
-
 /-- The metrical grid of a tree, as stacked rows. -/
 def ofTree : Marks := (columns t).rows
 
@@ -320,35 +308,24 @@ inductive IsHeadTerminal : Tree → Tree → Prop
   | head {a cs c leaf} : c ∈ cs → c.label.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
-/-- `headTerminals` computes the relation `IsHeadTerminal` — a clean, seed-free induction over the
-    RPPR projection. -/
-theorem mem_headTerminals_iff {t leaf : Tree} :
-    leaf ∈ headTerminals t ↔ IsHeadTerminal t leaf := by
+/-- **Soundness of `headTerminals`** ([liberman-prince-1977]): every head terminal the projection
+    computes really is one — reached from the root by an all-head descent. (The `decide`-verified
+    lists give the converse concretely, so the full iff is not needed.) -/
+theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
+    IsHeadTerminal t leaf := by
   induction t using Core.Order.Branching.inductionOn with
   | ih t IH =>
     obtain ⟨a, cs⟩ := t
-    rw [headTerminals_node]
-    split
+    rw [headTerminals_node] at h
+    split at h
     · rename_i hσ; obtain ⟨hσ, rfl⟩ := hσ
       obtain ⟨w, hd, rfl⟩ : ∃ w hd, a = .syl w hd := by cases a <;> simp_all [Constituent.isSyl]
-      simp only [List.mem_singleton]
-      constructor
-      · rintro rfl; exact .leaf w hd
-      · rintro h; cases h with
-        | leaf => rfl
-        | head hc => cases hc
-    · rename_i hσ
-      rw [List.mem_flatMap]
-      constructor
-      · rintro ⟨c, hc, hmem⟩
-        by_cases hh : c.label.isHead = true
-        · rw [if_pos hh] at hmem; exact .head hc hh ((IH c (by simpa using hc)).mp hmem)
-        · rw [if_neg hh] at hmem; exact absurd hmem (List.not_mem_nil)
-      · rintro h
-        cases h with
-        | leaf => simp [Constituent.isSyl] at hσ
-        | head hc hhd hsub =>
-          exact ⟨_, hc, by rw [if_pos hhd]; exact (IH _ (by simpa using hc)).mpr hsub⟩
+      rw [List.mem_singleton] at h; subst h; exact .leaf w hd
+    · rw [List.mem_flatMap] at h
+      obtain ⟨c, hc, hmem⟩ := h
+      by_cases hh : c.label.isHead = true
+      · rw [if_pos hh] at hmem; exact .head hc hh (IH c (by simpa using hc) hmem)
+      · rw [if_neg hh] at hmem; exact absurd hmem List.not_mem_nil
 
 /-! ## Head-preservation: the foot commuting square
 
@@ -363,13 +340,6 @@ theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) 
   by_cases hi : i = f.head <;>
     simp [project_node, Constituent.isSyl, Constituent.isHead, MarkedGrid.edge,
       MarkedGrid.promote, MarkedGrid.clear, MarkedGrid.toGrid, MarkedGrid.cell, hi]
-
-/-- The grid's head row recovers `Foot.toGrid`. -/
-theorem foot_headRow {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
-    (columns (f.toProsTree w)).map (fun h => decide (1 < h)) = Foot.toGrid f := by
-  rw [columns_toProsTree, List.map_map]
-  refine List.map_id'' (fun b => ?_) _
-  cases b <;> rfl
 
 /-- A foot's grid peaks at `2`. -/
 theorem peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
@@ -400,12 +370,6 @@ theorem not_culminative_under_recursion :
       [ .node (.ft true) [.node (.syl 1 true) []],
         .node .om [.node (.ft true) [.node (.syl 1 true) []]] ],
     by decide, by decide⟩
-
-/-- A flat word stays culminative. -/
-theorem culminative_flat :
-    IsCulminative (columns
-      (.node .om [ .node (.ft true)  [.node (.syl 1 true) []],
-                   .node (.ft false) [.node (.syl 1 true) []] ])) := by decide
 
 /-! ## The word peak is the head terminal
 
@@ -500,49 +464,24 @@ private theorem depth_word_child_le {ch : Tree}
     simp only [RootedTree.Planar.children_node] at hcs; subst hcs
     exact Nat.le_succ_of_le (le_of_eq rfl)
 
-/-- Every grid column height is at most the tree depth: the RPPR count grows by one per head edge. -/
-theorem toGrid_le_depth {t : Tree} : ∀ c ∈ columns t, c ≤ t.depth := by
+/-- Grid column heights are positive and bounded by the tree depth: the RPPR count is `≥ 1` and
+    grows by at most one per head edge. -/
+private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.depth := by
   induction t using Core.Order.Branching.inductionOn with
   | ih t IH =>
     obtain ⟨a, cs⟩ := t
-    rw [columns_node]
-    split
-    · intro c hc
-      simp only [List.mem_singleton] at hc; subst hc
-      rw [show RootedTree.Planar.depth (.node a cs) = 1 + RootedTree.Planar.depthMaxList cs from rfl]
-      omega
-    · intro c hc
-      rw [List.mem_flatMap] at hc
-      obtain ⟨ch, hch, hc⟩ := hc
-      have hle : c ≤ ch.depth + 1 := by
-        cases hh : ch.label.isHead with
-        | false =>
-          simp only [hh, MarkedGrid.edge_false, MarkedGrid.toGrid_clear] at hc
-          exact le_trans (IH ch (by simpa using hch) c hc) (by omega)
-        | true =>
-          simp only [hh, MarkedGrid.edge_true, MarkedGrid.promote, MarkedGrid.toGrid, List.map_map,
-            List.mem_map] at hc
-          obtain ⟨x, hx, rfl⟩ := hc
-          have := IH ch (by simpa using hch) x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
-          by_cases hs : x.onSpine <;> simp [hs] <;> omega
-      rw [show RootedTree.Planar.depth (.node a cs) = 1 + RootedTree.Planar.depthMaxList cs from rfl]
-      have := depth_le_depthMaxList hch; omega
-
-/-- Grid heights are positive. -/
-theorem one_le_toGrid {t : Tree} : ∀ c ∈ columns t, 1 ≤ c := by
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
-    rw [columns_node]
+    rw [columns_node, show RootedTree.Planar.depth (.node a cs)
+          = 1 + RootedTree.Planar.depthMaxList cs from rfl]
     split
     · intro c hc; simp only [List.mem_singleton] at hc; omega
     · intro c hc
       rw [List.mem_flatMap] at hc
       obtain ⟨ch, hch, hc⟩ := hc
+      have hd := depth_le_depthMaxList hch
       cases hh : ch.label.isHead with
       | false =>
         simp only [hh, MarkedGrid.edge_false, MarkedGrid.toGrid_clear] at hc
-        exact IH ch (by simpa using hch) c hc
+        have := IH ch (by simpa using hch) c hc; omega
       | true =>
         simp only [hh, MarkedGrid.edge_true, MarkedGrid.promote, MarkedGrid.toGrid, List.map_map,
           List.mem_map] at hc
@@ -586,7 +525,7 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
   rw [columns_node, if_neg (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
   rcases mem_toGrid_edge hc with hcol | hhead
-  · exact .inl (le_trans (toGrid_le_depth c hcol) (depth_word_child_le (hchild ch hch)))
+  · exact .inl (le_trans (toGrid_bounds c hcol).2 (depth_word_child_le (hchild ch hch)))
   · refine .inr ?_
     rw [headHeights_node, if_neg (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [MarkedGrid.headHeights_edge] at hhead⟩
@@ -601,9 +540,9 @@ theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
   obtain ⟨ch, hch, hh⟩ := hh
   split at hh
   · obtain ⟨h', hh', rfl⟩ := List.mem_map.mp hh
-    have : 1 ≤ h' := one_le_toGrid h' ((headHeights_sublist_columns ch).subset hh')
+    have : 1 ≤ h' := (toGrid_bounds h' ((headHeights_sublist_columns ch).subset hh')).1
     omega
-  · exact absurd hh (List.not_mem_nil)
+  · exact absurd hh List.not_mem_nil
 
 /-- On a non-recursive headed word, the head terminal is the grid peak ([liberman-prince-1977]):
     metrical primary stress is the tallest column. -/
