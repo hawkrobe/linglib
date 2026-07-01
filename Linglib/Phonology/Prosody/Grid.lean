@@ -155,13 +155,11 @@ def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
 @[simp] theorem headTerminals_juxtapose : (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
   simp [juxtapose, headTerminals, List.flatMap_def, Function.comp_def]
 
-@[simp] theorem headHeights_edge (h : Bool) (b : MarkedGrid α) :
-    (edge h b).headHeights = if h then b.headHeights.map (· + 1) else [] := by
-  cases h <;> simp [edge]
+@[simp] theorem headHeights_edge (h : Bool) : (edge h b).headHeights =
+    if h then b.headHeights.map (· + 1) else [] := by cases h <;> simp [edge]
 
-@[simp] theorem headTerminals_edge (h : Bool) (b : MarkedGrid α) :
-    (edge h b).headTerminals = if h then b.headTerminals else [] := by
-  cases h <;> simp [edge]
+@[simp] theorem headTerminals_edge (h : Bool) : (edge h b).headTerminals =
+    if h then b.headTerminals else [] := by cases h <;> simp [edge]
 
 end MarkedGrid
 
@@ -212,20 +210,15 @@ open MarkedGrid
 /-- The **Relative Prominence Projection Rule** ([liberman-prince-1977]) as a homomorphism
     `Tree → MarkedGrid`: a σ-leaf is one `cell`; any other node juxtaposes its children, projecting
     across head edges and clearing the spine across the rest. -/
-def project : Tree → MarkedGrid Tree :=
-  RootedTree.Planar.fold fun a ps =>
-    if a.isSyl ∧ ps = [] then cell (.node a [])
-    else juxtapose (ps.map fun p => edge p.1.label.isHead p.2)
+def project : Tree → MarkedGrid Tree := RootedTree.Planar.fold fun a ps =>
+  if a.isSyl ∧ ps = [] then cell (.node a [])
+  else juxtapose (ps.map fun (c, mg) => edge c.label.isHead mg)
 
 @[simp] theorem project_node (a : Constituent) (cs : List Tree) :
-    project (.node a cs)
-      = if a.isSyl ∧ cs = [] then cell (.node a [])
-        else juxtapose (cs.map fun c => edge c.label.isHead (project c)) := by
+    project (.node a cs) = if a.isSyl ∧ cs = [] then cell (.node a [])
+      else juxtapose (cs.map fun c => edge c.label.isHead (project c)) := by
   conv_lhs => rw [project, RootedTree.Planar.fold_node]
-  simp only [List.map_eq_nil_iff]
-  split
-  · rfl
-  · rw [List.map_map]; rfl
+  simp [List.map_eq_nil_iff, List.map_map, Function.comp_def]; rfl
 
 /-! ## Reading the grid off a tree (the forgetful maps) -/
 
