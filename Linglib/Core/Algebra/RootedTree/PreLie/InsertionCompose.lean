@@ -29,13 +29,11 @@ identity `GL_product_split_mul_ι`.
 * `insertionForest_bind_singleton`: forest-host form of the same.
 
 All statements are validated computationally on concrete trees,
-including the raw (planar multiset, not quotient-level) forms of the
+including the raw (`Tree`-level multiset, not quotient-level) forms of the
 last two.
 -/
 
-namespace RootedTree
-
-namespace Planar
+namespace Tree
 
 namespace Pathed
 
@@ -47,8 +45,8 @@ variable {α : Type*}
     lifted guest vertices. Collapses the three classes of
     `vertices_multiGraft_decomp` (`preserveMulti` is `transport` off
     `pairSources`). -/
-theorem vertices_multiGraft_transport_lift (T : Planar α)
-    (pairs : List (Path × Planar α))
+theorem vertices_multiGraft_transport_lift (T : Tree α)
+    (pairs : List (Path × Tree α))
     (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T) :
     ((vertices (multiGraft T pairs) : List Path) : Multiset Path) =
       ((vertices T : List Path) : Multiset Path).map (transport pairs) +
@@ -62,19 +60,19 @@ theorem vertices_multiGraft_transport_lift (T : Planar α)
 /-! ### Single-guest insertion as a vertex sum -/
 
 /-- A single graft is an `insertAt`. -/
-private theorem multiGraft_single_pair (W : Planar α) (p : Path) (v : Planar α) :
+private theorem multiGraft_single_pair (W : Tree α) (p : Path) (v : Tree α) :
     multiGraft W [(p, v)] = insertAt p v W := by
   rw [multiGraft_cons_pair, multiGraft_nil, transport_empty_pairs]
 
 /-- Single-guest insertion grafts the guest at each host vertex. -/
-theorem insertion_singleton_guest (W v : Planar α) :
+theorem insertion_singleton_guest (W v : Tree α) :
     insertion W [v] =
       ((vertices W : List Path) : Multiset Path).map
         (fun p => insertAt p v W) := by
   rw [insertion_def,
-      show listChoices (vertices W) ([v] : List (Planar α)).length =
+      show listChoices (vertices W) ([v] : List (Tree α)).length =
           (vertices W).map (fun p => [p]) from by
-        rw [show ([v] : List (Planar α)).length = 1 from rfl, listChoices_succ]
+        rw [show ([v] : List (Tree α)).length = 1 from rfl, listChoices_succ]
         simp only [listChoices_zero, List.map_cons, List.map_nil]
         induction vertices W with
         | nil => rfl
@@ -84,7 +82,7 @@ theorem insertion_singleton_guest (W v : Planar α) :
       List.map_map]
   rw [show ((((vertices W).map
         ((fun choice => multiGraft W (choice.zip [v])) ∘ fun p => [p])) :
-        List (Planar α)) : Multiset (Planar α)) =
+        List (Tree α)) : Multiset (Tree α)) =
       ((vertices W : List Path) : Multiset Path).map
         ((fun choice => multiGraft W (choice.zip [v])) ∘ fun p => [p]) from rfl]
   refine Multiset.map_congr rfl fun p _ => ?_
@@ -96,8 +94,8 @@ theorem insertion_singleton_guest (W v : Planar α) :
 /-- Inserting one guest `v` into a multi-graft output: `v` lands at an
     original vertex (prepend the pair) or inside the `k`-th grafted
     guest (pre-graft that guest). -/
-theorem insertion_multiGraft_singleton (T : Planar α)
-    (pairs : List (Path × Planar α)) (v : Planar α)
+theorem insertion_multiGraft_singleton (T : Tree α)
+    (pairs : List (Path × Tree α)) (v : Tree α)
     (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T) :
     insertion (multiGraft T pairs) [v] =
       ((vertices T : List Path) : Multiset Path).map
@@ -163,23 +161,23 @@ private theorem zip_set_eq_set_zip {β γ : Type*}
     position of each tree of `B`. De-privatized 2026-06-12 for
     `GL_T2_reindexing_key` (Q5c) which needs length-preservation of
     single-guest insertion outputs. -/
-theorem insertionForest_singleton_guest_set (B : List (Planar α))
-    (v : Planar α) :
+theorem insertionForest_singleton_guest_set (B : List (Tree α))
+    (v : Tree α) :
     insertionForest B [v] =
       (Multiset.ofList (List.finRange B.length)).bind
         (fun k => ((vertices B[k] : List Path) : Multiset Path).map
           (fun q => B.set k.val (insertAt q v B[k]))) := by
   induction B with
   | nil =>
-    show insertionForest ([] : List (Planar α)) [v] = _
+    show insertionForest ([] : List (Tree α)) [v] = _
     rw [insertionForest_empty_host_nonempty_guests]
     show (0 : Multiset _) =
-      (Multiset.ofList (List.finRange ([] : List (Planar α)).length)).bind _
+      (Multiset.ofList (List.finRange ([] : List (Tree α)).length)).bind _
     rfl
   | cons b B' ih =>
     rw [insertionForest_cons_assignment]
     -- listChoices [t,f] 1 = [[true],[false]]
-    rw [show ([v] : List (Planar α)).length = 1 from rfl]
+    rw [show ([v] : List (Tree α)).length = 1 from rfl]
     rw [show (Multiset.ofList (listChoices [true, false] 1) : Multiset (List Bool)) =
             [true] ::ₘ [false] ::ₘ 0 from rfl,
         Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
@@ -190,13 +188,13 @@ theorem insertionForest_singleton_guest_set (B : List (Planar α))
           (insertion b []).bind
             (fun T' => Multiset.map (fun F' => T' :: F') (insertionForest B' [v])) = _
     rw [insertionForest_nil_guests B']
-    rw [show insertion b ([] : List (Planar α)) = ({b} : Multiset (Planar α)) from by
+    rw [show insertion b ([] : List (Tree α)) = ({b} : Multiset (Tree α)) from by
           rw [insertion_def]
-          show (Multiset.ofList [multiGraft b []] : Multiset (Planar α)) = {b}
+          show (Multiset.ofList [multiGraft b []] : Multiset (Tree α)) = {b}
           rw [multiGraft_nil]; rfl]
     rw [Multiset.singleton_bind]
-    rw [show (fun T' => Multiset.map (fun F' => T' :: F') ({B'} : Multiset (List (Planar α)))) =
-            (fun T' => ({T' :: B'} : Multiset (List (Planar α)))) from by
+    rw [show (fun T' => Multiset.map (fun F' => T' :: F') ({B'} : Multiset (List (Tree α)))) =
+            (fun T' => ({T' :: B'} : Multiset (List (Tree α)))) from by
           funext T'; rfl]
     rw [Multiset.bind_singleton]
     rw [insertion_singleton_guest]
@@ -250,9 +248,9 @@ theorem insertionForest_singleton_guest_set (B : List (Planar α))
 
 /-- Tree-host singleton-guest associativity: grafting `B` then one more
     guest `v` equals grafting `v :: B` simultaneously plus grafting `B`
-    with `v` nested into one of its trees. Raw planar multiset equality. -/
-theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
-    (v : Planar α) :
+    with `v` nested into one of its trees. Raw `Tree`-level multiset equality. -/
+theorem insertion_bind_singleton (T : Tree α) (B : List (Tree α))
+    (v : Tree α) :
     (insertion T B).bind (fun W => insertion W [v]) =
       insertion T (v :: B) +
       (insertionForest B [v]).bind (fun B' => insertion T B') := by
@@ -260,7 +258,7 @@ theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
   rw [insertion_def T B]
   rw [show ((Multiset.ofList ((listChoices (vertices T) B.length).map
               fun choice => multiGraft T (choice.zip B))) :
-            Multiset (Planar α)) =
+            Multiset (Tree α)) =
           (Multiset.ofList (listChoices (vertices T) B.length)).map
             (fun choice => multiGraft T (choice.zip B)) from rfl,
       Multiset.bind_map]
@@ -282,7 +280,7 @@ theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
     rw [insertion_def T (v :: B), show (v :: B).length = B.length + 1 from rfl]
     rw [show ((Multiset.ofList ((listChoices (vertices T) (B.length + 1)).map
               fun choice => multiGraft T (choice.zip (v :: B)))) :
-            Multiset (Planar α)) =
+            Multiset (Tree α)) =
           (Multiset.ofList (listChoices (vertices T) (B.length + 1))).map
             (fun choice => multiGraft T (choice.zip (v :: B))) from rfl]
     rw [ofList_listChoices_succ_local (vertices T) B.length, Multiset.map_bind]
@@ -304,16 +302,16 @@ theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
               fun c => multiGraft T ((u, v) :: c.zip B)) =
           (fun u : Path =>
             (Multiset.ofList (listChoices (vertices T) B.length)).bind
-              fun c => ({multiGraft T ((u, v) :: c.zip B)} : Multiset (Planar α))) from by
+              fun c => ({multiGraft T ((u, v) :: c.zip B)} : Multiset (Tree α))) from by
         funext u
         rw [Multiset.bind_singleton]]
     -- Bind swap via Multiset.bind_bind
     rw [show ((((vertices T : List Path) : Multiset Path)).bind fun u =>
             (Multiset.ofList (listChoices (vertices T) B.length)).bind
-              fun c => ({multiGraft T ((u, v) :: c.zip B)} : Multiset (Planar α))) =
+              fun c => ({multiGraft T ((u, v) :: c.zip B)} : Multiset (Tree α))) =
           ((Multiset.ofList (listChoices (vertices T) B.length)).bind fun c =>
             (((vertices T : List Path) : Multiset Path)).bind fun u =>
-              ({multiGraft T ((u, v) :: c.zip B)} : Multiset (Planar α))) from by
+              ({multiGraft T ((u, v) :: c.zip B)} : Multiset (Tree α))) from by
         rw [Multiset.bind_bind]]
     refine Multiset.bind_congr fun c _ => ?_
     rw [Multiset.bind_singleton]
@@ -373,7 +371,7 @@ theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
                 (fun q =>
                   ({multiGraft T
                     ((c.zip B).set k.val ((c.zip B)[k].fst,
-                      insertAt q v (c.zip B)[k].snd))} : Multiset (Planar α)))) from by
+                      insertAt q v (c.zip B)[k].snd))} : Multiset (Tree α)))) from by
         refine Multiset.bind_congr fun k _ => ?_
         rw [← Multiset.bind_singleton]]
     -- Now LHS: bind k ∈ finRange B.length, bind q ∈ vertices B[k], {mG T (c.zip (B.set k ...))}
@@ -401,11 +399,11 @@ theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
     -- The Fin.cast indexing reduces by defeq to k.val indexing
     show ((vertices B[k] : List Path) : Multiset Path).bind
             (fun a => ({multiGraft T (c.zip (B.set k.val (insertAt a v B[k])))} :
-              Multiset (Planar α))) =
+              Multiset (Tree α))) =
           (((vertices ((c.zip B)[k.val]'hk_lt_zip).snd : List Path) : Multiset Path)).bind
             fun q => ({multiGraft T ((c.zip B).set k.val
               (((c.zip B)[k.val]'hk_lt_zip).fst, insertAt q v ((c.zip B)[k.val]'hk_lt_zip).snd))} :
-                Multiset (Planar α))
+                Multiset (Tree α))
     have hzip_get : (c.zip B)[k.val]'hk_lt_zip = (c[k.val]'hk_lt_c, B[k.val]'k.isLt) := by
       rw [List.getElem_zip]
     rw [hzip_get]
@@ -422,13 +420,13 @@ theorem insertion_bind_singleton (T : Planar α) (B : List (Planar α))
     v→tail branches. Specialization of `insertionForest_cons_assignment`
     at guests `[v]`, collapsing the [true]/[false] mask enumeration via
     `insertion_nil_guests` and `insertionForest_nil_guests`. -/
-private theorem insertionForest_cons_singleton (T : Planar α)
-    (F : List (Planar α)) (v : Planar α) :
+private theorem insertionForest_cons_singleton (T : Tree α)
+    (F : List (Tree α)) (v : Tree α) :
     insertionForest (T :: F) [v] =
       (insertion T [v]).map (fun T' => T' :: F) +
       (insertionForest F [v]).map (fun F' => T :: F') := by
   rw [insertionForest_cons_assignment]
-  rw [show ([v] : List (Planar α)).length = 1 from rfl]
+  rw [show ([v] : List (Tree α)).length = 1 from rfl]
   rw [show (Multiset.ofList (listChoices [true, false] 1) : Multiset (List Bool)) =
           [true] ::ₘ [false] ::ₘ 0 from rfl,
       Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
@@ -442,12 +440,12 @@ private theorem insertionForest_cons_singleton (T : Planar α)
   rw [insertionForest_nil_guests F, insertion_nil_guests T]
   rw [Multiset.singleton_bind]
   -- True branch: (insertion T [v]).bind (T' => {F}.map (T' :: ·)) = (insertion T [v]).map (· :: F)
-  rw [show (fun T' : Planar α =>
-            ({F} : Multiset (List (Planar α))).map (fun F' => T' :: F')) =
-          (fun T' : Planar α => ({T' :: F} : Multiset (List (Planar α)))) from by
+  rw [show (fun T' : Tree α =>
+            ({F} : Multiset (List (Tree α))).map (fun F' => T' :: F')) =
+          (fun T' : Tree α => ({T' :: F} : Multiset (List (Tree α)))) from by
         funext T'; rw [Multiset.map_singleton]]
-  rw [show (fun T' : Planar α => ({T' :: F} : Multiset (List (Planar α)))) =
-          (fun T' : Planar α => ({(fun T'' => T'' :: F) T'} : Multiset _)) from rfl]
+  rw [show (fun T' : Tree α => ({T' :: F} : Multiset (List (Tree α)))) =
+          (fun T' : Tree α => ({(fun T'' => T'' :: F) T'} : Multiset _)) from rfl]
   rw [Multiset.bind_singleton (f := fun T' => T' :: F)]
 
 /-- Bucketing lemma: single-guest insertion `insertionForest B [v]`
@@ -465,8 +463,8 @@ private theorem insertionForest_cons_singleton (T : Planar α)
     powerset-of-B sum produced by `mul_of'_sum_form` + Leibniz on the
     other terms. -/
 theorem insertionForest_singleton_bucket_split
-    {γ : Type*} (B : List (Planar α)) (m : List Bool) (v : Planar α)
-    (G : List (Planar α) → List (Planar α) → Multiset γ)
+    {γ : Type*} (B : List (Tree α)) (m : List Bool) (v : Tree α)
+    (G : List (Tree α) → List (Tree α) → Multiset γ)
     (hlen : m.length = B.length) :
     (insertionForest B [v]).bind (fun B' =>
         G ((B'.zip m).filterMap (fun p => if p.snd then some p.fst else none))
@@ -646,11 +644,11 @@ theorem insertionForest_singleton_bucket_split
               ((insertion b [v]).bind _)
               ((insertionForest _ [v]).bind _)]
 
-/-- Forest-host singleton-guest associativity. Raw planar multiset
+/-- Forest-host singleton-guest associativity. Raw `Tree`-level multiset
     equality; the nonplanar `insertionMultiset` form follows by the
     standard quotient descent. -/
-theorem insertionForest_bind_singleton (A B : List (Planar α))
-    (v : Planar α) :
+theorem insertionForest_bind_singleton (A B : List (Tree α))
+    (v : Tree α) :
     (insertionForest A B).bind (fun X => insertionForest X [v]) =
       insertionForest A (v :: B) +
       (insertionForest B [v]).bind (fun B' => insertionForest A B') := by
@@ -678,30 +676,30 @@ theorem insertionForest_bind_singleton (A B : List (Planar α))
       rw [show (fun k : Fin (b :: B').length =>
               (((vertices (b :: B')[k] : List Path) : Multiset Path).map
                 (fun q => (b :: B').set k.val (insertAt q v (b :: B')[k]))).bind
-              (insertionForest ([] : List (Planar α)))) =
-            (fun _ : Fin (b :: B').length => (0 : Multiset (List (Planar α)))) from by
+              (insertionForest ([] : List (Tree α)))) =
+            (fun _ : Fin (b :: B').length => (0 : Multiset (List (Tree α)))) from by
           funext k
           rw [Multiset.bind_map]
           -- Each inner: insertionForest [] (b::B').set k _ — nonempty because set preserves cons-shape
           -- Show: bind q ∈ vertices, 0 = 0 via bind_zero
-          have set_cons_form : ∀ (xs : List (Planar α)) (n : ℕ) (w : Planar α),
-              ∃ x' xs', ((b :: xs).set n w : List (Planar α)) = x' :: xs' := by
+          have set_cons_form : ∀ (xs : List (Tree α)) (n : ℕ) (w : Tree α),
+              ∃ x' xs', ((b :: xs).set n w : List (Tree α)) = x' :: xs' := by
             intro xs n w
             cases n with
             | zero => exact ⟨w, xs, rfl⟩
             | succ n' => exact ⟨b, xs.set n' w, rfl⟩
           have : ∀ q,
-              insertionForest ([] : List (Planar α))
+              insertionForest ([] : List (Tree α))
                 ((b :: B').set k.val (insertAt q v (b :: B')[k])) = 0 := by
             intro q
             obtain ⟨x', xs', hxs⟩ := set_cons_form B' k.val (insertAt q v (b :: B')[k])
             rw [hxs]
             exact insertionForest_empty_host_nonempty_guests x' xs'
           rw [show ((vertices (b :: B')[k] : List Path) : Multiset Path).bind
-                (fun q => insertionForest ([] : List (Planar α))
+                (fun q => insertionForest ([] : List (Tree α))
                   ((b :: B').set k.val (insertAt q v (b :: B')[k]))) =
                   ((vertices (b :: B')[k] : List Path) : Multiset Path).bind
-                  (fun _ => (0 : Multiset (List (Planar α)))) from by
+                  (fun _ => (0 : Multiset (List (Tree α)))) from by
                 refine Multiset.bind_congr fun q _ => ?_
                 exact this q]
           rw [Multiset.bind_zero]]
@@ -765,21 +763,21 @@ theorem insertionForest_bind_singleton (A B : List (Planar α))
     --   L1b m = ((insertionForest B_t [v]).bind (insertion T)).bind (T'' => (insertionForest A' B_f).map (T'' :: ·))
     --   L2a m = (insertion T B_t).bind (T' => (insertionForest A' (v :: B_f)).map (T' :: ·))
     --   L2b m = (insertion T B_t).bind (T' => ((insertionForest B_f [v]).bind (insertionForest A')).map (T' :: ·))
-    set tp : Planar α × Bool → Option (Planar α) :=
+    set tp : Tree α × Bool → Option (Tree α) :=
       fun p => if p.snd then some p.fst else none with htp_def
-    set fp : Planar α × Bool → Option (Planar α) :=
+    set fp : Tree α × Bool → Option (Tree α) :=
       fun p => if p.snd then none else some p.fst with hfp_def
-    set L1a : List Bool → Multiset (List (Planar α)) := fun m =>
+    set L1a : List Bool → Multiset (List (Tree α)) := fun m =>
       (insertion T (v :: (B.zip m).filterMap tp)).bind fun T' =>
         (insertionForest A' ((B.zip m).filterMap fp)).map (T' :: ·) with hL1a_def
-    set L1b : List Bool → Multiset (List (Planar α)) := fun m =>
+    set L1b : List Bool → Multiset (List (Tree α)) := fun m =>
       ((insertionForest ((B.zip m).filterMap tp) [v]).bind
         fun Bt' => insertion T Bt').bind fun T'' =>
           (insertionForest A' ((B.zip m).filterMap fp)).map (T'' :: ·) with hL1b_def
-    set L2a : List Bool → Multiset (List (Planar α)) := fun m =>
+    set L2a : List Bool → Multiset (List (Tree α)) := fun m =>
       (insertion T ((B.zip m).filterMap tp)).bind fun T' =>
         (insertionForest A' (v :: (B.zip m).filterMap fp)).map (T' :: ·) with hL2a_def
-    set L2b : List Bool → Multiset (List (Planar α)) := fun m =>
+    set L2b : List Bool → Multiset (List (Tree α)) := fun m =>
       (insertion T ((B.zip m).filterMap tp)).bind fun T' =>
         ((insertionForest ((B.zip m).filterMap fp) [v]).bind
           (fun B'' => insertionForest A' B'')).map (T' :: ·) with hL2b_def
@@ -964,6 +962,4 @@ theorem insertionForest_bind_singleton (A B : List (Planar α))
 
 end Pathed
 
-end Planar
-
-end RootedTree
+end Tree
