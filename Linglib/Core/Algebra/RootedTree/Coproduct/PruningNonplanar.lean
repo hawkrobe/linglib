@@ -9,14 +9,14 @@ import Mathlib.RingTheory.TensorProduct.Maps
 set_option autoImplicit false
 
 /-!
-# Δ^ρ on `ConnesKreimer R (Nonplanar α)` via projection from `Planar`
+# Δ^ρ on `ConnesKreimer R (Nonplanar α)` via projection from `RoseTree`
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
-The Nonplanar Δ^ρ is obtained by descending the planar Δ^ρ
-(`Coproduct.lean`) through the projection `mk : Planar α → Nonplanar α`.
+The Nonplanar Δ^ρ is obtained by descending the tree-level Δ^ρ
+(`Coproduct.lean`) through the projection `mk : RoseTree α → Nonplanar α`.
 The descent requires showing that the projected cut summands
-(`(cutSummandsP T).map projSummand`) depend on `T : Planar α` only
-through `mk T`, i.e., are invariant under `Planar.PlanarEquiv`. Once
+(`(cutSummandsP T).map projSummand`) depend on `T : RoseTree α` only
+through `mk T`, i.e., are invariant under `RoseTree.PermEquiv`. Once
 established, `Nonplanar.lift` produces `cutSummandsN`, which extends to
 `comulTreeN`, `comulForestN`, and the algebra hom `comulAlgHomN`.
 
@@ -46,8 +46,8 @@ calculus of `BMinus.lean`, which imports this file). The full
   (`projSummand`/`projForest`/`projAugAction`) plus a clean factoring of
   the `cutListSummandsP` cons case as a Nonplanar-level cartesian
   product (`cutListSummandsP_cons_proj`); structural induction on
-  `PlanarStep` for the headline invariance, with pure `EqvGen`/`Forall₂`
-  lifts for `PlanarEquiv` and `List.Forall₂` versions.
+  `PermStep` for the headline invariance, with pure `EqvGen`/`Forall₂`
+  lifts for `PermEquiv` and `List.Forall₂` versions.
 -/
 
 namespace RootedTree
@@ -58,28 +58,28 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ## Projection algebra hom `Planar → Nonplanar`
+/-! ## Projection algebra hom `RoseTree → Nonplanar`
 
-`Nonplanar.mk : Planar α → Nonplanar α` extends to an algebra hom on
+`Nonplanar.mk : RoseTree α → Nonplanar α` extends to an algebra hom on
 `ConnesKreimer R` via `AddMonoidAlgebra.mapDomainAlgHom`. Surjective at
-the carrier level; the kernel encodes PlanarEquiv-equivalence of forests
+the carrier level; the kernel encodes PermEquiv-equivalence of forests
 of trees, which is what subsequent sub-phases will need to factor through. -/
 
-/-- The additive monoid hom from forests of planar trees to forests of
+/-- The additive monoid hom from forests of tree-level trees to forests of
     nonplanar trees, given by mapping `Nonplanar.mk` componentwise. -/
 noncomputable def forestProjAddHom :
-    Forest (Planar α) →+ Forest (Nonplanar α) :=
+    Forest (RoseTree α) →+ Forest (Nonplanar α) :=
   Multiset.mapAddMonoidHom Nonplanar.mk
 
-/-- The **projection algebra hom** `ConnesKreimer R (Planar α) →ₐ[R]
+/-- The **projection algebra hom** `ConnesKreimer R (RoseTree α) →ₐ[R]
     ConnesKreimer R (Nonplanar α)` induced by `Nonplanar.mk`. -/
 noncomputable def planarToNonplanarAlg :
-    ConnesKreimer R (Planar α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
+    ConnesKreimer R (RoseTree α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
   AddMonoidAlgebra.mapDomainAlgHom R R (forestProjAddHom (α := α))
 
 /-! ## API lemmas — action on `of'` and `ofTree` -/
 
-@[simp] theorem planarToNonplanarAlg_of' (F : Forest (Planar α)) :
+@[simp] theorem planarToNonplanarAlg_of' (F : Forest (RoseTree α)) :
     planarToNonplanarAlg (R := R) (of' F) =
       of' (R := R) (F.map Nonplanar.mk) := by
   show Finsupp.mapDomain (forestProjAddHom (α := α)) (Finsupp.single F 1) =
@@ -87,28 +87,28 @@ noncomputable def planarToNonplanarAlg :
   rw [Finsupp.mapDomain_single]
   rfl
 
-@[simp] theorem planarToNonplanarAlg_ofTree (t : Planar α) :
+@[simp] theorem planarToNonplanarAlg_ofTree (t : RoseTree α) :
     planarToNonplanarAlg (R := R) (ofTree t) =
       ofTree (Nonplanar.mk t) := by
   unfold ofTree
   rw [planarToNonplanarAlg_of', Multiset.map_singleton]
 
 @[simp] theorem planarToNonplanarAlg_one :
-    planarToNonplanarAlg (R := R) (1 : ConnesKreimer R (Planar α)) = 1 :=
+    planarToNonplanarAlg (R := R) (1 : ConnesKreimer R (RoseTree α)) = 1 :=
   map_one _
 
 @[simp] theorem planarToNonplanarAlg_mul
-    (x y : ConnesKreimer R (Planar α)) :
+    (x y : ConnesKreimer R (RoseTree α)) :
     planarToNonplanarAlg (R := R) (x * y) =
       planarToNonplanarAlg x * planarToNonplanarAlg y :=
   map_mul _ _ _
 
 /-! ## Phase A.7-β — projection of cut summands, descent of Δ^ρ
 
-To descend Δ^ρ from `Planar` to `Nonplanar`, we need a Nonplanar-side
-cut-summand multiset that is `PlanarEquiv`-invariant. The strategy:
-project each planar cut summand through `mk` componentwise, then prove
-the resulting multiset depends on `T : Planar α` only through `mk T`.
+To descend Δ^ρ from `RoseTree` to `Nonplanar`, we need a Nonplanar-side
+cut-summand multiset that is `PermEquiv`-invariant. The strategy:
+project each tree-level cut summand through `mk` componentwise, then prove
+the resulting multiset depends on `T : RoseTree α` only through `mk T`.
 
 The proof factors through three layers:
 - **Pointwise projection** (`projSummand`, `projForest`, `projAugAction`):
@@ -116,41 +116,41 @@ The proof factors through three layers:
 - **Combine factoring** (`cutListSummandsP_cons_proj`): the cons case of
   `cutListSummandsP` distributes over the projection, giving a clean
   cartesian-product recursion at the `Nonplanar` level.
-- **Headline lifts** (`cutSummandsP_proj_planarStep`,
-  `cutSummandsP_proj_planarEquiv`, `cutListSummandsP_proj_componentwise`):
-  structural induction on `PlanarStep` for the substantive content;
+- **Headline lifts** (`cutSummandsP_proj_permStep`,
+  `cutSummandsP_proj_permEquiv`, `cutListSummandsP_proj_componentwise`):
+  structural induction on `PermStep` for the substantive content;
   pure `EqvGen` / `Forall₂` lifts for the rest. -/
 
 /-! ### Pointwise projection -/
 
-/-- Project a planar cut summand to a nonplanar one. -/
-def projSummand : Forest (Planar α) × Planar α →
+/-- Project a tree-level cut summand to a nonplanar one. -/
+def projSummand : Forest (RoseTree α) × RoseTree α →
     Forest (Nonplanar α) × Nonplanar α :=
   fun p => (p.1.map Nonplanar.mk, Nonplanar.mk p.2)
 
 /-- Project a `cutListSummandsP` summand to nonplanar level, discarding
     the list-order of the remainder children. The discarded order doesn't
     affect the eventual `mk (.node a remainder)`, since `mk` is invariant
-    under children-list permutation (`Planar.planarEquiv_root_perm`). -/
-def projForest : Forest (Planar α) × List (Planar α) →
+    under children-list permutation (`RoseTree.permEquiv_root_perm`). -/
+def projForest : Forest (RoseTree α) × List (RoseTree α) →
     Forest (Nonplanar α) × Multiset (Nonplanar α) :=
   fun p => (p.1.map Nonplanar.mk, Multiset.ofList (p.2.map Nonplanar.mk))
 
 /-- Project an `augActionP` summand to nonplanar level (per-child decision). -/
-def projAugAction : Forest (Planar α) × Option (Planar α) →
+def projAugAction : Forest (RoseTree α) × Option (RoseTree α) →
     Forest (Nonplanar α) × Option (Nonplanar α) :=
   fun p => (p.1.map Nonplanar.mk, p.2.map Nonplanar.mk)
 
 /-- Bridge: applying `cutSummandsP_node`'s wrapper `(p.1, .node a p.2)`
     then `projSummand` factors through `projForest` followed by the
     `Nonplanar.node a` smart constructor. -/
-theorem projSummand_node_factors (a : α) (p : Forest (Planar α) × List (Planar α)) :
+theorem projSummand_node_factors (a : α) (p : Forest (RoseTree α) × List (RoseTree α)) :
     projSummand (p.1, .node a p.2) =
       ((projForest p).1, Nonplanar.node a (projForest p).2) := by
   show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
        (p.1.map Nonplanar.mk, Nonplanar.node a (Multiset.ofList (p.2.map Nonplanar.mk)))
   congr 1
-  exact (Nonplanar.node_mk_planar_list a p.2).symm
+  exact (Nonplanar.node_mk_tree_list a p.2).symm
 
 /-! ### Combine factoring through projection
 
@@ -159,7 +159,7 @@ The cons case of `cutListSummandsP` combines a per-child decision
 combination distributes over the `Nonplanar` projection: the "projected
 combiner" `innerCombinerProj` operates on
 `(Forest × Option) × (Forest × Multiset)` and matches `projForest` of
-the inline planar combiner. The headline result is
+the inline tree-level combiner. The headline result is
 `cutListSummandsP_cons_proj`, which expresses the cons case of the
 projected `cutListSummandsP` as a clean cartesian product at the
 Nonplanar level. -/
@@ -175,11 +175,11 @@ private def innerCombinerProj :
   | ((F, Option.none), (G, ms)) => (F + G, ms)
   | ((F, Option.some r), (G, ms)) => (F + G, r ::ₘ ms)
 
-/-- Pointwise: `projForest` of an applied planar combiner equals
+/-- Pointwise: `projForest` of an applied tree-level combiner equals
     `innerCombinerProj` applied to the projected pair-of-pairs. -/
 private theorem projForest_innerCombiner_apply
-    (p : (Forest (Planar α) × Option (Planar α)) ×
-         (Forest (Planar α) × List (Planar α))) :
+    (p : (Forest (RoseTree α) × Option (RoseTree α)) ×
+         (Forest (RoseTree α) × List (RoseTree α))) :
     projForest (match p.1.2 with
                 | Option.none => (p.1.1 + p.2.1, p.2.2)
                 | Option.some r => (p.1.1 + p.2.1, r :: p.2.2)) =
@@ -202,7 +202,7 @@ private theorem projForest_innerCombiner_apply
     `Nonplanar.mk`-projection of the trees themselves (needed for the
     extract-whole element of `augActionP`). -/
 private theorem augActionP_proj_eq_of_step_data
-    {old new : Planar α}
+    {old new : RoseTree α}
     (h_mk : Nonplanar.mk old = Nonplanar.mk new)
     (h_proj : (cutSummandsP old).map projSummand =
               (cutSummandsP new).map projSummand) :
@@ -211,17 +211,17 @@ private theorem augActionP_proj_eq_of_step_data
   rw [augActionP_eq, augActionP_eq, Multiset.map_cons, Multiset.map_cons]
   congr 1
   · -- First element (extract-whole): projAugAction ({old}, none) = ({mk old}, none)
-    show (({old} : Forest (Planar α)).map Nonplanar.mk,
-          (Option.none : Option (Planar α)).map Nonplanar.mk) =
-         (({new} : Forest (Planar α)).map Nonplanar.mk,
-          (Option.none : Option (Planar α)).map Nonplanar.mk)
+    show (({old} : Forest (RoseTree α)).map Nonplanar.mk,
+          (Option.none : Option (RoseTree α)).map Nonplanar.mk) =
+         (({new} : Forest (RoseTree α)).map Nonplanar.mk,
+          (Option.none : Option (RoseTree α)).map Nonplanar.mk)
     rw [Multiset.map_singleton, Multiset.map_singleton, h_mk]
   · -- Tail: projAugAction-of-projection = (s.1, some s.2) ∘ projSummand
     rw [Multiset.map_map, Multiset.map_map]
     -- Both sides now: (cutSummandsP _).map (projAugAction ∘ (fun p => (p.1, some p.2)))
     -- Rewrite this composed function as (fun s => (s.1, some s.2)) ∘ projSummand
     have eq_fn : (projAugAction (α := α)) ∘
-        (fun (p : Forest (Planar α) × Planar α) => (p.1, Option.some p.2)) =
+        (fun (p : Forest (RoseTree α) × RoseTree α) => (p.1, Option.some p.2)) =
         (fun (s : Forest (Nonplanar α) × Nonplanar α) => (s.1, Option.some s.2)) ∘
         (projSummand (α := α)) := by
       funext p
@@ -253,7 +253,7 @@ private theorem map_prodMap_product {α β γ δ : Type*}
 /-- The projected `cutListSummandsP` on a cons list factors as a clean
     cartesian product at the Nonplanar level. This is the key lemma
     enabling all subsequent invariance proofs. -/
-private theorem cutListSummandsP_cons_proj (t : Planar α) (ts : List (Planar α)) :
+private theorem cutListSummandsP_cons_proj (t : RoseTree α) (ts : List (RoseTree α)) :
     (cutListSummandsP (t :: ts)).map projForest =
       ((augActionP t).map projAugAction ×ˢ
        (cutListSummandsP ts).map projForest).map innerCombinerProj := by
@@ -273,7 +273,7 @@ invariant under (1) substituting an "augAction-projection-equal" child,
     under `projForest` if `(augActionP old).map projAugAction =
     (augActionP new).map projAugAction`. -/
 private theorem cutListSummandsP_proj_at_via_augAction
-    {pre post : List (Planar α)} {old new : Planar α}
+    {pre post : List (RoseTree α)} {old new : RoseTree α}
     (h : (augActionP old).map projAugAction =
          (augActionP new).map projAugAction) :
     (cutListSummandsP (pre ++ old :: post)).map projForest =
@@ -290,8 +290,8 @@ private theorem cutListSummandsP_proj_at_via_augAction
 
 /-- Tail lift: `cutListSummandsP` is invariant under `projForest`-equal
     tails when consed with a fixed head. -/
-private theorem cutListSummandsP_proj_tail_lift (d : Planar α)
-    {cs ds : List (Planar α)}
+private theorem cutListSummandsP_proj_tail_lift (d : RoseTree α)
+    {cs ds : List (RoseTree α)}
     (h : (cutListSummandsP cs).map projForest =
          (cutListSummandsP ds).map projForest) :
     (cutListSummandsP (d :: cs)).map projForest =
@@ -380,7 +380,7 @@ private theorem swap_double_combinerProj
     permutation-related child lists yield the same projected
     cut-summand multiset. -/
 theorem cutListSummandsP_proj_perm
-    {cs ds : List (Planar α)} (h : cs.Perm ds) :
+    {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
     (cutListSummandsP cs).map projForest =
       (cutListSummandsP ds).map projForest := by
   induction h with
@@ -392,20 +392,20 @@ theorem cutListSummandsP_proj_perm
     exact (swap_double_combinerProj _ _ _).symm
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### Headline: PlanarStep + EqvGen lift
+/-! ### Headline: PermStep + EqvGen lift
 
-Substantive content: `cutSummandsP_proj_planarStep` proves projection
-invariance under a single elementary step (`PlanarStep`). The
-`PlanarEquiv` (`EqvGen`) and `Forall₂` versions follow as straightforward
-lifts. The structural induction on `PlanarStep` handles the recursion:
+Substantive content: `cutSummandsP_proj_permStep` proves projection
+invariance under a single elementary step (`PermStep`). The
+`PermEquiv` (`EqvGen`) and `Forall₂` versions follow as straightforward
+lifts. The structural induction on `PermStep` handles the recursion:
 the `recurse` case calls itself on a strictly smaller child tree. -/
 
-/-- Projection invariance under a single `PlanarStep`. Structural
+/-- Projection invariance under a single `PermStep`. Structural
     induction on the step constructor: `swapAtRoot` uses
     `cutListSummandsP_proj_perm`; `recurse` uses the inductive
     hypothesis combined with `cutListSummandsP_proj_at_via_augAction`. -/
-theorem cutSummandsP_proj_planarStep
-    {t s : Planar α} (h : Planar.PlanarStep t s) :
+theorem cutSummandsP_proj_permStep
+    {t s : RoseTree α} (h : RoseTree.PermStep t s) :
     (cutSummandsP t).map projSummand =
       (cutSummandsP s).map projSummand := by
   induction h with
@@ -423,7 +423,7 @@ theorem cutSummandsP_proj_planarStep
     --    = ((cutListSummandsP _).map projForest).map (fun pf => (pf.1, Nonplanar.node a pf.2))
     have eq_fn :
         (projSummand (α := α)) ∘
-          (fun (p : Forest (Planar α) × List (Planar α)) => (p.1, .node a p.2)) =
+          (fun (p : Forest (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
         (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
           (pf.1, Nonplanar.node a pf.2)) ∘ (projForest (α := α)) := by
       funext p
@@ -435,7 +435,7 @@ theorem cutSummandsP_proj_planarStep
     -- We need: (cutSummandsP t).map projSummand = (cutSummandsP s).map projSummand
     rw [cutSummandsP_node, cutSummandsP_node, Multiset.map_map, Multiset.map_map]
     have h_mk : Nonplanar.mk old = Nonplanar.mk new :=
-      Nonplanar.mk_eq_mk_iff.mpr (Planar.PlanarEquiv.of_step hsub)
+      Nonplanar.mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step hsub)
     have h_aug : (augActionP old).map projAugAction =
                  (augActionP new).map projAugAction :=
       augActionP_proj_eq_of_step_data h_mk ih
@@ -444,31 +444,31 @@ theorem cutSummandsP_proj_planarStep
       cutListSummandsP_proj_at_via_augAction h_aug
     have eq_fn :
         (projSummand (α := α)) ∘
-          (fun (p : Forest (Planar α) × List (Planar α)) => (p.1, .node a p.2)) =
+          (fun (p : Forest (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
         (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
           (pf.1, Nonplanar.node a pf.2)) ∘ (projForest (α := α)) := by
       funext p
       exact projSummand_node_factors a p
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
 
-/-- Projection invariance under `PlanarEquiv`. Pure `EqvGen` lift of
-    `cutSummandsP_proj_planarStep`. -/
-theorem cutSummandsP_proj_planarEquiv
-    {t s : Planar α} (h : Planar.PlanarEquiv t s) :
+/-- Projection invariance under `PermEquiv`. Pure `EqvGen` lift of
+    `cutSummandsP_proj_permStep`. -/
+theorem cutSummandsP_proj_permEquiv
+    {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
     (cutSummandsP t).map projSummand =
       (cutSummandsP s).map projSummand := by
   induction h with
-  | rel _ _ hstep => exact cutSummandsP_proj_planarStep hstep
+  | rel _ _ hstep => exact cutSummandsP_proj_permStep hstep
   | refl _ => rfl
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-- Componentwise `PlanarEquiv` invariance for child lists. Pure
+/-- Componentwise `PermEquiv` invariance for child lists. Pure
     `Forall₂` induction using `cutListSummandsP_proj_at_via_augAction`
     on the head and the IH on the tail. -/
 theorem cutListSummandsP_proj_componentwise
-    {cs ds : List (Planar α)}
-    (h : List.Forall₂ Planar.PlanarEquiv cs ds) :
+    {cs ds : List (RoseTree α)}
+    (h : List.Forall₂ RoseTree.PermEquiv cs ds) :
     (cutListSummandsP cs).map projForest =
       (cutListSummandsP ds).map projForest := by
   induction h with
@@ -479,7 +479,7 @@ theorem cutListSummandsP_proj_componentwise
       Nonplanar.mk_eq_mk_iff.mpr hcd
     have h_proj : (cutSummandsP c).map projSummand =
                   (cutSummandsP d).map projSummand :=
-      cutSummandsP_proj_planarEquiv hcd
+      cutSummandsP_proj_permEquiv hcd
     have h_aug : (augActionP c).map projAugAction =
                  (augActionP d).map projAugAction :=
       augActionP_proj_eq_of_step_data h_mk h_proj
@@ -494,19 +494,19 @@ theorem cutListSummandsP_proj_componentwise
 
 /-! ### Δ^ρ on Nonplanar via descent
 
-The `cutSummandsP_proj_planarEquiv` invariance lifts `cutSummandsP`
+The `cutSummandsP_proj_permEquiv` invariance lifts `cutSummandsP`
 through `Nonplanar.lift`, giving a well-defined `cutSummandsN`. The
 tree-level coproduct `comulTreeN` then extends multiplicatively to a
 forest-level monoid hom and finally to the algebra hom `comulAlgHomN`. -/
 
 /-- The **Nonplanar cut-summand multiset**, defined via `Nonplanar.lift`
-    using the `cutSummandsP_proj_planarEquiv` invariance. -/
+    using the `cutSummandsP_proj_permEquiv` invariance. -/
 noncomputable def cutSummandsN :
     Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α) :=
   Nonplanar.lift (fun T => (cutSummandsP T).map projSummand)
-    (fun _ _ h => cutSummandsP_proj_planarEquiv h)
+    (fun _ _ h => cutSummandsP_proj_permEquiv h)
 
-@[simp] theorem cutSummandsN_mk (T : Planar α) :
+@[simp] theorem cutSummandsN_mk (T : RoseTree α) :
     cutSummandsN (Nonplanar.mk T) = (cutSummandsP T).map projSummand := rfl
 
 /-- The **nonplanar tree-level Δ^ρ**: explicit `T ⊗ 1` term plus the
@@ -655,7 +655,7 @@ of `T`" (pair `(s.1, some s.2)` for `s ∈ cutSummandsN T`).
 
 Defined recursively at the Nonplanar level via `Multiset.foldr`, with
 the `LeftCommutative` obligation discharged by `swap_double_combinerProj`
-(the per-tree-decision swap symmetry, established for the planar
+(the per-tree-decision swap symmetry, established for the tree-level
 projection in §3 above and reused here verbatim). -/
 
 /-- Per-tree decision multiset at the Nonplanar level: extract this tree
@@ -665,9 +665,9 @@ noncomputable def augActionN (T : Nonplanar α) :
   (({T} : Forest (Nonplanar α)), Option.none) ::ₘ
     (cutSummandsN T).map (fun s => (s.1, Option.some s.2))
 
-/-- Bridge to the planar `augActionP`: at a planar lift, `augActionN`
+/-- Bridge to the tree-level `augActionP`: at a tree-level lift, `augActionN`
     agrees with `(augActionP T).map projAugAction`. -/
-private theorem augActionN_mk (T : Planar α) :
+private theorem augActionN_mk (T : RoseTree α) :
     augActionN (Nonplanar.mk T) = (augActionP T).map projAugAction := by
   unfold augActionN
   simp only [cutSummandsN_mk, augActionP_eq, Multiset.map_cons, Multiset.map_map]
@@ -690,7 +690,7 @@ private instance : LeftCommutative (cutForestCombinerN (α := α)) where
     `F : Forest (Nonplanar α)` produces a pair `(cut_forest, remainder_forest)`,
     and `cutForestSummandsN F` enumerates them all (as a multiset). The
     public Nonplanar-level analog of `(cutListSummandsP ps).map projForest`,
-    independent of the planar list representation. -/
+    independent of the tree-level list representation. -/
 noncomputable def cutForestSummandsN (F : Forest (Nonplanar α)) :
     Multiset (Forest (Nonplanar α) × Forest (Nonplanar α)) :=
   Multiset.foldr cutForestCombinerN
@@ -707,19 +707,19 @@ noncomputable def cutForestSummandsN (F : Forest (Nonplanar α)) :
   rw [Multiset.foldr_cons]
   rfl
 
-/-! ### Bridges to the planar list representation
+/-! ### Bridges to the tree-level list representation
 
-The planar substrate `cutListSummandsP` (defined on `List (Planar α)`)
-is reused to evaluate `cutForestSummandsN` on a planar list rep, and
+The tree-level substrate `cutListSummandsP` (defined on `List (RoseTree α)`)
+is reused to evaluate `cutForestSummandsN` on a tree-level list rep, and
 to characterize cuts of a Nonplanar node. These bridges are private —
 the public `cutSummandsN_node` and `comulForestN_eq_sum` are stated
 purely at the Nonplanar level. -/
 
-/-- Witness: every `F : Forest (Nonplanar α)` has a planar list
-    representative. Used internally to lift planar-side characterizations
+/-- Witness: every `F : Forest (Nonplanar α)` has a tree-level list
+    representative. Used internally to lift tree-level-side characterizations
     to the Nonplanar level. -/
 private theorem exists_planar_list_rep (F : Forest (Nonplanar α)) :
-    ∃ ps : List (Planar α), F = Multiset.ofList (ps.map Nonplanar.mk) := by
+    ∃ ps : List (RoseTree α), F = Multiset.ofList (ps.map Nonplanar.mk) := by
   refine ⟨F.toList.map Quotient.out, ?_⟩
   conv_lhs => rw [← Multiset.coe_toList F]
   congr 1
@@ -729,11 +729,11 @@ private theorem exists_planar_list_rep (F : Forest (Nonplanar α)) :
   intro x _
   exact (Quotient.out_eq x).symm
 
-/-- `cutForestSummandsN` evaluated on a planar list rep agrees with the
-    planar `cutListSummandsP` projected through `projForest`. By
+/-- `cutForestSummandsN` evaluated on a tree-level list rep agrees with the
+    tree-level `cutListSummandsP` projected through `projForest`. By
     induction on `ps` using `cutListSummandsP_cons_proj` and
     `augActionN_mk`. -/
-private theorem cutForestSummandsN_via_planar_list (ps : List (Planar α)) :
+private theorem cutForestSummandsN_via_planar_list (ps : List (RoseTree α)) :
     cutForestSummandsN (Multiset.ofList (ps.map Nonplanar.mk)) =
       (cutListSummandsP ps).map projForest := by
   induction ps with
@@ -746,22 +746,22 @@ private theorem cutForestSummandsN_via_planar_list (ps : List (Planar α)) :
     rw [cutForestSummandsN_cons, ih, augActionN_mk]
     exact (cutListSummandsP_cons_proj p ps').symm
 
-/-- Cuts of a node decompose via the planar `cutListSummandsP` projected
-    through `projForest` — the planar-list-rep form of `cutSummandsN_node`.
+/-- Cuts of a node decompose via the tree-level `cutListSummandsP` projected
+    through `projForest` — the tree-level-list-rep form of `cutSummandsN_node`.
     The map `(p ↦ (p.1, Nonplanar.node a p.2))` re-grafts the remainder
     children onto a fresh root with label `a`. -/
-private theorem cutSummandsN_node_planar_list (a : α) (ps : List (Planar α)) :
+private theorem cutSummandsN_node_planar_list (a : α) (ps : List (RoseTree α)) :
     cutSummandsN (Nonplanar.node a (Multiset.ofList (ps.map Nonplanar.mk))) =
       ((cutListSummandsP ps).map projForest).map
         (fun pf => (pf.1, Nonplanar.node a pf.2)) := by
-  rw [Nonplanar.node_mk_planar_list]
-  show (cutSummandsP (Planar.node a ps)).map (projSummand (α := α)) = _
+  rw [Nonplanar.node_mk_tree_list]
+  show (cutSummandsP (RoseTree.node a ps)).map (projSummand (α := α)) = _
   rw [cutSummandsP_node, Multiset.map_map, Multiset.map_map]
   apply Multiset.map_congr rfl
   intro p _
   show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
        ((projForest p).1, Nonplanar.node a (projForest p).2)
-  rw [← Nonplanar.node_mk_planar_list]
+  rw [← Nonplanar.node_mk_tree_list]
   rfl
 
 /-! ### Tensor-algebra and multiset distributivity helpers -/
@@ -788,7 +788,7 @@ private theorem map_first_product {β γ δ : Type*}
 The two structural facts that drive the cocycle: cuts of a node
 decompose along `cutForestSummandsN`, and `comulForestN` expands as the
 multiset sum over `cutForestSummandsN`. Both are pure Nonplanar-level
-statements; planar substrate is invisible to consumers. -/
+statements; tree-level substrate is invisible to consumers. -/
 
 /-- Cuts of `Nonplanar.node a F` decompose along the per-tree decisions
     of `F`: each pair `(cf, rem) ∈ cutForestSummandsN F` gives a cut
@@ -881,8 +881,8 @@ theorem comulForestN_eq_sum (F : Forest (Nonplanar α)) :
 theorem cutSummandsN_leaf (a : α) :
     cutSummandsN (Nonplanar.leaf a : Nonplanar α) =
       ({((0 : Forest (Nonplanar α)), Nonplanar.leaf a)} : Multiset _) := by
-  show (cutSummandsP (Planar.leaf a)).map (projSummand (α := α)) = _
-  rw [show Planar.leaf a = Planar.node a [] from rfl, cutSummandsP_node,
+  show (cutSummandsP (RoseTree.leaf a)).map (projSummand (α := α)) = _
+  rw [show RoseTree.leaf a = RoseTree.node a [] from rfl, cutSummandsP_node,
       cutListSummandsP_nil, Multiset.map_singleton, Multiset.map_singleton]
   rfl
 
@@ -945,7 +945,7 @@ The final `Bialgebra` instance is assembled via `Bialgebra.ofAlgHom`. -/
 
 /-! ### Empty cut existence (substrate for counit laws)
 
-The empty cut `(0, T)` is always a cut summand of `T`. The planar
+The empty cut `(0, T)` is always a cut summand of `T`. The tree-level
 substrate `cutSummandsP T` always contains `(0, T)`, by mutual structural
 induction with `cutListSummandsP`; the nonplanar `cutForestSummandsN F`
 contains `(0, F)` by descent. These witnesses split the `(counit ⊗ id)`
@@ -953,16 +953,16 @@ sum into a single non-vanishing summand `1 ⊗ of' F`. -/
 
 mutual
 
-/-- The empty cut `(0, T)` is a cut summand of every planar tree `T`. -/
-private theorem mem_cutSummandsP_zero : ∀ (T : Planar α),
-    ((0 : Forest (Planar α)), T) ∈ cutSummandsP T
+/-- The empty cut `(0, T)` is a cut summand of every tree-level tree `T`. -/
+private theorem mem_cutSummandsP_zero : ∀ (T : RoseTree α),
+    ((0 : Forest (RoseTree α)), T) ∈ cutSummandsP T
   | .node a children => by
     rw [cutSummandsP_node, Multiset.mem_map]
     exact ⟨(0, children), mem_cutListSummandsP_zero children, rfl⟩
 
-/-- The empty cut `(0, ps)` is a list cut summand of every planar list `ps`. -/
-private theorem mem_cutListSummandsP_zero : ∀ (ps : List (Planar α)),
-    ((0 : Forest (Planar α)), ps) ∈ cutListSummandsP ps
+/-- The empty cut `(0, ps)` is a list cut summand of every tree-level list `ps`. -/
+private theorem mem_cutListSummandsP_zero : ∀ (ps : List (RoseTree α)),
+    ((0 : Forest (RoseTree α)), ps) ∈ cutListSummandsP ps
   | [] => by
     rw [cutListSummandsP_nil]; exact Multiset.mem_singleton.mpr rfl
   | t :: ts => by
@@ -974,8 +974,8 @@ private theorem mem_cutListSummandsP_zero : ∀ (ps : List (Planar α)),
       exact ⟨(0, t), mem_cutSummandsP_zero t, rfl⟩
     · -- The cons combiner with `(0, some t)` and `(0, ts)` gives `(0, t :: ts)`
       -- via `0 + 0 = 0`.
-      show (((0 : Forest (Planar α)) + (0 : Forest (Planar α))), t :: ts) =
-           ((0 : Forest (Planar α)), t :: ts)
+      show (((0 : Forest (RoseTree α)) + (0 : Forest (RoseTree α))), t :: ts) =
+           ((0 : Forest (RoseTree α)), t :: ts)
       rw [zero_add]
 
 end
@@ -986,26 +986,12 @@ private theorem cutForestSummandsN_zero_mem (F : Forest (Nonplanar α)) :
   obtain ⟨ps, rfl⟩ := exists_planar_list_rep F
   rw [cutForestSummandsN_via_planar_list, Multiset.mem_map]
   refine ⟨(0, ps), mem_cutListSummandsP_zero ps, ?_⟩
-  show ((0 : Forest (Planar α)).map Nonplanar.mk,
+  show ((0 : Forest (RoseTree α)).map Nonplanar.mk,
         Multiset.ofList (ps.map Nonplanar.mk)) =
        ((0 : Forest (Nonplanar α)), Multiset.ofList (ps.map Nonplanar.mk))
   rw [Multiset.map_zero]
 
 /-! ### Tree-depth induction substrate -/
-
-/-- Every element of a list of planar trees has depth at most the
-    `depthMaxList` of the list. -/
-private theorem Planar.depth_le_depthMaxList (cs : List (Planar α))
-    (c : Planar α) (hc : c ∈ cs) :
-    c.depth ≤ Planar.depthMaxList cs := by
-  induction cs with
-  | nil => exact absurd hc (List.not_mem_nil)
-  | cons t ts ih =>
-    rcases List.mem_cons.mp hc with rfl | h
-    · show c.depth ≤ max c.depth (Planar.depthMaxList ts)
-      exact le_max_left _ _
-    · show c.depth ≤ max t.depth (Planar.depthMaxList ts)
-      exact (ih h).trans (le_max_right _ _)
 
 /-- A tree's depth is strictly less than the depth of any node containing
     it as a child. -/
@@ -1013,16 +999,16 @@ theorem Nonplanar.depth_lt_of_mem (T : Nonplanar α) (F : Forest (Nonplanar α))
     (hT : T ∈ F) (a : α) : T.depth < (Nonplanar.node a F).depth := by
   obtain ⟨ps, hps⟩ := exists_planar_list_rep F
   subst hps
-  rw [Nonplanar.node_mk_planar_list]
-  show T.depth < (Planar.node a ps).depth
-  rw [show (Planar.node a ps).depth = 1 + Planar.depthMaxList ps from rfl]
+  rw [Nonplanar.node_mk_tree_list]
+  show T.depth < (RoseTree.node a ps).depth
+  rw [RoseTree.depth_node]
   rw [show (Multiset.ofList (ps.map Nonplanar.mk) : Forest (Nonplanar α)) =
         ((ps.map Nonplanar.mk : List (Nonplanar α)) : Multiset _) from rfl,
       Multiset.mem_coe, List.mem_map] at hT
   obtain ⟨c, hc, rfl⟩ := hT
-  show (Nonplanar.mk c).depth < 1 + Planar.depthMaxList ps
+  show (Nonplanar.mk c).depth < 1 + (ps.map RoseTree.depth).foldr max 0
   rw [Nonplanar.depth_mk, Nat.add_comm]
-  exact Nat.lt_succ_of_le (Planar.depth_le_depthMaxList ps c hc)
+  exact Nat.lt_succ_of_le (RoseTree.depth_le_foldr_max hc)
 
 /-! ### Counit ⊗ id commutation with `lTensor (bPlusLin a)`
 
@@ -1132,13 +1118,13 @@ private theorem comulTreeN_counit_rTensor (T : Nonplanar α) :
   induction n using Nat.strong_induction_on with
   | _ n IH =>
     intro T hT
-    -- Pick a planar rep T = mk (.node a children).
-    obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=
+    -- Pick a tree-level rep T = mk (.node a children).
+    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
       ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
     obtain ⟨a, children⟩ := T₀
-    rw [show (Nonplanar.mk (Planar.node a children) : Nonplanar α) =
+    rw [show (Nonplanar.mk (RoseTree.node a children) : Nonplanar α) =
         Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))
-        from (Nonplanar.node_mk_planar_list a children).symm]
+        from (Nonplanar.node_mk_tree_list a children).symm]
     -- Use cocycle.
     rw [comulTreeN_node_cocycle, map_add]
     -- First summand vanishes via counit_ofTree.
@@ -1157,8 +1143,8 @@ private theorem comulTreeN_counit_rTensor (T : Nonplanar α) :
             have hlt := Nonplanar.depth_lt_of_mem T' _ hT' a
             rw [show (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk)) :
                   Nonplanar α) =
-                Nonplanar.mk (Planar.node a children) from
-                Nonplanar.node_mk_planar_list a children] at hlt
+                Nonplanar.mk (RoseTree.node a children) from
+                Nonplanar.node_mk_tree_list a children] at hlt
             rw [hT] at hlt
             exact hlt),
         LinearMap.lTensor_tmul, bPlusLin_of']
@@ -1205,12 +1191,12 @@ private theorem comulTreeN_counit_lTensor (T : Nonplanar α) :
   induction n using Nat.strong_induction_on with
   | _ n _IH =>
     intro T _hT
-    obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=
+    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = Nonplanar.mk T₀ :=
       ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
     obtain ⟨a, children⟩ := T₀
-    rw [show (Nonplanar.mk (Planar.node a children) : Nonplanar α) =
+    rw [show (Nonplanar.mk (RoseTree.node a children) : Nonplanar α) =
         Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))
-        from (Nonplanar.node_mk_planar_list a children).symm]
+        from (Nonplanar.node_mk_tree_list a children).symm]
     -- Use cocycle: comulTreeN T = ofTree T ⊗ 1 + (id ⊗ bPlusLin a)(comulForestN F).
     rw [comulTreeN_node_cocycle, map_add]
     -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.

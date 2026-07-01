@@ -62,8 +62,8 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 private noncomputable def bMinusList (a : α) :
     List (Nonplanar α) → ConnesKreimer R (Nonplanar α)
   | [T] =>
-      letI : Decidable (Nonplanar.rootLabel T = a) := Classical.dec _
-      if Nonplanar.rootLabel T = a then
+      letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
+      if Nonplanar.rootValue T = a then
         of' (R := R) (Nonplanar.rootChildren T)
       else 0
   | _ => 0
@@ -123,12 +123,12 @@ noncomputable def bMinusBasis (a : α) (F : Forest (Nonplanar α)) :
   show Quotient.liftOn (↑[Nonplanar.node a F] : Multiset (Nonplanar α))
       (bMinusList (R := R) a) _ = of' F
   show bMinusList (R := R) a [Nonplanar.node a F] = of' F
-  show (letI : Decidable (Nonplanar.rootLabel (Nonplanar.node a F) = a) :=
+  show (letI : Decidable (Nonplanar.rootValue (Nonplanar.node a F) = a) :=
             Classical.dec _
-        if Nonplanar.rootLabel (Nonplanar.node a F) = a then
+        if Nonplanar.rootValue (Nonplanar.node a F) = a then
           of' (R := R) (Nonplanar.rootChildren (Nonplanar.node a F))
         else 0) = of' F
-  rw [Nonplanar.rootLabel_node, if_pos rfl, Nonplanar.rootChildren_node]
+  rw [Nonplanar.rootValue_node, if_pos rfl, Nonplanar.rootChildren_node]
 
 /-! ### `bMinusLin a` — linear extension -/
 
@@ -226,8 +226,8 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
       rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
       · rfl
       · -- lst = [T]; F = ↑[T] = {T}. Need: T ≠ Nonplanar.node a (anything).
-        show (letI : Decidable (Nonplanar.rootLabel T = a) := Classical.dec _
-              if Nonplanar.rootLabel T = a then
+        show (letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
+              if Nonplanar.rootValue T = a then
                 of' (R := R) (Nonplanar.rootChildren T)
               else 0) = 0
         rw [if_neg]
@@ -237,7 +237,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
         show (↑[T] : Multiset (Nonplanar α)) =
               {Nonplanar.node a (Nonplanar.rootChildren T)}
         congr 1
-        -- T = node a (rootChildren T) when rootLabel T = a (by eta).
+        -- T = node a (rootChildren T) when rootValue T = a (by eta).
         rw [← hlab, Nonplanar.node_eta]
       · rfl
     rw [h_zero]
@@ -421,8 +421,8 @@ private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bo
     children) vs "in A's subtrees" (recursive NIM).
 
     Descent through the quotient: the singleton host's canonical planar
-    representative is `PlanarEquiv`-swapped for a visible planar node,
-    `Planar.Pathed.insertion_node_split` provides the root-vs-subtree
+    representative is `PermEquiv`-swapped for a visible planar node,
+    `RoseTree.Pathed.insertion_node_split` provides the root-vs-subtree
     mask decomposition, and the mask enumeration is converted to the
     powerset bind via `listChoices_bridge_powerset_paired` plus the
     powerset partition involution (the mask convention has `true` =
@@ -438,37 +438,37 @@ private theorem nim_singleton_node_a_decomp
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- §1: the canonical planar representative of the host is equivalent to
   -- the visible node on A''s canonical children list.
-  have h_mk2 : Nonplanar.mk (Planar.node a (A'.toList.map Quotient.out)) =
+  have h_mk2 : Nonplanar.mk (RoseTree.node a (A'.toList.map Quotient.out)) =
       Nonplanar.node a A' := by
-    rw [← Nonplanar.node_mk_planar_list]
+    rw [← Nonplanar.node_mk_tree_list]
     congr 1
     rw [List.map_map,
         show A'.toList.map (Nonplanar.mk ∘ Quotient.out) = A'.toList from
           (List.map_congr_left fun x _ => Quotient.out_eq x).trans
             (List.map_id _)]
     exact A'.coe_toList
-  have h_equiv : Planar.PlanarEquiv
+  have h_equiv : RoseTree.PermEquiv
       (Quotient.out (Nonplanar.node a A'))
-      (Planar.node a (A'.toList.map Quotient.out)) :=
+      (RoseTree.node a (A'.toList.map Quotient.out)) :=
     Nonplanar.mk_eq_mk_iff.mp
       (((Nonplanar.node a A').out_eq).trans h_mk2.symm)
   -- §2: unfold NIM; the host list is the singleton of the canonical rep.
   unfold Nonplanar.insertionMultiset
   rw [show (({Nonplanar.node a A'} : Forest (Nonplanar α)).toList.map
-        Quotient.out : List (Planar α))
+        Quotient.out : List (RoseTree α))
       = [Quotient.out (Nonplanar.node a A')] from by
     rw [Multiset.toList_singleton]
     rfl]
   -- §3: swap the host representative under the msform map.
-  have h_host := Planar.Pathed.insertionForest_planarEquiv_host
+  have h_host := RoseTree.Pathed.insertionForest_permEquiv_host
     (B.toList.map Quotient.out) (List.Forall₂.cons h_equiv List.Forall₂.nil)
   have h_host' :
-      (Planar.Pathed.insertionForest [Quotient.out (Nonplanar.node a A')]
+      (RoseTree.Pathed.insertionForest [Quotient.out (Nonplanar.node a A')]
           (B.toList.map Quotient.out)).map
         (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
           Multiset (Nonplanar α))) =
-      (Planar.Pathed.insertionForest
-          [Planar.node a (A'.toList.map Quotient.out)]
+      (RoseTree.Pathed.insertionForest
+          [RoseTree.node a (A'.toList.map Quotient.out)]
           (B.toList.map Quotient.out)).map
         (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
     have h2 := congrArg
@@ -478,8 +478,8 @@ private theorem nim_singleton_node_a_decomp
     exact h2
   rw [h_host']
   -- §4: singleton-forest reduction + the node-split engine.
-  rw [Planar.Pathed.insertionForest_singleton, Multiset.map_map,
-      Planar.Pathed.insertion_node_split, Multiset.map_bind]
+  rw [RoseTree.Pathed.insertionForest_singleton, Multiset.map_map,
+      RoseTree.Pathed.insertion_node_split, Multiset.map_bind]
   -- §5: convert the RHS powerset bind to the mask enumeration. The mask
   -- convention has `true` = root guests, so the powerset bind (over the
   -- subtree bucket B₁) is first flipped by the partition involution.
@@ -487,7 +487,7 @@ private theorem nim_singleton_node_a_decomp
         (Nonplanar.insertionMultiset A' B₁).map fun F' =>
           ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) =
       (Multiset.ofList
-          (Planar.Pathed.listChoices [true, false] B.toList.length)).bind
+          (RoseTree.Pathed.listChoices [true, false] B.toList.length)).bind
         (fun assn =>
           (Nonplanar.insertionMultiset A'
               (((B.toList.zip assn).filterMap
@@ -513,7 +513,7 @@ private theorem nim_singleton_node_a_decomp
       rfl]
     rw [show (B.powerset.map fun s => (s, B - s)) =
         (Multiset.ofList
-            (Planar.Pathed.listChoices [true, false] B.toList.length)).map
+            (RoseTree.Pathed.listChoices [true, false] B.toList.length)).map
           (fun assn =>
             ((((B.toList.zip assn).filterMap
                 fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
@@ -523,7 +523,7 @@ private theorem nim_singleton_node_a_decomp
                 Multiset (Nonplanar α)))) from by
       conv_lhs => rw [show B = (↑(B.toList) : Multiset (Nonplanar α)) from
         B.coe_toList.symm]
-      rw [← Planar.Pathed.listChoices_bridge_powerset_paired (l := B.toList)]]
+      rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := B.toList)]]
     rw [Multiset.map_map, ← bind_eq_map_sum]
     rfl
   refine Eq.trans ?_ h_rhs.symm
@@ -531,9 +531,9 @@ private theorem nim_singleton_node_a_decomp
   rw [List.length_map]
   refine Multiset.bind_congr fun assn h_assn => ?_
   -- Named buckets: planar (out-rep) and nonplanar (canonical) per side.
-  set gs_t : List (Planar α) := ((B.toList.map Quotient.out).zip assn).filterMap
+  set gs_t : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
     (fun p => if p.2 then some p.1 else none) with hgs_t
-  set gs_f : List (Planar α) := ((B.toList.map Quotient.out).zip assn).filterMap
+  set gs_f : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
     (fun p => if p.2 then none else some p.1) with hgs_f
   set s_t : Multiset (Nonplanar α) := Multiset.ofList
     ((B.toList.zip assn).filterMap
@@ -552,27 +552,27 @@ private theorem nim_singleton_node_a_decomp
           (List.map_congr_left fun x _ => Quotient.out_eq x).trans
             (List.map_id _),
         Multiset.coe_toList, hs_f]
-  have h_guests := Planar.Pathed.insertionForest_msform_invariance_guests
+  have h_guests := RoseTree.Pathed.insertionForest_msform_invariance_guests
     (A'.toList.map Quotient.out) h_f_perm
   -- Assemble: fuse post-maps, factor through msform, swap guests, recombine.
   rw [Multiset.map_map]
-  calc (Planar.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
+  calc (RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
         ((((fun L => (Multiset.ofList (L.map Nonplanar.mk) :
             Multiset (Nonplanar α))) ∘ fun T' => [T']))
-          ∘ (fun cs' => Planar.node a (gs_t ++ cs')))
-      = ((Planar.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
+          ∘ (fun cs' => RoseTree.node a (gs_t ++ cs')))
+      = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
           (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
             Multiset (Nonplanar α)))).map
         (fun M => ({Nonplanar.node a (s_t + M)} : Forest (Nonplanar α))) := by
         rw [Multiset.map_map]
         refine Multiset.map_congr rfl fun cs' _ => ?_
-        show ({Nonplanar.mk (Planar.node a (gs_t ++ cs'))} :
+        show ({Nonplanar.mk (RoseTree.node a (gs_t ++ cs'))} :
           Forest (Nonplanar α)) = _
         congr 1
-        rw [← Nonplanar.node_mk_planar_list]
+        rw [← Nonplanar.node_mk_tree_list]
         congr 1
         rw [List.map_append, ← Multiset.coe_add, h_t_mk]
-    _ = ((Planar.Pathed.insertionForest (A'.toList.map Quotient.out)
+    _ = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out)
             (s_f.toList.map Quotient.out)).map
           (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
             Multiset (Nonplanar α)))).map
@@ -780,8 +780,8 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
   rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
   · rfl
   · -- lst = [T]; F = ↑[T] = {T}. Need: T's root label ≠ a.
-    show (letI : Decidable (Nonplanar.rootLabel T = a) := Classical.dec _
-          if Nonplanar.rootLabel T = a then
+    show (letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
+          if Nonplanar.rootValue T = a then
             of' (R := R) (Nonplanar.rootChildren T) else 0) = 0
     rw [if_neg]
     intro hlab
@@ -961,7 +961,7 @@ private lemma sum_powerset_diff_zero_indicator
     * If `|A| = 1, |B - B₁| = 0`: `F'` is a singleton, but its root label
       equals `A`'s root label (which is ≠ a since `A` is not singleton-a-rooted),
       so still not of form `{node a G}`. Uses
-      `Nonplanar.insertionMultiset_singleton_rootLabel`. -/
+      `Nonplanar.insertionMultiset_singleton_rootValue`. -/
 private theorem bMinusBasis_nim_add_eq_zero (a : α)
     (A B₁ B' F' : Forest (Nonplanar α))
     (hA_ne : A ≠ 0)
@@ -989,15 +989,15 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
   subst hB'
   -- F' + 0 = F', and F' has card 1, F' = {T'} with T' = node a G.
   rw [add_zero] at hG
-  -- Now F' ∈ NIM A B₁ with A.card = 1; A = {T} for some T with T.rootLabel ≠ a.
+  -- Now F' ∈ NIM A B₁ with A.card = 1; A = {T} for some T with T.rootValue ≠ a.
   -- Goal: derive contradiction from F' = {node a G} via root preservation.
   have hF'_card : F'.card = 1 := by rw [hcard_F', hA_card]
   -- A is a singleton (card 1): A = {T_A} for some T_A.
   obtain ⟨T_A, hT_A⟩ : ∃ T_A : Nonplanar α, A = {T_A} := by
     rcases Multiset.card_eq_one.mp hA_card with ⟨T_A, hT_A⟩
     exact ⟨T_A, hT_A⟩
-  -- T_A.rootLabel ≠ a (otherwise A = {node a (rootChildren T_A)} via node_eta).
-  have hT_A_lab : T_A.rootLabel ≠ a := by
+  -- T_A.rootValue ≠ a (otherwise A = {node a (rootChildren T_A)} via node_eta).
+  have hT_A_lab : T_A.rootValue ≠ a := by
     intro h_lab
     apply hA
     refine ⟨Nonplanar.rootChildren T_A, ?_⟩
@@ -1007,14 +1007,14 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
   -- Apply NIM singleton root preservation.
   subst hT_A
   obtain ⟨T', hF'_eq, hT'_lab⟩ :=
-    Nonplanar.insertionMultiset_singleton_rootLabel T_A B₁ hF'
-  -- F' = {T'} with T'.rootLabel = T_A.rootLabel ≠ a.
+    Nonplanar.insertionMultiset_singleton_rootValue T_A B₁ hF'
+  -- F' = {T'} with T'.rootValue = T_A.rootValue ≠ a.
   -- But hG says F' = {node a G}, so T' = node a G.
   rw [hF'_eq] at hG
   have hT'_eq_node : T' = Nonplanar.node a G := Multiset.singleton_inj.mp hG
-  -- Then T'.rootLabel = a, contradicting hT'_lab + hT_A_lab.
-  have hT'_lab_a : T'.rootLabel = a := by
-    rw [hT'_eq_node, Nonplanar.rootLabel_node]
+  -- Then T'.rootValue = a, contradicting hT'_lab + hT_A_lab.
+  have hT'_lab_a : T'.rootValue = a := by
+    rw [hT'_eq_node, Nonplanar.rootValue_node]
   rw [hT'_lab_a] at hT'_lab
   exact hT_A_lab hT'_lab.symm
 

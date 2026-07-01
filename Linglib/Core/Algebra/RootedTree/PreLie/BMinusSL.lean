@@ -17,7 +17,7 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 For each color `a : α`, this file constructs the linear operator `B⁻_a` on
 `SL = SymmetricAlgebra ℤ (InsertionAlgebra α)` from [oudom-guin-2008]: on a
 generator `ι (ofTree t)` it returns the product
-`∏ c ∈ rootChildren t, ι (ofTree c)` if `rootLabel t = a` and `0` otherwise,
+`∏ c ∈ rootChildren t, ι (ofTree c)` if `rootValue t = a` and `0` otherwise,
 and it vanishes on scalars and on products of two or more generators. It is
 the SL-side analog of `bMinusLin` on the Connes-Kreimer side (`BMinus.lean`).
 
@@ -69,10 +69,10 @@ noncomputable def ιTree (t : Nonplanar α) : SL :=
   SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree t)
 
 /-- The value of `B⁻_a` on a tree `t`: the SL-product of `ι (ofTree c)` over
-    the root's children if `rootLabel t = a`, else `0`. -/
+    the root's children if `rootValue t = a`, else `0`. -/
 noncomputable def psiA_basis (a : α) (t : Nonplanar α) : SL :=
-  letI : Decidable (Nonplanar.rootLabel t = a) := Classical.dec _
-  if Nonplanar.rootLabel t = a then
+  letI : Decidable (Nonplanar.rootValue t = a) := Classical.dec _
+  if Nonplanar.rootValue t = a then
     ((Nonplanar.rootChildren t).map (fun c => ιTree c)).prod
   else 0
 
@@ -903,7 +903,7 @@ private theorem counit_ckIso [DecidableEq (Nonplanar α)] (X : SL) :
 /-- Product of `ιTree c` over a multiset `M` in SL, transported through
     `ckIso`, equals `of' M` in CK. Used in the `ι x` case of
     `bMinusLin_ckIso` to identify `ckIso (psiA_basis a t)` with
-    `bMinusBasis a {t}` when `rootLabel t = a`. -/
+    `bMinusBasis a {t}` when `rootValue t = a`. -/
 private theorem ckIso_prod_ιTree [DecidableEq (Nonplanar α)]
     (M : Multiset (Nonplanar α)) :
     ckIsoSymmetricAlgebra ((M.map (fun c => ιTree c)).prod) =
@@ -1011,15 +1011,15 @@ theorem bMinusLin_ckIso [DecidableEq (Nonplanar α)] (a : α) (X : SL) :
       rw [psiA_L_ofTree]
       -- Goal: r • bMinusLin a (of'{t}) = r • ckIso (psiA_basis a t)
       congr 1
-      -- bMinusLin a (of'{t}) = bMinusBasis a {t}; case on rootLabel t = a.
+      -- bMinusLin a (of'{t}) = bMinusBasis a {t}; case on rootValue t = a.
       show bMinusLin (R := ℤ) a (GrossmanLarson.of' ({t} : Forest (Nonplanar α))) =
            ckIsoSymmetricAlgebra (psiA_basis a t)
       rw [bMinusLin_of']
-      -- Split on rootLabel t = a.
-      letI : Decidable (Nonplanar.rootLabel t = a) := Classical.dec _
+      -- Split on rootValue t = a.
+      letI : Decidable (Nonplanar.rootValue t = a) := Classical.dec _
       unfold psiA_basis
-      by_cases hlab : Nonplanar.rootLabel t = a
-      · -- rootLabel t = a: t = node a (rootChildren t); both sides = of'(rootChildren t).
+      by_cases hlab : Nonplanar.rootValue t = a
+      · -- rootValue t = a: t = node a (rootChildren t); both sides = of'(rootChildren t).
         rw [if_pos hlab]
         rw [show t = Nonplanar.node a (Nonplanar.rootChildren t) by
               rw [← hlab, Nonplanar.node_eta]]
@@ -1028,14 +1028,14 @@ theorem bMinusLin_ckIso [DecidableEq (Nonplanar α)] (a : α) (X : SL) :
         -- After substitution, rootChildren (node a F) = F, so we get
         -- ckIso (∏ c ∈ F, ιTree c) = of' F.
         exact (ckIso_prod_ιTree _).symm
-      · -- rootLabel t ≠ a; both sides 0.
+      · -- rootValue t ≠ a; both sides 0.
         rw [if_neg hlab]
         rw [show bMinusBasis (R := ℤ) a ({t} : Forest (Nonplanar α)) = 0 from by
               apply bMinusBasis_eq_zero_of_not_singleton_a
               rintro ⟨G', hG⟩
               apply hlab
               have hT : t = Nonplanar.node a G' := Multiset.singleton_inj.mp hG
-              rw [hT, Nonplanar.rootLabel_node]]
+              rw [hT, Nonplanar.rootValue_node]]
         rw [_root_.map_zero]
   | mul X Y ihX ihY =>
     -- CK side: bMinusLin (ckIso (X*Y)) = bMinusLin (ckIso X * ckIso Y)
@@ -1120,8 +1120,8 @@ private theorem cons_add_swap {β : Type*} (x : β) (B C : Multiset β) :
     `pre` carried in the inner `node`'s children-multiset. -/
 private theorem insertSumList_bind_lift_aux [DecidableEq (Nonplanar α)]
     (a : α) (pre : Multiset (Nonplanar α))
-    (cs : List (Planar α)) (c_pl : Planar α) :
-    (Planar.insertSumList cs c_pl).map (fun cs' =>
+    (cs : List (RoseTree α)) (c_pl : RoseTree α) :
+    (RoseTree.insertSumList cs c_pl).map (fun cs' =>
       Nonplanar.node a (pre + ↑(cs'.map Nonplanar.mk))) =
     (↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α)).bind (fun d =>
       (Nonplanar.insertSum d (Nonplanar.mk c_pl)).map (fun d' =>
@@ -1129,10 +1129,10 @@ private theorem insertSumList_bind_lift_aux [DecidableEq (Nonplanar α)]
           (↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α)).erase d))) := by
   induction cs generalizing pre with
   | nil =>
-    simp only [Planar.insertSumList_nil, Multiset.map_zero,
+    simp only [RoseTree.insertSumList_nil, Multiset.map_zero,
                List.map_nil, Multiset.coe_nil, Multiset.zero_bind]
   | cons e cs' ih =>
-    rw [Planar.insertSumList_cons, Multiset.map_add,
+    rw [RoseTree.insertSumList_cons, Multiset.map_add,
         Multiset.map_map, Multiset.map_map]
     simp only [Function.comp_def]
     -- Convert `↑((e :: cs').map mk)` to `mk e ::ₘ ↑(cs'.map mk)` (rfl) under
@@ -1153,9 +1153,9 @@ private theorem insertSumList_bind_lift_aux [DecidableEq (Nonplanar α)]
       exact cons_add_swap (Nonplanar.mk c') pre _
     · -- Second piece: apply IH at `pre' = mk e ::ₘ pre`, then bridge to RHS.
       have hLHS_bridge :
-          (Planar.insertSumList cs' c_pl).map (fun L' =>
+          (RoseTree.insertSumList cs' c_pl).map (fun L' =>
             Nonplanar.node a (pre + ↑((e :: L').map Nonplanar.mk))) =
-          (Planar.insertSumList cs' c_pl).map (fun L' =>
+          (RoseTree.insertSumList cs' c_pl).map (fun L' =>
             Nonplanar.node a ((Nonplanar.mk e ::ₘ pre) + ↑(L'.map Nonplanar.mk))) := by
         apply Multiset.map_congr rfl
         intro L' _
@@ -1194,9 +1194,9 @@ private theorem insertSum_node_decompose [DecidableEq (Nonplanar α)]
       A''.bind (fun d => (Nonplanar.insertSum d c).map
         (fun d' => Nonplanar.node a (d' ::ₘ A''.erase d))) := by
   -- Step 1: Substitute c = mk c_pl and A'' = ↑(cs.map mk) for planar reps.
-  obtain ⟨c_pl, rfl⟩ : ∃ c_pl : Planar α, c = Nonplanar.mk c_pl :=
+  obtain ⟨c_pl, rfl⟩ : ∃ c_pl : RoseTree α, c = Nonplanar.mk c_pl :=
     ⟨c.out, c.out_eq.symm⟩
-  obtain ⟨cs, rfl⟩ : ∃ cs : List (Planar α),
+  obtain ⟨cs, rfl⟩ : ∃ cs : List (RoseTree α),
       A'' = (↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α)) := by
     refine ⟨A''.toList.map Quotient.out, ?_⟩
     have h_cs_lift : (A''.toList.map Quotient.out).map Nonplanar.mk = A''.toList := by
@@ -1209,28 +1209,28 @@ private theorem insertSum_node_decompose [DecidableEq (Nonplanar α)]
         rw [show (Nonplanar.mk ∘ Quotient.out) hd = hd from hd.out_eq, ih]
     rw [h_cs_lift]
     exact A''.coe_toList.symm
-  -- Step 2: Reduce LHS via `node_mk_planar_list` + `mk_insertSum` +
-  -- `Planar.insertSum_node` + `Multiset.map_cons`.
-  rw [Nonplanar.node_mk_planar_list a cs, Nonplanar.mk_insertSum,
-      Planar.insertSum_node, Multiset.map_cons]
+  -- Step 2: Reduce LHS via `node_mk_tree_list` + `mk_insertSum` +
+  -- `RoseTree.insertSum_node` + `Multiset.map_cons`.
+  rw [Nonplanar.node_mk_tree_list a cs, Nonplanar.mk_insertSum,
+      RoseTree.insertSum_node, Multiset.map_cons]
   -- Step 3: Match the two cons-heads + tails separately.
   congr 1
-  · -- Heads: `mk (Planar.node a (c_pl :: cs)) = node a (mk c_pl ::ₘ ↑(cs.map mk))`
-    -- by `node_mk_planar_list`-symm + `cons_coe` (rfl).
-    rw [← Nonplanar.node_mk_planar_list a (c_pl :: cs)]
+  · -- Heads: `mk (RoseTree.node a (c_pl :: cs)) = node a (mk c_pl ::ₘ ↑(cs.map mk))`
+    -- by `node_mk_tree_list`-symm + `cons_coe` (rfl).
+    rw [← Nonplanar.node_mk_tree_list a (c_pl :: cs)]
     rfl
-  · -- Tails: `((insertSumList cs c_pl).map (Planar.node a)).map mk = bind form`.
+  · -- Tails: `((insertSumList cs c_pl).map (RoseTree.node a)).map mk = bind form`.
     rw [Multiset.map_map]
-    -- LHS bridge: `(mk ∘ Planar.node a) cs' = node a (0 + ↑(cs'.map mk))`.
-    have hLHS_eq : (Planar.insertSumList cs c_pl).map
-          (Nonplanar.mk ∘ Planar.node a) =
-        (Planar.insertSumList cs c_pl).map (fun cs' =>
+    -- LHS bridge: `(mk ∘ RoseTree.node a) cs' = node a (0 + ↑(cs'.map mk))`.
+    have hLHS_eq : (RoseTree.insertSumList cs c_pl).map
+          (Nonplanar.mk ∘ RoseTree.node a) =
+        (RoseTree.insertSumList cs c_pl).map (fun cs' =>
           Nonplanar.node a (0 + ↑(cs'.map Nonplanar.mk))) := by
       apply Multiset.map_congr rfl
       intro cs' _
-      show Nonplanar.mk (Planar.node a cs') =
+      show Nonplanar.mk (RoseTree.node a cs') =
            Nonplanar.node a (0 + ↑(cs'.map Nonplanar.mk))
-      rw [Multiset.zero_add, Nonplanar.node_mk_planar_list]
+      rw [Multiset.zero_add, Nonplanar.node_mk_tree_list]
     -- RHS bridge: drop `+ 0` inside the bind.
     have hRHS_eq :
         ((↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α))).bind (fun d =>
@@ -1440,7 +1440,7 @@ private theorem psiA_basis_node_self (a : α) (A : Multiset (Nonplanar α)) :
     psiA_basis a (Nonplanar.node a A) =
       (A.map (fun c => ιTree c)).prod := by
   unfold psiA_basis
-  rw [Nonplanar.rootLabel_node, Nonplanar.rootChildren_node]
+  rw [Nonplanar.rootValue_node, Nonplanar.rootChildren_node]
   exact if_pos rfl
 
 /-- Closed form for `psiA_basis a (node a' A)` (off-color case): `0`. -/
@@ -1448,7 +1448,7 @@ private theorem psiA_basis_node_ne (a a' : α) (h : a' ≠ a)
     (A : Multiset (Nonplanar α)) :
     psiA_basis a (Nonplanar.node a' A) = 0 := by
   unfold psiA_basis
-  rw [Nonplanar.rootLabel_node]
+  rw [Nonplanar.rootValue_node]
   exact if_neg h
 
 /-- Cocycle rule for `psiA_L` on the insertion algebra:
@@ -1546,7 +1546,7 @@ private theorem psiA_L_mul_eq [DecidableEq (Nonplanar α)]
   -- Basis case.
   intro t s
   obtain ⟨a', A', rfl⟩ : ∃ a' A', t = Nonplanar.node a' A' :=
-    ⟨t.rootLabel, t.rootChildren, (Nonplanar.node_eta t).symm⟩
+    ⟨t.rootValue, t.rootChildren, (Nonplanar.node_eta t).symm⟩
   set ιs : SL := SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s) with hιs
   rw [InsertionAlgebra.ofTree_mul_ofTree, insertSum_node_decompose,
       InsertionAlgebra.ofMultiset_cons, map_add, psiA_L_ofTree,
@@ -1793,7 +1793,7 @@ private theorem psiA_L_circByT_total_eq [DecidableEq (Nonplanar α)]
     congr 1
     -- Now: psiA_L a (circByT_total (ofTree t) B) = (psiA_L a (ofTree t)) ★ B.
     obtain ⟨a', A', rfl⟩ : ∃ a' A', t = Nonplanar.node a' A' :=
-      ⟨t.rootLabel, t.rootChildren, (Nonplanar.node_eta t).symm⟩
+      ⟨t.rootValue, t.rootChildren, (Nonplanar.node_eta t).symm⟩
     set Q : SL := (A'.map (fun c => SymmetricAlgebra.ι ℤ LL
       (InsertionAlgebra.ofTree c))).prod with hQ
     have h_circ_node :
