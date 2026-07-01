@@ -92,7 +92,7 @@ end Marks
 /-! ## The head-marked grid: the marked-grid algebra -/
 
 namespace MarkedGrid
-variable {α : Type*} (b : MarkedGrid α)
+variable {α : Type*} (b : MarkedGrid α) (bs : List (MarkedGrid α))
 
 /-- Forget the marking: the underlying pure grid of column heights. -/
 def toGrid : Grid := b.map (·.height)
@@ -110,7 +110,7 @@ def headTerminals : List α := (b.filter (·.onSpine)).map (·.terminal)
 def cell (x : α) : MarkedGrid α := [⟨x, 1, true⟩]
 
 /-- Juxtapose sibling constituents. -/
-def juxtapose (bs : List (MarkedGrid α)) : MarkedGrid α := bs.flatten
+def juxtapose : MarkedGrid α := bs.flatten
 
 /-- The **head-projection step** of the RPPR ([liberman-prince-1977]): a head edge raises the head
     by one grid mark — bump every head-spine column. -/
@@ -138,29 +138,22 @@ def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
 
 @[simp] theorem headTerminals_clear : (clear b).headTerminals = [] := by simp [clear, headTerminals]
 
-@[simp] theorem headHeights_promote :
-    (promote b).headHeights = b.headHeights.map (· + 1) := by
+@[simp] theorem headHeights_promote : (promote b).headHeights = b.headHeights.map (· + 1) := by
   induction b with
   | nil => rfl
   | cons c b ih => obtain ⟨_, _, d⟩ := c; cases d <;> simp_all [promote, headHeights]
 
-@[simp] theorem headTerminals_promote :
-    (promote b).headTerminals = b.headTerminals := by
+@[simp] theorem headTerminals_promote : (promote b).headTerminals = b.headTerminals := by
   simp only [headTerminals, promote, List.filter_map, List.map_map, Function.comp_def]
 
-@[simp] theorem toGrid_juxtapose (bs : List (MarkedGrid α)) :
-    (juxtapose bs).toGrid = bs.flatMap (·.toGrid) := by
-  simp only [juxtapose, toGrid, List.map_flatten, List.flatMap_def]
+@[simp] theorem toGrid_juxtapose : (juxtapose bs).toGrid = bs.flatMap (·.toGrid) := by
+  simp [juxtapose, toGrid, List.flatMap_def]
 
-@[simp] theorem headHeights_juxtapose (bs : List (MarkedGrid α)) :
-    (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
-  simp only [juxtapose, headHeights, List.flatten_eq_flatMap, List.filter_flatMap,
-    List.map_flatMap, id_eq]
+@[simp] theorem headHeights_juxtapose : (juxtapose bs).headHeights = bs.flatMap (·.headHeights) := by
+  simp [juxtapose, headHeights, List.flatMap_def, Function.comp_def]
 
-@[simp] theorem headTerminals_juxtapose (bs : List (MarkedGrid α)) :
-    (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
-  simp only [juxtapose, headTerminals, List.flatten_eq_flatMap, List.filter_flatMap,
-    List.map_flatMap, id_eq]
+@[simp] theorem headTerminals_juxtapose : (juxtapose bs).headTerminals = bs.flatMap (·.headTerminals) := by
+  simp [juxtapose, headTerminals, List.flatMap_def, Function.comp_def]
 
 @[simp] theorem headHeights_edge (h : Bool) (b : MarkedGrid α) :
     (edge h b).headHeights = if h then b.headHeights.map (· + 1) else [] := by
