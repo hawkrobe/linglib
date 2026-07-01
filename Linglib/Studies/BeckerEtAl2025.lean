@@ -10,7 +10,7 @@ reversal**: when an iamb would leave a phrase-final long vowel, the last two syl
 trochee instead ([becker-etal-2025] §3.1; [hayes-1995] §5.3b). The **last foot is the head foot**
 of the word, and the **primary stress is the head of the head foot** ([becker-etal-2025] p. 2365)
 — i.e. the syllable reached from the word ω by an all-head descent: the **head terminal**
-(Liberman & Prince's *designated terminal element*, `Prosody.Grid.headTerminals`).
+(Liberman & Prince's *head terminal*, `Prosody.Grid.headTerminals`).
 
 The paper's title result — *incoherent* stress ([gordon-2016]) — is that the default High tone does
 **not** dock on this head terminal but surfaces displaced, on the last syllable of a tone domain
@@ -20,7 +20,7 @@ The metrically most prominent syllable is thereby dissociated from the high-tone
 This file formalizes the **default-length metrical spine** the tonal analysis is anchored to: the
 left-to-right iambic footing (with final trochaic reversal) of words in isolation, and the
 certification that the primary stress is exactly the grid's head terminal. That a word has a
-*unique* head terminal (`Prosody.Grid.IsHeaded`) is metrical culminativity — Liberman & Prince's DTE
+*unique* head terminal (`Prosody.Grid.IsHeaded`) is metrical culminativity — head-terminal
 uniqueness ([hyman-2006]). The paper's `Culminativity-H` (§4.2) is a *distinct, tonal* constraint
 ("one violation per High tone domain with more than one foot head"), part of the deferred tone
 layer. Also deferred alongside tone: lexical long vowels (Max-μ, monosyllabic feet, §3.1), word
@@ -40,26 +40,26 @@ open Prosody Constraints OptimalityTheory
 /-- *[(a.lá:)(ma.kí:)li]* 's/he fell' ([becker-etal-2025] Fig. 1): two iambs and a stray final σ.
     The rightmost foot `(ma.kí:)` heads the word, so the long `kí:` is the primary stress. -/
 def fell : Tree :=
-  .node .om
-    [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.ft true)  [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.syl 1 false) [] ]
+  .om
+    [ .ft false [.σ 1 false, .σ 2 true],
+      .ft true  [.σ 1 false, .σ 2 true],
+      .σ 1 false ]
 
 /-- *[(tsi.ha:)(la.ma:)(kí.li)]* 'we (exclusive) fell' ([becker-etal-2025] Fig. 2): even-parity, so
     the final two short syllables reverse to a **trochee** `(kí.li)` — the head foot — and the
     initial `kí` is the primary stress. -/
 def weFell : Tree :=
-  .node .om
-    [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.ft true)  [.node (.syl 1 true)  [], .node (.syl 1 false) []] ]
+  .om
+    [ .ft false [.σ 1 false, .σ 2 true],
+      .ft false [.σ 1 false, .σ 2 true],
+      .ft true  [.σ 1 true, .σ 1 false] ]
 
 /-- *[(u.mí:)ŋi]* 'annatto' ([becker-etal-2025] Fig. 3): one iamb and a stray final σ; the long
     `mí:` is the primary stress. -/
 def annatto : Tree :=
-  .node .om
-    [ .node (.ft true) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-      .node (.syl 1 false) [] ]
+  .om
+    [ .ft true [.σ 1 false, .σ 2 true],
+      .σ 1 false ]
 
 /-! ### The grid: secondary stress on every foot head, primary on the head foot's
 
@@ -73,7 +73,7 @@ theorem gridColumns_annatto : Grid.columns annatto = [1, 3, 1] := by decide
 /-! ### Primary stress is the head terminal ([becker-etal-2025] p. 2365)
 
 Each word has a **unique head terminal** (`Grid.IsHeaded` — metrical culminativity, Liberman & Prince's
-DTE uniqueness; cf. [hyman-2006]), and it is exactly the head syllable of the head foot — the long
+head-terminal uniqueness; cf. [hyman-2006]), and it is exactly the head syllable of the head foot — the long
 `kí:`/`mí:`, or the reversed-trochee's initial `kí`. The primary stress is read off the grid's live
 column as an *element*. -/
 
@@ -82,19 +82,19 @@ theorem isHeaded_weFell  : Grid.IsHeaded weFell  := by decide
 theorem isHeaded_annatto : Grid.IsHeaded annatto := by decide
 
 /-- 's/he fell': the head terminal is the long `kí:` (head of the rightmost iamb). -/
-theorem headTerminals_fell : Grid.headTerminals fell = [.node (.syl 2 true) []] := by decide
+theorem headTerminals_fell : Grid.headTerminals fell = [.σ 2 true] := by decide
 
 /-- 'we fell': the head terminal is the reversed trochee's initial short `kí`. -/
-theorem headTerminals_weFell : Grid.headTerminals weFell = [.node (.syl 1 true) []] := by decide
+theorem headTerminals_weFell : Grid.headTerminals weFell = [.σ 1 true] := by decide
 
 /-- 'annatto': the head terminal is the long `mí:`. -/
-theorem headTerminals_annatto : Grid.headTerminals annatto = [.node (.syl 2 true) []] := by decide
+theorem headTerminals_annatto : Grid.headTerminals annatto = [.σ 2 true] := by decide
 
 /-- The same fact **declaratively** ([liberman-prince-1977]): `kí:` is the head terminal of `fell`
-    — reached from ω by an all-head descent (ω → head foot → head σ), `Grid.IsHeadTerminal` — via the
-    spec↔fold bridge `Grid.mem_headTerminals_iff`, not just by computing the list. -/
-theorem isHeadTerminal_fell : Grid.IsHeadTerminal fell (.node (.syl 2 true) []) :=
-  Grid.mem_headTerminals_iff.mp (by decide)
+    — reached from ω by an all-head descent (ω → head foot → head σ), `Grid.IsHeadTerminal` — lifted
+    from the computed list by `Grid.headTerminal_sound`, not just by computing the list. -/
+theorem isHeadTerminal_fell : Grid.IsHeadTerminal fell (.σ 2 true) :=
+  Grid.headTerminal_sound (by decide)
 
 /-! ### The trochaic reversal is OT-optimal ([becker-etal-2025] §3.1, Table 2)
 
@@ -115,12 +115,12 @@ inductive FootingCand where
 
 /-- Each candidate as a footed tree (rightmost foot the head). -/
 def FootingCand.toTree : FootingCand → Tree
-  | .twoIambs    => .node .om [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-                                .node (.ft true)  [.node (.syl 1 false) [], .node (.syl 2 true) []] ]
-  | .iambStrays  => .node .om [ .node (.ft true)  [.node (.syl 1 false) [], .node (.syl 2 true) []],
-                                .node (.syl 1 false) [], .node (.syl 1 false) [] ]
-  | .iambTrochee => .node .om [ .node (.ft false) [.node (.syl 1 false) [], .node (.syl 2 true) []],
-                                .node (.ft true)  [.node (.syl 1 true)  [], .node (.syl 1 false) []] ]
+  | .twoIambs    => .om [ .ft false [.σ 1 false, .σ 2 true],
+                                .ft true  [.σ 1 false, .σ 2 true] ]
+  | .iambStrays  => .om [ .ft true  [.σ 1 false, .σ 2 true],
+                                .σ 1 false, .σ 1 false ]
+  | .iambTrochee => .om [ .ft false [.σ 1 false, .σ 2 true],
+                                .ft true  [.σ 1 true, .σ 1 false] ]
 
 /-- **Parse-σ** ([becker-etal-2025] (1)): one mark per unparsed (stray) σ — a σ-leaf under ω. -/
 def cParse : Constraint FootingCand := fun c => match c.toTree with
@@ -134,9 +134,9 @@ def cIamb : Constraint FootingCand := fun c => match c.toTree with
 /-- **`*V:]φ`** ([becker-etal-2025] (3)): one mark for a long vowel in the **phrase**-final σ (for a
     one-word phrase, the word-final σ). -/
 def cStarV : Constraint FootingCand := fun c =>
-  match (Grid.columnsLive c.toTree).getLast? with
-  | some col => if decide (col.leaf.label.weight? = some 2) then 1 else 0
-  | none     => 0
+  match (Grid.terminals c.toTree).getLast? with
+  | some leaf => if decide (leaf.label.weight? = some 2) then 1 else 0
+  | none      => 0
 
 def candidates : List FootingCand := [.twoIambs, .iambStrays, .iambTrochee]
 theorem candidates_ne : candidates ≠ [] := by decide

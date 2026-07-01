@@ -117,6 +117,30 @@ def depthMaxList : List (Planar α) → Nat
   | t :: ts => max (depth t) (depthMaxList ts)
 end
 
+/-- Node equation for `depth`: one edge above the deepest child. -/
+theorem depth_node (a : α) (cs : List (Planar α)) :
+    depth (.node a cs) = 1 + depthMaxList cs := rfl
+
+/-- Each child's depth is at most the children's max depth. -/
+theorem depth_le_depthMaxList {c : Planar α} {cs : List (Planar α)} (h : c ∈ cs) :
+    c.depth ≤ depthMaxList cs := by
+  induction cs with
+  | nil => cases h
+  | cons a as ih =>
+    rw [show depthMaxList (a :: as) = max a.depth (depthMaxList as) from rfl]
+    rcases List.mem_cons.mp h with rfl | h
+    · exact le_max_left _ _
+    · exact (ih h).trans (le_max_right _ _)
+
+/-- The children's max depth is bounded by any common bound on the child depths. -/
+theorem depthMaxList_le {cs : List (Planar α)} {n : ℕ} (h : ∀ c ∈ cs, c.depth ≤ n) :
+    depthMaxList cs ≤ n := by
+  induction cs with
+  | nil => exact Nat.zero_le n
+  | cons a as ih =>
+    rw [show depthMaxList (a :: as) = max a.depth (depthMaxList as) from rfl]
+    exact max_le (h a (List.mem_cons_self ..)) (ih fun c hc => h c (List.mem_cons_of_mem _ hc))
+
 /-- The **arity** of the root vertex: number of children. Leaves have
     arity 0. -/
 def arity : Planar α → Nat
@@ -415,5 +439,24 @@ instance {α : Type*} : Core.Order.IsFiniteBranching (Planar α) :=
       have := List.sizeOf_lt_of_mem hc
       simp only [Planar.node.sizeOf_spec]
       omega
+
+/-- **Structural induction on a planar rose tree.** To prove `motive t`, prove it for `node a cs`
+given `motive` for every child. This is the nested-`List` analogue of the recursor a non-nested
+inductive gets for free; tagged `@[induction_eliminator]` so plain `induction t with | node a cs ih`
+uses it on a bare `Planar α` (avoiding the `Branching.inductionOn` + destructure +
+membership-bridge boilerplate). Note: `induction` on an *abbreviation* of `Planar` rejects it as a
+nested inductive before the eliminator is consulted, so abbrev consumers must go through
+`induction t using RootedTree.Planar.recAux`. -/
+@[elab_as_elim, induction_eliminator]
+theorem recAux {α : Type*} {motive : Planar α → Prop}
+    (node : ∀ (a : α) (cs : List (Planar α)), (∀ c ∈ cs, motive c) → motive (.node a cs))
+    (t : Planar α) : motive t :=
+  match t with
+  | .node a cs => node a cs fun c hc => have := hc; recAux node c
+termination_by t
+decreasing_by
+  have := List.sizeOf_lt_of_mem hc
+  simp only [Planar.node.sizeOf_spec]
+  omega
 
 end RootedTree.Planar

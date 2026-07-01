@@ -135,7 +135,8 @@ Each `where`-aux `goList` is the matching `List` combinator over its `go`
 `Branching.inductionOn` over the carrier (the principle `Tree` already rides,
 `Core/Order/Branching.lean`) plus standard `List` reasoning. -/
 
-private theorem maximalProjections.goList_eq (p : Constituent → Bool) (under : Bool) (cs : List Tree) :
+private theorem maximalProjections.goList_eq (p : Constituent → Bool) (under : Bool)
+    (cs : List Tree) :
     maximalProjections.goList p under cs = cs.flatMap (maximalProjections.go p under) := by
   induction cs with
   | nil => rfl
@@ -162,9 +163,8 @@ private theorem noLevelRec.goList_eq (p : Constituent → Bool) (cs : List Tree)
 private theorem mem_maxProj_go {p : Constituent → Bool} {s : Tree} :
     ∀ (under : Bool) (t : Tree), s ∈ maximalProjections.go p under t → p s.label = true := by
   intro under t
-  induction t using Core.Order.Branching.inductionOn generalizing under with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux generalizing under with
+  | node a cs IH =>
     intro hs
     rw [maximalProjections.go] at hs
     split at hs
@@ -174,7 +174,7 @@ private theorem mem_maxProj_go {p : Constituent → Bool} {s : Tree} :
       simpa using hcond.2
     · rw [maximalProjections.goList_eq, List.mem_flatMap] at hs
       obtain ⟨c, hc, hsc⟩ := hs
-      exact IH c (by simpa using hc) _ hsc
+      exact IH c hc _ hsc
 
 /-- Every maximal `p`-projection is a `p`-node. -/
 theorem mem_maximalProjections_level {p : Constituent → Bool} {s t : Tree}
@@ -183,9 +183,8 @@ theorem mem_maximalProjections_level {p : Constituent → Bool} {s t : Tree}
 private theorem isMin_go {p : Constituent → Bool} {s : Tree} :
     ∀ t : Tree, s ∈ minimalProjections.go p t → IsMinimalProj p s := by
   intro t
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     intro hs
     rw [minimalProjections.go, List.mem_append, minimalProjections.goList_eq,
       List.mem_flatMap] at hs
@@ -193,7 +192,7 @@ private theorem isMin_go {p : Constituent → Bool} {s : Tree} :
     · split at h
       · rename_i hcond; rw [List.mem_singleton] at h; subst h; exact hcond
       · simp only [List.not_mem_nil] at h
-    · exact IH c (by simpa using hc) hsc
+    · exact IH c hc hsc
 
 /-- Minimality is **intrinsic**: a node returned as a minimal ℓ-projection of any tree is
     itself a minimal ℓ-projection (`IsMinimalProj`) — it does not depend on the ambient tree.
@@ -217,9 +216,8 @@ theorem mem_minimalProjections_level {p : Constituent → Bool} {s t : Tree}
 private theorem noAny_go (p : Constituent → Bool) :
     ∀ t : Tree, anyAtLevel.go p t = false → minimalProjections.go p t = [] := by
   intro t
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     intro h
     simp only [anyAtLevel.go, Bool.or_eq_false_iff] at h
     simp only [minimalProjections.go, isMinimalProj, h.1, Bool.false_and]
@@ -227,15 +225,14 @@ private theorem noAny_go (p : Constituent → Bool) :
     rw [minimalProjections.goList_eq, List.flatMap_eq_nil_iff]
     intro c hc
     rw [anyAtLevel.goList_eq, List.any_eq_false] at h
-    exact IH c (by simpa using hc) (by simpa [anyAtLevel] using h.2 c hc)
+    exact IH c hc (by simpa [anyAtLevel] using h.2 c hc)
 
 private theorem maxMin_go (p : Constituent → Bool) :
     ∀ t : Tree, noLevelRec.go p t = true →
       maximalProjections.go p false t = minimalProjections.go p t := by
   intro t
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     intro h
     simp only [noLevelRec.go, Bool.and_eq_true] at h
     obtain ⟨h1, h2⟩ := h
@@ -256,7 +253,7 @@ private theorem maxMin_go (p : Constituent → Bool) :
       rw [maximalProjections.goList_eq, minimalProjections.goList_eq]
       refine List.flatMap_congr fun c hc => ?_
       rw [noLevelRec.goList_eq, List.all_eq_true] at h2
-      exact IH c (by simpa using hc) (h2 c (by simpa using hc))
+      exact IH c hc (h2 c hc)
 
 /-- **No-Recursion collapses the projections.** Under transitive No-Recursion at `ℓ`
     (`noLevelRec`: no ℓ-node properly dominates an ℓ-node), the topmost and bottommost
@@ -331,6 +328,52 @@ def IsWord (t : Tree) : Prop := isWordTree t
 instance (t : Tree) : Decidable (IsWord t) :=
   inferInstanceAs (Decidable (isWordTree t = true))
 
+/-- `isWordTree.goList` as a `List.all` over children. -/
+theorem isWordTree.goList_all (cs : List Tree) :
+    isWordTree.goList cs
+      = cs.all (fun c => isFootTree c || isWordTree.go c
+          || (c.label.isSyl && c.children.isEmpty)) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [isWordTree.goList, List.all_cons, ih]
+
+/-- A non-recursive word is an ω over well-formed feet and stray σ-leaves — the structural content
+    of `IsWord ∧ noRec = 0`, used to read the grid off a word. -/
+theorem isWord_children {a : Constituent} {cs : List Tree}
+    (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
+    a.isOm = true ∧ ∀ c ∈ cs, isFootTree c = true ∨ (c.label.isSyl = true ∧ c.children = []) := by
+  simp only [IsWord, isWordTree, isWordTree.go, Bool.and_eq_true,
+    isWordTree.goList_all, List.all_eq_true] at hw
+  obtain ⟨ha, hall⟩ := hw
+  obtain rfl : a = .om := by cases a <;> simp_all [Constituent.isOm]
+  have hr' : (cs.filter (fun c => Constituent.sameLevel c.label .om)).length = 0 := by
+    have e : noRec (.node (.om : Constituent) cs)
+        = (cs.filter (fun c => Constituent.sameLevel c.label .om)).length + noRec.goList cs := rfl
+    rw [hr] at e; omega
+  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.label .om = false := by
+    intro c hc
+    by_contra h
+    rw [Bool.not_eq_false] at h
+    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.label .om) := by
+      rw [List.mem_filter]; exact ⟨hc, h⟩
+    rw [List.length_eq_zero_iff] at hr'
+    rw [hr'] at hmem; exact List.not_mem_nil hmem
+  refine ⟨ha, fun c hc => ?_⟩
+  have hdisj := hall c hc
+  have hsl := hnoω c hc
+  obtain ⟨cl, ccs⟩ := c
+  simp only [RootedTree.Planar.label_node] at hsl
+  have hcω : cl.isOm = false := by
+    cases cl <;> simp_all [Constituent.sameLevel, Constituent.isOm]
+  rw [show isWordTree.go (.node cl ccs)
+        = (cl.isOm && isWordTree.goList ccs) from rfl, hcω] at hdisj
+  simp only [Bool.false_and, Bool.or_false, Bool.or_eq_true, Bool.and_eq_true,
+    RootedTree.Planar.children_node, List.isEmpty_iff,
+    RootedTree.Planar.label_node] at hdisj ⊢
+  rcases hdisj with h | h
+  · exact Or.inl h
+  · exact Or.inr h
+
 /-- A well-formed prosodic word: the prosodic-tree carrier restricted to the legal
     recursive ω-trees (`IsWord`). -/
 abbrev Word := {t : Tree // IsWord t}
@@ -402,15 +445,15 @@ theorem MaximalWord.minimal (hne : feet t ≠ []) (h : MaximalWord measure t) :
 /-! ### Worked examples -/
 
 -- A bimoraic foot, the perfect word over it, and a recursive (ω-over-ω) word.
-private def exFoot : Tree := .node .ft [.node (.syl 2) []]
-private def perfectW : Tree := .node .om [exFoot]
-private def recursiveW : Tree := .node .om [.node (.syl 1) [], .node .om [exFoot]]
+private def exFoot : Tree := .ft false [.σ 2]
+private def perfectW : Tree := .om [exFoot]
+private def recursiveW : Tree := .om [.σ 1, .om [exFoot]]
 
 -- Well-formedness: a flat ω over a foot and a recursive ω are both legal words — ω-over-ω
 -- is admitted (No-Recursion is violable). A φ-node inside an ω violates Layeredness.
 example : IsWord perfectW := by decide
 example : IsWord recursiveW := by decide
-example : ¬ IsWord (.node .om [.node .ph []] : Tree) := by decide
+example : ¬ IsWord (.om [.node .ph []] : Tree) := by decide
 
 -- `recursionCount` reads the No-Recursion cost off the carrier: the recursive word scores
 -- one ω-over-ω, the flat one zero.
