@@ -162,9 +162,8 @@ private theorem noLevelRec.goList_eq (p : Constituent → Bool) (cs : List Tree)
 private theorem mem_maxProj_go {p : Constituent → Bool} {s : Tree} :
     ∀ (under : Bool) (t : Tree), s ∈ maximalProjections.go p under t → p s.label = true := by
   intro under t
-  induction t using Core.Order.Branching.inductionOn generalizing under with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux generalizing under with
+  | node a cs IH =>
     intro hs
     rw [maximalProjections.go] at hs
     split at hs
@@ -174,7 +173,7 @@ private theorem mem_maxProj_go {p : Constituent → Bool} {s : Tree} :
       simpa using hcond.2
     · rw [maximalProjections.goList_eq, List.mem_flatMap] at hs
       obtain ⟨c, hc, hsc⟩ := hs
-      exact IH c (by simpa using hc) _ hsc
+      exact IH c hc _ hsc
 
 /-- Every maximal `p`-projection is a `p`-node. -/
 theorem mem_maximalProjections_level {p : Constituent → Bool} {s t : Tree}
@@ -183,9 +182,8 @@ theorem mem_maximalProjections_level {p : Constituent → Bool} {s t : Tree}
 private theorem isMin_go {p : Constituent → Bool} {s : Tree} :
     ∀ t : Tree, s ∈ minimalProjections.go p t → IsMinimalProj p s := by
   intro t
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     intro hs
     rw [minimalProjections.go, List.mem_append, minimalProjections.goList_eq,
       List.mem_flatMap] at hs
@@ -193,7 +191,7 @@ private theorem isMin_go {p : Constituent → Bool} {s : Tree} :
     · split at h
       · rename_i hcond; rw [List.mem_singleton] at h; subst h; exact hcond
       · simp only [List.not_mem_nil] at h
-    · exact IH c (by simpa using hc) hsc
+    · exact IH c hc hsc
 
 /-- Minimality is **intrinsic**: a node returned as a minimal ℓ-projection of any tree is
     itself a minimal ℓ-projection (`IsMinimalProj`) — it does not depend on the ambient tree.
@@ -217,9 +215,8 @@ theorem mem_minimalProjections_level {p : Constituent → Bool} {s t : Tree}
 private theorem noAny_go (p : Constituent → Bool) :
     ∀ t : Tree, anyAtLevel.go p t = false → minimalProjections.go p t = [] := by
   intro t
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     intro h
     simp only [anyAtLevel.go, Bool.or_eq_false_iff] at h
     simp only [minimalProjections.go, isMinimalProj, h.1, Bool.false_and]
@@ -227,15 +224,14 @@ private theorem noAny_go (p : Constituent → Bool) :
     rw [minimalProjections.goList_eq, List.flatMap_eq_nil_iff]
     intro c hc
     rw [anyAtLevel.goList_eq, List.any_eq_false] at h
-    exact IH c (by simpa using hc) (by simpa [anyAtLevel] using h.2 c hc)
+    exact IH c hc (by simpa [anyAtLevel] using h.2 c hc)
 
 private theorem maxMin_go (p : Constituent → Bool) :
     ∀ t : Tree, noLevelRec.go p t = true →
       maximalProjections.go p false t = minimalProjections.go p t := by
   intro t
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     intro h
     simp only [noLevelRec.go, Bool.and_eq_true] at h
     obtain ⟨h1, h2⟩ := h
@@ -256,7 +252,7 @@ private theorem maxMin_go (p : Constituent → Bool) :
       rw [maximalProjections.goList_eq, minimalProjections.goList_eq]
       refine List.flatMap_congr fun c hc => ?_
       rw [noLevelRec.goList_eq, List.all_eq_true] at h2
-      exact IH c (by simpa using hc) (h2 c (by simpa using hc))
+      exact IH c hc (h2 c hc)
 
 /-- **No-Recursion collapses the projections.** Under transitive No-Recursion at `ℓ`
     (`noLevelRec`: no ℓ-node properly dominates an ℓ-node), the topmost and bottommost

@@ -436,4 +436,20 @@ instance {α : Type*} : Core.Order.IsFiniteBranching (Planar α) :=
       simp only [Planar.node.sizeOf_spec]
       omega
 
+/-- **Structural induction on a planar rose tree.** To prove `motive t`, prove it for `node a cs`
+given `motive` for every child. This is the nested-`List` analogue of the recursor a non-nested
+inductive gets for free; tagged `@[induction_eliminator]` so plain `induction t with | node a cs ih`
+uses it (avoiding the `Branching.inductionOn` + destructure + membership-bridge boilerplate). -/
+@[elab_as_elim, induction_eliminator]
+theorem recAux {α : Type*} {motive : Planar α → Prop}
+    (node : ∀ (a : α) (cs : List (Planar α)), (∀ c ∈ cs, motive c) → motive (.node a cs))
+    (t : Planar α) : motive t :=
+  match t with
+  | .node a cs => node a cs fun c hc => have := hc; recAux node c
+termination_by t
+decreasing_by
+  have := List.sizeOf_lt_of_mem hc
+  simp only [Planar.node.sizeOf_spec]
+  omega
+
 end RootedTree.Planar

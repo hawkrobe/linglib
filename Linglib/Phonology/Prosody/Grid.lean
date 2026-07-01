@@ -106,8 +106,7 @@ def rows (g : Grid) : Marks := (List.range (peak g)).map (fun r => g.map (r < ·
 theorem rows_isContinuous (g : Grid) : Marks.IsContinuous (rows g) := by
   rw [Marks.IsContinuous, rows, List.isChain_map, List.isChain_iff_getElem]
   intro i _
-  simp only [List.getElem_range]
-  rw [Marks.rowSubmask, List.zip_map', List.all_map, List.all_eq_true]
+  simp only [List.getElem_range, Marks.rowSubmask, List.zip_map', List.all_map, List.all_eq_true]
   intro h _
   by_cases hr : i + 1 < h <;> simp [hr]
   omega
@@ -313,9 +312,8 @@ inductive IsHeadTerminal : Tree → Tree → Prop
     lists give the converse concretely, so the full iff is not needed.) -/
 theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
     IsHeadTerminal t leaf := by
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     rw [headTerminals_node] at h
     split at h
     · rename_i hσ; obtain ⟨hσ, rfl⟩ := hσ
@@ -324,7 +322,7 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
     · rw [List.mem_flatMap] at h
       obtain ⟨c, hc, hmem⟩ := h
       by_cases hh : c.label.isHead = true
-      · rw [if_pos hh] at hmem; exact .head hc hh (IH c (by simpa using hc) hmem)
+      · rw [if_pos hh] at hmem; exact .head hc hh (IH c hc hmem)
       · rw [if_neg hh] at hmem; exact absurd hmem List.not_mem_nil
 
 /-! ## Head-preservation: the foot commuting square
@@ -399,9 +397,8 @@ private theorem depth_word_child_le {ch : Tree}
 /-- Grid column heights are positive and bounded by the tree depth: the RPPR count is `≥ 1` and
     grows by at most one per head edge. -/
 private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.depth := by
-  induction t using Core.Order.Branching.inductionOn with
-  | ih t IH =>
-    obtain ⟨a, cs⟩ := t
+  induction t using RootedTree.Planar.recAux with
+  | node a cs IH =>
     rw [columns_node, show RootedTree.Planar.depth (.node a cs)
           = 1 + RootedTree.Planar.depthMaxList cs from rfl]
     split
@@ -413,12 +410,12 @@ private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c �
       cases hh : ch.label.isHead with
       | false =>
         simp only [hh, MarkedGrid.edge_false, MarkedGrid.toGrid_clear] at hc
-        have := IH ch (by simpa using hch) c hc; omega
+        have := IH ch hch c hc; omega
       | true =>
         simp only [hh, MarkedGrid.edge_true, MarkedGrid.promote, MarkedGrid.toGrid, List.map_map,
           List.mem_map] at hc
         obtain ⟨x, hx, rfl⟩ := hc
-        have := IH ch (by simpa using hch) x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
+        have := IH ch hch x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
         by_cases hs : x.onSpine <;> simp [hs] <;> omega
 
 /-- Head-terminal heights are a sublist of the columns. -/
