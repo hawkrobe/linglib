@@ -3,6 +3,7 @@ import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
+import Linglib.Semantics.Degree.Defs
 import Linglib.Processing.VisualWorld
 
 /-!
@@ -125,19 +126,19 @@ instance : HasDisplayKind Cell where
 
 /-- The perceptual domain targeted by Exps 2 and 3 (scalar size adjectives:
     "tall", "short", "long"). Cross-study bridges use this to connect
-    Sedivy's findings to the comparison-class typology in
+    Sedivy's findings to the perceptual-domain typology in
     `Features.PropertyDomain`. Exp 1's intersective adjectives (color,
     material, shape) live in different domains and are not summarised
     here — see the docstring for the per-experiment breakdown. -/
 def adjDomain : Features.PropertyDomain := .size
 
-/-- The size domain requires comparison-class binding, which is the
-    structural prerequisite for Bierwisch's lexical account of the
-    contrast effect (§5 of [sedivy-etal-1999]). This is not a
-    stipulation: it follows from `Features.PropertyDomain.requiresComparisonClass`
-    by reduction. -/
-theorem adjDomain_requires_comparison_class :
-    Features.PropertyDomain.requiresComparisonClass adjDomain = true := rfl
+/-- Scalar size adjectives are relative gradable adjectives, interpreted
+    against a comparison class ([kennedy-2007], [kennedy-mcnally-2005]) —
+    the structural prerequisite for Bierwisch's lexical account of the
+    contrast effect (§5 of [sedivy-etal-1999]). -/
+def adjClass : Semantics.Degree.AdjectiveClass := .relativeGradable
+
+theorem adjClass_is_relative : adjClass.IsRelative := rfl
 
 -- ============================================================================
 -- §2. Norming Data (Table 5)
@@ -288,14 +289,13 @@ theorem trivial_satisfies_pattern :
 
 /-! The lexical-semantic account of the contrast effect ([bierwisch-1989],
 adopted in §5 of [sedivy-etal-1999]) places a free comparison-class
-variable in the lexical entry of every scalar adjective. The
-`Features.PropertyDomain` infrastructure flags this with
-`requiresComparisonClass`; the connection is made formal by
-`adjDomain_requires_comparison_class` above.
+variable in the lexical entry of every scalar adjective. Scalar adjectives
+are relative gradable adjectives ([kennedy-2007]); `adjClass_is_relative`
+records this via `Semantics.Degree.AdjectiveClass.IsRelative`.
 
 Note: Exp 1B nonetheless found contrast effects with intersective adjectives,
 attributed to *referential narrowing* rather than comparison-class binding.
-The two mechanisms are theoretically distinct; `requiresComparisonClass`
-captures only the comparison-class route. -/
+The two mechanisms are theoretically distinct; the comparison-class route
+covers only the former. -/
 
 end SedivyEtAl1999

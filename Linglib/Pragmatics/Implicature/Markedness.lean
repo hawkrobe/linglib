@@ -358,7 +358,7 @@ structure MAlternativeSet where
   /-- The unmarked (cheaper) form -/
   unmarked : String
   /-- The dimension they share (e.g., .height) -/
-  dimension : Features.Dimension
+  dimension : Semantics.Gradability.Dimension
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/
@@ -386,7 +386,7 @@ def generateMAlternatives (adj1 adj2 : GradableAdjWithMorphology)
       some {
         marked := markedForm
         unmarked := unmarkedForm
-        dimension := adj1.dimension
+        dimension := adj1.dimension.getD .unspecified
         costDifference := Markedness.costDifference
         construction := construction
       }

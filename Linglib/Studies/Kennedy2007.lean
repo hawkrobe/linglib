@@ -47,8 +47,8 @@ central claims against the degree substrate and the English adjective Fragment.
 * `k2007_matrix_agrees_with_typology`, `k2007_modifier_data_agrees`,
   `pipeline_agrees_with_measure` — the matrix agrees with the per-adjective
   typology data and with the `DirectedMeasure` / `LicensingPipeline` substrate.
-* `tall_cc_convergence` (etc.) — scale-structure and property-domain paths
-  agree on comparison-class sensitivity for each Fragment adjective.
+* `tall_requires_cc`, `full_no_cc` (etc.) — comparison-class sensitivity
+  read off each Fragment adjective's scale structure.
 -/
 
 namespace Kennedy2007
@@ -338,7 +338,8 @@ def wetTypology : AdjectiveTypologyDatum :=
   { adjective := "wet"
   , classification := .absoluteMinimum
   , scale := "wetness"
-  , scaleType := .lowerBounded  -- matches `Adjectival.wet.scaleType`
+  , scaleType := .lowerBounded  -- Kennedy's datum; the Fragment models this as
+                                -- closed + lower pole (same absoluteMinimum class)
   , naturalWithSlightly := true  -- "slightly wet"
   , naturalWithCompletely := false  -- "??completely wet"
   , thresholdShifts := false
@@ -360,7 +361,8 @@ def bentTypology : AdjectiveTypologyDatum :=
   { adjective := "bent"
   , classification := .absoluteMinimum
   , scale := "bentness"
-  , scaleType := .lowerBounded  -- matches `Adjectival.bent.scaleType`
+  , scaleType := .lowerBounded  -- Kennedy's datum; the Fragment models this as
+                                -- closed + lower pole (same absoluteMinimum class)
   , naturalWithSlightly := true   -- "slightly bent"
   , naturalWithCompletely := false -- "??completely bent" (odd)
   , thresholdShifts := false
@@ -560,17 +562,15 @@ theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Degree max)
     (adjMeasure μ full).IsLicensed :=
   closedAdj_licensed μ full rfl
 
-/-- "wet" (lower-bounded) → DirectedMeasure licenses. -/
+/-- "wet" (closed scale) → DirectedMeasure licenses. -/
 theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ wet).IsLicensed := by
-  simp only [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.IsLicensed, wet, Boundedness.IsLicensed]
+    (adjMeasure μ wet).IsLicensed :=
+  closedAdj_licensed μ wet rfl
 
-/-- "dry" (upper-bounded) → DirectedMeasure licenses. -/
+/-- "dry" (closed scale) → DirectedMeasure licenses. -/
 theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ dry).IsLicensed := by
-  simp only [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.IsLicensed, dry, Boundedness.IsLicensed]
+    (adjMeasure μ dry).IsLicensed :=
+  closedAdj_licensed μ dry rfl
 
 /-! #### DirectedMeasure → data bridges -/
 
@@ -601,11 +601,11 @@ theorem adj_pipeline_tall :
 theorem adj_pipeline_full :
     LicensingPipeline.IsLicensed full.scaleType := trivial
 
-/-- "wet" through the universal pipeline: lowerBounded → licensed. -/
+/-- "wet" through the universal pipeline: closed (endpoint) → licensed. -/
 theorem adj_pipeline_wet :
     LicensingPipeline.IsLicensed wet.scaleType := trivial
 
-/-- "dry" through the universal pipeline: upperBounded → licensed. -/
+/-- "dry" through the universal pipeline: closed (endpoint) → licensed. -/
 theorem adj_pipeline_dry :
     LicensingPipeline.IsLicensed dry.scaleType := trivial
 
@@ -619,72 +619,59 @@ theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree 
 
 /-! #### Scale structure → comparison-class sensitivity
 
-[kennedy-2007]'s scale structure and `PropertyDomain.requiresComparisonClass`
-are two independent classifications that converge on the same prediction for
-whether an adjective's standard depends on contextual domain information:
+Whether an adjective's standard depends on contextual domain information is
+read off its scale structure ([kennedy-2007]): `scaleType → interpretiveEconomy
+→ PositiveStandard → PositiveStandard.RequiresComparisonClass`. An open scale
+yields a contextual **s** (requires a comparison class); a closed scale fixes
+the standard at an endpoint via Interpretive Economy.
 
-- **Scale-structure path** ([kennedy-2007]): `scaleType → interpretiveEconomy
-  → PositiveStandard → PositiveStandard.RequiresComparisonClass`.
-  Open scale → contextual **s** → requires a comparison class.
-- **Domain path** ([sedivy-etal-1999]): `dimension.domain →
-  PropertyDomain.requiresComparisonClass`.
+Kennedy argues that the comparison class is descriptively real but NOT a
+semantic argument of *pos*; it feeds into **s** contextually rather than as a
+constituent of logical form. -/
 
-Kennedy argues (§2.3) that the comparison class is descriptively real but NOT a
-semantic argument of *pos*; `requiresComparisonClass` tracks whether contextual
-domain information is needed — compatible with that view, since the information
-feeds into **s** contextually rather than as a constituent of logical form. For
-every concrete Fragment adjective, the two paths agree. -/
+/-- "tall": open scale ⇒ CC-dependence. -/
+theorem tall_requires_cc :
+    (interpretiveEconomy tall.scaleType).RequiresComparisonClass := trivial
 
-/-- "tall": both paths predict CC-dependence. -/
-theorem tall_cc_convergence :
-    (interpretiveEconomy tall.scaleType).RequiresComparisonClass ∧
-    tall.dimension.domain.requiresComparisonClass = true :=
-  ⟨trivial, rfl⟩
+/-- "full": maximum-standard (closed scale) ⇒ CC-independence. -/
+theorem full_no_cc :
+    ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass := id
 
-/-- "full": both paths predict CC-independence. -/
-theorem full_no_cc_convergence :
-    ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass ∧
-    full.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+/-- "wet": closed scale ⇒ endpoint standard ⇒ CC-independence. -/
+theorem wet_no_cc :
+    ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass := id
 
-/-- "wet": both paths predict CC-independence
-    (lower-bounded → endpoint standard; state domain). -/
-theorem wet_no_cc_convergence :
-    ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass ∧
-    wet.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+/-- "dry": closed scale ⇒ endpoint standard ⇒ CC-independence. -/
+theorem dry_no_cc :
+    ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass := id
 
-/-- "dry": both paths predict CC-independence
-    (upper-bounded → endpoint standard; state domain). -/
-theorem dry_no_cc_convergence :
-    ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass ∧
-    dry.dimension.domain.requiresComparisonClass = false :=
-  ⟨id, rfl⟩
+/-! #### MPA classification ([beltrama-2025]) -/
 
-/-! #### MPA licensing ([beltrama-2025]) -/
+/-- MPAs are the mildly-positive class: an open `.value` scale carrying a
+    functional (necessity) standard via `standardOverride`. Their special status
+    is the standard, not scale boundedness — so on scale shape they pattern with
+    the relative adjectives (not endpoint-licensed), and their resistance to
+    *very*/*extremely* is pragmatic (conflicts with the middling inference). -/
+theorem mpa_mildly_positive :
+    decent.adjectiveClass = .mildlyPositive ∧
+    acceptable.adjectiveClass = .mildlyPositive ∧
+    adequate.adjectiveClass = .mildlyPositive := ⟨rfl, rfl, rfl⟩
 
-/-- MPAs (lower-bounded scale) are licensed by the pipeline, just like *wet*.
-    Their resistance to *very*/*extremely* is pragmatic (conflicts with the
-    middling inference), not structural. -/
-theorem mpa_licensed :
-    LicensingPipeline.IsLicensed decent.scaleType ∧
-    LicensingPipeline.IsLicensed acceptable.scaleType ∧
-    LicensingPipeline.IsLicensed adequate.scaleType := ⟨trivial, trivial, trivial⟩
-
-/-- MPAs and *good* have the same scale-structure licensing status
-    (both lower-bounded → licensed). Their difference is in standard type
-    (functional vs contextual), not in structural licensing. -/
+/-- MPAs and *good* share scale-structure licensing status: both sit on the open
+    `.value` scale, so neither is endpoint-licensed. Their difference is in
+    standard type (functional vs contextual), not in structural licensing. -/
 theorem mpa_good_same_licensing :
     LicensingPipeline.IsLicensed decent.scaleType ↔
     LicensingPipeline.IsLicensed good.scaleType := Iff.rfl
 
-/-- IE path diverges for MPAs: lower-bounded → minEndpoint, but MPAs actually
-    receive a functional standard. This is a genuine exception to Interpretive
-    Economy, distinct from *good*'s exception. -/
+/-- IE path diverges for MPAs: the open-scale shape-default is a *contextual*
+    standard (`interpretiveEconomy .open_`), yet MPAs actually receive a
+    *functional* standard via `standardOverride`. A genuine exception to
+    Interpretive Economy, distinct from *good*'s (which keeps the contextual
+    default). -/
 theorem mpa_ie_exception :
-    (interpretiveEconomy decent.scaleType) = .minEndpoint ∧
-    ¬ (interpretiveEconomy decent.scaleType).RequiresComparisonClass ∧
-    decent.dimension.domain.requiresComparisonClass = true := ⟨rfl, id, rfl⟩
+    interpretiveEconomy decent.scaleType = .contextual ∧
+    decent.standard = .functional := ⟨rfl, rfl⟩
 
 /-! #### Modifier-class matrix consistency (eq. (61)) -/
 
@@ -740,17 +727,22 @@ theorem tall_scaleType_consistency :
 theorem full_scaleType_consistency :
     fullTypology.scaleType = full.scaleType := rfl
 
-/-- "wet" (lower-bounded): Data scaleType matches Fragment scaleType. -/
-theorem wet_scaleType_consistency :
-    wetTypology.scaleType = wet.scaleType := rfl
+/-- "wet": Fragment's derived Kennedy class matches the paper typology datum.
+    The raw `Boundedness` labels now differ — the Fragment models wetness as one
+    closed scale with `wet` at the lower pole, where Kennedy's datum labels it
+    lower-bounded — but both yield the same absolute-minimum class. -/
+theorem wet_class_consistency :
+    wet.adjectiveClass = wetTypology.classification := rfl
 
 /-- "straight" (closed): Data scaleType matches Fragment scaleType. -/
 theorem straight_scaleType_consistency :
     straightTypology.scaleType = straight.scaleType := rfl
 
-/-- "bent" (lower-bounded): Data scaleType matches Fragment scaleType. -/
-theorem bent_scaleType_consistency :
-    bentTypology.scaleType = bent.scaleType := rfl
+/-- "bent": Fragment's derived Kennedy class matches the paper typology datum
+    (closed + lower pole vs Kennedy's lower-bounded label; same absolute-minimum
+    class). -/
+theorem bent_class_consistency :
+    bent.adjectiveClass = bentTypology.classification := rfl
 
 /-- "tall" (open scale): pipeline blocked = "completely" doesn't work with RGA. -/
 theorem tall_completely_agrees :

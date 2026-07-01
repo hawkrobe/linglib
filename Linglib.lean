@@ -1495,10 +1495,8 @@ import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Semantics.Aspect.Dimension
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.PrecedenceClosure
-import Linglib.Semantics.Aspect.ScalarTelicity
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
@@ -1695,6 +1693,7 @@ import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Gradability.Classification
 import Linglib.Semantics.Gradability.ClauseEmbedding
 import Linglib.Semantics.Gradability.Delineation
+import Linglib.Semantics.Gradability.Dimension
 import Linglib.Semantics.Gradability.GradableNouns
 import Linglib.Semantics.Gradability.Hierarchy
 import Linglib.Semantics.Gradability.Intensification
@@ -2752,6 +2751,7 @@ import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
+import Linglib.Syntax.Adjective.Basic
 import Linglib.Syntax.Adposition.Basic
 import Linglib.Syntax.Adposition.Order
 import Linglib.Syntax.Adposition.Spatial

@@ -1,5 +1,10 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Semantics.Aspect.ScalarTelicity
+import Linglib.Semantics.Gradability.Dimension
+import Linglib.Semantics.Degree.MeasureFunction
+import Linglib.Semantics.Degree.Bounds
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Order.Max
+import Mathlib.Order.WithBot
 import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
@@ -24,8 +29,8 @@ telic (accomplishment) verb, an open-scale base an atelic (activity) verb.
   accept *in X*, open-scale verbs accept *for X*.
 * `*_pipeline_converge` — the scale-based and Vendler-based licensing pipelines
   agree on boundedness.
-* The order-theoretic core lives in `Semantics/Aspect/ScalarTelicity.lean`
-  (`telic_of_orderTop` / `atelic_of_noMaxOrder`): a degree achievement admits a
+* The order-theoretic core (`telic_of_orderTop` / `atelic_of_noMaxOrder`, below):
+  a degree achievement admits a
   Quantized (telic) witness iff its scale has a greatest degree, via mathlib's
   `OrderTop` / `NoMaxOrder` mixins (witness `g_φ = ⊤`), feeding [beavers-2011]'s
   affectedness hierarchy. Here it is instantiated at the dimensions the verbs
@@ -320,28 +325,95 @@ theorem warm_pipeline_converge :
 
 /-! ### Substrate demonstration: telicity from scale order
 
-The order-theoretic account of [kennedy-levin-2008]'s thesis lives in
-`Semantics/Aspect/ScalarTelicity.lean`: a degree achievement is telic iff its
-scale has a greatest degree (`OrderTop`), with the Quantized witness `g_φ = ⊤`,
+The order-theoretic account of [kennedy-levin-2008]'s thesis (formalized below):
+a degree achievement is telic iff its scale has a greatest degree (`OrderTop`),
+with the Quantized witness `g_φ = ⊤`,
 feeding [beavers-2011]'s affectedness hierarchy. Here it is instantiated at the
 dimensions the K&L verbs measure. -/
 
 open Semantics.ArgumentStructure.Affectedness
 open Semantics.ArgumentStructure.Affectedness.Hierarchy
-open ScalarTelicity
+open Semantics.Gradability (Dimension)
+open Semantics.Degree.MeasureFunction
+
+/-! #### Telicity from the scale's order structure (order-theoretic K&L thesis)
+
+The telic reading is "the patient reaches the maximal degree `⊤`", available only
+on a scale with a greatest element (`OrderTop`); the atelic reading is "reaches
+*some* degree", always satisfiable. So telicity is a Quantized-witness existence
+fact over the dimension's `degree` fiber, derived from the order mixin — not a
+stored flag. The `Dimension` carrier lives in `Semantics/Gradability/Dimension.lean`;
+the event machinery below is specific to this paper's degree-achievement analysis. -/
+
+/-- Trivial patient: the measure of change ignores the patient's identity, so a
+    single one-constructor type serves for every degree type `δ`. -/
+inductive Patient
+  | mk
+
+section
+variable {δ : Type*} [LinearOrder δ]
+
+/-- The patient's degree at a time is that time — the temporal trace — so the final
+    degree of an event is its end-time. -/
+instance traceMeasure : HasMeasureFunction Patient δ δ where
+  measure _ t := t
+
+/-- Companion `HasLatentScale` ([beavers-2011] eq. (60c)). -/
+instance : HasLatentScale Patient (Event δ) :=
+  HasLatentScale.ofHasMeasureFunction (δ := δ)
+
+/-- Telic reading: the patient reaches the maximal degree `⊤` by the event's end. -/
+def reachesTop [OrderTop δ] : Patient → Event δ → Prop :=
+  fun _ e => e.runtime.snd = (⊤ : δ)
+
+/-- Atelic ('comparative') reading: the patient reaches *some* degree by the end. -/
+def reachesSome : Patient → Event δ → Prop :=
+  fun _ e => ∃ g : δ, e.runtime.snd = g
+
+theorem reachesSome_nonQuantized : NonQuantized (δ := δ) (reachesSome (δ := δ)) :=
+  fun _ _ h => h
+
+theorem reachesTop_quantized [OrderTop δ] :
+    Quantized (reachesTop (δ := δ)) (⊤ : δ) :=
+  fun _ _ h => h
+
+/-- **Telic ⇐ a greatest degree.** `OrderTop` supplies the Quantized witness
+    `g_φ = ⊤` — the order-theoretic content of [kennedy-levin-2008]'s closed-scale
+    telicity. -/
+theorem telic_of_orderTop [OrderTop δ] :
+    ∃ g : δ, Quantized (reachesTop (δ := δ)) g :=
+  ⟨⊤, reachesTop_quantized⟩
+
+/-- **Telic ⇒ a greatest degree (contrapositive).** With no greatest degree
+    (`NoMaxOrder`), no final degree is entailed — [kennedy-levin-2008]'s open-scale
+    obligatory atelicity, derived from the order structure. -/
+theorem atelic_of_noMaxOrder [NoMaxOrder δ] :
+    ¬ ∃ g : δ, Quantized (reachesSome (δ := δ)) g := by
+  rintro ⟨g, hg⟩
+  obtain ⟨b, hb⟩ := exists_gt g
+  have hbg : b = g := hg Patient.mk ⟨⟨⟨b, b⟩, le_refl b⟩, .dynamic⟩ ⟨_, rfl⟩
+  exact absurd hbg hb.ne'
+
+/-- Synthesis: with a greatest degree, the telic reading builds the full Beavers
+    `IsQuantizedAffected` instance ([beavers-2011] eq. (62)). -/
+instance reachesTop_isQuantizedAffected [OrderTop δ] :
+    IsQuantizedAffected (δ := δ) (reachesTop (δ := δ)) :=
+  IsQuantizedAffected.mk' (fun _ _ _ => trivial) ⊤ reachesTop_quantized
+
+end
 
 /-- *straighten* measures straightness — a closed scale — so a telic reading is
     available, derived from the dimension's `OrderTop` (not a stored `HasMax`). -/
 theorem straighten_telic :
     ∃ g : Dimension.straightness.degree,
       Quantized (reachesTop (δ := Dimension.straightness.degree)) g :=
-  straightness_telic
+  telic_of_orderTop
 
 /-- *widen* measures width — unbounded above — so no telic reading exists. -/
 theorem widen_atelic :
     ¬ ∃ g : Dimension.width.degree,
       Quantized (reachesSome (δ := Dimension.width.degree)) g :=
-  width_atelic
+  atelic_of_noMaxOrder
 
 /-- The fragment stores each verb's *dimension* directly (boundedness is derived):
     *straighten* measures straightness, *widen* width — so `straighten_telic` /
