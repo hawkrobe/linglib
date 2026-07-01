@@ -75,7 +75,7 @@ theorem endRuleLeft_leftStrong : EndRuleLeft leftStrong := by decide
 
 /-- **The End-Rule peak IS the head terminal** ([prince-1983]; [liberman-prince-1977]): the
     rightmost column End Rule Right promotes is the head foot's head σ — the head terminal
-    (Liberman & Prince's designated terminal element) as a *node*, not just the tallest height. -/
+    (Liberman & Prince's head terminal) as a *node*, not just the tallest height. -/
 theorem headTerminals_rightStrong : Grid.headTerminals rightStrong = [σh] := by decide
 
 /-- And its prominence is the grid peak: on a uniform (non-recursive headed) word the head

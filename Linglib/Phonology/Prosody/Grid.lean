@@ -14,14 +14,14 @@ connected to the plainer one below by a forgetful map:
 Marks        rendered rows of marks; the Continuous Column Constraint lives here
   ↑ rows                                    (Prince 1983's autonomous grid)
 Grid         column heights — the pure rhythmic grid
-  ↑ toGrid                                   (add the designated terminal element)
-MarkedGrid   a grid whose columns carry the head-spine (Liberman & Prince's DTE)
+  ↑ toGrid                                   (add the head terminal)
+MarkedGrid   a grid whose columns carry the head-spine (Liberman & Prince's head terminals)
   ↑ project                                  (the RPPR)
 Tree         the bracketed grid — brackets at all layers ([hayes-1995] §3.5)
 ```
 
 The projection `Grid.project` is the *Relative Prominence Projection Rule* ([liberman-prince-1977]):
-a homomorphism from the tree into the DTE-marked grid, built from a small algebra
+a homomorphism from the tree into the head-marked grid, built from a small algebra
 (`cell`/`juxtapose`/`promote`/`clear`). The grid readers (`columns`, `terminals`, `headTerminals`,
 `headHeights`) are the forgetful maps out of it. What the forgetful map onto the pure grid drops is
 *theorem*-shaped: constituency (`Grid.ofTree_not_injective`; the grid underdetermines bracketing,
@@ -32,7 +32,7 @@ a homomorphism from the tree into the DTE-marked grid, built from a small algebr
 * `Grid` / `Grid.peak` / `Grid.IsCulminative` — the pure grid (column heights) and its invariants.
 * `Marks` / `Marks.IsContinuous` / `Grid.rows` — the rendered grid and the Continuous Column
   Constraint, which holds for any rendered grid by construction.
-* `MarkedGrid` / `Grid.project` — the DTE-marked grid and the RPPR projection from a tree.
+* `MarkedGrid` / `Grid.project` — the head-marked grid and the RPPR projection from a tree.
 * `Grid.columns` / `Grid.headTerminals` / `Grid.headHeights` / `Grid.IsHeaded` — the grid readers.
 
 ## Main results
@@ -48,7 +48,7 @@ namespace Prosody
 /-! ## The tower carriers
 
 The four objects of the tower (see the module header): the rendered `Marks`, the pure `Grid`, and
-the DTE-marked grid `MarkedGrid` built from `Column`s. Operations follow, one namespace each. -/
+the head-marked grid `MarkedGrid` built from `Column`s. Operations follow, one namespace each. -/
 
 /-- A rendered metrical grid: rows of head-marks, bottom row first. -/
 abbrev Marks := List (List Bool)
@@ -58,17 +58,17 @@ abbrev Marks := List (List Bool)
 abbrev Grid := List ℕ
 
 /-- One column of a marked grid: the σ-leaf it sits over, its mark count (`height`), and whether it
-    lies on the current head-spine (the designated terminal element so far, [liberman-prince-1977]). -/
+    lies on the current head-spine (the head terminal so far, [liberman-prince-1977]). -/
 structure Column (α : Type*) where
   /-- The σ-leaf under this column. -/
   terminal : α
   /-- The column height = number of grid marks. -/
   height : ℕ
-  /-- Whether this column is (so far) the designated terminal element. -/
+  /-- Whether this column is (so far) the head terminal. -/
   onSpine : Bool
 
-/-- A grid whose columns carry the head-spine (the DTE, [liberman-prince-1977]). This is the pure
-    grid *plus a DTE marking* — it deliberately does not record the full bracketing (that is `Tree`;
+/-- A grid whose columns carry the head-spine (the head terminals, [liberman-prince-1977]). This is the pure
+    grid *plus a head marking* — it deliberately does not record the full bracketing (that is `Tree`;
     `Grid.ofTree_not_injective` is the honest statement that heights lose it). -/
 abbrev MarkedGrid (α : Type*) := List (Column α)
 
@@ -89,7 +89,7 @@ instance (m : Marks) : Decidable (IsContinuous m) := by unfold IsContinuous; inf
 
 end Marks
 
-/-! ## The DTE-marked grid: the marked-grid algebra -/
+/-! ## The head-marked grid: the marked-grid algebra -/
 
 namespace MarkedGrid
 variable {α : Type*} (b : MarkedGrid α)
@@ -100,10 +100,10 @@ def toGrid : Grid := b.map (·.height)
 /-- The terminals under the columns, left to right. -/
 def terminals : List α := b.map (·.terminal)
 
-/-- The head-spine columns' heights — the designated terminal elements' prominences. -/
+/-- The head-spine columns' heights — the head terminals' prominences. -/
 def headHeights : Grid := (b.filter (·.onSpine)).map (·.height)
 
-/-- The head-spine terminals — the designated terminal elements. -/
+/-- The head-spine terminals — the head terminals. -/
 def headTerminals : List α := (b.filter (·.onSpine)).map (·.terminal)
 
 /-- A single terminal: one column of height `1`, on its own head-spine. -/
@@ -114,12 +114,10 @@ def juxtapose (bs : List (MarkedGrid α)) : MarkedGrid α := bs.flatten
 
 /-- The **head-projection step** of the RPPR ([liberman-prince-1977]): a head edge raises the head
     by one grid mark — bump every head-spine column. -/
-def promote : MarkedGrid α :=
-  b.map (fun c => { c with height := c.height + if c.onSpine then 1 else 0 })
+def promote : MarkedGrid α := b.map fun c => { c with height := c.height + if c.onSpine then 1 else 0 }
 
 /-- A weak edge: heights freeze, the head-spine marking is dropped. -/
-def clear : MarkedGrid α :=
-  b.map (fun c => { c with onSpine := false })
+def clear : MarkedGrid α := b.map fun c => { c with onSpine := false }
 
 /-- One edge of the descent: a head edge projects, any other clears the spine. -/
 def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
@@ -134,14 +132,11 @@ def edge (isHead : Bool) (b : MarkedGrid α) : MarkedGrid α :=
 @[simp] theorem headHeights_cell (x : α) : (cell x).headHeights = [1] := rfl
 @[simp] theorem headTerminals_cell (x : α) : (cell x).headTerminals = [x] := rfl
 
-@[simp] theorem toGrid_clear : (clear b).toGrid = b.toGrid := by
-  simp [clear, toGrid, List.map_map]
+@[simp] theorem toGrid_clear : (clear b).toGrid = b.toGrid := by simp [clear, toGrid, List.map_map]
 
-@[simp] theorem headHeights_clear : (clear b).headHeights = [] := by
-  simp [clear, headHeights, List.filter_map]
+@[simp] theorem headHeights_clear : (clear b).headHeights = [] := by simp [clear, headHeights]
 
-@[simp] theorem headTerminals_clear : (clear b).headTerminals = [] := by
-  simp [clear, headTerminals, List.filter_map]
+@[simp] theorem headTerminals_clear : (clear b).headTerminals = [] := by simp [clear, headTerminals]
 
 @[simp] theorem headHeights_promote :
     (promote b).headHeights = b.headHeights.map (· + 1) := by
@@ -250,7 +245,7 @@ def terminals : List Tree := (project t).terminals
     contiguous run of head edges ending at it. -/
 def columns : Grid := (project t).toGrid
 
-/-- The **head terminals** (DTEs) — Liberman & Prince's *designated terminal elements*: the σ-leaves
+/-- The **head terminals** ([liberman-prince-1977]): the σ-leaves
     reached from the root by all head edges. -/
 def headTerminals : List Tree := (project t).headTerminals
 
@@ -371,7 +366,7 @@ theorem not_culminative_under_recursion :
 
 /-! ## The word peak is the head terminal
 
-On a non-recursive headed word the grid peak *is* the head terminal ([liberman-prince-1977]'s DTE):
+On a non-recursive headed word the grid peak *is* the head terminal ([liberman-prince-1977]):
 metrical primary stress is the tallest column. Recursion is the sole obstruction, and — this being
 [hayes-1995] §3.4.2(C)'s "the higher grid mark may only be assigned to a syllable that already bears
 stress" — the peak sits atop a foot head. -/
@@ -489,7 +484,7 @@ theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : n
   rw [hv, le_antisymm (headHeight_le_peak hvmem) hge]
 
 /-- Under recursion the peak can desert the head terminal, even when culminative
-    ([ito-mester-2009] for recursive ω; the peak≠DTE consequence is a property of this model). -/
+    ([ito-mester-2009] for recursive ω; the peak≠head-terminal consequence is a property of this model). -/
 theorem head_below_peak_under_recursion :
     ∃ t : Tree, IsWord t ∧ IsHeaded t ∧ IsCulminative (columns t)
       ∧ headHeights t ≠ [peak (columns t)] :=

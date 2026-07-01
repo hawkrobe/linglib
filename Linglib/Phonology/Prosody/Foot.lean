@@ -7,7 +7,7 @@ import Linglib.Phonology.Prosody.Syllable
 The canonical metrical foot ([selkirk-1980]; [nespor-vogel-1986]; [hayes-1995];
 [kager-1999]): a flat, **headed** constituent over syllable positions — a non-empty,
 ordered sequence of syllables with one distinguished `head` (the stressed daughter /
-Designated Terminal Element). Headedness (trochaic/iambic), binarity, and the
+head terminal). Headedness (trochaic/iambic), binarity, and the
 trochee/iamb/moraic **inventory are all derived** from the structure, not stored — the
 moraic/syllabic split is a counting parameter on `moraCount`, not a different kind of
 foot. Re-representations into the prosodic tree (`Prosody.Tree`) and the metrical grid
@@ -63,7 +63,7 @@ example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
 
 /-- The canonical metrical foot ([selkirk-1980]; [hayes-1995]; [kager-1999]): a
     non-empty, ordered sequence of syllable positions with one distinguished `head`
-    (the stressed daughter / DTE). The `Fin` index forces non-emptiness by construction.
+    (the stressed daughter, the head). The `Fin` index forces non-emptiness by construction.
     The inventory and headedness are derived below, not stored. -/
 structure Foot (S : Type*) where
   syllables : List S
@@ -73,7 +73,7 @@ structure Foot (S : Type*) where
 namespace Foot
 variable {S : Type*}
 
-/-- The head (stressed) syllable — the Designated Terminal Element. -/
+/-- The head (stressed) syllable — the head terminal. -/
 def headSyllable (f : Foot S) : S := f.syllables.get f.head
 
 /-- The number of dominated syllables. -/

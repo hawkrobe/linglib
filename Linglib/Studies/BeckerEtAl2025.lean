@@ -10,7 +10,7 @@ reversal**: when an iamb would leave a phrase-final long vowel, the last two syl
 trochee instead ([becker-etal-2025] §3.1; [hayes-1995] §5.3b). The **last foot is the head foot**
 of the word, and the **primary stress is the head of the head foot** ([becker-etal-2025] p. 2365)
 — i.e. the syllable reached from the word ω by an all-head descent: the **head terminal**
-(Liberman & Prince's *designated terminal element*, `Prosody.Grid.headTerminals`).
+(Liberman & Prince's *head terminal*, `Prosody.Grid.headTerminals`).
 
 The paper's title result — *incoherent* stress ([gordon-2016]) — is that the default High tone does
 **not** dock on this head terminal but surfaces displaced, on the last syllable of a tone domain
@@ -20,7 +20,7 @@ The metrically most prominent syllable is thereby dissociated from the high-tone
 This file formalizes the **default-length metrical spine** the tonal analysis is anchored to: the
 left-to-right iambic footing (with final trochaic reversal) of words in isolation, and the
 certification that the primary stress is exactly the grid's head terminal. That a word has a
-*unique* head terminal (`Prosody.Grid.IsHeaded`) is metrical culminativity — Liberman & Prince's DTE
+*unique* head terminal (`Prosody.Grid.IsHeaded`) is metrical culminativity — head-terminal
 uniqueness ([hyman-2006]). The paper's `Culminativity-H` (§4.2) is a *distinct, tonal* constraint
 ("one violation per High tone domain with more than one foot head"), part of the deferred tone
 layer. Also deferred alongside tone: lexical long vowels (Max-μ, monosyllabic feet, §3.1), word
@@ -73,7 +73,7 @@ theorem gridColumns_annatto : Grid.columns annatto = [1, 3, 1] := by decide
 /-! ### Primary stress is the head terminal ([becker-etal-2025] p. 2365)
 
 Each word has a **unique head terminal** (`Grid.IsHeaded` — metrical culminativity, Liberman & Prince's
-DTE uniqueness; cf. [hyman-2006]), and it is exactly the head syllable of the head foot — the long
+head-terminal uniqueness; cf. [hyman-2006]), and it is exactly the head syllable of the head foot — the long
 `kí:`/`mí:`, or the reversed-trochee's initial `kí`. The primary stress is read off the grid's live
 column as an *element*. -/
 

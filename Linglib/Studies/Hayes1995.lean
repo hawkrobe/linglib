@@ -101,7 +101,7 @@ theorem gridColumns_mudarris : Grid.columns (parse mudarris) = [1, 3, 1] := by d
 theorem gridColumns_Pinkasara : Grid.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
 
 /-- **The head terminal is the antepenult head σ** ([liberman-prince-1977]): `kataba`'s head
-    terminal — its primary stress, Liberman & Prince's designated terminal element — is the head
+    terminal — its primary stress, Liberman & Prince's head terminal — is the head
     syllable of the rightmost (head) foot, read off the grid's live column as an *element*, not
     just a height (cf. `gridColumns_kataba`'s `[3, 1, 1]`). -/
 theorem headTerminals_kataba : Grid.headTerminals (parse kataba) = [.node (.syl 1 true) []] := by decide
