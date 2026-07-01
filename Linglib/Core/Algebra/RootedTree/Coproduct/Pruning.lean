@@ -1,16 +1,17 @@
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Combinatorics.RootedTree.Cut
+import Linglib.Core.Data.Tree.Basic
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 set_option autoImplicit false
 
 /-!
-# Δ^ρ (admissible-cut, root-component pruning) coproduct on `RootedTree.Planar α`
+# Δ^ρ (admissible-cut, root-component pruning) coproduct on `Tree α`
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **admissible-cut, root-component pruning** variant of the
-Connes-Kreimer coproduct on planar n-ary rooted trees. For a tree T:
+Connes-Kreimer coproduct on ordered (planar) n-ary rooted trees `Tree α`.
+For a tree T:
 
   Δ^ρ(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderDeletion c)
 
@@ -38,6 +39,22 @@ the Connes-Kreimer Hopf algebra of Feynman graphs (a different, related
 Hopf algebra; Remark 1.2.9, p. 34). Used at the C-I (semantic)
 interface for FormCopy.
 
+## Relation to the generic cut enumeration
+
+The bespoke `cutSummandsP`/`cutListSummandsP`/`augActionP` block below is
+the deletion (Δ^ρ) sibling of the extraction-policy-parameterized
+`cutSummandsG` in `Coproduct/Defs.lean`. It is NOT re-expressed as
+`cutSummandsG (fun _ => some [])` because the downstream coassoc proof
+(`Coproduct/PruningNonplanar.lean`) is written against the `Option`
+remainder encoding used here — deletion is `Option.none`, a surviving
+child is `Option.some r` — whereas `cutSummandsG` carries `List`
+remainders (deletion `[]`, survival `[r]`). Folding onto `cutSummandsG`
+would change the public return type of `augActionP` (Option → List) and
+the shapes of `augActionP_eq`/`cutListSummandsP_cons`, all of which
+`PruningNonplanar.lean` consumes; so the two enumerations coexist.
+(Δ^c in `Trace.lean` *does* derive from `cutSummandsG`, since it was
+written against the `List` encoding.)
+
 ## Foissy clean coassoc
 
 Δ^ρ satisfies the Hochschild 1-cocycle condition with B+ (graft as
@@ -46,7 +63,7 @@ new root):
   Δ^ρ ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^ρ
 
 The B+ operator only well-defines on `Multiset (Nonplanar α) → Nonplanar α`
-(unordered children of a new root). On `Planar α` with `Multiset`
+(unordered children of a new root). On `Tree α` with `Multiset`
 forests, B+ would need a canonical ordering. Hence the sorry-free
 coassoc proof for Δ^ρ lives in `Coproduct/PruningNonplanar.lean` on
 `RootedTree.Nonplanar α`. (Note: this Foissy clean coassoc strategy
@@ -79,17 +96,17 @@ remainder) OR recurse with a smaller cut (contributes whatever its cut
 extracts, leaves its deletion-remainder in the remainder list). -/
 
 mutual
-/-- Multiset of (cut forest, deletion remainder) pairs for a planar tree.
+/-- Multiset of (cut forest, deletion remainder) pairs for a tree.
     Each summand corresponds to one admissible cut on T under the
     deletion semantics. -/
-def cutSummandsP : Planar α →
-    Multiset (Forest (Planar α) × Planar α)
+def cutSummandsP : Tree α →
+    Multiset (Forest (Tree α) × Tree α)
   | .node a cs => (cutListSummandsP cs).map (fun p => (p.1, .node a p.2))
 /-- Auxiliary: cut summands for a list of children. The remainder is a
     list (children of the parent that survived the cut). -/
-def cutListSummandsP : List (Planar α) →
-    Multiset (Forest (Planar α) × List (Planar α))
-  | [] => {((0 : Forest (Planar α)), ([] : List (Planar α)))}
+def cutListSummandsP : List (Tree α) →
+    Multiset (Forest (Tree α) × List (Tree α))
+  | [] => {((0 : Forest (Tree α)), ([] : List (Tree α)))}
   | t :: ts =>
       ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
         (fun p => match p.1.2 with
@@ -97,26 +114,26 @@ def cutListSummandsP : List (Planar α) →
           | Option.some r => (p.1.1 + p.2.1, r :: p.2.2))
 /-- Auxiliary: per-child action — either extract whole (`none` remainder)
     or recurse with a cut (`some remainder`). -/
-def augActionP : Planar α →
-    Multiset (Forest (Planar α) × Option (Planar α))
-  | t => (({t} : Forest (Planar α)), Option.none) ::ₘ
+def augActionP : Tree α →
+    Multiset (Forest (Tree α) × Option (Tree α))
+  | t => (({t} : Forest (Tree α)), Option.none) ::ₘ
          (cutSummandsP t).map (fun p => (p.1, Option.some p.2))
 end
 
 /-- Recursive formula on a node: cutSummandsP unfolds via cutListSummandsP. -/
-@[simp] theorem cutSummandsP_node (a : α) (cs : List (Planar α)) :
-    cutSummandsP (Planar.node a cs) =
+@[simp] theorem cutSummandsP_node (a : α) (cs : List (Tree α)) :
+    cutSummandsP (Tree.node a cs) =
       (cutListSummandsP cs).map (fun p => (p.1, .node a p.2)) := by
   unfold cutSummandsP; rfl
 
 /-- Recursive formula for cutListSummandsP on empty list. -/
 @[simp] theorem cutListSummandsP_nil :
-    cutListSummandsP ([] : List (Planar α)) =
-      {((0 : Forest (Planar α)), ([] : List (Planar α)))} := by
+    cutListSummandsP ([] : List (Tree α)) =
+      {((0 : Forest (Tree α)), ([] : List (Tree α)))} := by
   unfold cutListSummandsP; rfl
 
 /-- Recursive formula for cutListSummandsP on a cons list. -/
-@[simp] theorem cutListSummandsP_cons (t : Planar α) (ts : List (Planar α)) :
+@[simp] theorem cutListSummandsP_cons (t : Tree α) (ts : List (Tree α)) :
     cutListSummandsP (t :: ts) =
       ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
         (fun p => match p.1.2 with
@@ -125,8 +142,8 @@ end
   conv_lhs => unfold cutListSummandsP
 
 /-- Recursive formula for augActionP. -/
-@[simp] theorem augActionP_eq (t : Planar α) :
-    augActionP t = (({t} : Forest (Planar α)), Option.none) ::ₘ
+@[simp] theorem augActionP_eq (t : Tree α) :
+    augActionP t = (({t} : Forest (Tree α)), Option.none) ::ₘ
                    (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
   conv_lhs => unfold augActionP
 
@@ -134,11 +151,11 @@ end
 
 Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
 
-/-- The **planar tree-level Δ^ρ** coproduct: explicit `T ⊗ 1` term plus
+/-- The **tree-level Δ^ρ** coproduct: explicit `T ⊗ 1` term plus
     the sum of cut-summand tensors. -/
-noncomputable def comulTreePlanarP (T : Planar α) :
-    ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α) :=
-  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Planar α))
+noncomputable def comulTreePlanarP (T : Tree α) :
+    ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α) :=
+  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Tree α))
   + ((cutSummandsP T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
 /-! ### comulForestPlanarP — forest-level Δ^ρ
@@ -146,17 +163,17 @@ noncomputable def comulTreePlanarP (T : Planar α) :
 Multiplicative extension over the disjoint-union product on forests:
 Δ(F + G) = Δ(F) · Δ(G). -/
 
-/-- The **planar forest-level Δ^ρ**: multiplicative product of tree-level
+/-- The **forest-level Δ^ρ**: multiplicative product of tree-level
     coproducts over the components of the forest. -/
-noncomputable def comulForestPlanarP (F : Forest (Planar α)) :
-    ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α) :=
+noncomputable def comulForestPlanarP (F : Forest (Tree α)) :
+    ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α) :=
   (F.map (comulTreePlanarP (R := R))).prod
 
 @[simp] theorem comulForestPlanarP_zero :
-    comulForestPlanarP (R := R) (0 : Forest (Planar α)) = 1 := by
+    comulForestPlanarP (R := R) (0 : Forest (Tree α)) = 1 := by
   simp only [comulForestPlanarP, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulForestPlanarP_add (F G : Forest (Planar α)) :
+@[simp] theorem comulForestPlanarP_add (F G : Forest (Tree α)) :
     comulForestPlanarP (R := R) (F + G) =
       comulForestPlanarP (R := R) F * comulForestPlanarP (R := R) G := by
   unfold comulForestPlanarP
@@ -167,29 +184,29 @@ noncomputable def comulForestPlanarP (F : Forest (Planar α)) :
 Package the multiplicative extension as a `MonoidHom`, then lift to the
 full `AlgHom` via `AddMonoidAlgebra.lift`. -/
 
-/-- comulForestPlanarP as a monoid hom from `Multiplicative (Forest (Planar α))`. -/
+/-- comulForestPlanarP as a monoid hom from `Multiplicative (Forest (Tree α))`. -/
 noncomputable def comulMonoidHomP :
-    Multiplicative (Forest (Planar α)) →*
-      (ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α)) where
+    Multiplicative (Forest (Tree α)) →*
+      (ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α)) where
   toFun F := comulForestPlanarP (R := R) F.toAdd
   map_one' := comulForestPlanarP_zero
   map_mul' F G := comulForestPlanarP_add F.toAdd G.toAdd
 
-/-- The **Δ^ρ coproduct on `ConnesKreimer R (Planar α)`** as an algebra hom. -/
+/-- The **Δ^ρ coproduct on `ConnesKreimer R (Tree α)`** as an algebra hom. -/
 noncomputable def comulAlgHomP :
-    ConnesKreimer R (Planar α) →ₐ[R]
-      ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α) :=
+    ConnesKreimer R (Tree α) →ₐ[R]
+      ConnesKreimer R (Tree α) ⊗[R] ConnesKreimer R (Tree α) :=
   AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Planar α)) ⊗[R] (ConnesKreimer R (Planar α)))
-    (Forest (Planar α)) comulMonoidHomP
+    ((ConnesKreimer R (Tree α)) ⊗[R] (ConnesKreimer R (Tree α)))
+    (Forest (Tree α)) comulMonoidHomP
 
-@[simp] theorem comulAlgHomP_apply_of' (F : Forest (Planar α)) :
+@[simp] theorem comulAlgHomP_apply_of' (F : Forest (Tree α)) :
     comulAlgHomP (R := R) (α := α) (of' F) = comulForestPlanarP F := by
   show AddMonoidAlgebra.lift R _ _ comulMonoidHomP (Finsupp.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
   rfl
 
-@[simp] theorem comulAlgHomP_apply_ofTree (T : Planar α) :
+@[simp] theorem comulAlgHomP_apply_ofTree (T : Tree α) :
     comulAlgHomP (R := R) (α := α) (ofTree T) = comulTreePlanarP T := by
   unfold ofTree
   rw [comulAlgHomP_apply_of']
