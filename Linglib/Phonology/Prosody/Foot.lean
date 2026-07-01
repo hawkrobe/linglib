@@ -7,7 +7,7 @@ import Linglib.Phonology.Prosody.Syllable
 The canonical metrical foot ([selkirk-1980]; [nespor-vogel-1986]; [hayes-1995];
 [kager-1999]): a flat, **headed** constituent over syllable positions — a non-empty,
 ordered sequence of syllables with one distinguished `head` (the stressed daughter /
-Designated Terminal Element). Headedness (trochaic/iambic), binarity, and the
+head terminal). Headedness (trochaic/iambic), binarity, and the
 trochee/iamb/moraic **inventory are all derived** from the structure, not stored — the
 moraic/syllabic split is a counting parameter on `moraCount`, not a different kind of
 foot. Re-representations into the prosodic tree (`Prosody.Tree`) and the metrical grid
@@ -21,7 +21,8 @@ are *functions* that recover the same head.
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
 * `Foot.IsSyllabicTrochee` / `IsMoraicTrochee` / `IsCanonicalIamb` — the *derived* inventory.
-* `Foot.toProsTree` / `Foot.toGrid` — re-representations that preserve the head.
+* `Foot.toProsTree` / `Foot.toGrid` / `Foot.headFlags` — re-representations that preserve the head
+  (the prosodic tree, its metrical grid, and its head-flag row).
 * `footMorae` — mora count of a `Tree`-extracted weight-list foot (the flat metrical
   parse is now `Prosody.Footing`).
 
@@ -30,7 +31,7 @@ are *functions* that recover the same head.
 * `Foot.itl_gap` — the Iambic/Trochaic Law ([hayes-1985]): a binary iamb need not be
   weight-blind-characterizable, unlike a binary (syllabic) trochee.
 * `Foot.headFlags_toProsTree` — the prosodic-tree re-representation carries the same
-  head profile as `toGrid` (head-preservation, the functorial spine).
+  head profile as `headFlags` (head-preservation, the functorial spine).
 * `Foot.isFoot_toProsTree` — every `Foot`'s prosodic tree is a well-formed foot tree
   (`IsFoot`): the functoriality/well-formedness bridge onto the carrier.
 -/
@@ -63,7 +64,7 @@ example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
 
 /-- The canonical metrical foot ([selkirk-1980]; [hayes-1995]; [kager-1999]): a
     non-empty, ordered sequence of syllable positions with one distinguished `head`
-    (the stressed daughter / DTE). The `Fin` index forces non-emptiness by construction.
+    (the stressed daughter, the head). The `Fin` index forces non-emptiness by construction.
     The inventory and headedness are derived below, not stored. -/
 structure Foot (S : Type*) where
   syllables : List S
@@ -72,9 +73,6 @@ structure Foot (S : Type*) where
 
 namespace Foot
 variable {S : Type*}
-
-/-- The head (stressed) syllable — the Designated Terminal Element. -/
-def headSyllable (f : Foot S) : S := f.syllables.get f.head
 
 /-- The number of dominated syllables. -/
 def length (f : Foot S) : ℕ := f.syllables.length
@@ -153,11 +151,16 @@ def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false)
   .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
     .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))
 
-/-- Re-represent as a metrical-grid row ([hayes-1995]): a head mark per position. -/
-def toGrid (f : Foot S) : List Bool :=
+/-- The **metrical grid** of a foot in isolation ([hayes-1995]): the head σ carries `2` grid marks,
+    every other σ `1`. -/
+def toGrid (f : Foot S) : List ℕ :=
+  (List.finRange f.syllables.length).map (fun i => if i = f.head then 2 else 1)
+
+/-- The σ-leaves' **head flags**: `true` at the head σ, `false` elsewhere ([hayes-1995]). -/
+def headFlags (f : Foot S) : List Bool :=
   (List.finRange f.syllables.length).map (fun i => decide (i = f.head))
 
-/-- The σ-leaves' head flags. -/
+/-- The σ-leaves' head flags read off a tree. -/
 private def childHeadFlags : Tree → List Bool
   | .node _ cs => cs.map (fun | .node a _ => a.isHead)
 
@@ -165,10 +168,10 @@ private def childHeadFlags : Tree → List Bool
     (toGrid f).length = f.syllables.length := by simp [toGrid]
 
 /-- The two re-representations carry the **same head profile**: the prosodic tree's
-    σ-leaf head flags are exactly `toGrid f`. So both recover the foot's head. -/
+    σ-leaf head flags are exactly `headFlags f`. So both recover the foot's head. -/
 theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
-    childHeadFlags (toProsTree w f) = toGrid f := by
-  simp [childHeadFlags, toProsTree, toGrid, List.map_map, Function.comp, Constituent.isHead]
+    childHeadFlags (toProsTree w f) = headFlags f := by
+  simp [childHeadFlags, toProsTree, headFlags, List.map_map, Function.comp, Constituent.isHead]
 
 /-- **Functoriality / well-formedness bridge**: a `Foot` record's prosodic-tree
     re-representation is always a well-formed foot tree — `toProsTree` lands in the
@@ -233,7 +236,10 @@ example : ¬ (Foot.iamb 2 1 : Foot ℕ).IsCanonicalIamb id := by decide
 example : (Foot.monosyllable 0).IsDegenerate := by decide
 
 -- The re-representations recover the head: a trochee marks position 0, an iamb 1.
-example : Foot.toGrid (Foot.trochee 1 1) = [true, false] := by decide
-example : Foot.toGrid (Foot.iamb 1 1) = [false, true] := by decide
+example : Foot.headFlags (Foot.trochee 1 1) = [true, false] := by decide
+example : Foot.headFlags (Foot.iamb 1 1) = [false, true] := by decide
+-- ...and the grid peaks at the head: `2` there, `1` elsewhere.
+example : Foot.toGrid (Foot.trochee 1 1) = [2, 1] := by decide
+example : Foot.toGrid (Foot.iamb 1 1) = [1, 2] := by decide
 
 end Prosody

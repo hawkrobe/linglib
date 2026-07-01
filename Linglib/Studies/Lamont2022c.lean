@@ -76,10 +76,10 @@ def parse (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
 
 /-- `Trochee`: one violation per foot whose head is rightmost (= `Foot.IsIambic`). -/
 def trochee (fc : Footing Unit) : Nat :=
-  ((fc.feet).filter (fun f => decide (f.head.val + 1 = f.syllables.length))).length
+  ((fc.feet).filter (fun f => decide f.IsIambic)).length
 /-- `Iamb`: one violation per foot whose head is leftmost (= `Foot.IsTrochaic`). -/
 def iambC (fc : Footing Unit) : Nat :=
-  ((fc.feet).filter (fun f => decide (f.head.val = 0))).length
+  ((fc.feet).filter (fun f => decide f.IsTrochaic)).length
 
 /-- The violation vector of a footing under a ranking (a list of constraints), as the
     concatenated per-constraint violations — ordered lexicographically (`LexLE`). -/
@@ -139,9 +139,9 @@ theorem ftbin_obviated :
 /-! ### The footing functor: head (= stress) survives into grid and tree
 
 Lamont's `Trochee`/`Iamb` read each foot's head off `Foot.head`. Re-representing a foot
-into the prosodic `Tree` (`Foot.toProsTree`) and the metrical grid (`Foot.toGrid`)
+into the prosodic `Tree` (`Foot.toProsTree`) and the head-flag row (`Foot.headFlags`)
 recovers *exactly* that head — `Foot.headFlags_toProsTree` proves the tree's σ-leaves
-carry the same head profile as the grid — and the tree always lands in the well-formed
+carry the same head profile — and the tree always lands in the well-formed
 f/σ band (`Foot.isFoot_toProsTree`). So the head, the stress these constraints penalise,
 survives both re-representations. QI footing strips weight, so the tree reads any
 constant σ-weight. -/
@@ -159,13 +159,13 @@ theorem qiFeet_areFootTrees :
   ⟨Foot.isFoot_toProsTree qiWeight mono, Foot.isFoot_toProsTree qiWeight troch,
    Foot.isFoot_toProsTree qiWeight iamb⟩
 
-/-- **Head survives into grid and tree**: the metrical grid marks the foot head — leftmost
+/-- **Head survives into flags and tree**: the head-flag row marks the foot head — leftmost
     for the trochee (the foot Lamont's `Iamb` penalises), rightmost for the iamb (the foot
     `Trochee` penalises) — and the prosodic tree carries the *same* head profile, reduced
     here through `Foot.headFlags_toProsTree`. The trochaic vs iambic stress survives the
     functor identically. -/
 theorem head_survives :
-    Foot.toGrid troch = [true, false] ∧ Foot.toGrid iamb = [false, true] := by
+    Foot.headFlags troch = [true, false] ∧ Foot.headFlags iamb = [false, true] := by
   rw [← Foot.headFlags_toProsTree qiWeight troch, ← Foot.headFlags_toProsTree qiWeight iamb]
   decide
 

@@ -45,15 +45,15 @@ stray. Foot heads are marked as the parse builds them; `markHeadFoot` then promo
 def parseCells : Yield → List Tree
   | [] => []
   | [w] =>
-      if Syllable.Weight.heavy ≤ w then [.node (.ft false) [.node (.syl w true) []]]
-      else [.node (.syl w false) []]
+      if Syllable.Weight.heavy ≤ w then [.ft false [.σ w true]]
+      else [.σ w false]
   | w :: w2 :: rest =>
       if Syllable.Weight.heavy ≤ w then
-        .node (.ft false) [.node (.syl w true) []] :: parseCells (w2 :: rest)
+        .ft false [.σ w true] :: parseCells (w2 :: rest)
       else if Syllable.Weight.heavy ≤ w2 then
-        .node (.syl w false) [] :: parseCells (w2 :: rest)
+        .σ w false :: parseCells (w2 :: rest)
       else
-        .node (.ft false) [.node (.syl w true) [], .node (.syl w2 false) []] :: parseCells rest
+        .ft false [.σ w true, .σ w2 false] :: parseCells rest
 
 /-- Is this ω-daughter an `f`-level foot? -/
 def isFootChild : Tree → Bool
@@ -65,13 +65,13 @@ def markHeadFoot : List Tree → List Tree
   | [] => []
   | .node a ds :: rest =>
       if a.isFt && !rest.any isFootChild then
-        .node (.ft true) ds :: rest
+        .ft true ds :: rest
       else
         .node a ds :: markHeadFoot rest
 
 /-- The Cairene parse ([hayes-1995] §4.1.3): a prosodic word over moraic trochees built left to
     right, the rightmost foot heading the word. -/
-def parse (y : Yield) : Tree := .node .om (markHeadFoot (parseCells y))
+def parse (y : Yield) : Tree := .om (markHeadFoot (parseCells y))
 
 /-! ### Quantity-sensitive stress
 
@@ -101,10 +101,10 @@ theorem gridColumns_mudarris : Grid.columns (parse mudarris) = [1, 3, 1] := by d
 theorem gridColumns_Pinkasara : Grid.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
 
 /-- **The head terminal is the antepenult head σ** ([liberman-prince-1977]): `kataba`'s head
-    terminal — its primary stress, Liberman & Prince's designated terminal element — is the head
+    terminal — its primary stress, Liberman & Prince's head terminal — is the head
     syllable of the rightmost (head) foot, read off the grid's live column as an *element*, not
     just a height (cf. `gridColumns_kataba`'s `[3, 1, 1]`). -/
-theorem headTerminals_kataba : Grid.headTerminals (parse kataba) = [.node (.syl 1 true) []] := by decide
+theorem headTerminals_kataba : Grid.headTerminals (parse kataba) = [.σ 1 true] := by decide
 
 /-! ### The Continuous Column Constraint blocks final promotion
 
@@ -124,22 +124,22 @@ theorem toGrid_kataba :
 /-- **The grid is well-formed** ([hayes-1995] §3.4.2 (9)): `kataba`'s grid satisfies the Continuous
     Column Constraint — a consumer of the derived `Prosody.Grid.ofTree_isContinuous`, here doing the
     work that makes the inward peak the *only* legal reading. -/
-theorem cairene_grid_continuous : Grid.IsContinuous (Grid.ofTree (parse kataba)) := Grid.ofTree_isContinuous _
+theorem cairene_grid_continuous : Marks.IsContinuous (Grid.ofTree (parse kataba)) := Grid.ofTree_isContinuous _
 
 /-- The grid `kataba` would have if End Rule Right promoted the stray final light: a word-layer
     mark on the final column (`[hayes-1995] (17)`, *(x)(x.)*) with no foot-layer mark beneath. -/
-def promotedKataba : Grid := [[true, true, true], [true, false, false], [false, false, true]]
+def promotedKataba : Marks := [[true, true, true], [true, false, false], [false, false, true]]
 
 /-- **Promoting the final light violates the CCC** ([hayes-1995] (16d), (17)): the final
     column of `promotedKataba` is marked on layer 2 with nothing on layer 1 — a gap. This is
     exactly why End Rule Right cannot reach the edge, and the peak retracts inward. -/
-theorem promotedKataba_not_continuous : ¬ Grid.IsContinuous promotedKataba := by decide
+theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := by decide
 
 /-- **The peak retracts off the right edge** ([hayes-1995] (16d)): the final stray light of
     `kataba` is strictly weaker than the primary — unlike a uniform right-strong word
     ([prince-1983]), whose grid peaks at the edge. The blocked promotion above is why. -/
 theorem kataba_final_below_peak :
-    (Grid.columns (parse kataba)).getLast?.getD 0 < Grid.peak (parse kataba) := by
+    (Grid.columns (parse kataba)).getLast?.getD 0 < Grid.peak (Grid.columns (parse kataba)) := by
   decide
 
 end Hayes1995
