@@ -256,31 +256,24 @@ Each reader is a homomorphism out of the marked-grid algebra, so on a node it is
 of the children's readings, projected across head edges. These fuse `project_node` with the algebra
 once, so the downstream proofs never re-walk the fold. -/
 
-theorem columns_node (a : Constituent) (cs : List Tree) :
-    columns (.node a cs)
-      = if a.isSyl ∧ cs = [] then [1]
-        else cs.flatMap fun c => (MarkedGrid.edge c.label.isHead (project c)).toGrid := by
-  rw [columns, project_node]; split
-  · rfl
-  · rw [MarkedGrid.toGrid_juxtapose, List.flatMap_map]
+variable (a : Constituent) (cs : List Tree)
 
-theorem headHeights_node (a : Constituent) (cs : List Tree) :
-    headHeights (.node a cs)
-      = if a.isSyl ∧ cs = [] then [1]
-        else cs.flatMap fun c => if c.label.isHead then (headHeights c).map (· + 1) else [] := by
-  rw [headHeights, project_node]; split
-  · rfl
-  · rw [MarkedGrid.headHeights_juxtapose, List.flatMap_map]
-    simp only [MarkedGrid.headHeights_edge]; rfl
+theorem columns_node : columns (.node a cs) =
+    if a.isSyl ∧ cs = [] then [1]
+    else cs.flatMap fun c => (MarkedGrid.edge c.label.isHead (project c)).toGrid := by
+  rw [columns, project_node]; split <;> simp [MarkedGrid.toGrid_juxtapose, List.flatMap_map]
 
-theorem headTerminals_node (a : Constituent) (cs : List Tree) :
-    headTerminals (.node a cs)
-      = if a.isSyl ∧ cs = [] then [.node a []]
-        else cs.flatMap fun c => if c.label.isHead then headTerminals c else [] := by
-  rw [headTerminals, project_node]; split
-  · rfl
-  · rw [MarkedGrid.headTerminals_juxtapose, List.flatMap_map]
-    simp only [MarkedGrid.headTerminals_edge]; rfl
+theorem headHeights_node : headHeights (.node a cs) =
+    if a.isSyl ∧ cs = [] then [1]
+    else cs.flatMap fun c => if c.label.isHead then (headHeights c).map (· + 1) else [] := by
+  rw [headHeights, project_node]; split <;>
+    simp [headHeights, MarkedGrid.headHeights_juxtapose, List.flatMap_map, MarkedGrid.headHeights_edge]
+
+theorem headTerminals_node : headTerminals (.node a cs) =
+    if a.isSyl ∧ cs = [] then [.node a []]
+    else cs.flatMap fun c => if c.label.isHead then headTerminals c else [] := by
+  rw [headTerminals, project_node]; split <;>
+    simp [headTerminals, MarkedGrid.headTerminals_juxtapose, List.flatMap_map, MarkedGrid.headTerminals_edge]
 
 /-! ### The head terminals compute the head-terminal relation -/
 
