@@ -1,4 +1,5 @@
 import Linglib.Fragments.Uyghur.Complementizers
+import Linglib.Data.Examples.Major2024
 
 /-!
 # Major 2024: Re-analyzing 'say' complementation
@@ -51,6 +52,9 @@ status altogether. Major does not engage that analysis (he cites only
 [bondarenko-2020] among factivity-alternation accounts, §3.2), so no
 divergence theorem is stated here; the two witnesses coexist as rival
 records over their respective fragment inventories.
+
+Typed paradigm sentences (his 2, 38–41, 49) live in `Major2024.Examples`,
+generated from `Data/Examples/Major2024.json`.
 -/
 
 namespace Major2024
