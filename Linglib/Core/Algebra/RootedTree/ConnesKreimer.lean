@@ -130,8 +130,11 @@ noncomputable instance : Add (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp + q.toFinsupp⟩⟩
 noncomputable instance : Mul (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp * q.toFinsupp⟩⟩
-noncomputable instance : SMul R (ConnesKreimer R T) := ⟨fun s p => ⟨s • p.toFinsupp⟩⟩
-noncomputable instance : SMul ℕ (ConnesKreimer R T) := ⟨fun n p => ⟨n • p.toFinsupp⟩⟩
+noncomputable instance smulZeroClass {S : Type*}
+    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] :
+    SMulZeroClass S (ConnesKreimer R T) where
+  smul s p := ⟨s • p.toFinsupp⟩
+  smul_zero s := ext (smul_zero s)
 noncomputable instance : NatCast (ConnesKreimer R T) :=
   ⟨fun n => ⟨(n : AddMonoidAlgebra R (Forest T))⟩⟩
 noncomputable instance : Pow (ConnesKreimer R T) ℕ := ⟨fun p n => ⟨p.toFinsupp ^ n⟩⟩
@@ -142,10 +145,9 @@ noncomputable instance : Pow (ConnesKreimer R T) ℕ := ⟨fun p n => ⟨p.toFin
     (p + q).toFinsupp = p.toFinsupp + q.toFinsupp := rfl
 @[simp] theorem toFinsupp_mul (p q : ConnesKreimer R T) :
     (p * q).toFinsupp = p.toFinsupp * q.toFinsupp := rfl
-@[simp] theorem toFinsupp_smul (s : R) (p : ConnesKreimer R T) :
+@[simp] theorem toFinsupp_smul {S : Type*}
+    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] (s : S) (p : ConnesKreimer R T) :
     (s • p).toFinsupp = s • p.toFinsupp := rfl
-@[simp] theorem toFinsupp_nsmul (n : ℕ) (p : ConnesKreimer R T) :
-    (n • p).toFinsupp = n • p.toFinsupp := rfl
 @[simp] theorem toFinsupp_pow (p : ConnesKreimer R T) (n : ℕ) :
     (p ^ n).toFinsupp = p.toFinsupp ^ n := rfl
 
@@ -155,7 +157,8 @@ Built by injective transport from the single bottom `instCommSemiring`. -/
 
 noncomputable instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
   fast_instance% toFinsupp_injective.commSemiring _ toFinsupp_zero toFinsupp_one
-    toFinsupp_add toFinsupp_mul toFinsupp_nsmul toFinsupp_pow (fun _ => rfl)
+    toFinsupp_add toFinsupp_mul (fun n p => toFinsupp_smul n p) toFinsupp_pow
+    (fun _ => rfl)
 
 /-- `toFinsupp` bundled as an `AddMonoidHom` (transport vehicle). -/
 noncomputable def toFinsuppAddHom :
@@ -202,8 +205,6 @@ variable {R : Type*} [CommRing R] {T : Type*}
 noncomputable instance instNeg : Neg (ConnesKreimer R T) := ⟨fun p => ⟨-p.toFinsupp⟩⟩
 noncomputable instance instSub : Sub (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp - q.toFinsupp⟩⟩
-noncomputable instance instSMulZ : SMul ℤ (ConnesKreimer R T) :=
-  ⟨fun z p => ⟨z • p.toFinsupp⟩⟩
 noncomputable instance instIntCast : IntCast (ConnesKreimer R T) :=
   ⟨fun z => ⟨(z : AddMonoidAlgebra R (Forest T))⟩⟩
 
@@ -211,13 +212,11 @@ noncomputable instance instIntCast : IntCast (ConnesKreimer R T) :=
     (-p).toFinsupp = -p.toFinsupp := rfl
 @[simp] theorem toFinsupp_sub (p q : ConnesKreimer R T) :
     (p - q).toFinsupp = p.toFinsupp - q.toFinsupp := rfl
-@[simp] theorem toFinsupp_zsmul (z : ℤ) (p : ConnesKreimer R T) :
-    (z • p).toFinsupp = z • p.toFinsupp := rfl
-
 noncomputable instance instCommRing : CommRing (ConnesKreimer R T) :=
   fast_instance% toFinsupp_injective.commRing _ toFinsupp_zero toFinsupp_one
-    toFinsupp_add toFinsupp_mul toFinsupp_neg toFinsupp_sub toFinsupp_nsmul
-    toFinsupp_zsmul toFinsupp_pow (fun _ => rfl) (fun _ => rfl)
+    toFinsupp_add toFinsupp_mul toFinsupp_neg toFinsupp_sub
+    (fun n p => toFinsupp_smul n p) (fun z p => toFinsupp_smul z p)
+    toFinsupp_pow (fun _ => rfl) (fun _ => rfl)
 
 end Ring
 
@@ -257,10 +256,10 @@ theorem smul_single_one (F : Forest T) (r : R) :
 /-- Linear induction: prove `p` at `0`, under `+`, and on every `single`. -/
 @[elab_as_elim]
 theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
-    (h0 : p 0) (hadd : ∀ f g, p f → p g → p (f + g))
-    (hsingle : ∀ (F : Forest T) (r : R), p (single F r)) : p x := by
+    (zero : p 0) (add : ∀ f g, p f → p g → p (f + g))
+    (single : ∀ (F : Forest T) (r : R), p (ConnesKreimer.single F r)) : p x := by
   have h : ∀ y : AddMonoidAlgebra R (Forest T), p ⟨y⟩ := fun y =>
-    Finsupp.induction_linear y h0 (fun f g hf hg => hadd ⟨f⟩ ⟨g⟩ hf hg) hsingle
+    Finsupp.induction_linear y zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
   exact h x.toFinsupp
 
 /-- **Bare embedding**: a forest as the basis vector `single F 1`. -/
