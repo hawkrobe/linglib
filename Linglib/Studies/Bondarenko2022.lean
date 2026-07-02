@@ -667,6 +667,8 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 -- [cacchioli-2025]'s Tigrinya extension lives in
 -- `Studies/Cacchioli2025.lean` per the chronology rule.
 
+open Buryat
+
 /-- A Cont-exponence analysis of one language's clause-typing
     inventory ([bondarenko-2022] ch. 4): which morpheme, if any,
     overtly expones Cont, tied by law to the fragment inventory
@@ -696,12 +698,12 @@ structure ContCompAnalysis extends ContAnalysis where
     allomorphs — participial *-Aːša* next to nominal projections,
     converbial *-žA* next to verbs. -/
 def buryatAnalysis : ContCompAnalysis where
-  inventory := Buryat.complementizers
-  contExponent := some Buryat.ge
+  inventory := complementizers
+  contExponent := some ge
   contExponent_mem := fun _ hc => by cases hc; exact .head _
   compAllomorph
-    | .nominal => Buryat.aasha
-    | .verbal  => Buryat.zha
+    | .nominal => aasha
+    | .verbal  => zha
   compAllomorph_mem := by
     intro l
     cases l
@@ -728,7 +730,7 @@ def koreanAnalysis : ContAnalysis where
     in Buryat, the Cont exponent is exactly the non-suffixal
     say-root. -/
 theorem mem_buryatContExponent_iff :
-    ∀ c ∈ Buryat.complementizers,
+    ∀ c ∈ complementizers,
       (c ∈ buryatAnalysis.contExponent ↔ c.verbForm = none) := by
   decide
 
@@ -738,9 +740,9 @@ theorem mem_buryatContExponent_iff :
     nominalized frame by participial *-Aːša* — while the say-root *gɘ*
     (no `noonanType` of its own) realizes neither. -/
 theorem hanaxa_frames_realized :
-    Buryat.hanaxa.realizes Buryat.zha ∧
-    Buryat.hanaxa.realizes Buryat.aasha ∧
-    ¬ Buryat.hanaxa.realizes Buryat.ge :=
+    hanaxa.realizes zha ∧
+    hanaxa.realizes aasha ∧
+    ¬ hanaxa.realizes ge :=
   ⟨⟨.finiteClause, .head _, rfl⟩, ⟨.gerund, .tail _ (.head _), rfl⟩,
     fun ⟨_, hf, h⟩ => by fin_cases hf <;> exact nomatch h⟩
 
