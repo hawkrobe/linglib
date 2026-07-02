@@ -1,8 +1,7 @@
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Semantics.Verb.Basic
-import Linglib.Syntax.Clause.Complementation
+import Linglib.Data.Complementation.Noonan2007
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Studies.Noonan2007
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
@@ -800,8 +799,6 @@ end VerbVerification
 -- § 14: Noonan CTP → Landau Tier Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Clause.Complementation
-
 /-- Map [noonan-2007]'s CTP classes to [landau-2015]'s
     control tiers.
 
@@ -879,7 +876,7 @@ theorem ctp_tier_consistent (c : CTPClass)
     and Landau's `ctpToControlTier .achievement = some .predicative` holds
     by `rfl`. The bridge theorem makes the consilience kernel-checked. -/
 
-open Noonan2007 (english_manage)
+open Data.Complementation.Noonan2007 (english_manage)
 
 /-- Cross-paper consilience: Noonan-equi on the achievement class
     coincides with Landau's predicative tier. Witnessed by `manage`. -/

@@ -1,3 +1,4 @@
+import Linglib.Data.Complementation.Noonan2007
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Semantics.Mood.Basic
@@ -11,15 +12,22 @@ realis/irrealis split, equi-deletion restriction, indicative implicational
 hierarchy) plus interconnection theorems linking it to existing linglib
 infrastructure.
 
-## Part I: Per-language CTP data + Noonan's verified generalizations
+## Part I: Noonan's generalizations over the generated CTP sample
 
-7-language CTPDatum sample (English/Latin/Turkish/Irish/Persian/Hindi-Urdu/
-Japanese) testing four Noonan generalizations:
+Data rows are generated from `Data/Complementation/Noonan2007.json`
+(module `Data.Complementation.Noonan2007`): a 7-language sample
+(English §1.1 / Latin §1.3 / Turkish §1.4 / Irish §1.5 / Persian §2.3 /
+Hindi-Urdu §2.3 / Japanese) testing three Noonan generalizations:
 
-- G1: Realis/irrealis split ([noonan-2007] Table 2.3)
 - G2: Equi-deletion restricted to reduced complement types (§2.1)
 - G3: Negative raising restricted to propAttitude/desiderative (gap-filler)
 - G4: Per-language indicative-desiderative implies indicative-propAttitude (§2.4)
+
+Analytic caveats carried over from the hand-typed rows: Persian *khastan* and
+Hindi-Urdu *chaahna* have `hasEquiDeletion := false` because their subjunctive
+subject omission is pro-drop, not Noonan-equi; English *hope* has
+`hasNegativeRaising := true` per §2.7's restriction of NR to
+{propAttitude, desiderative, modal} (Horn 1989).
 
 ## Part II: Bridge theorems
 
@@ -27,473 +35,32 @@ Five bridges connecting CTPClass to existing infrastructure:
 1. CTPClass ↔ VerbEntry (Verbal.lean) — derive CTP class from verb features
 2. CTPClass ↔ SelectionClass (LeftPeriphery.lean) — map CTP to question embedding
 3. CTPClass ↔ MoodSelector (Mood/Basic.lean) — map CTP to mood selection
-4. ComplementType ↔ NoonanCompType — map English-specific to typological categories
+4. ComplementType ↔ NoonanCompType — via the substrate adapter
+   `ComplementType.toNoonan` (`Syntax/Clause/Complementation.lean`)
 5. VerbEntry → MoodSelector — derive mood selection from verb features
 
 -/
 
 namespace Noonan2007
 
-open Clause.Complementation
+open Data.Complementation Data.Complementation.Noonan2007
 open English.Predicates.Verbal
 open Minimalist.LeftPeriphery
 open Semantics.Mood
 
 -- ============================================================================
--- Part I: Per-language CTP Data
+-- Part I: Noonan's generalizations over the generated CTP sample
 -- ============================================================================
-
-/-! ### English ([noonan-2007] §1.1) attests all six complement types. -/
-
-def english_say : CTPDatum where
-  language := "English"
-  verb := "say"
-  ctpClass := .utterance
-  allowedCompTypes := [.indicative, .paratactic]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_tell : CTPDatum where
-  language := "English"
-  verb := "tell"
-  ctpClass := .utterance
-  allowedCompTypes := [.indicative, .infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_believe : CTPDatum where
-  language := "English"
-  verb := "believe"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := true
-  hasNegativeRaising := true
-
-def english_think : CTPDatum where
-  language := "English"
-  verb := "think"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := true
-
-def english_regret : CTPDatum where
-  language := "English"
-  verb := "regret"
-  ctpClass := .commentative
-  allowedCompTypes := [.indicative, .nominalized]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_know : CTPDatum where
-  language := "English"
-  verb := "know"
-  ctpClass := .knowledge
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_realize : CTPDatum where
-  language := "English"
-  verb := "realize"
-  ctpClass := .knowledge
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_see : CTPDatum where
-  language := "English"
-  verb := "see"
-  ctpClass := .perception
-  allowedCompTypes := [.indicative, .infinitive, .participle]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_want : CTPDatum where
-  language := "English"
-  verb := "want"
-  ctpClass := .desiderative
-  allowedCompTypes := [.infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := true
-  hasNegativeRaising := true
-
-def english_hope : CTPDatum where
-  language := "English"
-  verb := "hope"
-  ctpClass := .desiderative
-  allowedCompTypes := [.indicative, .infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  -- Per [noonan-2007] §2.7, NR is restricted to {propAttitude,
-  -- desiderative, modal}. Hope is desiderative and is in the standard NR
-  -- class (Horn 1989).
-  hasNegativeRaising := true
-
-def english_wish : CTPDatum where
-  language := "English"
-  verb := "wish"
-  ctpClass := .desiderative
-  allowedCompTypes := [.indicative, .subjunctive]
-  realityStatus := .irrealis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_make : CTPDatum where
-  language := "English"
-  verb := "make"
-  ctpClass := .manipulative
-  allowedCompTypes := [.infinitive, .paratactic]
-  realityStatus := .irrealis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_persuade : CTPDatum where
-  language := "English"
-  verb := "persuade"
-  ctpClass := .manipulative
-  allowedCompTypes := [.infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_manage : CTPDatum where
-  language := "English"
-  verb := "manage"
-  ctpClass := .achievement
-  allowedCompTypes := [.infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_stop : CTPDatum where
-  language := "English"
-  verb := "stop"
-  ctpClass := .phasal
-  allowedCompTypes := [.nominalized]
-  realityStatus := .realis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_start : CTPDatum where
-  language := "English"
-  verb := "start"
-  ctpClass := .phasal
-  allowedCompTypes := [.nominalized, .infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def english_continue : CTPDatum where
-  language := "English"
-  verb := "continue"
-  ctpClass := .phasal
-  allowedCompTypes := [.nominalized, .infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-/-! ### Latin uses indicative/subjunctive split along realis/irrealis lines
-    ([noonan-2007] §1.3). -/
-
-def latin_dicere : CTPDatum where
-  language := "Latin"
-  verb := "dicere"
-  ctpClass := .utterance
-  allowedCompTypes := [.indicative, .infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := true
-  hasNegativeRaising := false
-
-def latin_credere : CTPDatum where
-  language := "Latin"
-  verb := "credere"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := true
-  hasNegativeRaising := false
-
-def latin_velle : CTPDatum where
-  language := "Latin"
-  verb := "velle"
-  ctpClass := .desiderative
-  allowedCompTypes := [.subjunctive, .infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def latin_iubere : CTPDatum where
-  language := "Latin"
-  verb := "iubere"
-  ctpClass := .manipulative
-  allowedCompTypes := [.subjunctive, .infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-/-! ### Turkish strongly favors nominalized complements
-    ([noonan-2007] §1.4). -/
-
-def turkish_sanmak : CTPDatum where
-  language := "Turkish"
-  verb := "sanmak"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.nominalized, .indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def turkish_istemek : CTPDatum where
-  language := "Turkish"
-  verb := "istemek"
-  ctpClass := .desiderative
-  allowedCompTypes := [.nominalized, .infinitive]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def turkish_baslamak : CTPDatum where
-  language := "Turkish"
-  verb := "başlamak"
-  ctpClass := .phasal
-  allowedCompTypes := [.nominalized, .infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-/-! ### Irish: finite/non-finite split with paratactic patterns
-    ([noonan-2007] §1.5). -/
-
-def irish_abair : CTPDatum where
-  language := "Irish"
-  verb := "abair"
-  ctpClass := .utterance
-  allowedCompTypes := [.indicative, .subjunctive]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def irish_ceap : CTPDatum where
-  language := "Irish"
-  verb := "ceap"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-/-! ### Persian: clear subjunctive/indicative split along CTP lines
-    ([noonan-2007] §2.3). -/
-
-def persian_goftan : CTPDatum where
-  language := "Persian"
-  verb := "goftan"
-  ctpClass := .utterance
-  allowedCompTypes := [.indicative, .subjunctive]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def persian_khastan : CTPDatum where
-  language := "Persian"
-  verb := "khastan"
-  ctpClass := .desiderative
-  allowedCompTypes := [.subjunctive]
-  realityStatus := .irrealis
-  -- Persian SUBJ pro-drop, not Noonan-equi
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def persian_danestan : CTPDatum where
-  language := "Persian"
-  verb := "danestan"
-  ctpClass := .knowledge
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-/-! ### Hindi-Urdu: subjunctive complement with desideratives
-    ([noonan-2007] §2.3). -/
-
-def hindi_urdu_sochna : CTPDatum where
-  language := "Hindi-Urdu"
-  verb := "sochna"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def hindi_urdu_jaanna : CTPDatum where
-  language := "Hindi-Urdu"
-  verb := "jaanna"
-  ctpClass := .knowledge
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def hindi_urdu_chaahna : CTPDatum where
-  language := "Hindi-Urdu"
-  verb := "chaahna"
-  ctpClass := .desiderative
-  allowedCompTypes := [.subjunctive]
-  realityStatus := .irrealis
-  -- Hindi-Urdu has PRO-drop in SUBJ, not Noonan-equi
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-/-! ### Japanese: extensive nominalized complements. -/
-
-def japanese_omou : CTPDatum where
-  language := "Japanese"
-  verb := "omou"
-  ctpClass := .propAttitude
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def japanese_shiru : CTPDatum where
-  language := "Japanese"
-  verb := "shiru"
-  ctpClass := .knowledge
-  allowedCompTypes := [.indicative]
-  realityStatus := .realis
-  hasEquiDeletion := false
-  hasRaising := false
-  hasNegativeRaising := false
-
-def japanese_hoshii : CTPDatum where
-  language := "Japanese"
-  verb := "hoshii"
-  ctpClass := .desiderative
-  allowedCompTypes := [.nominalized]
-  realityStatus := .irrealis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
-def japanese_hajimeru : CTPDatum where
-  language := "Japanese"
-  verb := "hajimeru"
-  ctpClass := .phasal
-  allowedCompTypes := [.nominalized, .infinitive]
-  realityStatus := .realis
-  hasEquiDeletion := true
-  hasRaising := false
-  hasNegativeRaising := false
-
--- ============================================================================
--- Data collections
--- ============================================================================
-
-def allEnglishCTPData : List CTPDatum := [
-  english_say, english_tell, english_believe, english_think,
-  english_regret, english_know, english_realize, english_see,
-  english_want, english_hope, english_wish,
-  english_make, english_persuade, english_manage,
-  english_stop, english_start, english_continue ]
-
-def allLatinCTPData : List CTPDatum := [
-  latin_dicere, latin_credere, latin_velle, latin_iubere ]
-
-def allTurkishCTPData : List CTPDatum := [
-  turkish_sanmak, turkish_istemek, turkish_baslamak ]
-
-def allIrishCTPData : List CTPDatum := [
-  irish_abair, irish_ceap ]
-
-def allPersianCTPData : List CTPDatum := [
-  persian_goftan, persian_khastan, persian_danestan ]
-
-def allHindiUrduCTPData : List CTPDatum := [
-  hindi_urdu_sochna, hindi_urdu_jaanna, hindi_urdu_chaahna ]
-
-def allJapaneseCTPData : List CTPDatum := [
-  japanese_omou, japanese_shiru, japanese_hoshii, japanese_hajimeru ]
-
-def allCTPData : List CTPDatum :=
-  allEnglishCTPData ++ allLatinCTPData ++ allTurkishCTPData ++
-  allIrishCTPData ++ allPersianCTPData ++ allHindiUrduCTPData ++
-  allJapaneseCTPData
-
--- ============================================================================
--- G1: Realis/irrealis split ([noonan-2007] Table 2.3)
--- ============================================================================
-
-theorem realis_classes :
-    ctpRealityStatus .utterance = .realis ∧
-    ctpRealityStatus .propAttitude = .realis ∧
-    ctpRealityStatus .commentative = .realis ∧
-    ctpRealityStatus .knowledge = .realis ∧
-    ctpRealityStatus .perception = .realis ∧
-    ctpRealityStatus .phasal = .realis := by decide
-
-theorem irrealis_classes :
-    ctpRealityStatus .desiderative = .irrealis ∧
-    ctpRealityStatus .manipulative = .irrealis ∧
-    ctpRealityStatus .modal = .irrealis ∧
-    ctpRealityStatus .achievement = .irrealis ∧
-    ctpRealityStatus .pretence = .irrealis ∧
-    ctpRealityStatus .negative = .irrealis := by decide
-
-/-- Each datum's reality status matches the CTP class's default. -/
-theorem reality_status_consistent :
-    ∀ d ∈ allCTPData, d.realityStatus = ctpRealityStatus d.ctpClass := by decide
 
 -- ============================================================================
 -- G2: Equi-deletion restriction ([noonan-2007] §2.1)
 -- ============================================================================
 
-/-- Equi-deletion only occurs when some allowed complement type is reduced. -/
+/-- Equi-deletion only occurs when some attested complement type is reduced. -/
 theorem equi_requires_reduced :
-    ∀ d ∈ allCTPData,
+    ∀ d ∈ all,
       d.hasEquiDeletion = true →
-      d.allowedCompTypes.any NoonanCompType.isReduced = true := by decide
+      d.compTypes.any NoonanCompType.isReduced = true := by decide
 
 -- ============================================================================
 -- G3: Negative raising data (fills a gap in linglib)
@@ -501,45 +68,36 @@ theorem equi_requires_reduced :
 
 /-- Negative raising verbs are exclusively propAttitude or desiderative. -/
 theorem negative_raising_class_restriction :
-    ∀ d ∈ allCTPData,
+    ∀ d ∈ all,
       d.hasNegativeRaising = true →
       d.ctpClass = .propAttitude ∨ d.ctpClass = .desiderative := by decide
 
 /-- Knowledge CTPs never support negative raising. -/
 theorem knowledge_no_negative_raising :
-    ∀ d ∈ allCTPData,
+    ∀ d ∈ all,
       d.ctpClass = .knowledge → d.hasNegativeRaising = false := by decide
 
 -- ============================================================================
 -- G4: Per-language indicative implicational hierarchy ([noonan-2007] §2.4)
 -- ============================================================================
 
-/-- Does this language use indicative with desideratives? -/
-def languageHasIndicativeDesiderative (data : List CTPDatum) (lang : String) : Bool :=
-  data.any fun d =>
-    d.language == lang && d.ctpClass == .desiderative &&
-    d.allowedCompTypes.any (· == .indicative)
+/-- Does some row of this language's list attest an indicative complement
+    for CTP class `cls`? -/
+def hasIndicativeFor (rows : List Datum) (cls : CTPClass) : Bool :=
+  rows.any fun d => d.ctpClass == cls && d.compTypes.any (· == .indicative)
 
-/-- Does this language use indicative with propAttitudes? -/
-def languageHasIndicativePropAttitude (data : List CTPDatum) (lang : String) : Bool :=
-  data.any fun d =>
-    d.language == lang && d.ctpClass == .propAttitude &&
-    d.allowedCompTypes.any (· == .indicative)
-
-/-- Implicational hierarchy per-language ([noonan-2007] §2.4): if a
-    language uses indicative for desiderative CTPs, it also uses indicative
-    for propositional-attitude CTPs.
+/-- [noonan-2007] §2.4: any sampled language using indicative with
+    desideratives also uses it with propositional attitudes.
 
     English is the only language in the sample with indicative-desiderative
     (`hope` and `wish`), so English is the only place this implication has
-    nontrivial content. The 6 other-language theorems were vacuously true
-    (false antecedent) and have been deleted. To extend this generalization
-    further, add a language with indicative-desiderative attestation
-    (Modern Greek *thélo na + indicative-mood form*; Bulgarian
-    *iskam da + present-indicative form*). -/
-theorem indicative_hierarchy_english :
-    languageHasIndicativeDesiderative allCTPData "English" = true →
-    languageHasIndicativePropAttitude allCTPData "English" = true := by native_decide
+    nontrivial content. To extend this generalization further, add a
+    language with indicative-desiderative attestation (Modern Greek
+    *thélo na + indicative-mood form*; Bulgarian *iskam da +
+    present-indicative form*). -/
+theorem indicative_hierarchy :
+    ∀ rows ∈ sample, hasIndicativeFor rows .desiderative →
+      hasIndicativeFor rows .propAttitude := by decide
 
 -- ============================================================================
 -- Part II: Bridge Theorems
@@ -796,27 +354,17 @@ theorem irrealis_not_indicative :
 -- ============================================================================
 
 /-! ## D1. Map linglib's English-specific complement types to Noonan's
-typological categories -/
+typological categories
 
-/-- Map English fragment complement types to Noonan's universal categories.
-    Returns `none` for types that don't correspond to a clausal complement. -/
-def englishToNoonan : ComplementType → Option NoonanCompType
-  | .finiteClause => some .indicative
-  | .infinitival => some .infinitive
-  | .gerund => some .nominalized
-  | .smallClause => some .paratactic
-  | .none => none           -- Not complement-taking
-  | .np => none             -- NP complement, not clausal
-  | .np_np => none          -- Ditransitive, not clausal
-  | .np_pp => none          -- NP+PP, not clausal
-  | .question => some .indicative  -- Embedded questions are finite in English
+The adapter itself is substrate: `ComplementType.toNoonan` in
+`Syntax/Clause/Complementation.lean`. The clausal-coverage check stays here. -/
 
 /-- Every English verb that takes a clausal complement maps to a Noonan type. -/
 theorem clausal_complements_have_noonan_type :
-    englishToNoonan .finiteClause ≠ none ∧
-    englishToNoonan .infinitival ≠ none ∧
-    englishToNoonan .gerund ≠ none ∧
-    englishToNoonan .smallClause ≠ none := by decide
+    ComplementType.toNoonan .finiteClause ≠ none ∧
+    ComplementType.toNoonan .infinitival ≠ none ∧
+    ComplementType.toNoonan .gerund ≠ none ∧
+    ComplementType.toNoonan .smallClause ≠ none := by decide
 
 -- ============================================================================
 -- E. Gap fix: VerbEntry → MoodSelector (derived function)

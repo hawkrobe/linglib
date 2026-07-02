@@ -8,16 +8,21 @@ Per-entry complementation features: which complement type a predicate selects
 (`ControlType`). Composed into lexical-core structures as fields
 (`Verb.ArgStructure.complementType`), Pronoun-pattern style.
 
-The cross-linguistic complementation typology lives in
-`Typology/Complementation.lean` (Noonan's six complement types); the bridge
-between the two (`ComplementType ↔ NoonanCompType`) is paper-anchored in
-`Studies/Noonan2007.lean`.
+The cross-linguistic complementation typology also lives here:
+[noonan-2007]'s six complement-clause types (`NoonanCompType`) and twelve
+complement-taking-predicate classes (`CTPClass`) with their default reality
+status (`RealityStatus`, `ctpRealityStatus`). The adapter between the two
+inventories (`ComplementType.toNoonan`) lives in
+`Syntax/Clause/Complementation.lean`.
 
 ## Main declarations
 
 * `ComplementType` — complement frame a predicate selects (English-leaning
   inventory: NP, double object, clausal, …)
 * `ControlType` — subject/object control vs raising for infinitival complements
+* `NoonanCompType` + `isReduced` — [noonan-2007]'s complement-clause types
+* `CTPClass`, `RealityStatus`, `ctpRealityStatus` — [noonan-2007]'s CTP
+  classification and realis/irrealis defaults
 -/
 
 /--
@@ -78,3 +83,77 @@ inductive ControlType where
   | raising         -- "John seems to be happy" (no theta role for matrix subject)
   | none            -- Not applicable
   deriving DecidableEq, Repr
+
+/-! ### Noonan complement typology -/
+
+/-- The six major complement types attested cross-linguistically.
+    Ordered roughly from most to least "finite" (Noonan's "balanced" to
+    "deranked"). -/
+inductive NoonanCompType where
+  | indicative     -- Finite clause with indicative mood marking
+  | subjunctive    -- Finite clause with subjunctive/irrealis marking
+  | paratactic     -- Juxtaposed clause, no subordinator
+  | infinitive     -- Non-finite with "to" or equivalent
+  | nominalized    -- Gerund / action nominal
+  | participle     -- Participial complement
+  deriving DecidableEq, Repr, BEq
+
+/-- Is this complement type "reduced" (non-finite)? -/
+def NoonanCompType.isReduced : NoonanCompType → Bool
+  | .infinitive  => true
+  | .nominalized => true
+  | .participle  => true
+  | _            => false
+
+/-- Noonan's twelve CTP classes, organized by semantic contribution.
+
+    The ordering follows [noonan-2007] Table 2.1 from most to least
+    "assertive":
+    - Utterance/propAttitude/pretence: report/judge propositional content
+    - Commentative/knowledge: evaluate/know propositional content
+    - Perception: direct experience
+    - Desiderative/manipulative/modal: irrealis orientation
+    - Achievement/phasal: aspectual
+    - Negative: negation as CTP -/
+inductive CTPClass where
+  | utterance       -- say, tell, report
+  | propAttitude    -- believe, think, suppose
+  | pretence        -- pretend, act as if
+  | commentative    -- regret, be sorry
+  | knowledge       -- know, realize, discover
+  | perception      -- see, hear, feel
+  | desiderative    -- want, wish, hope
+  | manipulative    -- make, cause, persuade, order
+  | modal           -- can, must, should
+  | achievement     -- positive: manage, dare; negative: try, forget to, avoid (§3.2.10)
+  | phasal          -- start, stop, continue
+  /-- A CTP whose sole semantic content is sentential negation
+      ([noonan-2007] §3.2.13). Typologically rare; canonical examples
+      are Fijian *sega* and Shuswap negative predicates. English `avoid`,
+      `refrain`, `prevent` are NOT in this class — they are *negative
+      achievement* predicates (§3.2.10). -/
+  | negative
+  deriving DecidableEq, Repr, BEq
+
+/-- The fundamental realis/irrealis split that predicts complement type
+    selection. Realis CTPs tend toward indicative; irrealis toward
+    subjunctive/infinitive ([noonan-2007] §2.3). -/
+inductive RealityStatus where
+  | realis    -- CTP asserts or presupposes complement truth
+  | irrealis  -- CTP does not commit to complement truth
+  deriving DecidableEq, Repr
+
+/-- Default reality status of each CTP class ([noonan-2007] Table 2.3). -/
+def ctpRealityStatus : CTPClass → RealityStatus
+  | .utterance    => .realis
+  | .propAttitude => .realis
+  | .pretence     => .irrealis
+  | .commentative => .realis
+  | .knowledge    => .realis
+  | .perception   => .realis
+  | .desiderative => .irrealis
+  | .manipulative => .irrealis
+  | .modal        => .irrealis
+  | .achievement  => .irrealis
+  | .phasal       => .realis
+  | .negative     => .irrealis

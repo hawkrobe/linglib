@@ -1,7 +1,8 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Clause.Complementation
+import Linglib.Features.Complementation
 import Linglib.Fragments.Tigrinya.ClausePrefixes
+import Linglib.Studies.Bondarenko2022
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
@@ -122,7 +123,6 @@ def agreementData : List AgreementDatum := [
 -- ============================================================================
 
 open Minimalist
-open Clause.Complementation
 
 /-- Map CTP reality status to [±finite] selection.
 
@@ -295,5 +295,14 @@ theorem all_prefixes_verbal :
     catFamily (headCat ki) = .verbal ∧
     catFamily (headCat kemzi) = .verbal ∧
     catFamily (headCat ay_n) = .verbal := by decide
+
+/-- [cacchioli-2025]'s extension of [bondarenko-2022]'s Cont-exponence
+    paradigm: *kemzi* as Tigrinya's overt Cont exponent (the 2025
+    comparison, so it lives here per the chronology rule). -/
+def tigrinyaAnalysis : Bondarenko2022.ContAnalysis where
+  inventory := Tigrinya.ClausePrefixes.allPrefixes.map (·.toComplementizer)
+  contExponent := some Tigrinya.ClausePrefixes.kemzi.toComplementizer
+  contExponent_mem := fun _ hc => by
+    cases hc; exact .tail _ (.tail _ (.head _))
 
 end Cacchioli2025

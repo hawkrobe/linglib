@@ -2,8 +2,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Syntax.DependencyGrammar.Formal.EnhancedDependencies
-import Linglib.Syntax.Clause.Complementation
-import Linglib.Studies.Noonan2007
+import Linglib.Data.Complementation.Noonan2007
 
 /-!
 # DG Control/Raising Bridge: [osborne-2019]
@@ -40,7 +39,7 @@ hasUnrepresentedArg = true ← basic tree loses embedded subject
     ↓
 classifyEnhancement =.controlSubject ← enhanced edge classified
     ↓
-CTPDatum.hasEquiDeletion ← matches [noonan-2007]'s observations
+Datum.hasEquiDeletion ← matches [noonan-2007]'s observations
 ```
 
 -/
@@ -236,20 +235,20 @@ theorem control_raising_same_enhancement :
     subjControlEnhanced.deps.length = raisingEnhanced.deps.length := rfl
 
 -- ============================================================================
--- §8: Bridge to CTPDatum — Fragment controlType predicts equi-deletion
+-- §8: Bridge to the Noonan CTP rows — Fragment controlType predicts equi-deletion
 -- ============================================================================
 
-open Clause.Complementation
-open Noonan2007
+open Data.Complementation.Noonan2007
 open English.Predicates.Verbal (manage persuade want hope stop start continue_ seem)
 
-/-- Control verbs in the Fragment have corresponding CTPDatum entries
-    with hasEquiDeletion = true ([noonan-2007] §2.1).
+/-- Control verbs in the Fragment have corresponding rows in
+    `Data.Complementation.Noonan2007` with hasEquiDeletion = true
+    ([noonan-2007] §2.1).
 
     This connects three independently specified data sources:
     1. Fragment controlType / altControlType (lexical annotation)
     2. DG enhanced dependencies (structural analysis)
-    3. CTPDatum hasEquiDeletion (typological observation)
+    3. `Datum.hasEquiDeletion` (typological observation)
 
     Note: "hope" has complementType =.finiteClause (primary frame) but
     altComplementType =.infinitival with altControlType =.subjectControl.
@@ -263,7 +262,7 @@ theorem control_predicts_equi_deletion :
     stop.controlType = .subjectControl ∧
     start.controlType = .subjectControl ∧
     continue_.controlType = .subjectControl ∧
-    -- CTPDatum says these have equi-deletion
+    -- The Noonan rows say these have equi-deletion
     english_manage.hasEquiDeletion = true ∧
     english_persuade.hasEquiDeletion = true ∧
     english_want.hasEquiDeletion = true ∧
@@ -274,8 +273,9 @@ theorem control_predicts_equi_deletion :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- The raising verb "seem" is NOT marked for equi-deletion in the typology.
-    seem does not appear in allEnglishCTPData — it's a purely syntactic
-    phenomenon, not a CTP in Noonan's semantic classification. -/
+    seem does not appear in `Data.Complementation.Noonan2007.english` — it's a
+    purely syntactic phenomenon, not a CTP in Noonan's semantic
+    classification. -/
 theorem seem_is_raising_not_ctp :
     seem.controlType = .raising := rfl
 
@@ -291,11 +291,11 @@ theorem seem_is_raising_not_ctp :
     3. Basic tree LOSES John as argument of sleep ✓
     4. Enhanced graph RECOVERS John as nsubj of sleep ✓
     5. Enhanced edge classified as controlSubject ✓
-    6. CTPDatum english_manage.hasEquiDeletion = true ✓
+    6. Noonan row english_manage.hasEquiDeletion = true ✓
 
     The chain is cumulative: changing manage's controlType in the Fragment
     breaks the grounding theorem; changing the tree structure breaks the
-    information-loss proof; changing the CTPDatum breaks the bridge. -/
+    information-loss proof; changing the Noonan row breaks the bridge. -/
 theorem control_derivation_chain :
     -- Fragment grounding
     manage.controlType = .subjectControl ∧
@@ -318,7 +318,7 @@ theorem control_derivation_chain :
     3. Basic tree LOSES Mary as argument of run ✓
     4. Enhanced graph RECOVERS Mary as nsubj of run ✓
     5. Enhanced edge classified as controlSubject ✓
-    6. CTPDatum english_persuade.hasEquiDeletion = true ✓ -/
+    6. Noonan row english_persuade.hasEquiDeletion = true ✓ -/
 theorem object_control_derivation_chain :
     persuade.controlType = .objectControl ∧
     hasUniqueHeads objControlBasic = true ∧
