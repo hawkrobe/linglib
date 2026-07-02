@@ -113,15 +113,21 @@ private theorem eq_L_of_ne {x : ERCVal} (h1 : x ≠ .e) (h2 : x ≠ .W) : x = .L
 private theorem exists_ne_of_L {c : Fin n} (hc : α c = .L) : ∃ p, α (r p) ≠ .e :=
   ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩
 
-/-- The leading constraint dominates every loser-preferring one. -/
-private theorem lead_dominates {c : Fin n} (he : ∃ p, α (r p) ≠ .e)
-    (hlead : α (r (Fin.find _ he)) = .W) (hc : α c = .L) :
-    r.Dominates (r (Fin.find _ he)) c := by
+/-- With a winner-preferring leader, the leader dominates every loser-preferring
+constraint. -/
+private theorem lead_dominates
+    (hlead : ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W) {c : Fin n}
+    (hc : α c = .L) :
+    α (r (Fin.find _ (exists_ne_of_L r α hc))) = .W
+      ∧ r.Dominates (r (Fin.find _ (exists_ne_of_L r α hc))) c := by
+  have he := exists_ne_of_L r α hc
+  refine ⟨hlead he, ?_⟩
   have hle : Fin.find _ he ≤ r.symm c :=
     Fin.find_le_of_pos he (by rw [Equiv.apply_symm_apply, hc]; decide)
   have hne : Fin.find _ he ≠ r.symm c := fun h => by
-    rw [h, Equiv.apply_symm_apply, hc] at hlead
-    exact absurd hlead (by decide)
+    have hW := hlead he
+    rw [h, Equiv.apply_symm_apply, hc] at hW
+    exact absurd hW (by decide)
   simpa [Ranking.Dominates] using hle.lt_of_ne hne
 
 /-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
@@ -129,9 +135,7 @@ loser-preferring constraint is dominated by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
     α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c :=
   (satisfiedBy_iff_lead r α).trans
-    ⟨fun hlead c hc =>
-      have he := exists_ne_of_L r α hc
-      ⟨r (Fin.find _ he), hlead he, lead_dominates r α he (hlead he) hc⟩,
+    ⟨fun hlead _ hc => ⟨_, lead_dominates r α hlead hc⟩,
      fun h he => Classical.byContradiction fun hW =>
       have ⟨w, hwW, hdom⟩ := h _ (eq_L_of_ne (Fin.find_spec he) hW)
       Fin.find_min he (by simpa [Ranking.Dominates] using hdom)
@@ -149,7 +153,7 @@ theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     fun ⟨d, hd⟩ => (satisfiedBy_iff_dominance r α).mpr fun c hc => ⟨d, hd c hc⟩⟩
   have hlead := (satisfiedBy_iff_lead r α).mp hsat
   by_cases he : ∃ p, α (r p) ≠ .e
-  · exact ⟨r (Fin.find _ he), fun c hc => ⟨hlead he, lead_dominates r α he (hlead he) hc⟩⟩
+  · exact ⟨r (Fin.find _ he), fun c hc => ⟨hlead he, (lead_dominates r α hlead hc).2⟩⟩
   · exact ⟨0, fun c hc => (he (exists_ne_of_L r α hc)).elim⟩
 
 /-- A trivial ERC is satisfied by every ranking. -/
