@@ -12,6 +12,7 @@ import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Collapse
+import Linglib.Phonology.Autosegmental.Constructions
 import Linglib.Phonology.Tone.Basic
 
 /-!
@@ -774,18 +775,12 @@ open Autosegmental
 /-- The (40) translation: a H-toned TBU is one H melody node linked to its timing unit;
 a toneless TBU is a bare timing unit. -/
 def toAR : TBU → AR Tone.TRN Unit
-  | .H => ⟨⟨LabeledTuple.ofList [Tone.TRN.H], LabeledTuple.ofList [()], {(0, 0)}⟩, by
-      intro p hp
-      simp only [Finset.mem_singleton] at hp
-      subst hp
-      exact ⟨by simp, by simp⟩⟩
-  | .O => ⟨⟨LabeledTuple.empty, LabeledTuple.ofList [()], ∅⟩, by
-      intro p hp
-      simp at hp⟩
+  | .H => .single Tone.TRN.H ()
+  | .O => .bare ()
 
 private theorem linearize_toAR (a : TBU) :
     (toAR a).linearize = [((), if a = .H then [Tone.TRN.H] else [])] := by
-  cases a <;> decide
+  cases a <;> simp [toAR]
 
 theorem linearize_realize_toAR (w : List TBU) :
     (realize toAR w).linearize
@@ -827,15 +822,8 @@ private theorem mem_upper_realize_toAR (v : List TBU) :
     rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, List.mem_append] at hb
     rcases hb with hb | hb
     · cases a with
-      | H =>
-        rw [show (toAR TBU.H).upper = LabeledTuple.ofList [Tone.TRN.H] from rfl,
-          LabeledTuple.toList_ofList] at hb
-        simpa using hb
-      | O =>
-        rw [show (toAR TBU.O).upper = LabeledTuple.empty from rfl,
-          show (LabeledTuple.empty : LabeledTuple Tone.TRN).toList = [] from
-            List.eq_nil_of_length_eq_zero (by simp)] at hb
-        simp at hb
+      | H => simpa [toAR] using hb
+      | O => simp [toAR] at hb
     · exact ih b hb
 
 private theorem upper_realize_toAR (v : List TBU) :
@@ -863,10 +851,9 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
   | cons a v ih =>
     cases a with
     | H =>
-      rw [realize_cons, AR.links_concat,
-        show (toAR TBU.H).upper.len = 1 from rfl,
-        show (toAR TBU.H).lower.len = 1 from rfl,
-        show (toAR TBU.H).links = {((0 : ℕ), (0 : ℕ))} from rfl]
+      rw [realize_cons, show toAR TBU.H = .single Tone.TRN.H () from rfl, AR.links_concat]
+      simp only [AR.single_links, AR.single_upper, AR.single_lower, LabeledTuple.ofList_len,
+        List.length_singleton]
       cases j with
       | zero =>
         simp only [List.getElem?_cons_zero]
@@ -886,10 +873,9 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
           exact ⟨k + 1, Finset.mem_union_right _
             (Finset.mem_image.mpr ⟨(k, t), hk, by rw [shiftLink_apply]⟩)⟩
     | O =>
-      rw [realize_cons, AR.links_concat,
-        show (toAR TBU.O).upper.len = 0 from rfl,
-        show (toAR TBU.O).lower.len = 1 from rfl,
-        show (toAR TBU.O).links = (∅ : Finset (ℕ × ℕ)) from rfl]
+      rw [realize_cons, show toAR TBU.O = .bare () from rfl, AR.links_concat]
+      simp only [AR.bare_links, AR.bare_upper, AR.bare_lower, LabeledTuple.ofList_len,
+        List.length_singleton, List.length_nil]
       cases j with
       | zero =>
         simp only [List.getElem?_cons_zero]
