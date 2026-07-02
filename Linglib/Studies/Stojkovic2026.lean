@@ -1,6 +1,6 @@
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Slavic Verbalizer [stojkovic-2026]
@@ -299,12 +299,12 @@ set_option maxRecDepth 1024 in
     the three attested groups (with [ov]~[ev] one context-sensitive grammar) plus
     a hypothetical [uv]~[iv]; see the module docstring. -/
 theorem factorial_typology_size :
-    mkFactorialTypologySize fissionCandidates variableConstraints = 4 := by decide
+    factorialTypologySize fissionCandidates variableConstraints = 4 := by decide
 
 set_option maxRecDepth 1024 in
 /-- The four distinct optima are exactly the four singleton candidate sets. -/
 theorem factorial_optima_are_singletons :
-    mkFactorialOptima fissionCandidates variableConstraints
+    factorialOptima fissionCandidates variableConstraints
       = [{.uv}, {.iv}, {.ov}, {.ev}] := by decide
 
 /-- [iv] is the unattested optimum: the factorial typology predicts an [iv]
@@ -314,7 +314,7 @@ theorem factorial_optima_are_singletons :
     hypothetical and unattested). -/
 theorem iv_unattested :
     ({VBLZCandidate.iv} : Finset VBLZCandidate) ∈
-        mkFactorialOptima fissionCandidates variableConstraints ∧
+        factorialOptima fissionCandidates variableConstraints ∧
     ∀ d ∈ allData, VBLZCandidate.iv ∉ d.lang.vblzGroup.forms := by
   refine ⟨?_, by decide⟩
   rw [factorial_optima_are_singletons]; decide

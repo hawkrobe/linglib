@@ -1,7 +1,7 @@
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Fragments.English.Phonology
 import Linglib.Core.Optimization.System

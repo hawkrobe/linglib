@@ -392,6 +392,7 @@ private theorem exp_mul_neg_lt (x : ℝ) (hx : x < 0) (ε : ℝ) (hε : 0 < ε)
         rwa [div_mul_cancel₀ (log ε) (ne_of_lt hx)] at this
     _ = ε := exp_log hε
 
+open Filter Topology in
 /-- **Softmax → argmax limit**: as α → ∞, softmax concentrates on the unique
     maximizer. For any `i_max` with `s i_max` strictly greater than all other
     scores, `softmax(s, α)_{i_max} → 1`.
@@ -400,7 +401,8 @@ private theorem exp_mul_neg_lt (x : ℝ) (hx : x < 0) (ε : ℝ) (hε : 0 < ε)
     (hard optimization): OT is the α → ∞ limit of MaxEnt. -/
 theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
     (h_max : ∀ j, j ≠ i_max → s j < s i_max) :
-    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → |softmax (α • s) i_max - 1| < ε := by
+    Tendsto (fun α : ℝ => softmax (α • s) i_max) atTop (𝓝 1) := by
+  rw [Metric.tendsto_atTop]
   intro ε hε
   set n := Fintype.card ι
   have hn_pos : (0 : ℝ) < n := Nat.cast_pos.mpr Fintype.card_pos
@@ -408,7 +410,7 @@ theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
   have hεn : 0 < εn := div_pos hε hn_pos
   let threshFn : ι → ℝ := fun j =>
     if j = i_max then (0 : ℝ) else log εn / (s j - s i_max)
-  refine ⟨univ.sup' ⟨i_max, mem_univ _⟩ threshFn, fun α hα => ?_⟩
+  refine ⟨univ.sup' ⟨i_max, mem_univ _⟩ threshFn + 1, fun α hα => ?_⟩
   have hbound : ∀ j ≠ i_max, softmax (α • s) j < εn := by
     intro j hj
     apply lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
@@ -433,17 +435,21 @@ theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
             sum_le_sum_of_subset_of_nonneg (erase_subset _ _) (fun _ _ _ => hεn.le)
         _ = ↑n * εn := by rw [sum_const, card_univ, nsmul_eq_mul]
         _ = ε := mul_div_cancel₀ _ (ne_of_gt hn_pos)
-  rw [abs_sub_lt_iff]; constructor <;> linarith
+  rw [Real.dist_eq, abs_sub_lt_iff]; constructor <;> linarith
 
 omit [Nonempty ι] [DecidableEq ι] in
+open Filter Topology in
 /-- Complement of the limit: non-maximal actions get probability → 0. -/
 theorem softmax_nonmax_limit (s : ι → ℝ) (i_max : ι)
     (h_max : ∀ j, j ≠ i_max → s j < s i_max) (j : ι) (hj : j ≠ i_max) :
-    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → softmax (α • s) j < ε := by
+    Tendsto (fun α : ℝ => softmax (α • s) j) atTop (𝓝 0) := by
+  have : Nonempty ι := ⟨j⟩
+  rw [Metric.tendsto_atTop]
   intro ε hε
-  exact ⟨log ε / (s j - s i_max), fun α hα =>
-    lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
-      (exp_mul_neg_lt _ (sub_neg.mpr (h_max j hj)) ε hε α hα)⟩
+  refine ⟨log ε / (s j - s i_max) + 1, fun α hα => ?_⟩
+  rw [Real.dist_eq, sub_zero, abs_of_pos (softmax_pos _ _)]
+  exact lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
+    (exp_mul_neg_lt _ (sub_neg.mpr (h_max j hj)) ε hε α (by linarith))
 
 end SoftmaxLimit
 

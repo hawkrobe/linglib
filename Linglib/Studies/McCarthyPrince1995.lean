@@ -1,7 +1,7 @@
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Fragments.Akan.Phonology
 
 /-!
@@ -438,7 +438,7 @@ theorem overapplication_br_phono_io :
     independently) and is demonstrated by the Balangao and Tagalog examples
     in §§3-5 rather than the abstract model. -/
 theorem basic_model_factorial :
-    mkFactorialOptima basicCandidates
+    factorialOptima basicCandidates
       [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne
     = [{BasicCand.normal}, {BasicCand.over}, {BasicCand.faithful}] := by decide
 
@@ -471,7 +471,7 @@ unmarked) are the only optima. No ranking produces a 4th outcome. -/
     argument that underapplication requires an additional constraint
     beyond the three in the Basic Model. -/
 theorem basic_model_no_underapplication :
-    ∀ optima ∈ mkFactorialOptima basicCandidates
+    ∀ optima ∈ factorialOptima basicCandidates
       [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne,
     optima = {BasicCand.faithful} ∨ optima = {BasicCand.over} ∨ optima = {BasicCand.normal} := by
   decide
@@ -480,7 +480,7 @@ theorem basic_model_no_underapplication :
     not 4 — confirming that underapplication is absent from the Basic
     Model. -/
 theorem basic_model_exactly_three_types :
-    mkFactorialTypologySize basicCandidates
+    factorialTypologySize basicCandidates
       [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne
     = 3 := by decide
 

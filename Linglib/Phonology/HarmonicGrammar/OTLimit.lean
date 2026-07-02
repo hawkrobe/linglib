@@ -37,7 +37,7 @@ namespace HarmonicGrammar
 open Constraints
 
 
-open Core Constraints Core.Optimization.Evaluation Real Finset
+open Core Constraints Core.Optimization.Evaluation Real Finset Filter Topology
 
 /-! ### OT → HG weights
 
@@ -281,16 +281,15 @@ theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     (c_opt : C)
     (h_opt : ∀ c, c ≠ c_opt →
       harmonyScore con w c < harmonyScore con w c_opt) :
-    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (α • harmonyScore con w) c_opt - 1| < ε :=
+    Tendsto (fun α : ℝ => softmax (α • harmonyScore con w) c_opt) atTop (𝓝 1) :=
   softmax_argmax_limit (harmonyScore con w) c_opt h_opt
 
 /-- **MaxEnt → OT limit** ([smolensky-legendre-2006]): as α → ∞,
     MaxEnt probability concentrates on the OT winner.
 
     Given a constraint ranking with violation bound M and a candidate `c_opt`
-    that lexicographically beats all competitors, the MaxEnt probability
-    `softmax(α · H)(c_opt) → 1` as `α → ∞`.
+    that lexicographically beats all competitors,
+    `Tendsto (softmax (α • H) c_opt) atTop (𝓝 1)`.
 
     The proof combines:
     1. `ot_lex_imp_higher_harmony`: lex-better ⟹ higher harmony (HG–OT agreement)
@@ -302,8 +301,9 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
     (hlex : ∀ c, c ≠ c_opt →
       toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
       toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
-    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (α • harmonyScore ranking.get (expWeights ranking.length M)) c_opt - 1| < ε := by
+    Tendsto (fun α : ℝ =>
+      softmax (α • harmonyScore ranking.get (expWeights ranking.length M)) c_opt)
+      atTop (𝓝 1) := by
   apply softmax_argmax_limit
   intro c hc
   exact ot_lex_imp_higher_harmony ranking M hM c_opt c

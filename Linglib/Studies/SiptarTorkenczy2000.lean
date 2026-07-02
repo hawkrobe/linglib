@@ -1,7 +1,7 @@
 import Linglib.Phonology.Subregular.Harmony
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Fragments.Hungarian.VowelHarmony
 
@@ -288,7 +288,7 @@ theorem faithful_wins_reversed :
     This matches the typological prediction: suffix harmony is either
     present or absent, with no intermediate grammars. -/
 theorem factorial_two_types :
-    mkFactorialTypologySize házCands
+    factorialTypologySize házCands
       [mkSpread hungarianPalatalHarmony, mkIdentHarmony hungarianPalatalHarmony]
       házCands_ne = 2 := by native_decide
 

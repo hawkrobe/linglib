@@ -205,7 +205,8 @@ def footMorae (ws : List Syllable.Weight) : Nat :=
 
 A **footing**: a flat parse into feet and stray (unfooted) syllables, no designated head
 ([lamont-2022c]); the σ-type `S` carries quantity (`Unit` insensitive, `Syllable.Weight` not).
-A prosodic word ω (`Prosody.Word`) is the headed refinement of a footing. -/
+A prosodic word ω (an `IsWord` tree, `Prosody/Word.lean`) is the headed refinement of a
+footing. -/
 
 /-- A footing: a flat sequence of feet and stray (unfooted) syllables, no designated head
     ([lamont-2022c]). -/

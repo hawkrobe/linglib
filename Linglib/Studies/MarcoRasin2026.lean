@@ -1,7 +1,7 @@
 import Linglib.Studies.McCarthy2005
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.OptimalityTheory.Predict
 
@@ -244,8 +244,8 @@ private theorem adjOPpred_mem : adjOPpred ∈ adjCands := by
 theorem adjOPpred_always_optimal :
     ∀ ranking ∈ opConstraints.permutations',
       adjOPpred ∈ (Tableau.ofRanking adjCands ranking adjCands_ne).optimal :=
-  Tableau.ofRanking_zero_optimal_allRankings adjCands opConstraints adjCands_ne
-    adjOPpred adjOPpred_mem adjOPpred_zero_viols
+  fun _ hrk => Tableau.ofRanking_zero_optimal_allRankings adjCands opConstraints
+    adjCands_ne adjOPpred adjOPpred_mem adjOPpred_zero_viols hrk
 
 set_option maxHeartbeats 4000000 in
 /-- **Main result.** No ranking of the four OP constraints selects the

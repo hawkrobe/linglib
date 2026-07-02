@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Gradability.AntonymPrediction
 import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Pragmatics.Superoptimal
 
 /-!

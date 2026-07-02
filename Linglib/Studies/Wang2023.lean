@@ -1,6 +1,6 @@
 import Linglib.Features.ContainmentPair
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Syntax.Minimalist.Features
@@ -268,7 +268,7 @@ theorem tod_mp_optimal_is_unmarked :
 /-- Factorial typology: the binary ToD/MP! system predicts exactly
     2 language types — honorific (unmarked) vs normal (marked). -/
 theorem binary_factorial_typology :
-    mkFactorialTypologySize binaryCandidates [todConstraint, mpConstraint]
+    factorialTypologySize binaryCandidates [todConstraint, mpConstraint]
       binaryCandidates_ne = 2 := by
   native_decide
 
@@ -344,7 +344,7 @@ theorem mp_stod_wtod_selects_singular :
 /-- Factorial typology: {SToD (= todConstraint), WToD, MP!} with 3
     candidates predicts exactly 3 language types. -/
 theorem ternary_factorial_typology :
-    mkFactorialTypologySize ternaryCandidates
+    factorialTypologySize ternaryCandidates
       [todConstraint, wtodConstraint, mpConstraint]
       ternaryCandidates_ne = 3 := by
   native_decide
@@ -352,7 +352,7 @@ theorem ternary_factorial_typology :
 /-- No unattested ternary pattern: every constraint permutation selects
     one of the three canonical cells. -/
 theorem no_unattested_ternary_pattern :
-    (mkFactorialOptima ternaryCandidates
+    (factorialOptima ternaryCandidates
       [todConstraint, wtodConstraint, mpConstraint]
       ternaryCandidates_ne).all
     (fun opt => opt == {ContainmentPair.maximal} ||

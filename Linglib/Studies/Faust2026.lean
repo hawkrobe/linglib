@@ -1,6 +1,6 @@
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
@@ -986,7 +986,7 @@ theorem kalal_predicted_under_reversed_ranking :
     type, with empty C-slots tolerated) and a hypothetical mirror
     (kalal-type, where spreading wins). -/
 theorem klj_factorial_typology_size_two :
-    (mkFactorialOptima kljCandidates [starMisalign, fill]
+    (factorialOptima kljCandidates [starMisalign, fill]
       kljCandidates_ne).length = 2 := by decide
 
 /-! ### The (3) three-way contrast as a tableau
@@ -1060,7 +1060,7 @@ theorem tadmit_wins_under_fill_over_misalign :
     sense in which [faust-2026] (10b–c) makes intrusion the
     grammar's optimal escape from the misalignment dilemma. -/
 theorem taqtil_factorial_typology_size_one :
-    (mkFactorialOptima taqtilCandidates [starMisalign, fill]
+    (factorialOptima taqtilCandidates [starMisalign, fill]
       taqtilCandidates_ne).length = 1 := by decide
 
 -- ============================================================================
