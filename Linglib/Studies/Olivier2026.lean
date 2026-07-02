@@ -69,7 +69,7 @@ namespace Olivier2026
 open Olivier2026Auxiliary
   (RestructuringClause AuxiliarySwitchOccurs predictedMatrixAux
    beWantReflexiveClimbed)
-open Semantics.ArgumentStructure.AuxiliarySelection (TransitivityClass PerfectAux SelectsBe)
+open ArgumentStructure.AuxiliarySelection (TransitivityClass PerfectAux SelectsBe)
 
 /-! ## Clitic types
 
@@ -117,7 +117,7 @@ def CliticType.boundByEAviaVoiceStar : CliticType → Bool
     transitive embedded verbs.
 
     This is the projection from clitic-type taxonomy to the
-    `Semantics.ArgumentStructure.AuxiliarySelection.TransitivityClass` enum
+    `ArgumentStructure.AuxiliarySelection.TransitivityClass` enum
     used by the AuxVerbs sibling's AS predicate. -/
 def CliticType.embeddedClassOnClimbing : CliticType → TransitivityClass
   | .reflexive => .reflexive
@@ -161,8 +161,8 @@ theorem triggersAS_iff_boundByEAviaVoiceStar (c : CliticType) :
           CliticType.boundByEAviaVoiceStar,
           CliticType.embeddedClassOnClimbing,
           AuxiliarySwitchOccurs, SelectsBe,
-          Semantics.ArgumentStructure.AuxiliarySelection.canonicalSelection,
-          Semantics.ArgumentStructure.AuxiliarySelection.selection]
+          ArgumentStructure.AuxiliarySelection.canonicalSelection,
+          ArgumentStructure.AuxiliarySelection.selection]
 
 /-! ### Per-clitic-type smoke checks
 

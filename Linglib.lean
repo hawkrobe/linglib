@@ -1489,7 +1489,8 @@ import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Semantics.ArgumentStructure.Affectedness.Defs
 import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
+import Linglib.Semantics.ArgumentStructure.Agentivity.Defs
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection

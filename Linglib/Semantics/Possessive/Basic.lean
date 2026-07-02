@@ -29,7 +29,7 @@ quantificational layer (`Poss`, `PossW`, narrowing, `carrierGQ`) is in
   taxonomy.
 -/
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 
 namespace Possessive
 

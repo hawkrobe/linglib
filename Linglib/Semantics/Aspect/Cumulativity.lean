@@ -28,7 +28,7 @@ proof-factoring helpers, not part of the public API — mathlib pattern.
 namespace Semantics.Aspect.Cumulativity
 
 open _root_.Mereology
-open Semantics.ArgumentStructure
+open _root_.ArgumentStructure
 open Semantics.Aspect.Incremental
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]

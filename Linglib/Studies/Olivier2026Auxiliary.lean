@@ -95,7 +95,7 @@ theorem in this file; we encode only the diachronic French
 
 namespace Olivier2026Auxiliary
 
-open Semantics.ArgumentStructure.AuxiliarySelection
+open ArgumentStructure.AuxiliarySelection
 
 /-! ## Matrix-verb taxonomy and clitic position -/
 

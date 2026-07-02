@@ -37,7 +37,7 @@ the possessor).
 
 namespace ParteeBorschev2001
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 
 /-! ### Relation provenance and predicativity
 

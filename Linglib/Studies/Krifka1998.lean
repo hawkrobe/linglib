@@ -50,7 +50,7 @@ namespace Krifka1998
 
 open Features
 open _root_.Mereology
-open Semantics.ArgumentStructure (IsCumThetaVerb)
+open ArgumentStructure (IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 open Semantics.Spatial (Trace)
@@ -197,7 +197,7 @@ end Telicity
 
 section K98PropositionalSubstrate
 
-open Semantics.ArgumentStructure (MO)
+open ArgumentStructure (MO)
 
 /-- K98 §4.1 eq. 63 EXP: θ-arguments of temporally-ordered events do not overlap. -/
 def EXP [PartialOrder α]

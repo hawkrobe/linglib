@@ -28,7 +28,7 @@ The substrate already hosts every primitive Pasternak's §1–§4 needs:
 - Mental-state homogeneity = `Mereology.DIV` (downward-closure on the
   part-whole preorder; Pasternak (55) is the biconditional form, which
   reduces to `DIV` modulo preorder reflexivity).
-- Neo-Davidsonian roles = `Semantics.ArgumentStructure.ThematicFrame`
+- Neo-Davidsonian roles = `ArgumentStructure.ThematicFrame`
   with `experiencer`, `theme`, `holder` fields.
 
 This study file *consumes* those primitives and adds the paper-specific
@@ -86,7 +86,7 @@ namespace Pasternak2019
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
-open Semantics.ArgumentStructure (ThematicFrame)
+open ArgumentStructure (ThematicFrame)
 
 /-! ## §1. Monotonicity (Pasternak (4))
 

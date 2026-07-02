@@ -38,7 +38,7 @@ namespace Barker1995
 
 open Quantification
 open Possessive
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 
 /-! ### Narrowing
 

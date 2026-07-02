@@ -53,9 +53,9 @@ namespace Bhadra2024
 
 open Semantics.Lexical
 open Semantics.Lexical.EventStructure
-open Semantics.ArgumentStructure (EventRel)
+open ArgumentStructure (EventRel)
 open ArgumentStructure.EntailmentProfile
-open Semantics.ArgumentStructure.Affectedness.Profile
+open ArgumentStructure.Affectedness.Profile
 
 /-! ### The compositional verb root (eqs. 53–60)
 

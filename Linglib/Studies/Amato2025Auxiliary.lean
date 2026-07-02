@@ -63,7 +63,7 @@ The cyclic-Agree person-feature analysis adopted here originates in
 
 namespace Amato2025Auxiliary
 
-open Semantics.ArgumentStructure.AuxiliarySelection
+open ArgumentStructure.AuxiliarySelection
 open Olivier2026Auxiliary
 open Minimalist
 open Amato2025.NestedAgree

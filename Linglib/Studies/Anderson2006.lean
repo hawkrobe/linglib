@@ -101,7 +101,7 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
 namespace Anderson2006
 
 open AuxiliaryVerbs
-open Semantics.ArgumentStructure.AuxiliarySelection
+open ArgumentStructure.AuxiliarySelection
 open Syntax.Negation (NegStrategy)
 
 /-- A cross-linguistic AVC datum. Study-local: the `AuxiliaryVerbs` substrate

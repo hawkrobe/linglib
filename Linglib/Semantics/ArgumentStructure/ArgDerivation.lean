@@ -45,7 +45,7 @@ adds information beyond what root entailments + template predict:
   existence — the object pre-exists but measures the event
 -/
 
-namespace Semantics.ArgumentStructure.ArgDerivation
+namespace ArgumentStructure.ArgDerivation
 
 open Verb
 open Semantics.Lexical
@@ -573,4 +573,4 @@ The full derivational chain:
     (Root.Kinds)  (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
 -/
 
-end Semantics.ArgumentStructure.ArgDerivation
+end ArgumentStructure.ArgDerivation

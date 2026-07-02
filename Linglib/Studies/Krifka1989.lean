@@ -71,7 +71,7 @@ namespace Krifka1989
 
 open _root_.Mereology
 open Semantics.Plurality.Algebra (Materialization)
-open Semantics.ArgumentStructure (UP)
+open ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
 open Core.Order (MereoTag)
