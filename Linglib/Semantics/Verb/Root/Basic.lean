@@ -36,7 +36,7 @@ namespace Verb
     Participant/proto-role entailments (volition, sentience, movement,
     affectedness, …) are deliberately *not* modeled here: they are an
     orthogonal, linking-relevant layer carried by
-    `Semantics.ArgumentStructure.EntailmentProfile`. -/
+    `ArgumentStructure.EntailmentProfile`. -/
 inductive LexEntailment where
   /-- Attributes a static property (state-kind atom). -/
   | hasState     (label : String)

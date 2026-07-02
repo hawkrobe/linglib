@@ -29,7 +29,8 @@ succeed and where they diverge from the modern approach.
 namespace Dowty1991
 
 open Semantics.Lexical
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

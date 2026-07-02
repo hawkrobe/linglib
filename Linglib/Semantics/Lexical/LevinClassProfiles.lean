@@ -31,7 +31,8 @@ Individual verbs can override class-level profiles via explicit
 namespace Features.LevinClassProfiles
 
 open Semantics.Lexical
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -121,7 +122,8 @@ end Features.LevinClassProfiles
 
 namespace Semantics.Lexical
 open Features.LevinClassProfiles
-open Semantics.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure (EntailmentProfile)
+open _root_.ArgumentStructure.EntailmentProfile
 
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
@@ -176,7 +178,7 @@ end Semantics.Lexical
 
 namespace Features.LevinClassProfiles
 open Semantics.Lexical
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure.EntailmentProfile
 open Verb
 open Verb.Root.Kinds
 
