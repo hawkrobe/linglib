@@ -51,7 +51,7 @@ functional projection above TP*. Three primary conclusions:
   formalisation requires updating `HPSG/RelativeClauses.lean` to
   parameterise its currently-hardcoded `MOD NP` analysis.
 - A `commentative`-emitting fix to `deriveCTPClass` in
-  `Studies/Noonan2007.lean:570`: blocked on
+  `Studies/Noonan2007.lean`: blocked on
   VerbEntry schema (regret and know have identical features in
   `Fragments/English/Predicates/Verbal.lean`).
 

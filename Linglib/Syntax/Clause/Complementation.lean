@@ -1,18 +1,20 @@
 /-!
-# Clause complementation: complement-clause typology
+# Clause complementation: complement-clause surface typology
 
-[noonan-2007] [deal-2026]
+[deal-2026]
 
-[noonan-2007]'s complement-clause types and complement-taking-predicate (CTP)
-classes, plus [deal-2026]'s notional-complement surface structures and CP
-external-shell inventory. Graduated from the dissolved `Typology/` drawer; the
-unconsumed WALS subordination + Cristofaro complementation typology (and its
+[deal-2026]'s notional-complement surface structures and CP external-shell
+inventory. Graduated from the dissolved `Typology/` drawer; the unconsumed
+WALS subordination + Cristofaro complementation typology (and its
 `native_decide` distribution theorems) was dropped.
+
+[noonan-2007]'s complement-clause types and complement-taking-predicate
+classification (`NoonanCompType`, `CTPClass`, `RealityStatus`,
+`ctpRealityStatus`) live in `Features/Complementation.lean`; the generated
+CTP sample rows live in `Data/Complementation/`.
 
 ## Main definitions
 
-* `NoonanCompType` + `isReduced` — Noonan's complement-clause types.
-* `CTPClass`, `RealityStatus`, `ctpRealityStatus`, `CTPDatum` — CTP classification.
 * `ComplementClauseStructure` — surface complement-clause structure ([deal-2026]).
 * `CPShell` / `CPShellInventory` / `isAttestedShell` — CP external-shell cartography ([deal-2026]).
 -/
@@ -20,103 +22,7 @@ unconsumed WALS subordination + Cristofaro complementation typology (and its
 namespace Clause.Complementation
 
 -- ============================================================================
--- §1. Noonan Complement Typology
--- ============================================================================
-
-/-- The six major complement types attested cross-linguistically.
-    Ordered roughly from most to least "finite" (Noonan's "balanced" to
-    "deranked"). -/
-inductive NoonanCompType where
-  | indicative     -- Finite clause with indicative mood marking
-  | subjunctive    -- Finite clause with subjunctive/irrealis marking
-  | paratactic     -- Juxtaposed clause, no subordinator
-  | infinitive     -- Non-finite with "to" or equivalent
-  | nominalized    -- Gerund / action nominal
-  | participle     -- Participial complement
-  deriving DecidableEq, Repr
-
-/-- Is this complement type "reduced" (non-finite)? -/
-def NoonanCompType.isReduced : NoonanCompType → Bool
-  | .infinitive  => true
-  | .nominalized => true
-  | .participle  => true
-  | _            => false
-
-/-- Noonan's twelve CTP classes, organized by semantic contribution.
-
-    The ordering follows [noonan-2007] Table 2.1 from most to least
-    "assertive":
-    - Utterance/propAttitude/pretence: report/judge propositional content
-    - Commentative/knowledge: evaluate/know propositional content
-    - Perception: direct experience
-    - Desiderative/manipulative/modal: irrealis orientation
-    - Achievement/phasal: aspectual
-    - Negative: negation as CTP -/
-inductive CTPClass where
-  | utterance       -- say, tell, report
-  | propAttitude    -- believe, think, suppose
-  | pretence        -- pretend, act as if
-  | commentative    -- regret, be sorry
-  | knowledge       -- know, realize, discover
-  | perception      -- see, hear, feel
-  | desiderative    -- want, wish, hope
-  | manipulative    -- make, cause, persuade, order
-  | modal           -- can, must, should
-  | achievement     -- positive: manage, dare; negative: try, forget to, avoid (§3.2.10)
-  | phasal          -- start, stop, continue
-  /-- A CTP whose sole semantic content is sentential negation
-      ([noonan-2007] §3.2.13). Typologically rare; canonical examples
-      are Fijian *sega* and Shuswap negative predicates. English `avoid`,
-      `refrain`, `prevent` are NOT in this class — they are *negative
-      achievement* predicates (§3.2.10). -/
-  | negative
-  deriving DecidableEq, Repr
-
-/-- The fundamental realis/irrealis split that predicts complement type
-    selection. Realis CTPs tend toward indicative; irrealis toward
-    subjunctive/infinitive ([noonan-2007] §2.3). -/
-inductive RealityStatus where
-  | realis    -- CTP asserts or presupposes complement truth
-  | irrealis  -- CTP does not commit to complement truth
-  deriving DecidableEq, Repr
-
-/-- Default reality status of each CTP class ([noonan-2007] Table 2.3). -/
-def ctpRealityStatus : CTPClass → RealityStatus
-  | .utterance    => .realis
-  | .propAttitude => .realis
-  | .pretence     => .irrealis
-  | .commentative => .realis
-  | .knowledge    => .realis
-  | .perception   => .realis
-  | .desiderative => .irrealis
-  | .manipulative => .irrealis
-  | .modal        => .irrealis
-  | .achievement  => .irrealis
-  | .phasal       => .realis
-  | .negative     => .irrealis
-
-/-- A cross-linguistic datum about a complement-taking predicate.
-
-    Each datum records:
-    - Language and verb identification
-    - CTP class (Noonan Table 2.1)
-    - Which complement types this verb allows in this language
-    - Reality status (defaults to `ctpRealityStatus ctpClass`, but
-      overridable for exceptions)
-    - Control/raising properties ([noonan-2007] §2.1--2.2)
-    - Negative raising -/
-structure CTPDatum where
-  language : String
-  verb : String
-  ctpClass : CTPClass
-  allowedCompTypes : List NoonanCompType
-  realityStatus : RealityStatus
-  hasEquiDeletion : Bool
-  hasRaising : Bool
-  hasNegativeRaising : Bool
-  deriving DecidableEq, Repr
-
--- §8. Notional-Complement Surface Structure ([deal-2026])
+-- Notional-Complement Surface Structure ([deal-2026])
 -- ============================================================================
 
 /-! ### Theory-neutral surface enum
@@ -164,7 +70,7 @@ inductive ComplementClauseStructure where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §9. CP External Shell Inventory ([deal-2026] Table 79)
+-- CP External Shell Inventory ([deal-2026] Table 79)
 -- ============================================================================
 
 /-! ### CP-external wrapping shells

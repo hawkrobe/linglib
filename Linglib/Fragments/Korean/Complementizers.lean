@@ -58,7 +58,7 @@ namespace Korean.Complementizers
 /-- *-ta* — declarative ending. [bondarenko-2022] §4.3.2 (following
     [bogal-allbritten-moulton-2018]) analyses it as the overt ContP
     exponent — that decomposition is Studies-local
-    (`Bondarenko2022.koreanContExponent`); the consensus view
+    (`Bondarenko2022.koreanAnalysis`); the consensus view
     (Shim & Ihsane 2015, [kim-min-joo-2009]) treats it as a
     clause-typing morpheme without that structural decomposition. -/
 def ta : Complementizer where

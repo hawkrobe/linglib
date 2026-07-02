@@ -281,6 +281,8 @@ import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
+import Linglib.Data.Complementation.Noonan2007
+import Linglib.Data.Complementation.Schema
 import Linglib.Data.Examples.Abusch1997
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Examples.AhnZhu2025
@@ -1249,6 +1251,7 @@ import Linglib.Fragments.Tuyuca.Evidentiality
 import Linglib.Fragments.Tzotzil.Adposition
 import Linglib.Fragments.Tzotzil.WordOrder
 import Linglib.Fragments.Urdu.CausativeSystem
+import Linglib.Fragments.Uyghur.Complementizers
 import Linglib.Fragments.Vietnamese.TenseAspect
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
@@ -2472,6 +2475,7 @@ import Linglib.Studies.Magri2025
 import Linglib.Studies.Maier2014
 import Linglib.Studies.Maier2015
 import Linglib.Studies.MajidBosterBowerman2008
+import Linglib.Studies.Major2024
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
