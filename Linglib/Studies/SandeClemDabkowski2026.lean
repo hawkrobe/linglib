@@ -44,7 +44,7 @@ vP at the moment of vP-spell-out (when local harmony applied).
 
 3. **Local harmony in vP**. ATR harmony is a vP-domain cophonology
    (per [sande-jenks-inkelas-2020]'s Cophonologies-by-Phrase
-   architecture, formalized in `CophonologyByPhrase.lean`):
+   architecture, formalized in `Cophonology.lean`):
    when V and Part are both spelled out in vP, harmony applies; when
    only Part is in the vP-spell-out, no trigger is present and Part
    surfaces with its default −ATR value.
@@ -98,7 +98,7 @@ empirically violated.
 
 Substrate consumed (additions landed in this same overhaul):
 
-- `Phonology/OptimalityTheory/CophonologyByPhrase.lean` —
+- `Phonology/OptimalityTheory/Cophonology.lean` —
   [sande-jenks-inkelas-2020]'s phrasal extension of
   [sande-jenks-2017]'s VI-anchored cophonology.
 - `Syntax/Minimalist/Movement/Remnant.lean` —
