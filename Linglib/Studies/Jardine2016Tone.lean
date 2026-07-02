@@ -73,7 +73,7 @@ def utpBM : Bimachine Bool Bool TBU TBU :=
   .ofFlags (· == .H) (· == .H) fun l a r => if a == .H || (l && r) then .H else .O
 
 /-- The bimachine computes UTP. -/
-theorem utpBM_run : utpBM.run = utp := by
+theorem utpBM_run : utpBM.run = utp.map := by
   funext w
   refine List.ext_getElem? fun i => ?_
   rw [utpBM, Bimachine.ofFlags_run_getElem?, utp_getElem?]
@@ -90,38 +90,38 @@ theorem utpBM_run : utpBM.run = utp := by
     · rw [if_neg (fun hbt => hs (hb.mp hbt)), if_neg hs]
 
 /-- UTP is regular (§4.2): computable by a finite bimachine. -/
-theorem utp_isBimachineComputable : IsBimachineComputable utp :=
+theorem utp_isBimachineComputable : IsBimachineComputable utp.map :=
   utpBM_run ▸ isBimachineComputable utpBM
 
 /-! ### UTP is not subsequential
 
 The paper's central theorem (§4.2, online appendix), by bounded delay: a left machine
-reading `H Øⁿ` has emitted at most one symbol (`utp (H Øⁿ) = H Øⁿ` and
-`utp (H Øⁿ H) = H^(n+2)` diverge at position 1), so it withholds `n` symbols. -/
+reading `H Øⁿ` has emitted at most one symbol (`utp.map (H Øⁿ) = H Øⁿ` and
+`utp.map (H Øⁿ H) = H^(n+2)` diverge at position 1), so it withholds `n` symbols. -/
 
 /-- UTP is not left-subsequential (§4.2, online appendix). -/
-theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
+theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp.map := by
   refine not_isLeftSubsequential_of_diverging fun N =>
     ⟨.H :: List.replicate (N + 1) .O, [.H], 1, ?_, ?_⟩
-  · simp only [utp_length, List.length_cons, List.length_replicate]; omega
+  · simp only [Tone.Surfacing.map_length, List.length_cons, List.length_replicate]; omega
   · -- the images disagree at position 1: toneless there without the second H, plateau with it
-    have h1 : (utp (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O :=
+    have h1 : (utp.map (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O :=
       utp_getElem?_O_iff.mpr ⟨by simp, fun hs => by simpa using hs.2⟩
-    have h2 : (utp ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H :=
+    have h2 : (utp.map ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H :=
       utp_getElem?_H_iff.mpr ⟨by simp, by simp⟩
     rw [h1, h2]; simp
 
 /-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
 mirror-image unbounded look-ahead. -/
-theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp := by
+theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp.map := by
   intro hf
   rw [isRightSubsequential_iff_left_reverse] at hf
-  have heq : (fun xs : List TBU => (utp xs.reverse).reverse) = utp := by
+  have heq : (fun xs : List TBU => (utp.map xs.reverse).reverse) = utp.map := by
     funext xs; rw [utp_reverse, List.reverse_reverse]
   exact utp_not_isLeftSubsequential (heq ▸ hf)
 
 /-- UTP is subsequential in neither direction. -/
-theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp
+theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp.map
   | .left => utp_not_isLeftSubsequential
   | .right => utp_not_isRightSubsequential
 
@@ -132,7 +132,7 @@ Under the non-interacting-bimachine rendering of [heinz-lai-2013]'s weak determi
 expresses. -/
 
 /-- UTP is not weakly deterministic (§5.2). -/
-theorem utp_not_isBimachineWeaklyDeterministic : ¬ IsBimachineWeaklyDeterministic utp :=
+theorem utp_not_isBimachineWeaklyDeterministic : ¬ IsBimachineWeaklyDeterministic utp.map :=
   not_isBimachineWeaklyDeterministic_of_requiresBothSides utp_requiresBothSides
 
 /-! ### The (43) mark-up decomposition
@@ -166,7 +166,7 @@ private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
   | some a => cases a <;> simp [ite_eq_iff]
 
 /-- The (43) decomposition computes UTP. -/
-theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) := by
+theorem utp_eq_resolve_mark (w : List TBU) : utp.map w = resolve (markLeft.run w) := by
   have hmark : ∀ i : ℕ, Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) :=
     fun i => by simp only [List.mem_drop_iff, markLeft_run_H_iff]
   refine List.ext_getElem? fun i => ?_
@@ -189,7 +189,7 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) :=
 right-subsequential map after a left-subsequential map. -/
 theorem utp_markup_decomposition :
     IsLeftSubsequential markLeft.run ∧ IsRightSubsequential resolve
-      ∧ utp = resolve ∘ markLeft.run := by
+      ∧ utp.map = resolve ∘ markLeft.run := by
   refine ⟨markLeft.isLetterLeftSubsequential.isLeftSubsequential, ?_,
     funext utp_eq_resolve_mark⟩
   rw [isRightSubsequential_iff_left_reverse]
@@ -248,44 +248,44 @@ private theorem upper_realize_toAR (v : List TBU) :
     cases a <;> simp [toAR, List.replicate_succ]
 
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
-    p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
-  have hL : ∀ j, (realize toAR (utp w)).toGraph.IsLinkedLower j ↔ SurfacesH w j := fun j => by
+    p ∈ (realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
+  have hL : ∀ j, (realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ SurfacesH w j := fun j => by
     rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR, ← utp_getElem?_H_iff]
-    cases hv : (utp w)[j]? with
+    cases hv : (utp.map w)[j]? with
     | none => simp [List.getElem?_map, hv]
     | some a => cases a <;> simp [List.getElem?_map, hv]
   rw [realizeMerged_def,
-    mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp w)), hL]
+    mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp.map w)), hL]
 
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
 theorem links_realizeMerged_utp :
-    (realizeMerged toAR (utp w)).links = {0} ×ˢ plateau w := by
+    (realizeMerged toAR (utp.map w)).links = {0} ×ˢ plateau w := by
   ext ⟨k, j⟩; rw [mem_links_realizeMerged_utp]; simp [and_comm, eq_comm]
 
 /-- The timing tier survives the merge: one slot per input TBU. -/
 theorem lower_realizeMerged_utp :
-    (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () := by
+    (realizeMerged toAR (utp.map w)).lower.toList = List.replicate w.length () := by
   rw [realizeMerged_def, collapseAR_lower]
   have h := List.eq_replicate_of_mem
-    (l := (realize toAR (utp w)).lower.toList) (a := ()) fun _ _ => rfl
+    (l := (realize toAR (utp.map w)).lower.toList) (a := ()) fun _ _ => rfl
   rwa [LabeledTuple.toList_length, ← AR.linearize_length, linearize_realize_toAR,
-    List.length_map, utp_length] at h
+    List.length_map, Tone.Surfacing.map_length] at h
 
 /-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
 autosegment. -/
 theorem upper_realizeMerged_utp (hw : .H ∈ w) :
-    (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] := by
-  obtain ⟨m, hm⟩ : ∃ m, (utp w).count .H = m + 1 := by
+    (realizeMerged toAR (utp.map w)).upper.toList = [Tone.TRN.H] := by
+  obtain ⟨m, hm⟩ : ∃ m, ((utp.map w).count .H) = m + 1 := by
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     have := List.count_pos_iff.mpr <| List.mem_iff_getElem?.mpr
       ⟨i, utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi)⟩
-    exact ⟨(utp w).count .H - 1, by omega⟩
+    exact ⟨(utp.map w).count .H - 1, by omega⟩
   rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
 
 /-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
 example :
-    (realizeMerged toAR (utp [.H, .O, .O, .H])).links
+    (realizeMerged toAR (utp.map [.H, .O, .O, .H])).links
       = {(0, 0), (0, 1), (0, 2), (0, 3)} := by decide
 
 end AutosegmentalGrounding
@@ -294,8 +294,8 @@ end AutosegmentalGrounding
 subsequential in either direction nor weakly deterministic, the bound segmental
 phonology respects. -/
 theorem utp_fullyRegular :
-    IsBimachineComputable utp ∧ (∀ d, ¬ IsSubsequential d utp)
-      ∧ ¬ IsBimachineWeaklyDeterministic utp :=
+    IsBimachineComputable utp.map ∧ (∀ d, ¬ IsSubsequential d utp.map)
+      ∧ ¬ IsBimachineWeaklyDeterministic utp.map :=
   ⟨utp_isBimachineComputable, utp_not_isSubsequential, utp_not_isBimachineWeaklyDeterministic⟩
 
 end Jardine2016Tone
