@@ -226,25 +226,27 @@ other constraints are `e`. -/
 def simpleERC (i j : Fin n) : ERC n :=
   fun k => if k = i then .W else if k = j then .L else .e
 
+variable {i j : Fin n}
+
 /-- The only `W` of `simpleERC i j` is at `i`. -/
-theorem simpleERC_eq_W_iff {i j : Fin n} (k : Fin n) :
+theorem simpleERC_eq_W_iff (k : Fin n) :
     simpleERC i j k = .W ↔ k = i := by
   simp only [simpleERC]; split_ifs with h₁ h₂ <;> simp_all
 
 /-- The only `L` of `simpleERC i j` (with `i ≠ j`) is at `j`. -/
-theorem simpleERC_eq_L_iff {i j : Fin n} (hij : i ≠ j) (k : Fin n) :
+theorem simpleERC_eq_L_iff (hij : i ≠ j) (k : Fin n) :
     simpleERC i j k = .L ↔ k = j := by
   simp only [simpleERC]; split_ifs with h₁ h₂ <;> simp_all
 
-@[simp] theorem simpleERC_apply_W {i j : Fin n} : simpleERC i j i = .W :=
+@[simp] theorem simpleERC_apply_W : simpleERC i j i = .W :=
   (simpleERC_eq_W_iff i).mpr rfl
 
-theorem simpleERC_apply_L {i j : Fin n} (hij : i ≠ j) : simpleERC i j j = .L :=
+theorem simpleERC_apply_L (hij : i ≠ j) : simpleERC i j j = .L :=
   (simpleERC_eq_L_iff hij j).mpr rfl
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is satisfied by `r` iff `i` dominates
 `j` under `r`. -/
-theorem simpleERC_satisfiedBy_iff {i j : Fin n} (hij : i ≠ j) (r : Ranking n) :
+theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking n) :
     (simpleERC i j).SatisfiedBy r ↔ r.Dominates i j := by
   rw [ERC.satisfiedBy_iff_dominance]
   constructor
@@ -256,7 +258,7 @@ theorem simpleERC_satisfiedBy_iff {i j : Fin n} (hij : i ≠ j) (r : Ranking n) 
     exact ⟨i, simpleERC_apply_W, hdom⟩
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
-theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
+theorem simpleERC_consistent (hij : i ≠ j) :
     ERCSet.Consistent [simpleERC i j] := by
   rcases lt_or_gt_of_ne hij with h | h
   · exact ⟨Ranking.id n, fun α hα => List.mem_singleton.mp hα ▸
@@ -268,7 +270,7 @@ theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     exact h
 
 /-- `simpleERC i j` (with `i ≠ j`) is a simple ERC. -/
-theorem simpleERC_isSimple {i j : Fin n} (hij : i ≠ j) : (simpleERC i j).IsSimple :=
+theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=
   ⟨⟨i, simpleERC_apply_W, fun y hy => (simpleERC_eq_W_iff y).mp hy⟩,
    ⟨j, simpleERC_apply_L hij, fun y hy => (simpleERC_eq_L_iff hij y).mp hy⟩⟩
 
