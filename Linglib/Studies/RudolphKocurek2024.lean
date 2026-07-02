@@ -216,16 +216,12 @@ theorem evalMuchMore_iff_strict_dominationLift (φ ψ : L.CompFormula E)
       (ComparativeProbability.dominationLift (fun a b => ¬ FarBelow ord d a b))
       {x | ord.le x i ∧ Eval interp φ ord x w ∧ ¬ Eval interp ψ ord x w}
       {x | ord.le x i ∧ Eval interp ψ ord x w ∧ ¬ Eval interp φ ord x w} := by
-  rw [ComparativeProbability.strict_dominationLift_iff
-    (fun a b => not_farBelow_total d a b)]
-  constructor
-  · rintro ⟨x, h1, h2, h3, hdom⟩
-    refine ⟨x, ⟨h1, h2, h3⟩, fun b ⟨hb1, hb2, hb3⟩ => ?_⟩
-    have hfb := hdom b hb1 hb2 hb3
-    exact ⟨FarBelow.asymm d hfb, not_not_intro hfb⟩
-  · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
-    exact ⟨x, h1, h2, h3, fun b hb1 hb2 hb3 =>
-      not_not.mp (hdom b ⟨hb1, hb2, hb3⟩).2⟩
+  rw [ComparativeProbability.strict_dominationLift_iff_below
+    (fun a b => not_farBelow_total d a b)
+    (fun a b => ⟨fun h => ⟨FarBelow.asymm d h, not_not_intro h⟩,
+      fun h => not_not.mp h.2⟩)]
+  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
+  rfl
 
 /-- **Grounding**: *mostly* is the strict l-lifting comparing φ-uniform
 *levels* (`ord.equiv`-classes, mathlib's `AntisymmRel.setoid`): some
@@ -238,13 +234,10 @@ theorem evalMostly_iff_strict_dominationLift (φ : L.CompFormula E)
       (ComparativeProbability.dominationLift (fun a b => ord.le b a))
       {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interp φ ord j w}
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by
-  rw [ComparativeProbability.strict_dominationLift_iff
-    (fun a b => ord.le_total b a)]
-  constructor
-  · rintro ⟨x, h1, h2, h3, hdom⟩
-    exact ⟨x, ⟨h1, h2, h3⟩, fun b ⟨hb1, hb2⟩ => hdom b hb1 hb2⟩
-  · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
-    exact ⟨x, h1, h2, h3, fun b hb1 hb2 => hdom b ⟨hb1, hb2⟩⟩
+  rw [ComparativeProbability.strict_dominationLift_iff_below
+    (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl)]
+  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
+  rfl
 
 end ModifierGroundings
 

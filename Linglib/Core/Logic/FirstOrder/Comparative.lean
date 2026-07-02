@@ -161,12 +161,10 @@ theorem realize_comp_iff_strict_dominationLift (A B : CompFormula L E)
       {x | ord.le x i ∧ Realize interp B ord.le x w ∧
         ¬ Realize interp A ord.le x w} := by
   rw [realize_comp_iff,
-    ComparativeProbability.strict_dominationLift_iff (fun a b => ord.le_total b a)]
-  constructor
-  · rintro ⟨x, h1, h2, h3, hdom⟩
-    exact ⟨x, ⟨h1, h2, h3⟩, fun b ⟨hb1, hb2, hb3⟩ => hdom b hb1 hb2 hb3⟩
-  · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
-    exact ⟨x, h1, h2, h3, fun b hb1 hb2 hb3 => hdom b ⟨hb1, hb2, hb3⟩⟩
+    ComparativeProbability.strict_dominationLift_iff_below
+      (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl)]
+  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
+  rfl
 
 /-- ≻ is irreflexive — a witness would make A both true and false. -/
 theorem not_realize_comp_self (φ : CompFormula L E) (le : I → I → Prop)

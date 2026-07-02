@@ -362,6 +362,18 @@ theorem strict_dominationLift_iff (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     obtain ⟨b, hbB, hba⟩ := h a haA
     exact (ha b hbB).2 hba
 
+/-- `strict_dominationLift_iff` with the strict pair packaged as a dominance
+relation: whenever `below` is the strict form of the total `ge_w`, strict
+l-lifting is an ∃∀ clause in `below`. -/
+theorem strict_dominationLift_iff_below {below : W → W → Prop}
+    (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
+    (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
+    ComparativeProbability.Strict (dominationLift ge_w) A B ↔
+    ∃ a ∈ A, ∀ b ∈ B, below b a := by
+  rw [strict_dominationLift_iff hTotal]
+  exact exists_congr fun a => and_congr_right fun _ =>
+    forall₂_congr fun b _ => (hBelow b a).symm
+
 /-- The l-lifting satisfies determination by singletons. -/
 theorem dominationLift_axiomDS : DeterminedBySingletons (dominationLift ge_w) :=
   fun _ b hAb =>
