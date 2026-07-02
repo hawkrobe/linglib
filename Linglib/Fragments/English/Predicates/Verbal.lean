@@ -170,7 +170,7 @@ def kick : VerbEntry := .mkRegular {
   form := "kick"
   frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some ⟨false, false, false, false, false, true, false, true, true, false⟩
+  objectEntailments := some kickObjectProfile
   vendlerClass := some .activity
   levinClass := some .hit
   root := { profile := {

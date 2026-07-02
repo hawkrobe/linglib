@@ -394,13 +394,17 @@ theorem outcomeCard_orthogonal_to_hasResultState :
     LevinClass.outcomeCard .coil = ⊤ := by
   refine ⟨?_, ?_, rfl, rfl⟩ <;> decide
 
-/-- Affectedness bridge: the PFC profile projects to `potential` change on the
-    [beavers-2010] hierarchy, while IE verbs like *kick* project to
-    `nonquantized`. -/
+/-- Affectedness bridge: the PFC profile and surface-contact IE verbs like
+    *kick* ([beavers-2011] eq. (60c)) both project to `potential` change on
+    the [beavers-2010] hierarchy — the affectedness projection does not
+    separate them. What does is outcome cardinality (`⊤` vs `1`,
+    `outcome_hierarchy`): [bhadra-2024]'s classification is finer-grained
+    than the affectedness degree, just as it is finer than the CoS label
+    (`bend_reclassification`). -/
 theorem affectedness_bridge :
     profileToDegree { causallyAffected := true, stationary := true }
       = .potential ∧
-    profileToDegree kickObjectProfile = .nonquantized :=
+    profileToDegree kickObjectProfile = .potential :=
   ⟨rfl, rfl⟩
 
 /-- RootTypology bridge: result roots entail change and lack the restitutive

@@ -375,8 +375,10 @@ theorem locative_data_attested :
 theorem asp_and_map_orthogonal :
     -- ASP: kick subject outranks object for subjecthood
     OutranksForSubject kickSubjectProfile kickObjectProfile ∧
-    -- MAP: kick object has nonquantized affectedness (CoS, not incremental)
-    profileToDegree kickObjectProfile = .nonquantized ∧
+    -- MAP: kick object has potential affectedness (surface contact, no
+    -- entailed change — [beavers-2011] eq. (60c), same degree the paper
+    -- assigns the *hit* conative's direct object)
+    profileToDegree kickObjectProfile = .potential ∧
     -- The two operate on different dimensions
     -- (subjecthood is about P-Agent; alternation is about P-Patient strength)
     kickSubjectProfile.pAgentScore > 0 ∧
@@ -423,12 +425,16 @@ theorem changed_lower_than_unaffected :
     (PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence) := by
   decide
 
-/-- Bridge: kick object has persistence quPersBeginning (changed but
-    persists) and affectedness nonquantized — both theories agree it's
-    affected but not to a specific degree. -/
+/-- Bridge: kick object has persistence totalPersistence (persists, no
+    entailed change) and affectedness potential — exactly the
+    `degreeToPersistence` correspondence for potential change. Beavers'
+    surface-contact classification ([beavers-2011] eq. (60c)); note
+    [grimm-2011]'s own Fig. 5 instead places contact-verb objects at
+    quPersBeginning (`TransitivityRank.contact.patientNode`), a genuine
+    cross-paper disagreement over whether contact entails impingement. -/
 theorem kick_grimm_beavers_consistent :
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .quPersBeginning ∧
-    profileToDegree kickObjectProfile = .nonquantized := ⟨rfl, rfl⟩
+    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
+    profileToDegree kickObjectProfile = .potential := ⟨rfl, rfl⟩
 
 /-- Bridge: build object has persistence exPersEnd (created) and
     affectedness quantized — both theories agree on maximal patient status. -/
@@ -448,9 +454,9 @@ theorem eat_grimm_beavers_consistent :
     have lower persistence (Grimm). They formalize the same intuition
     — degree of change — from complementary perspectives. -/
 theorem grimm_beavers_monotone_canonical :
-    -- kick: nonquantized → quPersBeginning (changed)
-    profileToDegree kickObjectProfile = .nonquantized ∧
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .quPersBeginning ∧
+    -- kick: potential → totalPersistence (may change, persists unchanged)
+    profileToDegree kickObjectProfile = .potential ∧
+    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
     -- build: quantized → exPersEnd (created, lower persistence)
     profileToDegree buildObjectProfile = .quantized ∧
     PersistenceLevel.fromPatientProfile buildObjectProfile = .exPersEnd ∧
