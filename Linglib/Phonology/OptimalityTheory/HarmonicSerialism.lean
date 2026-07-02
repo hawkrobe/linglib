@@ -3,6 +3,7 @@ import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.Data.Finset.Union
 import Mathlib.Dynamics.FixedPoints.Basic
+import Linglib.Core.Order.IterateFixedPoint
 
 /-!
 # Harmonic Serialism
@@ -109,39 +110,57 @@ theorem iterateGen_of_pickFail (hpick : pick (step c) = none) :
   rw [iterateGen, Function.iterate_succ_apply, hsStep_some, if_neg hcv, hpick]
   exact Function.IsFixedPt.iterate isFixedPt_hsStep_none n
 
+/-- Lift a relation to `Option`, with `none` a bottom below every `some`: the
+well-founded carrier for the search orbit, where failure counts as a final descent. -/
+private def optionRel (lt : C → C → Prop) : Option C → Option C → Prop
+  | _, none => False
+  | none, some _ => True
+  | some a, some b => lt a b
+
+private theorem optionRel_wf {lt : C → C → Prop} (wf : WellFounded lt) :
+    WellFounded (optionRel lt) := by
+  have hnone : Acc (optionRel lt) none := Acc.intro _ fun _ hy => hy.elim
+  refine ⟨fun o => ?_⟩
+  cases o with
+  | none => exact hnone
+  | some a =>
+    induction a using wf.induction with
+    | _ a IH =>
+      refine Acc.intro _ fun o' ho' => ?_
+      match o', ho' with
+      | none, _ => exact hnone
+      | some a', h => exact IH a' h
+
+/-- The search step moves every non-fixed point strictly down the lifted harmony
+order: non-converged forms descend by `sound`, failure descends to the bottom. -/
+private theorem hsStep_descends {lt : C → C → Prop}
+    (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
+    (oc : Option C) (hne : hsStep step pick oc ≠ oc) :
+    optionRel lt (hsStep step pick oc) oc := by
+  match oc with
+  | none => exact absurd rfl hne
+  | some a =>
+    rw [hsStep_some] at hne ⊢
+    by_cases hcv : step a = {a}
+    · rw [if_pos hcv] at hne
+      exact absurd rfl hne
+    · rw [if_neg hcv] at hne ⊢
+      match hp : pick (step a) with
+      | none => exact trivial
+      | some a' =>
+        rw [hp] at hne
+        exact sound a a' hcv hp fun he => hne (congrArg some he)
+
 /-- **HS terminates under a well-founded harmony order.** If every genuine step
 descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
 past which further fuel doesn't change the result. Derivations cannot loop while each
-step makes measurable progress, so the explicit `Nat` bound is harmless. -/
+step makes measurable progress, so the explicit `Nat` bound is harmless. The proof is
+`WellFounded.iterate_eventually_constant` over the harmony order lifted to `Option`. -/
 theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
     (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
     (c : C) :
-    ∃ N, ∀ m, N ≤ m → iterateGen step pick m c = iterateGen step pick N c := by
-  induction c using wf.induction with
-  | _ c IH =>
-    by_cases hcv : step c = {c}
-    · exact ⟨0, fun m _ => by
-        rw [iterateGen_const_of_converged m hcv, iterateGen_const_of_converged 0 hcv]⟩
-    · cases hp : pick (step c) with
-      | none =>
-        refine ⟨1, fun m hm => ?_⟩
-        match m, hm with
-        | n + 1, _ => rw [iterateGen_of_pickFail _ hcv hp, iterateGen_of_pickFail _ hcv hp]
-      | some c' =>
-        by_cases hne : c' = c
-        · have hp' : pick (step c) = some c := hne ▸ hp
-          have h : ∀ m, iterateGen step pick m c = some c := by
-            intro m
-            induction m with
-            | zero => rfl
-            | succ _ ih => rw [iterateGen_succ_of_step _ hcv hp']; exact ih
-          exact ⟨0, fun m _ => by rw [h m, h 0]⟩
-        · obtain ⟨N', IH'⟩ := IH c' (sound c c' hcv hp hne)
-          refine ⟨N' + 1, fun m hm => ?_⟩
-          match m, hm with
-          | n + 1, hn =>
-            rw [iterateGen_succ_of_step _ hcv hp, iterateGen_succ_of_step _ hcv hp,
-              IH' n (Nat.le_of_succ_le_succ hn)]
+    ∃ N, ∀ m, N ≤ m → iterateGen step pick m c = iterateGen step pick N c :=
+  (optionRel_wf wf).iterate_eventually_constant (hsStep_descends sound) (some c)
 
 end Iteration
 
