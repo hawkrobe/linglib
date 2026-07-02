@@ -65,9 +65,7 @@ namespace ERC
 
 variable (α : ERC n)
 
-/-- An ERC is *trivial* if it has no `L`-constraint, so every ranking
-satisfies it. (Prince's "trivial" also includes the all-`L`/no-`W`
-case, captured here by `IsContradictory`.) -/
+/-- An ERC is *trivial* if it has no `L`-constraint, so every ranking satisfies it. -/
 def IsTrivial : Prop := ∀ k, α k ≠ .L
 
 instance : Decidable α.IsTrivial := Fintype.decidableForallFintype
@@ -78,10 +76,7 @@ def IsContradictory : Prop := (∀ k, α k ≠ .W) ∧ (∃ k, α k = .L)
 
 instance : Decidable α.IsContradictory := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A *simple* ERC has exactly one `W` and one `L`: a single dominance
-requirement `i ≫ j`. Simple ERCs are the Hasse edges of the ranking partial
-order; sets of them describe exactly the rankings representable as partial
-orders ([merchant-riggle-2016]). -/
+/-- A *simple* ERC has exactly one `W` and one `L`. -/
 def IsSimple : Prop := (∃! w, α w = .W) ∧ (∃! l, α l = .L)
 
 end ERC
@@ -96,9 +91,7 @@ namespace ERC
 variable (r : Ranking n) (α : ERC n)
 
 /-- A ranking `r` *satisfies* ERC `α` iff its sign vector, read in `r`'s priority
-order, is lexicographically nonnegative — the leading nonzero entry is `W`.
-Equivalently (`satisfiedBy_iff_dominance`, [prince-2002] §0 (3)), every
-`L`-constraint is outranked by some `W`-constraint. -/
+order, is lexicographically nonnegative. -/
 def SatisfiedBy : Prop :=
   toLex (fun _ : Fin n => (0 : ERCVal)) ≤ toLex (fun p => α (r p))
 
@@ -123,8 +116,7 @@ instance : Decidable (α.SatisfiedBy r) :=
   decidable_of_iff _ (satisfiedBy_iff_dominance r α).symm
 
 /-- [prince-2002] §0 (4): the `∀∃` form is equivalent to the `∃∀` form — *some*
-`W`-constraint dominates *every* `L`-constraint — because the ranking is total
-(Prince's footnote 3). Requires a nonempty constraint set. -/
+`W`-constraint dominates *every* `L`-constraint — because the ranking is total. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
   rw [satisfiedBy_iff_dominance]
@@ -173,18 +165,14 @@ def SatisfiedBy : Prop :=
 instance : Decidable (SatisfiedBy r E) :=
   List.decidableBAll _ E
 
-/-- An ERC set is *consistent* iff some ranking satisfies all its members. The
-definition searches over all `n!` rankings; for large `n` use ERC fusion. -/
+/-- An ERC set is *consistent* iff some ranking satisfies all its members. -/
 def Consistent : Prop := ∃ r : Ranking n, SatisfiedBy r E
 
 instance : Decidable (Consistent E) :=
   Fintype.decidableExistsFintype
 
-/-- The rankings consistent with an ERC set, as a `Finset` — its *linear
-extensions* in the terminology of [merchant-riggle-2016]. Decidable (hence a
-`Finset`) because `SatisfiedBy` is. This is the canonical "satisfying rankings"
-object that partial-order grammars reduce to via
-`PartialOrderConstraints.consistentTotalOrders_eq_linearExtensions`. -/
+/-- The rankings consistent with an ERC set, as a `Finset` — its *linear extensions*
+([merchant-riggle-2016]). -/
 def linearExtensions : Finset (Ranking n) :=
   Finset.univ.filter (fun r => SatisfiedBy r E)
 
@@ -194,11 +182,7 @@ def linearExtensions : Finset (Ranking n) :=
 
 /-! ### Entailment -/
 
-/-- `E` *entails* `E'` iff every ranking satisfying `E` also satisfies `E'` —
-equivalently, the linear extensions of `E` are contained in those of `E'`.
-This is the natural preorder on ERC sets; mutual entailment means the two sets
-describe the same OT grammar. (At the single-coordinate level, entailment is just
-`SignType`'s order `L ≤ e ≤ W`.) -/
+/-- `E` *entails* `E'` iff every ranking satisfying `E` also satisfies `E'`. -/
 def Entails : Prop := ∀ r : Ranking n, SatisfiedBy r E → SatisfiedBy r E'
 
 theorem entails_refl : Entails E E := fun _ h => h
@@ -207,8 +191,7 @@ theorem entails_trans {E₁ E₂ E₃ : ERCSet n}
     (h₁₂ : Entails E₁ E₂) (h₂₃ : Entails E₂ E₃) : Entails E₁ E₃ :=
   fun r hr => h₂₃ r (h₁₂ r hr)
 
-/-- Adding an ERC strengthens the set: `α :: E` entails `E` (more requirements,
-fewer satisfying rankings). -/
+/-- Adding an ERC strengthens the set: `α :: E` entails `E`. -/
 theorem entails_of_cons (α : ERC n) : Entails (α :: E) E :=
   fun _ hr β hβ => hr β (List.mem_cons_of_mem α hβ)
 
@@ -218,9 +201,8 @@ theorem entails_of_forall_mem {E E' : ERCSet n}
     (h : ∀ α ∈ E', Entails E [α]) : Entails E E' :=
   fun r hr α hα => h α hα r hr α (List.mem_cons.mpr (Or.inl rfl))
 
-/-- An ERC set is *simple* if every member is a simple ERC: a set of Hasse edges,
-which therefore describes a partial order on the constraints rather than a general
-antimatroid ([merchant-riggle-2016]). -/
+/-- An ERC set is *simple* if every member is a simple ERC — a set of Hasse edges
+([merchant-riggle-2016]). -/
 def IsSimpleSet (E : ERCSet n) : Prop := ∀ α ∈ E, α.IsSimple
 
 end ERCSet
@@ -261,8 +243,7 @@ theorem simpleERC_satisfiedBy_iff {i j : Fin n} (hij : i ≠ j) (r : Ranking n) 
     rw [(simpleERC_eq_L_iff hij l).mp hl]
     exact ⟨i, simpleERC_apply_W, hdom⟩
 
-/-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent: the identity ranking
-witnesses it when `i < j`, and the transposition `(i, j)` otherwise. -/
+/-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
 theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     ERCSet.Consistent [simpleERC i j] := by
   rcases lt_or_gt_of_ne hij with h | h
@@ -274,8 +255,7 @@ theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
     exact h
 
-/-- `simpleERC i j` (with `i ≠ j`) is a simple ERC: its unique `W` is `i` and its
-unique `L` is `j`. -/
+/-- `simpleERC i j` (with `i ≠ j`) is a simple ERC. -/
 theorem simpleERC_isSimple {i j : Fin n} (hij : i ≠ j) : (simpleERC i j).IsSimple :=
   ⟨⟨i, simpleERC_apply_W, fun y hy => (simpleERC_eq_W_iff y).mp hy⟩,
    ⟨j, simpleERC_apply_L hij, fun y hy => (simpleERC_eq_L_iff hij y).mp hy⟩⟩
@@ -283,8 +263,7 @@ theorem simpleERC_isSimple {i j : Fin n} (hij : i ≠ j) : (simpleERC i j).IsSim
 /-! ### Bridges: profiles, tableaux, and the Core lex order -/
 
 /-- The ERC of a winner/loser violation-profile pair: the coordinatewise sign of
-the violation difference ([prince-2002] §0; [riggle-2009-complexity] Def. 3). `W`
-where the winner has fewer violations, `L` where more, `e` where equal. -/
+the violation difference ([prince-2002] §0; [riggle-2009-complexity] Def. 3). -/
 def ercOfProfiles (winner loser : ViolationProfile n) : ERC n :=
   fun k => SignType.sign ((loser k : ℤ) - (winner k : ℤ))
 
@@ -305,8 +284,7 @@ theorem ercOfProfiles_eq_e_iff (w l : ViolationProfile n) (k : Fin n) :
     ercOfProfiles w l k = .e ↔ w k = l k := by
   simp only [ercOfProfiles, SignType.zero_eq_zero, sign_eq_zero_iff]; omega
 
-/-- The *antithetical* ERC ([prince-2002] §2): swapping winner and loser negates
-the ERC, `erc(l, w) = -erc(w, l)`. -/
+/-- The *antithetical* ERC ([prince-2002] §2): swapping winner and loser negates it. -/
 theorem ercOfProfiles_swap (w l : ViolationProfile n) :
     ercOfProfiles l w = -ercOfProfiles w l := by
   funext k
@@ -318,9 +296,8 @@ def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC n :=
   fun i => vs[i.val]'(by omega)
 
 /-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
-winner/loser pair iff the winner's profile, read in `r`'s priority order, is
-lex-≤ the loser's ([prince-2002]: an ERC holds of a ranking iff `a ≥ b` holds of
-the candidates). This grounds ERC inference in the Core lex evaluation order. -/
+winner/loser pair iff the winner's profile, read in `r`'s priority order, is lex-≤
+the loser's ([prince-2002]). -/
 theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking n) (w l : ViolationProfile n) :
     (ercOfProfiles w l).SatisfiedBy r ↔
       toLex (fun p => w (r p)) ≤ toLex (fun p => l (r p)) := by
@@ -337,9 +314,8 @@ theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking n) (w l : ViolationProfile
     exact ⟨r p', (ercOfProfiles_eq_W_iff w l (r p')).mpr hwin,
       by simpa [Ranking.Dominates] using hp'lt⟩
 
-/-- The ERC of a winner-loser pair `(w, l)` in tableau `t`: the ranking
-requirements for `w` to beat `l`. Every tableau that selects a winner implicitly
-generates one of these for each winner-loser pair. -/
+/-- The ERC of a winner-loser pair `(w, l)` in tableau `t`: the ranking requirements
+for `w` to beat `l`. -/
 def tableauERC {C : Type*} [DecidableEq C] (t : Tableau C n) (w l : C) : ERC n :=
   ercOfProfiles (t.profile w) (t.profile l)
 
@@ -368,12 +344,10 @@ theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
     forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
 
-/-- **The `Sₙ` action on a fixed `CON` is the ERC theory.** A candidate `w` is the
-optimum of `Tableau.ofPerm con r` iff, for every competitor, the winner–loser ERC
-of the *canonical* (identity-ranked) tableau is satisfied by `r`. So factorial
-typology (`r` ranging over all rankings of `con`) and ERC consistency are two
-readouts of one symmetric-group action on `con` — `Tableau.ofPerm con r` is the
-shared object. -/
+/-- **The `Sₙ` action on a fixed `CON` is the ERC theory**: `w` is optimal in
+`Tableau.ofPerm con r` iff every winner–loser ERC of the identity-ranked tableau is
+satisfied by `r` — factorial typology and ERC consistency are two readouts of one
+symmetric-group action. -/
 theorem Tableau.ofPerm_mem_optimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {n : ℕ}
     (con : CON C n) (r : Ranking n) (candidates : List C) (h : candidates ≠ [])
     (w : C) :
