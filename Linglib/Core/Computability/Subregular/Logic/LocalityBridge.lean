@@ -38,22 +38,11 @@ private theorem pred?_pos {w : WordModel α} {m : ℕ} (h0 : 0 < m) (hm : m ≤ 
   have hm' : m' < w.length := by omega
   simp [WordModel.pred?, hm']
 
-/-! ### Backward terms -/
+/-! ### Backward terms
+
+`Term.Backward` and `Term.pdepth` live with the `Term` API in `Logic/QFLogic.lean`. -/
 
 namespace Term
-
-/-- A term is *backward* if it uses no successor — only the variable and predecessors, so it reads
-positions at or before its variable. -/
-def Backward : Term V → Prop
-  | .var _  => True
-  | .pred t => t.Backward
-  | .succ _ => False
-
-/-- The predecessor depth of a term: how far back it reaches. -/
-def pdepth : Term V → ℕ
-  | .var _  => 0
-  | .pred t => t.pdepth + 1
-  | .succ t => t.pdepth
 
 /-- A backward term of predecessor depth `j`, evaluated at position `n` (in range), reads exactly
 position `n - j` — defined iff `j ≤ n`. -/

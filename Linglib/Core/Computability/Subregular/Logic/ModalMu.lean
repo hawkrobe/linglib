@@ -118,6 +118,33 @@ variable {w : WordModel α} {U : Fin n → Set ℕ} {i : ℕ} {s : Finset α} {�
 
 end RealizeSimp
 
+instance Formula.instDecidableRealize [DecidableEq α] (w : WordModel α)
+    (U : Fin n → Set ℕ) [∀ X, DecidablePred (· ∈ U X)] :
+    ∀ (i : ℕ) (φ : Formula α n), Decidable (φ.Realize w U i)
+  | _, .tru => .isTrue trivial
+  | _, .fls => .isFalse not_false
+  | i, .initial => inferInstanceAs (Decidable (i = 0))
+  | i, .final => inferInstanceAs (Decidable (i + 1 = w.length))
+  | i, .label s => inferInstanceAs (Decidable (∃ a ∈ s, w[i]? = some a))
+  | i, .nlabel s => inferInstanceAs (Decidable (∀ a ∈ s, w[i]? ≠ some a))
+  | i, .var X => inferInstanceAs (Decidable (i ∈ U X))
+  | i, .and φ ψ =>
+      @instDecidableAnd _ _ (instDecidableRealize w U i φ) (instDecidableRealize w U i ψ)
+  | i, .or φ ψ =>
+      @instDecidableOr _ _ (instDecidableRealize w U i φ) (instDecidableRealize w U i ψ)
+  | i, .dia φ =>
+      match h : w.succ? i with
+      | none => .isFalse (by simp [Formula.realize_dia, h])
+      | some j =>
+          @decidable_of_iff _ _ (by simp [Formula.realize_dia, h])
+            (instDecidableRealize w U j φ)
+  | i, .bdia φ =>
+      match h : w.pred? i with
+      | none => .isFalse (by simp [Formula.realize_bdia, h])
+      | some j =>
+          @decidable_of_iff _ _ (by simp [Formula.realize_bdia, h])
+            (instDecidableRealize w U j φ)
+
 /-- Satisfaction is monotone in the valuation: recursion variables occur only
 positively. -/
 theorem Formula.Realize.mono {w : WordModel α} {U V : Fin n → Set ℕ} (hUV : U ≤ V) :

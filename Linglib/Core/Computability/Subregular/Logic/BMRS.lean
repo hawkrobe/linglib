@@ -28,7 +28,7 @@ derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFue
 
 * `BMRS.Expr`, `BMRS.Program` — syntax; `BMRS.tden` — term denotation at an index.
 * `BMRS.Eval` — the derivation system; `BMRS.evalFuel` — the fuel-bounded evaluator.
-* `Expr.SuccFree` / `Program.SuccFree` (dually `PredFree`) — the one-sided fragments
+* `Expr.Backward` / `Program.Backward` (dually `PredFree`) — the one-sided fragments
   `BMRSᵖ` / `BMRSˢ` of [bhaskar-jardine-chandlee-oakden-2020].
 * `BMRS.combine` / `BMRS.combineC` — the value combinators of simultaneous application
   (⊙, [yolyan-2025] Def. 4.1) and its conjunctive dual (⊘, Def. 6.5).
@@ -69,7 +69,7 @@ inductive Expr (α F : Type*) where
   deriving DecidableEq
 
 /-- A BMRS program: one defining expression per rule head. -/
-def Program (α F : Type*) := F → Expr α F
+abbrev Program (α F : Type*) := F → Expr α F
 
 /-- Conjunction as `if…then…else` ([yolyan-2025] (3.6)). -/
 def Expr.and (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ e₂ .fls
@@ -89,27 +89,53 @@ def tden (w : WordModel α) (i : ℕ) (t : Term Unit) : Option ℕ := t.eval w f
 theorem tden_lt {w : WordModel α} {i : ℕ} :
     ∀ {t : Term Unit} {v : ℕ}, tden w i t = some v → v < w.length
   | .var _, v, h => by
-    simp only [tden, Term.eval] at h
-    split at h
-    · exact (Option.some.inj h) ▸ ‹w.Mem i›
-    · exact absurd h (by simp)
+    rw [tden, Term.eval] at h
+    split at h <;> simp_all [WordModel.mem_iff]
   | .succ t, v, h => by
-    simp only [tden, Term.eval, Option.bind_eq_some_iff] at h
-    obtain ⟨u, -, hu⟩ := h
-    unfold WordModel.succ? at hu
-    split at hu
-    · exact (Option.some.inj hu) ▸ ‹_›
-    · exact absurd hu (by simp)
+    simp only [tden, Term.eval, Option.bind_eq_some_iff,
+      WordModel.succ?_eq_some_iff] at h
+    obtain ⟨u, -, rfl, h⟩ := h
+    exact h
   | .pred t, v, h => by
-    simp only [tden, Term.eval, Option.bind_eq_some_iff] at h
-    obtain ⟨u, -, hu⟩ := h
-    cases u with
-    | zero => exact absurd hu (by simp [WordModel.pred?])
-    | succ u =>
-      simp only [WordModel.pred?] at hu
-      split at hu
-      · exact (Option.some.inj hu) ▸ Nat.lt_of_le_of_lt (Nat.le_refl _) ‹_›
-      · exact absurd hu (by simp)
+    simp only [tden, Term.eval, Option.bind_eq_some_iff,
+      WordModel.pred?_eq_some_iff] at h
+    obtain ⟨u, -, -, h⟩ := h
+    exact h
+
+/-- The variable denotes its own in-domain position. -/
+@[simp] theorem tden_var {w : WordModel α} {i : ℕ} (h : i < w.length) :
+    tden w i (.var ()) = some i := if_pos h
+
+/-- A one-step successor term denotes the successor position. -/
+@[simp] theorem tden_succ_var {w : WordModel α} {i : ℕ} :
+    tden w i ((Term.var ()).succ) = w.succ? i := by
+  by_cases h : i < w.length
+  · simp [tden, Term.eval, WordModel.Mem, h]
+  · simp only [tden, Term.eval, WordModel.Mem]
+    rw [if_neg h, WordModel.succ?, if_neg (by omega)]
+    rfl
+
+/-- A one-step predecessor term denotes the predecessor position (in-domain: off the
+right edge `pred?` is still defined at `w.length` but the variable is not). -/
+theorem tden_pred_var {w : WordModel α} {i : ℕ} (h : i < w.length) :
+    tden w i ((Term.var ()).pred) = w.pred? i := by
+  simp [tden, Term.eval, WordModel.Mem, h]
+
+/-- Composed terms denote sequenced denotations. -/
+theorem tden_comp {w : WordModel α} {i : ℕ} :
+    ∀ t u : Term Unit, tden w i (t.comp u) = (tden w i u).bind fun v => tden w v t
+  | .var _, u => by
+    cases hu : tden w i u with
+    | none => simp [Term.comp, hu]
+    | some v => simp [Term.comp, hu, tden_var (tden_lt hu)]
+  | .succ t, u => by
+    show (tden w i (t.comp u)).bind w.succ? = _
+    rw [tden_comp t u, Option.bind_assoc]
+    rfl
+  | .pred t, u => by
+    show (tden w i (t.comp u)).bind w.pred? = _
+    rw [tden_comp t u, Option.bind_assoc]
+    rfl
 
 /-! ### The derivation system -/
 
@@ -303,6 +329,37 @@ theorem eval_iff_evalFuel [DecidableEq α] {P : Program α F} {w : WordModel α}
     Eval P w i e b ↔ ∃ n, evalFuel P w n i e = some b :=
   ⟨evalFuel_complete, fun ⟨_, hn⟩ => evalFuel_sound hn⟩
 
+/-! ### Substitution -/
+
+/-- Substitute a term for the variable throughout an expression: `e.subst u` is
+`e[u/x]`, the operation the μ-calculus translation writes `tr(φ)[s(x)]`. -/
+def Expr.subst : Expr α F → Term Unit → Expr α F
+  | .tru, _ => .tru
+  | .fls, _ => .fls
+  | .initial t, u => .initial (t.comp u)
+  | .final t, u => .final (t.comp u)
+  | .label s t, u => .label s (t.comp u)
+  | .call f t, u => .call f (t.comp u)
+  | .ite c e₁ e₂, u => .ite (c.subst u) (e₁.subst u) (e₂.subst u)
+
+/-- Transport a derivation through substitution: evaluating `e[u/x]` at `i` is
+evaluating `e` at the position `u` denotes. -/
+theorem Eval.subst {P : Program α F} {w : WordModel α} {u : Term Unit} {i v : ℕ}
+    (hu : tden w i u = some v) {e : Expr α F} {b : Bool} (h : Eval P w v e b) :
+    Eval P w i (e.subst u) b := by
+  induction h with
+  | tru => exact .tru
+  | fls => exact .fls
+  | initial_true h => exact .initial_true (by rw [tden_comp, hu]; exact h)
+  | initial_false h hv => exact .initial_false (by rw [tden_comp, hu]; exact h) hv
+  | final_true h => exact .final_true (by rw [tden_comp, hu]; exact h)
+  | final_false h hv => exact .final_false (by rw [tden_comp, hu]; exact h) hv
+  | label_true h hl has => exact .label_true (by rw [tden_comp, hu]; exact h) hl has
+  | label_false h hl has => exact .label_false (by rw [tden_comp, hu]; exact h) hl has
+  | call h he ih => exact .call (by rw [tden_comp, hu]; exact h) he
+  | ite_true hc h₁ ihc ih₁ => exact .ite_true (ihc hu) (ih₁ hu)
+  | ite_false hc h₂ ihc ih₂ => exact .ite_false (ihc hu) (ih₂ hu)
+
 /-! ### One-sided fragments and locality
 
 `BMRSᵖ`-programs (successor-free) compute left-subsequentially, `BMRSˢ`-programs
@@ -311,69 +368,47 @@ locality lemmas below are what those inclusions rest on and are the engine of
 [yolyan-2025]'s negative results: the flags of a one-sided program cannot see across
 the target. Equal length is load-bearing — `min`/`max` atoms read `w.length`. -/
 
-/-- Successor-free terms: built from the variable by `pred` alone. -/
-def _root_.Subregular.Logic.Term.SuccFree : Term Unit → Prop
-  | .var _ => True
-  | .succ _ => False
-  | .pred t => Term.SuccFree t
-
-/-- Predecessor-free terms: built from the variable by `succ` alone. -/
-def _root_.Subregular.Logic.Term.PredFree : Term Unit → Prop
-  | .var _ => True
-  | .succ t => Term.PredFree t
-  | .pred _ => False
-
-/-- Successor-free expressions: every term is successor-free. -/
-def Expr.SuccFree : Expr α F → Prop
+/-- Backward expressions: every term is backward. -/
+def Expr.Backward : Expr α F → Prop
   | .tru | .fls => True
-  | .initial t | .final t => t.SuccFree
-  | .label _ t => t.SuccFree
-  | .call _ t => t.SuccFree
-  | .ite c e₁ e₂ => c.SuccFree ∧ e₁.SuccFree ∧ e₂.SuccFree
+  | .initial t | .final t => t.Backward
+  | .label _ t => t.Backward
+  | .call _ t => t.Backward
+  | .ite c e₁ e₂ => c.Backward ∧ e₁.Backward ∧ e₂.Backward
 
-/-- Predecessor-free expressions. -/
-def Expr.PredFree : Expr α F → Prop
+/-- Forward expressions. -/
+def Expr.Forward : Expr α F → Prop
   | .tru | .fls => True
-  | .initial t | .final t => t.PredFree
-  | .label _ t => t.PredFree
-  | .call _ t => t.PredFree
-  | .ite c e₁ e₂ => c.PredFree ∧ e₁.PredFree ∧ e₂.PredFree
+  | .initial t | .final t => t.Forward
+  | .label _ t => t.Forward
+  | .call _ t => t.Forward
+  | .ite c e₁ e₂ => c.Forward ∧ e₁.Forward ∧ e₂.Forward
 
-instance Term.instDecidableSuccFree : ∀ t : Term Unit, Decidable t.SuccFree
-  | .var _ => .isTrue trivial
-  | .succ _ => .isFalse not_false
-  | .pred t => Term.instDecidableSuccFree t
-
-instance Term.instDecidablePredFree : ∀ t : Term Unit, Decidable t.PredFree
-  | .var _ => .isTrue trivial
-  | .succ t => Term.instDecidablePredFree t
-  | .pred _ => .isFalse not_false
-
-instance Expr.instDecidableSuccFree : ∀ e : Expr α F, Decidable e.SuccFree
+instance Expr.instDecidableBackward : ∀ e : Expr α F, Decidable e.Backward
   | .tru | .fls => .isTrue trivial
-  | .initial t | .final t => inferInstanceAs (Decidable t.SuccFree)
-  | .label _ t | .call _ t => inferInstanceAs (Decidable t.SuccFree)
+  | .initial t | .final t => inferInstanceAs (Decidable t.Backward)
+  | .label _ t | .call _ t => inferInstanceAs (Decidable t.Backward)
   | .ite c e₁ e₂ =>
-      @instDecidableAnd _ _ (Expr.instDecidableSuccFree c)
-        (@instDecidableAnd _ _ (Expr.instDecidableSuccFree e₁) (Expr.instDecidableSuccFree e₂))
+      @instDecidableAnd _ _ (Expr.instDecidableBackward c)
+        (@instDecidableAnd _ _ (Expr.instDecidableBackward e₁) (Expr.instDecidableBackward e₂))
 
-instance Expr.instDecidablePredFree : ∀ e : Expr α F, Decidable e.PredFree
+instance Expr.instDecidableForward : ∀ e : Expr α F, Decidable e.Forward
   | .tru | .fls => .isTrue trivial
-  | .initial t | .final t => inferInstanceAs (Decidable t.PredFree)
-  | .label _ t | .call _ t => inferInstanceAs (Decidable t.PredFree)
+  | .initial t | .final t => inferInstanceAs (Decidable t.Forward)
+  | .label _ t | .call _ t => inferInstanceAs (Decidable t.Forward)
   | .ite c e₁ e₂ =>
-      @instDecidableAnd _ _ (Expr.instDecidablePredFree c)
-        (@instDecidableAnd _ _ (Expr.instDecidablePredFree e₁) (Expr.instDecidablePredFree e₂))
+      @instDecidableAnd _ _ (Expr.instDecidableForward c)
+        (@instDecidableAnd _ _ (Expr.instDecidableForward e₁) (Expr.instDecidableForward e₂))
 
-/-- `BMRSᵖ`: every rule body is successor-free (hereditarily, through calls). -/
-def Program.SuccFree (P : Program α F) : Prop := ∀ f, (P f).SuccFree
+/-- `BMRSᵖ`: every rule body is backward (hereditarily, through calls). -/
+def Program.Backward (P : Program α F) : Prop := ∀ f, (P f).Backward
 
-/-- `BMRSˢ`: every rule body is predecessor-free. -/
-def Program.PredFree (P : Program α F) : Prop := ∀ f, (P f).PredFree
+/-- `BMRSˢ`: every rule body is forward. -/
+def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 
-/-- Successor-free terms only move left. -/
-theorem tden_le_of_succFree {w : WordModel α} {i : ℕ} :
-    ∀ {t : Term Unit}, t.SuccFree → ∀ {v}, tden w i t = some v → v ≤ i
+/-- Backward terms only move left. -/
+theorem tden_le_of_backward {w : WordModel α} {i : ℕ} :
+    ∀ {t : Term Unit}, t.Backward → ∀ {v}, tden w i t = some v → v ≤ i
   | .var _, _, v, h => by
     simp only [tden, Term.eval] at h
     split at h
@@ -382,7 +417,7 @@ theorem tden_le_of_succFree {w : WordModel α} {i : ℕ} :
   | .pred t, ht, v, h => by
     simp only [tden, Term.eval, Option.bind_eq_some_iff] at h
     obtain ⟨u, hu, huv⟩ := h
-    have hle : u ≤ i := tden_le_of_succFree (t := t) ht hu
+    have hle : u ≤ i := tden_le_of_backward (t := t) ht hu
     cases u with
     | zero => exact absurd huv (by simp [WordModel.pred?])
     | succ u =>
@@ -391,9 +426,9 @@ theorem tden_le_of_succFree {w : WordModel α} {i : ℕ} :
       · exact (Option.some.inj huv) ▸ by omega
       · exact absurd huv (by simp)
 
-/-- Predecessor-free terms only move right. -/
-theorem le_tden_of_predFree {w : WordModel α} {i : ℕ} :
-    ∀ {t : Term Unit}, t.PredFree → ∀ {v}, tden w i t = some v → i ≤ v
+/-- Forward terms only move right. -/
+theorem le_tden_of_forward {w : WordModel α} {i : ℕ} :
+    ∀ {t : Term Unit}, t.Forward → ∀ {v}, tden w i t = some v → i ≤ v
   | .var _, _, v, h => by
     simp only [tden, Term.eval] at h
     split at h
@@ -402,7 +437,7 @@ theorem le_tden_of_predFree {w : WordModel α} {i : ℕ} :
   | .succ t, ht, v, h => by
     simp only [tden, Term.eval, Option.bind_eq_some_iff] at h
     obtain ⟨u, hu, huv⟩ := h
-    have hle : i ≤ u := le_tden_of_predFree (t := t) ht hu
+    have hle : i ≤ u := le_tden_of_forward (t := t) ht hu
     unfold WordModel.succ? at huv
     split at huv
     · exact (Option.some.inj huv) ▸ by omega
@@ -428,10 +463,10 @@ theorem tden_congr {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ}
 
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
-theorem Eval.congr_agreeUpto {P : Program α F} (hP : P.SuccFree)
+theorem Eval.congr_agreeUpto {P : Program α F} (hP : P.Backward)
     {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ} {e : Expr α F} {b : Bool}
     (h : Eval P w i e b) :
-    e.SuccFree → AgreeUpto w w' i → Eval P w' i e b := by
+    e.Backward → AgreeUpto w w' i → Eval P w' i e b := by
   induction h with
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
@@ -445,14 +480,14 @@ theorem Eval.congr_agreeUpto {P : Program α F} (hP : P.SuccFree)
     exact .final_false (by rw [← tden_congr hlen]; exact h) (hlen ▸ hv)
   | label_true h hl has =>
     intro he hag
-    exact .label_true (tden_congr hlen _ ▸ h) (hag _ (tden_le_of_succFree he h) ▸ hl) has
+    exact .label_true (tden_congr hlen _ ▸ h) (hag _ (tden_le_of_backward he h) ▸ hl) has
   | label_false h hl has =>
     intro he hag
-    exact .label_false (tden_congr hlen _ ▸ h) (hag _ (tden_le_of_succFree he h) ▸ hl) has
+    exact .label_false (tden_congr hlen _ ▸ h) (hag _ (tden_le_of_backward he h) ▸ hl) has
   | call h he' ih =>
     intro he hag
     exact .call (tden_congr hlen _ ▸ h)
-      (ih (hP _) fun k hk => hag k (hk.trans (tden_le_of_succFree he h)))
+      (ih (hP _) fun k hk => hag k (hk.trans (tden_le_of_backward he h)))
   | ite_true hc h₁ ihc ih₁ =>
     intro he hag
     exact .ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
@@ -462,10 +497,10 @@ theorem Eval.congr_agreeUpto {P : Program α F} (hP : P.SuccFree)
 
 /-- **One-sided locality (right)**: a predecessor-free program evaluated at `i` reads
 only positions `≥ i`, so equal-length words agreeing from `i` on evaluate identically. -/
-theorem Eval.congr_agreeFrom {P : Program α F} (hP : P.PredFree)
+theorem Eval.congr_agreeFrom {P : Program α F} (hP : P.Forward)
     {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ} {e : Expr α F} {b : Bool}
     (h : Eval P w i e b) :
-    e.PredFree → AgreeFrom w w' i → Eval P w' i e b := by
+    e.Forward → AgreeFrom w w' i → Eval P w' i e b := by
   induction h with
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
@@ -479,14 +514,14 @@ theorem Eval.congr_agreeFrom {P : Program α F} (hP : P.PredFree)
     exact .final_false (by rw [← tden_congr hlen]; exact h) (hlen ▸ hv)
   | label_true h hl has =>
     intro he hag
-    exact .label_true (tden_congr hlen _ ▸ h) (hag _ (le_tden_of_predFree he h) ▸ hl) has
+    exact .label_true (tden_congr hlen _ ▸ h) (hag _ (le_tden_of_forward he h) ▸ hl) has
   | label_false h hl has =>
     intro he hag
-    exact .label_false (tden_congr hlen _ ▸ h) (hag _ (le_tden_of_predFree he h) ▸ hl) has
+    exact .label_false (tden_congr hlen _ ▸ h) (hag _ (le_tden_of_forward he h) ▸ hl) has
   | call h he' ih =>
     intro he hag
     exact .call (tden_congr hlen _ ▸ h)
-      (ih (hP _) fun k hk => hag k ((le_tden_of_predFree he h).trans hk))
+      (ih (hP _) fun k hk => hag k ((le_tden_of_forward he h).trans hk))
   | ite_true hc h₁ ihc ih₁ =>
     intro he hag
     exact .ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)

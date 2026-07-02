@@ -57,6 +57,21 @@ def pred? (w : WordModel α) : ℕ → Option ℕ
 
 @[simp] theorem label?_eq_getElem? (w : WordModel α) (n : ℕ) : w.label? n = w[n]? := rfl
 
+theorem succ?_eq_some_iff {w : WordModel α} {n m : ℕ} :
+    w.succ? n = some m ↔ m = n + 1 ∧ n + 1 < w.length := by
+  unfold succ?
+  split <;> simp_all
+  all_goals omega
+
+theorem pred?_eq_some_iff {w : WordModel α} {n m : ℕ} :
+    w.pred? n = some m ↔ n = m + 1 ∧ m < w.length := by
+  cases n with
+  | zero => simp [pred?]
+  | succ k =>
+    unfold pred?
+    split <;> simp_all
+    all_goals omega
+
 @[simp] theorem mem_iff (w : WordModel α) (n : ℕ) : w.Mem n ↔ n < w.length := Iff.rfl
 
 end WordModel
