@@ -76,9 +76,11 @@ abbrev SemanticOrdering (I : Type*) := TotalPreorder I
 
 /-! ### Semantics (§4.2 of the paper) -/
 
-section Semantics
+section Framework
 
 variable {L : Language} {I W E : Type*} (interp : I → W → L.Structure E)
+
+section Semantics
 
 /-- Truth at an index ⟨≤, i, w⟩: `CompFormula.Realize` at the ordering's
 `le`. -/
@@ -143,60 +145,65 @@ theorem not_farBelow_total {I : Type*} {ord : SemanticOrdering I}
 
 section Modifiers
 
-variable {L : Language} {I W E : Type*} [Fintype I]
-  (interp : I → W → L.Structure E)
+variable [Fintype I] (φ ψ : L.CompFormula E) (ord : SemanticOrdering I)
+  (below : I → I → Prop) (d : DistanceFunction I ord) (i : I) (w : W)
 
-/-- Much more (A ≫ B): like A ≻ B but with ≪ in place of <. -/
-def EvalMuchMore (φ ψ : L.CompFormula E) (ord : SemanticOrdering I)
-    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+/-- The paper's comparative template: ≻'s clause with an arbitrary dominance
+relation in place of <. `.comp`'s semantics is the instance at `ord.lt`
+(`eval_comp_iff_compWith`); ≫ is the instance at ≪. -/
+def EvalCompWith : Prop :=
   ∃ i', ord.le i' i ∧ Eval interp φ ord i' w ∧ ¬ Eval interp ψ ord i' w ∧
     ∀ i'', ord.le i'' i → Eval interp ψ ord i'' w →
-      ¬ Eval interp φ ord i'' w → FarBelow ord d i'' i'
+      ¬ Eval interp φ ord i'' w → below i'' i'
 
 instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
-    (φ ψ : L.CompFormula E) (ord : SemanticOrdering I) [DecidableRel ord.le]
-    (d : DistanceFunction I ord) [DecidableRel d.close] (i : I) (w : W) :
-    Decidable (EvalMuchMore interp φ ψ ord d i w) := by
-  unfold EvalMuchMore; infer_instance
+    [DecidableRel ord.le] [DecidableRel below] :
+    Decidable (EvalCompWith interp φ ψ ord below i w) := by
+  unfold EvalCompWith
+  haveI : ∀ j v, Decidable (Eval interp φ ord j v) := fun _ _ => inferInstance
+  haveI : ∀ j v, Decidable (Eval interp ψ ord j v) := fun _ _ => inferInstance
+  infer_instance
+
+omit [Fintype I] in
+/-- ≻ is the template at <. -/
+theorem eval_comp_iff_compWith :
+    Eval interp (.comp φ ψ) ord i w ↔ EvalCompWith interp φ ψ ord ord.lt i w :=
+  Iff.rfl
+
+/-- Much more (A ≫ B): the template at ≪. -/
+abbrev EvalMuchMore : Prop :=
+  EvalCompWith interp φ ψ ord (FarBelow ord d) i w
 
 /-- very A := A ≫ ¬A — every reasonably close interpretation makes A true. -/
-abbrev EvalVery (φ : L.CompFormula E) (ord : SemanticOrdering I)
-    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+abbrev EvalVery : Prop :=
   EvalMuchMore interp φ (.not φ) ord d i w
 
 /-- sorta A := ¬ very ¬A — some reasonably close interpretation makes A true. -/
-abbrev EvalSorta (φ : L.CompFormula E) (ord : SemanticOrdering I)
-    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+abbrev EvalSorta : Prop :=
   ¬ EvalVery interp (.not φ) ord d i w
 
 /-- mostly A (eq. 97 of [rudolph-kocurek-2024]): some reasonably high level
 strictly below the top makes A uniformly true, and every A-false level below
 the current interpretation sits below it. Compatible with A and with ¬A
 (unlike `very`); entails `sorta A`; `mostly A ∧ mostly ¬A` is contradictory. -/
-def EvalMostly (φ : L.CompFormula E) (ord : SemanticOrdering I)
-    (d : DistanceFunction I ord) (i : I) (w : W) : Prop :=
+def EvalMostly : Prop :=
   ∃ i', ord.lt i' i ∧ d.close i i' ∧
     (∀ j, ord.equiv j i' → Eval interp φ ord j w) ∧
     ∀ i'', ord.lt i'' i → (∀ j, ord.equiv j i'' → ¬ Eval interp φ ord j w) →
       ord.lt i'' i'
 
 instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
-    (φ : L.CompFormula E) (ord : SemanticOrdering I) [DecidableRel ord.le]
-    (d : DistanceFunction I ord) [DecidableRel d.close] (i : I) (w : W) :
+    [DecidableRel ord.le] [DecidableRel d.close] :
     Decidable (EvalMostly interp φ ord d i w) := by
   unfold EvalMostly
   haveI h1 : DecidableRel ord.lt := inferInstance
   haveI h2 : DecidableRel ord.equiv := inferInstance
   haveI h3 : ∀ j, Decidable (Eval interp φ ord j w) := fun j => inferInstance
-  haveI h4 : DecidableRel d.close := inferInstance
   infer_instance
 
 end Modifiers
 
 section ModifierGroundings
-
-variable {L : Language} {I W E : Type*}
-  (interp : I → W → L.Structure E)
 
 /-- **Grounding**: ≫ is the strict l-lifting under the *coarser* total
 preorder "not far below" — the distance-function axioms are exactly what
@@ -247,17 +254,15 @@ end ModifierGroundings
 below any interpretation where e₁ falls under P and e₂ does not, every
 interpretation admitting e₂ also admits e₁. The order-restricted analogue of
 Klein's monotone-delineation constraint. -/
-def NoReversal {L : Language} {I W E : Type*}
-    (interp : I → W → L.Structure E)
-    (ord : SemanticOrdering I) (R : L.Relations 1) (w : W) (e1 e2 : E) : Prop :=
+def NoReversal (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
+    (e1 e2 : E) : Prop :=
   ∀ i i', ord.le i' i →
     @Structure.RelMap L E (interp i w) 1 R ![e1] →
     ¬ @Structure.RelMap L E (interp i w) 1 R ![e2] →
     @Structure.RelMap L E (interp i' w) 1 R ![e2] →
     @Structure.RelMap L E (interp i' w) 1 R ![e1]
 
-instance {L : Language} {I W E : Type*} [Fintype I]
-    (interp : I → W → L.Structure E) [DecidableAtoms interp]
+instance [Fintype I] [DecidableAtoms interp]
     (ord : SemanticOrdering I) [DecidableRel ord.le]
     (R : L.Relations 1) (w : W) (e1 e2 : E) :
     Decidable (NoReversal interp ord R w e1 e2) := by
@@ -265,9 +270,7 @@ instance {L : Language} {I W E : Type*} [Fintype I]
 
 section Delineation
 
-variable {L : Language} {I W E : Type*}
-  (interp : I → W → L.Structure E)
-  (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
+variable (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
 
 /-- The delineation induced by a ranked family of interpretations: a comparison
 class is admissible iff it is the extension of `P` at some interpretation
@@ -325,8 +328,6 @@ end Delineation
 /-! ### Revised Semantics ([kocurek-2024-supplement] §B) -/
 
 section Revised
-
-variable {L : Language} {I W E : Type*} (interp : I → W → L.Structure E)
 
 /-- Truth under the revised MC semantics ([kocurek-2024-supplement] §B). The
 basic semantics fails ME transitivity; the revision strengthens the MC: the
@@ -395,8 +396,7 @@ end Revised
 
 section MCond
 
-variable {L : Language} {I W E : Type*} [Fintype I]
-  (interp : I → W → L.Structure E)
+variable [Fintype I]
 
 /-- Restrict an ordering relation to A-interpretations (§6.3): drops non-A
 interpretations, so the result satisfies reflexivity (at A-interpretations)
@@ -449,6 +449,8 @@ theorem evalMCond_iff_entails (A B : L.CompFormula E) (hB : B.CompFree)
     exact (CompFormula.realize_congr_of_compFree interp B hB _ _ x w).mpr (h ⟨hx, hAx⟩)
 
 end MCond
+
+end Framework
 
 /-! ### Connection to Common Ground -/
 
