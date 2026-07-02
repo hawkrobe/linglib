@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Subregular.Function.Direction
 
 /-!
@@ -312,6 +313,25 @@ theorem isRightSubsequential_iff_left_reverse (f : List α → List β) :
     exact ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight]⟩
   · rintro ⟨σ, _, T, hT⟩
     exact ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight, hT]⟩
+
+/-- **Bounded delay**: a left-subsequential function can withhold only boundedly
+much output. On any input `u`, everything but the terminating state's final
+output is already emitted by the transitions — a prefix `p` of `f u` shared with
+`f (u ++ v)` for *every* continuation `v` — so the withheld suffix `su` is at
+most the longest state-final output `N`. This is the finite-look-ahead content of
+determinism ([mohri-1997]) and the engine of every non-subsequentiality proof:
+exhibit inputs `u`, `u ++ v` whose images diverge earlier than `(f u).length - N`
+(e.g. unbounded tonal plateauing, [jardine-2016]). -/
+theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
+    (hf : IsLeftSubsequential f) :
+    ∃ N : ℕ, ∀ u v : List α, ∃ p su sv : List β,
+      f u = p ++ su ∧ f (u ++ v) = p ++ sv ∧ su.length ≤ N := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  exact ⟨Finset.univ.sup fun s => (T.finalOutput s).length, fun u v =>
+    ⟨(T.runOnList T.start u).2, T.finalOutput (T.runOnList T.start u).1,
+      T.runFrom (T.runOnList T.start u).1 v, T.runFrom_eq_runOnList T.start u,
+      T.runFrom_append T.start u v,
+      Finset.le_sup (f := fun s => (T.finalOutput s).length) (Finset.mem_univ _)⟩⟩
 
 /-- Subsequential functions are closed under composition ([mohri-1997],
 originally Schützenberger and Choffrut) — the load-bearing fact that makes
