@@ -217,6 +217,9 @@ theorem ext {a b : LabeledTuple α} (hlen : a.len = b.len)
   simp only [ofList_label, toList, List.get_ofFn]
   congr 1
 
+theorem toList_injective : Function.Injective (toList (α := α)) := fun a b h => by
+  rw [← ofList_toList a, ← ofList_toList b, h]
+
 theorem concat_assoc (a b c : LabeledTuple α) :
     (a.concat b).concat c = a.concat (b.concat c) :=
   ext (Nat.add_assoc ..) (by simp only [concat_label]; exact Fin.append_assoc ..)
