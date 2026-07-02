@@ -4,35 +4,44 @@ import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
 # Cophonology theory
-[inkelas-zoll-2007] [sande-jenks-2017] [rolle-2018] [sande-jenks-inkelas-2020]
 
-Cophonology Theory (CPT): individual triggers carry morpheme-specific constraint
-rankings — **cophonologies** — that override parts of the default phonological grammar;
-the surface form is the optimal candidate under the trigger's cophonology rather than
-the default ranking. The constraint-merge mechanics are one apparatus
-(`mergeRanking` / `cophonologicalEval`); what varies across the theory family is the
-**trigger**:
+A *cophonology* is a morpheme-specific constraint ranking: in Cophonology Theory
+([inkelas-zoll-2007]), individual triggers override parts of the default phonological
+grammar, and the surface form is the optimal candidate under the trigger's ranking
+rather than the default one. The constraint-merge mechanics are a single apparatus;
+what varies across the theory family is the *trigger*:
 
-* **Per Vocabulary Item** ([sande-jenks-2017]; [rolle-2018] Ch 4): the trigger is the
-  individual VI inserted at a terminal — its **R component** specifies the subranking,
-  carried here as the `subranking` argument to `cophonologicalEval`. Classic CPT
-  ([inkelas-zoll-2007]) attached cophonologies to *constructions*; the VI view sharpens
-  the trigger to the inserted exponent.
-* **Per ph(r)ase** ([sande-jenks-inkelas-2020]): the trigger is a *spell-out phase*
-  (vP, CP, DP) — the cophonology activates over the entire phase complement at
-  spell-out (`PhrasalCophonology`), handling **long-distance** morphologically
-  conditioned effects (cross-word, within a phase). Syntactic reference stays
-  *indirect*: syntax selects which cophonology fires (`selectCophonology`), but the
-  cophonology itself is a pure constraint subranking with no syntactic vocabulary —
-  [newell-2008]-style cyclic phase phonology in CPT shape, without violating
-  modularity.
+* *per Vocabulary Item* ([sande-jenks-2017]; [rolle-2018] Ch 4): the trigger is the VI
+  inserted at a terminal, whose R component specifies the subranking — carried here as
+  the `subranking` argument to `cophonologicalEval`. Classic CPT attached cophonologies
+  to constructions; the VI view sharpens the trigger to the inserted exponent.
+* *per ph(r)ase* ([sande-jenks-inkelas-2020]): the trigger is a spell-out phase
+  (vP, CP, DP), whose cophonology activates over the entire phase complement —
+  deriving long-distance morphologically conditioned effects (cross-word, within a
+  phase). Syntactic reference stays indirect: syntax selects which cophonology fires,
+  but the cophonology itself is a pure constraint subranking with no syntactic
+  vocabulary, giving [newell-2008]-style cyclic phase phonology a CPT shape without
+  violating modularity.
 
-[sande-clem-dabkowski-2026] ground Guébie discontinuous harmony in the phrasal version
-(`Studies/SandeClemDabkowski2026.lean`); per-VI cophonology remains the right substrate
-for morpheme-internal effects (`Studies/AkinboFwangwar2026.lean`). The substrate
-implements neither bracket erasure ([kiparsky-1982]) nor DM PF discharge
-([embick-noyer-2007]) — rival interface theories [sande-clem-dabkowski-2026] §6.2
-argues against; it makes the CPT view expressible without forcing it on consumers.
+## Main definitions
+
+* `mergeRanking`: place a subranking's constraints above the default ranking,
+  preserving the relative order of the rest.
+* `cophonologicalEval`: OT evaluation under the merged ranking. With an empty
+  subranking it is standard OT evaluation (`cophonologicalEval_empty_sub`): CPT
+  properly generalizes OT.
+* `PhrasalCophonology`: the phasal trigger — a phase-head predicate bundled with its
+  subranking; `selectCophonology` picks the first match from a registry, the elsewhere
+  ordering of [sande-jenks-inkelas-2020].
+
+## Implementation notes
+
+The substrate implements neither bracket erasure ([kiparsky-1982]) nor DM PF discharge
+([embick-noyer-2007]) — rival theories of the syntax–phonology interface that
+[sande-clem-dabkowski-2026] §6.2 argues against; it makes the CPT view expressible
+without forcing it on consumers. Consuming studies: `Studies/AkinboFwangwar2026.lean`
+(per-VI, dominant grammatical tone) and `Studies/SandeClemDabkowski2026.lean` (phasal,
+Guébie discontinuous harmony).
 -/
 
 namespace OptimalityTheory.Cophonology
