@@ -74,33 +74,30 @@ end ERCVal
 `Fin n → ERCVal` ([prince-2002] §0). -/
 abbrev ERC (n : ℕ) := Fin n → ERCVal
 
+namespace ERC
+
+variable (α : ERC n)
+
 /-- An ERC is *trivial* if it has no `L`-constraint, so every ranking
 satisfies it. (Prince's "trivial" also includes the all-`L`/no-`W`
 case, captured here by `IsContradictory`.) -/
-def ERC.IsTrivial (α : ERC n) : Prop := ∀ k, α k ≠ .L
+def IsTrivial : Prop := ∀ k, α k ≠ .L
 
-instance (α : ERC n) : Decidable α.IsTrivial := Fintype.decidableForallFintype
+instance : Decidable α.IsTrivial := Fintype.decidableForallFintype
 
 /-- An ERC is *contradictory* if it has an `L`-constraint but no
 `W`-constraint, so no ranking satisfies it — Prince's class `𝓛⁺`. -/
-def ERC.IsContradictory (α : ERC n) : Prop :=
-  (∀ k, α k ≠ .W) ∧ (∃ k, α k = .L)
+def IsContradictory : Prop := (∀ k, α k ≠ .W) ∧ (∃ k, α k = .L)
 
-instance (α : ERC n) : Decidable α.IsContradictory :=
-  inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable α.IsContradictory := inferInstanceAs (Decidable (_ ∧ _))
 
-/-! ### Rankings as permutations -/
+/-- A *simple* ERC has exactly one `W` and one `L`: a single dominance
+requirement `i ≫ j`. Simple ERCs are the Hasse edges of the ranking partial
+order; sets of them describe exactly the rankings representable as partial
+orders ([merchant-riggle-2016]). -/
+def IsSimple : Prop := (∃! w, α w = .W) ∧ (∃! l, α l = .L)
 
-/-- Constraint `i` *dominates* constraint `j` under `r`: it sits at a lower
-(more dominant) rank position. -/
-def Ranking.Dominates (r : Ranking n) (i j : Fin n) : Prop :=
-  r.symm i < r.symm j
-
-instance (r : Ranking n) (i j : Fin n) : Decidable (r.Dominates i j) :=
-  inferInstanceAs (Decidable (r.symm i < r.symm j))
-
-/-- The identity ranking: rank position equals constraint index. -/
-def Ranking.id (n : ℕ) : Ranking n := Equiv.refl _
+end ERC
 
 /-! ### Bridge: violation profiles to ERCs -/
 
@@ -114,32 +111,25 @@ def ercOfProfiles (winner loser : ViolationProfile n) : ERC n :=
 violations. -/
 theorem ercOfProfiles_eq_W_iff (w l : ViolationProfile n) (k : Fin n) :
     ercOfProfiles w l k = .W ↔ w k < l k := by
-  show SignType.sign ((l k : ℤ) - (w k : ℤ)) = SignType.pos ↔ w k < l k
-  rw [SignType.pos_eq_one, sign_eq_one_iff]; omega
+  simp only [ercOfProfiles, SignType.pos_eq_one, sign_eq_one_iff]; omega
 
 /-- `ercOfProfiles` is `L` exactly where the winner has strictly more
 violations. -/
 theorem ercOfProfiles_eq_L_iff (w l : ViolationProfile n) (k : Fin n) :
     ercOfProfiles w l k = .L ↔ l k < w k := by
-  show SignType.sign ((l k : ℤ) - (w k : ℤ)) = SignType.neg ↔ l k < w k
-  rw [SignType.neg_eq_neg_one, sign_eq_neg_one_iff]; omega
+  simp only [ercOfProfiles, SignType.neg_eq_neg_one, sign_eq_neg_one_iff]; omega
 
 /-- `ercOfProfiles` is `e` exactly where violations are equal. -/
 theorem ercOfProfiles_eq_e_iff (w l : ViolationProfile n) (k : Fin n) :
     ercOfProfiles w l k = .e ↔ w k = l k := by
-  show SignType.sign ((l k : ℤ) - (w k : ℤ)) = SignType.zero ↔ w k = l k
-  rw [SignType.zero_eq_zero, sign_eq_zero_iff]; omega
+  simp only [ercOfProfiles, SignType.zero_eq_zero, sign_eq_zero_iff]; omega
 
 /-- The *antithetical* ERC ([prince-2002] §2): swapping winner and loser negates
 the ERC, `erc(l, w) = -erc(w, l)`. -/
 theorem ercOfProfiles_swap (w l : ViolationProfile n) :
     ercOfProfiles l w = -ercOfProfiles w l := by
   funext k
-  rw [Pi.neg_apply]
-  rcases lt_trichotomy (w k) (l k) with h | h | h
-  · rw [(ercOfProfiles_eq_L_iff l w k).mpr h, (ercOfProfiles_eq_W_iff w l k).mpr h]; decide
-  · rw [(ercOfProfiles_eq_e_iff l w k).mpr h.symm, (ercOfProfiles_eq_e_iff w l k).mpr h]; decide
-  · rw [(ercOfProfiles_eq_W_iff l w k).mpr h, (ercOfProfiles_eq_L_iff w l k).mpr h]; decide
+  rw [Pi.neg_apply, ercOfProfiles, ercOfProfiles, ← neg_sub, Left.sign_neg]
 
 /-- Construct an ERC from a list of `ERCVal`, with a length proof discharged by
 `decide` for literals: `def myERC : ERC 4 := ercOfList [.W, .e, .L, .e]`. -/
@@ -351,13 +341,6 @@ theorem Tableau.ofPerm_mem_optimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {
     exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_iff _ r w l).mp (hsat l hl)⟩
 
 /-! ### Simple ERCs -/
-
-/-- A *simple* ERC has exactly one `W` and one `L`: a single dominance
-requirement `i ≫ j`. Simple ERCs are the Hasse edges of the ranking partial
-order; sets of them describe exactly the rankings representable as partial
-orders ([merchant-riggle-2016]). -/
-def ERC.IsSimple (α : ERC n) : Prop :=
-  (∃! w, α w = .W) ∧ (∃! l, α l = .L)
 
 /-- An ERC set is *simple* if every member is a simple ERC: a set of Hasse edges,
 which therefore describes a partial order on the constraints rather than a general

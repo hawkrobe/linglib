@@ -1,4 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.OptimalityTheory.Ranking
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Profile
 import Mathlib.GroupTheory.Perm.Basic
@@ -44,11 +45,6 @@ namespace OptimalityTheory
 open Core.Optimization.Evaluation LexMinProblem Constraints
 
 /-! ### The tableau vocabulary -/
-
-/-- A constraint ranking: a permutation of `Fin n` ([prince-2002]'s total domination
-order `≫`). `r i` is the constraint at rank position `i` (position `0` is most
-dominant); `r.symm k` is the rank position of `k`. -/
-abbrev Ranking (n : ℕ) := Equiv.Perm (Fin n)
 
 /-- OT-named alias for `LexMinProblem` — a finite candidate set ranked by a
 fixed-length violation profile. -/
