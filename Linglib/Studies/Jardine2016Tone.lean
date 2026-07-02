@@ -12,65 +12,48 @@ import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Collapse
+import Linglib.Phonology.Autosegmental.Constructions
 import Linglib.Phonology.Tone.Basic
 
 /-!
 # Jardine (2016): Computationally, tone is different
 
-[jardine-2016] (Phonology 33: 247–283) establishes a typological asymmetry — *unbounded
-circumambient* processes, whose application depends on information unboundedly far away on
-**both** sides of the target, are common in tonal phonology but rare in segmental phonology —
-and characterises it computationally: segmental maps are at most weakly deterministic, while
-tonal maps are not. The flagship witness is **unbounded tonal plateauing** (UTP; Luganda,
-Digo, Xhosa, Zulu, Yaka, Saramaccan, …; [hyman-katamba-2010]): every tone-bearing unit
-between two H-toned TBUs surfaces H.
+[jardine-2016] (Phonology 33) characterises a typological asymmetry computationally:
+*unbounded circumambient* processes — application depends on unboundedly distant material
+on both sides of the target — are common in tone but rare in segmental phonology, and
+they are exactly the attested maps exceeding weak determinism. The flagship witness is
+**unbounded tonal plateauing** (UTP; [hyman-katamba-2010]): every TBU between two H-toned
+TBUs surfaces H. This file formalizes the paper's formal skeleton over its string
+representation (§4.1: `H` a H-toned TBU, `O` the paper's Ø).
 
-This file formalizes the paper's formal skeleton over its string-based representation
-(§4.1: `H` = TBU associated to a H tone, `O` = the paper's Ø, an unspecified TBU):
+## Main definitions
 
-* `utp` — the UTP map, with the paper's rule set (36) derived as equations
-  (`utp_toneless`, `utp_single`, `utp_plateau`) and the (43) input/output rows checked
-  by `decide`.
-* `utp_isBimachineComputable` — UTP **is** regular (§4.2 exhibits a nondeterministic FST;
-  here the sharper positive: an explicit bimachine, deterministic in each direction).
-* `utp_isUnboundedCircumambient` — the paper's definition (2) of an unbounded circumambient
-  process, instantiated by UTP: for every distance `d` one plateau word has a target whose
-  output flips under a far-left and a far-right perturbation.
-* `utp_not_isLeftSubsequential` / `utp_not_isRightSubsequential` — the paper's central
-  theorem (§4.2; proof in its online appendix): no deterministic FST computes UTP in either
-  scan direction. The proof runs on the substrate's bounded-delay property
-  (`IsLeftSubsequential.bounded_delay`): on input `H Øⁿ` a left machine may emit at most
-  `H` (the images of `H Øⁿ` and `H Øⁿ H` diverge at position 1), so it must withhold `n`
-  symbols — impossible with finitely many states. The right direction follows by the
-  reversal symmetry of plateauing (`utp_reverse`).
-* `utp_not_isBimachineWeaklyDeterministic` — §5.2's claim that UTP is not weakly
-  deterministic. [jardine-2016] argues this in [heinz-lai-2013]'s decomposition terms: the
-  mark-up-free composition of two subsequential passes cannot carry "a H appears to the
-  left" across the string (the (43) decomposition needs an enlarged alphabet). The project-
-  canonical rendering of weak determinism is the non-interacting bimachine
-  (`IsBimachineWeaklyDeterministic`, `Core/Computability/Subregular/Function/Bimachine`),
-  and under it the claim is a theorem: UTP `RequiresBothSides` — perturbing either far
-  trigger reverts the target — which no union of one-sided rules can express.
-* `utp_markup_decomposition` — the paper's (43): over the alphabet enlarged with the mark
-  `?`, UTP *is* a right-subsequential map after a left-subsequential map. Weak
-  determinism forbids exactly this enlargement, so (43) and the impossibility theorem
-  together locate UTP precisely.
-* `readTBU_linearize_realize` — §4.4's defense of the string-based representation, via
-  the substrate's `Autosegmental.AR.linearize`: the (40) translation `toAR` realizes a
-  TBU string as an autosegmental representation whose association-state string *is* the
-  input ((37a)), so string-measured look-ahead is timing-tier look-ahead ((37b)).
-* `links_realizeMerged_utp` / `upper_realizeMerged_utp` — the autosegmental output:
-  composed with the substrate's OCP-merging realization (`Autosegmental.realizeMerged`),
-  the UTP output is a *single* H autosegment multiply linked to exactly the `plateau`,
-  an interval (`plateau_eq_Icc`) — [hyman-katamba-2010]'s plateauing representation (7),
-  tying the string function back to the AR-level analysis.
-* `utp_fullyRegular` — the paper's thesis (§7) in one statement: UTP is *fully regular*,
-  i.e. regular but neither subsequential in either direction nor weakly deterministic.
-  Tone thereby exceeds the complexity bound that segmental phonology respects.
+* `utp` — the UTP map; `plateau w` — its set of surfacing positions.
+* `utpBM` — a bimachine computing UTP.
+* `markLeft`, `resolve` — the (43) two-pass decomposition over the `?`-enlarged alphabet.
+* `toAR` — the (40) translation into autosegmental representations.
 
-Contrast `Studies/MeinhardtEtAl2024`: bidirectional ATR spreading is unbounded circumambient
-*as covariation* yet weakly deterministic (a two-sided union); UTP's conjunctive trigger
-demand (`RequiresBothSides`) is what pushes it above the weakly deterministic bound.
+## Main results
+
+* `utp_toneless`, `utp_single`, `utp_plateau` — the rule set (36), derived.
+* `utp_isUnboundedCircumambient` — the paper's definition (2), instantiated by UTP.
+* `utp_not_isSubsequential` — the central theorem (§4.2, online appendix): no
+  deterministic FST computes UTP in either direction, via
+  `IsLeftSubsequential.bounded_delay` and the reversal symmetry `utp_reverse`.
+* `utp_not_isBimachineWeaklyDeterministic` — §5.2, via `RequiresBothSides`: no union of
+  one-sided rules expresses UTP's conjunctive trigger.
+* `utp_markup_decomposition` — (43): with the mark `?`, UTP is right-subsequential after
+  left-subsequential; weak determinism forbids exactly this enlargement.
+* `readTBU_linearize_realize` — §4.4: the TBU string is the linearization of the realized
+  AR ((37a)), so string look-ahead is timing-tier look-ahead.
+* `links_realizeMerged_utp`, `upper_realizeMerged_utp` — the OCP-merged realization of
+  the UTP output is a single H multiply linked to the `plateau`
+  ([hyman-katamba-2010] (7)).
+* `utp_fullyRegular` — §7: UTP is regular but neither subsequential nor weakly
+  deterministic.
+
+Contrast `Studies/MeinhardtEtAl2024`: ATR spreading is circumambient as covariation yet
+weakly deterministic; UTP's `RequiresBothSides` pushes it above that bound.
 -/
 
 namespace Jardine2016Tone
@@ -79,36 +62,34 @@ open Subregular
 
 /-! ### The string-based representation
 
-[jardine-2016] §4.4 defends analysing the tonal map over strings of timing-tier symbols:
-each symbol records one TBU's association state (its (40) linearisation), so look-ahead is
-measured on the timing tier. -/
+Strings of timing-tier symbols, each recording one TBU's association state (§4.4). -/
 
-/-- A tone-bearing unit in [jardine-2016]'s string-based representation (§4.1): `H` is a
-TBU associated to a H tone, `O` an unspecified TBU (the paper's Ø). -/
+/-- A tone-bearing unit (§4.1): `H` is a TBU associated to a H tone, `O` an unspecified
+TBU (the paper's Ø). -/
 inductive TBU
   | H
   | O
   deriving DecidableEq, Repr
 
 /-- TBU `i` of `w` surfaces with a H tone: some H-toned TBU sits at a position `≤ i` and
-some at a position `≥ i`. An underlyingly H-toned TBU witnesses both sides itself; a
-toneless TBU surfaces H exactly when flanked, which is the plateauing rule (7) of
-[hyman-katamba-2010] as a pointwise condition. -/
+some at a position `≥ i` — [hyman-katamba-2010]'s plateauing rule (7), pointwise. -/
 def SurfacesH (w : List TBU) (i : ℕ) : Prop :=
   .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
 
 instance (w : List TBU) (i : ℕ) : Decidable (SurfacesH w i) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The **unbounded tonal plateauing** map, [jardine-2016] (36): any number of TBUs
-between two H-toned TBUs surface as H; everything else is unchanged. -/
+variable {w : List TBU} {i j k : ℕ}
+
+/-- The unbounded tonal plateauing map (36): every TBU between two H-toned TBUs surfaces
+as H; everything else is unchanged. -/
 def utp (w : List TBU) : List TBU :=
   w.mapIdx fun i _ => if SurfacesH w i then .H else .O
 
-@[simp] theorem utp_length (w : List TBU) : (utp w).length = w.length := by
+@[simp] theorem utp_length : (utp w).length = w.length := by
   simp [utp]
 
-theorem utp_getElem? (w : List TBU) (i : ℕ) :
+theorem utp_getElem? :
     (utp w)[i]? = w[i]?.map fun _ => if SurfacesH w i then TBU.H else TBU.O := by
   simp [utp, List.getElem?_mapIdx]
 
@@ -135,32 +116,28 @@ private theorem mem_drop_iff {α : Type*} {a : α} {w : List α} {k : ℕ} :
     exact ⟨j - k, by rw [List.getElem?_drop, Nat.add_sub_cancel' hkj]; exact hj⟩
 
 /-- Positionwise reading of `SurfacesH`: a H at some `j ≤ i` and a H at some `j ≥ i`. -/
-theorem surfacesH_iff {w : List TBU} {i : ℕ} :
+theorem surfacesH_iff :
     SurfacesH w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j, i ≤ j ∧ w[j]? = some .H := by
   rw [SurfacesH, mem_take_iff, mem_drop_iff]
   simp [Nat.lt_succ_iff]
 
-/-- A surfacing position is in bounds: some H lies at or beyond it. -/
-theorem SurfacesH.lt_length {w : List TBU} {i : ℕ} (h : SurfacesH w i) : i < w.length := by
+theorem SurfacesH.lt_length (h : SurfacesH w i) : i < w.length := by
   obtain ⟨-, j, hij, hj⟩ := surfacesH_iff.mp h
   obtain ⟨hlt, -⟩ := List.getElem?_eq_some_iff.mp hj
   omega
 
-/-- The plateau is convex: a position between two surfacing positions surfaces. -/
-theorem SurfacesH.of_le_of_le {w : List TBU} {i j k : ℕ} (hi : SurfacesH w i)
-    (hk : SurfacesH w k) (hij : i ≤ j) (hjk : j ≤ k) : SurfacesH w j := by
+/-- The surfacing set is convex. -/
+theorem SurfacesH.of_le_of_le (hi : SurfacesH w i) (hk : SurfacesH w k) (hij : i ≤ j)
+    (hjk : j ≤ k) : SurfacesH w j := by
   obtain ⟨⟨j₁, hj₁, h₁⟩, -⟩ := surfacesH_iff.mp hi
   obtain ⟨-, j₂, hj₂, h₂⟩ := surfacesH_iff.mp hk
   exact surfacesH_iff.mpr ⟨⟨j₁, by omega, h₁⟩, ⟨j₂, by omega, h₂⟩⟩
 
-/-- An underlyingly H-toned TBU surfaces H: it flanks itself. -/
-theorem surfacesH_of_getElem?_H {w : List TBU} {i : ℕ} (h : w[i]? = some .H) :
-    SurfacesH w i :=
+/-- A H-toned TBU surfaces H: it flanks itself. -/
+theorem surfacesH_of_getElem?_H (h : w[i]? = some .H) : SurfacesH w i :=
   surfacesH_iff.mpr ⟨⟨i, le_rfl, h⟩, ⟨i, le_rfl, h⟩⟩
 
-/-- The output of UTP carries a H exactly at the surfacing positions. -/
-theorem utp_getElem?_H_iff {w : List TBU} {j : ℕ} :
-    (utp w)[j]? = some .H ↔ SurfacesH w j := by
+theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
   rw [utp_getElem?]
   cases hw : w[j]? with
   | none =>
@@ -177,15 +154,15 @@ theorem utp_getElem?_H_iff {w : List TBU} {j : ℕ} :
     · intro hs
       rw [if_pos hs]
 
-/-- The **plateau** of `w`: the finite set of positions that surface H. -/
+/-- The plateau of `w`: the set of positions that surface H. -/
 def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)
 
-@[simp] theorem mem_plateau {w : List TBU} {j : ℕ} : j ∈ plateau w ↔ SurfacesH w j := by
+@[simp] theorem mem_plateau : j ∈ plateau w ↔ SurfacesH w j := by
   unfold plateau
   rw [Finset.mem_filter, Finset.mem_range]
   exact ⟨fun h => h.2, fun h => ⟨h.lt_length, h⟩⟩
 
-@[simp] theorem plateau_nonempty {w : List TBU} : (plateau w).Nonempty ↔ .H ∈ w := by
+@[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w := by
   constructor
   · rintro ⟨j, hj⟩
     obtain ⟨⟨j₁, -, h₁⟩, -⟩ := surfacesH_iff.mp (mem_plateau.mp hj)
@@ -194,10 +171,9 @@ def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (Surfa
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     exact ⟨i, mem_plateau.mpr (surfacesH_of_getElem?_H hi)⟩
 
-/-- **The plateau is an interval** — the set form of (36c): nonempty
-(`plateau_nonempty`) and convex (`SurfacesH.of_le_of_le`), it runs from the first
-trigger to the last. -/
-theorem plateau_eq_Icc {w : List TBU} (hne : (plateau w).Nonempty) :
+/-- The plateau is an interval, from the first trigger to the last: the set form of
+(36c). -/
+theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
     plateau w = Finset.Icc ((plateau w).min' hne) ((plateau w).max' hne) := by
   ext j
   rw [Finset.mem_Icc]
@@ -209,9 +185,8 @@ theorem plateau_eq_Icc {w : List TBU} (hne : (plateau w).Nonempty) :
       (mem_plateau.mp ((plateau w).min'_mem hne))
       (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)
 
-/-- Splitting off the position itself: given the symbol at `i`, TBU `i` surfaces H iff it
-is itself a H or is strictly flanked. -/
-private theorem surfacesH_split {w : List TBU} {i : ℕ} {a : TBU} (h : w[i]? = some a) :
+/-- TBU `i` surfaces H iff it is itself a H or is strictly flanked. -/
+private theorem surfacesH_split {a : TBU} (h : w[i]? = some a) :
     SurfacesH w i ↔ a = .H ∨ (.H ∈ w.take i ∧ .H ∈ w.drop (i + 1)) := by
   rw [surfacesH_iff]
   constructor
@@ -237,11 +212,10 @@ private theorem surfacesH_split {w : List TBU} {i : ℕ} {a : TBU} (h : w[i]? = 
 
 /-! ### The rule set (36)
 
-[jardine-2016] specifies UTP by three schemata: toneless words and words with a single H
-map to themselves; between the outermost two Hs everything surfaces H. Here they are
-theorems about `utp` rather than clauses of its definition. -/
+The paper's three schemata for UTP, derived as theorems about `utp` rather than clauses
+of its definition. -/
 
-private theorem singleH_getElem?_H_iff (m n : ℕ) {j : ℕ} :
+private theorem singleH_getElem?_H_iff (m n : ℕ) :
     (List.replicate m TBU.O ++ TBU.H :: List.replicate n TBU.O)[j]? = some TBU.H ↔ j = m := by
   rcases lt_trichotomy j m with hj | rfl | hj
   · rw [List.getElem?_append_left (by simpa using hj), List.getElem?_replicate]
@@ -320,7 +294,7 @@ private theorem plateau_getElem?_second (m p : ℕ) (w : List TBU) :
   rw [htw, List.getElem?_append_right le_rfl]
   simp
 
-private theorem plateau_getElem?_H_bounds {m p : ℕ} {w : List TBU} {j : ℕ}
+private theorem plateau_getElem?_H_bounds {m p : ℕ}
     (h : (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[j]?
       = some TBU.H) :
     m ≤ j ∧ j ≤ m + 1 + w.length := by
@@ -338,8 +312,8 @@ private theorem plateau_getElem?_H_bounds {m p : ℕ} {w : List TBU} {j : ℕ}
     rw [hs, List.getElem?_cons_succ, List.getElem?_replicate] at h
     split at h <;> simp_all
 
-/-- (36c): everything between the outermost Hs surfaces H — the plateau. The medial
-material `w` is arbitrary (the paper's `{Ø,H}ⁿ`). -/
+/-- (36c): everything between the outermost Hs surfaces H; the medial material `w` is
+arbitrary. -/
 theorem utp_plateau (m p : ℕ) (w : List TBU) :
     utp (List.replicate m .O ++ .H :: (w ++ .H :: List.replicate p .O))
       = List.replicate m .O ++ (List.replicate (w.length + 2) .H ++ List.replicate p .O) := by
@@ -390,20 +364,18 @@ theorem utp_plateau (m p : ℕ) (w : List TBU) :
     rw [List.getElem?_eq_none (by omega), Option.map_none,
       List.getElem?_eq_none (by simp only [List.length_append, List.length_replicate]; omega)]
 
-/-- The (43) sample rows of [jardine-2016]: no plateau without two Hs; `HØØH ↦ HHHH`. -/
+/-- The (43) sample rows: no plateau without two Hs; `HØØH ↦ HHHH`. -/
 example : utp [.O, .O, .O, .H] = [.O, .O, .O, .H] := by decide
 example : utp [.H, .O, .O, .O] = [.H, .O, .O, .O] := by decide
 example : utp [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 
 /-! ### UTP is regular
 
-§4.2 exhibits a nondeterministic FST (Fig. 5) for UTP. The sharper positive fact fitting
-the substrate: UTP is computed by a **bimachine** — one deterministic pass per direction,
-each tracking "H seen on my side", conjoined at the cell. Regularity is thus witnessed
-without nondeterminism; what fails (below) is *one-directional* determinism. -/
+§4.2 exhibits a nondeterministic FST (Fig. 5); here UTP is computed by a bimachine — one
+deterministic pass per direction — so what fails below is one-directional determinism. -/
 
-/-- The UTP bimachine: a flag bimachine (`Bimachine.ofFlags`) whose sides record whether
-a H occurs on that side; a toneless cell surfaces H exactly when both flags are set. -/
+/-- The UTP bimachine: each side flags "a H occurs on my side"; a toneless cell surfaces
+H exactly when both flags are set. -/
 def utpBM : Bimachine Bool Bool TBU TBU :=
   .ofFlags (· == .H) (· == .H) fun l a r => if a == .H || (l && r) then .H else .O
 
@@ -425,15 +397,14 @@ theorem utpBM_run : utpBM.run = utp := by
     · rw [if_pos (hb.mpr hs), if_pos hs]
     · rw [if_neg (fun hbt => hs (hb.mp hbt)), if_neg hs]
 
-/-- **UTP is regular** ([jardine-2016] §4.2, Fig. 5): computable by a finite bimachine. -/
+/-- UTP is regular (§4.2): computable by a finite bimachine. -/
 theorem utp_isBimachineComputable : IsBimachineComputable utp :=
   utpBM_run ▸ isBimachineComputable utpBM
 
 /-! ### UTP is unboundedly circumambient
 
-Definition (2) of [jardine-2016]: application depends on the presence of triggers on both
-sides of the target, with no bound on their distance. The witness family at distance `d`:
-a plateau word `H Ø^(2d+2) H` with target `d+1`; deleting either flanking H reverts it. -/
+The witness family for definition (2), at distance `d`: the plateau word `H Ø^(2d+2) H`
+with target `d+1`; deleting either flanking H reverts it. -/
 
 /-- The distance-`d` plateau word: Hs at positions `0` and `2d+3`, toneless in between. -/
 def plateauBase (d : ℕ) : List TBU :=
@@ -464,14 +435,12 @@ private theorem plateauBase_getElem?_mid (d : ℕ) : (plateauBase d)[d + 1]? = s
   rw [plateauBase, List.getElem?_cons_succ, List.getElem?_append_left (by simp; omega),
     List.getElem?_replicate, if_pos (by omega)]
 
-/-- The base target surfaces H: both flanking Hs are present. -/
 private theorem utp_plateauBase_mid (d : ℕ) : (utp (plateauBase d))[d + 1]? = some TBU.H := by
   rw [utp_getElem?, plateauBase_getElem?_mid, Option.map_some, if_pos]
   rw [surfacesH_iff]
   exact ⟨⟨0, by omega, (plateauBase_getElem?_H_iff d).mpr (Or.inl rfl)⟩,
          ⟨2 * d + 3, by omega, (plateauBase_getElem?_H_iff d).mpr (Or.inr rfl)⟩⟩
 
-/-- Deleting the left H (perturbation at position 0) reverts the target to `O`. -/
 private theorem utp_left_perturbed (d : ℕ) :
     (utp ((plateauBase d).set 0 .O))[d + 1]? = some TBU.O := by
   have hmid : ((plateauBase d).set 0 TBU.O)[d + 1]? = some TBU.O := by
@@ -488,7 +457,6 @@ private theorem utp_left_perturbed (d : ℕ) :
     · exact hj0 rfl
     · omega
 
-/-- Deleting the right H (perturbation at position `2d+3`) reverts the target to `O`. -/
 private theorem utp_right_perturbed (d : ℕ) :
     (utp ((plateauBase d).set (2 * d + 3) .O))[d + 1]? = some TBU.O := by
   have hmid : ((plateauBase d).set (2 * d + 3) TBU.O)[d + 1]? = some TBU.O := by
@@ -505,8 +473,8 @@ private theorem utp_right_perturbed (d : ℕ) :
     · omega
     · exact hj0 rfl
 
-/-- UTP requires both sides ([heinz-lai-2013]'s interaction structure): the plateau
-target changes, yet deleting *either* flanking H reverts it to the identity. -/
+/-- UTP requires both sides ([heinz-lai-2013]): deleting either flanking H reverts the
+plateau target. -/
 theorem utp_requiresBothSides : RequiresBothSides utp := by
   intro d
   refine ⟨plateauBase d, d + 1, by simp only [plateauBase_length]; omega, ?_, ?_, ?_⟩
@@ -519,21 +487,17 @@ theorem utp_requiresBothSides : RequiresBothSides utp := by
       fun k hk => (List.getElem?_set_ne (by omega)).symm, List.getElem?_set_ne (by omega), ?_⟩
     rw [utp_right_perturbed, List.getElem?_set_ne (by omega), plateauBase_getElem?_mid]
 
-/-- **UTP is an unbounded circumambient process** — [jardine-2016]'s definition (2): for
-every distance `d`, some plateau target flips under a far-left and a far-right
-perturbation. Derived: requiring both sides is the conjunctive strengthening. -/
+/-- UTP is an unbounded circumambient process (definition (2)). -/
 theorem utp_isUnboundedCircumambient : IsUnboundedCircumambient utp :=
   utp_requiresBothSides.isUnboundedCircumambient
 
 /-! ### UTP is not subsequential
 
-The paper's central theorem (§4.2; full proof in its online appendix). The argument here
-is the bounded-delay one: a left machine reading `H Øⁿ` has emitted at most the common
-prefix of `utp (H Øⁿ) = H Øⁿ` and `utp (H Øⁿ H) = H^(n+2)` — a single symbol — so its
-final output must carry the withheld `n` symbols, exceeding any finite-state bound. -/
+The paper's central theorem (§4.2, online appendix), by bounded delay: a left machine
+reading `H Øⁿ` has emitted at most one symbol (`utp (H Øⁿ) = H Øⁿ` and
+`utp (H Øⁿ H) = H^(n+2)` diverge at position 1), so it withholds `n` symbols. -/
 
-/-- **UTP is not left-subsequential** ([jardine-2016] §4.2, appendix). At every delay
-bound `N`, the images of `H Ø^(N+1)` and `H Ø^(N+1) H` disagree already at position 1. -/
+/-- UTP is not left-subsequential (§4.2, online appendix). -/
 theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
   refine not_isLeftSubsequential_of_diverging fun N =>
     ⟨.H :: List.replicate (N + 1) .O, [.H], 1, ?_, ?_⟩
@@ -556,13 +520,11 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
     rw [h1, h2]
     simp
 
-/-- Plateauing is symmetric under string reversal — the formal content of "the position of
-the first triggering H is just as arbitrarily far to the right as the second is to the
-left" ([jardine-2016] §4.2). -/
-theorem utp_reverse (w : List TBU) : utp w.reverse = (utp w).reverse := by
+/-- Plateauing is symmetric under string reversal. -/
+theorem utp_reverse : utp w.reverse = (utp w).reverse := by
   refine List.ext_getElem? fun i => ?_
   by_cases hi : i < w.length
-  · have hrl : (utp w).length = w.length := utp_length w
+  · have hrl : (utp w).length = w.length := utp_length
     rw [utp_getElem?, List.getElem?_reverse (by simpa using hi),
       List.getElem?_reverse (by simpa [hrl] using hi), hrl, utp_getElem?]
     have hiff : SurfacesH w.reverse i ↔ SurfacesH w (w.length - 1 - i) := by
@@ -587,8 +549,8 @@ theorem utp_reverse (w : List TBU) : utp w.reverse = (utp w).reverse := by
           = (if SurfacesH w (w.length - 1 - i) then TBU.H else TBU.O) by simp [hiff]]
   · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
 
-/-- **UTP is not right-subsequential** ([jardine-2016] §4.2, appendix): by the reversal
-symmetry of plateauing, a right machine faces the mirror-image unbounded look-ahead. -/
+/-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
+mirror-image unbounded look-ahead. -/
 theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp := by
   intro hf
   rw [isRightSubsequential_iff_left_reverse] at hf
@@ -604,26 +566,20 @@ theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp
 
 /-! ### UTP is not weakly deterministic
 
-§5.2: a mark-up-free decomposition into two subsequential passes would have to carry "a H
-occurs to the left" rightward through unboundedly many toneless TBUs without changing the
-alphabet — [jardine-2016], following [heinz-lai-2013], argues none exists. Under the
-project-canonical non-interacting-bimachine rendering of weak determinism, the claim is a
-theorem: UTP `RequiresBothSides`, the conjunctive-trigger structure no union of one-sided
-rules can express. -/
+Under the non-interacting-bimachine rendering of [heinz-lai-2013]'s weak determinism,
+§5.2's claim is a theorem: UTP `RequiresBothSides`, which no union of one-sided rules
+expresses. -/
 
-/-- **UTP is not weakly deterministic** ([jardine-2016] §5.2). -/
+/-- UTP is not weakly deterministic (§5.2). -/
 theorem utp_not_isBimachineWeaklyDeterministic : ¬ IsBimachineWeaklyDeterministic utp :=
   not_isBimachineWeaklyDeterministic_of_requiresBothSides utp_requiresBothSides
 
 /-! ### The (43) mark-up decomposition
 
-With one extra symbol the two-pass decomposition *does* exist ([jardine-2016] (43)): a
-left pass marks every toneless TBU after a H with `?`; a right pass resolves `?` to H
-when a H follows and to Ø otherwise. The intermediate `?` carries "a H appears to the
-left" across unboundedly many TBUs — precisely the Elgot–Mezei-style mark-up that
-[heinz-lai-2013]'s weak determinism disallows. Together with
-`utp_not_isBimachineWeaklyDeterministic`, this locates UTP exactly: subsequential in
-neither direction, weakly deterministic only *with* alphabet enlargement. -/
+With one extra symbol the two-pass decomposition exists: a left pass marks every
+toneless TBU after a H with `?`; a right pass resolves `?` by whether a H follows. The
+mark is exactly the alphabet enlargement weak determinism disallows, so with the
+impossibility theorem this locates UTP precisely. -/
 
 /-- The mark-up alphabet of (43): `Q` is the paper's `?`. -/
 inductive Mark
@@ -640,8 +596,7 @@ def markLeft : Mealy Bool TBU Mark where
     | .H => (true, .H)
     | .O => (l, if l then .Q else .O)
 
-/-- Right pass of (43), scanning right-to-left: resolve `?` to H when a H follows,
-else to Ø. -/
+/-- Right pass of (43): resolve `?` to H when a H follows, else to Ø. -/
 def resolveRight : Mealy Bool Mark TBU where
   initial := false
   step r a :=
@@ -680,7 +635,6 @@ private theorem resolveRight_stateAfter (b : Bool) (pre : List Mark) :
       rw [show (resolveRight.step b .Q).1 = b from rfl, ih]
       simp only [List.any_cons, show (Mark.Q == Mark.H) = false from rfl, Bool.false_or]
 
-/-- Coordinate characterization of the marking pass. -/
 private theorem markLeft_run_getElem? (w : List TBU) (i : ℕ) :
     (markLeft.run w)[i]?
       = w[i]?.map fun a =>
@@ -702,7 +656,6 @@ private theorem markLeft_run_getElem? (w : List TBU) (i : ℕ) :
       rw [markLeft_stateAfter, show markLeft.initial = false from rfl]
       simp
 
-/-- Marking neither creates nor destroys H-toned TBUs. -/
 private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
     (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some TBU.H := by
   rw [markLeft_run_getElem?]
@@ -723,8 +676,7 @@ private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
 @[simp] private theorem markLeft_run_length (w : List TBU) :
     (markLeft.run w).length = w.length := markLeft.run_length w
 
-/-- **The (43) decomposition computes UTP**: resolving the marked string right-to-left
-recovers the plateau. -/
+/-- The (43) decomposition computes UTP. -/
 theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) := by
   refine List.ext_getElem? fun i => ?_
   by_cases hi : i < w.length
@@ -796,10 +748,8 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) :=
       simp
       omega)]
 
-/-- **The (43) mark-up decomposition** ([jardine-2016] §5.2): over the alphabet enlarged
-with `?`, UTP is a right-subsequential map after a left-subsequential map. Weak
-determinism forbids exactly this enlargement — UTP is Elgot–Mezei-decomposable but not
-weakly deterministic. -/
+/-- The (43) mark-up decomposition (§5.2): over the `?`-enlarged alphabet, UTP is a
+right-subsequential map after a left-subsequential map. -/
 theorem utp_markup_decomposition :
     IsLeftSubsequential markLeft.run ∧ IsRightSubsequential resolve
       ∧ utp = resolve ∘ markLeft.run := by
@@ -813,36 +763,25 @@ theorem utp_markup_decomposition :
 
 /-! ### The autosegmental grounding ((40), §4.4)
 
-The string-based representation is not a rival of the autosegmental one but its
-linearisation: each TBU symbol records one timing unit's association state. `toAR` is
-the paper's (40) translation — a H-toned TBU is one `Tone.TRN.H` melody node linked to
-its timing unit, a toneless TBU a bare timing unit — and by the substrate hom law
-`Autosegmental.linearize_realize`, the association-state string of the realized AR is
-the input string, symbol by symbol. So the TBU string is recoverable from the AR
-((37a)), and look-ahead measured on the string is look-ahead measured on the timing
-tier ((37b)). -/
+The string representation is the linearisation of the autosegmental one: `toAR` is the
+paper's (40) translation, and by `Autosegmental.linearize_realize` the association-state
+string of the realized AR is the input string. So the TBU string is recoverable from the
+AR ((37a)) and string look-ahead is timing-tier look-ahead ((37b)). -/
 
 section AutosegmentalGrounding
 
 open Autosegmental
 
-/-- The (40) translation: a H-toned TBU realizes as one H melody node (`Tone.TRN.H`)
-linked to its timing unit; a toneless TBU is a bare timing unit. -/
+/-- The (40) translation: a H-toned TBU is one H melody node linked to its timing unit;
+a toneless TBU is a bare timing unit. -/
 def toAR : TBU → AR Tone.TRN Unit
-  | .H => ⟨⟨LabeledTuple.ofList [Tone.TRN.H], LabeledTuple.ofList [()], {(0, 0)}⟩, by
-      intro p hp
-      simp only [Finset.mem_singleton] at hp
-      subst hp
-      exact ⟨by simp, by simp⟩⟩
-  | .O => ⟨⟨LabeledTuple.empty, LabeledTuple.ofList [()], ∅⟩, by
-      intro p hp
-      simp at hp⟩
+  | .H => .single Tone.TRN.H ()
+  | .O => .bare ()
 
 private theorem linearize_toAR (a : TBU) :
     (toAR a).linearize = [((), if a = .H then [Tone.TRN.H] else [])] := by
-  cases a <;> decide
+  cases a <;> simp [toAR]
 
-/-- (40): linearizing the realized AR returns the TBU string's association profiles. -/
 theorem linearize_realize_toAR (w : List TBU) :
     (realize toAR w).linearize
       = w.map fun a => ((), if a = .H then [Tone.TRN.H] else []) := by
@@ -854,9 +793,8 @@ theorem linearize_realize_toAR (w : List TBU) :
 /-- Read a timing unit's association state back as a TBU symbol. -/
 def readTBU (s : Unit × List Tone.TRN) : TBU := if s.2.isEmpty then .O else .H
 
-/-- **(37a)**: the TBU string is recoverable from the realized autosegmental
-representation — the string carries exactly the timing-tier association information, so
-the complexity results transfer to the autosegmental analysis. -/
+/-- (37a): the TBU string is recoverable from the realized AR, so the complexity results
+transfer to the autosegmental analysis. -/
 theorem readTBU_linearize_realize (w : List TBU) :
     ((realize toAR w).linearize).map readTBU = w := by
   rw [linearize_realize_toAR, List.map_map]
@@ -866,15 +804,10 @@ theorem readTBU_linearize_realize (w : List TBU) :
 
 /-! #### The fused plateau ([hyman-katamba-2010] (7))
 
-`realize toAR` keeps one H melody node per surface H TBU; the substrate's OCP-merging
-realization `Autosegmental.realizeMerged` fuses the plateau's run of H nodes into one.
-The result is [hyman-katamba-2010]'s plateauing representation (7): a *single* H
-autosegment (`upper_realizeMerged_utp`) multiply linked to exactly the `plateau`
-(`links_realizeMerged_utp`) — an interval by `plateau_eq_Icc` — over an unchanged
-timing tier (`lower_realizeMerged_utp`). So the string function `utp`, the bimachine,
-and autosegmental spreading-plus-fusion compute the same output object. -/
+The OCP-merging realization `Autosegmental.realizeMerged` fuses the plateau's run of H
+nodes into one, giving [hyman-katamba-2010]'s output representation (7): a single H
+autosegment multiply linked to exactly the `plateau`, over an unchanged timing tier. -/
 
-/-- Every melody node the realization creates is a H tone. -/
 private theorem mem_upper_realize_toAR (v : List TBU) :
     ∀ b ∈ (realize toAR v).upper.toList, b = Tone.TRN.H := by
   induction v with
@@ -889,25 +822,16 @@ private theorem mem_upper_realize_toAR (v : List TBU) :
     rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, List.mem_append] at hb
     rcases hb with hb | hb
     · cases a with
-      | H =>
-        rw [show (toAR TBU.H).upper = LabeledTuple.ofList [Tone.TRN.H] from rfl,
-          LabeledTuple.toList_ofList] at hb
-        simpa using hb
-      | O =>
-        rw [show (toAR TBU.O).upper = LabeledTuple.empty from rfl,
-          show (LabeledTuple.empty : LabeledTuple Tone.TRN).toList = [] from
-            List.eq_nil_of_length_eq_zero (by simp)] at hb
-        simp at hb
+      | H => simpa [toAR] using hb
+      | O => simp [toAR] at hb
     · exact ih b hb
 
-/-- The melody tier of the realization is a constant H run. -/
 private theorem upper_realize_toAR (v : List TBU) :
     (realize toAR v).upper.toList
       = List.replicate (realize toAR v).upper.len Tone.TRN.H := by
   have h := List.eq_replicate_of_mem (mem_upper_realize_toAR v)
   rwa [LabeledTuple.toList_length] at h
 
-/-- The timing tier of the realization has one slot per TBU. -/
 private theorem lower_realize_toAR (v : List TBU) :
     (realize toAR v).lower.toList = List.replicate v.length () := by
   have hlen : (realize toAR v).lower.len = v.length := by
@@ -916,7 +840,6 @@ private theorem lower_realize_toAR (v : List TBU) :
     (l := (realize toAR v).lower.toList) (a := ()) fun _ _ => rfl
   rwa [LabeledTuple.toList_length, hlen] at h
 
-/-- A timing slot of the realization is linked iff its TBU is H-toned. -/
 private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
     (∃ k, (k, j) ∈ (realize toAR v).links) ↔ v[j]? = some .H := by
   induction v generalizing j with
@@ -928,10 +851,9 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
   | cons a v ih =>
     cases a with
     | H =>
-      rw [realize_cons, AR.links_concat,
-        show (toAR TBU.H).upper.len = 1 from rfl,
-        show (toAR TBU.H).lower.len = 1 from rfl,
-        show (toAR TBU.H).links = {((0 : ℕ), (0 : ℕ))} from rfl]
+      rw [realize_cons, show toAR TBU.H = .single Tone.TRN.H () from rfl, AR.links_concat]
+      simp only [AR.single_links, AR.single_upper, AR.single_lower, LabeledTuple.ofList_len,
+        List.length_singleton]
       cases j with
       | zero =>
         simp only [List.getElem?_cons_zero]
@@ -951,10 +873,9 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
           exact ⟨k + 1, Finset.mem_union_right _
             (Finset.mem_image.mpr ⟨(k, t), hk, by rw [shiftLink_apply]⟩)⟩
     | O =>
-      rw [realize_cons, AR.links_concat,
-        show (toAR TBU.O).upper.len = 0 from rfl,
-        show (toAR TBU.O).lower.len = 1 from rfl,
-        show (toAR TBU.O).links = (∅ : Finset (ℕ × ℕ)) from rfl]
+      rw [realize_cons, show toAR TBU.O = .bare () from rfl, AR.links_concat]
+      simp only [AR.bare_links, AR.bare_upper, AR.bare_lower, LabeledTuple.ofList_len,
+        List.length_singleton, List.length_nil]
       cases j with
       | zero =>
         simp only [List.getElem?_cons_zero]
@@ -979,9 +900,7 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
           exact ⟨k, Finset.mem_union_right _
             (Finset.mem_image.mpr ⟨(k, t), hk, by simp [shiftLink_apply]⟩)⟩
 
-/-- The association lines of the OCP-merged plateau: all lines point at melody node `0`,
-one per surfacing TBU. -/
-theorem mem_links_realizeMerged_utp (w : List TBU) (p : ℕ × ℕ) :
+theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
   obtain ⟨k, j⟩ := p
   rw [realizeMerged_def,
@@ -998,10 +917,9 @@ theorem mem_links_realizeMerged_utp (w : List TBU) (p : ℕ × ℕ) :
     obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) j).mpr (utp_getElem?_H_iff.mpr hS)
     exact ⟨q₁, j, hq, rfl, rfl⟩
 
-/-- **Multiple association** ([hyman-katamba-2010] (7)): the merged realization links its
-melody node `0` to exactly the `plateau` — an interval, by `plateau_eq_Icc`.
-Unconditional: a toneless word has an empty plateau and no lines. -/
-theorem links_realizeMerged_utp (w : List TBU) :
+/-- Multiple association ((7)): the merged realization links melody node `0` to exactly
+the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
+theorem links_realizeMerged_utp :
     (realizeMerged toAR (utp w)).links = (plateau w).image fun j => ((0 : ℕ), j) := by
   ext ⟨k, j⟩
   rw [mem_links_realizeMerged_utp]
@@ -1012,15 +930,14 @@ theorem links_realizeMerged_utp (w : List TBU) :
   · rintro ⟨j', hS, rfl, rfl⟩
     exact ⟨rfl, hS⟩
 
-/-- The timing tier survives realization and merge unchanged: one slot per input TBU. -/
-theorem lower_realizeMerged_utp (w : List TBU) :
+/-- The timing tier survives the merge: one slot per input TBU. -/
+theorem lower_realizeMerged_utp :
     (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () := by
   rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
 
-/-- **The fused plateau** ([hyman-katamba-2010] (7)): with at least one H, the merged
-melody tier is a *single* H autosegment — the run of surface H nodes collapses to one,
-which `links_realizeMerged_utp` links across the whole plateau. -/
-theorem upper_realizeMerged_utp (w : List TBU) (hw : .H ∈ w) :
+/-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
+autosegment. -/
+theorem upper_realizeMerged_utp (hw : .H ∈ w) :
     (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] := by
   have hn : 0 < (realize toAR (utp w)).upper.len := by
     obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
@@ -1031,19 +948,16 @@ theorem upper_realizeMerged_utp (w : List TBU) (hw : .H ∈ w) :
     ⟨(realize toAR (utp w)).upper.len - 1, by omega⟩
   rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
 
-/-- (7) concretely: `H Ø Ø H` realizes, after UTP and OCP-fusion, as one H linked to all
-four TBUs. -/
+/-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
 example :
     (realizeMerged toAR (utp [.H, .O, .O, .H])).links
       = {(0, 0), (0, 1), (0, 2), (0, 3)} := by decide
 
 end AutosegmentalGrounding
 
-/-- **Computationally, tone is different** ([jardine-2016] §7): UTP is *fully regular* —
-regular (bimachine-computable) but neither left- nor right-subsequential nor weakly
-deterministic. Tonal phonology thereby exceeds the weakly deterministic bound that
-segmental phonology respects, which is the paper's characterisation of the unbounded
-circumambient asymmetry. -/
+/-- Computationally, tone is different (§7): UTP is fully regular — regular but neither
+subsequential in either direction nor weakly deterministic, the bound segmental
+phonology respects. -/
 theorem utp_fullyRegular :
     IsBimachineComputable utp ∧ (∀ d, ¬ IsSubsequential d utp)
       ∧ ¬ IsBimachineWeaklyDeterministic utp :=

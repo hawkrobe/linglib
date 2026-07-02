@@ -107,9 +107,7 @@ of a realization is the concatenation of the per-symbol association profiles
 def Graph.linkedLabels (A : Graph α β) (j : ℕ) : List α :=
   ((List.range A.upper.len).filter fun i => decide ((i, j) ∈ A.links)).filterMap A.upper.get?
 
-/-- Left half of the linearization hom law: positions inside `A` see only `A`'s links
-(the shifted `B` links live entirely to the right; stray out-of-bounds `A` uppers are
-excluded by `hA`). -/
+/-- Positions inside `A` see only `A`'s links. -/
 theorem Graph.linkedLabels_concat_left {A B : Graph α β} (hA : A.InBounds) {j : ℕ}
     (hj : j < A.lower.len) :
     (A.concat B).linkedLabels j = A.linkedLabels j := by
@@ -147,8 +145,7 @@ theorem Graph.linkedLabels_concat_left {A B : Graph α β} (hA : A.InBounds) {j 
       exact hi.1
     exact LabeledTuple.get?_concat_left hilt
 
-/-- Right half of the linearization hom law: positions past `A` see exactly `B`'s links,
-shifted. -/
+/-- Positions past `A` see exactly `B`'s links, shifted down by `A`'s length. -/
 theorem Graph.linkedLabels_concat_right {A B : Graph α β} (hA : A.InBounds) {j : ℕ}
     (hj : A.lower.len ≤ j) :
     (A.concat B).linkedLabels j = B.linkedLabels (j - A.lower.len) := by
@@ -188,8 +185,9 @@ theorem Graph.linkedLabels_concat_right {A B : Graph α β} (hA : A.InBounds) {j
     rw [Function.comp_apply]
     exact LabeledTuple.get?_concat_right A.upper B.upper i
 
-/-- **Linearize** an AR into its association-state string ([jardine-2016] (40)): position
-`j` carries the timing-unit label and the linked melody labels. -/
+/-- `A.linearize` is the association-state string of `A` ([jardine-2016] (40)): position
+`j` carries its timing-unit label together with the labels of the melody nodes linked
+to it. -/
 def AR.linearize (A : AR α β) : List (β × List α) :=
   A.lower.toList.mapIdx fun j b => (b, A.toGraph.linkedLabels j)
 
@@ -205,9 +203,8 @@ theorem AR.linearize_getElem? (A : AR α β) (j : ℕ) :
     List.eq_nil_of_length_eq_zero (by simp [AR.empty, Graph.empty])
   simp [AR.linearize, h]
 
-/-- **The linearization is a monoid homomorphism**: it sends concatenation of ARs to
-concatenation of association-state strings (in-bounds is what keeps each side's links on
-its own positions). -/
+/-- Linearization sends concatenation of ARs to concatenation of association-state
+strings; the `inBounds` fields keep each side's links on its own positions. -/
 theorem AR.linearize_concat (A B : AR α β) :
     (A.concat B).linearize = A.linearize ++ B.linearize := by
   refine List.ext_getElem? fun j => ?_
@@ -222,9 +219,8 @@ theorem AR.linearize_concat (A B : AR α β) :
       show j = A.lower.len + (j - A.lower.len) from by omega,
       LabeledTuple.get?_concat_right, Nat.add_sub_cancel_left]
 
-/-- **Linearizing a realization** yields the concatenation of the per-symbol association
-profiles — the general form of [jardine-2016]'s (40) translation between strings and
-autosegmental representations. -/
+/-- The linearization of a realization is the concatenation of the per-symbol
+association profiles ([jardine-2016] (40)). -/
 theorem linearize_realize (g₀ : S → AR α β) (w : List S) :
     (realize g₀ w).linearize = w.flatMap fun a => (g₀ a).linearize := by
   induction w with
