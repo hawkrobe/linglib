@@ -305,21 +305,9 @@ def plateauBase (d : ℕ) : List TBU :=
 
 private theorem plateauBase_getElem?_H_iff (d : ℕ) {j : ℕ} :
     (plateauBase d)[j]? = some TBU.H ↔ j = 0 ∨ j = 2 * d + 3 := by
-  cases j with
-  | zero => simp [plateauBase]
-  | succ t =>
-    rw [plateauBase, List.getElem?_cons_succ]
-    rcases lt_trichotomy t (2 * d + 2) with hj | rfl | hj
-    · rw [List.getElem?_append_left (by simpa using hj), List.getElem?_replicate, if_pos hj]
-      simp
-      omega
-    · rw [List.getElem?_append_right (by simp)]
-      simp
-    · rw [List.getElem?_append_right (by simp; omega)]
-      have : 1 ≤ t - (List.replicate (2 * d + 2) TBU.O).length := by simp; omega
-      rw [List.getElem?_eq_none (by simpa using this)]
-      simp
-      omega
+  simp only [plateauBase, List.getElem?_cons, List.getElem?_append, List.getElem?_replicate,
+    List.length_replicate, List.getElem?_nil]
+  split_ifs <;> simp_all <;> omega
 
 private theorem plateauBase_getElem?_mid (d : ℕ) : (plateauBase d)[d + 1]? = some TBU.O := by
   rw [plateauBase, List.getElem?_cons_succ, List.getElem?_append_left (by simp; omega),
