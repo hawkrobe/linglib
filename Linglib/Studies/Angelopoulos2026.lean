@@ -1,5 +1,6 @@
 import Linglib.Studies.Bondarenko2022
 import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
 # Angelopoulos 2026: On clausal complementation, once more
@@ -42,6 +43,9 @@ yields either composition mode.
   `Bondarenko2022.NominalSort` (§3.2 ex. 33–34)
 - `bareOtiAttested`, `transparency_conflates_axes` — the §7.3
   counterclaim against `Bondarenko2022.transparentSSMapping`
+
+Typed paradigm sentences (ex. 1, 31–34) live in `Angelopoulos2026.Examples`,
+generated from `Data/Examples/Angelopoulos2026.json`.
 -/
 
 namespace Angelopoulos2026
