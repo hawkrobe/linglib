@@ -2,7 +2,6 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
-import Linglib.Fragments.Tigrinya.ClausePrefixes
 
 /-!
 # Bondarenko 2022: Anatomy of an Attitude [bondarenko-2022]
@@ -658,52 +657,78 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 -- § 12. Cross-linguistic ContP exponence
 -- ════════════════════════════════════════════════════════════════
 --
--- Per-language overt Cont exponents under [bondarenko-2022]'s
--- analysis, typed over the fragment morpheme inventories: Buryat *gɘ*
--- (§4.3.1), Korean *-ta* (§4.3.2, following
--- [bogal-allbritten-moulton-2018]), extended with Tigrinya *kemzi*
--- ([cacchioli-2025]). `none` is null exponence (English, Russian).
+-- Per-language Cont-exponence analyses under [bondarenko-2022],
+-- bundled with the laws tying them to the fragment inventories —
+-- construction obligations discharged by `decide`, RingHom-style.
+-- Buryat additionally carries the licenser-conditioned Comp
+-- allomorphy (§4.3.1 ex. 33); the dissertation gives no such rule
+-- for Korean, so its witness stays at `ContAnalysis`.
+-- [cacchioli-2025]'s Tigrinya extension lives in
+-- `Studies/Cacchioli2025.lean` per the chronology rule.
 
-/-- Buryat: the say-root *gɘ* expones Cont ([bondarenko-2022] §4.3.1
-    ex. 33). -/
-def buryatContExponent : Option Complementizer := some Buryat.ge
+/-- A Cont-exponence analysis of one language's clause-typing
+    inventory ([bondarenko-2022] ch. 4): which morpheme, if any,
+    overtly expones Cont, tied by law to the fragment inventory
+    (`none` = null exponence: English, Russian). A structure, not a
+    class — rival frameworks construct rival witnesses. -/
+structure ContAnalysis where
+  /-- The fragment inventory analyzed. -/
+  inventory : List Complementizer
+  /-- The overt Cont exponent, if any. -/
+  contExponent : Option Complementizer
+  /-- The exponent is drawn from the inventory. -/
+  contExponent_mem : ∀ c ∈ contExponent, c ∈ inventory
 
-/-- Korean: *-ta* expones Cont ([bondarenko-2022] §4.3.2, following
-    [bogal-allbritten-moulton-2018]). -/
-def koreanContExponent : Option Complementizer :=
-  some Korean.Complementizers.ta
+/-- A full Cont/Comp head assignment: `ContAnalysis` plus the
+    licenser-conditioned Comp allomorphy and its laws. -/
+structure ContCompAnalysis extends ContAnalysis where
+  /-- Comp allomorph selected by the licensing category. -/
+  compAllomorph : Complementizer.Licenser → Complementizer
+  compAllomorph_mem : ∀ l, compAllomorph l ∈ inventory
+  /-- The selected allomorph reproduces the fragment's distribution
+      datum. -/
+  licenser_compAllomorph : ∀ l, (compAllomorph l).licenser = some l
+  /-- Head assignment is exhaustive over the inventory. -/
+  cover : ∀ c ∈ inventory, c ∈ contExponent ∨ ∃ l, compAllomorph l = c
 
-/-- Tigrinya: *kemzi* ([cacchioli-2025]). -/
-def tigrinyaContExponent : Option Complementizer :=
-  some Tigrinya.ClausePrefixes.kemzi.toComplementizer
+/-- Buryat (§4.3.1 ex. 33): *gɘ* expones Cont; the suffixes are Comp
+    allomorphs — participial *-Aːša* next to nominal projections,
+    converbial *-žA* next to verbs. -/
+def buryatAnalysis : ContCompAnalysis where
+  inventory := Buryat.complementizers
+  contExponent := some Buryat.ge
+  contExponent_mem := fun _ hc => by cases hc; exact .head _
+  compAllomorph
+    | .nominal => Buryat.aasha
+    | .verbal  => Buryat.zha
+  compAllomorph_mem := by
+    intro l
+    cases l
+    · exact .tail _ (.head _)
+    · exact .tail _ (.tail _ (.head _))
+  licenser_compAllomorph := by intro l; cases l <;> rfl
+  cover := by
+    intro c hc
+    fin_cases hc
+    · exact Or.inl rfl
+    · exact Or.inr ⟨.nominal, rfl⟩
+    · exact Or.inr ⟨.verbal, rfl⟩
 
-/-- [bondarenko-2022]'s Cont/Comp assignment coincides with the
-    fragment's root-vs-suffix datum: the Cont exponent is exactly the
-    non-suffixal (say-root) morpheme. -/
+/-- Korean (§4.3.2, following [bogal-allbritten-moulton-2018]): *-ta*
+    expones Cont. No Comp allomorphy rule is given for Korean, so the
+    witness stays at `ContAnalysis`. -/
+def koreanAnalysis : ContAnalysis where
+  inventory := Korean.Complementizers.complementizers
+  contExponent := some Korean.Complementizers.ta
+  contExponent_mem := fun _ hc => by cases hc; exact .head _
+
+/-- Buryat-specific alignment, NOT a `ContAnalysis` law — Korean's
+    Cont exponent *-ta* is itself a suffix (`verbForm = some .Fin`):
+    in Buryat, the Cont exponent is exactly the non-suffixal
+    say-root. -/
 theorem mem_buryatContExponent_iff :
     ∀ c ∈ Buryat.complementizers,
-      (c ∈ buryatContExponent ↔ c.verbForm = none) := by
-  decide
-
-/-- The Comp head realized by adjacency-conditioned allomorphy
-    ([bondarenko-2022] §4.3.1 ex. 33): one head, two allomorphs —
-    participial *-Aːša* next to nominal projections, converbial *-žA*
-    next to verbs. -/
-def buryatCompAllomorph : Complementizer.Licenser → Complementizer
-  | .nominal => Buryat.aasha
-  | .verbal  => Buryat.zha
-
-/-- The allomorph selected for a licenser has exactly that surface
-    distribution — the analysis reproduces the fragment's datum. -/
-theorem licenser_buryatCompAllomorph (h : Complementizer.Licenser) :
-    (buryatCompAllomorph h).licenser = some h := by
-  cases h <;> rfl
-
-/-- The head assignment is exhaustive: every morpheme in the inventory
-    is either the Cont exponent or a Comp allomorph. -/
-theorem contP_comp_cover :
-    ∀ c ∈ Buryat.complementizers,
-      c ∈ buryatContExponent ∨ ∃ h, buryatCompAllomorph h = c := by
+      (c ∈ buryatAnalysis.contExponent ↔ c.verbForm = none) := by
   decide
 
 -- ════════════════════════════════════════════════════════════════
