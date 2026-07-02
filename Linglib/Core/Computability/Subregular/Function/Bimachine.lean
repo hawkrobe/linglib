@@ -253,10 +253,10 @@ theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
   show B.out _ a _ = _
   rw [hω]
 
-/-- A target that **requires both sides**: `f` changes `base[i]` from its input, but
-perturbing either far side reverts it to identity. The suppression/conjunction structure of
-unbounded interaction. Unlike `IsUnboundedCircumambient`, a two-sided union does *not*
-satisfy it: removing one trigger leaves the other, so the output stays changed. -/
+/-- `f` requires both sides: some target changes under `f`, yet perturbing either far
+side reverts it to the identity. Unlike `IsUnboundedCircumambient`, a two-sided union
+never satisfies this — removing one trigger leaves the other, so the output stays
+changed. -/
 def RequiresBothSides (f : List α → List α) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
     (∃ uL : List α, uL.length = base.length ∧ AgreeFrom base uL (i - d) ∧
@@ -265,10 +265,9 @@ def RequiresBothSides (f : List α → List α) : Prop :=
       uR[i]? = base[i]? ∧ (f uR)[i]? = uR[i]?)
 
 omit [DecidableEq α] in
-/-- Requiring both sides is the *conjunctive* strengthening of unbounded circumambience:
-the target is changed on the base, and each far perturbation *reverts* it — in particular
-each perturbation flips the output, which is all circumambience asks. The converse fails
-(a two-sided union is circumambient but reverts under neither side alone). -/
+/-- Requiring both sides strengthens unbounded circumambience: a reverted target is in
+particular a flipped one. The converse fails (a two-sided union is circumambient but
+reverts under neither side alone). -/
 theorem RequiresBothSides.isUnboundedCircumambient {f : List α → List α}
     (hf : RequiresBothSides f) : IsUnboundedCircumambient f := by
   intro d

@@ -56,10 +56,8 @@ def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
   step s x := ((T.step s x).1, [(T.step s x).2])
   finalOutput _ := []
 
-@[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run := by
-  suffices h : ∀ (s : σ) (xs : List α), T.toSFST.runFrom s xs = T.runFrom s xs from
-    funext fun xs => h T.initial xs
-  intro s xs
+@[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
+    T.toSFST.runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
   | nil => rfl
   | cons x xs ih =>
@@ -67,7 +65,10 @@ def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
       show T.toSFST.step s x = ((T.step s x).1, [(T.step s x).2]) from rfl, ih]
     rfl
 
-/-- **Synchronous ⊆ block**: a letter-left-subsequential function is left-subsequential. -/
+@[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
+  funext fun xs => T.toSFST_runFrom T.initial xs
+
+/-- A letter-left-subsequential function is left-subsequential: synchronous ⊆ block. -/
 theorem IsLetterLeftSubsequential.isLeftSubsequential {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) : IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
