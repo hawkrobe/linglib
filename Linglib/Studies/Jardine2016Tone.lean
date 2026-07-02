@@ -59,11 +59,11 @@ This file formalizes the paper's formal skeleton over its string-based represent
   the substrate's `Autosegmental.AR.linearize`: the (40) translation `toAR` realizes a
   TBU string as an autosegmental representation whose association-state string *is* the
   input ((37a)), so string-measured look-ahead is timing-tier look-ahead ((37b)).
-* `realizeMerged_utp_plateau` — the autosegmental output: composed with the substrate's
-  OCP-merging realization (`Autosegmental.realizeMerged`), the UTP output is a *single*
-  H autosegment multiply linked across the plateau interval — [hyman-katamba-2010]'s
-  plateauing representation (7), tying the string function back to the AR-level
-  analysis.
+* `links_realizeMerged_utp` / `upper_realizeMerged_utp` — the autosegmental output:
+  composed with the substrate's OCP-merging realization (`Autosegmental.realizeMerged`),
+  the UTP output is a *single* H autosegment multiply linked to exactly the `plateau`,
+  an interval (`plateau_eq_Icc`) — [hyman-katamba-2010]'s plateauing representation (7),
+  tying the string function back to the AR-level analysis.
 * `utp_fullyRegular` — the paper's thesis (§7) in one statement: UTP is *fully regular*,
   i.e. regular but neither subsequential in either direction nor weakly deterministic.
   Tone thereby exceeds the complexity bound that segmental phonology respects.
@@ -176,6 +176,38 @@ theorem utp_getElem?_H_iff {w : List TBU} {j : ℕ} :
       exact TBU.noConfusion h
     · intro hs
       rw [if_pos hs]
+
+/-- The **plateau** of `w`: the finite set of positions that surface H. -/
+def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)
+
+@[simp] theorem mem_plateau {w : List TBU} {j : ℕ} : j ∈ plateau w ↔ SurfacesH w j := by
+  unfold plateau
+  rw [Finset.mem_filter, Finset.mem_range]
+  exact ⟨fun h => h.2, fun h => ⟨h.lt_length, h⟩⟩
+
+@[simp] theorem plateau_nonempty {w : List TBU} : (plateau w).Nonempty ↔ .H ∈ w := by
+  constructor
+  · rintro ⟨j, hj⟩
+    obtain ⟨⟨j₁, -, h₁⟩, -⟩ := surfacesH_iff.mp (mem_plateau.mp hj)
+    exact List.mem_iff_getElem?.mpr ⟨j₁, h₁⟩
+  · intro hw
+    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
+    exact ⟨i, mem_plateau.mpr (surfacesH_of_getElem?_H hi)⟩
+
+/-- **The plateau is an interval** — the set form of (36c): nonempty
+(`plateau_nonempty`) and convex (`SurfacesH.of_le_of_le`), it runs from the first
+trigger to the last. -/
+theorem plateau_eq_Icc {w : List TBU} (hne : (plateau w).Nonempty) :
+    plateau w = Finset.Icc ((plateau w).min' hne) ((plateau w).max' hne) := by
+  ext j
+  rw [Finset.mem_Icc]
+  constructor
+  · intro hj
+    exact ⟨(plateau w).min'_le j hj, (plateau w).le_max' j hj⟩
+  · rintro ⟨h₁, h₂⟩
+    exact mem_plateau.mpr (SurfacesH.of_le_of_le
+      (mem_plateau.mp ((plateau w).min'_mem hne))
+      (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)
 
 /-- Splitting off the position itself: given the symbol at `i`, TBU `i` surfaces H iff it
 is itself a H or is strictly flanked. -/
@@ -837,9 +869,10 @@ theorem readTBU_linearize_realize (w : List TBU) :
 `realize toAR` keeps one H melody node per surface H TBU; the substrate's OCP-merging
 realization `Autosegmental.realizeMerged` fuses the plateau's run of H nodes into one.
 The result is [hyman-katamba-2010]'s plateauing representation (7): a *single* H
-autosegment multiply linked to every TBU from the first trigger to the last, so the
-string function `utp`, the bimachine, and autosegmental spreading-plus-fusion compute
-the same output object. -/
+autosegment (`upper_realizeMerged_utp`) multiply linked to exactly the `plateau`
+(`links_realizeMerged_utp`) — an interval by `plateau_eq_Icc` — over an unchanged
+timing tier (`lower_realizeMerged_utp`). So the string function `utp`, the bimachine,
+and autosegmental spreading-plus-fusion compute the same output object. -/
 
 /-- Every melody node the realization creates is a H tone. -/
 private theorem mem_upper_realize_toAR (v : List TBU) :
@@ -965,52 +998,38 @@ theorem mem_links_realizeMerged_utp (w : List TBU) (p : ℕ × ℕ) :
     obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) j).mpr (utp_getElem?_H_iff.mpr hS)
     exact ⟨q₁, j, hq, rfl, rfl⟩
 
-/-- **The fused plateau** — [hyman-katamba-2010]'s plateauing representation (7). For a
-word with at least one H, the OCP-merging realization of the UTP output is a *single* H
-melody node multiply linked to exactly the TBUs of the plateau interval: the string
-function `utp`, the bimachine `utpBM`, and autosegmental spreading-plus-fusion agree on
-one output object. -/
-theorem realizeMerged_utp_plateau (w : List TBU) (hw : .H ∈ w) :
-    ∃ lo hi, lo ≤ hi ∧ hi < w.length ∧ (∀ j, SurfacesH w j ↔ lo ≤ j ∧ j ≤ hi) ∧
-      (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] ∧
-      (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () ∧
-      (realizeMerged toAR (utp w)).links
-        = (Finset.Icc lo hi).image fun j => ((0 : ℕ), j) := by
-  obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
-  have hS₀ : SurfacesH w i₀ := surfacesH_of_getElem?_H hi₀
-  set S : Finset ℕ := (Finset.range w.length).filter (SurfacesH w) with hSdef
-  have hmemS : ∀ j, j ∈ S ↔ SurfacesH w j := fun j => by
-    rw [hSdef, Finset.mem_filter, Finset.mem_range]
-    exact ⟨fun h => h.2, fun h => ⟨h.lt_length, h⟩⟩
-  have hne : S.Nonempty := ⟨i₀, (hmemS i₀).mpr hS₀⟩
-  have hiff : ∀ j, SurfacesH w j ↔ S.min' hne ≤ j ∧ j ≤ S.max' hne := fun j => by
-    constructor
-    · intro h
-      exact ⟨S.min'_le j ((hmemS j).mpr h), S.le_max' j ((hmemS j).mpr h)⟩
-    · rintro ⟨h₁, h₂⟩
-      exact SurfacesH.of_le_of_le ((hmemS _).mp (S.min'_mem hne))
-        ((hmemS _).mp (S.max'_mem hne)) h₁ h₂
-  refine ⟨S.min' hne, S.max' hne, S.min'_le_max' hne,
-    ((hmemS _).mp (S.max'_mem hne)).lt_length, hiff, ?_, ?_, ?_⟩
-  · -- the fused single H on the melody tier
-    have hn : 0 < (realize toAR (utp w)).upper.len := by
-      obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) i₀).mpr
-        (utp_getElem?_H_iff.mpr hS₀)
-      exact Nat.lt_of_le_of_lt (Nat.zero_le q₁) ((realize toAR (utp w)).inBounds _ hq).1
-    obtain ⟨m, hm⟩ : ∃ m, (realize toAR (utp w)).upper.len = m + 1 :=
-      ⟨(realize toAR (utp w)).upper.len - 1, by omega⟩
-    rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
-  · -- the timing tier survives the merge unchanged
-    rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
-  · -- the multiple association spans the plateau interval
-    ext ⟨k, j⟩
-    rw [mem_links_realizeMerged_utp]
-    simp only [Finset.mem_image, Finset.mem_Icc, Prod.mk.injEq]
-    constructor
-    · rintro ⟨rfl, hS⟩
-      exact ⟨j, (hiff j).mp hS, rfl, rfl⟩
-    · rintro ⟨j', ⟨h₁, h₂⟩, rfl, rfl⟩
-      exact ⟨rfl, (hiff j').mpr ⟨h₁, h₂⟩⟩
+/-- **Multiple association** ([hyman-katamba-2010] (7)): the merged realization links its
+melody node `0` to exactly the `plateau` — an interval, by `plateau_eq_Icc`.
+Unconditional: a toneless word has an empty plateau and no lines. -/
+theorem links_realizeMerged_utp (w : List TBU) :
+    (realizeMerged toAR (utp w)).links = (plateau w).image fun j => ((0 : ℕ), j) := by
+  ext ⟨k, j⟩
+  rw [mem_links_realizeMerged_utp]
+  simp only [Finset.mem_image, mem_plateau, Prod.mk.injEq]
+  constructor
+  · rintro ⟨rfl, hS⟩
+    exact ⟨j, hS, rfl, rfl⟩
+  · rintro ⟨j', hS, rfl, rfl⟩
+    exact ⟨rfl, hS⟩
+
+/-- The timing tier survives realization and merge unchanged: one slot per input TBU. -/
+theorem lower_realizeMerged_utp (w : List TBU) :
+    (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () := by
+  rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
+
+/-- **The fused plateau** ([hyman-katamba-2010] (7)): with at least one H, the merged
+melody tier is a *single* H autosegment — the run of surface H nodes collapses to one,
+which `links_realizeMerged_utp` links across the whole plateau. -/
+theorem upper_realizeMerged_utp (w : List TBU) (hw : .H ∈ w) :
+    (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] := by
+  have hn : 0 < (realize toAR (utp w)).upper.len := by
+    obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
+    obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) i₀).mpr
+      (utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi₀))
+    exact Nat.lt_of_le_of_lt (Nat.zero_le q₁) ((realize toAR (utp w)).inBounds _ hq).1
+  obtain ⟨m, hm⟩ : ∃ m, (realize toAR (utp w)).upper.len = m + 1 :=
+    ⟨(realize toAR (utp w)).upper.len - 1, by omega⟩
+  rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
 
 /-- (7) concretely: `H Ø Ø H` realizes, after UTP and OCP-fusion, as one H linked to all
 four TBUs. -/
