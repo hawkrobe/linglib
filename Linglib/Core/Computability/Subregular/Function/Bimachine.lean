@@ -380,9 +380,7 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
   -- shares it, and silence both rules by `inert_of_reverting`
   apply hspread
   rw [B.run_getElem?, List.getElem?_eq_getElem hi, Option.map_some, hω,
-    ← (take_eq_of_agree fun k hk => (hRag k (by omega)).symm : uR.take i = base.take i),
-    ← (drop_eq_of_agree fun k _ => (hLag k (by omega)).symm :
-        uL.drop (i + 1) = base.drop (i + 1)),
+    hRag.take_eq (by omega), hLag.drop_eq (by omega),
     (inert_of_reverting hω (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
     (inert_of_reverting hω (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
     unite_self]

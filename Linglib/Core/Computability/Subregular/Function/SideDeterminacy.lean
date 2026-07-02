@@ -81,6 +81,16 @@ theorem drop_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, i ≤ k → u[k]?
   intro k
   simpa only [List.getElem?_drop] using h (i + k) (Nat.le_add_right i k)
 
+/-- Agreement up to `j` transports truncations: `h.take_eq` for `h : AgreeUpto u v j`. -/
+theorem AgreeUpto.take_eq {u v : List α} {j : ℕ} (h : AgreeUpto u v j) {i : ℕ}
+    (hij : i ≤ j + 1) : u.take i = v.take i :=
+  take_eq_of_agree fun k hk => h k (by omega)
+
+/-- Agreement from `j` transports suffixes: `h.drop_eq` for `h : AgreeFrom u v j`. -/
+theorem AgreeFrom.drop_eq {u v : List α} {j : ℕ} (h : AgreeFrom u v j) {i : ℕ}
+    (hij : j ≤ i) : u.drop i = v.drop i :=
+  drop_eq_of_agree fun k hk => h k (by omega)
+
 /-- **Unbounded dependence on side `s`**: for every distance `d`, some target output
 position flips under a perturbation strictly beyond `d` on side `s` (the perturbed
 input agrees on the near window + the whole opposite side). -/
