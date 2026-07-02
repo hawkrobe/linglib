@@ -128,21 +128,18 @@ instance {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord)
     DecidableRel (FarBelow ord d) := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Two points cannot be far below each other: centeredness plus
-noncontractivity force mutually-≤ points to be close. -/
+/-- ≪ is asymmetric: centeredness plus noncontractivity force mutually-≤
+points to be close. -/
 theorem FarBelow.asymm {I : Type*} {ord : SemanticOrdering I}
     (d : DistanceFunction I ord) {a b : I} (h : FarBelow ord d a b) :
     ¬ FarBelow ord d b a :=
   fun h' => h'.2 (d.noncontractive b b a (d.centered b) h'.1 h.1)
 
-/-- The "not far below" relation is total — the totality that lets the
-strict l-lifting characterization apply to ≫. -/
+/-- "Not far below" is total — what lets the strict l-lifting characterize ≫. -/
 theorem not_farBelow_total {I : Type*} {ord : SemanticOrdering I}
     (d : DistanceFunction I ord) (a b : I) :
-    ¬ FarBelow ord d a b ∨ ¬ FarBelow ord d b a := by
-  by_cases h : FarBelow ord d a b
-  · exact Or.inr (FarBelow.asymm d h)
-  · exact Or.inl h
+    ¬ FarBelow ord d a b ∨ ¬ FarBelow ord d b a :=
+  imp_iff_not_or.mp (FarBelow.asymm d)
 
 section Modifiers
 
