@@ -81,6 +81,55 @@ def Expr.or (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ .tru e₂
 /-- Negation as `if…then…else` ([yolyan-2025] (3.8)). -/
 def Expr.not (e : Expr α F) : Expr α F := .ite e .fls .tru
 
+/-- Substitute a term for the variable throughout an expression: `e.subst u` is
+`e[u/x]`, the operation the μ-calculus translation writes `tr(φ)[s(x)]`. -/
+def Expr.subst : Expr α F → Term Unit → Expr α F
+  | .tru, _ => .tru
+  | .fls, _ => .fls
+  | .initial t, u => .initial (t.comp u)
+  | .final t, u => .final (t.comp u)
+  | .label s t, u => .label s (t.comp u)
+  | .call f t, u => .call f (t.comp u)
+  | .ite c e₁ e₂, u => .ite (c.subst u) (e₁.subst u) (e₂.subst u)
+
+/-- Backward expressions: every term is backward. -/
+def Expr.Backward : Expr α F → Prop
+  | .tru | .fls => True
+  | .initial t | .final t => t.Backward
+  | .label _ t => t.Backward
+  | .call _ t => t.Backward
+  | .ite c e₁ e₂ => c.Backward ∧ e₁.Backward ∧ e₂.Backward
+
+/-- Forward expressions. -/
+def Expr.Forward : Expr α F → Prop
+  | .tru | .fls => True
+  | .initial t | .final t => t.Forward
+  | .label _ t => t.Forward
+  | .call _ t => t.Forward
+  | .ite c e₁ e₂ => c.Forward ∧ e₁.Forward ∧ e₂.Forward
+
+instance Expr.instDecidableBackward : ∀ e : Expr α F, Decidable e.Backward
+  | .tru | .fls => .isTrue trivial
+  | .initial t | .final t => inferInstanceAs (Decidable t.Backward)
+  | .label _ t | .call _ t => inferInstanceAs (Decidable t.Backward)
+  | .ite c e₁ e₂ =>
+      @instDecidableAnd _ _ (Expr.instDecidableBackward c)
+        (@instDecidableAnd _ _ (Expr.instDecidableBackward e₁) (Expr.instDecidableBackward e₂))
+
+instance Expr.instDecidableForward : ∀ e : Expr α F, Decidable e.Forward
+  | .tru | .fls => .isTrue trivial
+  | .initial t | .final t => inferInstanceAs (Decidable t.Forward)
+  | .label _ t | .call _ t => inferInstanceAs (Decidable t.Forward)
+  | .ite c e₁ e₂ =>
+      @instDecidableAnd _ _ (Expr.instDecidableForward c)
+        (@instDecidableAnd _ _ (Expr.instDecidableForward e₁) (Expr.instDecidableForward e₂))
+
+/-- `BMRSᵖ`: every rule body is backward (hereditarily, through calls). -/
+def Program.Backward (P : Program α F) : Prop := ∀ f, (P f).Backward
+
+/-- `BMRSˢ`: every rule body is forward. -/
+def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
+
 /-! ### Term denotation -/
 
 /-- Denotation of a BMRS term at index `i` (the judgment `w, i ⊢ T → v`). -/
@@ -318,17 +367,6 @@ theorem eval_iff_evalFuel [DecidableEq α] :
 
 /-! ### Substitution -/
 
-/-- Substitute a term for the variable throughout an expression: `e.subst u` is
-`e[u/x]`, the operation the μ-calculus translation writes `tr(φ)[s(x)]`. -/
-def Expr.subst : Expr α F → Term Unit → Expr α F
-  | .tru, _ => .tru
-  | .fls, _ => .fls
-  | .initial t, u => .initial (t.comp u)
-  | .final t, u => .final (t.comp u)
-  | .label s t, u => .label s (t.comp u)
-  | .call f t, u => .call f (t.comp u)
-  | .ite c e₁ e₂, u => .ite (c.subst u) (e₁.subst u) (e₂.subst u)
-
 /-- Term denotations sequence through composition. -/
 private theorem tden_comp_of {z : ℕ} (hu : tden w i u = some v)
     (h : tden w v t = some z) :
@@ -360,44 +398,6 @@ theorem Eval.subst (hu : tden w i u = some v) (h : Eval P w v e b) :
 locality lemmas below are what those inclusions rest on and are the engine of
 [yolyan-2025]'s negative results: the flags of a one-sided program cannot see across
 the target. Equal length is load-bearing — `min`/`max` atoms read `w.length`. -/
-
-/-- Backward expressions: every term is backward. -/
-def Expr.Backward : Expr α F → Prop
-  | .tru | .fls => True
-  | .initial t | .final t => t.Backward
-  | .label _ t => t.Backward
-  | .call _ t => t.Backward
-  | .ite c e₁ e₂ => c.Backward ∧ e₁.Backward ∧ e₂.Backward
-
-/-- Forward expressions. -/
-def Expr.Forward : Expr α F → Prop
-  | .tru | .fls => True
-  | .initial t | .final t => t.Forward
-  | .label _ t => t.Forward
-  | .call _ t => t.Forward
-  | .ite c e₁ e₂ => c.Forward ∧ e₁.Forward ∧ e₂.Forward
-
-instance Expr.instDecidableBackward : ∀ e : Expr α F, Decidable e.Backward
-  | .tru | .fls => .isTrue trivial
-  | .initial t | .final t => inferInstanceAs (Decidable t.Backward)
-  | .label _ t | .call _ t => inferInstanceAs (Decidable t.Backward)
-  | .ite c e₁ e₂ =>
-      @instDecidableAnd _ _ (Expr.instDecidableBackward c)
-        (@instDecidableAnd _ _ (Expr.instDecidableBackward e₁) (Expr.instDecidableBackward e₂))
-
-instance Expr.instDecidableForward : ∀ e : Expr α F, Decidable e.Forward
-  | .tru | .fls => .isTrue trivial
-  | .initial t | .final t => inferInstanceAs (Decidable t.Forward)
-  | .label _ t | .call _ t => inferInstanceAs (Decidable t.Forward)
-  | .ite c e₁ e₂ =>
-      @instDecidableAnd _ _ (Expr.instDecidableForward c)
-        (@instDecidableAnd _ _ (Expr.instDecidableForward e₁) (Expr.instDecidableForward e₂))
-
-/-- `BMRSᵖ`: every rule body is backward (hereditarily, through calls). -/
-def Program.Backward (P : Program α F) : Prop := ∀ f, (P f).Backward
-
-/-- `BMRSˢ`: every rule body is forward. -/
-def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 
 /-- Backward terms only move left. -/
 theorem tden_le_of_backward :
