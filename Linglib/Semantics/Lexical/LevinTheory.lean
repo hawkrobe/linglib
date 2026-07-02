@@ -169,8 +169,9 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .lodge => minimal              -- (default)
   -- §47 Existence
   | .exist => minimal              -- (B&KG) pure stative, no root content
-  -- §48 Appearance
+  -- §48 Appearance, Disappearance
   | .appear => pureResult          -- internally caused appearance
+  | .disappearance => pureResult   -- internally caused going out of existence
   -- §49 Body-Internal Motion
   | .bodyInternalMotion => pureManner -- fidgeting manner
   -- §50 Assuming a Position

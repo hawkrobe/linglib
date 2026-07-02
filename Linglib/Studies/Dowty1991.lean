@@ -1,13 +1,22 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
 import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Data.ProtoRoles.Dowty1991
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # [dowty-1991] Thematic Proto-Roles and Argument Selection
 
-Study file connecting the proto-role theory (`Semantics/Events/ProtoRoles.lean`)
-to argument selection phenomena.
+Study file connecting the proto-role theory
+(`Semantics/ArgumentStructure/EntailmentProfile.lean` and the Levin-class
+template map, `Semantics/Lexical/LevinClassProfiles.lean`) to argument
+selection phenomena. The paper's explicit per-argument entailment
+attributions are typed data rows in `Data/ProtoRoles/Dowty1991.json`
+(generated module `Data.ProtoRoles.Dowty1991`), checked against the class
+templates in the final section — including the divergences the templates do
+NOT encode (build-object stationary, break-object incremental themehood,
+the eat-object dependent-existence tension).
 
 ## Dowty's original flat-counting ASP
 
@@ -31,6 +40,7 @@ namespace Dowty1991
 open Semantics.Lexical
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
+open Features.LevinClassProfiles
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
@@ -213,11 +223,11 @@ theorem cell2_unstable : table1 true true = .unstable := rfl
 theorem cell3_unstable : table1 false false = .unstable := rfl
 
 theorem run_cell1 :
-    table1 runSubjectProfile.volition runSubjectProfile.changeOfState
+    table1 selfMotion.subjectProfile.volition selfMotion.subjectProfile.changeOfState
     = .unergative := rfl
 
 theorem die_cell4 :
-    table1 dieSubjectProfile.volition dieSubjectProfile.changeOfState
+    table1 disappearance.subjectProfile.volition disappearance.subjectProfile.changeOfState
     = .unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
@@ -232,16 +242,16 @@ theorem die_cell4 :
 
 /-- Flat counting predicts arrive is NOT unaccusative (2 P-Ag > 1 P-Pat). -/
 theorem arrive_flat_wrong :
-    flatPredictsUnaccusative arriveSubjectProfile = false := by decide
+    flatPredictsUnaccusative directedMotion.subjectProfile = false := by decide
 
 /-- Modern priority-based ASP correctly predicts arrive IS unaccusative. -/
 theorem arrive_modern_correct :
-    PredictsUnaccusative arriveSubjectProfile := by decide
+    PredictsUnaccusative directedMotion.subjectProfile := by decide
 
 /-- Table 1 also correctly predicts arrive as unaccusative
     (non-agentive + telic = cell 4). -/
 theorem arrive_table1_correct :
-    table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
+    table1 directedMotion.subjectProfile.volition directedMotion.subjectProfile.changeOfState
     = .unaccusative := by decide
 
 /-- Agreement: Table 1 and the modern ASP converge on arrive being
@@ -249,65 +259,85 @@ theorem arrive_table1_correct :
     motivated [davis-koenig-2000]'s priority refinement. -/
 theorem arrive_anomaly_summary :
     -- Table 1: unaccusative (correct)
-    table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
+    table1 directedMotion.subjectProfile.volition directedMotion.subjectProfile.changeOfState
       = .unaccusative ∧
     -- Modern ASP: unaccusative (correct)
-    PredictsUnaccusative arriveSubjectProfile ∧
+    PredictsUnaccusative directedMotion.subjectProfile ∧
     -- Flat counting: NOT unaccusative (WRONG)
-    flatPredictsUnaccusative arriveSubjectProfile = false ∧
+    flatPredictsUnaccusative directedMotion.subjectProfile = false ∧
     -- Fragment annotation: unaccusative (ground truth)
     arrive.unaccusative = true := ⟨by decide, by decide, by decide, rfl⟩
 
 /-- Flat counting gets die right (both methods agree). -/
 theorem die_both_agree :
-    flatPredictsUnaccusative dieSubjectProfile = true ∧
-    PredictsUnaccusative dieSubjectProfile := ⟨by decide, by decide⟩
+    flatPredictsUnaccusative disappearance.subjectProfile = true ∧
+    PredictsUnaccusative disappearance.subjectProfile := ⟨by decide, by decide⟩
 
 /-- Flat counting gets run right (both methods agree). -/
 theorem run_both_agree :
-    flatPredictsUnergative runSubjectProfile = true ∧
-    PredictsUnergative runSubjectProfile := ⟨by decide, by decide⟩
+    flatPredictsUnergative selfMotion.subjectProfile = true ∧
+    PredictsUnergative selfMotion.subjectProfile := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Fragment Bridge: Profiles Match Verb Fields
 -- ════════════════════════════════════════════════════
 
-/-! These theorems verify that the canonical verb profiles in
-    `ProtoRoles.lean` match the entailment profiles stored on the
-    English Fragment verb entries. -/
+/-! These theorems verify that the English Fragment verb entries store
+    exactly the Levin-class template profiles of `LevinClassProfiles.lean` —
+    the stored fields are derivable from the class map (`sweep_instr` is the
+    deliberate instrument-sense override). -/
 
 theorem kick_subject_profile_matches :
-    kick.toVerb.subjectEntailments = some kickSubjectProfile := rfl
+    kick.toVerb.subjectEntailments = some mannerContact.subjectProfile := rfl
 
 theorem kick_object_profile_matches :
-    kick.toVerb.objectEntailments = some kickObjectProfile := rfl
+    kick.toVerb.objectEntailments = some contactObject := rfl
 
 theorem eat_subject_profile_matches :
-    eat.toVerb.subjectEntailments = some eatSubjectProfile := rfl
+    eat.toVerb.subjectEntailments = some consumption.subjectProfile := rfl
 
 theorem eat_object_profile_matches :
-    eat.toVerb.objectEntailments = some eatObjectProfile := rfl
+    eat.toVerb.objectEntailments = some consumptionObject := rfl
 
 theorem build_subject_profile_matches :
-    build.toVerb.subjectEntailments = some buildSubjectProfile := rfl
+    build.toVerb.subjectEntailments = some creation.subjectProfile := rfl
 
 theorem build_object_profile_matches :
-    build.toVerb.objectEntailments = some buildObjectProfile := rfl
+    build.toVerb.objectEntailments = some creationObject := rfl
 
 theorem run_subject_profile_matches :
-    run.toVerb.subjectEntailments = some runSubjectProfile := rfl
+    run.toVerb.subjectEntailments = some selfMotion.subjectProfile := rfl
 
 theorem arrive_subject_profile_matches :
-    arrive.toVerb.subjectEntailments = some arriveSubjectProfile := rfl
+    arrive.toVerb.subjectEntailments = some directedMotion.subjectProfile := rfl
 
 theorem see_subject_profile_matches :
-    see.toVerb.subjectEntailments = some seeSubjectProfile := rfl
+    see.toVerb.subjectEntailments = some perception.subjectProfile := rfl
 
 theorem sweep_subject_profile_matches :
-    sweep.toVerb.subjectEntailments = some sweepBasicSubjectProfile := rfl
+    sweep.toVerb.subjectEntailments = some wipeManner.subjectProfile := rfl
 
 theorem sweep_instr_subject_profile_matches :
-    sweep_instr.toVerb.subjectEntailments = some sweepBroomSubjectProfile := rfl
+    sweep_instr.toVerb.subjectEntailments = some wipeInstrument.subjectProfile := rfl
+
+/-- The stored fragment profiles coincide with the Levin-class fallback —
+    `effectiveSubjectEntailments`/`effectiveObjectEntailments` would be
+    unchanged without them. `sweep_instr` is the deliberate exception: its
+    instrument sense overrides the wipe-class (manner-subclass) default. -/
+theorem stored_profiles_derivable_from_class :
+    kick.toVerb.objectEntailments
+      = kick.toVerb.levinClass.bind (·.objectProfile) ∧
+    eat.toVerb.objectEntailments
+      = eat.toVerb.levinClass.bind (·.objectProfile) ∧
+    build.toVerb.objectEntailments
+      = build.toVerb.levinClass.bind (·.objectProfile) ∧
+    see.toVerb.subjectEntailments
+      = see.toVerb.levinClass.bind (·.subjectProfile) ∧
+    sweep.toVerb.subjectEntailments
+      = sweep.toVerb.levinClass.bind (·.subjectProfile) ∧
+    sweep_instr.toVerb.subjectEntailments
+      ≠ sweep_instr.toVerb.levinClass.bind (·.subjectProfile) := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. Fragment Bridge: Predictions Match Annotations
@@ -315,12 +345,12 @@ theorem sweep_instr_subject_profile_matches :
 
 /-- Agreement: arrive prediction matches the fragment annotation. -/
 theorem arrive_prediction_matches_fragment :
-    decide (PredictsUnaccusative arriveSubjectProfile) =
+    decide (PredictsUnaccusative directedMotion.subjectProfile) =
     arrive.unaccusative := by decide
 
 /-- Agreement: run prediction matches the fragment annotation. -/
 theorem run_prediction_matches_fragment :
-    decide (PredictsUnaccusative runSubjectProfile) =
+    decide (PredictsUnaccusative selfMotion.subjectProfile) =
     English.Predicates.Verbal.run.unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
@@ -338,18 +368,18 @@ open ArgumentStructure.AgentivityLattice
     motion but not instigation → not in the NOM/ERG region. Consistent
     with the priority-based ASP and Table 1, but not flat counting. -/
 theorem arrive_grimm_not_nom :
-    (GrimmNode.fromSubjectProfile arriveSubjectProfile).toCaseRegion ≠ .nomErg := by
+    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion ≠ .nomErg := by
   decide
 
 /-- Full cross-theory convergence on arrive: Table 1, modern ASP, and
     [grimm-2011]'s lattice all predict unaccusative/non-agent.
     Only flat counting diverges. -/
 theorem arrive_cross_theory :
-    table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
+    table1 directedMotion.subjectProfile.volition directedMotion.subjectProfile.changeOfState
       = .unaccusative ∧
-    PredictsUnaccusative arriveSubjectProfile ∧
-    flatPredictsUnaccusative arriveSubjectProfile = false ∧
-    (GrimmNode.fromSubjectProfile arriveSubjectProfile).toCaseRegion ≠ .nomErg ∧
+    PredictsUnaccusative directedMotion.subjectProfile ∧
+    flatPredictsUnaccusative directedMotion.subjectProfile = false ∧
+    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion ≠ .nomErg ∧
     arrive.unaccusative = true :=
   ⟨by decide, by decide, by decide, by decide, rfl⟩
 
@@ -360,19 +390,19 @@ theorem arrive_cross_theory :
     canonical ACC — see `Grimm2011.kick_object_persistence` for the
     Grimm-vs-Beavers divergence on contact-verb objects. -/
 theorem kick_asp_grimm_consistent :
-    OutranksForSubject kickSubjectProfile kickObjectProfile ∧
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
+    OutranksForSubject mannerContact.subjectProfile contactObject ∧
+    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
       = .nom ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
+    (GrimmNode.fromObjectProfile contactObject).toCaseRegion.toAccusativeCase
       = .inst :=
   ⟨by decide, by decide, by decide⟩
 
 /-- Die: ASP, flat counting, and [grimm-2011] all agree on unaccusative.
     Grimm's lattice maps the sole argument to ACC/ABS (patient region). -/
 theorem die_asp_grimm_consistent :
-    PredictsUnaccusative dieSubjectProfile ∧
-    flatPredictsUnaccusative dieSubjectProfile = true ∧
-    (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion = .accAbs :=
+    PredictsUnaccusative disappearance.subjectProfile ∧
+    flatPredictsUnaccusative disappearance.subjectProfile = true ∧
+    (GrimmNode.fromObjectProfile disappearance.subjectProfile).toCaseRegion = .accAbs :=
   ⟨by decide, by decide, by decide⟩
 
 /-- Kiss on [grimm-2011]'s Fig. 1 lattice: the object's agentivity node
@@ -391,5 +421,164 @@ theorem kiss_flat_count_from_lattice :
   rw [pAgentScore_decomposition, pAgentScore_decomposition]
   exact Nat.add_le_add
     (AgentivityNode.featureCount_monotone kiss_subject_dominates.le) le_rfl
+
+-- ════════════════════════════════════════════════════
+-- § 9. Dowty's Explicit Attributions vs the Class Templates
+-- ════════════════════════════════════════════════════
+
+/-! The paper's explicit per-argument attributions (generated rows in
+    `Data.ProtoRoles.Dowty1991`, one per stated entailment, with locators)
+    checked against the class-template profiles. Positive checks confirm the
+    templates encode what Dowty states; the divergence theorems record what
+    they deliberately do NOT encode. -/
+
+/-- Every entailment a data row explicitly attributes agrees with profile
+    `p`; fields the paper is silent or hedged about are unconstrained. -/
+def matchesProfile (d : ProtoRoleDatum) (p : EntailmentProfile) : Bool :=
+  d.volition.all (· == p.volition) &&
+  d.sentience.all (· == p.sentience) &&
+  d.causation.all (· == p.causation) &&
+  d.movement.all (· == p.movement) &&
+  d.independentExistence.all (· == p.independentExistence) &&
+  d.changeOfState.all (· == p.changeOfState) &&
+  d.incrementalTheme.all (· == p.incrementalTheme) &&
+  d.causallyAffected.all (· == p.causallyAffected) &&
+  d.stationary.all (· == p.stationary) &&
+  d.dependentExistence.all (· == p.dependentExistence)
+
+-- § 9a. Positive checks: the templates encode Dowty's attributions
+
+/-- The (35) primary transitive verbs: each stated subject attribution
+    (V+S+C+M, no P-Patient, p. 577) holds of the accomplishment template
+    subject, and each stated object attribution (CoS+CA) holds of the
+    accomplishment/creation/consumption objects. -/
+theorem primary_transitives_match_templates :
+    matchesProfile Rows.buildSubject accomplishmentSubjectProfile = true ∧
+    matchesProfile Rows.writeSubject accomplishmentSubjectProfile = true ∧
+    matchesProfile Rows.murderSubject accomplishmentSubjectProfile = true ∧
+    matchesProfile Rows.eatSubject accomplishmentSubjectProfile = true ∧
+    matchesProfile Rows.washSubject accomplishmentSubjectProfile = true ∧
+    matchesProfile Rows.murderObject accomplishmentObjectProfile = true ∧
+    matchesProfile Rows.washObject accomplishmentObjectProfile = true ∧
+    matchesProfile Rows.writeObject creationObject = true ∧
+    matchesProfile Rows.eatObject consumptionObject = true := by decide
+
+/-- The hit-class attributions ((64 III), §9.3.3): the direct object is
+    non-moving, unchanged, and a non-incremental-theme — exactly consistent
+    with the `mannerContact`/`wipeManner` contacted object (CA+St, no CoS)
+    and with this file's §3 hit-class argument profiles. -/
+theorem hit_class_matches_contact_object :
+    matchesProfile Rows.hitObject contactObject = true ∧
+    matchesProfile Rows.hitObject hitArg1 = true ∧
+    matchesProfile Rows.hitInstrument hitArg2 = true := by decide
+
+/-- The (29)/(30) single-entailment exemplars land in the right templates:
+    *see* (29b) in the perception subject, *need* (29e) in the desire
+    subject, *need*'s de dicto object (30e) in the desire object. -/
+theorem exemplars_match_templates :
+    matchesProfile Rows.seeSubject perception.subjectProfile = true ∧
+    matchesProfile Rows.needSubject desire.subjectProfile = true ∧
+    (desire.objectProfile.map (matchesProfile Rows.needObject)) = some true ∧
+    (desire.objectProfile.map (matchesProfile Rows.seekObject)) = some true := by
+  decide
+
+-- § 9b. The psych-state / desire split ([dowty-1991] (38) vs (29e))
+
+/-- The split of the former single state-subject profile is Dowty's own:
+    admire-class experiencers are sentience-entailed ((38): *like*), so
+    `psychState` fits them; want-class subjects are NOT ((29e)/p. 573:
+    *need* entails subject existence "but none of (a)-(d)"), so the
+    sentient profile mis-states them — `desire` fits instead. -/
+theorem psych_desire_split_justified :
+    matchesProfile Rows.likeSubject psychState.subjectProfile = true ∧
+    matchesProfile Rows.needSubject desire.subjectProfile = true ∧
+    matchesProfile Rows.needSubject psychState.subjectProfile = false := by
+  decide
+
+/-- The (38) doublet tie: the experiencer ({S,IE}) and stimulus ({C,IE})
+    profiles are Proto-Agent-incomparable with no Proto-Patient difference,
+    so neither outranks — Corollary 1 predicts both lexicalizations
+    (*like*/*please*). The stated stimulus attributions (causation, no
+    sentience) hold of the template's stimulus object. -/
+theorem psych_doublet_tie :
+    AllowsAlternation psychState.subjectProfile stimulusProfile ∧
+    (psychState.objectProfile.map (matchesProfile Rows.likeObject))
+      = some true ∧
+    matchesProfile Rows.pleaseSubject stimulusProfile = true := by
+  refine ⟨by decide, by decide, by decide⟩
+
+/-- Croft's inchoative restriction (p. 580): under the inchoative reading
+    the experiencer gains a change of state — the stated attribution matches
+    this file's §2 inchoative experiencer profile, which the stimulus then
+    outranks for subject. -/
+theorem inchoative_experiencer_matches :
+    matchesProfile Rows.surpriseObjectInchoative expInchoativeProfile = true ∧
+    OutranksForSubject stimProfile expInchoativeProfile := by
+  refine ⟨by decide, by decide⟩
+
+-- § 9c. The buy/sell tie (§3.2, §8.3)
+
+/-- §3.2: buyer and seller are both attributed volition and nothing
+    distinguishes them ("nor are they different in any proto-role
+    entailments", §8.3 p. 579) — the class map gives give-class and
+    obtain-class subjects one shared profile, and Corollary 1 licenses the
+    doublet: a profile never outranks itself. -/
+theorem buy_sell_tie :
+    matchesProfile Rows.buySubject possessionTransfer.subjectProfile = true ∧
+    matchesProfile Rows.buySeller possessionTransfer.subjectProfile = true ∧
+    matchesProfile Rows.sellSubject possessionTransfer.subjectProfile = true ∧
+    matchesProfile Rows.sellBuyer possessionTransfer.subjectProfile = true ∧
+    AllowsAlternation possessionTransfer.subjectProfile
+      possessionTransfer.subjectProfile := by
+  refine ⟨by decide, by decide, by decide, by decide, by decide⟩
+
+-- § 9d. Divergences the templates do not encode
+
+/-- Build-object stationary divergence: "all of 28" (pp. 572–573) includes
+    (28d) stationary, but the `creation` template object (CoS+IT+CA+DE)
+    deliberately omits St — the row disagrees with the template on exactly
+    that field. Recorded as data, not flipped: the class-level template
+    follows the (35)/p. 577 hedge ("(mostly) ... stationary"), which does
+    not commit every creation object to (28d). -/
+theorem build_object_stationary_divergence :
+    matchesProfile Rows.buildObject creationObject = false ∧
+    matchesProfile Rows.buildObject
+      { creationObject with stationary := true } = true := by
+  refine ⟨by decide, by decide⟩
+
+/-- Break-object incremental-themehood divergence: (64 II) attributes
+    "change of state (and Incremental Themehood)" to the break-class direct
+    object, but the `resultChange`/accomplishment object template carries no
+    IT (per-verb addition by design). The row disagrees with the template on
+    exactly that field. -/
+theorem break_object_it_divergence :
+    matchesProfile Rows.breakObject accomplishmentObjectProfile = false ∧
+    matchesProfile Rows.breakObject
+      { accomplishmentObjectProfile with incrementalTheme := true } = true := by
+  refine ⟨by decide, by decide⟩
+
+/-- Eat-object dependent-existence tension: (30e)(i) counts destruction —
+    the argument "will not exist after the event" — as dependent existence,
+    which would put DE on *eat*'s object; the paper never states this for
+    *eat* (the (35) hedge leaves DE open), and the `consumption` template
+    omits DE because the Grimm bridge disambiguation is load-bearing:
+    adding DE to an incremental theme flips
+    `PersistenceLevel.fromPatientProfile` from `exPersBeginning`
+    (consumption) to `exPersEnd` (creation), misclassifying *eat* as a
+    creation verb. Recorded, not flipped. -/
+theorem eat_object_de_tension :
+    matchesProfile Rows.eatObject consumptionObject = true ∧
+    ArgumentStructure.AgentivityLattice.PersistenceLevel.fromPatientProfile
+      consumptionObject = .exPersBeginning ∧
+    ArgumentStructure.AgentivityLattice.PersistenceLevel.fromPatientProfile
+      { consumptionObject with dependentExistence := true } = .exPersEnd := by
+  refine ⟨by decide, by decide, by decide⟩
+
+/-- The spray/load rows ((64 I), p. 594): both nonsubject arguments are
+    attributed a change of state, matching this file's §3 profiles. -/
+theorem spray_load_rows_match :
+    matchesProfile Rows.loadTheme sprayLoadTheme = true ∧
+    matchesProfile Rows.loadLocation sprayLoadLocation = true := by
+  refine ⟨by decide, by decide⟩
 
 end Dowty1991

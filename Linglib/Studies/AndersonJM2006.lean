@@ -363,14 +363,28 @@ theorem experiencer_correctly_predicted :
 -- § 6: Linking Accuracy Against the Fragment Lexicon
 -- ============================================================================
 
-/-- Anderson correctly predicts which argument becomes subject for
-    every verb in the Fragment: the prediction is defined iff the
-    verb has a derived subject role. -/
+/-- Anderson's prediction is defined iff the verb's derived subject role
+    maps to a src/abs-bearing case relation. Want-class subjects fall
+    outside that coverage: their [dowty-1991]-honest profile is bare
+    independent existence ((29e), the `desire` class template), whose role
+    label `goal` maps to locative {loc} — a case relation `canonicalTheta`
+    cannot link to subject. For every other verb, prediction definedness
+    tracks role definedness exactly. -/
 theorem anderson_linking_accuracy :
     (allVerbs.filter λ v =>
       (andersonPredictedSubjectTheta v.toVerb).isSome ==
-      (v.toVerb.subjectRole).isSome).length = allVerbs.length := by
+      ((v.toVerb.subjectRole).isSome &&
+        v.toVerb.subjectRole != some .goal)).length = allVerbs.length := by
   native_decide
+
+/-- The coverage gap is non-vacuous: *want* has a derived subject role
+    (goal, from the desire-class IE-only profile) but no Anderson subject
+    prediction. -/
+theorem want_outside_anderson_coverage :
+    English.Predicates.Verbal.want.toVerb.subjectRole = some .goal ∧
+    andersonPredictedSubjectTheta English.Predicates.Verbal.want.toVerb
+      = none := by
+  refine ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- § 7: Role Collapses — What Anderson's Three-Feature System Costs
