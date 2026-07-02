@@ -76,6 +76,17 @@ theorem optimal_nonempty : t.optimal.Nonempty := lexMins_nonempty t
 theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates :=
   lexMins_subset t c
 
+/-- A winner's profile bounds every candidate's. -/
+theorem le_of_mem_optimal {d : C} (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
+    t.profile c ≤ t.profile d :=
+  ((mem_optimal_iff t c).mp hc).2 d hd
+
+/-- Optimality factors through the profile, so it transports along profile equality:
+scoring like a winner is winning. -/
+theorem mem_optimal_of_profile_eq {d : C} (hd : d ∈ t.optimal) (hc : c ∈ t.candidates)
+    (he : t.profile c = t.profile d) : c ∈ t.optimal :=
+  (mem_optimal_iff t c).mpr ⟨hc, fun e he' => he ▸ le_of_mem_optimal t d hd he'⟩
+
 /-- A candidate whose profile vanishes wins: `0` is the global lex-minimum. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
     c ∈ t.optimal :=
@@ -85,11 +96,20 @@ theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile
 candidate. -/
 theorem optimal_eq_singleton_iff {m : C} (hm : m ∈ t.candidates) :
     t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c := by
-  simp only [Finset.eq_singleton_iff_unique_mem, mem_optimal_iff]
-  refine ⟨fun ⟨⟨_, hmin⟩, huniq⟩ c hc hcm => (hmin c hc).lt_of_ne fun he =>
-      hcm (huniq c ⟨hc, fun d hd => he ▸ hmin d hd⟩),
-    fun h => ⟨⟨hm, fun d hd => (eq_or_ne d m).elim (· ▸ le_rfl) fun hdm => (h d hd hdm).le⟩,
-      fun c ⟨hc, hcmin⟩ => of_not_not fun hcm => not_le.mpr (h c hc hcm) (hcmin m hm)⟩⟩
+  constructor
+  · intro h c hc hcm
+    have hmo : m ∈ t.optimal := h ▸ Finset.mem_singleton_self m
+    exact (le_of_mem_optimal t m hmo hc).lt_of_ne fun he => hcm <| Finset.mem_singleton.mp
+      (h ▸ mem_optimal_of_profile_eq t c hmo hc he.symm)
+  · intro h
+    refine Finset.eq_singleton_iff_unique_mem.mpr
+      ⟨(mem_optimal_iff t m).mpr ⟨hm, fun d hd => ?_⟩, fun c hc => ?_⟩
+    · rcases eq_or_ne d m with rfl | hdm
+      · exact le_rfl
+      · exact (h d hd hdm).le
+    · by_contra hcm
+      exact absurd (le_of_mem_optimal t c hc hm)
+        (not_le.mpr (h c (optimal_subset t c hc) hcm))
 
 /-! ### Tableau constructors -/
 
@@ -146,7 +166,7 @@ theorem ofRanking_optimal_zero_first (con : Constraint C) (rest : List (Constrai
     (hc : c ∈ (ofRanking candidates (con :: rest) h).optimal) : con c = 0 := by
   obtain ⟨c₀, hmem, h0⟩ := hExists
   have hle := ViolationProfile.le_apply_zero
-    (((mem_optimal_iff _ _).mp hc).2 c₀ (List.mem_toFinset.mpr hmem))
+    (le_of_mem_optimal _ _ hc (List.mem_toFinset.mpr hmem))
   change con c ≤ con c₀ at hle
   omega
 
