@@ -635,50 +635,6 @@ def strictlyBetter (X Y : Finset I) : Prop :=
     ((∀ i'' ∈ X ∩ Y, ord.lt i'' i') ∨
      (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i'))
 
-/-! ### Order-Theoretic Helpers -/
-
-omit [Fintype I] in
-/-- Every nonempty Finset has a maximal element under a total preorder. -/
-private lemma exists_le_max (S : Finset I) (hS : S.Nonempty) :
-    ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
-  induction S using Finset.cons_induction with
-  | empty => exact absurd hS (by simp)
-  | cons x S' hx ih =>
-    by_cases hS' : S'.Nonempty
-    · obtain ⟨m, hm, hle⟩ := ih hS'
-      rcases ord.le_total x m with h | h
-      · exact ⟨m, Finset.mem_cons.mpr (Or.inr hm), fun s hs => by
-          rcases Finset.mem_cons.mp hs with rfl | hs'
-          · exact h
-          · exact hle s hs'⟩
-      · exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
-          rcases Finset.mem_cons.mp hs with rfl | hs'
-          · exact ord.le_refl _
-          · exact ord.le_trans s m x (hle s hs') h⟩
-    · rw [Finset.not_nonempty_iff_eq_empty] at hS'
-      exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
-        simp [hS'] at hs; exact hs ▸ ord.le_refl _⟩
-
-omit [Fintype I] [DecidableEq I] in
-/-- a ≤ b ∧ b < c → a < c. -/
-private lemma le_lt_trans' (a b c : I) :
-    ord.le a b → ord.lt b c → ord.lt a c :=
-  fun hab ⟨hbc, hncb⟩ =>
-    ⟨ord.le_trans a b c hab hbc, fun hca => hncb (ord.le_trans c a b hca hab)⟩
-
-omit [Fintype I] [DecidableEq I] in
-/-- a < b ∧ b ≤ c → a < c. -/
-private lemma lt_le_trans' (a b c : I) :
-    ord.lt a b → ord.le b c → ord.lt a c :=
-  fun ⟨hab, hnba⟩ hbc =>
-    ⟨ord.le_trans a b c hab hbc, fun hca => hnba (ord.le_trans b c a hbc hca)⟩
-
-omit [Fintype I] [DecidableEq I] in
-/-- lt is irreflexive. -/
-private lemma lt_irrefl' (m : I) :
-    ¬ ord.lt m m :=
-  fun ⟨_, h⟩ => h (ord.le_refl m)
-
 omit [Fintype I] in
 /-- If m dominates X ∩ Y and Y \ X, it dominates all of Y. -/
 private lemma dom_all_of_inter_sdiff (m : I) (X Y : Finset I)
@@ -774,14 +730,14 @@ theorem strictlyBetter_respects_right (X Y Z : Finset I)
       intro z hz hny
       rcases hyz with ⟨_, hyz_b⟩ | hyz2
       · obtain ⟨y', hy', hle⟩ := hyz_b z (Finset.mem_sdiff.mpr ⟨hz, hny⟩)
-        exact le_lt_trans' ord z y' m hle (m_dom_Y y' (Finset.mem_sdiff.mp hy').1)
+        exact ord.lt_of_le_of_lt hle (m_dom_Y y' (Finset.mem_sdiff.mp hy').1)
       · obtain ⟨⟨c, hc, hle⟩, _⟩ := hyz2 z
           (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inr hz),
             fun h => hny (Finset.mem_inter.mp h).1⟩)
-        exact le_lt_trans' ord z c m hle (m_dom_Y c (Finset.mem_inter.mp hc).1)
+        exact ord.lt_of_le_of_lt hle (m_dom_Y c (Finset.mem_inter.mp hc).1)
     -- m ∉ Z forced
     have hm_nz : m ∉ Z :=
-      fun hm_z => absurd (z_ny_lt m hm_z hm_ny) (lt_irrefl' ord m)
+      fun hm_z => absurd (z_ny_lt m hm_z hm_ny) (ord.lt_irrefl m)
     refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_x, hm_nz⟩, hm_f, ?_, Or.inl ?_⟩
     · intro z hz
       by_cases hz_y : z ∈ Y
@@ -804,10 +760,10 @@ theorem strictlyBetter_respects_right (X Y Z : Finset I)
       suffices ∃ w, w ∈ X \ Z ∧ w ∈ field ord i ∧ ord.le m w from by
         obtain ⟨w, hw_sd, hw_f, hle⟩ := this
         refine ⟨w, hw_sd, hw_f, ?_, Or.inr ?_⟩
-        · intro z hz; exact lt_le_trans' ord z m w
+        · intro z hz; exact ord.lt_of_lt_of_le
             (m_dom_fX z (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz).1,
               (Finset.mem_sdiff.mp hz).2⟩)) hle
-        · intro c hc; exact lt_le_trans' ord c m w
+        · intro c hc; exact ord.lt_of_lt_of_le
             (m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
               fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)) hle
       rcases hyz with ⟨_, hyz_b⟩ | hyz2
@@ -851,9 +807,9 @@ theorem strictlyBetter_respects_left (X Y Z : Finset I)
       suffices ∃ w, w ∈ Z \ Y ∧ w ∈ field ord i ∧ ord.le m w from by
         obtain ⟨w, hw_sd, hw_f, hle⟩ := this
         refine ⟨w, hw_sd, hw_f, ?_, Or.inl ?_⟩
-        · intro y hy; exact lt_le_trans' ord y m w
+        · intro y hy; exact ord.lt_of_lt_of_le
             (m_dom_Y y (Finset.mem_sdiff.mp hy).1) hle
-        · intro c hc; exact lt_le_trans' ord c m w
+        · intro c hc; exact ord.lt_of_lt_of_le
             (m_dom_Y c (Finset.mem_inter.mp hc).2) hle
       -- Helper: w ∉ Y when m_dom_Y w and le m w (lt w m contradicts le m w)
       have not_in_Y (w : I) (hle : ord.le m w) : w ∉ Y :=
@@ -874,18 +830,18 @@ theorem strictlyBetter_respects_left (X Y Z : Finset I)
       intro c hc_x hc_nz
       rcases hxz with ⟨hxz_a, _⟩ | hxz2
       · obtain ⟨z', hz', hle⟩ := hxz_a c (Finset.mem_sdiff.mpr ⟨hc_x, hc_nz⟩)
-        exact le_lt_trans' ord c z' m hle (m_dom_fX z'
+        exact ord.lt_of_le_of_lt hle (m_dom_fX z'
           (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz').1,
             (Finset.mem_sdiff.mp hz').2⟩))
       · obtain ⟨_, ⟨c', hc', hle⟩⟩ := hxz2 c
           (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hc_x),
             fun h => hc_nz (Finset.mem_inter.mp h).2⟩)
-        exact le_lt_trans' ord c c' m hle (m_dom_fX c'
+        exact ord.lt_of_le_of_lt hle (m_dom_fX c'
           (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc').1,
             fun h => (Finset.mem_sdiff.mp hc').2 (Finset.mem_union.mpr (Or.inl h))⟩))
     -- m ∈ Z forced
     have hm_z : m ∈ Z := by
-      by_contra hm_nz; exact absurd (lt_via_xz m hm_x hm_nz) (lt_irrefl' ord m)
+      by_contra hm_nz; exact absurd (lt_via_xz m hm_x hm_nz) (ord.lt_irrefl m)
     -- Witness m ∈ Z\Y
     refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inr ?_⟩
     · intro y hy
@@ -914,21 +870,21 @@ theorem strictlyBetter_trans (X Y Z : Finset I) :
     have hz_nx := (Finset.mem_sdiff.mp hz).2
     by_cases hz_y : z ∈ Y
     · exact hm₁_yx z (Finset.mem_sdiff.mpr ⟨hz_y, hz_nx⟩)
-    · exact lt_le_trans' ord z m₂ m₁ (hm₂_zy z (Finset.mem_sdiff.mpr ⟨hz_z, hz_y⟩)) hle
+    · exact ord.lt_of_lt_of_le (hm₂_zy z (Finset.mem_sdiff.mpr ⟨hz_z, hz_y⟩)) hle
   -- Key helper: z ∈ Z\X → lt z m₂ (when m₁ ≤ m₂)
   have zx_lt_m2 (hle : ord.le m₁ m₂) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₂ := by
     have hz_z := (Finset.mem_sdiff.mp hz).1
     have hz_nx := (Finset.mem_sdiff.mp hz).2
     by_cases hz_y : z ∈ Y
-    · exact lt_le_trans' ord z m₁ m₂
+    · exact ord.lt_of_lt_of_le
         (hm₁_yx z (Finset.mem_sdiff.mpr ⟨hz_y, hz_nx⟩)) hle
     · exact hm₂_zy z (Finset.mem_sdiff.mpr ⟨hz_z, hz_y⟩)
   rcases ord.le_total m₂ m₁ with hle | hle
   · -- Case: m₂ ≤ m₁. Witness = m₁.
     -- m₁ ∉ Z: lt m₁ m₂ ∧ le m₂ m₁ → lt m₁ m₁
     have hm₁_nz : m₁ ∉ Z := fun h =>
-      absurd (lt_le_trans' ord m₁ m₂ m₁
-        (hm₂_zy m₁ (Finset.mem_sdiff.mpr ⟨h, hm₁_ny⟩)) hle) (lt_irrefl' ord m₁)
+      absurd (ord.lt_of_lt_of_le
+        (hm₂_zy m₁ (Finset.mem_sdiff.mpr ⟨h, hm₁_ny⟩)) hle) (ord.lt_irrefl m₁)
     refine ⟨m₁, Finset.mem_sdiff.mpr ⟨hm₁_x, hm₁_nz⟩, hm₁_f, zx_lt_m1 hle, ?_⟩
     -- Inner disjunct: follows from X⊐Y's inner
     rcases hm₁_inner with h_cap | h_comp
@@ -938,7 +894,7 @@ theorem strictlyBetter_trans (X Y Z : Finset I) :
       have hc_z := (Finset.mem_inter.mp hc).2
       by_cases hc_y : c ∈ Y
       · exact h_cap c (Finset.mem_inter.mpr ⟨hc_x, hc_y⟩)
-      · exact lt_le_trans' ord c m₂ m₁
+      · exact ord.lt_of_lt_of_le
           (hm₂_zy c (Finset.mem_sdiff.mpr ⟨hc_z, hc_y⟩)) hle
     · -- Right: ∀ field\(X∪Y) < m₁ → ∀ field\(X∪Z) < m₁
       right; intro c hc
@@ -953,8 +909,8 @@ theorem strictlyBetter_trans (X Y Z : Finset I) :
   · -- Case: m₁ ≤ m₂. Witness = m₂.
     -- m₂ ∈ X: lt m₂ m₁ ∧ le m₁ m₂ → lt m₂ m₂
     have hm₂_x : m₂ ∈ X := by
-      by_contra h; exact absurd (lt_le_trans' ord m₂ m₁ m₂
-        (hm₁_yx m₂ (Finset.mem_sdiff.mpr ⟨hm₂_y, h⟩)) hle) (lt_irrefl' ord m₂)
+      by_contra h; exact absurd (ord.lt_of_lt_of_le
+        (hm₁_yx m₂ (Finset.mem_sdiff.mpr ⟨hm₂_y, h⟩)) hle) (ord.lt_irrefl m₂)
     refine ⟨m₂, Finset.mem_sdiff.mpr ⟨hm₂_x, hm₂_nz⟩, hm₂_f, zx_lt_m2 hle, ?_⟩
     -- Inner disjunct: follows from Y⊐Z's inner
     rcases hm₂_inner with h_cap | h_comp
@@ -972,7 +928,7 @@ theorem strictlyBetter_trans (X Y Z : Finset I) :
       have hc_nx : c ∉ X := fun h => hc_nxz (Finset.mem_union.mpr (Or.inl h))
       have hc_nz : c ∉ Z := fun h => hc_nxz (Finset.mem_union.mpr (Or.inr h))
       by_cases hc_y : c ∈ Y
-      · exact lt_le_trans' ord c m₁ m₂
+      · exact ord.lt_of_lt_of_le
           (hm₁_yx c (Finset.mem_sdiff.mpr ⟨hc_y, hc_nx⟩)) hle
       · exact h_comp c (Finset.mem_sdiff.mpr
           ⟨hc_f, fun h => Finset.mem_union.mp h |>.elim hc_y hc_nz⟩)
@@ -984,7 +940,7 @@ theorem strictlyBetter_total (X Y : Finset I)
     strictlyBetter ord i Y X := by
   by_cases h_eq : X = Y
   · exact Or.inl (h_eq ▸ degreeEquiv_refl ord i X)
-  · obtain ⟨m, hm, hm_max⟩ := exists_le_max ord _ (symdiff_nonempty X Y h_eq)
+  · obtain ⟨m, hm, hm_max⟩ := ord.exists_le_max _ (symdiff_nonempty X Y h_eq)
     -- Helper: any element of the symdiff ≤ m
     have hm_max' : ∀ s ∈ (X \ Y) ∪ (Y \ X), ord.le s m := hm_max
     rcases Finset.mem_union.mp hm with hm_xy | hm_yx

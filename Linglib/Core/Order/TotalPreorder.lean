@@ -70,6 +70,37 @@ def lt (a b : α) : Prop := ord.le a b ∧ ¬ ord.le b a
 instance decRelLt [DecidableRel ord.le] : DecidableRel ord.lt := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
+theorem lt_of_le_of_lt {a b c : α} (h : ord.le a b) (h' : ord.lt b c) :
+    ord.lt a c :=
+  ⟨ord.le_trans a b c h h'.1, fun hca => h'.2 (ord.le_trans c a b hca h)⟩
+
+theorem lt_of_lt_of_le {a b c : α} (h : ord.lt a b) (h' : ord.le b c) :
+    ord.lt a c :=
+  ⟨ord.le_trans a b c h.1 h', fun hca => h.2 (ord.le_trans b c a h' hca)⟩
+
+theorem lt_irrefl (a : α) : ¬ ord.lt a a := fun h => h.2 (ord.le_refl a)
+
+/-- Every nonempty finset has a greatest element under a total preorder. -/
+theorem exists_le_max (S : Finset α) (hS : S.Nonempty) :
+    ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
+  induction S using Finset.cons_induction with
+  | empty => exact absurd hS (by simp)
+  | cons x S' hx ih =>
+    by_cases hS' : S'.Nonempty
+    · obtain ⟨m, hm, hle⟩ := ih hS'
+      rcases ord.le_total x m with h | h
+      · exact ⟨m, Finset.mem_cons.mpr (Or.inr hm), fun s hs => by
+          rcases Finset.mem_cons.mp hs with rfl | hs'
+          · exact h
+          · exact hle s hs'⟩
+      · exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
+          rcases Finset.mem_cons.mp hs with rfl | hs'
+          · exact ord.le_refl _
+          · exact ord.le_trans s m x (hle s hs') h⟩
+    · rw [Finset.not_nonempty_iff_eq_empty] at hS'
+      exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
+        simp [hS'] at hs; exact hs ▸ ord.le_refl _⟩
+
 /-- Equivalence: a and b are ranked at the same level — mathlib's
 `AntisymmRel` (whose `AntisymmRel.setoid` is the level-quotient). -/
 abbrev equiv (a b : α) : Prop := AntisymmRel ord.le a b
