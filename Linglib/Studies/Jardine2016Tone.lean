@@ -451,132 +451,54 @@ inductive Mark
   deriving DecidableEq, Repr
 
 /-- Left pass of (43): mark every toneless TBU after a H with `?`. -/
-def markLeft : Mealy Bool TBU Mark where
-  initial := false
-  step l a :=
+def markLeft : Mealy Bool TBU Mark :=
+  .ofFlag (· == .H) fun l a =>
     match a with
-    | .H => (true, .H)
-    | .O => (l, if l then .Q else .O)
+    | .H => .H
+    | .O => if l then .Q else .O
 
 /-- Right pass of (43): resolve `?` to H when a H follows, else to Ø. -/
-def resolveRight : Mealy Bool Mark TBU where
-  initial := false
-  step r a :=
+def resolveRight : Mealy Bool Mark TBU :=
+  .ofFlag (· == .H) fun r a =>
     match a with
-    | .H => (true, .H)
-    | .O => (r, .O)
-    | .Q => (r, if r then .H else .O)
+    | .H => .H
+    | .O => .O
+    | .Q => if r then .H else .O
 
 /-- The right pass as a right-to-left string function: reverse, run, reverse. -/
 def resolve (x : List Mark) : List TBU := (resolveRight.run x.reverse).reverse
 
-private theorem markLeft_stateAfter (b : Bool) (pre : List TBU) :
-    markLeft.stateAfter b pre = (b || pre.any (· == .H)) := by
-  induction pre generalizing b with
-  | nil => simp
-  | cons x xs ih =>
-    rw [Mealy.stateAfter_cons]
-    cases x with
-    | H => rw [show (markLeft.step b .H).1 = true from rfl, ih]; simp
-    | O =>
-      rw [show (markLeft.step b .O).1 = b from rfl, ih]
-      simp only [List.any_cons, show (TBU.O == TBU.H) = false from rfl, Bool.false_or]
-
-private theorem resolveRight_stateAfter (b : Bool) (pre : List Mark) :
-    resolveRight.stateAfter b pre = (b || pre.any (· == .H)) := by
-  induction pre generalizing b with
-  | nil => simp
-  | cons x xs ih =>
-    rw [Mealy.stateAfter_cons]
-    cases x with
-    | H => rw [show (resolveRight.step b .H).1 = true from rfl, ih]; simp
-    | O =>
-      rw [show (resolveRight.step b .O).1 = b from rfl, ih]
-      simp only [List.any_cons, show (Mark.O == Mark.H) = false from rfl, Bool.false_or]
-    | Q =>
-      rw [show (resolveRight.step b .Q).1 = b from rfl, ih]
-      simp only [List.any_cons, show (Mark.Q == Mark.H) = false from rfl, Bool.false_or]
-
-private theorem markLeft_run_getElem? (w : List TBU) (i : ℕ) :
-    (markLeft.run w)[i]?
-      = w[i]?.map fun a =>
-          match a with
-          | .H => Mark.H
-          | .O => if (w.take i).any (· == .H) then Mark.Q else Mark.O := by
-  rw [show markLeft.run w = markLeft.runFrom markLeft.initial w from rfl,
-    Mealy.runFrom_getElem?]
-  cases h : w[i]? with
-  | none => rfl
-  | some a =>
-    simp only [Option.map_some]
-    congr 1
-    cases a with
-    | H => rfl
-    | O =>
-      show (if markLeft.stateAfter markLeft.initial (w.take i) = true
-          then Mark.Q else Mark.O) = _
-      rw [markLeft_stateAfter, show markLeft.initial = false from rfl]
-      simp
-
 private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
     (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some TBU.H := by
-  rw [markLeft_run_getElem?]
-  cases h : w[j]? with
+  rw [markLeft, Mealy.ofFlag_run_getElem?]
+  cases hv : w[j]? with
   | none => simp
-  | some a =>
-    cases a with
-    | H => simp
-    | O =>
-      simp only [Option.map_some]
-      constructor
-      · intro hc
-        exfalso
-        split at hc <;> exact Mark.noConfusion (Option.some.inj hc)
-      · intro hc
-        exact absurd (Option.some.inj hc) (by simp)
-
-@[simp] private theorem markLeft_run_length (w : List TBU) :
-    (markLeft.run w).length = w.length := markLeft.run_length w
+  | some a => cases a <;> simp [ite_eq_iff]
 
 /-- The (43) decomposition computes UTP. -/
 theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) := by
+  have hflag : ∀ i : ℕ, (((markLeft.run w).drop (i + 1)).any (· == Mark.H))
+      = ((w.drop (i + 1)).any (· == TBU.H)) := fun i => by
+    rw [Bool.eq_iff_iff]
+    simp only [List.any_eq_true, beq_iff_eq]
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
+      exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mp hxj⟩, rfl⟩
+    · rintro ⟨x, hx, rfl⟩
+      obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
+      exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mpr hxj⟩, rfl⟩
   refine List.ext_getElem? fun i => ?_
-  by_cases hi : i < w.length
-  · have hn : (markLeft.run w).reverse.length = w.length := by simp
-    rw [utp_getElem?, resolve,
-      List.getElem?_reverse (by rw [resolveRight.run_length]; simpa using hi),
-      resolveRight.run_length, hn,
-      show resolveRight.run (markLeft.run w).reverse
-        = resolveRight.runFrom resolveRight.initial (markLeft.run w).reverse from rfl,
-      Mealy.runFrom_getElem?, resolveRight_stateAfter,
-      List.getElem?_reverse (by rw [hn] at *; simp; omega)]
-    have hidx : (markLeft.run w).length - 1 - (w.length - 1 - i) = i := by
-      rw [markLeft_run_length]; omega
-    rw [hidx, markLeft_run_getElem?]
-    -- the right flag of the resolving pass = "a H-toned TBU occurs strictly after `i`"
-    have hflag : (((markLeft.run w).reverse.take (w.length - 1 - i)).any (· == Mark.H))
-        = ((w.drop (i + 1)).any (· == TBU.H)) := by
-      have htk : (markLeft.run w).reverse.take (w.length - 1 - i)
-          = ((markLeft.run w).drop (i + 1)).reverse := by
-        rw [List.take_reverse, markLeft_run_length,
-          show w.length - (w.length - 1 - i) = i + 1 from by omega]
-      rw [htk, List.any_reverse, Bool.eq_iff_iff]
-      simp only [List.any_eq_true, beq_iff_eq]
-      constructor
-      · rintro ⟨x, hx, rfl⟩
-        obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
-        exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mp hxj⟩, rfl⟩
-      · rintro ⟨x, hx, rfl⟩
-        obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
-        exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mpr hxj⟩, rfl⟩
-    rw [hflag]
-    obtain ⟨a, ha⟩ : ∃ a, w[i]? = some a := ⟨w[i], List.getElem?_eq_getElem hi⟩
-    rw [ha]
-    simp only [Option.map_some]
+  rw [utp_getElem?, resolve, resolveRight, Mealy.ofFlag_run_reverse_getElem?, hflag i,
+    markLeft, Mealy.ofFlag_run_getElem?, Option.map_map]
+  cases ha : w[i]? with
+  | none => rfl
+  | some a =>
+    simp only [Option.map_some, Function.comp_apply]
     congr 1
     have hsp := surfacesH_split ha
     cases a with
-    | H => simp [surfacesH_iff.mpr ⟨⟨i, le_rfl, ha⟩, ⟨i, le_rfl, ha⟩⟩, resolveRight]
+    | H => simp [surfacesH_of_getElem?_H ha]
     | O =>
       by_cases hL : (w.take i).any (· == TBU.H) = true
       · have hLm : TBU.H ∈ w.take i := by
@@ -588,7 +510,7 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) :=
             simp only [List.any_eq_true, beq_iff_eq] at hR
             obtain ⟨x, hx, rfl⟩ := hR
             exact hx
-          simp [hsp.mpr (Or.inr ⟨hLm, hRm⟩), hL, hR, resolveRight]
+          simp [hsp.mpr (Or.inr ⟨hLm, hRm⟩), hL, hR]
         · have hs : ¬ SurfacesH w i := fun hs => by
             rcases hsp.mp hs with h' | ⟨-, hRm⟩
             · exact TBU.noConfusion h'
@@ -596,7 +518,7 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) :=
                 obtain ⟨j, hj, hjH⟩ := mem_drop_iff.mp hRm
                 simp only [List.any_eq_true, beq_iff_eq]
                 exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, hjH⟩, rfl⟩)
-          simp [hs, hL, hR, resolveRight]
+          simp [hs, hL, hR]
       · have hs : ¬ SurfacesH w i := fun hs => by
           rcases hsp.mp hs with h' | ⟨hLm, -⟩
           · exact TBU.noConfusion h'
@@ -604,11 +526,7 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) :=
               obtain ⟨j, hj, hjH⟩ := mem_take_iff.mp hLm
               simp only [List.any_eq_true, beq_iff_eq]
               exact ⟨.H, mem_take_iff.mpr ⟨j, hj, hjH⟩, rfl⟩)
-        simp [hs, hL, resolveRight]
-  · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by
-      rw [resolve, List.length_reverse, resolveRight.run_length]
-      simp
-      omega)]
+        simp [hs, hL]
 
 /-- The (43) mark-up decomposition (§5.2): over the `?`-enlarged alphabet, UTP is a
 right-subsequential map after a left-subsequential map. -/
