@@ -253,6 +253,63 @@ theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
   show B.out _ a _ = _
   rw [hω]
 
+/-! ### The flank-witness template
+
+The recurring witness family for two-sided unboundedness: a target buried in a filler
+run, with independently editable flanks. `RequiresBothSides.of_flanks` packages the
+whole assembly — a map is excluded by exhibiting only the images of the base and the
+two single-flank perturbations at the target. This is the three-map method of
+[yolyan-2025] §5.3, as an object. -/
+
+/-- A flank-controlled word: `x`, then `n` copies of `fill`, then `y`. -/
+def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
+
+omit [DecidableEq α] in
+@[simp] theorem flankWord_length {x fill y : α} {n : ℕ} :
+    (flankWord x fill y n).length = n + 2 := by
+  simp [flankWord]
+
+omit [DecidableEq α] in
+theorem flankWord_getElem? {x fill y : α} {n k : ℕ} :
+    (flankWord x fill y n)[k]? = if k = 0 then some x else if k = n + 1 then some y
+      else if k < n + 2 then some fill else none := by
+  rcases k with _ | k
+  · rfl
+  · simp only [flankWord, List.getElem?_cons_succ, List.getElem?_append,
+      List.getElem?_replicate, List.length_replicate, List.getElem?_cons,
+      List.getElem?_nil]
+    split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+omit [DecidableEq α] in
+@[simp] theorem flankWord_getElem?_zero {x fill y : α} {n : ℕ} :
+    (flankWord x fill y n)[0]? = some x := rfl
+
+omit [DecidableEq α] in
+@[simp] theorem flankWord_getElem?_last {x fill y : α} {n : ℕ} :
+    (flankWord x fill y n)[n + 1]? = some y := by
+  rw [flankWord_getElem?]
+  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+omit [DecidableEq α] in
+theorem flankWord_getElem?_mid {x fill y : α} {n k : ℕ} (h₁ : 0 < k) (h₂ : k ≤ n) :
+    (flankWord x fill y n)[k]? = some fill := by
+  rw [flankWord_getElem?]
+  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+omit [DecidableEq α] in
+/-- Flank words differing only on the left agree off position `0`. -/
+theorem flankWord_congr_left {x x' fill y : α} {n k : ℕ} (h : k ≠ 0) :
+    (flankWord x fill y n)[k]? = (flankWord x' fill y n)[k]? := by
+  rw [flankWord_getElem?, flankWord_getElem?]
+  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+omit [DecidableEq α] in
+/-- Flank words differing only on the right agree off the last position. -/
+theorem flankWord_congr_right {x fill y y' : α} {n k : ℕ} (h : k ≠ n + 1) :
+    (flankWord x fill y n)[k]? = (flankWord x fill y' n)[k]? := by
+  rw [flankWord_getElem?, flankWord_getElem?]
+  split_ifs <;> rfl
+
 /-- `f` requires both sides: some target changes under `f`, yet perturbing either far
 side reverts it to the identity. Unlike `IsUnboundedCircumambient`, a two-sided union
 never satisfies this — removing one trigger leaves the other, so the output stays
@@ -263,6 +320,30 @@ def RequiresBothSides (f : List α → List α) : Prop :=
       uL[i]? = base[i]? ∧ (f uL)[i]? = uL[i]?) ∧
     (∃ uR : List α, uR.length = base.length ∧ AgreeUpto base uR (i + d) ∧
       uR[i]? = base[i]? ∧ (f uR)[i]? = uR[i]?)
+
+omit [DecidableEq α] in
+/-- **The three-map template**: a `d`-indexed family of flank words whose target sits
+`d`-far from both flanks, changed to `on` in the base and reverted by flipping either
+flank alone, requires both sides. -/
+theorem RequiresBothSides.of_flanks {f : List α → List α}
+    {fill on xOn yOn xOff yOff : α} {n t : ℕ → ℕ} (hne : on ≠ fill)
+    (hmargin : ∀ d, d < t d ∧ t d + d < n d + 1)
+    (hchange : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]? = some on)
+    (hrevL : ∀ d, (f (flankWord xOff fill yOn (n d)))[t d]? = some fill)
+    (hrevR : ∀ d, (f (flankWord xOn fill yOff (n d)))[t d]? = some fill) :
+    RequiresBothSides f := by
+  intro d
+  obtain ⟨hm₁, hm₂⟩ := hmargin d
+  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun x y =>
+    flankWord_getElem?_mid (by omega) (by omega)
+  refine ⟨flankWord xOn fill yOn (n d), t d, by rw [flankWord_length]; omega,
+    by rw [hchange, hmid]; simpa using hne, ?_, ?_⟩
+  · exact ⟨flankWord xOff fill yOn (n d), by simp,
+      fun k hk => flankWord_congr_left (by omega), by rw [hmid, hmid],
+      by rw [hrevL, hmid]⟩
+  · exact ⟨flankWord xOn fill yOff (n d), by simp,
+      fun k hk => flankWord_congr_right (by omega), by rw [hmid, hmid],
+      by rw [hrevR, hmid]⟩
 
 omit [DecidableEq α] in
 /-- Requiring both sides strengthens unbounded circumambience: a reverted target is in

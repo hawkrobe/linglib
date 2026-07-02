@@ -361,75 +361,32 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 
 /-! ### Unbounded circumambience
 
-The witness family at distance `d`: `flanked d x y` puts `x` and `y` around `2d+2`
-toneless TBUs. The base `flanked d .H .H` is the plateau word with target `d+1`;
-flipping either flank to `.O` is the far perturbation that reverts it. -/
-
-/-- The distance-`d` witness word: flanks `x`, `y` around `2d+2` toneless TBUs. -/
-private def flanked (d : ℕ) (x y : TBU) : List TBU :=
-  x :: (List.replicate (2 * d + 2) .O ++ [y])
-
-private theorem flanked_length (d : ℕ) (x y : TBU) : (flanked d x y).length = 2 * d + 4 := by
-  simp [flanked]
-
-private theorem flanked_getElem? (d : ℕ) (x y : TBU) (j : ℕ) :
-    (flanked d x y)[j]? = if j = 0 then some x else if j = 2 * d + 3 then some y
-      else if j < 2 * d + 4 then some .O else none := by
-  simp only [flanked, List.getElem?_cons, List.getElem?_append, List.getElem?_replicate,
-    List.length_replicate, List.getElem?_nil]
-  split_ifs <;> first | rfl | omega
-
-/-- The target surfaces iff both flanks are H: the toneless fill offers no other
-trigger on either side. -/
-private theorem surfacesH_flanked_mid (d : ℕ) {x y : TBU} :
-    utp.Surfaces (flanked d x y) (d + 1) ↔ x = .H ∧ y = .H := by
-  rw [utp.surfaces_iff]
-  constructor
-  · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
-    rw [flanked_getElem?] at h₁ h₂
-    split_ifs at h₁ h₂ <;> simp_all
-    omega
-  · rintro ⟨rfl, rfl⟩
-    exact ⟨⟨0, by omega, by rw [flanked_getElem?]; split_ifs <;> first | rfl | omega⟩,
-      2 * d + 3, by omega, by rw [flanked_getElem?]; split_ifs <;> first | rfl | omega⟩
-
-/-- The target cell of every flanked word is toneless. -/
-private theorem flanked_mid (d : ℕ) (x y : TBU) : (flanked d x y)[d + 1]? = some .O := by
-  rw [flanked_getElem?]
-  split_ifs <;> first | rfl | exact ‹False›.elim | omega
-
-/-- The image at the target is controlled by the flanks alone. -/
-private theorem map_flanked_mid (d : ℕ) (x y : TBU) :
-    (utp.map (flanked d x y))[d + 1]? = if x = .H ∧ y = .H then some .H else some .O := by
-  split_ifs with h
-  · exact utp.map_getElem?_H_iff.mpr ((surfacesH_flanked_mid d).mpr h)
-  · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flanked_length]; omega,
-      fun hs => h ((surfacesH_flanked_mid d).mp hs)⟩
-
-/-- Flanked words differing only in the left flank agree off position `0`. -/
-private theorem flanked_congr_left (d : ℕ) (x x' y : TBU) {k : ℕ} (h0 : k ≠ 0) :
-    (flanked d x y)[k]? = (flanked d x' y)[k]? := by
-  rw [flanked_getElem?, flanked_getElem?]
-  split_ifs <;> first | rfl | omega
-
-/-- Flanked words differing only in the right flank agree off the last position. -/
-private theorem flanked_congr_right (d : ℕ) (x y y' : TBU) {k : ℕ} (h3 : k ≠ 2 * d + 3) :
-    (flanked d x y)[k]? = (flanked d x y')[k]? := by
-  rw [flanked_getElem?, flanked_getElem?]
-  split_ifs <;> rfl
+Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
+the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
 /-- UTP requires both sides ([heinz-lai-2013]): deleting either flanking H reverts the
 plateau target, at every distance. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map := by
-  intro d
-  refine ⟨flanked d .H .H, d + 1, by rw [flanked_length]; omega,
-    by simp [map_flanked_mid, flanked_mid], ?_, ?_⟩
-  · exact ⟨flanked d .O .H, by rw [flanked_length, flanked_length],
-      fun k hk => flanked_congr_left d _ _ _ (by omega),
-      by rw [flanked_mid, flanked_mid], by simp [map_flanked_mid, flanked_mid]⟩
-  · exact ⟨flanked d .H .O, by rw [flanked_length, flanked_length],
-      fun k hk => flanked_congr_right d _ _ _ (by omega),
-      by rw [flanked_mid, flanked_mid], by simp [map_flanked_mid, flanked_mid]⟩
+  have hsurf : ∀ (d : ℕ) (x y : TBU),
+      utp.Surfaces (flankWord x .O y (2 * d + 2)) (d + 1) ↔ x = .H ∧ y = .H := by
+    intro d x y
+    rw [utp.surfaces_iff]
+    constructor
+    · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
+      rw [flankWord_getElem?] at h₁ h₂
+      split_ifs at h₁ h₂ <;> simp_all
+      omega
+    · rintro ⟨rfl, rfl⟩
+      exact ⟨⟨0, by omega, flankWord_getElem?_zero⟩, 2 * d + 3, by omega,
+        by rw [flankWord_getElem?]; split_ifs <;> first | rfl | exact ‹False›.elim | omega⟩
+  refine RequiresBothSides.of_flanks (fill := TBU.O) (on := TBU.H) (xOn := .H)
+    (yOn := .H) (xOff := .O) (yOff := .O) (n := fun d => 2 * d + 2) (t := fun d => d + 1)
+    (by decide) (fun d => ⟨by omega, by omega⟩) (fun d => ?_) (fun d => ?_) (fun d => ?_)
+  · exact utp.map_getElem?_H_iff.mpr ((hsurf d .H .H).mpr ⟨rfl, rfl⟩)
+  · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flankWord_length]; omega,
+      fun hs => by simpa using (hsurf d .O .H).mp hs⟩
+  · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flankWord_length]; omega,
+      fun hs => by simpa using (hsurf d .H .O).mp hs⟩
 
 /-- UTP is an unbounded circumambient process: whether a position changes depends on
 unboundedly distant material on both sides. -/
