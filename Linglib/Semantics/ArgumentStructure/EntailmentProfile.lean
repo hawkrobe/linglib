@@ -243,9 +243,16 @@ def kickSubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, causation := true, movement := true,
     independentExistence := true }
 
-/-- *kick* object: CoS+CA+St. -/
+/-- *kick* object: CA+St — surface contact, no entailed change. [dowty-1991]
+does not discuss *kick* (zero occurrences in the paper; the formerly stored
+`changeOfState := true` had no Dowty basis). Classified per [beavers-2011]
+eq. (60c): surface-contact/impact verbs (*hit*, *kick*, *slap*) impose only
+*potential* for change — "John kicked the apple" leaves the apple impinged
+but not necessarily affected, and no-change continuations are felicitous
+([beavers-koontz-garboden-2020] ch. 4). Matches the hit-class
+`mannerContact` object template in `LevinClassProfiles.lean`. -/
 def kickObjectProfile : EntailmentProfile :=
-  { changeOfState := true, causallyAffected := true, stationary := true }
+  { causallyAffected := true, stationary := true }
 
 /-- *build* subject: V+S+C+M+IE. -/
 def buildSubjectProfile : EntailmentProfile :=
@@ -367,7 +374,7 @@ def AgentivityNode.fromEntailmentProfile (p : EntailmentProfile) : AgentivityNod
     - DE + IT → exPersEnd: entity created incrementally (build, invent)
     - DE + ¬IT → exPersBeginning: entity ceases to exist (die, evaporate)
     - IT + ¬DE → exPersBeginning: entity consumed incrementally (eat)
-    - CoS + ¬IT + ¬DE → quPersBeginning: changed but persists (kick, move)
+    - CoS + ¬IT + ¬DE → quPersBeginning: changed but persists (move, dim)
     - ¬CoS + ¬DE → totalPersistence or totalNonPersistence
 
     Dowty's DE ("does not exist independently of the event") maps to
@@ -381,9 +388,9 @@ def PersistenceLevel.fromPatientProfile (p : EntailmentProfile) : PersistenceLev
   else if p.incrementalTheme then
     .exPersBeginning                            -- eat (consumed incrementally)
   else if p.changeOfState then
-    .quPersBeginning                            -- kick, move (changed but persists)
+    .quPersBeginning                            -- move, dim (changed but persists)
   else if p.causallyAffected || p.stationary then
-    .totalPersistence                           -- see object, sit (unaffected)
+    .totalPersistence                           -- see, kick objects (no entailed change)
   else
     .totalNonPersistence                        -- seek, want
 

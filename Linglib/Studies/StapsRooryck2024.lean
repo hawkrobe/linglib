@@ -60,7 +60,7 @@ open Semantics.Presupposition
 open French.Predicates
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
-open ArgumentStructure.Affectedness.Profile
+open ArgumentStructure.Affectedness
 open Features
 open Semantics.Lexical
 open Minimalist
@@ -200,18 +200,18 @@ def objectChangeFavorsPar (objProfile : EntailmentProfile) : Bool :=
 
 -- laver object: CoS+CA → nonquantized → favors par.
 theorem laver_object_favors_par :
-    objectChangeFavorsPar protoTransObjectProfile = true := by native_decide
+    objectChangeFavorsPar protoTransObjectProfile = true := by decide
 
 -- écrire object: CoS+IT+DE → quantized → favors par.
 theorem ecrire_object_favors_par :
     objectChangeFavorsPar
       { protoTransObjectProfile with
         incrementalTheme := true, dependentExistence := true } = true := by
-  native_decide
+  decide
 
 -- Stimulus object (psych verbs): IE only, no change → no par pressure.
 theorem stimulus_no_object_par :
-    objectChangeFavorsPar minimalParticipantProfile = false := by native_decide
+    objectChangeFavorsPar minimalParticipantProfile = false := by decide
 
 -- ============================================================================
 -- § 5. Combined Prediction

@@ -354,7 +354,7 @@ theorem lattice_matches_aissen_type2 :
 
     | Verb | Subject region | Object region |
     |------|---------------|--------------|
-    | kick | nomErg | accAbs |
+    | kick | nomErg | oblique (contact, no entailed change) |
     | build | nomErg | oblique (creation) |
     | eat | nomErg | accAbs |
     | see | oblique | — |
@@ -368,17 +368,30 @@ theorem lattice_matches_aissen_type2 :
     instigation fall outside — the lattice predicts they are NOT
     prototypical transitive subjects.
 
-    Objects land in ACC/ABS only when they have ⊥ agentivity and
-    exist-at-beginning persistence. Creation verbs (exPersEnd) map
-    to oblique because the object does not exist at the event's start. -/
+    Objects land in ACC/ABS only when they have ⊥ agentivity and a
+    persistence level entailing change from the beginning
+    (exPersBeginning or quPersBeginning). Creation verbs (exPersEnd)
+    map to oblique because the object does not exist at the event's
+    start; contact verbs (*kick*, totalPersistence — no entailed
+    change, [beavers-2011] eq. (60c)) map to oblique because nothing
+    is entailed to happen to the object. Grimm's own Fig. 5 places
+    contact objects at quPersBeginning instead — see
+    `kick_object_persistence`. -/
 
 -- Transitive verbs
 
-/-- kick: prototypical transitive. Subject → NOM/ERG, object → ACC/ABS. -/
+/-- kick: contact verb (Tsunoda class II). Subject → NOM/ERG; the object,
+    under the corrected surface-contact profile (no entailed change,
+    [beavers-2011] eq. (60c)), sits at totalPersistence and falls OUTSIDE
+    the ACC/ABS region — though still inside the transitivity region
+    (`transitivity_membership`). English gives it plain accusative, and
+    Grimm's Fig. 5 keeps contact objects at quPersBeginning (inside
+    ACC/ABS); the divergence is the Grimm-vs-Beavers disagreement over
+    whether contact entails impingement (`kick_object_persistence`). -/
 theorem kick_case_regions :
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion = .accAbs :=
-  ⟨by native_decide, by native_decide⟩
+    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion = .oblique :=
+  ⟨by decide, by decide⟩
 
 /-- build: creation verb. Subject → NOM/ERG (has instigation), but
     object → oblique (exPersEnd: object created, not an existing patient).
@@ -434,16 +447,23 @@ theorem buy_sell_case_regions :
 
     | Verb | P-Patient features | Persistence | Tsunoda class |
     |------|-------------------|-------------|--------------|
-    | kick | CoS+CA+St | quPersBeginning | contact (II) |
+    | kick | CA+St | totalPersistence | contact (II) |
     | eat | CoS+IT+CA | exPersBeginning | result. eff. (I) |
     | build | CoS+IT+CA+DE | exPersEnd | creation (outside) |
     | die | CoS+CA+DE | exPersBeginning | result. eff. (I) |
 -/
 
-/-- kick object → quPersBeginning: affected but persists (contact). -/
+/-- kick object under the corrected surface-contact profile (no entailed
+    change, [beavers-2011] eq. (60c)) → totalPersistence. [grimm-2011]'s own
+    Fig. 5 places contact-verb objects at quPersBeginning
+    (`TransitivityRank.contact.patientNode`) — a genuine cross-paper
+    disagreement: Grimm treats contact as qualitative impingement, while
+    [beavers-koontz-garboden-2020] ch. 4 deny any entailed change. The
+    second conjunct keeps Grimm's own placement visible. -/
 theorem kick_object_persistence :
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .quPersBeginning := by
-  native_decide
+    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
+    TransitivityRank.contact.patientNode.persistence = .quPersBeginning :=
+  ⟨by decide, rfl⟩
 
 /-- eat object → exPersBeginning: consumed (ceases to exist via SINC). -/
 theorem eat_object_persistence :
@@ -488,7 +508,9 @@ theorem transitivity_membership :
     remains variable. -/
 
 /-- The lattice predicts three verb categories for DOM behavior:
-    1. Agent-patient verbs (kick): subject → NOM/ERG, object → ACC/ABS.
+    1. Agent-patient verbs (*matar* 'kill', [von-heusinger-2008]'s Class 1
+       exemplar — modeled by the accomplishment template, whose object has
+       entailed change): subject → NOM/ERG, object → ACC/ABS.
        Maximal contrast → DOM can regularize.
     2. Experiencer verbs (see): subject → oblique, outside NOM/ERG.
        Less contrast → DOM remains sensitive to object animacy.
@@ -496,8 +518,10 @@ theorem transitivity_membership :
        DOM is structurally inapplicable, not merely unnecessary. -/
 theorem verb_class_dom_behavior :
     -- Class 1: both arguments in core case regions
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion = .accAbs ∧
+    (GrimmNode.fromSubjectProfile accomplishmentSubjectProfile).toCaseRegion
+      = .nomErg ∧
+    (GrimmNode.fromObjectProfile accomplishmentObjectProfile).toCaseRegion
+      = .accAbs ∧
     -- Class 2: subject NOT in core agent region
     (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg ∧
     -- Creation: object outside transitivity region entirely
@@ -520,20 +544,29 @@ theorem creation_dom_inapplicable (a : AnimacyLevel) :
 -- ════════════════════════════════════════════════════
 
 /-! The lattice-to-case-region mapping predicts morphological case in
-    both accusative and ergative systems. For prototypical transitives
-    (kick, eat), both alignments produce the expected case assignments. -/
+    both accusative and ergative systems. For consumption transitives
+    (eat), both alignments produce the expected case assignments; contact
+    verbs (kick) fall outside the core object region — see
+    `kick_object_persistence` for the Grimm-vs-Beavers divergence this
+    reflects. -/
 
-/-- kick in an accusative system: subject → NOM, object → ACC. -/
+/-- kick in an accusative system: subject → NOM, but the object — with no
+    entailed change under the corrected contact profile — maps to the
+    oblique region (INST), NOT canonical ACC. English morphosyntax gives
+    contact-verb objects plain accusative, so this is a mis-prediction of
+    the profile-to-case bridge for contact verbs, inherited from the
+    Grimm-vs-Beavers disagreement flagged at `kick_object_persistence`. -/
 theorem kick_accusative :
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase = .nom ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase = .acc :=
-  ⟨by native_decide, by native_decide⟩
+    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase = .inst :=
+  ⟨by decide, by decide⟩
 
-/-- kick in an ergative system: subject → ERG, object → ABS. -/
+/-- kick in an ergative system: subject → ERG, object → INST (oblique
+    region; see `kick_accusative` for the caveat). -/
 theorem kick_ergative :
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toErgativeCase = .erg ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toErgativeCase = .abs :=
-  ⟨by native_decide, by native_decide⟩
+    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toErgativeCase = .inst :=
+  ⟨by decide, by decide⟩
 
 /-- eat in an accusative system: subject → NOM, object → ACC.
     Consumption verbs pattern with canonical transitives for case. -/
@@ -885,10 +918,13 @@ theorem kick_subject_to_nom :
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
     = .nom := by decide
 
-/-- Full pipeline: kick object → GrimmNode → ACC/ABS → ACC (accusative). -/
-theorem kick_object_to_acc :
+/-- Full pipeline: kick object → GrimmNode → oblique → INST. The corrected
+    surface-contact profile (no entailed change) exits the ACC/ABS region;
+    see `kick_accusative` for why this is a flagged mis-prediction for
+    contact verbs rather than a confirmed case assignment. -/
+theorem kick_object_to_inst :
     (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
-    = .acc := by decide
+    = .inst := by decide
 
 /-- Build subject → NOM (full agent, total persistence). -/
 theorem build_subject_to_nom :

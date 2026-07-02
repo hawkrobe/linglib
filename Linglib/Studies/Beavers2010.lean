@@ -27,31 +27,26 @@ captured by:
 ## Deepest theorem
 
 `MAP_holds_all_alternations`: for every attested object/oblique alternation
-in the data, the direct-argument affectedness degree is ≥ the oblique's.
-This connects the mathematical structure of the hierarchy (derived from
-truth-conditional definitions) to empirical argument realization facts
-through the MAP.
+in the data, the oblique role is the *next-weakest* (minimal, ⊆_M) weakening
+of the direct role. The subset form (direct degree ≥ oblique degree) is the
+derived corollary `MAP_subset` / `MapHolds.oblique_le`, via the substrate's
+`AffectednessDegree` order.
 -/
 
 namespace Beavers2010
 
 open ArgumentStructure.EntailmentProfile
 open ArgumentStructure.AgentivityLattice
-open ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
+open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)
 
 -- ════════════════════════════════════════════════════
 -- § 2. L-Thematic Roles as Entailment Sets (§4.3)
 -- ════════════════════════════════════════════════════
 
-/-- An L-thematic role for patienthood is a set of affectedness entailments.
-    Beavers reduces Dowty's 5 P-Patient entailments to 3 implicationally
-    related ones.
-
-    The three entailments:
-    - `quantized`: x undergoes a QUANTIZED change
-    - `nonquantized`: x undergoes a NONQUANTIZED change
-    - `potential`: x has POTENTIAL for a change -/
+/-- An L-thematic role for patienthood: a set of the three affectedness
+    entailments ([beavers-2010]'s reduction of Dowty's 5 P-Patient
+    entailments). -/
 structure PatientLRole where
   quantized    : Bool
   nonquantized : Bool
@@ -60,14 +55,8 @@ structure PatientLRole where
 
 namespace PatientLRole
 
-/-- An L-role is **valid** iff it respects the implicational constraints:
-    quantized → nonquantized → potential.
-
-    This rules out 4 of the 8 possible combinations:
-    - {q} alone: q → nq violated
-    - {q, p} without nq: q → nq violated
-    - {q, nq} without p: nq → p violated
-    - {nq} alone: nq → p violated -/
+/-- An L-role is valid iff it respects the implicational chain
+    quantized → nonquantized → potential. -/
 def valid (r : PatientLRole) : Bool :=
   (!r.quantized || r.nonquantized) &&    -- q → nq
   (!r.nonquantized || r.potential)         -- nq → p
@@ -78,40 +67,13 @@ def nonquantizedRole : PatientLRole := ⟨false, true, true⟩
 def potentialRole : PatientLRole := ⟨false, false, true⟩
 def unspecifiedRole : PatientLRole := ⟨false, false, false⟩
 
--- ── Validity proofs ──
-
-theorem quantized_valid : quantizedRole.valid = true := rfl
-theorem nonquantized_valid : nonquantizedRole.valid = true := rfl
-theorem potential_valid : potentialRole.valid = true := rfl
-theorem unspecified_valid : unspecifiedRole.valid = true := rfl
-
--- ── Invalid role proofs ──
-
-/-- {q} alone violates q → nq. -/
-theorem q_alone_invalid : (⟨true, false, false⟩ : PatientLRole).valid = false := rfl
-
-/-- {q, p} without nq violates q → nq. -/
-theorem q_p_invalid : (⟨true, false, true⟩ : PatientLRole).valid = false := rfl
-
-/-- {q, nq} without p violates nq → p. -/
-theorem q_nq_invalid : (⟨true, true, false⟩ : PatientLRole).valid = false := rfl
-
-/-- {nq} alone violates nq → p. -/
-theorem nq_alone_invalid : (⟨false, true, false⟩ : PatientLRole).valid = false := rfl
-
-/-- **Key theorem**: exactly 4 of 8 combinations are valid. The implicational
-    relationships between entailments constrain the space of semantically
-    contentful L-thematic roles. -/
+/-- Exactly 4 of the 8 combinations are valid: the implicational chain
+    prunes the role space to the four semantically contentful L-roles. -/
 theorem exactly_four_valid_roles :
-    (⟨true, true, true⟩ : PatientLRole).valid = true ∧
-    (⟨false, true, true⟩ : PatientLRole).valid = true ∧
-    (⟨false, false, true⟩ : PatientLRole).valid = true ∧
-    (⟨false, false, false⟩ : PatientLRole).valid = true ∧
-    (⟨true, false, false⟩ : PatientLRole).valid = false ∧
-    (⟨true, false, true⟩ : PatientLRole).valid = false ∧
-    (⟨true, true, false⟩ : PatientLRole).valid = false ∧
-    (⟨false, true, false⟩ : PatientLRole).valid = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ∀ r : PatientLRole, r.valid = true ↔
+      (r = quantizedRole ∨ r = nonquantizedRole ∨
+       r = potentialRole ∨ r = unspecifiedRole) := by
+  rintro ⟨q, n, p⟩; revert q n p; decide
 
 /-- Subset ordering on L-thematic roles: R₁ ⊆ R₂ iff every entailment
     in R₁ is also in R₂. -/
@@ -141,19 +103,12 @@ theorem no_incomparable_valid_pairs :
     subset potentialRole quantizedRole = true ∧
     subset nonquantizedRole quantizedRole = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- Minimal contrast: Q ⊆_M R iff Q = R or Q ⊂ R with no
-    intervening valid role P such that Q ⊂ P ⊂ R. -/
+/-- Minimal contrast: Q ⊆_M R iff Q = R or Q ⊂ R with no valid role
+    strictly between them. -/
 def minimalContrast (q r : PatientLRole) : Bool :=
   q == r || (strictSubset q r &&
-    -- No valid role strictly between q and r
-    !(strictSubset q potentialRole && strictSubset potentialRole r &&
-      q != potentialRole && r != potentialRole) &&
-    !(strictSubset q nonquantizedRole && strictSubset nonquantizedRole r &&
-      q != nonquantizedRole && r != nonquantizedRole) &&
-    !(strictSubset q unspecifiedRole && strictSubset unspecifiedRole r &&
-      q != unspecifiedRole && r != unspecifiedRole) &&
-    !(strictSubset q quantizedRole && strictSubset quantizedRole r &&
-      q != quantizedRole && r != quantizedRole))
+    !([quantizedRole, nonquantizedRole, potentialRole, unspecifiedRole].any
+        fun p => strictSubset q p && strictSubset p r))
 
 /-- The attested minimal contrasts are exactly the adjacent pairs. -/
 theorem minimal_contrasts_are_adjacent :
@@ -174,10 +129,25 @@ def toDegree (r : PatientLRole) : AffectednessDegree :=
   else if r.potential then .potential
   else .unspecified
 
-theorem toDegree_quantized : toDegree quantizedRole = .quantized := rfl
-theorem toDegree_nonquantized : toDegree nonquantizedRole = .nonquantized := rfl
-theorem toDegree_potential : toDegree potentialRole = .potential := rfl
-theorem toDegree_unspecified : toDegree unspecifiedRole = .unspecified := rfl
+/-- The valid L-thematic role realizing a degree (section of `toDegree`). -/
+def ofDegree : AffectednessDegree → PatientLRole
+  | .quantized => quantizedRole
+  | .nonquantized => nonquantizedRole
+  | .potential => potentialRole
+  | .unspecified => unspecifiedRole
+
+theorem ofDegree_valid : ∀ d, (ofDegree d).valid = true := by
+  intro d; cases d <;> rfl
+
+theorem toDegree_ofDegree : ∀ d, (ofDegree d).toDegree = d := by
+  intro d; cases d <;> rfl
+
+/-- The subset order on valid roles is the substrate's `AffectednessDegree`
+    order, transported along `toDegree`. -/
+theorem subset_iff_toDegree_le :
+    ∀ q r : PatientLRole, q.valid = true → r.valid = true →
+      (subset q r = true ↔ q.toDegree ≤ r.toDegree) := by
+  rintro ⟨a, b, c⟩ ⟨d, e, f⟩; revert a b c d e f; decide
 
 end PatientLRole
 
@@ -185,16 +155,28 @@ end PatientLRole
 -- § 3. Morphosyntactic Alignment Principle (§4.3)
 -- ════════════════════════════════════════════════════
 
-/-- The MAP: when participant x may be realized as either a direct
-    argument (bearing L-thematic role R) or an oblique (bearing role Q),
-    Q ⊆_M R — the oblique role is a minimal weakening of the direct role.
-
-    Equivalently: the direct object's affectedness degree is ≥ the oblique's.
-
-    This is a prominence-preservation principle: stronger truth conditions
-    map to more prominent morphosyntactic realization. -/
+/-- The MAP ([beavers-2010]; canonical wording in Beavers' 2023 Sag Lectures
+    handout): when an argument may be either an object or a PP, it bears role
+    R as an object and the *next weakest* role Q ⊆_M R as a PP — a minimal
+    weakening, not mere subset. -/
 def MAP (directRole obliqueRole : PatientLRole) : Bool :=
-  PatientLRole.subset obliqueRole directRole
+  PatientLRole.minimalContrast obliqueRole directRole
+
+/-- Derived corollary of the MAP (the weakened form an earlier version of
+    this file stated as the MAP itself): the oblique role's entailments are
+    a subset of the direct role's. -/
+theorem MAP_subset :
+    ∀ d o : PatientLRole, MAP d o = true → PatientLRole.subset o d = true := by
+  rintro ⟨a, b, c⟩ ⟨d, e, f⟩; revert a b c d e f; decide
+
+/-- The case the strengthening excludes: a level-skipping weakening
+    (potential oblique under a quantized direct role) satisfies the subset
+    corollary but violates the MAP proper. -/
+theorem skip_violates_MAP :
+    MAP PatientLRole.quantizedRole PatientLRole.potentialRole = false ∧
+    PatientLRole.subset PatientLRole.potentialRole PatientLRole.quantizedRole
+      = true :=
+  ⟨PatientLRole.skip_not_minimal.2.2, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Alternation Contrasts (§3.2)
@@ -262,12 +244,22 @@ def allContrasts : List AlternationContrast :=
 -- § 5. MAP Verification
 -- ════════════════════════════════════════════════════
 
-/-- MAP holds for a single contrast: direct ≥ oblique. -/
+/-- The MAP holds of a contrast: the oblique role is the next-weakest
+    (minimal) weakening of the direct role. -/
 def MapHolds (c : AlternationContrast) : Prop :=
-  c.obliqueDegree ≤ c.directDegree
+  MAP (.ofDegree c.directDegree) (.ofDegree c.obliqueDegree) = true
 
 instance (c : AlternationContrast) : Decidable (MapHolds c) := by
   unfold MapHolds; infer_instance
+
+/-- Degree-level corollary via `MAP_subset` and the substrate's
+    `AffectednessDegree` order: the direct degree dominates the oblique. -/
+theorem MapHolds.oblique_le {c : AlternationContrast} (h : MapHolds c) :
+    c.obliqueDegree ≤ c.directDegree := by
+  have hle := (PatientLRole.subset_iff_toDegree_le _ _
+    (PatientLRole.ofDegree_valid _) (PatientLRole.ofDegree_valid _)).mp
+    (MAP_subset _ _ h)
+  simpa [PatientLRole.toDegree_ofDegree] using hle
 
 -- ── Per-contrast MAP verification ──
 
@@ -279,16 +271,9 @@ theorem MAP_load_theme : MapHolds loadTheme := by decide
 theorem MAP_cut_location : MapHolds cutLocation := by decide
 theorem MAP_cut_theme : MapHolds cutTheme := by decide
 
-/-- **The deepest theorem**: the MAP holds for ALL attested alternation
-    contrasts. Every direct realization has truth conditions at least as
-    strong as the corresponding oblique realization.
-
-    This connects:
-    1. The mathematical structure of the affectedness hierarchy (§1–2)
-    2. The MAP as a prominence-preservation principle (§3)
-    3. The empirical alternation data (§4)
-
-    Any change to the affectedness assignments breaks this theorem. -/
+/-- The MAP — in its strengthened next-weakest form — holds for ALL attested
+    alternation contrasts: every oblique realization is a *minimal* weakening
+    of its direct counterpart. -/
 theorem MAP_holds_all_alternations :
     ∀ c ∈ allContrasts, MapHolds c := by decide
 
@@ -296,21 +281,10 @@ theorem MAP_holds_all_alternations :
 -- § 6. Minimal Contrast Verification
 -- ════════════════════════════════════════════════════
 
-/-- Each conative contrast is exactly a *minimal* contrast — adjacent
-    levels on the hierarchy. This is not stipulated; it follows from the
-    verbs' truth conditions. -/
-theorem conatives_are_minimal_contrasts :
-    PatientLRole.minimalContrast
-      .nonquantizedRole .quantizedRole = true ∧    -- eat
-    PatientLRole.minimalContrast
-      .potentialRole .nonquantizedRole = true ∧     -- cut
-    PatientLRole.minimalContrast
-      .unspecifiedRole .potentialRole = true         -- hit
-    := ⟨rfl, rfl, rfl⟩
-
-/-- The three conatives *tile* the entire hierarchy — every adjacent
-    pair appears exactly once. Together they demonstrate the full
-    implicational chain. -/
+/-- The three conatives *tile* the hierarchy — every adjacent pair appears
+    exactly once, so together they exhibit the full implicational chain.
+    (That each is a minimal contrast is the per-contrast `MAP_*_conative`
+    theorem above.) -/
 theorem conatives_cover_hierarchy :
     eatConative.directDegree = .quantized ∧
     eatConative.obliqueDegree = .nonquantized ∧
@@ -323,28 +297,32 @@ theorem conatives_cover_hierarchy :
 -- § 7. Impossible Alternations
 -- ════════════════════════════════════════════════════
 
-/-- The MAP rules out "impossible" alternations where the oblique
-    would have *more* entailments than the direct object.
-
-    Example: a hypothetical alternation where the DO is POTENTIAL
-    but the oblique is QUANTIZED is ruled out — it would mean the
-    less prominent realization has *stronger* truth conditions. -/
+/-- A hypothetical alternation whose oblique has *more* entailments than
+    its direct object (potential DO, quantized oblique) — the less prominent
+    realization would carry stronger truth conditions. -/
 def impossibleConative : AlternationContrast :=
   ⟨"impossible", .conative, .potential, .quantized⟩
 
-def impossibleLocative : AlternationContrast :=
-  ⟨"impossible", .locative, .quantized, .potential⟩
+/-- A level-skipping alternation: quantized direct, potential oblique.
+    Satisfies the subset corollary but not the MAP proper — the degree-level
+    face of `skip_violates_MAP`. -/
+def skippingLocative : AlternationContrast :=
+  ⟨"skipping", .locative, .quantized, .potential⟩
 
--- This one is fine (direct ≥ oblique)
-theorem possible_locative_ok : MapHolds impossibleLocative := by decide
-
--- Reversed direction violates the MAP
+/-- A reversed alternation: the oblique strictly outranks the direct. -/
 def reversedConative : AlternationContrast :=
   ⟨"reversed", .conative, .unspecified, .potential⟩
 
 theorem reversed_violates_MAP : ¬ MapHolds reversedConative := by decide
 
 theorem impossible_violates_MAP : ¬ MapHolds impossibleConative := by decide
+
+/-- Skipping a level violates the MAP even though the degree order is
+    respected — `skip_not_minimal` is what excludes it. -/
+theorem skipping_violates_MAP :
+    ¬ MapHolds skippingLocative ∧
+    skippingLocative.obliqueDegree ≤ skippingLocative.directDegree :=
+  ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to Existing Data and EntailmentProfile
@@ -397,8 +375,10 @@ theorem locative_data_attested :
 theorem asp_and_map_orthogonal :
     -- ASP: kick subject outranks object for subjecthood
     OutranksForSubject kickSubjectProfile kickObjectProfile ∧
-    -- MAP: kick object has nonquantized affectedness (CoS, not incremental)
-    profileToDegree kickObjectProfile = .nonquantized ∧
+    -- MAP: kick object has potential affectedness (surface contact, no
+    -- entailed change — [beavers-2011] eq. (60c), same degree the paper
+    -- assigns the *hit* conative's direct object)
+    profileToDegree kickObjectProfile = .potential ∧
     -- The two operate on different dimensions
     -- (subjecthood is about P-Agent; alternation is about P-Patient strength)
     kickSubjectProfile.pAgentScore > 0 ∧
@@ -445,24 +425,28 @@ theorem changed_lower_than_unaffected :
     (PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence) := by
   decide
 
-/-- Bridge: kick object has persistence quPersBeginning (changed but
-    persists) and affectedness nonquantized — both theories agree it's
-    affected but not to a specific degree. -/
+/-- Bridge: kick object has persistence totalPersistence (persists, no
+    entailed change) and affectedness potential — exactly the
+    `degreeToPersistence` correspondence for potential change. Beavers'
+    surface-contact classification ([beavers-2011] eq. (60c)); note
+    [grimm-2011]'s own Fig. 5 instead places contact-verb objects at
+    quPersBeginning (`TransitivityRank.contact.patientNode`), a genuine
+    cross-paper disagreement over whether contact entails impingement. -/
 theorem kick_grimm_beavers_consistent :
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .quPersBeginning ∧
-    profileToDegree kickObjectProfile = .nonquantized := ⟨by native_decide, rfl⟩
+    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
+    profileToDegree kickObjectProfile = .potential := ⟨rfl, rfl⟩
 
 /-- Bridge: build object has persistence exPersEnd (created) and
     affectedness quantized — both theories agree on maximal patient status. -/
 theorem build_grimm_beavers_consistent :
     PersistenceLevel.fromPatientProfile buildObjectProfile = .exPersEnd ∧
-    profileToDegree buildObjectProfile = .quantized := ⟨by native_decide, rfl⟩
+    profileToDegree buildObjectProfile = .quantized := ⟨rfl, rfl⟩
 
 /-- Bridge: eat object has persistence exPersBeginning (consumed) and
     affectedness quantized — both theories agree on maximal change. -/
 theorem eat_grimm_beavers_consistent :
     PersistenceLevel.fromPatientProfile eatObjectProfile = .exPersBeginning ∧
-    profileToDegree eatObjectProfile = .quantized := ⟨by native_decide, rfl⟩
+    profileToDegree eatObjectProfile = .quantized := ⟨rfl, rfl⟩
 
 /-- The deepest cross-theory result: Grimm's persistence ordering and
     Beavers' affectedness ordering are **monotonically related** for
@@ -470,16 +454,16 @@ theorem eat_grimm_beavers_consistent :
     have lower persistence (Grimm). They formalize the same intuition
     — degree of change — from complementary perspectives. -/
 theorem grimm_beavers_monotone_canonical :
-    -- kick: nonquantized → quPersBeginning (changed)
-    profileToDegree kickObjectProfile = .nonquantized ∧
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .quPersBeginning ∧
+    -- kick: potential → totalPersistence (may change, persists unchanged)
+    profileToDegree kickObjectProfile = .potential ∧
+    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
     -- build: quantized → exPersEnd (created, lower persistence)
     profileToDegree buildObjectProfile = .quantized ∧
     PersistenceLevel.fromPatientProfile buildObjectProfile = .exPersEnd ∧
     -- see: unspecified → totalNonPersistence (no P-Patient entailments at all)
     profileToDegree seeSubjectProfile = .unspecified ∧
     PersistenceLevel.fromPatientProfile seeSubjectProfile = .totalNonPersistence :=
-  ⟨rfl, by native_decide, rfl, by native_decide, rfl, by native_decide⟩
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. ArgTemplate → GrimmNode Bridge

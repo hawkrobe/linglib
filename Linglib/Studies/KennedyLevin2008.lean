@@ -332,7 +332,6 @@ feeding [beavers-2011]'s affectedness hierarchy. Here it is instantiated at the
 dimensions the K&L verbs measure. -/
 
 open ArgumentStructure.Affectedness
-open ArgumentStructure.Affectedness.Hierarchy
 open Semantics.Gradability (Dimension)
 open Degree.MeasureFunction
 
@@ -361,6 +360,9 @@ instance traceMeasure : HasMeasureFunction Patient δ δ where
 /-- Companion `HasLatentScale` ([beavers-2011] eq. (60c)). -/
 instance : HasLatentScale Patient (Event δ) :=
   HasLatentScale.ofHasMeasureFunction (δ := δ)
+
+/-- The forgetful link holds in this model: `latentScale` is `True`. -/
+instance : LawfulScalarLatent Patient δ (Event δ) := ⟨fun _ _ _ => trivial⟩
 
 /-- Telic reading: the patient reaches the maximal degree `⊤` by the event's end. -/
 def reachesTop [OrderTop δ] : Patient → Event δ → Prop :=
@@ -394,11 +396,12 @@ theorem atelic_of_noMaxOrder [NoMaxOrder δ] :
   have hbg : b = g := hg Patient.mk ⟨⟨⟨b, b⟩, le_refl b⟩, .dynamic⟩ ⟨_, rfl⟩
   exact absurd hbg hb.ne'
 
-/-- Synthesis: with a greatest degree, the telic reading builds the full Beavers
-    `IsQuantizedAffected` instance ([beavers-2011] eq. (62)). -/
+/-- Synthesis: with a greatest degree, the telic reading builds the Beavers
+    `IsQuantizedAffected` instance ([beavers-2011] eq. (62)); the weaker
+    mixins follow by derivation. -/
 instance reachesTop_isQuantizedAffected [OrderTop δ] :
     IsQuantizedAffected (δ := δ) (reachesTop (δ := δ)) :=
-  IsQuantizedAffected.mk' (fun _ _ _ => trivial) ⊤ reachesTop_quantized
+  ⟨⊤, reachesTop_quantized⟩
 
 end
 

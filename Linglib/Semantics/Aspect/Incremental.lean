@@ -276,30 +276,27 @@ def IsSincVerb.mk' {θ : α → β → Prop}
     final degree is verb-specific lexical content that cannot be
     derived from SINC alone. -/
 
-open _root_.ArgumentStructure.Affectedness.Hierarchy
 open _root_.ArgumentStructure.Affectedness
 
 /-- Bridge: a K98 SINC verb θ with an explicit final-degree witness
-    becomes a Beavers `IsQuantizedAffected` instance. The `forget`
-    link is needed to provide the inherited `HasLatentScale`
-    derivation (any verb with a result state is a fortiori a
-    force-recipient).
+    becomes a Beavers `IsQuantizedAffected` instance (the weaker
+    `IsNonQuantizedAffected` follows by the derivation instance;
+    `IsPotentialAffected` via `IsNonQuantizedAffected.isPotential'`
+    under a `LawfulScalarLatent` instance).
 
     Example use:
     ```
     instance : IsQuantizedAffected eatThemeToy :=
-      IsQuantizedAffected.ofIsSincVerb (forget := ...) (g_φ := fullyEaten) (h := ...)
+      IsQuantizedAffected.ofIsSincVerb (g_φ := fullyEaten) (h := ...)
     ```
 -/
 @[reducible]
 def IsQuantizedAffected.ofIsSincVerb {α β δ : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
-    [HasScalarResult α δ β] [HasLatentScale α β]
+    [HasScalarResult α δ β]
     (θ : α → β → Prop) [_h : IsSincVerb θ]
-    (forget : ∀ (x : α) (e : β), (∃ g : δ, HasScalarResult.resultAt x g e) →
-              HasLatentScale.latentScale x e)
     (g_φ : δ) (h_quantized : Quantized θ g_φ) :
     IsQuantizedAffected (δ := δ) θ :=
-  IsQuantizedAffected.mk' forget g_φ h_quantized
+  ⟨g_φ, h_quantized⟩
 
 end Semantics.Aspect.Incremental
