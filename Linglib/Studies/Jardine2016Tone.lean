@@ -12,7 +12,7 @@ import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Collapse
-import Linglib.Phonology.Autosegmental.Constructions
+import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic
 
 /-!
@@ -95,64 +95,42 @@ theorem utp_getElem? :
 
 private theorem mem_take_iff {α : Type*} {a : α} {w : List α} {k : ℕ} :
     a ∈ w.take k ↔ ∃ j < k, w[j]? = some a := by
-  rw [List.mem_iff_getElem?]
-  constructor
-  · rintro ⟨j, hj⟩
-    have hjk : j < k := by
-      by_contra hge
-      rw [List.getElem?_take_eq_none (le_of_not_gt hge)] at hj
-      simp at hj
-    exact ⟨j, hjk, by rwa [List.getElem?_take_of_lt hjk] at hj⟩
-  · rintro ⟨j, hjk, hj⟩
-    exact ⟨j, by rwa [List.getElem?_take_of_lt hjk]⟩
+  simp [List.mem_iff_getElem?, List.getElem?_take]
 
 private theorem mem_drop_iff {α : Type*} {a : α} {w : List α} {k : ℕ} :
-    a ∈ w.drop k ↔ ∃ j, k ≤ j ∧ w[j]? = some a := by
-  rw [List.mem_iff_getElem?]
-  constructor
-  · rintro ⟨t, ht⟩
-    exact ⟨k + t, Nat.le_add_right k t, by rwa [List.getElem?_drop] at ht⟩
-  · rintro ⟨j, hkj, hj⟩
-    exact ⟨j - k, by rw [List.getElem?_drop, Nat.add_sub_cancel' hkj]; exact hj⟩
+    a ∈ w.drop k ↔ ∃ j ≥ k, w[j]? = some a := by
+  simp only [List.mem_iff_getElem?, List.getElem?_drop]
+  exact ⟨fun ⟨t, ht⟩ => ⟨k + t, Nat.le_add_right k t, ht⟩,
+    fun ⟨j, hkj, hj⟩ => ⟨j - k, by rwa [Nat.add_sub_cancel' hkj]⟩⟩
 
 /-- Positionwise reading of `SurfacesH`: a H at some `j ≤ i` and a H at some `j ≥ i`. -/
 theorem surfacesH_iff :
-    SurfacesH w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j, i ≤ j ∧ w[j]? = some .H := by
+    SurfacesH w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
   rw [SurfacesH, mem_take_iff, mem_drop_iff]
   simp [Nat.lt_succ_iff]
 
 theorem SurfacesH.lt_length (h : SurfacesH w i) : i < w.length := by
-  obtain ⟨-, j, hij, hj⟩ := surfacesH_iff.mp h
-  obtain ⟨hlt, -⟩ := List.getElem?_eq_some_iff.mp hj
+  have h₂ := List.length_pos_of_mem h.2
+  rw [List.length_drop] at h₂
   omega
 
-/-- The surfacing set is convex. -/
+/-- The surfacing set is convex: `take`/`drop` windows only widen. -/
 theorem SurfacesH.of_le_of_le (hi : SurfacesH w i) (hk : SurfacesH w k) (hij : i ≤ j)
-    (hjk : j ≤ k) : SurfacesH w j := by
-  obtain ⟨⟨j₁, hj₁, h₁⟩, -⟩ := surfacesH_iff.mp hi
-  obtain ⟨-, j₂, hj₂, h₂⟩ := surfacesH_iff.mp hk
-  exact surfacesH_iff.mpr ⟨⟨j₁, by omega, h₁⟩, ⟨j₂, by omega, h₂⟩⟩
+    (hjk : j ≤ k) : SurfacesH w j :=
+  ⟨w.take_subset_take_left (by omega) hi.1, w.drop_subset_drop_left (by omega) hk.2⟩
 
 /-- A H-toned TBU surfaces H: it flanks itself. -/
 theorem surfacesH_of_getElem?_H (h : w[i]? = some .H) : SurfacesH w i :=
   surfacesH_iff.mpr ⟨⟨i, le_rfl, h⟩, ⟨i, le_rfl, h⟩⟩
 
 theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
-  rw [utp_getElem?]
-  cases hw : w[j]? with
-  | none =>
-    refine iff_of_false (by simp) fun hs => ?_
-    rw [List.getElem?_eq_none_iff] at hw
-    exact absurd hs.lt_length (by omega)
-  | some a =>
-    simp only [Option.map_some, Option.some.injEq]
-    constructor
-    · intro h
-      by_contra hs
-      rw [if_neg hs] at h
-      exact TBU.noConfusion h
-    · intro hs
-      rw [if_pos hs]
+  rw [utp_getElem?, Option.map_eq_some_iff]
+  constructor
+  · rintro ⟨a, -, ha⟩
+    by_contra hs
+    rw [if_neg hs] at ha
+    exact TBU.noConfusion ha
+  · exact fun hs => ⟨w[j]'hs.lt_length, List.getElem?_eq_getElem hs.lt_length, if_pos hs⟩
 
 /-- The plateau of `w`: the set of positions that surface H. -/
 def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)

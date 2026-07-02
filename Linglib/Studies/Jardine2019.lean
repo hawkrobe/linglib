@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Autosegmental.Collapse
-import Linglib.Phonology.Autosegmental.Constructions
+import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
 
 /-!

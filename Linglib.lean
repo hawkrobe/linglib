@@ -1320,7 +1320,7 @@ import Linglib.Morphology.WugTest
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Autosegmental.Collapse
-import Linglib.Phonology.Autosegmental.Constructions
+import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Embedding
 import Linglib.Phonology.Autosegmental.Floating
