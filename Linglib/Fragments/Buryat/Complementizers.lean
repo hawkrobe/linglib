@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Data.UD.Basic
+import Linglib.Syntax.Complementizer.Basic
 
 /-!
 # Buryat Complementizers and Clause-Embedding Verbs
@@ -13,9 +13,10 @@ and nominalized with the say-root `[… V-TENSE g-ɘːš-CASE]`.
 
 ## Main definitions
 
-- `Buryat.Complementizer` — the say-root *gɘ*, the agentive participle
-  *-Aːša*, and the imperfective converb *-žA* ([skribnik-2003]), with
-  projections `form`, `verbForm`, and `host`
+- `Buryat.Complementizer` — index of the say-root *gɘ*, the agentive
+  participle *-Aːša*, and the imperfective converb *-žA*
+  ([skribnik-2003]); the feature rows are `Complementizer.entry`
+  values of the root `Complementizer` schema
 - `Buryat.hanaxa`, `Buryat.medexe`, `Buryat.xelexe`, `Buryat.duulaxa` —
   clause-embedding verbs; all four alternate between the finite-CP and
   nominalized (`.gerund`) frames (ex. 35–36, 50–51)
@@ -34,8 +35,8 @@ archiphonemes.
 
 namespace Buryat
 
-/-- The three clause-typing morphemes of the Barguzin Buryat embedded
-clause (§4.3.1 ex. 30–32). -/
+/-- Index of the three clause-typing morphemes of the Barguzin Buryat
+embedded clause (§4.3.1 ex. 30–32). Feature rows: `Complementizer.entry`. -/
 inductive Complementizer where
   /-- *gɘ* — grammaticalized root of *gɘxɘ* 'say' (fn. 21: no speech act
   entailed under 'hear' or 'see'). -/
@@ -48,34 +49,19 @@ inductive Complementizer where
   | zha
   deriving DecidableEq, Fintype, Repr
 
-namespace Complementizer
-
-/-- Surface form in Bondarenko's transliteration. Display only. -/
-def form : Complementizer → String
-  | .ge    => "gɘ"
-  | .aasha => "-Aːša"
-  | .zha   => "-žA"
-
-/-- The verb form each suffix derives: participle for *-Aːša*, converb
-for *-žA*; `none` for the root *gɘ*, which is not a suffix. -/
-def verbForm : Complementizer → Option UD.VerbForm
-  | .ge    => none
-  | .aasha => some .Part
-  | .zha   => some .Conv
-
-/-- Category of the adjacent projection licensing each suffix (§4.3.1). -/
-inductive Host where
-  | nominal
-  | verbal
-  deriving DecidableEq, Fintype, Repr
-
-/-- Licensing host of each suffix; `none` for the root *gɘ*. -/
-def host : Complementizer → Option Host
-  | .ge    => none
-  | .aasha => some .nominal
-  | .zha   => some .verbal
-
-end Complementizer
+/-- The lexical entry of each morpheme, in Bondarenko's transliteration.
+The root *gɘ* never surfaces unsuffixed (gɘ-žɘ, g-ɘːšɘ), so its
+attachment is left unrecorded; the *-Aːša* complement is
+Noonan-nominalized (case-marked, genitive subject) while the morpheme
+itself is a participle — two axes, two fields. -/
+def Complementizer.entry : Complementizer → _root_.Complementizer
+  | .ge    => { form := "gɘ" }
+  | .aasha => { form := "-Aːša", position := some .postfixed,
+                noonanType := some .nominalized,
+                verbForm := some .Part, host := some .nominal }
+  | .zha   => { form := "-žA", position := some .postfixed,
+                noonanType := some .indicative,
+                verbForm := some .Conv, host := some .verbal }
 
 /-! ### Clause-embedding verbs
 

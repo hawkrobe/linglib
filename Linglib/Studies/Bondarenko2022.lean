@@ -679,21 +679,21 @@ def tigrinyaContExponent : Option Tigrinya.ClausePrefixes.ClausePrefixEntry :=
     fragment's root-vs-suffix datum: the Cont exponent is exactly the
     non-suffixal (say-root) morpheme. -/
 theorem mem_buryatContExponent_iff (c : Buryat.Complementizer) :
-    c ∈ buryatContExponent ↔ c.verbForm = none := by
+    c ∈ buryatContExponent ↔ c.entry.verbForm = none := by
   cases c <;> decide
 
 /-- The Comp head realized by adjacency-conditioned allomorphy
     ([bondarenko-2022] §4.3.1 ex. 33): one head, two allomorphs —
     participial *-Aːša* next to nominal projections, converbial *-žA*
     next to verbs. -/
-def buryatCompAllomorph : Buryat.Complementizer.Host → Buryat.Complementizer
+def buryatCompAllomorph : Complementizer.Host → Buryat.Complementizer
   | .nominal => .aasha
   | .verbal  => .zha
 
 /-- The allomorph selected for a host has exactly that surface
     distribution — the analysis reproduces the fragment's datum. -/
-theorem host_buryatCompAllomorph (h : Buryat.Complementizer.Host) :
-    (buryatCompAllomorph h).host = some h := by
+theorem host_buryatCompAllomorph (h : Complementizer.Host) :
+    (buryatCompAllomorph h).entry.host = some h := by
   cases h <;> rfl
 
 /-- The head assignment is exhaustive: every clause-typing morpheme is
