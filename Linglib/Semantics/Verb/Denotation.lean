@@ -44,7 +44,7 @@ participant roles.
 -/
 
 open Semantics.ArgumentStructure
-open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
+open ArgumentStructure (EntailmentProfile)
 
 /-! ### The theta-grid (derived from the proto-role profiles) -/
 

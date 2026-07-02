@@ -71,7 +71,8 @@ composed meaning — not the root-level or surface-diagnostic level.
 
 namespace Semantics.ArgumentStructure.Affectedness.Profile
 
-open Semantics.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure (EntailmentProfile)
+open _root_.ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Re-exports from Events/AffectednessHierarchy

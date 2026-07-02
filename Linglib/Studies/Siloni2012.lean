@@ -39,7 +39,7 @@ embedding.
 namespace Siloni2012
 
 open Reciprocal
-open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
+open ArgumentStructure (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Three-Way Reciprocal Classification (§2.4)

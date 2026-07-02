@@ -57,7 +57,7 @@ open English.Predicates.Verbal
 open Pesetsky1995.PsychVerbs
 open SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Consistency Predicates

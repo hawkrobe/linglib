@@ -65,7 +65,8 @@ you nothing about whether it entails change, and vice versa.
 -/
 
 open Semantics.Lexical.EventStructure
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile
 open Features.ChangeOfState
 open Features
 

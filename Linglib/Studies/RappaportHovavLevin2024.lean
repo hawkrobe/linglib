@@ -90,7 +90,7 @@ verbs ([levin-krejci-2019]), and *drown*.
 namespace RappaportHovavLevin2024
 
 open Semantics.Lexical.EventStructure
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure.EntailmentProfile
 open Semantics.Lexical
 
 /-! ### Force-dynamic primitives -/

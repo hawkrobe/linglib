@@ -28,7 +28,8 @@ enriched two-predicate event structure for the wiping-verbs class
 namespace Semantics.Lexical.EventStructure
 
 open Semantics.Lexical
-open Semantics.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure (EntailmentProfile)
+open _root_.ArgumentStructure.EntailmentProfile
 open Features
 
 /-! ### Event structure templates -/
