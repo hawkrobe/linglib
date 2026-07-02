@@ -149,6 +149,25 @@ def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (Surfa
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     exact ⟨i, mem_plateau.mpr (surfacesH_of_getElem?_H hi)⟩
 
+/-- `utp` writes the indicator word of its plateau. -/
+theorem utp_eq_plateau_indicator :
+    utp w = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O := by
+  refine List.ext_getElem (by simp [utp]) fun i h₁ h₂ => ?_
+  simp [utp, mem_plateau]
+
+/-- Sandwich characterization: a word with Hs at `lo` and `hi` and none outside
+`[lo, hi]` has plateau exactly `Finset.Icc lo hi`. -/
+theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? = some .H)
+    (hb : ∀ j, w[j]? = some .H → lo ≤ j ∧ j ≤ hi) : plateau w = Finset.Icc lo hi := by
+  ext j
+  rw [mem_plateau, Finset.mem_Icc, surfacesH_iff]
+  constructor
+  · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
+    have hb₁ := hb j₁ h₁
+    have hb₂ := hb j₂ h₂
+    omega
+  · exact fun hj => ⟨⟨lo, hj.1, hlo⟩, hi, hj.2, hhi⟩
+
 /-- The plateau is an interval, from the first trigger to the last: the set form of
 (36c). -/
 theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
@@ -186,40 +205,21 @@ private theorem singleH_getElem?_H_iff (m n : ℕ) :
 
 /-- (36a): a toneless word is unchanged. -/
 theorem utp_toneless (n : ℕ) : utp (List.replicate n .O) = List.replicate n .O := by
-  refine List.ext_getElem? fun i => ?_
-  have hs : ¬ SurfacesH (List.replicate n TBU.O) i := fun hs => by simpa using hs.H_mem
-  simp [utp_getElem?, hs, List.getElem?_replicate, apply_ite]
+  have h : plateau (List.replicate n TBU.O) = ∅ :=
+    Finset.not_nonempty_iff_eq_empty.mp (by simp)
+  simp [utp_eq_plateau_indicator, h, List.map_const']
 
 /-- (36b): a word with a single H is unchanged — one H cannot trigger a plateau. -/
 theorem utp_single (m n : ℕ) :
     utp (List.replicate m .O ++ .H :: List.replicate n .O)
       = List.replicate m .O ++ .H :: List.replicate n .O := by
-  refine List.ext_getElem? fun i => ?_
-  rw [utp_getElem?]
-  cases h : (List.replicate m TBU.O ++ TBU.H :: List.replicate n TBU.O)[i]? with
-  | none => rfl
-  | some a =>
-    have hS : SurfacesH (List.replicate m TBU.O ++ TBU.H :: List.replicate n TBU.O) i ↔ i = m := by
-      rw [surfacesH_iff]
-      constructor
-      · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-        rw [singleH_getElem?_H_iff] at h₁ h₂
-        omega
-      · rintro rfl
-        exact ⟨⟨_, le_rfl, (singleH_getElem?_H_iff _ n).mpr rfl⟩,
-               ⟨_, le_rfl, (singleH_getElem?_H_iff _ n).mpr rfl⟩⟩
-    by_cases him : i = m
-    · subst him
-      have : a = TBU.H := by
-        have := (singleH_getElem?_H_iff i n).mpr rfl
-        rw [h] at this
-        exact Option.some.inj this
-      simp [hS, this]
-    · have : a = TBU.O := by
-        cases a with
-        | H => exact absurd ((singleH_getElem?_H_iff m n).mp h) him
-        | O => rfl
-      simp [hS, him, this]
+  rw [utp_eq_plateau_indicator, plateau_eq_Icc_of ((singleH_getElem?_H_iff m n).mpr rfl)
+    ((singleH_getElem?_H_iff m n).mpr rfl) fun j hj => by
+      rw [singleH_getElem?_H_iff] at hj; omega]
+  refine List.ext_getElem (by simp) fun i h₁ h₂ => ?_
+  simp only [List.getElem_map, List.getElem_range, List.getElem_append, List.getElem_cons,
+    List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
+  split_ifs <;> first | rfl | omega
 
 private theorem plateau_getElem?_first (m p : ℕ) (w : List TBU) :
     (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[m]?
@@ -246,47 +246,12 @@ arbitrary. -/
 theorem utp_plateau (m p : ℕ) (w : List TBU) :
     utp (List.replicate m .O ++ .H :: (w ++ .H :: List.replicate p .O))
       = List.replicate m .O ++ (List.replicate (w.length + 2) .H ++ List.replicate p .O) := by
-  set u := List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O) with hu
-  have hlen : u.length = m + 1 + w.length + 1 + p := by simp [hu]; omega
-  have hS : ∀ i, SurfacesH u i ↔ m ≤ i ∧ i ≤ m + 1 + w.length := fun i => by
-    rw [surfacesH_iff]
-    constructor
-    · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-      have b₁ := plateau_getElem?_H_bounds h₁
-      have b₂ := plateau_getElem?_H_bounds h₂
-      omega
-    · rintro ⟨h₁, h₂⟩
-      exact ⟨⟨m, h₁, plateau_getElem?_first m p w⟩,
-             ⟨m + 1 + w.length, h₂, plateau_getElem?_second m p w⟩⟩
-  refine List.ext_getElem? fun i => ?_
-  rw [utp_getElem?]
-  rcases Nat.lt_or_ge i m with h1 | h1
-  · -- leading toneless stretch: unchanged `O`
-    have hui : u[i]? = some TBU.O := by
-      rw [List.getElem?_append_left (by simpa using h1), List.getElem?_replicate, if_pos h1]
-    rw [hui, Option.map_some, if_neg ((hS i).not.mpr (by omega)),
-      List.getElem?_append_left (by simpa using h1), List.getElem?_replicate, if_pos h1]
-  rcases Nat.lt_or_ge i (m + 1 + w.length + 1) with h2 | h2
-  · -- the plateau band: everything surfaces H
-    have hui : i < u.length := by omega
-    rw [List.getElem?_eq_getElem hui, Option.map_some, if_pos ((hS i).mpr ⟨h1, by omega⟩),
-      List.getElem?_append_right (by simpa using h1),
-      List.getElem?_append_left (by simp only [List.length_replicate]; omega),
-      List.getElem?_replicate, if_pos (by simp only [List.length_replicate]; omega)]
-  rcases Nat.lt_or_ge i u.length with h3 | h3
-  · -- trailing toneless stretch: unchanged `O`
-    have hui : u[i]? = some TBU.O := by
-      rw [hlen] at h3
-      simp only [hu, List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
-        List.length_replicate]
-      split_ifs <;> first | rfl | omega
-    rw [hui, Option.map_some, if_neg ((hS i).not.mpr (by omega)),
-      List.getElem?_append_right (by simp only [List.length_replicate]; omega),
-      List.getElem?_append_right (by simp only [List.length_replicate]; omega),
-      List.getElem?_replicate, if_pos (by simp only [List.length_replicate]; omega)]
-  · -- past the end: both sides `none`
-    rw [List.getElem?_eq_none (by omega), Option.map_none,
-      List.getElem?_eq_none (by simp only [List.length_append, List.length_replicate]; omega)]
+  rw [utp_eq_plateau_indicator, plateau_eq_Icc_of (plateau_getElem?_first m p w)
+    (plateau_getElem?_second m p w) fun _ => plateau_getElem?_H_bounds]
+  refine List.ext_getElem (by simp; omega) fun i h₁ h₂ => ?_
+  simp only [List.getElem_map, List.getElem_range, List.getElem_append,
+    List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
+  split_ifs <;> first | rfl | omega
 
 /-- The (43) sample rows: no plateau without two Hs; `HØØH ↦ HHHH`. -/
 example : utp [.O, .O, .O, .H] = [.O, .O, .O, .H] := by decide
