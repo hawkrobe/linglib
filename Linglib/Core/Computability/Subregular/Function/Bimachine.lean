@@ -356,6 +356,15 @@ theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
   show B.out _ a _ = _
   rw [hω]
 
+/-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
+unchanged has both of its change-proposals inert there. -/
+theorem inert_of_reverting {B : Bimachine L R α α} {ωL : L → α → α} {ωR : R → α → α}
+    (hω : ∀ l a r, B.out l a r = unite (ωL l a) (ωR r a) a) {u : List α} {i : ℕ} {a : α}
+    (hsym : u[i]? = some a) (hrev : (B.run u)[i]? = u[i]?) :
+    ωL (B.lState (u.take i)) a = a ∧ ωR (B.rState (u.drop (i + 1))) a = a := by
+  refine unite_eq_default (Option.some_injective _ (Eq.symm ?_))
+  rw [← hsym, ← hrev, B.run_getElem?, hsym, Option.map_some, hω]
+
 /-- **Unbounded interaction ⟹ not weakly deterministic.** At the witness, the base changes
 but each far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
 inert at this cell; the left perturbation keeps the right state, forcing `ωR` inert; yet the
@@ -364,29 +373,19 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
     (hf : RequiresBothSides f) : ¬ IsBimachineWeaklyDeterministic f := by
   rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
   obtain ⟨base, i, hi, hspread, hw⟩ := hf 0
-  obtain ⟨uL, ⟨hLlen, hLag⟩, hLsym, hLrev⟩ := hw .left
-  obtain ⟨uR, ⟨hRlen, hRag⟩, hRsym, hRrev⟩ := hw .right
+  obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
+  obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
   simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
-  have hbi : base[i]? = some base[i] := List.getElem?_eq_getElem hi
-  -- a matching, reverting word has an inert cell: both proposals leave its target alone
-  have cell : ∀ u : List α, u[i]? = some base[i] → (B.run u)[i]? = u[i]? →
-      ωL (B.lState (u.take i)) base[i] = base[i]
-        ∧ ωR (B.rState (u.drop (i + 1))) base[i] = base[i] := by
-    intro u hsym hrev
-    have hout : (B.run u)[i]? = some (unite (ωL (B.lState (u.take i)) base[i])
-        (ωR (B.rState (u.drop (i + 1))) base[i]) base[i]) := by
-      rw [B.run_getElem?, hsym, Option.map_some, hω]
-    exact unite_eq_default (Option.some_injective _ (hout.symm.trans (hrev.trans hsym)))
-  -- the right perturbation keeps the left state, the left one the right state
-  have hRtake : uR.take i = base.take i :=
-    take_eq_of_agree fun k hk => (hRag k (by omega)).symm
-  have hLdrop : uL.drop (i + 1) = base.drop (i + 1) :=
-    drop_eq_of_agree fun k _ => (hLag k (by omega)).symm
-  have hωL := hRtake ▸ (cell uR (hRsym.trans hbi) hRrev).1
-  have hωR := hLdrop ▸ (cell uL (hLsym.trans hbi) hLrev).2
-  -- the base needs a change, but both rules are inert
+  -- decompose the base's cell, retarget each side's state to the perturbation that
+  -- shares it, and silence both rules by `inert_of_reverting`
   apply hspread
-  rw [B.run_getElem?, hbi, Option.map_some, hω, hωL, hωR, unite_self]
+  rw [B.run_getElem?, List.getElem?_eq_getElem hi, Option.map_some, hω,
+    ← (take_eq_of_agree fun k hk => (hRag k (by omega)).symm : uR.take i = base.take i),
+    ← (drop_eq_of_agree fun k _ => (hLag k (by omega)).symm :
+        uL.drop (i + 1) = base.drop (i + 1)),
+    (inert_of_reverting hω (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
+    (inert_of_reverting hω (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
+    unite_self]
 
 end NonInteraction
 
