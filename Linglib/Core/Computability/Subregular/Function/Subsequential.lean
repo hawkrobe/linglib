@@ -333,6 +333,26 @@ theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
       T.runFrom_append T.start u v,
       Finset.le_sup (f := fun s => (T.finalOutput s).length) (Finset.mem_univ _)⟩⟩
 
+/-- **Divergence criterion**: `f` is not left-subsequential if, for every candidate delay
+bound `N`, some input `u` and continuation `v` have images disagreeing at a position more
+than `N` symbols above the end of `f u` — inside the prefix a bounded-delay machine must
+already have emitted. The working form of `bounded_delay` for impossibility proofs
+(unbounded tonal plateauing [jardine-2016], sour-grapes harmony [heinz-lai-2013]). -/
+theorem not_isLeftSubsequential_of_diverging {f : List α → List β}
+    (h : ∀ N, ∃ (u v : List α) (i : ℕ),
+      i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :
+    ¬ IsLeftSubsequential f := by
+  intro hf
+  obtain ⟨N, hN⟩ := hf.bounded_delay
+  obtain ⟨u, v, i, hi, hne⟩ := h N
+  obtain ⟨p, su, sv, hu, huv, hsu⟩ := hN u v
+  have hip : i < p.length := by
+    have := congrArg List.length hu
+    rw [List.length_append] at this
+    omega
+  rw [hu, huv, List.getElem?_append_left hip, List.getElem?_append_left hip] at hne
+  exact hne rfl
+
 /-- Subsequential functions are closed under composition ([mohri-1997],
 originally Schützenberger and Choffrut) — the load-bearing fact that makes
 the weakly-deterministic class (composition of two subsequential functions
