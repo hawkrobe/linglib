@@ -142,14 +142,11 @@ noncomputable def comulPrimMonoidHom :
 noncomputable def comulPrim :
     ConnesKreimer R (Nonplanar α) →ₐ[R]
       ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Nonplanar α)) ⊗[R] (ConnesKreimer R (Nonplanar α)))
-    (Forest (Nonplanar α)) comulPrimMonoidHom
+  ConnesKreimer.lift comulPrimMonoidHom
 
 @[simp] theorem comulPrim_apply_of' (F : Forest (Nonplanar α)) :
     comulPrim (R := R) (α := α) (of' F) = comulPrimForest F := by
-  show AddMonoidAlgebra.lift R _ _ comulPrimMonoidHom (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [comulPrim, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulPrim_apply_ofTree (T : Nonplanar α) :
@@ -173,21 +170,18 @@ on the left channel of the coproduct output. -/
     on basis `of' F`, returns `of' F` if `F.card = k`, else 0. -/
 noncomputable def projectKComponent (k : ℕ) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
-  Finsupp.lift _ R (Forest (Nonplanar α))
+  ConnesKreimer.linearLift
     (fun F => if F.card = k then (of' F : ConnesKreimer R (Nonplanar α)) else 0)
 
 @[simp] theorem projectKComponent_of'_eq (k : ℕ) (F : Forest (Nonplanar α))
     (h : F.card = k) :
     projectKComponent (R := R) k (of' F) = of' F := by
-  show Finsupp.lift _ R _ _ (Finsupp.single F 1) = _
-  rw [Finsupp.lift_apply, Finsupp.sum_single_index] <;> simp [h]
+  rw [projectKComponent, ConnesKreimer.linearLift_of', if_pos h]
 
 @[simp] theorem projectKComponent_of'_ne (k : ℕ) (F : Forest (Nonplanar α))
     (h : F.card ≠ k) :
     projectKComponent (R := R) k (of' F) = 0 := by
-  show Finsupp.lift _ R _ _ (Finsupp.single F 1) = _
-  rw [Finsupp.lift_apply, Finsupp.sum_single_index] <;> simp [h]
+  rw [projectKComponent, ConnesKreimer.linearLift_of', if_neg h]
 
 /-! ## §4: The FormSet operator `FS^(k)` (MCB Def 1.16.1)
 

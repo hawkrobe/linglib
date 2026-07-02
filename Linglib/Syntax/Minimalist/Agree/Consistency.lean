@@ -171,13 +171,12 @@ def headProbeMonoidHom (Υ : LIToken → Consistency) :
     whose Birkhoff renormalization is the consistency map. -/
 noncomputable def headProbeChar (Υ : LIToken → Consistency) :
     ConnesKreimer ℕ (Nonplanar SOLabel) →ₐ[ℕ] Consistency :=
-  AddMonoidAlgebra.lift ℕ Consistency (Forest (Nonplanar SOLabel)) (headProbeMonoidHom Υ)
+  ConnesKreimer.lift (headProbeMonoidHom Υ)
 
 @[simp] theorem headProbeChar_apply_of' (Υ : LIToken → Consistency)
     (F : Forest (Nonplanar SOLabel)) :
     headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod := by
-  show AddMonoidAlgebra.lift ℕ _ _ (headProbeMonoidHom Υ) (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [headProbeChar, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem headProbeChar_apply_ofTree (Υ : LIToken → Consistency) (T : Nonplanar SOLabel) :

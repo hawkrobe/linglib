@@ -182,7 +182,7 @@ noncomputable def comulForestP (F : Forest (RoseTree α)) :
 /-! ### comulMonoidHom and comulAlgHom
 
 Package the multiplicative extension as a `MonoidHom`, then lift to the
-full `AlgHom` via `AddMonoidAlgebra.lift`. -/
+full `AlgHom` via `ConnesKreimer.lift`. -/
 
 /-- comulForestP as a monoid hom from `Multiplicative (Forest (RoseTree α))`. -/
 noncomputable def comulMonoidHomP :
@@ -196,14 +196,11 @@ noncomputable def comulMonoidHomP :
 noncomputable def comulAlgHomP :
     ConnesKreimer R (RoseTree α) →ₐ[R]
       ConnesKreimer R (RoseTree α) ⊗[R] ConnesKreimer R (RoseTree α) :=
-  AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (RoseTree α)) ⊗[R] (ConnesKreimer R (RoseTree α)))
-    (Forest (RoseTree α)) comulMonoidHomP
+  ConnesKreimer.lift comulMonoidHomP
 
 @[simp] theorem comulAlgHomP_apply_of' (F : Forest (RoseTree α)) :
     comulAlgHomP (R := R) (α := α) (of' F) = comulForestP F := by
-  show AddMonoidAlgebra.lift R _ _ comulMonoidHomP (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [comulAlgHomP, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulAlgHomP_apply_ofTree (T : RoseTree α) :

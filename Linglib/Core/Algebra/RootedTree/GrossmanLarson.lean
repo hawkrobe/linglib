@@ -171,6 +171,50 @@ noncomputable def ofTree (t : Nonplanar α) : GrossmanLarson R α :=
     (of' (R := R) (0 : Forest (Nonplanar α)) : GrossmanLarson R α) = 1 :=
   ConnesKreimer.of'_zero
 
+/-! ### Basis extension over the Connes-Kreimer carrier
+
+`basisLift f` is the `R`-linear extension of a basis function
+`f : Forest → M` to all of `GrossmanLarson R α`, routed through the
+structure's `toFinsuppAlgEquiv` (the sanctioned escape hatch to the bare
+`AddMonoidAlgebra`). It replaces the former direct use of
+`Finsupp.linearCombination` on the `def`-synonym carrier. -/
+
+/-- `R`-linear extension of a basis function to `GrossmanLarson R α`. -/
+private noncomputable def basisLift {M : Type*} [AddCommMonoid M] [Module R M]
+    (f : Forest (Nonplanar α) → M) : GrossmanLarson R α →ₗ[R] M :=
+  (Finsupp.linearCombination R f).comp
+    (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
+
+private theorem basisLift_single {M : Type*} [AddCommMonoid M] [Module R M]
+    (f : Forest (Nonplanar α) → M) (F : Forest (Nonplanar α)) (r : R) :
+    basisLift f (ConnesKreimer.single F r) = r • f F := by
+  show Finsupp.linearCombination R f (ConnesKreimer.single F r).toFinsupp = r • f F
+  rw [ConnesKreimer.toFinsupp_single, Finsupp.linearCombination_single]
+
+private theorem basisLift_of' {M : Type*} [AddCommMonoid M] [Module R M]
+    (f : Forest (Nonplanar α) → M) (F : Forest (Nonplanar α)) :
+    basisLift f (of' (R := R) F) = f F :=
+  (basisLift_single f F 1).trans (one_smul _ _)
+
+private theorem basisLift_one {M : Type*} [AddCommMonoid M] [Module R M]
+    (f : Forest (Nonplanar α) → M) :
+    basisLift f (1 : GrossmanLarson R α) = f 0 := by
+  rw [← of'_zero (R := R) (α := α)]; exact basisLift_of' f 0
+
+/-- The basis extension of the embedding `of'` is the identity: the
+    transported form of `Finsupp.sum_single`. -/
+private theorem basisLift_of'_apply (x : GrossmanLarson R α) :
+    basisLift (of' (R := R) (α := α)) x = x := by
+  have key : (basisLift (of' (R := R) (α := α))).toAddMonoidHom
+      = (LinearMap.id : GrossmanLarson R α →ₗ[R] GrossmanLarson R α).toAddMonoidHom := by
+    apply ConnesKreimer.addHom_ext
+    intro F r
+    show basisLift (of' (R := R) (α := α)) (ConnesKreimer.single F r)
+        = ConnesKreimer.single F r
+    rw [basisLift_single]
+    exact (ConnesKreimer.smul_single_one F r).symm
+  simpa using DFunLike.congr_fun key x
+
 /-! ### Single-tree insertion
 
 `insertTreeForest T F : GrossmanLarson R α` is the basis-level
@@ -196,12 +240,11 @@ noncomputable def insertTreeForest (T : Nonplanar α) (F : Forest (Nonplanar α)
 /-- ℤ-linear extension of `insertTreeForest T` to `GrossmanLarson R α`. -/
 noncomputable def insertTree (T : Nonplanar α) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
-  Finsupp.linearCombination R (insertTreeForest T)
+  basisLift (insertTreeForest T)
 
 @[simp] theorem insertTree_of' (T : Nonplanar α) (F : Forest (Nonplanar α)) :
-    insertTree (R := R) T (of' F) = insertTreeForest T F := by
-  show Finsupp.linearCombination R (insertTreeForest T) (Finsupp.single F 1) = _
-  rw [Finsupp.linearCombination_single, one_smul]
+    insertTree (R := R) T (of' F) = insertTreeForest T F :=
+  basisLift_of' (insertTreeForest T) F
 
 /-- **Leibniz cons decomposition for `insertTreeForest`** (CK-level form).
 
@@ -322,7 +365,11 @@ noncomputable def insertionBasis (F_basis G_basis : Forest (Nonplanar α)) :
 /-- Internal: `insertionBasis`-bundled-as-LinearMap-in-F. -/
 private noncomputable def insertionBasisLin (G_basis : Forest (Nonplanar α)) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
-  Finsupp.linearCombination R (fun F_basis => insertionBasis (R := R) F_basis G_basis)
+  basisLift (fun F_basis => insertionBasis (R := R) F_basis G_basis)
+
+private theorem insertionBasisLin_of' (G_basis F_basis : Forest (Nonplanar α)) :
+    insertionBasisLin (R := R) G_basis (of' F_basis) = insertionBasis F_basis G_basis :=
+  basisLift_of' _ F_basis
 
 /-- The bilinear insertion operator `F • G : GrossmanLarson R α`.
     Defined as the bilinear extension of `insertionBasis` via
@@ -330,22 +377,14 @@ private noncomputable def insertionBasisLin (G_basis : Forest (Nonplanar α)) :
     F's via `insertionBasisLin`). -/
 noncomputable def insertion :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
-  (Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α))).flip
+  (basisLift (insertionBasisLin (R := R) (α := α))).flip
 
 /-- Bridge: on basis vectors, `insertion (of' F) (of' G) = insertionBasis F G`.
     Unfolds the bilinear extension on both basis arguments. -/
 theorem insertion_of'_of' (F G : Forest (Nonplanar α)) :
     insertion (R := R) (of' F) (of' G) = insertionBasis F G := by
-  show ((insertion (R := R)).flip (of' G)) (of' F) = _
-  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
-          (of' G)) (of' F) = _
-  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
-          (Finsupp.single G 1)) (Finsupp.single F 1) = _
-  rw [Finsupp.linearCombination_single, one_smul]
-  show ((Finsupp.linearCombination R
-          (fun F_basis => insertionBasis (R := R) F_basis G))
-        (Finsupp.single F 1)) = _
-  rw [Finsupp.linearCombination_single, one_smul]
+  show (basisLift (insertionBasisLin (R := R) (α := α))).flip (of' F) (of' G) = _
+  rw [LinearMap.flip_apply, basisLift_of', insertionBasisLin_of']
 
 /-! ### Grossman-Larson product
 
@@ -453,7 +492,7 @@ private noncomputable def productForestLin (G : Forest (Nonplanar α)) :
     bilinear in both arguments. -/
 noncomputable def product :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
-  (Finsupp.linearCombination R (productForestLin (R := R) (α := α))).flip
+  (basisLift (productForestLin (R := R) (α := α))).flip
 
 /-! ### Multiplicative structure
 
@@ -516,13 +555,9 @@ theorem mul_smul_gl (s : R) (a b : GrossmanLarson R α) :
     powerset-sum formula. -/
 theorem of'_mul_of' (F G : Forest (Nonplanar α)) :
     (of' F : GrossmanLarson R α) * of' G = productForest (of' F) G := by
-  show product (of' F) (of' G) = productForest (of' F) G
-  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α))).flip
-          (of' F)) (of' G) = productForest (of' F) G
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α)))
-          (Finsupp.single G (1 : R))) (of' F) = productForest (of' F) G
-  rw [Finsupp.linearCombination_single, one_smul]
+  show (basisLift (productForestLin (R := R) (α := α))).flip (of' F) (of' G)
+      = productForest (of' F) G
+  rw [LinearMap.flip_apply, basisLift_of']
   rfl
 
 /-! ### Unit lemmas
@@ -555,44 +590,20 @@ private theorem insertionBasis_zero_left_of_ne_zero
   rw [Nonplanar.insertionMultiset_zero_left_of_ne_zero G_basis h,
       Multiset.map_zero, Multiset.sum_zero]
 
-/-- `insertion F 1 = F`. The bilinear extension at the unit
-    of H reduces to summing `insertionBasis F_basis 0 = of' F_basis`
-    over F's basis decomposition, which equals F by `Finsupp.sum_single`. -/
+/-- `insertion F 1 = F`. The bilinear extension at the unit of H reduces
+    to summing `insertionBasis F_basis 0 = of' F_basis` over F's basis
+    decomposition, which equals F by `basisLift_of'_apply`. -/
 theorem insertion_one_right (F : GrossmanLarson R α) :
     insertion F (1 : GrossmanLarson R α) = F := by
-  -- Unfold (1 : GrossmanLarson R α) = AddMonoidAlgebra.one_def = single 0 1
-  show insertion F (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = F
-  -- insertion.flip F : H →ₗ H. Apply on single 0 1.
-  show (insertion (R := R) (α := α)).flip.flip F
-    (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = F
-  rw [LinearMap.flip_flip]
-  -- Goal: insertion F (single 0 1) = F. Use flip_apply to get
-  -- (insertion).flip (single 0 1) F = F.
-  -- Actually let's evaluate via insertion's def.
-  show ((Finsupp.linearCombination R insertionBasisLin).flip F)
-    (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = F
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
-    (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R))) F = F
-  rw [Finsupp.linearCombination_single, one_smul]
-  -- insertionBasisLin 0 F = (linearCombination (fun F_b => insertionBasis F_b 0)) F
-  show (Finsupp.linearCombination R
-        (fun F_basis : Forest (Nonplanar α) =>
-          insertionBasis (R := R) F_basis (0 : Forest (Nonplanar α)))) F = F
+  show (basisLift (insertionBasisLin (R := R) (α := α))).flip F 1 = F
+  rw [LinearMap.flip_apply, basisLift_one]
+  -- Goal: `insertionBasisLin 0 F = F`; the basis map is `of'`, extended to `id`.
+  show basisLift (fun F_basis : Forest (Nonplanar α) =>
+      insertionBasis (R := R) F_basis (0 : Forest (Nonplanar α))) F = F
   rw [show (fun F_basis : Forest (Nonplanar α) =>
-        insertionBasis (R := R) F_basis (0 : Forest (Nonplanar α))) =
-      (fun F_basis : Forest (Nonplanar α) =>
-        of' (R := R) F_basis) from
-    funext fun F_basis => insertionBasis_zero_right F_basis]
-  rw [Finsupp.linearCombination_apply]
-  show (F.sum fun F_basis r => r • of' (R := R) F_basis) = F
-  rw [show (fun F_basis r => r • of' (R := R) F_basis) =
-      (fun F_basis (r : R) => (Finsupp.single F_basis r : GrossmanLarson R α))
-      from funext fun F_basis => funext fun r => by
-        show r • (Finsupp.single F_basis (1 : R) : GrossmanLarson R α) =
-            Finsupp.single F_basis r
-        rw [Finsupp.smul_single, smul_eq_mul, mul_one]]
-  exact Finsupp.sum_single F
+        insertionBasis (R := R) F_basis (0 : Forest (Nonplanar α)))
+      = of' (R := R) (α := α) from funext insertionBasis_zero_right]
+  exact basisLift_of'_apply F
 
 /-- **Right unit**. `mul_one` for the GL product. The powerset
     `(0:Multiset).powerset = {0}` collapses to a single summand, which
@@ -600,12 +611,8 @@ theorem insertion_one_right (F : GrossmanLarson R α) :
 theorem mul_one (F : GrossmanLarson R α) : F * 1 = F := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   show product F 1 = F
-  show ((Finsupp.linearCombination R productForestLin).flip F)
-       (1 : GrossmanLarson R α) = F
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α)))
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R))) F = F
-  rw [Finsupp.linearCombination_single, one_smul]
+  show (basisLift (productForestLin (R := R) (α := α))).flip F 1 = F
+  rw [LinearMap.flip_apply, basisLift_one]
   show productForest F 0 = F
   show ((((0 : Forest (Nonplanar α)).powerset).map fun G₁ =>
         op (unop (insertion F (of' (R := R) G₁)) *
@@ -628,43 +635,16 @@ private theorem insertion_one_of'_zero :
     insertion (1 : GrossmanLarson R α)
         (of' (R := R) (0 : Forest (Nonplanar α))) =
       (1 : GrossmanLarson R α) := by
-  show ((Finsupp.linearCombination R insertionBasisLin).flip
-        (1 : GrossmanLarson R α))
-       (of' (R := R) (0 : Forest (Nonplanar α))) = _
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
-        (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)))
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = _
-  rw [Finsupp.linearCombination_single, one_smul]
-  show insertionBasisLin (R := R) (α := α) 0
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = _
-  show (Finsupp.linearCombination R
-        (fun F_basis : Forest (Nonplanar α) =>
-          insertionBasis (R := R) F_basis 0))
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = _
-  rw [Finsupp.linearCombination_single, one_smul]
-  exact insertionBasis_zero_zero
+  conv_lhs => rw [← of'_zero (R := R) (α := α)]
+  rw [insertion_of'_of', insertionBasis_zero_zero]
 
 /-- `insertion 1 (of' G₁) = 0` for non-empty G₁. -/
 theorem insertion_one_of'_ne_zero (G₁ : Forest (Nonplanar α))
     (h : G₁ ≠ 0) :
     insertion (1 : GrossmanLarson R α) (of' (R := R) G₁) =
       (0 : GrossmanLarson R α) := by
-  show ((Finsupp.linearCombination R insertionBasisLin).flip
-        (1 : GrossmanLarson R α)) (of' (R := R) G₁) = _
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
-        (Finsupp.single G₁ (1 : R)))
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = _
-  rw [Finsupp.linearCombination_single, one_smul]
-  show insertionBasisLin (R := R) (α := α) G₁
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = _
-  show (Finsupp.linearCombination R
-        (fun F_basis : Forest (Nonplanar α) =>
-          insertionBasis (R := R) F_basis G₁))
-       (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = _
-  rw [Finsupp.linearCombination_single, one_smul]
-  exact insertionBasis_zero_left_of_ne_zero G₁ h
+  conv_lhs => rw [← of'_zero (R := R) (α := α)]
+  rw [insertion_of'_of', insertionBasis_zero_left_of_ne_zero G₁ h]
 
 /-- `Multiset.count 0 s.powerset = 1`: the empty submultiset appears
     exactly once in the powerset of any multiset. By induction on `s`:
@@ -726,34 +706,23 @@ private theorem productForest_one_left (G_basis : Forest (Nonplanar α)) :
     rw [zero_mul]; rfl
   rw [hf0, hrest, add_zero]
 
-/-- **Left unit**. `one_mul` for the GL product. The powerset sum
-    in `productForest 1 G_basis` collapses to a single non-zero summand
-    at `G₁ = 0` (via `productForest_one_left`), giving `of' G_basis`.
-    The outer `linearCombination` then reduces to `F.sum single = F`. -/
+/-- **Left unit**. `one_mul` for the GL product. On each basis vector
+    `single G r`, `productForest 1 G = of' G` (via `productForest_one_left`)
+    forces `product 1` to agree with the identity, established through
+    `ConnesKreimer.addHom_ext`. -/
 theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F := by
-  show product 1 F = F
-  show ((Finsupp.linearCombination R productForestLin).flip
-        (1 : GrossmanLarson R α)) F = F
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α))) F)
-       (1 : GrossmanLarson R α) = F
-  rw [Finsupp.linearCombination_apply, LinearMap.finsupp_sum_apply]
-  -- Goal: F.sum (fun G_basis r => (r • productForestLin G_basis) 1) = F
-  -- Push smul through apply, then unfold productForestLin and use the helper
-  rw [show (fun G_basis r =>
-              (r • productForestLin (R := R) (α := α) G_basis)
-                (1 : GrossmanLarson R α)) =
-        (fun G_basis (r : R) =>
-          (Finsupp.single G_basis r : GrossmanLarson R α)) from ?_]
-  · exact Finsupp.sum_single F
-  · funext G_basis r
-    rw [LinearMap.smul_apply]
-    show r • productForest (1 : GrossmanLarson R α) G_basis =
-        Finsupp.single G_basis r
-    rw [productForest_one_left]
-    show r • (Finsupp.single G_basis (1 : R) : GrossmanLarson R α) =
-        Finsupp.single G_basis r
-    rw [Finsupp.smul_single, smul_eq_mul, _root_.mul_one]
+  suffices h : (product (R := R) (α := α)) 1 = LinearMap.id by
+    show product 1 F = F
+    rw [h, LinearMap.id_apply]
+  apply LinearMap.toAddMonoidHom_injective
+  apply ConnesKreimer.addHom_ext
+  intro G r
+  show product (R := R) 1 (ConnesKreimer.single G r) = ConnesKreimer.single G r
+  show (basisLift (productForestLin (R := R) (α := α))).flip 1 (ConnesKreimer.single G r) = _
+  rw [LinearMap.flip_apply, basisLift_single, LinearMap.smul_apply]
+  show r • productForest (1 : GrossmanLarson R α) G = ConnesKreimer.single G r
+  rw [productForest_one_left]
+  exact (ConnesKreimer.smul_single_one G r).symm
 
 /-! ### Associativity
 
