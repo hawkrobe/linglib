@@ -398,8 +398,8 @@ theorem outcomeCard_orthogonal_to_hasResultState :
     [beavers-2010] hierarchy, while IE verbs like *kick* project to
     `nonquantized`. -/
 theorem affectedness_bridge :
-    profileToDegree ⟨false, false, false, false, false,
-                     false, false, true, true, false⟩ = .potential ∧
+    profileToDegree { causallyAffected := true, stationary := true }
+      = .potential ∧
     profileToDegree kickObjectProfile = .nonquantized :=
   ⟨rfl, rfl⟩
 

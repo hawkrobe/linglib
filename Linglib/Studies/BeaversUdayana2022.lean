@@ -397,21 +397,13 @@ theorem men_incompatible_with_di :
 -- § 7: Bridge to Beavers 2010 (Affectedness Constraint)
 -- ============================================================================
 
-/-- **linglib bridge** (not formalized in the paper):
-
-    Dispositional middles are restricted to change-of-state verbs.
-    The paper notes (§2.1) that dispositional *ber-* forms "are only
-    possible with verbs that describe change-of-state or at least
-    some degree of affectedness."
-
-    We formalize this by connecting [beavers-2010]'s
-    affectedness hierarchy to the middle typology: verbs licensing
-    dispositional middles must have affectedness degree ≥ nonquantized.
-
-    This independently connects to [levin-1993]'s prediction
-    that the middle alternation requires `changeOfState` (see
-    `predictedAlternation` in Core/RootDimensions.lean) — the same
-    verb class restriction viewed through different theoretical lenses. -/
+/-- linglib bridge (not formalized in the paper): dispositional *ber-*
+    forms are "only possible with verbs that describe change-of-state or at
+    least some degree of affectedness" (§2.1) — i.e. affectedness degree
+    ≥ nonquantized on [beavers-2010]'s hierarchy. [levin-1993]'s middle
+    diagnostic (`MeaningComponents.predictedAlternation`,
+    `Semantics/Lexical/DiathesisAlternation.lean`) draws the same verb-class
+    line via `changeOfState`. -/
 def LicensesDispositionalMiddle (d : AffectednessDegree) : Prop :=
   AffectednessDegree.nonquantized ≤ d
 
