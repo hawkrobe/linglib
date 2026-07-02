@@ -638,6 +638,12 @@ theorem argMinSet_eq_singleton_iff (hm : m ∈ s) :
       exact lt_irrefl (f c) (lt_of_le_of_lt (le_of_mem_argMinSet hc hm)
         (h c (mem_argMinSet.mp hc).1 hcm))
 
+/-- A singleton's sole element minimizes. -/
+@[simp] theorem argMinSet_singleton (a : α) (f : α → P) :
+    argMinSet {a} f (· ≤ ·) = {a} := by
+  ext x
+  simp +contextual [mem_argMinSet]
+
 end ArgMinSetOrder
 
 -- ============================================================================

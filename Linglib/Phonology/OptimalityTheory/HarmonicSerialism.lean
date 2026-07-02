@@ -239,18 +239,17 @@ variable {C : Type*} [DecidableEq C]
 -- ============================================================================
 
 /-- Build a `Tableau` from an explicit candidate set, given `D.ranking`.
-    Defined when the candidate set is non-empty. Reuses `mkProfile`
-    (Layered Grounding — does not duplicate the `buildViolationProfile`
-    body). -/
+    Defined when the candidate set is non-empty. -/
 def tableauFor (D : HSDerivation C) (cands : Finset C) (h : cands.Nonempty) :
     Tableau C D.ranking.length :=
   { candidates := cands
-    profile := mkProfile D.ranking
+    profile := buildViolationProfile D.ranking.get
     nonempty := h }
 
-/-- The inner tableau's profile is exactly `mkProfile D.ranking`. -/
+/-- The inner tableau scores with `D.ranking`'s profile. -/
 @[simp] theorem tableauFor_profile (D : HSDerivation C) (cands : Finset C)
-    (h : cands.Nonempty) : (D.tableauFor cands h).profile = mkProfile D.ranking :=
+    (h : cands.Nonempty) :
+    (D.tableauFor cands h).profile = buildViolationProfile D.ranking.get :=
   rfl
 
 /-- Filter a candidate set to its optimal subset under `D.ranking`.
@@ -310,11 +309,7 @@ theorem converged_of_singleton_gen (D : HSDerivation C) (c : C)
   show (if h : ({c} : Finset C).Nonempty then (D.tableauFor {c} h).optimal else ∅) =
        ({c} : Finset C)
   rw [dif_pos (Finset.singleton_nonempty c)]
-  -- Tableau with a singleton candidate set: optimal = {c}
-  ext x
-  simp only [LexMinProblem.lexMins, argMinSet, tableauFor, Finset.mem_filter, Finset.mem_singleton]
-  refine ⟨fun ⟨hx, _⟩ => hx, fun hx => ⟨hx, ?_⟩⟩
-  intro c' hc'; subst hc'; subst hx; rfl
+  exact argMinSet_singleton c _
 
 -- ============================================================================
 -- § 5: Smart Constructor for n-Step Derivation

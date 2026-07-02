@@ -55,7 +55,7 @@ theorem tableauSystem_predict_eq
   have hfilter : t.optimal = (t.candidates.filter
       (fun c' => ∀ c'' ∈ t.candidates, t.profile c' ≤ t.profile c'')) := by
     ext x
-    simp only [Finset.mem_filter, LexMinProblem.lexMins, argMinSet]
+    simp [Tableau.mem_optimal_iff]
   show argminDecoder.decode t.candidates t.profile c = _
   unfold argminDecoder
   simp only

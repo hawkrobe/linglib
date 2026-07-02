@@ -151,7 +151,8 @@ abbrev maxLinkMIdx   : Fin numConstraints := 3
     `ranking`, via `ercOfProfiles` (the canonical `ViolationProfile → ERC`
     bridge from [prince-2002]). -/
 private def ercFor (winner loser : Cand) : ERC numConstraints :=
-  ercOfProfiles (Constraints.mkProfile ranking winner) (Constraints.mkProfile ranking loser)
+  ercOfProfiles (Constraints.buildViolationProfile ranking.get winner)
+    (Constraints.buildViolationProfile ranking.get loser)
 
 /-- ERC for the `/nān + rī^H + nā/` winner-loser pair. **Derived** from
     the candidates' violation profiles, not stipulated. -/
