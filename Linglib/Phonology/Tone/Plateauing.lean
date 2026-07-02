@@ -364,17 +364,10 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
 the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
-/-- UTP requires both sides ([heinz-lai-2013]): deleting either flanking H reverts the
-plateau target, at every distance. -/
-theorem utp.requiresBothSides : RequiresBothSides utp.map := by
-  have hsurf : ∀ (d : ℕ) (x y : TBU),
-      utp.Surfaces (flankWord x .O y (2 * d + 2)) (d + 1) ↔ x = .H ∧ y = .H := fun d x y => by
-    rw [utp.surfaces_iff, exists_le_flankWord_eq_some_iff (by decide) (by omega),
-      exists_ge_flankWord_eq_some_iff (by decide) (by omega) (by omega)]
-  exact utp.requiresBothSides_of_flanks (fun d => ⟨by omega, by omega⟩)
-    (fun d => (hsurf d .H .H).mpr ⟨rfl, rfl⟩)
-    (fun d hs => by simpa using (hsurf d .O .H).mp hs)
-    (fun d hs => by simpa using (hsurf d .H .O).mp hs)
+/-- UTP requires both sides ([heinz-lai-2013]): its trigger is the two-sided window
+conjunction, so deleting either flanking H reverts the plateau target. -/
+theorem utp.requiresBothSides : RequiresBothSides utp.map :=
+  utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_iff
 
 /-- UTP is an unbounded circumambient process: whether a position changes depends on
 unboundedly distant material on both sides. -/
