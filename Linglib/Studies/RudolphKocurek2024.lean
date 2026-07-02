@@ -80,6 +80,15 @@ def MFormula.me {Pred Entity : Type*} (A B : MFormula Pred Entity) :
     MFormula Pred Entity :=
   .conj (.neg (.mc A B)) (.neg (.mc B A))
 
+/-- Formulas free of the metalinguistic comparative: the fragment whose truth
+does not consult the ordering (`evalGen_congr_of_mcFree`). -/
+def MFormula.MCFree {Pred Entity : Type*} : MFormula Pred Entity → Prop
+  | .atom _ _ => True
+  | .neg A => A.MCFree
+  | .conj A B => A.MCFree ∧ B.MCFree
+  | .disj A B => A.MCFree ∧ B.MCFree
+  | .mc _ _ => False
+
 /-! ### Semantics (§4.2 of the paper) -/
 
 section Semantics
@@ -165,6 +174,22 @@ theorem eval_mc_iff_strict_dominationLift (A B : MFormula Pred Entity)
   · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
     exact ⟨x, h1, h2, h3, fun b hb1 hb2 hb3 => hdom b ⟨hb1, hb2, hb3⟩⟩
 
+/-- MC-free formulas are ordering-invariant: only ≻ consults the ordering. -/
+theorem evalGen_congr_of_mcFree :
+    ∀ (φ : MFormula Pred Entity), φ.MCFree →
+      ∀ (le le' : I → I → Prop) (i : I) (w : W),
+      (EvalGen interpFn φ le i w ↔ EvalGen interpFn φ le' i w)
+  | .atom _ _, _, _, _, _, _ => Iff.rfl
+  | .neg A, h, le, le', i, w =>
+      not_congr (evalGen_congr_of_mcFree A h le le' i w)
+  | .conj A B, h, le, le', i, w =>
+      and_congr (evalGen_congr_of_mcFree A h.1 le le' i w)
+        (evalGen_congr_of_mcFree B h.2 le le' i w)
+  | .disj A B, h, le, le', i, w =>
+      or_congr (evalGen_congr_of_mcFree A h.1 le le' i w)
+        (evalGen_congr_of_mcFree B h.2 le le' i w)
+  | .mc _ _, h, _, _, _, _ => h.elim
+
 /-! ### General entailment facts
 
 Of the supplement's Fact 3 entailment patterns, those that follow directly from
@@ -237,6 +262,22 @@ instance {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord) :
     DecidableRel (FarBelow ord d) := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- Two points cannot be far below each other: centeredness plus
+noncontractivity force mutually-≤ points to be close. -/
+theorem FarBelow.asymm {I : Type*} {ord : SemanticOrdering I}
+    (d : DistanceFunction I ord) {a b : I} (h : FarBelow ord d a b) :
+    ¬ FarBelow ord d b a :=
+  fun h' => h'.2 (d.noncontractive b b a (d.centered b) h'.1 h.1)
+
+/-- The "not far below" relation is total — the totality that lets the
+strict l-lifting characterization apply to ≫. -/
+theorem not_farBelow_total {I : Type*} {ord : SemanticOrdering I}
+    (d : DistanceFunction I ord) (a b : I) :
+    ¬ FarBelow ord d a b ∨ ¬ FarBelow ord d b a := by
+  by_cases h : FarBelow ord d a b
+  · exact Or.inr (FarBelow.asymm d h)
+  · exact Or.inl h
+
 section Modifiers
 
 variable {I W Pred Entity : Type*} [Fintype I]
@@ -281,6 +322,54 @@ instance (φ : MFormula Pred Entity) (ord : SemanticOrdering I)
   unfold EvalMostly; infer_instance
 
 end Modifiers
+
+section ModifierGroundings
+
+variable {I W Pred Entity : Type*}
+  (interpFn : I → Interpretation W Pred Entity)
+
+/-- **Grounding**: ≫ is the strict l-lifting under the *coarser* total
+preorder "not far below" — the distance-function axioms are exactly what
+make that relation total, so [holliday-icard-2013]'s lift machinery applies
+with ≪ in the role of <. -/
+theorem evalMuchMore_iff_strict_dominationLift (φ ψ : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (d : DistanceFunction I ord) (i : I) (w : W) :
+    EvalMuchMore interpFn φ ψ ord d i w ↔
+    ComparativeProbability.Strict
+      (ComparativeProbability.dominationLift (fun a b => ¬ FarBelow ord d a b))
+      {x | ord.le x i ∧ Eval interpFn φ ord x w ∧ ¬ Eval interpFn ψ ord x w}
+      {x | ord.le x i ∧ Eval interpFn ψ ord x w ∧ ¬ Eval interpFn φ ord x w} := by
+  rw [ComparativeProbability.strict_dominationLift_iff
+    (fun a b => not_farBelow_total d a b)]
+  constructor
+  · rintro ⟨x, h1, h2, h3, hdom⟩
+    refine ⟨x, ⟨h1, h2, h3⟩, fun b ⟨hb1, hb2, hb3⟩ => ?_⟩
+    have hfb := hdom b hb1 hb2 hb3
+    exact ⟨FarBelow.asymm d hfb, not_not_intro hfb⟩
+  · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
+    exact ⟨x, h1, h2, h3, fun b hb1 hb2 hb3 =>
+      not_not.mp (hdom b ⟨hb1, hb2, hb3⟩).2⟩
+
+/-- **Grounding**: *mostly* is the strict l-lifting comparing φ-uniform
+*levels* (`ord.equiv`-classes, mathlib's `AntisymmRel.setoid`): some
+reasonably-high all-φ level strictly below the index dominates every
+all-¬φ level below it. -/
+theorem evalMostly_iff_strict_dominationLift (φ : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (d : DistanceFunction I ord) (i : I) (w : W) :
+    EvalMostly interpFn φ ord d i w ↔
+    ComparativeProbability.Strict
+      (ComparativeProbability.dominationLift (fun a b => ord.le b a))
+      {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interpFn φ ord j w}
+      {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interpFn φ ord j w} := by
+  rw [ComparativeProbability.strict_dominationLift_iff
+    (fun a b => ord.le_total b a)]
+  constructor
+  · rintro ⟨x, h1, h2, h3, hdom⟩
+    exact ⟨x, ⟨h1, h2, h3⟩, fun b ⟨hb1, hb2⟩ => hdom b hb1 hb2⟩
+  · rintro ⟨x, ⟨h1, h2, h3⟩, hdom⟩
+    exact ⟨x, h1, h2, h3, fun b hb1 hb2 => hdom b ⟨hb1, hb2⟩⟩
+
+end ModifierGroundings
 
 /-! ### No Reversal and the delineation bridge ([klein-1980], §7) -/
 
@@ -471,6 +560,25 @@ def EvalMCond (A B : MFormula Pred Entity) (ord : SemanticOrdering I)
 instance (A B : MFormula Pred Entity) (ord : SemanticOrdering I) (i : I) (w : W) :
     Decidable (EvalMCond interpFn A B ord i w) := by
   unfold EvalMCond; infer_instance
+
+omit [Fintype I] in
+/-- **Grounding in the common-ground substrate**: for an MC-free consequent —
+strictly weaker than the paper's reduction, which also assumes the antecedent
+MC-free — the metalinguistic conditional is Stalnakerian entailment
+(`ContextSet.entails`) of the consequent by the ranked antecedent-cone. The
+antecedent may contain ≻ freely: it is always evaluated at the full ordering,
+and an MC-free consequent never consults the restricted one. -/
+theorem evalMCond_iff_entails (A B : MFormula Pred Entity) (hB : B.MCFree)
+    (ord : SemanticOrdering I) (i : I) (w : W) :
+    EvalMCond interpFn A B ord i w ↔
+    CommonGround.ContextSet.entails
+      {x | ord.le x i ∧ EvalGen interpFn A ord.le x w}
+      {x | EvalGen interpFn B ord.le x w} := by
+  constructor
+  · rintro h x ⟨hx1, hx2⟩
+    exact (evalGen_congr_of_mcFree interpFn B hB _ _ x w).mp (h x hx1 hx2)
+  · intro h x hx hAx
+    exact (evalGen_congr_of_mcFree interpFn B hB _ _ x w).mpr (h ⟨hx, hAx⟩)
 
 end MCond
 
