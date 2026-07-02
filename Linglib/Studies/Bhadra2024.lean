@@ -55,7 +55,7 @@ open Semantics.Lexical
 open Semantics.Lexical.EventStructure
 open ArgumentStructure (EventRel)
 open ArgumentStructure.EntailmentProfile
-open ArgumentStructure.Affectedness.Profile
+open ArgumentStructure.Affectedness
 
 /-! ### The compositional verb root (eqs. 53–60)
 

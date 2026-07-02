@@ -60,7 +60,7 @@ open Semantics.Presupposition
 open French.Predicates
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
-open ArgumentStructure.Affectedness.Profile
+open ArgumentStructure.Affectedness
 open Features
 open Semantics.Lexical
 open Minimalist

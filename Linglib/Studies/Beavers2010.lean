@@ -37,7 +37,7 @@ namespace Beavers2010
 
 open ArgumentStructure.EntailmentProfile
 open ArgumentStructure.AgentivityLattice
-open ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
+open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)
 
 -- ════════════════════════════════════════════════════

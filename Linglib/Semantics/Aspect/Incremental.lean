@@ -276,7 +276,6 @@ def IsSincVerb.mk' {θ : α → β → Prop}
     final degree is verb-specific lexical content that cannot be
     derived from SINC alone. -/
 
-open _root_.ArgumentStructure.Affectedness.Hierarchy
 open _root_.ArgumentStructure.Affectedness
 
 /-- Bridge: a K98 SINC verb θ with an explicit final-degree witness
@@ -296,8 +295,7 @@ def IsQuantizedAffected.ofIsSincVerb {α β δ : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
     [HasScalarResult α δ β] [HasLatentScale α β]
     (θ : α → β → Prop) [_h : IsSincVerb θ]
-    (forget : ∀ (x : α) (e : β), (∃ g : δ, HasScalarResult.resultAt x g e) →
-              HasLatentScale.latentScale x e)
+    (forget : ScalarToLatent α δ β)
     (g_φ : δ) (h_quantized : Quantized θ g_φ) :
     IsQuantizedAffected (δ := δ) θ :=
   IsQuantizedAffected.mk' forget g_φ h_quantized
