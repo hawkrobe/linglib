@@ -12,9 +12,10 @@ import Mathlib.RingTheory.Bialgebra.Basic
 import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 set_option autoImplicit false
--- The structure-wrapped `ConnesKreimer` needs one extra pending step when
--- synthesizing instances on nested tensor squares `CK ⊗ (CK ⊗ CK)` (the
--- def-synonym's fall-through to `AddMonoidAlgebra` instances is gone).
+-- Nested tensor squares `CK ⊗ (CK ⊗ CK)` need one extra pending step during
+-- instance synthesis: the chain `Semiring (CK ⊗ (CK ⊗ CK)) → Algebra R (CK ⊗ CK)
+-- → Semiring (CK ⊗ CK) → …` nests pending subgoals past the default limit
+-- (verified still required with the full granular instance set on the wrapper).
 set_option maxSynthPendingDepth 2
 
 /-!

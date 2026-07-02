@@ -167,8 +167,42 @@ noncomputable def toFinsuppAddHom :
   map_zero' := toFinsupp_zero
   map_add' := toFinsupp_add
 
-noncomputable instance instModule : Module R (ConnesKreimer R T) :=
-  fast_instance% toFinsupp_injective.module R toFinsuppAddHom toFinsupp_smul
+/-! Granular action instances (mirroring `Polynomial`): keeping these one
+synthesis step away from the underlying carrier lets nested-tensor goals
+(`CK ⊗ (CK ⊗ CK)`) resolve without deep pending chains. -/
+
+noncomputable instance distribSMul {S : Type*}
+    [DistribSMul S (AddMonoidAlgebra R (Forest T))] :
+    DistribSMul S (ConnesKreimer R T) where
+  smul_add s p q := ext (smul_add s p.toFinsupp q.toFinsupp)
+
+noncomputable instance distribMulAction {S : Type*} [Monoid S]
+    [DistribMulAction S (AddMonoidAlgebra R (Forest T))] :
+    DistribMulAction S (ConnesKreimer R T) where
+  one_smul p := ext (one_smul S p.toFinsupp)
+  mul_smul s t p := ext (mul_smul s t p.toFinsupp)
+  smul_zero s := ext (smul_zero s)
+  smul_add s p q := ext (smul_add s p.toFinsupp q.toFinsupp)
+
+noncomputable instance instModule {S : Type*} [Semiring S]
+    [Module S (AddMonoidAlgebra R (Forest T))] :
+    Module S (ConnesKreimer R T) where
+  add_smul s t p := ext (add_smul s t p.toFinsupp)
+  zero_smul p := ext (zero_smul S p.toFinsupp)
+
+instance smulCommClass {S₁ S₂ : Type*}
+    [SMulZeroClass S₁ (AddMonoidAlgebra R (Forest T))]
+    [SMulZeroClass S₂ (AddMonoidAlgebra R (Forest T))]
+    [SMulCommClass S₁ S₂ (AddMonoidAlgebra R (Forest T))] :
+    SMulCommClass S₁ S₂ (ConnesKreimer R T) :=
+  ⟨fun s t p => ext (smul_comm s t p.toFinsupp)⟩
+
+instance isScalarTower {S₁ S₂ : Type*} [SMul S₁ S₂]
+    [SMulZeroClass S₁ (AddMonoidAlgebra R (Forest T))]
+    [SMulZeroClass S₂ (AddMonoidAlgebra R (Forest T))]
+    [IsScalarTower S₁ S₂ (AddMonoidAlgebra R (Forest T))] :
+    IsScalarTower S₁ S₂ (ConnesKreimer R T) :=
+  ⟨fun s t p => ext (smul_assoc s t p.toFinsupp)⟩
 
 noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) where
   algebraMap :=
@@ -189,9 +223,6 @@ noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) where
 noncomputable instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R where
   coe p := (p.toFinsupp : Forest T →₀ R)
   coe_injective := fun _ _ h => ext (DFunLike.coe_injective (F := Forest T →₀ R) h)
-
-@[simp] theorem coe_apply (p : ConnesKreimer R T) (F : Forest T) :
-    p F = p.toFinsupp F := rfl
 
 /-! ### Global ring instance (the diamond killer)
 
@@ -298,6 +329,55 @@ theorem toFinsupp_of' (F : Forest T) :
 
 @[simp] theorem of'_singleton (t : T) :
     (of' (R := R) ({t} : Forest T) : ConnesKreimer R T) = ofTree t := rfl
+
+/-! ### Coefficients
+
+`coeff` is the simp-normal spelling of coefficient extraction
+(`Polynomial.coeff` analogue); the `FunLike` application `p F` reduces to it. -/
+
+/-- The coefficient of the forest `F`. -/
+noncomputable def coeff (p : ConnesKreimer R T) (F : Forest T) : R := p.toFinsupp F
+
+@[simp] theorem coe_apply (p : ConnesKreimer R T) (F : Forest T) :
+    p F = p.coeff F := rfl
+
+theorem coeff_def (p : ConnesKreimer R T) (F : Forest T) :
+    p.coeff F = p.toFinsupp F := rfl
+
+@[simp] theorem coeff_zero (F : Forest T) : (0 : ConnesKreimer R T).coeff F = 0 := rfl
+
+@[simp] theorem coeff_add (p q : ConnesKreimer R T) (F : Forest T) :
+    (p + q).coeff F = p.coeff F + q.coeff F :=
+  Finsupp.add_apply p.toFinsupp q.toFinsupp F
+
+@[simp] theorem coeff_smul {S : Type*} [SMulZeroClass S R] (s : S)
+    (p : ConnesKreimer R T) (F : Forest T) :
+    (s • p).coeff F = s • p.coeff F :=
+  Finsupp.smul_apply s p.toFinsupp F
+
+theorem coeff_single (F G : Forest T) (r : R) [Decidable (F = G)] :
+    (single F r).coeff G = if F = G then r else 0 := by
+  rw [coeff_def, toFinsupp_single, Finsupp.single_apply]
+
+@[simp] theorem coeff_single_same (F : Forest T) (r : R) :
+    (single F r).coeff F = r := Finsupp.single_eq_same
+
+theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
+    (of' (R := R) F).coeff G = if F = G then 1 else 0 := coeff_single F G 1
+
+/-- Elements agreeing coefficientwise are equal. -/
+theorem ext_coeff {p q : ConnesKreimer R T} (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
+  ext (Finsupp.ext h)
+
+/-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
+noncomputable def lcoeff (F : Forest T) : ConnesKreimer R T →ₗ[R] R where
+  toFun p := p.coeff F
+  map_add' p q := coeff_add p q F
+  map_smul' s p := coeff_smul s p F
+
+@[simp] theorem lcoeff_apply (F : Forest T) (p : ConnesKreimer R T) :
+    lcoeff F p = p.coeff F := rfl
+
 
 /-! ## §4: `lift`, `algHom_ext`, `addHom_ext` — the self-contained hom API
 

@@ -340,24 +340,19 @@ variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R] {α : Type*}
     Connes-Kreimer element. -/
 noncomputable def deltaSingleton (T : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
-  (Finsupp.lapply ({T} : Forest (Nonplanar α))).comp
-    (toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearEquiv.toLinearMap
+  lcoeff ({T} : Forest (Nonplanar α))
 
 set_option linter.unusedSectionVars false in
 @[simp] theorem deltaSingleton_of'_self (T : Nonplanar α) :
     deltaSingleton (R := R) T (of' ({T} : Forest (Nonplanar α))) = 1 := by
-  simp only [deltaSingleton, LinearMap.comp_apply, Finsupp.lapply_apply]
-  exact Finsupp.single_eq_same
+  rw [deltaSingleton, lcoeff_apply, of', coeff_single_same]
 
 set_option linter.unusedSectionVars false in
 theorem deltaSingleton_of'_other (T : Nonplanar α)
     (F : Forest (Nonplanar α)) (hF : F ≠ {T}) :
     deltaSingleton (R := R) T (of' F) = 0 := by
   classical
-  simp only [deltaSingleton, LinearMap.comp_apply, Finsupp.lapply_apply]
-  show (Finsupp.single F (1 : R) : Forest (Nonplanar α) →₀ R) {T} = 0
-  rw [Finsupp.single_apply]
-  exact if_neg hF
+  rw [deltaSingleton, lcoeff_apply, coeff_of', if_neg hF]
 
 /-- The delta functional on a single tree is a **dual primitive** —
     i.e., it satisfies `δ_T(x * y) = δ_T(x) · ε(y) + ε(x) · δ_T(y)`.

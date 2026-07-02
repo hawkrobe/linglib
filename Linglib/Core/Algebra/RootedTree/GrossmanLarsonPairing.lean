@@ -180,34 +180,22 @@ theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
 theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
     (G : Forest (Nonplanar α)) :
     pairing (R := R) x (ConnesKreimer.of' G) =
-      x.toFinsupp G * (forestAutCard G : R) := by
+      x.coeff G * (forestAutCard G : R) := by
   refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · rw [pairing_zero_left]
-    show (0 : R) = (0 : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
-    simp
+  · simp [pairing_zero_left]
   · intro x₁ x₂ ih₁ ih₂
-    rw [map_add, LinearMap.add_apply, ih₁, ih₂, ConnesKreimer.toFinsupp_add]
-    show _ = (x₁.toFinsupp + x₂.toFinsupp : Forest (Nonplanar α) →₀ R) G *
-      (forestAutCard G : R)
-    simp [add_mul]
+    rw [map_add, LinearMap.add_apply, ih₁, ih₂, ConnesKreimer.coeff_add, add_mul]
   · intro F r
     rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
           from ConnesKreimer.smul_single_one F r]
-    simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of']
+    simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of',
+      ConnesKreimer.coeff_smul]
     letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+    rw [ConnesKreimer.coeff_of']
     by_cases h : F = G
     · subst h
-      rw [if_pos rfl, smul_eq_mul]
-      show r * (forestAutCard F : R) =
-          (r • (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R)) F *
-            (forestAutCard F : R)
-      rw [Finsupp.smul_apply, Finsupp.single_eq_same]
-      ring
-    · rw [if_neg h, smul_zero]
-      show (0 : R) =
-          (r • (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R)) G *
-            (forestAutCard G : R)
-      rw [Finsupp.smul_apply, Finsupp.single_apply, if_neg h, smul_zero, zero_mul]
+      simp [smul_eq_mul]
+    · simp [if_neg h]
 
 /-- **Non-degeneracy** of the pairing over `CharZero R` with no zero
     divisors. If `pairing x y = 0` for all `y`, then `x = 0`. Uses
@@ -220,9 +208,8 @@ theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
 theorem pairing_nondegenerate
     [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (Nonplanar α))
     (h : ∀ y, pairing (R := R) x y = 0) : x = 0 := by
-  refine ConnesKreimer.ext ?_
-  rw [ConnesKreimer.toFinsupp_zero]
-  refine Finsupp.ext fun G => ?_
+  refine ConnesKreimer.ext_coeff fun G => ?_
+  rw [ConnesKreimer.coeff_zero]
   have hG : pairing (R := R) x (ConnesKreimer.of' G) = 0 := h _
   rw [pairing_apply_of'] at hG
   have hauts_ne : (Nonplanar.forestAutCard G : R) ≠ 0 :=
