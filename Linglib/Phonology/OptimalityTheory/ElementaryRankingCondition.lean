@@ -104,22 +104,9 @@ winner-preferring. -/
 theorem satisfiedBy_iff_lead :
     α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W := by
   unfold SatisfiedBy
-  rw [lex_le_iff_forall]
-  constructor
-  · intro h he
-    by_contra hW
-    have hL : α (r (Fin.find _ he)) = .L := by
-      have := Fin.find_spec he
-      rcases hx : α (r (Fin.find _ he)) <;> simp_all
-    obtain ⟨p', hlt, hpos⟩ := h (Fin.find _ he) (by rw [hL]; decide)
-    exact Fin.find_min he hlt fun hE => absurd (hE ▸ hpos) (by decide)
-  · intro hlead p hp
-    have hpL : α (r p) = .L := by simpa using hp
-    have he : ∃ q, α (r q) ≠ .e := ⟨p, by rw [hpL]; decide⟩
-    refine ⟨Fin.find _ he, ?_, by rw [hlead he]; decide⟩
-    rcases (Fin.find_le_of_pos he (by rw [hpL]; decide)).lt_or_eq with h | h
-    · exact h
-    · exact absurd (hlead he) (by rw [h, hpL]; decide)
+  rw [lex_le_iff_lead]
+  exact ⟨fun h he => (ERCVal.zero_lt_iff _).mp (h he),
+    fun h he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
 /-- The leading constraint dominates every loser-preferring one. -/
 private theorem lead_dominates {c : Fin n} (he : ∃ p, α (r p) ≠ .e)
