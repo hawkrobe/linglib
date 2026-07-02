@@ -75,16 +75,14 @@ noncomputable def forestProjAddHom :
     ConnesKreimer R (Nonplanar α)` induced by `Nonplanar.mk`. -/
 noncomputable def planarToNonplanarAlg :
     ConnesKreimer R (RoseTree α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.mapDomainAlgHom R R (forestProjAddHom (α := α))
+  ConnesKreimer.mapDomainAlgHom (forestProjAddHom (α := α))
 
 /-! ## API lemmas — action on `of'` and `ofTree` -/
 
 @[simp] theorem planarToNonplanarAlg_of' (F : Forest (RoseTree α)) :
     planarToNonplanarAlg (R := R) (of' F) =
       of' (R := R) (F.map Nonplanar.mk) := by
-  show Finsupp.mapDomain (forestProjAddHom (α := α)) (Finsupp.single F 1) =
-       Finsupp.single (F.map Nonplanar.mk) 1
-  rw [Finsupp.mapDomain_single]
+  rw [planarToNonplanarAlg, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
 @[simp] theorem planarToNonplanarAlg_ofTree (t : RoseTree α) :
@@ -578,14 +576,11 @@ noncomputable def comulMonoidHomN :
 noncomputable def comulAlgHomN :
     ConnesKreimer R (Nonplanar α) →ₐ[R]
       ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Nonplanar α)) ⊗[R] (ConnesKreimer R (Nonplanar α)))
-    (Forest (Nonplanar α)) comulMonoidHomN
+  ConnesKreimer.lift comulMonoidHomN
 
 @[simp] theorem comulAlgHomN_apply_of' (F : Forest (Nonplanar α)) :
     comulAlgHomN (R := R) (α := α) (of' F) = comulForestN F := by
-  show AddMonoidAlgebra.lift R _ _ comulMonoidHomN (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [comulAlgHomN, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulAlgHomN_apply_ofTree (T : Nonplanar α) :
@@ -629,13 +624,11 @@ noncomputable def bPlus (a : α) (F : Forest (Nonplanar α)) :
     sending the basis element `of' F` to `ofTree (Nonplanar.node a F)`. -/
 noncomputable def bPlusLin (a : α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  Finsupp.lift _ R (Forest (Nonplanar α))
-    (fun F => ofTree (Nonplanar.node a F))
+  ConnesKreimer.linearLift (fun F => ofTree (Nonplanar.node a F))
 
 @[simp] theorem bPlusLin_of' (a : α) (F : Forest (Nonplanar α)) :
     bPlusLin (R := R) a (of' F) = ofTree (Nonplanar.node a F) := by
-  show Finsupp.lift _ R _ _ (Finsupp.single F 1) = _
-  rw [Finsupp.lift_apply, Finsupp.sum_single_index] <;> simp
+  rw [bPlusLin, ConnesKreimer.linearLift_of']
 
 @[simp] theorem bPlusLin_one (a : α) :
     bPlusLin (R := R) a (1 : ConnesKreimer R (Nonplanar α)) =
@@ -931,7 +924,7 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (Nonplanar α)) :
 /-! ## Phase A.7-δ — Counit laws + coassoc via GL/CK duality + `Bialgebra`
 
 Counit laws follow by reducing to the tree case via
-`AddMonoidAlgebra.algHom_ext` + multiplicativity (the empty-cut summand
+`ConnesKreimer.algHom_ext` + multiplicativity (the empty-cut summand
 contributes `1 ⊗ of' F`; all others are killed by `counit`).
 
 Coassociativity uses GL/CK duality: `comulRhoN_coassoc` (LinearMap form)
@@ -1152,21 +1145,20 @@ private theorem comulTreeN_counit_rTensor (T : Nonplanar α) :
 /-- `counit ∘ B+_a = 0` as a linear map. The image of `B+_a` lies in the
     span of `ofTree`s on non-leaf trees, all of which have card-1 forests
     so counit kills them. Proven by reducing the linear-map equality to
-    basis vectors via `Finsupp.lhom_ext`, then computing on `of' F`. -/
+    basis vectors via `ConnesKreimer.lhom_ext`, then computing on `of' F`. -/
 private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (Nonplanar α)) :
     counit (R := R) (bPlusLin (R := R) a y) = 0 := by
   -- Both maps are R-linear; reduce to checking equality of the composite with 0
   -- as a LinearMap, then evaluate at y.
   have h : ((counit (R := R)).toLinearMap.comp (bPlusLin (R := R) a) :
            ConnesKreimer R (Nonplanar α) →ₗ[R] R) = 0 := by
-    apply Finsupp.lhom_ext
+    apply ConnesKreimer.lhom_ext
     intro F r
-    show counit (bPlusLin a (Finsupp.single F r)) = (0 : R)
+    show counit (bPlusLin a (ConnesKreimer.single F r)) = (0 : R)
     -- Convert `single F r` to `r • of' F`, then push through linearity.
-    have hr : (Finsupp.single F r : ConnesKreimer R (Nonplanar α))
-              = (r : R) • (of' F : ConnesKreimer R (Nonplanar α)) := by
-      show Finsupp.single F r = r • Finsupp.single F (1 : R)
-      rw [Finsupp.smul_single, smul_eq_mul, mul_one]
+    have hr : (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α))
+              = (r : R) • (of' F : ConnesKreimer R (Nonplanar α)) :=
+      ConnesKreimer.smul_single_one F r
     rw [hr]
     -- Force re-elaboration through Module-flavored smul.
     change counit (R := R) (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (Nonplanar α)))) =
@@ -1227,7 +1219,7 @@ private theorem comulTreeN_counit_lTensor (T : Nonplanar α) :
 
 /-! ### Counit laws (algebra-hom level)
 
-Strategy: reduce to `of' F` via `AddMonoidAlgebra.algHom_ext`. For each `F`, expand
+Strategy: reduce to `of' F` via `ConnesKreimer.algHom_ext`. For each `F`, expand
 `comulAlgHomN (of' F) = comulForestN F` via `comulForestN_eq_sum`, then identify
 the unique cut summand `(0, F) ∈ cutForestSummandsN F` (the "all empty cuts"
 tuple). Other summands have `pf.1.card > 0`, so `counit (of' pf.1) = 0` and
@@ -1243,7 +1235,7 @@ Helper lemmas needed (substantive):
 theorem counit_rTensor_comulAlgHomN :
     (Algebra.TensorProduct.map (counit (R := R)) (AlgHom.id R _)).comp comulAlgHomN =
       (Algebra.TensorProduct.lid R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   show (Algebra.TensorProduct.map (counit (R := R))
           (AlgHom.id R (ConnesKreimer R (Nonplanar α)))) (comulAlgHomN (of' F)) =
@@ -1254,7 +1246,7 @@ theorem counit_rTensor_comulAlgHomN :
 theorem counit_lTensor_comulAlgHomN :
     (Algebra.TensorProduct.map (AlgHom.id R _) (counit (R := R))).comp comulAlgHomN =
       (Algebra.TensorProduct.rid R R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   show (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
           (counit (R := R))) (comulAlgHomN (of' F)) =

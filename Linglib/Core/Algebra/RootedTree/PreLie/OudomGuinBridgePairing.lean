@@ -265,7 +265,7 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
         (GrossmanLarson.unop
           ((GrossmanLarson.op x : GrossmanLarson R α) * GrossmanLarson.op y)) =
       (counit x) * (counit y) := by
-  refine Finsupp.induction_linear x ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · -- x = 0
     change (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (GrossmanLarson.unop
@@ -310,9 +310,9 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
     ring
   · -- x = single F r
     intro F r
-    refine Finsupp.induction_linear y ?_ ?_ ?_
+    refine ConnesKreimer.induction_linear y ?_ ?_ ?_
     · -- y = 0
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       change (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop
             ((GrossmanLarson.op x_single : GrossmanLarson R α) *
@@ -325,7 +325,7 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
           map_zero, mul_zero]
     · -- y = y₁ + y₂
       intro y₁ y₂ ih₁ ih₂
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       let y₁' : ConnesKreimer R (Nonplanar α) := y₁
       let y₂' : ConnesKreimer R (Nonplanar α) := y₂
       show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
@@ -360,8 +360,8 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
       ring
     · -- y = single G s: factor r, s, apply counit_gl_mul_basis F G
       intro G s
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-      let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
+      let y_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single G s
       show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop
             ((GrossmanLarson.op x_single : GrossmanLarson R α) *
@@ -369,13 +369,13 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
         (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single *
           (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) y_single
       have hx : x_single = r • (ConnesKreimer.of' (R := R) F) := by
-        show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-            r • (Finsupp.single F (1 : R) : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one F r).symm
+        show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
+            r • (ConnesKreimer.single F (1 : R) : ConnesKreimer R (Nonplanar α))
+        exact ConnesKreimer.smul_single_one F r
       have hy : y_single = s • (ConnesKreimer.of' (R := R) G) := by
-        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
-            s • (Finsupp.single G (1 : R) : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one G s).symm
+        show (ConnesKreimer.single G s : ConnesKreimer R (Nonplanar α)) =
+            s • (ConnesKreimer.single G (1 : R) : ConnesKreimer R (Nonplanar α))
+        exact ConnesKreimer.smul_single_one G s
       rw [hx, hy]
       -- Pull r, s through op and *.
       rw [show (GrossmanLarson.op (r • ConnesKreimer.of' (R := R) F) :
@@ -420,6 +420,7 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
 
 /-! ### Phase D's pairing-side recurrence -/
 
+omit [DecidableEq (Nonplanar α)] in
 /-- Phase D RHS recurrence: `⟨unop (op X * op Y), bPlusLin a z⟩` unfolds
     via B+/B- adjoint + Phase C `bMinusLin_gl_mul`.
 

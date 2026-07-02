@@ -135,12 +135,12 @@ noncomputable def bMinusBasis (a : α) (F : Forest (Nonplanar α)) :
 /-- The B-_a linear map: linear extension of `bMinusBasis` via `Finsupp.lift`. -/
 noncomputable def bMinusLin (a : α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  Finsupp.lift _ R (Forest (Nonplanar α)) (bMinusBasis (R := R) a)
+  ConnesKreimer.linearLift (bMinusBasis (R := R) a)
 
 @[simp] theorem bMinusLin_of' (a : α) (F : Forest (Nonplanar α)) :
     bMinusLin (R := R) a (of' F) = bMinusBasis (R := R) a F := by
-  show Finsupp.lift _ R _ _ (Finsupp.single F 1) = _
-  rw [Finsupp.lift_apply, Finsupp.sum_single_index] <;> simp
+  show ConnesKreimer.linearLift (bMinusBasis (R := R) a) (ConnesKreimer.of' F) = _
+  rw [ConnesKreimer.linearLift_of']
 
 /-! ### B+/B- pairing adjoint -/
 
@@ -251,7 +251,7 @@ theorem bMinusLin_pairing_adjoint (a : α)
     (x y : ConnesKreimer R (Nonplanar α)) :
     pairing (R := R) (bMinusLin (R := R) a x) y =
     pairing (R := R) x (bPlusLin (R := R) a y) := by
-  refine Finsupp.induction_linear x ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · -- x = 0
     show pairing (R := R) (bMinusLin (R := R) a
           (0 : ConnesKreimer R (Nonplanar α))) y =
@@ -271,9 +271,9 @@ theorem bMinusLin_pairing_adjoint (a : α)
     rfl
   · -- x = single F r
     intro F r
-    refine Finsupp.induction_linear y ?_ ?_ ?_
+    refine ConnesKreimer.induction_linear y ?_ ?_ ?_
     · -- y = 0
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       show pairing (R := R) (bMinusLin (R := R) a x_single)
             (0 : ConnesKreimer R (Nonplanar α)) =
           pairing (R := R) x_single (bPlusLin (R := R) a
@@ -285,7 +285,7 @@ theorem bMinusLin_pairing_adjoint (a : α)
       rw [pairing_zero_right]
     · -- y = y₁ + y₂
       intro y₁ y₂ ih₁ ih₂
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       let y₁' : ConnesKreimer R (Nonplanar α) := y₁
       let y₂' : ConnesKreimer R (Nonplanar α) := y₂
       show pairing (R := R) (bMinusLin (R := R) a x_single) (y₁' + y₂') =
@@ -293,18 +293,18 @@ theorem bMinusLin_pairing_adjoint (a : α)
       rw [LinearMap.map_add, LinearMap.map_add, LinearMap.map_add, ih₁, ih₂]
     · -- y = single G s
       intro G s
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-      let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
+      let y_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single G s
       show pairing (R := R) (bMinusLin (R := R) a x_single) y_single =
           pairing (R := R) x_single (bPlusLin (R := R) a y_single)
       have hx : x_single = r • (of' (R := R) F) := by
-        show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-              r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one F r).symm
+        show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
+              r • (ConnesKreimer.single F 1 : ConnesKreimer R (Nonplanar α))
+        exact ConnesKreimer.smul_single_one F r
       have hy : y_single = s • (of' (R := R) G) := by
-        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
-              s • (Finsupp.single G 1 : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one G s).symm
+        show (ConnesKreimer.single G s : ConnesKreimer R (Nonplanar α)) =
+              s • (ConnesKreimer.single G 1 : ConnesKreimer R (Nonplanar α))
+        exact ConnesKreimer.smul_single_one G s
       rw [hx, hy]
       -- Goal: pairing (bMinusLin a (r • of' F)) (s • of' G) =
       --       pairing (r • of' F) (bPlusLin a (s • of' G))
@@ -838,7 +838,7 @@ private theorem bMinusBasis_singleton_node_add (a : α)
     extends linearly to all `Y`), and `0` otherwise (the product has each
     basis summand of cardinality `≥ 2`, so `bMinusLin` kills it).
 
-    Reduces by `Finsupp.induction_linear` on `Y` to the basis case via
+    Reduces by `ConnesKreimer.induction_linear` on `Y` to the basis case via
     `bMinusBasis_singleton_node_add`. -/
 private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     (Y : ConnesKreimer R (Nonplanar α)) (G : Forest (Nonplanar α)) :
@@ -848,7 +848,7 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
       (letI : Decidable (G = 0) := Classical.dec _
        if G = 0 then Y else 0) := by
   letI : Decidable (G = 0) := Classical.dec _
-  refine Finsupp.induction_linear Y ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear Y ?_ ?_ ?_
   · -- Y = 0
     show bMinusLin (R := R) a
         (ConnesKreimer.bPlusLin (R := R) a (0 : ConnesKreimer R (Nonplanar α)) *
@@ -869,14 +869,14 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
   · -- Y = single F r = r • of' F
     intro F r
     -- Compute bPlusLin a (single F r) = r • of' {node a F}.
-    have h_bPlus : ConnesKreimer.bPlusLin (R := R) a (Finsupp.single F r) =
+    have h_bPlus : ConnesKreimer.bPlusLin (R := R) a (ConnesKreimer.single F r) =
         r • ConnesKreimer.of' (R := R) ({Nonplanar.node a F} : Forest _) := by
-      show Finsupp.lift _ R _ _ (Finsupp.single F r) = _
-      rw [Finsupp.lift_apply, Finsupp.sum_single_index]
-      · rfl
-      · simp
+      show ConnesKreimer.linearLift (fun F => ConnesKreimer.ofTree (Nonplanar.node a F))
+            (ConnesKreimer.single F r) = _
+      rw [ConnesKreimer.linearLift_single]
+      rfl
     show bMinusLin (R := R) a
-        (ConnesKreimer.bPlusLin (R := R) a (Finsupp.single F r) *
+        (ConnesKreimer.bPlusLin (R := R) a (ConnesKreimer.single F r) *
           ConnesKreimer.of' (R := R) G) = _
     rw [h_bPlus, smul_mul_assoc, ← of'_add, (bMinusLin (R := R) a).map_smul]
     -- Now: r • bMinusLin a (of' ({node a F} + G)) = if G = 0 then single F r else 0
@@ -890,11 +890,8 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     · -- G = 0: r • of' F = single F r
       subst hG
       show r • ConnesKreimer.of' (R := R) F =
-        (Finsupp.single F r : ConnesKreimer R (Nonplanar α))
-      show r • Finsupp.single F (1 : R) =
-        (Finsupp.single F r : ConnesKreimer R (Nonplanar α))
-      rw [Finsupp.smul_single]
-      simp
+        (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α))
+      exact (ConnesKreimer.smul_single_one F r).symm
     · rw [smul_zero]
 
 /-- Combinatorial helper: summing a `B - B₁ = 0` indicator over `B.powerset`
@@ -1315,7 +1312,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
     with respect to the GL product:
     `B-_a (x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`.
 
-    Reduces by `Finsupp.induction_linear` (twice) to the basis case
+    Reduces by `ConnesKreimer.induction_linear` (twice) to the basis case
     `bMinusLin_gl_mul_basis`. -/
 theorem bMinusLin_gl_mul (a : α)
     (x y : ConnesKreimer R (Nonplanar α)) :
@@ -1326,7 +1323,7 @@ theorem bMinusLin_gl_mul (a : α)
       GrossmanLarson.unop
         ((GrossmanLarson.op (bMinusLin (R := R) a x)) *
           GrossmanLarson.op y) := by
-  refine Finsupp.induction_linear x ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · -- x = 0
     change bMinusLin (R := R) a
         ((0 : GrossmanLarson R α) * GrossmanLarson.op y) =
@@ -1393,9 +1390,9 @@ theorem bMinusLin_gl_mul (a : α)
     abel
   · -- x = single F r
     intro F r
-    refine Finsupp.induction_linear y ?_ ?_ ?_
+    refine ConnesKreimer.induction_linear y ?_ ?_ ?_
     · -- y = 0
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       show bMinusLin (R := R) a
           ((GrossmanLarson.op x_single : GrossmanLarson R α) *
             GrossmanLarson.op (0 : ConnesKreimer R (Nonplanar α))) =
@@ -1422,7 +1419,7 @@ theorem bMinusLin_gl_mul (a : α)
       exact (bMinusLin (R := R) a).map_zero
     · -- y = y₁ + y₂
       intro y₁ y₂ ih₁ ih₂
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       let y₁' : ConnesKreimer R (Nonplanar α) := y₁
       let y₂' : ConnesKreimer R (Nonplanar α) := y₂
       show bMinusLin (R := R) a
@@ -1461,8 +1458,8 @@ theorem bMinusLin_gl_mul (a : α)
       abel
     · -- y = single G s: factor out r, s, then apply bMinusLin_gl_mul_basis F G.
       intro G s
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-      let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
+      let y_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single G s
       show bMinusLin (R := R) a
           ((GrossmanLarson.op x_single : GrossmanLarson R α) *
             GrossmanLarson.op y_single) =
@@ -1472,13 +1469,13 @@ theorem bMinusLin_gl_mul (a : α)
           ((GrossmanLarson.op (bMinusLin (R := R) a x_single)) *
             GrossmanLarson.op y_single)
       have hx : x_single = r • (ConnesKreimer.of' (R := R) F) := by
-        show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-            r • (Finsupp.single F (1 : R) : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one F r).symm
+        show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
+            r • (ConnesKreimer.single F (1 : R) : ConnesKreimer R (Nonplanar α))
+        exact ConnesKreimer.smul_single_one F r
       have hy : y_single = s • (ConnesKreimer.of' (R := R) G) := by
-        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
-            s • (Finsupp.single G (1 : R) : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one G s).symm
+        show (ConnesKreimer.single G s : ConnesKreimer R (Nonplanar α)) =
+            s • (ConnesKreimer.single G (1 : R) : ConnesKreimer R (Nonplanar α))
+        exact ConnesKreimer.smul_single_one G s
       rw [hx, hy]
       -- Pull r, s through op (op is linear, rfl since op = id).
       rw [show (GrossmanLarson.op (r • ConnesKreimer.of' (R := R) F) :

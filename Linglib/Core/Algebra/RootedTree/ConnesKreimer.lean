@@ -1,4 +1,5 @@
 import Mathlib.Algebra.MonoidAlgebra.Basic
+import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Multiset.Basic
 
@@ -28,6 +29,32 @@ forests are multisets, multiset addition is commutative (Hopf
 algebra is commutative). The coproduct depends on the cut substrate
 of T; see sibling files for specific instantiations.
 
+## The one-field structure (`Polynomial` playbook)
+
+`ConnesKreimer R T` wraps `AddMonoidAlgebra R (Forest T)` as a one-field
+structure rather than a `def`-synonym, for the same reason mathlib's
+`Polynomial R` wraps `AddMonoidAlgebra R ℕ`:
+
+- the admissible-cut `Bialgebra` cannot live on the bare carrier —
+  mathlib's group-like `AddMonoidAlgebra.instBialgebra` already occupies it;
+- a `def`-synonym's forwarded instances leave the parent type's instance
+  paths reachable, which produced a genuine `SMul ℤ` diamond (two routes:
+  `Algebra ℤ → Module ℤ → SMul ℤ` vs `AddCommGroup → SubNegMonoid → zsmul`),
+  previously worked around by a `noncomputable def addCommGroupOf` registered
+  via `attribute [local instance]` at three consumer sites.
+
+With the structure, all operations are defined on the `toFinsupp` field and
+the instance stack is built by injective transport from a **single** bottom
+instance (`instCommSemiring`; a separate `AddCommMonoid` bottom would itself
+be a parallel path). The `CommRing`/`AddCommGroup` instance is now a safe
+**global** instance — its `zsmul` is the pulled-back structural operation and
+no alternative path exists, so the diamond is gone by construction.
+
+Consumers should speak the self-contained API — `of'`, `ofTree`, `single`,
+`lift`, `algHom_ext`, `addHom_ext`, `counit` — and never name
+`AddMonoidAlgebra`/`Finsupp` on `ConnesKreimer` values; `toFinsuppAlgEquiv`
+is the sanctioned escape hatch.
+
 ## Layer status
 
 `[UPSTREAM]` candidate. No sorries.
@@ -50,13 +77,7 @@ T parameterized.
 Type: `RootedTree.ConnesKreimer R T` with eponymous namespace
 `RootedTree.ConnesKreimer`. Eponymous-type-and-namespace pattern matches
 mathlib idiom (`Polynomial`, `WittVector`, `PowerSeries`, etc.) — no
-abbreviation. The legacy `open ConnesKreimer` statements in soon-to-be-
-rebuilt consumer files (Adger2025, Merge/*, etc.) referred to the now-
-deleted top-level `ConnesKreimer.{TraceTree, Hc, ...}` and won't compile
-against the new substrate anyway, so the silent re-binding hazard is
-moot — those files need full Phase D rewrites.
-
-The eventual upstream-mathlib home would be
+abbreviation. The eventual upstream-mathlib home would be
 `Mathlib.RingTheory.HopfAlgebra.RootedTree.ConnesKreimer` or similar.
 -/
 
@@ -72,105 +93,188 @@ abbrev Forest (T : Type*) : Type _ := Multiset T
 
 /-! ## §2: The Connes-Kreimer Hopf algebra carrier -/
 
-/-- The **Connes-Kreimer Hopf algebra** on tree type T:
-    `AddMonoidAlgebra R (Forest T)`. As an algebra: product = forest
+/-- The **Connes-Kreimer Hopf algebra** on tree type T: a one-field wrapper
+    around `AddMonoidAlgebra R (Forest T)`. As an algebra: product = forest
     disjoint union (commutative), unit = empty forest. The Bialgebra
     structure (coproduct + coassoc + counit laws) is in sibling files. -/
-def ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) : Type _ :=
-  AddMonoidAlgebra R (Forest T)
+structure ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) where
+  /-- Wrap an `AddMonoidAlgebra` as a Connes-Kreimer element. -/
+  ofFinsupp ::
+  /-- The underlying forest-indexed `Finsupp`. -/
+  toFinsupp : AddMonoidAlgebra R (Forest T)
 
 namespace ConnesKreimer
 
-/-! ## §3: Forwarded mathlib instances
-
-`ConnesKreimer R T` is a `def`, not `abbrev`, isolating its eventual
-Bialgebra structure from mathlib's default `AddMonoidAlgebra.instBialgebra`
-(group-like coproduct). Forward `CommSemiring`, `Algebra`, and `FunLike`
-explicitly. -/
-
 variable {R : Type*} [CommSemiring R] {T : Type*}
 
+theorem toFinsupp_injective :
+    Function.Injective (toFinsupp : ConnesKreimer R T → AddMonoidAlgebra R (Forest T)) :=
+  fun ⟨_⟩ ⟨_⟩ h => congrArg ofFinsupp h
+
+@[simp] theorem toFinsupp_inj {p q : ConnesKreimer R T} :
+    p.toFinsupp = q.toFinsupp ↔ p = q := toFinsupp_injective.eq_iff
+
+@[ext] theorem ext {p q : ConnesKreimer R T} (h : p.toFinsupp = q.toFinsupp) : p = q :=
+  toFinsupp_injective h
+
+@[simp] theorem ofFinsupp_toFinsupp (p : ConnesKreimer R T) : ⟨p.toFinsupp⟩ = p := rfl
+
+/-! ### Structural operations
+
+Each operation is defined on the `toFinsupp` field; the `toFinsupp_*`
+pushforward lemmas are all `rfl` and form the simp normal form. -/
+
+noncomputable instance : Zero (ConnesKreimer R T) := ⟨⟨0⟩⟩
+noncomputable instance : One (ConnesKreimer R T) := ⟨⟨1⟩⟩
+noncomputable instance : Add (ConnesKreimer R T) :=
+  ⟨fun p q => ⟨p.toFinsupp + q.toFinsupp⟩⟩
+noncomputable instance : Mul (ConnesKreimer R T) :=
+  ⟨fun p q => ⟨p.toFinsupp * q.toFinsupp⟩⟩
+noncomputable instance smulZeroClass {S : Type*}
+    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] :
+    SMulZeroClass S (ConnesKreimer R T) where
+  smul s p := ⟨s • p.toFinsupp⟩
+  smul_zero s := ext (smul_zero s)
+noncomputable instance : NatCast (ConnesKreimer R T) :=
+  ⟨fun n => ⟨(n : AddMonoidAlgebra R (Forest T))⟩⟩
+noncomputable instance : Pow (ConnesKreimer R T) ℕ := ⟨fun p n => ⟨p.toFinsupp ^ n⟩⟩
+
+@[simp] theorem toFinsupp_zero : (0 : ConnesKreimer R T).toFinsupp = 0 := rfl
+@[simp] theorem toFinsupp_one : (1 : ConnesKreimer R T).toFinsupp = 1 := rfl
+@[simp] theorem toFinsupp_add (p q : ConnesKreimer R T) :
+    (p + q).toFinsupp = p.toFinsupp + q.toFinsupp := rfl
+@[simp] theorem toFinsupp_mul (p q : ConnesKreimer R T) :
+    (p * q).toFinsupp = p.toFinsupp * q.toFinsupp := rfl
+@[simp] theorem toFinsupp_smul {S : Type*}
+    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] (s : S) (p : ConnesKreimer R T) :
+    (s • p).toFinsupp = s • p.toFinsupp := rfl
+@[simp] theorem toFinsupp_pow (p : ConnesKreimer R T) (n : ℕ) :
+    (p ^ n).toFinsupp = p.toFinsupp ^ n := rfl
+
+/-! ### The instance stack
+
+Built by injective transport from the single bottom `instCommSemiring`. -/
+
 noncomputable instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
-  inferInstanceAs (CommSemiring (AddMonoidAlgebra R (Forest T)))
+  fast_instance% toFinsupp_injective.commSemiring _ toFinsupp_zero toFinsupp_one
+    toFinsupp_add toFinsupp_mul (fun n p => toFinsupp_smul n p) toFinsupp_pow
+    (fun _ => rfl)
 
-noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) :=
-  inferInstanceAs (Algebra R (AddMonoidAlgebra R (Forest T)))
+/-- `toFinsupp` bundled as an `AddMonoidHom` (transport vehicle). -/
+noncomputable def toFinsuppAddHom :
+    ConnesKreimer R T →+ AddMonoidAlgebra R (Forest T) where
+  toFun := toFinsupp
+  map_zero' := toFinsupp_zero
+  map_add' := toFinsupp_add
 
-instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R :=
-  inferInstanceAs (FunLike (Forest T →₀ R) (Forest T) R)
+noncomputable instance instModule : Module R (ConnesKreimer R T) :=
+  fast_instance% toFinsupp_injective.module R toFinsuppAddHom toFinsupp_smul
 
-/-! ### Field-coherent `AddCommGroup` for `[CommRing R]`
+noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) where
+  algebraMap :=
+    { toFun := fun r => ⟨algebraMap R (AddMonoidAlgebra R (Forest T)) r⟩
+      map_one' := ext (map_one _)
+      map_mul' := fun r s => ext (map_mul _ r s)
+      map_zero' := ext (map_zero _)
+      map_add' := fun r s => ext (map_add _ r s) }
+  commutes' r x := ext (Algebra.commutes r x.toFinsupp)
+  smul_def' r x := ext (Algebra.smul_def r x.toFinsupp)
 
-Constructed manually as `{ instAddCommMonoid with ... }` — fields typed
-`CK → CK → CK`, not `Finsupp → Finsupp → Finsupp`. This avoids the kernel
-mismatch that `inferInstanceAs (AddCommGroup (Forest T →₀ R))` triggers:
-that form's `_aux_1_*` fields carry Finsupp types and reject when used as
-`AddCommGroup CK`.
+@[simp] theorem toFinsupp_algebraMap (r : R) :
+    (algebraMap R (ConnesKreimer R T) r).toFinsupp
+      = algebraMap R (AddMonoidAlgebra R (Forest T)) r := rfl
 
-The `neg`/`sub`/`zsmul` fields delegate to the underlying Finsupp
-operations via the identity coercion (CK = AddMonoidAlgebra R (Forest T) =
-Forest T →₀ R as defs). They agree definitionally with the operations
-coming through `Algebra ℤ CK → Module ℤ CK → SMul ℤ CK`, so no SMul ℤ
-diamond arises at downstream call sites. -/
+/-- Coefficient lookup: a Connes-Kreimer element is a function from forests
+    to coefficients. -/
+noncomputable instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R where
+  coe p := (p.toFinsupp : Forest T →₀ R)
+  coe_injective := fun _ _ h => ext (DFunLike.coe_injective (F := Forest T →₀ R) h)
 
-/-! ### AddCommGroup helper (NOT a global instance — use `attribute [local instance]`)
+@[simp] theorem coe_apply (p : ConnesKreimer R T) (F : Forest T) :
+    p F = p.toFinsupp F := rfl
 
-**Diamond verdict (2026-05-19, task #12 deep-dive)**: registering `AddCommGroup CK`
-globally creates a `SMul ℤ CK` diamond. Two paths to `SMul ℤ CK`:
-- `Algebra ℤ CK → Module ℤ CK → SMul ℤ CK` (existing, via instAlgebra)
-- `AddCommGroup CK → SubNegMonoid → SubNegMonoid.toZSMul → SMul ℤ CK` (new)
+/-! ### Global ring instance (the diamond killer)
 
-Lean's typeclass elaboration picks one OR the other depending on context.
-At `op_smul := rfl` sites in `PreLie/OudomGuinBridge.lean`, the LHS (CK-side
-`r • x`) may pick SubNeg while the RHS (GL-side `r • op x` via GL's frozen
-`instModule = inferInstanceAs (Module R CK)`) is locked to Algebra-derived.
+`zsmul` is the pulled-back structural operation; no parent-type path to
+`SMul ℤ` exists, so the former `addCommGroupOf` local-instance hack is
+unnecessary — and deleted. -/
 
-**Structural fix would be**: refactor CK from `def` to `structure` (mathlib's
-pattern for `Polynomial`, `WittVector`). This isolates all instances — no
-parent-type alternative paths exist. Large refactor (hundreds of call sites).
+section Ring
+variable {R : Type*} [CommRing R] {T : Type*}
 
-**Tactical fix**: provide AddCommGroup as a `def` (not an instance), and use
-`attribute [local instance]` at the consumer site so other files don't pick
-it up. -/
+noncomputable instance instNeg : Neg (ConnesKreimer R T) := ⟨fun p => ⟨-p.toFinsupp⟩⟩
+noncomputable instance instSub : Sub (ConnesKreimer R T) :=
+  ⟨fun p q => ⟨p.toFinsupp - q.toFinsupp⟩⟩
+noncomputable instance instIntCast : IntCast (ConnesKreimer R T) :=
+  ⟨fun z => ⟨(z : AddMonoidAlgebra R (Forest T))⟩⟩
 
-/-- `AddCommGroup` on `ConnesKreimer R T` (not a global instance). Register
-    locally in consumer files via `attribute [local instance] addCommGroupOf`.
+@[simp] theorem toFinsupp_neg (p : ConnesKreimer R T) :
+    (-p).toFinsupp = -p.toFinsupp := rfl
+@[simp] theorem toFinsupp_sub (p q : ConnesKreimer R T) :
+    (p - q).toFinsupp = p.toFinsupp - q.toFinsupp := rfl
+noncomputable instance instCommRing : CommRing (ConnesKreimer R T) :=
+  fast_instance% toFinsupp_injective.commRing _ toFinsupp_zero toFinsupp_one
+    toFinsupp_add toFinsupp_mul toFinsupp_neg toFinsupp_sub
+    (fun n p => toFinsupp_smul n p) (fun z p => toFinsupp_smul z p)
+    toFinsupp_pow (fun _ => rfl) (fun _ => rfl)
 
-    Takes both `[CommSemiring R]` and `[CommRing R]` to avoid a typeclass-instance
-    diamond at consumer sites where the section variable has `[CommSemiring R]`
-    and the theorem adds `[CommRing R]` (Lean treats these as separate hypotheses
-    even though `CommRing` extends `CommSemiring`). -/
-@[reducible] noncomputable def addCommGroupOf {R : Type*}
-    [CommRing R] {T : Type*} :
-    AddCommGroup (ConnesKreimer R T) :=
-  inferInstanceAs (AddCommGroup (AddMonoidAlgebra R (Forest T)))
+end Ring
 
-/-! ## §4: Basis embeddings — `of'`, `ofTree`
+/-! ### The algebra equivalence to the bare carrier -/
 
-The natural inclusions of basis elements (forests, single trees) into
-the algebra. Mirrors mathlib's `MonoidAlgebra.of'` (bare function form)
-and `MonoidAlgebra.of` (`MonoidHom` form). -/
+/-- `toFinsupp` as an `R`-algebra equivalence — the sanctioned bridge between
+    the wrapper and the bare `AddMonoidAlgebra`. -/
+noncomputable def toFinsuppAlgEquiv :
+    ConnesKreimer R T ≃ₐ[R] AddMonoidAlgebra R (Forest T) where
+  toFun := toFinsupp
+  invFun := ofFinsupp
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_mul' := toFinsupp_mul
+  map_add' := toFinsupp_add
+  commutes' _ := rfl
 
-/-- **Bare embedding**: a forest as the basis vector `Finsupp.single F 1`. -/
-noncomputable def of' (F : Forest T) : ConnesKreimer R T :=
-  Finsupp.single F (1 : R)
+@[simp] theorem toFinsuppAlgEquiv_apply (p : ConnesKreimer R T) :
+    toFinsuppAlgEquiv p = p.toFinsupp := rfl
+
+@[simp] theorem toFinsuppAlgEquiv_symm_apply (x : AddMonoidAlgebra R (Forest T)) :
+    (toFinsuppAlgEquiv (R := R) (T := T)).symm x = ⟨x⟩ := rfl
+
+/-! ## §3: Basis embeddings — `single`, `of'`, `ofTree` -/
+
+/-- Basis vector: coefficient `r` on the forest `F`. -/
+noncomputable def single (F : Forest T) (r : R) : ConnesKreimer R T :=
+  ⟨Finsupp.single F r⟩
+
+@[simp] theorem toFinsupp_single (F : Forest T) (r : R) :
+    (single F r).toFinsupp = Finsupp.single F r := rfl
+
+theorem smul_single_one (F : Forest T) (r : R) :
+    single F r = r • single F (1 : R) := by
+  ext; simp
+
+/-- Linear induction: prove `p` at `0`, under `+`, and on every `single`. -/
+@[elab_as_elim]
+theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
+    (zero : p 0) (add : ∀ f g, p f → p g → p (f + g))
+    (single : ∀ (F : Forest T) (r : R), p (ConnesKreimer.single F r)) : p x := by
+  have h : ∀ y : AddMonoidAlgebra R (Forest T), p ⟨y⟩ := fun y =>
+    Finsupp.induction_linear y zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
+  exact h x.toFinsupp
+
+/-- **Bare embedding**: a forest as the basis vector `single F 1`. -/
+noncomputable def of' (F : Forest T) : ConnesKreimer R T := single F 1
 
 /-- **MonoidHom embedding**: `Multiplicative (Forest T) →* ConnesKreimer R T`. -/
 noncomputable def of : Multiplicative (Forest T) →* ConnesKreimer R T where
   toFun F := of' (R := R) F.toAdd
-  map_one' := by
-    show (of' (R := R) (1 : Multiplicative (Forest T)).toAdd : ConnesKreimer R T) = 1
-    show (Finsupp.single (0 : Forest T) (1 : R)
-            : AddMonoidAlgebra R (Forest T))
-       = (1 : AddMonoidAlgebra R (Forest T))
-    exact AddMonoidAlgebra.one_def.symm
-  map_mul' F G := by
-    show of' (R := R) (F * G).toAdd = of' (R := R) F.toAdd * of' (R := R) G.toAdd
-    show of' (R := R) (F.toAdd + G.toAdd) = of' (R := R) F.toAdd * of' (R := R) G.toAdd
-    unfold of'
-    exact (AddMonoidAlgebra.single_mul_single
-      (R := R) (M := Forest T) F.toAdd G.toAdd 1 1
-      |>.trans (by rw [mul_one])).symm
+  map_one' := ext AddMonoidAlgebra.one_def.symm
+  map_mul' F G := ext <| by
+    show AddMonoidAlgebra.single (F.toAdd + G.toAdd) (1 : R)
+      = AddMonoidAlgebra.single (R := R) (M := Forest T) F.toAdd 1
+        * AddMonoidAlgebra.single (R := R) (M := Forest T) G.toAdd 1
+    exact (AddMonoidAlgebra.single_mul_single (R := R) (M := Forest T)
+      F.toAdd G.toAdd 1 1 |>.trans (by rw [mul_one])).symm
 
 /-- Embed a single tree as a singleton-forest basis vector. -/
 noncomputable def ofTree (t : T) : ConnesKreimer R T :=
@@ -179,8 +283,8 @@ noncomputable def ofTree (t : T) : ConnesKreimer R T :=
 theorem of_apply (F : Multiplicative (Forest T)) :
     (of (R := R) F : ConnesKreimer R T) = of' F.toAdd := rfl
 
-theorem of'_apply (F : Forest T) :
-    (of' (R := R) F : ConnesKreimer R T) = Finsupp.single F 1 := rfl
+theorem toFinsupp_of' (F : Forest T) :
+    (of' (R := R) F : ConnesKreimer R T).toFinsupp = Finsupp.single F 1 := rfl
 
 @[simp] theorem of'_zero :
     (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
@@ -194,6 +298,112 @@ theorem of'_apply (F : Forest T) :
 
 @[simp] theorem of'_singleton (t : T) :
     (of' (R := R) ({t} : Forest T) : ConnesKreimer R T) = ofTree t := rfl
+
+/-! ## §4: `lift`, `algHom_ext`, `addHom_ext` — the self-contained hom API
+
+Consumers use these instead of reaching for `AddMonoidAlgebra.lift` /
+`Finsupp.addHom_ext` on the bare carrier. -/
+
+section Lift
+variable {A : Type*} [CommSemiring A] [Algebra R A]
+
+/-- Lift a monoid hom off the forest monoid to an algebra hom off the
+    Connes-Kreimer algebra (the wrapper-native `AddMonoidAlgebra.lift`). -/
+noncomputable def lift (f : Multiplicative (Forest T) →* A) :
+    ConnesKreimer R T →ₐ[R] A :=
+  (AddMonoidAlgebra.lift R A (Forest T) f).comp toFinsuppAlgEquiv.toAlgHom
+
+@[simp] theorem lift_of' (f : Multiplicative (Forest T) →* A) (F : Forest T) :
+    lift f (of' (R := R) F) = f (Multiplicative.ofAdd F) := by
+  show AddMonoidAlgebra.lift R A (Forest T) f (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+
+/-- Algebra homs off `ConnesKreimer` agree if they agree on `of'`. -/
+theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
+    (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ := by
+  have key : φ.comp toFinsuppAlgEquiv.symm.toAlgHom
+      = ψ.comp toFinsuppAlgEquiv.symm.toAlgHom :=
+    AddMonoidAlgebra.algHom_ext fun F => h F
+  ext p
+  simpa using DFunLike.congr_fun key p.toFinsupp
+
+end Lift
+
+/-- `ofFinsupp` as an `AddMonoidHom` (transport vehicle for `addHom_ext`). -/
+noncomputable def ofFinsuppAddHom :
+    AddMonoidAlgebra R (Forest T) →+ ConnesKreimer R T where
+  toFun := ofFinsupp
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
+/-- Additive homs off `ConnesKreimer` agree if they agree on `single`. -/
+theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
+    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g := by
+  have key : f.comp ofFinsuppAddHom = g.comp ofFinsuppAddHom :=
+    Finsupp.addHom_ext h
+  ext p
+  exact DFunLike.congr_fun key p.toFinsupp
+
+section LinearApi
+variable {M : Type*} [AddCommMonoid M] [Module R M]
+
+/-- Linear maps off `ConnesKreimer` agree if they agree on `single`. -/
+theorem lhom_ext {f g : ConnesKreimer R T →ₗ[R] M}
+    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
+  LinearMap.toAddMonoidHom_injective (addHom_ext h)
+
+/-- Linear maps off `ConnesKreimer` agree if they agree on the basis `of'`. -/
+theorem lhom_ext' {f g : ConnesKreimer R T →ₗ[R] M}
+    (h : ∀ F : Forest T, f (of' F) = g (of' F)) : f = g :=
+  lhom_ext fun F r => by
+    rw [smul_single_one, map_smul, map_smul]
+    exact congrArg (r • ·) (h F)
+
+/-- Linearly extend a function off the forest basis
+    (wrapper-native `Finsupp.lift`). -/
+noncomputable def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
+  (Finsupp.lift M R (Forest T) f).comp
+    (toFinsuppAlgEquiv (R := R) (T := T)).toLinearEquiv.toLinearMap
+
+@[simp] theorem linearLift_single (f : Forest T → M) (F : Forest T) (r : R) :
+    linearLift f (single F r) = r • f F := by
+  show Finsupp.lift M R (Forest T) f (Finsupp.single F r) = r • f F
+  rw [Finsupp.lift_apply, Finsupp.sum_single_index (by simp)]
+
+@[simp] theorem linearLift_of' (f : Forest T → M) (F : Forest T) :
+    linearLift f (of' (R := R) F) = f F := by
+  rw [of', linearLift_single, one_smul]
+
+end LinearApi
+
+/-- Transport a forest-monoid hom to an algebra hom between Connes-Kreimer
+    algebras (wrapper-native `AddMonoidAlgebra.mapDomainAlgHom`). -/
+noncomputable def mapDomainAlgHom {T' : Type*} (f : Forest T →+ Forest T') :
+    ConnesKreimer R T →ₐ[R] ConnesKreimer R T' :=
+  ((toFinsuppAlgEquiv (R := R) (T := T')).symm.toAlgHom.comp
+    (AddMonoidAlgebra.mapDomainAlgHom R R f)).comp
+    (toFinsuppAlgEquiv (R := R) (T := T)).toAlgHom
+
+@[simp] theorem mapDomainAlgHom_of' {T' : Type*} (f : Forest T →+ Forest T')
+    (F : Forest T) :
+    mapDomainAlgHom (R := R) f (of' F) = of' (f F) := by
+  refine ext ?_
+  show Finsupp.mapDomain f (Finsupp.single F 1) = Finsupp.single (f F) 1
+  rw [Finsupp.mapDomain_single]
+
+/-! ### The forest basis -/
+
+/-- The forests, via `of'`, as an `R`-basis of the Connes-Kreimer algebra
+    (`Polynomial.basisMonomials` analogue). -/
+noncomputable def basisSingleOne :
+    Module.Basis (Forest T) R (ConnesKreimer R T) :=
+  Module.Basis.map Finsupp.basisSingleOne
+    (toFinsuppAlgEquiv (R := R) (T := T)).symm.toLinearEquiv
+
+@[simp] theorem basisSingleOne_apply (F : Forest T) :
+    (basisSingleOne : Module.Basis (Forest T) R (ConnesKreimer R T)) F = of' F := by
+  simp only [basisSingleOne, Module.Basis.map_apply, Finsupp.coe_basisSingleOne]
+  rfl
 
 /-! ## §5: Counit
 
@@ -227,16 +437,14 @@ noncomputable def counitMonoidHom :
 
 /-- The **counit** on `ConnesKreimer R T` as an algebra hom. -/
 noncomputable def counit : ConnesKreimer R T →ₐ[R] R :=
-  AddMonoidAlgebra.lift R R (Forest T) counitMonoidHom
+  lift counitMonoidHom
 
 /-- `counit (of' F) = if F.card = 0 then 1 else 0`. The `card`
     formulation avoids needing `DecidableEq T`. -/
 @[simp] theorem counit_of' (F : Forest T) :
     (counit : ConnesKreimer R T →ₐ[R] R) (of' F)
       = (if F.card = 0 then 1 else 0 : R) := by
-  show AddMonoidAlgebra.lift R R (Forest T) counitMonoidHom
-        (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [counit, lift_of']
   rfl
 
 @[simp] theorem counit_one :

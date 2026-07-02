@@ -741,7 +741,7 @@ private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
             bMinusLin (R := ℤ) a Z +
           counit Z • bMinusLin (R := ℤ) a (ConnesKreimer.of' F) by
     -- Bilinear extension: extend over X via Finsupp.induction_linear on X.
-    induction X using Finsupp.induction_linear with
+    induction X using ConnesKreimer.induction_linear with
     | zero =>
       -- LHS: bMinusLin a (0 * Y) = bMinusLin a 0 = 0.
       -- RHS: counit 0 • _ + counit Y • bMinusLin a 0 = 0 • _ + counit Y • 0 = 0.
@@ -769,10 +769,8 @@ private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
       abel
     | single F r =>
       -- Reduce single F r = r • of' F, then apply h on of' F.
-      have hX : (Finsupp.single F r : ConnesKreimer ℤ (Nonplanar α)) =
-                r • ConnesKreimer.of' F := by
-        show Finsupp.single F r = r • Finsupp.single F (1 : ℤ)
-        rw [Finsupp.smul_single, smul_eq_mul, mul_one]
+      have hX : (ConnesKreimer.single F r : ConnesKreimer ℤ (Nonplanar α)) =
+                r • ConnesKreimer.of' F := ConnesKreimer.smul_single_one F r
       rw [hX]
       show bMinusLin (R := ℤ) a ((r • ConnesKreimer.of' F) * Y) =
            counit ((r • ConnesKreimer.of' F : ConnesKreimer ℤ (Nonplanar α))) •
@@ -787,7 +785,7 @@ private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
       rw [smul_smul, smul_eq_mul]
   -- Now prove h: for fixed of' F, the identity holds for all Z.
   intro F Z
-  induction Z using Finsupp.induction_linear with
+  induction Z using ConnesKreimer.induction_linear with
   | zero =>
     show bMinusLin (R := ℤ) a
           (ConnesKreimer.of' F * (0 : ConnesKreimer ℤ (Nonplanar α))) = _
@@ -814,10 +812,8 @@ private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
     rw [ih₁, ih₂, LinearMap.map_add, smul_add, _root_.map_add, add_smul]
     abel
   | single G s =>
-    have hY : (Finsupp.single G s : ConnesKreimer ℤ (Nonplanar α)) =
-              s • ConnesKreimer.of' G := by
-      show Finsupp.single G s = s • Finsupp.single G (1 : ℤ)
-      rw [Finsupp.smul_single, smul_eq_mul, mul_one]
+    have hY : (ConnesKreimer.single G s : ConnesKreimer ℤ (Nonplanar α)) =
+              s • ConnesKreimer.of' G := ConnesKreimer.smul_single_one G s
     rw [hY]
     show bMinusLin (R := ℤ) a
             (ConnesKreimer.of' F * s • ConnesKreimer.of' G) =

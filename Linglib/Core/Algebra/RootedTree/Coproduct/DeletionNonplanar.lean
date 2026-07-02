@@ -276,17 +276,15 @@ The trace-strip algebra hom `Π_{d,c}` in MCB's notation. -/
 
 /-- The **trace-strip algebra hom** `Π_{d,c}` —
     `ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α)`
-    induced by `stripTraceForestAddHom` via `AddMonoidAlgebra.mapDomainAlgHom`. -/
+    induced by `stripTraceForestAddHom` via `ConnesKreimer.mapDomainAlgHom`. -/
 noncomputable def stripTraceAlgHom :
     ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.mapDomainAlgHom R R (stripTraceForestAddHom (α := α) (β := β))
+  ConnesKreimer.mapDomainAlgHom (stripTraceForestAddHom (α := α) (β := β))
 
 @[simp] theorem stripTraceAlgHom_of' (F : Forest (Nonplanar (α ⊕ β))) :
     stripTraceAlgHom (R := R) (of' F) =
       of' (R := R) (F.filterMap Nonplanar.stripTrace) := by
-  show Finsupp.mapDomain (stripTraceForestAddHom (α := α) (β := β))
-        (Finsupp.single F 1) = Finsupp.single _ 1
-  rw [Finsupp.mapDomain_single]
+  rw [stripTraceAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
 /-! ## Sum.inl embedding
@@ -306,17 +304,15 @@ noncomputable def embedInlForestAddHom :
 
 /-- The **Sum.inl embedding algebra hom**
     `ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β))`
-    induced by `Nonplanar.embedInl` via `AddMonoidAlgebra.mapDomainAlgHom`. -/
+    induced by `Nonplanar.embedInl` via `ConnesKreimer.mapDomainAlgHom`. -/
 noncomputable def embedInlAlgHom :
     ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  AddMonoidAlgebra.mapDomainAlgHom R R (embedInlForestAddHom (α := α) (β := β))
+  ConnesKreimer.mapDomainAlgHom (embedInlForestAddHom (α := α) (β := β))
 
 @[simp] theorem embedInlAlgHom_of' (F : Forest (Nonplanar α)) :
     embedInlAlgHom (R := R) (β := β) (of' F) =
       of' (R := R) (F.map Nonplanar.embedInl) := by
-  show Finsupp.mapDomain (embedInlForestAddHom (α := α) (β := β))
-        (Finsupp.single F 1) = Finsupp.single _ 1
-  rw [Finsupp.mapDomain_single]
+  rw [embedInlAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
 /-! ### Strip inverts embed
@@ -383,7 +379,7 @@ theorem stripTraceAlgHom_comp_embedInlAlgHom :
   apply AlgHom.ext
   intro x
   show stripTraceAlgHom (embedInlAlgHom x) = x
-  refine Finsupp.induction_linear x ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · show stripTraceAlgHom (embedInlAlgHom (0 : ConnesKreimer R (Nonplanar α))) = 0
     rw [map_zero, map_zero]
   · intro a b ha hb
@@ -394,10 +390,10 @@ theorem stripTraceAlgHom_comp_embedInlAlgHom :
     show stripTraceAlgHom (embedInlAlgHom (a' + b')) = a' + b'
     rw [map_add, map_add, ha', hb']
   · intro F r
-    show stripTraceAlgHom (embedInlAlgHom (Finsupp.single F r)) = Finsupp.single F r
-    have hsingle : (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+    show stripTraceAlgHom (embedInlAlgHom (ConnesKreimer.single F r)) = ConnesKreimer.single F r
+    have hsingle : (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
         r • (of' (R := R) F : ConnesKreimer R (Nonplanar α)) :=
-      (Finsupp.smul_single_one F r).symm
+      ConnesKreimer.smul_single_one F r
     rw [hsingle, map_smul, map_smul, embedInlAlgHom_of', stripTraceAlgHom_of',
         stripTrace_embedInl_filterMap]
 
@@ -1060,7 +1056,7 @@ private theorem strip_comulCForestN_embedInl
 
     `comulDN ∘ embed_{Sum.inl} = comulAlgHomN`
 
-    Closed via: (a) AlgHom extensionality + `Finsupp.induction_linear` reduces
+    Closed via: (a) AlgHom extensionality + `ConnesKreimer.induction_linear` reduces
     to per-basis `of' F`; (b) Multiset multiplicativity of `comulCForestN`,
     `comulForestN`, and `(stripTraceAlgHom ⊗ stripTraceAlgHom)` reduces to
     per-tree; (c) `Quotient.inductionOn` reduces per-tree to tree-level; (d)
@@ -1074,7 +1070,7 @@ theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
   show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R))
           stripTraceAlgHom) (comulCAlgHomN τ (embedInlAlgHom x)) =
        comulAlgHomN x
-  refine Finsupp.induction_linear x ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
           (comulCAlgHomN τ (embedInlAlgHom
               (0 : ConnesKreimer R (Nonplanar α)))) =
@@ -1092,11 +1088,11 @@ theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     rw [map_add, map_add, map_add, map_add, ha', hb']
   · intro F r
     show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
-          (comulCAlgHomN τ (embedInlAlgHom (Finsupp.single F r))) =
-         comulAlgHomN (Finsupp.single F r)
-    have hsingle : (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+          (comulCAlgHomN τ (embedInlAlgHom (ConnesKreimer.single F r))) =
+         comulAlgHomN (ConnesKreimer.single F r)
+    have hsingle : (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
         r • (of' (R := R) F : ConnesKreimer R (Nonplanar α)) :=
-      (Finsupp.smul_single_one F r).symm
+      ConnesKreimer.smul_single_one F r
     rw [hsingle, map_smul, map_smul, map_smul, map_smul, embedInlAlgHom_of',
         comulCAlgHomN_apply_of', comulAlgHomN_apply_of']
     congr 1

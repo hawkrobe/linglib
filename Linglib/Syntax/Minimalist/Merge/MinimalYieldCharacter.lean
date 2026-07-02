@@ -69,13 +69,11 @@ noncomputable def gradingMonoidHom :
 /-- **The Minimal-Yield character** `ϕt : H →ₐ[R] DM[t⁻¹][[t]]` (MCB Prop. 3.5.3, eq. 3.5.6) in the
     lean t-grading model. -/
 noncomputable def gradingChar : ConnesKreimer R (Nonplanar α) →ₐ[R] LaurentSeries R :=
-  AddMonoidAlgebra.lift R (LaurentSeries R) (Forest (Nonplanar α)) gradingMonoidHom
+  ConnesKreimer.lift gradingMonoidHom
 
 @[simp] theorem gradingChar_apply_of' (F : Forest (Nonplanar α)) :
     gradingChar (R := R) (of' F) = (F.map (gradingMonomialTree (R := R))).prod := by
-  show AddMonoidAlgebra.lift R (LaurentSeries R) (Forest (Nonplanar α)) gradingMonoidHom
-      (AddMonoidAlgebra.of R (Forest (Nonplanar α)) (Multiplicative.ofAdd F)) = _
-  rw [AddMonoidAlgebra.lift_of]
+  rw [gradingChar, ConnesKreimer.lift_of']
   rfl
 
 /-- `ϕt(F) = t^{α(F)}`: the forest value is the single grading monomial at the accessible-term
