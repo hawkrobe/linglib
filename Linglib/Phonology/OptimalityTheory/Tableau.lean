@@ -29,13 +29,13 @@ computation.
 
 ## Main results
 
-* `Tableau.exists_optimal` / `Tableau.optimal_nonempty` / `mem_optimal_iff` /
-  `optimal_subset` — winners exist; membership facts.
+* `Tableau.mem_optimal_iff` / `Tableau.optimal_nonempty` / `Tableau.optimal_subset` —
+  the winner characterization; winners exist.
 * `Tableau.optimal_eq_singleton_iff` — sole winner ⟺ strict domination.
-* `ofPerm_zero_isOptimal` / `Tableau.ofRanking_zero_isOptimal` /
-  `Tableau.ofRanking_zero_optimal_allRankings` — a candidate with no violations wins
-  under any (every) ranking.
-* `Tableau.ofRanking_isOptimal_zero_first` — a satisfiable top constraint forces all
+* `Tableau.ofPerm_zero_mem_optimal` / `Tableau.ofRanking_zero_mem_optimal` /
+  `Tableau.ofRanking_zero_mem_optimal_allRankings` — a candidate with no violations
+  wins under any (every) ranking.
+* `Tableau.ofRanking_optimal_zero_first` — a satisfiable top constraint forces all
   winners to satisfy it.
 -/
 
@@ -75,24 +75,20 @@ theorem mem_optimal_iff :
 theorem optimal_nonempty : t.optimal.Nonempty := lexMins_nonempty t
 
 /-- OT-named alias for `LexMinProblem.lexMins_subset`. -/
-theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates :=
-  lexMins_subset t c
+theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates := lexMins_subset t c
 
 /-- A winner's profile bounds every candidate's. -/
 theorem le_of_mem_optimal {d : C} (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
-    t.profile c ≤ t.profile d :=
-  le_of_mem_argMinSet hc hd
+    t.profile c ≤ t.profile d := le_of_mem_argMinSet hc hd
 
 /-- Optimality factors through the profile, so it transports along profile equality:
 scoring like a winner is winning. -/
 theorem mem_optimal_of_profile_eq {d : C} (hd : d ∈ t.optimal) (hc : c ∈ t.candidates)
-    (he : t.profile c = t.profile d) : c ∈ t.optimal :=
-  mem_argMinSet_of_eq hd hc he
+    (he : t.profile c = t.profile d) : c ∈ t.optimal := mem_argMinSet_of_eq hd hc he
 
 /-- A candidate whose profile vanishes wins: `0` is the global lex-minimum. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
-    c ∈ t.optimal :=
-  mem_argMinSet_of_eq_bot hc h0
+    c ∈ t.optimal := mem_argMinSet_of_eq_bot hc h0
 
 /-- A tableau has sole winner `m` iff `m` strictly lex-dominates every other
 candidate. -/
@@ -122,30 +118,26 @@ def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
   ofPerm ranking.get (Equiv.refl _) candidates h
 
 @[simp] theorem ofPerm_candidates :
-    (Tableau.ofPerm con r candidates h).candidates = candidates.toFinset := rfl
+    (ofPerm con r candidates h).candidates = candidates.toFinset := rfl
 
 @[simp] theorem ofPerm_profile (c : C) :
-    (Tableau.ofPerm con r candidates h).profile c
-      = buildViolationProfile (fun p => con (r p)) c := rfl
+    (ofPerm con r candidates h).profile c = buildViolationProfile (fun p => con (r p)) c := rfl
 
 @[simp] theorem ofRanking_candidates :
-    (Tableau.ofRanking candidates ranking h).candidates = candidates.toFinset := rfl
+    (ofRanking candidates ranking h).candidates = candidates.toFinset := rfl
 
 @[simp] theorem ofRanking_profile (c : C) :
-    (Tableau.ofRanking candidates ranking h).profile c
-      = buildViolationProfile ranking.get c := rfl
+    (ofRanking candidates ranking h).profile c = buildViolationProfile ranking.get c := rfl
 
 variable {con r candidates ranking h}
 
 /-- Candidates in `(Tableau.ofRanking ...).optimal` belong to the original list. -/
-theorem ofRanking_optimal_mem
-    (hc : c ∈ (ofRanking candidates ranking h).optimal) : c ∈ candidates :=
-  List.mem_toFinset.mp (optimal_subset hc)
+theorem ofRanking_optimal_mem (hc : c ∈ (ofRanking candidates ranking h).optimal) :
+    c ∈ candidates := List.mem_toFinset.mp (optimal_subset hc)
 
 /-- Candidates in `(Tableau.ofPerm ...).optimal` belong to the original list. -/
-theorem ofPerm_optimal_mem
-    (hc : c ∈ (ofPerm con r candidates h).optimal) : c ∈ candidates :=
-  List.mem_toFinset.mp (optimal_subset hc)
+theorem ofPerm_optimal_mem (hc : c ∈ (ofPerm con r candidates h).optimal) :
+    c ∈ candidates := List.mem_toFinset.mp (optimal_subset hc)
 
 /-! ### Top-constraint optimality -/
 
@@ -167,8 +159,7 @@ theorem ofPerm_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ i, con i c 
   mem_optimal_of_profile_eq_zero (List.mem_toFinset.mpr hc) (funext fun p => hzero (r p))
 
 /-- The list form of `ofPerm_zero_mem_optimal`. -/
-theorem ofRanking_zero_mem_optimal (hc : c ∈ candidates)
-    (hzero : ∀ con ∈ ranking, con c = 0) :
+theorem ofRanking_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ con ∈ ranking, con c = 0) :
     c ∈ (ofRanking candidates ranking h).optimal :=
   ofPerm_zero_mem_optimal hc fun i => hzero _ (ranking.get_mem i)
 
