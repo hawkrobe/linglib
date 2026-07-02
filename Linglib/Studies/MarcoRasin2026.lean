@@ -3,7 +3,7 @@ import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.OptimalityTheory.Predict
+import Linglib.Phonology.OptimalityTheory.TableauSystem
 
 /-!
 # Marco & Rasin (2026): Optimal Paradigms — A Challenge from JTA

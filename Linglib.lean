@@ -1362,7 +1362,7 @@ import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
-import Linglib.Phonology.OptimalityTheory.Predict
+import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid

@@ -2,7 +2,7 @@ import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.Doubling
-import Linglib.Phonology.OptimalityTheory.Predict
+import Linglib.Phonology.OptimalityTheory.TableauSystem
 
 /-!
 # Berent (2026) [berent-2026]
