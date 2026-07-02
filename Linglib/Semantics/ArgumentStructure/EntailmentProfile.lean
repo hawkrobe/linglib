@@ -243,7 +243,11 @@ def kickSubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, causation := true, movement := true,
     independentExistence := true }
 
-/-- *kick* object: CoS+CA+St. -/
+/-- *kick* object: CoS+CA+St. Caveat: the stored `changeOfState := true`
+follows Dowty's classification, but *kick* is a POTENTIAL exemplar in
+[beavers-2011] eq. (60c) with felicitous no-change continuations
+([beavers-koontz-garboden-2020] ch. 4) — a candidate bit-flip for the
+gated canonical-profile audit. -/
 def kickObjectProfile : EntailmentProfile :=
   { changeOfState := true, causallyAffected := true, stationary := true }
 

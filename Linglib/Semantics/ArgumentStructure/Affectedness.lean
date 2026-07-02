@@ -118,7 +118,10 @@ def Quantized (g_φ : δ) : Prop :=
   ∀ x e, θ x e → HasScalarResult.resultAt x g_φ e
 
 /-- [beavers-2011] eq. (60b): `θ` entails the theme ends the event at
-some degree (*widen*, *cool*). -/
+some degree (*widen*, *cool*). Scalar change without a net scalar
+RESULT (doubling-back motion, [beavers-koontz-garboden-2020] ch. 4
+recapping their 2017 typology) is a boundary case this predicate
+formalizes as result-at-event's-end. -/
 def NonQuantized : Prop :=
   ∀ x e, θ x e → ∃ g : δ, HasScalarResult.resultAt x g e
 
