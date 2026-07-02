@@ -43,8 +43,8 @@ def beRight : ClauseEmbeddingAdj where
     `controlType`. Constructed as a direct `Verb` instead. -/
 def beAble : Verb where
   form := "be able"
-  complementType := .infinitival
-  controlType := .subjectControl
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
 
 end English.Predicates.Copular
 
@@ -60,7 +60,7 @@ open Semantics.Lexical in
 def Semantics.Gradability.ClauseEmbeddingAdj.toVerb
     (a : Semantics.Gradability.ClauseEmbeddingAdj) : Verb where
   form := "be " ++ a.adjForm
-  complementType := a.complementType
+  frames := [a.complementType.toFrame]
   presupType := a.presupType
   attitude := a.attitude
   opaqueContext := a.opaqueContext

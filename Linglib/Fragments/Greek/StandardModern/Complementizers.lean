@@ -57,14 +57,14 @@ def complementizers : List Complementizer := [oti, pu, na]
     ex. 1a. Speech-act verb, eventive (activity). -/
 def leo : Verb where
   form := "léo"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .activity
 
 /-- *pistévo* (πιστεύω) 'believe' — doxastic, stative. -/
 def pistevo : Verb where
   form := "pistévo"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
   passivizable := false
@@ -74,7 +74,7 @@ def pistevo : Verb where
     stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
 def ksero : Verb where
   form := "kséro"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
   vendlerClass := some .state
   opaqueContext := false  -- factive ⇒ no opacity
@@ -84,7 +84,7 @@ def ksero : Verb where
     factive doxastic. -/
 def katalaveno : Verb where
   form := "katalavéno"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement
 
@@ -92,7 +92,7 @@ def katalaveno : Verb where
     factive doxastic ([angelopoulos-2026] ex. 21b). -/
 def sinidhitopio : Verb where
   form := "sinidhitopió"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement
 
@@ -100,7 +100,7 @@ def sinidhitopio : Verb where
     yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
 def eksigo : Verb where
   form := "eksigó"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .accomplishment
 
 -- ════════════════════════════════════════════════════════════════
@@ -114,7 +114,7 @@ def eksigo : Verb where
     valence), stative. [angelopoulos-2026] ex. 1b, 20. -/
 def metaniono : Verb where
   form := "metanióno"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
@@ -122,7 +122,7 @@ def metaniono : Verb where
     stative ([angelopoulos-2026] ex. 13, 14; [landau-2009]). -/
 def areso : Verb where
   form := "aréso"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
   unaccusative := true
@@ -131,7 +131,7 @@ def areso : Verb where
     stative. -/
 def xerome : Verb where
   form := "xérome"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
 
@@ -152,7 +152,7 @@ def xerome : Verb where
     [angelopoulos-2026] ex. 22 contrasts the two. -/
 def thimame : Verb where
   form := "thimáme"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement  -- eventive (perception) sense
 
@@ -161,7 +161,7 @@ def thimame : Verb where
     ex. 19, 23). -/
 def thimono : Verb where
   form := "thimóno"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .achievement
 

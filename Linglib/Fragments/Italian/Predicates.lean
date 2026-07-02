@@ -76,9 +76,8 @@ structure ItalianVerbEntry extends Verb where
     - (4b) Marco ha convinto Gianni a avere un figlio (intention) -/
 def convincere : ItalianVerbEntry :=
   { form := "convincere"
-    complementType := .infinitival
-    controlType := .objectControl
-    altComplementType := some .finiteClause
+    frames := [Frame.infinitival, Frame.finiteClause]
+    readings := [{ frame := Frame.infinitival, control := some .objectControl }]
     opaqueContext := true
     -- No fixed attitude: attitude type (belief vs intention)
     -- is determined by complement size, not lexically specified.
@@ -88,9 +87,8 @@ def convincere : ItalianVerbEntry :=
     Takes *di*-infinitives and *che*-finite clauses (belief only). -/
 def credere : ItalianVerbEntry :=
   { form := "credere"
-    complementType := .finiteClause
-    controlType := .subjectControl
-    altComplementType := some .infinitival
+    frames := [Frame.finiteClause, Frame.infinitival]
+    readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
     opaqueContext := true
     attitude := some (.doxastic .nonVeridical)
     infComplements := [.di] }
@@ -106,9 +104,8 @@ def credere : ItalianVerbEntry :=
     - (4b) Gianni vuole essere contento. (INF) -/
 def volere : ItalianVerbEntry :=
   { form := "volere"
-    complementType := .finiteClause
-    controlType := .subjectControl
-    altComplementType := some .infinitival
+    frames := [Frame.finiteClause, Frame.infinitival]
+    readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
     passivizable := false
     opaqueContext := true
     attitude := some (.preferential (.degreeComparison .positive))
@@ -124,9 +121,8 @@ def volere : ItalianVerbEntry :=
     *esperar*). -/
 def sperare : ItalianVerbEntry :=
   { form := "sperare"
-    complementType := .finiteClause
-    controlType := .subjectControl
-    altComplementType := some .infinitival
+    frames := [Frame.finiteClause, Frame.infinitival]
+    readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
     passivizable := false
     opaqueContext := true
     attitude := some (.preferential (.degreeComparison .positive))
@@ -142,8 +138,8 @@ def sperare : ItalianVerbEntry :=
     - (28) *Intendo che Giovanni vada/va al parco oggi. (rejected) -/
 def intendere : ItalianVerbEntry :=
   { form := "intendere"
-    complementType := .infinitival
-    controlType := .subjectControl
+    frames := [Frame.infinitival]
+    readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
     passivizable := false
     opaqueContext := true
     attitude := some (.preferential (.degreeComparison .positive))
@@ -158,8 +154,8 @@ def intendere : ItalianVerbEntry :=
     - (42a) Ho fatto sì che Giovanni *andasse*/*è andato al parco. (SBJV/*IND) -/
 def fare_caus : ItalianVerbEntry :=
   { form := "fare"
-    complementType := .infinitival
-    controlType := .objectControl
+    frames := [Frame.infinitival]
+    readings := [{ frame := Frame.infinitival, control := some .objectControl }]
     causative := some .make
     infComplements := [.a_] }
 
