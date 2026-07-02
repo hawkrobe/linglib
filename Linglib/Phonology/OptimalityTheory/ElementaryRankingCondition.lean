@@ -312,24 +312,25 @@ theorem ercOfProfiles_swap (w l : ViolationProfile n) :
 def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC n :=
   fun i => vs[i.val]'(by omega)
 
+/-- Lex-nonnegativity of the sign vector is lex-comparison of the profiles: the sign
+of the first difference decides both. -/
+theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
+    toLex (fun _ => (0 : ERCVal)) ≤ toLex (ercOfProfiles w l) ↔ w ≤ l :=
+  (lex_le_iff_forall _ _).trans <|
+    (forall_congr' fun p => imp_congr
+      ((ERCVal.lt_zero_iff _).trans (ercOfProfiles_eq_L_iff w l p))
+      (exists_congr fun q => and_congr_right fun _ =>
+        (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
+    (lex_le_iff_forall (ofLex w) (ofLex l)).symm
+
 /-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
 winner/loser pair iff the winner's profile, read in `r`'s priority order, is lex-≤
-the loser's ([prince-2002]). -/
+the loser's ([prince-2002]). Precomposition with the ranking is absorbed by
+instantiating `lex_nonneg_ercOfProfiles_iff` at the reordered profiles. -/
 theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking n) (w l : ViolationProfile n) :
     (ercOfProfiles w l).SatisfiedBy r ↔
-      toLex (fun p => w (r p)) ≤ toLex (fun p => l (r p)) := by
-  rw [ERC.satisfiedBy_iff_dominance, lex_le_iff_forall]
-  constructor
-  · intro h p hp
-    obtain ⟨c', hW, hdom⟩ := h (r p) ((ercOfProfiles_eq_L_iff w l (r p)).mpr hp)
-    refine ⟨r.symm c', by simpa [Ranking.Dominates] using hdom, ?_⟩
-    have := (ercOfProfiles_eq_W_iff w l c').mp hW
-    rwa [Equiv.apply_symm_apply]
-  · intro h c hc
-    obtain ⟨p', hp'lt, hwin⟩ :=
-      h (r.symm c) (by rw [Equiv.apply_symm_apply]; exact (ercOfProfiles_eq_L_iff w l c).mp hc)
-    exact ⟨r p', (ercOfProfiles_eq_W_iff w l (r p')).mpr hwin,
-      by simpa [Ranking.Dominates] using hp'lt⟩
+      toLex (fun p => w (r p)) ≤ toLex (fun p => l (r p)) :=
+  lex_nonneg_ercOfProfiles_iff (toLex fun p => w (r p)) (toLex fun p => l (r p))
 
 /-- The ERC of a winner-loser pair `(w, l)` in tableau `t`: the ranking requirements
 for `w` to beat `l`. -/
