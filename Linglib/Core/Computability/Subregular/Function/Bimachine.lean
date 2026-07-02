@@ -214,7 +214,7 @@ theorem isBimachineComputable {L R : Type*} [Fintype L] [Fintype R] {α β : Typ
 
 section TwoSidedWitness
 
-variable {α : Type*}
+variable {α : Type*} {x fill y a : α} {n k : ℕ}
 
 /-! ### The flank-witness template
 
@@ -227,63 +227,62 @@ two single-flank perturbations at the target. This is the three-map method of
 /-- A flank-controlled word: `x`, then `n` copies of `fill`, then `y`. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
 
-@[simp] theorem flankWord_length {x fill y : α} {n : ℕ} :
+@[simp] theorem flankWord_length :
     (flankWord x fill y n).length = n + 2 := by
   simp [flankWord]
 
-theorem flankWord_getElem? {x fill y : α} {n k : ℕ} :
+theorem flankWord_getElem? :
     (flankWord x fill y n)[k]? = if k = 0 then some x else if k = n + 1 then some y
       else if k < n + 2 then some fill else none := by
   simp only [flankWord, List.getElem?_cons, List.getElem?_append, List.getElem?_replicate,
     List.length_replicate, List.getElem?_nil]
   split_ifs <;> first | rfl | omega
 
-@[simp] theorem flankWord_getElem?_zero {x fill y : α} {n : ℕ} :
+@[simp] theorem flankWord_getElem?_zero :
     (flankWord x fill y n)[0]? = some x := rfl
 
-@[simp] theorem flankWord_getElem?_last {x fill y : α} {n : ℕ} :
+@[simp] theorem flankWord_getElem?_last :
     (flankWord x fill y n)[n + 1]? = some y := by
   rw [flankWord_getElem?]
   split_ifs <;> first | rfl | exact ‹False›.elim | omega
 
-theorem flankWord_getElem?_mid {x fill y : α} {n k : ℕ} (h₁ : 0 < k) (h₂ : k ≤ n) :
+theorem flankWord_getElem?_mid (h₁ : 0 < k) (h₂ : k ≤ n) :
     (flankWord x fill y n)[k]? = some fill := by
   rw [flankWord_getElem?]
   split_ifs <;> first | rfl | exact ‹False›.elim | omega
 
+/-- A non-filler value sits only on a flank. -/
+theorem flankWord_getElem?_eq_some_iff {j : ℕ} (hfill : fill ≠ a) :
+    (flankWord x fill y n)[j]? = some a ↔ j = 0 ∧ x = a ∨ j = n + 1 ∧ y = a := by
+  rw [flankWord_getElem?]
+  split_ifs <;> simp_all
+
 /-- A window reaching at most the filler run hits `a` iff the left flank is `a`. -/
-theorem exists_le_flankWord_eq_some_iff {x fill y a : α} {n k : ℕ} (hfill : fill ≠ a)
-    (hk : k ≤ n) : (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
+theorem exists_le_flankWord_eq_some_iff (hfill : fill ≠ a) (hk : k ≤ n) :
+    (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
+  simp only [flankWord_getElem?_eq_some_iff hfill]
   constructor
-  · rintro ⟨j, hj, hja⟩
-    rw [flankWord_getElem?] at hja
-    split_ifs at hja
-    · exact Option.some.inj hja
-    · exact absurd hj (by omega)
-    · exact absurd (Option.some.inj hja) hfill
-  · exact fun h => ⟨0, by omega, h ▸ flankWord_getElem?_zero⟩
+  · rintro ⟨j, hj, ⟨rfl, hx⟩ | ⟨rfl, hy⟩⟩
+    exacts [hx, absurd hj (by omega)]
+  · exact fun h => ⟨0, Nat.zero_le _, .inl ⟨rfl, h⟩⟩
 
 /-- A window past the left flank hits `a` iff the right flank is `a`. -/
-theorem exists_ge_flankWord_eq_some_iff {x fill y a : α} {n k : ℕ} (hfill : fill ≠ a)
-    (h0 : 0 < k) (hk : k ≤ n + 1) :
-    (∃ j ≥ k, (flankWord x fill y n)[j]? = some a) ↔ y = a := by
+theorem exists_ge_flankWord_eq_some_iff (hfill : fill ≠ a) (h0 : 0 < k)
+    (hk : k ≤ n + 1) : (∃ j ≥ k, (flankWord x fill y n)[j]? = some a) ↔ y = a := by
+  simp only [flankWord_getElem?_eq_some_iff hfill]
   constructor
-  · rintro ⟨j, hj, hja⟩
-    rw [flankWord_getElem?] at hja
-    split_ifs at hja
-    · exact absurd hj (by omega)
-    · exact Option.some.inj hja
-    · exact absurd (Option.some.inj hja) hfill
-  · exact fun h => ⟨n + 1, by omega, h ▸ flankWord_getElem?_last⟩
+  · rintro ⟨j, hj, ⟨rfl, hx⟩ | ⟨rfl, hy⟩⟩
+    exacts [absurd hj (by omega), hy]
+  · exact fun h => ⟨n + 1, hk, .inr ⟨rfl, h⟩⟩
 
 /-- Flank words differing only on the left agree off position `0`. -/
-theorem flankWord_congr_left {x x' fill y : α} {n k : ℕ} (h : k ≠ 0) :
+theorem flankWord_congr_left {x' : α} (h : k ≠ 0) :
     (flankWord x fill y n)[k]? = (flankWord x' fill y n)[k]? := by
   rw [flankWord_getElem?, flankWord_getElem?]
   split_ifs <;> first | rfl | exact ‹False›.elim | omega
 
 /-- Flank words differing only on the right agree off the last position. -/
-theorem flankWord_congr_right {x fill y y' : α} {n k : ℕ} (h : k ≠ n + 1) :
+theorem flankWord_congr_right {y' : α} (h : k ≠ n + 1) :
     (flankWord x fill y n)[k]? = (flankWord x fill y' n)[k]? := by
   rw [flankWord_getElem?, flankWord_getElem?]
   split_ifs <;> rfl
