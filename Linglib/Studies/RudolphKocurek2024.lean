@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Multiset.Sort
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Discourse.CommonGround
 import Linglib.Core.Order.TotalPreorder
@@ -1058,6 +1059,54 @@ theorem not_redundant_normalize (X : Finset I) :
 termination_by X.card
 decreasing_by
   exact Finset.card_erase_lt_of_mem h.choose_spec.1
+
+open Classical in
+/-- The rank of an interpretation: how many interpretations sit strictly
+below it. Order-reflecting into ℕ (`lt_iff_rank_lt`, `equiv_iff_rank_eq`),
+so degree invariants can live in `List ℕ` under mathlib's lex order. -/
+noncomputable def rank (x : I) : ℕ :=
+  (Finset.univ.filter (ord.lt · x)).card
+
+omit [DecidableEq I] in
+open Classical in
+theorem lt_iff_rank_lt {x y : I} :
+    ord.lt x y ↔ rank ord x < rank ord y := by
+  constructor
+  · intro h
+    refine Finset.card_lt_card (Finset.ssubset_iff_of_subset ?_ |>.mpr ?_)
+    · exact fun z hz => Finset.mem_filter.mpr
+        ⟨Finset.mem_univ z, ord.lt_of_lt_of_le (Finset.mem_filter.mp hz).2 h.1⟩
+    · exact ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ x, h⟩,
+        fun hx => ord.lt_irrefl x (Finset.mem_filter.mp hx).2⟩
+  · intro h
+    by_contra hn
+    have hyx : ord.le y x := ord.le_of_not_lt hn
+    exact absurd (Finset.card_le_card fun z hz => Finset.mem_filter.mpr
+      ⟨Finset.mem_univ z, ord.lt_of_lt_of_le (Finset.mem_filter.mp hz).2 hyx⟩)
+      (Nat.not_le.mpr h)
+
+omit [DecidableEq I] in
+open Classical in
+theorem equiv_iff_rank_eq {x y : I} :
+    ord.equiv x y ↔ rank ord x = rank ord y := by
+  constructor
+  · intro h
+    exact Nat.le_antisymm
+      (Finset.card_le_card fun z hz => Finset.mem_filter.mpr
+        ⟨Finset.mem_univ z, ord.lt_of_lt_of_le (Finset.mem_filter.mp hz).2 h.1⟩)
+      (Finset.card_le_card fun z hz => Finset.mem_filter.mpr
+        ⟨Finset.mem_univ z, ord.lt_of_lt_of_le (Finset.mem_filter.mp hz).2 h.2⟩)
+  · intro h
+    exact ⟨ord.le_of_not_lt fun hlt => Nat.lt_irrefl _
+        (h ▸ (lt_iff_rank_lt ord).mp hlt),
+      ord.le_of_not_lt fun hlt => Nat.lt_irrefl _
+        (h ▸ (lt_iff_rank_lt ord).mp hlt)⟩
+
+open Classical in
+/-- The degree list: ranks of the normal form, in descending order. ⊐ is the
+lexicographic order on degree lists (`strictlyBetter_iff_degList`). -/
+noncomputable def degList (X : Finset I) : List ℕ :=
+  ((normalize ord i X).val.map (rank ord)).sort (· ≥ ·)
 
 /-- ∼ as a `Setoid` on field-subsets (transitivity needs the field bound). -/
 def metalinguisticSetoid :
