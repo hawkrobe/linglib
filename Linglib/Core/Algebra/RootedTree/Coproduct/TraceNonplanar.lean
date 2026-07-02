@@ -12,6 +12,10 @@ import Mathlib.RingTheory.Bialgebra.Basic
 import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 set_option autoImplicit false
+-- The structure-wrapped `ConnesKreimer` needs one extra pending step when
+-- synthesizing instances on nested tensor squares `CK ⊗ (CK ⊗ CK)` (the
+-- def-synonym's fall-through to `AddMonoidAlgebra` instances is gone).
+set_option maxSynthPendingDepth 2
 
 /-!
 # Δ^c on `ConnesKreimer R (Nonplanar (α ⊕ β))` via descent + duality
@@ -542,17 +546,12 @@ noncomputable def comulCAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R]
       ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
         ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Nonplanar (α ⊕ β))) ⊗[R]
-      (ConnesKreimer R (Nonplanar (α ⊕ β))))
-    (Forest (Nonplanar (α ⊕ β))) (comulCMonoidHomN τ)
+  ConnesKreimer.lift (comulCMonoidHomN τ)
 
 @[simp] theorem comulCAlgHomN_apply_of' (τ : Nonplanar (α ⊕ β) → β)
     (F : Forest (Nonplanar (α ⊕ β))) :
     comulCAlgHomN (R := R) τ (ConnesKreimer.of' F) = comulCForestN τ F := by
-  show AddMonoidAlgebra.lift R _ _ (comulCMonoidHomN τ)
-        (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [comulCAlgHomN, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulCAlgHomN_apply_ofTree (τ : Nonplanar (α ⊕ β) → β)
@@ -794,12 +793,13 @@ private theorem pairing₂_nondegenerate
       pairing₂ (R := R) (x ⊗ₜ[R] y) U = 0) : U = 0 := by
   classical
   let ℬ : Module.Basis (Forest (Nonplanar α)) R (ConnesKreimer R (Nonplanar α)) :=
-    Finsupp.basisSingleOne
+    ConnesKreimer.basisSingleOne
   obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀ ConnesKreimer R (Nonplanar α),
       c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
     TensorProduct.eq_repr_basis_left ℬ U
   have hℬ : ∀ G : Forest (Nonplanar α),
-      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G := fun _ => rfl
+      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G := fun _ =>
+    ConnesKreimer.basisSingleOne_apply _
   have hc_zero : ∀ F, c F = 0 := by
     intro F
     apply GrossmanLarson.pairing_nondegenerate (c F)
@@ -839,7 +839,7 @@ theorem pairing₃_nondegenerate
   classical
   let ℬ : Module.Basis (Forest (Nonplanar α)) R
         (ConnesKreimer R (Nonplanar α)) :=
-    Finsupp.basisSingleOne
+    ConnesKreimer.basisSingleOne
   obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀
         (ConnesKreimer R (Nonplanar α) ⊗[R]
           ConnesKreimer R (Nonplanar α)),
@@ -847,7 +847,7 @@ theorem pairing₃_nondegenerate
     TensorProduct.eq_repr_basis_left ℬ U
   have hℬ : ∀ G : Forest (Nonplanar α),
       (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G :=
-    fun _ => rfl
+    fun _ => ConnesKreimer.basisSingleOne_apply _
   have hc_zero : ∀ F, c F = 0 := by
     intro F
     apply pairing₂_nondegenerate (c F)
@@ -875,13 +875,11 @@ theorem pairing₃_nondegenerate
 vector are equal. Follows from `pairing₃_nondegenerate` via
 `U = V ↔ U - V = 0`, requiring `AddCommGroup` on the triple tensor.
 
-**The CommSemiring/CommRing diamond fix**: this theorem lives in its own
-section with `[CommRing R₁]` only (NOT [CommSemiring R] from the file's
-top section + [CommRing R] added on top — those create two CommSemiring R
-instances that don't unify). With a single CommRing hypothesis, `CK R₁ T`
-uses `CommRing.toCommSemiring` uniformly, and `addCommGroupOf` (which
-also returns CK with CommRing-derived CommSemiring) matches without
-diamond. -/
+**Single ring hypothesis**: this theorem lives in its own section with
+`[CommRing R₁]` only (NOT [CommSemiring R] from the file's top section +
+[CommRing R] added on top — those create two CommSemiring R instances
+that don't unify). The `AddCommGroup` on the wrapper comes from the
+global `ConnesKreimer.instCommRing`. -/
 
 section PairingUnique
 variable {R₁ : Type*} [CommRing R₁] {α₁ : Type*}
@@ -891,8 +889,6 @@ theorem pairing₃_unique [CharZero R₁] [NoZeroDivisors R₁]
           (ConnesKreimer R₁ (Nonplanar α₁) ⊗[R₁]
             ConnesKreimer R₁ (Nonplanar α₁)))
     (h : ∀ t, pairing₃ (R := R₁) t U = pairing₃ (R := R₁) t V) : U = V := by
-  letI : AddCommGroup (ConnesKreimer R₁ (Nonplanar α₁)) :=
-    ConnesKreimer.addCommGroupOf
   rw [← sub_eq_zero]
   apply pairing₃_nondegenerate
   intro t
@@ -1317,7 +1313,7 @@ theorem comulCN_coassoc
           (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))
       rw [comulCAlgHomN_apply_ofTree]
       exact comulCN_coassoc_tree τ hτ T
-  exact AddMonoidAlgebra.algHom_ext (fun F => key F)
+  exact ConnesKreimer.algHom_ext (fun F => key F)
 
 end CoassocCommRing
 
@@ -1749,7 +1745,7 @@ theorem counit_rTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
         (AlgHom.id R' _)).comp (comulCAlgHomN (R := R') τ) =
       (Algebra.TensorProduct.lid R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))).symm.toAlgHom := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
           ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
@@ -1767,7 +1763,7 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
           ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')).comp (comulCAlgHomN (R := R') τ) =
       (Algebra.TensorProduct.rid R' R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))).symm.toAlgHom := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   show (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
           ((ConnesKreimer.counit (R := R')) :
@@ -2035,7 +2031,7 @@ theorem mcb_lemma_1_2_10
     (∀ (n : ℕ) (F : Forest (Nonplanar (α'' ⊕ β''))),
       Forest.edgeCount F = n →
       comulCAlgHomN (R := R'') τ (ConnesKreimer.of' F) ∈
-        Submodule.span R'' {y | ∃ (i j : ℕ) (hi : i + j = n)
+        Submodule.span R'' {y | ∃ (i j : ℕ) (_hi : i + j = n)
           (xi yi : ConnesKreimer R'' (Nonplanar (α'' ⊕ β''))),
           xi ∈ gradedPiece (α'' ⊕ β'') i ∧
           yi ∈ gradedPiece (α'' ⊕ β'') j ∧

@@ -1,4 +1,5 @@
 import Mathlib.Algebra.MonoidAlgebra.Basic
+import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Multiset.Basic
 
@@ -153,8 +154,8 @@ noncomputable instance : Pow (ConnesKreimer R T) ℕ := ⟨fun p n => ⟨p.toFin
 Built by injective transport from the single bottom `instCommSemiring`. -/
 
 noncomputable instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
-  toFinsupp_injective.commSemiring _ toFinsupp_zero toFinsupp_one toFinsupp_add
-    toFinsupp_mul toFinsupp_nsmul toFinsupp_pow (fun _ => rfl)
+  fast_instance% toFinsupp_injective.commSemiring _ toFinsupp_zero toFinsupp_one
+    toFinsupp_add toFinsupp_mul toFinsupp_nsmul toFinsupp_pow (fun _ => rfl)
 
 /-- `toFinsupp` bundled as an `AddMonoidHom` (transport vehicle). -/
 noncomputable def toFinsuppAddHom :
@@ -164,7 +165,7 @@ noncomputable def toFinsuppAddHom :
   map_add' := toFinsupp_add
 
 noncomputable instance instModule : Module R (ConnesKreimer R T) :=
-  toFinsupp_injective.module R toFinsuppAddHom toFinsupp_smul
+  fast_instance% toFinsupp_injective.module R toFinsuppAddHom toFinsupp_smul
 
 noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) where
   algebraMap :=
@@ -214,9 +215,9 @@ noncomputable instance instIntCast : IntCast (ConnesKreimer R T) :=
     (z • p).toFinsupp = z • p.toFinsupp := rfl
 
 noncomputable instance instCommRing : CommRing (ConnesKreimer R T) :=
-  toFinsupp_injective.commRing _ toFinsupp_zero toFinsupp_one toFinsupp_add
-    toFinsupp_mul toFinsupp_neg toFinsupp_sub toFinsupp_nsmul toFinsupp_zsmul
-    toFinsupp_pow (fun _ => rfl) (fun _ => rfl)
+  fast_instance% toFinsupp_injective.commRing _ toFinsupp_zero toFinsupp_one
+    toFinsupp_add toFinsupp_mul toFinsupp_neg toFinsupp_sub toFinsupp_nsmul
+    toFinsupp_zsmul toFinsupp_pow (fun _ => rfl) (fun _ => rfl)
 
 end Ring
 
@@ -343,6 +344,20 @@ theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
     Finsupp.addHom_ext h
   ext p
   exact DFunLike.congr_fun key p.toFinsupp
+
+/-! ### The forest basis -/
+
+/-- The forests, via `of'`, as an `R`-basis of the Connes-Kreimer algebra
+    (`Polynomial.basisMonomials` analogue). -/
+noncomputable def basisSingleOne :
+    Module.Basis (Forest T) R (ConnesKreimer R T) :=
+  Module.Basis.map Finsupp.basisSingleOne
+    (toFinsuppAlgEquiv (R := R) (T := T)).symm.toLinearEquiv
+
+@[simp] theorem basisSingleOne_apply (F : Forest T) :
+    (basisSingleOne : Module.Basis (Forest T) R (ConnesKreimer R T)) F = of' F := by
+  simp only [basisSingleOne, Module.Basis.map_apply, Finsupp.coe_basisSingleOne]
+  rfl
 
 /-! ## §5: Counit
 
