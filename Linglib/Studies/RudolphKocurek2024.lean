@@ -65,20 +65,13 @@ theory.
 namespace RudolphKocurek2024
 
 open FirstOrder FirstOrder.Language in
-/-! ### Interpretations and Semantic Orderings
-
-An interpretation — the paper's "function from linguistic expressions to
-intensions" — is a world-indexed family of first-order structures: predicates
-get world-relative extensions via `Structure.RelMap`. Studies carry them as
-terms (`interp : I → W → L.Structure E`), the structures-as-terms discipline
-of `Semantics/Composition/Model.lean`. -/
+/-! ### Interpretations and semantic orderings -/
 
 open Core.Order (TotalPreorder)
 open FirstOrder FirstOrder.Language
 
 /-- The paper's ranking of interpretations by strength of interpretive
-commitment (§4.2): a bundled total preorder, the frame object of Lewisian
-plausibility semantics. -/
+commitment (§4.2). -/
 abbrev SemanticOrdering (I : Type*) := TotalPreorder I
 
 /-! ### Semantics (§4.2 of the paper) -/
@@ -93,23 +86,11 @@ abbrev Eval (φ : L.CompFormula E) (ord : SemanticOrdering I) (i : I) (w : W) :
     Prop :=
   CompFormula.Realize interp φ ord.le i w
 
-/-! ### General entailment facts
-
-The logic-level facts — the definitional comparative clause
-(`CompFormula.realize_comp_iff`), atom realization, ordering-invariance of the
-comparative-free fragment, the strict l-lifting grounding, and Fact 3's
-(f)/(k)/(l) (irreflexivity of ≻, reflexivity and symmetry of ≈) — live with
-the comparative-possibility language in `Core/Logic/FirstOrder/Comparative`.
-The remainder of Fact 3 is established in [kocurek-2024-supplement] and
-witnessed on the finite models below. -/
-
 /-! ### Assertoric Content -/
 
-/-- Assertoric content: A is true at all ≤-maximal interpretations — the
-substrate's `TotalPreorder.AcceptedAt` acceptance operator. A speaker accepts
-A iff on every ordering-world pair they leave open, A holds at every
-top-ranked interpretation. Acceptance-preservation is nonclassical (see
-`mc_disj_not_accepted`). -/
+/-- Assertoric content (§3.3): truth at all ≤-maximal interpretations —
+`TotalPreorder.AcceptedAt`. Acceptance-preservation is nonclassical
+(`mc_disj_not_accepted`). -/
 def AssertoricContent [Fintype I] (φ : L.CompFormula E)
     (ord : SemanticOrdering I) (w : W) : Prop :=
   ord.AcceptedAt (fun i => Eval interp φ ord i w)
@@ -123,9 +104,8 @@ end Semantics
 
 /-! ### Distance Functions and Degree Modifiers (§6.1) -/
 
-/-- A distance function for a semantic ordering: maps each interpretation to
-the interpretations \"reasonably close\" to it. Grounds `very much`, `sorta`,
-`mostly`. -/
+/-- A distance function (§6.1): which interpretations count as reasonably
+close to each — the parameter behind *very*, *sorta*, *mostly*. -/
 structure DistanceFunction (I : Type*) (ord : SemanticOrdering I) where
   /-- `close i i'` means i' is reasonably close to i. -/
   close : I → I → Prop
@@ -138,7 +118,7 @@ structure DistanceFunction (I : Type*) (ord : SemanticOrdering I) where
   /-- Noncontractive: if i' ∈ d(i) and i' ≤ j ≤ i, then i' ∈ d(j) -/
   noncontractive : ∀ i i' j, close i i' → ord.le i' j → ord.le j i → close j i'
 
-/-- \"Far below\": i ≪ j iff i ≤ j and i is not even reasonably close to j. -/
+/-- `i ≪ j`: i is below j and not even reasonably close to it. -/
 def FarBelow {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord)
     (i j : I) : Prop :=
   ord.le i j ∧ ¬ d.close j i
@@ -294,7 +274,7 @@ variable {L : Language} {I W E : Type*}
 
 /-- The delineation induced by a ranked family of interpretations: a comparison
 class is admissible iff it is the extension of `P` at some interpretation
-ranked at or below `i`, and `x` is \"P-in-C\" iff `x ∈ C`. Instantiates
+ranked at or below `i`, and `x` is P-in-C iff `x ∈ C`. Instantiates
 [klein-1980]'s comparison-class parameter with the paper's interpretation
 rankings, so the substrate's `Delineation.comparativeSem` can consume it. -/
 def interpretationDelineation (i : I) :
@@ -478,15 +458,14 @@ end MCond
 open CommonGround (ContextSet HasContextSet)
 
 /-- An ordering-world pair: the enriched index for the metalinguistic common
-ground — a Stalnakerian \"world\" that fixes interpretive as well as factual
+ground — a Stalnakerian world that fixes interpretive as well as factual
 commitments. -/
 structure OrderingWorldPair (I W : Type*) where
   ord : SemanticOrdering I
   world : W
 
 /-- The metalinguistic common ground IS the substrate's `ContextSet`, taken at
-the enriched index type: the Stalnaker generalization is \"same object, richer
-worlds\", so `ContextSet.update` and its laws apply unchanged. -/
+the enriched index type: the Stalnaker generalization is "same object, richer worlds", so `ContextSet.update` and its laws apply unchanged. -/
 abbrev MetalinguisticCG (I W : Type*) := ContextSet (OrderingWorldPair I W)
 
 namespace MetalinguisticCG
