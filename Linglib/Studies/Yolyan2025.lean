@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Logic.BMRS
-import Linglib.Studies.Jardine2016Tone
+import Linglib.Phonology.Tone.Plateauing
 import Linglib.Studies.McCollumEtAl2020
 
 /-!
@@ -223,11 +223,11 @@ theorem tutrugbu_not_bmrsWeaklyDeterministic :
 
 /-- Luganda unbounded tonal plateauing is not weakly deterministic: [jardine-2016]'s
 flagship pattern (the class of the paper's Prop. 5.4 Bemba case), through
-`Studies/Jardine2016Tone`'s witness. -/
+`Phonology/Tone/Plateauing`'s witness. -/
 theorem utp_not_bmrsWeaklyDeterministic :
-    ¬ IsBmrsWeaklyDeterministic Jardine2016Tone.utp :=
+    ¬ IsBmrsWeaklyDeterministic Tone.Plateauing.utp :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
-    Jardine2016Tone.utp_requiresBothSides
+    Tone.Plateauing.utp_requiresBothSides
 
 /-! ### The positive side: LHOL stress as a simultaneous application (§5.2)
 

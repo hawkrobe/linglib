@@ -119,6 +119,7 @@ import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
+import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Traversable
@@ -2941,5 +2942,6 @@ import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.DegenTonhauser2021
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.Krifka1998
+import Linglib.Phonology.Tone.Plateauing
 
 
