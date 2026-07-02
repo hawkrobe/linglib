@@ -657,17 +657,13 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 -- ════════════════════════════════════════════════════════════════
 --
 -- Per-language overt Cont exponents under [bondarenko-2022]'s
--- analysis, typed over the fragment morpheme inventories (imported,
--- not re-stipulated): Buryat *gɘ* (§4.3.1), Korean *-ta* (§4.3.2,
--- following [bogal-allbritten-moulton-2018]), extended with Tigrinya
--- *kemzi* ([cacchioli-2025]). `none` is null exponence (English,
--- Russian). The typed values ARE the paradigm; the former pooled
--- `List (String × String)` display table was consumer-free and its
--- rows had drifted from the fragments, so it was deleted.
+-- analysis, typed over the fragment morpheme inventories: Buryat *gɘ*
+-- (§4.3.1), Korean *-ta* (§4.3.2, following
+-- [bogal-allbritten-moulton-2018]), extended with Tigrinya *kemzi*
+-- ([cacchioli-2025]). `none` is null exponence (English, Russian).
 
 /-- Buryat: the say-root *gɘ* expones Cont ([bondarenko-2022] §4.3.1
-    ex. 33). This is the Studies-local projection the fragment's
-    scope note defers to. -/
+    ex. 33). -/
 def buryatContExponent : Option Buryat.Complementizer := some .ge
 
 /-- Korean: *-ta* expones Cont ([bondarenko-2022] §4.3.2, following
