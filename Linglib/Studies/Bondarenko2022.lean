@@ -664,7 +664,7 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 
 /-- Buryat: the say-root *gɘ* expones Cont ([bondarenko-2022] §4.3.1
     ex. 33). -/
-def buryatContExponent : Option Buryat.Complementizer := some .ge
+def buryatContExponent : Option Complementizer := some Buryat.ge
 
 /-- Korean: *-ta* expones Cont ([bondarenko-2022] §4.3.2, following
     [bogal-allbritten-moulton-2018]). -/
@@ -678,29 +678,31 @@ def tigrinyaContExponent : Option Tigrinya.ClausePrefixes.ClausePrefixEntry :=
 /-- [bondarenko-2022]'s Cont/Comp assignment coincides with the
     fragment's root-vs-suffix datum: the Cont exponent is exactly the
     non-suffixal (say-root) morpheme. -/
-theorem mem_buryatContExponent_iff (c : Buryat.Complementizer) :
-    c ∈ buryatContExponent ↔ c.entry.verbForm = none := by
-  cases c <;> decide
+theorem mem_buryatContExponent_iff :
+    ∀ c ∈ Buryat.complementizers,
+      (c ∈ buryatContExponent ↔ c.verbForm = none) := by
+  decide
 
 /-- The Comp head realized by adjacency-conditioned allomorphy
     ([bondarenko-2022] §4.3.1 ex. 33): one head, two allomorphs —
     participial *-Aːša* next to nominal projections, converbial *-žA*
     next to verbs. -/
-def buryatCompAllomorph : Complementizer.Host → Buryat.Complementizer
-  | .nominal => .aasha
-  | .verbal  => .zha
+def buryatCompAllomorph : Complementizer.Host → Complementizer
+  | .nominal => Buryat.aasha
+  | .verbal  => Buryat.zha
 
 /-- The allomorph selected for a host has exactly that surface
     distribution — the analysis reproduces the fragment's datum. -/
 theorem host_buryatCompAllomorph (h : Complementizer.Host) :
-    (buryatCompAllomorph h).entry.host = some h := by
+    (buryatCompAllomorph h).host = some h := by
   cases h <;> rfl
 
-/-- The head assignment is exhaustive: every clause-typing morpheme is
-    either the Cont exponent or a Comp allomorph. -/
-theorem contP_comp_cover (c : Buryat.Complementizer) :
-    c ∈ buryatContExponent ∨ ∃ h, buryatCompAllomorph h = c := by
-  cases c <;> decide
+/-- The head assignment is exhaustive: every morpheme in the inventory
+    is either the Cont exponent or a Comp allomorph. -/
+theorem contP_comp_cover :
+    ∀ c ∈ Buryat.complementizers,
+      c ∈ buryatContExponent ∨ ∃ h, buryatCompAllomorph h = c := by
+  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13. Chapter 2 §2.2.3: noun-predicate co-occurrence diagnostics

@@ -13,10 +13,10 @@ and nominalized with the say-root `[… V-TENSE g-ɘːš-CASE]`.
 
 ## Main definitions
 
-- `Buryat.Complementizer` — index of the say-root *gɘ*, the agentive
-  participle *-Aːša*, and the imperfective converb *-žA*
-  ([skribnik-2003]); the feature rows are `Complementizer.entry`
-  values of the root `Complementizer` schema
+- `Buryat.ge`, `Buryat.aasha`, `Buryat.zha` — the say-root *gɘ*, the
+  agentive participle *-Aːša*, and the imperfective converb *-žA*
+  ([skribnik-2003]), as root `Complementizer` entries; the closed
+  inventory is `Buryat.complementizers`
 - `Buryat.hanaxa`, `Buryat.medexe`, `Buryat.xelexe`, `Buryat.duulaxa` —
   clause-embedding verbs; all four alternate between the finite-CP and
   nominalized (`.gerund`) frames (ex. 35–36, 50–51)
@@ -35,33 +35,34 @@ archiphonemes.
 
 namespace Buryat
 
-/-- Index of the three clause-typing morphemes of the Barguzin Buryat
-embedded clause (§4.3.1 ex. 30–32). Feature rows: `Complementizer.entry`. -/
-inductive Complementizer where
-  /-- *gɘ* — grammaticalized root of *gɘxɘ* 'say' (fn. 21: no speech act
-  entailed under 'hear' or 'see'). -/
-  | ge
-  /-- *-Aːša* — agentive participle ([skribnik-2003]); appears next to
-  nominal projections. -/
-  | aasha
-  /-- *-žA* — imperfective converb ([skribnik-2003]); appears next to
-  verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
-  | zha
-  deriving DecidableEq, Fintype, Repr
+/-- *gɘ* — grammaticalized root of *gɘxɘ* 'say' (fn. 21: no speech act
+entailed under 'hear' or 'see'). Never surfaces unsuffixed (gɘ-žɘ,
+g-ɘːšɘ), so its attachment is left unrecorded. -/
+def ge : Complementizer where
+  form := "gɘ"
 
-/-- The lexical entry of each morpheme, in Bondarenko's transliteration.
-The root *gɘ* never surfaces unsuffixed (gɘ-žɘ, g-ɘːšɘ), so its
-attachment is left unrecorded; the *-Aːša* complement is
-Noonan-nominalized (case-marked, genitive subject) while the morpheme
-itself is a participle — two axes, two fields. -/
-def Complementizer.entry : Complementizer → _root_.Complementizer
-  | .ge    => { form := "gɘ" }
-  | .aasha => { form := "-Aːša", position := some .postfixed,
-                noonanType := some .nominalized,
-                verbForm := some .Part, host := some .nominal }
-  | .zha   => { form := "-žA", position := some .postfixed,
-                noonanType := some .indicative,
-                verbForm := some .Conv, host := some .verbal }
+/-- *-Aːša* — agentive participle ([skribnik-2003]); appears next to
+nominal projections. The complement it types is Noonan-nominalized
+(case-marked, genitive subject) while the morpheme itself is a
+participle — two axes, two fields. -/
+def aasha : Complementizer where
+  form := "-Aːša"
+  position := some .postfixed
+  noonanType := some .nominalized
+  verbForm := some .Part
+  host := some .nominal
+
+/-- *-žA* — imperfective converb ([skribnik-2003]); appears next to
+verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
+def zha : Complementizer where
+  form := "-žA"
+  position := some .postfixed
+  noonanType := some .indicative
+  verbForm := some .Conv
+  host := some .verbal
+
+/-- The clause-typing inventory — closed per §4.3.1 ex. 30–32. -/
+def complementizers : List Complementizer := [ge, aasha, zha]
 
 /-! ### Clause-embedding verbs
 
