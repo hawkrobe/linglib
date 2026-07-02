@@ -1,167 +1,107 @@
 import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Complementizer.Basic
 
 /-!
 # Buryat Complementizers and Clause-Embedding Verbs
-[bondarenko-2022] [bondarenko-2020] [bondarenko-2017]
+[bondarenko-2022] [bondarenko-2020] [bondarenko-2019]
 
-Modern Barguzin Buryat (Mongolic; Russian Federation) — clause-typing
-morphology and the matrix verbs that select bare vs. nominalized
-embedded clauses ([bondarenko-2022] §4.3.1).
+This file records the clause-typing morphemes of Barguzin Buryat
+(Mongolic) embedded clauses and the matrix verbs that select them.
+Embedded clauses show three surface shapes ([bondarenko-2022] §4.3.1
+ex. 30–32): bare `[… V-TENSE gɘ-žɘ]`, nominalized `[… V-PART-CASE]`,
+and nominalized with the say-root `[… V-TENSE g-ɘːš-CASE]`.
 
-## Three clause-typing morphemes
+## Main definitions
 
-- **gɔ** 'say' — verbal source; [bondarenko-2022] §4.3.1 analyses
-  it as the overt exponent of ContP (the projection introducing the
-  CONT function at the left periphery of Cont-CPs). When *gɔ* is
-  present, the embedded clause is a Cont-CP.
-- **-Aːša** / **-žA** — Comp allomorphs of the participial nominaliser
-  (vowel harmony / aspect-conditioned). Closes off a non-finite
-  embedded clause; co-occurs with both Cont-CPs (alongside *gɔ*) and
-  Sit-CPs (without *gɔ*).
-- The contrast (Cont-CP = with *gɔ*; Sit-CP = without *gɔ*) is what
-  makes Buryat the chapter's headline language for the bare/
-  nominalized cut.
+- `Buryat.ge`, `Buryat.aasha`, `Buryat.zha` — the say-root *gɘ*, the
+  agentive participle *-Aːša*, and the imperfective converb *-žA*
+  ([skribnik-2003]), as root `Complementizer` entries; the closed
+  inventory is `Buryat.complementizers`
+- `Buryat.hanaxa`, `Buryat.medexe`, `Buryat.xelexe`, `Buryat.duulaxa` —
+  clause-embedding verbs; all four alternate between the finite-CP and
+  nominalized (`.gerund`) frames (ex. 35–36, 50–51)
 
-## Scope of this Fragment file
+## Implementation notes
 
-Per the project Fragment-discipline rule (textbook-consensus
-metadata only): this file exposes only the **morphological inventory
-and surface co-occurrence facts**. The Bondarenko-specific
-ContP-bearing projection (`bearsContP`) lives as a Studies-local
-projection in `Studies/Bondarenko2022.lean`,
-not as a field of the morpheme record. Alternative analyses
-(Knyazev's spanning-complementiser account, Stassen's serial-verb
-analysis of *gɔ*) treat the morphology differently; this fragment
-stays neutral.
-
-## Matrix verbs
-
-The verbs that anchor Bondarenko's bare-vs-nominalized arguments:
-
-- *xanaxa* 'think / remember' — polysemous attitude verb; bare
-  complement = thinking (Cont reading), nominalized complement =
-  remembering (DP-argument reading). Anchors §4.4.3 about-argument.
-- *boloxo* 'happen / become' — change-of-state verb taking situation
-  arguments; bare complement reading.
-- *medexe* 'know' — factive doxastic.
-- *xelexe* 'say' — speech act verb; selects bare *gɔ*-marked
-  complement.
-
+Bondarenko's head assignment (*gɘ* expones Cont, the suffixes are Comp
+allomorphs) is paper-specific and lives in `Studies/Bondarenko2022.lean`;
+rival carvings of Mongolic say-complementizers: [knyazev-2016],
+[matic-pakendorf-2013]. Bare `§`-references are to [bondarenko-2022],
+bare `ex.`/`fn.` references to [bondarenko-2020]. Identifiers are ASCII
+romanizations (ɘ → e, ː → doubling, ž → zh, š → sh); `form` fields carry
+the faithful transliterations, with capitals marking vowel-harmony
+archiphonemes.
 -/
 
-namespace Buryat.Complementizers
+namespace Buryat
 
+/-- *gɘ* — grammaticalized root of *gɘxɘ* 'say' (fn. 21: no speech act
+entailed under 'hear' or 'see'). Never surfaces unsuffixed (gɘ-žɘ,
+g-ɘːšɘ), so its attachment is left unrecorded. -/
+def ge : Complementizer where
+  form := "gɘ"
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Clause-typing morpheme inventory
--- ════════════════════════════════════════════════════════════════
+/-- *-Aːša* — agentive participle ([skribnik-2003]); appears next to
+nominal projections. The complement it types is Noonan-nominalized
+(case-marked, genitive subject) while the morpheme itself is a
+participle — two axes, two fields. -/
+def aasha : Complementizer where
+  form := "-Aːša"
+  position := some .postfixed
+  noonanType := some .nominalized
+  verbForm := some .Part
+  host := some .nominal
 
-/-- The three clause-typing morphemes covered here. *Aːša* / *žA* are
-    treated as separate morphemes by their phonological/aspectual
-    distribution; some accounts unify them as allomorphs of a single
-    Comp head. -/
-inductive BuryatComplementizer where
-  /-- *gɔ* — verbal "say"-source; overt exponent of ContP per
-      [bondarenko-2022] §4.3.1. ASCII identifier `gO` for kernel-
-      reducer compatibility; the form string preserves the unicode. -/
-  | gO
-  /-- *-Aːša* — participial nominaliser (imperfective/non-future).
-      ASCII identifier `aSha` for kernel-reducer compatibility. -/
-  | aSha
-  /-- *-žA* — participial nominaliser (perfective/factive).
-      ASCII identifier `zhA` for kernel-reducer compatibility. -/
-  | zhA
-  deriving DecidableEq, Repr
+/-- *-žA* — imperfective converb ([skribnik-2003]); appears next to
+verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
+def zha : Complementizer where
+  form := "-žA"
+  position := some .postfixed
+  noonanType := some .indicative
+  verbForm := some .Conv
+  host := some .verbal
 
-/-- Phonological form (rough Latinisation; vowel-harmony variants
-    abstracted away for citation purposes). -/
-def BuryatComplementizer.form : BuryatComplementizer → String
-  | .gO   => "gɔ"
-  | .aSha => "-Aːša"
-  | .zhA   => "-žA"
+/-- The clause-typing inventory — closed per §4.3.1 ex. 30–32. -/
+def complementizers : List Complementizer := [ge, aasha, zha]
 
-/-- Whether the morpheme is verbally sourced (vs. nominal/participial).
-    *gɔ* is verbally sourced (from "say"); the participial nominalisers
-    are not. -/
-def BuryatComplementizer.isVerbal : BuryatComplementizer → Bool
-  | .gO => true
-  | _   => false
+/-! ### Clause-embedding verbs
 
-/-- Whether the morpheme is a participial nominaliser. The split into
-    *Aːša* / *žA* by the participial allomorphy follows
-    [bondarenko-2022] §4.3.1. -/
-def BuryatComplementizer.isParticipial : BuryatComplementizer → Bool
-  | .aSha => true
-  | .zhA   => true
-  | .gO   => false
+Vendler class stays unset (`Verb.Aspect.vendlerClass` convention for
+clause-embedding verbs). -/
 
-/-- Sanity check: the verbal/participial axes partition the inventory. -/
-theorem verbal_xor_participial (c : BuryatComplementizer) :
-    c.isVerbal = !c.isParticipial := by cases c <;> decide
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Matrix verb entries
--- ════════════════════════════════════════════════════════════════
-
-/-- *xanaxa* — 'think / remember'. Bondarenko's anchor verb for the
-    bare-vs-nominalized argument-structure alternation
-    ([bondarenko-2022] §4.4.3). With bare complement → thinking
-    (Cont reading); with nominalized complement → remembering
-    (DP-argument reading + about-presupposition).
-
-    Citation form is the eventive/cognition sense; the
-    polysemy is tracked via `altComplementType`. -/
-def xanaxa : Verb where
-  form := "xanaxa"
+/-- *hanaxa* 'think ~ remember': 'think' with a bare gɘžɘ-CP, 'remember'
+with a nominalized complement (§4.4.3). `attitude` and `opaqueContext`
+record the bare-CP frame; the nominalized frame's pre-existence
+presupposition is tracked in `Semantics/Attitudes/PreExistence.lean`. -/
+def hanaxa : Verb where
+  form := "hanaxa"
   complementType := .finiteClause
-  altComplementType := some .finiteClause
+  altComplementType := some .gerund
   attitude := some (.doxastic .nonVeridical)
-  vendlerClass := some .activity
   opaqueContext := true
 
-/-- *boloxo* — 'happen / become'. Eventive change-of-state verb.
-    Selects situation-typed argument; relevant to §4.3.3 cross-
-    linguistic-occurrence-verb generalization. -/
-def boloxo : Verb where
-  form := "boloxo"
-  complementType := .finiteClause
-  vendlerClass := some .achievement
-  unaccusative := true
-
-/-- *medexe* — 'know'. Factive doxastic; stative. -/
+/-- *mɘdɘxɘ* 'know' — factive in both frames (ex. 36); embeds polar
+questions (ex. 3). -/
 def medexe : Verb where
-  form := "medexe"
+  form := "mɘdɘxɘ"
   complementType := .finiteClause
+  altComplementType := some .gerund
   attitude := some (.doxastic .veridical)
-  vendlerClass := some .state
+  takesQuestionBase := true
 
-/-- *xelexe* — 'say'. Speech-act verb; selects bare *gɔ*-marked
-    complement per [bondarenko-2022] §4.3.1. -/
+/-- *xɘlɘxɘ* 'say' — non-factive with bare CPs; nominalized complements
+are existence-entailing (ex. 51; speaker variation per fn. 30). -/
 def xelexe : Verb where
-  form := "xelexe"
+  form := "xɘlɘxɘ"
   complementType := .finiteClause
+  altComplementType := some .gerund
   speechActVerb := true
-  vendlerClass := some .activity
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Theorems
--- ════════════════════════════════════════════════════════════════
+/-- *duːlaxa* 'hear' — non-factive with bare CPs, existence-entailing
+with nominalized complements (ex. 50). -/
+def duulaxa : Verb where
+  form := "duːlaxa"
+  complementType := .finiteClause
+  altComplementType := some .gerund
 
-/-- *xanaxa* and *boloxo* are non-stative; *medexe* is stative.
-    Consensus stativity per Vendler. -/
-theorem stativity_split :
-    xanaxa.vendlerClass = some .activity ∧
-    boloxo.vendlerClass = some .achievement ∧
-    medexe.vendlerClass = some .state ∧
-    xelexe.vendlerClass = some .activity := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- *xanaxa* is the only verb here with two complement frames
-    available (the bare-vs-nominalized alternation Bondarenko exploits
-    in §4.4.3). -/
-theorem only_xanaxa_alternates :
-    xanaxa.altComplementType.isSome = true ∧
-    boloxo.altComplementType.isSome = false ∧
-    medexe.altComplementType.isSome = false ∧
-    xelexe.altComplementType.isSome = false := ⟨rfl, rfl, rfl, rfl⟩
-
-end Buryat.Complementizers
+end Buryat

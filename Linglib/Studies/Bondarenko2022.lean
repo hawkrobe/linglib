@@ -1,5 +1,8 @@
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
+import Linglib.Fragments.Buryat.Complementizers
+import Linglib.Fragments.Korean.Complementizers
+import Linglib.Fragments.Tigrinya.ClausePrefixes
 
 /-!
 # Bondarenko 2022: Anatomy of an Attitude [bondarenko-2022]
@@ -39,7 +42,7 @@ syntactic distinction in the left periphery (§1.1.1, paper ex. 1):
   predicate on minimal situations (Kratzer 1989). Lacks ContP.
 
 In some languages ContP is overtly exposed (Korean -ta declarative;
-Buryat gɔ 'say'); in others (English, Russian) it is null.
+Buryat gɘ 'say'); in others (English, Russian) it is null.
 
 ## Three substantive claims this file formalizes
 
@@ -83,9 +86,10 @@ Buryat gɔ 'say'); in others (English, Russian) it is null.
   + the L-analyticity argument. Worth its own file when the
   L-analyticity substrate is in place.
 - Buryat/Korean/Russian morphological exposition (ContP overt vs
-  null): would belong in per-language fragment files
-  (Fragments/Buryat, Fragments/Korean, Fragments/Russian) once
-  those exist.
+  null): lives in the per-language fragment files
+  (`Fragments/Buryat/Complementizers.lean`,
+  `Fragments/Korean/Complementizers.lean`; Russian has none yet),
+  consumed by the §12 exponence projections below.
 -/
 
 namespace Bondarenko2022
@@ -470,11 +474,13 @@ inductive SemType where
     compatible framing. -/
 inductive ClauseType where
   /-- Nominalized CP: type ⟨e⟩, refers to an individual (typically
-      with propositional content via CONT). Buryat *gɔ*-marked clause
-      with a participial nominaliser; Korean *-nun + kes* clause. -/
+      with propositional content via CONT). Buryat participial
+      nominalization — with or without the say-root *gɘ*
+      ([bondarenko-2022] §4.3.1 ex. 31–32); Korean *-nun + kes*
+      clause. -/
   | predicateOfIndividuals
   /-- Bare CP: type ⟨e,t⟩, predicate over (minimal) situations.
-      Buryat clause without *gɔ*; Korean *-ta* declarative; Russian
+      Buryat *gɘžɘ*-clause; Korean *-ta* declarative; Russian
       bare *čto*-clause. -/
   | predicateOfSituations
   deriving DecidableEq, Repr
@@ -647,22 +653,56 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
             fun _ => trivial⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 12. Cross-linguistic ContP-exponent paradigm
+-- § 12. Cross-linguistic ContP exponence
 -- ════════════════════════════════════════════════════════════════
 --
--- Per cross-framework auditor: Tigrinya *kemzi* (Cacchioli2025),
--- Buryat *gɔ* (Fragments/Buryat/Complementizers), Korean *-ta*
--- (Fragments/Korean/Complementizers) form a paradigm of overt ContP
--- exponents that Bondarenko's analysis predicts cross-linguistically.
--- This list is grep-discoverable for downstream typology work.
+-- Per-language overt Cont exponents under [bondarenko-2022]'s
+-- analysis, typed over the fragment morpheme inventories: Buryat *gɘ*
+-- (§4.3.1), Korean *-ta* (§4.3.2, following
+-- [bogal-allbritten-moulton-2018]), extended with Tigrinya *kemzi*
+-- ([cacchioli-2025]). `none` is null exponence (English, Russian).
 
-/-- Cross-linguistic overt exponents of ContP per
-    [bondarenko-2022]'s analysis (§4.3.1 Buryat, §4.3.2 Korean)
-    extended with Tigrinya *kemzi* ([cacchioli-2025]). -/
-def overtContPExponents : List (String × String) :=
-  [ ("Tigrinya",  "kemzi"),  -- [cacchioli-2025] factive
-    ("Buryat",    "gɔ"),     -- [bondarenko-2022] §4.3.1
-    ("Korean",    "-ta") ]   -- [bogal-allbritten-moulton-2018] / Bondarenko §4.3.2
+/-- Buryat: the say-root *gɘ* expones Cont ([bondarenko-2022] §4.3.1
+    ex. 33). -/
+def buryatContExponent : Option Complementizer := some Buryat.ge
+
+/-- Korean: *-ta* expones Cont ([bondarenko-2022] §4.3.2, following
+    [bogal-allbritten-moulton-2018]). -/
+def koreanContExponent : Option Korean.Complementizers.KoreanClauseSuffix :=
+  some .ta
+
+/-- Tigrinya: *kemzi* ([cacchioli-2025]). -/
+def tigrinyaContExponent : Option Tigrinya.ClausePrefixes.ClausePrefixEntry :=
+  some Tigrinya.ClausePrefixes.kemzi
+
+/-- [bondarenko-2022]'s Cont/Comp assignment coincides with the
+    fragment's root-vs-suffix datum: the Cont exponent is exactly the
+    non-suffixal (say-root) morpheme. -/
+theorem mem_buryatContExponent_iff :
+    ∀ c ∈ Buryat.complementizers,
+      (c ∈ buryatContExponent ↔ c.verbForm = none) := by
+  decide
+
+/-- The Comp head realized by adjacency-conditioned allomorphy
+    ([bondarenko-2022] §4.3.1 ex. 33): one head, two allomorphs —
+    participial *-Aːša* next to nominal projections, converbial *-žA*
+    next to verbs. -/
+def buryatCompAllomorph : Complementizer.Host → Complementizer
+  | .nominal => Buryat.aasha
+  | .verbal  => Buryat.zha
+
+/-- The allomorph selected for a host has exactly that surface
+    distribution — the analysis reproduces the fragment's datum. -/
+theorem host_buryatCompAllomorph (h : Complementizer.Host) :
+    (buryatCompAllomorph h).host = some h := by
+  cases h <;> rfl
+
+/-- The head assignment is exhaustive: every morpheme in the inventory
+    is either the Cont exponent or a Comp allomorph. -/
+theorem contP_comp_cover :
+    ∀ c ∈ Buryat.complementizers,
+      c ∈ buryatContExponent ∨ ∃ h, buryatCompAllomorph h = c := by
+  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13. Chapter 2 §2.2.3: noun-predicate co-occurrence diagnostics

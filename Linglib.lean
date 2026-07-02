@@ -2791,6 +2791,7 @@ import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Comparative
+import Linglib.Syntax.Complementizer.Basic
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.GrammarDist
