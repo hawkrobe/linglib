@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.List.TakeDrop
+import Linglib.Core.Computability.Subregular.Function.Bimachine
 
 /-!
 # Tonal surfacing processes
@@ -91,6 +92,25 @@ theorem map_getElem?_hi_of_getElem?_hi (h : w[i]? = some P.hi) :
 theorem Surfaces.lt_length {P : Surfacing α} {w : List α} {i : ℕ}
     (h : P.Surfaces w i) : i < w.length :=
   P.lt_length h
+
+open Subregular in
+/-- **The flank-witness template, at the surfacing level**: a process whose surfacing at
+a `d`-margined target in a flank word is switched on by the base flanks and off by
+either single flip requires both sides — supply only the three surfacing facts. -/
+theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
+    (hmargin : ∀ d, d < t d ∧ t d + d < n d + 1)
+    (hon : ∀ d, P.Surfaces (flankWord xOn P.lo yOn (n d)) (t d))
+    (hoffL : ∀ d, ¬ P.Surfaces (flankWord xOff P.lo yOn (n d)) (t d))
+    (hoffR : ∀ d, ¬ P.Surfaces (flankWord xOn P.lo yOff (n d)) (t d)) :
+    RequiresBothSides P.map :=
+  have hlen : ∀ d, t d < (flankWord xOn P.lo yOff (n d)).length := fun d => by
+    rw [flankWord_length]
+    have := hmargin d
+    omega
+  RequiresBothSides.of_flanks P.hi_ne_lo hmargin
+    (fun d => P.map_getElem?_hi_iff.mpr (hon d))
+    (fun d => P.map_getElem?_lo_iff.mpr ⟨by simpa using hlen d, hoffL d⟩)
+    (fun d => P.map_getElem?_lo_iff.mpr ⟨hlen d, hoffR d⟩)
 
 /-! ### The surfacing set -/
 

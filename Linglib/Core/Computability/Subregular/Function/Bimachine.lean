@@ -297,6 +297,33 @@ theorem flankWord_getElem?_mid {x fill y : α} {n k : ℕ} (h₁ : 0 < k) (h₂ 
   split_ifs <;> first | rfl | exact ‹False›.elim | omega
 
 omit [DecidableEq α] in
+/-- A window reaching at most the filler run hits `a` iff the left flank is `a`. -/
+theorem exists_le_flankWord_eq_some_iff {x fill y a : α} {n k : ℕ} (hfill : fill ≠ a)
+    (hk : k ≤ n) : (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
+  constructor
+  · rintro ⟨j, hj, hja⟩
+    rw [flankWord_getElem?] at hja
+    split_ifs at hja
+    · exact Option.some.inj hja
+    · exact absurd hj (by omega)
+    · exact absurd (Option.some.inj hja) hfill
+  · exact fun h => ⟨0, by omega, h ▸ flankWord_getElem?_zero⟩
+
+omit [DecidableEq α] in
+/-- A window past the left flank hits `a` iff the right flank is `a`. -/
+theorem exists_ge_flankWord_eq_some_iff {x fill y a : α} {n k : ℕ} (hfill : fill ≠ a)
+    (h0 : 0 < k) (hk : k ≤ n + 1) :
+    (∃ j ≥ k, (flankWord x fill y n)[j]? = some a) ↔ y = a := by
+  constructor
+  · rintro ⟨j, hj, hja⟩
+    rw [flankWord_getElem?] at hja
+    split_ifs at hja
+    · exact absurd hj (by omega)
+    · exact Option.some.inj hja
+    · exact absurd (Option.some.inj hja) hfill
+  · exact fun h => ⟨n + 1, by omega, h ▸ flankWord_getElem?_last⟩
+
+omit [DecidableEq α] in
 /-- Flank words differing only on the left agree off position `0`. -/
 theorem flankWord_congr_left {x x' fill y : α} {n k : ℕ} (h : k ≠ 0) :
     (flankWord x fill y n)[k]? = (flankWord x' fill y n)[k]? := by

@@ -368,25 +368,13 @@ the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 plateau target, at every distance. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map := by
   have hsurf : ∀ (d : ℕ) (x y : TBU),
-      utp.Surfaces (flankWord x .O y (2 * d + 2)) (d + 1) ↔ x = .H ∧ y = .H := by
-    intro d x y
-    rw [utp.surfaces_iff]
-    constructor
-    · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
-      rw [flankWord_getElem?] at h₁ h₂
-      split_ifs at h₁ h₂ <;> simp_all
-      omega
-    · rintro ⟨rfl, rfl⟩
-      exact ⟨⟨0, by omega, flankWord_getElem?_zero⟩, 2 * d + 3, by omega,
-        by rw [flankWord_getElem?]; split_ifs <;> first | rfl | exact ‹False›.elim | omega⟩
-  refine RequiresBothSides.of_flanks (fill := TBU.O) (on := TBU.H) (xOn := .H)
-    (yOn := .H) (xOff := .O) (yOff := .O) (n := fun d => 2 * d + 2) (t := fun d => d + 1)
-    (by decide) (fun d => ⟨by omega, by omega⟩) (fun d => ?_) (fun d => ?_) (fun d => ?_)
-  · exact utp.map_getElem?_H_iff.mpr ((hsurf d .H .H).mpr ⟨rfl, rfl⟩)
-  · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flankWord_length]; omega,
-      fun hs => by simpa using (hsurf d .O .H).mp hs⟩
-  · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flankWord_length]; omega,
-      fun hs => by simpa using (hsurf d .H .O).mp hs⟩
+      utp.Surfaces (flankWord x .O y (2 * d + 2)) (d + 1) ↔ x = .H ∧ y = .H := fun d x y => by
+    rw [utp.surfaces_iff, exists_le_flankWord_eq_some_iff (by decide) (by omega),
+      exists_ge_flankWord_eq_some_iff (by decide) (by omega) (by omega)]
+  exact utp.requiresBothSides_of_flanks (fun d => ⟨by omega, by omega⟩)
+    (fun d => (hsurf d .H .H).mpr ⟨rfl, rfl⟩)
+    (fun d hs => by simpa using (hsurf d .O .H).mp hs)
+    (fun d hs => by simpa using (hsurf d .H .O).mp hs)
 
 /-- UTP is an unbounded circumambient process: whether a position changes depends on
 unboundedly distant material on both sides. -/
