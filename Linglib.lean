@@ -2942,6 +2942,7 @@ import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.DegenTonhauser2021
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.Krifka1998
+import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Surfacing
 

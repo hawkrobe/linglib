@@ -142,6 +142,20 @@ theorem isLinkedLower_iff {j : ℕ} : r.IsLinkedLower j ↔ ∃ i, (i, j) ∈ r.
   · rintro ⟨i, hi⟩
     exact ⟨(i, j), hi, rfl⟩
 
+/-- Lower node `j` **surfaces with** label `a`: some `a`-labeled upper node is linked
+to it — the labeled refinement of `IsLinkedLower`. -/
+def SurfacesWith (a : α) (j : ℕ) : Prop :=
+  ∃ i, (i, j) ∈ r.links ∧ r.upper.get? i = some a
+
+theorem SurfacesWith.isLinkedLower {a : α} {j : ℕ} (h : r.SurfacesWith a j) :
+    r.IsLinkedLower j :=
+  r.isLinkedLower_iff.mpr ⟨h.choose, h.choose_spec.1⟩
+
+instance [DecidableEq α] (a : α) (j : ℕ) : Decidable (r.SurfacesWith a j) :=
+  decidable_of_iff (∃ p ∈ r.links, p.2 = j ∧ r.upper.get? p.1 = some a)
+    ⟨fun ⟨⟨pi, pj⟩, hp, hj, ha⟩ => ⟨pi, by subst hj; exact hp, ha⟩,
+      fun ⟨i, hl, ha⟩ => ⟨(i, j), hl, rfl, ha⟩⟩
+
 /-- Upper index `i` is **floating**: in-bounds but unlinked. -/
 def IsFloatingUpper (i : ℕ) : Prop :=
   i < r.upper.len ∧ ¬ r.IsLinkedUpper i

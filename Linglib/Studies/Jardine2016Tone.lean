@@ -83,9 +83,9 @@ theorem utpBM_run : utpBM.run = utp.map := by
     simp only [Option.map_some]
     congr 1
     have hb : (a == TBU.H || ((w.take i).any (· == .H) && (w.drop (i + 1)).any (· == .H)))
-        = true ↔ SurfacesH w i := by
-      rw [surfacesH_split h]; simp [List.any_eq_true]
-    by_cases hs : SurfacesH w i
+        = true ↔ utp.Surfaces w i := by
+      rw [utp_surfaces_split h]; simp [List.any_eq_true]
+    by_cases hs : utp.Surfaces w i
     · rw [if_pos (hb.mpr hs), if_pos hs]
     · rw [if_neg (fun hbt => hs (hb.mp hbt)), if_neg hs]
 
@@ -106,9 +106,9 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp.map := by
   · simp only [Tone.Surfacing.map_length, List.length_cons, List.length_replicate]; omega
   · -- the images disagree at position 1: toneless there without the second H, plateau with it
     have h1 : (utp.map (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O :=
-      utp_getElem?_O_iff.mpr ⟨by simp, fun hs => by simpa using hs.2⟩
+      utp_getElem?_O_iff.mpr ⟨by simp, fun hs => by simpa using (utp_surfaces_def.mp hs).2⟩
     have h2 : (utp.map ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H :=
-      utp_getElem?_H_iff.mpr ⟨by simp, by simp⟩
+      utp_getElem?_H_iff.mpr (utp_surfaces_def.mpr ⟨by simp, by simp⟩)
     rw [h1, h2]; simp
 
 /-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
@@ -180,10 +180,10 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp.map w = resolve (markLeft.run w
     simp only [Option.map_some, Function.comp_apply]
     congr 1
     cases a with
-    | H => simp [surfacesH_of_getElem?_H ha]
+    | H => simp [utp.surfaces_of_hi ha]
     | O =>
       by_cases hL : TBU.H ∈ w.take i <;> by_cases hR : TBU.H ∈ w.drop (i + 1) <;>
-        simp [surfacesH_split ha, hL, hR]
+        simp [utp_surfaces_split ha, hL, hR]
 
 /-- The (43) mark-up decomposition (§5.2): over the `?`-enlarged alphabet, UTP is a
 right-subsequential map after a left-subsequential map. -/
@@ -208,20 +208,6 @@ section AutosegmentalGrounding
 
 open Autosegmental
 
-/-- The (40) translation: a H-toned TBU is one H melody node linked to its timing unit;
-a toneless TBU is a bare timing unit. -/
-def toAR : TBU → AR Tone.TRN Unit
-  | .H => .single Tone.TRN.H ()
-  | .O => .bare ()
-
-theorem linearize_realize_toAR (w : List TBU) :
-    (realize toAR w).linearize
-      = w.map fun a => ((), if a = .H then [Tone.TRN.H] else []) := by
-  rw [linearize_realize]
-  induction w with
-  | nil => rfl
-  | cons a w ih => rw [List.flatMap_cons, List.map_cons, ih]; cases a <;> simp [toAR]
-
 /-- Read a timing unit's association state back as a TBU symbol. -/
 def readTBU (s : Unit × List Tone.TRN) : TBU := if s.2.isEmpty then .O else .H
 
@@ -239,21 +225,10 @@ The OCP-merging realization `Autosegmental.realizeMerged` fuses the plateau's ru
 nodes into one, giving [hyman-katamba-2010]'s output representation (7): a single H
 autosegment multiply linked to exactly the `plateau`, over an unchanged timing tier. -/
 
-private theorem upper_realize_toAR (v : List TBU) :
-    (realize toAR v).upper.toList = List.replicate (v.count .H) Tone.TRN.H := by
-  induction v with
-  | nil => rfl
-  | cons a v ih =>
-    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih]
-    cases a <;> simp [toAR, List.replicate_succ]
-
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
-    p ∈ (realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
-  have hL : ∀ j, (realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ SurfacesH w j := fun j => by
-    rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR, ← utp_getElem?_H_iff]
-    cases hv : (utp.map w)[j]? with
-    | none => simp [List.getElem?_map, hv]
-    | some a => cases a <;> simp [List.getElem?_map, hv]
+    p ∈ (realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ utp.Surfaces w p.2 := by
+  have hL : ∀ j, (realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ utp.Surfaces w j :=
+    fun j => by rw [isLinkedLower_realize_toAR, utp_getElem?_H_iff]
   rw [realizeMerged_def,
     mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp.map w)), hL]
 
@@ -279,7 +254,7 @@ theorem upper_realizeMerged_utp (hw : .H ∈ w) :
   obtain ⟨m, hm⟩ : ∃ m, ((utp.map w).count .H) = m + 1 := by
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     have := List.count_pos_iff.mpr <| List.mem_iff_getElem?.mpr
-      ⟨i, utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi)⟩
+      ⟨i, utp_getElem?_H_iff.mpr (utp.surfaces_of_hi hi)⟩
     exact ⟨(utp.map w).count .H - 1, by omega⟩
   rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
 

@@ -87,6 +87,11 @@ theorem map_getElem?_hi_of_getElem?_hi (h : w[i]? = some P.hi) :
     (P.map w)[i]? = some P.hi :=
   P.map_getElem?_hi_iff.mpr (P.surfaces_of_hi h)
 
+/-- Hypothesis-dot form of the in-domain law: `h.lt_length` for `h : P.Surfaces w i`. -/
+theorem Surfaces.lt_length {P : Surfacing α} {w : List α} {i : ℕ}
+    (h : P.Surfaces w i) : i < w.length :=
+  P.lt_length h
+
 /-! ### The surfacing set -/
 
 /-- The surfacing positions of `w`, as a finite set. -/
