@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Linearization
 import Linglib.Syntax.Minimalist.Movement.Remnant
-import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
+import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 
 /-!
@@ -44,7 +44,7 @@ vP at the moment of vP-spell-out (when local harmony applied).
 
 3. **Local harmony in vP**. ATR harmony is a vP-domain cophonology
    (per [sande-jenks-inkelas-2020]'s Cophonologies-by-Phrase
-   architecture, formalized in `CophonologyByPhrase.lean`):
+   architecture, formalized in `Cophonology.lean`):
    when V and Part are both spelled out in vP, harmony applies; when
    only Part is in the vP-spell-out, no trigger is present and Part
    surfaces with its default −ATR value.
@@ -98,7 +98,7 @@ empirically violated.
 
 Substrate consumed (additions landed in this same overhaul):
 
-- `Phonology/OptimalityTheory/CophonologyByPhrase.lean` —
+- `Phonology/OptimalityTheory/Cophonology.lean` —
   [sande-jenks-inkelas-2020]'s phrasal extension of
   [sande-jenks-2017]'s VI-anchored cophonology.
 - `Syntax/Minimalist/Movement/Remnant.lean` —
@@ -123,7 +123,7 @@ open Minimalist (PICStrength)
 open Minimalist.Linearization
   (SpelloutAndCheck FrozenFeature FrozenFeatureTable
    extendFrozenFeatures frozenValue)
-open OptimalityTheory.CophonologyByPhrase (PhrasalCophonology)
+open OptimalityTheory.Cophonology (PhrasalCophonology)
 
 -- ============================================================================
 -- § 1: Guébie vowel inventory and ATR feature
@@ -367,7 +367,7 @@ theorem guebie_properRemnant : properRemnant guebiePredicateDoubling.toRemnantFr
 
 The vP-domain ATR-harmony cophonology of [sande-jenks-inkelas-2020]
 applied to Guébie. The phase selector matches `v` heads (per the v*
-phase head of Chomsky 2000); the constraint subranking is left
+phase head of Chomsky 2000); the constraint-subranking payload is left
 abstract here (it would be `[ATRHARM ≫ IDENT-IO(ATR)]` over the
 candidate type the OT machinery uses, which we don't instantiate
 inline). -/
@@ -382,7 +382,7 @@ def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
   | some tok => tok.item.outerCat == .v
   | none => false
 
-/-- The Guébie vP-cophonology bundle. The `subranking` is left as an
+/-- The Guébie vP-cophonology bundle. The subranking `payload` is left as an
     empty list of constraints over `Unit` candidates because the
     ATR-harmony cophonology's actual constraints (SPREAD/IDENT derived
     from a `Harmony.System`) would require threading the OT-candidate type
@@ -390,8 +390,8 @@ def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
     scope. The substrate use is exhibited by the bundle's existence
     and the matched-phase predicate `appliesTo`. -/
 def guebieVPCophonology : PhrasalCophonology Unit Unit :=
-  { phaseSelector := guebieVPPhaseSelector
-    subranking    := [] }
+  { selector := guebieVPPhaseSelector
+    payload  := [] }
 
 /-- The Guébie vP-cophonology applies to a v head. (Witness: a leaf
     SO whose token's category is `.v`.) -/

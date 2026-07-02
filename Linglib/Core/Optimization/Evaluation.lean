@@ -613,7 +613,7 @@ theorem le_of_mem_argMinSet (hc : c ∈ argMinSet s f (· ≤ ·)) (hd : d ∈ s
 /-- Minimizer-hood factors through the image, so it transports along image equality. -/
 theorem mem_argMinSet_of_eq (hd : d ∈ argMinSet s f (· ≤ ·)) (hc : c ∈ s)
     (he : f c = f d) : c ∈ argMinSet s f (· ≤ ·) :=
-  mem_argMinSet.mpr ⟨hc, fun e he' => he ▸ le_of_mem_argMinSet hd he'⟩
+  mem_argMinSet.mpr ⟨hc, fun _ he' => he ▸ le_of_mem_argMinSet hd he'⟩
 
 /-- An element whose image is the bottom minimizes. -/
 theorem mem_argMinSet_of_eq_bot [OrderBot P] (hc : c ∈ s) (h0 : f c = ⊥) :
