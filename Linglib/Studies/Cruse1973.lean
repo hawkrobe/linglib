@@ -1,5 +1,5 @@
-import Linglib.Semantics.ArgumentStructure.Defs
-import Linglib.Semantics.ArgumentStructure.LF
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Features.Aktionsart

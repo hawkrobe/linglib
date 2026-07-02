@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.Aspect.Incremental
 
 /-!

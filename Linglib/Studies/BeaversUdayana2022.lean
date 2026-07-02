@@ -1,6 +1,6 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Studies.Beavers2010
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Lexical.DiathesisAlternation
 import Linglib.Syntax.Voice.Middle
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 

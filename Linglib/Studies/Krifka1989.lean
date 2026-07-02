@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Plurality.Algebra
-import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Core.Order.Boundedness

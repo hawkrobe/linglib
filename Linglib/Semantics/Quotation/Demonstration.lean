@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 /-!
 # Demonstration Semantics for Quotative Complements

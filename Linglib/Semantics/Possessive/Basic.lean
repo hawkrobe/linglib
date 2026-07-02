@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Relational
 
 /-!
 # Possessive carriers and capabilities

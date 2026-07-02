@@ -4,8 +4,9 @@ import Linglib.Semantics.Events.Basic
 # Thematic Roles — type definitions
 
 Neo-Davidsonian thematic roles as two-place predicates relating entities to
-events. The `Defs` partner to `LF.lean`, which builds the thematic axioms,
-Davidsonian logical forms, and adverbial modification on top of these types.
+events. The `Defs` partner to `Thematic/Basic.lean`, which builds the thematic
+axioms, Davidsonian logical forms, and adverbial modification on top of these
+types.
 
 ## Main definitions
 

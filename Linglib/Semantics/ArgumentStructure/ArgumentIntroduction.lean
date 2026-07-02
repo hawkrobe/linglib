@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 /-!
 # Argument Introduction by Functional Heads

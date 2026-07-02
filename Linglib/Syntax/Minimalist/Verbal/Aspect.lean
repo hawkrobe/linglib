@@ -9,7 +9,7 @@ import Linglib.Features.Aktionsart
 Substrate types for the bipartite split-aspect cartography that has emerged
 from work on Mandarin and Cantonese (and before them, English event-structure
 decomposition). Following the convention that `.Voice` is a single `Cat`
-constructor distinguished by `VoiceFlavor` (`Syntax/Minimalist/Voice.lean`),
+constructor distinguished by `VoiceFlavor` (`Syntax/Minimalist/Verbal/Voice.lean`),
 we keep `Cat.Asp` as a single F2 constructor and represent the
 `AspP_outer` / `AspP_inner` distinction as `AspFlavor` on an `AspHead`
 record. This avoids a new constructor (no fValue collision below v at F1)

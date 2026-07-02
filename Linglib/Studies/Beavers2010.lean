@@ -1,8 +1,8 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.Agentivity.Defs
 import Linglib.Semantics.Lexical.LevinClassProfiles
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Lexical.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
 
 /-!

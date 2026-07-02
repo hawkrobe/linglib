@@ -1,10 +1,10 @@
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Modification.Basic
 
 /-!
 # Thematic Roles — Davidsonian logical forms + axioms
 
-API on top of `ArgumentStructure/Defs.lean`: thematic axioms
+API on top of `Thematic/Defs.lean`: thematic axioms
 (Aktionsart selection + uniqueness), neo-Davidsonian stative logical
 forms, and adverbial modification (Davidson's key payoff).
 

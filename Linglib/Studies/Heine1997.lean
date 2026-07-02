@@ -1,6 +1,6 @@
 import Linglib.Features.Possession
 import Linglib.Morphology.Grammaticalization
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Relational
 import Linglib.Data.WALS.Features.F117A
 import Linglib.Fragments.Slavic.Russian.Possession
 import Linglib.Fragments.Finnish.Possession
