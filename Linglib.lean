@@ -2941,5 +2941,8 @@ import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.DegenTonhauser2021
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.Krifka1998
+import Linglib.Data.Examples.Bondarenko2022
+import Linglib.Data.Examples.Angelopoulos2026
+import Linglib.Data.Examples.Major2024
 
 
