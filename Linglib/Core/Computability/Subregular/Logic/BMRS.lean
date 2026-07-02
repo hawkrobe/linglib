@@ -88,12 +88,12 @@ def tden (w : WordModel α) (i : ℕ) (t : Term Unit) : Option ℕ := t.eval w f
 
 section TermDenotation
 
-variable {w : WordModel α} {i v : ℕ}
+variable {w : WordModel α} {i v : ℕ} {t u : Term Unit}
 
-@[simp] theorem tden_succ {t : Term Unit} :
+@[simp] theorem tden_succ :
     tden w i t.succ = (tden w i t).bind w.succ? := rfl
 
-@[simp] theorem tden_pred {t : Term Unit} :
+@[simp] theorem tden_pred :
     tden w i t.pred = (tden w i t).bind w.pred? := rfl
 
 theorem tden_var_eq_some_iff : tden w i (.var ()) = some v ↔ v = i ∧ i < w.length := by
@@ -134,7 +134,7 @@ theorem tden_pred_var (h : i < w.length) : tden w i ((Term.var ()).pred) = w.pre
   rw [tden_pred, tden_var h, Option.bind_some]
 
 /-- Composed terms denote sequenced denotations. -/
-theorem tden_comp {w : WordModel α} {i : ℕ} :
+theorem tden_comp :
     ∀ t u : Term Unit, tden w i (t.comp u) = (tden w i u).bind fun v => tden w v t
   | .var _, u => by
     cases hu : tden w i u with
@@ -170,17 +170,18 @@ inductive Eval (P : Program α F) (w : WordModel α) : ℕ → Expr α F → Boo
   | ite_false {i c e₁ e₂ b} (hc : Eval P w i c false) (h₂ : Eval P w i e₂ b) :
       Eval P w i (.ite c e₁ e₂) b
 
+variable {P : Program α F} {w w' : WordModel α} {i v n m : ℕ} {t u : Term Unit}
+  {e : Expr α F} {b b' : Bool}
+
 /-- Boolean-form introduction for the edge test: the value is the comparison. -/
-theorem Eval.initial {P : Program α F} {w : WordModel α} {i v : ℕ} {t : Term Unit}
-    (h : tden w i t = some v) : Eval P w i (.initial t) (v == 0) := by
+theorem Eval.initial (h : tden w i t = some v) : Eval P w i (.initial t) (v == 0) := by
   rcases Nat.eq_zero_or_pos v with rfl | hv
   · exact .initial_true h
   · rw [beq_eq_false_iff_ne.mpr (by omega)]
     exact .initial_false h hv
 
 /-- Boolean-form introduction for the final test. -/
-theorem Eval.final {P : Program α F} {w : WordModel α} {i v : ℕ} {t : Term Unit}
-    (h : tden w i t = some v) : Eval P w i (.final t) (v == w.length - 1) := by
+theorem Eval.final (h : tden w i t = some v) : Eval P w i (.final t) (v == w.length - 1) := by
   rcases eq_or_ne v (w.length - 1) with rfl | hne
   · rw [beq_self_eq_true]
     exact .final_true h
@@ -188,8 +189,7 @@ theorem Eval.final {P : Program α F} {w : WordModel α} {i v : ℕ} {t : Term U
     exact .final_false h (by have := tden_lt h; omega)
 
 /-- Boolean-form introduction for the class test. -/
-theorem Eval.label [DecidableEq α] {P : Program α F} {w : WordModel α} {i v : ℕ}
-    {t : Term Unit} {s : Finset α} {a : α} (h : tden w i t = some v)
+theorem Eval.label [DecidableEq α] {s : Finset α} {a : α} (h : tden w i t = some v)
     (hl : w[v]? = some a) : Eval P w i (.label s t) (decide (a ∈ s)) := by
   by_cases has : a ∈ s
   · rw [decide_eq_true has]
@@ -198,8 +198,7 @@ theorem Eval.label [DecidableEq α] {P : Program α F} {w : WordModel α} {i v :
     exact .label_false h hl has
 
 /-- The derivation system is deterministic: an expression has at most one value. -/
-theorem Eval.deterministic {P : Program α F} {w : WordModel α} {i : ℕ} {e : Expr α F}
-    {b b' : Bool} (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' := by
+theorem Eval.deterministic (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' := by
   induction h generalizing b' with
   | call h he ih => cases h' with
     | call h₂ he₂ => rw [h] at h₂; cases h₂; exact ih he₂
@@ -232,8 +231,7 @@ def evalFuel [DecidableEq α] (P : Program α F) (w : WordModel α) :
         if b then evalFuel P w fuel i e₁ else evalFuel P w fuel i e₂
 
 /-- More fuel never changes a defined answer. -/
-theorem evalFuel_mono [DecidableEq α] {P : Program α F} {w : WordModel α}
-    {n m i : ℕ} {e : Expr α F} {b : Bool} (hnm : n ≤ m)
+theorem evalFuel_mono [DecidableEq α] (hnm : n ≤ m)
     (h : evalFuel P w n i e = some b) : evalFuel P w m i e = some b := by
   induction n generalizing m i e b with
   | zero => simp [evalFuel] at h
@@ -252,8 +250,7 @@ theorem evalFuel_mono [DecidableEq α] {P : Program α F} {w : WordModel α}
     | _ => exact h
 
 /-- Soundness of the fuel evaluator against the derivation system. -/
-theorem evalFuel_sound [DecidableEq α] {P : Program α F} {w : WordModel α}
-    {n i : ℕ} {e : Expr α F} {b : Bool} (h : evalFuel P w n i e = some b) :
+theorem evalFuel_sound [DecidableEq α] (h : evalFuel P w n i e = some b) :
     Eval P w i e b := by
   induction n generalizing i e b with
   | zero => simp [evalFuel] at h
@@ -285,8 +282,7 @@ theorem evalFuel_sound [DecidableEq α] {P : Program α F} {w : WordModel α}
       | false => exact .ite_false (ih hbc) (ih (by simpa using hbr))
 
 /-- Completeness: every derivation is reached at some fuel. -/
-theorem evalFuel_complete [DecidableEq α] {P : Program α F} {w : WordModel α}
-    {i : ℕ} {e : Expr α F} {b : Bool} (h : Eval P w i e b) :
+theorem evalFuel_complete [DecidableEq α] (h : Eval P w i e b) :
     ∃ n, evalFuel P w n i e = some b := by
   induction h with
   | tru => exact ⟨1, rfl⟩
@@ -316,8 +312,7 @@ theorem evalFuel_complete [DecidableEq α] {P : Program α F} {w : WordModel α}
         simpa using evalFuel_mono (le_max_right _ _) hn₂⟩⟩
 
 /-- **Adequacy**: the derivation system and the fuel evaluator define the same values. -/
-theorem eval_iff_evalFuel [DecidableEq α] {P : Program α F} {w : WordModel α}
-    {i : ℕ} {e : Expr α F} {b : Bool} :
+theorem eval_iff_evalFuel [DecidableEq α] :
     Eval P w i e b ↔ ∃ n, evalFuel P w n i e = some b :=
   ⟨evalFuel_complete, fun ⟨_, hn⟩ => evalFuel_sound hn⟩
 
@@ -335,16 +330,15 @@ def Expr.subst : Expr α F → Term Unit → Expr α F
   | .ite c e₁ e₂, u => .ite (c.subst u) (e₁.subst u) (e₂.subst u)
 
 /-- Term denotations sequence through composition. -/
-private theorem tden_comp_of {w : WordModel α} {u t : Term Unit} {i v z : ℕ}
-    (hu : tden w i u = some v) (h : tden w v t = some z) :
+private theorem tden_comp_of {z : ℕ} (hu : tden w i u = some v)
+    (h : tden w v t = some z) :
     tden w i (t.comp u) = some z := by
   rw [tden_comp, hu]
   exact h
 
 /-- Transport a derivation through substitution: evaluating `e[u/x]` at `i` is
 evaluating `e` at the position `u` denotes. -/
-theorem Eval.subst {P : Program α F} {w : WordModel α} {u : Term Unit} {i v : ℕ}
-    (hu : tden w i u = some v) {e : Expr α F} {b : Bool} (h : Eval P w v e b) :
+theorem Eval.subst (hu : tden w i u = some v) (h : Eval P w v e b) :
     Eval P w i (e.subst u) b := by
   induction h with
   | tru => exact .tru
@@ -406,7 +400,7 @@ def Program.Backward (P : Program α F) : Prop := ∀ f, (P f).Backward
 def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 
 /-- Backward terms only move left. -/
-theorem tden_le_of_backward {w : WordModel α} {i : ℕ} :
+theorem tden_le_of_backward :
     ∀ {t : Term Unit}, t.Backward → ∀ {v}, tden w i t = some v → v ≤ i
   | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.le
   | .pred t, ht, v, h => by
@@ -415,7 +409,7 @@ theorem tden_le_of_backward {w : WordModel α} {i : ℕ} :
     exact Nat.le_of_succ_le (tden_le_of_backward (t := t) ht hu)
 
 /-- Forward terms only move right. -/
-theorem le_tden_of_forward {w : WordModel α} {i : ℕ} :
+theorem le_tden_of_forward :
     ∀ {t : Term Unit}, t.Forward → ∀ {v}, tden w i t = some v → i ≤ v
   | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.ge
   | .succ t, ht, v, h => by
@@ -425,7 +419,7 @@ theorem le_tden_of_forward {w : WordModel α} {i : ℕ} :
 
 /-- Term denotations read only the length, so they transport across equal-length
 words. -/
-theorem tden_congr {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ} :
+theorem tden_congr (hlen : w.length = w'.length) :
     ∀ t : Term Unit, tden w i t = tden w' i t
   | .var _ => by simp [tden, Term.eval, WordModel.Mem, hlen]
   | .succ t => by rw [tden_succ, tden_succ, tden_congr hlen t, WordModel.succ?_congr hlen]
@@ -433,71 +427,63 @@ theorem tden_congr {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ}
 
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
-theorem Eval.congr_agreeUpto {P : Program α F} (hP : P.Backward)
-    {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ} {e : Expr α F} {b : Bool}
+theorem Eval.congr_agreeUpto (hP : P.Backward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
     e.Backward → AgreeUpto w w' i → Eval P w' i e b := by
   induction h with
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
-  | initial_true h => exact fun he _ => .initial_true (tden_congr hlen _ ▸ h)
-  | initial_false h hv => exact fun he _ => .initial_false (tden_congr hlen _ ▸ h) hv
+  | initial_true h =>
+    exact fun _ _ => Eval.initial_true ((tden_congr hlen _).symm.trans h)
+  | initial_false h hv =>
+    exact fun _ _ => Eval.initial_false ((tden_congr hlen _).symm.trans h) hv
   | final_true h =>
-    intro he _
-    exact .final_true (by rw [← tden_congr hlen, ← hlen]; exact h)
+    exact fun _ _ => Eval.final_true ((tden_congr hlen _).symm.trans (hlen ▸ h))
   | final_false h hv =>
-    intro he _
-    exact .final_false (by rw [← tden_congr hlen]; exact h) (hlen ▸ hv)
+    exact fun _ _ => Eval.final_false ((tden_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    intro he hag
-    exact .label_true (tden_congr hlen _ ▸ h) (hag _ (tden_le_of_backward he h) ▸ hl) has
+    exact fun he hag => Eval.label_true ((tden_congr hlen _).symm.trans h)
+      (hag _ (tden_le_of_backward he h) ▸ hl) has
   | label_false h hl has =>
-    intro he hag
-    exact .label_false (tden_congr hlen _ ▸ h) (hag _ (tden_le_of_backward he h) ▸ hl) has
+    exact fun he hag => Eval.label_false ((tden_congr hlen _).symm.trans h)
+      (hag _ (tden_le_of_backward he h) ▸ hl) has
   | call h he' ih =>
-    intro he hag
-    exact .call (tden_congr hlen _ ▸ h)
+    exact fun he hag => Eval.call ((tden_congr hlen _).symm.trans h)
       (ih (hP _) fun k hk => hag k (hk.trans (tden_le_of_backward he h)))
   | ite_true hc h₁ ihc ih₁ =>
-    intro he hag
-    exact .ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
+    exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
-    intro he hag
-    exact .ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
+    exact fun he hag => Eval.ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
 
 /-- **One-sided locality (right)**: a predecessor-free program evaluated at `i` reads
 only positions `≥ i`, so equal-length words agreeing from `i` on evaluate identically. -/
-theorem Eval.congr_agreeFrom {P : Program α F} (hP : P.Forward)
-    {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ} {e : Expr α F} {b : Bool}
+theorem Eval.congr_agreeFrom (hP : P.Forward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
     e.Forward → AgreeFrom w w' i → Eval P w' i e b := by
   induction h with
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
-  | initial_true h => exact fun he _ => .initial_true (tden_congr hlen _ ▸ h)
-  | initial_false h hv => exact fun he _ => .initial_false (tden_congr hlen _ ▸ h) hv
+  | initial_true h =>
+    exact fun _ _ => Eval.initial_true ((tden_congr hlen _).symm.trans h)
+  | initial_false h hv =>
+    exact fun _ _ => Eval.initial_false ((tden_congr hlen _).symm.trans h) hv
   | final_true h =>
-    intro he _
-    exact .final_true (by rw [← tden_congr hlen, ← hlen]; exact h)
+    exact fun _ _ => Eval.final_true ((tden_congr hlen _).symm.trans (hlen ▸ h))
   | final_false h hv =>
-    intro he _
-    exact .final_false (by rw [← tden_congr hlen]; exact h) (hlen ▸ hv)
+    exact fun _ _ => Eval.final_false ((tden_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    intro he hag
-    exact .label_true (tden_congr hlen _ ▸ h) (hag _ (le_tden_of_forward he h) ▸ hl) has
+    exact fun he hag => Eval.label_true ((tden_congr hlen _).symm.trans h)
+      (hag _ (le_tden_of_forward he h) ▸ hl) has
   | label_false h hl has =>
-    intro he hag
-    exact .label_false (tden_congr hlen _ ▸ h) (hag _ (le_tden_of_forward he h) ▸ hl) has
+    exact fun he hag => Eval.label_false ((tden_congr hlen _).symm.trans h)
+      (hag _ (le_tden_of_forward he h) ▸ hl) has
   | call h he' ih =>
-    intro he hag
-    exact .call (tden_congr hlen _ ▸ h)
+    exact fun he hag => Eval.call ((tden_congr hlen _).symm.trans h)
       (ih (hP _) fun k hk => hag k ((le_tden_of_forward he h).trans hk))
   | ite_true hc h₁ ihc ih₁ =>
-    intro he hag
-    exact .ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
+    exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
-    intro he hag
-    exact .ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
+    exact fun he hag => Eval.ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
 
 /-! ### Simultaneous application, at the value level
 
