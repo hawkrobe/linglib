@@ -13,7 +13,8 @@ import Mathlib.Data.Finset.Basic
 BMRS ([bhaskar-jardine-chandlee-oakden-2020]; [bhaskar-chandlee-jardine-2023];
 phonological modelling in [chandlee-jardine-2021]): programs of mutually recursive
 Boolean-valued unary predicates over word models, built from `if…then…else`, the
-edge tests `min`/`max`, input-label tests, and recursive calls. Terms are the
+edge tests `initial`/`final` (the literature's `min`/`max`), input class tests, and
+recursive calls. Terms are the
 quantifier-free terms of `Logic/QFLogic.lean` at a single index variable.
 
 Two symbol types dissolve the literature's `sig(P)` bookkeeping: input labels `α` get
@@ -28,7 +29,7 @@ derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFue
 
 * `BMRS.Expr`, `BMRS.Program` — syntax; `BMRS.tden` — term denotation at an index.
 * `BMRS.Eval` — the derivation system; `BMRS.evalFuel` — the fuel-bounded evaluator.
-* `Expr.Backward` / `Program.Backward` (dually `PredFree`) — the one-sided fragments
+* `Expr.Backward` / `Program.Backward` (dually `Forward`) — the one-sided fragments
   `BMRSᵖ` / `BMRSˢ` of [bhaskar-jardine-chandlee-oakden-2020].
 * `BMRS.combine` / `BMRS.combineC` — the value combinators of simultaneous application
   (⊙, [yolyan-2025] Def. 4.1) and its conjunctive dual (⊘, Def. 6.5).
@@ -38,9 +39,9 @@ derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFue
 * `Eval.deterministic` — an expression has at most one value.
 * `eval_iff_evalFuel` — adequacy of the fuel evaluator.
 * `Eval.congr_agreeUpto` / `Eval.congr_agreeFrom` — **one-sided locality**: a
-  successor-free program evaluated at `i` reads only positions `≤ i`, so equal-length
-  words agreeing there evaluate identically (dually for predecessor-free). The engine
-  of [yolyan-2025]'s negative results (Thm. 5.2–5.5).
+  backward program evaluated at `i` reads only positions `≤ i`, so equal-length words
+  agreeing there evaluate identically (dually for forward). The engine of
+  [yolyan-2025]'s negative results (Thm. 5.2–5.5).
 * `combine_comm`, `combine_assoc`, `combine_id` — the ⊙-algebra
   ([yolyan-2025] Prop. 4.4), extensionally at the value level.
 -/
@@ -162,36 +163,37 @@ inductive Eval (P : Program α F) (w : WordModel α) : ℕ → Expr α F → Boo
   | ite_false {i c e₁ e₂ b} (hc : Eval P w i c false) (h₂ : Eval P w i e₂ b) :
       Eval P w i (.ite c e₁ e₂) b
 
+/-- Boolean-form introduction for the edge test: the value is the comparison. -/
+theorem Eval.initial {P : Program α F} {w : WordModel α} {i v : ℕ} {t : Term Unit}
+    (h : tden w i t = some v) : Eval P w i (.initial t) (v == 0) := by
+  rcases Nat.eq_zero_or_pos v with rfl | hv
+  · exact .initial_true h
+  · rw [beq_eq_false_iff_ne.mpr (by omega)]
+    exact .initial_false h hv
+
+/-- Boolean-form introduction for the final test. -/
+theorem Eval.final {P : Program α F} {w : WordModel α} {i v : ℕ} {t : Term Unit}
+    (h : tden w i t = some v) : Eval P w i (.final t) (v == w.length - 1) := by
+  rcases eq_or_ne v (w.length - 1) with rfl | hne
+  · rw [beq_self_eq_true]
+    exact .final_true h
+  · rw [beq_eq_false_iff_ne.mpr hne]
+    exact .final_false h (by have := tden_lt h; omega)
+
+/-- Boolean-form introduction for the class test. -/
+theorem Eval.label [DecidableEq α] {P : Program α F} {w : WordModel α} {i v : ℕ}
+    {t : Term Unit} {s : Finset α} {a : α} (h : tden w i t = some v)
+    (hl : w[v]? = some a) : Eval P w i (.label s t) (decide (a ∈ s)) := by
+  by_cases has : a ∈ s
+  · rw [decide_eq_true has]
+    exact .label_true h hl has
+  · rw [decide_eq_false has]
+    exact .label_false h hl has
+
 /-- The derivation system is deterministic: an expression has at most one value. -/
 theorem Eval.deterministic {P : Program α F} {w : WordModel α} {i : ℕ} {e : Expr α F}
     {b b' : Bool} (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' := by
   induction h generalizing b' with
-  | tru => cases h'; rfl
-  | fls => cases h'; rfl
-  | initial_true h => cases h' with
-    | initial_true => rfl
-    | initial_false h₂ hv => rw [h] at h₂; injection h₂ with h₂; omega
-  | initial_false h hv => cases h' with
-    | initial_true h₂ => rw [h] at h₂; injection h₂ with h₂; omega
-    | initial_false => rfl
-  | final_true h => cases h' with
-    | final_true => rfl
-    | final_false h₂ hv => rw [h] at h₂; injection h₂ with h₂; omega
-  | final_false h hv => cases h' with
-    | final_true h₂ => rw [h] at h₂; injection h₂ with h₂; omega
-    | final_false => rfl
-  | label_true h hl has => cases h' with
-    | label_true => rfl
-    | label_false h₂ hl₂ has₂ =>
-      cases h.symm.trans h₂
-      cases hl.symm.trans hl₂
-      exact absurd has has₂
-  | label_false h hl has => cases h' with
-    | label_true h₂ hl₂ has₂ =>
-      cases h.symm.trans h₂
-      cases hl.symm.trans hl₂
-      exact absurd has₂ has
-    | label_false => rfl
   | call h he ih => cases h' with
     | call h₂ he₂ => rw [h] at h₂; cases h₂; exact ih he₂
   | ite_true hc h₁ ihc ih₁ => cases h' with
@@ -200,6 +202,7 @@ theorem Eval.deterministic {P : Program α F} {w : WordModel α} {i : ℕ} {e : 
   | ite_false hc h₂ ihc ih₂ => cases h' with
     | ite_true hc₂ h₁ => exact absurd (ihc hc₂) (by simp)
     | ite_false hc₂ h₁ => exact ih₂ h₁
+  | _ => cases h' <;> simp_all
 
 /-- A program is **total on `w`** when every rule head is defined at every position. -/
 def Program.TotalOn (P : Program α F) (w : WordModel α) : Prop :=
@@ -230,11 +233,6 @@ theorem evalFuel_mono [DecidableEq α] {P : Program α F} {w : WordModel α}
   | succ n ih =>
     obtain ⟨m, rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
     cases e with
-    | tru => exact h
-    | fls => exact h
-    | initial t => exact h
-    | final t => exact h
-    | label s t => exact h
     | call f t =>
       simp only [evalFuel, Option.bind_eq_some_iff] at h ⊢
       obtain ⟨v, hv, hrec⟩ := h
@@ -243,9 +241,8 @@ theorem evalFuel_mono [DecidableEq α] {P : Program α F} {w : WordModel α}
       simp only [evalFuel, Option.bind_eq_some_iff] at h ⊢
       obtain ⟨bc, hbc, hbr⟩ := h
       refine ⟨bc, ih (by omega) hbc, ?_⟩
-      cases bc with
-      | true => simpa using ih (by omega) (by simpa using hbr)
-      | false => simpa using ih (by omega) (by simpa using hbr)
+      cases bc <;> simpa using ih (by omega) (by simpa using hbr)
+    | _ => exact h
 
 /-- Soundness of the fuel evaluator against the derivation system. -/
 theorem evalFuel_sound [DecidableEq α] {P : Program α F} {w : WordModel α}
@@ -260,27 +257,15 @@ theorem evalFuel_sound [DecidableEq α] {P : Program α F} {w : WordModel α}
     | initial t =>
       simp only [evalFuel, Option.map_eq_some_iff] at h
       obtain ⟨v, hv, rfl⟩ := h
-      rcases Nat.eq_zero_or_pos v with rfl | hpos
-      · exact .initial_true hv
-      · rw [show (v == 0) = false by simp; omega]
-        exact .initial_false hv hpos
+      exact .initial hv
     | final t =>
       simp only [evalFuel, Option.map_eq_some_iff] at h
       obtain ⟨v, hv, rfl⟩ := h
-      rcases eq_or_ne v (w.length - 1) with rfl | hne
-      · rw [show (w.length - 1 == w.length - 1) = true by simp]
-        exact .final_true hv
-      · have hlt : v < w.length - 1 := by have := tden_lt hv; omega
-        rw [show (v == w.length - 1) = false by simp [hne]]
-        exact .final_false hv hlt
+      exact .final hv
     | label s t =>
       simp only [evalFuel, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
       obtain ⟨v, hv, a, ha, rfl⟩ := h
-      by_cases has : a ∈ s
-      · rw [show decide (a ∈ s) = true by simp [has]]
-        exact .label_true hv ha has
-      · rw [show decide (a ∈ s) = false by simp [has]]
-        exact .label_false hv ha has
+      exact .label hv ha
     | call f t =>
       simp only [evalFuel, Option.bind_eq_some_iff] at h
       obtain ⟨v, hv, hrec⟩ := h
@@ -342,6 +327,13 @@ def Expr.subst : Expr α F → Term Unit → Expr α F
   | .call f t, u => .call f (t.comp u)
   | .ite c e₁ e₂, u => .ite (c.subst u) (e₁.subst u) (e₂.subst u)
 
+/-- Term denotations sequence through composition. -/
+private theorem tden_comp_of {w : WordModel α} {u t : Term Unit} {i v z : ℕ}
+    (hu : tden w i u = some v) (h : tden w v t = some z) :
+    tden w i (t.comp u) = some z := by
+  rw [tden_comp, hu]
+  exact h
+
 /-- Transport a derivation through substitution: evaluating `e[u/x]` at `i` is
 evaluating `e` at the position `u` denotes. -/
 theorem Eval.subst {P : Program α F} {w : WordModel α} {u : Term Unit} {i v : ℕ}
@@ -350,13 +342,13 @@ theorem Eval.subst {P : Program α F} {w : WordModel α} {u : Term Unit} {i v : 
   induction h with
   | tru => exact .tru
   | fls => exact .fls
-  | initial_true h => exact .initial_true (by rw [tden_comp, hu]; exact h)
-  | initial_false h hv => exact .initial_false (by rw [tden_comp, hu]; exact h) hv
-  | final_true h => exact .final_true (by rw [tden_comp, hu]; exact h)
-  | final_false h hv => exact .final_false (by rw [tden_comp, hu]; exact h) hv
-  | label_true h hl has => exact .label_true (by rw [tden_comp, hu]; exact h) hl has
-  | label_false h hl has => exact .label_false (by rw [tden_comp, hu]; exact h) hl has
-  | call h he ih => exact .call (by rw [tden_comp, hu]; exact h) he
+  | initial_true h => exact .initial_true (tden_comp_of hu h)
+  | initial_false h hv => exact .initial_false (tden_comp_of hu h) hv
+  | final_true h => exact .final_true (tden_comp_of hu h)
+  | final_false h hv => exact .final_false (tden_comp_of hu h) hv
+  | label_true h hl has => exact .label_true (tden_comp_of hu h) hl has
+  | label_false h hl has => exact .label_false (tden_comp_of hu h) hl has
+  | call h he ih => exact .call (tden_comp_of hu h) he
   | ite_true hc h₁ ihc ih₁ => exact .ite_true (ihc hu) (ih₁ hu)
   | ite_false hc h₂ ihc ih₂ => exact .ite_false (ihc hu) (ih₂ hu)
 
@@ -410,38 +402,27 @@ def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 theorem tden_le_of_backward {w : WordModel α} {i : ℕ} :
     ∀ {t : Term Unit}, t.Backward → ∀ {v}, tden w i t = some v → v ≤ i
   | .var _, _, v, h => by
-    simp only [tden, Term.eval] at h
-    split at h
-    · exact (Option.some.inj h) ▸ le_rfl
-    · exact absurd h (by simp)
+    rw [tden, Term.eval] at h
+    split at h <;> simp_all
   | .pred t, ht, v, h => by
-    simp only [tden, Term.eval, Option.bind_eq_some_iff] at h
+    rw [show tden w i t.pred = (tden w i t).bind w.pred? from rfl,
+      Option.bind_eq_some_iff] at h
     obtain ⟨u, hu, huv⟩ := h
-    have hle : u ≤ i := tden_le_of_backward (t := t) ht hu
-    cases u with
-    | zero => exact absurd huv (by simp [WordModel.pred?])
-    | succ u =>
-      simp only [WordModel.pred?] at huv
-      split at huv
-      · exact (Option.some.inj huv) ▸ by omega
-      · exact absurd huv (by simp)
+    obtain ⟨rfl, -⟩ := WordModel.pred?_eq_some_iff.mp huv
+    exact Nat.le_of_succ_le (tden_le_of_backward (t := t) ht hu)
 
 /-- Forward terms only move right. -/
 theorem le_tden_of_forward {w : WordModel α} {i : ℕ} :
     ∀ {t : Term Unit}, t.Forward → ∀ {v}, tden w i t = some v → i ≤ v
   | .var _, _, v, h => by
-    simp only [tden, Term.eval] at h
-    split at h
-    · exact (Option.some.inj h) ▸ le_rfl
-    · exact absurd h (by simp)
+    rw [tden, Term.eval] at h
+    split at h <;> simp_all
   | .succ t, ht, v, h => by
-    simp only [tden, Term.eval, Option.bind_eq_some_iff] at h
+    rw [show tden w i t.succ = (tden w i t).bind w.succ? from rfl,
+      Option.bind_eq_some_iff] at h
     obtain ⟨u, hu, huv⟩ := h
-    have hle : i ≤ u := le_tden_of_forward (t := t) ht hu
-    unfold WordModel.succ? at huv
-    split at huv
-    · exact (Option.some.inj huv) ▸ by omega
-    · exact absurd huv (by simp)
+    obtain ⟨rfl, -⟩ := WordModel.succ?_eq_some_iff.mp huv
+    exact (le_tden_of_forward (t := t) ht hu).trans (Nat.le_succ u)
 
 /-- Term denotations read only the length, so they transport across equal-length
 words. -/
@@ -449,17 +430,11 @@ theorem tden_congr {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ}
     ∀ t : Term Unit, tden w i t = tden w' i t
   | .var _ => by simp [tden, Term.eval, WordModel.Mem, hlen]
   | .succ t => by
-    simp only [tden, Term.eval]
-    rw [show Term.eval w (fun _ => i) t = Term.eval w' (fun _ => i) t from tden_congr hlen t]
-    cases Term.eval w' (fun _ => i) t with
-    | none => rfl
-    | some u => simp [WordModel.succ?, hlen]
+    show (tden w i t).bind w.succ? = (tden w' i t).bind w'.succ?
+    rw [tden_congr hlen t, WordModel.succ?_congr hlen]
   | .pred t => by
-    simp only [tden, Term.eval]
-    rw [show Term.eval w (fun _ => i) t = Term.eval w' (fun _ => i) t from tden_congr hlen t]
-    cases Term.eval w' (fun _ => i) t with
-    | none => rfl
-    | some u => cases u <;> simp [WordModel.pred?, hlen]
+    show (tden w i t).bind w.pred? = (tden w' i t).bind w'.pred?
+    rw [tden_congr hlen t, WordModel.pred?_congr hlen]
 
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
@@ -543,6 +518,20 @@ def combine (pin a b : Bool) : Bool := if pin then a && b else a || b
 /-- Conjunctive simultaneous application ⊘ on values ([yolyan-2025] Def. 6.5): a change
 survives iff both programs make it. -/
 def combineC (pin a b : Bool) : Bool := if pin then a || b else a && b
+
+/-- On a true input, ⊙ is conjunction. -/
+@[simp] theorem combine_true (a b : Bool) : combine true a b = (a && b) := rfl
+
+/-- On a false input, ⊙ is disjunction — the collapse behind [yolyan-2025] (5.15):
+with no underlying stress the ⊙ of the two stress programs is their disjunction. -/
+@[simp] theorem combine_false (a b : Bool) : combine false a b = (a || b) := rfl
+
+/-- On a true input, ⊘ is disjunction. -/
+@[simp] theorem combineC_true (a b : Bool) : combineC true a b = (a || b) := rfl
+
+/-- On a false input, ⊘ is conjunction — the conjunctive licensing of
+[yolyan-2025] §6.3. -/
+@[simp] theorem combineC_false (a b : Bool) : combineC false a b = (a && b) := rfl
 
 /-- A ⊙-value differs from the input iff one of the components does
 ([yolyan-2025] Prop. 4.2): the changes of the simultaneous application are the union

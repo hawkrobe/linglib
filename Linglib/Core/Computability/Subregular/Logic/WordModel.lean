@@ -63,6 +63,18 @@ theorem succ?_eq_some_iff {w : WordModel α} {n m : ℕ} :
   split <;> simp_all
   all_goals omega
 
+/-- The successor structure depends only on the length. -/
+theorem succ?_congr {w w' : WordModel α} (h : w.length = w'.length) :
+    w.succ? = w'.succ? := by
+  funext n
+  simp [succ?, h]
+
+/-- The predecessor structure depends only on the length. -/
+theorem pred?_congr {w w' : WordModel α} (h : w.length = w'.length) :
+    w.pred? = w'.pred? := by
+  funext n
+  cases n <;> simp [pred?, h]
+
 theorem pred?_eq_some_iff {w : WordModel α} {n m : ℕ} :
     w.pred? n = some m ↔ n = m + 1 ∧ m < w.length := by
   cases n with

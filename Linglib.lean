@@ -2746,6 +2746,7 @@ import Linglib.Studies.Yalcin2007
 import Linglib.Studies.Yan2023
 import Linglib.Studies.Yang2016
 import Linglib.Studies.YingEtAl2025
+import Linglib.Studies.Yolyan2025
 import Linglib.Studies.YolyanComer2026
 import Linglib.Studies.YoonEtAl2020
 import Linglib.Studies.ZaniCiardelliSanfelici2026
