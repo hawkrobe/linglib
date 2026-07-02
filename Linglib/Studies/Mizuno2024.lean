@@ -1,4 +1,5 @@
 import Linglib.Semantics.Modality.Exclusion
+import Linglib.Semantics.Tense.ConditionalShift
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Studies.Iatridou2000
@@ -14,37 +15,39 @@ the Typology of O-Marking and X-Marking", *Semantics and Pragmatics* 17(8): 1–
 Anderson conditionals ([anderson-1951]) argue *for* the truth of their antecedent
 ("If Jones had taken arsenic, he would show exactly the symptoms he is showing — so he
 took arsenic"). Mizuno shows that English must X-mark them (O-marking is trivial),
-whereas Japanese and Mandarin must O-mark them (X-marking — Past -ta, perfective le —
-forces a counterfactual reading). Both strategies avoid triviality by **expanding** the
-modal domain `D ⊆ D⁺`; Mizuno adopts the *expansion* analysis of X-marking (fn 6, citing
-[mackay-2015] against the [iatridou-2000] / [schulz-2014] exclusion analysis), and
+whereas Japanese and Mandarin must O-mark them: their X-marking — the Fake Past -ta
+([ogihara-2014], [mizuno-kaufmann-2019]) and perfective le — forces a counterfactual
+reading. Both strategies avoid triviality by **expanding** the modal domain `D ⊆ D⁺`;
+Mizuno adopts the *expansion* analysis of X-marking (fn 6, citing [mackay-2015],
+[mackay-2019] against the [iatridou-2000] / [schulz-2014] exclusion analysis), and
 analyzes Japanese O-marking as a Historical-Present perspectival shift ([schlenker-2004],
-[ogihara-2014], [mizuno-kaufmann-2019]) that expands `D` by shifting the evaluation time
-backward under branching time.
+[anand-toosarvandani-2018a], [anand-toosarvandani-2018b]) that expands `D` by shifting
+the evaluation time backward under branching time.
 
 ## Main results
 
 * `english_japanese_discrepancy` — English X-marks, Japanese O-marks: the typological twist.
-* `complementary_strategy` — in each language exactly one of the two markings is felicitous.
 * `attested_felicity_matches_strategy` — the attested judgments fit the per-language strategy.
 * `flv_anderson_correlation` — Anderson X-marking ⇔ Future-Less-Vivid X-marking (§4.2).
 * `oMarking_anderson_trivial` / `expansion_resolves_anderson` / `expanded_anderson_informative`
   — the triviality puzzle and its resolution by domain expansion, on the Jones-arsenic scenario.
-* `hp_expands_jones_domain` — Japanese HP: the backward time shift enlarges the live-possibility domain.
+* `hp_expands_jones_domain` / `hp_resolves_anderson` — Japanese HP: the backward time
+  shift enlarges the live-possibility domain, achieving the same semantic effect as
+  X-marking — Mizuno's take (§4.1) on [von-fintel-iatridou-2023]'s uniformity hypothesis.
 
 The glossed stimuli live in `Data/Examples/Mizuno2024.json` (generated module
 `Mizuno2024.Examples`); the substrate (`Semantics.Modality.Exclusion`,
 `Semantics.Tense.ConditionalShift`, both of which cite [mizuno-2024]) supplies the
-domain-expansion machinery instantiated here.
+marking typology and domain-expansion machinery instantiated here.
 -/
 
 namespace Mizuno2024
 
-open Semantics.Modality.Exclusion
-  (MarkingStrategy oMarking_trivial domain_expansion_avoids_triviality
-   expanded_conditional_informative)
+open Semantics.Modality.Exclusion (MarkingStrategy)
 open Tense.ConditionalShift
-  (trivialConsequent nonTrivialConsequent domainRestrictedConditional history_monotone_set)
+  (trivialConsequent nonTrivialConsequent domainRestrictedConditional
+   trivial_domainRestricted expansion_resolves_triviality
+   nontrivial_conditional_excludes history_antitone)
 open Data.Examples (LinguisticExample)
 
 /-! ### Languages and Anderson-conditional strategies
@@ -58,9 +61,9 @@ inductive Language where
   | english | japanese | mandarin
   deriving DecidableEq, Repr
 
-/-- The marking strategy each language uses for *felicitous* Anderson conditionals
-    ([mizuno-2024], §2–3): English X-marks (ex. 1a); Japanese and Mandarin O-mark
-    (ex. 4a -ru, ex. 13a without final le). -/
+/-- The marking strategy each language uses for *felicitous* Anderson conditionals:
+    English X-marks (§2, ex. 1a); Japanese O-marks (§3, ex. 4a -ru); Mandarin O-marks
+    (§4.2, ex. 13a without final le). -/
 def andersonStrategy : Language → MarkingStrategy
   | .english => .xMarking
   | .japanese => .oMarking
@@ -75,26 +78,17 @@ def flvXMarkingAvailable : Language → Bool
   | .mandarin => false
 
 /-- A marking is felicitous for an Anderson conditional in a language iff it is that
-    language's Anderson strategy. Derived from `andersonStrategy`, not stipulated:
-    English requires X-marking (O-marking is trivial, ex. 2); Japanese/Mandarin require
-    O-marking (X-marking is counterfactual, ex. 4a #ta / ex. 13a #le). -/
-def felicitousForAnderson (lang : Language) (m : MarkingStrategy) : Prop :=
+    language's Anderson strategy — so exactly one of the two markings is felicitous per
+    language. Derived from `andersonStrategy`, not stipulated: English requires X-marking
+    (O-marking is trivial, ex. 2); Japanese/Mandarin require O-marking (X-marking is
+    counterfactual, ex. 4a #ta / ex. 13a #le). -/
+abbrev felicitousForAnderson (lang : Language) (m : MarkingStrategy) : Prop :=
   m = andersonStrategy lang
-
-theorem english_xMarks : andersonStrategy .english = .xMarking := rfl
-theorem japanese_oMarks : andersonStrategy .japanese = .oMarking := rfl
-theorem mandarin_oMarks : andersonStrategy .mandarin = .oMarking := rfl
 
 /-- The core typological twist ([mizuno-2024], §3): English and Japanese pick *opposite*
     strategies for Anderson conditionals. -/
 theorem english_japanese_discrepancy :
     andersonStrategy .english ≠ andersonStrategy .japanese := by decide
-
-/-- The two strategies are in complementary distribution: in every language exactly one
-    of X-marking / O-marking is felicitous for an Anderson conditional ([mizuno-2024], §3). -/
-theorem complementary_strategy (lang : Language) :
-    felicitousForAnderson lang .xMarking ↔ ¬ felicitousForAnderson lang .oMarking := by
-  unfold felicitousForAnderson; cases lang <;> decide
 
 /-! ### Attested minimal pairs (the empirical anchor)
 
@@ -118,33 +112,23 @@ def ofGlottocode : String → Option Language
   | "mand1415" => some .mandarin
   | _ => none
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (e : LinguisticExample) (k : String) : Option String :=
-  (e.paperFeatures.find? (·.1 == k)).map (·.2)
-
 /-- Parse the `strategy` tag into a `MarkingStrategy`. -/
 def ofStrategyTag : String → Option MarkingStrategy
   | "x-marking" => some .xMarking
   | "o-marking" => some .oMarking
   | _ => none
 
-/-- The complementary marking strategy ([mizuno-2024], §2: "O-marking [is] generally
-    defined as the absence of X-marking"). The infelicitous alternative in a minimal pair
-    realizes the complement of the felicitous `primaryText`'s strategy. -/
-def otherMarking : MarkingStrategy → MarkingStrategy
-  | .xMarking => .oMarking
-  | .oMarking => .xMarking
-
 /-- Project the Anderson rows from an example: the `primaryText`'s (strategy, felicity),
-    plus — for a minimal-pair example — the complementary strategy paired with the
-    alternative's judgment. Non-Anderson examples and unrecognized language/strategy tags
-    yield no rows. -/
+    plus — for a minimal-pair example — the complementary strategy (`MarkingStrategy.other`,
+    per §2's "O-marking [is] generally defined as the absence of X-marking") paired with
+    the alternative's judgment. Non-Anderson examples and unrecognized language/strategy
+    tags yield no rows. -/
 def andersonRows (e : LinguisticExample) : List (Language × MarkingStrategy × Bool) :=
-  match ofGlottocode e.language, featureOf e "construction",
-        (featureOf e "strategy").bind ofStrategyTag with
+  match ofGlottocode e.language, e.feature? "construction",
+        (e.feature? "strategy").bind ofStrategyTag with
   | some lang, some "anderson", some m =>
       (lang, m, isFelicitous e.judgment) ::
-        e.alternatives.map (fun a => (lang, otherMarking m, isFelicitous a.2))
+        e.alternatives.map (λ a => (lang, m.other, isFelicitous a.2))
   | _, _, _ => []
 
 /-- All attested Anderson rows, projected from the generated example data. -/
@@ -152,11 +136,10 @@ def attestedAndersonRows : List (Language × MarkingStrategy × Bool) :=
   Examples.all.flatMap andersonRows
 
 /-- The attested judgments fit the per-language strategy: every projected row is
-    felicitous iff its marking is the language's `andersonStrategy` (i.e.
-    `felicitousForAnderson`). Derived from the JSON data, not stipulated — flipping any
-    judgment in `Data/Examples/Mizuno2024.json` breaks this. -/
+    felicitous iff its marking is `felicitousForAnderson` in its language. -/
 theorem attested_felicity_matches_strategy :
-    ∀ r ∈ attestedAndersonRows, (r.2.2 = true ↔ r.2.1 = andersonStrategy r.1) := by decide
+    ∀ r ∈ attestedAndersonRows, (r.2.2 = true ↔ felicitousForAnderson r.1 r.2.1) := by
+  decide
 
 /-- The projection is non-vacuous and covers all six cells: both markings are attested in
     every language (English via ex. 1a / 2, Japanese and Mandarin via the 4a / 13a minimal
@@ -175,8 +158,8 @@ theorem attestedAndersonRows_complete :
     conditionals stand or fall together. Across English / Japanese / Mandarin, a language
     X-marks Anderson conditionals iff X-marking is available for its FLV conditionals.
     An empirical generalization (Mizuno speculates a [chierchia-1998] Blocking Principle:
-    covert HP is blocked where overt X-marking is available), not a definitional identity —
-    the two functions are recorded independently. -/
+    covert HP is blocked where overt X-marking is available, fn 14), not a definitional
+    identity — the two functions are recorded independently. -/
 theorem flv_anderson_correlation (lang : Language) :
     (andersonStrategy lang).hasXMarking = flvXMarkingAvailable lang := by
   cases lang <;> rfl
@@ -191,7 +174,7 @@ theorem english_flv_matches_iatridou :
 
 /-- FLV X-marking availability read from the example data (`flv_xmarking` tag). -/
 def flvAvailableTag (e : LinguisticExample) : Option Bool :=
-  match featureOf e "flv_xmarking" with
+  match e.feature? "flv_xmarking" with
   | some "available"   => some true
   | some "unavailable" => some false
   | _                  => none
@@ -211,13 +194,12 @@ conditional is trivially true and uninformative. Both strategies fix this by exp
 to `D⁺ ⊋ D` containing a world where the consequent fails. Mizuno adopts the *expansion*
 analysis of X-marking (fn 6, citing [mackay-2015] against [iatridou-2000] exclusion).
 
-We instantiate the substrate's expansion machinery (`Semantics.Modality.Exclusion`,
-`Semantics.Tense.ConditionalShift`) on the Jones-arsenic scenario: `World = Bool`, where
-`true` is a world in which Jones shows the arsenic symptoms (the observed fact) and `false`
-one in which he does not. -/
+We instantiate the substrate's expansion machinery (`Semantics.Tense.ConditionalShift`)
+on the Jones-arsenic scenario: `World = Bool`, where `true` is a world in which Jones
+shows the arsenic symptoms (the observed fact) and `false` one in which he does not. -/
 
 /-- The Anderson consequent: Jones shows the (arsenic) symptoms. -/
-def showsSymptoms : Bool → Prop := fun w => w = true
+def showsSymptoms : Bool → Prop := λ w => w = true
 
 /-- The non-expanded domain `D` of live possibilities: Jones is assumed to show the
     symptoms, so the only live world is the symptom-showing one. -/
@@ -228,26 +210,22 @@ def expandedDomain : Set Bool := Set.univ
 
 /-- Over `D`, the consequent is trivial — it is an observed fact holding at every live
     world ([mizuno-2024], §2). -/
-theorem consequent_trivial_over_live : trivialConsequent liveDomain showsSymptoms := by
-  intro w hw
-  simp only [liveDomain, Set.mem_singleton_iff] at hw
-  simpa [showsSymptoms] using hw
+theorem consequent_trivial_over_live : trivialConsequent liveDomain showsSymptoms :=
+  λ _ hw => hw
 
 /-- O-marking without expansion: the Anderson conditional is vacuously true over `D` for
     *any* antecedent — Mizuno's triviality puzzle, the infelicity of ex. (2). -/
 theorem oMarking_anderson_trivial (antecedent : Bool → Prop) :
     domainRestrictedConditional liveDomain antecedent showsSymptoms :=
-  oMarking_trivial liveDomain antecedent showsSymptoms consequent_trivial_over_live
+  trivial_domainRestricted liveDomain antecedent showsSymptoms consequent_trivial_over_live
 
-/-- Expansion resolves triviality: `D⁺` contains the symptom-absent `false`-world, so the
-    consequent is non-trivial over `D⁺` ([mizuno-2024], §2). -/
+/-- X-marking's expansion resolves triviality, and is strict — the paper's `D ⊂ D⁺`:
+    `D⁺` properly extends the live domain and contains the symptom-absent `false`-world,
+    so the consequent is non-trivial over `D⁺` ([mizuno-2024], §2). -/
 theorem expansion_resolves_anderson :
-    nonTrivialConsequent expandedDomain showsSymptoms :=
-  domain_expansion_avoids_triviality liveDomain expandedDomain showsSymptoms
-    (by simp only [expandedDomain]; exact Set.subset_univ _)
-    consequent_trivial_over_live
-    false (by simp only [expandedDomain]; exact Set.mem_univ _)
-    (by simp only [showsSymptoms]; decide)
+    liveDomain ⊂ expandedDomain ∧ nonTrivialConsequent expandedDomain showsSymptoms :=
+  expansion_resolves_triviality liveDomain expandedDomain showsSymptoms
+    (Set.subset_univ _) consequent_trivial_over_live false (Set.mem_univ _) Bool.false_ne_true
 
 /-- The payoff ([mizuno-2024], §2: "one can make a meaningful, contingent claim"): an
     Anderson conditional that holds over the expanded `D⁺` is informative — its antecedent
@@ -255,46 +233,56 @@ theorem expansion_resolves_anderson :
 theorem expanded_anderson_informative (antecedent : Bool → Prop)
     (h : domainRestrictedConditional expandedDomain antecedent showsSymptoms) :
     ∃ w ∈ expandedDomain, ¬ antecedent w :=
-  expanded_conditional_informative expandedDomain antecedent showsSymptoms
-    expansion_resolves_anderson h
+  nontrivial_conditional_excludes expandedDomain antecedent showsSymptoms
+    expansion_resolves_anderson.2 h
 
 /-! ### Japanese O-marking: HP expansion under branching time
 
 [mizuno-2024]'s analysis of why Japanese O-marking (Non-Past) escapes triviality without
-X-marking (§3.3–3.4): the Historical-Present shift moves the evaluation time backward, and
-since live possibilities monotonically shrink as time develops ([condoravdi-2002]'s
-backward-closed history), the earlier-time domain is *larger* — domain expansion without
-counterfactual morphology. -/
+X-marking (§3.3): the Historical-Present shift moves the evaluation time backward, and
+since live possibilities monotonically shrink as time develops (Mizuno's assumption,
+which the substrate encodes as a backward-closed history à la [condoravdi-2002]), the
+earlier-time domain is *larger* — domain expansion without counterfactual morphology. -/
 
 /-- A backward-closed history witnessing HP expansion: a world is a live alternative to
     `s` iff it is `s`'s own world, or `s`'s time is at or before `0`. Earlier times have
     strictly more alternatives. -/
 def historyJones : HistoricalAlternatives Bool ℤ :=
-  fun s => { w | w = s.world ∨ s.time ≤ 0 }
+  λ s => { w | w = s.world ∨ s.time ≤ 0 }
 
-theorem historyJones_backwardsClosed : historyJones.backwardsClosed := by
-  intro w w' t t' hle hmem
-  simp only [historyJones, Set.mem_setOf_eq] at hmem ⊢
-  rcases hmem with h | h
-  · exact Or.inl h
-  · exact Or.inr (le_trans hle h)
+theorem historyJones_backwardsClosed : historyJones.backwardsClosed :=
+  λ _ _ _ _ hle hmem => Or.imp id (le_trans hle) hmem
 
 /-- The HP backward shift enlarges the domain of live possibilities: the symptom-absent
     world `false` is *not* a live alternative at the utterance time (`t = 1`) but *is* one
     at the HP-shifted earlier time (`t = 0`), so the expanded domain contains a
-    consequent-failing world — exactly [mizuno-2024]'s argument for Japanese (§3.3–3.4).
-    The subset direction is the substrate's `history_monotone_set`. -/
+    consequent-failing world — exactly [mizuno-2024]'s argument for Japanese (§3.3).
+    The subset direction is the substrate's `history_antitone`. -/
 theorem hp_expands_jones_domain :
     historyJones ⟨true, 1⟩ ⊆ historyJones ⟨true, 0⟩ ∧
       false ∈ historyJones ⟨true, 0⟩ ∧ false ∉ historyJones ⟨true, 1⟩ := by
-  refine ⟨history_monotone_set historyJones historyJones_backwardsClosed ⟨true, 1⟩ 0 (by decide),
-    ?_, ?_⟩
-  · simp only [historyJones, Set.mem_setOf_eq]; decide
-  · simp only [historyJones, Set.mem_setOf_eq]; decide
+  refine ⟨history_antitone historyJones historyJones_backwardsClosed true (by decide),
+    Or.inr le_rfl, ?_⟩
+  simp [historyJones]
+
+/-- Japanese O-marking end-to-end ([mizuno-2024], §3.3): the HP-shifted domain strictly
+    extends the live one and makes the consequent non-trivial — the same semantic effect
+    X-marking achieves by direct expansion (`expansion_resolves_anderson`). Together with
+    `english_japanese_discrepancy`, this renders §4.1's take on
+    [von-fintel-iatridou-2023]'s uniformity hypothesis: the semantic contribution of the
+    two strategies coincides (strict domain expansion resolving triviality); what varies
+    across languages is which strategy may be *deployed* for Anderson conditionals. -/
+theorem hp_resolves_anderson :
+    liveDomain ⊂ historyJones ⟨true, 0⟩ ∧
+      nonTrivialConsequent (historyJones ⟨true, 0⟩) showsSymptoms :=
+  expansion_resolves_triviality liveDomain (historyJones ⟨true, 0⟩) showsSymptoms
+    (Set.Subset.trans (λ _ hw => Or.inl hw) hp_expands_jones_domain.1)
+    consequent_trivial_over_live
+    false hp_expands_jones_domain.2.1 Bool.false_ne_true
 
 /-! ### Fragment marker connection -/
 
--- Japanese Anderson conditionals use -(r)eba, which marks both HC and PC (unlike HC-only
+-- Japanese Anderson conditionals use -(e)ba, which marks both HC and PC (unlike HC-only
 -- -ra): with Non-Past consequent → Anderson, with Past consequent → counterfactual.
 #guard Japanese.Conditionals.eba.markerType ==
   Semantics.Conditionals.ConditionalMarkerType.both

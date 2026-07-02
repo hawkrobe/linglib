@@ -177,6 +177,10 @@ def surfaceTokens (e : LinguisticExample) : List String :=
 def glossLine (e : LinguisticExample) : List String :=
   e.glossedTokens.map Prod.snd
 
+/-- Value of a `paperFeatures` key, if present. -/
+def feature? (e : LinguisticExample) (key : String) : Option String :=
+  e.paperFeatures.lookup key
+
 end LinguisticExample
 
 end Data.Examples

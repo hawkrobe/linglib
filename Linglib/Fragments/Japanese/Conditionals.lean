@@ -3,7 +3,7 @@ import Linglib.Semantics.Conditionals.Marker
 
 /-!
 # Japanese Conditional Markers
-[iatridou-1991] [mizuno-2024]
+[cao-white-lassiter-2025] [mizuno-2024]
 
 Conditional morphemes in Japanese and their HC/PC restrictions.
 
@@ -12,8 +12,8 @@ Conditional morphemes in Japanese and their HC/PC restrictions.
 - **-ra / -tara**: HC-only. Cannot mark premise conditionals.
 - **nara**: Can mark both HC and PC. PC reading available when antecedent
   echoes prior discourse ([cao-white-lassiter-2025], ex. 15).
-- **-(r)eba**: Can mark both HC and PC. Used in Anderson conditionals with
-  Non-Past consequent ([mizuno-2024], ex. 4a).
+- **-(e)ba**: Can mark both HC and PC — premise use in Anderson conditionals
+  ([mizuno-2024], ex. 4a), hypothetical use in FLVs ([mizuno-2024], ex. 9a).
 -/
 
 namespace Japanese.Conditionals
@@ -42,16 +42,17 @@ def nara : ConditionalMarker where
   markerType := .both
   notes := "Can mark premise conditionals (unlike -ra)"
 
-/-- Japanese -(r)eba: HC and PC conditional marker.
+/-- Japanese -(e)ba: HC and PC conditional marker ([mizuno-2024], fn 8 notation).
 
-    Used in Anderson conditionals. With Non-Past
-    consequent, yields Anderson reading; with Past consequent,
-    yields counterfactual reading. -/
+    Attaches directly to sentence radicals. Both uses are attested in
+    [mizuno-2024]: premise (Anderson, ex. 4a) and hypothetical (FLV, ex. 9a);
+    the Anderson vs counterfactual contrast is carried by the consequent's
+    Non-Past vs Past, not by the marker. -/
 def eba : ConditionalMarker where
   language := "Japanese"
-  marker := "-(r)eba"
+  marker := "-(e)ba"
   gloss := "if (conditional)"
   markerType := .both
-  notes := "Anderson conditionals use this form (Mizuno 2024)"
+  notes := "Anderson conditionals use this form (Mizuno 2024, ex. 4a)"
 
 end Japanese.Conditionals
