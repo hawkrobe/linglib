@@ -1,7 +1,6 @@
 import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Syntax.Clause.Complementation
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Cantonese.Aspect
@@ -86,7 +85,6 @@ explicit in §10 as a refutation theorem candidate.
 namespace LiuYip2026
 
 open Minimalist (AspFlavor AspHead Probe.Profile ClauseSpine ComplementSize Cat fValue)
-open Clause.Complementation (ComplementClauseStructure)
 
 -- ============================================================================
 -- §1. Three Chinese clause types as ComplementSize instances
@@ -467,27 +465,19 @@ have Studies-level Chinese formalizations they currently lack):
   explicit prose noting the alternative locality model. -/
 
 -- ============================================================================
--- §12. Bridge to Clause.Complementation.ComplementClauseStructure
+-- §12. Size bridge to Minimalist.ComplementSize
 -- ============================================================================
 
-/-- The local `ComplementClass` projects to the existing theory-neutral
-    surface enum `Clause.Complementation.ComplementClauseStructure`.
-    This converts the planned ICH from a parallel third axis into a
-    projection over substrate that already serves [deal-2026],
-    [landau-2015], [cristofaro-2013], and [noonan-2007]
-    — the interconnection-density discipline CLAUDE.md describes.
-
-    Note: the projection collapses [wurmbrand-lohninger-2023]'s
-    three classes onto two surface patterns (`barePropositionalCP` for
-    proposition, `abarInternalCP` for situation/event). The collapse is
-    correct for Chinese but may not generalize. -/
-def toSurfacePattern : ComplementClass → ComplementClauseStructure
-  | .proposition => .barePropositionalCP
-  | .situation => .abarInternalCP
-  | .event => .abarInternalCP
-
-theorem proposition_surface :
-    toSurfacePattern .proposition = .barePropositionalCP := rfl
+/-- [wurmbrand-lohninger-2023] ICH classes track structural size —
+    proposition = CP, situation = TP, event = vP. Replaces the retired
+    projection onto the deleted surface enum, which forced
+    situation/event onto an Ā-dependency cell the ICH does not claim.
+    ([deal-2026]'s shell/Ā axes live in `Syntax/Clause/Complementation`;
+    the ICH makes no claim on either axis, so no bridge is stated.) -/
+def ComplementClass.size : ComplementClass → ComplementSize
+  | .proposition => .cP
+  | .situation => .tP
+  | .event => .vP
 
 -- ============================================================================
 -- §13. Open / deferred items

@@ -12,9 +12,8 @@ frames and clause-typers.
 
 ## Main definitions
 
-- `ComplementClauseStructure` — surface complement-clause shapes
-- `CPShell`, `CPShellInventory`, `isAttestedShell` — CP external shells
-  ([deal-2026] Table 79)
+- `CPShell`, `CPShellInventory`, `isAttestedShell`, `hasNominalShell` —
+  CP external shells ([deal-2026] Table 79)
 - `ComplementType.toNoonan`, `Verb.frames`, `Verb.realizes` — the
   selection relation
 
@@ -31,41 +30,6 @@ named witnesses; the universal claims stay in Table 79 commentary.
 -/
 
 namespace Clause.Complementation
-
-/-! ### Theory-neutral surface enum
-
-`ComplementClauseStructure` records the *surface pattern* a notional
-complement clause realises, without committing to a framework's internal
-analysis; each Theory projects its native account into it (HPSG projects
-`headExternalModifier` for true RCs; Minimalist with [deal-2026] projects
-`abarInternalCP` for Nez Perce REs, `barePropositionalCP` for English
-*that*-clauses). -/
-
-/-- Surface shapes of notional complement clauses. [deal-2026]'s typology
-refutes the Kayne/Arsenijević universalist claim ([kayne-2008],
-[kayne-2014], [arsenijevic-2009]) — now the single decidable statement
-`∀ c : ComplementClauseStructure, c = .abarInternalCP` — by exhibiting
-`.barePropositionalCP` as attested. -/
-inductive ComplementClauseStructure where
-  /-- CP with internal Ā-dependency above TP: Nez Perce REs ([deal-2026]),
-      Adyghe ([caponigro-polinsky-2011]), Bulgarian ([krapova-2010]). -/
-  | abarInternalCP
-  /-- Bare CP, no internal Ā-dependency: Nez Perce simplex embeddings,
-      English *think*-complementation ([deal-2026]). -/
-  | barePropositionalCP
-  /-- CP wrapped in a nominal projection: Washo factives
-      ([hanink-bochnak-2017], [bochnak-hanink-2021]), Ndebele
-      ([pietraszko-2019]). -/
-  | nominalization
-  /-- True relative clause: adjunct modifier of a head noun — the pattern
-      Kayne/Arsenijević claim subsumes all others. -/
-  | headExternalModifier
-  /-- Internally-headed relative clause (Bambara, Navajo). -/
-  | headInternalRelative
-  /-- High adjunct, not complementation: Amahuaca attitude reports
-      ([deal-2026] §3). -/
-  | adjunct
-  deriving DecidableEq, Repr
 
 /-! ### CP-external wrapping shells
 
@@ -138,6 +102,16 @@ theorem pCP_not_attested : isAttestedShell [.c, .p] = false := rfl
 
 /-- `V N CP` (N with no D shell) is not a Table 79 cell. -/
 theorem nCP_not_attested : isAttestedShell [.c, .n] = false := rfl
+
+/-- The clause complex is wrapped in a nominal projection: its shell
+    contains D (Washo `dCP`, Adyghe `dnCP`, Bulgarian/Ndebele `pdCP`;
+    `bareCP` is not). On [deal-2026]'s attested cells this coincides
+    with `≠ bareCP` (`pCP`/`nCP` are unattested); D-membership is the
+    definitional content, not the complement of a special case. -/
+def hasNominalShell (inv : CPShellInventory) : Prop := CPShell.d ∈ inv
+
+instance : DecidablePred hasNominalShell :=
+  λ inv => inferInstanceAs (Decidable (CPShell.d ∈ inv))
 
 /-! ### Selection
 

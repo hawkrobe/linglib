@@ -59,7 +59,7 @@ functional projection above TP*. Three primary conclusions:
 
 [kayne-2008], [kayne-2014], [arsenijevic-2009]: universalist
 position (all complementation = relativization). Deal 2026 §7 refutes by
-exhibiting `barePropositionalCP` cells.
+exhibiting bare-CP cells with no internal Ā-dependency.
 
 [decuba-2017]: opposing position — complement clauses are *never*
 relatives. Compatible with Deal 2026 for English simplex; incompatible
@@ -173,65 +173,31 @@ theorem table79_membership :
        ("Adyghe",    "RE"), ("Bulgarian", "RE"),
        ("Ndebele",   "embedding"), ("Washo", "factive")] := by decide
 
-/-- Project a `NotionalComplementShape` onto the theory-neutral
-    `ComplementClauseStructure` enum from `Typology/Complementation.lean`.
-    The mapping is determined by the internal Ā-flag and the external shell:
-    bare CP + Ā = `abarInternalCP`; bare CP without Ā = `barePropositionalCP`;
-    any non-bare external shell = `nominalization` (subsumes V D CP, V D N CP,
-    V P D CP — they differ only in the depth of the nominal/prepositional
-    wrapper, not in the surface phenomenon being a nominalization). -/
-def NotionalComplementShape.surfacePattern (s : NotionalComplementShape) :
-    ComplementClauseStructure :=
-  if s.external = bareCP then
-    if s.hasInternalAbar then .abarInternalCP else .barePropositionalCP
-  else
-    .nominalization
-
-/-- A Table79 cell's surface pattern, derived from its shape. -/
-def Table79Cell.surfacePattern (c : Table79Cell) : ComplementClauseStructure :=
-  c.shape.surfacePattern
-
-/-- Nez Perce REs project as `abarInternalCP` (bare CP + Ā). -/
-theorem nezPerceRE_surface :
-    nezPerceREShape.surfacePattern = .abarInternalCP := rfl
-
-/-- Nez Perce simplex (and English *think*) project as `barePropositionalCP`. -/
-theorem nezPerceSimplex_surface :
-    nezPerceSimplexShape.surfacePattern = .barePropositionalCP := rfl
-
-/-- Adyghe REs project as `nominalization` (V D N CP). -/
-theorem adygheRE_surface :
-    adygheREShape.surfacePattern = .nominalization := rfl
-
-/-- Bulgarian REs project as `nominalization` (V P D CP). -/
-theorem bulgarianRE_surface :
-    bulgarianREShape.surfacePattern = .nominalization := rfl
-
-/-- Ndebele embedding projects as `nominalization` (V P D CP). -/
-theorem ndebele_surface :
-    ndebeleShape.surfacePattern = .nominalization := rfl
-
-/-- Washo factive embedding projects as `nominalization` (V D CP, no Ā). -/
-theorem washo_surface :
-    washoShape.surfacePattern = .nominalization := rfl
-
 /-- The Kayne-Arsenij\'evi\'c universalist hypothesis — that all clausal
-    complementation is relativization — is decidable on the Table 79 sample
-    as `∀ c ∈ table79, c.surfacePattern = .abarInternalCP`. Deal 2026 refutes
-    it: only one of six cells (Nez Perce REs) projects as `abarInternalCP`. -/
+    complementation is relativization — stated on the Ā-axis: not every
+    Table 79 cell carries an internal Ā-dependency. (The retired surface-enum
+    version undercounted — Adyghe/Bulgarian REs DO relativize, inside a
+    nominal shell, and are not counterexamples; the counterexamples are the
+    no-Ā cells: Nez Perce simplex, English *think*, Ndebele, Washo.) -/
 theorem kayne_universalism_refuted :
-    ¬ (table79.all (·.surfacePattern == .abarInternalCP) = true) := by decide
+    ¬ ∀ c ∈ table79, c.shape.hasInternalAbar = true := by decide
 
-/-- Deal 2026's positive contribution: at least one cell projects as
-    `abarInternalCP` (so REs are real); at least one cell projects as
-    `barePropositionalCP` (so not all complementation is relativization);
-    at least one cell projects as `nominalization` (consistent with prior
+/-- Deal 2026's positive contribution, on the two axes: bare CP + Ā attested
+    (REs are real); bare CP without Ā attested (not all complementation is
+    relativization); a nominal shell attested (consistent with prior
     nominalization analyses for some languages). -/
-theorem table79_three_surface_patterns_attested :
-    table79.any (·.surfacePattern == .abarInternalCP) = true ∧
-    table79.any (·.surfacePattern == .barePropositionalCP) = true ∧
-    table79.any (·.surfacePattern == .nominalization) = true := by
+theorem table79_axes_attested :
+    (∃ c ∈ table79, c.shape.external = bareCP ∧ c.shape.hasInternalAbar = true) ∧
+    (∃ c ∈ table79, c.shape.external = bareCP ∧ c.shape.hasInternalAbar = false) ∧
+    (∃ c ∈ table79, hasNominalShell c.shape.external) := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- The combination the surface enum could not express — claim 2: REs
+    vary in nominal superstructure (Adyghe V D N CP, Bulgarian V P D CP
+    carry Ā inside a nominal shell). -/
+theorem shelled_REs_attested :
+    ∃ c ∈ table79, hasNominalShell c.shape.external ∧
+      c.shape.hasInternalAbar = true := by decide
 
 -- ============================================================================
 -- §2.5. Greek extension (cross-reference to [angelopoulos-2026])
@@ -252,23 +218,17 @@ theorem table79_three_surface_patterns_attested :
 -- positions. The refutation theorem itself lives in
 -- `Studies/Angelopoulos2026.lean`
 -- (`angelopoulos_refutes_selection_argument_only`); this file just
--- exposes the Greek *pu*-complement shape as a `barePropositionalCP`
--- entry to make the typology connection explicit.
+-- exposes the Greek *pu*-complement shape as a bare-CP no-Ā entry
+-- to make the typology connection explicit.
 
 /-- Greek *pu*-complement shape per [angelopoulos-2026]: bare CP
-    with no internal Ā-dependency — projects as `barePropositionalCP`,
-    not `nominalization` (Greek lacks a silent situation noun, so
-    *pu* cannot nominalize per paper §5). The categorial [n]-feature
-    on C is checked structurally (light noun in Spec) rather than by
-    a nominal shell. -/
+    with no internal Ā-dependency and no nominal shell (Greek lacks
+    a silent situation noun, so *pu* cannot nominalize per paper §5).
+    The categorial [n]-feature on C is checked structurally (light
+    noun in Spec) rather than by a nominal shell — witnessing that
+    the (factive, bare-CP) combination is attested. -/
 def greekPuComplementShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, bareCP, false⟩
-
-/-- Greek *pu*-complement projects as `barePropositionalCP` —
-    a bare-CP cell consistent with Deal's typology, witnessing
-    that the (factive, bare-CP) combination is attested. -/
-theorem greekPu_surface :
-    greekPuComplementShape.surfacePattern = .barePropositionalCP := rfl
 
 -- ============================================================================
 -- §3. Cross-Classification: factivity ⊥ RE-structure
@@ -484,7 +444,7 @@ The Studies file integrates four independent substrate layers:
 - Fragment: per-verb consensus typology (CTPClass, factive)
 - Tonhauser projective content: ProjectiveClass (Semantics/Presupposition/)
 - Deal-internal: EmbeddingStrategy + NotionalComplementShape
-- Typology: ComplementClauseStructure surface enum
+- Shell/Ā axes: `CPShellInventory` + `hasNominalShell` (Syntax/Clause/)
 
 The bridge theorems below derive load-bearing predictions across these
 layers rather than stipulating them. -/
@@ -496,23 +456,13 @@ def EmbeddingStrategy.shape : EmbeddingStrategy → NotionalComplementShape
   | .re => nezPerceREShape
   | .simplex => nezPerceSimplexShape
 
-/-- Strategy-shape correspondence: every embedder's strategy projects to
-    the right shape, preserving the abarInternalCP / barePropositionalCP
-    distinction at the surface-pattern level. -/
-theorem strategy_shape_surface (v : NezPerceEmbedder) :
-    (nezPerceEmbedStrategy v).shape.surfacePattern =
-      if nezPerceEmbedStrategy v = .re then .abarInternalCP
-      else .barePropositionalCP := by
-  cases nezPerceEmbedStrategy v <;> simp [EmbeddingStrategy.shape]
-  all_goals rfl
-
-/-- Every RE-canonical predicate projects via shape to `abarInternalCP`. -/
-theorem reCanonical_surfacePattern_abar :
-    ∀ v ∈ reCanonical,
-      (nezPerceEmbedStrategy v).shape.surfacePattern = .abarInternalCP := by
-  intro v hv
-  rw [strategy_shape_surface]
-  simp [reCanonical_strategy v hv]
+/-- Strategy-shape correspondence on the Ā-axis: the shape an embedder's
+    strategy selects carries an internal Ā-dependency exactly when the
+    Fragment observable holds. -/
+theorem strategy_shape_abar (v : NezPerceEmbedder) :
+    (nezPerceEmbedStrategy v).shape.hasInternalAbar = v.requiresYoxKeEdge := by
+  unfold nezPerceEmbedStrategy
+  cases v.requiresYoxKeEdge <;> rfl
 
 /-- All three Table-79 RE cells (Nez Perce, Adyghe, Bulgarian) carry an
     internal Ā-dependency. The shared `hasInternalAbar = true` is the
@@ -530,14 +480,6 @@ theorem all_simplex_lack_internal_abar :
     ndebeleShape.hasInternalAbar = false ∧
     washoShape.hasInternalAbar = false := by
   refine ⟨rfl, rfl, rfl⟩
-
-/-- Table-79 cells partition into ±Ā: every cell either has it or lacks it
-    (a tautology over Bool, but documents the bipartition exhaustiveness
-    of the hasInternalAbar dimension). -/
-theorem table79_bipartite :
-    ∀ c ∈ table79, c.shape.hasInternalAbar = true ∨
-                   c.shape.hasInternalAbar = false := by
-  intro c _; cases c.shape.hasInternalAbar <;> tauto
 
 /-- The four-cell cross-classification of Tables 80–81 is exhaustively
     populated: every combination of (factive, hasInternalAbar) is attested
