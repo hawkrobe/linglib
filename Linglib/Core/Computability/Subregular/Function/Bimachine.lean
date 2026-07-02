@@ -154,6 +154,47 @@ theorem transferEquiv_runAux (B : Bimachine L R α β) (eL : L ≃ L') (eR : R �
     (B.transferEquiv eL eR).run = B.run := by
   funext xs; exact transferEquiv_runAux B eL eR B.lInit xs
 
+/-! ### Flag bimachines
+
+The recurring two-sided-trigger shape: each side's automaton is the one-bit "some symbol
+on my side satisfies `p`" flag, so `lState`/`rState` compute `List.any` and the cell sees
+exactly the two flags. Conjunctive spreads (`conjBM` in `Hierarchy.lean`) and unbounded
+tonal plateauing ([jardine-2016]) are instances. -/
+
+/-- The bimachine whose side states are "a symbol satisfying `pL`/`pR` occurred on my
+side" flags. -/
+def ofFlags (pL pR : α → Bool) (out : Bool → α → Bool → β) : Bimachine Bool Bool α β where
+  lInit := false
+  lStep l a := l || pL a
+  rInit := false
+  rStep r a := r || pR a
+  out := out
+
+@[simp] theorem ofFlags_lState (pL pR : α → Bool) (out : Bool → α → Bool → β)
+    (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
+  show xs.foldl (fun l a => l || pL a) false = _
+  have key : ∀ (acc : Bool) (ys : List α),
+      ys.foldl (fun l a => l || pL a) acc = (acc || ys.any pL) := by
+    intro acc ys
+    induction ys generalizing acc with
+    | nil => simp
+    | cons y ys ih => simp [ih, Bool.or_assoc]
+  simpa using key false xs
+
+@[simp] theorem ofFlags_rState (pL pR : α → Bool) (out : Bool → α → Bool → β)
+    (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
+  show xs.foldr (fun a r => r || pR a) false = _
+  induction xs <;> simp_all [Bool.or_comm]
+
+/-- Coordinate characterization of a flag bimachine: output `i` sees the input symbol and
+the two window-`any` flags. -/
+theorem ofFlags_run_getElem? (pL pR : α → Bool) (out : Bool → α → Bool → β)
+    (x : List α) (i : ℕ) :
+    ((ofFlags pL pR out).run x)[i]?
+      = (x[i]?).map fun a => out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
+  simp only [run_getElem?, ofFlags_lState, ofFlags_rState]
+  rfl
+
 end Bimachine
 
 /-! ### Weak determinism -/
@@ -222,6 +263,20 @@ def RequiresBothSides (f : List α → List α) : Prop :=
       uL[i]? = base[i]? ∧ (f uL)[i]? = uL[i]?) ∧
     (∃ uR : List α, uR.length = base.length ∧ AgreeUpto base uR (i + d) ∧
       uR[i]? = base[i]? ∧ (f uR)[i]? = uR[i]?)
+
+omit [DecidableEq α] in
+/-- Requiring both sides is the *conjunctive* strengthening of unbounded circumambience:
+the target is changed on the base, and each far perturbation *reverts* it — in particular
+each perturbation flips the output, which is all circumambience asks. The converse fails
+(a two-sided union is circumambient but reverts under neither side alone). -/
+theorem RequiresBothSides.isUnboundedCircumambient {f : List α → List α}
+    (hf : RequiresBothSides f) : IsUnboundedCircumambient f := by
+  intro d
+  obtain ⟨base, i, hi, hchange, ⟨uL, hLlen, hLag, hLsym, hLrev⟩,
+    ⟨uR, hRlen, hRag, hRsym, hRrev⟩⟩ := hf d
+  exact ⟨base, i, hi,
+    ⟨uL, hLlen, hLag, fun h => hchange (h.trans (hLrev.trans hLsym))⟩,
+    ⟨uR, hRlen, hRag, fun h => hchange (h.trans (hRrev.trans hRsym))⟩⟩
 
 /-- **Unbounded interaction ⟹ not weakly deterministic.** At the witness, the base changes
 but each far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
