@@ -367,7 +367,7 @@ theorem guebie_properRemnant : properRemnant guebiePredicateDoubling.toRemnantFr
 
 The vP-domain ATR-harmony cophonology of [sande-jenks-inkelas-2020]
 applied to Guébie. The phase selector matches `v` heads (per the v*
-phase head of Chomsky 2000); the constraint subranking is left
+phase head of Chomsky 2000); the constraint-subranking payload is left
 abstract here (it would be `[ATRHARM ≫ IDENT-IO(ATR)]` over the
 candidate type the OT machinery uses, which we don't instantiate
 inline). -/
@@ -382,7 +382,7 @@ def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
   | some tok => tok.item.outerCat == .v
   | none => false
 
-/-- The Guébie vP-cophonology bundle. The `subranking` is left as an
+/-- The Guébie vP-cophonology bundle. The subranking `payload` is left as an
     empty list of constraints over `Unit` candidates because the
     ATR-harmony cophonology's actual constraints (SPREAD/IDENT derived
     from a `Harmony.System`) would require threading the OT-candidate type
@@ -390,8 +390,8 @@ def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
     scope. The substrate use is exhibited by the bundle's existence
     and the matched-phase predicate `appliesTo`. -/
 def guebieVPCophonology : PhrasalCophonology Unit Unit :=
-  { phaseSelector := guebieVPPhaseSelector
-    subranking    := [] }
+  { selector := guebieVPPhaseSelector
+    payload  := [] }
 
 /-- The Guébie vP-cophonology applies to a v head. (Witness: a leaf
     SO whose token's category is `.v`.) -/

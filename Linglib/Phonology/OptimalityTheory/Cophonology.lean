@@ -98,34 +98,12 @@ end Eval
 /-! ### Cophonologies by ph(r)ase -/
 
 /-- A cophonology triggered by spell-out of a particular kind of phase
-([sande-jenks-inkelas-2020]): a phase-head predicate bundled with the constraint
-subranking promoted within the matched phase. Per [sande-clem-dabkowski-2026], the vP
-phase carries the ATR-harmony cophonology (`phaseSelector` matches v heads) and the DP
-phase the definite-marker phonology (`phaseSelector` matches definite D heads). -/
-structure PhrasalCophonology (L C : Type*) where
-  /-- Predicate selecting which phase heads activate this cophonology. -/
-  phaseSelector : SyntacticObject → Bool
-  /-- Constraint subranking promoted within the matched phase. -/
-  subranking : List (L × Constraint C)
-
-/-- A phrasal cophonology activates on a phase iff its `phaseSelector` matches the
-phase head (the head leaf `ph.head`, as a leaf SO). -/
-def PhrasalCophonology.appliesTo (pc : PhrasalCophonology L C) (ph : Phase) : Bool :=
-  pc.phaseSelector (Minimalist.SO.lexLeaf ph.head)
-
-/-- The *first* registered cophonology whose `phaseSelector` matches the phase head —
-first-match encodes lexicographic precedence, the elsewhere ordering of
-[sande-jenks-inkelas-2020]. `none` when no cophonology matches; callers then fall back
-to the default ranking. -/
-def selectCophonology (registry : List (PhrasalCophonology L C)) (ph : Phase) :
-    Option (PhrasalCophonology L C) :=
-  registry.find? (·.appliesTo ph)
-
-/-- The selected cophonology, when present, applies to the phase. -/
-theorem selectCophonology_applies {registry : List (PhrasalCophonology L C)} {ph : Phase}
-    {pc : PhrasalCophonology L C} (h : selectCophonology registry ph = some pc) :
-    pc.appliesTo ph = true := by
-  unfold selectCophonology at h
-  simpa using List.find?_some h
+([sande-jenks-inkelas-2020]): a `Minimalist.Phase.Trigger` whose payload is the
+constraint subranking promoted within the matched phase. Per
+[sande-clem-dabkowski-2026], the vP phase carries the ATR-harmony cophonology (the
+selector matches v heads) and the DP phase the definite-marker phonology (the selector
+matches definite D heads). Selection from a registry is `Minimalist.Phase.selectTrigger`
+(first-match, the elsewhere ordering). -/
+abbrev PhrasalCophonology (L C : Type*) := Minimalist.Phase.Trigger (List (L × Constraint C))
 
 end OptimalityTheory.Cophonology

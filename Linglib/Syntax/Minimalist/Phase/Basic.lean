@@ -136,6 +136,41 @@ def IsWellFormed (φ : Phase) : Prop := SO.isPhaseHead φ.tree φ.head
 instance (φ : Phase) : Decidable φ.IsWellFormed :=
   inferInstanceAs (Decidable (SO.isPhaseHead _ _))
 
+/-! ### Spell-out triggers
+
+A payload dispatched at the spell-out of matching phases. The payload is generic: the
+interpretive components read syntax, not conversely, so what a phase triggers — a
+constraint subranking ([sande-jenks-inkelas-2020]'s cophonologies by phase,
+`Phonology/OptimalityTheory/Cophonology.lean`), an allosemy rule, a realization rule —
+lives with the consuming component, and this layer knows only the dispatch. -/
+
+/-- A payload dispatched when a matching phase is spelled out: a phase-head predicate
+bundled with the payload it activates over the phase complement. -/
+structure Trigger (P : Type*) where
+  /-- Predicate selecting which phase heads activate this trigger. -/
+  selector : SyntacticObject → Bool
+  /-- The payload dispatched over the matched phase. -/
+  payload : P
+
+variable {P : Type*}
+
+/-- A trigger applies to a phase iff its `selector` matches the phase head (the head
+leaf `ph.head`, as a leaf SO). -/
+def Trigger.appliesTo (tr : Trigger P) (ph : Phase) : Bool :=
+  tr.selector (SO.lexLeaf ph.head)
+
+/-- The *first* registered trigger whose `selector` matches the phase head —
+first-match encodes lexicographic precedence (the elsewhere ordering of
+[sande-jenks-inkelas-2020]). `none` when no trigger matches. -/
+def selectTrigger (registry : List (Trigger P)) (ph : Phase) : Option (Trigger P) :=
+  registry.find? (·.appliesTo ph)
+
+/-- The selected trigger, when present, applies to the phase. -/
+theorem selectTrigger_applies {registry : List (Trigger P)} {ph : Phase} {tr : Trigger P}
+    (h : selectTrigger registry ph = some tr) : tr.appliesTo ph = true := by
+  unfold selectTrigger at h
+  simpa using List.find?_some h
+
 end Phase
 
 -- ============================================================================
