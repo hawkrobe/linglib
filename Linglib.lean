@@ -101,7 +101,9 @@ import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
+import Linglib.Core.Computability.Subregular.Logic.BMRS
 import Linglib.Core.Computability.Subregular.Logic.LocalityBridge
+import Linglib.Core.Computability.Subregular.Logic.ModalMu
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
 import Linglib.Core.Computability.Subregular.Logic.Transduction
 import Linglib.Core.Computability.Subregular.Logic.TreeModel
@@ -219,6 +221,7 @@ import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.FourierMotzkin
 import Linglib.Core.Order.Interval
+import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.IntervalContent
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Markedness
