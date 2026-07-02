@@ -75,11 +75,14 @@ def nun : Complementizer where
   verbForm := some .Part
   licenser := some .nominal
 
-/-- *-ko* — connective / quotative complementizer. -/
+/-- *-ko* — connective / quotative complementizer; verb-adjacent Comp
+    allomorph, paired with adnominal *-nun* (§4.3.2 ex. 46 of
+    [bondarenko-2022]). -/
 def ko : Complementizer where
   form := "-ko"
   position := some .postfixed
   verbForm := some .Conv
+  licenser := some .verbal
 
 /-- The clause-typing inventory. -/
 def complementizers : List Complementizer := [ta, nun, ko]
