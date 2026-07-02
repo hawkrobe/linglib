@@ -477,56 +477,23 @@ private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
 
 /-- The (43) decomposition computes UTP. -/
 theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) := by
-  have hflag : ∀ i : ℕ, (((markLeft.run w).drop (i + 1)).any (· == Mark.H))
-      = ((w.drop (i + 1)).any (· == TBU.H)) := fun i => by
-    rw [Bool.eq_iff_iff]
-    simp only [List.any_eq_true, beq_iff_eq]
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
-      exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mp hxj⟩, rfl⟩
-    · rintro ⟨x, hx, rfl⟩
-      obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
-      exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mpr hxj⟩, rfl⟩
+  have hmark : ∀ i : ℕ, Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) :=
+    fun i => by simp only [mem_drop_iff, markLeft_run_H_iff]
   refine List.ext_getElem? fun i => ?_
-  rw [utp_getElem?, resolve, resolveRight, Mealy.ofFlag_run_reverse_getElem?, hflag i,
-    markLeft, Mealy.ofFlag_run_getElem?, Option.map_map]
+  rw [utp_getElem?, resolve, resolveRight, Mealy.ofFlag_run_reverse_getElem?]
+  simp only [List.any_beq', List.contains_eq_mem, decide_eq_decide.mpr (hmark i)]
+  rw [markLeft, Mealy.ofFlag_run_getElem?, Option.map_map]
+  simp only [List.any_beq', List.contains_eq_mem]
   cases ha : w[i]? with
   | none => rfl
   | some a =>
     simp only [Option.map_some, Function.comp_apply]
     congr 1
-    have hsp := surfacesH_split ha
     cases a with
     | H => simp [surfacesH_of_getElem?_H ha]
     | O =>
-      by_cases hL : (w.take i).any (· == TBU.H) = true
-      · have hLm : TBU.H ∈ w.take i := by
-          simp only [List.any_eq_true, beq_iff_eq] at hL
-          obtain ⟨x, hx, rfl⟩ := hL
-          exact hx
-        by_cases hR : (w.drop (i + 1)).any (· == TBU.H) = true
-        · have hRm : TBU.H ∈ w.drop (i + 1) := by
-            simp only [List.any_eq_true, beq_iff_eq] at hR
-            obtain ⟨x, hx, rfl⟩ := hR
-            exact hx
-          simp [hsp.mpr (Or.inr ⟨hLm, hRm⟩), hL, hR]
-        · have hs : ¬ SurfacesH w i := fun hs => by
-            rcases hsp.mp hs with h' | ⟨-, hRm⟩
-            · exact TBU.noConfusion h'
-            · exact hR (by
-                obtain ⟨j, hj, hjH⟩ := mem_drop_iff.mp hRm
-                simp only [List.any_eq_true, beq_iff_eq]
-                exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, hjH⟩, rfl⟩)
-          simp [hs, hL, hR]
-      · have hs : ¬ SurfacesH w i := fun hs => by
-          rcases hsp.mp hs with h' | ⟨hLm, -⟩
-          · exact TBU.noConfusion h'
-          · exact hL (by
-              obtain ⟨j, hj, hjH⟩ := mem_take_iff.mp hLm
-              simp only [List.any_eq_true, beq_iff_eq]
-              exact ⟨.H, mem_take_iff.mpr ⟨j, hj, hjH⟩, rfl⟩)
-        simp [hs, hL]
+      by_cases hL : TBU.H ∈ w.take i <;> by_cases hR : TBU.H ∈ w.drop (i + 1) <;>
+        simp [surfacesH_split ha, hL, hR]
 
 /-- The (43) mark-up decomposition (§5.2): over the `?`-enlarged alphabet, UTP is a
 right-subsequential map after a left-subsequential map. -/
