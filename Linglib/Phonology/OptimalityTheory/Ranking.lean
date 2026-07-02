@@ -1,5 +1,6 @@
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Order.Fin.Basic
+import Mathlib.Order.PiLex
 
 /-!
 # Constraint rankings
@@ -41,6 +42,19 @@ def id (n : ℕ) : Ranking n := Equiv.refl _
 
 /-- Under the identity ranking, dominance is index order. -/
 @[simp] theorem id_dominates_iff {i j : Fin n} : (Ranking.id n).Dominates i j ↔ i < j := Iff.rfl
+
+/-- The ranking's *reading* of a lex-ordered vector: coordinate `p` of `r • v` is the
+value of `v` at the constraint ranked `p`-th. Reordering is the one operation that
+breaks and reconstitutes the lex order — the `Sₙ` action whose orbit structure is
+constraint ranking. (With this convention the action is a right action:
+`(r * s) • v = s • r • v`.) -/
+instance {α : Type*} : SMul (Ranking n) (Lex (Fin n → α)) :=
+  ⟨fun r v => toLex fun p => ofLex v (r p)⟩
+
+@[simp] theorem smul_apply {α : Type*} (r : Ranking n) (v : Lex (Fin n → α)) (p : Fin n) :
+    ofLex (r • v) p = ofLex v (r p) := rfl
+
+@[simp] theorem id_smul {α : Type*} (v : Lex (Fin n → α)) : Ranking.id n • v = v := rfl
 
 /-- Any two distinct constraints can be ranked either way: some ranking makes `i`
 dominate `j`. -/

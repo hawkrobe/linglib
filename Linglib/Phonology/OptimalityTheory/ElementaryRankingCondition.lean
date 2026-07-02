@@ -95,8 +95,7 @@ variable (r : Ranking n) (α : ERC n)
 
 /-- A ranking `r` *satisfies* ERC `α` iff its sign vector, read in `r`'s priority
 order, is lexicographically nonnegative. -/
-def SatisfiedBy : Prop :=
-  toLex (fun _ : Fin n => (0 : ERCVal)) ≤ toLex (fun p => α (r p))
+def SatisfiedBy : Prop := toLex 0 ≤ r • toLex α
 
 /-- **Prince's leading-entry characterization** ([prince-2002] §0): a ranking
 satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
@@ -326,11 +325,10 @@ theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
 /-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
 winner/loser pair iff the winner's profile, read in `r`'s priority order, is lex-≤
 the loser's ([prince-2002]). Precomposition with the ranking is absorbed by
-instantiating `lex_nonneg_ercOfProfiles_iff` at the reordered profiles. -/
+instantiating `lex_nonneg_ercOfProfiles_iff` at the ranked readings `r • w`, `r • l`. -/
 theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking n) (w l : ViolationProfile n) :
-    (ercOfProfiles w l).SatisfiedBy r ↔
-      toLex (fun p => w (r p)) ≤ toLex (fun p => l (r p)) :=
-  lex_nonneg_ercOfProfiles_iff (toLex fun p => w (r p)) (toLex fun p => l (r p))
+    (ercOfProfiles w l).SatisfiedBy r ↔ r • w ≤ r • l :=
+  lex_nonneg_ercOfProfiles_iff (r • w) (r • l)
 
 /-- The ERC of a winner-loser pair `(w, l)` in tableau `t`: the ranking requirements
 for `w` to beat `l`. -/
@@ -341,8 +339,7 @@ def tableauERC {C : Type*} [DecidableEq C] (t : Tableau C n) (w l : C) : ERC n :
 ranks the winner at-or-above the loser under the tableau's lex evaluation. -/
 theorem tableauERC_satisfiedBy_iff {C : Type*} [DecidableEq C]
     (t : Tableau C n) (r : Ranking n) (w l : C) :
-    (tableauERC t w l).SatisfiedBy r ↔
-      toLex (fun p => t.profile w (r p)) ≤ toLex (fun p => t.profile l (r p)) :=
+    (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
   satisfiedBy_ercOfProfiles_iff_le r (t.profile w) (t.profile l)
 
 /-- At the identity ranking, ERC satisfaction is exactly the tableau's own lex
