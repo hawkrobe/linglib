@@ -275,10 +275,7 @@ never satisfies this — removing one trigger leaves the other, so the output st
 changed. -/
 def RequiresBothSides (f : List α → List α) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
-    (∃ uL : List α, uL.length = base.length ∧ AgreeFrom base uL (i - d) ∧
-      uL[i]? = base[i]? ∧ (f uL)[i]? = uL[i]?) ∧
-    (∃ uR : List α, uR.length = base.length ∧ AgreeUpto base uR (i + d) ∧
-      uR[i]? = base[i]? ∧ (f uR)[i]? = uR[i]?)
+    ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ u[i]? = base[i]? ∧ (f u)[i]? = u[i]?
 
 /-- **The three-map template**: a `d`-indexed family of flank words whose target sits
 `d`-far from both flanks, changed to `on` in the base and reverted by flipping either
@@ -295,25 +292,26 @@ theorem RequiresBothSides.of_flanks {f : List α → List α}
   have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun x y =>
     flankWord_getElem?_mid (by omega) (by omega)
   refine ⟨flankWord xOn fill yOn (n d), t d, by rw [flankWord_length]; omega,
-    by rw [hchange, hmid]; simpa using hne, ?_, ?_⟩
-  · exact ⟨flankWord xOff fill yOn (n d), by simp,
-      fun k hk => flankWord_congr_left (by omega), by rw [hmid, hmid],
+    by rw [hchange, hmid]; simpa using hne, fun s => ?_⟩
+  match s with
+  | .left =>
+    exact ⟨flankWord xOff fill yOn (n d),
+      ⟨by simp, fun k hk => flankWord_congr_left (by omega)⟩, by rw [hmid, hmid],
       by rw [hrevL, hmid]⟩
-  · exact ⟨flankWord xOn fill yOff (n d), by simp,
-      fun k hk => flankWord_congr_right (by omega), by rw [hmid, hmid],
+  | .right =>
+    exact ⟨flankWord xOn fill yOff (n d),
+      ⟨by simp, fun k hk => flankWord_congr_right (by omega)⟩, by rw [hmid, hmid],
       by rw [hrevR, hmid]⟩
 
 /-- Requiring both sides strengthens unbounded circumambience: a reverted target is in
 particular a flipped one. The converse fails (a two-sided union is circumambient but
 reverts under neither side alone). -/
 theorem RequiresBothSides.isUnboundedCircumambient {f : List α → List α}
-    (hf : RequiresBothSides f) : IsUnboundedCircumambient f := by
-  intro d
-  obtain ⟨base, i, hi, hchange, ⟨uL, hLlen, hLag, hLsym, hLrev⟩,
-    ⟨uR, hRlen, hRag, hRsym, hRrev⟩⟩ := hf d
-  exact ⟨base, i, hi,
-    ⟨uL, hLlen, hLag, fun h => hchange (h.trans (hLrev.trans hLsym))⟩,
-    ⟨uR, hRlen, hRag, fun h => hchange (h.trans (hRrev.trans hRsym))⟩⟩
+    (hf : RequiresBothSides f) : IsUnboundedCircumambient f := fun d =>
+  have ⟨base, i, hi, hchange, hw⟩ := hf d
+  ⟨base, i, hi, fun s =>
+    have ⟨u, hp, hsym, hrev⟩ := hw s
+    ⟨u, hp, fun h => hchange (h.trans (hrev.trans hsym))⟩⟩
 
 end TwoSidedWitness
 
@@ -365,8 +363,9 @@ base needs one of them to fire — no union of one-sided rules can produce the c
 theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsBimachineWeaklyDeterministic f := by
   rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
-  obtain ⟨base, i, hi, hspread, ⟨uL, hLlen, hLag, hLsym, hLrev⟩,
-    ⟨uR, hRlen, hRag, hRsym, hRrev⟩⟩ := hf 0
+  obtain ⟨base, i, hi, hspread, hw⟩ := hf 0
+  obtain ⟨uL, ⟨hLlen, hLag⟩, hLsym, hLrev⟩ := hw .left
+  obtain ⟨uR, ⟨hRlen, hRag⟩, hRsym, hRrev⟩ := hw .right
   simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
   have hbi : base[i]? = some base[i] := List.getElem?_eq_getElem hi
   -- right perturbation keeps the left state; its reverting output makes `ωL` inert here

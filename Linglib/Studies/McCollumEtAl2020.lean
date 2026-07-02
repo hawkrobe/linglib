@@ -254,35 +254,36 @@ to the left blocks it; flipping the root `d` syllables to the right removes the
 trigger — both from the one base word. -/
 theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbuATR := by
   intro d
-  refine ⟨base d, d + 1, ?_, ⟨baseL d, ?_, ?_, ?_⟩, ⟨baseR d, ?_, ?_, ?_⟩⟩
-  · -- goal 1: d + 1 < (base d).length  (= 2d+3)
+  refine ⟨base d, d + 1, ?_, fun s => ?_⟩
+  · -- the target is in-domain: d + 1 < (base d).length  (= 2d+3)
     simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
       List.length_nil]; omega
-  · -- goal 2: (baseL d).length = (base d).length
-    simp only [baseL, base, pre, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]
-  · -- goal 3: AgreeFrom (base d) (baseL d) 1: they share the tail from index 1
-    intro k hk
-    cases k with
-    | zero => omega
-    | succ k' =>
-      simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
-  · -- goal 4: (tutrugbuATR (base d))[d+1]? ≠ (tutrugbuATR (baseL d))[d+1]?
-    rw [base_get_target, baseL_get_target]; decide
-  · -- goal 5: (baseR d).length = (base d).length
-    simp only [baseR, base, pre, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]
-  · -- goal 6: AgreeUpto (base d) (baseR d) ((d+1)+d): differ only at the root index
-    intro k hk
-    have hpre_len : (pre Seg.vLo d).length = 2 * d + 2 := by
-      simp only [pre, List.length_cons, List.length_append, List.length_replicate]
-      omega
-    rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
-        show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
-        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
-        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
-  · -- goal 7: (tutrugbuATR (base d))[d+1]? ≠ (tutrugbuATR (baseR d))[d+1]?
-    rw [base_get_target, baseR_get_target]; decide
+  match s with
+  | .left =>
+    refine ⟨baseL d, ⟨?_, ?_⟩, ?_⟩
+    · simp only [baseL, base, pre, List.length_cons, List.length_append,
+        List.length_replicate, List.length_nil]
+    · -- AgreeFrom (base d) (baseL d) 1: they share the tail from index 1
+      intro k hk
+      cases k with
+      | zero => omega
+      | succ k' =>
+        simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
+    · rw [base_get_target, baseL_get_target]; decide
+  | .right =>
+    refine ⟨baseR d, ⟨?_, ?_⟩, ?_⟩
+    · simp only [baseR, base, pre, List.length_cons, List.length_append,
+        List.length_replicate, List.length_nil]
+    · -- AgreeUpto (base d) (baseR d) ((d+1)+d): differ only at the root index
+      intro k hk
+      have hpre_len : (pre Seg.vLo d).length = 2 * d + 2 := by
+        simp only [pre, List.length_cons, List.length_append, List.length_replicate]
+        omega
+      rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
+          show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
+          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
+          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
+    · rw [base_get_target, baseR_get_target]; decide
 
 /-- **Tutrugbu ATR harmony is non-myopic** — the attested "variation on sour grapes"
 ([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
@@ -317,27 +318,32 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
   have hRin : (baseR d)[d + 1]? = some .vLo := by
     rw [show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
         List.getElem?_append_left (by omega : d + 1 < (pre Seg.vLo d).length), pre_get_target]
-  refine ⟨base d, d + 1, ?_, ?_, ⟨baseL d, ?_, ?_, ?_, ?_⟩, ⟨baseR d, ?_, ?_, ?_, ?_⟩⟩
+  refine ⟨base d, d + 1, ?_, ?_, fun s => ?_⟩
   · simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
       List.length_nil]; omega
   · rw [base_get_target, hbin]; decide
-  · simp only [baseL, base, pre, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]
-  · intro k hk
-    cases k with
-    | zero => omega
-    | succ k' => simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
-  · rw [hLin, hbin]
-  · rw [baseL_get_target, hLin]
-  · simp only [baseR, base, pre, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]
-  · intro k hk
-    rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
-        show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
-        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
-        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
-  · rw [hRin, hbin]
-  · rw [baseR_get_target, hRin]
+  match s with
+  | .left =>
+    refine ⟨baseL d, ⟨?_, ?_⟩, ?_, ?_⟩
+    · simp only [baseL, base, pre, List.length_cons, List.length_append,
+        List.length_replicate, List.length_nil]
+    · intro k hk
+      cases k with
+      | zero => omega
+      | succ k' => simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
+    · rw [hLin, hbin]
+    · rw [baseL_get_target, hLin]
+  | .right =>
+    refine ⟨baseR d, ⟨?_, ?_⟩, ?_, ?_⟩
+    · simp only [baseR, base, pre, List.length_cons, List.length_append,
+        List.length_replicate, List.length_nil]
+    · intro k hk
+      rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
+          show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
+          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
+          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
+    · rw [hRin, hbin]
+    · rw [baseR_get_target, hRin]
 
 /-- **Tutrugbu ATR harmony is not weakly deterministic** — it needs the full
 non-deterministic regular power, above the weakly-deterministic upper bound of
