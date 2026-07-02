@@ -555,6 +555,21 @@ theorem isCleanAR_gconcatAR (A B : AR α β) : IsCleanAR (gconcatAR A B) :=
 @[simp] theorem collapseAR_links (A : AR α β) :
     (collapseAR A).links = A.links.image (Prod.map (runIdx A.upper.toList) id) := rfl
 
+/-- OCP-merging a constant melody funnels every association line to the single surviving
+node: a link survives at `(0, j)` exactly when slot `j` was linked at all. -/
+theorem mem_links_collapseAR_of_upper_replicate {A : AR α β} {n : ℕ} {a : α}
+    (hA : A.upper.toList = List.replicate n a) {p : ℕ × ℕ} :
+    p ∈ (collapseAR A).links ↔ p.1 = 0 ∧ A.toGraph.IsLinkedLower p.2 := by
+  obtain ⟨k, j⟩ := p
+  rw [collapseAR_links, hA, Graph.isLinkedLower_iff]
+  simp only [Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, runIdx_replicate,
+    Prod.mk.injEq]
+  constructor
+  · rintro ⟨q₁, q₂, hq, rfl, rfl⟩
+    exact ⟨rfl, q₁, hq⟩
+  · rintro ⟨rfl, q₁, hq⟩
+    exact ⟨q₁, j, hq, rfl, rfl⟩
+
 /-- **Lower-tier projection** as a monoid hom `AR α β →* FreeMonoid β`: concatenation appends
 lower tiers. The timing-tier decategorification, dual to `upperHom`. -/
 def lowerHom : AR α β →* FreeMonoid β where

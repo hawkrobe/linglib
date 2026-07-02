@@ -685,79 +685,16 @@ private theorem lower_realize_toAR (v : List TBU) :
   rwa [LabeledTuple.toList_length, hlen] at h
 
 private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
-    (∃ k, (k, j) ∈ (realize toAR v).links) ↔ v[j]? = some .H := by
-  induction v generalizing j with
-  | nil =>
-    refine iff_of_false ?_ (by simp)
-    rintro ⟨k, hk⟩
-    rw [realize_nil] at hk
-    simp [AR.empty, Graph.empty] at hk
-  | cons a v ih =>
-    cases a with
-    | H =>
-      rw [realize_cons, show toAR TBU.H = .single Tone.TRN.H () from rfl, AR.links_concat]
-      simp only [AR.single_links, AR.single_upper, AR.single_lower, LabeledTuple.ofList_len,
-        List.length_singleton]
-      cases j with
-      | zero =>
-        simp only [List.getElem?_cons_zero]
-        exact iff_of_true ⟨0, Finset.mem_union_left _ (Finset.mem_singleton_self _)⟩ trivial
-      | succ t =>
-        rw [List.getElem?_cons_succ, ← ih t]
-        constructor
-        · rintro ⟨k, hk⟩
-          rcases Finset.mem_union.mp hk with hk | hk
-          · rw [Finset.mem_singleton, Prod.mk.injEq] at hk
-            exact absurd hk.2 (by omega)
-          · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
-            simp only [shiftLink_apply, Prod.mk.injEq] at hqe
-            obtain rfl : q₂ = t := by omega
-            exact ⟨q₁, hq⟩
-        · rintro ⟨k, hk⟩
-          exact ⟨k + 1, Finset.mem_union_right _
-            (Finset.mem_image.mpr ⟨(k, t), hk, by rw [shiftLink_apply]⟩)⟩
-    | O =>
-      rw [realize_cons, show toAR TBU.O = .bare () from rfl, AR.links_concat]
-      simp only [AR.bare_links, AR.bare_upper, AR.bare_lower, LabeledTuple.ofList_len,
-        List.length_singleton, List.length_nil]
-      cases j with
-      | zero =>
-        simp only [List.getElem?_cons_zero]
-        refine iff_of_false ?_ (by simp)
-        rintro ⟨k, hk⟩
-        rcases Finset.mem_union.mp hk with hk | hk
-        · exact absurd hk (Finset.notMem_empty _)
-        · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
-          simp only [shiftLink_apply, Prod.mk.injEq] at hqe
-          omega
-      | succ t =>
-        rw [List.getElem?_cons_succ, ← ih t]
-        constructor
-        · rintro ⟨k, hk⟩
-          rcases Finset.mem_union.mp hk with hk | hk
-          · exact absurd hk (Finset.notMem_empty _)
-          · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
-            simp only [shiftLink_apply, Prod.mk.injEq] at hqe
-            obtain rfl : q₂ = t := by omega
-            exact ⟨q₁, hq⟩
-        · rintro ⟨k, hk⟩
-          exact ⟨k, Finset.mem_union_right _
-            (Finset.mem_image.mpr ⟨(k, t), hk, by simp [shiftLink_apply]⟩)⟩
+    (realize toAR v).toGraph.IsLinkedLower j ↔ v[j]? = some .H := by
+  rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR]
+  cases hv : v[j]? with
+  | none => simp [List.getElem?_map, hv]
+  | some a => cases a <;> simp [List.getElem?_map, hv]
 
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
-  obtain ⟨k, j⟩ := p
-  have hL : ∀ j, (∃ k, (k, j) ∈ (realize toAR (utp w)).links) ↔ SurfacesH w j :=
-    fun j => (isLinkedLower_realize_toAR (utp w) j).trans utp_getElem?_H_iff
-  rw [realizeMerged_def, collapseAR_links, upper_realize_toAR]
-  simp only [Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, runIdx_replicate,
-    Prod.mk.injEq]
-  constructor
-  · rintro ⟨q₁, q₂, hq, rfl, rfl⟩
-    exact ⟨rfl, (hL q₂).mp ⟨q₁, hq⟩⟩
-  · rintro ⟨rfl, hS⟩
-    obtain ⟨q₁, hq⟩ := (hL j).mpr hS
-    exact ⟨q₁, j, hq, rfl, rfl⟩
+  rw [realizeMerged_def, mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp w)),
+    isLinkedLower_realize_toAR, utp_getElem?_H_iff]
 
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/

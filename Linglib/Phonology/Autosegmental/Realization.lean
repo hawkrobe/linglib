@@ -198,6 +198,33 @@ theorem AR.linearize_getElem? (A : AR α β) (j : ℕ) :
     A.linearize[j]? = (A.lower.get? j).map fun b => (b, A.toGraph.linkedLabels j) := by
   simp [AR.linearize, List.getElem?_mapIdx, LabeledTuple.get?_eq_getElem?]
 
+/-- Linkedness is readable off the linearization: slot `j` is linked iff its
+association-state entry carries a nonempty melody. -/
+theorem AR.isLinkedLower_iff_linearize (A : AR α β) {j : ℕ} :
+    A.toGraph.IsLinkedLower j ↔ ∃ b as, A.linearize[j]? = some (b, as) ∧ as ≠ [] := by
+  rw [Graph.isLinkedLower_iff, AR.linearize_getElem?]
+  constructor
+  · rintro ⟨i, hi⟩
+    obtain ⟨hiu, hjl⟩ := A.inBounds _ hi
+    obtain ⟨b, hb⟩ : ∃ b, A.lower.get? j = some b := by
+      rw [LabeledTuple.get?_eq_getElem?]
+      exact ⟨_, List.getElem?_eq_getElem (by simpa using hjl)⟩
+    refine ⟨b, A.toGraph.linkedLabels j, by rw [hb]; rfl, fun hnil => ?_⟩
+    have hmem : i ∈ (List.range A.upper.len).filter fun i => decide ((i, j) ∈ A.links) := by
+      simp [List.mem_filter, hiu, hi]
+    have hnone := List.filterMap_eq_nil_iff.mp hnil i hmem
+    rw [LabeledTuple.get?_eq_getElem?, List.getElem?_eq_none_iff] at hnone
+    simp at hnone
+    omega
+  · rintro ⟨b, as, hsome, hne⟩
+    obtain ⟨b', hb', heq⟩ := Option.map_eq_some_iff.mp hsome
+    obtain ⟨-, rfl⟩ : b' = b ∧ A.toGraph.linkedLabels j = as := by
+      simpa [Prod.ext_iff] using heq
+    obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil _ hne
+    obtain ⟨i, hif, -⟩ := List.mem_filterMap.mp hx
+    rw [List.mem_filter] at hif
+    exact ⟨i, of_decide_eq_true hif.2⟩
+
 @[simp] theorem AR.linearize_empty : (AR.empty : AR α β).linearize = [] := by
   have h : (AR.empty : AR α β).lower.toList = [] :=
     List.eq_nil_of_length_eq_zero (by simp [AR.empty, Graph.empty])

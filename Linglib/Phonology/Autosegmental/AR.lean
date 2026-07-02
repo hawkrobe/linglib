@@ -135,6 +135,13 @@ def IsLinkedUpper (i : ℕ) : Prop :=
 def IsLinkedLower (j : ℕ) : Prop :=
   ∃ p ∈ r.links, p.snd = j
 
+theorem isLinkedLower_iff {j : ℕ} : r.IsLinkedLower j ↔ ∃ i, (i, j) ∈ r.links := by
+  constructor
+  · rintro ⟨⟨i, j'⟩, hp, rfl⟩
+    exact ⟨i, hp⟩
+  · rintro ⟨i, hi⟩
+    exact ⟨(i, j), hi, rfl⟩
+
 /-- Upper index `i` is **floating**: in-bounds but unlinked. -/
 def IsFloatingUpper (i : ℕ) : Prop :=
   i < r.upper.len ∧ ¬ r.IsLinkedUpper i
