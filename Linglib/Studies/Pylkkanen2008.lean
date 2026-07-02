@@ -1101,7 +1101,7 @@ when both arguments bind the same variable — a thematic-uniqueness
 contradiction.
 
 **Status of this formalization**: The composition predicate below uses
-`Semantics.ArgumentStructure.EntailmentProfile.pPatientScore` to check whether a verb
+`ArgumentStructure.EntailmentProfile.pPatientScore` to check whether a verb
 has theme-like Proto-Patient entailments. An unergative has either no
 object profile (`objectEntailments = none`) or an empty one
 (`pPatientScore = 0`). This `EntailmentProfile`-based predicate is the
@@ -1110,7 +1110,7 @@ clash is now wired in via `Semantics/ArgumentStructure/ArgumentIntroduction.lean
 and consumed in §15c below (`low_appl_blocks_unergative_denotational`,
 `low_external_arg_clash`). -/
 
-open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
+open ArgumentStructure (EntailmentProfile)
 
 /-- A verb has an unsaturated theme argument iff its object entailment
     profile (if any) carries Proto-Patient entailments. Unergatives have
@@ -1175,7 +1175,7 @@ def themeBearingProfile : EntailmentProfile :=
 
 theorem themeBearingProfile_has_unsaturated_theme :
     hasUnsaturatedTheme (some themeBearingProfile) := by
-  unfold hasUnsaturatedTheme themeBearingProfile EntailmentProfile.pPatientScore
+  unfold hasUnsaturatedTheme themeBearingProfile ArgumentStructure.EntailmentProfile.pPatientScore
   decide
 
 /-- Low recipient applicatives can combine with verbs providing a

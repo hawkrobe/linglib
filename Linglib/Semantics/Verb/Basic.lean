@@ -15,7 +15,7 @@ open Semantics.Lexical
 open Features.ChangeOfState
 open NaturalLogic (EntailmentSig)
 open Causation.Psych (CausalSource)
-open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
+open ArgumentStructure (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Aspect.Incremental (VerbIncClass)
 open Features.LevinClassProfiles

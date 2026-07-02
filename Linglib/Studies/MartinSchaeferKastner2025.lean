@@ -64,7 +64,8 @@ syncretism creates voice ambiguity that speakers must manage.
 namespace MartinSchaeferKastner2025
 
 open Minimalist (VoiceFlavor)
-open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile PredictsUnaccusative)
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile (PredictsUnaccusative)
 open Pragmatics.GriceanMaxims (MannerSubmaxim)
 open French.Predicates
 

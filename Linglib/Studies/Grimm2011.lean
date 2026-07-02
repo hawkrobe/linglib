@@ -37,7 +37,8 @@ object marking profiles in `Studies/Aissen2003.lean`.
 namespace Grimm2011
 
 open Semantics.ArgumentStructure.AgentivityLattice
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile
 open Features.Prominence
 open Aissen2003
 

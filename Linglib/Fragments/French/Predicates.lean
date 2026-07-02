@@ -18,8 +18,9 @@ namespace French.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
-open Semantics.ArgumentStructure.EntailmentProfile
-  (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile
+  (kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
 /-- French verb entry: extends Verb with French inflectional paradigm. -/
 structure FrenchVerbEntry extends Verb where
