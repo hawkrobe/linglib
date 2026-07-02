@@ -1,4 +1,4 @@
-import Linglib.Phonology.OptimalityTheory.Predict
+import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau

@@ -556,11 +556,11 @@ theorem beaver_demoted_ranking_picks_bound_reading :
 /-- Beaver tableau (13) line 1: ViolationProfile of `cand_l_eq_i`
     under the canonical COT ranking. -/
 def d12_profile_l_eq_i : ViolationProfile 6 :=
-  mkProfile (cotRanking D12.b D12.priorTopic) D12.cand_l_eq_i
+  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_i
 
 /-- Beaver tableau (13) line 2: ViolationProfile of `cand_l_eq_j`. -/
 def d12_profile_l_eq_j : ViolationProfile 6 :=
-  mkProfile (cotRanking D12.b D12.priorTopic) D12.cand_l_eq_j
+  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_j
 
 /-- **OT lex-min witness on Beaver (12)**: under the canonical COT
     ranking, `cand_l_eq_i`'s violation profile is strictly less than
@@ -568,7 +568,7 @@ def d12_profile_l_eq_j : ViolationProfile 6 :=
     OT optimization mechanism (lex-min on Nat-vector profiles)
     picks `cand_l_eq_i` as the unique optimal candidate. This is
     the kernel-checked OT-mechanism witness, exercising the
-    `Constraint` substrate's `mkProfile` /
+    `Constraint` substrate's `buildViolationProfile` /
     `ViolationProfile.LinearOrder` infrastructure. -/
 theorem d12_lex_picks_l_eq_i :
     d12_profile_l_eq_i < d12_profile_l_eq_j := by decide

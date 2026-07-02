@@ -117,9 +117,9 @@ theorem realizedByRanking_iff_optimal [DecidableEq Output]
       Tableau.optimal ⟨P.cands i, fun o => toLex (fun k => P.vp i o (σ k)),
         ⟨P.target i, P.target_mem i hi⟩⟩ = {P.target i} := by
   refine ⟨fun h i hi => ?_, fun h i hi o ho hne => ?_⟩
-  · exact (Tableau.optimal_eq_singleton_iff _ (P.target_mem i hi)).mpr
+  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mpr
       fun o ho hne => h i hi o ho hne
-  · exact (Tableau.optimal_eq_singleton_iff _ (P.target_mem i hi)).mp (h i hi) o ho hne
+  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mp (h i hi) o ho hne
 
 end SystemicProblem
 

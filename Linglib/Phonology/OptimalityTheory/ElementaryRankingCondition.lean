@@ -318,11 +318,12 @@ theorem tableauERC_satisfiedBy_id_iff {C : Type*} [DecidableEq C]
 
 /-- A candidate is the tableau's optimum iff, under the identity ranking, its ERC
 against every competitor is satisfied — ERC consistency *is* optimality. -/
-theorem isOptimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
+theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
     (t : Tableau C n) (w : C) :
-    t.IsOptimal w ↔
+    w ∈ t.optimal ↔
       w ∈ t.candidates ∧
         ∀ l ∈ t.candidates, (tableauERC t w l).SatisfiedBy (Ranking.id n) := by
+  rw [Tableau.mem_optimal_iff]
   constructor
   · rintro ⟨hmem, hmin⟩
     exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_id_iff t w l).mpr (hmin l hl)⟩
@@ -335,13 +336,14 @@ of the *canonical* (identity-ranked) tableau is satisfied by `r`. So factorial
 typology (`r` ranging over all rankings of `con`) and ERC consistency are two
 readouts of one symmetric-group action on `con` — `Tableau.ofPerm con r` is the
 shared object. -/
-theorem Tableau.ofPerm_isOptimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {n : ℕ}
+theorem Tableau.ofPerm_mem_optimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {n : ℕ}
     (con : CON C n) (r : Ranking n) (candidates : List C) (h : candidates ≠ [])
     (w : C) :
-    (Tableau.ofPerm con r candidates h).IsOptimal w ↔
+    w ∈ (Tableau.ofPerm con r candidates h).optimal ↔
       w ∈ candidates.toFinset ∧
         ∀ l ∈ candidates.toFinset,
           (tableauERC (Tableau.ofPerm con (Equiv.refl _) candidates h) w l).SatisfiedBy r := by
+  rw [Tableau.mem_optimal_iff]
   constructor
   · rintro ⟨hmem, hmin⟩
     exact ⟨hmem, fun l hl => (tableauERC_satisfiedBy_iff _ r w l).mpr (hmin l hl)⟩

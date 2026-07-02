@@ -2,7 +2,7 @@ import Linglib.Phonology.Subregular.Harmony
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.OptimalityTheory.Predict
+import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Fragments.Hungarian.VowelHarmony
 
 /-!

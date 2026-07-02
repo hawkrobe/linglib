@@ -18,7 +18,7 @@ computation.
 ## Main definitions
 
 * `Tableau C n` — a finite OT tableau over candidates `C` with `n` constraints.
-* `Tableau.IsOptimal` / `Tableau.optimal` — the winner predicate and the winner set.
+* `Tableau.optimal` — the winner set; optimality is plain membership.
 * `Ranking n` — a constraint ranking ([prince-2002]'s domination order).
 * `Tableau.ofPerm` — a tableau from a fixed constraint set `CON C n` under a ranking
   `r : Ranking n` (priority position `p` reads constraint `r p`).
@@ -29,96 +29,83 @@ computation.
 
 ## Main results
 
-* `Tableau.exists_optimal` / `Tableau.optimal_nonempty` / `Tableau.mem_optimal_iff` /
-  `Tableau.optimal_subset` — winners exist; membership facts.
+* `Tableau.mem_optimal_iff` / `Tableau.optimal_nonempty` / `Tableau.optimal_subset` —
+  the winner characterization; winners exist.
 * `Tableau.optimal_eq_singleton_iff` — sole winner ⟺ strict domination.
-* `Tableau.ofPerm_zero_isOptimal` / `Tableau.ofRanking_zero_isOptimal` /
-  `Tableau.ofRanking_zero_optimal_allRankings` — a candidate with no violations wins
-  under any (every) ranking.
-* `Tableau.ofRanking_isOptimal_zero_first` — a satisfiable top constraint forces all
+* `Tableau.ofPerm_zero_mem_optimal` / `Tableau.ofRanking_zero_mem_optimal` /
+  `Tableau.ofRanking_zero_mem_optimal_allRankings` — a candidate with no violations
+  wins under any (every) ranking.
+* `Tableau.ofRanking_optimal_zero_first` — a satisfiable top constraint forces all
   winners to satisfy it.
 -/
 
 namespace OptimalityTheory
 
+open Core.Optimization.Evaluation LexMinProblem Constraints
 
-open Core.Optimization.Evaluation
 /-! ### The tableau vocabulary -/
+
+/-- A constraint ranking: a permutation of `Fin n` ([prince-2002]'s total domination
+order `≫`). `r i` is the constraint at rank position `i` (position `0` is most
+dominant); `r.symm k` is the rank position of `k`. -/
+abbrev Ranking (n : ℕ) := Equiv.Perm (Fin n)
 
 /-- OT-named alias for `LexMinProblem` — a finite candidate set ranked by a
 fixed-length violation profile. -/
 abbrev Tableau (C : Type*) [DecidableEq C] (n : Nat) := LexMinProblem C n
 
-variable {C : Type*} [DecidableEq C] {n : Nat}
+namespace Tableau
 
-/-- OT-named alias for `LexMinProblem.IsLexMin` — `c` is a lexicographic
-winner of `t`. -/
-abbrev Tableau.IsOptimal (t : Tableau C n) (c : C) : Prop :=
-  LexMinProblem.IsLexMin t c
+variable {C : Type*} [DecidableEq C] {n : Nat} (t : Tableau C n) (c : C)
 
-/-- OT-named alias for `LexMinProblem.lexMins` — the winning candidates. -/
-abbrev Tableau.optimal (t : Tableau C n) : Finset C :=
-  LexMinProblem.lexMins t
+/-- OT-named alias for `LexMinProblem.lexMins` — the winning candidates. Optimality is
+plain membership `c ∈ t.optimal`, unfolded by `mem_optimal_iff`; there is no separate
+winner predicate. -/
+abbrev optimal : Finset C := lexMins t
 
-/-- OT-named alias for `LexMinProblem.exists_lexMin`. -/
-theorem Tableau.exists_optimal (t : Tableau C n) : ∃ c, t.IsOptimal c :=
-  LexMinProblem.exists_lexMin t
+variable {t c}
 
-/-- OT-named alias for `LexMinProblem.mem_lexMins_iff`. -/
-theorem Tableau.mem_optimal_iff (t : Tableau C n) (c : C) :
-    c ∈ t.optimal ↔ t.IsOptimal c :=
-  LexMinProblem.mem_lexMins_iff t c
+/-- Membership in the winner set, unfolded: a winner is a candidate whose profile
+lexicographically bounds the whole tableau. -/
+theorem mem_optimal_iff :
+    c ∈ t.optimal ↔ c ∈ t.candidates ∧ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d :=
+  mem_lexMins_iff t c
 
 /-- OT-named alias for `LexMinProblem.lexMins_nonempty`. -/
-theorem Tableau.optimal_nonempty (t : Tableau C n) : t.optimal.Nonempty :=
-  LexMinProblem.lexMins_nonempty t
+theorem optimal_nonempty : t.optimal.Nonempty := lexMins_nonempty t
 
 /-- OT-named alias for `LexMinProblem.lexMins_subset`. -/
-theorem Tableau.optimal_subset (t : Tableau C n) (c : C) :
-    c ∈ t.optimal → c ∈ t.candidates :=
-  LexMinProblem.lexMins_subset t c
+theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates := lexMins_subset t c
+
+/-- A winner's profile bounds every candidate's. -/
+theorem le_of_mem_optimal {d : C} (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
+    t.profile c ≤ t.profile d := le_of_mem_argMinSet hc hd
+
+/-- Optimality factors through the profile, so it transports along profile equality:
+scoring like a winner is winning. -/
+theorem mem_optimal_of_profile_eq {d : C} (hd : d ∈ t.optimal) (hc : c ∈ t.candidates)
+    (he : t.profile c = t.profile d) : c ∈ t.optimal := mem_argMinSet_of_eq hd hc he
+
+/-- A candidate whose profile vanishes wins: `0` is the global lex-minimum. -/
+theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
+    c ∈ t.optimal := mem_argMinSet_of_eq_bot hc h0
 
 /-- A tableau has sole winner `m` iff `m` strictly lex-dominates every other
 candidate. -/
-theorem Tableau.optimal_eq_singleton_iff (t : Tableau C n) {m : C}
-    (hm : m ∈ t.candidates) :
-    t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c := by
-  constructor
-  · intro h c hc hcm
-    have hmin : ∀ d ∈ t.candidates, t.profile m ≤ t.profile d :=
-      ((t.mem_optimal_iff m).mp (h ▸ Finset.mem_singleton_self m)).2
-    rcases lt_or_eq_of_le (hmin c hc) with hlt | heq
-    · exact hlt
-    · exact absurd (Finset.mem_singleton.mp (h ▸ (t.mem_optimal_iff c).mpr
-        ⟨hc, fun d hd => heq ▸ hmin d hd⟩)) hcm
-  · intro h
-    refine Finset.eq_singleton_iff_unique_mem.mpr
-      ⟨(t.mem_optimal_iff m).mpr ⟨hm, fun d hd => ?_⟩, fun c hc => ?_⟩
-    · rcases eq_or_ne d m with rfl | hdm
-      · exact le_refl _
-      · exact (h d hd hdm).le
-    · by_contra hcm
-      exact absurd ((h c ((t.mem_optimal_iff c).mp hc).1 hcm).trans_le
-        (((t.mem_optimal_iff c).mp hc).2 m hm)) (lt_irrefl _)
-
-/-- A constraint ranking: a permutation of `Fin n` ([prince-2002]'s total
-domination order `≫`). `r i` is the constraint at rank position `i` (position
-`0` is most dominant); `r.symm k` is the rank position of `k`. -/
-abbrev Ranking (n : ℕ) := Equiv.Perm (Fin n)
-
-
-open Constraints
-
-variable {C : Type*} [DecidableEq C] {n : ℕ}
+theorem optimal_eq_singleton_iff {m : C} (hm : m ∈ t.candidates) :
+    t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
+  argMinSet_eq_singleton_iff hm
 
 /-! ### Tableau constructors -/
+
+variable (con : CON C n) (r : Ranking n) (candidates : List C)
+  (ranking : List (Constraint C)) (h : candidates ≠ [])
 
 /-- Build a `Tableau C n` from a fixed constraint set `con : CON C n` under a ranking
 `r : Ranking n`: priority position `p` reads constraint `r p`, so coordinate `0` of the
 lexicographic profile is the most dominant constraint. Candidates are deduplicated via
 `List.toFinset`. -/
-def Tableau.ofPerm (con : CON C n) (r : Ranking n) (candidates : List C)
-    (h : candidates ≠ [] := by decide) : Tableau C n where
+def ofPerm (h : candidates ≠ [] := by decide) : Tableau C n where
   candidates := candidates.toFinset
   profile c := buildViolationProfile (fun p => con (r p)) c
   nonempty := (candidates.exists_mem_of_ne_nil h).imp fun _ ha => List.mem_toFinset.mpr ha
@@ -127,86 +114,71 @@ def Tableau.ofPerm (con : CON C n) (r : Ranking n) (candidates : List C)
 list, list order being priority (position `0` most dominant): `Tableau.ofPerm` under the
 identity ranking. Study files use this as
 `(Tableau.ofRanking candidates ranking h).optimal = {.winner}`. -/
-def Tableau.ofRanking (candidates : List C) (ranking : List (Constraint C))
-    (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
-  Tableau.ofPerm ranking.get (Equiv.refl _) candidates h
+def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
+  ofPerm ranking.get (Equiv.refl _) candidates h
 
-variable (con : CON C n) (r : Ranking n) (candidates : List C)
-  (ranking constraints : List (Constraint C)) (h : candidates ≠ [])
+@[simp] theorem ofPerm_candidates :
+    (ofPerm con r candidates h).candidates = candidates.toFinset := rfl
 
-@[simp] theorem Tableau.ofPerm_candidates :
-    (Tableau.ofPerm con r candidates h).candidates = candidates.toFinset := rfl
+@[simp] theorem ofPerm_profile (c : C) :
+    (ofPerm con r candidates h).profile c = buildViolationProfile (fun p => con (r p)) c := rfl
 
-@[simp] theorem Tableau.ofPerm_profile (c : C) :
-    (Tableau.ofPerm con r candidates h).profile c
-      = buildViolationProfile (fun p => con (r p)) c := rfl
+@[simp] theorem ofRanking_candidates :
+    (ofRanking candidates ranking h).candidates = candidates.toFinset := rfl
 
-@[simp] theorem Tableau.ofRanking_candidates :
-    (Tableau.ofRanking candidates ranking h).candidates = candidates.toFinset := rfl
+@[simp] theorem ofRanking_profile (c : C) :
+    (ofRanking candidates ranking h).profile c = buildViolationProfile ranking.get c := rfl
 
-@[simp] theorem Tableau.ofRanking_profile (c : C) :
-    (Tableau.ofRanking candidates ranking h).profile c
-      = buildViolationProfile ranking.get c := rfl
+variable {con r candidates ranking h}
 
 /-- Candidates in `(Tableau.ofRanking ...).optimal` belong to the original list. -/
-theorem Tableau.ofRanking_optimal_mem (c : C)
-    (hc : c ∈ (Tableau.ofRanking candidates ranking h).optimal) : c ∈ candidates :=
-  List.mem_toFinset.mp (Tableau.optimal_subset _ c hc)
+theorem ofRanking_optimal_mem (hc : c ∈ (ofRanking candidates ranking h).optimal) :
+    c ∈ candidates := List.mem_toFinset.mp (optimal_subset hc)
+
+/-- Candidates in `(Tableau.ofPerm ...).optimal` belong to the original list. -/
+theorem ofPerm_optimal_mem (hc : c ∈ (ofPerm con r candidates h).optimal) :
+    c ∈ candidates := List.mem_toFinset.mp (optimal_subset hc)
 
 /-! ### Top-constraint optimality -/
 
 /-- If any candidate has `0` violations on the top-ranked constraint, every optimal
 candidate has `0` violations on it — constraint dominance: a satisfiable constraint
 promoted to the top of the ranking forces all winners to satisfy it perfectly. -/
-theorem Tableau.ofRanking_isOptimal_zero_first (candidates : List C) (con : Constraint C)
-    (rest : List (Constraint C)) (h : candidates ≠ [])
-    (hExists : ∃ c₀ ∈ candidates, con c₀ = 0) (c : C)
-    (hc : (Tableau.ofRanking candidates (con :: rest) h).IsOptimal c) : con c = 0 := by
-  obtain ⟨c₀, hc₀_mem, hc₀_zero⟩ := hExists
-  have h0 := ViolationProfile.le_apply_zero (hc.2 c₀ (List.mem_toFinset.mpr hc₀_mem))
-  change con c ≤ con c₀ at h0
-  omega
-
-/-- `∈ .optimal` version of `Tableau.ofRanking_isOptimal_zero_first`. -/
-theorem Tableau.ofRanking_optimal_zero_first (candidates : List C) (con : Constraint C)
-    (rest : List (Constraint C)) (h : candidates ≠ [])
-    (hExists : ∃ c₀ ∈ candidates, con c₀ = 0) (c : C)
-    (hc : c ∈ (Tableau.ofRanking candidates (con :: rest) h).optimal) : con c = 0 :=
-  Tableau.ofRanking_isOptimal_zero_first candidates con rest h hExists c
-    ((Tableau.mem_optimal_iff _ c).mp hc)
+theorem ofRanking_optimal_zero_first (top : Constraint C) (rest : List (Constraint C))
+    (hExists : ∃ c₀ ∈ candidates, top c₀ = 0)
+    (hc : c ∈ (ofRanking candidates (top :: rest) h).optimal) : top c = 0 := by
+  obtain ⟨c₀, hmem, h0⟩ := hExists
+  simpa [h0] using
+    ViolationProfile.le_apply_zero (le_of_mem_optimal hc (List.mem_toFinset.mpr hmem))
 
 /-- A candidate with `0` violations on every constraint of `con` is optimal in
 `Tableau.ofPerm con r` under **every** ranking `r`: permuting the coordinates of the
 all-zero profile leaves it zero. -/
-theorem Tableau.ofPerm_zero_isOptimal (c : C) (hc : c ∈ candidates)
-    (hzero : ∀ i, con i c = 0) :
-    c ∈ (Tableau.ofPerm con r candidates h).optimal := by
-  rw [Tableau.mem_optimal_iff]
-  refine ⟨List.mem_toFinset.mpr hc, fun c' _ => ?_⟩
-  suffices hsuff : (Tableau.ofPerm con r candidates h).profile c = 0 by
-    rw [hsuff]; exact ViolationProfile.zero_le _
-  rw [Tableau.ofPerm_profile]
-  funext p
-  exact hzero (r p)
+theorem ofPerm_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ i, con i c = 0) :
+    c ∈ (ofPerm con r candidates h).optimal :=
+  mem_optimal_of_profile_eq_zero (List.mem_toFinset.mpr hc) (funext fun p => hzero (r p))
 
-/-- The list form of `Tableau.ofPerm_zero_isOptimal`. -/
-theorem Tableau.ofRanking_zero_isOptimal (c : C) (hc : c ∈ candidates)
-    (hzero : ∀ con ∈ ranking, con c = 0) :
-    c ∈ (Tableau.ofRanking candidates ranking h).optimal :=
-  Tableau.ofPerm_zero_isOptimal _ _ candidates h c hc fun i => hzero _ (ranking.get_mem i)
+/-- The list form of `ofPerm_zero_mem_optimal`. -/
+theorem ofRanking_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ con ∈ ranking, con c = 0) :
+    c ∈ (ofRanking candidates ranking h).optimal :=
+  ofPerm_zero_mem_optimal hc fun i => hzero _ (ranking.get_mem i)
 
 /-- A candidate with `0` violations on every constraint is optimal under **every**
 permutation of those constraints — the structural backbone of `adj_always_initial` in
 [marco-rasin-2026]: the uniform-initial adjective paradigm has `[0, …, 0]` on all OP
 constraints, so it wins regardless of ranking. -/
-theorem Tableau.ofRanking_zero_optimal_allRankings (c : C) (hc : c ∈ candidates)
-    (hzero : ∀ con ∈ constraints, con c = 0) {rk : List (Constraint C)}
-    (hrk : rk ∈ constraints.permutations') :
-    c ∈ (Tableau.ofRanking candidates rk h).optimal :=
-  Tableau.ofRanking_zero_isOptimal candidates rk h c hc fun con hcon =>
+theorem ofRanking_zero_mem_optimal_allRankings {constraints : List (Constraint C)}
+    (hc : c ∈ candidates) (hzero : ∀ con ∈ constraints, con c = 0)
+    {rk : List (Constraint C)} (hrk : rk ∈ constraints.permutations') :
+    c ∈ (ofRanking candidates rk h).optimal :=
+  ofRanking_zero_mem_optimal hc fun con hcon =>
     hzero con ((List.mem_permutations'.mp hrk).subset hcon)
 
+end Tableau
+
 /-! ### Factorial typology -/
+
+variable {C : Type*} [DecidableEq C]
 
 /-- For each ranking of `constraints` — a permutation, via `List.permutations'`, which
 unlike `List.permutations` reduces under `decide` — the set of optimal candidates;

@@ -164,11 +164,11 @@ theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
       (mpConstraintOf maxStrength strength :: rest) hNE).optimal,
       strength c = maxStrength := by
   intro c hc
-  have hZero := Tableau.ofRanking_optimal_zero_first candidates
-    (mpConstraintOf maxStrength strength) rest hNE
+  have hZero := Tableau.ofRanking_optimal_zero_first (mpConstraintOf maxStrength strength)
+    rest
     (by obtain ⟨c₀, hm, hs⟩ := hExists
-        exact ⟨c₀, hm, mp_zero_at_max maxStrength strength c₀ hs⟩) c hc
-  have hcBound := hBound c (Tableau.ofRanking_optimal_mem candidates _ hNE c hc)
+        exact ⟨c₀, hm, mp_zero_at_max maxStrength strength c₀ hs⟩) hc
+  have hcBound := hBound c (Tableau.ofRanking_optimal_mem hc)
   simp only [mpConstraintOf] at hZero; omega
 
 /-- **Markedness dominant → weakest wins**: when a markedness constraint
@@ -184,10 +184,9 @@ theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List
       (markednessPenalty strength :: rest) hNE).optimal,
       strength c = 0 := by
   intro c hc
-  have hZero := Tableau.ofRanking_optimal_zero_first candidates
-    (markednessPenalty strength) rest hNE
+  have hZero := Tableau.ofRanking_optimal_zero_first (markednessPenalty strength) rest
     (by obtain ⟨c₀, hm, hs⟩ := hExists
-        exact ⟨c₀, hm, markedness_zero_at_min strength c₀ hs⟩) c hc
+        exact ⟨c₀, hm, markedness_zero_at_min strength c₀ hs⟩) hc
   simp only [markednessPenalty] at hZero; exact hZero
 
 -- ============================================================================

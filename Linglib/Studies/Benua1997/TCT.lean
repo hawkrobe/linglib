@@ -199,7 +199,8 @@ theorem TetruSchema.misapplication_wins {C : Type*} (s : TetruSchema C)
     (canonical misapplied : C)
     (hM1 : s.m1 canonical = s.m1 misapplied)
     (hOO : s.ooIdent misapplied < s.ooIdent canonical) :
-    mkProfile s.toRanking misapplied < mkProfile s.toRanking canonical := by
+    buildViolationProfile s.toRanking.get misapplied
+      < buildViolationProfile s.toRanking.get canonical := by
   -- First difference is at OO-Ident (index 1): the candidates tie on M₁
   -- (index 0), and `misapplied` strictly wins on OO-Ident — so its violation
   -- profile is lexicographically smaller under `[m1, ooIdent, m2, ioFaith]`
