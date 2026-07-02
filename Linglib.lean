@@ -147,6 +147,7 @@ import Linglib.Core.Logic.FirstOrder.Binders
 import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisse
 import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisseGame
 import Linglib.Core.Logic.FirstOrder.Kripke
+import Linglib.Core.Logic.FirstOrder.TotalPreorder
 import Linglib.Core.Logic.FirstOrder.Lindstrom
 import Linglib.Core.Logic.FirstOrder.QuantifierRank
 import Linglib.Core.Logic.Modal.BSML.Bisimulation
