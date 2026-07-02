@@ -230,7 +230,7 @@ theorem profileToDegree_eq_potential_iff :
     profileToDegree p = .potential ↔
       p.changeOfState = false ∧
         (p.causallyAffected = true ∨ p.stationary = true) := by
-  unfold profileToDegree; split_ifs <;> simp_all <;> tauto
+  unfold profileToDegree; split_ifs <;> simp_all
 
 /-- The `unspecified` fiber: exactly no CoS, no CA, no St. -/
 @[simp]
@@ -238,7 +238,8 @@ theorem profileToDegree_eq_unspecified_iff :
     profileToDegree p = .unspecified ↔
       p.changeOfState = false ∧ p.causallyAffected = false ∧
         p.stationary = false := by
-  unfold profileToDegree; split_ifs <;> simp_all
+  unfold profileToDegree
+  split_ifs <;> simp_all [or_iff_not_imp_left]
 
 /-! ### Bridge to the typeclass chain
 
