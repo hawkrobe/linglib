@@ -368,36 +368,25 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
   obtain ⟨uR, ⟨hRlen, hRag⟩, hRsym, hRrev⟩ := hw .right
   simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
   have hbi : base[i]? = some base[i] := List.getElem?_eq_getElem hi
-  -- right perturbation keeps the left state; its reverting output makes `ωL` inert here
-  have hRtake : uR.take i = base.take i := take_eq_of_agree fun k hk => (hRag k (by omega)).symm
-  have hRsym' : uR[i]? = some base[i] := hRsym.trans hbi
-  have hRout : (B.run uR)[i]? =
-      some (unite (ωL (B.lState (base.take i)) base[i])
-        (ωR (B.rState (uR.drop (i + 1))) base[i]) base[i]) := by
-    rw [B.run_getElem?, hRsym', Option.map_some, hRtake, hω]
-  have hωL : ωL (B.lState (base.take i)) base[i] = base[i] :=
-    (unite_eq_default (Option.some_injective _ (hRout.symm.trans (by rw [hRrev, hRsym'])))).1
-  -- left perturbation keeps the right state; its reverting output makes `ωR` inert here
-  have hLdrop : uL.drop (i + 1) = base.drop (i + 1) := drop_eq_of_agree fun k _ => (hLag k (by omega)).symm
-  have hLsym' : uL[i]? = some base[i] := hLsym.trans hbi
-  have hLout : (B.run uL)[i]? =
-      some (unite (ωL (B.lState (uL.take i)) base[i])
-        (ωR (B.rState (base.drop (i + 1))) base[i]) base[i]) := by
-    rw [B.run_getElem?, hLsym', Option.map_some, hLdrop, hω]
-  have hωR : ωR (B.rState (base.drop (i + 1))) base[i] = base[i] :=
-    (unite_eq_default (Option.some_injective _ (hLout.symm.trans (by rw [hLrev, hLsym'])))).2
+  -- a matching, reverting word has an inert cell: both proposals leave its target alone
+  have cell : ∀ u : List α, u[i]? = some base[i] → (B.run u)[i]? = u[i]? →
+      ωL (B.lState (u.take i)) base[i] = base[i]
+        ∧ ωR (B.rState (u.drop (i + 1))) base[i] = base[i] := by
+    intro u hsym hrev
+    have hout : (B.run u)[i]? = some (unite (ωL (B.lState (u.take i)) base[i])
+        (ωR (B.rState (u.drop (i + 1))) base[i]) base[i]) := by
+      rw [B.run_getElem?, hsym, Option.map_some, hω]
+    exact unite_eq_default (Option.some_injective _ (hout.symm.trans (hrev.trans hsym)))
+  -- the right perturbation keeps the left state, the left one the right state
+  have hRtake : uR.take i = base.take i :=
+    take_eq_of_agree fun k hk => (hRag k (by omega)).symm
+  have hLdrop : uL.drop (i + 1) = base.drop (i + 1) :=
+    drop_eq_of_agree fun k _ => (hLag k (by omega)).symm
+  have hωL := hRtake ▸ (cell uR (hRsym.trans hbi) hRrev).1
+  have hωR := hLdrop ▸ (cell uL (hLsym.trans hbi) hLrev).2
   -- the base needs a change, but both rules are inert
   apply hspread
   rw [B.run_getElem?, hbi, Option.map_some, hω, hωL, hωR, unite_self]
-
-/-- Non-vacuity: any bimachine whose cell output is literally a `unite` of independent
-one-sided rules is non-interacting — the class genuinely admits two-sided union changes,
-which a naive per-cell notion would wrongly exclude. -/
-example (ωL : L → α → α) (ωR : R → α → α) (lInit : L) (lStep : L → α → L)
-    (rInit : R) (rStep : R → α → R) :
-    (Bimachine.mk lInit lStep rInit rStep
-      (fun l a r => unite (ωL l a) (ωR r a) a)).IsNonInteracting :=
-  ⟨ωL, ωR, fun _ _ _ => rfl⟩
 
 end NonInteraction
 
