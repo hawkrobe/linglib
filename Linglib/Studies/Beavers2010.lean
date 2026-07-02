@@ -35,7 +35,7 @@ through the MAP.
 
 namespace Beavers2010
 
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.AgentivityLattice
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)

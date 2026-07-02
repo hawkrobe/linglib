@@ -37,7 +37,7 @@ Causation priority ([davis-koenig-2000]) needs no extra clause: it falls out
 of feature-set inclusion.
 -/
 
-namespace Semantics.ArgumentStructure.EntailmentProfile
+namespace ArgumentStructure
 
 /-- The ten entailments defining the proto-roles ([dowty-1991] pp.572–573):
 the first five are Proto-Agent, the last five Proto-Patient. Fields default
@@ -65,18 +65,20 @@ structure EntailmentProfile where
   dependentExistence : Bool := false
   deriving DecidableEq, Repr
 
+namespace EntailmentProfile
+
 variable (p q subj obj : EntailmentProfile)
 
 /-! ### Feature counting -/
 
 /-- Number of Proto-Agent entailments. Informational: the Argument Selection
 Principle uses lattice comparison ([grimm-2011]), not counting. -/
-def EntailmentProfile.pAgentScore : Nat :=
+def pAgentScore : Nat :=
   p.volition.toNat + p.sentience.toNat + p.causation.toNat +
   p.movement.toNat + p.independentExistence.toNat
 
 /-- Number of Proto-Patient entailments. -/
-def EntailmentProfile.pPatientScore : Nat :=
+def pPatientScore : Nat :=
   p.changeOfState.toNat + p.incrementalTheme.toNat +
   p.causallyAffected.toNat + p.stationary.toNat +
   p.dependentExistence.toNat
@@ -174,11 +176,11 @@ instance : DecidablePred PredictsUnergative := λ p => by
 
 /-- Volition presupposes sentience: only sentient entities can act
 volitionally ([dowty-1991] p.607, [levin-2019] §2.1). -/
-def EntailmentProfile.WellFormedInternal : Prop :=
+def WellFormedInternal : Prop :=
   p.volition = true → p.sentience = true
 
-instance : DecidablePred EntailmentProfile.WellFormedInternal := λ p => by
-  unfold EntailmentProfile.WellFormedInternal; infer_instance
+instance : DecidablePred WellFormedInternal := λ p => by
+  unfold WellFormedInternal; infer_instance
 
 /-- Three Proto-Agent entailments pair asymmetrically across a
 subject–object pair ([davis-koenig-2000], [primus-1999]): causation →
@@ -222,7 +224,7 @@ instance : DecidablePred IsForceRecipient := λ p => by
 /-- An effector carries at least two Proto-Agent entailments. -/
 theorem two_le_pAgentScore_of_isEffector (h : IsEffector p) :
     2 ≤ p.pAgentScore := by
-  simp [EntailmentProfile.pAgentScore, h.1, h.2]
+  simp [pAgentScore, h.1, h.2]
 
 /-! ### Canonical verb profiles
 
@@ -327,4 +329,6 @@ measure the event. -/
 def accomplishmentObjectProfile : EntailmentProfile :=
   { changeOfState := true, causallyAffected := true }
 
-end Semantics.ArgumentStructure.EntailmentProfile
+end EntailmentProfile
+
+end ArgumentStructure

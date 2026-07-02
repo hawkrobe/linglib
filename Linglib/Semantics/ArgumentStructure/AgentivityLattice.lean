@@ -49,7 +49,8 @@ All ordering infrastructure uses Mathlib typeclasses:
 
 namespace Semantics.ArgumentStructure.AgentivityLattice
 
-open Semantics.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure (EntailmentProfile)
+open _root_.ArgumentStructure.EntailmentProfile
 open Core
 
 -- ════════════════════════════════════════════════════

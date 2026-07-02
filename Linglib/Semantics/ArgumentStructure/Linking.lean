@@ -62,7 +62,8 @@ Accounts expressible via this interface (non-exhaustive):
 
 -/
 
-open Semantics.ArgumentStructure.EntailmentProfile
+open ArgumentStructure (EntailmentProfile)
+open ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 1. Theta Role Labels (derived convenience names)
@@ -92,7 +93,7 @@ inductive ThetaRole where
 -- § 2. EntailmentProfile → ThetaRole (canonical direction)
 -- ════════════════════════════════════════════════════════════════════════
 
-namespace Semantics.ArgumentStructure.EntailmentProfile
+namespace ArgumentStructure.EntailmentProfile
 
 /-- Derive a convenience theta-role label from an entailment profile.
 
@@ -112,7 +113,7 @@ namespace Semantics.ArgumentStructure.EntailmentProfile
     ({causation, IE}), as do goal and source ({IE}). The function
     defaults to stimulus and goal respectively. Disambiguation requires
     external context (e.g., `Verb.causalSource`). -/
-def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
+def toRole (p : EntailmentProfile) : Option ThetaRole :=
   if p.volition then some .agent
   else if p.sentience && !p.causation then some .experiencer
   else if p.causation && !p.sentience then some .stimulus
@@ -128,7 +129,7 @@ def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
     else none
   else none
 
-end Semantics.ArgumentStructure.EntailmentProfile
+end ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 3. ThetaRole → Canonical Profile (inverse direction)
