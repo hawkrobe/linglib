@@ -127,17 +127,15 @@ private theorem lead_dominates {c : Fin n} (he : ∃ p, α (r p) ≠ .e)
 /-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
 loser-preferring constraint is dominated by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
-    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
-  rw [satisfiedBy_iff_lead]
-  constructor
-  · intro hlead c hc
-    have he := exists_ne_of_L r α hc
-    exact ⟨r (Fin.find _ he), hlead he, lead_dominates r α he (hlead he) hc⟩
-  · intro h he
-    by_contra hW
-    obtain ⟨w, hwW, hdom⟩ := h _ (eq_L_of_ne (Fin.find_spec he) hW)
-    exact Fin.find_min he (by simpa [Ranking.Dominates] using hdom)
-      (by rw [Equiv.apply_symm_apply, hwW]; decide)
+    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c :=
+  (satisfiedBy_iff_lead r α).trans
+    ⟨fun hlead c hc =>
+      have he := exists_ne_of_L r α hc
+      ⟨r (Fin.find _ he), hlead he, lead_dominates r α he (hlead he) hc⟩,
+     fun h he => Classical.byContradiction fun hW =>
+      have ⟨w, hwW, hdom⟩ := h _ (eq_L_of_ne (Fin.find_spec he) hW)
+      Fin.find_min he (by simpa [Ranking.Dominates] using hdom)
+        (by rw [Equiv.apply_symm_apply, hwW]; decide)⟩
 
 instance : Decidable (α.SatisfiedBy r) :=
   decidable_of_iff _ (satisfiedBy_iff_dominance r α).symm
