@@ -2,6 +2,7 @@ import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.Data.Finset.Union
+import Mathlib.Dynamics.FixedPoints.Basic
 
 /-!
 # Harmonic Serialism
@@ -9,10 +10,10 @@ import Mathlib.Data.Finset.Union
 
 Harmonic Serialism: iterate a one-step `gen` and a durable constraint ranking to a
 fixed point. `HSDerivation` bundles the two; the serial search itself is `iterateGen`,
-a fuel-bounded iteration of an arbitrary step `C → Finset C` with a `pick` tie-breaker.
-The general theory the search instantiates is mathlib's (`Function.IsFixedPt`,
-`WellFounded` descent); the `Nat` fuel and `pick` are what make a
-possibly-non-terminating, possibly-tied search total and computable. One-step EVAL
+`Function.iterate` of a one-round map `hsStep` on `Option C` whose fixed points are
+exactly convergence and failure — durability of both is mathlib's `IsFixedPt.iterate`;
+the `Nat` fuel and the `pick` tie-breaker make a possibly-non-terminating,
+possibly-tied search total and computable. One-step EVAL
 reuses the parallel `Tableau` machinery; directional EVAL ([lamont-2022b];
 [eisner-2000]) needs nothing extra — a directional constraint like `*FLOAT^→` is a
 position-indexed scalar block (`Tone.starFloatBlock`) spliced into the ranking under
@@ -20,8 +21,8 @@ the canonical lex order.
 
 ## Main definitions
 
-* `iterateGen`: iterate a step for at most `n` rounds, stopping at convergence
-  (`step c = {c}`), advancing by `pick`, `none` on a failed pick.
+* `hsStep` / `iterateGen`: one total round of the search (convergence and failure are
+  its fixed points), and its `n`-fold `Function.iterate`.
 * `HSDerivation`: a one-step `gen` with a durable ranking; `stepOptimum` is one
   GEN/EVAL round, `Converged` the halting condition, `derive` the bundled search.
 
@@ -58,71 +59,75 @@ section Iteration
 
 variable {C : Type*} [DecidableEq C]
 
-/-- Iterate `step` for at most `n` rounds, stopping early at HS convergence
-(`step c = {c}`); otherwise advance by `pick`ing from the step's output (a canonical
-sort + `head?`, or a directional tie-breaker), returning `none` if `pick` fails. The
-`Nat` bound makes the search total — HS need not converge ([lamont-2022b]). -/
-def iterateGen (step : C → Finset C) (pick : Finset C → Option C) : C → Nat → Option C
-  | c, 0     => some c
-  | c, n + 1 =>
-    if step c = ({c} : Finset C) then some c
-    else (pick (step c)).bind fun c' => iterateGen step pick c' n
+/-- One total round of the serial search: a converged form (`step c = {c}`) returns
+itself, any other advances by `pick`ing from the step's output (a canonical sort +
+`head?`, or a directional tie-breaker), and failure — an empty pick, or an already
+failed search — is `none`. Convergence and failure are both fixed points, so the
+`n`-round search is literally `Function.iterate` of this map. -/
+def hsStep (step : C → Finset C) (pick : Finset C → Option C) (oc : Option C) :
+    Option C :=
+  oc.bind fun c => if step c = {c} then some c else pick (step c)
+
+/-- The `n`-round search from `c`: iterate `hsStep`. The `Nat` fuel makes the search
+total — HS need not converge ([lamont-2022b]). -/
+def iterateGen (step : C → Finset C) (pick : Finset C → Option C) (n : Nat) (c : C) :
+    Option C :=
+  (hsStep step pick)^[n] (some c)
 
 variable {step : C → Finset C} {pick : Finset C → Option C} {c c' : C}
 
-@[simp] theorem iterateGen_zero : iterateGen step pick c 0 = some c := rfl
+@[simp] theorem iterateGen_zero : iterateGen step pick 0 c = some c := rfl
 
-theorem iterateGen_succ (n : Nat) :
-    iterateGen step pick c (n + 1)
-      = if step c = ({c} : Finset C) then some c
-        else (pick (step c)).bind fun c' => iterateGen step pick c' n := rfl
+/-- A converged form is a fixed point of the search step. -/
+theorem isFixedPt_hsStep_of_converged (h : step c = {c}) :
+    Function.IsFixedPt (hsStep step pick) (some c) := by
+  simp [Function.IsFixedPt, hsStep, h]
 
-/-- One round from a converged form returns it unchanged. -/
-theorem iterateGen_succ_of_converged (h : step c = ({c} : Finset C)) (n : Nat) :
-    iterateGen step pick c (n + 1) = some c := by
-  rw [iterateGen_succ, if_pos h]
+/-- Failure is a fixed point of the search step. -/
+theorem isFixedPt_hsStep_none : Function.IsFixedPt (hsStep step pick) none := rfl
+
+/-- At a converged form the search is constant: convergence is durable. -/
+theorem iterateGen_const_of_converged (h : step c = {c}) (n : Nat) :
+    iterateGen step pick n c = some c :=
+  Function.IsFixedPt.iterate (isFixedPt_hsStep_of_converged h) n
 
 /-- One round from a non-converged form recurses with the picked successor. -/
-theorem iterateGen_succ_of_step (hcv : step c ≠ ({c} : Finset C))
-    (hpick : pick (step c) = some c') (n : Nat) :
-    iterateGen step pick c (n + 1) = iterateGen step pick c' n := by
-  rw [iterateGen_succ, if_neg hcv, hpick]; rfl
+theorem iterateGen_succ_of_step (hcv : step c ≠ {c}) (hpick : pick (step c) = some c')
+    (n : Nat) : iterateGen step pick (n + 1) c = iterateGen step pick n c' := by
+  rw [iterateGen, Function.iterate_succ_apply]
+  show (hsStep step pick)^[n] (hsStep step pick (some c)) = _
+  rw [show hsStep step pick (some c) = some c' from by simp [hsStep, hcv, hpick]]
+  rfl
 
-/-- One round from a non-converged form where `pick` fails yields `none`. -/
-theorem iterateGen_succ_of_pickFail (hcv : step c ≠ ({c} : Finset C))
-    (hpick : pick (step c) = none) (n : Nat) :
-    iterateGen step pick c (n + 1) = none := by
-  rw [iterateGen_succ, if_neg hcv, hpick]; rfl
-
-/-- At a fixed point the search is constant: convergence is durable. -/
-theorem iterateGen_const_of_converged (h : step c = ({c} : Finset C)) :
-    ∀ n, iterateGen step pick c n = some c
-  | 0     => rfl
-  | n + 1 => iterateGen_succ_of_converged h n
+/-- One round from a non-converged form where `pick` fails yields `none`, durably. -/
+theorem iterateGen_of_pickFail (hcv : step c ≠ {c}) (hpick : pick (step c) = none)
+    (n : Nat) : iterateGen step pick (n + 1) c = none := by
+  rw [iterateGen, Function.iterate_succ_apply,
+    show hsStep step pick (some c) = none from by simp [hsStep, hcv, hpick]]
+  exact Function.IsFixedPt.iterate isFixedPt_hsStep_none n
 
 /-- **HS terminates under a well-founded harmony order.** If every genuine step
 descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
 past which further fuel doesn't change the result. Derivations cannot loop while each
 step makes measurable progress, so the explicit `Nat` bound is harmless. -/
 theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
-    (sound : ∀ c c', step c ≠ ({c} : Finset C) → pick (step c) = some c' → c' ≠ c →
-      lt c' c) (c : C) :
-    ∃ N, ∀ m, N ≤ m → iterateGen step pick c m = iterateGen step pick c N := by
+    (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
+    (c : C) :
+    ∃ N, ∀ m, N ≤ m → iterateGen step pick m c = iterateGen step pick N c := by
   induction c using wf.induction with
   | _ c IH =>
-    by_cases hcv : step c = ({c} : Finset C)
+    by_cases hcv : step c = {c}
     · exact ⟨0, fun m _ => by
         rw [iterateGen_const_of_converged hcv m, iterateGen_const_of_converged hcv 0]⟩
     · cases hp : pick (step c) with
       | none =>
         refine ⟨1, fun m hm => ?_⟩
         match m, hm with
-        | n + 1, _ =>
-          rw [iterateGen_succ_of_pickFail hcv hp, iterateGen_succ_of_pickFail hcv hp]
+        | n + 1, _ => rw [iterateGen_of_pickFail hcv hp, iterateGen_of_pickFail hcv hp]
       | some c' =>
         by_cases hne : c' = c
         · have hp' : pick (step c) = some c := hne ▸ hp
-          have h : ∀ m, iterateGen step pick c m = some c := by
+          have h : ∀ m, iterateGen step pick m c = some c := by
             intro m
             induction m with
             | zero => rfl
@@ -199,7 +204,7 @@ theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converge
 `pick` tie-breaker for non-singleton optima (ties not yet broken by directional eval,
 or genuinely divergent ties in the [pruitt-2009] sense). -/
 def derive (pick : Finset C → Option C) (steps : Nat) : Option C :=
-  iterateGen D.stepOptimum pick c steps
+  iterateGen D.stepOptimum pick steps c
 
 end HSDerivation
 
