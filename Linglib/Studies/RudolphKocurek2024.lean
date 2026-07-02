@@ -1104,29 +1104,460 @@ theorem equiv_iff_rank_eq {x y : I} :
 
 open Classical in
 /-- The degree list: ranks of the normal form, in descending order. ⊐ is the
-lexicographic order on degree lists (`strictlyBetter_iff_degList`). -/
+lexicographic order on degree lists (`strictlyBetter_iff_degList_lex`). -/
 noncomputable def degList (X : Finset I) : List ℕ :=
   ((normalize ord i X).val.map (rank ord)).sort (· ≥ ·)
 
 open Classical in
+/-- Normalization is idempotent: normal forms are fixed points. -/
+theorem normalize_idem (X : Finset I) :
+    normalize ord i (normalize ord i X) = normalize ord i X := by
+  conv_lhs => rw [normalize]
+  split_ifs with h
+  · exfalso
+    obtain ⟨x, hx, hred⟩ := h
+    exact not_redundant_normalize ord i X x hx hred
+  · rfl
+
+open Classical in
+/-- The degree list is invariant under normalization. -/
+theorem degList_normalize (X : Finset I) :
+    degList ord i (normalize ord i X) = degList ord i X := by
+  unfold degList
+  rw [normalize_idem]
+
+open Classical in
+/-- Redundancy from `equivCond2`, one side: if `x ∈ X`, `x ∉ Y`, and the cond2
+witnesses exist for `x`, then `x` is redundant in `X`. -/
+private theorem redundant_of_cond2_witness {X Y : Finset I}
+    (x : I) (_hxX : x ∈ X) (hxY : x ∉ Y)
+    (h_int : ∃ x' ∈ X ∩ Y, ord.le x x')
+    (h_out : ∃ z ∈ field ord i \ (X ∪ Y), ord.le x z) :
+    Redundant ord i X x := by
+  obtain ⟨x', hx'_int, hx'_le⟩ := h_int
+  obtain ⟨z, hz, hzle⟩ := h_out
+  refine ⟨⟨x', ?_, hx'_le⟩, z, ?_, hzle⟩
+  · exact Finset.mem_erase.mpr
+      ⟨fun heq => hxY (heq ▸ (Finset.mem_inter.mp hx'_int).2),
+       (Finset.mem_inter.mp hx'_int).1⟩
+  · exact Finset.mem_sdiff.mpr
+      ⟨(Finset.mem_sdiff.mp hz).1,
+       fun h => (Finset.mem_sdiff.mp hz).2 (Finset.mem_union.mpr (Or.inl h))⟩
+
+open Classical in
+/-- Under `equivCond2` with both sides normal, the sets are equal — every
+element of the symmetric difference would be redundant in one side. -/
+private theorem equivCond2_of_normal_eq {X Y : Finset I}
+    (hnX : ∀ x ∈ X, ¬ Redundant ord i X x)
+    (hnY : ∀ y ∈ Y, ¬ Redundant ord i Y y)
+    (h : equivCond2 ord i X Y) : X = Y := by
+  ext x
+  refine ⟨fun hxX => ?_, fun hxY => ?_⟩
+  · by_contra hxY
+    have hxsym : x ∈ (X ∪ Y) \ (X ∩ Y) := Finset.mem_sdiff.mpr
+      ⟨Finset.mem_union.mpr (Or.inl hxX),
+       fun h => hxY (Finset.mem_inter.mp h).2⟩
+    exact hnX x hxX (redundant_of_cond2_witness ord i x hxX hxY
+      (h x hxsym).1 (h x hxsym).2)
+  · by_contra hxX
+    have hxsym : x ∈ (X ∪ Y) \ (X ∩ Y) := Finset.mem_sdiff.mpr
+      ⟨Finset.mem_union.mpr (Or.inr hxY),
+       fun h => hxX (Finset.mem_inter.mp h).1⟩
+    obtain ⟨⟨x', hx'_int, hx'_le⟩, z, hz, hzle⟩ := h x hxsym
+    refine hnY x hxY ⟨⟨x', ?_, hx'_le⟩, z, ?_, hzle⟩
+    · exact Finset.mem_erase.mpr
+        ⟨fun heq => hxX (heq ▸ (Finset.mem_inter.mp hx'_int).1),
+         (Finset.mem_inter.mp hx'_int).2⟩
+    · exact Finset.mem_sdiff.mpr
+        ⟨(Finset.mem_sdiff.mp hz).1,
+         fun h => (Finset.mem_sdiff.mp hz).2 (Finset.mem_union.mpr (Or.inr h))⟩
+
+open Classical in
+/-- `strictlyBetter` is invariant under normalization on both sides. -/
+private theorem strictlyBetter_normalize_iff (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+    strictlyBetter ord i X Y ↔
+    strictlyBetter ord i (normalize ord i X) (normalize ord i Y) := by
+  set NX := normalize ord i X
+  set NY := normalize ord i Y
+  have hNX : NX ⊆ field ord i := (normalize_subset ord i X).trans hX
+  have hNY : NY ⊆ field ord i := (normalize_subset ord i Y).trans hY
+  have hX_eq : degreeEquiv ord i X NX := degreeEquiv_normalize ord i X hX
+  have hY_eq : degreeEquiv ord i Y NY := degreeEquiv_normalize ord i Y hY
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · exact strictlyBetter_respects_right ord i NX Y NY hNX hY hNY
+      (strictlyBetter_respects_left ord i X Y NX hX hY hNX h hX_eq) hY_eq
+  · exact strictlyBetter_respects_right ord i X NY Y hX hNY hY
+      (strictlyBetter_respects_left ord i NX NY X hNX hNY hX
+        h (degreeEquiv_symm ord i X NX hX_eq))
+      (degreeEquiv_symm ord i Y NY hY_eq)
+
+open Classical in
+/-- `degreeEquiv` is invariant under normalization on both sides. -/
+private theorem degreeEquiv_normalize_iff (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+    degreeEquiv ord i X Y ↔
+    degreeEquiv ord i (normalize ord i X) (normalize ord i Y) := by
+  set NX := normalize ord i X
+  set NY := normalize ord i Y
+  have hNX : NX ⊆ field ord i := (normalize_subset ord i X).trans hX
+  have hNY : NY ⊆ field ord i := (normalize_subset ord i Y).trans hY
+  have hX_eq : degreeEquiv ord i X NX := degreeEquiv_normalize ord i X hX
+  have hY_eq : degreeEquiv ord i Y NY := degreeEquiv_normalize ord i Y hY
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · exact degreeEquiv_trans ord i NX X NY hNX hX hNY
+      (degreeEquiv_symm ord i X NX hX_eq)
+      (degreeEquiv_trans ord i X Y NY hX hY hNY h hY_eq)
+  · exact degreeEquiv_trans ord i X NX Y hX hNX hY hX_eq
+      (degreeEquiv_trans ord i NX NY Y hNX hNY hY h
+        (degreeEquiv_symm ord i Y NY hY_eq))
+
+/-! ### Normal-form structure -/
+
+open Classical in
+/-- **Normal-form structure**: a set without redundant elements has at most
+one element or is upward closed in the field. If some weak up-set escapes,
+its base has an outside witness, so non-redundancy makes it the strict top of
+the set; any second element then sits strictly below it and is redundant. -/
+private theorem card_le_one_or_upset_of_not_redundant (X : Finset I)
+    (h : ∀ x ∈ X, ¬ Redundant ord i X x) :
+    X.card ≤ 1 ∨ ∀ x ∈ X, ∀ v ∈ field ord i, ord.le x v → v ∈ X := by
+  by_cases hup : ∀ x ∈ X, ∀ v ∈ field ord i, ord.le x v → v ∈ X
+  · exact Or.inr hup
+  · left
+    push Not at hup
+    obtain ⟨x₀, hx₀, v, hvf, hlev, hvX⟩ := hup
+    have hout : v ∈ field ord i \ X := Finset.mem_sdiff.mpr ⟨hvf, hvX⟩
+    have htop : ∀ y ∈ X.erase x₀, ¬ ord.le x₀ y := fun y hy hle =>
+      h x₀ hx₀ ⟨⟨y, hy, hle⟩, v, hout, hlev⟩
+    have hkey : ∀ y ∈ X, y = x₀ := by
+      intro y hy
+      by_contra hne
+      have hyx₀ : ord.le y x₀ := (ord.le_total y x₀).resolve_right
+        (htop y (Finset.mem_erase.mpr ⟨hne, hy⟩))
+      exact h y hy ⟨⟨x₀, Finset.mem_erase.mpr ⟨fun h' => hne h'.symm, hx₀⟩, hyx₀⟩,
+        v, hout, ord.le_trans y x₀ v hyx₀ hlev⟩
+    exact Finset.card_le_one.mpr fun a ha b hb => (hkey a ha).trans (hkey b hb).symm
+
+open Classical in
+/-- A maximal element `s` of the symmetric difference between
+`equivCond1`-related normal forms forces both sides to singletons at one
+level: any companion element would be redundant, with the match across the
+difference as the outside witness. -/
+private theorem eq_singletons_of_equivCond1_max {X Y : Finset I}
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i)
+    (hnX : ∀ x ∈ X, ¬ Redundant ord i X x)
+    (hnY : ∀ y ∈ Y, ¬ Redundant ord i Y y)
+    (h : equivCond1 ord X Y) {s : I} (hs : s ∈ X \ Y)
+    (hmax : ∀ u ∈ (X \ Y) ∪ (Y \ X), ord.le u s) :
+    ∃ t, X = {s} ∧ Y = {t} ∧ ord.equiv s t := by
+  obtain ⟨hsX, hsY⟩ := Finset.mem_sdiff.mp hs
+  obtain ⟨t, ht, hst⟩ := h.1 s hs
+  obtain ⟨htY, htX⟩ := Finset.mem_sdiff.mp ht
+  have hts : ord.le t s := hmax t (Finset.mem_union.mpr (Or.inr ht))
+  have hstop : ∀ x ∈ X.erase s, ¬ ord.le s x := fun x hx hle =>
+    hnX s hsX ⟨⟨x, hx, hle⟩, t, Finset.mem_sdiff.mpr ⟨hY htY, htX⟩, hst⟩
+  have httop : ∀ y ∈ Y.erase t, ¬ ord.le t y := fun y hy hle =>
+    hnY t htY ⟨⟨y, hy, hle⟩, s, Finset.mem_sdiff.mpr ⟨hX hsX, hsY⟩, hts⟩
+  refine ⟨t, Finset.eq_singleton_iff_unique_mem.mpr ⟨hsX, fun x hx => ?_⟩,
+    Finset.eq_singleton_iff_unique_mem.mpr ⟨htY, fun y hy => ?_⟩, hst, hts⟩
+  · by_contra hne
+    have hmate : ∃ x' ∈ X.erase x, ord.le x x' :=
+      ⟨s, Finset.mem_erase.mpr ⟨fun h' => hne h'.symm, hsX⟩,
+        (ord.le_total x s).resolve_right (hstop x (Finset.mem_erase.mpr ⟨hne, hx⟩))⟩
+    by_cases hxY : x ∈ Y
+    · have hxt : ord.le x t := (ord.le_total x t).resolve_right
+        (httop x (Finset.mem_erase.mpr ⟨fun h' => htX (h' ▸ hx), hxY⟩))
+      exact hnX x hx ⟨hmate, t, Finset.mem_sdiff.mpr ⟨hY htY, htX⟩, hxt⟩
+    · obtain ⟨u, hu, hxu⟩ := h.1 x (Finset.mem_sdiff.mpr ⟨hx, hxY⟩)
+      obtain ⟨huY, huX⟩ := Finset.mem_sdiff.mp hu
+      exact hnX x hx ⟨hmate, u, Finset.mem_sdiff.mpr ⟨hY huY, huX⟩, hxu⟩
+  · by_contra hne
+    have hmate : ∃ y' ∈ Y.erase y, ord.le y y' :=
+      ⟨t, Finset.mem_erase.mpr ⟨fun h' => hne h'.symm, htY⟩,
+        (ord.le_total y t).resolve_right (httop y (Finset.mem_erase.mpr ⟨hne, hy⟩))⟩
+    by_cases hyX : y ∈ X
+    · have hys : ord.le y s := (ord.le_total y s).resolve_right
+        (hstop y (Finset.mem_erase.mpr ⟨fun h' => hsY (h' ▸ hy), hyX⟩))
+      exact hnY y hy ⟨hmate, s, Finset.mem_sdiff.mpr ⟨hX hsX, hsY⟩, hys⟩
+    · obtain ⟨u, hu, hyu⟩ := h.2 y (Finset.mem_sdiff.mpr ⟨hy, hyX⟩)
+      obtain ⟨huX, huY⟩ := Finset.mem_sdiff.mp hu
+      exact hnY y hy ⟨hmate, u, Finset.mem_sdiff.mpr ⟨hX huX, huY⟩, hyu⟩
+
+/-! ### Rank multisets: invariance under ∼ -/
+
+open Classical in
+/-- The rank multiset of a finset — its elements' ranks bagged. `degList` is
+this multiset sorted descending. -/
+noncomputable def rankMS (X : Finset I) : Multiset ℕ :=
+  X.val.map (rank ord)
+
+omit [DecidableEq I] in
+open Classical in
+private theorem mem_sort_rankMS {S : Finset I} {r : ℕ} :
+    r ∈ (rankMS ord S).sort (· ≥ ·) ↔ ∃ x ∈ S, rank ord x = r := by
+  simp [rankMS, Multiset.mem_sort]
+
+omit [DecidableEq I] in
+open Classical in
+private theorem length_sort_rankMS (S : Finset I) :
+    ((rankMS ord S).sort (· ≥ ·)).length = S.card := by
+  simp [rankMS, Multiset.length_sort]
+
+omit [DecidableEq I] in
+open Classical in
+private theorem sort_rankMS_empty :
+    (rankMS ord (∅ : Finset I)).sort (· ≥ ·) = [] := by
+  simp [rankMS, Multiset.sort_zero]
+
+omit [DecidableEq I] in
+open Classical in
+private theorem sort_rankMS_singleton (a : I) :
+    (rankMS ord {a}).sort (· ≥ ·) = [rank ord a] := by
+  simp [rankMS, Multiset.sort_singleton]
+
+open Classical in
+/-- **Multiset invariance on normal forms** (equivCond1 case): either the
+sets are equal, or a maximal element of the symmetric difference forces both
+into same-level singletons (`eq_singletons_of_equivCond1_max`). -/
+private theorem rankMS_eq_of_equivCond1_normal
+    (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i)
+    (hnX : ∀ x ∈ X, ¬ Redundant ord i X x)
+    (hnY : ∀ y ∈ Y, ¬ Redundant ord i Y y)
+    (h : equivCond1 ord X Y) : rankMS ord X = rankMS ord Y := by
+  by_cases heq : X = Y
+  · rw [heq]
+  · obtain ⟨s, hs, hmax⟩ := ord.exists_le_max _ (symdiff_nonempty X Y heq)
+    rcases Finset.mem_union.mp hs with hsX | hsY
+    · obtain ⟨t, hXeq, hYeq, hst⟩ :=
+        eq_singletons_of_equivCond1_max ord i hX hY hnX hnY h hsX hmax
+      rw [hXeq, hYeq]
+      simp [rankMS, (equiv_iff_rank_eq ord).mp hst]
+    · obtain ⟨t, hYeq, hXeq, hst⟩ :=
+        eq_singletons_of_equivCond1_max ord i hY hX hnY hnX ⟨h.2, h.1⟩ hsY
+          fun u hu => hmax u (Finset.union_comm (Y \ X) (X \ Y) ▸ hu)
+      rw [hXeq, hYeq]
+      simp [rankMS, (equiv_iff_rank_eq ord).mp hst]
+
+open Classical in
+/-- **Multiset invariance on normal forms** (main lemma): ∼-equivalent
+normalized sets have the same rank multiset. -/
+private theorem rankMS_eq_of_degreeEquiv_normal
+    (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i)
+    (hnX : ∀ x ∈ X, ¬ Redundant ord i X x)
+    (hnY : ∀ y ∈ Y, ¬ Redundant ord i Y y)
+    (h : degreeEquiv ord i X Y) : rankMS ord X = rankMS ord Y := by
+  rcases h with h1 | h2
+  · exact rankMS_eq_of_equivCond1_normal ord i X Y hX hY hnX hnY h1
+  · rw [equivCond2_of_normal_eq ord i hnX hnY h2]
+
+open Classical in
+/-- ∼-equivalent sets have equal degree lists: reduce to normal forms via
+`degreeEquiv_normalize_iff`, then sort the invariant rank multiset. -/
+private theorem degList_eq_of_degreeEquiv (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i)
+    (h : degreeEquiv ord i X Y) : degList ord i X = degList ord i Y := by
+  have hnX := not_redundant_normalize ord i X
+  have hnY := not_redundant_normalize ord i Y
+  have hNX : normalize ord i X ⊆ field ord i :=
+    (normalize_subset ord i X).trans hX
+  have hNY : normalize ord i Y ⊆ field ord i :=
+    (normalize_subset ord i Y).trans hY
+  have hNeq := (degreeEquiv_normalize_iff ord i X Y hX hY).mp h
+  have hms : rankMS ord (normalize ord i X) = rankMS ord (normalize ord i Y) :=
+    rankMS_eq_of_degreeEquiv_normal ord i _ _ hNX hNY hnX hnY hNeq
+  show ((rankMS ord (normalize ord i X)).sort (· ≥ ·)) =
+       ((rankMS ord (normalize ord i Y)).sort (· ≥ ·))
+  rw [hms]
+
+/-! ### Degree lists: ⊐ as descending lexicographic order -/
+
+/-- A proper extension of a list is lexicographically above it. -/
+private theorem lex_lt_append {l t : List ℕ} (ht : t ≠ []) :
+    List.Lex (· < ·) l (l ++ t) := by
+  induction l with
+  | nil =>
+    obtain ⟨a, t', rfl⟩ := List.exists_cons_of_ne_nil ht
+    exact List.Lex.nil
+  | cons a l ih => exact List.Lex.cons ih
+
+open Classical in
+/-- The sorted rank list of a set splits at a subset separated from its
+complement: the subset's ranks form the prefix, the strictly-lower
+remainder's the suffix. -/
+private theorem sort_rankMS_eq_append_of_sep {M N : Finset I} (hNM : N ⊆ M)
+    (hsep : ∀ n ∈ N, ∀ x ∈ M \ N, ord.lt x n) :
+    (rankMS ord M).sort (· ≥ ·) =
+      (rankMS ord N).sort (· ≥ ·) ++ (rankMS ord (M \ N)).sort (· ≥ ·) := by
+  refine List.Perm.eq_of_pairwise' (Multiset.pairwise_sort _ _)
+    (List.pairwise_append.mpr ⟨Multiset.pairwise_sort _ _, Multiset.pairwise_sort _ _, ?_⟩)
+    (Multiset.coe_eq_coe.mp ?_)
+  · intro a ha b hb
+    obtain ⟨n, hn, rfl⟩ := (mem_sort_rankMS ord).mp ha
+    obtain ⟨x, hx, rfl⟩ := (mem_sort_rankMS ord).mp hb
+    exact le_of_lt ((lt_iff_rank_lt ord).mp (hsep n hn x hx))
+  · rw [← Multiset.coe_add]
+    simp only [Multiset.sort_eq]
+    simp only [rankMS, ← Multiset.map_add]
+    congr 1
+    rw [Finset.sdiff_val]
+    exact (add_tsub_cancel_of_le (Finset.val_le_iff.mpr hNM)).symm
+
+open Classical in
+/-- On normal forms, ⊐ forces the lexicographic order — by case split on
+`card_le_one_or_upset_of_not_redundant`. Against a small `Y` the head ranks
+decide (`Y`'s lone rank is bounded by `X`'s top, with a longer tail on
+equality); against an up-set `Y`, a singleton `X` dominates every rank of
+`Y`, and an up-set `X` extends `Y` by a strictly-lower remainder, splitting
+the lists as prefix and suffix. -/
+private theorem lex_degList_of_strictlyBetter_normal
+    (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i)
+    (hnX : ∀ x ∈ X, ¬ Redundant ord i X x)
+    (hnY : ∀ y ∈ Y, ¬ Redundant ord i Y y)
+    (h : strictlyBetter ord i X Y) :
+    List.Lex (· < ·)
+      ((rankMS ord Y).sort (· ≥ ·))
+      ((rankMS ord X).sort (· ≥ ·)) := by
+  obtain ⟨m, hm_sd, hm_f, hm_dom, -⟩ := h
+  obtain ⟨hmX, hmY⟩ := Finset.mem_sdiff.mp hm_sd
+  obtain ⟨hd, tl, hXlist⟩ : ∃ hd tl, (rankMS ord X).sort (· ≥ ·) = hd :: tl := by
+    refine List.exists_cons_of_ne_nil fun hnil => ?_
+    have hlen := length_sort_rankMS ord X
+    rw [hnil] at hlen
+    exact absurd (Finset.card_eq_zero.mp hlen.symm ▸ hmX) (Finset.notMem_empty m)
+  have hhd : ∀ r ∈ (rankMS ord X).sort (· ≥ ·), r ≤ hd := by
+    have hsorted : ((rankMS ord X).sort (· ≥ ·)).Pairwise (· ≥ ·) :=
+      Multiset.pairwise_sort _ _
+    rw [hXlist] at hsorted
+    intro r hr
+    rw [hXlist] at hr
+    rcases List.mem_cons.mp hr with rfl | hr
+    · exact le_rfl
+    · exact (List.pairwise_cons.mp hsorted).1 r hr
+  rcases card_le_one_or_upset_of_not_redundant ord i Y hnY with hY1 | hYup
+  · -- Y is empty or a singleton {b}
+    rcases Finset.eq_empty_or_nonempty Y with rfl | ⟨b, hb⟩
+    · rw [hXlist, sort_rankMS_empty ord]
+      exact List.Lex.nil
+    · obtain rfl : Y = {b} := Finset.eq_singleton_iff_unique_mem.mpr
+        ⟨hb, fun y hy => Finset.card_le_one.mp hY1 y hy b hb⟩
+      rw [sort_rankMS_singleton ord b, hXlist]
+      by_cases hbX : b ∈ X
+      · rcases (hhd _ ((mem_sort_rankMS ord).mpr ⟨b, hbX, rfl⟩)).lt_or_eq
+          with hlt | heq
+        · exact List.Lex.rel hlt
+        · -- b's rank ties X's top; X has a second element, so a longer tail
+          have h2 : 1 < X.card := Finset.one_lt_card.mpr
+            ⟨m, hmX, b, hbX, fun h' => hmY (Finset.mem_singleton.mpr h')⟩
+          have hlen := length_sort_rankMS ord X
+          rw [hXlist] at hlen
+          obtain ⟨c, tl', rfl⟩ : ∃ c tl', tl = c :: tl' := by
+            rcases tl with - | ⟨c, tl'⟩
+            · simp at hlen; omega
+            · exact ⟨c, tl', rfl⟩
+          rw [heq]
+          exact List.Lex.cons List.Lex.nil
+      · exact List.Lex.rel (lt_of_lt_of_le
+          ((lt_iff_rank_lt ord).mp
+            (hm_dom b (Finset.mem_sdiff.mpr ⟨Finset.mem_singleton_self b, hbX⟩)))
+          (hhd _ ((mem_sort_rankMS ord).mpr ⟨m, hmX, rfl⟩)))
+  · rcases card_le_one_or_upset_of_not_redundant ord i X hnX with hX1 | hXup
+    · -- X = {m}, which the ⊐ witness puts strictly above all of Y
+      obtain rfl : X = {m} := Finset.eq_singleton_iff_unique_mem.mpr
+        ⟨hmX, fun x hx => Finset.card_le_one.mp hX1 x hx m hmX⟩
+      rcases hYl : (rankMS ord Y).sort (· ≥ ·) with - | ⟨yh, ytl⟩
+      · rw [sort_rankMS_singleton ord m]
+        exact List.Lex.nil
+      · have hyh : yh ∈ (rankMS ord Y).sort (· ≥ ·) := by
+          rw [hYl]; exact List.mem_cons_self ..
+        obtain ⟨y, hy, hyr⟩ := (mem_sort_rankMS ord).mp hyh
+        have hym : ord.lt y m := hm_dom y (Finset.mem_sdiff.mpr
+          ⟨hy, fun hyX => hmY (Finset.mem_singleton.mp hyX ▸ hy)⟩)
+        rw [sort_rankMS_singleton ord m]
+        exact List.Lex.rel (hyr ▸ (lt_iff_rank_lt ord).mp hym)
+    · -- both up-sets: Y is an initial segment of X, extended by X \ Y ∋ m
+      have hYX : Y ⊆ X := by
+        intro y hy
+        by_contra hyX
+        rcases ord.le_total m y with hle | hle
+        · exact hyX (hXup m hmX y (hY hy) hle)
+        · exact hmY (hYup y hy m hm_f hle)
+      have hsep : ∀ y ∈ Y, ∀ x ∈ X \ Y, ord.lt x y := by
+        intro y hy x hx
+        obtain ⟨hxX, hxY⟩ := Finset.mem_sdiff.mp hx
+        have hnyx : ¬ ord.le y x := fun hle => hxY (hYup y hy x (hX hxX) hle)
+        exact ⟨(ord.le_total x y).resolve_right hnyx, hnyx⟩
+      rw [sort_rankMS_eq_append_of_sep ord hYX hsep]
+      refine lex_lt_append fun hnil => ?_
+      have hlen := length_sort_rankMS ord (X \ Y)
+      rw [hnil] at hlen
+      exact absurd
+        (Finset.card_eq_zero.mp hlen.symm ▸ Finset.mem_sdiff.mpr ⟨hmX, hmY⟩)
+        (Finset.notMem_empty m)
+
+open Classical in
+/-- `strictlyBetter` implies degree lists are lex-ordered: reduce to normal
+forms via `strictlyBetter_normalize_iff`. -/
+private theorem lex_degList_of_strictlyBetter (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i)
+    (h : strictlyBetter ord i X Y) :
+    List.Lex (· < ·) (degList ord i Y) (degList ord i X) := by
+  have hnX := not_redundant_normalize ord i X
+  have hnY := not_redundant_normalize ord i Y
+  have hNX : normalize ord i X ⊆ field ord i :=
+    (normalize_subset ord i X).trans hX
+  have hNY : normalize ord i Y ⊆ field ord i :=
+    (normalize_subset ord i Y).trans hY
+  have h_norm := (strictlyBetter_normalize_iff ord i X Y hX hY).mp h
+  show List.Lex (· < ·)
+    ((rankMS ord (normalize ord i Y)).sort (· ≥ ·))
+    ((rankMS ord (normalize ord i X)).sort (· ≥ ·))
+  exact lex_degList_of_strictlyBetter_normal ord i _ _ hNX hNY hnX hnY h_norm
+
+/-- `List.Lex (· < ·)` is irreflexive on ℕ-lists via asymmetry. -/
+private theorem list_lex_lt_irrefl (l : List ℕ) :
+    ¬ List.Lex (· < ·) l l := fun h => Std.Asymm.asymm _ _ h h
+
+open Classical in
 /-- **Degree characterization** (spike-verified oracle:
 `scratch/colex_spike2.lean`): ⊐ is the descending lexicographic order on
-degree lists. TODO: prove via the normalized-set structure lemma (every
-element of a normal form lacks a weakly-higher mate or a weakly-higher
-outsider) and induction on the sorted lists. -/
+degree lists.
+
+Proof structure: forward direction reduces to normal forms and locates the
+top-rank divergence via the ⊐ witness; backward direction uses ⊐-trichotomy
+(`strictlyBetter_total`), asymmetry of `List.Lex`, and
+`degList_eq_of_degreeEquiv` to eliminate the other two cases. -/
 theorem strictlyBetter_iff_degList_lex (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
     strictlyBetter ord i X Y ↔
     List.Lex (· < ·) (degList ord i Y) (degList ord i X) := by
-  sorry
+  refine ⟨lex_degList_of_strictlyBetter ord i X Y hX hY, fun h_lex => ?_⟩
+  rcases strictlyBetter_total ord i X Y hX hY with h_eq | h_sb | h_sb'
+  · exact absurd
+      (degList_eq_of_degreeEquiv ord i X Y hX hY h_eq ▸ h_lex)
+      (list_lex_lt_irrefl _)
+  · exact h_sb
+  · have h_rev := lex_degList_of_strictlyBetter ord i Y X hY hX h_sb'
+    exact absurd h_rev (Std.Asymm.asymm _ _ h_lex)
 
 open Classical in
-/-- Degree equivalence is equality of degree lists. TODO: from
-`strictlyBetter_iff_degList_lex` via trichotomy on both sides. -/
+/-- Degree equivalence is equality of degree lists. Follows from
+`strictlyBetter_iff_degList_lex` and `List.Lex` trichotomy on `List ℕ`
+(via ⊐-trichotomy: if X ⊐ Y or Y ⊐ X, lex holds, contradicting list
+equality). -/
 theorem degreeEquiv_iff_degList_eq (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
     degreeEquiv ord i X Y ↔ degList ord i X = degList ord i Y := by
-  sorry
+  refine ⟨degList_eq_of_degreeEquiv ord i X Y hX hY, fun h_eq => ?_⟩
+  rcases strictlyBetter_total ord i X Y hX hY with h | h_sb | h_sb'
+  · exact h
+  · exact absurd ((strictlyBetter_iff_degList_lex ord i X Y hX hY).mp h_sb)
+      (h_eq ▸ list_lex_lt_irrefl _)
+  · exact absurd ((strictlyBetter_iff_degList_lex ord i Y X hY hX).mp h_sb')
+      (h_eq ▸ list_lex_lt_irrefl _)
 
 /-- ∼ as a `Setoid` on field-subsets (transitivity needs the field bound). -/
 def metalinguisticSetoid :
