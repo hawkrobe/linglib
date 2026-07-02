@@ -42,5 +42,12 @@ def id (n : ℕ) : Ranking n := Equiv.refl _
 /-- Under the identity ranking, dominance is index order. -/
 @[simp] theorem id_dominates_iff {i j : Fin n} : (Ranking.id n).Dominates i j ↔ i < j := Iff.rfl
 
+/-- Any two distinct constraints can be ranked either way: some ranking makes `i`
+dominate `j`. -/
+theorem exists_dominates {i j : Fin n} (hij : i ≠ j) : ∃ r : Ranking n, r.Dominates i j := by
+  rcases lt_or_gt_of_ne hij with h | h
+  · exact ⟨Ranking.id n, id_dominates_iff.mpr h⟩
+  · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
+
 end Ranking
 end OptimalityTheory

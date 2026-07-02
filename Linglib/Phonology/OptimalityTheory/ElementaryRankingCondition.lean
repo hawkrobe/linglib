@@ -183,6 +183,11 @@ def Consistent : Prop := ∃ r : Ranking n, SatisfiedBy r E
 instance : Decidable (Consistent E) :=
   Fintype.decidableExistsFintype
 
+/-- A singleton is consistent iff some ranking satisfies its ERC. -/
+@[simp] theorem consistent_singleton {α : ERC n} :
+    Consistent [α] ↔ ∃ r : Ranking n, α.SatisfiedBy r := by
+  simp [Consistent, SatisfiedBy]
+
 /-- The rankings consistent with an ERC set, as a `Finset` — its *linear extensions*
 ([merchant-riggle-2016]). -/
 def linearExtensions : Finset (Ranking n) :=
@@ -259,15 +264,9 @@ theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking n) :
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
 theorem simpleERC_consistent (hij : i ≠ j) :
-    ERCSet.Consistent [simpleERC i j] := by
-  rcases lt_or_gt_of_ne hij with h | h
-  · exact ⟨Ranking.id n, fun α hα => List.mem_singleton.mp hα ▸
-      (simpleERC_satisfiedBy_iff hij _).mpr (Ranking.id_dominates_iff.mpr h)⟩
-  · refine ⟨Equiv.swap i j, fun α hα => List.mem_singleton.mp hα ▸
-      (simpleERC_satisfiedBy_iff hij _).mpr ?_⟩
-    show (Equiv.swap i j).symm i < (Equiv.swap i j).symm j
-    rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
-    exact h
+    ERCSet.Consistent [simpleERC i j] :=
+  have ⟨r, hr⟩ := Ranking.exists_dominates hij
+  ERCSet.consistent_singleton.mpr ⟨r, (simpleERC_satisfiedBy_iff hij r).mpr hr⟩
 
 /-- `simpleERC i j` (with `i ≠ j`) is a simple ERC. -/
 theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=
