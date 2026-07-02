@@ -486,11 +486,11 @@ theorem popularisERC_is_simple :
 theorem pluvalisERC_is_simple :
     pluvalisERC = simpleERC (n := 2) 0 1 := by decide
 
-theorem navalisERC_isTrivial : navalisERC.isTrivial := by decide
-theorem floralisERC_isTrivial : floralisERC.isTrivial := by decide
-theorem legalisERC_isTrivial : legalisERC.isTrivial := by decide
+theorem navalisERC_isTrivial : navalisERC.IsTrivial := by decide
+theorem floralisERC_isTrivial : floralisERC.IsTrivial := by decide
+theorem legalisERC_isTrivial : legalisERC.IsTrivial := by decide
 
-theorem lunarisERC_isContradictory : lunarisERC.isContradictory := by decide
+theorem lunarisERC_isContradictory : lunarisERC.IsContradictory := by decide
 
 /-- The five non-lunaris contrasts form a **consistent** ERC set: the
     identity ranking (OCP at position 0, \*r at position 1) satisfies
@@ -498,19 +498,19 @@ theorem lunarisERC_isContradictory : lunarisERC.isContradictory := by decide
     pluvalis) both reduce to `simpleERC 0 1`; the other three are
     trivial. -/
 theorem latinERCSet_consistent_without_lunaris :
-    ERCSet.consistent
+    ERCSet.Consistent
       [popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC] :=
   ⟨Ranking.id 2, by decide⟩
 
 /-- Bridge to the dominance characterisation: under any ranking
     satisfying the empirical ERC set (sans lunaris), OCP dominates \*r. -/
 theorem latin_OCP_dominates_starR (r : Ranking 2)
-    (hr : ERCSet.satisfiedBy r
+    (hr : ERCSet.SatisfiedBy r
       [popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC]) :
-    r.dominates 0 1 := by
-  have hpop : popularisERC.satisfiedBy r :=
+    r.Dominates 0 1 := by
+  have hpop : popularisERC.SatisfiedBy r :=
     hr popularisERC (List.mem_cons.mpr (Or.inl rfl))
-  have : (simpleERC (n := 2) 0 1).satisfiedBy r := by
+  have : (simpleERC (n := 2) 0 1).SatisfiedBy r := by
     rw [← popularisERC_is_simple]; exact hpop
   exact (simpleERC_satisfiedBy_iff (by decide) r).mp this
 
