@@ -88,27 +88,25 @@ noncomputable def forestAutCard (F : Forest (Nonplanar α)) : ℕ :=
 
 /-! ### The bilinear pairing -/
 
-/-- The **symmetry-weighted pairing** `⟨·, ·⟩ : H × H → R`. On basis
-    elements, `⟨of' F, of' G⟩ = if F = G then forestAutCard F else 0`
-    (in `R`, via `Nat.cast`). Bilinearly extended via `Finsupp.lift`. -/
-noncomputable def pairing :
-    ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
+/-- Finsupp-level symmetry-weighted pairing on the bare forest basis. The
+    public `pairing` is this transported through the Connes-Kreimer
+    structure's `toFinsuppAlgEquiv`. -/
+private noncomputable def pairingAux :
+    (Forest (Nonplanar α) →₀ R) →ₗ[R] (Forest (Nonplanar α) →₀ R) →ₗ[R] R :=
   letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
   Finsupp.lift _ R (Forest (Nonplanar α)) (fun F =>
     Finsupp.lift R R (Forest (Nonplanar α)) (fun G =>
       if F = G then (forestAutCard F : R) else 0))
 
-@[simp] theorem pairing_of'_of' (F G : Forest (Nonplanar α)) :
-    pairing (R := R) (ConnesKreimer.of' (R := R) F)
-                     (ConnesKreimer.of' (R := R) G) =
+private theorem pairingAux_single_single (F G : Forest (Nonplanar α)) :
+    pairingAux (R := R) (Finsupp.single F 1) (Finsupp.single G 1) =
       (letI : Decidable (F = G) := Classical.dec _
        if F = G then (forestAutCard F : R) else 0) := by
   letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
   show (Finsupp.lift _ R (Forest (Nonplanar α)) (fun F' =>
     Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
       if F' = G' then (forestAutCard F' : R) else 0)))
-    (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R) (ConnesKreimer.of' G) = _
+    (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R) (Finsupp.single G 1) = _
   rw [Finsupp.lift_apply, Finsupp.sum_single_index]
   · rw [one_smul]
     show (Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
@@ -119,45 +117,47 @@ noncomputable def pairing :
     · simp
   · simp
 
+/-- The **symmetry-weighted pairing** `⟨·, ·⟩ : H × H → R`. On basis
+    elements, `⟨of' F, of' G⟩ = if F = G then forestAutCard F else 0`
+    (in `R`, via `Nat.cast`). Bilinearly extended, transported from the
+    forest-basis `pairingAux` through `ConnesKreimer.toFinsuppAlgEquiv`. -/
+noncomputable def pairing :
+    ConnesKreimer R (Nonplanar α) →ₗ[R]
+      ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
+  pairingAux.compl₁₂
+    (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
+    (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
+
+private theorem pairing_apply (x y : ConnesKreimer R (Nonplanar α)) :
+    pairing (R := R) x y = pairingAux x.toFinsupp y.toFinsupp := rfl
+
+@[simp] theorem pairing_of'_of' (F G : Forest (Nonplanar α)) :
+    pairing (R := R) (ConnesKreimer.of' (R := R) F)
+                     (ConnesKreimer.of' (R := R) G) =
+      (letI : Decidable (F = G) := Classical.dec _
+       if F = G then (forestAutCard F : R) else 0) := by
+  rw [pairing_apply, ConnesKreimer.toFinsupp_of', ConnesKreimer.toFinsupp_of']
+  exact pairingAux_single_single F G
+
 /-- The pairing is symmetric. Reduces by bilinearity to the basis case,
     where `pairing_of'_of'` shows both sides are `if F = G then
     forestAutCard F else 0` — same value (the `F = G` case forces it). -/
 theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
     pairing (R := R) x y = pairing y x := by
-  refine Finsupp.induction_linear x ?_ ?_ ?_
-  · show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α)) y =
-        pairing y (0 : ConnesKreimer R (Nonplanar α))
-    rw [LinearMap.map_zero, LinearMap.zero_apply, LinearMap.map_zero]
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
+  · rw [LinearMap.map_zero, LinearMap.zero_apply, LinearMap.map_zero]
   · intro x₁ x₂ ih₁ ih₂
-    let x₁' : ConnesKreimer R (Nonplanar α) := x₁
-    let x₂' : ConnesKreimer R (Nonplanar α) := x₂
-    show pairing (R := R) (x₁' + x₂') y = pairing y (x₁' + x₂')
     rw [map_add, LinearMap.add_apply, ih₁, ih₂, map_add]
   · intro F r
-    refine Finsupp.induction_linear y ?_ ?_ ?_
-    · let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-      show pairing (R := R) x_single (0 : ConnesKreimer R (Nonplanar α)) =
-          pairing (0 : ConnesKreimer R (Nonplanar α)) x_single
-      rw [LinearMap.map_zero, LinearMap.map_zero, LinearMap.zero_apply]
+    refine ConnesKreimer.induction_linear y ?_ ?_ ?_
+    · rw [LinearMap.map_zero, LinearMap.map_zero, LinearMap.zero_apply]
     · intro y₁ y₂ ih₁ ih₂
-      let y₁' : ConnesKreimer R (Nonplanar α) := y₁
-      let y₂' : ConnesKreimer R (Nonplanar α) := y₂
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-      show pairing (R := R) x_single (y₁' + y₂') = pairing (y₁' + y₂') x_single
       rw [map_add, LinearMap.map_add, LinearMap.add_apply, ih₁, ih₂]
     · intro G s
-      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-      let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
-      show pairing (R := R) x_single y_single = pairing y_single x_single
-      have hx : x_single = r • (ConnesKreimer.of' (R := R) F) := by
-        show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-              r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one F r).symm
-      have hy : y_single = s • (ConnesKreimer.of' (R := R) G) := by
-        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
-              s • (Finsupp.single G 1 : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one G s).symm
-      rw [hx, hy]
+      rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
+            from ConnesKreimer.smul_single_one F r,
+          show ConnesKreimer.single G s = s • ConnesKreimer.of' (R := R) G
+            from ConnesKreimer.smul_single_one G s]
       simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of']
       by_cases h : F = G
       · subst h; ring
@@ -180,32 +180,19 @@ theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
 theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
     (G : Forest (Nonplanar α)) :
     pairing (R := R) x (ConnesKreimer.of' G) =
-      (x : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R) := by
-  refine Finsupp.induction_linear x ?_ ?_ ?_
-  · show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α))
-                          (ConnesKreimer.of' G) =
-        (0 : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
-    rw [pairing_zero_left, Finsupp.zero_apply, zero_mul]
+      x.toFinsupp G * (forestAutCard G : R) := by
+  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
+  · rw [pairing_zero_left]
+    show (0 : R) = (0 : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
+    simp
   · intro x₁ x₂ ih₁ ih₂
-    let x₁' : ConnesKreimer R (Nonplanar α) := x₁
-    let x₂' : ConnesKreimer R (Nonplanar α) := x₂
-    show pairing (R := R) (x₁' + x₂') (ConnesKreimer.of' G) =
-        (((x₁' + x₂') : ConnesKreimer R (Nonplanar α)) :
-          Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
-    rw [map_add, LinearMap.add_apply, ih₁, ih₂]
-    show (x₁' : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R) +
-        (x₂' : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R) =
-        ((x₁' + x₂') : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
-    show x₁ G * (forestAutCard G : R) + x₂ G * (forestAutCard G : R) =
-        (x₁ + x₂) G * (forestAutCard G : R)
-    rw [Finsupp.add_apply, add_mul]
+    rw [map_add, LinearMap.add_apply, ih₁, ih₂, ConnesKreimer.toFinsupp_add]
+    show _ = (x₁.toFinsupp + x₂.toFinsupp : Forest (Nonplanar α) →₀ R) G *
+      (forestAutCard G : R)
+    simp [add_mul]
   · intro F r
-    have hx : (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-              r • (ConnesKreimer.of' (R := R) F) := by
-      show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-            r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
-      exact (Finsupp.smul_single_one F r).symm
-    rw [hx]
+    rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
+          from ConnesKreimer.smul_single_one F r]
     simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of']
     letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
     by_cases h : F = G
@@ -217,7 +204,7 @@ theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
       rw [Finsupp.smul_apply, Finsupp.single_eq_same]
       ring
     · rw [if_neg h, smul_zero]
-      show 0 =
+      show (0 : R) =
           (r • (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R)) G *
             (forestAutCard G : R)
       rw [Finsupp.smul_apply, Finsupp.single_apply, if_neg h, smul_zero, zero_mul]
@@ -233,13 +220,13 @@ theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
 theorem pairing_nondegenerate
     [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (Nonplanar α))
     (h : ∀ y, pairing (R := R) x y = 0) : x = 0 := by
-  apply Finsupp.ext (M := R)
-  intro G
+  refine ConnesKreimer.ext ?_
+  rw [ConnesKreimer.toFinsupp_zero]
+  refine Finsupp.ext fun G => ?_
   have hG : pairing (R := R) x (ConnesKreimer.of' G) = 0 := h _
   rw [pairing_apply_of'] at hG
   have hauts_ne : (Nonplanar.forestAutCard G : R) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos G).ne'
-  show (x : Forest (Nonplanar α) →₀ R) G = 0
   rcases mul_eq_zero.mp hG with hx | hx
   · exact hx
   · exact absurd hx hauts_ne
@@ -392,7 +379,7 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
           pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
           pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum := by
     intro C₁ z₂
-    refine Finsupp.induction_linear z₂ ?_ ?_ ?_
+    refine ConnesKreimer.induction_linear z₂ ?_ ?_ ?_
     · show pairing (R := R) (ConnesKreimer.of' W)
           (ConnesKreimer.of' C₁ * (0 : ConnesKreimer R (Nonplanar α))) =
         ((Multiset.antidiagonal W).map (fun p =>
@@ -425,17 +412,9 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
             pairing (R := R) (ConnesKreimer.of' p.2) b' = _
       rw [map_add, mul_add]
     · intro G s
-      let g' : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
-      have hsingle : g' = s • (ConnesKreimer.of' (R := R) G) := by
-        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
-            s • (Finsupp.single G 1 : ConnesKreimer R (Nonplanar α))
-        exact (Finsupp.smul_single_one G s).symm
-      show pairing (R := R) (ConnesKreimer.of' W)
-          (ConnesKreimer.of' C₁ * g') =
-        ((Multiset.antidiagonal W).map (fun p =>
-          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-          pairing (R := R) (ConnesKreimer.of' p.2) g')).sum
-      rw [hsingle, mul_smul_comm, map_smul, smul_eq_mul,
+      rw [show ConnesKreimer.single G s = s • ConnesKreimer.of' (R := R) G
+            from ConnesKreimer.smul_single_one G s,
+          mul_smul_comm, map_smul, smul_eq_mul,
           pairing_of'_mul_of' W C₁ G]
       rw [show ((Multiset.antidiagonal W).map (fun p =>
             pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
@@ -446,7 +425,7 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
              pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' G)))) from
         Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
       rw [Multiset.sum_map_mul_left]
-  refine Finsupp.induction_linear z₁ ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear z₁ ?_ ?_ ?_
   · show pairing (R := R) (ConnesKreimer.of' W)
         ((0 : ConnesKreimer R (Nonplanar α)) * z₂) =
       ((Multiset.antidiagonal W).map (fun p =>
@@ -476,16 +455,9 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
           pairing (R := R) (ConnesKreimer.of' p.2) z₂ = _
     rw [map_add, add_mul]
   · intro F r
-    let f' : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-    have hsingle : f' = r • (ConnesKreimer.of' (R := R) F) := by
-      show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
-          r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
-      exact (Finsupp.smul_single_one F r).symm
-    show pairing (R := R) (ConnesKreimer.of' W) (f' * z₂) =
-      ((Multiset.antidiagonal W).map (fun p =>
-        pairing (R := R) (ConnesKreimer.of' p.1) f' *
-        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
-    rw [hsingle, smul_mul_assoc, map_smul, smul_eq_mul, aux F z₂]
+    rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
+          from ConnesKreimer.smul_single_one F r,
+        smul_mul_assoc, map_smul, smul_eq_mul, aux F z₂]
     rw [show ((Multiset.antidiagonal W).map (fun p =>
           pairing (R := R) (ConnesKreimer.of' p.1)
             (r • ConnesKreimer.of' (R := R) F) *
