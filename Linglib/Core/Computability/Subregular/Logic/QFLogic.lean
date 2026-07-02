@@ -49,6 +49,48 @@ def eval (w : WordModel α) (ρ : V → ℕ) : Term V → Option ℕ
 
 end Term
 
+/-! ### Directed terms and substitution -/
+
+namespace Term
+
+/-- A term is *backward* if it uses no successor — only the variable and predecessors, so it reads
+positions at or before its variable. -/
+def Backward : Term V → Prop
+  | .var _  => True
+  | .pred t => t.Backward
+  | .succ _ => False
+
+/-- A term is *forward* if it uses no predecessor, so it reads positions at or after its
+variable. -/
+def Forward : Term V → Prop
+  | .var _  => True
+  | .pred _ => False
+  | .succ t => t.Forward
+
+/-- The predecessor depth of a term: how far back it reaches. -/
+def pdepth : Term V → ℕ
+  | .var _  => 0
+  | .pred t => t.pdepth + 1
+  | .succ t => t.pdepth
+
+instance instDecidableBackward : ∀ t : Term V, Decidable t.Backward
+  | .var _ => .isTrue trivial
+  | .pred t => instDecidableBackward t
+  | .succ _ => .isFalse not_false
+
+instance instDecidableForward : ∀ t : Term V, Decidable t.Forward
+  | .var _ => .isTrue trivial
+  | .pred _ => .isFalse not_false
+  | .succ t => instDecidableForward t
+
+/-- Substitution into the single variable: `t.comp u` is `t[u/x]`. -/
+def comp : Term Unit → Term Unit → Term Unit
+  | .var _, u => u
+  | .succ t, u => .succ (t.comp u)
+  | .pred t, u => .pred (t.comp u)
+
+end Term
+
 /-- Atomic quantifier-free formulas: a label test, an equality of positions, or a
 definedness test on a term. -/
 inductive Atom (α V : Type*) where
