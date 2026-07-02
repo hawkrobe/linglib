@@ -112,25 +112,14 @@ def transferEquiv (eL : L ≃ L') (eR : R ≃ R') :
 
 theorem transferEquiv_lState_from (eL : L ≃ L') (eR : R ≃ R')
     (l : L) (pre : List α) :
-    pre.foldl (B.transferEquiv eL eR).lStep (eL l) = eL (pre.foldl B.lStep l) := by
-  induction pre generalizing l with
-  | nil => rfl
-  | cons x xs ih =>
-    show xs.foldl (B.transferEquiv eL eR).lStep (eL (B.lStep (eL.symm (eL l)) x)) = _
-    rw [eL.symm_apply_apply, ih]; rfl
+    pre.foldl (B.transferEquiv eL eR).lStep (eL l) = eL (pre.foldl B.lStep l) :=
+  List.foldl_hom eL fun y x => by simp [transferEquiv]
 
 theorem transferEquiv_rState_from (eL : L ≃ L') (eR : R ≃ R')
     (r : R) (suf : List α) :
     suf.foldr (fun a r => (B.transferEquiv eL eR).rStep r a) (eR r)
-      = eR (suf.foldr (fun a r => B.rStep r a) r) := by
-  induction suf with
-  | nil => rfl
-  | cons x xs ih =>
-    show (B.transferEquiv eL eR).rStep
-        (xs.foldr (fun a r => (B.transferEquiv eL eR).rStep r a) (eR r)) x = _
-    rw [ih]
-    show eR (B.rStep (eR.symm (eR _)) x) = _
-    rw [eR.symm_apply_apply]; rfl
+      = eR (suf.foldr (fun a r => B.rStep r a) r) :=
+  List.foldr_hom eR fun x y => by simp [transferEquiv]
 
 theorem transferEquiv_lState (eL : L ≃ L') (eR : R ≃ R')
     (pre : List α) : (B.transferEquiv eL eR).lState pre = eL (B.lState pre) :=
