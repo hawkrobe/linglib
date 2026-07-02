@@ -2344,6 +2344,7 @@ import Linglib.Studies.ItoMester2009
 import Linglib.Studies.Izvorski1997
 import Linglib.Studies.Jaeger2007
 import Linglib.Studies.Jardine2016
+import Linglib.Studies.Jardine2016Tone
 import Linglib.Studies.Jardine2017
 import Linglib.Studies.Jardine2019
 import Linglib.Studies.Jenks2018
