@@ -1,5 +1,4 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
-import Mathlib.LinearAlgebra.Finsupp.Defs
 import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
 
@@ -58,15 +57,15 @@ element `of' {S, S'}`:
 
   gammaMatch S S' (of' F) = if F = {S, S'} then of' F else 0
 
-Built as `Finsupp.lsingle ∘ Finsupp.lapply` on the matching forest. -/
+Built as a `ConnesKreimer.linearLift` that maps the `{S, S'}` basis vector to
+itself and every other basis vector to zero. -/
 
 /-- The matching projection γ_{S,S'} (M-C-B Def 1.3.1): keeps the coefficient
     of the `{S, S'}` basis element, sends everything else to zero. -/
 noncomputable def gammaMatch (S S' : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  let target : Forest (Nonplanar α) := ({S, S'} : Multiset (Nonplanar α))
-  show (Forest (Nonplanar α) →₀ R) →ₗ[R] (Forest (Nonplanar α) →₀ R) from
-    (Finsupp.lsingle target).comp (Finsupp.lapply target)
+  ConnesKreimer.linearLift
+    (fun F => if F = ({S, S'} : Forest (Nonplanar α)) then of' F else 0)
 
 /-- **γ_{S,S'} acts as a basis-vector projection**: on the basis element
     `of' F`, it returns `of' F` if `F = {S, S'}` and `0` otherwise.
@@ -75,15 +74,7 @@ theorem gammaMatch_apply_singleton (S S' : Nonplanar α)
     (F : Forest (Nonplanar α)) :
     gammaMatch (R := R) S S' (of' F) =
       if F = ({S, S'} : Forest (Nonplanar α)) then of' F else 0 := by
-  show (Finsupp.lsingle ({S, S'} : Forest (Nonplanar α))).comp
-        (Finsupp.lapply ({S, S'} : Forest (Nonplanar α)))
-        (Finsupp.single F (1 : R))
-      = _
-  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply,
-    Finsupp.single_apply]
-  split_ifs with h
-  · subst h; rfl
-  · exact Finsupp.single_zero _
+  rw [gammaMatch, ConnesKreimer.linearLift_of']
 
 /-! ## §2: δ_{S,S'} matching on the left tensor channel (M-C-B Def 1.3.1)
 
@@ -114,11 +105,9 @@ head). -/
     other basis elements to zero. M-C-B Lemma 1.3.3 for binary Merge. -/
 noncomputable def graftBinaryAt (lbl : α) (S S' : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  let source : Forest (Nonplanar α) := ({S, S'} : Multiset (Nonplanar α))
-  let target : Forest (Nonplanar α) :=
-    ({Nonplanar.node lbl {S, S'}} : Multiset (Nonplanar α))
-  show (Forest (Nonplanar α) →₀ R) →ₗ[R] (Forest (Nonplanar α) →₀ R) from
-    (Finsupp.lsingle target).comp (Finsupp.lapply source)
+  ConnesKreimer.linearLift
+    (fun F => if F = ({S, S'} : Forest (Nonplanar α))
+      then of' ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) else 0)
 
 /-- **B grafts on basis vectors**: on `of' F`, returns
     `of' {Nonplanar.node lbl {S, S'}}` if `F = {S, S'}`, and `0` otherwise.
@@ -129,15 +118,7 @@ theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : Nonplanar α)
       if F = ({S, S'} : Forest (Nonplanar α))
         then of' ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α))
         else 0 := by
-  show (Finsupp.lsingle ({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α))).comp
-        (Finsupp.lapply ({S, S'} : Forest (Nonplanar α)))
-        (Finsupp.single F (1 : R))
-      = _
-  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply,
-    Finsupp.single_apply]
-  split_ifs with h
-  · subst h; rfl
-  · exact Finsupp.single_zero _
+  rw [graftBinaryAt, ConnesKreimer.linearLift_of']
 
 /-! ## §4: Merge operator (M-C-B Def 1.3.4)
 
@@ -206,33 +187,37 @@ theorem mergePost_basis_tensor (lbl : α) (S S' : Nonplanar α)
     simp only [map_zero]
 
 omit [DecidableEq (Nonplanar α)] in
+/-- Left-multiplying a `single` basis vector by `of' F` concatenates forests:
+    `of' F * single G r = single (F + G) r`. -/
+private theorem of'_mul_single (F G : Forest (Nonplanar α)) (r : R) :
+    of' (R := R) F * single G r = single (F + G) r := by
+  rw [smul_single_one G r, mul_smul_comm]
+  change r • (of' (R := R) F * of' G) = single (F + G) r
+  rw [← of'_add]
+  exact (smul_single_one (F + G) r).symm
+
 /-- **General γ_{S,S'}-vanishing on a left-multiplied forest**: if `F` is NOT a
     sub-multiset of `{S, S'}`, then `γ_{S,S'}(of' F * a) = 0` for any `a`.
 
     The hypothesis `¬ F ≤ ({S, S'} : Forest (Nonplanar α))` says `F` cannot
-    embed into `{S, S'}` as a sub-multiset, equivalently (by
-    `Multiset.le_iff_exists_add`) `F` is not a left-divisor of `{S, S'}`. -/
+    embed into `{S, S'}` as a sub-multiset: since `F ≤ F + G` always, every
+    forest `F + G` produced by left-multiplication misses the `{S, S'}` basis
+    element that `γ_{S,S'}` reads. -/
 theorem gammaMatch_mul_eq_zero_of_not_le (S S' : Nonplanar α)
     (F : Forest (Nonplanar α))
     (hF : ¬ F ≤ ({S, S'} : Forest (Nonplanar α)))
     (a : ConnesKreimer R (Nonplanar α)) :
     gammaMatch (R := R) S S' (of' F * a) = 0 := by
-  have h_no_decomp : ¬ ∃ d : Forest (Nonplanar α),
-                        ({S, S'} : Forest (Nonplanar α)) = F + d := by
-    intro ⟨d, hd⟩
-    exact hF (Multiset.le_iff_exists_add.mpr ⟨d, hd⟩)
-  show ((Finsupp.lsingle ({S, S'} : Forest (Nonplanar α))).comp
-        (Finsupp.lapply ({S, S'} : Forest (Nonplanar α))))
-      (of' (R := R) F * a) = 0
-  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply]
-  show Finsupp.single ({S, S'} : Forest (Nonplanar α))
-        ((of' (R := R) F * a) ({S, S'} : Forest (Nonplanar α))) = 0
-  rw [show (of' (R := R) F * a) ({S, S'} : Forest (Nonplanar α)) = 0 from
-    AddMonoidAlgebra.single_mul_apply_of_not_exists_add (M := Forest (Nonplanar α))
-      (R := R) (1 : R) a h_no_decomp]
-  exact Finsupp.single_zero _
+  induction a using ConnesKreimer.induction_linear with
+  | zero => rw [mul_zero, map_zero]
+  | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
+  | single G r =>
+    have hne : F + G ≠ ({S, S'} : Forest (Nonplanar α)) :=
+      fun heq => hF (heq ▸ Multiset.le_add_right F G)
+    rw [of'_mul_single, gammaMatch]
+    simp only [ConnesKreimer.linearLift_single]
+    rw [if_neg hne, smul_zero]
 
-omit [DecidableEq (Nonplanar α)] in
 /-- **Disjoint-singleton vanishing of γ_{S,S'}** (corollary): if `T ≠ S` and
     `T ≠ S'`, then `γ_{S,S'}(of' {T} * a) = 0`. -/
 theorem gammaMatch_singleton_mul_eq_zero (S S' T : Nonplanar α)
@@ -250,7 +235,6 @@ theorem gammaMatch_singleton_mul_eq_zero (S S' T : Nonplanar α)
   · exact hT_ne_S h
   · exact hT_ne_S' h
 
-omit [DecidableEq (Nonplanar α)] in
 /-- **Vanishing of mergePost on left-multiplied disjoint factors**: if `F` is NOT
     a sub-multiset of `{S, S'}` and `b` is arbitrary, then for any `z`:
 
@@ -278,7 +262,6 @@ theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : Nonplanar α)
     simp only [map_add]
     rw [ih1, ih2, add_zero]
 
-omit [DecidableEq (Nonplanar α)] in
 /-- **Right-multiplicativity of the post-coproduct chain** by a "pure
     right-channel" factor `1 ⊗ y`. For any `z` and any `y`:
 
@@ -338,9 +321,8 @@ manipulation; that name does NOT signal a stand-alone Merge. -/
     `gammaMatch` but with a singleton target. -/
 noncomputable def gammaMatchSingle (β : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  let target : Forest (Nonplanar α) := ({β} : Multiset (Nonplanar α))
-  show (Forest (Nonplanar α) →₀ R) →ₗ[R] (Forest (Nonplanar α) →₀ R) from
-    (Finsupp.lsingle target).comp (Finsupp.lapply target)
+  ConnesKreimer.linearLift
+    (fun F => if F = ({β} : Forest (Nonplanar α)) then of' F else 0)
 
 /-- **`γ_{β, 1}` acts as a basis-vector projection**: on `of' F`, returns `of' F`
     if `F = {β}`, and `0` otherwise. Singleton counterpart of
@@ -349,15 +331,7 @@ theorem gammaMatchSingle_apply_singleton (β : Nonplanar α)
     (F : Forest (Nonplanar α)) :
     gammaMatchSingle (R := R) β (of' F) =
       if F = ({β} : Forest (Nonplanar α)) then of' F else 0 := by
-  show (Finsupp.lsingle ({β} : Forest (Nonplanar α))).comp
-        (Finsupp.lapply ({β} : Forest (Nonplanar α)))
-        (Finsupp.single F (1 : R))
-      = _
-  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply,
-    Finsupp.single_apply]
-  split_ifs with h
-  · subst h; rfl
-  · exact Finsupp.single_zero _
+  rw [gammaMatchSingle, ConnesKreimer.linearLift_of']
 
 /-- The matching operator `δ_{β, 1}` on tensored coproduct output: applies
     `gammaMatchSingle β` to the left channel, identity to the right. -/

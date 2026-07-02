@@ -75,13 +75,16 @@ arbitrary `R` after `InsertionAlgebra` is generalized (deferred). -/
     which is definitionally `AddMonoidAlgebra ℤ (Nonplanar α →₀ ℕ)`. Then
     `AddMonoidAlgebra.domCongr` via the additive equiv
     `(Nonplanar α →₀ ℕ) ≃+ Multiset (Nonplanar α)` (= `Multiset.toFinsupp.symm`)
-    lands in `AddMonoidAlgebra ℤ (Multiset (Nonplanar α)) = ConnesKreimer ℤ _`. -/
+    lands in `AddMonoidAlgebra ℤ (Multiset (Nonplanar α))`; the final
+    `ConnesKreimer.toFinsuppAlgEquiv.symm` wraps that bare carrier into the
+    `ConnesKreimer` structure. -/
 noncomputable def ckIsoSymmetricAlgebra :
     SymmetricAlgebra ℤ (InsertionAlgebra α) ≃ₐ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
   (SymmetricAlgebra.equivMvPolynomial
       (Finsupp.basisSingleOne (R := ℤ) (ι := Nonplanar α) :
         Module.Basis (Nonplanar α) ℤ (InsertionAlgebra α))).trans
-    (AddMonoidAlgebra.domCongr ℤ ℤ (Multiset.toFinsupp (α := Nonplanar α)).symm)
+    ((AddMonoidAlgebra.domCongr ℤ ℤ (Multiset.toFinsupp (α := Nonplanar α)).symm).trans
+      ConnesKreimer.toFinsuppAlgEquiv.symm)
 
 /-! ## §1b: Basis identification
 
@@ -95,11 +98,12 @@ theorem ckIsoSymmetricAlgebra_ι_single (t : Nonplanar α) :
     ckIsoSymmetricAlgebra
         (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (Finsupp.single t (1 : ℤ))) =
       ConnesKreimer.of' (R := ℤ) ({t} : Multiset (Nonplanar α)) := by
-  show (AddMonoidAlgebra.domCongr ℤ ℤ Multiset.toFinsupp.symm)
-        ((SymmetricAlgebra.equivMvPolynomial
-            (Finsupp.basisSingleOne (R := ℤ) (ι := Nonplanar α) :
-              Module.Basis (Nonplanar α) ℤ (InsertionAlgebra α)))
-          ((SymmetricAlgebra.ι ℤ (InsertionAlgebra α)) (Finsupp.single t 1))) = _
+  show ConnesKreimer.toFinsuppAlgEquiv.symm
+        ((AddMonoidAlgebra.domCongr ℤ ℤ Multiset.toFinsupp.symm)
+          ((SymmetricAlgebra.equivMvPolynomial
+              (Finsupp.basisSingleOne (R := ℤ) (ι := Nonplanar α) :
+                Module.Basis (Nonplanar α) ℤ (InsertionAlgebra α)))
+            ((SymmetricAlgebra.ι ℤ (InsertionAlgebra α)) (Finsupp.single t 1)))) = _
   -- Step 1: equivMvPolynomial sends ι (basisSingleOne t) to MvPolynomial.X t.
   have h1 : SymmetricAlgebra.equivMvPolynomial
       (Finsupp.basisSingleOne (R := ℤ) (ι := Nonplanar α) :
@@ -112,9 +116,10 @@ theorem ckIsoSymmetricAlgebra_ι_single (t : Nonplanar α) :
     exact SymmetricAlgebra.equivMvPolynomial_ι_apply _ t
   rw [h1]
   -- Step 2: MvPolynomial.X t = single (single t 1) 1.
-  show (AddMonoidAlgebra.domCongr ℤ ℤ Multiset.toFinsupp.symm)
-      (AddMonoidAlgebra.single (Finsupp.single t 1) 1 :
-        AddMonoidAlgebra ℤ (Nonplanar α →₀ ℕ)) = _
+  show ConnesKreimer.toFinsuppAlgEquiv.symm
+      ((AddMonoidAlgebra.domCongr ℤ ℤ Multiset.toFinsupp.symm)
+        (AddMonoidAlgebra.single (Finsupp.single t 1) 1 :
+          AddMonoidAlgebra ℤ (Nonplanar α →₀ ℕ))) = _
   rw [AddMonoidAlgebra.domCongr_single]
   -- Multiset.toFinsupp.symm (single t 1) = {t}
   have h2 : (Multiset.toFinsupp (α := Nonplanar α)).symm (Finsupp.single t 1) =
@@ -379,7 +384,7 @@ private theorem GL_insertion_leibniz_basis_form
 omit [DecidableEq (Nonplanar α)] in
 /-- **Helper for 1.3**: Leibniz rule with right argument forced to be a
     Forest-basis element. Bilinear-in-A extension of the basis form via
-    `Finsupp.induction_linear` on A (following `insertion_mul_distrib_gen`'s
+    `ConnesKreimer.induction_linear` on A (following `insertion_mul_distrib_gen`'s
     pattern of explicit `show` casts to navigate type-alias unfolding). -/
 private theorem GL_insertion_leibniz_basis_right
     (A : ConnesKreimer ℤ (Nonplanar α)) (F_B : Forest (Nonplanar α))
@@ -395,7 +400,7 @@ private theorem GL_insertion_leibniz_basis_right
         (A * GrossmanLarson.unop (GrossmanLarson.insertion
           (GrossmanLarson.op (ConnesKreimer.of' F_B : ConnesKreimer ℤ _))
           (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))))) := by
-  refine Finsupp.induction_linear A ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear A ?_ ?_ ?_
   · -- A = 0: every term has a `0 *` or `* 0` or `unop 0`/`op 0` that
     -- reduces to 0 of the appropriate type.
     show GrossmanLarson.insertion
@@ -417,8 +422,8 @@ private theorem GL_insertion_leibniz_basis_right
                LinearMap.zero_apply, add_zero]
   · -- additive
     intro A₁ A₂ ih₁ ih₂
-    -- A₁, A₂ are typed as `Forest →₀ ℤ` by `Finsupp.induction_linear`.
-    -- Cast each to `ConnesKreimer ℤ (Nonplanar α)` via `let`.
+    -- A₁, A₂ are `ConnesKreimer ℤ (Nonplanar α)` from `ConnesKreimer.induction_linear`.
+    -- Alias each via `let` for the `show` below.
     let A₁' : ConnesKreimer ℤ (Nonplanar α) := A₁
     let A₂' : ConnesKreimer ℤ (Nonplanar α) := A₂
     show GrossmanLarson.insertion
@@ -447,8 +452,8 @@ private theorem GL_insertion_leibniz_basis_right
     ring
   · -- single F_A r
     intro F_A r
-    -- Cast `Finsupp.single F_A r` from Finsupp to CK type explicitly.
-    let A_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single F_A r
+    -- Basis case: `A = ConnesKreimer.single F_A r`.
+    let A_single : ConnesKreimer ℤ (Nonplanar α) := ConnesKreimer.single F_A r
     show GrossmanLarson.insertion
         (GrossmanLarson.op (A_single * (ConnesKreimer.of' F_B : ConnesKreimer ℤ _)))
         (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
@@ -460,11 +465,8 @@ private theorem GL_insertion_leibniz_basis_right
             (GrossmanLarson.op (ConnesKreimer.of' F_B : ConnesKreimer ℤ _))
             (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))))
     -- Unfold A_single = r • of' F_A.
-    have hA : A_single = r • (ConnesKreimer.of' F_A : ConnesKreimer ℤ (Nonplanar α)) := by
-      show (Finsupp.single F_A r : ConnesKreimer ℤ (Nonplanar α)) =
-            r • (ConnesKreimer.of' F_A : ConnesKreimer ℤ _)
-      rw [ConnesKreimer.of'_apply]
-      exact (Finsupp.smul_single_one F_A r).symm
+    have hA : A_single = r • (ConnesKreimer.of' F_A : ConnesKreimer ℤ (Nonplanar α)) :=
+      ConnesKreimer.smul_single_one F_A r
     rw [hA]
     rw [smul_mul_assoc, ← ConnesKreimer.of'_add, op_smul,
         (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_smul,
@@ -496,7 +498,7 @@ private theorem GL_insertion_leibniz_left_singleton_guest
       GrossmanLarson.op
         (A * GrossmanLarson.unop (GrossmanLarson.insertion (GrossmanLarson.op B)
           (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset (Nonplanar α)))))) := by
-  refine Finsupp.induction_linear B ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear B ?_ ?_ ?_
   · -- B = 0
     show GrossmanLarson.insertion
         (GrossmanLarson.op (A * (0 : ConnesKreimer ℤ (Nonplanar α))))
@@ -539,7 +541,7 @@ private theorem GL_insertion_leibniz_left_singleton_guest
     ring
   · -- B = single F_B r
     intro F_B r
-    let B_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single F_B r
+    let B_single : ConnesKreimer ℤ (Nonplanar α) := ConnesKreimer.single F_B r
     show GrossmanLarson.insertion
         (GrossmanLarson.op (A * B_single))
         (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
@@ -550,11 +552,8 @@ private theorem GL_insertion_leibniz_left_singleton_guest
         (A * GrossmanLarson.unop (GrossmanLarson.insertion
           (GrossmanLarson.op B_single)
           (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))))
-    have hB : B_single = r • (ConnesKreimer.of' F_B : ConnesKreimer ℤ (Nonplanar α)) := by
-      show (Finsupp.single F_B r : ConnesKreimer ℤ (Nonplanar α)) =
-            r • (ConnesKreimer.of' F_B : ConnesKreimer ℤ _)
-      rw [ConnesKreimer.of'_apply]
-      exact (Finsupp.smul_single_one F_B r).symm
+    have hB : B_single = r • (ConnesKreimer.of' F_B : ConnesKreimer ℤ (Nonplanar α)) :=
+      ConnesKreimer.smul_single_one F_B r
     rw [hB]
     -- A * (r • of' F_B) = r • (A * of' F_B). Then op + insertion scale out.
     rw [mul_smul_comm, op_smul,
@@ -622,10 +621,15 @@ private theorem ckIso_circ_intertwine_basis_v
         (GrossmanLarson.op (ckIsoSymmetricAlgebra
           (algebraMap ℤ (SymmetricAlgebra ℤ (InsertionAlgebra α)) r)))
         (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _))))
-    rw [AlgEquiv.commutes, Algebra.algebraMap_eq_smul_one, op_smul,
-        show GrossmanLarson.op (1 : ConnesKreimer ℤ (Nonplanar α)) =
-            (1 : GrossmanLarson ℤ α) from rfl,
-        (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_smul,
+    rw [AlgEquiv.commutes, Algebra.algebraMap_eq_smul_one]
+    -- `op (r • 1)` and `r • (1 : GrossmanLarson)` are both `⟨r • 1⟩`; normalize
+    -- the smul to the GL unit by defeq (avoids a `SMul ℤ` instance mismatch
+    -- between `Algebra.toSMul` and the structural `SMul ℤ`).
+    show (0 : ConnesKreimer ℤ (Nonplanar α)) =
+      GrossmanLarson.unop (GrossmanLarson.insertion
+        (r • (1 : GrossmanLarson ℤ α))
+        (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _))))
+    rw [(GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_smul,
         LinearMap.smul_apply]
     -- Goal: 0 = (r • insertion 1 (op (of' {t}))).unop
     rw [show GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset (Nonplanar α))) =
@@ -952,7 +956,7 @@ private theorem GL_iterated_insertion_singleton_v
   set ins : GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α :=
     GrossmanLarson.insertion with hins
   -- Linearize F. Both sides are F-linear by bilinearity of `insertion`.
-  refine Finsupp.induction_linear F ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear F ?_ ?_ ?_
   · -- F = 0: both sides reduce to 0.
     show ins (ins 0 (ConnesKreimer.of' C))
           (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
@@ -1012,20 +1016,15 @@ private theorem GL_iterated_insertion_singleton_v
     abel
   · -- F = single A r — basis case.
     intro A r
-    let F_single : GrossmanLarson ℤ α := Finsupp.single A r
+    let F_single : GrossmanLarson ℤ α := ConnesKreimer.single A r
     show ins (ins F_single (ConnesKreimer.of' C))
           (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
         ins F_single (ConnesKreimer.of' (C + {v})) +
         ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
           (fun Y => ins F_single (ConnesKreimer.of' Y))).sum
     -- ins is bilinear; reduce F_single = r • of' A.
-    have hF : F_single = r • (GrossmanLarson.of' A : GrossmanLarson ℤ α) := by
-      show (Finsupp.single A r : GrossmanLarson ℤ α) =
-            r • (GrossmanLarson.of' A : GrossmanLarson ℤ α)
-      show (Finsupp.single A r : ConnesKreimer ℤ (Nonplanar α)) =
-            r • (ConnesKreimer.of' A : ConnesKreimer ℤ _)
-      rw [ConnesKreimer.of'_apply]
-      exact (Finsupp.smul_single_one A r).symm
+    have hF : F_single = r • (GrossmanLarson.of' A : GrossmanLarson ℤ α) :=
+      ConnesKreimer.smul_single_one A r
     rw [hF]
     -- Helper: insertion respects smul in first arg.
     have hins_smul_left : ∀ (X Z : GrossmanLarson ℤ α),
@@ -1578,9 +1577,9 @@ private theorem GL_product_split_mul_ι
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Step 1: linearize G to basis. Use the underlying ℤ-linearity of
   -- both sides in G (each of T1, T2, T3, T4 is a ℤ-linear function of G).
-  -- This standard Finsupp.induction_linear pattern follows
+  -- This standard ConnesKreimer.induction_linear pattern follows
   -- `insertion_mul_distrib_gen`/`GL_insertion_leibniz_basis_right`.
-  refine Finsupp.induction_linear G ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear G ?_ ?_ ?_
   · -- G = 0 case: T1=T2=T3=T4=0.
     show F * GrossmanLarson.op
         ((0 : ConnesKreimer ℤ (Nonplanar α)) * ConnesKreimer.of' {v}) +
@@ -1737,7 +1736,7 @@ private theorem GL_product_split_mul_ι
     abel
   · -- G = single B r: scale out r, reduce to basis G = of' B.
     intro B r
-    let G_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single B r
+    let G_single : ConnesKreimer ℤ (Nonplanar α) := ConnesKreimer.single B r
     show F * GrossmanLarson.op (G_single * ConnesKreimer.of' {v}) +
         F * GrossmanLarson.insertion (GrossmanLarson.op G_single)
             (GrossmanLarson.op (ConnesKreimer.of' {v})) =
@@ -1745,11 +1744,8 @@ private theorem GL_product_split_mul_ι
         (GrossmanLarson.op (ConnesKreimer.of' {v})) +
       GrossmanLarson.op
         (GrossmanLarson.unop (F * GrossmanLarson.op G_single) * ConnesKreimer.of' {v})
-    have hG : G_single = r • (ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α)) := by
-      show (Finsupp.single B r : ConnesKreimer ℤ (Nonplanar α)) =
-            r • (ConnesKreimer.of' B : ConnesKreimer ℤ _)
-      rw [ConnesKreimer.of'_apply]
-      exact (Finsupp.smul_single_one B r).symm
+    have hG : G_single = r • (ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α)) :=
+      ConnesKreimer.smul_single_one B r
     rw [hG]
     -- Push r through each term using smul_mul_assoc, op_smul, etc.
     have h_ins_smul_first :
@@ -2124,9 +2120,9 @@ private theorem GL_product_split_mul_ι
     `oudomGuinCirc_algHomL_tprod_ι` + `ckIso_circ_intertwine_insertion` +
     `GL_product_split_mul_ι`. The `m+1` case v-linearizes via
     `Finsupp.induction_linear`; the basis case `v = ofTree t` chains all
-    substrate. Coercion discipline: work in CK (with the local
-    `AddCommGroup`) for additive rearrangements; transport to GL via
-    `op`/`unop` (which are the identity coercion). -/
+    substrate. Coercion discipline: work in CK (whose global `CommRing`
+    instance supplies the `AddCommGroup`) for additive rearrangements;
+    transport to GL via `op`/`unop` (which are the identity coercion). -/
 private theorem gl_product_eq_oudomGuinStar_tprod
     (X : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
     ∀ (m : ℕ) (a : Fin m → InsertionAlgebra α),
@@ -2158,8 +2154,6 @@ private theorem gl_product_eq_oudomGuinStar_tprod
     rfl
   | succ m ih =>
     intro a
-    -- Local AddCommGroup instance for CK to enable map_sub/map_neg.
-    letI : AddCommGroup (ConnesKreimer ℤ (Nonplanar α)) := ConnesKreimer.addCommGroupOf
     -- Set up tprod (m+1) split + algHomL split.
     have h_a_eq : a = Fin.snoc (Fin.init a) (a (Fin.last m)) :=
       (Fin.snoc_init_self a).symm

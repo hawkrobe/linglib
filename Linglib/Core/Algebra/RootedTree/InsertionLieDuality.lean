@@ -340,22 +340,23 @@ variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R] {α : Type*}
     Connes-Kreimer element. -/
 noncomputable def deltaSingleton (T : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
-  Finsupp.lapply ({T} : Forest (Nonplanar α))
+  (Finsupp.lapply ({T} : Forest (Nonplanar α))).comp
+    (toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearEquiv.toLinearMap
 
 set_option linter.unusedSectionVars false in
 @[simp] theorem deltaSingleton_of'_self (T : Nonplanar α) :
     deltaSingleton (R := R) T (of' ({T} : Forest (Nonplanar α))) = 1 := by
-  show Finsupp.lapply ({T} : Forest (Nonplanar α))
-        (Finsupp.single ({T} : Forest (Nonplanar α)) 1) = 1
-  rw [Finsupp.lapply_apply, Finsupp.single_eq_same]
+  simp only [deltaSingleton, LinearMap.comp_apply, Finsupp.lapply_apply]
+  exact Finsupp.single_eq_same
 
 set_option linter.unusedSectionVars false in
 theorem deltaSingleton_of'_other (T : Nonplanar α)
     (F : Forest (Nonplanar α)) (hF : F ≠ {T}) :
     deltaSingleton (R := R) T (of' F) = 0 := by
   classical
-  show Finsupp.lapply ({T} : Forest (Nonplanar α)) (Finsupp.single F 1) = 0
-  rw [Finsupp.lapply_apply, Finsupp.single_apply]
+  simp only [deltaSingleton, LinearMap.comp_apply, Finsupp.lapply_apply]
+  show (Finsupp.single F (1 : R) : Forest (Nonplanar α) →₀ R) {T} = 0
+  rw [Finsupp.single_apply]
   exact if_neg hF
 
 /-- The delta functional on a single tree is a **dual primitive** —
@@ -381,7 +382,7 @@ theorem deltaSingleton_isDualPrimitive (T : Nonplanar α) :
         counit (r • of' F : ConnesKreimer R (Nonplanar α)) *
           deltaSingleton T (s • of' G : ConnesKreimer R (Nonplanar α)) by
     intro x y
-    refine Finsupp.induction_linear x ?_ ?_ ?_
+    refine ConnesKreimer.induction_linear x ?_ ?_ ?_
     · -- x = 0
       show deltaSingleton T ((0 : ConnesKreimer R (Nonplanar α)) * y) =
            deltaSingleton T (0 : ConnesKreimer R (Nonplanar α)) * counit y +
@@ -405,16 +406,16 @@ theorem deltaSingleton_isDualPrimitive (T : Nonplanar α) :
       ring
     · -- x = single F r
       intro F r
-      refine Finsupp.induction_linear y ?_ ?_ ?_
+      refine ConnesKreimer.induction_linear y ?_ ?_ ?_
       · -- y = 0
-        let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+        let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
         show deltaSingleton T (x_single * (0 : ConnesKreimer R (Nonplanar α))) =
              deltaSingleton T x_single * counit (0 : ConnesKreimer R (Nonplanar α)) +
              counit x_single * deltaSingleton T (0 : ConnesKreimer R (Nonplanar α))
         simp
       · -- y = y₁ + y₂
         intro y₁ y₂ ih₁ ih₂
-        let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+        let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
         let y₁' : ConnesKreimer R (Nonplanar α) := y₁
         let y₂' : ConnesKreimer R (Nonplanar α) := y₂
         show deltaSingleton T (x_single * (y₁' + y₂')) =
@@ -428,15 +429,15 @@ theorem deltaSingleton_isDualPrimitive (T : Nonplanar α) :
         ring
       · -- y = single G s
         intro G s
-        let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
-        let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+        let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
+        let y_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single G s
         show deltaSingleton T (x_single * y_single) =
              deltaSingleton T x_single * counit y_single +
              counit x_single * deltaSingleton T y_single
         have hx : x_single = r • (of' (R := R) F) :=
-          (Finsupp.smul_single_one F r).symm
+          ConnesKreimer.smul_single_one F r
         have hy : y_single = s • (of' (R := R) G) :=
-          (Finsupp.smul_single_one G s).symm
+          ConnesKreimer.smul_single_one G s
         rw [hx, hy]
         exact h F G r s
   -- Step 2: scalars factor out; reduce to the unscaled basis identity.

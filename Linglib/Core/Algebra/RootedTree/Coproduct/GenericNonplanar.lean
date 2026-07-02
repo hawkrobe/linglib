@@ -87,16 +87,13 @@ noncomputable def comulAlgHomNG
     (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α)) :
     ConnesKreimer R (Nonplanar α) →ₐ[R]
       ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (Nonplanar α)) ⊗[R] (ConnesKreimer R (Nonplanar α)))
-    (Forest (Nonplanar α)) (comulMonoidHomNG cuts)
+  ConnesKreimer.lift (comulMonoidHomNG cuts)
 
 @[simp] theorem comulAlgHomNG_apply_of'
     (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
     (F : Forest (Nonplanar α)) :
     comulAlgHomNG (R := R) cuts (of' F) = comulForestNG cuts F := by
-  show AddMonoidAlgebra.lift R _ _ (comulMonoidHomNG cuts) (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [comulAlgHomNG, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulAlgHomNG_apply_ofTree
