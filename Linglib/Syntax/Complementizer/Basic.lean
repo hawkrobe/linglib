@@ -26,8 +26,9 @@ grammaticalized say-roots like Buryat *gɘ* and Uyghur *de*.
 
 Framework-specific head assignments (a cartographic Force/Fin split, a
 ContP-exponence claim, an [n]-feature) are not fields; they live as
-Studies-local projections over these entries (cf. `Adjective`'s
-deferred degree semantics). Field conventions:
+Studies-local projections over these entries, and the schema carries no
+denotation (cf. `Adjective`'s deferred degree semantics). Field
+conventions:
 
 - `position = none`: unrecorded, or a bound root with no fixed
   attachment of its own (Buryat *gɘ* surfaces only suffixed).
@@ -51,9 +52,7 @@ inductive Complementizer.Licenser where
   | verbal
   deriving DecidableEq, Fintype, Repr
 
-/-- The general complementizer object: the morphosyntactic core shared
-by clause-typing morphemes. Carries no denotation and no framework's
-head assignment (cf. `Pronoun`, `Adjective`). -/
+/-- A complementizer: surface form plus the consensus clause-typing axes. -/
 structure Complementizer where
   /-- Surface form (romanization; affixes hyphenated). -/
   form : String
