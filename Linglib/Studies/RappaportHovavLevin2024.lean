@@ -77,9 +77,9 @@ verbs ([levin-krejci-2019]), and *drown*.
 
 ## Todo
 
-* Bridge `broomSweep` to `Fragments/English/Predicates/Verbal.lean`'s
-  `sweepBroomSubjectProfile` once the inline `EntailmentProfile` records
-  are promoted to named exports (project decision pending).
+* Bridge `broomSweep` to the instrument-subclass template
+  `Features.LevinClassProfiles.wipeInstrument` (Levin 10.4.2), whose subject
+  profile is the fragment's `sweep_instr` entry value.
 * Formalize the lexicon-uniformity blocker for some causative-alternation
   pairs ([rappaport-hovav-2014] on direct-causation requirement).
 * Engage [ramchand-2008]'s first-phase syntax and

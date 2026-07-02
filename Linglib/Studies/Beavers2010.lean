@@ -37,6 +37,7 @@ namespace Beavers2010
 
 open ArgumentStructure.EntailmentProfile
 open ArgumentStructure.AgentivityLattice
+open Features.LevinClassProfiles
 open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)
 
@@ -374,15 +375,15 @@ theorem locative_data_attested :
     direct vs. oblique objects. -/
 theorem asp_and_map_orthogonal :
     -- ASP: kick subject outranks object for subjecthood
-    OutranksForSubject kickSubjectProfile kickObjectProfile ∧
+    OutranksForSubject mannerContact.subjectProfile contactObject ∧
     -- MAP: kick object has potential affectedness (surface contact, no
     -- entailed change — [beavers-2011] eq. (60c), same degree the paper
     -- assigns the *hit* conative's direct object)
-    profileToDegree kickObjectProfile = .potential ∧
+    profileToDegree contactObject = .potential ∧
     -- The two operate on different dimensions
     -- (subjecthood is about P-Agent; alternation is about P-Patient strength)
-    kickSubjectProfile.pAgentScore > 0 ∧
-    kickObjectProfile.pPatientScore > 0 :=
+    mannerContact.subjectProfile.pAgentScore > 0 ∧
+    contactObject.pPatientScore > 0 :=
   ⟨by decide, rfl, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -433,20 +434,20 @@ theorem changed_lower_than_unaffected :
     quPersBeginning (`TransitivityRank.contact.patientNode`), a genuine
     cross-paper disagreement over whether contact entails impingement. -/
 theorem kick_grimm_beavers_consistent :
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
-    profileToDegree kickObjectProfile = .potential := ⟨rfl, rfl⟩
+    PersistenceLevel.fromPatientProfile contactObject = .totalPersistence ∧
+    profileToDegree contactObject = .potential := ⟨rfl, rfl⟩
 
 /-- Bridge: build object has persistence exPersEnd (created) and
     affectedness quantized — both theories agree on maximal patient status. -/
 theorem build_grimm_beavers_consistent :
-    PersistenceLevel.fromPatientProfile buildObjectProfile = .exPersEnd ∧
-    profileToDegree buildObjectProfile = .quantized := ⟨rfl, rfl⟩
+    PersistenceLevel.fromPatientProfile creationObject = .exPersEnd ∧
+    profileToDegree creationObject = .quantized := ⟨rfl, rfl⟩
 
 /-- Bridge: eat object has persistence exPersBeginning (consumed) and
     affectedness quantized — both theories agree on maximal change. -/
 theorem eat_grimm_beavers_consistent :
-    PersistenceLevel.fromPatientProfile eatObjectProfile = .exPersBeginning ∧
-    profileToDegree eatObjectProfile = .quantized := ⟨rfl, rfl⟩
+    PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning ∧
+    profileToDegree consumptionObject = .quantized := ⟨rfl, rfl⟩
 
 /-- The deepest cross-theory result: Grimm's persistence ordering and
     Beavers' affectedness ordering are **monotonically related** for
@@ -455,14 +456,14 @@ theorem eat_grimm_beavers_consistent :
     — degree of change — from complementary perspectives. -/
 theorem grimm_beavers_monotone_canonical :
     -- kick: potential → totalPersistence (may change, persists unchanged)
-    profileToDegree kickObjectProfile = .potential ∧
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
+    profileToDegree contactObject = .potential ∧
+    PersistenceLevel.fromPatientProfile contactObject = .totalPersistence ∧
     -- build: quantized → exPersEnd (created, lower persistence)
-    profileToDegree buildObjectProfile = .quantized ∧
-    PersistenceLevel.fromPatientProfile buildObjectProfile = .exPersEnd ∧
+    profileToDegree creationObject = .quantized ∧
+    PersistenceLevel.fromPatientProfile creationObject = .exPersEnd ∧
     -- see: unspecified → totalNonPersistence (no P-Patient entailments at all)
-    profileToDegree seeSubjectProfile = .unspecified ∧
-    PersistenceLevel.fromPatientProfile seeSubjectProfile = .totalNonPersistence :=
+    profileToDegree perception.subjectProfile = .unspecified ∧
+    PersistenceLevel.fromPatientProfile perception.subjectProfile = .totalNonPersistence :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -475,7 +476,6 @@ theorem grimm_beavers_monotone_canonical :
     project into the predicted positions in both systems, and the consistency
     of affectedness ↔ persistence is checked. -/
 
-open Features.LevinClassProfiles
 
 /-- Project an ArgTemplate's subject profile to a GrimmNode. -/
 def _root_.Features.LevinClassProfiles.ArgTemplate.subjectGrimm

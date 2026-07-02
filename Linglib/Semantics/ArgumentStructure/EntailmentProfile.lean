@@ -22,8 +22,9 @@ with Proto-Patient dominance breaking ties.
 - `OutranksForSubject` — the lattice-based Argument Selection Principle
 - `PredictsUnaccusative`, `PredictsUnergative` — split-intransitivity
   predictions
-- `kickSubjectProfile` … `accomplishmentObjectProfile` — canonical per-verb
-  and per-template profiles
+- `activitySubjectProfile` … `accomplishmentObjectProfile` — the
+  [rappaport-hovav-levin-1998] template-level profile defaults (per-verb
+  content lives in the class map, `Semantics/Lexical/LevinClassProfiles.lean`)
 - `AgentivityLattice.AgentivityNode.fromEntailmentProfile`,
   `AgentivityLattice.PersistenceLevel.fromPatientProfile` — bridges from
   profiles to [grimm-2011]'s agentivity lattice, with the consistency
@@ -233,94 +234,15 @@ theorem two_le_pAgentScore_of_isEffector (h : IsEffector p) :
     2 ≤ p.pAgentScore := by
   simp [pAgentScore, h.1, h.2]
 
-/-! ### Canonical verb profiles
-
-Canonical entailment content for specific verb senses, consumed by
-`EventStructure.lean`, `Morphology/RootTypology.lean`, and study files. -/
-
-/-- *kick* subject: prototypical agent (V+S+C+M+IE). -/
-def kickSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true, movement := true,
-    independentExistence := true }
-
-/-- *kick* object: CA+St — surface contact, no entailed change. [dowty-1991]
-does not discuss *kick* (zero occurrences in the paper; the formerly stored
-`changeOfState := true` had no Dowty basis). Classified per [beavers-2011]
-eq. (60c): surface-contact/impact verbs (*hit*, *kick*, *slap*) impose only
-*potential* for change — "John kicked the apple" leaves the apple impinged
-but not necessarily affected, and no-change continuations are felicitous
-([beavers-koontz-garboden-2020] ch. 4). Matches the hit-class
-`mannerContact` object template in `LevinClassProfiles.lean`. -/
-def kickObjectProfile : EntailmentProfile :=
-  { causallyAffected := true, stationary := true }
-
-/-- *build* subject: V+S+C+M+IE. -/
-def buildSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true, movement := true,
-    independentExistence := true }
-
-/-- *build* object: CoS+IT+CA+DE (incremental theme, dependent existence). -/
-def buildObjectProfile : EntailmentProfile :=
-  { changeOfState := true, incrementalTheme := true, causallyAffected := true,
-    dependentExistence := true }
-
-/-- *see* subject: experiencer (S+IE). -/
-def seeSubjectProfile : EntailmentProfile :=
-  { sentience := true, independentExistence := true }
-
-/-- *run* subject: V+S+M+IE (unergative). -/
-def runSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, movement := true,
-    independentExistence := true }
-
-/-- *arrive* subject: M+IE+CoS (unaccusative). -/
-def arriveSubjectProfile : EntailmentProfile :=
-  { movement := true, independentExistence := true, changeOfState := true }
-
-/-- *die* subject: CoS+CA+DE (unaccusative). -/
-def dieSubjectProfile : EntailmentProfile :=
-  { changeOfState := true, causallyAffected := true, dependentExistence := true }
-
-/-- *eat* subject: V+S+C+M+IE. -/
-def eatSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true, movement := true,
-    independentExistence := true }
-
-/-- *eat* object: CoS+IT+CA (incremental theme). -/
-def eatObjectProfile : EntailmentProfile :=
-  { changeOfState := true, incrementalTheme := true, causallyAffected := true }
-
-/-- *buy* subject: V+S+C+IE. -/
-def buySubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true,
-    independentExistence := true }
-
-/-- *sell* subject: V+S+C+IE (same as *buy*). -/
-def sellSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true,
-    independentExistence := true }
-
-/-- *sweep* basic-sense subject: M+IE only; underspecified for volition, so
-agentivity is pragmatically resolved. -/
-def sweepBasicSubjectProfile : EntailmentProfile :=
-  { movement := true, independentExistence := true }
-
-/-- *sweep* broom-sense subject: obligatory agent (V+S+C+M+IE); instrument
-lexicalization forces volition, sentience, causation. -/
-def sweepBroomSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true, movement := true,
-    independentExistence := true }
-
 /-! ### Template-level proto-role defaults
 
 Per-template subject/object defaults ([rappaport-hovav-levin-1998] with
 [dowty-1991]'s entailments), consumed by `Template.subjectProfile` and
 `Template.objectProfile` in `EventStructure.lean` and by Fragment-level verb
-entries. -/
-
-/-- State template subject: psych-state holder (*admire*, *want*) — S+IE. -/
-def stateSubjectProfile : EntailmentProfile :=
-  { sentience := true, independentExistence := true }
+entries. Per-verb entailment content is NOT stored here: it lives in the
+Levin-class → template map (`Semantics/Lexical/LevinClassProfiles.lean`),
+and Dowty's own per-verb attributions are typed data rows in
+`Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
 
 /-- Activity template subject: V+S+M+IE. Transitive activities like *hit*
 add causation at the class level via root-contributed objects. -/
@@ -328,18 +250,29 @@ def activitySubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, movement := true,
     independentExistence := true }
 
-/-- Achievement template subject: undergoes change (M+IE+CoS). -/
+/-- Achievement template subject: undergoes change (M+IE+CoS). Caveat: the
+movement entailment fits directed-motion achievements (*arrive*) but
+overgeneralizes to non-motion achievements (*recognize*, *notice*), whose
+subjects are sentient rather than moving — those pattern with the psych-state
+templates in `LevinClassProfiles.lean`. -/
 def achievementSubjectProfile : EntailmentProfile :=
   { movement := true, independentExistence := true, changeOfState := true }
 
-/-- Accomplishment template subject: full proto-agent (V+S+C+M+IE). -/
+/-- Accomplishment template subject: full proto-agent (V+S+C+M+IE).
+Dowty-confirmed at the class level: the primary transitive verbs of
+[dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have subjects
+with "volition, sentience, causation, and movement" and no Proto-Patient
+entailments (p. 577); independent existence is the parenthesized (27e). -/
 def accomplishmentSubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, causation := true, movement := true,
     independentExistence := true }
 
-/-- Accomplishment template object: result patient (CoS+CA). Incremental
-themes (*eat*, *build*) add IT per-verb — not all accomplishment objects
-measure the event. -/
+/-- Accomplishment template object: result patient (CoS+CA). Dowty-confirmed
+at the class level: the (35) objects have "change, causally affected"
+(p. 577); the remaining Proto-Patient entailments are hedged there as
+"(mostly) incremental theme, stationary, dependent existence", so incremental
+themes (*eat*, *build*) add IT per class or per verb — not all accomplishment
+objects measure the event. -/
 def accomplishmentObjectProfile : EntailmentProfile :=
   { changeOfState := true, causallyAffected := true }
 

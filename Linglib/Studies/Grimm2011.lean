@@ -1,5 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Studies.Aissen2003
 
 /-!
@@ -39,6 +40,7 @@ namespace Grimm2011
 open ArgumentStructure.AgentivityLattice
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
+open Features.LevinClassProfiles
 open Features.Prominence
 open Aissen2003
 
@@ -192,17 +194,17 @@ instance (p : EntailmentProfile) : Decidable (SubjectInAgentRegion p) := by
 /-- Kick subject → NOM/ERG: maximal verbal contrast.
     Corresponds to *matar* 'kill' — DOM regularized early. -/
 theorem kick_subject_in_agent_region :
-    SubjectInAgentRegion kickSubjectProfile := by decide
+    SubjectInAgentRegion mannerContact.subjectProfile := by decide
 
 /-- See subject → NOT NOM/ERG: insufficient verbal contrast.
     Corresponds to *ver* 'see' — DOM remained variable. -/
 theorem see_subject_not_in_agent_region :
-    ¬ SubjectInAgentRegion seeSubjectProfile := by decide
+    ¬ SubjectInAgentRegion perception.subjectProfile := by decide
 
 /-- Build subject → NOM/ERG: high verbal contrast, but moot because
     the object is outside the transitivity region (§0.5). -/
 theorem build_subject_in_agent_region :
-    SubjectInAgentRegion buildSubjectProfile := by decide
+    SubjectInAgentRegion creation.subjectProfile := by decide
 
 -- ── §0.7 Monotonicity: Aissen's staircase from lattice structure ──
 
@@ -389,8 +391,8 @@ theorem lattice_matches_aissen_type2 :
     ACC/ABS); the divergence is the Grimm-vs-Beavers disagreement over
     whether contact entails impingement (`kick_object_persistence`). -/
 theorem kick_case_regions :
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion = .oblique :=
+    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromObjectProfile contactObject).toCaseRegion = .oblique :=
   ⟨by decide, by decide⟩
 
 /-- build: creation verb. Subject → NOM/ERG (has instigation), but
@@ -398,16 +400,16 @@ theorem kick_case_regions :
     The lattice correctly identifies creation verb objects as
     non-prototypical patients. -/
 theorem build_case_regions :
-    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion = .oblique :=
+    (GrimmNode.fromSubjectProfile creation.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromObjectProfile creationObject).toCaseRegion = .oblique :=
   ⟨by native_decide, by native_decide⟩
 
 /-- eat: consumption verb. Subject → NOM/ERG, object → ACC/ABS.
     The consumed object has exPersBeginning (exists before, ceases to
     exist after) — in the same region as destroyed objects. -/
 theorem eat_case_regions :
-    (GrimmNode.fromSubjectProfile eatSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromObjectProfile eatObjectProfile).toCaseRegion = .accAbs :=
+    (GrimmNode.fromSubjectProfile consumption.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromObjectProfile consumptionObject).toCaseRegion = .accAbs :=
   ⟨by native_decide, by native_decide⟩
 
 -- Intransitive verbs
@@ -416,7 +418,7 @@ theorem eat_case_regions :
     outside NOM/ERG. The lattice predicts the subject is not a prototypical
     agent — consistent with it being unergative in split-S systems. -/
 theorem run_case_region :
-    (GrimmNode.fromSubjectProfile runSubjectProfile).toCaseRegion = .oblique := by
+    (GrimmNode.fromSubjectProfile selfMotion.subjectProfile).toCaseRegion = .oblique := by
   native_decide
 
 /-- see: experiencer verb. Subject has sentience but not instigation →
@@ -424,7 +426,7 @@ theorem run_case_region :
     subjects dative or oblique case (e.g., German *mir gefällt*, Icelandic
     *mér líkar*). -/
 theorem see_case_region :
-    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion = .oblique := by
+    (GrimmNode.fromSubjectProfile perception.subjectProfile).toCaseRegion = .oblique := by
   native_decide
 
 -- Alternating verbs
@@ -433,8 +435,8 @@ theorem see_case_region :
     The lattice predicts both are prototypical agents — consistent with
     [dowty-1991]'s prediction that buy/sell allow alternation. -/
 theorem buy_sell_case_regions :
-    (GrimmNode.fromSubjectProfile buySubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromSubjectProfile sellSubjectProfile).toCaseRegion = .nomErg :=
+    (GrimmNode.fromSubjectProfile possessionTransfer.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromSubjectProfile possessionTransfer.subjectProfile).toCaseRegion = .nomErg :=
   ⟨by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -461,32 +463,32 @@ theorem buy_sell_case_regions :
     [beavers-koontz-garboden-2020] ch. 4 deny any entailed change. The
     second conjunct keeps Grimm's own placement visible. -/
 theorem kick_object_persistence :
-    PersistenceLevel.fromPatientProfile kickObjectProfile = .totalPersistence ∧
+    PersistenceLevel.fromPatientProfile contactObject = .totalPersistence ∧
     TransitivityRank.contact.patientNode.persistence = .quPersBeginning :=
   ⟨by decide, rfl⟩
 
 /-- eat object → exPersBeginning: consumed (ceases to exist via SINC). -/
 theorem eat_object_persistence :
-    PersistenceLevel.fromPatientProfile eatObjectProfile = .exPersBeginning := by
+    PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning := by
   native_decide
 
 /-- build object → exPersEnd: created (comes into existence). -/
 theorem build_object_persistence :
-    PersistenceLevel.fromPatientProfile buildObjectProfile = .exPersEnd := by
+    PersistenceLevel.fromPatientProfile creationObject = .exPersEnd := by
   native_decide
 
 /-- die subject → exPersBeginning: ceases to exist (as patient). -/
 theorem die_subject_persistence :
-    PersistenceLevel.fromPatientProfile dieSubjectProfile = .exPersBeginning := by
+    PersistenceLevel.fromPatientProfile disappearance.subjectProfile = .exPersBeginning := by
   native_decide
 
 /-- kick and eat objects are in the transitivity region; build is not.
     This is the lattice's version of Tsunoda's observation that contact
     and resultative verbs form the core of transitivity. -/
 theorem transitivity_membership :
-    (GrimmNode.fromObjectProfile kickObjectProfile).InTransitiveRegion ∧
-    (GrimmNode.fromObjectProfile eatObjectProfile).InTransitiveRegion ∧
-    ¬ (GrimmNode.fromObjectProfile buildObjectProfile).InTransitiveRegion :=
+    (GrimmNode.fromObjectProfile contactObject).InTransitiveRegion ∧
+    (GrimmNode.fromObjectProfile consumptionObject).InTransitiveRegion ∧
+    ¬ (GrimmNode.fromObjectProfile creationObject).InTransitiveRegion :=
   ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -523,9 +525,9 @@ theorem verb_class_dom_behavior :
     (GrimmNode.fromObjectProfile accomplishmentObjectProfile).toCaseRegion
       = .accAbs ∧
     -- Class 2: subject NOT in core agent region
-    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg ∧
+    (GrimmNode.fromSubjectProfile perception.subjectProfile).toCaseRegion ≠ .nomErg ∧
     -- Creation: object outside transitivity region entirely
-    ¬ (GrimmNode.fromObjectProfile buildObjectProfile).InTransitiveRegion :=
+    ¬ (GrimmNode.fromObjectProfile creationObject).InTransitiveRegion :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 /-- Creation verb objects are outside the transitivity region at ALL
@@ -557,22 +559,23 @@ theorem creation_dom_inapplicable (a : AnimacyLevel) :
     the profile-to-case bridge for contact verbs, inherited from the
     Grimm-vs-Beavers disagreement flagged at `kick_object_persistence`. -/
 theorem kick_accusative :
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase = .nom ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase = .inst :=
+    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
+      = .nom ∧
+    (GrimmNode.fromObjectProfile contactObject).toCaseRegion.toAccusativeCase = .inst :=
   ⟨by decide, by decide⟩
 
 /-- kick in an ergative system: subject → ERG, object → INST (oblique
     region; see `kick_accusative` for the caveat). -/
 theorem kick_ergative :
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toErgativeCase = .erg ∧
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toErgativeCase = .inst :=
+    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toErgativeCase = .erg ∧
+    (GrimmNode.fromObjectProfile contactObject).toCaseRegion.toErgativeCase = .inst :=
   ⟨by decide, by decide⟩
 
 /-- eat in an accusative system: subject → NOM, object → ACC.
     Consumption verbs pattern with canonical transitives for case. -/
 theorem eat_accusative :
-    (GrimmNode.fromSubjectProfile eatSubjectProfile).toCaseRegion.toAccusativeCase = .nom ∧
-    (GrimmNode.fromObjectProfile eatObjectProfile).toCaseRegion.toAccusativeCase = .acc :=
+    (GrimmNode.fromSubjectProfile consumption.subjectProfile).toCaseRegion.toAccusativeCase = .nom ∧
+    (GrimmNode.fromObjectProfile consumptionObject).toCaseRegion.toAccusativeCase = .acc :=
   ⟨by native_decide, by native_decide⟩
 
 /-- build in an accusative system: subject → NOM, but object → INST
@@ -581,8 +584,8 @@ theorem eat_accusative :
     incomplete creation and Russian genitive of negation being more
     readily available with creation verbs. -/
 theorem build_accusative :
-    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion.toAccusativeCase = .nom ∧
-    (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion.toAccusativeCase = .inst :=
+    (GrimmNode.fromSubjectProfile creation.subjectProfile).toCaseRegion.toAccusativeCase = .nom ∧
+    (GrimmNode.fromObjectProfile creationObject).toCaseRegion.toAccusativeCase = .inst :=
   ⟨by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -599,14 +602,14 @@ theorem build_accusative :
     The dividing line is instigation (Dowty's causation). -/
 theorem instigation_divides :
     -- With instigation → NOM/ERG
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromSubjectProfile eatSubjectProfile).toCaseRegion = .nomErg ∧
-    (GrimmNode.fromSubjectProfile buySubjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromSubjectProfile creation.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromSubjectProfile consumption.subjectProfile).toCaseRegion = .nomErg ∧
+    (GrimmNode.fromSubjectProfile possessionTransfer.subjectProfile).toCaseRegion = .nomErg ∧
     -- Without instigation → oblique
-    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion = .oblique ∧
-    (GrimmNode.fromSubjectProfile runSubjectProfile).toCaseRegion = .oblique ∧
-    (GrimmNode.fromSubjectProfile arriveSubjectProfile).toCaseRegion = .oblique :=
+    (GrimmNode.fromSubjectProfile perception.subjectProfile).toCaseRegion = .oblique ∧
+    (GrimmNode.fromSubjectProfile selfMotion.subjectProfile).toCaseRegion = .oblique ∧
+    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion = .oblique :=
   ⟨by native_decide, by native_decide, by native_decide, by native_decide,
    by native_decide, by native_decide, by native_decide⟩
 
@@ -615,14 +618,14 @@ theorem instigation_divides :
     Instigation = Dowty's causation mapped to Grimm's system. -/
 theorem instigation_is_the_feature :
     -- NOM/ERG subjects have instigation
-    kickSubjectProfile.causation = true ∧
-    buildSubjectProfile.causation = true ∧
-    eatSubjectProfile.causation = true ∧
-    buySubjectProfile.causation = true ∧
+    mannerContact.subjectProfile.causation = true ∧
+    creation.subjectProfile.causation = true ∧
+    consumption.subjectProfile.causation = true ∧
+    possessionTransfer.subjectProfile.causation = true ∧
     -- Non-NOM/ERG subjects lack instigation
-    seeSubjectProfile.causation = false ∧
-    runSubjectProfile.causation = false ∧
-    arriveSubjectProfile.causation = false :=
+    perception.subjectProfile.causation = false ∧
+    selfMotion.subjectProfile.causation = false ∧
+    directedMotion.subjectProfile.causation = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -873,40 +876,40 @@ theorem ergative_alignment :
 
 /-- kick subject → agentivity {V,S,I,M} (full agent). -/
 theorem kick_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile kickSubjectProfile
+    AgentivityNode.fromEntailmentProfile mannerContact.subjectProfile
     = ⟨true, true, true, true⟩ := rfl
 
 /-- run subject → agentivity {V,S,M} (no instigation). -/
 theorem run_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile runSubjectProfile
+    AgentivityNode.fromEntailmentProfile selfMotion.subjectProfile
     = ⟨true, true, false, true⟩ := rfl
 
 /-- arrive subject → agentivity {M} (motion only). -/
 theorem arrive_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile arriveSubjectProfile
+    AgentivityNode.fromEntailmentProfile directedMotion.subjectProfile
     = ⟨false, false, false, true⟩ := rfl
 
 /-- see subject → agentivity {S} (sentience only). -/
 theorem see_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile seeSubjectProfile
+    AgentivityNode.fromEntailmentProfile perception.subjectProfile
     = ⟨false, true, false, false⟩ := rfl
 
 /-- sweep basic subject → agentivity {M} (motion only, variable agentivity). -/
 theorem sweep_basic_agentivity :
-    AgentivityNode.fromEntailmentProfile sweepBasicSubjectProfile
+    AgentivityNode.fromEntailmentProfile wipeManner.subjectProfile
     = ⟨false, false, false, true⟩ := rfl
 
 /-- sweep broom subject → agentivity {V,S,I,M} (instrument lexicalization
     adds full agentivity, [rappaport-hovav-levin-2024]). -/
 theorem sweep_broom_agentivity :
-    AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile
+    AgentivityNode.fromEntailmentProfile wipeInstrument.subjectProfile
     = ⟨true, true, true, true⟩ := rfl
 
 /-- Instrument lexicalization strictly increases agentivity on the lattice:
     sweep basic {M} < sweep broom {V,S,I,M}. -/
 theorem sweep_lexicalization_increases :
-    AgentivityNode.fromEntailmentProfile sweepBasicSubjectProfile <
-    AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile := by
+    AgentivityNode.fromEntailmentProfile wipeManner.subjectProfile <
+    AgentivityNode.fromEntailmentProfile wipeInstrument.subjectProfile := by
   constructor <;> decide
 
 -- ════════════════════════════════════════════════════
@@ -915,7 +918,7 @@ theorem sweep_lexicalization_increases :
 
 /-- Full pipeline: kick subject → GrimmNode → NOM/ERG → NOM (accusative). -/
 theorem kick_subject_to_nom :
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
+    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
     = .nom := by decide
 
 /-- Full pipeline: kick object → GrimmNode → oblique → INST. The corrected
@@ -923,12 +926,12 @@ theorem kick_subject_to_nom :
     see `kick_accusative` for why this is a flagged mis-prediction for
     contact verbs rather than a confirmed case assignment. -/
 theorem kick_object_to_inst :
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
+    (GrimmNode.fromObjectProfile contactObject).toCaseRegion.toAccusativeCase
     = .inst := by decide
 
 /-- Build subject → NOM (full agent, total persistence). -/
 theorem build_subject_to_nom :
-    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion.toAccusativeCase
+    (GrimmNode.fromSubjectProfile creation.subjectProfile).toCaseRegion.toAccusativeCase
     = .nom := by decide
 
 /-- Build object → OBLIQUE (not ACC). The object of *build* maps to
@@ -939,7 +942,7 @@ theorem build_subject_to_nom :
     prediction: creation verb objects cross-linguistically show atypical
     case marking (e.g., pseudo-cleft asymmetry). -/
 theorem build_object_outside_acc :
-    (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion ≠ .accAbs := by
+    (GrimmNode.fromObjectProfile creationObject).toCaseRegion ≠ .accAbs := by
   decide
 
 /-- Full pipeline: see subject → OBLIQUE (not NOM/ERG).
@@ -947,7 +950,7 @@ theorem build_object_outside_acc :
     the NOM/ERG region. Grimm's system predicts non-canonical case for
     perception verb subjects cross-linguistically. -/
 theorem see_subject_not_nomErg :
-    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg := by
+    (GrimmNode.fromSubjectProfile perception.subjectProfile).toCaseRegion ≠ .nomErg := by
   decide
 
 /-- Full pipeline: die subject (unaccusative) → ACC/ABS.
@@ -955,7 +958,7 @@ theorem see_subject_not_nomErg :
     exPersBeginning). In an ergative system this → ABS (= intransitive
     subject). -/
 theorem die_subject_to_abs :
-    (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion.toErgativeCase
+    (GrimmNode.fromObjectProfile disappearance.subjectProfile).toCaseRegion.toErgativeCase
     = .abs := by decide
 
 end Grimm2011

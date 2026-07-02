@@ -1,6 +1,7 @@
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Lexical.LevinTheory
+import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.Verb.Root.Profile
@@ -713,12 +714,14 @@ def rootTypeFromChangeEntailment (p : EntailmentProfile) : RootType :=
     eq. (60c)) fall on the other side of the bridge. -/
 theorem result_object_has_changeOfState :
     rootTypeFromChangeEntailment accomplishmentObjectProfile = .result ∧
-    rootTypeFromChangeEntailment kickObjectProfile = .propertyConcept := by
+    rootTypeFromChangeEntailment Features.LevinClassProfiles.contactObject
+      = .propertyConcept := by
   decide
 
 /-- Die subject undergoes change → result-type pattern. -/
 theorem die_result_pattern :
-    (rootTypeFromChangeEntailment dieSubjectProfile) = .result := by
+    rootTypeFromChangeEntailment
+      Features.LevinClassProfiles.disappearance.subjectProfile = .result := by
   decide
 
 -- ════════════════════════════════════════════════════

@@ -43,9 +43,10 @@ and `VendlerClass`, connecting to the affectedness hierarchy
 
 ## Integration with linglib
 
-- Subject profiles reuse canonical [dowty-1991] profiles
-  (`kickSubjectProfile`, `seeSubjectProfile`, `runSubjectProfile`)
-  rather than duplicating them, making the connection structural.
+- Subject profiles reuse the canonical [dowty-1991] template profiles
+  (`accomplishmentSubjectProfile`, `experiencerProfile`,
+  `activitySubjectProfile`) rather than duplicating them, making the
+  connection structural.
 - Passive voice connects to [collins-2005]'s `voicePassive` —
   Case-checking by Voice is the syntactic correlate of the preposition's
   semantic contribution.
@@ -152,13 +153,13 @@ theorem par_de_complementary (p : EntailmentProfile) :
 -- each profile are listed in the docstring.
 
 /-- Canonical agents (laver, écrire, construire, tuer, abandonner,
-    délaisser) have V+S+C+M+IE → par required. This is `kickSubjectProfile`
-    from [dowty-1991]. -/
+    délaisser) have V+S+C+M+IE → par required. This is [dowty-1991]'s
+    canonical agent (`accomplishmentSubjectProfile`). -/
 theorem canonical_agent_requires_par :
     predictsParRequired protoTransSubjectProfile = true := by native_decide
 
 /-- Experiencer subjects (aimer, adorer, respecter) have S+IE only →
-    de available. This is `seeSubjectProfile` from [dowty-1991]. -/
+    de available. This is [dowty-1991]'s experiencer (`experiencerProfile`). -/
 theorem experiencer_allows_de :
     predictsDeAvailable experiencerSubjectProfile = true := by native_decide
 
@@ -168,7 +169,8 @@ theorem stative_positional_allows_de :
     predictsDeAvailable stativePositionalSubjectProfile = true := by native_decide
 
 /-- Dynamic motion subjects (dynamic suivre) have V+S+M+IE → par
-    required. This is `runSubjectProfile` from [dowty-1991]. -/
+    required. This is the self-motion class subject
+    (`activitySubjectProfile`). -/
 theorem dynamic_motion_requires_par :
     predictsParRequired dynamicFollowSubjectProfile = true := by native_decide
 

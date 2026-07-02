@@ -182,29 +182,12 @@ theorem toRole_canonicalProfile_roundtrip (r : ThetaRole) :
   cases r <;> exact ⟨_, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 4. toRole on Canonical Verb Profiles
+-- § 4. ASP Verification with Canonical Profiles
 -- ════════════════════════════════════════════════════════════════════════
 
-/-- "kick" subject profile → agent. -/
-theorem kick_subject_toRole : kickSubjectProfile.toRole = some .agent := by rfl
-
-/-- "kick" object profile → patient. -/
-theorem kick_object_toRole : kickObjectProfile.toRole = some .patient := by rfl
-
-/-- "see" subject profile → experiencer. -/
-theorem see_subject_toRole : seeSubjectProfile.toRole = some .experiencer := by rfl
-
-/-- "arrive" subject profile → patient: the unaccusative subject undergoes a
-    change of location (`changeOfState`) without agentivity. (Formerly `none` —
-    `movement` disqualified it, dropping the subject.) -/
-theorem arrive_subject_toRole : arriveSubjectProfile.toRole = some .patient := by rfl
-
-/-- "die" subject profile → patient (pure P-Patient). -/
-theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by rfl
-
--- ════════════════════════════════════════════════════════════════════════
--- § 5. ASP Verification with Canonical Profiles
--- ════════════════════════════════════════════════════════════════════════
+-- `toRole` on the per-class verb profiles lives downstream with the class
+-- map: see `hit_subject_role` … `disappearance_subject_role` in
+-- `Semantics/Lexical/LevinClassProfiles.lean`.
 
 -- Between-argument ASP
 
@@ -258,7 +241,7 @@ theorem canonical_profiles_wellformed (r : ThetaRole) :
   cases r <;> decide
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 6. Argument position
+-- § 5. Argument position
 -- ════════════════════════════════════════════════════════════════════════
 
 namespace ArgumentStructure.Linking
@@ -276,7 +259,7 @@ inductive ArgPosition where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 7. LinkingTheory
+-- § 6. LinkingTheory
 -- ════════════════════════════════════════════════════════════════════════
 
 /-- A linking theory, parameterized by verb representation and structural
@@ -311,7 +294,7 @@ structure LinkingTheory (Verb Ctx : Type) where
   predict : Verb → Ctx → ArgPosition → Option ThetaRole
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 8. Testing predictions against fragment data
+-- § 7. Testing predictions against fragment data
 -- ════════════════════════════════════════════════════════════════════════
 
 /-- Does the theory's prediction match the observed role at a given

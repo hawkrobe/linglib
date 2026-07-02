@@ -303,7 +303,7 @@ def expStimObjectProfile : EntailmentProfile :=
   ⟨false, false, true, false, true, false, false, false, false, false⟩
 
 /-- Agent-patient verb subject profile: full agent (all 5 P-Agent).
-    Identical to existing kickSubjectProfile. -/
+    Identical to `accomplishmentSubjectProfile`. -/
 def agPatSubjectProfile : EntailmentProfile :=
   ⟨true, true, true, true, true, false, false, false, false, false⟩
 
