@@ -3,12 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Data.Finset.Max
+import Mathlib.Order.Interval.Finset.Nat
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Phonology.Autosegmental.Realization
+import Linglib.Phonology.Autosegmental.Collapse
 import Linglib.Phonology.Tone.Basic
 
 /-!
@@ -56,6 +59,11 @@ This file formalizes the paper's formal skeleton over its string-based represent
   the substrate's `Autosegmental.AR.linearize`: the (40) translation `toAR` realizes a
   TBU string as an autosegmental representation whose association-state string *is* the
   input ((37a)), so string-measured look-ahead is timing-tier look-ahead ((37b)).
+* `realizeMerged_utp_plateau` — the autosegmental output: composed with the substrate's
+  OCP-merging realization (`Autosegmental.realizeMerged`), the UTP output is a *single*
+  H autosegment multiply linked across the plateau interval — [hyman-katamba-2010]'s
+  plateauing representation (7), tying the string function back to the AR-level
+  analysis.
 * `utp_fullyRegular` — the paper's thesis (§7) in one statement: UTP is *fully regular*,
   i.e. regular but neither subsequential in either direction nor weakly deterministic.
   Tone thereby exceeds the complexity bound that segmental phonology respects.
@@ -131,6 +139,43 @@ theorem surfacesH_iff {w : List TBU} {i : ℕ} :
     SurfacesH w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j, i ≤ j ∧ w[j]? = some .H := by
   rw [SurfacesH, mem_take_iff, mem_drop_iff]
   simp [Nat.lt_succ_iff]
+
+/-- A surfacing position is in bounds: some H lies at or beyond it. -/
+theorem SurfacesH.lt_length {w : List TBU} {i : ℕ} (h : SurfacesH w i) : i < w.length := by
+  obtain ⟨-, j, hij, hj⟩ := surfacesH_iff.mp h
+  obtain ⟨hlt, -⟩ := List.getElem?_eq_some_iff.mp hj
+  omega
+
+/-- The plateau is convex: a position between two surfacing positions surfaces. -/
+theorem SurfacesH.of_le_of_le {w : List TBU} {i j k : ℕ} (hi : SurfacesH w i)
+    (hk : SurfacesH w k) (hij : i ≤ j) (hjk : j ≤ k) : SurfacesH w j := by
+  obtain ⟨⟨j₁, hj₁, h₁⟩, -⟩ := surfacesH_iff.mp hi
+  obtain ⟨-, j₂, hj₂, h₂⟩ := surfacesH_iff.mp hk
+  exact surfacesH_iff.mpr ⟨⟨j₁, by omega, h₁⟩, ⟨j₂, by omega, h₂⟩⟩
+
+/-- An underlyingly H-toned TBU surfaces H: it flanks itself. -/
+theorem surfacesH_of_getElem?_H {w : List TBU} {i : ℕ} (h : w[i]? = some .H) :
+    SurfacesH w i :=
+  surfacesH_iff.mpr ⟨⟨i, le_rfl, h⟩, ⟨i, le_rfl, h⟩⟩
+
+/-- The output of UTP carries a H exactly at the surfacing positions. -/
+theorem utp_getElem?_H_iff {w : List TBU} {j : ℕ} :
+    (utp w)[j]? = some .H ↔ SurfacesH w j := by
+  rw [utp_getElem?]
+  cases hw : w[j]? with
+  | none =>
+    refine iff_of_false (by simp) fun hs => ?_
+    rw [List.getElem?_eq_none_iff] at hw
+    exact absurd hs.lt_length (by omega)
+  | some a =>
+    simp only [Option.map_some, Option.some.injEq]
+    constructor
+    · intro h
+      by_contra hs
+      rw [if_neg hs] at h
+      exact TBU.noConfusion h
+    · intro hs
+      rw [if_pos hs]
 
 /-- Splitting off the position itself: given the symbol at `i`, TBU `i` surfaces H iff it
 is itself a H or is strictly flanked. -/
@@ -786,6 +831,192 @@ theorem readTBU_linearize_realize (w : List TBU) :
   conv_rhs => rw [← List.map_id w]
   refine List.map_congr_left fun a ha => ?_
   cases a <;> rfl
+
+/-! #### The fused plateau ([hyman-katamba-2010] (7))
+
+`realize toAR` keeps one H melody node per surface H TBU; the substrate's OCP-merging
+realization `Autosegmental.realizeMerged` fuses the plateau's run of H nodes into one.
+The result is [hyman-katamba-2010]'s plateauing representation (7): a *single* H
+autosegment multiply linked to every TBU from the first trigger to the last, so the
+string function `utp`, the bimachine, and autosegmental spreading-plus-fusion compute
+the same output object. -/
+
+/-- Every melody node the realization creates is a H tone. -/
+private theorem mem_upper_realize_toAR (v : List TBU) :
+    ∀ b ∈ (realize toAR v).upper.toList, b = Tone.TRN.H := by
+  induction v with
+  | nil =>
+    have h : (realize toAR ([] : List TBU)).upper.toList = [] :=
+      List.eq_nil_of_length_eq_zero (by simp [realize_nil, AR.empty, Graph.empty])
+    rw [h]
+    intro b hb
+    simp at hb
+  | cons a v ih =>
+    intro b hb
+    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, List.mem_append] at hb
+    rcases hb with hb | hb
+    · cases a with
+      | H =>
+        rw [show (toAR TBU.H).upper = LabeledTuple.ofList [Tone.TRN.H] from rfl,
+          LabeledTuple.toList_ofList] at hb
+        simpa using hb
+      | O =>
+        rw [show (toAR TBU.O).upper = LabeledTuple.empty from rfl,
+          show (LabeledTuple.empty : LabeledTuple Tone.TRN).toList = [] from
+            List.eq_nil_of_length_eq_zero (by simp)] at hb
+        simp at hb
+    · exact ih b hb
+
+/-- The melody tier of the realization is a constant H run. -/
+private theorem upper_realize_toAR (v : List TBU) :
+    (realize toAR v).upper.toList
+      = List.replicate (realize toAR v).upper.len Tone.TRN.H := by
+  have h := List.eq_replicate_of_mem (mem_upper_realize_toAR v)
+  rwa [LabeledTuple.toList_length] at h
+
+/-- The timing tier of the realization has one slot per TBU. -/
+private theorem lower_realize_toAR (v : List TBU) :
+    (realize toAR v).lower.toList = List.replicate v.length () := by
+  have hlen : (realize toAR v).lower.len = v.length := by
+    rw [← AR.linearize_length, linearize_realize_toAR, List.length_map]
+  have h := List.eq_replicate_of_mem
+    (l := (realize toAR v).lower.toList) (a := ()) fun _ _ => rfl
+  rwa [LabeledTuple.toList_length, hlen] at h
+
+/-- A timing slot of the realization is linked iff its TBU is H-toned. -/
+private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
+    (∃ k, (k, j) ∈ (realize toAR v).links) ↔ v[j]? = some .H := by
+  induction v generalizing j with
+  | nil =>
+    refine iff_of_false ?_ (by simp)
+    rintro ⟨k, hk⟩
+    rw [realize_nil] at hk
+    simp [AR.empty, Graph.empty] at hk
+  | cons a v ih =>
+    cases a with
+    | H =>
+      rw [realize_cons, AR.links_concat,
+        show (toAR TBU.H).upper.len = 1 from rfl,
+        show (toAR TBU.H).lower.len = 1 from rfl,
+        show (toAR TBU.H).links = {((0 : ℕ), (0 : ℕ))} from rfl]
+      cases j with
+      | zero =>
+        simp only [List.getElem?_cons_zero]
+        exact iff_of_true ⟨0, Finset.mem_union_left _ (Finset.mem_singleton_self _)⟩ trivial
+      | succ t =>
+        rw [List.getElem?_cons_succ, ← ih t]
+        constructor
+        · rintro ⟨k, hk⟩
+          rcases Finset.mem_union.mp hk with hk | hk
+          · rw [Finset.mem_singleton, Prod.mk.injEq] at hk
+            exact absurd hk.2 (by omega)
+          · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
+            simp only [shiftLink_apply, Prod.mk.injEq] at hqe
+            obtain rfl : q₂ = t := by omega
+            exact ⟨q₁, hq⟩
+        · rintro ⟨k, hk⟩
+          exact ⟨k + 1, Finset.mem_union_right _
+            (Finset.mem_image.mpr ⟨(k, t), hk, by rw [shiftLink_apply]⟩)⟩
+    | O =>
+      rw [realize_cons, AR.links_concat,
+        show (toAR TBU.O).upper.len = 0 from rfl,
+        show (toAR TBU.O).lower.len = 1 from rfl,
+        show (toAR TBU.O).links = (∅ : Finset (ℕ × ℕ)) from rfl]
+      cases j with
+      | zero =>
+        simp only [List.getElem?_cons_zero]
+        refine iff_of_false ?_ (by simp)
+        rintro ⟨k, hk⟩
+        rcases Finset.mem_union.mp hk with hk | hk
+        · exact absurd hk (Finset.notMem_empty _)
+        · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
+          simp only [shiftLink_apply, Prod.mk.injEq] at hqe
+          omega
+      | succ t =>
+        rw [List.getElem?_cons_succ, ← ih t]
+        constructor
+        · rintro ⟨k, hk⟩
+          rcases Finset.mem_union.mp hk with hk | hk
+          · exact absurd hk (Finset.notMem_empty _)
+          · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
+            simp only [shiftLink_apply, Prod.mk.injEq] at hqe
+            obtain rfl : q₂ = t := by omega
+            exact ⟨q₁, hq⟩
+        · rintro ⟨k, hk⟩
+          exact ⟨k, Finset.mem_union_right _
+            (Finset.mem_image.mpr ⟨(k, t), hk, by simp [shiftLink_apply]⟩)⟩
+
+/-- The association lines of the OCP-merged plateau: all lines point at melody node `0`,
+one per surfacing TBU. -/
+theorem mem_links_realizeMerged_utp (w : List TBU) (p : ℕ × ℕ) :
+    p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
+  obtain ⟨k, j⟩ := p
+  rw [realizeMerged_def,
+    show (collapseAR (realize toAR (utp w))).links
+        = ((realize toAR (utp w)).links).image
+            (Prod.map (runIdx ((realize toAR (utp w)).upper.toList)) id) from rfl,
+    upper_realize_toAR]
+  simp only [Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, runIdx_replicate,
+    Prod.mk.injEq]
+  constructor
+  · rintro ⟨q₁, q₂, hq, rfl, rfl⟩
+    exact ⟨rfl, utp_getElem?_H_iff.mp ((isLinkedLower_realize_toAR (utp w) q₂).mp ⟨q₁, hq⟩)⟩
+  · rintro ⟨rfl, hS⟩
+    obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) j).mpr (utp_getElem?_H_iff.mpr hS)
+    exact ⟨q₁, j, hq, rfl, rfl⟩
+
+/-- **The fused plateau** — [hyman-katamba-2010]'s plateauing representation (7). For a
+word with at least one H, the OCP-merging realization of the UTP output is a *single* H
+melody node multiply linked to exactly the TBUs of the plateau interval: the string
+function `utp`, the bimachine `utpBM`, and autosegmental spreading-plus-fusion agree on
+one output object. -/
+theorem realizeMerged_utp_plateau (w : List TBU) (hw : .H ∈ w) :
+    ∃ lo hi, lo ≤ hi ∧ hi < w.length ∧ (∀ j, SurfacesH w j ↔ lo ≤ j ∧ j ≤ hi) ∧
+      (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] ∧
+      (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () ∧
+      (realizeMerged toAR (utp w)).links
+        = (Finset.Icc lo hi).image fun j => ((0 : ℕ), j) := by
+  obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
+  have hS₀ : SurfacesH w i₀ := surfacesH_of_getElem?_H hi₀
+  set S : Finset ℕ := (Finset.range w.length).filter (SurfacesH w) with hSdef
+  have hmemS : ∀ j, j ∈ S ↔ SurfacesH w j := fun j => by
+    rw [hSdef, Finset.mem_filter, Finset.mem_range]
+    exact ⟨fun h => h.2, fun h => ⟨h.lt_length, h⟩⟩
+  have hne : S.Nonempty := ⟨i₀, (hmemS i₀).mpr hS₀⟩
+  have hiff : ∀ j, SurfacesH w j ↔ S.min' hne ≤ j ∧ j ≤ S.max' hne := fun j => by
+    constructor
+    · intro h
+      exact ⟨S.min'_le j ((hmemS j).mpr h), S.le_max' j ((hmemS j).mpr h)⟩
+    · rintro ⟨h₁, h₂⟩
+      exact SurfacesH.of_le_of_le ((hmemS _).mp (S.min'_mem hne))
+        ((hmemS _).mp (S.max'_mem hne)) h₁ h₂
+  refine ⟨S.min' hne, S.max' hne, S.min'_le_max' hne,
+    ((hmemS _).mp (S.max'_mem hne)).lt_length, hiff, ?_, ?_, ?_⟩
+  · -- the fused single H on the melody tier
+    have hn : 0 < (realize toAR (utp w)).upper.len := by
+      obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) i₀).mpr
+        (utp_getElem?_H_iff.mpr hS₀)
+      exact Nat.lt_of_le_of_lt (Nat.zero_le q₁) ((realize toAR (utp w)).inBounds _ hq).1
+    obtain ⟨m, hm⟩ : ∃ m, (realize toAR (utp w)).upper.len = m + 1 :=
+      ⟨(realize toAR (utp w)).upper.len - 1, by omega⟩
+    rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
+  · -- the timing tier survives the merge unchanged
+    rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
+  · -- the multiple association spans the plateau interval
+    ext ⟨k, j⟩
+    rw [mem_links_realizeMerged_utp]
+    simp only [Finset.mem_image, Finset.mem_Icc, Prod.mk.injEq]
+    constructor
+    · rintro ⟨rfl, hS⟩
+      exact ⟨j, (hiff j).mp hS, rfl, rfl⟩
+    · rintro ⟨j', ⟨h₁, h₂⟩, rfl, rfl⟩
+      exact ⟨rfl, (hiff j').mpr ⟨h₁, h₂⟩⟩
+
+/-- (7) concretely: `H Ø Ø H` realizes, after UTP and OCP-fusion, as one H linked to all
+four TBUs. -/
+example :
+    (realizeMerged toAR (utp [.H, .O, .O, .H])).links
+      = {(0, 0), (0, 1), (0, 2), (0, 3)} := by decide
 
 end AutosegmentalGrounding
 
