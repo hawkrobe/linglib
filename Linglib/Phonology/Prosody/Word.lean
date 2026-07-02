@@ -12,8 +12,8 @@ a *declarative* property of that carrier rather than a separate inductive. `IsWo
 out the well-formed ω-trees as the **Strict-Layer** core ([selkirk-1996]): an ω-node whose
 daughters are only feet, recursive sub-words (ω-over-ω), or stray (unfooted) syllables — the
 inviolable **Layeredness** constraint (no φ/ι/AP inside an ω). The library's OT studies
-score raw `Tree` candidates, so `Word := {t : Tree // IsWord t}` is exactly the carrier
-restricted to the legal recursive words.
+score raw `Tree` candidates, so theorems take `IsWord` as a hypothesis on the carrier
+rather than bundling a subtype.
 
 `Exhaustivity` and `No-Recursion` are *violable* OT constraints, not part of `IsWord`: a
 stray σ (a free clitic) and an ω-over-ω (the extended prosodic word of [ito-mester-2009])
