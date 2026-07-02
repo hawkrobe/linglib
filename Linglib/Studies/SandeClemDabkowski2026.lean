@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Linearization
 import Linglib.Syntax.Minimalist.Movement.Remnant
-import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
+import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 
 /-!
@@ -123,7 +123,7 @@ open Minimalist (PICStrength)
 open Minimalist.Linearization
   (SpelloutAndCheck FrozenFeature FrozenFeatureTable
    extendFrozenFeatures frozenValue)
-open OptimalityTheory.CophonologyByPhrase (PhrasalCophonology)
+open OptimalityTheory.Cophonology (PhrasalCophonology)
 
 -- ============================================================================
 -- § 1: Guébie vowel inventory and ATR feature

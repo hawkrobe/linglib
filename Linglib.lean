@@ -1354,8 +1354,7 @@ import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
-import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
-import Linglib.Phonology.OptimalityTheory.CophonologyTheory
+import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.Doubling
