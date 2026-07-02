@@ -36,10 +36,11 @@ Embedded CPs receive **two kinds of denotations** corresponding to a
 syntactic distinction in the left periphery (§1.1.1, paper ex. 1):
 
 - **Cont-CP** ≔ λx. CONT(x) = {s : φ(s)}  — predicate on content
-  individuals (Kratzer 2006; Moulton 2009, 2015; Elliott 2020). Has an
-  extra **ContP** projection that introduces the CONT function.
+  individuals ([kratzer-2006]; [moulton-2009]; [moulton-2015];
+  [elliott-2020-embedding]). Has an extra **ContP** projection that
+  introduces the CONT function.
 - **Sit-CP** ≔ λs'. s' is a minimal situation exemplifying φ —
-  predicate on minimal situations (Kratzer 1989). Lacks ContP.
+  predicate on minimal situations ([kratzer-1989]). Lacks ContP.
 
 In some languages ContP is overtly exposed (Korean -ta declarative;
 Buryat gɘ 'say'); in others (English, Russian) it is null.
@@ -51,7 +52,7 @@ Buryat gɘ 'say'); in others (English, Russian) it is null.
    Cont-CP denotes equality with the embedded proposition, so CONT
    is a function rather than a downward-closed relation. Three
    arguments converge: (i) nominal CP interpretation (paper §2.4),
-   (ii) impossibility of CP conjunction (Bassi & Bondarenko 2021),
+   (ii) impossibility of CP conjunction ([bassi-bondarenko-2021]),
    (iii) Russian NPI subjunctive distribution (paper ch. 5).
 
 2. **Sit-CPs are referentially transparent; Cont-CPs are opaque.**
@@ -69,11 +70,12 @@ Buryat gɘ 'say'); in others (English, Russian) it is null.
    (bare, FA-argument) and (nominalized, PM-modifier) cells are
    ruled out by the structural correlation.
 
-   This is the thesis [angelopoulos-2026] attacks (autonomy of
-   syntax: same syntactic position can yield either composition
-   mode at LF). The conditional refutation theorem in
-   `Angelopoulos2026` cites the
-   `transparentSSMapping` definition below as its premise.
+   This is the thesis [angelopoulos-2026] later attacks (autonomy
+   of syntax: the same syntactic position can yield either
+   composition mode at LF); per the chronology rule the comparison
+   lives in `Studies/Angelopoulos2026.lean`
+   (`transparency_conflates_axes`), which targets the
+   `transparentSSMapping` definition below.
 
 ## Out of scope
 
@@ -162,7 +164,7 @@ theorem equality_implies_existential {W : Type*}
   exact ⟨w, hw, heq ▸ hw⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 3. CP Conjunction Impossibility (Bassi & Bondarenko 2021)
+-- § 3. CP Conjunction Impossibility ([bassi-bondarenko-2021])
 -- ════════════════════════════════════════════════════════════════
 --
 -- Paper §1.1.1.2 argues the equality semantics predicts true CP
@@ -174,7 +176,7 @@ theorem equality_implies_existential {W : Type*}
     under equality semantics AND `x` has content `p2` under
     equality semantics, then `p1 = p2`.
 
-    Bassi & Bondarenko 2021 derive the impossibility of true CP
+    [bassi-bondarenko-2021] derive the impossibility of true CP
     conjunction from this functionality (paper §1.1.1.2). -/
 theorem cont_function_blocks_conjunction {W : Type*}
     (xc : ContentIndividual W) (p1 p2 : W → Prop) :
@@ -273,8 +275,8 @@ theorem sit_cp_transparentAt {S : Type*} (s : S) :
     *the queen*) coextensional at the evaluation world but
     diverging across content-related worlds. The DP-level reading
     requires a binding-theoretic encoding of de dicto vs de re
-    (Moltmann 2020/2021 actuality-condition apparatus, Elliott
-    2020 CONT-as-content-restrictor) that is NOT yet a linglib
+    (an actuality-condition-style apparatus;
+    [elliott-2020-embedding]'s CONT-as-content-restrictor) that is NOT yet a linglib
     substrate primitive. The theorem below establishes the
     operator-level intensionality that *underwrites* the DP-level
     de dicto reading; the DP-level theorem itself is queued. -/
@@ -668,12 +670,12 @@ def buryatContExponent : Option Complementizer := some Buryat.ge
 
 /-- Korean: *-ta* expones Cont ([bondarenko-2022] §4.3.2, following
     [bogal-allbritten-moulton-2018]). -/
-def koreanContExponent : Option Korean.Complementizers.KoreanClauseSuffix :=
-  some .ta
+def koreanContExponent : Option Complementizer :=
+  some Korean.Complementizers.ta
 
 /-- Tigrinya: *kemzi* ([cacchioli-2025]). -/
-def tigrinyaContExponent : Option Tigrinya.ClausePrefixes.ClausePrefixEntry :=
-  some Tigrinya.ClausePrefixes.kemzi
+def tigrinyaContExponent : Option Complementizer :=
+  some Tigrinya.ClausePrefixes.kemzi.toComplementizer
 
 /-- [bondarenko-2022]'s Cont/Comp assignment coincides with the
     fragment's root-vs-suffix datum: the Cont exponent is exactly the
@@ -687,14 +689,14 @@ theorem mem_buryatContExponent_iff :
     ([bondarenko-2022] §4.3.1 ex. 33): one head, two allomorphs —
     participial *-Aːša* next to nominal projections, converbial *-žA*
     next to verbs. -/
-def buryatCompAllomorph : Complementizer.Host → Complementizer
+def buryatCompAllomorph : Complementizer.Licenser → Complementizer
   | .nominal => Buryat.aasha
   | .verbal  => Buryat.zha
 
-/-- The allomorph selected for a host has exactly that surface
+/-- The allomorph selected for a licenser has exactly that surface
     distribution — the analysis reproduces the fragment's datum. -/
-theorem host_buryatCompAllomorph (h : Complementizer.Host) :
-    (buryatCompAllomorph h).host = some h := by
+theorem licenser_buryatCompAllomorph (h : Complementizer.Licenser) :
+    (buryatCompAllomorph h).licenser = some h := by
   cases h <;> rfl
 
 /-- The head assignment is exhaustive: every morpheme in the inventory
@@ -780,7 +782,7 @@ instance : DecidablePred NominalSort.occurrenceCompatible
 -- **Substantiation status (per syntax expert S6).** The
 -- *justification* for the equality shape of Cont (vs subset
 -- `entails` or existential) lives partly in §3 above
--- (`cont_function_blocks_conjunction` — Bassi & Bondarenko 2021
+-- (`cont_function_blocks_conjunction` — [bassi-bondarenko-2021]
 -- argument) and partly in [bondarenko-2022] §2.4 (deferred:
 -- the nominal-CP-interpretation argument). One of three §2.4
 -- arguments is therefore already present in this file.

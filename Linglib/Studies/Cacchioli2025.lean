@@ -222,38 +222,48 @@ theorem phasal_violates_realis_finite_correspondence :
 
 open Tigrinya.ClausePrefixes
 
+/-- [cacchioli-2025]'s cartographic head assignment for the four
+    prefixes ([rizzi-1997] split CP): zɨ- spells out Rel, kɨ- Fin,
+    kəmzi- Force, ʔay- Neg. Paper-specific analysis projected over the
+    framework-neutral fragment entries. -/
+def headCat (e : ClausePrefixEntry) : Cat :=
+  if e = kemzi then .Force
+  else if e = ki then .Fin
+  else if e = zi then .Rel
+  else .Neg
+
 /-- zɨ- (Rel) is at the same fValue level as Top (topic field, F5). -/
-theorem zi_fvalue_topic_field : fValue zi.headCat = fValue .Top := by decide
+theorem zi_fvalue_topic_field : fValue (headCat zi) = fValue .Top := by decide
 
 /-- kɨ- (Fin) is at the IP/CP boundary (F3). -/
-theorem ki_fvalue_boundary : fValue ki.headCat = 3 := by decide
+theorem ki_fvalue_boundary : fValue (headCat ki) = 3 := by decide
 
 /-- kəmzi- (Force) is at the clause-typing level (F6). -/
-theorem kemzi_fvalue_clause_typing : fValue kemzi.headCat = 6 := by decide
+theorem kemzi_fvalue_clause_typing : fValue (headCat kemzi) = 6 := by decide
 
 /-- ʔay-...-n (Neg) is in the inflectional domain (F2). -/
-theorem ay_fvalue_inflectional : fValue ay_n.headCat = 2 := by decide
+theorem ay_fvalue_inflectional : fValue (headCat ay_n) = 2 := by decide
 
 /-- The four prefixes target four distinct F-levels:
     Neg(2) < Fin(3) < Rel(5) < Force(6). -/
 theorem prefixes_distinct_flevels :
-    fValue ay_n.headCat < fValue ki.headCat ∧
-    fValue ki.headCat < fValue zi.headCat ∧
-    fValue zi.headCat < fValue kemzi.headCat := by decide
+    fValue (headCat ay_n) < fValue (headCat ki) ∧
+    fValue (headCat ki) < fValue (headCat zi) ∧
+    fValue (headCat zi) < fValue (headCat kemzi) := by decide
 
 /-- Fragment agreement field matches empirical data for each prefix. -/
 theorem agreement_matches_data_bridge :
-    zi.takesAgreementSuffix = false ∧
-    ki.takesAgreementSuffix = true ∧
-    kemzi.takesAgreementSuffix = false ∧
-    ay_n.takesAgreementSuffix = true := ⟨rfl, rfl, rfl, rfl⟩
+    zi.agrees = some false ∧
+    ki.agrees = some true ∧
+    kemzi.agrees = some false ∧
+    ay_n.agrees = some true := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Only ʔay-...-n is discontinuous. -/
+/-- Only ʔay-...-n is discontinuous (circumfixal position). -/
 theorem only_neg_discontinuous :
-    zi.isDiscontinuous = false ∧
-    ki.isDiscontinuous = false ∧
-    kemzi.isDiscontinuous = false ∧
-    ay_n.isDiscontinuous = true := ⟨rfl, rfl, rfl, rfl⟩
+    zi.position = some .praefixed ∧
+    ki.position = some .praefixed ∧
+    kemzi.position = some .praefixed ∧
+    ay_n.position = some .circumfixed := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Knowledge verbs select [+finite] → predicts kəmzi- (factive). -/
 theorem knowledge_selects_kemzi :
@@ -281,9 +291,9 @@ theorem neg_circumfix_from_neg :
 
 /-- All four prefix heads are in the verbal extended projection. -/
 theorem all_prefixes_verbal :
-    catFamily zi.headCat = .verbal ∧
-    catFamily ki.headCat = .verbal ∧
-    catFamily kemzi.headCat = .verbal ∧
-    catFamily ay_n.headCat = .verbal := by decide
+    catFamily (headCat zi) = .verbal ∧
+    catFamily (headCat ki) = .verbal ∧
+    catFamily (headCat kemzi) = .verbal ∧
+    catFamily (headCat ay_n) = .verbal := by decide
 
 end Cacchioli2025

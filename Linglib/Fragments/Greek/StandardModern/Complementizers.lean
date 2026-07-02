@@ -1,84 +1,50 @@
 import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Complementizer.Basic
 
 /-!
 # Modern Greek Complementizers [christidis-1982] [roussou-2010]
 [roussou-2019] [angelopoulos-2026]
 
-The three Modern Greek complementizers and a small inventory of
-matrix verbs that select them. Consensus-only metadata: form, mood
-(indicative / subjunctive / factive), categorial [n]-feature, and
-the stativity / attitude classification of the matrix verbs.
+The three Modern Greek complementizers, as root `Complementizer`
+entries, and the matrix verbs that select them (with the attitude and
+stativity metadata [angelopoulos-2026]'s data turns on).
 
-## Scope
-
-This file exposes ONLY consensus typological metadata. The
-content/situation typing of the matrix-verb selection that
-[angelopoulos-2026] introduces (following [bondarenko-2022])
-is paper-specific apparatus and lives in
-`Studies/Angelopoulos2026.lean` as a
-projection over these `Verb` entries — it does not pollute the
-fragment schema.
-
-## Three complementizers
-
-- *oti* — indicative declarative ([christidis-1982],
-  [roussou-2010]). Combines with verbs of saying / belief /
-  knowledge. Bears an uninterpretable [n]-feature checked by a
-  light noun in its specifier per [angelopoulos-2026] §3.1.
-- *pu* — factive declarative ([christidis-1982],
-  [roussou-2019]). Combines with emotive factives and
-  doubles as adverbial / relative / interrogative pronoun *where*.
-  Bears the same [n]-feature as *oti*.
-- *na* — subjunctive ([grano-2024]). Already covered in
-  `Greek.StandardModern.MoodChoice`; referenced here
-  for completeness, not redefined.
+[angelopoulos-2026]-specific apparatus — the [n]-feature/light-noun
+selection (§3.1), the content/situation typing, and the stativity
+generalizations — lives in `Studies/Angelopoulos2026.lean` as
+projections over these entries.
 -/
 
 namespace Greek.StandardModern.Complementizers
 
+/-- *oti* — indicative declarative complementizer ([christidis-1982],
+    [roussou-2010]); selected by verbs of saying / belief / knowledge. -/
+def oti : Complementizer where
+  form := "oti"
+  position := some .detached
+  noonanType := some .indicative
+  clauseForm := some .declarative
+  factive := some false
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Complementizer Inventory
--- ════════════════════════════════════════════════════════════════
+/-- *pu* — factive complementizer ([christidis-1982], [roussou-2019]);
+    selected by emotive factives. Doubles as adverbial / relative /
+    interrogative *where*; the entry records the complement use. -/
+def pu : Complementizer where
+  form := "pu"
+  position := some .detached
+  noonanType := some .indicative
+  clauseForm := some .declarative
+  factive := some true
 
-/-- The three Modern Greek complementizers covered here. *na* is
-    in `MoodChoice.lean`; `GreekComplementizer.na` is exposed for
-    cross-reference but the substantive entries live there. -/
-inductive GreekComplementizer where
-  | oti
-  | pu
-  | na
-  deriving DecidableEq, Repr
+/-- *na* — subjunctive ([grano-2024]); the substantive mood entries are
+    in `MoodChoice.lean`, exposed here for inventory completeness. -/
+def na : Complementizer where
+  form := "na"
+  position := some .detached
+  noonanType := some .subjunctive
 
-/-- Phonological form. -/
-def GreekComplementizer.form : GreekComplementizer → String
-  | .oti => "oti"
-  | .pu  => "pu"
-  | .na  => "na"
-
-/-- Bears an uninterpretable [n]-feature checked by a light noun
-    in Spec,CP per [angelopoulos-2026] §3.1.  *na* does not
-    bear [n]; its checking machinery is mood-driven ([grano-2024]). -/
-def GreekComplementizer.bearsN : GreekComplementizer → Bool
-  | .oti => true
-  | .pu  => true
-  | .na  => false
-
-/-- Factive presupposition (consensus across [christidis-1982],
-    [roussou-2010], [roussou-2019], [angelopoulos-2026]). -/
-def GreekComplementizer.isFactive : GreekComplementizer → Bool
-  | .pu => true
-  | _   => false
-
-/-- All three are finite. -/
-theorem all_finite (c : GreekComplementizer) : c.form.length > 0 := by
-  cases c <;> decide
-
-/-- *oti* and *pu* both bear the [n]-feature; *na* does not. -/
-theorem n_bearing_complementizers :
-    GreekComplementizer.oti.bearsN = true ∧
-    GreekComplementizer.pu.bearsN  = true ∧
-    GreekComplementizer.na.bearsN  = false := ⟨rfl, rfl, rfl⟩
+/-- The complementizer inventory. -/
+def complementizers : List Complementizer := [oti, pu, na]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Matrix Verbs Selecting *oti*
@@ -187,7 +153,6 @@ def xerome : Verb where
 def thimame : Verb where
   form := "thimáme"
   complementType := .finiteClause
-  altComplementType := some .finiteClause  -- pu-complement available
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement  -- eventive (perception) sense
 
@@ -197,29 +162,7 @@ def thimame : Verb where
 def thimono : Verb where
   form := "thimóno"
   complementType := .finiteClause
-  altComplementType := some .finiteClause
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .achievement
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Theorems on consensus stativity
--- ════════════════════════════════════════════════════════════════
-
-/-- The *pu*-only verbs are all stative. This is the consensus
-    pattern ([angelopoulos-2026] §2.3, restating the diagnostic
-    from [roussou-2019]). -/
-theorem pu_only_verbs_stative :
-    metaniono.vendlerClass = some .state ∧
-    areso.vendlerClass     = some .state ∧
-    xerome.vendlerClass    = some .state := ⟨rfl, rfl, rfl⟩
-
-/-- The *oti*-only verbs span eventive and stative classes:
-    *léo*, *katalavéno*, *sinidhitopió*, *eksigó* are eventive;
-    *pistévo* and *kséro* are stative. -/
-theorem oti_verbs_stativity_split :
-    leo.vendlerClass = some .activity ∧
-    katalaveno.vendlerClass = some .achievement ∧
-    pistevo.vendlerClass = some .state ∧
-    ksero.vendlerClass = some .state := ⟨rfl, rfl, rfl, rfl⟩
 
 end Greek.StandardModern.Complementizers

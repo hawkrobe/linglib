@@ -26,7 +26,7 @@ degree semantics).
   fragments instantiate it (free subordinators like *that* and *oti*,
   affixal clause-typers like Buryat *-žA* and Tigrinya *zɨ-*,
   grammaticalized say-roots like Buryat *gɘ*)
-- `Complementizer.Host` — adnominal vs adverbal licensing category
+- `Complementizer.Licenser` — adnominal vs adverbal licensing category
 - `Complementizer.IsBound` — affixal status, derived from `position`
 - `Complementizer.toWord` — the `SCONJ` word a free complementizer
   projects
@@ -34,9 +34,12 @@ degree semantics).
 
 open Clause.Complementation (NoonanCompType)
 
-/-- Category of the projection an affixal clause-typer is licensed by:
-adnominal (Buryat *-Aːša*, Korean *-nun*) vs adverbal (Buryat *-žA*). -/
-inductive Complementizer.Host where
+/-- Category of the adjacent projection an affixal clause-typer is
+licensed by: adnominal (Buryat *-Aːša*, Korean *-nun*) vs adverbal
+(Buryat *-žA*). Named for the licensing projection, not the
+morphological host stem (which for a postfixed clause-typer is the
+verb it attaches to). -/
+inductive Complementizer.Licenser where
   | nominal
   | verbal
   deriving DecidableEq, Fintype, Repr
@@ -50,18 +53,29 @@ structure Complementizer where
   /-- Native script form, when distinct. -/
   script : Option String := none
   /-- Morphological attachment: `.detached` for free subordinators,
-  `.praefixed` and `.postfixed` for affixal clause-typers. -/
+  `.praefixed` and `.postfixed` for affixal clause-typers. `none` =
+  unrecorded, or a bound root with no fixed attachment of its own
+  (Buryat *gɘ*, which surfaces only suffixed). -/
   position : Option Morphology.FormativePosition := none
   /-- [noonan-2007] type of the complement clause this morpheme types. -/
   noonanType : Option NoonanCompType := none
-  /-- Surface clause form typed (declarative vs embedded question). -/
+  /-- Surface clause form typed. Only `.declarative` and
+  `.embeddedQuestion` are sensible values for an embedded-clause typer. -/
   clauseForm : Option Features.ClauseForm := none
   /-- Verb form an affixal clause-typer derives on its host (UD `.Part`,
   `.Conv`, `.Fin`, …). -/
   verbForm : Option UD.VerbForm := none
-  /-- Licensing host category, for adjacency-conditioned clause-typers. -/
-  host : Option Complementizer.Host := none
-  /-- Factive presupposition; `none` = unrecorded. -/
+  /-- Category of the adjacent licensing projection, for
+  adjacency-conditioned clause-typers. -/
+  licenser : Option Complementizer.Licenser := none
+  /-- Does the morpheme carry φ-agreement with an argument of its clause?
+  (Tigrinya *kɨ-* and *ʔay-…-n* take agreement suffixes; West Germanic
+  complementizer agreement.) `none` = unrecorded. -/
+  agrees : Option Bool := none
+  /-- Lexical factive presupposition conventionally carried by the
+  morpheme itself (Greek *pu*, Tigrinya *kəmzi-*). Leave `none` when
+  factivity tracks the verb or the construction (Buryat, Washo) —
+  construction-level factivity is derived in Studies, never stored. -/
   factive : Option Bool := none
   deriving Repr, BEq, DecidableEq
 
