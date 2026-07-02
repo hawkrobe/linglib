@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Grid
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # The incoherent stress of Kuikuro

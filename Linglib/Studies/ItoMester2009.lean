@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Word
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Itô & Mester 2009: the extended prosodic word

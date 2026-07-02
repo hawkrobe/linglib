@@ -3,7 +3,7 @@ import Linglib.Studies.Benua1997.TCT
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Studies.Benua1997.StratalCorr
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Benua 1997 — Misapplication Unification

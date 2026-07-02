@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Features.Prominence

@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Syntax.Minimalist.Position
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus

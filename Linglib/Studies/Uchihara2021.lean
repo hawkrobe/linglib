@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Word
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Uchihara & Mendoza Ruiz 2021: minimality, maximality, and the perfect word in Mixtec

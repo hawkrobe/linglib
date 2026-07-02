@@ -1,7 +1,7 @@
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Optimization.System
 import Linglib.Core.Optimization.Profile
-import Linglib.Phonology.OptimalityTheory.Defs
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Tableaux as Constraint Systems
