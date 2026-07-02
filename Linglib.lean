@@ -2947,5 +2947,7 @@ import Linglib.Data.Examples.Major2024
 import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Surfacing
+import Linglib.Data.ProtoRoles.Schema
+import Linglib.Data.ProtoRoles.Dowty1991
 
 

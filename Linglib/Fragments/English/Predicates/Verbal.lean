@@ -26,6 +26,7 @@ open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Order (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
 open ArgumentStructure.EntailmentProfile
+open Features.LevinClassProfiles
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules
@@ -154,7 +155,7 @@ def eat : VerbEntry where
   formPresPart := "eating"
   frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, false⟩
+  objectEntailments := some consumptionObject
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -170,7 +171,7 @@ def kick : VerbEntry := .mkRegular {
   form := "kick"
   frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some kickObjectProfile
+  objectEntailments := some contactObject
   vendlerClass := some .activity
   levinClass := some .hit
   root := { profile := {
@@ -235,8 +236,9 @@ def buy : VerbEntry where
   formPastPart := "bought"
   formPresPart := "buying"
   frames := [Frame.np]
-  subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
+  subjectEntailments := some possessionTransfer.subjectProfile
   vendlerClass := some .accomplishment
+  levinClass := some .getObtain
 
 /-- "meet" — irregular transitive -/
 def meet : VerbEntry where
@@ -257,10 +259,11 @@ def sell : VerbEntry where
   formPastPart := "sold"
   formPresPart := "selling"
   frames := [Frame.np, Frame.np_pp]
-  subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
+  subjectEntailments := some possessionTransfer.subjectProfile
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .accomplishment
+  levinClass := some .give
 
 /-- "leave" — transitive (also used intransitively with argument drop) -/
 def leave : VerbEntry where
@@ -281,7 +284,7 @@ def see : VerbEntry where
   formPastPart := "seen"
   formPresPart := "seeing"
   frames := [Frame.np, Frame.finiteClause]
-  subjectEntailments := some stateSubjectProfile
+  subjectEntailments := some perception.subjectProfile
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
   levinClass := some .see
@@ -1135,7 +1138,7 @@ def build : VerbEntry where
   formPresPart := "building"
   frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, true⟩
+  objectEntailments := some creationObject
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -1165,7 +1168,7 @@ def sweep : VerbEntry where
   formPresPart := "sweeping"
   frames := [Frame.np]
   vendlerClass := some .activity
-  subjectEntailments := some ⟨false, false, false, true, true, false, false, false, false, false⟩
+  subjectEntailments := some wipeManner.subjectProfile
   passivizable := true
   levinClass := some .wipe
   root := { profile := {
@@ -1184,7 +1187,7 @@ def sweep_instr : VerbEntry where
   formPresPart := "sweeping"
   frames := [Frame.np]
   vendlerClass := some .activity
-  subjectEntailments := some accomplishmentSubjectProfile
+  subjectEntailments := some wipeInstrument.subjectProfile
   passivizable := true
   senseTag := .instrumental
   levinClass := some .wipe

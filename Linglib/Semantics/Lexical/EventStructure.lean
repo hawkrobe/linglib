@@ -236,9 +236,14 @@ theorem only_accomplishment_alternates (t : Template) :
 
 /-! ### Argument realization from templates -/
 
-/-- Predicted subject entailment profile for each template. -/
+/-- Predicted subject entailment profile for each template. The state
+default is the sentient state-holder (S+IE, the admire-type value); this
+conflates two Dowty-honest state profiles — sentience-entailed psych states
+vs. bare desire states (IE alone, [dowty-1991] (29e)) — which the class map
+separates as `psychState` vs `desire` in `LevinClassProfiles.lean` (not
+importable here: it sits downstream of this file). -/
 def Template.subjectProfile : Template → EntailmentProfile
-  | .state          => stateSubjectProfile
+  | .state          => { sentience := true, independentExistence := true }
   | .activity       => activitySubjectProfile
   | .achievement    => achievementSubjectProfile
   | .accomplishment => accomplishmentSubjectProfile

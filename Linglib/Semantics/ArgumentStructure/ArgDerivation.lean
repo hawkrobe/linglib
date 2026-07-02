@@ -302,7 +302,7 @@ def deriveEnriched (re : Root.Kinds) (mc : MeaningComponents) : Option ArgTempla
       if mc.contact then
         -- Transitive activity: subject gets C from causal interaction
         some { subjectProfile := ArgumentStructure.EntailmentProfile.accomplishmentSubjectProfile,
-               objectProfile := some ⟨false, false, false, false, false, false, false, true, true, false⟩ }
+               objectProfile := some Features.LevinClassProfiles.contactObject }
       else
         some base
     | _ => some base

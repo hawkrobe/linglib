@@ -457,7 +457,7 @@ theorem outcomeCard_orthogonal_to_hasResultState :
     two (`⊤` vs `1`) where the affectedness degree does not. -/
 theorem affectedness_bridge :
     profileToDegree { causallyAffected := true, stationary := true }
-      = profileToDegree kickObjectProfile ∧
+      = profileToDegree Features.LevinClassProfiles.contactObject ∧
     1 < LevinClass.outcomeCard .bend ∧
     ¬ (1 < LevinClass.outcomeCard .hit) :=
   ⟨rfl, bend_predicts_un, hit_blocks_un_class⟩

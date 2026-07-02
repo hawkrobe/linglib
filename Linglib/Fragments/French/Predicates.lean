@@ -20,7 +20,8 @@ open Semantics.Lexical
 open Features (Causative)
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
-  (kickSubjectProfile seeSubjectProfile runSubjectProfile)
+  (accomplishmentSubjectProfile activitySubjectProfile)
+open Features.LevinClassProfiles (experiencerProfile)
 
 /-- French verb entry: extends Verb with French inflectional paradigm. -/
 structure FrenchVerbEntry extends Verb where
@@ -182,9 +183,9 @@ def refroidir : FrenchVerbEntry where
 -- ============================================================================
 
 /-- Prototypical transitive subject: V+S+C+M+IE (5 P-Ag).
-    Identical to [dowty-1991]'s canonical agent (`kickSubjectProfile`).
-    Used for *laver*, *écrire*, *construire*, *tuer*, etc. -/
-abbrev protoTransSubjectProfile := kickSubjectProfile
+    [dowty-1991]'s canonical agent — the `accomplishmentSubjectProfile`
+    template default. Used for *laver*, *écrire*, *construire*, *tuer*, etc. -/
+abbrev protoTransSubjectProfile := accomplishmentSubjectProfile
 
 /-- Prototypical transitive object: CoS+CA (2 P-Pat).
     Used for *laver*, *tuer*, etc. -/
@@ -196,9 +197,10 @@ def protoTransObjectProfile : EntailmentProfile where
   dependentExistence := false
 
 /-- Experiencer subject: S+IE (2 P-Ag).
-    Identical to [dowty-1991]'s perception profile (`seeSubjectProfile`).
-    Used for *aimer*, *adorer*, *respecter*. -/
-abbrev experiencerSubjectProfile := seeSubjectProfile
+    [dowty-1991]'s experiencer — `Features.LevinClassProfiles.experiencerProfile`,
+    the perception/psych-state class subject. Used for *aimer*, *adorer*,
+    *respecter*. -/
+abbrev experiencerSubjectProfile := experiencerProfile
 
 /-- Minimal participant: IE only (1 P-Ag, 0 P-Pat).
     The participant exists independently of the event but has no
@@ -225,10 +227,10 @@ def minimalParticipantProfile : EntailmentProfile where
 abbrev stativePositionalSubjectProfile := minimalParticipantProfile
 
 /-- Dynamic motion subject: V+S+M+IE (4 P-Ag).
-    Identical to `runSubjectProfile` — volitional self-propelled motion
-    without causing a change in another participant.
-    Used for dynamic *suivre* ('follow' with volition). -/
-abbrev dynamicFollowSubjectProfile := runSubjectProfile
+    The `activitySubjectProfile` template default (self-motion class) —
+    volitional self-propelled motion without causing a change in another
+    participant. Used for dynamic *suivre* ('follow' with volition). -/
+abbrev dynamicFollowSubjectProfile := activitySubjectProfile
 
 /-- Accompany subject: S+M+IE (3 P-Ag).
     Used for *accompagner*. Movement without obligatory volition:
