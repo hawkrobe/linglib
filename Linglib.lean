@@ -1251,6 +1251,7 @@ import Linglib.Fragments.Tuyuca.Evidentiality
 import Linglib.Fragments.Tzotzil.Adposition
 import Linglib.Fragments.Tzotzil.WordOrder
 import Linglib.Fragments.Urdu.CausativeSystem
+import Linglib.Fragments.Uyghur.Complementizers
 import Linglib.Fragments.Vietnamese.TenseAspect
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
@@ -2474,6 +2475,7 @@ import Linglib.Studies.Magri2025
 import Linglib.Studies.Maier2014
 import Linglib.Studies.Maier2015
 import Linglib.Studies.MajidBosterBowerman2008
+import Linglib.Studies.Major2024
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
