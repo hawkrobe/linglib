@@ -330,6 +330,15 @@ theorem evalFuel_sound [DecidableEq α] (h : evalFuel P w n i e = some b) :
       | true => exact .ite_true (ih hbc) (ih (by simpa using hbr))
       | false => exact .ite_false (ih hbc) (ih (by simpa using hbr))
 
+/-- Recombine a guard run and the selected branch run under one `max` fuel. -/
+private theorem evalFuel_ite_of [DecidableEq α] {c e₁ e₂ : Expr α F} {bc : Bool}
+    (hc : evalFuel P w n i c = some bc)
+    (hb : evalFuel P w m i (if bc then e₁ else e₂) = some b) :
+    evalFuel P w (max n m + 1) i (.ite c e₁ e₂) = some b := by
+  simp only [evalFuel, Option.bind_eq_some_iff]
+  exact ⟨bc, evalFuel_mono (le_max_left _ _) hc, by
+    cases bc <;> simpa using evalFuel_mono (le_max_right _ _) hb⟩
+
 /-- Completeness: every derivation is reached at some fuel. -/
 theorem evalFuel_complete [DecidableEq α] (h : Eval P w i e b) :
     ∃ n, evalFuel P w n i e = some b := by
@@ -348,17 +357,11 @@ theorem evalFuel_complete [DecidableEq α] (h : Eval P w i e b) :
   | ite_true hc h₁ ihc ih₁ =>
     obtain ⟨n₁, hn₁⟩ := ihc
     obtain ⟨n₂, hn₂⟩ := ih₁
-    exact ⟨max n₁ n₂ + 1, by
-      simp only [evalFuel, Option.bind_eq_some_iff]
-      exact ⟨true, evalFuel_mono (le_max_left _ _) hn₁, by
-        simpa using evalFuel_mono (le_max_right _ _) hn₂⟩⟩
+    exact ⟨_, evalFuel_ite_of hn₁ hn₂⟩
   | ite_false hc h₂ ihc ih₂ =>
     obtain ⟨n₁, hn₁⟩ := ihc
     obtain ⟨n₂, hn₂⟩ := ih₂
-    exact ⟨max n₁ n₂ + 1, by
-      simp only [evalFuel, Option.bind_eq_some_iff]
-      exact ⟨false, evalFuel_mono (le_max_left _ _) hn₁, by
-        simpa using evalFuel_mono (le_max_right _ _) hn₂⟩⟩
+    exact ⟨_, evalFuel_ite_of hn₁ hn₂⟩
 
 /-- **Adequacy**: the derivation system and the fuel evaluator define the same values. -/
 theorem eval_iff_evalFuel [DecidableEq α] :
