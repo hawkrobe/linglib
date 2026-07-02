@@ -196,7 +196,7 @@ theorem mem_toERCSet {p : PartialOrderConstraints n} {α : ERC n} :
 the `a ≫ b` ERCs are the strict dominance requirements, and reflexive pairs impose
 nothing. -/
 theorem satisfiedBy_toERCSet {p : PartialOrderConstraints n} {σ : Ranking n} :
-    ERCSet.satisfiedBy σ p.toERCSet ↔ p.IsConsistent σ := by
+    ERCSet.SatisfiedBy σ p.toERCSet ↔ p.IsConsistent σ := by
   constructor
   · intro h a b hrel
     rcases eq_or_ne a b with rfl | hab
@@ -327,14 +327,14 @@ consumer ([dilworth-1940]; [merchant-riggle-2016]). -/
 
 /-- `p.toERCSet` consists of simple ERCs (each is a `simpleERC` of a strict pair). -/
 theorem toERCSet_isSimpleSet (p : PartialOrderConstraints n) :
-    ERCSet.isSimpleSet p.toERCSet := by
+    ERCSet.IsSimpleSet p.toERCSet := by
   intro α hα
   obtain ⟨a, b, hab, _, rfl⟩ := mem_toERCSet.mp hα
   exact simpleERC_isSimple hab
 
 /-- `p.toERCSet` is consistent: any linear extension of `p` satisfies it. -/
 theorem toERCSet_consistent (p : PartialOrderConstraints n) :
-    ERCSet.consistent p.toERCSet := by
+    ERCSet.Consistent p.toERCSet := by
   obtain ⟨σ, hσ⟩ := p.consistentTotalOrders_nonempty
   exact ⟨σ, satisfiedBy_toERCSet.mpr (mem_consistentTotalOrders.mp hσ)⟩
 

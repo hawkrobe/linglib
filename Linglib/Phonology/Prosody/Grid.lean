@@ -33,12 +33,12 @@ a homomorphism from the tree into the head-marked grid, built from a small algeb
 * `Marks` / `Marks.IsContinuous` / `Grid.rows` — the rendered grid and the Continuous Column
   Constraint, which holds for any rendered grid by construction.
 * `MarkedGrid` / `Grid.project` — the head-marked grid and the RPPR projection from a tree.
-* `Grid.columns` / `Grid.headTerminals` / `Grid.headHeights` / `Grid.IsHeaded` — the grid readers.
+* `Tree.columns` / `Tree.headTerminals` / `Tree.headHeights` / `Tree.IsHeaded` — the grid readers.
 
 ## Main results
 * `Grid.ofTree_isContinuous` — the Continuous Column Constraint, by construction (free).
 * `Grid.peak_toProsTree` — head-preservation for a foot (its grid peaks at the head σ).
-* `Grid.headHeights_eq_peak` — on a non-recursive headed word the head terminal's height is the
+* `Tree.headHeights_eq_peak` — on a non-recursive headed word the head terminal's height is the
   grid peak: metrical primary stress is the tallest column.
 * `Grid.ofTree_not_injective` / `Grid.not_culminative_under_recursion` — what the projection
   forgets: constituency, and order-invariant culminativity under recursion.
@@ -211,7 +211,11 @@ theorem rows_isContinuous (g : Grid) : Marks.IsContinuous (rows g) := by
 
 /-! ### The RPPR projection -/
 
-open MarkedGrid
+end Grid
+
+namespace Tree
+
+open MarkedGrid Grid
 
 /-- One RPPR step: pair the node's label with its grid, so a parent can read the
     head flag off each child. -/
@@ -260,11 +264,12 @@ def IsHeaded : Prop := (headHeights t).length = 1
 instance : Decidable (IsHeaded t) := by unfold IsHeaded; infer_instance
 
 /-- The metrical grid of a tree, as stacked rows. -/
-def ofTree : Marks := (columns t).rows
+def _root_.Prosody.Grid.ofTree : Marks := (columns t).rows
 
-/-- `ofTree` always satisfies the Continuous Column Constraint ([prince-1983]; [hayes-1995]) — free
-    from `Grid.rows_isContinuous`, since a projected grid is a histogram. -/
-theorem ofTree_isContinuous : Marks.IsContinuous (ofTree t) := rows_isContinuous _
+/-- `Grid.ofTree` always satisfies the Continuous Column Constraint ([prince-1983];
+    [hayes-1995]) — free from `Grid.rows_isContinuous`: a projected grid is a histogram. -/
+theorem _root_.Prosody.Grid.ofTree_isContinuous : Marks.IsContinuous (Grid.ofTree t) :=
+  rows_isContinuous _
 
 /-! ### The reader recursions
 
@@ -342,7 +347,7 @@ recursion, order-invariant culminativity (`not_culminative_under_recursion`). -/
 
 /-- The grid render is not injective — it **forgets constituency**: a σ parsed under a foot and the
     same σ left bare render to the same grid ([hayes-1995] §3.8). -/
-theorem ofTree_not_injective : ¬ Function.Injective ofTree :=
+theorem _root_.Prosody.Grid.ofTree_not_injective : ¬ Function.Injective Grid.ofTree :=
   Function.not_injective_iff.mpr
     ⟨.om [.ft false [.σ 1]], .om [.σ 1], by decide⟩
 
@@ -480,6 +485,6 @@ theorem head_below_peak_unlayered :
     ∃ t, IsHeaded t ∧ noRec t = 0 ∧ ¬ IsWord t ∧ headHeights t ≠ [peak (columns t)] :=
   ⟨.om [.ph [.ft true [.σ 1 true]], .σ 1 true], by decide⟩
 
-end Grid
+end Tree
 
 end Prosody

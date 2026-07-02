@@ -410,8 +410,14 @@ def empty : AR α β where
 
 /-- Two ARs are equal iff their underlying graphs are (`inBounds` by proof
     irrelevance). -/
-theorem ext_toGraph {A B : AR α β} (h : A.toGraph = B.toGraph) : A = B := by
+@[ext] theorem ext_toGraph {A B : AR α β} (h : A.toGraph = B.toGraph) : A = B := by
   cases A; cases B; cases h; rfl
+
+theorem toGraph_injective : Function.Injective (toGraph : AR α β → Graph α β) :=
+  fun _ _ => ext_toGraph
+
+instance [DecidableEq α] [DecidableEq β] : DecidableEq (AR α β) := fun A B =>
+  decidable_of_iff _ ⟨ext_toGraph, congrArg toGraph⟩
 
 /-- Objects form a `Monoid` under concatenation, with `empty` as unit
     ([jardine-heinz-2015] Theorems 1, 3): the laws lift the `Graph` monoid laws

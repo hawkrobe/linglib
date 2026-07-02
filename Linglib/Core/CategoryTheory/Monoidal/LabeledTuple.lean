@@ -152,7 +152,7 @@ def get? (a : LabeledTuple α) (i : ℕ) : Option α :=
   · rw [List.getElem?_eq_getElem h, List.get_eq_getElem]
   · rw [List.getElem?_eq_none (by omega)]
 
-theorem get?_eq_getElem? (a : LabeledTuple α) (i : ℕ) : a.get? i = a.toList[i]? := by
+@[simp] theorem get?_eq_getElem? (a : LabeledTuple α) (i : ℕ) : a.get? i = a.toList[i]? := by
   unfold get?
   split <;> rename_i h
   · rw [List.getElem?_eq_getElem (by simpa using h)]; simp [toList, List.getElem_ofFn]

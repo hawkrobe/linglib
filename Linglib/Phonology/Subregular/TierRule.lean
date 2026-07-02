@@ -87,30 +87,29 @@ def Relation.flip : Relation → Relation
     Lean. -/
 abbrev Side := Subregular.Direction
 
-/-- A tier-based alternation rule over alphabet `α`.
-
-    - `tier`         : the erasing projection ([goldsmith-1976]) onto
-      which the context-class check is performed.
-    - `side`         : whether the triggering context precedes (`.left`)
-      or follows (`.right`) the unspecified target slot.
-    - `targetIsContext` : the natural class `C` — the rule fires only when
-      the tier-adjacent segment satisfies this predicate. Following
-      mathlib's `Finset.filter` convention this is `Prop`-valued with
-      `[DecidablePred]` carried as the instance field `decTarget`.
-    - `relation`     : `.agree` (assimilation) or `.disagree` (dissimilation).
-    - `featureValue` : the value of `F` extracted from a context segment.
-      `none` means the segment is itself underspecified for `F`, in which
-      case the rule defers to `default`.
-    - `default`      : the Elsewhere value ([belth-2026]'s default
-      fallback). `none` means *no* default — when no context is found,
-      `applyAt` returns `none`. `some v` is the concrete fallback. -/
+/-- A tier-based alternation rule over alphabet `α`: project the word onto a tier,
+    find the adjacent context segment on `side`, and fill the target's feature by
+    `relation` to it, falling back to `default`. -/
 structure TierRule (α : Type) where
+  /-- The erasing projection ([goldsmith-1976]) onto which the context-class check is
+      performed. -/
   tier : TierProjection α α
+  /-- Whether the triggering context precedes (`.left`) or follows (`.right`) the
+      unspecified target slot. -/
   side : Side := .left
+  /-- The natural class `C`: the rule fires only when the tier-adjacent segment
+      satisfies this predicate. -/
   targetIsContext : α → Prop
+  /-- Decidability of the context class, carried as an instance field (mathlib's
+      `Finset.filter` convention). -/
   [decTarget : DecidablePred targetIsContext]
+  /-- `.agree` (assimilation) or `.disagree` (dissimilation). -/
   relation : Relation
+  /-- The value of the alternating feature extracted from a context segment; `none`
+      means the segment is itself underspecified, deferring to `default`. -/
   featureValue : α → Option Bool
+  /-- The Elsewhere value ([belth-2026]'s default fallback): `some v` is the concrete
+      fallback when no context is found, `none` makes `applyAt` return `none`. -/
   default : Option Bool := none
 
 namespace TierRule
