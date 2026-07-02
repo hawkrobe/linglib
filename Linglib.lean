@@ -148,6 +148,7 @@ import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisse
 import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisseGame
 import Linglib.Core.Logic.FirstOrder.Kripke
 import Linglib.Core.Logic.FirstOrder.FiniteModel
+import Linglib.Core.Logic.FirstOrder.Comparative
 import Linglib.Core.Logic.FirstOrder.TotalPreorder
 import Linglib.Core.Logic.FirstOrder.Lindstrom
 import Linglib.Core.Logic.FirstOrder.QuantifierRank
