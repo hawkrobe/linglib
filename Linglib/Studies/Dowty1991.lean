@@ -353,14 +353,18 @@ theorem arrive_cross_theory :
     arrive.unaccusative = true :=
   ⟨by decide, by decide, by decide, by decide, rfl⟩
 
-/-- Kick: ASP outranking and [grimm-2011]'s case regions converge.
-    Subject → NOM, object → ACC in an accusative system. -/
+/-- Kick: ASP outranking and [grimm-2011]'s subject region converge —
+    subject → NOM in an accusative system. The object, under the corrected
+    surface-contact profile (no entailed change; [dowty-1991] never
+    discusses *kick*), falls in Grimm's oblique region (INST), outside
+    canonical ACC — see `Grimm2011.kick_object_persistence` for the
+    Grimm-vs-Beavers divergence on contact-verb objects. -/
 theorem kick_asp_grimm_consistent :
     OutranksForSubject kickSubjectProfile kickObjectProfile ∧
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
       = .nom ∧
     (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
-      = .acc :=
+      = .inst :=
   ⟨by decide, by decide, by decide⟩
 
 /-- Die: ASP, flat counting, and [grimm-2011] all agree on unaccusative.

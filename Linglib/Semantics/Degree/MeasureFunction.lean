@@ -227,8 +227,8 @@ def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Ti
     This is the load-bearing structural bridge from K&L 2008's
     measure-function framework to Beavers' affectedness substrate.
     Once a verb declares `[HasMeasureFunction]`, downstream
-    `IsNonQuantizedAffected.mk'` and `IsQuantizedAffected.mk'`
-    constructors find the `HasScalarResult` instance by typeclass
+    `IsNonQuantizedAffected` and `IsQuantizedAffected` instance
+    declarations find the `HasScalarResult` instance by typeclass
     synthesis — no explicit constructor invocation needed.
 
     Mathlib pattern: cf. `[MetricSpace α] : TopologicalSpace α`

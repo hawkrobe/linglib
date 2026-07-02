@@ -707,9 +707,13 @@ theorem hit_diagnostics_match_entailments :
 def rootTypeFromChangeEntailment (p : EntailmentProfile) : RootType :=
   if p.changeOfState then .result else .propertyConcept
 
-/-- A result root's object has changeOfState = true. -/
+/-- A result verb's object (accomplishment template) has
+    changeOfState = true, so it patterns with result roots. Contact-verb
+    objects (*kick*: CA+St, no entailed change per [beavers-2011]
+    eq. (60c)) fall on the other side of the bridge. -/
 theorem result_object_has_changeOfState :
-    (rootTypeFromChangeEntailment kickObjectProfile) = .result := by
+    rootTypeFromChangeEntailment accomplishmentObjectProfile = .result ∧
+    rootTypeFromChangeEntailment kickObjectProfile = .propertyConcept := by
   decide
 
 /-- Die subject undergoes change → result-type pattern. -/
