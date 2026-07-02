@@ -84,7 +84,9 @@ structure Root where
   entailments : Finset LexEntailment := ∅
   /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
       orthogonal to the `kinds` (derived from `entailments`). `none`
-      where the root has not been annotated for outcomes. -/
+      where the root has not been annotated for outcomes; `none` can also
+      carry [bhadra-2024]'s own gap — true intransitives have *no* outcome
+      set at all (end of §5.1.2), lacking an object. -/
   outcomes : Option OutcomeCardinality := none
   /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
       [majid-boster-bowerman-2008]); `{}` (all unconstrained) by default. -/

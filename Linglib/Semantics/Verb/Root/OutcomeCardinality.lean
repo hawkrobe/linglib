@@ -11,9 +11,9 @@ state and impingement roots), or `multi` (potential-for-change roots). Only the
 tier, not an exact count, is grammatically load-bearing, so this is a
 three-element linear order rather than `ℕ∞`.
 
-Factored out from `Roots/Outcomes.lean` (which carries the heavy event-relative
-machinery — `res`/`pre`, `VerbOutcomes`) so that `Root` itself can carry the
-outcome axis without depending on `Event`/`EventRel`.
+Factored out from `Semantics/Verb/Root/Outcomes.lean` (which carries the heavy
+event-relative machinery — `res`/`pre`, `VerbOutcomes`) so that `Root` itself
+can carry the outcome axis without depending on `Event`/`EventRel`.
 
 ## Main definitions
 
