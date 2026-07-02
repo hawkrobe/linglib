@@ -31,6 +31,7 @@ open Phonology (Segment)
     the μ node survives). A long vowel is two morae dominating the same melody;
     a non-moraic coda rides on the preceding mora's `dominates`. -/
 structure Mora where
+  /-- The melody this μ node dominates; `[]` is a stranded/floating mora. -/
   dominates : List Segment
   deriving DecidableEq
 

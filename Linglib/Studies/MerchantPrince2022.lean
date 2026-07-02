@@ -59,12 +59,12 @@ engine to the abstract `Grammar` hub ([merchant-prince-2022]; [merchant-riggle-2
 `h` is the consistency of the row's conditions, i.e. that `w` is a genuine,
 non-harmonically-bounded optimum. -/
 noncomputable def rowGrammar (t : Tableau C n) (w : C)
-    (h : ERCSet.consistent (rowERCSet t w)) : Grammar n :=
+    (h : ERCSet.Consistent (rowERCSet t w)) : Grammar n :=
   Grammar.ofERCSet (rowERCSet t w) h
 
 @[simp] theorem mem_rowGrammar_legs {t : Tableau C n} {w : C}
-    {h : ERCSet.consistent (rowERCSet t w)} {r : Ranking n} :
-    r ∈ (rowGrammar t w h).legs ↔ ERCSet.satisfiedBy r (rowERCSet t w) := by
+    {h : ERCSet.Consistent (rowERCSet t w)} {r : Ranking n} :
+    r ∈ (rowGrammar t w h).legs ↔ ERCSet.SatisfiedBy r (rowERCSet t w) := by
   simp only [rowGrammar, Grammar.legs_ofERCSet, ERCSet.mem_linearExtensions]
 
 /-- **The semantic anchor.** A row's grammar collects exactly the rankings under
@@ -73,12 +73,12 @@ dominates every competitor's — i.e. the rankings that select `w` as optimum
 ([prince-smolensky-1993]). This connects the abstract `Grammar` hub back to the
 tableau's lexicographic evaluation. -/
 theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
-    {h : ERCSet.consistent (rowERCSet t w)} {r : Ranking n} :
+    {h : ERCSet.Consistent (rowERCSet t w)} {r : Ranking n} :
     r ∈ (rowGrammar t w h).legs ↔
       ∀ l ∈ t.candidates.erase w,
         toLex (fun p => t.profile w (r p)) ≤ toLex (fun p => t.profile l (r p)) := by
   rw [mem_rowGrammar_legs]
-  unfold ERCSet.satisfiedBy rowERCSet
+  unfold ERCSet.SatisfiedBy rowERCSet
   constructor
   · intro hsat l hl
     exact (tableauERC_satisfiedBy_iff t r w l).mp

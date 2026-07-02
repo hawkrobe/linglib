@@ -79,16 +79,16 @@ Grammars are exactly the closed sets `models (conditions R)`, the *extents* of
 this context. -/
 
 /-- The rankings satisfying every condition in `A` (the extent polarity). -/
-def models (A : Set (ERC n)) : Set (Ranking n) := {r | ∀ α ∈ A, ERC.satisfiedBy r α}
+def models (A : Set (ERC n)) : Set (Ranking n) := {r | ∀ α ∈ A, ERC.SatisfiedBy r α}
 
 /-- The conditions satisfied by every ranking in `R` (the intent polarity). -/
-def conditions (R : Set (Ranking n)) : Set (ERC n) := {α | ∀ r ∈ R, ERC.satisfiedBy r α}
+def conditions (R : Set (Ranking n)) : Set (ERC n) := {α | ∀ r ∈ R, ERC.SatisfiedBy r α}
 
 @[simp] theorem mem_models {A : Set (ERC n)} {r : Ranking n} :
-    r ∈ models A ↔ ∀ α ∈ A, ERC.satisfiedBy r α := Iff.rfl
+    r ∈ models A ↔ ∀ α ∈ A, ERC.SatisfiedBy r α := Iff.rfl
 
 @[simp] theorem mem_conditions {R : Set (Ranking n)} {α : ERC n} :
-    α ∈ conditions R ↔ ∀ r ∈ R, ERC.satisfiedBy r α := Iff.rfl
+    α ∈ conditions R ↔ ∀ r ∈ R, ERC.SatisfiedBy r α := Iff.rfl
 
 /-- **The grammar–condition Galois connection.** `R ⊆ models A ↔ A ⊆ conditions R`:
 both sides say every ranking in `R` satisfies every condition in `A`. -/
@@ -174,7 +174,7 @@ theorem coe_linearExtensions_eq_models (E : ERCSet n) :
 of `Ord(S.Con)`. This is the trivial grammar (no ranking conditions). -/
 @[simp] theorem ERCSet.linearExtensions_nil :
     ERCSet.linearExtensions ([] : ERCSet n) = Finset.univ := by
-  ext r; simp [ERCSet.mem_linearExtensions, ERCSet.satisfiedBy]
+  ext r; simp [ERCSet.mem_linearExtensions, ERCSet.SatisfiedBy]
 
 /-- An OT **grammar**: a set of rankings realizable as the linear extensions of
 some consistent ERC set ([merchant-riggle-2016]). The leg set is the grammar's
@@ -183,7 +183,7 @@ structure Grammar (n : ℕ) where
   /-- The grammar's legs: the rankings that select its language's optima. -/
   legs : Finset (Ranking n)
   /-- Every grammar is the linear-extension set of some consistent ERC set. -/
-  realizable : ∃ E : ERCSet n, ERCSet.consistent E ∧ legs = E.linearExtensions
+  realizable : ∃ E : ERCSet n, ERCSet.Consistent E ∧ legs = E.linearExtensions
 
 namespace Grammar
 
@@ -193,11 +193,11 @@ so leg-set equality is grammar equality. -/
   cases G; cases G'; cases h; rfl
 
 /-- The grammar of a consistent ERC set — the ERC face, as a constructor. -/
-def ofERCSet (E : ERCSet n) (hcons : ERCSet.consistent E) : Grammar n where
+def ofERCSet (E : ERCSet n) (hcons : ERCSet.Consistent E) : Grammar n where
   legs := E.linearExtensions
   realizable := ⟨E, hcons, rfl⟩
 
-@[simp] theorem legs_ofERCSet (E : ERCSet n) (hcons : ERCSet.consistent E) :
+@[simp] theorem legs_ofERCSet (E : ERCSet n) (hcons : ERCSet.Consistent E) :
     (ofERCSet E hcons).legs = E.linearExtensions := rfl
 
 /-- Membership: `r ∈ G` means `r` is one of `G`'s legs. -/
@@ -206,8 +206,8 @@ instance : Membership (Ranking n) (Grammar n) where
 
 @[simp] theorem mem_iff {G : Grammar n} {r : Ranking n} : r ∈ G ↔ r ∈ G.legs := Iff.rfl
 
-@[simp] theorem mem_ofERCSet {E : ERCSet n} {hcons : ERCSet.consistent E} {r : Ranking n} :
-    r ∈ ofERCSet E hcons ↔ ERCSet.satisfiedBy r E := by
+@[simp] theorem mem_ofERCSet {E : ERCSet n} {hcons : ERCSet.Consistent E} {r : Ranking n} :
+    r ∈ ofERCSet E hcons ↔ ERCSet.SatisfiedBy r E := by
   simp [mem_iff, ofERCSet]
 
 /-- A grammar has at least one leg: a harmonically-bounded row gives no grammar
@@ -225,8 +225,8 @@ same legs. This is why the leg set, not the ERC set, is the grammar's identity:
 the "logically equivalent, not literally equal" hedge of the ERC presentation
 ([merchant-riggle-2016] Theorem 2) becomes literal `Grammar` equality. -/
 theorem ofERCSet_eq_iff_entails {E E' : ERCSet n}
-    (h : ERCSet.consistent E) (h' : ERCSet.consistent E') :
-    ofERCSet E h = ofERCSet E' h' ↔ ERCSet.entails E E' ∧ ERCSet.entails E' E := by
+    (h : ERCSet.Consistent E) (h' : ERCSet.Consistent E') :
+    ofERCSet E h = ofERCSet E' h' ↔ ERCSet.Entails E E' ∧ ERCSet.Entails E' E := by
   constructor
   · intro he
     have hl : E.linearExtensions = E'.linearExtensions := congrArg Grammar.legs he
@@ -248,7 +248,7 @@ def feasible (G : Grammar n) (S : Set (Fin n)) : Prop :=
 
 /-- The feasible family of `ofERCSet E` is exactly `MChain E`: the antimatroid face
 agrees with [merchant-riggle-2016]'s `Antimat E` construction. -/
-theorem feasible_ofERCSet (E : ERCSet n) (hcons : ERCSet.consistent E) (S : Set (Fin n)) :
+theorem feasible_ofERCSet (E : ERCSet n) (hcons : ERCSet.Consistent E) (S : Set (Fin n)) :
     (ofERCSet E hcons).feasible S ↔ MChain E S := by
   simp only [feasible, legs_ofERCSet, ERCSet.mem_linearExtensions, MChain]
 
@@ -288,7 +288,7 @@ def toAntimatroid (G : Grammar n) : Antimatroid (Fin n) where
     G.toAntimatroid.IsFeasible S ↔ G.feasible S := Iff.rfl
 
 /-- The antimatroid face of `ofERCSet E` has the same feasible sets as `Antimat E`. -/
-theorem toAntimatroid_ofERCSet_isFeasible (E : ERCSet n) (hcons : ERCSet.consistent E)
+theorem toAntimatroid_ofERCSet_isFeasible (E : ERCSet n) (hcons : ERCSet.Consistent E)
     (S : Set (Fin n)) :
     (ofERCSet E hcons).toAntimatroid.IsFeasible S ↔ (Antimat E hcons).IsFeasible S := by
   rw [toAntimatroid_isFeasible, feasible_ofERCSet]
@@ -315,7 +315,7 @@ theorem exists_grammar_of_isGrammarClosed {R : Set (Ranking n)}
     ext α; simp [Set.Finite.mem_toFinset, Finset.mem_toList]
   have hReq : (↑E.linearExtensions : Set (Ranking n)) = R := by
     rw [coe_linearExtensions_eq_models, hAeq]; exact hcl
-  have hcons : ERCSet.consistent E := by
+  have hcons : ERCSet.Consistent E := by
     obtain ⟨r, hr⟩ := hne
     have hmem : r ∈ (↑E.linearExtensions : Set (Ranking n)) := hReq ▸ hr
     rw [Finset.mem_coe, ERCSet.mem_linearExtensions] at hmem
@@ -345,8 +345,8 @@ theorem le_iff_legs {G G' : Grammar n} : G ≤ G' ↔ G.legs ⊆ G'.legs := Iff.
 /-- The specificity order on grammars **is** the entailment order on their ERC sets
 — the order side of the grammar–condition Galois adjunction. -/
 theorem ofERCSet_le_iff_entails {E E' : ERCSet n}
-    (h : ERCSet.consistent E) (h' : ERCSet.consistent E') :
-    ofERCSet E h ≤ ofERCSet E' h' ↔ ERCSet.entails E E' := by
+    (h : ERCSet.Consistent E) (h' : ERCSet.Consistent E') :
+    ofERCSet E h ≤ ofERCSet E' h' ↔ ERCSet.Entails E E' := by
   rw [le_iff_legs]
   constructor
   · intro hle r hr
@@ -356,7 +356,7 @@ theorem ofERCSet_le_iff_entails {E E' : ERCSet n}
 
 /-- The **trivial grammar** — the terminal object of the specificity order: all
 rankings, no ranking conditions (`ofERCSet []`). -/
-def trivial : Grammar n := ofERCSet [] ⟨Ranking.id n, by simp [ERCSet.satisfiedBy]⟩
+def trivial : Grammar n := ofERCSet [] ⟨Ranking.id n, by simp [ERCSet.SatisfiedBy]⟩
 
 @[simp] theorem legs_trivial : (Grammar.trivial : Grammar n).legs = Finset.univ := by
   simp only [Grammar.trivial, legs_ofERCSet, ERCSet.linearExtensions_nil]
