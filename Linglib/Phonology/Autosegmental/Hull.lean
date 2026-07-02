@@ -20,7 +20,8 @@ representation, where the melody is a single node and the hull is planar.
 
 ## Main results
 
-* `mem_hull_links` — hull membership as flanking, for in-bounds graphs.
+* `mem_links_hull` — hull membership as flanking (`Graph` form with explicit bounds;
+  side-condition-free `AR.mem_links_hull` for well-formed representations).
 * `links_subset_hull` — the hull extends the link set.
 * `hull_convex` — per-node convexity: the defining property of the hull.
 * `AR.hull` — the operation on well-formed representations.
@@ -44,7 +45,7 @@ def hull (r : Graph α β) : Graph α β where
 @[simp] theorem hull_lower (r : Graph α β) : r.hull.lower = r.lower := rfl
 
 /-- Hull membership, on an in-bounds graph: `j` lies between two of `k`'s links. -/
-theorem mem_hull_links {r : Graph α β} (hr : r.InBounds) {k j : ℕ} :
+theorem mem_links_hull {r : Graph α β} (hr : r.InBounds) {k j : ℕ} :
     (k, j) ∈ r.hull.links
       ↔ ∃ j₁ j₂, (k, j₁) ∈ r.links ∧ (k, j₂) ∈ r.links ∧ j₁ ≤ j ∧ j ≤ j₂ := by
   simp only [hull, Finset.mem_filter, Finset.mem_product, Finset.mem_range]
@@ -62,27 +63,15 @@ theorem InBounds.hull {r : Graph α β} (hr : r.InBounds) : r.hull.InBounds := f
 
 /-- Links flank themselves: the hull extends the link set. -/
 theorem links_subset_hull {r : Graph α β} (hr : r.InBounds) : r.links ⊆ r.hull.links :=
-  fun ⟨k, j⟩ hp => (mem_hull_links hr).mpr ⟨j, j, hp, hp, le_rfl, le_rfl⟩
+  fun ⟨k, j⟩ hp => (mem_links_hull hr).mpr ⟨j, j, hp, hp, le_rfl, le_rfl⟩
 
 /-- Per-node convexity: the defining property of the hull. -/
 theorem hull_convex {r : Graph α β} (hr : r.InBounds) {k j₁ j j₂ : ℕ}
     (h₁ : (k, j₁) ∈ r.hull.links) (h₂ : (k, j₂) ∈ r.hull.links) (hle₁ : j₁ ≤ j)
     (hle₂ : j ≤ j₂) : (k, j) ∈ r.hull.links := by
-  obtain ⟨a₁, -, ha₁, -, hle₃, -⟩ := (mem_hull_links hr).mp h₁
-  obtain ⟨-, a₂, -, ha₂, -, hle₄⟩ := (mem_hull_links hr).mp h₂
-  exact (mem_hull_links hr).mpr ⟨a₁, a₂, ha₁, ha₂, by omega, by omega⟩
-
-/-- Surfacing through the hull: a same-node flanking pair with the right label. -/
-theorem surfacesWith_hull {r : Graph α β} (hr : r.InBounds) {a : α} {j : ℕ} :
-    r.hull.SurfacesWith a j
-      ↔ ∃ i j₁ j₂, (i, j₁) ∈ r.links ∧ (i, j₂) ∈ r.links ∧ j₁ ≤ j ∧ j ≤ j₂
-          ∧ r.upper.get? i = some a := by
-  constructor
-  · rintro ⟨i, hlink, hlabel⟩
-    obtain ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩ := (mem_hull_links hr).mp hlink
-    exact ⟨i, j₁, j₂, h₁, h₂, hle₁, hle₂, hlabel⟩
-  · rintro ⟨i, j₁, j₂, h₁, h₂, hle₁, hle₂, hlabel⟩
-    exact ⟨i, (mem_hull_links hr).mpr ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩, hlabel⟩
+  obtain ⟨a₁, -, ha₁, -, hle₃, -⟩ := (mem_links_hull hr).mp h₁
+  obtain ⟨-, a₂, -, ha₂, -, hle₄⟩ := (mem_links_hull hr).mp h₂
+  exact (mem_links_hull hr).mpr ⟨a₁, a₂, ha₁, ha₂, by omega, by omega⟩
 
 end Graph
 
@@ -94,5 +83,12 @@ def AR.hull (A : AR α β) : AR α β where
 @[simp] theorem AR.hull_upper (A : AR α β) : A.hull.upper = A.upper := rfl
 
 @[simp] theorem AR.hull_lower (A : AR α β) : A.hull.lower = A.lower := rfl
+
+/-- Hull membership on a well-formed representation: no side condition — the
+representation carries its own bounds. -/
+theorem AR.mem_links_hull {A : AR α β} {k j : ℕ} :
+    (k, j) ∈ A.hull.links
+      ↔ ∃ j₁ j₂, (k, j₁) ∈ A.links ∧ (k, j₂) ∈ A.links ∧ j₁ ≤ j ∧ j ≤ j₂ :=
+  Graph.mem_links_hull A.inBounds
 
 end Autosegmental

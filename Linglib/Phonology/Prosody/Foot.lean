@@ -67,7 +67,9 @@ example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
     (the stressed daughter, the head). The `Fin` index forces non-emptiness by construction.
     The inventory and headedness are derived below, not stored. -/
 structure Foot (S : Type*) where
+  /-- The dominated syllable positions, left to right. -/
   syllables : List S
+  /-- The distinguished (stressed) daughter; the `Fin` index forces non-emptiness. -/
   head      : Fin syllables.length
   deriving DecidableEq, Repr
 

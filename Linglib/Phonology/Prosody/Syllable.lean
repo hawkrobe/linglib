@@ -40,8 +40,11 @@ open Phonology (Segment)
     mora (the sonority peak; mandatory, so σ has ≥1 mora and the head is initial by
     construction), and a `tail` of further morae (long-vowel morae + a moraic coda). -/
 structure Syllable where
+  /-- The non-moraic onset melody. -/
   onset : List Segment
+  /-- The nucleus mora — the sonority peak; mandatory, so σ has ≥ 1 mora. -/
   head  : Mora
+  /-- Further morae: long-vowel morae and a moraic coda. -/
   tail  : List Mora
   deriving DecidableEq
 
@@ -203,7 +206,9 @@ end Syllable
 /-- The onset-rime structure ([selkirk-1982]): a rival theory of σ structure, an onset
     over a rime. Here a re-representation of the canonical moraic `Syllable`. -/
 structure OnsetRime where
+  /-- The non-moraic onset melody. -/
   onset : List Segment
+  /-- The rime: the moraic spine. -/
   rime  : List Mora
   deriving DecidableEq
 
