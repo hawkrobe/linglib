@@ -23,7 +23,7 @@ the `agentive` sub-feature (own energy + dynamic), which is strictly
 narrower than passing the do-test.
 
 This analysis has been superseded by [grimm-2011]'s agentivity lattice
-(formalized in `AgentivityLattice.lean`), which organizes proto-agent
+(formalized in `Semantics/ArgumentStructure/Agentivity/Defs.lean`), which organizes proto-agent
 entailments into a lattice with privative features. The Cruse decomposition
 is preserved here as a historically important precursor.
 
@@ -43,7 +43,7 @@ and is marginal for others.
 
 namespace Cruse1973
 
-open Semantics.ArgumentStructure
+open ArgumentStructure
 open Causation.CoerciveImplication
 open Features (Causative)
 open Features

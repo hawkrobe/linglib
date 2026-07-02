@@ -722,7 +722,7 @@ participant (the Japanese adversity causative), while
 — so only the bieventive analysis accommodates the data, derived from the
 denotations. -/
 
-open Semantics.ArgumentStructure in
+open ArgumentStructure in
 /-- [pylkkanen-2008] §3.2: the Japanese adversity causative — a causing
     event with no external argument — is admitted by the bieventive Cause
     denotation, which the θ-role analysis (forcing a causer) cannot model. -/
@@ -1209,7 +1209,7 @@ contrast is `IntroMode.toEvent`/`.toTheme`, the two diagnostics are
 projects to an `IntroMode`, and the empirical diagnostics are *instances* of
 the substrate theorems rather than restatements of the `IsLow` predicate. -/
 
-open Semantics.ArgumentStructure
+open ArgumentStructure
 
 /-- Pylkkänen's high/low `ApplType` as a denotational introduction mode
     ([wood-marantz-2017]'s contextually-interpreted introducer). -/

@@ -411,7 +411,7 @@ the others wire through substrate theorems directly. -/
     comparative form. -/
 theorem confidence_comparative_reduces
     {E : Type*} {Time : Type*} [LinearOrder Time]
-    {frame : Semantics.ArgumentStructure.ThematicFrame E Time}
+    {frame : ArgumentStructure.ThematicFrame E Time}
     {P : Event Time → Prop}
     {μ : Event Time → ℚ}
     {a b : E} {sa sb : Event Time}

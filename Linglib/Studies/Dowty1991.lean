@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -332,7 +332,7 @@ theorem run_prediction_matches_fragment :
     verify that Grimm's lattice predictions are consistent with the ASP
     predictions above, and that it also resolves the arrive anomaly. -/
 
-open Semantics.ArgumentStructure.AgentivityLattice
+open ArgumentStructure.AgentivityLattice
 
 /-- Grimm's lattice handles the arrive anomaly: arrive's subject has
     motion but not instigation → not in the NOM/ERG region. Consistent
@@ -370,5 +370,22 @@ theorem die_asp_grimm_consistent :
     flatPredictsUnaccusative dieSubjectProfile = true ∧
     (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion = .accAbs :=
   ⟨by decide, by decide, by decide⟩
+
+/-- Kiss on [grimm-2011]'s Fig. 1 lattice: the object's agentivity node
+    {motion} sits strictly below the subject's {volition, motion} — the §1
+    asymmetry restated as strict lattice dominance. -/
+theorem kiss_subject_dominates :
+    AgentivityNode.fromEntailmentProfile kissObjectProfile <
+    AgentivityNode.fromEntailmentProfile kissSubjectProfile := by decide
+
+/-- Corollary: the flat-count direction follows from lattice dominance via
+    `featureCount_monotone` and `pAgentScore_decomposition` — Dowty's
+    counting comparison (`kiss_asymmetry_is_volition`) is demoted to a
+    consequence of Grimm's order. -/
+theorem kiss_flat_count_from_lattice :
+    kissObjectProfile.pAgentScore ≤ kissSubjectProfile.pAgentScore := by
+  rw [pAgentScore_decomposition, pAgentScore_decomposition]
+  exact Nat.add_le_add
+    (AgentivityNode.featureCount_monotone kiss_subject_dominates.le) le_rfl
 
 end Dowty1991

@@ -204,7 +204,7 @@ referent the determiner does. -/
 
 section CarrierUnification
 
-open Semantics.ArgumentStructure.Relational
+open _root_.ArgumentStructure.Relational
 
 variable (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
   (g : Assignment E) (gs : SitAssignment W)

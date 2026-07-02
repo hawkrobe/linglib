@@ -66,7 +66,7 @@ namespace HaninkKoontzGarboden2025
 open Verb
 open KoontzGarboden2009.Monotonicity
 open Morphology.DM (Categorizer)
-open Semantics.ArgumentStructure.Relational (π Pred1 Pred2)
+open ArgumentStructure.Relational (π Pred1 Pred2)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Morphological Classes and Semantic Types

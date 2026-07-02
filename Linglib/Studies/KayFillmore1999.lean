@@ -404,7 +404,7 @@ theorem literal_is_genuine_question {W E : Type*}
     (activities : Set E) (pred : E → Set W) :
     wxdyLiteralQ activities pred = which activities pred := rfl
 
-/-! ### Left Periphery bridge (Semantics.ArgumentStructure.Linking/LeftPeriphery.lean) — DEEPEST BRIDGE -/
+/-! ### Left Periphery bridge (ArgumentStructure.Linking/LeftPeriphery.lean) — DEEPEST BRIDGE -/
 
 open Minimalist.LeftPeriphery
 

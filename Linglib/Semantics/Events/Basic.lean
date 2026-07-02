@@ -9,7 +9,7 @@ import Linglib.Features.Aktionsart
 Foundational types and basic API for neo-Davidsonian event semantics
 ([davidson-1967], [parsons-1990]). Verbs denote predicates of
 events; thematic roles are independent two-place predicates
-(`Semantics.ArgumentStructure.ThematicRel`).
+(`ArgumentStructure.ThematicRel`).
 
 ## Main definitions
 

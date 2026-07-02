@@ -45,7 +45,7 @@ this substrate.
 relational noun, type shifting, bridging, definite description, demonstrative
 -/
 
-namespace Semantics.ArgumentStructure.Relational
+namespace ArgumentStructure.Relational
 
 /-! ### Predicates and arity -/
 
@@ -154,4 +154,4 @@ instance : DecidablePred canTakePossessor := λ t => by
 
 end NominalInterpType
 
-end Semantics.ArgumentStructure.Relational
+end ArgumentStructure.Relational

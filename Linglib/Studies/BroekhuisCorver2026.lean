@@ -191,7 +191,7 @@ theorem place_path_family :
     auxiliary selection`. -/
 
 open Semantics.Spatial.Trace (pathShapeToTelicity)
-open Semantics.ArgumentStructure.AuxiliarySelection
+open ArgumentStructure.AuxiliarySelection
 
 /-- All directional adpositions in the inventory carry a PathShape. -/
 theorem directional_adpositions_have_pathShape :

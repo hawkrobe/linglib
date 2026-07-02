@@ -282,7 +282,7 @@ The recursive case (for multi-argument predicates like ⟨e, ⟨e, t⟩⟩)
 applies ↑ to each curried application. Iterated application via
 `fxApply_twice` captures the effect for two-argument roles.
 
-Cf. `Semantics.ArgumentStructure.ThematicRel` for the
+Cf. `ArgumentStructure.ThematicRel` for the
 general Davidsonian role type `Entity → Event → Prop`; FX is PIP's
 mechanism for composing such roles with restricted variables.
 -/

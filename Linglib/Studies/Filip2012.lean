@@ -50,7 +50,7 @@ The third class's compositional behavior:
 namespace Filip2012
 
 open _root_.Mereology
-open Semantics.ArgumentStructure
+open ArgumentStructure
 open Semantics.Aspect.Incremental
 open Semantics.Aspect.Cumulativity
 
