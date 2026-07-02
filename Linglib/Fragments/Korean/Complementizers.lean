@@ -1,4 +1,5 @@
 import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Complementizer.Basic
 
 /-!
 # Korean Complementizers and Clause-Embedding Verbs
@@ -54,41 +55,34 @@ namespace Korean.Complementizers
 -- § 1. Clause-typing morpheme inventory
 -- ════════════════════════════════════════════════════════════════
 
-/-- The three clause-typing morphemes covered here. -/
-inductive KoreanClauseSuffix where
-  /-- *-ta* — declarative ending. Bondarenko-specific decomposition
-      treats it as overt ContP per [bogal-allbritten-moulton-2018];
-      the consensus view (Shim & Ihsane 2015, M.-J. Kim 2009) treats
-      it as a clause-typing morpheme without that specific structural
-      decomposition. -/
-  | ta
-  /-- *-nun* — adnominal ending; turns a clause into a noun modifier
-      (typically followed by *kes* "thing" in nominalized clauses). -/
-  | nun
-  /-- *-ko* — connective / quotative complementizer. -/
-  | ko
-  deriving DecidableEq, Repr
+/-- *-ta* — declarative ending. [bondarenko-2022] §4.3.2 (following
+    [bogal-allbritten-moulton-2018]) analyses it as the overt ContP
+    exponent — that decomposition is Studies-local
+    (`Bondarenko2022.koreanContExponent`); the consensus view
+    (Shim & Ihsane 2015, [kim-min-joo-2009]) treats it as a
+    clause-typing morpheme without that structural decomposition. -/
+def ta : Complementizer where
+  form := "-ta"
+  position := some .postfixed
+  verbForm := some .Fin
+  clauseForm := some .declarative
 
-/-- Phonological form. -/
-def KoreanClauseSuffix.form : KoreanClauseSuffix → String
-  | .ta  => "-ta"
-  | .nun => "-nun"
-  | .ko  => "-ko"
+/-- *-nun* — adnominal ending; turns a clause into a noun modifier
+    (typically followed by *kes* 'thing' in nominalized clauses). -/
+def nun : Complementizer where
+  form := "-nun"
+  position := some .postfixed
+  verbForm := some .Part
+  licenser := some .nominal
 
-/-- Whether the suffix typically appears in nominalized clauses
-    (consensus across analyses, including Bondarenko, M.-J. Kim,
-    Shim & Ihsane). The adnominal *-nun* is the canonical
-    nominalization morpheme; *-ta* and *-ko* are not. -/
-def KoreanClauseSuffix.isAdnominal : KoreanClauseSuffix → Bool
-  | .nun => true
-  | _    => false
+/-- *-ko* — connective / quotative complementizer. -/
+def ko : Complementizer where
+  form := "-ko"
+  position := some .postfixed
+  verbForm := some .Conv
 
-/-- The three suffixes are pairwise distinct. -/
-theorem suffixes_distinct :
-    KoreanClauseSuffix.ta ≠ .nun ∧
-    KoreanClauseSuffix.ta ≠ .ko ∧
-    KoreanClauseSuffix.nun ≠ .ko := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- The clause-typing inventory. -/
+def complementizers : List Complementizer := [ta, nun, ko]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. The lexical noun *kes*
@@ -97,8 +91,7 @@ theorem suffixes_distinct :
 /-- *kes* — 'thing'. Light noun analysed by [kim-min-joo-2009]
     as null-D + N. Combines with an adnominal *-nun*-marked clause
     to yield a nominalized DP that can saturate argument slots. -/
-def kes : { form : String // form = "kes" } :=
-  ⟨"kes", rfl⟩
+def kes : Word := { form := "kes", cat := .NOUN }
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Matrix verb entries
@@ -142,19 +135,5 @@ def selmyenghata : Verb where
   form := "selmyengha-ta"
   complementType := .finiteClause
   vendlerClass := some .accomplishment
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Theorems
--- ════════════════════════════════════════════════════════════════
-
-/-- Stativity split: *yukamsulewehay-ta* and *mit-ta* are stative;
-    *sayngkakha-ta*, *haysekha-ta*, *selmyengha-ta* are eventive. -/
-theorem stativity_split :
-    yukamsulewehayta.vendlerClass = some .state ∧
-    mitta.vendlerClass = some .state ∧
-    sayngkakhata.vendlerClass = some .activity ∧
-    haysekhata.vendlerClass = some .activity ∧
-    selmyenghata.vendlerClass = some .accomplishment :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 end Korean.Complementizers
