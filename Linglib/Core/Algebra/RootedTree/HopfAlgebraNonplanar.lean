@@ -76,13 +76,6 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommRing R] {α : Type*}
 
-/-- `ConnesKreimer R T` inherits the `CommRing` structure from
-    `AddMonoidAlgebra R (Forest T)` when `R` is a commutative ring. The
-    `Bialgebra` substrate only needed `CommSemiring`; the antipode formula
-    needs negation, hence `CommRing`. -/
-noncomputable instance : CommRing (ConnesKreimer R (Nonplanar α)) :=
-  inferInstanceAs (CommRing (AddMonoidAlgebra R (Forest (Nonplanar α))))
-
 /-! ## §1: Subtree depth bound on cut summands
 
 Substrate for the well-founded antipode definition. The depth of any tree
@@ -490,8 +483,7 @@ noncomputable def antipodeMonoidHomN :
     commutative, the antipode is a (not anti-)algebra hom. -/
 noncomputable def antipodeAlgHomN :
     ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.lift R (ConnesKreimer R (Nonplanar α)) (Forest (Nonplanar α))
-    antipodeMonoidHomN
+  ConnesKreimer.lift antipodeMonoidHomN
 
 /-! ### Right antipode (lTensor recursion)
 
@@ -537,14 +529,12 @@ noncomputable def antipodeRightMonoidHomN :
 /-- The **right antipode as an algebra hom** `R : H →ₐ[R] H`. -/
 noncomputable def antipodeRightAlgHomN :
     ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
-  AddMonoidAlgebra.lift R (ConnesKreimer R (Nonplanar α)) (Forest (Nonplanar α))
-    antipodeRightMonoidHomN
+  ConnesKreimer.lift antipodeRightMonoidHomN
 
 @[simp] theorem antipodeRightAlgHomN_apply_of' (F : Forest (Nonplanar α)) :
     antipodeRightAlgHomN (R := R) (of' F) =
       (F.map (antipodeRightTreeN (R := R))).prod := by
-  show AddMonoidAlgebra.lift R _ _ antipodeRightMonoidHomN (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [antipodeRightAlgHomN, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem antipodeRightAlgHomN_apply_ofTree (T : Nonplanar α) :
@@ -554,8 +544,7 @@ noncomputable def antipodeRightAlgHomN :
 
 @[simp] theorem antipodeAlgHomN_apply_of' (F : Forest (Nonplanar α)) :
     antipodeAlgHomN (R := R) (of' F) = (F.map (antipodeTreeN (R := R))).prod := by
-  show AddMonoidAlgebra.lift R _ _ antipodeMonoidHomN (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [antipodeAlgHomN, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem antipodeAlgHomN_apply_ofTree (T : Nonplanar α) :
@@ -763,7 +752,7 @@ private theorem antipodeAlgHomN_axiom_forest (F : Forest (Nonplanar α)) :
 
 Lift the forest-level statement (a per-element identity for `of' F`) to the
 algebra-hom equality `HopfAlgebra.ofAlgHom` consumes. Reduces via
-`AddMonoidAlgebra.algHom_ext`. -/
+`ConnesKreimer.algHom_ext`. -/
 
 /-- Wrapper of `antipodeAlgHomN_axiom_forest` stated at `comulAlgHomN (of' F)`
     instead of `comulForestN F`. The two are equal by `comulAlgHomN_apply_of'`. -/
@@ -782,7 +771,7 @@ private theorem antipode_rTensor_axiom [CharZero R] [NoZeroDivisors R] :
       (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
     (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
       (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α))) := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   -- Defeq: comp.apply, Bialgebra.comulAlgHom = AlgHom.ofLinearMap comul = comulAlgHomN,
   -- Bialgebra.counitAlgHom = AlgHom.ofLinearMap counit = counit, Algebra.ofId = algebraMap.
@@ -822,7 +811,7 @@ private theorem antipodeRight_lTensor_axiom [CharZero R] [NoZeroDivisors R] :
       (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
     (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
       (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α))) := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   exact antipodeRightAlgHomN_axiom_at_of' F
 
@@ -902,7 +891,7 @@ private theorem antipode_lTensor_axiom [CharZero R] [NoZeroDivisors R] :
       (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
     (Algebra.ofId R (ConnesKreimer R (Nonplanar α))).comp
       (Bialgebra.counitAlgHom R (ConnesKreimer R (Nonplanar α))) := by
-  apply AddMonoidAlgebra.algHom_ext
+  apply ConnesKreimer.algHom_ext
   intro F
   exact antipodeAlgHomN_axiom_at_of'_lTensor F
 
