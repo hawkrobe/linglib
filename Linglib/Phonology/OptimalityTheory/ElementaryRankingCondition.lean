@@ -145,14 +145,12 @@ instance : Decidable (α.SatisfiedBy r) :=
 the leading constraint is the single witness. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
-  constructor
-  · intro hsat
-    by_cases he : ∃ p, α (r p) ≠ .e
-    · exact ⟨r (Fin.find _ he), fun c hc => ⟨(satisfiedBy_iff_lead r α).mp hsat he,
-        lead_dominates r α he ((satisfiedBy_iff_lead r α).mp hsat he) hc⟩⟩
-    · exact ⟨0, fun c hc => (he (exists_ne_of_L r α hc)).elim⟩
-  · rintro ⟨d, hd⟩
-    exact (satisfiedBy_iff_dominance r α).mpr fun c hc => ⟨d, hd c hc⟩
+  refine ⟨fun hsat => ?_,
+    fun ⟨d, hd⟩ => (satisfiedBy_iff_dominance r α).mpr fun c hc => ⟨d, hd c hc⟩⟩
+  have hlead := (satisfiedBy_iff_lead r α).mp hsat
+  by_cases he : ∃ p, α (r p) ≠ .e
+  · exact ⟨r (Fin.find _ he), fun c hc => ⟨hlead he, lead_dominates r α he (hlead he) hc⟩⟩
+  · exact ⟨0, fun c hc => (he (exists_ne_of_L r α hc)).elim⟩
 
 /-- A trivial ERC is satisfied by every ranking. -/
 theorem trivial_satisfiedBy {α : ERC n} (htriv : α.IsTrivial) (r : Ranking n) :
