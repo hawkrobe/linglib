@@ -78,15 +78,17 @@ def SurfacesH (w : List TBU) (i : ℕ) : Prop :=
 instance (w : List TBU) (i : ℕ) : Decidable (SurfacesH w i) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+variable {w : List TBU} {i j k : ℕ}
+
 /-- The unbounded tonal plateauing map (36): every TBU between two H-toned TBUs surfaces
 as H; everything else is unchanged. -/
 def utp (w : List TBU) : List TBU :=
   w.mapIdx fun i _ => if SurfacesH w i then .H else .O
 
-@[simp] theorem utp_length (w : List TBU) : (utp w).length = w.length := by
+@[simp] theorem utp_length : (utp w).length = w.length := by
   simp [utp]
 
-theorem utp_getElem? (w : List TBU) (i : ℕ) :
+theorem utp_getElem? :
     (utp w)[i]? = w[i]?.map fun _ => if SurfacesH w i then TBU.H else TBU.O := by
   simp [utp, List.getElem?_mapIdx]
 
@@ -113,30 +115,28 @@ private theorem mem_drop_iff {α : Type*} {a : α} {w : List α} {k : ℕ} :
     exact ⟨j - k, by rw [List.getElem?_drop, Nat.add_sub_cancel' hkj]; exact hj⟩
 
 /-- Positionwise reading of `SurfacesH`: a H at some `j ≤ i` and a H at some `j ≥ i`. -/
-theorem surfacesH_iff {w : List TBU} {i : ℕ} :
+theorem surfacesH_iff :
     SurfacesH w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j, i ≤ j ∧ w[j]? = some .H := by
   rw [SurfacesH, mem_take_iff, mem_drop_iff]
   simp [Nat.lt_succ_iff]
 
-theorem SurfacesH.lt_length {w : List TBU} {i : ℕ} (h : SurfacesH w i) : i < w.length := by
+theorem SurfacesH.lt_length (h : SurfacesH w i) : i < w.length := by
   obtain ⟨-, j, hij, hj⟩ := surfacesH_iff.mp h
   obtain ⟨hlt, -⟩ := List.getElem?_eq_some_iff.mp hj
   omega
 
 /-- The surfacing set is convex. -/
-theorem SurfacesH.of_le_of_le {w : List TBU} {i j k : ℕ} (hi : SurfacesH w i)
-    (hk : SurfacesH w k) (hij : i ≤ j) (hjk : j ≤ k) : SurfacesH w j := by
+theorem SurfacesH.of_le_of_le (hi : SurfacesH w i) (hk : SurfacesH w k) (hij : i ≤ j)
+    (hjk : j ≤ k) : SurfacesH w j := by
   obtain ⟨⟨j₁, hj₁, h₁⟩, -⟩ := surfacesH_iff.mp hi
   obtain ⟨-, j₂, hj₂, h₂⟩ := surfacesH_iff.mp hk
   exact surfacesH_iff.mpr ⟨⟨j₁, by omega, h₁⟩, ⟨j₂, by omega, h₂⟩⟩
 
 /-- A H-toned TBU surfaces H: it flanks itself. -/
-theorem surfacesH_of_getElem?_H {w : List TBU} {i : ℕ} (h : w[i]? = some .H) :
-    SurfacesH w i :=
+theorem surfacesH_of_getElem?_H (h : w[i]? = some .H) : SurfacesH w i :=
   surfacesH_iff.mpr ⟨⟨i, le_rfl, h⟩, ⟨i, le_rfl, h⟩⟩
 
-theorem utp_getElem?_H_iff {w : List TBU} {j : ℕ} :
-    (utp w)[j]? = some .H ↔ SurfacesH w j := by
+theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
   rw [utp_getElem?]
   cases hw : w[j]? with
   | none =>
@@ -156,12 +156,12 @@ theorem utp_getElem?_H_iff {w : List TBU} {j : ℕ} :
 /-- The plateau of `w`: the set of positions that surface H. -/
 def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)
 
-@[simp] theorem mem_plateau {w : List TBU} {j : ℕ} : j ∈ plateau w ↔ SurfacesH w j := by
+@[simp] theorem mem_plateau : j ∈ plateau w ↔ SurfacesH w j := by
   unfold plateau
   rw [Finset.mem_filter, Finset.mem_range]
   exact ⟨fun h => h.2, fun h => ⟨h.lt_length, h⟩⟩
 
-@[simp] theorem plateau_nonempty {w : List TBU} : (plateau w).Nonempty ↔ .H ∈ w := by
+@[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w := by
   constructor
   · rintro ⟨j, hj⟩
     obtain ⟨⟨j₁, -, h₁⟩, -⟩ := surfacesH_iff.mp (mem_plateau.mp hj)
@@ -172,7 +172,7 @@ def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (Surfa
 
 /-- The plateau is an interval, from the first trigger to the last: the set form of
 (36c). -/
-theorem plateau_eq_Icc {w : List TBU} (hne : (plateau w).Nonempty) :
+theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
     plateau w = Finset.Icc ((plateau w).min' hne) ((plateau w).max' hne) := by
   ext j
   rw [Finset.mem_Icc]
@@ -185,7 +185,7 @@ theorem plateau_eq_Icc {w : List TBU} (hne : (plateau w).Nonempty) :
       (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)
 
 /-- TBU `i` surfaces H iff it is itself a H or is strictly flanked. -/
-private theorem surfacesH_split {w : List TBU} {i : ℕ} {a : TBU} (h : w[i]? = some a) :
+private theorem surfacesH_split {a : TBU} (h : w[i]? = some a) :
     SurfacesH w i ↔ a = .H ∨ (.H ∈ w.take i ∧ .H ∈ w.drop (i + 1)) := by
   rw [surfacesH_iff]
   constructor
@@ -214,7 +214,7 @@ private theorem surfacesH_split {w : List TBU} {i : ℕ} {a : TBU} (h : w[i]? = 
 The paper's three schemata for UTP, derived as theorems about `utp` rather than clauses
 of its definition. -/
 
-private theorem singleH_getElem?_H_iff (m n : ℕ) {j : ℕ} :
+private theorem singleH_getElem?_H_iff (m n : ℕ) :
     (List.replicate m TBU.O ++ TBU.H :: List.replicate n TBU.O)[j]? = some TBU.H ↔ j = m := by
   rcases lt_trichotomy j m with hj | rfl | hj
   · rw [List.getElem?_append_left (by simpa using hj), List.getElem?_replicate]
@@ -293,7 +293,7 @@ private theorem plateau_getElem?_second (m p : ℕ) (w : List TBU) :
   rw [htw, List.getElem?_append_right le_rfl]
   simp
 
-private theorem plateau_getElem?_H_bounds {m p : ℕ} {w : List TBU} {j : ℕ}
+private theorem plateau_getElem?_H_bounds {m p : ℕ}
     (h : (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[j]?
       = some TBU.H) :
     m ≤ j ∧ j ≤ m + 1 + w.length := by
@@ -520,10 +520,10 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
     simp
 
 /-- Plateauing is symmetric under string reversal. -/
-theorem utp_reverse (w : List TBU) : utp w.reverse = (utp w).reverse := by
+theorem utp_reverse : utp w.reverse = (utp w).reverse := by
   refine List.ext_getElem? fun i => ?_
   by_cases hi : i < w.length
-  · have hrl : (utp w).length = w.length := utp_length w
+  · have hrl : (utp w).length = w.length := utp_length
     rw [utp_getElem?, List.getElem?_reverse (by simpa using hi),
       List.getElem?_reverse (by simpa [hrl] using hi), hrl, utp_getElem?]
     have hiff : SurfacesH w.reverse i ↔ SurfacesH w (w.length - 1 - i) := by
@@ -914,7 +914,7 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
           exact ⟨k, Finset.mem_union_right _
             (Finset.mem_image.mpr ⟨(k, t), hk, by simp [shiftLink_apply]⟩)⟩
 
-theorem mem_links_realizeMerged_utp (w : List TBU) (p : ℕ × ℕ) :
+theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
   obtain ⟨k, j⟩ := p
   rw [realizeMerged_def,
@@ -933,7 +933,7 @@ theorem mem_links_realizeMerged_utp (w : List TBU) (p : ℕ × ℕ) :
 
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
-theorem links_realizeMerged_utp (w : List TBU) :
+theorem links_realizeMerged_utp :
     (realizeMerged toAR (utp w)).links = (plateau w).image fun j => ((0 : ℕ), j) := by
   ext ⟨k, j⟩
   rw [mem_links_realizeMerged_utp]
@@ -945,13 +945,13 @@ theorem links_realizeMerged_utp (w : List TBU) :
     exact ⟨rfl, hS⟩
 
 /-- The timing tier survives the merge: one slot per input TBU. -/
-theorem lower_realizeMerged_utp (w : List TBU) :
+theorem lower_realizeMerged_utp :
     (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () := by
   rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
 
 /-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
 autosegment. -/
-theorem upper_realizeMerged_utp (w : List TBU) (hw : .H ∈ w) :
+theorem upper_realizeMerged_utp (hw : .H ∈ w) :
     (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] := by
   have hn : 0 < (realize toAR (utp w)).upper.len := by
     obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
