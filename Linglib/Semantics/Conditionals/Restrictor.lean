@@ -166,12 +166,13 @@ theorem conditional_K (f : ModalBase W) (g : OrderingSource W)
 
 open Tense.ConditionalShift (domainRestrictedConditional)
 
-/-- `conditionalNecessity` (with empty ordering source) corresponds to
-    `domainRestrictedConditional` at the Prop level. -/
+/-- `conditionalNecessity` (with empty ordering source) is
+    `domainRestrictedConditional` over the accessible worlds: the two
+    files' Kratzer conditionals are the same operation at the Prop level. -/
 theorem conditionalNecessity_iff_domainRestricted
     (f : ModalBase W) (α : W → Prop) (β : W → Prop) (w : W) :
     conditionalNecessity f emptyBackground α β w ↔
-    (∀ w' ∈ accessibleWorlds f w, α w' → β w') :=
+    domainRestrictedConditional (accessibleWorlds f w) α β :=
   restrictor_eq_strict f α β w
 
 end Semantics.Conditionals.Restrictor

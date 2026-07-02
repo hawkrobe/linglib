@@ -273,8 +273,8 @@ def presCFTower : ContextTower CFCtx :=
 theorem presCF_depth : presCFTower.depth = 1 := rfl
 
 /-- Modal ExclF holds: the counterfactual world ≠ the actual world. -/
-theorem presCF_modal_exclF : ExclF .modal presCFTower := by
-  unfold ExclF presCFTower actualTower actualCtx subjShift; decide
+theorem presCF_modal_exclF : ExclF .modal presCFTower :=
+  subjShift_produces_modal_exclF actualCtx false 0 Bool.false_ne_true
 
 /-- Temporal ExclF does *not* hold: the time is unchanged (0 = 0). -/
 theorem presCF_no_temporal_exclF : ¬ ExclF .temporal presCFTower := by
@@ -292,13 +292,15 @@ def pastCFTower : ContextTower CFCtx :=
 /-- The tower has depth 2 — matching two past morpheme layers. -/
 theorem pastCF_depth : pastCFTower.depth = 2 := rfl
 
-/-- Modal ExclF holds: the counterfactual world ≠ the actual world. -/
-theorem pastCF_modal_exclF : ExclF .modal pastCFTower := by
-  unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift; decide
+/-- Modal ExclF holds: the counterfactual world ≠ the actual world. The
+    modal+temporal pair is the substrate's PastCF configuration
+    (`two_shifts_two_exclFs`). -/
+theorem pastCF_modal_exclF : ExclF .modal pastCFTower :=
+  (two_shifts_two_exclFs actualCtx false 0 (-5) Bool.false_ne_true (by decide)).1
 
 /-- Temporal ExclF holds: the shifted time (-5) ≠ the speech time (0). -/
-theorem pastCF_temporal_exclF : ExclF .temporal pastCFTower := by
-  unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift temporalShift; decide
+theorem pastCF_temporal_exclF : ExclF .temporal pastCFTower :=
+  (two_shifts_two_exclFs actualCtx false 0 (-5) Bool.false_ne_true (by decide)).2
 
 /-- Tower depth (2) matches the PastCF ExclF-layer count (2). -/
 theorem pastCF_depth_matches_data :

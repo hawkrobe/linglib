@@ -15,19 +15,19 @@ open Data.Examples
 
 def en1a : LinguisticExample :=
   { id := "mizuno2024_en1a"
-    source := ⟨"anderson-1951", "(orig.)"⟩
-    reportedIn := some ⟨"mizuno-2024", "(1a)"⟩
+    source := ⟨"mizuno-2024", "(1a)"⟩
+    reportedIn := none
     language := "stan1293"
-    primaryText := "If Jones had taken arsenic last night, he would show those symptoms which he is now showing."
+    primaryText := "You're right. If Jones had taken arsenic last night, he would show those symptoms which he is now showing."
     discourseSegments := []
     glossedTokens := []
-    translation := "If Jones had taken arsenic last night, he would show those symptoms which he is now showing."
+    translation := "You're right. If Jones had taken arsenic last night, he would show those symptoms which he is now showing."
     context := "Jones is in the ER with poisoning symptoms; the team is figuring out which chemical. The boss says he must have taken arsenic. A member responds with (1a), and the follow-up (1b) 'So, it looks like he did take arsenic' is felicitous — an Anderson conditional arguing FOR the truth of its antecedent."
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "x-marking")]
-    comment := "Anderson conditional (Anderson 1951). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact."
+    comment := "Mizuno's adaptation of Anderson's (1951) original ('If Jones had taken arsenic, he would have shown just exactly those symptoms which he does in fact show.'). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -47,7 +47,7 @@ def en2 : LinguisticExample :=
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")]
     comment := "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999)."
     metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    lgrConformance := "" }
 
 def ja4a : LinguisticExample :=
   { id := "mizuno2024_ja4a"
