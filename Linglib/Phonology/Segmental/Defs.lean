@@ -61,7 +61,7 @@ inductive Feature where
   | front            -- tongue body fronted
   | back             -- tongue body backed
   | tense            -- tense vowel quality
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr
 
 namespace Feature
 
@@ -95,7 +95,7 @@ abbrev IsPlace : Prop := f.category = .labial ∨ f.category = .coronal ∨ f.ca
 
 /-! ### Enumeration -/
 
-/-- All 26 features in declaration order. -/
+/-- All features, in declaration order. -/
 def allFeatures : List Feature :=
   [.syllabic, .consonantal, .sonorant, .approximant,
    .continuant, .delayedRelease, .nasal, .lateral, .strident, .tap, .trill,
@@ -104,10 +104,11 @@ def allFeatures : List Feature :=
    .coronal, .anterior, .distributed,
    .dorsal, .high, .low, .front, .back, .tense]
 
-theorem allFeatures_length : allFeatures.length = 26 := rfl
-
-/-- Every feature appears in `allFeatures`. -/
-theorem allFeatures_complete : f ∈ allFeatures := by cases f <;> simp [allFeatures]
+/-- `allFeatures` is the canonical enumeration: completeness is the `Fintype` law,
+not a theorem re-proved beside it. -/
+instance : Fintype Feature where
+  elems := ⟨allFeatures, by decide⟩
+  complete f := by cases f <;> decide
 
 end Feature
 

@@ -76,7 +76,7 @@ def Tableau.ofRanking (candidates : List C)
     ranking `r : Ranking n`: priority position `p` reads constraint `r p`, so
     coordinate `0` of the lexicographic profile is the most dominant constraint.
     The `Equiv.Perm`-indexed evaluation that the `ElementaryRankingCondition`
-    apparatus (`tableauERC`, `ERC.satisfiedBy`) ranges over. -/
+    apparatus (`tableauERC`, `ERC.SatisfiedBy`) ranges over. -/
 def Tableau.ofPerm (con : CON C n) (r : Ranking n)
     (candidates : List C)
     (h : candidates ≠ [] := by decide) : Tableau C n :=
