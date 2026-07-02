@@ -24,13 +24,13 @@ variable {n : ℕ}
 
 namespace Ranking
 
-variable (r : Ranking n) (i j : Fin n)
+variable (r : Ranking n)
 
 /-- Constraint `i` *dominates* constraint `j` under `r`: it sits at a lower
 (more dominant) rank position. -/
-def Dominates : Prop := r.symm i < r.symm j
+def Dominates (i j : Fin n) : Prop := r.symm i < r.symm j
 
-instance : Decidable (r.Dominates i j) := inferInstanceAs (Decidable (r.symm i < r.symm j))
+instance (i j : Fin n) : Decidable (r.Dominates i j) := inferInstanceAs (Decidable (r.symm i < r.symm j))
 
 /-- Dominance between ranked positions is position order. -/
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
@@ -40,7 +40,7 @@ instance : Decidable (r.Dominates i j) := inferInstanceAs (Decidable (r.symm i <
 def id (n : ℕ) : Ranking n := Equiv.refl _
 
 /-- Under the identity ranking, dominance is index order. -/
-@[simp] theorem id_dominates_iff : (Ranking.id n).Dominates i j ↔ i < j := Iff.rfl
+@[simp] theorem id_dominates_iff {i j : Fin n} : (Ranking.id n).Dominates i j ↔ i < j := Iff.rfl
 
 end Ranking
 end OptimalityTheory
