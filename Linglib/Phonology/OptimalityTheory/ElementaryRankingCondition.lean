@@ -123,10 +123,8 @@ private theorem lead_dominates
   refine ⟨hlead he, ?_⟩
   have hle : Fin.find _ he ≤ r.symm c :=
     Fin.find_le_of_pos he (by rw [Equiv.apply_symm_apply, hc]; decide)
-  have hne : Fin.find _ he ≠ r.symm c := fun h => by
-    have hW := hlead he
-    rw [h, Equiv.apply_symm_apply, hc] at hW
-    exact absurd hW (by decide)
+  have hne : Fin.find _ he ≠ r.symm c := fun h =>
+    absurd (h ▸ hlead he) (by rw [Equiv.apply_symm_apply, hc]; decide)
   simpa [Ranking.Dominates] using hle.lt_of_ne hne
 
 /-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
