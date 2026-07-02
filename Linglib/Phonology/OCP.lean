@@ -87,6 +87,16 @@ theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· �
 
 @[simp] theorem collapse_singleton (x : α) : collapse [x] = [x] := by simp [collapse]
 
+/-- `collapse` fuses a constant run into its single autosegment. -/
+@[simp] theorem collapse_replicate (n : ℕ) (a : α) :
+    collapse (List.replicate (n + 1) a) = [a] := by
+  induction n with
+  | zero => simp
+  | succ m ih =>
+    rw [List.replicate_succ, List.replicate_succ, collapse_eq_destutter,
+      List.destutter_cons_cons, if_neg (fun h => h rfl), ← List.destutter_cons',
+      ← List.replicate_succ, ← collapse_eq_destutter, ih]
+
 /-- `collapse` lands in the OCP-clean set. -/
 theorem collapse_clean (xs : List α) : IsClean (collapse xs) :=
   List.isChain_destutter _ xs
