@@ -152,7 +152,7 @@ def get? (a : LabeledTuple α) (i : ℕ) : Option α :=
   · rw [List.getElem?_eq_getElem h, List.get_eq_getElem]
   · rw [List.getElem?_eq_none (by omega)]
 
-theorem get?_eq_getElem? (a : LabeledTuple α) (i : ℕ) : a.get? i = a.toList[i]? := by
+@[simp] theorem get?_eq_getElem? (a : LabeledTuple α) (i : ℕ) : a.get? i = a.toList[i]? := by
   unfold get?
   split <;> rename_i h
   · rw [List.getElem?_eq_getElem (by simpa using h)]; simp [toList, List.getElem_ofFn]
@@ -216,6 +216,9 @@ theorem ext {a b : LabeledTuple α} (hlen : a.len = b.len)
   funext i
   simp only [ofList_label, toList, List.get_ofFn]
   congr 1
+
+theorem toList_injective : Function.Injective (toList (α := α)) := fun a b h => by
+  rw [← ofList_toList a, ← ofList_toList b, h]
 
 theorem concat_assoc (a b c : LabeledTuple α) :
     (a.concat b).concat c = a.concat (b.concat c) :=
