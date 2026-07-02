@@ -552,6 +552,9 @@ theorem isCleanAR_gconcatAR (A B : AR α β) : IsCleanAR (gconcatAR A B) :=
 /-- `collapseAR` leaves the lower (timing) tier untouched: the merge is upper-tier only. -/
 @[simp] theorem collapseAR_lower (A : AR α β) : (collapseAR A).lower = A.lower := rfl
 
+@[simp] theorem collapseAR_links (A : AR α β) :
+    (collapseAR A).links = A.links.image (Prod.map (runIdx A.upper.toList) id) := rfl
+
 /-- **Lower-tier projection** as a monoid hom `AR α β →* FreeMonoid β`: concatenation appends
 lower tiers. The timing-tier decategorification, dual to `upperHom`. -/
 def lowerHom : AR α β →* FreeMonoid β where

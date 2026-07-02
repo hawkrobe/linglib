@@ -668,29 +668,13 @@ The OCP-merging realization `Autosegmental.realizeMerged` fuses the plateau's ru
 nodes into one, giving [hyman-katamba-2010]'s output representation (7): a single H
 autosegment multiply linked to exactly the `plateau`, over an unchanged timing tier. -/
 
-private theorem mem_upper_realize_toAR (v : List TBU) :
-    ∀ b ∈ (realize toAR v).upper.toList, b = Tone.TRN.H := by
-  induction v with
-  | nil =>
-    have h : (realize toAR ([] : List TBU)).upper.toList = [] :=
-      List.eq_nil_of_length_eq_zero (by simp [realize_nil, AR.empty, Graph.empty])
-    rw [h]
-    intro b hb
-    simp at hb
-  | cons a v ih =>
-    intro b hb
-    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, List.mem_append] at hb
-    rcases hb with hb | hb
-    · cases a with
-      | H => simpa [toAR] using hb
-      | O => simp [toAR] at hb
-    · exact ih b hb
-
 private theorem upper_realize_toAR (v : List TBU) :
-    (realize toAR v).upper.toList
-      = List.replicate (realize toAR v).upper.len Tone.TRN.H := by
-  have h := List.eq_replicate_of_mem (mem_upper_realize_toAR v)
-  rwa [LabeledTuple.toList_length] at h
+    (realize toAR v).upper.toList = List.replicate (v.count .H) Tone.TRN.H := by
+  induction v with
+  | nil => rfl
+  | cons a v ih =>
+    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih]
+    cases a <;> simp [toAR, List.replicate_succ]
 
 private theorem lower_realize_toAR (v : List TBU) :
     (realize toAR v).lower.toList = List.replicate v.length () := by
@@ -763,32 +747,25 @@ private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
   obtain ⟨k, j⟩ := p
-  rw [realizeMerged_def,
-    show (collapseAR (realize toAR (utp w))).links
-        = ((realize toAR (utp w)).links).image
-            (Prod.map (runIdx ((realize toAR (utp w)).upper.toList)) id) from rfl,
-    upper_realize_toAR]
+  have hL : ∀ j, (∃ k, (k, j) ∈ (realize toAR (utp w)).links) ↔ SurfacesH w j :=
+    fun j => (isLinkedLower_realize_toAR (utp w) j).trans utp_getElem?_H_iff
+  rw [realizeMerged_def, collapseAR_links, upper_realize_toAR]
   simp only [Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, runIdx_replicate,
     Prod.mk.injEq]
   constructor
   · rintro ⟨q₁, q₂, hq, rfl, rfl⟩
-    exact ⟨rfl, utp_getElem?_H_iff.mp ((isLinkedLower_realize_toAR (utp w) q₂).mp ⟨q₁, hq⟩)⟩
+    exact ⟨rfl, (hL q₂).mp ⟨q₁, hq⟩⟩
   · rintro ⟨rfl, hS⟩
-    obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) j).mpr (utp_getElem?_H_iff.mpr hS)
+    obtain ⟨q₁, hq⟩ := (hL j).mpr hS
     exact ⟨q₁, j, hq, rfl, rfl⟩
 
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
 theorem links_realizeMerged_utp :
-    (realizeMerged toAR (utp w)).links = (plateau w).image fun j => ((0 : ℕ), j) := by
+    (realizeMerged toAR (utp w)).links = {0} ×ˢ plateau w := by
   ext ⟨k, j⟩
   rw [mem_links_realizeMerged_utp]
-  simp only [Finset.mem_image, mem_plateau, Prod.mk.injEq]
-  constructor
-  · rintro ⟨rfl, hS⟩
-    exact ⟨j, hS, rfl, rfl⟩
-  · rintro ⟨j', hS, rfl, rfl⟩
-    exact ⟨rfl, hS⟩
+  simp [and_comm, eq_comm]
 
 /-- The timing tier survives the merge: one slot per input TBU. -/
 theorem lower_realizeMerged_utp :
@@ -799,13 +776,11 @@ theorem lower_realizeMerged_utp :
 autosegment. -/
 theorem upper_realizeMerged_utp (hw : .H ∈ w) :
     (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] := by
-  have hn : 0 < (realize toAR (utp w)).upper.len := by
-    obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
-    obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) i₀).mpr
-      (utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi₀))
-    exact Nat.lt_of_le_of_lt (Nat.zero_le q₁) ((realize toAR (utp w)).inBounds _ hq).1
-  obtain ⟨m, hm⟩ : ∃ m, (realize toAR (utp w)).upper.len = m + 1 :=
-    ⟨(realize toAR (utp w)).upper.len - 1, by omega⟩
+  obtain ⟨m, hm⟩ : ∃ m, (utp w).count .H = m + 1 := by
+    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
+    have := List.count_pos_iff.mpr <| List.mem_iff_getElem?.mpr
+      ⟨i, utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi)⟩
+    exact ⟨(utp w).count .H - 1, by omega⟩
   rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
 
 /-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
