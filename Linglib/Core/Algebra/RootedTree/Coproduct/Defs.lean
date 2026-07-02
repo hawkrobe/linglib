@@ -163,7 +163,7 @@ mutual
 /-- Cut summands conserve node count (tree level): crown node count plus
     trunk node count equals the tree node count plus one replacement
     vertex per crown component. Requires single-node replacement entries. -/
-theorem cutSummandsG_weight
+theorem cutSummandsG_numNodes
     (extract : RoseTree α → Option (List (RoseTree α)))
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = 1) :
     ∀ (t : RoseTree α), ∀ p ∈ cutSummandsG extract t,
@@ -173,12 +173,12 @@ theorem cutSummandsG_weight
     intro p hp
     rw [cutSummandsG_node] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    have h := cutListSummandsG_weight extract hext cs q hq
+    have h := cutListSummandsG_numNodes extract hext cs q hq
     simp only [RoseTree.numNodes_node]
     omega
 
 /-- Mutual aux: node-count conservation for children-list cut summands. -/
-theorem cutListSummandsG_weight
+theorem cutListSummandsG_numNodes
     (extract : RoseTree α → Option (List (RoseTree α)))
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = 1) :
     ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsG extract cs,
@@ -194,14 +194,14 @@ theorem cutListSummandsG_weight
     rw [cutListSummandsG_cons] at hq
     obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
     obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    have h1 := augActionG_weight extract hext t pr.1 ha
-    have h2 := cutListSummandsG_weight extract hext ts pr.2 hq'
+    have h1 := augActionG_numNodes extract hext t pr.1 ha
+    have h2 := cutListSummandsG_numNodes extract hext ts pr.2 hq'
     rw [Multiset.map_add, Multiset.sum_add, List.map_append, List.sum_append,
         Multiset.card_add, List.map_cons, List.sum_cons]
     omega
 
 /-- Mutual aux: node-count conservation for per-child actions. -/
-theorem augActionG_weight
+theorem augActionG_numNodes
     (extract : RoseTree α → Option (List (RoseTree α)))
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = 1) :
     ∀ (t : RoseTree α), ∀ a ∈ augActionG extract t,
@@ -222,7 +222,7 @@ theorem augActionG_weight
         rw [Multiset.map_singleton, Multiset.sum_singleton, hr,
             Multiset.card_singleton]
     · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      have h := cutSummandsG_weight extract hext t p hp
+      have h := cutSummandsG_numNodes extract hext t p hp
       simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
       omega
 

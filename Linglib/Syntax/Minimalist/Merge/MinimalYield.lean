@@ -160,9 +160,9 @@ theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
       ∧ Forest.sigmaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
         = Forest.sigmaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1 :=
   im_pair_size_deltas_contraction lbl
-    (cutSummandsCN_crown_traceLeafCount_lt_weight τ _ p hp β_t
+    (cutSummandsCN_crown_traceLeafCount_lt_numNodes τ _ p hp β_t
       (by rw [hcard]; exact Multiset.mem_singleton_self β_t))
-    (Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+    (Nonplanar.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_rootValue τ _ p hp).trans (by rw [Nonplanar.rootValue_node])))
     (cutSummandsCN_accCountC_single τ _ a₀ F₀ rfl p hp β_t hcard)
 
