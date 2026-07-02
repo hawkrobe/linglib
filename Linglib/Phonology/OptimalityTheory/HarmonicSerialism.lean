@@ -64,46 +64,49 @@ itself, any other advances by `pick`ing from the step's output (a canonical sort
 `head?`, or a directional tie-breaker), and failure — an empty pick, or an already
 failed search — is `none`. Convergence and failure are both fixed points, so the
 `n`-round search is literally `Function.iterate` of this map. -/
-def hsStep (step : C → Finset C) (pick : Finset C → Option C) (oc : Option C) :
-    Option C :=
+def hsStep (step : C → Finset C) (pick : Finset C → Option C) (oc : Option C) : Option C :=
   oc.bind fun c => if step c = {c} then some c else pick (step c)
 
 /-- The `n`-round search from `c`: iterate `hsStep`. The `Nat` fuel makes the search
 total — HS need not converge ([lamont-2022b]). -/
-def iterateGen (step : C → Finset C) (pick : Finset C → Option C) (n : Nat) (c : C) :
-    Option C :=
+def iterateGen (step : C → Finset C) (pick : Finset C → Option C) (n : Nat) (c : C) : Option C :=
   (hsStep step pick)^[n] (some c)
 
-variable {step : C → Finset C} {pick : Finset C → Option C} {c c' : C}
+variable {step : C → Finset C} {pick : Finset C → Option C} {c c' : C} (n : Nat)
+
+@[simp] theorem hsStep_none : hsStep step pick none = none := rfl
+
+@[simp] theorem hsStep_some :
+    hsStep step pick (some c) = if step c = {c} then some c else pick (step c) := rfl
 
 @[simp] theorem iterateGen_zero : iterateGen step pick 0 c = some c := rfl
 
 /-- A converged form is a fixed point of the search step. -/
 theorem isFixedPt_hsStep_of_converged (h : step c = {c}) :
     Function.IsFixedPt (hsStep step pick) (some c) := by
-  simp [Function.IsFixedPt, hsStep, h]
+  simp [Function.IsFixedPt, h]
 
 /-- Failure is a fixed point of the search step. -/
 theorem isFixedPt_hsStep_none : Function.IsFixedPt (hsStep step pick) none := rfl
 
 /-- At a converged form the search is constant: convergence is durable. -/
-theorem iterateGen_const_of_converged (h : step c = {c}) (n : Nat) :
+theorem iterateGen_const_of_converged (h : step c = {c}) :
     iterateGen step pick n c = some c :=
   Function.IsFixedPt.iterate (isFixedPt_hsStep_of_converged h) n
 
-/-- One round from a non-converged form recurses with the picked successor. -/
-theorem iterateGen_succ_of_step (hcv : step c ≠ {c}) (hpick : pick (step c) = some c')
-    (n : Nat) : iterateGen step pick (n + 1) c = iterateGen step pick n c' := by
-  rw [iterateGen, Function.iterate_succ_apply]
-  show (hsStep step pick)^[n] (hsStep step pick (some c)) = _
-  rw [show hsStep step pick (some c) = some c' from by simp [hsStep, hcv, hpick]]
-  rfl
+variable (hcv : step c ≠ {c})
 
+include hcv in
+/-- One round from a non-converged form recurses with the picked successor. -/
+theorem iterateGen_succ_of_step (hpick : pick (step c) = some c') :
+    iterateGen step pick (n + 1) c = iterateGen step pick n c' := by
+  rw [iterateGen, Function.iterate_succ_apply, hsStep_some, if_neg hcv, hpick]; rfl
+
+include hcv in
 /-- One round from a non-converged form where `pick` fails yields `none`, durably. -/
-theorem iterateGen_of_pickFail (hcv : step c ≠ {c}) (hpick : pick (step c) = none)
-    (n : Nat) : iterateGen step pick (n + 1) c = none := by
-  rw [iterateGen, Function.iterate_succ_apply,
-    show hsStep step pick (some c) = none from by simp [hsStep, hcv, hpick]]
+theorem iterateGen_of_pickFail (hpick : pick (step c) = none) :
+    iterateGen step pick (n + 1) c = none := by
+  rw [iterateGen, Function.iterate_succ_apply, hsStep_some, if_neg hcv, hpick]
   exact Function.IsFixedPt.iterate isFixedPt_hsStep_none n
 
 /-- **HS terminates under a well-founded harmony order.** If every genuine step
@@ -118,12 +121,12 @@ theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded
   | _ c IH =>
     by_cases hcv : step c = {c}
     · exact ⟨0, fun m _ => by
-        rw [iterateGen_const_of_converged hcv m, iterateGen_const_of_converged hcv 0]⟩
+        rw [iterateGen_const_of_converged m hcv, iterateGen_const_of_converged 0 hcv]⟩
     · cases hp : pick (step c) with
       | none =>
         refine ⟨1, fun m hm => ?_⟩
         match m, hm with
-        | n + 1, _ => rw [iterateGen_of_pickFail hcv hp, iterateGen_of_pickFail hcv hp]
+        | n + 1, _ => rw [iterateGen_of_pickFail _ hcv hp, iterateGen_of_pickFail _ hcv hp]
       | some c' =>
         by_cases hne : c' = c
         · have hp' : pick (step c) = some c := hne ▸ hp
@@ -131,13 +134,13 @@ theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded
             intro m
             induction m with
             | zero => rfl
-            | succ _ ih => rw [iterateGen_succ_of_step hcv hp']; exact ih
+            | succ _ ih => rw [iterateGen_succ_of_step _ hcv hp']; exact ih
           exact ⟨0, fun m _ => by rw [h m, h 0]⟩
         · obtain ⟨N', IH'⟩ := IH c' (sound c c' hcv hp hne)
           refine ⟨N' + 1, fun m hm => ?_⟩
           match m, hm with
           | n + 1, hn =>
-            rw [iterateGen_succ_of_step hcv hp, iterateGen_succ_of_step hcv hp,
+            rw [iterateGen_succ_of_step _ hcv hp, iterateGen_succ_of_step _ hcv hp,
               IH' n (Nat.le_of_succ_le_succ hn)]
 
 end Iteration
