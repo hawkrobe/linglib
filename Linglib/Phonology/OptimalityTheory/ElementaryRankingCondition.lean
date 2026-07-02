@@ -97,6 +97,14 @@ variable (r : Ranking n) (α : ERC n)
 order, is lexicographically nonnegative. -/
 def SatisfiedBy : Prop := toLex 0 ≤ r • toLex α
 
+/-- Position-space dominance, ranking-free: a sign vector is lex-nonnegative iff every
+`L` is preceded by a `W`. -/
+theorem lex_nonneg_iff_dominance (v : Fin n → ERCVal) :
+    toLex 0 ≤ toLex v ↔ ∀ p, v p = .L → ∃ q < p, v q = .W := by
+  rw [lex_le_iff_forall]
+  exact forall_congr' fun p => imp_congr (ERCVal.lt_zero_iff _)
+    (exists_congr fun q => and_congr_right fun _ => ERCVal.zero_lt_iff _)
+
 /-- **Prince's leading-entry characterization** ([prince-2002] §0): a ranking
 satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
 winner-preferring. -/
@@ -104,9 +112,6 @@ theorem satisfiedBy_iff_lead :
     α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
   ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((lex_le_iff_lead _ _).mp h he),
    fun h => (lex_le_iff_lead _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
-
-private theorem eq_L_of_ne {x : ERCVal} (h1 : x ≠ .e) (h2 : x ≠ .W) : x = .L := by
-  cases x <;> simp_all
 
 /-- A loser-preferring constraint witnesses a non-neutral position. -/
 private theorem exists_ne_of_L {c : Fin n} (hc : α c = .L) : ∃ p, α (r p) ≠ .e :=
@@ -128,15 +133,17 @@ private theorem lead_dominates
   simpa [Ranking.Dominates] using hle.lt_of_ne hne
 
 /-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
-loser-preferring constraint is dominated by some winner-preferring one. -/
+loser-preferring constraint is dominated by some winner-preferring one.
+Position-space dominance (`lex_nonneg_iff_dominance`), coordinates changed along `r`. -/
 theorem satisfiedBy_iff_dominance :
     α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c :=
-  (satisfiedBy_iff_lead r α).trans
-    ⟨fun hlead _ hc => ⟨_, lead_dominates r α hlead hc⟩,
-     fun h he => Classical.byContradiction fun hW =>
-      have ⟨w, hwW, hdom⟩ := h _ (eq_L_of_ne (Fin.find_spec he) hW)
-      Fin.find_min he (by simpa [Ranking.Dominates] using hdom)
-        (by rw [Equiv.apply_symm_apply, hwW]; decide)⟩
+  (lex_nonneg_iff_dominance fun p => α (r p)).trans
+    ⟨fun h c hc =>
+      have ⟨q, hq, hW⟩ := h (r.symm c) (by rwa [Equiv.apply_symm_apply])
+      ⟨r q, hW, by simpa [Ranking.Dominates] using hq⟩,
+     fun h p hp =>
+      have ⟨w, hW, hdom⟩ := h (r p) hp
+      ⟨r.symm w, by simpa [Ranking.Dominates] using hdom, by rwa [Equiv.apply_symm_apply]⟩⟩
 
 instance : Decidable (α.SatisfiedBy r) :=
   decidable_of_iff _ (satisfiedBy_iff_dominance r α).symm
