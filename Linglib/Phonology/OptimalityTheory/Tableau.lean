@@ -41,7 +41,7 @@ computation.
 
 namespace OptimalityTheory
 
-open Core.Optimization.Evaluation Constraints
+open Core.Optimization.Evaluation LexMinProblem Constraints
 
 /-! ### The tableau vocabulary -/
 
@@ -61,20 +61,20 @@ variable {C : Type*} [DecidableEq C] {n : Nat} (t : Tableau C n) (c : C)
 /-- OT-named alias for `LexMinProblem.lexMins` — the winning candidates. Optimality is
 plain membership `c ∈ t.optimal`, unfolded by `mem_optimal_iff`; there is no separate
 winner predicate. -/
-abbrev optimal : Finset C := LexMinProblem.lexMins t
+abbrev optimal : Finset C := lexMins t
 
 /-- Membership in the winner set, unfolded: a winner is a candidate whose profile
 lexicographically bounds the whole tableau. -/
 theorem mem_optimal_iff :
     c ∈ t.optimal ↔ c ∈ t.candidates ∧ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d :=
-  LexMinProblem.mem_lexMins_iff t c
+  mem_lexMins_iff t c
 
 /-- OT-named alias for `LexMinProblem.lexMins_nonempty`. -/
-theorem optimal_nonempty : t.optimal.Nonempty := LexMinProblem.lexMins_nonempty t
+theorem optimal_nonempty : t.optimal.Nonempty := lexMins_nonempty t
 
 /-- OT-named alias for `LexMinProblem.lexMins_subset`. -/
 theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates :=
-  LexMinProblem.lexMins_subset t c
+  lexMins_subset t c
 
 /-- A candidate whose profile vanishes wins: `0` is the global lex-minimum. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
