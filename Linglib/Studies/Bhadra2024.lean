@@ -24,8 +24,13 @@ The two affixes split along two independent axes:
   Singleton or empty outcome sets block it.
 * ***re-*** is *not* cardinality-sensitive (eq. 72); it needs result
   equivalence with a prior event (eq. 68 i) and that the object can re-enter a
-  threshold state (eq. 68 ii). Consumption/destruction verbs block it because
-  their outcome leaves the object outside every threshold.
+  threshold state (eq. 68 ii). Consumption/destruction and impingement (IE)
+  verbs block it ((25), (48)) because their outcome leaves the object outside
+  every threshold.
+
+One idealization: each `VerbOutcomes` fixes its outcome and threshold sets once
+per root, freezing the [verb + object] unit that Bhadra's Level-2 story varies
+with the object (✓*rebreak a limb* vs. #*rebreak a sewer*, her (73)).
 
 ## Main definitions
 
@@ -45,7 +50,8 @@ The two affixes split along two independent axes:
 ## References
 
 * [bhadra-2024] (the Verb-Root-Outcomes framework)
-* [beavers-2010], [dowty-1991] (affectedness hierarchy this grounds in)
+* [beavers-2011] (the affectedness hierarchy and the PFC class)
+* [beavers-2010], [dowty-1991] (ground the `profileToDegree` projection only)
 * [levin-1993] (verb classes the outcome bridge keys on)
 -/
 
@@ -62,7 +68,7 @@ open ArgumentStructure.Affectedness
 A verb root lexically encodes its base predicate `P` (the `⟨v,⟨e,t⟩⟩` meaning the
 affixes modify), its outcome set `O` (states at the right boundary, eq. 56a), and
 its threshold set `T` (left boundary, eq. 56b) — the substrate `VerbOutcomes`
-(`Roots/Outcomes.lean`), with `resState`/`preState` the eq. 64–65 boundary
+(`Semantics/Verb/Root/Outcomes.lean`), with `resState`/`preState` the eq. 64–65 boundary
 operators and `StateFunction` the paper's *state* `k : t ↦ l(x)` (eq. 53).
 `APPLIES` (eq. 59) is folded into `verb`. -/
 
@@ -74,7 +80,8 @@ variable {Entity State Time : Type*} [LinearOrder Time]
     base event `e'` whose result is the un-event's start state
     (`res(e') = pre(e)`), the outcome set is multi-membered (`O.Nontrivial`,
     `|O| > 1`), and the un-event undoes it (`res(e) = pre(e')`). The vacuous
-    `∃Q. Q(e)(x)` of the paper's presupposition is dropped. -/
+    `∃Q. Q(e)(x)` — which sits in the *assertion* of eq. 66, not its
+    presupposition — is dropped. -/
 def unSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State Time)
     (e : Event Time) (x : Entity) : Prop :=
   ∃ e' : Event Time,
@@ -86,10 +93,12 @@ def unSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State
 
 /-- Restitutive *re-* (eq. 68). `reSem k vro e x` holds iff there is a prior
     base event `e'` with the same result (`res(e) = res(e')`, eq. 68 i), the
-    re-event starts from a valid threshold state (`pre(e) ∈ T`, eq. 68 ii — the
-    cyclic-*re-* condition, eq. 72), and the base predicate holds of the
-    re-event (`P(e)(x)`). Unlike `unSem`, this places no cardinality demand on
-    `O`. -/
+    re-event starts from a valid threshold state (`pre(e) ∈ T`), and the base
+    predicate holds of the re-event (`P(e)(x)`). The threshold clause is a
+    rational reconstruction — not a transcription — of eq. 68 ii's negative
+    existential (no threshold state may render the re-action undefined; the
+    cyclic-*re-* condition, eq. 72). Unlike `unSem`, this places no cardinality
+    demand on `O`. -/
 def reSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State Time)
     (e : Event Time) (x : Entity) : Prop :=
   (∃ e' : Event Time,
@@ -148,12 +157,26 @@ realize the eq. 62 hierarchy `multi > singleton > empty`. -/
 
 /-- Outcome-set cardinality of a Levin verb class ([bhadra-2024], eq. 62). -/
 def LevinClass.outcomeCard : LevinClass → ℕ∞
-  | .coil | .bend => ⊤
+  -- PFC roots: her §2.4.1 exemplar list includes *coil*, *bend*, and *veil*
+  -- (concealment), and *undress*/*redress* are fine (dressing verbs).
+  | .coil | .bend | .conceal | .dress => ⊤
+  -- IE roots (§2.4.2): a singleton impingement result (eq. 61g).
   | .hit | .swat | .wipe | .touch => 1
+  -- COS roots (eqs. 61a–f): a single lexically-specified result. Caveat:
+  -- *freeze* (Levin 45.4) is her (1b) ✓*unfreeze*, so the singleton tier
+  -- over-blocks that member — 45.4 is heterogeneous under her taxonomy.
   | .break_ | .destroy | .cooking | .otherCoS | .entitySpecificCoS
   | .calibratableCoS | .color | .imageCreation | .build | .create | .grow
   | .knead | .turn | .cut | .carve | .eat | .devour | .murder | .poison
-  | .mix | .amalgamate | .separate | .split | .conceal | .clear | .dress => 1
+  | .mix | .amalgamate | .separate | .split | .clear => 1
+  -- *load* is a degree achievement with a singleton outcome set (eq. 70).
+  -- Caveat: Levin 9.7 also holds *pack*, on her un-✓ list ((12d) *unpack*) —
+  -- the class is heterogeneous under her taxonomy.
+  | .sprayLoad => 1
+  -- Movement roots: singleton {displaced} sets (eq. 61c); their blocked
+  -- un-/re- ((12c)) comes from cardinality/threshold failure, not from
+  -- empty outcome sets.
+  | .pushPull | .remove | .throw | .put => 1
   | _ => 0
 
 /-- The eq. 62 hierarchy, witnessed on a representative of each tier:
@@ -215,7 +238,7 @@ private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂
 private theorem ev₁_precedes_ev₃ : (Event.τ ev₁).precedes (Event.τ ev₃) := by
   show (5 : ℤ) < 20; omega
 
-/-! #### fold: a PFC root (multi-membered outcomes) -/
+/-! #### fold: a PFC root (multi-membered outcomes), *un-* and *re-* both attach -/
 
 /-- States of a parchment under folding (eq. 54: a multi-membered outcome set). -/
 inductive ParchmentState where
@@ -241,6 +264,22 @@ private def foldUnfoldState : StateFunction Unit ParchmentState ℤ := fun t _ =
 theorem fold_un_satisfiable :
     unSem foldUnfoldState foldVRO ev₂ () :=
   ⟨ev₁, trivial, ev₁_precedes_ev₂, rfl, fold_outcomes_multi, rfl⟩
+
+/-- State for a fold-then-refold scenario: the parchment comes loose (flat)
+    between the events, so the refold starts from the `flat` threshold and
+    restores the `folded` result. -/
+private def foldRefoldState : StateFunction Unit ParchmentState ℤ := fun t _ =>
+  if t ≤ 0 then .flat else if t ≤ 5 then .folded
+  else if t ≤ 20 then .flat else .folded
+
+/-- **Positive: *re-* IS satisfiable for fold** — the multi-membered (PFC)
+    tier's *re-* cell, completing the Fig. 5 distribution: *re-* attaches
+    across the multi and singleton tiers (eq. 72), where *un-* takes the multi
+    tier only. Reuses the root of her worked *unfold* derivation (74)–(75). -/
+theorem fold_re_satisfiable :
+    reSem foldRefoldState foldVRO ev₃ () :=
+  ⟨⟨ev₁, trivial, ev₁_precedes_ev₃, rfl⟩,
+   by simp [foldVRO, preState, foldRefoldState, ev₃, Event.τ], trivial⟩
 
 /-! #### break: a COS root (singleton outcome), *un-* blocked, *re-* allowed -/
 
@@ -273,7 +312,7 @@ theorem break_re_satisfiable :
   ⟨⟨ev₁, trivial, ev₁_precedes_ev₃, rfl⟩,
    by simp [breakVRO, preState, breakRebreakState, ev₃, Event.τ], trivial⟩
 
-/-! #### hit: an IE root (singleton outcome), *un-* blocked -/
+/-! #### hit: an IE root (singleton outcome), *un-* and *re-* both blocked -/
 
 inductive SurfaceState where
   | unaltered | surfaceAltered
@@ -289,6 +328,19 @@ def hitVRO : VerbOutcomes Unit SurfaceState ℤ where
 theorem hit_blocks_un (k : StateFunction Unit SurfaceState ℤ) (e : Event ℤ) :
     ¬ unSem k hitVRO e () :=
   singleton_blocks_un k hitVRO .surfaceAltered rfl e ()
+
+/-- State for an attempted *rehit*: impingement is irreversible (§2.4.2) — the
+    surface stays altered, so the object never re-enters the `unaltered`
+    threshold. -/
+private def hitState : StateFunction Unit SurfaceState ℤ := fun t _ =>
+  if t ≤ 0 then .unaltered else .surfaceAltered
+
+/-- **Negative: *re-* is blocked for hit** — IE verbs block *re-* as well as
+    *un-* ((25), (48)): the impingement outcome never re-enters the pre-state
+    (threshold) set, so the cyclic-*re-* condition (eq. 68 ii) fails. -/
+theorem hit_re_blocked : ¬ reSem hitState hitVRO ev₃ () := by
+  rintro ⟨_, hthresh, _⟩
+  simp [hitVRO, preState, hitState, ev₃, Event.τ] at hthresh
 
 /-! #### load vs shatter: the *re-* minimal pair (eqs. 69–71)
 
@@ -394,18 +446,21 @@ theorem outcomeCard_orthogonal_to_hasResultState :
     LevinClass.outcomeCard .coil = ⊤ := by
   refine ⟨?_, ?_, rfl, rfl⟩ <;> decide
 
-/-- Affectedness bridge: the PFC profile and surface-contact IE verbs like
-    *kick* ([beavers-2011] eq. (60c)) both project to `potential` change on
-    the [beavers-2010] hierarchy — the affectedness projection does not
-    separate them. What does is outcome cardinality (`⊤` vs `1`,
-    `outcome_hierarchy`): [bhadra-2024]'s classification is finer-grained
-    than the affectedness degree, just as it is finer than the CoS label
-    (`bend_reclassification`). -/
+/-- Affectedness bridge ([bhadra-2024] §2.4.2, §6.1): the affectedness
+    projection cannot separate PFC roots from IE roots — the PFC object
+    profile (causally affected, no entailed change) and *kick*'s object
+    profile both land on Beavers's potential-for-change degree, whose
+    exemplars include surface-contact *hit*/*kick*. Bhadra carves the IE
+    class (*kick* is named in her (25)) out of exactly that cell (§2.4.2),
+    and her §6.1 point is that the split needs outcome-set structure a bare
+    latent-scale existential cannot see: outcome cardinality separates the
+    two (`⊤` vs `1`) where the affectedness degree does not. -/
 theorem affectedness_bridge :
     profileToDegree { causallyAffected := true, stationary := true }
-      = .potential ∧
-    profileToDegree kickObjectProfile = .potential :=
-  ⟨rfl, rfl⟩
+      = profileToDegree kickObjectProfile ∧
+    1 < LevinClass.outcomeCard .bend ∧
+    ¬ (1 < LevinClass.outcomeCard .hit) :=
+  ⟨rfl, bend_predicts_un, hit_blocks_un_class⟩
 
 /-- RootTypology bridge: result roots entail change and lack the restitutive
     *again* reading; property-concept roots are the reverse. -/

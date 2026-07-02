@@ -7,8 +7,9 @@ import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 The heavy, event-relative half of the outcome substrate: the boundary operators
 `res`/`pre` and the outcome-bearing carrier `VerbOutcomes`. The light cardinality
-invariant (`OutcomeCardinality`) lives in `Roots/OutcomeCardinality.lean` so that
-`Root` can carry the outcome axis without depending on `Event`/`EventRel`.
+invariant (`OutcomeCardinality`) lives in
+`Semantics/Verb/Root/OutcomeCardinality.lean` so that `Root` can carry the
+outcome axis without depending on `Event`/`EventRel`.
 
 A verb root lexically encodes the **set of outcomes** its object can be in after
 the action — the dimension [bhadra-2024] adds to root semantics, orthogonal to
