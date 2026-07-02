@@ -374,6 +374,32 @@ theorem strict_dominationLift_iff_below {below : W → W → Prop}
   exact exists_congr fun a => and_congr_right fun _ =>
     forall₂_congr fun b _ => (hBelow b a).symm
 
+/-- Lewis's ∃∀ comparative-possibility clause, localized to the `le`-cone at
+an index and comparing difference sets (`P∖Q` against `Q∖P`, the shape of
+[kratzer-2012]'s revised lifting), with the dominance relation a parameter —
+the single clause behind [rudolph-kocurek-2024]'s ≻ (`below` the strict
+ordering) and ≫ (`below` = far-below). -/
+def coneStrictLift (le below : W → W → Prop) (P Q : W → Prop) (i : W) : Prop :=
+  ∃ a, le a i ∧ P a ∧ ¬ Q a ∧ ∀ b, le b i → Q b → ¬ P b → below b a
+
+instance (le below : W → W → Prop) (P Q : W → Prop) (i : W) [Fintype W]
+    [DecidableRel le] [DecidableRel below] [DecidablePred P] [DecidablePred Q] :
+    Decidable (coneStrictLift le below P Q i) := by
+  unfold coneStrictLift; infer_instance
+
+/-- Whenever `below` is the strict form of the total `ge_w`, the
+cone-localized clause is the strict l-lifting on the cone difference sets. -/
+theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
+    (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
+    (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b)
+    (P Q : W → Prop) (i : W) :
+    coneStrictLift le below P Q i ↔
+    ComparativeProbability.Strict (dominationLift ge_w)
+      {x | le x i ∧ P x ∧ ¬ Q x} {x | le x i ∧ Q x ∧ ¬ P x} := by
+  rw [strict_dominationLift_iff_below hTotal hBelow]
+  unfold coneStrictLift
+  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
+
 /-- The l-lifting satisfies determination by singletons. -/
 theorem dominationLift_axiomDS : DeterminedBySingletons (dominationLift ge_w) :=
   fun _ b hAb =>

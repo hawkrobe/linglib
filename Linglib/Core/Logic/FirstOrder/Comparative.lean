@@ -95,9 +95,8 @@ def Realize (φ : CompFormula L E) (le : I → I → Prop) (i : I) (w : W) : Pro
   | .inf A B => Realize A le i w ∧ Realize B le i w
   | .sup A B => Realize A le i w ∨ Realize B le i w
   | .comp A B =>
-      ∃ i', le i' i ∧ Realize A le i' w ∧ ¬ Realize B le i' w ∧
-        ∀ i'', le i'' i → Realize B le i'' w →
-          ¬ Realize A le i'' w → le i'' i' ∧ ¬ le i' i''
+      ComparativeProbability.coneStrictLift le (fun b a => le b a ∧ ¬ le a b)
+        (fun j => Realize A le j w) (fun j => Realize B le j w) i
 
 instance instDec [Fintype I] [Fintype E] [DecidableEq E]
     [hA : DecidableAtoms interp]
@@ -118,11 +117,13 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
       haveI := instDec B le i w
       inferInstanceAs (Decidable (Realize interp A le i w ∨ Realize interp B le i w))
   | .comp A B =>
-      haveI : ∀ j v, Decidable (Realize interp A le j v) := (instDec A le · ·)
-      haveI : ∀ j v, Decidable (Realize interp B le j v) := (instDec B le · ·)
-      inferInstanceAs (Decidable (∃ i', le i' i ∧ Realize interp A le i' w ∧
-        ¬ Realize interp B le i' w ∧ ∀ i'', le i'' i → Realize interp B le i'' w →
-          ¬ Realize interp A le i'' w → le i'' i' ∧ ¬ le i' i''))
+      haveI : DecidablePred (fun j => Realize interp A le j w) :=
+        fun j => instDec A le j w
+      haveI : DecidablePred (fun j => Realize interp B le j w) :=
+        fun j => instDec B le j w
+      inferInstanceAs (Decidable (ComparativeProbability.coneStrictLift
+        le (fun b a => le b a ∧ ¬ le a b)
+        (fun j => Realize interp A le j w) (fun j => Realize interp B le j w) i))
 
 /-- The comparative clause over a total preorder — definitional; the rewriting
 interface, with the domination conjunction packaged as `ord.lt`. -/
@@ -178,12 +179,9 @@ theorem realize_comp_iff_strict_dominationLift (A B : CompFormula L E)
       {x | ord.le x i ∧ Realize interp A ord.le x w ∧
         ¬ Realize interp B ord.le x w}
       {x | ord.le x i ∧ Realize interp B ord.le x w ∧
-        ¬ Realize interp A ord.le x w} := by
-  rw [realize_comp_iff,
-    ComparativeProbability.strict_dominationLift_iff_below
-      (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl)]
-  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
-  rfl
+        ¬ Realize interp A ord.le x w} :=
+  ComparativeProbability.coneStrictLift_iff_strict_dominationLift
+    (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl) _ _ i
 
 /-- ≻ is irreflexive — a witness would make A both true and false. -/
 theorem not_realize_comp_self (φ : CompFormula L E) (le : I → I → Prop)

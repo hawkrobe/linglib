@@ -148,21 +148,12 @@ section Modifiers
 variable [Fintype I] (φ ψ : L.CompFormula E) (ord : SemanticOrdering I)
   (below : I → I → Prop) (d : DistanceFunction I ord) (i : I) (w : W)
 
-/-- The paper's comparative template: ≻'s clause with an arbitrary dominance
-relation in place of <. `.comp`'s semantics is the instance at `ord.lt`
-(`eval_comp_iff_compWith`); ≫ is the instance at ≪. -/
-def EvalCompWith : Prop :=
-  ∃ i', ord.le i' i ∧ Eval interp φ ord i' w ∧ ¬ Eval interp ψ ord i' w ∧
-    ∀ i'', ord.le i'' i → Eval interp ψ ord i'' w →
-      ¬ Eval interp φ ord i'' w → below i'' i'
-
-instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
-    [DecidableRel ord.le] [DecidableRel below] :
-    Decidable (EvalCompWith interp φ ψ ord below i w) := by
-  unfold EvalCompWith
-  haveI : ∀ j v, Decidable (Eval interp φ ord j v) := fun _ _ => inferInstance
-  haveI : ∀ j v, Decidable (Eval interp ψ ord j v) := fun _ _ => inferInstance
-  infer_instance
+/-- The paper's comparative template — the substrate's `coneStrictLift` at the
+formulas' truth sets: ≻'s clause with an arbitrary dominance relation in
+place of < (`eval_comp_iff_compWith`); ≫ is the instance at ≪. -/
+abbrev EvalCompWith : Prop :=
+  ComparativeProbability.coneStrictLift ord.le below
+    (fun j => Eval interp φ ord j w) (fun j => Eval interp ψ ord j w) i
 
 omit [Fintype I] in
 /-- ≻ is the template at <. -/
@@ -215,13 +206,11 @@ theorem evalMuchMore_iff_strict_dominationLift (φ ψ : L.CompFormula E)
     ComparativeProbability.Strict
       (ComparativeProbability.dominationLift (fun a b => ¬ FarBelow ord d a b))
       {x | ord.le x i ∧ Eval interp φ ord x w ∧ ¬ Eval interp ψ ord x w}
-      {x | ord.le x i ∧ Eval interp ψ ord x w ∧ ¬ Eval interp φ ord x w} := by
-  rw [ComparativeProbability.strict_dominationLift_iff_below
+      {x | ord.le x i ∧ Eval interp ψ ord x w ∧ ¬ Eval interp φ ord x w} :=
+  ComparativeProbability.coneStrictLift_iff_strict_dominationLift
     (fun a b => not_farBelow_total d a b)
-    (fun a b => ⟨fun h => ⟨FarBelow.asymm d h, not_not_intro h⟩,
-      fun h => not_not.mp h.2⟩)]
-  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
-  rfl
+    (fun _ _ => ⟨fun h => ⟨FarBelow.asymm d h, not_not_intro h⟩,
+      fun h => not_not.mp h.2⟩) _ _ i
 
 /-- **Grounding**: *mostly* is the strict l-lifting comparing φ-uniform
 *levels* (`ord.equiv`-classes, mathlib's `AntisymmRel.setoid`): some
