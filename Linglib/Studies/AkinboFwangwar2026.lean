@@ -3,7 +3,7 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.OptimalityTheory.CophonologyTheory
+import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Studies.Hyman2006
@@ -726,7 +726,7 @@ section DominantCophAgreement
 
 open Tone (TBU Spec tonalOverwrite)
 open Rolle2018
-open OptimalityTheory.CophonologyTheory (mergeRanking cophonologicalEval)
+open OptimalityTheory.Cophonology (mergeRanking cophonologicalEval)
 
 /-- **The general agreement theorem**: when MxBM-C (basemap faithfulness)
     is in the cophonological subranking, every OT-optimal candidate is
