@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Core.Computability.TierProjection
 
 /-!

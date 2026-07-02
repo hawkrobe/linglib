@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosody.Word
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Bennett 2018: recursion of the prosodic word in Kaqchikel

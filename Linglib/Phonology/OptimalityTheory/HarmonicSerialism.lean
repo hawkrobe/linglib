@@ -1,6 +1,6 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.OptimalityTheory.Defs
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.Data.Finset.Union
 
 /-!

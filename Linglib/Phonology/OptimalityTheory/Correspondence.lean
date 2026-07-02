@@ -7,7 +7,7 @@ import Mathlib.Order.Hom.Basic
 import Mathlib.Order.Hom.Set
 import Mathlib.Data.Fintype.Card
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Correspondence Theory

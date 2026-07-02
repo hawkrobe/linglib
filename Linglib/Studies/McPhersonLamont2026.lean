@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.Tone.Constraints

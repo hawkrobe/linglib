@@ -1,7 +1,7 @@
 import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Fragments.Farsi.Phonology
 import Mathlib.Data.Fin.VecNotation
 

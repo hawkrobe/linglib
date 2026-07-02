@@ -3,7 +3,7 @@ import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Harmony
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Coetzee & Pater (2011): The Place of Variation in Phonological Theory

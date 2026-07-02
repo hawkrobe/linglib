@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Syntax.Case.Dependent
 
 /-!

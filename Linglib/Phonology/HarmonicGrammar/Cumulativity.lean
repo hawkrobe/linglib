@@ -1,5 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.OTLimit
-import Linglib.Phonology.OptimalityTheory.Defs
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # The Cumulativity Gap: HG ⊋ OT

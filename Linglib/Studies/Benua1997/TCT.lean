@@ -1,6 +1,6 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Transderivational Correspondence Theory (TCT)

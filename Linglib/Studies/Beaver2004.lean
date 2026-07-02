@@ -2,7 +2,7 @@ import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # [beaver-2004]: The Optimization of Discourse Anaphora

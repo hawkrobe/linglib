@@ -1,6 +1,6 @@
 import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
