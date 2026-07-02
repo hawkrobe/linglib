@@ -710,73 +710,6 @@ theorem strictlyBetter_respects_right (_hXf : X ⊆ field ord i) (hYf : Y ⊆ fi
           ⟨(Finset.mem_sdiff.mp hc).1,
            fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)
 
-/-- Fact 11: ⊐ respects ∼ on the left — `X ⊐ Y` and `X ∼ Z` give `Z ⊐ Y`. -/
-theorem strictlyBetter_respects_left (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
-    strictlyBetter ord i X Y → degreeEquiv ord i X Z →
-    strictlyBetter ord i Z Y := by
-  rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hxz
-  have hm_x := (Finset.mem_sdiff.mp hm_sd).1
-  have hm_ny := (Finset.mem_sdiff.mp hm_sd).2
-  rcases hm_inner with h_left | h_right
-  · -- LEFT INNER: m dominates all of Y
-    have m_dom_Y := dom_all_of_inter_sdiff ord m X Y h_left hm_yx
-    by_cases hm_z : m ∈ Z
-    · -- m ∈ Z: witness m ∈ Z\Y
-      refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inl ?_⟩
-      · intro y hy; exact m_dom_Y y (Finset.mem_sdiff.mp hy).1
-      · intro c hc; exact m_dom_Y c (Finset.mem_inter.mp hc).2
-    · -- m ∉ Z: use X∼Z to find w ∈ Z with le m w, w ∉ Y forced
-      -- Once we have w, the proof is uniform
-      suffices ∃ w, w ∈ Z \ Y ∧ w ∈ field ord i ∧ ord.le m w from by
-        obtain ⟨w, hw_sd, hw_f, hle⟩ := this
-        refine ⟨w, hw_sd, hw_f, ?_, Or.inl ?_⟩
-        · intro y hy; exact ord.lt_of_lt_of_le
-            (m_dom_Y y (Finset.mem_sdiff.mp hy).1) hle
-        · intro c hc; exact ord.lt_of_lt_of_le
-            (m_dom_Y c (Finset.mem_inter.mp hc).2) hle
-      -- Helper: w ∉ Y when m_dom_Y w and le m w (lt w m contradicts le m w)
-      have not_in_Y (w : I) (hle : ord.le m w) : w ∉ Y :=
-        fun h => (m_dom_Y w h).2 hle
-      rcases hxz with ⟨hxz_a, _⟩ | hxz2
-      · obtain ⟨z₀, hz₀, hle⟩ := hxz_a m (Finset.mem_sdiff.mpr ⟨hm_x, hm_z⟩)
-        exact ⟨z₀, Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hz₀).1, not_in_Y z₀ hle⟩,
-          hZf (Finset.mem_sdiff.mp hz₀).1, hle⟩
-      · obtain ⟨⟨z₁, hz₁, hle⟩, _⟩ := hxz2 m
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hm_x),
-            fun h => hm_z (Finset.mem_inter.mp h).2⟩)
-        exact ⟨z₁, Finset.mem_sdiff.mpr ⟨(Finset.mem_inter.mp hz₁).2, not_in_Y z₁ hle⟩,
-          hXf (Finset.mem_inter.mp hz₁).1, hle⟩
-  · -- RIGHT INNER: m dominates field ord i \ X
-    have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
-    -- c ∈ X\Z → lt c m (via X∼Z matching to field\X, then m_dom_fX)
-    have lt_via_xz : ∀ c, c ∈ X → c ∉ Z → ord.lt c m := by
-      intro c hc_x hc_nz
-      rcases hxz with ⟨hxz_a, _⟩ | hxz2
-      · obtain ⟨z', hz', hle⟩ := hxz_a c (Finset.mem_sdiff.mpr ⟨hc_x, hc_nz⟩)
-        exact ord.lt_of_le_of_lt hle (m_dom_fX z'
-          (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz').1,
-            (Finset.mem_sdiff.mp hz').2⟩))
-      · obtain ⟨_, ⟨c', hc', hle⟩⟩ := hxz2 c
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hc_x),
-            fun h => hc_nz (Finset.mem_inter.mp h).2⟩)
-        exact ord.lt_of_le_of_lt hle (m_dom_fX c'
-          (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc').1,
-            fun h => (Finset.mem_sdiff.mp hc').2 (Finset.mem_union.mpr (Or.inl h))⟩))
-    -- m ∈ Z forced
-    have hm_z : m ∈ Z := by
-      by_contra hm_nz; exact absurd (lt_via_xz m hm_x hm_nz) (ord.lt_irrefl m)
-    -- Witness m ∈ Z\Y
-    refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inr ?_⟩
-    · intro y hy
-      by_cases hy_x : y ∈ X
-      · exact lt_via_xz y hy_x (Finset.mem_sdiff.mp hy).2
-      · exact hm_yx y (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hy).1, hy_x⟩)
-    · intro c hc
-      by_cases hc_x : c ∈ X
-      · exact lt_via_xz c hc_x
-          (fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h)))
-      · exact m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1, hc_x⟩)
-
 /-- Fact 12b: ⊐ is transitive. -/
 theorem strictlyBetter_trans :
     strictlyBetter ord i X Y → strictlyBetter ord i Y Z →
@@ -924,6 +857,25 @@ theorem strictlyBetter_total (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
            fun y hy => ⟨x₀, hx₀_mem,
               ord.le_trans y m x₀
                 (hm_max' y (Finset.mem_union.mpr (Or.inr hy))) hx₀_ge⟩⟩)
+
+/-- Fact 11: ⊐ respects ∼ on the left — a consequence of trichotomy,
+transitivity, irreflexivity, and the right congruence. -/
+theorem strictlyBetter_respects_left (hXf : X ⊆ field ord i)
+    (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
+    strictlyBetter ord i X Y → degreeEquiv ord i X Z →
+    strictlyBetter ord i Z Y := by
+  intro hXY hXZ
+  rcases strictlyBetter_total ord i Z Y hZf hYf with h | h | h
+  · exact absurd
+      (strictlyBetter_respects_right ord i X Y Z hXf hYf hZf hXY
+        (degreeEquiv_symm ord i Z Y h))
+      (degreeEquiv_not_strictlyBetter ord i X Z hXZ)
+  · exact h
+  · exact absurd
+      (strictlyBetter_trans ord i X Y X hXY
+        (strictlyBetter_respects_right ord i Y Z X hYf hZf hXf h
+          (degreeEquiv_symm ord i X Z hXZ)))
+      (strictlyBetter_irrefl ord i X)
 
 /-! ### Fact 8c: ∼ Transitivity (via Totality + Respects) -/
 
