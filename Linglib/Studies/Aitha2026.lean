@@ -607,6 +607,14 @@ inductive WordCandDat where
   | compLengthen
   deriving DecidableEq, Repr
 
+/-- The constraint inventory of [aitha-2026], as a label type: cross-stratum identity
+is by label, not by candidate type (the strata have different candidate types). The
+paper's tables abbreviate stress faithfulness as both ID-STR and IDENT-STRESS; both
+spellings are preserved as distinct labels. -/
+inductive Con
+  | distZero | alignR | idStress | ftBin | maxMora | max | identStress
+  deriving DecidableEq, Repr
+
 /-- Word-level ranking for DAT. Same constraint set as NOM, with
     \*DIST-0 additionally relevant (eliminates faithful candidate).
 
@@ -616,13 +624,13 @@ inductive WordCandDat where
     | resyllabify     |          |  1\* |        |        |        |     |
     | deleteNi        |          |      |        |   1\*  |   1    |  2  |
     | ☞ compLengthen  |          |      |        |        |   1    |  1  | -/
-def wordDatRanking : List (String × Constraint WordCandDat) :=
-  [ ("*DIST-0", λ | .faithful => 1 | _ => 0)
-  , ("AL-R",    λ | .resyllabify => 1 | _ => 0)
-  , ("ID-STR",  λ _ => 0)
-  , ("FT-BIN",  λ | .deleteNi => 1 | _ => 0)
-  , ("MAX(μ)",  λ | .deleteNi => 1 | .compLengthen => 1 | _ => 0)
-  , ("MAX",     λ | .deleteNi => 2 | .compLengthen => 1 | _ => 0) ]
+def wordDatRanking : List (Con × Constraint WordCandDat) :=
+  [ (.distZero, λ | .faithful => 1 | _ => 0)
+  , (.alignR,   λ | .resyllabify => 1 | _ => 0)
+  , (.idStress, λ _ => 0)
+  , (.ftBin,    λ | .deleteNi => 1 | _ => 0)
+  , (.maxMora,  λ | .deleteNi => 1 | .compLengthen => 1 | _ => 0)
+  , (.max,      λ | .deleteNi => 2 | .compLengthen => 1 | _ => 0) ]
 
 def wordDatCands : List WordCandDat :=
   [.faithful, .resyllabify, .deleteNi, .compLengthen]
@@ -722,11 +730,11 @@ inductive PhraseCandPostp where
     | deleteM       |              | 1   |         | 1    |
     | deleteN       |              | 1   |         |      |
     | ☞ faithful    |              |     | 1       |      | -/
-def phrasePostpRanking : List (String × Constraint PhraseCandPostp) :=
-  [ ("IDENT-STRESS", λ _ => 0)
-  , ("MAX",          λ | .compLengthen => 1 | .deleteM => 1 | .deleteN => 1 | _ => 0)
-  , ("*DIST-0",      λ | .faithful => 1 | _ => 0)
-  , ("AL-R",         λ | .compLengthen => 1 | .deleteM => 1 | _ => 0) ]
+def phrasePostpRanking : List (Con × Constraint PhraseCandPostp) :=
+  [ (.identStress, λ _ => 0)
+  , (.max,         λ | .compLengthen => 1 | .deleteM => 1 | .deleteN => 1 | _ => 0)
+  , (.distZero,    λ | .faithful => 1 | _ => 0)
+  , (.alignR,      λ | .compLengthen => 1 | .deleteM => 1 | _ => 0) ]
 
 def phrasePostpCands : List PhraseCandPostp :=
   [.compLengthen, .deleteM, .deleteN, .faithful]
@@ -803,8 +811,8 @@ end StratalRecords
 
 /-! Paper §5.3 (p. 31) makes the headline Stratal-OT claim that `*DIST-0`
 is **demoted** going from the Word stratum to the Phrase stratum. The
-substrate's `isPromotedAcross` / `isDemotedAcross` operate on constraint
-*names* — necessary here because `wordDatRanking` and `phrasePostpRanking`
+substrate's `IsPromotedAcross` / `IsDemotedAcross` operate on constraint
+*labels* — necessary here because `wordDatRanking` and `phrasePostpRanking`
 have different candidate types (`WordCandDat` vs `PhraseCandPostp`),
 so the same-`C` `isPromoted`/`isDemoted` would not typecheck. -/
 
@@ -820,13 +828,13 @@ open OptimalityTheory.Stratal
     m-retention at phrase boundaries vs m-deletion + CL inside
     the prosodic word. -/
 theorem dist0_demoted_phrase_relative_to_word :
-    OptimalityTheory.Stratal.isDemotedAcross "*DIST-0" phrasePostpRanking wordDatRanking := by
+    OptimalityTheory.Stratal.IsDemotedAcross .distZero phrasePostpRanking wordDatRanking := by
   decide
 
 /-- Conversely, `MAX` is **promoted** going Word → Phrase. Dual aspect
     of the same reranking. -/
 theorem max_promoted_phrase_relative_to_word :
-    OptimalityTheory.Stratal.isPromotedAcross "MAX" phrasePostpRanking wordDatRanking := by
+    OptimalityTheory.Stratal.IsPromotedAcross .max phrasePostpRanking wordDatRanking := by
   decide
 
 end CrossStratumReranking

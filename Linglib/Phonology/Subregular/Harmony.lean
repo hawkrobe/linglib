@@ -265,14 +265,6 @@ theorem spreadSuffix_length (sys : System) (val : Bool)
     · rfl
     · simp [ih]
 
-/-- Helper: `takeWhile p l = l` when `p` holds for all elements. -/
-private theorem takeWhile_all {l : List Segment} {p : Segment → Bool}
-    (h : ∀ s ∈ l, p s = true) : l.takeWhile p = l := by
-  induction l with
-  | nil => rfl
-  | cons a t ih =>
-    simp [h a (.head _), ih (fun s hs => h s (.tail _ hs))]
-
 /-- The harmony domain is the full stem when there are no blockers. -/
 theorem harmonyDomain_no_blockers (sys : System) (stem : List Segment)
     (h : ∀ s ∈ stem, ¬ sys.isBlocker s) :
@@ -283,8 +275,8 @@ theorem harmonyDomain_no_blockers (sys : System) (stem : List Segment)
   have hrev : ∀ s ∈ stem.reverse, (!decide (sys.isBlocker s)) = true :=
     fun s hs => hpred s (List.mem_reverse.mp hs)
   split
-  · rw [takeWhile_all hrev, List.reverse_reverse]
-  · exact takeWhile_all hpred
+  · rw [List.takeWhile_eq_self_iff.mpr hrev, List.reverse_reverse]
+  · exact List.takeWhile_eq_self_iff.mpr hpred
 
 /-- Blockers in the suffix halt spreading: segments at and after the first
     blocker are returned unchanged. -/

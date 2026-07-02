@@ -13,7 +13,7 @@ foot — independently supported by the absence of CV(C) content words in the la
 (unfooted).
 
 `parse` is that algorithm on the weight string; reading the stress off the result with the
-metrical grid (`Prosody.Grid.columns`) recovers the attested prominences — primary `3`,
+metrical grid (`Prosody.Tree.columns`) recovers the attested prominences — primary `3`,
 secondary `2`, unstressed `1`. Quantity moves the peak: all-light `kataba` is stressed on the
 **antepenult**, but a heavy penult (`mudarris`) draws stress to the **penult**. (The forms
 `kataba` and `ʔinkasara` are Cairene *Classical*; [hayes-1995] shows these take the same
@@ -76,7 +76,7 @@ def parse (y : Yield) : Tree := .om (markHeadFoot (parseCells y))
 /-! ### Quantity-sensitive stress
 
 The forms are [hayes-1995]'s, given as their post-extrametricality weight profiles
-(`1` = light CV, `2` = heavy CVC/CVV). Reading `Grid.columns ∘ parse` recovers the attested
+(`1` = light CV, `2` = heavy CVC/CVV). Reading `Tree.columns ∘ parse` recovers the attested
 stress: the column of `3` is the primary, `2` a secondary, `1` unstressed. -/
 
 /-- *kataba* `ka.ta.ba` 'he wrote' — all light (Cairene Classical). -/
@@ -88,23 +88,23 @@ def Pinkasara : Yield := [2, 1, 1, 1]
 
 /-- **Antepenultimate stress** ([hayes-1995] (15d), (16d)): all-light `kataba` parses as
     `(ká.ta)ba`, the rightmost foot heading the antepenult; the final light is stray. -/
-theorem gridColumns_kataba : Grid.columns (parse kataba) = [3, 1, 1] := by decide
+theorem gridColumns_kataba : Tree.columns (parse kataba) = [3, 1, 1] := by decide
 
 /-- **Penultimate stress** ([hayes-1995] (12b), (15b)): with a heavy penult, `mudarris` parses
     as `mu(dár)ri` — the heavy is its own foot, rightmost, so quantity pulls the peak one
     syllable rightward off the antepenult. -/
-theorem gridColumns_mudarris : Grid.columns (parse mudarris) = [1, 3, 1] := by decide
+theorem gridColumns_mudarris : Tree.columns (parse mudarris) = [1, 3, 1] := by decide
 
 /-- **Restarting the count after a heavy, with secondary stress** ([hayes-1995] (15d), (16d)):
     `ʔinkasara` parses as `(ʔìn)(ká.sa)ra` — the heavy initial is its own foot (secondary `2`),
     the count restarts, the next two lights foot, and the antepenult `ka` takes primary `3`. -/
-theorem gridColumns_Pinkasara : Grid.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
+theorem gridColumns_Pinkasara : Tree.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
 
 /-- **The head terminal is the antepenult head σ** ([liberman-prince-1977]): `kataba`'s head
     terminal — its primary stress, Liberman & Prince's head terminal — is the head
     syllable of the rightmost (head) foot, read off the grid's live column as an *element*, not
     just a height (cf. `gridColumns_kataba`'s `[3, 1, 1]`). -/
-theorem headTerminals_kataba : Grid.headTerminals (parse kataba) = [.σ 1 true] := by decide
+theorem headTerminals_kataba : Tree.headTerminals (parse kataba) = [.σ 1 true] := by decide
 
 /-! ### The Continuous Column Constraint blocks final promotion
 
@@ -139,7 +139,7 @@ theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := 
     `kataba` is strictly weaker than the primary — unlike a uniform right-strong word
     ([prince-1983]), whose grid peaks at the edge. The blocked promotion above is why. -/
 theorem kataba_final_below_peak :
-    (Grid.columns (parse kataba)).getLast?.getD 0 < Grid.peak (Grid.columns (parse kataba)) := by
+    (Tree.columns (parse kataba)).getLast?.getD 0 < Grid.peak (Tree.columns (parse kataba)) := by
   decide
 
 end Hayes1995

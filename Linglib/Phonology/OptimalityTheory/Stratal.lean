@@ -49,42 +49,35 @@ structure StratalDerivation (S W P : Type*) where
 
 /-! ### Constraint reranking -/
 
-/-- Find the rank (position) of a constraint by name within a ranking.
-    Position 0 = highest-ranked. Returns `none` if the constraint is not
-    active at this stratum. -/
-def findRank {C : Type*} (name : String)
-    (ranking : List (String × Constraint C)) : Option Nat :=
-  go ranking 0
-where
-  go : List (String × Constraint C) → Nat → Option Nat
-    | [], _ => none
-    | c :: cs, i => if c.1 == name then some i else go cs (i + 1)
+variable {L : Type*} [DecidableEq L] {C C₁ C₂ : Type*}
 
-/-- Cross-stratum promotion: `name` is ranked higher (closer to 0) in
-    `r₁ : List (String × Constraint C₁)` than in `r₂ : List (String × Constraint C₂)`.
-    Different candidate types between strata are permitted — the constraint
-    inventory is shared by *name*, not by candidate type (e.g. ONSET is
-    promoted from Word to Phrase level in Telugu, [aitha-2026] §5.3). -/
-def isPromotedAcross {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) : Prop :=
-  match findRank name r₁, findRank name r₂ with
+/-- The rank (position) of the constraint labeled `l` in a ranking: `0` is the highest
+    rank; `none` if the constraint is not active at this stratum. -/
+def findRank (l : L) (ranking : List (L × Constraint C)) : Option ℕ :=
+  ranking.findIdx? (·.1 == l)
+
+/-- Cross-stratum promotion: `l` is ranked higher (closer to `0`) in `r₁` than in `r₂`.
+    Different candidate types between strata are permitted — the constraint inventory is
+    shared by *label*, not by candidate type (e.g. ONSET is promoted from Word to Phrase
+    level in Telugu, [aitha-2026] §5.3). -/
+def IsPromotedAcross (l : L) (r₁ : List (L × Constraint C₁))
+    (r₂ : List (L × Constraint C₂)) : Prop :=
+  match findRank l r₁, findRank l r₂ with
   | some p₁, some p₂ => p₁ < p₂
   | _, _ => False
 
-instance {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) :
-    Decidable (isPromotedAcross name r₁ r₂) := by
-  unfold isPromotedAcross; split <;> infer_instance
+instance (l : L) (r₁ : List (L × Constraint C₁)) (r₂ : List (L × Constraint C₂)) :
+    Decidable (IsPromotedAcross l r₁ r₂) := by
+  unfold IsPromotedAcross; split <;> infer_instance
 
-/-- Cross-stratum demotion. Dual of `isPromotedAcross` (e.g. `*DIST-0` is
-    demoted from Word to Phrase level in Telugu, [aitha-2026] §5.3). -/
-def isDemotedAcross {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) : Prop :=
-  isPromotedAcross name r₂ r₁
+/-- Cross-stratum demotion. Dual of `IsPromotedAcross` (e.g. `*DIST-0` is demoted from
+    Word to Phrase level in Telugu, [aitha-2026] §5.3). -/
+def IsDemotedAcross (l : L) (r₁ : List (L × Constraint C₁))
+    (r₂ : List (L × Constraint C₂)) : Prop :=
+  IsPromotedAcross l r₂ r₁
 
-instance {C₁ C₂ : Type*} (name : String)
-    (r₁ : List (String × Constraint C₁)) (r₂ : List (String × Constraint C₂)) :
-    Decidable (isDemotedAcross name r₁ r₂) := by
-  unfold isDemotedAcross; infer_instance
+instance (l : L) (r₁ : List (L × Constraint C₁)) (r₂ : List (L × Constraint C₂)) :
+    Decidable (IsDemotedAcross l r₁ r₂) := by
+  unfold IsDemotedAcross; infer_instance
 
 end OptimalityTheory.Stratal

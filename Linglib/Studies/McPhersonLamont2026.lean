@@ -194,7 +194,7 @@ example : ercB maxHIdx = .L ∧ ercB depLinkHIdx = .W ∧
     instance for `Equiv.Perm (Fin n)` is built via `Quot.lift` and does
     not reduce well under kernel `decide`, so the existential search over
     24 rankings stalls. -/
-theorem parallel_OT_inadequate : ¬ ERCSet.consistent pokoSupport := by
+theorem parallel_OT_inadequate : ¬ ERCSet.Consistent pokoSupport := by
   rintro ⟨r, hr⟩
   -- Both ERCs are satisfied by `r`.
   have hA := (ERC.satisfiedBy_iff_dominance r ercA).mp (hr ercA (by simp [pokoSupport]))
