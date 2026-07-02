@@ -11,17 +11,11 @@ grammar, and the surface form is the optimal candidate under the trigger's ranki
 rather than the default one. The constraint-merge mechanics are a single apparatus;
 what varies across the theory family is the *trigger*:
 
-* *per Vocabulary Item* ([sande-jenks-2017]; [rolle-2018] Ch 4): the trigger is the VI
-  inserted at a terminal, whose R component specifies the subranking — carried here as
-  the `subranking` argument to `cophonologicalEval`. Classic CPT attached cophonologies
-  to constructions; the VI view sharpens the trigger to the inserted exponent.
-* *per ph(r)ase* ([sande-jenks-inkelas-2020]): the trigger is a spell-out phase
-  (vP, CP, DP), whose cophonology activates over the entire phase complement —
-  deriving long-distance morphologically conditioned effects (cross-word, within a
-  phase). Syntactic reference stays indirect: syntax selects which cophonology fires,
-  but the cophonology itself is a pure constraint subranking with no syntactic
-  vocabulary, giving [newell-2008]-style cyclic phase phonology a CPT shape without
-  violating modularity.
+* *per Vocabulary Item* ([sande-jenks-2017]; [rolle-2018] Ch 4): the inserted VI's
+  R component is the subranking — the `subranking` argument to `cophonologicalEval`;
+* *per ph(r)ase* ([sande-jenks-inkelas-2020]): a spell-out phase (vP, CP, DP) carries
+  the subranking (`PhrasalCophonology`) and activates it over its whole complement at
+  spell-out, deriving cross-word morphologically conditioned effects.
 
 ## Main definitions
 
@@ -35,6 +29,10 @@ what varies across the theory family is the *trigger*:
   ordering of [sande-jenks-inkelas-2020].
 
 ## Implementation notes
+
+Syntactic reference stays indirect: syntax selects which cophonology fires, but the
+cophonology itself contains no syntactic vocabulary — [newell-2008]-style cyclic phase
+phonology without violating modularity.
 
 The substrate implements neither bracket erasure ([kiparsky-1982]) nor DM PF discharge
 ([embick-noyer-2007]) — rival theories of the syntax–phonology interface that
