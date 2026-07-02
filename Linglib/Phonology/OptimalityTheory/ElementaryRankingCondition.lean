@@ -102,11 +102,9 @@ def SatisfiedBy : Prop :=
 satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
 winner-preferring. -/
 theorem satisfiedBy_iff_lead :
-    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W := by
-  unfold SatisfiedBy
-  rw [lex_le_iff_lead]
-  exact ⟨fun h he => (ERCVal.zero_lt_iff _).mp (h he),
-    fun h he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
+    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
+  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((lex_le_iff_lead _ _).mp h he),
+   fun h => (lex_le_iff_lead _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
 /-- The leading constraint dominates every loser-preferring one. -/
 private theorem lead_dominates {c : Fin n} (he : ∃ p, α (r p) ≠ .e)
