@@ -83,8 +83,11 @@ end ERC
 
 /-! ### ERC satisfaction -/
 
-private theorem ERCVal.lt_zero_iff (x : ERCVal) : x < 0 ↔ x = .L := by revert x; decide
-private theorem ERCVal.zero_lt_iff (x : ERCVal) : 0 < x ↔ x = .W := by revert x; decide
+@[simp] private theorem ERCVal.lt_zero_iff (x : ERCVal) : x < 0 ↔ x = .L := by
+  revert x; decide
+
+@[simp] private theorem ERCVal.zero_lt_iff (x : ERCVal) : 0 < x ↔ x = .W := by
+  revert x; decide
 
 namespace ERC
 
@@ -103,14 +106,11 @@ theorem satisfiedBy_iff_dominance :
   rw [lex_le_iff_forall]
   constructor
   · intro h c hc
-    have hp : α (r (r.symm c)) < 0 := by rw [Equiv.apply_symm_apply, hc]; decide
-    obtain ⟨p', hp'lt, hp'pos⟩ := h (r.symm c) hp
-    exact ⟨r p', (ERCVal.zero_lt_iff _).mp hp'pos,
-      by simpa [Ranking.Dominates] using hp'lt⟩
+    obtain ⟨p', hp'lt, hp'pos⟩ := h (r.symm c) (by simp [hc])
+    exact ⟨r p', by simpa using hp'pos, by simpa [Ranking.Dominates] using hp'lt⟩
   · intro h p hp
-    obtain ⟨w, hwW, hwdom⟩ := h (r p) ((ERCVal.lt_zero_iff _).mp hp)
-    refine ⟨r.symm w, by simpa [Ranking.Dominates] using hwdom, ?_⟩
-    rw [Equiv.apply_symm_apply, hwW]; decide
+    obtain ⟨w, hwW, hwdom⟩ := h (r p) (by simpa using hp)
+    exact ⟨r.symm w, by simpa [Ranking.Dominates] using hwdom, by simp [hwW]⟩
 
 instance : Decidable (α.SatisfiedBy r) :=
   decidable_of_iff _ (satisfiedBy_iff_dominance r α).symm
