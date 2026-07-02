@@ -453,12 +453,27 @@ def buryatAnalysis : ContCompAnalysis where
     · exact Or.inr ⟨.verbal, rfl⟩
 
 /-- Korean (§4.3.2 ex. 46; cf. [bogal-allbritten-moulton-2018]): *-ta*
-expones Cont. The fragment records a licenser only for *-nun*, so the
-Comp-allomorphy laws are not yet checkable. -/
-def koreanAnalysis : ContAnalysis where
+expones Cont; adnominal *-nun* and adverbal *-ko* are the Comp
+allomorphs, parallel to Buryat ex. 33. -/
+def koreanAnalysis : ContCompAnalysis where
   inventory := Korean.Complementizers.complementizers
   contExponent := some Korean.Complementizers.ta
   contExponent_mem := fun _ hc => by cases hc; exact .head _
+  compAllomorph
+    | .nominal => Korean.Complementizers.nun
+    | .verbal  => Korean.Complementizers.ko
+  compAllomorph_mem := by
+    intro l
+    cases l
+    · exact .tail _ (.head _)
+    · exact .tail _ (.tail _ (.head _))
+  licenser_compAllomorph := by intro l; cases l <;> rfl
+  cover := by
+    intro c hc
+    fin_cases hc
+    · exact Or.inl rfl
+    · exact Or.inr ⟨.nominal, rfl⟩
+    · exact Or.inr ⟨.verbal, rfl⟩
 
 /-- In Buryat the Cont exponent is exactly the non-suffixal say-root — a
 Buryat-specific alignment, not a `ContAnalysis` law (Korean's *-ta* is itself
