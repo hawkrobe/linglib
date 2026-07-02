@@ -738,15 +738,15 @@ open OptimalityTheory.CophonologyTheory (mergeRanking cophonologicalEval)
     the basemap output, which is independent of the target's underlying
     tones (`basemapOutput_tone_independent_whole`). -/
 theorem dominant_coph_selects_basemap_faithful
-    {C : Type} [DecidableEq C]
+    {L C : Type} [DecidableEq L] [DecidableEq C]
     (basemapTier : List TRN)
     (extractTier : C → List TRN)
-    (defaultRanking : List (String × Constraints.Constraint C))
+    (l : L) (defaultRanking : List (L × Constraints.Constraint C))
     (candidates : List C) (h : candidates ≠ [])
     (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier)
     : let mxbmc := mkBasemapConstraint basemapTier extractTier
-      ∀ c ∈ cophonologicalEval defaultRanking [("MxBM-C", mxbmc)] candidates h,
+      ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbmc)] candidates h,
         extractTier c = basemapTier := by
   intro mxbmc c hc
   simp only [cophonologicalEval, mergeRanking] at hc
@@ -767,10 +767,10 @@ theorem dominant_coph_selects_basemap_faithful
     `dominant_coph_selects_basemap_faithful` ensures the OT evaluation
     selects exactly the basemap-faithful candidates. -/
 theorem dominant_coph_agrees_with_tonalOverwrite
-    {S C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq C]
+    {S L C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq L] [DecidableEq C]
     (host : List (TBU S)) (t defaultTone : TRN)
     (extractTier : C → List TRN)
-    (defaultRanking : List (String × Constraints.Constraint C))
+    (l : L) (defaultRanking : List (L × Constraints.Constraint C))
     (candidates : List C) (h : candidates ≠ [])
     (hLen : ∀ c ∈ candidates,
       (extractTier c).length =
@@ -780,11 +780,11 @@ theorem dominant_coph_agrees_with_tonalOverwrite
     : let spec : Spec := ⟨"", [t], .whole⟩
       let baseTier := tonalTier (basemapOutput host spec defaultTone)
       let mxbmc := mkBasemapConstraint baseTier extractTier
-      ∀ c ∈ cophonologicalEval defaultRanking [("MxBM-C", mxbmc)] candidates h,
+      ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbmc)] candidates h,
         extractTier c = tonalTier (tonalOverwrite host spec) := by
   intro spec baseTier mxbmc c hc
   have hFaith := dominant_coph_selects_basemap_faithful
-    baseTier extractTier defaultRanking candidates h hLen hFaithful c hc
+    baseTier extractTier l defaultRanking candidates h hLen hFaithful c hc
   rw [hFaith]
   exact (tonalOverwrite_basemap_faithful host t defaultTone).symm
 
