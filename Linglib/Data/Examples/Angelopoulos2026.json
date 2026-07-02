@@ -1,0 +1,303 @@
+[
+  {
+    "id": "angelopoulos2026_1a",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (1a)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "I Elena ipe oti eçi episkefti tin Vrazilia.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the.F.SG.NOM"], ["Elena", "Elena.F.SG.NOM"], ["ipe", "said.3SG"], ["oti", "OTI"],
+      ["eçi", "have.3SG"], ["episkefti", "visited"], ["tin", "the.F.SG.ACC"],
+      ["Vrazilia", "Brazil.F.SG.ACC"]
+    ],
+    "translation": "Elena said that she has visited Brazil.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I Elena ipe pu eçi episkefti tin Vrazilia.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["complementizer", "oti"],
+      ["verbClass", "saying"]
+    ],
+    "comment": "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_1b",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (1b)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "I Elena metanjose pu paretiθike.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the.F.SG.NOM"], ["Elena", "Elena.F.SG.NOM"], ["metanjose", "regretted.3SG"],
+      ["pu", "PU"], ["paretiθike", "quit.3SG"]
+    ],
+    "translation": "Elena regretted that she quit.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I Elena metanjose oti paretiθike.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["complementizer", "pu"],
+      ["verbClass", "emotive-factive"]
+    ],
+    "comment": "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_31a",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (31a)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "δjafono me kati.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["δjafono", "disagree.1SG"], ["me", "with"], ["kati", "something.N.SG.ACC"]
+    ],
+    "translation": "I disagree with something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "P-ban"],
+      ["verb", "δjafono 'disagree'"]
+    ],
+    "comment": "δjafono 'disagree' takes a PP complement headed by me 'with'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_31b",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (31b)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "δjafono oti prepi na kanume epenδisis.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["δjafono", "disagree.1SG"], ["oti", "OTI"], ["prepi", "must.3SG"], ["na", "na"],
+      ["kanume", "do.1PL"], ["epenδisis", "investments.F.PL.ACC"]
+    ],
+    "translation": "I disagree that we should invest.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "P-ban"],
+      ["verb", "δjafono 'disagree'"]
+    ],
+    "comment": "δjafono 'disagree' also takes a bare oti-clause complement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_31c",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (31c)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "δjafono me oti prepi na kanume epenδisis.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["δjafono", "disagree.1SG"], ["me", "with"], ["oti", "OTI"], ["prepi", "must.3SG"],
+      ["na", "na"], ["kanume", "do.1PL"], ["epenδisis", "investments.F.PL.ACC"]
+    ],
+    "translation": "I disagree with the idea that we should invest.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "P-ban"],
+      ["verb", "δjafono 'disagree'"]
+    ],
+    "comment": "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_32a",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (32a)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Metanjono ja kati.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Metanjono", "regret.1SG"], ["ja", "for"], ["kati", "something.N.SG.ACC"]
+    ],
+    "translation": "I regret for something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "P-ban"],
+      ["verb", "metanjono 'regret'"]
+    ],
+    "comment": "metanjono 'regret' takes a PP complement headed by ja 'for'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_32b",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (32b)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Metanjono pu paremina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Metanjono", "regret.1SG"], ["pu", "PU"], ["paremina", "stayed.1SG"]
+    ],
+    "translation": "I regret that I stayed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "P-ban"],
+      ["verb", "metanjono 'regret'"]
+    ],
+    "comment": "metanjono 'regret' also takes a bare pu-clause complement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_32c",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (32c)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Metanjono ja pu paremina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Metanjono", "regret.1SG"], ["ja", "for"], ["pu", "PU"], ["paremina", "stayed.1SG"]
+    ],
+    "translation": "I regret for staying.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "P-ban"],
+      ["verb", "metanjono 'regret'"]
+    ],
+    "comment": "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_33a",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (33a)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Afti i fimi ine aliθis.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Afti", "this.F.SG.NOM"], ["i", "the.F.SG.NOM"], ["fimi", "rumor.F.SG.NOM"],
+      ["ine", "be.3SG"], ["aliθis", "true.F.SG.NOM"]
+    ],
+    "translation": "This rumor is true/mistaken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Afti i fimi ine lanθasmeni.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "truth-predicates"],
+      ["nounSort", "content"]
+    ],
+    "comment": "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_33b",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (33b)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Afti i katastasi ine aliθis.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Afti", "this.F.SG.NOM"], ["i", "the.F.SG.NOM"], ["katastasi", "situation.F.SG.NOM"],
+      ["ine", "be.3SG"], ["aliθis", "true.F.SG.NOM"]
+    ],
+    "translation": "This situation is true/mistaken.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Afti i katastasi ine lanθasmeni.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "truth-predicates"],
+      ["nounSort", "situation"]
+    ],
+    "comment": "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_34a",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (34a)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Tetjes fimes δen simvenun sixna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tetjes", "such.F.PL.NOM"], ["fimes", "rumors.F.PL.NOM"], ["δen", "not"],
+      ["simvenun", "occur.3PL"], ["sixna", "often"]
+    ],
+    "translation": "Such rumors/ideas/warnings/beliefs/hypotheses/theories do not happen often.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Tetjes iδees δen simvenun sixna.", "judgment": "unacceptable"},
+      {"form": "Tetjes proiδopiisis δen simvenun sixna.", "judgment": "unacceptable"},
+      {"form": "Tetjes pepiθisis δen simvenun sixna.", "judgment": "unacceptable"},
+      {"form": "Tetjes ipoθesis δen simvenun sixna.", "judgment": "unacceptable"},
+      {"form": "Tetjes θeories δen simvenun sixna.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "occurrence-predicates"],
+      ["nounSort", "content"]
+    ],
+    "comment": "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "angelopoulos2026_34b",
+    "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (34b)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Tetjes periptosis δen simvenun sixna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tetjes", "such.F.PL.NOM"], ["periptosis", "situations.F.PL.NOM"], ["δen", "not"],
+      ["simvenun", "occur.3PL"], ["sixna", "often"]
+    ],
+    "translation": "Such situations/cases do not happen often.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Tetjes katastasis δen simvenun sixna.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "occurrence-predicates"],
+      ["nounSort", "situation"]
+    ],
+    "comment": "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]

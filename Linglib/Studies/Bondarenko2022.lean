@@ -3,6 +3,7 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Syntax.Clause.Complementation
+import Linglib.Data.Examples.Bondarenko2022
 
 /-!
 # Bondarenko 2022: Anatomy of an Attitude
@@ -54,6 +55,9 @@ theorem lands here), ch. 5 polarity subjunctives (Russian NPI data,
 L-analyticity), and the morphological exposition of ContP, which lives in
 `Fragments/Buryat/Complementizers.lean` and
 `Fragments/Korean/Complementizers.lean`.
+
+Typed paradigm sentences (§2.2.3 ex. 105–112, 120–122; §4.3.1 ex. 30–32) live
+in `Bondarenko2022.Examples`, generated from `Data/Examples/Bondarenko2022.json`.
 -/
 
 namespace Bondarenko2022
