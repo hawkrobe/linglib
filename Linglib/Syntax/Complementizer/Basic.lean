@@ -1,8 +1,8 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.ClauseForm
+import Linglib.Features.Complementation
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.Word
-import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Complementizer
@@ -31,8 +31,6 @@ degree semantics).
 - `Complementizer.toWord` — the `SCONJ` word a free complementizer
   projects
 -/
-
-open Clause.Complementation (NoonanCompType)
 
 /-- Category of the adjacent projection an affixal clause-typer is
 licensed by: adnominal (Buryat *-Aːša*, Korean *-nun*) vs adverbal

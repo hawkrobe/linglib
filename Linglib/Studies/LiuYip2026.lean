@@ -86,7 +86,7 @@ explicit in §10 as a refutation theorem candidate.
 namespace LiuYip2026
 
 open Minimalist (AspFlavor AspHead Probe.Profile ClauseSpine ComplementSize Cat fValue)
-open Clause.Complementation (CTPClass ComplementClauseStructure)
+open Clause.Complementation (ComplementClauseStructure)
 
 -- ============================================================================
 -- §1. Three Chinese clause types as ComplementSize instances
