@@ -345,6 +345,53 @@ theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
   ext p
   exact DFunLike.congr_fun key p.toFinsupp
 
+section LinearApi
+variable {M : Type*} [AddCommMonoid M] [Module R M]
+
+/-- Linear maps off `ConnesKreimer` agree if they agree on `single`. -/
+theorem lhom_ext {f g : ConnesKreimer R T →ₗ[R] M}
+    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
+  LinearMap.toAddMonoidHom_injective (addHom_ext h)
+
+/-- Linear maps off `ConnesKreimer` agree if they agree on the basis `of'`. -/
+theorem lhom_ext' {f g : ConnesKreimer R T →ₗ[R] M}
+    (h : ∀ F : Forest T, f (of' F) = g (of' F)) : f = g :=
+  lhom_ext fun F r => by
+    rw [smul_single_one, map_smul, map_smul]
+    exact congrArg (r • ·) (h F)
+
+/-- Linearly extend a function off the forest basis
+    (wrapper-native `Finsupp.lift`). -/
+noncomputable def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
+  (Finsupp.lift M R (Forest T) f).comp
+    (toFinsuppAlgEquiv (R := R) (T := T)).toLinearEquiv.toLinearMap
+
+@[simp] theorem linearLift_single (f : Forest T → M) (F : Forest T) (r : R) :
+    linearLift f (single F r) = r • f F := by
+  show Finsupp.lift M R (Forest T) f (Finsupp.single F r) = r • f F
+  rw [Finsupp.lift_apply, Finsupp.sum_single_index (by simp)]
+
+@[simp] theorem linearLift_of' (f : Forest T → M) (F : Forest T) :
+    linearLift f (of' (R := R) F) = f F := by
+  rw [of', linearLift_single, one_smul]
+
+end LinearApi
+
+/-- Transport a forest-monoid hom to an algebra hom between Connes-Kreimer
+    algebras (wrapper-native `AddMonoidAlgebra.mapDomainAlgHom`). -/
+noncomputable def mapDomainAlgHom {T' : Type*} (f : Forest T →+ Forest T') :
+    ConnesKreimer R T →ₐ[R] ConnesKreimer R T' :=
+  ((toFinsuppAlgEquiv (R := R) (T := T')).symm.toAlgHom.comp
+    (AddMonoidAlgebra.mapDomainAlgHom R R f)).comp
+    (toFinsuppAlgEquiv (R := R) (T := T)).toAlgHom
+
+@[simp] theorem mapDomainAlgHom_of' {T' : Type*} (f : Forest T →+ Forest T')
+    (F : Forest T) :
+    mapDomainAlgHom (R := R) f (of' F) = of' (f F) := by
+  refine ext ?_
+  show Finsupp.mapDomain f (Finsupp.single F 1) = Finsupp.single (f F) 1
+  rw [Finsupp.mapDomain_single]
+
 /-! ### The forest basis -/
 
 /-- The forests, via `of'`, as an `R`-basis of the Connes-Kreimer algebra
