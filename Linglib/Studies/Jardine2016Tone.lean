@@ -66,15 +66,12 @@ Strings of timing-tier symbols, each recording one TBU's association state (§4.
 
 /-- A tone-bearing unit (§4.1): `H` is a TBU associated to a H tone, `O` an unspecified
 TBU (the paper's Ø). -/
-inductive TBU
-  | H
-  | O
+inductive TBU | H | O
   deriving DecidableEq, Repr
 
 /-- TBU `i` of `w` surfaces with a H tone: some H-toned TBU sits at a position `≤ i` and
 some at a position `≥ i` — [hyman-katamba-2010]'s plateauing rule (7), pointwise. -/
-def SurfacesH (w : List TBU) (i : ℕ) : Prop :=
-  .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
+def SurfacesH (w : List TBU) (i : ℕ) : Prop := .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
 
 instance (w : List TBU) (i : ℕ) : Decidable (SurfacesH w i) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -83,11 +80,9 @@ variable {w : List TBU} {i j k : ℕ}
 
 /-- The unbounded tonal plateauing map (36): every TBU between two H-toned TBUs surfaces
 as H; everything else is unchanged. -/
-def utp (w : List TBU) : List TBU :=
-  w.mapIdx fun i _ => if SurfacesH w i then .H else .O
+def utp (w : List TBU) : List TBU := w.mapIdx fun i _ => if SurfacesH w i then .H else .O
 
-@[simp] theorem utp_length : (utp w).length = w.length := by
-  simp [utp]
+@[simp] theorem utp_length : (utp w).length = w.length := by simp [utp]
 
 theorem utp_getElem? :
     (utp w)[i]? = w[i]?.map fun _ => if SurfacesH w i then TBU.H else TBU.O := by
@@ -106,13 +101,10 @@ private theorem mem_drop_iff {α : Type*} {a : α} {w : List α} {k : ℕ} :
 /-- Positionwise reading of `SurfacesH`: a H at some `j ≤ i` and a H at some `j ≥ i`. -/
 theorem surfacesH_iff :
     SurfacesH w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
-  rw [SurfacesH, mem_take_iff, mem_drop_iff]
-  simp [Nat.lt_succ_iff]
+  rw [SurfacesH, mem_take_iff, mem_drop_iff]; simp [Nat.lt_succ_iff]
 
 theorem SurfacesH.lt_length (h : SurfacesH w i) : i < w.length := by
-  have h₂ := List.length_pos_of_mem h.2
-  rw [List.length_drop] at h₂
-  omega
+  have h₂ := List.length_pos_of_mem h.2; rw [List.length_drop] at h₂; omega
 
 /-- The surfacing set is convex: `take`/`drop` windows only widen. -/
 theorem SurfacesH.of_le_of_le (hi : SurfacesH w i) (hk : SurfacesH w k) (hij : i ≤ j)
@@ -125,14 +117,26 @@ theorem surfacesH_of_getElem?_H (h : w[i]? = some .H) : SurfacesH w i :=
 
 theorem SurfacesH.H_mem (h : SurfacesH w i) : .H ∈ w := List.take_subset _ _ h.1
 
+/-- Reversal symmetry: under `reverse` the `take` and `drop` windows swap. -/
+theorem surfacesH_reverse (hi : i < w.length) :
+    SurfacesH w.reverse i ↔ SurfacesH w (w.length - 1 - i) := by
+  rw [SurfacesH, SurfacesH, List.take_reverse, List.drop_reverse, List.mem_reverse,
+    List.mem_reverse, show w.length - (i + 1) = w.length - 1 - i from by omega,
+    show w.length - i = (w.length - 1 - i) + 1 from by omega, and_comm]
+
 theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
   rw [utp_getElem?, Option.map_eq_some_iff]
   constructor
-  · rintro ⟨a, -, ha⟩
-    by_contra hs
-    rw [if_neg hs] at ha
-    exact TBU.noConfusion ha
+  · rintro ⟨a, -, ha⟩; by_contra hs; rw [if_neg hs] at ha; exact TBU.noConfusion ha
   · exact fun hs => ⟨w[j]'hs.lt_length, List.getElem?_eq_getElem hs.lt_length, if_pos hs⟩
+
+theorem utp_getElem?_O_iff : (utp w)[j]? = some .O ↔ j < w.length ∧ ¬ SurfacesH w j := by
+  rw [utp_getElem?, Option.map_eq_some_iff]
+  constructor
+  · rintro ⟨a, ha, hout⟩
+    refine ⟨(List.getElem?_eq_some_iff.mp ha).1, fun hs => ?_⟩
+    rw [if_pos hs] at hout; exact TBU.noConfusion hout
+  · exact fun ⟨hj, hs⟩ => ⟨w[j], List.getElem?_eq_getElem hj, if_neg hs⟩
 
 /-- The plateau of `w`: the set of positions that surface H. -/
 def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)
@@ -141,19 +145,15 @@ def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (Surfa
   simp only [plateau, Finset.mem_filter, Finset.mem_range, and_iff_right_iff_imp]
   exact SurfacesH.lt_length
 
-@[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w := by
-  constructor
-  · rintro ⟨j, hj⟩
-    exact (mem_plateau.mp hj).H_mem
-  · intro hw
-    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
-    exact ⟨i, mem_plateau.mpr (surfacesH_of_getElem?_H hi)⟩
+@[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w :=
+  ⟨fun ⟨_, hj⟩ => (mem_plateau.mp hj).H_mem, fun hw =>
+    have ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
+    ⟨i, mem_plateau.mpr (surfacesH_of_getElem?_H hi)⟩⟩
 
 /-- `utp` writes the indicator word of its plateau. -/
 theorem utp_eq_plateau_indicator :
-    utp w = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O := by
-  refine List.ext_getElem (by simp [utp]) fun i h₁ h₂ => ?_
-  simp [utp, mem_plateau]
+    utp w = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O :=
+  List.ext_getElem (by simp [utp]) fun i h₁ h₂ => by simp [utp, mem_plateau]
 
 /-- Sandwich characterization: a word with Hs at `lo` and `hi` and none outside
 `[lo, hi]` has plateau exactly `Finset.Icc lo hi`. -/
@@ -163,9 +163,7 @@ theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? =
   rw [mem_plateau, Finset.mem_Icc, surfacesH_iff]
   constructor
   · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
-    have hb₁ := hb j₁ h₁
-    have hb₂ := hb j₂ h₂
-    omega
+    have hb₁ := hb j₁ h₁; have hb₂ := hb j₂ h₂; omega
   · exact fun hj => ⟨⟨lo, hj.1, hlo⟩, hi, hj.2, hhi⟩
 
 /-- The plateau is an interval, from the first trigger to the last: the set form of
@@ -174,13 +172,9 @@ theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
     plateau w = Finset.Icc ((plateau w).min' hne) ((plateau w).max' hne) := by
   ext j
   rw [Finset.mem_Icc]
-  constructor
-  · intro hj
-    exact ⟨(plateau w).min'_le j hj, (plateau w).le_max' j hj⟩
-  · rintro ⟨h₁, h₂⟩
-    exact mem_plateau.mpr (SurfacesH.of_le_of_le
-      (mem_plateau.mp ((plateau w).min'_mem hne))
-      (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)
+  refine ⟨fun hj => ⟨(plateau w).min'_le j hj, (plateau w).le_max' j hj⟩, fun ⟨h₁, h₂⟩ =>
+    mem_plateau.mpr (SurfacesH.of_le_of_le (mem_plateau.mp ((plateau w).min'_mem hne))
+      (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)⟩
 
 /-- TBU `i` surfaces H iff it is itself a H or is strictly flanked: split the `take`
 window at its last slot and the `drop` window at its head. -/
@@ -265,8 +259,7 @@ theorem utpBM_run : utpBM.run = utp := by
     congr 1
     have hb : (a == TBU.H || ((w.take i).any (· == .H) && (w.drop (i + 1)).any (· == .H)))
         = true ↔ SurfacesH w i := by
-      rw [surfacesH_split h]
-      simp [List.any_eq_true]
+      rw [surfacesH_split h]; simp [List.any_eq_true]
     by_cases hs : SurfacesH w i
     · rw [if_pos (hb.mpr hs), if_pos hs]
     · rw [if_neg (fun hbt => hs (hb.mp hbt)), if_neg hs]
@@ -277,77 +270,65 @@ theorem utp_isBimachineComputable : IsBimachineComputable utp :=
 
 /-! ### UTP is unboundedly circumambient
 
-The witness family for definition (2), at distance `d`: the plateau word `H Ø^(2d+2) H`
-with target `d+1`; deleting either flanking H reverts it. -/
+The witness family for definition (2), at distance `d`: `flanked d x y` puts `x` and `y`
+around `2d+2` toneless TBUs. The base `flanked d .H .H` is the plateau word with target
+`d+1`; flipping either flank to `.O` is the far perturbation that reverts it. -/
 
-/-- The distance-`d` plateau word: Hs at positions `0` and `2d+3`, toneless in between. -/
-def plateauBase (d : ℕ) : List TBU :=
-  .H :: (List.replicate (2 * d + 2) .O ++ [.H])
+/-- The distance-`d` witness word: flanks `x`, `y` around `2d+2` toneless TBUs. -/
+private def flanked (d : ℕ) (x y : TBU) : List TBU :=
+  x :: (List.replicate (2 * d + 2) .O ++ [y])
 
-@[simp] theorem plateauBase_length (d : ℕ) : (plateauBase d).length = 2 * d + 4 := by
-  simp [plateauBase]
+private theorem flanked_length (d : ℕ) (x y : TBU) : (flanked d x y).length = 2 * d + 4 := by
+  simp [flanked]
 
-private theorem plateauBase_getElem?_H_iff (d : ℕ) {j : ℕ} :
-    (plateauBase d)[j]? = some TBU.H ↔ j = 0 ∨ j = 2 * d + 3 := by
-  cases j with
-  | zero => simp [plateauBase]
-  | succ t =>
-    rw [plateauBase, List.getElem?_cons_succ]
-    rcases lt_trichotomy t (2 * d + 2) with hj | rfl | hj
-    · rw [List.getElem?_append_left (by simpa using hj), List.getElem?_replicate, if_pos hj]
-      simp
-      omega
-    · rw [List.getElem?_append_right (by simp)]
-      simp
-    · rw [List.getElem?_append_right (by simp; omega)]
-      have : 1 ≤ t - (List.replicate (2 * d + 2) TBU.O).length := by simp; omega
-      rw [List.getElem?_eq_none (by simpa using this)]
-      simp
-      omega
+private theorem flanked_getElem? (d : ℕ) (x y : TBU) (j : ℕ) :
+    (flanked d x y)[j]? = if j = 0 then some x else if j = 2 * d + 3 then some y
+      else if j < 2 * d + 4 then some .O else none := by
+  simp only [flanked, List.getElem?_cons, List.getElem?_append, List.getElem?_replicate,
+    List.length_replicate, List.getElem?_nil]
+  split_ifs <;> first | rfl | omega
 
-private theorem plateauBase_getElem?_mid (d : ℕ) : (plateauBase d)[d + 1]? = some TBU.O := by
-  rw [plateauBase, List.getElem?_cons_succ, List.getElem?_append_left (by simp; omega),
-    List.getElem?_replicate, if_pos (by omega)]
-
-private theorem utp_plateauBase_mid (d : ℕ) : (utp (plateauBase d))[d + 1]? = some TBU.H :=
-  utp_getElem?_H_iff.mpr <| surfacesH_iff.mpr
-    ⟨⟨0, by omega, (plateauBase_getElem?_H_iff d).mpr (Or.inl rfl)⟩,
-      2 * d + 3, by omega, (plateauBase_getElem?_H_iff d).mpr (Or.inr rfl)⟩
-
-private theorem utp_set_perturbed (d : ℕ) {pos : ℕ} (hpos : pos = 0 ∨ pos = 2 * d + 3) :
-    (utp ((plateauBase d).set pos .O))[d + 1]? = some TBU.O := by
-  have hmid : ((plateauBase d).set pos TBU.O)[d + 1]? = some TBU.O := by
-    rw [List.getElem?_set_ne (by omega)]
-    exact plateauBase_getElem?_mid d
-  rw [utp_getElem?, hmid, Option.map_some, if_neg]
+/-- The target surfaces iff both flanks are H: the toneless fill offers no other
+trigger on either side. -/
+private theorem surfacesH_flanked_mid (d : ℕ) {x y : TBU} :
+    SurfacesH (flanked d x y) (d + 1) ↔ x = .H ∧ y = .H := by
   rw [surfacesH_iff]
-  rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
-  have key : ∀ j, ((plateauBase d).set pos TBU.O)[j]? = some TBU.H
-      → j ≠ pos ∧ (j = 0 ∨ j = 2 * d + 3) := fun j hj => by
-    rcases eq_or_ne j pos with rfl | hne
-    · rw [List.getElem?_set_self (by simp only [plateauBase_length]; omega)] at hj
-      simp at hj
-    · rw [List.getElem?_set_ne (Ne.symm hne)] at hj
-      exact ⟨hne, (plateauBase_getElem?_H_iff d).mp hj⟩
-  have k₁ := key _ h₁
-  have k₂ := key _ h₂
-  omega
+  constructor
+  · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
+    rw [flanked_getElem?] at h₁ h₂
+    split_ifs at h₁ h₂ <;> simp_all
+    omega
+  · rintro ⟨rfl, rfl⟩
+    exact ⟨⟨0, by omega, by rw [flanked_getElem?]; split_ifs <;> first | rfl | omega⟩,
+      2 * d + 3, by omega, by rw [flanked_getElem?]; split_ifs <;> first | rfl | omega⟩
 
 /-- UTP requires both sides ([heinz-lai-2013]): deleting either flanking H reverts the
 plateau target. -/
 theorem utp_requiresBothSides : RequiresBothSides utp := by
   intro d
-  refine ⟨plateauBase d, d + 1, by simp only [plateauBase_length]; omega, ?_, ?_, ?_⟩
-  · rw [utp_plateauBase_mid, plateauBase_getElem?_mid]
-    simp
-  · refine ⟨(plateauBase d).set 0 .O, by simp,
-      fun k hk => (List.getElem?_set_ne (by omega)).symm, List.getElem?_set_ne (by omega), ?_⟩
-    rw [utp_set_perturbed d (Or.inl rfl), List.getElem?_set_ne (by omega),
-      plateauBase_getElem?_mid]
-  · refine ⟨(plateauBase d).set (2 * d + 3) .O, by simp,
-      fun k hk => (List.getElem?_set_ne (by omega)).symm, List.getElem?_set_ne (by omega), ?_⟩
-    rw [utp_set_perturbed d (Or.inr rfl), List.getElem?_set_ne (by omega),
-      plateauBase_getElem?_mid]
+  have hmid : ∀ x y : TBU, (flanked d x y)[d + 1]? = some .O := fun x y => by
+    rw [flanked_getElem?, if_neg (by omega : ¬(d + 1 = 0)),
+      if_neg (by omega : ¬(d + 1 = 2 * d + 3)), if_pos (by omega : d + 1 < 2 * d + 4)]
+  have himg : ∀ x y : TBU, (utp (flanked d x y))[d + 1]?
+      = if x = .H ∧ y = .H then some .H else some .O := fun x y => by
+    split_ifs with h
+    · exact utp_getElem?_H_iff.mpr ((surfacesH_flanked_mid d).mpr h)
+    · exact utp_getElem?_O_iff.mpr ⟨by rw [flanked_length]; omega,
+        fun hs => h ((surfacesH_flanked_mid d).mp hs)⟩
+  have hagreeL : ∀ (x x' y : TBU) (k : ℕ), k ≠ 0 →
+      (flanked d x y)[k]? = (flanked d x' y)[k]? := fun x x' y k h0 => by
+    rw [flanked_getElem?, flanked_getElem?]; split_ifs <;> first | rfl | omega
+  have hagreeR : ∀ (x y y' : TBU) (k : ℕ), k ≠ 2 * d + 3 →
+      (flanked d x y)[k]? = (flanked d x y')[k]? := fun x y y' k h3 => by
+    rw [flanked_getElem?, flanked_getElem?]; split_ifs <;> rfl
+  refine ⟨flanked d .H .H, d + 1, by rw [flanked_length]; omega, ?_, ?_, ?_⟩
+  · rw [himg, hmid]; simp
+  · exact ⟨flanked d .O .H, by rw [flanked_length, flanked_length],
+      fun k hk => hagreeL _ _ _ k (by omega), by rw [hmid, hmid],
+      by rw [himg, hmid]; simp⟩
+  · exact ⟨flanked d .H .O, by rw [flanked_length, flanked_length],
+      fun k hk => hagreeR _ _ _ k (by omega), by rw [hmid, hmid],
+      by rw [himg, hmid]; simp⟩
 
 /-- UTP is an unbounded circumambient process (definition (2)). -/
 theorem utp_isUnboundedCircumambient : IsUnboundedCircumambient utp :=
@@ -363,52 +344,21 @@ reading `H Øⁿ` has emitted at most one symbol (`utp (H Øⁿ) = H Øⁿ` and
 theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
   refine not_isLeftSubsequential_of_diverging fun N =>
     ⟨.H :: List.replicate (N + 1) .O, [.H], 1, ?_, ?_⟩
-  · simp only [utp_length, List.length_cons, List.length_replicate]
-    omega
-  · -- image of `H Ø^(N+1)`: itself, by (36b); of `H Ø^(N+1) H`: a total plateau, by (36c)
-    have h1 : (utp (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O := by
-      rw [show (TBU.H :: List.replicate (N + 1) TBU.O)
-            = List.replicate 0 TBU.O ++ TBU.H :: List.replicate (N + 1) TBU.O by simp,
-        utp_single]
-      simp only [List.replicate_zero, List.nil_append]
-      rw [List.getElem?_cons_succ, List.getElem?_replicate, if_pos (by omega)]
-    have h2 : (utp ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H := by
-      rw [show (TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]
-            = List.replicate 0 TBU.O ++ TBU.H :: (List.replicate (N + 1) TBU.O
-                ++ TBU.H :: List.replicate 0 TBU.O) by simp,
-        utp_plateau]
-      simp only [List.replicate_zero, List.nil_append, List.append_nil, List.length_replicate]
-      rw [List.getElem?_replicate, if_pos (by omega)]
-    rw [h1, h2]
-    simp
+  · simp only [utp_length, List.length_cons, List.length_replicate]; omega
+  · -- the images disagree at position 1: toneless there without the second H, plateau with it
+    have h1 : (utp (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O :=
+      utp_getElem?_O_iff.mpr ⟨by simp, fun hs => by simpa using hs.2⟩
+    have h2 : (utp ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H :=
+      utp_getElem?_H_iff.mpr ⟨by simp, by simp⟩
+    rw [h1, h2]; simp
 
 /-- Plateauing is symmetric under string reversal. -/
 theorem utp_reverse : utp w.reverse = (utp w).reverse := by
   refine List.ext_getElem? fun i => ?_
   by_cases hi : i < w.length
-  · have hrl : (utp w).length = w.length := utp_length
-    rw [utp_getElem?, List.getElem?_reverse (by simpa using hi),
-      List.getElem?_reverse (by simpa [hrl] using hi), hrl, utp_getElem?]
-    have hiff : SurfacesH w.reverse i ↔ SurfacesH w (w.length - 1 - i) := by
-      rw [surfacesH_iff, surfacesH_iff]
-      constructor
-      · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-        obtain ⟨hlt₁, -⟩ := List.getElem?_eq_some_iff.mp h₁
-        obtain ⟨hlt₂, -⟩ := List.getElem?_eq_some_iff.mp h₂
-        simp only [List.length_reverse] at hlt₁ hlt₂
-        rw [List.getElem?_reverse (by simpa using hlt₁)] at h₁
-        rw [List.getElem?_reverse (by simpa using hlt₂)] at h₂
-        exact ⟨⟨w.length - 1 - j₂, by omega, h₂⟩, ⟨w.length - 1 - j₁, by omega, h₁⟩⟩
-      · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-        obtain ⟨hlt₁, -⟩ := List.getElem?_eq_some_iff.mp h₁
-        obtain ⟨hlt₂, -⟩ := List.getElem?_eq_some_iff.mp h₂
-        refine ⟨⟨w.length - 1 - j₂, by omega, ?_⟩, ⟨w.length - 1 - j₁, by omega, ?_⟩⟩
-        · rw [List.getElem?_reverse (by omega), show w.length - 1 - (w.length - 1 - j₂) = j₂ by omega]
-          exact h₂
-        · rw [List.getElem?_reverse (by omega), show w.length - 1 - (w.length - 1 - j₁) = j₁ by omega]
-          exact h₁
-    rw [show (if SurfacesH w.reverse i then TBU.H else TBU.O)
-          = (if SurfacesH w (w.length - 1 - i) then TBU.H else TBU.O) by simp [hiff]]
+  · rw [utp_getElem?, List.getElem?_reverse (by simpa using hi),
+      List.getElem?_reverse (by simpa using hi), utp_length, utp_getElem?]
+    simp only [surfacesH_reverse hi]
   · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
 
 /-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
@@ -417,8 +367,7 @@ theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp := by
   intro hf
   rw [isRightSubsequential_iff_left_reverse] at hf
   have heq : (fun xs : List TBU => (utp xs.reverse).reverse) = utp := by
-    funext xs
-    rw [utp_reverse, List.reverse_reverse]
+    funext xs; rw [utp_reverse, List.reverse_reverse]
   exact utp_not_isLeftSubsequential (heq ▸ hf)
 
 /-- UTP is subsequential in neither direction. -/
@@ -444,171 +393,47 @@ mark is exactly the alphabet enlargement weak determinism disallows, so with the
 impossibility theorem this locates UTP precisely. -/
 
 /-- The mark-up alphabet of (43): `Q` is the paper's `?`. -/
-inductive Mark
-  | H
-  | O
-  | Q
+inductive Mark | H | O | Q
   deriving DecidableEq, Repr
 
 /-- Left pass of (43): mark every toneless TBU after a H with `?`. -/
-def markLeft : Mealy Bool TBU Mark where
-  initial := false
-  step l a :=
-    match a with
-    | .H => (true, .H)
-    | .O => (l, if l then .Q else .O)
+def markLeft : Mealy Bool TBU Mark :=
+  .ofFlag (· == .H) fun l a => match a with | .H => .H | .O => if l then .Q else .O
 
 /-- Right pass of (43): resolve `?` to H when a H follows, else to Ø. -/
-def resolveRight : Mealy Bool Mark TBU where
-  initial := false
-  step r a :=
-    match a with
-    | .H => (true, .H)
-    | .O => (r, .O)
-    | .Q => (r, if r then .H else .O)
+def resolveRight : Mealy Bool Mark TBU :=
+  .ofFlag (· == .H) fun r a =>
+    match a with | .H => .H | .O => .O | .Q => if r then .H else .O
 
 /-- The right pass as a right-to-left string function: reverse, run, reverse. -/
 def resolve (x : List Mark) : List TBU := (resolveRight.run x.reverse).reverse
 
-private theorem markLeft_stateAfter (b : Bool) (pre : List TBU) :
-    markLeft.stateAfter b pre = (b || pre.any (· == .H)) := by
-  induction pre generalizing b with
-  | nil => simp
-  | cons x xs ih =>
-    rw [Mealy.stateAfter_cons]
-    cases x with
-    | H => rw [show (markLeft.step b .H).1 = true from rfl, ih]; simp
-    | O =>
-      rw [show (markLeft.step b .O).1 = b from rfl, ih]
-      simp only [List.any_cons, show (TBU.O == TBU.H) = false from rfl, Bool.false_or]
-
-private theorem resolveRight_stateAfter (b : Bool) (pre : List Mark) :
-    resolveRight.stateAfter b pre = (b || pre.any (· == .H)) := by
-  induction pre generalizing b with
-  | nil => simp
-  | cons x xs ih =>
-    rw [Mealy.stateAfter_cons]
-    cases x with
-    | H => rw [show (resolveRight.step b .H).1 = true from rfl, ih]; simp
-    | O =>
-      rw [show (resolveRight.step b .O).1 = b from rfl, ih]
-      simp only [List.any_cons, show (Mark.O == Mark.H) = false from rfl, Bool.false_or]
-    | Q =>
-      rw [show (resolveRight.step b .Q).1 = b from rfl, ih]
-      simp only [List.any_cons, show (Mark.Q == Mark.H) = false from rfl, Bool.false_or]
-
-private theorem markLeft_run_getElem? (w : List TBU) (i : ℕ) :
-    (markLeft.run w)[i]?
-      = w[i]?.map fun a =>
-          match a with
-          | .H => Mark.H
-          | .O => if (w.take i).any (· == .H) then Mark.Q else Mark.O := by
-  rw [show markLeft.run w = markLeft.runFrom markLeft.initial w from rfl,
-    Mealy.runFrom_getElem?]
-  cases h : w[i]? with
-  | none => rfl
-  | some a =>
-    simp only [Option.map_some]
-    congr 1
-    cases a with
-    | H => rfl
-    | O =>
-      show (if markLeft.stateAfter markLeft.initial (w.take i) = true
-          then Mark.Q else Mark.O) = _
-      rw [markLeft_stateAfter, show markLeft.initial = false from rfl]
-      simp
-
 private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
     (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some TBU.H := by
-  rw [markLeft_run_getElem?]
-  cases h : w[j]? with
+  rw [markLeft, Mealy.ofFlag_run_getElem?]
+  cases hv : w[j]? with
   | none => simp
-  | some a =>
-    cases a with
-    | H => simp
-    | O =>
-      simp only [Option.map_some]
-      constructor
-      · intro hc
-        exfalso
-        split at hc <;> exact Mark.noConfusion (Option.some.inj hc)
-      · intro hc
-        exact absurd (Option.some.inj hc) (by simp)
-
-@[simp] private theorem markLeft_run_length (w : List TBU) :
-    (markLeft.run w).length = w.length := markLeft.run_length w
+  | some a => cases a <;> simp [ite_eq_iff]
 
 /-- The (43) decomposition computes UTP. -/
 theorem utp_eq_resolve_mark (w : List TBU) : utp w = resolve (markLeft.run w) := by
+  have hmark : ∀ i : ℕ, Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) :=
+    fun i => by simp only [mem_drop_iff, markLeft_run_H_iff]
   refine List.ext_getElem? fun i => ?_
-  by_cases hi : i < w.length
-  · have hn : (markLeft.run w).reverse.length = w.length := by simp
-    rw [utp_getElem?, resolve,
-      List.getElem?_reverse (by rw [resolveRight.run_length]; simpa using hi),
-      resolveRight.run_length, hn,
-      show resolveRight.run (markLeft.run w).reverse
-        = resolveRight.runFrom resolveRight.initial (markLeft.run w).reverse from rfl,
-      Mealy.runFrom_getElem?, resolveRight_stateAfter,
-      List.getElem?_reverse (by rw [hn] at *; simp; omega)]
-    have hidx : (markLeft.run w).length - 1 - (w.length - 1 - i) = i := by
-      rw [markLeft_run_length]; omega
-    rw [hidx, markLeft_run_getElem?]
-    -- the right flag of the resolving pass = "a H-toned TBU occurs strictly after `i`"
-    have hflag : (((markLeft.run w).reverse.take (w.length - 1 - i)).any (· == Mark.H))
-        = ((w.drop (i + 1)).any (· == TBU.H)) := by
-      have htk : (markLeft.run w).reverse.take (w.length - 1 - i)
-          = ((markLeft.run w).drop (i + 1)).reverse := by
-        rw [List.take_reverse, markLeft_run_length,
-          show w.length - (w.length - 1 - i) = i + 1 from by omega]
-      rw [htk, List.any_reverse, Bool.eq_iff_iff]
-      simp only [List.any_eq_true, beq_iff_eq]
-      constructor
-      · rintro ⟨x, hx, rfl⟩
-        obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
-        exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mp hxj⟩, rfl⟩
-      · rintro ⟨x, hx, rfl⟩
-        obtain ⟨j, hj, hxj⟩ := mem_drop_iff.mp hx
-        exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, (markLeft_run_H_iff w j).mpr hxj⟩, rfl⟩
-    rw [hflag]
-    obtain ⟨a, ha⟩ : ∃ a, w[i]? = some a := ⟨w[i], List.getElem?_eq_getElem hi⟩
-    rw [ha]
-    simp only [Option.map_some]
+  rw [utp_getElem?, resolve, resolveRight, Mealy.ofFlag_run_reverse_getElem?]
+  simp only [List.any_beq', List.contains_eq_mem, decide_eq_decide.mpr (hmark i)]
+  rw [markLeft, Mealy.ofFlag_run_getElem?, Option.map_map]
+  simp only [List.any_beq', List.contains_eq_mem]
+  cases ha : w[i]? with
+  | none => rfl
+  | some a =>
+    simp only [Option.map_some, Function.comp_apply]
     congr 1
-    have hsp := surfacesH_split ha
     cases a with
-    | H => simp [surfacesH_iff.mpr ⟨⟨i, le_rfl, ha⟩, ⟨i, le_rfl, ha⟩⟩, resolveRight]
+    | H => simp [surfacesH_of_getElem?_H ha]
     | O =>
-      by_cases hL : (w.take i).any (· == TBU.H) = true
-      · have hLm : TBU.H ∈ w.take i := by
-          simp only [List.any_eq_true, beq_iff_eq] at hL
-          obtain ⟨x, hx, rfl⟩ := hL
-          exact hx
-        by_cases hR : (w.drop (i + 1)).any (· == TBU.H) = true
-        · have hRm : TBU.H ∈ w.drop (i + 1) := by
-            simp only [List.any_eq_true, beq_iff_eq] at hR
-            obtain ⟨x, hx, rfl⟩ := hR
-            exact hx
-          simp [hsp.mpr (Or.inr ⟨hLm, hRm⟩), hL, hR, resolveRight]
-        · have hs : ¬ SurfacesH w i := fun hs => by
-            rcases hsp.mp hs with h' | ⟨-, hRm⟩
-            · exact TBU.noConfusion h'
-            · exact hR (by
-                obtain ⟨j, hj, hjH⟩ := mem_drop_iff.mp hRm
-                simp only [List.any_eq_true, beq_iff_eq]
-                exact ⟨.H, mem_drop_iff.mpr ⟨j, hj, hjH⟩, rfl⟩)
-          simp [hs, hL, hR, resolveRight]
-      · have hs : ¬ SurfacesH w i := fun hs => by
-          rcases hsp.mp hs with h' | ⟨hLm, -⟩
-          · exact TBU.noConfusion h'
-          · exact hL (by
-              obtain ⟨j, hj, hjH⟩ := mem_take_iff.mp hLm
-              simp only [List.any_eq_true, beq_iff_eq]
-              exact ⟨.H, mem_take_iff.mpr ⟨j, hj, hjH⟩, rfl⟩)
-        simp [hs, hL, resolveRight]
-  · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by
-      rw [resolve, List.length_reverse, resolveRight.run_length]
-      simp
-      omega)]
+      by_cases hL : TBU.H ∈ w.take i <;> by_cases hR : TBU.H ∈ w.drop (i + 1) <;>
+        simp [surfacesH_split ha, hL, hR]
 
 /-- The (43) mark-up decomposition (§5.2): over the `?`-enlarged alphabet, UTP is a
 right-subsequential map after a left-subsequential map. -/
@@ -619,8 +444,7 @@ theorem utp_markup_decomposition :
     funext utp_eq_resolve_mark⟩
   rw [isRightSubsequential_iff_left_reverse]
   have heq : (fun xs : List Mark => (resolve xs.reverse).reverse) = resolveRight.run := by
-    funext xs
-    rw [resolve, List.reverse_reverse, List.reverse_reverse]
+    funext xs; rw [resolve, List.reverse_reverse, List.reverse_reverse]
   exact heq ▸ resolveRight.isLetterLeftSubsequential.isLeftSubsequential
 
 /-! ### The autosegmental grounding ((40), §4.4)
@@ -646,9 +470,7 @@ theorem linearize_realize_toAR (w : List TBU) :
   rw [linearize_realize]
   induction w with
   | nil => rfl
-  | cons a w ih =>
-    rw [List.flatMap_cons, List.map_cons, ih]
-    cases a <;> simp [toAR]
+  | cons a w ih => rw [List.flatMap_cons, List.map_cons, ih]; cases a <;> simp [toAR]
 
 /-- Read a timing unit's association state back as a TBU symbol. -/
 def readTBU (s : Unit × List Tone.TRN) : TBU := if s.2.isEmpty then .O else .H
@@ -659,8 +481,7 @@ theorem readTBU_linearize_realize (w : List TBU) :
     ((realize toAR w).linearize).map readTBU = w := by
   rw [linearize_realize_toAR, List.map_map]
   conv_rhs => rw [← List.map_id w]
-  refine List.map_congr_left fun a ha => ?_
-  cases a <;> rfl
+  exact List.map_congr_left fun a _ => by cases a <;> rfl
 
 /-! #### The fused plateau ([hyman-katamba-2010] (7))
 
@@ -668,144 +489,48 @@ The OCP-merging realization `Autosegmental.realizeMerged` fuses the plateau's ru
 nodes into one, giving [hyman-katamba-2010]'s output representation (7): a single H
 autosegment multiply linked to exactly the `plateau`, over an unchanged timing tier. -/
 
-private theorem mem_upper_realize_toAR (v : List TBU) :
-    ∀ b ∈ (realize toAR v).upper.toList, b = Tone.TRN.H := by
-  induction v with
-  | nil =>
-    have h : (realize toAR ([] : List TBU)).upper.toList = [] :=
-      List.eq_nil_of_length_eq_zero (by simp [realize_nil, AR.empty, Graph.empty])
-    rw [h]
-    intro b hb
-    simp at hb
-  | cons a v ih =>
-    intro b hb
-    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, List.mem_append] at hb
-    rcases hb with hb | hb
-    · cases a with
-      | H => simpa [toAR] using hb
-      | O => simp [toAR] at hb
-    · exact ih b hb
-
 private theorem upper_realize_toAR (v : List TBU) :
-    (realize toAR v).upper.toList
-      = List.replicate (realize toAR v).upper.len Tone.TRN.H := by
-  have h := List.eq_replicate_of_mem (mem_upper_realize_toAR v)
-  rwa [LabeledTuple.toList_length] at h
-
-private theorem lower_realize_toAR (v : List TBU) :
-    (realize toAR v).lower.toList = List.replicate v.length () := by
-  have hlen : (realize toAR v).lower.len = v.length := by
-    rw [← AR.linearize_length, linearize_realize_toAR, List.length_map]
-  have h := List.eq_replicate_of_mem
-    (l := (realize toAR v).lower.toList) (a := ()) fun _ _ => rfl
-  rwa [LabeledTuple.toList_length, hlen] at h
-
-private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
-    (∃ k, (k, j) ∈ (realize toAR v).links) ↔ v[j]? = some .H := by
-  induction v generalizing j with
-  | nil =>
-    refine iff_of_false ?_ (by simp)
-    rintro ⟨k, hk⟩
-    rw [realize_nil] at hk
-    simp [AR.empty, Graph.empty] at hk
+    (realize toAR v).upper.toList = List.replicate (v.count .H) Tone.TRN.H := by
+  induction v with
+  | nil => rfl
   | cons a v ih =>
-    cases a with
-    | H =>
-      rw [realize_cons, show toAR TBU.H = .single Tone.TRN.H () from rfl, AR.links_concat]
-      simp only [AR.single_links, AR.single_upper, AR.single_lower, LabeledTuple.ofList_len,
-        List.length_singleton]
-      cases j with
-      | zero =>
-        simp only [List.getElem?_cons_zero]
-        exact iff_of_true ⟨0, Finset.mem_union_left _ (Finset.mem_singleton_self _)⟩ trivial
-      | succ t =>
-        rw [List.getElem?_cons_succ, ← ih t]
-        constructor
-        · rintro ⟨k, hk⟩
-          rcases Finset.mem_union.mp hk with hk | hk
-          · rw [Finset.mem_singleton, Prod.mk.injEq] at hk
-            exact absurd hk.2 (by omega)
-          · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
-            simp only [shiftLink_apply, Prod.mk.injEq] at hqe
-            obtain rfl : q₂ = t := by omega
-            exact ⟨q₁, hq⟩
-        · rintro ⟨k, hk⟩
-          exact ⟨k + 1, Finset.mem_union_right _
-            (Finset.mem_image.mpr ⟨(k, t), hk, by rw [shiftLink_apply]⟩)⟩
-    | O =>
-      rw [realize_cons, show toAR TBU.O = .bare () from rfl, AR.links_concat]
-      simp only [AR.bare_links, AR.bare_upper, AR.bare_lower, LabeledTuple.ofList_len,
-        List.length_singleton, List.length_nil]
-      cases j with
-      | zero =>
-        simp only [List.getElem?_cons_zero]
-        refine iff_of_false ?_ (by simp)
-        rintro ⟨k, hk⟩
-        rcases Finset.mem_union.mp hk with hk | hk
-        · exact absurd hk (Finset.notMem_empty _)
-        · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
-          simp only [shiftLink_apply, Prod.mk.injEq] at hqe
-          omega
-      | succ t =>
-        rw [List.getElem?_cons_succ, ← ih t]
-        constructor
-        · rintro ⟨k, hk⟩
-          rcases Finset.mem_union.mp hk with hk | hk
-          · exact absurd hk (Finset.notMem_empty _)
-          · obtain ⟨⟨q₁, q₂⟩, hq, hqe⟩ := Finset.mem_image.mp hk
-            simp only [shiftLink_apply, Prod.mk.injEq] at hqe
-            obtain rfl : q₂ = t := by omega
-            exact ⟨q₁, hq⟩
-        · rintro ⟨k, hk⟩
-          exact ⟨k, Finset.mem_union_right _
-            (Finset.mem_image.mpr ⟨(k, t), hk, by simp [shiftLink_apply]⟩)⟩
+    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih]
+    cases a <;> simp [toAR, List.replicate_succ]
 
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
-  obtain ⟨k, j⟩ := p
+  have hL : ∀ j, (realize toAR (utp w)).toGraph.IsLinkedLower j ↔ SurfacesH w j := fun j => by
+    rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR, ← utp_getElem?_H_iff]
+    cases hv : (utp w)[j]? with
+    | none => simp [List.getElem?_map, hv]
+    | some a => cases a <;> simp [List.getElem?_map, hv]
   rw [realizeMerged_def,
-    show (collapseAR (realize toAR (utp w))).links
-        = ((realize toAR (utp w)).links).image
-            (Prod.map (runIdx ((realize toAR (utp w)).upper.toList)) id) from rfl,
-    upper_realize_toAR]
-  simp only [Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, runIdx_replicate,
-    Prod.mk.injEq]
-  constructor
-  · rintro ⟨q₁, q₂, hq, rfl, rfl⟩
-    exact ⟨rfl, utp_getElem?_H_iff.mp ((isLinkedLower_realize_toAR (utp w) q₂).mp ⟨q₁, hq⟩)⟩
-  · rintro ⟨rfl, hS⟩
-    obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) j).mpr (utp_getElem?_H_iff.mpr hS)
-    exact ⟨q₁, j, hq, rfl, rfl⟩
+    mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp w)), hL]
 
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
 theorem links_realizeMerged_utp :
-    (realizeMerged toAR (utp w)).links = (plateau w).image fun j => ((0 : ℕ), j) := by
-  ext ⟨k, j⟩
-  rw [mem_links_realizeMerged_utp]
-  simp only [Finset.mem_image, mem_plateau, Prod.mk.injEq]
-  constructor
-  · rintro ⟨rfl, hS⟩
-    exact ⟨j, hS, rfl, rfl⟩
-  · rintro ⟨j', hS, rfl, rfl⟩
-    exact ⟨rfl, hS⟩
+    (realizeMerged toAR (utp w)).links = {0} ×ˢ plateau w := by
+  ext ⟨k, j⟩; rw [mem_links_realizeMerged_utp]; simp [and_comm, eq_comm]
 
 /-- The timing tier survives the merge: one slot per input TBU. -/
 theorem lower_realizeMerged_utp :
     (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () := by
-  rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
+  rw [realizeMerged_def, collapseAR_lower]
+  have h := List.eq_replicate_of_mem
+    (l := (realize toAR (utp w)).lower.toList) (a := ()) fun _ _ => rfl
+  rwa [LabeledTuple.toList_length, ← AR.linearize_length, linearize_realize_toAR,
+    List.length_map, utp_length] at h
 
 /-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
 autosegment. -/
 theorem upper_realizeMerged_utp (hw : .H ∈ w) :
     (realizeMerged toAR (utp w)).upper.toList = [Tone.TRN.H] := by
-  have hn : 0 < (realize toAR (utp w)).upper.len := by
-    obtain ⟨i₀, hi₀⟩ := List.mem_iff_getElem?.mp hw
-    obtain ⟨q₁, hq⟩ := (isLinkedLower_realize_toAR (utp w) i₀).mpr
-      (utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi₀))
-    exact Nat.lt_of_le_of_lt (Nat.zero_le q₁) ((realize toAR (utp w)).inBounds _ hq).1
-  obtain ⟨m, hm⟩ : ∃ m, (realize toAR (utp w)).upper.len = m + 1 :=
-    ⟨(realize toAR (utp w)).upper.len - 1, by omega⟩
+  obtain ⟨m, hm⟩ : ∃ m, (utp w).count .H = m + 1 := by
+    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
+    have := List.count_pos_iff.mpr <| List.mem_iff_getElem?.mpr
+      ⟨i, utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H hi)⟩
+    exact ⟨(utp w).count .H - 1, by omega⟩
   rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
 
 /-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/

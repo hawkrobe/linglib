@@ -93,6 +93,55 @@ theorem runFrom_getElem? (T : Mealy σ α β) (s : σ) (xs : List α) (i : ℕ) 
     | zero => simp
     | succ j => simp [ih, List.take_succ_cons]
 
+/-! ### Flag machines
+
+The recurring one-sided-trigger shape (the `Mealy` counterpart of `Bimachine.ofFlags`):
+the state is the one-bit "some earlier symbol satisfies `p`" flag, so `stateAfter`
+computes `List.any` and each output cell sees the flag over its strict prefix. Scanned
+right-to-left (reverse, run, reverse), the cell sees the flag over its strict suffix
+(`ofFlag_run_reverse_getElem?`). -/
+
+/-- The Mealy machine whose state is the monotone flag "a symbol satisfying `p` has
+occurred". -/
+def ofFlag (p : α → Bool) (out : Bool → α → β) : Mealy Bool α β where
+  initial := false
+  step b a := (b || p a, out b a)
+
+@[simp] theorem ofFlag_stateAfter (p : α → Bool) (out : Bool → α → β) (b : Bool)
+    (xs : List α) : (ofFlag p out).stateAfter b xs = (b || xs.any p) := by
+  induction xs generalizing b with
+  | nil => simp
+  | cons x xs ih =>
+    rw [stateAfter_cons, show ((ofFlag p out).step b x).1 = (b || p x) from rfl, ih]
+    simp [Bool.or_assoc]
+
+theorem ofFlag_run_getElem? (p : α → Bool) (out : Bool → α → β) (xs : List α) (i : ℕ) :
+    ((ofFlag p out).run xs)[i]? = xs[i]?.map fun a => out ((xs.take i).any p) a := by
+  rw [show (ofFlag p out).run xs = (ofFlag p out).runFrom (ofFlag p out).initial xs from rfl,
+    runFrom_getElem?]
+  cases xs[i]? with
+  | none => rfl
+  | some a =>
+    rw [ofFlag_stateAfter, show (ofFlag p out).initial = false from rfl, Bool.false_or]
+    rfl
+
+/-- Coordinates of a flag machine scanned right-to-left: cell `i` sees the flag over its
+strict suffix. -/
+theorem ofFlag_run_reverse_getElem? (p : α → Bool) (out : Bool → α → β) (xs : List α)
+    (i : ℕ) :
+    (((ofFlag p out).run xs.reverse).reverse)[i]?
+      = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
+  by_cases hi : i < xs.length
+  · rw [List.getElem?_reverse (by rw [(ofFlag p out).run_length]; simpa using hi),
+      (ofFlag p out).run_length, List.length_reverse, ofFlag_run_getElem?,
+      List.getElem?_reverse (by omega),
+      show xs.length - 1 - (xs.length - 1 - i) = i from by omega,
+      List.take_reverse, show xs.length - (xs.length - 1 - i) = i + 1 from by omega,
+      List.any_reverse]
+  · rw [List.getElem?_eq_none
+        (by rw [List.length_reverse, (ofFlag p out).run_length, List.length_reverse]; omega),
+      List.getElem?_eq_none (le_of_not_gt hi), Option.map_none]
+
 /-- Transfer a `Mealy` along a state-space equivalence `σ ≃ τ`, preserving `run`.
 Mirrors `SFST.transferEquiv`; the use case is bringing a `Type*` finite state down to
 `Fin (Fintype.card σ) : Type 0` so a universe-polymorphic machine can witness the
