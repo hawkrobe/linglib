@@ -202,7 +202,7 @@ theorem parallel_OT_inadequate : ¬ ERCSet.Consistent pokoSupport := by
   have hB := (ERC.satisfiedBy_iff_dominance r ercB).mp (hr ercB (by simp [pokoSupport]))
   -- ercA: only W is at position 0 (MAX(H)). Verified per-position by
   -- `decide` on the derived ERC; can't `decide` the ∀ directly because
-  -- reduction through `ercOfProfiles + mkProfile` stalls.
+  -- reduction through `ercOfProfiles + buildViolationProfile` stalls.
   have ercA_only_W_at_zero : ∀ (w : Fin numConstraints), ercA w = .W → w = 0 := by
     intro w hw
     match w, hw with
