@@ -37,8 +37,9 @@ definition. -/
 
 namespace Core.Order
 
-/-- A bundled total preorder with decidability. Laws are carried as mathlib's
-unbundled relation classes, registered as instances. -/
+/-- A bundled total preorder. Laws are carried as mathlib's unbundled relation
+classes, registered as instances; decidability is not part of the frame — it
+enters locally where finite models compute (`decidableLE_ofBool`). -/
 structure TotalPreorder (α : Type*) where
   /-- The preorder relation: `le a b` means a is ranked no higher than b. -/
   le : α → α → Prop
@@ -46,11 +47,8 @@ structure TotalPreorder (α : Type*) where
   isPreorder : IsPreorder α le
   /-- Totality, as mathlib's unbundled relation class. -/
   total : Std.Total le
-  /-- Decidability of the ordering. -/
-  decRel : DecidableRel le
 
 attribute [instance] TotalPreorder.isPreorder TotalPreorder.total
-  TotalPreorder.decRel
 
 namespace TotalPreorder
 
@@ -69,14 +67,14 @@ theorem le_total (a b : α) : ord.le a b ∨ ord.le b a := Std.Total.total a b
 /-- Strict ordering: a is ranked strictly below b. -/
 def lt (a b : α) : Prop := ord.le a b ∧ ¬ ord.le b a
 
-instance decRelLt : DecidableRel ord.lt := fun _ _ =>
+instance decRelLt [DecidableRel ord.le] : DecidableRel ord.lt := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Equivalence: a and b are ranked at the same level — mathlib's
 `AntisymmRel` (whose `AntisymmRel.setoid` is the level-quotient). -/
 abbrev equiv (a b : α) : Prop := AntisymmRel ord.le a b
 
-instance decRelEquiv : DecidableRel ord.equiv := fun _ _ =>
+instance decRelEquiv [DecidableRel ord.le] : DecidableRel ord.equiv := fun _ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- ¬(a < b) → b ≤ a (by totality). -/
@@ -93,18 +91,24 @@ def ofBool {α : Type*} (f : α → α → Bool)
   le a b := f a b = true
   isPreorder := { refl := h_refl, trans := h_trans }
   total := ⟨h_total⟩
-  decRel _ _ := inferInstance
+
+/-- Table-built orderings are decidable — the local decidability finite
+models recover in one instance. -/
+instance decidableLE_ofBool {α : Type*} (f : α → α → Bool) (h₁ h₂ h₃) :
+    DecidableRel (ofBool f h₁ h₂ h₃).le := fun _ _ =>
+  inferInstanceAs (Decidable (_ = true))
 
 /-- A top-ranked point: no point is ranked strictly above it. -/
 def IsMaximal (x : α) : Prop := ∀ y, ¬ ord.lt x y
 
-instance [Fintype α] (x : α) : Decidable (ord.IsMaximal x) := by
+instance [Fintype α] [DecidableRel ord.le] (x : α) :
+    Decidable (ord.IsMaximal x) := by
   unfold IsMaximal; infer_instance
 
 /-- Acceptance: a predicate holds throughout the top-ranked points. -/
 def AcceptedAt (A : α → Prop) : Prop := ∀ x, ord.IsMaximal x → A x
 
-instance [Fintype α] (A : α → Prop) [DecidablePred A] :
+instance [Fintype α] [DecidableRel ord.le] (A : α → Prop) [DecidablePred A] :
     Decidable (ord.AcceptedAt A) := by
   unfold AcceptedAt; infer_instance
 

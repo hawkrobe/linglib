@@ -59,12 +59,10 @@ theorem toStructure_model (ord : Core.Order.TotalPreorder α) :
   · rw [Relations.realize_transitive]
     exact ⟨fun a b c => ord.le_trans a b c⟩
 
-/-- A decidable model of the total-preorder theory presents a bundle: the two
+/-- A model of the total-preorder theory presents a bundle: the two
 presentations round-trip. -/
 def ofModel [Language.order.Structure α]
-    [h : α ⊨ Language.order.totalPreorderTheory]
-    [DecidableRel (fun a b : α =>
-      Structure.RelMap (leSymb : Language.order.Relations 2) ![a, b])] :
+    [h : α ⊨ Language.order.totalPreorderTheory] :
     Core.Order.TotalPreorder α where
   le a b := Structure.RelMap (leSymb : Language.order.Relations 2) ![a, b]
   isPreorder :=
@@ -78,6 +76,5 @@ def ofModel [Language.order.Structure α]
           by simp [Language.preorderTheory]).trans }
   total := Relations.realize_total.mp <|
     Theory.model_iff _ |>.mp h _ <| by simp [Language.totalPreorderTheory]
-  decRel := inferInstance
 
 end Core.Order.TotalPreorder
