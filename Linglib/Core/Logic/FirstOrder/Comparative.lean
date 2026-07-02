@@ -11,8 +11,11 @@ pattern), boolean connectives, and a binary comparative `A ≻ B` (`.comp`)
 evaluated at an index of an ordered family of structures — some
 (A∧¬B)-index in the cone strictly dominates every (B∧¬A)-index.
 `realize_comp_iff_strict_dominationLift` identifies ≻ with the strict
-l-lifting of [holliday-icard-2013]; [rudolph-kocurek-2024] instantiates the
-language with interpretations as indices.
+l-lifting of [holliday-icard-2013] §5 — Lewis's lift, which is also the lift
+of [kratzer-1991]'s ordering semantics, with complete logic WJR
+([halpern-2003]); comparing *difference sets* follows [kratzer-2012]'s revised
+lifting. [rudolph-kocurek-2024] instantiates the language with
+interpretations as indices.
 -/
 
 namespace FirstOrder.Language
