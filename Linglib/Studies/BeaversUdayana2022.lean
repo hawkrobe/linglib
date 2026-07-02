@@ -91,9 +91,9 @@ open Semantics.Lexical
 open Indonesian.VoiceSystem
 open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
-open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree)
+open ArgumentStructure.Affectedness.Profile (AffectednessDegree)
 open Voice
-open Semantics.ArgumentStructure.VoiceSemantics
+open ArgumentStructure.VoiceSemantics
 open Intensional
 
 -- ============================================================================

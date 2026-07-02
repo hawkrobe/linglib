@@ -34,7 +34,7 @@ reflexive parameter. A faithful graded scale, derived from
 the documented successor (it would discharge `Studies/Sorace2000`'s standing TODO).
 -/
 
-namespace Semantics.ArgumentStructure.AuxiliarySelection
+namespace ArgumentStructure.AuxiliarySelection
 
 /-- Perfect auxiliary choice. -/
 inductive PerfectAux where
@@ -98,4 +98,4 @@ instance : DecidablePred SelectsBe := fun c => by
   unfold SelectsBe
   infer_instance
 
-end Semantics.ArgumentStructure.AuxiliarySelection
+end ArgumentStructure.AuxiliarySelection

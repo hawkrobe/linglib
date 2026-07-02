@@ -39,7 +39,7 @@ substrate:
 
 namespace ParteeBorschev2003
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 open Possessive
 
 variable {E S : Type*}

@@ -43,7 +43,7 @@ participant roles.
 * [dowty-1991] (the proto-role profiles that drive the theta-grid)
 -/
 
-open Semantics.ArgumentStructure
+open ArgumentStructure
 open ArgumentStructure (EntailmentProfile)
 
 /-! ### The theta-grid (derived from the proto-role profiles) -/

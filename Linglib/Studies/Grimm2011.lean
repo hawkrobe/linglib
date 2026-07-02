@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Aissen2003
 
@@ -7,7 +7,7 @@ import Linglib.Studies.Aissen2003
 [grimm-2011] [aissen-2003] [von-heusinger-2008]
 
 Study file connecting [grimm-2011]'s agentivity lattice
-(`Semantics/Events/AgentivityLattice.lean`) to the differential
+(`Semantics/ArgumentStructure/Agentivity/`) to the differential
 object marking profiles in `Studies/Aissen2003.lean`.
 
 ## Key results
@@ -36,7 +36,7 @@ object marking profiles in `Studies/Aissen2003.lean`.
 
 namespace Grimm2011
 
-open Semantics.ArgumentStructure.AgentivityLattice
+open ArgumentStructure.AgentivityLattice
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
 open Features.Prominence
@@ -313,8 +313,9 @@ theorem animacy_dom_within_lattice :
 
 /-- A DOM profile derived from the lattice's predictions at a fixed
     persistence level. Since `DomPredictedByLattice` is monotone in
-    animacy (§21.7 of AgentivityLattice.lean), this profile is
-    automatically an upper set on the animacy scale. -/
+    animacy (`dom_monotone_inanimate_animate`, `dom_monotone_animate_human`
+    above), this profile is automatically an upper set on the animacy
+    scale. -/
 def latticeDOM (p : PersistenceLevel) : DOMProfile :=
   { name := "Lattice-derived"
     role := .P

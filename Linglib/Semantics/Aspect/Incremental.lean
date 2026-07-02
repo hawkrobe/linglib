@@ -41,7 +41,7 @@ and any modern incremental-theme account.
 
 namespace Semantics.Aspect.Incremental
 
-open Semantics.ArgumentStructure
+open _root_.ArgumentStructure
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -276,8 +276,8 @@ def IsSincVerb.mk' {θ : α → β → Prop}
     final degree is verb-specific lexical content that cannot be
     derived from SINC alone. -/
 
-open Semantics.ArgumentStructure.Affectedness.Hierarchy
-open Semantics.ArgumentStructure.Affectedness
+open _root_.ArgumentStructure.Affectedness.Hierarchy
+open _root_.ArgumentStructure.Affectedness
 
 /-- Bridge: a K98 SINC verb θ with an explicit final-degree witness
     becomes a Beavers `IsQuantizedAffected` instance. The `forget`

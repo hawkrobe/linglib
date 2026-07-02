@@ -52,7 +52,7 @@ open Semantics.Lexical
 open Root.Kinds
 open Causation.Morphological
 open Semantics.Lexical.EventStructure
-open Semantics.ArgumentStructure.ArgDerivation
+open ArgumentStructure.ArgDerivation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lexically Reflexive Verb Data

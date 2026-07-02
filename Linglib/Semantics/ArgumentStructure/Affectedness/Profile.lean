@@ -69,7 +69,7 @@ projection here operates on the proto-role level, which is the final
 composed meaning — not the root-level or surface-diagnostic level.
 -/
 
-namespace Semantics.ArgumentStructure.Affectedness.Profile
+namespace ArgumentStructure.Affectedness.Profile
 
 open _root_.ArgumentStructure (EntailmentProfile)
 open _root_.ArgumentStructure.EntailmentProfile
@@ -81,12 +81,11 @@ open _root_.ArgumentStructure.EntailmentProfile
 /-! The 4-level Beavers affectedness enum, declared in
     `Semantics/Events/Scalar/Affectedness.lean` and
     re-exported here for backward compatibility with consumers
-    (`Beavers2010`, `BeaversUdayana2022`, `StapsRooryck2024`,
-    `AgentivityLattice`). -/
-export Semantics.ArgumentStructure.Affectedness.Hierarchy (AffectednessDegree)
+    (`Beavers2010`, `BeaversUdayana2022`, `StapsRooryck2024`). -/
+export ArgumentStructure.Affectedness.Hierarchy (AffectednessDegree)
 
 namespace AffectednessDegree
-export Semantics.ArgumentStructure.Affectedness.Hierarchy.AffectednessDegree
+export ArgumentStructure.Affectedness.Hierarchy.AffectednessDegree
   (unspecified potential nonquantized quantized strength)
 end AffectednessDegree
 
@@ -222,8 +221,8 @@ theorem die_nonquantized :
     doesn't carry, expose an explicit-witness smart constructor (cf. mathlib's
     `MetricSpace.ofDistTopology` and similar). -/
 
-open Semantics.ArgumentStructure.Affectedness.Hierarchy
-open Semantics.ArgumentStructure.Affectedness
+open ArgumentStructure.Affectedness.Hierarchy
+open ArgumentStructure.Affectedness
 
 /-- Joint consistency smart constructor: given a profile that projects to
     `.quantized` AND a scalar witness for some θ on a dimension δ,
@@ -247,4 +246,4 @@ def IsQuantizedAffected.ofProfileAndWitness {α β δ : Type*}
     IsQuantizedAffected (δ := δ) θ :=
   IsQuantizedAffected.mk' forget g_φ h_quantized
 
-end Semantics.ArgumentStructure.Affectedness.Profile
+end ArgumentStructure.Affectedness.Profile

@@ -19,7 +19,7 @@ Davidsonian logical forms, and adverbial modification on top of these types.
 * [rudin-2025b] (`EventRel` for non-entity arguments)
 -/
 
-namespace Semantics.ArgumentStructure
+namespace ArgumentStructure
 
 /-- A thematic relation: a two-place predicate relating an entity to an event.
     The core neo-Davidsonian type.
@@ -64,4 +64,4 @@ structure ThematicFrame (Entity Time : Type*) [LinearOrder Time] where
       states, not actions. -/
   holder : ThematicRel Entity Time
 
-end Semantics.ArgumentStructure
+end ArgumentStructure

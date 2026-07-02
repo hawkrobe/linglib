@@ -38,7 +38,7 @@ This means the DM categorizer head is simultaneously:
 
 namespace Morphology.DM.CategorizerSemantics
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 
 -- ============================================================================
 -- § 1: Semantic Denotation Types for n Heads

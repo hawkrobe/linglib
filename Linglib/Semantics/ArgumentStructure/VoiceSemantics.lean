@@ -51,7 +51,7 @@ of [beavers-udayana-2022] is a consequence of Montague composition,
 not a stipulated data structure.
 -/
 
-namespace Semantics.ArgumentStructure.VoiceSemantics
+namespace ArgumentStructure.VoiceSemantics
 
 open Intensional
 open Intensional.Variables
@@ -263,4 +263,4 @@ theorem berSemG_assignment_agnostic {E W : Type} {τ : Ty} (n : ℕ)
     berSemG n vp g₁ = berSemG n vp g₂ := by
   simp only [berSemG, h, hvp]
 
-end Semantics.ArgumentStructure.VoiceSemantics
+end ArgumentStructure.VoiceSemantics

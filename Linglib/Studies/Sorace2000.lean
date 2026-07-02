@@ -24,7 +24,7 @@ classification from `Features.Aktionsart`.
 namespace Sorace2000
 
 open Features
-open Semantics.ArgumentStructure.AuxiliarySelection
+open ArgumentStructure.AuxiliarySelection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to
     unaccusativity: canonical achievements are change-of-state verbs whose

@@ -62,7 +62,7 @@ presupposition.
 
 namespace AhnZhu2025
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 open Features.Definiteness
 
 variable {E S : Type*}

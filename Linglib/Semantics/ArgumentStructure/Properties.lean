@@ -20,7 +20,7 @@ incremental-theme account uses. Specific paper replications import
 this file and instantiate the predicates on paper-specific data.
 -/
 
-namespace Semantics.ArgumentStructure
+namespace ArgumentStructure
 
 open _root_.Mereology
 
@@ -113,4 +113,4 @@ class IsCumThetaVerb (θ : α → β → Prop) : Prop where
   /-- Cumulative theta: θ preserves sums (K98 eq. 44). -/
   cumTheta : CumTheta θ
 
-end Semantics.ArgumentStructure
+end ArgumentStructure

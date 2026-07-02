@@ -202,7 +202,7 @@ theorem volitive_admitted_for_break :
     *kadann* 'break' the operator instantiates with a `decide`-discharged
     obligation; for *minimarann* 'murder' no such proof exists. -/
 
-open Semantics.ArgumentStructure.VoiceSemantics
+open ArgumentStructure.VoiceSemantics
 
 /-- The Sinhala suppression operator can be instantiated for *kadann*
     'break' because its causer sort `.any` admits individuals. The

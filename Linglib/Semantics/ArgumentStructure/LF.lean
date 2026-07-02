@@ -25,7 +25,7 @@ forms, and adverbial modification (Davidson's key payoff).
 * [wellwood-2015] §3.2 (gradable adjectives over states)
 -/
 
-namespace Semantics.ArgumentStructure
+namespace ArgumentStructure
 
 open Modifier (intersective intersective_apply)
 
@@ -127,4 +127,4 @@ theorem modified_stative_is_pm {Entity Time : Type*} [LinearOrder Time]
   exact ⟨fun ⟨s, hp, hh, hm⟩ => ⟨s, ⟨hp, hm⟩, hh⟩,
          fun ⟨s, ⟨hp, hm⟩, hh⟩ => ⟨s, hp, hh, hm⟩⟩
 
-end Semantics.ArgumentStructure
+end ArgumentStructure
