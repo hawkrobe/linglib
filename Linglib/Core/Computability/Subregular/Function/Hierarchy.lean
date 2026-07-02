@@ -169,24 +169,27 @@ on each side), but flipping either far trigger to a filler reverts it. The pertu
 and the reverting cell output is read off via `conjBM_run_at`. -/
 theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run := by
   intro d
-  refine ⟨conjBase d, d + 1, by simp [conjBase], ?_,
-    ⟨(conjBase d).set 0 .raised, by simp [conjBase], ?_, ?_, ?_⟩,
-    ⟨(conjBase d).set (2 * d + 2) .raised, by simp [conjBase], ?_, ?_, ?_⟩⟩
+  refine ⟨conjBase d, d + 1, by simp [conjBase], ?_, fun s => ?_⟩
   -- base changes: both sides carry a trigger, so the medial `tgt` raises (`.raised ≠ .tgt`)
   · rw [conjBM_run_at (conjBase_getElem_tgt d), conjBase_take, conjBase_drop, conjBase_getElem_tgt]
     simp [List.any_cons, List.any_replicate, List.any_append]
-  · intro k hk; exact (List.getElem?_set_ne (by omega)).symm
-  · rw [List.getElem?_set_ne (by omega)]
-  -- uL reverts: the left perturbation empties the prefix of triggers (`take.any = false`)
-  · have h : ((conjBase d).set 0 .raised)[d + 1]? = some .tgt := by
+  match s with
+  | .left =>
+    -- the left perturbation empties the prefix of triggers (`take.any = false`)
+    refine ⟨(conjBase d).set 0 .raised,
+      ⟨by simp [conjBase], fun k hk => (List.getElem?_set_ne (by omega)).symm⟩,
+      by rw [List.getElem?_set_ne (by omega)], ?_⟩
+    have h : ((conjBase d).set 0 .raised)[d + 1]? = some .tgt := by
       rw [List.getElem?_set_ne (by omega : (0 : ℕ) ≠ d + 1)]; exact conjBase_getElem_tgt d
     have htake : ((conjBase d).set 0 .raised).take (d + 1) = List.replicate (d + 1) .raised := by
       rw [List.take_set, conjBase_take]; simp [List.set_cons_zero, List.replicate_succ]
     rw [conjBM_run_at h, h, htake]; simp [List.any_replicate]
-  · intro k hk; exact (List.getElem?_set_ne (by omega)).symm
-  · rw [List.getElem?_set_ne (by omega)]
-  -- uR reverts: the right perturbation empties the suffix of triggers (`drop.any = false`)
-  · have h : ((conjBase d).set (2 * d + 2) .raised)[d + 1]? = some .tgt := by
+  | .right =>
+    -- the right perturbation empties the suffix of triggers (`drop.any = false`)
+    refine ⟨(conjBase d).set (2 * d + 2) .raised,
+      ⟨by simp [conjBase], fun k hk => (List.getElem?_set_ne (by omega)).symm⟩,
+      by rw [List.getElem?_set_ne (by omega)], ?_⟩
+    have h : ((conjBase d).set (2 * d + 2) .raised)[d + 1]? = some .tgt := by
       rw [List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]; exact conjBase_getElem_tgt d
     have hdrop : ((conjBase d).set (2 * d + 2) .raised).drop (d + 2) = List.replicate (d + 1) .raised := by
       rw [show (2 * d + 2 : ℕ) = d + 2 + d from by omega, ← List.set_drop, conjBase_drop,

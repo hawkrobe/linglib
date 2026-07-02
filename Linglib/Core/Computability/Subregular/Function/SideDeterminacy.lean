@@ -81,6 +81,16 @@ theorem drop_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, i ≤ k → u[k]?
   intro k
   simpa only [List.getElem?_drop] using h (i + k) (Nat.le_add_right i k)
 
+/-- Agreement up to `j` transports truncations: `h.take_eq` for `h : AgreeUpto u v j`. -/
+theorem AgreeUpto.take_eq {u v : List α} {j : ℕ} (h : AgreeUpto u v j) {i : ℕ}
+    (hij : i ≤ j + 1) : u.take i = v.take i :=
+  take_eq_of_agree fun k hk => h k (by omega)
+
+/-- Agreement from `j` transports suffixes: `h.drop_eq` for `h : AgreeFrom u v j`. -/
+theorem AgreeFrom.drop_eq {u v : List α} {j : ℕ} (h : AgreeFrom u v j) {i : ℕ}
+    (hij : j ≤ i) : u.drop i = v.drop i :=
+  drop_eq_of_agree fun k hk => h k (by omega)
+
 /-- **Unbounded dependence on side `s`**: for every distance `d`, some target output
 position flips under a perturbation strictly beyond `d` on side `s` (the perturbed
 input agrees on the near window + the whole opposite side). -/
@@ -94,29 +104,35 @@ def UnboundedDependence (f : List α → List β) : Direction → Prop
 def IsMyopicTowards (f : List α → List β) (s : Direction) : Prop :=
   ¬ UnboundedDependence f s
 
+/-- An equal-length variant of `base` differing only beyond the `d`-margin of target
+`i` on side `s` — the far perturbation of the two-sided diagnostics. -/
+def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
+  u.length = base.length ∧
+    match s with
+    | .left => AgreeFrom base u (i - d)
+    | .right => AgreeUpto base u (i + d)
+
 /-- **Unbounded circumambience**, co-located: for every `d`, one base word with a
-target `i` whose output flips under BOTH a far-left perturbation (agreeing from
-`i - d`) and a far-right one (agreeing up to `i + d`). Co-location keeps both flips on
-a single base (one automaton context). -/
+target `i` whose output flips under a far perturbation on either side. Co-location
+keeps both flips on a single base (one automaton context). -/
 def IsUnboundedCircumambient (f : List α → List β) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧
-    (∃ uL : List α, uL.length = base.length ∧ AgreeFrom base uL (i - d) ∧
-      (f base)[i]? ≠ (f uL)[i]?) ∧
-    (∃ uR : List α, uR.length = base.length ∧ AgreeUpto base uR (i + d) ∧
-      (f base)[i]? ≠ (f uR)[i]?)
+    ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ (f base)[i]? ≠ (f u)[i]?
 
 /-- Co-located circumambience yields unbounded dependence on the left. -/
 theorem IsUnboundedCircumambient.left {f : List α → List β}
     (h : IsUnboundedCircumambient f) : UnboundedDependence f .left := by
   intro d
-  obtain ⟨base, i, hi, ⟨uL, hlen, hag, hne⟩, _⟩ := h d
+  obtain ⟨base, i, hi, hw⟩ := h d
+  obtain ⟨uL, ⟨hlen, hag⟩, hne⟩ := hw .left
   exact ⟨base, uL, i, hlen.symm, hi, hag, hne⟩
 
 /-- …and on the right. -/
 theorem IsUnboundedCircumambient.right {f : List α → List β}
     (h : IsUnboundedCircumambient f) : UnboundedDependence f .right := by
   intro d
-  obtain ⟨base, i, hi, _, ⟨uR, hlen, hag, hne⟩⟩ := h d
+  obtain ⟨base, i, hi, hw⟩ := h d
+  obtain ⟨uR, ⟨hlen, hag⟩, hne⟩ := hw .right
   exact ⟨base, uR, i, hlen.symm, hi, hag, hne⟩
 
 /-- **Circumambient ⟹ not myopic** (either side): a real consequence, since

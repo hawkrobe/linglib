@@ -85,9 +85,11 @@ and Props. 5.4, 5.5 are instances. -/
 theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsBmrsWeaklyDeterministic f := by
   rintro ⟨L, R, PL, PR, outL, outR, hPL, hPR, hm⟩
-  obtain ⟨base, i, hi, hchange, ⟨uL, hLlen, hLag, hLsym, hLrev⟩,
-    ⟨uR, hRlen, hRag, hRsym, hRrev⟩⟩ := hf 0
-  simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
+  obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
+  obtain ⟨uL, ⟨hLlen, hLag⟩, hLsym, hLrev⟩ := hw .left
+  obtain ⟨uR, ⟨hRlen, hRag⟩, hRsym, hRrev⟩ := hw .right
+  simp only [Nat.sub_zero] at hLag
+  simp only [Nat.add_zero] at hRag
   set σ := base[i]'hi with hσ
   have hbase : base[i]? = some σ := List.getElem?_eq_getElem hi
   -- the far-left run: the target is unchanged, so both components are forced true
@@ -178,28 +180,22 @@ private theorem sourGrapes_sg_mid {u v : SG} {d : ℕ} :
 /-- Sour Grapes requires both sides: the middle of `+ −…− −` spreads, but neither the
 triggerless `− −…− −` (far-left perturbation) nor the blocked `+ −…− ⊟` (far-right)
 changes it. -/
-theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes := by
-  intro d
-  have hlen : ∀ u v : SG, (sg u v d).length = 2 * d + 3 := fun _ _ => sg_length
-  refine ⟨sg .plus .minus d, d + 1, by rw [sg_length]; omega, ?_,
-    ⟨sg .minus .minus d, by rw [hlen, hlen], ?_, ?_, ?_⟩,
-    ⟨sg .plus .blk d, by rw [hlen, hlen], ?_, ?_, ?_⟩⟩
-  · rw [sourGrapes_sg_mid, if_pos ⟨rfl, by simp⟩, sg_getElem?]
-    split_ifs <;> simp_all
-  · intro k hk
-    rw [sg_getElem?, sg_getElem?]
-    split_ifs <;> first | rfl | omega
-  · rw [sg_getElem?, sg_getElem?]
-    split_ifs <;> first | rfl | omega | (exfalso; omega)
-  · rw [sourGrapes_sg_mid, if_neg (by simp), sg_getElem?]
-    split_ifs <;> first | rfl | omega
-  · intro k hk
-    rw [sg_getElem?, sg_getElem?]
-    split_ifs <;> first | rfl | omega
-  · rw [sg_getElem?, sg_getElem?]
-    split_ifs <;> first | rfl | omega
-  · rw [sourGrapes_sg_mid, if_neg (by simp), sg_getElem?]
-    split_ifs <;> first | rfl | omega | (exfalso; omega)
+theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
+  RequiresBothSides.of_flanks (fill := SG.minus) (on := SG.plus) (xOn := SG.plus)
+    (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d => 2 * d + 1)
+    (t := fun d => d + 1) (by decide) (fun d => ⟨by omega, by omega⟩)
+    (fun d => by
+      rw [show flankWord SG.plus SG.minus SG.minus (2 * d + 1) = sg .plus .minus d from
+        rfl, sourGrapes_sg_mid]
+      simp)
+    (fun d => by
+      rw [show flankWord SG.minus SG.minus SG.minus (2 * d + 1) = sg .minus .minus d from
+        rfl, sourGrapes_sg_mid]
+      simp)
+    (fun d => by
+      rw [show flankWord SG.plus SG.minus SG.blk (2 * d + 1) = sg .plus .blk d from
+        rfl, sourGrapes_sg_mid]
+      simp)
 
 /-- **Thm. 5.2** — the first proof of the [heinz-lai-2013] conjecture. -/
 theorem sourGrapes_not_bmrsWeaklyDeterministic :
@@ -315,34 +311,18 @@ private theorem not_bembaSurfaces_bw_LL {d : ℕ} : ¬ bembaSurfaces (bw .L .L d
   rintro ⟨-, h | ⟨j, -, hjH, -⟩ | ⟨j, -, hjH, -⟩⟩
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
-private theorem bw_mid {x y : BTone} {d : ℕ} : (bw x y d)[d + 3]? = some BTone.L := by
-  rw [bw_getElem?]
-  split_ifs <;> first | rfl | exact ‹False›.elim | omega
-
 /-- Bemba spreading requires both sides: the middle of `H L…L L` spreads (unbounded, no
 blocker), but neither the triggerless far-left flip nor the far-right H (which bounds
 the spread to two TBUs) changes it. -/
-theorem bemba_requiresBothSides : RequiresBothSides bemba.map := by
-  intro d
-  refine ⟨bw .H .L d, d + 3, by rw [bw_length]; omega, ?_,
-    ⟨bw .L .L d, by rw [bw_length, bw_length], ?_, ?_, ?_⟩,
-    ⟨bw .H .H d, by rw [bw_length, bw_length], ?_, ?_, ?_⟩⟩
-  · rw [bemba.map_getElem?_hi_iff.mpr bembaSurfaces_bw_HL, bw_mid]
-    decide
-  · intro k hk
-    rw [bw_getElem?, bw_getElem?]
-    split_ifs <;> first | rfl | omega
-  · rw [bw_mid, bw_mid]
-  · rw [bw_mid, bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [bw_length]; omega, not_bembaSurfaces_bw_LL⟩]
-    rfl
-  · intro k hk
-    rw [bw_getElem?, bw_getElem?]
-    split_ifs <;> first | rfl | omega
-  · rw [bw_mid, bw_mid]
-  · rw [bw_mid, bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [bw_length]; omega, not_bembaSurfaces_bw_HH⟩]
-    rfl
+theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
+  RequiresBothSides.of_flanks (fill := BTone.L) (on := BTone.H) (xOn := BTone.H)
+    (yOn := BTone.L) (xOff := BTone.L) (yOff := BTone.H) (n := fun d => 2 * d + 4)
+    (t := fun d => d + 3) (by decide) (fun d => ⟨by omega, by omega⟩)
+    (fun d => bemba.map_getElem?_hi_iff.mpr bembaSurfaces_bw_HL)
+    (fun d => bemba.map_getElem?_lo_iff.mpr
+      ⟨by rw [flankWord_length]; omega, not_bembaSurfaces_bw_LL⟩)
+    (fun d => bemba.map_getElem?_lo_iff.mpr
+      ⟨by rw [flankWord_length]; omega, not_bembaSurfaces_bw_HH⟩)
 
 /-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=

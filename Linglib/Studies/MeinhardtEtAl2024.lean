@@ -376,19 +376,22 @@ same predicate Tutrugbu satisfies (`tutrugbu_isUnboundedCircumambient`); the dif
 that Maasai does *not* `RequiresBothSides`. -/
 theorem maasai_isUnboundedCircumambient : IsUnboundedCircumambient maasai := by
   intro d
-  refine ⟨List.replicate (2 * d + 3) .recL, d + 1, by simp; omega,
-    ⟨(List.replicate (2 * d + 3) .recL).set 0 .dom,
-    by simp, ?_, ?_⟩, ⟨(List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom, by simp, ?_, ?_⟩⟩
-  · intro k _; rw [List.getElem?_set_ne (by omega)]
-  · simp only [maasai]
+  refine ⟨List.replicate (2 * d + 3) .recL, d + 1, by simp; omega, fun s => ?_⟩
+  match s with
+  | .left =>
+    refine ⟨(List.replicate (2 * d + 3) .recL).set 0 .dom,
+      ⟨by simp, fun k _ => by rw [List.getElem?_set_ne (by omega)]⟩, ?_⟩
+    simp only [maasai]
     rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 0 ≠ d + 1)]
     have hd : hasDom ((List.replicate (2 * d + 3) .recL).set 0 .dom) = true := by
       simp only [hasDom, List.any_eq_true]
       exact ⟨Seg.dom, List.mem_set (by simp) Seg.dom, rfl⟩
     have hb : hasDom (List.replicate (2 * d + 3) .recL) = false := by simp [hasDom]
     simp [hd, hb, (by omega : d + 1 < 2 * d + 3)]
-  · intro k _; rw [List.getElem?_set_ne (by omega)]
-  · simp only [maasai]
+  | .right =>
+    refine ⟨(List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom,
+      ⟨by simp, fun k _ => by rw [List.getElem?_set_ne (by omega)]⟩, ?_⟩
+    simp only [maasai]
     rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]
     have hd : hasDom ((List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom) = true := by
       simp only [hasDom, List.any_eq_true]
