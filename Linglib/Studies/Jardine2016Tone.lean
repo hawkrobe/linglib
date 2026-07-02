@@ -123,6 +123,8 @@ theorem SurfacesH.of_le_of_le (hi : SurfacesH w i) (hk : SurfacesH w k) (hij : i
 theorem surfacesH_of_getElem?_H (h : w[i]? = some .H) : SurfacesH w i :=
   surfacesH_iff.mpr ⟨⟨i, le_rfl, h⟩, ⟨i, le_rfl, h⟩⟩
 
+theorem SurfacesH.H_mem (h : SurfacesH w i) : .H ∈ w := List.take_subset _ _ h.1
+
 theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
   rw [utp_getElem?, Option.map_eq_some_iff]
   constructor
@@ -136,15 +138,13 @@ theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
 def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)
 
 @[simp] theorem mem_plateau : j ∈ plateau w ↔ SurfacesH w j := by
-  unfold plateau
-  rw [Finset.mem_filter, Finset.mem_range]
-  exact ⟨fun h => h.2, fun h => ⟨h.lt_length, h⟩⟩
+  simp only [plateau, Finset.mem_filter, Finset.mem_range, and_iff_right_iff_imp]
+  exact SurfacesH.lt_length
 
 @[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w := by
   constructor
   · rintro ⟨j, hj⟩
-    obtain ⟨⟨j₁, -, h₁⟩, -⟩ := surfacesH_iff.mp (mem_plateau.mp hj)
-    exact List.mem_iff_getElem?.mpr ⟨j₁, h₁⟩
+    exact (mem_plateau.mp hj).H_mem
   · intro hw
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     exact ⟨i, mem_plateau.mpr (surfacesH_of_getElem?_H hi)⟩
@@ -163,30 +163,15 @@ theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
       (mem_plateau.mp ((plateau w).min'_mem hne))
       (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)
 
-/-- TBU `i` surfaces H iff it is itself a H or is strictly flanked. -/
+/-- TBU `i` surfaces H iff it is itself a H or is strictly flanked: split the `take`
+window at its last slot and the `drop` window at its head. -/
 private theorem surfacesH_split {a : TBU} (h : w[i]? = some a) :
     SurfacesH w i ↔ a = .H ∨ (.H ∈ w.take i ∧ .H ∈ w.drop (i + 1)) := by
-  rw [surfacesH_iff]
-  constructor
-  · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-    by_cases ha : a = TBU.H
-    · exact Or.inl ha
-    · refine Or.inr ⟨mem_take_iff.mpr ⟨j₁, ?_, h₁⟩, mem_drop_iff.mpr ⟨j₂, ?_, h₂⟩⟩
-      · rcases Nat.lt_or_ge j₁ i with hlt | hge
-        · exact hlt
-        · obtain rfl : j₁ = i := by omega
-          rw [h] at h₁
-          exact absurd (Option.some.inj h₁) ha
-      · rcases Nat.lt_or_ge i j₂ with hlt | hge
-        · omega
-        · obtain rfl : j₂ = i := by omega
-          rw [h] at h₂
-          exact absurd (Option.some.inj h₂) ha
-  · rintro (rfl | ⟨h₁, h₂⟩)
-    · exact ⟨⟨i, le_rfl, h⟩, ⟨i, le_rfl, h⟩⟩
-    · obtain ⟨j₁, hj₁, hh₁⟩ := mem_take_iff.mp h₁
-      obtain ⟨j₂, hj₂, hh₂⟩ := mem_drop_iff.mp h₂
-      exact ⟨⟨j₁, by omega, hh₁⟩, ⟨j₂, by omega, hh₂⟩⟩
+  rcases eq_or_ne a .H with rfl | ha
+  · simp [surfacesH_of_getElem?_H h]
+  · obtain ⟨hi, hia⟩ := List.getElem?_eq_some_iff.mp h
+    rw [SurfacesH, List.take_add_one, h, List.drop_eq_getElem_cons hi, hia]
+    simp [ha, Ne.symm ha]
 
 /-! ### The rule set (36)
 
@@ -195,34 +180,15 @@ of its definition. -/
 
 private theorem singleH_getElem?_H_iff (m n : ℕ) :
     (List.replicate m TBU.O ++ TBU.H :: List.replicate n TBU.O)[j]? = some TBU.H ↔ j = m := by
-  rcases lt_trichotomy j m with hj | rfl | hj
-  · rw [List.getElem?_append_left (by simpa using hj), List.getElem?_replicate]
-    simp [hj]
-    omega
-  · rw [List.getElem?_append_right (by simp)]
-    simp
-  · rw [List.getElem?_append_right (by simp; omega)]
-    obtain ⟨t, ht⟩ : ∃ t, j - (List.replicate m TBU.O).length = t + 1 := ⟨j - m - 1, by simp; omega⟩
-    rw [ht, List.getElem?_cons_succ, List.getElem?_replicate]
-    simp
-    omega
+  simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+    List.length_replicate]
+  split_ifs <;> simp_all <;> omega
 
 /-- (36a): a toneless word is unchanged. -/
 theorem utp_toneless (n : ℕ) : utp (List.replicate n .O) = List.replicate n .O := by
   refine List.ext_getElem? fun i => ?_
-  rw [utp_getElem?]
-  cases h : (List.replicate n TBU.O)[i]? with
-  | none => rfl
-  | some a =>
-    have ha : a = TBU.O := by
-      rw [List.getElem?_replicate] at h
-      split at h <;> simp_all
-    have hs : ¬ SurfacesH (List.replicate n TBU.O) i := by
-      rw [surfacesH_iff]
-      rintro ⟨⟨j, -, hj⟩, -⟩
-      rw [List.getElem?_replicate] at hj
-      split at hj <;> simp_all
-    simp [hs, ha]
+  have hs : ¬ SurfacesH (List.replicate n TBU.O) i := fun hs => by simpa using hs.H_mem
+  simp [utp_getElem?, hs, List.getElem?_replicate, apply_ite]
 
 /-- (36b): a word with a single H is unchanged — one H cannot trigger a plateau. -/
 theorem utp_single (m n : ℕ) :
@@ -258,37 +224,22 @@ theorem utp_single (m n : ℕ) :
 private theorem plateau_getElem?_first (m p : ℕ) (w : List TBU) :
     (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[m]?
       = some TBU.H := by
-  rw [List.getElem?_append_right (by simp)]
   simp
 
 private theorem plateau_getElem?_second (m p : ℕ) (w : List TBU) :
     (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[m + 1 + w.length]?
       = some TBU.H := by
-  rw [List.getElem?_append_right (by simp; omega)]
-  obtain ⟨t, ht⟩ : ∃ t, m + 1 + w.length - (List.replicate m TBU.O).length = t + 1 :=
-    ⟨w.length, by simp; omega⟩
-  rw [ht, List.getElem?_cons_succ]
-  have htw : t = w.length := by simp at ht; omega
-  rw [htw, List.getElem?_append_right le_rfl]
-  simp
+  simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+    List.length_replicate]
+  split_ifs <;> first | rfl | omega
 
 private theorem plateau_getElem?_H_bounds {m p : ℕ}
     (h : (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[j]?
       = some TBU.H) :
     m ≤ j ∧ j ≤ m + 1 + w.length := by
-  constructor
-  · by_contra hlt
-    rw [List.getElem?_append_left (by simp; omega), List.getElem?_replicate] at h
-    split at h <;> simp_all
-  · by_contra hgt
-    rw [List.getElem?_append_right (by simp; omega)] at h
-    obtain ⟨t, ht⟩ : ∃ t, j - (List.replicate m TBU.O).length = t + 1 := ⟨j - m - 1, by simp; omega⟩
-    rw [ht, List.getElem?_cons_succ] at h
-    have htw : w.length < t := by simp at ht; omega
-    rw [List.getElem?_append_right (by omega)] at h
-    obtain ⟨s, hs⟩ : ∃ s, t - w.length = s + 1 := ⟨t - w.length - 1, by omega⟩
-    rw [hs, List.getElem?_cons_succ, List.getElem?_replicate] at h
-    split at h <;> simp_all
+  simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+    List.length_replicate] at h
+  split_ifs at h <;> first | omega | simp_all
 
 /-- (36c): everything between the outermost Hs surfaces H; the medial material `w` is
 arbitrary. -/
@@ -325,15 +276,10 @@ theorem utp_plateau (m p : ℕ) (w : List TBU) :
   rcases Nat.lt_or_ge i u.length with h3 | h3
   · -- trailing toneless stretch: unchanged `O`
     have hui : u[i]? = some TBU.O := by
-      rw [List.getElem?_append_right (by simp only [List.length_replicate]; omega)]
-      obtain ⟨t, ht⟩ : ∃ t, i - (List.replicate m TBU.O).length = t + 1 :=
-        ⟨i - m - 1, by simp only [List.length_replicate]; omega⟩
-      rw [ht, List.getElem?_cons_succ]
-      have htw : w.length < t := by simp only [List.length_replicate] at ht; omega
-      rw [List.getElem?_append_right (by omega)]
-      obtain ⟨s, hs⟩ : ∃ s, t - w.length = s + 1 := ⟨t - w.length - 1, by omega⟩
-      rw [hs, List.getElem?_cons_succ, List.getElem?_replicate,
-        if_pos (by simp only [List.length_replicate] at ht; omega)]
+      rw [hlen] at h3
+      simp only [hu, List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+        List.length_replicate]
+      split_ifs <;> first | rfl | omega
     rw [hui, Option.map_some, if_neg ((hS i).not.mpr (by omega)),
       List.getElem?_append_right (by simp only [List.length_replicate]; omega),
       List.getElem?_append_right (by simp only [List.length_replicate]; omega),
