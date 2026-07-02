@@ -95,4 +95,11 @@ def AR.hull (A : AR α β) : AR α β where
 
 @[simp] theorem AR.hull_lower (A : AR α β) : A.hull.lower = A.lower := rfl
 
+/-- Hull membership on a well-formed representation: no side condition — the
+representation carries its own bounds. -/
+theorem AR.mem_links_hull {A : AR α β} {k j : ℕ} :
+    (k, j) ∈ A.hull.links
+      ↔ ∃ j₁ j₂, (k, j₁) ∈ A.links ∧ (k, j₂) ∈ A.links ∧ j₁ ≤ j ∧ j ≤ j₂ :=
+  Graph.mem_hull_links A.inBounds
+
 end Autosegmental

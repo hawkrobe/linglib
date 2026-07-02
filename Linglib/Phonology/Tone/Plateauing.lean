@@ -137,6 +137,11 @@ theorem upper_realizeMerged_toAR (v : List TBU) :
   · rw [List.count_eq_zero.mpr hv, if_neg hv]
     rfl
 
+/-- The timing tier survives merging: the bare tier of the input's length. -/
+theorem lower_realizeMerged_toAR (v : List TBU) :
+    (realizeMerged toAR v).lower.toList = List.replicate v.length () := by
+  rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR]
+
 /-- With any H present, the fused melody node is the H at index `0`. -/
 theorem upper_get?_realizeMerged_toAR {w : List TBU} (hw : .H ∈ w) :
     (realizeMerged toAR w).upper.get? 0 = some _root_.Tone.TRN.H := by
@@ -146,6 +151,25 @@ theorem upper_get?_realizeMerged_toAR {w : List TBU} (hw : .H ∈ w) :
 /-- The output representation: fuse, then spread — the merged input, hull-closed. -/
 def plateauAR (w : List TBU) : AR _root_.Tone.TRN Unit := (realizeMerged toAR w).hull
 
+@[simp] theorem plateauAR_upper {w : List TBU} :
+    (plateauAR w).upper = (realizeMerged toAR w).upper := rfl
+
+@[simp] theorem plateauAR_lower {w : List TBU} :
+    (plateauAR w).lower = (realizeMerged toAR w).lower := rfl
+
+/-- A link of the output representation: the fused node, over a flanked position. -/
+theorem mem_links_plateauAR {w : List TBU} {k j : ℕ} :
+    (k, j) ∈ (plateauAR w).links
+      ↔ k = 0 ∧ (∃ i ≤ j, w[i]? = some .H) ∧ ∃ i ≥ j, w[i]? = some .H := by
+  rw [plateauAR, AR.mem_links_hull]
+  constructor
+  · rintro ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩
+    obtain ⟨rfl, hj₁⟩ := mem_links_realizeMerged_toAR.mp h₁
+    exact ⟨rfl, ⟨j₁, hle₁, hj₁⟩, j₂, hle₂, (mem_links_realizeMerged_toAR.mp h₂).2⟩
+  · rintro ⟨rfl, ⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
+    exact ⟨j₁, j₂, mem_links_realizeMerged_toAR.mpr ⟨rfl, h₁⟩,
+      mem_links_realizeMerged_toAR.mpr ⟨rfl, h₂⟩, hj₁, hj₂⟩
+
 /-- **What surfaces is the representation**: `i` is H-linked in `plateauAR w` iff some
 H-toned TBU lies at or before `i` and some at or after it — the string-level reading. -/
 theorem surfacesWith_plateauAR {w : List TBU} {i : ℕ} :
@@ -153,15 +177,11 @@ theorem surfacesWith_plateauAR {w : List TBU} {i : ℕ} :
   rw [List.mem_take_iff, List.mem_drop_iff]
   constructor
   · rintro ⟨k, hlink, -⟩
-    obtain ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩ :=
-      (Graph.mem_hull_links (realizeMerged toAR w).inBounds).mp hlink
-    exact ⟨⟨j₁, by omega, (mem_links_realizeMerged_toAR.mp h₁).2⟩,
-      j₂, hle₂, (mem_links_realizeMerged_toAR.mp h₂).2⟩
+    obtain ⟨-, ⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩ := mem_links_plateauAR.mp hlink
+    exact ⟨⟨j₁, by omega, h₁⟩, j₂, hj₂, h₂⟩
   · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
-    refine ⟨0, (Graph.mem_hull_links (realizeMerged toAR w).inBounds).mpr
-      ⟨j₁, j₂, mem_links_realizeMerged_toAR.mpr ⟨rfl, h₁⟩,
-        mem_links_realizeMerged_toAR.mpr ⟨rfl, h₂⟩, by omega, hj₂⟩, ?_⟩
-    exact upper_get?_realizeMerged_toAR (List.mem_iff_getElem?.mpr ⟨j₁, h₁⟩)
+    exact ⟨0, mem_links_plateauAR.mpr ⟨rfl, ⟨j₁, by omega, h₁⟩, j₂, hj₂, h₂⟩,
+      upper_get?_realizeMerged_toAR (List.mem_iff_getElem?.mpr ⟨j₁, h₁⟩)⟩
 
 /-! ### The plateauing process -/
 
@@ -397,31 +417,13 @@ output representation — fusion-plus-spreading followed by linearization equals
 followed by realization. -/
 theorem realizeMerged_toAR_map (w : List TBU) :
     realizeMerged toAR (utp.map w) = plateauAR w := by
-  refine AR.ext_toGraph (Graph.ext ?_ ?_ ?_)
-  · exact LabeledTuple.toList_injective (by
-      show (realizeMerged toAR (utp.map w)).upper.toList
-        = (realizeMerged toAR w).upper.toList
-      rw [upper_realizeMerged_toAR, upper_realizeMerged_toAR]
-      simp only [utp.H_mem_map])
-  · exact LabeledTuple.toList_injective (by
-      show (realizeMerged toAR (utp.map w)).lower.toList
-        = (realizeMerged toAR w).lower.toList
-      rw [realizeMerged_def, realizeMerged_def, collapseAR_lower, collapseAR_lower,
-        lower_realize_toAR, lower_realize_toAR, Surfacing.map_length])
+  refine AR.ext_toGraph (Graph.ext (LabeledTuple.toList_injective ?_)
+    (LabeledTuple.toList_injective ?_) ?_)
+  · simp only [plateauAR_upper, upper_realizeMerged_toAR, utp.H_mem_map]
+  · simp only [plateauAR_lower, lower_realizeMerged_toAR, Surfacing.map_length]
   · ext ⟨k, j⟩
-    show _ ↔ (k, j) ∈ (realizeMerged toAR w).toGraph.hull.links
-    rw [mem_links_realizeMerged_toAR,
-      Graph.mem_hull_links (realizeMerged toAR w).inBounds]
-    constructor
-    · rintro ⟨rfl, hj⟩
-      obtain ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩ :=
-        utp.surfaces_iff.mp (utp.map_getElem?_H_iff.mp hj)
-      exact ⟨j₁, j₂, mem_links_realizeMerged_toAR.mpr ⟨rfl, h₁⟩,
-        mem_links_realizeMerged_toAR.mpr ⟨rfl, h₂⟩, hj₁, hj₂⟩
-    · rintro ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩
-      obtain ⟨hk, hj₁⟩ := mem_links_realizeMerged_toAR.mp h₁
-      exact ⟨hk, utp.map_getElem?_H_iff.mpr (utp.surfaces_iff.mpr
-        ⟨⟨j₁, hle₁, hj₁⟩, j₂, hle₂, (mem_links_realizeMerged_toAR.mp h₂).2⟩)⟩
+    rw [mem_links_realizeMerged_toAR, utp.map_getElem?_H_iff, utp.surfaces_iff,
+      mem_links_plateauAR]
 
 /-! ### Unbounded circumambience
 
