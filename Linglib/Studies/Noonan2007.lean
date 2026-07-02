@@ -1,4 +1,5 @@
 import Linglib.Data.Complementation.Noonan2007
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Semantics.Mood.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -34,7 +35,8 @@ Five bridges connecting CTPClass to existing infrastructure:
 1. CTPClass ↔ VerbEntry (Verbal.lean) — derive CTP class from verb features
 2. CTPClass ↔ SelectionClass (LeftPeriphery.lean) — map CTP to question embedding
 3. CTPClass ↔ MoodSelector (Mood/Basic.lean) — map CTP to mood selection
-4. ComplementType ↔ NoonanCompType — map English-specific to typological categories
+4. ComplementType ↔ NoonanCompType — via the substrate adapter
+   `ComplementType.toNoonan` (`Syntax/Clause/Complementation.lean`)
 5. VerbEntry → MoodSelector — derive mood selection from verb features
 
 -/
@@ -352,27 +354,17 @@ theorem irrealis_not_indicative :
 -- ============================================================================
 
 /-! ## D1. Map linglib's English-specific complement types to Noonan's
-typological categories -/
+typological categories
 
-/-- Map English fragment complement types to Noonan's universal categories.
-    Returns `none` for types that don't correspond to a clausal complement. -/
-def englishToNoonan : ComplementType → Option NoonanCompType
-  | .finiteClause => some .indicative
-  | .infinitival => some .infinitive
-  | .gerund => some .nominalized
-  | .smallClause => some .paratactic
-  | .none => none           -- Not complement-taking
-  | .np => none             -- NP complement, not clausal
-  | .np_np => none          -- Ditransitive, not clausal
-  | .np_pp => none          -- NP+PP, not clausal
-  | .question => some .indicative  -- Embedded questions are finite in English
+The adapter itself is substrate: `ComplementType.toNoonan` in
+`Syntax/Clause/Complementation.lean`. The clausal-coverage check stays here. -/
 
 /-- Every English verb that takes a clausal complement maps to a Noonan type. -/
 theorem clausal_complements_have_noonan_type :
-    englishToNoonan .finiteClause ≠ none ∧
-    englishToNoonan .infinitival ≠ none ∧
-    englishToNoonan .gerund ≠ none ∧
-    englishToNoonan .smallClause ≠ none := by decide
+    ComplementType.toNoonan .finiteClause ≠ none ∧
+    ComplementType.toNoonan .infinitival ≠ none ∧
+    ComplementType.toNoonan .gerund ≠ none ∧
+    ComplementType.toNoonan .smallClause ≠ none := by decide
 
 -- ============================================================================
 -- E. Gap fix: VerbEntry → MoodSelector (derived function)

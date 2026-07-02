@@ -1,119 +1,96 @@
-/-!
-# Clause complementation: complement-clause surface typology
+import Linglib.Semantics.Verb.Defs
+import Linglib.Syntax.Complementizer.Basic
 
-[deal-2026]
+/-!
+# Clause complementation: surface typology and selection
+
+[deal-2026] [noonan-2007]
 
 [deal-2026]'s notional-complement surface structures and CP external-shell
-inventory. Graduated from the dissolved `Typology/` drawer; the unconsumed
-WALS subordination + Cristofaro complementation typology (and its
-`native_decide` distribution theorems) was dropped.
-
-[noonan-2007]'s complement-clause types and complement-taking-predicate
-classification (`NoonanCompType`, `CTPClass`, `RealityStatus`,
-`ctpRealityStatus`) live in `Features/Complementation.lean`; the generated
-CTP sample rows live in `Data/Complementation/`.
+inventory, plus the [noonan-2007]-anchored selection relation between verb
+frames and clause-typers.
 
 ## Main definitions
 
-* `ComplementClauseStructure` — surface complement-clause structure ([deal-2026]).
-* `CPShell` / `CPShellInventory` / `isAttestedShell` — CP external-shell cartography ([deal-2026]).
+- `ComplementClauseStructure` — surface complement-clause shapes
+- `CPShell`, `CPShellInventory`, `isAttestedShell` — CP external shells
+  ([deal-2026] Table 79)
+- `ComplementType.toNoonan`, `Verb.frames`, `Verb.realizes` — the
+  selection relation
+
+## Implementation notes
+
+[noonan-2007]'s enums (`NoonanCompType`, `CTPClass`, `RealityStatus`) live
+in `Features/Complementation.lean`; the generated CTP sample rows in
+`Data/Complementation/`. Placement of individual languages in Table 79
+cells consumes Fragment data and lives in `Studies/Deal2026.lean`;
+consistency checks on the selection relation live in Studies
+(e.g. `Bondarenko2022.hanaxa_frames_realized`). Shell implicational
+generalisations ("P-shelling co-occurs with D-shelling") are proven on the
+named witnesses; the universal claims stay in Table 79 commentary.
 -/
 
 namespace Clause.Complementation
 
--- ============================================================================
--- Notional-Complement Surface Structure ([deal-2026])
--- ============================================================================
-
 /-! ### Theory-neutral surface enum
 
-Following the cross-framework reconciler discipline, `ComplementClauseStructure`
-describes the *surface pattern* a notional complement clause realises, without
-committing to one framework's internal analysis. Each Theory projects its native
-account into this enum: HPSG always projects `headExternalModifier` for true
-RCs; Minimalist (with [deal-2026]) projects `abarInternalCP` for Nez Perce
-relative-embeddings (REs) and `barePropositionalCP` for English `that`-clauses.
--/
+`ComplementClauseStructure` records the *surface pattern* a notional
+complement clause realises, without committing to a framework's internal
+analysis; each Theory projects its native account into it (HPSG projects
+`headExternalModifier` for true RCs; Minimalist with [deal-2026] projects
+`abarInternalCP` for Nez Perce REs, `barePropositionalCP` for English
+*that*-clauses). -/
 
-/-- Surface-pattern enumeration of notional-complement-clause shapes attested
-    cross-linguistically.
-
-    [deal-2026]'s typology dissolves the Kayne/Arsenij\'evi\'c ([kayne-2008],
-    [kayne-2014], [arsenijevic-2009]) universalist claim that all
-    clausal complementation is relativization. The *surface* options are
-    independent of any one framework's commitments about underlying structure.
-
-    The Kayne/Arsenij\'evi\'c universalist hypothesis is now a single decidable
-    statement: `∀ c : ComplementClauseStructure, c = .abarInternalCP`. Deal 2026
-    refutes it by exhibiting `.barePropositionalCP` as an attested cell
-    (Nez Perce simplex embeddings and English *think*-complementation). -/
+/-- Surface shapes of notional complement clauses. [deal-2026]'s typology
+refutes the Kayne/Arsenijević universalist claim ([kayne-2008],
+[kayne-2014], [arsenijevic-2009]) — now the single decidable statement
+`∀ c : ComplementClauseStructure, c = .abarInternalCP` — by exhibiting
+`.barePropositionalCP` as attested. -/
 inductive ComplementClauseStructure where
-  /-- CP with internal Ā-dependency from a high functional projection above TP.
-      Nez Perce REs ([deal-2026]), Adyghe REs ([caponigro-polinsky-2011]),
-      Bulgarian REs ([krapova-2010]). -/
+  /-- CP with internal Ā-dependency above TP: Nez Perce REs ([deal-2026]),
+      Adyghe ([caponigro-polinsky-2011]), Bulgarian ([krapova-2010]). -/
   | abarInternalCP
-  /-- Bare CP with no internal Ā-dependency. Nez Perce simplex embeddings and
+  /-- Bare CP, no internal Ā-dependency: Nez Perce simplex embeddings,
       English *think*-complementation ([deal-2026]). -/
   | barePropositionalCP
-  /-- CP wrapped in a nominal projection (D, possibly with N). Washo factive
-      complementation ([hanink-bochnak-2017], [bochnak-hanink-2021]),
-      Ndebele ([pietraszko-2019], with additional P shell). -/
+  /-- CP wrapped in a nominal projection: Washo factives
+      ([hanink-bochnak-2017], [bochnak-hanink-2021]), Ndebele
+      ([pietraszko-2019]). -/
   | nominalization
-  /-- True relative clause: an adjunct modifier of a head noun. The pattern
-      that Kayne/Arsenij\'evi\'c claim subsumes all others. -/
+  /-- True relative clause: adjunct modifier of a head noun — the pattern
+      Kayne/Arsenijević claim subsumes all others. -/
   | headExternalModifier
   /-- Internally-headed relative clause (Bambara, Navajo). -/
   | headInternalRelative
-  /-- High adjunct, not complementation at all. Amahuaca attitude reports
-      ([deal-2026] §3, citing Clem 2022 — needs separate bib entry). -/
+  /-- High adjunct, not complementation: Amahuaca attitude reports
+      ([deal-2026] §3). -/
   | adjunct
   deriving DecidableEq, Repr
 
--- ============================================================================
--- CP External Shell Inventory ([deal-2026] Table 79)
--- ============================================================================
-
 /-! ### CP-external wrapping shells
 
-Where `ComplementSize` and `ClauseSpine` (Syntax/Minimalist/) record
-*internal* clause height (vP/TP/CP/NmlzP), `CPShell` records what wraps the CP
-*externally*. Deal 2026's Table 79 cross-classifies the two axes; this file
-houses the external axis as Fragment-importable substrate.
+`ComplementSize` and `ClauseSpine` (Syntax/Minimalist/) record *internal*
+clause height; `CPShell` records what wraps the CP *externally*.
+[deal-2026] Table 79 cross-classifies the two axes. -/
 
-Anchored to [deal-2026] Table 79; placement of individual languages in
-Table 79 cells consumes per-language Fragment data and lives in
-`Studies/Deal2026.lean`. -/
-
-/-- A wrapping head category that may appear above a CP in a notional complement.
-    [deal-2026] Table 79 attests three: D (Washo, Adyghe), N (Adyghe),
-    P (Bulgarian, Ndebele). C is included as the base case to give a uniform
-    representation of `bareCP` as `[.C]`. -/
+/-- A wrapping head above a CP: [deal-2026] Table 79 attests D, N, and P;
+`c` is the base case, so `bareCP = [.c]`. -/
 inductive CPShell where
   /-- The CP itself (always present). -/
   | c
-  /-- D shell (determiner wrapping CP). -/
+  /-- D shell. -/
   | d
-  /-- N shell (nominal head between D and CP). -/
+  /-- N shell (between D and CP). -/
   | n
-  /-- P shell (preposition wrapping the CP-headed argument). -/
+  /-- P shell. -/
   | p
   deriving DecidableEq, Repr
 
-/-- An ordered shell list, innermost first.
-
-    Convention: head element is the C of the CP itself; subsequent elements
-    are progressively more peripheral wrappers. So `[.c, .d]` = `dCP` (D wraps
-    CP), `[.c, .n, .d]` = `dnCP` (D wraps N wraps CP), `[.c, .d, .p]` = `pdCP`
-    (P wraps D wraps CP). -/
+/-- An ordered shell list, innermost first: `[.c, .d]` = D wraps CP,
+`[.c, .n, .d]` = D wraps N wraps CP. -/
 abbrev CPShellInventory := List CPShell
 
-/-- Predicate: this shell inventory is attested in [deal-2026] Table 79.
-
-    Six attested shapes (one per cell), four shell-shapes:
-    - `[.c]`        = `bareCP` (V CP row)
-    - `[.c, .d]`    = `dCP`    (V D CP — Washo per [bochnak-hanink-2021])
-    - `[.c, .n, .d]` = `dnCP`  (V D N CP row — Adyghe)
-    - `[.c, .d, .p]` = `pdCP`  (V P D CP row — Bulgarian, Ndebele) -/
+/-- The shell inventory is a [deal-2026] Table 79 cell. -/
 def isAttestedShell : CPShellInventory → Bool
   | [.c] => true
   | [.c, .d] => true
@@ -121,56 +98,71 @@ def isAttestedShell : CPShellInventory → Bool
   | [.c, .d, .p] => true
   | _ => false
 
-/-- The bare-CP cell (Nez Perce REs and simplex; English *think*). -/
+/-- The bare-CP cell (Nez Perce; English *think*). -/
 def bareCP : CPShellInventory := [.c]
 
-/-- The V D CP cell (Washo per [bochnak-hanink-2021]). -/
+/-- The V D CP cell (Washo, [bochnak-hanink-2021]). -/
 def dCP : CPShellInventory := [.c, .d]
 
-/-- The V D N CP cell (Adyghe REs per [caponigro-polinsky-2011]). -/
+/-- The V D N CP cell (Adyghe, [caponigro-polinsky-2011]). -/
 def dnCP : CPShellInventory := [.c, .n, .d]
 
-/-- The V P D CP cell (Bulgarian REs per [krapova-2010];
-    Ndebele per [pietraszko-2019]). -/
+/-- The V P D CP cell (Bulgarian, [krapova-2010]; Ndebele,
+[pietraszko-2019]). -/
 def pdCP : CPShellInventory := [.c, .d, .p]
 
-/-! ### Concrete facts on the named witnesses
-
-The full implicational generalisations ("every attested inventory containing P
-also contains D") are folklore from inspection of the four named cells. We
-prove the consumed facts directly on the named shells; the universal claim is
-tracked in [deal-2026] Table 79 commentary, not as a Lean theorem
-(general `List.Mem` reasoning over `CPShellInventory` would be substantial
-boilerplate without proportionate payoff). -/
-
-/-- The four named witnesses are all attested (Deal 2026 Table 79). -/
+/-- The four named witnesses are all attested. -/
 theorem named_shells_attested :
     isAttestedShell bareCP = true ∧
     isAttestedShell dCP = true ∧
     isAttestedShell dnCP = true ∧
-    isAttestedShell pdCP = true := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
+    isAttestedShell pdCP = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-/-- The pdCP cell contains both P and D — the empirical generalisation that
-    P-shelling co-occurs with D-shelling. -/
+/-- P-shelling co-occurs with D-shelling. -/
 theorem pdCP_contains_p_and_d : CPShell.p ∈ pdCP ∧ CPShell.d ∈ pdCP := by
-  refine ⟨?_, ?_⟩ <;> decide
+  decide
 
-/-- The dnCP cell contains both N and D — N appears only inside a D shell. -/
+/-- N appears only inside a D shell. -/
 theorem dnCP_contains_n_and_d : CPShell.n ∈ dnCP ∧ CPShell.d ∈ dnCP := by
-  refine ⟨?_, ?_⟩ <;> decide
+  decide
 
-/-- Every named shell contains C (the CP itself). -/
+/-- Every named shell contains C. -/
 theorem named_shells_contain_c :
     CPShell.c ∈ bareCP ∧ CPShell.c ∈ dCP ∧
     CPShell.c ∈ dnCP ∧ CPShell.c ∈ pdCP := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+  decide
 
-/-- An unattested example: `V P CP` (P with no D shell) — [deal-2026]
-    Table 79 has no such cell. -/
+/-- `V P CP` (P with no D shell) is not a Table 79 cell. -/
 theorem pCP_not_attested : isAttestedShell [.c, .p] = false := rfl
 
-/-- Another unattested example: `V N CP` (N with no D shell). -/
+/-- `V N CP` (N with no D shell) is not a Table 79 cell. -/
 theorem nCP_not_attested : isAttestedShell [.c, .n] = false := rfl
+
+/-! ### Selection
+
+The [noonan-2007]-anchored relation between a verb's complement frames
+and a language's clause-typing morphemes. -/
+
+/-- The [noonan-2007] category of a complement frame; `none` for
+non-clausal frames. -/
+def _root_.ComplementType.toNoonan : ComplementType → Option NoonanCompType
+  | .finiteClause => some .indicative
+  | .infinitival => some .infinitive
+  | .gerund => some .nominalized
+  | .smallClause => some .paratactic
+  | .none => none
+  | .np => none
+  | .np_np => none
+  | .np_pp => none
+  | .question => some .indicative
+
+/-- A verb's complement frames: main plus alternate, when present. -/
+def _root_.Verb.frames (v : Verb) : List ComplementType :=
+  v.complementType :: v.altComplementType.toList
+
+/-- `v`'s frame `f` is realized by clause-typer `c` ([noonan-2007]). -/
+def _root_.Verb.realizes (v : Verb) (c : Complementizer) : Prop :=
+  ∃ f ∈ v.frames, f.toNoonan = c.noonanType
 
 end Clause.Complementation

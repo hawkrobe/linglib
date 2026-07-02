@@ -11,9 +11,9 @@ Per-entry complementation features: which complement type a predicate selects
 The cross-linguistic complementation typology also lives here:
 [noonan-2007]'s six complement-clause types (`NoonanCompType`) and twelve
 complement-taking-predicate classes (`CTPClass`) with their default reality
-status (`RealityStatus`, `ctpRealityStatus`). The bridge between the two
-inventories (`ComplementType ↔ NoonanCompType`) is paper-anchored in
-`Studies/Noonan2007.lean`.
+status (`RealityStatus`, `ctpRealityStatus`). The adapter between the two
+inventories (`ComplementType.toNoonan`) lives in
+`Syntax/Clause/Complementation.lean`.
 
 ## Main declarations
 
