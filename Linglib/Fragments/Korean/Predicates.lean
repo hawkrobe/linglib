@@ -36,8 +36,8 @@ def wus_ke_ha : KoreanVerbEntry where
   formPast := "wus-ke ha-əss-ta"
   formAdnom := "wus-ke ha-n"
   formProgressive := "wus-ke ha-go itta"
-  complementType := .infinitival
-  controlType := .objectControl
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   causative := some .cause
 
 /-- 읽게 하다 "ilk-ke ha-da" — read-PURP do = "cause to read". -/
@@ -47,8 +47,8 @@ def ilk_ke_ha : KoreanVerbEntry where
   formPast := "ilk-ke ha-əss-ta"
   formAdnom := "ilk-ke ha-n"
   formProgressive := "ilk-ke ha-go itta"
-  complementType := .infinitival
-  controlType := .objectControl
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   causative := some .cause
 
 /-- 죽이다 "cwuk-i-da" — die-CAUS = "to kill" (lexical/morphological COMPACT). -/
@@ -58,7 +58,7 @@ def cwuk_i : KoreanVerbEntry where
   formPast := "cwuk-yəss-ta"
   formAdnom := "cwuk-i-n"
   formProgressive := "cwuk-i-go itta"
-  complementType := .np
+  frames := [Frame.np]
   causative := some .make
 
 /-- Korean PURP-type *-ke ha-* uses `.cause` builder. -/

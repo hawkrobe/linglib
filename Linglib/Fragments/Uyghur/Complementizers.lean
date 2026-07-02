@@ -83,8 +83,7 @@ complement to V (his 73). Under [major-2024] this same entry,
 converb-suffixed, heads dep clauses (`Studies/Major2024.lean`). -/
 def deVerb : Verb where
   form := "de-"
-  complementType := .finiteClause
-  altComplementType := some .np
+  frames := [Frame.finiteClause, Frame.np]
   speechActVerb := true
 
 /-- *oyla-* 'think' (his 58–59): takes DP objects (*u xewer-ni* 'that
@@ -94,8 +93,7 @@ frame is recorded: the apparent finite-CP frame (his 37a) is
 answering *qandaq* 'how' (his 58b, 60), not a complement. -/
 def oyla : Verb where
   form := "oyla-"
-  complementType := .np
-  altComplementType := some .gerund
+  frames := [Frame.np, Frame.gerund]
   attitude := some (.doxastic .nonVeridical)
 
 /-- *warqira-* 'scream': unergative, no complement frame — neither DP
@@ -103,7 +101,7 @@ def oyla : Verb where
 coerced into a verb of speech (his 38; §3.1). -/
 def warqira : Verb where
   form := "warqira-"
-  complementType := .none
+  frames := []
   voiceType := some .agentive
 
 end Uyghur

@@ -19,7 +19,9 @@ and nominalized with the say-root `[… V-TENSE g-ɘːš-CASE]`.
   inventory is `Buryat.complementizers`
 - `Buryat.hanaxa`, `Buryat.medexe`, `Buryat.xelexe`, `Buryat.duulaxa` —
   clause-embedding verbs; all four alternate between the finite-CP and
-  nominalized (`.gerund`) frames (ex. 35–36, 50–51)
+  nominalized frames (ex. 35–36, 50–51). *hanaxa*'s frame-conditioned
+  think~remember readings ride on `Verb.Reading` rows keyed to
+  `Buryat.nominalizedFrame`
 
 ## Implementation notes
 
@@ -69,23 +71,34 @@ def complementizers : List Complementizer := [ge, aasha, zha]
 Vendler class stays unset (`Verb.Aspect.vendlerClass` convention for
 clause-embedding verbs). -/
 
+/-- The nominalized complement frame of the ex. 35–36 alternation:
+[noonan-2007]-nominalized coding with an overt genitive embedded subject
+(§4.3.1). Richer than the bare `Frame.gerund` cell: it records the
+embedded-subject case. -/
+def nominalizedFrame : Frame :=
+  [{ cat := .clausal, coding := some .nominalized,
+     embeddedSubject := some (.overt (some .gen)) }]
+
 /-- *hanaxa* 'think ~ remember': 'think' with a bare gɘžɘ-CP, 'remember'
-with a nominalized complement (§4.4.3). `attitude` and `opaqueContext`
-record the bare-CP frame; the nominalized frame's pre-existence
-presupposition is tracked in `Semantics/Attitudes/PreExistence.lean`. -/
+with a nominalized complement (§4.4.3). The `readings` rows carry the
+think~remember alternation — nonveridical/opaque on the bare CP,
+veridical/transparent on the nominalized frame; the nominalized frame's
+pre-existence presupposition is tracked in
+`Semantics/Attitudes/PreExistence.lean`. -/
 def hanaxa : Verb where
   form := "hanaxa"
-  complementType := .finiteClause
-  altComplementType := some .gerund
-  attitude := some (.doxastic .nonVeridical)
-  opaqueContext := true
+  frames := [Frame.finiteClause, nominalizedFrame]
+  readings := [
+    { frame := Frame.finiteClause, attitude := some (.doxastic .nonVeridical),
+      opaqueContext := some true },
+    { frame := nominalizedFrame, attitude := some (.doxastic .veridical),
+      opaqueContext := some false }]
 
 /-- *mɘdɘxɘ* 'know' — factive in both frames (ex. 36); embeds polar
 questions (ex. 3). -/
 def medexe : Verb where
   form := "mɘdɘxɘ"
-  complementType := .finiteClause
-  altComplementType := some .gerund
+  frames := [Frame.finiteClause, Frame.gerund]
   attitude := some (.doxastic .veridical)
   takesQuestionBase := true
 
@@ -93,15 +106,13 @@ def medexe : Verb where
 are existence-entailing (ex. 51; speaker variation per fn. 30). -/
 def xelexe : Verb where
   form := "xɘlɘxɘ"
-  complementType := .finiteClause
-  altComplementType := some .gerund
+  frames := [Frame.finiteClause, Frame.gerund]
   speechActVerb := true
 
 /-- *duːlaxa* 'hear' — non-factive with bare CPs, existence-entailing
 with nominalized complements (ex. 50). -/
 def duulaxa : Verb where
   form := "duːlaxa"
-  complementType := .finiteClause
-  altComplementType := some .gerund
+  frames := [Frame.finiteClause, Frame.gerund]
 
 end Buryat

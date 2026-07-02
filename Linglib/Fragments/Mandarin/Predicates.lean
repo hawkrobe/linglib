@@ -26,7 +26,7 @@ def MandarinVerbEntry.mk' (core : Verb) : MandarinVerbEntry :=
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/
 def qidai : MandarinVerbEntry := .mk' {
   form := "qidai"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.relevanceBased .positive)) }
@@ -34,7 +34,7 @@ def qidai : MandarinVerbEntry := .mk' {
 /-- 担心 "danxin" — worry (Class 1: negative, non-C-distributive). -/
 def danxin : MandarinVerbEntry := .mk' {
   form := "danxin"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased) }
@@ -42,7 +42,7 @@ def danxin : MandarinVerbEntry := .mk' {
 /-- 希望 "xiwang" — hope (Class 3: positive, C-distributive, anti-rogative). -/
 def xiwang : MandarinVerbEntry := .mk' {
   form := "xiwang"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -50,7 +50,7 @@ def xiwang : MandarinVerbEntry := .mk' {
 /-- 害怕 "haipa" — fear (Class 2: negative, C-distributive, takes questions). -/
 def haipa : MandarinVerbEntry := .mk' {
   form := "haipa"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative)) }
@@ -62,7 +62,7 @@ contrafactive postsupposition (◇¬p, not derivable from veridicality alone);
 that paper-specific apparatus lives in `Glass2025`, not on this entry. -/
 def yiwei : MandarinVerbEntry := .mk' {
   form := "yiwei"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical) }
@@ -80,7 +80,7 @@ projection per the audit's "derive don't stipulate" discipline. -/
 /-- 想 *xiang* 'want' — desiderative; nonfinite-taking. Liu & Yip 2026 (18). -/
 def xiang : MandarinVerbEntry := .mk' {
   form := "xiang"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -88,7 +88,7 @@ def xiang : MandarinVerbEntry := .mk' {
 /-- 让 *rang* 'let' — manipulative; nonfinite-taking. Liu & Yip 2026 (18). -/
 def rang : MandarinVerbEntry := .mk' {
   form := "rang"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
   passivizable := false
   opaqueContext := false }
 
@@ -96,7 +96,7 @@ def rang : MandarinVerbEntry := .mk' {
     (CP-only). Liu & Yip 2026 (19) — blocks *you*-skipping. -/
 def xiangxin : MandarinVerbEntry := .mk' {
   form := "xiangxin"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .veridical) }
@@ -104,7 +104,7 @@ def xiangxin : MandarinVerbEntry := .mk' {
 /-- 劝 *quan* 'urge' — manipulative; nonfinite-taking. Liu & Yip 2026 (18). -/
 def quan : MandarinVerbEntry := .mk' {
   form := "quan"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
   passivizable := true
   opaqueContext := false }
 
@@ -112,7 +112,7 @@ def quan : MandarinVerbEntry := .mk' {
     (listed as *bi(po)*). -/
 def bi : MandarinVerbEntry := .mk' {
   form := "bi"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
   passivizable := true
   opaqueContext := false }
 
@@ -121,7 +121,7 @@ def bi : MandarinVerbEntry := .mk' {
     Type II (TP) and Type III (vP) selection. -/
 def dasuan : MandarinVerbEntry := .mk' {
   form := "dasuan"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -130,7 +130,7 @@ def dasuan : MandarinVerbEntry := .mk' {
     [noonan-2007] classifies 'try' under the achievement CTP class. -/
 def shefa : MandarinVerbEntry := .mk' {
   form := "shefa"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
   passivizable := false
   opaqueContext := false }
 

@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Logic.BMRS
-import Linglib.Studies.Jardine2016Tone
+import Linglib.Phonology.Tone.Plateauing
 import Linglib.Studies.McCollumEtAl2020
 
 /-!
@@ -30,8 +30,9 @@ witness is used: one-sidedness is global, not window-bounded.
 Instances: Sour Grapes harmony (Thm. 5.2 — the first proof of the [heinz-lai-2013]
 conjecture, via [padgett-1995]/[wilson-2003]'s pathology), and — through the shared
 witnesses already in the library — Tutrugbu ATR harmony (Prop. 5.5,
-[mccollum-bakovic-mai-meinhardt-2020]) and Luganda unbounded tonal plateauing
-([jardine-2016], the class the paper's Prop. 5.4 Bemba case exemplifies). The positive
+[mccollum-bakovic-mai-meinhardt-2020]), Luganda unbounded tonal plateauing
+([jardine-2016]), and Copperbelt Bemba high-tone spreading (Prop. 5.4), the latter
+formalized here as a second `Tone.Surfacing` instance. The positive
 side: with no underlying stress the input predicate is constantly `⊥` and ⊙ collapses
 to disjunction — (5.15), recovering [koser-jardine-2020]'s LHOL program as the
 simultaneous application of its two one-sided halves. §6.3's conjunctive dual ⊘ is
@@ -223,11 +224,134 @@ theorem tutrugbu_not_bmrsWeaklyDeterministic :
 
 /-- Luganda unbounded tonal plateauing is not weakly deterministic: [jardine-2016]'s
 flagship pattern (the class of the paper's Prop. 5.4 Bemba case), through
-`Studies/Jardine2016Tone`'s witness. -/
+`Phonology/Tone/Plateauing`'s witness. -/
 theorem utp_not_bmrsWeaklyDeterministic :
-    ¬ IsBmrsWeaklyDeterministic Jardine2016Tone.utp :=
+    ¬ IsBmrsWeaklyDeterministic Tone.Plateauing.utp.map :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
-    Jardine2016Tone.utp_requiresBothSides
+    Tone.Plateauing.utp_requiresBothSides
+
+/-! ### Bemba high-tone spreading is not weakly deterministic (Prop. 5.4)
+
+Copperbelt Bemba ([jardine-2016]; the paper's bounded/unbounded spreading data): a high
+tone spreads to the end of the word when no high follows it, and only onto the next two
+TBUs when one does. A second `Tone.Surfacing` instance — and a cautionary one: unlike
+plateauing, the surface set is not convex and the map is neither monotone nor
+idempotent, so only the shared surfacing API transfers. -/
+
+/-- The Bemba tonal alphabet. -/
+inductive BTone
+  | H | L
+  deriving DecidableEq, Repr
+
+/-- Position `i` surfaces H: an underlying H, within the two-TBU bounded spread of a
+preceding H, or at-or-after the last H (unbounded spread to the word end). -/
+def bembaSurfaces (w : List BTone) (i : ℕ) : Prop :=
+  i < w.length ∧ (w[i]? = some .H
+    ∨ (∃ j < i, w[j]? = some .H ∧ i ≤ j + 2)
+    ∨ ∃ j ≤ i, w[j]? = some .H ∧ ∀ k < w.length, w[k]? = some .H → k ≤ j)
+
+instance (w : List BTone) (i : ℕ) : Decidable (bembaSurfaces w i) := by
+  unfold bembaSurfaces
+  infer_instance
+
+/-- Bemba high-tone spreading as a surfacing process. -/
+def bemba : Tone.Surfacing BTone where
+  hi := .H
+  lo := .L
+  Surfaces := bembaSurfaces
+  hi_ne_lo := by decide
+  lt_length h := h.1
+  surfaces_of_hi h := ⟨(List.getElem?_eq_some_iff.mp h).1, .inl h⟩
+  decSurfaces _ _ := inferInstance
+
+/-- The witness family: flanks `x`, `y` around a toneless fill wide enough that the
+bounded two-TBU spread never reaches the middle. -/
+private def bw (x y : BTone) (d : ℕ) : List BTone :=
+  x :: (List.replicate (2 * d + 4) .L ++ [y])
+
+private theorem bw_length {x y : BTone} {d : ℕ} : (bw x y d).length = 2 * d + 6 := by
+  simp [bw]
+
+private theorem bw_getElem? {x y : BTone} {d k : ℕ} :
+    (bw x y d)[k]? = if k = 0 then some x else if k = 2 * d + 5 then some y
+      else if k < 2 * d + 5 then some .L else none := by
+  rcases k with _ | k
+  · rfl
+  · simp only [bw, List.getElem?_cons_succ, List.getElem?_append, List.getElem?_replicate,
+      List.length_replicate, List.getElem?_cons, List.getElem?_nil]
+    split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+/-- In the lone-trigger word, the middle surfaces: the initial H is the last H, so the
+unbounded spread reaches it. -/
+private theorem bembaSurfaces_bw_HL {d : ℕ} : bembaSurfaces (bw .H .L d) (d + 3) := by
+  refine ⟨by rw [bw_length]; omega, .inr (.inr ⟨0, by omega, ?_, fun k hk hkH => ?_⟩)⟩
+  · rw [bw_getElem?]
+    split_ifs <;> first | rfl | omega
+  · rw [bw_length] at hk
+    rw [bw_getElem?] at hkH
+    split_ifs at hkH <;> first | omega | exact BTone.noConfusion (Option.some.inj hkH)
+
+/-- With a second H at the end, the middle does not surface: the bounded spread stops
+two TBUs in, and the unbounded spread now belongs to the final H. -/
+private theorem not_bembaSurfaces_bw_HH {d : ℕ} : ¬ bembaSurfaces (bw .H .H d) (d + 3) := by
+  rintro ⟨-, h | ⟨j, hj, hjH, hspread⟩ | ⟨j, hj, hjH, hlast⟩⟩
+  · rw [bw_getElem?] at h
+    split_ifs at h <;> first | omega | exact BTone.noConfusion (Option.some.inj h)
+  · rw [bw_getElem?] at hjH
+    split_ifs at hjH <;> first | omega | exact BTone.noConfusion (Option.some.inj hjH)
+  · have hj0 : j = 0 := by
+      rw [bw_getElem?] at hjH
+      split_ifs at hjH <;> first | omega | exact BTone.noConfusion (Option.some.inj hjH)
+    have := hlast (2 * d + 5) (by rw [bw_length]; omega) (by
+      rw [bw_getElem?]
+      split_ifs <;> first | rfl | omega)
+    omega
+
+/-- With no trigger at all, the middle does not surface. -/
+private theorem not_bembaSurfaces_bw_LL {d : ℕ} : ¬ bembaSurfaces (bw .L .L d) (d + 3) := by
+  have hnoH : ∀ k, (bw .L .L d)[k]? ≠ some BTone.H := fun k => by
+    rw [bw_getElem?]
+    split_ifs <;> first | exact fun h => BTone.noConfusion (Option.some.inj h) | simp
+  rintro ⟨-, h | ⟨j, -, hjH, -⟩ | ⟨j, -, hjH, -⟩⟩
+  exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
+
+private theorem bw_mid {x y : BTone} {d : ℕ} : (bw x y d)[d + 3]? = some BTone.L := by
+  rw [bw_getElem?]
+  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+/-- Bemba spreading requires both sides: the middle of `H L…L L` spreads (unbounded, no
+blocker), but neither the triggerless far-left flip nor the far-right H (which bounds
+the spread to two TBUs) changes it. -/
+theorem bemba_requiresBothSides : RequiresBothSides bemba.map := by
+  intro d
+  refine ⟨bw .H .L d, d + 3, by rw [bw_length]; omega, ?_,
+    ⟨bw .L .L d, by rw [bw_length, bw_length], ?_, ?_, ?_⟩,
+    ⟨bw .H .H d, by rw [bw_length, bw_length], ?_, ?_, ?_⟩⟩
+  · rw [bemba.map_getElem?_hi_iff.mpr bembaSurfaces_bw_HL, bw_mid]
+    decide
+  · intro k hk
+    rw [bw_getElem?, bw_getElem?]
+    split_ifs <;> first | rfl | omega
+  · rw [bw_mid, bw_mid]
+  · rw [bw_mid, bemba.map_getElem?_lo_iff.mpr
+      ⟨by rw [bw_length]; omega, not_bembaSurfaces_bw_LL⟩]
+    rfl
+  · intro k hk
+    rw [bw_getElem?, bw_getElem?]
+    split_ifs <;> first | rfl | omega
+  · rw [bw_mid, bw_mid]
+  · rw [bw_mid, bemba.map_getElem?_lo_iff.mpr
+      ⟨by rw [bw_length]; omega, not_bembaSurfaces_bw_HH⟩]
+    rfl
+
+/-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/
+theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
+  not_isBmrsWeaklyDeterministic_of_requiresBothSides bemba_requiresBothSides
+
+/-- The bimachine twin, off the same witness. -/
+theorem bemba_not_bimachineWeaklyDeterministic :
+    ¬ IsBimachineWeaklyDeterministic bemba.map :=
+  not_isBimachineWeaklyDeterministic_of_requiresBothSides bemba_requiresBothSides
 
 /-! ### The positive side: LHOL stress as a simultaneous application (§5.2)
 

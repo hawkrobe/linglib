@@ -92,7 +92,7 @@ structure VerbEntry extends Verb where
     Usage:
     ```
     def kick : VerbEntry :=.mkRegular {
-      form := "kick", complementType :=.np }
+      form := "kick", frames := [Frame.np] }
     ``` -/
 def VerbEntry.mkRegular (core : Verb) : VerbEntry :=
   { toVerb := core
@@ -113,7 +113,7 @@ def sleep : VerbEntry where
   formPast := "slept"
   formPastPart := "slept"
   formPresPart := "sleeping"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .state
 
@@ -124,7 +124,7 @@ def run : VerbEntry where
   formPast := "ran"
   formPastPart := "run"
   formPresPart := "running"
-  complementType := .none
+  frames := []
   subjectEntailments := some activitySubjectProfile
   passivizable := false
   vendlerClass := some .activity
@@ -138,7 +138,7 @@ def run : VerbEntry where
 /-- "arrive" — unaccusative intransitive -/
 def arrive : VerbEntry := .mkRegular {
   form := "arrive"
-  complementType := .none
+  frames := []
   subjectEntailments := some achievementSubjectProfile
   unaccusative := true
   passivizable := false
@@ -152,7 +152,7 @@ def eat : VerbEntry where
   formPast := "ate"
   formPastPart := "eaten"
   formPresPart := "eating"
-  complementType := .np
+  frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, false⟩
   implicitObj := some .indef
@@ -168,7 +168,7 @@ def eat : VerbEntry where
 /-- "kick" — transitive -/
 def kick : VerbEntry := .mkRegular {
   form := "kick"
-  complementType := .np
+  frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some ⟨false, false, false, false, false, true, false, true, true, false⟩
   vendlerClass := some .activity
@@ -189,8 +189,7 @@ def give : VerbEntry where
   formPast := "gave"
   formPastPart := "given"
   formPresPart := "giving"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -203,28 +202,28 @@ def put : VerbEntry where
   formPast := "put"
   formPastPart := "put"
   formPresPart := "putting"
-  complementType := .np_pp
+  frames := [Frame.np_pp]
   vendlerClass := some .achievement
   levinClass := some .put
 
 /-- "weigh" — measure predicate selecting for mass/weight. -/
 def weigh : VerbEntry := .mkRegular {
   form := "weigh"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .measure }
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : VerbEntry := .mkRegular {
   form := "cover"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc }
 
 /-- "measure" — general measurement predicate. -/
 def measure : VerbEntry := .mkRegular {
   form := "measure"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .measure }
 
@@ -235,7 +234,7 @@ def buy : VerbEntry where
   formPast := "bought"
   formPastPart := "bought"
   formPresPart := "buying"
-  complementType := .np
+  frames := [Frame.np]
   subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
   vendlerClass := some .accomplishment
 
@@ -246,7 +245,7 @@ def meet : VerbEntry where
   formPast := "met"
   formPastPart := "met"
   formPresPart := "meeting"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
 
 /-- "sell" — change of possession, alternates DOC/PP.
@@ -257,8 +256,7 @@ def sell : VerbEntry where
   formPast := "sold"
   formPastPart := "sold"
   formPresPart := "selling"
-  complementType := .np
-  altComplementType := some .np_pp
+  frames := [Frame.np, Frame.np_pp]
   subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
   implicitObj := some .def
   implicitGoal := some .indef
@@ -271,7 +269,7 @@ def leave : VerbEntry where
   formPast := "left"
   formPastPart := "left"
   formPresPart := "leaving"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .leave
 
@@ -282,8 +280,7 @@ def see : VerbEntry where
   formPast := "saw"
   formPastPart := "seen"
   formPresPart := "seeing"
-  complementType := .np
-  altComplementType := some .finiteClause
+  frames := [Frame.np, Frame.finiteClause]
   subjectEntailments := some stateSubjectProfile
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
@@ -300,7 +297,7 @@ def know : VerbEntry where
   formPast := "knew"
   formPastPart := "known"
   formPresPart := "knowing"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
@@ -316,7 +313,7 @@ def regret : VerbEntry where
   formPast := "regretted"
   formPastPart := "regretted"
   formPresPart := "regretting"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
@@ -326,7 +323,7 @@ def regret : VerbEntry where
 /-- "realize" — factive, presupposes complement is true -/
 def realize : VerbEntry := .mkRegular {
   form := "realize"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
@@ -336,7 +333,7 @@ def realize : VerbEntry := .mkRegular {
 /-- "discover" — semifactive, weaker projection -/
 def discover : VerbEntry := .mkRegular {
   form := "discover"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
@@ -347,7 +344,7 @@ def discover : VerbEntry := .mkRegular {
 /-- "notice" — semifactive -/
 def notice : VerbEntry := .mkRegular {
   form := "notice"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
@@ -365,9 +362,9 @@ def stop : VerbEntry where
   formPast := "stopped"
   formPastPart := "stopped"
   formPresPart := "stopping"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
@@ -381,9 +378,9 @@ def quit : VerbEntry where
   formPast := "quit"
   formPastPart := "quit"
   formPresPart := "quitting"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
   cosType := some .cessation
@@ -392,9 +389,9 @@ def quit : VerbEntry where
 /-- "start" — CoS inception, presupposes activity wasn't happening -/
 def start : VerbEntry := .mkRegular {
   form := "start"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
   cosType := some .inception
@@ -407,9 +404,9 @@ def begin_ : VerbEntry where
   formPast := "began"
   formPastPart := "begun"
   formPresPart := "beginning"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
   cosType := some .inception
@@ -418,9 +415,9 @@ def begin_ : VerbEntry where
 /-- "continue" — CoS continuation, presupposes activity was happening -/
 def continue_ : VerbEntry := .mkRegular {
   form := "continue"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
-  controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
   cosType := some .continuation
@@ -433,9 +430,9 @@ def keep : VerbEntry where
   formPast := "kept"
   formPastPart := "kept"
   formPresPart := "keeping"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
-  controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
   cosType := some .continuation
@@ -450,9 +447,9 @@ def keep : VerbEntry where
     See also `manage_occasion` for the [solstad-bott-2024] analysis. -/
 def manage : VerbEntry := .mkRegular {
   form := "manage"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   projectionBehavior := some .hole
   presupType := some .prerequisiteSoft
@@ -461,9 +458,9 @@ def manage : VerbEntry := .mkRegular {
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
 def fail : VerbEntry := .mkRegular {
   form := "fail"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .negative }
 
@@ -474,9 +471,9 @@ def try_ : VerbEntry where
   formPast := "tried"
   formPastPart := "tried"
   formPresPart := "trying"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
-  controlType := .subjectControl
   passivizable := false
 
 /-- "persuade" — object control: "persuade X to VP" (X = agent of VP).
@@ -484,9 +481,9 @@ def try_ : VerbEntry where
     Projects AUTHOR coordinate → obligatory *de se* ([landau-2015] table (36)). -/
 def persuade : VerbEntry := .mkRegular {
   form := "persuade"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  controlType := .objectControl
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
 
@@ -495,9 +492,9 @@ def persuade : VerbEntry := .mkRegular {
     [landau-2015] (5c) classifies it as desiderative → logophoric control. -/
 def promise : VerbEntry := .mkRegular {
   form := "promise"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   projectionBehavior := some .plug
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -505,9 +502,9 @@ def promise : VerbEntry := .mkRegular {
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : VerbEntry := .mkRegular {
   form := "remember"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .positive }
 
@@ -518,9 +515,9 @@ def forget : VerbEntry where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .negative
 
@@ -528,9 +525,9 @@ def forget : VerbEntry where
     "John neglected to lock his door" entails "John didn't lock his door." -/
 def neglect : VerbEntry := .mkRegular {
   form := "neglect"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .negative }
 
@@ -541,7 +538,7 @@ def neglect : VerbEntry := .mkRegular {
 /-- "believe" — doxastic attitude verb, creates opaque context -/
 def believe : VerbEntry := .mkRegular {
   form := "believe"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   projectionBehavior := some .hole
@@ -556,7 +553,7 @@ def think : VerbEntry where
   formPast := "thought"
   formPastPart := "thought"
   formPresPart := "thinking"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -570,9 +567,9 @@ def think : VerbEntry where
 /-- "want" — preferential attitude verb with infinitival complement -/
 def want : VerbEntry := .mkRegular {
   form := "want"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
-  controlType := .subjectControl
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -586,9 +583,9 @@ def want : VerbEntry := .mkRegular {
     the complement's event argument). -/
 def intend : VerbEntry := .mkRegular {
   form := "intend"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
-  controlType := .subjectControl
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -601,10 +598,9 @@ def intend : VerbEntry := .mkRegular {
     ([fusco-sgrizzi-2026]). -/
 def decide_ : VerbEntry := .mkRegular {
   form := "decide"
-  complementType := .infinitival
+  frames := [Frame.infinitival, Frame.finiteClause]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
-  altComplementType := some .finiteClause
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want }
@@ -614,10 +610,9 @@ def decide_ : VerbEntry := .mkRegular {
     Alternate frame: infinitival with subject control ("hope to leave"). -/
 def hope : VerbEntry := .mkRegular {
   form := "hope"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause, Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
-  altComplementType := some .infinitival
-  altControlType := .subjectControl
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -629,10 +624,9 @@ def hope : VerbEntry := .mkRegular {
     Alternate frame: infinitival with subject control ("pray to be saved"). -/
 def pray : VerbEntry := .mkRegular {
   form := "pray"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause, Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
-  altComplementType := some .infinitival
-  altControlType := .subjectControl
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -640,7 +634,7 @@ def pray : VerbEntry := .mkRegular {
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
 def expect : VerbEntry := .mkRegular {
   form := "expect"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -653,7 +647,7 @@ def wish : VerbEntry where
   formPast := "wished"
   formPastPart := "wished"
   formPresPart := "wishing"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -663,7 +657,7 @@ def wish : VerbEntry where
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
 def fear : VerbEntry := .mkRegular {
   form := "fear"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -673,7 +667,7 @@ def fear : VerbEntry := .mkRegular {
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
 def dread : VerbEntry := .mkRegular {
   form := "dread"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -687,7 +681,7 @@ def worry : VerbEntry where
   formPast := "worried"
   formPastPart := "worried"
   formPresPart := "worrying"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -700,9 +694,9 @@ def worry : VerbEntry where
 /-- "seem" — raising verb (no theta role for subject, unaccusative) -/
 def seem : VerbEntry := .mkRegular {
   form := "seem"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .raising }]
   vendlerClass := some .state
-  controlType := .raising
   passivizable := false
   unaccusative := true }
 
@@ -713,9 +707,9 @@ def seem : VerbEntry := .mkRegular {
 /-- "cause" — counterfactual dependence (necessity semantics) -/
 def cause : VerbEntry := .mkRegular {
   form := "cause"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  controlType := .objectControl
   causative := some .cause
   levinClass := some .engender }
 
@@ -726,9 +720,9 @@ def make : VerbEntry where
   formPast := "made"
   formPastPart := "made"
   formPresPart := "making"
-  complementType := .smallClause
+  frames := [Frame.smallClause]
+  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  controlType := .objectControl
   causative := some .make
 
 /-- "let" — permissive causative (barrier removal) -/
@@ -738,9 +732,9 @@ def let_ : VerbEntry where
   formPast := "let"
   formPastPart := "let"
   formPresPart := "letting"
-  complementType := .smallClause
+  frames := [Frame.smallClause]
+  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
-  controlType := .objectControl
   causative := some .enable
 
 /-- "have" — causative use (directive causation) -/
@@ -750,9 +744,9 @@ def have_caus : VerbEntry where
   formPast := "had"
   formPastPart := "had"
   formPresPart := "having"
-  complementType := .smallClause
+  frames := [Frame.smallClause]
+  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
-  controlType := .objectControl
   causative := some .make
   senseTag := .causative
 
@@ -763,18 +757,18 @@ def get_caus : VerbEntry where
   formPast := "got"
   formPastPart := "gotten"
   formPresPart := "getting"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  controlType := .objectControl
   causative := some .make
   senseTag := .causative
 
 /-- "force" — coercive causative (overcome resistance) -/
 def force : VerbEntry := .mkRegular {
   form := "force"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  controlType := .objectControl
   projectionBehavior := some .hole
   causative := some .force }
 
@@ -784,9 +778,9 @@ def force : VerbEntry := .mkRegular {
     [nadathur-lauer-2020]: `preventSem` (dual of `causeSem`). -/
 def prevent : VerbEntry := .mkRegular {
   form := "prevent"
-  complementType := .gerund
+  frames := [Frame.gerund]
+  readings := [{ frame := Frame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  controlType := .objectControl
   projectionBehavior := some .hole
   causative := some .prevent }
 
@@ -797,7 +791,7 @@ def prevent : VerbEntry := .mkRegular {
 /-- "kill" — thin lexical causative (kill = cause-to-die, COMPACT type). -/
 def kill : VerbEntry := .mkRegular {
   form := "kill"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .murder
@@ -816,7 +810,7 @@ def break_ : VerbEntry where
   formPast := "broke"
   formPastPart := "broken"
   formPresPart := "breaking"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := false
   vendlerClass := some .accomplishment
   causative := some .make
@@ -845,7 +839,7 @@ def tear_ : VerbEntry where
   formPast := "tore"
   formPastPart := "torn"
   formPresPart := "tearing"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := false
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -873,7 +867,7 @@ def tear_ : VerbEntry where
     does not reduce to scale boundedness alone. -/
 def crack : VerbEntry := .mkRegular {
   form := "crack"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
@@ -887,7 +881,7 @@ def crack : VerbEntry := .mkRegular {
     dented*, *badly dented*. -/
 def dent : VerbEntry := .mkRegular {
   form := "dent"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
@@ -903,7 +897,7 @@ def dent : VerbEntry := .mkRegular {
     the CoS reading formalized here. -/
 def scratch : VerbEntry := .mkRegular {
   form := "scratch"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
@@ -917,7 +911,7 @@ def scratch : VerbEntry := .mkRegular {
     #*shatter for two minutes*, ??*more shattered* ([tham-2025] (12)). -/
 def shatter : VerbEntry := .mkRegular {
   form := "shatter"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := true
   vendlerClass := some .achievement
   causative := some .make
@@ -926,7 +920,7 @@ def shatter : VerbEntry := .mkRegular {
 /-- "burn" — thick lexical causative (manner = by fire/heat). -/
 def burn : VerbEntry := .mkRegular {
   form := "burn"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   causative := some .make
@@ -942,7 +936,7 @@ def burn : VerbEntry := .mkRegular {
 /-- "destroy" — thin lexical causative (result-only, no manner). -/
 def destroy : VerbEntry := .mkRegular {
   form := "destroy"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .destroy
@@ -957,7 +951,7 @@ def destroy : VerbEntry := .mkRegular {
     Implicit obj is indefinite ("the ice cream melted" / "we're melting"). -/
 def melt : VerbEntry := .mkRegular {
   form := "melt"
-  complementType := .np
+  frames := [Frame.np]
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -982,35 +976,35 @@ def melt : VerbEntry := .mkRegular {
 /-- "activate" — thin causative, CoS without manner. -/
 def activate : VerbEntry := .mkRegular {
   form := "activate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS }
 
 /-- "affect" — thin causative, general effect. -/
 def affect : VerbEntry := .mkRegular {
   form := "affect"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .destroy }
 
 /-- "change" — thin causative, transformation (§26.6). -/
 def change : VerbEntry := .mkRegular {
   form := "change"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .turn }
 
 /-- "damage" — thin causative, partial destruction. -/
 def damage : VerbEntry := .mkRegular {
   form := "damage"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .destroy }
 
 /-- "eliminate" — thin causative, removal/destruction. -/
 def eliminate : VerbEntry := .mkRegular {
   form := "eliminate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .destroy }
 
@@ -1021,49 +1015,49 @@ def hurt : VerbEntry where
   formPast := "hurt"
   formPastPart := "hurt"
   formPresPart := "hurting"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .destroy
 
 /-- "restore" — thin causative, reverse transformation (§26.6). -/
 def restore : VerbEntry := .mkRegular {
   form := "restore"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .turn }
 
 /-- "trigger" — thin causative, engender class (§27). -/
 def trigger : VerbEntry := .mkRegular {
   form := "trigger"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .engender }
 
 /-- "bury" — thick causative (state), concealment (§16). -/
 def bury : VerbEntry := .mkRegular {
   form := "bury"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .conceal }
 
 /-- "drop" — thick causative, caused falling (§45.4). -/
 def drop : VerbEntry := .mkRegular {
   form := "drop"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS }
 
 /-- "lift" — thick causative, caused upward motion (§11.4 carry). -/
 def lift : VerbEntry := .mkRegular {
   form := "lift"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .carry }
 
 /-- "lock" — thick causative, caused secured state (§45.4). -/
 def lock : VerbEntry := .mkRegular {
   form := "lock"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS }
 
@@ -1074,7 +1068,7 @@ def shut : VerbEntry where
   formPast := "shut"
   formPastPart := "shut"
   formPresPart := "shutting"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS
 
@@ -1085,21 +1079,21 @@ def spread : VerbEntry where
   formPast := "spread"
   formPastPart := "spread"
   formPresPart := "spreading"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .sprayLoad
 
 /-- "stretch" — thick causative, bend class (§45.2). -/
 def stretch : VerbEntry := .mkRegular {
   form := "stretch"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .bend }
 
 /-- "switch" — thick causative, CoS (§45.4). -/
 def switch : VerbEntry := .mkRegular {
   form := "switch"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS }
 
@@ -1110,7 +1104,7 @@ def switch : VerbEntry := .mkRegular {
 /-- "devour" — transitive, no presupposition -/
 def devour : VerbEntry := .mkRegular {
   form := "devour"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .devour
@@ -1127,7 +1121,7 @@ def read : VerbEntry where
   formPast := "read"
   formPastPart := "read"
   formPresPart := "reading"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .inc
 
@@ -1139,7 +1133,7 @@ def build : VerbEntry where
   formPast := "built"
   formPastPart := "built"
   formPresPart := "building"
-  complementType := .np
+  frames := [Frame.np]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, true⟩
   implicitObj := some .indef
@@ -1156,8 +1150,7 @@ def write : VerbEntry where
   formPast := "wrote"
   formPastPart := "written"
   formPresPart := "writing"
-  complementType := .np
-  altComplementType := some .np_pp
+  frames := [Frame.np, Frame.np_pp]
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -1170,7 +1163,7 @@ def sweep : VerbEntry where
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   subjectEntailments := some ⟨false, false, false, true, true, false, false, false, false, false⟩
   passivizable := true
@@ -1189,7 +1182,7 @@ def sweep_instr : VerbEntry where
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   subjectEntailments := some accomplishmentSubjectProfile
   passivizable := true
@@ -1214,7 +1207,7 @@ def say : VerbEntry where
   formPastPart := "said"
   formPresPart := "saying"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   projectionBehavior := some .plug
   levinClass := some .say
@@ -1229,8 +1222,7 @@ def tell : VerbEntry where
   formPastPart := "told"
   formPresPart := "telling"
   speechActVerb := true
-  complementType := .finiteClause
-  altComplementType := some .np_np
+  frames := [Frame.finiteClause, Frame.np_np]
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .achievement
@@ -1241,7 +1233,7 @@ def tell : VerbEntry where
 def claim : VerbEntry := .mkRegular {
   form := "claim"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   projectionBehavior := some .plug
   levinClass := some .say }
@@ -1257,7 +1249,7 @@ def claim : VerbEntry := .mkRegular {
 /-- "reveal" — factive communication verb ([degen-tonhauser-2022]: canonically factive) -/
 def reveal : VerbEntry := .mkRegular {
   form := "reveal"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   presupType := some .softTrigger
@@ -1267,7 +1259,7 @@ def reveal : VerbEntry := .mkRegular {
 /-- "acknowledge" — optionally factive communication verb -/
 def acknowledge : VerbEntry := .mkRegular {
   form := "acknowledge"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1279,7 +1271,7 @@ def admit : VerbEntry where
   formPast := "admitted"
   formPastPart := "admitted"
   formPresPart := "admitting"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say
@@ -1287,7 +1279,7 @@ def admit : VerbEntry where
 /-- "announce" — communication verb -/
 def announce : VerbEntry := .mkRegular {
   form := "announce"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1295,7 +1287,7 @@ def announce : VerbEntry := .mkRegular {
 /-- "confess" — optionally factive communication verb -/
 def confess : VerbEntry := .mkRegular {
   form := "confess"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1303,7 +1295,7 @@ def confess : VerbEntry := .mkRegular {
 /-- "inform" — optionally factive communication verb with recipient -/
 def inform : VerbEntry := .mkRegular {
   form := "inform"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .tell }
@@ -1311,7 +1303,7 @@ def inform : VerbEntry := .mkRegular {
 /-- "suggest" — non-factive communication verb -/
 def suggest : VerbEntry := .mkRegular {
   form := "suggest"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1319,32 +1311,32 @@ def suggest : VerbEntry := .mkRegular {
 /-- "pretend" — anti-veridical attitude verb -/
 def pretend : VerbEntry := .mkRegular {
   form := "pretend"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   opaqueContext := true }
 
 /-- "confirm" — evidential verb -/
 def confirm : VerbEntry := .mkRegular {
   form := "confirm"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement }
 
 /-- "demonstrate" — evidential verb -/
 def demonstrate : VerbEntry := .mkRegular {
   form := "demonstrate"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement }
 
 /-- "establish" — evidential verb -/
 def establish : VerbEntry := .mkRegular {
   form := "establish"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement }
 
 /-- "prove" — evidential verb -/
 def prove : VerbEntry := .mkRegular {
   form := "prove"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .achievement }
 
 -- ════════════════════════════════════════════════════
@@ -1361,7 +1353,7 @@ def prove : VerbEntry := .mkRegular {
 def whisper : VerbEntry := .mkRegular {
   form := "whisper"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1370,7 +1362,7 @@ def whisper : VerbEntry := .mkRegular {
 def murmur : VerbEntry := .mkRegular {
   form := "murmur"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1379,7 +1371,7 @@ def murmur : VerbEntry := .mkRegular {
 def shout : VerbEntry := .mkRegular {
   form := "shout"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1388,7 +1380,7 @@ def shout : VerbEntry := .mkRegular {
 def cry : VerbEntry := .mkRegular {
   form := "cry"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1397,7 +1389,7 @@ def cry : VerbEntry := .mkRegular {
 def scream : VerbEntry := .mkRegular {
   form := "scream"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1406,7 +1398,7 @@ def scream : VerbEntry := .mkRegular {
 def mumble : VerbEntry := .mkRegular {
   form := "mumble"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1415,7 +1407,7 @@ def mumble : VerbEntry := .mkRegular {
 def mutter : VerbEntry := .mkRegular {
   form := "mutter"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1424,7 +1416,7 @@ def mutter : VerbEntry := .mkRegular {
 def shriek : VerbEntry := .mkRegular {
   form := "shriek"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1433,7 +1425,7 @@ def shriek : VerbEntry := .mkRegular {
 def yell : VerbEntry := .mkRegular {
   form := "yell"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1442,7 +1434,7 @@ def yell : VerbEntry := .mkRegular {
 def groan : VerbEntry := .mkRegular {
   form := "groan"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1451,7 +1443,7 @@ def groan : VerbEntry := .mkRegular {
 def grumble : VerbEntry := .mkRegular {
   form := "grumble"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1460,7 +1452,7 @@ def grumble : VerbEntry := .mkRegular {
 def hiss : VerbEntry := .mkRegular {
   form := "hiss"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1469,7 +1461,7 @@ def hiss : VerbEntry := .mkRegular {
 def sigh : VerbEntry := .mkRegular {
   form := "sigh"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1478,7 +1470,7 @@ def sigh : VerbEntry := .mkRegular {
 def whimper : VerbEntry := .mkRegular {
   form := "whimper"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1487,7 +1479,7 @@ def whimper : VerbEntry := .mkRegular {
 def snap : VerbEntry := .mkRegular {
   form := "snap"
   speechActVerb := true
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1500,7 +1492,7 @@ def speak : VerbEntry where
   formPastPart := "spoken"
   formPresPart := "speaking"
   speechActVerb := true
-  complementType := .none
+  frames := []
   vendlerClass := some .activity
   passivizable := false
   levinClass := some .mannerOfSpeaking
@@ -1509,7 +1501,7 @@ def speak : VerbEntry where
 def talk : VerbEntry := .mkRegular {
   form := "talk"
   speechActVerb := true
-  complementType := .none
+  frames := []
   vendlerClass := some .activity
   passivizable := false
   levinClass := some .mannerOfSpeaking }
@@ -1521,7 +1513,7 @@ def talk : VerbEntry := .mkRegular {
 /-- "wonder" — embeds questions only -/
 def wonder : VerbEntry := .mkRegular {
   form := "wonder"
-  complementType := .question
+  frames := [Frame.question]
   vendlerClass := some .state
   takesQuestionBase := true
   opaqueContext := true }
@@ -1530,14 +1522,14 @@ def wonder : VerbEntry := .mkRegular {
 def ask : VerbEntry := .mkRegular {
   form := "ask"
   speechActVerb := true
-  complementType := .question
+  frames := [Frame.question]
   vendlerClass := some .achievement
   takesQuestionBase := true }
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : VerbEntry := .mkRegular {
   form := "investigate"
-  complementType := .question
+  frames := [Frame.question]
   vendlerClass := some .activity
   takesQuestionBase := true
   levinClass := some .search }
@@ -1549,14 +1541,14 @@ def depend_on : VerbEntry where
   formPast := "depended on"
   formPastPart := "depended on"
   formPresPart := "depending on"
-  complementType := .question
+  frames := [Frame.question]
   vendlerClass := some .state
   takesQuestionBase := true
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : VerbEntry := .mkRegular {
   form := "remember"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
@@ -1571,7 +1563,7 @@ def forget_rog : VerbEntry where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
@@ -1600,9 +1592,9 @@ def forget_rog : VerbEntry where
     volitional action, not because the matrix verb entails agentivity. -/
 def manage_occasion : VerbEntry := .mkRegular {
   form := "manage"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .positive
   presupType := some .prerequisiteSoft
@@ -1614,9 +1606,9 @@ def manage_occasion : VerbEntry := .mkRegular {
     realization ([nadathur-2023-implicatives] §5.2, ex. 3–4, 26). -/
 def dare : VerbEntry := .mkRegular {
   form := "dare"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   presupType := some .prerequisiteSoft
   implicative := some .positive }
@@ -1627,9 +1619,9 @@ def dare : VerbEntry := .mkRegular {
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : VerbEntry := .mkRegular {
   form := "bother"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   presupType := some .prerequisiteSoft
   implicative := some .positive }
@@ -1642,9 +1634,9 @@ def bother : VerbEntry := .mkRegular {
     ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
 def hesitate : VerbEntry := .mkRegular {
   form := "hesitate"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
-  controlType := .subjectControl
   passivizable := false
   presupType := some .prerequisiteSoft
   implicative := some .negative }
@@ -1653,9 +1645,9 @@ def hesitate : VerbEntry := .mkRegular {
     "John ventured to speak" entails "John spoke." -/
 def venture : VerbEntry := .mkRegular {
   form := "venture"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .positive }
 
@@ -1663,9 +1655,9 @@ def venture : VerbEntry := .mkRegular {
     "John condescended to help" entails "John helped." -/
 def condescend : VerbEntry := .mkRegular {
   form := "condescend"
-  complementType := .infinitival
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  controlType := .subjectControl
   passivizable := false
   implicative := some .positive }
 
@@ -1674,8 +1666,8 @@ def condescend : VerbEntry := .mkRegular {
     Raising: "It happened to rain" — no theta role for matrix subject. -/
 def happen : VerbEntry := .mkRegular {
   form := "happen"
-  complementType := .infinitival
-  controlType := .raising
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .raising }]
   passivizable := false
   implicative := some .positive }
 
@@ -1689,35 +1681,35 @@ def happen : VerbEntry := .mkRegular {
 /-- "enjoy" — AgExp verb (experiencer-subject) -/
 def enjoy : VerbEntry := .mkRegular {
   form := "enjoy"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "like" — AgExp verb (experiencer-subject) -/
 def like : VerbEntry := .mkRegular {
   form := "like"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "love" — AgExp verb (experiencer-subject) -/
 def love : VerbEntry := .mkRegular {
   form := "love"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "hate" — AgExp verb (experiencer-subject) -/
 def hate : VerbEntry := .mkRegular {
   form := "hate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "admire" — AgExp verb (experiencer-subject) -/
 def admire : VerbEntry := .mkRegular {
   form := "admire"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1726,8 +1718,7 @@ def admire : VerbEntry := .mkRegular {
     definite (familiar). Implicit second obj is indefinite. -/
 def envy : VerbEntry := .mkRegular {
   form := "envy"
-  complementType := .np
-  altComplementType := some .np_np
+  frames := [Frame.np, Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .state
@@ -1736,14 +1727,14 @@ def envy : VerbEntry := .mkRegular {
 /-- "respect" — AgExp verb (experiencer-subject) -/
 def respect : VerbEntry := .mkRegular {
   form := "respect"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "value" — AgExp verb (experiencer-subject) -/
 def value : VerbEntry := .mkRegular {
   form := "value"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1752,7 +1743,7 @@ def value : VerbEntry := .mkRegular {
     Note: `fear` (attitude verb, clausal complement) is defined separately. -/
 def fear_np : VerbEntry := .mkRegular {
   form := "fear"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1760,7 +1751,7 @@ def fear_np : VerbEntry := .mkRegular {
     "John dreads exams." Note: `dread` (attitude, clausal) defined separately. -/
 def dread_np : VerbEntry := .mkRegular {
   form := "dread"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1774,7 +1765,7 @@ def dread_np : VerbEntry := .mkRegular {
 /-- "frighten" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def frighten : VerbEntry := .mkRegular {
   form := "frighten"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1782,7 +1773,7 @@ def frighten : VerbEntry := .mkRegular {
 /-- "amuse" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def amuse : VerbEntry := .mkRegular {
   form := "amuse"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1790,7 +1781,7 @@ def amuse : VerbEntry := .mkRegular {
 /-- "fascinate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def fascinate : VerbEntry := .mkRegular {
   form := "fascinate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1798,7 +1789,7 @@ def fascinate : VerbEntry := .mkRegular {
 /-- "irritate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def irritate : VerbEntry := .mkRegular {
   form := "irritate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1806,7 +1797,7 @@ def irritate : VerbEntry := .mkRegular {
 /-- "annoy" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def annoy : VerbEntry := .mkRegular {
   form := "annoy"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1814,7 +1805,7 @@ def annoy : VerbEntry := .mkRegular {
 /-- "bore" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def bore : VerbEntry := .mkRegular {
   form := "bore"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1822,7 +1813,7 @@ def bore : VerbEntry := .mkRegular {
 /-- "charm" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def charm : VerbEntry := .mkRegular {
   form := "charm"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1830,7 +1821,7 @@ def charm : VerbEntry := .mkRegular {
 /-- "impress" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def impress : VerbEntry := .mkRegular {
   form := "impress"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1838,7 +1829,7 @@ def impress : VerbEntry := .mkRegular {
 /-- "concern" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
 def concern : VerbEntry := .mkRegular {
   form := "concern"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1847,7 +1838,7 @@ def concern : VerbEntry := .mkRegular {
 /-- "interest" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
 def interest : VerbEntry := .mkRegular {
   form := "interest"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1856,7 +1847,7 @@ def interest : VerbEntry := .mkRegular {
 /-- "surprise" — eventive Class II (Levin 31.1). "The news surprised John." -/
 def surprise : VerbEntry := .mkRegular {
   form := "surprise"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1864,7 +1855,7 @@ def surprise : VerbEntry := .mkRegular {
 /-- "scare" — eventive Class II (Levin 31.1). "The noise scared John." -/
 def scare : VerbEntry := .mkRegular {
   form := "scare"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1872,7 +1863,7 @@ def scare : VerbEntry := .mkRegular {
 /-- "delight" — eventive Class II (Levin 31.1). "The gift delighted Mary." -/
 def delight : VerbEntry := .mkRegular {
   form := "delight"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1880,7 +1871,7 @@ def delight : VerbEntry := .mkRegular {
 /-- "embarrass" — eventive Class II (Levin 31.1). "The remark embarrassed John." -/
 def embarrass : VerbEntry := .mkRegular {
   form := "embarrass"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1888,7 +1879,7 @@ def embarrass : VerbEntry := .mkRegular {
 /-- "upset" — eventive Class II (Levin 31.1). "The news upset Mary." -/
 def upset_psych : VerbEntry := .mkRegular {
   form := "upset"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1896,7 +1887,7 @@ def upset_psych : VerbEntry := .mkRegular {
 /-- "disgust" — eventive Class II (Levin 31.1). "The smell disgusted John." -/
 def disgust : VerbEntry := .mkRegular {
   form := "disgust"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1904,7 +1895,7 @@ def disgust : VerbEntry := .mkRegular {
 /-- "shock" — eventive Class II (Levin 31.1). "The revelation shocked everyone." -/
 def shock : VerbEntry := .mkRegular {
   form := "shock"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1912,7 +1903,7 @@ def shock : VerbEntry := .mkRegular {
 /-- "confuse" — eventive Class II (Levin 31.1). "The instructions confused John." -/
 def confuse : VerbEntry := .mkRegular {
   form := "confuse"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1920,7 +1911,7 @@ def confuse : VerbEntry := .mkRegular {
 /-- "disappoint" — eventive Class II (Levin 31.1). "The result disappointed Mary." -/
 def disappoint : VerbEntry := .mkRegular {
   form := "disappoint"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1929,7 +1920,7 @@ def disappoint : VerbEntry := .mkRegular {
     Note: `worry` (attitude, clausal) defined separately. -/
 def worry_eventive : VerbEntry := .mkRegular {
   form := "worry"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1938,7 +1929,7 @@ def worry_eventive : VerbEntry := .mkRegular {
     [kim-2024] UPH: same theta grid as worry_eventive, different causal source. -/
 def worry_stative : VerbEntry := .mkRegular {
   form := "worry"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1948,7 +1939,7 @@ def worry_stative : VerbEntry := .mkRegular {
     "The idea pleases John." Related to B&R Class III It. *piacere*. -/
 def please_psych : VerbEntry := .mkRegular {
   form := "please"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1958,7 +1949,7 @@ def please_psych : VerbEntry := .mkRegular {
     "The thought troubles John." -/
 def trouble : VerbEntry := .mkRegular {
   form := "trouble"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1968,7 +1959,7 @@ def trouble : VerbEntry := .mkRegular {
     "The problem puzzles John." -/
 def puzzle : VerbEntry := .mkRegular {
   form := "puzzle"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1984,7 +1975,7 @@ def puzzle : VerbEntry := .mkRegular {
 /-- "chase" — AgPat verb (Levin 51.6) -/
 def chase : VerbEntry := .mkRegular {
   form := "chase"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .chase }
@@ -1996,14 +1987,14 @@ def hit : VerbEntry where
   formPast := "hit"
   formPastPart := "hit"
   formPresPart := "hitting"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit
 
 /-- "push" — AgPat verb (Levin 12) -/
 def push : VerbEntry := .mkRegular {
   form := "push"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .pushPull }
@@ -2011,7 +2002,7 @@ def push : VerbEntry := .mkRegular {
 /-- "pull" — AgPat verb (Levin 12) -/
 def pull : VerbEntry := .mkRegular {
   form := "pull"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .pushPull }
@@ -2019,7 +2010,7 @@ def pull : VerbEntry := .mkRegular {
 /-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def shove : VerbEntry := .mkRegular {
   form := "shove"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
@@ -2030,28 +2021,28 @@ def tug : VerbEntry where
   formPast := "tugged"
   formPastPart := "tugged"
   formPresPart := "tugging"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull
 
 /-- "yank" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def yank : VerbEntry := .mkRegular {
   form := "yank"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
 /-- "jerk" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def jerk : VerbEntry := .mkRegular {
   form := "jerk"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
 /-- "wrench" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def wrench : VerbEntry := .mkRegular {
   form := "wrench"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
@@ -2063,7 +2054,7 @@ def fling : VerbEntry where
   formPast := "flung"
   formPastPart := "flung"
   formPresPart := "flinging"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull
 
@@ -2075,7 +2066,7 @@ def slam : VerbEntry where
   formPast := "slammed"
   formPastPart := "slammed"
   formPresPart := "slamming"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit
 
@@ -2083,7 +2074,7 @@ def slam : VerbEntry where
     [levin-2026] (32a)) -/
 def punch : VerbEntry := .mkRegular {
   form := "punch"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2091,7 +2082,7 @@ def punch : VerbEntry := .mkRegular {
     [levin-2026] (32a)) -/
 def smack : VerbEntry := .mkRegular {
   form := "smack"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2099,7 +2090,7 @@ def smack : VerbEntry := .mkRegular {
     [levin-2026] (32a)) -/
 def thump : VerbEntry := .mkRegular {
   form := "thump"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2107,7 +2098,7 @@ def thump : VerbEntry := .mkRegular {
     [levin-2026] (32a)) -/
 def bang : VerbEntry := .mkRegular {
   form := "bang"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2115,7 +2106,7 @@ def bang : VerbEntry := .mkRegular {
     [levin-2026] (32a)) -/
 def thrash : VerbEntry := .mkRegular {
   form := "thrash"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2124,7 +2115,7 @@ def thrash : VerbEntry := .mkRegular {
     surface-contact sense, not removing sense. -/
 def scrape : VerbEntry := .mkRegular {
   form := "scrape"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .wipe }
 
@@ -2135,7 +2126,7 @@ def carry : VerbEntry where
   formPast := "carried"
   formPastPart := "carried"
   formPresPart := "carrying"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .carry
@@ -2147,7 +2138,7 @@ def drag : VerbEntry where
   formPast := "dragged"
   formPastPart := "dragged"
   formPresPart := "dragging"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .carry
@@ -2155,7 +2146,7 @@ def drag : VerbEntry where
 /-- "call" — AgPat verb (communication + agent-patient frame) -/
 def call : VerbEntry := .mkRegular {
   form := "call"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity }
 
 -- ════════════════════════════════════════════════════
@@ -2165,14 +2156,14 @@ def call : VerbEntry := .mkRegular {
 /-- "place" — Levin 9.1 Put verbs. Instantaneous placement. -/
 def place : VerbEntry := .mkRegular {
   form := "place"
-  complementType := .np_pp
+  frames := [Frame.np_pp]
   vendlerClass := some .achievement
   levinClass := some .put }
 
 /-- "pour" — Levin 9.5 Pour verbs. Manner of caused motion. -/
 def pour : VerbEntry := .mkRegular {
   form := "pour"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .pour }
@@ -2180,7 +2171,7 @@ def pour : VerbEntry := .mkRegular {
 /-- "spray" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def spray : VerbEntry := .mkRegular {
   form := "spray"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .sprayLoad }
@@ -2188,7 +2179,7 @@ def spray : VerbEntry := .mkRegular {
 /-- "load" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def load : VerbEntry := .mkRegular {
   form := "load"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .sprayLoad }
@@ -2200,7 +2191,7 @@ def load : VerbEntry := .mkRegular {
 /-- "remove" — Levin 10.1 Remove verbs. -/
 def remove : VerbEntry := .mkRegular {
   form := "remove"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .remove }
 
@@ -2208,7 +2199,7 @@ def remove : VerbEntry := .mkRegular {
     Also a degree achievement: closed scale (maximally clean). -/
 def clean : VerbEntry := .mkRegular {
   form := "clean"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .cleanliness,
@@ -2223,7 +2214,7 @@ def steal : VerbEntry where
   formPast := "stole"
   formPastPart := "stolen"
   formPresPart := "stealing"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .steal
 
@@ -2239,8 +2230,7 @@ def send : VerbEntry where
   formPast := "sent"
   formPastPart := "sent"
   formPresPart := "sending"
-  complementType := .np
-  altComplementType := some .np_np
+  frames := [Frame.np, Frame.np_np]
   implicitGoal := some .def
   vendlerClass := some .accomplishment
   levinClass := some .send
@@ -2252,7 +2242,7 @@ def drive : VerbEntry where
   formPast := "drove"
   formPastPart := "driven"
   formPresPart := "driving"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .drive
@@ -2264,21 +2254,21 @@ def drive : VerbEntry where
 /-- "donate" — Levin 13.2 Contribute verbs. -/
 def donate : VerbEntry := .mkRegular {
   form := "donate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .contribute }
 
 /-- "obtain" — Levin 13.5 Get verbs. -/
 def obtain : VerbEntry := .mkRegular {
   form := "obtain"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .getObtain }
 
 /-- "trade" — Levin 13.6 Exchange verbs. -/
 def trade : VerbEntry := .mkRegular {
   form := "trade"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .exchange }
 
@@ -2289,7 +2279,7 @@ def trade : VerbEntry := .mkRegular {
 /-- "learn" — Levin 14 Learn verbs. -/
 def learn : VerbEntry := .mkRegular {
   form := "learn"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .learn }
 
@@ -2300,7 +2290,7 @@ def hold : VerbEntry where
   formPast := "held"
   formPastPart := "held"
   formPresPart := "holding"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .hold
 
@@ -2311,7 +2301,7 @@ def hide : VerbEntry where
   formPast := "hid"
   formPastPart := "hidden"
   formPresPart := "hiding"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .conceal
 
@@ -2327,8 +2317,7 @@ def throw : VerbEntry where
   formPast := "threw"
   formPastPart := "thrown"
   formPresPart := "throwing"
-  complementType := .np
-  altComplementType := some .np_np
+  frames := [Frame.np, Frame.np_np]
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .achievement
@@ -2341,14 +2330,14 @@ def throw : VerbEntry where
 /-- "poke" — Levin 19 Poke verbs. Punctual contact. -/
 def poke : VerbEntry := .mkRegular {
   form := "poke"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .poke }
 
 /-- "touch" — Levin 20 Touch verbs. Surface contact. -/
 def touch : VerbEntry := .mkRegular {
   form := "touch"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .touch }
 
@@ -2365,7 +2354,7 @@ def cut : VerbEntry where
   formPast := "cut"
   formPastPart := "cut"
   formPresPart := "cutting"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .cut
@@ -2381,7 +2370,7 @@ def chop : VerbEntry where
   formPast := "chopped"
   formPastPart := "chopped"
   formPresPart := "chopping"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .carve
@@ -2393,7 +2382,7 @@ def chop : VerbEntry where
 /-- "mix" — Levin 22.1 Mix verbs. Incremental by proportion combined. -/
 def mix : VerbEntry := .mkRegular {
   form := "mix"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .mix }
@@ -2401,7 +2390,7 @@ def mix : VerbEntry := .mkRegular {
 /-- "separate" — Levin 23.1 Separate verbs. -/
 def separate : VerbEntry := .mkRegular {
   form := "separate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .separate }
 
@@ -2412,7 +2401,7 @@ def separate : VerbEntry := .mkRegular {
 /-- "paint" — Levin 24 Color verbs. Incremental by surface area. -/
 def paint : VerbEntry := .mkRegular {
   form := "paint"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .color }
@@ -2424,7 +2413,7 @@ def draw : VerbEntry where
   formPast := "drew"
   formPastPart := "drawn"
   formPresPart := "drawing"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .imageCreation
@@ -2436,7 +2425,7 @@ def draw : VerbEntry where
 /-- "create" — Levin 26.4 Create verbs. -/
 def create : VerbEntry := .mkRegular {
   form := "create"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .create }
 
@@ -2447,7 +2436,7 @@ def grow : VerbEntry where
   formPast := "grew"
   formPastPart := "grown"
   formPresPart := "growing"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .grow
@@ -2455,7 +2444,7 @@ def grow : VerbEntry where
 /-- "perform" — Levin 26.7 Performance verbs. -/
 def perform : VerbEntry := .mkRegular {
   form := "perform"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .performance }
 
@@ -2466,7 +2455,7 @@ def perform : VerbEntry := .mkRegular {
 /-- "appoint" — Levin 29.1 Appoint verbs. -/
 def appoint : VerbEntry := .mkRegular {
   form := "appoint"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .appoint }
 
@@ -2482,8 +2471,7 @@ def hear : VerbEntry where
   formPast := "heard"
   formPastPart := "heard"
   formPresPart := "hearing"
-  complementType := .np
-  altComplementType := some .finiteClause
+  frames := [Frame.np, Frame.finiteClause]
   vendlerClass := some .state
   levinClass := some .see
 
@@ -2494,7 +2482,7 @@ def hear : VerbEntry where
 /-- "blame" — Levin 33 Judgment verbs. -/
 def blame : VerbEntry := .mkRegular {
   form := "blame"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .judgment }
@@ -2502,7 +2490,7 @@ def blame : VerbEntry := .mkRegular {
 /-- "evaluate" — Levin 34 Assessment verbs. -/
 def evaluate : VerbEntry := .mkRegular {
   form := "evaluate"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .assessment }
@@ -2518,7 +2506,7 @@ def marry : VerbEntry where
   formPast := "married"
   formPastPart := "married"
   formPresPart := "marrying"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .achievement
   levinClass := some .socialInteraction
 
@@ -2529,7 +2517,7 @@ def marry : VerbEntry where
 /-- "bark" — Levin 38 Animal Sound verbs. -/
 def bark : VerbEntry := .mkRegular {
   form := "bark"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .animalSound }
@@ -2541,7 +2529,7 @@ def bark : VerbEntry := .mkRegular {
 /-- "breathe" — Levin 40.1 Body Process verbs. -/
 def breathe : VerbEntry := .mkRegular {
   form := "breathe"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .bodyProcess }
@@ -2550,7 +2538,7 @@ def breathe : VerbEntry := .mkRegular {
     Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
 def cough : VerbEntry := .mkRegular {
   form := "cough"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2559,7 +2547,7 @@ def cough : VerbEntry := .mkRegular {
     Semelfactive: single involuntary body event ([smith-1997] §2.4.3). -/
 def hiccup : VerbEntry := .mkRegular {
   form := "hiccup"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2568,7 +2556,7 @@ def hiccup : VerbEntry := .mkRegular {
     Semelfactive: single instantaneous eye movement ([smith-1997] §2.4.3). -/
 def blink : VerbEntry := .mkRegular {
   form := "blink"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2578,7 +2566,7 @@ def blink : VerbEntry := .mkRegular {
     ([smith-1997] §2.4.3: "Guy knocked at the door"). -/
 def knock : VerbEntry := .mkRegular {
   form := "knock"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .hit }
@@ -2587,7 +2575,7 @@ def knock : VerbEntry := .mkRegular {
     Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
 def tap : VerbEntry := .mkRegular {
   form := "tap"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .hit }
@@ -2596,7 +2584,7 @@ def tap : VerbEntry := .mkRegular {
     Semelfactive: single instantaneous light event ([smith-1997] §2.4.3). -/
 def flash : VerbEntry := .mkRegular {
   form := "flash"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .lightEmission }
@@ -2604,7 +2592,7 @@ def flash : VerbEntry := .mkRegular {
 /-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
 def flinch : VerbEntry := .mkRegular {
   form := "flinch"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .achievement
   levinClass := some .flinch }
@@ -2612,7 +2600,7 @@ def flinch : VerbEntry := .mkRegular {
 /-- "dress" — Levin 41.1 Dress verbs. -/
 def dress : VerbEntry := .mkRegular {
   form := "dress"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   levinClass := some .dress }
 
@@ -2623,7 +2611,7 @@ def dress : VerbEntry := .mkRegular {
 /-- "drown" — Levin 42.2 Poison verbs. Manner-of-killing. -/
 def drown : VerbEntry := .mkRegular {
   form := "drown"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .poison }
@@ -2635,7 +2623,7 @@ def drown : VerbEntry := .mkRegular {
 /-- "glow" — Levin 43.1 Light Emission verbs. -/
 def glow : VerbEntry := .mkRegular {
   form := "glow"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .state
   unaccusative := true
@@ -2644,7 +2632,7 @@ def glow : VerbEntry := .mkRegular {
 /-- "buzz" — Levin 43.2 Sound Emission verbs. -/
 def buzz : VerbEntry := .mkRegular {
   form := "buzz"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2657,7 +2645,7 @@ def bleed : VerbEntry where
   formPast := "bled"
   formPastPart := "bled"
   formPresPart := "bleeding"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2675,7 +2663,7 @@ def bend : VerbEntry where
   formPast := "bent"
   formPastPart := "bent"
   formPresPart := "bending"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .curvature }
@@ -2686,7 +2674,7 @@ def bend : VerbEntry where
     Degree achievement: closed scale (reaches boiling point). -/
 def boil : VerbEntry := .mkRegular {
   form := "boil"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .boiling,
@@ -2698,7 +2686,7 @@ def boil : VerbEntry := .mkRegular {
     Degree achievement: open scale (no maximum rustedness). -/
 def rust : VerbEntry := .mkRegular {
   form := "rust"
-  complementType := .none
+  frames := []
   passivizable := false
   unaccusative := true
   vendlerClass := some .activity
@@ -2710,7 +2698,7 @@ def rust : VerbEntry := .mkRegular {
     Degree achievement: open scale (no maximum quantity). -/
 def increase : VerbEntry := .mkRegular {
   form := "increase"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .quantity }
@@ -2724,7 +2712,7 @@ def increase : VerbEntry := .mkRegular {
     Accomplishment: "straightened the wire in 10 seconds." -/
 def straighten : VerbEntry := .mkRegular {
   form := "straighten"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .straightness,
@@ -2735,7 +2723,7 @@ def straighten : VerbEntry := .mkRegular {
     Accomplishment: "flattened the dough in 2 minutes." -/
 def flatten : VerbEntry := .mkRegular {
   form := "flatten"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .flatness,
@@ -2746,7 +2734,7 @@ def flatten : VerbEntry := .mkRegular {
     Accomplishment: "opened the door in 3 seconds." -/
 def open_ : VerbEntry := .mkRegular {
   form := "open"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .openness,
@@ -2757,7 +2745,7 @@ def open_ : VerbEntry := .mkRegular {
     Activity: "lengthened the rope for hours." -/
 def lengthen : VerbEntry := .mkRegular {
   form := "lengthen"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .length,
@@ -2768,7 +2756,7 @@ def lengthen : VerbEntry := .mkRegular {
     Activity: "widened the road for months." -/
 def widen : VerbEntry := .mkRegular {
   form := "widen"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .width,
@@ -2779,7 +2767,7 @@ def widen : VerbEntry := .mkRegular {
     Activity: "cooled for an hour." -/
 def cool : VerbEntry := .mkRegular {
   form := "cool"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .temperature,
@@ -2790,7 +2778,7 @@ def cool : VerbEntry := .mkRegular {
     Activity: "warmed for an hour." -/
 def warm : VerbEntry := .mkRegular {
   form := "warm"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .temperature,
@@ -2804,7 +2792,7 @@ def warm : VerbEntry := .mkRegular {
 /-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
 def exist : VerbEntry := .mkRegular {
   form := "exist"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .state
   unaccusative := true
@@ -2813,7 +2801,7 @@ def exist : VerbEntry := .mkRegular {
 /-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
 def appear : VerbEntry := .mkRegular {
   form := "appear"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .achievement
   unaccusative := true
@@ -2822,7 +2810,7 @@ def appear : VerbEntry := .mkRegular {
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : VerbEntry := .mkRegular {
   form := "fidget"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .bodyInternalMotion }
@@ -2834,7 +2822,7 @@ def sit : VerbEntry where
   formPast := "sat"
   formPastPart := "sat"
   formPresPart := "sitting"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .state
   levinClass := some .assumePosition
@@ -2846,7 +2834,7 @@ def stand : VerbEntry where
   formPast := "stood"
   formPastPart := "stood"
   formPresPart := "standing"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .state
   levinClass := some .assumePosition
@@ -2858,7 +2846,7 @@ def stand : VerbEntry where
 /-- "walk" — Levin 51.3 Manner of Motion verbs. -/
 def walk : VerbEntry := .mkRegular {
   form := "walk"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2870,7 +2858,7 @@ def swim : VerbEntry where
   formPast := "swam"
   formPastPart := "swum"
   formPresPart := "swimming"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
@@ -2882,7 +2870,7 @@ def fly : VerbEntry where
   formPast := "flew"
   formPastPart := "flown"
   formPresPart := "flying"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .vehicleMotion
@@ -2894,14 +2882,14 @@ def fly : VerbEntry where
 /-- "avoid" — Levin 52 Avoid verbs. Stative. -/
 def avoid : VerbEntry := .mkRegular {
   form := "avoid"
-  complementType := .np
+  frames := [Frame.np]
   vendlerClass := some .state
   levinClass := some .avoid }
 
 /-- "linger" — Levin 53.1 Linger verbs. -/
 def linger : VerbEntry := .mkRegular {
   form := "linger"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .linger }
@@ -2909,7 +2897,7 @@ def linger : VerbEntry := .mkRegular {
 /-- "rush" — Levin 53.2 Rush verbs. -/
 def rush : VerbEntry := .mkRegular {
   form := "rush"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .rush }
@@ -2921,7 +2909,7 @@ def rush : VerbEntry := .mkRegular {
 /-- "rain" — Levin 57 Weather verbs. Expletive subject. -/
 def rain : VerbEntry := .mkRegular {
   form := "rain"
-  complementType := .none
+  frames := []
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .weather }
@@ -2940,7 +2928,7 @@ def rain : VerbEntry := .mkRegular {
 /-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
 def charge : VerbEntry := .mkRegular {
   form := "charge"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
@@ -2948,7 +2936,7 @@ def charge : VerbEntry := .mkRegular {
 /-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def cost : VerbEntry := .mkRegular {
   form := "cost"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .state }
@@ -2956,7 +2944,7 @@ def cost : VerbEntry := .mkRegular {
 /-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def fine : VerbEntry := .mkRegular {
   form := "fine"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
@@ -2968,7 +2956,7 @@ def tip : VerbEntry where
   formPast := "tipped"
   formPastPart := "tipped"
   formPresPart := "tipping"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -2980,7 +2968,7 @@ def pay : VerbEntry where
   formPast := "paid"
   formPastPart := "paid"
   formPresPart := "paying"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -2992,7 +2980,7 @@ def strike_ : VerbEntry where
   formPast := "struck"
   formPastPart := "struck"
   formPresPart := "striking"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .achievement
@@ -3005,7 +2993,7 @@ def forgive : VerbEntry where
   formPast := "forgave"
   formPastPart := "forgiven"
   formPresPart := "forgiving"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .def
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -3013,7 +3001,7 @@ def forgive : VerbEntry where
 /-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
 def spare : VerbEntry := .mkRegular {
   form := "spare"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitObj := some .def
   vendlerClass := some .accomplishment }
 
@@ -3025,7 +3013,7 @@ def deny : VerbEntry where
   formPast := "denied"
   formPastPart := "denied"
   formPresPart := "denying"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitGoal := some .def
   vendlerClass := some .accomplishment
 
@@ -3037,7 +3025,7 @@ def permit : VerbEntry where
   formPast := "permitted"
   formPastPart := "permitted"
   formPresPart := "permitting"
-  complementType := .np_np
+  frames := [Frame.np_np]
   implicitGoal := some .def
   vendlerClass := some .accomplishment
 
@@ -3045,8 +3033,7 @@ def permit : VerbEntry where
     obligatory (Pesetsky 1995:157 ex. (3a-c); [bruening-2021] Table 56 row 3). -/
 def assign : VerbEntry := .mkRegular {
   form := "assign"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
@@ -3055,7 +3042,7 @@ def assign : VerbEntry := .mkRegular {
 /-- "begrudge" — DOC-only. Neither object implicit. -/
 def begrudge : VerbEntry := .mkRegular {
   form := "begrudge"
-  complementType := .np_np
+  frames := [Frame.np_np]
   vendlerClass := some .state }
 
 /-- "bet" — DOC-only. Neither object implicit. -/
@@ -3065,7 +3052,7 @@ def bet : VerbEntry where
   formPast := "bet"
   formPastPart := "bet"
   formPresPart := "betting"
-  complementType := .np_np
+  frames := [Frame.np_np]
   vendlerClass := some .accomplishment
 
 -- Alternating verbs (both DOC and PP frame)
@@ -3074,8 +3061,7 @@ def bet : VerbEntry where
     Implicit goal def (PP). -/
 def serve : VerbEntry := .mkRegular {
   form := "serve"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
@@ -3088,8 +3074,7 @@ def teach : VerbEntry where
   formPast := "taught"
   formPastPart := "taught"
   formPresPart := "teaching"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitObj := some .indef
   implicitGoal := some .indef
   vendlerClass := some .activity
@@ -3102,8 +3087,7 @@ def feed : VerbEntry where
   formPast := "fed"
   formPastPart := "fed"
   formPresPart := "feeding"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitObj := some .indef
   vendlerClass := some .activity
 
@@ -3114,56 +3098,49 @@ def show_ : VerbEntry where
   formPast := "showed"
   formPastPart := "shown"
   formPresPart := "showing"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitObj := some .def
   vendlerClass := some .accomplishment
 
 /-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
 def award : VerbEntry := .mkRegular {
   form := "award"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
 def forward_ : VerbEntry := .mkRegular {
   form := "forward"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
 def grant : VerbEntry := .mkRegular {
   form := "grant"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
 def offer : VerbEntry := .mkRegular {
   form := "offer"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
 def reserve : VerbEntry := .mkRegular {
   form := "reserve"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
 def pass : VerbEntry := .mkRegular {
   form := "pass"
-  complementType := .np
-  altComplementType := some .np_pp
+  frames := [Frame.np, Frame.np_pp]
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .accomplishment
@@ -3174,8 +3151,7 @@ def pass : VerbEntry := .mkRegular {
 /-- "hand" — alternates DOC/PP. Neither argument implicit. -/
 def hand : VerbEntry := .mkRegular {
   form := "hand"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   vendlerClass := some .accomplishment
   levinClass := some .give }
 
@@ -3186,8 +3162,7 @@ def lend : VerbEntry where
   formPast := "lent"
   formPastPart := "lent"
   formPresPart := "lending"
-  complementType := .np_np
-  altComplementType := some .np_pp
+  frames := [Frame.np_np, Frame.np_pp]
   vendlerClass := some .accomplishment
   levinClass := some .give
 

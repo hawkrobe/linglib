@@ -104,14 +104,14 @@ def kes : Word := { form := "kes", cat := .NOUN }
     [bondarenko-2022] §4.3.2. -/
 def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
 /-- *mit-ta* — 'believe'. Doxastic non-veridical, stative. -/
 def mitta : Verb where
   form := "mit-ta"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
   passivizable := false
@@ -120,7 +120,7 @@ def mitta : Verb where
 /-- *sayngkakha-ta* — 'think'. Doxastic non-veridical, activity. -/
 def sayngkakhata : Verb where
   form := "sayngkakha-ta"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .activity
   opaqueContext := true
@@ -128,7 +128,7 @@ def sayngkakhata : Verb where
 /-- *haysekha-ta* — 'interpret'. -/
 def haysekhata : Verb where
   form := "haysekha-ta"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .activity
   opaqueContext := true
 
@@ -136,7 +136,7 @@ def haysekhata : Verb where
     [bondarenko-2022] §4.4.2 theme-argument analysis. -/
 def selmyenghata : Verb where
   form := "selmyengha-ta"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   vendlerClass := some .accomplishment
 
 end Korean.Complementizers

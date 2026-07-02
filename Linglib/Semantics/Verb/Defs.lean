@@ -1,4 +1,5 @@
 import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Frame
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
@@ -27,8 +28,13 @@ semantic fields shared across languages.
 into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
 `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`, `Verb.Attitude`
 — which `Verb` composes via `extends`. Flat field access
-(`v.complementType`, `v.attitude`, …) is preserved by `extends`-flattening, and
+(`v.frames`, `v.attitude`, …) is preserved by `extends`-flattening, and
 language fragments extend `Verb` with their own inflectional paradigms.
+Complement selection is a list of typed `Frame`s
+(`Syntax/Clause/Frame.lean`); frame-conditioned
+attitude/opacity/control lives on `Verb.Reading` rows; the legacy flat
+readers (`v.complementType`, `v.controlType`, …) are derived accessors
+over `frames`/`readings`.
 
 Verb classification (factive, causative, attitude, …) is DERIVED from these
 primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
@@ -156,8 +162,11 @@ namespace Verb
 /-- Argument structure and realization: complement selection, control,
     proto-role entailments, voice, and implicit arguments. -/
 structure ArgStructure where
-  /-- What complement does the verb select? -/
-  complementType : ComplementType
+  /-- Complement frames, citation frame first. `[]` for intransitives.
+      The legacy `ComplementType` cells are the `Frame.np`,
+      `Frame.finiteClause`, … smart constructors
+      (`Syntax/Clause/Frame.lean`). -/
+  frames : List Frame
   /-- Proto-role entailment profile for the subject (external argument).
       The authoritative representation of argument semantics
       ([dowty-1991], [grimm-2011], [levin-2019]).
@@ -165,15 +174,6 @@ structure ArgStructure where
   subjectEntailments : Option EntailmentProfile := none
   /-- Proto-role entailment profile for the first object (internal argument). -/
   objectEntailments : Option EntailmentProfile := none
-  /-- Control type for infinitival complements -/
-  controlType : ControlType := .none
-  /-- Alternate complement frame, for verbs with two complement types.
-      E.g., "hope" primarily takes.finiteClause ("hope that...") but
-      also takes.infinitival ("hope to...") with subject control.
-      When set, `altControlType` specifies the control type for this frame. -/
-  altComplementType : Option ComplementType := none
-  /-- Control type for the alternate complement frame. -/
-  altControlType : ControlType := .none
   /-- Is the verb unaccusative? (subject is underlying object)
       When `voiceType` is present, prefer `derivedUnaccusative` which
       derives this from Voice selection ([kratzer-1996]). -/
@@ -237,6 +237,22 @@ structure Causation where
   causalSource : Option CausalSource := none
   deriving Repr, BEq
 
+/-- One frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3
+    *hanaxa*; Greek *thimame*): per-frame overrides of the lexeme-level
+    attitude and opacity (`none` = inherit `Verb.attitude` /
+    `Verb.opaqueContext`), and the frame's control type. -/
+structure Reading where
+  /-- The frame this reading is conditioned on (one of the verb's
+      `frames`; `Verb.readingsWF`). -/
+  frame : Frame
+  /-- Frame-conditioned attitude override. -/
+  attitude : Option Features.Attitude := none
+  /-- Frame-conditioned opacity override. -/
+  opaqueContext : Option Bool := none
+  /-- Control type for this frame. -/
+  control : Option ControlType := none
+  deriving DecidableEq, Repr
+
 /-- Attitudinal and intensional properties: attitude classification, opacity,
     question-embedding, and complement monotonicity. -/
 structure Attitude where
@@ -245,6 +261,9 @@ structure Attitude where
   /-- Unified attitude classification covering doxastic and preferential attitudes.
       Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
   attitude : Option Features.Attitude := none
+  /-- Frame-conditioned readings ([bondarenko-2022] §4.4.3): per-frame
+      attitude/opacity overrides and control, keyed to `frames` entries. -/
+  readings : List Reading := []
   /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
   takesQuestionBase : Bool := false
   /-- Entailment signature of the complement position.
@@ -295,3 +314,45 @@ structure Verb extends
   deriving Repr, BEq
 
 end
+
+/-! ### Frame accessors
+
+Flat readers over `Verb.frames`/`Verb.readings`, preserving the legacy
+enum-based call syntax: the citation frame's complement/control type and
+the alternate frame's, when present. -/
+
+/-- The citation (first) frame's legacy `ComplementType` cell. -/
+def Verb.complementType (v : Verb) : ComplementType :=
+  (v.frames.head?.bind Frame.toComplementType).getD .none
+
+/-- The alternate (second) frame's legacy `ComplementType` cell. -/
+def Verb.altComplementType (v : Verb) : Option ComplementType :=
+  v.frames[1]?.bind Frame.toComplementType
+
+/-- The control type of the reading keyed to the citation frame. -/
+def Verb.controlType (v : Verb) : ControlType :=
+  (v.frames.head?.bind fun fr =>
+    (v.readings.find? (·.frame == fr)).bind (·.control)).getD .none
+
+/-- The control type of the reading keyed to the alternate frame. -/
+def Verb.altControlType (v : Verb) : ControlType :=
+  (v.frames[1]?.bind fun fr =>
+    (v.readings.find? (·.frame == fr)).bind (·.control)).getD .none
+
+/-- The effective attitude on frame `fr`: reading override, else lexeme
+    default. -/
+def Verb.attitudeOn (v : Verb) (fr : Frame) : Option Features.Attitude :=
+  ((v.readings.find? (·.frame == fr)).bind (·.attitude)).orElse
+    fun _ => v.attitude
+
+/-- Every reading is keyed to one of the verb's frames. -/
+def Verb.readingsWF (v : Verb) : Prop :=
+  ∀ r ∈ v.readings, r.frame ∈ v.frames
+
+/-- All [noonan-2007] codings across the verb's frames. -/
+def Verb.codings (v : Verb) : List NoonanCompType :=
+  v.frames.flatMap Frame.codings
+
+/-- Some frame of the verb records clause form `cf`. -/
+def Verb.takesClauseForm (v : Verb) (cf : Features.ClauseForm) : Prop :=
+  ∃ fr ∈ v.frames, fr.hasClauseForm cf

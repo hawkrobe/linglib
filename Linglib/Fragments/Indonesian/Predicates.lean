@@ -188,7 +188,7 @@ structure IndonesianVerbEntry extends Verb where
     reflexive incorporation (*ber-jual=diri* (26b)). -/
 def jual : IndonesianVerbEntry :=
   { form := "jual"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-jual"
   , formBer := some "ber-jual"
   , formDi := some "di-jual"
@@ -201,7 +201,7 @@ def jual : IndonesianVerbEntry :=
     (the paper's table (4)). -/
 def masak : IndonesianVerbEntry :=
   { form := "masak"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "me-masak"
   , formBer := some "ber-masak"
   , formDi := some "di-masak"
@@ -213,7 +213,7 @@ def masak : IndonesianVerbEntry :=
     (the paper's table (4) and (18)). -/
 def cuci : IndonesianVerbEntry :=
   { form := "cuci"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-cuci"
   , formBer := some "ber-cuci"
   , formDi := some "di-cuci"
@@ -228,7 +228,7 @@ def cuci : IndonesianVerbEntry :=
     (the paper's table (4)). -/
 def tambat : IndonesianVerbEntry :=
   { form := "tambat"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-tambat"
   , formBer := some "ber-tambat"
   , formDi := some "di-tambat"
@@ -243,7 +243,7 @@ def tambat : IndonesianVerbEntry :=
     (the paper's table (15)). -/
 def dandan : IndonesianVerbEntry :=
   { form := "dandan"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-dandan"
   , formBer := some "ber-dandan"
   , formDi := some "di-dandan"
@@ -254,7 +254,7 @@ def dandan : IndonesianVerbEntry :=
     (the paper's table (15)). -/
 def cukur : IndonesianVerbEntry :=
   { form := "cukur"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-cukur"
   , formBer := some "ber-cukur"
   , formDi := some "di-cukur"
@@ -266,7 +266,7 @@ def cukur : IndonesianVerbEntry :=
     ([sneddon-1996] §1.168; the paper's table (15)). -/
 def jemur : IndonesianVerbEntry :=
   { form := "jemur"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-jemur"
   , formBer := some "ber-jemur"
   , formDi := some "di-jemur"
@@ -278,7 +278,7 @@ def jemur : IndonesianVerbEntry :=
     (the paper's table (15)). -/
 def sisir : IndonesianVerbEntry :=
   { form := "sisir"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "meny-sisir"
   , formBer := some "ber-sisir"
   , formDi := some "di-sisir"
@@ -292,7 +292,7 @@ def sisir : IndonesianVerbEntry :=
     Change-of-state verb without entailed external cause. -/
 def buka : IndonesianVerbEntry :=
   { form := "buka"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "mem-buka"
   , formTer := some "ter-buka"
   , terClass := some .stative
@@ -305,7 +305,7 @@ def buka : IndonesianVerbEntry :=
     (the paper's §5, (67)–(68)). -/
 def pecah : IndonesianVerbEntry :=
   { form := "pecah"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "mem-pecah"
   , formTer := some "ter-pecah"
   , terClass := some .stative
@@ -325,7 +325,7 @@ def pecah : IndonesianVerbEntry :=
     ([sneddon-1996] §1.266). -/
 def tulis : IndonesianVerbEntry :=
   { form := "tulis"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-tulis"
   , formTer := some "ter-tulis"
   , terClass := some .stative
@@ -343,7 +343,7 @@ def tulis : IndonesianVerbEntry :=
     ([sneddon-1996] §1.269, §1.273). -/
 def bawa : IndonesianVerbEntry :=
   { form := "bawa"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "mem-bawa"
   , formTer := some "ter-bawa"
   , terClass := some .accidental
@@ -361,7 +361,7 @@ def bawa : IndonesianVerbEntry :=
     ([sneddon-1996] §1.272). -/
 def dengar : IndonesianVerbEntry :=
   { form := "dengar"
-  , complementType := .np
+  , frames := [Frame.np]
   , formMeN := some "men-dengar"
   , formTer := some "ter-dengar"
   , terClass := some .abilitative

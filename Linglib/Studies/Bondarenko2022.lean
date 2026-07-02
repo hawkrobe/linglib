@@ -494,8 +494,17 @@ theorem hanaxa_frames_realized :
     hanaxa.realizes zha ∧
     hanaxa.realizes aasha ∧
     ¬ hanaxa.realizes ge :=
-  ⟨⟨.finiteClause, .head _, rfl⟩, ⟨.gerund, .tail _ (.head _), rfl⟩,
-    fun ⟨_, hf, h⟩ => by fin_cases hf <;> exact nomatch h⟩
+  ⟨⟨Frame.finiteClause, .head _, _, .head _, .indicative, rfl, rfl⟩,
+    ⟨nominalizedFrame, .tail _ (.head _), _, .head _, .nominalized, rfl, rfl⟩,
+    fun ⟨_, _, _, _, _, _, h⟩ => nomatch h⟩
+
+/-- *hanaxa* think~remember (§4.4.3): the attitude flips with the frame —
+    nonveridical/opaque on the bare CP, veridical on the nominalized
+    frame. Previously unstateable: `attitude` was per-lexeme. -/
+theorem hanaxa_frame_conditioned_attitude :
+    hanaxa.attitudeOn Frame.finiteClause = some (.doxastic .nonVeridical) ∧
+    hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by
+  decide
 
 /-! ### Noun-predicate co-occurrence (§2.2.3)
 
