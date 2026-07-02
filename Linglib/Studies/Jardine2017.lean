@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Embedding
-import Linglib.Phonology.Autosegmental.Constructions
+import Linglib.Phonology.Autosegmental.Junction
 
 /-!
 # Jardine (2017): tone-association patterns as forbidden subgraphs
