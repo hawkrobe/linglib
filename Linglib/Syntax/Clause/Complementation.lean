@@ -1,3 +1,6 @@
+import Linglib.Semantics.Verb.Defs
+import Linglib.Syntax.Complementizer.Basic
+
 /-!
 # Clause complementation: complement-clause surface typology
 
@@ -17,6 +20,8 @@ CTP sample rows live in `Data/Complementation/`.
 
 * `ComplementClauseStructure` — surface complement-clause structure ([deal-2026]).
 * `CPShell` / `CPShellInventory` / `isAttestedShell` — CP external-shell cartography ([deal-2026]).
+* `ComplementType.toNoonan` / `Verb.frames` / `realizes` — [noonan-2007]-anchored
+  selection relation between a verb's complement frames and clause-typers.
 -/
 
 namespace Clause.Complementation
@@ -172,5 +177,37 @@ theorem pCP_not_attested : isAttestedShell [.c, .p] = false := rfl
 
 /-- Another unattested example: `V N CP` (N with no D shell). -/
 theorem nCP_not_attested : isAttestedShell [.c, .n] = false := rfl
+
+/-! ### Selection
+
+The [noonan-2007]-anchored selection relation between a verb's complement
+frames and a language's clause-typing morphemes: `ComplementType.toNoonan`
+maps fragment complement frames to Noonan's typological categories, and
+`realizes` matches a frame against a `Complementizer.noonanType`.
+Consistency checks on fragment inventories live in Studies
+(e.g. `Studies/Bondarenko2022.lean`). -/
+
+/-- Map English fragment complement types to [noonan-2007]'s universal
+    categories. Returns `none` for types that don't correspond to a
+    clausal complement. -/
+def _root_.ComplementType.toNoonan : ComplementType → Option NoonanCompType
+  | .finiteClause => some .indicative
+  | .infinitival => some .infinitive
+  | .gerund => some .nominalized
+  | .smallClause => some .paratactic
+  | .none => none           -- Not complement-taking
+  | .np => none             -- NP complement, not clausal
+  | .np_np => none          -- Ditransitive, not clausal
+  | .np_pp => none          -- NP+PP, not clausal
+  | .question => some .indicative  -- Embedded questions are finite in English
+
+/-- A verb's complement frames: the main frame plus the alternate frame,
+    when present. -/
+def _root_.Verb.frames (v : Verb) : List ComplementType :=
+  v.complementType :: v.altComplementType.toList
+
+/-- `v`'s frame `f` is realized by clause-typer `c` ([noonan-2007]). -/
+def realizes (v : Verb) (c : Complementizer) : Prop :=
+  ∃ f ∈ v.frames, f.toNoonan = c.noonanType
 
 end Clause.Complementation

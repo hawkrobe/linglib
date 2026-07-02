@@ -2,6 +2,7 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
+import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Bondarenko 2022: Anatomy of an Attitude [bondarenko-2022]
@@ -730,6 +731,19 @@ theorem mem_buryatContExponent_iff :
     ∀ c ∈ Buryat.complementizers,
       (c ∈ buryatAnalysis.contExponent ↔ c.verbForm = none) := by
   decide
+
+open Clause.Complementation (realizes) in
+/-- Positive-consistency check on the selection relation: each of
+    *hanaxa*'s two frames (§4.4.3) is realized by exactly one member
+    of the inventory — the bare-CP frame by converbial *-žA*, the
+    nominalized frame by participial *-Aːša* — while the say-root *gɘ*
+    (no `noonanType` of its own) realizes neither. -/
+theorem hanaxa_frames_realized :
+    realizes Buryat.hanaxa Buryat.zha ∧
+    realizes Buryat.hanaxa Buryat.aasha ∧
+    ¬ realizes Buryat.hanaxa Buryat.ge :=
+  ⟨⟨.finiteClause, .head _, rfl⟩, ⟨.gerund, .tail _ (.head _), rfl⟩,
+    fun ⟨_, hf, h⟩ => by fin_cases hf <;> exact nomatch h⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13. Chapter 2 §2.2.3: noun-predicate co-occurrence diagnostics
