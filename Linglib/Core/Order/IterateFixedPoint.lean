@@ -22,7 +22,12 @@ check one more application, conclude `lfp`.
 
 /-- **A well-founded descent has eventually-constant iterates**: if `f` moves every
 non-fixed point strictly down a well-founded relation, then from any start the orbit
-reaches a fixed point — there is an `N` past which further iteration does nothing. -/
+reaches a fixed point — there is an `N` past which further iteration does nothing.
+
+Absent from mathlib: the nearest neighbor is the chain condition
+(`wellFoundedGT_iff_monotone_chain_condition`), which is keyed to preorders and
+`ℕ →o α` sequences rather than a bare relation and a self-map; the lemma is also the
+deterministic case of strong normalization, a rewriting theory mathlib lacks. -/
 theorem WellFounded.iterate_eventually_constant {α : Type*} {lt : α → α → Prop}
     (wf : WellFounded lt) {f : α → α} (hmove : ∀ x, f x ≠ x → lt (f x) x) (x : α) :
     ∃ N, ∀ m, N ≤ m → f^[m] x = f^[N] x := by
