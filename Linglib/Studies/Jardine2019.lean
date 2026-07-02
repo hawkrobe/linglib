@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Autosegmental.Collapse
+import Linglib.Phonology.Autosegmental.Constructions
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
 
 /-!
@@ -111,14 +112,15 @@ inductive Mora | μ
 /-- The tone realization `g_T` ([jardine-2019] (23)): `H`/`L` are a single tone on one
     mora; the falling tone `F` is an `H-L` contour on one mora (multiple association). -/
 def gT : ToneSym → AR ToneSym Mora
-  | .H => ⟨⟨.ofList [.H], .ofList [.μ], {(0, 0)}⟩, by decide⟩
-  | .L => ⟨⟨.ofList [.L], .ofList [.μ], {(0, 0)}⟩, by decide⟩
-  | .F => ⟨⟨.ofList [.H, .L], .ofList [.μ], {(0, 0), (1, 0)}⟩, by decide⟩
+  | .H => .single .H .μ
+  | .L => .single .L .μ
+  | .F => .contour [.H, .L] .μ
 
 /-- The forbidden subgraph `*HLH` ([jardine-2019] (3)): an `H-L-H` tone sequence, three
     tones each on their own mora. -/
 def hlh : Graph ToneSym Mora :=
-  ⟨.ofList [.H, .L, .H], .ofList [.μ, .μ, .μ], {(0, 0), (1, 1), (2, 2)}⟩
+  (AR.single ToneSym.H Mora.μ * AR.single ToneSym.L Mora.μ *
+    AR.single ToneSym.H Mora.μ).toGraph
 
 /-- `HLH` is excluded: its realization contains the `*HLH` subgraph. -/
 theorem hlh_excluded : [ToneSym.H, .L, .H] ∉ ASL gT [hlh] := by decide
@@ -147,7 +149,8 @@ after merging, not on per-mora docking. This is where merging buys non-local pow
     the tone tier after OCP merging, this is the genuine non-local plateauing ban —
     contrast `hlh`, whose diagonal per-mora docking makes it sensitive to plateau width. -/
 def hlhTier : Graph ToneSym Mora :=
-  ⟨.ofList [.H, .L, .H], .ofList [], ∅⟩
+  ((AR.float ToneSym.H : AR ToneSym Mora) * AR.float ToneSym.L *
+    AR.float ToneSym.H).toGraph
 
 /-- The merging variant of `ASL`: the same forbidden-subgraph preimage, taken along the
     OCP-merging realization `realizeMerged` instead of the bridge-only `realize`. -/
