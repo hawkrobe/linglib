@@ -39,6 +39,8 @@ rendering) and `Studies/Yolyan2025` (BMRS rendering).
   interval, from the first trigger to the last.
 * `utp_toneless`, `utp_single`, `utp_plateau` — the rule schemata: toneless words and
   lone Hs are unchanged; everything between the outermost Hs surfaces H.
+* `utp_getElem?_H_of_getElem?_H`, `utp_mono`, `utp_utp` — plateauing is a closure
+  operator in the pointwise H-order: extensive, monotone, idempotent.
 * `utp_requiresBothSides` — deleting either flanking H reverts the plateau target, at
   every distance.
 -/
@@ -174,6 +176,54 @@ theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
   refine ⟨fun hj => ⟨(plateau w).min'_le j hj, (plateau w).le_max' j hj⟩, fun ⟨h₁, h₂⟩ =>
     mem_plateau.mpr (SurfacesH.of_le_of_le (mem_plateau.mp ((plateau w).min'_mem hne))
       (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)⟩
+
+/-! ### Closure laws
+
+Plateauing is a closure operator in the pointwise H-order: extensive
+(`utp_getElem?_H_of_getElem?_H`), monotone (`utp_mono`), idempotent (`utp_utp`). The
+engine is convexity: the output's Hs are the plateau, an interval, so plateauing the
+output surfaces nothing new (`surfacesH_utp`). -/
+
+@[simp] theorem utp_nil : utp [] = [] := rfl
+
+/-- Extensivity: every H survives plateauing. -/
+theorem utp_getElem?_H_of_getElem?_H (h : w[i]? = some .H) : (utp w)[i]? = some .H :=
+  utp_getElem?_H_iff.mpr (surfacesH_of_getElem?_H h)
+
+/-- Surfacing is monotone in the word's H-set. -/
+theorem SurfacesH.mono {w' : List TBU}
+    (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (h : SurfacesH w i) :
+    SurfacesH w' i := by
+  obtain ⟨⟨l, hl, hlH⟩, r, hr, hrH⟩ := surfacesH_iff.mp h
+  exact surfacesH_iff.mpr ⟨⟨l, hl, hw l hlH⟩, r, hr, hw r hrH⟩
+
+/-- Monotonicity: pointwise more Hs in, pointwise more Hs out. -/
+theorem utp_mono {w' : List TBU}
+    (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (j : ℕ)
+    (h : (utp w)[j]? = some TBU.H) : (utp w')[j]? = some TBU.H :=
+  utp_getElem?_H_iff.mpr ((utp_getElem?_H_iff.mp h).mono hw)
+
+/-- Surfacing is invariant under plateauing: the output's Hs are the plateau, whose
+convexity flanks no new positions. -/
+theorem surfacesH_utp : SurfacesH (utp w) i ↔ SurfacesH w i := by
+  constructor
+  · intro h
+    obtain ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩ := surfacesH_iff.mp h
+    rw [utp_getElem?_H_iff] at h₁ h₂
+    obtain ⟨⟨l, hl, hlH⟩, -⟩ := surfacesH_iff.mp h₁
+    obtain ⟨-, r, hr, hrH⟩ := surfacesH_iff.mp h₂
+    exact surfacesH_iff.mpr ⟨⟨l, by omega, hlH⟩, r, by omega, hrH⟩
+  · exact fun h => surfacesH_iff.mpr ⟨⟨i, le_rfl, utp_getElem?_H_iff.mpr h⟩,
+      i, le_rfl, utp_getElem?_H_iff.mpr h⟩
+
+@[simp] theorem plateau_utp : plateau (utp w) = plateau w := by
+  ext j
+  rw [mem_plateau, mem_plateau, surfacesH_utp]
+
+/-- Idempotence: a plateau is already closed. -/
+@[simp] theorem utp_utp : utp (utp w) = utp w := by
+  rw [utp_eq_plateau_indicator (w := utp w), plateau_utp, utp_length,
+    ← utp_eq_plateau_indicator]
 
 /-! ### The plateauing rule
 
