@@ -974,6 +974,91 @@ theorem degreeEquiv_trans (X Y Z : Finset I)
       (degreeEquiv_symm ord i Y Z hyz)
       (strictlyBetter_respects_right ord i Z X Y hZf hXf hYf h hxy)
 
+/-! ### The degree normal form
+
+An element is *redundant* when it has an `X`-mate weakly above it and a
+field-outsider weakly above it — `equivCond2` made unary: dropping it leaves
+the degree unchanged. Iterated dropping yields a normal form; the degree of a
+set is the level multiset of its normal form (spike-verified: ⊐ is the
+descending lexicographic order on those multisets). -/
+
+/-- `x` is redundant in `X`: an `X`-mate and a field-outsider both sit weakly
+above it. -/
+def Redundant (X : Finset I) (x : I) : Prop :=
+  (∃ x' ∈ X.erase x, ord.le x x') ∧ ∃ z ∈ field ord i \ X, ord.le x z
+
+/-- Dropping a redundant element preserves the degree — `equivCond2` with the
+redundancy witnesses. -/
+theorem degreeEquiv_erase_of_redundant {X : Finset I} {x : I}
+    (hx : x ∈ X) (h : Redundant ord i X x) :
+    degreeEquiv ord i X (X.erase x) := by
+  obtain ⟨⟨x', hx', hle⟩, z, hz, hzle⟩ := h
+  refine Or.inr fun s hs => ?_
+  have hsx : s = x := by
+    have h1 := Finset.mem_sdiff.mp hs
+    rcases Finset.mem_union.mp h1.1 with hsX | hsE
+    · by_contra hne
+      exact h1.2 (Finset.mem_inter.mpr ⟨hsX, Finset.mem_erase.mpr ⟨hne, hsX⟩⟩)
+    · exact absurd (Finset.mem_inter.mpr
+        ⟨Finset.mem_of_mem_erase hsE, hsE⟩) h1.2
+  subst hsx
+  refine ⟨⟨x', Finset.mem_inter.mpr
+      ⟨Finset.mem_of_mem_erase hx', Finset.mem_erase.mpr
+        ⟨(Finset.mem_erase.mp hx').1, Finset.mem_of_mem_erase hx'⟩⟩, hle⟩,
+    ⟨z, ?_, hzle⟩⟩
+  have hzf := Finset.mem_sdiff.mp hz
+  exact Finset.mem_sdiff.mpr ⟨hzf.1, fun hzu =>
+    hzf.2 ((Finset.mem_union.mp hzu).elim id Finset.mem_of_mem_erase)⟩
+
+open Classical in
+/-- The degree normal form: drop redundant elements until none remain. -/
+def normalize (X : Finset I) : Finset I :=
+  if h : ∃ x ∈ X, Redundant ord i X x then
+    normalize (X.erase h.choose)
+  else X
+termination_by X.card
+decreasing_by
+  exact Finset.card_erase_lt_of_mem h.choose_spec.1
+
+open Classical in
+theorem normalize_subset (X : Finset I) : normalize ord i X ⊆ X := by
+  rw [normalize]
+  split_ifs with h
+  · exact (normalize_subset _).trans (Finset.erase_subset _ _)
+  · exact Finset.Subset.refl X
+termination_by X.card
+decreasing_by
+  exact Finset.card_erase_lt_of_mem h.choose_spec.1
+
+open Classical in
+/-- Normalization preserves the degree. -/
+theorem degreeEquiv_normalize (X : Finset I) (hX : X ⊆ field ord i) :
+    degreeEquiv ord i X (normalize ord i X) := by
+  rw [normalize]
+  split_ifs with h
+  · obtain ⟨hmem, hred⟩ := h.choose_spec
+    exact degreeEquiv_trans ord i X (X.erase h.choose) _ hX
+      ((Finset.erase_subset _ _).trans hX)
+      ((normalize_subset ord i _).trans ((Finset.erase_subset _ _).trans hX))
+      (degreeEquiv_erase_of_redundant ord i hmem hred)
+      (degreeEquiv_normalize (X.erase h.choose)
+        ((Finset.erase_subset _ _).trans hX))
+  · exact degreeEquiv_refl ord i X
+termination_by X.card
+decreasing_by
+  exact Finset.card_erase_lt_of_mem h.choose_spec.1
+
+/-- Normal forms have no redundant elements. -/
+theorem not_redundant_normalize (X : Finset I) :
+    ∀ x ∈ normalize ord i X, ¬ Redundant ord i (normalize ord i X) x := by
+  rw [normalize]
+  split_ifs with h
+  · exact not_redundant_normalize _
+  · exact fun x hx hred => h ⟨x, hx, hred⟩
+termination_by X.card
+decreasing_by
+  exact Finset.card_erase_lt_of_mem h.choose_spec.1
+
 /-- ∼ as a `Setoid` on field-subsets (transitivity needs the field bound). -/
 def metalinguisticSetoid :
     Setoid {X : Finset I // X ⊆ field ord i} where
