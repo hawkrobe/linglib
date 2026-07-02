@@ -66,15 +66,15 @@ open Constraints OptimalityTheory
     - `subranking`: constraints promoted above the default ranking
 
     When this VI wins insertion, its `subranking` overrides the default
-    constraint ranking: constraints named in `subranking` are promoted
+    constraint ranking: constraints labeled in `subranking` are promoted
     to the top of the ranking (in the order listed), and the remaining
     default constraints follow. -/
-structure CophVocabItem (Ctx Root C : Type*) extends VocabItem Ctx Root where
+structure CophVocabItem (Ctx Root L C : Type*) extends VocabItem Ctx Root where
   /-- Morpheme-specific constraint subranking (R component).
       Constraints listed here are promoted to the top of the effective
       ranking, overriding their default position. An empty subranking
       means this VI imposes no morpheme-specific phonology. -/
-  subranking : List (String × Constraint C) := []
+  subranking : List (L × Constraint C) := []
 
 -- ============================================================================
 -- § 2: Ranking Merge
@@ -83,20 +83,20 @@ structure CophVocabItem (Ctx Root C : Type*) extends VocabItem Ctx Root where
 /-- Merge a morpheme-specific subranking with the default ranking.
 
     The effective ranking places the subranking constraints first (in
-    the order given), then appends default constraints whose names do
+    the order given), then appends default constraints whose labels do
     not appear in the subranking. This implements the intuition that
     the morpheme "promotes" certain constraints above the default
     ranking without disturbing the relative order of other constraints.
 
     When `sub` is empty, the result is exactly `default`. -/
-def mergeRanking {C : Type*}
-    (default sub : List (String × Constraint C)) : List (String × Constraint C) :=
-  let subNames := sub.map (·.1)
-  sub ++ default.filter (λ c => !subNames.contains c.1)
+def mergeRanking {L C : Type*} [DecidableEq L]
+    (default sub : List (L × Constraint C)) : List (L × Constraint C) :=
+  let subLabels := sub.map (·.1)
+  sub ++ default.filter (λ c => !subLabels.contains c.1)
 
 /-- An empty subranking produces the default ranking unchanged. -/
-theorem mergeRanking_empty_sub {C : Type*}
-    (default : List (String × Constraint C)) :
+theorem mergeRanking_empty_sub {L C : Type*} [DecidableEq L]
+    (default : List (L × Constraint C)) :
     mergeRanking default [] = default := by
   simp [mergeRanking]
 
@@ -113,9 +113,9 @@ theorem mergeRanking_empty_sub {C : Type*}
     constraint (basemap correspondence) above default markedness
     constraints, forcing the output to match the basemap rather than
     preserving the target's underlying tones ([rolle-2018] Ch 5). -/
-def cophonologicalEval {C : Type*} [DecidableEq C]
-    (defaultRanking : List (String × Constraint C))
-    (subranking : List (String × Constraint C))
+def cophonologicalEval {L C : Type*} [DecidableEq L] [DecidableEq C]
+    (defaultRanking : List (L × Constraint C))
+    (subranking : List (L × Constraint C))
     (candidates : List C)
     (h : candidates ≠ [] := by decide) : Finset C :=
   let effective := mergeRanking defaultRanking subranking
@@ -123,8 +123,8 @@ def cophonologicalEval {C : Type*} [DecidableEq C]
 
 /-- When the subranking is empty, cophonological evaluation reduces to
     standard OT evaluation. CPT is a proper generalization of OT. -/
-theorem cophonologicalEval_empty_sub {C : Type*} [DecidableEq C]
-    (defaultRanking : List (String × Constraint C))
+theorem cophonologicalEval_empty_sub {L C : Type*} [DecidableEq L] [DecidableEq C]
+    (defaultRanking : List (L × Constraint C))
     (candidates : List C) (h : candidates ≠ []) :
     cophonologicalEval defaultRanking [] candidates h =
     (Tableau.ofRanking candidates (defaultRanking.map (·.2)) h).optimal := by

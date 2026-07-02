@@ -389,10 +389,9 @@ def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
     through this study file — out of
     scope. The substrate use is exhibited by the bundle's existence
     and the matched-phase predicate `appliesTo`. -/
-def guebieVPCophonology : PhrasalCophonology Unit :=
+def guebieVPCophonology : PhrasalCophonology Unit Unit :=
   { phaseSelector := guebieVPPhaseSelector
-    subranking    := []
-    name          := "Guébie vP ATR cophonology" }
+    subranking    := [] }
 
 /-- The Guébie vP-cophonology applies to a v head. (Witness: a leaf
     SO whose token's category is `.v`.) -/
