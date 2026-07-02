@@ -346,8 +346,7 @@ noncomputable def deltaSingleton (T : Nonplanar α) :
 set_option linter.unusedSectionVars false in
 @[simp] theorem deltaSingleton_of'_self (T : Nonplanar α) :
     deltaSingleton (R := R) T (of' ({T} : Forest (Nonplanar α))) = 1 := by
-  simp only [deltaSingleton, LinearMap.comp_apply, LinearEquiv.coe_coe,
-    toFinsuppAlgEquiv_apply, Finsupp.lapply_apply]
+  simp only [deltaSingleton, LinearMap.comp_apply, Finsupp.lapply_apply]
   exact Finsupp.single_eq_same
 
 set_option linter.unusedSectionVars false in
@@ -355,8 +354,7 @@ theorem deltaSingleton_of'_other (T : Nonplanar α)
     (F : Forest (Nonplanar α)) (hF : F ≠ {T}) :
     deltaSingleton (R := R) T (of' F) = 0 := by
   classical
-  simp only [deltaSingleton, LinearMap.comp_apply, LinearEquiv.coe_coe,
-    toFinsuppAlgEquiv_apply, Finsupp.lapply_apply]
+  simp only [deltaSingleton, LinearMap.comp_apply, Finsupp.lapply_apply]
   show (Finsupp.single F (1 : R) : Forest (Nonplanar α) →₀ R) {T} = 0
   rw [Finsupp.single_apply]
   exact if_neg hF

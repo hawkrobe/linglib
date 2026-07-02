@@ -83,16 +83,15 @@ noncomputable def birkhoffMinusMonoidHom :
     rw [Multiset.map_add, Multiset.prod_add]
 
 /-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`, lifting `birkhoffMinusMonoidHom` via
-    `AddMonoidAlgebra.lift`. Mirrors `antipodeAlgHomN`. -/
+    `ConnesKreimer.lift`. Mirrors `antipodeAlgHomN`. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (Nonplanar α) →ₐ[R] ℛ :=
-  AddMonoidAlgebra.lift R ℛ (Forest (Nonplanar α)) (birkhoffMinusMonoidHom φ RB)
+  ConnesKreimer.lift (birkhoffMinusMonoidHom φ RB)
 
 /-- `φ₋` on a forest basis element is the product of `φ₋` over its trees. Mirrors
     `antipodeAlgHomN_apply_of'`. -/
 @[simp] theorem birkhoffMinus_apply_of' (F : Forest (Nonplanar α)) :
     birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod := by
-  show AddMonoidAlgebra.lift R _ _ (birkhoffMinusMonoidHom φ RB) (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [birkhoffMinus, ConnesKreimer.lift_of']
   rfl
 
 /-- `φ₋` on a single tree generator agrees with `birkhoffMinusTree`. Mirrors
@@ -167,14 +166,13 @@ noncomputable def birkhoffPlusMonoidHom :
     `birkhoffMinus`; the multiplicative extension of `birkhoffPlusTree` is automatically an
     algebra hom, so this is the renormalized character `φ₊`. -/
 noncomputable def birkhoffPlus : ConnesKreimer R (Nonplanar α) →ₐ[R] ℛ :=
-  AddMonoidAlgebra.lift R ℛ (Forest (Nonplanar α)) (birkhoffPlusMonoidHom φ RB)
+  ConnesKreimer.lift (birkhoffPlusMonoidHom φ RB)
 
 /-- `φ₊` on a forest basis element is the product of `φ₊` over its trees. Mirrors
     `birkhoffMinus_apply_of'`. -/
 @[simp] theorem birkhoffPlus_apply_of' (F : Forest (Nonplanar α)) :
     birkhoffPlus φ RB (of' F) = (F.map (birkhoffPlusTree φ RB)).prod := by
-  show AddMonoidAlgebra.lift R _ _ (birkhoffPlusMonoidHom φ RB) (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [birkhoffPlus, ConnesKreimer.lift_of']
   rfl
 
 /-- `φ₊` on a single tree generator agrees with `birkhoffPlusTree`. Mirrors
@@ -241,11 +239,11 @@ decreasing_by exact cutSummandsN_subtree_depth_lt T p.1 p.2 hp T_i hT_i
 /-- **`R = id`, `φ = id` recovers the antipode as an algebra hom.** The forest-level Bogolyubov
     negative part `φ₋` of the identity character under `RotaBaxter.id` is the Hopf antipode
     `antipodeAlgHomN`. Lifts `birkhoffMinusTree_id_eq_antipodeTreeN` through the shared
-    `AddMonoidAlgebra.lift`. -/
+    `ConnesKreimer.lift`. -/
 theorem birkhoffMinus_id_eq_antipodeAlgHomN :
     birkhoffMinus (LinearMap.id : ConnesKreimer R (Nonplanar α) →ₗ[R] _) RotaBaxter.id
       = antipodeAlgHomN := by
-  refine AddMonoidAlgebra.algHom_ext (fun F => ?_)
+  refine ConnesKreimer.algHom_ext (fun F => ?_)
   show birkhoffMinus _ _ (of' F) = antipodeAlgHomN (of' F)
   rw [birkhoffMinus_apply_of', antipodeAlgHomN_apply_of']
   exact congrArg Multiset.prod (Multiset.map_congr rfl
@@ -317,7 +315,7 @@ theorem birkhoffPlus_eq_convMul (φ : ConnesKreimer R (Nonplanar α) →ₐ[R] �
     WithConv.toConv (birkhoffMinus φ.toLinearMap RB) * WithConv.toConv φ
       = WithConv.toConv (birkhoffPlus φ.toLinearMap RB) := by
   apply WithConv.ofConv_injective
-  refine AddMonoidAlgebra.algHom_ext (fun F => ?_)
+  refine ConnesKreimer.algHom_ext (fun F => ?_)
   show (WithConv.toConv (birkhoffMinus φ.toLinearMap RB) * WithConv.toConv φ).ofConv (of' F)
      = birkhoffPlus φ.toLinearMap RB (of' F)
   induction F using Multiset.induction with
