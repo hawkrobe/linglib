@@ -106,6 +106,13 @@ theorem satisfiedBy_iff_lead :
   ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((lex_le_iff_lead _ _).mp h he),
    fun h => (lex_le_iff_lead _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
+private theorem eq_L_of_ne {x : ERCVal} (h1 : x ≠ .e) (h2 : x ≠ .W) : x = .L := by
+  cases x <;> simp_all
+
+/-- A loser-preferring constraint witnesses a non-neutral position. -/
+private theorem exists_ne_of_L {c : Fin n} (hc : α c = .L) : ∃ p, α (r p) ≠ .e :=
+  ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩
+
 /-- The leading constraint dominates every loser-preferring one. -/
 private theorem lead_dominates {c : Fin n} (he : ∃ p, α (r p) ≠ .e)
     (hlead : α (r (Fin.find _ he)) = .W) (hc : α c = .L) :
@@ -124,14 +131,11 @@ theorem satisfiedBy_iff_dominance :
   rw [satisfiedBy_iff_lead]
   constructor
   · intro hlead c hc
-    have he : ∃ p, α (r p) ≠ .e := ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩
+    have he := exists_ne_of_L r α hc
     exact ⟨r (Fin.find _ he), hlead he, lead_dominates r α he (hlead he) hc⟩
   · intro h he
     by_contra hW
-    have hL : α (r (Fin.find _ he)) = .L := by
-      have := Fin.find_spec he
-      rcases hx : α (r (Fin.find _ he)) <;> simp_all
-    obtain ⟨w, hwW, hdom⟩ := h (r (Fin.find _ he)) hL
+    obtain ⟨w, hwW, hdom⟩ := h _ (eq_L_of_ne (Fin.find_spec he) hW)
     exact Fin.find_min he (by simpa [Ranking.Dominates] using hdom)
       (by rw [Equiv.apply_symm_apply, hwW]; decide)
 
@@ -148,7 +152,7 @@ theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     by_cases he : ∃ p, α (r p) ≠ .e
     · exact ⟨r (Fin.find _ he), fun c hc => ⟨(satisfiedBy_iff_lead r α).mp hsat he,
         lead_dominates r α he ((satisfiedBy_iff_lead r α).mp hsat he) hc⟩⟩
-    · exact ⟨0, fun c hc => (he ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩).elim⟩
+    · exact ⟨0, fun c hc => (he (exists_ne_of_L r α hc)).elim⟩
   · rintro ⟨d, hd⟩
     exact (satisfiedBy_iff_dominance r α).mpr fun c hc => ⟨d, hd c hc⟩
 
