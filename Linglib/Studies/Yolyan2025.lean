@@ -228,7 +228,7 @@ flagship pattern (the class of the paper's Prop. 5.4 Bemba case), through
 theorem utp_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic Tone.Plateauing.utp.map :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
-    Tone.Plateauing.utp_requiresBothSides
+    Tone.Plateauing.utp.requiresBothSides
 
 /-! ### Bemba high-tone spreading is not weakly deterministic (Prop. 5.4)
 
