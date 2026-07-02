@@ -1,21 +1,22 @@
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Complementizer.Basic
 import Linglib.Morphology.MorphWord
 
 /-!
 # Tigrinya Clausal Prefixes [cacchioli-2025]
 [pollock-1989] [rizzi-1997]
 
-Lexical entries for Tigrinya's four clause-initial morphemes, analyzed as
-spell-outs of distinct heads in a cartographic left periphery.
+Lexical entries for Tigrinya's four clause-initial morphemes, as
+`Complementizer`-schema entries with the Tigrinya-specific fields
+(`gloss`, `clauseType`, circumfixal `suffix_`).
 
 ## The four prefixes
 
-| Prefix | Gloss | Head | Clause type |
-|--------|-------|------|-------------|
-| zɨ-    | REL   | Rel  | relative / general subordination |
-| kɨ-    | SBJV  | Fin  | subjunctive / irrealis |
-| kəmzi- | COMP  | Force | factive complementizer |
-| ʔay-...-n | NEG | Neg  | negative (circumfix) |
+| Prefix | Gloss | Clause type |
+|--------|-------|-------------|
+| zɨ-    | REL   | relative / general subordination |
+| kɨ-    | SBJV  | subjunctive / irrealis |
+| kəmzi- | COMP  | factive complementizer |
+| ʔay-...-n | NEG | negative (circumfix) |
 
 ## Key empirical facts
 
@@ -27,16 +28,14 @@ spell-outs of distinct heads in a cartographic left periphery.
 5. **Selection**: Matrix verb class determines which prefix appears
    (knowledge → kəmzi-, desiderative → kɨ-, etc.)
 
+[cacchioli-2025]'s cartographic head assignment (zɨ- = Rel, kɨ- = Fin,
+kəmzi- = Force, ʔay- = Neg in a [rizzi-1997] split CP) is paper-specific
+and lives as the `headCat` projection in `Studies/Cacchioli2025.lean`.
 -/
 
 namespace Tigrinya.ClausePrefixes
 
-open Minimalist
 open Morphology.Circumfix
-
--- ============================================================================
--- Clause type
--- ============================================================================
 
 /-- Clause types in Tigrinya, determined by the clausal prefix. -/
 inductive TigrinyaClauseType where
@@ -47,91 +46,66 @@ inductive TigrinyaClauseType where
   | matrix         -- unmarked: root declarative
   deriving DecidableEq, Repr
 
--- ============================================================================
--- Clausal prefix entry
--- ============================================================================
-
-/-- A Tigrinya clausal prefix lexical entry. -/
-structure ClausePrefixEntry where
-  /-- Surface form of the prefix -/
-  prefix_ : String
+/-- A Tigrinya clausal prefix lexical entry: the root `Complementizer`
+schema plus the Tigrinya-specific fields. The form is the prefix half;
+the discontinuous negative also sets `suffix_`. -/
+structure ClausePrefixEntry extends Complementizer where
   /-- Gloss -/
   gloss : String
-  /-- Syntactic head this prefix spells out -/
-  headCat : Cat
   /-- Clause type selected -/
   clauseType : TigrinyaClauseType
-  /-- Whether the prefix takes an agreement suffix -/
-  takesAgreementSuffix : Bool
-  /-- Whether the exponence is discontinuous (circumfix) -/
-  isDiscontinuous : Bool := false
   /-- Suffix form for circumfixes (empty if not discontinuous) -/
   suffix_ : String := ""
-  deriving Repr, BEq
+  deriving Repr, BEq, DecidableEq
 
--- ============================================================================
--- Lexical entries
--- ============================================================================
-
-/-- zɨ- : relativizer / general subordinator.
-    Spells out Rel. Does not take agreement.
+/-- zɨ- : relativizer / general subordinator. Does not take agreement.
     "zɨ-mäs'ə" = REL-come = "who came" -/
 def zi : ClausePrefixEntry where
-  prefix_ := "zɨ-"
+  form := "zɨ-"
+  position := some .praefixed
+  agrees := some false
   gloss := "REL"
-  headCat := .Rel
   clauseType := .relative
-  takesAgreementSuffix := false
 
-/-- kɨ- : subjunctive / irrealis marker.
-    Spells out Fin with [-finite].
+/-- kɨ- : subjunctive / irrealis marker. Takes an agreement suffix.
     Selected by desiderative/manipulative verbs.
     "kɨ-mäs'ə" = SBJV-come = "to come" -/
 def ki : ClausePrefixEntry where
-  prefix_ := "kɨ-"
+  form := "kɨ-"
+  position := some .praefixed
+  noonanType := some .subjunctive
+  agrees := some true
   gloss := "SBJV"
-  headCat := .Fin
   clauseType := .subjunctive
-  takesAgreementSuffix := true
 
-/-- kəmzi- : factive complementizer.
-    Spells out Force ([rizzi-1997] split-CP).
-    Selected by knowledge/commentative verbs.
-    "kəmzi-mäs'ə" = COMP-come = "that (he) came" (factive) -/
+/-- kəmzi- : factive complementizer. Selected by knowledge/commentative
+    verbs. "kəmzi-mäs'ə" = COMP-come = "that (he) came" (factive) -/
 def kemzi : ClausePrefixEntry where
-  prefix_ := "kəmzi-"
+  form := "kəmzi-"
+  position := some .praefixed
+  noonanType := some .indicative
+  agrees := some false
+  factive := some true
   gloss := "COMP.FACT"
-  headCat := .Force
   clauseType := .factive
-  takesAgreementSuffix := false
 
-/-- ʔay-...-n : negative circumfix.
-    Spells out Neg.
-    The verbal stem is wrapped: ʔay-mäs'ə-n = NEG-come-NEG = "did not come".
-    Discontinuous exponence derived from V-to-Neg head movement. -/
+/-- ʔay-...-n : negative circumfix. The verbal stem is wrapped:
+    ʔay-mäs'ə-n = NEG-come-NEG = "did not come". Discontinuous exponence
+    derived from V-to-Neg head movement. -/
 def ay_n : ClausePrefixEntry where
-  prefix_ := "ʔay-"
+  form := "ʔay-"
+  position := some .circumfixed
+  agrees := some true
   gloss := "NEG"
-  headCat := .Neg
   clauseType := .negative
-  takesAgreementSuffix := true
-  isDiscontinuous := true
   suffix_ := "-n"
-
--- ============================================================================
--- Collections
--- ============================================================================
 
 /-- All four clausal prefix entries. -/
 def allPrefixes : List ClausePrefixEntry := [zi, ki, kemzi, ay_n]
 
--- ============================================================================
--- Circumfix construction
--- ============================================================================
-
 /-- Construct a `CircumfixExponence` from the negative circumfix entry. -/
 def negCircumfix (verbStem : String) : CircumfixExponence where
-  prefix_ := ay_n.prefix_
+  prefix_ := ay_n.form
   suffix_ := ay_n.suffix_
   stem := verbStem
   gloss := ay_n.gloss
@@ -139,19 +113,5 @@ def negCircumfix (verbStem : String) : CircumfixExponence where
 /-- The negative circumfix surfaces correctly. -/
 theorem neg_circumfix_example :
     (negCircumfix "mäs'ə").realize = "ʔay-mäs'ə-n" := rfl
-
--- ============================================================================
--- Per-entry verification theorems
--- ============================================================================
-
-theorem zi_targets_rel : zi.headCat = .Rel := rfl
-theorem ki_targets_fin : ki.headCat = .Fin := rfl
-theorem kemzi_targets_force : kemzi.headCat = .Force := rfl
-theorem ay_targets_neg : ay_n.headCat = .Neg := rfl
-
-theorem zi_no_agreement : zi.takesAgreementSuffix = false := rfl
-theorem ki_has_agreement : ki.takesAgreementSuffix = true := rfl
-theorem ay_is_discontinuous : ay_n.isDiscontinuous = true := rfl
-theorem ki_is_continuous : ki.isDiscontinuous = false := rfl
 
 end Tigrinya.ClausePrefixes

@@ -1977,6 +1977,7 @@ import Linglib.Studies.Amato2025Auxiliary
 import Linglib.Studies.AnandHacquard2013
 import Linglib.Studies.AnandHardtMcCloskey2021
 import Linglib.Studies.AnandNevins2004
+import Linglib.Studies.Angelopoulos2026
 import Linglib.Studies.Anderson2006
 import Linglib.Studies.Anderson2021
 import Linglib.Studies.AndersonJM2006

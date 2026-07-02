@@ -42,7 +42,6 @@ closure:
 ## Cross-Linguistic Variation
 
 - English *that*-clauses: predicates (type ⟨e,st⟩), combine by PM
-- Korean *ko*-clauses: saturators (type e), function-apply directly
 - German *dass*-clauses: position from V2/cluster, not from CP-as-argument
 
 -/

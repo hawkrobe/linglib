@@ -50,7 +50,7 @@ def aasha : Complementizer where
   position := some .postfixed
   noonanType := some .nominalized
   verbForm := some .Part
-  host := some .nominal
+  licenser := some .nominal
 
 /-- *-žA* — imperfective converb ([skribnik-2003]); appears next to
 verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
@@ -59,7 +59,7 @@ def zha : Complementizer where
   position := some .postfixed
   noonanType := some .indicative
   verbForm := some .Conv
-  host := some .verbal
+  licenser := some .verbal
 
 /-- The clause-typing inventory — closed per §4.3.1 ex. 30–32. -/
 def complementizers : List Complementizer := [ge, aasha, zha]
