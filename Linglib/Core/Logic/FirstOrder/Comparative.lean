@@ -81,6 +81,7 @@ abbrev DecidableAtoms {L : Language} {I W E : Type*}
 namespace CompFormula
 
 open Core.Order (TotalPreorder)
+open ComparativeProbability
 
 variable {L : Language} {I W E : Type*} (interp : I → W → L.Structure E)
 
@@ -95,7 +96,7 @@ def Realize (φ : CompFormula L E) (le : I → I → Prop) (i : I) (w : W) : Pro
   | .inf A B => Realize A le i w ∧ Realize B le i w
   | .sup A B => Realize A le i w ∨ Realize B le i w
   | .comp A B =>
-      ComparativeProbability.coneStrictLift le (fun b a => le b a ∧ ¬ le a b)
+      coneStrictLift le (fun b a => le b a ∧ ¬ le a b)
         (fun j => Realize A le j w) (fun j => Realize B le j w) i
 
 instance instDec [Fintype I] [Fintype E] [DecidableEq E]
@@ -121,7 +122,7 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
         fun j => instDec A le j w
       haveI : DecidablePred (fun j => Realize interp B le j w) :=
         fun j => instDec B le j w
-      inferInstanceAs (Decidable (ComparativeProbability.coneStrictLift
+      inferInstanceAs (Decidable (coneStrictLift
         le (fun b a => le b a ∧ ¬ le a b)
         (fun j => Realize interp A le j w) (fun j => Realize interp B le j w) i))
 
@@ -174,13 +175,13 @@ possibility, with the ∃∀ clause as the strict Smyth order via
 theorem realize_comp_iff_strict_dominationLift (A B : CompFormula L E)
     (ord : TotalPreorder I) (i : I) (w : W) :
     Realize interp (.comp A B) ord.le i w ↔
-    ComparativeProbability.Strict
-      (ComparativeProbability.dominationLift (fun a b => ord.le b a))
+    Strict
+      (dominationLift (fun a b => ord.le b a))
       {x | ord.le x i ∧ Realize interp A ord.le x w ∧
         ¬ Realize interp B ord.le x w}
       {x | ord.le x i ∧ Realize interp B ord.le x w ∧
         ¬ Realize interp A ord.le x w} :=
-  ComparativeProbability.coneStrictLift_iff_strict_dominationLift
+  coneStrictLift_iff_strict_dominationLift
     (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl) _ _ i
 
 /-- ≻ is irreflexive — a witness would make A both true and false. -/

@@ -69,6 +69,7 @@ open FirstOrder FirstOrder.Language in
 
 open Core.Order (TotalPreorder)
 open FirstOrder FirstOrder.Language
+open ComparativeProbability
 
 /-- The paper's ranking of interpretations by strength of interpretive
 commitment (§4.2). -/
@@ -152,7 +153,7 @@ variable [Fintype I] (φ ψ : L.CompFormula E) (ord : SemanticOrdering I)
 formulas' truth sets: ≻'s clause with an arbitrary dominance relation in
 place of < (`eval_comp_iff_compWith`); ≫ is the instance at ≪. -/
 abbrev EvalCompWith : Prop :=
-  ComparativeProbability.coneStrictLift ord.le below
+  coneStrictLift ord.le below
     (fun j => Eval interp φ ord j w) (fun j => Eval interp ψ ord j w) i
 
 omit [Fintype I] in
@@ -203,11 +204,11 @@ with ≪ in the role of <. -/
 theorem evalMuchMore_iff_strict_dominationLift (φ ψ : L.CompFormula E)
     (ord : SemanticOrdering I) (d : DistanceFunction I ord) (i : I) (w : W) :
     EvalMuchMore interp φ ψ ord d i w ↔
-    ComparativeProbability.Strict
-      (ComparativeProbability.dominationLift (fun a b => ¬ FarBelow ord d a b))
+    Strict
+      (dominationLift (fun a b => ¬ FarBelow ord d a b))
       {x | ord.le x i ∧ Eval interp φ ord x w ∧ ¬ Eval interp ψ ord x w}
       {x | ord.le x i ∧ Eval interp ψ ord x w ∧ ¬ Eval interp φ ord x w} :=
-  ComparativeProbability.coneStrictLift_iff_strict_dominationLift
+  coneStrictLift_iff_strict_dominationLift
     (fun a b => not_farBelow_total d a b)
     (fun _ _ => ⟨fun h => ⟨FarBelow.asymm d h, not_not_intro h⟩,
       fun h => not_not.mp h.2⟩) _ _ i
@@ -219,11 +220,11 @@ all-¬φ level below it. -/
 theorem evalMostly_iff_strict_dominationLift (φ : L.CompFormula E)
     (ord : SemanticOrdering I) (d : DistanceFunction I ord) (i : I) (w : W) :
     EvalMostly interp φ ord d i w ↔
-    ComparativeProbability.Strict
-      (ComparativeProbability.dominationLift (fun a b => ord.le b a))
+    Strict
+      (dominationLift (fun a b => ord.le b a))
       {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interp φ ord j w}
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by
-  rw [ComparativeProbability.strict_dominationLift_iff_below
+  rw [strict_dominationLift_iff_below
     (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl)]
   simp only [Set.mem_setOf_eq, and_imp, and_assoc]
   rfl
