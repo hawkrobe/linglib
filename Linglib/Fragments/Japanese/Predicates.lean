@@ -34,7 +34,7 @@ def tanosimi : JapaneseVerbEntry where
   formPast := "tanosimi datta"
   formGerund := "tanosimi"
   formProgressive := "tanosimi"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.relevanceBased .positive))
@@ -46,7 +46,7 @@ def osore : JapaneseVerbEntry where
   formPast := "osoreta"
   formGerund := "osorete"
   formProgressive := "osoreteiru"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
@@ -58,7 +58,7 @@ def kitai : JapaneseVerbEntry where
   formPast := "kitai shita"
   formGerund := "kitai shite"
   formProgressive := "kitai shiteiru"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -70,7 +70,7 @@ def shinpai : JapaneseVerbEntry where
   formPast := "shinpai shita"
   formGerund := "shinpai shite"
   formProgressive := "shinpai shiteiru"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
@@ -92,8 +92,8 @@ def ik_ase : JapaneseVerbEntry where
   formPast := "ik-ase-ta"
   formGerund := "ik-ase-te"
   formProgressive := "ik-ase-teiru"
-  complementType := .smallClause
-  controlType := .objectControl
+  frames := [Frame.smallClause]
+  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- 食べさせる "tabe-sase-ru" — eat-CAUS (ACC causee = make reading). -/
@@ -103,8 +103,8 @@ def tabe_sase : JapaneseVerbEntry where
   formPast := "tabe-sase-ta"
   formGerund := "tabe-sase-te"
   formProgressive := "tabe-sase-teiru"
-  complementType := .smallClause
-  controlType := .objectControl
+  frames := [Frame.smallClause]
+  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- Japanese causative -(s)ase uses `.make` builder (direct causation reading). -/
@@ -127,7 +127,7 @@ def hanareru : JapaneseVerbEntry where
   formPast := "hanareta"
   formGerund := "hanarete"
   formProgressive := "hanareteiru"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := true
   voiceType := some .nonThematic
   passivizable := false
@@ -142,7 +142,7 @@ def deru : JapaneseVerbEntry where
   formPast := "deta"
   formGerund := "dete"
   formProgressive := "deteiru"
-  complementType := .np
+  frames := [Frame.np]
   unaccusative := true
   voiceType := some .nonThematic
   passivizable := false

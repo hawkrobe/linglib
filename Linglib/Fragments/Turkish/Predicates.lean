@@ -34,7 +34,7 @@ def kork : TurkishVerbEntry where
   formPast := "korktu"
   formEvidential := "korkmuş"
   formParticiple := "korkan"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
@@ -46,7 +46,7 @@ def um : TurkishVerbEntry where
   formPast := "umdu"
   formEvidential := "ummuş"
   formParticiple := "uman"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -58,7 +58,7 @@ def merakEt : TurkishVerbEntry where
   formPast := "merak etti"
   formEvidential := "merak etmiş"
   formParticiple := "merak eden"
-  complementType := .question
+  frames := [Frame.question]
   passivizable := false
   opaqueContext := true
   takesQuestionBase := true
@@ -70,7 +70,7 @@ def endiselen : TurkishVerbEntry where
   formPast := "endişelendi"
   formEvidential := "endişelenmiş"
   formParticiple := "endişelenen"
-  complementType := .finiteClause
+  frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
@@ -88,7 +88,7 @@ def ol_dur : TurkishVerbEntry where
   formPast := "öldürdü"
   formEvidential := "öldürmüş"
   formParticiple := "öldüren"
-  complementType := .np
+  frames := [Frame.np]
   causative := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
@@ -98,8 +98,8 @@ def yap_tir : TurkishVerbEntry where
   formPast := "yaptırdı"
   formEvidential := "yaptırmış"
   formParticiple := "yaptıran"
-  complementType := .smallClause
-  controlType := .objectControl
+  frames := [Frame.smallClause]
+  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- Turkish causative *-dür* uses `.make` builder. -/
