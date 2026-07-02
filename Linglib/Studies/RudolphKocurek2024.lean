@@ -530,56 +530,47 @@ theorem denotation_subset_field (φ : L.CompFormula E) (w : W) :
 
 /-! ### The ∼ Equivalence Relation ([kocurek-2024-supplement] §C, p. 9) -/
 
+variable (X Y Z : Finset I)
+
 /-- ∼ condition (i): each element of `X \ Y` is matched by one of `Y \ X` at
 least as high, and vice versa. -/
-def equivCond1 (X Y : Finset I) : Prop :=
+def equivCond1 : Prop :=
   (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'') ∧
   (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'')
 
 /-- ∼ condition (ii): each element of the symmetric difference is dominated
 both by an element of `X ∩ Y` and by one of the field outside `X ∪ Y`. -/
-def equivCond2 (X Y : Finset I) : Prop :=
+def equivCond2 : Prop :=
   ∀ i' ∈ (X ∪ Y) \ (X ∩ Y),
     (∃ i'' ∈ X ∩ Y, ord.le i' i'') ∧
     (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'')
 
 /-- Metalinguistic degree equivalence `X ∼_i Y`: the revised ME truth
 conditions applied to interpretation sets. -/
-def degreeEquiv (X Y : Finset I) : Prop :=
+def degreeEquiv : Prop :=
   equivCond1 ord X Y ∨ equivCond2 ord i X Y
 
 /-! ### Fact 8: ∼ is an Equivalence Relation -/
 
 /-- Fact 8a: ∼ is reflexive. -/
-theorem degreeEquiv_refl (X : Finset I) :
-    degreeEquiv ord i X X := by
+theorem degreeEquiv_refl : degreeEquiv ord i X X := by
   left
   constructor <;> intro i' h <;> simp at h
 
 /-- Fact 8b: ∼ is symmetric. -/
-theorem degreeEquiv_symm (X Y : Finset I) :
-    degreeEquiv ord i X Y → degreeEquiv ord i Y X := by
-  intro h
-  rcases h with h1 | h2
-  · left; exact ⟨h1.2, h1.1⟩
-  · right
-    intro i' hi'
-    have hi'swap : i' ∈ (X ∪ Y) \ (X ∩ Y) := by
-      simp only [Finset.mem_sdiff, Finset.mem_union, Finset.mem_inter] at hi' ⊢
-      exact ⟨Or.symm hi'.1, λ ⟨h1, h2⟩ => hi'.2 ⟨h2, h1⟩⟩
-    obtain ⟨h2a, h2b⟩ := h2 i' hi'swap
-    constructor
-    · obtain ⟨i'', hi''mem, hi''le⟩ := h2a
-      exact ⟨i'', by rwa [Finset.inter_comm] at hi''mem, hi''le⟩
-    · obtain ⟨i'', hi''mem, hi''le⟩ := h2b
-      exact ⟨i'', by rwa [Finset.union_comm] at hi''mem, hi''le⟩
+theorem degreeEquiv_symm : degreeEquiv ord i X Y → degreeEquiv ord i Y X := by
+  rintro (h1 | h2)
+  · exact Or.inl ⟨h1.2, h1.1⟩
+  · refine Or.inr ?_
+    unfold equivCond2 at h2 ⊢
+    rwa [Finset.union_comm, Finset.inter_comm]
 
 /-! ### The ⊐ Ordering on Sets ([kocurek-2024-supplement] §C, p. 10) -/
 
 /-- `X ⊐ Y`: some witness in `X \ Y` inside the field dominates all of
 `Y \ X` and, moreover, all of `X ∩ Y` or all of the field outside `X ∪ Y` —
 the revised MC truth conditions applied to interpretation sets. -/
-def strictlyBetter (X Y : Finset I) : Prop :=
+def strictlyBetter : Prop :=
   ∃ i' ∈ X \ Y,
     i' ∈ field ord i ∧
     (∀ i'' ∈ Y \ X, ord.lt i'' i') ∧
@@ -609,46 +600,29 @@ private lemma dom_fX_of_sdiff_comp (m : I) (X Y : Finset I)
       fun h => Finset.mem_union.mp h |>.elim (Finset.mem_sdiff.mp hc).2 hc_y⟩)
 
 omit [Fintype I] in
-/-- (X ∪ Y) \ (X ∩ Y) = (X \ Y) ∪ (Y \ X). -/
+/-- Both presentations of the symmetric difference `X ∆ Y`. -/
 private lemma mem_symdiff_iff (X Y : Finset I) (s : I) :
     s ∈ (X ∪ Y) \ (X ∩ Y) ↔ s ∈ (X \ Y) ∪ (Y \ X) := by
   simp only [Finset.mem_sdiff, Finset.mem_union, Finset.mem_inter]
-  constructor
-  · rintro ⟨hx | hy, hni⟩
-    · exact Or.inl ⟨hx, fun hy => hni ⟨hx, hy⟩⟩
-    · exact Or.inr ⟨hy, fun hx => hni ⟨hx, hy⟩⟩
-  · rintro (⟨hx, hny⟩ | ⟨hy, hnx⟩)
-    · exact ⟨Or.inl hx, fun ⟨_, hy⟩ => hny hy⟩
-    · exact ⟨Or.inr hy, fun ⟨hx, _⟩ => hnx hx⟩
+  tauto
 
 omit [Fintype I] in
-/-- X ≠ Y → (X \ Y) ∪ (Y \ X) is nonempty. -/
-private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y \ X)).Nonempty := by
-  by_contra h_empty
-  rw [Finset.not_nonempty_iff_eq_empty] at h_empty
-  apply h; ext x
-  constructor
-  · intro hx
-    by_contra hy
-    have : x ∈ (X \ Y) ∪ (Y \ X) :=
-      Finset.mem_union.mpr (Or.inl (Finset.mem_sdiff.mpr ⟨hx, hy⟩))
-    rw [h_empty] at this; simp at this
-  · intro hy
-    by_contra hx
-    have : x ∈ (X \ Y) ∪ (Y \ X) :=
-      Finset.mem_union.mpr (Or.inr (Finset.mem_sdiff.mpr ⟨hy, hx⟩))
-    rw [h_empty] at this; simp at this
+/-- The symmetric difference of distinct sets is nonempty. -/
+private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) :
+    ((X \ Y) ∪ (Y \ X)).Nonempty := by
+  rw [Finset.nonempty_iff_ne_empty, Ne, Finset.union_eq_empty,
+    Finset.sdiff_eq_empty_iff_subset, Finset.sdiff_eq_empty_iff_subset]
+  exact fun ⟨hXY, hYX⟩ => h (Finset.Subset.antisymm hXY hYX)
 
 /-! ### Facts 11–12: ⊐ on Degrees -/
 
 /-- Fact 12a: ⊐ is irreflexive. -/
-theorem strictlyBetter_irrefl (X : Finset I) :
-    ¬ strictlyBetter ord i X X := by
+theorem strictlyBetter_irrefl : ¬ strictlyBetter ord i X X := by
   intro ⟨i', hi', _, _, _⟩
   simp at hi'
 
 /-- ∼ refutes ⊐: equivalent sets are incomparable. -/
-theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
+theorem degreeEquiv_not_strictlyBetter :
     degreeEquiv ord i X Y → ¬ strictlyBetter ord i X Y := by
   intro h_eq ⟨i', h_sdiff, _, h_ymx, h_inner⟩
   rcases h_eq with ⟨h_match, _⟩ | h2
@@ -666,8 +640,7 @@ theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
     · exact (h_comp i₂ h_i₂_mem).2 h_le₂
 
 /-- Fact 11: ⊐ respects ∼ on the right — `X ⊐ Y` and `Y ∼ Z` give `X ⊐ Z`. -/
-theorem strictlyBetter_respects_right (X Y Z : Finset I)
-    (_hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
+theorem strictlyBetter_respects_right (_hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i Y Z →
     strictlyBetter ord i X Z := by
   rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hyz
@@ -738,8 +711,7 @@ theorem strictlyBetter_respects_right (X Y Z : Finset I)
            fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)
 
 /-- Fact 11: ⊐ respects ∼ on the left — `X ⊐ Y` and `X ∼ Z` give `Z ⊐ Y`. -/
-theorem strictlyBetter_respects_left (X Y Z : Finset I)
-    (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
+theorem strictlyBetter_respects_left (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i X Z →
     strictlyBetter ord i Z Y := by
   rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hxz
@@ -806,7 +778,7 @@ theorem strictlyBetter_respects_left (X Y Z : Finset I)
       · exact m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1, hc_x⟩)
 
 /-- Fact 12b: ⊐ is transitive. -/
-theorem strictlyBetter_trans (X Y Z : Finset I) :
+theorem strictlyBetter_trans :
     strictlyBetter ord i X Y → strictlyBetter ord i Y Z →
     strictlyBetter ord i X Z := by
   rintro ⟨m₁, hm₁_sd, hm₁_f, hm₁_yx, hm₁_inner⟩
@@ -885,8 +857,7 @@ theorem strictlyBetter_trans (X Y Z : Finset I) :
           ⟨hc_f, fun h => Finset.mem_union.mp h |>.elim hc_y hc_nz⟩)
 
 /-- Fact 12c: trichotomy — `X ∼ Y`, `X ⊐ Y`, or `Y ⊐ X`. -/
-theorem strictlyBetter_total (X Y : Finset I)
-    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+theorem strictlyBetter_total (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
     degreeEquiv ord i X Y ∨ strictlyBetter ord i X Y ∨
     strictlyBetter ord i Y X := by
   by_cases h_eq : X = Y
@@ -957,8 +928,7 @@ theorem strictlyBetter_total (X Y : Finset I)
 /-! ### Fact 8c: ∼ Transitivity (via Totality + Respects) -/
 
 /-- Fact 8c: ∼ is transitive on field-subsets, via trichotomy and Fact 11. -/
-theorem degreeEquiv_trans (X Y Z : Finset I)
-    (hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
+theorem degreeEquiv_trans (hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     degreeEquiv ord i X Y → degreeEquiv ord i Y Z →
     degreeEquiv ord i X Z := by
   intro hxy hyz
