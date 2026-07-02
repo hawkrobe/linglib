@@ -517,6 +517,24 @@ instance instDecidableLexFinNatProfileLT {n : Nat} (a b : Lex (Fin n → Nat)) :
     Decidable (a < b) :=
   decidable_of_iff (¬ b ≤ a) (@not_le _ _ b a)
 
+/-- Lexicographic order is decided at the first differing coordinate: `A ≤ B` iff at
+the least index where they differ — when one exists — `A` is smaller. (Candidate for
+mathlib's `Pi.Lex` API.) -/
+theorem lex_le_iff_lead {α : Type*} [LinearOrder α] {m : ℕ} (A B : Fin m → α)
+    [DecidablePred fun i => B i ≠ A i] :
+    toLex A ≤ toLex B ↔ ∀ he : ∃ i, B i ≠ A i, A (Fin.find _ he) < B (Fin.find _ he) := by
+  rw [lex_le_iff_forall]
+  constructor
+  · intro h he
+    by_contra hle
+    obtain ⟨p', hlt, hp'⟩ := h _ ((not_lt.mp hle).lt_of_ne (Fin.find_spec he))
+    exact Fin.find_min he hlt hp'.ne'
+  · intro hlead p hp
+    have he : ∃ i, B i ≠ A i := ⟨p, hp.ne⟩
+    refine ⟨Fin.find _ he, ?_, hlead he⟩
+    exact (Fin.find_le_of_pos he hp.ne).lt_of_ne fun h =>
+      absurd (h ▸ hlead he) hp.asymm
+
 -- ============================================================================
 -- § 12b: Smart constructor for `Lex (Fin n → Nat)` from atom-wise functions
 -- ============================================================================
