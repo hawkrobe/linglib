@@ -91,12 +91,14 @@ theorem optimal_eq_singleton_iff {m : C} (hm : m ∈ t.candidates) :
 
 /-! ### Tableau constructors -/
 
+variable (con : CON C n) (r : Ranking n) (candidates : List C)
+  (ranking constraints : List (Constraint C)) (h : candidates ≠ [])
+
 /-- Build a `Tableau C n` from a fixed constraint set `con : CON C n` under a ranking
 `r : Ranking n`: priority position `p` reads constraint `r p`, so coordinate `0` of the
 lexicographic profile is the most dominant constraint. Candidates are deduplicated via
 `List.toFinset`. -/
-def ofPerm (con : CON C n) (r : Ranking n) (candidates : List C)
-    (h : candidates ≠ [] := by decide) : Tableau C n where
+def ofPerm (h : candidates ≠ [] := by decide) : Tableau C n where
   candidates := candidates.toFinset
   profile c := buildViolationProfile (fun p => con (r p)) c
   nonempty := (candidates.exists_mem_of_ne_nil h).imp fun _ ha => List.mem_toFinset.mpr ha
@@ -105,12 +107,8 @@ def ofPerm (con : CON C n) (r : Ranking n) (candidates : List C)
 list, list order being priority (position `0` most dominant): `Tableau.ofPerm` under the
 identity ranking. Study files use this as
 `(Tableau.ofRanking candidates ranking h).optimal = {.winner}`. -/
-def ofRanking (candidates : List C) (ranking : List (Constraint C))
-    (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
-  Tableau.ofPerm ranking.get (Equiv.refl _) candidates h
-
-variable (con : CON C n) (r : Ranking n) (candidates : List C)
-  (ranking constraints : List (Constraint C)) (h : candidates ≠ [])
+def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
+  ofPerm ranking.get (Equiv.refl _) candidates h
 
 @[simp] theorem ofPerm_candidates :
     (Tableau.ofPerm con r candidates h).candidates = candidates.toFinset := rfl
