@@ -253,6 +253,15 @@ theorem smul_single_one (F : Forest T) (r : R) :
     single F r = r • single F (1 : R) := by
   ext; simp
 
+/-- Linear induction: prove `p` at `0`, under `+`, and on every `single`. -/
+@[elab_as_elim]
+theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
+    (h0 : p 0) (hadd : ∀ f g, p f → p g → p (f + g))
+    (hsingle : ∀ (F : Forest T) (r : R), p (single F r)) : p x := by
+  have h : ∀ y : AddMonoidAlgebra R (Forest T), p ⟨y⟩ := fun y =>
+    Finsupp.induction_linear y h0 (fun f g hf hg => hadd ⟨f⟩ ⟨g⟩ hf hg) hsingle
+  exact h x.toFinsupp
+
 /-- **Bare embedding**: a forest as the basis vector `single F 1`. -/
 noncomputable def of' (F : Forest T) : ConnesKreimer R T := single F 1
 
