@@ -140,8 +140,8 @@ theorem tden_comp {w : WordModel α} {i : ℕ} :
     cases hu : tden w i u with
     | none => simp [Term.comp, hu]
     | some v => simp [Term.comp, hu, tden_var (tden_lt hu)]
-  | .succ t, u => by rw [Term.comp, tden_succ, tden_comp t u, Option.bind_assoc]; rfl
-  | .pred t, u => by rw [Term.comp, tden_pred, tden_comp t u, Option.bind_assoc]; rfl
+  | .succ t, u => by simp only [Term.comp, tden_succ, tden_comp t u, Option.bind_assoc]
+  | .pred t, u => by simp only [Term.comp, tden_pred, tden_comp t u, Option.bind_assoc]
 
 end TermDenotation
 
