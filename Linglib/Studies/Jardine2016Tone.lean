@@ -125,6 +125,13 @@ theorem surfacesH_of_getElem?_H (h : w[i]? = some .H) : SurfacesH w i :=
 
 theorem SurfacesH.H_mem (h : SurfacesH w i) : .H ∈ w := List.take_subset _ _ h.1
 
+/-- Reversal symmetry: under `reverse` the `take` and `drop` windows swap. -/
+theorem surfacesH_reverse (hi : i < w.length) :
+    SurfacesH w.reverse i ↔ SurfacesH w (w.length - 1 - i) := by
+  rw [SurfacesH, SurfacesH, List.take_reverse, List.drop_reverse, List.mem_reverse,
+    List.mem_reverse, show w.length - (i + 1) = w.length - 1 - i from by omega,
+    show w.length - i = (w.length - 1 - i) + 1 from by omega, and_comm]
+
 theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
   rw [utp_getElem?, Option.map_eq_some_iff]
   constructor
@@ -133,6 +140,15 @@ theorem utp_getElem?_H_iff : (utp w)[j]? = some .H ↔ SurfacesH w j := by
     rw [if_neg hs] at ha
     exact TBU.noConfusion ha
   · exact fun hs => ⟨w[j]'hs.lt_length, List.getElem?_eq_getElem hs.lt_length, if_pos hs⟩
+
+theorem utp_getElem?_O_iff : (utp w)[j]? = some .O ↔ j < w.length ∧ ¬ SurfacesH w j := by
+  rw [utp_getElem?, Option.map_eq_some_iff]
+  constructor
+  · rintro ⟨a, ha, hout⟩
+    refine ⟨(List.getElem?_eq_some_iff.mp ha).1, fun hs => ?_⟩
+    rw [if_pos hs] at hout
+    exact TBU.noConfusion hout
+  · exact fun ⟨hj, hs⟩ => ⟨w[j], List.getElem?_eq_getElem hj, if_neg hs⟩
 
 /-- The plateau of `w`: the set of positions that surface H. -/
 def plateau (w : List TBU) : Finset ℕ := (Finset.range w.length).filter (SurfacesH w)
@@ -316,12 +332,9 @@ private theorem utp_plateauBase_mid (d : ℕ) : (utp (plateauBase d))[d + 1]? = 
 
 private theorem utp_set_perturbed (d : ℕ) {pos : ℕ} (hpos : pos = 0 ∨ pos = 2 * d + 3) :
     (utp ((plateauBase d).set pos .O))[d + 1]? = some TBU.O := by
-  have hmid : ((plateauBase d).set pos TBU.O)[d + 1]? = some TBU.O := by
-    rw [List.getElem?_set_ne (by omega)]
-    exact plateauBase_getElem?_mid d
-  rw [utp_getElem?, hmid, Option.map_some, if_neg]
-  rw [surfacesH_iff]
-  rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
+  refine utp_getElem?_O_iff.mpr ⟨by simp only [List.length_set, plateauBase_length]; omega,
+    fun hs => ?_⟩
+  obtain ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩ := surfacesH_iff.mp hs
   have key : ∀ j, ((plateauBase d).set pos TBU.O)[j]? = some TBU.H
       → j ≠ pos ∧ (j = 0 ∨ j = 2 * d + 3) := fun j hj => by
     rcases eq_or_ne j pos with rfl | hne
@@ -365,20 +378,11 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
     ⟨.H :: List.replicate (N + 1) .O, [.H], 1, ?_, ?_⟩
   · simp only [utp_length, List.length_cons, List.length_replicate]
     omega
-  · -- image of `H Ø^(N+1)`: itself, by (36b); of `H Ø^(N+1) H`: a total plateau, by (36c)
-    have h1 : (utp (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O := by
-      rw [show (TBU.H :: List.replicate (N + 1) TBU.O)
-            = List.replicate 0 TBU.O ++ TBU.H :: List.replicate (N + 1) TBU.O by simp,
-        utp_single]
-      simp only [List.replicate_zero, List.nil_append]
-      rw [List.getElem?_cons_succ, List.getElem?_replicate, if_pos (by omega)]
-    have h2 : (utp ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H := by
-      rw [show (TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]
-            = List.replicate 0 TBU.O ++ TBU.H :: (List.replicate (N + 1) TBU.O
-                ++ TBU.H :: List.replicate 0 TBU.O) by simp,
-        utp_plateau]
-      simp only [List.replicate_zero, List.nil_append, List.append_nil, List.length_replicate]
-      rw [List.getElem?_replicate, if_pos (by omega)]
+  · -- the images disagree at position 1: toneless there without the second H, plateau with it
+    have h1 : (utp (TBU.H :: List.replicate (N + 1) TBU.O))[1]? = some TBU.O :=
+      utp_getElem?_O_iff.mpr ⟨by simp, fun hs => by simpa using hs.2⟩
+    have h2 : (utp ((TBU.H :: List.replicate (N + 1) TBU.O) ++ [TBU.H]))[1]? = some TBU.H :=
+      utp_getElem?_H_iff.mpr ⟨by simp, by simp⟩
     rw [h1, h2]
     simp
 
@@ -386,29 +390,9 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp := by
 theorem utp_reverse : utp w.reverse = (utp w).reverse := by
   refine List.ext_getElem? fun i => ?_
   by_cases hi : i < w.length
-  · have hrl : (utp w).length = w.length := utp_length
-    rw [utp_getElem?, List.getElem?_reverse (by simpa using hi),
-      List.getElem?_reverse (by simpa [hrl] using hi), hrl, utp_getElem?]
-    have hiff : SurfacesH w.reverse i ↔ SurfacesH w (w.length - 1 - i) := by
-      rw [surfacesH_iff, surfacesH_iff]
-      constructor
-      · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-        obtain ⟨hlt₁, -⟩ := List.getElem?_eq_some_iff.mp h₁
-        obtain ⟨hlt₂, -⟩ := List.getElem?_eq_some_iff.mp h₂
-        simp only [List.length_reverse] at hlt₁ hlt₂
-        rw [List.getElem?_reverse (by simpa using hlt₁)] at h₁
-        rw [List.getElem?_reverse (by simpa using hlt₂)] at h₂
-        exact ⟨⟨w.length - 1 - j₂, by omega, h₂⟩, ⟨w.length - 1 - j₁, by omega, h₁⟩⟩
-      · rintro ⟨⟨j₁, hj₁, h₁⟩, ⟨j₂, hj₂, h₂⟩⟩
-        obtain ⟨hlt₁, -⟩ := List.getElem?_eq_some_iff.mp h₁
-        obtain ⟨hlt₂, -⟩ := List.getElem?_eq_some_iff.mp h₂
-        refine ⟨⟨w.length - 1 - j₂, by omega, ?_⟩, ⟨w.length - 1 - j₁, by omega, ?_⟩⟩
-        · rw [List.getElem?_reverse (by omega), show w.length - 1 - (w.length - 1 - j₂) = j₂ by omega]
-          exact h₂
-        · rw [List.getElem?_reverse (by omega), show w.length - 1 - (w.length - 1 - j₁) = j₁ by omega]
-          exact h₁
-    rw [show (if SurfacesH w.reverse i then TBU.H else TBU.O)
-          = (if SurfacesH w (w.length - 1 - i) then TBU.H else TBU.O) by simp [hiff]]
+  · rw [utp_getElem?, List.getElem?_reverse (by simpa using hi),
+      List.getElem?_reverse (by simpa using hi), utp_length, utp_getElem?]
+    simp only [surfacesH_reverse hi]
   · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
 
 /-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
