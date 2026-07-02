@@ -5,42 +5,29 @@ import Mathlib.Data.Sign.Basic
 import Mathlib.Data.Fintype.Perm
 
 /-!
-# Elementary ranking conditions for Optimality Theory
+# Elementary ranking conditions
 
-Pure types and operations for OT's algebraic ranking-inference layer
-([prince-2002]; [riggle-2009-complexity]). An ERC value is a **sign**, so the
-alphabet is mathlib's `SignType`: `W` (`+1`, winner-preferring), `L` (`-1`,
-loser-preferring), `e` (`0`, neutral). This buys, for free:
+OT's algebraic ranking-inference layer ([prince-2002]; [riggle-2009-complexity]). An
+ERC value is a *sign*, so the alphabet is mathlib's `SignType` — `W` (`+1`,
+winner-preferring), `L` (`-1`, loser-preferring), `e` (`0`, neutral) — which buys
+`ercOfProfiles` as a coordinatewise `SignType.sign`, the antithetical ERC as pointwise
+negation, per-coordinate entailment as `SignType`'s own order `L ≤ e ≤ W`, and the
+decidability instances for free.
 
-* `ercOfProfiles` is the coordinatewise `SignType.sign` of the violation
-  difference;
-* the *antithetical* ERC ([prince-2002] §2 negation) is pointwise `-`;
-* per-coordinate **entailment** `L ≤ e ≤ W` is `SignType`'s own order;
-* `DecidableEq` and the `LinearOrder` are inherited.
-
-Satisfaction is grounded in the lexicographic order: a ranking satisfies an ERC
-iff its sign vector, read in the ranking's priority order, is lex-nonnegative —
-equivalently (`satisfiedBy_iff_dominance`), every `L`-constraint is outranked by
-some `W`-constraint ([prince-2002] §0 (3)/(4)).
+A ranking satisfies an ERC iff its sign vector, read in the ranking's priority order,
+is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
+`L`-constraint is outranked by some `W`-constraint ([prince-2002] §0 (3)/(4)).
 
 ## Main declarations
 
-* `ERCVal` — `SignType`, with `W`/`L`/`e` notation.
-* `ERC n` — an ERC over `n` constraints, a sign vector `Fin n → ERCVal`.
-* `Ranking n` — a constraint ranking, a permutation of `Fin n`.
-* `ercOfProfiles` — the sign of a winner/loser violation-profile difference.
+* `ERCVal`, `ERC n` — the sign alphabet and sign vectors `Fin n → ERCVal`.
 * `ERC.SatisfiedBy`, `ERCSet.Consistent`, `ERCSet.Entails` — the
-  satisfaction/consistency/entailment algebra.
-* `ERCSet.linearExtensions` — the (decidable) `Finset` of satisfying rankings.
-* `satisfiedBy_ercOfProfiles_iff_le` — the bridge to the Core lex order.
-* `tableauERC` — the ERC of a winner-loser pair in a tableau.
-* `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`.
-
-## References
-
-* [prince-2002]
-* [riggle-2009-complexity]
-* [merchant-riggle-2016]
+  satisfaction/consistency/entailment algebra; `ERCSet.linearExtensions` the
+  satisfying rankings as a `Finset`.
+* `ercOfProfiles`, `tableauERC` — ERCs from violation profiles and winner–loser
+  pairs; `satisfiedBy_ercOfProfiles_iff_le` bridges to the Core lex order.
+* `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`
+  ([merchant-riggle-2016]).
 -/
 
 open Core.Optimization.Evaluation
