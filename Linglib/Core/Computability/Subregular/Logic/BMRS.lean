@@ -86,41 +86,52 @@ def Expr.not (e : Expr α F) : Expr α F := .ite e .fls .tru
 /-- Denotation of a BMRS term at index `i` (the judgment `w, i ⊢ T → v`). -/
 def tden (w : WordModel α) (i : ℕ) (t : Term Unit) : Option ℕ := t.eval w fun _ => i
 
+section TermDenotation
+
+variable {w : WordModel α} {i v : ℕ}
+
+@[simp] theorem tden_succ {t : Term Unit} :
+    tden w i t.succ = (tden w i t).bind w.succ? := rfl
+
+@[simp] theorem tden_pred {t : Term Unit} :
+    tden w i t.pred = (tden w i t).bind w.pred? := rfl
+
+theorem tden_var_eq_some_iff : tden w i (.var ()) = some v ↔ v = i ∧ i < w.length := by
+  rw [tden, Term.eval]
+  split
+  · simp_all [WordModel.mem_iff, eq_comm]
+  · simp_all [WordModel.mem_iff]
+
 /-- Term denotations are in-domain. -/
-theorem tden_lt {w : WordModel α} {i : ℕ} :
-    ∀ {t : Term Unit} {v : ℕ}, tden w i t = some v → v < w.length
-  | .var _, v, h => by
-    rw [tden, Term.eval] at h
-    split at h <;> simp_all [WordModel.mem_iff]
-  | .succ t, v, h => by
-    simp only [tden, Term.eval, Option.bind_eq_some_iff,
-      WordModel.succ?_eq_some_iff] at h
-    obtain ⟨u, -, rfl, h⟩ := h
-    exact h
-  | .pred t, v, h => by
-    simp only [tden, Term.eval, Option.bind_eq_some_iff,
-      WordModel.pred?_eq_some_iff] at h
-    obtain ⟨u, -, -, h⟩ := h
-    exact h
+theorem tden_lt : ∀ {t : Term Unit} {v : ℕ}, tden w i t = some v → v < w.length
+  | .var _, _, h => by
+    obtain ⟨rfl, hlt⟩ := tden_var_eq_some_iff.mp h
+    exact hlt
+  | .succ t, _, h => by
+    obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, hlt⟩ := WordModel.succ?_eq_some_iff.mp hu
+    exact hlt
+  | .pred t, _, h => by
+    obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
+    exact (WordModel.pred?_eq_some_iff.mp hu).2
 
 /-- The variable denotes its own in-domain position. -/
-@[simp] theorem tden_var {w : WordModel α} {i : ℕ} (h : i < w.length) :
-    tden w i (.var ()) = some i := if_pos h
+@[simp] theorem tden_var (h : i < w.length) : tden w i (.var ()) = some i := if_pos h
 
 /-- A one-step successor term denotes the successor position. -/
-@[simp] theorem tden_succ_var {w : WordModel α} {i : ℕ} :
-    tden w i ((Term.var ()).succ) = w.succ? i := by
-  by_cases h : i < w.length
-  · simp [tden, Term.eval, WordModel.Mem, h]
-  · simp only [tden, Term.eval, WordModel.Mem]
-    rw [if_neg h, WordModel.succ?, if_neg (by omega)]
-    rfl
+@[simp] theorem tden_succ_var : tden w i ((Term.var ()).succ) = w.succ? i := by
+  rcases lt_or_ge i w.length with h | h
+  · rw [tden_succ, tden_var h, Option.bind_some]
+  · rw [tden_succ, tden, Term.eval, if_neg (by simpa [WordModel.Mem] using h),
+      Option.bind_none, eq_comm, Option.eq_none_iff_forall_ne_some]
+    intro m hm
+    have := (WordModel.succ?_eq_some_iff.mp hm).2
+    omega
 
 /-- A one-step predecessor term denotes the predecessor position (in-domain: off the
 right edge `pred?` is still defined at `w.length` but the variable is not). -/
-theorem tden_pred_var {w : WordModel α} {i : ℕ} (h : i < w.length) :
-    tden w i ((Term.var ()).pred) = w.pred? i := by
-  simp [tden, Term.eval, WordModel.Mem, h]
+theorem tden_pred_var (h : i < w.length) : tden w i ((Term.var ()).pred) = w.pred? i := by
+  rw [tden_pred, tden_var h, Option.bind_some]
 
 /-- Composed terms denote sequenced denotations. -/
 theorem tden_comp {w : WordModel α} {i : ℕ} :
@@ -129,14 +140,10 @@ theorem tden_comp {w : WordModel α} {i : ℕ} :
     cases hu : tden w i u with
     | none => simp [Term.comp, hu]
     | some v => simp [Term.comp, hu, tden_var (tden_lt hu)]
-  | .succ t, u => by
-    show (tden w i (t.comp u)).bind w.succ? = _
-    rw [tden_comp t u, Option.bind_assoc]
-    rfl
-  | .pred t, u => by
-    show (tden w i (t.comp u)).bind w.pred? = _
-    rw [tden_comp t u, Option.bind_assoc]
-    rfl
+  | .succ t, u => by rw [Term.comp, tden_succ, tden_comp t u, Option.bind_assoc]; rfl
+  | .pred t, u => by rw [Term.comp, tden_pred, tden_comp t u, Option.bind_assoc]; rfl
+
+end TermDenotation
 
 /-! ### The derivation system -/
 
@@ -401,26 +408,18 @@ def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 /-- Backward terms only move left. -/
 theorem tden_le_of_backward {w : WordModel α} {i : ℕ} :
     ∀ {t : Term Unit}, t.Backward → ∀ {v}, tden w i t = some v → v ≤ i
-  | .var _, _, v, h => by
-    rw [tden, Term.eval] at h
-    split at h <;> simp_all
+  | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.le
   | .pred t, ht, v, h => by
-    rw [show tden w i t.pred = (tden w i t).bind w.pred? from rfl,
-      Option.bind_eq_some_iff] at h
-    obtain ⟨u, hu, huv⟩ := h
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨rfl, -⟩ := WordModel.pred?_eq_some_iff.mp huv
     exact Nat.le_of_succ_le (tden_le_of_backward (t := t) ht hu)
 
 /-- Forward terms only move right. -/
 theorem le_tden_of_forward {w : WordModel α} {i : ℕ} :
     ∀ {t : Term Unit}, t.Forward → ∀ {v}, tden w i t = some v → i ≤ v
-  | .var _, _, v, h => by
-    rw [tden, Term.eval] at h
-    split at h <;> simp_all
+  | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.ge
   | .succ t, ht, v, h => by
-    rw [show tden w i t.succ = (tden w i t).bind w.succ? from rfl,
-      Option.bind_eq_some_iff] at h
-    obtain ⟨u, hu, huv⟩ := h
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨rfl, -⟩ := WordModel.succ?_eq_some_iff.mp huv
     exact (le_tden_of_forward (t := t) ht hu).trans (Nat.le_succ u)
 
@@ -429,12 +428,8 @@ words. -/
 theorem tden_congr {w w' : WordModel α} (hlen : w.length = w'.length) {i : ℕ} :
     ∀ t : Term Unit, tden w i t = tden w' i t
   | .var _ => by simp [tden, Term.eval, WordModel.Mem, hlen]
-  | .succ t => by
-    show (tden w i t).bind w.succ? = (tden w' i t).bind w'.succ?
-    rw [tden_congr hlen t, WordModel.succ?_congr hlen]
-  | .pred t => by
-    show (tden w i t).bind w.pred? = (tden w' i t).bind w'.pred?
-    rw [tden_congr hlen t, WordModel.pred?_congr hlen]
+  | .succ t => by rw [tden_succ, tden_succ, tden_congr hlen t, WordModel.succ?_congr hlen]
+  | .pred t => by rw [tden_pred, tden_pred, tden_congr hlen t, WordModel.pred?_congr hlen]
 
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
