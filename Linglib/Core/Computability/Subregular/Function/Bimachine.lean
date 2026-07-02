@@ -260,11 +260,8 @@ theorem flankWord_getElem?_eq_some_iff {j : ℕ} (hfill : fill ≠ a) :
 /-- A window reaching at most the filler run hits `a` iff the left flank is `a`. -/
 theorem exists_le_flankWord_eq_some_iff (hfill : fill ≠ a) (hk : k ≤ n) :
     (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
-  simp only [flankWord_getElem?_eq_some_iff hfill]
-  constructor
-  · rintro ⟨j, hj, ⟨rfl, hx⟩ | ⟨rfl, hy⟩⟩
-    exacts [hx, absurd hj (by omega)]
-  · exact fun h => ⟨0, Nat.zero_le _, .inl ⟨rfl, h⟩⟩
+  simp [flankWord_getElem?_eq_some_iff hfill, and_or_left, exists_or]
+  exact fun h => absurd h (by omega)
 
 /-- A window past the left flank hits `a` iff the right flank is `a`. -/
 theorem exists_ge_flankWord_eq_some_iff (hfill : fill ≠ a) (h0 : 0 < k)
