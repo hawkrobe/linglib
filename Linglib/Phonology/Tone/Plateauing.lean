@@ -54,6 +54,8 @@ rendering) and `Studies/Yolyan2025` (BMRS rendering).
   operator in the pointwise H-order: extensive, monotone, idempotent.
 * `utp.requiresBothSides` — deleting either flanking H reverts the plateau target, at
   every distance.
+* `realizeMerged_toAR_map` — the commuting square: the merged representation of the
+  output string is the output representation `plateauAR`.
 -/
 
 namespace Tone.Plateauing
@@ -100,6 +102,15 @@ theorem upper_realize_toAR (v : List TBU) :
     rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih]
     cases a <;> simp [toAR, List.replicate_succ]
 
+/-- The lower tier of the realization is the bare timing tier. -/
+theorem lower_realize_toAR (v : List TBU) :
+    (realize toAR v).lower.toList = List.replicate v.length () := by
+  induction v with
+  | nil => rfl
+  | cons a v ih =>
+    rw [realize_cons, AR.concat_lower, LabeledTuple.toList_concat, ih]
+    cases a <;> simp [toAR, List.replicate_succ]
+
 /-- A timing node of the input representation is linked iff its TBU is H-toned. -/
 theorem isLinkedLower_realize_toAR {w : List TBU} {j : ℕ} :
     (realize toAR w).toGraph.IsLinkedLower j ↔ w[j]? = some .H := by
@@ -114,13 +125,22 @@ theorem mem_links_realizeMerged_toAR {w : List TBU} {p : ℕ × ℕ} :
   rw [realizeMerged_def, mem_links_collapseAR_of_upper_replicate (upper_realize_toAR w),
     isLinkedLower_realize_toAR]
 
+/-- The melodic tier of the merged representation: one fused H if any, else empty. -/
+theorem upper_realizeMerged_toAR (v : List TBU) :
+    (realizeMerged toAR v).upper.toList
+      = if .H ∈ v then [_root_.Tone.TRN.H] else [] := by
+  rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR]
+  by_cases hv : .H ∈ v
+  · obtain ⟨n, hn⟩ : ∃ n, v.count .H = n + 1 :=
+      ⟨v.count .H - 1, by have := List.count_pos_iff.mpr hv; omega⟩
+    rw [hn, OCP.collapse_replicate, if_pos hv]
+  · rw [List.count_eq_zero.mpr hv, if_neg hv]
+    rfl
+
 /-- With any H present, the fused melody node is the H at index `0`. -/
 theorem upper_get?_realizeMerged_toAR {w : List TBU} (hw : .H ∈ w) :
     (realizeMerged toAR w).upper.get? 0 = some _root_.Tone.TRN.H := by
-  obtain ⟨n, hn⟩ : ∃ n, w.count .H = n + 1 :=
-    ⟨w.count .H - 1, by have := List.count_pos_iff.mpr hw; omega⟩
-  rw [LabeledTuple.get?_eq_getElem?, realizeMerged_def, upper_collapseAR,
-    upper_realize_toAR, hn, OCP.collapse_replicate]
+  rw [LabeledTuple.get?_eq_getElem?, upper_realizeMerged_toAR, if_pos hw]
   rfl
 
 /-- The output representation: fuse, then spread — the merged input, hull-closed. -/
@@ -287,6 +307,13 @@ theorem utp.map_mono {w' : List TBU}
     (h : (utp.map w)[j]? = some TBU.H) : (utp.map w')[j]? = some TBU.H :=
   utp.map_getElem?_H_iff.mpr ((utp.map_getElem?_H_iff.mp h).mono hw)
 
+/-- Plateauing preserves the presence of a trigger in both directions. -/
+theorem utp.H_mem_map : .H ∈ utp.map w ↔ .H ∈ w :=
+  ⟨fun h => have ⟨_, hi⟩ := List.mem_iff_getElem?.mp h
+    (utp.map_getElem?_H_iff.mp hi).H_mem,
+   fun h => have ⟨i, hi⟩ := List.mem_iff_getElem?.mp h
+    List.mem_iff_getElem?.mpr ⟨i, utp.map_getElem?_H_of_getElem?_H hi⟩⟩
+
 /-- Surfacing is invariant under plateauing: the output's Hs are the plateau, whose
 convexity flanks no new positions. -/
 theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
@@ -358,6 +385,43 @@ theorem utp.map_plateau (m p : ℕ) (w : List TBU) :
 example : utp.map [.O, .O, .O, .H] = [.O, .O, .O, .H] := by decide
 example : utp.map [.H, .O, .O, .O] = [.H, .O, .O, .O] := by decide
 example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
+
+/-! ### The commuting square
+
+The string map linearizes the representational operation: realizing the output string
+gives back exactly the output representation. `utp.Surfaces` reads `plateauAR` by
+definition; the square closes the loop at the level of whole representations. -/
+
+/-- **The commuting square**: the merged representation of the output string *is* the
+output representation — fusion-plus-spreading followed by linearization equals `utp.map`
+followed by realization. -/
+theorem realizeMerged_toAR_map (w : List TBU) :
+    realizeMerged toAR (utp.map w) = plateauAR w := by
+  refine AR.ext_toGraph (Graph.ext ?_ ?_ ?_)
+  · exact LabeledTuple.toList_injective (by
+      show (realizeMerged toAR (utp.map w)).upper.toList
+        = (realizeMerged toAR w).upper.toList
+      rw [upper_realizeMerged_toAR, upper_realizeMerged_toAR]
+      simp only [utp.H_mem_map])
+  · exact LabeledTuple.toList_injective (by
+      show (realizeMerged toAR (utp.map w)).lower.toList
+        = (realizeMerged toAR w).lower.toList
+      rw [realizeMerged_def, realizeMerged_def, collapseAR_lower, collapseAR_lower,
+        lower_realize_toAR, lower_realize_toAR, Surfacing.map_length])
+  · ext ⟨k, j⟩
+    show _ ↔ (k, j) ∈ (realizeMerged toAR w).toGraph.hull.links
+    rw [mem_links_realizeMerged_toAR,
+      Graph.mem_hull_links (realizeMerged toAR w).inBounds]
+    constructor
+    · rintro ⟨rfl, hj⟩
+      obtain ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩ :=
+        utp.surfaces_iff.mp (utp.map_getElem?_H_iff.mp hj)
+      exact ⟨j₁, j₂, mem_links_realizeMerged_toAR.mpr ⟨rfl, h₁⟩,
+        mem_links_realizeMerged_toAR.mpr ⟨rfl, h₂⟩, hj₁, hj₂⟩
+    · rintro ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩
+      obtain ⟨hk, hj₁⟩ := mem_links_realizeMerged_toAR.mp h₁
+      exact ⟨hk, utp.map_getElem?_H_iff.mpr (utp.surfaces_iff.mpr
+        ⟨⟨j₁, hle₁, hj₁⟩, j₂, hle₂, (mem_links_realizeMerged_toAR.mp h₂).2⟩)⟩
 
 /-! ### Unbounded circumambience
 
