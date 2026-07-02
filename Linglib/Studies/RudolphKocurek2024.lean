@@ -74,10 +74,9 @@ of `Semantics/Composition/Model.lean`. -/
 open Core.Order (TotalPreorder)
 open FirstOrder FirstOrder.Language
 
-/-- A semantic ordering — the paper's ranking of interpretations by strength
-of interpretive commitment ([rudolph-kocurek-2024] §4.2) — IS the substrate's
-bundled decidable total preorder (`Core.Order.TotalPreorder`), the same frame
-object that ranks worlds in Lewisian plausibility semantics. -/
+/-- The paper's ranking of interpretations by strength of interpretive
+commitment (§4.2): a bundled total preorder, the frame object of Lewisian
+plausibility semantics. -/
 abbrev SemanticOrdering (I : Type*) := TotalPreorder I
 
 /-! ### Formulas -/
@@ -742,52 +741,33 @@ theorem denotation_subset_field (φ : MFormula L E) (w : W) :
 
 /-! ### The ∼ Equivalence Relation ([kocurek-2024-supplement] §C, p. 9) -/
 
-/-- Condition (i) of the ∼ equivalence: every element of X\Y is
-matched by an element of Y\X at least as high, and vice versa.
-
-This is the same as the basic ME matching condition applied to
-interpretation sets rather than formulas. -/
+/-- ∼ condition (i): each element of `X \ Y` is matched by one of `Y \ X` at
+least as high, and vice versa. -/
 def equivCond1 (X Y : Finset I) : Prop :=
   (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'') ∧
   (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'')
 
-/-- Condition (ii) of the ∼ equivalence: every element of the
-symmetric difference (X ∪ Y) \ (X ∩ Y) is dominated by both
-an element of X ∩ Y and an element of X̄ ∩ Ȳ (relative to I_i).
-
-This handles the "Figure 1" situation where A ↔ ¬B always holds
-at top-ranked interpretations: if every A-or-B-but-not-both
-interpretation is matched by both an A∧B and a ¬A∧¬B interpretation. -/
+/-- ∼ condition (ii): each element of the symmetric difference is dominated
+both by an element of `X ∩ Y` and by one of the field outside `X ∪ Y`. -/
 def equivCond2 (X Y : Finset I) : Prop :=
   ∀ i' ∈ (X ∪ Y) \ (X ∩ Y),
     (∃ i'' ∈ X ∩ Y, ord.le i' i'') ∧
     (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'')
 
-/-- Metalinguistic degree equivalence: X ∼_i Y.
-
-Two interpretation sets have the same metalinguistic degree iff
-either (i) their symmetric difference elements are pairwise matched
-in rank, or (ii) every unmatched element is dominated by both an
-element in the overlap and an element outside both sets.
-
-This mirrors the revised ME truth conditions ([kocurek-2024-supplement] §B) applied
-to sets rather than formulas. -/
+/-- Metalinguistic degree equivalence `X ∼_i Y`: the revised ME truth
+conditions applied to interpretation sets. -/
 def degreeEquiv (X Y : Finset I) : Prop :=
   equivCond1 ord X Y ∨ equivCond2 ord i X Y
 
 /-! ### Fact 8: ∼ is an Equivalence Relation -/
 
-/-- Fact 8a: ∼ is reflexive.
-X \ X = ∅, so all conditions are vacuously satisfied. -/
+/-- Fact 8a: ∼ is reflexive. -/
 theorem degreeEquiv_refl (X : Finset I) :
     degreeEquiv ord i X X := by
   left
   constructor <;> intro i' h <;> simp at h
 
-/-- Fact 8b: ∼ is symmetric.
-Both conditions are symmetric in X and Y: condition (i) swaps the
-two conjuncts, and condition (ii) is invariant under X ↔ Y since
-X ∩ Y = Y ∩ X and X ∪ Y = Y ∪ X. -/
+/-- Fact 8b: ∼ is symmetric. -/
 theorem degreeEquiv_symm (X Y : Finset I) :
     degreeEquiv ord i X Y → degreeEquiv ord i Y X := by
   intro h
@@ -807,13 +787,9 @@ theorem degreeEquiv_symm (X Y : Finset I) :
 
 /-! ### The ⊐ Ordering on Sets ([kocurek-2024-supplement] §C, p. 10) -/
 
-/-- X ⊐ Y: interpretation set X is strictly better than Y.
-
-Mirrors the revised MC truth conditions ([kocurek-2024-supplement] §B):
-∃ i' ∈ I_i such that i' ∈ X \ Y and either
-(a) all elements of X ∩ Y are strictly below i', or
-(b) all elements of I_i \ (X ∪ Y) are strictly below i',
-and in both cases all elements of Y \ X are strictly below i'. -/
+/-- `X ⊐ Y`: some witness in `X \ Y` inside the field dominates all of
+`Y \ X` and, moreover, all of `X ∩ Y` or all of the field outside `X ∪ Y` —
+the revised MC truth conditions applied to interpretation sets. -/
 def strictlyBetter (X Y : Finset I) : Prop :=
   ∃ i' ∈ X \ Y,
     i' ∈ field ord i ∧
@@ -920,18 +896,13 @@ private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y 
 
 /-! ### Facts 11–12: ⊐ on Degrees -/
 
-/-- Fact 12a: ⊐ is irreflexive on sets.
-i' ∈ X \ X is impossible, so no witness exists. -/
+/-- Fact 12a: ⊐ is irreflexive. -/
 theorem strictlyBetter_irrefl (X : Finset I) :
     ¬ strictlyBetter ord i X X := by
   intro ⟨i', hi', _, _, _⟩
   simp at hi'
 
-/-- If X ∼ Y, then ¬(X ⊐ Y).
-Under equivCond1, any witness i' ∈ X\Y is matched by i'' ∈ Y\X with
-i' ≤ i'', contradicting i'' < i'. Under equivCond2, the witness is
-dominated by an X∩Y or field\(X∪Y) element, contradicting the inner
-disjunct of ⊐. -/
+/-- ∼ refutes ⊐: equivalent sets are incomparable. -/
 theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
     degreeEquiv ord i X Y → ¬ strictlyBetter ord i X Y := by
   intro h_eq ⟨i', h_sdiff, _, h_ymx, h_inner⟩
@@ -949,12 +920,7 @@ theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
     · exact (h_cap i₁ h_i₁_mem).2 h_le₁
     · exact (h_comp i₂ h_i₂_mem).2 h_le₂
 
-/-- Fact 11: ⊐ respects ∼ on the right.
-If X ⊐ Y and Y ∼ Z (with all sets in the field), then X ⊐ Z.
-Under left inner: m dominates all of Y, m ∉ Z is forced, and
-matching through Y∼Z extends domination to Z\Y.
-Under right inner: m dominates field\X; if m ∉ Z, Z\X ⊆ field ord i\X;
-if m ∈ Z, use Y∼Z to find alternative witness in X\Z. -/
+/-- Fact 11: ⊐ respects ∼ on the right — `X ⊐ Y` and `Y ∼ Z` give `X ⊐ Z`. -/
 theorem strictlyBetter_respects_right (X Y Z : Finset I)
     (_hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i Y Z →
@@ -1026,14 +992,7 @@ theorem strictlyBetter_respects_right (X Y Z : Finset I)
           ⟨(Finset.mem_sdiff.mp hc).1,
            fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)
 
-/-- Fact 11: ⊐ respects ∼ on the left.
-If X ⊐ Y and X ∼ Z (with all sets in the field), then Z ⊐ Y.
-Under left inner: m dominates all of Y; use X∼Z to find
-a witness in Z\Y (either m itself or a matched element).
-Under right inner: m dominates field\X; m ∈ Z is forced
-(matching m ∈ X\Z through X∼Z yields z ∈ field ord i\X < m,
-contradicting le m z); elements of Y\Z ∩ X use X∼Z
-matching to field\X for domination. -/
+/-- Fact 11: ⊐ respects ∼ on the left — `X ⊐ Y` and `X ∼ Z` give `Z ⊐ Y`. -/
 theorem strictlyBetter_respects_left (X Y Z : Finset I)
     (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i X Z →
@@ -1101,12 +1060,7 @@ theorem strictlyBetter_respects_left (X Y Z : Finset I)
           (fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h)))
       · exact m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1, hc_x⟩)
 
-/-- Fact 12b: ⊐ is transitive on sets.
-Given witnesses m₁ (X⊐Y) and m₂ (Y⊐Z), split on which is higher.
-If m₂ ≤ m₁: m₁ cannot be in Z (else m₁ ∈ Z\Y with ¬(m₁ < m₂)),
-so m₁ ∈ X\Z is the witness for X⊐Z.
-If m₁ ≤ m₂: m₂ must be in X (else m₂ ∈ Y\X with ¬(m₂ < m₁)),
-so m₂ ∈ X\Z is the witness for X⊐Z. -/
+/-- Fact 12b: ⊐ is transitive. -/
 theorem strictlyBetter_trans (X Y Z : Finset I) :
     strictlyBetter ord i X Y → strictlyBetter ord i Y Z →
     strictlyBetter ord i X Z := by
@@ -1185,13 +1139,7 @@ theorem strictlyBetter_trans (X Y Z : Finset I) :
       · exact h_comp c (Finset.mem_sdiff.mpr
           ⟨hc_f, fun h => Finset.mem_union.mp h |>.elim hc_y hc_nz⟩)
 
-/-- Fact 12c: ⊐ is total on nonequivalent sets.
-For any X, Y ⊆ I_i, either X ∼ Y or X ⊐ Y or Y ⊐ X.
-
-The proof finds the maximum element m of the symmetric difference
-(X\Y)∪(Y\X), then case-splits on whether all elements on the
-other side are strictly below m. If yes, we get ⊐; if no, we
-get ∼ via one of the two equivalence conditions. -/
+/-- Fact 12c: trichotomy — `X ∼ Y`, `X ⊐ Y`, or `Y ⊐ X`. -/
 theorem strictlyBetter_total (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
     degreeEquiv ord i X Y ∨ strictlyBetter ord i X Y ∨
@@ -1263,11 +1211,7 @@ theorem strictlyBetter_total (X Y : Finset I)
 
 /-! ### Fact 8c: ∼ Transitivity (via Totality + Respects) -/
 
-/-- Fact 8c: ∼ is transitive (for sets in the field).
-Indirect proof: if ¬(X∼Z), totality gives X⊐Z or Z⊐X.
-- X⊐Z: respects_right(X,Z,Y) with Z∼Y gives X⊐Y, contradicting X∼Y.
-- Z⊐X: respects_right(Z,X,Y) with X∼Y gives Z⊐Y, contradicting Y∼Z.
-This avoids the direct Schröder-Bernstein bouncing chain argument. -/
+/-- Fact 8c: ∼ is transitive on field-subsets, via trichotomy and Fact 11. -/
 theorem degreeEquiv_trans (X Y Z : Finset I)
     (hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     degreeEquiv ord i X Y → degreeEquiv ord i Y Z →
@@ -1285,9 +1229,7 @@ theorem degreeEquiv_trans (X Y Z : Finset I)
       (degreeEquiv_symm ord i Y Z hyz)
       (strictlyBetter_respects_right ord i Z X Y hZf hXf hYf h hxy)
 
-/-- The metalinguistic setoid: ∼ as a Mathlib `Setoid` on field-subsets.
-The carrier is `{X : Finset I // X ⊆ field ord i}` because
-transitivity requires the ⊆ field ord i hypothesis (via totality). -/
+/-- ∼ as a `Setoid` on field-subsets (transitivity needs the field bound). -/
 def metalinguisticSetoid :
     Setoid {X : Finset I // X ⊆ field ord i} where
   r X Y := degreeEquiv ord i X.1 Y.1
@@ -1302,17 +1244,13 @@ end DegreeTheory
 
 /-! ### Metalinguistic Degree Type -/
 
-/-- The type of metalinguistic degrees: equivalence classes of
-interpretation sets under ∼.
-
-A metalinguistic degree is a *set of sets of interpretations* —
-all the interpretation sets that are "ranked as high" as each other.
-The degree of a sentence A is `deg(⟦A⟧_i)`. -/
+/-- Metalinguistic degrees: ∼-classes of interpretation sets. The degree of
+a sentence is `deg` of its denotation (`formulaDeg`). -/
 def MetaDegree (I : Type*) [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I) :=
   Quotient (metalinguisticSetoid ord i)
 
-/-- Compute the metalinguistic degree of an interpretation set. -/
+/-- The metalinguistic degree of an interpretation set. -/
 def deg {I : Type*} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I)
     (X : Finset I) (hX : X ⊆ field ord i) :
@@ -1700,12 +1638,8 @@ theorem tautology_accepted :
     AssertoricContent interp₂ (.disj La (.neg La)) tiedOrd .w0 := by
   decide
 
-/-- Nonclassicality of acceptance-preservation:
-(La ≻ ¬La) ∨ (¬La ≻ La) does NOT have assertoric content 1 on the
-tied model. At both maximal interpretations (j₀ ≡ j₁), neither
-direction of MC holds because the interpretations are tied.
-
-This is the key result paralleling informational entailment for
+/-- Nonclassical acceptance-preservation: `(La ≻ ¬La) ∨ (¬La ≻ La)` is not
+accepted on the tied model — the analogue of informational entailment for
 epistemic modals ([yalcin-2007]). -/
 theorem mc_disj_not_accepted :
     AssertoricContent interp₂ (.disj (.mc La (.neg La)) (.mc (.neg La) La))
@@ -1801,14 +1735,8 @@ abbrev Ta : MFormula (Language.monadic Pred1) Entity2 := .matom Pred1.tall .ann
 /-- "Ben is tall" -/
 abbrev Tb : MFormula (Language.monadic Pred1) Entity2 := .matom Pred1.tall .ben
 
-/-- No Reversal holds for `tall` on the two-entity model.
-Since Ann enters the extension before Ben (at i₁ vs i₂), there is no
-interpretation where Ben is tall but Ann is not. NR is satisfied
-because the extensions are monotonically nested.
-
-Compare with `nr_trivial_single_entity` above, which holds vacuously
-on a single-entity model. Here NR constrains the relationship between
-two distinct entities' extensions across the ordering. -/
+/-- No Reversal holds for `tall`: the extensions are monotonically nested,
+so Ben never outruns Ann. -/
 theorem nr_tall_ann_ben :
     NoReversal interpNR ord₃ Pred1.tall .w0 .ann .ben := by decide
 
@@ -1872,42 +1800,25 @@ theorem mc_delineation_diverge_without_nr :
 
 /-! ### Metalinguistic Conditional (§6.3) -/
 
-/-- La → Pa fails at i₂ on Model 1: the La-restricted ordering ≤_{La}
-includes i₁ (where La is true but Pa is false), so there exists
-a ranked La-interpretation that does not satisfy Pa.
-
-This shows → is NOT the material conditional — La and Pa are
-both true at i₂, but the conditional is false because it quantifies
-over all ranked La-interpretations, not just the current one. -/
+/-- `La → Pa` fails at i₂ even though both conjuncts are true there: the
+conditional quantifies over all ranked La-interpretations, so it is not the
+material conditional. -/
 theorem mcond_la_pa_false :
     ¬ EvalMCond interp₃ La Pa ord₃ .i2 .w0 := by decide
 
-/-- Observation M1 (§6.3): ⊨ A → (A ≻ ¬A).
-
-"If Pluto is a planet, then it's more a planet than not" is classically
-valid. On ≤_A (restricted to A-interpretations), A ≻ ¬A trivially holds:
-every A-interpretation makes A true, so the (A∧¬(¬A))-witness exists,
-and there are no (¬A∧¬A)-witnesses in the restricted ordering.
-
-This parallels the validity of epistemic "if p then probably p"
+/-- M1 (§6.3): ⊨ A → (A ≻ ¬A) — "if Pluto is a planet, it's more a planet
+than not", the analogue of epistemic "if p then probably p"
 ([yalcin-2007]). -/
 theorem mcond_m1 :
     ∀ (i : I3),
       EvalMCond interp₃ La (.mc La NLa) ord₃ i .w0 := by decide
 
-/-! ### ME Transitivity: Basic vs Revised Semantics ([kocurek-2024-supplement] §B) -/
+/-! ### ME transitivity: basic vs revised semantics ([kocurek-2024-supplement] §B)
 
-/-! ### ME transitivity counterexample
-
-The basic semantics fails to validate ME transitivity:
-`A ≈ B, B ≈ C ⊭ A ≈ C` ([kocurek-2024-supplement] §B). Model 4 provides a minimal
-counterexample.
-
-Key insight: the (La∧¬Ca)-witness l has no matching (Ca∧¬La)-witness,
-so `La ≻ Ca` holds vacuously under the basic semantics. The revised
-semantics blocks this: l must dominate either all Ca-interpretations
-(i and j are above it) or all ¬La-interpretations (k is above it),
-and it can do neither. -/
+Model 4 is the minimal counterexample: `La ≻ Ca` holds vacuously in the basic
+semantics (the (La∧¬Ca)-witness l faces no (Ca∧¬La)-witness), breaking
+`A ≈ B, B ≈ C ⊨ A ≈ C`; the revised domination clause blocks the vacuous
+witness and restores transitivity. -/
 
 /-- Three predicates for the transitivity counterexample. -/
 inductive Pred3 | linguist | philosopher | psychologist
@@ -1934,16 +1845,8 @@ def ord₄ : SemanticOrdering I4 :=
     (by intro x y z hxy hyz; cases x <;> cases y <;> cases z <;> simp_all)
     (by intro x y; cases x <;> cases y <;> simp)
 
-/-- Interpretation function for transitivity counterexample:
-- i: all three true  (linguist, philosopher, psychologist)
-- j: linguist and psychologist only (philosopher false)
-- k: philosopher only (linguist and psychologist false)
-- l: linguist and philosopher only (psychologist false)
-
-The (La∧¬Pa)-witness j and (Pa∧¬La)-witness k are at the same level,
-ensuring neither MC direction holds for La vs Pa (and similarly for
-Pa vs Ca). But the only (La∧¬Ca)-witness is l at the bottom, with no
-(Ca∧¬La)-witness anywhere. -/
+/-- Counterexample interpretations: i all three; j linguist+psychologist;
+k philosopher only; l linguist+philosopher. -/
 @[implicit_reducible] def interp₄ : I4 → W → (Language.monadic Pred3).Structure Entity :=
   fun idx _ => monadicStructure fun P _ =>
     (match idx, P with
