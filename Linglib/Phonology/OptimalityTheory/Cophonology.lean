@@ -77,7 +77,8 @@ theorem cophonologicalEval_empty_sub [DecidableEq L] [DecidableEq C]
     (defaultRanking : List (L × Constraint C)) (candidates : List C) (h : candidates ≠ []) :
     cophonologicalEval defaultRanking [] candidates h
       = (Tableau.ofRanking candidates (defaultRanking.map (·.2)) h).optimal := by
-  simp only [cophonologicalEval, mergeRanking_empty_sub]
+  show (Tableau.ofRanking candidates ((mergeRanking defaultRanking []).map (·.2)) h).optimal = _
+  rw [mergeRanking_empty_sub]
 
 /-! ### Cophonologies by ph(r)ase -/
 
@@ -108,7 +109,8 @@ def selectCophonology (registry : List (PhrasalCophonology L C)) (ph : Phase) :
 /-- The selected cophonology, when present, applies to the phase. -/
 theorem selectCophonology_applies {registry : List (PhrasalCophonology L C)} {ph : Phase}
     {pc : PhrasalCophonology L C} (h : selectCophonology registry ph = some pc) :
-    pc.appliesTo ph = true :=
-  List.find?_some h
+    pc.appliesTo ph = true := by
+  unfold selectCophonology at h
+  simpa using List.find?_some h
 
 end OptimalityTheory.Cophonology
