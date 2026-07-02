@@ -27,8 +27,8 @@ here abstract the foot level. Prominence-head marking is likewise a refinement, 
 
 * `isWordTree` — the structural `Bool` Layeredness checker (decide-reducible; the foot arm
   reuses `Foot.isFootTree`).
-* `IsWord` / `Word` — the Layeredness predicate and the carrier subtype it cuts out.
-* `Word.recursionCount` — the `No-Recursion` violation count, read off the carrier (`noRec`).
+* `IsWord` — the Layeredness predicate; theorems take it as a hypothesis on the carrier
+  (mathlib's `Squarefree`-style), there is no bundled subtype.
 * `noRec` / `parseInto` — the violable OT constraints over the carrier (`Constraint Tree`).
 * `maximalProjections` / `minimalProjections` / `IsMinimalProj` — the topmost / bottommost
   ℓ-nodes of the carrier, and the intrinsic minimal-projection predicate.
@@ -48,7 +48,7 @@ namespace Prosody
 The violable constraints scoring prosodic candidates are `Constraints.Constraint Tree`
 values ([prince-smolensky-1993]); a grammar ranks them and scores with the OT engine
 (`OptimalityTheory.Tableau.ofRanking`). They are defined on the **carrier** `Tree` (which
-holds the ill-formed candidates a well-formed `Word` can't represent). List-recursion auxes
+holds the ill-formed candidates `IsWord` rules out). List-recursion auxes
 are local `where`s. -/
 
 open Constraints
@@ -374,26 +374,6 @@ theorem isWord_children {a : Constituent} {cs : List Tree}
   · exact Or.inl h
   · exact Or.inr h
 
-/-- A well-formed prosodic word: the prosodic-tree carrier restricted to the legal
-    recursive ω-trees (`IsWord`). -/
-abbrev Word := {t : Tree // IsWord t}
-
-namespace Word
-
-/-- The `No-Recursion` violation count of a word ([ito-mester-2009]): its ω-over-ω depth,
-    the carrier fold `noRec` read off the underlying tree. -/
-def recursionCount (w : Word) : ℕ := noRec w.val
-
-/-- The maximal ω-projections of a word: its topmost ω-nodes. A flat word is its own sole
-    maximal projection; a recursive ω-over-ω ([ito-mester-2009]) has the outer ω. -/
-def maximalProjections (w : Word) : List Tree := Prosody.maximalProjections (·.isOm) w.val
-
-/-- The minimal ω-projections of a word: its innermost ω-nodes — the bottommost cores of
-    an ω-over-ω recursion ([ito-mester-2009]). -/
-def minimalProjections (w : Word) : List Tree := Prosody.minimalProjections (·.isOm) w.val
-
-end Word
-
 /-! ### Word-size predicates -/
 
 variable {measure : List Syllable.Weight → ℕ} {t : Tree}
@@ -455,17 +435,17 @@ example : IsWord perfectW := by decide
 example : IsWord recursiveW := by decide
 example : ¬ IsWord (.om [.node .ph []] : Tree) := by decide
 
--- `recursionCount` reads the No-Recursion cost off the carrier: the recursive word scores
+-- `noRec` reads the No-Recursion cost off the carrier: the recursive word scores
 -- one ω-over-ω, the flat one zero.
-example : Word.recursionCount ⟨recursiveW, by decide⟩ = 1 := by decide
-example : Word.recursionCount ⟨perfectW, by decide⟩ = 0 := by decide
+example : noRec recursiveW = 1 := by decide
+example : noRec perfectW = 0 := by decide
 
 -- The ω-over-ω word has the outer ω as its sole maximal projection and the inner ω as its
 -- sole minimal projection; the perfect (flat) word is both at once.
-example : Word.maximalProjections ⟨recursiveW, by decide⟩ = [recursiveW] := by decide
-example : Word.minimalProjections ⟨recursiveW, by decide⟩ = [.node Constituent.om [exFoot]] := by
+example : maximalProjections (·.isOm) recursiveW = [recursiveW] := by decide
+example : minimalProjections (·.isOm) recursiveW = [.node Constituent.om [exFoot]] := by
   decide
-example : Word.maximalProjections ⟨perfectW, by decide⟩ = [perfectW] := by decide
-example : Word.minimalProjections ⟨perfectW, by decide⟩ = [perfectW] := by decide
+example : maximalProjections (·.isOm) perfectW = [perfectW] := by decide
+example : minimalProjections (·.isOm) perfectW = [perfectW] := by decide
 
 end Prosody

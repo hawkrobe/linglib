@@ -219,7 +219,7 @@ theorem Syllable.toOnsetRime_weight (σ : Syllable) :
 
 /-- A **yield**: the terminal σ-weight string of a prosodic structure — the
     unparsed input, or the leaves of a prosodic `Tree`. Distinct from the prosodic
-    word ω (`Prosody.Word`), which is a *headed constituent*: a yield is just the
+    word ω (an `IsWord` tree), which is a *headed constituent*: a yield is just the
     weight profile, with no head and no constituency. -/
 abbrev Yield := List Syllable.Weight
 
@@ -244,8 +244,8 @@ end Yield
 The recursive prosodic constituent ([ito-mester-2003]): the Core ordered rose tree
 `RoseTree` labeled by prosodic-level `Constituent`s — the **violable OT candidate
 carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω, a stray under
-φ) the headed `Prosody.Word` cannot represent. Its OT constraints are
-`Constraints.Constraint Tree` values, defined alongside `Prosody.Word`. Homed here because
+φ) that `IsWord` rules out. Its OT constraints are
+`Constraints.Constraint Tree` values, defined alongside `IsWord`. Homed here because
 `Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
 `RoseTree`. -/
 
