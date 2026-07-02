@@ -47,8 +47,12 @@ namespace Semantics.Attitudes
     ([liefke-2024] §4.3), and the *frame* created by `thinks[...]` in memo.
 
     The `cont` field is Kratzer's CONT function: the propositional content
-    this mental state carries. Two distinct content individuals can share
-    the same content (my belief that p ≠ your belief that p). -/
+    this mental state carries. Caveat: because `cont` is the only field,
+    this formalization identifies individuals with their contents
+    (`xc₁ = xc₂ ↔` equal `cont`) — the intuition "my belief that p ≠ your
+    belief that p" is NOT captured; a Kratzerian atom-plus-model shape
+    (`cont : E → W → (W → Prop)`) would capture it, deferred until a
+    study states an identity-vs-content theorem. -/
 structure ContentIndividual (W : Type*) where
   /-- Propositional content: CONT(c) -/
   cont : W → Prop
@@ -116,5 +120,33 @@ theorem ContentIndividual.entails_not_implies_eq :
     (by simp [ContentIndividual.entails])
   -- But identity would require (λ_ => False) = (λ_ => True)
   exact (iff_of_eq (congr_fun heq true)).mpr trivial
+
+/-! ### World-indexed content ([moulton-2015]; [bondarenko-2022])
+
+A rigid `ContentIndividual` carries its content absolutely; an *indexed*
+content individual assigns content at each evaluation index — the shape
+needed for de re/de dicto contrasts and DP substitution. It is a family
+of rigid individuals, so the rigid API applies pointwise (`(x w).cont`,
+`compC p (x w)`): no parallel indexed API exists or should. -/
+
+/-- World-indexed content individual: a family of rigid ones. -/
+abbrev ContentIndividual.Indexed (W : Type*) := W → ContentIndividual W
+
+/-- A rigid individual as the constant family — the specialization the
+    rest of this file works with. -/
+def ContentIndividual.toIndexed {W : Type*} (c : ContentIndividual W) :
+    ContentIndividual.Indexed W := fun _ => c
+
+/-- Rigidity: the family is constant across indices. -/
+def ContentIndividual.Indexed.IsRigid {W : Type*}
+    (x : ContentIndividual.Indexed W) : Prop := ∀ w w', x w = x w'
+
+theorem ContentIndividual.toIndexed_isRigid {W : Type*}
+    (c : ContentIndividual W) : c.toIndexed.IsRigid := fun _ _ => rfl
+
+/-- At every index, the constant family is the rigid individual — the
+    lemma that transports any rigid theorem pointwise. -/
+theorem ContentIndividual.toIndexed_apply {W : Type*}
+    (c : ContentIndividual W) (w : W) : c.toIndexed w = c := rfl
 
 end Semantics.Attitudes

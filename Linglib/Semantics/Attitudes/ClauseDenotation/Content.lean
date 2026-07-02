@@ -221,4 +221,10 @@ def attitudeWithContentNoun {W E : Type*}
     (p : W → Prop) (w : W) : Prop :=
   ∃ xc : ContentIndividual W, noun xc w ∧ verb agent xc w ∧ compC p xc
 
+
+/-- De dicto evaluation at an index reduces to rigid `compC` for constant
+    families — new de re/de dicto work states `compC p (x w)` directly. -/
+theorem compC_toIndexed {W : Type*} (p : W → Prop) (c : ContentIndividual W)
+    (w : W) : compC p (c.toIndexed w) ↔ compC p c := Iff.rfl
+
 end Semantics.Attitudes.ClauseDenotation.Content
