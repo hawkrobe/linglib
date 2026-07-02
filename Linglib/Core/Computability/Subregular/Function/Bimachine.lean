@@ -46,13 +46,15 @@ structure Bimachine (L R α β : Type*) where
 
 namespace Bimachine
 
-/-- Left state after scanning a prefix left-to-right. -/
-def lState (B : Bimachine L R α β) (pre : List α) : L := pre.foldl B.lStep B.lInit
-/-- Right state after scanning a suffix right-to-left. -/
-def rState (B : Bimachine L R α β) (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
+variable (B : Bimachine L R α β)
 
-theorem lState_nil (B : Bimachine L R α β) : B.lState [] = B.lInit := rfl
-theorem rState_nil (B : Bimachine L R α β) : B.rState [] = B.rInit := rfl
+/-- Left state after scanning a prefix left-to-right. -/
+def lState (pre : List α) : L := pre.foldl B.lStep B.lInit
+/-- Right state after scanning a suffix right-to-left. -/
+def rState (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
+
+theorem lState_nil : B.lState [] = B.lInit := rfl
+theorem rState_nil : B.rState [] = B.rInit := rfl
 
 /-- Run threading the left state; each tail's right state is read on the spot. -/
 def runAux (B : Bimachine L R α β) : L → List α → List β
@@ -60,23 +62,23 @@ def runAux (B : Bimachine L R α β) : L → List α → List β
   | l, x :: xs => B.out l x (B.rState xs) :: B.runAux (B.lStep l x) xs
 
 /-- The computed function. -/
-def run (B : Bimachine L R α β) (x : List α) : List β := B.runAux B.lInit x
+def run (x : List α) : List β := B.runAux B.lInit x
 
-@[simp] theorem runAux_nil (B : Bimachine L R α β) (l : L) : B.runAux l [] = [] := rfl
-@[simp] theorem runAux_cons (B : Bimachine L R α β) (l : L) (x : α) (xs : List α) :
+@[simp] theorem runAux_nil (l : L) : B.runAux l [] = [] := rfl
+@[simp] theorem runAux_cons (l : L) (x : α) (xs : List α) :
     B.runAux l (x :: xs) = B.out l x (B.rState xs) :: B.runAux (B.lStep l x) xs := rfl
 
-theorem runAux_length (B : Bimachine L R α β) (l : L) (xs : List α) :
+theorem runAux_length (l : L) (xs : List α) :
     (B.runAux l xs).length = xs.length := by
   induction xs generalizing l with
   | nil => rfl
   | cons x xs ih => simp [ih]
 
-theorem run_length (B : Bimachine L R α β) (x : List α) : (B.run x).length = x.length :=
+theorem run_length (x : List α) : (B.run x).length = x.length :=
   B.runAux_length B.lInit x
 
 /-- **Coordinate characterization** (threaded form). -/
-theorem runAux_getElem? (B : Bimachine L R α β) (l : L) (xs : List α) (i : ℕ) :
+theorem runAux_getElem? (l : L) (xs : List α) (i : ℕ) :
     (B.runAux l xs)[i]?
       = (xs[i]?).map (fun a => B.out ((xs.take i).foldl B.lStep l) a (B.rState (xs.drop (i + 1)))) := by
   induction xs generalizing l i with
@@ -88,7 +90,7 @@ theorem runAux_getElem? (B : Bimachine L R α β) (l : L) (xs : List α) (i : �
 
 /-- **Coordinate characterization**: output `i` is `out (lState (x.take i)) (x i)
 (rState (x.drop (i+1)))`. -/
-theorem run_getElem? (B : Bimachine L R α β) (x : List α) (i : ℕ) :
+theorem run_getElem? (x : List α) (i : ℕ) :
     (B.run x)[i]?
       = (x[i]?).map (fun a => B.out (B.lState (x.take i)) a (B.rState (x.drop (i + 1)))) := by
   rw [run, runAux_getElem?]; rfl
@@ -100,7 +102,7 @@ preserving `run`. Mirrors `SFST.transferEquiv`/`Mealy.transferEquiv`; the use ca
 bringing `Type*` finite states down to `Fin (Fintype.card ·) : Type 0` so a
 universe-polymorphic machine can witness the `Type 0`-state existentials of
 `IsBimachineComputable`/`IsBimachineWeaklyDeterministic`. -/
-def transferEquiv (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R') :
+def transferEquiv (eL : L ≃ L') (eR : R ≃ R') :
     Bimachine L' R' α β where
   lInit := eL B.lInit
   lStep l a := eL (B.lStep (eL.symm l) a)
@@ -108,7 +110,7 @@ def transferEquiv (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R') :
   rStep r a := eR (B.rStep (eR.symm r) a)
   out l a r := B.out (eL.symm l) a (eR.symm r)
 
-theorem transferEquiv_lState_from (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+theorem transferEquiv_lState_from (eL : L ≃ L') (eR : R ≃ R')
     (l : L) (pre : List α) :
     pre.foldl (B.transferEquiv eL eR).lStep (eL l) = eL (pre.foldl B.lStep l) := by
   induction pre generalizing l with
@@ -117,7 +119,7 @@ theorem transferEquiv_lState_from (B : Bimachine L R α β) (eL : L ≃ L') (eR 
     show xs.foldl (B.transferEquiv eL eR).lStep (eL (B.lStep (eL.symm (eL l)) x)) = _
     rw [eL.symm_apply_apply, ih]; rfl
 
-theorem transferEquiv_rState_from (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+theorem transferEquiv_rState_from (eL : L ≃ L') (eR : R ≃ R')
     (r : R) (suf : List α) :
     suf.foldr (fun a r => (B.transferEquiv eL eR).rStep r a) (eR r)
       = eR (suf.foldr (fun a r => B.rStep r a) r) := by
@@ -130,15 +132,15 @@ theorem transferEquiv_rState_from (B : Bimachine L R α β) (eL : L ≃ L') (eR 
     show eR (B.rStep (eR.symm (eR _)) x) = _
     rw [eR.symm_apply_apply]; rfl
 
-theorem transferEquiv_lState (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+theorem transferEquiv_lState (eL : L ≃ L') (eR : R ≃ R')
     (pre : List α) : (B.transferEquiv eL eR).lState pre = eL (B.lState pre) :=
   transferEquiv_lState_from B eL eR B.lInit pre
 
-theorem transferEquiv_rState (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+theorem transferEquiv_rState (eL : L ≃ L') (eR : R ≃ R')
     (suf : List α) : (B.transferEquiv eL eR).rState suf = eR (B.rState suf) :=
   transferEquiv_rState_from B eL eR B.rInit suf
 
-theorem transferEquiv_runAux (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+theorem transferEquiv_runAux (eL : L ≃ L') (eR : R ≃ R')
     (l : L) (xs : List α) :
     (B.transferEquiv eL eR).runAux (eL l) xs = B.runAux l xs := by
   induction xs generalizing l with
@@ -150,7 +152,7 @@ theorem transferEquiv_runAux (B : Bimachine L R α β) (eL : L ≃ L') (eR : R �
     rw [eL.symm_apply_apply, transferEquiv_rState, eR.symm_apply_apply, ih]
 
 /-- The transferred bimachine computes the same string function. -/
-@[simp] theorem transferEquiv_run (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R') :
+@[simp] theorem transferEquiv_run (eL : L ≃ L') (eR : R ≃ R') :
     (B.transferEquiv eL eR).run = B.run := by
   funext xs; exact transferEquiv_runAux B eL eR B.lInit xs
 
@@ -161,17 +163,18 @@ on my side satisfies `p`" flag, so `lState`/`rState` compute `List.any` and the 
 exactly the two flags. Conjunctive spreads (`conjBM` in `Hierarchy.lean`) and unbounded
 tonal plateauing ([jardine-2016]) are instances. -/
 
+variable (pL pR : α → Bool) (out : Bool → α → Bool → β)
+
 /-- The bimachine whose side states are "a symbol satisfying `pL`/`pR` occurred on my
 side" flags. -/
-def ofFlags (pL pR : α → Bool) (out : Bool → α → Bool → β) : Bimachine Bool Bool α β where
+def ofFlags : Bimachine Bool Bool α β where
   lInit := false
   lStep l a := l || pL a
   rInit := false
   rStep r a := r || pR a
   out := out
 
-@[simp] theorem ofFlags_lState (pL pR : α → Bool) (out : Bool → α → Bool → β)
-    (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
+@[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
   show xs.foldl (fun l a => l || pL a) false = _
   have key : ∀ (acc : Bool) (ys : List α),
       ys.foldl (fun l a => l || pL a) acc = (acc || ys.any pL) := by
@@ -181,14 +184,13 @@ def ofFlags (pL pR : α → Bool) (out : Bool → α → Bool → β) : Bimachin
     | cons y ys ih => simp [ih, Bool.or_assoc]
   simpa using key false xs
 
-@[simp] theorem ofFlags_rState (pL pR : α → Bool) (out : Bool → α → Bool → β)
-    (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
+@[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
   show xs.foldr (fun a r => r || pR a) false = _
   induction xs <;> simp_all [Bool.or_comm]
 
 /-- Coordinate characterization of a flag bimachine: output `i` sees the input symbol and
 the two window-`any` flags. -/
-theorem ofFlags_run_getElem? (pL pR : α → Bool) (out : Bool → α → Bool → β)
+theorem ofFlags_run_getElem?
     (x : List α) (i : ℕ) :
     ((ofFlags pL pR out).run x)[i]?
       = (x[i]?).map fun a => out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
