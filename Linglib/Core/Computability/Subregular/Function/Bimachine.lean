@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.EquivFin
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Data.List.Fold
 
 /-!
 # Bimachines and weak determinism
@@ -164,14 +165,7 @@ def ofFlags : Bimachine Bool Bool α β where
   out := out
 
 @[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
-  show xs.foldl (fun l a => l || pL a) false = _
-  have key : ∀ (acc : Bool) (ys : List α),
-      ys.foldl (fun l a => l || pL a) acc = (acc || ys.any pL) := by
-    intro acc ys
-    induction ys generalizing acc with
-    | nil => simp
-    | cons y ys ih => simp [ih, Bool.or_assoc]
-  simpa using key false xs
+  simp [lState, ofFlags, List.foldl_or]
 
 @[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
   show xs.foldr (fun a r => r || pR a) false = _
