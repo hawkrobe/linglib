@@ -676,25 +676,15 @@ private theorem upper_realize_toAR (v : List TBU) :
     rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih]
     cases a <;> simp [toAR, List.replicate_succ]
 
-private theorem lower_realize_toAR (v : List TBU) :
-    (realize toAR v).lower.toList = List.replicate v.length () := by
-  have hlen : (realize toAR v).lower.len = v.length := by
-    rw [← AR.linearize_length, linearize_realize_toAR, List.length_map]
-  have h := List.eq_replicate_of_mem
-    (l := (realize toAR v).lower.toList) (a := ()) fun _ _ => rfl
-  rwa [LabeledTuple.toList_length, hlen] at h
-
-private theorem isLinkedLower_realize_toAR (v : List TBU) (j : ℕ) :
-    (realize toAR v).toGraph.IsLinkedLower j ↔ v[j]? = some .H := by
-  rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR]
-  cases hv : v[j]? with
-  | none => simp [List.getElem?_map, hv]
-  | some a => cases a <;> simp [List.getElem?_map, hv]
-
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp w)).links ↔ p.1 = 0 ∧ SurfacesH w p.2 := by
-  rw [realizeMerged_def, mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp w)),
-    isLinkedLower_realize_toAR, utp_getElem?_H_iff]
+  have hL : ∀ j, (realize toAR (utp w)).toGraph.IsLinkedLower j ↔ SurfacesH w j := fun j => by
+    rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR, ← utp_getElem?_H_iff]
+    cases hv : (utp w)[j]? with
+    | none => simp [List.getElem?_map, hv]
+    | some a => cases a <;> simp [List.getElem?_map, hv]
+  rw [realizeMerged_def,
+    mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp w)), hL]
 
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
@@ -707,7 +697,11 @@ theorem links_realizeMerged_utp :
 /-- The timing tier survives the merge: one slot per input TBU. -/
 theorem lower_realizeMerged_utp :
     (realizeMerged toAR (utp w)).lower.toList = List.replicate w.length () := by
-  rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR, utp_length]
+  rw [realizeMerged_def, collapseAR_lower]
+  have h := List.eq_replicate_of_mem
+    (l := (realize toAR (utp w)).lower.toList) (a := ()) fun _ _ => rfl
+  rwa [LabeledTuple.toList_length, ← AR.linearize_length, linearize_realize_toAR,
+    List.length_map, utp_length] at h
 
 /-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
 autosegment. -/
