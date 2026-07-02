@@ -20,7 +20,7 @@ CTP sample rows live in `Data/Complementation/`.
 
 * `ComplementClauseStructure` — surface complement-clause structure ([deal-2026]).
 * `CPShell` / `CPShellInventory` / `isAttestedShell` — CP external-shell cartography ([deal-2026]).
-* `ComplementType.toNoonan` / `Verb.frames` / `realizes` — [noonan-2007]-anchored
+* `ComplementType.toNoonan` / `Verb.frames` / `Verb.realizes` — [noonan-2007]-anchored
   selection relation between a verb's complement frames and clause-typers.
 -/
 
@@ -207,7 +207,7 @@ def _root_.Verb.frames (v : Verb) : List ComplementType :=
   v.complementType :: v.altComplementType.toList
 
 /-- `v`'s frame `f` is realized by clause-typer `c` ([noonan-2007]). -/
-def realizes (v : Verb) (c : Complementizer) : Prop :=
+def _root_.Verb.realizes (v : Verb) (c : Complementizer) : Prop :=
   ∃ f ∈ v.frames, f.toNoonan = c.noonanType
 
 end Clause.Complementation
