@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 /-!
 # Demonstration Semantics for Quotative Complements
@@ -92,7 +92,7 @@ their own performance type.
 
 namespace Semantics.Quotation.Demonstration
 
-open Semantics.ArgumentStructure (EventRel)
+open _root_.ArgumentStructure (EventRel)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Performance Ontology

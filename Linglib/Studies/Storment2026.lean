@@ -42,7 +42,7 @@ namespace Storment2026
 open Semantics.Lexical
 open English.Predicates.Verbal
 open Data.Examples
-open Semantics.ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
+open ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
 open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
 
 /-! ## §1 + §2. Lexical annotations and QI data

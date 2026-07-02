@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Plurality.Algebra
-import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Core.Order.Boundedness
@@ -71,7 +71,7 @@ namespace Krifka1989
 
 open _root_.Mereology
 open Semantics.Plurality.Algebra (Materialization)
-open Semantics.ArgumentStructure (UP)
+open ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
 open Core.Order (MereoTag)

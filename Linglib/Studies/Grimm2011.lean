@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Aissen2003
 
@@ -7,7 +7,7 @@ import Linglib.Studies.Aissen2003
 [grimm-2011] [aissen-2003] [von-heusinger-2008]
 
 Study file connecting [grimm-2011]'s agentivity lattice
-(`Semantics/Events/AgentivityLattice.lean`) to the differential
+(`Semantics/ArgumentStructure/Agentivity/`) to the differential
 object marking profiles in `Studies/Aissen2003.lean`.
 
 ## Key results
@@ -36,7 +36,7 @@ object marking profiles in `Studies/Aissen2003.lean`.
 
 namespace Grimm2011
 
-open Semantics.ArgumentStructure.AgentivityLattice
+open ArgumentStructure.AgentivityLattice
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
 open Features.Prominence
@@ -313,8 +313,9 @@ theorem animacy_dom_within_lattice :
 
 /-- A DOM profile derived from the lattice's predictions at a fixed
     persistence level. Since `DomPredictedByLattice` is monotone in
-    animacy (§21.7 of AgentivityLattice.lean), this profile is
-    automatically an upper set on the animacy scale. -/
+    animacy (`dom_monotone_inanimate_animate`, `dom_monotone_animate_human`
+    above), this profile is automatically an upper set on the animacy
+    scale. -/
 def latticeDOM (p : PersistenceLevel) : DOMProfile :=
   { name := "Lattice-derived"
     role := .P
@@ -647,9 +648,9 @@ theorem maximal_opposition :
     the patient is more affected (fewer persistence features). -/
 theorem classI_more_opposition_than_classII :
     semanticOpposition effectorAgent
-      (TransitivityClass.resultativeEffective.patientNode) >
+      (TransitivityRank.resultativeEffective.patientNode) >
     semanticOpposition effectorAgent
-      (TransitivityClass.contact.patientNode) := by decide
+      (TransitivityRank.contact.patientNode) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Canonical Verb-Agentivity Chain ([grimm-2011] §2.2, p.523–524)
@@ -761,40 +762,40 @@ theorem wellFormedPair_not_preserved_by_grimm :
 
 /-- Class I patients (break) are in the transitivity region. -/
 theorem classI_patient_in_region :
-    (TransitivityClass.resultativeEffective.patientNode).InTransitiveRegion :=
+    (TransitivityRank.resultativeEffective.patientNode).InTransitiveRegion :=
   by decide
 
 /-- Class II patients (shoot) are in the transitivity region. -/
 theorem classII_patient_in_region :
-    (TransitivityClass.contact.patientNode).InTransitiveRegion :=
+    (TransitivityRank.contact.patientNode).InTransitiveRegion :=
   by decide
 
 /-- Class III patients (search) are OUTSIDE the transitivity region.
     This captures Tsunoda's observation that pursuit verbs deviate most
     strongly from the prototypical transitive paradigm. -/
 theorem classIII_patient_outside_region :
-    ¬ (TransitivityClass.pursuit.patientNode).InTransitiveRegion :=
+    ¬ (TransitivityRank.pursuit.patientNode).InTransitiveRegion :=
   by decide
 
 /-- Class I patient (break: exPersBeginning) has lower persistence than
     Class II patient (shoot: quPersBeginning). The Class I object is
     more affected — it ceases to exist. -/
 theorem classI_patient_lower_persistence :
-    (TransitivityClass.resultativeEffective.patientNode).persistence.featureCount <
-    (TransitivityClass.contact.patientNode).persistence.featureCount := by
+    (TransitivityRank.resultativeEffective.patientNode).persistence.featureCount <
+    (TransitivityRank.contact.patientNode).persistence.featureCount := by
   decide
 
 /-- Class I patient ≤ Class II patient on the lattice
     (exPersBeginning ≤ quPersBeginning). -/
 theorem classI_patient_le_classII :
-    TransitivityClass.resultativeEffective.patientNode ≤
-    TransitivityClass.contact.patientNode := by decide
+    TransitivityRank.resultativeEffective.patientNode ≤
+    TransitivityRank.contact.patientNode := by decide
 
 /-- Class III patient ≤ Class I patient
     (totalNonPersistence ≤ exPersBeginning). -/
 theorem classIII_patient_le_classI :
-    TransitivityClass.pursuit.patientNode ≤
-    TransitivityClass.resultativeEffective.patientNode := by decide
+    TransitivityRank.pursuit.patientNode ≤
+    TransitivityRank.resultativeEffective.patientNode := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 14. Named Participants & Alignment ([grimm-2011] §4)
@@ -815,12 +816,12 @@ theorem effectorAgent_nomErg :
 
 /-- Class I patient (break object: destroyed) maps to ACC/ABS. -/
 theorem classI_patient_accAbs :
-    (TransitivityClass.resultativeEffective.patientNode).toCaseRegion
+    (TransitivityRank.resultativeEffective.patientNode).toCaseRegion
     = .accAbs := by decide
 
 /-- Class II patient (shoot object: affected but persists) maps to ACC/ABS. -/
 theorem classII_patient_accAbs :
-    (TransitivityClass.contact.patientNode).toCaseRegion
+    (TransitivityRank.contact.patientNode).toCaseRegion
     = .accAbs := by decide
 
 /-- Accusative alignment: maximal agent → NOM, maximal patient → ACC. -/

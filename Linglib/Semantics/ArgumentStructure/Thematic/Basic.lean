@@ -1,10 +1,10 @@
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Modification.Basic
 
 /-!
 # Thematic Roles — Davidsonian logical forms + axioms
 
-API on top of `ArgumentStructure/Defs.lean`: thematic axioms
+API on top of `Thematic/Defs.lean`: thematic axioms
 (Aktionsart selection + uniqueness), neo-Davidsonian stative logical
 forms, and adverbial modification (Davidson's key payoff).
 
@@ -25,7 +25,7 @@ forms, and adverbial modification (Davidson's key payoff).
 * [wellwood-2015] §3.2 (gradable adjectives over states)
 -/
 
-namespace Semantics.ArgumentStructure
+namespace ArgumentStructure
 
 open Modifier (intersective intersective_apply)
 
@@ -127,4 +127,4 @@ theorem modified_stative_is_pm {Entity Time : Type*} [LinearOrder Time]
   exact ⟨fun ⟨s, hp, hh, hm⟩ => ⟨s, ⟨hp, hm⟩, hh⟩,
          fun ⟨s, ⟨hp, hm⟩, hh⟩ => ⟨s, hp, hh, hm⟩⟩
 
-end Semantics.ArgumentStructure
+end ArgumentStructure

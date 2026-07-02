@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
-import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Features.Aktionsart
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
@@ -60,7 +60,7 @@ open Semantics.Presupposition
 open French.Predicates
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile
-open Semantics.ArgumentStructure.Affectedness.Profile
+open ArgumentStructure.Affectedness.Profile
 open Features
 open Semantics.Lexical
 open Minimalist

@@ -1,6 +1,6 @@
 import Linglib.Morphology.RootTypology
-import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Affectedness
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.ENat.Basic
@@ -53,9 +53,9 @@ namespace Bhadra2024
 
 open Semantics.Lexical
 open Semantics.Lexical.EventStructure
-open Semantics.ArgumentStructure (EventRel)
+open ArgumentStructure (EventRel)
 open ArgumentStructure.EntailmentProfile
-open Semantics.ArgumentStructure.Affectedness.Profile
+open ArgumentStructure.Affectedness.Profile
 
 /-! ### The compositional verb root (eqs. 53–60)
 

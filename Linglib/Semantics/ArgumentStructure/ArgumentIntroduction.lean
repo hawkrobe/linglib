@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 /-!
 # Argument Introduction by Functional Heads
@@ -31,7 +31,7 @@ contextually-interpreted single argument-introducer is its `IntroMode` reading.
 * `causeBieventive` / `causeThetaRole` — the §3.2 Cause-is-not-a-θ-role contrast
 -/
 
-namespace Semantics.ArgumentStructure
+namespace ArgumentStructure
 
 variable {Entity : Type*} {Time : Type*} [LinearOrder Time]
 
@@ -209,4 +209,4 @@ theorem causeBieventive_no_external_arg
     causeBieventive cause caused e :=
   ⟨e', hc, hcause⟩
 
-end Semantics.ArgumentStructure
+end ArgumentStructure

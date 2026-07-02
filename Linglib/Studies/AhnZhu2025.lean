@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Relational
 import Linglib.Features.Definiteness
 import Linglib.Studies.Jenks2018
 import Linglib.Data.Examples.AhnZhu2025
@@ -34,7 +34,7 @@ sub-component. Writing `sᵣ` for the resource situation:
 
 ## Layered grounding
 
-This file is a thin consumer of `Semantics/ArgumentStructure/Relational.lean`
+This file is a thin consumer of `Semantics/Possessive/Relational.lean`
 (Barker's `π`, `Ex`, `iotaPresupposition`, `naSemantics`, `bareSemantics`,
 `CanFillRelatum`). It does **not** re-implement them. `ι` is modelled by the
 substrate's `iotaPresupposition` (the existence-and-uniqueness presupposition a
@@ -62,7 +62,7 @@ presupposition.
 
 namespace AhnZhu2025
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 open Features.Definiteness
 
 variable {E S : Type*}

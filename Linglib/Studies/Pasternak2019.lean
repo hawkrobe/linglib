@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Studies.Wellwood2015
 import Linglib.Semantics.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
@@ -28,7 +28,7 @@ The substrate already hosts every primitive Pasternak's §1–§4 needs:
 - Mental-state homogeneity = `Mereology.DIV` (downward-closure on the
   part-whole preorder; Pasternak (55) is the biconditional form, which
   reduces to `DIV` modulo preorder reflexivity).
-- Neo-Davidsonian roles = `Semantics.ArgumentStructure.ThematicFrame`
+- Neo-Davidsonian roles = `ArgumentStructure.ThematicFrame`
   with `experiencer`, `theme`, `holder` fields.
 
 This study file *consumes* those primitives and adds the paper-specific
@@ -86,7 +86,7 @@ namespace Pasternak2019
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
-open Semantics.ArgumentStructure (ThematicFrame)
+open ArgumentStructure (ThematicFrame)
 
 /-! ## §1. Monotonicity (Pasternak (4))
 

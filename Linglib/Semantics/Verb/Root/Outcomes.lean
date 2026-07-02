@@ -1,6 +1,6 @@
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 /-!
 # Root outcomes — event-relative machinery
@@ -31,7 +31,7 @@ outcomes).
 namespace Semantics.Lexical
 
 open Verb
-open Semantics.ArgumentStructure (EventRel)
+open _root_.ArgumentStructure (EventRel)
 
 /-! ### Event boundaries (eqs. 64–65)
 

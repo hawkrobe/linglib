@@ -39,7 +39,7 @@ Pustejovsky qualia rather than stipulated.
 
 namespace ViknerJensen2002
 
-open Semantics.ArgumentStructure.Relational
+open ArgumentStructure.Relational
 open Possessive
 
 /-! ### Qualia structure (Pustejovsky, as used by V&J §3.2.1) -/

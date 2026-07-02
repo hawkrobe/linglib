@@ -1,8 +1,8 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.Affectedness
+import Linglib.Semantics.ArgumentStructure.Agentivity.Defs
 import Linglib.Semantics.Lexical.LevinClassProfiles
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Lexical.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
 
 /-!
@@ -36,8 +36,8 @@ through the MAP.
 namespace Beavers2010
 
 open ArgumentStructure.EntailmentProfile
-open Semantics.ArgumentStructure.AgentivityLattice
-open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
+open ArgumentStructure.AgentivityLattice
+open ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)
 
 -- ════════════════════════════════════════════════════

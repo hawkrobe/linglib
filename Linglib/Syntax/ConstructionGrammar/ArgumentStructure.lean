@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Lexical.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
 /-!

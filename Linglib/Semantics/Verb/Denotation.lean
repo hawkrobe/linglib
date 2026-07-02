@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Lexical.EventStructure
 
@@ -43,7 +43,7 @@ participant roles.
 * [dowty-1991] (the proto-role profiles that drive the theta-grid)
 -/
 
-open Semantics.ArgumentStructure
+open ArgumentStructure
 open ArgumentStructure (EntailmentProfile)
 
 /-! ### The theta-grid (derived from the proto-role profiles) -/

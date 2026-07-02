@@ -1,6 +1,6 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Studies.Beavers2010
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Lexical.DiathesisAlternation
 import Linglib.Syntax.Voice.Middle
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 
@@ -91,9 +91,9 @@ open Semantics.Lexical
 open Indonesian.VoiceSystem
 open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
-open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree)
+open ArgumentStructure.Affectedness.Profile (AffectednessDegree)
 open Voice
-open Semantics.ArgumentStructure.VoiceSemantics
+open ArgumentStructure.VoiceSemantics
 open Intensional
 
 -- ============================================================================

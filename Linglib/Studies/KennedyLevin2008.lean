@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Bounds
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Order.WithBot
-import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Features.Aktionsart
@@ -43,7 +43,7 @@ telic (accomplishment) verb, an open-scale base an atelic (activity) verb.
 The scale annotations and Vendler classes consumed here live on the English
 verbal/adjectival fragment entries; the derivations they are checked against
 live in `Semantics/Aspect/DegreeAchievement.lean`, and the affectedness
-typeclass chain in `Semantics/ArgumentStructure/Affectedness/Hierarchy.lean`.
+typeclass chain in `Semantics/ArgumentStructure/Affectedness.lean`.
 -/
 
 namespace KennedyLevin2008
@@ -331,8 +331,8 @@ with the Quantized witness `g_φ = ⊤`,
 feeding [beavers-2011]'s affectedness hierarchy. Here it is instantiated at the
 dimensions the K&L verbs measure. -/
 
-open Semantics.ArgumentStructure.Affectedness
-open Semantics.ArgumentStructure.Affectedness.Hierarchy
+open ArgumentStructure.Affectedness
+open ArgumentStructure.Affectedness.Hierarchy
 open Semantics.Gradability (Dimension)
 open Degree.MeasureFunction
 
