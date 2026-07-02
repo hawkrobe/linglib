@@ -393,33 +393,43 @@ private theorem surfacesH_flanked_mid (d : ℕ) {x y : TBU} :
     exact ⟨⟨0, by omega, by rw [flanked_getElem?]; split_ifs <;> first | rfl | omega⟩,
       2 * d + 3, by omega, by rw [flanked_getElem?]; split_ifs <;> first | rfl | omega⟩
 
+/-- The target cell of every flanked word is toneless. -/
+private theorem flanked_mid (d : ℕ) (x y : TBU) : (flanked d x y)[d + 1]? = some .O := by
+  rw [flanked_getElem?]
+  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+
+/-- The image at the target is controlled by the flanks alone. -/
+private theorem map_flanked_mid (d : ℕ) (x y : TBU) :
+    (utp.map (flanked d x y))[d + 1]? = if x = .H ∧ y = .H then some .H else some .O := by
+  split_ifs with h
+  · exact utp.map_getElem?_H_iff.mpr ((surfacesH_flanked_mid d).mpr h)
+  · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flanked_length]; omega,
+      fun hs => h ((surfacesH_flanked_mid d).mp hs)⟩
+
+/-- Flanked words differing only in the left flank agree off position `0`. -/
+private theorem flanked_congr_left (d : ℕ) (x x' y : TBU) {k : ℕ} (h0 : k ≠ 0) :
+    (flanked d x y)[k]? = (flanked d x' y)[k]? := by
+  rw [flanked_getElem?, flanked_getElem?]
+  split_ifs <;> first | rfl | omega
+
+/-- Flanked words differing only in the right flank agree off the last position. -/
+private theorem flanked_congr_right (d : ℕ) (x y y' : TBU) {k : ℕ} (h3 : k ≠ 2 * d + 3) :
+    (flanked d x y)[k]? = (flanked d x y')[k]? := by
+  rw [flanked_getElem?, flanked_getElem?]
+  split_ifs <;> rfl
+
 /-- UTP requires both sides ([heinz-lai-2013]): deleting either flanking H reverts the
 plateau target, at every distance. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map := by
   intro d
-  have hmid : ∀ x y : TBU, (flanked d x y)[d + 1]? = some .O := fun x y => by
-    rw [flanked_getElem?, if_neg (by omega : ¬(d + 1 = 0)),
-      if_neg (by omega : ¬(d + 1 = 2 * d + 3)), if_pos (by omega : d + 1 < 2 * d + 4)]
-  have himg : ∀ x y : TBU, (utp.map (flanked d x y))[d + 1]?
-      = if x = .H ∧ y = .H then some .H else some .O := fun x y => by
-    split_ifs with h
-    · exact utp.map_getElem?_H_iff.mpr ((surfacesH_flanked_mid d).mpr h)
-    · exact utp.map_getElem?_O_iff.mpr ⟨by rw [flanked_length]; omega,
-        fun hs => h ((surfacesH_flanked_mid d).mp hs)⟩
-  have hagreeL : ∀ (x x' y : TBU) (k : ℕ), k ≠ 0 →
-      (flanked d x y)[k]? = (flanked d x' y)[k]? := fun x x' y k h0 => by
-    rw [flanked_getElem?, flanked_getElem?]; split_ifs <;> first | rfl | omega
-  have hagreeR : ∀ (x y y' : TBU) (k : ℕ), k ≠ 2 * d + 3 →
-      (flanked d x y)[k]? = (flanked d x y')[k]? := fun x y y' k h3 => by
-    rw [flanked_getElem?, flanked_getElem?]; split_ifs <;> rfl
-  refine ⟨flanked d .H .H, d + 1, by rw [flanked_length]; omega, ?_, ?_, ?_⟩
-  · rw [himg, hmid]; simp
+  refine ⟨flanked d .H .H, d + 1, by rw [flanked_length]; omega,
+    by simp [map_flanked_mid, flanked_mid], ?_, ?_⟩
   · exact ⟨flanked d .O .H, by rw [flanked_length, flanked_length],
-      fun k hk => hagreeL _ _ _ k (by omega), by rw [hmid, hmid],
-      by rw [himg, hmid]; simp⟩
+      fun k hk => flanked_congr_left d _ _ _ (by omega),
+      by rw [flanked_mid, flanked_mid], by simp [map_flanked_mid, flanked_mid]⟩
   · exact ⟨flanked d .H .O, by rw [flanked_length, flanked_length],
-      fun k hk => hagreeR _ _ _ k (by omega), by rw [hmid, hmid],
-      by rw [himg, hmid]; simp⟩
+      fun k hk => flanked_congr_right d _ _ _ (by omega),
+      by rw [flanked_mid, flanked_mid], by simp [map_flanked_mid, flanked_mid]⟩
 
 /-- UTP is an unbounded circumambient process: whether a position changes depends on
 unboundedly distant material on both sides. -/
