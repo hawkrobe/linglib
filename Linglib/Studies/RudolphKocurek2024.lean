@@ -1108,6 +1108,26 @@ lexicographic order on degree lists (`strictlyBetter_iff_degList`). -/
 noncomputable def degList (X : Finset I) : List ℕ :=
   ((normalize ord i X).val.map (rank ord)).sort (· ≥ ·)
 
+open Classical in
+/-- **Degree characterization** (spike-verified oracle:
+`scratch/colex_spike2.lean`): ⊐ is the descending lexicographic order on
+degree lists. TODO: prove via the normalized-set structure lemma (every
+element of a normal form lacks a weakly-higher mate or a weakly-higher
+outsider) and induction on the sorted lists. -/
+theorem strictlyBetter_iff_degList_lex (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+    strictlyBetter ord i X Y ↔
+    List.Lex (· < ·) (degList ord i Y) (degList ord i X) := by
+  sorry
+
+open Classical in
+/-- Degree equivalence is equality of degree lists. TODO: from
+`strictlyBetter_iff_degList_lex` via trichotomy on both sides. -/
+theorem degreeEquiv_iff_degList_eq (X Y : Finset I)
+    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
+    degreeEquiv ord i X Y ↔ degList ord i X = degList ord i Y := by
+  sorry
+
 /-- ∼ as a `Setoid` on field-subsets (transitivity needs the field bound). -/
 def metalinguisticSetoid :
     Setoid {X : Finset I // X ⊆ field ord i} where
