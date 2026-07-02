@@ -732,16 +732,15 @@ theorem mem_buryatContExponent_iff :
       (c ∈ buryatAnalysis.contExponent ↔ c.verbForm = none) := by
   decide
 
-open Clause.Complementation (realizes) in
 /-- Positive-consistency check on the selection relation: each of
     *hanaxa*'s two frames (§4.4.3) is realized by exactly one member
     of the inventory — the bare-CP frame by converbial *-žA*, the
     nominalized frame by participial *-Aːša* — while the say-root *gɘ*
     (no `noonanType` of its own) realizes neither. -/
 theorem hanaxa_frames_realized :
-    realizes Buryat.hanaxa Buryat.zha ∧
-    realizes Buryat.hanaxa Buryat.aasha ∧
-    ¬ realizes Buryat.hanaxa Buryat.ge :=
+    Buryat.hanaxa.realizes Buryat.zha ∧
+    Buryat.hanaxa.realizes Buryat.aasha ∧
+    ¬ Buryat.hanaxa.realizes Buryat.ge :=
   ⟨⟨.finiteClause, .head _, rfl⟩, ⟨.gerund, .tail _ (.head _), rfl⟩,
     fun ⟨_, hf, h⟩ => by fin_cases hf <;> exact nomatch h⟩
 
