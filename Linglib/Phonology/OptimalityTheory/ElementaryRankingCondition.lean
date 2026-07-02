@@ -98,47 +98,74 @@ order, is lexicographically nonnegative. -/
 def SatisfiedBy : Prop :=
   toLex (fun _ : Fin n => (0 : ERCVal)) ≤ toLex (fun p => α (r p))
 
+/-- **Prince's leading-entry characterization** ([prince-2002] §0): a ranking
+satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
+winner-preferring. -/
+theorem satisfiedBy_iff_lead :
+    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W := by
+  unfold SatisfiedBy
+  rw [lex_le_iff_forall]
+  constructor
+  · intro h he
+    by_contra hW
+    have hL : α (r (Fin.find _ he)) = .L := by
+      have := Fin.find_spec he
+      rcases hx : α (r (Fin.find _ he)) <;> simp_all
+    obtain ⟨p', hlt, hpos⟩ := h (Fin.find _ he) (by rw [hL]; decide)
+    exact Fin.find_min he hlt fun hE => absurd (hE ▸ hpos) (by decide)
+  · intro hlead p hp
+    have hpL : α (r p) = .L := by simpa using hp
+    have he : ∃ q, α (r q) ≠ .e := ⟨p, by rw [hpL]; decide⟩
+    refine ⟨Fin.find _ he, ?_, by rw [hlead he]; decide⟩
+    rcases (Fin.find_le_of_pos he (by rw [hpL]; decide)).lt_or_eq with h | h
+    · exact h
+    · exact absurd (hlead he) (by rw [h, hpL]; decide)
+
+/-- The leading constraint dominates every loser-preferring one. -/
+private theorem lead_dominates {c : Fin n} (he : ∃ p, α (r p) ≠ .e)
+    (hlead : α (r (Fin.find _ he)) = .W) (hc : α c = .L) :
+    r.Dominates (r (Fin.find _ he)) c := by
+  have hle : Fin.find _ he ≤ r.symm c :=
+    Fin.find_le_of_pos he (by rw [Equiv.apply_symm_apply, hc]; decide)
+  have hne : Fin.find _ he ≠ r.symm c := fun h => by
+    rw [h, Equiv.apply_symm_apply, hc] at hlead
+    exact absurd hlead (by decide)
+  simpa [Ranking.Dominates] using hle.lt_of_ne hne
+
 /-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
 loser-preferring constraint is dominated by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
     α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
-  unfold SatisfiedBy
-  rw [lex_le_iff_forall]
+  rw [satisfiedBy_iff_lead]
   constructor
-  · intro h c hc
-    obtain ⟨p', hp'lt, hp'pos⟩ := h (r.symm c) (by simp [hc])
-    exact ⟨r p', by simpa using hp'pos, by simpa [Ranking.Dominates] using hp'lt⟩
-  · intro h p hp
-    obtain ⟨w, hwW, hwdom⟩ := h (r p) (by simpa using hp)
-    exact ⟨r.symm w, by simpa [Ranking.Dominates] using hwdom, by simp [hwW]⟩
+  · intro hlead c hc
+    have he : ∃ p, α (r p) ≠ .e := ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩
+    exact ⟨r (Fin.find _ he), hlead he, lead_dominates r α he (hlead he) hc⟩
+  · intro h he
+    by_contra hW
+    have hL : α (r (Fin.find _ he)) = .L := by
+      have := Fin.find_spec he
+      rcases hx : α (r (Fin.find _ he)) <;> simp_all
+    obtain ⟨w, hwW, hdom⟩ := h (r (Fin.find _ he)) hL
+    exact Fin.find_min he (by simpa [Ranking.Dominates] using hdom)
+      (by rw [Equiv.apply_symm_apply, hwW]; decide)
 
 instance : Decidable (α.SatisfiedBy r) :=
   decidable_of_iff _ (satisfiedBy_iff_dominance r α).symm
 
 /-- [prince-2002] §0 (4): the `∀∃` form is equivalent to the `∃∀` form — *some*
-`W`-constraint dominates *every* `L`-constraint — because the ranking is total. -/
+`W`-constraint dominates *every* `L`-constraint — because the ranking is total:
+the leading constraint is the single witness. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
-  rw [satisfiedBy_iff_dominance]
   constructor
-  · intro h
-    by_cases hL : ∃ c, α c = .L
-    · obtain ⟨c0, hc0⟩ := hL
-      have hSne : (Finset.univ.filter (fun c => α c = .L)).Nonempty :=
-        ⟨c0, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact hc0⟩
-      obtain ⟨cstar, hcstar_mem, hcstar_min⟩ :=
-        Finset.exists_min_image _ (fun c => (r.symm c : ℕ)) hSne
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hcstar_mem
-      obtain ⟨w, hwW, hwdom⟩ := h cstar hcstar_mem
-      refine ⟨w, fun c hc => ⟨hwW, ?_⟩⟩
-      have hmin : (r.symm cstar : ℕ) ≤ (r.symm c : ℕ) :=
-        hcstar_min c (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact hc)
-      simp only [Ranking.Dominates] at hwdom ⊢
-      omega
-    · simp only [not_exists] at hL
-      exact ⟨(0 : Fin n), fun c hc => absurd hc (hL c)⟩
-  · rintro ⟨d, hd⟩ c hc
-    exact ⟨d, hd c hc⟩
+  · intro hsat
+    by_cases he : ∃ p, α (r p) ≠ .e
+    · exact ⟨r (Fin.find _ he), fun c hc => ⟨(satisfiedBy_iff_lead r α).mp hsat he,
+        lead_dominates r α he ((satisfiedBy_iff_lead r α).mp hsat he) hc⟩⟩
+    · exact ⟨0, fun c hc => (he ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩).elim⟩
+  · rintro ⟨d, hd⟩
+    exact (satisfiedBy_iff_dominance r α).mpr fun c hc => ⟨d, hd c hc⟩
 
 /-- A trivial ERC is satisfied by every ranking. -/
 theorem trivial_satisfiedBy {α : ERC n} (htriv : α.IsTrivial) (r : Ranking n) :
