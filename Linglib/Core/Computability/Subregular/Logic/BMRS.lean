@@ -288,14 +288,12 @@ theorem evalFuel_mono [DecidableEq α] (hnm : n ≤ m)
     obtain ⟨m, rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
     cases e with
     | call f t =>
-      simp only [evalFuel, Option.bind_eq_some_iff] at h ⊢
-      obtain ⟨v, hv, hrec⟩ := h
-      exact ⟨v, hv, ih (by omega) hrec⟩
+      obtain ⟨v, hv, hrec⟩ := Option.bind_eq_some_iff.mp h
+      exact Option.bind_eq_some_iff.mpr ⟨v, hv, ih (by omega) hrec⟩
     | ite c e₁ e₂ =>
-      simp only [evalFuel, Option.bind_eq_some_iff] at h ⊢
-      obtain ⟨bc, hbc, hbr⟩ := h
-      refine ⟨bc, ih (by omega) hbc, ?_⟩
-      cases bc <;> simpa using ih (by omega) (by simpa using hbr)
+      obtain ⟨bc, hbc, hbr⟩ := Option.bind_eq_some_iff.mp h
+      exact Option.bind_eq_some_iff.mpr
+        ⟨bc, ih (by omega) hbc, by cases bc <;> exact ih (by omega) hbr⟩
     | _ => exact h
 
 /-- Soundness of the fuel evaluator against the derivation system. -/
@@ -305,30 +303,26 @@ theorem evalFuel_sound [DecidableEq α] (h : evalFuel P w n i e = some b) :
   | zero => simp [evalFuel] at h
   | succ n ih =>
     cases e with
-    | tru => simp [evalFuel] at h; exact h ▸ .tru
-    | fls => simp [evalFuel] at h; exact h ▸ .fls
+    | tru => exact Option.some.inj h ▸ .tru
+    | fls => exact Option.some.inj h ▸ .fls
     | initial t =>
-      simp only [evalFuel, Option.map_eq_some_iff] at h
-      obtain ⟨v, hv, rfl⟩ := h
+      obtain ⟨v, hv, rfl⟩ := Option.map_eq_some_iff.mp h
       exact .initial hv
     | final t =>
-      simp only [evalFuel, Option.map_eq_some_iff] at h
-      obtain ⟨v, hv, rfl⟩ := h
+      obtain ⟨v, hv, rfl⟩ := Option.map_eq_some_iff.mp h
       exact .final hv
     | label s t =>
-      simp only [evalFuel, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
-      obtain ⟨v, hv, a, ha, rfl⟩ := h
+      obtain ⟨v, hv, hm⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨a, ha, rfl⟩ := Option.map_eq_some_iff.mp hm
       exact .label hv ha
     | call f t =>
-      simp only [evalFuel, Option.bind_eq_some_iff] at h
-      obtain ⟨v, hv, hrec⟩ := h
+      obtain ⟨v, hv, hrec⟩ := Option.bind_eq_some_iff.mp h
       exact .call hv (ih hrec)
     | ite c e₁ e₂ =>
-      simp only [evalFuel, Option.bind_eq_some_iff] at h
-      obtain ⟨bc, hbc, hbr⟩ := h
+      obtain ⟨bc, hbc, hbr⟩ := Option.bind_eq_some_iff.mp h
       cases bc with
-      | true => exact .ite_true (ih hbc) (ih (by simpa using hbr))
-      | false => exact .ite_false (ih hbc) (ih (by simpa using hbr))
+      | true => exact .ite_true (ih hbc) (ih hbr)
+      | false => exact .ite_false (ih hbc) (ih hbr)
 
 /-- Recombine a guard run and the selected branch run under one `max` fuel. -/
 private theorem evalFuel_ite_of [DecidableEq α] {c e₁ e₂ : Expr α F} {bc : Bool}
