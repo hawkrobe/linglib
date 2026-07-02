@@ -198,9 +198,11 @@ def profileToDegree (p : EntailmentProfile) : AffectednessDegree :=
   else if p.causallyAffected || p.stationary then .potential
   else .unspecified
 
+variable (p q : EntailmentProfile)
+
 /-- Profiles agreeing on {CoS, IT, CA, St} map to the same degree — the
 remaining six features are irrelevant. -/
-theorem profileToDegree_depends_only_on_patient (p q : EntailmentProfile)
+theorem profileToDegree_depends_only_on_patient
     (hcos : p.changeOfState = q.changeOfState)
     (hit : p.incrementalTheme = q.incrementalTheme)
     (hca : p.causallyAffected = q.causallyAffected)
@@ -208,39 +210,35 @@ theorem profileToDegree_depends_only_on_patient (p q : EntailmentProfile)
     profileToDegree p = profileToDegree q := by
   simp only [profileToDegree, hcos, hit, hca, hst]
 
-/-- What `quantized` guarantees: both CoS and IT hold. -/
-theorem quantized_implies (p : EntailmentProfile)
-    (h : profileToDegree p = .quantized) :
-    p.changeOfState = true ∧ p.incrementalTheme = true := by
-  unfold profileToDegree at h
-  split_ifs at h
-  simp_all
+/-- The `quantized` fiber: exactly IT ∧ CoS. -/
+@[simp]
+theorem profileToDegree_eq_quantized_iff :
+    profileToDegree p = .quantized ↔
+      p.incrementalTheme = true ∧ p.changeOfState = true := by
+  unfold profileToDegree; split_ifs <;> simp_all
 
-/-- What `nonquantized` guarantees: CoS without IT. -/
-theorem nonquantized_implies (p : EntailmentProfile)
-    (h : profileToDegree p = .nonquantized) :
-    p.changeOfState = true ∧ p.incrementalTheme = false := by
-  unfold profileToDegree at h
-  split_ifs at h
-  simp_all
+/-- The `nonquantized` fiber: exactly CoS without IT. -/
+@[simp]
+theorem profileToDegree_eq_nonquantized_iff :
+    profileToDegree p = .nonquantized ↔
+      p.changeOfState = true ∧ p.incrementalTheme = false := by
+  unfold profileToDegree; split_ifs <;> simp_all
 
-/-- What `potential` guarantees: no CoS, but CA or St. -/
-theorem potential_implies (p : EntailmentProfile)
-    (h : profileToDegree p = .potential) :
-    p.changeOfState = false ∧
-    (p.causallyAffected = true ∨ p.stationary = true) := by
-  unfold profileToDegree at h
-  split_ifs at h
-  simp_all
+/-- The `potential` fiber: exactly no CoS with CA or St. -/
+@[simp]
+theorem profileToDegree_eq_potential_iff :
+    profileToDegree p = .potential ↔
+      p.changeOfState = false ∧
+        (p.causallyAffected = true ∨ p.stationary = true) := by
+  unfold profileToDegree; split_ifs <;> simp_all <;> tauto
 
-/-- What `unspecified` guarantees: no CoS, no CA, no St. -/
-theorem unspecified_implies (p : EntailmentProfile)
-    (h : profileToDegree p = .unspecified) :
-    p.changeOfState = false ∧ p.causallyAffected = false ∧
-    p.stationary = false := by
-  unfold profileToDegree at h
-  split_ifs at h
-  simp_all
+/-- The `unspecified` fiber: exactly no CoS, no CA, no St. -/
+@[simp]
+theorem profileToDegree_eq_unspecified_iff :
+    profileToDegree p = .unspecified ↔
+      p.changeOfState = false ∧ p.causallyAffected = false ∧
+        p.stationary = false := by
+  unfold profileToDegree; split_ifs <;> simp_all
 
 /-! ### Bridge to the typeclass chain
 
