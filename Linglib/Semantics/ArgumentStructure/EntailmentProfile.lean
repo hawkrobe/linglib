@@ -244,7 +244,8 @@ def kickSubjectProfile : EntailmentProfile :=
     independentExistence := true }
 
 /-- *kick* object: CoS+CA+St. Caveat: the stored `changeOfState := true`
-follows Dowty's classification, but *kick* is a POTENTIAL exemplar in
+has unverified provenance (Dowty 1991's own treatment of surface-contact
+objects needs checking), and *kick* is a POTENTIAL exemplar in
 [beavers-2011] eq. (60c) with felicitous no-change continuations
 ([beavers-koontz-garboden-2020] ch. 4) — a candidate bit-flip for the
 gated canonical-profile audit. -/
