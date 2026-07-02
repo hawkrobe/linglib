@@ -41,6 +41,41 @@ trivial, so its cell output is a *one-sided* rule — non-interacting.
 
 namespace Subregular
 
+/-! ### Synchronous ⊆ block subsequential
+
+A `Mealy` machine is an `SFST` emitting singleton blocks with an empty final flush, so
+the synchronous class embeds in the block class scanning the same direction. -/
+
+section MealyBlock
+
+variable {σ α β : Type*}
+
+/-- View a synchronous transducer as a block `SFST`: singleton outputs, empty flush. -/
+def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
+  start := T.initial
+  step s x := ((T.step s x).1, [(T.step s x).2])
+  finalOutput _ := []
+
+@[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
+    T.toSFST.runFrom s xs = T.runFrom s xs := by
+  induction xs generalizing s with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [SFST.runFrom_cons, Mealy.runFrom_cons,
+      show T.toSFST.step s x = ((T.step s x).1, [(T.step s x).2]) from rfl, ih]
+    rfl
+
+@[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
+  funext fun xs => T.toSFST_runFrom T.initial xs
+
+/-- A letter-left-subsequential function is left-subsequential: synchronous ⊆ block. -/
+theorem IsLetterLeftSubsequential.isLeftSubsequential {f : List α → List β}
+    (hf : IsLetterLeftSubsequential f) : IsLeftSubsequential f := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  exact T.toSFST_run ▸ T.toSFST.isLeftSubsequential
+
+end MealyBlock
+
 variable {α : Type*} [DecidableEq α]
 
 private theorem unite_default_right (cL a : α) : unite cL a a = cL := by
@@ -96,29 +131,11 @@ inductive ConjSym | trig | tgt | raised
 
 instance : Fintype ConjSym := ⟨{.trig, .tgt, .raised}, fun x => by cases x <;> simp⟩
 
-/-- A target raises iff a trigger occurs on **both** sides — left/right states track a
-trigger seen on each side, and the cell genuinely needs both (`l && r`). -/
-def conjBM : Bimachine Bool Bool ConjSym ConjSym where
-  lInit := false
-  lStep l s := l || (s == .trig)
-  rInit := false
-  rStep r s := r || (s == .trig)
-  out l s r := if (l && r) && s == .tgt then .raised else s
-
-private theorem conjBM_lState (xs : List ConjSym) :
-    conjBM.lState xs = xs.any (· == .trig) := by
-  show xs.foldl (fun l s => l || (s == .trig)) false = _
-  have key : ∀ (acc : Bool) (ys : List ConjSym),
-      ys.foldl (fun l s => l || (s == .trig)) acc = (acc || ys.any (· == .trig)) := by
-    intro acc ys; induction ys generalizing acc with
-    | nil => simp
-    | cons y ys ih => simp [ih, Bool.or_assoc]
-  simpa using key false xs
-
-private theorem conjBM_rState (xs : List ConjSym) :
-    conjBM.rState xs = xs.any (· == .trig) := by
-  show xs.foldr (fun s r => r || (s == .trig)) false = _
-  induction xs <;> simp_all [Bool.or_comm]
+/-- A target raises iff a trigger occurs on **both** sides — a flag bimachine
+(`Bimachine.ofFlags`) tracking a trigger on each side, whose cell genuinely needs both
+flags (`l && r`). -/
+def conjBM : Bimachine Bool Bool ConjSym ConjSym :=
+  .ofFlags (· == .trig) (· == .trig) fun l s r => if (l && r) && s == .tgt then .raised else s
 
 /-- Output of `conjBM` at a `.tgt` position: `.raised` iff a trigger appears on both the
 left prefix and the right suffix, else `.tgt`. -/
@@ -126,7 +143,7 @@ private theorem conjBM_run_at {w : List ConjSym} {i : ℕ} (h : w[i]? = some .tg
     (conjBM.run w)[i]?
       = some (if (w.take i).any (· == .trig) && (w.drop (i + 1)).any (· == .trig)
           then .raised else .tgt) := by
-  rw [conjBM.run_getElem?, h, conjBM_lState, conjBM_rState]; simp [conjBM]
+  rw [conjBM, Bimachine.ofFlags_run_getElem?, h]; simp
 
 /-- Witness word at distance `d`: a medial `.tgt` flanked by `d` neutral fillers and a
 `.trig` on each end. The two perturbations replace one end's `.trig` with a filler. -/

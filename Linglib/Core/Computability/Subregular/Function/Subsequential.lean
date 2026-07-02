@@ -314,14 +314,9 @@ theorem isRightSubsequential_iff_left_reverse (f : List α → List β) :
   · rintro ⟨σ, _, T, hT⟩
     exact ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight, hT]⟩
 
-/-- **Bounded delay**: a left-subsequential function can withhold only boundedly
-much output. On any input `u`, everything but the terminating state's final
-output is already emitted by the transitions — a prefix `p` of `f u` shared with
-`f (u ++ v)` for *every* continuation `v` — so the withheld suffix `su` is at
-most the longest state-final output `N`. This is the finite-look-ahead content of
-determinism ([mohri-1997]) and the engine of every non-subsequentiality proof:
-exhibit inputs `u`, `u ++ v` whose images diverge earlier than `(f u).length - N`
-(e.g. unbounded tonal plateauing, [jardine-2016]). -/
+/-- A left-subsequential function has bounded delay ([mohri-1997]): on any input `u` it
+has already emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation
+`v`, withholding at most the longest state-final output. -/
 theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
     (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, ∃ p su sv : List β,
@@ -332,6 +327,25 @@ theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
       T.runFrom (T.runOnList T.start u).1 v, T.runFrom_eq_runOnList T.start u,
       T.runFrom_append T.start u v,
       Finset.le_sup (f := fun s => (T.finalOutput s).length) (Finset.mem_univ _)⟩⟩
+
+/-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
+disagree more than `N` positions before the end of `f u`: the working form of
+`bounded_delay` for impossibility proofs (e.g. unbounded tonal plateauing,
+[jardine-2016]). -/
+theorem not_isLeftSubsequential_of_diverging {f : List α → List β}
+    (h : ∀ N, ∃ (u v : List α) (i : ℕ),
+      i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :
+    ¬ IsLeftSubsequential f := by
+  intro hf
+  obtain ⟨N, hN⟩ := hf.bounded_delay
+  obtain ⟨u, v, i, hi, hne⟩ := h N
+  obtain ⟨p, su, sv, hu, huv, hsu⟩ := hN u v
+  have hip : i < p.length := by
+    have := congrArg List.length hu
+    rw [List.length_append] at this
+    omega
+  rw [hu, huv, List.getElem?_append_left hip, List.getElem?_append_left hip] at hne
+  exact hne rfl
 
 /-- Subsequential functions are closed under composition ([mohri-1997],
 originally Schützenberger and Choffrut) — the load-bearing fact that makes

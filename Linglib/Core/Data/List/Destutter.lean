@@ -125,6 +125,20 @@ theorem destutter_append_destutter (l m : List α) :
 /-! ### Head and the clean-clean boundary -/
 
 omit [DecidableEq α] in
+theorem destutter'_replicate_self {R : α → α → Prop} [DecidableRel R] {a : α}
+    (h : ¬ R a a) (n : ℕ) : (replicate n a).destutter' R a = [a] := by
+  induction n with
+  | zero => rfl
+  | succ m ih => rw [replicate_succ, destutter'_cons_neg _ h, ih]
+
+omit [DecidableEq α] in
+/-- `destutter` fuses a constant run whenever the relation is irreflexive at its
+element. -/
+theorem destutter_replicate {R : α → α → Prop} [DecidableRel R] {a : α}
+    (h : ¬ R a a) (n : ℕ) : (replicate (n + 1) a).destutter R = [a] := by
+  rw [replicate_succ, destutter_cons', destutter'_replicate_self h]
+
+omit [DecidableEq α] in
 /-- `destutter` preserves the head: the running element is the input's head. -/
 theorem destutter_head? {R : α → α → Prop} [DecidableRel R] (l : List α) :
     (l.destutter R).head? = l.head? := by

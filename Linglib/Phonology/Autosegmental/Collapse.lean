@@ -99,6 +99,15 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
     exact hne h
   omega
 
+/-- On a constant tier every position lies in the single run: `runIdx` is `0`. -/
+@[simp] theorem runIdx_replicate (n : ℕ) (a : α) (k : ℕ) :
+    runIdx (List.replicate n a) k = 0 := by
+  unfold runIdx
+  rw [List.take_replicate]
+  cases hm : min (k + 1) n with
+  | zero => simp
+  | succ m => rw [collapse_replicate, List.length_singleton]
+
 /-! ### Run-index and concatenation
 
 The defining property of `concat` for the OCP quotient: `runIdx` commutes with the
