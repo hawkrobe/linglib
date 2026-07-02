@@ -4,367 +4,202 @@ import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.Data.Finset.Union
 
 /-!
-# Harmonic Serialism — The Combinator
-[mccarthy-2000] [mccarthy-2010] [pruitt-2023]
-[lamont-2022a] [lamont-2022b]
+# Harmonic Serialism
+[mccarthy-2000] [mccarthy-2010] [pruitt-2023] [lamont-2022a] [lamont-2022b]
 
-Bundles a one-step `gen` function and a constraint ranking into an
-`HSDerivation`. Owns the serial GEN/EVAL iteration combinator (§ 1 — a
-bespoke fuel-bounded search; the generic fixed-point / well-founded-
-termination theory it instantiates is mathlib's) and reuses the existing
-parallel `Tableau`/`Tableau.ofRanking` machinery from `Basic.lean` (Layered
-Grounding — does not duplicate parallel optimization).
+Harmonic Serialism: iterate a one-step `gen` and a durable constraint ranking to a
+fixed point. `HSDerivation` bundles the two; the serial search itself is `iterateGen`,
+a fuel-bounded iteration of an arbitrary step `C → Finset C` with a `pick` tie-breaker.
+The general theory the search instantiates is mathlib's (`Function.IsFixedPt`,
+`WellFounded` descent); the `Nat` fuel and `pick` are what make a
+possibly-non-terminating, possibly-tied search total and computable. One-step EVAL
+reuses the parallel `Tableau` machinery; directional EVAL ([lamont-2022b];
+[eisner-2000]) needs nothing extra — a directional constraint like `*FLOAT^→` is a
+position-indexed scalar block (`Tone.starFloatBlock`) spliced into the ranking under
+the canonical lex order.
 
-## NOTE on theoretical scope
+## Main definitions
 
-Per [pruitt-2023] (Table 1): HS does **not** solve counterfeeding
-underapplication, and only patches counterbleeding overapplication with
-extra GEN assumptions. This file's docstring deliberately does not claim
-HS is "the serial OT solution to opacity" — that would misrepresent the
-field's current understanding. HS is one constraint-based serial framework
-with mixed empirical record; [mcpherson-lamont-2026] is the
-motivating positive case for the directional variant of HS
-([lamont-2022b]). For counterfeeding cases linglib offers
-`Phonology/Subregular/LocalRewrite.lean` (extrinsic ordering of
-local rewrite rules; subregular-grounded per [chandlee-heinz-2018])
-and `Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking)
-as architecturally-distinct alternatives.
+* `iterateGen`: iterate a step for at most `n` rounds, stopping at convergence
+  (`step c = {c}`), advancing by `pick`, `none` on a failed pick.
+* `HSDerivation`: a one-step `gen` with a durable ranking; `stepOptimum` is one
+  GEN/EVAL round, `Converged` the halting condition, `derive` the bundled search.
 
-## Sibling architectures
+## Main results
 
-OT has multiple "more than one EVAL call" specializations, all sharing
-the parallel-OT primitives in `Basic.lean`:
+* `iterateGen_eventually_constant`: under a well-founded harmony order that every
+  genuine step descends, the search is eventually constant — derivations cannot loop
+  while each step makes measurable progress, so the fuel bound is harmless.
+* `isFixedPt_singleton_iff_converged`: `Converged` is `Function.IsFixedPt` of the
+  powerset step at the singleton.
+* `converged_of_singleton_gen`: GEN-restriction to the faithful candidate forces
+  convergence.
 
-| Theory                        | Ranking across calls | Candidate across calls |
-|-------------------------------|----------------------|------------------------|
-| Parallel OT (`Basic.lean`)    | n/a (single call)    | n/a                    |
-| Stratal OT (`Stratal.lean`) | varies per stratum   | chained via `bridge`   |
-| HS (this file)                | **durable**          | iterated via `gen`     |
-| Stratal HS (not yet)          | varies per stratum   | iterated within stratum |
+## Theoretical scope
 
-HS and Stratal OT are **sister specializations**, not nested: HS holds
-ranking constant and varies the candidate; Stratal OT varies the ranking
-and chains the candidate. Stratal HS combines both axes and is
-deferred (cf. [pruitt-2023] §2.4).
-
-## One tableau, including directional constraints
-
-This module does **not** modify `Constraint` or `Tableau`
-(load-bearing for `Weighted.lean`/`MaxEnt.lean`/`NoisyHG.lean` and ~30
-study files). The `stepOptimum` function builds an inner `Tableau` and
-reuses `Tableau.optimal` directly. Directional EVAL ([lamont-2022b];
-[eisner-2000]) needs no separate machinery: a directional constraint
-like `*FLOAT^→` is a position-indexed scalar block (`Tone.starFloatBlock`)
-spliced into the ranking and compared under the canonical lex order, so
-`HSDerivation` handles directional and parallel hierarchies alike.
+Per [pruitt-2023] (Table 1), HS does **not** solve counterfeeding underapplication and
+only patches counterbleeding with extra GEN assumptions; this file makes no
+"serial OT solves opacity" claim. [mcpherson-lamont-2026] is the motivating positive
+case for the directional variant. Architecturally distinct alternatives in linglib:
+`Phonology/Subregular/LocalRewrite.lean` (extrinsic rule ordering) and
+`Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking). HS and Stratal OT are
+sister specializations of parallel OT, not nested: HS holds the ranking constant and
+iterates the candidate; Stratal OT varies the ranking and chains the candidate
+(Stratal HS, combining both axes, is deferred — cf. [pruitt-2023] §2.4).
 -/
 
 namespace OptimalityTheory
-open Constraints
 
+open Constraints Core.Optimization.Evaluation
 
-open Core.Optimization.Evaluation
-
--- ============================================================================
--- § 1: Serial GEN/EVAL Iteration Combinator
--- ============================================================================
-
-/-! The bespoke part of Harmonic Serialism, which mathlib has no off-the-shelf
-form of: a fuel-bounded search that iterates `eval ∘ gen` to a fixed point,
-picking a representative of the optimal set at each step. The *general* theory
-it instantiates is mathlib's — `Function.IsFixedPt`, `Order.FixedPoints`
-(Knaster–Tarski), `WellFounded` descent; the `Nat` fuel and `pick` selector
-here are what make a possibly-non-terminating, possibly-tied search total and
-computable. -/
+/-! ### The serial search -/
 
 section Iteration
 
-variable {C : Type*}
+variable {C : Type*} [DecidableEq C]
 
-/-- One step of an HS derivation: `gen` produces the candidate set, `eval`
-    selects the (possibly non-singleton) optimal subset. -/
-def iterateStep (gen : C → Finset C) (eval : Finset C → Finset C) (c : C) : Finset C :=
-  eval (gen c)
-
-/-- Iterate `iterateStep` for at most `n` rounds, stopping early at HS
-    convergence (`eval (gen c) = {c}`). Otherwise advance by `pick`ing some
-    element of the optimal set (a canonical sort + `head?`, or a directional
-    tie-breaker). Returns `none` if `pick` fails or the optimal set is empty
-    along the way. The `Nat` bound makes the function total — HS need not
-    converge ([lamont-2022b]). -/
-def iterateGen [DecidableEq C] (gen : C → Finset C)
-    (eval : Finset C → Finset C) (pick : Finset C → Option C) : C → Nat → Option C
+/-- Iterate `step` for at most `n` rounds, stopping early at HS convergence
+(`step c = {c}`); otherwise advance by `pick`ing from the step's output (a canonical
+sort + `head?`, or a directional tie-breaker), returning `none` if `pick` fails. The
+`Nat` bound makes the search total — HS need not converge ([lamont-2022b]). -/
+def iterateGen (step : C → Finset C) (pick : Finset C → Option C) : C → Nat → Option C
   | c, 0     => some c
   | c, n + 1 =>
-    let optima := iterateStep gen eval c
-    if optima = ({c} : Finset C) then some c
-    else
-      match pick optima with
-      | none    => none
-      | some c' => iterateGen gen eval pick c' n
+    if step c = ({c} : Finset C) then some c
+    else (pick (step c)).bind fun c' => iterateGen step pick c' n
 
-/-- Zero iterations is identity. -/
-@[simp] theorem iterateGen_zero [DecidableEq C] (gen : C → Finset C)
-    (eval : Finset C → Finset C) (pick : Finset C → Option C) (c : C) :
-    iterateGen gen eval pick c 0 = some c := rfl
+variable {step : C → Finset C} {pick : Finset C → Option C} {c c' : C}
 
-/-- One iteration from a converged form returns it unchanged. -/
-theorem iterateGen_succ_of_converged [DecidableEq C] {gen : C → Finset C}
-    {eval : Finset C → Finset C} (pick : Finset C → Option C) {c : C}
-    (h : iterateStep gen eval c = ({c} : Finset C)) (n : Nat) :
-    iterateGen gen eval pick c (n + 1) = some c := by
-  unfold iterateGen; simp [h]
+@[simp] theorem iterateGen_zero : iterateGen step pick c 0 = some c := rfl
 
-/-- One iteration from a non-converged form recurses with the picked
-    successor at the smaller depth. -/
-theorem iterateGen_succ_of_step [DecidableEq C] {gen : C → Finset C}
-    {eval : Finset C → Finset C} {pick : Finset C → Option C} {c c' : C}
-    (n : Nat) (hcv : iterateStep gen eval c ≠ ({c} : Finset C))
-    (hpick : pick (iterateStep gen eval c) = some c') :
-    iterateGen gen eval pick c (n + 1) = iterateGen gen eval pick c' n := by
-  show (if iterateStep gen eval c = ({c} : Finset C) then some c
-        else match pick (iterateStep gen eval c) with
-             | none => none
-             | some c' => iterateGen gen eval pick c' n)
-       = iterateGen gen eval pick c' n
-  rw [if_neg hcv, hpick]
+theorem iterateGen_succ (n : Nat) :
+    iterateGen step pick c (n + 1)
+      = if step c = ({c} : Finset C) then some c
+        else (pick (step c)).bind fun c' => iterateGen step pick c' n := rfl
 
-/-- One iteration from a non-converged form where `pick` fails yields `none`. -/
-theorem iterateGen_succ_of_pickFail [DecidableEq C] {gen : C → Finset C}
-    {eval : Finset C → Finset C} {pick : Finset C → Option C} {c : C}
-    (n : Nat) (hcv : iterateStep gen eval c ≠ ({c} : Finset C))
-    (hpick : pick (iterateStep gen eval c) = none) :
-    iterateGen gen eval pick c (n + 1) = none := by
-  show (if iterateStep gen eval c = ({c} : Finset C) then some c
-        else match pick (iterateStep gen eval c) with
-             | none => none
-             | some c' => iterateGen gen eval pick c' n)
-       = none
-  rw [if_neg hcv, hpick]
+/-- One round from a converged form returns it unchanged. -/
+theorem iterateGen_succ_of_converged (h : step c = ({c} : Finset C)) (n : Nat) :
+    iterateGen step pick c (n + 1) = some c := by
+  rw [iterateGen_succ, if_pos h]
 
-/-- Once at a fixed point, further iterations stay there — convergence is
-    durable. The hypothesis is equivalent to `Function.IsFixedPt` of the
-    powerset step at `{c}`. -/
-theorem iterateGen_idempotent_at_fixedPoint [DecidableEq C]
-    (gen : C → Finset C) (eval : Finset C → Finset C)
-    (pick : Finset C → Option C) (c : C)
-    (h : iterateStep gen eval c = ({c} : Finset C)) :
-    ∀ n, iterateGen gen eval pick c n = some c
+/-- One round from a non-converged form recurses with the picked successor. -/
+theorem iterateGen_succ_of_step (hcv : step c ≠ ({c} : Finset C))
+    (hpick : pick (step c) = some c') (n : Nat) :
+    iterateGen step pick c (n + 1) = iterateGen step pick c' n := by
+  rw [iterateGen_succ, if_neg hcv, hpick]; rfl
+
+/-- One round from a non-converged form where `pick` fails yields `none`. -/
+theorem iterateGen_succ_of_pickFail (hcv : step c ≠ ({c} : Finset C))
+    (hpick : pick (step c) = none) (n : Nat) :
+    iterateGen step pick c (n + 1) = none := by
+  rw [iterateGen_succ, if_neg hcv, hpick]; rfl
+
+/-- At a fixed point the search is constant: convergence is durable. -/
+theorem iterateGen_const_of_converged (h : step c = ({c} : Finset C)) :
+    ∀ n, iterateGen step pick c n = some c
   | 0     => rfl
-  | n + 1 => iterateGen_succ_of_converged (gen := gen) (eval := eval) pick h n
+  | n + 1 => iterateGen_succ_of_converged h n
 
-/-- **Harmonic improvement.** At each non-fixed-point step every newly chosen
-    candidate is strictly better than the input under the supplied harmony
-    order `lt`. The order is a parameter so this stays agnostic about the
-    EVAL term order; soundness (`sound`) is witnessed by the caller. -/
-theorem harmonicImprovement [DecidableEq C] (lt : C → C → Prop)
-    (gen : C → Finset C) (eval : Finset C → Finset C)
-    (sound : ∀ c c', c' ∈ eval (gen c) → c' ≠ c → lt c' c)
-    (c c' : C) (hopt : c' ∈ iterateStep gen eval c) (hne : c' ≠ c) :
-    lt c' c :=
-  sound c c' hopt hne
-
-/-- **HS terminates under a well-founded harmony order.** If `lt` is
-    well-founded and every genuine step produces a strictly more harmonic
-    candidate (`sound`), then `iterateGen` is **eventually constant**: some `N`
-    past which further iterations don't change the result. This is the
-    structural justification for HS as a search — derivations can't loop while
-    each step makes measurable progress, so the explicit `Nat` bound is
-    harmless. -/
-theorem iterateGen_eventually_constant [DecidableEq C]
-    (gen : C → Finset C) (eval : Finset C → Finset C)
-    (pick : Finset C → Option C) {lt : C → C → Prop} (wf : WellFounded lt)
-    (sound : ∀ c c', iterateStep gen eval c ≠ ({c} : Finset C) →
-                     pick (iterateStep gen eval c) = some c' → c' ≠ c → lt c' c)
-    (c : C) :
-    ∃ N, ∀ m, N ≤ m → iterateGen gen eval pick c m = iterateGen gen eval pick c N := by
+/-- **HS terminates under a well-founded harmony order.** If every genuine step
+descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
+past which further fuel doesn't change the result. Derivations cannot loop while each
+step makes measurable progress, so the explicit `Nat` bound is harmless. -/
+theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
+    (sound : ∀ c c', step c ≠ ({c} : Finset C) → pick (step c) = some c' → c' ≠ c →
+      lt c' c) (c : C) :
+    ∃ N, ∀ m, N ≤ m → iterateGen step pick c m = iterateGen step pick c N := by
   induction c using wf.induction with
   | _ c IH =>
-    by_cases hcv : iterateStep gen eval c = ({c} : Finset C)
-    · refine ⟨0, fun m _ => ?_⟩
-      rw [iterateGen_idempotent_at_fixedPoint gen eval pick c hcv m,
-          iterateGen_idempotent_at_fixedPoint gen eval pick c hcv 0]
-    · cases hp : pick (iterateStep gen eval c) with
+    by_cases hcv : step c = ({c} : Finset C)
+    · exact ⟨0, fun m _ => by
+        rw [iterateGen_const_of_converged hcv m, iterateGen_const_of_converged hcv 0]⟩
+    · cases hp : pick (step c) with
       | none =>
         refine ⟨1, fun m hm => ?_⟩
         match m, hm with
-        | 0, hm => omega
         | n + 1, _ =>
-          rw [iterateGen_succ_of_pickFail _ hcv hp,
-              iterateGen_succ_of_pickFail 0 hcv hp]
+          rw [iterateGen_succ_of_pickFail hcv hp, iterateGen_succ_of_pickFail hcv hp]
       | some c' =>
         by_cases hne : c' = c
-        · have hp' : pick (iterateStep gen eval c) = some c := hne ▸ hp
-          refine ⟨0, fun m _ => ?_⟩
-          have h : ∀ m, iterateGen gen eval pick c m = some c := by
+        · have hp' : pick (step c) = some c := hne ▸ hp
+          have h : ∀ m, iterateGen step pick c m = some c := by
             intro m
             induction m with
             | zero => rfl
-            | succ _ ih => rw [iterateGen_succ_of_step _ hcv hp']; exact ih
-          rw [h m, h 0]
-        · have hlt : lt c' c := sound c c' hcv hp hne
-          obtain ⟨N', IH'⟩ := IH c' hlt
+            | succ _ ih => rw [iterateGen_succ_of_step hcv hp']; exact ih
+          exact ⟨0, fun m _ => by rw [h m, h 0]⟩
+        · obtain ⟨N', IH'⟩ := IH c' (sound c c' hcv hp hne)
           refine ⟨N' + 1, fun m hm => ?_⟩
           match m, hm with
-          | 0, hm => omega
           | n + 1, hn =>
-            have hn' : N' ≤ n := Nat.le_of_succ_le_succ hn
-            rw [iterateGen_succ_of_step _ hcv hp,
-                iterateGen_succ_of_step _ hcv hp,
-                IH' n hn']
+            rw [iterateGen_succ_of_step hcv hp, iterateGen_succ_of_step hcv hp,
+              IH' n (Nat.le_of_succ_le_succ hn)]
 
 end Iteration
 
--- ============================================================================
--- § 2: HSDerivation Specification
--- ============================================================================
+/-! ### HS derivations -/
 
-/-- A Harmonic Serialism derivation specification.
-
-    `gen` is the one-step candidate-generation function (per
-    [mccarthy-2008b]'s restricted GEN). `ranking` is a list of
-    named constraints, indexed by rank position (head = highest). The
-    inner `Tableau` width is inferred from `ranking.length`; no separate
-    length parameter is exposed. -/
+/-- A Harmonic Serialism derivation: a one-step candidate-generation function (per
+[mccarthy-2008b]'s restricted GEN) and a durable ranking. The inner `Tableau` width is
+`ranking.length`. -/
 structure HSDerivation (C : Type*) [DecidableEq C] where
+  /-- The one-step candidate-generation function. -/
   gen : C → Finset C
+  /-- The constraint ranking, durable across rounds (head = highest). -/
   ranking : List (Constraints.Constraint C)
 
 namespace HSDerivation
 
-variable {C : Type*} [DecidableEq C]
+variable {C : Type*} [DecidableEq C] (D : HSDerivation C) (c : C)
 
--- ============================================================================
--- § 3: Inner Tableau and Optimal Set
--- ============================================================================
+/-- The inner tableau on an explicit nonempty candidate set, scored by `D.ranking`. -/
+def tableauFor (cands : Finset C) (h : cands.Nonempty) : Tableau C D.ranking.length where
+  candidates := cands
+  profile := buildViolationProfile D.ranking.get
+  nonempty := h
 
-/-- Build a `Tableau` from an explicit candidate set, given `D.ranking`.
-    Defined when the candidate set is non-empty. -/
-def tableauFor (D : HSDerivation C) (cands : Finset C) (h : cands.Nonempty) :
-    Tableau C D.ranking.length :=
-  { candidates := cands
-    profile := buildViolationProfile D.ranking.get
-    nonempty := h }
+@[simp] theorem tableauFor_profile (cands : Finset C) (h : cands.Nonempty) :
+    (D.tableauFor cands h).profile = buildViolationProfile D.ranking.get := rfl
 
-/-- The inner tableau scores with `D.ranking`'s profile. -/
-@[simp] theorem tableauFor_profile (D : HSDerivation C) (cands : Finset C)
-    (h : cands.Nonempty) :
-    (D.tableauFor cands h).profile = buildViolationProfile D.ranking.get :=
-  rfl
-
-/-- Filter a candidate set to its optimal subset under `D.ranking`.
-    Returns `∅` on empty input. Routes through the existing parallel
-    `Tableau.optimal` (Layered Grounding — does not duplicate parallel
-    optimization). This is the `eval : Finset C → Finset C` consumed by
-    `iterateGen`. -/
-def evalFilter (D : HSDerivation C) (cands : Finset C) : Finset C :=
+/-- Filter a candidate set to its optimal subset under `D.ranking`; `∅` on empty
+input. This is the one-step EVAL of the serial search. -/
+def evalFilter (cands : Finset C) : Finset C :=
   if h : cands.Nonempty then (D.tableauFor cands h).optimal else ∅
 
-/-- Optimal set for one HS step: `evalFilter` applied to `gen c`.
-    Equivalently, `iterateStep D.gen D.evalFilter c`. -/
-def stepOptimum (D : HSDerivation C) (c : C) : Finset C :=
-  D.evalFilter (D.gen c)
-
-@[simp] theorem stepOptimum_eq_iterateStep (D : HSDerivation C) (c : C) :
-    D.stepOptimum c = iterateStep D.gen D.evalFilter c := rfl
+/-- The optimal set of one GEN/EVAL round. -/
+def stepOptimum : Finset C := D.evalFilter (D.gen c)
 
 /-- An empty `gen` output yields an empty optimal set. -/
-@[simp] theorem stepOptimum_of_empty_gen (D : HSDerivation C) (c : C)
-    (h : D.gen c = ∅) : D.stepOptimum c = ∅ := by
+@[simp] theorem stepOptimum_of_empty_gen (h : D.gen c = ∅) : D.stepOptimum c = ∅ := by
   simp [stepOptimum, evalFilter, h]
 
--- ============================================================================
--- § 4: Convergence
--- ============================================================================
+/-! ### Convergence -/
 
-/-- A form `c` has **converged** under `D` iff its optimal set is the
-    singleton `{c}` — the faithful candidate is the unique optimum. This
-    is the canonical HS halting condition ([mccarthy-2010]).
+/-- A form has **converged** iff its one-round optimal set is the singleton of the
+faithful candidate — the canonical HS halting condition ([mccarthy-2010]). -/
+def Converged : Prop := D.stepOptimum c = ({c} : Finset C)
 
-    Equivalent to `Function.IsFixedPt` of the powerset step at `{c}`
-    (`isFixedPt_singleton_iff_converged`). -/
-def Converged (D : HSDerivation C) (c : C) : Prop :=
-  D.stepOptimum c = ({c} : Finset C)
+instance : Decidable (D.Converged c) := decEq (D.stepOptimum c) ({c} : Finset C)
 
-instance (D : HSDerivation C) (c : C) : Decidable (D.Converged c) :=
-  decEq (D.stepOptimum c) ({c} : Finset C)
+/-- `Converged` is `Function.IsFixedPt` of the powerset step
+`s ↦ ⋃ x ∈ s, stepOptimum x` at the singleton `{c}` — by `Finset.singleton_biUnion`,
+with no intermediate combinator. Simp-normalized toward `Converged`. -/
+@[simp] theorem isFixedPt_singleton_iff_converged :
+    Function.IsFixedPt (fun s => s.biUnion D.stepOptimum) ({c} : Finset C)
+      ↔ D.Converged c := by
+  simp [Converged, Function.IsFixedPt, Finset.singleton_biUnion]
 
-/-- `Converged` is exactly mathlib's `Function.IsFixedPt` of the powerset step
-    `s ↦ ⋃_{x ∈ s} evalFilter (gen x)` at the singleton `{c}` — by
-    `Finset.singleton_biUnion`, with no intermediate combinator. Registered as
-    a simp lemma in the `IsFixedPt → Converged` direction (complex → simpler). -/
-@[simp] theorem isFixedPt_singleton_iff_converged (D : HSDerivation C) (c : C) :
-    Function.IsFixedPt (fun s => s.biUnion fun x => D.evalFilter (D.gen x))
-      ({c} : Finset C) ↔ D.Converged c := by
-  simp [Converged, stepOptimum, Function.IsFixedPt, Finset.singleton_biUnion]
-
-/-- **Sufficient condition for convergence**: when `gen` produces only
-    the faithful candidate, the form is converged. This is the structural
-    soundness statement that GEN-restriction at a candidate forces the
-    HS halting condition. -/
-theorem converged_of_singleton_gen (D : HSDerivation C) (c : C)
-    (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
+/-- GEN-restriction to the faithful candidate forces convergence. -/
+theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
   show D.evalFilter (D.gen c) = ({c} : Finset C)
-  rw [h]
-  show (if h : ({c} : Finset C).Nonempty then (D.tableauFor {c} h).optimal else ∅) =
-       ({c} : Finset C)
-  rw [dif_pos (Finset.singleton_nonempty c)]
+  rw [h, evalFilter, dif_pos (Finset.singleton_nonempty c)]
   exact argMinSet_singleton c _
 
--- ============================================================================
--- § 5: Smart Constructor for n-Step Derivation
--- ============================================================================
-
-/-- n-step HS derivation. Wraps `iterateGen` with `D.gen` and
-    `D.stepOptimum`. The caller supplies a `pick : Finset C → Option C`
-    tie-breaker used when the optimal set isn't a singleton (which would
-    indicate either (a) ties not yet broken by directional eval, or (b)
-    a divergent tie in the [pruitt-2009] sense). Returns `none` if
-    `pick` ever fails. HS derivations are not in general guaranteed to
-    converge — see [lamont-2022b] for non-terminating cases. -/
-def derive (D : HSDerivation C) (pick : Finset C → Option C) (c : C)
-    (steps : Nat) : Option C :=
-  iterateGen D.gen D.evalFilter pick c steps
-
-end HSDerivation
-
-namespace HSDerivation
-
-variable {C : Type*} [DecidableEq C]
-
--- ============================================================================
--- § 6: Smoke Test
--- ============================================================================
-
-section SmokeTest
-
-/-- Two-character toy alphabet for the substrate's smoke test. -/
-inductive Toy | a | b
-  deriving DecidableEq, Repr
-
-/-- Toy GEN: every form admits only itself. This makes every form a
-    fixed point of every HSDerivation built over `Toy` (no harmonic
-    improvement is possible). The smoke test exercises the convergence
-    machinery on the trivial-GEN case. -/
-def toyGen : Toy → Finset Toy := fun c => {c}
-
-/-- Toy ranking: a single faithfulness constraint that is satisfied by
-    every candidate (returns 0 always). Evaluation is then trivially
-    parallel. -/
-def toyRanking : List (Constraints.Constraint Toy) :=
-  [fun _ => 0]
-
-/-- The toy HSDerivation. -/
-def toyDerivation : HSDerivation Toy :=
-  { gen := toyGen, ranking := toyRanking }
-
-/-- **Smoke test**: every form is converged under `toyDerivation`,
-    because `toyGen c = {c}` (one-line proof via the substrate's
-    `converged_of_singleton_gen` sufficient condition). -/
-example (c : Toy) : toyDerivation.Converged c :=
-  converged_of_singleton_gen toyDerivation c rfl
-
-end SmokeTest
+/-- An `n`-round HS derivation: `iterateGen` over `stepOptimum` with a caller-supplied
+`pick` tie-breaker for non-singleton optima (ties not yet broken by directional eval,
+or genuinely divergent ties in the [pruitt-2009] sense). -/
+def derive (pick : Finset C → Option C) (steps : Nat) : Option C :=
+  iterateGen D.stepOptimum pick c steps
 
 end HSDerivation
 
