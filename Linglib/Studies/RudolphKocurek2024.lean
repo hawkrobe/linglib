@@ -243,55 +243,45 @@ end ModifierGroundings
 
 /-! ### No Reversal and the delineation bridge ([klein-1980], §7) -/
 
-/-- No Reversal constraint (van Benthem 1990; §7 of [rudolph-kocurek-2024]):
-below any interpretation where e₁ falls under P and e₂ does not, every
-interpretation admitting e₂ also admits e₁. The order-restricted analogue of
-Klein's monotone-delineation constraint. -/
+/-- No Reversal (van Benthem 1990; §7 of [rudolph-kocurek-2024]): below any
+interpretation separating `a` from `b`, every extension admitting `b` admits
+`a` — the order-restricted analogue of Klein's monotone delineation. -/
 def NoReversal (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
-    (e1 e2 : E) : Prop :=
+    (a b : E) : Prop :=
   ∀ i i', ord.le i' i →
-    @Structure.RelMap L E (interp i w) 1 R ![e1] →
-    ¬ @Structure.RelMap L E (interp i w) 1 R ![e2] →
-    @Structure.RelMap L E (interp i' w) 1 R ![e2] →
-    @Structure.RelMap L E (interp i' w) 1 R ![e1]
+    a ∈ (interp i w).ext₁ R → b ∉ (interp i w).ext₁ R →
+    b ∈ (interp i' w).ext₁ R → a ∈ (interp i' w).ext₁ R
 
 instance [Fintype I] [DecidableAtoms interp]
     (ord : SemanticOrdering I) [DecidableRel ord.le]
-    (R : L.Relations 1) (w : W) (e1 e2 : E) :
-    Decidable (NoReversal interp ord R w e1 e2) := by
-  unfold NoReversal; infer_instance
+    (R : L.Relations 1) (w : W) (a b : E) :
+    Decidable (NoReversal interp ord R w a b) := by
+  unfold NoReversal; simp only [Structure.mem_ext₁]; infer_instance
 
 section Delineation
 
 variable (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
 
-/-- The delineation induced by a ranked family of interpretations: a comparison
-class is admissible iff it is the extension of `P` at some interpretation
-ranked at or below `i`, and `x` is P-in-C iff `x ∈ C`. Instantiates
-[klein-1980]'s comparison-class parameter with the paper's interpretation
-rankings, so the substrate's `Delineation.comparativeSem` can consume it. -/
+/-- The delineation induced by a ranked interpretation family: admissible
+comparison classes are the extensions of `R` in the ≤-cone; `x` is R-in-C iff
+`x ∈ C`. Instantiates [klein-1980]'s comparison-class parameter. -/
 def interpretationDelineation (i : I) :
     Semantics.Gradability.Delineation.ComparisonClass E → E → Prop :=
   fun C x =>
-    (∃ i', ord.le i' i ∧ C = {y | @Structure.RelMap L E (interp i' w) 1 R ![y]}) ∧
-    x ∈ C
+    (∃ i', ord.le i' i ∧ C = (interp i' w).ext₁ R) ∧ x ∈ C
 
-/-- Unfolding lemma: the delineation comparative over the interpretation-induced
-delineation is the ∃-witness clause of the MC — the decidable form used on
-finite models. -/
+/-- The delineation comparative over the induced delineation is the ∃-witness
+clause of the MC: some cone extension separates `a` from `b`. -/
 theorem delineation_comparativeSem_iff (i : I) (a b : E) :
     Semantics.Gradability.Delineation.comparativeSem
       (interpretationDelineation interp ord R w i) a b ↔
-    ∃ i', ord.le i' i ∧ @Structure.RelMap L E (interp i' w) 1 R ![a] ∧
-      ¬ @Structure.RelMap L E (interp i' w) 1 R ![b] := by
+    ∃ i', ord.le i' i ∧ a ∈ (interp i' w).ext₁ R ∧ b ∉ (interp i' w).ext₁ R := by
   constructor
   · rintro ⟨C, ⟨⟨i', h_le, rfl⟩, h_aC⟩, h_nb⟩
     exact ⟨i', h_le, h_aC, fun hb => h_nb ⟨⟨i', h_le, rfl⟩, hb⟩⟩
   · rintro ⟨i', h_le, h_a, h_b⟩
-    refine ⟨{y | @Structure.RelMap L E (interp i' w) 1 R ![y]},
-      ⟨⟨i', h_le, rfl⟩, h_a⟩, ?_⟩
-    rintro ⟨-, h_bC⟩
-    exact h_b h_bC
+    exact ⟨(interp i' w).ext₁ R, ⟨⟨i', h_le, rfl⟩, h_a⟩,
+      fun h => h_b h.2⟩
 
 /-- **The §7 bridge, in the substrate's vocabulary**: under No Reversal, the
 metalinguistic comparative for a gradable predicate IS [klein-1980]'s
@@ -304,7 +294,7 @@ theorem eval_mc_iff_delineation_of_noReversal (i : I) (a b : E)
     Semantics.Gradability.Delineation.comparativeSem
       (interpretationDelineation interp ord R w i) a b := by
   rw [Eval, CompFormula.realize_comp_iff, delineation_comparativeSem_iff]
-  simp only [CompFormula.realize_matom]
+  simp only [CompFormula.realize_matom, ← Structure.mem_ext₁]
   constructor
   · rintro ⟨i', h_le, h_A, h_B, -⟩
     exact ⟨i', h_le, h_A, h_B⟩

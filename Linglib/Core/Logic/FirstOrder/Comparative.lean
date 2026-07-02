@@ -17,6 +17,22 @@ language with interpretations as indices.
 
 namespace FirstOrder.Language
 
+/-- The extension of a unary relation symbol in a structure carried as a
+term. -/
+def Structure.ext₁ {L : Language} {E : Type*} (S : L.Structure E)
+    (R : L.Relations 1) : Set E :=
+  {e | @Structure.RelMap L E S 1 R ![e]}
+
+@[simp] theorem Structure.mem_ext₁ {L : Language} {E : Type*}
+    {S : L.Structure E} {R : L.Relations 1} {e : E} :
+    e ∈ S.ext₁ R ↔ @Structure.RelMap L E S 1 R ![e] :=
+  Iff.rfl
+
+instance {L : Language} {E : Type*} (S : L.Structure E) (R : L.Relations 1)
+    (e : E) [h : Decidable (@Structure.RelMap L E S 1 R ![e])] :
+    Decidable (e ∈ S.ext₁ R) :=
+  h
+
 /-- Comparative-possibility formulas: an embedded classical formula (free
 variables valued by domain elements), booleans, and the comparative ≻
 (`.comp`). Booleans exist at both layers because negation and the derived
