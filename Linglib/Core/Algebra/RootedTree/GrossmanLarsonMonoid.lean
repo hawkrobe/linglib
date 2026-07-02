@@ -34,7 +34,7 @@ injectivity), and that R-free equality re-applies for any R.
 * `mul_assoc_basis` (R-generic) : `(of' F₁ * of' F₂) * of' F₃ =
   of' F₁ * (of' F₂ * of' F₃)` on basis vectors.
 * `mul_assoc` (R-generic) : full associativity, by triple
-  `Finsupp.addHom_ext`.
+  `ConnesKreimer.addHom_ext`.
 * `instSemigroup`, `instMonoid` instances.
 
 ## Status
@@ -198,7 +198,7 @@ theorem mul_assoc_basis {R : Type*} [CommSemiring R]
   rw [lhs_eq_sum_of' (R := R), rhs_eq_sum_of' (R := R),
       sum_of'_congr (lhsMultiset_eq_rhsMultiset F₁ F₂ F₃)]
 
-/-! ### Full `mul_assoc` via triple `Finsupp.addHom_ext` -/
+/-! ### Full `mul_assoc` via triple `ConnesKreimer.addHom_ext` -/
 
 /-- Right multiplication by `y` as an `AddMonoidHom`, additive in `x`. -/
 private noncomputable def mulRightHom
@@ -316,26 +316,29 @@ theorem mul_assoc {R : Type*} [CommSemiring R]
     (F₁ F₂ F₃ : GrossmanLarson R α) :
     F₁ * F₂ * F₃ = F₁ * (F₂ * F₃) := by
   have h₁ : assocLHSHom F₂ F₃ = assocRHSHom F₂ F₃ := by
-    refine Finsupp.addHom_ext fun T₁ a₁ => ?_
-    set s₁ : GrossmanLarson R α := Finsupp.single T₁ a₁ with s₁_def
+    refine ConnesKreimer.addHom_ext (T := Nonplanar α)
+      (M := GrossmanLarson R α) fun T₁ a₁ => ?_
+    set s₁ : GrossmanLarson R α := ConnesKreimer.single T₁ a₁ with s₁_def
     show assocLHSHom F₂ F₃ s₁ = assocRHSHom F₂ F₃ s₁
     rw [assocLHSHom_apply, assocRHSHom_apply]
     have h₂ : assocLHSHomY s₁ F₃ = assocRHSHomY s₁ F₃ := by
-      refine Finsupp.addHom_ext fun T₂ a₂ => ?_
-      set s₂ : GrossmanLarson R α := Finsupp.single T₂ a₂ with s₂_def
+      refine ConnesKreimer.addHom_ext (T := Nonplanar α)
+        (M := GrossmanLarson R α) fun T₂ a₂ => ?_
+      set s₂ : GrossmanLarson R α := ConnesKreimer.single T₂ a₂ with s₂_def
       show assocLHSHomY s₁ F₃ s₂ = assocRHSHomY s₁ F₃ s₂
       rw [assocLHSHomY_apply, assocRHSHomY_apply]
       have h₃ : assocLHSHomZ s₁ s₂ = assocRHSHomZ s₁ s₂ := by
-        refine Finsupp.addHom_ext fun T₃ a₃ => ?_
-        set s₃ : GrossmanLarson R α := Finsupp.single T₃ a₃ with s₃_def
+        refine ConnesKreimer.addHom_ext (T := Nonplanar α)
+          (M := GrossmanLarson R α) fun T₃ a₃ => ?_
+        set s₃ : GrossmanLarson R α := ConnesKreimer.single T₃ a₃ with s₃_def
         show assocLHSHomZ s₁ s₂ s₃ = assocRHSHomZ s₁ s₂ s₃
         rw [assocLHSHomZ_apply, assocRHSHomZ_apply]
         rw [show s₁ = a₁ • (of' T₁ : GrossmanLarson R α) from
-              (Finsupp.smul_single_one T₁ a₁).symm,
+              ConnesKreimer.smul_single_one T₁ a₁,
             show s₂ = a₂ • (of' T₂ : GrossmanLarson R α) from
-              (Finsupp.smul_single_one T₂ a₂).symm,
+              ConnesKreimer.smul_single_one T₂ a₂,
             show s₃ = a₃ • (of' T₃ : GrossmanLarson R α) from
-              (Finsupp.smul_single_one T₃ a₃).symm]
+              ConnesKreimer.smul_single_one T₃ a₃]
         simp only [smul_mul_left, mul_smul_right]
         rw [mul_assoc_basis T₁ T₂ T₃]
       have h₃App := DFunLike.congr_fun h₃ F₃

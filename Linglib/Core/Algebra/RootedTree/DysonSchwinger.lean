@@ -137,7 +137,7 @@ theorem dsMap_add
     (P Q : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
     (a : α) :
     dsMap (P + Q) a = dsMap P a + dsMap Q a := by
-  ext X
+  refine LinearMap.ext fun X => ?_
   show bPlusLin (R := R) a ((P + Q) X) =
        bPlusLin (R := R) a (P X) + bPlusLin (R := R) a (Q X)
   rw [LinearMap.add_apply, map_add]
@@ -147,7 +147,7 @@ theorem dsMap_smul (r : R)
     (P : ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α))
     (a : α) :
     dsMap (r • P) a = r • dsMap P a := by
-  ext X
+  refine LinearMap.ext fun X => ?_
   show bPlusLin (R := R) a ((r • P) X) = r • bPlusLin (R := R) a (P X)
   rw [LinearMap.smul_apply, map_smul]
 
@@ -155,7 +155,7 @@ theorem dsMap_smul (r : R)
 @[simp] theorem dsMap_zero (a : α) :
     dsMap (0 : ConnesKreimer R (Nonplanar α) →ₗ[R]
                 ConnesKreimer R (Nonplanar α)) a = 0 := by
-  ext X
+  refine LinearMap.ext fun X => ?_
   show bPlusLin (R := R) a ((0 : ConnesKreimer R (Nonplanar α) →ₗ[R] _) X) = 0
   rw [LinearMap.zero_apply, map_zero]
 
@@ -197,7 +197,7 @@ example (a : α) :
     dsMap (LinearMap.id : ConnesKreimer R (Nonplanar α) →ₗ[R]
               ConnesKreimer R (Nonplanar α)) a =
       bPlusLin (R := R) a := by
-  ext X
+  refine LinearMap.ext fun X => ?_
   show bPlusLin (R := R) a
         ((LinearMap.id : ConnesKreimer R (Nonplanar α) →ₗ[R] _) X) =
        bPlusLin (R := R) a X

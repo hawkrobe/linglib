@@ -770,7 +770,7 @@ vectors (the output of `insertion`, a sum-over-partition, ...). To keep
 the chain's rewrites compositional, we lift two basis-form identities to
 LinearMap-general form via standard linearity arguments.
 
-The lifts are routine `Finsupp.induction_linear` (zero / additive /
+The lifts are routine `ConnesKreimer.induction_linear` (zero / additive /
 scalar-of-basis) reductions to the basis form. -/
 
 /-- Push `X * of' G` to the explicit powerset sum form for ANY `X`.
@@ -786,7 +786,7 @@ theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α
         op (unop (insertion X (of' G₁)) *
             unop (of' (G - G₁)))).sum := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
-  refine Finsupp.induction_linear (M := R) X ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear X ?_ ?_ ?_
   · -- X = 0
     have h_prod_zero : (product : GrossmanLarson R α →ₗ[R] _) 0 (of' G) =
         (0 : GrossmanLarson R α) := by
@@ -848,11 +848,11 @@ theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α
     rw [add_mul]; rfl
   · -- single basis: reduce to of'_mul_of'.
     intro A c
-    -- Single A c = c • (single A 1) = c • of' A (via Finsupp.smul_single_one).
-    show product ((Finsupp.single A c : GrossmanLarson R α)) (of' G) = _
-    rw [show ((Finsupp.single A c : Forest (Nonplanar α) →₀ R) :
-            GrossmanLarson R α) = c • (of' A : GrossmanLarson R α)
-        from (Finsupp.smul_single_one A c).symm]
+    -- Single A c = c • (single A 1) = c • of' A (via ConnesKreimer.smul_single_one).
+    show product ((ConnesKreimer.single A c : GrossmanLarson R α)) (of' G) = _
+    rw [show (ConnesKreimer.single A c : GrossmanLarson R α)
+          = c • (of' A : GrossmanLarson R α)
+        from ConnesKreimer.smul_single_one A c]
     rw [product.map_smul, LinearMap.smul_apply]
     -- Goal: c • product (of' A) (of' G) = (sum form with c • of' A)
     show c • ((of' A : GrossmanLarson R α) * of' G) = _
@@ -960,7 +960,7 @@ theorem insertion_mul_distrib_gen
         op (unop (insertion X (of' C₁)) *
             unop (insertion (of' Y) (of' (C - C₁))))).sum := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
-  refine Finsupp.induction_linear X ?_ ?_ ?_
+  refine ConnesKreimer.induction_linear X ?_ ?_ ?_
   · -- X = 0 case: both sides reduce to 0.
     -- LHS = insertion (op (0 * unop (of' Y))) (of' C) = insertion 0 (of' C) = 0
     -- RHS = each summand `op(0 * ...) = 0`, hence sum = 0.
@@ -1024,8 +1024,9 @@ theorem insertion_mul_distrib_gen
     rw [add_mul]; rfl
   · -- single A c basis case
     intro A c
-    rw [show (Finsupp.single A c : GrossmanLarson R α) = c • (of' A : GrossmanLarson R α)
-        from (Finsupp.smul_single_one A c).symm]
+    rw [show (ConnesKreimer.single A c : GrossmanLarson R α)
+          = c • (of' A : GrossmanLarson R α)
+        from ConnesKreimer.smul_single_one A c]
     rw [show unop (c • (of' A : GrossmanLarson R α)) =
             c • unop (of' (R := R) A) from rfl]
     rw [smul_mul_assoc]

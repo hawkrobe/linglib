@@ -192,17 +192,12 @@ noncomputable def comulCAlgHomP (τ : RoseTree (α ⊕ β) → β) :
     ConnesKreimer R (RoseTree (α ⊕ β)) →ₐ[R]
       ConnesKreimer R (RoseTree (α ⊕ β)) ⊗[R]
         ConnesKreimer R (RoseTree (α ⊕ β)) :=
-  AddMonoidAlgebra.lift R
-    ((ConnesKreimer R (RoseTree (α ⊕ β))) ⊗[R]
-      (ConnesKreimer R (RoseTree (α ⊕ β))))
-    (Forest (RoseTree (α ⊕ β))) (comulCMonoidHomP τ)
+  ConnesKreimer.lift (comulCMonoidHomP τ)
 
 @[simp] theorem comulCAlgHomP_apply_of' (τ : RoseTree (α ⊕ β) → β)
     (F : Forest (RoseTree (α ⊕ β))) :
     comulCAlgHomP (R := R) τ (of' F) = comulCForestPlanar τ F := by
-  show AddMonoidAlgebra.lift R _ _ (comulCMonoidHomP τ)
-        (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [comulCAlgHomP, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem comulCAlgHomP_apply_ofTree (τ : RoseTree (α ⊕ β) → β)

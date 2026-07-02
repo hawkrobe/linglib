@@ -18,7 +18,7 @@ tree is primitive: `Δ(of' {t}) = of' {t} ⊗ 1 + 1 ⊗ of' {t}`) and the existi
 
 This is **distinct** from mathlib's default `AddMonoidAlgebra.instBialgebra`
 (which uses the group-like coproduct `single g r ↦ single g r ⊗ single g r`).
-The `def`-vs-`abbrev` discipline on `ConnesKreimer R T` keeps the two
+The one-field structure wrapper on `ConnesKreimer R T` keeps the two
 unambiguous: typeclass synthesis on `ConnesKreimer R T` finds the shuffle
 Bialgebra instance, while `AddMonoidAlgebra R (Forest T)` retains the
 group-like one.
@@ -170,7 +170,7 @@ theorem rTensor_counit_comulShuffle [DecidableEq T] :
     (counit (R := R)).toLinearMap.rTensor (ConnesKreimer R T) ∘ₗ
         (comulShuffle (R := R)) =
       TensorProduct.mk R R (ConnesKreimer R T) 1 := by
-  -- Reduce arbitrary `x` to basis singleton via `Finsupp.addHom_ext`.
+  -- Reduce arbitrary `x` to basis singleton via `addHom_ext`.
   ext x
   show (counit (R := R)).toLinearMap.rTensor (ConnesKreimer R T)
         (comulShuffle (R := R) x) =
@@ -179,12 +179,12 @@ theorem rTensor_counit_comulShuffle [DecidableEq T] :
               (comulShuffle (R := R))).toAddMonoidHom =
            (TensorProduct.mk R R (ConnesKreimer R T) 1 :
               ConnesKreimer R T →ₗ[R] R ⊗[R] ConnesKreimer R T).toAddMonoidHom := by
-    refine Finsupp.addHom_ext fun F₀ r => ?_
-    set sF : ConnesKreimer R T := Finsupp.single F₀ r with sF_def
+    refine addHom_ext fun F₀ r => ?_
+    set sF : ConnesKreimer R T := single F₀ r with sF_def
     show (counit (R := R)).toLinearMap.rTensor (ConnesKreimer R T)
           (comulShuffle (R := R) sF) =
          TensorProduct.mk R R (ConnesKreimer R T) 1 sF
-    rw [show sF = r • of' (R := R) F₀ from (Finsupp.smul_single_one F₀ r).symm]
+    rw [show sF = r • of' (R := R) F₀ from smul_single_one F₀ r]
     rw [LinearMap.map_smul, LinearMap.map_smul,
         rTensor_counit_comulShuffle_basis (R := R) F₀]
     show r • ((1 : R) ⊗ₜ[R] of' (R := R) F₀) =
@@ -206,12 +206,12 @@ theorem lTensor_counit_comulShuffle [DecidableEq T] :
               (comulShuffle (R := R))).toAddMonoidHom =
            ((TensorProduct.mk R (ConnesKreimer R T) R).flip 1 :
               ConnesKreimer R T →ₗ[R] ConnesKreimer R T ⊗[R] R).toAddMonoidHom := by
-    refine Finsupp.addHom_ext fun F₀ r => ?_
-    set sF : ConnesKreimer R T := Finsupp.single F₀ r with sF_def
+    refine addHom_ext fun F₀ r => ?_
+    set sF : ConnesKreimer R T := single F₀ r with sF_def
     show (counit (R := R)).toLinearMap.lTensor (ConnesKreimer R T)
           (comulShuffle (R := R) sF) =
          (TensorProduct.mk R (ConnesKreimer R T) R).flip 1 sF
-    rw [show sF = r • of' (R := R) F₀ from (Finsupp.smul_single_one F₀ r).symm]
+    rw [show sF = r • of' (R := R) F₀ from smul_single_one F₀ r]
     rw [LinearMap.map_smul, LinearMap.map_smul,
         lTensor_counit_comulShuffle_basis (R := R) F₀]
     show r • (of' (R := R) F₀ ⊗ₜ[R] (1 : R)) =

@@ -78,12 +78,11 @@ noncomputable def birkhoffMinusMonoidHom :
 /-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`, lifting `birkhoffMinusMonoidHom`. Mirrors the ring
     `birkhoffMinus`. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (Nonplanar α) →ₐ[R] ℛ :=
-  AddMonoidAlgebra.lift R ℛ (Forest (Nonplanar α)) (birkhoffMinusMonoidHom φ RB)
+  ConnesKreimer.lift (birkhoffMinusMonoidHom φ RB)
 
 @[simp] theorem birkhoffMinus_apply_of' (F : Forest (Nonplanar α)) :
     birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod := by
-  show AddMonoidAlgebra.lift R _ _ (birkhoffMinusMonoidHom φ RB) (Finsupp.single F 1) = _
-  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rw [birkhoffMinus, ConnesKreimer.lift_of']
   rfl
 
 @[simp] theorem birkhoffMinus_apply_ofTree (T : Nonplanar α) :
