@@ -25,9 +25,8 @@ open Semantics.Lexical
     [grano-2024], (3a): SBJV required. -/
 def querer : Verb where
   form := "querer"
-  complementType := .finiteClause
-  controlType := .subjectControl
-  altComplementType := some .infinitival
+  frames := [Frame.finiteClause, Frame.infinitival]
+  readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -37,9 +36,8 @@ def querer : Verb where
     [grano-2024], (11): both IND and SBJV accepted. -/
 def esperar : Verb where
   form := "esperar"
-  complementType := .finiteClause
-  controlType := .subjectControl
-  altComplementType := some .infinitival
+  frames := [Frame.finiteClause, Frame.infinitival]
+  readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -48,8 +46,8 @@ def esperar : Verb where
     [grano-2024], (26): SBJV required, IND rejected. -/
 def pretender : Verb where
   form := "pretender"
-  complementType := .infinitival
-  controlType := .subjectControl
+  frames := [Frame.infinitival]
+  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -59,9 +57,8 @@ def pretender : Verb where
     [grano-2024], (41): SBJV required via *com que*, IND rejected. -/
 def fazer : Verb where
   form := "fazer"
-  complementType := .infinitival
-  controlType := .objectControl
-  altComplementType := some .finiteClause
+  frames := [Frame.infinitival, Frame.finiteClause]
+  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   causative := some .make
 
 -- ════════════════════════════════════════════════════════════════

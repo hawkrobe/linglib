@@ -1,18 +1,22 @@
+import Mathlib.Order.Basic
+import Mathlib.Data.Nat.Basic
+
 /-!
 # Complementation — complement selection and control
 
 [noonan-2007]
 
-Per-entry complementation features: which complement type a predicate selects
-(`ComplementType`) and, for infinitival complements, its control type
-(`ControlType`). Composed into lexical-core structures as fields
-(`Verb.ArgStructure.complementType`), Pronoun-pattern style.
+Per-entry complementation features: the legacy complement-type enum
+(`ComplementType`, the flat view over the typed `Frame` of
+`Syntax/Clause/Frame.lean`) and, for infinitival complements, its control
+type (`ControlType`).
 
 The cross-linguistic complementation typology also lives here:
-[noonan-2007]'s six complement-clause types (`NoonanCompType`) and twelve
+[noonan-2007]'s six complement-clause types (`NoonanCompType`, linearly
+ordered from most to least finite via `rank`) and twelve
 complement-taking-predicate classes (`CTPClass`) with their default reality
 status (`RealityStatus`, `ctpRealityStatus`). The adapter between the two
-inventories (`ComplementType.toNoonan`) lives in
+enum inventories (`ComplementType.toNoonan`) lives in
 `Syntax/Clause/Complementation.lean`.
 
 ## Main declarations
@@ -20,7 +24,8 @@ inventories (`ComplementType.toNoonan`) lives in
 * `ComplementType` — complement frame a predicate selects (English-leaning
   inventory: NP, double object, clausal, …)
 * `ControlType` — subject/object control vs raising for infinitival complements
-* `NoonanCompType` + `isReduced` — [noonan-2007]'s complement-clause types
+* `NoonanCompType` + `isReduced` + `rank` — [noonan-2007]'s complement-clause
+  types with their finiteness order
 * `CTPClass`, `RealityStatus`, `ctpRealityStatus` — [noonan-2007]'s CTP
   classification and realis/irrealis defaults
 -/
@@ -104,6 +109,22 @@ def NoonanCompType.isReduced : NoonanCompType → Bool
   | .nominalized => true
   | .participle  => true
   | _            => false
+
+/-- [noonan-2007]'s balanced-to-deranked order as a numeric rank
+    (indicative most finite, participle most deranked). -/
+def NoonanCompType.rank : NoonanCompType → Nat
+  | .indicative  => 0
+  | .subjunctive => 1
+  | .paratactic  => 2
+  | .infinitive  => 3
+  | .nominalized => 4
+  | .participle  => 5
+
+/-- The balanced-to-deranked order: `t ≤ t'` iff `t` is at least as
+    finite as `t'`. -/
+instance : LinearOrder NoonanCompType :=
+  .lift' NoonanCompType.rank fun a b => by
+    cases a <;> cases b <;> simp [NoonanCompType.rank]
 
 /-- Noonan's twelve CTP classes, organized by semantic contribution.
 

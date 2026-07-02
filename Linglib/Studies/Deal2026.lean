@@ -84,6 +84,7 @@ namespace Deal2026
 
 open NezPerce.ClausalEmbedding
 open Clause.Complementation
+open Slot.ShellInventory
 open Semantics.Presupposition.ProjectiveContent (ProjectiveClass)
 open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
   hasValuedFeature FeatureBundle FeatureVal GramFeature ābar_is_Ā)
@@ -95,7 +96,7 @@ open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
 /-- The full Deal-2026 description of a notional complement clause: internal
     spine + external shell + presence of internal Ā-dependency. Bundled here
     rather than in substrate to keep the per-axis primitives reusable
-    (`ClauseSpine`, `CPShellInventory`, `AbarDep`) for non-Deal accounts.
+    (`ClauseSpine`, `Slot.ShellInventory`, `AbarDep`) for non-Deal accounts.
 
     The three axes are independent in [deal-2026] Table 79: each cell
     in the 4×2 cross-classification (CP-superstructure × ±Ā) is filled or
@@ -104,7 +105,7 @@ structure NotionalComplementShape where
   /-- Internal spine of the embedded clause (typically `ClauseSpine.cP`). -/
   internal : ClauseSpine
   /-- External wrapping shells from C outward (`bareCP / dCP / dnCP / pdCP`). -/
-  external : CPShellInventory
+  external : Slot.ShellInventory
   /-- Whether the embedded CP contains an internal Ā-dependency. -/
   hasInternalAbar : Bool
   deriving Repr
@@ -288,7 +289,7 @@ theorem nezPerce_re_factive_no_nominalization :
 
 /-- The bare-CP shell contains neither D nor N. -/
 theorem bareCP_no_d_no_n :
-    CPShell.d ∉ bareCP ∧ CPShell.n ∉ bareCP := by
+    Slot.Shell.d ∉ bareCP ∧ Slot.Shell.n ∉ bareCP := by
   refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
@@ -444,7 +445,7 @@ The Studies file integrates four independent substrate layers:
 - Fragment: per-verb consensus typology (CTPClass, factive)
 - Tonhauser projective content: ProjectiveClass (Semantics/Presupposition/)
 - Deal-internal: EmbeddingStrategy + NotionalComplementShape
-- Shell/Ā axes: `CPShellInventory` + `hasNominalShell` (Syntax/Clause/)
+- Shell/Ā axes: `Slot.ShellInventory` + `hasNominalShell` (Syntax/Clause/Frame.lean)
 
 The bridge theorems below derive load-bearing predictions across these
 layers rather than stipulating them. -/
