@@ -1,5 +1,5 @@
-import Linglib.Semantics.ArgumentStructure.Properties
-import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
+import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.Aspect.PrecedenceClosure
 
 /-!
@@ -15,10 +15,10 @@ correspondence between an object and an event. K98 distinguishes:
   (allows backups: *read the article*).
 
 Plus the verb-class typeclass hierarchy formed by these properties
-together with `CumTheta` (and `UP`) from `ThematicRoleProperties.lean`,
+together with `CumTheta` (and `UP`) from `Thematic/Mereology.lean`,
 declared as a mathlib-style `extends` chain:
 
-    IsCumThetaVerb (in ThematicRoleProperties.lean)
+    IsCumThetaVerb (in Thematic/Mereology.lean)
         ↑
     IsIncVerb extends IsCumThetaVerb
         ↑

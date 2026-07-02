@@ -2,7 +2,7 @@ import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 
 /-!
-# Features.DiathesisAlternation
+# Diathesis Alternations
 [levin-1993]
 
 Twenty-five curated diathesis alternations from [levin-1993] Part One,

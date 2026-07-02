@@ -1,6 +1,6 @@
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 
 /-!
 # Root outcomes — event-relative machinery

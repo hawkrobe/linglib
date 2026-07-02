@@ -449,8 +449,12 @@ instance (n : GrimmNode) : Decidable n.InTransitiveRegion := by
     |-------|--------------|-------------|
     | I     | kill, break  | Highest     |
     | II    | shoot, hit   | Middle      |
-    | III   | search, seek | Lowest      | -/
-inductive TransitivityClass where
+    | III   | search, seek | Lowest      |
+
+    Named `TransitivityRank` (rank on Tsunoda's hierarchy) to avoid
+    collision with `ArgumentStructure.AuxiliarySelection.TransitivityClass`
+    (the Burzio unaccusative/unergative/transitive classification). -/
+inductive TransitivityRank where
   /-- Resultative Effective Action: kill, break. Object is destroyed
       (exPersBeginning). Maximal opposition between agent and patient. -/
   | resultativeEffective
@@ -466,7 +470,7 @@ inductive TransitivityClass where
     (Fig. 5). The agent position for all three classes is `effectorAgent`
     (Fig. 5, Ia/IIa share the same agent node; Grimm doesn't separately
     label IIIa). -/
-def TransitivityClass.patientNode : TransitivityClass → GrimmNode
+def TransitivityRank.patientNode : TransitivityRank → GrimmNode
   | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
   | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
   | .pursuit              => ⟨⊥, .totalNonPersistence⟩ -- IIIp

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.DM.NominalStructure
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Relational
 
 /-!
 # Myler 2016: Building and Interpreting Possession Sentences

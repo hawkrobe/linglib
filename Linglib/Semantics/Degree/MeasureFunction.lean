@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Affectedness.Defs
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.Events.Basic
 import Mathlib.Order.Defs.LinearOrder
 

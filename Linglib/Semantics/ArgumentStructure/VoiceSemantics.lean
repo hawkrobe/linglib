@@ -11,7 +11,7 @@ Voice heads are type-changing compositional functions: they take a VP
 denotation and return a clause-level meaning with modified argument
 structure. This file defines the semantic operations; the theta-role
 labels are projected from Voice flavor by `VoiceFlavor.thetaRole` in
-`Syntax/Minimalist/Voice.lean`.
+`Syntax/Minimalist/Verbal/Voice.lean`.
 
 ## Independence from VoiceFlavor.thetaRole
 

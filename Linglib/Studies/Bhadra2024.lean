@@ -1,6 +1,6 @@
 import Linglib.Morphology.RootTypology
-import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Affectedness
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.ENat.Basic

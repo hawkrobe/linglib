@@ -1,5 +1,5 @@
 import Linglib.Morphology.DM.Categorizer
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Relational
 import Linglib.Semantics.Possessive.Basic
 
 /-!

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
-import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Studies.Wellwood2015
 import Linglib.Semantics.Mereology
 import Linglib.Fragments.English.Predicates.Verbal

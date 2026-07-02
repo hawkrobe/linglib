@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Measurement
-import Linglib.Semantics.ArgumentStructure.Defs
-import Linglib.Semantics.ArgumentStructure.Properties
-import Linglib.Semantics.ArgumentStructure.LF
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
+import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Semantics.Degree.Comparative

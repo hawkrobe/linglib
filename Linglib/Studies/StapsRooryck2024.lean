@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
-import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Features.Aktionsart
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
