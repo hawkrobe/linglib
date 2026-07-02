@@ -197,12 +197,14 @@ end Modifiers
 
 section ModifierGroundings
 
+variable (φ ψ : L.CompFormula E) (ord : SemanticOrdering I)
+  (d : DistanceFunction I ord) (i : I) (w : W)
+
 /-- **Grounding**: ≫ is the strict l-lifting under the *coarser* total
 preorder "not far below" — the distance-function axioms are exactly what
 make that relation total, so [holliday-icard-2013]'s lift machinery applies
 with ≪ in the role of <. -/
-theorem evalMuchMore_iff_strict_dominationLift (φ ψ : L.CompFormula E)
-    (ord : SemanticOrdering I) (d : DistanceFunction I ord) (i : I) (w : W) :
+theorem evalMuchMore_iff_strict_dominationLift :
     EvalMuchMore interp φ ψ ord d i w ↔
     Strict
       (dominationLift (fun a b => ¬ FarBelow ord d a b))
@@ -217,8 +219,7 @@ theorem evalMuchMore_iff_strict_dominationLift (φ ψ : L.CompFormula E)
 *levels* (`ord.equiv`-classes, mathlib's `AntisymmRel.setoid`): some
 reasonably-high all-φ level strictly below the index dominates every
 all-¬φ level below it. -/
-theorem evalMostly_iff_strict_dominationLift (φ : L.CompFormula E)
-    (ord : SemanticOrdering I) (d : DistanceFunction I ord) (i : I) (w : W) :
+theorem evalMostly_iff_strict_dominationLift :
     EvalMostly interp φ ord d i w ↔
     Strict
       (dominationLift (fun a b => ord.le b a))
@@ -353,9 +354,10 @@ instance EvalRevised.instDec [Fintype I] [Fintype E] [DecidableEq E]
         ((∀ i'', ord.le i'' i → EvalRevised interp B ord i'' w → ord.lt i'' i') ∨
          (∀ i'', ord.le i'' i → ¬ EvalRevised interp A ord i'' w → ord.lt i'' i'))))
 
+variable (A B : L.CompFormula E) (ord : SemanticOrdering I) (i : I) (w : W)
+
 /-- Characterization of the revised MC case — definitional. -/
-theorem evalRevised_mc_iff (A B : L.CompFormula E) (ord : SemanticOrdering I)
-    (i : I) (w : W) :
+theorem evalRevised_mc_iff :
     EvalRevised interp (.comp A B) ord i w ↔
     ∃ i', ord.le i' i ∧ EvalRevised interp A ord i' w ∧
       ¬ EvalRevised interp B ord i' w ∧
@@ -369,20 +371,21 @@ end Revised
 
 section MCond
 
-variable [Fintype I]
+variable [Fintype I] (A B : L.CompFormula E)
 
 /-- Restrict an ordering relation to A-interpretations (§6.3): drops non-A
 interpretations, so the result satisfies reflexivity (at A-interpretations)
 and transitivity but not totality — hence the consequent of a conditional is
 evaluated via `EvalGen` rather than `Eval`. -/
-def restrictLE (A : L.CompFormula E) (le : I → I → Prop) (w : W) :
-    I → I → Prop :=
+def restrictLE (le : I → I → Prop) (w : W) : I → I → Prop :=
   fun i j => le i j ∧ CompFormula.Realize interp A le i w ∧ CompFormula.Realize interp A le j w
 
 instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
-    (A : L.CompFormula E) (le : I → I → Prop) [DecidableRel le] (w : W) :
+    (le : I → I → Prop) [DecidableRel le] (w : W) :
     DecidableRel (restrictLE interp A le w) := fun _ _ => by
   unfold restrictLE; infer_instance
+
+variable (ord : SemanticOrdering I) (i : I) (w : W)
 
 /-- Metalinguistic conditional (eq. 120 of [rudolph-kocurek-2024]): the
 antecedent is evaluated with the full ordering, the consequent with the
@@ -391,14 +394,12 @@ interpretation-strict implication.
 
 Key properties: C1 (conditionals entail weak comparatives), M1
 (⊨ A → (A ≻ ¬A), see `mcond_m1`), failure of modus tollens for acceptance. -/
-def EvalMCond (A B : L.CompFormula E) (ord : SemanticOrdering I)
-    (i : I) (w : W) : Prop :=
+def EvalMCond : Prop :=
   ∀ i', ord.le i' i → CompFormula.Realize interp A ord.le i' w →
     CompFormula.Realize interp B (restrictLE interp A ord.le w) i' w
 
 instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
-    (A B : L.CompFormula E) (ord : SemanticOrdering I) [DecidableRel ord.le]
-    (i : I) (w : W) :
+    [DecidableRel ord.le] :
     Decidable (EvalMCond interp A B ord i w) := by
   unfold EvalMCond; infer_instance
 
@@ -409,8 +410,7 @@ MC-free — the metalinguistic conditional is Stalnakerian entailment
 (`ContextSet.entails`) of the consequent by the ranked antecedent-cone. The
 antecedent may contain ≻ freely: it is always evaluated at the full ordering,
 and an MC-free consequent never consults the restricted one. -/
-theorem evalMCond_iff_entails (A B : L.CompFormula E) (hB : B.CompFree)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
+theorem evalMCond_iff_entails (hB : B.CompFree) :
     EvalMCond interp A B ord i w ↔
     CommonGround.ContextSet.entails
       {x | ord.le x i ∧ CompFormula.Realize interp A ord.le x w}
@@ -1029,8 +1029,10 @@ variable {L : Language} {I W E : Type*} [Fintype I] [DecidableEq I]
 def formulaDeg (φ : L.CompFormula E) (w : W) : MetaDegree I ord i :=
   deg ord i (denotation interp ord i φ w) (denotation_subset_field interp ord i φ w)
 
+variable (A B : L.CompFormula E) (w : W)
+
 /-- Fact 10: revised MC holds iff denotation of A ⊐ denotation of B. -/
-theorem mc_iff_degree_gt (A B : L.CompFormula E) (w : W) :
+theorem mc_iff_degree_gt :
     EvalRevised interp (.comp A B) ord i w ↔
     strictlyBetter ord i (denotation interp ord i A w)
       (denotation interp ord i B w) := by
@@ -1085,7 +1087,7 @@ theorem mc_iff_degree_gt (A B : L.CompFormula E) (w : W) :
 /-- Fact 9: ME holds iff denotations have the same degree — the Boolean-free
 bridge from `EvalRevised` to the algebraic degree structure. Forward direction
 uses `strictlyBetter_total`. -/
-theorem me_iff_same_degree (A B : L.CompFormula E) (w : W) :
+theorem me_iff_same_degree :
     EvalRevised interp (A.equi B) ord i w ↔
     degreeEquiv ord i (denotation interp ord i A w)
       (denotation interp ord i B w) := by

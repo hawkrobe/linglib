@@ -126,10 +126,12 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
         le (fun b a => le b a ∧ ¬ le a b)
         (fun j => Realize interp A le j w) (fun j => Realize interp B le j w) i))
 
+variable (A B : CompFormula L E) (le : I → I → Prop) (ord : TotalPreorder I)
+  (i : I) (w : W)
+
 /-- The comparative clause over a total preorder — definitional; the rewriting
 interface, with the domination conjunction packaged as `ord.lt`. -/
-theorem realize_comp_iff (A B : CompFormula L E) (ord : TotalPreorder I)
-    (i : I) (w : W) :
+theorem realize_comp_iff :
     Realize interp (.comp A B) ord.le i w ↔
     ∃ i', ord.le i' i ∧ Realize interp A ord.le i' w ∧
       ¬ Realize interp B ord.le i' w ∧
@@ -138,8 +140,7 @@ theorem realize_comp_iff (A B : CompFormula L E) (ord : TotalPreorder I)
   Iff.rfl
 
 /-- Realization of a ground unary atom. -/
-@[simp] theorem realize_matom (R : L.Relations 1) (e : E)
-    (le : I → I → Prop) (i : I) (w : W) :
+@[simp] theorem realize_matom (R : L.Relations 1) (e : E) :
     Realize interp (.matom R e) le i w ↔
       @Structure.RelMap L E (interp i w) 1 R ![e] := by
   letI := interp i w
@@ -172,8 +173,7 @@ theorem realize_congr_of_compFree :
 Lewis's lifting) applied to the cone at the evaluation index: comparative
 possibility, with the ∃∀ clause as the strict Smyth order via
 `strict_dominationLift_iff`. -/
-theorem realize_comp_iff_strict_dominationLift (A B : CompFormula L E)
-    (ord : TotalPreorder I) (i : I) (w : W) :
+theorem realize_comp_iff_strict_dominationLift :
     Realize interp (.comp A B) ord.le i w ↔
     Strict
       (dominationLift (fun a b => ord.le b a))
@@ -185,20 +185,17 @@ theorem realize_comp_iff_strict_dominationLift (A B : CompFormula L E)
     (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl) _ _ i
 
 /-- ≻ is irreflexive — a witness would make A both true and false. -/
-theorem not_realize_comp_self (φ : CompFormula L E) (le : I → I → Prop)
-    (i : I) (w : W) : ¬ Realize interp (.comp φ φ) le i w := by
+theorem not_realize_comp_self : ¬ Realize interp (.comp A A) le i w := by
   rintro ⟨_, _, hA, hnA, _⟩
   exact hnA hA
 
 /-- ≈ is reflexive. -/
-theorem realize_equi_self (φ : CompFormula L E) (le : I → I → Prop)
-    (i : I) (w : W) : Realize interp (φ.equi φ) le i w :=
-  ⟨not_realize_comp_self interp φ le i w, not_realize_comp_self interp φ le i w⟩
+theorem realize_equi_self : Realize interp (A.equi A) le i w :=
+  ⟨not_realize_comp_self interp A le i w, not_realize_comp_self interp A le i w⟩
 
 /-- ≈ is symmetric. -/
-theorem realize_equi_comm (φ ψ : CompFormula L E) (le : I → I → Prop)
-    (i : I) (w : W) :
-    Realize interp (φ.equi ψ) le i w ↔ Realize interp (ψ.equi φ) le i w :=
+theorem realize_equi_comm :
+    Realize interp (A.equi B) le i w ↔ Realize interp (B.equi A) le i w :=
   and_comm
 
 end CompFormula
