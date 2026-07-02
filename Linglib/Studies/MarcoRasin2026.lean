@@ -244,8 +244,8 @@ private theorem adjOPpred_mem : adjOPpred ∈ adjCands := by
 theorem adjOPpred_always_optimal :
     ∀ ranking ∈ opConstraints.permutations',
       adjOPpred ∈ (Tableau.ofRanking adjCands ranking adjCands_ne).optimal :=
-  fun _ hrk => Tableau.ofRanking_zero_mem_optimal_allRankings adjOPpred adjCands
-    adjCands_ne opConstraints adjOPpred_mem adjOPpred_zero_viols hrk
+  fun _ hrk => Tableau.ofRanking_zero_mem_optimal_allRankings adjOPpred_mem
+    adjOPpred_zero_viols hrk
 
 set_option maxHeartbeats 4000000 in
 /-- **Main result.** No ranking of the four OP constraints selects the

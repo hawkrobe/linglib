@@ -35,6 +35,9 @@ abbrev buildViolationProfile
     (con : CON C n) (c : C) : ViolationProfile n :=
   lexFinNatOf con c
 
+@[simp] theorem buildViolationProfile_apply (con : CON C n) (c : C) (i : Fin n) :
+    buildViolationProfile con c i = con i c := rfl
+
 /-- The `ViolationProfile` a constraint set `CON` assigns to a candidate: the
     vector of its `n` constraints' violation counts on `c`. An OT grammar ranks
     these coordinates; an HG grammar weights them. -/

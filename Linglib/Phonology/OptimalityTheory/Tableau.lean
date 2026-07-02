@@ -63,6 +63,8 @@ plain membership `c ∈ t.optimal`, unfolded by `mem_optimal_iff`; there is no s
 winner predicate. -/
 abbrev optimal : Finset C := lexMins t
 
+variable {t c}
+
 /-- Membership in the winner set, unfolded: a winner is a candidate whose profile
 lexicographically bounds the whole tableau. -/
 theorem mem_optimal_iff :
@@ -79,37 +81,24 @@ theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates :=
 /-- A winner's profile bounds every candidate's. -/
 theorem le_of_mem_optimal {d : C} (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
     t.profile c ≤ t.profile d :=
-  ((mem_optimal_iff t c).mp hc).2 d hd
+  le_of_mem_argMinSet hc hd
 
 /-- Optimality factors through the profile, so it transports along profile equality:
 scoring like a winner is winning. -/
 theorem mem_optimal_of_profile_eq {d : C} (hd : d ∈ t.optimal) (hc : c ∈ t.candidates)
     (he : t.profile c = t.profile d) : c ∈ t.optimal :=
-  (mem_optimal_iff t c).mpr ⟨hc, fun e he' => he ▸ le_of_mem_optimal t d hd he'⟩
+  mem_argMinSet_of_eq hd hc he
 
 /-- A candidate whose profile vanishes wins: `0` is the global lex-minimum. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
     c ∈ t.optimal :=
-  (mem_optimal_iff t c).mpr ⟨hc, fun d _ => h0 ▸ ViolationProfile.zero_le _⟩
+  mem_argMinSet_of_eq_bot hc h0
 
 /-- A tableau has sole winner `m` iff `m` strictly lex-dominates every other
 candidate. -/
 theorem optimal_eq_singleton_iff {m : C} (hm : m ∈ t.candidates) :
-    t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c := by
-  constructor
-  · intro h c hc hcm
-    have hmo : m ∈ t.optimal := h ▸ Finset.mem_singleton_self m
-    exact (le_of_mem_optimal t m hmo hc).lt_of_ne fun he => hcm <| Finset.mem_singleton.mp
-      (h ▸ mem_optimal_of_profile_eq t c hmo hc he.symm)
-  · intro h
-    refine Finset.eq_singleton_iff_unique_mem.mpr
-      ⟨(mem_optimal_iff t m).mpr ⟨hm, fun d hd => ?_⟩, fun c hc => ?_⟩
-    · rcases eq_or_ne d m with rfl | hdm
-      · exact le_rfl
-      · exact (h d hd hdm).le
-    · by_contra hcm
-      exact absurd (le_of_mem_optimal t c hc hm)
-        (not_le.mpr (h c (optimal_subset t c hc) hcm))
+    t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
+  argMinSet_eq_singleton_iff hm
 
 /-! ### Tableau constructors -/
 
@@ -146,15 +135,17 @@ def ofRanking (h : candidates ≠ [] := by decide) : Tableau C ranking.length :=
     (Tableau.ofRanking candidates ranking h).profile c
       = buildViolationProfile ranking.get c := rfl
 
+variable {con r candidates ranking h}
+
 /-- Candidates in `(Tableau.ofRanking ...).optimal` belong to the original list. -/
 theorem ofRanking_optimal_mem
     (hc : c ∈ (ofRanking candidates ranking h).optimal) : c ∈ candidates :=
-  List.mem_toFinset.mp (optimal_subset _ c hc)
+  List.mem_toFinset.mp (optimal_subset hc)
 
 /-- Candidates in `(Tableau.ofPerm ...).optimal` belong to the original list. -/
 theorem ofPerm_optimal_mem
     (hc : c ∈ (ofPerm con r candidates h).optimal) : c ∈ candidates :=
-  List.mem_toFinset.mp (optimal_subset _ c hc)
+  List.mem_toFinset.mp (optimal_subset hc)
 
 /-! ### Top-constraint optimality -/
 
@@ -165,34 +156,31 @@ theorem ofRanking_optimal_zero_first (con : Constraint C) (rest : List (Constrai
     (hExists : ∃ c₀ ∈ candidates, con c₀ = 0)
     (hc : c ∈ (ofRanking candidates (con :: rest) h).optimal) : con c = 0 := by
   obtain ⟨c₀, hmem, h0⟩ := hExists
-  have hle := ViolationProfile.le_apply_zero
-    (le_of_mem_optimal _ _ hc (List.mem_toFinset.mpr hmem))
-  change con c ≤ con c₀ at hle
-  omega
+  simpa [h0] using
+    ViolationProfile.le_apply_zero (le_of_mem_optimal hc (List.mem_toFinset.mpr hmem))
 
 /-- A candidate with `0` violations on every constraint of `con` is optimal in
 `Tableau.ofPerm con r` under **every** ranking `r`: permuting the coordinates of the
 all-zero profile leaves it zero. -/
 theorem ofPerm_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ i, con i c = 0) :
     c ∈ (ofPerm con r candidates h).optimal :=
-  mem_optimal_of_profile_eq_zero _ _ (List.mem_toFinset.mpr hc)
-    (funext fun p => hzero (r p))
+  mem_optimal_of_profile_eq_zero (List.mem_toFinset.mpr hc) (funext fun p => hzero (r p))
 
 /-- The list form of `ofPerm_zero_mem_optimal`. -/
 theorem ofRanking_zero_mem_optimal (hc : c ∈ candidates)
     (hzero : ∀ con ∈ ranking, con c = 0) :
     c ∈ (ofRanking candidates ranking h).optimal :=
-  ofPerm_zero_mem_optimal _ _ _ _ h hc fun i => hzero _ (ranking.get_mem i)
+  ofPerm_zero_mem_optimal hc fun i => hzero _ (ranking.get_mem i)
 
 /-- A candidate with `0` violations on every constraint is optimal under **every**
 permutation of those constraints — the structural backbone of `adj_always_initial` in
 [marco-rasin-2026]: the uniform-initial adjective paradigm has `[0, …, 0]` on all OP
 constraints, so it wins regardless of ranking. -/
-theorem ofRanking_zero_mem_optimal_allRankings (constraints : List (Constraint C))
+theorem ofRanking_zero_mem_optimal_allRankings {constraints : List (Constraint C)}
     (hc : c ∈ candidates) (hzero : ∀ con ∈ constraints, con c = 0)
     {rk : List (Constraint C)} (hrk : rk ∈ constraints.permutations') :
     c ∈ (ofRanking candidates rk h).optimal :=
-  ofRanking_zero_mem_optimal _ _ _ h hc fun con hcon =>
+  ofRanking_zero_mem_optimal hc fun con hcon =>
     hzero con ((List.mem_permutations'.mp hrk).subset hcon)
 
 end Tableau

@@ -473,9 +473,9 @@ theorem tod_mp_only_minimal (candidates : List ContainmentPair)
     ∀ c ∈ (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal := by
   intro c hc
-  have hZero := Tableau.ofRanking_optimal_zero_first c candidates hNE todConstraint [mpConstraint]
+  have hZero := Tableau.ofRanking_optimal_zero_first todConstraint [mpConstraint]
     ⟨.minimal, hMin, rfl⟩ hc
-  have hcWF := hWF c (Tableau.ofRanking_optimal_mem c candidates _ hNE hc)
+  have hcWF := hWF c (Tableau.ofRanking_optimal_mem hc)
   rcases ContainmentPair.classification c hcWF with rfl | rfl | rfl
   · exact absurd hZero (by decide)
   · exact absurd hZero (by decide)

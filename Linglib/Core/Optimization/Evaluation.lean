@@ -600,6 +600,46 @@ theorem argMinSet_nonempty {α P : Type*} [DecidableEq α] {s : Finset α} {f : 
     (argMinSet s f r).Nonempty :=
   let ⟨m, hm, hmin⟩ := h; ⟨m, mem_argMinSet.mpr ⟨hm, hmin⟩⟩
 
+section ArgMinSetOrder
+
+variable {α P : Type*} [DecidableEq α] [PartialOrder P]
+  [DecidableRel ((· ≤ ·) : P → P → Prop)] {s : Finset α} {f : α → P} {c d m : α}
+
+/-- A minimizer's image bounds every image in `s`. -/
+theorem le_of_mem_argMinSet (hc : c ∈ argMinSet s f (· ≤ ·)) (hd : d ∈ s) :
+    f c ≤ f d :=
+  (mem_argMinSet.mp hc).2 d hd
+
+/-- Minimizer-hood factors through the image, so it transports along image equality. -/
+theorem mem_argMinSet_of_eq (hd : d ∈ argMinSet s f (· ≤ ·)) (hc : c ∈ s)
+    (he : f c = f d) : c ∈ argMinSet s f (· ≤ ·) :=
+  mem_argMinSet.mpr ⟨hc, fun e he' => he ▸ le_of_mem_argMinSet hd he'⟩
+
+/-- An element whose image is the bottom minimizes. -/
+theorem mem_argMinSet_of_eq_bot [OrderBot P] (hc : c ∈ s) (h0 : f c = ⊥) :
+    c ∈ argMinSet s f (· ≤ ·) :=
+  mem_argMinSet.mpr ⟨hc, fun _ _ => h0 ▸ bot_le⟩
+
+/-- The minimizer set is the singleton `{m}` iff `m` strictly minimizes. -/
+theorem argMinSet_eq_singleton_iff (hm : m ∈ s) :
+    argMinSet s f (· ≤ ·) = {m} ↔ ∀ c ∈ s, c ≠ m → f m < f c := by
+  constructor
+  · intro h c hc hcm
+    have hmo : m ∈ argMinSet s f (· ≤ ·) := h ▸ Finset.mem_singleton_self m
+    exact (le_of_mem_argMinSet hmo hc).lt_of_ne fun he =>
+      hcm <| Finset.mem_singleton.mp (h ▸ mem_argMinSet_of_eq hmo hc he.symm)
+  · intro h
+    refine Finset.eq_singleton_iff_unique_mem.mpr
+      ⟨mem_argMinSet.mpr ⟨hm, fun d hd => ?_⟩, fun c hc => ?_⟩
+    · rcases eq_or_ne d m with rfl | hdm
+      · exact le_rfl
+      · exact (h d hd hdm).le
+    · by_contra hcm
+      exact lt_irrefl (f c) (lt_of_le_of_lt (le_of_mem_argMinSet hc hm)
+        (h c (mem_argMinSet.mp hc).1 hcm))
+
+end ArgMinSetOrder
+
 -- ============================================================================
 -- § 14: LexMinProblem — finite candidate set with a lex-comparable score
 -- ============================================================================

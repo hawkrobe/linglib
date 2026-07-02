@@ -754,10 +754,10 @@ theorem dominant_coph_selects_basemap_faithful
     obtain ⟨c₀, hc₀_mem, hc₀_eq⟩ := hFaithful
     exact ⟨c₀, hc₀_mem, by simp [mxbmc, mkBasemapConstraint, hc₀_eq,
       basemapViolations_self_eq_zero]⟩
-  have hZero := Tableau.ofRanking_optimal_zero_first c candidates h mxbmc _ hExists hc
+  have hZero := Tableau.ofRanking_optimal_zero_first mxbmc _ hExists hc
   simp only [mxbmc, mkBasemapConstraint] at hZero
   exact basemapViolations_eq_zero_imp (extractTier c) basemapTier
-    (hLen c (Tableau.ofRanking_optimal_mem c candidates _ h hc)) hZero
+    (hLen c (Tableau.ofRanking_optimal_mem hc)) hZero
 
 /-- **Dominant cophonology agrees with tonalOverwrite**: for whole-word
     single-tone replacement, OT evaluation under the dominant cophonology
