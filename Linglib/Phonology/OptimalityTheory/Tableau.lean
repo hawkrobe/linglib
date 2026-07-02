@@ -152,9 +152,9 @@ theorem ofPerm_optimal_mem
 /-- If any candidate has `0` violations on the top-ranked constraint, every optimal
 candidate has `0` violations on it — constraint dominance: a satisfiable constraint
 promoted to the top of the ranking forces all winners to satisfy it perfectly. -/
-theorem ofRanking_optimal_zero_first (con : Constraint C) (rest : List (Constraint C))
-    (hExists : ∃ c₀ ∈ candidates, con c₀ = 0)
-    (hc : c ∈ (ofRanking candidates (con :: rest) h).optimal) : con c = 0 := by
+theorem ofRanking_optimal_zero_first (top : Constraint C) (rest : List (Constraint C))
+    (hExists : ∃ c₀ ∈ candidates, top c₀ = 0)
+    (hc : c ∈ (ofRanking candidates (top :: rest) h).optimal) : top c = 0 := by
   obtain ⟨c₀, hmem, h0⟩ := hExists
   simpa [h0] using
     ViolationProfile.le_apply_zero (le_of_mem_optimal hc (List.mem_toFinset.mpr hmem))
