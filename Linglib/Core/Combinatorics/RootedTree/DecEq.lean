@@ -28,18 +28,10 @@ so concrete `Nonplanar` equalities close by `decide`.
 
 ## Implementation notes
 
-`eqv.go` is the generic greedy matcher `List.isPermBy` at `eqv` (`go_eq_isPermBy`); it
-is re-inlined in the definition only so the recursion compiles structurally — kernel
-reduction (hence `decide`) needs `brecOn`, not `WellFounded.fix`, so the recursion cannot
-route through the opaque `isPermBy`. Soundness and completeness of the matcher live
-generically in `Core/Data/Multiset/Rel.lean`, and correctness here is a single
-size-bounded induction (`eqv_iff_mk_eq`): the inductive hypothesis converts `eqv` on
-children to equality of `mk`-images, so the matcher's symmetry/transitivity hypotheses
-are discharged by `Eq.symm`/`Eq.trans`, and `Nonplanar.mk_node_eq_mk_node_iff` (from
-`congrArg` on the lifted `value`/`children` destructors) inverts the node.
-
-Strict, order-sensitive equality of the underlying ordered trees is already decidable
-(`RoseTree.instDecidableEq`); this file only adds the decider for the quotient relation.
+`eqv` must recurse structurally for kernel reduction (`decide` needs `brecOn`, not
+`WellFounded.fix`), so the greedy matcher is inlined as `eqv.go` rather than calling the
+opaque `List.isPermBy`; `go_eq_isPermBy` reconnects them and imports the generic
+correctness from `Core/Data/Multiset/Rel.lean`.
 
 `[UPSTREAM]` candidate.
 -/
@@ -148,7 +140,7 @@ theorem eqv_iff_permEquiv : eqv t s = true ↔ PermEquiv t s :=
 instance instDecidableRelPermEquiv : DecidableRel (PermEquiv (α := α)) :=
   fun _ _ => decidable_of_iff _ eqv_iff_permEquiv
 
-instance instDecidableRelEquiv : DecidableRel ((· ≈ ·) : RoseTree α → RoseTree α → Prop) :=
+instance : DecidableRel ((· ≈ ·) : RoseTree α → RoseTree α → Prop) :=
   instDecidableRelPermEquiv
 
 end RoseTree
