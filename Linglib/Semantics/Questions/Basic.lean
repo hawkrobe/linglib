@@ -4,6 +4,7 @@ import Mathlib.Data.SetLike.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.CompleteBooleanAlgebra
 import Mathlib.Order.CompleteLattice.Basic
+import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Order.Lattice
 import Mathlib.Order.Preorder.Finite
 import Mathlib.Order.UpperLower.Basic
@@ -11,7 +12,7 @@ import Linglib.Semantics.Questions.Support
 
 /-!
 # Question — core type, lattice, Heyting derivatives
-[ciardelli-groenendijk-roelofsen-2018] [puncochar-2016]
+[ciardelli-groenendijk-roelofsen-2018] [ciardelli-2022] [puncochar-2016]
 [puncochar-2019] [theiler-etal-2018]
 
 A bundled `Question W` — a non-empty downward-closed family of information
@@ -987,6 +988,74 @@ theorem not_lem_inquisitive_content :
     simp at this
   · have : true ∈ ({true} : Set Bool)ᶜ := h1 (Set.mem_univ true)
     simp at this
+
+/-! ### The Truth-Support Bridge: the declarative embedding
+
+The classical algebra of propositions embeds into the inquisitive
+algebra via `declarative` — [ciardelli-2022]'s Truth-Support Bridge, by
+which a statement names the singleton-generated information type
+`↓{|α|}` (§2.4.2, p. 21). The embedding is order-faithful
+(`declarativeEmbedding`) and preserves meets and `⊤`
+(`declarativeHom : InfTopHom`), but **not** joins: the join of two
+declaratives can be genuinely inquisitive
+(`exists_isInquisitive_declarative_sup`) — inquisitive content enters
+the algebra exactly at `⊔`. The classical context-set picture of
+`Discourse/CommonGround.lean` (its scoped meet monoid and
+`CommonGround.HasAssertion`) is the declarative fragment of the
+inquisitive one along this embedding. -/
+
+@[simp] theorem declarative_top : declarative (Set.univ : Set W) = ⊤ := by
+  ext q; simp
+
+theorem declarative_le_declarative_iff {A B : Set W} :
+    declarative A ≤ declarative B ↔ A ⊆ B :=
+  mem_iff_declarative_le.symm.trans mem_declarative
+
+theorem declarative_injective :
+    Function.Injective (declarative : Set W → Question W) := fun A B h => by
+  rw [← info_declarative A, ← info_declarative B, h]
+
+/-- `declarative` as an order embedding: the classical algebra of
+    propositions sits order-faithfully inside the inquisitive algebra. -/
+def declarativeEmbedding : Set W ↪o Question W where
+  toFun := declarative
+  inj' := declarative_injective
+  map_rel_iff' := declarative_le_declarative_iff
+
+/-- The Truth-Support Bridge, bundled: `declarative` preserves meets and
+    `⊤`. Deliberately not a lattice hom — see
+    `exists_declarative_sup_ne`. -/
+def declarativeHom : InfTopHom (Set W) (Question W) where
+  toFun := declarative
+  map_inf' A B := (declarative_inf A B).symm
+  map_top' := declarative_top
+
+/-- Joins are where inquisitiveness enters: over `Bool`, the join of the
+    declaratives `↓{{true}}` and `↓{{false}}` is the polar question
+    "which truth value?" — its own informative content (`univ`) does not
+    resolve it. -/
+theorem exists_isInquisitive_declarative_sup :
+    ∃ A B : Set Bool, (declarative A ⊔ declarative B).isInquisitive := by
+  refine ⟨{true}, {false}, ?_⟩
+  have hinfo : (declarative ({true} : Set Bool) ⊔ declarative {false}).info =
+      Set.univ := by
+    rw [info_sup, info_declarative, info_declarative]
+    ext b; cases b <;> simp
+  show _ ∉ _
+  rw [hinfo]
+  intro h
+  rcases mem_sup.mp h with h' | h'
+  · have := mem_declarative.mp h' (Set.mem_univ false)
+    simp at this
+  · have := mem_declarative.mp h' (Set.mem_univ true)
+    simp at this
+
+/-- The Truth-Support Bridge does not commute with `⊔`: `declarative` is
+    an `InfTopHom` but not a lattice hom. -/
+theorem exists_declarative_sup_ne :
+    ∃ A B : Set Bool, declarative A ⊔ declarative B ≠ declarative (A ∪ B) := by
+  obtain ⟨A, B, hinq⟩ := exists_isInquisitive_declarative_sup
+  exact ⟨A, B, fun h => not_isInquisitive_declarative (A ∪ B) (h ▸ hinq)⟩
 
 /-! ### `Question.Support` instance
 

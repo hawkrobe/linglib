@@ -102,7 +102,10 @@ mirroring mathlib's `Pointwise` locale: `open CommonGround` activates it.
 The same meet-monoid structure recurs one level up in inquisitive
 semantics, where contexts are downward-closed sets of information states,
 also updated by intersection ([ciardelli-groenendijk-roelofsen-2018]);
-the classical picture formalized here is its declarative fragment. -/
+the classical picture formalized here is its declarative fragment, along
+the Truth-Support Bridge `Question.declarativeHom` — an order-faithful
+`InfTopHom` that does not preserve `⊔`
+(`Semantics/Questions/Basic.lean`). -/
 
 /-- Meet-monoid on context sets: `* = ∩`, `1 = univ`. Scoped, Pointwise-style. -/
 scoped instance : CommMonoid (ContextSet W) where
