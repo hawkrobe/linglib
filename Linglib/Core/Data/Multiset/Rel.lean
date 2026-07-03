@@ -45,6 +45,55 @@ available beneath a termination bound (see `RootedTree/DecEq.lean`). The uncondi
 `[UPSTREAM]` candidate.
 -/
 
+namespace Multiset
+
+variable {α β : Type*} {r : α → α → Prop} {s t u : Multiset α}
+
+/-- `Rel r` on coerced lists: some reordering of `l₂` is componentwise `r`-related to
+    `l₁`. The list-level reading of `Multiset.Rel`. -/
+theorem rel_coe_iff_exists {r : α → β → Prop} {l₁ : List α} {l₂ : List β} :
+    Rel r ↑l₁ ↑l₂ ↔ ∃ l', List.Forall₂ r l₁ l' ∧ l'.Perm l₂ := by
+  constructor
+  · induction l₁ generalizing l₂ with
+    | nil =>
+      intro h
+      rw [Multiset.coe_nil, rel_zero_left, ← Multiset.coe_nil, Multiset.coe_eq_coe] at h
+      exact ⟨[], List.Forall₂.nil, h.symm⟩
+    | cons a l₁ ih =>
+      intro h
+      rw [← Multiset.cons_coe, rel_cons_left] at h
+      obtain ⟨b, bs, hab, hrel, hbs⟩ := h
+      obtain ⟨l₂', rfl⟩ := Quotient.exists_rep bs
+      obtain ⟨l', hf, hperm⟩ := ih hrel
+      refine ⟨b :: l', List.Forall₂.cons hab hf, ?_⟩
+      have : l₂.Perm (b :: l₂') := Multiset.coe_eq_coe.mp (by simpa using hbs)
+      exact (hperm.cons b).trans this.symm
+  · rintro ⟨l', hf, hperm⟩
+    rw [← Multiset.coe_eq_coe.mpr hperm]
+    clear hperm
+    induction hf with
+    | nil => exact Rel.zero
+    | cons hab _ ih => exact Rel.cons hab ih
+
+/-- `Rel r` is symmetric when `r` is symmetric on the members. -/
+theorem rel_symm_on (hs : ∀ x ∈ s, ∀ y ∈ t, r x y → r y x) (h : Rel r s t) : Rel r t s :=
+  rel_flip.mp (h.mono hs)
+
+/-- `Rel r` is transitive when `r` is transitive on the members. -/
+theorem rel_trans_on (ht : ∀ x ∈ s, ∀ y ∈ t, ∀ z ∈ u, r x y → r y z → r x z)
+    (h₁ : Rel r s t) (h₂ : Rel r t u) : Rel r s u := by
+  induction t using Multiset.induction_on generalizing s u with
+  | empty => rw [rel_zero_right.mp h₁, rel_zero_left.mp h₂, rel_zero_left]
+  | cons y t ih =>
+    obtain ⟨x, s', hxy, hrel₁, rfl⟩ := rel_cons_right.mp h₁
+    obtain ⟨z, u', hyz, hrel₂, rfl⟩ := rel_cons_left.mp h₂
+    refine Rel.cons
+      (ht x (mem_cons_self _ _) y (mem_cons_self _ _) z (mem_cons_self _ _) hxy hyz)
+      (ih (fun a ha b hb c hc => ht a (mem_cons_of_mem ha) b (mem_cons_of_mem hb) c
+        (mem_cons_of_mem hc)) hrel₁ hrel₂)
+
+end Multiset
+
 namespace List
 
 variable {α : Type*} {p : α → α → Bool}
@@ -83,6 +132,31 @@ private theorem permMatch_of_isPermBy :
       refine ⟨(b :: l₂)[i] :: es', List.Forall₂.cons hpi hf', ?_⟩
       exact (hperm'.cons _).trans (List.getElem_cons_eraseIdx_perm hi)
 
+/-- Soundness of the greedy matcher against `Multiset.Rel`, hypothesis-free. -/
+theorem rel_of_isPermBy {l₁ l₂ : List α} (h : isPermBy p l₁ l₂ = true) :
+    Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂ := by
+  obtain ⟨l', hf, hperm⟩ := permMatch_of_isPermBy l₁ l₂ h
+  exact Multiset.rel_coe_iff_exists.mpr ⟨l', hf, hperm⟩
+
+/-- `isPermBy p` is reflexive when `p` is reflexive on the members. -/
+theorem isPermBy_refl : ∀ (l : List α), (∀ x ∈ l, p x x = true) → isPermBy p l l = true
+  | [], _ => rfl
+  | a :: l, h => by
+    rw [isPermBy]
+    have h0 : (a :: l).findIdx? (p a) = some 0 := by
+      rw [List.findIdx?_cons]; simp [h a List.mem_cons_self]
+    rw [h0]
+    simp only [List.eraseIdx_cons_zero]
+    exact isPermBy_refl l fun x hx => h x (List.mem_cons_of_mem _ hx)
+
+section Completeness
+
+variable {P : α → Prop}
+  (Ssymm : ∀ x y, P x → P y → p x y = true → p y x = true)
+  (Strans : ∀ x y z, P x → P y → P z → p x y = true → p y z = true → p x z = true)
+
+include Ssymm Strans
+
 section
 -- `DecidableEq` is proof bookkeeping only (the `List.erase`-based match rebuilding);
 -- the public lemmas below discharge it with `classical`.
@@ -92,9 +166,7 @@ variable [DecidableEq α]
     leftover match for `l₁` against `(e :: es).erase d`. Reattaching the floating `e` to
     `d`'s old partner uses symmetry and transitivity of `p` on the members (supplied
     through the bound predicate `P`). -/
-private theorem forall₂_cons_erase_match {P : α → Prop}
-    (Ssymm : ∀ x y, P x → P y → p x y = true → p y x = true)
-    (Strans : ∀ x y z, P x → P y → P z → p x y = true → p y z = true → p x z = true)
+private theorem forall₂_cons_erase_match
     {a e : α} (hPa : P a) (hPe : P e) (hae : p a e = true)
     {l₁ es : List α} (hPl₁ : ∀ x ∈ l₁, P x) (hPes : ∀ x ∈ es, P x)
     (hl₁ : List.Forall₂ (fun a b => p a b = true) l₁ es) :
@@ -132,9 +204,7 @@ private theorem forall₂_cons_erase_match {P : α → Prop}
 /-- Completeness of the greedy matcher: `PermMatch p l₁ l₂ → isPermBy p l₁ l₂ = true`,
     given symmetry and transitivity of `p` on the members (via the bound predicate
     `P`). -/
-private theorem isPermBy_of_permMatch {P : α → Prop}
-    (Ssymm : ∀ x y, P x → P y → p x y = true → p y x = true)
-    (Strans : ∀ x y z, P x → P y → P z → p x y = true → p y z = true → p x z = true) :
+private theorem isPermBy_of_permMatch :
     ∀ (l₁ l₂ : List α), (∀ x ∈ l₁, P x) → (∀ x ∈ l₂, P x) →
       PermMatch p l₁ l₂ → isPermBy p l₁ l₂ = true
   | [], l₂, _, _, ⟨l', hf, hperm⟩ => by
@@ -158,104 +228,26 @@ private theorem isPermBy_of_permMatch {P : α → Prop}
     obtain ⟨X, hXf, hXp⟩ :=
       forall₂_cons_erase_match Ssymm Strans hPa hPe hae hPl₁' hPes hf' hPd hpi
         (hperm.symm.subset (List.getElem_mem hi))
-    apply isPermBy_of_permMatch Ssymm Strans l₁ (l₂.eraseIdx i) hPl₁'
+    apply isPermBy_of_permMatch l₁ (l₂.eraseIdx i) hPl₁'
       (fun x hx => hPl₂ x ((List.eraseIdx_sublist l₂ i).subset hx))
     exact ⟨X, hXf, (hXp.trans (hperm.erase d)).trans (List.erase_getElem hi)⟩
 
 end
 
-/-- `isPermBy p` is reflexive when `p` is reflexive on the members. -/
-theorem isPermBy_refl : ∀ (l : List α), (∀ x ∈ l, p x x = true) → isPermBy p l l = true
-  | [], _ => rfl
-  | a :: l, h => by
-    rw [isPermBy]
-    have h0 : (a :: l).findIdx? (p a) = some 0 := by
-      rw [List.findIdx?_cons]; simp [h a List.mem_cons_self]
-    rw [h0]
-    simp only [List.eraseIdx_cons_zero]
-    exact isPermBy_refl l fun x hx => h x (List.mem_cons_of_mem _ hx)
-
-end List
-
-namespace Multiset
-
-variable {α : Type*} {β : Type*}
-
-/-- `Rel r` on coerced lists: some reordering of `l₂` is componentwise `r`-related to
-    `l₁`. The list-level reading of `Multiset.Rel`. -/
-theorem rel_coe_iff_exists {r : α → β → Prop} {l₁ : List α} {l₂ : List β} :
-    Rel r ↑l₁ ↑l₂ ↔ ∃ l', List.Forall₂ r l₁ l' ∧ l'.Perm l₂ := by
-  constructor
-  · induction l₁ generalizing l₂ with
-    | nil =>
-      intro h
-      rw [Multiset.coe_nil, rel_zero_left, ← Multiset.coe_nil, Multiset.coe_eq_coe] at h
-      exact ⟨[], List.Forall₂.nil, h.symm⟩
-    | cons a l₁ ih =>
-      intro h
-      rw [← Multiset.cons_coe, rel_cons_left] at h
-      obtain ⟨b, bs, hab, hrel, hbs⟩ := h
-      obtain ⟨l₂', rfl⟩ := Quotient.exists_rep bs
-      obtain ⟨l', hf, hperm⟩ := ih hrel
-      refine ⟨b :: l', List.Forall₂.cons hab hf, ?_⟩
-      have : l₂.Perm (b :: l₂') := Multiset.coe_eq_coe.mp (by simpa using hbs)
-      exact (hperm.cons b).trans this.symm
-  · rintro ⟨l', hf, hperm⟩
-    rw [← Multiset.coe_eq_coe.mpr hperm]
-    clear hperm
-    induction hf with
-    | nil => exact Rel.zero
-    | cons hab _ ih => exact Rel.cons hab ih
-
-/-- `Rel r` is symmetric when `r` is symmetric on the members. -/
-theorem rel_symm_on {r : α → α → Prop} {s t : Multiset α}
-    (hs : ∀ x ∈ s, ∀ y ∈ t, r x y → r y x) (h : Rel r s t) : Rel r t s :=
-  rel_flip.mp (h.mono hs)
-
-/-- `Rel r` is transitive when `r` is transitive on the members. -/
-theorem rel_trans_on {r : α → α → Prop} {s t u : Multiset α}
-    (ht : ∀ x ∈ s, ∀ y ∈ t, ∀ z ∈ u, r x y → r y z → r x z)
-    (h₁ : Rel r s t) (h₂ : Rel r t u) : Rel r s u := by
-  induction t using Multiset.induction_on generalizing s u with
-  | empty => rw [rel_zero_right.mp h₁, rel_zero_left.mp h₂, rel_zero_left]
-  | cons y t ih =>
-    obtain ⟨x, s', hxy, hrel₁, rfl⟩ := rel_cons_right.mp h₁
-    obtain ⟨z, u', hyz, hrel₂, rfl⟩ := rel_cons_left.mp h₂
-    refine Rel.cons
-      (ht x (mem_cons_self _ _) y (mem_cons_self _ _) z (mem_cons_self _ _) hxy hyz)
-      (ih (fun a ha b hb c hc => ht a (mem_cons_of_mem ha) b (mem_cons_of_mem hb) c
-        (mem_cons_of_mem hc)) hrel₁ hrel₂)
-
-end Multiset
-
-namespace List
-
-variable {α : Type*} {p : α → α → Bool}
-
-/-- Soundness of the greedy matcher against `Multiset.Rel`, hypothesis-free. -/
-theorem rel_of_isPermBy {l₁ l₂ : List α} (h : isPermBy p l₁ l₂ = true) :
-    Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂ := by
-  obtain ⟨l', hf, hperm⟩ := permMatch_of_isPermBy l₁ l₂ h
-  exact Multiset.rel_coe_iff_exists.mpr ⟨l', hf, hperm⟩
-
 /-- Completeness of the greedy matcher against `Multiset.Rel`, given symmetry and
     transitivity of `p` on a predicate `P` covering both lists. -/
-theorem isPermBy_of_rel {P : α → Prop}
-    (Ssymm : ∀ x y, P x → P y → p x y = true → p y x = true)
-    (Strans : ∀ x y z, P x → P y → P z → p x y = true → p y z = true → p x z = true)
-    {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP₂ : ∀ x ∈ l₂, P x)
+theorem isPermBy_of_rel {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP₂ : ∀ x ∈ l₂, P x)
     (h : Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂) : isPermBy p l₁ l₂ = true := by
   classical
   exact isPermBy_of_permMatch Ssymm Strans l₁ l₂ hP₁ hP₂ (Multiset.rel_coe_iff_exists.mp h)
 
 /-- The greedy matcher decides `Multiset.Rel`, given symmetry and transitivity of `p` on
     a predicate `P` covering both lists. -/
-theorem isPermBy_iff_rel {P : α → Prop}
-    (Ssymm : ∀ x y, P x → P y → p x y = true → p y x = true)
-    (Strans : ∀ x y z, P x → P y → P z → p x y = true → p y z = true → p x z = true)
-    {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP₂ : ∀ x ∈ l₂, P x) :
+theorem isPermBy_iff_rel {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP₂ : ∀ x ∈ l₂, P x) :
     isPermBy p l₁ l₂ = true ↔ Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂ :=
   ⟨rel_of_isPermBy, isPermBy_of_rel Ssymm Strans hP₁ hP₂⟩
+
+end Completeness
 
 end List
 

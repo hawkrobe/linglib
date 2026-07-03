@@ -44,7 +44,7 @@ Strict, order-sensitive equality of the underlying ordered trees is already deci
 
 namespace RoseTree
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s u : RoseTree α}
 
 /-! ### Deciding `PermEquiv`: equality up to child reordering -/
 
@@ -84,7 +84,7 @@ private theorem eqvMulti_eq_isPermBy :
     | some i => exact eqvMulti_eq_isPermBy cs (ds.eraseIdx i)
 
 /-- Soundness of `eqvMulti` against `Multiset.Rel`, hypothesis-free. -/
-private theorem rel_of_eqvMulti {cs ds : List (RoseTree α)} (h : eqvMulti cs ds = true) :
+private theorem rel_of_eqvMulti (h : eqvMulti cs ds = true) :
     Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds :=
   List.rel_of_isPermBy (eqvMulti_eq_isPermBy cs ds ▸ h)
 
@@ -93,13 +93,13 @@ private theorem rel_of_eqvMulti {cs ds : List (RoseTree α)} (h : eqvMulti cs ds
 private theorem eqvMulti_of_rel {P : RoseTree α → Prop}
     (Ssymm : ∀ x y, P x → P y → eqv x y = true → eqv y x = true)
     (Strans : ∀ x y z, P x → P y → P z → eqv x y = true → eqv y z = true → eqv x z = true)
-    {cs ds : List (RoseTree α)} (hPcs : ∀ x ∈ cs, P x) (hPds : ∀ x ∈ ds, P x)
+    (hPcs : ∀ x ∈ cs, P x) (hPds : ∀ x ∈ ds, P x)
     (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true := by
   rw [eqvMulti_eq_isPermBy]
   exact List.isPermBy_of_rel Ssymm Strans hPcs hPds h
 
 /-- `eqv` on two nodes: equal root values and children matching under `eqvMulti`. -/
-private theorem eqv_node_iff {a b : α} {cs ds : List (RoseTree α)} :
+private theorem eqv_node_iff {a b : α} :
     eqv (.node a cs) (.node b ds) = true ↔ a = b ∧ eqvMulti cs ds = true := by
   rw [eqv, Bool.and_eq_true, decide_eq_true_eq]
 
@@ -148,12 +148,12 @@ private theorem eqv_symm_trans :
         (hdsN y (Multiset.mem_coe.mp hy)) (hesN z (Multiset.mem_coe.mp hz))
 
 /-- Symmetry of `eqv`. -/
-private theorem eqv_symm {t s : RoseTree α} (h : eqv t s = true) : eqv s t = true :=
+private theorem eqv_symm (h : eqv t s = true) : eqv s t = true :=
   (eqv_symm_trans (max (sizeOf t) (sizeOf s) + 1)).1 t s
     (Nat.lt_succ_of_le (le_max_left _ _)) (Nat.lt_succ_of_le (le_max_right _ _)) h
 
 /-- Transitivity of `eqv`. -/
-private theorem eqv_trans {t s u : RoseTree α} (h1 : eqv t s = true) (h2 : eqv s u = true) :
+private theorem eqv_trans (h1 : eqv t s = true) (h2 : eqv s u = true) :
     eqv t u = true :=
   (eqv_symm_trans (max (sizeOf t) (max (sizeOf s) (sizeOf u)) + 1)).2 t s u
     (Nat.lt_succ_of_le (le_max_left _ _))
@@ -172,14 +172,14 @@ decreasing_by exact sizeOf_lt_of_mem hc
 
 /-- `eqvMulti`, unconditionally: symmetry and transitivity of `eqv` are now globally
     available. -/
-private theorem eqvMulti_of_rel' {cs ds : List (RoseTree α)}
+private theorem eqvMulti_of_rel'
     (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true :=
   eqvMulti_of_rel (P := fun _ => True) (fun _ _ _ _ hxy => eqv_symm hxy)
     (fun _ _ _ _ _ _ hxy hyz => eqv_trans hxy hyz)
     (fun _ _ => trivial) (fun _ _ => trivial) h
 
 /-- `eqv` respects a single `PermStep`. -/
-private theorem eqv_step {t s : RoseTree α} (h : PermStep t s) : eqv t s = true := by
+private theorem eqv_step (h : PermStep t s) : eqv t s = true := by
   induction h with
   | @swapAtRoot a l r pre post =>
     rw [eqv_node_iff]
@@ -198,7 +198,7 @@ private theorem eqv_step {t s : RoseTree α} (h : PermStep t s) : eqv t s = true
         List.Perm.refl _⟩)⟩
 
 /-- `PermEquiv → eqv`, by `EqvGen` induction. -/
-private theorem permEquiv_to_eqv {t s : RoseTree α} (h : PermEquiv t s) : eqv t s = true := by
+private theorem permEquiv_to_eqv (h : PermEquiv t s) : eqv t s = true := by
   induction h with
   | rel _ _ hstep => exact eqv_step hstep
   | refl t => exact eqv_refl t
@@ -232,7 +232,7 @@ end
     through `permEquiv_node_componentwise` and `permEquiv_root_perm`; `(←)` is `EqvGen`
     induction (`permEquiv_to_eqv`), using that `eqv` is an equivalence and respects each
     `PermStep`. -/
-theorem eqv_iff_permEquiv {t s : RoseTree α} : eqv t s = true ↔ PermEquiv t s :=
+theorem eqv_iff_permEquiv : eqv t s = true ↔ PermEquiv t s :=
   ⟨eqv_to_permEquiv t s, permEquiv_to_eqv⟩
 
 /-- `PermEquiv` is decidable, computably so: decided by `eqv`, which reduces in the
