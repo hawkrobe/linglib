@@ -1,4 +1,5 @@
 import Linglib.Core.Data.RoseTree.Basic
+import Linglib.Core.Data.Multiset.Rel
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Data.List.Forall2
 import Mathlib.Logic.Relation
@@ -447,6 +448,60 @@ def isLeaf : Nonplanar α → Bool :=
 @[simp] theorem isLeaf_mk (t : RoseTree α) : (mk t).isLeaf = t.isLeaf := rfl
 
 @[simp] theorem isLeaf_leaf (a : α) : (leaf a : Nonplanar α).isLeaf = true := rfl
+
+/-! ### Destructors and node injectivity
+
+The root value and the children (as a multiset of nonplanar trees) are
+`PermEquiv`-invariant, so they descend to `Nonplanar`. `congrArg` on these destructors
+inverts `mk`-equality at a node with no induction, giving the injectivity
+characterization `mk_node_eq_mk_node_iff`. -/
+
+/-- The root value of a nonplanar tree. -/
+def value : Nonplanar α → α :=
+  Nonplanar.lift RoseTree.value (fun _ _ h => RoseTree.value_permEquiv h)
+
+@[simp] theorem value_mk (t : RoseTree α) : (mk t).value = t.value := rfl
+
+private theorem childrenMk_permStep {t s : RoseTree α} (h : RoseTree.PermStep t s) :
+    (↑(t.children.map mk) : Multiset (Nonplanar α)) = ↑(s.children.map mk) := by
+  cases h with
+  | @swapAtRoot a l r pre post =>
+    exact Multiset.coe_eq_coe.mpr (((List.Perm.swap r l post).append_left pre).map mk)
+  | @recurse a pre old new post h =>
+    simp [RoseTree.children, mk_step h]
+
+private theorem childrenMk_permEquiv {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
+    (↑(t.children.map mk) : Multiset (Nonplanar α)) = ↑(s.children.map mk) := by
+  induction h with
+  | rel _ _ h => exact childrenMk_permStep h
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- The children of a nonplanar tree, as a multiset of nonplanar trees. -/
+def children : Nonplanar α → Multiset (Nonplanar α) :=
+  Nonplanar.lift (fun t => ↑(t.children.map mk)) (fun _ _ h => childrenMk_permEquiv h)
+
+@[simp] theorem children_mk (t : RoseTree α) :
+    (mk t).children = ↑(t.children.map mk) := rfl
+
+/-- Injectivity of the node constructor on the quotient: `mk`-images of two nodes are
+    equal iff the root values agree and the children agree as multisets of nonplanar
+    trees. The forward direction is `congrArg` on the `value` and `children`
+    destructors; the backward direction assembles a `PermEquiv` componentwise. -/
+theorem mk_node_eq_mk_node_iff {a b : α} {cs ds : List (RoseTree α)} :
+    mk (.node a cs) = mk (.node b ds) ↔
+      a = b ∧ (↑(cs.map mk) : Multiset (Nonplanar α)) = ↑(ds.map mk) := by
+  constructor
+  · intro h
+    exact ⟨by simpa [RoseTree.value] using congrArg value h,
+           by simpa [RoseTree.children] using congrArg children h⟩
+  · rintro ⟨rfl, hc⟩
+    rw [← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map] at hc
+    obtain ⟨ds', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp
+      (hc.mono fun x _ y _ h => mk_eq_mk_iff.mp h)
+    exact mk_eq_mk_iff.mpr ((RoseTree.permEquiv_node_componentwise hf).trans
+      (RoseTree.permEquiv_root_perm hperm))
 
 /-! ### Smart node constructor
 
