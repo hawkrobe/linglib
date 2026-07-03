@@ -1654,6 +1654,7 @@ import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
+import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Exhaustification.Combinators
 import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Exhaustification.FreeChoice
@@ -1662,6 +1663,7 @@ import Linglib.Semantics.Exhaustification.Operators.Antiexhaustive
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
+import Linglib.Semantics.Exhaustification.PreExhaustified
 import Linglib.Semantics.Exhaustification.Presuppositional
 import Linglib.Semantics.Exhaustification.Relevance
 import Linglib.Semantics.Exhaustification.ScalePredictions
