@@ -614,6 +614,7 @@ import Linglib.Discourse.Gameboard.NSUTaxonomy
 import Linglib.Discourse.Gameboard.RepriseContent
 import Linglib.Discourse.Gameboard.SelfRepair
 import Linglib.Discourse.Gunlogson
+import Linglib.Discourse.Issue
 import Linglib.Discourse.LayeredAssertion
 import Linglib.Discourse.Move
 import Linglib.Discourse.QUDStack

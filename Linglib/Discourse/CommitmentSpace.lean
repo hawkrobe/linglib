@@ -1,4 +1,5 @@
 import Linglib.Discourse.CommonGround
+import Linglib.Discourse.Issue
 import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
 
@@ -803,5 +804,236 @@ instance instHasAssertion {W : Type*} :
       rcases hic with rfl | hic
       · exact hφ
       · exact hs ic hic
+
+-- ════════════════════════════════════════════════════
+-- § 6. Issue projection
+-- ════════════════════════════════════════════════════
+
+namespace CommitmentSpace
+
+variable {W G : Type*}
+
+section HasSupport
+
+variable [HasSupport G]
+
+/-- Worlds compatible with a single commitment state (a list of indexed
+    commitments). `toContextSet` is `stateSet` of the root. -/
+def stateSet (st : List (IndexedWeightedCommitment W G)) : Set W :=
+  {w | ∀ ic ∈ st, IndexedWeightedCommitment.toCommitment ic w}
+
+@[simp] theorem stateSet_cons (ic : IndexedWeightedCommitment W G)
+    (st : List (IndexedWeightedCommitment W G)) :
+    stateSet (ic :: st) =
+      {w | IndexedWeightedCommitment.toCommitment ic w} ∩ stateSet st := by
+  ext w
+  simp [stateSet]
+
+theorem toContextSet_eq_stateSet_root (cs : CommitmentSpace W G) :
+    cs.toContextSet = stateSet cs.root := rfl
+
+/-- The issue a commitment space raises. With no open continuations the
+    issue is trivial over the root (declarative); otherwise an
+    information state settles it iff it lands inside some proposed
+    continuation, within the root's context set. -/
+def toIssue : CommitmentSpace W G → Question W
+  | ⟨root, []⟩ => Question.declarative (stateSet root)
+  | ⟨root, c :: conts⟩ =>
+    Question.ofLowerSet
+      {i | ∃ st ∈ c :: conts, i ⊆ stateSet root ∩ stateSet st}
+      ⟨c, List.mem_cons_self, Set.empty_subset _⟩
+      (fun _ _ hji ⟨st, hst, hi⟩ => ⟨st, hst, hji.trans hi⟩)
+
+@[simp] theorem mem_toIssue_nil {root : List (IndexedWeightedCommitment W G)}
+    {i : Set W} :
+    i ∈ toIssue (⟨root, []⟩ : CommitmentSpace W G) ↔ i ⊆ stateSet root :=
+  Iff.rfl
+
+@[simp] theorem mem_toIssue_cons
+    {root c : List (IndexedWeightedCommitment W G)}
+    {conts : List (List (IndexedWeightedCommitment W G))} {i : Set W} :
+    i ∈ toIssue (⟨root, c :: conts⟩ : CommitmentSpace W G) ↔
+      ∃ st ∈ c :: conts, i ⊆ stateSet root ∩ stateSet st :=
+  Iff.rfl
+
+instance : Discourse.HasIssue (CommitmentSpace W G) W := ⟨toIssue⟩
+
+/-- Assertion meets the issue with the declarative of the asserted
+    content: on the issue observable, assertion is Stalnakerian. -/
+theorem toIssue_assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
+    (weight : W → G) (force : CommitmentForce) :
+    (cs.assert committer weight force).toIssue =
+      cs.toIssue ⊓ Question.declarative {w | HasSupport.support (weight w)} := by
+  obtain ⟨root, conts⟩ := cs
+  ext i
+  cases conts with
+  | nil =>
+    show i ⊆ stateSet (_ :: root) ↔ i ⊆ stateSet root ∧ i ⊆ _
+    rw [stateSet_cons, Set.subset_inter_iff]
+    exact and_comm
+  | cons c cs' =>
+    show (∃ st ∈ _ :: cs'.map _, i ⊆ stateSet (_ :: root) ∩ stateSet st) ↔
+      (∃ st ∈ c :: cs', i ⊆ stateSet root ∩ stateSet st) ∧ i ⊆ _
+    constructor
+    · rintro ⟨st', hst', hi⟩
+      rw [List.mem_cons] at hst'
+      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      rcases hst' with rfl | hst'
+      · rw [stateSet_cons, Set.subset_inter_iff] at hi
+        exact ⟨⟨c, List.mem_cons_self,
+          Set.subset_inter hi.1.2 hi.2.2⟩, hi.1.1⟩
+      · obtain ⟨st, hst, rfl⟩ := List.mem_map.mp hst'
+        rw [stateSet_cons, Set.subset_inter_iff] at hi
+        exact ⟨⟨st, List.mem_cons_of_mem _ hst,
+          Set.subset_inter hi.1.2 hi.2.2⟩, hi.1.1⟩
+    · rintro ⟨⟨st, hst, hi⟩, hP⟩
+      rw [Set.subset_inter_iff] at hi
+      rw [List.mem_cons] at hst
+      refine ⟨IndexedWeightedCommitment.commit committer force weight :: st,
+        ?_, ?_⟩
+      · rcases hst with rfl | hst
+        · exact List.mem_cons_self
+        · exact List.mem_cons_of_mem _ (List.mem_map_of_mem hst)
+      · rw [stateSet_cons, stateSet_cons]
+        exact Set.subset_inter (Set.subset_inter hP hi.1)
+          (Set.subset_inter hP hi.2)
+
+/-- The issue of a monopolar question is a single proposal — the
+    declarative of the content within the context set. On the issue
+    observable a monopolar question raises no inquisitive issue:
+    Krifka's monopolar bias lives in the commitment structure, below
+    what the issue projection can see. -/
+theorem toIssue_monopolarQuestion (cs : CommitmentSpace W G)
+    (weight : W → G) (force : CommitmentForce) :
+    (cs.monopolarQuestion weight force).toIssue =
+      Question.declarative
+        ({w | HasSupport.support (weight w)} ∩ cs.toContextSet) := by
+  obtain ⟨root, conts⟩ := cs
+  ext i
+  show (∃ st ∈ _ :: conts.map _, i ⊆ stateSet root ∩ stateSet st) ↔
+    i ⊆ _ ∩ stateSet root
+  constructor
+  · rintro ⟨st', hst', hi⟩
+    rw [List.mem_cons] at hst'
+    rcases hst' with rfl | hst'
+    · rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      exact Set.subset_inter hi.2.1 hi.1
+    · obtain ⟨st, _, rfl⟩ := List.mem_map.mp hst'
+      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      exact Set.subset_inter hi.2.1 hi.1
+  · intro hi
+    rw [Set.subset_inter_iff] at hi
+    refine ⟨_ :: root, List.mem_cons_self, ?_⟩
+    rw [stateSet_cons]
+    exact Set.subset_inter hi.2 (Set.subset_inter hi.1 hi.2)
+
+end HasSupport
+
+/-- The issue of a bipolar question is a genuine join: the two answer
+    proposals as alternatives. -/
+theorem toIssue_bipolarQuestion [CommitmentGrade G] (cs : CommitmentSpace W G)
+    (φ : W → G) :
+    (cs.bipolarQuestion φ).toIssue =
+      Question.declarative ({w | HasSupport.support (φ w)} ∩ cs.toContextSet) ⊔
+        Question.declarative
+          ({w | HasSupport.support (CommitmentGrade.complement (φ w))} ∩
+            cs.toContextSet) := by
+  obtain ⟨root, conts⟩ := cs
+  ext i
+  show (∃ st ∈ _ :: _ :: (conts.map _ ++ conts.map _),
+      i ⊆ stateSet root ∩ stateSet st) ↔ _ ∨ _
+  constructor
+  · rintro ⟨st', hst', hi⟩
+    rw [List.mem_cons, List.mem_cons, List.mem_append] at hst'
+    rcases hst' with rfl | rfl | hst' | hst'
+    · rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      exact Or.inl (Set.subset_inter hi.2.1 hi.1)
+    · rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      exact Or.inr (Set.subset_inter hi.2.1 hi.1)
+    · obtain ⟨st, _, rfl⟩ := List.mem_map.mp hst'
+      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      exact Or.inl (Set.subset_inter hi.2.1 hi.1)
+    · obtain ⟨st, _, rfl⟩ := List.mem_map.mp hst'
+      rw [stateSet_cons, Set.subset_inter_iff, Set.subset_inter_iff] at hi
+      exact Or.inr (Set.subset_inter hi.2.1 hi.1)
+  · rintro (hi | hi)
+    · obtain ⟨h1, h2⟩ := Set.subset_inter_iff.mp hi
+      refine ⟨_ :: root, List.mem_cons_self, ?_⟩
+      rw [stateSet_cons]
+      exact Set.subset_inter h2 (Set.subset_inter h1 h2)
+    · obtain ⟨h1, h2⟩ := Set.subset_inter_iff.mp hi
+      refine ⟨_ :: root, List.mem_cons_of_mem _ List.mem_cons_self, ?_⟩
+      rw [stateSet_cons]
+      exact Set.subset_inter h2 (Set.subset_inter h1 h2)
+
+end CommitmentSpace
+
+-- ════════════════════════════════════════════════════
+-- § 7. KrifkaState issue laws
+-- ════════════════════════════════════════════════════
+
+namespace KrifkaState
+
+variable {W : Type*}
+
+/-- The issue raised by a Krifka state: from the commitment space. -/
+def toIssue (s : KrifkaState W) : Question W := s.space.toIssue
+
+instance : Discourse.HasIssue (KrifkaState W) W := ⟨toIssue⟩
+
+@[simp] theorem toIssue_assert (s : KrifkaState W) (p : W → Prop) :
+    (s.assert p).toIssue = s.toIssue ⊓ Question.declarative {w | p w} :=
+  CommitmentSpace.toIssue_assert s.space .speaker p .doxastic
+
+@[simp] theorem toIssue_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
+    (s.monopolarQuestion p).toIssue =
+      Question.declarative ({w | p w} ∩ s.contextSet) :=
+  CommitmentSpace.toIssue_monopolarQuestion s.space p .doxastic
+
+@[simp] theorem toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
+    (s.bipolarQuestion p).toIssue =
+      Question.declarative ({w | p w} ∩ s.contextSet) ⊔
+        Question.declarative ({w | ¬ p w} ∩ s.contextSet) :=
+  CommitmentSpace.toIssue_bipolarQuestion s.space p
+
+/-- Monopolar questions raise no inquisitive issue: the projection is
+    declarative. The monopolar/bipolar distinction — Krifka's bias
+    thesis — is invisible to the issue observable. -/
+theorem not_isInquisitive_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
+    ¬ (s.monopolarQuestion p).toIssue.isInquisitive := by
+  rw [toIssue_monopolarQuestion]
+  exact Question.not_isInquisitive_declarative _
+
+/-- Bipolar questions raise a genuine issue whenever both answers are
+    live in the context set. -/
+theorem isInquisitive_bipolarQuestion (s : KrifkaState W) (p : W → Prop)
+    (h₁ : ∃ w ∈ s.contextSet, p w) (h₂ : ∃ w ∈ s.contextSet, ¬ p w) :
+    (s.bipolarQuestion p).toIssue.isInquisitive := by
+  rw [toIssue_bipolarQuestion]
+  obtain ⟨w₁, hw₁cs, hw₁p⟩ := h₁
+  obtain ⟨w₂, hw₂cs, hw₂p⟩ := h₂
+  intro hmem
+  rw [Question.info_sup, Question.info_declarative,
+    Question.info_declarative] at hmem
+  rcases Question.mem_sup.mp hmem with h | h
+  · exact hw₂p (Question.mem_declarative.mp h (Or.inr ⟨hw₂p, hw₂cs⟩)).1
+  · exact (Question.mem_declarative.mp h (Or.inl ⟨hw₁p, hw₁cs⟩)).1 hw₁p
+
+/-- Bipolar questions preserve informative content: the issue refines
+    the context set without eliminating worlds. -/
+theorem info_toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
+    (s.bipolarQuestion p).toIssue.info = s.contextSet := by
+  rw [toIssue_bipolarQuestion, Question.info_sup, Question.info_declarative,
+    Question.info_declarative]
+  ext w
+  by_cases hp : p w <;> simp [hp]
+
+/-- Monopolar questions narrow the settled-future content by the
+    proposal: Krifka's bias, visible as informative loss. -/
+theorem info_toIssue_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
+    (s.monopolarQuestion p).toIssue.info = {w | p w} ∩ s.contextSet := by
+  rw [toIssue_monopolarQuestion, Question.info_declarative]
+
+end KrifkaState
 
 end Discourse.Krifka
