@@ -3,9 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Optimization.Linearization
 import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Studies.BarkerPullum1990
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -92,14 +92,12 @@ def weightedActivation (w : CueSource → ℕ) (feats : List F) (cues : List (Cu
 
 /-- If `a`'s cue-match vector pointwise dominates `b`'s, strictly at some source
     carrying positive weight, then `a` out-activates `b` under every such
-    weighting: Pareto dominance transfers to all positive cue weightings. -/
+    weighting — `Core.Optimization.sum_mul_lt_sum_mul` on cue-match vectors. -/
 theorem dominance {w : CueSource → ℕ} {a b : List F} {cues : List (Cue F)}
     (hle : ∀ s, matchCount b cues s ≤ matchCount a cues s)
     (hlt : ∃ s, 0 < w s ∧ matchCount b cues s < matchCount a cues s) :
     weightedActivation w b cues < weightedActivation w a cues :=
-  have ⟨s, hw, hs⟩ := hlt
-  Finset.sum_lt_sum (fun i _ => Nat.mul_le_mul_left _ (hle i))
-    ⟨s, Finset.mem_univ s, Nat.mul_lt_mul_of_pos_left hs hw⟩
+  Core.Optimization.sum_mul_lt_sum_mul hle hlt
 
 /-! ### Retrieval cues for *birbirleri* -/
 
