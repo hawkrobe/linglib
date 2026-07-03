@@ -8,25 +8,16 @@ following [sigurd-1988], [jansen-pollmann-2001], and [woodin-etal-2023].
 A number n has **k-ness** (for k ∈ {2, 2.5, 5, 10}) if n = m × k × 10^b
 for some b ≥ 1 and 1 ≤ m ≤ 9.
 
-The 6 properties (ordered by frequency effect, [woodin-etal-2023]):
-1. 10-ness (β = 4.46) — strongest predictor of frequency
-2. 2.5-ness (β = 3.84)
-3. 5-ness (β = 2.61)
-4. 2-ness (β = 1.56)
-5. Multiple of 10 (β = 0.52)
-6. Multiple of 5 (β = 0.06) — weakest predictor
-
-This module lives in substrate because both empirical consumers
-(`Studies/`) and theory files (Semantics.Montague, NeoGricean, RSA)
-depend on the roundness score.
-
+The 6 properties, ordered by strength as frequency predictors in
+[woodin-etal-2023]'s negative binomial regression (strongest first):
+10-ness (β = 4.46), 2.5-ness (β = 3.84), 5-ness (β = 3.39),
+2-ness (β = 2.74), multiple of 10 (β = 2.45), multiple of 5 (β = 0.06);
+the 2-ness and multiple-of-10 credible intervals overlap.
 -/
 
 namespace Semantics.Numerals.Roundness
 
--- ============================================================================
--- k-ness primitives
--- ============================================================================
+/-! ### k-ness primitives -/
 
 /-- Check if n has integer k-ness: n = m × k × 10^b for b ≥ 1, 1 ≤ m ≤ 9. -/
 def hasIntKness (n : Nat) (k : Nat) : Bool :=
@@ -47,9 +38,7 @@ def has2_5ness (n : Nat) : Bool :=
       let divisor := 5 * 10 ^ b
       (2 * n) % divisor == 0 && (2 * n) / divisor ≥ 1 && (2 * n) / divisor ≤ 9
 
--- ============================================================================
--- Roundness properties and score
--- ============================================================================
+/-! ### Roundness properties and score -/
 
 /--
 The 6 graded roundness properties from Sigurd/Jansen & Pollmann.
@@ -90,9 +79,7 @@ def roundnessScore (n : Nat) : Nat :=
 /-- Maximum possible roundness score. -/
 def maxRoundnessScore : Nat := 6
 
--- ============================================================================
--- Roundness grade (binned score)
--- ============================================================================
+/-! ### Roundness grade (binned score) -/
 
 /--
 Binned roundness grade for use in width/tolerance functions.
@@ -114,9 +101,7 @@ def roundnessGrade (n : Nat) : RoundnessGrade :=
   else if roundnessScore n ≥ 1 then .low
   else .none
 
--- ============================================================================
--- Context-sensitive roundness
--- ============================================================================
+/-! ### Context-sensitive roundness -/
 
 /--
 Count k-ness-like properties relative to a non-standard base.
@@ -145,15 +130,11 @@ default k-ness score is 0. On base-60 (minutes), 120 = 2 × 60 is round.
 The contextual score derives from actual divisibility properties relative
 to the base (not a flat bonus), paralleling how standard k-ness derives
 from divisibility by 2/2.5/5/10 × powers of 10.
-
-Composes with `GranularityDatum` in `Studies/ThomasDeo2020.lean`.
 -/
 def roundnessInContext (n : Nat) (base : Nat) : Nat :=
   max (roundnessScore n) (contextualRoundnessScore n base)
 
--- ============================================================================
--- Per-datum verification
--- ============================================================================
+/-! ### Per-datum verification -/
 
 -- Score verification
 #guard roundnessScore 100 == 6
@@ -185,15 +166,5 @@ theorem score_ge_two_of_div10 (n : Nat) (h10 : n % 10 = 0) :
   have h5 : n % 5 = 0 := by omega
   simp only [h10, h5, beq_self_eq_true, ite_true]
   omega
-
-/-- Grade is never `.none` when score ≥ 1. -/
-theorem grade_ne_none_of_score_ge_one (n : Nat) (h : roundnessScore n ≥ 1) :
-    roundnessGrade n ≠ .none := by
-  unfold roundnessGrade
-  split
-  · decide
-  · split
-    · decide
-    · decide
 
 end Semantics.Numerals.Roundness

@@ -68,8 +68,9 @@ The illustrated stimulus (the "$200" ticket dialogue against a $207 screen) and
 the text-reported observed directions live in `Data.Examples.BeltramaSchwarz2024`;
 the structural predictions are checked against them by `#guard`. Persona ↔
 precision indexing reuses `Pragmatics.SocialMeaning` (the [eckert-2008] field and
-[burnett-2019]'s Eckert–Montague lift); speaker-conditioned halo width is the
-`Semantics.Numerals.Precision.speakerModulatedHalo` this paper motivates.
+[burnett-2019]'s Eckert–Montague lift); `speakerModulatedHalo` scales the
+substrate `haloWidth` by a speaker multiplier — the paper's claim that the
+halo is a property of the number–speaker pair, not the number alone.
 -/
 
 namespace BeltramaSchwarz2024
@@ -289,9 +290,14 @@ theorem bsb_stim_also_round :
 
 /-! ### Speaker-modulated halo
 
-The substrate map `speakerModulatedHalo` (motivated by this paper) widens or
-narrows a numeral's pragmatic halo by a speaker-specific multiplier; Chill
-speakers get a wider halo than Nerdy ones. -/
+`speakerModulatedHalo` widens or narrows a numeral's pragmatic halo by a
+speaker-specific multiplier; Chill speakers get a wider halo than Nerdy
+ones. -/
+
+/-- Speaker-conditioned pragmatic halo width: scales the substrate
+    `haloWidth` by a speaker's tolerance multiplier. -/
+def speakerModulatedHalo (multiplier : ℚ) (n : Nat) : ℚ :=
+  multiplier * haloWidth n
 
 /-- A larger multiplier yields a wider halo — the monotonicity that ties the
     Competence/Warmth ordering to tolerance width. -/

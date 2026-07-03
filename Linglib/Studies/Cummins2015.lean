@@ -53,8 +53,9 @@ connecting monotone map. The legacy criterion-based view via
    serves as the RSA `cost : U → ℚ` parameter. Round numerals are cheap;
    non-round are expensive.
 2. **k-ness as `PrecisionMode` threshold** — `roundnessScore ≥ 2` triggers
-   `.approximate` mode, grounding the binary switch used by
-   [kao-etal-2014-hyperbole]. The pragmatic halo width
+   `.approximate` mode, grounding the binary meaning-projection switch
+   (`f_e` vs `f_a`) of [kao-etal-2014-hyperbole] — the projection component
+   only, not that paper's joint goal inference. The pragmatic halo width
    ([lasersohn-1999], [krifka-2007]) is also wider for round
    numerals.
 
