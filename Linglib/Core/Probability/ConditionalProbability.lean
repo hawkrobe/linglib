@@ -35,14 +35,16 @@ theorem cond_eq_withDensity (hs : MeasurableSet s) :
     μ[|s] = μ.withDensity (s.indicator fun _ => (μ s)⁻¹) :=
   ((withDensity_indicator hs _).trans (withDensity_const _)).symm
 
+variable [SigmaFinite μ]
+
 /-- The Radon-Nikodym derivative of the conditional measure `μ[|s]` with
 respect to `μ` is `(μ s)⁻¹` on `s` and `0` off it. -/
-theorem rnDeriv_cond [SigmaFinite μ] (hs : MeasurableSet s) :
+theorem rnDeriv_cond (hs : MeasurableSet s) :
     (μ[|s]).rnDeriv μ =ᵐ[μ] s.indicator fun _ => (μ s)⁻¹ :=
   cond_eq_withDensity hs ▸ Measure.rnDeriv_withDensity μ (measurable_const.indicator hs)
 
 /-- On its own event, the conditional measure's density is the constant `(μ s)⁻¹`. -/
-theorem rnDeriv_cond_ae_const [SigmaFinite μ] (hs : MeasurableSet s) :
+theorem rnDeriv_cond_ae_const (hs : MeasurableSet s) :
     (μ[|s]).rnDeriv μ =ᵐ[μ[|s]] fun _ => (μ s)⁻¹ :=
   (cond_absolutelyContinuous.ae_eq (rnDeriv_cond hs)).trans <|
     (ae_cond_mem hs).mono fun _ hx => Set.indicator_of_mem hx _
