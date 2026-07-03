@@ -144,7 +144,7 @@ theorem round_beats_nonround_nsal (n₁ n₂ : Nat)
 #guard nsalViolations 100 = 0    -- maximally round → 0 violations
 #guard nsalViolations 1000 = 0   -- maximally round → 0 violations
 #guard nsalViolations 7 = 6      -- non-round → 6 violations
-#guard nsalViolations 50 = 2     -- moderately round → 2 violations
+#guard nsalViolations 50 = 1     -- highly round → 1 violation
 #guard nsalViolations 110 = 4    -- slightly round → 4 violations
 
 -- ============================================================================

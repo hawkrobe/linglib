@@ -7,8 +7,13 @@ import Mathlib.Data.Nat.Basic
 Framework-agnostic infrastructure for graded numeral roundness,
 following [sigurd-1988], [jansen-pollmann-2001], and [woodin-etal-2023].
 
-A number n has **k-ness** (for k ∈ {2, 2.5, 5, 10}) if n = m × k × 10^b
-for some b ≥ 1 and 1 ≤ m ≤ 9.
+A number n has **k-ness** if it lies in [jansen-pollmann-2001]'s set
+[k × (1–9 × 10ⁿ)] (their p. 198): n = m × k × 10^b with 1 ≤ m ≤ 9 —
+so 10-ness is the k = 1 family (divisors 10, 100, …), per their own
+example "70 has only 10-ness". Their original allows b ≥ 0; following
+[woodin-etal-2023] (fn. 3) the search starts at b ≥ 1, which drops the
+single digits from 10-ness and 15, 45, … from 5-ness (cf.
+`Studies/JansenPollmann2001.lean` for the original and the divergence).
 
 The 6 properties, ordered by strength as frequency predictors in
 [woodin-etal-2023]'s negative binomial regression (strongest first):
@@ -57,7 +62,7 @@ and pragmatic behavior ([woodin-etal-2023]). -/
 def roundnessScore (n : ℕ) : ℕ :=
   (if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0) +
   (if HasKness n 2 then 1 else 0) + (if Has2_5ness n then 1 else 0) +
-  (if HasKness n 5 then 1 else 0) + (if HasKness n 10 then 1 else 0)
+  (if HasKness n 5 then 1 else 0) + (if HasKness n 1 then 1 else 0)
 
 /-- Maximum possible roundness score. -/
 def maxRoundnessScore : ℕ := 6
@@ -71,9 +76,9 @@ Collapses the 0–6 score into 4 levels to avoid duplicating
 step-function logic across Theory files.
 -/
 inductive RoundnessGrade where
-  /-- score ≥ 5 (e.g., 100, 1000, 200) -/
+  /-- score ≥ 5 (e.g., 100, 50, 200) -/
   | high
-  /-- score 3–4 (e.g., 50, 20) -/
+  /-- score 3–4 (e.g., 20, 40) -/
   | moderate
   /-- score 1–2 (e.g., 110, 15) -/
   | low
@@ -123,16 +128,16 @@ def roundnessInContext (n : ℕ) (base : ℕ) : ℕ :=
 
 -- Score verification
 #guard roundnessScore 100 = 6
-#guard roundnessScore 50 = 4
+#guard roundnessScore 50 = 5
 #guard roundnessScore 7 = 0
 #guard roundnessScore 1000 = 6
 #guard roundnessScore 200 = 6
 #guard roundnessScore 110 = 2
-#guard roundnessScore 20 = 3
+#guard roundnessScore 20 = 4
 
 -- Grade verification
 #guard roundnessGrade 100 = .high
-#guard roundnessGrade 50 = .moderate
+#guard roundnessGrade 50 = .high
 #guard roundnessGrade 110 = .low
 #guard roundnessGrade 7 = .none
 
