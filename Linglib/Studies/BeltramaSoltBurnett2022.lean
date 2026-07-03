@@ -1,9 +1,10 @@
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Semantics.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
+import Mathlib.Tactic.NormNum
 
 /-!
 # [beltrama-solt-burnett-2023]
@@ -78,21 +79,21 @@ def stimRound : Nat := 50
 
 /-- 49 has zero roundness — no imprecise reading is possible. -/
 theorem stim_precise_not_round :
-    Semantics.Numerals.Roundness.roundnessScore stimPrecise = 0 := by native_decide
+    Semantics.Numerals.Roundness.roundnessScore stimPrecise = 0 := by decide
 
 /-- 50 has moderate roundness (score 4) — imprecise readings available. -/
 theorem stim_round_is_round :
-    Semantics.Numerals.Roundness.roundnessScore stimRound = 4 := by native_decide
+    Semantics.Numerals.Roundness.roundnessScore stimRound = 4 := by decide
 
 open Semantics.Numerals.Precision in
 /-- 49 → exact precision mode (roundnessScore 0 < 2). -/
 theorem precise_stim_is_exact :
-    inferPrecisionMode stimPrecise = .exact := by native_decide
+    inferPrecisionMode stimPrecise = .exact := by decide
 
 open Semantics.Numerals.Precision in
 /-- 50 → approximate precision mode (roundnessScore 4 ≥ 2). -/
 theorem round_stim_is_approximate :
-    inferPrecisionMode stimRound = .approximate := by native_decide
+    inferPrecisionMode stimRound = .approximate := by decide
 
 open English.NumeralModifiers in
 /-- The Fragment entry "about" is a tolerance modifier that forces an
@@ -120,15 +121,15 @@ def classifyVariant (n : Nat) (hasToleranceModifier : Bool) : Variant :=
 
 /-- "forty-nine minutes" → precise variant. -/
 theorem classify_49 :
-    classifyVariant stimPrecise false = .precise := by native_decide
+    classifyVariant stimPrecise false = .precise := by decide
 
 /-- "fifty minutes" (bare) → underspecified variant. -/
 theorem classify_50_bare :
-    classifyVariant stimRound false = .underspecified := by native_decide
+    classifyVariant stimRound false = .underspecified := by decide
 
 /-- "about fifty minutes" → approximate variant. -/
 theorem classify_50_about :
-    classifyVariant stimRound true = .approximate := by native_decide
+    classifyVariant stimRound true = .approximate := by decide
 
 -- ============================================================================
 -- §4. Experimental data: cell means (7-point Likert scale)
@@ -173,7 +174,7 @@ def exp2Mean : Variant → SocialDimension → ℚ
 theorem competence_precise_gt_approx :
     exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
     exp2Mean .precise .competence > exp2Mean .approximate .competence := by
-  constructor <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 /-- **Warmth: approximate > precise** (both experiments).
 
@@ -183,7 +184,7 @@ theorem competence_precise_gt_approx :
 theorem warmth_approx_gt_precise :
     exp1Mean .approximate .warmth > exp1Mean .precise .warmth ∧
     exp2Mean .approximate .warmth > exp2Mean .precise .warmth := by
-  constructor <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 /-- **Anti-Solidarity: precise > approximate** (both experiments).
 
@@ -192,7 +193,7 @@ theorem warmth_approx_gt_precise :
 theorem antiSol_precise_gt_approx :
     exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
     exp2Mean .precise .antiSolidarity > exp2Mean .approximate .antiSolidarity := by
-  constructor <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 /-- **Sign alignment**: competence and anti-solidarity share sign direction
     (both favor precise), while warmth reverses (favors approximate).
@@ -207,7 +208,7 @@ theorem sign_alignment :
     (exp2Mean .precise .competence > exp2Mean .approximate .competence ∧
      exp2Mean .precise .antiSolidarity > exp2Mean .approximate .antiSolidarity ∧
      exp2Mean .approximate .warmth > exp2Mean .precise .warmth) := by
-  constructor <;> refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 -- ============================================================================
 -- §6. Three-way indexical field
@@ -265,7 +266,7 @@ theorem underspec_near_precise_on_competence :
      exp1Mean .underspecified .competence - exp1Mean .approximate .competence) ∧
     (exp2Mean .precise .competence - exp2Mean .underspecified .competence <
      exp2Mean .underspecified .competence - exp2Mean .approximate .competence) := by
-  constructor <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 /-- On anti-solidarity, underspecified is closer to approximate than to precise.
     The contrast is precision-driven: it is sharp numbers that make you seem
@@ -277,7 +278,7 @@ theorem underspec_near_approx_on_antiSol :
      exp1Mean .precise .antiSolidarity - exp1Mean .underspecified .antiSolidarity) ∧
     (exp2Mean .underspecified .antiSolidarity - exp2Mean .approximate .antiSolidarity <
      exp2Mean .precise .antiSolidarity - exp2Mean .underspecified .antiSolidarity) := by
-  constructor <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 /-- On warmth, underspecified is genuinely intermediate: it falls strictly
     between precise and approximate in both experiments. Both precision and
@@ -288,7 +289,7 @@ theorem underspec_intermediate_on_warmth :
      exp1Mean .underspecified .warmth < exp1Mean .approximate .warmth) ∧
     (exp2Mean .precise .warmth < exp2Mean .underspecified .warmth ∧
      exp2Mean .underspecified .warmth < exp2Mean .approximate .warmth) := by
-  constructor <;> constructor <;> native_decide
+  norm_num [exp1Mean, exp2Mean]
 
 /-- **Diagnostic asymmetry**: the dimension on which underspecified is closest
     to each endpoint differs. On competence, the cluster gap (precise to
@@ -304,7 +305,7 @@ theorem diagnostic_crossover :
     -- On anti-solidarity: approx-to-underspec < underspec-to-precise (reversed!)
     (exp1Mean .underspecified .antiSolidarity - exp1Mean .approximate .antiSolidarity <
      exp1Mean .precise .antiSolidarity - exp1Mean .underspecified .antiSolidarity) := by
-  constructor <;> native_decide
+  norm_num [exp1Mean]
 
 -- ============================================================================
 -- §8. Context modulation
@@ -350,13 +351,13 @@ theorem competence_enhanced_in_high_demand :
     exp1CompetenceByScenario .forTheRecord .approximate >
     exp1CompetenceByScenario .bonding .precise -
     exp1CompetenceByScenario .bonding .approximate := by
-  native_decide
+  norm_num [exp1CompetenceByScenario]
 
 /-- In Bonding, the competence contrast is neutralized: approximate ≥ precise. -/
 theorem competence_neutralized_in_bonding :
     exp1CompetenceByScenario .bonding .approximate ≥
     exp1CompetenceByScenario .bonding .precise := by
-  native_decide
+  norm_num [exp1CompetenceByScenario]
 
 /-- Exp 2 scenario-specific means on warmth (Solidarity).
     Stranger vs For-the-record, precise vs underspecified (the significant
@@ -379,7 +380,7 @@ theorem warmth_enhanced_in_low_demand :
     exp2WarmthByScenario .stranger .precise >
     exp2WarmthByScenario .forTheRecord .underspecified -
     exp2WarmthByScenario .forTheRecord .precise := by
-  native_decide
+  norm_num [exp2WarmthByScenario]
 
 /-- **Bidirectional context modulation**: high-demand contexts amplify
     competence contrasts while suppressing warmth contrasts, and vice versa.
@@ -399,7 +400,7 @@ theorem context_crossover :
      exp2WarmthByScenario .stranger .precise >
      exp2WarmthByScenario .forTheRecord .underspecified -
      exp2WarmthByScenario .forTheRecord .precise) := by
-  constructor <;> native_decide
+  norm_num [exp1CompetenceByScenario, exp2WarmthByScenario]
 
 -- ============================================================================
 -- §9. Roundness gating
@@ -442,13 +443,13 @@ def bsbGroundedField : GroundedField Variant scmSpace :=
 theorem precise_scmProperties :
     bsbGroundedField.indexedProperties .precise =
       {.competent, .cold, .antiSolidary} := by
-  native_decide
+  decide
 
 /-- Approximate indexes {incompetent, warm, solidary}: the complement. -/
 theorem approximate_scmProperties :
     bsbGroundedField.indexedProperties .approximate =
       {.incompetent, .warm, .solidary} := by
-  native_decide
+  decide
 
 /-- Underspecified indexes nothing: zero association on all dimensions
     → no indexed social properties. Under the EM lift, this makes
@@ -456,6 +457,6 @@ theorem approximate_scmProperties :
     diagnostic role as a neutral baseline (§7). -/
 theorem underspecified_indexes_nothing :
     bsbGroundedField.indexedProperties .underspecified = ∅ := by
-  native_decide
+  decide
 
 end BeltramaSoltBurnett2022

@@ -1,16 +1,45 @@
+import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Relevance
 
 /-!
-# Strategy of Inquiry: Rose-Tree Decomposition of a QUD
+# Questions under discussion: stack and strategy
 [roberts-2012]
 
-A `Strategy W` is a rose-tree plan to answer a question by pursuing
-subquestions whose collective answers resolve the parent. The
-companion `QUDStack` is the current unanswered slice.
+The inquiry coordinate of the conversational scoreboard: the stack of
+accepted-but-unanswered questions (head is the immediate QUD;
+subquestions push, answers pop) and the rose-tree strategy of inquiry
+decomposing a question into subquestions whose joint resolution answers
+the parent.
 -/
 
 namespace Discourse
+
+/-- A QUD stack: ordered list of accepted, unanswered questions
+    (Roberts 2012 Def 10g). -/
+structure QUDStack (W : Type*) where
+  questions : List (Question W)
+
+namespace QUDStack
+
+variable {W : Type*}
+
+/-- Empty QUD stack (discourse initial state). -/
+def empty : QUDStack W := ⟨[]⟩
+
+/-- The immediate QUD: the most recently accepted, unanswered question. -/
+def immediateQUD (s : QUDStack W) : Option (Question W) := s.questions.head?
+
+/-- Accept a new question: push onto the stack. -/
+def push (s : QUDStack W) (q : Question W) : QUDStack W := ⟨q :: s.questions⟩
+
+/-- Answer the immediate QUD: pop from the stack. -/
+def pop (s : QUDStack W) : QUDStack W := ⟨s.questions.tail⟩
+
+/-- Current depth of the QUD stack. -/
+def depth (s : QUDStack W) : Nat := s.questions.length
+
+end QUDStack
 
 open Question
 

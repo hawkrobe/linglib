@@ -4,8 +4,7 @@ import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Discourse.QUDStack
-import Linglib.Discourse.Strategy
+import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Reference.Donnellan
 import Linglib.Fragments.English.Determiners

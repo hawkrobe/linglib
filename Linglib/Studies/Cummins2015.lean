@@ -2,9 +2,9 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.Optimization.Pareto
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.Satisfaction
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Fragments.English.NumeralModifiers
-import Linglib.Semantics.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Precision
 
 /-!
 # [cummins-2015]: OT Constraints, k-ness, NSAL, and RSA Cost
@@ -53,8 +53,9 @@ connecting monotone map. The legacy criterion-based view via
    serves as the RSA `cost : U → ℚ` parameter. Round numerals are cheap;
    non-round are expensive.
 2. **k-ness as `PrecisionMode` threshold** — `roundnessScore ≥ 2` triggers
-   `.approximate` mode, grounding the binary switch used by
-   [kao-etal-2014-hyperbole]. The pragmatic halo width
+   `.approximate` mode, grounding the binary meaning-projection switch
+   (`f_e` vs `f_a`) of [kao-etal-2014-hyperbole] — the projection component
+   only, not that paper's joint goal inference. The pragmatic halo width
    ([lasersohn-1999], [krifka-2007]) is also wider for round
    numerals.
 
@@ -90,11 +91,11 @@ structure NumeralCandidate where
   deriving Repr
 
 /-- Infer granularity from a numeral's trailing zeros: 100 → 2, 110 → 1, 111 → 0. -/
-def inferGranularity (n : Nat) : Nat :=
-  if n == 0 then 0
-  else if n % 1000 == 0 then 3
-  else if n % 100 == 0 then 2
-  else if n % 10 == 0 then 1
+def inferGranularity (n : ℕ) : ℕ :=
+  if n = 0 then 0
+  else if 1000 ∣ n then 3
+  else if 100 ∣ n then 2
+  else if 10 ∣ n then 1
   else 0
 
 -- ============================================================================
@@ -140,11 +141,11 @@ theorem round_beats_nonround_nsal (n₁ n₂ : Nat)
   unfold nsalViolations
   omega
 
-#guard nsalViolations 100 == 0    -- maximally round → 0 violations
-#guard nsalViolations 1000 == 0   -- maximally round → 0 violations
-#guard nsalViolations 7 == 6      -- non-round → 6 violations
-#guard nsalViolations 50 == 2     -- moderately round → 2 violations
-#guard nsalViolations 110 == 4    -- slightly round → 4 violations
+#guard nsalViolations 100 = 0    -- maximally round → 0 violations
+#guard nsalViolations 1000 = 0   -- maximally round → 0 violations
+#guard nsalViolations 7 = 6      -- non-round → 6 violations
+#guard nsalViolations 50 = 2     -- moderately round → 2 violations
+#guard nsalViolations 110 = 4    -- slightly round → 4 violations
 
 -- ============================================================================
 -- § 3: ViolationProfile as Profile Nat 4
@@ -291,7 +292,7 @@ theorem precision_7_exact :
     `.approximate` mode. Follows from `score_ge_two_of_div10`: the score is
     at least 2, so the `roundnessScore n ≥ 2` branch of `inferPrecisionMode`
     fires. -/
-theorem multipleOf10_implies_approximate (n : Nat) (hr : n % 10 = 0) :
+theorem multipleOf10_implies_approximate (n : ℕ) (hr : 10 ∣ n) :
     inferPrecisionMode n = .approximate := by
   unfold inferPrecisionMode
   have hs := Semantics.Numerals.Roundness.score_ge_two_of_div10 n hr

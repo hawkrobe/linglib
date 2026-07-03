@@ -1,4 +1,4 @@
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 
@@ -25,9 +25,7 @@ namespace WoodinEtAl2024
 
 open Semantics.Numerals.Roundness
 
--- ============================================================================
--- β coefficients from regression model (Table 3, [woodin-etal-2023])
--- ============================================================================
+/-! ### β coefficients from the negative binomial regression (§4.2, [woodin-etal-2023]) -/
 
 /--
 Regression coefficient for each k-ness property on log frequency.
@@ -40,7 +38,7 @@ structure RoundnessCoefficient where
   β : ℚ
   deriving Repr
 
-/-- β coefficients ordered by magnitude (Table 3). -/
+/-- β coefficients ordered by magnitude (§4.2). -/
 def β_tenness : RoundnessCoefficient :=
   { property := "10-ness", β := 446 / 100 }  -- 4.46
 
@@ -48,13 +46,13 @@ def β_2_5ness : RoundnessCoefficient :=
   { property := "2.5-ness", β := 384 / 100 }  -- 3.84
 
 def β_5ness : RoundnessCoefficient :=
-  { property := "5-ness", β := 261 / 100 }  -- 2.61
+  { property := "5-ness", β := 339 / 100 }  -- 3.39
 
 def β_2ness : RoundnessCoefficient :=
-  { property := "2-ness", β := 156 / 100 }  -- 1.56
+  { property := "2-ness", β := 274 / 100 }  -- 2.74
 
 def β_mult10 : RoundnessCoefficient :=
-  { property := "multipleOf10", β := 52 / 100 }  -- 0.52
+  { property := "multipleOf10", β := 245 / 100 }  -- 2.45
 
 def β_mult5 : RoundnessCoefficient :=
   { property := "multipleOf5", β := 6 / 100 }  -- 0.06
@@ -76,12 +74,9 @@ theorem hierarchy_ordering :
     β_5ness.β > β_2ness.β ∧
     β_2ness.β > β_mult10.β ∧
     β_mult10.β > β_mult5.β := by
-  unfold β_tenness β_2_5ness β_5ness β_2ness β_mult10 β_mult5
-  native_decide
+  norm_num [β_tenness, β_2_5ness, β_5ness, β_2ness, β_mult10, β_mult5]
 
--- ============================================================================
--- Frequency-weighted roundness score
--- ============================================================================
+/-! ### Frequency-weighted roundness score -/
 
 /--
 Frequency-weighted roundness score using Woodin et al.'s β coefficients.
@@ -89,40 +84,35 @@ Frequency-weighted roundness score using Woodin et al.'s β coefficients.
 Unlike the unweighted `roundnessScore` (which counts properties equally),
 this weights each property by its empirical frequency effect.
 -/
-def weightedRoundnessScore (n : Nat) : ℚ :=
-  let rp := roundnessProperties n
-  (if rp.multipleOf5 then β_mult5.β else 0) +
-  (if rp.multipleOf10 then β_mult10.β else 0) +
-  (if rp.twoness then β_2ness.β else 0) +
-  (if rp.twoPointFiveness then β_2_5ness.β else 0) +
-  (if rp.fiveness then β_5ness.β else 0) +
-  (if rp.tenness then β_tenness.β else 0)
+def weightedRoundnessScore (n : ℕ) : ℚ :=
+  (if 5 ∣ n then β_mult5.β else 0) +
+  (if 10 ∣ n then β_mult10.β else 0) +
+  (if HasKness n 2 then β_2ness.β else 0) +
+  (if Has2_5ness n then β_2_5ness.β else 0) +
+  (if HasKness n 5 then β_5ness.β else 0) +
+  (if HasKness n 10 then β_tenness.β else 0)
 
 -- Weighted score verification
-#guard weightedRoundnessScore 7 == 0
+#guard weightedRoundnessScore 7 = 0
 #guard weightedRoundnessScore 100 > weightedRoundnessScore 50
 #guard weightedRoundnessScore 50 > weightedRoundnessScore 110
 
 theorem weighted_100_gt_50 :
-    weightedRoundnessScore 100 > weightedRoundnessScore 50 := by native_decide
+    weightedRoundnessScore 100 > weightedRoundnessScore 50 := by
+  simp +decide [weightedRoundnessScore, β_tenness, β_2_5ness, β_5ness, β_2ness, β_mult10, β_mult5]; norm_num
 
 theorem weighted_50_gt_110 :
-    weightedRoundnessScore 50 > weightedRoundnessScore 110 := by native_decide
+    weightedRoundnessScore 50 > weightedRoundnessScore 110 := by
+  simp +decide [weightedRoundnessScore, β_2_5ness, β_5ness, β_mult10, β_mult5]; norm_num
 
 theorem weighted_7_eq_zero :
-    weightedRoundnessScore 7 = 0 := by native_decide
+    weightedRoundnessScore 7 = 0 := by simp +decide [weightedRoundnessScore]
 
 /-- `weightedRoundnessScore 50 > 0`: 50 has multipleOf5, multipleOf10,
     2.5-ness, and 5-ness, so its weighted score is the strictly positive
     sum of those β coefficients. -/
 theorem weighted_50_pos : weightedRoundnessScore 50 > 0 := by
-  unfold weightedRoundnessScore
-  have hp : roundnessProperties 50 =
-      ⟨true, true, false, true, true, false⟩ := by decide
-  rw [hp]
-  simp only [↓reduceIte]
-  unfold β_mult5 β_mult10 β_2_5ness β_5ness
-  norm_num
+  simp +decide [weightedRoundnessScore, β_2_5ness, β_5ness, β_mult10, β_mult5]; norm_num
 
 theorem weighted_50_gt_7 :
     weightedRoundnessScore 50 > weightedRoundnessScore 7 := by
@@ -138,9 +128,7 @@ theorem roundness_prior_monotone :
     weightedRoundnessScore 50 > weightedRoundnessScore 7 :=
   ⟨weighted_100_gt_50, weighted_50_gt_7⟩
 
--- ============================================================================
--- Register effect data
--- ============================================================================
+/-! ### Register effect data -/
 
 /--
 Register type from corpus analysis.

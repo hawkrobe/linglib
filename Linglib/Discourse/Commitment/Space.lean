@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.Issue
+import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
 
@@ -34,7 +34,7 @@ holds indexed commitments, projected to a flat context set via
 
 ## Sibling files
 
-`Discourse/LayeredAssertion.lean` houses Krifka 2020's
+`Studies/Krifka2020.lean` houses Krifka 2020's
 TP/JP/ComP/ActP layered-clause framework. The two files are independent
 (neither imports the other); study files target whichever fits.
 
@@ -54,7 +54,7 @@ Out of scope (would need substrate extensions):
   substrate has no time index; `rejectFirst` is the closest proxy for
   rescission. True time-indexed commitment dynamics need a separate layer.
 - **Anderson 2021 distributional CommonGround**: a probability distribution
-  over worlds, hosted as `PMF W` in `Discourse/DistributionalCG.lean`. It is
+  over worlds, hosted as `PMF W` in `Studies/Anderson2021.lean`. It is
   *not* routed through the commitment-space substrate: a `CommitmentSpace W ℝ`
   would carry unconstrained per-world reals (no sum-to-one, no normalisation),
   losing exactly the structure Anderson's entropy/KL criteria depend on. The

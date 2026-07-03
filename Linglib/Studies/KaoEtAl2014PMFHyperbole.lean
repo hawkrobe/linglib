@@ -2,6 +2,7 @@ import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Pragmatics.RSA.QUD
+import Linglib.Semantics.Quantification.Numerals.Precision
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
@@ -102,6 +103,14 @@ def PriceState.round : PriceState → PriceState
   | .s1000  | .s1001  => .s1000
   | .s5000  | .s5001  => .s5000
   | .s10000 | .s10001 => .s10000
+
+/-- `PriceState.round` is the substrate rounding map: composing with `value`
+gives `Precision.roundToNearest` at the paper's base 10. -/
+theorem round_value_eq_roundToNearest (p : PriceState) :
+    (p.round.value : ℚ) = Semantics.Numerals.Precision.roundToNearest p.value := by
+  cases p <;>
+    norm_num [PriceState.round, PriceState.value,
+      Semantics.Numerals.Precision.roundToNearest]
 
 /-- Binary affect: speaker has notable opinion, or none. -/
 inductive Affect where
@@ -244,6 +253,20 @@ def project (g : Goal) (w : World) : ℕ :=
   | .priceValence       => w.1.value * 2 + (match w.2 with | .none => 0 | .notable => 1)
   | .approxPrice        => w.1.round.value
   | .approxPriceValence => w.1.round.value * 2 + (match w.2 with | .none => 0 | .notable => 1)
+
+/-- The `price` goal projects by the paper's exact meaning projection `f_e`:
+the substrate `Precision.projectPrecision .exact`. -/
+theorem project_price_eq (w : World) :
+    (project .price w : ℚ) =
+      Semantics.Numerals.Precision.projectPrecision .exact w.1.value := rfl
+
+/-- The `approxPrice` goal projects by the paper's approximate meaning
+projection `f_a`: the substrate `Precision.projectPrecision .approximate`
+at base 10. -/
+theorem project_approxPrice_eq (w : World) :
+    (project .approxPrice w : ℚ) =
+      Semantics.Numerals.Precision.projectPrecision .approximate w.1.value :=
+  round_value_eq_roundToNearest w.1
 
 /-- QUD-projected L0: sum of L0Weight over the QUD-equivalence class of `w`
 under goal `g`. The denominator of the speaker softmax (Eq. 6 of paper).

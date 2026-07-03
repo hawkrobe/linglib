@@ -3,10 +3,11 @@ import Linglib.Discourse.Roles
 
 /-!
 # Discourse Commitments
-[krifka-2015] [brandom-1994] [gunlogson-2001]
+[hamblin-1970] [krifka-2015] [brandom-1994] [gunlogson-2001]
 
 Commitment slates, source × force tagging, and the speaker-indexed
-`S⊢φ` constructor.
+`S⊢φ` constructor. The per-agent commitment store originates with
+[hamblin-1970]'s formal dialectic.
 -/
 
 namespace Discourse
@@ -192,7 +193,7 @@ instance : CommitmentGrade Prop where
 
 -- No `Bool` instance by default — consumers needing decidable grades
 -- declare locally. Anderson 2021's distributional CommonGround is a genuine
--- distribution (`PMF W`, in `Discourse/DistributionalCG.lean`), not a graded
+-- distribution (`PMF W`, in `Studies/Anderson2021.lean`), not a graded
 -- commitment, so it does not instantiate this hierarchy.
 
 /-! ### Speaker-Indexed Commitments -/

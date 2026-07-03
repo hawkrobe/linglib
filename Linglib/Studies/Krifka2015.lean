@@ -1,4 +1,4 @@
-import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Commitment.Table
@@ -349,7 +349,7 @@ theorem noNeg_licensing_distinguishes_contexts :
 Per [krifka-2015] p. 342: matching tags are speech-act CONJUNCTION
 applied as ONE complex move — explicitly NOT sequential `assert; question`.
 The substrate's `Discourse.Krifka.matchingTag` and `reverseTag`
-(`Discourse/CommitmentSpace.lean` §4) capture this directly.
+(`Discourse/Commitment/Space.lean` §4) capture this directly.
 -/
 
 /-- Substrate's `matchingTag φ` is structurally a `conj` of two atomic
@@ -611,8 +611,9 @@ This file proves the conjecture's restriction to a 2-element framework
 class `{Krifka2015, FarkasBruce2010}` and a 2-event trace
 (`assert; accept`). The general statement requires:
 
-1. A `DialogueState` typeclass in `Discourse/Common.lean`
-   (does not yet exist) parameterising over the four operations above.
+1. A dialogue-state typeclass parameterising over the four operations
+   above (a first attempt, `Discourse/DialogueState.lean`, was retired
+   2026-07 with no consumers — the interface needs its instances first).
 2. Per-framework instances for Krifka, Farkas-Bruce, KOS, Stalnaker,
    Brandom, Gunlogson, Lauer.
 3. The universal theorem proved either generically (likely needs an

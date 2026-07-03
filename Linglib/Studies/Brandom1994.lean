@@ -3,9 +3,11 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
 
 /-!
-# [brandom-1994]: Scorekeeping Model of Assertion
+# Brandom 1994: Scorekeeping Model of Assertion
 
-[brandom-1994] [brandom-1983]Models assertion as a move in a normative scorekeeping game. Each
+[brandom-1994] [brandom-1983]
+
+Models assertion as a move in a normative scorekeeping game. Each
 participant tracks a "scorecard" for every other participant, recording
 two kinds of normative status:
 
@@ -33,7 +35,7 @@ inferential role.
 
 -/
 
-namespace Discourse.Brandom
+namespace Brandom1994
 
 open Discourse.Commitment (CommitmentSlate)
 open CommonGround (ContextSet)
@@ -229,4 +231,4 @@ open CommonGround in
 instance {W : Type*} : HasContextSet (BrandomState W) W where
   toContextSet := BrandomState.effectiveContextSet
 
-end Discourse.Brandom
+end Brandom1994

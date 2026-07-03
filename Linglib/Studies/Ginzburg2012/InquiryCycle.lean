@@ -28,12 +28,12 @@ conversational rules into a relation on (DGB, move) pairs.
 
 ## Genre relevance
 
-`genreRelevant` (eq. 90 p. 105) lives in the sibling `Gameboard/Genre.lean`.
+`genreRelevant` (eq. 90 p. 105) lives in the sibling `Genre.lean`.
 
 ## Grounding
 
 The LocProp grounding/CRification protocol (Ch. 6 §6.5–6.7) lives in
-the sibling `Gameboard/Grounding.lean`.
+the sibling `Grounding.lean`.
 -/
 
 namespace Discourse.Gameboard

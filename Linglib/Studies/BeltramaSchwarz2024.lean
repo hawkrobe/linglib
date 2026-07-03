@@ -1,5 +1,5 @@
-import Linglib.Semantics.Numerals.Roundness
-import Linglib.Semantics.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
@@ -68,8 +68,9 @@ The illustrated stimulus (the "$200" ticket dialogue against a $207 screen) and
 the text-reported observed directions live in `Data.Examples.BeltramaSchwarz2024`;
 the structural predictions are checked against them by `#guard`. Persona ↔
 precision indexing reuses `Pragmatics.SocialMeaning` (the [eckert-2008] field and
-[burnett-2019]'s Eckert–Montague lift); speaker-conditioned halo width is the
-`Semantics.Numerals.Precision.speakerModulatedHalo` this paper motivates.
+[burnett-2019]'s Eckert–Montague lift); `speakerModulatedHalo` scales the
+substrate `haloWidth` by a speaker multiplier — the paper's claim that the
+halo is a property of the number–speaker pair, not the number alone.
 -/
 
 namespace BeltramaSchwarz2024
@@ -270,7 +271,7 @@ instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
 
 /-- Any multiple of 10 carries an imprecise reading (general; derived from the
     roundness keystone). -/
-theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
+theorem div10_enables_imprecision (n : ℕ) (h10 : 10 ∣ n) :
     impreciseReadingAvailable n := by
   unfold impreciseReadingAvailable inferPrecisionMode
   exact if_pos (Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10)
@@ -289,9 +290,14 @@ theorem bsb_stim_also_round :
 
 /-! ### Speaker-modulated halo
 
-The substrate map `speakerModulatedHalo` (motivated by this paper) widens or
-narrows a numeral's pragmatic halo by a speaker-specific multiplier; Chill
-speakers get a wider halo than Nerdy ones. -/
+`speakerModulatedHalo` widens or narrows a numeral's pragmatic halo by a
+speaker-specific multiplier; Chill speakers get a wider halo than Nerdy
+ones. -/
+
+/-- Speaker-conditioned pragmatic halo width: scales the substrate
+    `haloWidth` by a speaker's tolerance multiplier. -/
+def speakerModulatedHalo (multiplier : ℚ) (n : Nat) : ℚ :=
+  multiplier * haloWidth n
 
 /-- A larger multiplier yields a wider halo — the monotonicity that ties the
     Competence/Warmth ordering to tolerance width. -/
