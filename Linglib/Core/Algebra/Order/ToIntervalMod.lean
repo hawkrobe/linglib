@@ -38,7 +38,7 @@ on bucket partitions, derived from the kernel keystone
 /-- Finer grain widths refine the bucket partition on ℕ: if `ε₁ ∣ ε₂`, the
 `ε₁`-buckets sit inside the `ε₂`-buckets. -/
 theorem Nat.ker_div_le_of_dvd {ε₁ ε₂ : ℕ} (h : ε₁ ∣ ε₂) :
-    Setoid.ker (· / ε₁ : ℕ → ℕ) ≤ Setoid.ker (· / ε₂) := by
+    Setoid.ker (· / ε₁) ≤ Setoid.ker (· / ε₂) := by
   obtain ⟨k, rfl⟩ := h
   simpa [Function.comp_def, Nat.div_div_eq_div_mul] using
     Setoid.ker_le_ker_comp (· / ε₁ : ℕ → ℕ) (· / k)
@@ -50,7 +50,7 @@ variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
 `Setoid.ker ⌊·/ε⌋`: the refinement half of the finer-than order, via the
 kernel keystone and `Int.floor_div_natCast`. -/
 theorem Setoid.ker_floor_div_le_natCast_mul (ε : α) (k : ℕ) :
-    Setoid.ker (fun d : α => ⌊d / ε⌋) ≤ Setoid.ker (fun d : α => ⌊d / ((k : α) * ε)⌋) := by
+    Setoid.ker (fun d => ⌊d / ε⌋) ≤ Setoid.ker (fun d => ⌊d / ((k : α) * ε)⌋) := by
   simpa [Function.comp_def, ← Int.floor_div_natCast, div_div,
     mul_comm ε (k : α)] using
     Setoid.ker_le_ker_comp (fun d : α => ⌊d / ε⌋) (· / (k : ℤ))
