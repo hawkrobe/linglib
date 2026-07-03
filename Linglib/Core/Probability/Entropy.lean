@@ -355,6 +355,91 @@ theorem klDiv_eq_sum_klFun {α : Type*} [Fintype α] [MeasurableSpace α]
   refine Finset.sum_congr rfl (fun y _ => ?_)
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton y), mul_comm]
 
+/-- **Conditioning identity**: the KL divergence of `p` conditioned on an
+    event `s` from `p` itself is the negative log-mass of the event —
+    updating by pure restriction costs exactly the information of learning
+    that `s` occurred. The general core of [levy-2008]\'s equivalence of
+    relative-entropy difficulty and surprisal (his eq. (4)).
+    `[UPSTREAM]` candidate: mathlib has `klDiv` but no conditioning identity. -/
+theorem klDiv_filter_self {α : Type*} [Fintype α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (p : PMF α) (s : Set α)
+    (h : ∃ a ∈ s, a ∈ p.support) :
+    (p.filter s h).klDiv p =
+      ENNReal.ofReal (-Real.log (∑' a, s.indicator p a).toReal) := by
+  classical
+  have hM0 : (∑' a, s.indicator p a) ≠ 0 := by simpa using h
+  have hMtop : (∑' a, s.indicator p a) ≠ ⊤ := p.tsum_coe_indicator_ne_top s
+  set M : ℝ≥0∞ := ∑' a, s.indicator p a with hMdef
+  have hM1 : M ≤ 1 := by
+    calc M ≤ ∑' a, p a := ENNReal.tsum_le_tsum (fun a => Set.indicator_le_self s _ a)
+    _ = 1 := p.tsum_coe
+  set m : ℝ := M.toReal with hmdef
+  have hm_pos : 0 < m := ENNReal.toReal_pos hM0 hMtop
+  have hm_le1 : m ≤ 1 := by
+    simpa [hmdef] using ENNReal.toReal_mono ENNReal.one_ne_top hM1
+  -- Absolute continuity: the conditioned PMF vanishes wherever `p` does.
+  have hAC : MeasureTheory.Measure.AbsolutelyContinuous
+      (p.filter s h).toMeasure p.toMeasure := by
+    refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun t ht hpt => ?_
+    rw [PMF.toMeasure_apply_eq_zero_iff _ ht] at hpt
+    rw [PMF.toMeasure_apply_eq_zero_iff _ ht, PMF.support_filter]
+    exact hpt.mono_left Set.inter_subset_right
+  rw [klDiv_eq_sum_klFun _ _ hAC]
+  -- Split the sum at membership in `s`.
+  rw [← Finset.sum_filter_add_sum_filter_not Finset.univ (· ∈ s)]
+  -- On `s`, every summand is `p a · klFun m⁻¹`.
+  have h_on : ∀ a ∈ Finset.univ.filter (· ∈ s),
+      p a * ENNReal.ofReal (_root_.InformationTheory.klFun
+        (((p.filter s h) a / p a).toReal))
+      = p a * ENNReal.ofReal (_root_.InformationTheory.klFun m⁻¹) := by
+    intro a ha
+    have has : a ∈ s := (Finset.mem_filter.mp ha).2
+    by_cases hpa : p a = 0
+    · rw [hpa, zero_mul, zero_mul]
+    · congr 2
+      rw [filter_apply, Set.indicator_of_mem has, ← hMdef, mul_comm,
+        mul_div_assoc, ENNReal.div_self hpa (PMF.apply_ne_top p a),
+        mul_one, ENNReal.toReal_inv]
+  -- Off `s`, the conditioned mass is 0 and `klFun 0 = 1`.
+  have h_off : ∀ a ∈ Finset.univ.filter (¬ · ∈ s),
+      p a * ENNReal.ofReal (_root_.InformationTheory.klFun
+        (((p.filter s h) a / p a).toReal))
+      = p a := by
+    intro a ha
+    have has : a ∉ s := by simpa using (Finset.mem_filter.mp ha).2
+    rw [filter_apply_eq_zero_of_notMem h has, ENNReal.zero_div,
+      ENNReal.toReal_zero, _root_.InformationTheory.klFun_zero,
+      ENNReal.ofReal_one, mul_one]
+  rw [Finset.sum_congr rfl h_on, Finset.sum_congr rfl h_off, ← Finset.sum_mul]
+  -- The `s`-part masses sum to `M`; the complement sums to `1 - m` in `ℝ`.
+  have hM_sum : ∑ a ∈ Finset.univ.filter (· ∈ s), p a = M := by
+    rw [hMdef, tsum_fintype, Finset.sum_filter]
+    exact Finset.sum_congr rfl (fun a _ => by rw [Set.indicator_apply])
+  have h_split : ∑ a ∈ Finset.univ.filter (· ∈ s), p a
+      + ∑ a ∈ Finset.univ.filter (¬ · ∈ s), p a = 1 := by
+    rw [Finset.sum_filter_add_sum_filter_not]
+    exact (tsum_fintype _).symm.trans p.tsum_coe
+  have hS₂top : (∑ a ∈ Finset.univ.filter (¬ · ∈ s), p a) ≠ ⊤ := fun htop => by
+    rw [htop, add_top] at h_split
+    exact ENNReal.one_ne_top h_split.symm
+  have hS₂ : ∑ a ∈ Finset.univ.filter (¬ · ∈ s), p a = ENNReal.ofReal (1 - m) := by
+    have := congrArg ENNReal.toReal h_split
+    rw [ENNReal.toReal_add (hM_sum ▸ hMtop) hS₂top, hM_sum, ← hmdef,
+      ENNReal.toReal_one] at this
+    rw [← ENNReal.ofReal_toReal hS₂top]
+    exact congrArg ENNReal.ofReal (by linarith)
+  rw [hM_sum, hS₂, ← ENNReal.ofReal_toReal hMtop, ← hmdef,
+    ← ENNReal.ofReal_mul hm_pos.le]
+  -- Real endgame: `m · klFun m⁻¹ + (1 − m) = −log m`.
+  have h_klFun : m * _root_.InformationTheory.klFun m⁻¹ = -Real.log m + (m - 1) := by
+    unfold _root_.InformationTheory.klFun
+    rw [Real.log_inv]
+    field_simp
+    ring
+  rw [h_klFun, ← ENNReal.ofReal_add (by nlinarith [Real.log_le_sub_one_of_pos hm_pos])
+    (by linarith)]
+  exact congrArg ENNReal.ofReal (by ring)
+
 -- ============================================================================
 -- §7: Jensen-Shannon divergence — KL-symmetrized form (mathlib-style)
 -- ============================================================================

@@ -146,3 +146,54 @@ theorem ofRealWeightFn_toRealFn_eq [Fintype α]
   rw [h_sum_ennreal, inv_one, mul_one, ENNReal.toReal_ofReal (h_nonneg b)]
 
 end PMF
+
+namespace PMF
+
+/-! ### Iterated conditioning -/
+
+variable {α : Type*}
+
+/-- **Iterated conditioning collapses**: filtering on `s`, then on a subevent
+    `s' ⊆ s`, is filtering on `s'` directly. Incremental Bayesian update by
+    restriction agrees with direct conditioning ([levy-2008]'s eqs. (5)–(8)).
+    `[UPSTREAM]` candidate for `Mathlib/Probability/ProbabilityMassFunction`. -/
+theorem filter_filter (p : PMF α) {s s' : Set α} (hss : s' ⊆ s)
+    (h : ∃ a ∈ s, a ∈ p.support) (h'' : ∃ a ∈ s', a ∈ p.support)
+    (h' : ∃ a ∈ s', a ∈ (p.filter s h).support) :
+    (p.filter s h).filter s' h' = p.filter s' h'' := by
+  have hM0 : (∑' a, s.indicator p a) ≠ 0 := by simpa using h
+  have hMtop : (∑' a, s.indicator p a) ≠ ⊤ := p.tsum_coe_indicator_ne_top s
+  have hind : ∀ a, s'.indicator (⇑(p.filter s h)) a
+      = s'.indicator p a * (∑' b, s.indicator p b)⁻¹ := by
+    intro a
+    by_cases ha : a ∈ s'
+    · rw [Set.indicator_of_mem ha, Set.indicator_of_mem ha, filter_apply,
+        Set.indicator_of_mem (hss ha)]
+    · rw [Set.indicator_of_notMem ha, Set.indicator_of_notMem ha, zero_mul]
+  ext a
+  rw [filter_apply, filter_apply]
+  simp only [hind]
+  rw [ENNReal.tsum_mul_right,
+    ENNReal.mul_inv (Or.inr (ENNReal.inv_ne_top.mpr hM0))
+      (Or.inl (p.tsum_coe_indicator_ne_top s')), inv_inv,
+    mul_comm ((∑' a, s'.indicator (⇑p) a)⁻¹) (∑' a, s.indicator (⇑p) a),
+    ← mul_assoc, mul_assoc (s'.indicator (⇑p) a),
+    ENNReal.inv_mul_cancel hM0 hMtop, mul_one]
+
+/-- Conditional mass of a subevent under filtering: for `s' ⊆ s`, the filtered
+    distribution gives `s'` the mass `p(s') / p(s)`. -/
+theorem tsum_indicator_filter_of_subset (p : PMF α) {s s' : Set α} (hss : s' ⊆ s)
+    (h : ∃ a ∈ s, a ∈ p.support) :
+    ∑' a, s'.indicator (⇑(p.filter s h)) a
+      = (∑' a, s'.indicator (⇑p) a) / (∑' a, s.indicator (⇑p) a) := by
+  have hind : ∀ a, s'.indicator (⇑(p.filter s h)) a
+      = s'.indicator (⇑p) a * (∑' b, s.indicator (⇑p) b)⁻¹ := by
+    intro a
+    by_cases ha : a ∈ s'
+    · rw [Set.indicator_of_mem ha, Set.indicator_of_mem ha, filter_apply,
+        Set.indicator_of_mem (hss ha)]
+    · rw [Set.indicator_of_notMem ha, Set.indicator_of_notMem ha, zero_mul]
+  simp only [hind]
+  rw [ENNReal.tsum_mul_right, div_eq_mul_inv]
+
+end PMF
