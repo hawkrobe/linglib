@@ -1,5 +1,6 @@
 import Linglib.Semantics.Modality.Exclusion
-import Linglib.Semantics.Tense.ConditionalShift
+import Linglib.Semantics.Conditionals.Basic
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Studies.Iatridou2000
@@ -17,7 +18,7 @@ Anderson conditionals ([anderson-1951]) argue *for* the truth of their anteceden
 took arsenic"). Mizuno shows that English must X-mark them (O-marking is trivial),
 whereas Japanese and Mandarin must O-mark them: their X-marking — the Fake Past -ta
 ([ogihara-2014], [mizuno-kaufmann-2019]) and perfective le — forces a counterfactual
-reading. Both strategies avoid triviality by **expanding** the modal domain `D ⊆ D⁺`;
+reading. Both strategies avoid triviality by **expanding** the modal domain `D ⊂ D⁺`;
 Mizuno adopts the *expansion* analysis of X-marking (fn 6, citing [mackay-2015],
 [mackay-2019] against the [iatridou-2000] / [schulz-2014] exclusion analysis), and
 analyzes Japanese O-marking as a Historical-Present perspectival shift ([schlenker-2004],
@@ -29,25 +30,24 @@ the evaluation time backward under branching time.
 * `english_japanese_discrepancy` — English X-marks, Japanese O-marks: the typological twist.
 * `attested_felicity_matches_strategy` — the attested judgments fit the per-language strategy.
 * `flv_anderson_correlation` — Anderson X-marking ⇔ Future-Less-Vivid X-marking (§4.2).
-* `oMarking_anderson_trivial` / `expansion_resolves_anderson` / `expanded_anderson_informative`
+* `oMarking_anderson_trivial` / `xMarking_resolves_anderson` / `expanded_anderson_informative`
   — the triviality puzzle and its resolution by domain expansion, on the Jones-arsenic scenario.
-* `hp_expands_jones_domain` / `hp_resolves_anderson` — Japanese HP: the backward time
+* `hp_expands_jones_domain` / `hp_resolves_anderson` — Japanese HP: the backward index
   shift enlarges the live-possibility domain, achieving the same semantic effect as
   X-marking — Mizuno's take (§4.1) on [von-fintel-iatridou-2023]'s uniformity hypothesis.
 
 The glossed stimuli live in `Data/Examples/Mizuno2024.json` (generated module
-`Mizuno2024.Examples`); the substrate (`Semantics.Modality.Exclusion`,
-`Semantics.Tense.ConditionalShift`, both of which cite [mizuno-2024]) supplies the
-marking typology and domain-expansion machinery instantiated here.
+`Mizuno2024.Examples`). The semantics is `Semantics.Conditionals.strictImp` over a
+`HistoricalAlternatives` modal base; `Semantics.Modality.Exclusion` (which cites
+[mizuno-2024]) supplies the X/O marking typology.
 -/
 
 namespace Mizuno2024
 
 open Semantics.Modality.Exclusion (MarkingStrategy)
-open Tense.ConditionalShift
-  (trivialConsequent nonTrivialConsequent domainRestrictedConditional
-   trivial_domainRestricted expansion_resolves_triviality
-   nontrivial_conditional_excludes history_antitone)
+open Semantics.Conditionals (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
+open HistoricalAlternatives (histEquiv_mono)
+open Intensional (WorldTimeIndex)
 open Data.Examples (LinguisticExample)
 
 /-! ### Languages and Anderson-conditional strategies
@@ -191,94 +191,105 @@ theorem flv_examples_match_generalization :
 [mizuno-2024]'s core semantic argument (§2): an Anderson consequent is an observed *fact*,
 true at every world in the non-expanded domain `D` of live possibilities, so over `D` the
 conditional is trivially true and uninformative. Both strategies fix this by expanding `D`
-to `D⁺ ⊋ D` containing a world where the consequent fails. Mizuno adopts the *expansion*
+to a `D⁺` containing a world where the consequent fails. Mizuno adopts the *expansion*
 analysis of X-marking (fn 6, citing [mackay-2015] against [iatridou-2000] exclusion).
 
-We instantiate the substrate's expansion machinery (`Semantics.Tense.ConditionalShift`)
-on the Jones-arsenic scenario: `World = Bool`, where `true` is a world in which Jones
-shows the arsenic symptoms (the observed fact) and `false` one in which he does not. -/
+The Jones-arsenic scenario as a strict conditional (`Semantics.Conditionals.strictImp`)
+over a historical modal base: worlds are `Bool` (`true` = Jones shows the symptoms),
+evaluation points are ⟨world, time⟩ indices, and the domain at an index is its set of
+live alternatives. The paper's `D` is the domain at the utterance index; `D⁺` is its
+expansion — reached by X-marking (a larger base, same index) or by the Japanese HP
+shift (same base, earlier index). -/
 
 /-- The Anderson consequent: Jones shows the (arsenic) symptoms. -/
-def showsSymptoms : Bool → Prop := λ w => w = true
+def showsSymptoms : Set Bool := {w | w = true}
 
-/-- The non-expanded domain `D` of live possibilities: Jones is assumed to show the
-    symptoms, so the only live world is the symptom-showing one. -/
-def liveDomain : Set Bool := {true}
-
-/-- The expanded domain `D⁺`, including the non-live world where the symptoms are absent. -/
-def expandedDomain : Set Bool := Set.univ
-
-/-- Over `D`, the consequent is trivial — it is an observed fact holding at every live
-    world ([mizuno-2024], §2). -/
-theorem consequent_trivial_over_live : trivialConsequent liveDomain showsSymptoms :=
-  λ _ hw => hw
-
-/-- O-marking without expansion: the Anderson conditional is vacuously true over `D` for
-    *any* antecedent — Mizuno's triviality puzzle, the infelicity of ex. (2). -/
-theorem oMarking_anderson_trivial (antecedent : Bool → Prop) :
-    domainRestrictedConditional liveDomain antecedent showsSymptoms :=
-  trivial_domainRestricted liveDomain antecedent showsSymptoms consequent_trivial_over_live
-
-/-- X-marking's expansion resolves triviality, and is strict — the paper's `D ⊂ D⁺`:
-    `D⁺` properly extends the live domain and contains the symptom-absent `false`-world,
-    so the consequent is non-trivial over `D⁺` ([mizuno-2024], §2). -/
-theorem expansion_resolves_anderson :
-    liveDomain ⊂ expandedDomain ∧ nonTrivialConsequent expandedDomain showsSymptoms :=
-  expansion_resolves_triviality liveDomain expandedDomain showsSymptoms
-    (Set.subset_univ _) consequent_trivial_over_live false (Set.mem_univ _) Bool.false_ne_true
-
-/-- The payoff ([mizuno-2024], §2: "one can make a meaningful, contingent claim"): an
-    Anderson conditional that holds over the expanded `D⁺` is informative — its antecedent
-    genuinely excludes the symptom-absent world. -/
-theorem expanded_anderson_informative (antecedent : Bool → Prop)
-    (h : domainRestrictedConditional expandedDomain antecedent showsSymptoms) :
-    ∃ w ∈ expandedDomain, ¬ antecedent w :=
-  nontrivial_conditional_excludes expandedDomain antecedent showsSymptoms
-    expansion_resolves_anderson.2 h
-
-/-! ### Japanese O-marking: HP expansion under branching time
-
-[mizuno-2024]'s analysis of why Japanese O-marking (Non-Past) escapes triviality without
-X-marking (§3.3): the Historical-Present shift moves the evaluation time backward, and
-since live possibilities monotonically shrink as time develops (Mizuno's assumption,
-which the substrate encodes as a backward-closed history à la [condoravdi-2002]), the
-earlier-time domain is *larger* — domain expansion without counterfactual morphology. -/
-
-/-- A backward-closed history witnessing HP expansion: a world is a live alternative to
-    `s` iff it is `s`'s own world, or `s`'s time is at or before `0`. Earlier times have
-    strictly more alternatives. -/
+/-- A backward-closed history: a world is a live alternative to `s` iff it is `s`'s own
+    world, or `s`'s time is at or before `0`. Earlier times have strictly more
+    alternatives. -/
 def historyJones : HistoricalAlternatives Bool ℤ :=
   λ s => { w | w = s.world ∨ s.time ≤ 0 }
 
 theorem historyJones_backwardsClosed : historyJones.backwardsClosed :=
   λ _ _ _ _ hle hmem => Or.imp id (le_trans hle) hmem
 
-/-- The HP backward shift enlarges the domain of live possibilities: the symptom-absent
-    world `false` is *not* a live alternative at the utterance time (`t = 1`) but *is* one
-    at the HP-shifted earlier time (`t = 0`), so the expanded domain contains a
-    consequent-failing world — exactly [mizuno-2024]'s argument for Japanese (§3.3).
-    The subset direction is the substrate's `history_antitone`. -/
-theorem hp_expands_jones_domain :
-    historyJones ⟨true, 1⟩ ⊆ historyJones ⟨true, 0⟩ ∧
-      false ∈ historyJones ⟨true, 0⟩ ∧ false ∉ historyJones ⟨true, 1⟩ := by
-  refine ⟨history_antitone historyJones historyJones_backwardsClosed true (by decide),
-    Or.inr le_rfl, ?_⟩
-  simp [historyJones]
+/-- The utterance index: the symptom world, at a time (`1`) after the facts are settled.
+    Its domain is the paper's `D`. -/
+def utteranceIdx : WorldTimeIndex Bool ℤ := ⟨true, 1⟩
 
-/-- Japanese O-marking end-to-end ([mizuno-2024], §3.3): the HP-shifted domain strictly
-    extends the live one and makes the consequent non-trivial — the same semantic effect
-    X-marking achieves by direct expansion (`expansion_resolves_anderson`). Together with
-    `english_japanese_discrepancy`, this renders §4.1's take on
-    [von-fintel-iatridou-2023]'s uniformity hypothesis: the semantic contribution of the
-    two strategies coincides (strict domain expansion resolving triviality); what varies
-    across languages is which strategy may be *deployed* for Anderson conditionals. -/
+/-- The HP-shifted index ([mizuno-2024], §3.3): same world, evaluation time moved
+    backward to `0`. Its domain is the paper's `D⁺` on the O-marking route. -/
+def hpIdx : WorldTimeIndex Bool ℤ := ⟨true, 0⟩
+
+/-- Over `D`, the consequent is trivial: at the utterance index only the symptom world
+    is live, and it is an observed fact there ([mizuno-2024], §2). -/
+theorem consequent_trivial_at_utterance :
+    historyJones utteranceIdx ⊆ showsSymptoms :=
+  λ _ hw => Or.resolve_right hw (by decide)
+
+/-- O-marking without expansion: at the utterance index the Anderson conditional is
+    trivially true for *any* antecedent — Mizuno's triviality puzzle, the infelicity of
+    ex. (2). -/
+theorem oMarking_anderson_trivial (antecedent : Set Bool) :
+    utteranceIdx ∈ strictImp historyJones antecedent showsSymptoms :=
+  mem_strictImp_of_subset consequent_trivial_at_utterance
+
+/-- The X-marked base: counterfactual morphology makes every world live at every index
+    ([mizuno-2024], §2's expansion analysis, fn 6) — the miniature's `D⁺` on the
+    X-marking route. -/
+def xMarkedBase : HistoricalAlternatives Bool ℤ := λ _ => Set.univ
+
+/-- The symptom-absent world is not live at the utterance index. -/
+theorem false_not_live : false ∉ historyJones utteranceIdx :=
+  λ h => absurd (Or.resolve_left h (by decide)) (by decide)
+
+/-- X-marking resolves triviality: the expansion is strict (the paper's `D ⊂ D⁺`) and
+    the consequent fails at the newly live symptom-absent world, so it is no longer
+    trivial over `D⁺` ([mizuno-2024], §2). -/
+theorem xMarking_resolves_anderson :
+    historyJones utteranceIdx ⊂ xMarkedBase utteranceIdx ∧
+      ¬ xMarkedBase utteranceIdx ⊆ showsSymptoms :=
+  ⟨(Set.ssubset_iff_of_subset (Set.subset_univ _)).mpr
+      ⟨false, Set.mem_univ _, false_not_live⟩,
+    λ h => Bool.false_ne_true (h (Set.mem_univ false))⟩
+
+/-! ### Japanese O-marking: HP expansion under branching time
+
+Why Japanese O-marking (Non-Past) escapes triviality without X-marking ([mizuno-2024],
+§3.3): the Historical-Present shift moves the evaluation index backward, and since live
+possibilities monotonically shrink as time develops (Mizuno's assumption; the substrate's
+`backwardsClosed`, anchored on [condoravdi-2002]), the earlier index has a larger
+domain — domain expansion without counterfactual morphology. -/
+
+/-- The HP backward shift strictly enlarges the live domain: every world live at the
+    utterance index stays live at the earlier index (the substrate's `histEquiv_mono`),
+    and the symptom-absent world becomes newly live ([mizuno-2024], §3.3). -/
+theorem hp_expands_jones_domain :
+    historyJones utteranceIdx ⊂ historyJones hpIdx :=
+  (Set.ssubset_iff_of_subset
+      (λ _ hw => histEquiv_mono historyJones_backwardsClosed true _ (by decide) hw)).mpr
+    ⟨false, Or.inr le_rfl, false_not_live⟩
+
+/-- O-marking resolves triviality the HP way ([mizuno-2024], §3.3): over the shifted
+    domain the consequent is non-trivial — the same conclusion
+    `xMarking_resolves_anderson` reaches by enlarging the base. Same operator
+    (`strictImp`), same semantic effect; X-marking moves the *base* argument, the HP
+    shift moves the *index* argument. Together with `english_japanese_discrepancy`,
+    this renders §4.1's take on [von-fintel-iatridou-2023]'s uniformity hypothesis:
+    what varies across languages is which route may be deployed, not what the
+    expansion does. -/
 theorem hp_resolves_anderson :
-    liveDomain ⊂ historyJones ⟨true, 0⟩ ∧
-      nonTrivialConsequent (historyJones ⟨true, 0⟩) showsSymptoms :=
-  expansion_resolves_triviality liveDomain (historyJones ⟨true, 0⟩) showsSymptoms
-    (Set.Subset.trans (λ _ hw => Or.inl hw) hp_expands_jones_domain.1)
-    consequent_trivial_over_live
-    false hp_expands_jones_domain.2.1 Bool.false_ne_true
+    historyJones utteranceIdx ⊂ historyJones hpIdx ∧
+      ¬ historyJones hpIdx ⊆ showsSymptoms :=
+  ⟨hp_expands_jones_domain, λ h => Bool.false_ne_true (h (Or.inr le_rfl))⟩
+
+/-- The payoff ([mizuno-2024], §2: "one can make a meaningful, contingent claim"): a
+    true Anderson conditional at the HP-shifted index is informative — its antecedent
+    excludes a live world (`Set.not_subset` gives the ∃-witness form). -/
+theorem expanded_anderson_informative (antecedent : Set Bool)
+    (h : hpIdx ∈ strictImp historyJones antecedent showsSymptoms) :
+    ¬ historyJones hpIdx ⊆ antecedent :=
+  not_subset_of_mem_strictImp h hp_resolves_anderson.2
 
 /-! ### Fragment marker connection -/
 
