@@ -1444,7 +1444,6 @@ import Linglib.Pragmatics.SocialMeaning.SocialUtility
 import Linglib.Pragmatics.SoftmaxOptimality
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Processing.Cost.Profile
-import Linglib.Processing.CueBasedRetrieval.Basic
 import Linglib.Processing.LanguageModel.Basic
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
@@ -2332,12 +2331,14 @@ import Linglib.Studies.IatridouZeijlstra2021
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.ImelGuoST2026
+import Linglib.Studies.IoninMatushansky2006
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025
 import Linglib.Studies.Israel2001
 import Linglib.Studies.ItoMester2009
 import Linglib.Studies.Izvorski1997
 import Linglib.Studies.Jaeger2007
+import Linglib.Studies.JansenPollmann2001
 import Linglib.Studies.Jardine2016
 import Linglib.Studies.Jardine2016Tone
 import Linglib.Studies.Jardine2017
@@ -2605,6 +2606,7 @@ import Linglib.Studies.Santorio2018
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Sauerland2003
+import Linglib.Studies.SauerlandStateva2011
 import Linglib.Studies.Schlenker2003
 import Linglib.Studies.Schlenker2004
 import Linglib.Studies.Schlenker2009
@@ -2892,6 +2894,7 @@ import Linglib.Syntax.Minimalist.Workspace.Basic
 import Linglib.Syntax.Negation
 import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Numeral.Basic
+import Linglib.Syntax.Numeral.Composition
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative

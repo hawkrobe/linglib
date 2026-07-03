@@ -81,9 +81,9 @@ def stimRound : Nat := 50
 theorem stim_precise_not_round :
     Semantics.Numerals.Roundness.roundnessScore stimPrecise = 0 := by decide
 
-/-- 50 has moderate roundness (score 4) — imprecise readings available. -/
+/-- 50 is highly round (score 5) — imprecise readings available. -/
 theorem stim_round_is_round :
-    Semantics.Numerals.Roundness.roundnessScore stimRound = 4 := by decide
+    Semantics.Numerals.Roundness.roundnessScore stimRound = 5 := by decide
 
 open Semantics.Numerals.Precision in
 /-- 49 → exact precision mode (roundnessScore 0 < 2). -/

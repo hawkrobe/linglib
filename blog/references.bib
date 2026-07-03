@@ -5139,6 +5139,34 @@
   validated = {true},
   sources   = {Phenomena/Polarity/NPIs.lean;Phenomena/Polarity/Studies/Israel2001.lean;Core/Lexical/PolarityItem.lean;Fragments/English/PolarityItems.lean}
 }% REF: Jansen & Pollmann (2001). On round numbers: An analysis of numerical turn-taking points.
+@book{hurford-1975,
+  author    = {Hurford, James R.},
+  year      = {1975},
+  title     = {The Linguistic Theory of Numerals},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  isbn      = {0521207355},
+  subfield  = {syntax},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Syntax/Numeral/Composition.lean}
+}
+
+@article{ionin-matushansky-2006,
+  author    = {Ionin, Tania and Matushansky, Ora},
+  year      = {2006},
+  title     = {The Composition of Complex Cardinals},
+  journal   = {Journal of Semantics},
+  volume    = {23},
+  number    = {4},
+  pages     = {315--360},
+  doi       = {10.1093/jos/ffl006},
+  subfield  = {semantics/compositional},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Studies/IoninMatushansky2006.lean}
+}
+
 @article{jansen-pollmann-2001,
   author    = {Jansen, Carel J. M. and Pollmann, Mathijs M. W.},
   year      = {2001},
@@ -5149,7 +5177,7 @@
   pages     = {187--201},
   doi       = {10.1076/jqul.8.3.187.4095},
   subfield  = {semantics/compositional},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
   sources   = {Core/Scales/Roundness.lean;Phenomena/Numerals/Studies/WoodinEtAl2024.lean;Pragmatics/NeoGricean/Constraints/NumericalExpressions.lean}
 }% REF: Palmer, F. R. (2001). Mood and Modality. 2nd ed. CUP.
@@ -20694,8 +20722,8 @@
   publisher = {Palgrave Macmillan},
   doi       = {10.1057/9780230299313_6},
   subfield  = {semantics},
-  role      = {cited},
-  sources   = {crossref}
+  role      = {formalized},
+  sources   = {Studies/SauerlandStateva2011.lean}
 }
 @article{yalcin-2007,
   author    = {Yalcin, Seth},
@@ -35141,4 +35169,73 @@
   subfield  = {semantics/pragmatics},
   role      = {formalized},
   sources   = {Studies/Mihoc2019.lean}
+}
+
+@article{bakay-etal-2026,
+  author    = {Bakay, {\"O}zge and Akku{\c{s}}, Faruk and Dillon, Brian},
+  year      = {2026},
+  title     = {Hierarchical relations guide memory retrieval in sentence comprehension: Evidence from a local anaphor in Turkish},
+  journal   = {Journal of Memory and Language},
+  volume    = {148},
+  pages     = {104747},
+  doi       = {10.1016/j.jml.2026.104747},
+  subfield  = {processing},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Studies/BakayEtAl2026.lean; Fragments/Turkish/Anaphors.lean}
+}
+
+@phdthesis{kush-2013,
+  author    = {Kush, Dave W.},
+  year      = {2013},
+  title     = {Respecting Relations: Memory Access and Antecedent Retrieval in Incremental Sentence Processing},
+  school    = {University of Maryland, College Park},
+  subfield  = {processing},
+  role      = {cited},
+  validated = {true},
+  sources   = {Studies/BakayEtAl2026.lean}
+}
+
+@article{mcelree-2006,
+  author    = {McElree, Brian},
+  year      = {2006},
+  title     = {Accessing Recent Events},
+  journal   = {Psychology of Learning and Motivation},
+  volume    = {46},
+  pages     = {155--200},
+  doi       = {10.1016/S0079-7421(06)46005-9},
+  subfield  = {processing},
+  role      = {cited},
+  validated = {true},
+  sources   = {Studies/BakayEtAl2026.lean}
+}
+
+@article{oberauer-2002,
+  author    = {Oberauer, Klaus},
+  year      = {2002},
+  title     = {Access to information in working memory: Exploring the focus of attention},
+  journal   = {Journal of Experimental Psychology: Learning, Memory, and Cognition},
+  volume    = {28},
+  number    = {3},
+  pages     = {411--421},
+  doi       = {10.1037/0278-7393.28.3.411},
+  subfield  = {processing},
+  role      = {cited},
+  validated = {true},
+  sources   = {Studies/BakayEtAl2026.lean}
+}
+
+@article{dillon-etal-2013,
+  author    = {Dillon, Brian and Mishler, Alan and Sloggett, Shayne and Phillips, Colin},
+  year      = {2013},
+  title     = {Contrasting intrusion profiles for agreement and anaphora: Experimental and modeling evidence},
+  journal   = {Journal of Memory and Language},
+  volume    = {69},
+  number    = {2},
+  pages     = {85--103},
+  doi       = {10.1016/j.jml.2013.04.003},
+  subfield  = {processing},
+  role      = {cited},
+  validated = {true},
+  sources   = {Studies/BakayEtAl2026.lean}
 }

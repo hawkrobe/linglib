@@ -92,7 +92,7 @@ def PrecisionMode.projection (g : ℕ) : PrecisionMode → PrecisionProjection �
   | .approximate => .roundTo g
 
 #guard inferPrecisionMode 100 = .approximate  -- score 6 ≥ 2
-#guard inferPrecisionMode 50 = .approximate   -- score 4 ≥ 2
+#guard inferPrecisionMode 50 = .approximate   -- score 5 ≥ 2
 #guard inferPrecisionMode 110 = .approximate  -- score 2 ≥ 2
 #guard inferPrecisionMode 7 = .exact          -- score 0 < 2
 #guard inferPrecisionMode 99 = .exact         -- score 0 < 2
