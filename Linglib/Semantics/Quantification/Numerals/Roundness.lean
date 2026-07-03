@@ -126,27 +126,25 @@ def roundnessInContext (n : ℕ) (base : ℕ) : ℕ :=
 
 /-! ### Per-datum verification -/
 
--- Score verification
-#guard roundnessScore 100 = 6
-#guard roundnessScore 50 = 5
-#guard roundnessScore 7 = 0
-#guard roundnessScore 1000 = 6
-#guard roundnessScore 200 = 6
-#guard roundnessScore 110 = 2
-#guard roundnessScore 20 = 4
+example : roundnessScore 100 = 6 := by decide
+example : roundnessScore 50 = 5 := by decide
+example : roundnessScore 7 = 0 := by decide
+example : roundnessScore 1000 = 6 := by decide
+example : roundnessScore 200 = 6 := by decide
+example : roundnessScore 110 = 2 := by decide
+example : roundnessScore 20 = 4 := by decide
 
--- Grade verification
-#guard roundnessGrade 100 = .high
-#guard roundnessGrade 50 = .high
-#guard roundnessGrade 110 = .low
-#guard roundnessGrade 7 = .none
+example : roundnessGrade 100 = .high := by decide
+example : roundnessGrade 50 = .high := by decide
+example : roundnessGrade 110 = .low := by decide
+example : roundnessGrade 7 = .none := by decide
 
--- Context-sensitive verification
-#guard contextualRoundnessScore 48 12 = 2
-#guard contextualRoundnessScore 120 12 = 4
-#guard roundnessInContext 48 12 = 2     -- contextual score beats default (0)
-#guard roundnessInContext 48 10 = 0     -- not round on base-10
-#guard roundnessInContext 100 10 = 6    -- default score beats contextual
+example : contextualRoundnessScore 48 12 = 2 := by decide
+example : contextualRoundnessScore 120 12 = 4 := by decide
+-- contextual score beats default; nothing on base-10; default beats contextual
+example : roundnessInContext 48 12 = 2 := by decide
+example : roundnessInContext 48 10 = 0 := by decide
+example : roundnessInContext 100 10 = 6 := by decide
 
 /-- Multiples of 10 have roundness score ≥ 2 (multiple-of-5 and
 multiple-of-10 both hold). The keystone for downstream sorry-free proofs. -/
