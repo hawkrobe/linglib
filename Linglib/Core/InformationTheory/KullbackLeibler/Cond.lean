@@ -27,7 +27,7 @@ namespace InformationTheory
 `μ` is the information content of the event: `−log μ(s)`. The core of
 [levy-2008]'s equivalence of relative-entropy difficulty and surprisal. -/
 theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
-    (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
+    (μ : Measure Ω) [IsProbabilityMeasure μ]
     {s : Set Ω} (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :
     klDiv (μ[|s]) μ = ENNReal.ofReal (-Real.log (μ s).toReal) := by
   haveI := cond_isProbabilityMeasure (μ := μ) hs0

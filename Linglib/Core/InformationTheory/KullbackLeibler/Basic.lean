@@ -19,7 +19,7 @@ open scoped ENNReal
 
 namespace InformationTheory
 
-variable {Ω : Type*} [MeasurableSpace Ω] {μ ν : MeasureTheory.Measure Ω}
+variable {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω}
 
 /-- For probability measures, `klDiv` is the integral of the log-likelihood
     ratio: the finite-measure correction term cancels. -/

@@ -28,7 +28,7 @@ open scoped ENNReal ProbabilityTheory
 
 namespace ProbabilityTheory
 
-variable {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} {s : Set Ω}
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {s : Set Ω}
 
 /-- The conditional measure `μ[|s]` is `μ` with density `(μ s)⁻¹` on `s` and `0` off it. -/
 theorem cond_eq_withDensity (hs : MeasurableSet s) :
