@@ -42,8 +42,7 @@ theorem rnDeriv_cond [SigmaFinite μ] (hs : MeasurableSet s) :
     (μ[|s]).rnDeriv μ =ᵐ[μ] s.indicator fun _ => (μ s)⁻¹ :=
   cond_eq_withDensity hs ▸ Measure.rnDeriv_withDensity μ (measurable_const.indicator hs)
 
-/-- On its own event, the conditional measure's density is the constant
-    `(μ s)⁻¹`. -/
+/-- On its own event, the conditional measure's density is the constant `(μ s)⁻¹`. -/
 theorem rnDeriv_cond_ae_const [SigmaFinite μ] (hs : MeasurableSet s) :
     (μ[|s]).rnDeriv μ =ᵐ[μ[|s]] fun _ => (μ s)⁻¹ :=
   (cond_absolutelyContinuous.ae_eq (rnDeriv_cond hs)).trans <|
