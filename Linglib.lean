@@ -2218,6 +2218,7 @@ import Linglib.Studies.FrischPierrehumbertBroe2004
 import Linglib.Studies.Funakoshi2016
 import Linglib.Studies.FuscoSgrizzi2026
 import Linglib.Studies.FutrellEtAl2020
+import Linglib.Studies.FutrellGibsonLevy2020
 import Linglib.Studies.GahlBaayen2024
 import Linglib.Studies.Gajewski2002
 import Linglib.Studies.Gajewski2011
