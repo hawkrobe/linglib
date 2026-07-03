@@ -1,4 +1,4 @@
-import Linglib.Processing.NoisyChannel.Basic
+import Linglib.Processing.Memory.Channel
 
 /-!
 # Lossy-Context Surprisal: Bridge to Classical Surprisal

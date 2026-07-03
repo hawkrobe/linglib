@@ -1,6 +1,6 @@
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Topology.Algebra.InfiniteSum.Basic
-import Linglib.Processing.LanguageModel.Basic
+import Linglib.Processing.Expectation.LanguageModel
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Analysis.Convex.Jensen
@@ -35,8 +35,9 @@ Following the paper's claims (§3.1, Claims 1–4):
    `-log P(w | m)` over `m ~ encode(c)`.
 
 This file provides the abstract type and the master cost function.
-Specialisations (lossless = classical surprisal, n-gram, erasure noise,
-cue-based retrieval) live in sibling files.
+Specialisations (lossless = classical surprisal, n-gram, erasure noise)
+live in sibling files. Whether activation-based retrieval (see
+`Studies/BakayEtAl2026.lean`) also derives as an instantiation is open.
 
 The encoder and predictor are mathlib `PMF` kernels (countable support,
 `ℝ≥0∞`-valued), so neither `Voc` nor `Mem` need to be `Fintype`. Expected
@@ -104,9 +105,8 @@ noncomputable def perStateSurprisal (mp : MemoryProcess Voc Mem)
 `D_lc(w | c) = E_{m ~ encode(c)}[-log P(w | m)]`.
 ([futrell-gibson-levy-2020] Eq. 3.)
 
-This is the master cost function from which classical surprisal,
-n-gram surprisal, and the cue-based retrieval cost all derive as
-instantiations of `(encode, predict)`. -/
+This is the master cost function from which classical surprisal and
+n-gram surprisal derive as instantiations of `(encode, predict)`. -/
 noncomputable def expectedSurprisal (mp : MemoryProcess Voc Mem)
     (c : List Voc) (w : Voc) : ℝ :=
   ∑' m : Mem, (mp.encode c m).toReal * mp.perStateSurprisal m w

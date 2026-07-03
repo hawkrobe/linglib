@@ -1,4 +1,4 @@
-import Linglib.Processing.MemorySurprisal.Basic
+import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!

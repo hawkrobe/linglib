@@ -1,5 +1,5 @@
-import Linglib.Processing.MemorySurprisal.InformationalFusion
-import Linglib.Processing.MemorySurprisal.Basic
+import Linglib.Processing.Memory.InformationalFusion
+import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Studies.AckermanMalouf2013
 import Linglib.Studies.Bybee1985
 import Linglib.Studies.BickelNichols2013
@@ -13,7 +13,7 @@ import Linglib.Morphology.Paradigm
 
 [rathi-hahn-futrell-2026] extend the **Memory-Surprisal Tradeoff**
 ([hahn-degen-futrell-2021], formalized in
-`Processing/MemorySurprisal/Basic.lean` and consumed in
+`Processing/Memory/SurprisalTradeoff.lean` and consumed in
 `Studies/HahnDegenFutrell2021Morphology.lean`) from word/morpheme
 order to four further morphological phenomena:
 
@@ -34,7 +34,7 @@ segmentation.
 
 - §1: Toy languages L_agg, L_fus, L_clustered (paper Tables 4, 5, 6)
 - §2: A1/A2/A3 instantiations (paper Appendix); abstract theorems live in
-  `Processing/MemorySurprisal/InformationalFusion.lean`
+  `Processing/Memory/InformationalFusion.lean`
 - §3: Polyexponence empirical clustering (paper §4.2, Figs 7–8)
 - §4: Suppletion — number-before-case in optimal ordering (paper §4.3)
 - §5: Pairwise informational fusion in Spanish (paper §4.4, Table 7)
@@ -187,7 +187,7 @@ theorem L_clustered_eComplexity_match :
 /-! ### Paper Appendix A1: fusion can lower local surprisal
 
 The abstract theorem `fusion_can_lower_marginal_entropy` lives in
-`Processing/MemorySurprisal/InformationalFusion.lean` and is a
+`Processing/Memory/InformationalFusion.lean` and is a
 direct re-export of `PMF.conditionalEntropy_le_entropy`
 (Cover-Thomas 2.6.4).
 

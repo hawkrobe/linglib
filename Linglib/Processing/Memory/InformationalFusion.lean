@@ -1,5 +1,5 @@
 import Linglib.Morphology.Paradigm
-import Linglib.Processing.MemorySurprisal.Basic
+import Linglib.Processing.Memory.SurprisalTradeoff
 
 /-!
 # Informational Fusion

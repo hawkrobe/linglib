@@ -1,4 +1,4 @@
-import Linglib.Processing.MemorySurprisal.Basic
+import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Sesotho.Morph

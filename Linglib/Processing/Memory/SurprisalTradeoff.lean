@@ -1,6 +1,6 @@
 import Linglib.Processing.Cost.Profile
-import Linglib.Processing.PredictiveUncertainty.Config
-import Linglib.Processing.NoisyChannel.LossyContext
+import Linglib.Processing.Expectation.Defs
+import Linglib.Processing.Memory.LossyContext
 
 /-!
 # Memory-Surprisal Trade-off Framework
@@ -86,7 +86,7 @@ structure MemoryEncoding (W : Type) (Mem : Type) where
 /-- Iterate a `MemoryEncoding` over an entire history to produce the
 final memory state. This is the *context-summary function* that, when
 paired with a predictor `Mem → PMF (Option W)`, induces a Dirac
-`MemoryProcess` (in `Processing.Memory`). Such a
+`MemoryProcess` (in `Processing.NoisyChannel`). Such a
 process is lossless for its own virtual LM
 (`MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal`), so
 classical surprisal arises *exactly* when memory is encoded
