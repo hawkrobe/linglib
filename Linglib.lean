@@ -582,12 +582,9 @@ import Linglib.Data.WALS.Features.F99A
 import Linglib.Data.WALS.Features.F9A
 import Linglib.Data.WALS.Languages
 import Linglib.Discourse.AtIssueness
-import Linglib.Discourse.Brandom
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Constraints
 import Linglib.Discourse.Centering.Defs
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Discourse.Centering.Instances.InformationStatus
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Rule2
 import Linglib.Discourse.Centering.Transition
@@ -597,8 +594,6 @@ import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.CommitmentSpace
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.DisjunctiveUpdate
-import Linglib.Discourse.DistributionalCG
 import Linglib.Discourse.Gameboard.Austinian
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
@@ -611,17 +606,9 @@ import Linglib.Discourse.Gameboard.RepriseContent
 import Linglib.Discourse.Gameboard.SelfRepair
 import Linglib.Discourse.Gunlogson
 import Linglib.Discourse.Issue
-import Linglib.Discourse.LayeredAssertion
-import Linglib.Discourse.Move
 import Linglib.Discourse.QUDStack
-import Linglib.Discourse.QuotationFBOntology
-import Linglib.Discourse.ReasonableInference
-import Linglib.Discourse.Rhetorical.Defs
-import Linglib.Discourse.Rhetorical.RightFrontier
 import Linglib.Discourse.Roles
-import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.SpeechAct
-import Linglib.Discourse.Stalnaker
 import Linglib.Discourse.Strategy
 import Linglib.Features.Acceptability
 import Linglib.Features.Accessibility
@@ -2059,6 +2046,7 @@ import Linglib.Studies.BrehenyEtAl2018
 import Linglib.Studies.BreissKatsudaKawahara2026
 import Linglib.Studies.Bresnan1973
 import Linglib.Studies.BresnanEtAl1982
+import Linglib.Studies.Brandom1994
 import Linglib.Studies.BringGunlogson2000
 import Linglib.Studies.BroekhuisCorver2026
 import Linglib.Studies.Bruening2001
@@ -2078,6 +2066,7 @@ import Linglib.Studies.Caha2009
 import Linglib.Studies.CaoWhiteLassiter2025
 import Linglib.Studies.Cariani2013
 import Linglib.Studies.CarianiGoldstein2020
+import Linglib.Studies.Caie2023
 import Linglib.Studies.CarianiSantorio2018
 import Linglib.Studies.CarianiSantorioWellwood2024
 import Linglib.Studies.Carstens2026

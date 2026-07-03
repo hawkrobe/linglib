@@ -56,7 +56,7 @@ sequential update = single conjunctive update — apply directly.
   analogue with different conceptual content.
 -/
 
-namespace Discourse.DisjunctiveUpdate
+namespace Caie2023
 
 open CommonGround (ContextSet)
 open Semantics.Dynamic.ParameterizedUpdate
@@ -601,4 +601,4 @@ theorem matching_mixed_compl (c : DressInt) (w : TimPref) :
 
 end SarahsSocks
 
-end Discourse.DisjunctiveUpdate
+end Caie2023
