@@ -3,8 +3,7 @@ import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Discourse.QUDStack
-import Linglib.Discourse.Strategy
+import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Questions.Partition.Lattice
 
 /-!

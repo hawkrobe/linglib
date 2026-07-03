@@ -1,4 +1,4 @@
-import Linglib.Discourse.AtIssueness
+import Linglib.Discourse.QUD.AtIssueness
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Generalizations.Projectivity
 

@@ -17,7 +17,7 @@ is treated as orthogonal to Krifka's four. Substrate for each:
 - Focus: `FocusMark` + `Focus α` (this file).
 - Givenness: `Features/Givenness.lean` (`GivennessStatus` + `BinaryGivenness`).
 - Topic: `Features/Topic.lean` (`TopicMark` + `ContrastiveTopic α`).
-- At-issueness: `Discourse/AtIssueness.lean` (gradient `AtIssuenessDegree`).
+- At-issueness: `Discourse/QUD/AtIssueness.lean` (gradient `AtIssuenessDegree`).
 - Delimitation: no substrate yet — deferred.
 
 Theme/Rheme and `JudgmentType` (Kuroda 1972) live here too — they

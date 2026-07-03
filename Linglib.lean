@@ -581,7 +581,6 @@ import Linglib.Data.WALS.Features.F98A
 import Linglib.Data.WALS.Features.F99A
 import Linglib.Data.WALS.Features.F9A
 import Linglib.Data.WALS.Languages
-import Linglib.Discourse.AtIssueness
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Defs
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
@@ -605,11 +604,11 @@ import Linglib.Discourse.Gameboard.NSUTaxonomy
 import Linglib.Discourse.Gameboard.RepriseContent
 import Linglib.Discourse.Gameboard.SelfRepair
 import Linglib.Discourse.Gunlogson
-import Linglib.Discourse.Issue
-import Linglib.Discourse.QUDStack
+import Linglib.Discourse.QUD.AtIssueness
+import Linglib.Discourse.QUD.Basic
+import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
-import Linglib.Discourse.Strategy
 import Linglib.Features.Acceptability
 import Linglib.Features.Accessibility
 import Linglib.Features.Agreement

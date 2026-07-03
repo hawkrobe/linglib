@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.Issue
+import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
 
