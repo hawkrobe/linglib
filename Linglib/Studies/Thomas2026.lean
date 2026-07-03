@@ -138,17 +138,13 @@ for (72)/(19c), `prejacent_violation_i` for (11), `prejacent_violation_ii` for
 (30)). The *either* row carries no diagnosis — fn. 9 leaves *either* to future
 work — so the transfer equation is stated for *too* rows only. -/
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : Data.Examples.LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- **Transfer equation**: a *too* row is acceptable iff the paper exhibits an
     (ANT, RQ) pair satisfying all of Def 64. Uniform across the standard and
     argument-building rows — [thomas-2026]'s unification thesis. -/
 theorem too_acceptable_iff_def64_satisfied :
-    ∀ row ∈ Examples.all, featureOf row "particle" = some "too" →
+    ∀ row ∈ Examples.all, row.feature? "particle" = some "too" →
       (row.judgment = .acceptable ↔
-        featureOf row "def64_status" = some "satisfied") := by
+        row.feature? "def64_status" = some "satisfied") := by
   decide
 
 end Thomas2026

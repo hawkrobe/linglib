@@ -48,7 +48,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 - `Focus`, `Background` — focus/background partition (§4)
 - `Theme`, `Rheme`, `InfoStructure` — information structure analysis (§5)
 - `FocusedSentence.infoStructure` — IS extractor (§5b; previously a `HasInfoStructure` instance)
-- `featureOf`, `fipPrediction` — row adapters over `Data/Examples/Rooth1992.json` (§8)
+- `fipPrediction` — row adapter over `Data/Examples/Rooth1992.json` (§8)
 - `Tree`, `interp` — compositional derivation (§10–§11)
 - `Derivation` — derivation bundles (§13)
 - `English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
@@ -352,16 +352,11 @@ theorem only_focus_determines_meaning :
 
 open _root_.Rooth1992
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : Data.Examples.LinguisticExample) (key : String) :
-    Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- The FIP prediction for a row, read off its `focus` feature: subject
     focus ("Fred") evokes the subject-alternative focus value, object
     focus ("beans") the object-alternative one (§6). -/
 def fipPrediction (row : Data.Examples.LinguisticExample) : Prop :=
-  match featureOf row "focus" with
+  match row.feature? "focus" with
   | some "Fred"  => fip q_whoAteBeans fv_subjectFocus
   | some "beans" => fip q_whoAteBeans fv_objectFocus
   | _ => False
@@ -371,7 +366,7 @@ def fipPrediction (row : Data.Examples.LinguisticExample) : Prop :=
     focus passes (§6a); object focus fails (§6b). -/
 theorem qa_acceptable_iff_fip :
     ∀ row ∈ Examples.all,
-      featureOf row "fip_application" = some "qaCongruence" →
+      row.feature? "fip_application" = some "qaCongruence" →
       (row.judgment = .acceptable ↔ fipPrediction row) := by
   intro row hrow happ
   simp only [Examples.all, List.mem_cons, List.not_mem_nil, or_false] at hrow
@@ -386,17 +381,17 @@ theorem qa_acceptable_iff_fip :
     rows form an association-with-focus minimal pair. -/
 theorem focusingAdverb_rows_differ_in_focus :
     ∀ r₁ ∈ Examples.all, ∀ r₂ ∈ Examples.all,
-      featureOf r₁ "fip_application" = some "focusingAdverb" →
-      featureOf r₂ "fip_application" = some "focusingAdverb" →
-      r₁.id ≠ r₂.id → featureOf r₁ "focus" ≠ featureOf r₂ "focus" := by
+      r₁.feature? "fip_application" = some "focusingAdverb" →
+      r₂.feature? "fip_application" = some "focusingAdverb" →
+      r₁.id ≠ r₂.id → r₁.feature? "focus" ≠ r₂.feature? "focus" := by
   decide
 
 /-- Bridge: the focusing-adverb rows differ only in focus position, and
     the theory maps distinct focus positions to distinct "only"
     meanings (§7). -/
 theorem bridge_only_association :
-    featureOf Examples.only_bill "focus" ≠
-      featureOf Examples.only_sue "focus" ∧
+    Examples.only_bill.feature? "focus" ≠
+      Examples.only_sue.feature? "focus" ∧
     onlyBill ≠ onlyJohn :=
   ⟨by decide, only_focus_determines_meaning⟩
 

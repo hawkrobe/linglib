@@ -28,10 +28,6 @@ namespace Gasparri2025
 
 open Data.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Judgment of the row's generic reading, if recorded. -/
 def genericOf (row : LinguisticExample) : Option Features.Judgment :=
   (row.readings.find? (·.1 == "generic")).map (·.2)
@@ -41,17 +37,17 @@ def genericOf (row : LinguisticExample) : Option Features.Judgment :=
     This is the asymmetry predicativism leaves unexplained: if *Ruth* is
     just ⟦the⟧ + a predicate, it should pattern with *the tiger*. -/
 theorem generic_recalcitrance :
-    ∀ row ∈ Examples.all, featureOf row "licensor" = some "none" →
+    ∀ row ∈ Examples.all, row.feature? "licensor" = some "none" →
       (genericOf row = some .acceptable ↔
-        featureOf row "subject_type" = some "definite_common") := by
+        row.feature? "subject_type" = some "definite_common") := by
   decide
 
 /-- Naming-convention contexts license generic readings of BSNs:
     recalcitrance is not a categorical ban. -/
 theorem licensing_enables_generic :
     ∀ row ∈ Examples.all,
-      featureOf row "subject_type" = some "bare_name" →
-      featureOf row "licensor" = some "generic_context" →
+      row.feature? "subject_type" = some "bare_name" →
+      row.feature? "licensor" = some "generic_context" →
         genericOf row = some .acceptable := by
   decide
 

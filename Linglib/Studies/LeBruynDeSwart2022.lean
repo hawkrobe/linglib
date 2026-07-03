@@ -41,10 +41,6 @@ open Semantics.Kinds.NMP
   (chierchiaDerivScrambled chierchiaDerivUnscrambled chierchia_position_invariant)
 open Krifka2004 (krifkaDerivScrambled krifkaDerivUnscrambled scope_follows_position)
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Judgment of a named reading, if recorded. -/
 def readingOf (row : LinguisticExample) (name : String) : Option Features.Judgment :=
   (row.readings.find? (·.1 == name)).map (·.2)
@@ -129,7 +125,7 @@ theorem krifka_matches_scrambling_data :
 /-- A scrambled bare plural can still be kind-referring (the *haten* 'hate' cases,
 `Examples.boeken_gehaat`): scrambling affects scope, not kindhood. -/
 theorem scrambled_keeps_kind_reference :
-    featureOf Examples.boeken_gehaat "position" = some "scrambled" ∧
+    Examples.boeken_gehaat.feature? "position" = some "scrambled" ∧
     readingOf Examples.boeken_gehaat "kind_reference" = some .acceptable := ⟨rfl, rfl⟩
 
 end LeBruynDeSwart2022

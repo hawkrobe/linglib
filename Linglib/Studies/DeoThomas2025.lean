@@ -94,13 +94,9 @@ def associatedSource : JustFlavor → AlternativeSource
 -- B. Row Adapters (Data/Examples/DeoThomas2025.json)
 -- ============================================================================
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- A row's `flavor` feature as a `JustFlavor`. -/
 def flavorOf (row : LinguisticExample) : Option JustFlavor :=
-  match featureOf row "flavor" with
+  match row.feature? "flavor" with
   | some "complementExclusion"   => some .complementExclusion
   | some "rankOrder"             => some .rankOrder
   | some "emphatic"              => some .emphatic
@@ -114,7 +110,7 @@ def flavorOf (row : LinguisticExample) : Option JustFlavor :=
 
 /-- A row's `context_type` feature as a `ContextType`. -/
 def contextTypeOf (row : LinguisticExample) : Option ContextType :=
-  match featureOf row "context_type" with
+  match row.feature? "context_type" with
   | some "answerable"    => some .answerable
   | some "qualityFail"   => some .qualityFail
   | some "relevanceFail" => some .relevanceFail
@@ -122,7 +118,7 @@ def contextTypeOf (row : LinguisticExample) : Option ContextType :=
 
 /-- Whether the row's `#only` substitution test succeeds. -/
 def onlyOkOf (row : LinguisticExample) : Bool :=
-  featureOf row "only_ok" == some "true"
+  row.feature? "only_ok" == some "true"
 
 -- ============================================================================
 -- C. Discourse Context

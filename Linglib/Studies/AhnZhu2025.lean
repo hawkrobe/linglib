@@ -181,24 +181,20 @@ section Data
 
 open Data.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-private def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- *na*-CL is acceptable in every condition (both bridging types, both noun
 types) — *na* itself is the relationalizer, so it always supplies the relatum
 slot (`bridge_licensed_iff`, `naApp = true`). -/
 theorem naCL_rows_acceptable :
-    ∀ row ∈ Examples.all, featureOf row "definite_form" = some "naCL" →
+    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "naCL" →
       row.judgment = .acceptable := by decide
 
 /-- Bare + **relational** noun bridges (Study 4): the lexically 2-place noun
 supplies its own relatum (`relational_bare_felicitous`). -/
 theorem bare_relational_noun_bridges :
     ∀ row ∈ Examples.all,
-      featureOf row "definite_form" = some "bare" →
-      featureOf row "bridging_type" = some "relational" →
-      featureOf row "noun_arity" = some "relational" →
+      row.feature? "definite_form" = some "bare" →
+      row.feature? "bridging_type" = some "relational" →
+      row.feature? "noun_arity" = some "relational" →
       row.judgment = .acceptable := by decide
 
 /-- **The decisive Study-4 cell.** Bare + **non-relational** noun in relational
@@ -207,9 +203,9 @@ is lexically relational (`bare_nonrelational_cannot_bridge`). Marginal, not out:
 the cell is rated below its rivals but not at floor. -/
 theorem bare_nonrelational_noun_degraded :
     ∀ row ∈ Examples.all,
-      featureOf row "definite_form" = some "bare" →
-      featureOf row "bridging_type" = some "relational" →
-      featureOf row "noun_arity" = some "sortal" →
+      row.feature? "definite_form" = some "bare" →
+      row.feature? "bridging_type" = some "relational" →
+      row.feature? "noun_arity" = some "sortal" →
       row.judgment = .marginal := by decide
 
 /-- English demonstrative *that* is **degraded but not ungrammatical** in bridging
@@ -217,12 +213,12 @@ theorem bare_nonrelational_noun_degraded :
 Modelled as `.marginal` (the paper's gradient ~4.3–5.0/7 finding), in contrast to
 English *the*, which is acceptable. -/
 theorem english_that_degraded :
-    ∀ row ∈ Examples.all, featureOf row "definite_form" = some "that" →
+    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "that" →
       row.judgment = .marginal := by decide
 
 /-- English definite *the* bridges freely (Study 2 baseline). -/
 theorem english_the_acceptable :
-    ∀ row ∈ Examples.all, featureOf row "definite_form" = some "the" →
+    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "the" →
       row.judgment = .acceptable := by decide
 
 end Data

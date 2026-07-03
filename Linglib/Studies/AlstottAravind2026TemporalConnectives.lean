@@ -20,7 +20,7 @@ Connects three layers:
 
 ## Main declarations
 
-- `vendlerOf`, `featureOf`: adapters reading a row's `paperFeatures`
+- `vendlerOf`: adapter reading a row's `paperFeatures`
 - `coercion_tracks_embedded_telicity`: a *before*/*after* row records a
   coercion operator exactly when the connective × embedded-telicity pair
   demands one (COMPLET for *before* + telic, INCHOAT for *after* + atelic)
@@ -83,13 +83,9 @@ theorem telicity_sensitivity_iff_ordering :
 -- § 2: Row Adapters
 -- ============================================================================
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Vendler-class adapter: the row's `vendler_class` feature. -/
 def vendlerOf (row : LinguisticExample) : Option VendlerClass :=
-  match featureOf row "vendler_class" with
+  match row.feature? "vendler_class" with
   | some "state"          => some .state
   | some "activity"       => some .activity
   | some "achievement"    => some .achievement
@@ -117,8 +113,8 @@ def expectedCoercion (conn : String) (c : VendlerClass) : Option String :=
     [alstott-aravind-2026]'s Exps 2 (COMPLET) and 4 (INCHOAT). -/
 theorem coercion_tracks_embedded_telicity :
     ∀ row ∈ AlstottAravind2026.Examples.all,
-      featureOf row "coercion" =
-        (featureOf row "connective").bind fun conn =>
+      row.feature? "coercion" =
+        (row.feature? "connective").bind fun conn =>
           (vendlerOf row).bind fun c => expectedCoercion conn c := by
   decide
 
@@ -129,8 +125,8 @@ theorem default_reading_matches_fragment :
     before_.defaultReading = .beforeStart ∧
     after_.defaultReading = .afterFinish ∧
     ∀ row ∈ AlstottAravind2026.Examples.all,
-      featureOf row "default_reading" =
-        (featureOf row "connective").bind fun conn =>
+      row.feature? "default_reading" =
+        (row.feature? "connective").bind fun conn =>
           if conn = "before" then some "before-start"
           else if conn = "after" then some "after-finish"
           else none :=
@@ -143,8 +139,8 @@ theorem coerced_reading_matches_fragment :
     before_.coercedReading = some .beforeFinish ∧
     after_.coercedReading = some .afterStart ∧
     ∀ row ∈ AlstottAravind2026.Examples.all,
-      featureOf row "coerced_reading" =
-        (featureOf row "coercion").bind fun op =>
+      row.feature? "coerced_reading" =
+        (row.feature? "coercion").bind fun op =>
           if op = "COMPLET" then some "before-finish"
           else if op = "INCHOAT" then some "after-start"
           else none :=
@@ -234,7 +230,7 @@ def whenCoercionLabel : WhenTarget → Option String
     accomplishments to their telos. -/
 theorem when_coercion_matches_ms :
     ∀ row ∈ MoensSteedman1988.Examples.all,
-      featureOf row "coercion" =
+      row.feature? "coercion" =
         (vendlerOf row).bind fun c => whenCoercionLabel (msOf c).whenTarget := by
   decide
 
@@ -242,8 +238,8 @@ theorem when_coercion_matches_ms :
     records achievement as its result class. -/
 theorem when_coercion_targets_achievement :
     ∀ row ∈ MoensSteedman1988.Examples.all,
-      (featureOf row "coercion").isSome →
-        featureOf row "result_class" = some "achievement" := by
+      (row.feature? "coercion").isSome →
+        row.feature? "result_class" = some "achievement" := by
   decide
 
 -- ============================================================================

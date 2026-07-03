@@ -181,13 +181,9 @@ equivalent to the bare positive (`equivalent_to_positive`). The theorems
 below are the transfer equations between those classifications and the
 strengthened model (§ 4-5). -/
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Quadruplet-form adapter: the row's `form` feature as an `AntonymForm`. -/
 def formOf (row : LinguisticExample) : Option AntonymForm :=
-  match featureOf row "form" with
+  match row.feature? "form" with
   | some "positive" => some .positive
   | some "notPositive" => some .notPositive
   | some "negative" => some .negative
@@ -197,7 +193,7 @@ def formOf (row : LinguisticExample) : Option AntonymForm :=
 /-- Interpretation adapter: the row's preferred `interpretation` feature as a
     `NegationType`. -/
 def interpretationOf (row : LinguisticExample) : Option NegationType :=
-  match featureOf row "interpretation" with
+  match row.feature? "interpretation" with
   | some "contrary" => some .contrary
   | some "contradictory" => some .contradictory
   | _ => none
@@ -209,7 +205,7 @@ def interpretationOf (row : LinguisticExample) : Option NegationType :=
     analysis where the contrary behavior is pragmatically derived. -/
 theorem interpretation_follows_inner_neg :
     ∀ row ∈ TesslerFranke2019.Examples.all,
-      (featureOf row "inner_neg" = some "morphological" ↔
+      (row.feature? "inner_neg" = some "morphological" ↔
         interpretationOf row = some .contrary) := by
   decide
 
@@ -223,7 +219,7 @@ private instance {max : Nat} (tp : ThresholdPair max) (q : AntonymForm)
     (§ 5, Prediction 3-4) puts it on the non-equivalent side. -/
 theorem equivalent_to_positive_iff_strengthened :
     ∀ row ∈ TesslerFranke2019.Examples.all, ∀ f ∈ formOf row,
-      (featureOf row "equivalent_to_positive" = some "true" ↔
+      (row.feature? "equivalent_to_positive" = some "true" ↔
         ∀ d : HappyDeg, (AntonymForm.strengthenedDenot happyTP f d ↔
           AntonymForm.strengthenedDenot happyTP .positive d)) := by
   decide
@@ -248,7 +244,7 @@ theorem unhappy_marked_by_morphology :
     reading, the costlier one ("not happy") the marked contradictory one. -/
 theorem cost_eq_complexity :
     ∀ row ∈ TesslerFranke2019.Examples.all, ∀ f ∈ formOf row,
-      featureOf row "cost" = some (toString f.complexity) := by
+      row.feature? "cost" = some (toString f.complexity) := by
   decide
 
 -- ════════════════════════════════════════════════════

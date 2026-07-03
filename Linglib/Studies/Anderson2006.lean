@@ -461,15 +461,10 @@ states one. The NegStrategy → InflPattern mapping lives in
 the most common verbal-negator → aux-headed mapping, and the Kwerba
 rows witness below that it is a tendency, not a law. -/
 
-/-- Value of a row's `paperFeatures` key, if present. -/
-private def featureOf (row : Data.Examples.LinguisticExample)
-    (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Udihe (49) *bi ei-mi sa:* is classified aux-headed by Anderson,
     and the strategy-level projection expects exactly that. -/
 theorem udihe_negVerb_expects_auxHeaded :
-    featureOf Examples.udihe_neg "infl_pattern" = some "auxHeaded" ∧
+    Examples.udihe_neg.feature? "infl_pattern" = some "auxHeaded" ∧
     NegStrategy.negVerb.expectedInflPattern = some .auxHeaded :=
   ⟨rfl, rfl⟩
 
@@ -478,7 +473,7 @@ theorem udihe_negVerb_expects_auxHeaded :
     expectation of `NegStrategy.expectedInflPattern` is defeasible —
     Anderson's own four-pattern list is the counterexample source. -/
 theorem kwerba_negVerb_lexHeaded_counterexample :
-    featureOf Examples.kwerba_neg_fut "infl_pattern" = some "lexHeaded" ∧
+    Examples.kwerba_neg_fut.feature? "infl_pattern" = some "lexHeaded" ∧
     NegStrategy.negVerb.expectedInflPattern ≠ some .lexHeaded :=
   ⟨rfl, by decide⟩
 
