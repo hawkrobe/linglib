@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Order.Basic
-import Linglib.Core.Algebra.Order.Grain
+import Linglib.Core.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Questions.Partition.QUD

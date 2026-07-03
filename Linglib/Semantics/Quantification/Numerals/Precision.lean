@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Algebra.Order.Grain
+import Linglib.Core.Algebra.Order.ToIntervalMod
 
 /-!
 # Pragmatic halo and precision modes

@@ -13,7 +13,7 @@ import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
 import Linglib.Core.Algebra.IdempotentPower
-import Linglib.Core.Algebra.Order.Grain
+import Linglib.Core.Algebra.Order.ToIntervalMod
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
@@ -126,6 +126,7 @@ import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Traversable
+import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra

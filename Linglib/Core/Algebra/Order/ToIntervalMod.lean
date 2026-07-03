@@ -7,11 +7,15 @@ import Mathlib.Algebra.Order.Round
 import Mathlib.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Floor.Semiring
 import Mathlib.Data.Rat.Floor
-import Mathlib.Data.Setoid.Basic
+import Linglib.Core.Data.Setoid.Basic
 import Mathlib.Order.Interval.Set.Defs
 
 /-!
-# Grains: equal-width partitions of a scale
+# Grain partitions: interval-mod representatives and their buckets
+
+Mirror of `Mathlib/Algebra/Order/ToIntervalMod.lean`, which this file
+extends: `toIcoDiv hε 0` is the bucket index (`grainIndex_eq_toIcoDiv`),
+and round-to-nearest-multiple is the centered-base representative.
 
 A *grain* of width `ε` partitions a scale into the half-open cells
 `[kε, (k+1)ε)` — the kernel of the bucket map `⌊·/ε⌋`. This is the
@@ -27,10 +31,13 @@ of anything that factors through it (`Setoid.ker_le_ker_comp`), applied to
 the floor-nesting identities (`Nat.div_div_eq_div_mul`,
 `Int.floor_div_natCast`).
 
-`Setoid.ker_le_ker_comp`, `Nat.grainFloor`, and `grainRound` are
-[UPSTREAM] candidates (siblings of `Setoid.ker` and `round`; the index is
-already mathlib's `toIcoDiv` at base `0`, `grainIndex_eq_toIcoDiv`, so an
-upstream PR should state the partition at that generality).
+`Nat.grainFloor` and `grainRound` are [UPSTREAM] candidates for this
+file's mathlib original (the index is already `toIcoDiv` at base `0`,
+`grainIndex_eq_toIcoDiv`, so an upstream PR should state the partition at
+that generality); the `Setoid.ker` keystone lives in the
+`Core/Data/Setoid/Basic.lean` mirror. Local `grain*` names are
+domain-facing ([sauerland-stateva-2011] granularity); upstream names to be
+derived at PR time.
 
 ## Main definitions
 
@@ -40,18 +47,11 @@ upstream PR should state the partition at that generality).
 
 ## Main results
 
-- `Setoid.ker_le_ker_comp`: the kernel keystone
 - `Nat.ker_div_le_of_dvd`, `Core.Order.grainSetoid_le_natCast_mul`:
   finer widths refine the partition
 - `Core.Order.mem_grainCell_self`, `abs_sub_grainRound_le`: representative
   and error bounds
 -/
-
-/-- If `g` factors through `f`, then the kernel of `f` refines the kernel
-of `g`. [UPSTREAM] -/
-theorem Setoid.ker_le_ker_comp {α β γ : Type*} (f : α → β) (h : β → γ) :
-    Setoid.ker f ≤ Setoid.ker (h ∘ f) :=
-  Setoid.le_def.mpr fun hxy => congrArg h hxy
 
 /-- Round a natural number down to a multiple of `ε` — the canonical
 representative of its grain cell. [UPSTREAM] -/
