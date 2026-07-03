@@ -30,8 +30,7 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} {s : Set Ω}
 
-/-- The conditional measure `μ[|s]` is `μ` with density `(μ s)⁻¹` on `s`
-and `0` off it. -/
+/-- The conditional measure `μ[|s]` is `μ` with density `(μ s)⁻¹` on `s` and `0` off it. -/
 theorem cond_eq_withDensity (hs : MeasurableSet s) :
     μ[|s] = μ.withDensity (s.indicator fun _ => (μ s)⁻¹) :=
   ((withDensity_indicator hs _).trans (withDensity_const _)).symm
