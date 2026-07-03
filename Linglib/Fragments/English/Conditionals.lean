@@ -30,9 +30,8 @@ def if_ : ConditionalMarker where
   markerType := .both
   notes := "Ambiguous between HC and PC; context determines reading"
 
-/-- English X-marking: Fake Past ([iatridou-2000]). Antecedent X-marking is past
-    alone — a minority pattern ([von-fintel-iatridou-2023], §2); the consequent
-    adds the modal woll (would). -/
+/-- English X-marking: Fake Past ([iatridou-2000]); the consequent adds woll
+    ([von-fintel-iatridou-2023] §2). -/
 def xMarking : Option XMarkingExponent := some ⟨"Past", [.past, .future]⟩
 
 end English.Conditionals

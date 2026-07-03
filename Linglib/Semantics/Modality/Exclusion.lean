@@ -154,11 +154,9 @@ theorem MarkingStrategy.other_other : ∀ s : MarkingStrategy, s.other.other = s
 
 /-! ### X-marking exponents ([von-fintel-iatridou-2023] §2, "The form") -/
 
-/-- The morphological material realizing X-marking. [von-fintel-iatridou-2023]
-(§2) divide languages into those with *dedicated* X-morphology and those whose
-exponents have other functions — "past tense, imperfective, future and/or
-subjunctive"; [mizuno-2024] (§4.2) extends the inventory with the Mandarin
-perfective. -/
+/-- The morphology realizing X-marking ([von-fintel-iatridou-2023] §2): dedicated,
+or borrowed from past / imperfective / future / subjunctive; [mizuno-2024] (§4.2)
+adds the Mandarin perfective. -/
 inductive XMarkingHost where
   /-- Dedicated X-morphology with no other use (Hungarian -nA). -/
   | dedicated
@@ -174,12 +172,10 @@ inductive XMarkingHost where
   | perfective
   deriving DecidableEq, Repr
 
-/-- A language's X-marking exponent: its citation form and its (possibly
-complex — [von-fintel-iatridou-2023] §2: Greek combines fake past with fake
-imperfective) morphological components. Per-language entries live in
-`Fragments/{Language}/Conditionals.lean` as `Option`-valued `xMarking`
-projections; [von-fintel-iatridou-2023]'s total-uniformity hypothesis
-(p. 1471) includes the bet that every language has one. -/
+/-- A language's X-marking exponent: citation form and (possibly complex — Greek:
+past + imperfective) components. `Option`-valued `xMarking` entries live in
+`Fragments/{Language}/Conditionals.lean`; total uniformity
+([von-fintel-iatridou-2023] p. 1471) bets every language has one. -/
 structure XMarkingExponent where
   form : String
   components : List XMarkingHost
