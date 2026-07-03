@@ -611,8 +611,9 @@ This file proves the conjecture's restriction to a 2-element framework
 class `{Krifka2015, FarkasBruce2010}` and a 2-event trace
 (`assert; accept`). The general statement requires:
 
-1. A `DialogueState` typeclass in `Discourse/Common.lean`
-   (does not yet exist) parameterising over the four operations above.
+1. A dialogue-state typeclass parameterising over the four operations
+   above (a first attempt, `Discourse/DialogueState.lean`, was retired
+   2026-07 with no consumers — the interface needs its instances first).
 2. Per-framework instances for Krifka, Farkas-Bruce, KOS, Stalnaker,
    Brandom, Gunlogson, Lauer.
 3. The universal theorem proved either generically (likely needs an

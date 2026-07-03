@@ -1,5 +1,5 @@
-import Linglib.Discourse.Rhetorical.Defs
-import Linglib.Discourse.Rhetorical.RightFrontier
+import Mathlib.Data.List.Basic
+import Linglib.Discourse.Coherence
 
 /-!
 # Asher & Lascarides 2003: SDRT Right Frontier Constraint worked example
@@ -59,6 +59,203 @@ subordinating, and the RFC's condition 2b only sees the
 `isSubordinating` projection. The example would behave identically
 with a hypothetical `.topic` constructor.
 -/
+
+/-!### Rhetorical-Structure Substrate (SDRT core)
+[asher-lascarides-2003]
+The labelled discourse-structure record + SDRT-specific projections
+(`kind`, `veridicality`) on top of the framework-neutral
+`Discourse.Coherence.CoherenceRelation` enum. The Right Frontier
+Constraint lives in the sibling `RightFrontier.lean`.
+-/
+
+namespace Discourse.Rhetorical
+open Discourse.Coherence (CoherenceRelation)
+/-- SDRT vocabulary alias for the unified coherence-relation enum. -/
+abbrev RhetoricalRelation : Type := CoherenceRelation
+/-! ### Structural Kind: subordinating vs coordinating vs structural -/
+/-- Structural kind of a rhetorical relation (Asher-Lascarides §4.7).
+    The Right Frontier Constraint gates new attachment points on the
+    `subordinating` case. -/
+inductive RelationKind where
+  | subordinating
+  | coordinating
+  | structural
+  deriving DecidableEq, Repr, Inhabited
+end Discourse.Rhetorical
+namespace Discourse.Coherence
+/-- SDRT structural kind of each coherence relation. -/
+def CoherenceRelation.sdrtKind :
+    CoherenceRelation → Discourse.Rhetorical.RelationKind
+  | .elaboration  => .subordinating
+  | .explanation  => .subordinating
+  | .occasion     => .coordinating  -- = SDRT's Narration
+  | .result       => .coordinating
+  | .background   => .coordinating
+  | .consequence  => .coordinating
+  | .alternation  => .coordinating
+  | .correction   => .coordinating
+  | .contrast     => .structural
+  | .parallel     => .structural
+/-- The coherence relation is subordinating in SDRT's sense. -/
+def CoherenceRelation.isSubordinating (R : CoherenceRelation) : Prop :=
+  R.sdrtKind = .subordinating
+instance : DecidablePred CoherenceRelation.isSubordinating :=
+  fun R => inferInstanceAs (Decidable (R.sdrtKind = _))
+end Discourse.Coherence
+namespace Discourse.Rhetorical
+open Discourse.Coherence (CoherenceRelation)
+/-! ### Veridicality -/
+/-- Veridicality classification for rhetorical relations
+    (Asher-Lascarides §4.8). Determines whether `R(α, β)` requires
+    both arguments' contents to be true, neither, or one denied. -/
+inductive Veridicality where
+  | veridical
+  | nonVeridical
+  | denialBearing
+  deriving DecidableEq, Repr, Inhabited
+end Discourse.Rhetorical
+namespace Discourse.Coherence
+/-- Veridicality of each rhetorical relation per SDRT
+    ([asher-lascarides-2003], preface "What's New" + §4.8). -/
+def CoherenceRelation.veridicality :
+    CoherenceRelation → Discourse.Rhetorical.Veridicality
+  | .occasion     => .veridical    -- = SDRT's Narration
+  | .elaboration  => .veridical
+  | .explanation  => .veridical
+  | .result       => .veridical
+  | .background   => .veridical
+  | .contrast     => .veridical
+  | .parallel     => .veridical
+  | .alternation  => .nonVeridical
+  | .consequence  => .nonVeridical
+  | .correction   => .denialBearing
+end Discourse.Coherence
+namespace Discourse.Rhetorical
+open Discourse.Coherence (CoherenceRelation)
+/-! ### SDRS — Segmented Discourse Representation Structure -/
+/-- A discourse-relation conjunct in an SDRS: `R(source, target)` is
+    a conjunct in `F(container)`'s content. The `container` field
+    distinguishes i-outscopes from generic endpoint relations. -/
+structure SDRSEdge (L : Type*) where
+  container : L
+  source : L
+  target : L
+  relation : RhetoricalRelation
+  deriving Repr, DecidableEq
+/-- A Segmented Discourse Representation Structure (Asher-Lascarides
+    Def 13, ⟨A, F⟩ form). Polymorphic in label type `L` and content
+    type `α`. Condition L5 ("unique parent") is intentionally omitted
+    per the book p. 144. -/
+structure SDRS (L : Type*) (α : Type*) where
+  labels : List L
+  content : L → α
+  edges : List (SDRSEdge L)
+  root : L
+  last : L
+namespace SDRS
+variable {L : Type*} {α : Type*}
+/-- An empty SDRS with one root label, no edges; root is also LAST. -/
+def initial (root : L) (rootContent : L → α) : SDRS L α where
+  labels := [root]
+  content := rootContent
+  edges := []
+  root := root
+  last := root
+/-- Add an edge to an SDRS. Does not add the labels — caller
+    must ensure both `source` and `target` are already in `labels`. -/
+def addEdge (s : SDRS L α) (e : SDRSEdge L) : SDRS L α :=
+  { s with edges := e :: s.edges }
+/-- Attach a new labelled unit to `parent` via `relation`, recording
+    the conjunct in `container`'s content. The new unit becomes LAST. -/
+def attach [DecidableEq L] (s : SDRS L α)
+    (newLabel : L) (newContent : α)
+    (container parent : L) (relation : RhetoricalRelation) : SDRS L α where
+  labels := newLabel :: s.labels
+  content := fun l => if l = newLabel then newContent else s.content l
+  edges := ⟨container, parent, newLabel, relation⟩ :: s.edges
+  root := s.root
+  last := newLabel
+end SDRS
+/-! ### Outscopes (i-outscopes from Def 14 condition 2a) -/
+/-- `iOutscopes s γ α'` — γ immediately outscopes α': some edge with
+    container γ mentions α' as source or target. -/
+def iOutscopes {L : Type*} {α : Type*} [DecidableEq L]
+    (s : SDRS L α) (γ α' : L) : Prop :=
+  ∃ e ∈ s.edges, e.container = γ ∧ (e.source = α' ∨ e.target = α')
+instance {L : Type*} {α : Type*} [DecidableEq L]
+    (s : SDRS L α) (γ α' : L) :
+    Decidable (iOutscopes s γ α') := by
+  unfold iOutscopes
+  exact List.decidableBEx _ _
+end Discourse.Rhetorical
+
+
+/-!### Right Frontier Constraint
+[asher-lascarides-2003]
+Available-attachment-points constraint restricting where new
+discourse units attach in an SDRS. `α = LAST` is always available;
+labels `γ` that outscope `α` structurally or are connected via a
+subordinating relation are also available, transitively closed.
+The central structural constraint on SDRT anaphora resolution.
+-/
+
+namespace Discourse.Rhetorical
+variable {L : Type*} {α : Type*} [DecidableEq L]
+/-! ### The single-step "<" relation (Def 14 conditions 2a + 2b) -/
+/-- γ dominates α' in one step: γ outscopes α' (2a) or there is a
+    subordinating-relation edge from γ to α' (2b). -/
+def dominatesOneStep (s : SDRS L α) (α' γ : L) : Prop :=
+  iOutscopes s γ α' ∨
+  ∃ e ∈ s.edges, e.source = γ ∧ e.target = α' ∧
+                 e.relation.isSubordinating
+instance (s : SDRS L α) (α' γ : L) :
+    Decidable (dominatesOneStep s α' γ) := by
+  unfold dominatesOneStep
+  exact instDecidableOr
+/-! ### Available attachment points (Def 14, transitively closed) -/
+/-- `availableViaChain s α γ n` — γ dominates α via a chain of
+    length ≤ n of `dominatesOneStep` steps. Bounded because the
+    transitive closure on a finite SDRS terminates. -/
+def availableViaChain (s : SDRS L α) (α' γ : L) : Nat → Prop
+  | 0 => α' = γ
+  | n + 1 => availableViaChain s α' γ n ∨
+             ∃ δ ∈ s.labels, dominatesOneStep s α' δ ∧
+                              availableViaChain s δ γ n
+instance (s : SDRS L α) (α' γ : L) (n : Nat) :
+    Decidable (availableViaChain s α' γ n) := by
+  induction n generalizing α' with
+  | zero => exact inferInstanceAs (Decidable (_ = _))
+  | succ n ih =>
+    unfold availableViaChain
+    exact instDecidableOr
+/-- Labels available for new attachment from `s.last`: those reachable
+    via `dominatesOneStep` within `s.labels.length` steps. -/
+def availableAttachmentPoints (s : SDRS L α) : List L :=
+  s.labels.filter
+    (fun γ => decide (availableViaChain s s.last γ s.labels.length))
+/-! ### Structural theorems -/
+/-- LAST is always its own available attachment point (Def 14
+    condition 1). Holds at chain length 0. -/
+theorem last_self_available (s : SDRS L α) :
+    availableViaChain s s.last s.last 0 := rfl
+/-- The available-via-chain relation is monotone in the chain
+    length: longer chains include shorter ones. -/
+theorem availableViaChain_mono (s : SDRS L α) (α' γ : L) (n : Nat) :
+    availableViaChain s α' γ n → availableViaChain s α' γ (n + 1) := by
+  intro h
+  unfold availableViaChain
+  exact Or.inl h
+/-- `α' < γ` (one-step domination) implies γ is available from α'
+    at chain length 1. Headline corollary of Def 14 condition 2. -/
+theorem oneStep_available (s : SDRS L α) (α' γ : L)
+    (hγ : γ ∈ s.labels)
+    (h : dominatesOneStep s α' γ) :
+    availableViaChain s α' γ 1 := by
+  unfold availableViaChain
+  refine Or.inr ⟨γ, hγ, h, ?_⟩
+  rfl
+end Discourse.Rhetorical
+
 
 namespace AsherLascarides2003
 

@@ -225,8 +225,7 @@ instance : HasAssertion (ContextSet W) W where
 
 /-- The free model: proposition lists, asserted-into by `add`; the
     projection is `contextSet` ([stalnaker-1973] p. 450's duality map).
-    `Discourse/Stalnaker.lean`'s framework rides this instance through the
-    `StalnakerState W := CommonGround W` abbrev. -/
+    This IS the bare Stalnakerian framework ([stalnaker-1978]). -/
 instance : HasAssertion (CommonGround W) W where
   initial := empty
   assert cg φ := cg.add φ
