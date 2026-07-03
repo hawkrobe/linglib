@@ -1,71 +1,61 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Studies.BarkerPullum1990
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Bakay, Akkuş & Dillon (2026)
-[bakay-etal-2026]
+# Bakay, Akkuş & Dillon (2026): hierarchical relations guide memory retrieval
 
-Hierarchical relations guide memory retrieval in sentence comprehension:
-Evidence from a local anaphor in Turkish. *Journal of Memory and Language*
-148, 104747.
+[bakay-etal-2026] (JML 148, 104747): three visual-world experiments showing that
+c-command between NPs within a single clause guides antecedent retrieval for the
+Turkish reciprocal *birbirleri*, deconfounded from clause-mateness, case marking,
+subjecthood, and linear order/recency — cues the paper argues are "plausibly
+construed as item-level features". This file derives the retrieval predictions
+from the `Turkish.Anaphors` fragment (its plurality requirement yields the number
+cue), Principle A (the c-command and clause-mate cues), and
+`BarkerPullum1990.cCommand` on tree addresses; each experiment's target advantage
+is an instance of `dominance`. The retrieval model is the ordinal core of
+[lewis-vasishth-2005] spreading activation — a weighted count of cue matches;
+base-level decay, fan, mismatch penalty, and noise are not modeled.
 
-Three visual-world experiments show that **c-command between NPs within a
-single clause** guides antecedent retrieval for the Turkish reciprocal
-*birbirleri* from the earliest moments of processing. The design deconfounds
-c-command from clause-mateness, case marking, subjecthood, and linear
-order/recency: the paper's review (45 experiments from 28 studies) finds no
-prior study isolating c-command from cues that are "plausibly construed as
-item-level features".
+## Main definitions
 
-## Formalization
+* `CueSource`, `Cue` — cues tagged relational / item-level / positional, the
+  paper's deconfound (clause-mateness is item-level, e.g. a clause index).
+* `birbirleriCues` — the cue bundle *birbirleri* generates, from Principle A plus
+  the fragment's plurality requirement.
+* `weightedActivation` — activation as a weighted cue-match count.
+* `privileged` — the rival representational account: direct access by structural
+  position ([mcelree-2006]; [oberauer-2002]; gated retrieval, [dillon-etal-2013]),
+  defined on the tree configuration, not on cue matches.
 
-Retrieval predictions are derived from three independently formalized
-components:
+## Main results
 
-1. **Fragment** (`Turkish.Anaphors`): *birbirleri* is a reciprocal whose
-   plurality requirement generates the item-level number cue.
-2. **Theory** (Principle A): reciprocals need a local c-commanding
-   clause-mate antecedent; c-command is computed on tree addresses via the
-   binary-branching `cCommand` of `BarkerPullum1990`.
-3. **Retrieval model**: a cue-based model in the [lewis-vasishth-2005]
-   tradition reduced to its ordinal core — activation as a weighted count of
-   cue matches. Base-level decay, fan, mismatch penalty, and noise are not
-   modeled; only activation *orderings* are derived.
+* `dominance` — pointwise dominance of cue-match vectors gives strictly higher
+  activation under every positive weighting.
+* `exp1_target_retrieved`, `exp1_target_retrieved_mismatch`, `exp2_io_retrieved` —
+  the target advantages (Exp 1: subject vs. possessor, both GEN; Exp 2: indirect
+  object vs. adjunct NP, both DAT), for any positive relational weight.
+* `exp1_target_privileged`, `exp1_distractor_not_privileged` — the same contrast
+  under privileged access.
 
-Cue sources follow the paper: **relational** (c-command per se — a
-configuration between retrieval site and candidate), **item-level** (features
-stored with the item: number, case, and clause-mateness, which the paper
-argues is plausibly an item-level feature such as a clause index), and
-**positional** (linear order/recency). In a content-addressable memory only
-item features are visible, so the relational cue is realized as a dynamically
-assigned feature approximating c-command — the strategy the paper attributes
-to [kush-2013] (`LOCAL:1/0` rewritten at clause boundaries, in the paper's
-summary; the dissertation's own device is a clause index plus a spine-mate
-feature).
+## Implementation notes
 
-## Two accounts
-
-The paper's General Discussion distinguishes **differentially weighted cues**
-(hierarchical cues weighted above item-level ones — favored by its
-limited-interference data) from a **privileged representation** (c-commanding
-items temporarily occupy a *region of direct access*, [mcelree-2006];
-[oberauer-2002]; structure-gated retrieval in [dillon-etal-2013] — access by
-representational position, not cue matching). Both predict the target
-advantage: the former via `dominance`, the latter via `privileged` on the
-tree configuration. They diverge on early interference from feature-matching
-distractors, which needs the unmodeled fan/mismatch machinery; the paper
-reports limited, inconsistent number-based interference and leaves the
-distinction open.
-
-The paper also leaves open whether the operative relation is c-command or
-coargumenthood ([pollard-sag-1994]). Linglib's `Binding` engine states
-Principle A over an abstract command relation and would host that divergence,
-but its `SimpleClause` (subject/object positions only) cannot yet represent
-the possessor and indirect-object configurations used here. The looks-based
-findings connect to `Processing.VisualWorld` observables through a monotone
-linking hypothesis (more activation → more looks), not yet formalized.
+The paper's General Discussion opposes differentially weighted cues to a
+privileged representation; both predict the target advantage and diverge only on
+early interference from feature-matching distractors, which needs the unmodeled
+fan/mismatch machinery — the paper finds limited, inconsistent number
+interference and leaves the distinction open. The relational cue is realized as
+a dynamically assigned item feature approximating c-command ([kush-2013], in the
+paper's summary). Not yet formalized: the c-command vs. coargumenthood
+alternative the paper leaves open ([pollard-sag-1994]) — `Binding.SimpleClause`
+cannot represent the possessor/IO configurations used here — and the monotone
+activation-to-looks linking to `Processing.VisualWorld` observables.
 -/
 
 namespace BakayEtAl2026
@@ -96,15 +86,13 @@ variable {F : Type*} [DecidableEq F]
 def matchCount (feats : List F) (cues : List (Cue F)) (s : CueSource) : ℕ :=
   cues.countP fun c => decide (c.source = s ∧ c.feature ∈ feats)
 
-/-- Activation of an item as a weighted count of cue matches, the ordinal core
-    of [lewis-vasishth-2005]-style spreading activation. -/
+/-- Activation of an item as a weighted count of cue matches. -/
 def weightedActivation (w : CueSource → ℕ) (feats : List F) (cues : List (Cue F)) : ℕ :=
   ∑ s, w s * matchCount feats cues s
 
-/-- **Dominance.** If `a`'s cue-match vector pointwise dominates `b`'s, strictly
-    at some source carrying positive weight, then `a` out-activates `b` under
-    every such weighting: Pareto dominance transfers to all positive linear
-    readings of the cue weights. -/
+/-- If `a`'s cue-match vector pointwise dominates `b`'s, strictly at some source
+    carrying positive weight, then `a` out-activates `b` under every such
+    weighting: Pareto dominance transfers to all positive cue weightings. -/
 theorem dominance {w : CueSource → ℕ} {a b : List F} {cues : List (Cue F)}
     (hle : ∀ s, matchCount b cues s ≤ matchCount a cues s)
     (hlt : ∃ s, 0 < w s ∧ matchCount b cues s < matchCount a cues s) :
@@ -185,9 +173,9 @@ theorem exp1_relational_distinguishes :
       matchCount exp1Target birbirleriCues s =
       matchCount exp1DistractorMatch birbirleriCues s := by decide
 
-/-- **Experiment 1 prediction**: the target out-activates the Match distractor —
-    the hardest case, where item-level cues do not distinguish them — for any
-    weighting with positive relational weight. -/
+/-- The target out-activates the Match distractor — the hardest case, where
+    item-level cues do not distinguish them — for any weighting with positive
+    relational weight. -/
 theorem exp1_target_retrieved (w : CueSource → ℕ) (hw : 0 < w .relational) :
     weightedActivation w exp1DistractorMatch birbirleriCues <
     weightedActivation w exp1Target birbirleriCues :=
@@ -237,10 +225,10 @@ def exp2IO : List Feature := [.cCommanding, .clauseMate, .plural, .datCase]
 /-- Adjunct-internal distractor: clause-mate, plural, DAT, not c-commanding. -/
 def exp2Distractor : List Feature := [.clauseMate, .plural, .datCase]
 
-/-- **Experiment 2 prediction**: the indirect object out-activates the adjunct
-    distractor for any weighting with positive relational weight. Experiment 3
-    is the paper's pre-registered, high-powered replication of the Experiment
-    1–2 contrasts; it introduces no new configuration. -/
+/-- The indirect object out-activates the adjunct distractor for any weighting
+    with positive relational weight. Experiment 3 is the paper's pre-registered,
+    high-powered replication of the Experiment 1–2 contrasts; it introduces no
+    new configuration. -/
 theorem exp2_io_retrieved (w : CueSource → ℕ) (hw : 0 < w .relational) :
     weightedActivation w exp2Distractor birbirleriCues <
     weightedActivation w exp2IO birbirleriCues :=
