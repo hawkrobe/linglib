@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Quantification.Numerals.Roundness
+import Linglib.Syntax.Numeral.Composition
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.FieldSimp
@@ -154,18 +155,20 @@ def SeqPair (a b : ℕ) : Prop :=
 instance (a b : ℕ) : Decidable (SeqPair a b) :=
   inferInstanceAs (Decidable (∃ r ≤ a, _ ∧ _ ∧ _ ∧ _))
 
--- Their p. 196 pairs: attested combinations conform to the rule …
-#guard SeqPair 3 4        -- [about 3 or 4]: sequence 1, 2, 3, 4
-#guard SeqPair 40 50      -- sequence 10, 20, 30, 40, 50
-#guard SeqPair 18 20      -- sequence 2, 4, …, 18, 20
-#guard SeqPair 100 150    -- sequence 50, 100, 150 (ratio ½ × 10²)
--- … and their starred non-combinations do not:
-#guard ¬ SeqPair 1 3      -- [*about 1 or 3]
-#guard ¬ SeqPair 5 7      -- [*about 5 or 7]
-#guard ¬ SeqPair 6 9      -- [*about 6 or 9]
-#guard ¬ SeqPair 40 80    -- [*about 40 or 80]
--- The revision: quarter-ratio pairs are excluded (their p. 197)
-#guard ¬ SeqPair 100 125  -- sequence 25, 50, … (ratio ¼ × 10²)
+-- Their p. 196 pairs: attested combinations conform to the rule,
+-- their starred non-combinations do not, and the revision excludes
+-- quarter-ratio pairs (their p. 197).
+example : SeqPair 3 4 := by decide      -- sequence 1, 2, 3, 4
+example : SeqPair 40 50 := by decide    -- sequence 10, 20, …, 50
+example : SeqPair 18 20 := by decide    -- sequence 2, 4, …, 20
+set_option maxRecDepth 2048 in
+example : SeqPair 100 150 := by decide  -- sequence 50, 100, 150
+example : ¬ SeqPair 1 3 := by decide    -- [*about 1 or 3]
+example : ¬ SeqPair 5 7 := by decide    -- [*about 5 or 7]
+example : ¬ SeqPair 6 9 := by decide    -- [*about 6 or 9]
+example : ¬ SeqPair 40 80 := by decide  -- [*about 40 or 80]
+set_option maxRecDepth 2048 in
+example : ¬ SeqPair 100 125 := by decide -- ratio ¼ × 10²: excluded
 
 /-- Quarters split single-number roundness from pair formation: `25` is a
 favourite unit (twice-halved `10²`, whence 2½-ness) but not a licensed
@@ -193,11 +196,16 @@ theorem hasKnessOrig_of_hasKness {n k : ℕ} (h : HasKness n k) :
 -- Their p. 198 examples, under the original definition: "40 has 10-ness,
 -- 2-ness, and 5-ness; 8 has 10-ness and 2-ness but no 5-ness; 300 has
 -- 10-ness and 5-ness but no 2-ness; 70 has only 10-ness; 61 has none."
-#guard hasKnessOrig 40 1 ∧ hasKnessOrig 40 2 ∧ hasKnessOrig 40 5
-#guard hasKnessOrig 8 1 ∧ hasKnessOrig 8 2 ∧ ¬ hasKnessOrig 8 5
-#guard hasKnessOrig 300 1 ∧ hasKnessOrig 300 5 ∧ ¬ hasKnessOrig 300 2
-#guard hasKnessOrig 70 1 ∧ ¬ hasKnessOrig 70 2 ∧ ¬ hasKnessOrig 70 5
-#guard ¬ hasKnessOrig 61 1 ∧ ¬ hasKnessOrig 61 2 ∧ ¬ hasKnessOrig 61 5
+example : hasKnessOrig 40 1 ∧ hasKnessOrig 40 2 ∧ hasKnessOrig 40 5 := by
+  decide
+example : hasKnessOrig 8 1 ∧ hasKnessOrig 8 2 ∧ ¬ hasKnessOrig 8 5 := by
+  decide
+example : hasKnessOrig 300 1 ∧ hasKnessOrig 300 5 ∧ ¬ hasKnessOrig 300 2 := by
+  decide
+example : hasKnessOrig 70 1 ∧ ¬ hasKnessOrig 70 2 ∧ ¬ hasKnessOrig 70 5 := by
+  decide
+example : ¬ hasKnessOrig 61 1 ∧ ¬ hasKnessOrig 61 2 ∧ ¬ hasKnessOrig 61 5 := by
+  decide
 
 /-- The divergence that matters downstream: under the original definition
 15 has 5-ness (15 = 3 × 5 × 10⁰), which the b ≥ 1 variant drops — the
@@ -205,5 +213,23 @@ source of the 15/45-idealization noted at
 `Precision.inferPrecisionMode`. -/
 theorem fifteen_has_orig_fiveness : hasKnessOrig 15 5 ∧ ¬ HasKness 15 5 := by
   decide
+
+/-! ### 10-ness as expression shape ([hurford-1975]) -/
+
+/-- 10-ness is two-word expressibility: `n` has 10-ness iff it is the
+value of a digit×base PHRASE — [hurford-1975]'s `[NUMBER M]` with a digit
+NUMBER and a pure ten-power M (*forty*, *four hundred*, …). The
+favourite-quantity properties are facts about numeral expression shape. -/
+theorem hasKness_one_iff_phrase (n : ℕ) :
+    HasKness n 1 ↔ ∃ m ≤ 8, ∃ k ≤ 9,
+      n = (Syntax.Numeral.Phrase.mk (.tally m) (.tenPow k)).value := by
+  simp only [Syntax.Numeral.Phrase.value_tally_tenPow]
+  constructor
+  · rintro ⟨b, hb, hb1, m, hm, hm1, rfl⟩
+    exact ⟨m - 1, by omega, b - 1, by omega, by
+      rw [Nat.sub_add_cancel hm1, Nat.sub_add_cancel hb1, mul_one]⟩
+  · rintro ⟨m, hm, k, hk, rfl⟩
+    exact ⟨k + 1, by omega, by omega, m + 1, by omega, by omega, by
+      rw [mul_one]⟩
 
 end JansenPollmann2001
