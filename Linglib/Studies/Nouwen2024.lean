@@ -740,6 +740,98 @@ theorem meaning_grounded_pleasantly (h : Height) (θ θ_e : Threshold) :
              Semantics.Gradability.Intensification.intensifiedMeaning,
              muPleasant_eq, Nat.cast_lt]
 
+-- Structural Semantics: Goldilocks, Wheeler, and Licensing Support
+
+/-! ### The Goldilocks effect as a set-theoretic fact
+
+[nouwen-2024] p. 21: "horribly warm will end up being compatible only with the
+higher degrees in this range. Note that extremely low temperatures are also
+horrible, but they are not in the interval [d, d′], because we arrived at that
+interval using the positive form of the adjective." The paper calls Goldilocks
+"merely a tendency" (p. 9; fn. 14 notes the expressive-taboo exception). On
+this scale the tendency has an exact boundary — `θ + θ_e ≥ 2`
+(`horriblyWarm_upperClosed_iff`): below it the intensified meaning leaks into
+the cold tail, which is precisely the Wheeler problem of the paper's Fig. 5
+(`wheeler_cold_leak`). -/
+
+/-- `S` is upward closed within `B`: any `B`-world at least as high as some
+`S`-world is itself in `S`. -/
+def UpwardClosedWithin (S B : Height → Bool) : Prop :=
+  ∀ h h', S h = true → B h' = true → h.toNat ≤ h'.toNat → S h' = true
+
+instance (S B : Height → Bool) : Decidable (UpwardClosedWithin S B) := by
+  unfold UpwardClosedWithin; infer_instance
+
+/-- **Goldilocks, exactly**: *horribly warm* is an upper set within *warm* iff
+the adjectival and evaluative thresholds jointly reach the `norm − 1`
+boundary (`θ + θ_e ≥ 2` on the Degree-6 scale, norm = 3). The U-shaped
+`μ_horrible` targets both scale extremes, but the positive form of *warm* has
+already cut off the cold end whenever the thresholds are high enough. -/
+theorem horriblyWarm_upperClosed_iff (θ θ_e : Threshold) :
+    UpwardClosedWithin (fun h => meaning .horribly_warm h θ θ_e)
+      (fun h => meaning .bare_warm h θ θ_e) ↔ 2 ≤ θ.toNat + θ_e.toNat := by
+  revert θ θ_e; decide
+
+/-- Positive evaluations are "reserved for the middle of a scale"
+([nouwen-2024] p. 21): whenever *pleasantly warm* is satisfiable at all, it is
+never an upper set within *warm* — the mid-peaked `μ_pleasant` cannot produce
+upper-tail intensification. (The nonemptiness guard excludes the vacuous
+`θ_e ≥ 3` cases, where no height is pleasant enough.) -/
+theorem pleasantlyWarm_never_upperClosed (θ θ_e : Threshold)
+    (hne : ∃ h, meaning .pleasantly_warm h θ θ_e = true) :
+    ¬ UpwardClosedWithin (fun h => meaning .pleasantly_warm h θ θ_e)
+      (fun h => meaning .bare_warm h θ θ_e) := by
+  revert θ θ_e; decide
+
+/-- **The Wheeler leak** ([nouwen-2024] Fig. 5, p. 27: "horribly warm is not
+(entirely) incompatible with things being horribly cold"): below the
+Goldilocks boundary, *horribly warm* is true at cold heights. This is the
+semantic root of the problem the paper's backgrounded (sequential) update is
+designed to mitigate. -/
+theorem wheeler_cold_leak :
+    ∃ (θ θ_e : Threshold) (h : Height),
+      h.toNat < 3 ∧ meaning .horribly_warm h θ θ_e = true := by
+  decide
+
+/-! ### Licensing support: the proof engine for the pragmatic shifts
+
+The latent pairs licensing an utterance at a world form the rectangle
+`[0, h) × [0, μ(h))`, so support inclusion is componentwise dominance in the
+two measures: higher-and-more-extreme worlds license strictly more latents —
+the structural mechanism behind upward intensification (the pragmatic
+listener sums over licensed latents). -/
+
+/-- The latent threshold pairs at which `u` is true at `h`. -/
+def licensingSet (u : Utterance) (h : Height) : Finset (Threshold × Threshold) :=
+  Finset.univ.filter fun l => meaning u h l.1 l.2
+
+/-- Componentwise measure dominance yields licensing-support inclusion:
+if `w₁` is at least as high and at least as extreme as `w₂`, every latent
+licensing *horribly warm* at `w₂` licenses it at `w₁`. -/
+theorem licensingSet_horribly_mono {w₂ w₁ : Height}
+    (hw : w₂.toNat ≤ w₁.toNat) (hμ : muHorrible w₂ ≤ muHorrible w₁) :
+    licensingSet .horribly_warm w₂ ⊆ licensingSet .horribly_warm w₁ := by
+  intro l hl
+  simp only [licensingSet, Finset.mem_filter, Finset.mem_univ, true_and, meaning,
+    tallMeaning, Bool.and_eq_true, decide_eq_true_eq] at hl ⊢
+  obtain ⟨h1, h2⟩ := hl
+  exact ⟨lt_of_lt_of_le h1 (by exact_mod_cast hw), by omega⟩
+
+/-- The file's key comparison pair has *strict* support inclusion: the extreme
+height `deg 5` licenses strictly more latents than the moderate `deg 2`. -/
+theorem licensingSet_deg2_ssubset_deg5 :
+    licensingSet .horribly_warm (deg 2) ⊂ licensingSet .horribly_warm (deg 5) := by
+  decide
+
+/-- Licensing support is **not** totally ordered: below the norm, lower
+heights are warmer-false but more extreme, so their supports are
+incomparable — the inclusion order is exactly componentwise dominance, not a
+chain. -/
+theorem licensingSet_not_totalOrder :
+    ¬ (licensingSet .horribly_warm (deg 1) ⊆ licensingSet .horribly_warm (deg 2)) ∧
+    ¬ (licensingSet .horribly_warm (deg 2) ⊆ licensingSet .horribly_warm (deg 1)) := by
+  decide
+
 -- Zwicky Vacuity
 
 /--
