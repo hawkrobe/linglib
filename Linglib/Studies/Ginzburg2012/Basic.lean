@@ -1,14 +1,14 @@
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.Gameboard.Basic
-import Linglib.Discourse.Gameboard.InquiryCycle
-import Linglib.Discourse.Gameboard.Genre
-import Linglib.Discourse.Gameboard.Grounding
-import Linglib.Discourse.Gameboard.SelfRepair
-import Linglib.Discourse.Gameboard.NSUTaxonomy
+import Linglib.Studies.Ginzburg2012.InquiryCycle
+import Linglib.Studies.Ginzburg2012.Genre
+import Linglib.Studies.Ginzburg2012.Grounding
+import Linglib.Studies.Ginzburg2012.SelfRepair
+import Linglib.Studies.Ginzburg2012.NSUTaxonomy
 import Linglib.Studies.Ginzburg2012.Examples
-import Linglib.Discourse.Gameboard.Grammar
+import Linglib.Studies.Ginzburg2012.Grammar
 import Linglib.Discourse.Gameboard.RepriseContent
-import Linglib.Discourse.Gameboard.Austinian
+import Linglib.Studies.Ginzburg2012.Austinian
 import Linglib.Discourse.Commitment.Table
 
 /-!
@@ -154,7 +154,7 @@ example {P Fact QContent Cont : Type} (tis : TIS P Fact QContent Cont) :
 
 [ginzburg-2012] Ch. 4 §4.4.5 walks through the canonical
 Ask → Assert → Accept dialogue. We exercise the TTR-typed substrate
-from `Gameboard/Austinian.lean`, which instantiates `TIS` with
+from `Austinian.lean`, which instantiates `TIS` with
 `BCheckableAustinian` propositions and `TTRQuestionB` questions over
 a `Weather` situation type.
 
@@ -289,7 +289,7 @@ NSU subclass — short answers in the Ch. 7 taxonomy below. -/
 [fernandez-2006] for the BNC subcorpus study.
 
 The 16-class taxonomy + 4 functional groupings live in the substrate
-(`Gameboard/NSUTaxonomy.lean`) — they are framework infrastructure usable by
+(`NSUTaxonomy.lean`) — they are framework infrastructure usable by
 any KOS-aware study. This section just reuses them. The `freqTable`
 single-source-of-truth + `frequency_coherent` drift sentry replace the
 old aggregate-count theorems.
@@ -375,7 +375,7 @@ LocProps:
    Clarification Context Update Rule — Parameter Identification (the
    default), Confirm, or Repeat — pushing a CR question on QUD
 
-The substrate `Gameboard/Grounding.lean::integrateLocPropCCUR` implements
+The substrate `Grounding.lean::integrateLocPropCCUR` implements
 this pipeline. This section exercises it on a worked example. -/
 
 section CCURExample
@@ -424,7 +424,7 @@ end CCURExample
 
 [ginzburg-2012] §8.2 (pp. 282–290) "Unifying Self- and Other-Correction".
 Per §6.3 footnote 31 p. 168 + §8.2: **MaxPending is the head of `Pending`**,
-not a separate field. The substrate `Gameboard/SelfRepair.lean` provides:
+not a separate field. The substrate `SelfRepair.lean` provides:
 
 - `pushMaxPending lp` — start a new in-construction LocProp at the head of Pending
 - `replaceMaxPending lp'` — backwards-looking appropriateness repair

@@ -1,4 +1,4 @@
-import Linglib.Discourse.Gameboard.InquiryCycle
+import Linglib.Studies.Ginzburg2012.InquiryCycle
 import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!

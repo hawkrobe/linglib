@@ -1,5 +1,5 @@
 import Linglib.Discourse.Gameboard.Defs
-import Linglib.Discourse.Gameboard.Grounding
+import Linglib.Studies.Ginzburg2012.Grounding
 import Linglib.Syntax.HPSG.Basic
 
 /-!
