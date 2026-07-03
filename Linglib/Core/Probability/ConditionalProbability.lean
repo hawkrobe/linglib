@@ -7,12 +7,14 @@ import Mathlib.Probability.ConditionalProbability
 import Mathlib.MeasureTheory.Measure.Decomposition.Lebesgue
 
 /-!
-# Conditional measures: the Radon-Nikodym derivative
+# Conditional measures are densities
 
-The density of `μ[|s]` with respect to `μ` is `(μ s)⁻¹` on `s` and `0` off it.
-`[UPSTREAM]` candidates; the upstream home is either
-`MeasureTheory/Measure/Decomposition/Lebesgue.lean` (following
-`rnDeriv_restrict_self`) or a `Probability/` leaf importing the decomposition.
+`cond_eq_withDensity`: conditioning on an event is reweighting by the density
+`(μ s)⁻¹` on `s` and `0` off it — an exact measure equality with no
+side conditions beyond measurability. The Radon-Nikodym facts
+(`rnDeriv_cond`, `rnDeriv_cond_ae_const`) are its corollaries.
+`[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`,
+which currently has no `withDensity` or `rnDeriv` characterization of `cond`.
 -/
 
 open MeasureTheory
@@ -22,21 +24,29 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} {s : Set Ω}
 
+/-- **Conditioning is a density**: `μ[|s]` is `μ` reweighted by `(μ s)⁻¹` on
+    `s` and `0` off it. Exact, with no hypotheses beyond measurability. -/
+theorem cond_eq_withDensity (hs : MeasurableSet s) :
+    μ[|s] = μ.withDensity (s.indicator fun _ => (μ s)⁻¹) := by
+  have hind : (s.indicator fun _ => (μ s)⁻¹)
+      = (μ s)⁻¹ • s.indicator (1 : Ω → ℝ≥0∞) := by
+    funext x
+    by_cases hx : x ∈ s <;> simp [hx]
+  rw [hind, withDensity_smul _ (measurable_one.indicator hs),
+    withDensity_indicator_one hs]
+  rfl
+
 /-- The density of the conditional measure: `(μ s)⁻¹` on `s`, `0` off it. -/
-theorem rnDeriv_cond [SigmaFinite μ] (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :
-    (μ[|s]).rnDeriv μ =ᵐ[μ] s.indicator fun _ => (μ s)⁻¹ := by
-  have h1 : ((μ s)⁻¹ • μ.restrict s).rnDeriv μ
-      =ᵐ[μ] (μ s)⁻¹ • (μ.restrict s).rnDeriv μ :=
-    Measure.rnDeriv_smul_left_of_ne_top' _ _ (ENNReal.inv_ne_top.mpr hs0)
-  refine h1.trans ((Measure.rnDeriv_restrict_self μ hs).mono fun x hx => ?_)
-  rw [Pi.smul_apply, hx]
-  by_cases hxs : x ∈ s <;> simp [hxs]
+theorem rnDeriv_cond [SigmaFinite μ] (hs : MeasurableSet s) :
+    (μ[|s]).rnDeriv μ =ᵐ[μ] s.indicator fun _ => (μ s)⁻¹ :=
+  cond_eq_withDensity hs ▸
+    Measure.rnDeriv_withDensity μ (measurable_const.indicator hs)
 
 /-- On its own event, the conditional measure's density is the constant
     `(μ s)⁻¹`. -/
-theorem rnDeriv_cond_ae_const [SigmaFinite μ] (hs : MeasurableSet s)
-    (hs0 : μ s ≠ 0) : (μ[|s]).rnDeriv μ =ᵐ[μ[|s]] fun _ => (μ s)⁻¹ := by
-  filter_upwards [cond_absolutelyContinuous.ae_eq (rnDeriv_cond hs hs0),
+theorem rnDeriv_cond_ae_const [SigmaFinite μ] (hs : MeasurableSet s) :
+    (μ[|s]).rnDeriv μ =ᵐ[μ[|s]] fun _ => (μ s)⁻¹ := by
+  filter_upwards [cond_absolutelyContinuous.ae_eq (rnDeriv_cond hs),
     ae_cond_mem hs] with x hx hxs
   rw [hx, Set.indicator_of_mem hxs]
 
