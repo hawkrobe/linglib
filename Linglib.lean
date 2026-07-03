@@ -1445,7 +1445,6 @@ import Linglib.Pragmatics.SocialMeaning.SocialUtility
 import Linglib.Pragmatics.SoftmaxOptimality
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Processing.Cost.Profile
-import Linglib.Processing.CueBasedRetrieval.Basic
 import Linglib.Processing.LanguageModel.Basic
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
