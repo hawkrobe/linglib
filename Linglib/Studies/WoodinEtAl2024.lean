@@ -109,8 +109,8 @@ theorem weighted_7_eq_zero :
     weightedRoundnessScore 7 = 0 := by simp +decide [weightedRoundnessScore]
 
 /-- `weightedRoundnessScore 50 > 0`: 50 has multipleOf5, multipleOf10,
-    2.5-ness, and 5-ness, so its weighted score is the strictly positive
-    sum of those β coefficients. -/
+    2.5-ness, 5-ness, and 10-ness (50 = 5 × 10¹), so its weighted score is
+    the strictly positive sum of those β coefficients. -/
 theorem weighted_50_pos : weightedRoundnessScore 50 > 0 := by
   simp +decide [weightedRoundnessScore, β_2_5ness, β_5ness, β_mult10, β_mult5]; norm_num
 
