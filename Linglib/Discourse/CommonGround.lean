@@ -1,7 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Mathlib.GroupTheory.GroupAction.Hom
-import Mathlib.Algebra.BigOperators.Group.List.Defs
-import Linglib.Core.Order.MeetMonoid
+import Mathlib.Data.List.Perm.Basic
 
 /-!
 # Common Ground
@@ -14,15 +12,14 @@ representations to both.
 ## Main definitions
 
 * `ContextSet W` — worlds compatible with the context (a synonym for
-  `Set W`), with `ContextSet.update` as multiplication in its
-  `MeetMonoid`.
+  `Set W`), with `ContextSet.update`.
 * `CommonGround W` — common ground as a list of propositions.
 * `CommonGround.HasContextSet` — extraction of a context set from a
   discourse state.
 * `CommonGround.HasAssertion` — discourse states whose assertion operation
-  projects onto `ContextSet.update` ([stalnaker-1973] p. 455);
-  `toContextSetHom` bundles the projection as a `MulActionHom`, and
-  `toContextSet_play` computes it on histories as `List.prod`.
+  projects onto `ContextSet.update` ([stalnaker-1973] p. 455); a played
+  history lands on the free model (`toContextSet_play`) and its projection
+  is permutation-invariant (`toContextSet_play_perm`).
 
 Proposal-based ([farkas-bruce-2010]) and graded non-monotonic
 ([anderson-2021]) assertion models are deliberate non-instances; see
@@ -71,17 +68,6 @@ theorem update_idem (c p : Set W) : update (update c p) p = update c p := by
 
 end ContextSet
 
-/-! ### The meet monoid -/
-
-/-- `update` is multiplication in the meet monoid of context sets. -/
-theorem ContextSet.of_update (c : ContextSet W) (p : Set W) :
-    MeetMonoid.of (ContextSet.update c p) =
-      MeetMonoid.of c * MeetMonoid.of p := rfl
-
-/-- The trivial context is the meet monoid's unit. -/
-theorem ContextSet.of_trivial :
-    MeetMonoid.of (ContextSet.trivial : ContextSet W) = 1 := rfl
-
 /-- The context set determined by a common ground: intersection of its propositions. -/
 def contextSet (cg : CommonGround W) : ContextSet W :=
   cg.propositions.foldr (· ∩ ·) Set.univ
@@ -106,6 +92,14 @@ instance : Inhabited (CommonGround W) := ⟨empty⟩
 theorem add_restricts (cg : CommonGround W) (p : Set W) :
     (cg.add p).contextSet ⊆ cg.contextSet :=
   Set.inter_subset_right
+
+instance : LeftCommutative (α := Set W) (· ∩ ·) := ⟨Set.inter_left_comm⟩
+
+/-- The context set is invariant under permutation of the propositions:
+    the common ground is order-indifferent on its worlds-side projection. -/
+theorem contextSet_perm {l₁ l₂ : List (Set W)} (p : l₁.Perm l₂) :
+    contextSet ⟨l₁⟩ = contextSet ⟨l₂⟩ :=
+  p.foldr_eq Set.univ
 
 /-! ### Uniform context-set extraction -/
 
@@ -239,31 +233,13 @@ instance : HasAssertion (CommonGround W) W where
   toContextSet_initial := rfl
   toContextSet_assert _ φ := Set.inter_comm φ _
 
-/-! ### The assertion action -/
+/-! ### Assertion histories -/
 
 namespace HasAssertion
 
 open HasContextSet (toContextSet)
 
 variable {S : Type*} [HasAssertion S W]
-
-/-- Propositions, as meet-monoid elements, act on states by assertion. -/
-instance : SMul (MeetMonoid (Set W)) S :=
-  ⟨fun φ s => assert s (MeetMonoid.val φ)⟩
-
-theorem smul_eq_assert (φ : Set W) (s : S) :
-    MeetMonoid.of φ • s = assert s φ := rfl
-
-/-- `toContextSet` bundled as an equivariant map (`MulActionHom`) from the
-    assertion action to the regular action of the meet monoid. -/
-def toContextSetHom (S : Type*) [HasAssertion S W] :
-    S →[MeetMonoid (Set W)] MeetMonoid (ContextSet W) where
-  toFun s := MeetMonoid.of (toContextSet s)
-  map_smul' φ s := by
-    show MeetMonoid.of (toContextSet (assert s (MeetMonoid.val φ))) =
-      φ * MeetMonoid.of (toContextSet s)
-    rw [toContextSet_assert]
-    exact congrArg MeetMonoid.of (Set.inter_comm _ _)
 
 /-- Play a history of assertions from a state. -/
 def play (s : S) (h : List (Set W)) : S :=
@@ -274,33 +250,30 @@ def play (s : S) (h : List (Set W)) : S :=
 @[simp] theorem play_cons (s : S) (φ : Set W) (t : List (Set W)) :
     play s (φ :: t) = play (assert s φ) t := rfl
 
-/-- The context set of a played history is the monoid product — the
-    intersection — of the history ([stalnaker-1973] p. 450). -/
+/-- The context set of a played history is the common ground of that
+    history: `play` from `initial` lands on the free model
+    ([stalnaker-1973] p. 450). -/
 theorem toContextSet_play (h : List (Set W)) :
-    MeetMonoid.of (toContextSet (play (initial : S) h)) =
-      (h.map MeetMonoid.of).prod := by
-  suffices key : ∀ s : S, MeetMonoid.of (toContextSet (play s h)) =
-      MeetMonoid.of (toContextSet s) * (h.map MeetMonoid.of).prod by
-    rw [key, toContextSet_initial, ContextSet.of_trivial, one_mul]
+    toContextSet (play (initial : S) h) = contextSet ⟨h⟩ := by
+  suffices key : ∀ s : S,
+      toContextSet (play s h) = toContextSet s ∩ contextSet ⟨h⟩ by
+    rw [key, toContextSet_initial]
+    exact Set.univ_inter _
   induction h with
-  | nil => intro s; simp
+  | nil => intro s; exact (Set.inter_univ _).symm
   | cons φ t ih =>
     intro s
-    rw [List.map_cons, List.prod_cons, play_cons, ih, toContextSet_assert,
-      ContextSet.of_update]
-    exact mul_assoc ..
+    rw [play_cons, ih, toContextSet_assert]
+    exact Set.inter_assoc ..
 
-/-- The context set of a played history is the common ground of that
-    history: `play` from `initial` lands on the free model. -/
-theorem toContextSet_play_eq_contextSet (h : List (Set W)) :
-    toContextSet (play (initial : S) h) = contextSet ⟨h⟩ := by
-  apply MeetMonoid.of_injective
-  rw [toContextSet_play]
-  induction h with
-  | nil => rfl
-  | cons φ t ih =>
-    rw [List.map_cons, List.prod_cons, ih]
-    exact (ContextSet.of_update φ (contextSet ⟨t⟩)).symm
+/-- Assertion order is irrelevant: permuted histories project to the
+    same context set. States may differ — frameworks can record order —
+    but the projection cannot. -/
+theorem toContextSet_play_perm {h₁ h₂ : List (Set W)} (p : h₁.Perm h₂) :
+    toContextSet (play (initial : S) h₁) =
+      toContextSet (play (initial : S) h₂) := by
+  rw [toContextSet_play, toContextSet_play]
+  exact contextSet_perm p
 
 end HasAssertion
 
