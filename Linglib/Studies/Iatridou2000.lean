@@ -230,22 +230,18 @@ The generalizations are grounded in the verified glossed sentences of
 `Data/Examples/Iatridou2000.json` (generated `Iatridou2000.Examples`): all three CF types
 are attested, and the per-language imperfective fact matches the examples' `impf` tags. -/
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (e : LinguisticExample) (k : String) : Option String :=
-  (e.paperFeatures.find? (·.1 == k)).map (·.2)
-
 /-- The `impf` tag read as a Bool. -/
 def impfTag (e : LinguisticExample) : Option Bool :=
-  match featureOf e "impf" with
+  match e.feature? "impf" with
   | some "yes" => some true
   | some "no"  => some false
   | _          => none
 
 /-- All three CF types are attested in the English stimuli. -/
 theorem cf_types_attested :
-    featureOf Examples.en_flv "cf_type" = some "flv" ∧
-    featureOf Examples.en_presCF "cf_type" = some "presCF" ∧
-    featureOf Examples.en_pastCF "cf_type" = some "pastCF" := by decide
+    Examples.en_flv.feature? "cf_type" = some "flv" ∧
+    Examples.en_presCF.feature? "cf_type" = some "presCF" ∧
+    Examples.en_pastCF.feature? "cf_type" = some "pastCF" := by decide
 
 /-- `usesImperfectiveInCF` matches the example `impf` tags — English (no), Greek (yes),
     French (yes). Flipping a JSON tag or the generalization breaks this. -/
@@ -313,8 +309,8 @@ theorem pastCF_origin_preserved : pastCFTower.origin = actualCtx := rfl
     a PresCF (one modal ExclF, tower depth 1), (2b) a PastCF (two ExclFs, depth 2). Ties
     the glossed (2)-stimuli to the ContextTower model. -/
 theorem cf_diagnostics_examples :
-    featureOf Examples.ex2a "cf_type" = some "presCF" ∧
-    featureOf Examples.ex2b "cf_type" = some "pastCF" ∧
+    Examples.ex2a.feature? "cf_type" = some "presCF" ∧
+    Examples.ex2b.feature? "cf_type" = some "pastCF" ∧
     presCFTower.depth = 1 ∧ pastCFTower.depth = 2 :=
   ⟨by decide, by decide, rfl, rfl⟩
 

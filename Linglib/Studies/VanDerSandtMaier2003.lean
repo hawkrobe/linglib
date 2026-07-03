@@ -388,13 +388,9 @@ of its rows (`Data/Examples/VanDerSandtMaier2003.json`): for every row whose
 discourse scenario is formalized as a `LayeredProp` above, the computed
 offensive layers include the layer targeted by the row's denial type. -/
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Denial-type adapter: the row's `denial_type` feature as a `DenialType`. -/
 def denialTypeOf (row : LinguisticExample) : Option DenialType :=
-  match featureOf row "denial_type" with
+  match row.feature? "denial_type" with
   | some "propositional" => some .propositional
   | some "presuppositional" => some .presuppositional
   | some "implicature" => some .implicature
@@ -403,7 +399,7 @@ def denialTypeOf (row : LinguisticExample) : Option DenialType :=
 /-- The Off computation of the `LayeredProp` scenario named by the row's
 `scenario` feature. -/
 private def scenarioOff (row : LinguisticExample) : Option (List ContentLayer) :=
-  match featureOf row "scenario" with
+  match row.feature? "scenario" with
   | some "kingOfFrance" =>
       some (offensiveLayers kfLayered (fun w => w == .noKing) kfWorlds)
   | some "modal" =>
@@ -432,7 +428,7 @@ syntactically positive (ex. 6, where the denial IS the correction) targets fr,
 like negative propositional denials. The mechanism is the same regardless of
 surface polarity. -/
 theorem positive_denial_propositional :
-    ∀ row ∈ Examples.all, featureOf row "surface_polarity" = some "positive" →
+    ∀ row ∈ Examples.all, row.feature? "surface_polarity" = some "positive" →
       denialTypeOf row = some .propositional := by
   decide
 

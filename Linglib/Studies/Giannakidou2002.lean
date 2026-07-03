@@ -471,13 +471,9 @@ inductive ActualizationStatus where
   | absent
   deriving DecidableEq, Repr
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- The row's `semantic_type` feature as an `UntilType`. -/
 def untilTypeOf (row : LinguisticExample) : Option UntilType :=
-  match featureOf row "semantic_type" with
+  match row.feature? "semantic_type" with
   | some "before"   => some .before
   | some "endpoint" => some .endpoint
   | some "eventive" => some .eventive
@@ -485,7 +481,7 @@ def untilTypeOf (row : LinguisticExample) : Option UntilType :=
 
 /-- The row's `actualization` feature as an `ActualizationStatus`. -/
 def actualizationOf (row : LinguisticExample) : Option ActualizationStatus :=
-  match featureOf row "actualization" with
+  match row.feature? "actualization" with
   | some "entailment"  => some .entailment
   | some "implicature" => some .implicature
   | some "none"        => some .absent
@@ -513,7 +509,7 @@ theorem actualization_determined_by_type :
     connectives are nonveridical. -/
 theorem veridical_iff_endpoint :
     ∀ row ∈ Examples.all,
-      (featureOf row "complement_veridical" = some "true" ↔
+      (row.feature? "complement_veridical" = some "true" ↔
         untilTypeOf row = some .endpoint) := by
   decide
 
@@ -523,7 +519,7 @@ theorem veridical_iff_endpoint :
     provide; narrow scope (`narrowScopeNotUntil`) does not. -/
 theorem durative_main_iff_endpoint :
     ∀ row ∈ Examples.all,
-      (featureOf row "requires_durative_main" = some "true" ↔
+      (row.feature? "requires_durative_main" = some "true" ↔
         untilTypeOf row = some .endpoint) := by
   decide
 
@@ -532,7 +528,7 @@ theorem durative_main_iff_endpoint :
     NPI-*until*. -/
 theorem requires_de_iff_eventive :
     ∀ row ∈ Examples.all,
-      (featureOf row "requires_de" = some "true" ↔
+      (row.feature? "requires_de" = some "true" ↔
         untilTypeOf row = some .eventive) := by
   decide
 
@@ -541,9 +537,9 @@ theorem requires_de_iff_eventive :
 theorem npi_licensing_by_type :
     ∀ row ∈ Examples.all,
       (untilTypeOf row = some .before →
-        featureOf row "licenses_npis" = some "true") ∧
+        row.feature? "licenses_npis" = some "true") ∧
       (untilTypeOf row = some .endpoint →
-        featureOf row "licenses_npis" = some "false") := by
+        row.feature? "licenses_npis" = some "false") := by
   decide
 
 /-- Greek lexicalizes all three semantic types as distinct connectives:
@@ -564,7 +560,7 @@ def UntilType.greekMood : UntilType → Option String
     The mood split is the morphological reflex of (non)veridicality. -/
 theorem greek_mood_tracks_type :
     ∀ row ∈ Examples.all, row.language = "mode1248" →
-      featureOf row "mood" = (untilTypeOf row).bind UntilType.greekMood := by
+      row.feature? "mood" = (untilTypeOf row).bind UntilType.greekMood := by
   decide
 
 -- ============================================================================

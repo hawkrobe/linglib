@@ -25,13 +25,9 @@ open Data.Examples
 open CaoWhiteLassiter2025
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Marker adapter: the Fragment entry for the row's conditional marker. -/
 def markerOf (row : LinguisticExample) : Option ConditionalMarker :=
-  match featureOf row "marker" with
+  match row.feature? "marker" with
   | some "nara"  => some Japanese.Conditionals.nara
   | some "ra"    => some Japanese.Conditionals.ra
   | some "wenn"  => some German.Conditionals.wenn
@@ -42,7 +38,7 @@ def markerOf (row : LinguisticExample) : Option ConditionalMarker :=
     content. Bare content forces the premise-conditional reading, so an
     HC-only marker cannot rescue the LNC. -/
 def bareContent (row : LinguisticExample) : Bool :=
-  featureOf row "content" == some "bare"
+  row.feature? "content" == some "bare"
 
 /-- The marker typology's prediction for a row: the LNC is licensed iff the
     marker can mark premise conditionals (`.both`) or non-bare content makes

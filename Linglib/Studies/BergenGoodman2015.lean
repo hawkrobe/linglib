@@ -495,13 +495,9 @@ the listener infers that the speaker had reason to protect the stressed word,
 implying exhaustive knowledge.
 -/
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : Data.Examples.LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Utterance adapter: a row's `stress` feature as a `ProsodyModel.Utterance`. -/
 def uttOf (row : Data.Examples.LinguisticExample) : Option ProsodyModel.Utterance :=
-  match featureOf row "stress" with
+  match row.feature? "stress" with
   | some "subject" => some .BOB_went
   | some "none"    => some .bobWent
   | _              => none

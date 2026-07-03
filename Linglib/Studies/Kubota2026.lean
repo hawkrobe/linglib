@@ -177,17 +177,13 @@ The judgment data live in `Data/Examples/Kubota2026.json`. The adapters read a r
 `paperFeatures` back into the theory's vocabulary; the theorems restate the paper's
 generalizations as facts about the rows. -/
 
-/-- Value of a `paperFeatures` key, if present. -/
-private def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- The row's marker, as classified in `Marker.all` (by romaji form). -/
 def markerOf (row : LinguisticExample) : Option Marker :=
-  (featureOf row "marker").bind fun r => Marker.all.find? (·.form.romaji == r)
+  (row.feature? "marker").bind fun r => Marker.all.find? (·.form.romaji == r)
 
 /-- The row's modal flavor, from the `modalFlavor` feature. -/
 def flavorOf (row : LinguisticExample) : Option ModalFlavor :=
-  match featureOf row "modalFlavor" with
+  match row.feature? "modalFlavor" with
   | some "epistemic"      => some .epistemic
   | some "deontic"        => some .deontic
   | some "bouletic"       => some .bouletic
@@ -198,8 +194,8 @@ def flavorOf (row : LinguisticExample) : Option ModalFlavor :=
 is felicitous iff the discourse context makes a counterstance salient — (37)/(39)-Q1
 follow an evaluative assertion or question, (38)/(39)-Q2 a neutral question. -/
 theorem felicitous_iff_counterstance_salient :
-    ∀ row ∈ Examples.all, featureOf row "phenomenon" = some "counterstance" →
-      (row.judgment = .acceptable ↔ featureOf row "counterstanceSalient" = some "true") := by
+    ∀ row ∈ Examples.all, row.feature? "phenomenon" = some "counterstance" →
+      (row.judgment = .acceptable ↔ row.feature? "counterstanceSalient" = some "true") := by
   decide
 
 /-- The theory's prediction for a marker–modal row: the row's flavor lies in the
@@ -211,7 +207,7 @@ def predictedCompat (row : LinguisticExample) : Option Bool := do
 acceptable iff the marker's `modalCompat` contains the row's flavor — the selectional
 restrictions in `Marker` are exactly the attested judgment pattern. -/
 theorem modal_row_acceptable_iff_compat :
-    ∀ row ∈ Examples.all, featureOf row "phenomenon" = some "modalInteraction" →
+    ∀ row ∈ Examples.all, row.feature? "phenomenon" = some "modalInteraction" →
       (row.judgment = .acceptable ↔ predictedCompat row = some true) := by
   decide
 
