@@ -1,7 +1,7 @@
 import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Constructions
-import Linglib.Core.Probability.ConditionalProbability
+import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import Mathlib.InformationTheory.KullbackLeibler.Basic
@@ -370,7 +370,7 @@ theorem klDiv_filter_self {α : Type*} [MeasurableSpace α] (p : PMF α) {s : Se
     obtain ⟨a, has, hsupp⟩ := h
     exact fun hd => Set.disjoint_left.mp hd hsupp has
   rw [klDiv_eq_toMeasure_klDiv, PMF.toMeasure_filter p hs h,
-    ProbabilityTheory.klDiv_cond_self p.toMeasure hs hs0]
+    InformationTheory.klDiv_cond_self p.toMeasure hs hs0]
 
 -- ============================================================================
 -- §7: Jensen-Shannon divergence — KL-symmetrized form (mathlib-style)

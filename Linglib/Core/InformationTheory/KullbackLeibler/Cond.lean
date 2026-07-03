@@ -3,25 +3,25 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.ConditionalProbability
 import Mathlib.InformationTheory.KullbackLeibler.Basic
+import Mathlib.Probability.ConditionalProbability
 
 /-!
-# Conditional measures: extensions
+# Kullback-Leibler divergence of a conditional measure
 
-Measure-level facts about `ProbabilityTheory.cond` beyond mathlib's
-`Mathlib/Probability/ConditionalProbability.lean`. `[UPSTREAM]` candidates.
+The conditioning identity: for a probability measure `μ` and an event `s` of
+nonzero mass, `klDiv (μ[|s]) μ = −log μ(s)` — Bayesian update by pure
+restriction costs exactly the information content of the event.
 
-## Main results
-
-* `ProbabilityTheory.klDiv_cond_self` — the conditioning identity: the KL
-  divergence of `μ[|s]` from `μ` is the information content of the event,
-  `−log μ(s)`.
+`[UPSTREAM]` candidate for `Mathlib/InformationTheory/KullbackLeibler/`
+(placement and namespace mirror `ChainRule.lean`, the directory's other
+file combining `klDiv` with probability constructions).
 -/
 
-namespace ProbabilityTheory
+open MeasureTheory ProbabilityTheory
+open scoped ENNReal ProbabilityTheory
 
-open scoped ProbabilityTheory
+namespace InformationTheory
 
 /-- **Conditioning identity** (measure level): for a probability measure `μ`,
     the KL divergence of the conditional measure `μ[|s]` from `μ` is the
@@ -32,7 +32,7 @@ open scoped ProbabilityTheory
 theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
     {s : Set Ω} (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :
-    InformationTheory.klDiv (μ[|s]) μ = ENNReal.ofReal (-Real.log (μ s).toReal) := by
+    klDiv (μ[|s]) μ = ENNReal.ofReal (-Real.log (μ s).toReal) := by
   have : MeasureTheory.IsProbabilityMeasure (μ[|s]) :=
     cond_isProbabilityMeasure hs0
   -- The density of `μ[|s]` with respect to `μ` is `(μ s)⁻¹`, `μ[|s]`-a.e.
@@ -58,9 +58,9 @@ theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
       Real.log_inv]
   have hint : MeasureTheory.Integrable (MeasureTheory.llr (μ[|s]) μ) (μ[|s]) :=
     (MeasureTheory.integrable_const _).congr hllr.symm
-  rw [InformationTheory.klDiv_of_ac_of_integrable
+  rw [klDiv_of_ac_of_integrable
       cond_absolutelyContinuous hint,
     MeasureTheory.integral_congr_ae hllr, MeasureTheory.integral_const]
   simp [MeasureTheory.measureReal_def]
 
-end ProbabilityTheory
+end InformationTheory
