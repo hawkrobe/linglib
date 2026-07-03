@@ -13,7 +13,7 @@ issue and the context set is its informative content
 projections relate them per instance (e.g. how much of the context set
 an issue's informative content retains is a framework fact, not a law —
 see the Krifka monopolar/bipolar contrast in
-`Discourse/CommitmentSpace.lean`).
+`Discourse/Commitment/Space.lean`).
 
 ## Main definitions
 

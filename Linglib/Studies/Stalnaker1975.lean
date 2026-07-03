@@ -1,6 +1,6 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Stalnaker
-import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.CommonGround
 
 /-!

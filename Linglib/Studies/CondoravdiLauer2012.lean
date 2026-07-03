@@ -1,4 +1,4 @@
-import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.Commitment.Space
 import Linglib.Studies.Krifka2015
 
 /-!
