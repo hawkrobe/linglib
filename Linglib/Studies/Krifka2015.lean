@@ -634,4 +634,55 @@ The refusal would surface a genuine architectural break between
 gradient-pragmatic and categorical-pragmatic models of dialogue.
 -/
 
+-- ════════════════════════════════════════════════════
+-- § ∞+1. The issue projection (paper §3 via `Discourse.HasIssue`)
+-- ════════════════════════════════════════════════════
+
+/-! The two observables jointly separate Krifka's move types where each
+alone is blind — the paper §3 monopolar/bipolar asymmetry, through the
+issue projection:
+
+* the bipolar question projects to a genuinely inquisitive issue;
+* the monopolar question projects to a *declarative* — its bias lives in
+  the commitment structure, invisible to the issue observable;
+* on the initial state, asking `?φ` monopolarly and asserting `φ` raise
+  the same issue and differ only on the context set: the assert/ask
+  contrast is carried by `toContextSet`, the monopolar/bipolar contrast
+  by `toIssue`. -/
+
+/-- The bipolar question raises a genuinely inquisitive issue: both
+    answers are live in the initial context set. -/
+theorem bipolar_issue_inquisitive :
+    (s₀.bipolarQuestion isRaining).toIssue.isInquisitive :=
+  KrifkaState.isInquisitive_bipolarQuestion s₀ isRaining
+    ⟨.rain, fun _ hic => absurd hic List.not_mem_nil, trivial⟩
+    ⟨.noRain, fun _ hic => absurd hic List.not_mem_nil, id⟩
+
+/-- The monopolar question does not: its issue projection is
+    declarative. -/
+theorem monopolar_issue_not_inquisitive :
+    ¬ (s₀.monopolarQuestion isRaining).toIssue.isInquisitive :=
+  KrifkaState.not_isInquisitive_monopolarQuestion s₀ isRaining
+
+/-- **Observable separation**: monopolar `?φ` and asserting `φ` raise the
+    same issue — the assert/ask distinction is invisible to `toIssue` —
+    while their context sets differ: that distinction is carried entirely
+    by `toContextSet`. Dually, `toContextSet` cannot see the
+    monopolar/bipolar contrast (`monopolar_root_unchanged`). -/
+theorem monopolar_vs_assert_observable_separation :
+    (s₀.monopolarQuestion isRaining).toIssue = (s₀.assert isRaining).toIssue ∧
+      (s₀.monopolarQuestion isRaining).contextSet ≠
+        (s₀.assert isRaining).contextSet := by
+  constructor
+  · rw [KrifkaState.toIssue_monopolarQuestion, KrifkaState.toIssue_assert,
+      show s₀.toIssue =
+        Question.declarative (CommitmentSpace.stateSet []) from rfl,
+      Question.declarative_inf]
+    exact congrArg Question.declarative (Set.inter_comm _ _)
+  · intro h
+    have h1 : Weather.noRain ∈ (s₀.monopolarQuestion isRaining).contextSet :=
+      fun _ hic => absurd hic List.not_mem_nil
+    rw [h] at h1
+    exact h1 _ List.mem_cons_self
+
 end Krifka2015
