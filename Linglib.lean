@@ -624,7 +624,7 @@ import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
 import Linglib.Discourse.Roles
 import Linglib.Discourse.Scoreboard
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Stalnaker
 import Linglib.Discourse.Strategy
 import Linglib.Features.Acceptability

@@ -18,7 +18,7 @@ This file lives in `Semantics/Mood/` alongside `IllocutionaryMood.lean` (force) 
 `ClauseType.lean` (force × mood); together they form the unified mood-category
 namespace `Semantics.Mood`. Discourse-act material (Searle classes, direction of
 fit, preparatory conditions, discourse roles) lives in
-`Discourse/SpeechAct/Basic.lean`.
+`Discourse/SpeechAct.lean`.
 -/
 
 namespace Semantics.Mood

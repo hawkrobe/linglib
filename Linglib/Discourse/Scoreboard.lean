@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Sort
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Move
 import Linglib.Semantics.Questions.Partition.QUD

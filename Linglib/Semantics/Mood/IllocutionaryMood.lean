@@ -16,7 +16,7 @@ The pair `(IllocutionaryMood, GramMood)` is `Semantics.Mood.ClauseType`.
 This file contains only the *category* — the enum + its sole intrinsic
 property `moodAuthority` (which participant has epistemic authority). The
 *act-side* extensions (Searle classes, direction of fit, preparatory
-conditions) live in `Discourse/SpeechAct/Basic.lean`, which imports
+conditions) live in `Discourse/SpeechAct.lean`, which imports
 this file. The split keeps `Semantics/Mood/` framework-agnostic and free of
 pragmatic-act commitments.
 

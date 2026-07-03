@@ -1,7 +1,7 @@
 import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
 import Mathlib.Data.Set.Basic
 

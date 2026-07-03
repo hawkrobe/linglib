@@ -235,7 +235,7 @@ theorem licensed_activates_weakEN :
 -- The Romero (2024) HiNQ bridge formerly lived here as §7 but was relocated
 -- to `Studies/Romero2024.lean` so that this file does not
 -- have to import the Bias stack (CommonGround / InformationStructure /
--- Discourse.{SpeechAct.Basic,Commitment} / Kratzer.Flavor /
+-- Discourse.{SpeechAct,Commitment} / Kratzer.Flavor /
 -- Intensional.Examples). The bridge is predicate-level — sharing only the
 -- licensing predicate, not the form-level structure — and lives naturally in
 -- the polar-question phenomenon directory.

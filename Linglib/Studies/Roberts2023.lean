@@ -4,7 +4,7 @@ import Linglib.Semantics.Mood.IllocutionaryMood
 import Linglib.Semantics.Mood.POSW
 import Linglib.Semantics.Mood.POSWTarget
 import Linglib.Discourse.Scoreboard
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Modality.Assert
