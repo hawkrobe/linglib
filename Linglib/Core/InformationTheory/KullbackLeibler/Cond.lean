@@ -30,8 +30,8 @@ theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
     {s : Set Ω} (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :
     klDiv (μ[|s]) μ = ENNReal.ofReal (-Real.log (μ s).toReal) := by
-  have := cond_isProbabilityMeasure (μ := μ) hs0
-  rw [klDiv_of_rnDeriv_ae_const cond_absolutelyContinuous
-    (rnDeriv_cond_ae_const hs), ENNReal.toReal_inv, Real.log_inv]
+  haveI := cond_isProbabilityMeasure (μ := μ) hs0
+  rw [klDiv_of_rnDeriv_ae_const cond_absolutelyContinuous (rnDeriv_cond_ae_const hs),
+    ENNReal.toReal_inv, Real.log_inv]
 
 end InformationTheory
