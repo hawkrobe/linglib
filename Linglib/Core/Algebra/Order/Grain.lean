@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.Order.Round
+import Mathlib.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Floor.Semiring
 import Mathlib.Data.Rat.Floor
 import Mathlib.Data.Setoid.Basic
@@ -27,7 +28,9 @@ the floor-nesting identities (`Nat.div_div_eq_div_mul`,
 `Int.floor_div_natCast`).
 
 `Setoid.ker_le_ker_comp`, `Nat.grainFloor`, and `grainRound` are
-[UPSTREAM] candidates (siblings of `Setoid.ker` and `round`).
+[UPSTREAM] candidates (siblings of `Setoid.ker` and `round`; the index is
+already mathlib's `toIcoDiv` at base `0`, `grainIndex_eq_toIcoDiv`, so an
+upstream PR should state the partition at that generality).
 
 ## Main definitions
 
@@ -108,6 +111,16 @@ theorem lt_grainFloor_add (hε : 0 < ε) (d : α) : d < grainFloor ε d + ε := 
 /-- Every degree lies in its own grain cell. -/
 theorem mem_grainCell_self (hε : 0 < ε) (d : α) : d ∈ grainCell ε d :=
   ⟨grainFloor_le hε d, lt_grainFloor_add hε d⟩
+
+/-- The grain index is mathlib's `toIcoDiv` at base point `0`: the unique
+multiple count landing `d` in `[0, ε)` after subtraction. `toIcoDiv` is the
+more general object (archimedean ordered groups, no division); `grainIndex`
+is its computation-friendly `FloorRing` form. -/
+theorem grainIndex_eq_toIcoDiv (hε : 0 < ε) (d : α) :
+    grainIndex ε d = toIcoDiv hε 0 d := by
+  refine (toIcoDiv_eq_of_sub_zsmul_mem_Ico hε ?_).symm
+  rw [Set.mem_Ico, zero_add, sub_nonneg, sub_lt_iff_lt_add']
+  exact ⟨grainFloor_le hε d, lt_grainFloor_add hε d⟩
 
 /-- Multiplying the width by a natural coarsens the partition: the
 refinement half of the finer-than order, via the kernel keystone and
