@@ -1410,7 +1410,6 @@ import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.Composition
 import Linglib.Pragmatics.RSA.Compositional
-import Linglib.Pragmatics.RSA.ConfigData
 import Linglib.Pragmatics.RSA.Defs
 import Linglib.Pragmatics.RSA.Distributions
 import Linglib.Pragmatics.RSA.Gibbs
