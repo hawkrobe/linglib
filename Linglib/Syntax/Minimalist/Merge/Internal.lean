@@ -156,12 +156,6 @@ theorem mergeOp_im_composition
         from add_comm _ _]
   exact mergeOp_pair lbl Q β
 
-/-- `Nonplanar (LIToken ⊕ Unit)` has no structural `DecidableEq`; supply one
-    classically so the Merge operators elaborate at the workspace type (proof-only,
-    noncomputable). -/
-private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
-  Classical.decEq _
-
 /-! The linguistic Internal-Merge bridge `mergeOp_im_matches_Step` (which related the
 `mergeOp ∘ mergeOpUnit` composition on the head-decorated `toNonplanar` projection to
 the legacy `Step.im` + `⊕ Nat` trace index) has been retired by the single-carrier

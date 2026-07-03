@@ -6,22 +6,37 @@ Authors: Robert Hawkins
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 
 /-!
-# Deciding nonplanar-tree equality (equality up to child reordering)
+# Decidable equality of nonplanar rose trees
 
-Two nonplanar trees are equal exactly when they are equal up to reordering the children of
-every vertex. This file makes that comparison decidable and **kernel-computable**, so
-`Nonplanar` syntactic objects keep `decide` (MCB §1.1–1.2, `scratch/mcb-single-carrier-spec.md`).
+Two rose trees represent the same nonplanar tree exactly when they are equal up to
+reordering the children of every vertex (`RoseTree.PermEquiv`). This file shows that the
+relation is decidable, and computably so: the decision procedure reduces in the kernel,
+so concrete `Nonplanar` equalities close by `decide`.
 
-Strict, order-sensitive equality of the underlying ordered trees is already decidable —
-`RoseTree.instDecidableEq` in `Core/Data/RoseTree/Basic.lean` — so this file does not re-derive it. It
-only adds the *nonplanar* decider:
+## Main definitions
 
-- `RoseTree.eqv` compares two ordered trees up to child reordering (same root value, and the child
-  lists match as multisets under `eqv`), and `RoseTree.eqv_iff_permEquiv` proves it decides
-  `PermEquiv`.
-- `Nonplanar.instDecidableEq` lifts that through the quotient. The P0 spike confirmed `by
-  decide` closes concrete `eqv`-equalities, so building via `mk ∘ RoseTree.node` avoids the
-  noncomputable `Nonplanar.node`.
+- `RoseTree.eqv`: Boolean comparison of two ordered trees up to child reordering — equal
+  root values, and child lists matching as multisets under `eqv` (greedy matching).
+
+## Main results
+
+- `RoseTree.eqv_iff_permEquiv`: `eqv` decides `PermEquiv`.
+- `RoseTree.instDecidableRelPermEquiv`: the resulting `DecidableRel PermEquiv`.
+- `RootedTree.Nonplanar.instDecidableEq`: decidable equality on the quotient, via
+  `Quotient.decidableEq`.
+
+## Implementation notes
+
+The greedy matcher is core's `List.isPerm` algorithm, but the correctness lemma there,
+`List.isPerm_iff`, requires `LawfulBEq`, which equality-up-to-reordering is not: greedy
+matching is complete only because `eqv` is an equivalence, which is the content this file
+adds. Symmetry and transitivity of `eqv` are mutually entangled at the children level, so
+they are proven together by strong induction on a size bound (`eqv_symm_trans`).
+
+Strict, order-sensitive equality of the underlying ordered trees is already decidable
+(`RoseTree.instDecidableEq`); this file only adds the decider for the quotient relation.
+
+`[UPSTREAM]` candidate.
 -/
 
 namespace RoseTree
@@ -31,20 +46,17 @@ variable {α : Type*} [DecidableEq α]
 /-! ### Deciding `PermEquiv`: equality up to child reordering -/
 
 mutual
-/-- Decide whether two trees are **equal up to child reordering** (i.e. `PermEquiv` — they
-    represent the same `Nonplanar` tree): same root value, and the child lists match as
-    multisets under `eqv` (each child of one matched to a distinct `eqv`-equal child of the
-    other). Computable; needs only `DecidableEq α`. -/
+/-- `eqv t s` decides whether `t` and `s` are equal up to child reordering, i.e.
+    `PermEquiv` (see `eqv_iff_permEquiv`): equal root values, and child lists matching as
+    multisets under `eqv`. Computable from `DecidableEq α` alone. -/
 def eqv : RoseTree α → RoseTree α → Bool
   | .node a cs, .node b ds => decide (a = b) && eqvMulti cs ds
-/-- Auxiliary: match two child lists as multisets under `eqv`. Greedily pair each head of
-    the left list with an `eqv`-equal element of the right, removing it. -/
-def eqvMulti : List (RoseTree α) → List (RoseTree α) → Bool
-  | [], [] => true
-  | [], _ :: _ => false
-  | _ :: _, [] => false
+/-- Greedy multiset matching of child lists: pair each element of the left list with a
+    distinct `eqv`-equal element of the right. `List.isPerm`, with `eqv` for `==`. -/
+private def eqvMulti : List (RoseTree α) → List (RoseTree α) → Bool
+  | [], ds => ds.isEmpty
   | c :: cs, ds =>
-    match ds.findIdx? (fun d => eqv c d) with
+    match ds.findIdx? (eqv c) with
     | some i => eqvMulti cs (ds.eraseIdx i)
     | none => false
 end
@@ -60,14 +72,6 @@ there: `eqv` is reflexive/symmetric/transitive and respects a single `PermStep`,
 are mutually entangled at the children level (the greedy `Match`-readback needs both), so
 they are proven together by strong induction on a per-tree size bound. -/
 
-/-- Unfolding lemma for `eqvMulti` on a `cons` left and non-empty right. -/
-private theorem eqvMulti_cons_left (c : RoseTree α) (cs ds : List (RoseTree α)) (h : ds ≠ []) :
-    eqvMulti (c :: cs) ds =
-      match ds.findIdx? (fun d => eqv c d) with
-      | some i => eqvMulti cs (ds.eraseIdx i)
-      | none => false :=
-  eqvMulti.eq_4 ds c cs (fun he => h he)
-
 /-- `cs` and `ds` match as multisets under `eqv`: some reordering of `ds` is componentwise
     `eqv`-equal to `cs`. -/
 private def Match (cs ds : List (RoseTree α)) : Prop :=
@@ -80,8 +84,8 @@ private theorem eqvMulti_to_match :
   | [], _ :: _, h => by rw [eqvMulti] at h; exact absurd h (by simp)
   | _ :: _, [], h => by rw [eqvMulti] at h; exact absurd h (by simp)
   | c :: cs, d :: ds, h => by
-    rw [eqvMulti_cons_left c cs (d :: ds) (by simp)] at h
-    cases hfind : (d :: ds).findIdx? (fun x => eqv c x) with
+    rw [eqvMulti] at h
+    cases hfind : (d :: ds).findIdx? (eqv c) with
     | none => rw [hfind] at h; exact absurd h (by simp)
     | some i =>
       rw [hfind] at h
@@ -141,7 +145,7 @@ private theorem match_to_eqvMulti {P : RoseTree α → Prop}
       Match cs ds → eqvMulti cs ds = true
   | [], ds, _, _, ⟨ds', hf, hperm⟩ => by
     rw [List.forall₂_nil_left_iff.mp hf] at hperm
-    rw [hperm.symm.eq_nil, eqvMulti]
+    rw [hperm.symm.eq_nil, eqvMulti]; rfl
   | c :: cs, ds, hPcs, hPds, ⟨ds', hf, hperm⟩ => by
     obtain ⟨e, es, hce, hf', rfl⟩ := List.forall₂_cons_left_iff.mp hf
     have hPc : P c := hPcs c List.mem_cons_self
@@ -149,11 +153,10 @@ private theorem match_to_eqvMulti {P : RoseTree α → Prop}
     have hPe : P e := hPds e (hperm.subset List.mem_cons_self)
     have hPes : ∀ x ∈ es, P x := fun x hx => hPds x (hperm.subset (List.mem_cons_of_mem _ hx))
     have heds : e ∈ ds := hperm.subset List.mem_cons_self
-    have hfi : ds.findIdx? (fun x => eqv c x) = some (ds.findIdx (fun x => eqv c x)) :=
+    have hfi : ds.findIdx? (eqv c) = some (ds.findIdx (eqv c)) :=
       List.findIdx?_eq_some_of_exists ⟨e, heds, hce⟩
-    have hne : ds ≠ [] := by rintro rfl; simp at heds
-    rw [eqvMulti_cons_left c cs ds hne, hfi]
-    set i := ds.findIdx (fun x => eqv c x)
+    rw [eqvMulti, hfi]
+    set i := ds.findIdx (eqv c)
     rw [List.findIdx?_eq_some_iff_getElem] at hfi
     obtain ⟨hi, hpi, _⟩ := hfi
     set d := ds[i] with hd
@@ -212,21 +215,15 @@ private theorem match_trans {P : RoseTree α → Prop}
   exact ⟨m, forall₂_eqv_trans Strans hPcs hPds' hPm hf1 hm1, hm2.trans hp2⟩
 
 omit [DecidableEq α] in
-/-- A child of a node is strictly smaller than the node (for the size induction). -/
-private theorem sizeOf_child_lt {a : α} {cs : List (RoseTree α)} {c : RoseTree α} (hc : c ∈ cs) :
-    sizeOf c < sizeOf (RoseTree.node a cs) := by
-  have := List.sizeOf_lt_of_mem hc
-  simp only [RoseTree.node.sizeOf_spec]; omega
-
-omit [DecidableEq α] in
 /-- Every tree has at least one vertex. -/
 private theorem one_le_sizeOf (t : RoseTree α) : 1 ≤ sizeOf t := by
   cases t with
   | node a cs => simp only [RoseTree.node.sizeOf_spec]; omega
 
-/-- `eqv` on two nodes unfolds to root-value equality and `eqvMulti` on children. -/
-private theorem eqv_node {a b : α} {cs ds : List (RoseTree α)} :
-    eqv (.node a cs) (.node b ds) = (decide (a = b) && eqvMulti cs ds) := by rw [eqv]
+/-- `eqv` on two nodes: equal root values and children matching under `eqvMulti`. -/
+private theorem eqv_node_iff {a b : α} {cs ds : List (RoseTree α)} :
+    eqv (.node a cs) (.node b ds) = true ↔ a = b ∧ eqvMulti cs ds = true := by
+  rw [eqv, Bool.and_eq_true, decide_eq_true_eq]
 
 /-- Symmetry and transitivity of `eqv`, proven together by strong induction on a per-tree
     size bound: the `Match`-readback at a node needs both symmetry and transitivity on the
@@ -241,40 +238,40 @@ private theorem eqv_symm_trans :
   | _ N ih =>
     refine ⟨?_, ?_⟩
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ hst hss hts
-      rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq] at hts
+      rw [eqv_node_iff] at hts
       obtain ⟨hab, hmulti⟩ := hts
       have hNpos : 1 ≤ N := le_trans (one_le_sizeOf (RoseTree.node a cs)) hst
       have hcsN : ∀ x ∈ cs, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_child_lt hx) hst; omega
+        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hst; omega
       have hdsN : ∀ x ∈ ds, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_child_lt hx) hss; omega
+        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hss; omega
       have ihm := ih (N - 1) (by omega)
       have Psymm : ∀ x y, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 →
           eqv x y = true → eqv y x = true := fun x y => ihm.1 x y
       have Ptrans : ∀ x y z, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 → sizeOf z ≤ N - 1 →
           eqv x y = true → eqv y z = true → eqv x z = true := fun x y z => ihm.2 x y z
-      rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq]
+      rw [eqv_node_iff]
       refine ⟨hab.symm, ?_⟩
       have hMs : Match ds cs := match_symm Psymm hcsN hdsN (eqvMulti_to_match cs ds hmulti)
       exact match_to_eqvMulti Psymm Ptrans ds cs hdsN hcsN hMs
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ ⟨c, es⟩ hst hss hsu hts hsu'
-      rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq] at hts
+      rw [eqv_node_iff] at hts
       obtain ⟨hab, hm1⟩ := hts
-      rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq] at hsu'
+      rw [eqv_node_iff] at hsu'
       obtain ⟨hbc, hm2⟩ := hsu'
       have hNpos : 1 ≤ N := le_trans (one_le_sizeOf (RoseTree.node a cs)) hst
       have hcsN : ∀ x ∈ cs, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_child_lt hx) hst; omega
+        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hst; omega
       have hdsN : ∀ x ∈ ds, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_child_lt hx) hss; omega
+        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hss; omega
       have hesN : ∀ x ∈ es, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_child_lt hx) hsu; omega
+        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hsu; omega
       have ihm := ih (N - 1) (by omega)
       have Psymm : ∀ x y, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 →
           eqv x y = true → eqv y x = true := fun x y => ihm.1 x y
       have Ptrans : ∀ x y z, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 → sizeOf z ≤ N - 1 →
           eqv x y = true → eqv y z = true → eqv x z = true := fun x y z => ihm.2 x y z
-      rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq]
+      rw [eqv_node_iff]
       refine ⟨hab.trans hbc, ?_⟩
       have hM : Match cs es := match_trans Ptrans hcsN hdsN hesN
         (eqvMulti_to_match cs ds hm1) (eqvMulti_to_match ds es hm2)
@@ -299,10 +296,10 @@ private theorem eqv_refl : ∀ (t : RoseTree α), eqv t t = true
     simp only [Bool.and_eq_true, decide_true, true_and]
     exact eqvMulti_refl cs
 private theorem eqvMulti_refl : ∀ (cs : List (RoseTree α)), eqvMulti cs cs = true
-  | [] => by rw [eqvMulti]
+  | [] => by rw [eqvMulti]; rfl
   | c :: cs => by
-    rw [eqvMulti_cons_left c cs (c :: cs) (by simp)]
-    have h0 : (c :: cs).findIdx? (fun d => eqv c d) = some 0 := by
+    rw [eqvMulti]
+    have h0 : (c :: cs).findIdx? (eqv c) = some 0 := by
       rw [List.findIdx?_cons]; simp [eqv_refl c]
     rw [h0]
     simp only [List.eraseIdx_cons_zero]
@@ -334,10 +331,10 @@ private theorem eqvMulti_of_perm {cs ds : List (RoseTree α)} (hperm : cs.Perm d
 private theorem eqv_step {t s : RoseTree α} (h : PermStep t s) : eqv t s = true := by
   induction h with
   | @swapAtRoot a l r pre post =>
-    rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq]
+    rw [eqv_node_iff]
     exact ⟨rfl, eqvMulti_of_perm ((List.Perm.swap r l post).append_left pre)⟩
   | @recurse a pre old new post _ ih =>
-    rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq]
+    rw [eqv_node_iff]
     exact ⟨rfl, eqvMulti_of_match
       ⟨pre ++ new :: post,
         List.rel_append (forall₂_eqv_refl pre) (List.Forall₂.cons ih (forall₂_eqv_refl post)),
@@ -355,7 +352,7 @@ private theorem permEquiv_to_eqv {t s : RoseTree α} (h : PermEquiv t s) : eqv t
 mutual
 private theorem eqv_to_permEquiv : ∀ (t s : RoseTree α), eqv t s = true → PermEquiv t s
   | .node a cs, .node b ds, h => by
-    rw [eqv_node, Bool.and_eq_true, decide_eq_true_eq] at h
+    rw [eqv_node_iff] at h
     obtain ⟨hab, hmulti⟩ := h
     subst hab
     obtain ⟨ds', hf, hperm⟩ := eqvMulti_to_match cs ds hmulti
@@ -371,18 +368,23 @@ private theorem eqv_forall₂_to_permEquiv :
       (eqv_forall₂_to_permEquiv cs ds' hrest)
 end
 
-/-- **Soundness/completeness of `eqv`**: it decides `PermEquiv` (the nonplanar quotient
-    relation). The P0 spike confirmed the *computation* (`by decide` closes `eqv`
-    equalities); this lemma is the formal characterization that makes
-    `DecidableEq (Nonplanar α)` honest.
+/-- `eqv` decides `PermEquiv`: two ordered trees are `eqv`-related iff they are equal up
+    to reordering the children of every vertex.
 
-    Proof: (←) `PermEquiv → eqv` by `EqvGen` induction (`permEquiv_to_eqv`), using that
-    `eqv` is reflexive/symmetric/transitive and respects each `PermStep` (swap = child
-    permutation, recurse = componentwise); (→) `eqv → PermEquiv` by structural induction
-    (`eqv_to_permEquiv`), reading the greedy match back through
-    `permEquiv_node_componentwise` + `permEquiv_root_perm`. -/
-theorem eqv_iff_permEquiv : ∀ (t s : RoseTree α), eqv t s = true ↔ PermEquiv t s :=
-  fun t s => ⟨eqv_to_permEquiv t s, permEquiv_to_eqv⟩
+    `(→)` is structural induction (`eqv_to_permEquiv`), reading the greedy match back
+    through `permEquiv_node_componentwise` and `permEquiv_root_perm`; `(←)` is `EqvGen`
+    induction (`permEquiv_to_eqv`), using that `eqv` is an equivalence and respects each
+    `PermStep`. -/
+theorem eqv_iff_permEquiv {t s : RoseTree α} : eqv t s = true ↔ PermEquiv t s :=
+  ⟨eqv_to_permEquiv t s, permEquiv_to_eqv⟩
+
+/-- `PermEquiv` is decidable, computably so: decided by `eqv`, which reduces in the
+    kernel. -/
+instance instDecidableRelPermEquiv : DecidableRel (PermEquiv (α := α)) :=
+  fun _ _ => decidable_of_iff _ eqv_iff_permEquiv
+
+instance instDecidableRelEquiv : DecidableRel ((· ≈ ·) : RoseTree α → RoseTree α → Prop) :=
+  instDecidableRelPermEquiv
 
 end RoseTree
 
@@ -390,13 +392,10 @@ namespace RootedTree.Nonplanar
 
 variable {α : Type*} [DecidableEq α]
 
-/-- Equality of nonplanar trees (= equality up to child reordering) is decidable and
-    **computable**: decided by `RoseTree.eqv` on representatives, which reduces in the kernel,
-    so concrete `Nonplanar` equalities `decide`. This is the keystone that lets the
-    syntactic-object carrier live on `Nonplanar` without losing `decide`. -/
-instance instDecidableEq : DecidableEq (Nonplanar α) := fun t s =>
-  Quotient.recOnSubsingleton₂ t s fun a b =>
-    decidable_of_iff (RoseTree.eqv a b = true)
-      (by rw [RoseTree.eqv_iff_permEquiv]; exact Nonplanar.mk_eq_mk_iff.symm)
+/-- Equality of nonplanar trees — equality up to child reordering — is decidable and
+    computable: `Quotient.decidableEq` over `RoseTree.eqv` on representatives, which
+    reduces in the kernel, so concrete `Nonplanar` equalities close by `decide`. -/
+instance instDecidableEq : DecidableEq (Nonplanar α) :=
+  inferInstanceAs (DecidableEq (Quotient (RoseTree.instSetoid (α := α))))
 
 end RootedTree.Nonplanar

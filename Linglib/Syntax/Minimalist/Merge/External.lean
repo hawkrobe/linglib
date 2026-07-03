@@ -3,6 +3,7 @@ import Linglib.Syntax.Minimalist.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
+import Linglib.Core.Combinatorics.RootedTree.DecEq
 
 /-!
 # External Merge bridge: algebraic ↔ linguistic
@@ -307,12 +308,6 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
           (({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) + Fhat'),
         mergeOp_factor_out_singleton lbl hT_S hT_S']
     exact congrArg (of' (R := R) ({T} : Forest (Nonplanar α)) * ·) ih'
-
-/-- `Nonplanar (LIToken ⊕ Unit)` has no structural `DecidableEq`; supply one
-    classically so the Merge operators elaborate at the workspace type (proof-only,
-    noncomputable). -/
-private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
-  Classical.decEq _
 
 /-! The linguistic External-Merge bridges `mergeOp_emR/emL_matches_Step` (which
 related `mergeOp (Sum.inl L)` on the head-decorated `toNonplanar` projection to the
