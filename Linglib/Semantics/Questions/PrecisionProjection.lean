@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
@@ -23,9 +28,11 @@ def exact {N : Type} : PrecisionProjection N where
   round := id
   name := "exact"
 
-/-- Round to nearest multiple of k -/
+/-- Round down to the enclosing multiple of `k` — the lower representative
+`⌊n/k⌋·k` of the width-`k` bucket partition; finer `k` refines the induced
+QUD (`Nat.ker_div_le_of_dvd`). -/
 def roundTo (k : Nat) : PrecisionProjection Nat where
-  round n := (n / k) * k
+  round n := n / k * k
   name := s!"round{k}"
 
 /-- Compose precision with a QUD. Delegates to `QUD.ofProject`. -/

@@ -1,4 +1,10 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Order.Basic
+import Linglib.Core.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Questions.Partition.QUD
@@ -226,21 +232,12 @@ since it requires `toIssue` from inquisitive semantics. -/
 
 section GranularityQuestion
 
-/-- If ε₁ divides ε₂, then knowing ⌊d/ε₁⌋ determines ⌊d/ε₂⌋.
-
-    This is the number-theoretic core of the granularity–refinement
-    bridge: finer grain indices determine coarser grain indices.
-    Uses `Nat.div_div_eq_div_mul`: a / b / c = a / (b * c). -/
-theorem div_determined_by_finer (d₁ d₂ ε₁ ε₂ : Nat)
-    (hdvd : ε₁ ∣ ε₂) (heq : d₁ / ε₁ = d₂ / ε₁) : d₁ / ε₂ = d₂ / ε₂ := by
-  obtain ⟨k, rfl⟩ := hdvd
-  simp only [← Nat.div_div_eq_div_mul]
-  rw [heq]
-
 /-- A granularity QUD on `Fin n`, parameterized by grain width ε.
 
     Maps each degree d to grain index ⌊d/ε⌋, inducing a partition where
-    degrees in the same grain cell are indistinguishable.
+    degrees in the same grain cell are indistinguishable — the ℕ grain
+    partition (`Setoid.ker (· / ε)`, `Core/Algebra/Order/Grain.lean`)
+    restricted to `Fin n` and packaged as a `QUD`.
 
     [deo-thomas-2025] definition (22): γ maps each point p to a cell I
     of a partition such that p ∈ I. For uniform grain width ε on a discrete
@@ -257,7 +254,7 @@ theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂)
     QUD.refines (granQUD n ε₁) (granQUD n ε₂) := by
   intro w v h
   simp only [granQUD, QUD.ofProject_sameAnswer_iff] at *
-  exact div_determined_by_finer w.val v.val ε₁ ε₂ hdvd h
+  exact Nat.ker_div_le_of_dvd hdvd h
 
 end GranularityQuestion
 
