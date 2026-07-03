@@ -1,4 +1,5 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.ConditionalProbability
 import Mathlib.Data.ENNReal.Operations
 import Mathlib.Data.ENNReal.Inv
 
@@ -195,5 +196,32 @@ theorem tsum_indicator_filter_of_subset (p : PMF α) {s s' : Set α} (hss : s' �
     · rw [Set.indicator_of_notMem ha, Set.indicator_of_notMem ha, zero_mul]
   simp only [hind]
   rw [ENNReal.tsum_mul_right, div_eq_mul_inv]
+
+open scoped ProbabilityTheory in
+/-- `PMF.filter` is `Measure.cond`: conditioning a PMF on an event agrees with
+    the measure-theoretic conditional measure. `[UPSTREAM]` candidate — it
+    connects mathlib's two conditioning notions. -/
+theorem toMeasure_filter [MeasurableSpace α] (p : PMF α) {s : Set α}
+    (hs : MeasurableSet s) (h : ∃ a ∈ s, a ∈ p.support) :
+    (p.filter s h).toMeasure = p.toMeasure[|s] := by
+  refine MeasureTheory.Measure.ext fun t ht => ?_
+  rw [ProbabilityTheory.cond_apply hs, PMF.toMeasure_apply,
+    PMF.toMeasure_apply, PMF.toMeasure_apply]
+  have hpt : ∀ a, t.indicator (⇑(p.filter s h)) a
+      = (s ∩ t).indicator (⇑p) a * (∑' b, s.indicator (⇑p) b)⁻¹ := by
+    intro a
+    by_cases hat : a ∈ t
+    · rw [Set.indicator_of_mem hat, filter_apply]
+      by_cases has : a ∈ s
+      · rw [Set.indicator_of_mem has, Set.indicator_of_mem (Set.mem_inter has hat)]
+      · rw [Set.indicator_of_notMem has,
+          Set.indicator_of_notMem (fun hc => has hc.1)]
+    · rw [Set.indicator_of_notMem hat,
+        Set.indicator_of_notMem (fun hc => hat hc.2), zero_mul]
+  · simp only [hpt]
+    rw [ENNReal.tsum_mul_right, mul_comm]
+  · exact hs.inter ht
+  · exact hs
+  · exact ht
 
 end PMF

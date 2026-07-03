@@ -39,11 +39,12 @@ conditional word probabilities they determine.
 
 ## Implementation notes
 
-Structures form a `Fintype` (the paper allows "normally infinite" 𝒯; the
-substrate's discrete-sum KL reduction is `Fintype`-gated — lift when it is).
-The prior `P` is fixed throughout, matching the paper's caveat that the
-equivalence holds only when extra-sentential context does not change while the
-word is processed.
+Structures live in an arbitrary discrete measurable space — `PMF` handles the
+paper's "normally infinite" 𝒯 (the theorem is measure-level via
+`ProbabilityTheory.klDiv_cond_self` and the `PMF.filter`–`Measure.cond`
+bridge). The prior `P` is fixed throughout, matching the paper's caveat that
+the equivalence holds only when extra-sentential context does not change while
+the word is processed.
 -/
 
 namespace Levy2008
@@ -75,7 +76,7 @@ theorem posterior_incremental
     posterior P str (ws ++ [w]) hnext :=
   PMF.filter_filter P (consistent_anti str (List.prefix_append ws [w])) hws hnext _
 
-variable [Fintype T] [MeasurableSpace T] [MeasurableSingletonClass T]
+variable [MeasurableSpace T] [DiscreteMeasurableSpace T]
 
 /-- **Eq. (4)**: the relative entropy of the updated distribution over
     structures with respect to the pre-update distribution is the surprisal of
@@ -85,11 +86,13 @@ theorem klDiv_posterior_eq_surprisal
     (hnext : ∃ t ∈ consistent str (ws ++ [w]), t ∈ P.support) :
     (posterior P str (ws ++ [w]) hnext).klDiv (posterior P str ws hws)
       = ENNReal.ofReal (-Real.log (nextProb P str ws w).toReal) := by
-  rw [← posterior_incremental P str ws w hws hnext, PMF.klDiv_filter_self]
-  simp only [posterior]
-  rw [PMF.tsum_indicator_filter_of_subset P
-    (consistent_anti str (List.prefix_append ws [w])) hws]
-  rfl
+  rw [← posterior_incremental P str ws w hws hnext,
+    PMF.klDiv_filter_self _ MeasurableSet.of_discrete, PMF.toMeasure_apply]
+  · simp only [posterior]
+    rw [PMF.tsum_indicator_filter_of_subset P
+      (consistent_anti str (List.prefix_append ws [w])) hws]
+    rfl
+  · exact MeasurableSet.of_discrete
 
 /-- The update difficulty read through any language model that matches the
     process's conditional word probabilities is that model's surprisal. -/
@@ -104,8 +107,8 @@ theorem klDiv_posterior_eq_lm_surprisal (lm : LangModel W)
 /-- **Causal bottleneck** (§2.3, Fig. 1b): two generative processes assigning
     the same conditional word probability incur the same update difficulty,
     regardless of their structural representations. -/
-theorem bottleneck {T' : Type*} [Fintype T'] [MeasurableSpace T']
-    [MeasurableSingletonClass T'] (P' : PMF T') (str' : T' → List W)
+theorem bottleneck {T' : Type*} [MeasurableSpace T'] [DiscreteMeasurableSpace T']
+    (P' : PMF T') (str' : T' → List W)
     (hagree : nextProb P str ws w = nextProb P' str' ws w)
     (hws : ∃ t ∈ consistent str ws, t ∈ P.support)
     (hnext : ∃ t ∈ consistent str (ws ++ [w]), t ∈ P.support)
