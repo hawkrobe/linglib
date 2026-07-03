@@ -1,5 +1,5 @@
-import Linglib.Semantics.Numerals.Roundness
-import Linglib.Semantics.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague

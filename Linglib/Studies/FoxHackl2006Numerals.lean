@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
-import Linglib.Semantics.Numerals.Basic
+import Linglib.Semantics.Quantification.Numerals.Basic
 
 /-!
 # Numeral MIP Bridge

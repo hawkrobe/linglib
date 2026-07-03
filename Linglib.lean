@@ -1760,9 +1760,9 @@ import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
 import Linglib.Semantics.Negation.Expletive
-import Linglib.Semantics.Numerals.Basic
-import Linglib.Semantics.Numerals.Precision
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Quantification.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover

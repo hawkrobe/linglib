@@ -1,4 +1,4 @@
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 

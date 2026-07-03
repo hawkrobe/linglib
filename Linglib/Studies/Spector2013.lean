@@ -1,4 +1,4 @@
-import Linglib.Semantics.Numerals.Basic
+import Linglib.Semantics.Quantification.Numerals.Basic
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!

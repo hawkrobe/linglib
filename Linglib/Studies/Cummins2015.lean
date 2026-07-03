@@ -2,9 +2,9 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.Optimization.Pareto
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.Satisfaction
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Fragments.English.NumeralModifiers
-import Linglib.Semantics.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Precision
 
 /-!
 # [cummins-2015]: OT Constraints, k-ness, NSAL, and RSA Cost
