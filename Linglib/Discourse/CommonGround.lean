@@ -290,6 +290,18 @@ theorem toContextSet_play (h : List (Set W)) :
       ContextSet.of_update]
     exact mul_assoc ..
 
+/-- The context set of a played history is the common ground of that
+    history: `play` from `initial` lands on the free model. -/
+theorem toContextSet_play_eq_contextSet (h : List (Set W)) :
+    toContextSet (play (initial : S) h) = contextSet ⟨h⟩ := by
+  apply MeetMonoid.of_injective
+  rw [toContextSet_play]
+  induction h with
+  | nil => rfl
+  | cons φ t ih =>
+    rw [List.map_cons, List.prod_cons, ih]
+    exact (ContextSet.of_update φ (contextSet ⟨t⟩)).symm
+
 end HasAssertion
 
 end CommonGround

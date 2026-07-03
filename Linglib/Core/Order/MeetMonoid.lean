@@ -12,7 +12,12 @@ with its monoid structure: `* = ⊓`, `1 = ⊤` (the `Multiplicative` /
 global and never leaks onto `α` itself — in particular it cannot collide
 with the scoped `Pointwise` algebra on `Set`.
 
-[UPSTREAM] mathlib has no lattice-as-monoid wrapper.
+Deliberately not upstream material: mathlib serves this role unbundled —
+`Std.Commutative` / `Std.Associative` / `Std.IdempotentOp` instances for
+`⊓` in `Order/Lattice.lean` plus native aggregation (`Finset.inf`,
+`sInf`, `List.foldr`). The wrapper exists here to give discourse-update
+dynamics bundled `MonoidHom` / `MulActionHom` vocabulary, which the
+unbundled route does not provide.
 -/
 
 /-- Type synonym: `α` with `⊓` as multiplication and `⊤` as unit. -/
