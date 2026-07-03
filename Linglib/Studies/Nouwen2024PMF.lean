@@ -1266,6 +1266,113 @@ theorem seq_pleasantly_prefers_moderate_pmf :
   exact pos_iff_ne_zero.mpr
     (mul_ne_zero (mul_ne_zero (heightPriorPMF_pos _) hE4) hA4)
 
+/-! ## §5e. Zwicky vacuity as an identity; the usually chain
+
+[nouwen-2024] p. 22: the simple account "wrongly predict[s] that usually
+tall means the same as tall but not unusually tall". Model-side content: a
+constant evaluative measure licenses every threshold at every height, so the
+evaluative update is the IDENTITY (`priorAfterEvalPosUsual_eq_prior`) —
+"usually warm" reduces to bare "warm" exactly — while `μ_unusual =
+μ_horrible` holds definitionally, so "unusually warm" IS the horribly chain
+and inherits its upward shift. The old cross-model inequality pair is
+subsumed by these identities plus the single-model shift theorems. -/
+
+/-- ℕ-valued constant measure ("usual"): no height discrimination. -/
+def muUsualN : Height → ℕ := fun _ => 3
+
+/-- μ_unusual has μ_horrible's shape: deviation measures pattern with
+negative evaluatives ([nouwen-2024] §5). -/
+def muUnusualN : Height → ℕ := muHorrible
+
+theorem muUnusualN_eq_muHorrible : muUnusualN = muHorrible := rfl
+
+/-- Under the constant measure every threshold is licensed at every height. -/
+private theorem evalLex_usual_true (vt : ValidThreshold) (u : EvalUtterance) (h : Height) :
+    evalLex muUsualN (validToThreshold vt) u h = true := by
+  cases u
+  · revert vt h; decide
+  · rfl
+
+/-- The constant-measure literal listener is the prior at every utterance. -/
+theorem evalL0At_usual (vt : ValidThreshold) (u : EvalUtterance) (w : Height) :
+    evalL0At muUsualN vt u w = heightPriorPMF w := by
+  have hm : (∑' h, heightPriorPMF h *
+      (if evalLex muUsualN (validToThreshold vt) u h then (1 : ℝ≥0∞) else 0)) = 1 := by
+    simp only [evalLex_usual_true, if_true, mul_one]
+    exact PMF.tsum_coe _
+  unfold evalL0At
+  rw [dif_pos (by rw [hm]; exact one_ne_zero)]
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _
+    (fun w' => evalLex_usual_true vt u w') _ _
+
+/-- Constant-measure speaker value: closed form, height-independent. -/
+theorem evalSpeakerAt_usual_apply (vt : ValidThreshold) (w : Height) :
+    evalSpeakerAt muUsualN vt w .eval_pos
+      = evalCostFactor .eval_pos / (evalCostFactor .eval_pos + 1) := by
+  have hP0 : heightPriorPMF w ≠ 0 := heightPriorPMF_pos w
+  have hPt : heightPriorPMF w ≠ ⊤ := PMF.apply_ne_top _ _
+  unfold evalSpeakerAt
+  rw [dif_pos (evalSpeakerAt_h_pos muUsualN vt w), RSA.S1Belief_apply, sumEvalUtt,
+    evalL0At_usual, evalL0At_usual, evalCostFactor_silent, mul_one]
+  have hP4 : (heightPriorPMF w) ^ (4 : ℝ) ≠ 0 :=
+    (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hP0) hPt).ne'
+  have hP4t : (heightPriorPMF w) ^ (4 : ℝ) ≠ ⊤ :=
+    ENNReal.rpow_ne_top_of_nonneg (by norm_num) hPt
+  rw [← div_eq_mul_inv,
+    show (heightPriorPMF w) ^ (4 : ℝ) * evalCostFactor .eval_pos +
+          (heightPriorPMF w) ^ (4 : ℝ)
+        = (heightPriorPMF w) ^ (4 : ℝ) * (evalCostFactor .eval_pos + 1) from by ring,
+    ENNReal.mul_div_mul_left _ _ hP4 hP4t]
+
+/-- The marginalised constant-measure kernel is constant across heights. -/
+theorem evalMarginalAt_usual_const (w : Height) :
+    evalMarginalAt muUsualN w .eval_pos
+      = evalCostFactor .eval_pos / (evalCostFactor .eval_pos + 1) := by
+  unfold evalMarginalAt
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+    evalSpeakerAt_usual_apply, evalSpeakerAt_usual_apply, evalSpeakerAt_usual_apply,
+    show ∀ x : ℝ≥0∞, 3⁻¹ * x + 3⁻¹ * x + 3⁻¹ * x = 3 * 3⁻¹ * x from fun x => by ring,
+    ENNReal.mul_inv_cancel (by norm_num) (by norm_num), one_mul]
+
+private theorem usualKernelValue_ne_zero :
+    evalCostFactor .eval_pos / (evalCostFactor .eval_pos + 1) ≠ 0 := by
+  rw [ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨evalCostFactor_pos _,
+    ENNReal.add_ne_top.mpr ⟨evalCostFactor_finite _, ENNReal.one_ne_top⟩⟩
+
+/-- Backgrounded prior for "usually". -/
+noncomputable def priorAfterEvalPosUsual : PMF Height :=
+  PMF.posterior (evalMarginalAt muUsualN) heightPriorPMF .eval_pos
+    (PMF.marginal_ne_zero _ _ _ (heightPriorPMF_pos (deg 0))
+      (by rw [evalMarginalAt_usual_const]; exact usualKernelValue_ne_zero))
+
+/-- **Zwicky's vacuity as an identity**: the constant measure's evaluative
+update is the identity — Π_usual IS the prior. This is the deep form of the
+old `eval_constant_preserves_peak` (whose inequality is now a corollary of
+the prior's own shape) and the first half of "usually warm ≈ warm". -/
+theorem priorAfterEvalPosUsual_eq_prior : priorAfterEvalPosUsual = heightPriorPMF :=
+  PMF.posterior_eq_of_kernel_const _ _ _ _ (fun w => evalMarginalAt_usual_const w)
+
+/-- The old `eval_constant_preserves_peak`, now a prior fact: the constant
+measure's stage-1 posterior at the norm exceeds it at the extreme because
+the prior does (`20 : 1` weights) — the evaluative step contributed nothing. -/
+theorem eval_constant_preserves_peak_pmf :
+    priorAfterEvalPosUsual (deg 3) > priorAfterEvalPosUsual (deg 6) := by
+  rw [priorAfterEvalPosUsual_eq_prior]
+  unfold heightPriorPMF
+  rw [gt_iff_lt, PMF.normalize_apply, PMF.normalize_apply,
+    mul_comm, mul_comm (heightPriorENN (deg 3))]
+  refine ENNReal.mul_lt_mul_right
+    (ENNReal.inv_ne_zero.mpr (ENNReal.tsum_ne_top_of_fintype heightPriorENN_finite))
+    (ENNReal.inv_ne_top.mpr
+      (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨deg 0, heightPriorENN_pos _⟩)) ?_
+  unfold heightPriorENN
+  rw [show (heightPrior (deg 6) : ℝ) = 1 from by
+      norm_num [show heightPrior (deg 6) = 1 from rfl],
+    show (heightPrior (deg 3) : ℝ) = 20 from by
+      norm_num [show heightPrior (deg 3) = 20 from rfl]]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+
 /-! ## §6. Predictions
 
 The headline below states that "horribly warm" shifts probability toward
