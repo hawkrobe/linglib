@@ -104,11 +104,13 @@ auditor flagged this as a broader linglib gap; the fix is an
 `IntensifierSemantics` typeclass at the Theory level (deferred — out of
 scope for this file).
 
-## Proof obligations (sorry'd, honestly motivated)
+## Proof obligations
 
-- `seq_horribly_shifts_upward_pmf` (numeric arithmetic core) — same wall
-  as `LassiterGoodman2017PMF`'s headline; structural decomposition reaches
-  product-of-scores via `posterior_chained_lt_iff_score_lt`, then halts.
+- `seq_horribly_shifts_upward_pmf` — PROVEN structurally (§5b ratio
+  cancellation): the height factor cancels in each per-threshold speaker,
+  collapsing the marginals to mass-monotone sums over the licensed
+  thresholds; informativity (`gval 1 > gval 0`) beats the 2:1 prior ratio.
+  No numeric reflection.
 - `eq_44b_factive_embedding_NOT_FORMALISED` — Nouwen's novel contribution.
 - `eq_49_qud_partition_NOT_FORMALISED` — explicit substrate gap.
 
@@ -493,7 +495,325 @@ noncomputable def seqAdjL1HorriblyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF H
             rw [ENNReal.ofReal_ne_zero_iff]
             exact Real.exp_pos _)))
 
-/-! ## §6. Predictions (sorry'd, with honest scope notes)
+/-! ## §5b. Ratio cancellation: the structural core
+
+Because the L&G literal listener carries the prior multiplicatively
+(`L0(u) h = P h · 1[u true at h] / mass(u)`), the height factor `P h` cancels
+in the speaker's normalisation: on its support, each per-threshold speaker
+value depends only on the prior MASS of the utterance's extension at that
+threshold. Each marginalised speaker is therefore a sum of a mass-monotone
+value over the licensed thresholds, and the headline product comparison
+follows from mass monotonicity alone — no numeric reflection. -/
+
+/-- Prior mass of the `.eval_pos` extension at threshold `vt` (exactly the
+`L0LassiterGoodman` normaliser for stage 1). -/
+noncomputable def evalMass (vt : ValidThreshold) : ℝ≥0∞ :=
+  ∑' h, heightPriorPMF h *
+    (if evalLex muHorrible (validToThreshold vt) .eval_pos h then (1 : ℝ≥0∞) else 0)
+
+theorem evalMass_ne_zero (vt : ValidThreshold) : evalMass vt ≠ 0 :=
+  evalLex_horrible_extension_pos vt .eval_pos
+
+theorem evalMass_ne_top (vt : ValidThreshold) : evalMass vt ≠ ⊤ := by
+  refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+  calc evalMass vt
+      ≤ ∑' h, heightPriorPMF h := ENNReal.tsum_le_tsum fun h => by split <;> simp
+    _ = 1 := PMF.tsum_coe _
+
+/-- Π-mass of the `.warm` extension at threshold `vt` (the stage-2
+`L0LassiterGoodman` normaliser, against the backgrounded prior). -/
+noncomputable def adjMass (vt : ValidThreshold) : ℝ≥0∞ :=
+  ∑' h, priorAfterEvalPos h *
+    (if adjLex (validToThreshold vt) .warm h then (1 : ℝ≥0∞) else 0)
+
+theorem adjMass_ne_zero (vt : ValidThreshold) : adjMass vt ≠ 0 :=
+  adjLex_warm_extension_pos vt .warm
+
+theorem adjMass_ne_top (vt : ValidThreshold) : adjMass vt ≠ ⊤ := by
+  refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+  calc adjMass vt
+      ≤ ∑' h, priorAfterEvalPos h := ENNReal.tsum_le_tsum fun h => by split <;> simp
+    _ = 1 := PMF.tsum_coe _
+
+/-- Stage-1 speaker value at `.eval_pos` on its support: a function of the
+extension mass only (the height factor has cancelled). -/
+noncomputable def gval (vt : ValidThreshold) : ℝ≥0∞ :=
+  (evalMass vt)⁻¹ ^ (4 : ℝ) * evalCostFactor .eval_pos /
+    ((evalMass vt)⁻¹ ^ (4 : ℝ) * evalCostFactor .eval_pos + 1)
+
+/-- Stage-2 speaker value at `.warm` on its support. -/
+noncomputable def fval (vt : ValidThreshold) : ℝ≥0∞ :=
+  (adjMass vt)⁻¹ ^ (4 : ℝ) * adjCostFactor .warm /
+    ((adjMass vt)⁻¹ ^ (4 : ℝ) * adjCostFactor .warm + 1)
+
+theorem evalCostFactor_silent : evalCostFactor .silent = 1 := by
+  unfold evalCostFactor evalCost
+  norm_num
+
+theorem adjCostFactor_silent : adjCostFactor .silent = 1 := by
+  unfold adjCostFactor
+  show ENNReal.ofReal (Real.exp (-4 * ((RSA.Nouwen2024.adjCost .silent : ℚ) : ℝ))) = 1
+  norm_num [RSA.Nouwen2024.adjCost]
+
+private theorem sumEvalUtt (f : EvalUtterance → ℝ≥0∞) :
+    ∑' u, f u = f .eval_pos + f .silent := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset EvalUtterance) = {.eval_pos, .silent} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+
+private theorem sumAdjUtt (f : RSA.Nouwen2024.AdjUtterance → ℝ≥0∞) :
+    ∑' u, f u = f .warm + f .silent := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset RSA.Nouwen2024.AdjUtterance) = {.warm, .silent} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+
+/-- **Ratio cancellation, stage 1**: on its support the eval speaker's value
+is `gval vt` — independent of the height. -/
+theorem evalSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
+    (hw : evalLex muHorrible (validToThreshold vt) .eval_pos w = true) :
+    evalSpeaker_horribleAt vt w .eval_pos = gval vt := by
+  have hP0 : heightPriorPMF w ≠ 0 := heightPriorPMF_pos w
+  have hPt : heightPriorPMF w ≠ ⊤ := PMF.apply_ne_top _ _
+  have hL0pos : evalL0_horribleAt vt .eval_pos w = heightPriorPMF w * (evalMass vt)⁻¹ := by
+    unfold evalL0_horribleAt
+    rw [RSA.L0LassiterGoodman_apply, hw]
+    simp only [if_true, mul_one]
+    rfl
+  have hL0sil : evalL0_horribleAt vt .silent w = heightPriorPMF w := by
+    unfold evalL0_horribleAt
+    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+  unfold evalSpeaker_horribleAt
+  rw [RSA.S1Belief_apply, sumEvalUtt, hL0pos, hL0sil, evalCostFactor_silent, mul_one,
+    ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+  -- value = (P^4 * M^4 * c) * (P^4 * M^4 * c + P^4)⁻¹ ; factor P^4
+  have hP4 : (heightPriorPMF w) ^ (4 : ℝ) ≠ 0 := (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hP0) hPt).ne'
+  have hP4t : (heightPriorPMF w) ^ (4 : ℝ) ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) hPt
+  rw [mul_assoc ((heightPriorPMF w) ^ (4 : ℝ)),
+    show (heightPriorPMF w) ^ (4 : ℝ) * ((evalMass vt)⁻¹ ^ (4 : ℝ) *
+          evalCostFactor .eval_pos) + (heightPriorPMF w) ^ (4 : ℝ)
+        = (heightPriorPMF w) ^ (4 : ℝ) * ((evalMass vt)⁻¹ ^ (4 : ℝ) *
+          evalCostFactor .eval_pos + 1) from by rw [mul_add, mul_one],
+    ← div_eq_mul_inv, ENNReal.mul_div_mul_left _ _ hP4 hP4t]
+  rfl
+
+/-- **Ratio cancellation, stage 1, off support**: value 0. -/
+theorem evalSpeaker_apply_of_false (vt : ValidThreshold) (w : Height)
+    (hw : evalLex muHorrible (validToThreshold vt) .eval_pos w = false) :
+    evalSpeaker_horribleAt vt w .eval_pos = 0 := by
+  have hL0pos : evalL0_horribleAt vt .eval_pos w = 0 := by
+    unfold evalL0_horribleAt
+    rw [RSA.L0LassiterGoodman_apply, hw]
+    simp
+  unfold evalSpeaker_horribleAt
+  rw [RSA.S1Belief_apply, hL0pos, ENNReal.zero_rpow_of_pos (by norm_num), zero_mul, zero_mul]
+
+/-- **Ratio cancellation, stage 2**: on its support (and at a non-degenerate
+world, `Π(w) ≠ 0`) the adjective speaker's value is `fval vt`. -/
+theorem adjSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
+    (hw : adjLex (validToThreshold vt) .warm w = true)
+    (hPi : priorAfterEvalPos w ≠ 0) :
+    adjSpeaker_warmAt vt w .warm = fval vt := by
+  have hPt : priorAfterEvalPos w ≠ ⊤ := PMF.apply_ne_top _ _
+  have hL0warm : adjL0_warmAt vt .warm w = priorAfterEvalPos w * (adjMass vt)⁻¹ := by
+    unfold adjL0_warmAt
+    rw [RSA.L0LassiterGoodman_apply, hw]
+    simp only [if_true, mul_one]
+    rfl
+  have hL0sil : adjL0_warmAt vt .silent w = priorAfterEvalPos w := by
+    unfold adjL0_warmAt
+    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+  have h_dite : (∑' u, ((adjL0_warmAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 := by
+    rw [sumAdjUtt]
+    intro hz
+    obtain ⟨-, h2⟩ := add_eq_zero.mp hz
+    rcases mul_eq_zero.mp h2 with h3 | h3
+    · rw [hL0sil] at h3
+      exact hPi (by
+        by_contra hne
+        exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hne) hPt).ne' h3)
+    · rw [adjCostFactor_silent] at h3
+      exact one_ne_zero h3
+  unfold adjSpeaker_warmAt
+  rw [dif_pos h_dite, RSA.S1Belief_apply, sumAdjUtt, hL0warm, hL0sil, adjCostFactor_silent,
+    mul_one, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+  have hP4 : (priorAfterEvalPos w) ^ (4 : ℝ) ≠ 0 :=
+    (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hPi) hPt).ne'
+  have hP4t : (priorAfterEvalPos w) ^ (4 : ℝ) ≠ ⊤ :=
+    ENNReal.rpow_ne_top_of_nonneg (by norm_num) hPt
+  rw [mul_assoc ((priorAfterEvalPos w) ^ (4 : ℝ)),
+    show (priorAfterEvalPos w) ^ (4 : ℝ) * ((adjMass vt)⁻¹ ^ (4 : ℝ) *
+          adjCostFactor .warm) + (priorAfterEvalPos w) ^ (4 : ℝ)
+        = (priorAfterEvalPos w) ^ (4 : ℝ) * ((adjMass vt)⁻¹ ^ (4 : ℝ) *
+          adjCostFactor .warm + 1) from by rw [mul_add, mul_one],
+    ← div_eq_mul_inv, ENNReal.mul_div_mul_left _ _ hP4 hP4t]
+  rfl
+
+/-- Stage-2 speaker value off support (at a non-degenerate world): `0`. -/
+theorem adjSpeaker_apply_of_false (vt : ValidThreshold) (w : Height)
+    (hw : adjLex (validToThreshold vt) .warm w = false)
+    (hPi : priorAfterEvalPos w ≠ 0) :
+    adjSpeaker_warmAt vt w .warm = 0 := by
+  have hPt : priorAfterEvalPos w ≠ ⊤ := PMF.apply_ne_top _ _
+  have hL0warm : adjL0_warmAt vt .warm w = 0 := by
+    unfold adjL0_warmAt
+    rw [RSA.L0LassiterGoodman_apply, hw]
+    simp
+  have hL0sil : adjL0_warmAt vt .silent w = priorAfterEvalPos w := by
+    unfold adjL0_warmAt
+    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+  have h_dite : (∑' u, ((adjL0_warmAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 := by
+    rw [sumAdjUtt]
+    intro hz
+    obtain ⟨-, h2⟩ := add_eq_zero.mp hz
+    rcases mul_eq_zero.mp h2 with h3 | h3
+    · rw [hL0sil] at h3
+      exact hPi (by
+        by_contra hne
+        exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hne) hPt).ne' h3)
+    · rw [adjCostFactor_silent] at h3
+      exact one_ne_zero h3
+  unfold adjSpeaker_warmAt
+  rw [dif_pos h_dite, RSA.S1Belief_apply, hL0warm,
+    ENNReal.zero_rpow_of_pos (by norm_num), zero_mul, zero_mul]
+
+/-! ### Mass monotonicity — structural, no value computation
+
+The `.eval_pos` extension shrinks strictly from threshold 0 to threshold 1
+(`deg 2` has `μ_horrible = 1`, licensed at 0 but not at 1), so the eval mass
+drops strictly; the speaker value `gval` rises strictly (informativity). -/
+
+theorem evalMass_one_lt_zero : evalMass 1 < evalMass 0 := by
+  refine ENNReal.tsum_lt_tsum (i := deg 2) (evalMass_ne_top 1) (fun h => ?_) ?_
+  · fin_cases h <;>
+      simp [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Degree.toNat,
+        Degree.Threshold.toNat]
+  · simp only [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Degree.toNat,
+      Degree.Threshold.toNat, deg]
+    norm_num
+    exact pos_iff_ne_zero.mpr (heightPriorPMF_pos _)
+
+/-- `x ↦ x/(x+1)` is strictly monotone on finite `ℝ≥0∞` — the informativity
+step: a bigger unnormalised weight yields a bigger speaker value. -/
+private theorem div_succ_lt_div_succ {a b : ℝ≥0∞} (hb : b ≠ ⊤) (h : a < b) :
+    a / (a + 1) < b / (b + 1) := by
+  have ha : a ≠ ⊤ := ne_top_of_lt h
+  have hda : a / (a + 1) ≠ ⊤ := ENNReal.div_ne_top ha (by simp)
+  have hdb : b / (b + 1) ≠ ⊤ := ENNReal.div_ne_top hb (by simp)
+  rw [← ENNReal.toReal_lt_toReal hda hdb, ENNReal.toReal_div, ENNReal.toReal_div,
+    ENNReal.toReal_add ha ENNReal.one_ne_top, ENNReal.toReal_add hb ENNReal.one_ne_top,
+    ENNReal.toReal_one]
+  have h' : a.toReal < b.toReal := (ENNReal.toReal_lt_toReal ha hb).mpr h
+  have ha0 : (0 : ℝ) ≤ a.toReal := ENNReal.toReal_nonneg
+  rw [div_lt_div_iff₀ (by positivity) (by positivity)]
+  nlinarith
+
+/-- Informativity is threshold-monotone at the eval stage: the strictly
+smaller mass at threshold 1 yields a strictly larger speaker value. -/
+theorem gval_zero_lt_one : gval 0 < gval 1 := by
+  have hc0 : evalCostFactor .eval_pos ≠ 0 := evalCostFactor_pos _
+  have hct : evalCostFactor .eval_pos ≠ ⊤ := evalCostFactor_finite _
+  have hX : (evalMass 0)⁻¹ ^ (4 : ℝ) * evalCostFactor .eval_pos
+      < (evalMass 1)⁻¹ ^ (4 : ℝ) * evalCostFactor .eval_pos := by
+    rw [mul_comm _ (evalCostFactor .eval_pos), mul_comm _ (evalCostFactor .eval_pos)]
+    exact ENNReal.mul_lt_mul_right hc0 hct
+      (ENNReal.rpow_lt_rpow (ENNReal.inv_lt_inv.mpr evalMass_one_lt_zero) (by norm_num))
+  have hbt : (evalMass 1)⁻¹ ^ (4 : ℝ) * evalCostFactor .eval_pos ≠ ⊤ :=
+    ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+      (ENNReal.inv_ne_top.mpr (evalMass_ne_zero 1))) hct
+  exact div_succ_lt_div_succ hbt hX
+
+/-! ### Marginal expansions over the licensed thresholds -/
+
+theorem gval_ne_top (vt : ValidThreshold) : gval vt ≠ ⊤ :=
+  ENNReal.div_ne_top
+    (ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+      (ENNReal.inv_ne_top.mpr (evalMass_ne_zero vt))) (evalCostFactor_finite _))
+    (by simp)
+
+theorem fval_ne_top (vt : ValidThreshold) : fval vt ≠ ⊤ :=
+  ENNReal.div_ne_top
+    (ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+      (ENNReal.inv_ne_top.mpr (adjMass_ne_zero vt)))
+      (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
+    (by simp)
+
+theorem fval_ne_zero (vt : ValidThreshold) : fval vt ≠ 0 := by
+  unfold fval
+  rw [ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  constructor
+  · apply mul_ne_zero
+    · exact (ENNReal.rpow_pos (ENNReal.inv_pos.mpr (adjMass_ne_top vt))
+        (ENNReal.inv_ne_top.mpr (adjMass_ne_zero vt))).ne'
+    · unfold adjCostFactor
+      rw [ENNReal.ofReal_ne_zero_iff]
+      exact Real.exp_pos _
+  · exact ENNReal.add_ne_top.mpr
+      ⟨ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+        (ENNReal.inv_ne_top.mpr (adjMass_ne_zero vt)))
+        (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top),
+       ENNReal.one_ne_top⟩
+
+/-- The raw prior ratio `P(deg 2) = 2 · P(deg 5)` (weights 10 vs 5) — no
+normaliser computation needed. -/
+theorem heightPriorPMF_deg2_eq :
+    heightPriorPMF (deg 2) = 2 * heightPriorPMF (deg 5) := by
+  unfold heightPriorPMF
+  rw [PMF.normalize_apply, PMF.normalize_apply, ← mul_assoc]
+  congr 1
+  unfold heightPriorENN
+  rw [show (heightPrior (deg 2) : ℝ) = 10 from by norm_num [show heightPrior (deg 2) = 10 from rfl],
+    show (heightPrior (deg 5) : ℝ) = 5 from by norm_num [show heightPrior (deg 5) = 5 from rfl],
+    show (2 : ℝ≥0∞) = ENNReal.ofReal (2 : ℝ) from (ENNReal.ofReal_ofNat 2).symm,
+    ← ENNReal.ofReal_mul (by norm_num)]
+  norm_num
+
+private theorem sumVT (f : ValidThreshold → ℝ≥0∞) :
+    ∑' vt, f vt = f 0 + f 1 + f 2 := by
+  rw [tsum_fintype, Fin.sum_univ_three]
+
+private theorem uPrior (vt : ValidThreshold) : thresholdPriorPMF vt = 3⁻¹ := by
+  rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]
+  norm_num
+
+theorem evalMarginal_deg2 :
+    evalSpeakerMarginalHorrible (deg 2) .eval_pos = 3⁻¹ * gval 0 := by
+  unfold evalSpeakerMarginalHorrible
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+    evalSpeaker_apply_of_true 0 _ (by decide),
+    evalSpeaker_apply_of_false 1 _ (by decide),
+    evalSpeaker_apply_of_false 2 _ (by decide), mul_zero, add_zero, add_zero]
+
+theorem evalMarginal_deg5 :
+    evalSpeakerMarginalHorrible (deg 5) .eval_pos = 3⁻¹ * gval 0 + 3⁻¹ * gval 1 := by
+  unfold evalSpeakerMarginalHorrible
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+    evalSpeaker_apply_of_true 0 _ (by decide),
+    evalSpeaker_apply_of_true 1 _ (by decide),
+    evalSpeaker_apply_of_false 2 _ (by decide), mul_zero, add_zero]
+
+theorem adjMarginal_deg2 :
+    adjSpeakerMarginal (deg 2) .warm = 3⁻¹ * fval 0 + 3⁻¹ * fval 1 := by
+  unfold adjSpeakerMarginal
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+    adjSpeaker_apply_of_true 0 _ (by decide)
+      (priorAfterEvalPos_pos_at_horrible_pos (by decide)),
+    adjSpeaker_apply_of_true 1 _ (by decide)
+      (priorAfterEvalPos_pos_at_horrible_pos (by decide)),
+    adjSpeaker_apply_of_false 2 _ (by decide)
+      (priorAfterEvalPos_pos_at_horrible_pos (by decide)), mul_zero, add_zero]
+
+theorem adjMarginal_deg5 :
+    adjSpeakerMarginal (deg 5) .warm = 3⁻¹ * fval 0 + 3⁻¹ * fval 1 + 3⁻¹ * fval 2 := by
+  unfold adjSpeakerMarginal
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+    adjSpeaker_apply_of_true 0 _ (by decide)
+      (priorAfterEvalPos_pos_at_horrible_pos (by decide)),
+    adjSpeaker_apply_of_true 1 _ (by decide)
+      (priorAfterEvalPos_pos_at_horrible_pos (by decide)),
+    adjSpeaker_apply_of_true 2 _ (by decide)
+      (priorAfterEvalPos_pos_at_horrible_pos (by decide))]
+
+/-! ## §6. Predictions
 
 The headline below states that "horribly warm" shifts probability toward
 *high* heights (deg 5 > deg 2). **HONEST SCOPE**: this is the
@@ -506,35 +826,50 @@ THIS model but the WRONG statement for Nouwen's actual Goldilocks claim.
 See module docstring §3 of "Scope (honest reckoning)". -/
 
 /-- The headline shift prediction in PMF form: "horribly warm" pushes
-probability toward higher heights (under the file's monotone `muHorrible`).
+probability toward the high extreme (`deg 5` over the moderate `deg 2`).
 
-**Discharge structure** (as far as structural decomposition reaches):
-
-The chained `posterior κ₂ (posterior κ₁ μ b₁) b₂` shape decomposes via
-`PMF.posterior_chained_lt_iff_score_lt` (the PMF analogue of mathlib's
-`posterior_comp` for chained Bayesian updates) — this is a single
-`rw` step that cancels both the inner and outer marginal denominators in
-one move, reducing the headline to a comparison of products of
-unnormalised scores `μ a · κ₁ a b₁ · κ₂ a b₂`.
-
-The remaining residue is the genuine "numeric arithmetic core": each side
-is a `Real.exp`-weighted sum over `ValidThreshold` whose value depends on
-the marginalised speaker computation. Same wall as
-`LassiterGoodman2017PMF`'s headline; same wall as the bundled-RSAConfig
-counterpart (`Nouwen2024.seq_horribly_shifts_upward`) — bundled passes via
-`rsa_predict` reflection on rational arithmetic; PMF face inherits the
-barrier and sorrys out. -/
+**Fully structural discharge** — no numeric reflection. The chained
+`posterior κ₂ (posterior κ₁ μ b₁) b₂` shape decomposes via
+`PMF.posterior_chained_lt_iff_score_lt` to a product comparison
+`μ(2)·E(2)·A(2) < μ(5)·E(5)·A(5)`; the ratio-cancellation lemmas (§5b)
+collapse each marginal to a sum of the mass-monotone speaker value over the
+licensed thresholds (`E(h) = Σ_{θ_e < μ_H(h)} gval θ_e`, `A(h) = Σ_{θ < h}
+fval θ`), and the raw prior ratio `μ(2) = 2·μ(5)` is beaten by informativity
+alone: `gval 1 > gval 0` (strictly smaller extension mass at the higher
+threshold), so `(g₀+g₁)(f₀+f₁+f₂) > 2·g₀·(f₀+f₁)`. -/
 theorem seq_horribly_shifts_upward_pmf :
     seqAdjL1HorriblyWarm .warm (deg 5) >
     seqAdjL1HorriblyWarm .warm (deg 2) := by
   unfold seqAdjL1HorriblyWarm priorAfterEvalPos evalL1Horrible
-  rw [gt_iff_lt, PMF.posterior_chained_lt_iff_score_lt]
-  -- Goal: heightPriorPMF (deg 2) * evalSpeakerMarginalHorrible (deg 2) .eval_pos
-  --       * adjSpeakerMarginal (deg 2) .warm
-  --     < heightPriorPMF (deg 5) * evalSpeakerMarginalHorrible (deg 5) .eval_pos
-  --       * adjSpeakerMarginal (deg 5) .warm
-  -- Numeric arithmetic core (same as bundled `rsa_predict` reflection territory).
-  sorry
+  rw [gt_iff_lt, PMF.posterior_chained_lt_iff_score_lt,
+    evalMarginal_deg2, evalMarginal_deg5, adjMarginal_deg2, adjMarginal_deg5,
+    heightPriorPMF_deg2_eq]
+  have hF0 : fval 0 + fval 1 ≠ 0 := fun h => fval_ne_zero 0 (add_eq_zero.mp h).1
+  have hFt : fval 0 + fval 1 ≠ ⊤ :=
+    ENNReal.add_ne_top.mpr ⟨fval_ne_top 0, fval_ne_top 1⟩
+  have key : 2 * gval 0 * (fval 0 + fval 1)
+      < (gval 0 + gval 1) * (fval 0 + fval 1 + fval 2) := by
+    have h1 : 2 * gval 0 * (fval 0 + fval 1)
+        < (gval 0 + gval 1) * (fval 0 + fval 1) := by
+      rw [two_mul, mul_comm (gval 0 + gval 0), mul_comm (gval 0 + gval 1)]
+      exact ENNReal.mul_lt_mul_right hF0 hFt
+        (ENNReal.add_lt_add_left (gval_ne_top 0) gval_zero_lt_one)
+    exact h1.trans_le (mul_le_mul_right le_self_add _)
+  have h3 : (3 : ℝ≥0∞)⁻¹ ≠ 0 := ENNReal.inv_ne_zero.mpr (by norm_num)
+  have h3t : (3 : ℝ≥0∞)⁻¹ ≠ ⊤ := ENNReal.inv_ne_top.mpr (by norm_num)
+  have hP5 : heightPriorPMF (deg 5) ≠ 0 := heightPriorPMF_pos _
+  have hP5t : heightPriorPMF (deg 5) ≠ ⊤ := PMF.apply_ne_top _ _
+  calc 2 * heightPriorPMF (deg 5) * (3⁻¹ * gval 0) * (3⁻¹ * fval 0 + 3⁻¹ * fval 1)
+      = heightPriorPMF (deg 5) * 3⁻¹ * 3⁻¹ * (2 * gval 0 * (fval 0 + fval 1)) := by
+        ring
+    _ < heightPriorPMF (deg 5) * 3⁻¹ * 3⁻¹ *
+        ((gval 0 + gval 1) * (fval 0 + fval 1 + fval 2)) :=
+        ENNReal.mul_lt_mul_right
+          (mul_ne_zero (mul_ne_zero hP5 h3) h3)
+          (ENNReal.mul_ne_top (ENNReal.mul_ne_top hP5t h3t) h3t) key
+    _ = heightPriorPMF (deg 5) * (3⁻¹ * gval 0 + 3⁻¹ * gval 1) *
+        (3⁻¹ * fval 0 + 3⁻¹ * fval 1 + 3⁻¹ * fval 2) := by
+        ring
 
 /-! ## §6'. Substrate gaps documented as sorry'd theorems (Nouwen 2024 not-formalised)
 
@@ -588,7 +923,7 @@ theorem eq_49_qud_partition_NOT_FORMALISED :
 The following theorems exercise the inequality-decomposition lemmas added in
 0.230.387. Each one proves a structural claim about the model that the new
 lemmas dispatch in 1-2 lines — no numeric arithmetic required. The contrast
-with `seq_horribly_shifts_upward_pmf` (which sorrys out the numeric core) is
+with `seq_horribly_shifts_upward_pmf` (closed structurally via §5b) is
 the point: structural shell handles structural claims; the numeric core is
 reflection territory, regardless of bundling. -/
 
