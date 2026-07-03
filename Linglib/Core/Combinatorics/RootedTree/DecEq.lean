@@ -33,8 +33,8 @@ so concrete `Nonplanar` equalities close by `decide`.
 checker sees the structural descent. Soundness and completeness of the matcher live
 generically in `Core/Data/Multiset/Rel.lean`; what remains here is that `eqv` is an
 equivalence. Symmetry and transitivity of `eqv` are mutually entangled at the children
-level (completeness of the matcher needs both), so they are proven together by strong
-induction on a size bound (`eqv_symm_trans`).
+level (completeness of the matcher needs both), so they are proven together by induction
+on a size bound (`eqv_symm_trans`).
 
 Strict, order-sensitive equality of the underlying ordered trees is already decidable
 (`RoseTree.instDecidableEq`); this file only adds the decider for the quotient relation.
@@ -70,10 +70,13 @@ end
 greedy matcher (`Core/Data/Multiset/Rel.lean`) reduce both directions of
 `eqv_iff_permEquiv` to the equivalence properties of `eqv`. -/
 
+/-- `eqv` as a `Prop`-valued relation. -/
+private abbrev Eqv (c d : RoseTree α) : Prop := eqv c d = true
+
 /-- `eqvMulti` is the generic greedy matcher at `eqv`. -/
 private theorem eqvMulti_eq_isPermBy :
     ∀ cs ds : List (RoseTree α), eqvMulti cs ds = List.isPermBy eqv cs ds
-  | [], ds => by rw [eqvMulti, List.isPermBy]
+  | [], _ => rfl
   | c :: cs, ds => by
     rw [eqvMulti, List.isPermBy]
     cases ds.findIdx? (eqv c) with
@@ -82,7 +85,7 @@ private theorem eqvMulti_eq_isPermBy :
 
 /-- Soundness of `eqvMulti` against `Multiset.Rel`, hypothesis-free. -/
 private theorem rel_of_eqvMulti {cs ds : List (RoseTree α)} (h : eqvMulti cs ds = true) :
-    Multiset.Rel (fun c d : RoseTree α => eqv c d = true) ↑cs ↑ds :=
+    Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds :=
   List.rel_of_isPermBy (eqvMulti_eq_isPermBy cs ds ▸ h)
 
 /-- Completeness of `eqvMulti` against `Multiset.Rel`, given symmetry and transitivity
@@ -91,86 +94,71 @@ private theorem eqvMulti_of_rel {P : RoseTree α → Prop}
     (Ssymm : ∀ x y, P x → P y → eqv x y = true → eqv y x = true)
     (Strans : ∀ x y z, P x → P y → P z → eqv x y = true → eqv y z = true → eqv x z = true)
     {cs ds : List (RoseTree α)} (hPcs : ∀ x ∈ cs, P x) (hPds : ∀ x ∈ ds, P x)
-    (h : Multiset.Rel (fun c d : RoseTree α => eqv c d = true) ↑cs ↑ds) : eqvMulti cs ds = true := by
+    (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true := by
   rw [eqvMulti_eq_isPermBy]
   exact List.isPermBy_of_rel Ssymm Strans hPcs hPds h
-
-omit [DecidableEq α] in
-/-- Every tree has at least one vertex. -/
-private theorem one_le_sizeOf (t : RoseTree α) : 1 ≤ sizeOf t := by
-  cases t with
-  | node a cs => simp only [RoseTree.node.sizeOf_spec]; omega
 
 /-- `eqv` on two nodes: equal root values and children matching under `eqvMulti`. -/
 private theorem eqv_node_iff {a b : α} {cs ds : List (RoseTree α)} :
     eqv (.node a cs) (.node b ds) = true ↔ a = b ∧ eqvMulti cs ds = true := by
   rw [eqv, Bool.and_eq_true, decide_eq_true_eq]
 
-/-- Symmetry and transitivity of `eqv`, proven together by strong induction on a per-tree
-    size bound: completeness of the matcher at a node needs both symmetry and
-    transitivity on the (strictly smaller) children. -/
+/-- Symmetry and transitivity of `eqv`, proven together by induction on a size bound:
+    completeness of the matcher at a node needs both symmetry and transitivity on the
+    (strictly smaller) children, which the induction hypothesis supplies. -/
 private theorem eqv_symm_trans :
-    ∀ N, (∀ t s : RoseTree α, sizeOf t ≤ N → sizeOf s ≤ N →
+    ∀ N, (∀ t s : RoseTree α, sizeOf t < N → sizeOf s < N →
             (eqv t s = true → eqv s t = true)) ∧
-         (∀ t s u : RoseTree α, sizeOf t ≤ N → sizeOf s ≤ N → sizeOf u ≤ N →
+         (∀ t s u : RoseTree α, sizeOf t < N → sizeOf s < N → sizeOf u < N →
             (eqv t s = true → eqv s u = true → eqv t u = true)) := by
   intro N
-  induction N using Nat.strong_induction_on with
-  | _ N ih =>
+  induction N with
+  | zero =>
+    exact ⟨fun t s hst _ => absurd hst (Nat.not_lt_zero _),
+           fun t s u hst _ _ => absurd hst (Nat.not_lt_zero _)⟩
+  | succ N ih =>
     refine ⟨?_, ?_⟩
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ hst hss hts
       rw [eqv_node_iff] at hts
       obtain ⟨hab, hmulti⟩ := hts
-      have hNpos : 1 ≤ N := le_trans (one_le_sizeOf (RoseTree.node a cs)) hst
-      have hcsN : ∀ x ∈ cs, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hst; omega
-      have hdsN : ∀ x ∈ ds, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hss; omega
-      have ihm := ih (N - 1) (by omega)
-      have Psymm : ∀ x y, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 →
-          eqv x y = true → eqv y x = true := fun x y => ihm.1 x y
-      have Ptrans : ∀ x y z, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 → sizeOf z ≤ N - 1 →
-          eqv x y = true → eqv y z = true → eqv x z = true := fun x y z => ihm.2 x y z
+      have hcsN : ∀ x ∈ cs, sizeOf x < N := fun x hx =>
+        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hst)
+      have hdsN : ∀ x ∈ ds, sizeOf x < N := fun x hx =>
+        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hss)
       rw [eqv_node_iff]
-      refine ⟨hab.symm, ?_⟩
-      refine eqvMulti_of_rel Psymm Ptrans hdsN hcsN (Multiset.rel_symm_on ?_
-        (rel_of_eqvMulti hmulti))
-      exact fun x hx y hy => Psymm x y (hcsN x (Multiset.mem_coe.mp hx))
+      refine ⟨hab.symm, eqvMulti_of_rel ih.1 ih.2 hdsN hcsN (Multiset.rel_symm_on ?_
+        (rel_of_eqvMulti hmulti))⟩
+      exact fun x hx y hy => ih.1 x y (hcsN x (Multiset.mem_coe.mp hx))
         (hdsN y (Multiset.mem_coe.mp hy))
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ ⟨c, es⟩ hst hss hsu hts hsu'
       rw [eqv_node_iff] at hts
       obtain ⟨hab, hm1⟩ := hts
       rw [eqv_node_iff] at hsu'
       obtain ⟨hbc, hm2⟩ := hsu'
-      have hNpos : 1 ≤ N := le_trans (one_le_sizeOf (RoseTree.node a cs)) hst
-      have hcsN : ∀ x ∈ cs, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hst; omega
-      have hdsN : ∀ x ∈ ds, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hss; omega
-      have hesN : ∀ x ∈ es, sizeOf x ≤ N - 1 := fun x hx => by
-        have := lt_of_lt_of_le (sizeOf_lt_of_mem hx) hsu; omega
-      have ihm := ih (N - 1) (by omega)
-      have Psymm : ∀ x y, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 →
-          eqv x y = true → eqv y x = true := fun x y => ihm.1 x y
-      have Ptrans : ∀ x y z, sizeOf x ≤ N - 1 → sizeOf y ≤ N - 1 → sizeOf z ≤ N - 1 →
-          eqv x y = true → eqv y z = true → eqv x z = true := fun x y z => ihm.2 x y z
+      have hcsN : ∀ x ∈ cs, sizeOf x < N := fun x hx =>
+        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hst)
+      have hdsN : ∀ x ∈ ds, sizeOf x < N := fun x hx =>
+        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hss)
+      have hesN : ∀ x ∈ es, sizeOf x < N := fun x hx =>
+        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hsu)
       rw [eqv_node_iff]
-      refine ⟨hab.trans hbc, ?_⟩
-      refine eqvMulti_of_rel Psymm Ptrans hcsN hesN (Multiset.rel_trans_on ?_
-        (rel_of_eqvMulti hm1) (rel_of_eqvMulti hm2))
-      exact fun x hx y hy z hz => Ptrans x y z (hcsN x (Multiset.mem_coe.mp hx))
+      refine ⟨hab.trans hbc, eqvMulti_of_rel ih.1 ih.2 hcsN hesN (Multiset.rel_trans_on ?_
+        (rel_of_eqvMulti hm1) (rel_of_eqvMulti hm2))⟩
+      exact fun x hx y hy z hz => ih.2 x y z (hcsN x (Multiset.mem_coe.mp hx))
         (hdsN y (Multiset.mem_coe.mp hy)) (hesN z (Multiset.mem_coe.mp hz))
 
 /-- Symmetry of `eqv`. -/
 private theorem eqv_symm {t s : RoseTree α} (h : eqv t s = true) : eqv s t = true :=
-  (eqv_symm_trans (max (sizeOf t) (sizeOf s))).1 t s (le_max_left _ _) (le_max_right _ _) h
+  (eqv_symm_trans (max (sizeOf t) (sizeOf s) + 1)).1 t s
+    (Nat.lt_succ_of_le (le_max_left _ _)) (Nat.lt_succ_of_le (le_max_right _ _)) h
 
 /-- Transitivity of `eqv`. -/
 private theorem eqv_trans {t s u : RoseTree α} (h1 : eqv t s = true) (h2 : eqv s u = true) :
     eqv t u = true :=
-  (eqv_symm_trans (max (sizeOf t) (max (sizeOf s) (sizeOf u)))).2 t s u
-    (le_max_left _ _) (le_trans (le_max_left _ _) (le_max_right _ _))
-    (le_trans (le_max_right _ _) (le_max_right _ _)) h1 h2
+  (eqv_symm_trans (max (sizeOf t) (max (sizeOf s) (sizeOf u)) + 1)).2 t s u
+    (Nat.lt_succ_of_le (le_max_left _ _))
+    (Nat.lt_succ_of_le (le_trans (le_max_left _ _) (le_max_right _ _)))
+    (Nat.lt_succ_of_le (le_trans (le_max_right _ _) (le_max_right _ _))) h1 h2
 
 /-- `eqv` is reflexive. -/
 private theorem eqv_refl : ∀ (t : RoseTree α), eqv t t = true
@@ -185,7 +173,7 @@ decreasing_by exact sizeOf_lt_of_mem hc
 /-- `eqvMulti`, unconditionally: symmetry and transitivity of `eqv` are now globally
     available. -/
 private theorem eqvMulti_of_rel' {cs ds : List (RoseTree α)}
-    (h : Multiset.Rel (fun c d : RoseTree α => eqv c d = true) ↑cs ↑ds) : eqvMulti cs ds = true :=
+    (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true :=
   eqvMulti_of_rel (P := fun _ => True) (fun _ _ _ _ hxy => eqv_symm hxy)
     (fun _ _ _ _ _ _ hxy hyz => eqv_trans hxy hyz)
     (fun _ _ => trivial) (fun _ _ => trivial) h
