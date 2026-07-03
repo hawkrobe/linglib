@@ -61,16 +61,10 @@ private def eqvMulti : List (RoseTree α) → List (RoseTree α) → Bool
     | none => false
 end
 
-/-! #### Correctness of `eqv` — internal machinery
+/-! #### Correctness of the greedy matcher
 
-`eqvMulti` greedily matches each left child to the first `eqv`-equal right child and erases
-it. The matching succeeds iff the two child lists are equal as *multisets under `eqv`*,
-which we package as `Match cs ds := ∃ ds', Forall₂ (eqv · ·) cs ds' ∧ ds'.Perm ds`. From
-there: `eqv` is reflexive/symmetric/transitive and respects a single `PermStep`, giving
-`PermEquiv → eqv`; and `Match` reads back through `permEquiv_node_componentwise` +
-`permEquiv_root_perm`, giving `eqv → PermEquiv`. Symmetry and transitivity of `eqv`
-are mutually entangled at the children level (the greedy `Match`-readback needs both), so
-they are proven together by strong induction on a per-tree size bound. -/
+Both directions of `eqv_iff_permEquiv` factor through `Match`, equality of child lists as
+multisets under `eqv`. -/
 
 /-- `cs` and `ds` match as multisets under `eqv`: some reordering of `ds` is componentwise
     `eqv`-equal to `cs`. -/
@@ -288,13 +282,14 @@ private theorem eqv_trans {t s u : RoseTree α} (h1 : eqv t s = true) (h2 : eqv 
     (le_max_left _ _) (le_trans (le_max_left _ _) (le_max_right _ _))
     (le_trans (le_max_right _ _) (le_max_right _ _)) h1 h2
 
-/-! Reflexivity of `eqv`, with its `eqvMulti` companion. -/
 mutual
+/-- `eqv` is reflexive. -/
 private theorem eqv_refl : ∀ (t : RoseTree α), eqv t t = true
   | .node a cs => by
     rw [eqv]
     simp only [Bool.and_eq_true, decide_true, true_and]
     exact eqvMulti_refl cs
+/-- `eqvMulti` is reflexive. -/
 private theorem eqvMulti_refl : ∀ (cs : List (RoseTree α)), eqvMulti cs cs = true
   | [] => by rw [eqvMulti]; rfl
   | c :: cs => by
@@ -348,8 +343,8 @@ private theorem permEquiv_to_eqv {t s : RoseTree α} (h : PermEquiv t s) : eqv t
   | symm _ _ _ ih => exact eqv_symm ih
   | trans _ _ _ _ _ ih1 ih2 => exact eqv_trans ih1 ih2
 
-/-! (→) `eqv → PermEquiv`, by structural induction (mutual with the child-list version). -/
 mutual
+/-- `eqv → PermEquiv`, by structural induction. -/
 private theorem eqv_to_permEquiv : ∀ (t s : RoseTree α), eqv t s = true → PermEquiv t s
   | .node a cs, .node b ds, h => by
     rw [eqv_node_iff] at h
