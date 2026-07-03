@@ -144,72 +144,59 @@ private theorem eqv_symm_trans :
           (fun x hx y hy z hz => ih.2 x y z (hcsN x hx) (hdsN y hy) (hesN z hz))
           (rel_of_eqvMulti hm1) (rel_of_eqvMulti hm2))⟩
 
-/-- Symmetry of `eqv`. -/
-private theorem eqv_symm (h : eqv t s = true) : eqv s t = true :=
-  (eqv_symm_trans (max (sizeOf t) (sizeOf s) + 1)).1 t s
-    (Nat.lt_succ_of_le (le_max_left _ _)) (Nat.lt_succ_of_le (le_max_right _ _)) h
-
-/-- Transitivity of `eqv`. -/
-private theorem eqv_trans (h1 : eqv t s = true) (h2 : eqv s u = true) :
-    eqv t u = true :=
-  (eqv_symm_trans (max (sizeOf t) (max (sizeOf s) (sizeOf u)) + 1)).2 t s u
-    (Nat.lt_succ_of_le (le_max_left _ _))
-    (Nat.lt_succ_of_le (le_trans (le_max_left _ _) (le_max_right _ _)))
-    (Nat.lt_succ_of_le (le_trans (le_max_right _ _) (le_max_right _ _))) h1 h2
-
 /-- `eqv` is reflexive. -/
-private theorem eqv_refl : ∀ (t : RoseTree α), eqv t t = true
-  | .node a cs => by
-    rw [eqv_node_iff]
-    refine ⟨rfl, ?_⟩
-    rw [eqvMulti_eq_isPermBy]
-    exact List.isPermBy_refl cs fun c hc => eqv_refl c
-termination_by t => sizeOf t
-decreasing_by exact sizeOf_lt_of_mem hc
+private theorem eqv_refl (t : RoseTree α) : eqv t t = true := by
+  induction t with
+  | node a cs ih =>
+    rw [eqv_node_iff, eqvMulti_eq_isPermBy]
+    exact ⟨rfl, List.isPermBy_refl cs ih⟩
 
-/-- `eqvMulti`, unconditionally: symmetry and transitivity of `eqv` are now globally
-    available. -/
-private theorem eqvMulti_of_rel'
-    (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true :=
-  eqvMulti_of_rel (P := fun _ => True) (fun _ _ _ _ hxy => eqv_symm hxy)
-    (fun _ _ _ _ _ _ hxy hyz => eqv_trans hxy hyz)
-    (fun _ _ => trivial) (fun _ _ => trivial) h
+/-- `eqv` is an equivalence: `eqv_symm_trans` at a sum-of-sizes bound, plus structural
+    reflexivity. -/
+private theorem eqv_equivalence : Equivalence (Eqv (α := α)) where
+  refl := eqv_refl
+  symm {t s} h := (eqv_symm_trans (sizeOf t + sizeOf s + 1)).1 t s (by omega) (by omega) h
+  trans {t s u} h1 h2 := (eqv_symm_trans (sizeOf t + sizeOf s + sizeOf u + 1)).2 t s u
+    (by omega) (by omega) (by omega) h1 h2
+
+/-- The characterization of `eqv` at a node, now unconditional: equal root values, and
+    children related as multisets under `eqv`. -/
+private theorem eqv_node_iff_rel {a b : α} :
+    eqv (.node a cs) (.node b ds) = true ↔
+      a = b ∧ Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds :=
+  eqv_node_iff.trans <| and_congr_right fun _ =>
+    ⟨rel_of_eqvMulti, eqvMulti_of_rel (P := fun _ => True)
+      (fun _ _ _ _ => eqv_equivalence.symm) (fun _ _ _ _ _ _ => eqv_equivalence.trans)
+      (fun _ _ => trivial) (fun _ _ => trivial)⟩
 
 /-- `eqv` respects a single `PermStep`. -/
 private theorem eqv_step (h : PermStep t s) : eqv t s = true := by
   induction h with
   | @swapAtRoot a l r pre post =>
-    rw [eqv_node_iff]
-    refine ⟨rfl, eqvMulti_of_rel' ?_⟩
+    refine eqv_node_iff_rel.mpr ⟨rfl, ?_⟩
     have hcoe : ((pre ++ l :: r :: post : List (RoseTree α)) : Multiset (RoseTree α))
         = ↑(pre ++ r :: l :: post) :=
       Multiset.coe_eq_coe.mpr ((List.Perm.swap r l post).append_left pre)
     rw [hcoe]
     exact Multiset.rel_refl_of_refl_on fun x _ => eqv_refl x
   | @recurse a pre old new post _ ih =>
-    rw [eqv_node_iff]
-    refine ⟨rfl, eqvMulti_of_rel' (Multiset.rel_coe_iff_exists.mpr
+    exact eqv_node_iff_rel.mpr ⟨rfl, Multiset.rel_coe_iff_exists.mpr
       ⟨pre ++ new :: post,
         List.rel_append (List.forall₂_same.mpr fun x _ => eqv_refl x)
           (List.Forall₂.cons ih (List.forall₂_same.mpr fun x _ => eqv_refl x)),
-        List.Perm.refl _⟩)⟩
+        List.Perm.refl _⟩⟩
 
-/-- `PermEquiv → eqv`, by `EqvGen` induction. -/
-private theorem permEquiv_to_eqv (h : PermEquiv t s) : eqv t s = true := by
-  induction h with
-  | rel _ _ hstep => exact eqv_step hstep
-  | refl t => exact eqv_refl t
-  | symm _ _ _ ih => exact eqv_symm ih
-  | trans _ _ _ _ _ ih1 ih2 => exact eqv_trans ih1 ih2
+/-- `PermEquiv → eqv`: `eqv` is an equivalence containing `PermStep`, and `PermEquiv` is
+    the least one. -/
+private theorem permEquiv_to_eqv (h : PermEquiv t s) : eqv t s = true :=
+  eqv_equivalence.eqvGen_iff.mp (Relation.EqvGen.mono (fun _ _ => eqv_step) h)
 
 mutual
 /-- `eqv → PermEquiv`, by structural induction. -/
 private theorem eqv_to_permEquiv : ∀ (t s : RoseTree α), eqv t s = true → PermEquiv t s
   | .node a cs, .node b ds, h => by
-    rw [eqv_node_iff] at h
-    obtain ⟨hab, hmulti⟩ := h
-    subst hab
-    obtain ⟨ds', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp (rel_of_eqvMulti hmulti)
+    obtain ⟨rfl, hrel⟩ := eqv_node_iff_rel.mp h
+    obtain ⟨ds', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp hrel
     exact (permEquiv_node_componentwise
       (eqv_forall₂_to_permEquiv cs ds' hf)).trans (permEquiv_root_perm hperm)
 private theorem eqv_forall₂_to_permEquiv :
