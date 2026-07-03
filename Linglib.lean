@@ -585,7 +585,6 @@ import Linglib.Discourse.AtIssueness
 import Linglib.Discourse.Brandom
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Constraints
-import Linglib.Discourse.Centering.DRS
 import Linglib.Discourse.Centering.Defs
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Discourse.Centering.Instances.InformationStatus
@@ -598,14 +597,11 @@ import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.CommitmentSpace
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.CredenceThreshold
-import Linglib.Discourse.DialogueState
 import Linglib.Discourse.DisjunctiveUpdate
 import Linglib.Discourse.DistributionalCG
 import Linglib.Discourse.Gameboard.Austinian
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
-import Linglib.Discourse.Gameboard.DialogueStateInstance
 import Linglib.Discourse.Gameboard.Genre
 import Linglib.Discourse.Gameboard.Grammar
 import Linglib.Discourse.Gameboard.Grounding
