@@ -1,4 +1,4 @@
-import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Quantification.Numerals.Roundness
 
 /-!
 # [haslinger-2025-diss]: Imprecision and homogeneity

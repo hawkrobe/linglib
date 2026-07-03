@@ -2,7 +2,7 @@ import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Numerals.Precision
+import Linglib.Semantics.Quantification.Numerals.Precision
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
