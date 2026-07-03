@@ -13,8 +13,14 @@ import Mathlib.MeasureTheory.Measure.Decomposition.Lebesgue
 `(μ s)⁻¹` on `s` and `0` off it — an exact measure equality with no
 side conditions beyond measurability. The Radon-Nikodym facts
 (`rnDeriv_cond`, `rnDeriv_cond_ae_const`) are its corollaries.
-`[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`,
-which currently has no `withDensity` or `rnDeriv` characterization of `cond`.
+`[UPSTREAM]` candidates. Mathlib has no `withDensity` or `rnDeriv`
+characterization of `cond` in either direction; its
+`Probability/ConditionalProbability.lean` imports only measure typeclasses, so
+the realistic upstream shape is a new leaf holding this file's three lemmas
+(importing `ConditionalProbability` + `WithDensity` + `Decomposition.Lebesgue`,
+the pattern of `WithDensityFinite.lean`), unless review pulls
+`cond_eq_withDensity` alone into `ConditionalProbability.lean` at the cost of
+one import.
 -/
 
 open MeasureTheory
