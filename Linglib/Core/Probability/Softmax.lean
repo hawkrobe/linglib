@@ -187,6 +187,15 @@ theorem softmax_le_iff_score_le [Fintype α] (score : α → EReal)
   rw [← not_lt, ← not_lt, not_iff_not]
   exact softmax_lt_iff_score_lt score h_no_top h_some_finite a₂ a₁
 
+/-- **`=` companion** of `softmax_lt_iff_score_lt`: score symmetry. -/
+theorem softmax_eq_iff_score_eq [Fintype α] (score : α → EReal)
+    (h_no_top : ∀ a, score a ≠ ⊤) (h_some_finite : ∃ a, score a ≠ ⊥)
+    (a₁ a₂ : α) :
+    softmax score h_no_top h_some_finite a₁ =
+        softmax score h_no_top h_some_finite a₂ ↔
+      score a₁ = score a₂ := by
+  simp only [le_antisymm_iff, softmax_le_iff_score_le]
+
 /-! ## Degenerate cases -/
 
 /-- **Constant-score softmax is uniform**: a constant score gives no

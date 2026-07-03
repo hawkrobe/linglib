@@ -97,6 +97,15 @@ theorem posterior_fst_le_iff
   rw [← not_lt, ← not_lt, not_iff_not]
   exact posterior_fst_lt_iff κ joint c h a₂ a₁
 
+/-- **Companion `=` form** of `posterior_fst_lt_iff`: conditional-joint-sum symmetry. -/
+theorem posterior_fst_eq_iff
+    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
+    (h : marginal κ joint c ≠ 0) (a₁ a₂ : α) :
+    (posterior κ joint c h).fst a₁ = (posterior κ joint c h).fst a₂
+      ↔ (∑ b : β, joint (a₁, b) * κ (a₁, b) c)
+          = ∑ b : β, joint (a₂, b) * κ (a₂, b) c := by
+  simp only [le_antisymm_iff, posterior_fst_le_iff]
+
 omit [DecidableEq α] in
 /-- **Closed form for the second-marginalized joint posterior**.
 Companion of `posterior_fst_apply` for the second component. Used by
@@ -122,5 +131,26 @@ theorem posterior_snd_lt_iff [DecidableEq β]
           < ∑ a : α, joint (a, b₂) * κ (a, b₂) c := by
   rw [posterior_snd_apply, posterior_snd_apply]
   exact ENNReal.div_lt_div_iff_left h (marginal_ne_top κ joint c)
+
+omit [DecidableEq α] in
+/-- **Companion `≤` form** of `posterior_snd_lt_iff`. -/
+theorem posterior_snd_le_iff [DecidableEq β]
+    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
+    (h : marginal κ joint c ≠ 0) (b₁ b₂ : β) :
+    (posterior κ joint c h).snd b₁ ≤ (posterior κ joint c h).snd b₂
+      ↔ (∑ a : α, joint (a, b₁) * κ (a, b₁) c)
+          ≤ ∑ a : α, joint (a, b₂) * κ (a, b₂) c := by
+  rw [← not_lt, ← not_lt, not_iff_not]
+  exact posterior_snd_lt_iff κ joint c h b₂ b₁
+
+omit [DecidableEq α] in
+/-- **Companion `=` form** of `posterior_snd_lt_iff`: conditional-joint-sum symmetry. -/
+theorem posterior_snd_eq_iff [DecidableEq β]
+    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
+    (h : marginal κ joint c ≠ 0) (b₁ b₂ : β) :
+    (posterior κ joint c h).snd b₁ = (posterior κ joint c h).snd b₂
+      ↔ (∑ a : α, joint (a, b₁) * κ (a, b₁) c)
+          = ∑ a : α, joint (a, b₂) * κ (a, b₂) c := by
+  simp only [le_antisymm_iff, posterior_snd_le_iff]
 
 end PMF

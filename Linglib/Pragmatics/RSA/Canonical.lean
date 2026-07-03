@@ -89,6 +89,12 @@ theorem S1_prefers_le_iff (score : St → U → EReal) [ViableSpeaker score] (s 
     S1 score s u₁ ≤ S1 score s u₂ ↔ score s u₁ ≤ score s u₂ :=
   PMF.softmax_le_iff_score_le (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u₁ u₂
 
+/-- `=` companion of `S1_prefers_iff`: score symmetry. -/
+@[rsa]
+theorem S1_eq_iff (score : St → U → EReal) [ViableSpeaker score] (s : St) (u₁ u₂ : U) :
+    S1 score s u₁ = S1 score s u₂ ↔ score s u₁ = score s u₂ :=
+  PMF.softmax_eq_iff_score_eq (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u₁ u₂
+
 /-- The speaker assigns positive probability to any applicable (finite-utility)
 utterance — the witness for discharging `L1` marginal positivity. -/
 theorem S1_ne_zero (score : St → U → EReal) [ViableSpeaker score] {s : St} {u : U}
@@ -145,6 +151,15 @@ theorem L1_world_prefers_le_iff [DecidableEq W] (S : W × Lat → PMF U)
           ≤ ∑ l : Lat, joint (w₂, l) * S (w₂, l) u :=
   PMF.posterior_fst_le_iff S joint u h w₁ w₂
 
+/-- `=` companion of `L1_world_prefers_iff`: conditional-joint-sum symmetry. -/
+@[rsa]
+theorem L1_world_eq_iff [DecidableEq W] (S : W × Lat → PMF U)
+    (joint : PMF (W × Lat)) (u : U) (h : PMF.marginal S joint u ≠ 0) (w₁ w₂ : W) :
+    (L1 S joint u h).fst w₁ = (L1 S joint u h).fst w₂
+      ↔ (∑ l : Lat, joint (w₁, l) * S (w₁, l) u)
+          = ∑ l : Lat, joint (w₂, l) * S (w₂, l) u :=
+  PMF.posterior_fst_eq_iff S joint u h w₁ w₂
+
 /-- **Cross-latent prediction**: marginalising the world, `L1` favours latent `l₂`
 over `l₁` iff the conditional-joint sums favour it. -/
 @[rsa]
@@ -154,6 +169,24 @@ theorem L1_latent_prefers_iff [DecidableEq Lat] (S : W × Lat → PMF U)
       ↔ (∑ w : W, joint (w, l₁) * S (w, l₁) u)
           < ∑ w : W, joint (w, l₂) * S (w, l₂) u :=
   PMF.posterior_snd_lt_iff S joint u h l₁ l₂
+
+/-- `≤` companion of `L1_latent_prefers_iff`. -/
+@[rsa]
+theorem L1_latent_prefers_le_iff [DecidableEq Lat] (S : W × Lat → PMF U)
+    (joint : PMF (W × Lat)) (u : U) (h : PMF.marginal S joint u ≠ 0) (l₁ l₂ : Lat) :
+    (L1 S joint u h).snd l₁ ≤ (L1 S joint u h).snd l₂
+      ↔ (∑ w : W, joint (w, l₁) * S (w, l₁) u)
+          ≤ ∑ w : W, joint (w, l₂) * S (w, l₂) u :=
+  PMF.posterior_snd_le_iff S joint u h l₁ l₂
+
+/-- `=` companion of `L1_latent_prefers_iff`: conditional-joint-sum symmetry. -/
+@[rsa]
+theorem L1_latent_eq_iff [DecidableEq Lat] (S : W × Lat → PMF U)
+    (joint : PMF (W × Lat)) (u : U) (h : PMF.marginal S joint u ≠ 0) (l₁ l₂ : Lat) :
+    (L1 S joint u h).snd l₁ = (L1 S joint u h).snd l₂
+      ↔ (∑ w : W, joint (w, l₁) * S (w, l₁) u)
+          = ∑ w : W, joint (w, l₂) * S (w, l₂) u :=
+  PMF.posterior_snd_eq_iff S joint u h l₁ l₂
 
 end Listener
 

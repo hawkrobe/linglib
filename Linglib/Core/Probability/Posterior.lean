@@ -228,6 +228,12 @@ theorem normalize_le_iff_le {α : Type*} (f : α → ℝ≥0∞) (hf0 : tsum f �
   rw [← not_lt, ← not_lt, not_iff_not]
   exact normalize_lt_iff_lt f hf0 hf a₂ a₁
 
+/-- The `=` companion of `normalize_lt_iff_lt`: score symmetry. -/
+theorem normalize_eq_iff_eq {α : Type*} (f : α → ℝ≥0∞) (hf0 : tsum f ≠ 0)
+    (hf : tsum f ≠ ∞) (a₁ a₂ : α) :
+    normalize f hf0 hf a₁ = normalize f hf0 hf a₂ ↔ f a₁ = f a₂ := by
+  simp only [le_antisymm_iff, normalize_le_iff_le]
+
 /-- **Vacuous-zero cross-base inequality**: when the LHS normalize base
 vanishes at `a` (`f a = 0`) and the RHS does not (`g a ≠ 0`), the LHS
 normalize value is `0` and the RHS is positive — so the inequality holds.
