@@ -1016,6 +1016,256 @@ theorem sim_sharedSupport_dominance_fails :
       _ = 2 * heightPriorPMF (deg 5) * v := by ring
   exact absurd (hforall _ hmem) (not_le.mpr hkey)
 
+/-! ## §5d. Measure-generic evaluative stage; the pleasantly chain
+
+The horrible chain (§3–§5) instantiates the architecture with
+measure-specific definitions; the dite-total generic forms below serve the
+remaining measures (μ_pleasant here, μ_usual for the Zwicky section)
+without threading extension-positivity hypotheses. -/
+
+/-- Measure-generic stage-1 literal listener (dite-total). -/
+noncomputable def evalL0At (evalMu : Height → ℕ) (vt : ValidThreshold)
+    (u : EvalUtterance) : PMF Height :=
+  if h_pos : (∑' h, heightPriorPMF h *
+      (if evalLex evalMu (validToThreshold vt) u h then (1 : ℝ≥0∞) else 0)) ≠ 0 then
+    RSA.L0LassiterGoodman heightPriorPMF (evalLex evalMu (validToThreshold vt)) u h_pos
+  else PMF.uniformOfFintype Height
+
+/-- Measure-generic stage-1 speaker (dite-total). -/
+noncomputable def evalSpeakerAt (evalMu : Height → ℕ) (vt : ValidThreshold)
+    (w : Height) : PMF EvalUtterance :=
+  if h_pos : (∑' u, ((evalL0At evalMu vt) u w : ℝ≥0∞) ^ (4 : ℝ) *
+      evalCostFactor u) ≠ 0 then
+    RSA.S1Belief (evalL0At evalMu vt) evalCostFactor 4 w h_pos
+      (ENNReal.tsum_ne_top_of_fintype fun u =>
+        ENNReal.mul_ne_top
+          (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+          (evalCostFactor_finite u))
+  else PMF.pure .silent
+
+/-- Measure-generic marginalized stage-1 speaker. -/
+noncomputable def evalMarginalAt (evalMu : Height → ℕ) : Height → PMF EvalUtterance :=
+  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => evalSpeakerAt evalMu vt w)
+
+theorem evalL0At_silent (evalMu : Height → ℕ) (vt : ValidThreshold) (w : Height) :
+    evalL0At evalMu vt .silent w = heightPriorPMF w := by
+  have hm : (∑' h, heightPriorPMF h *
+      (if evalLex evalMu (validToThreshold vt) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
+    simp only [show ∀ h, evalLex evalMu (validToThreshold vt) .silent h = true from
+      fun _ => rfl, if_true, mul_one]
+    exact PMF.tsum_coe _
+  unfold evalL0At
+  rw [dif_pos (by rw [hm]; exact one_ne_zero)]
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+
+private theorem evalSpeakerAt_h_pos (evalMu : Height → ℕ) (vt : ValidThreshold)
+    (w : Height) :
+    (∑' u, ((evalL0At evalMu vt) u w : ℝ≥0∞) ^ (4 : ℝ) * evalCostFactor u) ≠ 0 := by
+  rw [sumEvalUtt]
+  intro hz
+  rcases mul_eq_zero.mp (add_eq_zero.mp hz).2 with h5 | h5
+  · rw [evalL0At_silent] at h5
+    rcases ENNReal.rpow_eq_zero_iff.mp h5 with ⟨hz0, -⟩ | ⟨-, hneg⟩
+    · exact heightPriorPMF_pos w hz0
+    · norm_num at hneg
+  · exact evalCostFactor_pos .silent h5
+
+/-- Generic off-support zero (given a nonempty `.eval_pos` extension). -/
+theorem evalSpeakerAt_apply_of_false (evalMu : Height → ℕ) (vt : ValidThreshold)
+    (w : Height)
+    (hne : (∑' h, heightPriorPMF h *
+      (if evalLex evalMu (validToThreshold vt) .eval_pos h then (1 : ℝ≥0∞) else 0)) ≠ 0)
+    (hw : evalLex evalMu (validToThreshold vt) .eval_pos w = false) :
+    evalSpeakerAt evalMu vt w .eval_pos = 0 := by
+  have hL0 : evalL0At evalMu vt .eval_pos w = 0 := by
+    unfold evalL0At
+    rw [dif_pos hne, RSA.L0LassiterGoodman_apply, hw]
+    simp
+  unfold evalSpeakerAt
+  rw [dif_pos (evalSpeakerAt_h_pos evalMu vt w), RSA.S1Belief_apply, hL0,
+    ENNReal.zero_rpow_of_pos (by norm_num), zero_mul, zero_mul]
+
+/-- Generic on-support positivity (given a nonempty `.eval_pos` extension). -/
+theorem evalSpeakerAt_apply_ne_zero_of_true (evalMu : Height → ℕ) (vt : ValidThreshold)
+    (w : Height)
+    (hne : (∑' h, heightPriorPMF h *
+      (if evalLex evalMu (validToThreshold vt) .eval_pos h then (1 : ℝ≥0∞) else 0)) ≠ 0)
+    (hw : evalLex evalMu (validToThreshold vt) .eval_pos w = true) :
+    evalSpeakerAt evalMu vt w .eval_pos ≠ 0 := by
+  have hL0 : evalL0At evalMu vt .eval_pos w ≠ 0 := by
+    unfold evalL0At
+    rw [dif_pos hne, ← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+    exact ⟨heightPriorPMF_pos w, hw⟩
+  unfold evalSpeakerAt
+  rw [dif_pos (evalSpeakerAt_h_pos evalMu vt w)]
+  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (evalCostFactor_pos _)
+
+/-- Nonempty `.eval_pos` extension for μ_pleasant at every valid threshold
+(witness `deg 3`, where `μ_pleasant = 3`). -/
+theorem evalMass_pleasant_ne_zero (vt : ValidThreshold) :
+    (∑' h, heightPriorPMF h *
+      (if evalLex muPleasant (validToThreshold vt) .eval_pos h then (1 : ℝ≥0∞) else 0)) ≠ 0 := by
+  apply ENNReal.summable.tsum_ne_zero_iff.mpr
+  refine ⟨deg 3, ?_⟩
+  have ht : evalLex muPleasant (validToThreshold vt) .eval_pos (deg 3) = true := by
+    revert vt; decide
+  rw [ht]
+  simp only [if_true, mul_one]
+  exact heightPriorPMF_pos _
+
+/-- Backgrounded prior for "pleasantly": stage-1 posterior under μ_pleasant. -/
+noncomputable def priorAfterEvalPosPleasant : PMF Height :=
+  PMF.posterior (evalMarginalAt muPleasant) heightPriorPMF .eval_pos
+    (PMF.marginal_ne_zero _ _ _ (heightPriorPMF_pos (deg 3)) (by
+      unfold evalMarginalAt
+      rw [RSA.marginalizeKernel_apply]
+      apply ENNReal.summable.tsum_ne_zero_iff.mpr
+      refine ⟨0, mul_ne_zero ?_ ?_⟩
+      · rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]; simp
+      · exact evalSpeakerAt_apply_ne_zero_of_true muPleasant 0 (deg 3)
+          (evalMass_pleasant_ne_zero 0) (by decide)))
+
+/-- Π_pleasant is positive at heights with positive `μ_pleasant`. -/
+theorem priorAfterEvalPosPleasant_pos_at {h : Height} (hpos : 0 < muPleasant h) :
+    priorAfterEvalPosPleasant h ≠ 0 := by
+  unfold priorAfterEvalPosPleasant
+  rw [← PMF.mem_support_iff, PMF.mem_support_posterior_iff]
+  refine ⟨heightPriorPMF_pos h, ?_⟩
+  unfold evalMarginalAt
+  rw [RSA.marginalizeKernel_apply]
+  apply ENNReal.summable.tsum_ne_zero_iff.mpr
+  refine ⟨0, mul_ne_zero ?_ ?_⟩
+  · rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]; simp
+  · refine evalSpeakerAt_apply_ne_zero_of_true muPleasant 0 h
+      (evalMass_pleasant_ne_zero 0) ?_
+    have h0 : (validToThreshold 0).toNat = 0 := rfl
+    simp only [evalLex, evalMeaning, h0]
+    exact decide_eq_true (by omega)
+
+/-- Stage-2 literal listener for the pleasantly chain (dite-total, prior Π_pleasant). -/
+noncomputable def adjL0PleasantAt (vt : ValidThreshold)
+    (u : RSA.Nouwen2024.AdjUtterance) : PMF Height :=
+  if h_pos : (∑' h, priorAfterEvalPosPleasant h *
+      (if adjLex (validToThreshold vt) u h then (1 : ℝ≥0∞) else 0)) ≠ 0 then
+    RSA.L0LassiterGoodman priorAfterEvalPosPleasant (adjLex (validToThreshold vt)) u h_pos
+  else PMF.uniformOfFintype Height
+
+/-- Stage-2 speaker for the pleasantly chain (dite-total). -/
+noncomputable def adjSpeakerPleasantAt (vt : ValidThreshold) (w : Height) :
+    PMF (RSA.Nouwen2024.AdjUtterance) :=
+  if h_pos : (∑' u, ((adjL0PleasantAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 then
+    RSA.S1Belief (adjL0PleasantAt vt) adjCostFactor 4 w h_pos
+      (ENNReal.tsum_ne_top_of_fintype fun u =>
+        ENNReal.mul_ne_top
+          (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+          (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
+  else PMF.pure .silent
+
+/-- Marginalized stage-2 speaker for the pleasantly chain. -/
+noncomputable def adjMarginalPleasant : Height → PMF AdjUtterance :=
+  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => adjSpeakerPleasantAt vt w)
+
+/-- Nonempty `.warm` extension over Π_pleasant at threshold 0 (witness `deg 4`). -/
+private theorem adjMass_pleasant_zero_ne_zero :
+    (∑' h, priorAfterEvalPosPleasant h *
+      (if adjLex (validToThreshold 0) .warm h then (1 : ℝ≥0∞) else 0)) ≠ 0 := by
+  apply ENNReal.summable.tsum_ne_zero_iff.mpr
+  refine ⟨deg 4, ?_⟩
+  rw [show adjLex (validToThreshold 0) .warm (deg 4) = true from by decide]
+  simp only [if_true, mul_one]
+  exact priorAfterEvalPosPleasant_pos_at (by decide)
+
+/-- The stage-2 pleasantly speaker is positive on `.warm` at `deg 4`, `vt = 0`. -/
+private theorem adjSpeakerPleasant_warm_deg4_ne_zero :
+    adjSpeakerPleasantAt 0 (deg 4) .warm ≠ 0 := by
+  have hL0 : adjL0PleasantAt 0 .warm (deg 4) ≠ 0 := by
+    unfold adjL0PleasantAt
+    rw [dif_pos adjMass_pleasant_zero_ne_zero, ← PMF.mem_support_iff,
+      RSA.mem_support_L0LassiterGoodman_iff]
+    exact ⟨priorAfterEvalPosPleasant_pos_at (by decide), by decide⟩
+  have h_pos : (∑' u, ((adjL0PleasantAt 0) u (deg 4) : ℝ≥0∞) ^ (4 : ℝ) *
+      adjCostFactor u) ≠ 0 := by
+    apply ENNReal.summable.tsum_ne_zero_iff.mpr
+    refine ⟨.warm, mul_ne_zero ?_ ?_⟩
+    · exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hL0) (PMF.apply_ne_top _ _)).ne'
+    · unfold adjCostFactor
+      rw [ENNReal.ofReal_ne_zero_iff]
+      exact Real.exp_pos _
+  unfold adjSpeakerPleasantAt
+  rw [dif_pos h_pos]
+  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (by
+    unfold adjCostFactor
+    rw [ENNReal.ofReal_ne_zero_iff]
+    exact Real.exp_pos _)
+
+/-- **Sequential L1 for "pleasantly warm"** (mirrors `seqAdjL1HorriblyWarm`). -/
+noncomputable def seqAdjL1PleasantlyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF Height :=
+  PMF.posterior adjMarginalPleasant priorAfterEvalPosPleasant u
+    (PMF.marginal_ne_zero _ _ _ (priorAfterEvalPosPleasant_pos_at (by decide : 0 < muPleasant (deg 4))) (by
+      unfold adjMarginalPleasant
+      rw [RSA.marginalizeKernel_apply]
+      apply ENNReal.summable.tsum_ne_zero_iff.mpr
+      refine ⟨0, mul_ne_zero ?_ ?_⟩
+      · rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]; simp
+      · cases u
+        · exact adjSpeakerPleasant_warm_deg4_ne_zero
+        · have hL0 : adjL0PleasantAt 0 .silent (deg 4) ≠ 0 := by
+            have hm : (∑' h, priorAfterEvalPosPleasant h *
+                (if adjLex (validToThreshold 0) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
+              simp only [show ∀ h, adjLex (validToThreshold 0) .silent h = true from
+                fun _ => rfl, if_true, mul_one]
+              exact PMF.tsum_coe _
+            unfold adjL0PleasantAt
+            rw [dif_pos (by rw [hm]; exact one_ne_zero),
+              RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl)]
+            exact priorAfterEvalPosPleasant_pos_at (by decide)
+          have h_pos : (∑' u', ((adjL0PleasantAt 0) u' (deg 4) : ℝ≥0∞) ^ (4 : ℝ) *
+              adjCostFactor u') ≠ 0 := by
+            apply ENNReal.summable.tsum_ne_zero_iff.mpr
+            refine ⟨.silent, mul_ne_zero ?_ ?_⟩
+            · exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hL0)
+                (PMF.apply_ne_top _ _)).ne'
+            · rw [adjCostFactor_silent]; exact one_ne_zero
+          unfold adjSpeakerPleasantAt
+          rw [dif_pos h_pos]
+          exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (by
+            rw [adjCostFactor_silent]; exact one_ne_zero)))
+
+/-- **"Pleasantly warm" prefers the moderate `deg 4` over the extreme `deg 6`**
+([nouwen-2024] Fig. 8: positive evaluations concentrate mass mid-scale). The
+proof is a support fact: `μ_pleasant (deg 6) = 0` licenses *no* evaluative
+threshold, so the extreme world's evaluative marginal — hence its whole
+chained score — is zero, while the moderate world's is positive. -/
+theorem seq_pleasantly_prefers_moderate_pmf :
+    seqAdjL1PleasantlyWarm .warm (deg 4) > seqAdjL1PleasantlyWarm .warm (deg 6) := by
+  unfold seqAdjL1PleasantlyWarm priorAfterEvalPosPleasant
+  rw [gt_iff_lt, PMF.posterior_chained_lt_iff_score_lt]
+  have hE6 : evalMarginalAt muPleasant (deg 6) .eval_pos = 0 := by
+    unfold evalMarginalAt
+    rw [RSA.marginalizeKernel_apply, sumVT,
+      evalSpeakerAt_apply_of_false muPleasant 0 _ (evalMass_pleasant_ne_zero 0) (by decide),
+      evalSpeakerAt_apply_of_false muPleasant 1 _ (evalMass_pleasant_ne_zero 1) (by decide),
+      evalSpeakerAt_apply_of_false muPleasant 2 _ (evalMass_pleasant_ne_zero 2) (by decide),
+      mul_zero, mul_zero, mul_zero, add_zero, add_zero]
+  have hE4 : evalMarginalAt muPleasant (deg 4) .eval_pos ≠ 0 := by
+    unfold evalMarginalAt
+    rw [RSA.marginalizeKernel_apply]
+    apply ENNReal.summable.tsum_ne_zero_iff.mpr
+    refine ⟨0, mul_ne_zero ?_ ?_⟩
+    · rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]; simp
+    · exact evalSpeakerAt_apply_ne_zero_of_true muPleasant 0 _
+        (evalMass_pleasant_ne_zero 0) (by decide)
+  have hA4 : adjMarginalPleasant (deg 4) .warm ≠ 0 := by
+    unfold adjMarginalPleasant
+    rw [RSA.marginalizeKernel_apply]
+    apply ENNReal.summable.tsum_ne_zero_iff.mpr
+    refine ⟨0, mul_ne_zero ?_ ?_⟩
+    · rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]; simp
+    · exact adjSpeakerPleasant_warm_deg4_ne_zero
+  rw [hE6, mul_zero, zero_mul]
+  exact pos_iff_ne_zero.mpr
+    (mul_ne_zero (mul_ne_zero (heightPriorPMF_pos _) hE4) hA4)
+
 /-! ## §6. Predictions
 
 The headline below states that "horribly warm" shifts probability toward
