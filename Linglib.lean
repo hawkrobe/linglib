@@ -121,6 +121,7 @@ import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Data.List.Fold
 import Linglib.Core.Data.List.TakeDrop
+import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Traversable
