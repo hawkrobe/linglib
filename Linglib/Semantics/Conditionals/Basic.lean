@@ -49,21 +49,71 @@ def materialImp {W : Type*} (p q : Set W) : Set W :=
 -- Strict Conditional
 
 /--
-Strict conditional: true at w iff the material conditional holds at all
-accessible worlds.
+Strict conditional: true at an evaluation point iff the consequent holds
+throughout the antecedent-worlds accessible from it.
 
-□(p → q) ≡ ∀w' ∈ R(w). p(w') → q(w')
+□(p → q) ≡ R(i) ∩ p ⊆ q ≡ ∀w ∈ R(i). p(w) → q(w)
 
-This is the modal "necessitation" of the material conditional.
-Used in deontic and epistemic conditionals.
+This is the modal "necessitation" of the material conditional, stated as
+set inclusion so that mathlib's `Set` lattice API applies directly. The
+evaluation points `I` may differ from the worlds `W` quantified over —
+e.g. a historical modal base `WorldTimeIndex W T → Set W` evaluates at
+world-time indices ([condoravdi-2002]); the classical case is `I = W`.
 
 Parameters:
-- `access`: The accessibility relation R : W → Set W
-- `p`: The antecedent proposition
-- `q`: The consequent proposition
+- `access`: the accessibility map R : I → Set W (a modal base)
+- `p`: the antecedent proposition
+- `q`: the consequent proposition
 -/
-def strictImp {W : Type*} (access : W → Set W) (p q : Set W) : Set W :=
-  λ w => ∀ w' ∈ access w, p w' → q w'
+def strictImp {I W : Type*} (access : I → Set W) (p q : Set W) : Set I :=
+  {i | access i ∩ p ⊆ q}
+
+section StrictImp
+
+variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I}
+
+@[simp]
+theorem mem_strictImp : i ∈ strictImp access p q ↔ access i ∩ p ⊆ q :=
+  Iff.rfl
+
+/-- The quantifier reading of the strict conditional. -/
+theorem mem_strictImp_forall :
+    i ∈ strictImp access p q ↔ ∀ w ∈ access i, w ∈ p → w ∈ q :=
+  ⟨λ h _ hw hp => h ⟨hw, hp⟩, λ h w hw => h w hw.1 hw.2⟩
+
+/-- The strict conditional is monotone in its consequent. -/
+theorem strictImp_mono_right (hq : q ⊆ q') :
+    strictImp access p q ⊆ strictImp access p q' :=
+  λ _ h => h.trans hq
+
+/-- **Antecedent strengthening**: the strict conditional is antitone in its
+antecedent. This is the signature property of strict (and material)
+conditionals that variably strict semantics rejects ([lewis-1973] Sobel
+sequences); cf. `variablyStrictImp`. -/
+theorem strictImp_anti_left (hp : p' ⊆ p) :
+    strictImp access p q ⊆ strictImp access p' q :=
+  λ _ h => (Set.inter_subset_inter (Set.Subset.refl _) hp).trans h
+
+/-- **Triviality**: when the consequent already holds throughout the
+accessible worlds, the strict conditional holds for *any* antecedent —
+the if-clause restriction does no work. This is why a conditional whose
+consequent is an observed fact is uninformative over the domain of live
+possibilities ([stalnaker-1975], [von-fintel-1999]; the Anderson-conditional
+application is [mizuno-2024], §2). -/
+theorem mem_strictImp_of_subset (h : access i ⊆ q) :
+    i ∈ strictImp access p q :=
+  Set.inter_subset_left.trans h
+
+/-- **Informativity**: a true strict conditional whose consequent is *not*
+trivial over the accessible worlds has an antecedent that excludes at
+least one accessible world (`Set.not_subset` gives the witness form) —
+the restriction is doing genuine work ([mizuno-2024], §2). -/
+theorem not_subset_of_mem_strictImp
+    (hm : i ∈ strictImp access p q) (hq : ¬ access i ⊆ q) :
+    ¬ access i ⊆ p :=
+  λ hp => hq (λ _ hw => hm ⟨hw, hp hw⟩)
+
+end StrictImp
 
 -- Variably Strict Conditional ([stalnaker-1968]–[lewis-1973])
 
@@ -180,9 +230,8 @@ theorem perfection_not_entailed_variablyStrict :
 If w is accessible from itself (reflexive accessibility), then □(p → q) at w implies (p → q) at w.
 -/
 theorem strict_implies_material {W : Type*} (R : W → Set W) (p q : Set W) (w : W) :
-    w ∈ R w → strictImp R p q w → materialImp p q w := by
-  intro h_refl h_strict h_p
-  exact h_strict w h_refl h_p
+    w ∈ R w → strictImp R p q w → materialImp p q w :=
+  λ h_refl h_strict h_p => h_strict ⟨h_refl, h_p⟩
 
 /-! `SimilarityOrdering.isCentered` lives in `Core.Order.SimilarityOrdering`
     (re-exported above). -/
