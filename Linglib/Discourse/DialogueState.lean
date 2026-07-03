@@ -27,14 +27,17 @@ observable destination.
 ## Two grounding disciplines
 
 Admitting this (lazy, accept-grounds) law is **not** the same as the eager
-per-event narrowing of `Discourse.SpeechAct.Assertable` (where `assert`
+per-event narrowing of `CommonGround.HasAssertion` (where `assert`
 narrows the context set immediately). The two coincide only on *balanced*
 traces (every `assert` followed by `accept`); eager frameworks (Stalnaker,
 Krifka) assume `propose = accept` ("perfect communication"), so their
-observable runs ahead of `groundedContent` on unbalanced traces. Lazy,
-grounding-explicit frameworks (Farkas-Bruce, Ginzburg) are the natural
-`LawfulDialogueState` instances. (Verified empirically in the design spike:
-the eager `Assertable ⟹ LawfulDialogueState` implication is *false*.)
+observable runs ahead of `groundedContent` on unbalanced traces — the
+implication `HasAssertion ⟹ LawfulDialogueState` fails on any eager
+framework. TODO: witness with a concrete unbalanced trace once an eager
+framework carries a `DialogueStep` instance. Lazy, grounding-explicit
+frameworks (Farkas-Bruce; Ginzburg's grounding path via `pending` — note
+the repo's `DGB.assertFact` models the eager pre-grounding idealization)
+are the natural `LawfulDialogueState` instances.
 
 ## Main definitions
 

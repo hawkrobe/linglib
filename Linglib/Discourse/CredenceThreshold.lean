@@ -174,4 +174,27 @@ open CommonGround in
 instance {W : Type*} : HasContextSet (State W) W where
   toContextSet := State.contextSet
 
+open CommonGround in
+/-- Credence-threshold states instantiate `HasAssertion`: the credence and
+    threshold machinery gates the *felicity* of asserting (the sincerity
+    norm), but the effect of an assertion on the context set is exactly
+    Stalnakerian narrowing — including for norm-violating assertions
+    (lying), which update the context set all the same. -/
+instance instHasAssertion {W : Type*} :
+    CommonGround.HasAssertion (State W) W where
+  initial := State.empty
+  assert s p := s.assert p
+  toContextSet_initial :=
+    Set.eq_univ_of_forall fun _ _ hq => absurd hq List.not_mem_nil
+  toContextSet_assert s p := by
+    ext w
+    rw [Set.mem_inter_iff]
+    constructor
+    · intro h
+      exact ⟨fun q hq => h q (List.mem_cons_of_mem _ hq), h p List.mem_cons_self⟩
+    · rintro ⟨hs, hp⟩ q hq
+      rcases List.mem_cons.mp hq with rfl | hq
+      · exact hp
+      · exact hs q hq
+
 end Discourse.CredenceThreshold

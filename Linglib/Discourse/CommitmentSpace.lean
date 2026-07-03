@@ -1,7 +1,6 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.SpeechAct.Update
 
 /-!
 # Commitment Space Semantics
@@ -778,24 +777,31 @@ theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
 
 open Discourse.Commitment (IndexedWeightedCommitment)
 
-/-- Krifka commitment-space instance for `Assertable`: assertion prepends
-    `commit speaker doxastic φ` to the root; narrowing and monotonicity
-    follow from the projection of root commitments through `HasSupport`. -/
-instance instAssertable {W : Type*} :
-    Discourse.SpeechAct.Assertable (KrifkaState W) W where
+/-- Krifka commitment-space instance for `HasAssertion`: assertion prepends
+    `commit speaker doxastic φ` to the root, whose projection through
+    `HasSupport` narrows the context set by exactly `φ`. -/
+instance instHasAssertion {W : Type*} :
+    CommonGround.HasAssertion (KrifkaState W) W where
   initial := KrifkaState.empty
-  speakerAssert s φ := s.assert φ
-  speakerAssert_subset_prior s φ w h := by
-    intro ic hic
-    have shifted : ic ∈ (s.assert φ).space.root := by
+  assert s φ := s.assert φ
+  toContextSet_initial :=
+    Set.eq_univ_of_forall fun _ _ hic => absurd hic List.not_mem_nil
+  toContextSet_assert s φ := by
+    ext w
+    rw [Set.mem_inter_iff]
+    constructor
+    · intro h
+      have head_mem :
+          IndexedWeightedCommitment.commit (G := Prop) .speaker .doxastic φ ∈
+            (s.assert φ).space.root := by
+        simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons, true_or]
+      refine ⟨fun ic hic => h ic ?_, h _ head_mem⟩
       simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons]
       exact Or.inr hic
-    exact h ic shifted
-  speakerAssert_narrows s φ w h := by
-    have head_mem :
-        IndexedWeightedCommitment.commit (G := Prop) .speaker .doxastic φ ∈
-          (s.assert φ).space.root := by
-      simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons, true_or]
-    exact h _ head_mem
+    · rintro ⟨hs, hφ⟩ ic hic
+      simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons] at hic
+      rcases hic with rfl | hic
+      · exact hφ
+      · exact hs ic hic
 
 end Discourse.Krifka

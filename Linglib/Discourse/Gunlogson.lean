@@ -344,4 +344,34 @@ open CommonGround in
 instance {W : Type*} : HasContextSet (GunlogsonState W) W where
   toContextSet := GunlogsonState.contextSet
 
+open CommonGround in
+/-- Gunlogson's state instantiates `HasAssertion`: a falling declarative
+    commits only the speaker, but because the context set is the
+    intersection of both participants' commitment contexts, the
+    projection still narrows by exactly `p` — eagerly, with no
+    ratification step. The eager/lazy cut thus crosses the
+    commitment-tracking distinction: Gunlogson patterns with
+    [stalnaker-1978] on the projected observable while
+    [farkas-bruce-2010]'s proposal model does not instantiate. -/
+instance instHasAssertion {W : Type*} :
+    CommonGround.HasAssertion (GunlogsonState W) W where
+  initial := GunlogsonState.empty
+  assert s p := s.assert p
+  toContextSet_initial :=
+    Set.eq_univ_of_forall fun _ =>
+      ⟨fun _ hq => absurd hq List.not_mem_nil,
+       fun _ hq => absurd hq List.not_mem_nil⟩
+  toContextSet_assert s p := by
+    ext w
+    rw [Set.mem_inter_iff]
+    constructor
+    · rintro ⟨hs, ha⟩
+      exact ⟨⟨fun q hq => hs q (List.mem_cons_of_mem _ hq), ha⟩,
+             hs p List.mem_cons_self⟩
+    · rintro ⟨⟨hs, ha⟩, hp⟩
+      refine ⟨fun q hq => ?_, ha⟩
+      rcases List.mem_cons.mp hq with rfl | hq
+      · exact hp
+      · exact hs q hq
+
 end Discourse.Gunlogson
