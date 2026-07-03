@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Order.Basic
+import Mathlib.Data.Finset.Max
 import Linglib.Core.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Semantics.Degree.Defs
@@ -107,6 +108,44 @@ theorem finer_contained (ε₁ ε₂ d : D) (h : ε₁ ≤ ε₂) :
 end GranularityFunction
 
 variable {D : Type*} [LinearOrder D]
+
+/-! ### Granularity selection ([sauerland-stateva-2011] (18)–(19), (41))
+
+A context supplies a set of available granularities; scalar approximators
+*reset* it ([sauerland-stateva-2011] (18)–(19)): *exactly* to the finest,
+*approximately* to the coarsest. With uniform-width granularities the
+finer-than order (their (41)) is width comparison, so selection is
+`Finset.min'`/`max'`. Resetting leaves a singleton, on which any further
+reset is vacuous — the engine of approximator-stacking oddity
+(their §6.3.5). -/
+
+section GranSelection
+
+variable (𝒢 : Finset D) (h𝒢 : 𝒢.Nonempty)
+
+/-- The finest available grain width — the reset target of *exactly*
+([sauerland-stateva-2011] (19a)). -/
+def finestWidth : D := 𝒢.min' h𝒢
+
+/-- The coarsest available grain width — the reset target of
+*approximately* ([sauerland-stateva-2011] (19b)). -/
+def coarsestWidth : D := 𝒢.max' h𝒢
+
+theorem finestWidth_le {ε : D} (hε : ε ∈ 𝒢) : finestWidth 𝒢 h𝒢 ≤ ε :=
+  Finset.min'_le _ _ hε
+
+theorem le_coarsestWidth {ε : D} (hε : ε ∈ 𝒢) : ε ≤ coarsestWidth 𝒢 h𝒢 :=
+  Finset.le_max' _ _ hε
+
+@[simp] theorem finestWidth_singleton (ε : D) :
+    finestWidth {ε} (Finset.singleton_nonempty ε) = ε :=
+  Finset.min'_singleton ε
+
+@[simp] theorem coarsestWidth_singleton (ε : D) :
+    coarsestWidth {ε} (Finset.singleton_nonempty ε) = ε :=
+  Finset.max'_singleton ε
+
+end GranSelection
 
 -- ════════════════════════════════════════════════════
 -- § 2. Entailment Reversal
