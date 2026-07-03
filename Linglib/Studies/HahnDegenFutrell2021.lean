@@ -1,4 +1,4 @@
-import Linglib.Processing.MemorySurprisal.Basic
+import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Studies.FutrellEtAl2020
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Languages

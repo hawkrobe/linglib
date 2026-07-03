@@ -1,5 +1,5 @@
-import Linglib.Processing.LanguageModel.Basic
-import Linglib.Processing.PredictiveUncertainty.IAS
+import Linglib.Processing.Expectation.LanguageModel
+import Linglib.Processing.Expectation.InformationValue
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!

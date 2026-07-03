@@ -86,7 +86,7 @@ contradicting the paper's findings.
   binary postverbal pair. The same module's word-invariance
   (`dlm_word_invariant`) shows DLM cannot, on its own, also derive
   the newness effect — motivating §10's UID derivation.
-- `Processing.MemorySurprisal` — under [futrell-2019]'s
+- `Processing.Memory` — under [futrell-2019]'s
   information-locality framework, DLM and UID are reductions of a
   single mutual-information-weighted cost (§11), so the two
   independent constraints `*HEAVY-FIRST` and `*NEW-FIRST` reflect
@@ -577,10 +577,10 @@ independently-motivated processing cost already formalized in linglib:
 | Constraint | Bridge | Cost lives in |
 |---|---|---|
 | `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Syntax.DependencyGrammar.Formal.DependencyLength` |
-| `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.MemorySurprisal` (information locality) |
+| `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.Memory` (information locality) |
 
 The two costs unify under [futrell-2019]'s **information locality**
-framework (see `Processing.MemorySurprisal.Basic`,
+framework (see `Processing.Memory.SurprisalTradeoff`,
 `MutualInfoProfile.weightedSum`): both DLM and UID are special cases of
 minimizing Σ (memory cost × mutual information) across the utterance.
 
@@ -603,7 +603,7 @@ themselves rather than leaving them as stipulated penalties.
 
 `MutualInfoProfile.weightedSum` is itself a *behavioural profile* of a
 deeper substrate: a `MemoryProcess` ([futrell-gibson-levy-2020],
-formalized in `Processing.Memory.Basic`) — a predictor that
+formalized in `Processing.Memory.SurprisalTradeoff`) — a predictor that
 reads from a lossily-encoded summary of the past rather than from the
 raw history. Classical surprisal arises as the lossless special case
 (`MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless` in

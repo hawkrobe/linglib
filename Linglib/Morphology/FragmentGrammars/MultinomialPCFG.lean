@@ -261,7 +261,7 @@ noncomputable instance : Inhabited (MultinomialPCFG G) := ⟨uniform⟩
 
 The per-LHS PMFs let us inherit mathlib's PMF entropy / KL machinery
 directly. These primitives are the integration bridge to processing-cost
-theories (`Processing/MemorySurprisal/`): rule-weight entropy
+theories (`Processing/Memory/`): rule-weight entropy
 gives the local uncertainty at each nonterminal expansion choice, and
 KL between two MultinomialPCFGs measures how different their
 rule-weight predictions are. -/
