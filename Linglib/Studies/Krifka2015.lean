@@ -1,4 +1,4 @@
-import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Commitment.Table
@@ -349,7 +349,7 @@ theorem noNeg_licensing_distinguishes_contexts :
 Per [krifka-2015] p. 342: matching tags are speech-act CONJUNCTION
 applied as ONE complex move — explicitly NOT sequential `assert; question`.
 The substrate's `Discourse.Krifka.matchingTag` and `reverseTag`
-(`Discourse/CommitmentSpace.lean` §4) capture this directly.
+(`Discourse/Commitment/Space.lean` §4) capture this directly.
 -/
 
 /-- Substrate's `matchingTag φ` is structurally a `conj` of two atomic

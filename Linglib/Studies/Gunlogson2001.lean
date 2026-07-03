@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Gunlogson2001
-import Linglib.Discourse.Gunlogson
+import Linglib.Discourse.Commitment.SourceMarked
 import Mathlib.Data.Set.Basic
 
 /-!

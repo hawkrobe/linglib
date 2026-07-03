@@ -3,10 +3,11 @@ import Linglib.Discourse.Roles
 
 /-!
 # Discourse Commitments
-[krifka-2015] [brandom-1994] [gunlogson-2001]
+[hamblin-1970] [krifka-2015] [brandom-1994] [gunlogson-2001]
 
 Commitment slates, source × force tagging, and the speaker-indexed
-`S⊢φ` constructor.
+`S⊢φ` constructor. The per-agent commitment store originates with
+[hamblin-1970]'s formal dialectic.
 -/
 
 namespace Discourse

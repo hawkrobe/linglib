@@ -591,7 +591,7 @@ import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Table
-import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Gameboard.Austinian
 import Linglib.Discourse.Gameboard.Basic
@@ -603,7 +603,7 @@ import Linglib.Discourse.Gameboard.InquiryCycle
 import Linglib.Discourse.Gameboard.NSUTaxonomy
 import Linglib.Discourse.Gameboard.RepriseContent
 import Linglib.Discourse.Gameboard.SelfRepair
-import Linglib.Discourse.Gunlogson
+import Linglib.Discourse.Commitment.SourceMarked
 import Linglib.Discourse.QUD.AtIssueness
 import Linglib.Discourse.QUD.Basic
 import Linglib.Discourse.QUD.Issue

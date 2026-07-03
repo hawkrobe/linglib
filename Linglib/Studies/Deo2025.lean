@@ -1,7 +1,7 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
-import Linglib.Discourse.Gunlogson
+import Linglib.Discourse.Commitment.SourceMarked
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
 
