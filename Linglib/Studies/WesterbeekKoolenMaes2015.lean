@@ -1,5 +1,4 @@
-import Linglib.Tactics.RSAPredict
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.DaleReiter1995
 
@@ -78,6 +77,8 @@ construction.
 -/
 
 set_option autoImplicit false
+
+open scoped ENNReal
 
 namespace WesterbeekKoolenMaes2015
 
@@ -363,35 +364,82 @@ theorem atypical_gap_larger :
   native_decide
 
 -- ============================================================================
--- §9. RSA Config (Atypical Condition)
+-- §9. RSA Model (Atypical Condition, mathlib-PMF face)
 -- ============================================================================
 
-open RSA Real in
-/-- RSA model for the atypical color condition. Demonstrates that the
-    ℚ-valued predictions correspond to a genuine RSAConfig.
+/-! The ℚ-valued predictions above correspond to a genuine PMF-based RSA
+model: `RSA.L0OfMeaning` on the lifted meaning and `RSA.S1Belief` at
+α = 1, zero cost — the same architecture as [degen-etal-2020]'s cs-RSA,
+differing only in the meaning function, which varies with color
+typicality rather than with perceptual noise parameters. -/
 
-    Architecture: same as [degen-etal-2020]'s cs-RSA — the only
-    difference is the meaning function, which now varies with color
-    typicality rather than with perceptual noise parameters. -/
-noncomputable def atypicalCfg : RSAConfig Utterance World where
-  meaning _ _ u w := ↑(φ_atypical u w)
-  meaning_nonneg _ _ u w := by cases u <;> cases w <;> simp [φ_atypical, typicalityφ, bareEffectiveness, bananaPrototype] <;> norm_num
-  s1Score l0 α _ w u :=
-    if l0 u w = 0 then 0
-    else exp (α * log (l0 u w))
-  s1Score_nonneg l0 α _ _ u _ _ := by
-    split
-    · exact le_refl 0
-    · exact le_of_lt (exp_pos _)
-  α := 1
-  α_pos := by norm_num
-  worldPrior_nonneg _ := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
+/-- The atypical-condition meaning lifted to `ℝ≥0∞`. -/
+noncomputable def φE (u : Utterance) (w : World) : ℝ≥0∞ :=
+  .ofReal (φ_atypical u w)
 
-/-- RSA prediction: color modifier is preferred for the atypical target. -/
-theorem rsa_atypical_color_preferred :
-    atypicalCfg.S1 () .target .withColor > atypicalCfg.S1 () .target .bare := by
-  rsa_predict
+private theorem φE_pos (u : Utterance) (w : World) : 0 < φE u w := by
+  cases u <;> cases w <;>
+    exact ENNReal.ofReal_pos.mpr
+      (by norm_num [φ_atypical, typicalityφ, bareEffectiveness, bananaPrototype])
+
+private theorem sumW (f : World → ℝ≥0∞) : ∑' w, f w = f .target + f .distractor := by
+  rw [tsum_fintype, show (Finset.univ : Finset World) = {.target, .distractor} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+
+private theorem sumφE_ne_zero (u : Utterance) : ∑' w, φE u w ≠ 0 := by
+  rw [sumW]
+  exact fun h => (φE_pos u .target).ne' (add_eq_zero.mp h).1
+
+private theorem sumφE_ne_top (u : Utterance) : ∑' w, φE u w ≠ ⊤ := by
+  rw [tsum_fintype]
+  exact ENNReal.sum_ne_top.mpr fun w _ => ENNReal.ofReal_ne_top
+
+/-- Literal listener `L0(·|u) : PMF World`, normalising the lifted meaning. -/
+noncomputable def L0 (u : Utterance) : PMF World :=
+  RSA.L0OfMeaning φE u (sumφE_ne_zero u) (sumφE_ne_top u)
+
+private theorem L0_pos (u : Utterance) (w : World) : 0 < L0 u w := by
+  rw [L0, RSA.L0OfMeaning_apply]
+  exact ENNReal.mul_pos (φE_pos u w).ne' (ENNReal.inv_ne_zero.mpr (sumφE_ne_top u))
+
+/-- L0(target | bare) = 5/6 — the PMF face of `L0_atypical_bare`. -/
+theorem L0_bare_target : L0 .bare .target = ENNReal.ofReal (5/6) := by
+  rw [L0, RSA.L0OfMeaning_apply, sumW]
+  simp only [φE, φ_atypical, typicalityφ, bareEffectiveness, bananaPrototype]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← div_eq_mul_inv,
+      ← ENNReal.ofReal_div_of_pos (by norm_num)]
+  congr 1
+  norm_num
+
+/-- L0(target | withColor) = 19/20 — the PMF face of `L0_withColor_constant`. -/
+theorem L0_withColor_target : L0 .withColor .target = ENNReal.ofReal (19/20) := by
+  rw [L0, RSA.L0OfMeaning_apply, sumW]
+  simp only [φE, φ_atypical, typicalityφ]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num), ← div_eq_mul_inv,
+      ← ENNReal.ofReal_div_of_pos (by norm_num)]
+  congr 1
+  norm_num
+
+private theorem s1_ne_zero (w : World) : ∑' u, (L0 u w : ℝ≥0∞) ^ (1 : ℝ) * 1 ≠ 0 := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [tsum_fintype]
+  intro h
+  exact (L0_pos .bare w).ne' (Finset.sum_eq_zero_iff.mp h .bare (Finset.mem_univ _))
+
+private theorem s1_ne_top (w : World) : ∑' u, (L0 u w : ℝ≥0∞) ^ (1 : ℝ) * 1 ≠ ⊤ := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [tsum_fintype]
+  exact ENNReal.sum_ne_top.mpr fun u _ => PMF.apply_ne_top _ _
+
+/-- Pragmatic speaker `S1(·|w) ∝ L0(w|u)` (α = 1, zero cost), a `PMF Utterance`. -/
+noncomputable def S1 (w : World) : PMF Utterance :=
+  RSA.S1Belief L0 (fun _ => 1) 1 w (s1_ne_zero w) (s1_ne_top w)
+
+/-- RSA prediction: color mention is preferred for the atypical target. -/
+theorem rsa_atypical_color_preferred : S1 .target .bare < S1 .target .withColor := by
+  simp only [S1, rsa, ENNReal.rpow_one, mul_one, L0_bare_target, L0_withColor_target]
+  rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+  norm_num
 
 -- ============================================================================
 -- §10. Color Diagnosticity Interaction (Experiment 2)
