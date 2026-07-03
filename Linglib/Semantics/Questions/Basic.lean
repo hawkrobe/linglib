@@ -8,8 +8,6 @@ import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Order.Lattice
 import Mathlib.Order.Preorder.Finite
 import Mathlib.Order.UpperLower.Basic
-import Mathlib.Algebra.Group.Hom.Defs
-import Linglib.Core.Order.MeetMonoid
 import Linglib.Semantics.Questions.Support
 
 /-!
@@ -1058,14 +1056,6 @@ theorem exists_declarative_sup_ne :
     ∃ A B : Set Bool, declarative A ⊔ declarative B ≠ declarative (A ∪ B) := by
   obtain ⟨A, B, hinq⟩ := exists_isInquisitive_declarative_sup
   exact ⟨A, B, fun h => not_isInquisitive_declarative (A ∪ B) (h ▸ hinq)⟩
-
-/-- The Truth-Support Bridge as a monoid hom: the classical meet monoid
-    of propositions embeds in the inquisitive one. -/
-def declarativeMonoidHom :
-    MeetMonoid (Set W) →* MeetMonoid (Question W) where
-  toFun A := MeetMonoid.of (declarative (MeetMonoid.val A))
-  map_one' := congrArg MeetMonoid.of declarative_top
-  map_mul' A B := congrArg MeetMonoid.of (declarative_inf _ _).symm
 
 /-! ### `Question.Support` instance
 
