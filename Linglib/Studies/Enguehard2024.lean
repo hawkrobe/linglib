@@ -665,7 +665,7 @@ categorical judgments in examples (5)–(6).
 theorem constant_presup_satisfied_iff_satisfiable
     {W : Type*} (witnessCard : W → Nat) (conceivable : W → Prop)
     (c : CommonGround.ContextSet W)
-    (hne : c.nonEmpty) :
+    (hne : c.Nonempty) :
     Semantics.Presupposition.Context.presupSatisfied c
       (sgIndefPresup witnessCard conceivable) ↔
     Semantics.Presupposition.Context.presupSatisfiable c

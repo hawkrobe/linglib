@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Set.Lattice
 import Mathlib.GroupTheory.GroupAction.Hom
-import Mathlib.Algebra.BigOperators.Group.List.Basic
+import Mathlib.Algebra.BigOperators.Group.List.Defs
+import Linglib.Core.Order.MeetMonoid
 
 /-!
 # Common Ground
@@ -14,7 +14,8 @@ representations to both.
 ## Main definitions
 
 * `ContextSet W` — worlds compatible with the context (a synonym for
-  `Set W`), with `ContextSet.update` and a scoped meet-monoid instance.
+  `Set W`), with `ContextSet.update` as multiplication in its
+  `MeetMonoid`.
 * `CommonGround W` — common ground as a list of propositions.
 * `CommonGround.HasContextSet` — extraction of a context set from a
   discourse state.
@@ -49,32 +50,15 @@ abbrev trivial : ContextSet W := Set.univ
 /-- Entailment: every world in the context satisfies the proposition. -/
 abbrev entails (c : ContextSet W) (p : Set W) : Prop := c ⊆ p
 
-/-- The context set has at least one world. Alias for `Set.Nonempty`. -/
-abbrev nonEmpty (c : ContextSet W) : Prop := c.Nonempty
-
 /-- Compatibility: some world in the context satisfies the proposition. -/
 abbrev compatible (c : ContextSet W) (p : Set W) : Prop := (c ∩ p).Nonempty
 
 /-- Update: keep only worlds where the proposition holds. Alias for `(· ∩ ·)`. -/
 abbrev update (c : ContextSet W) (p : Set W) : ContextSet W := c ∩ p
 
-/-- Updated context entails the update proposition. -/
-theorem update_entails (c : ContextSet W) (p : Set W) : update c p ⊆ p :=
-  Set.inter_subset_right
-
 /-- Updated context is contained in the original. -/
 theorem update_restricts (c : ContextSet W) (p : Set W) : update c p ⊆ c :=
   Set.inter_subset_left
-
-/-- Updating with what's already entailed doesn't change the context. -/
-theorem update_eq_self_of_entails (c : ContextSet W) (p : Set W) (h : c ⊆ p) :
-    update c p = c :=
-  Set.inter_eq_left.mpr h
-
-/-- Sequential updates are associative. -/
-theorem update_assoc (c p q : Set W) :
-    update (update c p) q = update c (update p q) :=
-  Set.inter_assoc c p q
 
 /-- Successive updates commute: assertion order is irrelevant. -/
 theorem update_comm (c p q : Set W) :
@@ -85,27 +69,18 @@ theorem update_comm (c p q : Set W) :
 theorem update_idem (c p : Set W) : update (update c p) p = update c p := by
   simp [update, Set.inter_assoc]
 
-/-- Updating the trivial context with `p` gives `p`. -/
-theorem trivial_update (p : Set W) : update trivial p = p :=
-  Set.univ_inter p
-
 end ContextSet
 
 /-! ### The meet monoid -/
 
-/-- Meet-monoid on context sets: `* = ∩`, `1 = univ`. Scoped, Pointwise-style. -/
-scoped instance : CommMonoid (ContextSet W) where
-  mul c p := c ∩ p
-  one := ContextSet.trivial
-  mul_assoc := Set.inter_assoc
-  mul_comm := Set.inter_comm
-  one_mul := Set.univ_inter
-  mul_one := Set.inter_univ
+/-- `update` is multiplication in the meet monoid of context sets. -/
+theorem ContextSet.of_update (c : ContextSet W) (p : Set W) :
+    MeetMonoid.of (ContextSet.update c p) =
+      MeetMonoid.of c * MeetMonoid.of p := rfl
 
-theorem ContextSet.update_eq_mul (c : ContextSet W) (p : Set W) :
-    ContextSet.update c p = c * p := rfl
-
-theorem ContextSet.trivial_eq_one : (ContextSet.trivial : ContextSet W) = 1 := rfl
+/-- The trivial context is the meet monoid's unit. -/
+theorem ContextSet.of_trivial :
+    MeetMonoid.of (ContextSet.trivial : ContextSet W) = 1 := rfl
 
 /-- The context set determined by a common ground: intersection of its propositions. -/
 def contextSet (cg : CommonGround W) : ContextSet W :=
@@ -178,7 +153,7 @@ class HasAssertion (S : Type*) (W : outParam Type*)
   /-- Assert φ. -/
   assert : S → Set W → S
   /-- Nothing is presupposed initially: every world is live. -/
-  toContextSet_initial : toContextSet initial = ContextSet.trivial (W := W)
+  toContextSet_initial : toContextSet initial = ContextSet.trivial
   /-- Assertion narrows the projected context set by exactly `φ`. -/
   toContextSet_assert : ∀ (s : S) (φ : Set W),
     toContextSet (assert s φ) = ContextSet.update (toContextSet s) φ
@@ -197,7 +172,7 @@ theorem assert_subset_prior :
 /-- Narrowing: every surviving world satisfies the asserted proposition. -/
 theorem assert_narrows :
     toContextSet (assert s φ) ⊆ φ :=
-  toContextSet_assert s φ ▸ ContextSet.update_entails _ φ
+  toContextSet_assert s φ ▸ Set.inter_subset_right
 
 /-- Membership in the post-assertion context set, characterized. -/
 theorem mem_assert {s : S} {φ : Set W} {w : W} :
@@ -207,7 +182,8 @@ theorem mem_assert {s : S} {φ : Set W} {w : W} :
 /-- Asserting φ in the initial context yields exactly φ. -/
 @[simp] theorem assert_initial :
     toContextSet (assert (initial : S) φ) = φ := by
-  rw [toContextSet_assert, toContextSet_initial, ContextSet.trivial_update]
+  rw [toContextSet_assert, toContextSet_initial]
+  exact Set.univ_inter φ
 
 /-- Assertion order is irrelevant on the projected context set. -/
 theorem assert_comm :
@@ -228,7 +204,7 @@ theorem assert_idem :
 theorem assert_of_entails (h : toContextSet s ⊆ φ) :
     toContextSet (assert s φ) = toContextSet s := by
   rw [toContextSet_assert]
-  exact ContextSet.update_eq_self_of_entails _ φ h
+  exact Set.inter_eq_left.mpr h
 
 /-- Two consecutive assertions narrow the context set by the conjunction. -/
 theorem assert_twice :
@@ -271,39 +247,48 @@ open HasContextSet (toContextSet)
 
 variable {S : Type*} [HasAssertion S W]
 
-/-- Propositions act on any `HasAssertion` state by assertion. Scoped. -/
-scoped instance : SMul (Set W) S := ⟨fun φ s => assert s φ⟩
+/-- Propositions, as meet-monoid elements, act on states by assertion. -/
+instance : SMul (MeetMonoid (Set W)) S :=
+  ⟨fun φ s => assert s (MeetMonoid.val φ)⟩
 
-theorem smul_eq_assert (φ : Set W) (s : S) : φ • s = assert s φ := rfl
+theorem smul_eq_assert (φ : Set W) (s : S) :
+    MeetMonoid.of φ • s = assert s φ := rfl
 
 /-- `toContextSet` bundled as an equivariant map (`MulActionHom`) from the
     assertion action to the regular action of the meet monoid. -/
 def toContextSetHom (S : Type*) [HasAssertion S W] :
-    S →[Set W] ContextSet W where
-  toFun := toContextSet
+    S →[MeetMonoid (Set W)] MeetMonoid (ContextSet W) where
+  toFun s := MeetMonoid.of (toContextSet s)
   map_smul' φ s := by
-    show toContextSet (assert s φ) = φ * toContextSet s
+    show MeetMonoid.of (toContextSet (assert s (MeetMonoid.val φ))) =
+      φ * MeetMonoid.of (toContextSet s)
     rw [toContextSet_assert]
-    exact Set.inter_comm _ φ
+    exact congrArg MeetMonoid.of (Set.inter_comm _ _)
 
 /-- Play a history of assertions from a state. -/
 def play (s : S) (h : List (Set W)) : S :=
   h.foldl assert s
 
+@[simp] theorem play_nil (s : S) : play s [] = s := rfl
+
+@[simp] theorem play_cons (s : S) (φ : Set W) (t : List (Set W)) :
+    play s (φ :: t) = play (assert s φ) t := rfl
+
 /-- The context set of a played history is the monoid product — the
     intersection — of the history ([stalnaker-1973] p. 450). -/
 theorem toContextSet_play (h : List (Set W)) :
-    toContextSet (play (initial : S) h) = h.prod := by
-  suffices key : ∀ (s : S), toContextSet (play s h) =
-      toContextSet s * h.prod by
-    rw [key, toContextSet_initial, ContextSet.trivial_eq_one, one_mul]
+    MeetMonoid.of (toContextSet (play (initial : S) h)) =
+      (h.map MeetMonoid.of).prod := by
+  suffices key : ∀ s : S, MeetMonoid.of (toContextSet (play s h)) =
+      MeetMonoid.of (toContextSet s) * (h.map MeetMonoid.of).prod by
+    rw [key, toContextSet_initial, ContextSet.of_trivial, one_mul]
   induction h with
-  | nil => intro s; simp [play]
+  | nil => intro s; simp
   | cons φ t ih =>
     intro s
-    rw [List.prod_cons, show play s (φ :: t) = play (assert s φ) t from rfl,
-      ih, toContextSet_assert, ContextSet.update_eq_mul]
-    exact mul_assoc _ _ _
+    rw [List.map_cons, List.prod_cons, play_cons, ih, toContextSet_assert,
+      ContextSet.of_update]
+    exact mul_assoc ..
 
 end HasAssertion
 

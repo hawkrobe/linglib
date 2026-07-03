@@ -279,7 +279,7 @@ open Semantics.Presupposition.Accommodation
     Accommodation input is `p.presup` — structurally connected to PartialProp. -/
 theorem heim_synthesis_projection (c : ContextSet W)
     (p : PartialProp W)
-    (h : ContextSet.nonEmpty
+    (h : Set.Nonempty
            (globalAccommodate c p.presup)) :
     heimSelect c p.presup = .global :=
   heim_projection_when_consistent c p.presup h
@@ -288,7 +288,7 @@ theorem heim_synthesis_projection (c : ContextSet W)
     This matches Gazdar's cancellation prediction. -/
 theorem heim_synthesis_cancellation (c : ContextSet W)
     (p : PartialProp W)
-    (h : ¬ContextSet.nonEmpty
+    (h : ¬Set.Nonempty
            (globalAccommodate c p.presup)) :
     heimSelect c p.presup = .local :=
   heim_cancellation_equivalence c p.presup h
