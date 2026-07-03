@@ -127,6 +127,7 @@ import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
+import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
@@ -266,6 +267,7 @@ import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Choice.SemiorderRanking
 import Linglib.Core.Probability.Choice.UtilityTheory
+import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.CoupledEvaluation
