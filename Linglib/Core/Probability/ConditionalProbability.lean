@@ -30,13 +30,14 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} {s : Set Ω}
 
-/-- **Conditioning is a density**: `μ[|s]` is `μ` reweighted by `(μ s)⁻¹` on
-    `s` and `0` off it. Exact, with no hypotheses beyond measurability. -/
+/-- The conditional measure `μ[|s]` is `μ` with density `(μ s)⁻¹` on `s`
+and `0` off it. -/
 theorem cond_eq_withDensity (hs : MeasurableSet s) :
     μ[|s] = μ.withDensity (s.indicator fun _ => (μ s)⁻¹) :=
   ((withDensity_indicator hs _).trans (withDensity_const _)).symm
 
-/-- The density of the conditional measure: `(μ s)⁻¹` on `s`, `0` off it. -/
+/-- The Radon-Nikodym derivative of the conditional measure `μ[|s]` with
+respect to `μ` is `(μ s)⁻¹` on `s` and `0` off it. -/
 theorem rnDeriv_cond [SigmaFinite μ] (hs : MeasurableSet s) :
     (μ[|s]).rnDeriv μ =ᵐ[μ] s.indicator fun _ => (μ s)⁻¹ :=
   cond_eq_withDensity hs ▸

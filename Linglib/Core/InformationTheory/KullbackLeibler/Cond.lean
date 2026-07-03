@@ -23,10 +23,9 @@ open scoped ENNReal ProbabilityTheory
 
 namespace InformationTheory
 
-/-- **Conditioning identity** (measure level): for a probability measure `μ`,
-    the KL divergence of the conditional measure `μ[|s]` from `μ` is the
-    information content of the event: `−log μ(s)`. The general core of
-    [levy-2008]'s equivalence of relative-entropy difficulty and surprisal. -/
+/-- The Kullback-Leibler divergence of the conditional measure `μ[|s]` from
+`μ` is the information content of the event: `−log μ(s)`. The core of
+[levy-2008]'s equivalence of relative-entropy difficulty and surprisal. -/
 theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
     {s : Set Ω} (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :

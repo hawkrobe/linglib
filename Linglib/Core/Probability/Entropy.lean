@@ -357,11 +357,9 @@ theorem klDiv_eq_sum_klFun {α : Type*} [Fintype α] [MeasurableSpace α]
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton y), mul_comm]
 
 open scoped ProbabilityTheory in
-/-- **Conditioning identity** on PMFs: the KL divergence of `p` conditioned on
-    an event `s` from `p` itself is the negative log-mass of the event —
-    updating by pure restriction costs exactly the information of learning
-    that `s` occurred ([levy-2008]\'s eq. (4) at its most general). Fintype-free
-    via the `PMF.filter`–`Measure.cond` bridge. -/
+/-- The Kullback-Leibler divergence of `p` conditioned on an event `s` from
+`p` itself is the negative log-mass of the event ([levy-2008]'s eq. (4) at
+its most general). -/
 theorem klDiv_filter_self {α : Type*} [MeasurableSpace α] (p : PMF α) {s : Set α}
     (hs : MeasurableSet s) (h : ∃ a ∈ s, a ∈ p.support) :
     (p.filter s h).klDiv p = ENNReal.ofReal (-Real.log (p.toMeasure s).toReal) := by
