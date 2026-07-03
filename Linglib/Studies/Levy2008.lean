@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Probability.Entropy
-import Mathlib.Data.List.Infix
 import Linglib.Processing.Expectation.LanguageModel
+import Linglib.Processing.Expectation.PrefixProbability
 
 /-!
 # Levy (2008): expectation-based syntactic comprehension
@@ -22,10 +22,9 @@ conditional word probabilities they determine.
 
 ## Main definitions
 
-* `consistent` — the structures whose complete string extends a prefix (𝒯ᵢ).
 * `posterior` — the comprehender's distribution given a prefix: the prior
-  conditioned on consistency (eq. (3)).
-* `nextProb` — the induced conditional word probability.
+  conditioned on consistency (eq. (3)). The prefix substrate (`consistent`,
+  `prefixMass`, `nextProb`) lives in `Processing.Expectation.PrefixProbability`.
 
 ## Main results
 
@@ -50,34 +49,16 @@ word is processed.
 namespace Levy2008
 
 open Processing.LanguageModel
+open Processing.Expectation
 open scoped ENNReal
 
 variable {T W : Type*}
-
-/-- The complete structures whose string extends the prefix `ws` — the paper's
-    𝒯ᵢ, "the set of complete structures with prefix `w₁…ᵢ`". -/
-def consistent (str : T → List W) (ws : List W) : Set T := {t | ws <+: str t}
-
-/-- Longer prefixes select fewer structures. -/
-theorem consistent_anti (str : T → List W) {ws ws' : List W} (h : ws <+: ws') :
-    consistent str ws' ⊆ consistent str ws :=
-  fun _ ht => h.trans ht
-
-/-- `P(w₁…ᵢ)`: the total mass of structures consistent with a prefix — the
-    paper's secondary reading of `P` as a distribution over strings. -/
-noncomputable def prefixMass (P : PMF T) (str : T → List W) (ws : List W) : ℝ≥0∞ :=
-  ∑' t, (consistent str ws).indicator P t
 
 /-- `Pᵢ` (eq. (3)): the comprehender's distribution over complete structures
     given the prefix — the prior conditioned on consistency. -/
 noncomputable def posterior (P : PMF T) (str : T → List W) (ws : List W)
     (h : ∃ t ∈ consistent str ws, t ∈ P.support) : PMF T :=
   P.filter (consistent str ws) h
-
-/-- `Pᵢ(w)`: the conditional probability of the next word induced by the
-    generative process. -/
-noncomputable def nextProb (P : PMF T) (str : T → List W) (ws : List W) (w : W) : ℝ≥0∞ :=
-  prefixMass P str (ws ++ [w]) / prefixMass P str ws
 
 variable (P : PMF T) (str : T → List W) (ws : List W) (w : W)
 

@@ -1441,6 +1441,7 @@ import Linglib.Processing.Cost.Profile
 import Linglib.Processing.Expectation.Defs
 import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
+import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Linglib.Processing.Lexical.Discriminative.Normed
@@ -2268,6 +2269,7 @@ import Linglib.Studies.Hacquard2006
 import Linglib.Studies.Hacquard2010
 import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.HahnDegenFutrell2021Morphology
+import Linglib.Studies.Hale2001
 import Linglib.Studies.HalleMarantz1993
 import Linglib.Studies.Halpert2012
 import Linglib.Studies.Halpert2019
