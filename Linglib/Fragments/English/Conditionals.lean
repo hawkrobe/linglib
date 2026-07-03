@@ -1,19 +1,23 @@
 import Linglib.Semantics.Conditionals.ConditionalType
 import Linglib.Semantics.Conditionals.Marker
+import Linglib.Semantics.Modality.Exclusion
 
 /-!
 # English Conditional Markers
 
-Conditional connectives in English and their HC/PC restrictions.
+Conditional connectives in English and their HC/PC restrictions, and the
+language's X-marking exponent ([iatridou-2000], [von-fintel-iatridou-2023]).
 
 ## Markers
 
 - **if**: Can mark both HC and PC. Context determines reading.
+- **X-marking**: Fake Past, plus woll (would) in the consequent.
 -/
 
 namespace English.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
+open Semantics.Modality.Exclusion (XMarkingExponent)
 
 /-- English if: HC and PC conditional marker.
 
@@ -25,5 +29,10 @@ def if_ : ConditionalMarker where
   gloss := "if"
   markerType := .both
   notes := "Ambiguous between HC and PC; context determines reading"
+
+/-- English X-marking: Fake Past ([iatridou-2000]). Antecedent X-marking is past
+    alone — a minority pattern ([von-fintel-iatridou-2023], §2); the consequent
+    adds the modal woll (would). -/
+def xMarking : Option XMarkingExponent := some ⟨"Past", [.past, .future]⟩
 
 end English.Conditionals

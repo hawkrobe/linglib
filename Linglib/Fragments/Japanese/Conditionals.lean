@@ -1,5 +1,6 @@
 import Linglib.Semantics.Conditionals.ConditionalType
 import Linglib.Semantics.Conditionals.Marker
+import Linglib.Semantics.Modality.Exclusion
 
 /-!
 # Japanese Conditional Markers
@@ -19,6 +20,7 @@ Conditional morphemes in Japanese and their HC/PC restrictions.
 namespace Japanese.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
+open Semantics.Modality.Exclusion (XMarkingExponent)
 
 /-- Japanese -ra / -tara: HC-only conditional marker.
 
@@ -54,5 +56,10 @@ def eba : ConditionalMarker where
   gloss := "if (conditional)"
   markerType := .both
   notes := "Anderson conditionals use this form (Mizuno 2024, ex. 4a)"
+
+/-- Japanese X-marking: Fake Past -ta ([ogihara-2014], [mizuno-kaufmann-2019]) —
+    Past morphology with counterfactual rather than temporal import, e.g. in the
+    consequent of -(e)ba conditionals ([mizuno-2024], ex. 3). -/
+def xMarking : Option XMarkingExponent := some ⟨"-ta", [.past]⟩
 
 end Japanese.Conditionals

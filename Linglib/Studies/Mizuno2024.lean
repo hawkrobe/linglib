@@ -1,6 +1,7 @@
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Modality.HistoricalAlternatives
+import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Data.Examples.Mizuno2024
@@ -33,6 +34,9 @@ examples, and the row theorems quantify over `Examples.all`. The semantics is
 ## Main results
 
 * `english_japanese_discrepancy` — English X-marks, Japanese O-marks: the typological twist.
+* `inventory_prediction_fails_japanese` — the §3.1 puzzle: Japanese *has* X-marking
+  (Fake Past -ta, ex. 3, the Fragment inventory entry), yet the inventory-driven
+  prediction of its Anderson deployment fails; English validates it.
 * `anderson_judgments_match_strategy` — every recorded Anderson judgment (primary text and
   minimal-pair alternative) matches the per-language strategy record.
 * `flv_anderson_correlation` — Anderson X-marking ⇔ Future-Less-Vivid X-marking, per
@@ -47,7 +51,7 @@ examples, and the row theorems quantify over `Examples.all`. The semantics is
 
 namespace Mizuno2024
 
-open Semantics.Modality.Exclusion (MarkingStrategy)
+open Semantics.Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Semantics.Conditionals (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 open HistoricalAlternatives (histEquiv_mono)
 open Intensional (WorldTimeIndex)
@@ -82,6 +86,49 @@ def flvXMarkingAvailable : Glottocode → Option Bool
     strategies for Anderson conditionals. -/
 theorem english_japanese_discrepancy :
     andersonStrategy "stan1293" ≠ andersonStrategy "nucl1643" := by decide
+
+/-! ### The §3.1 puzzle: available X-marking that must not be deployed
+
+Japanese *has* X-marking — the Fake Past -ta, demonstrated by ex. 3 and recorded in the
+Fragment inventory (`Japanese.Conditionals.xMarking`) — and §2's semantics says Anderson
+conditionals want X-marking, so one would predict -ta in ex. 4a. "Strikingly, this is not
+borne out": the attested strategy is O-marking. [von-fintel-iatridou-2023]'s uniformity
+hypothesis survives via the meaning/use split (§4.1): the exponent's semantics is
+uniform; its Anderson *deployment* is blocked by a third factor. -/
+
+/-- The sample languages' X-marking exponents, routed from the Fragment inventory
+    (English Fake Past + woll; Japanese Fake Past -ta). The Mandarin entry is
+    study-local: consequent-final perfective le rests on a single consultant
+    ([mizuno-2024], fn 15), below the textbook-consensus bar for a Fragment entry. -/
+def xExponentOf : Glottocode → Option XMarkingExponent
+  | "stan1293" => English.Conditionals.xMarking
+  | "nucl1643" => Japanese.Conditionals.xMarking
+  | "mand1415" => some ⟨"le", [.perfective]⟩
+  | _ => none
+
+/-- The naive inventory-driven prediction: X-mark Anderson conditionals wherever the
+    inventory provides X-marking — per §2's triviality argument, and a fortiori under
+    fn 14's Blocking Principle, which bans covert HP where overt X-marking exists. -/
+def inventoryPrediction (lang : Glottocode) : Option MarkingStrategy :=
+  (xExponentOf lang).map (λ _ => .xMarking)
+
+/-- English validates the inventory-driven prediction. -/
+theorem inventory_prediction_holds_english :
+    inventoryPrediction "stan1293" = andersonStrategy "stan1293" := by decide
+
+/-- The §3.1 puzzle: Japanese has the X resource yet must not deploy it for Anderson
+    conditionals — the inventory prediction fails. -/
+theorem inventory_prediction_fails_japanese :
+    inventoryPrediction "nucl1643" ≠ andersonStrategy "nucl1643" := by decide
+
+/-- Mandarin patterns with Japanese ([mizuno-2024], §4.2). -/
+theorem inventory_prediction_fails_mandarin :
+    inventoryPrediction "mand1415" ≠ andersonStrategy "mand1415" := by decide
+
+-- Ex. (3) grounds the Japanese inventory entry: the row's tagged exponent is the
+-- Fragment entry's Fake Past -ta, and the Fake-Past sentence is acceptable.
+#guard Examples.ja3.feature? "x_exponent" == Japanese.Conditionals.xMarking.map (·.form)
+#guard Examples.ja3.judgment == Features.Judgment.acceptable
 
 /-! ### The attested minimal pairs (the empirical anchor)
 
