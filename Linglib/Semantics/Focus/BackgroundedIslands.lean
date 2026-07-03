@@ -1,11 +1,10 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Discourse.QUDStack
-import Linglib.Discourse.Strategy
+import Linglib.Discourse.QUD.Basic
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
 import Linglib.Semantics.Focus.Comparability
-import Linglib.Discourse.AtIssueness
+import Linglib.Discourse.QUD.AtIssueness
 import Linglib.Semantics.Focus.Interpretation
 
 /-!
