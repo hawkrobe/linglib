@@ -32,10 +32,11 @@ so concrete `Nonplanar` equalities close by `decide`.
 is re-inlined in the definition only so the recursion compiles structurally — kernel
 reduction (hence `decide`) needs `brecOn`, not `WellFounded.fix`, so the recursion cannot
 route through the opaque `isPermBy`. Soundness and completeness of the matcher live
-generically in `Core/Data/Multiset/Rel.lean`; what remains here is that `eqv` is an
-equivalence. Symmetry and transitivity of `eqv` are mutually entangled at the children
-level (completeness of the matcher needs both), so they are proven together by induction
-on a size bound (`eqv_symm_trans`).
+generically in `Core/Data/Multiset/Rel.lean`, and correctness here is a single
+size-bounded induction (`eqv_iff_mk_eq`): the inductive hypothesis converts `eqv` on
+children to equality of `mk`-images, so the matcher's symmetry/transitivity hypotheses
+are discharged by `Eq.symm`/`Eq.trans`, and `Nonplanar.mk_node_eq_mk_node_iff` (from
+`congrArg` on the lifted `value`/`children` destructors) inverts the node.
 
 Strict, order-sensitive equality of the underlying ordered trees is already decidable
 (`RoseTree.instDecidableEq`); this file only adds the decider for the quotient relation.
@@ -45,7 +46,9 @@ Strict, order-sensitive equality of the underlying ordered trees is already deci
 
 namespace RoseTree
 
-variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s u : RoseTree α}
+open RootedTree
+
+variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s : RoseTree α}
 
 /-! ### Deciding `PermEquiv`: equality up to child reordering -/
 
@@ -65,8 +68,8 @@ where
 /-! #### Correctness of the greedy matcher
 
 `eqv.go` is `List.isPermBy eqv`, so the generic soundness and completeness of the
-greedy matcher (`Core/Data/Multiset/Rel.lean`) reduce both directions of
-`eqv_iff_permEquiv` to the equivalence properties of `eqv`. -/
+greedy matcher (`Core/Data/Multiset/Rel.lean`) reduce `eqv_iff_permEquiv` to one
+size-bounded induction against `mk`-equality. -/
 
 /-- `eqv` as a `Prop`-valued relation. -/
 private abbrev Eqv (c d : RoseTree α) : Prop := eqv c d = true
@@ -109,113 +112,36 @@ private theorem sizeOf_children_lt {a : α} {N : ℕ} (h : sizeOf (RoseTree.node
     ∀ x ∈ (↑cs : Multiset (RoseTree α)), sizeOf x < N := fun _ hx =>
   lt_of_lt_of_le (sizeOf_lt_of_mem (Multiset.mem_coe.mp hx)) (Nat.lt_succ_iff.mp h)
 
-/-- Symmetry and transitivity of `eqv`, proven together by induction on a size bound:
-    completeness of the matcher at a node needs both symmetry and transitivity on the
-    (strictly smaller) children, which the induction hypothesis supplies. -/
-private theorem eqv_symm_trans :
-    ∀ N, (∀ t s : RoseTree α, sizeOf t < N → sizeOf s < N →
-            (eqv t s = true → eqv s t = true)) ∧
-         (∀ t s u : RoseTree α, sizeOf t < N → sizeOf s < N → sizeOf u < N →
-            (eqv t s = true → eqv s u = true → eqv t u = true)) := by
+/-- `eqv` decides equality in the quotient, by induction on a size bound: on the
+    children, the inductive hypothesis converts `eqv` to equality of `mk`-images, whose
+    symmetry and transitivity discharge the completeness hypotheses of the matcher,
+    while `Nonplanar.mk_node_eq_mk_node_iff` inverts `mk`-equality at the node. -/
+private theorem eqv_iff_mk_eq :
+    ∀ N, ∀ t s : RoseTree α, sizeOf t < N → sizeOf s < N →
+      (eqv t s = true ↔ Nonplanar.mk t = Nonplanar.mk s) := by
   intro N
   induction N with
-  | zero =>
-    exact ⟨fun _ _ hst _ => absurd hst (Nat.not_lt_zero _),
-           fun _ _ _ hst _ _ => absurd hst (Nat.not_lt_zero _)⟩
+  | zero => exact fun _ _ hst _ => absurd hst (Nat.not_lt_zero _)
   | succ N ih =>
-    refine ⟨?_, ?_⟩
-    · rintro ⟨a, cs⟩ ⟨b, ds⟩ hst hss hts
-      obtain ⟨hab, hmulti⟩ := eqv_node_iff.mp hts
-      have hcsN := sizeOf_children_lt hst
-      have hdsN := sizeOf_children_lt hss
-      exact eqv_node_iff.mpr ⟨hab.symm, go_of_rel ih.1 ih.2 hdsN hcsN
-        (Multiset.rel_symm_on (fun x hx y hy => ih.1 x y (hcsN x hx) (hdsN y hy))
-          (rel_of_go hmulti))⟩
-    · rintro ⟨a, cs⟩ ⟨b, ds⟩ ⟨c, es⟩ hst hss hsu hts hsu'
-      obtain ⟨hab, hm1⟩ := eqv_node_iff.mp hts
-      obtain ⟨hbc, hm2⟩ := eqv_node_iff.mp hsu'
-      have hcsN := sizeOf_children_lt hst
-      have hdsN := sizeOf_children_lt hss
-      have hesN := sizeOf_children_lt hsu
-      exact eqv_node_iff.mpr ⟨hab.trans hbc, go_of_rel ih.1 ih.2 hcsN hesN
-        (Multiset.rel_trans_on
-          (fun x hx y hy z hz => ih.2 x y z (hcsN x hx) (hdsN y hy) (hesN z hz))
-          (rel_of_go hm1) (rel_of_go hm2))⟩
-
-/-- `eqv` is reflexive. -/
-private theorem eqv_refl (t : RoseTree α) : eqv t t = true := by
-  induction t with
-  | node a cs ih =>
-    rw [eqv_node_iff, go_eq_isPermBy]
-    exact ⟨rfl, List.isPermBy_refl cs ih⟩
-
-/-- `eqv` is an equivalence: `eqv_symm_trans` at a sum-of-sizes bound, plus structural
-    reflexivity. -/
-private theorem eqv_equivalence : Equivalence (Eqv (α := α)) where
-  refl := eqv_refl
-  symm {t s} h := (eqv_symm_trans (sizeOf t + sizeOf s + 1)).1 t s (by omega) (by omega) h
-  trans {t s u} h1 h2 := (eqv_symm_trans (sizeOf t + sizeOf s + sizeOf u + 1)).2 t s u
-    (by omega) (by omega) (by omega) h1 h2
-
-/-- The characterization of `eqv` at a node, now unconditional: equal root values, and
-    children related as multisets under `eqv`. -/
-private theorem eqv_node_iff_rel {a b : α} :
-    eqv (.node a cs) (.node b ds) = true ↔
-      a = b ∧ Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds :=
-  eqv_node_iff.trans <| and_congr_right fun _ =>
-    ⟨rel_of_go, go_of_rel (P := fun _ => True)
-      (fun _ _ _ _ => eqv_equivalence.symm) (fun _ _ _ _ _ _ => eqv_equivalence.trans)
-      (fun _ _ => trivial) (fun _ _ => trivial)⟩
-
-/-- `eqv` respects a single `PermStep`. -/
-private theorem eqv_step (h : PermStep t s) : eqv t s = true := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    refine eqv_node_iff_rel.mpr ⟨rfl, ?_⟩
-    have hcoe : ((pre ++ l :: r :: post : List (RoseTree α)) : Multiset (RoseTree α))
-        = ↑(pre ++ r :: l :: post) :=
-      Multiset.coe_eq_coe.mpr ((List.Perm.swap r l post).append_left pre)
-    rw [hcoe]
-    exact Multiset.rel_refl_of_refl_on fun x _ => eqv_refl x
-  | @recurse a pre old new post _ ih =>
-    exact eqv_node_iff_rel.mpr ⟨rfl, Multiset.rel_coe_iff_exists.mpr
-      ⟨pre ++ new :: post,
-        List.rel_append (List.forall₂_same.mpr fun x _ => eqv_refl x)
-          (List.Forall₂.cons ih (List.forall₂_same.mpr fun x _ => eqv_refl x)),
-        List.Perm.refl _⟩⟩
-
-/-- `PermEquiv → eqv`: `eqv` is an equivalence containing `PermStep`, and `PermEquiv` is
-    the least one. -/
-private theorem permEquiv_to_eqv (h : PermEquiv t s) : eqv t s = true :=
-  eqv_equivalence.eqvGen_iff.mp (Relation.EqvGen.mono (fun _ _ => eqv_step) h)
-
-mutual
-/-- `eqv → PermEquiv`, by structural induction. -/
-private theorem eqv_to_permEquiv : ∀ (t s : RoseTree α), eqv t s = true → PermEquiv t s
-  | .node a cs, .node b ds, h => by
-    obtain ⟨rfl, hrel⟩ := eqv_node_iff_rel.mp h
-    obtain ⟨ds', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp hrel
-    exact (permEquiv_node_componentwise
-      (eqv_forall₂_to_permEquiv cs ds' hf)).trans (permEquiv_root_perm hperm)
-private theorem eqv_forall₂_to_permEquiv :
-    ∀ (cs ds' : List (RoseTree α)),
-      List.Forall₂ (fun c d => eqv c d = true) cs ds' → List.Forall₂ PermEquiv cs ds'
-  | [], [], _ => List.Forall₂.nil
-  | c :: cs, d :: ds', h => by
-    obtain ⟨hcd, hrest⟩ := List.forall₂_cons.mp h
-    exact List.Forall₂.cons (eqv_to_permEquiv c d hcd)
-      (eqv_forall₂_to_permEquiv cs ds' hrest)
-end
+    rintro ⟨a, cs⟩ ⟨b, ds⟩ hst hss
+    have hcsN := sizeOf_children_lt hst
+    have hdsN := sizeOf_children_lt hss
+    rw [eqv_node_iff, Nonplanar.mk_node_eq_mk_node_iff,
+        ← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map]
+    refine and_congr_right fun _ => ⟨fun h => (rel_of_go h).mono
+      (fun x hx y hy hxy => (ih x y (hcsN x hx) (hdsN y hy)).mp hxy), fun h => ?_⟩
+    exact go_of_rel (P := (sizeOf · < N))
+      (fun x y hx hy hxy => (ih y x hy hx).mpr ((ih x y hx hy).mp hxy).symm)
+      (fun x y z hx hy hz h1 h2 =>
+        (ih x z hx hz).mpr (((ih x y hx hy).mp h1).trans ((ih y z hy hz).mp h2)))
+      hcsN hdsN (h.mono fun x hx y hy hxy => (ih x y (hcsN x hx) (hdsN y hy)).mpr hxy)
 
 /-- `eqv` decides `PermEquiv`: two ordered trees are `eqv`-related iff they are equal up
-    to reordering the children of every vertex.
-
-    `(→)` is structural induction (`eqv_to_permEquiv`), reading the greedy match back
-    through `permEquiv_node_componentwise` and `permEquiv_root_perm`; `(←)` is `EqvGen`
-    induction (`permEquiv_to_eqv`), using that `eqv` is an equivalence and respects each
-    `PermStep`. -/
+    to reordering the children of every vertex. Composite of `eqv_iff_mk_eq` (at a
+    sum-of-sizes bound) with `Nonplanar.mk_eq_mk_iff`. -/
 theorem eqv_iff_permEquiv : eqv t s = true ↔ PermEquiv t s :=
-  ⟨eqv_to_permEquiv t s, permEquiv_to_eqv⟩
+  ((eqv_iff_mk_eq (sizeOf t + sizeOf s + 1) t s (by omega) (by omega)).trans
+    Nonplanar.mk_eq_mk_iff)
 
 /-- `PermEquiv` is decidable, computably so: decided by `eqv`, which reduces in the
     kernel. -/

@@ -28,8 +28,8 @@ structurally, so the instance reduces in the kernel and concrete goals close by 
   componentwise `r`-related to `l₁`.
 - `List.isPermBy_iff_rel`: `isPermBy p` decides `Multiset.Rel (p · ·)`, given symmetry
   and transitivity of `p` on a predicate covering both lists.
-- `Multiset.rel_symm_on`, `Multiset.rel_trans_on`: symmetry and transitivity of `Rel r`
-  from the corresponding properties of `r` on the members alone.
+- `Multiset.rel_symm_of_symm_on`, `Multiset.rel_trans_of_trans_on`: symmetry and
+  transitivity of `Rel r` from the corresponding properties of `r` on the members alone.
 - `Multiset.Rel.decidable`: `Decidable (Rel r s t)` for decidable symmetric transitive
   `r`.
 
@@ -76,11 +76,11 @@ theorem rel_coe_iff_exists {r : α → β → Prop} {l₁ : List α} {l₂ : Lis
     | cons hab _ ih => exact Rel.cons hab ih
 
 /-- `Rel r` is symmetric when `r` is symmetric on the members. -/
-theorem rel_symm_on (hs : ∀ x ∈ s, ∀ y ∈ t, r x y → r y x) (h : Rel r s t) : Rel r t s :=
+theorem rel_symm_of_symm_on (hs : ∀ x ∈ s, ∀ y ∈ t, r x y → r y x) (h : Rel r s t) : Rel r t s :=
   rel_flip.mp (h.mono hs)
 
 /-- `Rel r` is transitive when `r` is transitive on the members. -/
-theorem rel_trans_on (ht : ∀ x ∈ s, ∀ y ∈ t, ∀ z ∈ u, r x y → r y z → r x z)
+theorem rel_trans_of_trans_on (ht : ∀ x ∈ s, ∀ y ∈ t, ∀ z ∈ u, r x y → r y z → r x z)
     (h₁ : Rel r s t) (h₂ : Rel r t u) : Rel r s u := by
   induction t using Multiset.induction_on generalizing s u with
   | empty => rw [rel_zero_right.mp h₁, rel_zero_left.mp h₂, rel_zero_left]
@@ -249,6 +249,14 @@ theorem isPermBy_iff_rel {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP
 
 end Completeness
 
+/-- The greedy matcher decides `Multiset.Rel` for an unconditionally symmetric and
+    transitive `p`. -/
+theorem isPermBy_iff_rel' (hs : ∀ x y, p x y = true → p y x = true)
+    (ht : ∀ x y z, p x y = true → p y z = true → p x z = true) {l₁ l₂ : List α} :
+    isPermBy p l₁ l₂ = true ↔ Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂ :=
+  isPermBy_iff_rel (P := fun _ => True) (fun x y _ _ => hs x y) (fun x y z _ _ _ => ht x y z)
+    (fun _ _ => trivial) (fun _ _ => trivial)
+
 end List
 
 namespace Multiset
@@ -262,11 +270,10 @@ instance Rel.decidable {r : α → α → Prop} [DecidableRel r] [Std.Symm r] [I
     (s t : Multiset α) : Decidable (Rel r s t) :=
   Quotient.recOnSubsingleton₂ s t fun l₁ l₂ =>
     decidable_of_iff (List.isPermBy (fun a b => decide (r a b)) l₁ l₂ = true) <| by
-      rw [List.isPermBy_iff_rel (p := fun a b => decide (r a b)) (P := fun _ => True)
-        (fun x y _ _ h => decide_eq_true (Std.Symm.symm x y (of_decide_eq_true h)))
-        (fun x y z _ _ _ h₁ h₂ => decide_eq_true
-          (IsTrans.trans x y z (of_decide_eq_true h₁) (of_decide_eq_true h₂)))
-        (fun _ _ => trivial) (fun _ _ => trivial)]
+      rw [List.isPermBy_iff_rel' (p := fun a b => decide (r a b))
+        (fun x y h => decide_eq_true (Std.Symm.symm x y (of_decide_eq_true h)))
+        (fun x y z h₁ h₂ => decide_eq_true
+          (IsTrans.trans x y z (of_decide_eq_true h₁) (of_decide_eq_true h₂)))]
       exact ⟨fun h => h.mono (by simp), fun h => h.mono (by simp)⟩
 
 end Multiset
