@@ -1,5 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Lattice
+import Mathlib.GroupTheory.GroupAction.Hom
+import Mathlib.Algebra.BigOperators.Group.List.Basic
 
 /-!
 # Common Ground
@@ -91,6 +93,33 @@ theorem trivial_update (p : Set W) : update trivial p = p :=
   Set.univ_inter p
 
 end ContextSet
+
+/-! ### The meet monoid
+
+`(ContextSet W, ∩, univ)` is a commutative idempotent monoid, and
+`ContextSet.update` is its (right) regular action. The instance is scoped,
+mirroring mathlib's `Pointwise` locale: `open CommonGround` activates it.
+The same meet-monoid structure recurs one level up in inquisitive
+semantics, where contexts are downward-closed sets of information states,
+also updated by intersection ([ciardelli-groenendijk-roelofsen-2018]);
+the classical picture formalized here is its declarative fragment, along
+the Truth-Support Bridge `Question.declarativeHom` — an order-faithful
+`InfTopHom` that does not preserve `⊔`
+(`Semantics/Questions/Basic.lean`). -/
+
+/-- Meet-monoid on context sets: `* = ∩`, `1 = univ`. Scoped, Pointwise-style. -/
+scoped instance : CommMonoid (ContextSet W) where
+  mul c p := c ∩ p
+  one := ContextSet.trivial
+  mul_assoc := Set.inter_assoc
+  mul_comm := Set.inter_comm
+  one_mul := Set.univ_inter
+  mul_one := Set.inter_univ
+
+theorem ContextSet.update_eq_mul (c : ContextSet W) (p : Set W) :
+    ContextSet.update c p = c * p := rfl
+
+theorem ContextSet.trivial_eq_one : (ContextSet.trivial : ContextSet W) = 1 := rfl
 
 /-- The context set determined by a common ground: intersection of its propositions. -/
 def contextSet (cg : CommonGround W) : ContextSet W :=
@@ -295,5 +324,58 @@ instance : HasAssertion (CommonGround W) W where
   assert cg φ := cg.add φ
   toContextSet_initial := rfl
   toContextSet_assert _ φ := Set.inter_comm φ _
+
+/-! ### The assertion action and its equivariant projection
+
+`HasAssertion` in mathlib vocabulary: propositions act on states by
+assertion (a raw `SMul`), the meet monoid acts on itself regularly
+(`Mul.toSMul`), and `toContextSet` is an equivariant map between the two
+actions (a mathlib `MulActionHom`) sending `initial` to `1`. No action
+laws are demanded of the state side — states may record commitment order,
+sources, or credences — yet the projected dynamics inherits every monoid
+equation, and on a played history the projection is the monoid product. -/
+
+namespace HasAssertion
+
+open HasContextSet (toContextSet)
+
+variable {S : Type*} [HasAssertion S W]
+
+/-- Propositions act on any `HasAssertion` state by assertion. Scoped. -/
+scoped instance : SMul (Set W) S := ⟨fun φ s => assert s φ⟩
+
+theorem smul_eq_assert (φ : Set W) (s : S) : φ • s = assert s φ := rfl
+
+/-- `toContextSet` bundled as an equivariant map (`MulActionHom`) from the
+    assertion action to the regular action of the meet monoid. -/
+def toContextSetHom (S : Type*) [HasAssertion S W] :
+    S →[Set W] ContextSet W where
+  toFun := toContextSet
+  map_smul' φ s := by
+    show toContextSet (assert s φ) = φ * toContextSet s
+    rw [toContextSet_assert]
+    exact Set.inter_comm _ φ
+
+/-- Play a history of assertions from a state. -/
+def play (s : S) (h : List (Set W)) : S :=
+  h.foldl assert s
+
+/-- **Forced projection**: the context set of a played history is the
+    monoid product — the intersection — of the history. [stalnaker-1973]
+    p. 450's propositions-to-worlds duality as a hom equation. -/
+theorem toContextSet_play (h : List (Set W)) :
+    toContextSet (play (initial : S) h) = h.prod := by
+  suffices key : ∀ (s : S), toContextSet (play s h) =
+      toContextSet s * h.prod by
+    rw [key, toContextSet_initial, ContextSet.trivial_eq_one, one_mul]
+  induction h with
+  | nil => intro s; simp [play]
+  | cons φ t ih =>
+    intro s
+    rw [List.prod_cons, show play s (φ :: t) = play (assert s φ) t from rfl,
+      ih, toContextSet_assert, ContextSet.update_eq_mul]
+    exact mul_assoc _ _ _
+
+end HasAssertion
 
 end CommonGround
