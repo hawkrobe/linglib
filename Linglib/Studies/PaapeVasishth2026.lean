@@ -42,7 +42,7 @@ bimodality ([van-schijndel-linzen-2021], [huang-etal-2024]).
 
 ## Connections
 
-- `Core.ProcessingModel`: Ordinal profile bridge (§ 7)
+- `Processing.Cost.Profile`: ordinal profile bridge (§ 7)
 - `Semantics/Lexical/Determiner/Definite.lean`: Uniqueness
   presupposition of `the_uniq` grounds the context manipulation — bare
   definites fail uniqueness in non-unique contexts, motivating RC modifiers (§ 9)
@@ -540,7 +540,7 @@ theorem noTriage_beats_full :
 
 /-! ### From ordinal to quantitative
 
-The `ProcessingProfile` from `Core.ProcessingModel` captures the ordinal
+The `ProcessingProfile` from `Processing.Cost.Profile` captures the ordinal
 claim that RC is harder than CC (`rc_pareto_harder`, § 0).
 The MPT *explains* this ordering by decomposing it into quantitative
 components: RC has higher garden-path probability, higher reanalysis cost,
