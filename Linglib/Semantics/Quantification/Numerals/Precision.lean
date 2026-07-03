@@ -41,17 +41,17 @@ inductive PrecisionMode where
 
 /-- Round a rational to the nearest multiple of `base` —
 [kao-etal-2014-hyperbole]'s `Round` at the default `base = 10`, the
-nearest-representative map of the grain partition
-(`Core.Order.grainRound`). -/
+nearest-representative map of the width-`base` bucket partition
+(`Core/Algebra/Order/ToIntervalMod.lean`). -/
 def roundToNearest (n : ℚ) (base : ℚ := 10) : ℚ :=
-  Core.Order.grainRound base n
+  round (n / base) * base
 
 /-- Rounding moves a value by at most half the grain: the imprecision
 introduced by `f_a` at base 10 is bounded by 5
-(`Core.Order.abs_sub_grainRound_le`). -/
+(`abs_sub_round_div_zsmul_le`). -/
 theorem abs_sub_roundToNearest_le (n : ℚ) : |n - roundToNearest n| ≤ 5 := by
-  have h := Core.Order.abs_sub_grainRound_le (by norm_num : (0 : ℚ) < 10) n
-  norm_num at h
+  have h := abs_sub_round_div_zsmul_le (by norm_num : (0 : ℚ) < 10) n
+  norm_num [zsmul_eq_mul] at h
   simpa [roundToNearest] using h
 
 /-- Project a value according to precision mode: `f_e` is the identity,
