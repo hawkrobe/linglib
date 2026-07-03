@@ -813,6 +813,209 @@ theorem adjMarginal_deg5 :
     adjSpeaker_apply_of_true 2 _ (by decide)
       (priorAfterEvalPos_pos_at_horrible_pos (by decide))]
 
+/-! ## §5c. The backgrounding contrast: why the paper rejects (49)
+
+[nouwen-2024] p. 28: "the source of this problem lies in the simple
+conjunctive analysis I assume in (49)… the two thresholds are resolved in
+tandem… all we need to do is update the two positive forms successively
+rather than simultaneously." Made structural: in the REJECTED simultaneous
+model, per-latent dominance FAILS on the shared licensing support — at a
+shared latent where every utterance is true at both worlds, ratio
+cancellation makes the speaker values exactly equal, so the raw height
+prior's 2:1 preference for the moderate world wins the term comparison
+(`sim_sharedSupport_dominance_fails`). In the final sequential model the
+same per-latent comparison HOLDS (`seq_horribly_shifts_upward_pmf`'s §5b
+engine): the backgrounded evaluative posterior has already re-loaded the
+prior toward the extremes. Backgrounding is exactly what makes
+intensification term-by-term derivable. -/
+
+/-- Cost factor for the simultaneous model's four utterances. -/
+noncomputable def simCostFactor (u : Utterance) : ℝ≥0∞ :=
+  ENNReal.ofReal (Real.exp (-4 * (utteranceCost u : ℝ)))
+
+theorem simCostFactor_pos (u : Utterance) : simCostFactor u ≠ 0 := by
+  unfold simCostFactor
+  rw [ENNReal.ofReal_ne_zero_iff]
+  exact Real.exp_pos _
+
+theorem simCostFactor_finite (u : Utterance) : simCostFactor u ≠ ∞ :=
+  ENNReal.ofReal_ne_top
+
+/-- Simultaneous-model literal listener at latent `(θ, θ_e)`, gated on the
+utterance's extension being nonempty (the four-utterance L&G L0). -/
+noncomputable def simL0At (l : Threshold × Threshold) (u : Utterance) : PMF Height :=
+  if h_pos : (∑' h, heightPriorPMF h *
+      (if meaning u h l.1 l.2 then (1 : ℝ≥0∞) else 0)) ≠ 0 then
+    RSA.L0LassiterGoodman heightPriorPMF (fun u' h => meaning u' h l.1 l.2) u h_pos
+  else PMF.uniformOfFintype Height
+
+/-- Simultaneous-model speaker at latent `(θ, θ_e)` and world `h` (total, with
+the vacuous fallback at degenerate cells, as in `adjSpeaker_warmAt`). -/
+noncomputable def simSpeakerAt (l : Threshold × Threshold) (h : Height) : PMF Utterance :=
+  if h_pos : (∑' u, ((simL0At l) u h : ℝ≥0∞) ^ (4 : ℝ) * simCostFactor u) ≠ 0 then
+    RSA.S1Belief (simL0At l) simCostFactor 4 h h_pos
+      (ENNReal.tsum_ne_top_of_fintype fun u =>
+        ENNReal.mul_ne_top
+          (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+          (simCostFactor_finite u))
+  else PMF.pure .silent
+
+/-- Per-latent joint term of the simultaneous model for "horribly warm":
+prior × speaker — one latent cell's contribution to the (49)-listener's
+world score. -/
+noncomputable def simTerm (l : Threshold × Threshold) (h : Height) : ℝ≥0∞ :=
+  heightPriorPMF h * simSpeakerAt l h .horribly_warm
+
+/-- Extension mass of utterance `u` at latent `l` (the `simL0At` normaliser). -/
+noncomputable def simMass (l : Threshold × Threshold) (u : Utterance) : ℝ≥0∞ :=
+  ∑' h, heightPriorPMF h * (if meaning u h l.1 l.2 then (1 : ℝ≥0∞) else 0)
+
+private theorem simMass_ne_zero_of_true {l : Threshold × Threshold} {u : Utterance}
+    {h : Height} (hu : meaning u h l.1 l.2 = true) : simMass l u ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr
+    ⟨h, by rw [hu]; simp only [if_true, mul_one]; exact heightPriorPMF_pos h⟩
+
+private theorem sumUtt4 (f : Utterance → ℝ≥0∞) :
+    ∑' u, f u = f .bare_warm + f .horribly_warm + f .pleasantly_warm + f .silent := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Utterance)
+      = {.bare_warm, .horribly_warm, .pleasantly_warm, .silent} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+/-- At an all-true world, the simultaneous speaker's value is a function of
+the four extension masses alone — the height factor has cancelled. -/
+private theorem simValue_of_allTrue (l : Threshold × Threshold) (h : Height)
+    (hall : ∀ u : Utterance, meaning u h l.1 l.2 = true) :
+    simSpeakerAt l h .horribly_warm
+      = (simMass l .horribly_warm)⁻¹ ^ (4 : ℝ) * simCostFactor .horribly_warm /
+        ((simMass l .bare_warm)⁻¹ ^ (4 : ℝ) * simCostFactor .bare_warm +
+         (simMass l .horribly_warm)⁻¹ ^ (4 : ℝ) * simCostFactor .horribly_warm +
+         (simMass l .pleasantly_warm)⁻¹ ^ (4 : ℝ) * simCostFactor .pleasantly_warm +
+         (simMass l .silent)⁻¹ ^ (4 : ℝ) * simCostFactor .silent) := by
+  have hP0 : heightPriorPMF h ≠ 0 := heightPriorPMF_pos h
+  have hPt : heightPriorPMF h ≠ ⊤ := PMF.apply_ne_top _ _
+  have hL0 : ∀ u : Utterance, simL0At l u h = heightPriorPMF h * (simMass l u)⁻¹ := by
+    intro u
+    have hm : (∑' h', heightPriorPMF h' *
+        (if meaning u h' l.1 l.2 then (1 : ℝ≥0∞) else 0)) ≠ 0 :=
+      simMass_ne_zero_of_true (hall u)
+    unfold simL0At
+    rw [dif_pos hm, RSA.L0LassiterGoodman_apply, hall u]
+    simp only [if_true, mul_one]
+    rfl
+  have h_pos : (∑' u, ((simL0At l) u h : ℝ≥0∞) ^ (4 : ℝ) * simCostFactor u) ≠ 0 := by
+    rw [sumUtt4]
+    intro hz
+    rcases mul_eq_zero.mp (add_eq_zero.mp hz).2 with h5 | h5
+    · rw [hL0 .silent] at h5
+      have hne : heightPriorPMF h * (simMass l .silent)⁻¹ ≠ 0 :=
+        mul_ne_zero hP0 (ENNReal.inv_ne_zero.mpr (by
+          refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+          calc simMass l .silent
+              ≤ ∑' h', heightPriorPMF h' := ENNReal.tsum_le_tsum fun h' => by
+                split <;> simp
+            _ = 1 := PMF.tsum_coe _))
+      rcases ENNReal.rpow_eq_zero_iff.mp h5 with ⟨hz0, -⟩ | ⟨-, hneg⟩
+      · exact hne hz0
+      · norm_num at hneg
+    · exact simCostFactor_pos .silent h5
+  unfold simSpeakerAt
+  rw [dif_pos h_pos, RSA.S1Belief_apply, sumUtt4, hL0 .bare_warm, hL0 .horribly_warm,
+    hL0 .pleasantly_warm, hL0 .silent]
+  simp only [ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0:ℝ) ≤ 4)]
+  have hP4 : (heightPriorPMF h) ^ (4 : ℝ) ≠ 0 :=
+    (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hP0) hPt).ne'
+  have hP4t : (heightPriorPMF h) ^ (4 : ℝ) ≠ ⊤ :=
+    ENNReal.rpow_ne_top_of_nonneg (by norm_num) hPt
+  rw [← div_eq_mul_inv,
+    show heightPriorPMF h ^ (4 : ℝ) * (simMass l .horribly_warm)⁻¹ ^ (4 : ℝ) *
+          simCostFactor .horribly_warm
+        = heightPriorPMF h ^ (4 : ℝ) * ((simMass l .horribly_warm)⁻¹ ^ (4 : ℝ) *
+          simCostFactor .horribly_warm) from by ring,
+    show heightPriorPMF h ^ (4 : ℝ) * (simMass l .bare_warm)⁻¹ ^ (4 : ℝ) *
+          simCostFactor .bare_warm +
+        heightPriorPMF h ^ (4 : ℝ) * ((simMass l .horribly_warm)⁻¹ ^ (4 : ℝ) *
+          simCostFactor .horribly_warm) +
+        heightPriorPMF h ^ (4 : ℝ) * (simMass l .pleasantly_warm)⁻¹ ^ (4 : ℝ) *
+          simCostFactor .pleasantly_warm +
+        heightPriorPMF h ^ (4 : ℝ) * (simMass l .silent)⁻¹ ^ (4 : ℝ) *
+          simCostFactor .silent
+        = heightPriorPMF h ^ (4 : ℝ) * ((simMass l .bare_warm)⁻¹ ^ (4 : ℝ) *
+            simCostFactor .bare_warm +
+          (simMass l .horribly_warm)⁻¹ ^ (4 : ℝ) * simCostFactor .horribly_warm +
+          (simMass l .pleasantly_warm)⁻¹ ^ (4 : ℝ) * simCostFactor .pleasantly_warm +
+          (simMass l .silent)⁻¹ ^ (4 : ℝ) * simCostFactor .silent) from by ring,
+    ENNReal.mul_div_mul_left _ _ hP4 hP4t]
+
+private theorem simMass_ne_top (l : Threshold × Threshold) (u : Utterance) :
+    simMass l u ≠ ⊤ := by
+  refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+  calc simMass l u
+      ≤ ∑' h', heightPriorPMF h' := ENNReal.tsum_le_tsum fun h' => by split <;> simp
+    _ = 1 := PMF.tsum_coe _
+
+/-- At a latent where every utterance is true at both worlds, ratio
+cancellation makes the two speaker values exactly equal. -/
+private theorem simSpeaker_value_congr (l : Threshold × Threshold) (h₁ h₂ : Height)
+    (hall₁ : ∀ u : Utterance, meaning u h₁ l.1 l.2 = true)
+    (hall₂ : ∀ u : Utterance, meaning u h₂ l.1 l.2 = true) :
+    simSpeakerAt l h₁ .horribly_warm = simSpeakerAt l h₂ .horribly_warm := by
+  rw [simValue_of_allTrue l h₁ hall₁, simValue_of_allTrue l h₂ hall₂]
+
+/-- **The failure half of the backgrounding contrast** ([nouwen-2024] p. 28:
+in (49) "the two thresholds are resolved in tandem"): in the rejected
+simultaneous model, per-latent dominance fails on the shared licensing
+support. At the shared latent `(θ, θ_e) = (1, 0)` every utterance is true at
+both `deg 2` and `deg 5`, so ratio cancellation makes the speaker values
+exactly equal — and the raw height prior's 2:1 preference for the moderate
+world decides the term comparison. Contrast the sequential model
+(`seq_horribly_shifts_upward_pmf`): after backgrounding, the same per-latent
+comparisons run against the evaluative posterior, which has already
+re-loaded the prior toward the extremes. Backgrounding, not parameter
+tuning, is what makes intensification term-by-term derivable. -/
+theorem sim_sharedSupport_dominance_fails :
+    ¬ ∀ l ∈ licensingSet .horribly_warm (deg 2),
+        simTerm l (deg 2) ≤ simTerm l (deg 5) := by
+  intro hforall
+  have hmem : ((thr 1, thr 0) : Threshold × Threshold)
+      ∈ licensingSet .horribly_warm (deg 2) := by decide
+  have hall2 : ∀ u : Utterance, meaning u (deg 2) (thr 1) (thr 0) = true := by
+    decide
+  have hcongr := simSpeaker_value_congr ((thr 1, thr 0) : Threshold × Threshold)
+    (deg 5) (deg 2) (by decide) hall2
+  set v := simSpeakerAt ((thr 1, thr 0) : Threshold × Threshold) (deg 2) .horribly_warm
+    with hv
+  have hv0 : v ≠ 0 := by
+    rw [hv, simValue_of_allTrue _ _ hall2, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+    have hterm : ∀ u : Utterance,
+        (simMass ((thr 1, thr 0) : Threshold × Threshold) u)⁻¹ ^ (4 : ℝ) *
+          simCostFactor u ≠ ⊤ := fun u =>
+      ENNReal.mul_ne_top
+        (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+          (ENNReal.inv_ne_top.mpr (simMass_ne_zero_of_true (hall2 u))))
+        (simCostFactor_finite u)
+    refine ⟨mul_ne_zero ?_ (simCostFactor_pos _), ?_⟩
+    · exact (ENNReal.rpow_pos (ENNReal.inv_pos.mpr (simMass_ne_top _ _))
+        (ENNReal.inv_ne_top.mpr (simMass_ne_zero_of_true (hall2 .horribly_warm)))).ne'
+    · exact ENNReal.add_ne_top.mpr
+        ⟨ENNReal.add_ne_top.mpr ⟨ENNReal.add_ne_top.mpr ⟨hterm _, hterm _⟩, hterm _⟩,
+         hterm _⟩
+  have hvt : v ≠ ⊤ := PMF.apply_ne_top _ _
+  have hP5 : heightPriorPMF (deg 5) ≠ 0 := heightPriorPMF_pos _
+  have hP5t : heightPriorPMF (deg 5) ≠ ⊤ := PMF.apply_ne_top _ _
+  have hkey : simTerm (thr 1, thr 0) (deg 5) < simTerm (thr 1, thr 0) (deg 2) := by
+    unfold simTerm
+    rw [hcongr, ← hv, heightPriorPMF_deg2_eq]
+    calc heightPriorPMF (deg 5) * v
+        = heightPriorPMF (deg 5) * v * 1 := (mul_one _).symm
+      _ < heightPriorPMF (deg 5) * v * 2 :=
+          ENNReal.mul_lt_mul_right (mul_ne_zero hP5 hv0)
+            (ENNReal.mul_ne_top hP5t hvt) (by norm_num)
+      _ = 2 * heightPriorPMF (deg 5) * v := by ring
+  exact absurd (hforall _ hmem) (not_le.mpr hkey)
+
 /-! ## §6. Predictions
 
 The headline below states that "horribly warm" shifts probability toward
