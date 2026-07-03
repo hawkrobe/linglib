@@ -265,6 +265,7 @@ import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Choice.SemiorderRanking
 import Linglib.Core.Probability.Choice.UtilityTheory
+import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.CoupledEvaluation
