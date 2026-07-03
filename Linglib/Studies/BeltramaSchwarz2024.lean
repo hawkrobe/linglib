@@ -271,7 +271,7 @@ instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
 
 /-- Any multiple of 10 carries an imprecise reading (general; derived from the
     roundness keystone). -/
-theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
+theorem div10_enables_imprecision (n : ℕ) (h10 : 10 ∣ n) :
     impreciseReadingAvailable n := by
   unfold impreciseReadingAvailable inferPrecisionMode
   exact if_pos (Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10)

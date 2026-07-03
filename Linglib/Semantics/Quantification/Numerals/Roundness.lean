@@ -1,3 +1,5 @@
+import Mathlib.Data.Nat.Basic
+
 /-!
 # Graded Numeral Roundness (k-ness Model)
 [krifka-2007] [sigurd-1988] [woodin-etal-2023] [jansen-pollmann-2001] [cummins-2015]
@@ -13,71 +15,52 @@ The 6 properties, ordered by strength as frequency predictors in
 10-ness (β = 4.46), 2.5-ness (β = 3.84), 5-ness (β = 3.39),
 2-ness (β = 2.74), multiple of 10 (β = 2.45), multiple of 5 (β = 0.06);
 the 2-ness and multiple-of-10 credible intervals overlap.
+
+## Main definitions
+
+- `HasKness`, `Has2_5ness`: the k-ness properties as decidable predicates
+- `roundnessScore`: count of the six properties that hold (0–6)
+- `RoundnessGrade`, `roundnessGrade`: the score binned into 4 levels
+- `contextualRoundnessScore`, `roundnessInContext`: k-ness relative to a
+  non-standard base (dozens, minutes)
 -/
 
 namespace Semantics.Numerals.Roundness
 
 /-! ### k-ness primitives -/
 
-/-- Check if n has integer k-ness: n = m × k × 10^b for b ≥ 1, 1 ≤ m ≤ 9. -/
-def hasIntKness (n : Nat) (k : Nat) : Bool :=
-  if n == 0 || k == 0 then false
-  else
-    List.range 10 |>.any λ i =>
-      let b := i + 1
-      let divisor := k * 10 ^ b
-      n % divisor == 0 && n / divisor ≥ 1 && n / divisor ≤ 9
+/-- `n` has integer k-ness: `n = m × k × 10^b` for some `b ≥ 1` and
+`1 ≤ m ≤ 9` ([jansen-pollmann-2001]). The witness search is bounded at
+`b ≤ 10`, valid for `n < 10¹¹`. -/
+def HasKness (n k : ℕ) : Prop :=
+  ∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b
 
-/-- Check if n has 2.5-ness: n = m × 2.5 × 10^b for b ≥ 1, 1 ≤ m ≤ 9.
-    Equivalent to: 2n = m × 5 × 10^b. -/
-def has2_5ness (n : Nat) : Bool :=
-  if n == 0 then false
-  else
-    List.range 10 |>.any λ i =>
-      let b := i + 1
-      let divisor := 5 * 10 ^ b
-      (2 * n) % divisor == 0 && (2 * n) / divisor ≥ 1 && (2 * n) / divisor ≤ 9
+instance (n k : ℕ) : Decidable (HasKness n k) :=
+  inferInstanceAs (Decidable (∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b))
 
-/-! ### Roundness properties and score -/
+/-- `n` has 2.5-ness: `n = m × 2.5 × 10^b` for `b ≥ 1`, `1 ≤ m ≤ 9` —
+equivalently `2n = m × 5 × 10^b`. Search bounded as in `HasKness`. -/
+def Has2_5ness (n : ℕ) : Prop :=
+  ∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ 2 * n = m * 5 * 10 ^ b
 
-/--
-The 6 graded roundness properties from Sigurd/Jansen & Pollmann.
+instance (n : ℕ) : Decidable (Has2_5ness n) :=
+  inferInstanceAs (Decidable (∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ 2 * n = m * 5 * 10 ^ b))
 
-Each field is an independent Boolean property. The number of true
-properties predicts numeral frequency and
-pragmatic behavior.
--/
-structure RoundnessProperties where
-  multipleOf5 : Bool
-  multipleOf10 : Bool
-  twoness : Bool
-  twoPointFiveness : Bool
-  fiveness : Bool
-  tenness : Bool
-  deriving Repr, DecidableEq
+/-! ### Roundness score
 
-/-- Compute all 6 roundness properties for a natural number. -/
-def roundnessProperties (n : Nat) : RoundnessProperties :=
-  { multipleOf5 := n % 5 == 0
-  , multipleOf10 := n % 10 == 0
-  , twoness := hasIntKness n 2
-  , twoPointFiveness := has2_5ness n
-  , fiveness := hasIntKness n 5
-  , tenness := hasIntKness n 10
-  }
+The six graded roundness properties of [sigurd-1988] and
+[jansen-pollmann-2001] — multiple of 5, multiple of 10, 2-ness, 2.5-ness,
+5-ness, 10-ness — counted equally. The count predicts numeral frequency
+and pragmatic behavior ([woodin-etal-2023]). -/
 
 /-- Count of true roundness properties (0–6). Higher = rounder. -/
-def roundnessScore (n : Nat) : Nat :=
-  let rp := roundnessProperties n
-  (if rp.multipleOf5 then 1 else 0) +
-  (if rp.multipleOf10 then 1 else 0) +
-  (if rp.twoness then 1 else 0) +
-  (if rp.twoPointFiveness then 1 else 0) +
-  (if rp.fiveness then 1 else 0) +
-  (if rp.tenness then 1 else 0)
+def roundnessScore (n : ℕ) : ℕ :=
+  (if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0) +
+  (if HasKness n 2 then 1 else 0) + (if Has2_5ness n then 1 else 0) +
+  (if HasKness n 5 then 1 else 0) + (if HasKness n 10 then 1 else 0)
 
 /-- Maximum possible roundness score. -/
-def maxRoundnessScore : Nat := 6
+def maxRoundnessScore : ℕ := 6
 
 /-! ### Roundness grade (binned score) -/
 
@@ -88,14 +71,18 @@ Collapses the 0–6 score into 4 levels to avoid duplicating
 step-function logic across Theory files.
 -/
 inductive RoundnessGrade where
-  | high      -- score ≥ 5 (e.g., 100, 1000, 200)
-  | moderate  -- score 3-4 (e.g., 50, 20)
-  | low       -- score 1-2 (e.g., 110, 15)
-  | none      -- score 0 (e.g., 7, 99)
+  /-- score ≥ 5 (e.g., 100, 1000, 200) -/
+  | high
+  /-- score 3–4 (e.g., 50, 20) -/
+  | moderate
+  /-- score 1–2 (e.g., 110, 15) -/
+  | low
+  /-- score 0 (e.g., 7, 99) -/
+  | none
   deriving Repr, DecidableEq
 
 /-- Classify a number into a roundness grade. -/
-def roundnessGrade (n : Nat) : RoundnessGrade :=
+def roundnessGrade (n : ℕ) : RoundnessGrade :=
   if roundnessScore n ≥ 5 then .high
   else if roundnessScore n ≥ 3 then .moderate
   else if roundnessScore n ≥ 1 then .low
@@ -113,13 +100,11 @@ Examples:
 - contextualRoundnessScore 48 12 = 2 (48 ÷ 12 = 4, 48 ÷ 24 = 2)
 - contextualRoundnessScore 120 12 = 4 (divides by 12, 24, 60, 120)
 -/
-def contextualRoundnessScore (n : Nat) (base : Nat) : Nat :=
-  if base ≤ 1 || n == 0 then 0
+def contextualRoundnessScore (n : ℕ) (base : ℕ) : ℕ :=
+  if base ≤ 1 ∨ n = 0 then 0
   else
-    (if n % base == 0 then 1 else 0) +
-    (if n % (base * 2) == 0 then 1 else 0) +
-    (if n % (base * 5) == 0 then 1 else 0) +
-    (if n % (base * 10) == 0 then 1 else 0)
+    (if base ∣ n then 1 else 0) + (if base * 2 ∣ n then 1 else 0) +
+    (if base * 5 ∣ n then 1 else 0) + (if base * 10 ∣ n then 1 else 0)
 
 /--
 Context-sensitive roundness: compose default k-ness with a non-standard base.
@@ -131,40 +116,39 @@ The contextual score derives from actual divisibility properties relative
 to the base (not a flat bonus), paralleling how standard k-ness derives
 from divisibility by 2/2.5/5/10 × powers of 10.
 -/
-def roundnessInContext (n : Nat) (base : Nat) : Nat :=
+def roundnessInContext (n : ℕ) (base : ℕ) : ℕ :=
   max (roundnessScore n) (contextualRoundnessScore n base)
 
 /-! ### Per-datum verification -/
 
 -- Score verification
-#guard roundnessScore 100 == 6
-#guard roundnessScore 50 == 4
-#guard roundnessScore 7 == 0
-#guard roundnessScore 1000 == 6
-#guard roundnessScore 200 == 6
-#guard roundnessScore 110 == 2
-#guard roundnessScore 20 == 3
+#guard roundnessScore 100 = 6
+#guard roundnessScore 50 = 4
+#guard roundnessScore 7 = 0
+#guard roundnessScore 1000 = 6
+#guard roundnessScore 200 = 6
+#guard roundnessScore 110 = 2
+#guard roundnessScore 20 = 3
 
 -- Grade verification
-#guard roundnessGrade 100 == .high
-#guard roundnessGrade 50 == .moderate
-#guard roundnessGrade 110 == .low
-#guard roundnessGrade 7 == .none
+#guard roundnessGrade 100 = .high
+#guard roundnessGrade 50 = .moderate
+#guard roundnessGrade 110 = .low
+#guard roundnessGrade 7 = .none
 
 -- Context-sensitive verification
-#guard contextualRoundnessScore 48 12 == 2
-#guard contextualRoundnessScore 120 12 == 4
-#guard roundnessInContext 48 12 == 2     -- contextual score beats default (0)
-#guard roundnessInContext 48 10 == 0     -- not round on base-10
-#guard roundnessInContext 100 10 == 6    -- default score beats contextual
+#guard contextualRoundnessScore 48 12 = 2
+#guard contextualRoundnessScore 120 12 = 4
+#guard roundnessInContext 48 12 = 2     -- contextual score beats default (0)
+#guard roundnessInContext 48 10 = 0     -- not round on base-10
+#guard roundnessInContext 100 10 = 6    -- default score beats contextual
 
-/-- Multiples of 10 have roundness score ≥ 2 (multipleOf5 + multipleOf10 both true).
-    This is the key lemma for all downstream sorry-free proofs. -/
-theorem score_ge_two_of_div10 (n : Nat) (h10 : n % 10 = 0) :
-    roundnessScore n ≥ 2 := by
-  unfold roundnessScore roundnessProperties
-  have h5 : n % 5 = 0 := by omega
-  simp only [h10, h5, beq_self_eq_true, ite_true]
+/-- Multiples of 10 have roundness score ≥ 2 (multiple-of-5 and
+multiple-of-10 both hold). The keystone for downstream sorry-free proofs. -/
+theorem score_ge_two_of_div10 (n : ℕ) (h10 : 10 ∣ n) :
+    2 ≤ roundnessScore n := by
+  have h5 : 5 ∣ n := Nat.dvd_trans ⟨2, rfl⟩ h10
+  rw [roundnessScore, if_pos h5, if_pos h10]
   omega
 
 end Semantics.Numerals.Roundness
