@@ -33,14 +33,8 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} {s : 
 /-- **Conditioning is a density**: `μ[|s]` is `μ` reweighted by `(μ s)⁻¹` on
     `s` and `0` off it. Exact, with no hypotheses beyond measurability. -/
 theorem cond_eq_withDensity (hs : MeasurableSet s) :
-    μ[|s] = μ.withDensity (s.indicator fun _ => (μ s)⁻¹) := by
-  have hind : (s.indicator fun _ => (μ s)⁻¹)
-      = (μ s)⁻¹ • s.indicator (1 : Ω → ℝ≥0∞) := by
-    funext x
-    by_cases hx : x ∈ s <;> simp [hx]
-  rw [hind, withDensity_smul _ (measurable_one.indicator hs),
-    withDensity_indicator_one hs]
-  rfl
+    μ[|s] = μ.withDensity (s.indicator fun _ => (μ s)⁻¹) :=
+  ((withDensity_indicator hs _).trans (withDensity_const _)).symm
 
 /-- The density of the conditional measure: `(μ s)⁻¹` on `s`, `0` off it. -/
 theorem rnDeriv_cond [SigmaFinite μ] (hs : MeasurableSet s) :
