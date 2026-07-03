@@ -363,12 +363,8 @@ its most general). -/
 theorem klDiv_filter_self {α : Type*} [MeasurableSpace α] (p : PMF α) {s : Set α}
     (hs : MeasurableSet s) (h : ∃ a ∈ s, a ∈ p.support) :
     (p.filter s h).klDiv p = ENNReal.ofReal (-Real.log (p.toMeasure s).toReal) := by
-  have hs0 : p.toMeasure s ≠ 0 := by
-    rw [Ne, PMF.toMeasure_apply_eq_zero_iff _ hs]
-    obtain ⟨a, has, hsupp⟩ := h
-    exact fun hd => Set.disjoint_left.mp hd hsupp has
-  rw [klDiv_eq_toMeasure_klDiv, PMF.toMeasure_filter p hs h,
-    InformationTheory.klDiv_cond_self p.toMeasure hs hs0]
+  rw [klDiv_eq_toMeasure_klDiv, PMF.toMeasure_filter p hs h]
+  exact InformationTheory.klDiv_cond_self p.toMeasure hs (p.toMeasure_ne_zero hs h)
 
 -- ============================================================================
 -- §7: Jensen-Shannon divergence — KL-symmetrized form (mathlib-style)

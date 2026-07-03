@@ -197,6 +197,12 @@ theorem tsum_indicator_filter_of_subset (p : PMF α) {s s' : Set α} (hss : s' �
   simp only [hind]
   rw [ENNReal.tsum_mul_right, div_eq_mul_inv]
 
+/-- A set meeting the support has nonzero measure. -/
+theorem toMeasure_ne_zero [MeasurableSpace α] (p : PMF α) {s : Set α}
+    (hs : MeasurableSet s) (h : ∃ a ∈ s, a ∈ p.support) : p.toMeasure s ≠ 0 :=
+  (p.toMeasure_apply_eq_zero_iff hs).not.mpr <|
+    Set.not_disjoint_iff.mpr <| h.elim fun a ha => ⟨a, ha.2, ha.1⟩
+
 open scoped ProbabilityTheory in
 /-- `PMF.filter` is `Measure.cond`: conditioning a PMF on an event agrees with
     the measure-theoretic conditional measure. `[UPSTREAM]` candidate — it
