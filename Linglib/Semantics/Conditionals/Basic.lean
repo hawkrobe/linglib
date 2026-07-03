@@ -1,80 +1,84 @@
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Filter
 import Linglib.Core.Order.SimilarityOrdering
 
 /-!
-# Conditional Semantics
+# Conditional operators
 
 [lewis-1973] [stalnaker-1968]
 
-Compositional semantics for conditional sentences.
+The basic conditional operators. A conditional operator sends an antecedent
+and a consequent (propositions qua `Set W`) to the proposition expressed by
+the conditional; rival theories differ in the carrier the operator is derived
+from. Comparisons and non-entailments between operators are stated over this
+shared signature.
 
-## Overview
+## Main definitions
 
-This module provides the semantic building blocks for conditionals:
-1. **Material conditional**: p → q = ¬p ∨ q (classical logic)
-2. **Strict conditional**: □(p → q) - necessity of material conditional
-3. **Variably strict conditional**: [stalnaker-1968]/[lewis-1973]-style conditionals
+- `materialImp p q`: the truth-functional conditional; `w ∈ materialImp p q`
+  iff `w ∈ p → w ∈ q`.
+- `strictImp access p q`: the strict conditional over an accessibility map
+  `access : I → Set W` (a modal base); `i ∈ strictImp access p q` iff
+  `access i ∩ p ⊆ q`.
+- `variablyStrictImp sim allWorlds p q`: the [stalnaker-1968] / [lewis-1973]
+  variably strict conditional — vacuously true without antecedent worlds,
+  otherwise some closest antecedent world settles the consequent.
+- `conditionalPerfection p q`: the perfected ("only if") reading,
+  `materialImp pᶜ qᶜ`.
 
-## The Material Conditional Problem
+## Main results
 
-The material conditional (p → q ≡ ¬p ∨ q) has well-known problems:
-- "If pigs fly, then the moon is cheese" comes out true
-- It doesn't capture "If A, then C" as speakers use it
+- `strictImp_anti_left`: antecedent strengthening — valid for the strict
+  conditional, the signature property variably strict semantics rejects.
+- `mem_strictImp_of_subset` / `not_subset_of_mem_strictImp`: a strict
+  conditional whose consequent exhausts the domain is trivially true; a true
+  non-trivial one has an antecedent that excludes a live world
+  ([stalnaker-1975], [von-fintel-1999], [mizuno-2024]).
+- `strict_implies_material` / `variably_strict_implies_material`: both modal
+  operators refine the material conditional (under reflexivity / centering).
+- `perfection_not_entailed` / `perfection_not_entailed_variablyStrict`:
+  conditional perfection is not entailed, even variably strictly — it is a
+  pragmatic inference ([grusdt-lassiter-franke-2022]).
 
-However, following [grusdt-lassiter-franke-2022], we can maintain
-classical semantics while deriving apparent exceptions through RSA
-pragmatics. The key is that conditionals assert high conditional
-probability, not material implication.
+The Kratzer restrictor conditional (necessity over a restricted
+conversational background) lives in `Conditionals/Restrictor.lean`, which
+bridges to `strictImp` via `conditionalNecessity_iff_mem_strictImp`.
 -/
 
 namespace Semantics.Conditionals
 
 open Core.Order (SimilarityOrdering)
 
--- Material Conditional
+variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I} {w : W}
 
-/--
-Material conditional: p → q ≡ ¬p ∨ q
+/-! ### Material conditional -/
 
-This is the classical truth-functional conditional.
-True whenever the antecedent is false or the consequent is true.
-
-Equivalent to `pᶜ ∪ q` in mathlib's `Set` algebra; written here in
-set-builder form to keep the conditional name discourse-meaningful.
--/
-def materialImp {W : Type*} (p q : Set W) : Set W :=
-  {w | p w → q w}
-
--- Strict Conditional
-
-/--
-Strict conditional: true at an evaluation point iff the consequent holds
-throughout the antecedent-worlds accessible from it.
-
-□(p → q) ≡ R(i) ∩ p ⊆ q ≡ ∀w ∈ R(i). p(w) → q(w)
-
-This is the modal "necessitation" of the material conditional, stated as
-set inclusion so that mathlib's `Set` lattice API applies directly. The
-evaluation points `I` may differ from the worlds `W` quantified over —
-e.g. a historical modal base `WorldTimeIndex W T → Set W` evaluates at
-world-time indices ([condoravdi-2002]); the classical case is `I = W`.
-
-Parameters:
-- `access`: the accessibility map R : I → Set W (a modal base)
-- `p`: the antecedent proposition
-- `q`: the consequent proposition
--/
-def strictImp {I W : Type*} (access : I → Set W) (p q : Set W) : Set I :=
-  {i | access i ∩ p ⊆ q}
-
-section StrictImp
-
-variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I}
+/-- The material conditional: true wherever the antecedent fails or the
+consequent holds (`pᶜ ∪ q`). Classical semantics keeps this literal meaning
+and derives its apparent exceptions pragmatically
+([grusdt-lassiter-franke-2022]). -/
+def materialImp (p q : Set W) : Set W := {w | w ∈ p → w ∈ q}
 
 @[simp]
-theorem mem_strictImp : i ∈ strictImp access p q ↔ access i ∩ p ⊆ q :=
-  Iff.rfl
+theorem mem_materialImp : w ∈ materialImp p q ↔ (w ∈ p → w ∈ q) := Iff.rfl
+
+/-- Contraposition, valid for the material conditional. [stalnaker-1975] (§4)
+observes that it fails for indicative conditionals under his semantics — see
+`Studies/Stalnaker1975`. -/
+theorem contraposition : materialImp p q ⊆ materialImp qᶜ pᶜ :=
+  λ _ h hq hp => hq (h hp)
+
+/-! ### Strict conditional -/
+
+/-- The strict conditional over an accessibility map: the consequent holds
+throughout the accessible antecedent worlds, `access i ∩ p ⊆ q`. The
+evaluation points `I` may differ from the worlds `W` quantified over — e.g. a
+historical modal base `WorldTimeIndex W T → Set W` evaluates at world-time
+indices ([condoravdi-2002]); the classical case is `I = W`. -/
+def strictImp (access : I → Set W) (p q : Set W) : Set I :=
+  {i | access i ∩ p ⊆ q}
+
+@[simp]
+theorem mem_strictImp : i ∈ strictImp access p q ↔ access i ∩ p ⊆ q := Iff.rfl
 
 /-- The quantifier reading of the strict conditional. -/
 theorem mem_strictImp_forall :
@@ -87,200 +91,95 @@ theorem strictImp_mono_right (hq : q ⊆ q') :
   λ _ h => h.trans hq
 
 /-- **Antecedent strengthening**: the strict conditional is antitone in its
-antecedent. This is the signature property of strict (and material)
-conditionals that variably strict semantics rejects ([lewis-1973] Sobel
-sequences); cf. `variablyStrictImp`. -/
+antecedent — the signature property of strict (and material) conditionals
+that variably strict semantics rejects ([lewis-1973] Sobel sequences). -/
 theorem strictImp_anti_left (hp : p' ⊆ p) :
     strictImp access p q ⊆ strictImp access p' q :=
   λ _ h => (Set.inter_subset_inter (Set.Subset.refl _) hp).trans h
 
 /-- **Triviality**: when the consequent already holds throughout the
-accessible worlds, the strict conditional holds for *any* antecedent —
-the if-clause restriction does no work. This is why a conditional whose
-consequent is an observed fact is uninformative over the domain of live
-possibilities ([stalnaker-1975], [von-fintel-1999]; the Anderson-conditional
-application is [mizuno-2024], §2). -/
+accessible worlds, the strict conditional holds for *any* antecedent — the
+if-clause does no work ([stalnaker-1975], [von-fintel-1999]; the
+Anderson-conditional application is [mizuno-2024] §2). -/
 theorem mem_strictImp_of_subset (h : access i ⊆ q) :
     i ∈ strictImp access p q :=
   Set.inter_subset_left.trans h
 
 /-- **Informativity**: a true strict conditional whose consequent is *not*
-trivial over the accessible worlds has an antecedent that excludes at
-least one accessible world (`Set.not_subset` gives the witness form) —
-the restriction is doing genuine work ([mizuno-2024], §2). -/
+trivial over the accessible worlds has an antecedent that excludes at least
+one accessible world (`Set.not_subset` gives the witness form)
+([mizuno-2024] §2). -/
 theorem not_subset_of_mem_strictImp
     (hm : i ∈ strictImp access p q) (hq : ¬ access i ⊆ q) :
     ¬ access i ⊆ p :=
   λ hp => hq (λ _ hw => hm ⟨hw, hp hw⟩)
 
-end StrictImp
+/-- With reflexive access, the strict conditional refines the material one. -/
+theorem strict_implies_material {R : W → Set W} (h_refl : w ∈ R w)
+    (h : w ∈ strictImp R p q) : w ∈ materialImp p q :=
+  λ hp => h ⟨h_refl, hp⟩
 
--- Variably Strict Conditional ([stalnaker-1968]–[lewis-1973])
+/-! ### Variably strict conditional -/
 
-/-! `SimilarityOrdering` and its constructors (`ofBool`, `atCenter`) live
-    in `Core.Order.SimilarityOrdering` since they are general-purpose
-    primitives used by counterfactuals, alternative-sensitive operators,
-    and causal psycholinguistic models. They are re-exported above via
-    `open Core.Order`. -/
+/-- The variably strict conditional ([stalnaker-1968] / [lewis-1973]):
+vacuously true if the domain has no antecedent worlds; otherwise true iff
+some antecedent world settles the consequent throughout all antecedent
+worlds at least as close. (`SimilarityOrdering` and its constructors live in
+`Core.Order.SimilarityOrdering`.) -/
+def variablyStrictImp (sim : SimilarityOrdering W) (allWorlds p q : Set W) :
+    Set W :=
+  {w | allWorlds ∩ p = ∅ ∨
+    ∃ w' ∈ allWorlds ∩ p, ∀ w'' ∈ allWorlds ∩ p, sim.closer w w'' w' → w'' ∈ q}
 
-/--
-Variably strict conditional ([stalnaker-1968]/[lewis-1973]):
+@[simp]
+theorem mem_variablyStrictImp {sim : SimilarityOrdering W} {allWorlds : Set W} :
+    w ∈ variablyStrictImp sim allWorlds p q ↔
+      allWorlds ∩ p = ∅ ∨
+        ∃ w' ∈ allWorlds ∩ p, ∀ w'' ∈ allWorlds ∩ p,
+          sim.closer w w'' w' → w'' ∈ q :=
+  Iff.rfl
 
-"If p, then q" is true at w iff:
-- Either there are no p-worlds (vacuous truth), or
-- Some p-world is such that q holds at all p-worlds at least as close
+/-- With centered similarity, the variably strict conditional refines the
+material one at antecedent worlds: `w` is its own unique closest antecedent
+world, so the consequent must hold there. -/
+theorem variably_strict_implies_material {sim : SimilarityOrdering W}
+    {allWorlds : Set W} (hw : w ∈ allWorlds) (hp : w ∈ p)
+    (h_centered : sim.isCentered)
+    (h : w ∈ variablyStrictImp sim allWorlds p q) : w ∈ materialImp p q := by
+  intro _
+  rcases h with h_empty | ⟨w', _, h_close⟩
+  · exact absurd h_empty (Set.nonempty_iff_ne_empty.mp ⟨w, hw, hp⟩)
+  · rcases eq_or_ne w w' with rfl | h_ne
+    · exact h_close w ⟨hw, hp⟩ (sim.closer_refl w w)
+    · exact h_close w ⟨hw, hp⟩ (h_centered w w' h_ne).1
 
-This captures the intuition that conditionals quantify over "nearby" worlds
-where the antecedent holds.
--/
-def variablyStrictImp {W : Type*} (sim : SimilarityOrdering W)
-    (allWorlds : Set W) (p q : Set W) : Set W :=
-  λ w =>
-    let pWorlds := { w' ∈ allWorlds | p w' }
-    -- Vacuously true if no p-worlds
-    pWorlds = ∅ ∨
-    -- Otherwise: some closest p-world makes q true
-    ∃ w' ∈ pWorlds, ∀ w'' ∈ pWorlds, sim.closer w w'' w' → q w''
+/-! ### Conditional perfection -/
 
--- Conditional Entailment
+/-- Conditional perfection: the strengthened converse reading of a
+conditional ("if not A, not C"), as `materialImp pᶜ qᶜ`. Observed
+pragmatically but not entailed (`perfection_not_entailed`);
+[grusdt-lassiter-franke-2022] derive it as an RSA implicature. -/
+def conditionalPerfection (p q : Set W) : Set W := materialImp pᶜ qᶜ
 
-/--
-Conditional perfection: the inference from "if A then C" to "if not A then not C".
+/-- Conditional perfection is not entailed: the material conditional can
+hold (vacuously, at an antecedent-false world) where its perfection fails. -/
+theorem perfection_not_entailed :
+    ∃ (W : Type) (p q : Set W) (w : W),
+      w ∈ materialImp p q ∧ w ∉ conditionalPerfection p q :=
+  ⟨Bool, {w | w = true}, Set.univ, false, λ _ => trivial,
+    λ h => h Bool.false_ne_true trivial⟩
 
-This is NOT valid for material conditionals but IS observed pragmatically.
-The RSA model in GrusdtLassiterFranke2022 derives this as an implicature.
--/
-def conditionalPerfection {W : Type*} (p q : Set W) : Set W :=
-  materialImp pᶜ qᶜ
-
-/--
-Modus ponens: from (p → q) and p, derive q.
--/
-theorem modus_ponens {W : Type*} (p q : Set W) (w : W)
-    (h_imp : materialImp p q w) (h_p : p w) : q w := by
-  unfold materialImp at h_imp
-  exact h_imp h_p
-
-/--
-Contraposition: (p → q) entails (¬q → ¬p).
--/
-theorem contraposition {W : Type*} (p q : Set W) :
-    materialImp p q ⊆ materialImp qᶜ pᶜ := by
-  intro w h_imp h_nq h_p
-  unfold materialImp at h_imp
-  have h_q := h_imp h_p
-  exact h_nq h_q
-
-/--
-**Conditional perfection is NOT semantically entailed**.
-
-There exists a world where (p → q) is true but (¬p → ¬q) is false.
-This shows that "perfection" (the biconditional reading) is a pragmatic inference,
-not a semantic entailment.
-
-Counterexample: World where p is false, q is true.
-Then (p → q) is vacuously true, but (¬p → ¬q) = (true → false) = false.
--/
-theorem perfection_not_entailed : ∃ (W : Type) (p q : Set W) (w : W),
-    materialImp p q w ∧ ¬(conditionalPerfection p q w) := by
-  -- Use a simple 2-world type
-  use Bool
-  -- p = (w = true), q = constantly true
-  use (λ w => w = true)
-  use (λ _ => True)
-  use false
-  constructor
-  · -- (p → q)(false) = (false = true → True) = True (vacuously)
-    intro h
-    -- h : false = true, which is absurd
-    cases h
-  · -- ¬(¬p → ¬q)(false) = ¬(¬(false = true) → ¬True)
-    simp only [conditionalPerfection, materialImp, Set.mem_setOf_eq, Set.mem_compl_iff]
-    intro h
-    -- h : ¬(false = true) → ¬True, i.e., True → False
-    have hnot_false_eq_true : ¬(false = true) := Bool.false_ne_true
-    exact h hnot_false_eq_true trivial
-
-/--
-**Conditional perfection is NOT semantically entailed** (variably strict).
-
-Even under [stalnaker-1968]/[lewis-1973] variably strict semantics (stronger than material
-implication), the conditional does not entail its converse. There exist a
-similarity ordering, propositions p and q, and a world w such that
-"if p then q" holds but "if ¬p then ¬q" does not.
-
-Counterexample: W = Bool, p = (· = true), q = (fun _ => True), w = false.
-The conditional holds (the only p-world is `true`, where q holds trivially),
-but perfection fails (¬p(false) is true but ¬q(false) is false).
--/
+/-- Perfection is not entailed even variably strictly: the
+[stalnaker-1968] / [lewis-1973] semantics is stronger than material
+implication, yet still does not entail the converse. -/
 theorem perfection_not_entailed_variablyStrict :
-    ∃ (W : Type) (sim : SimilarityOrdering W) (domain : Set W)
-      (p q : Set W) (w : W),
-      variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w) := by
-  use Bool
-  exact ⟨⟨fun _ => Preorder.ofLE (fun _ _ => True) (fun _ => trivial)
-      (fun _ _ _ _ _ => trivial), fun _ _ _ => .isTrue trivial⟩,
-    Set.univ, (· = true), (fun _ => True), false,
-    Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, fun _ _ _ => trivial⟩,
-    fun h => h Bool.false_ne_true trivial⟩
-
-/--
-**Strict conditional implies material conditional**.
-
-If w is accessible from itself (reflexive accessibility), then □(p → q) at w implies (p → q) at w.
--/
-theorem strict_implies_material {W : Type*} (R : W → Set W) (p q : Set W) (w : W) :
-    w ∈ R w → strictImp R p q w → materialImp p q w :=
-  λ h_refl h_strict h_p => h_strict ⟨h_refl, h_p⟩
-
-/-! `SimilarityOrdering.isCentered` lives in `Core.Order.SimilarityOrdering`
-    (re-exported above). -/
-
-/--
-**Variably strict conditional implies material conditional** (with centered similarity).
-
-If there is a p-world, the similarity ordering is centered, and the variably strict
-conditional holds, then the material conditional holds at the actual world.
-
-The centering axiom ensures that if p holds at w, then w is the unique closest p-world
-to itself, so q must hold at w.
--/
-theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W)
-    (domain : Set W) (p q : Set W) (w : W) (hw : w ∈ domain) (hp : p w)
-    (h_centered : sim.isCentered) :
-    variablyStrictImp sim domain p q w → materialImp p q w := by
-  intro h_variably _h_p'
-  simp only [variablyStrictImp] at h_variably
-  cases h_variably with
-  | inl h_empty =>
-    -- p-worlds empty, but we have p w, contradiction
-    have hw_in_pWorlds : w ∈ { w' ∈ domain | p w' } := Set.mem_sep hw hp
-    rw [h_empty] at hw_in_pWorlds
-    simp at hw_in_pWorlds
-  | inr h_exists =>
-    -- There's a closest p-world w' such that all equally close p-worlds satisfy q
-    obtain ⟨w', hw'_in, h_q_close⟩ := h_exists
-    -- w is also a p-world
-    have hw_in_pWorlds : w ∈ { w' ∈ domain | p w' } := Set.mem_sep hw hp
-    -- By centering, w is closer to itself than w' (if w ≠ w')
-    -- So sim.closer w w w' holds
-    by_cases h_eq : w = w'
-    · -- w = w', so we need to show q w = q w'
-      subst h_eq
-      -- Apply h_q_close to w itself
-      exact h_q_close w hw_in_pWorlds (sim.closer_refl w w)
-    · -- w ≠ w', so by centering, w is strictly closer to itself
-      have ⟨h_closer, _⟩ := h_centered w w' h_eq
-      exact h_q_close w hw_in_pWorlds h_closer
-
-/-! `KratzerContext`/`kratzerBetter`/`kratzerConditional` previously
-    lived here as a Set-based parallel to the canonical List-based
-    Kratzer machinery in `Semantics/Modality/Kratzer/`. They
-    were a third parallel formalization (alongside Kratzer/Operators
-    and the late lumping CF in `Conditionals/PremiseSemantic.lean`)
-    and have been deleted in favour of `Restrictor.conditionalNecessity`
-    (which calls the canonical `Kratzer.necessity` directly). The sole
-    consumer (`LeftNested.lean`) now uses `conditionalNecessity`. -/
-
+    ∃ (W : Type) (sim : SimilarityOrdering W) (domain p q : Set W) (w : W),
+      w ∈ variablyStrictImp sim domain p q ∧ w ∉ conditionalPerfection p q :=
+  ⟨Bool,
+    ⟨λ _ => Preorder.ofLE (λ _ _ => True) (λ _ => trivial)
+      (λ _ _ _ _ _ => trivial), λ _ _ _ => .isTrue trivial⟩,
+    Set.univ, {w | w = true}, Set.univ, false,
+    Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, λ _ _ _ => trivial⟩,
+    λ h => h Bool.false_ne_true trivial⟩
 
 end Semantics.Conditionals
