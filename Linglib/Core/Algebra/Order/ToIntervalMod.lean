@@ -59,10 +59,7 @@ theorem Setoid.ker_floor_div_le_natCast_mul (ε : α) (k : ℕ) :
 `ε / 2` — the sibling of `abs_sub_round` for multiples. -/
 theorem abs_sub_round_div_zsmul_le (hε : 0 < ε) (d : α) :
     |d - round (d / ε) • ε| ≤ ε / 2 := by
-  have h := abs_sub_round (d / ε)
   have key : d - round (d / ε) • ε = (d / ε - round (d / ε)) * ε := by
     rw [zsmul_eq_mul, sub_mul, div_mul_cancel₀ d hε.ne']
   rw [key, abs_mul, abs_of_pos hε]
-  calc |d / ε - ↑(round (d / ε))| * ε ≤ 1 / 2 * ε :=
-        mul_le_mul_of_nonneg_right h hε.le
-    _ = ε / 2 := by ring
+  exact (mul_le_mul_of_nonneg_right (abs_sub_round _) hε.le).trans_eq (by ring)
