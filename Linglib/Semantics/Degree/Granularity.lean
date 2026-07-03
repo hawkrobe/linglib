@@ -9,8 +9,12 @@ import Linglib.Semantics.Questions.Partition.Lattice
 /-!
 # Granularity-Sensitive Degree Semantics [thomas-deo-2020]
 
-Thomas, W. & Deo, A. (2020). The interaction of *just* with modified
-scalar predicates. *Sinn und Bedeutung* 24, vol. 2, pp. 354–372.
+The underlying granularity apparatus — granularity functions partitioning a
+scale into equal-width intervals and the finer/coarser ordering — is
+[sauerland-stateva-2011]'s (their (15)–(16)), following [krifka-2007];
+[thomas-deo-2020]'s contributions are the granularity-*level* convenience
+g(d) = (d − ε, d + ε) (their (43)) and the semantics of approximative *just*
+(their (44)).
 
 ## Overview
 
