@@ -614,6 +614,7 @@ import Linglib.Discourse.Gameboard.NSUTaxonomy
 import Linglib.Discourse.Gameboard.RepriseContent
 import Linglib.Discourse.Gameboard.SelfRepair
 import Linglib.Discourse.Gunlogson
+import Linglib.Discourse.Issue
 import Linglib.Discourse.LayeredAssertion
 import Linglib.Discourse.Move
 import Linglib.Discourse.QUDStack
@@ -623,7 +624,7 @@ import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
 import Linglib.Discourse.Roles
 import Linglib.Discourse.Scoreboard
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Stalnaker
 import Linglib.Discourse.Strategy
 import Linglib.Features.Acceptability

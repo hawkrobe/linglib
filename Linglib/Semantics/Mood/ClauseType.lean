@@ -26,7 +26,7 @@ subjunctive question is [interrogative, subjunctive].
 `ClauseType` lives in `Semantics/Mood/` because the file is intrinsically about
 the mood-category cross-product. The discourse-act extensions of force
 (Searle classes, direction of fit, preparatory conditions) live in
-`Discourse/SpeechAct/Basic.lean`.
+`Discourse/SpeechAct.lean`.
 -/
 
 namespace Semantics.Mood

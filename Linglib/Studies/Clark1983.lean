@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Pragmatics.RSA.LexicalUncertainty
@@ -621,7 +621,7 @@ hierarchy of goals (paper pp. 319–321).
 
 The substrate consolidation: the indirect-act side carries a typed
 `prepCondition : Option PreparatoryCondition` consuming
-`Discourse.SpeechAct.Basic`'s Searle hierarchy, and projects to
+`Discourse.SpeechAct`'s Searle hierarchy, and projects to
 `GoalHierarchy` via `IndirectAct.toGoalHierarchy`. The "same mechanism"
 claim is then a structural identity: both `IndirectAct` and
 `DenominalVerbConvention` provide projections into the common

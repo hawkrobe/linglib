@@ -1,6 +1,6 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Gunlogson
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
