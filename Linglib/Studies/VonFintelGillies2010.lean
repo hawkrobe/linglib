@@ -71,14 +71,10 @@ theorem all_evidence_types_nonfuture (e : EvidenceType) :
 -- § 2  Adapters over the Example Rows
 -- ============================================================================
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Evidence-type adapter: the row's `evidence` feature as an
     `EvidenceType`. -/
 def evidenceOf (row : LinguisticExample) : Option EvidenceType :=
-  match featureOf row "evidence" with
+  match row.feature? "evidence" with
   | some "direct" => some .direct
   | some "indirect" => some .indirect
   | some "elimination" => some .elimination
@@ -87,7 +83,7 @@ def evidenceOf (row : LinguisticExample) : Option EvidenceType :=
 /-- Rows whose primary text is the modalized member of a bare/modal
     minimal pair. -/
 def mustPairs : List LinguisticExample :=
-  Examples.all.filter (featureOf · "kind" == some "must_pair")
+  Examples.all.filter (·.feature? "kind" == some "must_pair")
 
 -- ============================================================================
 -- § 3  The Evidential Restriction
@@ -107,7 +103,7 @@ theorem must_felicitous_iff_indirect :
     uniformly on the negative-modal rows (exx. 21, 23, 24) — *can't*
     groups with *must*, not with weak modals. -/
 theorem cant_patterns_with_must :
-    ∀ row ∈ mustPairs.filter (featureOf · "modal" == some "cant"),
+    ∀ row ∈ mustPairs.filter (·.feature? "modal" == some "cant"),
       row.judgment = .acceptable ↔
         (evidenceOf row).map EvidenceType.toCoarseSource ≠ some .direct :=
   fun row hrow => must_felicitous_iff_indirect row (List.mem_filter.mp hrow).1
@@ -123,7 +119,7 @@ theorem cant_patterns_with_must :
     valid, *must φ ∧ perhaps ¬φ* is contradictory, retraction fails) are
     in the same JSON under `kind = inference`. -/
 theorem must_entails_prejacent :
-    ∀ row ∈ mustPairs, featureOf row "must_entails_prejacent" = some "true" := by
+    ∀ row ∈ mustPairs, row.feature? "must_entails_prejacent" = some "true" := by
   decide
 
 /-- The bare prejacent is felicitous in every context: the felicity

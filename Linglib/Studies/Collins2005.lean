@@ -211,36 +211,32 @@ and both *have* and passive *be* select PartP. -/
 
 open Data.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- **C-command rows (10a–d)**: a binding/NPI dependency succeeds iff the
     licensee sits in the by-phrase — the derived subject c-commands the
     by-phrase and not conversely, exactly the asymmetry the smuggled-object
     configuration predicts. -/
 theorem c_command_rows_acceptable_iff_licensee_in_by_phrase :
-    ∀ row ∈ Examples.all, featureOf row "test" = some "c_command" →
+    ∀ row ∈ Examples.all, row.feature? "test" = some "c_command" →
       (row.judgment = .acceptable ↔
-        featureOf row "licensee_position" = some "by_phrase") := by
+        row.feature? "licensee_position" = some "by_phrase") := by
   decide
 
 /-- **Particle rows (15–16)**: a passive particle clause is grammatical iff
     no DP object remains — PartP moved as a constituent, taking the
     particle and leaving no Case position for a second DP. -/
 theorem particle_rows_acceptable_iff_no_dp_object :
-    ∀ row ∈ Examples.all, featureOf row "test" = some "particle" →
+    ∀ row ∈ Examples.all, row.feature? "test" = some "particle" →
       (row.judgment = .acceptable ↔
-        featureOf row "has_dp_object" = some "false") := by
+        row.feature? "has_dp_object" = some "false") := by
   decide
 
 /-- **Auxiliary rows (23a–d)**: both *have* and passive *be* are grammatical
     iff their complement is a past participle — the shared PartP selection
     of conditions (24–25). -/
 theorem aux_rows_acceptable_iff_participial_complement :
-    ∀ row ∈ Examples.all, featureOf row "test" = some "aux_selection" →
+    ∀ row ∈ Examples.all, row.feature? "test" = some "aux_selection" →
       (row.judgment = .acceptable ↔
-        featureOf row "complement_form" = some "past_participle") := by
+        row.feature? "complement_form" = some "past_participle") := by
   decide
 
 end Collins2005

@@ -35,12 +35,8 @@ namespace OgiharaSteinertThrelkeld2024
 open Data.Examples (LinguisticExample)
 open OgiharaSteinertThrelkeld2024.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (e : LinguisticExample) (k : String) : Option String :=
-  (e.paperFeatures.find? (·.1 == k)).map (·.2)
-
 /-- A `paperFeatures` flag read as a Bool (`true` iff the value is `"true"`). -/
-def flagOf (e : LinguisticExample) (k : String) : Bool := featureOf e k == some "true"
+def flagOf (e : LinguisticExample) (k : String) : Bool := e.feature? k == some "true"
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Veridicality Judgments
@@ -65,7 +61,7 @@ structure VeridicalityDatum where
     `primaryText`; the connective and complement-entailment are `paperFeatures` tags. -/
 def ofVeridicality (e : LinguisticExample) : VeridicalityDatum where
   sentence := e.primaryText
-  connective := (featureOf e "connective").getD ""
+  connective := (e.feature? "connective").getD ""
   complementEntailed := flagOf e "complement_entailed"
   gloss := e.comment
 

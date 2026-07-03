@@ -439,27 +439,23 @@ prediction for each row. -/
 
 open Data.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Kind adapter: the row's `noun` feature as a `Kind`. -/
 def kindOf (row : LinguisticExample) : Option Kind :=
-  match featureOf row "noun" with
+  match row.feature? "noun" with
   | some "basketball player" => some .basketballPlayer
   | some "jockey"            => some .jockey
   | _ => none
 
 /-- Utterance adapter: the row's `adjective` feature as an `Utterance`. -/
 def uttOf (row : LinguisticExample) : Option Utterance :=
-  match featureOf row "adjective" with
+  match row.feature? "adjective" with
   | some "tall"  => some .tall
   | some "short" => some .short
   | _ => none
 
 /-- Comparison-class adapter: the row's attested `inferred_class` feature. -/
 def ccOf (row : LinguisticExample) : Option ComparisonClass :=
-  match featureOf row "inferred_class" with
+  match row.feature? "inferred_class" with
   | some "subordinate"   => some .subordinate
   | some "superordinate" => some .superordinate
   | _ => none

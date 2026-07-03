@@ -355,16 +355,12 @@ section StimulusRows
 
 open Data.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-private def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- The stimulus rows' judgment coding matches the rating data: a row is
 `.marginal` iff it instantiates an island condition (the lower-rated
 member of its experimental contrast). -/
 theorem stimulus_judgments_track_island_conditions :
     ∀ row ∈ Examples.all,
-      (featureOf row "island_condition" = some "true" ↔
+      (row.feature? "island_condition" = some "true" ↔
         row.judgment = .marginal) := by decide
 
 end StimulusRows

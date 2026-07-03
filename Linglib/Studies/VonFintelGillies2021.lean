@@ -19,12 +19,12 @@ is anti-knowledge, not anti-perception — direct-enough *knowledge* blocks
 namespace VonFintelGillies2021
 
 open Data.Examples
-open VonFintelGillies2010 (featureOf evidenceOf EvidenceType)
+open VonFintelGillies2010 (evidenceOf EvidenceType)
 
 /-- Rows whose primary text is the modalized member of a bare/modal
     minimal pair. -/
 def mustPairs : List LinguisticExample :=
-  Examples.all.filter (featureOf · "kind" == some "must_pair")
+  Examples.all.filter (·.feature? "kind" == some "must_pair")
 
 /-- **Anti-knowledge**: the evidential restriction extends to rows where
     "direct" is direct-enough knowledge rather than perception. Phil, who

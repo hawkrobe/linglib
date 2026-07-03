@@ -455,18 +455,14 @@ def declarativeChain : GenHMChain where
 -- § 2  Bridge Table: Empirical Data Meets GenHM Predictions
 -- ============================================================================
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- Does the sentence use do-support? (`do_support` feature). -/
 def usesDoSupport (row : LinguisticExample) : Option Bool :=
-  (featureOf row "do_support").map (· == "true")
+  (row.feature? "do_support").map (· == "true")
 
 /-- Does the probe carry lexical content? (auxiliary = true, lexical
     V = false; `verb_type` feature). -/
 def probeHasContent (row : LinguisticExample) : Option Bool :=
-  (featureOf row "verb_type").map (· == "auxiliary")
+  (row.feature? "verb_type").map (· == "auxiliary")
 
 /-- A&P's do-support paradigm as a bridge table: each generated row
     paired with the GenHM chain configuration assigned in §1.

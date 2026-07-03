@@ -1056,14 +1056,10 @@ section BarePluralBridge
 
 open Data.Examples
 
-/-- Value of a `paperFeatures` key, if present. -/
-def featureOf (row : LinguisticExample) (key : String) : Option String :=
-  (row.paperFeatures.find? (·.1 == key)).map (·.2)
-
 /-- The row's predicate level ([carlson-1977]), read from the
     `predicate_level` feature. -/
 def predicateLevelOf (row : LinguisticExample) : Option PredicateLevel :=
-  match featureOf row "predicate_level" with
+  match row.feature? "predicate_level" with
   | some "individual" => some .individualLevel
   | some "stage"      => some .stageLevel
   | _                 => none
@@ -1085,7 +1081,7 @@ reading — matching [magri-2009]'s prediction that the ∃-BPS of an SLP
 is fine (no homogeneity → no mismatch). -/
 theorem slp_argument_data_matches_magri_prediction :
     ∀ row ∈ CohenErteschikShir2002.Examples.all,
-      featureOf row "locative_status" = some "argument" →
+      row.feature? "locative_status" = some "argument" →
         predicateLevelOf row = some .stageLevel ∧ existentialOK row = true := by
   decide
 
@@ -1103,7 +1099,7 @@ independently confirm the existential reading is available. -/
 theorem magri_predicts_slp_existential :
     bpsSLPScenario.blindOdd .existential_ = false ∧
     ∀ row ∈ CohenErteschikShir2002.Examples.all,
-      featureOf row "locative_status" = some "argument" → existentialOK row = true :=
+      row.feature? "locative_status" = some "argument" → existentialOK row = true :=
   ⟨by decide, fun row h hf => (slp_argument_data_matches_magri_prediction row h hf).2⟩
 
 end BarePluralBridge
