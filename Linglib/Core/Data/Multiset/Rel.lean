@@ -26,11 +26,11 @@ structurally, so the instance reduces in the kernel and concrete goals close by 
 
 - `Multiset.rel_coe_iff_exists`: `Rel r ↑l₁ ↑l₂` iff some reordering of `l₂` is
   componentwise `r`-related to `l₁`.
-- `List.isPermBy_iff_rel`: `isPermBy p` decides `Multiset.Rel (p · ·)`, given symmetry
+- `List.isPermBy_iff_rel'`: `isPermBy p` decides `Multiset.Rel (p · ·)`, given symmetry
   and transitivity of `p` on a predicate covering both lists.
 - `Multiset.rel_symm_of_symm_on`, `Multiset.rel_trans_of_trans_on`: symmetry and
   transitivity of `Rel r` from the corresponding properties of `r` on the members alone.
-- `Multiset.Rel.decidable`: `Decidable (Rel r s t)` for decidable symmetric transitive
+- `Multiset.Rel.decidableRel`: `DecidableRel (Rel r)` for decidable symmetric transitive
   `r`.
 
 ## Implementation notes
@@ -101,7 +101,7 @@ variable {α : Type*} {p : α → α → Bool}
 /-- Greedy matching of `l₁` against `l₂` along `p`: pair each element of `l₁` with the
     first `p`-related element of `l₂`, removing it. The algorithm of `List.isPerm`, with
     `p` in place of `==`. Complete for `Multiset.Rel (p · ·)` when `p` is symmetric and
-    transitive on the members (`isPermBy_iff_rel`). -/
+    transitive on the members (`isPermBy_iff_rel'`). -/
 def isPermBy (p : α → α → Bool) : List α → List α → Bool
   | [], l₂ => l₂.isEmpty
   | a :: l₁, l₂ =>
@@ -243,7 +243,7 @@ theorem isPermBy_of_rel {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP�
 
 /-- The greedy matcher decides `Multiset.Rel`, given symmetry and transitivity of `p` on
     a predicate `P` covering both lists. -/
-theorem isPermBy_iff_rel {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP₂ : ∀ x ∈ l₂, P x) :
+theorem isPermBy_iff_rel' {l₁ l₂ : List α} (hP₁ : ∀ x ∈ l₁, P x) (hP₂ : ∀ x ∈ l₂, P x) :
     isPermBy p l₁ l₂ = true ↔ Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂ :=
   ⟨rel_of_isPermBy, isPermBy_of_rel Ssymm Strans hP₁ hP₂⟩
 
@@ -251,11 +251,30 @@ end Completeness
 
 /-- The greedy matcher decides `Multiset.Rel` for an unconditionally symmetric and
     transitive `p`. -/
-theorem isPermBy_iff_rel' (hs : ∀ x y, p x y = true → p y x = true)
+theorem isPermBy_iff_rel (hs : ∀ x y, p x y = true → p y x = true)
     (ht : ∀ x y z, p x y = true → p y z = true → p x z = true) {l₁ l₂ : List α} :
     isPermBy p l₁ l₂ = true ↔ Multiset.Rel (fun a b => p a b = true) ↑l₁ ↑l₂ :=
-  isPermBy_iff_rel (P := fun _ => True) (fun x y _ _ => hs x y) (fun x y z _ _ _ => ht x y z)
+  isPermBy_iff_rel' (P := fun _ => True) (fun x y _ _ => hs x y) (fun x y z _ _ _ => ht x y z)
     (fun _ _ => trivial) (fun _ _ => trivial)
+
+/-- Characterization of the greedy matcher for a symmetric transitive `p`, the analogue
+    of `List.isPerm_iff`: some reordering of `l₂` is componentwise `p`-related to
+    `l₁`. -/
+theorem isPermBy_iff (hs : ∀ x y, p x y = true → p y x = true)
+    (ht : ∀ x y z, p x y = true → p y z = true → p x z = true) {l₁ l₂ : List α} :
+    isPermBy p l₁ l₂ = true ↔
+      ∃ l', List.Forall₂ (fun a b => p a b = true) l₁ l' ∧ l'.Perm l₂ :=
+  (isPermBy_iff_rel hs ht).trans Multiset.rel_coe_iff_exists
+
+/-- On a lawful `BEq`, the greedy matcher at `(· == ·)` decides permutation: `isPermBy`
+    generalizes core's `List.isPerm` (compare `List.isPerm_iff`). -/
+theorem isPermBy_beq_iff_perm {α : Type*} [BEq α] [LawfulBEq α] {l₁ l₂ : List α} :
+    isPermBy (· == ·) l₁ l₂ = true ↔ l₁.Perm l₂ := by
+  rw [isPermBy_iff_rel
+    (fun x y h => by simp only [beq_iff_eq] at h ⊢; exact h.symm)
+    (fun x y z h₁ h₂ => by simp only [beq_iff_eq] at h₁ h₂ ⊢; exact h₁.trans h₂)]
+  simp only [beq_iff_eq]
+  rw [Multiset.rel_eq, Multiset.coe_eq_coe]
 
 end List
 
@@ -266,11 +285,11 @@ variable {α : Type*}
 /-- `Multiset.Rel r` is decidable, and computably so, for a decidable symmetric
     transitive `r`: decided by the greedy matcher on representatives, which reduces in
     the kernel. -/
-instance Rel.decidable {r : α → α → Prop} [DecidableRel r] [Std.Symm r] [IsTrans α r]
-    (s t : Multiset α) : Decidable (Rel r s t) :=
+instance Rel.decidableRel {r : α → α → Prop} [DecidableRel r] [Std.Symm r] [IsTrans α r] :
+    DecidableRel (Rel r) := fun s t =>
   Quotient.recOnSubsingleton₂ s t fun l₁ l₂ =>
     decidable_of_iff (List.isPermBy (fun a b => decide (r a b)) l₁ l₂ = true) <| by
-      rw [List.isPermBy_iff_rel' (p := fun a b => decide (r a b))
+      rw [List.isPermBy_iff_rel (p := fun a b => decide (r a b))
         (fun x y h => decide_eq_true (Std.Symm.symm x y (of_decide_eq_true h)))
         (fun x y z h₁ h₂ => decide_eq_true
           (IsTrans.trans x y z (of_decide_eq_true h₁) (of_decide_eq_true h₂)))]
