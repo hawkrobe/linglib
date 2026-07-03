@@ -40,10 +40,8 @@ on bucket partitions, derived from the kernel keystone
 theorem Nat.ker_div_le_of_dvd {ε₁ ε₂ : ℕ} (h : ε₁ ∣ ε₂) :
     Setoid.ker (· / ε₁ : ℕ → ℕ) ≤ Setoid.ker (· / ε₂) := by
   obtain ⟨k, rfl⟩ := h
-  have hfac : (· / (ε₁ * k) : ℕ → ℕ) = (· / k) ∘ (· / ε₁) :=
-    funext fun n => (Nat.div_div_eq_div_mul n ε₁ k).symm
-  rw [hfac]
-  exact Setoid.ker_le_ker_comp _ _
+  simpa [Function.comp_def, Nat.div_div_eq_div_mul] using
+    Setoid.ker_le_ker_comp (· / ε₁ : ℕ → ℕ) (· / k)
 
 variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
   [FloorRing α] {ε : α}
@@ -54,13 +52,9 @@ kernel keystone and `Int.floor_div_natCast`. -/
 theorem Setoid.ker_floor_div_le_natCast_mul (ε : α) (k : ℕ) :
     Setoid.ker (fun d : α => ⌊d / ε⌋) ≤
       Setoid.ker (fun d : α => ⌊d / ((k : α) * ε)⌋) := by
-  have hfac : (fun d : α => ⌊d / ((k : α) * ε)⌋) =
-      (· / (k : ℤ)) ∘ (fun d : α => ⌊d / ε⌋) := by
-    funext d
-    show ⌊d / ((k : α) * ε)⌋ = ⌊d / ε⌋ / (k : ℤ)
-    rw [mul_comm (k : α) ε, ← div_div, ← Int.floor_div_natCast]
-  rw [hfac]
-  exact Setoid.ker_le_ker_comp _ _
+  simpa [Function.comp_def, ← Int.floor_div_natCast, div_div,
+    mul_comm ε (k : α)] using
+    Setoid.ker_le_ker_comp (fun d : α => ⌊d / ε⌋) (· / (k : ℤ))
 
 /-- Rounding to the nearest multiple of `ε` moves a point by at most
 `ε / 2` — the sibling of `abs_sub_round` for multiples. -/
