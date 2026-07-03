@@ -1,130 +1,76 @@
 import Linglib.Semantics.Numerals.Roundness
-import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Rat.Floor
 
 /-!
-# Pragmatic Halo and Precision Modes
-[krifka-2007] [lasersohn-1999] [woodin-etal-2023] [kao-etal-2014-hyperbole]
+# Pragmatic halo and precision modes
 
-Rounding semantics for numeral imprecision.
-Round numbers (100, 1000) are interpreted imprecisely; sharp numbers (103, 1001)
-are interpreted precisely. This is the "pragmatic halo" effect.
+Rounding semantics for numeral imprecision: round numbers (100, 1000) admit
+imprecise construals; sharp numbers (103, 1001) do not — [lasersohn-1999]'s
+pragmatic halo, [krifka-2007]'s approximate interpretation.
 
+## Main definitions
+
+- `PrecisionMode`, `projectPrecision`, `roundToNearest`: the two meaning
+  projections `f_e(s) = s` and `f_a(s) = Round(s)` of
+  [kao-etal-2014-hyperbole], with `Round` = round-to-nearest-multiple.
+  `Studies/KaoEtAl2014PMFHyperbole.lean` grounds its goal projections in these.
+- `haloWidth`, `inferPrecisionMode`: halo width and precision mode as
+  functions of the k-ness score (`Roundness.roundnessScore`). Only the
+  monotone relationship — rounder numerals carry wider halos and favour
+  approximate construal — is motivated by the cited papers
+  ([woodin-etal-2023]'s corpus finding); the magnitude constants and the
+  score threshold are stipulations of this formalisation.
 -/
 
 namespace Semantics.Numerals.Precision
 
-/-- Precision mode for numeral interpretation. -/
+/-- Precision mode for numeral interpretation: which of
+[kao-etal-2014-hyperbole]'s two meaning projections applies. -/
 inductive PrecisionMode where
-  | exact       -- f_e(s) = s
-  | approximate -- f_a(s) = Round(s)
+  /-- Exact interpretation, `f_e(s) = s`. -/
+  | exact
+  /-- Approximate interpretation, `f_a(s) = Round(s)`. -/
+  | approximate
   deriving Repr, DecidableEq
 
-/-- Round a rational number to the nearest multiple of `base`. -/
+/-- Round a rational to the nearest multiple of `base` —
+[kao-etal-2014-hyperbole]'s `Round` at the default `base = 10`. -/
 def roundToNearest (n : ℚ) (base : ℚ := 10) : ℚ :=
-  if base == 0 then n
-  else
-    let scaled := n / base
-    let rounded := (scaled + 1/2).floor
-    rounded * base
+  round (n / base) * base
 
-/-- Check if a number is "round" (divisible by base). -/
-def isRoundNumber (n : ℚ) (base : ℚ := 10) : Bool :=
-  roundToNearest n base == n
-
-/-- Rounding equivalence: two values are equivalent if they round to the same number. -/
-def roundingEquiv (n₁ n₂ : ℚ) (base : ℚ := 10) : Bool :=
-  roundToNearest n₁ base == roundToNearest n₂ base
-
-/-- Project a value according to precision mode. -/
+/-- Project a value according to precision mode: `f_e` is the identity,
+`f_a` rounds to the nearest multiple of `base`. -/
 def projectPrecision (mode : PrecisionMode) (n : ℚ) (base : ℚ := 10) : ℚ :=
   match mode with
   | .exact => n
   | .approximate => roundToNearest n base
 
-/-- Check if stated and actual values match under a given precision mode. -/
-def matchesPrecision (mode : PrecisionMode) (stated actual : ℚ) (base : ℚ := 10) : Bool :=
-  projectPrecision mode stated base == projectPrecision mode actual base
+/-! ### Halo width and precision-mode inference
 
--- ════════════════════════════════════════════════════
--- Adaptive Pragmatic Halo ([woodin-etal-2023], [krifka-2007], [lasersohn-1999])
--- ════════════════════════════════════════════════════
+Stipulated operationalisations over the k-ness score. Making the mode a
+function of the numeral alone idealises away the contextual choice of
+granularity ([krifka-2007]) and joint probabilistic inference
+([kao-etal-2014-hyperbole]); see the caveat on `inferPrecisionMode`. -/
 
-open Semantics.Numerals.Roundness in
-
-/-- Adaptive rounding base: rounder numbers get a coarser base.
-    Uses `RoundnessGrade` to avoid duplicating score-binning logic. -/
-def adaptiveBase (n : Nat) : ℚ :=
-  match Semantics.Numerals.Roundness.roundnessGrade n with
-  | .high =>
-    if n % 1000 == 0 then 100
-    else 10
-  | .moderate => 10
-  | .low => 5
-  | .none => 1
-
-open Semantics.Numerals.Roundness in
-
-/-- Adaptive tolerance: scales a base tolerance by the roundness score. -/
-def adaptiveTolerance (n : Nat) (baseTol : ℚ) : ℚ :=
-  let score := Semantics.Numerals.Roundness.roundnessScore n
-  baseTol * (1 + score / 6)
-
-open Semantics.Numerals.Roundness in
-
-/-- Pragmatic halo width as a function of roundness score. -/
+/-- Pragmatic halo width, increasing in the roundness score. The magnitude
+factors are stipulated, not paper-derived. -/
 def haloWidth (n : Nat) : ℚ :=
-  let score := Semantics.Numerals.Roundness.roundnessScore n
-  let magnitudeFactor : ℚ := if n ≥ 1000 then 50
-                              else if n ≥ 100 then 10
-                              else if n ≥ 10 then 5
-                              else 1
+  let score := Roundness.roundnessScore n
+  let magnitudeFactor : ℚ :=
+    if n ≥ 1000 then 50 else if n ≥ 100 then 10 else if n ≥ 10 then 5 else 1
   magnitudeFactor * score / 6
 
-open Semantics.Numerals.Roundness in
-
-/-- Infer precision mode from k-ness score.
-    roundnessScore ≥ 2 → `.approximate`; roundnessScore < 2 → `.exact`. -/
+/-- Infer precision mode from the k-ness score: `roundnessScore ≥ 2` yields
+`.approximate`. Known idealisation: score-1 numerals (5, 15, 45, …) come out
+`.exact` even though imprecise uses of them are attested. -/
 def inferPrecisionMode (n : Nat) : PrecisionMode :=
-  if Semantics.Numerals.Roundness.roundnessScore n ≥ 2 then .approximate
-  else .exact
+  if Roundness.roundnessScore n ≥ 2 then .approximate else .exact
 
--- Verification
-
-#guard inferPrecisionMode 100 == .approximate  -- score 6 ≥ 2
-#guard inferPrecisionMode 50 == .approximate   -- score 4 ≥ 2
-#guard inferPrecisionMode 110 == .approximate  -- score 2 ≥ 2
-#guard inferPrecisionMode 7 == .exact          -- score 0 < 2
-#guard inferPrecisionMode 99 == .exact         -- score 0 < 2
-#guard inferPrecisionMode 15 == .exact         -- score 1 < 2
-
-/-- Multiples of 10 have adaptive base ≥ 5. -/
-theorem adaptive_base_ge_five_of_div10 (n : Nat) (h10 : n % 10 = 0) :
-    adaptiveBase n ≥ 5 := by
-  unfold adaptiveBase
-  have hs := Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10
-  split
-  · split <;> decide
-  · decide
-  · decide
-  · exact absurd ‹_› (Semantics.Numerals.Roundness.grade_ne_none_of_score_ge_one n (by omega))
-
--- ════════════════════════════════════════════════════
--- Speaker-conditioned precision ([beltrama-schwarz-2024])
--- ════════════════════════════════════════════════════
-
-/-- Speaker-conditioned pragmatic halo width: scales the base `haloWidth`
-    by a tolerance multiplier. [beltrama-schwarz-2024] show that
-    numeral precision is jointly determined by roundness AND speaker
-    identity — the pragmatic halo is not a property of the number alone
-    but of the number-speaker pair. -/
-def speakerModulatedHalo (multiplier : ℚ) (n : Nat) : ℚ :=
-  multiplier * haloWidth n
-
-/-- Whether an actual value falls within the speaker-conditioned
-    pragmatic halo of a stated value. -/
-def inSpeakerHalo (multiplier : ℚ) (stated actual : Nat) : Bool :=
-  let hw := speakerModulatedHalo multiplier stated
-  decide ((actual : ℚ) ≥ (stated : ℚ) - hw ∧
-          (actual : ℚ) ≤ (stated : ℚ) + hw)
+#guard inferPrecisionMode 100 = .approximate  -- score 6 ≥ 2
+#guard inferPrecisionMode 50 = .approximate   -- score 4 ≥ 2
+#guard inferPrecisionMode 110 = .approximate  -- score 2 ≥ 2
+#guard inferPrecisionMode 7 = .exact          -- score 0 < 2
+#guard inferPrecisionMode 99 = .exact         -- score 0 < 2
+#guard inferPrecisionMode 15 = .exact         -- score 1 < 2 (see caveat above)
 
 end Semantics.Numerals.Precision
