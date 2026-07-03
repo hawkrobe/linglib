@@ -98,7 +98,7 @@ structure SCF_Allows (W : Type*) where
   content : Set W
   /-- Accommodation is possible: there exist contexts where content is
       informative (not entailed) yet use is felicitous -/
-  accommodable : ∃ (c : ContextSet W), ContextSet.nonEmpty c ∧
+  accommodable : ∃ (c : ContextSet W), Set.Nonempty c ∧
     ¬ContextSet.entails c content
 
 /--

@@ -818,7 +818,7 @@ theorem negation_grounding :
     because global accommodation would be inconsistent. -/
 theorem accommodation_grounded_in_heim {W : Type*}
     (c : ContextSet W) (pex_output : PartialProp W)
-    (h_consistent : ContextSet.nonEmpty
+    (h_consistent : Set.Nonempty
       (globalAccommodate c pex_output.presup)) :
     heimSelect c pex_output.presup = .global :=
   heim_projection_when_consistent c pex_output.presup h_consistent
@@ -829,7 +829,7 @@ theorem accommodation_grounded_in_heim {W : Type*}
     from projecting in hostile environments. -/
 theorem enemy_territory_blocks_projection {W : Type*}
     (c : ContextSet W) (pex_output : PartialProp W)
-    (h_inconsistent : ¬ContextSet.nonEmpty
+    (h_inconsistent : ¬Set.Nonempty
       (globalAccommodate c pex_output.presup)) :
     heimSelect c pex_output.presup = .local :=
   heim_cancellation_equivalence c pex_output.presup h_inconsistent

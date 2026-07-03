@@ -227,6 +227,7 @@ import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.IntervalContent
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Markedness
+import Linglib.Core.Order.MeetMonoid
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.OfCriteria
