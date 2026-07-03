@@ -1373,6 +1373,235 @@ theorem eval_constant_preserves_peak_pmf :
       norm_num [show heightPrior (deg 3) = 20 from rfl]]
   exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
+/-! ## §5f. Prior-generic adjective stage; the bare and usually chains -/
+
+/-- Prior-generic stage-2 literal listener (dite-total). -/
+noncomputable def adjL0WithPrior (Pi : PMF Height) (vt : ValidThreshold)
+    (u : RSA.Nouwen2024.AdjUtterance) : PMF Height :=
+  if h_pos : (∑' h, Pi h *
+      (if adjLex (validToThreshold vt) u h then (1 : ℝ≥0∞) else 0)) ≠ 0 then
+    RSA.L0LassiterGoodman Pi (adjLex (validToThreshold vt)) u h_pos
+  else PMF.uniformOfFintype Height
+
+/-- Prior-generic stage-2 speaker (dite-total). -/
+noncomputable def adjSpeakerWithPrior (Pi : PMF Height) (vt : ValidThreshold)
+    (w : Height) : PMF (RSA.Nouwen2024.AdjUtterance) :=
+  if h_pos : (∑' u, ((adjL0WithPrior Pi vt) u w : ℝ≥0∞) ^ (4 : ℝ) *
+      adjCostFactor u) ≠ 0 then
+    RSA.S1Belief (adjL0WithPrior Pi vt) adjCostFactor 4 w h_pos
+      (ENNReal.tsum_ne_top_of_fintype fun u =>
+        ENNReal.mul_ne_top
+          (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+          (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
+  else PMF.pure .silent
+
+/-- Prior-generic marginalized stage-2 speaker. -/
+noncomputable def adjMarginalWithPrior (Pi : PMF Height) : Height → PMF AdjUtterance :=
+  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => adjSpeakerWithPrior Pi vt w)
+
+theorem adjL0WithPrior_silent (Pi : PMF Height) (vt : ValidThreshold) (w : Height) :
+    adjL0WithPrior Pi vt .silent w = Pi w := by
+  have hm : (∑' h, Pi h *
+      (if adjLex (validToThreshold vt) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
+    simp only [show ∀ h, adjLex (validToThreshold vt) .silent h = true from
+      fun _ => rfl, if_true, mul_one]
+    exact PMF.tsum_coe _
+  unfold adjL0WithPrior
+  rw [dif_pos (by rw [hm]; exact one_ne_zero)]
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+
+private theorem adjSpeakerWithPrior_h_pos (Pi : PMF Height) (vt : ValidThreshold)
+    {w : Height} (hPw : Pi w ≠ 0) :
+    (∑' u, ((adjL0WithPrior Pi vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 := by
+  rw [sumAdjUtt]
+  intro hz
+  rcases mul_eq_zero.mp (add_eq_zero.mp hz).2 with h5 | h5
+  · rw [adjL0WithPrior_silent] at h5
+    rcases ENNReal.rpow_eq_zero_iff.mp h5 with ⟨hz0, -⟩ | ⟨-, hneg⟩
+    · exact hPw hz0
+    · norm_num at hneg
+  · rw [adjCostFactor_silent] at h5
+    exact one_ne_zero h5
+
+/-- Π-mass of the `.warm` extension at threshold `vt`. -/
+noncomputable def adjMassP (Pi : PMF Height) (vt : ValidThreshold) : ℝ≥0∞ :=
+  ∑' h, Pi h * (if adjLex (validToThreshold vt) .warm h then (1 : ℝ≥0∞) else 0)
+
+/-- Prior-generic stage-2 speaker value on support: mass form. -/
+noncomputable def fvalP (Pi : PMF Height) (vt : ValidThreshold) : ℝ≥0∞ :=
+  (adjMassP Pi vt)⁻¹ ^ (4 : ℝ) * adjCostFactor .warm /
+    ((adjMassP Pi vt)⁻¹ ^ (4 : ℝ) * adjCostFactor .warm + 1)
+
+/-- **Ratio cancellation, prior-generic stage 2**: on support, at a
+non-degenerate world, the speaker's value is `fvalP Pi vt` — independent of
+the world. -/
+theorem adjSpeakerWithPrior_apply_of_true (Pi : PMF Height) (vt : ValidThreshold)
+    (w : Height) (hw : adjLex (validToThreshold vt) .warm w = true)
+    (hPw : Pi w ≠ 0) :
+    adjSpeakerWithPrior Pi vt w .warm = fvalP Pi vt := by
+  have hPt : Pi w ≠ ⊤ := PMF.apply_ne_top _ _
+  have hmne : adjMassP Pi vt ≠ 0 :=
+    ENNReal.summable.tsum_ne_zero_iff.mpr
+      ⟨w, by rw [hw]; simp only [if_true, mul_one]; exact hPw⟩
+  have hL0warm : adjL0WithPrior Pi vt .warm w = Pi w * (adjMassP Pi vt)⁻¹ := by
+    have hm' : (∑' h, Pi h *
+        (if adjLex (validToThreshold vt) .warm h then (1 : ℝ≥0∞) else 0)) ≠ 0 := hmne
+    unfold adjL0WithPrior
+    rw [dif_pos hm', RSA.L0LassiterGoodman_apply, hw]
+    simp only [if_true, mul_one]
+    rfl
+  unfold adjSpeakerWithPrior
+  rw [dif_pos (adjSpeakerWithPrior_h_pos Pi vt hPw), RSA.S1Belief_apply, sumAdjUtt,
+    hL0warm, adjL0WithPrior_silent, adjCostFactor_silent, mul_one,
+    ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 4)]
+  have hP4 : (Pi w) ^ (4 : ℝ) ≠ 0 := (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hPw) hPt).ne'
+  have hP4t : (Pi w) ^ (4 : ℝ) ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) hPt
+  rw [mul_assoc ((Pi w) ^ (4 : ℝ)), ← div_eq_mul_inv,
+    show (Pi w) ^ (4 : ℝ) * ((adjMassP Pi vt)⁻¹ ^ (4 : ℝ) * adjCostFactor .warm) +
+          (Pi w) ^ (4 : ℝ)
+        = (Pi w) ^ (4 : ℝ) * ((adjMassP Pi vt)⁻¹ ^ (4 : ℝ) * adjCostFactor .warm + 1)
+      from by ring,
+    ENNReal.mul_div_mul_left _ _ hP4 hP4t]
+  rfl
+
+/-- Marginal positivity for the prior-generic stage-2 chain at any world where
+the prior is positive and `.warm` holds at threshold 0. -/
+private theorem bareAdj_marginal_ne_zero (u : RSA.Nouwen2024.AdjUtterance) :
+    PMF.marginal (adjMarginalWithPrior heightPriorPMF) heightPriorPMF u ≠ 0 := by
+  refine PMF.marginal_ne_zero _ _ _ (heightPriorPMF_pos (deg 4)) ?_
+  unfold adjMarginalWithPrior
+  rw [RSA.marginalizeKernel_apply]
+  apply ENNReal.summable.tsum_ne_zero_iff.mpr
+  refine ⟨0, mul_ne_zero ?_ ?_⟩
+  · rw [thresholdPriorPMF, PMF.uniformOfFintype_apply]; simp
+  · have hcf : adjCostFactor u ≠ 0 := by
+      unfold adjCostFactor
+      rw [ENNReal.ofReal_ne_zero_iff]
+      exact Real.exp_pos _
+    have hL0 : adjL0WithPrior heightPriorPMF 0 u (deg 4) ≠ 0 := by
+      cases u
+      · have hmne : (∑' h, heightPriorPMF h *
+            (if adjLex (validToThreshold 0) .warm h then (1 : ℝ≥0∞) else 0)) ≠ 0 :=
+          ENNReal.summable.tsum_ne_zero_iff.mpr
+            ⟨deg 4, by rw [show adjLex (validToThreshold 0) .warm (deg 4) = true from
+              by decide]; simp only [if_true, mul_one]; exact heightPriorPMF_pos _⟩
+        unfold adjL0WithPrior
+        rw [dif_pos hmne, ← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+        exact ⟨heightPriorPMF_pos _, by decide⟩
+      · rw [adjL0WithPrior_silent]
+        exact heightPriorPMF_pos _
+    unfold adjSpeakerWithPrior
+    rw [dif_pos (adjSpeakerWithPrior_h_pos heightPriorPMF 0 (heightPriorPMF_pos (deg 4)))]
+    exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 hcf
+
+/-- Baseline chain: bare "warm" over the raw height prior. -/
+noncomputable def bareAdjL1 (u : RSA.Nouwen2024.AdjUtterance) : PMF Height :=
+  PMF.posterior (adjMarginalWithPrior heightPriorPMF) heightPriorPMF u
+    (bareAdj_marginal_ne_zero u)
+
+/-- The "usually warm" chain: stage 2 over the (identity) usual posterior. -/
+noncomputable def seqAdjL1Usually (u : RSA.Nouwen2024.AdjUtterance) : PMF Height :=
+  PMF.posterior (adjMarginalWithPrior priorAfterEvalPosUsual) priorAfterEvalPosUsual u
+    (by rw [priorAfterEvalPosUsual_eq_prior]; exact bareAdj_marginal_ne_zero u)
+
+/-- **"Usually warm" IS bare "warm"**: the second half of Zwicky's vacuity —
+with the identity evaluative update (`priorAfterEvalPosUsual_eq_prior`), the
+whole sequential chain collapses to the baseline. Together with
+`seq_unusually_shifts_extreme` this subsumes the old cross-model
+discrimination pair without any cross-model numeric comparison. -/
+theorem seqUsually_eq_bare (u : RSA.Nouwen2024.AdjUtterance) :
+    seqAdjL1Usually u = bareAdjL1 u := by
+  ext h
+  unfold seqAdjL1Usually bareAdjL1
+  rw [PMF.posterior_apply, PMF.posterior_apply, priorAfterEvalPosUsual_eq_prior]
+
+private theorem adjMassP_ne_top (Pi : PMF Height) (vt : ValidThreshold) :
+    adjMassP Pi vt ≠ ⊤ := by
+  refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+  calc adjMassP Pi vt
+      ≤ ∑' h', Pi h' := ENNReal.tsum_le_tsum fun h' => by split <;> simp
+    _ = 1 := PMF.tsum_coe _
+
+private theorem fvalP_ne_zero (Pi : PMF Height) (vt : ValidThreshold)
+    (hm : adjMassP Pi vt ≠ 0) : fvalP Pi vt ≠ 0 := by
+  unfold fvalP
+  rw [ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  have hcf : adjCostFactor .warm ≠ 0 := by
+    unfold adjCostFactor
+    rw [ENNReal.ofReal_ne_zero_iff]
+    exact Real.exp_pos _
+  constructor
+  · exact mul_ne_zero
+      (ENNReal.rpow_pos (ENNReal.inv_pos.mpr (adjMassP_ne_top Pi vt))
+        (ENNReal.inv_ne_top.mpr hm)).ne' hcf
+  · exact ENNReal.add_ne_top.mpr
+      ⟨ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+          (ENNReal.inv_ne_top.mpr hm))
+        (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top),
+       ENNReal.one_ne_top⟩
+
+private theorem fvalP_ne_top (Pi : PMF Height) (vt : ValidThreshold)
+    (hm : adjMassP Pi vt ≠ 0) : fvalP Pi vt ≠ ⊤ :=
+  ENNReal.div_ne_top
+    (ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+        (ENNReal.inv_ne_top.mpr hm))
+      (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
+    (by simp)
+
+private theorem bareMass_ne_zero (vt : ValidThreshold) :
+    adjMassP heightPriorPMF vt ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨deg 4, by
+    rw [show adjLex (validToThreshold vt) .warm (deg 4) = true from by revert vt; decide]
+    simp only [if_true, mul_one]
+    exact heightPriorPMF_pos _⟩
+
+/-- Bare "warm" prefers the moderate `deg 4` over the extreme `deg 6`: both
+worlds license every valid threshold, so the marginalised speaker values
+coincide (ratio cancellation) and the raw prior (`10 : 1`) decides. -/
+theorem bare_warm_prefers_moderate_pmf :
+    bareAdjL1 .warm (deg 4) > bareAdjL1 .warm (deg 6) := by
+  unfold bareAdjL1
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt]
+  have hA : ∀ w : Height, (∀ vt : ValidThreshold,
+      adjLex (validToThreshold vt) .warm w = true) →
+      adjMarginalWithPrior heightPriorPMF w .warm
+        = 3⁻¹ * fvalP heightPriorPMF 0 + 3⁻¹ * fvalP heightPriorPMF 1 +
+          3⁻¹ * fvalP heightPriorPMF 2 := by
+    intro w hall
+    unfold adjMarginalWithPrior
+    rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+      adjSpeakerWithPrior_apply_of_true _ _ _ (hall 0) (heightPriorPMF_pos w),
+      adjSpeakerWithPrior_apply_of_true _ _ _ (hall 1) (heightPriorPMF_pos w),
+      adjSpeakerWithPrior_apply_of_true _ _ _ (hall 2) (heightPriorPMF_pos w)]
+  rw [hA _ (by decide), hA _ (by decide)]
+  set C := (3 : ℝ≥0∞)⁻¹ * fvalP heightPriorPMF 0 + 3⁻¹ * fvalP heightPriorPMF 1 +
+    3⁻¹ * fvalP heightPriorPMF 2 with hCdef
+  have hC0 : C ≠ 0 := by
+    intro hz
+    rcases mul_eq_zero.mp (add_eq_zero.mp (add_eq_zero.mp hz).1).1 with h | h
+    · exact ENNReal.inv_ne_zero.mpr (by norm_num) h
+    · exact fvalP_ne_zero _ _ (bareMass_ne_zero 0) h
+  have h3t : (3 : ℝ≥0∞)⁻¹ ≠ ⊤ := ENNReal.inv_ne_top.mpr (by norm_num)
+  have hCt : C ≠ ⊤ := by
+    refine ENNReal.add_ne_top.mpr ⟨ENNReal.add_ne_top.mpr ⟨?_, ?_⟩, ?_⟩ <;>
+      exact ENNReal.mul_ne_top h3t (fvalP_ne_top _ _ (bareMass_ne_zero _))
+  have hP : heightPriorPMF (deg 6) < heightPriorPMF (deg 4) := by
+    unfold heightPriorPMF
+    rw [PMF.normalize_apply, PMF.normalize_apply,
+      mul_comm, mul_comm (heightPriorENN (deg 4))]
+    refine ENNReal.mul_lt_mul_right
+      (ENNReal.inv_ne_zero.mpr (ENNReal.tsum_ne_top_of_fintype heightPriorENN_finite))
+      (ENNReal.inv_ne_top.mpr
+        (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨deg 0, heightPriorENN_pos _⟩)) ?_
+    unfold heightPriorENN
+    rw [show (heightPrior (deg 6) : ℝ) = 1 from by
+        norm_num [show heightPrior (deg 6) = 1 from rfl],
+      show (heightPrior (deg 4) : ℝ) = 10 from by
+        norm_num [show heightPrior (deg 4) = 10 from rfl]]
+    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+  rw [mul_comm (heightPriorPMF (deg 6)), mul_comm (heightPriorPMF (deg 4))]
+  exact ENNReal.mul_lt_mul_right hC0 hCt hP
+
 /-! ## §6. Predictions
 
 The headline below states that "horribly warm" shifts probability toward
