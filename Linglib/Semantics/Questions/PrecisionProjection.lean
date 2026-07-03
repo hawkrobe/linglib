@@ -1,4 +1,10 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Core.Algebra.Order.Grain
 
 /-!
 # Precision Projection for Numeric QUDs
@@ -23,9 +29,11 @@ def exact {N : Type} : PrecisionProjection N where
   round := id
   name := "exact"
 
-/-- Round to nearest multiple of k -/
+/-- Round down to the enclosing multiple of `k` — the lower grain
+representative `Nat.grainFloor` (the grain partition of
+`Core/Algebra/Order/Grain.lean`). -/
 def roundTo (k : Nat) : PrecisionProjection Nat where
-  round n := (n / k) * k
+  round := Nat.grainFloor k
   name := s!"round{k}"
 
 /-- Compose precision with a QUD. Delegates to `QUD.ofProject`. -/

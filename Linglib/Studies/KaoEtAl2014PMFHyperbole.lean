@@ -110,7 +110,8 @@ theorem round_value_eq_roundToNearest (p : PriceState) :
     (p.round.value : ℚ) = Semantics.Numerals.Precision.roundToNearest p.value := by
   cases p <;>
     norm_num [PriceState.round, PriceState.value,
-      Semantics.Numerals.Precision.roundToNearest]
+      Semantics.Numerals.Precision.roundToNearest, Core.Order.grainRound,
+      zsmul_eq_mul]
 
 /-- Binary affect: speaker has notable opinion, or none. -/
 inductive Affect where
