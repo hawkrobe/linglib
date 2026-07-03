@@ -2486,6 +2486,7 @@ import Linglib.Studies.MerchantPrince2022
 import Linglib.Studies.MeyerFeiman2021
 import Linglib.Studies.Middleton2026
 import Linglib.Studies.Miestamo2005
+import Linglib.Studies.Mihoc2019
 import Linglib.Studies.Mirrazi2024
 import Linglib.Studies.MitrovicSauerland2016
 import Linglib.Studies.Mizuno2024
