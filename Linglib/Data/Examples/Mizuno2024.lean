@@ -49,6 +49,24 @@ def en2 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
+def ja3 : LinguisticExample :=
+  { id := "mizuno2024_ja3"
+    source := ⟨"mizuno-2024", "(3)"⟩
+    reportedIn := none
+    language := "nucl1643"
+    primaryText := "John-ga ima kono siai-no naka-ni ir-eba, syoohai-wa mada wakar-ana-katta daroo."
+    discourseSegments := []
+    glossedTokens := [("John-ga", "John-NOM"), ("ima", "now"), ("kono", "this"), ("siai-no", "game-GEN"), ("naka-ni", "inside-LOC"), ("ir-eba", "be-COND"), ("syoohai-wa", "outcome-TOP"), ("mada", "yet"), ("wakar-ana-katta", "be.clear-NEG-PAST"), ("daroo", "MOD")]
+    translation := "If John were playing now, the outcome of the game would still be uncertain."
+    context := "John, an ace player, has recently left the team for better pay. The team weakens considerably after losing their mainstay, and their defeat in today's game is already certain during the first half. A fan who is currently watching the game says the following."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "fake-past"), ("x_exponent", "-ta")]
+    comment := "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
 def ja4a : LinguisticExample :=
   { id := "mizuno2024_ja4a"
     source := ⟨"mizuno-2024", "(4a)"⟩
@@ -157,6 +175,6 @@ def ma11 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "MORPHEME_ALIGNED" }
 
-def all : List LinguisticExample := [en1a, en2, ja4a, ja7a, ma13a, en8, ja9, ma11]
+def all : List LinguisticExample := [en1a, en2, ja3, ja4a, ja7a, ma13a, en8, ja9, ma11]
 
 end Mizuno2024.Examples
