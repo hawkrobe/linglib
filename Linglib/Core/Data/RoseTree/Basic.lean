@@ -111,6 +111,17 @@ instance instDecidableEq : DecidableEq (RoseTree α) := RoseTree.decEq
 
 end DecidableEq
 
+/-! ### Size -/
+
+/-- A child of a node is strictly smaller than the node, in the auto-generated
+`SizeOf`. This is the measure behind `rec'` and downstream well-founded
+recursions over `RoseTree`. -/
+theorem sizeOf_lt_of_mem {a : α} {cs : List (RoseTree α)} {c : RoseTree α} (hc : c ∈ cs) :
+    sizeOf c < sizeOf (RoseTree.node a cs) := by
+  have := List.sizeOf_lt_of_mem hc
+  simp only [RoseTree.node.sizeOf_spec]
+  omega
+
 /-! ### The recursion principle -/
 
 /-- **Structural induction** for `RoseTree`: to prove `motive t` for all `t`, prove
@@ -124,10 +135,7 @@ def rec' {motive : RoseTree α → Sort*}
     ∀ t, motive t
   | .node a cs => node a cs fun c _hc => rec' node c
 termination_by t => sizeOf t
-decreasing_by
-  have := List.sizeOf_lt_of_mem _hc
-  simp only [RoseTree.node.sizeOf_spec]
-  omega
+decreasing_by exact sizeOf_lt_of_mem _hc
 
 /-! ### Catamorphism
 
