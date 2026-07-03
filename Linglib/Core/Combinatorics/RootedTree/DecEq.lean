@@ -49,14 +49,12 @@ variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s u : Ros
 
 /-! ### Deciding `PermEquiv`: equality up to child reordering -/
 
-/-- `eqv t s` decides whether `t` and `s` are equal up to child reordering, i.e.
-    `PermEquiv` (see `eqv_iff_permEquiv`): equal root values, and child lists matching as
-    multisets under `eqv`. Computable from `DecidableEq α` alone. -/
+/-- `eqv t s` decides whether `t` and `s` are equal up to child reordering
+    (`eqv_iff_permEquiv`). -/
 def eqv : RoseTree α → RoseTree α → Bool
   | .node a cs, .node b ds => decide (a = b) && go cs ds
 where
-  /-- Greedy multiset matching of child lists: `List.isPermBy eqv`, inlined so the
-      recursion compiles structurally. -/
+  /-- Greedy multiset matching of child lists: `List.isPermBy eqv`. -/
   go : List (RoseTree α) → List (RoseTree α) → Bool
     | [], ds => ds.isEmpty
     | c :: cs, ds =>
