@@ -93,15 +93,23 @@ private theorem rel_of_eqvMulti (h : eqvMulti cs ds = true) :
 private theorem eqvMulti_of_rel {P : RoseTree α → Prop}
     (Ssymm : ∀ x y, P x → P y → eqv x y = true → eqv y x = true)
     (Strans : ∀ x y z, P x → P y → P z → eqv x y = true → eqv y z = true → eqv x z = true)
-    (hPcs : ∀ x ∈ cs, P x) (hPds : ∀ x ∈ ds, P x)
+    (hPcs : ∀ x ∈ (↑cs : Multiset (RoseTree α)), P x)
+    (hPds : ∀ x ∈ (↑ds : Multiset (RoseTree α)), P x)
     (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true := by
   rw [eqvMulti_eq_isPermBy]
-  exact List.isPermBy_of_rel Ssymm Strans hPcs hPds h
+  exact List.isPermBy_of_rel Ssymm Strans (fun x hx => hPcs x (Multiset.mem_coe.mpr hx))
+    (fun x hx => hPds x (Multiset.mem_coe.mpr hx)) h
 
 /-- `eqv` on two nodes: equal root values and children matching under `eqvMulti`. -/
 private theorem eqv_node_iff {a b : α} :
     eqv (.node a cs) (.node b ds) = true ↔ a = b ∧ eqvMulti cs ds = true := by
   rw [eqv, Bool.and_eq_true, decide_eq_true_eq]
+
+omit [DecidableEq α] in
+/-- Children of a node below `N + 1` are below `N`. -/
+private theorem sizeOf_children_lt {a : α} {N : ℕ} (h : sizeOf (RoseTree.node a cs) < N + 1) :
+    ∀ x ∈ (↑cs : Multiset (RoseTree α)), sizeOf x < N := fun _ hx =>
+  lt_of_lt_of_le (sizeOf_lt_of_mem (Multiset.mem_coe.mp hx)) (Nat.lt_succ_iff.mp h)
 
 /-- Symmetry and transitivity of `eqv`, proven together by induction on a size bound:
     completeness of the matcher at a node needs both symmetry and transitivity on the
@@ -114,38 +122,27 @@ private theorem eqv_symm_trans :
   intro N
   induction N with
   | zero =>
-    exact ⟨fun t s hst _ => absurd hst (Nat.not_lt_zero _),
-           fun t s u hst _ _ => absurd hst (Nat.not_lt_zero _)⟩
+    exact ⟨fun _ _ hst _ => absurd hst (Nat.not_lt_zero _),
+           fun _ _ _ hst _ _ => absurd hst (Nat.not_lt_zero _)⟩
   | succ N ih =>
     refine ⟨?_, ?_⟩
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ hst hss hts
-      rw [eqv_node_iff] at hts
-      obtain ⟨hab, hmulti⟩ := hts
-      have hcsN : ∀ x ∈ cs, sizeOf x < N := fun x hx =>
-        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hst)
-      have hdsN : ∀ x ∈ ds, sizeOf x < N := fun x hx =>
-        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hss)
-      rw [eqv_node_iff]
-      refine ⟨hab.symm, eqvMulti_of_rel ih.1 ih.2 hdsN hcsN (Multiset.rel_symm_on ?_
-        (rel_of_eqvMulti hmulti))⟩
-      exact fun x hx y hy => ih.1 x y (hcsN x (Multiset.mem_coe.mp hx))
-        (hdsN y (Multiset.mem_coe.mp hy))
+      obtain ⟨hab, hmulti⟩ := eqv_node_iff.mp hts
+      have hcsN := sizeOf_children_lt hst
+      have hdsN := sizeOf_children_lt hss
+      exact eqv_node_iff.mpr ⟨hab.symm, eqvMulti_of_rel ih.1 ih.2 hdsN hcsN
+        (Multiset.rel_symm_on (fun x hx y hy => ih.1 x y (hcsN x hx) (hdsN y hy))
+          (rel_of_eqvMulti hmulti))⟩
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ ⟨c, es⟩ hst hss hsu hts hsu'
-      rw [eqv_node_iff] at hts
-      obtain ⟨hab, hm1⟩ := hts
-      rw [eqv_node_iff] at hsu'
-      obtain ⟨hbc, hm2⟩ := hsu'
-      have hcsN : ∀ x ∈ cs, sizeOf x < N := fun x hx =>
-        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hst)
-      have hdsN : ∀ x ∈ ds, sizeOf x < N := fun x hx =>
-        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hss)
-      have hesN : ∀ x ∈ es, sizeOf x < N := fun x hx =>
-        lt_of_lt_of_le (sizeOf_lt_of_mem hx) (Nat.lt_succ_iff.mp hsu)
-      rw [eqv_node_iff]
-      refine ⟨hab.trans hbc, eqvMulti_of_rel ih.1 ih.2 hcsN hesN (Multiset.rel_trans_on ?_
-        (rel_of_eqvMulti hm1) (rel_of_eqvMulti hm2))⟩
-      exact fun x hx y hy z hz => ih.2 x y z (hcsN x (Multiset.mem_coe.mp hx))
-        (hdsN y (Multiset.mem_coe.mp hy)) (hesN z (Multiset.mem_coe.mp hz))
+      obtain ⟨hab, hm1⟩ := eqv_node_iff.mp hts
+      obtain ⟨hbc, hm2⟩ := eqv_node_iff.mp hsu'
+      have hcsN := sizeOf_children_lt hst
+      have hdsN := sizeOf_children_lt hss
+      have hesN := sizeOf_children_lt hsu
+      exact eqv_node_iff.mpr ⟨hab.trans hbc, eqvMulti_of_rel ih.1 ih.2 hcsN hesN
+        (Multiset.rel_trans_on
+          (fun x hx y hy z hz => ih.2 x y z (hcsN x hx) (hdsN y hy) (hesN z hz))
+          (rel_of_eqvMulti hm1) (rel_of_eqvMulti hm2))⟩
 
 /-- Symmetry of `eqv`. -/
 private theorem eqv_symm (h : eqv t s = true) : eqv s t = true :=
