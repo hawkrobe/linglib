@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
 
 /-!

@@ -1,6 +1,6 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Issue
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
 
 /-!

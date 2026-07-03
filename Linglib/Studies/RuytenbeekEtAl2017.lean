@@ -1,4 +1,4 @@
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Modality.Assert
 import Linglib.Fragments.French.Modals
 

@@ -1,4 +1,4 @@
-import Linglib.Discourse.SpeechAct.Basic
+import Linglib.Discourse.SpeechAct
 
 /-!
 # Layered Assertive Clauses
@@ -71,7 +71,7 @@ theorem strength_ordering :
 
     Each layer is independent: the epistemic status (JP) can vary without
     affecting the commitment strength (ComP), and vice versa. The actType
-    uses `IllocutionaryMood` from `Discourse/SpeechAct/Basic.lean`. -/
+    uses `IllocutionaryMood` from `Discourse/SpeechAct.lean`. -/
 structure LayeredAssertion (W : Type*) where
   /-- TP: the propositional content -/
   content : Set W
