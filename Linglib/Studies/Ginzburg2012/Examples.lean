@@ -1,4 +1,4 @@
-import Linglib.Discourse.Gameboard.InquiryCycle
+import Linglib.Studies.Ginzburg2012.InquiryCycle
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Semantics.Questions.Partition.QUD
 Public worked examples demonstrating the substrate operations on concrete
 inputs. Earlier these lived inline in `Gameboard/Rules.lean` as `private` defs;
 they are public here so consumers (study files, the TTR-typed counterpart
-in `Gameboard/Austinian.lean`) can reference them.
+in `Austinian.lean`) can reference them.
 
 ## Sections
 
@@ -21,7 +21,7 @@ in `Gameboard/Austinian.lean`) can reference them.
 The string-based examples use a generic `DecidableSupport String String`
 instance (string equality as answerhood), and instantiate Cont = String
 for utterance content (since the worked examples don't exercise the
-LocProp Pending pipeline). See `Gameboard/Austinian.lean` for the TTR-typed
+LocProp Pending pipeline). See `Austinian.lean` for the TTR-typed
 counterpart over `BCheckableAustinian S` and `TTRQuestionB R`.
 
 -/
