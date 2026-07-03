@@ -28,9 +28,10 @@ so concrete `Nonplanar` equalities close by `decide`.
 
 ## Implementation notes
 
-`eqvMulti` is the generic greedy matcher `List.isPermBy` at `eqv`
-(`eqvMulti_eq_isPermBy`); it is redefined mutually with `eqv` only so the termination
-checker sees the structural descent. Soundness and completeness of the matcher live
+`eqv.go` is the generic greedy matcher `List.isPermBy` at `eqv` (`go_eq_isPermBy`); it
+is re-inlined in the definition only so the recursion compiles structurally — kernel
+reduction (hence `decide`) needs `brecOn`, not `WellFounded.fix`, so the recursion cannot
+route through the opaque `isPermBy`. Soundness and completeness of the matcher live
 generically in `Core/Data/Multiset/Rel.lean`; what remains here is that `eqv` is an
 equivalence. Symmetry and transitivity of `eqv` are mutually entangled at the children
 level (completeness of the matcher needs both), so they are proven together by induction
@@ -48,61 +49,60 @@ variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s u : Ros
 
 /-! ### Deciding `PermEquiv`: equality up to child reordering -/
 
-mutual
 /-- `eqv t s` decides whether `t` and `s` are equal up to child reordering, i.e.
     `PermEquiv` (see `eqv_iff_permEquiv`): equal root values, and child lists matching as
     multisets under `eqv`. Computable from `DecidableEq α` alone. -/
 def eqv : RoseTree α → RoseTree α → Bool
-  | .node a cs, .node b ds => decide (a = b) && eqvMulti cs ds
-/-- Greedy multiset matching of child lists: `List.isPermBy eqv`, inlined for
-    termination. -/
-private def eqvMulti : List (RoseTree α) → List (RoseTree α) → Bool
-  | [], ds => ds.isEmpty
-  | c :: cs, ds =>
-    match ds.findIdx? (eqv c) with
-    | some i => eqvMulti cs (ds.eraseIdx i)
-    | none => false
-end
+  | .node a cs, .node b ds => decide (a = b) && go cs ds
+where
+  /-- Greedy multiset matching of child lists: `List.isPermBy eqv`, inlined so the
+      recursion compiles structurally. -/
+  go : List (RoseTree α) → List (RoseTree α) → Bool
+    | [], ds => ds.isEmpty
+    | c :: cs, ds =>
+      match ds.findIdx? (eqv c) with
+      | some i => go cs (ds.eraseIdx i)
+      | none => false
 
 /-! #### Correctness of the greedy matcher
 
-`eqvMulti` is `List.isPermBy eqv`, so the generic soundness and completeness of the
+`eqv.go` is `List.isPermBy eqv`, so the generic soundness and completeness of the
 greedy matcher (`Core/Data/Multiset/Rel.lean`) reduce both directions of
 `eqv_iff_permEquiv` to the equivalence properties of `eqv`. -/
 
 /-- `eqv` as a `Prop`-valued relation. -/
 private abbrev Eqv (c d : RoseTree α) : Prop := eqv c d = true
 
-/-- `eqvMulti` is the generic greedy matcher at `eqv`. -/
-private theorem eqvMulti_eq_isPermBy :
-    ∀ cs ds : List (RoseTree α), eqvMulti cs ds = List.isPermBy eqv cs ds
+/-- `eqv.go` is the generic greedy matcher at `eqv`. -/
+private theorem go_eq_isPermBy :
+    ∀ cs ds : List (RoseTree α), eqv.go cs ds = List.isPermBy eqv cs ds
   | [], _ => rfl
   | c :: cs, ds => by
-    rw [eqvMulti, List.isPermBy]
+    rw [eqv.go, List.isPermBy]
     cases ds.findIdx? (eqv c) with
     | none => rfl
-    | some i => exact eqvMulti_eq_isPermBy cs (ds.eraseIdx i)
+    | some i => exact go_eq_isPermBy cs (ds.eraseIdx i)
 
-/-- Soundness of `eqvMulti` against `Multiset.Rel`, hypothesis-free. -/
-private theorem rel_of_eqvMulti (h : eqvMulti cs ds = true) :
+/-- Soundness of `eqv.go` against `Multiset.Rel`, hypothesis-free. -/
+private theorem rel_of_go (h : eqv.go cs ds = true) :
     Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds :=
-  List.rel_of_isPermBy (eqvMulti_eq_isPermBy cs ds ▸ h)
+  List.rel_of_isPermBy (go_eq_isPermBy cs ds ▸ h)
 
-/-- Completeness of `eqvMulti` against `Multiset.Rel`, given symmetry and transitivity
+/-- Completeness of `eqv.go` against `Multiset.Rel`, given symmetry and transitivity
     of `eqv` on a predicate `P` covering the children. -/
-private theorem eqvMulti_of_rel {P : RoseTree α → Prop}
+private theorem go_of_rel {P : RoseTree α → Prop}
     (Ssymm : ∀ x y, P x → P y → eqv x y = true → eqv y x = true)
     (Strans : ∀ x y z, P x → P y → P z → eqv x y = true → eqv y z = true → eqv x z = true)
     (hPcs : ∀ x ∈ (↑cs : Multiset (RoseTree α)), P x)
     (hPds : ∀ x ∈ (↑ds : Multiset (RoseTree α)), P x)
-    (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqvMulti cs ds = true := by
-  rw [eqvMulti_eq_isPermBy]
+    (h : Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds) : eqv.go cs ds = true := by
+  rw [go_eq_isPermBy]
   exact List.isPermBy_of_rel Ssymm Strans (fun x hx => hPcs x (Multiset.mem_coe.mpr hx))
     (fun x hx => hPds x (Multiset.mem_coe.mpr hx)) h
 
-/-- `eqv` on two nodes: equal root values and children matching under `eqvMulti`. -/
+/-- `eqv` on two nodes: equal root values and children matching under `eqv.go`. -/
 private theorem eqv_node_iff {a b : α} :
-    eqv (.node a cs) (.node b ds) = true ↔ a = b ∧ eqvMulti cs ds = true := by
+    eqv (.node a cs) (.node b ds) = true ↔ a = b ∧ eqv.go cs ds = true := by
   rw [eqv, Bool.and_eq_true, decide_eq_true_eq]
 
 omit [DecidableEq α] in
@@ -130,25 +130,25 @@ private theorem eqv_symm_trans :
       obtain ⟨hab, hmulti⟩ := eqv_node_iff.mp hts
       have hcsN := sizeOf_children_lt hst
       have hdsN := sizeOf_children_lt hss
-      exact eqv_node_iff.mpr ⟨hab.symm, eqvMulti_of_rel ih.1 ih.2 hdsN hcsN
+      exact eqv_node_iff.mpr ⟨hab.symm, go_of_rel ih.1 ih.2 hdsN hcsN
         (Multiset.rel_symm_on (fun x hx y hy => ih.1 x y (hcsN x hx) (hdsN y hy))
-          (rel_of_eqvMulti hmulti))⟩
+          (rel_of_go hmulti))⟩
     · rintro ⟨a, cs⟩ ⟨b, ds⟩ ⟨c, es⟩ hst hss hsu hts hsu'
       obtain ⟨hab, hm1⟩ := eqv_node_iff.mp hts
       obtain ⟨hbc, hm2⟩ := eqv_node_iff.mp hsu'
       have hcsN := sizeOf_children_lt hst
       have hdsN := sizeOf_children_lt hss
       have hesN := sizeOf_children_lt hsu
-      exact eqv_node_iff.mpr ⟨hab.trans hbc, eqvMulti_of_rel ih.1 ih.2 hcsN hesN
+      exact eqv_node_iff.mpr ⟨hab.trans hbc, go_of_rel ih.1 ih.2 hcsN hesN
         (Multiset.rel_trans_on
           (fun x hx y hy z hz => ih.2 x y z (hcsN x hx) (hdsN y hy) (hesN z hz))
-          (rel_of_eqvMulti hm1) (rel_of_eqvMulti hm2))⟩
+          (rel_of_go hm1) (rel_of_go hm2))⟩
 
 /-- `eqv` is reflexive. -/
 private theorem eqv_refl (t : RoseTree α) : eqv t t = true := by
   induction t with
   | node a cs ih =>
-    rw [eqv_node_iff, eqvMulti_eq_isPermBy]
+    rw [eqv_node_iff, go_eq_isPermBy]
     exact ⟨rfl, List.isPermBy_refl cs ih⟩
 
 /-- `eqv` is an equivalence: `eqv_symm_trans` at a sum-of-sizes bound, plus structural
@@ -165,7 +165,7 @@ private theorem eqv_node_iff_rel {a b : α} :
     eqv (.node a cs) (.node b ds) = true ↔
       a = b ∧ Multiset.Rel Eqv (↑cs : Multiset (RoseTree α)) ↑ds :=
   eqv_node_iff.trans <| and_congr_right fun _ =>
-    ⟨rel_of_eqvMulti, eqvMulti_of_rel (P := fun _ => True)
+    ⟨rel_of_go, go_of_rel (P := fun _ => True)
       (fun _ _ _ _ => eqv_equivalence.symm) (fun _ _ _ _ _ _ => eqv_equivalence.trans)
       (fun _ _ => trivial) (fun _ _ => trivial)⟩
 
