@@ -2,8 +2,8 @@ import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Studies.KadmonLandman1993
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.BToM
+import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Discourse.CommonGround
-import Linglib.Tactics.RSAPredict
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUD.Basic
@@ -51,9 +51,11 @@ regions to restrictor monotonicity.
 
 While R&S argue *against* RSA as explaining default status (§2.1), DDRPs are
 compatible with RSA as the *selection mechanism*: the listener reasons over
-candidate DDRPs (= `Latent` in RSAConfig) to infer which domain restriction
-the speaker intended. With a cognitive-default prior biasing toward peripersonal
-scales, L1_latent infers the proximal restriction (§8).
+candidate DDRPs (the latent `SpatialScale` in the joint posterior) to infer
+which domain restriction the speaker intended. With a cognitive-default prior
+biasing toward peripersonal scales, the pragmatic listener's latent marginal
+infers the proximal restriction (§8). Predictions are checked by exact `PMF`
+evaluation on the `RSA.Canonical` pipeline.
 -/
 
 set_option autoImplicit false
@@ -62,6 +64,7 @@ namespace RitchieSchiller2024
 
 open Quantification (every_sem some_sem)
 open Quantification.DomainRestriction
+open scoped ENNReal
 
 -- ============================================================================
 -- §1. Domain Types
@@ -344,7 +347,11 @@ theorem ddprPrior_anti_mono {s₁ s₂ : SpatialScale} (h : s₁ ≤ s₂) :
 
     While R&S argue against RSA as explaining *default status* (§2.1), DDRPs
     are compatible with RSA as the *selection mechanism* once the candidate set
-    and prior are fixed by cognitive heuristics. -/
+    and prior are fixed by cognitive heuristics.
+
+    This `RSAConfig` is retained as the subject of the §9 BToM bridge (pending a
+    Canonical re-grounding); the five L1 predictions below now live on the
+    mathlib-PMF listeners `ddprListener`/`uniformListener`. -/
 noncomputable def domainRestrictionRSA : RSA.RSAConfig Utterance World where
   Latent := SpatialScale
   meaning _ scale u w := if utteranceMeaning scale u w then 1 else 0
@@ -357,31 +364,348 @@ noncomputable def domainRestrictionRSA : RSA.RSAConfig Utterance World where
   latentPrior_nonneg _ l := by cases l <;> simp only [ddprPrior, heuristicScore] <;> norm_num
   worldPrior_nonneg _ := by norm_num
 
+/-! ### PMF face: shared speaker, cognitive-default vs uniform joint priors
+
+The two listener variants below differ only in the latent prior, so they share
+one speaker: the literal listener is uniform on `utteranceMeaning scale u`'s
+world extension, and the speaker normalises literal informativity over the two
+utterances (α = 1, no cost). -/
+
+private theorem ext_nonempty (scale : SpatialScale) (u : Utterance) :
+    (RSA.extensionOf (utteranceMeaning scale) u).Nonempty := by
+  cases scale <;> cases u <;> decide
+
+/-- Per-scale literal listener: uniform on the utterance's world extension. -/
+noncomputable def L0 : SpatialScale → Utterance → PMF World :=
+  RSA.Canonical.L0OfBool utteranceMeaning ext_nonempty
+
+private theorem some_always_true (w : World) (l : SpatialScale) :
+    utteranceMeaning l .someEmpty w = true := by
+  cases w <;> cases l <;> decide
+
+noncomputable instance : RSA.Canonical.ViableSpeaker (RSA.Canonical.powUtility 1 L0) :=
+  RSA.Canonical.viableSpeaker_powUtility_of_witness 1 L0 fun s =>
+    ⟨.someEmpty, RSA.Canonical.L0OfBool_ne_zero utteranceMeaning ext_nonempty
+      (some_always_true s.1 s.2)⟩
+
+/-- Shared pragmatic speaker `S(w, scale) ∝ L0(w | ·, scale)` (α = 1, no cost). -/
+noncomputable def S : World × SpatialScale → PMF Utterance :=
+  RSA.Canonical.S1 (RSA.Canonical.powUtility 1 L0)
+
+/-- Unnormalised speaker weight at a true utterance: `|ext(scale, u)|⁻¹`. -/
+private theorem pw_true {l : SpatialScale} {u : Utterance} {w : World} {k : ℕ}
+    (h : utteranceMeaning l u w = true)
+    (hk : (RSA.extensionOf (utteranceMeaning l) u).card = k) :
+    RSA.Canonical.powWeight 1 L0 (w, l) u = ENNReal.ofReal (k : ℝ)⁻¹ := by
+  have hpos : 0 < k := hk ▸ Finset.card_pos.mpr ⟨w, RSA.mem_extensionOf.mpr h⟩
+  simp only [L0]
+  rw [RSA.Canonical.powWeight_L0OfBool_of_mem utteranceMeaning ext_nonempty k h hk, pow_one,
+    ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos), ENNReal.ofReal_natCast]
+
+private theorem pw_false {l : SpatialScale} {u : Utterance} {w : World}
+    (h : utteranceMeaning l u w = false) :
+    RSA.Canonical.powWeight 1 L0 (w, l) u = ENNReal.ofReal 0 := by
+  rw [ENNReal.ofReal_zero]
+  simp only [L0]
+  exact RSA.Canonical.powWeight_L0OfBool_of_not_mem utteranceMeaning ext_nonempty
+    one_ne_zero (by rw [h]; decide)
+
+private theorem sumU (f : Utterance → ℝ≥0∞) :
+    ∑' u, f u = f .everyEmpty + f .someEmpty := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Utterance) = {.everyEmpty, .someEmpty} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+
+/-- Normalised speaker mass at a true utterance, as an exact rational. -/
+private theorem S_val {l : SpatialScale} {u : Utterance} {w : World} {k : ℕ} {z q : ℝ}
+    (h : utteranceMeaning l u w = true)
+    (hk : (RSA.extensionOf (utteranceMeaning l) u).card = k) (hz : 0 < z)
+    (hZ : (∑' u', RSA.Canonical.powWeight 1 L0 (w, l) u') = ENNReal.ofReal z)
+    (hq : (k : ℝ)⁻¹ / z = q) :
+    S (w, l) u = ENNReal.ofReal q := by
+  unfold S
+  rw [RSA.Canonical.S1_powUtility_eq_normalize, PMF.normalize_apply, pw_true h hk, hZ,
+    ← ENNReal.ofReal_inv_of_pos hz, ← ENNReal.ofReal_mul (by positivity), ← div_eq_mul_inv, hq]
+
+/-- Normalised speaker mass at a false utterance: `0`. -/
+private theorem S_zero {l : SpatialScale} {u : Utterance} {w : World}
+    (h : utteranceMeaning l u w = false) : S (w, l) u = 0 := by
+  unfold S
+  rw [RSA.Canonical.S1_powUtility_eq_normalize, PMF.normalize_apply, pw_false h,
+    ENNReal.ofReal_zero, zero_mul]
+
+/-- The speaker never assigns zero mass to a true utterance. -/
+private theorem S_ne_zero {l : SpatialScale} {u : Utterance} {w : World}
+    (h : utteranceMeaning l u w = true) : S (w, l) u ≠ 0 := by
+  have hpos : 0 < (RSA.extensionOf (utteranceMeaning l) u).card :=
+    Finset.card_pos.mpr ⟨w, RSA.mem_extensionOf.mpr h⟩
+  unfold S
+  rw [RSA.Canonical.S1_powUtility_eq_normalize, ← PMF.mem_support_iff,
+    PMF.mem_support_normalize_iff, pw_true h rfl, ne_eq, ENNReal.ofReal_eq_zero, not_le]
+  exact inv_pos.mpr (by exact_mod_cast hpos)
+
+/-! Partition sums `Z(w, scale) = Σ_u |ext(scale, u)|⁻¹` over the two
+utterances (extension cards — everyEmpty: peripersonal 3, action 2, vista 1;
+someEmpty: 3 at every scale): peripersonal `2/3` everywhere; action `1/3` at
+`nearEmpty`, else `5/6`; vista `1/3` except `4/3` at `allEmpty`. -/
+
+private theorem Z_near_peri :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.nearEmpty, .peripersonal) u')
+      = ENNReal.ofReal (2/3) := by
+  rw [sumU, pw_true (k := 3) (by decide) (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_mid_peri :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.midEmpty, .peripersonal) u')
+      = ENNReal.ofReal (2/3) := by
+  rw [sumU, pw_true (k := 3) (by decide) (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_all_peri :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.allEmpty, .peripersonal) u')
+      = ENNReal.ofReal (2/3) := by
+  rw [sumU, pw_true (k := 3) (by decide) (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_near_action :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.nearEmpty, .action) u')
+      = ENNReal.ofReal (1/3) := by
+  rw [sumU, pw_false (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_mid_action :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.midEmpty, .action) u')
+      = ENNReal.ofReal (5/6) := by
+  rw [sumU, pw_true (k := 2) (by decide) (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_all_action :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.allEmpty, .action) u')
+      = ENNReal.ofReal (5/6) := by
+  rw [sumU, pw_true (k := 2) (by decide) (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_near_vista :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.nearEmpty, .vista) u')
+      = ENNReal.ofReal (1/3) := by
+  rw [sumU, pw_false (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_mid_vista :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.midEmpty, .vista) u')
+      = ENNReal.ofReal (1/3) := by
+  rw [sumU, pw_false (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem Z_all_vista :
+    (∑' u', RSA.Canonical.powWeight 1 L0 (.allEmpty, .vista) u')
+      = ENNReal.ofReal (4/3) := by
+  rw [sumU, pw_true (k := 1) (by decide) (by decide), pw_true (k := 3) (by decide) (by decide),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem sumW (f : World → ℝ≥0∞) :
+    ∑ w, f w = f .nearEmpty + f .midEmpty + f .allEmpty := by
+  rw [show (Finset.univ : Finset World) = {.nearEmpty, .midEmpty, .allEmpty} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+/-! Speaker-mass values `S(w, scale) u` (exact rationals): every — `1/2` at
+peripersonal, `3/5` at action (mid/all), `3/4` at vista (all), else `0`;
+some — `1/2` at peripersonal, `1, 2/5, 2/5` at action, `1, 1, 1/4` at vista. -/
+
+private theorem s_near_peri_every :
+    S (.nearEmpty, .peripersonal) .everyEmpty = ENNReal.ofReal (1/2) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_near_peri (by norm_num)
+private theorem s_mid_peri_every :
+    S (.midEmpty, .peripersonal) .everyEmpty = ENNReal.ofReal (1/2) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_mid_peri (by norm_num)
+private theorem s_all_peri_every :
+    S (.allEmpty, .peripersonal) .everyEmpty = ENNReal.ofReal (1/2) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_all_peri (by norm_num)
+private theorem s_mid_action_every :
+    S (.midEmpty, .action) .everyEmpty = ENNReal.ofReal (3/5) :=
+  S_val (k := 2) (by decide) (by decide) (by norm_num) Z_mid_action (by norm_num)
+private theorem s_all_action_every :
+    S (.allEmpty, .action) .everyEmpty = ENNReal.ofReal (3/5) :=
+  S_val (k := 2) (by decide) (by decide) (by norm_num) Z_all_action (by norm_num)
+private theorem s_all_vista_every :
+    S (.allEmpty, .vista) .everyEmpty = ENNReal.ofReal (3/4) :=
+  S_val (k := 1) (by decide) (by decide) (by norm_num) Z_all_vista (by norm_num)
+private theorem s_near_peri_some :
+    S (.nearEmpty, .peripersonal) .someEmpty = ENNReal.ofReal (1/2) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_near_peri (by norm_num)
+private theorem s_mid_peri_some :
+    S (.midEmpty, .peripersonal) .someEmpty = ENNReal.ofReal (1/2) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_mid_peri (by norm_num)
+private theorem s_all_peri_some :
+    S (.allEmpty, .peripersonal) .someEmpty = ENNReal.ofReal (1/2) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_all_peri (by norm_num)
+private theorem s_near_action_some :
+    S (.nearEmpty, .action) .someEmpty = ENNReal.ofReal 1 :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_near_action (by norm_num)
+private theorem s_mid_action_some :
+    S (.midEmpty, .action) .someEmpty = ENNReal.ofReal (2/5) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_mid_action (by norm_num)
+private theorem s_all_action_some :
+    S (.allEmpty, .action) .someEmpty = ENNReal.ofReal (2/5) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_all_action (by norm_num)
+private theorem s_near_vista_some :
+    S (.nearEmpty, .vista) .someEmpty = ENNReal.ofReal 1 :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_near_vista (by norm_num)
+private theorem s_mid_vista_some :
+    S (.midEmpty, .vista) .someEmpty = ENNReal.ofReal 1 :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_mid_vista (by norm_num)
+private theorem s_all_vista_some :
+    S (.allEmpty, .vista) .someEmpty = ENNReal.ofReal (1/4) :=
+  S_val (k := 3) (by decide) (by decide) (by norm_num) Z_all_vista (by norm_num)
+
+/-! Pooled world-sums of speaker mass per scale (the latent-comparison
+residues): every — peripersonal `3/2`, action `6/5`, vista `3/4`;
+some — peripersonal `3/2`, action `9/5`, vista `9/4`. -/
+
+private theorem sum_every_peri :
+    (∑ w : World, S (w, .peripersonal) .everyEmpty) = ENNReal.ofReal (3/2) := by
+  rw [sumW, s_near_peri_every, s_mid_peri_every, s_all_peri_every,
+    ← ENNReal.ofReal_add (by positivity) (by positivity),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem sum_every_action :
+    (∑ w : World, S (w, .action) .everyEmpty) = ENNReal.ofReal (6/5) := by
+  rw [sumW, S_zero (by decide), s_mid_action_every, s_all_action_every,
+    zero_add, ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem sum_every_vista :
+    (∑ w : World, S (w, .vista) .everyEmpty) = ENNReal.ofReal (3/4) := by
+  rw [sumW, S_zero (by decide), S_zero (by decide), s_all_vista_every,
+    zero_add, zero_add]
+
+private theorem sum_some_peri :
+    (∑ w : World, S (w, .peripersonal) .someEmpty) = ENNReal.ofReal (3/2) := by
+  rw [sumW, s_near_peri_some, s_mid_peri_some, s_all_peri_some,
+    ← ENNReal.ofReal_add (by positivity) (by positivity),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem sum_some_action :
+    (∑ w : World, S (w, .action) .someEmpty) = ENNReal.ofReal (9/5) := by
+  rw [sumW, s_near_action_some, s_mid_action_some, s_all_action_some,
+    ← ENNReal.ofReal_add (by positivity) (by positivity),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+private theorem sum_some_vista :
+    (∑ w : World, S (w, .vista) .someEmpty) = ENNReal.ofReal (9/4) := by
+  rw [sumW, s_near_vista_some, s_mid_vista_some, s_all_vista_some,
+    ← ENNReal.ofReal_add (by positivity) (by positivity),
+    ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  congr 1; norm_num
+
+/-! ### Listeners -/
+
+private theorem ddprW_tsum_ne_zero :
+    (∑' s : World × SpatialScale, ENNReal.ofReal (ddprPrior s.2)) ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr
+    ⟨(.nearEmpty, .peripersonal),
+      (ENNReal.ofReal_pos.mpr (by norm_num [ddprPrior, heuristicScore])).ne'⟩
+
+private theorem ddprW_tsum_ne_top :
+    (∑' s : World × SpatialScale, ENNReal.ofReal (ddprPrior s.2)) ≠ ⊤ := by
+  rw [tsum_fintype]
+  exact ENNReal.sum_ne_top.mpr fun s _ => ENNReal.ofReal_ne_top
+
+/-- Cognitive-default joint prior: uniform over worlds (the constant world
+factor is absorbed by normalisation), `ddprPrior` over scales. -/
+noncomputable def ddprJoint : PMF (World × SpatialScale) :=
+  PMF.normalize (fun s => ENNReal.ofReal (ddprPrior s.2)) ddprW_tsum_ne_zero ddprW_tsum_ne_top
+
+private theorem ddprJoint_ne_zero {s : World × SpatialScale}
+    (h : ENNReal.ofReal (ddprPrior s.2) ≠ 0) : ddprJoint s ≠ 0 := by
+  rw [ddprJoint, ← PMF.mem_support_iff, PMF.mem_support_normalize_iff]
+  exact h
+
+theorem ddpr_marg_every : PMF.marginal S ddprJoint .everyEmpty ≠ 0 :=
+  PMF.marginal_ne_zero S ddprJoint _ (a := (.allEmpty, .peripersonal))
+    (ddprJoint_ne_zero (ENNReal.ofReal_pos.mpr (by norm_num [ddprPrior, heuristicScore])).ne')
+    (S_ne_zero (by decide))
+
+theorem ddpr_marg_some : PMF.marginal S ddprJoint .someEmpty ≠ 0 :=
+  PMF.marginal_ne_zero S ddprJoint _ (a := (.allEmpty, .peripersonal))
+    (ddprJoint_ne_zero (ENNReal.ofReal_pos.mpr (by norm_num [ddprPrior, heuristicScore])).ne')
+    (S_ne_zero (by decide))
+
+/-- Pragmatic listener over the cognitive-default joint prior. -/
+noncomputable def ddprListener (u : Utterance) (h : PMF.marginal S ddprJoint u ≠ 0) :
+    PMF (World × SpatialScale) :=
+  RSA.Canonical.L1 S ddprJoint u h
+
+private theorem sum_scaled (c z : ℝ≥0∞) (f : World → ℝ≥0∞) :
+    (∑ w : World, c * z * f w) = z * (c * ∑ w : World, f w) := by
+  rw [Finset.mul_sum, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun w _ => by ring
+
+/-- The cognitive-default latent preference reduces to prior-weighted pooled
+speaker sums — the normalisation constant cancels. -/
+private theorem ddprListener_snd_lt (u : Utterance)
+    (h : PMF.marginal S ddprJoint u ≠ 0) (l₁ l₂ : SpatialScale) :
+    (ddprListener u h).snd l₁ < (ddprListener u h).snd l₂ ↔
+      ENNReal.ofReal (ddprPrior l₁) * (∑ w : World, S (w, l₁) u) <
+        ENNReal.ofReal (ddprPrior l₂) * (∑ w : World, S (w, l₂) u) := by
+  unfold ddprListener
+  rw [RSA.Canonical.L1_latent_prefers_iff]
+  simp only [ddprJoint, PMF.normalize_apply]
+  rw [sum_scaled, sum_scaled]
+  exact ENNReal.mul_lt_mul_iff_right
+    (ENNReal.inv_ne_zero.mpr ddprW_tsum_ne_top)
+    (ENNReal.inv_ne_top.mpr ddprW_tsum_ne_zero)
+
 /-- **L1_latent peripersonal > action**: The listener infers peripersonal as
     the most likely intended domain restriction, beating the action-space
     scale. This captures R&S's core claim: cognitive-default priors biasing
     toward proximal scales cause the listener to default to the nearest
     restriction. -/
 theorem L1_latent_peripersonal_gt_action :
-    domainRestrictionRSA.L1_latent .everyEmpty .peripersonal >
-    domainRestrictionRSA.L1_latent .everyEmpty .action := by
-  rsa_predict
+    (ddprListener .everyEmpty ddpr_marg_every).snd .peripersonal >
+    (ddprListener .everyEmpty ddpr_marg_every).snd .action := by
+  rw [gt_iff_lt, ddprListener_snd_lt, sum_every_action, sum_every_peri,
+    ← ENNReal.ofReal_mul (by norm_num [ddprPrior, heuristicScore]),
+    ← ENNReal.ofReal_mul (by norm_num [ddprPrior, heuristicScore]),
+    ENNReal.ofReal_lt_ofReal_iff (by norm_num [ddprPrior, heuristicScore])]
+  norm_num [ddprPrior, heuristicScore]
 
 /-- **L1_latent action > vista**: The action scale is preferred over vista,
     showing the full ordering: peripersonal > action > vista. -/
 theorem L1_latent_action_gt_vista :
-    domainRestrictionRSA.L1_latent .everyEmpty .action >
-    domainRestrictionRSA.L1_latent .everyEmpty .vista := by
-  rsa_predict
+    (ddprListener .everyEmpty ddpr_marg_every).snd .action >
+    (ddprListener .everyEmpty ddpr_marg_every).snd .vista := by
+  rw [gt_iff_lt, ddprListener_snd_lt, sum_every_vista, sum_every_action,
+    ← ENNReal.ofReal_mul (by norm_num [ddprPrior, heuristicScore]),
+    ← ENNReal.ofReal_mul (by norm_num [ddprPrior, heuristicScore]),
+    ENNReal.ofReal_lt_ofReal_iff (by norm_num [ddprPrior, heuristicScore])]
+  norm_num [ddprPrior, heuristicScore]
 
 /-- For "some bottle is empty", the cognitive-default prior overrides the
     semantic signal: peripersonal is inferred as the most likely scale despite
     ⟦some⟧ being true under all scales in all worlds. Without the prior,
     RSA predicts the WRONG ordering (see `uniform_some_distal_wins`). -/
 theorem L1_latent_some_peripersonal_gt_action :
-    domainRestrictionRSA.L1_latent .someEmpty .peripersonal >
-    domainRestrictionRSA.L1_latent .someEmpty .action := by
-  rsa_predict
+    (ddprListener .someEmpty ddpr_marg_some).snd .peripersonal >
+    (ddprListener .someEmpty ddpr_marg_some).snd .action := by
+  rw [gt_iff_lt, ddprListener_snd_lt, sum_some_action, sum_some_peri,
+    ← ENNReal.ofReal_mul (by norm_num [ddprPrior, heuristicScore]),
+    ← ENNReal.ofReal_mul (by norm_num [ddprPrior, heuristicScore]),
+    ENNReal.ofReal_lt_ofReal_iff (by norm_num [ddprPrior, heuristicScore])]
+  norm_num [ddprPrior, heuristicScore]
 
 -- ============================================================================
 -- §8b. R&S §2.1: RSA with Uniform Priors Cannot Explain Defaults
@@ -407,18 +731,41 @@ theorem L1_latent_some_peripersonal_gt_action :
     not on cognitive structure, so RSA alone doesn't explain the cross-quantifier
     generalization that proximal restrictions are always preferred. -/
 
-/-- RSA model with uniform latent prior (no cognitive bias).
-    Identical to `domainRestrictionRSA` except `latentPrior _ _ = 1`. -/
-noncomputable def uniformPriorRSA : RSA.RSAConfig Utterance World where
-  Latent := SpatialScale
-  meaning _ scale u w := if utteranceMeaning scale u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> norm_num
-  s1Score l0 α _ w u := (l0 u w) ^ α
-  s1Score_nonneg _ _ _ _ _ h_nn h_pos := Real.rpow_nonneg (h_nn _ _) _
-  α := 1
-  α_pos := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
-  worldPrior_nonneg _ := by norm_num
+theorem unif_marg_every :
+    PMF.marginal S (PMF.uniformOfFintype (World × SpatialScale)) .everyEmpty ≠ 0 :=
+  PMF.marginal_ne_zero S _ _ (a := (.allEmpty, .peripersonal))
+    (((PMF.uniformOfFintype (World × SpatialScale)).mem_support_iff _).mp
+      (PMF.mem_support_uniformOfFintype _))
+    (S_ne_zero (by decide))
+
+theorem unif_marg_some :
+    PMF.marginal S (PMF.uniformOfFintype (World × SpatialScale)) .someEmpty ≠ 0 :=
+  PMF.marginal_ne_zero S _ _ (a := (.allEmpty, .peripersonal))
+    (((PMF.uniformOfFintype (World × SpatialScale)).mem_support_iff _).mp
+      (PMF.mem_support_uniformOfFintype _))
+    (S_ne_zero (by decide))
+
+/-- Pragmatic listener with a uniform latent prior (no cognitive bias):
+same speaker as `ddprListener`, uniform joint. -/
+noncomputable def uniformListener (u : Utterance)
+    (h : PMF.marginal S (PMF.uniformOfFintype (World × SpatialScale)) u ≠ 0) :
+    PMF (World × SpatialScale) :=
+  RSA.Canonical.L1 S (PMF.uniformOfFintype _) u h
+
+/-- The uniform-prior latent preference reduces to bare pooled speaker sums. -/
+private theorem uniformListener_snd_lt (u : Utterance)
+    (h : PMF.marginal S (PMF.uniformOfFintype (World × SpatialScale)) u ≠ 0)
+    (l₁ l₂ : SpatialScale) :
+    (uniformListener u h).snd l₁ < (uniformListener u h).snd l₂ ↔
+      (∑ w : World, S (w, l₁) u) < ∑ w : World, S (w, l₂) u := by
+  unfold uniformListener
+  rw [RSA.Canonical.L1_latent_prefers_iff]
+  simp only [PMF.uniformOfFintype_apply]
+  rw [← Finset.mul_sum, ← Finset.mul_sum]
+  exact ENNReal.mul_lt_mul_iff_right
+    (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top (Fintype.card (World × SpatialScale))))
+    (ENNReal.inv_ne_top.mpr
+      (Nat.cast_ne_zero.mpr (Fintype.card_ne_zero (α := World × SpatialScale))))
 
 /-- R&S §2.1: With uniform priors, RSA still predicts peripersonal for
     ⟦every⟧ — but only because the literal semantics does the work (⟦every⟧
@@ -426,9 +773,11 @@ noncomputable def uniformPriorRSA : RSA.RSAConfig Utterance World where
     probability to narrower scales). This is a semantic accident, not a
     cognitive explanation. -/
 theorem uniform_every_still_proximal :
-    uniformPriorRSA.L1_latent .everyEmpty .peripersonal >
-    uniformPriorRSA.L1_latent .everyEmpty .action := by
-  rsa_predict
+    (uniformListener .everyEmpty unif_marg_every).snd .peripersonal >
+    (uniformListener .everyEmpty unif_marg_every).snd .action := by
+  rw [gt_iff_lt, uniformListener_snd_lt, sum_every_action, sum_every_peri,
+    ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+  norm_num
 
 /-- R&S §2.1: With uniform priors, RSA predicts the WRONG ordering for
     ⟦some⟧ — the listener infers vista as most likely, not peripersonal.
@@ -436,9 +785,11 @@ theorem uniform_every_still_proximal :
     the only true utterance when ⟦every⟧ is false), yielding higher L0.
     Cognitive-default priors (`ddprPrior`) are needed to override this. -/
 theorem uniform_some_distal_wins :
-    uniformPriorRSA.L1_latent .someEmpty .vista >
-    uniformPriorRSA.L1_latent .someEmpty .peripersonal := by
-  rsa_predict
+    (uniformListener .someEmpty unif_marg_some).snd .vista >
+    (uniformListener .someEmpty unif_marg_some).snd .peripersonal := by
+  rw [gt_iff_lt, uniformListener_snd_lt, sum_some_peri, sum_some_vista,
+    ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+  norm_num
 
 -- ============================================================================
 -- §9. Perception & Common Ground

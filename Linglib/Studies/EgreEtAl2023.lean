@@ -1,6 +1,5 @@
 import Linglib.Core.Probability.Choice.RationalAction
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Tactics.RSAPredict
+import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.Linarith
@@ -35,6 +34,8 @@ LU models cannot derive the triangular shape.
 -/
 
 namespace EgreEtAl2023
+
+open scoped ENNReal
 
 -- ============================================================================
 -- Section I: Empirical Data
@@ -465,7 +466,7 @@ theorem sorites_cumulative :
   native_decide
 
 -- ============================================================================
--- RSAConfig: BIR Literal Listener + KL-Divergence Speaker (Section 6)
+-- RSA model: BIR Literal Listener + KL-Divergence Speaker (Section 6)
 -- ============================================================================
 
 /-- Message alternatives for the RSA model. -/
@@ -491,44 +492,149 @@ noncomputable def speakerBeliefR (observed w : Value) : ℝ :=
             else w.toNat - observed.toNat
   if d ≤ 1 then ((2 - d : ℕ) : ℝ) else 0
 
-open RSA in
-/-- RSA model for imprecision: BIR + KL-divergence speaker.
+/-! RSA model for imprecision: BIR + KL-divergence speaker, on the mathlib-PMF
+face. **L0** = BIR (Bayesian Interpretation Rule): the graded meaning,
+normalised by `RSA.L0OfMeaning`, gives the triangular "around" posterior
+matching `birWeight`. **S1** = KL speaker via `RSA.softmaxBelief`: the speaker
+with peaked beliefs chooses the message whose L0 posterior best matches those
+beliefs, measured by expected log-likelihood (= negative KL divergence up to
+constant entropy). The quality gate `qOk` zeroes messages whose L0 posterior
+misses part of the belief support — the paper's `exp(-∞) = 0` (WebPPL)
+behaviour, which Lean's junk `Real.log 0 = 0` would otherwise not reproduce. -/
 
-**L0** = BIR (Bayesian Interpretation Rule): graded meaning gives the
-triangular "around" posterior after normalization, matching `birWeight`.
+/-- Graded meaning lifted to `ℝ≥0∞`: triangular BIR weights for "around 3",
+Boolean indicators for the precise alternatives. -/
+noncomputable def meaningE : Utt → Value → ℝ≥0∞
+  | .around3, w => (aroundWeight w : ℝ≥0∞)
+  | .between0_6, w => if betweenMeaning 0 6 w then 1 else 0
+  | .between1_5, w => if betweenMeaning 1 5 w then 1 else 0
+  | .between2_4, w => if betweenMeaning 2 4 w then 1 else 0
+  | .exactly3, w => if exactlyMeaning 3 w then 1 else 0
 
-**S1** = KL speaker: the speaker with peaked beliefs chooses the message
-whose L0 posterior best matches those beliefs, measured by expected
-log-likelihood (= negative KL divergence up to constant entropy,
-the inlined `klFinite_eq_negEntropy_sub_crossEntropy` algebra). -/
-noncomputable def cfg : RSAConfig Utt Value where
-  Latent := Unit
-  meaning _ _ u w := match u with
-    | .around3 => (aroundWeight w : ℝ)
-    | .between0_6 => if betweenMeaning 0 6 w then 1 else 0
-    | .between1_5 => if betweenMeaning 1 5 w then 1 else 0
-    | .between2_4 => if betweenMeaning 2 4 w then 1 else 0
-    | .exactly3 => if exactlyMeaning 3 w then 1 else 0
-  meaning_nonneg _ _ u w := by
-    cases u
-    · exact Nat.cast_nonneg _
-    all_goals (split <;> positivity)
-  s1Score l0 α _ w u :=
-    Real.exp (α * ∑ w' : Value, speakerBeliefR w w' * Real.log (l0 u w'))
-  s1Score_nonneg _ _ _ _ _ _ _ := le_of_lt (Real.exp_pos _)
-  α := 1
-  α_pos := one_pos
-  latentPrior_nonneg _ _ := by positivity
-  worldPrior_nonneg _ := by positivity
+/-- Positivity of the graded meaning, as decidable data. -/
+def mPos : Utt → Value → Bool
+  | .around3, _ => true
+  | .between0_6, w => betweenMeaning 0 6 w
+  | .between1_5, w => betweenMeaning 1 5 w
+  | .between2_4, w => betweenMeaning 2 4 w
+  | .exactly3, w => exactlyMeaning 3 w
+
+private theorem sumV (f : Value → ℝ≥0∞) :
+    ∑' w, f w = f .v0 + f .v1 + f .v2 + f .v3 + f .v4 + f .v5 + f .v6 := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Value) = {.v0, .v1, .v2, .v3, .v4, .v5, .v6} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem sumE_ne_zero (u : Utt) : (∑' w, meaningE u w) ≠ 0 := by
+  intro h
+  have h3 := ENNReal.tsum_eq_zero.mp h Value.v3
+  cases u <;> simp [meaningE, aroundWeight, betweenMeaning, exactlyMeaning, Value.toNat] at h3
+
+private theorem sumE_ne_top (u : Utt) : (∑' w, meaningE u w) ≠ ⊤ := by
+  rw [tsum_fintype]
+  refine ENNReal.sum_ne_top.mpr fun w _ => ?_
+  cases u <;> cases w <;>
+    simp [meaningE, aroundWeight, betweenMeaning, exactlyMeaning, Value.toNat]
+
+/-- Literal listener (BIR): the graded meaning normalised over values. -/
+noncomputable def L0 (u : Utt) : PMF Value :=
+  RSA.L0OfMeaning meaningE u (sumE_ne_zero u) (sumE_ne_top u)
+
+/-- The literal posterior as real values — the `softmaxBelief` lexicon. -/
+noncomputable def lex (u : Utt) (w : Value) : ℝ := (L0 u w).toReal
+
+/-- Quality gate: the message's literal posterior covers the belief support
+(`|obs − w| ≤ 1`). Decidable, so `softmaxBelief`'s filter can fire. -/
+def qOk (obs : Value) (u : Utt) : Bool :=
+  decide (∀ w : Value,
+    (if obs.toNat ≥ w.toNat then obs.toNat - w.toNat else w.toNat - obs.toNat) ≤ 1 →
+      mPos u w = true)
+
+/-- KL-speaker score: expected log-likelihood of the literal posterior under
+the peaked speaker belief, quality-gated (α = 1). -/
+noncomputable def s1Score (obs : Value) : Utt → ℝ≥0∞ :=
+  RSA.softmaxBelief lex (speakerBeliefR obs) 1 (fun u => qOk obs u = true)
+
+private theorem qOk_around3 (obs : Value) : qOk obs .around3 = true := by
+  cases obs <;> rfl
+
+/-- Pragmatic speaker: the KL-speaker scores normalised over messages. -/
+noncomputable def S1 (obs : Value) : PMF Utt :=
+  PMF.normalize (s1Score obs)
+    (RSA.softmaxBelief_tsum_ne_zero_of_witness (qOk_around3 obs))
+    (RSA.softmaxBelief_tsum_ne_top _ _ _ _)
+
+/-! Literal-posterior values on the belief support of `v3` (`{v2, v3, v4}`):
+"around 3" gives the triangular `3/16, 4/16, 3/16`; "between 0 and 6" is flat
+at `1/7`. -/
+
+private theorem L0_around3 (w : Value) :
+    L0 .around3 w = (aroundWeight w : ℝ≥0∞) * 16⁻¹ := by
+  rw [L0, RSA.L0OfMeaning_apply, sumV]
+  simp only [meaningE, aroundWeight]
+  norm_num
+
+private theorem L0_between0_6 (w : Value) : L0 .between0_6 w = 7⁻¹ := by
+  rw [L0, RSA.L0OfMeaning_apply, sumV]
+  cases w <;>
+    simp [meaningE, betweenMeaning, Value.toNat] <;> norm_num
+
+private theorem lex_around3 {w : Value} {k : ℕ} (hk : aroundWeight w = k) :
+    lex .around3 w = (k : ℝ) / 16 := by
+  rw [lex, L0_around3, hk, show ((16 : ℝ≥0∞))⁻¹ = ENNReal.ofReal (16 : ℝ)⁻¹ from by
+      rw [ENNReal.ofReal_inv_of_pos (by norm_num), ENNReal.ofReal_ofNat],
+    show ((k : ℝ≥0∞)) = ENNReal.ofReal (k : ℝ) from (ENNReal.ofReal_natCast k).symm,
+    ← ENNReal.ofReal_mul (by positivity), ENNReal.toReal_ofReal (by positivity)]
+  ring
+
+private theorem lex_between0_6 (w : Value) : lex .between0_6 w = 1 / 7 := by
+  rw [lex, L0_between0_6, show ((7 : ℝ≥0∞))⁻¹ = ENNReal.ofReal (7 : ℝ)⁻¹ from by
+      rw [ENNReal.ofReal_inv_of_pos (by norm_num), ENNReal.ofReal_ofNat],
+    ENNReal.toReal_ofReal (by norm_num)]
+  norm_num
+
+private theorem sumVR (f : Value → ℝ) :
+    ∑ w, f w = f .v0 + f .v1 + f .v2 + f .v3 + f .v4 + f .v5 + f .v6 := by
+  rw [show (Finset.univ : Finset Value) = {.v0, .v1, .v2, .v3, .v4, .v5, .v6} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
 
 /-- Speaker with peaked belief at v3 prefers "around 3" over "between 0 6".
 
 "Around 3" produces a triangular L0 posterior peaked at v3, which
 better matches the speaker's peaked belief via KL divergence.
 "Between 0 6" produces a flat L0 posterior that wastes probability
-mass on values far from v3. -/
+mass on values far from v3: `(1/7)⁴ < (3/16)²·(1/4)²`. -/
 theorem s1_prefers_around_peaked :
-    cfg.S1 () .v3 .around3 > cfg.S1 () .v3 .between0_6 := by rsa_predict
+    S1 .v3 .around3 > S1 .v3 .between0_6 := by
+  rw [gt_iff_lt, S1, PMF.normalize_lt_iff_lt, s1Score, RSA.softmaxBelief,
+    if_pos (show qOk .v3 .between0_6 = true from rfl), RSA.softmaxBelief,
+    if_pos (show qOk .v3 .around3 = true from rfl)]
+  rw [ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _), Real.exp_lt_exp, one_mul, one_mul,
+    sumVR, sumVR, lex_between0_6, lex_between0_6, lex_between0_6, lex_between0_6,
+    lex_between0_6, lex_between0_6, lex_between0_6,
+    lex_around3 (w := .v0) (k := 1) rfl, lex_around3 (w := .v1) (k := 2) rfl,
+    lex_around3 (w := .v2) (k := 3) rfl, lex_around3 (w := .v3) (k := 4) rfl,
+    lex_around3 (w := .v4) (k := 3) rfl, lex_around3 (w := .v5) (k := 2) rfl,
+    lex_around3 (w := .v6) (k := 1) rfl]
+  simp only [speakerBeliefR, Value.toNat]
+  norm_num
+  have e1 : Real.log ((1 / 7 : ℝ) ^ 4) = 4 * Real.log (1 / 7) := by
+    rw [Real.log_pow]; norm_num
+  have e2 : Real.log (((3 : ℝ) / 16) ^ 2 * ((4 : ℝ) / 16) ^ 2)
+      = 2 * Real.log (3 / 16) + 2 * Real.log (4 / 16) := by
+    rw [Real.log_mul (by positivity) (by positivity), Real.log_pow, Real.log_pow]
+    norm_num
+  have hlt : Real.log ((1 / 7 : ℝ) ^ 4) < Real.log (((3 : ℝ) / 16) ^ 2 * ((4 : ℝ) / 16) ^ 2) :=
+    Real.log_lt_log (by positivity) (by norm_num)
+  linarith
 
 -- ============================================================================
 -- Section III: Appendix A — LU Limitation
