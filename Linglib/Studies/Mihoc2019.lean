@@ -1,5 +1,14 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Exhaustification.Chain
+import Linglib.Semantics.Exhaustification.PreExhaustified
+import Linglib.Discourse.CommonGround
+import Mathlib.Data.Fintype.Powerset
 
 /-!
 # [mihoc-2019]: Decomposing Modified Numerals
@@ -62,6 +71,16 @@ obliterates the next-stronger alternative.
   neo-Gricean account derives none (`Kennedy2015.classA_moreThan3_no_primary`)
 - `exhSigma_moreThan_coarse_not_exactly`, `spector_grade_context`: coarser
   granularity avoids the 'exactly' overgeneration (her §3.6–3.7)
+- `exhSigma_moreThan_eq_exhChain` / `exhSigma_atMost_eq_exhChain`: the
+  one-scalemate operator equals whole-scale chain-exhaustification
+  (`Exhaustification.exhChain_iff_succ`)
+- `Ignorance.parse_sg_total`: unpruned parses force total ignorance —
+  the structural core of her Tables 4.1/4.3, via
+  `Exhaustification.forall_not_preExh_iff`; `winner0_blocked`,
+  `sg_accommodates_loser`, `db_blocks_loser`: the residual table cells
+- `AntiNegativity.negation_fails_PS`: `O_ExhDA` is vacuous under negation
+  (her Ch. 5 (9)), so the SMN's Proper Strengthening requirement fails;
+  `NumeralClass`: her [±prune DA, ±PS] parameter pair
 -/
 
 namespace Mihoc2019
@@ -392,5 +411,230 @@ theorem spector_grade_context (maxD : ℕ) :
 #guard (Form.lessThan 3).exhSigma 1 2 ∧ ¬ (Form.lessThan 3).exhSigma 1 1
 #guard (Form.atLeast 3).exhSigma 1 3 ∧ ¬ (Form.atLeast 3).exhSigma 1 4
 #guard (Form.atMost 3).exhSigma 1 3 ∧ ¬ (Form.atMost 3).exhSigma 1 2
+
+
+/-! ### σA scales as entailment chains
+
+`exhSigma` negates one next-stronger scalemate; the substrate keystone
+`Exhaustification.exhChain_iff_succ` shows this equals exhaustification
+against the *whole* granularity-`g` scale, since the scale is an entailment
+chain. (Dually, `Exhaustification.exhChain_not_of_dense` is the
+[fox-hackl-2006] crash that this file's contextual-granularity scales
+avoid: cf. `FoxHackl2006Numerals.moreThan_exhChain_crash`.) -/
+
+theorem exhSigma_moreThan_eq_exhChain (n g maxD : ℕ) :
+    (Form.moreThan n).exhSigma g maxD ↔
+      Exhaustification.exhChain (fun k => (Form.moreThan (n + k * g)).tc) 0 maxD := by
+  rw [Exhaustification.exhChain_iff_succ
+      (fun j k hjk d hd => by
+        simp only [tc_moreThan] at hd ⊢
+        have := Nat.mul_le_mul_right g hjk
+        omega)
+      Nat.zero_lt_one fun j hj => hj]
+  simp only [Form.exhSigma, Form.strongerAlt, tc_moreThan, Nat.zero_mul,
+    Nat.add_zero, Nat.one_mul]
+
+theorem exhSigma_atMost_eq_exhChain (n g maxD : ℕ) :
+    (Form.atMost n).exhSigma g maxD ↔
+      Exhaustification.exhChain (fun k => (Form.atMost (n - k * g)).tc) 0 maxD := by
+  rw [Exhaustification.exhChain_iff_succ
+      (fun j k hjk d hd => by
+        simp only [tc_atMost] at hd ⊢
+        have := Nat.mul_le_mul_right g hjk
+        omega)
+      Nat.zero_lt_one fun j hj => hj]
+  simp only [Form.exhSigma, Form.strongerAlt, tc_atMost, Nat.zero_mul,
+    Nat.sub_zero, Nat.one_mul]
+
+/-! ### Ignorance (her Ch. 4)
+
+Assertions carry a null epistemic necessity modal `□_S`; `O` applies above
+it, negating pre-exhaustified domain alternatives
+(`Exhaustification.preExh`) and the stronger σA. Her running model: the CMN
+*less than three* / SMN *at most two*, worlds = candidate maxima 0–3,
+`□_S` = `ContextSet.entails` over a nonempty epistemic state
+(`boxS_iff_entails`). The DA are the value-regions inside the prejacent set
+{0, 1, 2}: singletons and doubletons.
+
+The load-bearing structure: negating the pre-exhaustified singleton DA says
+no region is settled *uniquely* (`Exhaustification.forall_not_preExh_iff`),
+and a nonempty state settles at most one of the disjoint regions
+(`sgDA_subsingleton`) — so none is settled: **total ignorance**, her Tables
+4.1/4.3, derived structurally. The residual table cells (loser/winner
+accommodation and blocking) are checked exhaustively over all epistemic
+states. -/
+
+namespace Ignorance
+
+/-- Worlds: the candidate maximum, values 0–3. -/
+abbrev EWorld := Fin 4
+
+/-- `□_S` over a finite epistemic state — `ContextSet.entails` in
+computable clothing (`boxS_iff_entails`). -/
+def boxS (E : Finset EWorld) (p : EWorld → Prop) : Prop := ∀ w ∈ E, p w
+
+instance (E : Finset EWorld) (p : EWorld → Prop) [DecidablePred p] :
+    Decidable (boxS E p) :=
+  inferInstanceAs (Decidable (∀ w ∈ E, p w))
+
+theorem boxS_iff_entails (E : Finset EWorld) (p : EWorld → Prop) :
+    boxS E p ↔ CommonGround.ContextSet.entails (↑E : Set EWorld) {w | p w} := by
+  simp [boxS, CommonGround.ContextSet.entails, Set.subset_def]
+
+/-- The asserted prejacent: `□_S`(*less than three*). -/
+def prejacent (E : Finset EWorld) : Prop :=
+  boxS E fun w => (Form.lessThan 3).tc w.val
+
+instance (E : Finset EWorld) : Decidable (prejacent E) :=
+  inferInstanceAs (Decidable (boxS E fun w => (Form.lessThan 3).tc w.val))
+
+/-- Singleton domain alternatives: `□_S(max = i)` for `i < 3`. -/
+def sgDA (E : Finset EWorld) (i : Fin 3) : Prop :=
+  boxS E fun w => w.val = i.val
+
+/-- Doubleton domain alternatives: `□_S` of the prejacent region minus
+value `i`. -/
+def dbDA (E : Finset EWorld) (i : Fin 3) : Prop :=
+  boxS E fun w => w.val < 3 ∧ w.val ≠ i.val
+
+instance (E : Finset EWorld) (i : Fin 3) : Decidable (sgDA E i) :=
+  inferInstanceAs (Decidable (boxS E fun w => w.val = i.val))
+
+instance (E : Finset EWorld) (i : Fin 3) : Decidable (dbDA E i) :=
+  inferInstanceAs (Decidable (boxS E fun w => w.val < 3 ∧ w.val ≠ i.val))
+
+/-- A nonempty state settles at most one singleton region. -/
+theorem sgDA_subsingleton {E : Finset EWorld} (hE : E.Nonempty) {i j : Fin 3}
+    (hi : sgDA E i) (hj : sgDA E j) : i = j := by
+  obtain ⟨w, hw⟩ := hE
+  have h1 := hi w hw
+  have h2 := hj w hw
+  exact Fin.ext (by omega)
+
+/-- **Total ignorance from unique-truth failure**: negating every
+pre-exhaustified singleton DA leaves no settled region at all — the
+'total' verdicts of her Tables 4.1/4.3, structurally. -/
+theorem total_ignorance_of_not_preExh {E : Finset EWorld} (hE : E.Nonempty)
+    (h : ∀ i, ¬ Exhaustification.preExh (sgDA E) i) (i : Fin 3) :
+    ¬ sgDA E i := by
+  intro hi
+  rw [Exhaustification.forall_not_preExh_iff] at h
+  exact h ⟨i, hi, fun j hj => sgDA_subsingleton hE hj hi⟩
+
+/-- The `O_ExhDA+σA` parse of `□_S`(*less than three*) (her (12)/(14)/(16)),
+with her DA-pruning parameter: `sg`/`db` select which DA sizes survive
+pruning. -/
+def parse (sg db : Bool) (E : Finset EWorld) : Prop :=
+  prejacent E ∧
+  (sg = true → ∀ i, ¬ Exhaustification.preExh (sgDA E) i) ∧
+  (db = true → ∀ i, ¬ Exhaustification.preExh (dbDA E) i) ∧
+  ¬ boxS E (fun w => w.val < 2) ∧ ¬ boxS E (fun w => w.val < 1)
+
+instance (sg db : Bool) (E : Finset EWorld) : Decidable (parse sg db E) :=
+  inferInstanceAs (Decidable (prejacent E ∧ _ ∧ _ ∧ _ ∧ _))
+
+/-- Total ignorance (her total row): no value-region is settled. -/
+def TotalIgnorance (E : Finset EWorld) : Prop := ∀ i, ¬ sgDA E i
+
+/-- Her canonical 'winner' scenario: `□_S 0`. -/
+def winner0 (E : Finset EWorld) : Prop := sgDA E 0
+
+/-- Her canonical 'loser' scenario: `□_S ¬0 ∧ ¬□_S 1 ∧ ¬□_S 2` — one region
+excluded, the rest unsettled. -/
+def loser0 (E : Finset EWorld) : Prop :=
+  (boxS E fun w => w.val ≠ 0) ∧ ¬ sgDA E 1 ∧ ¬ sgDA E 2
+
+instance (E : Finset EWorld) : Decidable (loser0 E) :=
+  inferInstanceAs (Decidable ((boxS E fun w => w.val ≠ 0) ∧ _ ∧ _))
+
+/-- Any parse that keeps the singleton DA forces total ignorance — her
+Table 4.1 and 4.3 sum-ups, including the SMN (no-pruning) verdict. -/
+theorem parse_sg_total {db : Bool} {E : Finset EWorld} (hE : E.Nonempty)
+    (h : parse true db E) : TotalIgnorance E :=
+  fun i => total_ignorance_of_not_preExh hE (h.2.1 rfl) i
+
+/-- The 'winner' scenario clashes with the σA-implicature — the ✗ cells of
+her Tables 4.1/4.2: `□_S 0` entails `□_S`(*less than one*). -/
+theorem winner0_blocked {sg db : Bool} {E : Finset EWorld}
+    (h : parse sg db E) : ¬ winner0 E := by
+  intro hw
+  exact h.2.2.2.2 fun w hwE => by have := hw w hwE; omega
+
+/-- The singleton-DA regime accommodates the 'loser' scenario — Table 4.1's
+✓ cell (CMNs, which may prune, admit partial ignorance). -/
+theorem sg_accommodates_loser :
+    ∃ E : Finset EWorld, E.Nonempty ∧ parse true false E ∧ loser0 E := by
+  exact ⟨{1, 2}, by decide, by decide, by decide⟩
+
+/-- The doubleton-DA regime blocks the 'loser' scenario — Table 4.2's ✗
+cell — checked over every epistemic state. -/
+theorem db_blocks_loser :
+    ∀ E : Finset EWorld, E.Nonempty → parse false true E → ¬ loser0 E := by
+  decide
+
+end Ignorance
+
+/-! ### Anti-negativity (her Ch. 5)
+
+Under clausemate negation each pre-exhaustified DA is individually
+inconsistent with the prejacent, so `O_ExhDA` is vacuous (her (9)) — and
+the Proper Strengthening requirement
+(`Exhaustification.ProperlyStrengthens`) fails. Her parameter pair: SMNs
+keep all DA (hence episodic total ignorance, `Ignorance.parse_sg_total`)
+and require PS (hence deviance under negation, `negation_fails_PS`); CMNs
+may prune and impose no PS requirement, escaping both. -/
+
+namespace AntiNegativity
+
+/-- Worlds for the negated case: candidate maxima 0–2. -/
+abbrev NWorld := Fin 3
+
+/-- *John didn't call less than two people*: the negated prejacent. -/
+def negPrejacent (w : NWorld) : Prop := ¬ (Form.lessThan 2).tc w.val
+
+/-- The embedded numeral's DA as propositions at `w`: `max = i`, `i < 2`. -/
+def negDA (w : NWorld) (i : Fin 2) : Prop := w.val = i.val
+
+/-- The `O_ExhDA` parse of the negated sentence (her (8)–(9)). -/
+def oParse (w : NWorld) : Prop :=
+  negPrejacent w ∧ ∀ i, ¬ Exhaustification.preExh (negDA w) i
+
+/-- Her (9): every pre-exhaustified DA contradicts the negated prejacent,
+so negating them adds nothing — `O_ExhDA` is vacuous. -/
+theorem oParse_iff_negPrejacent (w : NWorld) : oParse w ↔ negPrejacent w := by
+  constructor
+  · exact And.left
+  · intro h
+    refine ⟨h, fun i hpe => h ((tc_lessThan 2 w.val).mpr ?_)⟩
+    have hi := hpe.1
+    simp only [negDA] at hi
+    omega
+
+/-- Vacuous exhaustification fails Proper Strengthening — the SMN
+anti-negativity verdict (her §5.1); CMNs, lacking the requirement, are
+fine under negation. -/
+theorem negation_fails_PS :
+    ¬ Exhaustification.ProperlyStrengthens oParse negPrejacent :=
+  Exhaustification.not_properlyStrengthens_of_iff oParse_iff_negPrejacent
+
+/-- Her Ch. 4–5 lexical parameter pair for modified numerals. -/
+inductive NumeralClass where
+  /-- Comparative-modified: may prune DA; no PS requirement. -/
+  | cmn
+  /-- Superlative-modified: full DA; PS required. -/
+  | smn
+  deriving DecidableEq, Repr
+
+/-- Whether the class licenses DA pruning (her Ch. 4). -/
+def NumeralClass.canPruneDA : NumeralClass → Prop
+  | .cmn => True
+  | .smn => False
+
+/-- Whether the class requires Proper Strengthening (her Ch. 5). -/
+def NumeralClass.requiresPS : NumeralClass → Prop
+  | .cmn => False
+  | .smn => True
+
+end AntiNegativity
 
 end Mihoc2019

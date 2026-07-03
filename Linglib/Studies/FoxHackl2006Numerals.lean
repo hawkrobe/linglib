@@ -1,7 +1,14 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Exhaustification.Chain
+import Mathlib.Tactic.Linarith
 
 /-!
 # Numeral MIP Bridge
@@ -65,6 +72,17 @@ theorem atLeast_has_maxInf_general (n : ℕ) :
 theorem moreThan_has_maxInf_nat :
     HasMaxInf (Comparison.gt.over (α := ℕ) id) 3 :=
   moreThan_nat_hasMaxInf id 3 (show (3 : ℕ) ∈ Comparison.gt.over id 0 from by decide)
+
+/-- The dense half of the asymmetry as chain-exhaustification: on ℚ the
+stronger *more than* alternatives have no next member, so exhaustifying
+*more than c* against its own scale is unsatisfiable —
+`Exhaustification.exhChain_not_of_dense` at the UDM scale. On ℕ the next
+member exists and exhaustification returns 'exactly' instead
+(`Semantics.Numerals.exhNumeral_eq_exhChain`). -/
+theorem moreThan_exhChain_crash (c maxD : ℚ) :
+    ¬ Exhaustification.exhChain (fun x d => x < d) c maxD :=
+  Exhaustification.exhChain_not_of_dense fun d hd =>
+    ⟨(c + d) / 2, by linarith, by linarith⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. MIP Derives Exact Meaning

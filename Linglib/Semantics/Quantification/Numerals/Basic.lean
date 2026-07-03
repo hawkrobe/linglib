@@ -1,4 +1,10 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Quantification.Quantifier
@@ -325,6 +331,19 @@ theorem exhNumeral_iff_bare (m n : Nat) :
   unfold exhNumeral
   show n ≥ m ∧ ¬ n ≥ m + 1 ↔ n = m
   omega
+
+/-- `exhNumeral` is chain-exhaustification against the full Horn scale of
+stronger numerals (`Exhaustification.exhChain`): the scale is an entailment
+chain, so negating the next-stronger alternative negates them all
+(`Exhaustification.exhChain_iff_succ`). -/
+theorem exhNumeral_eq_exhChain (m n : Nat) :
+    exhNumeral m n ↔
+      Exhaustification.exhChain (fun k => atLeastMeaning (m + k)) 0 n := by
+  rw [Exhaustification.exhChain_iff_succ
+      (fun j k hjk d hd => by
+        simp only [atLeastMeaning_def, ge_iff_le] at hd ⊢; omega)
+      Nat.zero_lt_one fun j hj => hj]
+  simp [exhNumeral]
 
 -- ============================================================================
 -- Section 8: GQT Bridge ([bylinina-nouwen-2020])
