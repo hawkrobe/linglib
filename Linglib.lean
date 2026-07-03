@@ -13,6 +13,7 @@ import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
 import Linglib.Core.Algebra.IdempotentPower
+import Linglib.Core.Algebra.Order.Grain
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct

@@ -1,5 +1,11 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Quantification.Numerals.Roundness
-import Mathlib.Data.Rat.Floor
+import Linglib.Semantics.Questions.PrecisionProjection
+import Linglib.Core.Algebra.Order.Grain
 
 /-!
 # Pragmatic halo and precision modes
@@ -34,9 +40,19 @@ inductive PrecisionMode where
   deriving Repr, DecidableEq
 
 /-- Round a rational to the nearest multiple of `base` —
-[kao-etal-2014-hyperbole]'s `Round` at the default `base = 10`. -/
+[kao-etal-2014-hyperbole]'s `Round` at the default `base = 10`, the
+nearest-representative map of the grain partition
+(`Core.Order.grainRound`). -/
 def roundToNearest (n : ℚ) (base : ℚ := 10) : ℚ :=
-  round (n / base) * base
+  Core.Order.grainRound base n
+
+/-- Rounding moves a value by at most half the grain: the imprecision
+introduced by `f_a` at base 10 is bounded by 5
+(`Core.Order.abs_sub_grainRound_le`). -/
+theorem abs_sub_roundToNearest_le (n : ℚ) : |n - roundToNearest n| ≤ 5 := by
+  have h := Core.Order.abs_sub_grainRound_le (by norm_num : (0 : ℚ) < 10) n
+  norm_num at h
+  simpa [roundToNearest] using h
 
 /-- Project a value according to precision mode: `f_e` is the identity,
 `f_a` rounds to the nearest multiple of `base`. -/
@@ -65,6 +81,15 @@ def haloWidth (n : Nat) : ℚ :=
 `.exact` even though imprecise uses of them are attested. -/
 def inferPrecisionMode (n : Nat) : PrecisionMode :=
   if Roundness.roundnessScore n ≥ 2 then .approximate else .exact
+
+/-- `PrecisionMode` is the two-point instance of the QUD-layer
+`PrecisionProjection` family: `f_e` is `PrecisionProjection.exact`; `f_a`
+at grain `g` rounds within the width-`g` grain (the lower representative
+on the ℕ scale — [kao-etal-2014-hyperbole]'s `Round` picks the nearest;
+same partition, different canonical representative). -/
+def PrecisionMode.projection (g : ℕ) : PrecisionMode → PrecisionProjection ℕ
+  | .exact => .exact
+  | .approximate => .roundTo g
 
 #guard inferPrecisionMode 100 = .approximate  -- score 6 ≥ 2
 #guard inferPrecisionMode 50 = .approximate   -- score 4 ≥ 2
