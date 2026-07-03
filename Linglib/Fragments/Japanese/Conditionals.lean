@@ -44,12 +44,9 @@ def nara : ConditionalMarker where
   markerType := .both
   notes := "Can mark premise conditionals (unlike -ra)"
 
-/-- Japanese -(e)ba: HC and PC conditional marker ([mizuno-2024], fn 8 notation).
-
-    Attaches directly to sentence radicals. Both uses are attested in
-    [mizuno-2024]: premise (Anderson, ex. 4a) and hypothetical (FLV, ex. 9a);
-    the Anderson vs counterfactual contrast is carried by the consequent's
-    Non-Past vs Past, not by the marker. -/
+/-- Japanese -(e)ba ([mizuno-2024], fn 8): attaches to sentence radicals; premise
+    use in Andersons (ex. 4a), hypothetical in FLVs (ex. 9a). The Anderson vs
+    counterfactual contrast is carried by the consequent's tense, not the marker. -/
 def eba : ConditionalMarker where
   language := "Japanese"
   marker := "-(e)ba"
@@ -57,9 +54,8 @@ def eba : ConditionalMarker where
   markerType := .both
   notes := "Anderson conditionals use this form (Mizuno 2024, ex. 4a)"
 
-/-- Japanese X-marking: Fake Past -ta ([ogihara-2014], [mizuno-kaufmann-2019]) —
-    Past morphology with counterfactual rather than temporal import, e.g. in the
-    consequent of -(e)ba conditionals ([mizuno-2024], ex. 3). -/
+/-- Japanese X-marking: Fake Past -ta ([ogihara-2014], [mizuno-kaufmann-2019];
+    [mizuno-2024] ex. 3). -/
 def xMarking : Option XMarkingExponent := some ⟨"-ta", [.past]⟩
 
 end Japanese.Conditionals
