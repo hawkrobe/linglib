@@ -50,8 +50,7 @@ variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
 `Setoid.ker ⌊·/ε⌋`: the refinement half of the finer-than order, via the
 kernel keystone and `Int.floor_div_natCast`. -/
 theorem Setoid.ker_floor_div_le_natCast_mul (ε : α) (k : ℕ) :
-    Setoid.ker (fun d : α => ⌊d / ε⌋) ≤
-      Setoid.ker (fun d : α => ⌊d / ((k : α) * ε)⌋) := by
+    Setoid.ker (fun d : α => ⌊d / ε⌋) ≤ Setoid.ker (fun d : α => ⌊d / ((k : α) * ε)⌋) := by
   simpa [Function.comp_def, ← Int.floor_div_natCast, div_div,
     mul_comm ε (k : α)] using
     Setoid.ker_le_ker_comp (fun d : α => ⌊d / ε⌋) (· / (k : ℤ))
