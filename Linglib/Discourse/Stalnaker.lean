@@ -1,5 +1,4 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.SpeechAct.Update
 
 /-!
 # Stalnaker's Common Ground Model of Assertion
@@ -86,14 +85,12 @@ theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
 theorem hasContextSet_eq_contextSet {W : Type*} (s : StalnakerState W) :
     CommonGround.HasContextSet.toContextSet s = Stalnaker.contextSet s := rfl
 
-/-- Stalnaker's CommonGround-as-context-set instances `Assertable`: assertion is
-    `s.add φ` (set intersection); the two laws are the two halves of
-    intersection membership. -/
-instance instAssertable {W : Type*} :
-    Discourse.SpeechAct.Assertable (Stalnaker.StalnakerState W) W where
-  initial := Stalnaker.initial
-  speakerAssert s φ := Stalnaker.assert s φ
-  speakerAssert_subset_prior _ _ _ h := h.2
-  speakerAssert_narrows _ _ _ h := h.1
+/-- Theorem (not instance — the `CommonGround W` instance of
+    `CommonGround.HasAssertion` already resolves through the
+    `StalnakerState W := CommonGround W` abbrev): the `HasAssertion`
+    assertion on a Stalnaker state is the local `Stalnaker.assert`.
+    Documents the bridge for grep. -/
+theorem hasAssertion_eq_assert {W : Type*} (s : StalnakerState W) (p : Set W) :
+    CommonGround.HasAssertion.assert s p = Stalnaker.assert s p := rfl
 
 end Discourse.Stalnaker

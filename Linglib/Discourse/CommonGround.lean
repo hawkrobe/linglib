@@ -4,10 +4,10 @@ import Mathlib.Data.Set.Lattice
 /-!
 # Common Ground
 
-Framework-agnostic context management following [stalnaker-1974] and
-[stalnaker-2002]: context sets, common ground as proposition lists, and
-the `HasContextSet` interface unifying both with the various discourse-state
-representations across the discourse layer.
+Framework-agnostic context management following [stalnaker-1973],
+[stalnaker-1974] and [stalnaker-2002]: context sets, common ground as
+proposition lists, and the interfaces unifying both with the various
+discourse-state representations across the discourse layer.
 
 ## Main definitions
 
@@ -15,6 +15,9 @@ representations across the discourse layer.
 * `CommonGround W` — common ground as a list of propositions.
 * `CommonGround.HasContextSet` — interface extracting a context set from an
   arbitrary discourse state.
+* `CommonGround.HasAssertion` — the Stalnakerian update law as an interface:
+  discourse states whose assertion operation projects onto
+  `ContextSet.update` ([stalnaker-1973] p. 455, [stalnaker-1978]).
 
 ## Implementation notes
 
@@ -148,5 +151,149 @@ instance : HasContextSet (CommonGround W) W where
 theorem hasContextSet_add_restricts (cg : CommonGround W) (p : Set W) :
     HasContextSet.toContextSet (cg.add p) ⊆ HasContextSet.toContextSet cg :=
   add_restricts cg p
+
+/-! ### Stalnakerian assertion: `HasAssertion`
+
+A unifying interface over discourse-state types that admit a one-step
+"speaker asserts φ" operation whose effect on the projected context set is
+exactly Stalnaker's: the context set is updated to its intersection with φ
+(`ContextSet.update`). The law is [stalnaker-1973]'s update principle —
+"after some proposition has been asserted, then the speaker may reasonably
+presuppose it in subsequent conversation" (p. 455) — projected through the
+worlds-side characterization of the presupposition set (p. 450), and
+[stalnaker-1978]'s essential effect of assertion.
+
+Mathematically: `(Set W, ∩, univ)` is a commutative idempotent monoid `M`,
+and `ContextSet.update` is its right regular action. A `HasAssertion`
+structure is a raw pointed `M`-flow `(S, assert, initial)` together
+with an equivariant pointed map into the regular act:
+`toContextSet initial = univ` and
+`toContextSet (assert s φ) = toContextSet s ∩ φ`. No act laws are
+demanded of `S` itself — states may record commitment order, sources, or
+credences — but every equation of `M` transports along the projection,
+which is where the lemma kit (`assert_comm`, `_idem`, `_initial`,
+...) comes from. Frameworks differ in the kernel of the projection (state
+structure the context set cannot see); on states reachable from `initial`,
+the projection is forced: the intersection of everything asserted.
+
+The 1973 principle's own hedge — the asserted proposition stands "until it
+is denied, challenged, retracted or forgotten" — marks the idealization
+this interface bakes in: assertion takes effect immediately and
+unchallenged. Frameworks that model the challenge stage explicitly, or
+that update non-monotonically, do **not** instantiate it — informationally
+important non-instances, not gaps:
+
+* Proposal-based models — [farkas-bruce-2010], where assertion proposes
+  via `dcS` and `table` without touching `cg` until uptake (witnessed by
+  `FarkasBruce2010.assert_not_narrowing`).
+* Graded models — [anderson-2021], whose distributional common ground is
+  non-monotonic by design (excluded worlds can regain probability), so no
+  sharp narrowing law holds
+  (`Anderson2021.graded_update_keeps_false_world`).
+
+Framework instances live with the framework types:
+`Discourse/Stalnaker.lean` (via the `CommonGround` instance below),
+`Discourse/CommitmentSpace.lean` ([krifka-2015] commitment spaces),
+`Discourse/Gunlogson.lean` ([gunlogson-2004] source-marked commitments),
+`Discourse/CredenceThreshold.lean` (credence-gated assertion).
+-/
+
+/-- A dialogue-state type that admits a Stalnakerian one-step assertion:
+    `assert s φ` takes immediate effect on the projected context
+    set, updating it by exactly `φ` — [stalnaker-1978]'s essential
+    effect, under the idealization that assertion is not challenged. -/
+class HasAssertion (S : Type*) (W : outParam Type*)
+    extends HasContextSet S W where
+  /-- The initial dialogue state. -/
+  initial : S
+  /-- Speaker commits to φ. -/
+  assert : S → Set W → S
+  /-- Nothing is presupposed initially: every world is live. -/
+  toContextSet_initial : toContextSet initial = ContextSet.trivial (W := W)
+  /-- Assertion narrows the projected context set by exactly `φ`. -/
+  toContextSet_assert : ∀ (s : S) (φ : Set W),
+    toContextSet (assert s φ) = ContextSet.update (toContextSet s) φ
+
+namespace HasAssertion
+
+open HasContextSet (toContextSet)
+
+variable {S : Type*} [HasAssertion S W] (s : S) (φ ψ : Set W)
+
+/-- Contraction: assertion only removes worlds. -/
+theorem assert_subset_prior :
+    toContextSet (assert s φ) ⊆ toContextSet s :=
+  toContextSet_assert s φ ▸ ContextSet.update_restricts _ φ
+
+/-- Narrowing: every surviving world satisfies the asserted proposition. -/
+theorem assert_narrows :
+    toContextSet (assert s φ) ⊆ φ :=
+  toContextSet_assert s φ ▸ ContextSet.update_entails _ φ
+
+/-- Membership in the post-assertion context set, characterized. -/
+theorem mem_assert {s : S} {φ : Set W} {w : W} :
+    w ∈ toContextSet (assert s φ) ↔ w ∈ toContextSet s ∧ w ∈ φ := by
+  rw [toContextSet_assert]; exact Set.mem_inter_iff ..
+
+/-- Asserting φ in the initial context yields exactly φ. -/
+@[simp] theorem assert_initial :
+    toContextSet (assert (initial : S) φ) = φ := by
+  rw [toContextSet_assert, toContextSet_initial, ContextSet.trivial_update]
+
+/-- Assertion order is irrelevant on the projected context set. -/
+theorem assert_comm :
+    toContextSet (assert (assert s φ) ψ) =
+      toContextSet (assert (assert s ψ) φ) := by
+  simp only [toContextSet_assert]
+  exact ContextSet.update_comm _ φ ψ
+
+/-- Re-asserting φ does not change the projected context set. -/
+theorem assert_idem :
+    toContextSet (assert (assert s φ) φ) =
+      toContextSet (assert s φ) := by
+  simp only [toContextSet_assert]
+  exact ContextSet.update_idem _ φ
+
+/-- Asserting what the state already entails does not change the
+    projected context set — the formal shadow of [stalnaker-1973]'s
+    constraint that asserted content normally not already be
+    presupposed (p. 454): such an assertion is a no-op. -/
+theorem assert_of_entails (h : toContextSet s ⊆ φ) :
+    toContextSet (assert s φ) = toContextSet s := by
+  rw [toContextSet_assert]
+  exact ContextSet.update_eq_self_of_entails _ φ h
+
+/-- Two consecutive assertions narrow the context set by the conjunction. -/
+theorem assert_twice :
+    toContextSet (assert (assert s φ) ψ) =
+      toContextSet s ∩ φ ∩ ψ := by
+  rw [toContextSet_assert, toContextSet_assert]
+
+/-- Two consecutive assertions land inside the conjunction. -/
+theorem assert_twice_narrows :
+    toContextSet (assert (assert s φ) ψ) ⊆ φ ∩ ψ := by
+  rw [assert_twice]
+  exact Set.subset_inter (Set.inter_subset_left.trans Set.inter_subset_right)
+    Set.inter_subset_right
+
+end HasAssertion
+
+/-- The regular model: the context set itself, asserted-into by `update`.
+    Every `HasAssertion` state projects onto this flow. -/
+instance : HasAssertion (ContextSet W) W where
+  initial := ContextSet.trivial
+  assert := ContextSet.update
+  toContextSet_initial := rfl
+  toContextSet_assert _ _ := rfl
+
+/-- The free model: proposition lists, asserted-into by `add`; the
+    projection is `contextSet` ([stalnaker-1973] p. 450's duality map).
+    `Discourse/Stalnaker.lean`'s framework rides this instance through the
+    `StalnakerState W := CommonGround W` abbrev. -/
+instance : HasAssertion (CommonGround W) W where
+  initial := empty
+  assert cg φ := cg.add φ
+  toContextSet_initial := rfl
+  toContextSet_assert _ φ := Set.inter_comm φ _
 
 end CommonGround
