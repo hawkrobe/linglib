@@ -1,10 +1,8 @@
-import Linglib.Tactics.RSAPredict
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Necessity
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # [grusdt-lassiter-franke-2022]
@@ -45,7 +43,7 @@ Key predictions:
 The full model uses 10,000 sampled world states and three causal relations
 (A→C, C→A, A⊥C) as latent variables. We formalize only the toy example
 here, which captures all qualitative predictions with finite types amenable
-to `rsa_predict`.
+to exact `PMF` evaluation.
 
 ## Grounding
 
@@ -73,6 +71,7 @@ open Causation.BayesNet
 open Semantics.Probabilistic.ConditionalAssertability
 open Causation.Sufficiency
 open Causation.Necessity
+open scoped ENNReal
 
 
 -- ============================================================================
@@ -213,29 +212,163 @@ theorem strict_assertability_s3_false :
 
 
 -- ============================================================================
--- Section 5: RSAConfig
+-- Section 5: PMF-face RSA model
 -- ============================================================================
 
-open RSA Real in
-/-- [grusdt-lassiter-franke-2022] toy example as RSAConfig.
+/-! The toy example as a mathlib-`PMF` Frank-Goodman model
+[frank-goodman-2012]: the literal listener is uniform on each utterance's
+assertability extension, the pragmatic speaker `S1` normalises the literal
+weights over utterances (α = 1, no cost), and the pragmatic listener `L1` is
+the Bayesian posterior against the uniform world prior. `conjAC`, assertable in
+no state, has an empty extension: it carries weight `0` and drops out of the
+competition rather than receiving an (undefined) literal-listener PMF. -/
 
-Meaning: Boolean assertability (1 if assertable, 0 if not).
-World prior: uniform over the 3 states.
-S1 score: belief-based (rpow): score = L0(w|u)^α.
-α = 1 (rationality parameter from the paper's toy example). -/
-noncomputable def cfg : RSAConfig Utt State where
-  meaning _ _ u s := if assertable' u s then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α _ w u := rpow (l0 u w) α
-  s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
-  α := 1
-  α_pos := one_pos
-  latentPrior_nonneg _ _ := by positivity
-  worldPrior_nonneg _ := by positivity
+/-- Assertability extension of an utterance: the states where it holds. -/
+abbrev ext (u : Utt) : Finset State := RSA.extensionOf assertable' u
+
+/-- Literal-listener weight `L0(s | u)` at α = 1: uniform on the extension,
+`1/|ext u|` where `u` is assertable at `s`, else `0`. For the three assertable
+utterances this coincides with `RSA.L0OfBoolMeaning`
+(`litWeight_eq_L0OfBoolMeaning`); the never-assertable `conjAC` is weightless. -/
+noncomputable def litWeight (s : State) (u : Utt) : ℝ≥0∞ :=
+  if assertable' u s = true then ((ext u).card : ℝ≥0∞)⁻¹ else 0
+
+theorem litWeight_of_true {s : State} {u : Utt} {k : ℕ}
+    (h : assertable' u s = true) (hk : (ext u).card = k) :
+    litWeight s u = ((k : ℝ≥0∞))⁻¹ := by
+  unfold litWeight; rw [if_pos h, hk]
+
+theorem litWeight_of_false {s : State} {u : Utt} (h : assertable' u s = false) :
+    litWeight s u = 0 := by
+  unfold litWeight; rw [if_neg (by simp [h])]
+
+/-- Where an utterance is assertable somewhere, `litWeight` is exactly the
+canonical literal listener uniform on the extension; `conjAC` gets `0`. -/
+theorem litWeight_eq_L0OfBoolMeaning (s : State) {u : Utt} (h : (ext u).Nonempty) :
+    litWeight s u = RSA.L0OfBoolMeaning assertable' u h s := by
+  unfold litWeight
+  by_cases hu : assertable' u s = true
+  · rw [if_pos hu, RSA.L0OfBoolMeaning_apply_of_mem h hu]
+  · rw [if_neg hu, RSA.L0OfBoolMeaning_apply_of_not_mem h hu]
+
+theorem litWeight_ne_top (s : State) (u : Utt) : litWeight s u ≠ ⊤ := by
+  unfold litWeight
+  split
+  next h =>
+    exact ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr
+      (Finset.card_pos.mpr ⟨s, RSA.mem_extensionOf.mpr h⟩).ne')
+  next => exact ENNReal.zero_ne_top
+
+/-! Toy-example weights (Table 2): `likelyC` is assertable in all 3 states,
+`conditional` in {s1, s2}, `C` in {s1}, `conjAC` in none. -/
+
+theorem lw_likelyC (s : State) : litWeight s .likelyC = 3⁻¹ := by
+  rw [litWeight_of_true rfl (show (ext .likelyC).card = 3 from by decide)]; norm_num
+
+theorem lw_s1_conditional : litWeight .s1 .conditional = 2⁻¹ := by
+  rw [litWeight_of_true rfl (show (ext .conditional).card = 2 from by decide)]; norm_num
+
+theorem lw_s2_conditional : litWeight .s2 .conditional = 2⁻¹ := by
+  rw [litWeight_of_true rfl (show (ext .conditional).card = 2 from by decide)]; norm_num
+
+theorem lw_s3_conditional : litWeight .s3 .conditional = 0 := litWeight_of_false rfl
+
+theorem lw_s1_C : litWeight .s1 .C = 1 := by
+  rw [litWeight_of_true rfl (show (ext .C).card = 1 from by decide)]; norm_num
+
+theorem lw_s2_C : litWeight .s2 .C = 0 := litWeight_of_false rfl
+
+theorem lw_s3_C : litWeight .s3 .C = 0 := litWeight_of_false rfl
+
+theorem lw_conjAC (s : State) : litWeight s .conjAC = 0 := litWeight_of_false rfl
+
+private theorem tsum_litWeight_ne_zero (s : State) : (∑' u, litWeight s u) ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr
+    ⟨.likelyC, by rw [lw_likelyC]; exact ENNReal.inv_ne_zero.mpr (by norm_num)⟩
+
+private theorem tsum_litWeight_ne_top (s : State) : (∑' u, litWeight s u) ≠ ⊤ := by
+  rw [tsum_fintype]
+  exact ENNReal.sum_ne_top.mpr fun u _ => litWeight_ne_top s u
+
+/-- Pragmatic speaker `S1(· | s) ∝ L0(s | ·)` (α = 1, no cost), normalising the
+literal weights over utterances. -/
+noncomputable def S1 (s : State) : PMF Utt :=
+  PMF.normalize (litWeight s) (tsum_litWeight_ne_zero s) (tsum_litWeight_ne_top s)
+
+/-- Same-state utterance preference reduces to comparing literal weights — the
+speaker's partition function cancels. -/
+theorem S1_lt_iff (s : State) (u₁ u₂ : Utt) :
+    S1 s u₁ < S1 s u₂ ↔ litWeight s u₁ < litWeight s u₂ :=
+  PMF.normalize_lt_iff_lt _ _ _ _ _
+
+theorem S1_ne_zero {s : State} {u : Utt} (h : litWeight s u ≠ 0) : S1 s u ≠ 0 := by
+  rw [← PMF.mem_support_iff, S1, PMF.mem_support_normalize_iff]; exact h
+
+/-- Uniform world prior over the three states. -/
+noncomputable def worldPrior : PMF State := PMF.uniformOfFintype State
+
+theorem worldPrior_ne_zero (s : State) : worldPrior s ≠ 0 :=
+  (worldPrior.mem_support_iff s).mp (PMF.mem_support_uniformOfFintype s)
+
+theorem marginal_conditional_ne_zero : PMF.marginal S1 worldPrior .conditional ≠ 0 :=
+  PMF.marginal_ne_zero S1 worldPrior .conditional (worldPrior_ne_zero .s1)
+    (S1_ne_zero (by rw [lw_s1_conditional]; exact ENNReal.inv_ne_zero.mpr (by norm_num)))
+
+theorem marginal_C_ne_zero : PMF.marginal S1 worldPrior .C ≠ 0 :=
+  PMF.marginal_ne_zero S1 worldPrior .C (worldPrior_ne_zero .s1)
+    (S1_ne_zero (by rw [lw_s1_C]; exact one_ne_zero))
+
+theorem marginal_likelyC_ne_zero : PMF.marginal S1 worldPrior .likelyC ≠ 0 :=
+  PMF.marginal_ne_zero S1 worldPrior .likelyC (worldPrior_ne_zero .s1)
+    (S1_ne_zero (by rw [lw_likelyC]; exact ENNReal.inv_ne_zero.mpr (by norm_num)))
+
+/-- Pragmatic listener `L1(· | u)`: the Bayesian posterior of `S1` against the
+uniform world prior. -/
+noncomputable def L1 (u : Utt) (h : PMF.marginal S1 worldPrior u ≠ 0) : PMF State :=
+  PMF.posterior S1 worldPrior u h
+
+/-! Partition functions `Z(s) = ∑_u L0(s | u)` per state (`s1`: 11/6, `s2`: 5/6,
+`s3`: 1/3). A smaller partition means a sharper speaker, so `L1` prefers the
+world with the smaller partition when the numerators agree. -/
+
+private theorem Z_s1 : (∑' u, litWeight .s1 u) = 3⁻¹ + 2⁻¹ + 1 := by
+  rw [tsum_fintype, show (Finset.univ : Finset Utt) = {.likelyC, .conditional, .C, .conjAC}
+        from by decide,
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      lw_likelyC, lw_s1_conditional, lw_s1_C, lw_conjAC]
+  ring
+
+private theorem Z_s2 : (∑' u, litWeight .s2 u) = 3⁻¹ + 2⁻¹ := by
+  rw [tsum_fintype, show (Finset.univ : Finset Utt) = {.likelyC, .conditional, .C, .conjAC}
+        from by decide,
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      lw_likelyC, lw_s2_conditional, lw_s2_C, lw_conjAC]
+  ring
+
+private theorem Z_s3 : (∑' u, litWeight .s3 u) = 3⁻¹ := by
+  rw [tsum_fintype, show (Finset.univ : Finset Utt) = {.likelyC, .conditional, .C, .conjAC}
+        from by decide,
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      lw_likelyC, lw_s3_conditional, lw_s3_C, lw_conjAC]
+  ring
+
+private theorem Z_s2_lt_Z_s1 : (∑' u, litWeight .s2 u) < ∑' u, litWeight .s1 u := by
+  rw [Z_s1, Z_s2]
+  exact ENNReal.lt_add_right
+    (ENNReal.add_ne_top.mpr ⟨ENNReal.inv_ne_top.mpr (by norm_num),
+      ENNReal.inv_ne_top.mpr (by norm_num)⟩) one_ne_zero
+
+private theorem Z_s3_lt_Z_s1 : (∑' u, litWeight .s3 u) < ∑' u, litWeight .s1 u := by
+  rw [Z_s1, Z_s3, show (3 : ℝ≥0∞)⁻¹ + 2⁻¹ + 1 = 3⁻¹ + (2⁻¹ + 1) from by ring]
+  exact ENNReal.lt_add_right (ENNReal.inv_ne_top.mpr (by norm_num))
+    (by positivity)
 
 
 -- ============================================================================
--- Section 6: S1 Speaker Predictions (rsa_predict)
+-- Section 6: S1 Speaker Predictions
 -- ============================================================================
 
 /-! ## S1 predictions from the toy example (Table 2)
@@ -260,43 +393,48 @@ In s1, both "C" and "conditional" are true, but "C" is true only in s1
 while "conditional" is true in both s1 and s2. So "C" is more informative.
 S1(C|s1) = 6/11, S1(conditional|s1) = 3/11. -/
 theorem s1_C_gt_conditional :
-    cfg.S1 () .s1 .C > cfg.S1 () .s1 .conditional := by
-  rsa_predict
+    S1 .s1 .C > S1 .s1 .conditional := by
+  rw [gt_iff_lt, S1_lt_iff, lw_s1_conditional, lw_s1_C]
+  exact ENNReal.inv_lt_one.mpr (by norm_num)
 
 /-- **s1**: S1 prefers "if A then C" over "likely C."
 
 "conditional" is true in 2 states vs "likely C" in all 3.
 S1(conditional|s1) = 3/11, S1(likelyC|s1) = 2/11. -/
 theorem s1_conditional_gt_likelyC :
-    cfg.S1 () .s1 .conditional > cfg.S1 () .s1 .likelyC := by
-  rsa_predict
+    S1 .s1 .conditional > S1 .s1 .likelyC := by
+  rw [gt_iff_lt, S1_lt_iff, lw_likelyC, lw_s1_conditional]
+  exact ENNReal.inv_lt_inv.mpr (by norm_num)
 
 /-- **s2**: S1 prefers "if A then C" over "likely C."
 
 In s2, "conditional" is true in 2 states while "likely C" is true in all 3.
 S1(conditional|s2) = 3/5, S1(likelyC|s2) = 2/5. -/
 theorem s2_conditional_gt_likelyC :
-    cfg.S1 () .s2 .conditional > cfg.S1 () .s2 .likelyC := by
-  rsa_predict
+    S1 .s2 .conditional > S1 .s2 .likelyC := by
+  rw [gt_iff_lt, S1_lt_iff, lw_likelyC, lw_s2_conditional]
+  exact ENNReal.inv_lt_inv.mpr (by norm_num)
 
 /-- **s2**: S1 prefers "if A then C" over "C."
 
 "C" is false in s2 (P(C) = 0.65 < 0.9), so S1 assigns it zero. -/
 theorem s2_conditional_gt_C :
-    cfg.S1 () .s2 .conditional > cfg.S1 () .s2 .C := by
-  rsa_predict
+    S1 .s2 .conditional > S1 .s2 .C := by
+  rw [gt_iff_lt, S1_lt_iff, lw_s2_C, lw_s2_conditional]
+  exact ENNReal.inv_pos.mpr (by norm_num)
 
 /-- **s3**: "likely C" dominates — no other utterance beats it.
 
 "likely C" is the only true utterance in s3. The conditional, C, and
 conjAC are all false, so they get zero S1 score. -/
 theorem s3_likelyC_dominates :
-    cfg.S1 () .s3 .likelyC > cfg.S1 () .s3 .conditional := by
-  rsa_predict
+    S1 .s3 .likelyC > S1 .s3 .conditional := by
+  rw [gt_iff_lt, S1_lt_iff, lw_s3_conditional, lw_likelyC]
+  exact ENNReal.inv_pos.mpr (by norm_num)
 
 
 -- ============================================================================
--- Section 7: L1 Listener Predictions (rsa_predict)
+-- Section 7: L1 Listener Predictions
 -- ============================================================================
 
 /-! ## L1 predictions: the core dependency inference result
@@ -307,7 +445,47 @@ S1 in s1 would have used the more informative "C" instead of the conditional.
 
 This is the key mechanism behind dependency inference: conditionals
 signal that the speaker could not have used a stronger utterance,
-implicating a state where only the conditional is assertable. -/
+implicating a state where only the conditional is assertable.
+
+Each `L1` comparison cancels the shared marginal and uniform prior
+(`PMF.posterior_lt_iff_kernel_lt_of_uniform`), reducing to an `S1` comparison
+across states: a vacuous-zero at the world where the utterance is false, or a
+partition-dominance where the numerators agree. -/
+
+private theorem S1_conditional_s1_lt_s2 :
+    S1 .s1 .conditional < S1 .s2 .conditional :=
+  PMF.normalize_lt_of_apply_eq_of_sum_lt (litWeight .s1) (litWeight .s2)
+    (tsum_litWeight_ne_zero .s1) (tsum_litWeight_ne_top .s1)
+    (tsum_litWeight_ne_zero .s2) (tsum_litWeight_ne_top .s2) .conditional
+    (by rw [lw_s1_conditional, lw_s2_conditional])
+    (by rw [lw_s2_conditional]; exact ENNReal.inv_ne_zero.mpr (by norm_num))
+    (by rw [lw_s2_conditional]; exact ENNReal.inv_ne_top.mpr (by norm_num))
+    Z_s2_lt_Z_s1
+
+private theorem S1_conditional_s3_lt_s2 :
+    S1 .s3 .conditional < S1 .s2 .conditional :=
+  PMF.normalize_lt_of_apply_zero_pos (litWeight .s3) (litWeight .s2)
+    (tsum_litWeight_ne_zero .s3) (tsum_litWeight_ne_top .s3)
+    (tsum_litWeight_ne_zero .s2) (tsum_litWeight_ne_top .s2) .conditional
+    lw_s3_conditional
+    (by rw [lw_s2_conditional]; exact ENNReal.inv_ne_zero.mpr (by norm_num))
+
+private theorem S1_C_s2_lt_s1 :
+    S1 .s2 .C < S1 .s1 .C :=
+  PMF.normalize_lt_of_apply_zero_pos (litWeight .s2) (litWeight .s1)
+    (tsum_litWeight_ne_zero .s2) (tsum_litWeight_ne_top .s2)
+    (tsum_litWeight_ne_zero .s1) (tsum_litWeight_ne_top .s1) .C
+    lw_s2_C (by rw [lw_s1_C]; exact one_ne_zero)
+
+private theorem S1_likelyC_s1_lt_s3 :
+    S1 .s1 .likelyC < S1 .s3 .likelyC :=
+  PMF.normalize_lt_of_apply_eq_of_sum_lt (litWeight .s1) (litWeight .s3)
+    (tsum_litWeight_ne_zero .s1) (tsum_litWeight_ne_top .s1)
+    (tsum_litWeight_ne_zero .s3) (tsum_litWeight_ne_top .s3) .likelyC
+    (by simp only [lw_likelyC])
+    (by rw [lw_likelyC]; exact ENNReal.inv_ne_zero.mpr (by norm_num))
+    (by rw [lw_likelyC]; exact ENNReal.inv_ne_top.mpr (by norm_num))
+    Z_s3_lt_Z_s1
 
 /-- **L1 hearing "if A then C"**: prefers s2 over s1.
 
@@ -316,22 +494,30 @@ The core dependency inference result. S1 in s1 would prefer "C" over
 makes L1 shift probability toward s2 where "conditional" is the
 best available utterance. -/
 theorem l1_conditional_prefers_s2 :
-    cfg.L1 .conditional .s2 > cfg.L1 .conditional .s1 := by
-  rsa_predict
+    L1 .conditional marginal_conditional_ne_zero .s2
+      > L1 .conditional marginal_conditional_ne_zero .s1 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact S1_conditional_s1_lt_s2
 
 /-- **L1 hearing "if A then C"**: prefers s2 over s3.
 
 s3 makes the conditional literally false, so it gets zero L1 weight. -/
 theorem l1_conditional_s2_gt_s3 :
-    cfg.L1 .conditional .s2 > cfg.L1 .conditional .s3 := by
-  rsa_predict
+    L1 .conditional marginal_conditional_ne_zero .s2
+      > L1 .conditional marginal_conditional_ne_zero .s3 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact S1_conditional_s3_lt_s2
 
 /-- **L1 hearing "C"**: identifies s1.
 
 "C" is true only in s1, so L1 assigns it probability 1. -/
 theorem l1_C_identifies_s1 :
-    cfg.L1 .C .s1 > cfg.L1 .C .s2 := by
-  rsa_predict
+    L1 .C marginal_C_ne_zero .s1 > L1 .C marginal_C_ne_zero .s2 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact S1_C_s2_lt_s1
 
 /-- **L1 hearing "likely C"**: prefers s3 over s1.
 
@@ -340,8 +526,11 @@ prefers "conditional," so hearing "likely C" implicates that stronger
 utterances were unavailable — i.e., the state is s3 where "likely C" is
 the only option. L1(s3|likelyC) = 55/87 > L1(s1|likelyC) = 10/87. -/
 theorem l1_likelyC_prefers_s3 :
-    cfg.L1 .likelyC .s3 > cfg.L1 .likelyC .s1 := by
-  rsa_predict
+    L1 .likelyC marginal_likelyC_ne_zero .s3
+      > L1 .likelyC marginal_likelyC_ne_zero .s1 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact S1_likelyC_s1_lt_s3
 
 
 -- ============================================================================

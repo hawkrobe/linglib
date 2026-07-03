@@ -101,6 +101,24 @@ theorem L0OfMeaning_apply (meaning : U → W → ℝ≥0∞) (u : U)
     L0OfMeaning meaning u h0 hTop w = meaning u w * (∑' w', meaning u w')⁻¹ :=
   PMF.normalize_apply _ _ w
 
+/-- **Inequality decomposition for `L0OfMeaning`**: at a fixed utterance,
+comparing two worlds' literal-listener probabilities reduces to comparing
+their meaning values — the normalisation factor cancels. -/
+@[rsa]
+theorem L0OfMeaning_apply_lt_iff (meaning : U → W → ℝ≥0∞) (u : U)
+    (h0 : ∑' w, meaning u w ≠ 0) (hTop : ∑' w, meaning u w ≠ ∞) (w₁ w₂ : W) :
+    L0OfMeaning meaning u h0 hTop w₁ < L0OfMeaning meaning u h0 hTop w₂ ↔
+      meaning u w₁ < meaning u w₂ :=
+  PMF.normalize_lt_iff_lt _ _ _ _ _
+
+/-- The `≤` companion of `L0OfMeaning_apply_lt_iff`. -/
+@[rsa]
+theorem L0OfMeaning_apply_le_iff (meaning : U → W → ℝ≥0∞) (u : U)
+    (h0 : ∑' w, meaning u w ≠ 0) (hTop : ∑' w, meaning u w ≠ ∞) (w₁ w₂ : W) :
+    L0OfMeaning meaning u h0 hTop w₁ ≤ L0OfMeaning meaning u h0 hTop w₂ ↔
+      meaning u w₁ ≤ meaning u w₂ :=
+  PMF.normalize_le_iff_le _ _ _ _ _
+
 /-! ## L0 from a Boolean meaning (uniform on extension) -/
 
 /-- Extension of a Boolean meaning at utterance `u`: the `Finset` of worlds
@@ -203,6 +221,17 @@ theorem S1Belief_apply_le_iff_score_le (L0 : U → PMF W) (costFactor : U → �
       (L0 u₁ w : ℝ≥0∞) ^ α * costFactor u₁ ≤
         (L0 u₂ w : ℝ≥0∞) ^ α * costFactor u₂ :=
   PMF.normalize_le_iff_le _ _ _ _ _
+
+/-- The `=` companion of `S1Belief_apply_lt_iff_score_lt`: score symmetry. -/
+@[rsa]
+theorem S1Belief_apply_eq_iff_score_eq (L0 : U → PMF W) (costFactor : U → ℝ≥0∞)
+    (α : ℝ) (w : W)
+    (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
+    (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) (u₁ u₂ : U) :
+    S1Belief L0 costFactor α w h0 hTop u₁ = S1Belief L0 costFactor α w h0 hTop u₂ ↔
+      (L0 u₁ w : ℝ≥0∞) ^ α * costFactor u₁ =
+        (L0 u₂ w : ℝ≥0∞) ^ α * costFactor u₂ :=
+  PMF.normalize_eq_iff_eq _ _ _ _ _
 
 /-! ## S1: Pragmatic Speaker (softmax-of-expected-log form) -/
 

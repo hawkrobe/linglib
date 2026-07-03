@@ -1,12 +1,10 @@
-import Linglib.Tactics.RSAPredict
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Causation.ProductionDependence
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -71,6 +69,7 @@ set_option autoImplicit false
 namespace BellerGerstenberg2025
 
 open Intensional (WorldTimeIndex)
+open scoped ENNReal
 
 
 -- ============================================================================
@@ -269,40 +268,115 @@ theorem table1b_scenario4 :
 
 
 -- ============================================================================
--- Section 7: RSAConfig
+-- Section 7: PMF-face RSA model
 -- ============================================================================
 
-open RSA Real in
-/-- [beller-gerstenberg-2025] causal expression model as RSAConfig.
+/-! [beller-gerstenberg-2025]'s pragmatics module as a mathlib-PMF
+Frank-Goodman model [frank-goodman-2012]: the literal listener is uniform
+on each expression's extension over the 8 causal worlds (Table 1c), the
+pragmatic speaker normalises literal informativity over expressions
+(α = 1, no cost; Table 1d), and the pragmatic listener is the Bayesian
+posterior against the uniform world prior. The fitted model (Experiment 2)
+uses λ = 40.18, but α = 1 suffices for the qualitative predictions. -/
 
-Meaning: Boolean expression semantics (1 if true, 0 if false).
-World prior: uniform over the 8 possible W-H-S worlds.
-S1 score: belief-based (rpow): score = L0(w|u)^α.
-α = 1 for the illustrative Table 1 computation.
+/-- Boolean meaning in speaker argument order (expression first). -/
+abbrev sem (u : CausalExpression) (cw : CausalWorld) : Bool := expressionMeaning cw u
 
-The fitted model (Experiment 2) uses λ=40.18, but α=1 suffices for
-the qualitative predictions and matches Table 1d. -/
-noncomputable def cfg : RSAConfig CausalExpression CausalWorld where
-  meaning _ _ u cw := if expressionMeaning cw u then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α _ w u := rpow (l0 u w) α
-  s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
-  α := 1
-  α_pos := one_pos
-  latentPrior_nonneg _ _ := by positivity
-  worldPrior_nonneg _ := by positivity
+private theorem ext_nonempty (u : CausalExpression) :
+    (RSA.extensionOf sem u).Nonempty := by
+  cases u <;> decide
+
+/-- Literal listener `L0(·|u)`: uniform on the expression's extension. -/
+noncomputable def L0 (u : CausalExpression) : PMF CausalWorld :=
+  RSA.L0OfBoolMeaning sem u (ext_nonempty u)
+
+/-- L0 mass at a world where the expression holds: inverse extension size. -/
+private theorem L0_apply_of_true {u : CausalExpression} {cw : CausalWorld} (k : ℕ)
+    (h : sem u cw = true) (hk : (RSA.extensionOf sem u).card = k) :
+    L0 u cw = (k : ℝ≥0∞)⁻¹ := by
+  rw [L0, RSA.L0OfBoolMeaning_apply_of_mem _ h, hk]
+
+private theorem L0_apply_of_false {u : CausalExpression} {cw : CausalWorld}
+    (h : sem u cw = false) :
+    L0 u cw = 0 :=
+  RSA.L0OfBoolMeaning_apply_of_not_mem _ (by simp [h])
+
+private theorem L0_ne_zero {u : CausalExpression} {cw : CausalWorld}
+    (h : sem u cw = true) : L0 u cw ≠ 0 :=
+  (PMF.mem_support_iff _ _).mp ((RSA.mem_support_L0OfBoolMeaning_iff _ cw).mpr h)
+
+private theorem s1_ne_zero (cw : CausalWorld) :
+    ∑' u, (L0 u cw : ℝ≥0∞) ^ (1 : ℝ) * 1 ≠ 0 := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [tsum_fintype]
+  obtain ⟨u, hu⟩ : ∃ u, sem u cw = true := by
+    revert cw; decide
+  intro h
+  exact L0_ne_zero hu (Finset.sum_eq_zero_iff.mp h u (Finset.mem_univ _))
+
+private theorem s1_ne_top (cw : CausalWorld) :
+    ∑' u, (L0 u cw : ℝ≥0∞) ^ (1 : ℝ) * 1 ≠ ⊤ := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [tsum_fintype]
+  exact ENNReal.sum_ne_top.mpr fun u _ => PMF.apply_ne_top _ _
+
+/-- Pragmatic speaker `S1(·|cw) ∝ L0(cw|·)` (α = 1, zero cost; Table 1d). -/
+noncomputable def S1 (cw : CausalWorld) : PMF CausalExpression :=
+  RSA.S1Belief L0 (fun _ => 1) 1 cw (s1_ne_zero cw) (s1_ne_top cw)
+
+/-- Uniform prior over the 8 causal worlds. -/
+noncomputable def worldPrior : PMF CausalWorld := PMF.uniformOfFintype CausalWorld
+
+private theorem marg_ne_zero {u : CausalExpression} (cw : CausalWorld)
+    (h : sem u cw = true) :
+    PMF.marginal S1 worldPrior u ≠ 0 :=
+  PMF.marginal_ne_zero S1 worldPrior u
+    ((worldPrior.mem_support_iff cw).mp (PMF.mem_support_uniformOfFintype cw))
+    (RSA.S1Belief_apply_ne_zero_of_pos L0 _ 1 cw _ _ (L0_ne_zero h) one_ne_zero)
+
+/-- Pragmatic listener `L1(·|u)`: Bayesian posterior of `S1` against the
+uniform world prior. -/
+noncomputable def L1 (u : CausalExpression) (h : PMF.marginal S1 worldPrior u ≠ 0) :
+    PMF CausalWorld :=
+  PMF.posterior S1 worldPrior u h
+
+/-- Same-world expression preference reduces to comparing literal-listener
+mass — the speaker's partition function cancels. -/
+theorem S1_lt_iff (cw : CausalWorld) (u₁ u₂ : CausalExpression) :
+    S1 cw u₁ < S1 cw u₂ ↔ L0 u₁ cw < L0 u₂ cw := by
+  unfold S1
+  rw [RSA.S1Belief_apply_lt_iff_score_lt]
+  simp only [ENNReal.rpow_one, mul_one]
+
+/-- `≤` companion of `S1_lt_iff`. -/
+theorem S1_le_iff (cw : CausalWorld) (u₁ u₂ : CausalExpression) :
+    S1 cw u₁ ≤ S1 cw u₂ ↔ L0 u₁ cw ≤ L0 u₂ cw := by
+  unfold S1
+  rw [RSA.S1Belief_apply_le_iff_score_le]
+  simp only [ENNReal.rpow_one, mul_one]
+
+/-- Cross-world vacuous zero: where the expression is false the speaker
+assigns it no mass, so any world where it holds wins. -/
+private theorem S1_lt_of_zero_pos {cw₁ cw₂ : CausalWorld} {u : CausalExpression}
+    (h₁ : sem u cw₁ = false) (h₂ : sem u cw₂ = true) :
+    S1 cw₁ u < S1 cw₂ u := by
+  unfold S1 RSA.S1Belief
+  exact PMF.normalize_lt_of_apply_zero_pos _ _ (s1_ne_zero cw₁) (s1_ne_top cw₁)
+    (s1_ne_zero cw₂) (s1_ne_top cw₂) u
+    (by simp only [ENNReal.rpow_one, mul_one]; exact L0_apply_of_false h₁)
+    (by simp only [ENNReal.rpow_one, mul_one]; exact L0_ne_zero h₂)
 
 
 -- ============================================================================
--- Section 8: RSAConfig Predictions (rsa_predict)
+-- Section 8: PMF-face Predictions
 -- ============================================================================
 
 /-! ## S1 speaker predictions from the full 8-world Boolean model
 
-These theorems verify that the RSAConfig reproduces the qualitative
-predictions from Table 1d using `rsa_predict`. The predictions arise
-from the full space of 2³ = 8 causal worlds with uniform prior and
-Boolean semantics.
+These theorems verify that the PMF-face model reproduces the qualitative
+predictions from Table 1d. The predictions arise from the full space of
+2³ = 8 causal worlds with uniform prior and Boolean semantics: extension
+sizes are caused 3, enabled 6, affected 7, madeNoDifference 1.
 
 In each scenario, the pragmatic speaker selects the most informative
 true expression, producing the same preference orderings as Table 1d. -/
@@ -313,13 +387,17 @@ In (W=1, H=1, S=1), all positive expressions are literally true.
 "caused" applies to only 3/8 worlds while "enabled" applies to 6/8,
 so L0("caused") is more informative → S1 selects "caused." -/
 theorem s1_cfg_full_caused_gt_enabled :
-    cfg.S1 () scenario1 .caused > cfg.S1 () scenario1 .enabled := by
-  rsa_predict
+    S1 scenario1 .caused > S1 scenario1 .enabled := by
+  rw [gt_iff_lt, S1_lt_iff, L0_apply_of_true 6 (by decide) (by decide),
+    L0_apply_of_true 3 (by decide) (by decide)]
+  exact ENNReal.inv_lt_inv.mpr (by norm_num)
 
 /-- **Scenario 1**: S1 prefers "enabled" over "affected." -/
 theorem s1_cfg_full_enabled_gt_affected :
-    cfg.S1 () scenario1 .enabled > cfg.S1 () scenario1 .affected := by
-  rsa_predict
+    S1 scenario1 .enabled > S1 scenario1 .affected := by
+  rw [gt_iff_lt, S1_lt_iff, L0_apply_of_true 7 (by decide) (by decide),
+    L0_apply_of_true 6 (by decide) (by decide)]
+  exact ENNReal.inv_lt_inv.mpr (by norm_num)
 
 /-- **Scenario 2 (double prevention)**: S1 prefers "enabled" over "affected."
 
@@ -327,43 +405,63 @@ In (W=1, H=0, S=1), "caused" is literally false (H=0), so the speaker
 chooses between "enabled" and "affected." "enabled" is more informative
 (6/8 vs 7/8 worlds), so S1 selects it. -/
 theorem s1_cfg_double_prevention_enabled_gt_affected :
-    cfg.S1 () scenario2 .enabled > cfg.S1 () scenario2 .affected := by
-  rsa_predict
+    S1 scenario2 .enabled > S1 scenario2 .affected := by
+  rw [gt_iff_lt, S1_lt_iff, L0_apply_of_true 7 (by decide) (by decide),
+    L0_apply_of_true 6 (by decide) (by decide)]
+  exact ENNReal.inv_lt_inv.mpr (by norm_num)
 
 /-- **Scenario 2**: "caused" is ruled out (literally false at H=0). -/
 theorem s1_cfg_double_prevention_caused_zero :
-    ¬(cfg.S1 () scenario2 .caused > cfg.S1 () scenario2 .enabled) := by
-  rsa_predict
+    ¬(S1 scenario2 .caused > S1 scenario2 .enabled) := by
+  rw [gt_iff_lt, not_lt, S1_le_iff, L0_apply_of_false (by decide)]
+  exact zero_le
 
 /-- **Scenario 3 (H-only)**: S1 prefers "affected" over "caused."
 
 In (W=0, H=1, S=0), "affected" is the only true positive expression.
 "caused" requires H ∧ (W ∨ S), which fails when W=S=0. -/
 theorem s1_cfg_howOnly_affected_gt_caused :
-    cfg.S1 () scenario3 .affected > cfg.S1 () scenario3 .caused := by
-  rsa_predict
+    S1 scenario3 .affected > S1 scenario3 .caused := by
+  rw [gt_iff_lt, S1_lt_iff, L0_apply_of_false (by decide)]
+  exact pos_iff_ne_zero.mpr (L0_ne_zero (by decide))
 
 /-- **Scenario 3**: "affected" also beats "madeNoDifference."
 
 In the Boolean model (unlike the graded model with ν), "madeNoDifference"
 is strictly false in an H-only world: ¬W ∧ ¬H ∧ ¬S fails because H=1. -/
 theorem s1_cfg_howOnly_affected_gt_noDiff :
-    cfg.S1 () scenario3 .affected > cfg.S1 () scenario3 .madeNoDifference := by
-  rsa_predict
+    S1 scenario3 .affected > S1 scenario3 .madeNoDifference := by
+  rw [gt_iff_lt, S1_lt_iff, L0_apply_of_false (by decide)]
+  exact pos_iff_ne_zero.mpr (L0_ne_zero (by decide))
 
 /-- **Scenario 4 (no causation)**: S1 prefers "madeNoDifference" over "affected."
 
 In (W=0, H=0, S=0), only "madeNoDifference" is literally true. -/
 theorem s1_cfg_noCause_noDiff_gt_affected :
-    cfg.S1 () scenario4 .madeNoDifference > cfg.S1 () scenario4 .affected := by
-  rsa_predict
+    S1 scenario4 .madeNoDifference > S1 scenario4 .affected := by
+  rw [gt_iff_lt, S1_lt_iff, L0_apply_of_false (by decide)]
+  exact pos_iff_ne_zero.mpr (L0_ne_zero (by decide))
 
 /-! ## L1 listener predictions: scalar implicature effects
 
 The pragmatic listener (L1) inverts S1 via Bayes' rule. Hearing a weaker
 expression triggers a scalar implicature: the listener infers the speaker
 *chose not* to use a stronger expression, shifting probability away from
-worlds where the stronger expression would have been true. -/
+worlds where the stronger expression would have been true.
+
+Each comparison cancels the shared marginal and uniform prior
+(`PMF.posterior_lt_iff_kernel_lt_of_uniform`), reducing to a cross-world
+`S1` comparison: a vacuous zero where the expression is false, or a
+partition-dominance where the literal weights agree. -/
+
+theorem marg_caused : PMF.marginal S1 worldPrior .caused ≠ 0 :=
+  marg_ne_zero scenario1 (by decide)
+
+theorem marg_enabled : PMF.marginal S1 worldPrior .enabled ≠ 0 :=
+  marg_ne_zero scenario1 (by decide)
+
+theorem marg_noDiff : PMF.marginal S1 worldPrior .madeNoDifference ≠ 0 :=
+  marg_ne_zero scenario4 (by decide)
 
 /-- **L1 hearing "caused"**: higher probability for full-causation world
 than no-causation world.
@@ -371,8 +469,41 @@ than no-causation world.
 L1("caused") assigns positive mass only to worlds where "caused" is
 literally true (H ∧ (W ∨ S)). The no-causation world (F,F,F) gets zero. -/
 theorem l1_cfg_caused_identifies_full :
-    cfg.L1 .caused scenario1 > cfg.L1 .caused scenario4 := by
-  rsa_predict
+    L1 .caused marg_caused scenario1 > L1 .caused marg_caused scenario4 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact S1_lt_of_zero_pos (by decide) (by decide)
+
+/-! Speaker partition functions at the two "enabled"-worlds: at (T,F,F) only
+"enabled" and "affected" are true (`Z = 6⁻¹ + 7⁻¹`); at (T,T,T) "caused" also
+competes (`Z = 3⁻¹ + 6⁻¹ + 7⁻¹`). The smaller partition means a sharper
+speaker, so hearing "enabled" favours (T,F,F). -/
+
+private theorem sumExpr (f : CausalExpression → ℝ≥0∞) :
+    ∑' u, f u = f .caused + f .enabled + f .affected + f .madeNoDifference := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset CausalExpression)
+      = {.caused, .enabled, .affected, .madeNoDifference} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+private theorem Z_TFF :
+    (∑' u, (L0 u ⟨true, false, false⟩ : ℝ≥0∞) ^ (1 : ℝ) * 1) = 6⁻¹ + 7⁻¹ := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [sumExpr, L0_apply_of_false (by decide), L0_apply_of_true 6 (by decide) (by decide),
+    L0_apply_of_true 7 (by decide) (by decide), L0_apply_of_false (by decide)]
+  push_cast
+  ring
+
+private theorem Z_TTT :
+    (∑' u, (L0 u scenario1 : ℝ≥0∞) ^ (1 : ℝ) * 1) = 3⁻¹ + 6⁻¹ + 7⁻¹ := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [sumExpr, L0_apply_of_true 3 (by decide) (by decide),
+    L0_apply_of_true 6 (by decide) (by decide),
+    L0_apply_of_true 7 (by decide) (by decide), L0_apply_of_false (by decide)]
+  push_cast
+  ring
 
 /-- **L1 scalar implicature for "enabled"**: hearing "enabled" makes the
 listener prefer worlds where "caused" is *false* over worlds where it's true.
@@ -382,15 +513,37 @@ Both (T,F,F) and (T,T,T) make "enabled" literally true (W ∨ S). But at
 L1 down-weights (T,T,T) upon hearing "enabled." This is the classic
 scalar implicature: "enabled" ⇝ ¬caused. -/
 theorem l1_cfg_enabled_implicature :
-    cfg.L1 .enabled ⟨true, false, false⟩ > cfg.L1 .enabled scenario1 := by
-  rsa_predict
+    L1 .enabled marg_enabled ⟨true, false, false⟩ > L1 .enabled marg_enabled scenario1 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  unfold S1 RSA.S1Belief
+  refine PMF.normalize_lt_of_apply_eq_of_sum_lt _ _ (s1_ne_zero scenario1)
+    (s1_ne_top scenario1) (s1_ne_zero ⟨true, false, false⟩)
+    (s1_ne_top ⟨true, false, false⟩) .enabled
+    (by simp only [ENNReal.rpow_one, mul_one]
+        rw [L0_apply_of_true 6 (by decide) (by decide),
+          L0_apply_of_true 6 (by decide) (by decide)])
+    (by simp only [ENNReal.rpow_one, mul_one]
+        rw [L0_apply_of_true 6 (by decide) (by decide)]
+        exact ENNReal.inv_ne_zero.mpr (by norm_num))
+    (by simp only [ENNReal.rpow_one, mul_one]
+        rw [L0_apply_of_true 6 (by decide) (by decide)]
+        exact ENNReal.inv_ne_top.mpr (by norm_num))
+    ?_
+  rw [Z_TFF, Z_TTT, show (3 : ℝ≥0∞)⁻¹ + 6⁻¹ + 7⁻¹ = 6⁻¹ + 7⁻¹ + 3⁻¹ from by ring]
+  exact ENNReal.lt_add_right
+    (ENNReal.add_ne_top.mpr ⟨ENNReal.inv_ne_top.mpr (by norm_num),
+      ENNReal.inv_ne_top.mpr (by norm_num)⟩)
+    (ENNReal.inv_ne_zero.mpr (by norm_num))
 
 /-- **L1 hearing "madeNoDifference"**: identifies the no-causation world.
 
 "madeNoDifference" is true only at (F,F,F), so L1 assigns it probability 1. -/
 theorem l1_cfg_noDiff_identifies_none :
-    cfg.L1 .madeNoDifference scenario4 > cfg.L1 .madeNoDifference scenario1 := by
-  rsa_predict
+    L1 .madeNoDifference marg_noDiff scenario4 > L1 .madeNoDifference marg_noDiff scenario1 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact S1_lt_of_zero_pos (by decide) (by decide)
 
 
 -- ============================================================================
@@ -742,12 +895,14 @@ theorem solo_causalWorld :
 theorem solo_cause_chain :
     let cw := causalWorldFromModel soloModel Valuation.empty .cause .effect
     expressionMeaning cw .caused = true ∧
-    cfg.S1 () cw .caused > cfg.S1 () cw .enabled ∧
-    cfg.S1 () cw .caused > cfg.S1 () cw .affected := by
+    S1 cw .caused > S1 cw .enabled ∧
+    S1 cw .caused > S1 cw .affected := by
   refine ⟨?_, ?_, ?_⟩ <;> rw [solo_causalWorld]
   · decide
-  · rsa_predict
-  · rsa_predict
+  · exact s1_cfg_full_caused_gt_enabled
+  · rw [gt_iff_lt, S1_lt_iff, L0_apply_of_true 7 (by decide) (by decide),
+      L0_apply_of_true 3 (by decide) (by decide)]
+    exact ENNReal.inv_lt_inv.mpr (by norm_num)
 
 end EndToEnd
 
