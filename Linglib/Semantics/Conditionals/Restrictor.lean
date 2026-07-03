@@ -1,6 +1,5 @@
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Tense.ConditionalShift
 
 /-!
 # Restrictor Theory of Conditionals
@@ -162,17 +161,16 @@ theorem conditional_K (f : ModalBase W) (g : OrderingSource W)
     conditionalNecessity f g α γ w :=
   K_axiom (restrictedBase f α) g β γ w hImpl hBeta
 
-/-! ## Prop-level bridge -/
+/-! ## Bridge to the strict conditional -/
 
-open Tense.ConditionalShift (domainRestrictedConditional)
-
-/-- `conditionalNecessity` (with empty ordering source) is
-    `domainRestrictedConditional` over the accessible worlds: the two
-    files' Kratzer conditionals are the same operation at the Prop level. -/
-theorem conditionalNecessity_iff_domainRestricted
+/-- `conditionalNecessity` with empty ordering source is membership in
+    `strictImp` over the accessible worlds: Kratzer's restricted necessity
+    and the strict conditional of `Conditionals/Basic.lean` are the same
+    operation. -/
+theorem conditionalNecessity_iff_mem_strictImp
     (f : ModalBase W) (α : W → Prop) (β : W → Prop) (w : W) :
     conditionalNecessity f emptyBackground α β w ↔
-    domainRestrictedConditional (accessibleWorlds f w) α β :=
-  restrictor_eq_strict f α β w
+    w ∈ strictImp (accessibleWorlds f) {w' | α w'} {w' | β w'} :=
+  (restrictor_eq_strict f α β w).trans mem_strictImp_forall.symm
 
 end Semantics.Conditionals.Restrictor

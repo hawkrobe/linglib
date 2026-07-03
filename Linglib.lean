@@ -1891,7 +1891,6 @@ import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Semantics.Supervaluation.TCS
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Compositional
-import Linglib.Semantics.Tense.ConditionalShift
 import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Domain
