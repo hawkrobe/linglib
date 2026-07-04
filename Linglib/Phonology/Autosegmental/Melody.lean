@@ -24,9 +24,12 @@ substrate already provides.
 A word's underlying form is the left-to-right `Graph.concat` fold of its
 melodies ([jardine-heinz-2015] §5), and `FloatingForm.ofGraph` packages
 it as a derivation input. This melody-concatenation view of
-non-concatenative exponence is [bye-svenonius-2012]'s Generalized
-Nonlinear Affixation (survey: [zimmermann-2024]); GEN's compliance with
-Consistency of Exponence is `FloatingForm.gen_preserves_morphemes`.
+non-concatenative exponence is the Generalized Nonlinear Affixation
+program — [bermudez-otero-2012]'s term; [bye-svenonius-2012] give the
+programmatic statement (non-concatenative morphology as epiphenomenon
+of deficient lexical entries); [zimmermann-2024] surveys. GEN's
+compliance with Consistency of Exponence is
+`FloatingForm.gen_preserves_morphemes`.
 
 ## Main definitions
 
