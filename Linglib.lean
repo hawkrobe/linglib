@@ -1684,7 +1684,6 @@ import Linglib.Semantics.Exhaustification.ScalePredictions
 import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Trivalent
-import Linglib.Semantics.Focus.BackgroundedIslands
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Particles
