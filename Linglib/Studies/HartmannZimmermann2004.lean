@@ -33,10 +33,11 @@ audible.
 
 Realisation uses the shared `Semantics.Focus.Realization` vocabulary
 (reflex lists; `Strategy` is the paper's label set, derived from the
-reflex shape). The aspect frames are grounded in the Tangale fragment
-via `Aspect.entry`: the perfective rows carry [kidda-1985]'s singular
-perfective suffix and the paper's progressive is the fragment's
-continuous (preposed *né*). The *núm* readings use the strong-theory
+reflex shape). Configurations carry the fragment's
+tense–aspect type directly (`Tangale.TAM`): the perfective rows are
+[kidda-1985]'s singular perfective and the paper's progressive is the
+fragment's continuous (preposed *né*), with the paradigm restriction
+in `Config.WF`. The *núm* readings use the strong-theory
 `Semantics.Focus.onlyVia`: one string, three contrast-set resolutions.
 
 The paper's fn. 6 notes the suffix *-i* does not occur with all
@@ -62,11 +63,6 @@ open OptimalityTheory (Tableau)
 
 /-! ## The marking system (§4.1, §5.2, §6.2) -/
 
-/-- Verbal aspect, as far as the focus-marking facts require. -/
-inductive Aspect where
-  | perfective | progressive
-  deriving DecidableEq, Repr
-
 /-- The focused constituent in the paper's paradigm. -/
 inductive Focused where
   | subject | verb | vp | object
@@ -77,47 +73,45 @@ inductive Strategy where
   | postposing | suffixI | boundary | unmarked
   deriving DecidableEq, Repr
 
-/-- A focus configuration: what is focused, in which aspect, with a
+/-- A focus configuration: what is focused, in which tense–aspect
+frame ([kidda-1985]'s inventory, `Fragments/Tangale/TAM.lean`), with a
 transitive or intransitive predicate. -/
 structure Config where
   focused    : Focused
-  aspect     : Aspect
+  tam        : Tangale.TAM
   transitive : Bool
   deriving DecidableEq, Repr
 
-/-- Object focus presupposes a transitive predicate. -/
+/-- The paper's paradigm: object focus presupposes a transitive
+predicate, and the marking facts are documented for the perfective and
+the continuous (the paper's progressive) frames. -/
 def Config.WF (c : Config) : Prop :=
-  c.focused = .object → c.transitive = true
+  (c.focused = .object → c.transitive = true) ∧
+  (c.tam = .perfective ∨ c.tam = .continuous)
 
 instance (c : Config) : Decidable c.WF :=
-  inferInstanceAs (Decidable (_ → _))
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The fragment entry realising each aspect frame
-(`Fragments/Tangale/TAM.lean`): the perfective rows carry
-[kidda-1985]'s singular perfective (the *-gó* of *wai-gó*, *wur-gó*),
-and the paper's progressive is the continuous (preposed *né*, the
-paper's PROG *n*). -/
-def Aspect.entry : Aspect → Tangale.TAMEntry
-  | .perfective  => Tangale.perfectiveSg
-  | .progressive => Tangale.continuous
-
-/-- The paper's glosses are grounded in the fragment: PERF is the
-voiced alternant of the perfective suffix, and PROG is the preposed
-continuous marker. -/
-theorem aspect_entry_grounds_glosses :
-    "gó" ∈ Aspect.perfective.entry.suffixAlternants ∧
-    Aspect.progressive.entry.marker = .preposed "né" := by decide
+/-- The paper's glosses are the fragment's paradigm: PERF is the
+voiced alternant of [kidda-1985]'s singular perfective (the *-gó* of
+*wai-gó*, *wur-gó*), and PROG is the continuous with its preposed
+*né* (the paper's *n*). -/
+theorem paradigm_grounds_glosses :
+    "gó" ∈ Tangale.perfectiveSg.suffixAlternants ∧
+    Tangale.continuous.marker = .preposed "né" := by decide
 
 /-- The overt reflexes of each configuration: subjects surface
 displaced in every aspect ((17b)); intransitive predicate focus bears
 the morpheme *-i* ((24b)); transitive perfective non-subject foci get
 the prosodic boundary after the verb ((25a–c)); progressive non-subject
-foci receive nothing ((31)/(32a–c)). -/
+foci receive nothing ((31)/(32a–c)). Frames beyond the paper's tested
+perfective and continuous fall to the unmarked default; claims about
+them are guarded by `Config.WF`. -/
 def realize : Config → Realization Focused
   | ⟨.subject, _, _⟩        => ⟨.subject, [.displacement .subject]⟩
   | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
   | ⟨f, .perfective, true⟩  => ⟨f, [.boundary .verb]⟩
-  | ⟨f, .progressive, _⟩    => ⟨f, []⟩
+  | ⟨f, _, _⟩               => ⟨f, []⟩
 
 /-- The paper's strategy labels, classified from the realization
 shape — a derived quotient, not a primitive tag. -/
@@ -139,7 +133,7 @@ theorem subject_always_marked (c : Config) (h : c.focused = .subject) :
 /-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
 contra Kidda 1993). -/
 theorem progressive_nonsubject_unmarked (c : Config)
-    (hs : c.focused ≠ .subject) (ha : c.aspect = .progressive) :
+    (hs : c.focused ≠ .subject) (ha : c.tam = .continuous) :
     (realize c).reflexes = [] := by
   obtain ⟨f, a, t⟩ := c
   cases ha
@@ -149,14 +143,14 @@ theorem progressive_nonsubject_unmarked (c : Config)
 with no overt reflex — (32a), object focus in the progressive. -/
 theorem focus_marking_not_obligatory :
     ∃ c : Config, c.WF ∧ ¬ (realize c).IsOvert :=
-  ⟨⟨.object, .progressive, true⟩, fun _ => rfl, fun h => h rfl⟩
+  ⟨⟨.object, .continuous, true⟩, ⟨fun _ => rfl, Or.inr rfl⟩, fun h => h rfl⟩
 
 /-- Tangale refutes the universalist claim that every focus receives an
 overt reflex — the Tangale side of the counterexample the Hausa
 chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
     ¬ Semantics.Focus.EveryFocusPerceptible realize :=
-  fun h => h ⟨.object, .progressive, true⟩ rfl
+  fun h => h ⟨.object, .continuous, true⟩ rfl
 
 /-- The perfective boundary underdetermines the focus extent: on
 transitive perfective non-subject configurations, `focused` does not
@@ -165,7 +159,7 @@ across the three extents. -/
 theorem boundary_underdetermines_extent :
     ¬ Function.FactorsThroughOn
         Config.focused (fun c => (realize c).reflexes)
-        {c | c.aspect = .perfective ∧ c.transitive = true ∧
+        {c | c.tam = .perfective ∧ c.transitive = true ∧
              c.focused ≠ .subject} := by
   rw [Function.not_factorsThroughOn_iff_exists_witness]
   exact ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
@@ -331,9 +325,10 @@ private def focusedLabel : Focused → String
   | .vp      => "vp"
   | .object  => "object"
 
-private def aspectLabel : Aspect → String
-  | .perfective  => "perfective"
-  | .progressive => "progressive"
+private def aspectLabel : Tangale.TAM → String
+  | .perfective => "perfective"
+  | .continuous => "progressive"
+  | _           => ""
 
 private def configRows :
     List (Config × Data.Examples.LinguisticExample) :=
@@ -342,9 +337,9 @@ private def configRows :
    (⟨.object, .perfective, true⟩, Examples.ex25a),
    (⟨.vp, .perfective, true⟩, Examples.ex25b),
    (⟨.verb, .perfective, true⟩, Examples.ex25c),
-   (⟨.object, .progressive, true⟩, Examples.ex32a),
-   (⟨.vp, .progressive, true⟩, Examples.ex32b),
-   (⟨.verb, .progressive, true⟩, Examples.ex32c)]
+   (⟨.object, .continuous, true⟩, Examples.ex32a),
+   (⟨.vp, .continuous, true⟩, Examples.ex32b),
+   (⟨.verb, .continuous, true⟩, Examples.ex32c)]
 
 /-- Every focus row's strategy is the `marking` of its configuration:
 the conditioning function is derived from the data, not stipulated
@@ -353,6 +348,6 @@ theorem marking_matches_rows :
     ∀ p ∈ configRows,
       p.2.feature? "strategy" = some (strategyLabel (marking p.1)) ∧
       p.2.feature? "focused" = some (focusedLabel p.1.focused) ∧
-      p.2.feature? "aspect" = some (aspectLabel p.1.aspect) := by decide
+      p.2.feature? "aspect" = some (aspectLabel p.1.tam) := by decide
 
 end HartmannZimmermann2004
