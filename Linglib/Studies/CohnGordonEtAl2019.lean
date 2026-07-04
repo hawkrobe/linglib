@@ -662,8 +662,9 @@ open scoped ENNReal in
     the strongest natural choice given a single normalised posterior.
     A weaker alternative would be a Luce-choice rule over a
     monotone-in-posterior activation; that weakening preserves the
-    qualitative inequality patterns this file proves. If a second linking hypothesis enters the codebase, the
-    paradigm contract should grow a typed `LinkingHypothesis` API and
+    qualitative inequality patterns this file proves. If a second linking
+    hypothesis enters the codebase, the paradigm contract should grow a
+    typed `LinkingHypothesis` API and
     the bridge theorem statement should mention which hypothesis is
     in force.
 
