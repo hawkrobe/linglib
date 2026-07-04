@@ -37,8 +37,9 @@ situ" — only the categorical no-determination claim is a theorem.
 
 ## TODO
 
-* §3.2.5 exhaustivity contrast against Kiss 1998 requires an
-  alternatives-semantics exhaustivity operator beyond `Use` tags.
+* The Kiss-side semantic interpretation of `FocusType.IsExhaustive`
+  (obligatory covert `onlyVia`) for the like-for-like §3.2.5 contrast —
+  needs a semantic layer in `Kiss1998.lean`.
 * §2.3 multiple foci: co-occurrence of one ex-situ focus with in-situ
   foci (18a-c).
 * §4 focus pied-piping / partial focus movement and the (47) "Ex-Situ
@@ -115,6 +116,41 @@ cells. One semantics, four pragmatic uses. -/
 theorem ctx_resolves (u : Use) :
     (ctx u).Resolves answer.oValue answer.aSet :=
   use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
+
+/-! ## Exhaustive focus (§3.2.5)
+
+Exhaustivity is not structurally encoded: it is induced by focus
+particles (*kawài* 'only'; *nee/cee* per the paper's fn. 3) over the
+resolved contrast set, in either strategy — (32a/b) attest in-situ and
+ex-situ *only BOOKS* alike. -/
+
+/-- The exhaustified answer: strong-theory *only* over the scenario's
+resolved contrast set. -/
+private def exhAnswer (u : Use) : Set Alt :=
+  onlyVia (ctx u).contrastSet answer.oValue
+
+/-- The exhaustified answer computes to the bare true answer, uniformly
+across the four uses: exhaustification consumes the resolved contrast
+set and prejacent, never the strategy — the §3.2.5 point that
+exhaustive readings are available in both positions. -/
+theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
+  have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Semantics.Focus.Interpretation.PropFocusValue Alt)
+      {Alt.ans} = {Alt.ans} := by
+    ext w
+    constructor
+    · intro hw
+      have halt := hw {Alt.alt} (Or.inr rfl)
+      cases w with
+      | ans => rfl
+      | alt =>
+        exact absurd (halt rfl)
+          (by simp [Set.singleton_eq_singleton_iff])
+    · rintro rfl
+      intro q hq hwq
+      rcases hq with rfl | rfl
+      · rfl
+      · exact absurd hwq (by simp)
+  cases u <;> exact key
 
 /-! ## The 8-cell empirical matrix (§3.2)
 

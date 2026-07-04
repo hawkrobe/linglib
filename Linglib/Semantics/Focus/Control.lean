@@ -303,6 +303,41 @@ theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
   | selective   => exact hSq
   | contrastive => exact hSq
 
+/-! ### Strong-theory *only*
+
+[rooth-1992]'s official semantics: *only* quantifies over the resolved
+contrast variable `C`; the focus constraint `C ⊆ ⟦·⟧f` is supplied
+separately by the squiggle, "leaving room for a pragmatic process of
+constructing a domain of quantification". The operator has no lexical
+access to focus values — direct-association implementations carry an
+alternative list lexically instead, and the two provably diverge under
+domain restriction (`Studies/Rooth1992.lean`). -/
+
+/-- The strong-theory *only* assertion, transposed to the propositional
+level: every true member of the resolved contrast set is the prejacent.
+The prejacent presupposition is carried separately. -/
+def onlyVia (C : PropFocusValue W) (prejacent : Set W) : Set W :=
+  {w | ∀ q ∈ C, w ∈ q → q = prejacent}
+
+@[simp] theorem mem_onlyVia {C : PropFocusValue W} {p : Set W} {w : W} :
+    w ∈ onlyVia C p ↔ ∀ q ∈ C, w ∈ q → q = p := Iff.rfl
+
+/-- Narrowing the domain weakens *only* — the pragmatic domain
+restriction that repairs the over-generation of a fixed full-focus
+domain. -/
+theorem onlyVia_antitone {C C' : PropFocusValue W} (h : C ⊆ C')
+    (p : Set W) : onlyVia C' p ⊆ onlyVia C p :=
+  fun _ hw q hq => hw q (h hq)
+
+/-- Against a squiggle-resolved contrast set, *only* genuinely
+excludes: the contrast clause supplies a distinct alternative that the
+assertion rules out wherever it holds. -/
+theorem onlyVia_excludes_of_squiggleSet {o : Set W} {fv C : PropFocusValue W}
+    (h : SquiggleSet o fv C) :
+    ∃ q ∈ C, q ≠ o ∧ ∀ w ∈ onlyVia C o, w ∉ q :=
+  let ⟨_, _, q, hq, hne⟩ := h
+  ⟨q, hq, hne, fun _ hw hwq => hne (hw q hq hwq)⟩
+
 /-- A `Question` supplies its maximal alternatives as a question
 antecedent — the bridge from the inquisitive layer. -/
 def Antecedent.ofQuestion (q : Question W) : Antecedent W :=
