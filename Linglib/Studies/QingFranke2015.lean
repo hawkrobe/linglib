@@ -732,7 +732,8 @@ theorem salience_circle_blue_circ :
     sc_circle_bc, sc_circle_gc,
     ← ENNReal.ofReal_mul (by norm_num [saliencePrior]),
     ← ENNReal.ofReal_mul (by norm_num [saliencePrior])]
-  refine (ENNReal.ofReal_lt_ofReal_iff (by have := xc_pos; norm_num [saliencePrior]; positivity)).mpr ?_
+  refine (ENNReal.ofReal_lt_ofReal_iff
+    (by have := xc_pos; norm_num [saliencePrior]; positivity)).mpr ?_
   have hx := xc_pos
   have h1 : (0:ℝ) < 1/2 + xc := by linarith
   have h2 : (0:ℝ) < 1/2 + xc/2 := by linarith
@@ -786,7 +787,8 @@ theorem salience_green_green_sq :
     sc_green_gs, sc_green_gc,
     ← ENNReal.ofReal_mul (by norm_num [saliencePrior]),
     ← ENNReal.ofReal_mul (by norm_num [saliencePrior])]
-  refine (ENNReal.ofReal_lt_ofReal_iff (by have := xc_pos; norm_num [saliencePrior]; positivity)).mpr ?_
+  refine (ENNReal.ofReal_lt_ofReal_iff
+    (by have := xc_pos; norm_num [saliencePrior]; positivity)).mpr ?_
   have hx := xc_pos
   have h1 : (0:ℝ) < 1 + xc/2 := by linarith
   have h2 : (0:ℝ) < 1/2 + xc/2 := by linarith
