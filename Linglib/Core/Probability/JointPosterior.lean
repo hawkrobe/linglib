@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Posterior
-import Linglib.Core.Probability.Entropy
+import Linglib.Core.Probability.Marginal
 
 /-!
 # Joint posterior reasoning: posterior over `α × β`
