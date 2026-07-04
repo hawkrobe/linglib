@@ -337,8 +337,11 @@ while every other member fails — equivalently, no member is covered by
 the union of the rest (each alternative has a private world). Strictly
 weaker than the mutual exclusivity of partition semantics
 (`irredundant_of_pairwise_disjoint`) and than Boolean independence of
-the family. `[UPSTREAM]` candidate: mathlib has the disjointness
-analogue (`sSupIndep`) but not this non-coveredness form. -/
+the family. `[UPSTREAM]` candidate as the non-coveredness
+companion of `iSupIndep` (`¬ t i ≤ ⨆ j ≠ i, t j`): mathlib has the
+disjointness form and, at the module instance, the characterization
+`linearIndependent_iff_notMem_span`, but no lattice-level name — and
+`SupIrred` (join-irreducibility of an element) is a false friend. -/
 def Irredundant {ι : Type*} (f : ι → Set W) : Prop :=
   ∀ i, ∃ w ∈ f i, ∀ j, j ≠ i → w ∉ f j
 
