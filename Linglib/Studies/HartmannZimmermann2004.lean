@@ -36,8 +36,9 @@ Realisation uses the shared `Semantics.Focus.Realization` vocabulary
 shape in the data linkage). Configurations carry the fragment's
 tense–aspect type directly (`Tangale.TAM`): the perfective rows are
 [kidda-1985]'s singular perfective and the paper's progressive is the
-fragment's continuous (preposed *né*), with the paradigm restriction
-in `Config.WF`. The *núm* readings use the strong-theory
+fragment's continuous (preposed *né*, transcribed *n* by the paper),
+with the paradigm restriction in `Config.WF`; `marking_matches_rows`
+pins the identification to the data rows. The *núm* readings use the strong-theory
 `Semantics.Focus.onlyVia`: one string, three contrast-set resolutions.
 
 The paper's fn. 6 notes the suffix *-i* does not occur with all
@@ -86,14 +87,6 @@ def Config.WF (c : Config) : Prop :=
 
 instance (c : Config) : Decidable c.WF :=
   inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The paper's glosses are the fragment's paradigm: PERF is the
-voiced alternant of [kidda-1985]'s singular perfective (the *-gó* of
-*wai-gó*, *wur-gó*), and PROG is the continuous with its preposed
-*né* (the paper's *n*). -/
-theorem paradigm_grounds_glosses :
-    "gó" ∈ Tangale.perfectiveSg.suffixAlternants ∧
-    Tangale.continuous.marker = .preposed "né" := by decide
 
 /-- The overt reflexes of each configuration: subjects surface
 displaced in every aspect ((17b)); intransitive predicate focus bears
