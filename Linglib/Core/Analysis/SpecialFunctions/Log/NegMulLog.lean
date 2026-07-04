@@ -17,14 +17,10 @@ rule. `[UPSTREAM]` candidate for that file.
 
 namespace Real
 
-/-- `negMulLog` at an inverse. Holds with junk at `y = 0` (both sides vanish). -/
-theorem negMulLog_inv (y : ℝ) : negMulLog y⁻¹ = y⁻¹ * log y := by
+lemma negMulLog_inv (y : ℝ) : negMulLog y⁻¹ = y⁻¹ * log y := by
   simp [negMulLog, log_inv]
 
-/-- The quotient rule for `negMulLog`, weighted by the denominator: the
-    companion of `negMulLog_mul`. Holds with junk at `x = 0` (both sides
-    vanish). -/
-theorem negMulLog_div (x : ℝ) {y : ℝ} (hy : y ≠ 0) :
+lemma negMulLog_div (x : ℝ) {y : ℝ} (hy : y ≠ 0) :
     y * negMulLog (x / y) = negMulLog x + x * log y := by
   obtain rfl | hx := eq_or_ne x 0
   · simp
