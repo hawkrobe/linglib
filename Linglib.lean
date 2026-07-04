@@ -675,7 +675,6 @@ import Linglib.Features.Register
 import Linglib.Features.ScopeTypes
 import Linglib.Features.Slot
 import Linglib.Features.Subjectivity
-import Linglib.Features.Topic
 import Linglib.Features.Valence
 import Linglib.Features.VerbCluster
 import Linglib.Features.WordOrder
@@ -901,7 +900,6 @@ import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Hixkaryana.WordOrder
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Hungarian.Focus
 import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Hungarian.Morph
 import Linglib.Fragments.Hungarian.Phonology
@@ -1686,11 +1684,10 @@ import Linglib.Semantics.Exhaustification.ScalePredictions
 import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Trivalent
-import Linglib.Semantics.Focus.BackgroundedIslands
-import Linglib.Semantics.Focus.Comparability
+import Linglib.Semantics.Focus.Control
+import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Particles
-import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Highlighting

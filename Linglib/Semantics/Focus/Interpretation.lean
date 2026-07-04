@@ -59,13 +59,6 @@ focus value. -/
 def qaCongruentWeak (answerFocus question : PropFocusValue W) : Prop :=
   question ⊆ answerFocus
 
-/-- Short label for each `FIPApplication` case. -/
-def FIPApplication.description : FIPApplication → String
-  | .focusingAdverb => "Focus-sensitive particles (only, even, also) associate with focus"
-  | .contrast => "Parallel focus in discourse triggers contrast presupposition"
-  | .scalarImplicature => "Focus alternatives feed into scalar implicature computation"
-  | .qaCongruence => "Answer focus must match question (see Questions/FocusAnswer.lean)"
-
 /-- The full ~ operator: resolves focus alternatives to a comparison
 class `C` constrained by FIP (`C ⊆ ⟦α⟧f`) and ordinary-inclusion
 (`⟦α⟧o ∈ C`). -/

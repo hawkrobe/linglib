@@ -1,16 +1,18 @@
 import Linglib.Features.InformationStructure
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Focus.Interpretation
+import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Composition.Tree
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.Rooth1992
 
 /-!
-# [rooth-1992] Bridge — Focus Interpretation [rooth-1992]
+# Alternative-semantics focus interpretation
 
-Bridges the example rows in `Data/Examples/Rooth1992.json` to the formal
-theory in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
+Formalises [rooth-1992] over the example rows in
+`Data/Examples/Rooth1992.json` and the formal theory in
+`Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
 compositional derivational chain through Montague semantics and
 connection to English fragment entries.
 
@@ -55,7 +57,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 
 -/
 
-namespace Rooth1992Bridge
+namespace Rooth1992
 
 open Features.InformationStructure
 open Alternatives
@@ -266,6 +268,27 @@ theorem maryAteBeans_not_in_objectFocus :
 theorem fip_fails_object_focus :
     ¬ fip q_whoAteBeans fv_objectFocus :=
   fun h => maryAteBeans_not_in_objectFocus (h maryAteBeans_in_question)
+
+-- ───────────────────────────────────────────────────────────────────
+-- §6c  The Question as a Focus Antecedent
+-- ───────────────────────────────────────────────────────────────────
+
+/-- 'Who ate the beans?' as a focus antecedent
+    (`Semantics.Focus.Antecedent`): the anaphoric source of the
+    squiggle's contrast set. -/
+def qaAntecedent : Semantics.Focus.Antecedent QAWorld := .question q_whoAteBeans
+
+/-- Question antecedents license the new-information use. -/
+theorem qaAntecedent_use : qaAntecedent.use = .newInfo := rfl
+
+/-- The antecedent admits subject focus — FIP routed through the
+    antecedent layer. -/
+theorem qaAntecedent_admits_subjectFocus :
+    qaAntecedent.Admits fv_subjectFocus := fip_congruent
+
+/-- The antecedent rejects object focus. -/
+theorem qaAntecedent_rejects_objectFocus :
+    ¬ qaAntecedent.Admits fv_objectFocus := fip_fails_object_focus
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §7  "Only" Association ([rooth-1992] §2.1)
@@ -580,4 +603,4 @@ theorem endToEnd_question_grounded :
     (∀ w, treeResult (focusLex w) tree_maryAteBeans = some (ateInWorld w E.beans E.mary)) := by
   exact ⟨fun w => by cases w <;> rfl, fun w => by cases w <;> rfl⟩
 
-end Rooth1992Bridge
+end Rooth1992

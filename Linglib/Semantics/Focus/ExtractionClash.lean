@@ -2,28 +2,15 @@ import Linglib.Features.Givenness
 import Linglib.Features.InformationStructure
 
 /-!
-# Focus alternative-set well-formedness and extraction clash
+# Information-structural extraction clash
 
-Theory predicates over the substance taxonomies in `Features/`:
-alternative-set well-formedness (similarity + dissimilarity), and an
-extraction-IS clash predicate parametrised over filler focus marking
-and domain givenness.
-
-## Main definitions
-
-* `semanticallyIndependent`: neither of two propositions entails the other.
-* `commonIntegrator`: a set subsuming all alternatives.
-* `wellFormedAlts`: alternatives are pairwise independent under a common
-  integrator.
-* `extractionISClash`: predicate on `(FocusMark, BinaryGivenness)` true
-  exactly at `(focused, given)`.
-
-## References
-
-* [umbach-2004], [erteschik-shir-1973], [abeille-et-al-2020].
+`extractionISClash`: a focused filler extracted from a given/backgrounded
+domain clashes — the filler addresses the QUD while the domain is
+QUD-invisible ([erteschik-shir-1973], [abeille-et-al-2020]). Predicate
+over the `Features/` axes `(FocusMark, BinaryGivenness)`.
 -/
 
-namespace Semantics.Focus.Comparability
+namespace Semantics.Focus.ExtractionClash
 
 open Features (BinaryGivenness)
 open Features.InformationStructure (FocusMark)
@@ -88,4 +75,4 @@ theorem extractionISClash_focused_new :
 theorem extractionISClash_nonFocused_given :
     ¬ extractionISClash .nonFocused .given := by decide
 
-end Semantics.Focus.Comparability
+end Semantics.Focus.ExtractionClash

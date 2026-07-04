@@ -1,39 +1,32 @@
-import Linglib.Fragments.Hungarian.Focus
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
 # Hungarian preverbal/postverbal focus contrast
 
-Formalises the §1 minimal pairs, the §2 structural claim that
-position determines focus type, and the §3 distributional
-restrictions of É. Kiss (1998) on Hungarian focus.
-
-## Main definitions
-
-* `preverbal_identificational`, `postverbal_information`: paper eq. (5a)/(5b).
-* `preverbal_hat`, `postverbal_hat`: paper eq. (8a)/(8b).
-* `starred_universal_identificational`, `universal_information`: eq. (17b)/(19b).
-
-## Main results
-
-* `position_determines_focusType`: on licensed configs, `focusType`
-  factors through `position`. Kiss's §2 structural claim.
-* `preverbal_iff_exhaustive`: exhaustivity equivalent to preverbal
-  position on licensed configs.
-* `starred_universal_identificational_not_licensed`,
-  `universal_information_licensed`, `only_information_not_licensed`,
-  `someIndef_neither_licensed`: §3 restrictions.
+Formalises [kiss-1998]: identificational focus moves to the immediately
+preverbal Spec,FP and expresses exhaustive identification; information
+focus stays postverbal and carries no exhaustivity. Position determines
+focus type on licensed configurations, and the §3 distributional
+restrictions (universals, *csak*-phrases, *valami/valaki*) follow from
+class–type compatibility.
 
 ## Implementation notes
 
-Kiss's exhaustivity claim has been substantially revised in later
-work (Onea & Beaver 2011, Horváth 2010, Wedgwood 2005). The
-theorems below formalise Kiss's 1998 position faithfully without
-adjudicating between Kiss and her successors.
+The apparatus (`Position`, `FocusType`, `ConstituentClass`,
+`FocusConfig`) is Kiss's analytical classification, not consensus
+typology, so it lives here rather than in a Fragment.
 
-The same factor-through schema (`Function.FactorsThroughOn`) is
-instantiated for Hausa in `HartmannZimmermann2007.lean`, where it is
-refuted.
+Kiss's exhaustivity claim has been substantially revised in later work
+(Onea & Beaver 2011, Horváth 2010, Wedgwood 2005); the theorems
+formalise the 1998 position without adjudicating.
+
+The factor-through schema (`Function.FactorsThroughOn`) is instantiated
+for Hausa in `HartmannZimmermann2007.lean`, where it is *refuted*.
 
 ## TODO
 
@@ -42,17 +35,148 @@ refuted.
 * §9 cross-linguistic feature typology for Italian, Romanian,
   Catalan, Greek, Arabic, Finnish.
 * §7 focus iteration and projection (eq. 51-53).
-
-## References
-
-* [kiss-1998].
 -/
 
 namespace Kiss1998
 
-open Hungarian.Focus
+/-! ### Structural position and focus type (§1, §2) -/
 
-/-! ## Cells (paper §1, eq. 5a/5b, 8a/8b, 17b, 19b) -/
+/-- The two structural positions for focused constituents in Hungarian:
+`preverbal` = Spec,FP (the identificational slot), `postverbal` =
+VP-internal in situ. -/
+inductive Position where
+  | preverbal
+  | postverbal
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The two focus types: *identificational* carries an exhaustivity
+entailment, *information* does not. -/
+inductive FocusType where
+  | identificational
+  | information
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Whether the focus type carries an exhaustivity entailment (§2, the
+Szabolcsi–Farkas test). -/
+def FocusType.IsExhaustive : FocusType → Prop
+  | .identificational => True
+  | .information      => False
+
+instance (t : FocusType) : Decidable t.IsExhaustive := by
+  cases t <;> simp [FocusType.IsExhaustive] <;> infer_instance
+
+/-! ### Constituent classes and licensing (§3) -/
+
+/-- Coarse classification of the focused constituent for the §3
+distributional facts: `regular` DPs occur as either type; `universal`
+covers the *minden / X+is / még…is* class barred from identificational
+focus (17b–d); `onlyPhrase` is *csak X*, obligatorily identificational;
+`someIndef` is *valami/valaki*, barred from both (17e). -/
+inductive ConstituentClass where
+  | regular
+  | universal
+  | onlyPhrase
+  | someIndef
+  deriving DecidableEq, Repr, Inhabited
+
+/-- A Hungarian focused-clause configuration; `Licensed` enforces the
+position–type and class–type pairings. -/
+structure FocusConfig where
+  /-- The structural position of the focused constituent. -/
+  position  : Position
+  /-- The focus type (identificational vs information). -/
+  focusType : FocusType
+  /-- The lexical class of the focused constituent. -/
+  cclass    : ConstituentClass
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The canonical position for a focus type (§2): identificational
+moves to Spec,FP, information stays postverbal. -/
+def positionFor : FocusType → Position
+  | .identificational => .preverbal
+  | .information      => .postverbal
+
+/-- Class–type compatibility (§3): `universal` is barred from
+identificational focus (17b–d); `onlyPhrase` is "obligatorily realized
+as identificational" (§3); `someIndef` is barred from both — starred
+identificationally (17e) and "cannot function as information foci,
+either" (§3). -/
+def ConstituentClass.compatibleWith : ConstituentClass → FocusType → Prop
+  | .regular,    _                  => True
+  | .universal,  .identificational  => False
+  | .universal,  .information       => True
+  | .onlyPhrase, .identificational  => True
+  | .onlyPhrase, .information       => False
+  | .someIndef,  _                  => False
+
+instance (c : ConstituentClass) (t : FocusType) :
+    Decidable (c.compatibleWith t) := by
+  cases c <;> cases t <;> simp [ConstituentClass.compatibleWith] <;>
+    infer_instance
+
+/-- A configuration is licensed iff its position is canonical for its
+focus type (§2) and its constituent class is compatible with that type
+(§3). -/
+def FocusConfig.Licensed (c : FocusConfig) : Prop :=
+  c.position = positionFor c.focusType ∧ c.cclass.compatibleWith c.focusType
+
+instance (c : FocusConfig) : Decidable c.Licensed :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A preverbal identificational focus over a compatible class. -/
+def mkIdentificational (cc : ConstituentClass)
+    (_h : cc.compatibleWith .identificational) : FocusConfig :=
+  ⟨.preverbal, .identificational, cc⟩
+
+/-- A postverbal information focus over a compatible class. -/
+def mkInformation (cc : ConstituentClass)
+    (_h : cc.compatibleWith .information) : FocusConfig :=
+  ⟨.postverbal, .information, cc⟩
+
+theorem mkIdentificational_licensed (cc : ConstituentClass)
+    (h : cc.compatibleWith .identificational) :
+    (mkIdentificational cc h).Licensed :=
+  ⟨rfl, h⟩
+
+theorem mkInformation_licensed (cc : ConstituentClass)
+    (h : cc.compatibleWith .information) :
+    (mkInformation cc h).Licensed :=
+  ⟨rfl, h⟩
+
+/-- Position determines focus type on licensed configurations — the
+biconditional behind the Meaning-Structure Mapping verdict for
+Hungarian. -/
+theorem licensed_position_determines_type (c : FocusConfig)
+    (h : c.Licensed) :
+    (c.position = .preverbal ↔ c.focusType = .identificational) := by
+  obtain ⟨hpos, _⟩ := h
+  unfold positionFor at hpos
+  cases ht : c.focusType <;> rw [ht] at hpos <;> simp_all
+
+/-- *csak*-phrases must be identificational foci (§3). -/
+theorem onlyPhrase_forces_identificational (c : FocusConfig)
+    (h : c.Licensed) (hcc : c.cclass = .onlyPhrase) :
+    c.focusType = .identificational := by
+  obtain ⟨_, hcompat⟩ := h
+  rw [hcc] at hcompat
+  cases hft : c.focusType
+  case identificational => rfl
+  case information =>
+    rw [hft] at hcompat
+    simp [ConstituentClass.compatibleWith] at hcompat
+
+/-- *valami/valaki* can never be focused (17e): no licensed
+configuration has a `someIndef` constituent. -/
+theorem someIndef_never_licensed (c : FocusConfig) (h : c.Licensed) :
+    c.cclass ≠ .someIndef := by
+  intro hcc
+  obtain ⟨_, hcompat⟩ := h
+  rw [hcc] at hcompat
+  cases hft : c.focusType <;>
+    rw [hft] at hcompat <;>
+    simp [ConstituentClass.compatibleWith] at hcompat
+
+/-! ### Cells (§1, eq. 5a/5b, 8a/8b, 17b, 19b) -/
 
 /-- Eq. (5a): *Tegnap este Marinak mutattam be Pétert*
     'It was to MARY that I introduced Peter last night.'
@@ -96,18 +220,12 @@ def starred_universal_identificational : FocusConfig :=
 def universal_information : FocusConfig :=
   mkInformation .universal (by simp [ConstituentClass.compatibleWith])
 
-/-! ## Position determines focus type (paper §2)
+/-! ### Position determines focus type (paper §2)
 
-Kiss's §2 (p. 246, property list (1)-(6); p. 249 prose after eq. (9))
-argues that the two Hungarian focus positions encode genuinely distinct
-focus *types*, not merely interpretational variants of a single focus.
-Formalised here as: among licensed configurations, `focusType` factors
-through `position` (i.e. position determines type).
-
-The same schema is instantiated for Hausa in `HartmannZimmermann2007.lean`
-with `cfg.strategy` for the structural projection and `pragType` for the
-interpretation, and is *refuted* there — making the typological contrast
-a difference of verdict on a single shared factor-through schema. -/
+Among licensed configurations, `focusType` factors through `position`.
+The same schema is instantiated for Hausa in
+`HartmannZimmermann2007.lean` (with `cfg.strategy` and `pragType`) and
+*refuted* there — a difference of verdict on one shared predicate. -/
 
 /-- Position determines focus type on licensed configurations: Kiss's
 §2 structural claim. -/
@@ -130,38 +248,31 @@ theorem preverbal_iff_exhaustive (c : FocusConfig) (h : c.Licensed) :
   rw [licensed_position_determines_type c h]
   cases c.focusType <;> simp [FocusType.IsExhaustive]
 
-/-! ## Distributional restrictions (paper §3, eq. 17) -/
+/-! ### Distributional restrictions (paper §3, eq. 17) -/
 
-/-- **Universal quantifiers cannot be identificational foci** (paper
-    eq. 17b). The `starred_universal_identificational` configuration
-    fails licensing because `universal.compatibleWith
-    .identificational = False`. -/
+/-- Universal quantifiers cannot be identificational foci (17b):
+`starred_universal_identificational` fails licensing. -/
 theorem starred_universal_identificational_not_licensed :
     ¬ starred_universal_identificational.Licensed := by decide
 
-/-- **Universal quantifiers can be information foci** (paper eq. 19b).
-    The same `universal` class that is barred from preverbal position
-    is admissible postverbally. The asymmetry is exactly the §3
-    typological observation. -/
+/-- Universal quantifiers can be information foci (19b): the class
+barred preverbally is admissible postverbally. -/
 theorem universal_information_licensed : universal_information.Licensed :=
   mkInformation_licensed _ _
 
-/-- **Only-phrases must be identificational foci** (paper §3 last
-    paragraph): the *csak X* construction is obligatorily realised as
-    identificational focus. The information-focus alternative is
-    therefore ill-licensed. -/
+/-- The *csak X* construction is obligatorily identificational (§3):
+the information-focus alternative is ill-licensed. -/
 theorem only_information_not_licensed :
     ¬ (FocusConfig.mk .postverbal .information .onlyPhrase).Licensed := by
   decide
 
-/-- **Indefinite *valami/valaki* is barred from both focus types**
-    (paper eq. 17e). Both attempted licensings fail. -/
+/-- Indefinite *valami/valaki* is barred from both focus types (17e). -/
 theorem someIndef_neither_licensed :
     ¬ (FocusConfig.mk .preverbal .identificational .someIndef).Licensed ∧
     ¬ (FocusConfig.mk .postverbal .information .someIndef).Licensed := by
   refine ⟨?_, ?_⟩ <;> decide
 
-/-! ## Cell properties -/
+/-! ### Cell properties -/
 
 theorem preverbal_identificational_licensed :
     preverbal_identificational.Licensed :=
@@ -171,11 +282,8 @@ theorem postverbal_information_licensed :
     postverbal_information.Licensed :=
   mkInformation_licensed _ _
 
-/-- The eq. (5a/5b) minimal pair: same constituent (a regular DP),
-    different positions, different focus types — both licensed,
-    validating the paper's claim that the two positions encode
-    genuinely distinct focus types rather than free interpretational
-    variants. -/
+/-- The eq. (5a/5b) minimal pair: same constituent, different
+positions, different focus types — both licensed. -/
 theorem minimal_pair_distinct_types :
     preverbal_hat.focusType ≠ postverbal_hat.focusType := by decide
 

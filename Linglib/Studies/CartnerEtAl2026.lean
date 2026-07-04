@@ -1,7 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Studies.Adger2025
 import Linglib.Features.Givenness
-import Linglib.Semantics.Focus.Comparability
+import Linglib.Semantics.Focus.ExtractionClash
 
 /-!
 # Cartner, Kogan, Webster, Wagers & Sichel (2026)
@@ -35,7 +35,7 @@ results do NOT falsify direct backgroundedness approaches
    ([winckel-et-al-2025]) as predicates over IS profiles
 3. Both FBCs' predictions derived, then falsified by experimental DD scores
 4. Explicit distinction from direct backgroundedness (BCI), which is NOT
-   falsified (connecting to `BackgroundedIslands.lean`)
+   falsified (connecting to the backgroundedness model in `LuPanDegen2025.lean`)
 5. Cross-constructional invariance of the island effect
 6. Bridge: subject islands have syntactic source
 7. End-to-end argument chain
@@ -64,7 +64,7 @@ inductive ExtractionPosition where
 
 open Features (BinaryGivenness)
 open Features.InformationStructure (FocusMark)
-open Semantics.Focus.Comparability
+open Semantics.Focus.ExtractionClash
 
 namespace CartnerEtAl2026
 
@@ -126,7 +126,7 @@ theorem fillerFocus_varies :
     "A focused element should not be part of a backgrounded constituent."
 
 A violation occurs when a focused filler is extracted from a backgrounded
-domain. This is exactly `extractionISClash` from `Core/InformationStructure.lean`,
+domain. This is exactly `extractionISClash` from `Semantics/Focus/ExtractionClash.lean`,
 which unifies this constraint with [erteschik-shir-1973]'s Dominance
 Condition on Extraction. -/
 def fbcPredictsIsland (c : FGDConstruction) : Prop :=
@@ -339,7 +339,7 @@ all three constructions tested, direct backgroundedness could in principle
 capture the results. The paper did not manipulate backgroundedness
 directly, so the BCI remains unfalsified.
 
-This matters for linglib integration: `BackgroundedIslands.lean` formalizes
+This matters for linglib integration: the backgroundedness model in `LuPanDegen2025.lean` formalizes
 the direct backgroundedness account (for MoS verbs, via QUD-determined
 backgroundedness). That formalization is NOT undermined by Cartner et al.'s
 findings — they target a different theory. -/
@@ -365,10 +365,9 @@ def cartnerTestsTheory : DiscourseIslandTheory → Bool
   | .directBackgroundedness  => false
 
 /-- The direct backgroundedness account (BCI) is untouched by these results.
-This connects to the existing formalization in
-`Semantics/Focus/BackgroundedIslands.lean`, which models
-QUD-determined backgroundedness for MoS islands — a different phenomenon
-that these experiments do not address. -/
+This connects to the existing formalization of QUD-determined
+backgroundedness for MoS islands in `LuPanDegen2025.lean` — a different
+phenomenon that these experiments do not address. -/
 theorem bci_not_falsified :
     cartnerTestsTheory .directBackgroundedness = false := rfl
 
