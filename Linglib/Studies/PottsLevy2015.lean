@@ -32,10 +32,9 @@ requires truth at both atoms) × 3 lexica for X (`base` = A ∪ B, `excl` = B,
 ## Implementation notes
 
 α = 2 and β = 1 are natural powers, so each agent of the tower is one
-exact-`ℚ≥0` distribution (`PMF.normalizeScores` over the agents below it),
-and each observable agent's `PMF` is its `PMF.ofScores` coercion. No
-utterance row is dead (`null` is true everywhere), so the plain `÷0 = 0`
-normalizer suffices — no fallback-completed `PMF.scoresWith` mid-chain.
+`QDist.ofScores` definition — an exact-rational distribution the kernel
+computes with — and theorems state over its `toPMF` face. No utterance row
+is dead (`null` is true everywhere), so the uniform fallback never fires.
 The disjunction cost `exp(−1)` is rationalized as `37/100` (qualitative
 predictions robust, paper §5.4). `s2PMF` is the endorsement reading of S₂
 over the level-1 listener (an informativity-component decomposition);
@@ -147,46 +146,30 @@ theorem syn_w12_AorX_false :
 theorem base_w12_AorX_true :
     truth .base .AorX .w₁₂ = true := by decide
 
-/-! ### The fixed-lexicon agents (eqs. 10–12)
+/-! ### The agent tower (eqs. 10–17)
 
-Each agent is a single normalized `ℚ≥0` distribution (`PMF.normalizeScores`
-over the agents below it; `÷0 = 0`, though no row here is dead), and the
-observable agents get their `PMF` by `PMF.ofScores` coercion. Unnormalized
-weights never appear. -/
+Each agent is one `QDist.ofScores` definition — an exact-rational
+distribution normalizing scores built from the agents below it (`÷0 = 0`,
+though no row here is dead). Theorems state over the mathlib face via
+`QDist.toPMF`. -/
 
 /-- Speaker (eq. 11 at α = 2, uniform world prior, zero cost): the
 normalized squared literal listener of eq. 10. -/
-def s1 (l : Lex) (w : World) : Utterance → ℚ≥0 :=
-  PMF.normalizeScores fun u => RSA.Score.l0 (truth l) (fun _ => 1) u w ^ 2
-
-/-- Speaker distribution (eq. 11). -/
-noncomputable def s1PMF (l : Lex) (w : World) : PMF Utterance :=
-  PMF.ofScores .uniform (s1 l w)
+def s1 (l : Lex) (w : World) : QDist Utterance :=
+  .ofScores .uniform fun u => RSA.Score.l0 (truth l) (fun _ => 1) u w ^ 2
 
 /-- Per-lexicon pragmatic listener (eq. 12), the stacked literal layer. -/
-def l02 (l : Lex) (u : Utterance) : World → ℚ≥0 :=
-  PMF.normalizeScores fun w => s1 l w u
+def l02 (l : Lex) (u : Utterance) : QDist World :=
+  .ofScores .uniform fun w => s1 l w u
 
-/-! ### The joint listener L₁ (eqs. 14, 16) -/
+/-- Joint-listener world posterior (eq. 14/16; the per-lexicon normaliser
+cancels under uniform priors, leaving `∑ s₁`). -/
+def l1 (u : Utterance) : QDist World :=
+  .ofScores .uniform fun w => ∑ l, s1 l w u
 
-/-- World posterior (eq. 14/16; the per-lexicon normaliser cancels under
-uniform priors, leaving `∑ s₁`). -/
-def l1 (u : Utterance) : World → ℚ≥0 :=
-  PMF.normalizeScores fun w => ∑ l, s1 l w u
-
-/-- World posterior distribution (eq. 16). -/
-noncomputable def l1PMF (u : Utterance) : PMF World :=
-  PMF.ofScores .uniform (l1 u)
-
-/-- Lexicon posterior (eq. 14). -/
-def l1Lat (u : Utterance) : Lex → ℚ≥0 :=
-  PMF.normalizeScores fun l => ∑ w, s1 l w u
-
-/-- Lexicon posterior distribution (eq. 14). -/
-noncomputable def l1LatPMF (u : Utterance) : PMF Lex :=
-  PMF.ofScores .uniform (l1Lat u)
-
-/-! ### The expertise level (eqs. 15, 17) -/
+/-- Joint-listener lexicon posterior (eq. 14). -/
+def l1Lat (u : Utterance) : QDist Lex :=
+  .ofScores .uniform fun l => ∑ w, s1 l w u
 
 /-- Disjunction cost factor `exp(−C(m))` with C(or) = 1, rationalized as
 `37/100 ≈ exp(−1)`. -/
@@ -196,30 +179,25 @@ def disjCost : Utterance → ℚ≥0
 
 /-- Expertise speaker (eq. 15 at α = 2, β = 1):
 normalized `l₁(w|m,L)² · L₁(L|m) · exp(−C(m))`. -/
-def s2 (l : Lex) (w : World) : Utterance → ℚ≥0 :=
-  PMF.normalizeScores fun u => l02 l u w ^ 2 * l1Lat u l * disjCost u
+def s2 (l : Lex) (w : World) : QDist Utterance :=
+  .ofScores .uniform fun u => l02 l u w ^ 2 * l1Lat u l * disjCost u
 
 /-- Endorsement speaker: the L₁ world posterior renormalized per world
 (the informativity component of eq. 15 in isolation). -/
-noncomputable def s2PMF (w : World) : PMF Utterance :=
-  PMF.ofScores .uniform fun u => l1 u w
-
-/-- L₂ scores (eq. 14 at k = 2): summed expertise speakers. Read at fixed
-`u` they are the world-posterior scores; at fixed `w`, the eq. 17
-lexicon-marginalized speaker scores. -/
-def l2Score (u : Utterance) (w : World) : ℚ≥0 := ∑ l, s2 l w u
+def s2End (w : World) : QDist Utterance :=
+  .ofScores .uniform fun u => l1 u w
 
 /-- L₂ world posterior (eq. 16 at k = 2). -/
-noncomputable def l2PMF (u : Utterance) : PMF World :=
-  PMF.ofScores .uniform (l2Score u)
+def l2 (u : Utterance) : QDist World :=
+  .ofScores .uniform fun w => ∑ l, s2 l w u
 
 /-- L₂ lexicon posterior (eq. 14 at k = 2). -/
-noncomputable def l2LatPMF (u : Utterance) : PMF Lex :=
-  PMF.ofScores .uniform fun l => ∑ w, s2 l w u
+def l2Lat (u : Utterance) : QDist Lex :=
+  .ofScores .uniform fun l => ∑ w, s2 l w u
 
 /-- Marginal expertise speaker (eq. 17 at k = 2, uniform lexicon prior). -/
-noncomputable def s2ExpPMF (w : World) : PMF Utterance :=
-  PMF.ofScores .uniform fun u => l2Score u w
+def s2Exp (w : World) : QDist Utterance :=
+  .ofScores .uniform fun u => ∑ l, s2 l w u
 
 /-! ### Uncertainty implicature
 
@@ -228,17 +206,17 @@ have said "A" knowing w₁ or "X" knowing w₂ (under `excl`), so the
 disjunction signals commitment to neither disjunct. -/
 
 /-- w₁₂ > w₁ given "A or X". -/
-theorem uncertainty_w12_vs_w1 : l1PMF .AorX .w₁ < l1PMF .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem uncertainty_w12_vs_w1 : (l1 .AorX).toPMF .w₁ < (l1 .AorX).toPMF .w₁₂ :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- w₁₂ > w₂ given "A or X". -/
-theorem uncertainty_w12_vs_w2 : l1PMF .AorX .w₂ < l1PMF .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem uncertainty_w12_vs_w2 : (l1 .AorX).toPMF .w₂ < (l1 .AorX).toPMF .w₁₂ :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- w₁ > w₂ given "A or X": at w₁ the natural disjunct A operates, at w₂
 only the refined excl-X does. -/
-theorem uncertainty_w1_vs_w2 : l1PMF .AorX .w₂ < l1PMF .AorX .w₁ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem uncertainty_w1_vs_w2 : (l1 .AorX).toPMF .w₂ < (l1 .AorX).toPMF .w₁ :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-! ### Lexicon inference
 
@@ -247,32 +225,32 @@ maximally informative — while `syn` renders it redundant (the Hurford
 violation) and is dispreferred. -/
 
 /-- excl > base for "A or X". -/
-theorem lexicon_excl_vs_base : l1LatPMF .AorX .base < l1LatPMF .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem lexicon_excl_vs_base : (l1Lat .AorX).toPMF .base < (l1Lat .AorX).toPMF .excl :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- excl > syn for "A or X". -/
-theorem lexicon_excl_vs_syn : l1LatPMF .AorX .syn < l1LatPMF .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem lexicon_excl_vs_syn : (l1Lat .AorX).toPMF .syn < (l1Lat .AorX).toPMF .excl :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- base > syn for "A or X", completing excl > base > syn. -/
-theorem lexicon_base_vs_syn : l1LatPMF .AorX .syn < l1LatPMF .AorX .base :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem lexicon_base_vs_syn : (l1Lat .AorX).toPMF .syn < (l1Lat .AorX).toPMF .base :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-! ### Speaker rationality -/
 
 /-- At w₁₂ the speaker prefers "A or X" over "A" (under `excl`): "A" alone
 would signal w₁. -/
-theorem s1_w12_AorX_vs_A : s1PMF .excl .w₁₂ .A < s1PMF .excl .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem s1_w12_AorX_vs_A : (s1 .excl .w₁₂).toPMF .A < (s1 .excl .w₁₂).toPMF .AorX :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- At w₁₂ the speaker prefers "A or X" over "X": "X" alone would signal
 w₂. -/
-theorem s1_w12_AorX_vs_X : s1PMF .excl .w₁₂ .X < s1PMF .excl .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem s1_w12_AorX_vs_X : (s1 .excl .w₁₂).toPMF .X < (s1 .excl .w₁₂).toPMF .AorX :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- Knowing w₁, the speaker prefers the bare "A" over the disjunction. -/
-theorem s1_w1_A_vs_AorX : s1PMF .excl .w₁ .AorX < s1PMF .excl .w₁ .A :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem s1_w1_A_vs_AorX : (s1 .excl .w₁).toPMF .AorX < (s1 .excl .w₁).toPMF .A :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-! ### Endorsement decomposition
 
@@ -283,49 +261,51 @@ both reasons to use the disjunction. -/
 
 /-- Endorsement at w₁₂: "A or X" beats "A" ("A" is false at w₁₂ under
 every lexicon). -/
-theorem s2_w12_AorX_vs_A : s2PMF .w₁₂ .A < s2PMF .w₁₂ .AorX := PMF.ofScores_lt _ (by decide +kernel)
+theorem s2_w12_AorX_vs_A : (s2End .w₁₂).toPMF .A < (s2End .w₁₂).toPMF .AorX :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- Endorsement at w₁: the direct "A" beats the disjunction. -/
-theorem s2_w1_A_vs_AorX : s2PMF .w₁ .AorX < s2PMF .w₁ .A := PMF.ofScores_lt _ (by decide +kernel)
+theorem s2_w1_A_vs_AorX : (s2End .w₁).toPMF .AorX < (s2End .w₁).toPMF .A :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- "A or X" signals the `excl` lexicon more strongly than "A" does (all
 lexica agree on "A", so its lexicon posterior is near-uniform). This
 asymmetry is what β > 0 amplifies. -/
-theorem AorX_signals_excl_vs_A : l1LatPMF .A .excl < l1LatPMF .AorX .excl :=
-  PMF.ofScores_lt_cross _ _ (by decide +kernel)
+theorem AorX_signals_excl_vs_A : (l1Lat .A).toPMF .excl < (l1Lat .AorX).toPMF .excl :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-! ### Predictions at the stacked level (Figure 10) -/
 
 /-- L₂ hearing "A or X": w₁₂ > w₁. -/
-theorem l2_AorX_w12_vs_w1 : l2PMF .AorX .w₁ < l2PMF .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem l2_AorX_w12_vs_w1 : (l2 .AorX).toPMF .w₁ < (l2 .AorX).toPMF .w₁₂ :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- L₂ hearing "A or X": w₁₂ > w₂. -/
-theorem l2_AorX_w12_vs_w2 : l2PMF .AorX .w₂ < l2PMF .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem l2_AorX_w12_vs_w2 : (l2 .AorX).toPMF .w₂ < (l2 .AorX).toPMF .w₁₂ :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- L₂ hearing "A or X": w₁ > w₂. -/
-theorem l2_AorX_w1_vs_w2 : l2PMF .AorX .w₂ < l2PMF .AorX .w₁ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem l2_AorX_w1_vs_w2 : (l2 .AorX).toPMF .w₂ < (l2 .AorX).toPMF .w₁ :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- L₂ lexicon inference: excl > base for "A or X". -/
-theorem l2_AorX_excl_vs_base : l2LatPMF .AorX .base < l2LatPMF .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem l2_AorX_excl_vs_base : (l2Lat .AorX).toPMF .base < (l2Lat .AorX).toPMF .excl :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- L₂ lexicon inference: excl > syn for "A or X". -/
-theorem l2_AorX_excl_vs_syn : l2LatPMF .AorX .syn < l2LatPMF .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem l2_AorX_excl_vs_syn : (l2Lat .AorX).toPMF .syn < (l2Lat .AorX).toPMF .excl :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- L₂ lexicon inference: base > syn, completing excl > base > syn. -/
-theorem l2_AorX_base_vs_syn : l2LatPMF .AorX .syn < l2LatPMF .AorX .base :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem l2_AorX_base_vs_syn : (l2Lat .AorX).toPMF .syn < (l2Lat .AorX).toPMF .base :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- Marginalized S₂ at w₁₂ prefers "A or X" over "A" (p. 436). -/
-theorem s2Exp_w12_AorX_vs_A : s2ExpPMF .w₁₂ .A < s2ExpPMF .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem s2Exp_w12_AorX_vs_A : (s2Exp .w₁₂).toPMF .A < (s2Exp .w₁₂).toPMF .AorX :=
+  QDist.toPMF_lt (by decide +kernel)
 
 /-- Marginalized S₂ at w₁ prefers "A" over the disjunction. -/
-theorem s2Exp_w1_A_vs_AorX : s2ExpPMF .w₁ .AorX < s2ExpPMF .w₁ .A :=
-  PMF.ofScores_lt _ (by decide +kernel)
+theorem s2Exp_w1_A_vs_AorX : (s2Exp .w₁).toPMF .AorX < (s2Exp .w₁).toPMF .A :=
+  QDist.toPMF_lt (by decide +kernel)
 
 end PottsLevy2015

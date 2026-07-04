@@ -28,6 +28,9 @@ sibling of `PMF.normalize`); `[UPSTREAM]` candidate.
 * `PMF.normalizeScores f` — `f x / ∑ f`, the ℚ≥0 shadow of `PMF.normalize`.
 * `PMF.scoresWith fb f` — the normalized `ℚ≥0` score function both faces read.
 * `PMF.ofScores fb f` — the induced PMF; `ofScores_apply` is `rfl`.
+* `QDist` — bundled exact-rational distribution (`FunLike` into ℚ≥0,
+  `toPMF` into the mathlib face); `QDist.ofScores` is the one-step
+  constructor for RSA-style agents.
 * `PMF.normalizeOrUniform` — total `ℝ≥0∞` normalization.
 
 ## Main results
@@ -227,3 +230,71 @@ theorem ofScores_event_lt (fb : Fallback σ) (f : σ → ℚ≥0) {P Q : σ → 
   exact_mod_cast h
 
 end PMF
+
+/-! ### Bundled exact-rational distributions -/
+
+/-- An exact rational distribution on a finite type: a `ℚ≥0` mass function
+summing to one. Applies like a function (into ℚ≥0, where `decide +kernel`
+computes) and coerces to the mathlib face by `toPMF` (a pointwise cast, by
+`rfl`). An agent tower is one `QDist.ofScores` definition per agent, each
+consuming the applications of the agents below it. -/
+structure QDist (σ : Type*) [Fintype σ] where
+  /-- The mass function. -/
+  toFun : σ → ℚ≥0
+  /-- Total mass one. -/
+  sum_eq_one : ∑ x, toFun x = 1
+
+namespace QDist
+
+variable {σ τ : Type*} [Fintype σ] [Fintype τ]
+
+instance : FunLike (QDist σ) σ ℚ≥0 where
+  coe := toFun
+  coe_injective := fun d e h => by cases d; cases e; congr
+
+/-- Normalize a score vector into a distribution, falling back to `fb` on a
+zero-mass vector (`PMF.scoresWith` bundled with its total-mass proof). -/
+def ofScores (fb : PMF.Fallback σ) (f : σ → ℚ≥0) : QDist σ :=
+  ⟨PMF.scoresWith fb f, PMF.scoresWith_sum_eq_one fb f⟩
+
+theorem ofScores_apply (fb : PMF.Fallback σ) (f : σ → ℚ≥0) (x : σ) :
+    ofScores fb f x = PMF.scoresWith fb f x := rfl
+
+/-- The mathlib face: the same masses, cast into `ℝ≥0∞`. -/
+noncomputable def toPMF (d : QDist σ) : PMF σ :=
+  ⟨fun x => ((d x : ℝ≥0) : ℝ≥0∞), by
+    have key : ((∑ x, d.toFun x : ℚ≥0) : ℝ≥0) = 1 := by rw [d.sum_eq_one]; norm_num
+    rw [show (1 : ℝ≥0∞) = ((1 : ℝ≥0) : ℝ≥0∞) from rfl, ← key, NNRat.cast_sum]
+    exact_mod_cast hasSum_fintype fun x => ((d x : ℝ≥0) : ℝ≥0∞)⟩
+
+theorem toPMF_apply (d : QDist σ) (x : σ) :
+    d.toPMF x = ((d x : ℝ≥0) : ℝ≥0∞) := rfl
+
+/-- `PMF.ofScores` factors through the bundled face. -/
+theorem _root_.PMF.ofScores_eq_toPMF (fb : PMF.Fallback σ) (f : σ → ℚ≥0) :
+    PMF.ofScores fb f = (ofScores fb f).toPMF := rfl
+
+/-! Comparisons: a PMF-level prediction from a `ℚ≥0` mass comparison, the
+latter closed by `decide +kernel`. -/
+
+theorem toPMF_lt {d : QDist σ} {e : QDist τ} {a : σ} {b : τ} (h : d a < e b) :
+    d.toPMF a < e.toPMF b := by
+  rw [toPMF_apply, toPMF_apply]; exact_mod_cast h
+
+theorem toPMF_le {d : QDist σ} {e : QDist τ} {a : σ} {b : τ} (h : d a ≤ e b) :
+    d.toPMF a ≤ e.toPMF b := by
+  rw [toPMF_apply, toPMF_apply]; exact_mod_cast h
+
+theorem toPMF_eq {d : QDist σ} {e : QDist τ} {a : σ} {b : τ} (h : d a = e b) :
+    d.toPMF a = e.toPMF b := by
+  rw [toPMF_apply, toPMF_apply, h]
+
+theorem toPMF_lt_ratCast {d : QDist σ} {a : σ} {t : ℚ≥0} (h : d a < t) :
+    d.toPMF a < ((t : ℝ≥0) : ℝ≥0∞) := by
+  rw [toPMF_apply]; exact_mod_cast h
+
+theorem ratCast_lt_toPMF {d : QDist σ} {a : σ} {t : ℚ≥0} (h : t < d a) :
+    ((t : ℝ≥0) : ℝ≥0∞) < d.toPMF a := by
+  rw [toPMF_apply]; exact_mod_cast h
+
+end QDist
