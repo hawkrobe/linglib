@@ -11,7 +11,9 @@ import Mathlib.Tactic.DeriveFintype
 
 What a grammar overtly does to mark a focus: a `Realization` pairs the
 focus constituent with the list of grammatical `Reflex`es marking it —
-a displaced exponent, a dedicated morpheme, or a prosodic event.
+a displaced exponent, a dedicated morpheme, a phrase-edge, or a
+metrical prominence — the demarcative vs culminative cut kept visible
+in the type.
 Overtness is derived (`IsOvert`: the reflex list is nonempty), not
 flagged; strategy labels are shape classifications over reflexes; and
 multi-channel marking (Hausa ex-situ focus: displacement + Relative
@@ -43,8 +45,12 @@ inductive Reflex (C : Type*) where
   /-- A dedicated morpheme — affix, particle, or form alternation — at
   a host constituent. -/
   | morpheme (host : C)
-  /-- A prosodic event — boundary or prominence — at a host. -/
-  | prosodic (host : C)
+  /-- A demarcative prosodic event: a phrase-edge at a host constituent
+  (the Tangale/Chadic pattern). -/
+  | boundary (edge : C)
+  /-- A culminative prosodic event: metrical prominence on a host (the
+  English pattern). -/
+  | prominence (host : C)
   deriving DecidableEq, Repr
 
 /-- A focus realization: the focus constituent and the grammatical

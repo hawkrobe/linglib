@@ -137,6 +137,31 @@ theorem WellFormed.map {f : α → β} {m : AltMeaning α} (hm : m.WellFormed) :
     (f <$> m).WellFormed :=
   hm.bind fun a => WellFormed.unfeatured (f a)
 
+/-! ### Givenness -/
+
+/-- Given with respect to `a`: the alternatives have collapsed to the
+singleton `{a}` ([kratzer-selkirk-2020] (46)). -/
+def Given (m : AltMeaning α) (a : α) : Prop := m.aSet = {a}
+
+/-- Unfeatured meanings are Given with respect to their value. -/
+theorem Given.unfeatured (x : α) : (unfeatured x).Given x :=
+  unfeatured_aSet x
+
+/-- A Given function collapses Hamblin composition to application on
+the argument's alternatives — deaccented material contributes exactly
+its ordinary value. -/
+theorem Given.aSet_seq {mf : AltMeaning (α → β)} {f : α → β}
+    (h : mf.Given f) (ma : AltMeaning α) :
+    (mf <*> ma).aSet = f '' ma.aSet := by
+  ext b
+  simp only [mem_aSet_seq, Set.mem_image]
+  constructor
+  · rintro ⟨g, hg, a, ha, rfl⟩
+    obtain rfl := Set.mem_singleton_iff.mp (h ▸ hg)
+    exact ⟨a, ha, rfl⟩
+  · rintro ⟨a, ha, rfl⟩
+    exact ⟨f, h ▸ rfl, a, ha, rfl⟩
+
 end AltMeaning
 
 end Alternatives
