@@ -31,13 +31,12 @@ requires truth at both atoms) × 3 lexica for X (`base` = A ∪ B, `excl` = B,
 
 ## Implementation notes
 
-α = 2 and β = 1 are natural powers, so every agent in the tower — l₀, s₁,
-the joint L₁ (eq. 14; its per-lexicon normaliser cancels, giving scores
-P(w)·P(L)·s₁), the stacked l₁/S₂/L₂, and the eq. 17 speaker marginal — is
-an exact-`ℚ≥0` score vector normalized by `PMF.ofScores`. No utterance row
-is dead (`null` is true everywhere), so mid-chain normalizations are plain
-`÷0 = 0` divisions rather than fallback-completed `PMF.scoresWith`. The
-disjunction cost `exp(−1)` is rationalized as `37/100` (qualitative
+α = 2 and β = 1 are natural powers, so each agent of the tower is one
+exact-`ℚ≥0` distribution (`PMF.normalizeScores` over the agents below it),
+and each observable agent's `PMF` is its `PMF.ofScores` coercion. No
+utterance row is dead (`null` is true everywhere), so the plain `÷0 = 0`
+normalizer suffices — no fallback-completed `PMF.scoresWith` mid-chain.
+The disjunction cost `exp(−1)` is rationalized as `37/100` (qualitative
 predictions robust, paper §5.4). `s2PMF` is the endorsement reading of S₂
 over the level-1 listener (an informativity-component decomposition);
 `s2ExpPMF` is the paper's eq. 17 lexicon-marginalized expertise speaker.
@@ -150,92 +149,77 @@ theorem base_w12_AorX_true :
 
 /-! ### The fixed-lexicon agents (eqs. 10–12)
 
-Score division by zero yields 0, matching the zero-normaliser convention
-of `Core.RationalAction.policy`; no row here is in fact dead. -/
+Each agent is a single normalized `ℚ≥0` distribution (`PMF.normalizeScores`
+over the agents below it; `÷0 = 0`, though no row here is dead), and the
+observable agents get their `PMF` by `PMF.ofScores` coercion. Unnormalized
+weights never appear. -/
 
-/-- Speaker weight: the squared literal listener (eqs. 10–11 at α = 2,
-uniform world prior, zero cost). -/
-def s1WQ (l : Lex) (w : World) (u : Utterance) : ℚ≥0 :=
-  RSA.Score.l0 (truth l) (fun _ => 1) u w ^ 2
-
-/-- Normalized speaker (eq. 11). -/
-def s1Q (l : Lex) (w : World) (u : Utterance) : ℚ≥0 :=
-  s1WQ l w u / ∑ u', s1WQ l w u'
+/-- Speaker (eq. 11 at α = 2, uniform world prior, zero cost): the
+normalized squared literal listener of eq. 10. -/
+def s1 (l : Lex) (w : World) : Utterance → ℚ≥0 :=
+  PMF.normalizeScores fun u => RSA.Score.l0 (truth l) (fun _ => 1) u w ^ 2
 
 /-- Speaker distribution (eq. 11). -/
 noncomputable def s1PMF (l : Lex) (w : World) : PMF Utterance :=
-  PMF.ofScores .uniform (s1WQ l w)
+  PMF.ofScores .uniform (s1 l w)
 
 /-- Per-lexicon pragmatic listener (eq. 12), the stacked literal layer. -/
-def l02Q (l : Lex) (u : Utterance) (w : World) : ℚ≥0 :=
-  s1Q l w u / ∑ w', s1Q l w' u
+def l02 (l : Lex) (u : Utterance) : World → ℚ≥0 :=
+  PMF.normalizeScores fun w => s1 l w u
 
-/-! ### The joint listener L₁ (eqs. 14, 16)
+/-! ### The joint listener L₁ (eqs. 14, 16) -/
 
-The per-lexicon normaliser of eq. 14 cancels under uniform priors, so the
-joint scores are just `∑ s₁`. -/
-
-/-- World score (eq. 14/16, uniform priors). -/
-def l1ScoreQ (u : Utterance) (w : World) : ℚ≥0 := ∑ l, s1Q l w u
-
-/-- Normalized world posterior (eq. 16). -/
-def l1Q (u : Utterance) (w : World) : ℚ≥0 :=
-  l1ScoreQ u w / ∑ w', l1ScoreQ u w'
+/-- World posterior (eq. 14/16; the per-lexicon normaliser cancels under
+uniform priors, leaving `∑ s₁`). -/
+def l1 (u : Utterance) : World → ℚ≥0 :=
+  PMF.normalizeScores fun w => ∑ l, s1 l w u
 
 /-- World posterior distribution (eq. 16). -/
 noncomputable def l1PMF (u : Utterance) : PMF World :=
-  PMF.ofScores .uniform (l1ScoreQ u)
+  PMF.ofScores .uniform (l1 u)
 
-/-- Lexicon score (eq. 14). -/
-def l1LatScoreQ (u : Utterance) (l : Lex) : ℚ≥0 := ∑ w, s1Q l w u
-
-/-- Normalized lexicon posterior (eq. 14). -/
-def l1LatQ (u : Utterance) (l : Lex) : ℚ≥0 :=
-  l1LatScoreQ u l / ∑ l', l1LatScoreQ u l'
+/-- Lexicon posterior (eq. 14). -/
+def l1Lat (u : Utterance) : Lex → ℚ≥0 :=
+  PMF.normalizeScores fun l => ∑ w, s1 l w u
 
 /-- Lexicon posterior distribution (eq. 14). -/
 noncomputable def l1LatPMF (u : Utterance) : PMF Lex :=
-  PMF.ofScores .uniform (l1LatScoreQ u)
+  PMF.ofScores .uniform (l1Lat u)
 
 /-! ### The expertise level (eqs. 15, 17) -/
 
 /-- Disjunction cost factor `exp(−C(m))` with C(or) = 1, rationalized as
 `37/100 ≈ exp(−1)`. -/
-def disjCostQ : Utterance → ℚ≥0
+def disjCost : Utterance → ℚ≥0
   | .AorX => 37/100
   | _ => 1
 
-/-- Expertise speaker weight (eq. 15 at α = 2, β = 1):
-`l₁(w|m,L)² · L₁(L|m) · exp(−C(m))`. -/
-def s2WQ (l : Lex) (w : World) (u : Utterance) : ℚ≥0 :=
-  l02Q l u w ^ 2 * l1LatQ u l * disjCostQ u
+/-- Expertise speaker (eq. 15 at α = 2, β = 1):
+normalized `l₁(w|m,L)² · L₁(L|m) · exp(−C(m))`. -/
+def s2 (l : Lex) (w : World) : Utterance → ℚ≥0 :=
+  PMF.normalizeScores fun u => l02 l u w ^ 2 * l1Lat u l * disjCost u
 
-/-- Normalized expertise speaker (eq. 15). -/
-def s2Q (l : Lex) (w : World) (u : Utterance) : ℚ≥0 :=
-  s2WQ l w u / ∑ u', s2WQ l w u'
-
-/-- Endorsement speaker: renormalizes the L₁ world posterior per world
+/-- Endorsement speaker: the L₁ world posterior renormalized per world
 (the informativity component of eq. 15 in isolation). -/
 noncomputable def s2PMF (w : World) : PMF Utterance :=
-  PMF.ofScores .uniform (fun u => l1Q u w)
+  PMF.ofScores .uniform fun u => l1 u w
 
-/-- L₂ world score (eq. 14/16 at k = 2). -/
-def l2ScoreQ (u : Utterance) (w : World) : ℚ≥0 := ∑ l, s2Q l w u
+/-- L₂ scores (eq. 14 at k = 2): summed expertise speakers. Read at fixed
+`u` they are the world-posterior scores; at fixed `w`, the eq. 17
+lexicon-marginalized speaker scores. -/
+def l2Score (u : Utterance) (w : World) : ℚ≥0 := ∑ l, s2 l w u
 
 /-- L₂ world posterior (eq. 16 at k = 2). -/
 noncomputable def l2PMF (u : Utterance) : PMF World :=
-  PMF.ofScores .uniform (l2ScoreQ u)
-
-/-- L₂ lexicon score (eq. 14 at k = 2). -/
-def l2LatScoreQ (u : Utterance) (l : Lex) : ℚ≥0 := ∑ w, s2Q l w u
+  PMF.ofScores .uniform (l2Score u)
 
 /-- L₂ lexicon posterior (eq. 14 at k = 2). -/
 noncomputable def l2LatPMF (u : Utterance) : PMF Lex :=
-  PMF.ofScores .uniform (l2LatScoreQ u)
+  PMF.ofScores .uniform fun l => ∑ w, s2 l w u
 
 /-- Marginal expertise speaker (eq. 17 at k = 2, uniform lexicon prior). -/
 noncomputable def s2ExpPMF (w : World) : PMF Utterance :=
-  PMF.ofScores .uniform (fun u => l2ScoreQ u w)
+  PMF.ofScores .uniform fun u => l2Score u w
 
 /-! ### Uncertainty implicature
 
