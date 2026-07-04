@@ -1230,9 +1230,9 @@ private theorem s2hf (nr : NumeralReading) (w : JumpOutcome4) :
     Under at-least semantics with the same parameters, surface scope is true
     at {w0,w1,w2}, diluting informativity → low S2 endorsement at w=2.
 
-    The 1-of-2 vs 2-of-4 asymmetry: these SAME "baseline" parameters produce
-    low endorsement (27.5%) in the 1-of-2 context but high endorsement in the
-    2-of-4 context, but ONLY under exact numeral semantics. This is the
+    The 1-of-2 vs 2-of-4 asymmetry: the SAME baseline world prior produces
+    low endorsement (≈ 0.29, Figure 2 left) in the 1-of-2 context but high
+    endorsement in the 2-of-4 context, ONLY under exact numeral semantics. This is the
     paper's key argument for exact semantics as the basic numeral meaning.
 
     Every prediction is a kernel-verified comparison of the exact-ℚ
