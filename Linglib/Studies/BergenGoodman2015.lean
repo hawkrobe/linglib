@@ -44,8 +44,6 @@ open scoped NNRat ENNReal
 
 namespace BergenGoodman2015
 
-/-! ### Ellipsis: Sentence Fragments -/
-
 /-! ## Ellipsis (§3)
 
 Three meanings, seven utterances (full sentences plus fragments); only
@@ -193,8 +191,6 @@ theorem l1_fragment_correct :
     l1 .bob .nobodyWent < l1 .bob .bobWent :=
   ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
-/-! ### Parametric Robustness -/
-
 /-! ### Parametric robustness (Fig. 1, left panel) -/
 
 /-- The noisy meaning at "bob" is δ for bobWent and 0 for all others.
@@ -233,8 +229,6 @@ theorem l0_fragment_robust (δ₀ : ℝ) (hδ : δ₀ ≠ 0) :
   simp [div_self hδ]
 
 end EllipsisModel
-
-/-! ### Prosody: Strategic Noise Reduction -/
 
 /-! ## Prosody (§4)
 
