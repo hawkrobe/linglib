@@ -322,6 +322,71 @@ def onlyVia (C : PropFocusValue W) (prejacent : Set W) : Set W :=
 @[simp] theorem mem_onlyVia {C : PropFocusValue W} {p : Set W} {w : W} :
     w ∈ onlyVia C p ↔ ∀ q ∈ C, w ∈ q → q = p := Iff.rfl
 
+/-- A true alternative distinct from the prejacent refutes *only*. -/
+theorem not_mem_onlyVia {C : PropFocusValue W} {p q : Set W} {w : W}
+    (hq : q ∈ C) (hw : w ∈ q) (hne : q ≠ p) : w ∉ onlyVia C p :=
+  fun h => hne (h q hq hw)
+
+/-- Membership in *only* from refuting every distinct alternative. -/
+theorem mem_onlyVia_of_forall_not_mem {C : PropFocusValue W} {p : Set W}
+    {w : W} (h : ∀ q ∈ C, q ≠ p → w ∉ q) : w ∈ onlyVia C p :=
+  fun q hq hwq => not_not.mp fun hne => h q hq hne hwq
+
+/-- An **irredundant** family of alternatives: each member can hold
+while every other member fails — equivalently, no member is covered by
+the union of the rest (each alternative has a private world). Strictly
+weaker than the mutual exclusivity of partition semantics
+(`irredundant_of_pairwise_disjoint`) and than Boolean independence of
+the family. `[UPSTREAM]` candidate as the non-coveredness
+companion of `iSupIndep` (`¬ t i ≤ ⨆ j ≠ i, t j`): mathlib has the
+disjointness form and, at the module instance, the characterization
+`linearIndependent_iff_notMem_span`, but no lattice-level name — and
+`SupIrred` (join-irreducibility of an element) is a false friend. -/
+def Irredundant {ι : Type*} (f : ι → Set W) : Prop :=
+  ∀ i, ∃ w ∈ f i, ∀ j, j ≠ i → w ∉ f j
+
+/-- Pairwise-disjoint nonempty alternatives — the mutual-exclusivity
+assumption of partition semantics — are irredundant. -/
+theorem irredundant_of_pairwise_disjoint {ι : Type*} {f : ι → Set W}
+    (hd : Pairwise fun i j => Disjoint (f i) (f j))
+    (hne : ∀ i, (f i).Nonempty) :
+    Irredundant f := fun i =>
+  let ⟨w, hw⟩ := hne i
+  ⟨w, hw, fun _ hj hwj => Set.disjoint_left.mp (hd hj) hwj hw⟩
+
+/-- Over a separated family, resolving *only* to contrast sets that
+differ beyond the prejacent yields distinct readings: the alternative
+present in one resolution and absent from the other separates them. -/
+theorem Irredundant.onlyVia_ne {ι : Type*} {f : ι → Set W}
+    (hf : Irredundant f) {i₀ j : ι} {s₁ s₂ : Finset ι}
+    (hj₂ : j ∈ s₂) (hj₁ : j ∉ s₁) (hji : j ≠ i₀) :
+    onlyVia (f '' ↑s₁) (f i₀) ≠ onlyVia (f '' ↑s₂) (f i₀) := by
+  obtain ⟨w, hwj, hother⟩ := hf j
+  refine ne_of_mem_of_not_mem'
+    (mem_onlyVia_of_forall_not_mem ?_)
+    (not_mem_onlyVia ⟨j, hj₂, rfl⟩ hwj
+      (ne_of_mem_of_not_mem' hwj (hother i₀ (Ne.symm hji))))
+  rintro q ⟨k, hk, rfl⟩ _
+  exact hother k fun h => hj₁ (h ▸ hk)
+
+/-- Over a separated family, *only* is injective in the resolved
+contrast set, on resolutions containing the prejacent. -/
+theorem Irredundant.onlyVia_injOn {ι : Type*} {f : ι → Set W}
+    (hf : Irredundant f) (i₀ : ι) :
+    Set.InjOn (fun s : Finset ι => onlyVia (f '' ↑s) (f i₀))
+      {s | i₀ ∈ s} := by
+  intro s₁ h₁ s₂ h₂ heq
+  by_contra hne
+  obtain ⟨j, hj⟩ : ∃ j, ¬ (j ∈ s₁ ↔ j ∈ s₂) := by
+    simpa [Finset.ext_iff] using hne
+  by_cases hmem : j ∈ s₁
+  · have h₂j : j ∉ s₂ := fun h => hj ⟨fun _ => h, fun _ => hmem⟩
+    exact hf.onlyVia_ne hmem h₂j (fun h => h₂j (h ▸ h₂)) heq.symm
+  · have h₂j : j ∈ s₂ := by
+      by_contra h2
+      exact hj ⟨fun h => absurd h hmem, fun h => absurd h h2⟩
+    exact hf.onlyVia_ne h₂j hmem (fun h => hmem (h ▸ h₁)) heq
+
 /-- Narrowing the domain weakens *only* — the pragmatic domain
 restriction that repairs the over-generation of a fixed full-focus
 domain. -/
