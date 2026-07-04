@@ -253,21 +253,19 @@ theorem num_readings_injOn :
   have h₂ : w₂ ∈ numReading .verb := mem_onlyVia_of_forall_not_mem <| by
     rintro q (rfl | rfl) hne
     exacts [absurd rfl hne, Bool.false_ne_true]
-  have hov : numReading .object ≠ numReading .verb :=
-    ne_of_mem_of_not_mem' h₁
-      (not_mem_onlyVia (Or.inr rfl) rfl readBook_ne_boughtBook)
-  have hovp : numReading .object ≠ numReading .vp :=
-    ne_of_mem_of_not_mem' h₁
+  rw [Set.injOn_insert (by simp), Set.injOn_insert (by simp)]
+  simp only [Set.injOn_singleton, Set.image_insert_eq, Set.image_singleton,
+    Set.mem_insert_iff, Set.mem_singleton_iff, true_and, not_or]
+  refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩
+  · have hw : w₁ ∈ numReading .vp := h.symm ▸ h₁
+    exact absurd hw
       (not_mem_onlyVia (Or.inr (Or.inr rfl)) rfl readBook_ne_boughtBook)
-  have hvvp : numReading .verb ≠ numReading .vp :=
-    ne_of_mem_of_not_mem' h₂
+  · have hw : w₂ ∈ numReading .vp := h ▸ h₂
+    exact absurd hw
       (not_mem_onlyVia (Or.inr (Or.inl rfl)) rfl boughtShirt_ne_boughtBook)
-  rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
-    first
-      | rfl
-      | exact absurd h hvvp | exact absurd h.symm hvvp
-      | exact absurd h hov  | exact absurd h.symm hov
-      | exact absurd h hovp | exact absurd h.symm hovp
+  · have hw : w₂ ∈ numReading .object := h ▸ h₂
+    exact absurd hw
+      (not_mem_onlyVia (Or.inr rfl) rfl boughtShirt_ne_boughtBook)
 
 /-- The VP association is the strongest reading: 'I did nothing else'
 entails both 'I bought nothing else' and 'I did nothing else to the
