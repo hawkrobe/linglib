@@ -50,6 +50,11 @@ relative-clause rate `f` is low, as for English `f ≈ 0.2` but not German
   surprisal (§3.5.1); certain erasure recovers the prior (§3.4.2).
 * `mutualInformation_memory_le` — §3.2: the data processing inequality as the
   constraint on all admissible noise distributions.
+* `bayesDifficulty_memJoint_sub_eq`, `bayesDifficulty_le_memJoint` — the
+  average form (§3.4.1, Supp. A, at the §3.3 Bayes-optimal comprehender):
+  expected difficulty under lossy memory exceeds expected difficulty under
+  veridical context by exactly the predictive information lost to memory,
+  `I(W;C) − I(W;M) ≥ 0`.
 -/
 
 namespace FutrellGibsonLevy2020
@@ -192,5 +197,71 @@ theorem mutualInformation_memory_le {W C M : Type*}
     PMF.mutualInformation (joint.bind fun x => (mem x.2).map (Prod.mk x.1))
       ≤ PMF.mutualInformation joint :=
   PMF.mutualInformation_bind_snd_le joint mem
+
+section AverageForm
+
+/-! ### The average form (§3.4.1, Supplementary Material A)
+
+Averaged over contexts, the difficulty of the Bayes-optimal comprehender
+(§3.3, eqs. (4)–(9)) under lossy memory exceeds its difficulty under
+veridical context by exactly the predictive information lost to memory. -/
+
+variable {W C M : Type*} [Fintype W] [Fintype C] [Fintype M]
+  [MeasurableSpace W] [MeasurableSpace C] [MeasurableSpace M]
+  [MeasurableSingletonClass W] [MeasurableSingletonClass C]
+  [MeasurableSingletonClass M] [DecidableEq W] [DecidableEq C] [DecidableEq M]
+
+/-- The (word, memory) joint induced by passing the context coordinate through
+    the memory encoder (Claims 1 and 3). -/
+noncomputable def memJoint (J : PMF (W × C)) (mem : C → PMF M) : PMF (W × M) :=
+  J.bind fun x => (mem x.2).map (Prod.mk x.1)
+
+/-- Expected difficulty of the Bayes-optimal comprehender (§3.3): the expected
+    surprisal of predicting the first coordinate from the second under the
+    conditional distribution `PMF.cond`. -/
+noncomputable def bayesDifficulty {α β : Type*} [Fintype α] [Fintype β]
+    [DecidableEq β] (G : PMF (α × β)) : ℝ :=
+  ∑ x : α × β, (G x).toReal * (-Real.log ((G.cond x.2) x.1).toReal)
+
+/-- The Bayes-optimal difficulty is the conditional entropy `H(W | ·)`:
+    the entropy chain rule read as an expected surprisal. -/
+theorem bayesDifficulty_eq {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
+    (G : PMF (α × β)) : bayesDifficulty G = G.entropy - G.snd.entropy :=
+  PMF.sum_mul_neg_log_cond G
+
+/-- **The average form of information locality**: the expected excess
+    difficulty of lossy-memory comprehension over veridical-context
+    comprehension is exactly the predictive information lost to memory. -/
+theorem bayesDifficulty_memJoint_sub_eq (J : PMF (W × C)) (mem : C → PMF M)
+    (hW : ∀ w, 0 < J.fst.toRealFn w) (hC : ∀ c, 0 < J.snd.toRealFn c)
+    (hM : ∀ m, 0 < (memJoint J mem).snd.toRealFn m) :
+    bayesDifficulty (memJoint J mem) - bayesDifficulty J
+      = PMF.mutualInformation J - PMF.mutualInformation (memJoint J mem) := by
+  have hW' : ∀ w, 0 < (memJoint J mem).fst.toRealFn w := by
+    intro w
+    rw [show (memJoint J mem).fst = J.fst from PMF.fst_bind_snd J mem]
+    exact hW w
+  rw [bayesDifficulty_eq, bayesDifficulty_eq,
+    PMF.mutualInformation_eq_entropy_sum J hW hC,
+    PMF.mutualInformation_eq_entropy_sum (memJoint J mem) hW' hM,
+    show (memJoint J mem).fst = J.fst from PMF.fst_bind_snd J mem]
+  ring
+
+/-- Lossy memory cannot make comprehension easier on average: the expected
+    Bayes-optimal difficulty under memory is at least that under veridical
+    context (the §3.4.1 deduction, with the gap given by
+    `bayesDifficulty_memJoint_sub_eq` and its sign by the data processing
+    inequality). -/
+theorem bayesDifficulty_le_memJoint (J : PMF (W × C)) (mem : C → PMF M)
+    (hW : ∀ w, 0 < J.fst.toRealFn w) (hC : ∀ c, 0 < J.snd.toRealFn c)
+    (hM : ∀ m, 0 < (memJoint J mem).snd.toRealFn m) :
+    bayesDifficulty J ≤ bayesDifficulty (memJoint J mem) := by
+  have hsub := bayesDifficulty_memJoint_sub_eq J mem hW hC hM
+  have hdpi : PMF.mutualInformation (memJoint J mem)
+      ≤ PMF.mutualInformation J :=
+    PMF.mutualInformation_bind_snd_le J mem
+  linarith
+
+end AverageForm
 
 end FutrellGibsonLevy2020
