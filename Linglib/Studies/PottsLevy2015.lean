@@ -476,23 +476,9 @@ theorem AorX_signals_excl_vs_A :
 
 /-! ### The stacked expertise model (eq. 15) -/
 
-/-! The paper's distinctive contribution is the **expertise parameter β**
-in the S₂ speaker utility (eq 15):
-
-  `S₂(m|w,L) ∝ l₁(w|m,L)^α · L₁(L|m)^β · exp(-C(m))`
-
-The expertise speaker simultaneously signals world knowledge (informativity
-via l₁) and lexicon knowledge (expertise via L₁). We implement this as a
-**stacked RSAConfig**: the base config's per-lexicon listener l₁ becomes
-the upper level's L0 meaning, with the expertise bonus `L₁(L|m)` and
-disjunction cost `exp(-C(m))` entering via `stack`'s `bonus` and
-`costFactor` parameters.
-
-Since `exp(-1) ∉ ℚ`, the cost penalty is approximated as `37/100 ≈ 0.37`
-(close to `exp(-1) ≈ 0.368`). Qualitative predictions are robust to the
-exact value (paper Section 5.4). -/
-
--- ---- L₂ World Predictions ----
+/-! Eq. 15, `S₂(m|w,L) ∝ l₁(w|m,L)^α · L₁(L|m)^β · exp(−C(m))`, at
+Figure 10's regime α = 2, β = 1, C(or) = 1: `s2WQ` scores the per-lexicon
+listener squared, times the lexicon posterior, times `disjCostQ`. -/
 
 /-- L₂ hearing "A or X": uncertainty state w₁₂ dominates w₁. -/
 theorem L2_AorX_w12_vs_w1 :
@@ -509,7 +495,7 @@ theorem L2_AorX_w1_vs_w2 :
     l2PMF .AorX .w₂ < l2PMF .AorX .w₁ :=
   pmf_lt (l2ScoreQ_nonneg _) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
--- ---- L₂ Lexicon Predictions ----
+
 
 /-- L₂ lexicon inference: excl dominates base for "A or X". -/
 theorem L2_AorX_excl_vs_base :
@@ -526,7 +512,7 @@ theorem L2_AorX_base_vs_syn :
     l2LatPMF .AorX .syn < l2LatPMF .AorX .base :=
   pmf_lt (l2LatScoreQ_nonneg _) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
--- ---- S₂ Expertise Speaker Predictions ----
+
 
 /-- S₂ at w₁₂ prefers "A or X" over "A" (marginalized over lexica). -/
 theorem S2_expertise_w12_AorX_vs_A :
