@@ -2,6 +2,8 @@ import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Pragmatics.RSA.Channel
+import Linglib.Core.Probability.Scores
+import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Sequential
 
@@ -208,12 +210,12 @@ def csScene : Referent → Bool
   | .smallRed | .bigRed | .smallBlue => true
   | _ => false
 
-/-! ### Exact-ℚ face and the cost atom (local pending the RSA API pass) -/
+/-! ### Exact-ℚ face and the cost atom -/
 
 /-! With α = 7 the informativity factor `L0^α` is exact ℚ; the only
 transcendental ingredient is the per-adjective cost factor
-`cAtom = exp(−α·C) = exp(−7/10)`, bounded two-sidedly below via
-`cAtom¹⁰ · e⁷ = 1` and kernel arithmetic on `e`-bounds. Every prediction
+`cAtom = RSA.expAtom (7/10)`, bounded two-sidedly via the substrate
+certificates and kernel arithmetic on `e`-bounds. Every prediction
 trajectory reduces to `K · cAtom / (A + B · cAtom)` with kernel-certified
 rational constants, so the comparisons are linear (the sum comparison
 quadratic) in the atom. -/
@@ -258,13 +260,9 @@ end QFace
 section CostAtom
 
 /-- The per-adjective cost factor `exp(−α·C) = exp(−7/10)`. -/
-noncomputable def cAtom : ℝ := Real.exp (-(7/10 : ℝ))
+noncomputable def cAtom : ℝ := RSA.expAtom (7/10)
 
-theorem cAtom_pos : 0 < cAtom := Real.exp_pos _
-
-private theorem cAtom_pow10 : cAtom ^ (10:ℕ) * Real.exp 7 = 1 := by
-  rw [cAtom, ← Real.exp_nat_mul, ← Real.exp_add]
-  norm_num
+theorem cAtom_pos : 0 < cAtom := RSA.expAtom_pos _
 
 private theorem e7_bounds :
     (1096.633 : ℝ) < Real.exp 7 ∧ Real.exp 7 < 1096.634 := by
@@ -280,16 +278,14 @@ private theorem e7_bounds :
         pow_lt_pow_left₀ Real.exp_one_lt_d9 (Real.exp_pos 1).le (by norm_num)
       _ < 1096.634 := by norm_num
 
-/-- Kernel-certified atom bounds: `(4965/10000)¹⁰·e⁷ < 1 < (4967/10000)¹⁰·e⁷`. -/
+/-- Kernel-certified atom bounds via `RSA.lt_expAtom`/`expAtom_lt` at
+n = 10: `(4965/10000)¹⁰·e⁷ < 1 < (4967/10000)¹⁰·e⁷`. -/
 theorem cAtom_bounds : (4965/10000 : ℝ) < cAtom ∧ cAtom < 4967/10000 := by
-  obtain ⟨he1, he2⟩ := e7_bounds
-  have h10 := cAtom_pow10
-  have hc := cAtom_pos
-  constructor
-  · have : (4965/10000 : ℝ) ^ (10:ℕ) < cAtom ^ (10:ℕ) := by nlinarith
-    exact lt_of_pow_lt_pow_left₀ 10 hc.le this
-  · have : cAtom ^ (10:ℕ) < (4967/10000 : ℝ) ^ (10:ℕ) := by nlinarith
-    exact lt_of_pow_lt_pow_left₀ 10 (by norm_num) this
+  have h7 : ((10:ℕ) : ℝ) * (7/10) = 7 := by norm_num
+  exact ⟨RSA.lt_expAtom (n := 10) (by norm_num) (by norm_num)
+      (by rw [h7]; nlinarith [e7_bounds.2]),
+    RSA.expAtom_lt (n := 10) (by norm_num) (by norm_num)
+      (by rw [h7]; nlinarith [e7_bounds.1])⟩
 
 end CostAtom
 
@@ -301,11 +297,8 @@ open scoped ENNReal
 dite-total. -/
 noncomputable def s1PMF (utts : List (List Word)) (scene : Referent → Bool)
     (tgt : Referent) (ctx : List Word) : PMF Word :=
-  if h : (∑' u, ENNReal.ofReal ((s1BaseQ utts scene tgt ctx u : ℝ) *
-      cAtom ^ costExp u)) ≠ 0 then
-    PMF.normalize _ h
-      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
-  else PMF.uniformOfFintype Word
+  PMF.normalizeOrUniform fun u =>
+    ENNReal.ofReal ((s1BaseQ utts scene tgt ctx u : ℝ) * cAtom ^ costExp u)
 
 private theorem sumWordsE (f : Word → ℝ≥0∞) :
     ∑ u, f u = f .blue + f .red + f .big + f .small + f .pin + f .stop := by
@@ -363,9 +356,9 @@ private theorem s1PMF_step (utts : List (List Word)) (scene : Referent → Bool)
       exact_mod_cast congrArg (fun q : ℚ => (q : ℝ)) hA
     simp only [costExp, pow_one, pow_zero, mul_one]
     linear_combination cAtom * hb + ha
-  rw [s1PMF, dif_pos (by
-      rw [hZ, ENNReal.ofReal_ne_zero_iff]; exact hden),
-    PMF.normalize_apply, hZ, hN,
+  rw [s1PMF, PMF.normalizeOrUniform_apply
+      (by rw [hZ, ENNReal.ofReal_ne_zero_iff]; exact hden)
+      (by rw [hZ]; exact ENNReal.ofReal_ne_top), hZ, hN,
     ← ENNReal.ofReal_inv_of_pos hden,
     ← ENNReal.ofReal_mul (mul_nonneg (by exact_mod_cast
       (hN ▸ s1BaseQ_nonneg utts scene tgt ctx step)) (pow_nonneg hc.le _))]
