@@ -16,7 +16,7 @@ migration with a cost factor in the S1 score**:
 ## Friction surfaced (informs API direction)
 
 - **Cost factor as ENNReal**: `exp (-utteranceCost u)` lives in `ℝ` — needs
-  lift to `ℝ≥0∞` via `ENNReal.ofReal`. Pattern from `Nouwen2024PMF.lean`.
+  lift to `ℝ≥0∞` via `ENNReal.ofReal`. Pattern from `Nouwen2024.lean`.
 - **32-state latent**: `Latent := HThreshold × HThreshold × NegLexicon`
   (4×4×2). The per-latent leaves are 32-case case-bashes — well beyond
   hand-discharge. Validates the need for `pmf_score_compare` tactic.
