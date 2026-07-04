@@ -159,6 +159,21 @@ def cosSemantics (t : CoSType) (P : W → Prop) : PartialProp W :=
   { presup := priorStatePresup t P
   , assertion := resultStateAssertion t P }
 
+/-- Boolean evaluation of a CoS predicate at a prior/result state pair —
+the kernel-computable face of `cosSemantics` for finite world models. -/
+def CoSType.eval : CoSType → Bool → Bool → Bool
+  | .cessation,    p, n => p && !n
+  | .inception,    p, n => !p && n
+  | .continuation, p, n => p && n
+
+/-- `CoSType.eval` computes presupposition-and-assertion truth: the Bool
+face agrees with `priorStatePresup`/`resultStateAssertion` at the
+projections. -/
+theorem CoSType.eval_iff (t : CoSType) (p n : Bool) :
+    t.eval p n = true ↔
+      priorStatePresup t (· = true) p ∧ resultStateAssertion t (· = true) n := by
+  cases t <;> constructor <;> simp_all [eval, priorStatePresup, resultStateAssertion]
+
 /--
 Semantics for a lexical entry applied to an activity predicate.
 -/

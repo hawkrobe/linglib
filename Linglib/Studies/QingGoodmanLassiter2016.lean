@@ -1,3 +1,4 @@
+import Linglib.Pragmatics.RSA.ScoreChain
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Aspect.ChangeOfState
@@ -26,10 +27,11 @@ Domain: 13 utterances × 4 worlds × 9 context sets.
 
 ## Implementation notes
 
-α = 6 is a natural power, so every layer is rational: scores are computed in
-exact ℚ (`l0Q` … `ctxScoreQ`), listeners are `PMF.normalize` of those scores
-(bridged by `ENNReal.ofReal_sum_of_nonneg`), and predictions are
-kernel-verified rational comparisons (`decide +kernel`).
+α = 6 is a natural power, so the chain is exact ℚ≥0: the speaker is
+`RSA.Score.s1` over the QUD-aggregated literal listener (dead cells fall
+back to silence — one fallback declaration covers both faces), listeners
+are `PMF.ofScores` of the prior-weighted speaker mass, and each prediction
+closes by the `ofScores` comparison family with one kernel certificate.
 
 The paper uses 15 context sets with 5% noise; we model the 9 derivable from
 past/now observations — the omitted 6 carry only the noise prior (≥ 18×
@@ -48,6 +50,7 @@ reaching the PMF face.
 namespace QingGoodmanLassiter2016
 
 open BigOperators
+open scoped ENNReal NNRat
 /-! ### World states -/
 
 /-- World state: (past, now) where past = John smoked, now = John smokes.
@@ -76,14 +79,14 @@ inductive Utterance where
   | doesntSmoke         -- "John doesn't smoke"    {(T,F),(F,F)}
   | smoked              -- "John smoked"           {(T,T),(T,F)}
   | didntSmoke          -- "John didn't smoke"     {(F,T),(F,F)}
-  | alwaysSmoked        -- "John has always smoked"  {(T,T)}
-  | notAlwaysSmoked     -- "John hasn't always smoked" {(T,F),(F,T),(F,F)}
-  | stoppedSmoking      -- "John stopped smoking"  {(T,F)}
-  | notStoppedSmoking   -- "John didn't stop smoking" {(T,T),(F,T),(F,F)}
-  | startedSmoking      -- "John started smoking"  {(F,T)}
-  | notStartedSmoking   -- "John didn't start smoking" {(T,T),(T,F),(F,F)}
-  | neverSmoked         -- "John has never smoked" {(F,F)}
-  | notNeverSmoked      -- "John hasn't never smoked" {(T,T),(T,F),(F,T)}
+  | always        -- "John has always smoked"  {(T,T)}
+  | notAlways     -- "John hasn't always smoked" {(T,F),(F,T),(F,F)}
+  | stopped      -- "John stopped smoking"  {(T,F)}
+  | notStopped   -- "John didn't stop smoking" {(T,T),(F,T),(F,F)}
+  | started      -- "John started smoking"  {(F,T)}
+  | notStarted   -- "John didn't start smoking" {(T,T),(T,F),(F,F)}
+  | never         -- "John has never smoked" {(F,F)}
+  | notNever      -- "John hasn't never smoked" {(T,T),(T,F),(F,T)}
   | silence             -- null utterance          {(T,T),(T,F),(F,T),(F,F)}
   deriving DecidableEq, Repr, Inhabited, Fintype
 
@@ -91,55 +94,26 @@ inductive Utterance where
 
 /-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧.
 
-    The change-of-state utterances (stopped, started, always smoked) encode
-    presupposition + assertion as a conjunction over two temporal projections
-    of the world state. See bridge theorems below connecting these to the
-    CoS theory in `Semantics.Aspect.ChangeOfState`. -/
+    The change-of-state utterances evaluate the corresponding
+    `Features.ChangeOfState.CoSType` at the world's temporal projections —
+    presupposition and assertion by construction
+    (`Features.ChangeOfState.CoSType.eval_iff`), not by bridge theorem. -/
 def literalMeaning : Utterance → WorldState → Bool
   | .smokes,            w => w.now
   | .doesntSmoke,       w => !w.now
   | .smoked,            w => w.past
   | .didntSmoke,        w => !w.past
-  | .alwaysSmoked,      w => w.past && w.now
-  | .notAlwaysSmoked,   w => !(w.past && w.now)
-  | .stoppedSmoking,    w => w.past && !w.now
-  | .notStoppedSmoking, w => !(w.past && !w.now)
-  | .startedSmoking,    w => !w.past && w.now
-  | .notStartedSmoking, w => !(!w.past && w.now)
-  | .neverSmoked,       w => !w.past && !w.now
-  | .notNeverSmoked,    w => !(!w.past && !w.now)
+  | .always,      w => Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .notAlways,   w => !Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .stopped,    w => Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .notStopped, w => !Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .started,    w => Features.ChangeOfState.CoSType.inception.eval w.past w.now
+  | .notStarted, w => !Features.ChangeOfState.CoSType.inception.eval w.past w.now
+  | .never,       w => !w.past && !w.now
+  | .notNever,    w => !(!w.past && !w.now)
   | .silence,           _ => true
 
-open Features.ChangeOfState (priorStatePresup resultStateAssertion)
-
-/-- "Stopped smoking" = cessation presupposition (past=T) ∧ cessation assertion (now=F).
-
-    The CoS theory operates on a single predicate P, but the QGL world model
-    separates prior state (`past`) from current state (`now`). We use `·.past`
-    for the presupposition and `·.now` for the assertion. -/
-theorem stopped_matches_cessation (w : WorldState) :
-    literalMeaning .stoppedSmoking w = true ↔
-    (priorStatePresup .cessation (fun w => w.past = true) w ∧
-     resultStateAssertion .cessation (fun w => w.now = true) w) := by
-  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
-    WorldState.past, WorldState.now]
-
-/-- "Started smoking" = inception presupposition (past=F) ∧ inception assertion (now=T). -/
-theorem started_matches_inception (w : WorldState) :
-    literalMeaning .startedSmoking w = true ↔
-    (priorStatePresup .inception (fun w => w.past = true) w ∧
-     resultStateAssertion .inception (fun w => w.now = true) w) := by
-  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
-    WorldState.past, WorldState.now]
-
-/-- "Always smoked" = continuation presupposition (past=T) ∧ continuation assertion (now=T). -/
-theorem always_matches_continuation (w : WorldState) :
-    literalMeaning .alwaysSmoked w = true ↔
-    (priorStatePresup .continuation (fun w => w.past = true) w ∧
-     resultStateAssertion .continuation (fun w => w.now = true) w) := by
-  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
-    WorldState.past, WorldState.now]
-
+open Features.ChangeOfState (CoSType)
 /-! ### Context sets -/
 
 /-- Context sets: subsets of worlds representing common ground.
@@ -186,16 +160,13 @@ inductive QUD where
     - 2 content words: stopped/started/always/never smoking → 1/4
     - 1 content word: smokes/smoked → 1/2
     - 0 content words: silence → 1 -/
-def utterancePrior : Utterance → ℚ
+def utterancePrior : Utterance → ℚ≥0
   | .smokes | .doesntSmoke | .smoked | .didntSmoke => 1/2
-  | .alwaysSmoked | .notAlwaysSmoked
-  | .stoppedSmoking | .notStoppedSmoking
-  | .startedSmoking | .notStartedSmoking
-  | .neverSmoked | .notNeverSmoked => 1/4
+  | .always | .notAlways
+  | .stopped | .notStopped
+  | .started | .notStarted
+  | .never | .notNever => 1/4
   | .silence => 1
-
-theorem utterancePrior_nonneg (u : Utterance) : 0 ≤ utterancePrior u := by
-  cases u <;> simp [utterancePrior]
 
 /-- Context set prior (eq. 8):
 `Pr(C) ∝ Σ_{CG ⊆ Obs} P(CG) · δ_{C = ∩CG}`.
@@ -204,280 +175,66 @@ theorem utterancePrior_nonneg (u : Utterance) : 0 ≤ utterancePrior u := by
     - 0 observations (universe): 0.6^4 ∝ 9
     - 1 observation (single): 0.4 × 0.6^3 ∝ 6
     - 2 observations (pair): 0.4^2 × 0.6^2 ∝ 4 -/
-def contextPrior : ContextSet → ℚ
+def contextPrior : ContextSet → ℚ≥0
   | .universe => 9
   | .pastTrue | .pastFalse | .nowTrue | .nowFalse => 6
   | .pastTrueNowTrue | .pastTrueNowFalse
   | .pastFalseNowTrue | .pastFalseNowFalse => 4
 
-theorem contextPrior_pos (cs : ContextSet) : 0 < contextPrior cs := by
-  cases cs <;> simp [contextPrior]
+/-! ### The score chain -/
 
-/-! ### The exact-ℚ model and its PMF face (local pending the RSA API pass) -/
-
-section QModel
-
-/-- Literal-listener mass: worlds compatible with the context set where `u`
-is literally true (eq. 5's normaliser; uniform world prior cancels). -/
-def l0MassQ (cs : ContextSet) (u : Utterance) : ℚ :=
-  ∑ w, (if compatibleBool cs w && literalMeaning u w then (1 : ℚ) else 0)
-
-/-- Literal listener value (division by zero yields 0 at empty extensions). -/
-def l0Q (cs : ContextSet) (u : Utterance) (w : WorldState) : ℚ :=
-  (if compatibleBool cs w && literalMeaning u w then (1 : ℚ) else 0) / l0MassQ cs u
+/-- Literal listener within the context set (eq. 5; the uniform world
+prior cancels, and empty extensions normalize to the zero row). -/
+def l0Score (cs : ContextSet) (u : Utterance) : WorldState → ℚ≥0 :=
+  PMF.normalizeScores fun w =>
+    if compatibleBool cs w && literalMeaning u w then 1 else 0
 
 /-- QUD aggregation of the literal listener (eq. 5): sum over the QUD cell. -/
-def qAggQ (qud : QUD) (cs : ContextSet) (u : Utterance) : WorldState → ℚ
+def qAgg (qud : QUD) (cs : ContextSet) (u : Utterance) : WorldState → ℚ≥0
   | .wTT => match qud with
-    | .now => l0Q cs u .wTT + l0Q cs u .wFT
-    | .max => l0Q cs u .wTT
-    | .past => l0Q cs u .wTT + l0Q cs u .wTF
+    | .now => l0Score cs u .wTT + l0Score cs u .wFT
+    | .max => l0Score cs u .wTT
+    | .past => l0Score cs u .wTT + l0Score cs u .wTF
   | .wTF => match qud with
-    | .now => l0Q cs u .wTF + l0Q cs u .wFF
-    | .max => l0Q cs u .wTF
-    | .past => l0Q cs u .wTT + l0Q cs u .wTF
+    | .now => l0Score cs u .wTF + l0Score cs u .wFF
+    | .max => l0Score cs u .wTF
+    | .past => l0Score cs u .wTT + l0Score cs u .wTF
   | .wFT => match qud with
-    | .now => l0Q cs u .wTT + l0Q cs u .wFT
-    | .max => l0Q cs u .wFT
-    | .past => l0Q cs u .wFT + l0Q cs u .wFF
+    | .now => l0Score cs u .wTT + l0Score cs u .wFT
+    | .max => l0Score cs u .wFT
+    | .past => l0Score cs u .wFT + l0Score cs u .wFF
   | .wFF => match qud with
-    | .now => l0Q cs u .wTF + l0Q cs u .wFF
-    | .max => l0Q cs u .wFF
-    | .past => l0Q cs u .wFT + l0Q cs u .wFF
+    | .now => l0Score cs u .wTF + l0Score cs u .wFF
+    | .max => l0Score cs u .wFF
+    | .past => l0Score cs u .wFT + l0Score cs u .wFF
 
-/-- Speaker weight (eq. 6 at α = 6): `Pr(u) · qAgg⁶`. -/
-def s1WeightQ (qud : QUD) (cs : ContextSet) (w : WorldState) (u : Utterance) : ℚ :=
-  utterancePrior u * (qAggQ qud cs u w) ^ 6
+/-- Speaker (eq. 6 at α = 6): `RSA.Score.s1` over the QUD-aggregated
+literal listener with the utterance prior as multiplicative cost; dead
+cells fall back to silence. -/
+def s1Post (qud : QUD) (cs : ContextSet) : WorldState → Utterance → ℚ≥0 :=
+  RSA.Score.s1 (fun u w => qAgg qud cs u w) 6 utterancePrior (.pure .silence)
 
-/-- Speaker normaliser. -/
-def s1ZQ (qud : QUD) (cs : ContextSet) (w : WorldState) : ℚ :=
-  ∑ u, s1WeightQ qud cs w u
-
-/-- Normalized speaker value. -/
-def s1ValQ (qud : QUD) (cs : ContextSet) (w : WorldState) (u : Utterance) : ℚ :=
-  s1WeightQ qud cs w u / s1ZQ qud cs w
-
-/-- Listener world score (eq. 7, world side): context-prior-weighted speaker
-mass, before normalization. -/
-def worldScoreQ (qud : QUD) (u : Utterance) (w : WorldState) : ℚ :=
-  ∑ cs, contextPrior cs * s1ValQ qud cs w u
+/-- Listener world score (eq. 7, world side): context-prior-weighted
+speaker mass. -/
+def worldScore (qud : QUD) (u : Utterance) (w : WorldState) : ℚ≥0 :=
+  ∑ cs, contextPrior cs * s1Post qud cs w u
 
 /-- Listener context score (eq. 7, context side). -/
-def ctxScoreQ (qud : QUD) (u : Utterance) (cs : ContextSet) : ℚ :=
-  contextPrior cs * ∑ w, s1ValQ qud cs w u
+def ctxScore (qud : QUD) (u : Utterance) (cs : ContextSet) : ℚ≥0 :=
+  contextPrior cs * ∑ w, s1Post qud cs w u
 
-theorem l0MassQ_nonneg (cs : ContextSet) (u : Utterance) : 0 ≤ l0MassQ cs u :=
-  Finset.sum_nonneg fun _ _ => by split <;> norm_num
-
-theorem l0Q_nonneg (cs : ContextSet) (u : Utterance) (w : WorldState) :
-    0 ≤ l0Q cs u w :=
-  div_nonneg (by split <;> norm_num) (l0MassQ_nonneg cs u)
-
-theorem qAggQ_nonneg (qud : QUD) (cs : ContextSet) (u : Utterance) (w : WorldState) :
-    0 ≤ qAggQ qud cs u w := by
-  cases w <;> cases qud <;>
-    simp only [qAggQ] <;>
-    first
-      | exact l0Q_nonneg cs u _
-      | exact add_nonneg (l0Q_nonneg cs u _) (l0Q_nonneg cs u _)
-
-theorem s1WeightQ_nonneg (qud : QUD) (cs : ContextSet) (w : WorldState) (u : Utterance) :
-    0 ≤ s1WeightQ qud cs w u :=
-  mul_nonneg (utterancePrior_nonneg u) (pow_nonneg (qAggQ_nonneg qud cs u w) 6)
-
-theorem s1ZQ_nonneg (qud : QUD) (cs : ContextSet) (w : WorldState) :
-    0 ≤ s1ZQ qud cs w :=
-  Finset.sum_nonneg fun u _ => s1WeightQ_nonneg qud cs w u
-
-theorem s1ValQ_nonneg (qud : QUD) (cs : ContextSet) (w : WorldState) (u : Utterance) :
-    0 ≤ s1ValQ qud cs w u :=
-  div_nonneg (s1WeightQ_nonneg qud cs w u) (s1ZQ_nonneg qud cs w)
-
-theorem worldScoreQ_nonneg (qud : QUD) (u : Utterance) (w : WorldState) :
-    0 ≤ worldScoreQ qud u w :=
-  Finset.sum_nonneg fun cs _ =>
-    mul_nonneg (le_of_lt (contextPrior_pos cs)) (s1ValQ_nonneg qud cs w u)
-
-theorem ctxScoreQ_nonneg (qud : QUD) (u : Utterance) (cs : ContextSet) :
-    0 ≤ ctxScoreQ qud u cs :=
-  mul_nonneg (le_of_lt (contextPrior_pos cs))
-    (Finset.sum_nonneg fun w _ => s1ValQ_nonneg qud cs w u)
-
-end QModel
-
-section PMFFace
-
-open scoped ENNReal
-
-/-- PMF speaker (eq. 6), total via dite (pure-silence fallback at cells with
-no compatible utterance). -/
-noncomputable def s1PMF (qud : QUD) (cs : ContextSet) (w : WorldState) : PMF Utterance :=
-  if h : (∑' u, ENNReal.ofReal ((s1WeightQ qud cs w u : ℝ))) ≠ 0 then
-    PMF.normalize (fun u => ENNReal.ofReal ((s1WeightQ qud cs w u : ℝ))) h
-      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
-  else PMF.pure .silence
-
-private theorem sumW_eq (qud : QUD) (cs : ContextSet) (w : WorldState) :
-    (∑' u, ENNReal.ofReal ((s1WeightQ qud cs w u : ℝ)))
-      = ENNReal.ofReal ((s1ZQ qud cs w : ℝ)) := by
-  rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg
-    (fun u _ => by exact_mod_cast s1WeightQ_nonneg qud cs w u)]
-  congr 1
-  push_cast [s1ZQ]
-  rfl
-
-/-- The PMF speaker's values bridge exactly to the ℚ model (off `silence`,
-which absorbs the degenerate fallback). -/
-theorem s1PMF_apply (qud : QUD) (cs : ContextSet) (w : WorldState)
-    {u : Utterance} (hu : u ≠ .silence) :
-    s1PMF qud cs w u = ENNReal.ofReal ((s1ValQ qud cs w u : ℝ)) := by
-  unfold s1PMF
-  by_cases hZ : (0 : ℚ) < s1ZQ qud cs w
-  · rw [dif_pos (by rw [sumW_eq, ENNReal.ofReal_ne_zero_iff]; exact_mod_cast hZ),
-      PMF.normalize_apply, sumW_eq,
-      ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hZ),
-      ← ENNReal.ofReal_mul (by exact_mod_cast s1WeightQ_nonneg qud cs w u)]
-    congr 1
-    push_cast [s1ValQ]
-    rw [div_eq_mul_inv]
-  · have hZ0 : s1ZQ qud cs w = 0 := le_antisymm (not_lt.mp hZ) (s1ZQ_nonneg _ _ _)
-    rw [dif_neg (by rw [sumW_eq, hZ0]; simp),
-      show s1ValQ qud cs w u = 0 from by rw [s1ValQ, hZ0, div_zero]]
-    simp [PMF.pure_apply, hu]
-
-/-- World score of the pragmatic listener in PMF terms. -/
-noncomputable def wScore (qud : QUD) (u : Utterance) (w : WorldState) : ℝ≥0∞ :=
-  ∑' cs, ENNReal.ofReal ((contextPrior cs : ℝ)) * s1PMF qud cs w u
-
-theorem wScore_eq (qud : QUD) {u : Utterance} (hu : u ≠ .silence) (w : WorldState) :
-    wScore qud u w = ENNReal.ofReal ((worldScoreQ qud u w : ℝ)) := by
-  unfold wScore
-  rw [tsum_fintype,
-    Finset.sum_congr rfl (fun cs _ => by
-      rw [s1PMF_apply qud cs w hu,
-        ← ENNReal.ofReal_mul (by exact_mod_cast le_of_lt (contextPrior_pos cs))]),
-    ← ENNReal.ofReal_sum_of_nonneg (fun cs _ => by
-      exact_mod_cast mul_nonneg (le_of_lt (contextPrior_pos cs))
-        (s1ValQ_nonneg qud cs w u))]
-  congr 1
-  push_cast [worldScoreQ]
-  rfl
-
-/-- Context score of the pragmatic listener in PMF terms. -/
-noncomputable def cScore (qud : QUD) (u : Utterance) (cs : ContextSet) : ℝ≥0∞ :=
-  ENNReal.ofReal ((contextPrior cs : ℝ)) * ∑' w, s1PMF qud cs w u
-
-theorem cScore_eq (qud : QUD) {u : Utterance} (hu : u ≠ .silence) (cs : ContextSet) :
-    cScore qud u cs = ENNReal.ofReal ((ctxScoreQ qud u cs : ℝ)) := by
-  unfold cScore
-  rw [tsum_fintype,
-    Finset.sum_congr rfl (fun w _ => s1PMF_apply qud cs w hu),
-    ← ENNReal.ofReal_sum_of_nonneg (fun w _ => by
-      exact_mod_cast s1ValQ_nonneg qud cs w u),
-    ← ENNReal.ofReal_mul (by exact_mod_cast le_of_lt (contextPrior_pos cs))]
-  congr 1
-  push_cast [ctxScoreQ]
-  rfl
-
-/-- World-side pragmatic listener (eq. 7), dite-total. -/
+/-- World-side pragmatic listener (eq. 7). -/
 noncomputable def l1World (qud : QUD) (u : Utterance) : PMF WorldState :=
-  if h : (∑' w, wScore qud u w) ≠ 0 then
-    PMF.normalize (wScore qud u) h
-      (ENNReal.tsum_ne_top_of_fintype fun _ =>
-        ENNReal.tsum_ne_top_of_fintype fun _ =>
-          ENNReal.mul_ne_top ENNReal.ofReal_ne_top (PMF.apply_ne_top _ _))
-  else PMF.uniformOfFintype WorldState
+  .ofScores .uniform (worldScore qud u)
 
-/-- Context-side pragmatic listener (eq. 7), dite-total. -/
+/-- Context-side pragmatic listener (eq. 7). -/
 noncomputable def l1Ctx (qud : QUD) (u : Utterance) : PMF ContextSet :=
-  if h : (∑' cs, cScore qud u cs) ≠ 0 then
-    PMF.normalize (cScore qud u) h
-      (ENNReal.tsum_ne_top_of_fintype fun _ =>
-        ENNReal.mul_ne_top ENNReal.ofReal_ne_top
-          (ENNReal.tsum_ne_top_of_fintype fun _ => PMF.apply_ne_top _ _))
-  else PMF.uniformOfFintype ContextSet
-
-end PMFFace
-
-section PMFFace
-
-open scoped ENNReal
-
-private theorem sumWorlds4 (f : WorldState → ℝ≥0∞) :
-    ∑' w, f w = f .wTT + f .wTF + f .wFT + f .wFF := by
-  rw [tsum_fintype,
-    show (Finset.univ : Finset WorldState) = {.wTT, .wTF, .wFT, .wFF} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_singleton]
-  ring
-
-private theorem wZ_fin (qud : QUD) (u : Utterance) :
-    (∑' w, wScore qud u w) ≠ ⊤ :=
-  ENNReal.tsum_ne_top_of_fintype fun _ =>
-    ENNReal.tsum_ne_top_of_fintype fun _ =>
-      ENNReal.mul_ne_top ENNReal.ofReal_ne_top (PMF.apply_ne_top _ _)
-
-private theorem wZ_pos_now_ns : (∑' w, wScore .now .notStoppedSmoking w) ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.wTT, by
-    rw [wScore_eq .now (by decide) _, ENNReal.ofReal_ne_zero_iff]
-    exact_mod_cast
-      (by decide +kernel : (0:ℚ) < worldScoreQ .now .notStoppedSmoking .wTT)⟩
-
-private theorem wZ_pos_max_ns : (∑' w, wScore .max .notStoppedSmoking w) ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.wTT, by
-    rw [wScore_eq .max (by decide) _, ENNReal.ofReal_ne_zero_iff]
-    exact_mod_cast
-      (by decide +kernel : (0:ℚ) < worldScoreQ .max .notStoppedSmoking .wTT)⟩
-
-private theorem wZ_pos_now_st : (∑' w, wScore .now .stoppedSmoking w) ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.wTF, by
-    rw [wScore_eq .now (by decide) _, ENNReal.ofReal_ne_zero_iff]
-    exact_mod_cast
-      (by decide +kernel : (0:ℚ) < worldScoreQ .now .stoppedSmoking .wTF)⟩
-
-private theorem cZ_pos_now_ns : (∑' cs, cScore .now .notStoppedSmoking cs) ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.pastTrue, by
-    rw [cScore_eq .now (by decide) _, ENNReal.ofReal_ne_zero_iff]
-    exact_mod_cast
-      (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue)⟩
-
-/-- Score comparison under a shared normaliser: the workhorse for every
-strict listener prediction below. -/
-private theorem ofReal_mul_inv_lt {Z : ℝ≥0∞} (hZ0 : Z ≠ 0) (hZt : Z ≠ ⊤)
-    {a b : ℝ} (hb : 0 < b) (hab : a < b) :
-    ENNReal.ofReal a * Z⁻¹ < ENNReal.ofReal b * Z⁻¹ := by
-  rw [mul_comm, mul_comm (ENNReal.ofReal b)]
-  exact ENNReal.mul_lt_mul_right (ENNReal.inv_ne_zero.mpr hZt)
-    (ENNReal.inv_ne_top.mpr hZ0) ((ENNReal.ofReal_lt_ofReal_iff hb).mpr hab)
-
-/-- Listener world values in ℚ-bridged form. -/
-private theorem l1World_apply (qud : QUD) {u : Utterance} (hu : u ≠ .silence)
-    (hpos : (∑' w, wScore qud u w) ≠ 0) (w : WorldState) :
-    l1World qud u w
-      = ENNReal.ofReal ((worldScoreQ qud u w : ℝ)) * (∑' w', wScore qud u w')⁻¹ := by
-  unfold l1World
-  rw [dif_pos hpos, PMF.normalize_apply, wScore_eq qud hu w]
+  .ofScores .uniform (ctxScore qud u)
 
 /-- Event marginal of the world-side listener. -/
 noncomputable def l1WorldEvent (qud : QUD) (u : Utterance)
-    (P : WorldState → Prop) [DecidablePred P] : ℝ≥0∞ :=
+    (P : WorldState → Bool) : ℝ≥0∞ :=
   ∑' w, if P w then l1World qud u w else 0
-
-private theorem cZ_fin (qud : QUD) (u : Utterance) :
-    (∑' cs, cScore qud u cs) ≠ ⊤ :=
-  ENNReal.tsum_ne_top_of_fintype fun _ =>
-    ENNReal.mul_ne_top ENNReal.ofReal_ne_top
-      (ENNReal.tsum_ne_top_of_fintype fun _ => PMF.apply_ne_top _ _)
-
-/-- Listener context values in ℚ-bridged form. -/
-private theorem l1Ctx_apply (qud : QUD) {u : Utterance} (hu : u ≠ .silence)
-    (hpos : (∑' cs, cScore qud u cs) ≠ 0) (cs : ContextSet) :
-    l1Ctx qud u cs
-      = ENNReal.ofReal ((ctxScoreQ qud u cs : ℝ)) * (∑' cs', cScore qud u cs')⁻¹ := by
-  unfold l1Ctx
-  rw [dif_pos hpos, PMF.normalize_apply, cScore_eq qud hu cs]
-
-end PMFFace
 
 /-! ### Listener predictions -/
 
@@ -486,49 +243,23 @@ end PMFFace
 /-- Under QUD_now, wTT and wFT are indistinguishable: `qAggQ .now` is
 definitionally symmetric in the now-cell, so projection must be measured on
 the context-set side (`l1Ctx`), not the world marginal. -/
-theorem qud_now_wTT_eq_wFT :
-    l1World .now .notStoppedSmoking .wTT =
-    l1World .now .notStoppedSmoking .wFT := by
-  rw [l1World_apply .now (by decide) wZ_pos_now_ns,
-    l1World_apply .now (by decide) wZ_pos_now_ns]
-  congr 2
+theorem qud_now_wTT_eq_wFT : l1World .now .notStopped .wTT = l1World .now .notStopped .wFT :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-! ### QUD answer -/
 
 /-- L1 infers the QUD answer now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
-    l1WorldEvent .now .notStoppedSmoking (fun w => w.now = true) >
-    l1WorldEvent .now .notStoppedSmoking (fun w => w.now = false) := by
-  unfold l1WorldEvent
-  rw [gt_iff_lt, sumWorlds4, sumWorlds4]
-  simp +decide only [if_true, if_false, add_zero, zero_add]
-  simp only [l1World_apply .now (by decide) wZ_pos_now_ns]
-  rw [← add_mul, ← add_mul,
-    ← ENNReal.ofReal_add (by exact_mod_cast worldScoreQ_nonneg .now .notStoppedSmoking _)
-      (by exact_mod_cast worldScoreQ_nonneg .now .notStoppedSmoking _),
-    ← ENNReal.ofReal_add (by exact_mod_cast worldScoreQ_nonneg .now .notStoppedSmoking _)
-      (by exact_mod_cast worldScoreQ_nonneg .now .notStoppedSmoking _)]
-  exact ofReal_mul_inv_lt wZ_pos_now_ns (wZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) <
-      worldScoreQ .now .notStoppedSmoking .wTT + worldScoreQ .now .notStoppedSmoking .wFT))
-    (by exact_mod_cast (by decide +kernel :
-      worldScoreQ .now .notStoppedSmoking .wTF + worldScoreQ .now .notStoppedSmoking .wFF <
-      worldScoreQ .now .notStoppedSmoking .wTT + worldScoreQ .now .notStoppedSmoking .wFT))
+    l1WorldEvent .now .notStopped (fun w => !w.now) < l1WorldEvent .now .notStopped (·.now) :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### World elimination
 
 "Didn't stop smoking" is literally false at wTF, concentrating L1 on wTT. -/
 
 /-- now=T dominates now=F among past=T worlds. -/
-theorem wTT_gt_wTF :
-    l1World .now .notStoppedSmoking .wTT >
-    l1World .now .notStoppedSmoking .wTF := by
-  rw [gt_iff_lt, l1World_apply .now (by decide) wZ_pos_now_ns,
-    l1World_apply .now (by decide) wZ_pos_now_ns]
-  exact ofReal_mul_inv_lt wZ_pos_now_ns (wZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) < worldScoreQ .now .notStoppedSmoking .wTT))
-    (by exact_mod_cast (by decide +kernel :
-      worldScoreQ .now .notStoppedSmoking .wTF < worldScoreQ .now .notStoppedSmoking .wTT))
+theorem wTT_gt_wTF : l1World .now .notStopped .wTF < l1World .now .notStopped .wTT :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-! ### Projection under QUD_max (Figure 1c)
 
@@ -537,29 +268,16 @@ narrows to exactly wTT — but projection stays incomplete: wTT = wFF, so
 the past marginals still coincide. -/
 
 /-- Projection under QUD_max: wTT > wFT. -/
-theorem projection_under_qud_max :
-    l1World .max .notStoppedSmoking .wTT >
-    l1World .max .notStoppedSmoking .wFT := by
-  rw [gt_iff_lt, l1World_apply .max (by decide) wZ_pos_max_ns,
-    l1World_apply .max (by decide) wZ_pos_max_ns]
-  exact ofReal_mul_inv_lt wZ_pos_max_ns (wZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) < worldScoreQ .max .notStoppedSmoking .wTT))
-    (by exact_mod_cast (by decide +kernel :
-      worldScoreQ .max .notStoppedSmoking .wFT < worldScoreQ .max .notStoppedSmoking .wTT))
+theorem projection_under_qud_max : l1World .max .notStopped .wFT < l1World .max .notStopped .wTT :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- Incomplete projection under QUD_max: wTT = wFF (Figure 1c). The
 involution (past, now) ↦ (¬now, ¬past) fixes ⟦didn't stop⟧ and permutes the
 context sets prior-preservingly, so world marginals cannot fully register
 the presupposition. -/
 theorem qud_max_incomplete_projection :
-    l1World .max .notStoppedSmoking .wTT =
-    l1World .max .notStoppedSmoking .wFF := by
-  rw [l1World_apply .max (by decide) wZ_pos_max_ns,
-    l1World_apply .max (by decide) wZ_pos_max_ns]
-  congr 2
-  exact_mod_cast (by decide +kernel :
-    worldScoreQ .max .notStoppedSmoking .wTT
-      = worldScoreQ .max .notStoppedSmoking .wFF)
+    l1World .max .notStopped .wTT = l1World .max .notStopped .wFF :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-! ### Context set projection (the paper's main result, Figure 3)
 
@@ -569,105 +287,52 @@ the speaker assumed a +past common ground — projection as context-set
 inference, with (wTT, +past) the joint mode (Figure 3). -/
 
 /-- The headline: L1 infers a +past context set over −past. -/
-theorem context_projection :
-    l1Ctx .now .notStoppedSmoking .pastTrue >
-    l1Ctx .now .notStoppedSmoking .pastFalse := by
-  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns,
-    l1Ctx_apply .now (by decide) cZ_pos_now_ns]
-  exact ofReal_mul_inv_lt cZ_pos_now_ns (cZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue))
-    (by exact_mod_cast (by decide +kernel :
-      ctxScoreQ .now .notStoppedSmoking .pastFalse < ctxScoreQ .now .notStoppedSmoking .pastTrue))
+theorem context_projection : l1Ctx .now .notStopped .pastFalse < l1Ctx .now .notStopped .pastTrue :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- +past beats `universe` despite the prior (6 vs 9): "didn't stop" narrows
 to wTT under +past (`1⁶ = 1`) but spreads over three worlds under `universe`
 (`(1/4)⁶`). -/
 theorem context_projection_over_universe :
-    l1Ctx .now .notStoppedSmoking .pastTrue >
-    l1Ctx .now .notStoppedSmoking .universe := by
-  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns,
-    l1Ctx_apply .now (by decide) cZ_pos_now_ns]
-  exact ofReal_mul_inv_lt cZ_pos_now_ns (cZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue))
-    (by exact_mod_cast (by decide +kernel :
-      ctxScoreQ .now .notStoppedSmoking .universe < ctxScoreQ .now .notStoppedSmoking .pastTrue))
+    l1Ctx .now .notStopped .universe < l1Ctx .now .notStopped .pastTrue :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- −now contexts are dispreferred (p. 1114): −now already entails the QUD
 answer, so "didn't stop smoking" adds nothing there. -/
 theorem now_context_dispreferred :
-    l1Ctx .now .notStoppedSmoking .pastTrue >
-    l1Ctx .now .notStoppedSmoking .nowFalse := by
-  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns,
-    l1Ctx_apply .now (by decide) cZ_pos_now_ns]
-  exact ofReal_mul_inv_lt cZ_pos_now_ns (cZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue))
-    (by exact_mod_cast (by decide +kernel :
-      ctxScoreQ .now .notStoppedSmoking .nowFalse < ctxScoreQ .now .notStoppedSmoking .pastTrue))
+    l1Ctx .now .notStopped .nowFalse < l1Ctx .now .notStopped .pastTrue :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-! ### "Stopped smoking" -/
 
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
-    l1WorldEvent .now .stoppedSmoking (fun w => w.now = false) >
-    l1WorldEvent .now .stoppedSmoking (fun w => w.now = true) := by
-  unfold l1WorldEvent
-  rw [gt_iff_lt, sumWorlds4, sumWorlds4]
-  simp +decide only [if_true, if_false, add_zero, zero_add]
-  simp only [l1World_apply .now (by decide) wZ_pos_now_st]
-  rw [← add_mul, ← add_mul,
-    ← ENNReal.ofReal_add (by exact_mod_cast worldScoreQ_nonneg .now .stoppedSmoking _)
-      (by exact_mod_cast worldScoreQ_nonneg .now .stoppedSmoking _),
-    ← ENNReal.ofReal_add (by exact_mod_cast worldScoreQ_nonneg .now .stoppedSmoking _)
-      (by exact_mod_cast worldScoreQ_nonneg .now .stoppedSmoking _)]
-  exact ofReal_mul_inv_lt wZ_pos_now_st (wZ_fin _ _)
-    (by exact_mod_cast (by decide +kernel : (0:ℚ) <
-      worldScoreQ .now .stoppedSmoking .wTF + worldScoreQ .now .stoppedSmoking .wFF))
-    (by exact_mod_cast (by decide +kernel :
-      worldScoreQ .now .stoppedSmoking .wTT + worldScoreQ .now .stoppedSmoking .wFT <
-      worldScoreQ .now .stoppedSmoking .wTF + worldScoreQ .now .stoppedSmoking .wFF))
+    l1WorldEvent .now .stopped (·.now) < l1WorldEvent .now .stopped (fun w => !w.now) :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### Structural properties -/
 
-/-- "didn't stop smoking" is compatible with 3 of 4 worlds. -/
-theorem notStopped_compatible_worlds :
-    literalMeaning .notStoppedSmoking .wTT = true ∧
-    literalMeaning .notStoppedSmoking .wTF = false ∧
-    literalMeaning .notStoppedSmoking .wFT = true ∧
-    literalMeaning .notStoppedSmoking .wFF = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "didn't stop smoking" excludes exactly the stopping world. -/
+theorem notStopped_compatible_worlds (w : WorldState) :
+    literalMeaning .notStopped w = true ↔ w ≠ .wTF := by cases w <;> decide
 
-/-- Under context set +past, "didn't stop" is maximally informative for QUD_now:
-    it narrows to exactly (T,T). -/
-theorem notStopped_informative_in_pastTrue :
-    (compatibleBool .pastTrue .wTT && literalMeaning .notStoppedSmoking .wTT) = true ∧
-    (compatibleBool .pastTrue .wTF && literalMeaning .notStoppedSmoking .wTF) = false ∧
-    (compatibleBool .pastTrue .wFT && literalMeaning .notStoppedSmoking .wFT) = false ∧
-    (compatibleBool .pastTrue .wFF && literalMeaning .notStoppedSmoking .wFF) = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- Under a +past context set, "didn't stop" is maximally informative for
+QUD_now: it narrows to exactly wTT. -/
+theorem notStopped_informative_in_pastTrue (w : WorldState) :
+    (compatibleBool .pastTrue w && literalMeaning .notStopped w) = true ↔
+      w = .wTT := by cases w <;> decide
 
-/-- "stopped smoking" narrows to exactly (T,F): past=T and now=F. -/
-theorem stopped_world :
-    literalMeaning .stoppedSmoking .wTT = false ∧
-    literalMeaning .stoppedSmoking .wTF = true ∧
-    literalMeaning .stoppedSmoking .wFT = false ∧
-    literalMeaning .stoppedSmoking .wFF = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "stopped smoking" denotes exactly the stopping world (T,F). -/
+theorem stopped_world (w : WorldState) :
+    literalMeaning .stopped w = true ↔ w = .wTF := by cases w <;> decide
 
-/-- "always smoked" = {(T,T)}, maximally informative for (T,T). -/
-theorem alwaysSmoked_world :
-    literalMeaning .alwaysSmoked .wTT = true ∧
-    literalMeaning .alwaysSmoked .wTF = false ∧
-    literalMeaning .alwaysSmoked .wFT = false ∧
-    literalMeaning .alwaysSmoked .wFF = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "always smoked" denotes exactly (T,T). -/
+theorem alwaysSmoked_world (w : WorldState) :
+    literalMeaning .always w = true ↔ w = .wTT := by cases w <;> decide
 
-/-- "never smoked" = {(F,F)}, maximally informative for (F,F). -/
-theorem neverSmoked_world :
-    literalMeaning .neverSmoked .wTT = false ∧
-    literalMeaning .neverSmoked .wTF = false ∧
-    literalMeaning .neverSmoked .wFT = false ∧
-    literalMeaning .neverSmoked .wFF = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "never smoked" denotes exactly (F,F). -/
+theorem neverSmoked_world (w : WorldState) :
+    literalMeaning .never w = true ↔ w = .wFF := by cases w <;> decide
 
 /-- Context sets that entail past=T (used for measuring projection). -/
 def entailsPast : ContextSet → Bool

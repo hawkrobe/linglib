@@ -274,5 +274,21 @@ theorem ofScores_event_lt (fb : Fallback σ) (f : σ → ℚ≥0) {P Q : σ → 
   rw [ofScores_event_eq, ofScores_event_eq]
   exact_mod_cast h
 
+theorem ofScores_event_lt_cross {τ : Type*} [Fintype τ]
+    (fb₁ : Fallback σ) (fb₂ : Fallback τ) (f : σ → ℚ≥0) (g : τ → ℚ≥0)
+    {P : σ → Bool} {Q : τ → Bool}
+    (h : eventMass (scoresWith fb₁ f) P < eventMass (scoresWith fb₂ g) Q) :
+    (∑' x, if P x then ofScores fb₁ f x else 0)
+      < ∑' y, if Q y then ofScores fb₂ g y else 0 := by
+  rw [ofScores_event_eq, ofScores_event_eq]
+  exact_mod_cast h
+
+/-- Exact-value form: an event mass that is a rational literal on the ℚ≥0
+face is that literal on the PMF face. -/
+theorem ofScores_event_eq_ratCast (fb : Fallback σ) (f : σ → ℚ≥0)
+    (P : σ → Bool) {q : ℚ≥0} (h : eventMass (scoresWith fb f) P = q) :
+    (∑' x, if P x then ofScores fb f x else 0) = ((q : ℝ≥0) : ℝ≥0∞) := by
+  rw [ofScores_event_eq, h]
+
 end PMF
 
