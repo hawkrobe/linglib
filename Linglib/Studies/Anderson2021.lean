@@ -5,114 +5,55 @@ import Linglib.Core.Probability.Scores
 import Linglib.Discourse.CommonGround
 
 /-!
-# Anderson (2021): Conversation Update for RSA
+# [anderson-2021]: conversation update for RSA
+[luce-1959] [stalnaker-2002] [frank-goodman-2012]
 
-[anderson-2021]
+Tell me everything you know (SCiL 2021, 244–253): multi-turn conversation
+in RSA. The common ground is a probability distribution over worlds
+substituted for the RSA world prior (Figure 4), updated each turn by
+convex combination with the pragmatic-listener posterior at a learning
+rate, with weighted, thresholded, and difference sampling for cooperative
+observation selection.
 
-A system for multi-turn conversation update in the Rational Speech Acts
-framework. The core contributions:
+## Main results
 
-1. **Common ground as distribution**: the CommonGround is a probability distribution
-   over worlds, substituted directly for the RSA world prior
-2. **Learning-rate update**: CommonGround evolves via convex combination with
-   Pragmatic Listener posteriors
-3. **Shared vs. approximate CommonGround**: two models differing in whether
-   participants share a single CommonGround representation
-4. **Observation sampling**: weighted, thresholded, and difference-based
-   strategies for cooperative speaker behavior
-
-## Key Connections
-
-The CommonGround update rule `CommonGround'(w) = (1-lr)·CommonGround(w) + lr·post(w)`
-is algebraically identical to [luce-1959]'s linear learning rule with retention rate
-`1-lr` and reinforcement target `post`. This connects RSA pragmatics to
-learning theory: multi-turn conversation IS iterated learning over
-distributions.
-
-The distributional CommonGround refines [stalnaker-2002]'s classical context set:
-worlds with zero weight are excluded from the context, recovering
-set-intersection update as a special case.
-
-## BToM Connection
-
-Anderson's distributional CommonGround has the type expected by `BToMModel.sharedUpdate`
-(`Shared → Action → World → Shared`). Setting `Shared := DistributionalCG W`
-instantiates BToM's discourse dynamics for the first time in linglib — the
-shared state is a distribution that evolves after each utterance via the
-learning-rate update.
-
-## MutualFriends Domain
-
-The paper illustrates predictions using the MutualFriends dataset, where
-worlds are individuals characterized by features (major, location) and
-utterances describe those features.
+* `updateCG_matches_linear_learning`: the update rule is [luce-1959]'s
+  linear learning rule — multi-turn conversation is iterated learning
+  over distributions.
+* `lr_one_excludes_false_worlds` / `graded_update_keeps_false_world`:
+  set-intersection update is the lr = 1 degenerate limit; the graded
+  common ground is non-monotonic by design (fn. 7).
+* Turn-1 and turn-2 predictions over the MutualFriends worlds
+  (individuals typed by major × location), including
+  `turn2_breaks_symmetry`: an updated common ground changes what the
+  same utterance conveys.
+* `toBToMSharedUpdate`: `Shared := DistributionalCG W` instantiates
+  `BToMModel.sharedUpdate` — BToM discourse dynamics with a
+  distributional shared state.
 
 ## Implementation notes
 
-The Figure-4 chain is exact ℚ≥0, parameterized by CommonGround weights:
+The Figure-4 chain is exact ℚ≥0, parameterized by common-ground weights:
 each agent (`l0Score`/`s1Score`/`l1Score`/`s2Score`) is one
 `PMF.normalizeScores` application over the agent below it, the
 distributions are `PMF.ofScores`, and every prediction closes by the
 `ofScores` comparison family with one kernel certificate.
 -/
+/-! ### Distributional common ground
 
-/-!### Distributional Common Ground
-
-[anderson-2021]
-
-A probability distribution over worlds representing the state of the
-conversation. The probabilistic counterpart of [stalnaker-2002]'s sharp
-set-membership context set: instead of a membership predicate (`W → Prop`),
-the common ground assigns graded plausibility that **sums to one**
-(Anderson 2021, §3.2: *"I model the Common Ground as a distribution over
-worlds reflecting the state of the conversation"*).
-
-## Carrier
-
-`DistributionalCG W` wraps mathlib's `PMF W` — a genuine probability mass
-function, not an unnormalised weight. This makes Anderson's success
-criterion expressible: §3.2 measures conversational progress by the
-**entropy** of the common ground (*"In a successful conversation, the
-entropy of the Common Ground should decrease"*), and footnote 15 names KL
-divergence as the perspective-alignment objective. Both `PMF.entropy` and
-`PMF.klDiv` are available on the carrier.
-
-## Substrate role
-
-This file hosts:
-- The `DistributionalCG W` structure over `PMF W`.
-- `weight`/`weight_nonneg`/`sum_weight` — the ℝ-valued view of the masses
-  (via `PMF.toRealFn`), the interface every RSA consumer reads.
-- `toContextSet` projecting to the positive-mass worlds, with
-  `toContextSet_eq_support` identifying it with mathlib's `PMF.support`.
-- `uniform` — the genuine `1/|W|` distribution (`PMF.uniformOfFintype`),
-  Anderson's empty/maximally-uncertain common ground.
-- `ofWeights` — the renormalising constructor from non-negative weights
-  (Anderson 2021, footnote 3: *"At each step, the probabilities are
-  renormalized"*), built on `PMF.ofRealWeightFn`.
-- The `HasContextSet (DistributionalCG W) W` instance.
-
-The Anderson 2021 study (`Studies/Anderson2021.lean`) imports this
-substrate and adds the conversation-update + RSA-bridge content on top.
-
-## Non-monotonicity
-
-Unlike Stalnaker's context set — where worlds, once excluded, stay
-excluded — the distributional common ground is non-monotonic by design
-(Anderson 2021, footnote 7: *"worlds can regain probability"*). The
-classical set-intersection update is recovered only in the degenerate
-limit; see `Anderson2021.lr_one_excludes_false_worlds` for the one
-direction that survives, and `Anderson2021.graded_update_keeps_false_world`
-for the divergence the graded model insists on.
--/
-
+`DistributionalCG W` wraps `PMF W`: [stalnaker-2002]'s context set with
+graded plausibility summing to one (§3.2), so entropy — Anderson's
+success criterion — and KL divergence are available on the carrier.
+`toContextSet` projects to the positive-mass worlds (`PMF.support`),
+`uniform` is the empty common ground, and `ofWeights` renormalizes
+non-negative weights (fn. 3). Unlike the classical context set, worlds
+can regain probability (fn. 7); intersection update survives only at
+lr = 1. -/
 namespace Discourse
 
 open CommonGround (ContextSet HasContextSet)
 
--- ════════════════════════════════════════════════════
--- § 1. DistributionalCG
--- ════════════════════════════════════════════════════
+/-! ### DistributionalCG -/
 
 /-- A distributional common ground: a probability distribution over worlds
     ([anderson-2021], §3.2). The probabilistic counterpart of
@@ -163,16 +104,17 @@ noncomputable def entropy [Fintype W] (cg : DistributionalCG W) : ℝ :=
 theorem entropy_nonneg [Fintype W] (cg : DistributionalCG W) : 0 ≤ cg.entropy :=
   cg.dist.entropy_nonneg
 
-/-- Bridge to classical context set: a world is "in the context" iff its
-    mass is positive. Recovers [stalnaker-2002]'s set-membership view from
-    the distributional representation. -/
+/-- The classical context set of a distributional common ground: the
+    positive-mass worlds, recovering [stalnaker-2002]'s membership view. -/
 def toContextSet (cg : DistributionalCG W) : ContextSet W :=
   fun w => 0 < cg.weight w
 
-@[simp] theorem toContextSet_apply (cg : DistributionalCG W) (w : W) :
-    cg.toContextSet w ↔ 0 < cg.weight w := Iff.rfl
+instance : HasContextSet (DistributionalCG W) W := ⟨toContextSet⟩
 
-/-- The positive-mass projection coincides with mathlib's `PMF.support`. -/
+@[simp] theorem hasContextSet_eq (cg : DistributionalCG W) :
+    HasContextSet.toContextSet cg = cg.toContextSet := rfl
+
+/-- The context set is mathlib's `PMF.support`. -/
 theorem toContextSet_eq_support (cg : DistributionalCG W) :
     cg.toContextSet = cg.dist.support := by
   ext w
@@ -180,14 +122,7 @@ theorem toContextSet_eq_support (cg : DistributionalCG W) :
   rw [weight_def, PMF.mem_support_iff, ENNReal.toReal_pos_iff, pos_iff_ne_zero]
   exact and_iff_left (lt_top_iff_ne_top.mpr (cg.dist.apply_ne_top w))
 
-/-- A world with zero mass is excluded from the classical context set. -/
-theorem zero_weight_excluded (cg : DistributionalCG W) (w : W)
-    (h : cg.weight w = 0) : ¬cg.toContextSet w := by
-  rw [toContextSet_apply, h]; exact lt_irrefl 0
-
--- ════════════════════════════════════════════════════
--- § 2. Uniform common ground
--- ════════════════════════════════════════════════════
+/-! ### Uniform common ground -/
 
 /-- The uniform common ground: every world equally plausible at `1/|W|`
     (Anderson 2021: `CG = Uniform(worlds)`, the empty/maximally-uncertain
@@ -210,9 +145,7 @@ theorem uniform_toContextSet [Fintype W] [Nonempty W] :
   simp only [ContextSet.trivial, Set.mem_univ, iff_true]
   positivity
 
--- ════════════════════════════════════════════════════
--- § 3. Renormalising constructor
--- ════════════════════════════════════════════════════
+/-! ### Renormalising constructor -/
 
 /-- Build a common ground from non-negative `ℝ` weights by renormalising
     (Anderson 2021, footnote 3: *"the probabilities are renormalized"*).
@@ -260,22 +193,14 @@ theorem ofWeights_weight [Fintype W] (f : W → ℝ) (hn : ∀ w, 0 ≤ f w)
 
 end DistributionalCG
 
-/-- A distributional common ground projects to a context set: the worlds
-    with positive mass. -/
-instance {W : Type*} : HasContextSet (DistributionalCG W) W where
-  toContextSet := DistributionalCG.toContextSet
-
 end Discourse
-
 
 namespace Anderson2021
 
 open CommonGround (ContextSet)
 open scoped ENNReal NNReal NNRat
 
--- ════════════════════════════════════════════════════
--- § 1. MutualFriends Domain
--- ════════════════════════════════════════════════════
+/-! ### MutualFriends Domain -/
 
 /-- Worlds in the MutualFriends domain: four individuals with different
 feature combinations. -/
@@ -340,21 +265,13 @@ theorem studyHumanity_partition :
     (mfMeaning .studyHumanity .ina = false) ∧
     (mfMeaning .studyHumanity .katie = false) := ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 2. Distributional Common Ground (re-exported from substrate)
--- ════════════════════════════════════════════════════
+/-! ### Distributional Common Ground (re-exported from substrate) -/
 
-/-! `DistributionalCG` (a `PMF W` over worlds), its `weight`/`toContextSet`
-    projections, the `uniform` distribution, the `ofWeights` renormaliser,
-    and the `HasContextSet` instance are all hosted in the substrate file
-    the substrate section above. The Anderson study below builds the
-    conversation-update + RSA-bridge content on those primitives. -/
-
+/-! The `DistributionalCG` substrate above supplies the weights; the
+conversation-update and RSA content below consume them. -/
 open Discourse (DistributionalCG)
 
--- ════════════════════════════════════════════════════
--- § 3. CommonGround Update
--- ════════════════════════════════════════════════════
+/-! ### CommonGround Update -/
 
 /-- Convex-combination update for distributional common ground:
 
@@ -422,9 +339,7 @@ theorem updateCG_lr_one {W : Type*} [Fintype W] (cg post : DistributionalCG W)
     (updateCG cg post 1 zero_le_one (le_refl 1)).weight w = post.weight w := by
   rw [updateCG_eq]; ring
 
--- ════════════════════════════════════════════════════
--- § 4. Conversation State
--- ════════════════════════════════════════════════════
+/-! ### Conversation State -/
 
 /-- The state of a two-participant conversation (Figure 2).
 
@@ -454,9 +369,7 @@ noncomputable def ConversationState.initial {W : Type*} [Fintype W] [Nonempty W]
   lr := lr
   speakerIsA := true
 
--- ════════════════════════════════════════════════════
--- § 5. Observation Sampling
--- ════════════════════════════════════════════════════
+/-! ### Observation Sampling -/
 
 /-- **Weighted sampling**: sample a world proportional to the speaker's belief.
 Biased toward truth (zero-probability worlds are never sampled) but can
@@ -488,9 +401,7 @@ theorem differenceSample_nonneg {W : Type*}
     0 ≤ differenceSample bel cg w :=
   le_max_left 0 _
 
--- ════════════════════════════════════════════════════
--- § 6. BToM Shared-State Update
--- ════════════════════════════════════════════════════
+/-! ### BToM Shared-State Update -/
 
 /-- Anderson's CommonGround update expressed as a BToM shared-state update.
 
@@ -510,9 +421,7 @@ noncomputable def toBToMSharedUpdate {W U : Type*} [Fintype W]
     DistributionalCG W → U → W → DistributionalCG W :=
   fun cg u _w => updateCG cg (posteriorFn u) lr hlr hlr1
 
--- ════════════════════════════════════════════════════
--- § 7. Example Beliefs
--- ════════════════════════════════════════════════════
+/-! ### Example Beliefs -/
 
 /-- The unnormalised belief weights: `peak` on one world, `1` elsewhere.
 Their total over the four MutualFriends worlds is `6`. -/
@@ -570,25 +479,13 @@ theorem a_diff_nancy_positive :
   rw [beliefsA_weight, DistributionalCG.uniform_weight, card_mfworld]
   norm_num
 
--- ════════════════════════════════════════════════════
--- § 8. The Figure-4 model on ℚ≥0 scores
--- ════════════════════════════════════════════════════
+/-! ### The Figure-4 model on ℚ≥0 scores -/
 
-/-! Anderson's Shared CommonGround model ([anderson-2021] Figure 4) uses the
-distributional CommonGround at BOTH ends of the chain:
+/-! ### The Figure-4 chain
 
-    L0(w|u) ∝ ⟦u⟧(w) · CG(w)    -- CG enters the literal listener
-    S1(u|w) ∝ L0(w|u)           -- speaker = renormalised L0 row (fn. 3:
-                                --   softmax omitted, α = 1, no cost)
-    L1(w|u) ∝ S1(u|w) · CG(w)   -- CG enters the pragmatic listener
-
-At turn 1 the CommonGround is uniform, so the CG factor drops out of L0 and
-the meaning reduces to Boolean semantics. The chain below computes this on
-exact ℚ≥0 scores, parameterized by the CommonGround weights. -/
-
--- ════════════════════════════════════════════════════
--- § 8b. Score chain (CG-parameterized)
--- ════════════════════════════════════════════════════
+Shared-CG RSA: `L0 ∝ ⟦u⟧·CG`, `S1 ∝ LitList` (α = 1, fn. 3), `L1 ∝
+PragSpeak·CG`, with the endorsement speaker `S2 ∝ L1`. -/
+/-! ### b. Score chain (CG-parameterized) -/
 
 /-- CG-weighted literal listener ([anderson-2021] Figure 4: `L0 ∝ ⟦u⟧·CG`). -/
 def l0Score (cg : MFWorld → ℚ≥0) (u : MFUtterance) : MFWorld → ℚ≥0 :=
@@ -658,9 +555,7 @@ theorem l1Turn1_false {u : MFUtterance} {w : MFWorld}
   exact_mod_cast (by revert hw; cases u <;> cases w <;> decide +kernel :
     PMF.scoresWith .uniform (l1Score (fun _ => 1) u) w = 0)
 
--- ════════════════════════════════════════════════════
--- § 9. Turn 1: S1 Predictions
--- ════════════════════════════════════════════════════
+/-! ### Turn 1: S1 Predictions -/
 
 /-- A speaker who knows the person is Nancy prefers "studyHumanity" over
 "studyScience". Nancy studies German (a humanity), so "studyScience" has
@@ -710,9 +605,7 @@ theorem s1_nancy_science_not_gt_null :
     ¬(s1Turn1 .nancy .null < s1Turn1 .nancy .studyScience) :=
   not_lt.mpr (PMF.ofScores_le_cross _ _ (by decide +kernel))
 
--- ════════════════════════════════════════════════════
--- § 10. Turn 1: L1 Predictions
--- ════════════════════════════════════════════════════
+/-! ### Turn 1: L1 Predictions -/
 
 /-- After hearing "studyHumanity", L1 assigns higher probability to Nancy
 than to Ina. Nancy studies a humanity; Ina studies a science. -/
@@ -745,9 +638,7 @@ theorem l1_null_uniform (w₁ w₂ : MFWorld) :
     l1Turn1 .null w₁ = l1Turn1 .null w₂ := by
   rw [l1Turn1_null, l1Turn1_null]
 
--- ════════════════════════════════════════════════════
--- § 11. Turn 2 (Post-Update Prior)
--- ════════════════════════════════════════════════════
+/-! ### Turn 2 (Post-Update Prior) -/
 
 /-- CommonGround weights after hearing "studyHumanity" at turn 1.
 
@@ -774,9 +665,7 @@ noncomputable def s1Turn2 : MFWorld → PMF MFUtterance :=
 noncomputable def l1Turn2 : MFUtterance → PMF MFWorld :=
   fun u => .ofScores .uniform (l1Score cgTurn2 u)
 
--- ════════════════════════════════════════════════════
--- § 12. Turn 2 Predictions
--- ════════════════════════════════════════════════════
+/-! ### Turn 2 Predictions -/
 
 /-- After CommonGround update from "studyHumanity", L1("likeOutdoors") now favors
 Nancy over Katie. In turn 1, they were symmetric (both like outdoors).
@@ -812,16 +701,12 @@ theorem turn2_breaks_symmetry :
     l1Turn2 .likeOutdoors .katie < l1Turn2 .likeOutdoors .nancy :=
   ⟨PMF.ofScores_eq_cross _ _ (by decide +kernel), l1_turn2_outdoors_favors_nancy⟩
 
--- ════════════════════════════════════════════════════
--- § 12b. Turn 2: S1 CommonGround-Adapted Speaker
--- ════════════════════════════════════════════════════
+/-! ### b. Turn 2: S1 CommonGround-Adapted Speaker -/
 
-/-! With CommonGround entering L0 (Figure 4), the speaker at turn 2 adapts to what's
-already in the common ground. After "studyHumanity" establishes the major
-dimension, utterances that disambiguate within the high-CommonGround subspace become
-more informative. This section verifies that the CommonGround-weighted S1 captures
-Anderson's cooperative contribution mechanism. -/
+/-! ### Turn 2
 
+With the common ground entering L0, the same utterances convey different
+information after the first update. -/
 /-- **CommonGround-adapted informativity**: At turn 2, the speaker who knows it's Nancy
 prefers "likeOutdoors" over "studyHumanity". At turn 1, these were equal
 (both partition the 4-world space into 2+2). After the CommonGround shifts toward
@@ -851,9 +736,7 @@ theorem s1_turn2_ina_prefers_science :
     s1Turn2 .ina .likeIndoors < s1Turn2 .ina .studyScience :=
   PMF.ofScores_lt _ (by decide +kernel)
 
--- ════════════════════════════════════════════════════
--- § 13. S2: Endorsement Predictions
--- ════════════════════════════════════════════════════
+/-! ### S2: Endorsement Predictions -/
 
 /-- S2 endorsement: given world Nancy, the pragmatic speaker endorses
 "studyHumanity" over "studyScience". S2(u|w) ∝ L1(w|u), and
@@ -868,9 +751,7 @@ theorem s2_nancy_humanity_eq_outdoors :
     s2Turn1 .nancy .studyHumanity = s2Turn1 .nancy .likeOutdoors :=
   PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
--- ════════════════════════════════════════════════════
--- § 14. Parametric RSA and Conversation Step
--- ════════════════════════════════════════════════════
+/-! ### Parametric RSA and Conversation Step -/
 
 /-- One step of the Shared CommonGround conversation loop (Figure 2), with
 the CommonGround carried on its ℚ≥0 score face (RSA normalizes, so the
@@ -916,21 +797,7 @@ theorem conversationStep_lr_zero (cg : MFWorld → ℚ≥0) (u : MFUtterance) (w
   · exact updateCG_lr_zero _ _ w
   · rfl
 
--- ════════════════════════════════════════════════════
--- § 15. Qualitative information-sharing properties
--- ════════════════════════════════════════════════════
-
-/-! The RSA predictions above verify the qualitative properties of
-successful information sharing:
-
-1. **Contributions informative**: S1 prefers specific utterances over null
-   (§9, `s1_null_suboptimal`).
-
-2. **Uncertainty decreases**: L1 concentrates probability after hearing
-   an informative utterance (this section).
-
-3. **CommonGround-adapted contributions**: At turn 2, S1 adapts to what's already
-   in the CommonGround, preferring non-redundant information (§12b). -/
+/-! ### Qualitative information-sharing properties -/
 
 /-- L1 concentrates probability after an informative utterance:
 L1(nancy|studyHumanity) > L1(nancy|null). The null utterance gives
@@ -946,9 +813,7 @@ theorem s1_informed_speaker_is_informative :
     s1Turn1 .nancy .null < s1Turn1 .nancy .studyHumanity :=
   s1_null_suboptimal
 
--- ════════════════════════════════════════════════════
--- § 16. Bridge to Classical CommonGround Update
--- ════════════════════════════════════════════════════
+/-! ### Bridge to Classical CommonGround Update -/
 
 /-- Anderson's distributional CommonGround update subsumes [stalnaker-2002]'s
 set-intersection update **only in the degenerate `lr = 1` limit**: when the
@@ -962,8 +827,9 @@ graded model diverges for every `lr < 1`; see
 theorem lr_one_excludes_false_worlds (cg post : DistributionalCG MFWorld)
     (w : MFWorld) (h : post.weight w = 0) :
     ¬(updateCG cg post 1 zero_le_one (le_refl 1)).toContextSet w := by
-  apply DistributionalCG.zero_weight_excluded
-  rw [updateCG_lr_one]; exact h
+  show ¬(0 < _)
+  rw [updateCG_lr_one, h]
+  exact lt_irrefl 0
 
 /-- **The divergence the graded model insists on** (Anderson 2021, footnote
 7: *"worlds can regain probability"*). For any `lr < 1`, a world the
@@ -976,26 +842,16 @@ Linglib surfaces the incompatibility rather than papering over it. -/
 theorem graded_update_keeps_false_world (cg post : DistributionalCG MFWorld)
     (w : MFWorld) (hcg : 0 < cg.weight w) (lr : ℝ) (h0 : 0 ≤ lr) (h1 : lr < 1) :
     (updateCG cg post lr h0 h1.le).toContextSet w := by
-  rw [DistributionalCG.toContextSet_apply, updateCG_eq]
+  show 0 < _
+  rw [updateCG_eq]
   have : 0 < (1 - lr) * cg.weight w := mul_pos (by linarith) hcg
   have : 0 ≤ lr * post.weight w :=
     mul_nonneg h0 (DistributionalCG.weight_nonneg _ _)
   linarith
 
--- ════════════════════════════════════════════════════
--- § 17. Exact Numerical Predictions (turn 1)
--- ════════════════════════════════════════════════════
+/-! ### Exact Numerical Predictions (turn 1) -/
 
-/-! Exact rational values for the turn-1 RSA computations, derived from
-the Figure-4 equations at the uniform CommonGround. (The paper's Figure 5
-is a qualitative bar chart of a four-move conversation; these exact
-fractions are the formalization's own kernel-checked arithmetic, not
-printed paper values.) The domain's 2×2 feature symmetry gives clean
-fractions: each non-null utterance is true of exactly 2 worlds
-(L0 = 1/2), null is true of all 4 (L0 = 1/4), and each world makes
-exactly 2 non-null utterances true, giving
-S1(true u|w) = (1/2)/(5/4) = 2/5 and S1(null|w) = (1/4)/(5/4) = 1/5. -/
-
+/-! ### Exact turn-1 values -/
 -- S1(·|nancy): production probabilities given obs = Nancy
 
 theorem s1_nancy_studyHumanity_val :
@@ -1042,23 +898,13 @@ theorem l1_null_val (w : MFWorld) :
     l1Turn1 .null w = (((1/4 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   l1Turn1_null w
 
--- ════════════════════════════════════════════════════
--- § 18. Approximate CommonGround Model (§5.2, Figure 6)
--- ════════════════════════════════════════════════════
+/-! ### Approximate CommonGround Model (§5.2, Figure 6) -/
 
-/-! The Approximate Common Ground model relaxes the shared-CommonGround assumption:
-each participant maintains their own CommonGround approximation. The speaker uses
-CG_S in production; the listener uses CG_L in comprehension with their
-private beliefs B_L as the L1 world prior.
+/-! ### Approximate common ground
 
-Key difference from shared CommonGround (Figure 4):
-- Shared:  L1(w|u) ∝ S1(u|w) · CommonGround(w)     — same CommonGround for everyone
-- Approx:  L1(w|u) ∝ S1(u|w) · B_L(w)    — listener's own beliefs
-
-This models realistic divergence: participants with different priors
-hear the same utterance but reach different posteriors, causing their
-CommonGround approximations to drift apart (Figure 7). -/
-
+Separate speaker/listener CG representations (Figure 6): the listener's
+Pragmatic Listener runs on their own beliefs, so divergence can arise
+when those differ from the common ground. -/
 /-- State for the Approximate CommonGround model (§5.2, Figure 6). -/
 structure ApproxCGState (W : Type*) where
   cgA : DistributionalCG W
@@ -1088,9 +934,7 @@ shared CommonGround model — the split is only meaningful when they diverge. -/
 theorem approx_reduces_to_shared (cg : MFWorld → ℚ≥0) (u : MFUtterance) :
     approxL1 cg cg u = .ofScores .uniform (l1Score cg u) := rfl
 
--- ════════════════════════════════════════════════════
--- § 19. Belief Update Model (§6, Figure 8)
--- ════════════════════════════════════════════════════
+/-! ### Belief Update Model (§6, Figure 8) -/
 
 /-! The belief update model extends the conversation system by also
 updating participants' private beliefs. After comprehension, the
@@ -1137,9 +981,7 @@ theorem belief_update_is_linear_learning {W : Type*} [Fintype W]
     (1 - lr) * bel.weight w + lr * post.weight w :=
   updateCG_eq bel post lr h0 h1 w
 
--- ════════════════════════════════════════════════════
--- § 20. Noncommittal Speaker Problem (§7.1)
--- ════════════════════════════════════════════════════
+/-! ### Noncommittal Speaker Problem (§7.1) -/
 
 /-! A speaker with uniform beliefs (no private information) assigns equal
 weight to all worlds under weighted sampling. Since no observation is
@@ -1174,9 +1016,7 @@ theorem threshold_preserves_confident {W : Type*}
     (bel : DistributionalCG W) (θ : ℝ) (w : W) (h : bel.weight w ≥ θ) :
     thresholdedSample bel θ w = bel.weight w := if_pos h
 
--- ════════════════════════════════════════════════════
--- § 21. Redundancy and Difference Sampling (§7.2)
--- ════════════════════════════════════════════════════
+/-! ### Redundancy and Difference Sampling (§7.2) -/
 
 /-! Under weighted sampling, a speaker whose beliefs match the CommonGround keeps
 repeating already-shared information (Figure 14). Difference-based
