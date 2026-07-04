@@ -87,15 +87,10 @@ def longer : StickWorld → Bool
 
 /-! ### Persuasive-speaker scores -/
 
-/-- L0(longer|u) as ℚ for each stick. Each stick appears in C(4,2)=6 worlds;
-this gives the fraction of longer worlds.
-
-- s1: 1/6 (only w145 is longer)
-- s2: 2/6 = 1/3 (w235, w245)
-- s3: 2/6 = 1/3 (w235, w345)
-- s4: 3/6 = 1/2 (w145, w245, w345)
-- s5: 4/6 = 2/3 (w145, w235, w245, w345) -/
-def l0LongerQ : Stick → ℚ
+/-- The literal listener's longer-probability per stick: each stick
+appears in six worlds, and `l0LongerQ_eq_eventMass` certifies these
+fractions against the chain. -/
+def l0LongerQ : Stick → ℚ≥0
   | .s1 => 1/6
   | .s2 => 1/3
   | .s3 => 1/3
@@ -105,26 +100,17 @@ def l0LongerQ : Stick → ℚ
 /-- `l0LongerQ` agrees with the chain: it is the literal listener's
 longer-event mass at each stick. -/
 theorem l0LongerQ_eq_eventMass (u : Stick) :
-    l0LongerQ u = (PMF.eventMass
+    l0LongerQ u = PMF.eventMass
       (PMF.scoresWith .uniform fun w => if worldContains w u then 1 else 0)
-      longer : ℚ≥0) := by
+      longer := by
   cases u <;> decide +kernel
 
 /-- Prior probability of "longer": 4 out of 10 worlds -/
 def priorLonger : ℚ := 2 / 5
 
-/-- S1 score as ℚ: L0(longer|u)^β · 𝟙[u ∈ w], at β=2. The squared L0 values
-are precomputed as literal fractions so that the reifier extracts concrete ℚ
-values from the ℚ→ℝ cast without needing to reduce function calls. -/
+/-- Persuasive-speaker weight (eq. 8 at β = 2): `L0(longer|u)² · 𝟙[u ∈ w]`. -/
 def s1Score (w : StickWorld) (u : Stick) : ℚ≥0 :=
-  if worldContains w u then
-    match u with
-    | .s1 => 1/36   -- (1/6)²
-    | .s2 => 1/9    -- (1/3)²
-    | .s3 => 1/9    -- (1/3)²
-    | .s4 => 1/4    -- (1/2)²
-    | .s5 => 4/9    -- (2/3)²
-  else 0
+  if worldContains w u then l0LongerQ u ^ 2 else 0
 
 /-! ### The chain
 
@@ -181,7 +167,7 @@ theorem l0_monotone :
     l0LongerQ .s1 ≤ l0LongerQ .s2 ∧
     l0LongerQ .s2 ≤ l0LongerQ .s3 ∧
     l0LongerQ .s3 ≤ l0LongerQ .s4 ∧
-    l0LongerQ .s4 ≤ l0LongerQ .s5 := by norm_num [l0LongerQ]
+    l0LongerQ .s4 ≤ l0LongerQ .s5 := by refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ### Predictions — L1 (weak evidence effect) -/
 
@@ -216,13 +202,13 @@ theorem goalOriented_via_combined (uEpi uPers β : ℚ) (hβ : 0 ≤ β) :
 /-- Connection to ArgumentativeStrength: stick 4 has positive argumentative
 strength for the goal "longer" (L0(longer|s4) = 1/2 > 2/5 = P(longer)). -/
 theorem s4_positive_argStr :
-    hasPositiveArgStr (l0LongerQ .s4) priorLonger := by
+    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger := by
   norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
 
 /-- Stick 3 does NOT have positive argumentative strength
 (L0(longer|s3) = 1/3 < 2/5 = P(longer)). -/
 theorem s3_not_positive_argStr :
-    ¬ hasPositiveArgStr (l0LongerQ .s3) priorLonger := by
+    ¬ hasPositiveArgStr (l0LongerQ .s3 : ℚ) priorLonger := by
   norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
 
 /-- The weak evidence effect shows that argumentatively positive evidence
@@ -233,7 +219,7 @@ insight connecting [barnett-griffiths-hawkins-2022] to
 Stick 4 has positive argStr at L0 (1/2 > 2/5), yet L1 assigns more mass
 to ¬longer than longer after seeing s4. -/
 theorem argStr_positive_but_backfires :
-    hasPositiveArgStr (l0LongerQ .s4) priorLonger ∧
+    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
     l1Event .s4 longer < l1Event .s4 (fun w => !longer w) :=
   ⟨s4_positive_argStr, weak_evidence_effect⟩
 
@@ -421,7 +407,7 @@ confirms exactly this divergence: pragmatic participants' mean (34.7) falls
 below neutral (50), while literal participants' mean (50.1) does not. -/
 theorem model_predicts_interaction :
     -- Model: L0 (literal) — s4 is positive evidence
-    hasPositiveArgStr (l0LongerQ .s4) priorLonger ∧
+    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
     -- Model: L1 (pragmatic) — s4 backfires
     l1Event .s4 longer < l1Event .s4 (fun w => !longer w) ∧
     -- Data: pragmatic group shows backfire
