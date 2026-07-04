@@ -23,7 +23,10 @@ substrate already provides.
 
 A word's underlying form is the left-to-right `Graph.concat` fold of its
 melodies ([jardine-heinz-2015] §5), and `FloatingForm.ofGraph` packages
-it as a derivation input.
+it as a derivation input. This melody-concatenation view of
+non-concatenative exponence is [bye-svenonius-2012]'s Generalized
+Nonlinear Affixation (survey: [zimmermann-2024]); GEN's compliance with
+Consistency of Exponence is `FloatingForm.gen_preserves_morphemes`.
 
 ## Main definitions
 
@@ -97,5 +100,16 @@ def FloatingForm.ofGraph (g : Graph (TierSpec T) (SegSpec S)) : FloatingForm S T
 theorem FloatingForm.mkInput_eq_ofGraph (lower : List (SegSpec S))
     (upper : List (TierSpec T)) (links : Finset Link) :
     mkInput lower upper links = ofGraph ⟨.ofList upper, .ofList lower, links⟩ := rfl
+
+/-- **Consistency of Exponence** ([zimmermann-2024] §4): GEN never alters
+    morphemic affiliation — every one-step candidate carries its input's
+    sponsors on both tiers. -/
+theorem FloatingForm.gen_preserves_morphemes [DecidableEq S] [DecidableEq T]
+    (f : FloatingForm S T) : ∀ g ∈ f.gen,
+    g.upperMorpheme? = f.upperMorpheme? ∧ g.lowerMorpheme? = f.lowerMorpheme? := by
+  intro g hg
+  simp only [FloatingForm.gen, Finset.mem_insert, Finset.mem_union, Finset.mem_image,
+    Finset.mem_filter, Finset.mem_product] at hg
+  rcases hg with rfl | ⟨k, _, rfl⟩ | ⟨⟨k, i⟩, _, rfl⟩ <;> exact ⟨rfl, rfl⟩
 
 end Autosegmental
