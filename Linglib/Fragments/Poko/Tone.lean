@@ -1,5 +1,6 @@
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Tone.Grammatical
+import Linglib.Phonology.Autosegmental.Melody
 
 /-!
 # Poko Tonal Fragment
@@ -21,10 +22,9 @@ a fuller fragment when a second Poko paper arrives.
 ## Main definitions
 
 * `Poko.Syll` — the stems, one morpheme each (`Syll.morpheme`).
-* `Poko.Syll.melody` — lexical melody as ordered tier elements.
-* `Poko.seg`, `Poko.mTone`, `Poko.hTone`, `Poko.lTone` — `SegSpec` /
-  `TierSpec` builders carrying the morpheme membership that feeds
-  `*TAUTDOCK` and `*CROWD`.
+* `Poko.Syll.melody` — each stem's lexical melody: tones, TBU, and
+  pre-linking ([rolle-2018] §2.1; the floating H of `/M^H/` stems is
+  the unlinked element).
 * `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN`).
 -/
 
@@ -58,7 +58,7 @@ inductive Syll
   | ne
   deriving DecidableEq, Repr
 
-/-! ### Morphemes -/
+/-! ### Morphemes and melodies -/
 
 /-- Stable morpheme per stem, keyed by the syllable's surface form. -/
 def Syll.morpheme : Syll → Morpheme
@@ -71,38 +71,24 @@ def Syll.morpheme : Syll → Morpheme
   | .ili => { form := "ili" }
   | .ne  => { form := "ne" }
 
-/-! ### Builders -/
+/-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
+    over the stem's single TBU, with the lexical pre-linking — the H of
+    an `/M^H/` stem is the sole unlinked (floating) element. -/
+def Syll.melody (s : Syll) : Graph (TierSpec TRN) (SegSpec Syll) :=
+  match s with
+  | .kak => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
+  | .ri  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
+  | .do  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
+  | .nan => .melody s.morpheme [.M] [s] {(0, 0)}              -- /M/
+  | .na  => .melody s.morpheme [.M] [s] {(0, 0)}              -- /M/
+  | .ka  => .melody s.morpheme [.M, .H] [s] {(0, 0), (1, 0)}  -- /MH/, both linked
+  | .ili => .melody s.morpheme [.L, .H] [s] {(0, 0), (1, 0)}  -- /LH/, both linked
+  | .ne  => .melody s.morpheme [] [s] ∅                       -- toneless
 
-/-- Wrap a syllable as a `SegSpec` carrying its morpheme. -/
-def seg (s : Syll) : SegSpec Syll :=
-  { seg := s, morpheme := s.morpheme }
-
-/-- An M tone belonging to the morpheme of syllable `s`. -/
-def mTone (s : Syll) : TierSpec TRN :=
-  { value := TRN.M, morpheme := s.morpheme }
-
-/-- An H tone belonging to the morpheme of syllable `s`. -/
-def hTone (s : Syll) : TierSpec TRN :=
-  { value := TRN.H, morpheme := s.morpheme }
-
-/-- An L tone belonging to the morpheme of syllable `s`. -/
-def lTone (s : Syll) : TierSpec TRN :=
-  { value := TRN.L, morpheme := s.morpheme }
-
-/-! ### Melodies and forms -/
-
-/-- Lexical melody of each stem, in tier order (linked tones before a
-    floating H). Which tones are underlyingly linked is per-input data
-    — the `links` argument of `FloatingForm.mkInput`. -/
-def Syll.melody : Syll → List (TierSpec TRN)
-  | .kak => [mTone .kak, hTone .kak]  -- /M^H/
-  | .ri  => [mTone .ri, hTone .ri]    -- /M^H/
-  | .do  => [mTone .do, hTone .do]    -- /M^H/
-  | .nan => [mTone .nan]              -- /M/
-  | .na  => [mTone .na]               -- /M/
-  | .ka  => [mTone .ka, hTone .ka]    -- /MH/, both linked
-  | .ili => [lTone .ili, hTone .ili]  -- /LH/, both linked
-  | .ne  => []                        -- toneless
+/-- The underlying form of a stem sequence: melodies concatenated
+    left-to-right. -/
+def word (ss : List Syll) : Graph (TierSpec TRN) (SegSpec Syll) :=
+  .concatList (ss.map Syll.melody)
 
 /-- Poko autosegmental forms: syllable backbone, `TRN` tone tier. -/
 abbrev Form := FloatingForm Syll TRN
