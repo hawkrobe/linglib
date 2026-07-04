@@ -112,6 +112,19 @@ theorem disjoint_licensedFocusValue_weakBanned
     Disjoint (licensedFocusValue dw ds) (weakBanned dw ds) :=
   Set.disjoint_sdiff_left
 
+/-- With a Given strong daughter the default pattern licenses
+nothing: the ban swallows the whole composition. The deaccenting
+imperative — prominence must shift off given material
+([schwarzschild-1999], [buring-2016]) — derived from the Weak
+Restriction plus [kratzer-selkirk-2020]'s (46) Givenness. -/
+theorem licensedFocusValue_eq_empty_of_given
+    {dw : AltMeaning (α → β)} {ds : AltMeaning α}
+    (h : ds.Given ds.oValue) :
+    licensedFocusValue dw ds = ∅ := by
+  unfold licensedFocusValue weakBanned
+  rw [show ds.aSet = {ds.oValue} from h]
+  exact sdiff_self
+
 /-- Prosodic restriction only strengthens admission: an antecedent the
 licensed focus value admits is admitted by the unrestricted Hamblin
 composition — [rooth-1992]'s fip against the prosodically derived
