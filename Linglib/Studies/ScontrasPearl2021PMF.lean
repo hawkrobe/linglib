@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Studies.ScontrasPearl2021Quantification
+import Linglib.Studies.ScontrasPearl2021
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.ProbabilityMassFunction.Binomial

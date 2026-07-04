@@ -2647,7 +2647,6 @@ import Linglib.Studies.Schwarzer2026
 import Linglib.Studies.Scontras2014
 import Linglib.Studies.ScontrasPearl2021
 import Linglib.Studies.ScontrasPearl2021PMF
-import Linglib.Studies.ScontrasPearl2021Quantification
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Studies.Scott2021
 import Linglib.Studies.Scott2023
