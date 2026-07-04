@@ -63,6 +63,54 @@ theorem normalizeOrUniform_apply {f : σ → ℝ≥0∞} (h0 : (∑' x, f x) ≠
     normalizeOrUniform f x = f x * (∑' x', f x')⁻¹ := by
   rw [normalizeOrUniform, dif_pos ⟨h0, hT⟩, PMF.normalize_apply]
 
+variable [Nonempty σ] in
+/-- Comparison of `normalizeOrUniform` values built from nonnegative real
+scores: reduces to the normalized-score inequality. Real-face analogue of
+`ofScores_lt_cross`. -/
+theorem normalizeOrUniform_ofReal_lt_cross {τ : Type*} [Fintype τ] [Nonempty τ]
+    {f : σ → ℝ} {g : τ → ℝ} {a : σ} {b : τ}
+    (hf : ∀ x, 0 ≤ f x) (hg : ∀ y, 0 ≤ g y)
+    (hfs : 0 < ∑ x, f x) (hgs : 0 < ∑ y, g y)
+    (h : f a / ∑ x, f x < g b / ∑ y, g y) :
+    normalizeOrUniform (fun x => ENNReal.ofReal (f x)) a <
+      normalizeOrUniform (fun y => ENNReal.ofReal (g y)) b := by
+  have hfsum : (∑' x, ENNReal.ofReal (f x)) = ENNReal.ofReal (∑ x, f x) := by
+    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg fun x _ => hf x]
+  have hgsum : (∑' y, ENNReal.ofReal (g y)) = ENNReal.ofReal (∑ y, g y) := by
+    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg fun y _ => hg y]
+  rw [normalizeOrUniform_apply
+      (by simp only [hfsum, ENNReal.ofReal_ne_zero_iff]; exact hfs)
+      (by simp only [hfsum]; exact ENNReal.ofReal_ne_top),
+    normalizeOrUniform_apply
+      (by simp only [hgsum, ENNReal.ofReal_ne_zero_iff]; exact hgs)
+      (by simp only [hgsum]; exact ENNReal.ofReal_ne_top),
+    hfsum, hgsum, ← ENNReal.ofReal_inv_of_pos hfs, ← ENNReal.ofReal_inv_of_pos hgs,
+    ← ENNReal.ofReal_mul (hf a), ← ENNReal.ofReal_mul (hg b)]
+  have hgb : 0 < g b * (∑ y, g y)⁻¹ := by
+    rw [← div_eq_mul_inv]
+    exact lt_of_le_of_lt (div_nonneg (hf a) (Finset.sum_nonneg fun x _ => hf x))
+      (by rwa [div_eq_mul_inv, ← div_eq_mul_inv] at h)
+  exact (ENNReal.ofReal_lt_ofReal_iff hgb).mpr
+    (by rw [← div_eq_mul_inv, ← div_eq_mul_inv]; exact h)
+
+/-! ### Posterior dominance
+
+Comparing two posteriors at a cell needs no global algebra: pointwise
+dominance of the odds `f a : f c` by `g a : g c` (strict at one cell)
+transfers to the normalized values. This is Bayes-factor monotonicity. -/
+
+/-- Pointwise odds dominance implies posterior dominance: if
+`f a · g c ≤ g a · f c` at every cell, strictly at one, then
+`f a / ∑ f < g a / ∑ g`. -/
+theorem _root_.Finset.div_sum_lt_div_sum {ι α : Type*} [Fintype ι]
+    [Semifield α] [LinearOrder α] [IsStrictOrderedRing α] {f g : ι → α} {a : ι}
+    (hfs : 0 < ∑ i, f i) (hgs : 0 < ∑ i, g i)
+    (hle : ∀ i, f a * g i ≤ g a * f i) (hlt : ∃ i, f a * g i < g a * f i) :
+    f a / ∑ i, f i < g a / ∑ i, g i := by
+  rw [div_lt_div_iff₀ hfs hgs, Finset.mul_sum, Finset.mul_sum]
+  exact Finset.sum_lt_sum (fun i _ => hle i)
+    (hlt.imp fun i h => ⟨Finset.mem_univ i, h⟩)
+
 /-! ### Fallbacks -/
 
 /-- A total fallback distribution completing a zero-mass score row: a `ℚ≥0`

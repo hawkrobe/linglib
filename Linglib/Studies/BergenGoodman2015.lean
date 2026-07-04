@@ -503,66 +503,34 @@ private theorem sum_pos_bob (hε0 : 0 < ε) (hε1 : ε < 1) :
     apply div_nonneg _ (by linarith); nlinarith
   nlinarith
 
-private theorem l1PMF_apply (u_p : Utterance)
-    (hnn : ∀ m, 0 ≤ l1Score ε u_p m) (hpos : 0 < ∑ m, l1Score ε u_p m)
-    (m : Meaning) :
-    l1PMF ε u_p m = ENNReal.ofReal (l1Score ε u_p m / ∑ m', l1Score ε u_p m') := by
-  have hsum : (∑' m, ENNReal.ofReal (l1Score ε u_p m))
-      = ENNReal.ofReal (∑ m, l1Score ε u_p m) := by
-    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg fun m _ => hnn m]
-  rw [l1PMF, PMF.normalizeOrUniform_apply
-      (by rw [hsum, ENNReal.ofReal_ne_zero_iff]; exact hpos)
-      (by rw [hsum]; exact ENNReal.ofReal_ne_top),
-    hsum, ← ENNReal.ofReal_inv_of_pos hpos, ← ENNReal.ofReal_mul (hnn m),
-    div_eq_mul_inv]
-
 /-- Stress increases the exhaustive interpretation, at every noise rate
 ε < 2/3: "BOB went" is strictly more likely than "Bob went" to mean only
-Bob went (§4). After the shared channel factor cancels, the comparison
-reduces to the atom ordering `xAtom < yAtom` — the paper's mechanism —
-and positivity. -/
+Bob went (§4). By posterior dominance (`Finset.div_sum_lt_div_sum`), the
+comparison is cell-by-cell odds dominance: trivial at `onlyAlice` (the
+stressed row is zero there) and `onlyBob`, and the atom ordering
+`xAtom < yAtom` — the paper's mechanism — at `both`. -/
 theorem stress_increases_exhaustivity (hε0 : 0 < ε) (hε : ε < 2/3) :
     l1PMF ε .bobWent .onlyBob < l1PMF ε .BOB_went .onlyBob := by
   have hε1 : ε < 1 := by linarith
   have hx := xAtom_pos hε0 hε1
-  have hy := yAtom_pos hε0 hε1
   have hxy := xAtom_lt_yAtom hε0 hε
-  obtain ⟨hB_ob, hB_oa, hB_both, hb_ob, hb_oa, hb_both⟩ := l1Score_values hε0 hε1
-  rw [l1PMF_apply _ (l1Score_nonneg hε0 hε1 _) (sum_pos_bob hε0 hε1),
-    l1PMF_apply _ (l1Score_nonneg hε0 hε1 _) (sum_pos_BOB hε0 hε1),
-    sumMeaningsR, sumMeaningsR, hB_ob, hB_oa, hB_both, hb_ob, hb_oa, hb_both]
-  have hS : (0:ℝ) < xAtom ε + yAtom ε := by linarith
-  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
-  · have h1 : (0:ℝ) < yAtom ε * (1 - ε/2) / (xAtom ε + yAtom ε) := by
-      apply div_pos _ hS; nlinarith
-    have h2 : (0:ℝ) < (1 - ε/2) / 6 := div_pos (by linarith) (by norm_num)
-    apply div_pos <;> linarith
-  · have hm : (0:ℝ) ≤ (xAtom ε * (1 - ε) + yAtom ε * (ε/2)) / (xAtom ε + yAtom ε) := by
-      apply div_nonneg _ hS.le; nlinarith
-    have hoa : (0:ℝ) ≤ xAtom ε * ε / (xAtom ε + yAtom ε) := by positivity
-    have hb6 : (0:ℝ) < (1 + ε/2) / 6 := by positivity
-    have hB6 : (0:ℝ) < (1 - ε/2) / 6 := div_pos (by linarith) (by norm_num)
-    have hd1 : (0:ℝ) < xAtom ε * ε / (xAtom ε + yAtom ε)
-        + (xAtom ε * (1 - ε) + yAtom ε * (ε/2)) / (xAtom ε + yAtom ε)
-        + (1 + ε/2) / 6 := by linarith
-    have hy1 : (0:ℝ) < yAtom ε * (1 - ε/2) / (xAtom ε + yAtom ε) := by
-      apply div_pos _ hS; nlinarith
-    have hd2 : (0:ℝ) < 0 + yAtom ε * (1 - ε/2) / (xAtom ε + yAtom ε)
-        + (1 - ε/2) / 6 := by linarith
-    rw [div_lt_div_iff₀ hd1 hd2]
-    have hkey : xAtom ε * (1 - ε) + yAtom ε * (ε/2)
-        < yAtom ε * (1 - ε/2) + 6 * (xAtom ε * (yAtom ε * ε)) / (xAtom ε + yAtom ε) := by
-      have h1 : xAtom ε * (1 - ε) < yAtom ε * (1 - ε) := by nlinarith
-      have h2 : (0:ℝ) ≤ 6 * (xAtom ε * (yAtom ε * ε)) / (xAtom ε + yAtom ε) := by
-        positivity
-      nlinarith
-    have hSne : (xAtom ε + yAtom ε) ≠ 0 := hS.ne'
-    field_simp
-    nlinarith [mul_pos hx hy, mul_pos (mul_pos hx hy) hε0,
-      mul_lt_mul_of_pos_right hxy hε0, mul_pos hx hε0, mul_pos hy hε0,
-      mul_lt_mul_of_pos_right hxy (mul_pos hx hε0),
-      mul_lt_mul_of_pos_right hxy (mul_pos hy hε0),
-      mul_lt_mul_of_pos_right hxy hS]
+  obtain ⟨hB_ob, hB_oa, hB_both, hb_ob, _, hb_both⟩ := l1Score_values hε0 hε1
+  have hboth : l1Score ε .bobWent .onlyBob * l1Score ε .BOB_went .both <
+      l1Score ε .BOB_went .onlyBob * l1Score ε .bobWent .both := by
+    rw [hb_ob, hB_both, hB_ob, hb_both, div_mul_div_comm, div_mul_div_comm]
+    have hy := yAtom_pos hε0 hε1
+    exact div_lt_div_of_pos_right (by nlinarith [mul_pos hx hε0]) (by nlinarith)
+  rw [l1PMF, l1PMF]
+  exact PMF.normalizeOrUniform_ofReal_lt_cross (l1Score_nonneg hε0 hε1 _)
+    (l1Score_nonneg hε0 hε1 _) (sum_pos_bob hε0 hε1) (sum_pos_BOB hε0 hε1)
+    (Finset.div_sum_lt_div_sum (sum_pos_bob hε0 hε1) (sum_pos_BOB hε0 hε1)
+      (fun c => match c with
+        | .onlyAlice => by
+            rw [hB_oa, mul_zero]
+            exact mul_nonneg (l1Score_nonneg hε0 hε1 _ _) (l1Score_nonneg hε0 hε1 _ _)
+        | .onlyBob => (mul_comm _ _).le
+        | .both => hboth.le)
+      ⟨.both, hboth⟩)
 
 end Parametric
 
