@@ -21,8 +21,9 @@ associate to one backbone position (forming contours); a tier element
 with no associations is **floating**. Generic over both backbone type
 `S` (the lower tier) and tier-value type `T` (the upper tier); tonal use
 instantiates `T := TRN`, while non-tonal autosegmental work
-([laoide-kemp-2026]'s floating consonants, [lieber-1983]'s
-floating features) chooses other `T` values.
+([laoide-kemp-2026]'s floating consonants, [lieber-1983]'s floating
+features, [zimmermann-2017]'s floating moras and prosodic nodes)
+chooses other `T` values.
 
 ## Main definitions
 
