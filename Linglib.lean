@@ -280,11 +280,13 @@ import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Probability.Marginal
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.ProductOfExperts
 import Linglib.Core.Probability.RandomUtility
+import Linglib.Core.Probability.Scores
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
@@ -1414,6 +1416,7 @@ import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.BToM
 import Linglib.Pragmatics.RSA.Cancellation
 import Linglib.Pragmatics.RSA.Canonical
@@ -1430,6 +1433,7 @@ import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.Ranking
 import Linglib.Pragmatics.RSA.ReferenceGame
+import Linglib.Pragmatics.RSA.ScoreChain
 import Linglib.Pragmatics.RSA.Sequential
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.SimpAttr
@@ -1698,6 +1702,7 @@ import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Realization
+import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Highlighting
@@ -1987,6 +1992,7 @@ import Linglib.Studies.ArregiPietraszko2021
 import Linglib.Studies.ArreguiKusumoto1998
 import Linglib.Studies.AsherLascarides2003
 import Linglib.Studies.AsherPelletier2013
+import Linglib.Studies.AssmannEtAl2023
 import Linglib.Studies.Asudeh2022
 import Linglib.Studies.AugurzkyEtAl2023
 import Linglib.Studies.BachBrownMarslenWilson1986
@@ -2067,6 +2073,7 @@ import Linglib.Studies.BumfordCharlow2024
 import Linglib.Studies.BumfordRett2021
 import Linglib.Studies.Buring2007
 import Linglib.Studies.Buring2012
+import Linglib.Studies.Buring2015
 import Linglib.Studies.Burnett2019
 import Linglib.Studies.Bybee1985
 import Linglib.Studies.BylininaNouwen2020
@@ -2297,6 +2304,7 @@ import Linglib.Studies.Harbour2016
 import Linglib.Studies.HardingGerstenbergIcard2025
 import Linglib.Studies.HarizanovGribanova2019
 import Linglib.Studies.HarrisPotts2009
+import Linglib.Studies.HartmannZimmermann2004
 import Linglib.Studies.HartmannZimmermann2007
 import Linglib.Studies.HartshorneEtAl2016
 import Linglib.Studies.Haslinger2025
@@ -2384,7 +2392,6 @@ import Linglib.Studies.KatzirSingh2015
 import Linglib.Studies.Kawahara2015
 import Linglib.Studies.KayFillmore1999
 import Linglib.Studies.KayMichaelis2019
-import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeenanComrie1977
 import Linglib.Studies.KeenanStavi1986
 import Linglib.Studies.KehlerRohde2013
@@ -2395,6 +2402,7 @@ import Linglib.Studies.Kennedy2007
 import Linglib.Studies.Kennedy2015
 import Linglib.Studies.Kennedy2015PMF
 import Linglib.Studies.KennedyLevin2008
+import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.KeshetAbney2024.Basic
 import Linglib.Studies.KeshetAbney2024.Bridges
