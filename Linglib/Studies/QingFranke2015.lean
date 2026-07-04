@@ -1,5 +1,9 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.DaleReiter1995
 
@@ -345,6 +349,280 @@ noncomputable def salienceCfg : RSAConfig Utterance Object :=
 
 -- §9. Action-oriented listener ρ_a is now `RSAConfig.L1_action` in Config.lean.
 -- Use `cfg.L1_action αL u w` via dot notation (open RSA provides namespace).
+
+-- ============================================================================
+-- §9b. PMF chain (local pending the RSA API pass)
+-- ============================================================================
+
+section PMFChain
+
+open scoped ENNReal
+
+/-- Every utterance applies to some object, and every object satisfies some
+utterance. -/
+private theorem appliesTo_sat : ∀ u : Utterance, ∃ w, u.appliesTo w = true := by
+  decide
+
+private noncomputable def qfPriorU : PMF Object := PMF.uniformOfFintype Object
+
+private theorem qfPriorU_pos (w : Object) : qfPriorU w ≠ 0 := by
+  rw [qfPriorU, PMF.uniformOfFintype_apply]
+  simp
+
+private theorem qfPriorU_apply (w : Object) : qfPriorU w = 3⁻¹ := by
+  rw [qfPriorU, PMF.uniformOfFintype_apply,
+    show Fintype.card Object = 3 from by decide]
+  norm_num
+
+private theorem sumObjs (f : Object → ℝ≥0∞) :
+    ∑' w, f w = f .green_square + f .blue_circle + f .green_circle := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Object)
+      = {.green_square, .blue_circle, .green_circle} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem sumUtts (f : Utterance → ℝ≥0∞) :
+    ∑' u, f u = f .square + f .circle + f .green + f .blue := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Utterance) = {.square, .circle, .green, .blue} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+/-- Salience prior as a PMF (Table 2 counts, total 240). -/
+private noncomputable def qfPriorS : PMF Object :=
+  PMF.normalize (fun w => ENNReal.ofReal (saliencePrior w))
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.green_square, by
+      rw [ENNReal.ofReal_ne_zero_iff]
+      norm_num [saliencePrior]⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+
+private theorem salience_sum :
+    (∑' w, ENNReal.ofReal (saliencePrior w)) = ENNReal.ofReal 240 := by
+  rw [sumObjs]
+  norm_num [saliencePrior]
+
+private theorem qfPriorS_apply (w : Object) :
+    qfPriorS w = ENNReal.ofReal (saliencePrior w / 240) := by
+  rw [qfPriorS, PMF.normalize_apply, salience_sum,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num),
+    ← ENNReal.ofReal_mul (by cases w <;> norm_num [saliencePrior])]
+  rw [div_eq_mul_inv]
+
+private theorem qfPriorS_pos (w : Object) : qfPriorS w ≠ 0 := by
+  rw [qfPriorS_apply, ENNReal.ofReal_ne_zero_iff]
+  cases w <;> norm_num [saliencePrior]
+
+/-- Literal listener at a speaker-belief prior (Figure-4-style prior-in-L0;
+[qing-franke-2015] eqs. 5–8). -/
+private noncomputable def qfL0 (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0)
+    (u : Utterance) : PMF Object :=
+  RSA.L0LassiterGoodman bel (fun u w => u.appliesTo w) u (by
+    obtain ⟨w, hw⟩ := appliesTo_sat u
+    exact ENNReal.summable.tsum_ne_zero_iff.mpr
+      ⟨w, by rw [hw]; simpa using hbel w⟩)
+
+/-- Uniform-belief L0 values: `1` on the unique-feature objects, `1/2` on
+shared features (extensions of size 1 and 2 over 3 objects). -/
+private theorem qfL0_uniform_apply (u : Utterance) (w : Object) :
+    qfL0 qfPriorU qfPriorU_pos u w
+      = if u.appliesTo w then
+          (if u = .square ∨ u = .blue then 1 else 2⁻¹) else 0 := by
+  unfold qfL0
+  rw [RSA.L0LassiterGoodman_apply]
+  have hmass : (∑' w', qfPriorU w' * (if u.appliesTo w' then (1 : ℝ≥0∞) else 0))
+      = if u = .square ∨ u = .blue then 3⁻¹ else 3⁻¹ + 3⁻¹ := by
+    rw [sumObjs]
+    simp only [qfPriorU_apply]
+    cases u <;> simp +decide [Utterance.appliesTo]
+  rw [hmass, qfPriorU_apply]
+  by_cases hw : u.appliesTo w = true
+  · rw [hw]
+    by_cases h1 : u = .square ∨ u = .blue
+    · simp only [h1, if_true, mul_one, reduceIte]
+      rw [ENNReal.mul_inv_cancel (by norm_num) (by norm_num)]
+    · simp only [h1, if_false, reduceIte, mul_one]
+      rw [show (3 : ℝ≥0∞)⁻¹ + 3⁻¹ = 3⁻¹ * 2 from by ring,
+        ENNReal.mul_inv (by norm_num) (by norm_num), ← mul_assoc,
+        ENNReal.mul_inv_cancel (by norm_num) (by norm_num), one_mul]
+  · rw [Bool.not_eq_true] at hw
+    rw [hw]
+    simp
+
+/-- Extension salience sums (denominators of the salience L0). -/
+private noncomputable def extSum : Utterance → ℝ
+  | .square => 71
+  | .circle => 169
+  | .green  => 101
+  | .blue   => 139
+
+/-- Salience-belief L0 values on support: object salience over extension
+salience ([qing-franke-2015] L0 ∝ S(t)·⟦m⟧). -/
+private theorem qfL0_salience_true {u : Utterance} {w : Object}
+    (hw : u.appliesTo w = true) :
+    qfL0 qfPriorS qfPriorS_pos u w
+      = ENNReal.ofReal (saliencePrior w / extSum u) := by
+  unfold qfL0
+  rw [RSA.L0LassiterGoodman_apply, hw]
+  have hmass : (∑' w', qfPriorS w' * (if u.appliesTo w' then (1 : ℝ≥0∞) else 0))
+      = ENNReal.ofReal (extSum u / 240) := by
+    rw [sumObjs]
+    simp only [qfPriorS_apply]
+    cases u <;>
+      · simp +decide [Utterance.appliesTo, saliencePrior, extSum]
+        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+        try norm_num
+  rw [hmass, qfPriorS_apply]
+  simp only [reduceIte, mul_one]
+  rw [← ENNReal.ofReal_inv_of_pos (by cases u <;> norm_num [extSum]),
+    ← ENNReal.ofReal_mul (by cases w <;> norm_num [saliencePrior])]
+  congr 1
+  cases u <;> cases w <;> norm_num [saliencePrior, extSum]
+
+private theorem qfL0_salience_false {u : Utterance} {w : Object}
+    (hw : u.appliesTo w = false) :
+    qfL0 qfPriorS qfPriorS_pos u w = 0 := by
+  unfold qfL0
+  rw [RSA.L0LassiterGoodman_apply, hw]
+  simp
+
+/-! ### Speakers and exp-bound helpers -/
+
+private noncomputable def qfCf (c : ℝ) (u : Utterance) : ℝ≥0∞ :=
+  ENNReal.ofReal (Real.exp (-(adjCost c u)))
+
+private theorem qfCf_pos (c : ℝ) (u : Utterance) : qfCf c u ≠ 0 := by
+  rw [qfCf, ENNReal.ofReal_ne_zero_iff]
+  exact Real.exp_pos _
+
+private theorem qfCf_square (c : ℝ) : qfCf c .square = 1 := by
+  simp [qfCf, adjCost]
+
+private theorem qfCf_circle (c : ℝ) : qfCf c .circle = 1 := by
+  simp [qfCf, adjCost]
+
+private theorem qfCf_green (c : ℝ) : qfCf c .green = ENNReal.ofReal (Real.exp (-c)) :=
+  rfl
+
+private theorem qfCf_blue (c : ℝ) : qfCf c .blue = ENNReal.ofReal (Real.exp (-c)) :=
+  rfl
+
+private theorem objSat : ∀ w : Object, ∃ u : Utterance, u.appliesTo w = true := by
+  decide
+
+/-- Belief-oriented speaker ([qing-franke-2015] eq. 10 at λ = 1): weights
+`L0 · exp(−Cost)`. -/
+private noncomputable def s1B (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0) (c : ℝ)
+    (w : Object) : PMF Utterance :=
+  RSA.S1Belief (qfL0 bel hbel) (qfCf c) 1 w
+    (by
+      obtain ⟨u, hu⟩ := objSat w
+      refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨u, mul_ne_zero ?_ (qfCf_pos c u)⟩
+      have hL0 : qfL0 bel hbel u w ≠ 0 := by
+        unfold qfL0
+        rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+        exact ⟨hbel w, hu⟩
+      exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hL0) (PMF.apply_ne_top _ _)).ne')
+    (ENNReal.tsum_ne_top_of_fintype fun u =>
+      ENNReal.mul_ne_top
+        (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+        (by rw [qfCf]; exact ENNReal.ofReal_ne_top))
+
+/-- Action-oriented speaker ([qing-franke-2015] eq. 9 at λ = 1): weights
+`exp(L0 − Cost)` — positive on ALL utterances, including false ones (the
+action-oriented speaker softmaxes raw success probability). Local private
+op pending the RSA API pass. -/
+private noncomputable def s1A (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0) (c : ℝ)
+    (w : Object) : PMF Utterance :=
+  PMF.normalize
+    (fun u => ENNReal.ofReal (Real.exp ((qfL0 bel hbel u w).toReal - adjCost c u)))
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.square, by
+      rw [ENNReal.ofReal_ne_zero_iff]
+      exact Real.exp_pos _⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+
+/-- The five speaker chains of §7–§8, on the PMF face. -/
+noncomputable def s1ZeroCost : Object → PMF Utterance := s1B qfPriorU qfPriorU_pos 0
+noncomputable def s1Cost : Object → PMF Utterance := s1B qfPriorU qfPriorU_pos (1/2)
+noncomputable def s1AU : Object → PMF Utterance := s1A qfPriorU qfPriorU_pos (1/2)
+noncomputable def s1BS : Object → PMF Utterance := s1B qfPriorS qfPriorS_pos (1/2)
+noncomputable def s1AS : Object → PMF Utterance := s1A qfPriorS qfPriorS_pos (1/2)
+
+private theorem s1B_marginal_pos (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0) (c : ℝ)
+    (lp : PMF Object) (hlp : ∀ w, lp w ≠ 0) (u : Utterance) :
+    PMF.marginal (s1B bel hbel c) lp u ≠ 0 := by
+  obtain ⟨w, hw⟩ := appliesTo_sat u
+  refine PMF.marginal_ne_zero _ _ _ (hlp w) ?_
+  have hL0 : qfL0 bel hbel u w ≠ 0 := by
+    unfold qfL0
+    rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+    exact ⟨hbel w, hw⟩
+  unfold s1B
+  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (qfCf_pos c u)
+
+/-- Pragmatic listeners ([qing-franke-2015] eqs. 12–13, 15): same σ_bU cost
+speaker, uniform vs salience world prior. -/
+noncomputable def l1Cost (u : Utterance) : PMF Object :=
+  PMF.posterior (s1Cost) qfPriorU u
+    (s1B_marginal_pos qfPriorU qfPriorU_pos (1/2) qfPriorU qfPriorU_pos u)
+
+noncomputable def l1Sal (u : Utterance) : PMF Object :=
+  PMF.posterior (s1Cost) qfPriorS u
+    (s1B_marginal_pos qfPriorU qfPriorU_pos (1/2) qfPriorS qfPriorS_pos u)
+
+/-! ### The `exp(−1/2)` atom and its three numeric bounds -/
+
+private noncomputable def xc : ℝ := Real.exp (-(1/2))
+
+private theorem xc_pos : 0 < xc := Real.exp_pos _
+
+private theorem xc_lt_one : xc < 1 := by
+  rw [xc, show (1 : ℝ) = Real.exp 0 from Real.exp_zero.symm]
+  exact Real.exp_lt_exp.mpr (by norm_num)
+
+private theorem xc_sq : xc * xc = (Real.exp 1)⁻¹ := by
+  rw [xc, ← Real.exp_add, ← Real.exp_neg]
+  norm_num
+
+private theorem xc_sq_mul : xc * xc * Real.exp 1 = 1 := by
+  rw [xc_sq, inv_mul_cancel₀ (Real.exp_pos 1).ne']
+
+/-- `exp(−1/2) > 1/2` ⟺ `e < 4` — [qing-franke-2015]'s Finding 2 needs the
+adjective's cost penalty to stay above the halved literal probability. -/
+private theorem xc_gt_half : 1/2 < xc := by
+  by_contra h
+  push Not at h
+  have h2 : xc * xc ≤ 1/4 := by nlinarith [xc_pos]
+  have h3 : Real.exp 1 * (xc * xc) ≤ Real.exp 1 * (1/4) :=
+    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
+  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
+  nlinarith [Real.exp_one_lt_d9]
+
+/-- `exp(−1/2) < 139/169` ⟺ `e > (169/139)²` — the salience-belief speaker's
+circle-over-blue reversal at the blue circle. -/
+private theorem xc_lt_139_169 : xc < 139/169 := by
+  by_contra h
+  push Not at h
+  have h2 : (139/169 : ℝ) * (139/169) ≤ xc * xc := by nlinarith [xc_pos]
+  have h3 : Real.exp 1 * ((139/169 : ℝ) * (139/169)) ≤ Real.exp 1 * (xc * xc) :=
+    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
+  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
+  nlinarith [Real.exp_one_gt_d9]
+
+/-- `exp(−1/2) > 101/169` ⟺ `e < (169/101)²` ≈ 2.7998 — the tight bound
+(margin ≈ 0.08 over `exp_one_lt_d9`). -/
+private theorem xc_gt_101_169 : 101/169 < xc := by
+  by_contra h
+  push Not at h
+  have h2 : xc * xc ≤ (101/169 : ℝ) * (101/169) := by nlinarith [xc_pos]
+  have h3 : Real.exp 1 * (xc * xc) ≤ Real.exp 1 * ((101/169 : ℝ) * (101/169)) :=
+    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
+  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
+  nlinarith [Real.exp_one_lt_d9]
+
+end PMFChain
 
 -- ============================================================================
 -- §10. Structural Properties
