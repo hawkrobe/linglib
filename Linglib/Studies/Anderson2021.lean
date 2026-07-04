@@ -1093,6 +1093,115 @@ private theorem cgTurn2PMF_pos (w : MFWorld) : cgTurn2PMF w ≠ 0 := by
 noncomputable def s1Turn2 : MFWorld → PMF MFUtterance := cgS1 cgTurn2PMF cgTurn2PMF_pos
 noncomputable def l1Turn2 : MFUtterance → PMF MFWorld := cgL1 cgTurn2PMF cgTurn2PMF_pos
 
+private theorem t2_sum : (∑' w, ENNReal.ofReal (cgTurn2 w)) = ENNReal.ofReal 10 := by
+  rw [sumWorlds]
+  norm_num [cgTurn2]
+  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  try norm_num
+
+private theorem cgTurn2PMF_apply (w : MFWorld) :
+    cgTurn2PMF w = ENNReal.ofReal (cgTurn2 w / 10) := by
+  rw [cgTurn2PMF, PMF.normalize_apply, t2_sum,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num),
+    ← ENNReal.ofReal_mul (by cases w <;> norm_num [cgTurn2])]
+  rw [div_eq_mul_inv]
+
+/-- Turn-2 masses: `3/5` for humanity, `2/5` for science, `1/2` for each
+location, `1` for `null` (weights `[2,2,3,3]/10`). -/
+private noncomputable def t2MassQ : MFUtterance → ℝ
+  | .studyHumanity => 3/5
+  | .studyScience  => 2/5
+  | .likeIndoors   => 1/2
+  | .likeOutdoors  => 1/2
+  | .null          => 1
+
+private theorem t2Mass (u : MFUtterance) :
+    (∑' w, cgTurn2PMF w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0))
+      = ENNReal.ofReal (t2MassQ u) := by
+  rw [sumWorlds]
+  simp only [cgTurn2PMF_apply]
+  cases u <;>
+    · simp +decide [mfMeaning, worldMajor, worldLocation, cgTurn2, t2MassQ]
+      try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      first
+        | (rw [half_conv]; congr 1; norm_num)
+        | norm_num
+        | rfl
+
+private theorem cgL0_t2_true {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = true) :
+    cgL0 cgTurn2PMF cgTurn2PMF_pos u w
+      = ENNReal.ofReal (cgTurn2 w / 10 / t2MassQ u) := by
+  unfold cgL0
+  rw [RSA.L0LassiterGoodman_apply, hw, t2Mass, cgTurn2PMF_apply]
+  simp only [if_true, mul_one, reduceIte]
+  rw [← ENNReal.ofReal_inv_of_pos (by cases u <;> norm_num [t2MassQ]),
+    ← ENNReal.ofReal_mul (by cases w <;> norm_num [cgTurn2])]
+  congr 1 <;> ring
+
+private theorem cgL0_t2_false {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = false) :
+    cgL0 cgTurn2PMF cgTurn2PMF_pos u w = 0 := by
+  unfold cgL0
+  rw [RSA.L0LassiterGoodman_apply, hw]
+  simp
+
+/-- Turn-2 speaker normalisers: `7/5` at the high-CG worlds (nancy, sally),
+`11/10` at the low-CG worlds (ina, katie). -/
+private noncomputable def Zt2Q : MFWorld → ℝ
+  | .ina | .katie => 11/10
+  | .nancy | .sally => 7/5
+
+private theorem Z_t2 (w : MFWorld) :
+    (∑' u, cgL0 cgTurn2PMF cgTurn2PMF_pos u w) = ENNReal.ofReal (Zt2Q w) := by
+  rw [sumUtts]
+  cases w <;>
+    · first
+      | rw [cgL0_t2_false (by decide), cgL0_t2_true (by decide),
+          cgL0_t2_true (by decide), cgL0_t2_false (by decide),
+          cgL0_t2_true (by decide)]
+      | rw [cgL0_t2_false (by decide), cgL0_t2_true (by decide),
+          cgL0_t2_false (by decide), cgL0_t2_true (by decide),
+          cgL0_t2_true (by decide)]
+      | rw [cgL0_t2_true (by decide), cgL0_t2_false (by decide),
+          cgL0_t2_false (by decide), cgL0_t2_true (by decide),
+          cgL0_t2_true (by decide)]
+      | rw [cgL0_t2_true (by decide), cgL0_t2_false (by decide),
+          cgL0_t2_true (by decide), cgL0_t2_false (by decide),
+          cgL0_t2_true (by decide)]
+      simp only [cgTurn2, t2MassQ, Zt2Q, zero_add, add_zero]
+      rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+        ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      norm_num
+
+/-- Generic turn-2 speaker value on support. -/
+private theorem cgS1_t2_true {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = true) :
+    cgS1 cgTurn2PMF cgTurn2PMF_pos w u
+      = ENNReal.ofReal (cgTurn2 w / 10 / t2MassQ u / Zt2Q w) := by
+  unfold cgS1
+  rw [RSA.S1Belief_apply]
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [show (∑' u', cgL0 cgTurn2PMF cgTurn2PMF_pos u' w) = ENNReal.ofReal (Zt2Q w)
+      from Z_t2 w,
+    cgL0_t2_true hw,
+    ← ENNReal.ofReal_inv_of_pos (by cases w <;> norm_num [Zt2Q]),
+    ← ENNReal.ofReal_mul (by cases u <;> cases w <;> norm_num [cgTurn2, t2MassQ])]
+  congr 1 <;> ring
+
+private theorem cgS1_t2_false {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = false) :
+    cgS1 cgTurn2PMF cgTurn2PMF_pos w u = 0 := by
+  unfold cgS1
+  rw [RSA.S1Belief_apply]
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [cgL0_t2_false hw]
+  simp
+
 end PMFChain
 
 /-- RSA model after hearing "studyHumanity" at turn 1.
@@ -1132,34 +1241,61 @@ Nancy over Katie. In turn 1, they were symmetric (both like outdoors).
 The updated prior (3 vs 1) breaks the tie — Nancy's higher CommonGround weight
 makes her more probable. This is the key multi-turn prediction. -/
 theorem l1_turn2_outdoors_favors_nancy :
-    mfRSA_turn2.L1 .likeOutdoors .nancy > mfRSA_turn2.L1 .likeOutdoors .katie := by
-  rsa_predict
+    l1Turn2 .likeOutdoors .nancy > l1Turn2 .likeOutdoors .katie := by
+  unfold l1Turn2 cgL1
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, cgTurn2PMF_apply, cgTurn2PMF_apply,
+    cgS1_t2_true (by decide), cgS1_t2_true (by decide),
+    ← ENNReal.ofReal_mul (by norm_num [cgTurn2]),
+    ← ENNReal.ofReal_mul (by norm_num [cgTurn2])]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
+    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
 
 /-- After CommonGround update, "likeIndoors" favors Sally over Ina. Both like
 indoors, but Sally has higher prior (3 vs 1) from the CommonGround shift. -/
 theorem l1_turn2_indoors_favors_sally :
-    mfRSA_turn2.L1 .likeIndoors .sally > mfRSA_turn2.L1 .likeIndoors .ina := by
-  rsa_predict
+    l1Turn2 .likeIndoors .sally > l1Turn2 .likeIndoors .ina := by
+  unfold l1Turn2 cgL1
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, cgTurn2PMF_apply, cgTurn2PMF_apply,
+    cgS1_t2_true (by decide), cgS1_t2_true (by decide),
+    ← ENNReal.ofReal_mul (by norm_num [cgTurn2]),
+    ← ENNReal.ofReal_mul (by norm_num [cgTurn2])]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
+    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
 
 /-- After CommonGround update, "studyScience" still treats Ina and Katie equally:
 both study a science and both have equal prior weight (1). -/
 theorem l1_turn2_science_ina_eq_katie :
-    mfRSA_turn2.L1 .studyScience .ina = mfRSA_turn2.L1 .studyScience .katie := by
-  rsa_predict
+    l1Turn2 .studyScience .ina = l1Turn2 .studyScience .katie := by
+  unfold l1Turn2 cgL1
+  have h : cgTurn2PMF .ina * cgS1 cgTurn2PMF cgTurn2PMF_pos .ina .studyScience
+      = cgTurn2PMF .katie * cgS1 cgTurn2PMF cgTurn2PMF_pos .katie .studyScience := by
+    rw [cgTurn2PMF_apply, cgTurn2PMF_apply, cgS1_t2_true (by decide),
+      cgS1_t2_true (by decide)]
+    norm_num [cgTurn2, Zt2Q]
+  exact le_antisymm ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.le)
+    ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.ge)
 
 /-- After CommonGround update, "studyHumanity" still treats Nancy and Sally equally:
 both study a humanity and both have equal updated prior (3). -/
 theorem l1_turn2_humanity_nancy_eq_sally :
-    mfRSA_turn2.L1 .studyHumanity .nancy = mfRSA_turn2.L1 .studyHumanity .sally := by
-  rsa_predict
+    l1Turn2 .studyHumanity .nancy = l1Turn2 .studyHumanity .sally := by
+  unfold l1Turn2 cgL1
+  have h : cgTurn2PMF .nancy * cgS1 cgTurn2PMF cgTurn2PMF_pos .nancy .studyHumanity
+      = cgTurn2PMF .sally * cgS1 cgTurn2PMF cgTurn2PMF_pos .sally .studyHumanity := by
+    rw [cgTurn2PMF_apply, cgTurn2PMF_apply, cgS1_t2_true (by decide),
+      cgS1_t2_true (by decide)]
+    norm_num [cgTurn2, Zt2Q]
+  exact le_antisymm ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.le)
+    ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.ge)
 
 /-- CommonGround update breaks turn-1 symmetry: in turn 1, L1("likeOutdoors")
 assigned equal weight to Nancy and Katie. After the CommonGround shift, Nancy
 is favored. Multi-turn conversation enriches inference. -/
 theorem turn2_breaks_symmetry :
-    mfRSA.L1 .likeOutdoors .nancy = mfRSA.L1 .likeOutdoors .katie ∧
-    mfRSA_turn2.L1 .likeOutdoors .nancy > mfRSA_turn2.L1 .likeOutdoors .katie := by
-  exact ⟨by rsa_predict, l1_turn2_outdoors_favors_nancy⟩
+    l1Turn1 .likeOutdoors .nancy = l1Turn1 .likeOutdoors .katie ∧
+    l1Turn2 .likeOutdoors .nancy > l1Turn2 .likeOutdoors .katie :=
+  ⟨by rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)],
+   l1_turn2_outdoors_favors_nancy⟩
 
 -- ════════════════════════════════════════════════════
 -- § 12b. Turn 2: S1 CommonGround-Adapted Speaker
@@ -1182,8 +1318,11 @@ the high-weight subspace (L0(nancy|likeOutdoors) = 3/5) while
 This is Anderson's key insight: the CommonGround-weighted L0 makes speakers prefer
 *new* information over *redundant* information. -/
 theorem s1_turn2_nancy_prefers_outdoors :
-    mfRSA_turn2.S1 () .nancy .likeOutdoors > mfRSA_turn2.S1 () .nancy .studyHumanity := by
-  rsa_predict
+    s1Turn2 .nancy .likeOutdoors > s1Turn2 .nancy .studyHumanity := by
+  show cgS1 _ _ _ _ > cgS1 _ _ _ _
+  rw [cgS1_t2_true (by decide), cgS1_t2_true (by decide)]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
+    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
 
 /-- At turn 1, the same two utterances were equal (pre-CommonGround-adaptation). -/
 theorem s1_turn1_nancy_humanity_eq_outdoors :
@@ -1197,8 +1336,11 @@ L0(ina|likeIndoors) = 2/5 < L0(ina|studyScience) = 1/2. The CommonGround shift
 makes the major dimension MORE informative for low-CommonGround worlds, the opposite
 of the high-CommonGround case (nancy, §12b above). -/
 theorem s1_turn2_ina_prefers_science :
-    mfRSA_turn2.S1 () .ina .studyScience > mfRSA_turn2.S1 () .ina .likeIndoors := by
-  rsa_predict
+    s1Turn2 .ina .studyScience > s1Turn2 .ina .likeIndoors := by
+  show cgS1 _ _ _ _ > cgS1 _ _ _ _
+  rw [cgS1_t2_true (by decide), cgS1_t2_true (by decide)]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
+    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
 
 -- ════════════════════════════════════════════════════
 -- § 13. S2: Endorsement Predictions
@@ -1208,14 +1350,21 @@ theorem s1_turn2_ina_prefers_science :
 "studyHumanity" over "studyScience". S2(u|w) ∝ L1(w|u), and
 L1(nancy|studyHumanity) > 0 = L1(nancy|studyScience). -/
 theorem s2_nancy_endorses_humanity :
-    mfRSA.S2 .nancy .studyHumanity > mfRSA.S2 .nancy .studyScience := by
-  rsa_predict
+    s2Turn1 .nancy .studyHumanity > s2Turn1 .nancy .studyScience := by
+  unfold s2Turn1 cgS2
+  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
+  show l1Turn1 .studyScience .nancy < l1Turn1 .studyHumanity .nancy
+  rw [l1Turn1_false (by decide), l1Turn1_true (by decide) (by decide)]
+  exact ENNReal.ofReal_pos.mpr (by norm_num)
 
 /-- S2 endorsement: given world Nancy, "studyHumanity" and "likeOutdoors"
 are equally endorsed (symmetric L1 posteriors). -/
 theorem s2_nancy_humanity_eq_outdoors :
-    mfRSA.S2 .nancy .studyHumanity = mfRSA.S2 .nancy .likeOutdoors := by
-  rsa_predict
+    s2Turn1 .nancy .studyHumanity = s2Turn1 .nancy .likeOutdoors := by
+  unfold s2Turn1 cgS2
+  rw [PMF.normalize_eq_iff_eq]
+  show l1Turn1 .studyHumanity .nancy = l1Turn1 .likeOutdoors .nancy
+  rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)]
 
 -- ════════════════════════════════════════════════════
 -- § 14. Parametric RSA and Conversation Step
