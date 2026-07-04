@@ -56,7 +56,7 @@ situ" — only the categorical no-determination claim is a theorem.
 namespace HartmannZimmermann2007
 
 open Hausa
-open Semantics.Focus (Antecedent Use hamblin whAntecedent)
+open Semantics.Focus
 
 /-! ## What is focused (§2.2.2) -/
 
@@ -88,74 +88,33 @@ instance (u : FocusUtterance) : Decidable u.IsHausaLicensed :=
 
 /-! ## Controlling contexts of the §3.2 matrix
 
-One small answer domain per Q/A pair (`other` stands in for the
-unmentioned rest of open *wh*-domains); each control carries the
-context's actual Hamblin denotation. -/
+Every cell's mini-scenario has one shape: a two-point answer domain —
+the mentioned answer `ans` vs the contextual alternative `alt` — whose
+content (fish vs other dishes, fifteen vs twenty Naira, behind vs in
+front, …) lives in the cell's data row. The antecedent is the canonical
+`Use.model` of the row's context shape; the answer is composed by the
+engine (`pairAnswer`); `ctx_resolves` is the uniform full-resolution
+fact. Ex-situ variants are interpreted at the base structure (fronting
+is A'-movement for the paper, and alternatives do not distribute
+through abstraction: `PredAbs AltMeaning = ⟨none⟩`). -/
 
-inductive Dish | kiifii | other
-inductive City | birninKwanni | other
-inductive Deceased | wife | mother
-inductive Price | fifteen | twenty
-inductive Route | front | behind
-inductive Activity | eating | chatting
-inductive Amount | whole | half
-inductive Drink | tea | coffee
-inductive Caller | daudaa | other
-inductive Traveler | audu | other
+/-- The two-point answer domain of a cell's mini-scenario. -/
+inductive Alt | ans | alt
 
-/-- 'What is Kande cooking?' ((22)). -/
-def control22 : Antecedent Dish := whAntecedent Dish
-/-- 'From which city do you come?' ((23)). -/
-def control23 : Antecedent City := whAntecedent City
-/-- 'Was it his mother who died?' — asserted alternative to correct ((24)). -/
-def control24 : Antecedent Deceased :=
-  .assertion {Deceased.mother} (hamblin Deceased)
-/-- 'It is twenty Naira that you will pay' — assertion to correct ((25)). -/
-def control25 : Antecedent Price :=
-  .assertion {Price.twenty} (hamblin Price)
-/-- '…you shouldn't pass in front of him' — parallel focus ((26)). -/
-def control26 : Antecedent Route := .parallel (hamblin Route)
-/-- 'no one is chatting…' — parallel focus ((27)). -/
-def control27 : Antecedent Activity := .parallel (hamblin Activity)
-/-- 'A whole or a half?' — explicitly offered alternatives ((29)). -/
-def control29 : Antecedent Amount := .offer (hamblin Amount)
-/-- 'Coffee or tea?' — explicitly offered alternatives ((30)). -/
-def control30 : Antecedent Drink := .offer (hamblin Drink)
-/-- 'Who is calling her?' ((17)). -/
-def control17 : Antecedent Caller := whAntecedent Caller
-/-- 'Who will go to Germany?' ((8)). -/
-def control8 : Antecedent Traveler := whAntecedent Traveler
+/-- The canonical antecedent of a use over the two-point scenario. -/
+private def ctx (u : Use) : Antecedent Alt :=
+  Use.model {Alt.ans} {Alt.alt} u
 
-/-- The wh-cells resolve fully, not just felicitously: all three
-squiggle clauses hold for (22)'s control against the fish answer. -/
-theorem control22_resolves :
-    control22.Resolves {Dish.kiifii} (hamblin Dish) :=
-  Semantics.Focus.whAntecedent_resolves Dish.kiifii Dish.other nofun
+/-- The composed answer of the two-point scenario. -/
+private def answer : Alternatives.AltMeaning (Set Alt) :=
+  pairAnswer Alt.ans Alt.alt
 
-/-- Roothian felicity holds uniformly: every §3.2 control admits its
-answer's focus value. One semantics, four pragmatic uses. -/
-theorem controls_admit :
-    control22.Admits (hamblin Dish) ∧ control23.Admits (hamblin City) ∧
-    control24.Admits (hamblin Deceased) ∧ control25.Admits (hamblin Price) ∧
-    control26.Admits (hamblin Route) ∧ control27.Admits (hamblin Activity) ∧
-    control29.Admits (hamblin Amount) ∧ control30.Admits (hamblin Drink) :=
-  ⟨subset_rfl, subset_rfl, subset_rfl, subset_rfl,
-   subset_rfl, subset_rfl, subset_rfl, subset_rfl⟩
-
-/-- (25) is a real correction: the answer's ordinary value lies in the
-contrast set and differs from the asserted alternative. -/
-theorem ex25_corrects :
-    ({Price.fifteen} : Set Price) ∈ control25.contrastSet ∧
-    ({Price.fifteen} : Set Price) ≠ {Price.twenty} :=
-  ⟨⟨Price.fifteen, rfl⟩, by simp⟩
-
-/-- (26) is a real parallel contrast: 'in front' and 'behind' are
-distinct members of one contrast set. -/
-theorem ex26_parallel_contrast :
-    ({Route.front} : Set Route) ∈ control26.contrastSet ∧
-    ({Route.behind} : Set Route) ∈ control26.contrastSet ∧
-    ({Route.front} : Set Route) ≠ {Route.behind} :=
-  ⟨⟨Route.front, rfl⟩, ⟨Route.behind, rfl⟩, by simp⟩
+/-- Every cell's context fully resolves against the composed answer —
+all squiggle clauses, plus the correction clause for the corrective
+cells. One semantics, four pragmatic uses. -/
+theorem ctx_resolves (u : Use) :
+    (ctx u).Resolves answer.oValue answer.aSet :=
+  use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
 
 /-! ## The 8-cell empirical matrix (§3.2)
 
@@ -176,36 +135,36 @@ private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
 
 /-- Ex-situ new-information focus ((22), `Examples.ex22`). -/
 def exSitu_newInfo : FocusUtterance :=
-  mkExSituUtt cont_3sf_R .masculine true true (fun _ => rfl) control22
+  mkExSituUtt cont_3sf_R .masculine true true (fun _ => rfl) (ctx .newInfo)
 
 /-- Ex-situ corrective focus on a feminine subject ((24),
 `Examples.ex24`). -/
 def exSitu_corrective : FocusUtterance :=
-  mkExSituUtt cmp_3sf_R .feminine true true (fun _ => rfl) control24 .subject
+  mkExSituUtt cmp_3sf_R .feminine true true (fun _ => rfl) (ctx .corrective) .subject
 
 /-- Ex-situ selective focus, no stabilizer ((29), `Examples.ex29`). -/
 def exSitu_selective : FocusUtterance :=
-  mkExSituUtt cont_1sg_R .masculine true false (fun _ => rfl) control29
+  mkExSituUtt cont_1sg_R .masculine true false (fun _ => rfl) (ctx .selective)
 
 /-- Ex-situ contrastive focus, no stabilizer ((27), `Examples.ex27`);
 the paper's 4sg impersonal *akèe* is approximated with the 3sg.M
 Relative continuous. -/
 def exSitu_contrastive : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true false (fun _ => rfl) control27
+  mkExSituUtt cont_3sm_R .masculine true false (fun _ => rfl) (ctx .contrastive)
 
 /-- In-situ new-information focus ((23), `Examples.ex23`). -/
-def inSitu_newInfo : FocusUtterance := mkInSituUtt cmp_1sg_G .masculine true control23
+def inSitu_newInfo : FocusUtterance := mkInSituUtt cmp_1sg_G .masculine true (ctx .newInfo)
 
 /-- In-situ corrective focus with sentence-final *nèe* ((25),
 `Examples.ex25`). -/
 def inSitu_corrective : FocusUtterance :=
-  mkInSituUtt fut_1sg .masculine true control25 (hasStab := true)
+  mkInSituUtt fut_1sg .masculine true (ctx .corrective) (hasStab := true)
 
 /-- In-situ selective focus ((30), `Examples.ex30`). -/
-def inSitu_selective : FocusUtterance := mkInSituUtt fut_1sg .masculine true control30
+def inSitu_selective : FocusUtterance := mkInSituUtt fut_1sg .masculine true (ctx .selective)
 
 /-- In-situ contrastive focus ((26), `Examples.ex26`). -/
-def inSitu_contrastive : FocusUtterance := mkInSituUtt fut_1sg .masculine true control26
+def inSitu_contrastive : FocusUtterance := mkInSituUtt fut_1sg .masculine true (ctx .contrastive)
 
 /-- The 8-cell matrix of §3.2: both strategies × all four pragmatic
 types. -/
@@ -252,14 +211,14 @@ theorem subject_focus_only_exSitu (u : FocusUtterance)
 
 /-- The starred in-situ subject focus ((17 A2), `Examples.ex17a2`). -/
 def starred_inSitu_subject : FocusUtterance :=
-  mkInSituUtt cont_3sm_G .masculine true control17 .subject
+  mkInSituUtt cont_3sm_G .masculine true (ctx .newInfo) .subject
 
 theorem starred_inSitu_subject_not_IsHausaLicensed :
     ¬ starred_inSitu_subject.IsHausaLicensed := by decide
 
 /-- The grammatical ex-situ subject focus ((17 A1), `Examples.ex17a1`). -/
 def licensed_exSitu_subject : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true true (fun _ => rfl) control17 .subject
+  mkExSituUtt cont_3sm_R .masculine true true (fun _ => rfl) (ctx .newInfo) .subject
 
 theorem licensed_exSitu_subject_IsHausaLicensed :
     licensed_exSitu_subject.IsHausaLicensed := by decide
@@ -268,7 +227,7 @@ theorem licensed_exSitu_subject_IsHausaLicensed :
 `Examples.ex8`): string-vacuous fronting with no overt reflex — see
 `exSitu_subject_subjunctive_no_reflex`. -/
 def exSitu_subject_subjunctive : FocusUtterance :=
-  mkExSituUtt subj_3sm .masculine true false (by decide) control8 .subject
+  mkExSituUtt subj_3sm .masculine true false (by decide) (ctx .newInfo) .subject
 
 theorem exSitu_subject_subjunctive_IsHausaLicensed :
     exSitu_subject_subjunctive.IsHausaLicensed := by decide

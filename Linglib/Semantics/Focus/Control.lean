@@ -107,20 +107,22 @@ def Antecedent.use : Antecedent W → Use
 @[simp] theorem use_phrase (γ : Set W) :
     (Antecedent.phrase γ).use = .contrastive := rfl
 
-/-- The canonical antecedent of each shape (empty payloads): a section
-of `Antecedent.use`. -/
-def Use.toAntecedent : Use → Antecedent W
-  | .newInfo     => .question ∅
-  | .corrective  => .assertion ∅ ∅
-  | .selective   => .offer ∅
-  | .contrastive => .parallel ∅
+/-- The canonical antecedent of each use over a designated
+ordinary-value/alternative pair `(o, a)`: a question, an assertion of
+the alternative to be corrected, an offer, or a parallel focus — the
+minimal contentful model of the four controlling contexts. -/
+def Use.model (o a : Set W) : Use → Antecedent W
+  | .newInfo     => .question {o, a}
+  | .corrective  => .assertion a {o, a}
+  | .selective   => .offer {o, a}
+  | .contrastive => .parallel {o, a}
 
-@[simp] theorem use_toAntecedent (u : Use) :
-    (Use.toAntecedent (W := W) u).use = u := by cases u <;> rfl
+@[simp] theorem use_model (o a : Set W) (u : Use) :
+    (Use.model o a u).use = u := by cases u <;> rfl
 
 /-- Every pragmatic use is realised by some antecedent shape. -/
 theorem use_surjective : Function.Surjective (Antecedent.use (W := W)) :=
-  fun u => ⟨u.toAntecedent, use_toAntecedent u⟩
+  fun u => ⟨Use.model ∅ ∅ u, use_model ∅ ∅ u⟩
 
 /-- Roothian felicity of a focus value against an antecedent: `fip` on
 the antecedent's contrast set. -/
@@ -196,11 +198,14 @@ theorem not_squiggleSet_unfeatured (x : α) (Γ : Set α) :
 end Squiggle
 
 /-- Full Roothian resolution of an antecedent against a two-dimensional
-meaning `(o, fv)`: the set case for question / assertion / offer /
-parallel antecedents, the individual case for contrasting phrases. -/
+meaning `(o, fv)`: the set case for question / offer / parallel
+antecedents, the individual case for contrasting phrases — and for
+assertion antecedents additionally the correction clause: the resolved
+ordinary value replaces (differs from) the prior assertion. -/
 def Antecedent.Resolves : Antecedent W → Set W → PropFocusValue W → Prop
-  | .phrase γ, o, fv => SquiggleInd o fv γ
-  | c, o, fv         => SquiggleSet o fv c.contrastSet
+  | .phrase γ, o, fv         => SquiggleInd o fv γ
+  | .assertion p alts, o, fv => SquiggleSet o fv alts ∧ o ≠ p
+  | c, o, fv                 => SquiggleSet o fv c.contrastSet
 
 /-- Full resolution entails felicity: `Admits` is the set case's first
 clause, and a resolved contrasting phrase is a member of the focus
@@ -210,7 +215,7 @@ theorem Antecedent.Resolves.admits {c : Antecedent W} {o : Set W}
   cases c with
   | phrase γ => exact Set.singleton_subset_iff.mpr h.1
   | question q => exact h.1
-  | assertion p alts => exact h.1
+  | assertion p alts => exact h.1.1
   | offer alts => exact h.1
   | parallel alts => exact h.1
 
@@ -247,6 +252,56 @@ theorem whAntecedent_resolves {D : Type*} (d d' : D) (hne : d' ≠ d) :
     (whAntecedent D).Resolves {d} (hamblin D) :=
   ⟨subset_rfl, ⟨d, rfl⟩, ⟨{d'}, ⟨d', rfl⟩,
     fun h => hne (Set.singleton_eq_singleton_iff.mp h)⟩⟩
+
+/-! ### Composed answers over a pair
+
+The minimal contentful scenario: a two-point answer domain
+`{d, d'}` with `d` the true answer. The answer is built by the
+composition engine — the singleton complete-answer predicate mapped
+over the F-marked argument — and every canonical antecedent shape
+fully resolves against it. -/
+
+open Alternatives in
+/-- The composed focused answer `d` over the pair `{d, d'}`. -/
+def pairAnswer {W : Type*} (d d' : W) : AltMeaning (Set W) :=
+  (fun x => ({x} : Set W)) <$> (⟨d, [d, d']⟩ : AltMeaning W)
+
+open Alternatives in
+@[simp] theorem pairAnswer_oValue {W : Type*} (d d' : W) :
+    (pairAnswer d d').oValue = {d} := rfl
+
+open Alternatives in
+@[simp] theorem pairAnswer_aSet {W : Type*} (d d' : W) :
+    (pairAnswer d d').aSet = {{d}, {d'}} := by
+  ext q
+  simp only [pairAnswer, AltMeaning.mem_aSet_map]
+  constructor
+  · rintro ⟨a, ha, rfl⟩
+    rcases (by simpa using ha : a = d ∨ a = d') with rfl | rfl
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  · rintro (rfl | rfl)
+    · exact ⟨d, by simp, rfl⟩
+    · exact ⟨d', by simp, rfl⟩
+
+/-- **Uniform resolution across the four uses**: every canonical
+antecedent shape fully resolves — all squiggle clauses, including the
+correction clause — against the composed answer over its pair. One
+semantics, four pragmatic uses. -/
+theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
+    (Use.model {d} {d'} u).Resolves
+      (pairAnswer d d').oValue (pairAnswer d d').aSet := by
+  have hne' : ({d'} : Set W) ≠ {d} :=
+    fun h => hne (Set.singleton_eq_singleton_iff.mp h)
+  have hSq : SquiggleSet (pairAnswer d d').oValue (pairAnswer d d').aSet
+      {{d}, {d'}} := by
+    rw [pairAnswer_oValue, pairAnswer_aSet]
+    exact ⟨subset_rfl, Or.inl rfl, ⟨{d'}, Or.inr rfl, hne'⟩⟩
+  cases u with
+  | newInfo     => exact hSq
+  | corrective  => exact ⟨hSq, by rw [pairAnswer_oValue]; exact hne'.symm⟩
+  | selective   => exact hSq
+  | contrastive => exact hSq
 
 /-- A `Question` supplies its maximal alternatives as a question
 antecedent — the bridge from the inquisitive layer. -/
