@@ -32,7 +32,7 @@ floating features) chooses other `T` values.
   (re-exported into this namespace).
 * `FloatingForm S T` — autosegmental form with underlying/surface
   split.
-* `FloatingForm.IsAlive`, `IsLinked`, `IsFloating`, `IsTautomorphic`,
+* `FloatingForm.IsAlive`, `IsLinked`, `IsFloating`, `IsTautomorphemic`,
   `Crosses` — decidable predicates on tier elements and links.
 * `FloatingForm.deleteTierElem`, `insertLink`, `deleteLink` — atomic
   GEN operations (paper subset).
@@ -57,7 +57,7 @@ This multi-element-per-position encoding (vs. the prior `tonalOverwrite`) is wha
 
 `gen` is a paper-subset (delete tier element, insert/delete link; no
 insert-and-associate or shift), filtered for no-crossing ([goldsmith-1976]). A
-link is **tautomorphic** when its tier element and backbone share a morpheme
+link is **tautomorphemic** when its tier element and backbone share a morpheme
 (`*TAUTDOCK`, after [wolf-2007]).
 -/
 
@@ -180,10 +180,10 @@ abbrev IsLinked (k : TierIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.fst = k
     floating. -/
 abbrev IsFloating (k : TierIdx) : Prop := k < f.upper.len ∧ f.IsAlive k ∧ ¬ f.IsLinked k
 
-/-- A surface link `(k, i)` is **tautomorphic** iff its upper- and lower-tier
+/-- A surface link `(k, i)` is **tautomorphemic** iff its upper- and lower-tier
     endpoints share a morpheme. Out-of-range indices on either side make this
     false. -/
-abbrev IsTautomorphic (l : Link) : Prop :=
+abbrev IsTautomorphemic (l : Link) : Prop :=
   f.upperMorpheme? l.fst = f.lowerMorpheme? l.snd ∧ (f.upper.get? (l.fst)).isSome
 
 /-! ### Faithfulness: surface vs underlying -/

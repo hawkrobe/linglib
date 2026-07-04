@@ -87,9 +87,9 @@ def starFloatCount : Constraint (FloatingForm S TRN) :=
 /-! ### *TAUTDOCK -/
 
 /-- `*TAUTDOCK` (paper, eq. 15, after [wolf-2007]): one violation
-    per GEN-inserted tautomorphic surface link. -/
+    per GEN-inserted tautomorphemic surface link. -/
 def starTautDock : Constraint (FloatingForm S TRN) :=
-  fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ f.IsTautomorphic l)).card
+  fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ f.IsTautomorphemic l)).card
 
 /-! ### *CROWD (per-morpheme tone count) -/
 
