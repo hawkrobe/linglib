@@ -8,7 +8,7 @@ Latent-variable extensions to the unbundled `Operators.lean` API. RSA models
 with latent variables (thresholds, QUDs, lexicons) parameterize their L0/S1
 on a latent type `L`; the L1 marginalizes over `L` against a latent prior.
 
-The audit in `project_rsa_v2_functional.md` flagged that **87% of RSAConfig
+The migration audit flagged that **87% of bundled-config
 consumers use Latent ≠ Unit** — so latent support must be first-class in any
 unbundled v2 API, not an afterthought.
 

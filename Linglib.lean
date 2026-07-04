@@ -1,11 +1,3 @@
-/-
-# Linglib
-
-A Lean 4 library for formal linguistics, covering semantics, pragmatics,
-and their interfaces. See README.md for documentation links.
--/
-
-import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.Algebra.ConnesKreimer.Shuffle
 import Linglib.Core.Algebra.ConnesKreimer.ShuffleBialgebra
 import Linglib.Core.Algebra.Free
@@ -59,6 +51,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
+import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
@@ -277,6 +270,7 @@ import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
+import Linglib.Core.Probability.ENNRealArith
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Eval
 import Linglib.Core.Probability.EvalLemmas
@@ -305,9 +299,12 @@ import Linglib.Data.Examples.AlstottAravind2026
 import Linglib.Data.Examples.AnandHardtMcCloskey2025
 import Linglib.Data.Examples.AnandNevins2004
 import Linglib.Data.Examples.Anderson2006
+import Linglib.Data.Examples.Angelopoulos2026
 import Linglib.Data.Examples.ArregiPietraszko2021
 import Linglib.Data.Examples.ArreguiKusumoto1998
+import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
+import Linglib.Data.Examples.Bondarenko2022
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Data.Examples.Charlow2014
 import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
@@ -316,6 +313,7 @@ import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Data.Examples.Collins2005
 import Linglib.Data.Examples.CondoravdiLauer2016
 import Linglib.Data.Examples.Declerck1991
+import Linglib.Data.Examples.DegenTonhauser2021
 import Linglib.Data.Examples.DelPinal2015
 import Linglib.Data.Examples.DeoThomas2025
 import Linglib.Data.Examples.ElliottSudo2025
@@ -324,7 +322,10 @@ import Linglib.Data.Examples.Geach1962
 import Linglib.Data.Examples.Giannakidou2002
 import Linglib.Data.Examples.GinzburgCooper2004
 import Linglib.Data.Examples.GroenendijkStokhof1984
+import Linglib.Data.Examples.Guerrini2026
 import Linglib.Data.Examples.Gunlogson2001
+import Linglib.Data.Examples.HartmannZimmermann2004
+import Linglib.Data.Examples.HartmannZimmermann2007
 import Linglib.Data.Examples.Heim1982
 import Linglib.Data.Examples.Hofmann2025
 import Linglib.Data.Examples.Holmberg2016
@@ -334,6 +335,7 @@ import Linglib.Data.Examples.Kanazawa1994
 import Linglib.Data.Examples.Karttunen1974
 import Linglib.Data.Examples.Klecha2016
 import Linglib.Data.Examples.Kratzer1998
+import Linglib.Data.Examples.Krifka1998
 import Linglib.Data.Examples.Kriz2015
 import Linglib.Data.Examples.KrizChemla2015
 import Linglib.Data.Examples.Kubota2026
@@ -341,8 +343,10 @@ import Linglib.Data.Examples.Landau2026
 import Linglib.Data.Examples.LeBruynDeSwart2022
 import Linglib.Data.Examples.Levin1993
 import Linglib.Data.Examples.LevinRappaportHovav1995
+import Linglib.Data.Examples.LiuRotter2025
 import Linglib.Data.Examples.LoGuercio2025
 import Linglib.Data.Examples.LuPanDegen2025
+import Linglib.Data.Examples.Major2024
 import Linglib.Data.Examples.Marsan2026
 import Linglib.Data.Examples.Merchant2001
 import Linglib.Data.Examples.Mizuno2024
@@ -356,17 +360,20 @@ import Linglib.Data.Examples.Pancheva2003
 import Linglib.Data.Examples.Partee2010
 import Linglib.Data.Examples.Pollock1989
 import Linglib.Data.Examples.Rooth1992
+import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.Rubinstein2014
 import Linglib.Data.Examples.Saab2026
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Schlenker2004
 import Linglib.Data.Examples.Sharvit2003
+import Linglib.Data.Examples.SolstadBott2024
 import Linglib.Data.Examples.Steedman2000
 import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Data.Examples.Thomas2026
 import Linglib.Data.Examples.TieuEtAl2020
+import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.TurkHirsch2026
 import Linglib.Data.Examples.VanDerSandtMaier2003
 import Linglib.Data.Examples.VonFintelGillies2010
@@ -394,6 +401,8 @@ import Linglib.Data.PHOIBLE.Inventories.Turkish
 import Linglib.Data.PHOIBLE.Inventories.Yoruba
 import Linglib.Data.PHOIBLE.Inventories.Zulu
 import Linglib.Data.PHOIBLE.Schema
+import Linglib.Data.ProtoRoles.Dowty1991
+import Linglib.Data.ProtoRoles.Schema
 import Linglib.Data.UD.Basic
 import Linglib.Data.WALS.Aggregation
 import Linglib.Data.WALS.Datapoint
@@ -599,10 +608,10 @@ import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Frame
-import Linglib.Discourse.Commitment.Table
-import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Commitment.SourceMarked
+import Linglib.Discourse.Commitment.Space
+import Linglib.Discourse.Commitment.Table
+import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.Gameboard.RepriseContent
@@ -1192,9 +1201,9 @@ import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tagalog.TenseAspect
-import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
+import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Tariana.Evidentiality
 import Linglib.Fragments.Tarifit.Inventory
@@ -1314,6 +1323,7 @@ import Linglib.Phonology.Autosegmental.Collapse
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Embedding
 import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.MultiAR
@@ -1367,6 +1377,8 @@ import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Tone.Grammatical
+import Linglib.Phonology.Tone.Plateauing
+import Linglib.Phonology.Tone.Surfacing
 import Linglib.Pragmatics.AsymmetricCommunication
 import Linglib.Pragmatics.AvoidAmbiguity
 import Linglib.Pragmatics.BToM
@@ -1402,20 +1414,16 @@ import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Pragmatics.RSA.BToM
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Cancellation
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.Channel
-import Linglib.Pragmatics.RSA.Composition
 import Linglib.Pragmatics.RSA.Compositional
-import Linglib.Pragmatics.RSA.Defs
 import Linglib.Pragmatics.RSA.Distributions
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Pragmatics.RSA.Limits
-import Linglib.Pragmatics.RSA.Monotonicity
 import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
@@ -1425,7 +1433,6 @@ import Linglib.Pragmatics.RSA.Sequential
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.SimpAttr
 import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
-import Linglib.Pragmatics.RSA.Speaker.Discrimination
 import Linglib.Pragmatics.RSA.Speaker.Noncooperative
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEnvironment
@@ -2861,10 +2868,10 @@ import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
 import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldBirkhoff
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldCharacter
 import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
 import Linglib.Syntax.Minimalist.Merge.MinimalYieldPsi
-import Linglib.Syntax.Minimalist.Merge.MinimalYieldCharacter
-import Linglib.Syntax.Minimalist.Merge.MinimalYieldBirkhoff
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.MinimalPronoun
@@ -2924,25 +2931,12 @@ import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
-import Linglib.Tactics.ENNRealArith
-import Linglib.Tactics.NonnegOfForall
-import Linglib.Data.Examples.Guerrini2026
-import Linglib.Data.Examples.TonhauserBeaverDegen2018
-import Linglib.Data.Examples.LiuRotter2025
-import Linglib.Data.Examples.SolstadBott2024
-import Linglib.Data.Examples.RotterLiu2025
-import Linglib.Data.Examples.DegenTonhauser2021
-import Linglib.Data.Examples.BeltramaSchwarz2024
-import Linglib.Data.Examples.Krifka1998
-import Linglib.Data.Examples.Angelopoulos2026
-import Linglib.Data.Examples.Bondarenko2022
-import Linglib.Data.Examples.Major2024
-import Linglib.Phonology.Autosegmental.Hull
-import Linglib.Phonology.Tone.Plateauing
-import Linglib.Phonology.Tone.Surfacing
-import Linglib.Data.ProtoRoles.Schema
-import Linglib.Data.ProtoRoles.Dowty1991
-import Linglib.Data.Examples.HartmannZimmermann2007
-import Linglib.Data.Examples.HartmannZimmermann2004
+/-
+# Linglib
+
+A Lean 4 library for formal linguistics, covering semantics, pragmatics,
+and their interfaces. See README.md for documentation links.
+-/
+
 
 

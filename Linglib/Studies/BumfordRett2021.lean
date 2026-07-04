@@ -172,7 +172,7 @@ def costN : Utterance → ℕ
   | .null     => 0
 
 -- ============================================================================
--- § 6. mathlib-PMF pipeline (replaces the RSAConfig; eq 10)
+-- § 6. mathlib-PMF pipeline (eq 10)
 -- ============================================================================
 
 /-! Companion architecture on `PMF`, parameterized by the cost-factor base

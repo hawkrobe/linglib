@@ -1,5 +1,4 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Quantification.Quantifier

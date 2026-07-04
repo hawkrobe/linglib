@@ -1250,7 +1250,7 @@ the background `b` is `wonky` (a uniform world prior) or `default_` (the 3:1
 bias). The listener is jointly uncertain about `(w, b)`, so the model is a clean
 `RSA.jointListener` over the joint prior `RSA.jointPrior`, with the world belief
 read off as the `W`-marginal of the `(World × Background)` posterior — no
-`RSAConfig` encoding needed. The per-background speaker reuses the already-proven
+bundled-config encoding needed. The per-background speaker reuses the already-proven
 closed forms: under `default_` the biased prior is baked into L0 (eq. 1 of §4.1),
 so its speaker is `baselineS1`; under `wonky` it uses uniform-prior literal
 meaning, the plain literal RSA speaker — which coincides by construction with

@@ -38,7 +38,7 @@ open Core in
     listener's expected truth-value under their world posterior.
 
     Polymorphic in `F` so it composes with both ℚ-valued (exact
-    computation) and ℝ-valued (RSAConfig.toBToM) models. -/
+    computation) and ℝ-valued models. -/
 noncomputable def btomCredence
     {F : Type*} [CommSemiring F]
     {A P B D S M W : Type*}
@@ -93,7 +93,7 @@ theorem identity_belief_eq_world_marginal
 
     This connects the abstract `btomCredence` to concrete RSA
     inference: when the BToM model has identity perception/belief
-    (as in `RSAConfig.toBToM`), computing agent credence via BToM
+    (as in the RSA-as-BToM bridge), computing agent credence via BToM
     belief marginals is the same as computing the L1 listener's
     expected truth-value.
 

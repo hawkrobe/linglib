@@ -1,7 +1,6 @@
 import Linglib.Semantics.Degree.Basic
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.Limits
-import Linglib.Pragmatics.RSA.Monotonicity
 import Linglib.Core.Probability.Finite
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real

@@ -5,7 +5,7 @@ import Mathlib.Data.Rat.Defs
 
 The `Lexicon` type used by lexical uncertainty models in RSA.
 
-For RSA models with lexical uncertainty, use `RSAConfig` with
+For RSA models with lexical uncertainty, use a latent-lexicon chain with
 `Latent := YourLexiconType` (see [potts-etal-2016] and
 [potts-levy-2015] for examples). This file provides the
 shared `Lexicon` type used by:

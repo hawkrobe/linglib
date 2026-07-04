@@ -10,7 +10,7 @@ import Mathlib.Algebra.Order.Field.Rat
 The Product-of-Experts (PoE) prefix meaning underlying noisy / incremental
 RSA models: a per-word lex function `lex : U → W → R` is composed
 multiplicatively over a list of tokens. Higher layers (`Noisy.lean`,
-`Incremental.lean`) bundle this with `RSAConfig` builders.
+`Incremental.lean`) bundle this for study-level chains.
 
 The substrate exists because two distinct study files
 ([waldon-degen-2021], [schlotterbeck-wang-2023]) independently
