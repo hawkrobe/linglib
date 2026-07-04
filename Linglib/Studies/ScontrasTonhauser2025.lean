@@ -1,5 +1,6 @@
-import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.BToM
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Studies.DegenTonhauser2021
@@ -7,88 +8,60 @@ import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# [scontras-tonhauser-2025]
+# [scontras-tonhauser-2025]: projection without lexical presupposition
 
-Projection emerges from RSA over speaker's private assumptions, not lexical
-presupposition. L1 jointly infers world state and speaker's belief state.
+An RSA model of *know* under negation (SuB 29, pp. 1431–1448): the pragmatic
+listener jointly infers the world state and the speaker's private assumptions
+(eq. 7), the speaker scores QUD-projected informativity (eq. 6, α = 10, fn.
+12), and the literal listener answers the QUD within the assumption set
+(eq. 5). Projection of the complement C emerges with no lexically-specified
+constraint on the common ground. Domain: 6 utterances × 4 worlds (BEL × C) ×
+15 belief states × 2 QUDs; literal semantics from
+`Semantics.Attitudes.Factivity` (know = `factivePos`, think =
+`nonFactivePos`).
 
-## The Model (Section 3)
+## Main results
 
-- **L0** (eq. 5): L0(Q(w)|u,A,Q) ∝ Σ_{w'∈A∩⟦u⟧, Q(w')=Q(w)} P(w')
-- **S1** (eq. 6): S1(u|w,A,Q) ∝ exp(α(log L0(Q(w)|u,A,Q) − C(u)))
-- **L1** (eq. 7): L1(w,A|u,Q) ∝ S1(u|w,A,Q) · P(w) · P(A)
+* `bel_qud_marginal_eq_prior_high` / `_low`: under the BEL? QUD the world
+  C-marginal *equals the prior* for every utterance — S1 depends on the
+  world only through its BEL-cell, so projection is invisible there.
+* `prediction_2b`: higher prior ⇒ stronger projection (C? QUD), the effect
+  [degen-tonhauser-2021] documents across 20 predicates (Exp 1: β = 0.16,
+  p < .001).
+* `prediction_2c`: BEL? QUD ⇒ stronger projection than C? QUD (Exp 2:
+  β = 0.14, p < .001).
+* `c_qud_thinkNeg_higher`: under C?, negated *know* is evidence against C.
+* `model_predicts_effects`: the model directions match the regressions.
 
-Domain: 6 utterances × 4 worlds × 15 belief states × 2 QUDs. α = 10.
+## Implementation notes
 
-## Section 3 Parameters (fn. 12)
+α = 10 is a natural power, so the model is computed in exact ℚ (`l0Q` …
+`wTotalQ`); listeners are `PMF.normalize` of those scores bridged by
+`ENNReal.ofReal_sum_of_nonneg`, and every prediction is a kernel-verified
+rational comparison. Degenerate cells (no compatible utterance) fall back to
+`pure .cPos` on both faces, keeping the bridge total.
 
-- **Belief states A**: all 15 non-empty subsets of W
-  (following [qing-goodman-lassiter-2016])
-- **Prior over A**: uniform
-- **α = 10**
-- **P(C)**: 2/3 (higher) or 1/3 (lower); P(BEL|C) = 1/2
+Utterance cost (§3.1: complex = 2 × simple) is omitted: `exp(−αC)` is
+transcendental, and the omission reverses prediction (2a)'s world-marginal
+direction (the paper derives know > think *with* cost, Figure 7a);
+predictions (2b) and (2c) are robust to it. Prior parameters follow §3.1:
+P(C) ∈ {2/3, 1/3}, P(BEL | C) = 1/2, uniform over the 15 assumption sets.
 
-Cost (complex = 2×simple) is omitted: exp(−αC) with α = 10 introduces
-irrational numbers incompatible with ℚ arithmetic. Cost omission affects
-S1's normalization even for same-cost comparisons, reversing the direction of
-prediction (2a); the full model with cost predicts know > think (Figure 7a).
-Predictions (2b) and (2c) are robust to cost omission.
+## TODO
 
-## Factive Semantics
-
-Literal truth conditions derive from `Semantics.Attitudes.Factivity`:
-know = `factivePos` (BEL ∧ C), think = `nonFactivePos` (BEL).
-
-## Key Structural Insight
-
-Under QUD=BEL?, L1's world-marginal P(C|u) = P(C) for all utterances — a
-mathematical identity. S1 scores depend on w only through w.bel, so the
-complement dimension washes out in the marginal. Prediction 2b (prior
-effect) therefore comes from the C? QUD condition; prediction 2c (QUD
-effect) compares the uninformative BEL? marginal against the C? marginal.
-
-## BToM Connection
-
-This is a BToM model: L1 inverts S1's generative model to jointly infer
-the speaker's belief state and the world state.
-
-## Experimental Results
-
-Exp 1 confirms (2a) utterance effect (β = 0.35, p < .001) and (2b) prior
-effect (β = 0.16, p < .001). The QUD manipulation was not significant
-(β = 0.009, p = .75). Exp 2 confirms (2a) utterance effect (β = 0.34,
-p < .001) and (2c) QUD effect (β = 0.14, p < .001) with a stronger QUD
-manipulation. Exp 2 did not manipulate prior probability.
-
-## Connection to [degen-tonhauser-2021]
-
-The prior effect (prediction 2b) replicates the core finding of
-[degen-tonhauser-2021]: higher prior probability of complement content
-leads to stronger projection. D&T 2021 demonstrate this across 20 predicates
-with β = 0.14 (categorical) / β = 0.28 (individual-level). S&T 2025's RSA
-model provides the theoretical explanation: L1's Bayesian inference naturally
-incorporates prior beliefs, so higher priors yield higher posteriors.
-
-## Comparison with Compositional Filtering
-
-§13 compares the BToM model against compositional filtering
-([heim-1983]): both predict conditional presupposition for factive
-"know", but only BToM predicts projection effects for non-factive
-"think" and relatedness modulation — the paper's key empirical argument
-against lexical presupposition encoding.
+Model the cost term (log-rational costs keep ℚ exactness) and derive
+prediction (2a)'s world-marginal direction. Prove the structural equivalence
+with [qing-goodman-lassiter-2016] (fn. 10: "private assumptions" vs "common
+ground" is interpretive, not computational) — see the matching TODO in
+`QingGoodmanLassiter2016.lean`.
 -/
-
-set_option autoImplicit false
 
 namespace ScontrasTonhauser2025
 
 open BigOperators
-open Real (rpow rpow_nonneg rpow_pos_of_pos)
 open Semantics.Attitudes.Factivity
 
--- ============================================================================
--- §1. World and Utterance Types
--- ============================================================================
+/-! ### Worlds and utterances -/
 
 /-- World state: (BEL, C) where BEL = Cole believes C, C = complement is true.
     Flat inductive for tactic enumerability. -/
@@ -125,9 +98,7 @@ instance : Fintype Utterance where
   elems := {.knowPos, .knowNeg, .thinkPos, .thinkNeg, .cPos, .cNeg}
   complete := fun x => by cases x <;> simp
 
--- ============================================================================
--- §2. Literal Truth Conditions (derived from Factivity)
--- ============================================================================
+/-! ### Literal truth conditions (from `Factivity`) -/
 
 /-- Literal truth conditions derived from factive/non-factive semantics.
 
@@ -142,9 +113,7 @@ def literalMeaning : Utterance → WorldState → Bool
   | .cPos     => HasComplement.c
   | .cNeg     => fun w => !HasComplement.c w
 
--- ============================================================================
--- §3. Speaker Belief States — all 15 non-empty subsets of W
--- ============================================================================
+/-! ### Speaker belief states (the 15 non-empty subsets of W) -/
 
 /-- Speaker's private assumptions: all 15 non-empty subsets of W.
     Section 3 follows [qing-goodman-lassiter-2016]: A ranges over all
@@ -171,7 +140,7 @@ instance : Fintype BeliefState where
   complete := fun x => by cases x <;> simp
 
 /-- Membership in belief state. Boolean operations on `WorldState` fields
-    reduce cleanly for `rsa_predict`. -/
+    reduce cleanly under kernel evaluation. -/
 def speakerCredenceBool : BeliefState → WorldState → Bool
   | .all, _ => true
   | .onlyW11, w => w.bel && w.c
@@ -194,33 +163,7 @@ def assumesC : BeliefState → Bool
   | .onlyW11 | .onlyW01 | .cTrue => true
   | _ => false
 
--- ============================================================================
--- §4. QUD Aggregation
--- ============================================================================
-
-/-- QUD aggregation: sums L0 probabilities over the QUD equivalence class of w.
-    Named `qudAggregate` to distinguish from `Factivity.qudProject`
-    (the equivalence relation, not the aggregation).
-    - BEL? QUD: partitions by BEL → sums over same-BEL worlds
-    - C? QUD: partitions by C → sums over same-C worlds -/
-def qudAggregate (qud : QUD) (f : WorldState → ℝ) (w : WorldState) : ℝ :=
-  match qud, w with
-  | .bel, .w11 => f .w11 + f .w10
-  | .bel, .w10 => f .w11 + f .w10
-  | .bel, .w01 => f .w01 + f .w00
-  | .bel, .w00 => f .w01 + f .w00
-  | .c,   .w11 => f .w11 + f .w01
-  | .c,   .w01 => f .w11 + f .w01
-  | .c,   .w10 => f .w10 + f .w00
-  | .c,   .w00 => f .w10 + f .w00
-
-theorem qudAggregate_nonneg {qud : QUD} {f : WorldState → ℝ} {w : WorldState}
-    (hf : ∀ w, 0 ≤ f w) : 0 ≤ qudAggregate qud f w := by
-  cases qud <;> cases w <;> simp only [qudAggregate] <;> exact add_nonneg (hf _) (hf _)
-
--- ============================================================================
--- §5. Priors
--- ============================================================================
+/-! ### Priors -/
 
 /-- World prior parameterized by P(C).
     P(BEL, C) = P(BEL | C) · P(C), with P(BEL | C) = 1/2. -/
@@ -238,339 +181,419 @@ theorem worldPriorQ_sum (pC : ℚ) :
     worldPriorQ pC .w01 + worldPriorQ pC .w00 = 1 := by
   simp [worldPriorQ]; ring
 
--- ============================================================================
--- §6. RSAConfig
--- ============================================================================
+/-! ### The exact-ℚ model and its PMF face (local pending the RSA API pass) -/
 
-/-- RSA model for Section 3: uniform prior over all 15 belief states,
-    QUD-projected rpow scoring, α = 10. -/
-noncomputable def cfg (qud : QUD) (pC : ℚ) (hpC : 0 ≤ pC) (hpC1 : pC ≤ 1) :
-    RSA.RSAConfig Utterance WorldState where
-  Latent := BeliefState
-  meaning _ bs u w :=
-    if speakerCredenceBool bs w && literalMeaning u w then
-      (worldPriorQ pC w : ℝ)
-    else 0
-  meaning_nonneg _ _ _ w := by
+section QModel
+
+/-- Literal-listener mass (eq. 5's normaliser): prior mass of worlds in the
+assumption set where `u` is true. -/
+def l0MassQ (pC : ℚ) (bs : BeliefState) (u : Utterance) : ℚ :=
+  ∑ w, (if speakerCredenceBool bs w && literalMeaning u w then worldPriorQ pC w else 0)
+
+/-- Literal listener value (division by zero yields 0). -/
+def l0Q (pC : ℚ) (bs : BeliefState) (u : Utterance) (w : WorldState) : ℚ :=
+  (if speakerCredenceBool bs w && literalMeaning u w then worldPriorQ pC w else 0) /
+    l0MassQ pC bs u
+
+/-- QUD aggregation of the literal listener (eq. 5). -/
+def qAggQ (qud : QUD) (pC : ℚ) (bs : BeliefState) (u : Utterance) : WorldState → ℚ
+  | .w11 => match qud with
+    | .bel => l0Q pC bs u .w11 + l0Q pC bs u .w10
+    | .c   => l0Q pC bs u .w11 + l0Q pC bs u .w01
+  | .w10 => match qud with
+    | .bel => l0Q pC bs u .w11 + l0Q pC bs u .w10
+    | .c   => l0Q pC bs u .w10 + l0Q pC bs u .w00
+  | .w01 => match qud with
+    | .bel => l0Q pC bs u .w01 + l0Q pC bs u .w00
+    | .c   => l0Q pC bs u .w11 + l0Q pC bs u .w01
+  | .w00 => match qud with
+    | .bel => l0Q pC bs u .w01 + l0Q pC bs u .w00
+    | .c   => l0Q pC bs u .w10 + l0Q pC bs u .w00
+
+/-- Speaker weight (eq. 6 at α = 10, zero cost). -/
+def s1WeightQ (qud : QUD) (pC : ℚ) (bs : BeliefState) (w : WorldState)
+    (u : Utterance) : ℚ :=
+  (qAggQ qud pC bs u w) ^ 10
+
+def s1ZQ (qud : QUD) (pC : ℚ) (bs : BeliefState) (w : WorldState) : ℚ :=
+  ∑ u, s1WeightQ qud pC bs w u
+
+/-- Normalized speaker value, with the degenerate-cell fallback matching the
+PMF face (`pure .cPos` where no utterance carries weight). -/
+def s1ValQ (qud : QUD) (pC : ℚ) (bs : BeliefState) (w : WorldState)
+    (u : Utterance) : ℚ :=
+  if s1ZQ qud pC bs w = 0 then (if u = .cPos then 1 else 0)
+  else s1WeightQ qud pC bs w u / s1ZQ qud pC bs w
+
+/-- Listener world score (eq. 7; uniform assumption prior). -/
+def worldScoreQ (qud : QUD) (pC : ℚ) (u : Utterance) (w : WorldState) : ℚ :=
+  worldPriorQ pC w * ∑ bs, s1ValQ qud pC bs w u
+
+/-- C-event mass and total of the listener scores. -/
+def cEventQ (qud : QUD) (pC : ℚ) (u : Utterance) : ℚ :=
+  ∑ w, (if w.c then worldScoreQ qud pC u w else 0)
+
+def wTotalQ (qud : QUD) (pC : ℚ) (u : Utterance) : ℚ :=
+  ∑ w, worldScoreQ qud pC u w
+
+end QModel
+
+section QModel
+
+theorem worldPriorQ_nonneg' {pC : ℚ} (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (w : WorldState) :
+    0 ≤ worldPriorQ pC w := worldPriorQ_nonneg pC h0 h1 w
+
+variable {pC : ℚ}
+
+theorem l0MassQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (bs : BeliefState) (u : Utterance) :
+    0 ≤ l0MassQ pC bs u :=
+  Finset.sum_nonneg fun w _ => by
     split
-    · exact Rat.cast_nonneg.mpr (worldPriorQ_nonneg pC hpC hpC1 w)
+    · exact worldPriorQ_nonneg pC h0 h1 w
     · exact le_refl 0
-  s1Score l0 α _bs w u := rpow (qudAggregate qud (l0 u) w) α
-  s1Score_nonneg _ _ _ _ u hl _ :=
-    rpow_nonneg (qudAggregate_nonneg (fun w => hl u w)) _
-  α := 10
-  α_pos := by positivity
-  worldPrior w := (worldPriorQ pC w : ℝ)
-  worldPrior_nonneg w := Rat.cast_nonneg.mpr (worldPriorQ_nonneg pC hpC hpC1 w)
-  latentPrior _w _bs := 1
-  latentPrior_nonneg _w _bs := one_pos.le
 
-/-- QUD=BEL?, P(C)=2/3. -/
-noncomputable abbrev cfgBelHigh := cfg .bel (2/3) (by norm_num) (by norm_num)
+theorem l0Q_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (bs : BeliefState) (u : Utterance)
+    (w : WorldState) : 0 ≤ l0Q pC bs u w :=
+  div_nonneg (by
+    split
+    · exact worldPriorQ_nonneg pC h0 h1 w
+    · exact le_refl 0) (l0MassQ_nonneg h0 h1 bs u)
 
-/-- QUD=BEL?, P(C)=1/3. -/
-noncomputable abbrev cfgBelLow := cfg .bel (1/3) (by norm_num) (by norm_num)
+theorem qAggQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (bs : BeliefState)
+    (u : Utterance) (w : WorldState) : 0 ≤ qAggQ qud pC bs u w := by
+  cases w <;> cases qud <;>
+    exact add_nonneg (l0Q_nonneg h0 h1 bs u _) (l0Q_nonneg h0 h1 bs u _)
 
-/-- QUD=C?, P(C)=2/3. -/
-noncomputable abbrev cfgCHigh := cfg .c (2/3) (by norm_num) (by norm_num)
+theorem s1WeightQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (bs : BeliefState)
+    (w : WorldState) (u : Utterance) : 0 ≤ s1WeightQ qud pC bs w u :=
+  pow_nonneg (qAggQ_nonneg h0 h1 qud bs u w) 10
 
-/-- QUD=C?, P(C)=1/3. -/
-noncomputable abbrev cfgCLow := cfg .c (1/3) (by norm_num) (by norm_num)
+theorem s1ZQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (bs : BeliefState)
+    (w : WorldState) : 0 ≤ s1ZQ qud pC bs w :=
+  Finset.sum_nonneg fun u _ => s1WeightQ_nonneg h0 h1 qud bs w u
 
--- ============================================================================
--- §7. L1 Predictions
--- ============================================================================
+theorem s1ValQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (bs : BeliefState)
+    (w : WorldState) (u : Utterance) : 0 ≤ s1ValQ qud pC bs w u := by
+  unfold s1ValQ
+  split
+  · split <;> norm_num
+  · exact div_nonneg (s1WeightQ_nonneg h0 h1 qud bs w u) (s1ZQ_nonneg h0 h1 qud bs w)
 
--- ---------- helpers for BEL? QUD identity ----------
+theorem worldScoreQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (u : Utterance)
+    (w : WorldState) : 0 ≤ worldScoreQ qud pC u w :=
+  mul_nonneg (worldPriorQ_nonneg pC h0 h1 w)
+    (Finset.sum_nonneg fun bs _ => s1ValQ_nonneg h0 h1 qud bs w u)
 
-private theorem worldState_univ :
-    (Finset.univ : Finset WorldState) = {.w11, .w10, .w01, .w00} := by
-  ext x; cases x <;> simp
+theorem wTotalQ_nonneg (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (u : Utterance) :
+    0 ≤ wTotalQ qud pC u :=
+  Finset.sum_nonneg fun w _ => worldScoreQ_nonneg h0 h1 qud u w
 
-private theorem c_filter :
-    Finset.univ.filter (fun w : WorldState => w.c = true) = {.w11, .w01} := by
-  native_decide
+end QModel
 
-private theorem meaning_pos_high (u : Utterance) :
-    ∃ w₀, 0 < cfgBelHigh.meaning cfgBelHigh.initial .all u w₀ := by
-  cases u
-  · exact ⟨.w11, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .knowPos .w11
-                        then (worldPriorQ (2/3) .w11 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, factivePos,
-        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .knowNeg .w10
-                        then (worldPriorQ (2/3) .w10 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, factiveNeg,
-        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .thinkPos .w11
-                        then (worldPriorQ (2/3) .w11 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, nonFactivePos,
-        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w01, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w01 && literalMeaning .thinkNeg .w01
-                        then (worldPriorQ (2/3) .w01 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, nonFactiveNeg,
-        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .cPos .w11
-                        then (worldPriorQ (2/3) .w11 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning,
-        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .cNeg .w10
-                        then (worldPriorQ (2/3) .w10 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning,
-        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+section PMFFace
 
-set_option maxHeartbeats 1600000 in
-private theorem high_totalScore_pos (u : Utterance) :
-    0 < cfgBelHigh.L1agent.totalScore u := by
-  obtain ⟨w₀, hm⟩ := meaning_pos_high u
-  have hL0t := lt_of_lt_of_le hm (Finset.single_le_sum
-    (fun w' _ => cfgBelHigh.meaning_nonneg cfgBelHigh.initial .all u w') (Finset.mem_univ w₀))
-  have hL0t' : 0 < (cfgBelHigh.L0agent .all).totalScore u := hL0t
-  have hL0p : 0 < (cfgBelHigh.L0agent .all).policy u w₀ := by
-    unfold Core.RationalAction.policy; rw [if_neg (ne_of_gt hL0t')]; exact div_pos hm hL0t'
-  have hqud : 0 < qudAggregate .bel ((cfgBelHigh.L0agent .all).policy u) w₀ := by
-    cases w₀ <;> simp only [qudAggregate] <;>
-      linarith [(cfgBelHigh.L0agent .all).policy_nonneg u .w11,
-                (cfgBelHigh.L0agent .all).policy_nonneg u .w10,
-                (cfgBelHigh.L0agent .all).policy_nonneg u .w01,
-                (cfgBelHigh.L0agent .all).policy_nonneg u .w00]
-  have hS1s : 0 < (cfgBelHigh.S1agent .all).score w₀ u := by
-    simp only [RSA.RSAConfig.S1agent, RSA.RSAConfig.L0agent, cfgBelHigh, cfg]
-    exact rpow_pos_of_pos hqud _
-  have hS1t := lt_of_lt_of_le hS1s (Finset.single_le_sum
-    (fun u' _ => (cfgBelHigh.S1agent .all).score_nonneg w₀ u') (Finset.mem_univ u))
-  have hS1t' : 0 < (cfgBelHigh.S1agent .all).totalScore w₀ := hS1t
-  have hS1p : 0 < cfgBelHigh.S1 .all w₀ u := by
-    unfold RSA.RSAConfig.S1 Core.RationalAction.policy; rw [if_neg (ne_of_gt hS1t')]
-    exact div_pos hS1s hS1t'
-  have hwp : (0 : ℝ) < cfgBelHigh.worldPrior w₀ := by
-    cases w₀ <;> simp only [cfgBelHigh, cfg, worldPriorQ] <;> push_cast <;> norm_num
-  have hls : 0 < ∑ l : BeliefState, cfgBelHigh.latentPrior w₀ l * cfgBelHigh.S1 l w₀ u :=
-    calc 0 < cfgBelHigh.latentPrior w₀ (BeliefState.all) * cfgBelHigh.S1 .all w₀ u := by
-              rw [show cfgBelHigh.latentPrior w₀ .all = 1 from rfl, one_mul]; exact hS1p
-      _ ≤ ∑ l : BeliefState, cfgBelHigh.latentPrior w₀ l * cfgBelHigh.S1 l w₀ u :=
-            Finset.single_le_sum
-              (fun l _ => mul_nonneg (cfgBelHigh.latentPrior_nonneg w₀ l) (cfgBelHigh.S1_nonneg l w₀ u))
-              (Finset.mem_univ (BeliefState.all))
-  exact lt_of_lt_of_le (show 0 < cfgBelHigh.L1agent.score u w₀ by
-      simp only [RSA.RSAConfig.L1agent]; exact mul_pos hwp hls)
-    (Finset.single_le_sum (fun w' _ => cfgBelHigh.L1agent.score_nonneg u w') (Finset.mem_univ w₀))
+open scoped ENNReal
 
-set_option maxHeartbeats 800000 in
-private theorem high_score_w10 (u : Utterance) :
-    cfgBelHigh.L1agent.score u .w10 =
-    (1/2 : ℝ) * cfgBelHigh.L1agent.score u .w11 := by
-  simp only [RSA.RSAConfig.L1agent]
-  simp_rw [show ∀ l, cfgBelHigh.S1 l .w10 u = cfgBelHigh.S1 l .w11 u from fun _ => rfl]
-  simp_rw [show ∀ l, cfgBelHigh.latentPrior .w10 l = cfgBelHigh.latentPrior .w11 l from fun _ => rfl]
-  simp only [cfgBelHigh, cfg, worldPriorQ]; push_cast; ring
+private theorem sumUtts (f : Utterance → ℝ≥0∞) :
+    ∑' u, f u = f .knowPos + f .knowNeg + f .thinkPos + f .thinkNeg +
+      f .cPos + f .cNeg := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Utterance)
+      = {.knowPos, .knowNeg, .thinkPos, .thinkNeg, .cPos, .cNeg} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
 
-set_option maxHeartbeats 800000 in
-private theorem high_score_w00 (u : Utterance) :
-    cfgBelHigh.L1agent.score u .w00 =
-    (1/2 : ℝ) * cfgBelHigh.L1agent.score u .w01 := by
-  simp only [RSA.RSAConfig.L1agent]
-  simp_rw [show ∀ l, cfgBelHigh.S1 l .w00 u = cfgBelHigh.S1 l .w01 u from fun _ => rfl]
-  simp_rw [show ∀ l, cfgBelHigh.latentPrior .w00 l = cfgBelHigh.latentPrior .w01 l from fun _ => rfl]
-  simp only [cfgBelHigh, cfg, worldPriorQ]; push_cast; ring
+private theorem sumBS (f : BeliefState → ℝ≥0∞) :
+    ∑' bs, f bs = f .onlyW11 + f .onlyW10 + f .onlyW01 + f .onlyW00 +
+      f .belTrue + f .belFalse + f .cTrue + f .cFalse +
+      f .diagonal + f .antiDiagonal +
+      f .notW11 + f .notW10 + f .notW01 + f .notW00 + f .all := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset BeliefState)
+      = {.onlyW11, .onlyW10, .onlyW01, .onlyW00, .belTrue, .belFalse, .cTrue,
+         .cFalse, .diagonal, .antiDiagonal, .notW11, .notW10, .notW01,
+         .notW00, .all} from rfl]
+  repeat rw [Finset.sum_insert (by decide)]
+  rw [Finset.sum_singleton]
+  ring
 
-private theorem high_totalScore_expand (u : Utterance) :
-    cfgBelHigh.L1agent.totalScore u =
-    cfgBelHigh.L1agent.score u .w11 + cfgBelHigh.L1agent.score u .w10 +
-    cfgBelHigh.L1agent.score u .w01 + cfgBelHigh.L1agent.score u .w00 := by
-  unfold Core.RationalAction.totalScore; rw [worldState_univ]
-  simp only [Finset.sum_insert (show WorldState.w11 ∉ ({.w10, .w01, .w00} : Finset WorldState) by decide),
-             Finset.sum_insert (show WorldState.w10 ∉ ({.w01, .w00} : Finset WorldState) by decide),
-             Finset.sum_insert (show WorldState.w01 ∉ ({.w00} : Finset WorldState) by decide),
-             Finset.sum_singleton]; ring
+private theorem sumWs (f : WorldState → ℝ≥0∞) :
+    ∑' w, f w = f .w11 + f .w10 + f .w01 + f .w00 := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset WorldState) = {.w11, .w10, .w01, .w00} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
 
-set_option maxHeartbeats 1600000 in
-/-- Under BEL? QUD, L1's world-marginal for C equals the prior P(C) for every
-    utterance. S1 scores depend on w only through w.bel, so the complement
-    dimension washes out in the marginal:
+variable {pC : ℚ}
 
-    L1_marginal(C|u, BEL?) = Σ_{w:C(w)} P(w)·f(u,w.bel) / Σ_w P(w)·f(u,w.bel)
-                            = (pC/2)·(f₁+f₀) / ((1/2)·(f₁+f₀)) = pC. -/
+/-- PMF speaker (eq. 6 at α = 10, zero cost), dite-total. -/
+noncomputable def s1PMF (qud : QUD) (pC : ℚ) (bs : BeliefState) (w : WorldState) :
+    PMF Utterance :=
+  if h : (∑' u, ENNReal.ofReal ((s1WeightQ qud pC bs w u : ℝ))) ≠ 0 then
+    PMF.normalize (fun u => ENNReal.ofReal ((s1WeightQ qud pC bs w u : ℝ))) h
+      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+  else PMF.pure .cPos
+
+private theorem sumW_eq (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (bs : BeliefState)
+    (w : WorldState) :
+    (∑' u, ENNReal.ofReal ((s1WeightQ qud pC bs w u : ℝ)))
+      = ENNReal.ofReal ((s1ZQ qud pC bs w : ℝ)) := by
+  rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg
+    (fun u _ => by exact_mod_cast s1WeightQ_nonneg h0 h1 qud bs w u)]
+  congr 1
+  push_cast [s1ZQ]
+  rfl
+
+theorem s1PMF_apply (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (bs : BeliefState)
+    (w : WorldState) (u : Utterance) :
+    s1PMF qud pC bs w u = ENNReal.ofReal ((s1ValQ qud pC bs w u : ℝ)) := by
+  unfold s1PMF
+  by_cases hZ : (0 : ℚ) < s1ZQ qud pC bs w
+  · rw [dif_pos (by rw [sumW_eq h0 h1, ENNReal.ofReal_ne_zero_iff]; exact_mod_cast hZ),
+      PMF.normalize_apply, sumW_eq h0 h1,
+      ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hZ),
+      ← ENNReal.ofReal_mul (by exact_mod_cast s1WeightQ_nonneg h0 h1 qud bs w u),
+      show s1ValQ qud pC bs w u = s1WeightQ qud pC bs w u / s1ZQ qud pC bs w from by
+        rw [s1ValQ, if_neg hZ.ne']]
+    congr 1
+    push_cast
+    rw [div_eq_mul_inv]
+  · have hZ0 : s1ZQ qud pC bs w = 0 :=
+      le_antisymm (not_lt.mp hZ) (s1ZQ_nonneg h0 h1 qud bs w)
+    rw [dif_neg (by rw [sumW_eq h0 h1, hZ0]; simp),
+      show s1ValQ qud pC bs w u = (if u = .cPos then 1 else 0) from by
+        rw [s1ValQ, if_pos hZ0]]
+    by_cases hu : u = .cPos <;> simp [PMF.pure_apply, hu]
+
+/-- Listener world score (eq. 7; uniform assumption prior factors out). -/
+noncomputable def wScore (qud : QUD) (pC : ℚ) (u : Utterance) (w : WorldState) :
+    ℝ≥0∞ :=
+  ENNReal.ofReal ((worldPriorQ pC w : ℝ)) * ∑' bs, s1PMF qud pC bs w u
+
+theorem wScore_eq (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (u : Utterance)
+    (w : WorldState) :
+    wScore qud pC u w = ENNReal.ofReal ((worldScoreQ qud pC u w : ℝ)) := by
+  unfold wScore
+  rw [tsum_fintype,
+    Finset.sum_congr rfl (fun bs _ => s1PMF_apply h0 h1 qud bs w u),
+    ← ENNReal.ofReal_sum_of_nonneg (fun bs _ => by
+      exact_mod_cast s1ValQ_nonneg h0 h1 qud bs w u),
+    ← ENNReal.ofReal_mul (by exact_mod_cast worldPriorQ_nonneg pC h0 h1 w)]
+  congr 1
+  push_cast [worldScoreQ]
+  rfl
+
+private theorem sumScore_eq (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD) (u : Utterance) :
+    (∑' w, wScore qud pC u w) = ENNReal.ofReal ((wTotalQ qud pC u : ℝ)) := by
+  rw [tsum_fintype, Finset.sum_congr rfl (fun w _ => wScore_eq h0 h1 qud u w),
+    ← ENNReal.ofReal_sum_of_nonneg (fun w _ => by
+      exact_mod_cast worldScoreQ_nonneg h0 h1 qud u w)]
+  congr 1
+  push_cast [wTotalQ]
+  rfl
+
+/-- Pragmatic listener over worlds (eq. 7), dite-total. -/
+noncomputable def l1World (qud : QUD) (pC : ℚ) (u : Utterance) : PMF WorldState :=
+  if h : (∑' w, wScore qud pC u w) ≠ 0 then
+    PMF.normalize (wScore qud pC u) h
+      (ENNReal.tsum_ne_top_of_fintype fun _ =>
+        ENNReal.mul_ne_top ENNReal.ofReal_ne_top
+          (ENNReal.tsum_ne_top_of_fintype fun _ => PMF.apply_ne_top _ _))
+  else PMF.uniformOfFintype WorldState
+
+private theorem l1World_apply (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD)
+    (u : Utterance) (hpos : (∑' w, wScore qud pC u w) ≠ 0)
+    (w : WorldState) :
+    l1World qud pC u w
+      = ENNReal.ofReal ((worldScoreQ qud pC u w : ℝ)) *
+        (∑' w', wScore qud pC u w')⁻¹ := by
+  unfold l1World
+  rw [dif_pos hpos, PMF.normalize_apply, wScore_eq h0 h1 qud u w]
+
+/-- The listener's C-marginal. -/
+noncomputable def l1CEvent (qud : QUD) (pC : ℚ) (u : Utterance) : ℝ≥0∞ :=
+  ∑' w, if w.c then l1World qud pC u w else 0
+
+private theorem cEventQ_expand (qud : QUD) (u : Utterance) :
+    cEventQ qud pC u = worldScoreQ qud pC u .w11 + worldScoreQ qud pC u .w01 := by
+  rw [cEventQ, show (Finset.univ : Finset WorldState) = {.w11, .w10, .w01, .w00}
+      from rfl]
+  repeat rw [Finset.sum_insert (by decide)]
+  rw [Finset.sum_singleton]
+  simp +decide
+
+private theorem l1CEvent_eq (h0 : 0 ≤ pC) (h1 : pC ≤ 1) (qud : QUD)
+    (u : Utterance) (hpos : (∑' w, wScore qud pC u w) ≠ 0) :
+    l1CEvent qud pC u
+      = ENNReal.ofReal ((cEventQ qud pC u : ℝ)) *
+        (ENNReal.ofReal ((wTotalQ qud pC u : ℝ)))⁻¹ := by
+  unfold l1CEvent
+  rw [sumWs]
+  simp +decide only [if_true, if_false, add_zero]
+  simp only [l1World_apply h0 h1 qud u hpos]
+  rw [← add_mul, ← ENNReal.ofReal_add
+      (by exact_mod_cast worldScoreQ_nonneg h0 h1 qud u _)
+      (by exact_mod_cast worldScoreQ_nonneg h0 h1 qud u _),
+    sumScore_eq h0 h1 qud u, cEventQ_expand]
+  congr 2
+  push_cast
+  rfl
+
+/-- Division form for the marginal identities. -/
+private theorem ofReal_mul_inv_eq {b c : ℝ} (hb : 0 < b) (hc : 0 ≤ c) :
+    ENNReal.ofReal (c * b) * (ENNReal.ofReal b)⁻¹ = ENNReal.ofReal c := by
+  rw [ENNReal.ofReal_mul hc, mul_assoc,
+    ENNReal.mul_inv_cancel (by rw [ENNReal.ofReal_ne_zero_iff]; exact hb)
+      ENNReal.ofReal_ne_top, mul_one]
+
+/-- Cross-normaliser comparison for the strict predictions. -/
+private theorem ofReal_div_lt {a b c d : ℝ} (hb : 0 < b) (hd : 0 < d)
+    (hc : 0 < c) (h : a * d < c * b) :
+    ENNReal.ofReal a * (ENNReal.ofReal b)⁻¹ <
+      ENNReal.ofReal c * (ENNReal.ofReal d)⁻¹ := by
+  rw [← div_eq_mul_inv, ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos hb,
+    ← ENNReal.ofReal_div_of_pos hd]
+  exact (ENNReal.ofReal_lt_ofReal_iff (div_pos hc hd)).mpr
+    ((div_lt_div_iff₀ hb hd).mpr h)
+
+end PMFFace
+
+section KernelFacts
+
+/-! The model's arithmetic content, kernel-verified over the exact-ℚ scores. -/
+
+private theorem belHigh_pos : ∀ u, (0:ℚ) < wTotalQ .bel (2/3) u := by decide +kernel
+
+private theorem belLow_pos : ∀ u, (0:ℚ) < wTotalQ .bel (1/3) u := by decide +kernel
+
+private theorem cHigh_pos : ∀ u, (0:ℚ) < wTotalQ .c (2/3) u := by decide +kernel
+
+private theorem cLow_pos : ∀ u, (0:ℚ) < wTotalQ .c (1/3) u := by decide +kernel
+
+private theorem belHigh_id :
+    ∀ u, cEventQ .bel (2/3) u = 2/3 * wTotalQ .bel (2/3) u := by decide +kernel
+
+private theorem belLow_id :
+    ∀ u, cEventQ .bel (1/3) u = 1/3 * wTotalQ .bel (1/3) u := by decide +kernel
+
+private theorem cHigh_thinkNeg_pos : (0:ℚ) < cEventQ .c (2/3) .thinkNeg := by
+  decide +kernel
+
+private theorem cHigh_knowNeg_pos : (0:ℚ) < cEventQ .c (2/3) .knowNeg := by
+  decide +kernel
+
+private theorem belHigh_knowNeg_pos : (0:ℚ) < cEventQ .bel (2/3) .knowNeg := by
+  decide +kernel
+
+private theorem cqud_cross :
+    cEventQ .c (2/3) .knowNeg * wTotalQ .c (2/3) .thinkNeg <
+    cEventQ .c (2/3) .thinkNeg * wTotalQ .c (2/3) .knowNeg := by decide +kernel
+
+private theorem prior_cross :
+    cEventQ .c (1/3) .knowNeg * wTotalQ .c (2/3) .knowNeg <
+    cEventQ .c (2/3) .knowNeg * wTotalQ .c (1/3) .knowNeg := by decide +kernel
+
+private theorem qud_cross :
+    cEventQ .c (2/3) .knowNeg * wTotalQ .bel (2/3) .knowNeg <
+    cEventQ .bel (2/3) .knowNeg * wTotalQ .c (2/3) .knowNeg := by decide +kernel
+
+end KernelFacts
+
+section PMFFace
+
+open scoped ENNReal
+
+private theorem wZpos_belHigh (u : Utterance) :
+    (∑' w, wScore .bel (2/3) u w) ≠ 0 := by
+  rw [sumScore_eq (by norm_num) (by norm_num) .bel u, ENNReal.ofReal_ne_zero_iff]
+  exact_mod_cast belHigh_pos u
+
+private theorem wZpos_belLow (u : Utterance) :
+    (∑' w, wScore .bel (1/3) u w) ≠ 0 := by
+  rw [sumScore_eq (by norm_num) (by norm_num) .bel u, ENNReal.ofReal_ne_zero_iff]
+  exact_mod_cast belLow_pos u
+
+private theorem wZpos_cHigh (u : Utterance) :
+    (∑' w, wScore .c (2/3) u w) ≠ 0 := by
+  rw [sumScore_eq (by norm_num) (by norm_num) .c u, ENNReal.ofReal_ne_zero_iff]
+  exact_mod_cast cHigh_pos u
+
+private theorem wZpos_cLow (u : Utterance) :
+    (∑' w, wScore .c (1/3) u w) ≠ 0 := by
+  rw [sumScore_eq (by norm_num) (by norm_num) .c u, ENNReal.ofReal_ne_zero_iff]
+  exact_mod_cast cLow_pos u
+
+end PMFFace
+
+/-! ### Listener predictions -/
+
+open scoped ENNReal in
+/-- Under the BEL? QUD the C-marginal equals the prior, for every utterance:
+S1 depends on the world only through its BEL-cell, so the C-dimension washes
+out of the world posterior. Projection is invisible at the world marginal. -/
 theorem bel_qud_marginal_eq_prior_high (u : Utterance) :
-    cfgBelHigh.L1_marginal u (fun w => w.c = true) = 2/3 := by
-  have h := ne_of_gt (high_totalScore_pos u)
-  unfold RSA.RSAConfig.L1_marginal RSA.RSAConfig.L1
-  simp only [Core.RationalAction.policy, h, ↓reduceIte]
-  rw [← Finset.sum_div, c_filter, Finset.sum_pair (by decide : WorldState.w11 ≠ WorldState.w01)]
-  rw [high_totalScore_expand, high_score_w10, high_score_w00]
-  rw [high_totalScore_expand, high_score_w10, high_score_w00] at h
-  rw [div_eq_iff h]; ring
+    l1CEvent .bel (2/3) u = ENNReal.ofReal (2/3) := by
+  rw [l1CEvent_eq (by norm_num) (by norm_num) .bel u (wZpos_belHigh u),
+    show ((cEventQ .bel (2/3) u : ℝ)) = 2/3 * ((wTotalQ .bel (2/3) u : ℝ)) from by
+      rw [belHigh_id u]; push_cast; ring]
+  exact ofReal_mul_inv_eq (by exact_mod_cast belHigh_pos u) (by norm_num)
 
--- ---------- low-prior analogues ----------
-
-private theorem meaning_pos_low (u : Utterance) :
-    ∃ w₀, 0 < cfgBelLow.meaning cfgBelLow.initial .all u w₀ := by
-  cases u
-  · exact ⟨.w11, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .knowPos .w11
-                        then (worldPriorQ (1/3) .w11 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, factivePos,
-        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .knowNeg .w10
-                        then (worldPriorQ (1/3) .w10 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, factiveNeg,
-        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .thinkPos .w11
-                        then (worldPriorQ (1/3) .w11 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, nonFactivePos,
-        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w01, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w01 && literalMeaning .thinkNeg .w01
-                        then (worldPriorQ (1/3) .w01 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning, nonFactiveNeg,
-        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .cPos .w11
-                        then (worldPriorQ (1/3) .w11 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning,
-        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by
-      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .cNeg .w10
-                        then (worldPriorQ (1/3) .w10 : ℝ) else 0
-      simp only [speakerCredenceBool, literalMeaning,
-        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-
-set_option maxHeartbeats 1600000 in
-private theorem low_totalScore_pos (u : Utterance) :
-    0 < cfgBelLow.L1agent.totalScore u := by
-  obtain ⟨w₀, hm⟩ := meaning_pos_low u
-  have hL0t := lt_of_lt_of_le hm (Finset.single_le_sum
-    (fun w' _ => cfgBelLow.meaning_nonneg cfgBelLow.initial .all u w') (Finset.mem_univ w₀))
-  have hL0t' : 0 < (cfgBelLow.L0agent .all).totalScore u := hL0t
-  have hL0p : 0 < (cfgBelLow.L0agent .all).policy u w₀ := by
-    unfold Core.RationalAction.policy; rw [if_neg (ne_of_gt hL0t')]; exact div_pos hm hL0t'
-  have hqud : 0 < qudAggregate .bel ((cfgBelLow.L0agent .all).policy u) w₀ := by
-    cases w₀ <;> simp only [qudAggregate] <;>
-      linarith [(cfgBelLow.L0agent .all).policy_nonneg u .w11,
-                (cfgBelLow.L0agent .all).policy_nonneg u .w10,
-                (cfgBelLow.L0agent .all).policy_nonneg u .w01,
-                (cfgBelLow.L0agent .all).policy_nonneg u .w00]
-  have hS1s : 0 < (cfgBelLow.S1agent .all).score w₀ u := by
-    simp only [RSA.RSAConfig.S1agent, RSA.RSAConfig.L0agent, cfgBelLow, cfg]
-    exact rpow_pos_of_pos hqud _
-  have hS1t := lt_of_lt_of_le hS1s (Finset.single_le_sum
-    (fun u' _ => (cfgBelLow.S1agent .all).score_nonneg w₀ u') (Finset.mem_univ u))
-  have hS1t' : 0 < (cfgBelLow.S1agent .all).totalScore w₀ := hS1t
-  have hS1p : 0 < cfgBelLow.S1 .all w₀ u := by
-    unfold RSA.RSAConfig.S1 Core.RationalAction.policy; rw [if_neg (ne_of_gt hS1t')]
-    exact div_pos hS1s hS1t'
-  have hwp : (0 : ℝ) < cfgBelLow.worldPrior w₀ := by
-    cases w₀ <;> simp only [cfgBelLow, cfg, worldPriorQ] <;> push_cast <;> norm_num
-  have hls : 0 < ∑ l : BeliefState, cfgBelLow.latentPrior w₀ l * cfgBelLow.S1 l w₀ u :=
-    calc 0 < cfgBelLow.latentPrior w₀ (BeliefState.all) * cfgBelLow.S1 .all w₀ u := by
-              rw [show cfgBelLow.latentPrior w₀ .all = 1 from rfl, one_mul]; exact hS1p
-      _ ≤ ∑ l : BeliefState, cfgBelLow.latentPrior w₀ l * cfgBelLow.S1 l w₀ u :=
-            Finset.single_le_sum
-              (fun l _ => mul_nonneg (cfgBelLow.latentPrior_nonneg w₀ l) (cfgBelLow.S1_nonneg l w₀ u))
-              (Finset.mem_univ (BeliefState.all))
-  exact lt_of_lt_of_le (show 0 < cfgBelLow.L1agent.score u w₀ by
-      simp only [RSA.RSAConfig.L1agent]; exact mul_pos hwp hls)
-    (Finset.single_le_sum (fun w' _ => cfgBelLow.L1agent.score_nonneg u w') (Finset.mem_univ w₀))
-
-set_option maxHeartbeats 800000 in
-private theorem low_score_w10 (u : Utterance) :
-    cfgBelLow.L1agent.score u .w10 =
-    (2 : ℝ) * cfgBelLow.L1agent.score u .w11 := by
-  simp only [RSA.RSAConfig.L1agent]
-  simp_rw [show ∀ l, cfgBelLow.S1 l .w10 u = cfgBelLow.S1 l .w11 u from fun _ => rfl]
-  simp_rw [show ∀ l, cfgBelLow.latentPrior .w10 l = cfgBelLow.latentPrior .w11 l from fun _ => rfl]
-  simp only [cfgBelLow, cfg, worldPriorQ]; push_cast; ring
-
-set_option maxHeartbeats 800000 in
-private theorem low_score_w00 (u : Utterance) :
-    cfgBelLow.L1agent.score u .w00 =
-    (2 : ℝ) * cfgBelLow.L1agent.score u .w01 := by
-  simp only [RSA.RSAConfig.L1agent]
-  simp_rw [show ∀ l, cfgBelLow.S1 l .w00 u = cfgBelLow.S1 l .w01 u from fun _ => rfl]
-  simp_rw [show ∀ l, cfgBelLow.latentPrior .w00 l = cfgBelLow.latentPrior .w01 l from fun _ => rfl]
-  simp only [cfgBelLow, cfg, worldPriorQ]; push_cast; ring
-
-private theorem low_totalScore_expand (u : Utterance) :
-    cfgBelLow.L1agent.totalScore u =
-    cfgBelLow.L1agent.score u .w11 + cfgBelLow.L1agent.score u .w10 +
-    cfgBelLow.L1agent.score u .w01 + cfgBelLow.L1agent.score u .w00 := by
-  unfold Core.RationalAction.totalScore; rw [worldState_univ]
-  simp only [Finset.sum_insert (show WorldState.w11 ∉ ({.w10, .w01, .w00} : Finset WorldState) by decide),
-             Finset.sum_insert (show WorldState.w10 ∉ ({.w01, .w00} : Finset WorldState) by decide),
-             Finset.sum_insert (show WorldState.w01 ∉ ({.w00} : Finset WorldState) by decide),
-             Finset.sum_singleton]; ring
-
-set_option maxHeartbeats 1600000 in
-/-- Same identity for the low-prior configuration: P(C|u, BEL?) = P(C) = 1/3. -/
+open scoped ENNReal in
+/-- The low-prior analogue of `bel_qud_marginal_eq_prior_high`. -/
 theorem bel_qud_marginal_eq_prior_low (u : Utterance) :
-    cfgBelLow.L1_marginal u (fun w => w.c = true) = 1/3 := by
-  have h := ne_of_gt (low_totalScore_pos u)
-  unfold RSA.RSAConfig.L1_marginal RSA.RSAConfig.L1
-  simp only [Core.RationalAction.policy, h, ↓reduceIte]
-  rw [← Finset.sum_div, c_filter, Finset.sum_pair (by decide : WorldState.w11 ≠ WorldState.w01)]
-  rw [low_totalScore_expand, low_score_w10, low_score_w00]
-  rw [low_totalScore_expand, low_score_w10, low_score_w00] at h
-  rw [div_eq_iff h]; ring
+    l1CEvent .bel (1/3) u = ENNReal.ofReal (1/3) := by
+  rw [l1CEvent_eq (by norm_num) (by norm_num) .bel u (wZpos_belLow u),
+    show ((cEventQ .bel (1/3) u : ℝ)) = 1/3 * ((wTotalQ .bel (1/3) u : ℝ)) from by
+      rw [belLow_id u]; push_cast; ring]
+  exact ofReal_mul_inv_eq (by exact_mod_cast belLow_pos u) (by norm_num)
 
-set_option maxHeartbeats 1600000 in
-/-- Under C? QUD, knowNeg is evidence AGAINST C: ¬(BEL∧C) is literally
-    compatible with C-false worlds, so an informative speaker uses knowNeg
-    more often when C is false. Thus thinkNeg preserves P(C) better. -/
+open scoped ENNReal in
+/-- Under the C? QUD, knowNeg is evidence against C — ¬(BEL∧C) is compatible
+with C-false worlds — so thinkNeg preserves P(C) better. -/
 theorem c_qud_thinkNeg_higher :
-    cfgCHigh.L1_marginal .thinkNeg (fun w => w.c = true) >
-    cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) := by
-  rsa_predict
+    l1CEvent .c (2/3) .thinkNeg > l1CEvent .c (2/3) .knowNeg := by
+  rw [gt_iff_lt, l1CEvent_eq (by norm_num) (by norm_num) .c _ (wZpos_cHigh _),
+    l1CEvent_eq (by norm_num) (by norm_num) .c _ (wZpos_cHigh _)]
+  exact ofReal_div_lt (by exact_mod_cast cHigh_pos .knowNeg)
+    (by exact_mod_cast cHigh_pos .thinkNeg)
+    (by exact_mod_cast cHigh_thinkNeg_pos)
+    (by exact_mod_cast cqud_cross)
 
-/-! ### Prediction 2a: Utterance Effect (know > think)
+/-! ### Prediction 2a: utterance effect (know > think)
 
-The paper predicts stronger projection for factive know than non-factive
-think (Figure 7a). The full Section 3 model — including utterance cost
-(complex = 2×simple) — produces this direction via the world-marginal.
-Our cost-free model does not:
-- **BEL? QUD**: both utterances yield P(C|u) = P(C) (the identity above)
-- **C? QUD**: the direction is reversed (`c_qud_thinkNeg_higher`)
+The paper derives 2a *with* utterance cost (Figure 7a); the cost-free model
+does not — under BEL? both marginals sit at the prior, and under C? the
+direction reverses (`c_qud_thinkNeg_higher`). Fn. 11's A-marginal measure
+(P(A ⊧ C | u)) may capture the effect without cost; see the module TODO. -/
 
-The reversal is due to cost omission, which changes S1's normalization.
-With cost, simple utterances (cPos, cNeg) dominate S1's softmax via
-exp(−α·C_simple) ≫ exp(−α·C_complex), altering which (world, belief state)
-combinations favor knowNeg vs thinkNeg in L1's posterior.
-
-The paper also notes (fn. 11) that projection can be measured via the
-A-marginal P(A ⊧ C | u) — the probability that the speaker's inferred
-belief state entails C. This measure may capture the utterance effect
-even without cost, since the mechanism works through belief state inference
-rather than world-marginal. -/
-
-set_option maxHeartbeats 3200000 in
-/-- Prediction 2b (prior effect): higher prior increases projection.
-    Under C? QUD, L1 assigns higher probability to C with P(C) = 2/3
-    than with P(C) = 1/3. -/
+open scoped ENNReal in
+/-- Prediction 2b (prior effect): higher prior increases projection. -/
 theorem prediction_2b :
-    cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) >
-    cfgCLow.L1_marginal .knowNeg (fun w => w.c = true) := by
-  rsa_predict
+    l1CEvent .c (2/3) .knowNeg > l1CEvent .c (1/3) .knowNeg := by
+  rw [gt_iff_lt, l1CEvent_eq (by norm_num) (by norm_num) .c _ (wZpos_cLow _),
+    l1CEvent_eq (by norm_num) (by norm_num) .c _ (wZpos_cHigh _)]
+  exact ofReal_div_lt (by exact_mod_cast cLow_pos .knowNeg)
+    (by exact_mod_cast cHigh_pos .knowNeg)
+    (by exact_mod_cast cHigh_knowNeg_pos)
+    (by exact_mod_cast prior_cross)
 
-set_option maxHeartbeats 3200000 in
-/-- Prediction 2c (QUD effect): BEL? QUD increases projection over C? QUD.
-    Under BEL? QUD, C is not at-issue and L1_marginal(C) = P(C) = 2/3.
-    Under C? QUD, the literal semantics of "doesn't know C" (= ¬(BEL∧C))
-    lowers P(C) from the prior, so BEL? > C?. -/
+open scoped ENNReal in
+/-- Prediction 2c (QUD effect): under BEL? the C-marginal stays at the prior
+(`bel_qud_marginal_eq_prior_high`), while under C? the literal semantics of
+"doesn't know C" lowers it. -/
 theorem prediction_2c :
-    cfgBelHigh.L1_marginal .knowNeg (fun w => w.c = true) >
-    cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) := by
-  rsa_predict
+    l1CEvent .bel (2/3) .knowNeg > l1CEvent .c (2/3) .knowNeg := by
+  rw [gt_iff_lt, l1CEvent_eq (by norm_num) (by norm_num) .c _ (wZpos_cHigh _),
+    l1CEvent_eq (by norm_num) (by norm_num) .bel _ (wZpos_belHigh _)]
+  exact ofReal_div_lt (by exact_mod_cast cHigh_pos .knowNeg)
+    (by exact_mod_cast belHigh_pos .knowNeg)
+    (by exact_mod_cast belHigh_knowNeg_pos)
+    (by exact_mod_cast qud_cross)
 
--- ============================================================================
--- §8. Structural Properties
--- ============================================================================
+/-! ### Structural properties -/
 
 /-- "know" entails C (from `factivePos_entails_c`). -/
 theorem know_entails_c : ∀ w, literalMeaning .knowPos w = true → w.c = true :=
@@ -611,31 +634,29 @@ theorem thinkNeg_semantics :
 theorem knowNeg_weaker_than_thinkNeg :
     (Finset.univ.filter (fun w : WorldState => literalMeaning .knowNeg w)).card >
     (Finset.univ.filter (fun w : WorldState => literalMeaning .thinkNeg w)).card := by
-  native_decide
+  decide
 
 /-- The pattern-matched `assumesC` agrees with the generic
     `assumesComplement` from `Factivity`. -/
 theorem assumesC_matches_generic : ∀ bs : BeliefState,
     assumesC bs = assumesComplement (speakerCredenceBool bs)
       [.w11, .w10, .w01, .w00] := by
-  intro bs; cases bs <;> native_decide
+  intro bs; cases bs <;> decide
 
 /-- Exactly 3 of 15 belief states assume C: onlyW11, onlyW01, cTrue. -/
 theorem three_of_fifteen_assume_c :
     (Finset.univ.filter (fun bs : BeliefState => assumesC bs)).card = 3 := by
-  native_decide
+  decide
 
--- ============================================================================
--- §9. Experimental Data
--- ============================================================================
+/-! ### Experimental data -/
 
 /-- Effect size from a linear mixed-effects model. p values are upper bounds
     (paper reports "< .001"). -/
 structure UtteranceEffect where
-  β : Float
-  se : Float
-  t : Float
-  p : Float
+  β : ℚ
+  se : ℚ
+  t : ℚ
+  p : ℚ
   deriving Repr
 
 /-- Exp 1: Utterance effect (know > think). -/
@@ -677,9 +698,7 @@ def directionCorrect : Hypothesis → Bool
   | .prior     => exp1_priorEffect.β > 0
   | .qud       => exp2_qudEffect.β > 0
 
--- ============================================================================
--- §10. BToM Bridge
--- ============================================================================
+/-! ### BToM bridge -/
 
 open Core in
 /-- Classification of BeliefState in BToM terms. -/
@@ -723,25 +742,20 @@ theorem assumesCIndicator_classification :
     assumesCIndicator .all = 0 := by
   refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- §11. Model–Data Connection
--- ============================================================================
+/-! ### Model–data connection -/
 
 /-- Predictions (2b) and (2c) match experimental effect directions.
     Prediction (2a) requires cost; see the commentary above. -/
 theorem model_predicts_effects :
-    (cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) >
-     cfgCLow.L1_marginal .knowNeg (fun w => w.c = true)) ∧
-    (cfgBelHigh.L1_marginal .knowNeg (fun w => w.c = true) >
-     cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true)) ∧
+    (l1CEvent .c (2/3) .knowNeg > l1CEvent .c (1/3) .knowNeg) ∧
+    (l1CEvent .bel (2/3) .knowNeg > l1CEvent .c (2/3) .knowNeg) ∧
     directionCorrect .prior = true ∧
     directionCorrect .qud = true :=
   ⟨prediction_2b, prediction_2c,
-   by native_decide, by native_decide⟩
+   by simp only [directionCorrect, exp1_priorEffect, decide_eq_true_eq]; norm_num,
+   by simp only [directionCorrect, exp2_qudEffect, decide_eq_true_eq]; norm_num⟩
 
--- ============================================================================
--- §12. Connection to [degen-tonhauser-2021]
--- ============================================================================
+/-! ### Connection to [degen-tonhauser-2021] -/
 
 /-- The prior effect found by S&T 2025 (β = 0.16 > 0) replicates the positive
     prior effect of [degen-tonhauser-2021] (β = 0.14 categorical, β = 0.28
@@ -751,11 +765,9 @@ theorem model_predicts_effects :
     (`DegenTonhauser2021.sensitive_predicts_modulation`) — and the RSA model's
     `prediction_2b` provides the same explanation here. -/
 theorem prior_effect_consistent_with_dt2021 :
-    exp1_priorEffect.β > 0 := by native_decide
+    exp1_priorEffect.β > 0 := by norm_num [exp1_priorEffect]
 
--- ============================================================================
--- §13. Comparison: Compositional Filtering vs. BToM
--- ============================================================================
+/-! ### Compositional filtering vs BToM -/
 
 /-! Compares the BToM model against compositional filtering ([heim-1983]):
 presuppositions project through connectives via local context computation;
@@ -792,8 +804,8 @@ theorem filtering_know_nontrivial (a c : W → Prop)
     ∃ w, ¬(filteringPrediction_know a c).presup w := by
   obtain ⟨w, ha, hc⟩ := h
   refine ⟨w, ?_⟩
-  simp only [filteringPrediction_know, PartialProp.impFilter, PartialProp.ofProp, PartialProp.condAssert,
-    not_and]
+  simp only [filteringPrediction_know, PartialProp.impFilter, PartialProp.ofProp,
+    PartialProp.condAssert, not_and]
   intro _
   exact fun h_imp => hc (h_imp ha)
 
