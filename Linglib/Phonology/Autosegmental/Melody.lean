@@ -25,7 +25,6 @@ term, [bye-svenonius-2012]'s programmatic statement; survey:
 ## Main definitions
 
 * `Graph.melody` — one morpheme's tones, slots, and pre-links.
-* `Graph.concatList` — the word: melodies folded by `Graph.concat`.
 * `FloatingForm.ofGraph` — an underlying graph as a derivation input.
 * `FloatingForm.gen_preserves_morphemes` — GEN respects Consistency of
   Exponence: every candidate keeps its input's sponsors.
@@ -37,7 +36,7 @@ variable {S T : Type*}
 
 namespace Graph
 
-variable {α β : Type*} (m : Morpheme) (tones : List T) (tbus : List S) (links : Finset Link)
+variable (m : Morpheme) (tones : List T) (tbus : List S) (links : Finset Link)
 
 /-- One morpheme's underlying autosegmental contribution ([rolle-2018]
     §2.1 Def 1): `tones` over `tbus`, every element sponsored by `m`,
@@ -68,16 +67,6 @@ theorem melody_lower_morpheme {j : ℕ} (hj : j < tbus.length) :
     ((melody m tones tbus links).lower.get? j).map SegSpec.morpheme = some m := by
   rw [melody_lower, LabeledTuple.ofList_get?]
   simp [hj]
-
-/-- Left-to-right concatenation of a word's melodies ([jardine-heinz-2015]
-    §5): tier juxtaposition with index-shifted links. -/
-def concatList (gs : List (Graph α β)) : Graph α β :=
-  gs.foldr concat empty
-
-@[simp] theorem concatList_nil : concatList ([] : List (Graph α β)) = empty := rfl
-
-@[simp] theorem concatList_cons (g : Graph α β) (gs : List (Graph α β)) :
-    concatList (g :: gs) = g.concat (concatList gs) := rfl
 
 end Graph
 
