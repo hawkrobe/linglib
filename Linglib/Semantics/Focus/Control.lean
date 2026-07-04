@@ -322,6 +322,16 @@ def onlyVia (C : PropFocusValue W) (prejacent : Set W) : Set W :=
 @[simp] theorem mem_onlyVia {C : PropFocusValue W} {p : Set W} {w : W} :
     w ∈ onlyVia C p ↔ ∀ q ∈ C, w ∈ q → q = p := Iff.rfl
 
+/-- A true alternative distinct from the prejacent refutes *only*. -/
+theorem not_mem_onlyVia {C : PropFocusValue W} {p q : Set W} {w : W}
+    (hq : q ∈ C) (hw : w ∈ q) (hne : q ≠ p) : w ∉ onlyVia C p :=
+  fun h => hne (h q hq hw)
+
+/-- Membership in *only* from refuting every distinct alternative. -/
+theorem mem_onlyVia_of_forall_not_mem {C : PropFocusValue W} {p : Set W}
+    {w : W} (h : ∀ q ∈ C, q ≠ p → w ∉ q) : w ∈ onlyVia C p :=
+  fun q hq hwq => not_not.mp fun hne => h q hq hne hwq
+
 /-- Narrowing the domain weakens *only* — the pragmatic domain
 restriction that repairs the over-generation of a fixed full-focus
 domain. -/
