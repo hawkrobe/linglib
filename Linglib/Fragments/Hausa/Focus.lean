@@ -10,8 +10,9 @@ Hausa expresses focus by two principal strategies ([newman-2000]
 ch. 28, ch. 66):
 
 1. **In-situ focus**: the focused constituent stays in its canonical
-   position; focus is signaled prosodically (and contextually) without
-   any morphosyntactic reflex.
+   position, with no morphosyntactic reflex beyond a sporadic
+   sentence-final stabilizer ([hartmann-zimmermann-2007] §2.2) — and,
+   per the same work's §5 pilot study, no prosodic reflex either.
 2. **Ex-situ focus**: the focused constituent fronts to a clause-initial
    position. Two morphosyntactic reflexes are diagnostic:
    - the **stabilizer** *nē* (M / non-feminine-singular) or *cē*
@@ -94,7 +95,8 @@ structure FocusConfig where
   focusG   : Gender
   /-- Whether the focused constituent is singular. -/
   focusSG  : Bool
-  /-- Whether a stabilizer surfaces (optional in ex-situ; absent in-situ). -/
+  /-- Whether a stabilizer surfaces (optional ex-situ; sporadic
+      sentence-final in-situ). -/
   hasStab  : Bool
   deriving Repr
 
@@ -128,10 +130,11 @@ instance (c : FocusConfig) : Decidable c.Licensed := by
 -- ============================================================================
 
 /-- Smart constructor for an in-situ focus configuration. Always
-    licensed; defaults to no stabilizer (in-situ focus carries no
-    morphological reflex). -/
-def mkInSitu (pac : PAC) (focusG : Gender) (focusSG : Bool) : FocusConfig :=
-  ⟨pac, .inSitu, focusG, focusSG, false⟩
+    licensed; the stabilizer defaults to absent but may sporadically
+    surface sentence-finally ([hartmann-zimmermann-2007] §2.2). -/
+def mkInSitu (pac : PAC) (focusG : Gender) (focusSG : Bool)
+    (hasStab : Bool := false) : FocusConfig :=
+  ⟨pac, .inSitu, focusG, focusSG, hasStab⟩
 
 /-- Smart constructor for an ex-situ focus configuration. Takes a proof
     that if the TAM admits a Relative form, the PAC's mode is Relative;
