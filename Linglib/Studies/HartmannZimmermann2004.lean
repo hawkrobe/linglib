@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Focus.Realization
+import Linglib.Fragments.Tangale.TAM
 import Linglib.Data.Examples.HartmannZimmermann2004
 
 /-!
@@ -24,14 +25,16 @@ structural.
 
 ## Implementation notes
 
-The marking function and its `Strategy` codomain are study-local; with
-Hausa (`HartmannZimmermann2007.lean`) they are the two data points for
-a future `Semantics/Focus/Realization.lean` (the marking-typology
-layer). The *núm* readings use the strong-theory
+Realisation uses the shared `Semantics.Focus.Realization` vocabulary
+(reflex lists; `Strategy` is the paper's label set, derived from the
+reflex shape). The aspect frames are grounded in the Tangale fragment
+via `Aspect.entry`: the perfective rows carry [kidda-1985]'s singular
+perfective suffix and the paper's progressive is the fragment's
+continuous (preposed *né*). The *núm* readings use the strong-theory
 `Semantics.Focus.onlyVia`: one string, three contrast-set resolutions.
 
 The paper's fn. 6 notes the suffix *-i* does not occur with all
-intransitive verbs; `marking` idealises it as the intransitive
+intransitive verbs; `realize` idealises it as the intransitive
 perfective strategy. The autosegmental detail of the boundary
 diagnosis (vowel elision, left-line delinking, H-spread) is kept as
 prose; formalising it against the tone substrate is a TODO.
@@ -39,10 +42,7 @@ prose; formalising it against the tone substrate is a TODO.
 ## TODO
 
 * The VE/LLD phonology as autosegmental operations (connect to the
-  tone substrate).
-* Graduate the marking vocabulary to `Semantics/Focus/Realization.lean`
-  once this file and `HartmannZimmermann2007.lean` consume a shared
-  version (the B7 plan).
+  tone substrate; [kidda-1985] Ch. 2 and Ch. 4 are the sources).
 * The paper's two solutions (§6): the prosodic-boundary account vs the
   subjects-vs-non-subjects account as rival `Predict`-style theories.
 -/
@@ -58,6 +58,22 @@ open Semantics.Focus.Interpretation (PropFocusValue)
 inductive Aspect where
   | perfective | progressive
   deriving DecidableEq, Repr
+
+/-- The fragment entry realising each aspect frame
+(`Fragments/Tangale/TAM.lean`): the perfective rows carry
+[kidda-1985]'s singular perfective (the *-gó* of *wai-gó*, *wur-gó*),
+and the paper's progressive is the continuous (preposed *né*, the
+paper's PROG *n*). -/
+def Aspect.entry : Aspect → Tangale.TAMEntry
+  | .perfective  => Tangale.perfectiveSg
+  | .progressive => Tangale.continuous
+
+/-- The paper's glosses are grounded in the fragment: PERF is the
+voiced alternant of the perfective suffix, and PROG is the preposed
+continuous marker. -/
+theorem aspect_entry_grounds_glosses :
+    "gó" ∈ Aspect.perfective.entry.suffixAlternants ∧
+    Aspect.progressive.entry.marker = .preposed "né" := by decide
 
 /-- The focused constituent in the paper's paradigm. -/
 inductive Focused where
