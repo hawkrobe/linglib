@@ -1,4 +1,5 @@
-import Linglib.Tactics.RSAPredict
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.Noisy
@@ -54,10 +55,10 @@ full-sequence L0 posterior is order-independent.
 
 ## Substrate use
 
-This file plugs `RSA.NoisyLex` (`Pragmatics/RSA/Noisy.lean`) into
-`RSAConfig`'s sequential machinery. Each scene becomes a `NoisyLex` value
-plus a scene predicate; `NoisyLex.toRSAConfigSeq` produces the incremental
-RSAConfig. The PoE prefix-product order-independence lemmas live in
+This file plugs `RSA.NoisyLex` (`Pragmatics/RSA/Noisy.lean`) into an
+incremental word-by-word chain. Each scene is a `NoisyLex` value plus a
+scene predicate; the chain (`l0Q`/`s1Q`/`s1PMF`) is No-Brevity over
+PoE-prefix meanings. The order-independence lemmas live in
 `RSA.Sequential` and are inherited (no per-study reproof).
 
 ## Variable-name note (α vs β)
@@ -65,7 +66,7 @@ RSAConfig. The PoE prefix-product order-independence lemmas live in
 S&W's α is the **utterance-level speaker** softmax temperature (Table 1
 row 6, varied 5/1/1 across Fig. 3a–c); their β is the **utility/word-level
 speaker** temperature (Table 1 row 7, set to 1 in all reported simulations).
-This file's `RSAConfig.α` field corresponds to S&W's β = 1. The α-field-name
+The chain has no rationality exponent, matching S&W's β = 1. The α-name
 in the substrate predates S&W and is not renamed here.
 
 ## Findings
@@ -90,10 +91,14 @@ inductive Referent where
   | bigBlue | bigGreen | smallBlue | smallGreen | smallRed
   deriving DecidableEq, Fintype, Repr
 
+instance : Nonempty Referent := ⟨.bigBlue⟩
+
 /-- Words available to the speaker: size adjectives, color adjectives, noun. -/
 inductive Word where
   | big | small | blue | green | red | sticker
   deriving DecidableEq, Fintype, Repr
+
+instance : Nonempty Word := ⟨.sticker⟩
 
 /-! ### Boolean semantics -/
 
@@ -162,16 +167,6 @@ def sceneALex : NoisyLex Word Referent :=
 def sceneBLex : NoisyLex Word Referent :=
   noisyLex (80/100) (95/100) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
-/-! ### `RSAConfig` via `NoisyLex.toRSAConfigSeq` -/
-
-/-- Scene A config: `sceneALex` over Scene A members. -/
-noncomputable def sceneACfg : RSAConfig Word Referent :=
-  sceneALex.toRSAConfigSeq sceneAMembers
-
-/-- Scene B config: `sceneBLex` over Scene B members. -/
-noncomputable def sceneBCfg : RSAConfig Word Referent :=
-  sceneBLex.toRSAConfigSeq sceneBMembers
-
 /-! ### Utterances -/
 
 /-- Size-first ordering for the big-blue target. -/
@@ -208,45 +203,241 @@ theorem prefix_meaning_product (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel 
   simp only [NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex, List.map_cons,
     List.map_nil, List.prod_cons, List.prod_nil, mul_one]
 
+/-! ### Exact-ℚ face (local pending the RSA API pass)
+
+The builder's chain is No-Brevity (`s1Score = l0`, β = 1, no cost) over
+PoE-prefix meanings, so every layer is exact ℚ: `l0Q` normalizes the
+scene-gated prefix product over referents, `s1Q` renormalizes over words,
+and utterance probabilities are chain-rule products. -/
+
+section QFace
+
+/-- Scene-gated ℚ prefix meaning. -/
+def meaningQ (lex : NoisyLex Word Referent) (scene : Referent → Bool)
+    (ctx : List Word) (u : Word) (r : Referent) : ℚ :=
+  if scene r then lex.prefixMeaning (ctx ++ [u]) r else 0
+
+/-- Word-level literal listener value. -/
+def l0Q (lex : NoisyLex Word Referent) (scene : Referent → Bool)
+    (ctx : List Word) (u : Word) (r : Referent) : ℚ :=
+  meaningQ lex scene ctx u r / ∑ r', meaningQ lex scene ctx u r'
+
+/-- Word-level speaker value (β = 1, no cost). -/
+def s1Q (lex : NoisyLex Word Referent) (scene : Referent → Bool)
+    (ctx : List Word) (r : Referent) (u : Word) : ℚ :=
+  l0Q lex scene ctx u r / ∑ u', l0Q lex scene ctx u' r
+
+private theorem meaningQ_nonneg (lex : NoisyLex Word Referent)
+    (scene : Referent → Bool) (ctx : List Word) (u : Word) (r : Referent) :
+    0 ≤ meaningQ lex scene ctx u r := by
+  unfold meaningQ
+  split
+  · exact lex.prefixMeaning_nonneg _ r
+  · exact le_refl 0
+
+private theorem l0Q_nonneg (lex : NoisyLex Word Referent)
+    (scene : Referent → Bool) (ctx : List Word) (u : Word) (r : Referent) :
+    0 ≤ l0Q lex scene ctx u r :=
+  div_nonneg (meaningQ_nonneg lex scene ctx u r)
+    (Finset.sum_nonneg fun r' _ => meaningQ_nonneg lex scene ctx u r')
+
+theorem s1Q_nonneg (lex : NoisyLex Word Referent) (scene : Referent → Bool)
+    (ctx : List Word) (r : Referent) (u : Word) :
+    0 ≤ s1Q lex scene ctx r u :=
+  div_nonneg (l0Q_nonneg lex scene ctx u r)
+    (Finset.sum_nonneg fun u' _ => l0Q_nonneg lex scene ctx u' r)
+
+open scoped ENNReal
+
+/-- Normalize a rational score vector into a PMF (uniform at zero mass). -/
+noncomputable def pmfOfScores {σ : Type*} [Fintype σ] [Nonempty σ]
+    (f : σ → ℚ) : PMF σ :=
+  if h : (∑' x, ENNReal.ofReal ((f x : ℝ))) ≠ 0 then
+    PMF.normalize (fun x => ENNReal.ofReal ((f x : ℝ))) h
+      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+  else PMF.uniformOfFintype σ
+
+theorem pmfOfScores_apply {σ : Type*} [Fintype σ] [Nonempty σ]
+    {f : σ → ℚ} (hf : ∀ x, 0 ≤ f x) (hpos : 0 < ∑ x, f x) (x : σ) :
+    pmfOfScores f x = ENNReal.ofReal ((f x / ∑ x', f x' : ℚ) : ℝ) := by
+  have hsum : (∑' x, ENNReal.ofReal ((f x : ℝ)))
+      = ENNReal.ofReal ((∑ x, f x : ℚ) : ℝ) := by
+    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg (fun x _ => by exact_mod_cast hf x)]
+    push_cast
+    rfl
+  rw [pmfOfScores, dif_pos (by
+      rw [hsum, ENNReal.ofReal_ne_zero_iff]; exact_mod_cast hpos),
+    PMF.normalize_apply, hsum,
+    ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos),
+    ← ENNReal.ofReal_mul (by exact_mod_cast hf x)]
+  congr 1
+  push_cast
+  rw [div_eq_mul_inv]
+
+/-- Strict comparison of `pmfOfScores` values via the exact-ℚ scores. -/
+theorem pmf_lt_cross {σ τ : Type*} [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ]
+    {f : σ → ℚ} {g : τ → ℚ}
+    (hf : ∀ x, 0 ≤ f x) (hg : ∀ x, 0 ≤ g x)
+    (hfp : 0 < ∑ x, f x) (hgp : 0 < ∑ x, g x) {a : σ} {b : τ}
+    (hb : 0 < g b / ∑ x, g x) (hab : f a / ∑ x, f x < g b / ∑ x, g x) :
+    pmfOfScores f a < pmfOfScores g b := by
+  rw [pmfOfScores_apply hf hfp, pmfOfScores_apply hg hgp]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast hb)).mpr
+    (by exact_mod_cast hab)
+
+private theorem ofReal_mul3 {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (_hc : 0 ≤ c) :
+    ENNReal.ofReal a * ENNReal.ofReal b * ENNReal.ofReal c
+      = ENNReal.ofReal (a * b * c) := by
+  rw [← ENNReal.ofReal_mul ha, ← ENNReal.ofReal_mul (mul_nonneg ha hb)]
+
+private theorem valNN (lex : NoisyLex Word Referent) (scene : Referent → Bool)
+    (ctx : List Word) (u : Word) (r : Referent) :
+    (0:ℝ) ≤ ((l0Q lex scene ctx u r / ∑ u', l0Q lex scene ctx u' r : ℚ) : ℝ) := by
+  exact_mod_cast div_nonneg (l0Q_nonneg lex scene ctx u r)
+    (Finset.sum_nonneg fun u' _ => l0Q_nonneg lex scene ctx u' r)
+
+/-- Word-by-word speaker at context `ctx` (β = 1, no cost). -/
+noncomputable def s1PMF (lex : NoisyLex Word Referent) (scene : Referent → Bool)
+    (ctx : List Word) (r : Referent) : PMF Word :=
+  pmfOfScores (fun u => l0Q lex scene ctx u r)
+
+end QFace
+
 /-! ### Predictions via `trajectoryProb` -/
 
 /-- **Finding**: When size has high discriminatory power (Scene A),
     `S1^inc` prefers size-first ordering. -/
 theorem size_first_when_size_discriminates :
-    sceneACfg.trajectoryProb () target sizeFirstUtt >
-    sceneACfg.trajectoryProb () target colorFirstUtt := by
-  rsa_predict
+    s1PMF sceneALex sceneAMembers [] target .blue *
+      s1PMF sceneALex sceneAMembers [.blue] target .big *
+      s1PMF sceneALex sceneAMembers [.blue, .big] target .sticker <
+    s1PMF sceneALex sceneAMembers [] target .big *
+      s1PMF sceneALex sceneAMembers [.big] target .blue *
+      s1PMF sceneALex sceneAMembers [.big, .blue] target .sticker := by
+  simp only [s1PMF]
+  rw [pmfOfScores_apply (f := fun u => l0Q sceneALex sceneAMembers [] u target) (x := .blue)
+      (fun u => l0Q_nonneg sceneALex sceneAMembers [] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneALex sceneAMembers [] u target) (x := .big)
+      (fun u => l0Q_nonneg sceneALex sceneAMembers [] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneALex sceneAMembers [.blue] u target)
+      (fun u => l0Q_nonneg sceneALex sceneAMembers [.blue] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneALex sceneAMembers [.blue, .big] u target)
+      (fun u => l0Q_nonneg sceneALex sceneAMembers [.blue, .big] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneALex sceneAMembers [.big] u target)
+      (fun u => l0Q_nonneg sceneALex sceneAMembers [.big] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneALex sceneAMembers [.big, .blue] u target)
+      (fun u => l0Q_nonneg sceneALex sceneAMembers [.big, .blue] u target) (by decide +kernel)]
+  rw [ofReal_mul3 (valNN sceneALex sceneAMembers [] .blue target)
+      (valNN sceneALex sceneAMembers [.blue] .big target)
+      (valNN sceneALex sceneAMembers [.blue, .big] .sticker target),
+    ofReal_mul3 (valNN sceneALex sceneAMembers [] .big target)
+      (valNN sceneALex sceneAMembers [.big] .blue target)
+      (valNN sceneALex sceneAMembers [.big, .blue] .sticker target)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast (by decide +kernel :
+    (0:ℚ) < (l0Q sceneALex sceneAMembers [] .big target /
+        ∑ u', l0Q sceneALex sceneAMembers [] u' target) *
+      (l0Q sceneALex sceneAMembers [.big] .blue target /
+        ∑ u', l0Q sceneALex sceneAMembers [.big] u' target) *
+      (l0Q sceneALex sceneAMembers [.big, .blue] .sticker target /
+        ∑ u', l0Q sceneALex sceneAMembers [.big, .blue] u' target)))).mpr ?_
+  exact_mod_cast (by decide +kernel :
+    (l0Q sceneALex sceneAMembers [] .blue target /
+        ∑ u', l0Q sceneALex sceneAMembers [] u' target) *
+      (l0Q sceneALex sceneAMembers [.blue] .big target /
+        ∑ u', l0Q sceneALex sceneAMembers [.blue] u' target) *
+      (l0Q sceneALex sceneAMembers [.blue, .big] .sticker target /
+        ∑ u', l0Q sceneALex sceneAMembers [.blue, .big] u' target) <
+    (l0Q sceneALex sceneAMembers [] .big target /
+        ∑ u', l0Q sceneALex sceneAMembers [] u' target) *
+      (l0Q sceneALex sceneAMembers [.big] .blue target /
+        ∑ u', l0Q sceneALex sceneAMembers [.big] u' target) *
+      (l0Q sceneALex sceneAMembers [.big, .blue] .sticker target /
+        ∑ u', l0Q sceneALex sceneAMembers [.big, .blue] u' target))
 
 /-- **Finding**: When both properties discriminate equally but color is
     more reliable (Scene B), `S1^inc` prefers color-first ordering. -/
 theorem color_first_when_color_reliable :
-    sceneBCfg.trajectoryProb () target colorFirstUtt >
-    sceneBCfg.trajectoryProb () target sizeFirstUtt := by
-  rsa_predict
+    s1PMF sceneBLex sceneBMembers [] target .big *
+      s1PMF sceneBLex sceneBMembers [.big] target .blue *
+      s1PMF sceneBLex sceneBMembers [.big, .blue] target .sticker <
+    s1PMF sceneBLex sceneBMembers [] target .blue *
+      s1PMF sceneBLex sceneBMembers [.blue] target .big *
+      s1PMF sceneBLex sceneBMembers [.blue, .big] target .sticker := by
+  simp only [s1PMF]
+  rw [pmfOfScores_apply (f := fun u => l0Q sceneBLex sceneBMembers [] u target) (x := .big)
+      (fun u => l0Q_nonneg sceneBLex sceneBMembers [] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneBLex sceneBMembers [] u target) (x := .blue)
+      (fun u => l0Q_nonneg sceneBLex sceneBMembers [] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneBLex sceneBMembers [.big] u target)
+      (fun u => l0Q_nonneg sceneBLex sceneBMembers [.big] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneBLex sceneBMembers [.big, .blue] u target)
+      (fun u => l0Q_nonneg sceneBLex sceneBMembers [.big, .blue] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneBLex sceneBMembers [.blue] u target)
+      (fun u => l0Q_nonneg sceneBLex sceneBMembers [.blue] u target) (by decide +kernel),
+    pmfOfScores_apply (f := fun u => l0Q sceneBLex sceneBMembers [.blue, .big] u target)
+      (fun u => l0Q_nonneg sceneBLex sceneBMembers [.blue, .big] u target) (by decide +kernel)]
+  rw [ofReal_mul3 (valNN sceneBLex sceneBMembers [] .big target)
+      (valNN sceneBLex sceneBMembers [.big] .blue target)
+      (valNN sceneBLex sceneBMembers [.big, .blue] .sticker target),
+    ofReal_mul3 (valNN sceneBLex sceneBMembers [] .blue target)
+      (valNN sceneBLex sceneBMembers [.blue] .big target)
+      (valNN sceneBLex sceneBMembers [.blue, .big] .sticker target)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast (by decide +kernel :
+    (0:ℚ) < (l0Q sceneBLex sceneBMembers [] .blue target /
+        ∑ u', l0Q sceneBLex sceneBMembers [] u' target) *
+      (l0Q sceneBLex sceneBMembers [.blue] .big target /
+        ∑ u', l0Q sceneBLex sceneBMembers [.blue] u' target) *
+      (l0Q sceneBLex sceneBMembers [.blue, .big] .sticker target /
+        ∑ u', l0Q sceneBLex sceneBMembers [.blue, .big] u' target)))).mpr ?_
+  exact_mod_cast (by decide +kernel :
+    (l0Q sceneBLex sceneBMembers [] .big target /
+        ∑ u', l0Q sceneBLex sceneBMembers [] u' target) *
+      (l0Q sceneBLex sceneBMembers [.big] .blue target /
+        ∑ u', l0Q sceneBLex sceneBMembers [.big] u' target) *
+      (l0Q sceneBLex sceneBMembers [.big, .blue] .sticker target /
+        ∑ u', l0Q sceneBLex sceneBMembers [.big, .blue] u' target) <
+    (l0Q sceneBLex sceneBMembers [] .blue target /
+        ∑ u', l0Q sceneBLex sceneBMembers [] u' target) *
+      (l0Q sceneBLex sceneBMembers [.blue] .big target /
+        ∑ u', l0Q sceneBLex sceneBMembers [.blue] u' target) *
+      (l0Q sceneBLex sceneBMembers [.blue, .big] .sticker target /
+        ∑ u', l0Q sceneBLex sceneBMembers [.blue, .big] u' target))
 
 /-- The ordering preference flips between scenes: Scene A prefers size-first,
     Scene B prefers color-first. The preferred ordering depends on the
     discriminatory structure of the scene, not a fixed ordering rule. -/
 theorem ordering_preference_flips :
-    sceneACfg.trajectoryProb () target sizeFirstUtt >
-    sceneACfg.trajectoryProb () target colorFirstUtt ∧
-    sceneBCfg.trajectoryProb () target colorFirstUtt >
-    sceneBCfg.trajectoryProb () target sizeFirstUtt :=
+    (s1PMF sceneALex sceneAMembers [] target .blue *
+        s1PMF sceneALex sceneAMembers [.blue] target .big *
+        s1PMF sceneALex sceneAMembers [.blue, .big] target .sticker <
+      s1PMF sceneALex sceneAMembers [] target .big *
+        s1PMF sceneALex sceneAMembers [.big] target .blue *
+        s1PMF sceneALex sceneAMembers [.big, .blue] target .sticker) ∧
+    (s1PMF sceneBLex sceneBMembers [] target .big *
+        s1PMF sceneBLex sceneBMembers [.big] target .blue *
+        s1PMF sceneBLex sceneBMembers [.big, .blue] target .sticker <
+      s1PMF sceneBLex sceneBMembers [] target .blue *
+        s1PMF sceneBLex sceneBMembers [.blue] target .big *
+        s1PMF sceneBLex sceneBMembers [.blue, .big] target .sticker) :=
   ⟨size_first_when_size_discriminates, color_first_when_color_reliable⟩
 
 /-! ### First-word informativity via `S1_at` -/
 
 /-- In Scene A, "big" is more informative than "blue" about the target. -/
 theorem big_more_informative_A :
-    sceneACfg.S1_at ([] : List Word) () target .big >
-    sceneACfg.S1_at ([] : List Word) () target .blue := by
-  rsa_predict
+    s1PMF sceneALex sceneAMembers [] target .blue <
+    s1PMF sceneALex sceneAMembers [] target .big :=
+  pmf_lt_cross (fun u => l0Q_nonneg sceneALex sceneAMembers [] u target)
+    (fun u => l0Q_nonneg sceneALex sceneAMembers [] u target)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- In Scene B, "blue" is more informative than "big" about the target. -/
 theorem blue_more_informative_B :
-    sceneBCfg.S1_at ([] : List Word) () target .blue >
-    sceneBCfg.S1_at ([] : List Word) () target .big := by
-  rsa_predict
+    s1PMF sceneBLex sceneBMembers [] target .big <
+    s1PMF sceneBLex sceneBMembers [] target .blue :=
+  pmf_lt_cross (fun u => l0Q_nonneg sceneBLex sceneBMembers [] u target)
+    (fun u => l0Q_nonneg sceneBLex sceneBMembers [] u target)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-! ### Target identification -/
 
