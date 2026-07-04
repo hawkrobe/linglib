@@ -35,10 +35,14 @@ The paper uses 15 context sets with 5% noise; we model the 9 derivable from
 past/now observations — the omitted 6 carry only the noise prior (≥ 18×
 lower) and do not affect the qualitative predictions.
 
-[scontras-tonhauser-2025] and [warstadt-2022] instantiate the same structure
-(latent = "private assumptions" resp. context set) over factives and
-genus-species; see `ScontrasTonhauser2025.lean`. Per S&T fn. 10 the
-difference is interpretive, not computational.
+## TODO
+
+Prove the structural equivalence with [scontras-tonhauser-2025] (factives;
+latent = "private assumptions", their fn. 10: the difference from QGL's
+"common ground" is interpretive, not computational) and [warstadt-2022]
+(genus-species) — all three compute `L1(w, C | u, Q) ∝ S1(u | w, C, Q) ·
+P(w) · P(C)` over different domains. Blocked on `ScontrasTonhauser2025.lean`
+reaching the PMF face.
 -/
 
 set_option autoImplicit false
@@ -676,34 +680,5 @@ def entailsPast : ContextSet → Bool
 theorem three_entail_past :
     (Finset.univ.filter (fun cs : ContextSet => entailsPast cs)).card = 3 := by
   decide
-
-/-! ### §10. Connection to S&T and Warstadt -/
-
-/-!
-## Mathematical Equivalence with [scontras-tonhauser-2025] and [warstadt-2022]
-
-All three papers implement the same RSA computation:
-
-```
-L1(w, C | u, Q) ∝ S1(u | w, C, Q) · P(w) · P(C)
-```
-
-| Paper | Latent | Interpretation | Domain |
-|-------|--------|---------------|--------|
-| [qing-goodman-lassiter-2016] | Context set C | Common ground | CoS verbs |
-| [scontras-tonhauser-2025] | Assumptions A | Speaker beliefs | Factives |
-| [warstadt-2022] | Context set C | Common ground | Genus-species |
-
-The encoding is structurally identical: the latent is the context/belief
-state, the literal listener filters by compatibility, and the speaker
-scores the QUD-projected literal posterior. See `ScontrasTonhauser2025.lean`
-for the factive domain implementation.
-
-[scontras-tonhauser-2025] fn. 10: "[qing-goodman-lassiter-2016] call these subsets
-the 'common ground,' but we think 'private assumptions' better captures
-this component of the model."
-
-The terminological difference is interpretive, not computational.
--/
 
 end QingGoodmanLassiter2016
