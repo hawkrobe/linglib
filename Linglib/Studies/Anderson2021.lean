@@ -1,4 +1,3 @@
-import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
@@ -129,7 +128,7 @@ theorem ext {cg₁ cg₂ : DistributionalCG W} (h : cg₁.dist = cg₂.dist) :
 
 /-- The ℝ-valued masses of the common ground (via `PMF.toRealFn`). This is
     the interface every RSA consumer reads: it plugs directly into
-    `RSAConfig.worldPrior`/`meaning`, which expect `W → ℝ`. -/
+    ℝ-valued consumers (`updateCG`, the samplers), which expect `W → ℝ`. -/
 noncomputable def weight (cg : DistributionalCG W) : W → ℝ := cg.dist.toRealFn
 
 @[simp] theorem weight_def (cg : DistributionalCG W) (w : W) :
@@ -428,10 +427,10 @@ beliefs, and the learning rate for updates. In the **shared CommonGround** model
 **approximate CommonGround** model (§5.2, Figure 6), each maintains a separate
 approximation (not yet formalized).
 
-The distributional CommonGround serves as both `RSAConfig.meaning` (L0 prior) and
-`RSAConfig.worldPrior` (L1 prior) — the CommonGround enters the RSA model at two
-levels (Figure 4). Between turns, the CommonGround evolves via `updateCG`, and the
-RSA model is reconstructed via `mfRSAAt`. -/
+The distributional CommonGround enters the RSA model at two points
+(Figure 4): inside the literal listener and as the pragmatic listener's
+prior. At each turn the chain is rebuilt at the current CommonGround
+(`cgS1Total`/`conversationStep`). -/
 structure ConversationState (W : Type*) where
   cg : DistributionalCG W
   belA : DistributionalCG W
@@ -565,32 +564,22 @@ theorem a_diff_nancy_positive :
   norm_num
 
 -- ════════════════════════════════════════════════════
--- § 8. RSAConfig: Turn 1 (Uniform Prior)
+-- § 8. The Figure-4 model on mathlib PMF
 -- ════════════════════════════════════════════════════
 
 open RSA
 
-/-- RSA model for the MutualFriends domain at turn 1.
+/-! Anderson's Shared CommonGround model ([anderson-2021] Figure 4) uses the
+distributional CommonGround at BOTH ends of the chain:
 
-Anderson's Shared CommonGround model (Figure 4) uses the distributional CommonGround at BOTH
-L0 and L1:
+    L0(w|u) ∝ ⟦u⟧(w) · CG(w)    -- CG enters the literal listener
+    S1(u|w) ∝ L0(w|u)           -- speaker = renormalised L0 row (fn. 3:
+                                --   softmax omitted, α = 1, no cost)
+    L1(w|u) ∝ S1(u|w) · CG(w)   -- CG enters the pragmatic listener
 
-    L0(w|u) ∝ ⟦u⟧(w) · CommonGround(w)     -- CommonGround enters L0 via `meaning`
-    S1(u|w) ∝ L0(w|u)              -- speaker optimizes CommonGround-weighted informativity
-    L1(w|u) ∝ S1(u|w) · CommonGround(w)     -- CommonGround enters L1 via `worldPrior`
-
-At turn 1, CommonGround is uniform (weight 1 everywhere), so the CommonGround factor drops out
-of L0 and the meaning reduces to Boolean semantics: `⟦u⟧(w) · 1 = ⟦u⟧(w)`.
-The general CommonGround-weighted pattern is visible in `mfRSA_turn2`. -/
-noncomputable def mfRSA : RSAConfig MFUtterance MFWorld where
-  meaning _ _ u w := if mfMeaning u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> norm_num
-  s1Score l0 _ _ w u := l0 u w
-  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
-  α := 1
-  α_pos := one_pos
-  worldPrior_nonneg _ := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
+At turn 1 the CommonGround is uniform, so the CG factor drops out of L0 and
+the meaning reduces to Boolean semantics. The chain below implements this on
+mathlib `PMF`, parameterized by the CommonGround. -/
 
 -- ════════════════════════════════════════════════════
 -- § 8b. PMF chain (CG-parameterized; local pending the RSA API pass)
@@ -653,7 +642,7 @@ private noncomputable def cgL1 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
   PMF.posterior (cgS1 cg hcg) cg u (cgS1_marginal_pos cg hcg u)
 
 /-- Endorsement speaker: `S2(u|w) ∝ L1(w|u)` (uniform utterance prior),
-matching `RSAConfig.S2agent`'s Bayes inversion of L1 over utterances. -/
+the standard endorsement inversion of L1 over utterances. -/
 private noncomputable def cgS2 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
     (w : MFWorld) : PMF MFUtterance :=
   PMF.normalize (fun u => cgL1 cg hcg u w)
@@ -978,7 +967,7 @@ theorem s1_ina_prefers_science :
 
 /-- A speaker who knows it's Ina is indifferent between "studyScience" and
 "likeIndoors": both are true of exactly 2 worlds, giving equal L0 posteriors.
-This tests `rsa_predict` on equality goals. -/
+-/
 theorem s1_ina_science_eq_indoors :
     s1Turn1 .ina .studyScience = s1Turn1 .ina .likeIndoors := by
   rw [s1Turn1_true (by decide) (by decide), s1Turn1_true (by decide) (by decide)]
@@ -1001,7 +990,7 @@ theorem s1_nancy_humanity_eq_outdoors :
 
 /-- False utterances get zero S1 probability.
 "studyScience" is false of Nancy (she studies German), so S1 = 0.
-Tests `rsa_predict` on negation of strict inequality. -/
+-/
 theorem s1_nancy_science_not_gt_null :
     ¬(s1Turn1 .nancy .studyScience > s1Turn1 .nancy .null) := by
   rw [gt_iff_lt,
@@ -1046,7 +1035,7 @@ theorem l1_null_uniform (w₁ w₂ : MFWorld) :
   rw [l1Turn1_null, l1Turn1_null]
 
 -- ════════════════════════════════════════════════════
--- § 11. RSAConfig: Turn 2 (Post-Update Prior)
+-- § 11. Turn 2 (Post-Update Prior)
 -- ════════════════════════════════════════════════════
 
 /-- CommonGround weights after hearing "studyHumanity" at turn 1.
@@ -1066,8 +1055,6 @@ def cgTurn2 : MFWorld → ℝ
   | .ina | .katie => 2
   | .nancy | .sally => 3
 
-theorem cgTurn2_nonneg : ∀ w, 0 ≤ cgTurn2 w := by
-  intro w; cases w <;> norm_num [cgTurn2]
 
 section PMFChain
 
@@ -1204,33 +1191,6 @@ private theorem cgS1_t2_false {u : MFUtterance} {w : MFWorld}
 
 end PMFChain
 
-/-- RSA model after hearing "studyHumanity" at turn 1.
-
-The updated CommonGround enters BOTH L0 and L1 (Figure 4), matching Anderson's
-Shared CommonGround model:
-
-    L0(w|u) ∝ ⟦u⟧(w) · CommonGround'(w)     -- CommonGround in L0 via `meaning`
-    L1(w|u) ∝ S1(u|w) · CommonGround'(w)     -- CommonGround in L1 via `worldPrior`
-
-This means S1 *adapts* to the CommonGround: the speaker reasons about informativity
-relative to the current common ground. After "studyHumanity" shifts the CommonGround
-toward nancy/sally (weights [2,2,3,3] ∝ [1/5, 1/5, 3/10, 3/10]),
-utterances that disambiguate *within* that subspace (e.g., "likeOutdoors")
-become more informative than utterances that merely re-assert the major
-dimension (e.g., "studyHumanity"). -/
-noncomputable def mfRSA_turn2 : RSAConfig MFUtterance MFWorld where
-  meaning _ _ u w := if mfMeaning u w then cgTurn2 w else 0
-  meaning_nonneg _ _ _ w := by
-    split
-    · exact cgTurn2_nonneg w
-    · exact le_refl 0
-  s1Score l0 _ _ w u := l0 u w
-  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
-  α := 1
-  α_pos := one_pos
-  worldPrior := cgTurn2
-  worldPrior_nonneg := cgTurn2_nonneg
-  latentPrior_nonneg _ _ := by norm_num
 
 -- ════════════════════════════════════════════════════
 -- § 12. Turn 2 Predictions
@@ -1370,55 +1330,56 @@ theorem s2_nancy_humanity_eq_outdoors :
 -- § 14. Parametric RSA and Conversation Step
 -- ════════════════════════════════════════════════════
 
-/-- RSA model for MutualFriends at an arbitrary CommonGround (Figure 4).
+section PMFChain
 
-This is the general form of Anderson's Shared CommonGround model: the CommonGround enters
-as the L0 meaning weight (via `meaning`) AND as the L1 prior (via
-`worldPrior`). One-shot RSA is the special case with uniform CommonGround.
+open scoped ENNReal
 
-Used by `conversationStep` to construct the RSA model at each turn. -/
-noncomputable def mfRSAAt (cg : MFWorld → ℝ) (hcg : ∀ w, 0 ≤ cg w) :
-    RSAConfig MFUtterance MFWorld where
-  meaning _ _ u w := if mfMeaning u w then cg w else 0
-  meaning_nonneg _ _ _ w := by split; exact hcg w; exact le_refl 0
-  s1Score l0 _ _ w u := l0 u w
-  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
-  α := 1
-  α_pos := one_pos
-  worldPrior := cg
-  worldPrior_nonneg := hcg
-  latentPrior_nonneg _ _ := by norm_num
+/-- Total literal listener at an arbitrary CommonGround (dite fallback for
+utterances whose extension has zero CG mass). -/
+noncomputable def cgL0Total (cg : PMF MFWorld) (u : MFUtterance) : PMF MFWorld :=
+  if h : (∑' w, cg w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0)) ≠ 0 then
+    RSA.L0LassiterGoodman cg mfMeaning u h
+  else PMF.uniformOfFintype MFWorld
+
+/-- Total speaker at an arbitrary CommonGround — the general Figure-4
+production model used by the conversation loop (fallback to `null` at
+zero-support worlds). -/
+noncomputable def cgS1Total (cg : PMF MFWorld) (w : MFWorld) : PMF MFUtterance :=
+  if h : (∑' u, ((cgL0Total cg u) w : ℝ≥0∞) ^ (1 : ℝ) * 1) ≠ 0 then
+    RSA.S1Belief (cgL0Total cg) (fun _ => 1) 1 w h
+      (ENNReal.tsum_ne_top_of_fintype fun _ =>
+        ENNReal.mul_ne_top
+          (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+          ENNReal.one_ne_top)
+  else PMF.pure .null
+
+end PMFChain
 
 /-- One step of the Shared CommonGround conversation loop (Figure 2).
 
 Given the current CommonGround and an utterance:
-1. Build the RSA model at the current CommonGround (`mfRSAAt`)
+1. Build the speaker chain at the current CommonGround (`cgS1Total`)
 2. Compute L1 posteriors: the pragmatic listener's world beliefs
 3. Update the CommonGround via convex combination with the posteriors
 
 This closes the loop: RSA inference → CommonGround update → new RSA model.
 The returned CommonGround serves as the world prior for the next turn's model.
 
-**Renormalisation**: the L1 posterior is repackaged as a `DistributionalCG`
-via `ofWeights` (Anderson 2021, footnote 3: *"the probabilities are
-renormalized"*), so `updateCG` is a genuine convex combination of two
-distributions and the result is again a distribution. The guard handles the
-degenerate case of an utterance contradicting the entire common ground
-(`∑ L1 = 0`, e.g. `studyHumanity` against a CG concentrated on Ina): then
-the posterior carries no information and the CommonGround is left unchanged —
-matching Anderson's null-utterance "skip the update" behaviour (§7.1). -/
+**Renormalisation** is now intrinsic: `PMF.posterior` IS the renormalised
+listener ([anderson-2021] fn. 3: *"the probabilities are renormalized"*), so
+`updateCG` is a genuine convex combination of distributions by construction.
+The guard handles the degenerate case of an utterance contradicting the
+entire common ground (marginal 0, e.g. `studyHumanity` against a CG
+concentrated on Ina): the posterior carries no information and the
+CommonGround is left unchanged — matching Anderson's null-utterance "skip
+the update" behaviour (§7.1). -/
 noncomputable def conversationStep
     (cg : DistributionalCG MFWorld) (u : MFUtterance)
     (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) :
     DistributionalCG MFWorld :=
-  let rsaModel := mfRSAAt cg.weight cg.weight_nonneg
-  let posterior := rsaModel.L1 u
-  let postCG : DistributionalCG MFWorld :=
-    if h : 0 < ∑ w, posterior w then
-      DistributionalCG.ofWeights posterior
-        (fun w => rsaModel.L1agent.policy_nonneg u w) h
-    else cg
-  updateCG cg postCG lr hlr hlr1
+  if h : PMF.marginal (cgS1Total cg.dist) cg.dist u ≠ 0 then
+    updateCG cg ⟨PMF.posterior (cgS1Total cg.dist) cg.dist u h⟩ lr hlr hlr1
+  else cg
 
 /-- The conversation step preserves CommonGround non-negativity (now free:
 the result is a genuine distribution). -/
@@ -1430,8 +1391,10 @@ theorem conversationStep_nonneg (cg : DistributionalCG MFWorld)
 /-- With lr = 0, the conversation step leaves the CommonGround unchanged. -/
 theorem conversationStep_lr_zero (cg : DistributionalCG MFWorld) (u : MFUtterance) (w : MFWorld) :
     (conversationStep cg u 0 (le_refl 0) zero_le_one).weight w = cg.weight w := by
-  simp only [conversationStep]
-  exact updateCG_lr_zero cg _ w
+  unfold conversationStep
+  split
+  · exact updateCG_lr_zero cg _ w
+  · rfl
 
 -- ════════════════════════════════════════════════════
 -- § 15. Qualitative information-sharing properties
@@ -1595,26 +1558,31 @@ noncomputable def ApproxCGState.initial {W : Type*} [Fintype W] [Nonempty W]
   lr := lr
   speakerIsA := true
 
-/-- Approximate comprehension RSA (Figure 6): L0 uses CG_L, but L1
-uses B_L (listener's private beliefs) as the world prior. -/
-noncomputable def approxComprehensionRSA
-    (cgL : MFWorld → ℝ) (hcgL : ∀ w, 0 ≤ cgL w)
-    (belL : MFWorld → ℝ) (hbelL : ∀ w, 0 ≤ belL w) :
-    RSAConfig MFUtterance MFWorld where
-  meaning _ _ u w := if mfMeaning u w then cgL w else 0
-  meaning_nonneg _ _ _ w := by split; exact hcgL w; exact le_refl 0
-  s1Score l0 _ _ w u := l0 u w
-  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
-  α := 1
-  α_pos := one_pos
-  worldPrior := belL
-  worldPrior_nonneg := hbelL
-  latentPrior_nonneg _ _ := by norm_num
+private theorem cgS1_marginal_pos' (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (bel : PMF MFWorld) (hbel : ∀ w, bel w ≠ 0) (u : MFUtterance) :
+    PMF.marginal (cgS1 cg hcg) bel u ≠ 0 := by
+  obtain ⟨w, hw⟩ := mfMeaning_sat u
+  refine PMF.marginal_ne_zero _ _ _ (hbel w) ?_
+  have hL0 : cgL0 cg hcg u w ≠ 0 := by
+    unfold cgL0
+    rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+    exact ⟨hcg w, hw⟩
+  unfold cgS1
+  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 one_ne_zero
+
+/-- Approximate comprehension listener ([anderson-2021] Figure 6): L0/S1 run
+over the listener's CommonGround approximation `CG_L`, but the Bayesian
+inversion uses the listener's private beliefs `B_L` as the prior. Stated for
+everywhere-positive `CG_L`/`B_L` (the degenerate-support cases go through
+the total conversation-loop constructions above). -/
+noncomputable def approxL1 (cgL : PMF MFWorld) (hcgL : ∀ w, cgL w ≠ 0)
+    (belL : PMF MFWorld) (hbelL : ∀ w, belL w ≠ 0) (u : MFUtterance) : PMF MFWorld :=
+  PMF.posterior (cgS1 cgL hcgL) belL u (cgS1_marginal_pos' cgL hcgL belL hbelL u)
 
 /-- When beliefs equal the CommonGround, the approximate model reduces to the
 shared CommonGround model — the split is only meaningful when they diverge. -/
-theorem approx_reduces_to_shared (cg : MFWorld → ℝ) (hcg : ∀ w, 0 ≤ cg w) :
-    approxComprehensionRSA cg hcg cg hcg = mfRSAAt cg hcg := rfl
+theorem approx_reduces_to_shared (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (u : MFUtterance) : approxL1 cg hcg cg hcg u = cgL1 cg hcg u := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 19. Belief Update Model (§6, Figure 8)
