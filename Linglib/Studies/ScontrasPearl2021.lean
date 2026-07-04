@@ -1624,112 +1624,12 @@ def jumpIn4 : JumpOutcome4 → Horse4 → Bool
   | .w3, .h1 => true | .w3, .h2 => true | .w3, .h3 => true | .w3, _ => false
   | .w4, _ => true
 
-instance : Fintype Horse4 where
-  elems := ({Horse4.h1, .h2, .h3, .h4} : Finset Horse4)
-  complete := fun x => by cases x <;> simp
-
 /-- Restrictor: all entities are horses (trivial for this model). -/
 def horse4_sem : Denot Horse4 Unit (.e ⇒ .t) := fun _ => True
 
 /-- Jump predicate as Montague semantic value. -/
 def jumpIn4_sem (w : JumpOutcome4) : Denot Horse4 Unit (.e ⇒ .t) :=
   fun h => jumpIn4 w h = true
-
--- Exact semantics grounding
-
-/-- Exact surface scope: ⟦exactly 2⟧(horse)(λx.¬jump(x))(w).
-    "There are exactly two horses that didn't jump." -/
-noncomputable def twoNotExact_surface (w : JumpOutcome4) : Prop :=
-  exactly_n_sem (α := Horse4) 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
-
-/-- Exact inverse scope: ¬⟦exactly 2⟧(horse)(jump)(w).
-    "It's not the case that exactly two horses jumped." -/
-noncomputable def twoNotExact_inverse (w : JumpOutcome4) : Prop :=
-  ¬ (exactly_n_sem (α := Horse4) 2 horse4_sem (jumpIn4_sem w))
-
-/-- Exact surface grounding: `twoNotTruth .exact .surface` derives from
-    compositional ⟦exactly 2⟧(horse)(λx.¬jump(x)), not stipulation. -/
-theorem exact_surface_from_exactly_n_sem :
-    ∀ w, (twoNotTruth .exact .surface w = true) ↔ twoNotExact_surface w := by
-  intro w; cases w <;> simp [twoNotTruth, twoNotExact_surface, exactly_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Quantification.count] <;> sorry
-
-/-- Exact inverse grounding: `twoNotTruth .exact .inverse` derives from
-    negating the compositional ⟦exactly 2⟧(horse)(jump). -/
-theorem exact_inverse_from_exactly_n_sem :
-    ∀ w, (twoNotTruth .exact .inverse w = true) ↔ twoNotExact_inverse w := by
-  intro w; cases w <;> simp [twoNotTruth, twoNotExact_inverse, exactly_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Quantification.count] <;> sorry
-
--- At-least semantics grounding
-
-/-- At-least surface scope: ⟦at least 2⟧(horse)(λx.¬jump(x))(w).
-    "There are at least two horses that didn't jump." -/
-noncomputable def twoNotAtLeast_surface (w : JumpOutcome4) : Prop :=
-  at_least_n_sem (α := Horse4) 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
-
-/-- At-least inverse scope: ¬⟦at least 2⟧(horse)(jump)(w).
-    "It's not the case that at least two horses jumped." -/
-noncomputable def twoNotAtLeast_inverse (w : JumpOutcome4) : Prop :=
-  ¬ (at_least_n_sem (α := Horse4) 2 horse4_sem (jumpIn4_sem w))
-
-/-- At-least surface grounding: `twoNotTruth .atLeast .surface` derives from
-    compositional ⟦at least 2⟧(horse)(λx.¬jump(x)). -/
-theorem atLeast_surface_from_at_least_n_sem :
-    ∀ w, (twoNotTruth .atLeast .surface w = true) ↔ twoNotAtLeast_surface w := by
-  intro w; cases w <;> simp [twoNotTruth, twoNotAtLeast_surface, at_least_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Quantification.count] <;> sorry
-
-/-- At-least inverse grounding: `twoNotTruth .atLeast .inverse` derives from
-    negating the compositional ⟦at least 2⟧(horse)(jump). -/
-theorem atLeast_inverse_from_at_least_n_sem :
-    ∀ w, (twoNotTruth .atLeast .inverse w = true) ↔ twoNotAtLeast_inverse w := by
-  intro w; cases w <;> simp [twoNotTruth, twoNotAtLeast_inverse, at_least_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Quantification.count] <;> sorry
-
-/-- RSA meaning is grounded in compositional semantics: the meaning function
-    used by the two-not RSA config matches the GQT numeral quantifiers. -/
-theorem rsa_meaning_grounded (nr : NumeralReading) (s : ScopeReading) (w : JumpOutcome4) :
-    (uttMeaning nr s .twoNot w = true) ↔ match nr, s with
-    | .exact, .surface => twoNotExact_surface w
-    | .exact, .inverse => twoNotExact_inverse w
-    | .atLeast, .surface => twoNotAtLeast_surface w
-    | .atLeast, .inverse => twoNotAtLeast_inverse w := by
-  cases nr <;> cases s
-  · exact exact_surface_from_exactly_n_sem w
-  · exact exact_inverse_from_exactly_n_sem w
-  · exact atLeast_surface_from_at_least_n_sem w
-  · exact atLeast_inverse_from_at_least_n_sem w
-
--- Named numeral meaning ↔ GQT bridge
-
-/-- The two grounding layers agree: `bareMeaning` (count-based) and
-    `exactly_n_sem` (GQT compositional) produce the same truth values.
-    Chains `twoNotExact_surface_matches_bareMeaning` with
-    `exact_surface_from_exactly_n_sem` by transitivity. -/
-theorem bareMeaning_agrees_gqt_exact_surface :
-    ∀ w, bareMeaning 2 (4 - w.toNat) ↔ twoNotExact_surface w := by
-  intro w
-  rw [← twoNotExact_surface_matches_bareMeaning]
-  exact exact_surface_from_exactly_n_sem w
-
-theorem bareMeaning_agrees_gqt_exact_inverse :
-    ∀ w, ¬ bareMeaning 2 w.toNat ↔ twoNotExact_inverse w := by
-  intro w
-  rw [← twoNotExact_inverse_matches_bareMeaning]
-  exact exact_inverse_from_exactly_n_sem w
-
-theorem atLeastMeaning_agrees_gqt_atLeast_surface :
-    ∀ w, atLeastMeaning 2 (4 - w.toNat) ↔ twoNotAtLeast_surface w := by
-  intro w
-  rw [← twoNotAtLeast_surface_matches_atLeastMeaning]
-  exact atLeast_surface_from_at_least_n_sem w
-
-theorem atLeastMeaning_agrees_gqt_atLeast_inverse :
-    ∀ w, ¬ atLeastMeaning 2 w.toNat ↔ twoNotAtLeast_inverse w := by
-  intro w
-  rw [← twoNotAtLeast_inverse_matches_atLeastMeaning]
-  exact atLeast_inverse_from_at_least_n_sem w
 
 -- Scope Derivation
 
