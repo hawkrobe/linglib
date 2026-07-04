@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
+import Linglib.Semantics.Focus.Realization
 import Linglib.Data.Examples.HartmannZimmermann2004
 
 /-!
@@ -83,57 +84,63 @@ def Config.WF (c : Config) : Prop :=
 instance (c : Config) : Decidable c.WF :=
   inferInstanceAs (Decidable (_ → _))
 
-/-- The marking each configuration receives: subjects postpose in every
-aspect ((17b)); intransitive predicate focus takes the suffix *-i*
-((24b)); transitive perfective non-subject foci get the prosodic
-boundary ((25a–c)); progressive non-subject foci are unmarked
-((31)/(32a–c)). -/
-def marking : Config → Strategy
-  | ⟨.subject, _, _⟩        => .postposing
-  | ⟨_, .perfective, false⟩ => .suffixI
-  | ⟨_, .perfective, true⟩  => .boundary
-  | ⟨_, .progressive, _⟩    => .unmarked
+/-- The overt reflexes of each configuration: subjects surface
+displaced in every aspect ((17b)); intransitive predicate focus bears
+the morpheme *-i* ((24b)); transitive perfective non-subject foci get
+the prosodic boundary after the verb ((25a–c)); progressive non-subject
+foci receive nothing ((31)/(32a–c)). -/
+def realize : Config → Realization Focused
+  | ⟨.subject, _, _⟩        => ⟨.subject, [.displacement .subject]⟩
+  | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
+  | ⟨f, .perfective, true⟩  => ⟨f, [.prosodic .verb]⟩
+  | ⟨f, .progressive, _⟩    => ⟨f, []⟩
 
-/-- Overt marking: any strategy but `unmarked`. -/
-def Strategy.IsOvert : Strategy → Prop
-  | .unmarked => False
-  | _         => True
+/-- The paper's strategy labels, classified from the realization
+shape — a derived quotient, not a primitive tag. -/
+def marking (c : Config) : Strategy :=
+  match (realize c).reflexes with
+  | [.displacement _] => .postposing
+  | [.morpheme _]     => .suffixI
+  | [.prosodic _]     => .boundary
+  | _                 => .unmarked
 
-instance (s : Strategy) : Decidable s.IsOvert := by
-  cases s <;> simp [Strategy.IsOvert] <;> infer_instance
-
-/-- Focused subjects are marked in every aspect — the paper's §6
-subjects-vs-non-subjects generalization, shared with Hausa. -/
+/-- Focused subjects are overtly marked in every aspect — the paper's
+§6 subjects-vs-non-subjects generalization, shared with Hausa. -/
 theorem subject_always_marked (c : Config) (h : c.focused = .subject) :
-    (marking c).IsOvert := by
+    (realize c).IsOvert := by
   obtain ⟨f, a, t⟩ := c
   cases h
-  trivial
+  simp [realize, Realization.IsOvert]
 
 /-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
 contra Kidda 1993). -/
 theorem progressive_nonsubject_unmarked (c : Config)
     (hs : c.focused ≠ .subject) (ha : c.aspect = .progressive) :
-    marking c = .unmarked := by
+    (realize c).reflexes = [] := by
   obtain ⟨f, a, t⟩ := c
   cases ha
   cases f <;> first | exact absurd rfl hs | rfl
 
 /-- Focus marking is not obligatory: a well-formed focus configuration
-with no overt reflex — (32a), object focus in the progressive. The
-Tangale side of the counterexample the Hausa chapter states for the
-universalist Basic Focus Rule. -/
+with no overt reflex — (32a), object focus in the progressive. -/
 theorem focus_marking_not_obligatory :
-    ∃ c : Config, c.WF ∧ ¬ (marking c).IsOvert :=
-  ⟨⟨.object, .progressive, true⟩, fun _ => rfl, fun h => h⟩
+    ∃ c : Config, c.WF ∧ ¬ (realize c).IsOvert :=
+  ⟨⟨.object, .progressive, true⟩, fun _ => rfl, fun h => h rfl⟩
+
+/-- Tangale refutes the universalist claim that every focus receives an
+overt reflex — the Tangale side of the counterexample the Hausa
+chapter states against the Basic Focus Rule. -/
+theorem tangale_refutes_perceptibility :
+    ¬ Semantics.Focus.EveryFocusPerceptible realize :=
+  fun h => h ⟨.object, .progressive, true⟩ rfl
 
 /-- The perfective boundary underdetermines the focus extent: on
 transitive perfective non-subject configurations, `focused` does not
-factor through `marking` — (25a–c) are string- and pitch-identical
+factor through the reflexes — (25a–c) are string- and pitch-identical
 across the three extents. -/
 theorem boundary_underdetermines_extent :
     ¬ Function.FactorsThroughOn
-        Config.focused marking
+        Config.focused (fun c => (realize c).reflexes)
         {c | c.aspect = .perfective ∧ c.transitive = true ∧
              c.focused ≠ .subject} := by
   rw [Function.not_factorsThroughOn_iff_exists_witness]
