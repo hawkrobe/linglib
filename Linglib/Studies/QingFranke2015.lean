@@ -1,5 +1,8 @@
-import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.DaleReiter1995
 
@@ -29,8 +32,8 @@ yielding a family of models that includes [frank-goodman-2012] as one instance:
 - **Salience (S)**: L0 weights by perceptual salience:
   S(t|m) = S(t) · ⟦m⟧(t) / Σ_t' S(t') · ⟦m⟧(t')
 
-This enters the RSAConfig via `meaning`: uniform uses constant 1 for true worlds;
-salience uses S(w) for true worlds.
+This enters the literal listener as its prior: uniform (`qfPriorU`) or
+salience-weighted (`qfPriorS`), via the prior-in-L0 construction.
 
 ### Speaker Goal (x ∈ {a, b}): What does the speaker optimize?
 
@@ -48,8 +51,8 @@ This enters via `s1Score`: belief-oriented uses log L0; action-oriented uses raw
 - **Action-oriented (a)**: softmax over Bayesian posterior
   ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m)) (Eq. 14)
 
-The belief-oriented listener IS `RSAConfig.L1`. The action-oriented listener is
-a composable extension defined as `softmax ∘ L1`.
+The belief-oriented listener IS the Bayesian `PMF.posterior`. The
+action-oriented listener is a composable softmax extension.
 
 ## Speaker Models (4 variants)
 
@@ -88,8 +91,6 @@ direction (green_circle: 115/180 = 64%), NOT salience.
 | 6 | `salience_reversal_green` | uniform vs salience L1 flip for "green" | σ_bU |
 
 -/
-
-set_option autoImplicit false
 
 namespace QingFranke2015
 
@@ -235,7 +236,7 @@ theorem actionGoalScore_nonneg (cost : Utterance → ℝ) :
   fun _ _ _ _ _ _ _ => le_of_lt (exp_pos _)
 
 -- ============================================================================
--- §6. RSAConfig Constructor
+-- §6. Priors
 -- ============================================================================
 
 /-- Uniform prior: all objects equally weighted. -/
@@ -244,107 +245,398 @@ def uniformPrior : Object → ℝ := fun _ => 1
 theorem uniformPrior_nonneg : ∀ w, 0 ≤ uniformPrior w :=
   fun _ => le_of_lt one_pos
 
-/-- Parametric Q&F RSAConfig constructor.
-
-    Decouples the three orthogonal dimensions:
-    - `speakerPrior`: belief dimension — baked into `meaning` as L0's prior weight
-      (uniform = 1 for all; salience = S(w))
-    - `s1` + `s1_nn`: goal dimension — beliefGoalScore or actionGoalScore
-    - `listenerPrior`: listener's world prior at L1 (independent of speaker's belief)
-
-    The speaker's belief about L0 and the listener's prior vary independently —
-    the speaker may assume uniform L0 while the listener uses salience, or vice versa.
-    This decoupling is a key feature of the RSAConfig API. -/
-@[reducible]
-noncomputable def mkConfig
-    (speakerPrior : Object → ℝ) (sp_nn : ∀ w, 0 ≤ speakerPrior w)
-    (s1 : (Utterance → Object → ℝ) → ℝ → Unit → Object → Utterance → ℝ)
-    (s1_nn : ∀ (l0 : Utterance → Object → ℝ) (α : ℝ) (l : Unit) (w : Object) (u : Utterance),
-      (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ s1 l0 α l w u)
-    (listenerPrior : Object → ℝ) (lp_nn : ∀ w, 0 ≤ listenerPrior w) :
-    RSAConfig Utterance Object where
-  meaning _ _ u w := if u.appliesTo w then speakerPrior w else 0
-  meaning_nonneg _ _ _ w := by
-    split
-    · exact sp_nn w
-    · exact le_refl 0
-  s1Score := s1
-  s1Score_nonneg := s1_nn
-  worldPrior := listenerPrior
-  worldPrior_nonneg := lp_nn
-  α := 1
-  α_pos := one_pos
-  latentPrior_nonneg _ _ := by positivity
-
 -- ============================================================================
 -- §7. The 4 Speaker Models
 -- ============================================================================
-
-/-- σ_bU: Belief-oriented speaker, uniform L0.
-    This IS standard RSA with utterance costs.
-    S1 score = exp(λ · (log U(t|m) - Cost(m))). -/
-@[reducible]
-noncomputable def σ_bU (cost : Utterance → ℝ) (lp : Object → ℝ) (lp_nn : ∀ w, 0 ≤ lp w) :
-    RSAConfig Utterance Object :=
-  mkConfig uniformPrior uniformPrior_nonneg
-    (beliefGoalScore cost) (beliefGoalScore_nonneg cost)
-    lp lp_nn
-
-/-- σ_aU: Action-oriented speaker, uniform L0.
-    S1 score = exp(λ · (U(t|m) - Cost(m))). -/
-@[reducible]
-noncomputable def σ_aU (cost : Utterance → ℝ) (lp : Object → ℝ) (lp_nn : ∀ w, 0 ≤ lp w) :
-    RSAConfig Utterance Object :=
-  mkConfig uniformPrior uniformPrior_nonneg
-    (actionGoalScore cost) (actionGoalScore_nonneg cost)
-    lp lp_nn
-
-/-- σ_bS: Belief-oriented speaker, salience-weighted L0.
-    The speaker assumes L0 weights worlds by perceptual salience:
-    L0(t|m) ∝ S(t) · ⟦m⟧(t). S1 score = exp(λ · (log S(t|m) - Cost(m))). -/
-@[reducible]
-noncomputable def σ_bS (cost : Utterance → ℝ) (lp : Object → ℝ) (lp_nn : ∀ w, 0 ≤ lp w) :
-    RSAConfig Utterance Object :=
-  mkConfig saliencePrior saliencePrior_nonneg
-    (beliefGoalScore cost) (beliefGoalScore_nonneg cost)
-    lp lp_nn
-
-/-- σ_aS: Action-oriented speaker, salience-weighted L0.
-    Same salience-weighted L0 as σ_bS, but S1 score = exp(λ · (S(t|m) - Cost(m))). -/
-@[reducible]
-noncomputable def σ_aS (cost : Utterance → ℝ) (lp : Object → ℝ) (lp_nn : ∀ w, 0 ≤ lp w) :
-    RSAConfig Utterance Object :=
-  mkConfig saliencePrior saliencePrior_nonneg
-    (actionGoalScore cost) (actionGoalScore_nonneg cost)
-    lp lp_nn
 
 -- ============================================================================
 -- §8. Concrete Configs for Findings
 -- ============================================================================
 
-/-- σ_bU with zero cost, uniform listener prior.
-    Used for finding 4 (no cost → no symmetry breaking). -/
-@[reducible]
-noncomputable def zeroCostCfg : RSAConfig Utterance Object :=
-  σ_bU (fun _ => 0) uniformPrior uniformPrior_nonneg
+-- ============================================================================
+-- §9b. PMF chain (local pending the RSA API pass)
+-- ============================================================================
 
-/-- σ_bU with adjective cost = 1/2, uniform listener prior.
-    Standard RSA with cost asymmetry. Used for speaker predictions (findings 1–3)
-    and the uniform half of salience reversal (findings 5–6). -/
-@[reducible]
-noncomputable def costCfg : RSAConfig Utterance Object :=
-  σ_bU (adjCost (1/2)) uniformPrior uniformPrior_nonneg
+section PMFChain
 
-/-- σ_bU with adjective cost = 1/2, salience-weighted listener prior.
-    Shares the same S1 policy as costCfg (same speaker model σ_bU) but produces
-    different L1 posteriors because L1's Bayesian inversion uses a salience-weighted
-    world prior [Eq. 15 with v = S]. Used for findings 5–6 (salience half). -/
-@[reducible]
-noncomputable def salienceCfg : RSAConfig Utterance Object :=
-  σ_bU (adjCost (1/2)) saliencePrior saliencePrior_nonneg
+open scoped ENNReal
 
--- §9. Action-oriented listener ρ_a is now `RSAConfig.L1_action` in Config.lean.
--- Use `cfg.L1_action αL u w` via dot notation (open RSA provides namespace).
+/-- Every utterance applies to some object, and every object satisfies some
+utterance. -/
+private theorem appliesTo_sat : ∀ u : Utterance, ∃ w, u.appliesTo w = true := by
+  decide
+
+private noncomputable def qfPriorU : PMF Object := PMF.uniformOfFintype Object
+
+private theorem qfPriorU_pos (w : Object) : qfPriorU w ≠ 0 := by
+  rw [qfPriorU, PMF.uniformOfFintype_apply]
+  simp
+
+private theorem qfPriorU_apply (w : Object) : qfPriorU w = 3⁻¹ := by
+  rw [qfPriorU, PMF.uniformOfFintype_apply,
+    show Fintype.card Object = 3 from by decide]
+  norm_num
+
+private theorem sumObjs (f : Object → ℝ≥0∞) :
+    ∑' w, f w = f .green_square + f .blue_circle + f .green_circle := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Object)
+      = {.green_square, .blue_circle, .green_circle} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem sumUtts (f : Utterance → ℝ≥0∞) :
+    ∑' u, f u = f .square + f .circle + f .green + f .blue := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Utterance) = {.square, .circle, .green, .blue} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+/-- Salience prior as a PMF (Table 2 counts, total 240). -/
+private noncomputable def qfPriorS : PMF Object :=
+  PMF.normalize (fun w => ENNReal.ofReal (saliencePrior w))
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.green_square, by
+      rw [ENNReal.ofReal_ne_zero_iff]
+      norm_num [saliencePrior]⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+
+private theorem salience_sum :
+    (∑' w, ENNReal.ofReal (saliencePrior w)) = ENNReal.ofReal 240 := by
+  rw [sumObjs]
+  norm_num [saliencePrior]
+
+private theorem qfPriorS_apply (w : Object) :
+    qfPriorS w = ENNReal.ofReal (saliencePrior w / 240) := by
+  rw [qfPriorS, PMF.normalize_apply, salience_sum,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num),
+    ← ENNReal.ofReal_mul (by cases w <;> norm_num [saliencePrior])]
+  rw [div_eq_mul_inv]
+
+private theorem qfPriorS_pos (w : Object) : qfPriorS w ≠ 0 := by
+  rw [qfPriorS_apply, ENNReal.ofReal_ne_zero_iff]
+  cases w <;> norm_num [saliencePrior]
+
+/-- Literal listener at a speaker-belief prior (Figure-4-style prior-in-L0;
+[qing-franke-2015] eqs. 5–8). -/
+private noncomputable def qfL0 (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0)
+    (u : Utterance) : PMF Object :=
+  RSA.L0LassiterGoodman bel (fun u w => u.appliesTo w) u (by
+    obtain ⟨w, hw⟩ := appliesTo_sat u
+    exact ENNReal.summable.tsum_ne_zero_iff.mpr
+      ⟨w, by rw [hw]; simpa using hbel w⟩)
+
+/-- Uniform-belief L0 values: `1` on the unique-feature objects, `1/2` on
+shared features (extensions of size 1 and 2 over 3 objects). -/
+private theorem qfL0_uniform_apply (u : Utterance) (w : Object) :
+    qfL0 qfPriorU qfPriorU_pos u w
+      = if u.appliesTo w then
+          (if u = .square ∨ u = .blue then 1 else 2⁻¹) else 0 := by
+  unfold qfL0
+  rw [RSA.L0LassiterGoodman_apply]
+  have hmass : (∑' w', qfPriorU w' * (if u.appliesTo w' then (1 : ℝ≥0∞) else 0))
+      = if u = .square ∨ u = .blue then 3⁻¹ else 3⁻¹ + 3⁻¹ := by
+    rw [sumObjs]
+    simp only [qfPriorU_apply]
+    cases u <;> simp +decide
+  rw [hmass, qfPriorU_apply]
+  by_cases hw : u.appliesTo w = true
+  · rw [hw]
+    by_cases h1 : u = .square ∨ u = .blue
+    · simp only [h1, if_true, mul_one]
+      rw [ENNReal.mul_inv_cancel (by norm_num) (by norm_num)]
+    · simp only [h1, if_false, reduceIte, mul_one]
+      rw [show (3 : ℝ≥0∞)⁻¹ + 3⁻¹ = 3⁻¹ * 2 from by ring,
+        ENNReal.mul_inv (by norm_num) (by norm_num), ← mul_assoc,
+        ENNReal.mul_inv_cancel (by norm_num) (by norm_num), one_mul]
+  · rw [Bool.not_eq_true] at hw
+    rw [hw]
+    simp
+
+/-- Extension salience sums (denominators of the salience L0). -/
+private noncomputable def extSum : Utterance → ℝ
+  | .square => 71
+  | .circle => 169
+  | .green  => 101
+  | .blue   => 139
+
+/-- Salience-belief L0 values on support: object salience over extension
+salience ([qing-franke-2015] L0 ∝ S(t)·⟦m⟧). -/
+private theorem qfL0_salience_true {u : Utterance} {w : Object}
+    (hw : u.appliesTo w = true) :
+    qfL0 qfPriorS qfPriorS_pos u w
+      = ENNReal.ofReal (saliencePrior w / extSum u) := by
+  unfold qfL0
+  rw [RSA.L0LassiterGoodman_apply, hw]
+  have hmass : (∑' w', qfPriorS w' * (if u.appliesTo w' then (1 : ℝ≥0∞) else 0))
+      = ENNReal.ofReal (extSum u / 240) := by
+    rw [sumObjs]
+    simp only [qfPriorS_apply]
+    cases u <;>
+      · simp +decide [saliencePrior, extSum]
+        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+        try norm_num
+  rw [hmass, qfPriorS_apply]
+  simp only [reduceIte, mul_one]
+  rw [← ENNReal.ofReal_inv_of_pos (by cases u <;> norm_num [extSum]),
+    ← ENNReal.ofReal_mul (by cases w <;> norm_num [saliencePrior])]
+  congr 1
+  cases u <;> cases w <;> norm_num [saliencePrior, extSum]
+
+private theorem qfL0_salience_false {u : Utterance} {w : Object}
+    (hw : u.appliesTo w = false) :
+    qfL0 qfPriorS qfPriorS_pos u w = 0 := by
+  unfold qfL0
+  rw [RSA.L0LassiterGoodman_apply, hw]
+  simp
+
+/-! ### Speakers and exp-bound helpers -/
+
+private noncomputable def qfCf (c : ℝ) (u : Utterance) : ℝ≥0∞ :=
+  ENNReal.ofReal (Real.exp (-(adjCost c u)))
+
+private theorem qfCf_pos (c : ℝ) (u : Utterance) : qfCf c u ≠ 0 := by
+  rw [qfCf, ENNReal.ofReal_ne_zero_iff]
+  exact Real.exp_pos _
+
+private theorem qfCf_square (c : ℝ) : qfCf c .square = 1 := by
+  simp [qfCf, adjCost]
+
+private theorem qfCf_circle (c : ℝ) : qfCf c .circle = 1 := by
+  simp [qfCf, adjCost]
+
+private theorem qfCf_green (c : ℝ) : qfCf c .green = ENNReal.ofReal (Real.exp (-c)) :=
+  rfl
+
+private theorem qfCf_blue (c : ℝ) : qfCf c .blue = ENNReal.ofReal (Real.exp (-c)) :=
+  rfl
+
+private theorem objSat : ∀ w : Object, ∃ u : Utterance, u.appliesTo w = true := by
+  decide
+
+/-- Belief-oriented speaker ([qing-franke-2015] eq. 10 at λ = 1): weights
+`L0 · exp(−Cost)`. -/
+private noncomputable def s1B (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0) (c : ℝ)
+    (w : Object) : PMF Utterance :=
+  RSA.S1Belief (qfL0 bel hbel) (qfCf c) 1 w
+    (by
+      obtain ⟨u, hu⟩ := objSat w
+      refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨u, mul_ne_zero ?_ (qfCf_pos c u)⟩
+      have hL0 : qfL0 bel hbel u w ≠ 0 := by
+        unfold qfL0
+        rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+        exact ⟨hbel w, hu⟩
+      exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hL0) (PMF.apply_ne_top _ _)).ne')
+    (ENNReal.tsum_ne_top_of_fintype fun u =>
+      ENNReal.mul_ne_top
+        (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+        (by rw [qfCf]; exact ENNReal.ofReal_ne_top))
+
+/-- Action-oriented speaker ([qing-franke-2015] eq. 9 at λ = 1): weights
+`exp(L0 − Cost)` — positive on ALL utterances, including false ones (the
+action-oriented speaker softmaxes raw success probability). Local private
+op pending the RSA API pass. -/
+private noncomputable def s1A (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0) (c : ℝ)
+    (w : Object) : PMF Utterance :=
+  PMF.normalize
+    (fun u => ENNReal.ofReal (Real.exp ((qfL0 bel hbel u w).toReal - adjCost c u)))
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.square, by
+      rw [ENNReal.ofReal_ne_zero_iff]
+      exact Real.exp_pos _⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+
+/-- The five speaker chains of §7–§8, on the PMF face. -/
+noncomputable def s1ZeroCost : Object → PMF Utterance := s1B qfPriorU qfPriorU_pos 0
+noncomputable def s1Cost : Object → PMF Utterance := s1B qfPriorU qfPriorU_pos (1/2)
+noncomputable def s1AU : Object → PMF Utterance := s1A qfPriorU qfPriorU_pos (1/2)
+noncomputable def s1BS : Object → PMF Utterance := s1B qfPriorS qfPriorS_pos (1/2)
+noncomputable def s1AS : Object → PMF Utterance := s1A qfPriorS qfPriorS_pos (1/2)
+
+private theorem s1B_marginal_pos (bel : PMF Object) (hbel : ∀ w, bel w ≠ 0) (c : ℝ)
+    (lp : PMF Object) (hlp : ∀ w, lp w ≠ 0) (u : Utterance) :
+    PMF.marginal (s1B bel hbel c) lp u ≠ 0 := by
+  obtain ⟨w, hw⟩ := appliesTo_sat u
+  refine PMF.marginal_ne_zero _ _ _ (hlp w) ?_
+  have hL0 : qfL0 bel hbel u w ≠ 0 := by
+    unfold qfL0
+    rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+    exact ⟨hbel w, hw⟩
+  unfold s1B
+  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (qfCf_pos c u)
+
+/-- Pragmatic listeners ([qing-franke-2015] eqs. 12–13, 15): same σ_bU cost
+speaker, uniform vs salience world prior. -/
+noncomputable def l1Cost (u : Utterance) : PMF Object :=
+  PMF.posterior (s1Cost) qfPriorU u
+    (s1B_marginal_pos qfPriorU qfPriorU_pos (1/2) qfPriorU qfPriorU_pos u)
+
+noncomputable def l1Sal (u : Utterance) : PMF Object :=
+  PMF.posterior (s1Cost) qfPriorS u
+    (s1B_marginal_pos qfPriorU qfPriorU_pos (1/2) qfPriorS qfPriorS_pos u)
+
+/-! ### The `exp(−1/2)` atom and its three numeric bounds -/
+
+private noncomputable def xc : ℝ := Real.exp (-(1/2))
+
+private theorem xc_pos : 0 < xc := Real.exp_pos _
+
+private theorem xc_lt_one : xc < 1 := by
+  rw [xc, show (1 : ℝ) = Real.exp 0 from Real.exp_zero.symm]
+  exact Real.exp_lt_exp.mpr (by norm_num)
+
+private theorem xc_sq : xc * xc = (Real.exp 1)⁻¹ := by
+  rw [xc, ← Real.exp_add, ← Real.exp_neg]
+  norm_num
+
+private theorem xc_sq_mul : xc * xc * Real.exp 1 = 1 := by
+  rw [xc_sq, inv_mul_cancel₀ (Real.exp_pos 1).ne']
+
+/-- `exp(−1/2) > 1/2` ⟺ `e < 4` — [qing-franke-2015]'s Finding 2 needs the
+adjective's cost penalty to stay above the halved literal probability. -/
+private theorem xc_gt_half : 1/2 < xc := by
+  by_contra h
+  push Not at h
+  have h2 : xc * xc ≤ 1/4 := by nlinarith [xc_pos]
+  have h3 : Real.exp 1 * (xc * xc) ≤ Real.exp 1 * (1/4) :=
+    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
+  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
+  nlinarith [Real.exp_one_lt_d9]
+
+/-- `exp(−1/2) < 139/169` ⟺ `e > (169/139)²` — the salience-belief speaker's
+circle-over-blue reversal at the blue circle. -/
+private theorem xc_lt_139_169 : xc < 139/169 := by
+  by_contra h
+  push Not at h
+  have h2 : (139/169 : ℝ) * (139/169) ≤ xc * xc := by nlinarith [xc_pos]
+  have h3 : Real.exp 1 * ((139/169 : ℝ) * (139/169)) ≤ Real.exp 1 * (xc * xc) :=
+    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
+  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
+  nlinarith [Real.exp_one_gt_d9]
+
+/-- `exp(−1/2) > 101/169` ⟺ `e < (169/101)²` ≈ 2.7998 — the tight bound
+(margin ≈ 0.08 over `exp_one_lt_d9`). -/
+private theorem xc_gt_101_169 : 101/169 < xc := by
+  by_contra h
+  push Not at h
+  have h2 : xc * xc ≤ (101/169 : ℝ) * (101/169) := by nlinarith [xc_pos]
+  have h3 : Real.exp 1 * (xc * xc) ≤ Real.exp 1 * ((101/169 : ℝ) * (101/169)) :=
+    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
+  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
+  nlinarith [Real.exp_one_lt_d9]
+
+/-! ### Cost-speaker values (for the listener comparisons) -/
+
+private theorem half_conv : (2 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/2) := by
+  rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 from (ENNReal.ofReal_ofNat 2).symm,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
+  norm_num
+
+private theorem s1Cost_val {u : Utterance} {w : Object} (hw : u.appliesTo w = true)
+    {q Z : ℝ} (hq0 : 0 ≤ q)
+    (hq : (if u = .square ∨ u = .blue then (1 : ℝ≥0∞) else 2⁻¹) * qfCf (1/2) u
+      = ENNReal.ofReal q)
+    (hZ : (∑' u', (qfL0 qfPriorU qfPriorU_pos u' w : ℝ≥0∞) ^ (1 : ℝ) * qfCf (1/2) u')
+      = ENNReal.ofReal Z) (hZpos : 0 < Z) :
+    s1Cost w u = ENNReal.ofReal (q * Z⁻¹) := by
+  unfold s1Cost s1B
+  rw [RSA.S1Belief_apply, hZ, ENNReal.rpow_one, qfL0_uniform_apply, hw]
+  simp only [if_true]
+  rw [hq, ← ENNReal.ofReal_inv_of_pos hZpos, ← ENNReal.ofReal_mul hq0]
+
+private theorem Z_gs :
+    (∑' u', (qfL0 qfPriorU qfPriorU_pos u' .green_square : ℝ≥0∞) ^ (1 : ℝ) *
+      qfCf (1/2) u') = ENNReal.ofReal (1 + xc/2) := by
+  rw [sumUtts]
+  simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_square, qfCf_circle,
+    qfCf_green, qfCf_blue]
+  simp +decide
+  rw [half_conv, ← ENNReal.ofReal_mul (by norm_num),
+    show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm,
+    ← ENNReal.ofReal_add (by norm_num) (by positivity)]
+  congr 1
+  unfold xc
+  norm_num
+  ring
+
+private theorem Z_bc :
+    (∑' u', (qfL0 qfPriorU qfPriorU_pos u' .blue_circle : ℝ≥0∞) ^ (1 : ℝ) *
+      qfCf (1/2) u') = ENNReal.ofReal (1/2 + xc) := by
+  rw [sumUtts]
+  simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_square, qfCf_circle,
+    qfCf_green, qfCf_blue]
+  simp +decide
+  rw [half_conv, ← ENNReal.ofReal_add (by norm_num) (by positivity)]
+  congr 1
+  unfold xc
+  norm_num
+
+private theorem Z_gc :
+    (∑' u', (qfL0 qfPriorU qfPriorU_pos u' .green_circle : ℝ≥0∞) ^ (1 : ℝ) *
+      qfCf (1/2) u') = ENNReal.ofReal (1/2 + xc/2) := by
+  rw [sumUtts]
+  simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_square, qfCf_circle,
+    qfCf_green, qfCf_blue]
+  simp +decide
+  rw [half_conv, ← ENNReal.ofReal_mul (by norm_num),
+    ← ENNReal.ofReal_add (by norm_num) (by positivity)]
+  congr 1
+  unfold xc
+  norm_num
+  ring
+
+private theorem third_conv : (3 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/3) := by
+  rw [show (3 : ℝ≥0∞) = ENNReal.ofReal 3 from (ENNReal.ofReal_ofNat 3).symm,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
+  norm_num
+
+private theorem circle_weight :
+    (if Utterance.circle = Utterance.square ∨ Utterance.circle = Utterance.blue
+      then (1 : ℝ≥0∞) else 2⁻¹) * qfCf (1/2) .circle = ENNReal.ofReal (1/2) := by
+  rw [show (if Utterance.circle = Utterance.square ∨ Utterance.circle = Utterance.blue
+      then (1 : ℝ≥0∞) else 2⁻¹) = 2⁻¹ from by simp +decide, qfCf_circle, mul_one]
+  exact half_conv
+
+private theorem green_weight :
+    (if Utterance.green = Utterance.square ∨ Utterance.green = Utterance.blue
+      then (1 : ℝ≥0∞) else 2⁻¹) * qfCf (1/2) .green = ENNReal.ofReal (xc/2) := by
+  rw [show (if Utterance.green = Utterance.square ∨ Utterance.green = Utterance.blue
+      then (1 : ℝ≥0∞) else 2⁻¹) = 2⁻¹ from by simp +decide, qfCf_green, half_conv,
+    ← ENNReal.ofReal_mul (by norm_num)]
+  congr 1
+  unfold xc
+  ring
+
+private theorem sc_circle_gc :
+    s1Cost .green_circle .circle = ENNReal.ofReal ((1/2) * (1/2 + xc/2)⁻¹) :=
+  s1Cost_val (by decide) (by norm_num) circle_weight Z_gc
+    (by have := xc_pos; linarith)
+
+private theorem sc_circle_bc :
+    s1Cost .blue_circle .circle = ENNReal.ofReal ((1/2) * (1/2 + xc)⁻¹) :=
+  s1Cost_val (by decide) (by norm_num) circle_weight Z_bc
+    (by have := xc_pos; linarith)
+
+private theorem sc_green_gc :
+    s1Cost .green_circle .green = ENNReal.ofReal ((xc/2) * (1/2 + xc/2)⁻¹) :=
+  s1Cost_val (by decide) (by have := xc_pos; linarith) green_weight Z_gc
+    (by have := xc_pos; linarith)
+
+private theorem sc_green_gs :
+    s1Cost .green_square .green = ENNReal.ofReal ((xc/2) * (1 + xc/2)⁻¹) :=
+  s1Cost_val (by decide) (by have := xc_pos; linarith) green_weight Z_gs
+    (by have := xc_pos; linarith)
+
+private theorem xc_eq : Real.exp (-2⁻¹) = xc := by
+  unfold xc
+  norm_num
+
+private theorem qfCf_zero (u : Utterance) : qfCf 0 u = 1 := by
+  cases u <;> simp [qfCf, adjCost]
+
+end PMFChain
+
+open scoped ENNReal
 
 -- ============================================================================
 -- §10. Structural Properties
@@ -386,15 +678,30 @@ theorem green_ambiguous :
     (ambiguous, cost=1/2). Both informativity and cost favor "square".
     Evidence: 135/144 speakers chose "square" (Table 1). -/
 theorem speaker_prefers_unique_shape :
-    costCfg.S1 () .green_square .square > costCfg.S1 () .green_square .green := by
-  rsa_predict
+    s1Cost .green_square .square > s1Cost .green_square .green := by
+  unfold s1Cost s1B
+  rw [gt_iff_lt, RSA.S1Belief_apply_lt_iff_score_lt]
+  simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_square, qfCf_green]
+  simp +decide
+  rw [half_conv, ← ENNReal.ofReal_mul (by norm_num),
+    show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr ?_
+  rw [xc_eq]
+  nlinarith [xc_pos, xc_lt_one]
 
 /-- Finding 2: For blue_circle, S1 prefers "blue" (unique, cost=1/2) over "circle"
     (ambiguous, cost=0). Informativity dominates cost.
     Evidence: 119/144 speakers chose "blue" (Table 1). -/
 theorem speaker_prefers_unique_color :
-    costCfg.S1 () .blue_circle .blue > costCfg.S1 () .blue_circle .circle := by
-  rsa_predict
+    s1Cost .blue_circle .blue > s1Cost .blue_circle .circle := by
+  unfold s1Cost s1B
+  rw [gt_iff_lt, RSA.S1Belief_apply_lt_iff_score_lt]
+  simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_circle, qfCf_blue]
+  simp +decide
+  rw [half_conv]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by positivity)).mpr ?_
+  rw [xc_eq]
+  exact xc_gt_half
 
 /-- Finding 3: For green_circle, cost breaks the tie between the two ambiguous
     words: S1 prefers "circle" (cost=0) over "green" (cost=1/2). Both are equally
@@ -402,15 +709,29 @@ theorem speaker_prefers_unique_color :
     Evidence: 81/144 chose "circle", 63/144 chose "green" (Table 1;
     not statistically significant: χ²=2.25, p=0.13). -/
 theorem cost_breaks_symmetry :
-    costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green := by
-  rsa_predict
+    s1Cost .green_circle .circle > s1Cost .green_circle .green := by
+  unfold s1Cost s1B
+  rw [gt_iff_lt, RSA.S1Belief_apply_lt_iff_score_lt]
+  simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_circle, qfCf_green]
+  simp +decide
+  rw [half_conv, ← ENNReal.ofReal_mul (by norm_num)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr ?_
+  rw [xc_eq]
+  nlinarith [xc_lt_one, xc_pos]
 
 /-- Finding 4: Without cost, the symmetry is unbroken — neither ambiguous word
     dominates for green_circle. Both "circle" and "green" apply to exactly 2 objects,
     so L0 assigns equal probability, and S1 assigns equal weight. -/
 theorem no_cost_symmetry :
-    ¬(zeroCostCfg.S1 () .green_circle .circle > zeroCostCfg.S1 () .green_circle .green) := by
-  rsa_predict
+    ¬(s1ZeroCost .green_circle .circle > s1ZeroCost .green_circle .green) := by
+  have h : s1ZeroCost .green_circle .circle = s1ZeroCost .green_circle .green := by
+    refine le_antisymm ?_ ?_ <;>
+      · unfold s1ZeroCost s1B
+        rw [RSA.S1Belief_apply_le_iff_score_le]
+        simp only [ENNReal.rpow_one, qfL0_uniform_apply, qfCf_zero]
+        simp +decide
+  rw [gt_iff_lt, h]
+  exact lt_irrefl _
 
 -- ============================================================================
 -- §12. Listener Predictions (Findings 5–6): Salience Reversal
@@ -436,21 +757,49 @@ prior — exactly the comparison the paper runs (Table 4 rows for ρ_bU vs ρ_bS
     Pragmatic reasoning: a speaker wanting blue_circle would say "blue" (unique),
     so saying "circle" signals green_circle. -/
 theorem uniform_circle_green_circ :
-    costCfg.L1 .circle .green_circle > costCfg.L1 .circle .blue_circle := by
-  rsa_predict
+    l1Cost .circle .green_circle > l1Cost .circle .blue_circle := by
+  unfold l1Cost
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, qfPriorU_apply, qfPriorU_apply,
+    sc_circle_bc, sc_circle_gc, third_conv,
+    ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by have := xc_pos; positivity)).mpr ?_
+  have hx := xc_pos
+  have h1 : (0:ℝ) < 1/2 + xc := by linarith
+  have h2 : (0:ℝ) < 1/2 + xc/2 := by linarith
+  rw [show (1:ℝ)/3 * (1/2 * (1/2 + xc)⁻¹) = (1/6) / (1/2 + xc) from by
+      rw [div_eq_mul_inv]; ring,
+    show (1:ℝ)/3 * (1/2 * (1/2 + xc/2)⁻¹) = (1/6) / (1/2 + xc/2) from by
+      rw [div_eq_mul_inv]; ring,
+    div_lt_div_iff₀ h1 h2]
+  nlinarith [hx]
 
 /-- Salience L1 for "circle": blue_circle > green_circle.
     Salience (139 vs 30) overrides pragmatic narrowing. Matches human data
     (Table 2: 117/180 = 65% chose blue_circle). -/
 theorem salience_circle_blue_circ :
-    salienceCfg.L1 .circle .blue_circle > salienceCfg.L1 .circle .green_circle := by
-  rsa_predict
+    l1Sal .circle .blue_circle > l1Sal .circle .green_circle := by
+  unfold l1Sal
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, qfPriorS_apply, qfPriorS_apply,
+    sc_circle_bc, sc_circle_gc,
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior]),
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior])]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by have := xc_pos; norm_num [saliencePrior]; positivity)).mpr ?_
+  have hx := xc_pos
+  have h1 : (0:ℝ) < 1/2 + xc := by linarith
+  have h2 : (0:ℝ) < 1/2 + xc/2 := by linarith
+  rw [saliencePrior, saliencePrior]
+  rw [show ((30:ℝ)/240) * ((1/2) * (1/2 + xc/2)⁻¹) = (30/480) / (1/2 + xc/2) from by
+      rw [div_eq_mul_inv]; ring,
+    show ((139:ℝ)/240) * ((1/2) * (1/2 + xc)⁻¹) = (139/480) / (1/2 + xc) from by
+      rw [div_eq_mul_inv]; ring,
+    div_lt_div_iff₀ h2 h1]
+  nlinarith [hx]
 
 /-- Finding 5: Salience reversal for "circle". Uniform and salience priors make
     opposite L1 predictions, and human data matches the salience direction. -/
 theorem salience_reversal_circle :
-    (costCfg.L1 .circle .green_circle > costCfg.L1 .circle .blue_circle) ∧
-    (salienceCfg.L1 .circle .blue_circle > salienceCfg.L1 .circle .green_circle) :=
+    (l1Cost .circle .green_circle > l1Cost .circle .blue_circle) ∧
+    (l1Sal .circle .blue_circle > l1Sal .circle .green_circle) :=
   ⟨uniform_circle_green_circ, salience_circle_blue_circ⟩
 
 -- Finding 6: Salience reversal for "green"
@@ -461,23 +810,51 @@ theorem salience_reversal_circle :
     Pragmatic reasoning: a speaker wanting green_square would say "square" (unique),
     so saying "green" signals green_circle. -/
 theorem uniform_green_green_circ :
-    costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square := by
-  rsa_predict
+    l1Cost .green .green_circle > l1Cost .green .green_square := by
+  unfold l1Cost
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, qfPriorU_apply, qfPriorU_apply,
+    sc_green_gs, sc_green_gc, third_conv,
+    ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by have := xc_pos; positivity)).mpr ?_
+  have hx := xc_pos
+  have h1 : (0:ℝ) < 1 + xc/2 := by linarith
+  have h2 : (0:ℝ) < 1/2 + xc/2 := by linarith
+  rw [show (1:ℝ)/3 * (xc/2 * (1 + xc/2)⁻¹) = (xc/6) / (1 + xc/2) from by
+      rw [div_eq_mul_inv]; ring,
+    show (1:ℝ)/3 * (xc/2 * (1/2 + xc/2)⁻¹) = (xc/6) / (1/2 + xc/2) from by
+      rw [div_eq_mul_inv]; ring,
+    div_lt_div_iff₀ h1 h2]
+  nlinarith [hx]
 
 /-- Salience L1 for "green": green_square > green_circle.
     Salience (71 vs 30) overrides pragmatic narrowing in the model. However,
     human data goes in the opposite (pragmatic) direction: Table 2 shows
     115/180 = 64% chose green_circle. -/
 theorem salience_green_green_sq :
-    salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle := by
-  rsa_predict
+    l1Sal .green .green_square > l1Sal .green .green_circle := by
+  unfold l1Sal
+  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, qfPriorS_apply, qfPriorS_apply,
+    sc_green_gs, sc_green_gc,
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior]),
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior])]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by have := xc_pos; norm_num [saliencePrior]; positivity)).mpr ?_
+  have hx := xc_pos
+  have h1 : (0:ℝ) < 1 + xc/2 := by linarith
+  have h2 : (0:ℝ) < 1/2 + xc/2 := by linarith
+  rw [saliencePrior, saliencePrior]
+  rw [show ((30:ℝ)/240) * ((xc/2) * (1/2 + xc/2)⁻¹) = (30 * xc/480) / (1/2 + xc/2) from by
+      rw [div_eq_mul_inv]; ring,
+    show ((71:ℝ)/240) * ((xc/2) * (1 + xc/2)⁻¹) = (71 * xc/480) / (1 + xc/2) from by
+      rw [div_eq_mul_inv]; ring,
+    div_lt_div_iff₀ h2 h1]
+  nlinarith [hx]
 
 /-- Finding 6: Salience reversal for "green". Uniform and salience priors make
     opposite L1 predictions. Human data matches the *pragmatic* (uniform)
     direction: 115/180 chose green_circle (Table 2). -/
 theorem salience_reversal_green :
-    (costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square) ∧
-    (salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle) :=
+    (l1Cost .green .green_circle > l1Cost .green .green_square) ∧
+    (l1Sal .green .green_square > l1Sal .green .green_circle) :=
   ⟨uniform_green_green_circ, salience_green_green_sq⟩
 
 -- ============================================================================
@@ -505,23 +882,6 @@ score for "circle" enough to match or exceed "blue". -/
 -- Concrete configs: all use adjCost 1/2 and uniform listener prior.
 -- (Listener prior doesn't affect S1, so any prior works for speaker comparison.)
 
-/-- σ_aU with adjective cost = 1/2. Action-oriented speaker, uniform L0.
-    S1 score = exp(λ · (U(t|m) - Cost(m))). No exp/log cancellation. -/
-@[reducible]
-noncomputable def σ_aU_cfg : RSAConfig Utterance Object :=
-  σ_aU (adjCost (1/2)) uniformPrior uniformPrior_nonneg
-
-/-- σ_bS with adjective cost = 1/2. Belief-oriented speaker, salience-weighted L0.
-    L0 weights worlds by perceptual salience; S1 score = exp(λ · (log S(t|m) - Cost(m))). -/
-@[reducible]
-noncomputable def σ_bS_cfg : RSAConfig Utterance Object :=
-  σ_bS (adjCost (1/2)) uniformPrior uniformPrior_nonneg
-
-/-- σ_aS with adjective cost = 1/2. Action-oriented speaker, salience-weighted L0. -/
-@[reducible]
-noncomputable def σ_aS_cfg : RSAConfig Utterance Object :=
-  σ_aS (adjCost (1/2)) uniformPrior uniformPrior_nonneg
-
 -- §13a. σ_aU: Action-oriented, uniform belief
 -- Agrees on green_sq and green_circ; ties on blue_circ.
 -- The tie arises because exp/log don't cancel in actionGoalScore:
@@ -530,13 +890,19 @@ noncomputable def σ_aS_cfg : RSAConfig Utterance Object :=
 
 /-- σ_aU agrees: "square" > "green" for green_square. -/
 theorem σ_aU_green_sq :
-    σ_aU_cfg.S1 () .green_square .square > σ_aU_cfg.S1 () .green_square .green := by
-  rsa_predict
+    s1AU .green_square .square > s1AU .green_square .green := by
+  unfold s1AU s1A
+  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
+  simp only [qfL0_uniform_apply]
+  simp +decide [ENNReal.toReal_inv, adjCost]
 
 /-- σ_aU agrees: "circle" > "green" for green_circle (cost breaks symmetry). -/
 theorem σ_aU_green_circ :
-    σ_aU_cfg.S1 () .green_circle .circle > σ_aU_cfg.S1 () .green_circle .green := by
-  rsa_predict
+    s1AU .green_circle .circle > s1AU .green_circle .green := by
+  unfold s1AU s1A
+  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
+  simp only [qfL0_uniform_apply]
+  simp +decide [ENNReal.toReal_inv, adjCost]
 
 /-- σ_aU fails: "blue" and "circle" are tied for blue_circle.
     This is the key prediction that distinguishes σ_aU from σ_bU.
@@ -545,9 +911,16 @@ theorem σ_aU_green_circ :
     under action-oriented scoring (σ_aU), the raw difference is exactly
     offset by cost. -/
 theorem σ_aU_blue_circ_tie :
-    ¬(σ_aU_cfg.S1 () .blue_circle .blue > σ_aU_cfg.S1 () .blue_circle .circle) ∧
-    ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue) :=
-  ⟨by rsa_predict, by rsa_predict⟩
+    ¬(s1AU .blue_circle .blue > s1AU .blue_circle .circle) ∧
+    ¬(s1AU .blue_circle .circle > s1AU .blue_circle .blue) := by
+  have h : s1AU .blue_circle .blue = s1AU .blue_circle .circle := by
+    unfold s1AU s1A
+    rw [PMF.normalize_eq_iff_eq]
+    simp only [qfL0_uniform_apply]
+    simp +decide [ENNReal.toReal_inv, adjCost]
+    norm_num
+  exact ⟨by rw [gt_iff_lt, h]; exact lt_irrefl _,
+         by rw [gt_iff_lt, h]; exact lt_irrefl _⟩
 
 -- §13b. σ_bS: Belief-oriented, salience belief
 -- Agrees on green_sq; reverses on both blue_circ and green_circ.
@@ -557,8 +930,17 @@ theorem σ_aU_blue_circ_tie :
     The unique shape word wins regardless of speaker belief, since "square"
     applies to only one object while "green" is ambiguous. -/
 theorem σ_bS_green_sq :
-    σ_bS_cfg.S1 () .green_square .square > σ_bS_cfg.S1 () .green_square .green := by
-  rsa_predict
+    s1BS .green_square .square > s1BS .green_square .green := by
+  unfold s1BS s1B
+  rw [gt_iff_lt, RSA.S1Belief_apply_lt_iff_score_lt, ENNReal.rpow_one, ENNReal.rpow_one,
+    qfL0_salience_true (show Utterance.green.appliesTo .green_square = true from by decide),
+    qfL0_salience_true (show Utterance.square.appliesTo .green_square = true from by decide),
+    qfCf_square, qfCf_green, mul_one,
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior, extSum])]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num [saliencePrior, extSum])).mpr ?_
+  rw [show Real.exp (-(1/2 : ℝ)) = xc from rfl]
+  norm_num [saliencePrior, extSum]
+  nlinarith [xc_lt_one, xc_pos]
 
 /-- σ_bS reverses blue_circle: predicts "circle" > "blue".
     With salience-weighted L0, blue_circle has the highest salience (139),
@@ -566,8 +948,17 @@ theorem σ_bS_green_sq :
     informative. Combined with zero cost for "circle" vs cost 1/2 for "blue",
     the pragmatic advantage of "blue" is overcome. -/
 theorem σ_bS_blue_circ_reversal :
-    σ_bS_cfg.S1 () .blue_circle .circle > σ_bS_cfg.S1 () .blue_circle .blue := by
-  rsa_predict
+    s1BS .blue_circle .circle > s1BS .blue_circle .blue := by
+  unfold s1BS s1B
+  rw [gt_iff_lt, RSA.S1Belief_apply_lt_iff_score_lt, ENNReal.rpow_one, ENNReal.rpow_one,
+    qfL0_salience_true (show Utterance.blue.appliesTo .blue_circle = true from by decide),
+    qfL0_salience_true (show Utterance.circle.appliesTo .blue_circle = true from by decide),
+    qfCf_circle, qfCf_blue, mul_one,
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior, extSum])]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num [saliencePrior, extSum])).mpr ?_
+  rw [show Real.exp (-(1/2 : ℝ)) = xc from rfl]
+  norm_num [saliencePrior, extSum]
+  nlinarith [xc_lt_139_169]
 
 /-- σ_bS reverses green_circle: predicts "green" > "circle".
     With salience weights, L0(green_circ|"green") = 30/101 ≈ 0.30 and
@@ -575,31 +966,55 @@ theorem σ_bS_blue_circ_reversal :
     for green_circ, and the log transform in belief-oriented scoring
     amplifies this advantage enough to overcome its cost disadvantage. -/
 theorem σ_bS_green_circ_reversal :
-    σ_bS_cfg.S1 () .green_circle .green > σ_bS_cfg.S1 () .green_circle .circle := by
-  rsa_predict
+    s1BS .green_circle .green > s1BS .green_circle .circle := by
+  unfold s1BS s1B
+  rw [gt_iff_lt, RSA.S1Belief_apply_lt_iff_score_lt, ENNReal.rpow_one, ENNReal.rpow_one,
+    qfL0_salience_true (show Utterance.circle.appliesTo .green_circle = true from by decide),
+    qfL0_salience_true (show Utterance.green.appliesTo .green_circle = true from by decide),
+    qfCf_circle, qfCf_green, mul_one,
+    ← ENNReal.ofReal_mul (by norm_num [saliencePrior, extSum])]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num [saliencePrior, extSum]; positivity)).mpr ?_
+  rw [show Real.exp (-(1/2 : ℝ)) = xc from rfl]
+  norm_num [saliencePrior, extSum]
+  nlinarith [xc_gt_101_169]
 
 -- §13c. σ_aS: Action-oriented, salience belief
 -- Agrees on green_sq and green_circ; reverses on blue_circ.
 
 /-- σ_aS agrees: "square" > "green" for green_square. -/
 theorem σ_aS_green_sq :
-    σ_aS_cfg.S1 () .green_square .square > σ_aS_cfg.S1 () .green_square .green := by
-  rsa_predict
+    s1AS .green_square .square > s1AS .green_square .green := by
+  unfold s1AS s1A
+  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
+  simp +decide [qfL0_salience_true, saliencePrior, extSum, adjCost]
+  rw [ENNReal.toReal_ofReal (by norm_num)]
+  exact (ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _)).mpr
+    (Real.exp_lt_exp.mpr (by norm_num))
 
 /-- σ_aS reverses blue_circle: predicts "circle" > "blue".
     Same mechanism as σ_bS: salience inflates L0(blue_circ|"circle") = 139/169.
     Under action-oriented scoring, this raw probability advantage
     (plus zero cost) overcomes "blue"'s informativity. -/
 theorem σ_aS_blue_circ_reversal :
-    σ_aS_cfg.S1 () .blue_circle .circle > σ_aS_cfg.S1 () .blue_circle .blue := by
-  rsa_predict
+    s1AS .blue_circle .circle > s1AS .blue_circle .blue := by
+  unfold s1AS s1A
+  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
+  simp +decide [qfL0_salience_true, saliencePrior, extSum, adjCost]
+  rw [ENNReal.toReal_ofReal (by norm_num)]
+  exact (ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _)).mpr
+    (Real.exp_lt_exp.mpr (by norm_num))
 
 /-- σ_aS agrees: "circle" > "green" for green_circle.
     Unlike σ_bS, the action-oriented scoring doesn't amplify the L0
     advantage of "green" via log, so cost wins for green_circle. -/
 theorem σ_aS_green_circ :
-    σ_aS_cfg.S1 () .green_circle .circle > σ_aS_cfg.S1 () .green_circle .green := by
-  rsa_predict
+    s1AS .green_circle .circle > s1AS .green_circle .green := by
+  unfold s1AS s1A
+  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
+  simp +decide [qfL0_salience_true, saliencePrior, extSum, adjCost]
+  rw [ENNReal.toReal_ofReal (by norm_num), ENNReal.toReal_ofReal (by norm_num)]
+  exact (ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _)).mpr
+    (Real.exp_lt_exp.mpr (by norm_num))
 
 -- §13d. Capstone: σ_bU is the best speaker model
 
@@ -616,14 +1031,14 @@ theorem σ_aS_green_circ :
     uniform L0) best explains production data. -/
 theorem σ_bU_best_speaker_model :
     -- σ_bU correctly predicts blue > circle
-    (costCfg.S1 () .blue_circle .blue > costCfg.S1 () .blue_circle .circle) ∧
+    (s1Cost .blue_circle .blue > s1Cost .blue_circle .circle) ∧
     -- σ_aU ties: neither blue > circle nor circle > blue
-    (¬(σ_aU_cfg.S1 () .blue_circle .blue > σ_aU_cfg.S1 () .blue_circle .circle) ∧
-     ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue)) ∧
+    (¬(s1AU .blue_circle .blue > s1AU .blue_circle .circle) ∧
+     ¬(s1AU .blue_circle .circle > s1AU .blue_circle .blue)) ∧
     -- σ_bS reverses: circle > blue
-    (σ_bS_cfg.S1 () .blue_circle .circle > σ_bS_cfg.S1 () .blue_circle .blue) ∧
+    (s1BS .blue_circle .circle > s1BS .blue_circle .blue) ∧
     -- σ_aS reverses: circle > blue
-    (σ_aS_cfg.S1 () .blue_circle .circle > σ_aS_cfg.S1 () .blue_circle .blue) :=
+    (s1AS .blue_circle .circle > s1AS .blue_circle .blue) :=
   ⟨speaker_prefers_unique_color, σ_aU_blue_circ_tie,
    σ_bS_blue_circ_reversal, σ_aS_blue_circ_reversal⟩
 
@@ -634,19 +1049,19 @@ theorem σ_bU_best_speaker_model :
 /-- Map each empirical finding to the RSA model prediction that accounts for it. -/
 def formalize : Finding → Prop
   | .speaker_prefers_unique_shape =>
-      costCfg.S1 () .green_square .square > costCfg.S1 () .green_square .green
+      s1Cost .green_square .square > s1Cost .green_square .green
   | .speaker_prefers_unique_color =>
-      costCfg.S1 () .blue_circle .blue > costCfg.S1 () .blue_circle .circle
+      s1Cost .blue_circle .blue > s1Cost .blue_circle .circle
   | .cost_breaks_symmetry =>
-      costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green
+      s1Cost .green_circle .circle > s1Cost .green_circle .green
   | .no_cost_symmetry =>
-      ¬(zeroCostCfg.S1 () .green_circle .circle > zeroCostCfg.S1 () .green_circle .green)
+      ¬(s1ZeroCost .green_circle .circle > s1ZeroCost .green_circle .green)
   | .salience_reversal_circle =>
-      (costCfg.L1 .circle .green_circle > costCfg.L1 .circle .blue_circle) ∧
-      (salienceCfg.L1 .circle .blue_circle > salienceCfg.L1 .circle .green_circle)
+      (l1Cost .circle .green_circle > l1Cost .circle .blue_circle) ∧
+      (l1Sal .circle .blue_circle > l1Sal .circle .green_circle)
   | .salience_reversal_green =>
-      (costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square) ∧
-      (salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle)
+      (l1Cost .green .green_circle > l1Cost .green .green_square) ∧
+      (l1Sal .green .green_square > l1Sal .green .green_circle)
 
 /-- The RSA model accounts for all 6 qualitative findings from [qing-franke-2015]. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
@@ -670,9 +1085,9 @@ is strictly monotone and multiplication by λ > 0 preserves strict order:
 
 **Consequence**: The qualitative predictions (findings 1–4) hold for ALL λ > 0.
 The paper's strong rejection of λ = 1 (§5) affects only the *magnitude* of
-preferences (softmax temperature), not their *direction*. The existing
-`rsa_predict` proofs at α = 1 establish log(L0) − cost orderings that hold
-at every positive α.
+preferences (softmax temperature), not their *direction*. The PMF-face
+proofs at λ = 1 establish log(L0) − cost orderings that hold at every
+positive λ.
 
 Cost thresholds (the exact c ranges where each finding holds):
 - **Finding 1** (sq > gr for green_sq): all c ≥ 0 (log 1 − 0 > log ½ − c)
@@ -840,9 +1255,9 @@ which equals `beliefGoalScore (fun _ => 0)` since `x − 0 = x` (`sub_zero`).
 
 FG2012 uses multiple reference game contexts across 7 conditions; Q&F's
 experiment (§4) focuses on one configuration: {green_square, green_circle,
-blue_circle}. The scoring rule, compositional pattern, and RSAConfig structure
-are identical — Q&F's contribution is decomposing along the cost, goal, and
-salience dimensions. -/
+blue_circle}. The scoring rule and compositional pattern are identical —
+Q&F's contribution is decomposing along the cost, goal, and salience
+dimensions. -/
 
 /-- Zero-cost belief-oriented scoring equals FG2012's scoring rule.
 
@@ -856,36 +1271,29 @@ theorem zeroCost_beliefGoal_eq
   simp [beliefGoalScore, sub_zero]
 
 /-!
-## Summary: What this file tests about the RSAConfig API
+## Summary: the model on the PMF face
 
-1. **Pluggable s1Score**: `beliefGoalScore` and `actionGoalScore` are different
-   scoring functions, plugged into the same RSAConfig structure via `s1Score`.
-   The API is agnostic to what the speaker optimizes.
+1. **Two speaker goals, one chain shape**: the belief-oriented speakers are
+   `RSA.S1Belief` (weights `L0 · exp(−Cost)`, eq. 10 at λ = 1); the
+   action-oriented speakers are a local softmax over `exp(L0 − Cost)`
+   (eq. 9) — positive on false utterances, which is exactly what produces
+   the σ_aU tie at the blue circle.
 
-2. **Meaning encodes speaker belief**: The speaker's assumption about L0
-   (uniform vs salience-weighted) is captured by the `meaning` function.
-   No separate "speaker belief" field is needed.
+2. **Speaker belief enters as the L0 prior**: uniform vs salience-weighted
+   literal listeners are the same `L0LassiterGoodman` construction at
+   different priors (`qfPriorU`/`qfPriorS`).
 
-3. **Cost inside s1Score**: Utterance cost is part of the speaker's
-   score function, not a separate RSAConfig field. This is clean because
-   cost IS part of what the speaker optimizes.
+3. **Independent listener prior**: `l1Cost` and `l1Sal` share the σ_bU
+   speaker and differ only in the posterior's world prior (eqs. 12–13) —
+   the salience-reversal findings are pure prior effects.
 
-4. **Independent listener prior**: `worldPrior` (the listener's prior at L1)
-   is independent of `meaning` (which determines L0). This allows the
-   speaker's belief about L0 and the listener's prior to vary independently,
-   exactly as Q&F require.
+4. **Sharp cost regime**: the three genuinely numeric findings need only
+   `exp(−1/2) > 1/2` (e < 4), `exp(−1/2) < 139/169`, and
+   `exp(−1/2) > 101/169` (e < (169/101)² ≈ 2.7998) — all discharged from
+   `Real.exp_one_lt_d9`/`gt_d9`; everything else is generic in the cost
+   factor.
 
-5. **Composable extensions**: The action-oriented listener is defined as
-   `softmax ∘ L1`, extending the API without modifying RSAConfig. The
-   softmax properties (positivity, sum-to-one, monotonicity) transfer
-   directly from Core.RationalAction.
-
-6. **Model comparison**: All 4 speaker models instantiate the same RSAConfig
-   API with different `s1Score` and `meaning` choices. `rsa_predict` handles
-   all comparisons including score-equality ties (σ_aU, zeroCost). The
-   capstone theorem shows σ_bU uniquely predicts the blue_circle observation.
-
-7. **λ-independence** (§15): `beliefGoal_gt_iff` and `actionGoal_gt_iff` prove
+5. **λ-independence** (§15): `beliefGoal_gt_iff` and `actionGoal_gt_iff` prove
    that speaker rankings depend only on `log L0 − cost` (or `L0 − cost`),
    not on the rationality parameter λ. The paper's rejection of λ = 1 affects
    only quantitative fit, not qualitative predictions.
@@ -936,9 +1344,9 @@ open Pragmatics.GriceanMaxims
     No-Brevity interpretation (strength = 0), the weakest Q2. -/
 theorem cost_is_q2 :
     -- No cost = no symmetry breaking (No Brevity regime)
-    ¬(zeroCostCfg.S1 () .green_circle .circle > zeroCostCfg.S1 () .green_circle .green) ∧
+    ¬(s1ZeroCost .green_circle .circle > s1ZeroCost .green_circle .green) ∧
     -- With cost = symmetry breaks (Q2 pressure active)
-    costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green ∧
+    s1Cost .green_circle .circle > s1Cost .green_circle .green ∧
     -- No Brevity is the weakest Q2 interpretation
     DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 ∧
     -- Q1 and Q2 are independent sub-maxims
