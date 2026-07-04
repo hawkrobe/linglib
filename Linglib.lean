@@ -2382,6 +2382,7 @@ import Linglib.Studies.KatzirSingh2015
 import Linglib.Studies.Kawahara2015
 import Linglib.Studies.KayFillmore1999
 import Linglib.Studies.KayMichaelis2019
+import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeenanComrie1977
 import Linglib.Studies.KeenanStavi1986
 import Linglib.Studies.KehlerRohde2013
