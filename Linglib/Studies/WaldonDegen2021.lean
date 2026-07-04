@@ -417,7 +417,8 @@ private theorem s1PMF_step (utts : List (List Word)) (scene : Referent → Bool)
       rw [hZ, ENNReal.ofReal_ne_zero_iff]; exact hden),
     PMF.normalize_apply, hZ, hN,
     ← ENNReal.ofReal_inv_of_pos hden,
-    ← ENNReal.ofReal_mul (mul_nonneg (by exact_mod_cast (hN ▸ s1BaseQ_nonneg utts scene tgt ctx step)) (pow_nonneg hc.le _))]
+    ← ENNReal.ofReal_mul (mul_nonneg (by exact_mod_cast
+      (hN ▸ s1BaseQ_nonneg utts scene tgt ctx step)) (pow_nonneg hc.le _))]
   rw [div_eq_mul_inv]
 
 
@@ -474,31 +475,45 @@ theorem prediction1_english_asymmetry :
   obtain ⟨hb1, hb2⟩ := cAtom_bounds
   obtain ⟨hp2l, hp2u, hp3l, hp3u⟩ := cpow_bounds
   rw [s1PMF_step allUttsEng csScene .smallBlue [] .small
-      (N := 16384/4782969) (A := 0) (B := 86342264515924592972880295/172780993362485219401138176) (by decide +kernel) (by decide +kernel)
+      (N := 16384/4782969) (A := 0)
+        (B := 86342264515924592972880295/172780993362485219401138176) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [.small] .blue
-      (N := 14645194571776/22876792454961) (A := 16384/4782969) (B := 285393411026834849792/445803966501334805331) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 16384/4782969)
+        (B := 285393411026834849792/445803966501334805331) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [.small, .blue] .pin
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [] .small
-      (N := 62748517/612220032) (A := 0) (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel) (by decide +kernel)
+      (N := 62748517/612220032) (A := 0)
+        (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small] .blue
-      (N := 893871739/4586471424) (A := 128/2187) (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 128/2187)
+        (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue] .pin
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _)]
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _),
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _)]
   refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
   · positivity
   · rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
@@ -523,31 +538,45 @@ theorem prediction2_cross_linguistic :
   obtain ⟨hb1, hb2⟩ := cAtom_bounds
   obtain ⟨hp2l, hp2u, hp3l, hp3u⟩ := cpow_bounds
   rw [s1PMF_step allUttsSpn ssScene .smallBlue [] .pin
-      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin] .blue
-      (N := 893871739/137231006679) (A := 0) (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/137231006679) (A := 0)
+        (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue] .small
-      (N := 893871739/4586471424) (A := 893871739/137231006679) (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/137231006679)
+        (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [] .small
-      (N := 62748517/612220032) (A := 0) (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel) (by decide +kernel)
+      (N := 62748517/612220032) (A := 0)
+        (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small] .blue
-      (N := 893871739/4586471424) (A := 128/2187) (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 128/2187)
+        (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue] .pin
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _)]
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _),
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _)]
   refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
   · positivity
   · rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
@@ -573,31 +602,46 @@ theorem prediction3_spanish_flip :
   obtain ⟨hb1, hb2⟩ := cAtom_bounds
   obtain ⟨hp2l, hp2u, hp3l, hp3u⟩ := cpow_bounds
   rw [s1PMF_step allUttsSpn ssScene .smallBlue [] .pin
-      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin] .blue
-      (N := 893871739/137231006679) (A := 0) (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/137231006679) (A := 0)
+        (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue] .small
-      (N := 893871739/4586471424) (A := 893871739/137231006679) (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/137231006679)
+        (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [] .pin
-      (N := 138338874920368361/395848262635768037376) (A := 138338874920368361/395848262635768037376) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 138338874920368361/395848262635768037376)
+        (A := 138338874920368361/395848262635768037376)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [.pin] .blue
-      (N := 1954897493193/3521614606208) (A := 0) (B := 295168158416140658615676439/528460903635888342130944192) (by decide +kernel) (by decide +kernel)
+      (N := 1954897493193/3521614606208) (A := 0)
+        (B := 295168158416140658615676439/528460903635888342130944192) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue] .small
-      (N := 14645194571776/22876792454961) (A := 893871739/1801088541) (B := 14645194571776/22876792454961) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 893871739/1801088541)
+        (B := 14645194571776/22876792454961) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _)]
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _),
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _)]
   refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
   · positivity
   · rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
@@ -701,54 +745,85 @@ theorem prediction4_overall_redundancy :
   have h5 := cpow_bounds' 5 (by norm_num)
   have h6 := cpow_bounds' 6 (by norm_num)
   rw [s1PMF_step allUttsSpn ssScene .smallBlue [] .pin
-      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin] .blue
-      (N := 893871739/137231006679) (A := 0) (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/137231006679) (A := 0)
+        (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue] .small
-      (N := 893871739/4586471424) (A := 893871739/137231006679) (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/137231006679)
+        (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [] .pin
-      (N := 138338874920368361/395848262635768037376) (A := 138338874920368361/395848262635768037376) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 138338874920368361/395848262635768037376)
+        (A := 138338874920368361/395848262635768037376)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [.pin] .blue
-      (N := 1954897493193/3521614606208) (A := 0) (B := 295168158416140658615676439/528460903635888342130944192) (by decide +kernel) (by decide +kernel)
+      (N := 1954897493193/3521614606208) (A := 0)
+        (B := 295168158416140658615676439/528460903635888342130944192) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue] .small
-      (N := 14645194571776/22876792454961) (A := 893871739/1801088541) (B := 14645194571776/22876792454961) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 893871739/1801088541)
+        (B := 14645194571776/22876792454961) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [] .small
-      (N := 62748517/612220032) (A := 0) (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel) (by decide +kernel)
+      (N := 62748517/612220032) (A := 0)
+        (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small] .blue
-      (N := 893871739/4586471424) (A := 128/2187) (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 128/2187)
+        (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue] .pin
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 893871739/4586471424) (A := 893871739/4586471424)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [] .small
-      (N := 16384/4782969) (A := 0) (B := 86342264515924592972880295/172780993362485219401138176) (by decide +kernel) (by decide +kernel)
+      (N := 16384/4782969) (A := 0)
+        (B := 86342264515924592972880295/172780993362485219401138176) (by decide +kernel)
+          (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [.small] .blue
-      (N := 14645194571776/22876792454961) (A := 16384/4782969) (B := 285393411026834849792/445803966501334805331) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 16384/4782969)
+        (B := 285393411026834849792/445803966501334805331) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [.small, .blue] .pin
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
     s1PMF_step allUttsEng csScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961) (B := 0) (by decide +kernel) (by decide +kernel)
+      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
+        (B := 0) (by decide +kernel) (by decide +kernel)
       (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _),
+    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN (by norm_num)
+        (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num)
+        (by norm_num) _), ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num)
+        (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN
+        (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num)
+        (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
+        (by norm_num) (by norm_num) _),
     ← ENNReal.ofReal_add (by positivity) (by positivity),
     ← ENNReal.ofReal_add (by positivity) (by positivity)]
   refine (ENNReal.ofReal_lt_ofReal_iff (by positivity)).mpr ?_
