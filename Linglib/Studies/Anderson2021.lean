@@ -674,9 +674,278 @@ private theorem cgUniform_pos (w : MFWorld) : cgUniform w ≠ 0 := by
   rw [cgUniform, PMF.uniformOfFintype_apply]
   simp
 
+private theorem quarter_eq_half_div : (4 : ℝ≥0∞)⁻¹ = 2⁻¹ / 2 := by
+  rw [div_eq_mul_inv, ← ENNReal.mul_inv (by norm_num) (by norm_num)]
+  norm_num
+
+private theorem quarter_add_quarter : (4 : ℝ≥0∞)⁻¹ + 4⁻¹ = 2⁻¹ := by
+  rw [quarter_eq_half_div, ENNReal.add_halves]
+
+private theorem four_quarters : (4 : ℝ≥0∞)⁻¹ + 4⁻¹ + 4⁻¹ + 4⁻¹ = 1 := by
+  rw [show (4 : ℝ≥0∞)⁻¹ + 4⁻¹ + 4⁻¹ + 4⁻¹ = (4⁻¹ + 4⁻¹) + (4⁻¹ + 4⁻¹) from by ring,
+    quarter_add_quarter, ENNReal.inv_two_add_inv_two]
+
+private theorem quarter_mul_two : (4 : ℝ≥0∞)⁻¹ * 2 = 2⁻¹ := by
+  rw [show (4 : ℝ≥0∞) = 2 * 2 from by norm_num,
+    ENNReal.mul_inv (by norm_num) (by norm_num), mul_assoc,
+    ENNReal.inv_mul_cancel (by norm_num) (by norm_num), mul_one]
+
+private theorem cgUniform_apply (w : MFWorld) : cgUniform w = 4⁻¹ := by
+  rw [cgUniform, PMF.uniformOfFintype_apply, card_mfworld]
+  norm_num
+
+private theorem sumWorlds (f : MFWorld → ℝ≥0∞) :
+    ∑' w, f w = f .ina + f .katie + f .nancy + f .sally := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset MFWorld) = {.ina, .katie, .nancy, .sally} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+/-- Uniform extension masses: `1` for `null`, `1/2` for each specific
+utterance (true at exactly two of the four worlds). -/
+private theorem uniformMass (u : MFUtterance) :
+    (∑' w, cgUniform w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0))
+      = if u = .null then 1 else 2⁻¹ := by
+  rw [sumWorlds]
+  simp only [cgUniform_apply]
+  cases u
+  case null =>
+    simp only [show ∀ w, mfMeaning .null w = true from fun _ => rfl, if_true,
+      mul_one, reduceIte]
+    exact four_quarters
+  case studyHumanity =>
+    rw [show mfMeaning .studyHumanity .ina = false from rfl,
+      show mfMeaning .studyHumanity .katie = false from rfl,
+      show mfMeaning .studyHumanity .nancy = true from rfl,
+      show mfMeaning .studyHumanity .sally = true from rfl]
+    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
+    exact quarter_add_quarter
+  case studyScience =>
+    rw [show mfMeaning .studyScience .ina = true from rfl,
+      show mfMeaning .studyScience .katie = true from rfl,
+      show mfMeaning .studyScience .nancy = false from rfl,
+      show mfMeaning .studyScience .sally = false from rfl]
+    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
+    exact quarter_add_quarter
+  case likeIndoors =>
+    rw [show mfMeaning .likeIndoors .ina = true from rfl,
+      show mfMeaning .likeIndoors .katie = false from rfl,
+      show mfMeaning .likeIndoors .nancy = false from rfl,
+      show mfMeaning .likeIndoors .sally = true from rfl]
+    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
+    rw [show ((4 : ℝ≥0∞)⁻¹ + 4⁻¹) = 4⁻¹ + 4⁻¹ from rfl]
+    exact quarter_add_quarter
+  case likeOutdoors =>
+    rw [show mfMeaning .likeOutdoors .ina = false from rfl,
+      show mfMeaning .likeOutdoors .katie = true from rfl,
+      show mfMeaning .likeOutdoors .nancy = true from rfl,
+      show mfMeaning .likeOutdoors .sally = false from rfl]
+    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
+    exact quarter_add_quarter
+
+/-- Literal-listener values under the uniform CG: `1/2` on a specific true
+utterance (mass `1/2` doubles the `1/4` prior), `1/4` on `null`, `0` off
+support. -/
+private theorem cgL0_uniform_apply (u : MFUtterance) (w : MFWorld) :
+    cgL0 cgUniform cgUniform_pos u w
+      = if mfMeaning u w then (if u = .null then 4⁻¹ else 2⁻¹) else 0 := by
+  unfold cgL0
+  rw [RSA.L0LassiterGoodman_apply,
+    show (∑' w', cgUniform w' * (if mfMeaning u w' then (1 : ℝ≥0∞) else 0))
+      = if u = .null then 1 else 2⁻¹ from uniformMass u, cgUniform_apply]
+  by_cases hw : mfMeaning u w = true
+  · rw [hw]
+    by_cases hn : u = .null <;>
+      simp only [hn, if_true, if_false, reduceIte, mul_one, inv_one, inv_inv]
+    exact quarter_mul_two
+  · rw [Bool.not_eq_true] at hw
+    rw [hw]
+    simp
+
+private theorem sumUtts (f : MFUtterance → ℝ≥0∞) :
+    ∑' u, f u = f .studyHumanity + f .studyScience + f .likeIndoors +
+      f .likeOutdoors + f .null := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset MFUtterance)
+      = {.studyHumanity, .studyScience, .likeIndoors, .likeOutdoors, .null} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem half_conv : (2 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/2) := by
+  rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 from (ENNReal.ofReal_ofNat 2).symm,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
+  norm_num
+
+private theorem quarter_conv : (4 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/4) := by
+  rw [show (4 : ℝ≥0∞) = ENNReal.ofReal 4 from (ENNReal.ofReal_ofNat 4).symm,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
+  norm_num
+
+/-- The turn-1 speaker normaliser at every world: `1/2 + 1/2 + 1/4 = 5/4`
+(two true specific utterances plus `null`). -/
+private theorem Z_uniform (w : MFWorld) :
+    (∑' u, ((cgL0 cgUniform cgUniform_pos u w : ℝ≥0∞)) ^ (1 : ℝ) * 1)
+      = ENNReal.ofReal (5/4) := by
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [sumUtts]
+  simp only [cgL0_uniform_apply]
+  cases w <;>
+    · simp +decide [mfMeaning, worldMajor, worldLocation]
+      rw [half_conv, quarter_conv, ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+        ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      norm_num
+
 /-- Turn-1 chain. -/
 noncomputable def s1Turn1 : MFWorld → PMF MFUtterance := cgS1 cgUniform cgUniform_pos
+
+private theorem Z_uniform' (w : MFWorld) :
+    (∑' u, cgL0 cgUniform cgUniform_pos u w) = ENNReal.ofReal (5/4) := by
+  have h := Z_uniform w
+  simpa [ENNReal.rpow_one] using h
+
+private theorem s1_val_arith :
+    (2 : ℝ≥0∞)⁻¹ * (ENNReal.ofReal (5/4))⁻¹ = ENNReal.ofReal (2/5) := by
+  rw [half_conv, ← ENNReal.ofReal_inv_of_pos (by norm_num),
+    ← ENNReal.ofReal_mul (by norm_num)]
+  norm_num
+
+private theorem s1_null_arith :
+    (4 : ℝ≥0∞)⁻¹ * (ENNReal.ofReal (5/4))⁻¹ = ENNReal.ofReal (1/5) := by
+  rw [quarter_conv, ← ENNReal.ofReal_inv_of_pos (by norm_num),
+    ← ENNReal.ofReal_mul (by norm_num)]
+  norm_num
+
+/-- Turn-1 speaker value on a true specific utterance: `2/5` — identical at
+every world (each satisfies exactly two specific utterances plus `null`).
+Derived from the Figure-4 equations; [anderson-2021]'s Figure 5 reports the
+qualitative multi-move profile. -/
+private theorem cgS1_uniform_true {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = true) (hn : u ≠ .null) :
+    cgS1 cgUniform cgUniform_pos w u = ENNReal.ofReal (2/5) := by
+  unfold cgS1
+  rw [RSA.S1Belief_apply]
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [Z_uniform' w, cgL0_uniform_apply, hw]
+  simp only [if_true, reduceIte]
+  rw [if_neg hn]
+  exact s1_val_arith
+
+/-- Turn-1 speaker value on `null`: `1/5` at every world. -/
+private theorem cgS1_uniform_null (w : MFWorld) :
+    cgS1 cgUniform cgUniform_pos w .null = ENNReal.ofReal (1/5) := by
+  unfold cgS1
+  rw [RSA.S1Belief_apply]
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [Z_uniform' w, cgL0_uniform_apply]
+  simp only [show mfMeaning .null w = true from rfl, if_true, reduceIte]
+  exact s1_null_arith
+
+/-- Turn-1 speaker value off support: `0`. -/
+private theorem cgS1_uniform_false {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = false) : cgS1 cgUniform cgUniform_pos w u = 0 := by
+  unfold cgS1
+  rw [RSA.S1Belief_apply]
+  simp only [ENNReal.rpow_one, mul_one]
+  rw [cgL0_uniform_apply, hw]
+  simp
+
+/-- Turn-1 speaker values ([anderson-2021] Figure-4 equations at the uniform
+CG; derived exact rationals — Figure 5 reports the qualitative profile):
+`2/5` on each true specific utterance, `1/5` on `null`, `0` off support. -/
+theorem s1Turn1_true {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = true) (hn : u ≠ .null) :
+    s1Turn1 w u = ENNReal.ofReal (2/5) := cgS1_uniform_true hw hn
+
+theorem s1Turn1_null (w : MFWorld) : s1Turn1 w .null = ENNReal.ofReal (1/5) :=
+  cgS1_uniform_null w
+
+theorem s1Turn1_false {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = false) : s1Turn1 w u = 0 := cgS1_uniform_false hw
+
+/-- The utterance marginal at turn 1 is `1/5` for every utterance: specific
+utterances collect `2 · (1/4)·(2/5)`, `null` collects `4 · (1/4)·(1/5)`. -/
+private theorem marginal_uniform (u : MFUtterance) :
+    PMF.marginal (cgS1 cgUniform cgUniform_pos) cgUniform u = ENNReal.ofReal (1/5) := by
+  show (cgUniform.bind (cgS1 cgUniform cgUniform_pos)) u = _
+  rw [PMF.bind_apply, sumWorlds]
+  simp only [cgUniform_apply]
+  cases u
+  case null =>
+    rw [cgS1_uniform_null, cgS1_uniform_null, cgS1_uniform_null, cgS1_uniform_null,
+      quarter_conv, ← ENNReal.ofReal_mul (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num
+  all_goals
+    first
+    | (rw [cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
+          cgS1_uniform_true (by decide) (by decide),
+          cgS1_uniform_true (by decide) (by decide),
+          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
+       simp only [mul_zero, zero_add, add_zero]
+       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+       norm_num)
+    | (rw [cgS1_uniform_true (by decide) (by decide),
+          cgS1_uniform_true (by decide) (by decide),
+          cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
+          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
+       simp only [mul_zero, zero_add, add_zero]
+       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+       norm_num)
+    | (rw [cgS1_uniform_true (by decide) (by decide),
+          cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
+          cgS1_uniform_true (by decide) (by decide),
+          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
+       simp only [mul_zero, zero_add, add_zero]
+       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+       norm_num)
+    | (rw [cgS1_uniform_false (by decide),
+          cgS1_uniform_true (by decide) (by decide),
+          cgS1_uniform_true (by decide) (by decide),
+          cgS1_uniform_false (by decide),
+          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
+       simp only [mul_zero, zero_add, add_zero]
+       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+       norm_num)
 noncomputable def l1Turn1 : MFUtterance → PMF MFWorld := cgL1 cgUniform cgUniform_pos
+
+private theorem l1_arith_true :
+    (4 : ℝ≥0∞)⁻¹ * ENNReal.ofReal (2/5) * (ENNReal.ofReal (1/5))⁻¹
+      = ENNReal.ofReal (1/2) := by
+  rw [quarter_conv, ← ENNReal.ofReal_mul (by norm_num),
+    ← ENNReal.ofReal_inv_of_pos (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
+  norm_num
+
+private theorem l1_arith_null :
+    (4 : ℝ≥0∞)⁻¹ * ENNReal.ofReal (1/5) * (ENNReal.ofReal (1/5))⁻¹
+      = ENNReal.ofReal (1/4) := by
+  rw [quarter_conv, ← ENNReal.ofReal_mul (by norm_num),
+    ← ENNReal.ofReal_inv_of_pos (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
+  norm_num
+
+/-- Turn-1 listener values (derived; `L1 ∝ PragSpeak·CG`, Figure 4): `1/2`
+on each world satisfying a specific utterance, `1/4` on every world after
+`null`, `0` off support. -/
+theorem l1Turn1_true {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = true) (hn : u ≠ .null) :
+    l1Turn1 u w = ENNReal.ofReal (1/2) := by
+  unfold l1Turn1 cgL1
+  rw [PMF.posterior_apply, marginal_uniform, cgUniform_apply, cgS1_uniform_true hw hn]
+  exact l1_arith_true
+
+theorem l1Turn1_null (w : MFWorld) : l1Turn1 .null w = ENNReal.ofReal (1/4) := by
+  unfold l1Turn1 cgL1
+  rw [PMF.posterior_apply, marginal_uniform, cgUniform_apply, cgS1_uniform_null]
+  exact l1_arith_null
+
+theorem l1Turn1_false {u : MFUtterance} {w : MFWorld}
+    (hw : mfMeaning u w = false) : l1Turn1 u w = 0 := by
+  unfold l1Turn1 cgL1
+  rw [PMF.posterior_apply, cgS1_uniform_false hw, mul_zero, zero_mul]
 noncomputable def s2Turn1 : MFWorld → PMF MFUtterance := cgS2 cgUniform cgUniform_pos
 
 end PMFChain
@@ -1312,3 +1581,4 @@ theorem a_initial_diff_nancy_highest :
   · rw [ho .sally (by decide)]; norm_num
 
 end Anderson2021
+
