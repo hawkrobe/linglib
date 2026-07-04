@@ -363,7 +363,7 @@ end MontaguGrounding
 
 The egocentric model captures the no-occlusion case; the asymmetric model
 captures occlusion. Predictions are structural PMF proofs over the canonical
-operators (no `rsa_predict`). -/
+operators (no interval reflection). -/
 
 /-! ### Egocentric predictions -/
 
@@ -578,7 +578,7 @@ theorem mixUtility_at_one (u : Utt) :
 /-! ### Resource-rational predictions
 
 These three are transcendental ℝ inequalities over `Real.exp`/`Real.log` of the
-L0 success rates. The former `rsa_predict` tactic discharged them with its
+L0 success rates. The retired interval-reflection tactic discharged them with its
 numeric/interval backend; the PMF migration has no equivalent, so they are
 stated with `sorry` per CLAUDE.md "prefer `sorry` over weakening". They reduce
 to finite real arithmetic and await real-analysis/interval lemmas (or a

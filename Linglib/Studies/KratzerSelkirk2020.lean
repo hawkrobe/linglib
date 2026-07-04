@@ -3,6 +3,8 @@ import Linglib.Features.Prosody
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Focus.Control
+import Linglib.Studies.HartmannZimmermann2007
 
 /-!
 # Two-feature decomposition of information structure
@@ -35,7 +37,7 @@ discourse salience), with no separate feature for newness.
 ## References
 
 * [kratzer-selkirk-2020], [schwarzschild-1999],
-  [beaver-2007], [katz-selkirk-2011].
+  [beaver-2007], [katz-selkirk-2011], [hartmann-zimmermann-2007].
 -/
 
 open Features.InformationStructure
@@ -273,21 +275,18 @@ theorem squiggle_singleton_aValue {α : Type*} (op : ContrastOperator α) :
 
 /-! ## Semantics of *only*
 
-K&S's *only* directly takes a contextual variable 𝔠 (the contrast set),
-rather than accessing focus alternatives indirectly:
+Their (55b) is the Roothian strong theory verbatim: association with
+*only* is indirect, mediated by two occurrences of the contextual
+variable ℭ — one on *only*, one on the ~ operator that comes with
+[FoC]. -/
 
-  ⟦only_𝔠⟧ = λp λw. ∀q. (q ∈ 𝔠 ∧ q(w)) → q = p
-
-The contrast set 𝔠 is supplied by the ~ operator that comes with [FoC].
-Since ~ stops alternative propagation, *only* associates with [FoC]
-indirectly via a second occurrence of 𝔠. -/
-
-/-- Semantics of *only* with explicit contrast set (K&S 56).
-    Takes a contrast set 𝔠 and a prejacent proposition p.
-    True at w iff every true member of 𝔠 equals p. -/
-def onlySemantics (contrastSet : List (W → Prop)) (prejacent : W → Prop)
-    (w : W) : Prop :=
-  ∀ q ∈ contrastSet, q w → (q w ↔ prejacent w)
+/-- Semantics of *only* with explicit contrast set (their (56)):
+`λp λw. ∀q ((q ∈ ℭ ∧ q(w)) → q = p)` — the strong-theory
+`Semantics.Focus.onlyVia` at the list-supplied contrast set, so the
+`onlyVia` lemmas (antitonicity, squiggle-resolved exclusion) apply. -/
+def onlySemantics (contrastSet : List (W → Prop)) (prejacent : W → Prop) :
+    Set W :=
+  Semantics.Focus.onlyVia {q | q ∈ contrastSet} prejacent
 
 /-! ## [G] containing [FoC] requires alternatives consumption
 
@@ -537,5 +536,48 @@ theorem givenness_entails_aGivenness {α : Type*} [DecidableEq α]
 theorem aGivenness_not_sufficient : ∃ (aValue : List Nat) (referent : Nat),
     isAGiven aValue referent ∧ ¬ isGiven aValue referent := by
   exact ⟨[1, 2], 1, by decide, by decide⟩
+
+/-! ## Hausa in situ vs ex situ (their fn. 21)
+
+K&S contest [hartmann-zimmermann-2007]'s conclusion that information
+focus is realised both in situ and ex situ in Hausa: without
+controlling for accommodated contrasts, an in-situ answer may be
+merely new and an ex-situ one contrastive. On the K&S inventory mere
+newness is not focus at all, so the reinterpretation is: ex situ
+realises [FoC], in situ is unmarked. The corpus tendencies both sides
+cite (their fn. 21; H&Z §3.3: 99 vs 25 in situ for new information,
+154 vs 12 ex situ for the contrastive family) fit the
+reinterpretation; the accounts genuinely diverge only on the minority
+cells, which is where the accommodation caveat does its work. -/
+
+/-- The K&S inventory over H&Z's pragmatic-use taxonomy: the
+contrastive family is [FoC]; new-information focus is mere newness —
+no feature at all. -/
+def IsFoCus : Semantics.Focus.Use → Prop
+  | .newInfo => False
+  | _        => True
+
+instance (u : Semantics.Focus.Use) : Decidable (IsFoCus u) := by
+  cases u <;> simp [IsFoCus] <;> infer_instance
+
+/-- The fn. 21 reinterpretation of Hausa: ex-situ realisation ↔
+[FoC]. -/
+def KSHausaReading (u : HartmannZimmermann2007.FocusUtterance) : Prop :=
+  u.cfg.strategy = .exSitu ↔ IsFoCus u.pragType
+
+instance (u : HartmannZimmermann2007.FocusUtterance) :
+    Decidable (KSHausaReading u) :=
+  inferInstanceAs (Decidable (_ ↔ _))
+
+/-- The two accounts diverge on H&Z's own matrix: the ex-situ
+new-information cell (their (22)) and the in-situ corrective cell
+(their (25)) both violate the reinterpretation. These are exactly the
+cells the accommodation caveat targets — the divergence is real but
+undecided on minimal pairs, and the corpus asymmetry is the evidence
+both sides invoke. -/
+theorem hz_matrix_cells_violate_ks_reading :
+    ¬ KSHausaReading HartmannZimmermann2007.exSitu_newInfo ∧
+    ¬ KSHausaReading HartmannZimmermann2007.inSitu_corrective := by
+  decide
 
 end KratzerSelkirk2020

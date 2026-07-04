@@ -312,7 +312,7 @@ partial world `.one`, robust across prior configurations. Each is an L1
 inequality discharged via the Bayes identity (S2(u|w) ∝ L1(w|u) over u).
 
 Stated below as `L1` apply inequalities with `sorry` per CLAUDE.md "Prefer
-`sorry` over weakening theorem statements". The PMF-shaped `rsa_predict`
+`sorry` over weakening theorem statements". A PMF-shaped reflection tactic
 tactic (Task #36) will discharge these as finite ℝ≥0∞ arithmetic. -/
 
 namespace Findings
@@ -964,7 +964,7 @@ This requires concrete numeric arithmetic on the chained Bayesian update —
 the same wall as L&G/Nouwen headlines. The structural shape decomposes via
 `posterior_chained_lt_iff_score_lt` (Core); the residue is ENNReal arithmetic
 on the closed-form expansion. Stated below as theorem signatures with sorry'd
-numeric core; closing them is `rsa_predict_pmf` reflection territory or
+numeric core; closing them is PMF-reflection territory or
 manual ENNReal arithmetic. -/
 
 /-! **D4 (deferred to numeric core)**: at fixed `b_suc = 0.5` and `p_inv = 0.5`,
@@ -980,7 +980,7 @@ model (binomial worldPrior + product latentPrior + S1g rpow + L1 posterior
 
 Not stated as a Lean theorem because the per-prior S2 marginal positivity
 hypotheses make the signature unwieldy without a closure pattern. When
-`rsa_predict_pmf` lands or a closure helper is built, the statement becomes:
+such a tactic lands or a closure helper is built, the statement becomes:
 
 ```lean
 example {α : ℝ} (hα : 0 < α)

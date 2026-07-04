@@ -2,6 +2,7 @@ import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
+import Linglib.Semantics.Focus.Realization
 import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
@@ -294,6 +295,38 @@ theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR :=
 /-- The subject-side counterexample (the (8) pattern). -/
 theorem exSitu_subject_subjunctive_no_reflex :
     ¬ exSitu_subject_subjunctive.HasMorphosyntacticReflex := by decide
+
+/-- The overt reflexes of a focus utterance in the shared
+`Semantics.Focus.Realization` vocabulary: non-vacuous fronting,
+Relative-form morphology, and the stabilizer. -/
+def FocusUtterance.reflexes (u : FocusUtterance) : List (Reflex Focused) :=
+  (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu
+    then [.displacement u.focused] else []) ++
+  (if u.cfg.pac.mode = .relative then [.morpheme u.focused] else []) ++
+  (if u.cfg.hasStab then [.morpheme u.focused] else [])
+
+/-- The disjunctive reflex predicate coincides with overtness of the
+reflex list. -/
+theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
+    u.HasMorphosyntacticReflex ↔
+      (Realization.mk u.focused u.reflexes).IsOvert := by
+  by_cases h1 : u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu <;>
+  by_cases h2 : u.cfg.pac.mode = .relative <;>
+  by_cases h3 : u.cfg.hasStab = true <;>
+    simp [FocusUtterance.HasMorphosyntacticReflex, FocusUtterance.reflexes,
+      Realization.IsOvert, h1, h2, h3]
+
+/-- Hausa refutes the universalist claim that every (licensed) focus
+receives an overt reflex — the same `EveryFocusPerceptible` shape
+Tangale refutes in `HartmannZimmermann2004.lean`. -/
+theorem hausa_refutes_perceptibility :
+    ¬ Semantics.Focus.EveryFocusPerceptible
+        (fun u : {u : FocusUtterance // u.IsHausaLicensed} =>
+          Realization.mk u.1.focused u.1.reflexes) :=
+  fun h => absurd
+    ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr
+      (h ⟨inSitu_newInfo, by decide⟩))
+    (by decide)
 
 /-! ## Polar tone of *nē/cē* (§2.1)
 
