@@ -224,8 +224,9 @@ abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
 
 /-- One-step GEN: the faithful candidate, deleting each alive tone, and (for
     each FLOATING tone) inserting a link to each TBU that doesn't cross an
-    existing link. A subset of [mcpherson-lamont-2026]'s GEN — omits
-    insert-and-associate and shift. The no-crossing filter ([goldsmith-1976])
+    existing link. One operation per step, after [mccarthy-mullin-smith-2012];
+    a subset of [mcpherson-lamont-2026]'s operation set (omits
+    insert-and-associate and shift). The no-crossing filter ([goldsmith-1976])
     enforces well-formedness: without it a floating tone could dock across an
     intervening linked tone. -/
 def gen : Finset (FloatingForm S T) :=
