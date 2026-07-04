@@ -218,9 +218,9 @@ def readBookP : Set NumWorld := {w | w.readBook}
 /-- The alternative facts, as an indexed family. -/
 def alt : Fin 3 → Set NumWorld := ![boughtBookP, boughtShirtP, readBookP]
 
-/-- The alternatives are logically independent: each can hold while
-the others fail — one world per free Boolean field. -/
-theorem alt_separated : SeparatedFamily alt := by
+/-- The alternatives are irredundant: each can hold while the others
+fail — one world per free Boolean field. -/
+theorem alt_irredundant : Irredundant alt := by
   intro i
   fin_cases i
   · exact ⟨⟨true, false, false⟩, rfl, fun j hj => by
@@ -245,11 +245,11 @@ def numReading (x : Focused) : Set NumWorld :=
   onlyVia (alt '' ↑(extAlts x)) (alt 0)
 
 /-- One surface string, three semantically distinct readings: over a
-logically independent alternative family, *only* is injective in its
-resolution (`SeparatedFamily.onlyVia_injOn`), and the three extents
+irredundant alternative family, *only* is injective in its
+resolution (`Irredundant.onlyVia_injOn`), and the three extents
 resolve to three different contrast sets. -/
 theorem num_readings_injOn : Set.InjOn numReading {.verb, .vp, .object} :=
-  (alt_separated.onlyVia_injOn 0).comp
+  (alt_irredundant.onlyVia_injOn 0).comp
     (by rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
       first | rfl | exact absurd h (by decide))
     (by rintro a (rfl | rfl | rfl) <;> decide)

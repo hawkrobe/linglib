@@ -332,17 +332,30 @@ theorem mem_onlyVia_of_forall_not_mem {C : PropFocusValue W} {p : Set W}
     {w : W} (h : ∀ q ∈ C, q ≠ p → w ∉ q) : w ∈ onlyVia C p :=
   fun q hq hwq => not_not.mp fun hne => h q hq hne hwq
 
-/-- An indexed family of alternatives is separated when each member can
-hold while every other member fails — the alternatives are logically
-independent. -/
-def SeparatedFamily {ι : Type*} (f : ι → Set W) : Prop :=
+/-- An **irredundant** family of alternatives: each member can hold
+while every other member fails — equivalently, no member is covered by
+the union of the rest (each alternative has a private world). Strictly
+weaker than the mutual exclusivity of partition semantics
+(`irredundant_of_pairwise_disjoint`) and than Boolean independence of
+the family. `[UPSTREAM]` candidate: mathlib has the disjointness
+analogue (`sSupIndep`) but not this non-coveredness form. -/
+def Irredundant {ι : Type*} (f : ι → Set W) : Prop :=
   ∀ i, ∃ w ∈ f i, ∀ j, j ≠ i → w ∉ f j
+
+/-- Pairwise-disjoint nonempty alternatives — the mutual-exclusivity
+assumption of partition semantics — are irredundant. -/
+theorem irredundant_of_pairwise_disjoint {ι : Type*} {f : ι → Set W}
+    (hd : Pairwise fun i j => Disjoint (f i) (f j))
+    (hne : ∀ i, (f i).Nonempty) :
+    Irredundant f := fun i =>
+  let ⟨w, hw⟩ := hne i
+  ⟨w, hw, fun _ hj hwj => Set.disjoint_left.mp (hd hj) hwj hw⟩
 
 /-- Over a separated family, resolving *only* to contrast sets that
 differ beyond the prejacent yields distinct readings: the alternative
 present in one resolution and absent from the other separates them. -/
-theorem SeparatedFamily.onlyVia_ne {ι : Type*} {f : ι → Set W}
-    (hf : SeparatedFamily f) {i₀ j : ι} {s₁ s₂ : Finset ι}
+theorem Irredundant.onlyVia_ne {ι : Type*} {f : ι → Set W}
+    (hf : Irredundant f) {i₀ j : ι} {s₁ s₂ : Finset ι}
     (hj₂ : j ∈ s₂) (hj₁ : j ∉ s₁) (hji : j ≠ i₀) :
     onlyVia (f '' ↑s₁) (f i₀) ≠ onlyVia (f '' ↑s₂) (f i₀) := by
   obtain ⟨w, hwj, hother⟩ := hf j
@@ -355,8 +368,8 @@ theorem SeparatedFamily.onlyVia_ne {ι : Type*} {f : ι → Set W}
 
 /-- Over a separated family, *only* is injective in the resolved
 contrast set, on resolutions containing the prejacent. -/
-theorem SeparatedFamily.onlyVia_injOn {ι : Type*} {f : ι → Set W}
-    (hf : SeparatedFamily f) (i₀ : ι) :
+theorem Irredundant.onlyVia_injOn {ι : Type*} {f : ι → Set W}
+    (hf : Irredundant f) (i₀ : ι) :
     Set.InjOn (fun s : Finset ι => onlyVia (f '' ↑s) (f i₀))
       {s | i₀ ∈ s} := by
   intro s₁ h₁ s₂ h₂ heq
