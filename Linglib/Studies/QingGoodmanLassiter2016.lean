@@ -79,14 +79,14 @@ inductive Utterance where
   | doesntSmoke         -- "John doesn't smoke"    {(T,F),(F,F)}
   | smoked              -- "John smoked"           {(T,T),(T,F)}
   | didntSmoke          -- "John didn't smoke"     {(F,T),(F,F)}
-  | alwaysSmoked        -- "John has always smoked"  {(T,T)}
-  | notAlwaysSmoked     -- "John hasn't always smoked" {(T,F),(F,T),(F,F)}
-  | stoppedSmoking      -- "John stopped smoking"  {(T,F)}
-  | notStoppedSmoking   -- "John didn't stop smoking" {(T,T),(F,T),(F,F)}
-  | startedSmoking      -- "John started smoking"  {(F,T)}
-  | notStartedSmoking   -- "John didn't start smoking" {(T,T),(T,F),(F,F)}
-  | neverSmoked         -- "John has never smoked" {(F,F)}
-  | notNeverSmoked      -- "John hasn't never smoked" {(T,T),(T,F),(F,T)}
+  | always        -- "John has always smoked"  {(T,T)}
+  | notAlways     -- "John hasn't always smoked" {(T,F),(F,T),(F,F)}
+  | stopped      -- "John stopped smoking"  {(T,F)}
+  | notStopped   -- "John didn't stop smoking" {(T,T),(F,T),(F,F)}
+  | started      -- "John started smoking"  {(F,T)}
+  | notStarted   -- "John didn't start smoking" {(T,T),(T,F),(F,F)}
+  | never         -- "John has never smoked" {(F,F)}
+  | notNever      -- "John hasn't never smoked" {(T,T),(T,F),(F,T)}
   | silence             -- null utterance          {(T,T),(T,F),(F,T),(F,F)}
   deriving DecidableEq, Repr, Inhabited, Fintype
 
@@ -103,14 +103,14 @@ def literalMeaning : Utterance → WorldState → Bool
   | .doesntSmoke,       w => !w.now
   | .smoked,            w => w.past
   | .didntSmoke,        w => !w.past
-  | .alwaysSmoked,      w => Features.ChangeOfState.CoSType.continuation.eval w.past w.now
-  | .notAlwaysSmoked,   w => !Features.ChangeOfState.CoSType.continuation.eval w.past w.now
-  | .stoppedSmoking,    w => Features.ChangeOfState.CoSType.cessation.eval w.past w.now
-  | .notStoppedSmoking, w => !Features.ChangeOfState.CoSType.cessation.eval w.past w.now
-  | .startedSmoking,    w => Features.ChangeOfState.CoSType.inception.eval w.past w.now
-  | .notStartedSmoking, w => !Features.ChangeOfState.CoSType.inception.eval w.past w.now
-  | .neverSmoked,       w => !w.past && !w.now
-  | .notNeverSmoked,    w => !(!w.past && !w.now)
+  | .always,      w => Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .notAlways,   w => !Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .stopped,    w => Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .notStopped, w => !Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .started,    w => Features.ChangeOfState.CoSType.inception.eval w.past w.now
+  | .notStarted, w => !Features.ChangeOfState.CoSType.inception.eval w.past w.now
+  | .never,       w => !w.past && !w.now
+  | .notNever,    w => !(!w.past && !w.now)
   | .silence,           _ => true
 
 open Features.ChangeOfState (CoSType)
@@ -162,10 +162,10 @@ inductive QUD where
     - 0 content words: silence → 1 -/
 def utterancePrior : Utterance → ℚ≥0
   | .smokes | .doesntSmoke | .smoked | .didntSmoke => 1/2
-  | .alwaysSmoked | .notAlwaysSmoked
-  | .stoppedSmoking | .notStoppedSmoking
-  | .startedSmoking | .notStartedSmoking
-  | .neverSmoked | .notNeverSmoked => 1/4
+  | .always | .notAlways
+  | .stopped | .notStopped
+  | .started | .notStarted
+  | .never | .notNever => 1/4
   | .silence => 1
 
 /-- Context set prior (eq. 8):
@@ -243,17 +243,14 @@ noncomputable def l1WorldEvent (qud : QUD) (u : Utterance)
 /-- Under QUD_now, wTT and wFT are indistinguishable: `qAggQ .now` is
 definitionally symmetric in the now-cell, so projection must be measured on
 the context-set side (`l1Ctx`), not the world marginal. -/
-theorem qud_now_wTT_eq_wFT :
-    l1World .now .notStoppedSmoking .wTT =
-    l1World .now .notStoppedSmoking .wFT :=
+theorem qud_now_wTT_eq_wFT : l1World .now .notStopped .wTT = l1World .now .notStopped .wFT :=
   PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-! ### QUD answer -/
 
 /-- L1 infers the QUD answer now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
-    l1WorldEvent .now .notStoppedSmoking (fun w => !w.now) <
-    l1WorldEvent .now .notStoppedSmoking (·.now) :=
+    l1WorldEvent .now .notStopped (fun w => !w.now) < l1WorldEvent .now .notStopped (·.now) :=
   PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### World elimination
@@ -261,9 +258,7 @@ theorem qud_answer_now_true :
 "Didn't stop smoking" is literally false at wTF, concentrating L1 on wTT. -/
 
 /-- now=T dominates now=F among past=T worlds. -/
-theorem wTT_gt_wTF :
-    l1World .now .notStoppedSmoking .wTF <
-    l1World .now .notStoppedSmoking .wTT :=
+theorem wTT_gt_wTF : l1World .now .notStopped .wTF < l1World .now .notStopped .wTT :=
   PMF.ofScores_lt _ (by decide +kernel)
 
 /-! ### Projection under QUD_max (Figure 1c)
@@ -273,9 +268,7 @@ narrows to exactly wTT — but projection stays incomplete: wTT = wFF, so
 the past marginals still coincide. -/
 
 /-- Projection under QUD_max: wTT > wFT. -/
-theorem projection_under_qud_max :
-    l1World .max .notStoppedSmoking .wFT <
-    l1World .max .notStoppedSmoking .wTT :=
+theorem projection_under_qud_max : l1World .max .notStopped .wFT < l1World .max .notStopped .wTT :=
   PMF.ofScores_lt _ (by decide +kernel)
 
 /-- Incomplete projection under QUD_max: wTT = wFF (Figure 1c). The
@@ -283,8 +276,7 @@ involution (past, now) ↦ (¬now, ¬past) fixes ⟦didn't stop⟧ and permutes 
 context sets prior-preservingly, so world marginals cannot fully register
 the presupposition. -/
 theorem qud_max_incomplete_projection :
-    l1World .max .notStoppedSmoking .wTT =
-    l1World .max .notStoppedSmoking .wFF :=
+    l1World .max .notStopped .wTT = l1World .max .notStopped .wFF :=
   PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-! ### Context set projection (the paper's main result, Figure 3)
@@ -295,57 +287,52 @@ the speaker assumed a +past common ground — projection as context-set
 inference, with (wTT, +past) the joint mode (Figure 3). -/
 
 /-- The headline: L1 infers a +past context set over −past. -/
-theorem context_projection :
-    l1Ctx .now .notStoppedSmoking .pastFalse <
-    l1Ctx .now .notStoppedSmoking .pastTrue :=
+theorem context_projection : l1Ctx .now .notStopped .pastFalse < l1Ctx .now .notStopped .pastTrue :=
   PMF.ofScores_lt _ (by decide +kernel)
 
 /-- +past beats `universe` despite the prior (6 vs 9): "didn't stop" narrows
 to wTT under +past (`1⁶ = 1`) but spreads over three worlds under `universe`
 (`(1/4)⁶`). -/
 theorem context_projection_over_universe :
-    l1Ctx .now .notStoppedSmoking .universe <
-    l1Ctx .now .notStoppedSmoking .pastTrue :=
+    l1Ctx .now .notStopped .universe < l1Ctx .now .notStopped .pastTrue :=
   PMF.ofScores_lt _ (by decide +kernel)
 
 /-- −now contexts are dispreferred (p. 1114): −now already entails the QUD
 answer, so "didn't stop smoking" adds nothing there. -/
 theorem now_context_dispreferred :
-    l1Ctx .now .notStoppedSmoking .nowFalse <
-    l1Ctx .now .notStoppedSmoking .pastTrue :=
+    l1Ctx .now .notStopped .nowFalse < l1Ctx .now .notStopped .pastTrue :=
   PMF.ofScores_lt _ (by decide +kernel)
 
 /-! ### "Stopped smoking" -/
 
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
-    l1WorldEvent .now .stoppedSmoking (·.now) <
-    l1WorldEvent .now .stoppedSmoking (fun w => !w.now) :=
+    l1WorldEvent .now .stopped (·.now) < l1WorldEvent .now .stopped (fun w => !w.now) :=
   PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### Structural properties -/
 
 /-- "didn't stop smoking" excludes exactly the stopping world. -/
 theorem notStopped_compatible_worlds (w : WorldState) :
-    literalMeaning .notStoppedSmoking w = true ↔ w ≠ .wTF := by cases w <;> decide
+    literalMeaning .notStopped w = true ↔ w ≠ .wTF := by cases w <;> decide
 
 /-- Under a +past context set, "didn't stop" is maximally informative for
 QUD_now: it narrows to exactly wTT. -/
 theorem notStopped_informative_in_pastTrue (w : WorldState) :
-    (compatibleBool .pastTrue w && literalMeaning .notStoppedSmoking w) = true ↔
+    (compatibleBool .pastTrue w && literalMeaning .notStopped w) = true ↔
       w = .wTT := by cases w <;> decide
 
 /-- "stopped smoking" denotes exactly the stopping world (T,F). -/
 theorem stopped_world (w : WorldState) :
-    literalMeaning .stoppedSmoking w = true ↔ w = .wTF := by cases w <;> decide
+    literalMeaning .stopped w = true ↔ w = .wTF := by cases w <;> decide
 
 /-- "always smoked" denotes exactly (T,T). -/
 theorem alwaysSmoked_world (w : WorldState) :
-    literalMeaning .alwaysSmoked w = true ↔ w = .wTT := by cases w <;> decide
+    literalMeaning .always w = true ↔ w = .wTT := by cases w <;> decide
 
 /-- "never smoked" denotes exactly (F,F). -/
 theorem neverSmoked_world (w : WorldState) :
-    literalMeaning .neverSmoked w = true ↔ w = .wFF := by cases w <;> decide
+    literalMeaning .never w = true ↔ w = .wFF := by cases w <;> decide
 
 /-- Context sets that entail past=T (used for measuring projection). -/
 def entailsPast : ContextSet → Bool
