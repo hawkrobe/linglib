@@ -318,20 +318,6 @@ information about another variable than the context itself
 
 variable {γ : Type*} [Fintype γ]
 
-/-- The joint is atomwise dominated by its first marginal. -/
-theorem apply_le_fst [DecidableEq α] (joint : PMF (α × β)) (x : α × β) :
-    joint x ≤ joint.fst x.1 := by
-  rw [fst_apply]
-  exact Finset.single_le_sum (f := fun b => joint (x.1, b))
-    (fun _ _ => zero_le) (Finset.mem_univ x.2)
-
-/-- The joint is atomwise dominated by its second marginal. -/
-theorem apply_le_snd [DecidableEq β] (joint : PMF (α × β)) (x : α × β) :
-    joint x ≤ joint.snd x.2 := by
-  rw [snd_apply]
-  exact Finset.single_le_sum (f := fun a => joint (a, x.2))
-    (fun _ _ => zero_le) (Finset.mem_univ x.1)
-
 /-- A joint distribution is absolutely continuous with respect to the product
     of its marginals. -/
 theorem toMeasure_absolutelyContinuous_product
