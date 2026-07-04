@@ -2,6 +2,7 @@ import Linglib.Features.InformationStructure
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Control
+import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Composition.Tree
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -290,6 +291,101 @@ theorem qaAntecedent_admits_subjectFocus :
 theorem qaAntecedent_rejects_objectFocus :
     ¬ qaAntecedent.Admits fv_objectFocus := fip_fails_object_focus
 
+/-- The question antecedent *fully* resolves against the subject-focus
+    meaning: all three clauses of the squiggle presupposition, not just
+    FIP — the contrast set contains the ordinary value `fredAteBeans`
+    and the distinct alternative `maryAteBeans`. -/
+theorem qaAntecedent_resolves :
+    qaAntecedent.Resolves fredAteBeans fv_subjectFocus :=
+  ⟨fip_congruent, Or.inl rfl,
+    maryAteBeans, Or.inr rfl,
+    fun h => by
+      have : maryBeans ∈ fredAteBeans := h ▸ (rfl : maryBeans ∈ maryAteBeans)
+      exact absurd this (by simp [fredAteBeans, maryAteBeans])⟩
+
+/-- A focus-free answer cannot resolve any antecedent: its focus value
+    is the unit set `{fredAteBeans}`, defeating the contrast clause —
+    "the argument must contain a focus". -/
+theorem focusFree_answer_cannot_resolve (Γ : PropFocusValue QAWorld) :
+    ¬ Semantics.Focus.SquiggleSet fredAteBeans {fredAteBeans} Γ :=
+  Semantics.Focus.not_squiggleSet_singleton fredAteBeans Γ
+
+/-- Contrasting phrases (Rooth's symmetric-contrast joke opening, his
+    rule construing α as contrasting with β via ⟦β⟧ᵒ ∈ ⟦α⟧f): *Canadian
+    farmer*'s ordinary value is a member of *[American]F farmer*'s focus
+    value distinct from its ordinary value. -/
+theorem farmer_contrast :
+    Semantics.Focus.SquiggleInd "American farmer"
+      ({"American farmer", "Canadian farmer"} : Set String)
+      "Canadian farmer" :=
+  ⟨Or.inr rfl, by decide⟩
+
+-- ───────────────────────────────────────────────────────────────────
+-- §6d  Strong vs Direct Association ("The Recognitions")
+-- ───────────────────────────────────────────────────────────────────
+
+/-! With a focused transitive verb, the full focus value contains
+    "even trivial relations", so fixing *only*'s domain to it yields
+    unsatisfiable truth conditions — while intuitively *Mary only READ
+    The Recognitions* can be true. The strong theory's separately
+    resolved `C` "might be quite a small set"; a lexically carried
+    alternative list cannot be pragmatically narrowed. -/
+
+/-- Worlds tracking Mary's relation to *The Recognitions*. -/
+inductive RWorld where
+  | readOnly      -- read it, nothing more
+  | readAndGrasp  -- read and understood it
+  | neither
+  deriving DecidableEq, Repr
+
+/-- 'reading The Recognitions'. -/
+def reading : Set RWorld := {.readOnly, .readAndGrasp}
+/-- 'understanding The Recognitions'. -/
+def grasping : Set RWorld := {.readAndGrasp}
+/-- A trivial property of the same semantic type — a member of the
+    full focus value. -/
+def trivialR : Set RWorld := Set.univ
+
+/-- With the pragmatically restricted domain, *only READ* is
+    satisfiable: true where Mary read without understanding. -/
+theorem restricted_only_satisfiable :
+    RWorld.readOnly ∈
+      Semantics.Focus.onlyVia {reading, grasping} reading := by
+  intro q hq hw
+  rcases hq with rfl | rfl
+  · rfl
+  · exact absurd hw (by simp [grasping])
+
+/-- With the domain fixed to the full focus value (trivial property
+    included), *only READ* is unsatisfiable — direct association
+    over-generates exclusions. -/
+theorem direct_only_unsatisfiable :
+    Semantics.Focus.onlyVia {reading, grasping, trivialR} reading = ∅ := by
+  have hne : trivialR ≠ reading := fun h =>
+    (by simp [reading] : RWorld.neither ∉ reading)
+      (h ▸ Set.mem_univ RWorld.neither)
+  ext w
+  simp only [Semantics.Focus.mem_onlyVia, Set.mem_empty_iff_false, iff_false]
+  exact fun hw => hne (hw trivialR (by simp) (Set.mem_univ w))
+
+private def readingB : RWorld → Bool
+  | .readOnly | .readAndGrasp => true
+  | .neither => false
+private def graspingB : RWorld → Bool
+  | .readAndGrasp => true
+  | _ => false
+private def trivialB : RWorld → Bool := fun _ => true
+
+/-- The direct-association operator with its lexically carried full
+    alternative list is the same over-generation, exhibited on
+    `TraditionalOnly` itself: its assertion is everywhere false in this
+    model. No pragmatic narrowing is possible — the list is fixed in
+    the lexical entry, which is the strong theory's objection. -/
+theorem traditional_only_unsatisfiable (w : RWorld) :
+    (Semantics.Focus.Particles.TraditionalOnly.mk
+      readingB [graspingB, trivialB]).assertion w = false := by
+  cases w <;> rfl
+
 -- ═══════════════════════════════════════════════════════════════════════
 -- §7  "Only" Association ([rooth-1992] §2.1)
 -- ═══════════════════════════════════════════════════════════════════════
@@ -531,6 +627,64 @@ theorem comp_grounds_maryAteBeans :
 theorem comp_grounds_fredAteRice :
     fredAteRice_comp = fun w => ateInWorld w E.rice E.fred := by
   funext w; cases w <;> rfl
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §12b  The Focus Dimension Through the Same Engine
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! F-marking is a non-`pure` lexicon entry: the same `interp` that
+    computes ordinary values at `M = Id` computes focus values at
+    `M = AltMeaning` (`pure = AltMeaning.unfeatured` lifts the
+    focus-free entries), with `applyForward`'s `<*>` doing Hamblin
+    functional application. -/
+
+/-- Alternatives do not distribute through predicate abstraction —
+    the honest `none`. -/
+instance (E W : Type) : PredAbs AltMeaning E W := ⟨none⟩
+
+/-- The focus lexicon at `M = AltMeaning`: every entry `pure`-lifts
+    except focused *[Fred]F*, whose entry carries the subject
+    alternatives. -/
+def focusLexF (w : QAWorld) : Lexicon E Unit AltMeaning := fun word =>
+  match word with
+  | "Fred" => some ⟨.e, (⟨E.fred, [E.fred, E.mary]⟩ : AltMeaning _)⟩
+  | w' => Lexicon.lift AltMeaning (focusLex w) w'
+
+/-- Focus-dimension tree interpretation. -/
+def treeResultF (lex : Lexicon E Unit AltMeaning) (t : Tree Unit String) :
+    Option (AltMeaning Prop) :=
+  match interp E Unit lex g₀ t with
+  | some ⟨.t, p⟩ => some p
+  | _ => none
+
+/-- The engine at `M = AltMeaning` computes the two-dimensional meaning
+    of *[FRED]F ate the beans*: the O-value is the ordinary
+    interpretation and the A-value is the subject-alternative family —
+    the focus value is computed, not stipulated. -/
+theorem treeResultF_fredAteBeans (w : QAWorld) :
+    treeResultF (focusLexF w) tree_fredAteBeans =
+      some ⟨ateInWorld w E.beans E.fred,
+            [ateInWorld w E.beans E.fred, ateInWorld w E.beans E.mary]⟩ := by
+  cases w <;> rfl
+
+/-- O-projection through the engine: mapping `oValue` over the
+    `AltMeaning` run recovers the `Id` run. -/
+theorem treeResultF_oValue (w : QAWorld) :
+    (treeResultF (focusLexF w) tree_fredAteBeans).map (·.oValue) =
+      treeResult (focusLex w) tree_fredAteBeans := by
+  cases w <;> rfl
+
+/-- The stipulated `fv_subjectFocus` of §6 is exactly the engine's
+    computed alternative family, read as proposition sets. -/
+theorem fv_subjectFocus_computed :
+    fv_subjectFocus =
+      {{w | ateInWorld w E.beans E.fred}, {w | ateInWorld w E.beans E.mary}} := by
+  have h1 : ({w | ateInWorld w E.beans E.fred} : Set QAWorld) = fredAteBeans := by
+    ext w; cases w <;> simp [ateInWorld, fredAteBeans]
+  have h2 : ({w | ateInWorld w E.beans E.mary} : Set QAWorld) = maryAteBeans := by
+    ext w; cases w <;> simp [ateInWorld, maryAteBeans]
+  rw [h1, h2]
+  rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §13  Fragment Connection
