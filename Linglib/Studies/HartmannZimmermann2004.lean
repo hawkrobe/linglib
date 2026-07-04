@@ -24,7 +24,10 @@ left-line delinking blocked) for perfective transitive foci, and
 focus extent (V-, VP-, and OBJ-focus are string- and pitch-identical),
 and the particle *núm* 'only' associates with any of the three extents
 from one fixed DP-adjacent position — association is anaphoric, not
-structural.
+structural. The boundary itself is derived: [truckenbrodt-1999]-style
+focus alignment dominating phrasal economy places the φ-edge exactly
+in the focused cells, and [kidda-1985]'s elision cascade makes it
+audible.
 
 ## Implementation notes
 
@@ -54,7 +57,8 @@ perceptible.
 namespace HartmannZimmermann2004
 
 open Semantics.Focus
-open Semantics.Focus.Interpretation (PropFocusValue)
+open Constraints (Constraint)
+open OptimalityTheory (Tableau)
 
 /-! ## The marking system (§4.1, §5.2, §6.2) -/
 
@@ -62,22 +66,6 @@ open Semantics.Focus.Interpretation (PropFocusValue)
 inductive Aspect where
   | perfective | progressive
   deriving DecidableEq, Repr
-
-/-- The fragment entry realising each aspect frame
-(`Fragments/Tangale/TAM.lean`): the perfective rows carry
-[kidda-1985]'s singular perfective (the *-gó* of *wai-gó*, *wur-gó*),
-and the paper's progressive is the continuous (preposed *né*, the
-paper's PROG *n*). -/
-def Aspect.entry : Aspect → Tangale.TAMEntry
-  | .perfective  => Tangale.perfectiveSg
-  | .progressive => Tangale.continuous
-
-/-- The paper's glosses are grounded in the fragment: PERF is the
-voiced alternant of the perfective suffix, and PROG is the preposed
-continuous marker. -/
-theorem aspect_entry_grounds_glosses :
-    "gó" ∈ Aspect.perfective.entry.suffixAlternants ∧
-    Aspect.progressive.entry.marker = .preposed "né" := by decide
 
 /-- The focused constituent in the paper's paradigm. -/
 inductive Focused where
@@ -103,6 +91,22 @@ def Config.WF (c : Config) : Prop :=
 
 instance (c : Config) : Decidable c.WF :=
   inferInstanceAs (Decidable (_ → _))
+
+/-- The fragment entry realising each aspect frame
+(`Fragments/Tangale/TAM.lean`): the perfective rows carry
+[kidda-1985]'s singular perfective (the *-gó* of *wai-gó*, *wur-gó*),
+and the paper's progressive is the continuous (preposed *né*, the
+paper's PROG *n*). -/
+def Aspect.entry : Aspect → Tangale.TAMEntry
+  | .perfective  => Tangale.perfectiveSg
+  | .progressive => Tangale.continuous
+
+/-- The paper's glosses are grounded in the fragment: PERF is the
+voiced alternant of the perfective suffix, and PROG is the preposed
+continuous marker. -/
+theorem aspect_entry_grounds_glosses :
+    "gó" ∈ Aspect.perfective.entry.suffixAlternants ∧
+    Aspect.progressive.entry.marker = .preposed "né" := by decide
 
 /-- The overt reflexes of each configuration: subjects surface
 displaced in every aspect ((17b)); intransitive predicate focus bears
@@ -130,7 +134,7 @@ theorem subject_always_marked (c : Config) (h : c.focused = .subject) :
     (realize c).IsOvert := by
   obtain ⟨f, a, t⟩ := c
   cases h
-  simp [realize, Realization.IsOvert]
+  exact List.cons_ne_nil _ _
 
 /-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
 contra Kidda 1993). -/
@@ -153,14 +157,6 @@ chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
     ¬ Semantics.Focus.EveryFocusPerceptible realize :=
   fun h => h ⟨.object, .progressive, true⟩ rfl
-
-/-- The prosodic reflex is audible: the boundary-blocked perfective
-form differs from the phrase-medial elided form — [kidda-1985]'s
-elision cascade is what makes `Reflex.boundary` perceptible in the
-(25) cells. -/
-theorem prosodic_reflex_audible :
-    Tangale.blockedForm ≠ Tangale.elidedForm :=
-  Tangale.boundary_audible.1
 
 /-- The perfective boundary underdetermines the focus extent: on
 transitive perfective non-subject configurations, `focused` does not
@@ -196,21 +192,19 @@ private def separated : Prosody.Tree :=
 
 /-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
 (leaf offset 1, the object). -/
-private def alignFocus : Constraints.Constraint Prosody.Tree :=
+private def alignFocus : Constraint Prosody.Tree :=
   .binary (fun t => ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
 
 /-- Phrasal economy: one violation per φ. -/
-private def starPhi : Constraints.Constraint Prosody.Tree :=
+private def starPhi : Constraint Prosody.Tree :=
   fun t => (RoseTree.spansOf Prosody.Constituent.isPh t).length
 
-open OptimalityTheory in
 /-- Object focus: alignment dominates economy, and the separated parse
 wins — the derived φ-edge after the verb. -/
 theorem focused_parse_separates :
     (Tableau.ofRanking [wrapped, separated] [alignFocus, starPhi]).optimal
       = {separated} := by decide
 
-open OptimalityTheory in
 /-- All-new: economy decides alone and the wrapped parse wins — no
 boundary, the elision cascade applies. -/
 theorem neutral_parse_wraps :
@@ -224,6 +218,14 @@ difference); in the wrapped parse the juncture is φ-internal. -/
 theorem separated_edge_wrapped_internal :
     (0, 2) ∉ RoseTree.spansOf Prosody.Constituent.isPh separated ∧
     (0, 2) ∈ RoseTree.spansOf Prosody.Constituent.isPh wrapped := by decide
+
+/-- The prosodic reflex is audible: the boundary-blocked perfective
+form differs from the phrase-medial elided form — [kidda-1985]'s
+elision cascade is what makes `Reflex.boundary` perceptible in the
+(25) cells. -/
+theorem prosodic_reflex_audible :
+    Tangale.blockedForm ≠ Tangale.elidedForm :=
+  Tangale.boundary_audible.1
 
 /-! ## The *núm* readings (§6.3)
 
