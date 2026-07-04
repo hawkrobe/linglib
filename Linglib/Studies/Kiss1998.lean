@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Semantics.Focus.Control
 
 /-!
 # Hungarian preverbal/postverbal focus contrast
@@ -295,5 +296,101 @@ theorem postverbal_information_licensed :
 positions, different focus types — both licensed. -/
 theorem minimal_pair_distinct_types :
     preverbal_hat.focusType ≠ postverbal_hat.focusType := by decide
+
+/-! ### Exhaustive identification semantics (§2)
+
+The hat/coat model of the paper's own test sentences ((8), (12)–(15)).
+Identificational focus is the prejacent exhaustified over the resolved
+alternatives — covert obligatory `Semantics.Focus.onlyVia` — while
+information focus is the bare prejacent. Szabolcsi's coordination test
+and Farkas's dialogue test come out as theorems, and position
+*determines* whether exhaustification applies: the like-for-like
+counterpart of `HartmannZimmermann2007.exhAnswer_eq`, where
+exhaustification is strategy-blind. -/
+
+open Semantics.Focus (onlyVia)
+
+/-- Worlds tracking what Mary picked for herself. -/
+inductive HatWorld where
+  | hatOnly | coatOnly | both | neither
+  deriving DecidableEq, Repr
+
+/-- 'Mary picked a hat' (at least). -/
+def pickedHat : Set HatWorld := {.hatOnly, .both}
+/-- 'Mary picked a coat' (at least). -/
+def pickedCoat : Set HatWorld := {.coatOnly, .both}
+
+/-- The resolved atomic alternatives for the picking scenario. -/
+def hatAlts : Semantics.Focus.Interpretation.PropFocusValue HatWorld :=
+  {pickedHat, pickedCoat}
+
+/-- Identificational focus: the prejacent exhaustified over the
+resolved alternatives (§2's "exhaustive subset of the relevant set"). -/
+def identificational (p : Set HatWorld) : Set HatWorld :=
+  p ∩ onlyVia hatAlts p
+
+/-- The identificational meaning of (8a)/(12b) computes to
+picked-exactly-a-hat. -/
+theorem identificational_hat_eq :
+    identificational pickedHat = {HatWorld.hatOnly} := by
+  ext w
+  constructor
+  · rintro ⟨hp, hw⟩
+    have hcoat := hw pickedCoat (Or.inr rfl)
+    cases w with
+    | hatOnly => rfl
+    | coatOnly => exact absurd hp (fun h => h.elim nofun nofun)
+    | both =>
+      have heq : pickedCoat = pickedHat := hcoat (Or.inr rfl)
+      have hmem : HatWorld.coatOnly ∈ pickedHat :=
+        heq ▸ (show HatWorld.coatOnly ∈ pickedCoat from Or.inl rfl)
+      exact absurd hmem (fun h => h.elim nofun nofun)
+    | neither => exact absurd hp (fun h => h.elim nofun nofun)
+  · rintro rfl
+    refine ⟨Or.inl rfl, fun q hq hwq => ?_⟩
+    rcases hq with rfl | rfl
+    · rfl
+    · exact absurd hwq (fun h => h.elim nofun nofun)
+
+/-- **Szabolcsi's coordination test** ((12) vs (13)): the
+identificational *a hat* contradicts the *hat-and-coat* content, while
+the information-focus *a hat* is entailed by it. -/
+theorem szabolcsi_test :
+    identificational pickedHat ∩ (pickedHat ∩ pickedCoat) = ∅ ∧
+    pickedHat ∩ pickedCoat ⊆ pickedHat := by
+  refine ⟨?_, Set.inter_subset_left⟩
+  rw [identificational_hat_eq]
+  ext w
+  constructor
+  · rintro ⟨rfl, -, hcoat⟩
+    exact absurd hcoat (fun h => h.elim nofun nofun)
+  · exact fun h => h.elim
+
+/-- **Farkas's dialogue test** ((15)): in the situation where Mary
+picked a coat too, the identificational claim is false (so B's "No,
+she picked a coat, too" is a coherent denial of exhaustivity), while
+the information-focus claim is true (so the denial is infelicitous). -/
+theorem farkas_test :
+    HatWorld.both ∉ identificational pickedHat ∧
+    HatWorld.both ∈ pickedHat := by
+  refine ⟨?_, Or.inr rfl⟩
+  rw [identificational_hat_eq]
+  exact nofun
+
+/-- The two focus types' denotations for the hat prejacent. -/
+def semanticsOf : FocusType → Set HatWorld
+  | .identificational => identificational pickedHat
+  | .information      => pickedHat
+
+/-- **Position determines the semantics**: the preverbal slot's meaning
+is exhaustified, the postverbal one's is plain — Kiss's §2 claim cashed
+out through the factor `typeOfPosition`. The Hausa counterpart
+(`HartmannZimmermann2007.exhAnswer_eq`) shows exhaustification
+*strategy-blind*: the two-verdict contrast at the level of one
+semantic operator. -/
+theorem position_determines_exhaustification :
+    semanticsOf (typeOfPosition .preverbal) = {HatWorld.hatOnly} ∧
+    semanticsOf (typeOfPosition .postverbal) = pickedHat :=
+  ⟨identificational_hat_eq, rfl⟩
 
 end Kiss1998
