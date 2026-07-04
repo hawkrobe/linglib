@@ -48,29 +48,23 @@ of Nouwen's actual contribution:
    extend to Nouwen's Figures 4-7 construction (which depends on the
    QUD partition + measure-function-on-cells distinction). Stub theorem
    `eq_49_qud_partition_NOT_FORMALISED` below documents the gap.
-3. **`muHorrible` is monotone-decreasing, NOT Nouwen's `f(x) = x²`
-   quadratic.** Nouwen's Figure 4(b) (p. 2:27) handcrafts
-   `f(x) = x²` so BOTH extremes (low + high temperature) are evaluated as
-   horrible — this is what produces the Goldilocks shape in Figures 5-7.
-   The file's `muHorrible (deg 0) = 3, deg 5 = 0` is monotone in
-   `h.toNat`, NOT quadratic-in-distance-from-mean. The file's
-   `seq_horribly_shifts_upward_pmf` is therefore the WRONG headline
-   shape for Goldilocks: it captures monotone shift, not extremes-vs-
-   middle. UNVERIFIED-NOTE: the bundled `Nouwen2024.lean`'s `muHorrible`
-   was originally built for the bundled-API Goldilocks demo and may
-   itself need correction.
+3. **`muHorrible` is linear `|h − norm|`, NOT Nouwen's `f(x) = x²`
+   quadratic.** Nouwen's Figure 4(b) handcrafts `f(x) = x²`; the file's
+   `muHorrible = |h − 3|` (deg 0 ↦ 3, deg 3 ↦ 0, deg 6 ↦ 3) is the
+   linear-V simplification. Both are U-shaped — both extremes count as
+   horrible, which is what the Wheeler leak (`wheeler_cold_leak` in the
+   bundled file) and the Goldilocks boundary depend on — but slopes and
+   hence fitted magnitudes differ. Paper (p. 31): the model is "a proof
+   of concept"; the theorems here are shape-generic where possible.
 
-**Also not captured (substrate gaps):**
-- **Zwicky's generalisation** (paper §5, the third of Nouwen's three
-  desiderata p. 2:15) — the vacuity argument for positive modal adverbs
-  (*usually*, *normally*, *possibly*) is entirely absent. No modal lex,
-  no `usually` utterance, no theorem stating that `usually warm ≈ warm`
-  because the adverb's update is vacuous against a normality-shaped prior.
-- **Positive-valence Goldilocks half** (Figure 8, *pleasantly warm* →
-  narrow moderate peak) — only the negative-valence case is built in
-  the PMF face. The bundled `Nouwen2024.lean` has the positive-valence
-  symmetric pair; lifting it to PMF requires rebuilding stage-2 with
-  `muPleasant` + corrected `f`.
+**Also captured (§5d–§5g):**
+- **Zwicky's generalisation** (paper §5): the constant measure's update
+  is the identity (`priorAfterEvalPosUsual_eq_prior`), so "usually warm"
+  collapses to bare "warm" (`seqUsually_eq_bare`), while `μ_unusual =
+  μ_horrible` definitionally and the extreme-measure update strictly
+  boosts the extreme above its prior (`eval_unusual_boosts_extreme_pmf`).
+- **Positive-valence half** (Figure 8): `seq_pleasantly_prefers_moderate_pmf`
+  — a support fact (`μ_pleasant (deg 6) = 0` licenses no threshold).
 
 ## Connection to `LassiterGoodman2017PMF.lean`
 
