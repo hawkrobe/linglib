@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Phonology.OptimalityTheory.Tableau
+import Linglib.Phonology.Prosody.Phrase
 import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Focus.Realization
 import Linglib.Fragments.Tangale.TAM
@@ -172,6 +174,56 @@ theorem boundary_underdetermines_extent :
   rw [Function.not_factorsThroughOn_iff_exists_witness]
   exact ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
     by decide, by decide, rfl, by decide⟩
+
+/-! ## Deriving the boundary ([truckenbrodt-1999]-style alignment)
+
+The perfective boundary is not primitive. Candidate parses wrap the
+V–O string into one φ or separate the object into its own φ; a
+focus-alignment constraint (the focus's left edge coincides with a
+φ-edge) dominates phrasal economy exactly when the object is focused.
+The winning parse's φ-edge is the `Reflex.boundary` of `realize`, and
+its audibility is the blocked elision cascade
+(`prosodic_reflex_audible`). -/
+
+private def ω : Prosody.Tree := .node .om [.node .syl []]
+
+/-- V and O wrapped into one φ. -/
+private def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
+
+/-- O separated into its own φ. -/
+private def separated : Prosody.Tree :=
+  .node .iota [.node .ph [ω], .node .ph [ω]]
+
+/-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
+(leaf offset 1, the object). -/
+private def alignFocus : Constraints.Constraint Prosody.Tree :=
+  .binary (fun t => ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
+
+/-- Phrasal economy: one violation per φ. -/
+private def starPhi : Constraints.Constraint Prosody.Tree :=
+  fun t => (RoseTree.spansOf Prosody.Constituent.isPh t).length
+
+open OptimalityTheory in
+/-- Object focus: alignment dominates economy, and the separated parse
+wins — the derived φ-edge after the verb. -/
+theorem focused_parse_separates :
+    (Tableau.ofRanking [wrapped, separated] [alignFocus, starPhi]).optimal
+      = {separated} := by decide
+
+open OptimalityTheory in
+/-- All-new: economy decides alone and the wrapped parse wins — no
+boundary, the elision cascade applies. -/
+theorem neutral_parse_wraps :
+    (Tableau.ofRanking [wrapped, separated] [starPhi]).optimal
+      = {wrapped} := by decide
+
+/-- The derived contrast grounds the reflex: in the separated parse no
+φ spans both leaves, so the V–O juncture is phrase-external and
+elision is blocked (`Tangale.boundary_audible` supplies the audible
+difference); in the wrapped parse the juncture is φ-internal. -/
+theorem separated_edge_wrapped_internal :
+    (0, 2) ∉ RoseTree.spansOf Prosody.Constituent.isPh separated ∧
+    (0, 2) ∈ RoseTree.spansOf Prosody.Constituent.isPh wrapped := by decide
 
 /-! ## The *núm* readings (§6.3)
 

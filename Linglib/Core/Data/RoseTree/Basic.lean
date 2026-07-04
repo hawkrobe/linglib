@@ -267,6 +267,18 @@ theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t := by
     rw [numLeaves_node]
     exact Nat.lt_of_lt_of_le Nat.one_pos (Nat.le_max_left _ _)
 
+/-- The `(offset, size)` leaf-spans of the nodes satisfying `p`, in
+left-to-right traversal order: the offset counts leaves strictly to
+the node's left, the size its own leaves. -/
+def spansOf (p : α → Bool) (t : RoseTree α) : List (ℕ × ℕ) := go 0 t where
+  go (off : ℕ) : RoseTree α → List (ℕ × ℕ)
+    | .node a cs =>
+        (if p a then [(off, numLeaves (node a cs))] else []) ++ goList off cs
+  goList (off : ℕ) : List (RoseTree α) → List (ℕ × ℕ)
+    | [] => []
+    | c :: cs => go off c ++ goList (off + numLeaves c) cs
+
+
 /-- The **height** (length of the longest root-to-leaf path in edges): a leaf has
 height `0`, an internal node is one more than the maximum child height. -/
 def height : RoseTree α → ℕ :=
