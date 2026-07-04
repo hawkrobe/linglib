@@ -345,16 +345,18 @@ theorem isWord_children {a : Constituent} {cs : List Tree}
   simp only [IsWord, isWordTree, isWordTree.go, Bool.and_eq_true,
     isWordTree.goList_all, List.all_eq_true] at hw
   obtain ⟨ha, hall⟩ := hw
-  obtain rfl : a = .om := by cases a <;> simp_all [Constituent.isOm]
-  have hr' : (cs.filter (fun c => Constituent.sameLevel c.value .om)).length = 0 := by
-    have e : noRec (.node (.om : Constituent) cs)
-        = (cs.filter (fun c => Constituent.sameLevel c.value .om)).length + noRec.goList cs := rfl
+  obtain ⟨hd, rfl⟩ : ∃ b, a = .om b := by
+    cases a <;> first | exact ⟨_, rfl⟩ | simp_all [Constituent.isOm]
+  have hr' : (cs.filter (fun c => Constituent.sameLevel c.value (.om hd))).length = 0 := by
+    have e : noRec (.node (Constituent.om hd) cs)
+        = (cs.filter (fun c => Constituent.sameLevel c.value (.om hd))).length
+          + noRec.goList cs := rfl
     rw [hr] at e; omega
-  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.value .om = false := by
+  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.value (.om hd) = false := by
     intro c hc
     by_contra h
     rw [Bool.not_eq_false] at h
-    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.value .om) := by
+    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.value (.om hd)) := by
       rw [List.mem_filter]; exact ⟨hc, h⟩
     rw [List.length_eq_zero_iff] at hr'
     rw [hr'] at hmem; exact List.not_mem_nil hmem
