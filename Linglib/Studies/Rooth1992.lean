@@ -562,6 +562,64 @@ theorem comp_grounds_fredAteRice :
   funext w; cases w <;> rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
+-- §12b  The Focus Dimension Through the Same Engine
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! F-marking is a non-`pure` lexicon entry: the same `interp` that
+    computes ordinary values at `M = Id` computes focus values at
+    `M = AltMeaning` (`pure = AltMeaning.unfeatured` lifts the
+    focus-free entries), with `applyForward`'s `<*>` doing Hamblin
+    functional application. -/
+
+/-- Alternatives do not distribute through predicate abstraction —
+    the honest `none`. -/
+instance (E W : Type) : PredAbs AltMeaning E W := ⟨none⟩
+
+/-- The focus lexicon at `M = AltMeaning`: every entry `pure`-lifts
+    except focused *[Fred]F*, whose entry carries the subject
+    alternatives. -/
+def focusLexF (w : QAWorld) : Lexicon E Unit AltMeaning := fun word =>
+  match word with
+  | "Fred" => some ⟨.e, (⟨E.fred, [E.fred, E.mary]⟩ : AltMeaning _)⟩
+  | w' => Lexicon.lift AltMeaning (focusLex w) w'
+
+/-- Focus-dimension tree interpretation. -/
+def treeResultF (lex : Lexicon E Unit AltMeaning) (t : Tree Unit String) :
+    Option (AltMeaning Prop) :=
+  match interp E Unit lex g₀ t with
+  | some ⟨.t, p⟩ => some p
+  | _ => none
+
+/-- The engine at `M = AltMeaning` computes the two-dimensional meaning
+    of *[FRED]F ate the beans*: the O-value is the ordinary
+    interpretation and the A-value is the subject-alternative family —
+    the focus value is computed, not stipulated. -/
+theorem treeResultF_fredAteBeans (w : QAWorld) :
+    treeResultF (focusLexF w) tree_fredAteBeans =
+      some ⟨ateInWorld w E.beans E.fred,
+            [ateInWorld w E.beans E.fred, ateInWorld w E.beans E.mary]⟩ := by
+  cases w <;> rfl
+
+/-- O-projection through the engine: mapping `oValue` over the
+    `AltMeaning` run recovers the `Id` run. -/
+theorem treeResultF_oValue (w : QAWorld) :
+    (treeResultF (focusLexF w) tree_fredAteBeans).map (·.oValue) =
+      treeResult (focusLex w) tree_fredAteBeans := by
+  cases w <;> rfl
+
+/-- The stipulated `fv_subjectFocus` of §6 is exactly the engine's
+    computed alternative family, read as proposition sets. -/
+theorem fv_subjectFocus_computed :
+    fv_subjectFocus =
+      {{w | ateInWorld w E.beans E.fred}, {w | ateInWorld w E.beans E.mary}} := by
+  have h1 : ({w | ateInWorld w E.beans E.fred} : Set QAWorld) = fredAteBeans := by
+    ext w; cases w <;> simp [ateInWorld, fredAteBeans]
+  have h2 : ({w | ateInWorld w E.beans E.mary} : Set QAWorld) = maryAteBeans := by
+    ext w; cases w <;> simp [ateInWorld, maryAteBeans]
+  rw [h1, h2]
+  rfl
+
+-- ═══════════════════════════════════════════════════════════════════════
 -- §13  Fragment Connection
 -- ═══════════════════════════════════════════════════════════════════════
 
