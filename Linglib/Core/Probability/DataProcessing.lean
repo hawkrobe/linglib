@@ -407,4 +407,48 @@ theorem mutualInformation_bind_snd_le
   exact klDiv_bind_le joint (joint.fst.product joint.snd) _
     (toMeasure_absolutelyContinuous_product joint)
 
+/-! ### Expected Bayes surprisal is conditional entropy
+
+The Bayes-optimal predictor of the first coordinate from the second is the
+conditional `G(a,b)/G.snd(b)`; its expected surprisal is the conditional
+entropy `H(fst | snd) = H(G) − H(G.snd)`. -/
+
+/-- The expected surprisal of the Bayes-optimal predictor of `fst` from `snd`
+    is the conditional entropy `H(G) − H(G.snd)`. -/
+theorem sum_mul_neg_log_bayes [DecidableEq β] (G : PMF (α × β)) :
+    ∑ x : α × β, (G x).toReal
+        * (-Real.log ((G x).toReal / (G.snd x.2).toReal))
+      = G.entropy - G.snd.entropy := by
+  have key : ∀ x : α × β, (G x).toReal
+      * (-Real.log ((G x).toReal / (G.snd x.2).toReal))
+      = Real.negMulLog (G x).toReal
+        + (G x).toReal * Real.log (G.snd x.2).toReal := by
+    intro x
+    by_cases hx : (G x).toReal = 0
+    · simp [hx, Real.negMulLog]
+    · have hGx : G x ≠ 0 := fun h => hx (by rw [h, ENNReal.toReal_zero])
+      have hsnd : (G.snd x.2).toReal ≠ 0 :=
+        ENNReal.toReal_ne_zero.mpr
+          ⟨fun h => hGx (le_zero_iff.mp (h ▸ apply_le_snd G x)),
+            PMF.apply_ne_top _ _⟩
+      rw [Real.log_div hx hsnd, Real.negMulLog]
+      ring
+  simp_rw [key]
+  rw [Finset.sum_add_distrib]
+  have h1 : ∑ x : α × β, Real.negMulLog (G x).toReal = G.entropy := rfl
+  have h2 : ∑ x : α × β, (G x).toReal * Real.log (G.snd x.2).toReal
+      = -G.snd.entropy := by
+    rw [Fintype.sum_prod_type, Finset.sum_comm]
+    unfold entropy
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl fun b _ => ?_
+    dsimp only
+    rw [← Finset.sum_mul,
+      show (∑ a, (G (a, b)).toReal) = (G.snd b).toReal from
+        (snd_toRealFn_eq_sum G b).symm,
+      Real.negMulLog]
+    ring
+  rw [h1, h2]
+  ring
+
 end PMF
