@@ -1,7 +1,7 @@
 import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Core.Logic.FactorsThroughOn
-import Linglib.Semantics.Focus.Interpretation
+import Linglib.Semantics.Focus.Control
 import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
@@ -19,7 +19,9 @@ Mapping Hypothesis" (§3.1), the label following
 [vallduvi-vilkuna-1998]'s phrase "the meaning-structure mapping"; the
 shared schema is `Function.FactorsThroughOn`
 (`Core.Logic.FactorsThroughOn`), making the Hungarian/Hausa contrast
-a difference of verdict on a single set-theoretic predicate.
+a difference of verdict on a single set-theoretic predicate. The §1.2
+control taxonomy (`Antecedent`, `Use`) and its factor-through theorems
+live in `Semantics/Focus/Control.lean`.
 
 Subject foci in TAMs lacking a Relative form (future, habitual,
 subjunctive) are "syntactically and morphologically unmarked" (p. 4);
@@ -36,7 +38,7 @@ situ" — only the categorical no-determination claim is a theorem.
 ## TODO
 
 * §3.2.5 exhaustivity contrast against Kiss 1998 requires an
-  alternatives-semantics exhaustivity operator beyond `PragType` tags.
+  alternatives-semantics exhaustivity operator beyond `Use` tags.
 * §2.3 multiple foci: co-occurrence of one ex-situ focus with in-situ
   foci (18a-c).
 * §4 focus pied-piping / partial focus movement and the (47) "Ex-Situ
@@ -54,89 +56,7 @@ situ" — only the categorical no-determination claim is a theorem.
 namespace HartmannZimmermann2007
 
 open Hausa
-open Semantics.Focus.Interpretation (fip PropFocusValue qaCongruentWeak)
-
-/-! ## Pragmatic focus types (§1.2) -/
-
-/-- The four pragmatic uses of one Roothian semantic focus (§1.2, 1a–d;
-after [uhmann-1991]): the image of `FocusControl.pragType`. The §3.2.5
-*exhaustive* case is deferred to a real exhaustivity operator. -/
-inductive PragType where
-  | newInfo      -- (1a) Q/A new-information focus
-  | corrective   -- (1b) correction of prior assertion
-  | selective    -- (1c) selection from explicit alternatives
-  | contrastive  -- (1d) parallel contrast across utterances
-  deriving DecidableEq, Repr, Inhabited
-
-/-! ## Focus control (§1.2)
-
-The four uses are distinguished by what the preceding context supplies
-("the context controls the focus", after [uhmann-1991]); the
-contrast-set machinery is `Semantics.Focus.Interpretation`. -/
-
-variable {W : Type*}
-
-/-- A focus-controlling context (§1.2): the discourse object that
-supplies the contrast set. -/
-inductive FocusControl (W : Type*) where
-  /-- (1a) A *wh*-question with denotation `q`. -/
-  | question (q : PropFocusValue W)
-  /-- (1b) A prior assertion `p` corrected among alternatives `alts`. -/
-  | assertion (p : Set W) (alts : PropFocusValue W)
-  /-- (1c) Explicitly offered alternatives. -/
-  | alternatives (alts : PropFocusValue W)
-  /-- (1d) A parallel focus with focus value `alts`. -/
-  | parallel (alts : PropFocusValue W)
-
-/-- The contrast set Γ a control supplies to the squiggle. -/
-def FocusControl.contrastSet : FocusControl W → PropFocusValue W
-  | .question q       => q
-  | .assertion _ alts => alts
-  | .alternatives alts => alts
-  | .parallel alts    => alts
-
-/-- The pragmatic use a control shape licenses. -/
-def FocusControl.pragType : FocusControl W → PragType
-  | .question _     => .newInfo
-  | .assertion _ _  => .corrective
-  | .alternatives _ => .selective
-  | .parallel _     => .contrastive
-
-/-- Roothian felicity of a focus value against a control: `fip` on the
-control's contrast set. -/
-def FocusControl.Admits (c : FocusControl W) (fv : PropFocusValue W) : Prop :=
-  fip c.contrastSet fv
-
-/-- The (1a) case is the substrate's Q-A congruence. -/
-theorem question_admits_iff (q fv : PropFocusValue W) :
-    (FocusControl.question q).Admits fv ↔ qaCongruentWeak fv q := Iff.rfl
-
-/-- The Hamblin set of complete answers over a domain `D`. -/
-def hamblin (D : Type*) : PropFocusValue D := Set.range fun d => ({d} : Set D)
-
-/-- A *wh*-question control: the context supplies the full Hamblin set. -/
-def whControl (D : Type*) : FocusControl D := .question (hamblin D)
-
-theorem whControl_admits (D : Type*) : (whControl D).Admits (hamblin D) :=
-  subset_rfl
-
-/-- Felicity factors through the contrast set: the semantics sees Γ,
-never the pragmatic label. -/
-theorem admits_factorsThrough_contrastSet (fv : PropFocusValue W) :
-    Function.FactorsThrough (FocusControl.Admits · fv)
-      (FocusControl.contrastSet (W := W)) :=
-  fun _ _ h => congrArg (fip · fv) h
-
-/-- Distinct pragmatic uses can supply one and the same Γ, so the
-four-way split is invisible to the Roothian semantics — pragmatic, not
-semantic (§1.2). Concretely: a *wh*-question and an explicit offer
-('Coffee or tea?', `control30`) can supply the same contrast set while
-licensing newInfo vs selective uses. -/
-theorem pragType_not_factorsThrough_contrastSet :
-    ¬ Function.FactorsThrough (FocusControl.pragType (W := W))
-        FocusControl.contrastSet :=
-  fun h => absurd (h (a := .question ∅) (b := .alternatives ∅) rfl)
-    (by simp [FocusControl.pragType])
+open Semantics.Focus (Antecedent Use hamblin whAntecedent)
 
 /-! ## What is focused (§2.2.2) -/
 
@@ -153,7 +73,7 @@ inductive Focused where
 constituent. -/
 structure FocusUtterance where
   cfg      : FocusConfig
-  pragType : PragType
+  pragType : Use
   focused  : Focused
   deriving Repr
 
@@ -184,27 +104,27 @@ inductive Caller | daudaa | other
 inductive Traveler | audu | other
 
 /-- 'What is Kande cooking?' ((22)). -/
-def control22 : FocusControl Dish := whControl Dish
+def control22 : Antecedent Dish := whAntecedent Dish
 /-- 'From which city do you come?' ((23)). -/
-def control23 : FocusControl City := whControl City
+def control23 : Antecedent City := whAntecedent City
 /-- 'Was it his mother who died?' — asserted alternative to correct ((24)). -/
-def control24 : FocusControl Deceased :=
+def control24 : Antecedent Deceased :=
   .assertion {Deceased.mother} (hamblin Deceased)
 /-- 'It is twenty Naira that you will pay' — assertion to correct ((25)). -/
-def control25 : FocusControl Price :=
+def control25 : Antecedent Price :=
   .assertion {Price.twenty} (hamblin Price)
 /-- '…you shouldn't pass in front of him' — parallel focus ((26)). -/
-def control26 : FocusControl Route := .parallel (hamblin Route)
+def control26 : Antecedent Route := .parallel (hamblin Route)
 /-- 'no one is chatting…' — parallel focus ((27)). -/
-def control27 : FocusControl Activity := .parallel (hamblin Activity)
+def control27 : Antecedent Activity := .parallel (hamblin Activity)
 /-- 'A whole or a half?' — explicitly offered alternatives ((29)). -/
-def control29 : FocusControl Amount := .alternatives (hamblin Amount)
+def control29 : Antecedent Amount := .offer (hamblin Amount)
 /-- 'Coffee or tea?' — explicitly offered alternatives ((30)). -/
-def control30 : FocusControl Drink := .alternatives (hamblin Drink)
+def control30 : Antecedent Drink := .offer (hamblin Drink)
 /-- 'Who is calling her?' ((17)). -/
-def control17 : FocusControl Caller := whControl Caller
+def control17 : Antecedent Caller := whAntecedent Caller
 /-- 'Who will go to Germany?' ((8)). -/
-def control8 : FocusControl Traveler := whControl Traveler
+def control8 : Antecedent Traveler := whAntecedent Traveler
 
 /-- Roothian felicity holds uniformly: every §3.2 control admits its
 answer's focus value. One semantics, four pragmatic uses. -/
@@ -234,19 +154,19 @@ theorem ex26_parallel_contrast :
 /-! ## The 8-cell empirical matrix (§3.2)
 
 Each cell's pragmatic type is *computed* from its controlling context:
-the constructors take a `FocusControl`, not a tag. -/
+the constructors take a `Semantics.Focus.Antecedent`, not a tag. -/
 
 private def mkExSituUtt (pac : PAC) (g : Gender) (sg hasStab : Bool)
     (h : pac.tam.HasRelativeForm → pac.mode = .relative)
-    {W : Type*} (ctl : FocusControl W) (foc : Focused := .nonSubject) :
+    {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) :
     FocusUtterance :=
-  ⟨mkExSitu pac g sg h hasStab, ctl.pragType, foc⟩
+  ⟨mkExSitu pac g sg h hasStab, ctl.use, foc⟩
 
 private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
-    {W : Type*} (ctl : FocusControl W) (foc : Focused := .nonSubject)
+    {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject)
     (hasStab : Bool := false) :
     FocusUtterance :=
-  ⟨mkInSitu pac g sg hasStab, ctl.pragType, foc⟩
+  ⟨mkInSitu pac g sg hasStab, ctl.use, foc⟩
 
 /-- Ex-situ new-information focus ((22), `Examples.ex22`). -/
 def exSitu_newInfo : FocusUtterance :=
@@ -394,7 +314,7 @@ private def strategyLabel : Strategy → String
   | .inSitu => "inSitu"
   | .exSitu => "exSitu"
 
-private def pragLabel : PragType → String
+private def pragLabel : Use → String
   | .newInfo => "newInfo"
   | .corrective => "corrective"
   | .selective => "selective"

@@ -97,8 +97,10 @@ def positionFor : FocusType → Position
   | .information      => .postverbal
 
 /-- Class–type compatibility (§3): `universal` is barred from
-identificational focus, `onlyPhrase` from information focus,
-`someIndef` from both. -/
+identificational focus (17b–d); `onlyPhrase` is "obligatorily realized
+as identificational" (§3); `someIndef` is barred from both — starred
+identificationally (17e) and "cannot function as information foci,
+either" (§3). -/
 def ConstituentClass.compatibleWith : ConstituentClass → FocusType → Prop
   | .regular,    _                  => True
   | .universal,  .identificational  => False
