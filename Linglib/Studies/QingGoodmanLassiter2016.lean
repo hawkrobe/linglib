@@ -94,55 +94,26 @@ inductive Utterance where
 
 /-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧.
 
-    The change-of-state utterances (stopped, started, always smoked) encode
-    presupposition + assertion as a conjunction over two temporal projections
-    of the world state. See bridge theorems below connecting these to the
-    CoS theory in `Semantics.Aspect.ChangeOfState`. -/
+    The change-of-state utterances evaluate the corresponding
+    `Features.ChangeOfState.CoSType` at the world's temporal projections —
+    presupposition and assertion by construction
+    (`Features.ChangeOfState.CoSType.eval_iff`), not by bridge theorem. -/
 def literalMeaning : Utterance → WorldState → Bool
   | .smokes,            w => w.now
   | .doesntSmoke,       w => !w.now
   | .smoked,            w => w.past
   | .didntSmoke,        w => !w.past
-  | .alwaysSmoked,      w => w.past && w.now
-  | .notAlwaysSmoked,   w => !(w.past && w.now)
-  | .stoppedSmoking,    w => w.past && !w.now
-  | .notStoppedSmoking, w => !(w.past && !w.now)
-  | .startedSmoking,    w => !w.past && w.now
-  | .notStartedSmoking, w => !(!w.past && w.now)
+  | .alwaysSmoked,      w => Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .notAlwaysSmoked,   w => !Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .stoppedSmoking,    w => Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .notStoppedSmoking, w => !Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .startedSmoking,    w => Features.ChangeOfState.CoSType.inception.eval w.past w.now
+  | .notStartedSmoking, w => !Features.ChangeOfState.CoSType.inception.eval w.past w.now
   | .neverSmoked,       w => !w.past && !w.now
   | .notNeverSmoked,    w => !(!w.past && !w.now)
   | .silence,           _ => true
 
-open Features.ChangeOfState (priorStatePresup resultStateAssertion)
-
-/-- "Stopped smoking" = cessation presupposition (past=T) ∧ cessation assertion (now=F).
-
-    The CoS theory operates on a single predicate P, but the QGL world model
-    separates prior state (`past`) from current state (`now`). We use `·.past`
-    for the presupposition and `·.now` for the assertion. -/
-theorem stopped_matches_cessation (w : WorldState) :
-    literalMeaning .stoppedSmoking w = true ↔
-    (priorStatePresup .cessation (fun w => w.past = true) w ∧
-     resultStateAssertion .cessation (fun w => w.now = true) w) := by
-  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
-    WorldState.past, WorldState.now]
-
-/-- "Started smoking" = inception presupposition (past=F) ∧ inception assertion (now=T). -/
-theorem started_matches_inception (w : WorldState) :
-    literalMeaning .startedSmoking w = true ↔
-    (priorStatePresup .inception (fun w => w.past = true) w ∧
-     resultStateAssertion .inception (fun w => w.now = true) w) := by
-  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
-    WorldState.past, WorldState.now]
-
-/-- "Always smoked" = continuation presupposition (past=T) ∧ continuation assertion (now=T). -/
-theorem always_matches_continuation (w : WorldState) :
-    literalMeaning .alwaysSmoked w = true ↔
-    (priorStatePresup .continuation (fun w => w.past = true) w ∧
-     resultStateAssertion .continuation (fun w => w.now = true) w) := by
-  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
-    WorldState.past, WorldState.now]
-
+open Features.ChangeOfState (CoSType)
 /-! ### Context sets -/
 
 /-- Context sets: subsets of worlds representing common ground.
@@ -354,46 +325,27 @@ theorem stopped_qud_answer :
 
 /-! ### Structural properties -/
 
-/-- "didn't stop smoking" is compatible with 3 of 4 worlds. -/
-theorem notStopped_compatible_worlds :
-    literalMeaning .notStoppedSmoking .wTT = true ∧
-    literalMeaning .notStoppedSmoking .wTF = false ∧
-    literalMeaning .notStoppedSmoking .wFT = true ∧
-    literalMeaning .notStoppedSmoking .wFF = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "didn't stop smoking" excludes exactly the stopping world. -/
+theorem notStopped_compatible_worlds (w : WorldState) :
+    literalMeaning .notStoppedSmoking w = true ↔ w ≠ .wTF := by cases w <;> decide
 
-/-- Under context set +past, "didn't stop" is maximally informative for QUD_now:
-    it narrows to exactly (T,T). -/
-theorem notStopped_informative_in_pastTrue :
-    (compatibleBool .pastTrue .wTT && literalMeaning .notStoppedSmoking .wTT) = true ∧
-    (compatibleBool .pastTrue .wTF && literalMeaning .notStoppedSmoking .wTF) = false ∧
-    (compatibleBool .pastTrue .wFT && literalMeaning .notStoppedSmoking .wFT) = false ∧
-    (compatibleBool .pastTrue .wFF && literalMeaning .notStoppedSmoking .wFF) = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- Under a +past context set, "didn't stop" is maximally informative for
+QUD_now: it narrows to exactly wTT. -/
+theorem notStopped_informative_in_pastTrue (w : WorldState) :
+    (compatibleBool .pastTrue w && literalMeaning .notStoppedSmoking w) = true ↔
+      w = .wTT := by cases w <;> decide
 
-/-- "stopped smoking" narrows to exactly (T,F): past=T and now=F. -/
-theorem stopped_world :
-    literalMeaning .stoppedSmoking .wTT = false ∧
-    literalMeaning .stoppedSmoking .wTF = true ∧
-    literalMeaning .stoppedSmoking .wFT = false ∧
-    literalMeaning .stoppedSmoking .wFF = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "stopped smoking" denotes exactly the stopping world (T,F). -/
+theorem stopped_world (w : WorldState) :
+    literalMeaning .stoppedSmoking w = true ↔ w = .wTF := by cases w <;> decide
 
-/-- "always smoked" = {(T,T)}, maximally informative for (T,T). -/
-theorem alwaysSmoked_world :
-    literalMeaning .alwaysSmoked .wTT = true ∧
-    literalMeaning .alwaysSmoked .wTF = false ∧
-    literalMeaning .alwaysSmoked .wFT = false ∧
-    literalMeaning .alwaysSmoked .wFF = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "always smoked" denotes exactly (T,T). -/
+theorem alwaysSmoked_world (w : WorldState) :
+    literalMeaning .alwaysSmoked w = true ↔ w = .wTT := by cases w <;> decide
 
-/-- "never smoked" = {(F,F)}, maximally informative for (F,F). -/
-theorem neverSmoked_world :
-    literalMeaning .neverSmoked .wTT = false ∧
-    literalMeaning .neverSmoked .wTF = false ∧
-    literalMeaning .neverSmoked .wFT = false ∧
-    literalMeaning .neverSmoked .wFF = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- "never smoked" denotes exactly (F,F). -/
+theorem neverSmoked_world (w : WorldState) :
+    literalMeaning .neverSmoked w = true ↔ w = .wFF := by cases w <;> decide
 
 /-- Context sets that entail past=T (used for measuring projection). -/
 def entailsPast : ContextSet → Bool
