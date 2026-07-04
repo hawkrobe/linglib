@@ -280,11 +280,13 @@ import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Probability.Marginal
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.ProductOfExperts
 import Linglib.Core.Probability.RandomUtility
+import Linglib.Core.Probability.Scores
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
