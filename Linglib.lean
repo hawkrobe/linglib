@@ -1416,6 +1416,7 @@ import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.BToM
 import Linglib.Pragmatics.RSA.Cancellation
 import Linglib.Pragmatics.RSA.Canonical
@@ -1432,6 +1433,7 @@ import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.Ranking
 import Linglib.Pragmatics.RSA.ReferenceGame
+import Linglib.Pragmatics.RSA.ScoreChain
 import Linglib.Pragmatics.RSA.Sequential
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.SimpAttr
@@ -2389,7 +2391,6 @@ import Linglib.Studies.KatzirSingh2015
 import Linglib.Studies.Kawahara2015
 import Linglib.Studies.KayFillmore1999
 import Linglib.Studies.KayMichaelis2019
-import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeenanComrie1977
 import Linglib.Studies.KeenanStavi1986
 import Linglib.Studies.KehlerRohde2013
@@ -2400,6 +2401,7 @@ import Linglib.Studies.Kennedy2007
 import Linglib.Studies.Kennedy2015
 import Linglib.Studies.Kennedy2015PMF
 import Linglib.Studies.KennedyLevin2008
+import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.KeshetAbney2024.Basic
 import Linglib.Studies.KeshetAbney2024.Bridges
