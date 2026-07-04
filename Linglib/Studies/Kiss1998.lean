@@ -227,18 +227,27 @@ The same schema is instantiated for Hausa in
 `HartmannZimmermann2007.lean` (with `cfg.strategy` and `pragType`) and
 *refuted* there — a difference of verdict on one shared predicate. -/
 
+/-- The factor witnessing §2: focus type as a function of position. -/
+def typeOfPosition : Position → FocusType
+  | .preverbal  => .identificational
+  | .postverbal => .information
+
+/-- On licensed configurations the focus type is literally
+`typeOfPosition` of the position — the §2 claim in factored form. -/
+theorem focusType_eqOn_typeOfPosition :
+    Set.EqOn FocusConfig.focusType
+      (typeOfPosition ∘ FocusConfig.position) {c | c.Licensed} := by
+  rintro c ⟨hpos, -⟩
+  rw [Function.comp_apply, hpos]
+  cases c.focusType <;> rfl
+
 /-- Position determines focus type on licensed configurations: Kiss's
-§2 structural claim. -/
+§2 structural claim, derived from the explicit factor. -/
 theorem position_determines_focusType :
     Function.FactorsThroughOn
-      FocusConfig.focusType FocusConfig.position {c | c.Licensed} := by
-  intro c₁ c₂ h₁ h₂ hpos
-  obtain ⟨hpos₁, _⟩ := h₁
-  obtain ⟨hpos₂, _⟩ := h₂
-  have heq : positionFor c₁.focusType = positionFor c₂.focusType := by
-    rw [← hpos₁, ← hpos₂]; exact hpos
-  cases ft₁ : c₁.focusType <;> cases ft₂ : c₂.focusType <;>
-    rw [ft₁, ft₂] at heq <;> simp [positionFor] at heq
+      FocusConfig.focusType FocusConfig.position {c | c.Licensed} :=
+  Function.factorsThroughOn_iff_exists_eqOn.mpr
+    ⟨typeOfPosition, focusType_eqOn_typeOfPosition⟩
 
 /-- Position equivalence with exhaustivity: composition of the
 position-type and type-exhaustivity equivalences. The semantic payoff
