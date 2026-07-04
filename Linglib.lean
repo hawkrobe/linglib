@@ -2282,6 +2282,7 @@ import Linglib.Studies.GroszJoshiWeinstein1995
 import Linglib.Studies.Grove2022
 import Linglib.Studies.GroveWhite2025
 import Linglib.Studies.Grubic2015
+import Linglib.Studies.GrubicRenansDuah2019
 import Linglib.Studies.GrusdtLassiterFranke2022
 import Linglib.Studies.Guerrini2026
 import Linglib.Studies.Gunlogson2001
