@@ -31,8 +31,9 @@ named atoms.
 
 * Declare the full instance set on ℚ≥0-face sections:
   `[Fintype _] [DecidableEq _] [Nonempty _]`.
-* Guard on strict inequalities (`Rat.blt` kernel-reduces), never on
-  equality with a `ℚ≥0` sum (its `Decidable` instance may not).
+* Base tables are pattern matches or `Bool` tables — never propositional
+  `if x = y` over a derived `DecidableEq`; one such `ite` anywhere in the
+  chain blocks kernel reduction of every order comparison above it.
 * Prefer strict-bound sandwiches over equalities with literals.
 * Certify every numeric claim externally (exact fractions, mirroring the
   Lean definitions including fallback semantics) before proving.
