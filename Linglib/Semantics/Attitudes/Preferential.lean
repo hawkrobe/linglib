@@ -103,17 +103,12 @@ Focus triggers significance presup [[kennedy-2007]]
 For positive valence: significance = ∃p ∈ C. μ(x,p) > θ = TSP
 ```
 
-### Rooth Integration (see `Focus/Sensitivity.lean`)
+### Rooth Integration
 
-The compositional chain from focus marking to TSP is now explicit:
-
-- `Focus/Interpretation.lean`: `FocusResolution` bundles ~'s two constraints
-  (C ⊆ ⟦α⟧f, ⟦α⟧o ∈ C)
-- `Focus/Sensitivity.lean`: `focusSignificance` derives the significance
-  presupposition from a degree predicate + FocusResolution;
-  `tsp_from_focus` proves significance = TSP for positive valence;
-  `assertion_entails_tsp` shows TSP is entailed by the assertion
-  (because ⟦α⟧o ∈ C guarantees a witness)
+The squiggle's two constraints (Γ ⊆ ⟦α⟧f, ⟦α⟧o ∈ Γ) live in
+`Semantics/Focus/Control.lean` (`SquiggleSet`, `Antecedent.Resolves`);
+deriving the significance presupposition from a degree predicate plus
+a resolved contrast set is an open TODO.
 -/
 
 /--

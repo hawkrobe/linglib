@@ -110,7 +110,7 @@ foci receive nothing ((31)/(32a–c)). -/
 def realize : Config → Realization Focused
   | ⟨.subject, _, _⟩        => ⟨.subject, [.displacement .subject]⟩
   | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
-  | ⟨f, .perfective, true⟩  => ⟨f, [.prosodic .verb]⟩
+  | ⟨f, .perfective, true⟩  => ⟨f, [.boundary .verb]⟩
   | ⟨f, .progressive, _⟩    => ⟨f, []⟩
 
 /-- The paper's strategy labels, classified from the realization
@@ -119,7 +119,7 @@ def marking (c : Config) : Strategy :=
   match (realize c).reflexes with
   | [.displacement _] => .postposing
   | [.morpheme _]     => .suffixI
-  | [.prosodic _]     => .boundary
+  | [.boundary _]     => .boundary
   | _                 => .unmarked
 
 /-- Focused subjects are overtly marked in every aspect — the paper's
@@ -154,7 +154,7 @@ theorem tangale_refutes_perceptibility :
 
 /-- The prosodic reflex is audible: the boundary-blocked perfective
 form differs from the phrase-medial elided form — [kidda-1985]'s
-elision cascade is what makes `Reflex.prosodic` perceptible in the
+elision cascade is what makes `Reflex.boundary` perceptible in the
 (25) cells. -/
 theorem prosodic_reflex_audible :
     Tangale.blockedForm ≠ Tangale.elidedForm :=

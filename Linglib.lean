@@ -1363,6 +1363,7 @@ import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Prosody.Mora
+import Linglib.Phonology.Prosody.Phrase
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Segmental.Basic

@@ -436,13 +436,13 @@ def onlyJohn : OnlyWorld → Bool
 theorem only_bill_semantics :
     (onlyWorlds.all fun w =>
       onlyBill w == (introBill w && !introJohn w)) = true := by
-  native_decide
+  decide
 
 /-- "Only" with focus on JOHN: symmetric case. -/
 theorem only_john_semantics :
     (onlyWorlds.all fun w =>
       onlyJohn w == (introJohn w && !introBill w)) = true := by
-  native_decide
+  decide
 
 /-- Different focus → different "only" meaning.
     Focus on BILL excludes John; focus on JOHN excludes Bill

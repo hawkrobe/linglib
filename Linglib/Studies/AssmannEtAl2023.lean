@@ -15,7 +15,7 @@ Each construction focally marks exactly one constituent; **No
 Projection** (§2.2) lets it realize any focus within that constituent
 (the marked constituent and the pragmatic focus need not coincide);
 **Blocking** (§2.3) preempts a marking wherever a strictly more
-specific one would do. Syncretism is containment minus blocking:
+specific one would do — `Usable` is minimality among inventory covers. Syncretism is containment minus blocking:
 disjoint-constituent syncretisms (V with Obj, §4.2.1) — which
 "directly contradict Uniform Marking" — fall out by focally marking
 the common mother (§4.2.3).
@@ -38,7 +38,7 @@ fn. 18.
 
 namespace AssmannEtAl2023
 
-open Semantics.Focus (Marking)
+open Semantics.Focus (Usable)
 
 
 /-! ## The constituent skeleton of the case studies -/
@@ -69,19 +69,19 @@ instance : DecidableLE Node := fun _ _ =>
 
 /-- The Gùrùntùm inventory: *a* before the subject, *a* before the
 object marking VP, clausal *á* ((4a–c)). -/
-def guruntumInv : List (Marking Node) := [⟨.sbj⟩, ⟨.vp⟩, ⟨.s⟩]
+def guruntumInv : List Node := [.sbj, .vp, .s]
 
 /-- (4b): focally marking VP is syncretic for V, VP and Obj focus —
 No Projection in action. -/
 theorem guruntum_vp_syncretism :
-    Marking.Usable guruntumInv ⟨.vp⟩ .v ∧ Marking.Usable guruntumInv ⟨.vp⟩ .vp ∧
-    Marking.Usable guruntumInv ⟨.vp⟩ .obj := by decide
+    Usable guruntumInv .vp .v ∧ Usable guruntumInv .vp .vp ∧
+    Usable guruntumInv .vp .obj := by decide
 
 /-- (4c)/(5): the clausal marking realizes only clausal focus — every
 smaller focus is blocked by a specialized marking. -/
 theorem guruntum_clausal_blocked :
-    Marking.Usable guruntumInv ⟨.s⟩ .s ∧ ¬ Marking.Usable guruntumInv ⟨.s⟩ .sbj ∧
-    ¬ Marking.Usable guruntumInv ⟨.s⟩ .vp ∧ ¬ Marking.Usable guruntumInv ⟨.s⟩ .obj := by
+    Usable guruntumInv .s .s ∧ ¬ Usable guruntumInv .s .sbj ∧
+    ¬ Usable guruntumInv .s .vp ∧ ¬ Usable guruntumInv .s .obj := by
   decide
 
 /-! ## Case study: Hausa (§3.2) -/
@@ -89,19 +89,19 @@ theorem guruntum_clausal_blocked :
 /-- The Hausa canonical-order inventory: the relative form of the PAC
 focally marks the subject ((10)); the absolute form is the default,
 "the absence of a specific marking", focally marking the clause. -/
-def hausaInv : List (Marking Node) := [⟨.sbj⟩, ⟨.s⟩]
+def hausaInv : List Node := [.sbj, .s]
 
 /-- (11): the absolute form answers any non-subject constituent
 question and all-new contexts — one default, syncretic for V, VP,
 Obj and clausal focus. -/
 theorem hausa_default_syncretism :
-    Marking.Usable hausaInv ⟨.s⟩ .v ∧ Marking.Usable hausaInv ⟨.s⟩ .vp ∧
-    Marking.Usable hausaInv ⟨.s⟩ .obj ∧ Marking.Usable hausaInv ⟨.s⟩ .s := by decide
+    Usable hausaInv .s .v ∧ Usable hausaInv .s .vp ∧
+    Usable hausaInv .s .obj ∧ Usable hausaInv .s .s := by decide
 
 /-- Only subject focus has to be marked (their fn. 13): the default
 is blocked for subject focus by the relative form. -/
 theorem hausa_subject_needs_relative :
-    ¬ Marking.Usable hausaInv ⟨.s⟩ .sbj ∧ Marking.Usable hausaInv ⟨.sbj⟩ .sbj := by
+    ¬ Usable hausaInv .s .sbj ∧ Usable hausaInv .sbj .sbj := by
   decide
 
 /-! ## The Tangale rivalry (their fn. 13, 17, 18)
@@ -119,10 +119,10 @@ open HartmannZimmermann2004 in
 specific subject marking (postposing); perfective non-subject foci
 the VP-marking (the prosodic boundary, fn. 18); progressive
 non-subject foci the default clause marking (fn. 13). -/
-def uaTangale : Config → Marking Node
-  | ⟨.subject, _, _⟩        => ⟨.sbj⟩
-  | ⟨_, .perfective, _⟩     => ⟨.vp⟩
-  | ⟨_, .progressive, _⟩    => ⟨.s⟩
+def uaTangale : Config → Node
+  | ⟨.subject, _, _⟩        => .sbj
+  | ⟨_, .perfective, _⟩     => .vp
+  | ⟨_, .progressive, _⟩    => .s
 
 open HartmannZimmermann2004 in
 /-- Cell-by-cell agreement with the reflex analysis: a configuration
@@ -131,7 +131,7 @@ has an overt reflex iff its UA marking is not the default. What
 for UA, the default marking whose focally marked constituent
 properly contains the focus. -/
 theorem ua_agrees_with_hz_on_overtness (c : Config) :
-    (realize c).IsOvert ↔ uaTangale c ≠ ⟨Node.s⟩ := by
+    (realize c).IsOvert ↔ uaTangale c ≠ Node.s := by
   obtain ⟨f, a, t⟩ := c
   cases f <;> cases a <;> cases t <;> decide
 
