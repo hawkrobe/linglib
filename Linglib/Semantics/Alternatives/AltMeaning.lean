@@ -103,6 +103,24 @@ ordinary dimension. -/
     b ∈ (mf <*> ma).aSet ↔ ∃ g ∈ mf.aSet, ∃ a ∈ ma.aSet, g a = b := by
   simp [Seq.seq, aSet, unfeatured, eq_comm]
 
+/-! ### `aSet` as a morphism into the `Set` applicative
+
+Together with the `oValue` monad-morphism laws above, these exhibit
+the alternatives monad as a span `Id ⟵ AltMeaning ⟶ Set`: ordinary
+meaning and focal-target set are its two structure-preserving
+projections. Hamblin application is the image of `<*>` under `aSet`. -/
+
+theorem aSet_pure (a : α) : (pure a : AltMeaning α).aSet = {a} := by
+  ext b; simp [pure, aSet, unfeatured]
+
+theorem aSet_seq (mf : AltMeaning (α → β)) (ma : AltMeaning α) :
+    (mf <*> ma).aSet = mf.aSet.seq ma.aSet := by
+  ext b; simp only [mem_aSet_seq, Set.mem_seq_iff]
+
+theorem aSet_bind (m : AltMeaning α) (f : α → AltMeaning β) :
+    (m >>= f).aSet = {b | ∃ a ∈ m.aSet, b ∈ (f a).aSet} := by
+  ext b; simp [Bind.bind, aSet]
+
 /-- Rooth's containment constraint: the A-value contains the O-value. -/
 def WellFormed (m : AltMeaning α) : Prop := m.oValue ∈ m.aValue
 
