@@ -958,49 +958,55 @@ end PMFChain
 "studyScience". Nancy studies German (a humanity), so "studyScience" has
 L0(nancy|studyScience) = 0, while "studyHumanity" has L0(nancy|studyHumanity) = 1/2. -/
 theorem s1_nancy_prefers_humanity :
-    mfRSA.S1 () .nancy .studyHumanity > mfRSA.S1 () .nancy .studyScience := by
-  rsa_predict
+    s1Turn1 .nancy .studyHumanity > s1Turn1 .nancy .studyScience := by
+  rw [s1Turn1_true (by decide) (by decide), s1Turn1_false (by decide)]
+  exact ENNReal.ofReal_pos.mpr (by norm_num)
 
 /-- A speaker who knows it's Nancy prefers "likeOutdoors" over "likeIndoors".
 Nancy likes being outdoors. -/
 theorem s1_nancy_prefers_outdoors :
-    mfRSA.S1 () .nancy .likeOutdoors > mfRSA.S1 () .nancy .likeIndoors := by
-  rsa_predict
+    s1Turn1 .nancy .likeOutdoors > s1Turn1 .nancy .likeIndoors := by
+  rw [s1Turn1_true (by decide) (by decide), s1Turn1_false (by decide)]
+  exact ENNReal.ofReal_pos.mpr (by norm_num)
 
 /-- A speaker who knows it's Ina prefers "studyScience" over "studyHumanity".
 Ina studies Astronomy (a science). -/
 theorem s1_ina_prefers_science :
-    mfRSA.S1 () .ina .studyScience > mfRSA.S1 () .ina .studyHumanity := by
-  rsa_predict
+    s1Turn1 .ina .studyScience > s1Turn1 .ina .studyHumanity := by
+  rw [s1Turn1_true (by decide) (by decide), s1Turn1_false (by decide)]
+  exact ENNReal.ofReal_pos.mpr (by norm_num)
 
 /-- A speaker who knows it's Ina is indifferent between "studyScience" and
 "likeIndoors": both are true of exactly 2 worlds, giving equal L0 posteriors.
 This tests `rsa_predict` on equality goals. -/
 theorem s1_ina_science_eq_indoors :
-    mfRSA.S1 () .ina .studyScience = mfRSA.S1 () .ina .likeIndoors := by
-  rsa_predict
+    s1Turn1 .ina .studyScience = s1Turn1 .ina .likeIndoors := by
+  rw [s1Turn1_true (by decide) (by decide), s1Turn1_true (by decide) (by decide)]
 
 /-- The null utterance is always suboptimal: a speaker who knows it's Nancy
 strictly prefers any true specific utterance over saying nothing.
 Null is true of all 4 worlds (L0 = 1/4), while "studyHumanity" is true of
 only 2 (L0 = 1/2). -/
 theorem s1_null_suboptimal :
-    mfRSA.S1 () .nancy .studyHumanity > mfRSA.S1 () .nancy .null := by
-  rsa_predict
+    s1Turn1 .nancy .studyHumanity > s1Turn1 .nancy .null := by
+  rw [s1Turn1_true (by decide) (by decide), s1Turn1_null]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
 /-- Symmetry: S1(studyHumanity|nancy) = S1(likeOutdoors|nancy).
 Both utterances partition the 4 worlds into 2 true + 2 false, so
 L0(nancy|studyHumanity) = L0(nancy|likeOutdoors) = 1/2, hence equal S1. -/
 theorem s1_nancy_humanity_eq_outdoors :
-    mfRSA.S1 () .nancy .studyHumanity = mfRSA.S1 () .nancy .likeOutdoors := by
-  rsa_predict
+    s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors := by
+  rw [s1Turn1_true (by decide) (by decide), s1Turn1_true (by decide) (by decide)]
 
 /-- False utterances get zero S1 probability.
 "studyScience" is false of Nancy (she studies German), so S1 = 0.
 Tests `rsa_predict` on negation of strict inequality. -/
 theorem s1_nancy_science_not_gt_null :
-    ¬(mfRSA.S1 () .nancy .studyScience > mfRSA.S1 () .nancy .null) := by
-  rsa_predict
+    ¬(s1Turn1 .nancy .studyScience > s1Turn1 .nancy .null) := by
+  rw [gt_iff_lt,
+    s1Turn1_false (show mfMeaning .studyScience .nancy = false from by decide)]
+  simp
 
 -- ════════════════════════════════════════════════════
 -- § 10. Turn 1: L1 Predictions
@@ -1009,33 +1015,35 @@ theorem s1_nancy_science_not_gt_null :
 /-- After hearing "studyHumanity", L1 assigns higher probability to Nancy
 than to Ina. Nancy studies a humanity; Ina studies a science. -/
 theorem l1_humanity_favors_nancy :
-    mfRSA.L1 .studyHumanity .nancy > mfRSA.L1 .studyHumanity .ina := by
-  rsa_predict
+    l1Turn1 .studyHumanity .nancy > l1Turn1 .studyHumanity .ina := by
+  rw [l1Turn1_true (by decide) (by decide), l1Turn1_false (by decide)]
+  exact ENNReal.ofReal_pos.mpr (by norm_num)
 
 /-- After hearing "likeOutdoors", L1 favors Nancy over Sally.
 Nancy likes outdoors; Sally likes indoors. -/
 theorem l1_outdoors_favors_nancy :
-    mfRSA.L1 .likeOutdoors .nancy > mfRSA.L1 .likeOutdoors .sally := by
-  rsa_predict
+    l1Turn1 .likeOutdoors .nancy > l1Turn1 .likeOutdoors .sally := by
+  rw [l1Turn1_true (by decide) (by decide), l1Turn1_false (by decide)]
+  exact ENNReal.ofReal_pos.mpr (by norm_num)
 
 /-- After hearing "studyHumanity", L1 assigns equal probability to Nancy
 and Sally — both study a humanity, and S1 scores are symmetric. -/
 theorem l1_humanity_nancy_eq_sally :
-    mfRSA.L1 .studyHumanity .nancy = mfRSA.L1 .studyHumanity .sally := by
-  rsa_predict
+    l1Turn1 .studyHumanity .nancy = l1Turn1 .studyHumanity .sally := by
+  rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)]
 
 /-- After hearing "studyScience", L1 assigns equal probability to Ina
 and Katie — both study a science. -/
 theorem l1_science_ina_eq_katie :
-    mfRSA.L1 .studyScience .ina = mfRSA.L1 .studyScience .katie := by
-  rsa_predict
+    l1Turn1 .studyScience .ina = l1Turn1 .studyScience .katie := by
+  rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)]
 
 /-- The null utterance conveys no information: L1 assigns equal probability
 to all worlds. Every world has S1(null|w) = 1/5 by the domain's symmetry
 (each world makes exactly 2 non-null utterances true). -/
 theorem l1_null_uniform (w₁ w₂ : MFWorld) :
-    mfRSA.L1 .null w₁ = mfRSA.L1 .null w₂ := by
-  cases w₁ <;> cases w₂ <;> first | rfl | rsa_predict
+    l1Turn1 .null w₁ = l1Turn1 .null w₂ := by
+  rw [l1Turn1_null, l1Turn1_null]
 
 -- ════════════════════════════════════════════════════
 -- § 11. RSAConfig: Turn 2 (Post-Update Prior)
@@ -1179,7 +1187,7 @@ theorem s1_turn2_nancy_prefers_outdoors :
 
 /-- At turn 1, the same two utterances were equal (pre-CommonGround-adaptation). -/
 theorem s1_turn1_nancy_humanity_eq_outdoors :
-    mfRSA.S1 () .nancy .studyHumanity = mfRSA.S1 () .nancy .likeOutdoors :=
+    s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors :=
   s1_nancy_humanity_eq_outdoors
 
 /-- CommonGround adaptation works differently for low-CommonGround worlds: at turn 2,
@@ -1297,13 +1305,14 @@ L1(nancy|studyHumanity) > L1(nancy|null). The null utterance gives
 uniform L1 (= 1/4), while "studyHumanity" concentrates on the 2
 German-studying worlds (= 1/2). -/
 theorem l1_concentrates_after_utterance :
-    mfRSA.L1 .studyHumanity .nancy > mfRSA.L1 .null .nancy := by
-  rsa_predict
+    l1Turn1 .studyHumanity .nancy > l1Turn1 .null .nancy := by
+  rw [l1Turn1_true (by decide) (by decide), l1Turn1_null]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
 /-- Informed speakers are informative: S1 assigns higher probability
 to a true specific utterance than to null. -/
 theorem s1_informed_speaker_is_informative :
-    mfRSA.S1 () .nancy .studyHumanity > mfRSA.S1 () .nancy .null :=
+    s1Turn1 .nancy .studyHumanity > s1Turn1 .nancy .null :=
   s1_null_suboptimal
 
 -- ════════════════════════════════════════════════════
@@ -1343,51 +1352,64 @@ theorem graded_update_keeps_false_world (cg post : DistributionalCG MFWorld)
   linarith
 
 -- ════════════════════════════════════════════════════
--- § 17. Exact Numerical Predictions (Figure 5)
+-- § 17. Exact Numerical Predictions (turn 1)
 -- ════════════════════════════════════════════════════
 
-/-! Exact rational values for the turn-1 RSA computations underlying
-Figure 5, panel 1A. At turn 1 with uniform CommonGround, the domain's 2×2
-feature symmetry gives clean fractions: each non-null utterance is true
-of exactly 2 worlds (L0 = 1/2), null is true of all 4 (L0 = 1/4), and
-each world makes exactly 2 non-null utterances true, giving
+/-! Exact rational values for the turn-1 RSA computations, derived from
+the Figure-4 equations at the uniform CommonGround. (The paper's Figure 5
+is a qualitative bar chart of a four-move conversation; these exact
+fractions are the formalization's own kernel-checked arithmetic, not
+printed paper values.) The domain's 2×2 feature symmetry gives clean
+fractions: each non-null utterance is true of exactly 2 worlds
+(L0 = 1/2), null is true of all 4 (L0 = 1/4), and each world makes
+exactly 2 non-null utterances true, giving
 S1(true u|w) = (1/2)/(5/4) = 2/5 and S1(null|w) = (1/4)/(5/4) = 1/5. -/
 
 -- S1(·|nancy): production probabilities given obs = Nancy
 
 theorem s1_nancy_studyHumanity_val :
-    mfRSA.S1 () .nancy .studyHumanity = 2/5 := by rsa_predict
+    s1Turn1 .nancy .studyHumanity = ENNReal.ofReal (2/5) :=
+  s1Turn1_true (by decide) (by decide)
 
 theorem s1_nancy_studyScience_val :
-    mfRSA.S1 () .nancy .studyScience = 0 := by rsa_predict
+    s1Turn1 .nancy .studyScience = 0 :=
+  s1Turn1_false (by decide)
 
 theorem s1_nancy_likeIndoors_val :
-    mfRSA.S1 () .nancy .likeIndoors = 0 := by rsa_predict
+    s1Turn1 .nancy .likeIndoors = 0 :=
+  s1Turn1_false (by decide)
 
 theorem s1_nancy_likeOutdoors_val :
-    mfRSA.S1 () .nancy .likeOutdoors = 2/5 := by rsa_predict
+    s1Turn1 .nancy .likeOutdoors = ENNReal.ofReal (2/5) :=
+  s1Turn1_true (by decide) (by decide)
 
 theorem s1_nancy_null_val :
-    mfRSA.S1 () .nancy .null = 1/5 := by rsa_predict
+    s1Turn1 .nancy .null = ENNReal.ofReal (1/5) :=
+  s1Turn1_null .nancy
 
 -- L1(·|studyHumanity): posteriors used in CommonGround update → Figure 5 panel 1A
 
 theorem l1_studyHumanity_nancy_val :
-    mfRSA.L1 .studyHumanity .nancy = 1/2 := by rsa_predict
+    l1Turn1 .studyHumanity .nancy = ENNReal.ofReal (1/2) :=
+  l1Turn1_true (by decide) (by decide)
 
 theorem l1_studyHumanity_sally_val :
-    mfRSA.L1 .studyHumanity .sally = 1/2 := by rsa_predict
+    l1Turn1 .studyHumanity .sally = ENNReal.ofReal (1/2) :=
+  l1Turn1_true (by decide) (by decide)
 
 theorem l1_studyHumanity_ina_val :
-    mfRSA.L1 .studyHumanity .ina = 0 := by rsa_predict
+    l1Turn1 .studyHumanity .ina = 0 :=
+  l1Turn1_false (by decide)
 
 theorem l1_studyHumanity_katie_val :
-    mfRSA.L1 .studyHumanity .katie = 0 := by rsa_predict
+    l1Turn1 .studyHumanity .katie = 0 :=
+  l1Turn1_false (by decide)
 
 /-- Null gives uniform L1: every world has the same S1(null|w) by the
 domain's symmetry, so L1(w|null) = CommonGround(w)/Σ CommonGround = 1/4. -/
 theorem l1_null_val (w : MFWorld) :
-    mfRSA.L1 .null w = 1/4 := by cases w <;> rsa_predict
+    l1Turn1 .null w = ENNReal.ofReal (1/4) :=
+  l1Turn1_null w
 
 -- ════════════════════════════════════════════════════
 -- § 18. Approximate CommonGround Model (§5.2, Figure 6)
