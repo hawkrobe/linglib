@@ -1,4 +1,5 @@
-import Linglib.Tactics.RSAPredict
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Data.Examples.BergenGoodman2015
@@ -33,35 +34,72 @@ standard RSA cannot:
     U_n(u_i | m) = Σ_{u_p} P_N(u_p|u_i) · log L_{n-1}(m|u_p) - c(u_i)  (Eq. 7)
     L_n(m | u_p) ∝ P(m) Σ_{u_i} S_n(u_i|m) · P_N(u_p|u_i)              (Eq. 8)
 
-## RSAConfig Encoding
+## Implementation notes
 
-The noisy channel model is encoded in RSAConfig by **folding noise into the
-score functions**:
+**Ellipsis** is exact ℚ: each meaning has a unique truthful full sentence,
+so eq. 7's softmax has singleton support, the intended speaker is degenerate,
+and eq. 8's fold reduces to the channel row (`s1nQ`). Listeners are
+`pmfOfScores` of the eq. 6 scores; predictions are kernel-verified.
 
-- `meaning(u_p, m)` = Eq. 6 numerator: Σ_{u_i} ⟦u_i⟧(m) · P(u_i) · P_N(u_p|u_i)
-- `s1Score(l0, α, _, m, u_p)` = Eqs. 7-8 combined:
-  Σ_{u_i} exp(α · Σ_{u_p'} P_N(u_p'|u_i) · log l0(u_p',m)) · P_N(u_p|u_i)
-
-This works because the noise channel rows sum to 1, so normalization before
-vs after folding in noise gives the same result:
-
-    S1_noise(u_p|m) = Σ_{u_i} S1_intended(u_i|m) · P_N(u_p|u_i)
-
-and L1(m|u_p) ∝ worldPrior(m) · S1_noise(u_p|m), matching Eq. 8.
-
-The S1 speaker only produces **full sentences** — fragments arise solely from
-noise corruption. This is encoded via `literalMeaning`: fragments have no
-literal meaning, so S1's exp(α·utility) term is zero for them (matching
-exp(-∞) = 0 from log(0) in the utility).
+**Prosody** is genuinely transcendental — eq. 7 exponentiates `P_N`-weighted
+sums of `log l0` — but with ε = 1/100 the weights have denominator 200, so
+each utility atom's 200th power is an explicit rational (`X200`, `Y200`).
+The atoms are two-sidedly bounded by kernel-certified rational-power
+inequalities (`Xa_bounds`, `Ya_bounds`), the bridge lemmas `Xa_eq_exp` /
+`Ya_eq_exp` identify them with the paper's exponentiated utilities, and the
+three predictions close by `nlinarith` over the bounds. The `both`-meaning
+atoms are exactly `1/2` (its literal posteriors are constant), and the
+fragment/full-sentence split is carried by `literalMeaning`: fragments have
+no literal meaning, so they get zero speaker weight (exp(−∞) from log 0).
 -/
 
 open BigOperators RSA
 
 namespace BergenGoodman2015
 
--- ============================================================================
--- § 1. Ellipsis: Sentence Fragments
--- ============================================================================
+section PMFCombinator
+
+open scoped ENNReal
+
+/-- Normalize a rational score vector into a PMF (uniform at zero mass). -/
+noncomputable def pmfOfScores {σ : Type*} [Fintype σ] [Nonempty σ]
+    (f : σ → ℚ) : PMF σ :=
+  if h : (∑' x, ENNReal.ofReal ((f x : ℝ))) ≠ 0 then
+    PMF.normalize (fun x => ENNReal.ofReal ((f x : ℝ))) h
+      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+  else PMF.uniformOfFintype σ
+
+theorem pmfOfScores_apply {σ : Type*} [Fintype σ] [Nonempty σ]
+    {f : σ → ℚ} (hf : ∀ x, 0 ≤ f x) (hpos : 0 < ∑ x, f x) (x : σ) :
+    pmfOfScores f x = ENNReal.ofReal ((f x / ∑ x', f x' : ℚ) : ℝ) := by
+  have hsum : (∑' x, ENNReal.ofReal ((f x : ℝ)))
+      = ENNReal.ofReal ((∑ x, f x : ℚ) : ℝ) := by
+    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg (fun x _ => by exact_mod_cast hf x)]
+    push_cast
+    rfl
+  rw [pmfOfScores, dif_pos (by
+      rw [hsum, ENNReal.ofReal_ne_zero_iff]; exact_mod_cast hpos),
+    PMF.normalize_apply, hsum,
+    ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos),
+    ← ENNReal.ofReal_mul (by exact_mod_cast hf x)]
+  congr 1
+  push_cast
+  rw [div_eq_mul_inv]
+
+/-- Strict comparison of `pmfOfScores` values via the exact-ℚ scores. -/
+theorem pmf_lt_cross {σ τ : Type*} [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ]
+    {f : σ → ℚ} {g : τ → ℚ}
+    (hf : ∀ x, 0 ≤ f x) (hg : ∀ x, 0 ≤ g x)
+    (hfp : 0 < ∑ x, f x) (hgp : 0 < ∑ x, g x) {a : σ} {b : τ}
+    (hb : 0 < g b / ∑ x, g x) (hab : f a / ∑ x, f x < g b / ∑ x, g x) :
+    pmfOfScores f a < pmfOfScores g b := by
+  rw [pmfOfScores_apply hf hfp, pmfOfScores_apply hg hgp]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast hb)).mpr
+    (by exact_mod_cast hab)
+
+end PMFCombinator
+
+/-! ### Ellipsis: Sentence Fragments -/
 
 /-!
 ## Ellipsis
@@ -143,9 +181,71 @@ noncomputable def noiseChannel (δ : ℝ) : Utterance → Utterance → ℝ
   | .wentToMovies, .wentToMovies => 1
   | _, _ => 0
 
--- ============================================================================
--- § 2. RSAConfig for Ellipsis
--- ============================================================================
+/-! ### RSAConfig for Ellipsis -/
+
+/-- ℚ noise rate (1%; Fig. 1 shows robustness across 10⁻⁵–10⁻¹). -/
+def δQ : ℚ := 1/100
+
+/-- ℚ noise channel (word deletion, mirroring `noiseChannel`). -/
+def noiseQ : Utterance → Utterance → ℚ
+  | .aliceWentToMovies, .aliceWentToMovies => 1 - δQ
+  | .aliceWentToMovies, .alice => δQ
+  | .bobWentToMovies, .bobWentToMovies => 1 - δQ
+  | .bobWentToMovies, .bob => δQ
+  | .nobodyWentToMovies, .nobodyWentToMovies => 1 - δQ
+  | .nobodyWentToMovies, .nobody => δQ
+  | .alice, .alice => 1
+  | .bob, .bob => 1
+  | .nobody, .nobody => 1
+  | .wentToMovies, .wentToMovies => 1
+  | _, _ => 0
+
+/-- ℚ utterance prior (only full sentences are produced). -/
+def utterancePriorQ : Utterance → ℚ
+  | .aliceWentToMovies => 1
+  | .bobWentToMovies => 1
+  | .nobodyWentToMovies => 1
+  | _ => 0
+
+/-- ℚ noisy literal-listener score (eq. 6 numerator). -/
+def noisyMeaningQ (u_p : Utterance) (m : Meaning) : ℚ :=
+  ∑ u_i, (if literalMeaning u_i m then (1 : ℚ) else 0) *
+    utterancePriorQ u_i * noiseQ u_i u_p
+
+/-- The unique full sentence expressing each meaning. -/
+def fullOf : Meaning → Utterance
+  | .aliceWent => .aliceWentToMovies
+  | .bobWent => .bobWentToMovies
+  | .nobodyWent => .nobodyWentToMovies
+
+/-- The noise-folded pragmatic speaker (eqs. 7–8). Each meaning has exactly
+one truthful full sentence, so eq. 7's softmax has singleton support and
+the intended-speaker distribution is degenerate at `fullOf m`; eq. 8's fold
+then reduces to the channel row of `fullOf m`. -/
+def s1nQ (m : Meaning) (u_p : Utterance) : ℚ := noiseQ (fullOf m) u_p
+
+private theorem noiseQ_nonneg (u_i u_p : Utterance) : 0 ≤ noiseQ u_i u_p := by
+  cases u_i <;> cases u_p <;> norm_num [noiseQ, δQ]
+
+private theorem noisyMeaningQ_nonneg (u_p : Utterance) (m : Meaning) :
+    0 ≤ noisyMeaningQ u_p m :=
+  Finset.sum_nonneg fun u_i _ => by
+    have := noiseQ_nonneg u_i u_p
+    have : (0:ℚ) ≤ utterancePriorQ u_i := by cases u_i <;> norm_num [utterancePriorQ]
+    split <;> positivity
+
+private theorem s1nQ_nonneg (m : Meaning) (u_p : Utterance) : 0 ≤ s1nQ m u_p :=
+  noiseQ_nonneg _ _
+
+open scoped ENNReal in
+/-- Literal listener over meanings (eq. 6). -/
+noncomputable def l0PMF (u_p : Utterance) : PMF Meaning :=
+  pmfOfScores (fun m => noisyMeaningQ u_p m)
+
+open scoped ENNReal in
+/-- Pragmatic listener over meanings (eq. 8, uniform meaning prior). -/
+noncomputable def l1PMF (u_p : Utterance) : PMF Meaning :=
+  pmfOfScores (fun m => s1nQ m u_p)
 
 /-- Noisy L0 meaning (Eq. 6 numerator).
 
@@ -158,64 +258,7 @@ noncomputable def noisyMeaning (δ : ℝ) (u_p : Utterance) (m : Meaning) : ℝ 
     (if literalMeaning u_i m then (1 : ℝ) else 0) *
     utterancePrior u_i * noiseChannel δ u_i u_p
 
-/-- Noise-folded S1 score (Eqs. 7-8 combined).
-
-    s1Score(l0, α, _, m, u_p) = Σ_{u_i} raw(u_i|m) · P_N(u_p | u_i)
-
-    where raw(u_i|m) = exp(α · Σ_{u_p'} P_N(u_p'|u_i) · log l0(u_p',m))
-    for utterances with literal meaning m, and 0 otherwise (exp(-∞) = 0).
-
-    This folds the noise channel into S1's output so that RSAConfig's
-    S1(u_p|m) = Σ_{u_i} S1_intended(u_i|m) · P_N(u_p|u_i), matching Eq. 8.
-    The row-sum-to-1 property of the noise channel ensures normalization
-    is correct. -/
-noncomputable def noisyS1Score (δ : ℝ)
-    (l0 : Utterance → Meaning → ℝ) (α : ℝ) (_ : Unit)
-    (m : Meaning) (u_p : Utterance) : ℝ :=
-  ∑ u_i : Utterance,
-    (if literalMeaning u_i m then
-      Real.exp (α * ∑ u_p' : Utterance,
-        noiseChannel δ u_i u_p' * Real.log (l0 u_p' m))
-    else 0) * noiseChannel δ u_i u_p
-
-/-- Noise rate: 1% per-word deletion. The paper's Fig. 1 shows results
-    are robust across noise rates from 10⁻⁵ to 10⁻¹. -/
-noncomputable def δ : ℝ := 1/100
-
-/-- RSAConfig for the ellipsis model.
-
-    The noisy channel is encoded via:
-    - `meaning`: noisy L0 score (Eq. 6 numerator)
-    - `s1Score`: noise-folded S1 (Eqs. 7-8 combined) -/
-noncomputable def cfg : RSAConfig Utterance Meaning where
-  Latent := Unit
-  meaning _ _ := noisyMeaning δ
-  meaning_nonneg _ _ u_p m := by
-    show 0 ≤ noisyMeaning δ u_p m
-    unfold noisyMeaning
-    apply Finset.sum_nonneg; intro u_i _
-    apply mul_nonneg
-    · apply mul_nonneg
-      · split <;> norm_num
-      · cases u_i <;> simp [utterancePrior]
-    · cases u_i <;> cases u_p <;> simp [noiseChannel, δ] <;> norm_num
-  s1Score := noisyS1Score δ
-  s1Score_nonneg l0 α _ m u_p _ _ := by
-    unfold noisyS1Score
-    apply Finset.sum_nonneg; intro u_i _
-    apply mul_nonneg
-    · split
-      · exact le_of_lt (Real.exp_pos _)
-      · exact le_refl 0
-    · cases u_i <;> cases u_p <;> simp [noiseChannel, δ] <;> norm_num
-  α := 1
-  α_pos := by norm_num
-  worldPrior_nonneg _ := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
-
--- ============================================================================
--- § 3. Ellipsis Predictions
--- ============================================================================
+/-! ### Ellipsis Predictions -/
 
 /-- L0 assigns higher probability to "Bob went" than "Alice went" or
     "Nobody went" given the fragment "Bob".
@@ -225,34 +268,44 @@ noncomputable def cfg : RSAConfig Utterance Meaning where
     the only full sentence that produces "Bob" via noise, so L0 assigns
     it probability 1. -/
 theorem l0_fragment_correct :
-    cfg.L0 () .bob .bobWent > cfg.L0 () .bob .aliceWent ∧
-    cfg.L0 () .bob .bobWent > cfg.L0 () .bob .nobodyWent :=
-  ⟨by rsa_predict, by rsa_predict⟩
+    l0PMF .bob .aliceWent < l0PMF .bob .bobWent ∧
+    l0PMF .bob .nobodyWent < l0PMF .bob .bobWent :=
+  ⟨pmf_lt_cross (noisyMeaningQ_nonneg .bob) (noisyMeaningQ_nonneg .bob)
+      (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel),
+   pmf_lt_cross (noisyMeaningQ_nonneg .bob) (noisyMeaningQ_nonneg .bob)
+       (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)⟩
 
 /-- L0 correctly interprets the "Nobody" fragment. -/
 theorem l0_nobody_correct :
-    cfg.L0 () .nobody .nobodyWent > cfg.L0 () .nobody .aliceWent ∧
-    cfg.L0 () .nobody .nobodyWent > cfg.L0 () .nobody .bobWent :=
-  ⟨by rsa_predict, by rsa_predict⟩
+    l0PMF .nobody .aliceWent < l0PMF .nobody .nobodyWent ∧
+    l0PMF .nobody .bobWent < l0PMF .nobody .nobodyWent :=
+  ⟨pmf_lt_cross (noisyMeaningQ_nonneg .nobody) (noisyMeaningQ_nonneg .nobody)
+      (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel),
+   pmf_lt_cross (noisyMeaningQ_nonneg .nobody) (noisyMeaningQ_nonneg .nobody)
+       (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)⟩
 
 /-- L0 correctly interprets a full sentence (sanity check). -/
 theorem l0_full_sentence_correct :
-    cfg.L0 () .bobWentToMovies .bobWent > cfg.L0 () .bobWentToMovies .aliceWent ∧
-    cfg.L0 () .bobWentToMovies .bobWent > cfg.L0 () .bobWentToMovies .nobodyWent :=
-  ⟨by rsa_predict, by rsa_predict⟩
+    l0PMF .bobWentToMovies .aliceWent < l0PMF .bobWentToMovies .bobWent ∧
+    l0PMF .bobWentToMovies .nobodyWent < l0PMF .bobWentToMovies .bobWent :=
+  ⟨pmf_lt_cross (noisyMeaningQ_nonneg .bobWentToMovies) (noisyMeaningQ_nonneg .bobWentToMovies)
+      (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel),
+   pmf_lt_cross (noisyMeaningQ_nonneg .bobWentToMovies) (noisyMeaningQ_nonneg .bobWentToMovies)
+       (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)⟩
 
 /-- L1 also correctly interprets the fragment "Bob" as "Bob went".
 
     The pragmatic listener, reasoning about S1's production choices,
     also assigns bobWent the highest probability. -/
 theorem l1_fragment_correct :
-    cfg.L1 .bob .bobWent > cfg.L1 .bob .aliceWent ∧
-    cfg.L1 .bob .bobWent > cfg.L1 .bob .nobodyWent :=
-  ⟨by rsa_predict, by rsa_predict⟩
+    l1PMF .bob .aliceWent < l1PMF .bob .bobWent ∧
+    l1PMF .bob .nobodyWent < l1PMF .bob .bobWent :=
+  ⟨pmf_lt_cross (fun m => s1nQ_nonneg m .bob) (fun m => s1nQ_nonneg m .bob)
+      (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel),
+   pmf_lt_cross (fun m => s1nQ_nonneg m .bob) (fun m => s1nQ_nonneg m .bob)
+       (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)⟩
 
--- ============================================================================
--- § 4. Parametric Robustness
--- ============================================================================
+/-! ### Parametric Robustness -/
 
 /-!
 ### Parametric Robustness (Fig. 1, left panel)
@@ -309,9 +362,7 @@ theorem l0_fragment_robust (δ₀ : ℝ) (hδ : δ₀ ≠ 0) :
 end EllipsisModel
 
 
--- ============================================================================
--- § 5. Prosody: Strategic Noise Reduction
--- ============================================================================
+/-! ### Prosody: Strategic Noise Reduction -/
 
 /-!
 ## Prosody
@@ -398,74 +449,310 @@ noncomputable def noisyMeaning (ε : ℝ) (u_p : Utterance) (m : Meaning) : ℝ 
     (if literalMeaning u_i m then (1 : ℝ) else 0) *
     noiseChannel ε u_i u_p
 
-/-- Noise-folded S1 score (Eqs. 7-8) for the prosody model. -/
-noncomputable def noisyS1Score (ε : ℝ)
-    (l0 : Utterance → Meaning → ℝ) (α : ℝ) (_ : Unit)
-    (m : Meaning) (u_p : Utterance) : ℝ :=
-  ∑ u_i : Utterance,
-    (if literalMeaning u_i m then
-      Real.exp (α * ∑ u_p' : Utterance,
-        noiseChannel ε u_i u_p' * Real.log (l0 u_p' m))
-    else 0) * noiseChannel ε u_i u_p
+/-- ℚ noise rate (1%). -/
+def εQ : ℚ := 1/100
 
-/-- Baseline noise rate (1%). -/
-noncomputable def ε : ℝ := 1/100
+/-- ℚ noise channel with prosody (stress halves the rate; §4.1). -/
+def noiseQ : Utterance → Utterance → ℚ
+  | .aliceWent, .aliceWent => 1 - εQ
+  | .aliceWent, .bobWent => εQ
+  | .bobWent, .bobWent => 1 - εQ
+  | .bobWent, .aliceWent => εQ
+  | .ALICE_went, .ALICE_went => 1 - εQ/2
+  | .ALICE_went, .aliceWent => εQ/2
+  | .BOB_went, .BOB_went => 1 - εQ/2
+  | .BOB_went, .bobWent => εQ/2
+  | .aliceAndBobWent, .aliceAndBobWent => 1
+  | _, _ => 0
 
-/-- RSAConfig for the prosody model. -/
-noncomputable def cfg : RSAConfig Utterance Meaning where
-  Latent := Unit
-  meaning _ _ := noisyMeaning ε
-  meaning_nonneg _ _ u_p m := by
-    show 0 ≤ noisyMeaning ε u_p m
-    unfold noisyMeaning
-    apply Finset.sum_nonneg; intro u_i _
-    apply mul_nonneg
-    · split <;> norm_num
-    · cases u_i <;> cases u_p <;> simp [noiseChannel, ε] <;> norm_num
-  s1Score := noisyS1Score ε
-  s1Score_nonneg l0 α _ m u_p _ _ := by
-    unfold noisyS1Score
-    apply Finset.sum_nonneg; intro u_i _
-    apply mul_nonneg
-    · split
-      · exact le_of_lt (Real.exp_pos _)
-      · exact le_refl 0
-    · cases u_i <;> cases u_p <;> simp [noiseChannel, ε] <;> norm_num
-  α := 1
-  α_pos := by norm_num
-  worldPrior_nonneg _ := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
+/-- ℚ noisy literal-listener score (eq. 6 numerator). -/
+def noisyMeaningQ (u_p : Utterance) (m : Meaning) : ℚ :=
+  ∑ u_i, (if literalMeaning u_i m then (1 : ℚ) else 0) * noiseQ u_i u_p
 
--- ============================================================================
--- § 6. Prosody Predictions
--- ============================================================================
+/-- L0 posterior over meanings (eq. 6). All values are rational; the
+relevant column entries are `l0Q .bobWent .onlyBob = 199/402`,
+`l0Q .aliceWent .onlyBob = 1/201`, `l0Q .BOB_went .onlyBob = 1/2`, and the
+`both` column is constantly `1/2` on subject utterances (`1` on the
+conjunction). -/
+def l0Q (u_p : Utterance) (m : Meaning) : ℚ :=
+  noisyMeaningQ u_p m / ∑ m', noisyMeaningQ u_p m'
 
-/-- Stress increases exhaustive interpretation.
+/-- 200th power of the speaker utility atom for the single-subject meanings
+(eq. 7 exponentiates a `P_N`-weighted sum of `log l0` values; with
+ε = 1/100 the exponent weights have denominator 200, so the utility's 200th
+power is rational): `exp(U(bobWent | onlyBob))²⁰⁰ = l0(b|ob)¹⁹⁸ · l0(a|ob)²`. -/
+def X200 : ℚ := l0Q .bobWent .onlyBob ^ 198 * l0Q .aliceWent .onlyBob ^ 2
 
-    "BOB went" (stressed) is strictly more likely to mean "only Bob" than
-    "Bob went" (unstressed). This is the paper's central prosody
-    prediction (§4). -/
+/-- 200th power of the stressed-utterance utility atom:
+`exp(U(BOB_went | onlyBob))²⁰⁰ = l0(B|ob)¹⁹⁹ · l0(b|ob)`. -/
+def Y200 : ℚ := l0Q .BOB_went .onlyBob ^ 199 * l0Q .bobWent .onlyBob
+
+open Real in
+/-- Unstressed speaker-utility atom `exp(U(bobWent | onlyBob))`. -/
+noncomputable def Xa : ℝ := (X200 : ℝ) ^ ((200 : ℝ)⁻¹)
+
+open Real in
+/-- Stressed speaker-utility atom `exp(U(BOB_went | onlyBob))`. -/
+noncomputable def Ya : ℝ := (Y200 : ℝ) ^ ((200 : ℝ)⁻¹)
+
+section AtomBridge
+
+open Real
+
+private theorem l0_b_ob : l0Q .bobWent .onlyBob = 199/402 := by decide +kernel
+private theorem l0_a_ob : l0Q .aliceWent .onlyBob = 1/201 := by decide +kernel
+private theorem l0_B_ob : l0Q .BOB_went .onlyBob = 1/2 := by decide +kernel
+
+/-- The atoms are the paper's exponentiated utilities (eq. 7): the
+`P_N`-weighted geometric mean of the literal posteriors. Stated for the
+unstressed atom; the stressed case is `Ya_eq_exp`. -/
+theorem Xa_eq_exp :
+    Xa = Real.exp ((1 - (εQ : ℝ)) * Real.log (l0Q .bobWent .onlyBob : ℝ) +
+      (εQ : ℝ) * Real.log (l0Q .aliceWent .onlyBob : ℝ)) := by
+  have hb : (0:ℝ) < (l0Q .bobWent .onlyBob : ℝ) := by rw [l0_b_ob]; norm_num
+  have ha : (0:ℝ) < (l0Q .aliceWent .onlyBob : ℝ) := by rw [l0_a_ob]; norm_num
+  rw [Real.exp_add, mul_comm ((1:ℝ) - (εQ:ℝ)) (Real.log _),
+    mul_comm ((εQ:ℝ)) (Real.log _),
+    ← Real.rpow_def_of_pos hb, ← Real.rpow_def_of_pos ha, Xa]
+  have : ((X200 : ℚ) : ℝ)
+      = (l0Q .bobWent .onlyBob : ℝ) ^ (198:ℕ) * (l0Q .aliceWent .onlyBob : ℝ) ^ (2:ℕ) := by
+    push_cast [X200]
+    ring
+  rw [this, Real.mul_rpow (by positivity) (by positivity),
+    ← Real.rpow_natCast ((l0Q .bobWent .onlyBob : ℝ)) 198,
+    ← Real.rpow_natCast ((l0Q .aliceWent .onlyBob : ℝ)) 2,
+    ← Real.rpow_mul hb.le, ← Real.rpow_mul ha.le]
+  norm_num [εQ]
+
+theorem Ya_eq_exp :
+    Ya = Real.exp ((1 - (εQ : ℝ)/2) * Real.log (l0Q .BOB_went .onlyBob : ℝ) +
+      ((εQ : ℝ)/2) * Real.log (l0Q .bobWent .onlyBob : ℝ)) := by
+  have hB : (0:ℝ) < (l0Q .BOB_went .onlyBob : ℝ) := by rw [l0_B_ob]; norm_num
+  have hb : (0:ℝ) < (l0Q .bobWent .onlyBob : ℝ) := by rw [l0_b_ob]; norm_num
+  rw [Real.exp_add, mul_comm ((1:ℝ) - (εQ:ℝ)/2) (Real.log _),
+    mul_comm ((εQ:ℝ)/2) (Real.log _),
+    ← Real.rpow_def_of_pos hB, ← Real.rpow_def_of_pos hb, Ya]
+  have : ((Y200 : ℚ) : ℝ)
+      = (l0Q .BOB_went .onlyBob : ℝ) ^ (199:ℕ) * (l0Q .bobWent .onlyBob : ℝ) ^ (1:ℕ) := by
+    push_cast [Y200]
+    ring
+  rw [this, Real.mul_rpow (by positivity) (by positivity),
+    ← Real.rpow_natCast ((l0Q .BOB_went .onlyBob : ℝ)) 199,
+    ← Real.rpow_natCast ((l0Q .bobWent .onlyBob : ℝ)) 1,
+    ← Real.rpow_mul hB.le, ← Real.rpow_mul hb.le]
+  norm_num [εQ]
+
+private theorem rpow_inv200_le_of_pow_le {r q : ℚ} (hr : 0 ≤ r) (h : r ^ 200 ≤ q) :
+    (r : ℝ) ≤ (q : ℝ) ^ ((200 : ℝ)⁻¹) := by
+  have : (r : ℝ) = (((r : ℝ) ^ (200:ℕ)) : ℝ) ^ ((200 : ℝ)⁻¹) := by
+    rw [← Real.rpow_natCast ((r : ℝ)) 200, ← Real.rpow_mul (by exact_mod_cast hr)]
+    norm_num
+  rw [this]
+  exact Real.rpow_le_rpow (by positivity) (by exact_mod_cast h) (by norm_num)
+
+private theorem rpow_inv200_le_of_le_pow {q s : ℚ} (hq : 0 ≤ q) (hs : 0 ≤ s)
+    (h : q ≤ s ^ 200) : (q : ℝ) ^ ((200 : ℝ)⁻¹) ≤ (s : ℝ) := by
+  have : (s : ℝ) = (((s : ℝ) ^ (200:ℕ)) : ℝ) ^ ((200 : ℝ)⁻¹) := by
+    rw [← Real.rpow_natCast ((s : ℝ)) 200, ← Real.rpow_mul (by exact_mod_cast hs)]
+    norm_num
+  rw [this]
+  exact Real.rpow_le_rpow (by exact_mod_cast hq) (by exact_mod_cast h) (by norm_num)
+
+private theorem X200_pos : (0:ℚ) < X200 := by decide +kernel
+private theorem Y200_pos : (0:ℚ) < Y200 := by decide +kernel
+
+theorem Xa_pos : 0 < Xa :=
+  Real.rpow_pos_of_pos (by exact_mod_cast X200_pos) _
+
+theorem Ya_pos : 0 < Ya :=
+  Real.rpow_pos_of_pos (by exact_mod_cast Y200_pos) _
+
+/-- Kernel-certified bounds: `(47/100)²⁰⁰ ≤ X200 ≤ (473/1000)²⁰⁰`. -/
+theorem Xa_bounds : (47/100 : ℝ) ≤ Xa ∧ Xa ≤ 473/1000 := by
+  constructor
+  · have := rpow_inv200_le_of_pow_le (r := 47/100) (q := X200) (by norm_num)
+      (by decide +kernel)
+    simpa [Xa] using this
+  · have := rpow_inv200_le_of_le_pow (q := X200) (s := 473/1000) X200_pos.le
+      (by norm_num) (by decide +kernel)
+    simpa [Xa] using this
+
+/-- Kernel-certified bounds: `(4999/10000)²⁰⁰ ≤ Y200 ≤ (1/2)²⁰⁰`. -/
+theorem Ya_bounds : (4999/10000 : ℝ) ≤ Ya ∧ Ya ≤ 1/2 := by
+  constructor
+  · have := rpow_inv200_le_of_pow_le (r := 4999/10000) (q := Y200) (by norm_num)
+      (by decide +kernel)
+    simpa [Ya] using this
+  · have := rpow_inv200_le_of_le_pow (q := Y200) (s := 1/2) Y200_pos.le
+      (by norm_num) (by decide +kernel)
+    simpa [Ya] using this
+
+end AtomBridge
+
+section ListenerFace
+
+open scoped ENNReal
+
+/-- Speaker-utility atom per (meaning, intended utterance): `Xa`/`Ya` for the
+single-subject meanings (the a ↔ b relabelling fixes the model, so the
+`onlyAlice` atoms coincide with the `onlyBob` ones — their 200th powers are
+equal rationals), exact `1/2` (and `1` on the conjunction) for `both`
+(its literal posteriors are constantly `1/2`, so the geometric mean is
+degenerate), and `0` off the truthful support. -/
+noncomputable def eAtom : Meaning → Utterance → ℝ
+  | .onlyBob, .bobWent => Xa
+  | .onlyBob, .BOB_went => Ya
+  | .onlyAlice, .aliceWent => Xa
+  | .onlyAlice, .ALICE_went => Ya
+  | .both, .aliceWent => 1/2
+  | .both, .ALICE_went => 1/2
+  | .both, .bobWent => 1/2
+  | .both, .BOB_went => 1/2
+  | .both, .aliceAndBobWent => 1
+  | _, _ => 0
+
+private theorem eAtom_nonneg (m : Meaning) (u : Utterance) : 0 ≤ eAtom m u := by
+  cases m <;> cases u <;> simp [eAtom, Xa_pos.le, Ya_pos.le]
+
+/-- L1 world score (eq. 8, uniform meaning prior): the normalized
+intended-speaker mass pushed through the channel. -/
+noncomputable def l1Score (u_p : Utterance) (m : Meaning) : ℝ :=
+  (∑ u_i, eAtom m u_i * (noiseQ u_i u_p : ℝ)) / ∑ u_i, eAtom m u_i
+
+private theorem l1Score_nonneg (u_p : Utterance) (m : Meaning) :
+    0 ≤ l1Score u_p m := by
+  apply div_nonneg
+  · exact Finset.sum_nonneg fun u_i _ => mul_nonneg (eAtom_nonneg m u_i)
+      (by exact_mod_cast (by cases u_i <;> cases u_p <;> norm_num [noiseQ, εQ] :
+        (0:ℚ) ≤ noiseQ u_i u_p))
+  · exact Finset.sum_nonneg fun u_i _ => eAtom_nonneg m u_i
+
+/-- Pragmatic listener (eq. 8), dite-total. -/
+noncomputable def l1PMF (u_p : Utterance) : PMF Meaning :=
+  if h : (∑' m, ENNReal.ofReal (l1Score u_p m)) ≠ 0 then
+    PMF.normalize (fun m => ENNReal.ofReal (l1Score u_p m)) h
+      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+  else PMF.uniformOfFintype Meaning
+
+end ListenerFace
+
+section Predictions
+
+open scoped ENNReal
+
+private theorem sumMeanings (f : Meaning → ℝ≥0∞) :
+    ∑' m, f m = f .onlyAlice + f .onlyBob + f .both := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Meaning) = {.onlyAlice, .onlyBob, .both} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem l1PMF_apply (u_p : Utterance)
+    (hpos : 0 < ∑ m, l1Score u_p m) (m : Meaning) :
+    l1PMF u_p m = ENNReal.ofReal (l1Score u_p m / ∑ m', l1Score u_p m') := by
+  have hsum : (∑' m, ENNReal.ofReal (l1Score u_p m))
+      = ENNReal.ofReal (∑ m, l1Score u_p m) := by
+    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg fun m _ => l1Score_nonneg u_p m]
+  rw [l1PMF, dif_pos (by rw [hsum, ENNReal.ofReal_ne_zero_iff]; exact hpos),
+    PMF.normalize_apply, hsum, ← ENNReal.ofReal_inv_of_pos hpos,
+    ← ENNReal.ofReal_mul (l1Score_nonneg u_p m), div_eq_mul_inv]
+
+private theorem sumUttsR (f : Utterance → ℝ) :
+    ∑ u, f u = f .aliceWent + f .ALICE_went + f .bobWent + f .BOB_went +
+      f .aliceAndBobWent := by
+  rw [show (Finset.univ : Finset Utterance)
+      = {.aliceWent, .ALICE_went, .bobWent, .BOB_went, .aliceAndBobWent} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem sumMeaningsR (f : Meaning → ℝ) :
+    ∑ m, f m = f .onlyAlice + f .onlyBob + f .both := by
+  rw [show (Finset.univ : Finset Meaning) = {.onlyAlice, .onlyBob, .both} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+/-- Expanded scores (5-term utterance sums; `Z both = 3`). -/
+private theorem l1Score_values :
+    l1Score .BOB_went .onlyBob = Ya * ((1 : ℝ) - 1/200) / (Xa + Ya) ∧
+    l1Score .BOB_went .onlyAlice = 0 ∧
+    l1Score .BOB_went .both = ((1 : ℝ) - 1/200) / 6 ∧
+    l1Score .bobWent .onlyBob = (Xa * ((1 : ℝ) - 1/100) + Ya * (1/200)) / (Xa + Ya) ∧
+    l1Score .bobWent .onlyAlice = Xa * (1/100) / (Xa + Ya) ∧
+    l1Score .bobWent .both = ((1 : ℝ) + 1/200) / 6 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    · unfold l1Score
+      rw [sumUttsR, sumUttsR]
+      simp only [eAtom]
+      push_cast [noiseQ, εQ]
+      ring
+
+private theorem sum_pos_BOB : 0 < ∑ m, l1Score .BOB_went m := by
+  rw [sumMeaningsR]
+  have h := l1Score_values
+  rw [h.2.1, h.1, h.2.2.1]
+  have := Xa_pos; have := Ya_pos
+  positivity
+
+private theorem sum_pos_bob : 0 < ∑ m, l1Score .bobWent m := by
+  rw [sumMeaningsR]
+  have h := l1Score_values
+  rw [h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2]
+  have := Xa_pos; have := Ya_pos
+  positivity
+
+/-- Stress increases exhaustive interpretation: "BOB went" (stressed) is
+strictly more likely to mean "only Bob" than unstressed "Bob went" (§4). -/
 theorem stress_increases_exhaustivity :
-    cfg.L1 .BOB_went .onlyBob > cfg.L1 .bobWent .onlyBob := by
-  rsa_predict
+    l1PMF .bobWent .onlyBob < l1PMF .BOB_went .onlyBob := by
+  rw [l1PMF_apply _ sum_pos_bob, l1PMF_apply _ sum_pos_BOB, sumMeaningsR, sumMeaningsR]
+  obtain ⟨hB_ob, hB_oa, hB_both, hb_ob, hb_oa, hb_both⟩ := l1Score_values
+  rw [hB_ob, hB_oa, hB_both, hb_ob, hb_oa, hb_both]
+  have hX := Xa_pos; have hY := Ya_pos
+  obtain ⟨hX1, hX2⟩ := Xa_bounds; obtain ⟨hY1, hY2⟩ := Ya_bounds
+  have hXY : 0 < Xa + Ya := by linarith
+  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
+  · positivity
+  · rw [div_lt_div_iff₀ (by positivity) (by positivity)]
+    field_simp
+    nlinarith [mul_pos hX hY, sq_nonneg (Xa - Ya), sq_nonneg (Xa + Ya),
+      mul_le_mul_of_nonneg_left hY2 hX.le, mul_le_mul_of_nonneg_left hX2 hY.le,
+      mul_le_mul_of_nonneg_left hY1 hX.le, mul_le_mul_of_nonneg_left hX1 hY.le]
 
-/-- Both stressed and unstressed assign positive probability to "both went"
-    (it is compatible with either prosody). We show this via comparison:
-    .both gets more probability than .onlyAlice under each utterance. -/
+/-- "Both went" stays live under stress: it beats `onlyAlice` (which is
+channel-incompatible with hearing "BOB went"). -/
 theorem stressed_both_positive :
-    cfg.L1 .BOB_went .both > cfg.L1 .BOB_went .onlyAlice := by
-  rsa_predict
+    l1PMF .BOB_went .onlyAlice < l1PMF .BOB_went .both := by
+  rw [l1PMF_apply _ sum_pos_BOB, l1PMF_apply _ sum_pos_BOB]
+  obtain ⟨_, hB_oa, hB_both, _, _, _⟩ := l1Score_values
+  rw [hB_oa, hB_both]
+  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
+  · exact div_pos (by norm_num) sum_pos_BOB
+  · exact div_lt_div_of_pos_right (by norm_num) sum_pos_BOB
 
+/-- "Both went" also beats `onlyAlice` without stress. -/
 theorem unstressed_both_positive :
-    cfg.L1 .bobWent .both > cfg.L1 .bobWent .onlyAlice := by
-  rsa_predict
+    l1PMF .bobWent .onlyAlice < l1PMF .bobWent .both := by
+  rw [l1PMF_apply _ sum_pos_bob, l1PMF_apply _ sum_pos_bob]
+  obtain ⟨_, _, _, _, hb_oa, hb_both⟩ := l1Score_values
+  rw [hb_oa, hb_both]
+  have hX := Xa_pos; have hY := Ya_pos
+  obtain ⟨hX1, hX2⟩ := Xa_bounds; obtain ⟨hY1, hY2⟩ := Ya_bounds
+  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
+  · exact div_pos (by positivity) sum_pos_bob
+  · refine div_lt_div_of_pos_right ?_ sum_pos_bob
+    rw [div_lt_div_iff₀ (by positivity) (by norm_num)]
+    nlinarith
+
+end Predictions
 
 end ProsodyModel
 
 
--- ============================================================================
--- § 7. Fragment Interpretation Summary
--- ============================================================================
+/-! ### Fragment Interpretation Summary -/
 
 /-!
 ## Fragment Interpretation
@@ -481,9 +768,7 @@ plausible licenses fragment use.
 -/
 
 
--- ============================================================================
--- § 8. Prosody Data
--- ============================================================================
+/-! ### Prosody Data -/
 
 /-!
 ## Prosody data (`Data/Examples/BergenGoodman2015.json`)
@@ -508,13 +793,11 @@ def uttOf (row : Data.Examples.LinguisticExample) : Option ProsodyModel.Utteranc
 theorem model_matches_stress_rows :
     ∃ u_s u_u, uttOf Examples.stressed_subject = some u_s ∧
       uttOf Examples.unstressed_subject = some u_u ∧
-      ProsodyModel.cfg.L1 u_s .onlyBob > ProsodyModel.cfg.L1 u_u .onlyBob :=
+      ProsodyModel.l1PMF u_u .onlyBob < ProsodyModel.l1PMF u_s .onlyBob :=
   ⟨_, _, rfl, rfl, ProsodyModel.stress_increases_exhaustivity⟩
 
 
--- ============================================================================
--- § 9. Connection to Unified Noise Theory
--- ============================================================================
+/-! ### Connection to Unified Noise Theory -/
 
 /-!
 ## Connection to RSA.Noise
