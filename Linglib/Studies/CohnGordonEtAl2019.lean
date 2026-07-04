@@ -1,5 +1,6 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
+import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Processing.VisualWorld
 import Linglib.Studies.SedivyEtAl1999
@@ -64,12 +65,14 @@ the bound follows.
 ## Implementation notes
 
 The bundle's extension counts are natural numbers, so the whole No-Brevity
-chain is exact ℚ (`incSemQ` … `s1Q`), with PMF agents via `pmfOfScores` and
-kernel-verified comparisons. The §2.2 dead-end fallback distributes over
+chain is exact ℚ≥0 (`incSemScore` … `s1Post`), with PMF agents via
+`PMF.ofScores` and kernel-verified comparisons. The §2.2 dead-end fallback distributes over
 words with viable continuations, gated to scene referents (out-of-scene
 referents keep the substrate's zero row). Utterance-level probabilities are
-chain-rule products of `s1PMF` values (eq. 7).
+chain-rule products of `s1` values (eq. 7).
 -/
+
+open scoped NNRat
 
 namespace CohnGordonEtAl2019
 
@@ -110,13 +113,13 @@ def figureOne : IncrementalSemantics Word Referent where
     [[.dress], [.red, .dress], [.red, .object]]
   worlds := [.redDress, .blueDress, .redHat]
 
-/-! ### Exact-ℚ face over a bundle (local pending the RSA API pass) -/
+/-! ### The kernel face over the bundle -/
 
 /-! The bundle's extension counts are natural numbers, so the whole
-No-Brevity chain (eqs. 4–6, zero cost, α = 1) is exact-ℚ: `l0Q` normalizes
-the extension semantics over referents, `s1Q` renormalizes over words, and
+No-Brevity chain (eqs. 4–6, zero cost, α = 1) is exact-ℚ: `l0Score` normalizes
+the extension semantics over referents, `s1Post` renormalizes over words, and
 utterance-level probabilities are chain-rule products (eq. 7). PMF speakers
-and listeners are `pmfOfScores` of these values. -/
+and listeners are `PMF.ofScores` of these values. -/
 
 section QFace
 
@@ -126,102 +129,43 @@ variable {U W : Type} [DecidableEq U]
 
 /-- ℚ extension semantics ⟦pfx⟧(r) (§2.2), mirroring
 `IncrementalSemantics.incrementalSem`. -/
-def incSemQ (sem : IncrementalSemantics U W) (pfx : List U) (r : W) : ℚ :=
-  (sem.trueExtCount pfx r : ℚ) / (sem.viableExtCount pfx : ℚ)
-
-private theorem incSemQ_nonneg (sem : IncrementalSemantics U W) (pfx : List U)
-    (r : W) : 0 ≤ incSemQ sem pfx r :=
-  div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+def incSemScore (sem : IncrementalSemantics U W) (pfx : List U) (r : W) : ℚ≥0 :=
+  (sem.trueExtCount pfx r : ℚ≥0) / (sem.viableExtCount pfx : ℚ≥0)
 
 variable [Fintype W]
 
 /-- Word-level literal listener value (eq. 4). -/
-def l0Q (sem : IncrementalSemantics U W) (ctx : List U) (u : U) (r : W) : ℚ :=
-  incSemQ sem (ctx ++ [u]) r / ∑ r', incSemQ sem (ctx ++ [u]) r'
-
-private theorem l0Q_nonneg (sem : IncrementalSemantics U W) (ctx : List U)
-    (u : U) (r : W) : 0 ≤ l0Q sem ctx u r :=
-  div_nonneg (incSemQ_nonneg sem _ r)
-    (Finset.sum_nonneg fun r' _ => incSemQ_nonneg sem _ r')
+def l0Score (sem : IncrementalSemantics U W) (ctx : List U) (u : U) (r : W) : ℚ≥0 :=
+  incSemScore sem (ctx ++ [u]) r / ∑ r', incSemScore sem (ctx ++ [u]) r'
 
 variable [DecidableEq W] [Fintype U]
-
 
 /-- Word-level speaker score at context `ctx` (eq. 5, zero cost, α = 1).
 At dead-end cells — no word makes the referent reachable — probability is
 "evenly distributed" over the words with viable continuations (§2.2,
 Figure 1c's R2 row: 0, ½, ½). -/
-def s1ScoreQ (sem : IncrementalSemantics U W) (ctx : List U) (r : W) (u : U) : ℚ :=
+def s1Score (sem : IncrementalSemantics U W) (ctx : List U) (r : W) (u : U) : ℚ≥0 :=
   if (∑ u', sem.trueExtCount (ctx ++ [u']) r) = 0 then
     (if 0 < (sem.worlds.filter (fun r' => decide (r' = r))).length *
           sem.viableExtCount (ctx ++ [u]) then 1 else 0)
-  else l0Q sem ctx u r
+  else l0Score sem ctx u r
 
-/-- Normalized word-level speaker value. -/
-def s1Q (sem : IncrementalSemantics U W) (ctx : List U) (r : W) (u : U) : ℚ :=
-  s1ScoreQ sem ctx r u / ∑ u', s1ScoreQ sem ctx r u'
-
-
-theorem s1ScoreQ_nonneg (sem : IncrementalSemantics U W) (ctx : List U) (r : W)
-    (u : U) : 0 ≤ s1ScoreQ sem ctx r u := by
-  unfold s1ScoreQ
-  split
-  · split <;> norm_num
-  · exact l0Q_nonneg sem ctx u r
-
-theorem s1Q_nonneg (sem : IncrementalSemantics U W) (ctx : List U) (r : W)
-    (u : U) : 0 ≤ s1Q sem ctx r u :=
-  div_nonneg (s1ScoreQ_nonneg sem ctx r u)
-    (Finset.sum_nonneg fun u' _ => s1ScoreQ_nonneg sem ctx r u')
+/-- Normalized incremental speaker. -/
+def s1Post (sem : IncrementalSemantics U W) (ctx : List U) (r : W) : U → ℚ≥0 :=
+  PMF.normalizeScores (s1Score sem ctx r)
 
 open scoped ENNReal
 
 variable [Nonempty U] [Nonempty W]
 
-/-- Normalize a rational score vector into a PMF (uniform at zero mass). -/
-noncomputable def pmfOfScores {σ : Type*} [Fintype σ] [Nonempty σ]
-    (f : σ → ℚ) : PMF σ :=
-  if h : (∑' x, ENNReal.ofReal ((f x : ℝ))) ≠ 0 then
-    PMF.normalize (fun x => ENNReal.ofReal ((f x : ℝ))) h
-      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
-  else PMF.uniformOfFintype σ
-
-theorem pmfOfScores_apply {σ : Type*} [Fintype σ] [Nonempty σ]
-    {f : σ → ℚ} (hf : ∀ x, 0 ≤ f x) (hpos : 0 < ∑ x, f x) (x : σ) :
-    pmfOfScores f x = ENNReal.ofReal ((f x / ∑ x', f x' : ℚ) : ℝ) := by
-  have hsum : (∑' x, ENNReal.ofReal ((f x : ℝ)))
-      = ENNReal.ofReal ((∑ x, f x : ℚ) : ℝ) := by
-    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg (fun x _ => by exact_mod_cast hf x)]
-    push_cast
-    rfl
-  rw [pmfOfScores, dif_pos (by
-      rw [hsum, ENNReal.ofReal_ne_zero_iff]; exact_mod_cast hpos),
-    PMF.normalize_apply, hsum,
-    ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos),
-    ← ENNReal.ofReal_mul (by exact_mod_cast hf x)]
-  congr 1
-  push_cast
-  rw [div_eq_mul_inv]
-
-/-- Strict comparison of `pmfOfScores` values via the exact-ℚ scores. -/
-theorem pmf_lt_cross {σ τ : Type*} [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ]
-    {f : σ → ℚ} {g : τ → ℚ}
-    (hf : ∀ x, 0 ≤ f x) (hg : ∀ x, 0 ≤ g x)
-    (hfp : 0 < ∑ x, f x) (hgp : 0 < ∑ x, g x) {a : σ} {b : τ}
-    (hb : 0 < g b / ∑ x, g x) (hab : f a / ∑ x, f x < g b / ∑ x, g x) :
-    pmfOfScores f a < pmfOfScores g b := by
-  rw [pmfOfScores_apply hf hfp, pmfOfScores_apply hg hgp]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast hb)).mpr
-    (by exact_mod_cast hab)
-
 /-- Word-by-word speaker at context `ctx` (eq. 5). -/
-noncomputable def s1PMF (sem : IncrementalSemantics U W) (ctx : List U)
+noncomputable def s1 (sem : IncrementalSemantics U W) (ctx : List U)
     (r : W) : PMF U :=
-  pmfOfScores (s1ScoreQ sem ctx r)
+  .ofScores .uniform (s1Score sem ctx r)
 
 /-- Pragmatic listener upon the first word (eq. 6, uniform priors). -/
-noncomputable def l1PMF (sem : IncrementalSemantics U W) (u : U) : PMF W :=
-  pmfOfScores (fun r => s1Q sem [] r u)
+noncomputable def l1 (sem : IncrementalSemantics U W) (u : U) : PMF W :=
+  .ofScores .uniform fun r => s1Post sem [] r u
 
 end QFace
 
@@ -231,7 +175,7 @@ end QFace
 
 -- ---------- Figure 1c: S1^WORD incremental speaker ----------
 
-/-- **Finding 1** (Figure 1c): The incremental speaker prefers "red" first
+/-- (Figure 1c) The incremental speaker prefers "red" first
     when referring to R1 (red dress).
 
     S1(red | [], R1) = 4/7 ≈ 0.57 > S1(dress | [], R1) = 3/7 ≈ 0.43
@@ -240,12 +184,10 @@ end QFace
     both true of R1 (trueExtCount = 2, viableExtCount = 2 → meaning = 1).
     "dress" narrows to {dress}, true of R1 (meaning = 1) but the L0
     posterior for R1 is lower because "dress" also applies to R2. -/
-theorem adj_first_for_target :
-    s1PMF figureOne [] .redDress .dress < s1PMF figureOne [] .redDress .red :=
-  pmf_lt_cross (s1ScoreQ_nonneg figureOne [] .redDress) (s1ScoreQ_nonneg figureOne [] .redDress)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+theorem adj_first_for_target : s1 figureOne [] .redDress .dress < s1 figureOne [] .redDress .red :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
-/-- **Finding 2** (Figure 1c): After producing "red", the speaker prefers
+/-- (Figure 1c) After producing "red", the speaker prefers
     "dress" over "object" for R1.
 
     S1(dress | [red], R1) = 2/3 ≈ 0.67 > S1(object | [red], R1) = 1/3 ≈ 0.33
@@ -253,31 +195,26 @@ theorem adj_first_for_target :
     "red dress" uniquely identifies R1 (only R1 is a red dress), while
     "red object" is ambiguous between R1 and R3. -/
 theorem noun_after_adj :
-    s1PMF figureOne [.red] .redDress .object < s1PMF figureOne [.red] .redDress .dress :=
-  pmf_lt_cross (s1ScoreQ_nonneg figureOne _ .redDress) (s1ScoreQ_nonneg figureOne _ .redDress)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+    s1 figureOne [.red] .redDress .object < s1 figureOne [.red] .redDress .dress :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
-/-- **Finding 3** (Figure 1c): For R2 (blue dress), the speaker must start
+/-- (Figure 1c) For R2 (blue dress), the speaker must start
     with "dress" — "red" never applies to R2 (it's a blue dress), so all
     extensions of "red" have zero semantics for R2.
 
     S1(dress | [], R2) > S1(red | [], R2) -/
-theorem noun_only_for_r2 :
-    s1PMF figureOne [] .blueDress .red < s1PMF figureOne [] .blueDress .dress :=
-  pmf_lt_cross (s1ScoreQ_nonneg figureOne [] .blueDress) (s1ScoreQ_nonneg figureOne [] .blueDress)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+theorem noun_only_for_r2 : s1 figureOne [] .blueDress .red < s1 figureOne [] .blueDress .dress :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
-/-- **Finding 4** (Figure 1c): For R3 (red hat), the speaker must start
+/-- (Figure 1c) For R3 (red hat), the speaker must start
     with "red" — "dress" never applies to R3 (it's a hat), so the only
     extension of "dress" (= "dress" itself) has zero semantics for R3.
 
     S1(red | [], R3) > S1(dress | [], R3) -/
-theorem adj_only_for_r3 :
-    s1PMF figureOne [] .redHat .dress < s1PMF figureOne [] .redHat .red :=
-  pmf_lt_cross (s1ScoreQ_nonneg figureOne [] .redHat) (s1ScoreQ_nonneg figureOne [] .redHat)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+theorem adj_only_for_r3 : s1 figureOne [] .redHat .dress < s1 figureOne [] .redHat .red :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
-/-- **Finding 5** (§2.2, uniform fallback): After "red" for R2, no complete
+/-- (§2.2, uniform fallback) After "red" for R2, no complete
     utterance extension of "red" is true of R2 (blue dress). The paper
     states: "probability is evenly distributed over all choices of word."
 
@@ -286,21 +223,16 @@ theorem adj_only_for_r3 :
     Both equal 1/2 because the meaning function returns 0 for all R2
     extensions of "red", yielding uniform L0 → uniform S1. -/
 theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
-    s1PMF figureOne [.red] .blueDress .dress =
-    s1PMF figureOne [.red] .blueDress w := by
+    s1 figureOne [.red] .blueDress .dress =
+    s1 figureOne [.red] .blueDress w := by
   cases w with
   | red => exact absurd rfl hw
   | dress => rfl
-  | object =>
-      rw [s1PMF, pmfOfScores_apply (s1ScoreQ_nonneg figureOne _ .blueDress)
-          (by decide +kernel),
-        pmfOfScores_apply (s1ScoreQ_nonneg figureOne _ .blueDress)
-          (by decide +kernel)]
-      congr 1
+  | object => exact PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 -- ---------- Figure 1d: L1^WORD pragmatic listener ----------
 
-/-- **Finding 6** (Figure 1d): After hearing "red", the pragmatic listener L1
+/-- (Figure 1d) After hearing "red", the pragmatic listener L1
     infers that the target is more likely R3 (red hat) than R1 (red dress).
 
     L1(R3 | red) = 7/11 ≈ 0.64 > L1(R1 | red) = 4/11 ≈ 0.36
@@ -311,16 +243,13 @@ theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
     diagnostic. We pick this up below as a structural foreshadowing of
     [sedivy-etal-1999]'s contrastive-inference findings; CommonGround themselves
     cite [sedivy-2007] for the same effect. -/
-theorem listener_anticipation :
-    l1PMF figureOne .red .redDress < l1PMF figureOne .red .redHat :=
-  pmf_lt_cross (fun r => s1Q_nonneg figureOne [] r .red)
-    (fun r => s1Q_nonneg figureOne [] r .red)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+theorem listener_anticipation : l1 figureOne .red .redDress < l1 figureOne .red .redHat :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 -- ---------- Figure 1e: S1^UTT-IP utterance-level ----------
 
 open scoped ENNReal in
-/-- **Finding 7** (Figure 1e): The incremental model prefers "dress" over
+/-- (Figure 1e) The incremental model prefers "dress" over
     "red dress" for R1 — the key divergence from the global RSA model.
 
     S1^UTT-IP(dress | R1) = 3/7 ≈ 0.43 > S1^UTT-IP(red dress | R1) = 8/21 ≈ 0.38
@@ -330,24 +259,16 @@ open scoped ENNReal in
     3/7, while "red dress" requires two steps: S1(red|[],R1) · S1(dress|[red],R1)
     = 4/7 · 2/3 = 8/21 < 9/21 = 3/7. -/
 theorem incremental_prefers_bare_noun :
-    s1PMF figureOne [] .redDress .red * s1PMF figureOne [.red] .redDress .dress <
-    s1PMF figureOne [] .redDress .dress := by
-  rw [s1PMF, s1PMF,
-    pmfOfScores_apply (s1ScoreQ_nonneg figureOne [] .redDress) (by decide +kernel),
-    pmfOfScores_apply (s1ScoreQ_nonneg figureOne [.red] .redDress) (by decide +kernel),
-    pmfOfScores_apply (s1ScoreQ_nonneg figureOne [] .redDress) (by decide +kernel),
-    ← ENNReal.ofReal_mul (by
-      exact_mod_cast div_nonneg (s1ScoreQ_nonneg figureOne [] .redDress .red)
-        (Finset.sum_nonneg fun u' _ => s1ScoreQ_nonneg figureOne [] .redDress u'))]
-  refine (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast (by decide +kernel :
-    (0:ℚ) < s1ScoreQ figureOne [] .redDress .dress /
-      ∑ u', s1ScoreQ figureOne [] .redDress u'))).mpr ?_
+    s1 figureOne [] .redDress .red * s1 figureOne [.red] .redDress .dress <
+    s1 figureOne [] .redDress .dress := by
+  show (PMF.ofScores .uniform (s1Score figureOne [] .redDress)) .red *
+      (PMF.ofScores .uniform (s1Score figureOne [.red] .redDress)) .dress <
+    (PMF.ofScores .uniform (s1Score figureOne [] .redDress)) .dress
+  rw [PMF.ofScores_apply, PMF.ofScores_apply, PMF.ofScores_apply, ← ENNReal.coe_mul]
   exact_mod_cast (by decide +kernel :
-    (s1ScoreQ figureOne [] .redDress .red / ∑ u', s1ScoreQ figureOne [] .redDress u') *
-      (s1ScoreQ figureOne [.red] .redDress .dress /
-        ∑ u', s1ScoreQ figureOne [.red] .redDress u') <
-    s1ScoreQ figureOne [] .redDress .dress /
-      ∑ u', s1ScoreQ figureOne [] .redDress u')
+    PMF.scoresWith .uniform (s1Score figureOne [] .redDress) .red *
+      PMF.scoresWith .uniform (s1Score figureOne [.red] .redDress) .dress <
+    PMF.scoresWith .uniform (s1Score figureOne [] .redDress) .dress)
 
 /-! ### §2.4 Weakly-Informative Greedy Unrolling -/
 
@@ -418,19 +339,14 @@ def uttApplies : Utterance → Referent → Bool
   | _,          _          => false
 
 /-- Global literal listener value (eq. 1): indicator over referents. -/
-def globalL0Q (u : Utterance) (r : Referent) : ℚ :=
+def globalL0Score (u : Utterance) (r : Referent) : ℚ≥0 :=
   (if uttApplies u r then 1 else 0) /
-    (∑ r', if uttApplies u r' then (1 : ℚ) else 0)
-
-private theorem globalL0Q_nonneg (u : Utterance) (r : Referent) :
-    0 ≤ globalL0Q u r :=
-  div_nonneg (by split <;> norm_num)
-    (Finset.sum_nonneg fun _ _ => by split <;> norm_num)
+    (∑ r', if uttApplies u r' then (1 : ℚ≥0) else 0)
 
 /-- Global speaker (eq. 2 at zero cost, α = 1): renormalizes L0 over the
 three atomic utterances. -/
-noncomputable def globalS1PMF (r : Referent) : PMF Utterance :=
-  pmfOfScores (fun u => globalL0Q u r)
+noncomputable def globalS1 (r : Referent) : PMF Utterance :=
+  .ofScores .uniform fun u => globalL0Score u r
 
 /-- **Divergence from incremental** (§2.4): the global RSA prefers the
     fully-modified "red dress" over the bare "dress" for R1, because
@@ -440,10 +356,8 @@ noncomputable def globalS1PMF (r : Referent) : PMF Utterance :=
     preference: chain-rule products discount longer trajectories enough
     to flip the ordering. This is the central empirical wedge between
     the two architectures the paper articulates. -/
-theorem global_prefers_red_dress :
-    globalS1PMF .redDress .dress < globalS1PMF .redDress .redDress :=
-  pmf_lt_cross (globalL0Q_nonneg · .redDress) (globalL0Q_nonneg · .redDress)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+theorem global_prefers_red_dress : globalS1 .redDress .dress < globalS1 .redDress .redDress :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-! ### Sedivy §3.2 Bridge (Anticipatory Contrastive Inference) -/
 
@@ -572,11 +486,9 @@ open SedivyScene in
     contrast vs no-contrast comparison; this theorem captures the
     contrast-condition direction only. -/
 theorem sedivy_contrast_inference :
-    l1PMF SedivyScene.sedivyBundle .tall .tallPitcher <
-    l1PMF SedivyScene.sedivyBundle .tall .tallCup :=
-  pmf_lt_cross (fun r => s1Q_nonneg SedivyScene.sedivyBundle [] r .tall)
-    (fun r => s1Q_nonneg SedivyScene.sedivyBundle [] r .tall)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+    l1 SedivyScene.sedivyBundle .tall .tallPitcher <
+    l1 SedivyScene.sedivyBundle .tall .tallCup :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 open VisualWorld SedivyEtAl1999 in
 open scoped ENNReal in
@@ -624,16 +536,16 @@ open scoped ENNReal in
 noncomputable def cgSedivyLooks : LookProportion SedivyEtAl1999.Cell ℝ≥0∞ :=
   fun role c =>
     match c.contrast, role with
-    | .contrast,   .target                  => l1PMF SedivyScene.sedivyBundle .tall .tallCup
-    | .contrast,   .crossCategoryCompetitor => l1PMF SedivyScene.sedivyBundle .tall .tallPitcher
-    | .contrast,   .contrastingObject       => l1PMF SedivyScene.sedivyBundle .tall .shortCup
-    | .contrast,   .distractor              => l1PMF SedivyScene.sedivyBundle .tall .key
+    | .contrast,   .target                  => l1 SedivyScene.sedivyBundle .tall .tallCup
+    | .contrast,   .crossCategoryCompetitor => l1 SedivyScene.sedivyBundle .tall .tallPitcher
+    | .contrast,   .contrastingObject       => l1 SedivyScene.sedivyBundle .tall .shortCup
+    | .contrast,   .distractor              => l1 SedivyScene.sedivyBundle .tall .key
     | .noContrast, .target                  =>
-        l1PMF SedivyScene_NoContrast.bundle .tall .tallCup
+        l1 SedivyScene_NoContrast.bundle .tall .tallCup
     | .noContrast, .crossCategoryCompetitor =>
-        l1PMF SedivyScene_NoContrast.bundle .tall .tallPitcher
+        l1 SedivyScene_NoContrast.bundle .tall .tallPitcher
     | .noContrast, .distractor              =>
-        l1PMF SedivyScene_NoContrast.bundle .tall .key
+        l1 SedivyScene_NoContrast.bundle .tall .key
     | _,           _                        => 0
 
 open VisualWorld SedivyEtAl1999 in
@@ -660,11 +572,9 @@ theorem cgSedivyLooks_satisfy_contrast_reduces_competitor :
     ContrastReducesCompetitorLooks (Cell := SedivyEtAl1999.Cell) (R := ℝ≥0∞) cgSedivyLooks := by
   intro c
   obtain ⟨_, _, _⟩ := c
-  show l1PMF SedivyScene.sedivyBundle .tall .tallPitcher <
-       l1PMF SedivyScene_NoContrast.bundle .tall .tallPitcher
-  exact pmf_lt_cross (fun r => s1Q_nonneg SedivyScene.sedivyBundle [] r .tall)
-    (fun r => s1Q_nonneg SedivyScene_NoContrast.bundle [] r .tall)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+  show l1 SedivyScene.sedivyBundle .tall .tallPitcher <
+       l1 SedivyScene_NoContrast.bundle .tall .tallPitcher
+  exact PMF.ofScores_lt_cross _ _ (by decide +kernel)
 
 /-! ### Rubio-Fernández §3.1 Bridge (English Over-Modification, STOP token) -/
 
