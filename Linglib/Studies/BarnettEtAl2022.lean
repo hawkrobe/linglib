@@ -167,7 +167,13 @@ theorem l0_monotone :
     l0LongerQ .s1 ≤ l0LongerQ .s2 ∧
     l0LongerQ .s2 ≤ l0LongerQ .s3 ∧
     l0LongerQ .s3 ≤ l0LongerQ .s4 ∧
-    l0LongerQ .s4 ≤ l0LongerQ .s5 := by refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+    l0LongerQ .s4 ≤ l0LongerQ .s5 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp only [l0LongerQ] <;>
+    first
+      | rfl
+      | exact_mod_cast (by norm_num : (1:ℚ)/6 ≤ 1/3)
+      | exact_mod_cast (by norm_num : (1:ℚ)/3 ≤ 1/2)
+      | exact_mod_cast (by norm_num : (1:ℚ)/2 ≤ 2/3)
 
 /-! ### Predictions — L1 (weak evidence effect) -/
 
