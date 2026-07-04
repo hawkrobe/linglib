@@ -162,13 +162,15 @@ def s1Score (l : Lex) (w : World) : Utterance → ℚ≥0 :=
 noncomputable def s1 (l : Lex) (w : World) : PMF Utterance :=
   .ofScores .uniform (s1Score l w)
 
-/-- Per-lexicon pragmatic-listener scores (eq. 12), the stacked literal
-layer. -/
-def l02Score (l : Lex) (u : Utterance) : World → ℚ≥0 :=
+/-- Fixed-lexicon pragmatic listener (the paper's lowercase l₁, eq. 12):
+the speaker renormalized over worlds — Bayes with a uniform prior, at a
+single lexicon (Figure 2's "fixed 𝓛" column). -/
+def l1FixedScore (l : Lex) (u : Utterance) : World → ℚ≥0 :=
   PMF.normalizeScores fun w => s1Score l w u
 
-/-- Joint-listener world-posterior scores (eq. 14/16; the per-lexicon
-normaliser cancels under uniform priors, leaving `∑ s₁`). -/
+/-- Lexical-uncertainty listener over worlds (the paper's uppercase L₁,
+eq. 14/16): the per-lexicon normaliser cancels under uniform priors,
+leaving `∑ s₁`. -/
 def l1Score (u : Utterance) : World → ℚ≥0 :=
   PMF.normalizeScores fun w => ∑ l, s1Score l w u
 
@@ -193,7 +195,7 @@ def disjCost : Utterance → ℚ≥0
 /-- Expertise-speaker scores (eq. 15 at α = 2, β = 1):
 normalized `l₁(w|m,L)² · L₁(L|m) · exp(−C(m))`. -/
 def s2Score (l : Lex) (w : World) : Utterance → ℚ≥0 :=
-  PMF.normalizeScores fun u => l02Score l u w ^ 2 * l1LatScore u l * disjCost u
+  PMF.normalizeScores fun u => l1FixedScore l u w ^ 2 * l1LatScore u l * disjCost u
 
 /-- Endorsement speaker: the L₁ world posterior renormalized per world
 (the informativity component of eq. 15 in isolation). -/
