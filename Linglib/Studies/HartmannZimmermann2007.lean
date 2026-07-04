@@ -153,7 +153,7 @@ private def mkExSituUtt (pac : PAC) (g : Gender) (sg hasStab : Bool)
     (h : pac.tam.HasRelativeForm → pac.mode = .relative)
     (pT : PragType) (foc : Focused := .nonSubject) :
     FocusUtterance :=
-  ⟨mkExSitu pac g sg hasStab h, pT, foc⟩
+  ⟨mkExSitu pac g sg h hasStab, pT, foc⟩
 
 /-- Smart constructor for an in-situ focus utterance. -/
 private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
