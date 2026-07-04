@@ -8,10 +8,10 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 /-!
 # Algebraic identities for `negMulLog`
 
-Mathlib's `Analysis.SpecialFunctions.Log.NegMulLog` develops the analysis of
-`x ↦ -x * log x` (continuity, derivatives, convexity) but none of its algebra.
-This file supplies the division identity behind the entropy chain rule.
-`[UPSTREAM]` candidate for that file.
+Mathlib's `Analysis.SpecialFunctions.Log.NegMulLog` has the product identity
+`Real.negMulLog_mul` but not its quotient companion. This file derives the
+division identity behind the entropy chain rule. `[UPSTREAM]` candidate for
+that file.
 -/
 
 namespace Real
@@ -21,10 +21,9 @@ namespace Real
     Holds with junk at `x = 0` (both sides vanish). -/
 theorem negMulLog_div (x : ℝ) {y : ℝ} (hy : y ≠ 0) :
     y * negMulLog (x / y) = negMulLog x + x * log y := by
-  by_cases hx : x = 0
-  · simp [hx, negMulLog]
-  · unfold negMulLog
-    rw [log_div hx hy]
+  obtain rfl | hx := eq_or_ne x 0
+  · simp
+  · simp only [negMulLog, log_div hx hy]
     field_simp
     ring
 
