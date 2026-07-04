@@ -1,9 +1,9 @@
-import Linglib.Tactics.RSAPredict
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # [bumford-rett-2021] — Rationalizing Evaluativity
@@ -152,44 +152,276 @@ def sigmaVal (s : Sigma) : Int := (s.val : Int) - 2
 -- § 5. Shared RSA Infrastructure
 -- ============================================================================
 
-open Real (exp log exp_pos)
+open scoped ENNReal
 
-/-- World prior as ℝ (for RSAConfig). -/
+/-- World prior as ℝ. -/
 noncomputable def worldPriorR (w : EvalWorld) : ℝ := worldPrior w
 
 private theorem worldPrior_nonneg_Q :
-    ∀ w : EvalWorld, (0 : ℚ) ≤ worldPrior w := by native_decide
+    ∀ w : EvalWorld, (0 : ℚ) ≤ worldPrior w := by
+  intro w; unfold worldPrior; split <;> norm_num
 
 theorem worldPriorR_nonneg : ∀ w : EvalWorld, 0 ≤ worldPriorR w := by
   intro w; simp only [worldPriorR]; exact_mod_cast worldPrior_nonneg_Q w
 
-/-- Utterance cost as ℝ (cast from ℚ for use in S1 score). -/
-noncomputable def costR (u : Utterance) : ℝ := cost u
+/-- Utterance cost as a natural exponent: `exp(−α·C(u)) = e^(costN u)` at the
+paper's α = 4, where `e := exp(−4)`. -/
+def costN : Utterance → ℕ
+  | .unmarked => 1
+  | .marked   => 2
+  | .null     => 0
 
 -- ============================================================================
--- § 6. Parametric RSAConfig
+-- § 6. mathlib-PMF pipeline (replaces the RSAConfig; eq 10)
 -- ============================================================================
 
-/-- Parametric RSAConfig for all four constructions.
+/-! Companion architecture on `PMF`, parameterized by the cost-factor base
+`e` (= `exp(−4)` at the paper's α = 4; only the speaker depends on `e`):
 
-    All simulations share the same architecture (eq 10); they differ only
-    in the meaning function (eqs 12, 14, 16, 18). -/
-@[reducible]
-noncomputable def mkEvalCfg (sem : Utterance → Sigma → EvalWorld → Bool) :
-    RSA.RSAConfig Utterance EvalWorld where
-  Latent := Sigma
-  meaning _ σ u w := if sem u σ w then worldPriorR w else 0
-  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
-  -- eq 10: Sₙ(u | w, L) ∝ exp(α · (log Lₙ₋₁(w | u, L) − C(u)))
-  s1Score := fun l0 α _ w u =>
-    if l0 u w = 0 then 0 else exp (α * (log (l0 u w) - costR u))
-  s1Score_nonneg := fun _ _ _ _ _ _ _ => by
-    split <;> [exact le_refl 0; exact le_of_lt (exp_pos _)]
-  α := 4
-  α_pos := by norm_num
-  worldPrior := worldPriorR
-  worldPrior_nonneg := worldPriorR_nonneg
-  latentPrior_nonneg _ _ := by positivity
+    L₀(w | u, σ) ∝ ⟦u⟧(σ,w) · P(w)               (`meaningE`, `L0v`)
+    S₁(u | w, σ) ∝ L₀(w | u, σ)⁴ · e^C(u)         (`Sk`)
+    L₁(w, σ | u) ∝ S₁(u | w, σ) · P(w) · P(σ)     (`listener`, `PMF.posterior`)
+
+The prior is baked into the graded L₀ kernel (eq 10, `L₀ ∝ P(w)·⟦u⟧(w)`);
+`null` is licensed everywhere, so the speaker normaliser vanishes only at
+invalid (zero-prior) worlds, which carry joint weight 0 and are handled by a
+`dite` wrapper. Statements are `e`-generic over `0 < e < 1`; `exp(−4)` is
+instantiated only in bridging corollaries. -/
+
+/-- Prior-weighted meaning `⟦u⟧(σ,w) · P(w)`, lifted to `ℝ≥0∞`. -/
+def meaningE (sem : Utterance → Sigma → EvalWorld → Bool) (σ : Sigma)
+    (u : Utterance) (w : EvalWorld) : ℝ≥0∞ :=
+  if sem u σ w then ENNReal.ofReal (worldPrior w) else 0
+
+private theorem meaningE_ne_top (sem) (σ) (u) (w) : meaningE sem σ u w ≠ ⊤ := by
+  simp only [meaningE]; split
+  · exact ENNReal.ofReal_ne_top
+  · exact ENNReal.zero_ne_top
+
+private theorem meaningE_tsum_ne_top (sem) (σ) (u) : (∑' w, meaningE sem σ u w) ≠ ⊤ := by
+  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun w _ => meaningE_ne_top sem σ u w
+
+/-- Literal-listener value `L₀(w | u, σ) = ⟦u⟧(σ,w)·P(w) / D` (well-defined
+and `0` on empty extensions, since `0 · ⊤ = 0` in `ℝ≥0∞`). -/
+noncomputable def L0v (sem : Utterance → Sigma → EvalWorld → Bool) (σ : Sigma)
+    (u : Utterance) (w : EvalWorld) : ℝ≥0∞ :=
+  meaningE sem σ u w * (∑' w', meaningE sem σ u w')⁻¹
+
+private theorem L0v_ne_top (sem) (σ) (u) (w) : L0v sem σ u w ≠ ⊤ := by
+  rw [L0v]
+  rcases eq_or_ne (∑' w', meaningE sem σ u w') 0 with h | h
+  · have hm : meaningE sem σ u w = 0 := by
+      by_contra hm; exact (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨w, hm⟩) h
+    rw [hm, zero_mul]; exact ENNReal.zero_ne_top
+  · exact ENNReal.mul_ne_top (meaningE_ne_top sem σ u w) (ENNReal.inv_ne_top.mpr h)
+
+/-- Speaker weight `L₀(w|u,σ)⁴ · e^C(u)`. -/
+noncomputable def spkW (sem : Utterance → Sigma → EvalWorld → Bool) (e : ℝ)
+    (s : EvalWorld × Sigma) (u : Utterance) : ℝ≥0∞ :=
+  (L0v sem s.2 u s.1) ^ 4 * ENNReal.ofReal (e ^ costN u)
+
+private theorem spkW_ne_top (sem) (e) (s) (u) : spkW sem e s u ≠ ⊤ :=
+  ENNReal.mul_ne_top (ENNReal.pow_ne_top (L0v_ne_top sem s.2 u s.1)) ENNReal.ofReal_ne_top
+
+private theorem spkW_tsum_ne_top (sem) (e) (s) : (∑' u, spkW sem e s u) ≠ ⊤ := by
+  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun u _ => spkW_ne_top sem e s u
+
+/-- **Speaker** `S₁(· | w, σ) : PMF Utterance`, `dite`-guarded so it is total
+even at invalid worlds (where every weight vanishes; those carry joint prior 0). -/
+noncomputable def Sk (sem : Utterance → Sigma → EvalWorld → Bool) (e : ℝ)
+    (s : EvalWorld × Sigma) : PMF Utterance :=
+  if h : (∑' u, spkW sem e s u) ≠ 0 then
+    PMF.normalize (spkW sem e s) h (spkW_tsum_ne_top sem e s)
+  else PMF.pure .null
+
+/-- Unnormalised joint prior `P(w) · P(σ)` (uniform latent absorbed). -/
+def jointW (s : EvalWorld × Sigma) : ℝ≥0∞ := ENNReal.ofReal (worldPrior s.1)
+
+/-- Concise world constructor: `mkW h m = (Fin h, Fin m)`. -/
+def mkW (h : Fin 9) (m : Fin 5) : EvalWorld := (h, m)
+
+private theorem worldPrior_pos_of_ne {w : EvalWorld} (h : worldPrior w ≠ 0) :
+    (0 : ℝ) < (worldPrior w : ℝ) := by
+  have := worldPrior_nonneg_Q w; exact_mod_cast lt_of_le_of_ne this (Ne.symm h)
+
+private theorem jointW_ne_zero {s : EvalWorld × Sigma} (h : worldPrior s.1 ≠ 0) :
+    jointW s ≠ 0 := by
+  simp only [jointW]; exact (ENNReal.ofReal_pos.mpr (worldPrior_pos_of_ne h)).ne'
+
+private theorem jointW_tsum_ne_zero : (∑' s, jointW s) ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨(mkW 4 2, 0), jointW_ne_zero (by decide)⟩
+
+private theorem jointW_tsum_ne_top : (∑' s, jointW s) ≠ ⊤ := by
+  rw [tsum_fintype]; exact ENNReal.sum_ne_top.mpr fun _ _ => ENNReal.ofReal_ne_top
+
+/-- Listener's joint prior over `world × σ`. -/
+noncomputable def jointK : PMF (EvalWorld × Sigma) :=
+  PMF.normalize jointW jointW_tsum_ne_zero jointW_tsum_ne_top
+
+private theorem jointK_ne_zero {s : EvalWorld × Sigma} (h : worldPrior s.1 ≠ 0) :
+    jointK s ≠ 0 := by
+  rw [jointK, ← PMF.mem_support_iff, PMF.mem_support_normalize_iff]; exact jointW_ne_zero h
+
+private theorem L0v_ne_zero {sem σ u w} (h : meaningE sem σ u w ≠ 0) :
+    L0v sem σ u w ≠ 0 :=
+  mul_ne_zero h (ENNReal.inv_ne_zero.mpr (meaningE_tsum_ne_top sem σ u))
+
+private theorem meaningE_ne_zero {sem σ u w} (hlic : sem u σ w = true)
+    (hval : worldPrior w ≠ 0) : meaningE sem σ u w ≠ 0 := by
+  simp only [meaningE, hlic, if_true]
+  exact (ENNReal.ofReal_pos.mpr (worldPrior_pos_of_ne hval)).ne'
+
+private theorem spkW_ne_zero {sem} {e : ℝ} (he0 : 0 < e) {s : EvalWorld × Sigma}
+    {u : Utterance} (hlic : sem u s.2 s.1 = true) (hval : worldPrior s.1 ≠ 0) :
+    spkW sem e s u ≠ 0 := by
+  refine mul_ne_zero (pow_ne_zero 4 (L0v_ne_zero (meaningE_ne_zero hlic hval))) ?_
+  exact (ENNReal.ofReal_pos.mpr (pow_pos he0 _)).ne'
+
+private theorem Sk_apply_ne_zero {sem} {e : ℝ} (he0 : 0 < e) {s : EvalWorld × Sigma}
+    {u : Utterance} (hnull : sem .null s.2 s.1 = true) (hval : worldPrior s.1 ≠ 0)
+    (hlic : sem u s.2 s.1 = true) : Sk sem e s u ≠ 0 := by
+  have hsum : (∑' u', spkW sem e s u') ≠ 0 :=
+    ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, spkW_ne_zero he0 hnull hval⟩
+  rw [Sk, dif_pos hsum, ← PMF.mem_support_iff, PMF.mem_support_normalize_iff]
+  exact spkW_ne_zero he0 hlic hval
+
+/-- Single-witness discharge of the listener's marginal positivity: a valid
+world `w0` licensed for `u` at some `σ0` (with `null` also licensed there). -/
+theorem marg_ne_zero {sem} {e : ℝ} (he0 : 0 < e) {u : Utterance}
+    {w0 : EvalWorld} {σ0 : Sigma} (hval : worldPrior w0 ≠ 0)
+    (hnull : sem .null σ0 w0 = true) (hlic : sem u σ0 w0 = true) :
+    PMF.marginal (Sk sem e) jointK u ≠ 0 :=
+  PMF.marginal_ne_zero (Sk sem e) jointK u (a := (w0, σ0)) (jointK_ne_zero hval)
+    (Sk_apply_ne_zero he0 hnull hval hlic)
+
+/-! ### Structural speaker/listener monotonicity
+
+Evaluativity is proved *structurally*, with no normaliser computation: the
+per-latent speaker order follows from **licensing-set inclusion** between two
+equal-prior worlds. Two equal-prior worlds with the same licensing bit for `u`
+have identical speaker numerators; a wider licensing set only enlarges the
+denominator. Hence a world that is licensed for *fewer* alternatives (its
+licensing set is contained in the other's) puts *more* mass on the observed
+`u`. Only `0 < e` is used (for strict positivity); nothing needs `e < 1`. -/
+
+private theorem spkW_tsum_ne_zero {sem} {e : ℝ} (he0 : 0 < e) {s : EvalWorld × Sigma}
+    (hnull : sem .null s.2 s.1 = true) (hv : worldPrior s.1 ≠ 0) :
+    (∑' u', spkW sem e s u') ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, spkW_ne_zero he0 hnull hv⟩
+
+private theorem Sk_apply_eq {sem} {e : ℝ} {s : EvalWorld × Sigma}
+    (hsum : (∑' u', spkW sem e s u') ≠ 0) (u : Utterance) :
+    Sk sem e s u = spkW sem e s u * (∑' u', spkW sem e s u')⁻¹ := by
+  rw [Sk, dif_pos hsum, PMF.normalize_apply]
+
+private theorem spkW_eq_zero_of_not_lic {sem} {e : ℝ} {s : EvalWorld × Sigma}
+    {u : Utterance} (h : sem u s.2 s.1 = false) : spkW sem e s u = 0 := by
+  rw [spkW]
+  suffices L0v sem s.2 u s.1 = 0 by rw [this, zero_pow (by norm_num), zero_mul]
+  rw [L0v, meaningE, if_neg (by simp [h]), zero_mul]
+
+private theorem Sk_eq_zero_of_not_lic {sem} {e : ℝ} {s : EvalWorld × Sigma}
+    (hsum : (∑' u', spkW sem e s u') ≠ 0) {u : Utterance} (h : sem u s.2 s.1 = false) :
+    Sk sem e s u = 0 := by
+  rw [Sk_apply_eq hsum, spkW_eq_zero_of_not_lic h, zero_mul]
+
+private theorem Sk_pos {sem} {e : ℝ} (he0 : 0 < e) {s : EvalWorld × Sigma}
+    (hnull : sem .null s.2 s.1 = true) (hv : worldPrior s.1 ≠ 0)
+    {u : Utterance} (hlic : sem u s.2 s.1 = true) : 0 < Sk sem e s u := by
+  rw [Sk_apply_eq (spkW_tsum_ne_zero he0 hnull hv)]
+  exact ENNReal.mul_pos (spkW_ne_zero he0 hlic hv)
+    (ENNReal.inv_ne_zero.mpr (spkW_tsum_ne_top sem e s))
+
+/-- **Monotone speaker weight**: with equal world prior, a licensing bit that
+is dominated (`wa` licensed for `u` ⟹ `wb` licensed) forces `spkW wa ≤ spkW wb`. -/
+private theorem spkW_le_of_prior_lic {sem} {e : ℝ} {u σ} {wa wb : EvalWorld}
+    (hp : worldPrior wa = worldPrior wb) (hlic : sem u σ wa = true → sem u σ wb = true) :
+    spkW sem e (wa, σ) u ≤ spkW sem e (wb, σ) u := by
+  unfold spkW L0v
+  gcongr
+  simp only [meaningE]
+  by_cases ha : sem u σ wa = true
+  · rw [if_pos ha, if_pos (hlic ha), hp]
+  · rw [if_neg ha]; exact zero_le
+
+private theorem jointK_apply_eq (s : EvalWorld × Sigma) :
+    jointK s = jointW s * (∑' s', jointW s')⁻¹ := by
+  rw [jointK, PMF.normalize_apply]
+
+private theorem jointK_eq_of_prior {σ : Sigma} {w1 w2 : EvalWorld}
+    (h : worldPrior w1 = worldPrior w2) : jointK (w1, σ) = jointK (w2, σ) := by
+  rw [jointK_apply_eq, jointK_apply_eq, jointW, jointW, h]
+
+private theorem jointK_ne_top (s : EvalWorld × Sigma) : jointK s ≠ ⊤ :=
+  PMF.apply_ne_top jointK s
+
+/-- **Per-latent evaluativity**: at a fixed `σ`, the speaker prefers the
+observed `u` for `w2` at least as much as for `w1`, when `w1, w2` share the
+world prior, `w1`'s `u`-licensing is contained in `w2`'s (`hu`), and — on the
+region where `w1` is `u`-licensed — `w2`'s whole licensing set is contained in
+`w1`'s (`halt`). Pure order argument; no normaliser is evaluated. -/
+private theorem sk_le_of_incl {sem} {e : ℝ} (he0 : 0 < e) {u σ} {w1 w2 : EvalWorld}
+    (hp : worldPrior w1 = worldPrior w2) (hv1 : worldPrior w1 ≠ 0) (hv2 : worldPrior w2 ≠ 0)
+    (hnull1 : sem .null σ w1 = true) (hnull2 : sem .null σ w2 = true)
+    (hu : sem u σ w1 = true → sem u σ w2 = true)
+    (halt : sem u σ w1 = true → ∀ u', sem u' σ w2 = true → sem u' σ w1 = true) :
+    Sk sem e (w1, σ) u ≤ Sk sem e (w2, σ) u := by
+  by_cases h1 : sem u σ w1 = true
+  · rw [Sk_apply_eq (spkW_tsum_ne_zero he0 hnull1 hv1) u,
+        Sk_apply_eq (spkW_tsum_ne_zero he0 hnull2 hv2) u]
+    refine mul_le_mul' (spkW_le_of_prior_lic hp hu) (ENNReal.inv_le_inv.mpr ?_)
+    exact ENNReal.tsum_le_tsum fun u' => spkW_le_of_prior_lic hp.symm (halt h1 u')
+  · rw [Sk_eq_zero_of_not_lic (spkW_tsum_ne_zero he0 hnull1 hv1) (Bool.not_eq_true _ ▸ h1)]
+    exact zero_le
+
+/-- **Strict per-latent gap**: where `w1` is *not* `u`-licensed but `w2` is,
+`w1` contributes `0` and `w2` contributes a positive speaker mass. -/
+private theorem sk_lt_of_gap {sem} {e : ℝ} (he0 : 0 < e) {u σ} {w1 w2 : EvalWorld}
+    (hv1 : worldPrior w1 ≠ 0) (hv2 : worldPrior w2 ≠ 0)
+    (hnull1 : sem .null σ w1 = true) (hnull2 : sem .null σ w2 = true)
+    (h1 : sem u σ w1 = false) (h2 : sem u σ w2 = true) :
+    Sk sem e (w1, σ) u < Sk sem e (w2, σ) u := by
+  rw [Sk_eq_zero_of_not_lic (spkW_tsum_ne_zero he0 hnull1 hv1) h1]
+  exact Sk_pos he0 hnull2 hv2 h2
+
+/-- Strict monotonicity of a finite `ℝ≥0∞` sum from a single strictly-larger
+term (the others being finite): `Finset.sum_lt_sum` is unavailable because
+`ℝ≥0∞` is not cancellative. -/
+private theorem ennreal_sum_lt_sum {ι} [DecidableEq ι] {s : Finset ι} {f g : ι → ℝ≥0∞}
+    (hfg : ∀ i ∈ s, f i ≤ g i) {i₀ : ι} (hi₀ : i₀ ∈ s) (hlt : f i₀ < g i₀)
+    (htop : ∀ i ∈ s, g i ≠ ⊤) : ∑ i ∈ s, f i < ∑ i ∈ s, g i := by
+  rw [← Finset.add_sum_erase s f hi₀, ← Finset.add_sum_erase s g hi₀]
+  have htop' : ∑ x ∈ s.erase i₀, g x ≠ ⊤ :=
+    ENNReal.sum_ne_top.mpr fun i hi => htop i (Finset.mem_of_mem_erase hi)
+  calc f i₀ + ∑ x ∈ s.erase i₀, f x
+      ≤ f i₀ + ∑ x ∈ s.erase i₀, g x := by
+        gcongr with i hi; exact hfg i (Finset.mem_of_mem_erase hi)
+    _ < g i₀ + ∑ x ∈ s.erase i₀, g x := ENNReal.add_lt_add_right htop' hlt
+
+/-- **Evaluativity from licensing inclusion** (Tier A). For two equal-prior
+worlds with `w1`'s `u`-licensing contained in `w2`'s (`hu`) and, on that
+support, `w2`'s whole licensing contained in `w1`'s (`halt`), plus a `σ₀` where
+only `w2` is `u`-licensed, the listener strictly prefers `w2`: `L₁(w1|u) <
+L₁(w2|u)`. Pure order argument — no normaliser is evaluated, and only `0 < e`
+is used. -/
+private theorem evaluative_of_incl {sem} {e : ℝ} (he0 : 0 < e) {u : Utterance}
+    {w1 w2 : EvalWorld} (marg : PMF.marginal (Sk sem e) jointK u ≠ 0)
+    (hp : worldPrior w1 = worldPrior w2) (hv1 : worldPrior w1 ≠ 0) (hv2 : worldPrior w2 ≠ 0)
+    (hnull1 : ∀ σ, sem .null σ w1 = true) (hnull2 : ∀ σ, sem .null σ w2 = true)
+    (hu : ∀ σ, sem u σ w1 = true → sem u σ w2 = true)
+    (halt : ∀ σ, sem u σ w1 = true → ∀ u', sem u' σ w2 = true → sem u' σ w1 = true)
+    (σ₀ : Sigma) (hgap1 : sem u σ₀ w1 = false) (hgap2 : sem u σ₀ w2 = true) :
+    (RSA.Canonical.L1 (Sk sem e) jointK u marg).fst w1
+      < (RSA.Canonical.L1 (Sk sem e) jointK u marg).fst w2 := by
+  rw [RSA.Canonical.L1_world_prefers_iff]
+  refine ennreal_sum_lt_sum (fun σ _ => ?_) (Finset.mem_univ σ₀) ?_
+    (fun σ _ => ENNReal.mul_ne_top (jointK_ne_top _) (PMF.apply_ne_top _ _))
+  · rw [jointK_eq_of_prior hp]
+    gcongr
+    exact sk_le_of_incl he0 hp hv1 hv2 (hnull1 σ) (hnull2 σ) (hu σ) (halt σ)
+  · rw [jointK_eq_of_prior hp]
+    exact ENNReal.mul_lt_mul_right (jointK_ne_zero hv2) (jointK_ne_top _)
+      (sk_lt_of_gap he0 hv1 hv2 (hnull1 σ₀) (hnull2 σ₀) hgap1 hgap2)
 
 -- ============================================================================
 -- § 7. Simulation 1: Positive Construction (§2.2.1, Table 1)
@@ -205,10 +437,13 @@ def posMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-@[reducible] noncomputable def posCfg := mkEvalCfg posMeaning
-
-/-- Concise world constructor: mkW h m = (Fin h, Fin m). -/
-def mkW (h : Fin 9) (m : Fin 5) : EvalWorld := (h, m)
+/-- Positive-construction pragmatic listener `L₁(· | u)` at cost base `e`. -/
+noncomputable def posL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
+  RSA.Canonical.L1 (Sk posMeaning e) jointK u <|
+    match u with
+    | .unmarked => marg_ne_zero he0 (w0 := mkW 4 2) (σ0 := 0) (by decide) (by decide) (by decide)
+    | .marked   => marg_ne_zero he0 (w0 := mkW 4 4) (σ0 := 4) (by decide) (by decide) (by decide)
+    | .null     => marg_ne_zero he0 (w0 := mkW 4 2) (σ0 := 0) (by decide) (by decide) (by decide)
 
 /-! ### Prediction 1: "Tall" shifts height above CC mean
 
@@ -219,9 +454,11 @@ than height 4 (index 3, dev = −1). Both worlds have equal prior (6),
 so the asymmetry is entirely due to pragmatic reasoning.
 The paper reports E[ht − μ] = 2.08 at L₁. -/
 
-theorem pos_tall_evaluative :
-    posCfg.L1 .unmarked (mkW 5 2) > posCfg.L1 .unmarked (mkW 3 2) := by
-  rsa_predict
+theorem pos_tall_evaluative (e : ℝ) (he0 : 0 < e) :
+    (posL1 .unmarked he0).fst (mkW 5 2) > (posL1 .unmarked he0).fst (mkW 3 2) := by
+  simp only [posL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
 
 /-! ### Prediction 2: "Short" shifts height below CC mean
 
@@ -231,9 +468,11 @@ The marked form is even more evaluative than the unmarked form,
 because the extra cost signals that the speaker's reason for speaking
 must be particularly strong. -/
 
-theorem pos_short_evaluative :
-    posCfg.L1 .marked (mkW 3 2) > posCfg.L1 .marked (mkW 5 2) := by
-  rsa_predict
+theorem pos_short_evaluative (e : ℝ) (he0 : 0 < e) :
+    (posL1 .marked he0).fst (mkW 3 2) > (posL1 .marked he0).fst (mkW 5 2) := by
+  simp only [posL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
 
 -- ============================================================================
 -- § 8. Simulation 2: Exact Equative (§2.2.2, Table 1)
@@ -257,7 +496,13 @@ def eqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w = kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-@[reducible] noncomputable def eqCfg := mkEvalCfg eqMeaning
+/-- Exact-equative pragmatic listener `L₁(· | u)` at cost base `e`. -/
+noncomputable def eqL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
+  RSA.Canonical.L1 (Sk eqMeaning e) jointK u <|
+    match u with
+    | .unmarked => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
+    | .marked   => marg_ne_zero he0 (w0 := mkW 4 4) (σ0 := 0) (by decide) (by decide) (by decide)
+    | .null     => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
 
 -- k = 5 (height index 4). Relevant worlds: (4, j) for j ∈ {0,1,2,3,4}.
 -- μ = 3 (j=0): k well above mean → non-evaluative direction
@@ -276,9 +521,11 @@ By [bergen-levy-goodman-2016]'s logic, L₁ infers the speaker must have
 had a strong reason — the marked form is distinctively informative in worlds
 where k is atypically low. -/
 
-theorem eq_marked_evaluative :
-    eqCfg.L1 .marked (mkW 4 4) > eqCfg.L1 .marked (mkW 4 0) := by
-  rsa_predict
+theorem eq_marked_evaluative (e : ℝ) (he0 : 0 < e) :
+    (eqL1 .marked he0).fst (mkW 4 4) > (eqL1 .marked he0).fst (mkW 4 0) := by
+  simp only [eqL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨0, by omega⟩ (by decide) (by decide)
 
 /-! ### Prediction 4: Unmarked equative is weakly evaluative
 
@@ -291,9 +538,11 @@ This asymmetry — marked evaluative, unmarked weakly/not evaluative — is
 the antonym-sensitive pattern that [rett-2015] identifies categorically
 and this model derives gradiently. -/
 
-theorem eq_unmarked_weakly_evaluative :
-    eqCfg.L1 .unmarked (mkW 4 0) > eqCfg.L1 .unmarked (mkW 4 4) := by
-  rsa_predict
+theorem eq_unmarked_weakly_evaluative (e : ℝ) (he0 : 0 < e) :
+    (eqL1 .unmarked he0).fst (mkW 4 0) > (eqL1 .unmarked he0).fst (mkW 4 4) := by
+  simp only [eqL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨4, by omega⟩ (by decide) (by decide)
 
 -- ============================================================================
 -- § 9. Simulation 3: ≥ Equative (§2.2.3, Table 1)
@@ -318,7 +567,13 @@ def geqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w ≤ kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-@[reducible] noncomputable def geqCfg := mkEvalCfg geqMeaning
+/-- ≥-equative pragmatic listener `L₁(· | u)` at cost base `e`. -/
+noncomputable def geqL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
+  RSA.Canonical.L1 (Sk geqMeaning e) jointK u <|
+    match u with
+    | .unmarked => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
+    | .marked   => marg_ne_zero he0 (w0 := mkW 4 4) (σ0 := 0) (by decide) (by decide) (by decide)
+    | .null     => marg_ne_zero he0 (w0 := mkW 4 0) (σ0 := 0) (by decide) (by decide) (by decide)
 
 /-! ### Prediction 5: Marked ≥ equative is evaluative
 
@@ -326,9 +581,11 @@ Hearing "Jane is at least as short as Keisha" (marked) shifts L₁'s
 posterior toward worlds where k is below the CC center.
 The paper reports E[k − μ] = −1.52 at L₁. -/
 
-theorem geq_marked_evaluative :
-    geqCfg.L1 .marked (mkW 4 4) > geqCfg.L1 .marked (mkW 4 0) := by
-  rsa_predict
+theorem geq_marked_evaluative (e : ℝ) (he0 : 0 < e) :
+    (geqL1 .marked he0).fst (mkW 4 4) > (geqL1 .marked he0).fst (mkW 4 0) := by
+  simp only [geqL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨0, by omega⟩ (by decide) (by decide)
 
 /-! ### Prediction 6: Unmarked ≥ equative is barely evaluative
 
@@ -336,9 +593,11 @@ Hearing "Jane is at least as tall as Keisha" (unmarked) barely shifts
 the posterior. The paper reports E[k − μ] = 0.11 at L₁ — the weakest
 evaluative effect of any construction. -/
 
-theorem geq_unmarked_barely_evaluative :
-    geqCfg.L1 .unmarked (mkW 4 0) > geqCfg.L1 .unmarked (mkW 4 4) := by
-  rsa_predict
+theorem geq_unmarked_barely_evaluative (e : ℝ) (he0 : 0 < e) :
+    (geqL1 .unmarked he0).fst (mkW 4 0) > (geqL1 .unmarked he0).fst (mkW 4 4) := by
+  simp only [geqL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨4, by omega⟩ (by decide) (by decide)
 
 -- ============================================================================
 -- § 10. Simulation 4: Comparative (§2.2.4, Table 1)
@@ -368,7 +627,13 @@ def compMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w < kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-@[reducible] noncomputable def compCfg := mkEvalCfg compMeaning
+/-- Comparative pragmatic listener `L₁(· | u)` at cost base `e`. -/
+noncomputable def compL1 (u : Utterance) {e : ℝ} (he0 : 0 < e) : PMF (EvalWorld × Sigma) :=
+  RSA.Canonical.L1 (Sk compMeaning e) jointK u <|
+    match u with
+    | .unmarked => marg_ne_zero he0 (w0 := mkW 5 2) (σ0 := 0) (by decide) (by decide) (by decide)
+    | .marked   => marg_ne_zero he0 (w0 := mkW 3 2) (σ0 := 2) (by decide) (by decide) (by decide)
+    | .null     => marg_ne_zero he0 (w0 := mkW 5 2) (σ0 := 0) (by decide) (by decide) (by decide)
 
 /-! ### Prediction 7: Comparative marked does not strongly shift k
 
@@ -378,9 +643,11 @@ toward worlds where k is far from the CC center. At equal prior
 world with k well above the mean. The paper reports E[k − μ] = −0.44
 at L₁ — a very weak effect, unlike the equative's −1.06. -/
 
-theorem comp_marked_weak :
-    compCfg.L1 .marked (mkW 3 2) > compCfg.L1 .marked (mkW 3 0) := by
-  rsa_predict
+theorem comp_marked_weak (e : ℝ) (he0 : 0 < e) :
+    (compL1 .marked he0).fst (mkW 3 2) > (compL1 .marked he0).fst (mkW 3 0) := by
+  simp only [compL1, gt_iff_lt]
+  exact evaluative_of_incl he0 _ (by decide) (by decide) (by decide) (fun _ => rfl)
+    (fun _ => rfl) (by decide) (by decide) ⟨2, by omega⟩ (by decide) (by decide)
 
 /-! ### Prediction 8: Comparative unmarked is counter-evaluative
 
@@ -390,9 +657,152 @@ E[k − μ] = −0.74, slightly negative: Keisha is inferred to be
 slightly below the CC mean. This is because knowing Jane exceeds
 Keisha's height leaves more room for Keisha to be below average. -/
 
-theorem comp_unmarked_counter_evaluative :
-    compCfg.L1 .unmarked (mkW 5 3) > compCfg.L1 .unmarked (mkW 5 1) := by
-  rsa_predict
+private theorem meaningE_eq_ofReal (sem) (σ) (u) (w) :
+    meaningE sem σ u w = ENNReal.ofReal (if sem u σ w then worldPrior w else 0) := by
+  unfold meaningE; split <;> simp
+
+/-- Kernel-clean evaluation of a graded-`L₀` normaliser: the `ℝ≥0∞` fan-out
+sum equals `ofReal` of the concrete ℚ mass sum. -/
+private theorem dval {sem σ u} {D : ℚ}
+    (h : (∑ w : Fin 9 × Fin 5, if sem u σ w then worldPrior w else 0) = D) :
+    (∑' w, meaningE sem σ u w) = ENNReal.ofReal D := by
+  rw [tsum_fintype, Finset.sum_congr rfl fun w _ => meaningE_eq_ofReal sem σ u w,
+    ← ENNReal.ofReal_sum_of_nonneg fun w _ => by
+      split
+      · exact_mod_cast worldPrior_nonneg_Q w
+      · exact le_refl 0]
+  congr 1
+  rw [← h, Rat.cast_sum]
+  exact Finset.sum_congr rfl fun w _ => by split <;> simp
+
+private theorem dval_unm :
+    (∑' w, meaningE compMeaning (1 : Sigma) .unmarked w) = ENNReal.ofReal 25 :=
+  dval (by decide +kernel)
+
+private theorem dval_null :
+    (∑' w, meaningE compMeaning (1 : Sigma) .null w) = ENNReal.ofReal 120 :=
+  dval (by decide +kernel)
+
+private theorem wp53 : worldPrior (mkW 5 3) = 10 := by decide +kernel
+
+private theorem L0v_unm :
+    L0v compMeaning (1 : Sigma) .unmarked (mkW 5 3) = ENNReal.ofReal (2 / 5) := by
+  unfold L0v
+  rw [dval_unm, meaningE_eq_ofReal, if_pos (by decide),
+    show ((worldPrior (mkW 5 3) : ℝ)) = 10 by rw [wp53]; norm_num,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num : (0:ℝ) < 25),
+    ← ENNReal.ofReal_mul (by norm_num : (0:ℝ) ≤ 10)]
+  norm_num
+
+private theorem L0v_null :
+    L0v compMeaning (1 : Sigma) .null (mkW 5 3) = ENNReal.ofReal (1 / 12) := by
+  unfold L0v
+  rw [dval_null, meaningE_eq_ofReal, if_pos (by decide),
+    show ((worldPrior (mkW 5 3) : ℝ)) = 10 by rw [wp53]; norm_num,
+    ← ENNReal.ofReal_inv_of_pos (by norm_num : (0:ℝ) < 120),
+    ← ENNReal.ofReal_mul (by norm_num : (0:ℝ) ≤ 10)]
+  norm_num
+
+private theorem spkW_unm (e : ℝ) :
+    spkW compMeaning e (mkW 5 3, (1 : Sigma)) .unmarked = ENNReal.ofReal ((2 / 5) ^ 4 * e) := by
+  unfold spkW
+  rw [L0v_unm, ← ENNReal.ofReal_pow (by norm_num : (0:ℝ) ≤ 2 / 5),
+    show costN .unmarked = 1 from rfl, pow_one, ← ENNReal.ofReal_mul (by positivity)]
+
+private theorem spkW_null (e : ℝ) :
+    spkW compMeaning e (mkW 5 3, (1 : Sigma)) .null = ENNReal.ofReal ((1 / 12) ^ 4) := by
+  unfold spkW
+  rw [L0v_null, ← ENNReal.ofReal_pow (by norm_num : (0:ℝ) ≤ 1 / 12),
+    show costN .null = 0 from rfl, pow_zero, ENNReal.ofReal_one, mul_one]
+
+private theorem spkW_marked (e : ℝ) :
+    spkW compMeaning e (mkW 5 3, (1 : Sigma)) .marked = 0 :=
+  spkW_eq_zero_of_not_lic (by decide)
+
+private theorem spkW_tsum (e : ℝ) :
+    (∑' u, spkW compMeaning e (mkW 5 3, (1 : Sigma)) u)
+      = ENNReal.ofReal ((2 / 5) ^ 4 * e) + ENNReal.ofReal ((1 / 12) ^ 4) := by
+  rw [tsum_fintype,
+    show (Finset.univ : Finset Utterance) = {.unmarked, .marked, .null} from by decide,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
+    spkW_unm, spkW_marked, spkW_null, zero_add]
+
+private theorem Sk_bound {e : ℝ} (he0 : 0 < e) (he_lo : (1 : ℝ) / 100 ≤ e) :
+    (5 : ℝ≥0∞) < 10 * Sk compMeaning e (mkW 5 3, (1 : Sigma)) .unmarked := by
+  have hA : (0 : ℝ) < (2 / 5) ^ 4 * e := by positivity
+  have hsum : (∑' u', spkW compMeaning e (mkW 5 3, (1 : Sigma)) u') ≠ 0 := by
+    rw [spkW_tsum]
+    exact ((ENNReal.ofReal_pos.mpr hA).trans_le le_self_add).ne'
+  rw [Sk_apply_eq hsum, spkW_unm, spkW_tsum, ← ENNReal.ofReal_add hA.le (by positivity),
+    ← ENNReal.ofReal_inv_of_pos (by positivity), ← ENNReal.ofReal_mul hA.le,
+    show (10 : ℝ≥0∞) = ENNReal.ofReal 10 by norm_num, ← ENNReal.ofReal_mul (by norm_num),
+    show (5 : ℝ≥0∞) = ENNReal.ofReal 5 by norm_num, ENNReal.ofReal_lt_ofReal_iff (by positivity),
+    ← mul_assoc, ← div_eq_mul_inv, lt_div_iff₀ (by positivity)]
+  nlinarith [he_lo]
+
+private theorem jointK_w1 (σ : Sigma) : jointK (mkW 5 1, σ) = jointK (mkW 5 1, 1) := by
+  simp only [jointK_apply_eq, jointW]
+
+private theorem jointK_w3_ratio :
+    jointK (mkW 5 3, (1 : Sigma)) = 10 * jointK (mkW 5 1, (1 : Sigma)) := by
+  rw [jointK_apply_eq, jointK_apply_eq, jointW, jointW, wp53,
+    show worldPrior (mkW 5 1) = 1 from by decide +kernel, ← mul_assoc]
+  congr 1
+  rw [Rat.cast_one, ENNReal.ofReal_one, mul_one, Rat.cast_ofNat, ENNReal.ofReal_ofNat]
+
+/-- Counter-evaluative comparative — a **prior-magnitude** effect, not a
+licensing one. Unlike the seven Tier-A predictions (which hold for every cost
+base `e ∈ (0,1)` via `evaluative_of_incl`'s bare `0 < e`), here the speaker
+distribution depends on a world only through its *licensing set* (the prior
+cancels inside `Sk`), so the 10:1 world prior of `mkW 5 3` (k at the CC mean)
+over `mkW 5 1` (k above it) is the sole asymmetry and it dominates.
+
+The prior dominates only when markedness costs are not extreme. The sharp
+threshold is `e ≥ (D_unm(1)/D_null)⁴ = (25/120)⁴ ≈ 0.0019`: for `e` below it,
+the cost factor `e^C` so heavily discounts the informative "taller than"
+utterance in the high-threshold worlds that the informativity cost dominates
+the prior mass and the inequality flips. We therefore assume `1/100 ≤ e`
+(comfortably above the threshold, and met by the paper's `e = exp(−4) ≈ 0.018`;
+see `comp_unmarked_counter_evaluative_exp`). -/
+theorem comp_unmarked_counter_evaluative (e : ℝ) (he0 : 0 < e) (he_lo : (1 : ℝ)/100 ≤ e) :
+    (compL1 .unmarked he0).fst (mkW 5 3) > (compL1 .unmarked he0).fst (mkW 5 1) := by
+  -- `L1_world_prefers_iff` reduces to a comparison of joint-weighted speaker
+  -- sums. `jointK(w,·)` is constant in σ, with a 10:1 prior for `mkW 5 3` over
+  -- `mkW 5 1`; `Sk ≤ 1` bounds `mkW 5 1`'s five terms by `5·jointK(w1,·)`, while
+  -- `mkW 5 3`'s σ = 1 term alone gives `10·jointK(w1,·)·Sk(w2,1)` with
+  -- `Sk(w2,1) > 1/2` (`Sk_bound`) — so the prior mass wins.
+  simp only [compL1, gt_iff_lt, RSA.Canonical.L1_world_prefers_iff]
+  calc ∑ σ, jointK (mkW 5 1, σ) * Sk compMeaning e (mkW 5 1, σ) .unmarked
+      ≤ ∑ σ : Sigma, jointK (mkW 5 1, 1) := by
+        refine Finset.sum_le_sum fun σ _ => ?_
+        rw [jointK_w1 σ]
+        calc jointK (mkW 5 1, 1) * Sk compMeaning e (mkW 5 1, σ) .unmarked
+            ≤ jointK (mkW 5 1, 1) * 1 := by gcongr; exact PMF.coe_le_one _ _
+          _ = jointK (mkW 5 1, 1) := mul_one _
+    _ = 5 * jointK (mkW 5 1, 1) := by
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]; norm_num
+    _ < jointK (mkW 5 3, 1) * Sk compMeaning e (mkW 5 3, 1) .unmarked := by
+        rw [jointK_w3_ratio, mul_right_comm]
+        exact ENNReal.mul_lt_mul_left (jointK_ne_zero (by decide +kernel)) (jointK_ne_top _)
+          (Sk_bound he0 he_lo)
+    _ ≤ ∑ σ, jointK (mkW 5 3, σ) * Sk compMeaning e (mkW 5 3, σ) .unmarked :=
+        Finset.single_le_sum
+          (f := fun σ => jointK (mkW 5 3, σ) * Sk compMeaning e (mkW 5 3, σ) .unmarked)
+          (fun σ _ => zero_le) (Finset.mem_univ (1 : Sigma))
+
+/-- The counter-evaluative comparative at the paper's cost base `e = exp(−4)`.
+The hypothesis `1/100 ≤ exp(−4)` reduces to `exp 4 ≤ 100`, and
+`exp 4 = (exp 1)⁴ < 2.7182818286⁴ ≈ 54.6 < 100`. -/
+theorem comp_unmarked_counter_evaluative_exp :
+    (compL1 .unmarked (Real.exp_pos (-4))).fst (mkW 5 3)
+      > (compL1 .unmarked (Real.exp_pos (-4))).fst (mkW 5 1) := by
+  refine comp_unmarked_counter_evaluative (Real.exp (-4)) (Real.exp_pos _) ?_
+  have he4 : Real.exp 4 ≤ 100 :=
+    calc Real.exp 4 = Real.exp 1 ^ 4 := by rw [← Real.exp_nat_mul]; norm_num
+      _ ≤ 2.7182818286 ^ 4 := by gcongr; exact Real.exp_one_lt_d9.le
+      _ ≤ 100 := by norm_num
+  rw [Real.exp_neg, one_div]
+  gcongr
 
 -- ============================================================================
 -- § 11. Cross-Construction Contrast
@@ -440,8 +850,8 @@ constructions categorically using `AdjectivalConstruction` and `Polarity`:
 - **Equative** (`.equative`): evaluative for `.negative` only (Manner/R-implicature)
 - **Comparative** (`.comparative`): NOT evaluative (no applicable implicature)
 
-This RSA model derives the same pattern *gradiently*: each `rsa_predict`
-theorem above confirms a qualitative directional prediction that matches
+This RSA model derives the same pattern *gradiently*: each `L₁` prediction
+above confirms a qualitative directional prediction that matches
 the categorical classification. The RSA model adds:
 1. **Graded predictions** — evaluativity has a continuous strength, not just ±
 2. **Unified mechanism** — rational communication replaces separate Q/R principles
@@ -475,24 +885,24 @@ open Rett2015Implicature (deriveEvaluativity)
     This theorem connects two independent formalizations — the categorical
     `deriveEvaluativity` function and the RSA `L1` predictions — proving they
     make compatible predictions despite using entirely different mechanisms. -/
-theorem rsa_neo_gricean_agreement :
+theorem rsa_neo_gricean_agreement (e : ℝ) (he0 : 0 < e) :
     -- Positive: both accounts say evaluative for both polarities
     (deriveEvaluativity posConstruction .positive).isEvaluative = true ∧
     (deriveEvaluativity posConstruction .negative).isEvaluative = true ∧
-    posCfg.L1 .unmarked (mkW 5 2) > posCfg.L1 .unmarked (mkW 3 2) ∧
-    posCfg.L1 .marked (mkW 3 2) > posCfg.L1 .marked (mkW 5 2) ∧
+    (posL1 .unmarked he0).fst (mkW 5 2) > (posL1 .unmarked he0).fst (mkW 3 2) ∧
+    (posL1 .marked he0).fst (mkW 3 2) > (posL1 .marked he0).fst (mkW 5 2) ∧
     -- Equative: Neo-Gricean says marked-only; RSA shows marked shift
     (deriveEvaluativity eqConstruction .positive).isEvaluative = false ∧
     (deriveEvaluativity eqConstruction .negative).isEvaluative = true ∧
-    eqCfg.L1 .marked (mkW 4 4) > eqCfg.L1 .marked (mkW 4 0) ∧
+    (eqL1 .marked he0).fst (mkW 4 4) > (eqL1 .marked he0).fst (mkW 4 0) ∧
     -- Comparative: both say not evaluative
     (deriveEvaluativity compConstruction .positive).isEvaluative = false ∧
     (deriveEvaluativity compConstruction .negative).isEvaluative = false :=
-  ⟨by native_decide, by native_decide,
-   pos_tall_evaluative, pos_short_evaluative,
-   by native_decide, by native_decide,
-   eq_marked_evaluative,
-   by native_decide, by native_decide⟩
+  ⟨by decide, by decide,
+   pos_tall_evaluative e he0, pos_short_evaluative e he0,
+   by decide, by decide,
+   eq_marked_evaluative e he0,
+   by decide, by decide⟩
 
 -- ============================================================================
 -- § 13. Cross-References
@@ -509,12 +919,19 @@ hearing "tall"/"short" shifts the height posterior.
 
 ### Architecture
 
-This model uses `RSAConfig` with:
-- `Latent := Sigma` (threshold offset, = lexical uncertainty over σ)
-- `meaning` bakes in the world prior (L₀ ∝ P(w) · L(u, w))
-- `s1Score` = exp(α · (log L₀ − C(u))) (action-based, cost-sensitive)
-- `worldPrior` = Gaussian-weighted 2D prior
-- `latentPrior` = uniform over σ (lexica equally likely a priori)
+The model runs on the mathlib-`PMF` RSA pipeline (`RSA.Canonical.L1`), with the
+latent threshold offset `σ` as the joint-listener's second coordinate:
+- `meaningE` bakes the Gaussian 2D world prior into the graded L₀ kernel
+  (L₀ ∝ P(w) · ⟦u⟧(σ,w)); `L0v` is its normalised value.
+- `Sk` is the cost-sensitive speaker `S₁(u | w,σ) ∝ L₀(w|u,σ)⁴ · e^C(u)`, with
+  cost base `e` (= `exp(−4)` at α = 4). It is `dite`-guarded so it stays total
+  at invalid worlds, which carry joint prior 0.
+- `jointK` is the uniform-over-σ joint prior `P(w)·P(σ)`; the listener is the
+  joint Bayesian posterior over `world × σ`, world marginal via `.fst`.
+
+Evaluativity (Tier A) is proved structurally from licensing-set inclusion and
+needs only `0 < e`; the counter-evaluative comparative is the sole
+prior-magnitude case and needs `1/100 ≤ e`.
 -/
 
 end BumfordRett2021
