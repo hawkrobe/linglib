@@ -8,7 +8,7 @@ import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Italian.PolarityMarking
-import Linglib.Semantics.Focus.PolarityLevel
+import Linglib.Features.Polarity
 
 /-!
 # [turco-braun-dimroth-2014] — Polarity Marking in Dutch and German
@@ -38,8 +38,8 @@ argue that VF and *wel* operate at different semantic levels: VF targets
 the *assertion operator* (the element carrying the assertive relation
 between topic and comment), while *wel* targets the *polarity operator*
 ([±Pol]). Both achieve polarity contrast/correction pragmatically, but
-they are structurally distinct. See `PolarityLevel.lean` for the
-formal theory.
+they are structurally distinct; the two-level theory is formalised in
+the polarity-marking-levels section below.
 
 ## Data Sources
 
@@ -63,7 +63,94 @@ open Swedish.AnswerParticles (joMarking)
 open English.PolarityMarking (emphaticDo)
 open Spanish.PolarityMarking (siQue)
 open Italian.PolarityMarking (siChe)
-open Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
+open Features (Polarity)
+
+/-! ## Polarity-marking levels (p. 104, following Blühdorn 2012)
+
+Particles target the polarity operator directly; Verum focus targets
+the assertion operator that wraps it — predicting opposite
+co-occurrence patterns with sentential negation. -/
+
+/-- The semantic level at which a polarity-marking device operates:
+`polarity` (affirmative particles like Dutch *wel* set `[+Pol]`) vs
+`assertion` (German Verum focus highlights the assertion operator,
+[hohle-1992]). -/
+inductive PolarityMarkingLevel where
+  | polarity
+  | assertion
+  deriving DecidableEq, Repr
+
+/-- The semantic level of each polarity-marking strategy; `none` for
+strategies without a clear level assignment. -/
+def strategyLevel : Strategy → Option PolarityMarkingLevel
+  | .particle        => some .polarity
+  | .verumFocus      => some .assertion
+  | .polarityReversal => some .polarity
+  | .other           => none
+  | .unmarked        => none
+
+variable {W : Type*}
+
+/-- A sentence decomposed into its polarity-relevant layers: a
+polarity-neutral radical, the polarity value `[±Pol]`, and the overtly
+marked level, if any (`Option` — assertion-level and polarity-level
+marking are mutually exclusive by construction). -/
+structure SentenceStructure (W : Type*) where
+  /-- Polarity-neutral propositional content -/
+  radical : W → Bool
+  /-- The polarity value [±Pol] -/
+  pol : Polarity
+  /-- Which structural level is overtly marked, if any -/
+  marking : Option PolarityMarkingLevel := none
+
+/-- Apply polarity to the radical: polarity is the innermost operator. -/
+def SentenceStructure.eval (s : SentenceStructure W) : W → Bool :=
+  match s.pol with
+  | .positive => s.radical
+  | .negative => λ w => !s.radical w
+
+/-- Assertion-level marking (VF) is compatible with either polarity;
+polarity-level marking (particles) requires `[+Pol]` — the particle IS
+the polarity operator. -/
+def PolarityMarkingLevel.compatibleWith : PolarityMarkingLevel → Polarity → Bool
+  | .assertion, _         => true
+  | .polarity,  .positive => true
+  | .polarity,  .negative => false
+
+/-- Unmarked sentences are always well-formed; marked sentences need a
+level compatible with their polarity value. -/
+def SentenceStructure.wellFormed (s : SentenceStructure W) : Bool :=
+  match s.marking with
+  | none       => true
+  | some level => level.compatibleWith s.pol
+
+/-- VF on a negative sentence is well-formed: *Das Kind HAT nicht
+geweint* — emphatic denial (Gussenhoven 1983). -/
+theorem vf_negative_wellformed (radical : W → Bool) :
+    (SentenceStructure.mk radical .negative (some .assertion)).wellFormed = true := rfl
+
+theorem vf_positive_wellformed (radical : W → Bool) :
+    (SentenceStructure.mk radical .positive (some .assertion)).wellFormed = true := rfl
+
+/-- Polarity particles require `[+Pol]`: **Het kind heeft wel niet
+gehuild* is contradictory. -/
+theorem particle_negative_illformed (radical : W → Bool) :
+    (SentenceStructure.mk radical .negative (some .polarity)).wellFormed = false := rfl
+
+theorem particle_positive_wellformed (radical : W → Bool) :
+    (SentenceStructure.mk radical .positive (some .polarity)).wellFormed = true := rfl
+
+/-- The two levels differ exactly on negation compatibility. -/
+theorem levels_differ_on_negation :
+    PolarityMarkingLevel.polarity.compatibleWith .negative ≠
+    PolarityMarkingLevel.assertion.compatibleWith .negative := by decide
+
+/-- Both strategies yield the same truth conditions on a positive
+proposition — the paper's "functional equivalence" of *wel* and VF. -/
+theorem functional_equivalence_positive (radical : W → Bool) :
+    let vf  : SentenceStructure W := ⟨radical, .positive, some .assertion⟩
+    let prt : SentenceStructure W := ⟨radical, .positive, some .polarity⟩
+    vf.eval = prt.eval := rfl
 
 /-! ## Types -/
 
@@ -447,6 +534,6 @@ theorem sentence_internality_by_strategy :
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     refine ⟨?_, ?_⟩ <;> intro h <;>
     simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe] <;> decide
+              siQue, siChe]
 
 end TurcoBraunDimroth2014

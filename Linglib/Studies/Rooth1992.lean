@@ -7,10 +7,11 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.Rooth1992
 
 /-!
-# [rooth-1992] Bridge — Focus Interpretation [rooth-1992]
+# Alternative-semantics focus interpretation
 
-Bridges the example rows in `Data/Examples/Rooth1992.json` to the formal
-theory in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
+Formalises [rooth-1992] over the example rows in
+`Data/Examples/Rooth1992.json` and the formal theory in
+`Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
 compositional derivational chain through Montague semantics and
 connection to English fragment entries.
 
@@ -55,7 +56,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 
 -/
 
-namespace Rooth1992Bridge
+namespace Rooth1992
 
 open Features.InformationStructure
 open Alternatives
@@ -580,4 +581,4 @@ theorem endToEnd_question_grounded :
     (∀ w, treeResult (focusLex w) tree_maryAteBeans = some (ateInWorld w E.beans E.mary)) := by
   exact ⟨fun w => by cases w <;> rfl, fun w => by cases w <;> rfl⟩
 
-end Rooth1992Bridge
+end Rooth1992
