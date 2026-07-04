@@ -1,47 +1,31 @@
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Floating
 
 /-!
-# Poko Phonological Fragment — Tonal
-[mcpherson-dryer-2021] [mcpherson-2022] [mcpherson-lamont-2026]
+# Poko Tonal Fragment
 
-Poko (also Poko-Rawo, ISO 639-3: not assigned, Glottocode: poko1259) is
-a Skou language spoken in Sandaun Province, Papua New Guinea, near the
-border with West Papua. ~100 speakers as of [mcpherson-dryer-2021].
+Lexical tone data for Poko (Poko-Rawo; Glottolog `rawo1244`, ISO 639-3
+`rwa`), a Skou language of Sandaun Province, Papua New Guinea (~100
+speakers, [mcpherson-dryer-2021]). Three contrastive tone levels (H,
+M, L) plus toneless syllables and floating tones; the TBU is the
+syllable. Lexical melodies span `Ø`, `M`, `MH`, `LM`, `LH`, `M^H` and
+double-floating `^L∅^H`, with floating L only stem-initial and
+floating H only stem-final ([mcpherson-lamont-2026] ex. 3, §2.2);
+simple `L` and `H` melodies are absent — [mcpherson-2022] derives the
+gap from edge constraints (`NonInitial(H)`, `NonFinal(L)`), while
+[mcpherson-lamont-2026] speculate an extreme OCP response.
 
-## Tone system
+Just enough stems for the [mcpherson-lamont-2026] tableaux; promote to
+a fuller fragment when a second Poko paper arrives.
 
-Three contrastive tone levels — high (H), mid (M), low (L) — plus
-toneless syllables and floating tones. Lexical melodies range from `Ø`
-(toneless) through `M`, `MH`, `LM`, `LH`, `M^H` (M with floating H);
-[mcpherson-2022] argues the lexical inventory excludes simple `L`
-and `H` melodies as a response to OCP markedness pressures.
+## Main definitions
 
-The TBU is the syllable; stems are mono- or disyllabic with vowel-final
-stems undergoing apocope phrase-medially (paper, ex. 1).
-
-## Floating tones
-
-Floating L tones appear at the LEFT edge of stems; floating H tones at
-the RIGHT edge (paper, §2.2). Postlexically, floating L tones remain
-floating (causing downstep), while floating H tones either dock
-rightward, dock leftward (tautomorphic, blocked by `*TAUTDOCK`), or
-delete (paper, §3.2).
-
-## Stems represented here
-
-Just enough syllables for the [mcpherson-lamont-2026] fig. 3
-demonstration: `kāk` (3sg.m possessive), `rī` (pig stem with `/M^H/`
-melody), `dō` (get verb with `/M^H/` melody). Promote to a fuller
-fragment when a second Poko paper arrives.
-
-## Morphemes
-
-Each Poko stem is one morpheme, keyed by the syllable's surface form
-via `Syll.morphemeId` (`{ form := "kak" }`, `{ form := "ri" }`, etc.).
-Consumed by *TAUTDOCK and *CROWD via the `SegSpec`/`TierSpec TRN` morpheme
-fields.
+* `Poko.Syll` — the stems, one morpheme each (`Syll.morpheme`).
+* `Poko.Syll.melody` — lexical melody as ordered tier elements.
+* `Poko.seg`, `Poko.mTone`, `Poko.hTone`, `Poko.lTone` — `SegSpec` /
+  `TierSpec` builders carrying the morpheme membership that feeds
+  `*TAUTDOCK` and `*CROWD`.
+* `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN`).
 -/
 
 namespace Poko
@@ -49,31 +33,35 @@ namespace Poko
 open Autosegmental
 open Tone (TRN)
 
--- ============================================================================
--- § 1: Syllables
--- ============================================================================
+/-! ### Syllables -/
 
-/-- Poko syllables represented for the [mcpherson-lamont-2026]
-    tableaux: fig. 3 (`kak`, `ri`, `do`); eq. (24) (`nan`, `ri`, `na`);
-    eq. (27) (`kak`, `ka`); eq. (30) (`kak`, `ili`). Promote to a
-    fuller stem inventory when a second Poko paper arrives. -/
+/-- Poko syllables for the [mcpherson-lamont-2026] tableaux: fig. 3
+    (`kak`, `ri`, `do`); eq. (24) (`nan`, `ri`, `na`); eq. (27)
+    (`kak`, `ka`); eq. (30) (`kak`, `ili`); eq. (22a) (`ne`). -/
 inductive Syll
-  | kak  -- 3sg.m possessive `kāk`
-  | ri   -- pig stem `rī` (M^H lexical melody)
-  | do   -- get verb `dō` (M^H lexical melody)
-  | nan  -- 1sg subject pronoun `nãn`
-  | na   -- eat verb `nã`
-  | ka   -- friend stem `kā` (MH lexical melody, paper eq. 26a)
-  | ili  -- bamboo stem `ìlí` (LH lexical melody, paper eq. 28a)
-  | ne   -- 'make.1sg' verb stem `ne` (toneless, paper eq. 22a)
-  deriving DecidableEq, Repr, Inhabited
+  /-- 3sg.m possessive `kāk` (melody `/M^H/`). -/
+  | kak
+  /-- Pig stem `rī` (melody `/M^H/`). -/
+  | ri
+  /-- Get verb `dō` (melody `/M^H/`). -/
+  | do
+  /-- 1sg pronoun `nãn` — possessor 'my' and subject 'I' (melody `/M/`). -/
+  | nan
+  /-- Eat verb `nã` (melody `/M/`). -/
+  | na
+  /-- Friend stem `kǎ` (melody `/MH/`, surfacing as a rise; eq. 26a). -/
+  | ka
+  /-- Bamboo stem `ìlí` (melody `/LH/`; disyllabic in the language,
+      collapsed to a single backbone element here; eq. 28a). -/
+  | ili
+  /-- Make.1sg verb stem `ne` (toneless; eq. 22a). -/
+  | ne
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Morpheme IDs
--- ============================================================================
+/-! ### Morphemes -/
 
 /-- Stable morpheme per stem, keyed by the syllable's surface form. -/
-def Syll.morphemeId : Syll → Morpheme
+def Syll.morpheme : Syll → Morpheme
   | .kak => { form := "kak" }
   | .ri  => { form := "ri" }
   | .do  => { form := "do" }
@@ -83,27 +71,40 @@ def Syll.morphemeId : Syll → Morpheme
   | .ili => { form := "ili" }
   | .ne  => { form := "ne" }
 
--- ============================================================================
--- § 3: Convenience Constructors for SegSpec / TierSpec TRN
--- ============================================================================
+/-! ### Builders -/
 
-/-- Wrap a syllable as a `SegSpec` carrying its morpheme ID. -/
+/-- Wrap a syllable as a `SegSpec` carrying its morpheme. -/
 def seg (s : Syll) : SegSpec Syll :=
-  { seg := s, morpheme := s.morphemeId }
+  { seg := s, morpheme := s.morpheme }
 
-/-- An M tone belonging to the morpheme of syllable `s` (the lexical M
-    of an /M^H/ stem). -/
+/-- An M tone belonging to the morpheme of syllable `s`. -/
 def mTone (s : Syll) : TierSpec TRN :=
-  { value := TRN.M, morpheme := s.morphemeId }
+  { value := TRN.M, morpheme := s.morpheme }
 
-/-- An H tone belonging to the morpheme of syllable `s` (the floating
-    H of an /M^H/ stem). -/
+/-- An H tone belonging to the morpheme of syllable `s`. -/
 def hTone (s : Syll) : TierSpec TRN :=
-  { value := TRN.H, morpheme := s.morphemeId }
+  { value := TRN.H, morpheme := s.morpheme }
 
-/-- An L tone belonging to the morpheme of syllable `s` (the L of an
-    /LH/ lexical stem like `ìlí`). -/
+/-- An L tone belonging to the morpheme of syllable `s`. -/
 def lTone (s : Syll) : TierSpec TRN :=
-  { value := TRN.L, morpheme := s.morphemeId }
+  { value := TRN.L, morpheme := s.morpheme }
+
+/-! ### Melodies and forms -/
+
+/-- Lexical melody of each stem, in tier order (linked tones before a
+    floating H). Which tones are underlyingly linked is per-input data
+    — the `links` argument of `FloatingForm.mkInput`. -/
+def Syll.melody : Syll → List (TierSpec TRN)
+  | .kak => [mTone .kak, hTone .kak]  -- /M^H/
+  | .ri  => [mTone .ri, hTone .ri]    -- /M^H/
+  | .do  => [mTone .do, hTone .do]    -- /M^H/
+  | .nan => [mTone .nan]              -- /M/
+  | .na  => [mTone .na]               -- /M/
+  | .ka  => [mTone .ka, hTone .ka]    -- /MH/, both linked
+  | .ili => [lTone .ili, hTone .ili]  -- /LH/, both linked
+  | .ne  => []                        -- toneless
+
+/-- Poko autosegmental forms: syllable backbone, `TRN` tone tier. -/
+abbrev Form := FloatingForm Syll TRN
 
 end Poko
