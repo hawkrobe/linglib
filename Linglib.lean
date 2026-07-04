@@ -20,8 +20,8 @@ import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
-import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
+import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
@@ -64,10 +64,10 @@ import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.Counting
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.DecEq
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
-import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.Rebinarize
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
@@ -127,6 +127,8 @@ import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
+import Linglib.Core.InformationTheory.KullbackLeibler.Basic
+import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
@@ -151,14 +153,14 @@ import Linglib.Core.Logic.CylindricAlgebra.DynamicSemantics
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.FirstOrder.Binders
+import Linglib.Core.Logic.FirstOrder.Comparative
 import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisse
 import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisseGame
-import Linglib.Core.Logic.FirstOrder.Kripke
 import Linglib.Core.Logic.FirstOrder.FiniteModel
-import Linglib.Core.Logic.FirstOrder.Comparative
-import Linglib.Core.Logic.FirstOrder.TotalPreorder
+import Linglib.Core.Logic.FirstOrder.Kripke
 import Linglib.Core.Logic.FirstOrder.Lindstrom
 import Linglib.Core.Logic.FirstOrder.QuantifierRank
+import Linglib.Core.Logic.FirstOrder.TotalPreorder
 import Linglib.Core.Logic.Modal.BSML.Bisimulation
 import Linglib.Core.Logic.Modal.BSML.Bridge
 import Linglib.Core.Logic.Modal.BSML.Characteristic
@@ -222,13 +224,12 @@ import Linglib.Core.Order.ComparativeProbability.Patterns
 import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Core.Order.ComparativeScale
-import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.FourierMotzkin
 import Linglib.Core.Order.Interval
-import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.IntervalContent
+import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Markedness
 import Linglib.Core.Order.Monotone.Monovary
@@ -254,6 +255,7 @@ import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.SignVectors
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.StrictBounds
+import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
@@ -265,6 +267,7 @@ import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Choice.SemiorderRanking
 import Linglib.Core.Probability.Choice.UtilityTheory
+import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.CoupledEvaluation
@@ -1441,6 +1444,7 @@ import Linglib.Processing.Cost.Profile
 import Linglib.Processing.Expectation.Defs
 import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
+import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Linglib.Processing.Lexical.Discriminative.Normed
@@ -2269,6 +2273,7 @@ import Linglib.Studies.Hacquard2006
 import Linglib.Studies.Hacquard2010
 import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.HahnDegenFutrell2021Morphology
+import Linglib.Studies.Hale2001
 import Linglib.Studies.HalleMarantz1993
 import Linglib.Studies.Halpert2012
 import Linglib.Studies.Halpert2019
@@ -2447,6 +2452,7 @@ import Linglib.Studies.Lechner2004
 import Linglib.Studies.Levin1993
 import Linglib.Studies.Levin2026
 import Linglib.Studies.LevshinaEtAl2023
+import Linglib.Studies.Levy2008
 import Linglib.Studies.Lewis1973
 import Linglib.Studies.Lionnet2022Laal
 import Linglib.Studies.Lionnet2025

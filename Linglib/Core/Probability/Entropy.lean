@@ -1,6 +1,7 @@
 import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Constructions
+import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import Mathlib.InformationTheory.KullbackLeibler.Basic
@@ -354,6 +355,16 @@ theorem klDiv_eq_sum_klFun {α : Type*} [Fintype α] [MeasurableSpace α]
       MeasureTheory.lintegral_fintype]
   refine Finset.sum_congr rfl (fun y _ => ?_)
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton y), mul_comm]
+
+open scoped ProbabilityTheory in
+/-- The Kullback-Leibler divergence of `p` conditioned on an event `s` from
+`p` itself is the negative log-mass of the event ([levy-2008]'s eq. (4) at
+its most general). -/
+theorem klDiv_filter_self {α : Type*} [MeasurableSpace α] (p : PMF α) {s : Set α}
+    (hs : MeasurableSet s) (h : ∃ a ∈ s, a ∈ p.support) :
+    (p.filter s h).klDiv p = ENNReal.ofReal (-Real.log (p.toMeasure s).toReal) := by
+  rw [klDiv_eq_toMeasure_klDiv, PMF.toMeasure_filter p hs h]
+  exact InformationTheory.klDiv_cond_self p.toMeasure hs (p.toMeasure_ne_zero hs h)
 
 -- ============================================================================
 -- §7: Jensen-Shannon divergence — KL-symmetrized form (mathlib-style)
