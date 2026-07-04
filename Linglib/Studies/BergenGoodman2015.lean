@@ -324,45 +324,18 @@ section Parametric
 
 variable {ε : ℝ}
 
-/-! The literal posteriors, symbolically in ε: the stressed percept pins
+/-- The literal posteriors, symbolically in ε: the stressed percept pins
 the subject against `both`; the unstressed one mixes in the confusable
-subject; the `both` row is identically `1/2` (`1 + ε/2 = (2 + ε)/2`). -/
-
-private theorem l0_B_ob (hε0 : 0 < ε) (hε1 : ε < 1) :
-    l0 ε .BOB_went .onlyBob = 1/2 := by
-  have hB : (2 : ℝ) - ε ≠ 0 := by linarith
-  unfold l0 noisyMeaning
-  rw [sumMeaningsR]
-  simp only [sumUttsR, literalMeaning, noiseChannel, if_true]
-  norm_num
-  rw [div_eq_div_iff (ne_of_gt (by linarith)) (ne_of_gt (by linarith))]
-  ring
-
-private theorem l0_b_ob (hε0 : 0 < ε) (hε1 : ε < 1) :
-    l0 ε .bobWent .onlyBob = (1 - ε/2) / (2 + ε) := by
-  have h2 : (2 : ℝ) + ε ≠ 0 := by linarith
-  unfold l0 noisyMeaning
-  rw [sumMeaningsR]
-  simp only [sumUttsR, literalMeaning, noiseChannel, if_true]
-  norm_num
-  rw [div_eq_div_iff (ne_of_gt (by linarith)) (ne_of_gt (by linarith))]
-  ring
-
-private theorem l0_a_ob (hε0 : 0 < ε) (hε1 : ε < 1) :
-    l0 ε .aliceWent .onlyBob = ε / (2 + ε) := by
-  have h2 : (2 : ℝ) + ε ≠ 0 := by linarith
-  unfold l0 noisyMeaning
-  rw [sumMeaningsR]
-  simp only [sumUttsR, literalMeaning, noiseChannel, if_true]
-  norm_num
-  rw [div_eq_div_iff (ne_of_gt (by linarith)) (ne_of_gt (by linarith))]
-  ring
-
+subject. -/
 private theorem l0_values (hε0 : 0 < ε) (hε1 : ε < 1) :
     l0 ε .BOB_went .onlyBob = 1/2 ∧
     l0 ε .bobWent .onlyBob = (1 - ε/2) / (2 + ε) ∧
-    l0 ε .aliceWent .onlyBob = ε / (2 + ε) :=
-  ⟨l0_B_ob hε0 hε1, l0_b_ob hε0 hε1, l0_a_ob hε0 hε1⟩
+    l0 ε .aliceWent .onlyBob = ε / (2 + ε) := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    · norm_num [l0, noisyMeaning, sumMeaningsR, sumUttsR, literalMeaning,
+        noiseChannel]
+      rw [div_eq_div_iff (ne_of_gt (by linarith)) (ne_of_gt (by linarith))]
+      ring
 
 /-- Unstressed speaker-utility atom (eq. 7): the channel-weighted geometric
 mean of the literal posteriors for uttering "Bob went". -/
@@ -539,62 +512,31 @@ theorem's range. -/
 example : l1PMF (1/100) .bobWent .onlyBob < l1PMF (1/100) .BOB_went .onlyBob :=
   stress_increases_exhaustivity (by norm_num) (by norm_num)
 
-end ProsodyModel
-
-/-! ### Fragment Interpretation Summary -/
-
-/-!
-## Fragment Interpretation
-
-The wh-fragment-answer prediction — "Bob" as answer to "Who went to the
-movies?" is correctly interpreted despite having no literal meaning — is
-carried by `EllipsisModel.l0_fragment_correct` and
-`EllipsisModel.l1_fragment_correct` in §1.
-
-The same mechanism extends to non-question fragments: noise-based inference
-is not restricted to question-answer pairs — any context where deletion is
-plausible licenses fragment use.
--/
-
-/-! ### Prosody Data -/
-
-/-!
-## Prosody data (`Data/Examples/BergenGoodman2015.json`)
-
-The paper's stress/exhaustivity stimuli: "BOB went to the movies" is read
-exhaustively (only Bob went), "Bob went to the movies" is not. The model
-derives the contrast from noise reduction: stress lowers the noise rate, and
-the listener infers that the speaker had reason to protect the stressed word,
-implying exhaustive knowledge.
--/
-
-/-- Utterance adapter: a row's `stress` feature as a `ProsodyModel.Utterance`. -/
-def uttOf (row : Data.Examples.LinguisticExample) : Option ProsodyModel.Utterance :=
+/-- Utterance adapter: a row's `stress` feature as an utterance. -/
+def uttOf (row : Data.Examples.LinguisticExample) : Option Utterance :=
   match row.feature? "stress" with
   | some "subject" => some .BOB_went
   | some "none"    => some .bobWent
   | _              => none
 
 /-- The model's L1 assigns the exhaustive meaning more probability at the
-    stressed row's utterance than at the unstressed row's, matching the rows'
-    recorded `reading` contrast. -/
+stressed row's utterance than at the unstressed row's, matching the rows'
+recorded `reading` contrast. -/
 theorem model_matches_stress_rows :
     ∃ u_s u_u, uttOf Examples.stressed_subject = some u_s ∧
       uttOf Examples.unstressed_subject = some u_u ∧
-      ProsodyModel.l1PMF (1/100) u_u .onlyBob <
-        ProsodyModel.l1PMF (1/100) u_s .onlyBob :=
-  ⟨_, _, rfl, rfl,
-    ProsodyModel.stress_increases_exhaustivity (by norm_num) (by norm_num)⟩
+      l1PMF (1/100) u_u .onlyBob < l1PMF (1/100) u_s .onlyBob :=
+  ⟨_, _, rfl, rfl, stress_increases_exhaustivity (by norm_num) (by norm_num)⟩
 
 /-- Stress widens the channel's correct-vs-confused gap by exactly ε
-(1 − ε stressed versus 1 − 2ε unstressed) — the mechanism behind
-`stress_increases_exhaustivity`, at every noise rate. -/
-theorem stress_increases_discrimination (ε : ℝ) (hε : 0 < ε) :
-    ProsodyModel.noiseChannel ε .BOB_went .BOB_went -
-      ProsodyModel.noiseChannel ε .BOB_went .bobWent >
-    ProsodyModel.noiseChannel ε .bobWent .bobWent -
-      ProsodyModel.noiseChannel ε .bobWent .aliceWent := by
-  simp only [ProsodyModel.noiseChannel]
+(1 − ε stressed versus 1 − 2ε unstressed) — the channel-level face of the
+mechanism, at every noise rate. -/
+theorem stress_increases_discrimination {ε : ℝ} (hε : 0 < ε) :
+    noiseChannel ε .BOB_went .BOB_went - noiseChannel ε .BOB_went .bobWent >
+    noiseChannel ε .bobWent .bobWent - noiseChannel ε .bobWent .aliceWent := by
+  simp only [noiseChannel]
   linarith
+
+end ProsodyModel
 
 end BergenGoodman2015
