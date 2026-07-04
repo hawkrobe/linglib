@@ -255,25 +255,30 @@ carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω
 `RoseTree`. -/
 
 /-- A prosodic node — the **level is the constructor**: a σ carries its mora `weight` and `isHead`,
-    a foot only `isHead`, ω/φ neither. Constructor defaults match the former smart constructors, so
-    node literals are unchanged; illegal nodes (a weight on a foot, a head on ω) are
-    unrepresentable. -/
+    every non-root level carries `isHead` (whether it heads its parent). Constructor defaults match
+    the former smart constructors, so node literals are unchanged; illegal nodes (a weight on a
+    foot, a head on the ι root) are unrepresentable. -/
 inductive Constituent
   /-- A syllable of the given `weight`, optionally the head of its foot. -/
   | syl (weight : Syllable.Weight := 0) (isHead : Bool := false)
   /-- A foot, optionally the head foot of its word. -/
   | ft (isHead : Bool := false)
-  /-- A prosodic word ω. -/
-  | om
-  /-- A phonological phrase φ — interim, until `Prosody.Phrase` lands. -/
-  | ph
+  /-- A prosodic word ω, optionally the head word of its phrase. -/
+  | om (isHead : Bool := false)
+  /-- A phonological phrase φ, optionally the head phrase of its
+  intonational phrase. -/
+  | ph (isHead : Bool := false)
+  /-- An intonational phrase ι — the root of the utterance-level
+  hierarchy, headless. -/
+  | iota
   deriving DecidableEq, Repr
 
 namespace Constituent
 
-/-- Whether a node heads its parent (a σ heads its foot, a foot heads its word); `false` for ω/φ. -/
+/-- Whether a node heads its parent (a σ heads its foot, a foot heads its word, an ω its phrase,
+    a φ its intonational phrase); `false` for the ι root. -/
 def isHead : Constituent → Bool
-  | .syl _ h => h | .ft h => h | .om | .ph => false
+  | .syl _ h => h | .ft h => h | .om h => h | .ph h => h | .iota => false
 
 /-- The mora weight of a σ node; `none` for non-σ nodes. -/
 def weight? : Constituent → Option Syllable.Weight
@@ -284,12 +289,17 @@ def isSyl : Constituent → Bool | .syl .. => true | _ => false
 /-- A foot (f) node. -/
 def isFt : Constituent → Bool | .ft _ => true | _ => false
 /-- A prosodic-word (ω) node. -/
-def isOm : Constituent → Bool | .om => true | _ => false
+def isOm : Constituent → Bool | .om _ => true | _ => false
+/-- A phonological-phrase (φ) node. -/
+def isPh : Constituent → Bool | .ph _ => true | _ => false
+/-- An intonational-phrase (ι) node. -/
+def isIota : Constituent → Bool | .iota => true | _ => false
 
 /-- Two nodes at the same prosodic level (the same constructor, ignoring weight/head) — the
     same-category test the No-Recursion family reads off the carrier. -/
 def sameLevel : Constituent → Constituent → Bool
-  | .syl .., .syl .. | .ft _, .ft _ | .om, .om | .ph, .ph => true
+  | .syl .., .syl .. | .ft _, .ft _ | .om _, .om _ | .ph _, .ph _
+  | .iota, .iota => true
   | _, _ => false
 
 /-- The level family is exclusive: a foot is not a syllable. -/
