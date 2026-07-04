@@ -675,7 +675,6 @@ import Linglib.Features.Register
 import Linglib.Features.ScopeTypes
 import Linglib.Features.Slot
 import Linglib.Features.Subjectivity
-import Linglib.Features.Topic
 import Linglib.Features.Valence
 import Linglib.Features.VerbCluster
 import Linglib.Features.WordOrder

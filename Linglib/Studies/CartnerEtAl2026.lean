@@ -126,7 +126,7 @@ theorem fillerFocus_varies :
     "A focused element should not be part of a backgrounded constituent."
 
 A violation occurs when a focused filler is extracted from a backgrounded
-domain. This is exactly `extractionISClash` from `Core/InformationStructure.lean`,
+domain. This is exactly `extractionISClash` from `Semantics/Focus/Comparability.lean`,
 which unifies this constraint with [erteschik-shir-1973]'s Dominance
 Condition on Extraction. -/
 def fbcPredictsIsland (c : FGDConstruction) : Prop :=

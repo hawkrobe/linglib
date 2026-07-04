@@ -9,8 +9,8 @@ Every expression has an *ordinary* denotation (`oValue`) and an
 *alternatives* set (`aValue`); focus features and operators manipulate
 the latter while typically preserving the former.
 
-This file isolates the bare data structure. Categorical refinements
-([fox-katzir-2011]) live in `Categorical.lean`; structural
+This file isolates the bare data structure. Symmetry-based refinements
+([fox-katzir-2011]) live in `Symmetric.lean`; structural
 alternatives ([katzir-2007]) live in `Structural.lean`;
 [FoC]/[G] feature semantics live in `Semantics/Focus/`.
 -/

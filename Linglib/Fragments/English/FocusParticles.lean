@@ -15,7 +15,6 @@ namespace English.FocusParticles
 
 open Semantics.Focus.Particles (EvenThreshold)
 open Semantics.ContentLayer (ContentLayer)
-open Features.InformationStructure (FIPApplication)
 open Discourse.Coherence (CoherenceRelation)
 
 /-- A focus-sensitive particle lexical entry. -/
@@ -28,8 +27,6 @@ structure Entry where
   contributionLayer : ContentLayer
   /-- For scalar particles: threshold on alternatives exceeded -/
   threshold : Option EvenThreshold
-  /-- FIP application type -/
-  application : FIPApplication
   /-- Discourse-relation flavor of exclusion ([umbach-2004]): *only*
       excludes additional alternatives → `.contrast`; contrastive focus
       excludes by substitution → `.correction`. Encoded directly as
@@ -49,7 +46,7 @@ def even_ : Entry :=
   , truthFunctional := false           -- Equivalence Thesis
   , contributionLayer := .implicature  -- conventional implicature
   , threshold := some .most            -- [francescotti-1995]
-  , application := .focusingAdverb }
+  }
 
 /-- "only" — exclusive focus particle.
     Truth-functional (asserts exclusion of alternatives),
@@ -62,7 +59,6 @@ def only_ : Entry :=
   , truthFunctional := true
   , contributionLayer := .atIssue
   , threshold := none
-  , application := .focusingAdverb
   , exclusionVariety := some .contrast }
 
 /-- "also"/"too" — additive focus particle.
@@ -72,7 +68,7 @@ def also : Entry :=
   , truthFunctional := false
   , contributionLayer := .presupposition
   , threshold := none
-  , application := .focusingAdverb }
+  }
 
 /-- "too" — additive focus particle, sentence-final.
     [thomas-2026]: felicity requires existence of an antecedent
@@ -87,7 +83,7 @@ def too_ : Entry :=
   , truthFunctional := false
   , contributionLayer := .presupposition
   , threshold := none
-  , application := .focusingAdverb }
+  }
 
 /-- "either" — negative-polarity additive focus particle.
     [rullmann-2003]: complementary distribution with "too" in
@@ -100,7 +96,7 @@ def either_ : Entry :=
   , truthFunctional := false
   , contributionLayer := .presupposition
   , threshold := none
-  , application := .focusingAdverb }
+  }
 
 /-- "just" — domain-widening focus particle.
     [deo-thomas-2025]: *just* signals that the CQ is the widest
@@ -116,7 +112,6 @@ def just_ : Entry :=
   , truthFunctional := false
   , contributionLayer := .presupposition
   , threshold := none
-  , application := .focusingAdverb
   , exclusionVariety := none }
 
 def allEntries : List Entry := [even_, only_, just_, also, too_, either_]

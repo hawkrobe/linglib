@@ -16,7 +16,7 @@ axis from Roberts / Tonhauser-Beaver-Roberts-Simons / Tonhauser-Beaver-Degen)
 is treated as orthogonal to Krifka's four. Substrate for each:
 - Focus: `FocusMark` + `Focus α` (this file).
 - Givenness: `Features/Givenness.lean` (`GivennessStatus` + `BinaryGivenness`).
-- Topic: `Features/Topic.lean` (`TopicMark` + `ContrastiveTopic α`).
+- Topic: no substrate yet — deferred.
 - At-issueness: `Discourse/QUD/AtIssueness.lean` (gradient `AtIssuenessDegree`).
 - Delimitation: no substrate yet — deferred.
 
@@ -66,8 +66,7 @@ structure Rheme (P : Type) where
 
 /-- Binary focus marking — whether a constituent bears focus or not.
     The simplest categorical encoding of the focus axis (Krifka 2008
-    one of four IS notions). Mirror of `Features.TopicMark` for the
-    topic axis. Use `FocusMark` when a study only needs the binary
+    one of four IS notions). Use `FocusMark` when a study only needs the binary
     focus-vs-not distinction; use `Focus α` (below) when the
     Roothian alternative-set structure is needed. -/
 inductive FocusMark where
@@ -125,25 +124,6 @@ structure InfoStructure (P : Type) where
   foci : List P := []
   /-- Background elements (given) -/
   background : List P := []
-
-/-! ## Focus Interpretation Principle (Rooth 1992) -/
-
-/-- Application type for the Focus Interpretation Principle. The four
-    constructors below pick out the families of focus uses Rooth surveys
-    (focusing adverbs, contrast/parallelism, scalar implicature,
-    question–answer congruence). UNVERIFIED whether the paper specifies
-    exactly these four under a single header — earlier prose claimed
-    `[rooth-1992] §2`, removed pending PDF check. -/
-inductive FIPApplication where
-  /-- Focusing adverbs: only, even, also -/
-  | focusingAdverb
-  /-- Contrast/parallelism in discourse -/
-  | contrast
-  /-- Scalar implicature computation -/
-  | scalarImplicature
-  /-- Question-answer congruence -/
-  | qaCongruence
-  deriving DecidableEq, Repr
 
 /-! ## Categorical vs Thetic Judgment (Kuroda 1972)
 
