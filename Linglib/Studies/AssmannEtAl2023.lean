@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Studies.HartmannZimmermann2004
 
 /-!
@@ -37,51 +38,8 @@ fn. 18.
 
 namespace AssmannEtAl2023
 
-/-! ## The proposal (§2.2–2.3) -/
+open Semantics.Focus (Marking)
 
-section Theory
-
-variable {C : Type*} [PartialOrder C] [DecidableEq C]
-
-/-- A focal marking: a construction focally marking exactly one
-constituent (§2.2). -/
-structure Marking (C : Type*) where
-  marked : C
-  deriving DecidableEq, Repr
-
-/-- No Projection (§2.2): a marking realizes focus `f` iff `f` lies
-within its focally marked constituent — broad foci are marked
-directly, narrower foci realized syncretically. -/
-def Realizes (m : Marking C) (f : C) : Prop := f ≤ m.marked
-
-instance [DecidableLE C] (m : Marking C) (f : C) : Decidable (Realizes m f) :=
-  inferInstanceAs (Decidable (_ ≤ _))
-
-/-- Blocking (§2.3): `m` is blocked for `f` when the inventory has a
-strictly more specific marking that also realizes `f`. -/
-def Blocked (inv : List (Marking C)) (m : Marking C) (f : C) : Prop :=
-  ∃ m' ∈ inv, Realizes m' f ∧ m'.marked ≤ m.marked ∧ m'.marked ≠ m.marked
-
-/-- A marking is usable for a focus: in the inventory, realizes it,
-and not blocked. -/
-def Usable (inv : List (Marking C)) (m : Marking C) (f : C) : Prop :=
-  m ∈ inv ∧ Realizes m f ∧ ¬ Blocked inv m f
-
-instance [DecidableLE C] (inv : List (Marking C)) (m : Marking C) (f : C) :
-    Decidable (Blocked inv m f) :=
-  List.decidableBEx _ inv
-
-instance [DecidableLE C] (inv : List (Marking C)) (m : Marking C) (f : C) :
-    Decidable (Usable inv m f) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-/-- No Projection makes realizability downward-closed: whatever
-realizes a focus realizes anything within it. -/
-theorem Realizes.mono {m : Marking C} {f f' : C}
-    (h : Realizes m f) (hle : f' ≤ f) : Realizes m f' :=
-  hle.trans h
-
-end Theory
 
 /-! ## The constituent skeleton of the case studies -/
 
@@ -116,14 +74,14 @@ def guruntumInv : List (Marking Node) := [⟨.sbj⟩, ⟨.vp⟩, ⟨.s⟩]
 /-- (4b): focally marking VP is syncretic for V, VP and Obj focus —
 No Projection in action. -/
 theorem guruntum_vp_syncretism :
-    Usable guruntumInv ⟨.vp⟩ .v ∧ Usable guruntumInv ⟨.vp⟩ .vp ∧
-    Usable guruntumInv ⟨.vp⟩ .obj := by decide
+    Marking.Usable guruntumInv ⟨.vp⟩ .v ∧ Marking.Usable guruntumInv ⟨.vp⟩ .vp ∧
+    Marking.Usable guruntumInv ⟨.vp⟩ .obj := by decide
 
 /-- (4c)/(5): the clausal marking realizes only clausal focus — every
 smaller focus is blocked by a specialized marking. -/
 theorem guruntum_clausal_blocked :
-    Usable guruntumInv ⟨.s⟩ .s ∧ ¬ Usable guruntumInv ⟨.s⟩ .sbj ∧
-    ¬ Usable guruntumInv ⟨.s⟩ .vp ∧ ¬ Usable guruntumInv ⟨.s⟩ .obj := by
+    Marking.Usable guruntumInv ⟨.s⟩ .s ∧ ¬ Marking.Usable guruntumInv ⟨.s⟩ .sbj ∧
+    ¬ Marking.Usable guruntumInv ⟨.s⟩ .vp ∧ ¬ Marking.Usable guruntumInv ⟨.s⟩ .obj := by
   decide
 
 /-! ## Case study: Hausa (§3.2) -/
@@ -137,13 +95,13 @@ def hausaInv : List (Marking Node) := [⟨.sbj⟩, ⟨.s⟩]
 question and all-new contexts — one default, syncretic for V, VP,
 Obj and clausal focus. -/
 theorem hausa_default_syncretism :
-    Usable hausaInv ⟨.s⟩ .v ∧ Usable hausaInv ⟨.s⟩ .vp ∧
-    Usable hausaInv ⟨.s⟩ .obj ∧ Usable hausaInv ⟨.s⟩ .s := by decide
+    Marking.Usable hausaInv ⟨.s⟩ .v ∧ Marking.Usable hausaInv ⟨.s⟩ .vp ∧
+    Marking.Usable hausaInv ⟨.s⟩ .obj ∧ Marking.Usable hausaInv ⟨.s⟩ .s := by decide
 
 /-- Only subject focus has to be marked (their fn. 13): the default
 is blocked for subject focus by the relative form. -/
 theorem hausa_subject_needs_relative :
-    ¬ Usable hausaInv ⟨.s⟩ .sbj ∧ Usable hausaInv ⟨.sbj⟩ .sbj := by
+    ¬ Marking.Usable hausaInv ⟨.s⟩ .sbj ∧ Marking.Usable hausaInv ⟨.sbj⟩ .sbj := by
   decide
 
 /-! ## The Tangale rivalry (their fn. 13, 17, 18)
