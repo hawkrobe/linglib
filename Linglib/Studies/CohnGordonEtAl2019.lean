@@ -310,32 +310,16 @@ noncomputable def globalS1 (r : Referent) : PMF Utterance :=
 theorem global_prefers_red_dress : globalS1 .redDress .dress < globalS1 .redDress .redDress :=
   PMF.ofScores_lt _ (by decide +kernel)
 
-/-! ### Sedivy §3.2 Bridge (Anticipatory Contrastive Inference) -/
+/-! ### The §3.2 contrastive-inference bridge
 
-/-! [cohn-gordon-goodman-potts-2019] §3.2 reanalyses
-[sedivy-2007]'s review of contrastive-inference findings within the
-incremental RSA framework. The scene contains a target tall cup, a
-contrasting short cup (same category, opposite scale pole), a tall
-pitcher (cross-category competitor at the same scale pole), and an
-unrelated key. After the listener hears just "tall", the pragmatic
-listener L1 prefers the tall cup over the tall pitcher — even though
-extension semantics treats both as equally compatible — because a
-speaker referring to the pitcher would have said "pitcher" alone (no
-need for "tall" to disambiguate from the only other pitcher: there
-isn't one). The "tall" is therefore diagnostic of the cup with a
-same-category contrast.
-
-The original empirical effect is from [sedivy-etal-1999]; CommonGround cite
-the [sedivy-2007] review article that summarizes it.
-
-This file formalises both contrast cells. The contrast scene is the
-five-word, four-referent `sedivyBundle` from CommonGround's text. The no-contrast
-scene is a four-word, three-referent companion bundle
-(`SedivyScene_NoContrast.bundle`) — `.short` is omitted because the
-shortCup referent it would describe is absent from the display, leaving
-the speaker with no scene-anchored use for the word. The two scenes
-share a `Referent` type so a single Cell-typed
-`LookProportion SedivyEtAl1999.Cell ℝ` projection can read off both. -/
+§3.2 reanalyses [sedivy-2007]'s review (the effect is
+[sedivy-etal-1999]'s) in incremental RSA: hearing bare "tall", L1 prefers
+the tall cup over the tall pitcher — extensionally both fit, but a
+pitcher-referring speaker had no use for "tall". Both contrast cells are
+formalized: the paper's four-referent `sedivyBundle` and a no-contrast
+companion (`SedivyScene_NoContrast.bundle`, dropping the absent short
+cup's word); the shared `Referent` type lets one Cell-typed
+`LookProportion` read off both. -/
 
 namespace SedivyScene
 
@@ -386,7 +370,7 @@ from the visual display.
 The companion bundle drops `.short` from `Word` and the `[short, cup]`
 utterance from `completeUtterances`. Justification: with no shortCup
 in the display, a cooperative speaker has no scene-anchored use for
-`.short`, and CommonGround's `IncrementalSemantics` is a *scene-specific*
+`.short`, and the paper's `IncrementalSemantics` is a *scene-specific*
 production model rather than a lexicon-wide one. (The listener's
 standing mental lexicon still contains `short`; the bundle here is a
 model of speaker production for *this scene*, not of mental
