@@ -7,6 +7,7 @@ import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Focus.Realization
 import Linglib.Fragments.Tangale.TAM
+import Linglib.Fragments.Tangale.Phonology
 import Linglib.Data.Examples.HartmannZimmermann2004
 
 /-!
@@ -35,14 +36,15 @@ continuous (preposed *né*). The *núm* readings use the strong-theory
 
 The paper's fn. 6 notes the suffix *-i* does not occur with all
 intransitive verbs; `realize` idealises it as the intransitive
-perfective strategy. The autosegmental detail of the boundary
-diagnosis (vowel elision, left-line delinking, H-spread) is kept as
-prose; formalising it against the tone substrate is a TODO.
+perfective strategy. The boundary diagnosis is grounded in
+`Fragments/Tangale/Phonology.lean`: `prosodic_reflex_audible` cites
+[kidda-1985]'s elision cascade as what makes the boundary reflex
+perceptible.
 
 ## TODO
 
-* The VE/LLD phonology as autosegmental operations (connect to the
-  tone substrate; [kidda-1985] Ch. 2 and Ch. 4 are the sources).
+* The interleaved elision-feeding-tone-shift derivations of
+  [kidda-1985] (34) on lexical forms.
 * The paper's two solutions (§6): the prosodic-boundary account vs the
   subjects-vs-non-subjects account as rival `Predict`-style theories.
 -/
@@ -149,6 +151,14 @@ chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
     ¬ Semantics.Focus.EveryFocusPerceptible realize :=
   fun h => h ⟨.object, .progressive, true⟩ rfl
+
+/-- The prosodic reflex is audible: the boundary-blocked perfective
+form differs from the phrase-medial elided form — [kidda-1985]'s
+elision cascade is what makes `Reflex.prosodic` perceptible in the
+(25) cells. -/
+theorem prosodic_reflex_audible :
+    Tangale.blockedForm ≠ Tangale.elidedForm :=
+  Tangale.boundary_audible.1
 
 /-- The perfective boundary underdetermines the focus extent: on
 transitive perfective non-subject configurations, `focused` does not
