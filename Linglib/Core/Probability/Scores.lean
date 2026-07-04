@@ -25,6 +25,7 @@ sibling of `PMF.normalize`); `[UPSTREAM]` candidate.
 
 * `PMF.Fallback` — total fallback distribution (value + nonzero-mass witness)
   with smart constructors `pure`, `uniform`, `uniformOn`.
+* `PMF.normalizeScores f` — `f x / ∑ f`, the ℚ≥0 shadow of `PMF.normalize`.
 * `PMF.scoresWith fb f` — the normalized `ℚ≥0` score function both faces read.
 * `PMF.ofScores fb f` — the induced PMF; `ofScores_apply` is `rfl`.
 * `PMF.normalizeOrUniform` — total `ℝ≥0∞` normalization.
@@ -96,23 +97,33 @@ def Fallback.uniformOn [DecidableEq σ] (S : Finset σ) (hS : S.Nonempty) : Fall
 
 /-! ### Scores -/
 
+/-- Normalize a score vector into a distribution function (`÷0 = 0` gives
+the zero function on a dead vector) — the ℚ≥0 shadow of `PMF.normalize`.
+Studies define each agent of a model tower as one `normalizeScores`
+application over the agents below it. -/
+def normalizeScores (f : σ → ℚ≥0) (x : σ) : ℚ≥0 := f x / ∑ y, f y
+
 /-- The normalized score function both faces read: `f` normalized when it
-has mass, else the fallback normalized. The guard is a strict inequality
-(kernel-reduces via `Rat.blt`); never restate it as an equality, whose
-`Decidable` instance reduces along a path the kernel cannot always take. -/
+has mass, else the fallback normalized.
+
+Kernel hygiene: comparisons of `scoresWith` values reduce under
+`decide +kernel` provided the score chain's *base tables* are pattern
+matches or `Bool`-valued tables — a propositional `if x = y then … else …`
+over a derived `DecidableEq` anywhere in the chain blocks kernel reduction
+of order comparisons (equalities still reduce). -/
 def scoresWith (fb : Fallback σ) (f : σ → ℚ≥0) (x : σ) : ℚ≥0 :=
-  if 0 < ∑ y, f y then f x / ∑ y, f y else fb.dist x / ∑ y, fb.dist y
+  if 0 < ∑ y, f y then normalizeScores f x else normalizeScores fb.dist x
 
 theorem scoresWith_sum_eq_one (fb : Fallback σ) (f : σ → ℚ≥0) :
     ∑ x, scoresWith fb f x = 1 := by
-  unfold scoresWith
+  unfold scoresWith normalizeScores
   split
   · rw [← Finset.sum_div, div_self (by positivity)]
   · rw [← Finset.sum_div, div_self fb.ne_zero]
 
 theorem scoresWith_of_pos (fb : Fallback σ) {f : σ → ℚ≥0}
     (h : 0 < ∑ y, f y) (x : σ) : scoresWith fb f x = f x / ∑ y, f y := by
-  rw [scoresWith, if_pos h]
+  rw [scoresWith, if_pos h, normalizeScores]
 
 /-- The PMF induced by a score vector and a fallback: pointwise the
 coercion of `scoresWith`, so the ℚ≥0 face and the PMF face agree
@@ -216,3 +227,4 @@ theorem ofScores_event_lt (fb : Fallback σ) (f : σ → ℚ≥0) {P Q : σ → 
   exact_mod_cast h
 
 end PMF
+

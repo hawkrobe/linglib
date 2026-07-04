@@ -530,50 +530,6 @@ theorem ue_enrichment_SSS_vs_AAA :
   rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_UE_AAA, ms_UE_SSS]
   exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
-/-! ### Findings: verified predictions -/
-
-/-- The 6 qualitative findings from the [potts-etal-2016] LU model.
-    3 DE blocking predictions (global reading preferred under "no") +
-    3 UE enrichment predictions (enriched reading preferred under "every"). -/
-inductive Finding where
-  | de_NNN_vs_NNA
-  | de_NNN_vs_NAA
-  | de_NNN_vs_AAA
-  | ue_SSS_vs_SSA
-  | ue_SSS_vs_SAA
-  | ue_SSS_vs_AAA
-  deriving DecidableEq, Repr
-
-/-- All findings. -/
-def findings : List Finding :=
-  [.de_NNN_vs_NNA, .de_NNN_vs_NAA, .de_NNN_vs_AAA,
-   .ue_SSS_vs_SSA, .ue_SSS_vs_SAA, .ue_SSS_vs_AAA]
-
-/-- Map each empirical finding to the RSA model prediction that accounts for it. -/
-def formalize : Finding → Prop
-  | .de_NNN_vs_NNA =>
-      L1 (.stmt .no .some_) hMarg_DE .NNN > L1 (.stmt .no .some_) hMarg_DE .NNA
-  | .de_NNN_vs_NAA =>
-      L1 (.stmt .no .some_) hMarg_DE .NNN > L1 (.stmt .no .some_) hMarg_DE .NAA
-  | .de_NNN_vs_AAA =>
-      L1 (.stmt .no .some_) hMarg_DE .NNN > L1 (.stmt .no .some_) hMarg_DE .AAA
-  | .ue_SSS_vs_SSA =>
-      L1 (.stmt .every .some_) hMarg_UE .SSS > L1 (.stmt .every .some_) hMarg_UE .SSA
-  | .ue_SSS_vs_SAA =>
-      L1 (.stmt .every .some_) hMarg_UE .SSS > L1 (.stmt .every .some_) hMarg_UE .SAA
-  | .ue_SSS_vs_AAA =>
-      L1 (.stmt .every .some_) hMarg_UE .SSS > L1 (.stmt .every .some_) hMarg_UE .AAA
-
-/-- The RSA model accounts for all 6 qualitative findings from [potts-etal-2016]. -/
-theorem all_findings_verified : ∀ f : Finding, formalize f := by
-  intro f; cases f
-  · exact de_blocking_NNN_vs_NNA
-  · exact de_blocking_NNN_vs_NAA
-  · exact de_blocking_NNN_vs_AAA
-  · exact ue_enrichment_SSS_vs_SSA
-  · exact ue_enrichment_SSS_vs_SAA
-  · exact ue_enrichment_SSS_vs_AAA
-
 /-! ### Grounding: outer quantifiers
 
 The outer quantifiers "every" and "no" in the [potts-etal-2016] model agree

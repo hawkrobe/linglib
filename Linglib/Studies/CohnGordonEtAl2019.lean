@@ -227,34 +227,6 @@ end QFace
 
 /-! ### The incremental chain -/
 
-/-! ### Findings -/
-
-/-- Qualitative findings from the incremental RSA model. -/
-inductive Finding where
-  /-- The incremental speaker prefers the adjective "red" first when
-      referring to the target R1 (red dress). -/
-  | adj_first_for_target
-  /-- After producing "red", the speaker prefers the type noun "dress"
-      over the generic "object". -/
-  | noun_after_adj
-  /-- For R2 (blue dress), the speaker must start with "dress" —
-      "red" has zero incremental semantics for R2. -/
-  | noun_only_for_r2
-  /-- For R3 (red hat), the speaker must start with "red" —
-      "dress" has zero incremental semantics for R3. -/
-  | adj_only_for_r3
-  /-- After "red" for R2, no extension is true — the speaker is
-      indifferent between "dress" and "object" (uniform fallback). -/
-  | uniform_after_red_for_r2
-  /-- After hearing "red", L1 infers the target is more likely R3
-      (red hat) than R1 (red dress) — an anticipatory implicature. -/
-  | listener_anticipation
-  /-- At the utterance level, the incremental model assigns higher
-      probability to "dress" than to "red dress" for R1 — diverging
-      from the global model which prefers "red dress". -/
-  | incremental_prefers_bare_noun
-  deriving DecidableEq, Repr
-
 /-! ### Predictions -/
 
 -- ---------- Figure 1c: S1^WORD incremental speaker ----------
@@ -376,38 +348,6 @@ theorem incremental_prefers_bare_noun :
         ∑ u', s1ScoreQ figureOne [.red] .redDress u') <
     s1ScoreQ figureOne [] .redDress .dress /
       ∑ u', s1ScoreQ figureOne [] .redDress u')
-
-/-! ### Verification -/
-
-/-- Map each finding to the model prediction that accounts for it. -/
-def formalize : Finding → Prop
-  | .adj_first_for_target =>
-      s1PMF figureOne [] .redDress .dress < s1PMF figureOne [] .redDress .red
-  | .noun_after_adj =>
-      s1PMF figureOne [.red] .redDress .object < s1PMF figureOne [.red] .redDress .dress
-  | .noun_only_for_r2 =>
-      s1PMF figureOne [] .blueDress .red < s1PMF figureOne [] .blueDress .dress
-  | .adj_only_for_r3 =>
-      s1PMF figureOne [] .redHat .dress < s1PMF figureOne [] .redHat .red
-  | .uniform_after_red_for_r2 =>
-      ∀ w, w ≠ .red →
-        s1PMF figureOne [.red] .blueDress .dress = s1PMF figureOne [.red] .blueDress w
-  | .listener_anticipation =>
-      l1PMF figureOne .red .redDress < l1PMF figureOne .red .redHat
-  | .incremental_prefers_bare_noun =>
-      s1PMF figureOne [] .redDress .red * s1PMF figureOne [.red] .redDress .dress <
-        s1PMF figureOne [] .redDress .dress
-
-/-- All 7 findings verified. -/
-theorem all_findings_verified : ∀ f : Finding, formalize f := by
-  intro f; cases f
-  · exact adj_first_for_target
-  · exact noun_after_adj
-  · exact noun_only_for_r2
-  · exact adj_only_for_r3
-  · exact fun w hw => uniform_after_red_for_r2 w hw
-  · exact listener_anticipation
-  · exact incremental_prefers_bare_noun
 
 /-! ### §2.4 Weakly-Informative Greedy Unrolling -/
 
