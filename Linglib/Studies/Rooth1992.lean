@@ -290,6 +290,35 @@ theorem qaAntecedent_admits_subjectFocus :
 theorem qaAntecedent_rejects_objectFocus :
     ¬ qaAntecedent.Admits fv_objectFocus := fip_fails_object_focus
 
+/-- The question antecedent *fully* resolves against the subject-focus
+    meaning: all three clauses of the squiggle presupposition, not just
+    FIP — the contrast set contains the ordinary value `fredAteBeans`
+    and the distinct alternative `maryAteBeans`. -/
+theorem qaAntecedent_resolves :
+    qaAntecedent.Resolves fredAteBeans fv_subjectFocus :=
+  ⟨fip_congruent, Or.inl rfl,
+    maryAteBeans, Or.inr rfl,
+    fun h => by
+      have : maryBeans ∈ fredAteBeans := h ▸ (rfl : maryBeans ∈ maryAteBeans)
+      exact absurd this (by simp [fredAteBeans, maryAteBeans])⟩
+
+/-- A focus-free answer cannot resolve any antecedent: its focus value
+    is the unit set `{fredAteBeans}`, defeating the contrast clause —
+    "the argument must contain a focus". -/
+theorem focusFree_answer_cannot_resolve (Γ : PropFocusValue QAWorld) :
+    ¬ Semantics.Focus.SquiggleSet fredAteBeans {fredAteBeans} Γ :=
+  Semantics.Focus.not_squiggleSet_singleton fredAteBeans Γ
+
+/-- Contrasting phrases (Rooth's symmetric-contrast joke opening, his
+    rule construing α as contrasting with β via ⟦β⟧ᵒ ∈ ⟦α⟧f): *Canadian
+    farmer*'s ordinary value is a member of *[American]F farmer*'s focus
+    value distinct from its ordinary value. -/
+theorem farmer_contrast :
+    Semantics.Focus.SquiggleInd "American farmer"
+      ({"American farmer", "Canadian farmer"} : Set String)
+      "Canadian farmer" :=
+  ⟨Or.inr rfl, by decide⟩
+
 -- ═══════════════════════════════════════════════════════════════════════
 -- §7  "Only" Association ([rooth-1992] §2.1)
 -- ═══════════════════════════════════════════════════════════════════════

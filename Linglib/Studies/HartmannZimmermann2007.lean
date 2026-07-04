@@ -126,6 +126,12 @@ def control17 : Antecedent Caller := whAntecedent Caller
 /-- 'Who will go to Germany?' ((8)). -/
 def control8 : Antecedent Traveler := whAntecedent Traveler
 
+/-- The wh-cells resolve fully, not just felicitously: all three
+squiggle clauses hold for (22)'s control against the fish answer. -/
+theorem control22_resolves :
+    control22.Resolves {Dish.kiifii} (hamblin Dish) :=
+  Semantics.Focus.whAntecedent_resolves Dish.kiifii Dish.other nofun
+
 /-- Roothian felicity holds uniformly: every §3.2 control admits its
 answer's focus value. One semantics, four pragmatic uses. -/
 theorem controls_admit :

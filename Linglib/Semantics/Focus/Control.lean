@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Questions.Hamblin
 
@@ -17,6 +18,14 @@ to correct, explicitly offered alternatives, or a parallel focus
 felicity (`Antecedent.Admits`) is `fip` on the antecedent's contrast
 set, uniformly across uses — and `use_not_factorsThrough_contrastSet`
 shows the four-way split is invisible to the semantics.
+
+`SquiggleSet`/`SquiggleInd` state the full presuppositions of
+[rooth-1992]'s ~ operator (his (40), set and individual cases):
+`Admits` is only the first set-case clause, and the contrast clauses
+are what make ~ anaphorically demanding — `not_squiggleSet_unfeatured`
+derives "the argument must contain a focus" from the unit focus value
+of focus-free phrases. `Antecedent.Resolves` routes each antecedent
+shape through the appropriate case.
 
 ## Implementation notes
 
@@ -45,7 +54,8 @@ inductive Use where
   deriving DecidableEq, Repr, Inhabited
 
 /-- A focus antecedent: the discourse object that supplies the
-squiggle's contrast set. -/
+squiggle's antecedent — a contrast set for [rooth-1992]'s set case, or
+a single contrasting ordinary value for the individual case. -/
 inductive Antecedent (W : Type*) where
   /-- A question with (flat Hamblin) denotation `q`. -/
   | question (q : PropFocusValue W)
@@ -55,6 +65,9 @@ inductive Antecedent (W : Type*) where
   | offer (alts : PropFocusValue W)
   /-- A parallel focus with focus value `alts`. -/
   | parallel (alts : PropFocusValue W)
+  /-- A contrasting phrase's ordinary value ([rooth-1992]'s individual
+  case; the "contrasting phrases" rule). -/
+  | phrase (γ : Set W)
 
 /-- The contrast set Γ an antecedent supplies to the squiggle. -/
 def Antecedent.contrastSet : Antecedent W → PropFocusValue W
@@ -62,6 +75,7 @@ def Antecedent.contrastSet : Antecedent W → PropFocusValue W
   | .assertion _ alts  => alts
   | .offer alts        => alts
   | .parallel alts     => alts
+  | .phrase γ          => {γ}
 
 /-- The pragmatic use an antecedent shape licenses. -/
 def Antecedent.use : Antecedent W → Use
@@ -69,6 +83,7 @@ def Antecedent.use : Antecedent W → Use
   | .assertion _ _  => .corrective
   | .offer _        => .selective
   | .parallel _     => .contrastive
+  | .phrase _       => .contrastive
 
 @[simp] theorem contrastSet_question (q : PropFocusValue W) :
     (Antecedent.question q).contrastSet = q := rfl
@@ -87,6 +102,10 @@ def Antecedent.use : Antecedent W → Use
     (Antecedent.offer alts).use = .selective := rfl
 @[simp] theorem use_parallel (alts : PropFocusValue W) :
     (Antecedent.parallel alts).use = .contrastive := rfl
+@[simp] theorem contrastSet_phrase (γ : Set W) :
+    (Antecedent.phrase γ).contrastSet = {γ} := rfl
+@[simp] theorem use_phrase (γ : Set W) :
+    (Antecedent.phrase γ).use = .contrastive := rfl
 
 /-- The canonical antecedent of each shape (empty payloads): a section
 of `Antecedent.use`. -/
@@ -121,6 +140,81 @@ theorem admits_inter_iff {c : Antecedent W} {fv fv' : PropFocusValue W} :
     c.Admits (fv ∩ fv') ↔ c.Admits fv ∧ c.Admits fv' :=
   Set.subset_inter_iff
 
+/-! ### The squiggle presupposition
+
+[rooth-1992]'s ~ operator introduces the presuppositions of its (40),
+over an ordinary value `o` and focus value `fv` of any type: in the set
+case the resolved antecedent `Γ` is a subset of `fv` containing `o` and
+a distinct alternative; in the individual case the antecedent is a
+member of `fv` distinct from `o`. `Admits` is the first set-case clause;
+the contrast clauses are what make ~ anaphorically demanding. -/
+
+section Squiggle
+
+variable {α : Type*}
+
+/-- The ~ presupposition, set case: `Γ ⊆ fv`, `o ∈ Γ`, and `Γ` contains
+an alternative distinct from `o` ([rooth-1992] (40)). -/
+def SquiggleSet (o : α) (fv Γ : Set α) : Prop :=
+  Γ ⊆ fv ∧ o ∈ Γ ∧ ∃ x ∈ Γ, x ≠ o
+
+/-- The ~ presupposition, individual case: the antecedent is a member
+of `fv` distinct from `o` ([rooth-1992] (40)); the contrasting-phrases
+rule is this with `γ := ⟦β⟧ᵒ`. -/
+def SquiggleInd (o : α) (fv : Set α) (γ : α) : Prop :=
+  γ ∈ fv ∧ γ ≠ o
+
+/-- The first set-case clause alone: the antecedent is a subset of the
+focus value (at the propositional level, exactly `fip`). -/
+theorem SquiggleSet.subset {o : α} {fv Γ : Set α} (h : SquiggleSet o fv Γ) :
+    Γ ⊆ fv := h.1
+
+/-- A resolved antecedent is nontrivial: it contains the ordinary value
+and a distinct alternative. -/
+theorem SquiggleSet.nontrivial {o : α} {fv Γ : Set α}
+    (h : SquiggleSet o fv Γ) : Γ.Nontrivial :=
+  let ⟨_, ho, x, hx, hne⟩ := h; ⟨x, hx, o, ho, hne⟩
+
+/-- A unit focus value defeats the contrast clause: nothing resolves
+against `{o}`. -/
+theorem not_squiggleSet_singleton (o : α) (Γ : Set α) :
+    ¬ SquiggleSet o {o} Γ :=
+  fun ⟨hsub, _, _, hx, hne⟩ => hne (hsub hx)
+
+theorem not_squiggleInd_singleton (o γ : α) : ¬ SquiggleInd o {o} γ :=
+  fun ⟨hγ, hne⟩ => hne hγ
+
+open Alternatives in
+/-- "The argument must contain a focus": a focus-free phrase has a unit
+focus value, so no antecedent resolves against it ([rooth-1992] §10). -/
+theorem not_squiggleSet_unfeatured (x : α) (Γ : Set α) :
+    ¬ SquiggleSet (AltMeaning.unfeatured x).oValue
+      (AltMeaning.unfeatured x).aSet Γ := by
+  rw [AltMeaning.unfeatured_aSet, AltMeaning.unfeatured_oValue]
+  exact not_squiggleSet_singleton x Γ
+
+end Squiggle
+
+/-- Full Roothian resolution of an antecedent against a two-dimensional
+meaning `(o, fv)`: the set case for question / assertion / offer /
+parallel antecedents, the individual case for contrasting phrases. -/
+def Antecedent.Resolves : Antecedent W → Set W → PropFocusValue W → Prop
+  | .phrase γ, o, fv => SquiggleInd o fv γ
+  | c, o, fv         => SquiggleSet o fv c.contrastSet
+
+/-- Full resolution entails felicity: `Admits` is the set case's first
+clause, and a resolved contrasting phrase is a member of the focus
+value. -/
+theorem Antecedent.Resolves.admits {c : Antecedent W} {o : Set W}
+    {fv : PropFocusValue W} (h : c.Resolves o fv) : c.Admits fv := by
+  cases c with
+  | phrase γ => exact Set.singleton_subset_iff.mpr h.1
+  | question q => exact h.1
+  | assertion p alts => exact h.1
+  | offer alts => exact h.1
+  | parallel alts => exact h.1
+
+
 /-- Felicity factors through the contrast set: the semantics sees Γ,
 never the use label. -/
 theorem admits_factorsThrough_contrastSet (fv : PropFocusValue W) :
@@ -146,6 +240,13 @@ def whAntecedent (D : Type*) : Antecedent D := .question (hamblin D)
 
 theorem whAntecedent_admits (D : Type*) :
     (whAntecedent D).Admits (hamblin D) := subset_rfl
+
+/-- A wh-antecedent over a domain with two distinct elements fully
+resolves against the Hamblin focus value of any complete answer. -/
+theorem whAntecedent_resolves {D : Type*} (d d' : D) (hne : d' ≠ d) :
+    (whAntecedent D).Resolves {d} (hamblin D) :=
+  ⟨subset_rfl, ⟨d, rfl⟩, ⟨{d'}, ⟨d', rfl⟩,
+    fun h => hne (Set.singleton_eq_singleton_iff.mp h)⟩⟩
 
 /-- A `Question` supplies its maximal alternatives as a question
 antecedent — the bridge from the inquisitive layer. -/
