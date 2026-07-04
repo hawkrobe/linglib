@@ -339,31 +339,6 @@ theorem ddprPrior_anti_mono {s₁ s₂ : SpatialScale} (h : s₁ ≤ s₂) :
   have hm := heuristic_anti_mono .manipulability h
   linarith
 
-/-- RSA model with DDRPs as the latent interpretation variable.
-
-    `Latent = SpatialScale`: L1 marginalizes over candidate domain restrictions
-    to infer the speaker's intended domain. The `latentPrior` encodes the
-    cognitive default via `ddprPrior`.
-
-    While R&S argue against RSA as explaining *default status* (§2.1), DDRPs
-    are compatible with RSA as the *selection mechanism* once the candidate set
-    and prior are fixed by cognitive heuristics.
-
-    This `RSAConfig` is retained as the subject of the §9 BToM bridge (pending a
-    Canonical re-grounding); the five L1 predictions below now live on the
-    mathlib-PMF listeners `ddprListener`/`uniformListener`. -/
-noncomputable def domainRestrictionRSA : RSA.RSAConfig Utterance World where
-  Latent := SpatialScale
-  meaning _ scale u w := if utteranceMeaning scale u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> norm_num
-  s1Score l0 α _ w u := (l0 u w) ^ α
-  s1Score_nonneg _ _ _ _ _ h_nn h_pos := Real.rpow_nonneg (h_nn _ _) _
-  α := 1
-  α_pos := by norm_num
-  latentPrior _ l := ↑(ddprPrior l)
-  latentPrior_nonneg _ l := by cases l <;> simp only [ddprPrior, heuristicScore] <;> norm_num
-  worldPrior_nonneg _ := by norm_num
-
 /-! ### PMF face: shared speaker, cognitive-default vs uniform joint priors
 
 The two listener variants below differ only in the latent prior, so they share
@@ -805,11 +780,49 @@ different DDRPs, motivating R&S's requirement of perceptual co-presence. -/
 open Core
 open CommonGround
 
-/-- The RSA-BToM bridge applies to the domain restriction RSA config. -/
-theorem rsa_btom_bridge (u : Utterance) (w : World) :
-    domainRestrictionRSA.L1agent.score u w =
-      (domainRestrictionRSA.toBToM).worldMarginal u w :=
-  RSA.RSAConfig.L1_eq_btom_worldMarginal domainRestrictionRSA u w
+/-- The DDRP generative model as a BToM instance over ℝ≥0∞: percept and
+belief are veridical deltas ([baker-jara-ettinger-saxe-tenenbaum-2017]'s
+observer with full perceptual access), the plan model is the shared
+pragmatic speaker `S`, and the world-conditioned desire prior is the
+cognitive-default joint prior. -/
+noncomputable def ddprBToM :
+    Core.BToMModel ℝ≥0∞ Utterance World World SpatialScale Unit Unit World where
+  perceptModel w p := if p = w then 1 else 0
+  beliefModel p b := if b = p then 1 else 0
+  planModel b d _ _ a := S (b, d) a
+  worldPrior _ := 1
+  desirePrior w d := ddprJoint (w, d)
+  sharedPrior _ := 1
+  mediumPrior _ := 1
+
+/-- Delta-collapse: the BToM world marginal is the listener's unnormalized
+world score, `Σ_l prior(w, l) · S(u | w, l)`. -/
+theorem ddprBToM_worldMarginal_eq (u : Utterance) (w : World) :
+    ddprBToM.worldMarginal u w
+      = ∑ l : SpatialScale, ddprJoint (w, l) * S (w, l) u := by
+  unfold ddprBToM Core.BToMModel.worldMarginal Core.BToMModel.jointScore
+  simp only [Fintype.sum_unique, mul_one, ite_mul, zero_mul, mul_ite, mul_zero]
+  rw [Finset.sum_eq_single w
+    (fun p _ hp => Finset.sum_eq_zero fun b _ => Finset.sum_eq_zero fun d _ => by
+      rw [if_neg hp])
+    (fun h => absurd (Finset.mem_univ w) h)]
+  simp only [reduceIte]
+  rw [Finset.sum_eq_single w
+    (fun b _ hb => Finset.sum_eq_zero fun d _ => by rw [if_neg hb])
+    (fun h => absurd (Finset.mem_univ w) h)]
+  simp only [reduceIte]
+  exact Finset.sum_congr rfl fun l _ => mul_comm _ _
+
+/-- **RSA's pragmatic listener IS BToM world-marginal inference**, on the
+mathlib-PMF face: the listener's world marginal is the `ddprBToM` world
+marginal, normalized by the utterance's prior predictive mass. -/
+theorem rsa_btom_bridge (u : Utterance) (h : PMF.marginal S ddprJoint u ≠ 0)
+    (w : World) :
+    (ddprListener u h).fst w
+      = ddprBToM.worldMarginal u w * (PMF.marginal S ddprJoint u)⁻¹ := by
+  rw [PMF.fst_apply, ddprBToM_worldMarginal_eq, Finset.sum_mul]
+  exact Finset.sum_congr rfl fun l _ => by
+    rw [ddprListener, RSA.Canonical.L1, PMF.posterior_apply]
 
 /-- When all discourse participants share the same spatial scene, they
     derive the same DDRP — a prerequisite for successful communication
