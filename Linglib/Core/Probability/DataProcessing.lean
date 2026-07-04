@@ -97,7 +97,7 @@ theorem klFun_logSum_le {ι : Type*} (s : Finset ι) (x y : ι → ℝ)
     rw [← mul_assoc, mul_one_div, div_self hY_ne, one_mul] at this
     exact this
   · -- Empty s: both sides are 0 (empty sum)
-    simp [Finset.not_nonempty_iff_eq_empty.mp hs, klFun, Real.log_one]
+    simp [Finset.not_nonempty_iff_eq_empty.mp hs, klFun]
 
 end Real
 
@@ -115,27 +115,38 @@ their KL divergence:
   `klDiv (p.bind κ) (q.bind κ) ≤ klDiv p q`.
 
 The information-theoretic content: post-processing observations through
-any noisy channel can only destroy information about the source.
-
-Hypotheses: `p ≪ q` (otherwise both sides may be `∞` and the inequality
-is vacuous in a less interesting way) and `q a ≠ 0 → κ a b ≠ 0` for all
-`a, b` where the inequality at `b` matters (encoded via the
-`(q.bind κ) b ≠ 0 → ...` flow). For finite-support discrete measures,
-both hypotheses reduce to checking at finitely many `(a, b)` pairs.
-
-This is the core principle that drives:
-- the cancellation theorem in [goodman-stuhlmuller-2013]
-  (less informative speaker access → smaller KL of L1 from prior),
-- post-processing of any kernel-decomposed RSA model. -/
+any noisy channel can only destroy information about the source. The only
+hypothesis is absolute continuity `p ≪ q`; absolute continuity of the
+binds is derived. -/
 theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
     [MeasurableSingletonClass α] [MeasurableSingletonClass β]
     (p q : PMF α) (κ : α → PMF β)
-    (h_ac : MeasureTheory.Measure.AbsolutelyContinuous p.toMeasure q.toMeasure)
-    (h_bind_ac : MeasureTheory.Measure.AbsolutelyContinuous
-                  (p.bind κ).toMeasure (q.bind κ).toMeasure)
-    (h_q_pos : ∀ a, q a ≠ 0)
-    (h_κ_pos : ∀ a b, q a ≠ 0 → (q.bind κ) b ≠ 0 → κ a b ≠ 0) :
+    (h_ac : MeasureTheory.Measure.AbsolutelyContinuous p.toMeasure q.toMeasure) :
     (p.bind κ).klDiv (q.bind κ) ≤ p.klDiv q := by
+  classical
+  -- Atom-level absolute continuity, and its lift to the binds.
+  have h_ac_atom : ∀ a, q a = 0 → p a = 0 := by
+    intro a hqa
+    have hQ : q.toMeasure {a} = 0 := by
+      rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton a)]; exact hqa
+    have hP := h_ac hQ
+    rwa [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton a)] at hP
+  have h_bind_atom : ∀ b, (q.bind κ) b = 0 → (p.bind κ) b = 0 := by
+    intro b hqb
+    rw [PMF.bind_apply] at hqb ⊢
+    rw [ENNReal.tsum_eq_zero] at hqb ⊢
+    intro a
+    rcases mul_eq_zero.mp (hqb a) with hqa | hκ
+    · rw [h_ac_atom a hqa, zero_mul]
+    · rw [hκ, mul_zero]
+  have h_bind_ac : MeasureTheory.Measure.AbsolutelyContinuous
+      (p.bind κ).toMeasure (q.bind κ).toMeasure := by
+    refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun t ht h0 => ?_
+    rw [PMF.toMeasure_apply_eq_zero_iff _ ht] at h0 ⊢
+    exact fun u hu hut => Set.disjoint_left.mpr
+      (fun b hb hbt => Set.disjoint_left.mp h0
+        (PMF.mem_support_iff _ b |>.mpr fun hz =>
+          (PMF.mem_support_iff _ b |>.mp hb) (h_bind_atom b hz)) hbt) hu hut
   -- Convert both KL divergences to discrete sums via `klDiv_eq_sum_klFun`.
   rw [klDiv_eq_sum_klFun (p.bind κ) (q.bind κ) h_bind_ac,
       klDiv_eq_sum_klFun p q h_ac]
@@ -144,7 +155,6 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
   have hq_ne_top : ∀ a, q a ≠ ∞ := PMF.apply_ne_top q
   have hκ_ne_top : ∀ a b, κ a b ≠ ∞ := fun a b => PMF.apply_ne_top (κ a) b
   have hbq_ne_top : ∀ b, (q.bind κ) b ≠ ∞ := PMF.apply_ne_top (q.bind κ)
-  have hbp_ne_top : ∀ b, (p.bind κ) b ≠ ∞ := PMF.apply_ne_top (p.bind κ)
   have hp_nn : ∀ a, (0 : ℝ) ≤ (p a).toReal := fun _ => ENNReal.toReal_nonneg
   have hq_nn : ∀ a, (0 : ℝ) ≤ (q a).toReal := fun _ => ENNReal.toReal_nonneg
   have hκ_nn : ∀ a b, (0 : ℝ) ≤ (κ a b).toReal := fun _ _ => ENNReal.toReal_nonneg
@@ -155,41 +165,26 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
     rw [bind_apply_eq_finset_sum,
         ENNReal.toReal_sum (fun a _ =>
           ENNReal.mul_ne_top (hq_ne_top a) (hκ_ne_top a b))]
-    refine Finset.sum_congr rfl (fun a _ => ?_)
-    exact ENNReal.toReal_mul
+    exact Finset.sum_congr rfl (fun a _ => ENNReal.toReal_mul)
   have h_bind_toReal_p : ∀ b,
       ((p.bind κ) b).toReal = ∑ a, (p a).toReal * (κ a b).toReal := by
     intro b
     rw [bind_apply_eq_finset_sum,
         ENNReal.toReal_sum (fun a _ =>
           ENNReal.mul_ne_top (hp_ne_top a) (hκ_ne_top a b))]
-    refine Finset.sum_congr rfl (fun a _ => ?_)
-    exact ENNReal.toReal_mul
+    exact Finset.sum_congr rfl (fun a _ => ENNReal.toReal_mul)
   -- κ a is a PMF: ∑_b κ a b = 1 (in ENNReal)
   have h_κ_sum_one : ∀ a, ∑ b, κ a b = 1 := fun a =>
     (PMF.tsum_coe (κ a) ▸ tsum_eq_sum (fun b (h : b ∉ Finset.univ) =>
       absurd (Finset.mem_univ b) h)).symm
-  -- The classical klFun_nonneg, used in lifts to ENNReal
   have h_klFun_nn : ∀ x, 0 ≤ x → 0 ≤ _root_.InformationTheory.klFun x :=
     fun _ hx => _root_.InformationTheory.klFun_nonneg hx
-  -- Strategy:
-  --   Step 1. Rewrite RHS sum: each term q a * ofReal(klFun((p a / q a).toReal))
-  --           equals ∑_b (q a * κ a b) * ofReal(klFun((p a / q a).toReal))
-  --           via `1 = ∑_b κ a b` lifted into ENNReal.
-  --   Step 2. Swap ∑_a ∑_b → ∑_b ∑_a.
-  --   Step 3. Per-b inequality: split on `(q.bind κ) b = 0` vs `≠ 0`.
-  --           If = 0: both sides zero (each q a * κ a b = 0).
-  --           Else:   apply log-sum on ℝ side with weights y_a = (q a * κ a b).toReal,
-  --                   points x_a = (p a * κ a b).toReal. Then lift via ofReal.
-  -- ============================================================================
   -- Step 1: expand q a = q a * (∑_b κ a b) on RHS, then push sum inside.
-  -- ============================================================================
   have h_RHS_expand : (∑ a, q a * ENNReal.ofReal
         (_root_.InformationTheory.klFun ((p a / q a).toReal)))
       = ∑ a, ∑ b, (q a * κ a b) * ENNReal.ofReal
         (_root_.InformationTheory.klFun ((p a / q a).toReal)) := by
     refine Finset.sum_congr rfl (fun a _ => ?_)
-    -- Distribute: ∑_b (q a * κ a b) * X = (∑_b q a * κ a b) * X = (q a * ∑_b κ a b) * X = q a * X.
     rw [show (∑ b, (q a * κ a b) * ENNReal.ofReal
               (_root_.InformationTheory.klFun ((p a / q a).toReal)))
           = (∑ b, q a * κ a b) * ENNReal.ofReal
@@ -197,86 +192,84 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
             (Finset.sum_mul (s := Finset.univ) ..).symm,
         ← Finset.mul_sum, h_κ_sum_one a, mul_one]
   rw [h_RHS_expand, Finset.sum_comm]
-  -- ============================================================================
   -- Step 2: pointwise per b.
-  -- ============================================================================
   refine Finset.sum_le_sum (fun b _ => ?_)
-  -- Per-b goal:
-  --   (q.bind κ) b * ofReal(klFun (((p.bind κ) b / (q.bind κ) b).toReal))
-  --     ≤ ∑ a, (q a * κ a b) * ofReal(klFun ((p a / q a).toReal))
   by_cases hbq_zero : (q.bind κ) b = 0
-  · -- LHS = 0, and each q a * κ a b = 0 in the RHS (since their sum vanishes).
-    rw [hbq_zero, zero_mul]
-    -- Show RHS ≥ 0 (trivially from non-negativity).
+  · rw [hbq_zero, zero_mul]
     exact zero_le
-  · -- (q.bind κ) b ≠ 0. By h_κ_pos and h_q_pos, κ a b ≠ 0 for all a.
-    have h_κ_ne : ∀ a, κ a b ≠ 0 := fun a =>
-      h_κ_pos a b (h_q_pos a) hbq_zero
-    -- Hence q a * κ a b ≠ 0 (q a ≠ 0 by h_q_pos).
-    have hq_κ_ne : ∀ a, q a * κ a b ≠ 0 := fun a =>
-      mul_ne_zero (h_q_pos a) (h_κ_ne a)
-    -- Strict positivity in ℝ:
-    have hqκ_real_pos : ∀ a, 0 < (q a).toReal * (κ a b).toReal := by
-      intro a
-      refine mul_pos ?_ ?_
-      · refine ENNReal.toReal_pos (h_q_pos a) (hq_ne_top a)
-      · refine ENNReal.toReal_pos (h_κ_ne a) (hκ_ne_top a b)
-    -- (p a / q a).toReal = (p a).toReal / (q a).toReal under hyps.
-    have h_pdivq_toReal : ∀ a, ((p a) / (q a)).toReal = (p a).toReal / (q a).toReal :=
-      fun a => ENNReal.toReal_div _ _
-    -- ((p.bind κ) b / (q.bind κ) b).toReal = (p.bind κ b).toReal / (q.bind κ b).toReal
-    have h_bdivb_toReal :
-        (((p.bind κ) b) / ((q.bind κ) b)).toReal
-          = ((p.bind κ) b).toReal / ((q.bind κ) b).toReal :=
-      ENNReal.toReal_div _ _
-    -- Total weight Y in ℝ:
-    have hY_eq : ((q.bind κ) b).toReal = ∑ a, (q a).toReal * (κ a b).toReal :=
-      h_bind_toReal_q b
-    have hX_eq : ((p.bind κ) b).toReal = ∑ a, (p a).toReal * (κ a b).toReal :=
-      h_bind_toReal_p b
-    -- Apply log-sum inequality on ℝ.
-    have h_logsum := Real.klFun_logSum_le (Finset.univ : Finset α)
+  · -- Restrict the log-sum inequality to the support of `a ↦ q a * κ a b`.
+    set t : Finset α := Finset.univ.filter (fun a => q a * κ a b ≠ 0) with ht_def
+    have h_mem : ∀ a ∈ t, q a ≠ 0 ∧ κ a b ≠ 0 := fun a ha =>
+      mul_ne_zero_iff.mp (Finset.mem_filter.mp ha).2
+    have h_notMem : ∀ a ∉ t, q a = 0 ∨ κ a b = 0 := fun a ha =>
+      mul_eq_zero.mp (not_not.mp fun hne =>
+        ha (Finset.mem_filter.mpr ⟨Finset.mem_univ a, hne⟩))
+    -- Off-support, both real summands vanish (using atom-level AC for `p`).
+    have h_x_zero : ∀ a ∉ t, (p a).toReal * (κ a b).toReal = 0 := by
+      intro a ha
+      rcases h_notMem a ha with hqa | hκa
+      · rw [h_ac_atom a hqa, ENNReal.toReal_zero, zero_mul]
+      · rw [hκa, ENNReal.toReal_zero, mul_zero]
+    have h_y_zero : ∀ a ∉ t, (q a).toReal * (κ a b).toReal = 0 := by
+      intro a ha
+      rcases h_notMem a ha with hqa | hκa
+      · rw [hqa, ENNReal.toReal_zero, zero_mul]
+      · rw [hκa, ENNReal.toReal_zero, mul_zero]
+    have h_x_sum : ∑ a ∈ t, (p a).toReal * (κ a b).toReal
+        = ((p.bind κ) b).toReal := by
+      rw [h_bind_toReal_p b]
+      exact Finset.sum_subset (Finset.subset_univ t)
+        (fun a _ ha => h_x_zero a ha)
+    have h_y_sum : ∑ a ∈ t, (q a).toReal * (κ a b).toReal
+        = ((q.bind κ) b).toReal := by
+      rw [h_bind_toReal_q b]
+      exact Finset.sum_subset (Finset.subset_univ t)
+        (fun a _ ha => h_y_zero a ha)
+    -- Log-sum inequality over the support.
+    have h_logsum := Real.klFun_logSum_le t
         (fun a => (p a).toReal * (κ a b).toReal)
         (fun a => (q a).toReal * (κ a b).toReal)
         (fun a _ => mul_nonneg (hp_nn a) (hκ_nn a b))
-        (fun a _ => hqκ_real_pos a)
-    -- Rewrite ∑_a x_a / ∑_a y_a in the log-sum into ((p.bind κ) b / (q.bind κ) b).toReal.
-    rw [← hX_eq, ← hY_eq] at h_logsum
-    -- Per-a: y_a * klFun(x_a / y_a) = (q a * κ a b).toReal * klFun((p a / q a).toReal).
-    -- The κ a b's cancel inside klFun's argument.
-    have h_per_a : ∀ a,
+        (fun a ha => mul_pos
+          (ENNReal.toReal_pos (h_mem a ha).1 (hq_ne_top a))
+          (ENNReal.toReal_pos (h_mem a ha).2 (hκ_ne_top a b)))
+    rw [h_x_sum, h_y_sum] at h_logsum
+    -- On-support, the κ factors cancel inside `klFun`.
+    have h_per_a : ∀ a ∈ t,
         ((q a).toReal * (κ a b).toReal) *
           _root_.InformationTheory.klFun
             (((p a).toReal * (κ a b).toReal) / ((q a).toReal * (κ a b).toReal))
         = ((q a).toReal * (κ a b).toReal) *
           _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal) := by
-      intro a
+      intro a ha
       have hκ_real_ne : (κ a b).toReal ≠ 0 :=
-        ne_of_gt (ENNReal.toReal_pos (h_κ_ne a) (hκ_ne_top a b))
+        (ENNReal.toReal_pos (h_mem a ha).2 (hκ_ne_top a b)).ne'
       have hq_real_ne : (q a).toReal ≠ 0 :=
-        ne_of_gt (ENNReal.toReal_pos (h_q_pos a) (hq_ne_top a))
-      have h_div_eq :
-          ((p a).toReal * (κ a b).toReal) / ((q a).toReal * (κ a b).toReal)
-            = (p a).toReal / (q a).toReal := by
-        field_simp
-      rw [h_div_eq]
-    -- Bridge: the ℝ-side log-sum bound.
+        (ENNReal.toReal_pos (h_mem a ha).1 (hq_ne_top a)).ne'
+      congr 1
+      field_simp
+    -- Assemble the ℝ-side bound over the full index set.
     have h_real_bound :
         ((q.bind κ) b).toReal *
           _root_.InformationTheory.klFun
             ((((p.bind κ) b) / ((q.bind κ) b)).toReal)
         ≤ ∑ a, ((q a).toReal * (κ a b).toReal) *
             _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal) := by
-      rw [h_bdivb_toReal]
+      rw [ENNReal.toReal_div]
       calc ((q.bind κ) b).toReal *
               _root_.InformationTheory.klFun
                 (((p.bind κ) b).toReal / ((q.bind κ) b).toReal)
-          ≤ _ := h_logsum
-        _ = _ := by simp_rw [h_per_a]
-    -- Step 3a: lift the ℝ-side bound to ENNReal via ofReal.
-    -- LHS to lift:
-    --   (q.bind κ b) * ofReal(klFun (((p.bind κ) b / (q.bind κ) b).toReal))
-    --   = ofReal((q.bind κ b).toReal * klFun(...))
+          ≤ ∑ a ∈ t, ((q a).toReal * (κ a b).toReal) *
+              _root_.InformationTheory.klFun
+                (((p a).toReal * (κ a b).toReal)
+                  / ((q a).toReal * (κ a b).toReal)) := h_logsum
+        _ = ∑ a ∈ t, ((q a).toReal * (κ a b).toReal) *
+              _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal) :=
+            Finset.sum_congr rfl h_per_a
+        _ ≤ _ := Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ t)
+            (fun a _ _ => mul_nonneg (mul_nonneg (hq_nn a) (hκ_nn a b))
+              (h_klFun_nn _ (div_nonneg (hp_nn a) (hq_nn a))))
+    -- Lift the ℝ-side bound to ENNReal via ofReal.
     have h_LHS_ofReal : ((q.bind κ) b) * ENNReal.ofReal
         (_root_.InformationTheory.klFun
           ((((p.bind κ) b) / ((q.bind κ) b)).toReal))
@@ -292,9 +285,6 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
             congr 1
             exact (ENNReal.ofReal_toReal (hbq_ne_top b)).symm,
           ← ENNReal.ofReal_mul ENNReal.toReal_nonneg]
-    -- RHS to lift:
-    --   ∑_a (q a * κ a b) * ofReal(klFun((p a / q a).toReal))
-    --   = ofReal(∑_a (q a * κ a b).toReal * klFun((p a / q a).toReal))
     have h_summand_RHS : ∀ a, (q a * κ a b) * ENNReal.ofReal
         (_root_.InformationTheory.klFun ((p a / q a).toReal))
         = ENNReal.ofReal ((q a).toReal * (κ a b).toReal *
@@ -303,7 +293,7 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
       have h1 : q a * κ a b = ENNReal.ofReal ((q a).toReal * (κ a b).toReal) := by
         rw [← ENNReal.toReal_mul, ENNReal.ofReal_toReal
               (ENNReal.mul_ne_top (hq_ne_top a) (hκ_ne_top a b))]
-      rw [h_pdivq_toReal a, h1,
+      rw [ENNReal.toReal_div, h1,
           ← ENNReal.ofReal_mul (mul_nonneg (hq_nn a) (hκ_nn a b))]
     have h_RHS_ofReal :
         (∑ a, (q a * κ a b) * ENNReal.ofReal
@@ -315,6 +305,106 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
             (fun a _ => mul_nonneg (mul_nonneg (hq_nn a) (hκ_nn a b))
               (h_klFun_nn _ (div_nonneg (hp_nn a) (hq_nn a))))]
     rw [h_LHS_ofReal, h_RHS_ofReal]
-    refine ENNReal.ofReal_le_ofReal h_real_bound
+    exact ENNReal.ofReal_le_ofReal h_real_bound
+
+/-! ### Data processing for mutual information
+
+Garbling one coordinate of a joint distribution through a channel cannot
+increase mutual information. This is the form of the DPI that constrains
+memory models: a representation generated from a context can carry no more
+information about another variable than the context itself
+([futrell-gibson-levy-2020] §3.2).
+-/
+
+variable {γ : Type*} [Fintype γ]
+
+/-- The joint is atomwise dominated by its first marginal. -/
+theorem apply_le_fst [DecidableEq α] (joint : PMF (α × β)) (x : α × β) :
+    joint x ≤ joint.fst x.1 := by
+  rw [fst_apply]
+  exact Finset.single_le_sum (f := fun b => joint (x.1, b))
+    (fun _ _ => zero_le) (Finset.mem_univ x.2)
+
+/-- The joint is atomwise dominated by its second marginal. -/
+theorem apply_le_snd [DecidableEq β] (joint : PMF (α × β)) (x : α × β) :
+    joint x ≤ joint.snd x.2 := by
+  rw [snd_apply]
+  exact Finset.single_le_sum (f := fun a => joint (a, x.2))
+    (fun _ _ => zero_le) (Finset.mem_univ x.1)
+
+/-- A joint distribution is absolutely continuous with respect to the product
+    of its marginals. -/
+theorem toMeasure_absolutelyContinuous_product
+    [MeasurableSpace α] [MeasurableSpace β] [DecidableEq α] [DecidableEq β]
+    [MeasurableSpace (α × β)] [MeasurableSingletonClass (α × β)]
+    (joint : PMF (α × β)) :
+    MeasureTheory.Measure.AbsolutelyContinuous joint.toMeasure
+      (joint.fst.product joint.snd).toMeasure := by
+  refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun t ht h0 => ?_
+  rw [PMF.toMeasure_apply_eq_zero_iff _ ht] at h0 ⊢
+  refine Set.disjoint_left.mpr fun x hx hxt =>
+    Set.disjoint_left.mp h0 ?_ hxt
+  rw [PMF.mem_support_iff] at hx ⊢
+  rw [product_apply]
+  intro hz
+  rcases mul_eq_zero.mp hz with h | h
+  · exact hx (le_zero_iff.mp (h ▸ apply_le_fst joint x))
+  · exact hx (le_zero_iff.mp (h ▸ apply_le_snd joint x))
+
+omit [Fintype α] [Fintype β] [Fintype γ] in
+/-- Garbling the second coordinate preserves the first marginal. -/
+theorem fst_bind_snd (joint : PMF (α × β)) (κ : β → PMF γ) :
+    (joint.bind fun x => (κ x.2).map (Prod.mk x.1)).fst = joint.fst := by
+  unfold fst
+  rw [PMF.map_bind]
+  simp only [PMF.map_comp]
+  have : ∀ x : α × β, (κ x.2).map (Prod.fst ∘ Prod.mk x.1) = PMF.pure x.1 := by
+    intro x
+    rw [show Prod.fst ∘ Prod.mk x.1 = Function.const γ x.1 from rfl, PMF.map_const]
+  simp only [this]
+  exact (PMF.bind_pure_comp _ _)
+
+omit [Fintype α] [Fintype β] [Fintype γ] in
+/-- Garbling the second coordinate pushes the second marginal through the
+    channel. -/
+theorem snd_bind_snd (joint : PMF (α × β)) (κ : β → PMF γ) :
+    (joint.bind fun x => (κ x.2).map (Prod.mk x.1)).snd = joint.snd.bind κ := by
+  unfold snd
+  rw [PMF.map_bind, PMF.bind_map]
+  simp only [PMF.map_comp]
+  have : ∀ x : α × β, (κ x.2).map (Prod.snd ∘ Prod.mk x.1) = κ x.2 := by
+    intro x
+    rw [show Prod.snd ∘ Prod.mk x.1 = id from rfl, PMF.map_id]
+  simp only [this]
+  rfl
+
+omit [Fintype α] [Fintype β] [Fintype γ] in
+/-- Garbling commutes with forming the product of marginals. -/
+theorem product_bind (P : PMF α) (Q : PMF β) (κ : β → PMF γ) :
+    (P.product Q).bind (fun x => (κ x.2).map (Prod.mk x.1))
+      = P.product (Q.bind κ) := by
+  unfold product
+  rw [PMF.bind_bind]
+  refine congrArg _ (funext fun a => ?_)
+  rw [PMF.bind_map, PMF.map_bind]
+  rfl
+
+/-- **Data processing inequality, mutual-information form**: passing one
+    coordinate of a joint distribution through a channel cannot increase
+    mutual information. -/
+theorem mutualInformation_bind_snd_le
+    [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
+    [MeasurableSingletonClass α] [MeasurableSingletonClass β]
+    [MeasurableSingletonClass γ] [DecidableEq α] [DecidableEq β]
+    (joint : PMF (α × β)) (κ : β → PMF γ) :
+    mutualInformation (joint.bind fun x => (κ x.2).map (Prod.mk x.1))
+      ≤ mutualInformation joint := by
+  unfold mutualInformation
+  refine ENNReal.toReal_mono
+    (klDiv_ne_top (toMeasure_absolutelyContinuous_product joint)
+      MeasureTheory.Integrable.of_finite) ?_
+  rw [fst_bind_snd, snd_bind_snd, ← product_bind]
+  exact klDiv_bind_le joint (joint.fst.product joint.snd) _
+    (toMeasure_absolutelyContinuous_product joint)
 
 end PMF
