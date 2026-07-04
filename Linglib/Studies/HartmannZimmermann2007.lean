@@ -12,47 +12,6 @@ counterexample to the universalist claims that focus marking is
 obligatory and that focus position determines pragmatic
 interpretation.
 
-## Main definitions
-
-* `PragType`: four pragmatic uses of focus (§1.2, 1a–d), after
-  [uhmann-1991].
-* `FocusControl`: what the preceding context supplies — question,
-  prior assertion, explicit alternatives, or parallel focus; `PragType`
-  is the image of `FocusControl.pragType`, and `FocusControl.Admits`
-  is Roothian `fip` on the control's contrast set. Each matrix cell is
-  built from its context's Hamblin model (`control22`–`control8`), so
-  its pragmatic type is computed, not stipulated.
-* `Focused`: subject vs nonSubject classification.
-* `FocusUtterance`: a `FocusConfig` with pragmatic-use and
-  focused-constituent tags.
-* `FocusUtterance.IsHausaLicensed`: `FocusConfig.Licensed` plus the
-  §2.2.2 ban on in-situ subject focus.
-* `FocusUtterance.HasMorphosyntacticReflex`: overt reflex of focus —
-  non-vacuous fronting, Relative-form morphology, or a stabilizer.
-* `hzMatrix`: the 8-cell empirical matrix of §3.2.
-* `UniversalBFR`: universalist Basic Focus Rule, instantiated at Hausa.
-
-## Main results
-
-* `strategy_does_not_determine_pragType`: `pragType` does not factor
-  through `cfg.strategy` on Hausa-licensed utterances — the paper's
-  refutation of its (21) "Meaning-Structure Mapping Hypothesis"; the
-  same schema is *satisfied* for Hungarian in `Kiss1998.lean`.
-* `pragType_not_factorsThrough_contrastSet`: distinct pragmatic uses
-  can supply the same contrast set — the four-way split is invisible
-  to the semantics, cashing out §1.2's "pragmatic uses of one semantic
-  focus"; `controls_admit` shows the same Roothian felicity holds
-  across all four uses in the matrix's own models.
-* `strategy_underdetermines_pragType_inSitu`: the refutation persists
-  restricted to in-situ utterances.
-* `subject_focus_only_exSitu`: subject focus requires the ex-situ
-  strategy (§2.2.2).
-* `hausa_falsifies_UniversalBFR`: in-situ new-info utterances carry no
-  morphosyntactic reflex; `exSitu_subject_subjunctive_no_reflex` is a
-  second, subject-side counterexample ((8)).
-* `cells_match_rows`: every cell's tags agree with the `paperFeatures`
-  of its `Data.Examples.HartmannZimmermann2007` row.
-
 ## Implementation notes
 
 The paper states the hypothesis it refutes as (21) "Meaning-Structure
