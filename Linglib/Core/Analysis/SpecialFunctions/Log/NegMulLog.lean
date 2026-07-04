@@ -21,9 +21,9 @@ namespace Real
 theorem negMulLog_inv (y : ℝ) : negMulLog y⁻¹ = y⁻¹ * log y := by
   simp [negMulLog, log_inv]
 
-/-- Splitting `negMulLog` at a quotient: the weighted entropy summand of a
-    conditional `x / y` is the joint summand corrected by the marginal log.
-    Holds with junk at `x = 0` (both sides vanish). -/
+/-- The quotient rule for `negMulLog`, weighted by the denominator: the
+    companion of `negMulLog_mul`. Holds with junk at `x = 0` (both sides
+    vanish). -/
 theorem negMulLog_div (x : ℝ) {y : ℝ} (hy : y ≠ 0) :
     y * negMulLog (x / y) = negMulLog x + x * log y := by
   obtain rfl | hx := eq_or_ne x 0
