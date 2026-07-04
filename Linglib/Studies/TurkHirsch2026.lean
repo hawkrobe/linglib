@@ -255,18 +255,26 @@ theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
 def applyFoC_typeTheo : AltMeaning (Set PolarWorld) :=
   { oValue := p, aValue := typeTheoAlternatives }
 
+/-- The two carriers agree definitionally: the type-theoretic [FoC]
+A-value *as a set* is the type-theoretic question. -/
+theorem applyFoC_typeTheo_aSet : applyFoC_typeTheo.aSet = typeTheoQ := rfl
+
 /-- The type-theoretic A-value produces the wrong question denotation. -/
-theorem applyFoC_is_typeTheo : mustP ∈ ({q | q ∈ applyFoC_typeTheo.aValue} : Set _) := by
+theorem applyFoC_is_typeTheo : mustP ∈ applyFoC_typeTheo.aSet := by
   simp [applyFoC_typeTheo, typeTheoAlternatives, opLexicon]
 
 /-- Restricting the A-value by category match corrects the prediction. -/
 def applyFoC_catMatch : AltMeaning (Set PolarWorld) :=
   { oValue := p, aValue := catMatchAlternatives }
 
+/-- The two carriers agree definitionally on the category-matched side
+as well. -/
+theorem applyFoC_catMatch_aSet : applyFoC_catMatch.aSet = catMatchQ := rfl
+
 /-- The category-matched A-value produces the correct question denotation. -/
 theorem categoryMatch_fixes_applyFoC :
-    mustP ∉ ({q | q ∈ applyFoC_catMatch.aValue} : Set _) := by
-  simp only [applyFoC_catMatch, Set.mem_setOf_eq]
+    mustP ∉ applyFoC_catMatch.aSet := by
+  simp only [applyFoC_catMatch, AltMeaning.mem_aSet]
   show mustP ∉ catMatchAlternatives
   -- catMatchAlternatives = [p, notP]; mustP is neither.
   have hcm : catMatchAlternatives = [p, notP] := by

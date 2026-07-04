@@ -46,6 +46,23 @@ theorem not_factorsThroughOn_iff_exists_witness {g : α → γ} {f : α → β} 
     ∃ a b, a ∈ s ∧ b ∈ s ∧ f a = f b ∧ g a ≠ g b := by
   simp only [FactorsThroughOn, not_forall, exists_prop]
 
+/-- Factoring through on `s`, existentially: `g` agrees on `s` with some
+function of `f`. The mirror of `Function.factorsThrough_iff` for the
+set-restricted variant. -/
+theorem factorsThroughOn_iff_exists_eqOn [Nonempty γ] {g : α → γ} {f : α → β}
+    {s : Set α} :
+    FactorsThroughOn g f s ↔ ∃ h : β → γ, Set.EqOn g (h ∘ f) s := by
+  constructor
+  · intro hf
+    classical
+    refine ⟨fun b => if hb : ∃ a ∈ s, f a = b then g hb.choose
+      else Classical.arbitrary γ, fun a ha => ?_⟩
+    have hb : ∃ a' ∈ s, f a' = f a := ⟨a, ha, rfl⟩
+    simp only [Function.comp_apply, dif_pos hb]
+    exact (hf hb.choose_spec.1 ha hb.choose_spec.2).symm
+  · rintro ⟨h, hh⟩ a b ha hb hab
+    rw [hh ha, hh hb, Function.comp_apply, Function.comp_apply, hab]
+
 /-- For an **idempotent** `f`, `g` factors through `f` iff `g` is `f`-invariant
 (pointwise `g = g ∘ f`). -/
 theorem factorsThrough_iff_of_idempotent {g : α → γ} {f : α → α} (hf : ∀ a, f (f a) = f a) :
