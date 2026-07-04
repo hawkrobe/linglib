@@ -35,10 +35,10 @@ where U is the set of complete utterances and ⊑ is the prefix relation.
 Each scene in this file is a single value of `RSA.IncrementalSemantics U W`
 (in `Pragmatics/RSA/Incremental.lean`), specifying just the lexicon
 (`wordApplies`), the closed set of complete utterances, and the world set.
-The bundle previously fed a bundled-config builder; the file now derives the chain-
-rule speaker, α = 1, no cost, uniform priors, and extension-based L0 — so
-the three scenes (Figure 1, the [sedivy-2007] reference game, the
-[rubio-fernandez-2016] display) share machinery rather than duplicating it.
+The file derives the chain-rule speaker (α = 1, no cost, uniform priors)
+and extension-based L0 from the bundle, so the three scenes (Figure 1, the
+[sedivy-2007] reference game, the [rubio-fernandez-2016] display) share
+machinery rather than duplicating it.
 
 The bundle exposes a single deep theorem, `l0Utt_ge_inv_card`, proving
 the §2.4 weakly-informative bound generically: any complete utterance true
@@ -64,11 +64,10 @@ the bound follows.
 
 ## Implementation notes
 
-The bundle's extension counts are natural numbers, so the whole No-Brevity
-chain is exact ℚ≥0 (`incSemScore` … `s1Post`), with PMF agents via
-`PMF.ofScores` and kernel-verified comparisons. The §2.2 dead-end fallback distributes over
+Extension counts are natural numbers, so the chain is exact ℚ≥0 with PMF
+agents via `PMF.ofScores`. The §2.2 dead-end fallback distributes over
 words with viable continuations, gated to scene referents (out-of-scene
-referents keep the substrate's zero row). Utterance-level probabilities are
+referents keep their zero row). Utterance-level probabilities are
 chain-rule products of `s1` values (eq. 7).
 -/
 
@@ -114,12 +113,6 @@ def figureOne : IncrementalSemantics Word Referent where
   worlds := [.redDress, .blueDress, .redHat]
 
 /-! ### The kernel face over the bundle -/
-
-/-! The bundle's extension counts are natural numbers, so the whole
-No-Brevity chain (eqs. 4–6, zero cost, α = 1) is exact-ℚ: `l0Score` normalizes
-the extension semantics over referents, `s1Post` renormalizes over words, and
-utterance-level probabilities are chain-rule products (eq. 7). PMF speakers
-and listeners are `PMF.ofScores` of these values. -/
 
 section QFace
 
@@ -173,55 +166,32 @@ end QFace
 
 /-! ### Predictions -/
 
--- ---------- Figure 1c: S1^WORD incremental speaker ----------
+/-! ### Figure 1c: the word-by-word speaker -/
 
-/-- (Figure 1c) The incremental speaker prefers "red" first
-    when referring to R1 (red dress).
-
-    S1(red | [], R1) = 4/7 ≈ 0.57 > S1(dress | [], R1) = 3/7 ≈ 0.43
-
-    Mechanism: "red" narrows the extension set to {red dress, red object},
-    both true of R1 (trueExtCount = 2, viableExtCount = 2 → meaning = 1).
-    "dress" narrows to {dress}, true of R1 (meaning = 1) but the L0
-    posterior for R1 is lower because "dress" also applies to R2. -/
+/-- For R1 the speaker leads with "red" (4/7 > 3/7): both red referents
+stay viable, while "dress" dilutes L0 over the two dresses. -/
 theorem adj_first_for_target : s1 figureOne [] .redDress .dress < s1 figureOne [] .redDress .red :=
   PMF.ofScores_lt _ (by decide +kernel)
 
-/-- (Figure 1c) After producing "red", the speaker prefers
-    "dress" over "object" for R1.
-
-    S1(dress | [red], R1) = 2/3 ≈ 0.67 > S1(object | [red], R1) = 1/3 ≈ 0.33
-
-    "red dress" uniquely identifies R1 (only R1 is a red dress), while
-    "red object" is ambiguous between R1 and R3. -/
+/-- After "red", the speaker completes with "dress" (2/3 > 1/3): "red
+dress" is unique to R1, "red object" ambiguous with R3. -/
 theorem noun_after_adj :
     s1 figureOne [.red] .redDress .object < s1 figureOne [.red] .redDress .dress :=
   PMF.ofScores_lt _ (by decide +kernel)
 
-/-- (Figure 1c) For R2 (blue dress), the speaker must start
-    with "dress" — "red" never applies to R2 (it's a blue dress), so all
-    extensions of "red" have zero semantics for R2.
-
-    S1(dress | [], R2) > S1(red | [], R2) -/
+/-- For R2 (blue dress) the speaker must start with "dress": no extension
+of "red" is true of R2. -/
 theorem noun_only_for_r2 : s1 figureOne [] .blueDress .red < s1 figureOne [] .blueDress .dress :=
   PMF.ofScores_lt _ (by decide +kernel)
 
-/-- (Figure 1c) For R3 (red hat), the speaker must start
-    with "red" — "dress" never applies to R3 (it's a hat), so the only
-    extension of "dress" (= "dress" itself) has zero semantics for R3.
-
-    S1(red | [], R3) > S1(dress | [], R3) -/
+/-- For R3 (red hat) the speaker must start with "red": "dress" is false
+of R3. -/
 theorem adj_only_for_r3 : s1 figureOne [] .redHat .dress < s1 figureOne [] .redHat .red :=
   PMF.ofScores_lt _ (by decide +kernel)
 
-/-- (§2.2, uniform fallback) After "red" for R2, no complete
-    utterance extension of "red" is true of R2 (blue dress). The paper
-    states: "probability is evenly distributed over all choices of word."
-
-    S1(dress | [red], R2) = S1(object | [red], R2)
-
-    Both equal 1/2 because the meaning function returns 0 for all R2
-    extensions of "red", yielding uniform L0 → uniform S1. -/
+/-- The §2.2 dead end: after "red" for R2 nothing is true, and
+"probability is evenly distributed over all choices of word" — S1 is
+uniform (½, ½) over the viable continuations. -/
 theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
     s1 figureOne [.red] .blueDress .dress =
     s1 figureOne [.red] .blueDress w := by
@@ -230,34 +200,21 @@ theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
   | dress => rfl
   | object => exact PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
--- ---------- Figure 1d: L1^WORD pragmatic listener ----------
+/-! ### Figure 1d: the pragmatic listener -/
 
-/-- (Figure 1d) After hearing "red", the pragmatic listener L1
-    infers that the target is more likely R3 (red hat) than R1 (red dress).
-
-    L1(R3 | red) = 7/11 ≈ 0.64 > L1(R1 | red) = 4/11 ≈ 0.36
-
-    This is an anticipatory implicature: "red" is the ONLY word available
-    for R3 (S1(red|[],R3) = 1), so hearing "red" raises R3's probability.
-    For R1, the speaker could have said "dress" instead, so "red" is less
-    diagnostic. We pick this up below as a structural foreshadowing of
-    [sedivy-etal-1999]'s contrastive-inference findings; CommonGround themselves
-    cite [sedivy-2007] for the same effect. -/
+/-- The anticipatory implicature: hearing "red", L1 favours R3 over R1
+(7/11 > 4/11) — "red" is R3's only option, while R1's speaker had
+alternatives. The §3.2 [sedivy-etal-1999] bridge below builds on this;
+the authors cite [sedivy-2007] for the effect. -/
 theorem listener_anticipation : l1 figureOne .red .redDress < l1 figureOne .red .redHat :=
   PMF.ofScores_lt _ (by decide +kernel)
 
--- ---------- Figure 1e: S1^UTT-IP utterance-level ----------
+/-! ### Figure 1e: utterance-level probabilities -/
 
 open scoped ENNReal in
-/-- (Figure 1e) The incremental model prefers "dress" over
-    "red dress" for R1 — the key divergence from the global RSA model.
-
-    S1^UTT-IP(dress | R1) = 3/7 ≈ 0.43 > S1^UTT-IP(red dress | R1) = 8/21 ≈ 0.38
-
-    The global model prefers "red dress" (more informative). The incremental
-    model prefers "dress" because it is produced in one step with probability
-    3/7, while "red dress" requires two steps: S1(red|[],R1) · S1(dress|[red],R1)
-    = 4/7 · 2/3 = 8/21 < 9/21 = 3/7. -/
+/-- The architectural wedge (Figure 1e): the chain-rule product prefers
+bare "dress" (3/7) over "red dress" (4/7 · 2/3 = 8/21) for R1, while the
+global model prefers the more informative "red dress". -/
 theorem incremental_prefers_bare_noun :
     s1 figureOne [] .redDress .red * s1 figureOne [.red] .redDress .dress <
     s1 figureOne [] .redDress .dress := by
@@ -272,16 +229,10 @@ theorem incremental_prefers_bare_noun :
 
 /-! ### §2.4 Weakly-Informative Greedy Unrolling -/
 
-/-! [cohn-gordon-goodman-potts-2019] §2.4 establishes a *weakly
-informative* lower bound on greedy unrolling: even though the
-incremental speaker has no global view of the utterance space, the
-greedy choice at each step yields a complete utterance under which the
-literal listener's posterior for the target is at least 1 / |W|. The
-bound itself — `l0Utt_ge_inv_card` — is proved generically over the
-`IncrementalSemantics` bundle in `Pragmatics/RSA/Incremental.lean`.
-What's left for this study is to (i) define the greedy unroller for
-Figure 1's three referents and (ii) verify that each output is a complete
-utterance true of the target; the §2.4 bound then follows. -/
+/-! §2.4's weakly informative bound — greedy unrolling reaches a complete
+utterance whose literal posterior for the target is at least 1/|W| — is
+proved generically as `l0Utt_ge_inv_card` in `Incremental.lean`; here we
+define the Figure 1 unroller and discharge its premises. -/
 
 /-- Greedy unrolling for Figure 1's scene: at each step pick the word
     maximizing L0(r | ctx ++ [w]); stop when ctx is a complete utterance.
