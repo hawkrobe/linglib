@@ -1,6 +1,7 @@
 import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
 # Hausa focus strategies and pragmatic types
@@ -44,6 +45,8 @@ interpretation.
   no morphosyntactic reflex, refuting the universalist BFR;
   `exSitu_subject_subjunctive_no_reflex` is a second, subject-side
   counterexample (paper §2.1, eq. 8).
+* `cells_match_rows`: every cell's tags agree with the
+  `paperFeatures` of its `Data.Examples.HartmannZimmermann2007` row.
 
 ## Implementation notes
 
@@ -370,5 +373,58 @@ example : Stabilizer.cee.toneAfter .L = .H := rfl
 /-- Eq. (3b): *[DP Kiifii] nèe* — the host *Kiifii* ends in a high
     syllable (unmarked vowel = high), so the stabilizer surfaces low. -/
 example : Stabilizer.nee.toneAfter .H = .L := rfl
+
+/-! ## Data linkage
+
+The paper's examples live as typed rows in
+`Data.Examples.HartmannZimmermann2007` (surface text, IGT gloss,
+translation, provenance); the theorems below pin each cell's tags to
+its row's `paperFeatures`, so the Lean encoding and the data layer
+cannot drift apart. -/
+
+private def strategyLabel : Strategy → String
+  | .inSitu => "inSitu"
+  | .exSitu => "exSitu"
+
+private def pragLabel : PragType → String
+  | .newInfo => "newInfo"
+  | .corrective => "corrective"
+  | .selective => "selective"
+  | .contrastive => "contrastive"
+
+private def focusedLabel : Focused → String
+  | .subject => "subject"
+  | .nonSubject => "nonSubject"
+
+private def stabLabel (c : FocusConfig) : String :=
+  match c.stab? with
+  | some .nee => "nee"
+  | some .cee => "cee"
+  | none      => "none"
+
+/-- The matrix cells and the §2.2.2 subject pair, each with its data
+    row. -/
+private def cellRows :
+    List (FocusUtterance × Data.Examples.LinguisticExample) :=
+  [(exSitu_newInfo, Examples.ex22), (exSitu_corrective, Examples.ex24),
+   (exSitu_selective, Examples.ex29), (exSitu_contrastive, Examples.ex27),
+   (inSitu_newInfo, Examples.ex23), (inSitu_corrective, Examples.ex25),
+   (inSitu_selective, Examples.ex30), (inSitu_contrastive, Examples.ex26),
+   (starred_inSitu_subject, Examples.ex17a2),
+   (licensed_exSitu_subject, Examples.ex17a1)]
+
+/-- **Every cell's tags agree with its row's `paperFeatures`.** -/
+theorem cells_match_rows :
+    ∀ p ∈ cellRows,
+      p.2.feature? "strategy" = some (strategyLabel p.1.cfg.strategy) ∧
+      p.2.feature? "pragType" = some (pragLabel p.1.pragType) ∧
+      p.2.feature? "focused" = some (focusedLabel p.1.focused) ∧
+      p.2.feature? "stabilizer" = some (stabLabel p.1.cfg) := by decide
+
+/-- The row the paper stars is exactly the cell the licensing predicate
+    rejects. -/
+theorem starred_row_is_the_unlicensed_cell :
+    Examples.ex17a2.judgment = .unacceptable ∧
+    ¬ starred_inSitu_subject.IsHausaLicensed := ⟨rfl, by decide⟩
 
 end HartmannZimmermann2007
