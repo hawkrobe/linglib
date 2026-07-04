@@ -217,16 +217,17 @@ noncomputable def memJoint (J : PMF (W × C)) (mem : C → PMF M) : PMF (W × M)
   J.bind fun x => (mem x.2).map (Prod.mk x.1)
 
 /-- Expected difficulty of the Bayes-optimal comprehender (§3.3): the expected
-    surprisal of predicting the first coordinate from the second via the
-    conditional `G(w|m) = G(w,m)/G(m)`. -/
+    surprisal of predicting the first coordinate from the second under the
+    conditional distribution `PMF.cond`. -/
 noncomputable def bayesDifficulty {α β : Type*} [Fintype α] [Fintype β]
-    (G : PMF (α × β)) : ℝ :=
-  ∑ x : α × β, (G x).toReal * (-Real.log ((G x).toReal / (G.snd x.2).toReal))
+    [DecidableEq β] (G : PMF (α × β)) : ℝ :=
+  ∑ x : α × β, (G x).toReal * (-Real.log ((G.cond x.2) x.1).toReal)
 
-/-- The Bayes-optimal difficulty is the conditional entropy `H(W | ·)`. -/
+/-- The Bayes-optimal difficulty is the conditional entropy `H(W | ·)`:
+    the entropy chain rule read as an expected surprisal. -/
 theorem bayesDifficulty_eq {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (G : PMF (α × β)) : bayesDifficulty G = G.entropy - G.snd.entropy :=
-  PMF.sum_mul_neg_log_bayes G
+  PMF.sum_mul_neg_log_cond G
 
 /-- **The average form of information locality**: the expected excess
     difficulty of lossy-memory comprehension over veridical-context

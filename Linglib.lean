@@ -5,6 +5,7 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
 
+import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.Algebra.ConnesKreimer.Shuffle
 import Linglib.Core.Algebra.ConnesKreimer.ShuffleBialgebra
 import Linglib.Core.Algebra.Free
