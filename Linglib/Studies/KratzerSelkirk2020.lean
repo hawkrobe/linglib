@@ -311,6 +311,14 @@ theorem consumed_alts_enable_g {α : Type*} [DecidableEq α]
   unfold isGiven
   rfl
 
+/-- The ~-consumed result is Given with respect to the ordinary value —
+the `AltMeaning.Given` form of `consumed_alts_enable_g` (their (46)). -/
+theorem consumed_alts_given {α : Type*} (op : ContrastOperator α) :
+    op.result.Given op.meaning.oValue := by
+  show op.result.aSet = {op.meaning.oValue}
+  ext x
+  simp [AltMeaning.mem_aSet, squiggle_singleton_aValue]
+
 /-! ## Prosodic spellout
 
 In Standard American and British English, [FoC] and [G] are spelled out
