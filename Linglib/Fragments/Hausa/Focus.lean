@@ -34,7 +34,7 @@ strategy, and in-situ focus is otherwise unmarked, prosody included
 * `stabilizerFor_eq_cee_iff`: *cē* appears exactly with feminine-singular
   focus.
 * `stabilizer_tone_is_polar`: the stabilizer's surface tone is
-  `Tone.polarOf` of the host's final tone — the same autosegmental
+  `Hausa.polarOf` of the host's final tone — the same autosegmental
   operation as the genitive linker *-n*.
 
 ## Implementation notes
@@ -46,11 +46,9 @@ ergonomic constructors; the ex-situ one takes the licensing obligation as
 an argument.
 -/
 
-namespace Hausa.Focus
+namespace Hausa
 
-open Hausa.Inflection (PAC cmp_3sm_R cmp_3sm_G)
-open Hausa.Tone (polarOf)
-open _root_.Tone (TRN)
+open Tone (TRN)
 
 /-! ### Strategy and stabilizer -/
 
@@ -176,17 +174,17 @@ the given tone: polar, i.e. the opposite of the host ([newman-2000]
 def Stabilizer.toneAfter (_ : Stabilizer) (host : TRN) : TRN :=
   polarOf host
 
-/-- The stabilizer's surface tone is `Tone.polarOf` of the host tone —
+/-- The stabilizer's surface tone is `Hausa.polarOf` of the host tone —
 the same autosegmental operation as the genitive linker *-n*, not a
 separate stipulation. -/
 theorem stabilizer_tone_is_polar (s : Stabilizer) (host : TRN) :
     s.toneAfter host = polarOf host := rfl
 
 /-- Two applications of the stabilizer-tone map restore the host tone on
-the H/L sublattice. Direct corollary of `Tone.polarOf_involutive_on_HL`. -/
+the H/L sublattice. Direct corollary of `polarOf_involutive_on_HL`. -/
 theorem stabilizer_toneAfter_involutive (s : Stabilizer) (h : TRN)
     (hh : h ∈ ([.H, .L] : List TRN)) :
     polarOf (s.toneAfter h) = h :=
-  Hausa.Tone.polarOf_involutive_on_HL h hh
+  polarOf_involutive_on_HL h hh
 
-end Hausa.Focus
+end Hausa

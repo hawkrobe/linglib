@@ -56,7 +56,7 @@ Spanish/Russian/German Fragment Gender files still bake in DM `CatHead`
 fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
 -/
 
-namespace Hausa.Gender
+namespace Hausa
 
 
 /-- A Hausa noun: surface form, gloss, and two empirical gender fields.
@@ -147,4 +147,4 @@ def allNouns : List Noun :=
   [yarinya, mace, kaza, riga, yaro, mutum, littafi, gida,
    kasaLand, rana, kada, uba]
 
-end Hausa.Gender
+end Hausa

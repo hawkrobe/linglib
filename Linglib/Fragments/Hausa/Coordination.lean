@@ -14,7 +14,7 @@ for the data.
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hausa`).
 -/
 
-namespace Hausa.Coordination
+namespace Hausa
 
 /-- *da* — J particle, also comitative marker. Free, prepositive.
     Diachronic source: comitative ('with') → coordinator ('and'). -/
@@ -25,4 +25,4 @@ def da : Coordinator :=
 
 def allEntries : List Coordinator := [da]
 
-end Hausa.Coordination
+end Hausa

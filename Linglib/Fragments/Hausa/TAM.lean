@@ -43,7 +43,7 @@ ill-formed (see `Focus.lean`'s `exSitu_with_genCmp`, which is exactly
 that pattern).
 -/
 
-namespace Hausa.Inflection
+namespace Hausa
 
 open Person
 
@@ -276,4 +276,4 @@ theorem registry_covers_relative_TAMs :
     | exact ⟨⟨cont_3sm_G, by simp [representativePACs], rfl, rfl⟩,
             ⟨cont_3sm_R, by simp [representativePACs], rfl, rfl⟩⟩
 
-end Hausa.Inflection
+end Hausa

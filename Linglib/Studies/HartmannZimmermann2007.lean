@@ -80,10 +80,7 @@ the paper analyses them as string-vacuously ex-situ, so
 
 namespace HartmannZimmermann2007
 
-open Hausa.Focus
-open Hausa.Inflection
-  (PAC cmp_3sf_R cmp_1sg_G cont_3sm_R cont_3sm_G cont_3sf_R cont_1sg_R
-   fut_1sg subj_3sm)
+open Hausa
 
 /-! ## Pragmatic focus types (paper §1.2, after [uhmann-1991]) -/
 
@@ -363,7 +360,7 @@ The focus-sensitive particle *nē/cē* surfaces with low tone after a
 high syllable and high tone after a low syllable — exactly
 `Stabilizer.toneAfter`, which `stabilizer_tone_is_polar` in
 `Fragments/Hausa/Focus.lean` grounds in the cross-fragment
-`Tone.polarOf`. The minimal pair below is paper eq. (3a, 3b). -/
+`Hausa.polarOf`. The minimal pair below is paper eq. (3a, 3b). -/
 
 /-- Eq. (3a): *[DP Kandè] cee* — the host *Kandè* ends in a low
     syllable (*-dè* with grave accent), so the stabilizer surfaces

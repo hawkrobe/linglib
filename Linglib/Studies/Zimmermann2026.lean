@@ -20,7 +20,7 @@ and that the two-way African comparison discriminates between CF- and
 ## Main declarations
 
 * `Akan.Determiners.Indefinite.z2026IndefType`,
-  `Hausa.Determiners.Indefinite.z2026IndefType` — the review's (16)
+  `Hausa.Indefinite.z2026IndefType` — the review's (16)
   classification over the two Fragment inventories, discharging the
   substrate `IndefType` contrast.
 * `Zimmermann2026.wani_scopings_diverge` — (13): the ∃-analysis' two
@@ -68,7 +68,7 @@ def z2026IndefType : Indefinite → Option IndefType
 
 end Akan.Determiners.Indefinite
 
-namespace Hausa.Determiners.Indefinite
+namespace Hausa.Indefinite
 
 /-- [zimmermann-2026] (16b)'s classification of the Hausa inventory:
 *wani/wata* denotes an ∃-quantifier ([zimmermann-2008],
@@ -78,7 +78,7 @@ def z2026IndefType : Indefinite → Option IndefType
   | .wani => some .existential
   | .bare => none
 
-end Hausa.Determiners.Indefinite
+end Hausa.Indefinite
 
 namespace Zimmermann2026
 
