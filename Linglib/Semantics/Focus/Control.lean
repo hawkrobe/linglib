@@ -332,6 +332,45 @@ theorem mem_onlyVia_of_forall_not_mem {C : PropFocusValue W} {p : Set W}
     {w : W} (h : ∀ q ∈ C, q ≠ p → w ∉ q) : w ∈ onlyVia C p :=
   fun q hq hwq => not_not.mp fun hne => h q hq hne hwq
 
+/-- An indexed family of alternatives is separated when each member can
+hold while every other member fails — the alternatives are logically
+independent. -/
+def SeparatedFamily {ι : Type*} (f : ι → Set W) : Prop :=
+  ∀ i, ∃ w ∈ f i, ∀ j, j ≠ i → w ∉ f j
+
+/-- Over a separated family, resolving *only* to contrast sets that
+differ beyond the prejacent yields distinct readings: the alternative
+present in one resolution and absent from the other separates them. -/
+theorem SeparatedFamily.onlyVia_ne {ι : Type*} {f : ι → Set W}
+    (hf : SeparatedFamily f) {i₀ j : ι} {s₁ s₂ : Finset ι}
+    (hj₂ : j ∈ s₂) (hj₁ : j ∉ s₁) (hji : j ≠ i₀) :
+    onlyVia (f '' ↑s₁) (f i₀) ≠ onlyVia (f '' ↑s₂) (f i₀) := by
+  obtain ⟨w, hwj, hother⟩ := hf j
+  refine ne_of_mem_of_not_mem'
+    (mem_onlyVia_of_forall_not_mem ?_)
+    (not_mem_onlyVia ⟨j, hj₂, rfl⟩ hwj
+      (ne_of_mem_of_not_mem' hwj (hother i₀ (Ne.symm hji))))
+  rintro q ⟨k, hk, rfl⟩ _
+  exact hother k fun h => hj₁ (h ▸ hk)
+
+/-- Over a separated family, *only* is injective in the resolved
+contrast set, on resolutions containing the prejacent. -/
+theorem SeparatedFamily.onlyVia_injOn {ι : Type*} {f : ι → Set W}
+    (hf : SeparatedFamily f) (i₀ : ι) :
+    Set.InjOn (fun s : Finset ι => onlyVia (f '' ↑s) (f i₀))
+      {s | i₀ ∈ s} := by
+  intro s₁ h₁ s₂ h₂ heq
+  by_contra hne
+  obtain ⟨j, hj⟩ : ∃ j, ¬ (j ∈ s₁ ↔ j ∈ s₂) := by
+    simpa [Finset.ext_iff] using hne
+  by_cases hmem : j ∈ s₁
+  · have h₂j : j ∉ s₂ := fun h => hj ⟨fun _ => h, fun _ => hmem⟩
+    exact hf.onlyVia_ne hmem h₂j (fun h => h₂j (h ▸ h₂)) heq.symm
+  · have h₂j : j ∈ s₂ := by
+      by_contra h2
+      exact hj ⟨fun h => absurd h hmem, fun h => absurd h h2⟩
+    exact hf.onlyVia_ne h₂j hmem (fun h => hmem (h ▸ h₁)) heq
+
 /-- Narrowing the domain weakens *only* — the pragmatic domain
 restriction that repairs the over-generation of a fixed full-focus
 domain. -/

@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Tactic.FinCases
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Phrase
@@ -214,68 +215,52 @@ def boughtShirtP : Set NumWorld := {w | w.boughtShirt}
 /-- 'I read the book.' -/
 def readBookP : Set NumWorld := {w | w.readBook}
 
-/-- The (36) readings by association extent: object ((36a),
+/-- The alternative facts, as an indexed family. -/
+def alt : Fin 3 → Set NumWorld := ![boughtBookP, boughtShirtP, readBookP]
+
+/-- The alternatives are logically independent: each can hold while
+the others fail — one world per free Boolean field. -/
+theorem alt_separated : SeparatedFamily alt := by
+  intro i
+  fin_cases i
+  · exact ⟨⟨true, false, false⟩, rfl, fun j hj => by
+      fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
+  · exact ⟨⟨false, true, false⟩, rfl, fun j hj => by
+      fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
+  · exact ⟨⟨false, false, true⟩, rfl, fun j hj => by
+      fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
+
+/-- The contrast sets by association extent: object ((36a),
 alternatives to the book), VP ((36b), 'I did nothing else'), verb
 ((36c), 'but I have not read it yet'). Subjects are outside the (36)
 paradigm; the arm shares the verb value and is never queried. -/
-def numReading : Focused → Set NumWorld
-  | .object => onlyVia {boughtBookP, boughtShirtP} boughtBookP
-  | .vp     => onlyVia {boughtBookP, boughtShirtP, readBookP} boughtBookP
-  | _       => onlyVia {boughtBookP, readBookP} boughtBookP
+def extAlts : Focused → Finset (Fin 3)
+  | .object => {0, 1}
+  | .vp     => {0, 1, 2}
+  | _       => {0, 2}
 
-/-- Bought the book and read it, bought nothing else: verifies (36a),
-falsifies (36c). -/
-private def w₁ : NumWorld := ⟨true, false, true⟩
-/-- Bought the book and a shirt, read nothing: verifies (36c),
-falsifies (36a). -/
-private def w₂ : NumWorld := ⟨true, true, false⟩
+/-- The (36) readings: strong-theory *only* over the resolved contrast
+set, with 'bought the book' as prejacent. -/
+def numReading (x : Focused) : Set NumWorld :=
+  onlyVia (alt '' ↑(extAlts x)) (alt 0)
 
-private theorem readBook_ne_boughtBook : readBookP ≠ boughtBookP := by
-  intro h
-  have hmem : (⟨false, false, true⟩ : NumWorld) ∈ readBookP := rfl
-  rw [h] at hmem
-  exact absurd hmem Bool.false_ne_true
-
-private theorem boughtShirt_ne_boughtBook : boughtShirtP ≠ boughtBookP := by
-  intro h
-  have hmem : (⟨false, true, false⟩ : NumWorld) ∈ boughtShirtP := rfl
-  rw [h] at hmem
-  exact absurd hmem Bool.false_ne_true
-
-/-- One surface string, three semantically distinct readings: the
-reading map is injective on exactly the extents whose marking
-`boundary_underdetermines_extent` collapses. -/
-theorem num_readings_injOn :
-    Set.InjOn numReading {.verb, .vp, .object} := by
-  have h₁ : w₁ ∈ numReading .object := mem_onlyVia_of_forall_not_mem <| by
-    rintro q (rfl | rfl) hne
-    exacts [absurd rfl hne, Bool.false_ne_true]
-  have h₂ : w₂ ∈ numReading .verb := mem_onlyVia_of_forall_not_mem <| by
-    rintro q (rfl | rfl) hne
-    exacts [absurd rfl hne, Bool.false_ne_true]
-  rw [Set.injOn_insert (by simp), Set.injOn_insert (by simp)]
-  simp only [Set.injOn_singleton, Set.image_insert_eq, Set.image_singleton,
-    Set.mem_insert_iff, Set.mem_singleton_iff, true_and, not_or]
-  refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩
-  · have hw : w₁ ∈ numReading .vp := h.symm ▸ h₁
-    exact absurd hw
-      (not_mem_onlyVia (Or.inr (Or.inr rfl)) rfl readBook_ne_boughtBook)
-  · have hw : w₂ ∈ numReading .vp := h ▸ h₂
-    exact absurd hw
-      (not_mem_onlyVia (Or.inr (Or.inl rfl)) rfl boughtShirt_ne_boughtBook)
-  · have hw : w₂ ∈ numReading .object := h ▸ h₂
-    exact absurd hw
-      (not_mem_onlyVia (Or.inr rfl) rfl boughtShirt_ne_boughtBook)
+/-- One surface string, three semantically distinct readings: over a
+logically independent alternative family, *only* is injective in its
+resolution (`SeparatedFamily.onlyVia_injOn`), and the three extents
+resolve to three different contrast sets. -/
+theorem num_readings_injOn : Set.InjOn numReading {.verb, .vp, .object} :=
+  (alt_separated.onlyVia_injOn 0).comp
+    (by rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
+      first | rfl | exact absurd h (by decide))
+    (by rintro a (rfl | rfl | rfl) <;> decide)
 
 /-- The VP association is the strongest reading: 'I did nothing else'
 entails both 'I bought nothing else' and 'I did nothing else to the
 book' — `onlyVia_antitone` over the contrast-set inclusions. -/
 theorem vp_reading_strongest :
     numReading .vp ⊆ numReading .object ∧ numReading .vp ⊆ numReading .verb :=
-  ⟨onlyVia_antitone
-      (fun _ hq => hq.elim Or.inl fun h => Or.inr (Or.inl h)) _,
-   onlyVia_antitone
-      (fun _ hq => hq.elim Or.inl fun h => Or.inr (Or.inr h)) _⟩
+  ⟨onlyVia_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _,
+   onlyVia_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _⟩
 
 /-! ## Data linkage
 
