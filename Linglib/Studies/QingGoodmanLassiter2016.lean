@@ -48,7 +48,7 @@ reaching the PMF face.
 namespace QingGoodmanLassiter2016
 
 open BigOperators
-/-! ### §1. World State -/
+/-! ### World states -/
 
 /-- World state: (past, now) where past = John smoked, now = John smokes.
     Flat inductive for tactic enumerability. -/
@@ -67,7 +67,7 @@ def WorldState.now : WorldState → Bool
   | .wTT | .wFT => true
   | .wTF | .wFF => false
 
-/-! ### §2. Utterances (Table 1 + negations + silence) -/
+/-! ### Utterances (Table 1, negations, silence) -/
 
 /-- Utterances about John's smoking habits.
     6 positive utterances from Table 1, their 6 negations, and silence. -/
@@ -87,7 +87,7 @@ inductive Utterance where
   | silence             -- null utterance          {(T,T),(T,F),(F,T),(F,F)}
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-! ### §3. Literal Semantics -/
+/-! ### Literal semantics -/
 
 /-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧.
 
@@ -140,7 +140,7 @@ theorem always_matches_continuation (w : WorldState) :
   cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
     WorldState.past, WorldState.now]
 
-/-! ### §4. Context Sets (Common Ground) -/
+/-! ### Context sets -/
 
 /-- Context sets: subsets of worlds representing common ground.
     These are the 9 context sets derivable from observations about past and now
@@ -170,7 +170,7 @@ def compatibleBool : ContextSet → WorldState → Bool
   | .pastFalseNowFalse, w => !w.past && !w.now
   | .universe,          _ => true
 
-/-! ### §5. QUD -/
+/-! ### QUD -/
 
 /-- Questions under discussion. -/
 inductive QUD where
@@ -179,7 +179,7 @@ inductive QUD where
   | past  -- "Did John smoke?" (partitions by past)
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-! ### §6. Priors -/
+/-! ### Priors -/
 
 /-- Utterance prior (eq. 1): Pr(u) ∝ 2^{-#content-words(u)}.
     Negation and auxiliaries excluded from count.
@@ -213,7 +213,7 @@ def contextPrior : ContextSet → ℚ
 theorem contextPrior_pos (cs : ContextSet) : 0 < contextPrior cs := by
   cases cs <;> simp [contextPrior]
 
-/-! ### §7b. Exact-ℚ model and PMF face (local pending the RSA API pass) -/
+/-! ### The exact-ℚ model and its PMF face (local pending the RSA API pass) -/
 
 section QModel
 
@@ -479,9 +479,9 @@ private theorem l1Ctx_apply (qud : QUD) {u : Utterance} (hu : u ≠ .silence)
 
 end PMFFace
 
-/-! ### §8. L1 Predictions -/
+/-! ### Listener predictions -/
 
-/-! ### §8.1 QUD_now symmetry -/
+/-! ### QUD_now symmetry -/
 
 /-- Under QUD_now, wTT and wFT are indistinguishable: `qAggQ .now` is
 definitionally symmetric in the now-cell, so projection must be measured on
@@ -493,7 +493,7 @@ theorem qud_now_wTT_eq_wFT :
     l1World_apply .now (by decide) wZ_pos_now_ns]
   congr 2
 
-/-! ### §8.2 QUD answer -/
+/-! ### QUD answer -/
 
 /-- L1 infers the QUD answer now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
@@ -515,7 +515,7 @@ theorem qud_answer_now_true :
       worldScoreQ .now .notStoppedSmoking .wTF + worldScoreQ .now .notStoppedSmoking .wFF <
       worldScoreQ .now .notStoppedSmoking .wTT + worldScoreQ .now .notStoppedSmoking .wFT))
 
-/-! ### §8.3 World elimination
+/-! ### World elimination
 
 "Didn't stop smoking" is literally false at wTF, concentrating L1 on wTT. -/
 
@@ -530,9 +530,9 @@ theorem wTT_gt_wTF :
     (by exact_mod_cast (by decide +kernel :
       worldScoreQ .now .notStoppedSmoking .wTF < worldScoreQ .now .notStoppedSmoking .wTT))
 
-/-! ### §8.4 Projection under QUD_max (Figure 1c)
+/-! ### Projection under QUD_max (Figure 1c)
 
-The identity QUD breaks §8.1's degeneracy — under +past, "didn't stop"
+The identity QUD breaks the QUD_now degeneracy — under +past, "didn't stop"
 narrows to exactly wTT — but projection stays incomplete: wTT = wFF, so
 the past marginals still coincide. -/
 
@@ -561,7 +561,7 @@ theorem qud_max_incomplete_projection :
     worldScoreQ .max .notStoppedSmoking .wTT
       = worldScoreQ .max .notStoppedSmoking .wFF)
 
-/-! ### §8.5 Context set projection (the paper's main result, Figure 3)
+/-! ### Context set projection (the paper's main result, Figure 3)
 
 Under +past, "didn't stop" narrows L0 to wTT (aggregate 1, `1⁶ = 1`); under
 −past it spreads (`(1/2)⁶ = 1/64`). S1 rewards informativity, so L1 infers
@@ -604,7 +604,7 @@ theorem now_context_dispreferred :
     (by exact_mod_cast (by decide +kernel :
       ctxScoreQ .now .notStoppedSmoking .nowFalse < ctxScoreQ .now .notStoppedSmoking .pastTrue))
 
-/-! ### §8.6 "Stopped smoking" -/
+/-! ### "Stopped smoking" -/
 
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
@@ -626,7 +626,7 @@ theorem stopped_qud_answer :
       worldScoreQ .now .stoppedSmoking .wTT + worldScoreQ .now .stoppedSmoking .wFT <
       worldScoreQ .now .stoppedSmoking .wTF + worldScoreQ .now .stoppedSmoking .wFF))
 
-/-! ### §9. Structural Properties -/
+/-! ### Structural properties -/
 
 /-- "didn't stop smoking" is compatible with 3 of 4 worlds. -/
 theorem notStopped_compatible_worlds :
