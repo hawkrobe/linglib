@@ -1,6 +1,7 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Tactics.RSAPredict
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Composition.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -85,13 +86,9 @@ contexts under exact numeral semantics.
 
 -/
 
-set_option autoImplicit false
-
 namespace ScontrasPearl2021
 
--- ============================================================================
--- §1. Every-Not (n=2) — Shared Types & Truth Conditions
--- ============================================================================
+/-! ### Every-Not (n=2) — Shared Types & Truth Conditions -/
 
 /-- How many horses jumped (out of 2). -/
 inductive JumpOutcome where
@@ -134,9 +131,7 @@ theorem inverse_scope_truth :
     scopeTruth .inverse .one = true ∧
     scopeTruth .inverse .two = false := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- §2. Two-Not (n=4) — Shared Types & Truth Conditions
--- ============================================================================
+/-! ### Two-Not (n=4) — Shared Types & Truth Conditions -/
 
 /-- How many horses jumped (out of 4). -/
 inductive JumpOutcome4 where
@@ -213,9 +208,7 @@ theorem exact_atleast_diverge_2of4 :
     twoNotTruth .exact .inverse .w4 = true ∧
     twoNotTruth .atLeast .inverse .w4 = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- §3. Scope Entailment Asymmetry ([musolino-lidz-2003])
--- ============================================================================
+/-! ### Scope Entailment Asymmetry ([musolino-lidz-2003]) -/
 
 /-- For universals, surface scope (∀>¬: none jumped) ENTAILS inverse scope
     (¬>∀: not all jumped). If no horse jumped, then trivially not every horse
@@ -251,9 +244,7 @@ theorem numeral_inverse_not_entails_surface :
          twoNotTruth .exact .surface w = false :=
   ⟨.w0, rfl, rfl⟩
 
--- ============================================================================
--- §4. Numeral Semantics Grounding
--- ============================================================================
+/-! ### Numeral Semantics Grounding -/
 
 /-! Connects S&P's `twoNotTruth` truth conditions to linglib's numeral
 semantics infrastructure (named meanings in `Semantics.Numerals`).
@@ -316,9 +307,52 @@ theorem typeshift_resolves_tension :
     atLeastMeaning 2 2 :=
   Semantics.Numerals.typeLower_bareMeaning_iff 2 2
 
--- ============================================================================
--- Part II: Every-Not RSA Model (§3)
--- ============================================================================
+/-! ### Every-Not RSA Model (§3) -/
+
+-- ℚ-score PMF combinator (local pending the RSA API pass)
+
+section PMFCombinator
+
+open scoped ENNReal
+
+/-- Normalize a rational score vector into a PMF (uniform at zero mass). -/
+noncomputable def pmfOfScores {σ : Type*} [Fintype σ] [Nonempty σ]
+    (f : σ → ℚ) : PMF σ :=
+  if h : (∑' x, ENNReal.ofReal ((f x : ℝ))) ≠ 0 then
+    PMF.normalize (fun x => ENNReal.ofReal ((f x : ℝ))) h
+      (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+  else PMF.uniformOfFintype σ
+
+theorem pmfOfScores_apply {σ : Type*} [Fintype σ] [Nonempty σ]
+    {f : σ → ℚ} (hf : ∀ x, 0 ≤ f x) (hpos : 0 < ∑ x, f x) (x : σ) :
+    pmfOfScores f x = ENNReal.ofReal ((f x / ∑ x', f x' : ℚ) : ℝ) := by
+  have hsum : (∑' x, ENNReal.ofReal ((f x : ℝ)))
+      = ENNReal.ofReal ((∑ x, f x : ℚ) : ℝ) := by
+    rw [tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg (fun x _ => by exact_mod_cast hf x)]
+    push_cast
+    rfl
+  rw [pmfOfScores, dif_pos (by
+      rw [hsum, ENNReal.ofReal_ne_zero_iff]; exact_mod_cast hpos),
+    PMF.normalize_apply, hsum,
+    ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos),
+    ← ENNReal.ofReal_mul (by exact_mod_cast hf x)]
+  congr 1
+  push_cast
+  rw [div_eq_mul_inv]
+
+/-- Strict comparison of `pmfOfScores` values via the exact-ℚ scores;
+`f` and `g` may be different score vectors (cross-world, cross-configuration). -/
+theorem pmf_lt_cross {σ τ : Type*} [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ]
+    {f : σ → ℚ} {g : τ → ℚ}
+    (hf : ∀ x, 0 ≤ f x) (hg : ∀ x, 0 ≤ g x)
+    (hfp : 0 < ∑ x, f x) (hgp : 0 < ∑ x, g x) {a : σ} {b : τ}
+    (hb : 0 < g b / ∑ x, g x) (hab : f a / ∑ x, f x < g b / ∑ x, g x) :
+    pmfOfScores f a < pmfOfScores g b := by
+  rw [pmfOfScores_apply hf hfp, pmfOfScores_apply hg hgp]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast hb)).mpr
+    (by exact_mod_cast hab)
+
+end PMFCombinator
 
 namespace EveryNot
 
@@ -504,7 +538,7 @@ theorem every_not_scope_entailment :
     Semantics.Scope.classifyScopeEntailment
       [JumpOutcome.zero, .one, .two]
       (scopeTruth .surface) (scopeTruth .inverse)
-    = .surfaceEntailsInverse := by native_decide
+    = .surfaceEntailsInverse := by decide
 
 -- QUD Projection
 
@@ -538,145 +572,150 @@ theorem qudProjectInline_nonneg {q : QUD} {f : JumpOutcome → ℝ} {w : JumpOut
   cases q <;> cases w <;> simp only [qudProjectInline]
   all_goals first | exact hf _ | exact add_nonneg (hf _) (hf _)
 
--- RSAConfig
+-- Exact-ℚ model
 
-/-- [scontras-pearl-2021] RSA model, parametric in three priors.
-    S1 uses QUD-projected rpow with α = 1 (§3.2).
-    L0 does not incorporate the world prior (footnote 6). -/
-noncomputable def cfg
-    (worldPr : JumpOutcome → ℝ) (hwp : ∀ w, 0 ≤ worldPr w)
-    (scopePr : ScopeReading → ℝ) (hsp : ∀ s, 0 ≤ scopePr s)
-    (qudPr : QUD → ℝ) (hqp : ∀ q, 0 ≤ qudPr q) :
-    RSA.RSAConfig Utt JumpOutcome where
-  Latent := Latent
-  meaning _ lat u w := if uttMeaning lat.scope u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α lat w u := rpow (qudProjectInline lat.qud (l0 u) w) α
-  s1Score_nonneg _ _ _ _ u hl _ :=
-    rpow_nonneg (qudProjectInline_nonneg (fun w => hl u w)) _
-  α := 1
-  α_pos := one_pos
-  worldPrior := worldPr
-  worldPrior_nonneg := hwp
-  latentPrior _w lat := scopePr lat.scope * qudPr lat.qud
-  latentPrior_nonneg _w lat := mul_nonneg (hsp lat.scope) (hqp lat.qud)
+section QModel
 
--- Configurations
+/-- Literal listener (fn. 6: no world prior in L0). -/
+def l0Q (sc : ScopeReading) (u : Utt) (w : JumpOutcome) : ℚ :=
+  (if uttMeaning sc u w then 1 else 0) /
+    (∑ w', if uttMeaning sc u w' then (1 : ℚ) else 0)
 
-/-! World priors follow Binomial(2, b_suc), unnormalized:
-    - b_suc = 0.1: P(w) ∝ (81, 18, 1) — horses unlikely to jump
-    - b_suc = 0.5: P(w) ∝ (1, 2, 1) — symmetric
-    - b_suc = 0.9: P(w) ∝ (1, 18, 81) — horses likely to jump -/
+/-- QUD projection of the literal listener (paper (3)). -/
+def qProjQ (q : QUD) (f : JumpOutcome → ℚ) : JumpOutcome → ℚ
+  | .zero => match q with
+    | .howMany => f .zero
+    | .all_ => f .zero + f .one
+    | .none_ => f .zero
+  | .one => match q with
+    | .howMany => f .one
+    | .all_ => f .zero + f .one
+    | .none_ => f .one + f .two
+  | .two => match q with
+    | .howMany => f .two
+    | .all_ => f .two
+    | .none_ => f .one + f .two
 
-/-- Baseline: low base rate (b_suc = 0.1), uniform scope, uniform QUD.
-    Best fit to adult Experiment 1 data (§3.2, Figure 2 left). -/
-noncomputable abbrev baselineCfg :=
-  cfg (fun w => match w with | .zero => 81 | .one => 18 | .two => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
+/-- Speaker (α = 1, §3.2; costs cancel, fn. 8). -/
+def s1Q (sc : ScopeReading) (q : QUD) (w : JumpOutcome) (u : Utt) : ℚ :=
+  qProjQ q (fun w' => l0Q sc u w') w / ∑ u', qProjQ q (fun w' => l0Q sc u' w') w
 
-/-- Default: symmetric prior (b_suc = 0.5), uniform scope, uniform QUD.
-    Binomial(2, 0.5) ∝ (1, 2, 1). Paper's default parameter setting. -/
-noncomputable abbrev defaultCfg :=
-  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
+/-- Joint pragmatic listener world score: `P(w)·Σ_{i,q} P(i)·P(q)·S1`. -/
+def l1ScoreQ (wp : JumpOutcome → ℚ) (sp : ScopeReading → ℚ) (qp : QUD → ℚ)
+    (u : Utt) (w : JumpOutcome) : ℚ :=
+  wp w * ∑ lat : Latent, sp lat.scope * qp lat.qud * s1Q lat.scope lat.qud w u
 
-/-- High base rate: b_suc = 0.9, uniform scope, uniform QUD.
-    Tests robustness of S2 ordering to prior manipulation (Figure 2 left). -/
-noncomputable abbrev highBaseCfg :=
-  cfg (fun w => match w with | .zero => 1 | .one => 18 | .two => 81)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
+/-- Normalized world posterior. -/
+def l1Q (wp : JumpOutcome → ℚ) (sp : ScopeReading → ℚ) (qp : QUD → ℚ)
+    (u : Utt) (w : JumpOutcome) : ℚ :=
+  l1ScoreQ wp sp qp u w / ∑ w', l1ScoreQ wp sp qp u w'
 
-/-- Supportive context: b_suc = 0.9 + all?-biased QUD (1:18:1 ≈ 0.05:0.9:0.05).
-    Models S&P's supportive-context prediction (§3.3, Figure 3), motivated by
-    [gualmini-etal-2008]'s finding that QUD manipulation increases endorsement.
-    When both pragmatic factors are supportive, scope access has negligible
-    impact on endorsement (paper: 0.91 at P(inv)=0.1 vs 0.91 at P(inv)=0.9). -/
-noncomputable abbrev supportiveCfg :=
-  cfg (fun w => match w with | .zero => 1 | .one => 18 | .two => 81)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun q => match q with | .howMany => 1 | .all_ => 18 | .none_ => 1)
-    (fun q => by cases q <;> positivity)
+private theorem l0Q_nonneg (sc : ScopeReading) (u : Utt) (w : JumpOutcome) :
+    0 ≤ l0Q sc u w :=
+  div_nonneg (by split <;> norm_num)
+    (Finset.sum_nonneg fun _ _ => by split <;> norm_num)
 
-/-- Surface-only: P(inverse) = 0. Tests whether scope ambiguity is needed
-    to produce intermediate endorsement. -/
-noncomputable abbrev surfaceOnlyCfg :=
-  cfg (fun w => match w with | .zero => 81 | .one => 18 | .two => 1)
-    (fun w => by cases w <;> positivity)
-    (fun s => match s with | .surface => 1 | .inverse => 0)
-    (fun s => by cases s <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
+private theorem qProjQ_nonneg {f : JumpOutcome → ℚ} (hf : ∀ w, 0 ≤ f w)
+    (q : QUD) (w : JumpOutcome) : 0 ≤ qProjQ q f w := by
+  cases w <;> cases q <;>
+    first
+      | exact hf _
+      | exact add_nonneg (hf _) (hf _)
 
--- QUD-Biased Configurations (Figure 2, center panel)
+private theorem s1Q_nonneg (sc : ScopeReading) (q : QUD) (w : JumpOutcome)
+    (u : Utt) : 0 ≤ s1Q sc q w u :=
+  div_nonneg (qProjQ_nonneg (fun w' => l0Q_nonneg sc u w') q w)
+    (Finset.sum_nonneg fun u' _ => qProjQ_nonneg (fun w' => l0Q_nonneg sc u' w') q w)
 
-/-! QUD manipulation: favored QUD gets P = 0.9, others get P = 0.05.
-    Default world prior (b_suc = 0.5) and default scope prior (uniform).
-    Paper: "we see an increase in utterance endorsement from the none?
-    (0.38) to how-many? (0.48) to all? (0.63) QUD." -/
+theorem l1ScoreQ_nonneg {wp : JumpOutcome → ℚ} {sp : ScopeReading → ℚ}
+    {qp : QUD → ℚ} (hwp : ∀ w, 0 ≤ wp w) (hsp : ∀ sc, 0 ≤ sp sc)
+    (hqp : ∀ q, 0 ≤ qp q) (u : Utt) (w : JumpOutcome) :
+    0 ≤ l1ScoreQ wp sp qp u w :=
+  mul_nonneg (hwp w) (Finset.sum_nonneg fun lat _ =>
+    mul_nonneg (mul_nonneg (hsp lat.scope) (hqp lat.qud))
+      (s1Q_nonneg lat.scope lat.qud w u))
 
-/-- None?-biased QUD: P(none?) ≈ 0.9, P(howMany?) = P(all?) ≈ 0.05.
-    Figure 2, center panel, leftmost bar (S2 ≈ 0.38). -/
-noncomputable abbrev noneBiasedCfg :=
-  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun q => match q with | .howMany => 1 | .all_ => 1 | .none_ => 18)
-    (fun q => by cases q <;> positivity)
+theorem l1Q_nonneg {wp : JumpOutcome → ℚ} {sp : ScopeReading → ℚ}
+    {qp : QUD → ℚ} (hwp : ∀ w, 0 ≤ wp w) (hsp : ∀ sc, 0 ≤ sp sc)
+    (hqp : ∀ q, 0 ≤ qp q) (u : Utt) (w : JumpOutcome) :
+    0 ≤ l1Q wp sp qp u w :=
+  div_nonneg (l1ScoreQ_nonneg hwp hsp hqp u w)
+    (Finset.sum_nonneg fun w' _ => l1ScoreQ_nonneg hwp hsp hqp u w')
 
-/-- How-many?-biased QUD: P(howMany?) ≈ 0.9, P(all?) = P(none?) ≈ 0.05.
-    Figure 2, center panel, middle bar (S2 ≈ 0.48). -/
-noncomputable abbrev howManyBiasedCfg :=
-  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun q => match q with | .howMany => 18 | .all_ => 1 | .none_ => 1)
-    (fun q => by cases q <;> positivity)
+end QModel
 
-/-- All?-biased QUD: P(all?) ≈ 0.9, P(howMany?) = P(none?) ≈ 0.05.
-    Figure 2, center panel, rightmost bar (S2 ≈ 0.63). -/
-noncomputable abbrev allBiasedCfg :=
-  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun q => match q with | .howMany => 1 | .all_ => 18 | .none_ => 1)
-    (fun q => by cases q <;> positivity)
+-- Prior configurations (ℚ; §3.2, Figure 2)
 
--- S2 Endorsement
+/-- Binomial(2, 0.1) ∝ (81, 18, 1). -/
+def lowWP : JumpOutcome → ℚ | .zero => 81 | .one => 18 | .two => 1
 
-/-! S2 endorsement uses the generic `RSAConfig.S2` from
-    `Pragmatics/RSA/Core/Config.lean`:
-    S2(u|w) = S2agent.policy(w, u) where S2agent.score(w, u) = cfg.L1(u, w)
-    (the **normalized** L1 posterior).
+/-- Binomial(2, 0.5) ∝ (1, 2, 1). -/
+def midWP : JumpOutcome → ℚ | .zero => 1 | .one => 2 | .two => 1
 
-    The `rsa_predict` tactic handles S2 cross-world goals via `policy_lt_cross`,
-    building compositional QInterval proofs for the cross-product comparison. -/
+/-- Binomial(2, 0.9) ∝ (1, 18, 81). -/
+def highWP : JumpOutcome → ℚ | .zero => 1 | .one => 18 | .two => 81
+
+/-- Uniform scope prior (P(inverse) = 0.5, the default). -/
+def uniSP : ScopeReading → ℚ := fun _ => 1
+
+/-- Surface-only scope prior (P(inverse) = 0). -/
+def surfSP : ScopeReading → ℚ | .surface => 1 | .inverse => 0
+
+/-- Uniform QUD prior. -/
+def uniQP : QUD → ℚ := fun _ => 1
+
+/-- Biased QUD prior: the favored QUD gets 0.9, others 0.05 (∝ 18:1:1). -/
+def biasQP (q₀ : QUD) : QUD → ℚ := fun q => if q = q₀ then 18 else 1
+
+private theorem lowWP_nonneg : ∀ w, 0 ≤ lowWP w := by intro w; cases w <;> norm_num [lowWP]
+private theorem midWP_nonneg : ∀ w, 0 ≤ midWP w := by intro w; cases w <;> norm_num [midWP]
+private theorem highWP_nonneg : ∀ w, 0 ≤ highWP w := by intro w; cases w <;> norm_num [highWP]
+private theorem uniSP_nonneg : ∀ sc, 0 ≤ uniSP sc := fun _ => by norm_num [uniSP]
+private theorem surfSP_nonneg : ∀ sc, 0 ≤ surfSP sc := by
+  intro sc; cases sc <;> norm_num [surfSP]
+private theorem uniQP_nonneg : ∀ q, 0 ≤ uniQP q := fun _ => by norm_num [uniQP]
+private theorem biasQP_nonneg (q₀ : QUD) : ∀ q, 0 ≤ biasQP q₀ q := fun q => by
+  unfold biasQP; split <;> norm_num
+
+-- PMF face
+
+open scoped ENNReal in
+/-- Pragmatic listener over worlds. -/
+noncomputable def l1PMF (wp : JumpOutcome → ℚ) (sp : ScopeReading → ℚ)
+    (qp : QUD → ℚ) (u : Utt) : PMF JumpOutcome :=
+  pmfOfScores (l1ScoreQ wp sp qp u)
+
+open scoped ENNReal in
+/-- Endorsement speaker S₂ (§3.1): renormalizes the L1 world posterior. -/
+noncomputable def s2PMF (wp : JumpOutcome → ℚ) (sp : ScopeReading → ℚ)
+    (qp : QUD → ℚ) (w : JumpOutcome) : PMF Utt :=
+  pmfOfScores (fun u => l1Q wp sp qp u w)
+
+-- S2 Endorsement (§3.1: score = the normalized L1 world posterior)
 
 -- L1-Level Theorems
 
 /-- Baseline L1: 0-jumped > 1-jumped. Both scopes agree w=0 is true;
     high prior weight (81 vs 18). -/
 theorem baseline_L1_w0_gt_w1 :
-    baselineCfg.L1 .everyNot .zero > baselineCfg.L1 .everyNot .one := by
-  rsa_predict
+    l1PMF lowWP uniSP uniQP .everyNot .one < l1PMF lowWP uniSP uniQP .everyNot .zero :=
+  pmf_lt_cross (l1ScoreQ_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg _) (l1ScoreQ_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- Baseline L1: 1-jumped > 2-jumped. Inverse scope makes w=1 true;
     moderate prior advantage (18 vs 1). -/
 theorem baseline_L1_w1_gt_w2 :
-    baselineCfg.L1 .everyNot .one > baselineCfg.L1 .everyNot .two := by
-  rsa_predict
+    l1PMF lowWP uniSP uniQP .everyNot .two < l1PMF lowWP uniSP uniQP .everyNot .one :=
+  pmf_lt_cross (l1ScoreQ_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg _) (l1ScoreQ_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- Scope ambiguity boosts partial-world endorsement.
     With both scopes active, L1(w=1) is higher than surface-only,
     because inverse scope directly makes w=1 true. -/
 theorem ambiguity_boosts_partial :
-    baselineCfg.L1 .everyNot .one > surfaceOnlyCfg.L1 .everyNot .one := by
-  rsa_predict
+    l1PMF lowWP surfSP uniQP .everyNot .one < l1PMF lowWP uniSP uniQP .everyNot .one :=
+  pmf_lt_cross (l1ScoreQ_nonneg lowWP_nonneg surfSP_nonneg uniQP_nonneg _) (l1ScoreQ_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 -- S2 Endorsement Theorems (paper's main claims)
 
@@ -689,43 +728,51 @@ theorem ambiguity_boosts_partial :
     "every horse didn't jump" when no horses jumped (none-scenario)
     than when one horse jumped (not-all scenario). -/
 theorem baseline_S2_w0_gt_w1 :
-    baselineCfg.S2 .zero .everyNot > baselineCfg.S2 .one .everyNot := by
-  rsa_predict
+    s2PMF lowWP uniSP uniQP .one .everyNot < s2PMF lowWP uniSP uniQP .zero .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg u _) (fun u => l1Q_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- Baseline S2: w1 > w2. Endorsement in the not-all scenario
     exceeds the all scenario. -/
 theorem baseline_S2_w1_gt_w2 :
-    baselineCfg.S2 .one .everyNot > baselineCfg.S2 .two .everyNot := by
-  rsa_predict
+    s2PMF lowWP uniSP uniQP .two .everyNot < s2PMF lowWP uniSP uniQP .one .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg u _) (fun u => l1Q_nonneg lowWP_nonneg uniSP_nonneg uniQP_nonneg u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- S2 ordering robust to high base rate (b_suc = 0.9).
     Even when L1 reverses (w1 > w2 > w0 at L1), S2 still orders w0 > w1. -/
 theorem highBase_S2_w0_gt_w1 :
-    highBaseCfg.S2 .zero .everyNot > highBaseCfg.S2 .one .everyNot := by
-  rsa_predict
+    s2PMF highWP uniSP uniQP .one .everyNot < s2PMF highWP uniSP uniQP .zero .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg uniQP_nonneg u _) (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg uniQP_nonneg u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- S2 ordering robust to high base rate: w1 > w2. -/
 theorem highBase_S2_w1_gt_w2 :
-    highBaseCfg.S2 .one .everyNot > highBaseCfg.S2 .two .everyNot := by
-  rsa_predict
+    s2PMF highWP uniSP uniQP .two .everyNot < s2PMF highWP uniSP uniQP .one .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg uniQP_nonneg u _) (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg uniQP_nonneg u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- S2 ordering robust to symmetric prior (b_suc = 0.5). -/
 theorem default_S2_w0_gt_w1 :
-    defaultCfg.S2 .zero .everyNot > defaultCfg.S2 .one .everyNot := by
-  rsa_predict
+    s2PMF midWP uniSP uniQP .one .everyNot < s2PMF midWP uniSP uniQP .zero .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg uniQP_nonneg u _) (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg uniQP_nonneg u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 theorem default_S2_w1_gt_w2 :
-    defaultCfg.S2 .one .everyNot > defaultCfg.S2 .two .everyNot := by
-  rsa_predict
+    s2PMF midWP uniSP uniQP .two .everyNot < s2PMF midWP uniSP uniQP .one .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg uniQP_nonneg u _) (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg uniQP_nonneg u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- S2 ordering robust under supportive context (b_suc = 0.9, all?-biased QUD). -/
 theorem supportive_S2_w0_gt_w1 :
-    supportiveCfg.S2 .zero .everyNot > supportiveCfg.S2 .one .everyNot := by
-  rsa_predict
+    s2PMF highWP uniSP (biasQP .all_) .one .everyNot < s2PMF highWP uniSP (biasQP .all_) .zero .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _) (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 theorem supportive_S2_w1_gt_w2 :
-    supportiveCfg.S2 .one .everyNot > supportiveCfg.S2 .two .everyNot := by
-  rsa_predict
+    s2PMF highWP uniSP (biasQP .all_) .two .everyNot < s2PMF highWP uniSP (biasQP .all_) .one .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _) (fun u => l1Q_nonneg highWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 -- QUD Manipulation Ordering (Figure 2, center panel)
 
@@ -734,22 +781,22 @@ theorem supportive_S2_w1_gt_w2 :
     "did none succeed?" QUD, because how-many? makes the ambiguous utterance
     more informative at w=1 (partial success). -/
 theorem qud_howMany_gt_none :
-    howManyBiasedCfg.S2 .one .everyNot > noneBiasedCfg.S2 .one .everyNot := by
-  rsa_predict
+    s2PMF midWP uniSP (biasQP .none_) .one .everyNot < s2PMF midWP uniSP (biasQP .howMany) .one .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _) (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- QUD manipulation: all?-biased > how-many?-biased (Figure 2, center panel).
     Favoring the "did all succeed?" QUD yields the highest endorsement because
     both scope interpretations fully resolve all? at w=1 (the answer is "no"
     under either reading). -/
 theorem qud_all_gt_howMany :
-    allBiasedCfg.S2 .one .everyNot > howManyBiasedCfg.S2 .one .everyNot := by
-  rsa_predict
+    s2PMF midWP uniSP (biasQP .howMany) .one .everyNot < s2PMF midWP uniSP (biasQP .all_) .one .everyNot :=
+  pmf_lt_cross (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _) (fun u => l1Q_nonneg midWP_nonneg uniSP_nonneg (biasQP_nonneg _) u _)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 end EveryNot
 
--- ============================================================================
--- Part III: Two-Not RSA Model (§4)
--- ============================================================================
+/-! ### Two-Not RSA Model (§4) -/
 
 namespace TwoNot
 
@@ -999,7 +1046,7 @@ theorem exact_two_not_scope_independent :
     Semantics.Scope.classifyScopeEntailment
       [JumpOutcome4.w0, .w1, .w2, .w3, .w4]
       (twoNotTruth .exact .surface) (twoNotTruth .exact .inverse)
-    = .independent := by native_decide
+    = .independent := by decide
 
 /-- At-least two-not has NESTED readings: inverse (true at {w0,w1}) entails
     surface (true at {w0,w1,w2}). Like universals, at-least numerals are
@@ -1008,7 +1055,7 @@ theorem atLeast_two_not_scope_nested :
     Semantics.Scope.classifyScopeEntailment
       [JumpOutcome4.w0, .w1, .w2, .w3, .w4]
       (twoNotTruth .atLeast .surface) (twoNotTruth .atLeast .inverse)
-    = .inverseEntailsSurface := by native_decide
+    = .inverseEntailsSurface := by decide
 
 -- QUD Projection
 
@@ -1052,59 +1099,125 @@ theorem qudProject_nonneg {q : QUD5} {f : JumpOutcome4 → ℝ} {w : JumpOutcome
   cases q <;> cases w <;> simp only [qudProject] <;>
     linarith [hf .w0, hf .w1, hf .w2, hf .w3, hf .w4]
 
--- RSAConfig
+-- Exact-ℚ model
 
-/-- Two-not RSA model, parameterized by numeral reading and priors.
-    Same architecture as the every-not model: S1 uses QUD-projected rpow
-    with α = 1, L0 does not incorporate the world prior. -/
-noncomputable def cfg
-    (nr : NumeralReading)
-    (worldPr : JumpOutcome4 → ℝ) (hwp : ∀ w, 0 ≤ worldPr w)
-    (scopePr : ScopeReading → ℝ) (hsp : ∀ s, 0 ≤ scopePr s)
-    (qudPr : QUD5 → ℝ) (hqp : ∀ q, 0 ≤ qudPr q) :
-    RSA.RSAConfig Utt JumpOutcome4 where
-  Latent := Latent10
-  meaning _ lat u w := if uttMeaning nr lat.scope u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α lat w u := rpow (qudProject lat.qud (l0 u) w) α
-  s1Score_nonneg _ _ _ _ u hl _ :=
-    rpow_nonneg (qudProject_nonneg (fun w => hl u w)) _
-  α := 1
-  α_pos := one_pos
-  worldPrior := worldPr
-  worldPrior_nonneg := hwp
-  latentPrior _w lat := scopePr lat.scope * qudPr lat.qud
-  latentPrior_nonneg _w lat := mul_nonneg (hsp lat.scope) (hqp lat.qud)
+section QModel
 
--- Configurations
+/-- Literal listener (fn. 6: no world prior in L0). -/
+def l0Q (nr : NumeralReading) (sc : ScopeReading) (u : Utt) (w : JumpOutcome4) : ℚ :=
+  (if uttMeaning nr sc u w then 1 else 0) /
+    (∑ w', if uttMeaning nr sc u w' then (1 : ℚ) else 0)
 
-/-! World priors follow Binomial(4, b_suc), unnormalized.
+/-- QUD projection (paper (7)); mirrors `qudProject`. -/
+def qProjQ (q : QUD5) (f : JumpOutcome4 → ℚ) : JumpOutcome4 → ℚ
+  | .w0 => match q with
+    | .howMany => f .w0
+    | .all_ => f .w0 + f .w1 + f .w2 + f .w3
+    | .none_ => f .w0
+    | .twoExact => f .w0 + f .w1 + f .w3 + f .w4
+    | .twoAtLeast => f .w0 + f .w1
+  | .w1 => match q with
+    | .howMany => f .w1
+    | .all_ => f .w0 + f .w1 + f .w2 + f .w3
+    | .none_ => f .w1 + f .w2 + f .w3 + f .w4
+    | .twoExact => f .w0 + f .w1 + f .w3 + f .w4
+    | .twoAtLeast => f .w0 + f .w1
+  | .w2 => match q with
+    | .howMany => f .w2
+    | .all_ => f .w0 + f .w1 + f .w2 + f .w3
+    | .none_ => f .w1 + f .w2 + f .w3 + f .w4
+    | .twoExact => f .w2
+    | .twoAtLeast => f .w2 + f .w3 + f .w4
+  | .w3 => match q with
+    | .howMany => f .w3
+    | .all_ => f .w0 + f .w1 + f .w2 + f .w3
+    | .none_ => f .w1 + f .w2 + f .w3 + f .w4
+    | .twoExact => f .w0 + f .w1 + f .w3 + f .w4
+    | .twoAtLeast => f .w2 + f .w3 + f .w4
+  | .w4 => match q with
+    | .howMany => f .w4
+    | .all_ => f .w4
+    | .none_ => f .w1 + f .w2 + f .w3 + f .w4
+    | .twoExact => f .w0 + f .w1 + f .w3 + f .w4
+    | .twoAtLeast => f .w2 + f .w3 + f .w4
 
-    The paper's central 2-of-4 predictions (Figure 7) use b_suc = 0.1
-    with low P(inverse) = 0.1 (surface scope bias), matching the baseline
-    parameters from the every-not model that produce low 1-of-2 endorsement.
+/-- Speaker (α = 1). -/
+def s1Q (nr : NumeralReading) (sc : ScopeReading) (q : QUD5) (w : JumpOutcome4)
+    (u : Utt) : ℚ :=
+  qProjQ q (fun w' => l0Q nr sc u w') w /
+    ∑ u', qProjQ q (fun w' => l0Q nr sc u' w') w
 
-    Binomial(4, 0.1) ∝ C(4,k) · 1^k · 9^(4-k) = (6561, 2916, 486, 36, 1). -/
+/-- Joint pragmatic listener world score. -/
+def l1ScoreQ (nr : NumeralReading) (wp : JumpOutcome4 → ℚ)
+    (sp : ScopeReading → ℚ) (qp : QUD5 → ℚ) (u : Utt) (w : JumpOutcome4) : ℚ :=
+  wp w * ∑ lat : Latent10, sp lat.scope * qp lat.qud * s1Q nr lat.scope lat.qud w u
 
-/-- Baseline exact config: b_suc = 0.1, P(inv) = 0.1 (surface scope bias).
-    Matches Figure 7 right panel, red bar (S2 ≈ 0.8). -/
-noncomputable abbrev exactBaselineCfg :=
-  cfg .exact
-    (fun w => match w with | .w0 => 6561 | .w1 => 2916 | .w2 => 486 | .w3 => 36 | .w4 => 1)
-    (fun w => by cases w <;> positivity)
-    (fun s => match s with | .surface => 9 | .inverse => 1)
-    (fun s => by cases s <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
+/-- Normalized world posterior. -/
+def l1Q (nr : NumeralReading) (wp : JumpOutcome4 → ℚ) (sp : ScopeReading → ℚ)
+    (qp : QUD5 → ℚ) (u : Utt) (w : JumpOutcome4) : ℚ :=
+  l1ScoreQ nr wp sp qp u w / ∑ w', l1ScoreQ nr wp sp qp u w'
 
-/-- Baseline at-least config: same parameters, at-least numeral semantics.
-    Matches Figure 7 left panel, red bar (S2 ≈ 0.1). -/
-noncomputable abbrev atleastBaselineCfg :=
-  cfg .atLeast
-    (fun w => match w with | .w0 => 6561 | .w1 => 2916 | .w2 => 486 | .w3 => 36 | .w4 => 1)
-    (fun w => by cases w <;> positivity)
-    (fun s => match s with | .surface => 9 | .inverse => 1)
-    (fun s => by cases s <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
+private theorem l0Q_nonneg (nr : NumeralReading) (sc : ScopeReading) (u : Utt)
+    (w : JumpOutcome4) : 0 ≤ l0Q nr sc u w :=
+  div_nonneg (by split <;> norm_num)
+    (Finset.sum_nonneg fun _ _ => by split <;> norm_num)
+
+private theorem qProjQ_nonneg {f : JumpOutcome4 → ℚ} (hf : ∀ w, 0 ≤ f w)
+    (q : QUD5) (w : JumpOutcome4) : 0 ≤ qProjQ q f w := by
+  cases w <;> cases q <;> simp only [qProjQ] <;>
+    linarith [hf .w0, hf .w1, hf .w2, hf .w3, hf .w4]
+
+private theorem s1Q_nonneg (nr : NumeralReading) (sc : ScopeReading) (q : QUD5)
+    (w : JumpOutcome4) (u : Utt) : 0 ≤ s1Q nr sc q w u :=
+  div_nonneg (qProjQ_nonneg (fun w' => l0Q_nonneg nr sc u w') q w)
+    (Finset.sum_nonneg fun u' _ =>
+      qProjQ_nonneg (fun w' => l0Q_nonneg nr sc u' w') q w)
+
+theorem l1ScoreQ_nonneg {wp : JumpOutcome4 → ℚ} {sp : ScopeReading → ℚ}
+    {qp : QUD5 → ℚ} (nr : NumeralReading) (hwp : ∀ w, 0 ≤ wp w)
+    (hsp : ∀ sc, 0 ≤ sp sc) (hqp : ∀ q, 0 ≤ qp q) (u : Utt) (w : JumpOutcome4) :
+    0 ≤ l1ScoreQ nr wp sp qp u w :=
+  mul_nonneg (hwp w) (Finset.sum_nonneg fun lat _ =>
+    mul_nonneg (mul_nonneg (hsp lat.scope) (hqp lat.qud))
+      (s1Q_nonneg nr lat.scope lat.qud w u))
+
+theorem l1Q_nonneg {wp : JumpOutcome4 → ℚ} {sp : ScopeReading → ℚ}
+    {qp : QUD5 → ℚ} (nr : NumeralReading) (hwp : ∀ w, 0 ≤ wp w)
+    (hsp : ∀ sc, 0 ≤ sp sc) (hqp : ∀ q, 0 ≤ qp q) (u : Utt) (w : JumpOutcome4) :
+    0 ≤ l1Q nr wp sp qp u w :=
+  div_nonneg (l1ScoreQ_nonneg nr hwp hsp hqp u w)
+    (Finset.sum_nonneg fun w' _ => l1ScoreQ_nonneg nr hwp hsp hqp u w')
+
+end QModel
+
+-- Prior configuration (ℚ; §4.2, Figure 7)
+
+/-- Binomial(4, 0.1) ∝ (6561, 2916, 486, 36, 1). -/
+def lowWP4 : JumpOutcome4 → ℚ
+  | .w0 => 6561 | .w1 => 2916 | .w2 => 486 | .w3 => 36 | .w4 => 1
+
+/-- Surface-biased scope prior: P(inverse) = 0.1 (∝ 9:1). -/
+def biasSP : ScopeReading → ℚ | .surface => 9 | .inverse => 1
+
+/-- Uniform QUD prior. -/
+def uniQP5 : QUD5 → ℚ := fun _ => 1
+
+private theorem lowWP4_nonneg : ∀ w, 0 ≤ lowWP4 w := by
+  intro w; cases w <;> norm_num [lowWP4]
+private theorem biasSP_nonneg : ∀ sc, 0 ≤ biasSP sc := by
+  intro sc; cases sc <;> norm_num [biasSP]
+private theorem uniQP5_nonneg : ∀ q, 0 ≤ uniQP5 q := fun _ => by norm_num [uniQP5]
+
+-- PMF face
+
+open scoped ENNReal in
+/-- Endorsement speaker S₂ over the two-not listener. -/
+noncomputable def s2PMF (nr : NumeralReading) (w : JumpOutcome4) : PMF Utt :=
+  pmfOfScores (fun u => l1Q nr lowWP4 biasSP uniQP5 u w)
+
+private theorem s2hf (nr : NumeralReading) (w : JumpOutcome4) :
+    ∀ u, 0 ≤ l1Q nr lowWP4 biasSP uniQP5 u w :=
+  fun u => l1Q_nonneg nr lowWP4_nonneg biasSP_nonneg uniQP5_nonneg u w
 
 -- Key Predictions (§4.2)
 
@@ -1122,34 +1235,44 @@ noncomputable abbrev atleastBaselineCfg :=
     2-of-4 context, but ONLY under exact numeral semantics. This is the
     paper's key argument for exact semantics as the basic numeral meaning.
 
-    The `rsa_predict` tactic handles the S2 computation via reflection,
-    building L0→S1→L1→S2 layers and comparing exact rational bounds. -/
+    Every prediction is a kernel-verified comparison of the exact-ℚ
+    endorsement values. -/
 
-set_option maxHeartbeats 1600000 in
+open scoped ENNReal in
 /-- Under exact semantics with baseline parameters (b_suc=0.1, P(inv)=0.1),
-    S2 endorsement of "two horses didn't jump" at w=2 exceeds 1/2.
-    Surface scope pinpoints w=2 as the unique true world, giving maximum
-    informativity (Figure 7 right, red bar ≈ 0.8). -/
+    S2 endorsement of "two horses didn't jump" at w=2 exceeds 1/2: surface
+    scope pinpoints w=2 as the unique true world (Figure 7 right, ≈ 0.8). -/
 theorem exact_baseline_endorsement_high :
-    exactBaselineCfg.S2 .w2 .twoNot > (1 : ℝ) / 2 := by
-  rsa_predict
+    ENNReal.ofReal (1/2) < s2PMF .exact .w2 .twoNot := by
+  rw [s2PMF, pmfOfScores_apply (s2hf .exact .w2) (by decide +kernel)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by exact_mod_cast
+      (by decide +kernel : (0:ℚ) <
+        l1Q .exact lowWP4 biasSP uniQP5 .twoNot .w2 /
+          ∑ u', l1Q .exact lowWP4 biasSP uniQP5 u' .w2))).mpr ?_
+  rw [show (1/2 : ℝ) = ((1/2 : ℚ) : ℝ) from by norm_num]
+  exact Rat.cast_lt.mpr (by decide +kernel : (1/2 : ℚ) <
+    l1Q .exact lowWP4 biasSP uniQP5 .twoNot .w2 /
+      ∑ u', l1Q .exact lowWP4 biasSP uniQP5 u' .w2)
 
-set_option maxHeartbeats 1600000 in
-/-- Under at-least semantics with baseline parameters, S2 endorsement
-    at w=2 is below 1/2 (Figure 7 left, red bar ≈ 0.1).
-    Surface scope is true at {w0,w1,w2}, diluting informativity. -/
+open scoped ENNReal in
+/-- Under at-least semantics with the same parameters, S2 endorsement at
+    w=2 is below 1/2: surface scope spreads over {w0,w1,w2} (Figure 7 left,
+    ≈ 0.4). -/
 theorem atleast_baseline_endorsement_low :
-    (1 : ℝ) / 2 > atleastBaselineCfg.S2 .w2 .twoNot := by
-  rsa_predict
+    s2PMF .atLeast .w2 .twoNot < ENNReal.ofReal (1/2) := by
+  rw [s2PMF, pmfOfScores_apply (s2hf .atLeast .w2) (by decide +kernel)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr ?_
+  rw [show (1/2 : ℝ) = ((1/2 : ℚ) : ℝ) from by norm_num]
+  exact Rat.cast_lt.mpr (by decide +kernel :
+    l1Q .atLeast lowWP4 biasSP uniQP5 .twoNot .w2 /
+      ∑ u', l1Q .atLeast lowWP4 biasSP uniQP5 u' .w2 < (1/2 : ℚ))
 
-set_option maxHeartbeats 3200000 in
-/-- Under at-least semantics with baseline parameters, S2 endorsement
-    at w=2 is lower than under exact semantics.
-    Exact surface has 1 true world; at-least surface has 3.
-    (Figure 7: right panel > left panel at matching P(inv).) -/
+/-- At-least endorsement at w=2 is lower than exact endorsement: exact
+    surface has 1 true world, at-least surface has 3 (Figure 7). -/
 theorem exact_vs_atleast_endorsement :
-    exactBaselineCfg.S2 .w2 .twoNot > atleastBaselineCfg.S2 .w2 .twoNot := by
-  rsa_predict
+    s2PMF .atLeast .w2 .twoNot < s2PMF .exact .w2 .twoNot :=
+  pmf_lt_cross (s2hf .atLeast .w2) (s2hf .exact .w2)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 -- Informativity Contrasts
 
@@ -1158,11 +1281,11 @@ theorem exact_vs_atleast_endorsement :
     This drives the endorsement difference via S1 informativity. -/
 theorem exact_surface_singleton :
     (List.filter (uttMeaning .exact .surface .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 1 := by
-  native_decide
+  decide
 
 theorem atLeast_surface_triple :
     (List.filter (uttMeaning .atLeast .surface .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 3 := by
-  native_decide
+  decide
 
 /-- Exact inverse has 4 true worlds (w0,w1,w3,w4) — very uninformative.
     Since w2 is the only world where surface scope is true, inverse scope
@@ -1170,19 +1293,17 @@ theorem atLeast_surface_triple :
     scope dominates the S2 prediction under exact semantics. -/
 theorem exact_inverse_quad :
     (List.filter (uttMeaning .exact .inverse .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 4 := by
-  native_decide
+  decide
 
 /-- At-least inverse has 2 true worlds (w0,w1) — more informative than
     exact inverse's 4, but still less informative than exact surface's 1. -/
 theorem atLeast_inverse_double :
     (List.filter (uttMeaning .atLeast .inverse .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 2 := by
-  native_decide
+  decide
 
 end TwoNot
 
--- ============================================================================
--- Cross-Model Narrative (§4.2.2)
--- ============================================================================
+/-! ### Cross-Model Narrative (§4.2.2) -/
 
 /-! The paper's key argument: the SAME "baseline" parameters that produce
     low 1-of-2 endorsement also produce high 2-of-4 endorsement — but only
@@ -1196,16 +1317,27 @@ end TwoNot
     - Two-not exact baseline: S2(twoNot|w=2) > 1/2 (high)
     - Two-not at-least baseline: S2(twoNot|w=2) < 1/2 (low)
 
-    The first two use "baseline" parameters (b_suc=0.1, P(inv)=0.1).
+    Both baselines use b_suc = 0.1 (the two-not one adds P(inv) = 0.1).
     The asymmetry between the second and third is the argument for exact
     semantics: changing only the numeral reading flips the prediction. -/
 
+open scoped ENNReal in
 /-- Every-not baseline endorsement at w=1 is below 1/2.
     This is the low-endorsement end of the 1-of-2 vs 2-of-4 asymmetry.
-    Uses the same b_suc=0.1 parameter that the TwoNot baseline uses. -/
+    Uses the same b_suc=0.1 world prior that the TwoNot baseline uses. -/
 theorem everyNot_baseline_endorsement_low :
-    (1 : ℝ) / 2 > EveryNot.baselineCfg.S2 .one .everyNot := by
-  rsa_predict
+    EveryNot.s2PMF EveryNot.lowWP EveryNot.uniSP EveryNot.uniQP .one .everyNot <
+      ENNReal.ofReal (1/2) := by
+  rw [EveryNot.s2PMF, pmfOfScores_apply
+      (fun u => EveryNot.l1Q_nonneg EveryNot.lowWP_nonneg EveryNot.uniSP_nonneg
+        EveryNot.uniQP_nonneg u _)
+      (by decide +kernel)]
+  refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr ?_
+  rw [show (1/2 : ℝ) = ((1/2 : ℚ) : ℝ) from by norm_num]
+  exact Rat.cast_lt.mpr (by decide +kernel :
+    EveryNot.l1Q EveryNot.lowWP EveryNot.uniSP EveryNot.uniQP .everyNot .one /
+      ∑ u', EveryNot.l1Q EveryNot.lowWP EveryNot.uniSP EveryNot.uniQP u' .one
+      < (1/2 : ℚ))
 
 /-! **Cross-model summary** (proved above):
     - `everyNot_baseline_endorsement_low`: S2(everyNot|w=1) < 1/2
