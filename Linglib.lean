@@ -2925,13 +2925,6 @@ import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
 import Linglib.Tactics.ENNRealArith
 import Linglib.Tactics.NonnegOfForall
-import Linglib.Tactics.RSAPredict
-import Linglib.Tactics.RSAPredict.Backend.Bounds
-import Linglib.Tactics.RSAPredict.Backend.Reflection
-import Linglib.Tactics.RSAPredict.Helpers
-import Linglib.Tactics.RSAPredict.RSABuilder
-import Linglib.Tactics.RSAPredict.ReflectBridge
-import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Data.Examples.Guerrini2026
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.LiuRotter2025
