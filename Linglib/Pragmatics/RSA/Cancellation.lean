@@ -109,28 +109,15 @@ If the noisy observation kernel is a post-processing of the informative kernel
 through a noise channel (`κ_n s = (κ_i s).bind noise`), then the mutual
 information between state and observation decreases.
 
-Reduces to `PMF.klDiv_bind_le` applied per-state. The state component never
-enters the noise kernel, so the technical support precondition on `klDiv_bind_le`
-applies cleanly to `noise : Obs → PMF Obs`.
-
-The hypothesis `h_ac` is per-state absolute continuity of `κ_i s` w.r.t.
-`obsMarginal prior κ_i`; `h_marg_pos` ensures the obs marginal has full support;
-`h_noise_pos` ensures noise has full support compatible with the marginals (the
-standard DPI support precondition).
+Reduces to `PMF.klDiv_bind_le` applied per-state; the hypothesis `h_ac` is
+per-state absolute continuity of `κ_i s` w.r.t. `obsMarginal prior κ_i`.
 
 This is the structural information-theoretic content of "less informative
 observation kernel → less information about state in the observation". -/
 theorem mutualInfoStateObs_bind_noise_le
     (prior : PMF W) (κ_i : W → PMF Obs) (noise : Obs → PMF Obs)
     (h_ac : ∀ s, MeasureTheory.Measure.AbsolutelyContinuous
-              (κ_i s).toMeasure (obsMarginal prior κ_i).toMeasure)
-    (h_bind_ac : ∀ s, MeasureTheory.Measure.AbsolutelyContinuous
-              ((κ_i s).bind noise).toMeasure
-              ((obsMarginal prior κ_i).bind noise).toMeasure)
-    (h_marg_pos : ∀ o, obsMarginal prior κ_i o ≠ 0)
-    (h_noise_pos : ∀ o o', obsMarginal prior κ_i o ≠ 0 →
-                   ((obsMarginal prior κ_i).bind noise) o' ≠ 0 →
-                   noise o o' ≠ 0) :
+              (κ_i s).toMeasure (obsMarginal prior κ_i).toMeasure) :
     mutualInfoStateObs prior (fun s => (κ_i s).bind noise)
       ≤ mutualInfoStateObs prior κ_i := by
   unfold mutualInfoStateObs
@@ -139,8 +126,7 @@ theorem mutualInfoStateObs_bind_noise_le
   -- For each state s: the noisy term `KL((κ_i s).bind noise ‖ marg.bind noise)`
   -- is ≤ informative term `KL(κ_i s ‖ marg)` by `klDiv_bind_le`.
   -- Need: prior(s) · KL_n ≤ prior(s) · KL_i (left-mult preserves ≤ in ℝ≥0∞)
-  have h_kl := klDiv_bind_le (κ_i s) (obsMarginal prior κ_i) noise
-    (h_ac s) (h_bind_ac s) h_marg_pos h_noise_pos
+  have h_kl := klDiv_bind_le (κ_i s) (obsMarginal prior κ_i) noise (h_ac s)
   -- mul_le_mul_left needs left arg as `(a : ℝ≥0∞)`, returns `b ≤ c → a * b ≤ a * c`
   exact mul_le_mul' (le_refl _) h_kl
 

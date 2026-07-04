@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Probability.DataProcessing
 import Linglib.Processing.Memory.LossyContext
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -47,6 +48,8 @@ relative-clause rate `f` is low, as for English `f ≈ 0.2` but not German
   `0 ≤ pmi` and decreasing when `pmi ≤ 0`.
 * `erasure_zero`, `erasure_one` — the brackets: no erasure recovers plain
   surprisal (§3.5.1); certain erasure recovers the prior (§3.4.2).
+* `mutualInformation_memory_le` — §3.2: the data processing inequality as the
+  constraint on all admissible noise distributions.
 -/
 
 namespace FutrellGibsonLevy2020
@@ -175,5 +178,19 @@ theorem erasure_one (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
     (erasure L 1 le_rfl).expectedSurprisal [y] w = L.surprisal [] w := by
   rw [expectedSurprisal_erasure L le_rfl h0 hy]
   simp
+
+/-- §3.2's constraint on noise distributions, as the mutual-information form
+    of the data processing inequality: a memory representation generated from
+    the context (Claim 3) carries no more information about the next word than
+    the context itself, whatever the noise distribution. -/
+theorem mutualInformation_memory_le {W C M : Type*}
+    [Fintype W] [Fintype C] [Fintype M]
+    [MeasurableSpace W] [MeasurableSpace C] [MeasurableSpace M]
+    [MeasurableSingletonClass W] [MeasurableSingletonClass C]
+    [MeasurableSingletonClass M] [DecidableEq W] [DecidableEq C]
+    (joint : PMF (W × C)) (mem : C → PMF M) :
+    PMF.mutualInformation (joint.bind fun x => (mem x.2).map (Prod.mk x.1))
+      ≤ PMF.mutualInformation joint :=
+  PMF.mutualInformation_bind_snd_le joint mem
 
 end FutrellGibsonLevy2020
