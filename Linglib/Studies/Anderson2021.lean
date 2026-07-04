@@ -1,5 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Core.Probability.Choice.Learning
 import Linglib.Discourse.CommonGround
 import Linglib.Core.Probability.Constructions
@@ -591,6 +593,95 @@ noncomputable def mfRSA : RSAConfig MFUtterance MFWorld where
   latentPrior_nonneg _ _ := by norm_num
 
 -- ════════════════════════════════════════════════════
+-- § 8b. PMF chain (CG-parameterized; local pending the RSA API pass)
+-- ════════════════════════════════════════════════════
+
+section PMFChain
+
+open scoped ENNReal
+
+/-- Every utterance is satisfiable (each has two true worlds; `null` four). -/
+private theorem mfMeaning_sat : ∀ u : MFUtterance, ∃ w, mfMeaning u w = true := by
+  decide
+
+private theorem cgL0_pos (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0) (u : MFUtterance) :
+    (∑' w, cg w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0)) ≠ 0 := by
+  obtain ⟨w, hw⟩ := mfMeaning_sat u
+  exact ENNReal.summable.tsum_ne_zero_iff.mpr
+    ⟨w, by rw [hw]; simpa using hcg w⟩
+
+/-- CG-weighted literal listener ([anderson-2021] Figure 4: `L0 ∝ ⟦u⟧·CG`). -/
+private noncomputable def cgL0 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (u : MFUtterance) : PMF MFWorld :=
+  RSA.L0LassiterGoodman cg mfMeaning u (cgL0_pos cg hcg u)
+
+private theorem cgL0_null (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0) (w : MFWorld) :
+    cgL0 cg hcg .null w = cg w := by
+  unfold cgL0
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+
+/-- Pragmatic speaker ([anderson-2021] Figure 4: `S1 ∝ LitList`; fn. 3: the
+softmax terms are omitted and probabilities renormalized, i.e. `α = 1` and
+no cost — the speaker weight IS the literal-listener value). -/
+private noncomputable def cgS1 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (w : MFWorld) : PMF MFUtterance :=
+  RSA.S1Belief (cgL0 cg hcg) (fun _ => 1) 1 w
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, by
+      rw [cgL0_null cg hcg w]
+      exact mul_ne_zero
+        ((ENNReal.rpow_pos (pos_iff_ne_zero.mpr (hcg w)) (PMF.apply_ne_top _ _)).ne')
+        one_ne_zero⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun u =>
+      ENNReal.mul_ne_top
+        (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
+        ENNReal.one_ne_top)
+
+private theorem cgS1_marginal_pos (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (u : MFUtterance) : PMF.marginal (cgS1 cg hcg) cg u ≠ 0 := by
+  obtain ⟨w, hw⟩ := mfMeaning_sat u
+  refine PMF.marginal_ne_zero _ _ _ (hcg w) ?_
+  have hL0 : cgL0 cg hcg u w ≠ 0 := by
+    unfold cgL0
+    rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+    exact ⟨hcg w, hw⟩
+  unfold cgS1
+  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 one_ne_zero
+
+/-- Pragmatic listener ([anderson-2021] Figure 4: `L1 ∝ PragSpeak·CG`). -/
+private noncomputable def cgL1 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (u : MFUtterance) : PMF MFWorld :=
+  PMF.posterior (cgS1 cg hcg) cg u (cgS1_marginal_pos cg hcg u)
+
+/-- Endorsement speaker: `S2(u|w) ∝ L1(w|u)` (uniform utterance prior),
+matching `RSAConfig.S2agent`'s Bayes inversion of L1 over utterances. -/
+private noncomputable def cgS2 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
+    (w : MFWorld) : PMF MFUtterance :=
+  PMF.normalize (fun u => cgL1 cg hcg u w)
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, by
+      unfold cgL1
+      rw [← PMF.mem_support_iff, PMF.mem_support_posterior_iff]
+      refine ⟨hcg w, ?_⟩
+      unfold cgS1
+      exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _
+        (by rw [cgL0_null cg hcg w]; exact hcg w) one_ne_zero⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun _ => PMF.apply_ne_top _ _)
+
+/-- Turn-1 Common Ground: uniform ([anderson-2021] Figure 2:
+`CG = Uniform(worlds)`). -/
+private noncomputable def cgUniform : PMF MFWorld := PMF.uniformOfFintype MFWorld
+
+private theorem cgUniform_pos (w : MFWorld) : cgUniform w ≠ 0 := by
+  rw [cgUniform, PMF.uniformOfFintype_apply]
+  simp
+
+/-- Turn-1 chain. -/
+noncomputable def s1Turn1 : MFWorld → PMF MFUtterance := cgS1 cgUniform cgUniform_pos
+noncomputable def l1Turn1 : MFUtterance → PMF MFWorld := cgL1 cgUniform cgUniform_pos
+noncomputable def s2Turn1 : MFWorld → PMF MFUtterance := cgS2 cgUniform cgUniform_pos
+
+end PMFChain
+
+-- ════════════════════════════════════════════════════
 -- § 9. Turn 1: S1 Predictions
 -- ════════════════════════════════════════════════════
 
@@ -700,6 +791,32 @@ def cgTurn2 : MFWorld → ℝ
 
 theorem cgTurn2_nonneg : ∀ w, 0 ≤ cgTurn2 w := by
   intro w; cases w <;> norm_num [cgTurn2]
+
+section PMFChain
+
+open scoped ENNReal
+
+/-- Turn-2 Common Ground as a PMF: the normalised `[2,2,3,3]` weights
+(= `0.8·uniform + 0.2·L1(studyHumanity)`, [anderson-2021] fn. 9's lr = 0.2). -/
+private noncomputable def cgTurn2PMF : PMF MFWorld :=
+  PMF.normalize (fun w => ENNReal.ofReal (cgTurn2 w))
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.ina, by
+      rw [ENNReal.ofReal_ne_zero_iff]
+      norm_num [cgTurn2]⟩)
+    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
+
+private theorem cgTurn2PMF_pos (w : MFWorld) : cgTurn2PMF w ≠ 0 := by
+  rw [cgTurn2PMF, PMF.normalize_apply]
+  refine mul_ne_zero ?_ (ENNReal.inv_ne_zero.mpr
+    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top))
+  rw [ENNReal.ofReal_ne_zero_iff]
+  cases w <;> norm_num [cgTurn2]
+
+/-- Turn-2 chain. -/
+noncomputable def s1Turn2 : MFWorld → PMF MFUtterance := cgS1 cgTurn2PMF cgTurn2PMF_pos
+noncomputable def l1Turn2 : MFUtterance → PMF MFWorld := cgL1 cgTurn2PMF cgTurn2PMF_pos
+
+end PMFChain
 
 /-- RSA model after hearing "studyHumanity" at turn 1.
 
