@@ -37,7 +37,7 @@ not bare entities. The two scope readings are the shared GQ-level operators
 denotations `every_sem`/`some_sem`, and the ambiguous string is a
 `Semantics.Scope.ScopeDerivation`. This makes PTQ's quantifying-in directly
 comparable to the QR (`HeimKratzer1998`), Glue (`Asudeh2022`), and RSA
-(`ScontrasPearl2021Quantification`) treatments of the same ambiguity, which
+(`ScontrasPearl2021`) treatments of the same ambiguity, which
 target the same substrate.
 
 PTQ's distinctive intensional payload — individual concepts doing semantic work
@@ -187,7 +187,7 @@ theorem every_some_inverse_entails_surface {α : Type*} (A B : α → Prop)
 /-- "Every student sees a person" as a single syntactic form carrying both
     scope-indexed meanings, in the shared `ScopeDerivation` representation —
     the same type targeted by `HeimKratzer1998` (QR), `Asudeh2022` (Glue), and
-    `ScontrasPearl2021Quantification` (RSA). -/
+    `ScontrasPearl2021` (RSA). -/
 def everyStudentSeesAPerson : ScopeDerivation ToyEntity Unit .t where
   surface := "every student sees a person"
   meaningAt
@@ -220,7 +220,7 @@ theorem inverseTruth_iff :
   decide_eq_true_iff
 
 /-- In the shared `ScopeEntailment` vocabulary (cf.
-    `ScontrasPearl2021Quantification.every_not_scope_entailment`, which gets
+    `ScontrasPearl2021.every_not_scope_entailment`, which gets
     `surfaceEntailsInverse` for "every…not"), the `every`/`some` pair
     classifies as `inverseEntailsSurface`: inverse ⊨ surface (held across the
     checked world), surface ⊭ inverse (the toy world makes surface true and
