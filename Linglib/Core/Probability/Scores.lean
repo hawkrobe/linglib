@@ -151,6 +151,16 @@ Studies define each agent of a model tower as one `normalizeScores`
 application over the agents below it. -/
 def normalizeScores (f : σ → ℚ≥0) (x : σ) : ℚ≥0 := f x / ∑ y, f y
 
+/-- Normalization is scale-invariant: a common nonzero factor cancels.
+The reason RSA chains may drop constant factors mid-tower. -/
+theorem normalizeScores_mul_left {c : ℚ≥0} (hc : c ≠ 0) (f : σ → ℚ≥0) :
+    normalizeScores (fun x => c * f x) = normalizeScores f := by
+  funext x
+  simp only [normalizeScores, ← Finset.mul_sum]
+  rcases eq_or_ne (∑ y, f y) 0 with h | h
+  · simp [h]
+  · rw [mul_div_mul_left _ _ hc]
+
 /-- The normalized score function both faces read: `f` normalized when it
 has mass, else the fallback normalized.
 

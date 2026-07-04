@@ -35,19 +35,11 @@ models), call `PMF.ofRealWeightFn` from `Core.Probability.Constructions`
 directly:
 
 ```
-PMF.ofRealWeightFn q hq i₀ hq_pos_i₀
+PMF.ofRealWeightFn q hq htot
 ```
 
-where `i₀ : Fin m` is some index with `hq_pos_i₀ : 0 < q i₀`. From a
-positive-total hypothesis `htot : 0 < q.totalMass` together with `hq`
-nonneg, extract a witness via the standard contrapositive:
-```
-have ⟨i₀, hq_pos_i₀⟩ : ∃ i, 0 < q i := by
-  by_contra h_no
-  push_neg at h_no
-  have : ∑ i, q i = 0 := Finset.sum_eq_zero (fun i _ => le_antisymm (h_no i) (hq i))
-  exact absurd this (ne_of_gt htot)
-```
+where `htot : 0 < ∑ i, q i` is the positive-total hypothesis
+(`q.totalMass` unfolded).
 
 There is no project-side `toEmpiricalPMF` wrapper — the inline
 `PMF.ofRealWeightFn` call is the canonical entry point. (An earlier

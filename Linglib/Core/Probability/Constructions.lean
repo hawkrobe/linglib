@@ -1,7 +1,10 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.Distributions.Uniform
 import Mathlib.Probability.ConditionalProbability
 import Mathlib.Data.ENNReal.Operations
 import Mathlib.Data.ENNReal.Inv
+
+open scoped NNReal
 
 /-!
 # PMF constructors and ℝ-coercion utilities beyond mathlib's basic surface
@@ -79,6 +82,11 @@ theorem toRealFn_le_one (p : PMF α) (a : α) : p.toRealFn a ≤ 1 := by
   unfold toRealFn
   exact ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using h)
 
+/-- Mass of the uniform distribution, in ℝ. -/
+@[simp] theorem uniformOfFintype_toRealFn [Fintype α] [Nonempty α] (a : α) :
+    (uniformOfFintype α).toRealFn a = (Fintype.card α : ℝ)⁻¹ := by
+  simp [toRealFn, uniformOfFintype_apply]
+
 /-- For a `[Fintype α]` PMF, the `toReal`-coerced masses sum to 1. -/
 theorem sum_toRealFn_eq_one [Fintype α] (p : PMF α) :
     ∑ a, p.toRealFn a = 1 := by
@@ -94,57 +102,79 @@ theorem sum_toRealFn_eq_one [Fintype α] (p : PMF α) :
 -- §2: ℝ-valued normalisation for Fintype carriers
 -- ============================================================================
 
-/-- Construct a `PMF α` over a `Fintype` from a non-negative `ℝ`-valued
-weight function with one positivity witness. Lifts to `ℝ≥0∞` via
-`ENNReal.ofReal` and routes through mathlib's `PMF.normalize`.
+/-! ### Convex mixture -/
 
+/-- Convex combination of two PMFs at rate `r`: draw a Bernoulli-`r` coin,
+then sample `q` on heads and `p` on tails. Normalization is free from
+`bind` — no `Fintype`, no sum proof. -/
+noncomputable def mix (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) : PMF α :=
+  (bernoulli r hr).bind fun b => bif b then q else p
+
+@[simp] theorem mix_apply (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) (a : α) :
+    mix r hr p q a = (1 - r) * p a + r * q a := by
+  rw [mix, bind_apply, tsum_bool]
+  simp [bernoulli_apply, mul_comm]
+
+/-- The mixture in ℝ: `(1 − r)·p + r·q` pointwise. -/
+theorem toRealFn_mix (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) (a : α) :
+    (mix r hr p q).toRealFn a = (1 - r) * p.toRealFn a + r * q.toRealFn a := by
+  have h1 : (1 - (r : ℝ≥0∞)) ≠ ⊤ := ne_top_of_le_ne_top ENNReal.one_ne_top tsub_le_self
+  simp only [toRealFn, mix_apply]
+  rw [ENNReal.toReal_add (ENNReal.mul_ne_top h1 (p.apply_ne_top a))
+      (ENNReal.mul_ne_top ENNReal.coe_ne_top (q.apply_ne_top a)),
+    ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.coe_toReal,
+    ENNReal.toReal_sub_of_le (by exact_mod_cast hr) ENNReal.one_ne_top,
+    ENNReal.toReal_one, ENNReal.coe_toReal]
+
+/-- Normalize non-negative `ℝ` weights with positive total into a PMF.
 The `_h_nonneg` hypothesis is unused in the body (`ENNReal.ofReal` clamps
-negatives to 0 silently), but is kept on the signature because the
-spec lemmas `support_ofRealWeightFn` and `ofRealWeightFn_toRealFn_eq`
-require non-negativity to characterise the result faithfully. -/
-noncomputable def ofRealWeightFn [Fintype α]
-    (f : α → ℝ) (_h_nonneg : ∀ a, 0 ≤ f a)
-    (a : α) (h_pos : 0 < f a) : PMF α :=
+negatives silently) but is kept so the spec lemmas characterise the
+result faithfully. -/
+noncomputable def ofRealWeightFn [Fintype α] (f : α → ℝ)
+    (_h_nonneg : ∀ a, 0 ≤ f a) (h_pos : 0 < ∑ a, f a) : PMF α :=
   PMF.normalize (fun x => ENNReal.ofReal (f x))
-    (ENNReal.summable.tsum_ne_zero_iff.mpr
-      ⟨a, by rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]; exact h_pos⟩)
+    (by
+      have hex : ∃ a, 0 < f a := by
+        by_contra h
+        push Not at h
+        exact absurd h_pos (not_lt.mpr (Finset.sum_nonpos fun a _ => h a))
+      obtain ⟨a, ha⟩ := hex
+      exact ENNReal.summable.tsum_ne_zero_iff.mpr
+        ⟨a, by rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]; exact ha⟩)
     (ENNReal.tsum_ne_top_of_fintype (fun _ => ENNReal.ofReal_ne_top))
 
-/-- Closed-form value of `ofRealWeightFn`: each mass is the `ENNReal.ofReal`
-of the weight, divided by the sum of `ofReal`-lifted weights. -/
+/-- Closed-form value of `ofRealWeightFn` in `ℝ≥0∞`. -/
 @[simp] theorem ofRealWeightFn_apply [Fintype α]
-    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a)
-    (a : α) (h_pos : 0 < f a) (b : α) :
-    ofRealWeightFn f h_nonneg a h_pos b =
+    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a) (h_pos : 0 < ∑ a, f a) (b : α) :
+    ofRealWeightFn f h_nonneg h_pos b =
         ENNReal.ofReal (f b) * (∑ x, ENNReal.ofReal (f x))⁻¹ := by
   rw [ofRealWeightFn, PMF.normalize_apply]
   congr 2
   exact tsum_eq_sum (fun x (h : x ∉ Finset.univ) => absurd (Finset.mem_univ x) h)
 
-/-- Support of `ofRealWeightFn` is the set of strictly-positive weights —
-non-negative weights of `0` get cast to `ENNReal.ofReal 0 = 0` and drop out. -/
+/-- Closed form in ℝ: each mass is its weight divided by the total. -/
+theorem ofRealWeightFn_toRealFn_apply [Fintype α]
+    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a) (h_pos : 0 < ∑ a, f a) (b : α) :
+    (ofRealWeightFn f h_nonneg h_pos).toRealFn b = f b / ∑ x, f x := by
+  simp only [toRealFn, ofRealWeightFn_apply]
+  rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (h_nonneg b),
+    ← ENNReal.ofReal_sum_of_nonneg (fun x _ => h_nonneg x), ENNReal.toReal_inv,
+    ENNReal.toReal_ofReal h_pos.le, div_eq_mul_inv]
+
+/-- Support of `ofRealWeightFn`: the strictly-positive weights. -/
 theorem support_ofRealWeightFn [Fintype α]
-    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a)
-    (a : α) (h_pos : 0 < f a) :
-    (ofRealWeightFn f h_nonneg a h_pos).support = {x | 0 < f x} := by
+    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a) (h_pos : 0 < ∑ a, f a) :
+    (ofRealWeightFn f h_nonneg h_pos).support = {x | 0 < f x} := by
   rw [ofRealWeightFn, PMF.support_normalize]
   ext x
   rw [Function.mem_support, Set.mem_setOf_eq, ne_eq, ENNReal.ofReal_eq_zero, not_le]
 
-/-- Round-trip: when `f` is already normalised (sums to 1 in ℝ),
-`ofRealWeightFn`'s normalisation divides by 1, recovering `f` exactly
-through `toRealFn`. -/
+/-- Already-normalised weights are recovered exactly. -/
 theorem ofRealWeightFn_toRealFn_eq [Fintype α]
-    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a)
-    (a : α) (h_pos : 0 < f a) (h_sum_one : ∑ a, f a = 1) :
-    (ofRealWeightFn f h_nonneg a h_pos).toRealFn = f := by
-  funext b
-  show ((ofRealWeightFn f h_nonneg a h_pos) b).toReal = f b
-  rw [ofRealWeightFn_apply]
-  have h_sum_ennreal : (∑ x, ENNReal.ofReal (f x)) = 1 := by
-    rw [← ENNReal.ofReal_sum_of_nonneg (fun x _ => h_nonneg x), h_sum_one,
-        ENNReal.ofReal_one]
-  rw [h_sum_ennreal, inv_one, mul_one, ENNReal.toReal_ofReal (h_nonneg b)]
+    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a) (h_pos : 0 < ∑ a, f a)
+    (h_sum_one : ∑ a, f a = 1) :
+    (ofRealWeightFn f h_nonneg h_pos).toRealFn = f :=
+  funext fun b => by rw [ofRealWeightFn_toRealFn_apply, h_sum_one, div_one]
 
 end PMF
 
