@@ -976,7 +976,7 @@ Structural decomposition would reduce posterior comparison to product-of-scores
 via `PMF.posterior_lt_iff_score_lt`; partition functions differ (the QUD
 prior changes weights), so the residue is numeric ENNReal arithmetic on the
 model (binomial worldPrior + product latentPrior + S1g rpow + L1 posterior
-+ S2 normalize). Same wall as LassiterGoodman2017PMF / Nouwen2024PMF headlines.
++ S2 normalize). Same wall as the LassiterGoodman2017PMF headline (the Nouwen2024 one was closed structurally).
 
 Not stated as a Lean theorem because the per-prior S2 marginal positivity
 hypotheses make the signature unwieldy without a closure pattern. When

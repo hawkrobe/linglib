@@ -56,7 +56,7 @@ This file is part of Phase 1.5 of the RSA → mathlib-PMF migration
 to cover the latent and L&G patterns identified in the consumer audit
 (6 canonical patterns, 47 files). Phase 5 study migrations build on these.
 
-A Nouwen2024PMF pilot demonstrating the L&G two-prior + latent + sequential
+A Nouwen2024 pilot demonstrating the L&G two-prior + latent + sequential
 pattern end-to-end is the natural next step — see commented sketch in
 `L0LassiterGoodman` and `marginalizeKernel` docstrings for how to use them.
 -/
