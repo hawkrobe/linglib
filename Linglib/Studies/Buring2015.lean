@@ -27,7 +27,7 @@ morphosyntactic extension of [assmann-etal-2023].
 namespace Buring2015
 
 open Alternatives
-open Semantics.Focus (weakBanned strongAllowed)
+open Semantics.Focus (weakBanned strongAllowed licensedFocusValue)
 
 /-- Transitive-verb meanings. -/
 inductive Rel where
@@ -98,5 +98,41 @@ theorem reversal_excludes_object_focus :
   rcases List.mem_cons.mp hf' with rfl | hf''
   · exact absurd (congrArg Prod.snd heq) (by decide)
   · exact nomatch hf''
+
+/-- The licensed focal targets of default *ordered BREAKfast*
+compute to exactly the *breakfast*-free compositions: object focus
+with a new object survives; everything about *breakfast* is banned.
+The licensed set is the focus value the prosody derives — the
+pipeline the squiggle consumes at propositional type. -/
+theorem licensed_eq :
+    licensedFocusValue orderedM breakfastM =
+      {p : Rel × Obj | p.2 = Obj.lunch} := by
+  ext ⟨r, o⟩
+  constructor
+  · rintro ⟨⟨f, hf, a, ha, heq⟩, hban⟩
+    rcases List.mem_cons.mp ha with rfl | ha'
+    · exact absurd ⟨f, hf, .breakfast, rfl, heq⟩ hban
+    rcases List.mem_cons.mp ha' with rfl | ha''
+    · rcases List.mem_cons.mp hf with rfl | hf'
+      · exact (congrArg Prod.snd heq).symm
+      rcases List.mem_cons.mp hf' with rfl | hf''
+      · exact (congrArg Prod.snd heq).symm
+      · exact nomatch hf''
+    · exact nomatch ha''
+  · intro ho
+    have ho' : o = Obj.lunch := ho
+    subst ho'
+    refine ⟨⟨vt r, ?_, .lunch,
+      List.mem_cons_of_mem _ (List.mem_cons_self ..), rfl⟩, ?_⟩
+    · cases r
+      · exact List.mem_cons_self ..
+      · exact List.mem_cons_of_mem _ (List.mem_cons_self ..)
+    · rintro ⟨g, hg, a, ha, heq⟩
+      rcases Set.eq_of_mem_singleton ha with rfl
+      rcases List.mem_cons.mp hg with rfl | hg'
+      · exact absurd (congrArg Prod.snd heq) nofun
+      rcases List.mem_cons.mp hg' with rfl | hg''
+      · exact absurd (congrArg Prod.snd heq) nofun
+      · exact nomatch hg''
 
 end Buring2015
