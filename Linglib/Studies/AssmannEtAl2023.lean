@@ -117,12 +117,13 @@ the focus" means. -/
 open HartmannZimmermann2004 in
 /-- The UA marking of each Tangale configuration: subjects take the
 specific subject marking (postposing); perfective non-subject foci
-the VP-marking (the prosodic boundary, fn. 18); progressive
-non-subject foci the default clause marking (fn. 13). -/
+the VP-marking (the prosodic boundary, fn. 18); other frames fall to
+the default clause marking — fn. 13's progressive among them,
+mirroring `realize`'s guard-zone default. -/
 def uaTangale : Config → Node
-  | ⟨.subject, _, _⟩        => .sbj
-  | ⟨_, .perfective, _⟩     => .vp
-  | ⟨_, .progressive, _⟩    => .s
+  | ⟨.subject, _, _⟩    => .sbj
+  | ⟨_, .perfective, _⟩ => .vp
+  | ⟨_, _, _⟩           => .s
 
 open HartmannZimmermann2004 in
 /-- Cell-by-cell agreement with the reflex analysis: a configuration
