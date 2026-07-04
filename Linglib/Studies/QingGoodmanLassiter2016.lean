@@ -45,8 +45,6 @@ P(w) · P(C)` over different domains. Blocked on `ScontrasTonhauser2025.lean`
 reaching the PMF face.
 -/
 
-set_option autoImplicit false
-
 namespace QingGoodmanLassiter2016
 
 open BigOperators

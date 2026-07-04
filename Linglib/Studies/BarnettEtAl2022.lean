@@ -58,8 +58,6 @@ plays the role of β. The s1Score uses precomputed L0(longer|u) values squared
 | 10 | RSA speaker-dependent model fits best | `rsa_speaker_dep_best_waic` |
 -/
 
-set_option autoImplicit false
-
 namespace BarnettEtAl2022
 
 open RSA.ArgumentativeStrength

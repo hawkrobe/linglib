@@ -92,8 +92,6 @@ direction (green_circle: 115/180 = 64%), NOT salience.
 
 -/
 
-set_option autoImplicit false
-
 namespace QingFranke2015
 
 open RSA BigOperators Core
