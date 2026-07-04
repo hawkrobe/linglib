@@ -13,7 +13,8 @@ established pattern is to lift through `ENNReal.toReal` (which requires
 `≠ ⊤` finiteness witnesses on both sides) and discharge the residual real
 arithmetic with `norm_num`.
 
-This file packages that pattern as a tactic. Helper lemmas
+This file packages that pattern as a tactic (homed with its PMF-construction
+consumers; the `toReal`-lift lemmas are `[UPSTREAM]` candidates). Helper lemmas
 `ENNReal.eq_of_toReal`, `ENNReal.lt_of_toReal`, `ENNReal.le_of_toReal`
 provide the lifts; the macro tries equality first, then strict
 inequality, then negated strict inequality (via `not_lt.mpr` reduces to

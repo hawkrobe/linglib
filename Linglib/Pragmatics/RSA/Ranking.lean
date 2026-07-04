@@ -238,7 +238,7 @@ theorem rankToPrior_lt_iff (κ : RankingFunction W) (w v : W) :
 -- § 5. Connection to RSA: Rankings as Limiting Priors
 -- ══════════════════════════════════════════════════════════════════════
 
-/-! An RSAConfig with `worldPrior = rankToPrior κ` and boolean meaning
+/-! An RSA chain with world prior `rankToPrior κ` and boolean meaning
     computes L1 posteriors that concentrate on the minimum-rank worlds
     in the support of the utterance as α → ∞.
 

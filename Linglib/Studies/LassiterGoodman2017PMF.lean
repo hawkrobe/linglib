@@ -62,7 +62,7 @@ posterior.
 
 ## Connection to the bundled formalisation
 
-The bundled-`RSAConfig` formalisation in `LassiterGoodman2017.lean`
+The bundled-config formalisation in `LassiterGoodman2017.lean`
 (sibling file, in this directory) handles the empirical-fit reproduction
 via interval reflection. Its `defaultCfg.L1 : Utterance → Height →
 ℝ` returns unnormalised real values via the bundled API; it is not

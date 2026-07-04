@@ -9,9 +9,9 @@ import Mathlib.Probability.Distributions.Uniform
 [frank-goodman-2012] [degen-2023]
 
 Mathlib-shaped, struct-free formulation of RSA's three core operators, sitting
-alongside the bundled `RSAConfig` API (`Defs.lean` / `Basic.lean`). Each
+as the library's RSA substrate. Each
 operator takes its ingredients (meaning function, cost factor, rationality, prior)
-as explicit arguments — no `RSAConfig` projection chains, no nonneg-axiom fields.
+as explicit arguments — no bundled-config projection chains, no nonneg-axiom fields.
 
 The mathlib precedent is `bayesRisk` (`Mathlib/Probability/Decision/Risk/Defs.lean`):
 ```
@@ -55,23 +55,11 @@ For the common case where the world prior is uniform, see
 `Core/Probability/Posterior.lean` — those cancel both the marginal
 denominator AND the uniform prior in one move.
 
-## Relationship to `RSAConfig`
+## Relationship to the retired bundled config
 
-Phase 1 of the RSA → mathlib-PMF migration: this file is a pure addition.
-`RSAConfig` and `RSAConfig.L1` (in `Basic.lean`) remain in place; consumer
-code is unchanged. A subsequent phase migrates one RSA study end-to-end
-to demonstrate that numeric reflection still applies to operator
-applications.
+The bundled `RSAConfig` layer was retired once every study moved to these
+operators; the pointwise API is now the sole RSA substrate.
 
-## The `rsa` simp set
-
-The decomposition lemmas below are tagged `@[rsa]`. `simp [rsa]` rewrites an
-`S1`/`L1` *preference* goal to its structural score/posterior comparison — the
-partition factor cancels by rewriting, not by evaluating a normalisation. This is
-the migration API that replaced interval reflection with simplification: a
-migrated prediction is `by simp [rsa]` down to a condition closed by a *theorem*,
-not a `decide`/`norm_num` over a state-space sum. The set itself is registered in
-`RSA/SimpAttr.lean`.
 -/
 
 set_option autoImplicit false

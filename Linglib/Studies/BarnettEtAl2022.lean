@@ -1,4 +1,3 @@
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.ArgumentativeStrength

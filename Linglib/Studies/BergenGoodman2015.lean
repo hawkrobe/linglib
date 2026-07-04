@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Data.Examples.BergenGoodman2015
 
@@ -181,7 +180,7 @@ noncomputable def noiseChannel (δ : ℝ) : Utterance → Utterance → ℝ
   | .wentToMovies, .wentToMovies => 1
   | _, _ => 0
 
-/-! ### RSAConfig for Ellipsis -/
+/-! ### The ellipsis chain -/
 
 /-- ℚ noise rate (1%; Fig. 1 shows robustness across 10⁻⁵–10⁻¹). -/
 def δQ : ℚ := 1/100

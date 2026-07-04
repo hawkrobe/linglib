@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
 # IncrementalSemantics — Cohn-Gordon's bundle for word-by-word RSA
@@ -12,13 +12,13 @@ A scene-specific incremental RSA model factors into three pieces:
 
 From these three pieces every other ingredient — utterance-level truth,
 extension-based incremental semantics ⟦pfx⟧(r), the chain-rule speaker,
-the literal-listener categorical L0^UTT, and the full `RSAConfig` — is
+the literal-listener categorical L0^UTT, and the study-level chain — is
 *derived* rather than re-stipulated per study.
 
 This consolidates what was previously triplicated across CommonGround's Figure 1
 scene, the [sedivy-2007] reference-game scene, and the
 [rubio-fernandez-2016] display: each becomes a single
-`IncrementalSemantics` value, with `toRSAConfig` producing the model.
+`IncrementalSemantics` value; studies derive their exact-ℚ chains from it.
 
 ## The deep theorem (§2.4)
 
@@ -34,11 +34,11 @@ namespace RSA
 
 /-- Bundle of scene-specific data for an incremental RSA model.
 
-The three fields jointly determine the entire model: `toRSAConfig`
-builds the No-Brevity (`s1Score = L0`, α = 1, no cost) `RSAConfig`,
+The three fields jointly determine the entire model:
 `incrementalSem` derives the extension-based meaning function
-([cohn-gordon-goodman-potts-2019] §2.2), and `l0Utt` projects
-the literal listener over complete utterances. -/
+([cohn-gordon-goodman-potts-2019] §2.2) and `l0Utt` projects
+the literal listener over complete utterances; studies build their
+No-Brevity chains (`s1Score = L0`, α = 1, no cost) from these. -/
 structure IncrementalSemantics (U W : Type) [DecidableEq U] where
   /-- Word-level Boolean truth: does word `u` apply to world `w`? -/
   wordApplies : U → W → Bool
@@ -131,27 +131,6 @@ theorem l0Utt_ge_inv_card (sem : IncrementalSemantics U W)
   rw [if_neg hnR_ne, if_pos htrue, ge_iff_le]
   apply one_div_le_one_div_of_le hnR_pos
   exact_mod_cast hn_le
-
-variable [Fintype U] [Fintype W]
-
-/-- The No-Brevity incremental RSA built from the bundle:
-    chain-rule speaker, α = 1, no cost, uniform priors,
-    extension-based L0 meaning. The "No-Brevity" name (after
-    [dale-reiter-1995]) flags `s1Score = L0`: the speaker scores
-    each next word by the literal listener's posterior, with brevity
-    emerging only via the chain-rule product over longer trajectories. -/
-noncomputable def toRSAConfig (sem : IncrementalSemantics U W) : RSAConfig U W where
-  Ctx := List U
-  meaning ctx _ u r := sem.incrementalSem (ctx ++ [u]) r
-  meaning_nonneg _ _ _ _ := sem.incrementalSem_nonneg _ _
-  s1Score l0 _ _ w u := l0 u w
-  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
-  α := 1
-  α_pos := one_pos
-  transition ctx w := ctx ++ [w]
-  initial := []
-  latentPrior_nonneg _ _ := by norm_num
-  worldPrior_nonneg _ := by norm_num
 
 end IncrementalSemantics
 

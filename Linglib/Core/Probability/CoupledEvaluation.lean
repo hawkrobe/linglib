@@ -32,7 +32,7 @@ softmax of its per-item score.
   that would otherwise be independent, and marginalization recovers individual
   probabilities that reflect the coupling.
 
-  See `RSAConfig.L1agent` in `Pragmatics/RSA/Core/Config.lean` for the
+  See the RSA listener chains for the
   RSA marginalization pattern.
 
 - **BToM inference** (`Core/Agent/BToM.lean`): the observer marginalizes over

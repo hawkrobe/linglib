@@ -1,6 +1,5 @@
 import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Studies.KadmonLandman1993
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.BToM
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Discourse.CommonGround

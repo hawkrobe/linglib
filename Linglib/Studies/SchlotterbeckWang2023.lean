@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Sequential
@@ -27,7 +26,7 @@ per-step normalized softmaxes). Note that linglib's `trajectoryProb` is not
 literally S&W's `S1^inc` (which accumulates utilities with a single global
 normalization rather than per-step softmaxes). Per-step S1 normalizers are
 world-dependent, so speaker chaining and stage-to-stage listener chaining
-(`RSA.RSAConfig.composeWithPrior`) generically diverge at the pragmatic
+(prior-composition operators) generically diverge at the pragmatic
 layer ([cohn-gordon-goodman-potts-2019]); they agree at the literal layer,
 where iterated Bayesian update equals the PoE posterior.
 

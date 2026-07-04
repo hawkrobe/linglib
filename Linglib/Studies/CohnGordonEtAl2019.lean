@@ -34,7 +34,7 @@ where U is the set of complete utterances and ⊑ is the prefix relation.
 Each scene in this file is a single value of `RSA.IncrementalSemantics U W`
 (in `Pragmatics/RSA/Incremental.lean`), specifying just the lexicon
 (`wordApplies`), the closed set of complete utterances, and the world set.
-The bundle's `toRSAConfig` builder produces the full `RSAConfig` with chain-
+The bundle previously fed a bundled-config builder; the file now derives the chain-
 rule speaker, α = 1, no cost, uniform priors, and extension-based L0 — so
 the three scenes (Figure 1, the [sedivy-2007] reference game, the
 [rubio-fernandez-2016] display) share machinery rather than duplicating it.
@@ -225,7 +225,7 @@ noncomputable def l1PMF (sem : IncrementalSemantics U W) (u : U) : PMF W :=
 
 end QFace
 
-/-! ### RSAConfig -/
+/-! ### The incremental chain -/
 
 /-! ### Findings -/
 

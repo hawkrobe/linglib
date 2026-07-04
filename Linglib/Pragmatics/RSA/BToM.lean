@@ -1,18 +1,17 @@
 import Linglib.Pragmatics.BToM
-import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # RSA-BToM Grounding: Latent Classification
 [baker-jara-ettinger-saxe-tenenbaum-2017] [clark-1996] [goodman-frank-2016]
 
-The structural mapping `toBToM` and the bridge theorem `L1_eq_btom_worldMarginal`
-now live in `Config.lean` (§5), where they are methods on `RSAConfig`. This file
+The RSA-as-BToM bridge lives on the PMF face (see
+`RitchieSchiller2024.rsa_btom_bridge` for the worked instance). This file
 retains the **latent classification** infrastructure: the cognitive-level
 interpretation of what kind of thing each latent variable represents.
 
 ## Latent Classification
 
-RSAConfig bundles all non-world latent variables into a single `Latent` type.
+RSA chains bundle all non-world latent variables into a single `Latent` type.
 A `LatentClassification` assigns each component to a BToM ontological category,
 making the cognitive interpretation explicit. Different theoretical positions
 correspond to different classifications:
@@ -28,7 +27,7 @@ correspond to different classifications:
 
 ## Behavioral Equivalence
 
-Different classifications of the same RSAConfig yield identical behavioral
+Different classifications of the same model yield identical behavioral
 predictions. This follows because marginalization doesn't care about labels:
 `Σ_l f(l)` is the same whether `l` is called a belief or a medium property.
 The classifications diverge only on cognitive-level claims about what kind

@@ -1,7 +1,6 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Sequential
@@ -32,14 +31,14 @@ least one scene member are included (Figure 1).
 
 ## Formalization
 
-This builds on `RSAConfig`'s sequential infrastructure (following
+This builds on the incremental word-by-word chain (following
 [cohn-gordon-goodman-potts-2019]), adding:
 - Continuous (ℚ-valued) meaning instead of Boolean extension-counting
 - `rpow`-based s1Score with α = 7
 - Scene-parameterized configs for cross-condition comparisons
 
 The three predictions are trajectory probability comparisons across
-different `RSAConfig` instances (language × scene).
+different (language × scene) configurations of the same chain.
 
 ## Predictions
 
@@ -195,11 +194,6 @@ private theorem continuousMeaningQ_nonneg (utts : List (List Word))
               simp [lexContinuousQ, wordApplies, semanticValueQ] <;> norm_num))
     · exact Nat.cast_nonneg _
 
-/-- Real-valued continuous meaning (for RSAConfig). -/
-noncomputable def continuousMeaning (utts : List (List Word))
-    (scene : Referent → Bool) (pfx : List Word) (r : Referent) : ℝ :=
-  (continuousMeaningQ utts scene pfx r : ℝ)
-
 /-! ### Scenes -/
 
 /-- Size-sufficient scene: {big_blue, big_red, small_blue}.
@@ -213,50 +207,6 @@ def ssScene : Referent → Bool
 def csScene : Referent → Bool
   | .smallRed | .bigRed | .smallBlue => true
   | _ => false
-
-/-! ### RSAConfig (Parameterized by Language and Scene) -/
-
-/-- CI-RSA configuration parameterized by utterance set and scene.
-
-    - L0 uses extension-based continuous meaning, returning 0 for
-      referents outside the scene
-    - S1 uses `rpow`-based scoring with α = 7 and per-word cost C(i)
-    - S1(i|c,r) ∝ L0(r|c,i)^α · exp(−α · C(i))  (Section 4)
-
-    Note: v^color = 0.95 here, matching the paper's fitted values.
-    This differs from the [degen-etal-2020] value of v^color = 0.99
-    used in `RSA.Core.Noise`, because the two papers fit different
-    experimental datasets. -/
-noncomputable def mkCIRSA (utts : List (List Word)) (scene : Referent → Bool) :
-    RSAConfig Word Referent where
-  Ctx := List Word
-  meaning ctx _ u w :=
-    if scene w then continuousMeaning utts scene (ctx ++ [u]) w else 0
-  meaning_nonneg _ _ _ w := by
-    split
-    · exact Rat.cast_nonneg.mpr (continuousMeaningQ_nonneg _ _ _ _)
-    · exact le_refl _
-  s1Score l0 α _ w u := Real.rpow (l0 u w) α * Real.exp (-α * (wordCostQ u : ℝ))
-  s1Score_nonneg _ _ _ _ _ hl _ :=
-    mul_nonneg (Real.rpow_nonneg (hl _ _) _) (Real.exp_pos _).le
-  α := 7
-  α_pos := by norm_num
-  transition ctx w := ctx ++ [w]
-  initial := []
-  latentPrior_nonneg _ _ := by norm_num
-  worldPrior_nonneg _ := by norm_num
-
-/-- English (prenominal) CI-RSA in size-sufficient scene. -/
-noncomputable def englishSS := mkCIRSA allUttsEng ssScene
-
-/-- English (prenominal) CI-RSA in color-sufficient scene. -/
-noncomputable def englishCS := mkCIRSA allUttsEng csScene
-
-/-- Spanish (postnominal) CI-RSA in size-sufficient scene. -/
-noncomputable def spanishSS := mkCIRSA allUttsSpn ssScene
-
-/-- Spanish (postnominal) CI-RSA in color-sufficient scene. -/
-noncomputable def spanishCS := mkCIRSA allUttsSpn csScene
 
 /-! ### Exact-ℚ face and the cost atom (local pending the RSA API pass) -/
 

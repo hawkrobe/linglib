@@ -1,4 +1,3 @@
-import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -94,7 +93,7 @@ direction (green_circle: 115/180 = 64%), NOT salience.
 
 namespace QingFranke2015
 
-open RSA BigOperators Core
+open RSA BigOperators
 open Real (exp log exp_pos exp_lt_exp)
 
 -- ============================================================================
