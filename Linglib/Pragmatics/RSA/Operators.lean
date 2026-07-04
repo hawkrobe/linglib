@@ -60,7 +60,7 @@ denominator AND the uniform prior in one move.
 Phase 1 of the RSA → mathlib-PMF migration: this file is a pure addition.
 `RSAConfig` and `RSAConfig.L1` (in `Basic.lean`) remain in place; consumer
 code is unchanged. A subsequent phase migrates one RSA study end-to-end
-to demonstrate that `rsa_predict` reflection still applies to operator
+to demonstrate that numeric reflection still applies to operator
 applications.
 
 ## The `rsa` simp set
@@ -68,7 +68,7 @@ applications.
 The decomposition lemmas below are tagged `@[rsa]`. `simp [rsa]` rewrites an
 `S1`/`L1` *preference* goal to its structural score/posterior comparison — the
 partition factor cancels by rewriting, not by evaluating a normalisation. This is
-the migration API that replaces `rsa_predict` reflection with simplification: a
+the migration API that replaced interval reflection with simplification: a
 migrated prediction is `by simp [rsa]` down to a condition closed by a *theorem*,
 not a `decide`/`norm_num` over a state-space sum. The set itself is registered in
 `RSA/SimpAttr.lean`.

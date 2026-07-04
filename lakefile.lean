@@ -27,13 +27,5 @@ lean_lib PsychVerbs where
   srcDir := "blog/lean"
   globs := #[.submodules `PsychVerbs]
 
-lean_lib KennedyRSA where
-  srcDir := "blog/lean"
-  globs := #[.submodules `KennedyRSA]
-
-lean_lib SeMarkingRSA where
-  srcDir := "blog/lean"
-  globs := #[.submodules `SeMarkingRSA]
-
 lean_lib scratch where
   globs := #[.submodules `scratch]
