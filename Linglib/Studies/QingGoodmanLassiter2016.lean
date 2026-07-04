@@ -3,57 +3,42 @@ import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Aspect.ChangeOfState
 
 /-!
-# [qing-goodman-lassiter-2016]
+# [qing-goodman-lassiter-2016]: an RSA model of projective content
 
-A rational speech-act model of projective content. CogSci 2016, pp. 1110–1115.
+The listener jointly infers the world state and the context set the speaker
+assumed (CogSci 2016, pp. 1110–1115). Under the right QUD this derives
+presupposition projection with no special semantic mechanism: L0 answers the
+QUD within the context set (eq. 5), S1 scores QUD-projected informativity
+(eq. 6, α = 6), and L1 inverts jointly over worlds and context sets (eq. 7).
+Domain: 13 utterances × 4 worlds × 9 context sets.
 
-The listener jointly infers the world state and the common ground (context set)
-the speaker assumed. Under the right QUD, this derives presupposition projection
-without any special semantic mechanism.
+## Main results
 
-## The Model
+* `qud_now_wTT_eq_wFT`: under QUD_now the world marginal cannot show
+  projection — the now-cell aggregation is definitionally symmetric.
+* `context_projection`: the paper's headline — after "didn't stop smoking",
+  L1 infers a +past context set over −past (and over `universe`,
+  `context_projection_over_universe`, despite its higher prior).
+* `projection_under_qud_max` / `qud_max_incomplete_projection`: under the
+  identity QUD projection is visible at the world level but incomplete
+  (wTT = wFF, Figure 1c).
+* `qud_answer_now_true` / `stopped_qud_answer`: L1 recovers the QUD answer.
 
-- **L0** (eq. 5): L0(Q(w) | u, C, Q) ∝ Σ_{w'∈C∩⟦u⟧} δ_{Q(w)=Q(w')} · P(w')
-- **S1** (eq. 6): S(u|w,C,Q) ∝ P(u) · L0(Q(w) | u, C, Q)^α
-- **L1** (eq. 7): L(w,C | u, Q) ∝ P(w) · P(C) · S(u | w, C, Q)
+## Implementation notes
 
-Domain: 13 utterances × 4 worlds × 9 context sets. α = 6.
+α = 6 is a natural power, so every layer is rational: scores are computed in
+exact ℚ (`l0Q` … `ctxScoreQ`), listeners are `PMF.normalize` of those scores
+(bridged by `ENNReal.ofReal_sum_of_nonneg`), and predictions are
+kernel-verified rational comparisons (`decide +kernel`).
 
-## Formalization
+The paper uses 15 context sets with 5% noise; we model the 9 derivable from
+past/now observations — the omitted 6 carry only the noise prior (≥ 18×
+lower) and do not affect the qualitative predictions.
 
-Since α = 6 is a natural power, every layer of the model is a rational
-function of the priors: the scores are computed in exact ℚ (`l0Q` through
-`worldScoreQ`/`ctxScoreQ`), the listeners are `PMF.normalize` of those
-scores, and the two meet through `ENNReal.ofReal_sum_of_nonneg` bridges.
-Every prediction is a kernel-verified rational comparison; the lone
-exception is the QUD_now symmetry, which holds definitionally.
-
-## Key Insight: QUD Projection and Context Set Inference
-
-Under QUD_now ("Does John smoke now?"), S1 scores depend on `now(w)` only —
-worlds with the same `now` value are indistinguishable (§8.1). This means
-presupposition projection CANNOT be observed at the world marginal level.
-Instead, projection surfaces in the **context set posterior** (`l1Ctx`):
-L1 infers the speaker assumed a context set entailing `past=T` (§8.5).
-
-Under QUD_max (identity QUD), the past-now degeneracy breaks and projection
-is visible directly at the world level (§8.4).
-
-## Context Set Simplification
-
-The paper uses 15 non-empty context sets (all 2^4 - 1 subsets of 4 worlds) with
-5% noise added to eq. (8) to ensure nonzero priors. We model only the 9 context
-sets derivable from observations about past/now, since the remaining 6 (e.g.,
-`change = {(T,F),(F,T)}`) receive only the noise prior (≥18× lower) and do not
-affect qualitative predictions.
-
-## Connection to [scontras-tonhauser-2025] and [warstadt-2022]
-
-All three papers implement the same mathematical structure with different
-domains (change-of-state verbs, factives, genus-species). The latent variable
-is called "context set" here and "private assumptions" in S&T, but the
-computation is identical. See `ScontrasTonhauser2025.lean` for the factive
-domain.
+[scontras-tonhauser-2025] and [warstadt-2022] instantiate the same structure
+(latent = "private assumptions" resp. context set) over factives and
+genus-species; see `ScontrasTonhauser2025.lean`. Per S&T fn. 10 the
+difference is interpretive, not computational.
 -/
 
 set_option autoImplicit false
@@ -61,9 +46,7 @@ set_option autoImplicit false
 namespace QingGoodmanLassiter2016
 
 open BigOperators
--- ============================================================================
--- §1. World State
--- ============================================================================
+/-! ### §1. World State -/
 
 /-- World state: (past, now) where past = John smoked, now = John smokes.
     Flat inductive for tactic enumerability. -/
@@ -82,9 +65,7 @@ def WorldState.now : WorldState → Bool
   | .wTT | .wFT => true
   | .wTF | .wFF => false
 
--- ============================================================================
--- §2. Utterances (Table 1 + negations + silence)
--- ============================================================================
+/-! ### §2. Utterances (Table 1 + negations + silence) -/
 
 /-- Utterances about John's smoking habits.
     6 positive utterances from Table 1, their 6 negations, and silence. -/
@@ -104,9 +85,7 @@ inductive Utterance where
   | silence             -- null utterance          {(T,T),(T,F),(F,T),(F,F)}
   deriving DecidableEq, Repr, Inhabited, Fintype
 
--- ============================================================================
--- §3. Literal Semantics
--- ============================================================================
+/-! ### §3. Literal Semantics -/
 
 /-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧.
 
@@ -159,9 +138,7 @@ theorem always_matches_continuation (w : WorldState) :
   cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
     WorldState.past, WorldState.now]
 
--- ============================================================================
--- §4. Context Sets (Common Ground)
--- ============================================================================
+/-! ### §4. Context Sets (Common Ground) -/
 
 /-- Context sets: subsets of worlds representing common ground.
     These are the 9 context sets derivable from observations about past and now
@@ -191,9 +168,7 @@ def compatibleBool : ContextSet → WorldState → Bool
   | .pastFalseNowFalse, w => !w.past && !w.now
   | .universe,          _ => true
 
--- ============================================================================
--- §5. QUD
--- ============================================================================
+/-! ### §5. QUD -/
 
 /-- Questions under discussion. -/
 inductive QUD where
@@ -202,9 +177,7 @@ inductive QUD where
   | past  -- "Did John smoke?" (partitions by past)
   deriving DecidableEq, Repr, Inhabited, Fintype
 
--- ============================================================================
--- §6. Priors
--- ============================================================================
+/-! ### §6. Priors -/
 
 /-- Utterance prior (eq. 1): Pr(u) ∝ 2^{-#content-words(u)}.
     Negation and auxiliaries excluded from count.
@@ -222,7 +195,8 @@ def utterancePrior : Utterance → ℚ
 theorem utterancePrior_nonneg (u : Utterance) : 0 ≤ utterancePrior u := by
   cases u <;> simp [utterancePrior]
 
-/-- Context set prior (eq. 8): Pr(C) ∝ Σ_{CommonGround⊆Obs} P(CommonGround) · δ_{C=∩CommonGround}.
+/-- Context set prior (eq. 8):
+`Pr(C) ∝ Σ_{CG ⊆ Obs} P(CG) · δ_{C = ∩CG}`.
     Each observation enters CommonGround independently with probability 0.4.
     P(CommonGround) = 0.4^|CommonGround| × 0.6^(4-|CommonGround|).
     - 0 observations (universe): 0.6^4 ∝ 9
@@ -237,15 +211,7 @@ def contextPrior : ContextSet → ℚ
 theorem contextPrior_pos (cs : ContextSet) : 0 < contextPrior cs := by
   cases cs <;> simp [contextPrior]
 
--- ============================================================================
--- §7b. Exact-ℚ model and PMF face (local pending the RSA API pass)
--- ============================================================================
-
-/-! The model computed in exact rational arithmetic (the project's RSA
-convention): α = 6 is a natural power, so every layer — literal listener,
-QUD aggregation (eq. 5), speaker (eq. 6), listener scores (eq. 7) — is a
-rational function of the priors. The PMF face below normalizes these scores;
-its values bridge to the ℚ layer by `ENNReal.ofReal_sum_of_nonneg`. -/
+/-! ### §7b. Exact-ℚ model and PMF face (local pending the RSA API pass) -/
 
 section QModel
 
@@ -511,23 +477,13 @@ private theorem l1Ctx_apply (qud : QUD) {u : Utterance} (hu : u ≠ .silence)
 
 end PMFFace
 
--- ============================================================================
--- §8. L1 Predictions
--- ============================================================================
+/-! ### §8. L1 Predictions -/
 
-/-! ### §8.1 QUD_now symmetry
+/-! ### §8.1 QUD_now symmetry -/
 
-Under QUD_now, the QUD aggregation maps wTT and wFT to the same value (both
-have now=T), so S1(cs, wTT, u) = S1(cs, wFT, u) for all cs. With uniform
-worldPrior and w-independent latentPrior, L1(wTT) = L1(wFT). This means
-presupposition projection **cannot** be measured by world marginal under
-QUD_now — the past dimension is invisible to L1. -/
-
-/-- **QUD_now symmetry**: wTT and wFT are indistinguishable.
-
-    This is the structural reason why projection under QUD_now must be
-    measured via context set inference (the `l1Ctx` side), not the world
-    marginal — `qAggQ .now` is definitionally symmetric in the now-cell. -/
+/-- Under QUD_now, wTT and wFT are indistinguishable: `qAggQ .now` is
+definitionally symmetric in the now-cell, so projection must be measured on
+the context-set side (`l1Ctx`), not the world marginal. -/
 theorem qud_now_wTT_eq_wFT :
     l1World .now .notStoppedSmoking .wTT =
     l1World .now .notStoppedSmoking .wFT := by
@@ -535,12 +491,9 @@ theorem qud_now_wTT_eq_wFT :
     l1World_apply .now (by decide) wZ_pos_now_ns]
   congr 2
 
-/-! ### §8.2 QUD answer
+/-! ### §8.2 QUD answer -/
 
-After hearing "didn't stop smoking" with QUD = "Does John smoke now?",
-L1 correctly infers the QUD answer: John smokes (now=T). -/
-
-/-- **QUD answer inference**: L1 infers now=T from "didn't stop smoking". -/
+/-- L1 infers the QUD answer now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
     l1WorldEvent .now .notStoppedSmoking (fun w => w.now = true) >
     l1WorldEvent .now .notStoppedSmoking (fun w => w.now = false) := by
@@ -562,15 +515,14 @@ theorem qud_answer_now_true :
 
 /-! ### §8.3 World elimination
 
-Within worlds sharing the same past value, now=T dominates now=F.
-"Didn't stop smoking" is literally false at wTF (past=T, now=F is exactly
-"stopped smoking"), concentrating L1 mass on wTT. -/
+"Didn't stop smoking" is literally false at wTF, concentrating L1 on wTT. -/
 
-/-- **Now=T dominates now=F** among past=T worlds. -/
+/-- now=T dominates now=F among past=T worlds. -/
 theorem wTT_gt_wTF :
     l1World .now .notStoppedSmoking .wTT >
     l1World .now .notStoppedSmoking .wTF := by
-  rw [gt_iff_lt, l1World_apply .now (by decide) wZ_pos_now_ns, l1World_apply .now (by decide) wZ_pos_now_ns]
+  rw [gt_iff_lt, l1World_apply .now (by decide) wZ_pos_now_ns,
+    l1World_apply .now (by decide) wZ_pos_now_ns]
   exact ofReal_mul_inv_lt wZ_pos_now_ns (wZ_fin _ _)
     (by exact_mod_cast (by decide +kernel : (0:ℚ) < worldScoreQ .now .notStoppedSmoking .wTT))
     (by exact_mod_cast (by decide +kernel :
@@ -578,33 +530,25 @@ theorem wTT_gt_wTF :
 
 /-! ### §8.4 Projection under QUD_max (Figure 1c)
 
-Under the identity QUD, the past-now degeneracy of §8.1 breaks: S1 scores
-depend on all world dimensions, so L1 can distinguish wTT from wFT. The
-key asymmetry: under +past context, "didn't stop" narrows to exactly wTT
-(maximally informative for the speaker), while under -past context it
-spreads over both wFT and wFF (less informative). This makes wTT more
-likely than wFT.
+The identity QUD breaks §8.1's degeneracy — under +past, "didn't stop"
+narrows to exactly wTT — but projection stays incomplete: wTT = wFF, so
+the past marginals still coincide. -/
 
-The paper observes that (T,T) = (F,F) under QUD_max (Figure 1c), so projection
-is incomplete — the past=T marginal still equals the past=F marginal. Full
-projection requires QUD_now + context set inference (§8.5). -/
-
-/-- **Projection under QUD_max**: wTT > wFT. -/
+/-- Projection under QUD_max: wTT > wFT. -/
 theorem projection_under_qud_max :
     l1World .max .notStoppedSmoking .wTT >
     l1World .max .notStoppedSmoking .wFT := by
-  rw [gt_iff_lt, l1World_apply .max (by decide) wZ_pos_max_ns, l1World_apply .max (by decide) wZ_pos_max_ns]
+  rw [gt_iff_lt, l1World_apply .max (by decide) wZ_pos_max_ns,
+    l1World_apply .max (by decide) wZ_pos_max_ns]
   exact ofReal_mul_inv_lt wZ_pos_max_ns (wZ_fin _ _)
     (by exact_mod_cast (by decide +kernel : (0:ℚ) < worldScoreQ .max .notStoppedSmoking .wTT))
     (by exact_mod_cast (by decide +kernel :
       worldScoreQ .max .notStoppedSmoking .wFT < worldScoreQ .max .notStoppedSmoking .wTT))
 
-/-- **Incomplete projection under QUD_max**: wTT = wFF (Figure 1c).
-
-    Under the identity QUD, (T,T) and (F,F) receive equal L1 probability —
-    the involution swapping (past, now) ↦ (¬now, ¬past) fixes the meaning of
-    "didn't stop" and permutes the context sets prior-preservingly. Projection
-    is NOT captured at the world level under QUD_max. -/
+/-- Incomplete projection under QUD_max: wTT = wFF (Figure 1c). The
+involution (past, now) ↦ (¬now, ¬past) fixes ⟦didn't stop⟧ and permutes the
+context sets prior-preservingly, so world marginals cannot fully register
+the presupposition. -/
 theorem qud_max_incomplete_projection :
     l1World .max .notStoppedSmoking .wTT =
     l1World .max .notStoppedSmoking .wFF := by
@@ -617,63 +561,48 @@ theorem qud_max_incomplete_projection :
 
 /-! ### §8.5 Context set projection (the paper's main result, Figure 3)
 
-The paper's headline result: after hearing "didn't stop smoking" under QUD_now,
-L1 infers the speaker assumed a **+past context set** (common ground where John
-smoked). This is presupposition projection: the presupposed content (past=T)
-enters the listener's beliefs about the common ground, even though the utterance
-literally says nothing about the past.
+Under +past, "didn't stop" narrows L0 to wTT (aggregate 1, `1⁶ = 1`); under
+−past it spreads (`(1/2)⁶ = 1/64`). S1 rewards informativity, so L1 infers
+the speaker assumed a +past common ground — projection as context-set
+inference, with (wTT, +past) the joint mode (Figure 3). -/
 
-The mechanism: under +past context, "didn't stop" narrows L0 to exactly wTT,
-giving aggregate 1 and `1⁶ = 1` (maximally informative). Under
--past context, L0 spreads over wFT and wFF, giving aggregate `1/2` and
-`(1/2)⁶ = 1/64` (weakly informative). Since S1 rewards informativity,
-the speaker is much more likely to use "didn't stop" when the +past context
-holds, and L1 infers this.
-
-Figure 3 shows that (T,T) with context set +past is the unique maximum of the
-joint distribution under CommonGround prior + QUD_now. -/
-
-/-- **Context set projection**: L1 infers +past context over -past context. -/
+/-- The headline: L1 infers a +past context set over −past. -/
 theorem context_projection :
     l1Ctx .now .notStoppedSmoking .pastTrue >
     l1Ctx .now .notStoppedSmoking .pastFalse := by
-  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns, l1Ctx_apply .now (by decide) cZ_pos_now_ns]
+  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns,
+    l1Ctx_apply .now (by decide) cZ_pos_now_ns]
   exact ofReal_mul_inv_lt cZ_pos_now_ns (cZ_fin _ _)
     (by exact_mod_cast (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue))
     (by exact_mod_cast (by decide +kernel :
       ctxScoreQ .now .notStoppedSmoking .pastFalse < ctxScoreQ .now .notStoppedSmoking .pastTrue))
 
-/-- **+past beats uninformative universe** despite lower prior (9 vs 6).
-
-    Under +past, "didn't stop" narrows to exactly wTT (`1⁶ = 1`).
-    Under universe, it spreads over 3 worlds (`(1/4)⁶ ≈ 0`). The
-    informativity gain overwhelms the prior advantage. -/
+/-- +past beats `universe` despite the prior (6 vs 9): "didn't stop" narrows
+to wTT under +past (`1⁶ = 1`) but spreads over three worlds under `universe`
+(`(1/4)⁶`). -/
 theorem context_projection_over_universe :
     l1Ctx .now .notStoppedSmoking .pastTrue >
     l1Ctx .now .notStoppedSmoking .universe := by
-  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns, l1Ctx_apply .now (by decide) cZ_pos_now_ns]
+  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns,
+    l1Ctx_apply .now (by decide) cZ_pos_now_ns]
   exact ofReal_mul_inv_lt cZ_pos_now_ns (cZ_fin _ _)
     (by exact_mod_cast (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue))
     (by exact_mod_cast (by decide +kernel :
       ctxScoreQ .now .notStoppedSmoking .universe < ctxScoreQ .now .notStoppedSmoking .pastTrue))
 
-/-- **-now context is dispreferred** (p. 1114): -now already entails the QUD
-    answer (John doesn't smoke now), so the speaker would be maximally
-    informative even saying nothing — "didn't stop smoking" adds no value.
-    L1 therefore infers the speaker did NOT assume a -now context. -/
+/-- −now contexts are dispreferred (p. 1114): −now already entails the QUD
+answer, so "didn't stop smoking" adds nothing there. -/
 theorem now_context_dispreferred :
     l1Ctx .now .notStoppedSmoking .pastTrue >
     l1Ctx .now .notStoppedSmoking .nowFalse := by
-  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns, l1Ctx_apply .now (by decide) cZ_pos_now_ns]
+  rw [gt_iff_lt, l1Ctx_apply .now (by decide) cZ_pos_now_ns,
+    l1Ctx_apply .now (by decide) cZ_pos_now_ns]
   exact ofReal_mul_inv_lt cZ_pos_now_ns (cZ_fin _ _)
     (by exact_mod_cast (by decide +kernel : (0:ℚ) < ctxScoreQ .now .notStoppedSmoking .pastTrue))
     (by exact_mod_cast (by decide +kernel :
       ctxScoreQ .now .notStoppedSmoking .nowFalse < ctxScoreQ .now .notStoppedSmoking .pastTrue))
 
-/-! ### §8.6 "Stopped smoking" projects past=T via QUD answer
-
-"Stopped smoking" is true only at wTF (past=T, now=F). Under QUD_now,
-L1 infers the QUD answer is now=F. -/
+/-! ### §8.6 "Stopped smoking" -/
 
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
@@ -695,9 +624,7 @@ theorem stopped_qud_answer :
       worldScoreQ .now .stoppedSmoking .wTT + worldScoreQ .now .stoppedSmoking .wFT <
       worldScoreQ .now .stoppedSmoking .wTF + worldScoreQ .now .stoppedSmoking .wFF))
 
--- ============================================================================
--- §9. Structural Properties
--- ============================================================================
+/-! ### §9. Structural Properties -/
 
 /-- "didn't stop smoking" is compatible with 3 of 4 worlds. -/
 theorem notStopped_compatible_worlds :
@@ -750,9 +677,7 @@ theorem three_entail_past :
     (Finset.univ.filter (fun cs : ContextSet => entailsPast cs)).card = 3 := by
   decide
 
--- ============================================================================
--- §10. Connection to S&T and Warstadt
--- ============================================================================
+/-! ### §10. Connection to S&T and Warstadt -/
 
 /-!
 ## Mathematical Equivalence with [scontras-tonhauser-2025] and [warstadt-2022]
