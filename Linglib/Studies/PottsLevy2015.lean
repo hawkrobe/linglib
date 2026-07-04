@@ -15,17 +15,18 @@ requires truth at both atoms) × 3 lexica for X (`base` = A ∪ B, `excl` = B,
 
 ## Main results
 
-* `uncertainty_w12_vs_w1` / `_w2` / `w1_vs_w2`: hearing "A or X", the joint
-  listener infers speaker uncertainty — w₁₂ > w₁ > w₂.
-* `lexicon_excl_vs_base` / `_syn`: the exclusivized lexicon dominates —
-  excl > base > syn.
-* `s1_w12_AorX_vs_A` / `_X`, `s1_w1_A_vs_AorX`: the eq. 11 speaker uses the
-  disjunction exactly when uncertain.
-* `l2_AorX_*` / `s2Exp_*`: the same orderings at the stacked expertise
-  level, Figure 10's regime α = 2, β = 1, C(or) = 1 (its L₂ world margins
-  are .91 > .09 > 0 and lexicon margins .49 > .34 > .17; p. 436: "S₂'s
-  preferred message given observed state w₁∨w₂ and lexicon L₁ from
-  Figure 10 is A or X").
+* `l1_uncertainty`, `l1_lexicon`: hearing "A or X", the joint listener
+  infers speaker uncertainty (w₁₂ > w₁ > w₂) and the exclusivized lexicon
+  (excl > base > syn).
+* `s1_disjunction_iff_uncertain`: the eq. 11 speaker uses the disjunction
+  exactly when uncertain.
+* `s2End_disjunction_iff_uncertain`, `AorX_signals_excl_vs_A`: eq. 15's
+  informativity and expertise components verified independently.
+* `l2_uncertainty`, `l2_lexicon`, `s2Exp_disjunction_iff_uncertain`: the
+  same at the stacked expertise level, Figure 10's regime α = 2, β = 1,
+  C(or) = 1 (its L₂ margins are .91 > .09 > 0 over worlds and
+  .49 > .34 > .17 over lexica; p. 436: "S₂'s preferred message given
+  observed state w₁∨w₂ and lexicon L₁ from Figure 10 is A or X").
 * `excl_is_base_minus_A`: the `excl` lexicon is exhaustification —
   excl(X) = base(X) ∧ ¬A.
 
@@ -219,113 +220,72 @@ noncomputable def l2Lat (u : Utterance) : PMF Lex :=
 noncomputable def s2Exp (w : World) : PMF Utterance :=
   .ofScores .uniform fun u => l2Score u w
 
-/-! ### Uncertainty implicature
+/-! ### The L₁ inferences -/
 
-Hearing "A or X", L₁ infers the speaker is uncertain (w₁₂): they could
-have said "A" knowing w₁ or "X" knowing w₂ (under `excl`), so the
-disjunction signals commitment to neither disjunct. -/
+/-- The ignorance implicature: hearing "A or X", L₁ ranks the uncertainty
+state on top — w₁₂ > w₁ > w₂. The speaker could have said "A" knowing w₁
+or "X" knowing w₂ (under `excl`), so the disjunction signals commitment
+to neither disjunct. -/
+theorem l1_uncertainty :
+    l1 .AorX .w₂ < l1 .AorX .w₁ ∧ l1 .AorX .w₁ < l1 .AorX .w₁₂ :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
-/-- w₁₂ > w₁ given "A or X". -/
-theorem uncertainty_w12_vs_w1 : l1 .AorX .w₁ < l1 .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- w₁₂ > w₂ given "A or X". -/
-theorem uncertainty_w12_vs_w2 : l1 .AorX .w₂ < l1 .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- w₁ > w₂ given "A or X": at w₁ the natural disjunct A operates, at w₂
-only the refined excl-X does. -/
-theorem uncertainty_w1_vs_w2 : l1 .AorX .w₂ < l1 .AorX .w₁ :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-! ### Lexicon inference
-
-For "A or X" the `excl` lexicon dominates — it makes the disjunction
-maximally informative — while `syn` renders it redundant (the Hurford
-violation) and is dispreferred. -/
-
-/-- excl > base for "A or X". -/
-theorem lexicon_excl_vs_base : l1Lat .AorX .base < l1Lat .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- excl > syn for "A or X". -/
-theorem lexicon_excl_vs_syn : l1Lat .AorX .syn < l1Lat .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- base > syn for "A or X", completing excl > base > syn. -/
-theorem lexicon_base_vs_syn : l1Lat .AorX .syn < l1Lat .AorX .base :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- The Hurford rescue: hearing "A or X", L₁ ranks the exclusivized
+lexicon on top — excl > base > syn. `excl` makes the disjunction maximally
+informative; `syn` makes it redundant. -/
+theorem l1_lexicon :
+    l1Lat .AorX .syn < l1Lat .AorX .base ∧ l1Lat .AorX .base < l1Lat .AorX .excl :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
 /-! ### Speaker rationality -/
 
-/-- At w₁₂ the speaker prefers "A or X" over "A" (under `excl`): "A" alone
-would signal w₁. -/
-theorem s1_w12_AorX_vs_A : s1 .excl .w₁₂ .A < s1 .excl .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- At w₁₂ the speaker prefers "A or X" over "X": "X" alone would signal
-w₂. -/
-theorem s1_w12_AorX_vs_X : s1 .excl .w₁₂ .X < s1 .excl .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- Knowing w₁, the speaker prefers the bare "A" over the disjunction. -/
-theorem s1_w1_A_vs_AorX : s1 .excl .w₁ .AorX < s1 .excl .w₁ .A :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- The eq. 11 speaker (under `excl`) uses the disjunction exactly when
+uncertain: at w₁₂ it beats both bare disjuncts, while knowing w₁ the bare
+"A" wins. -/
+theorem s1_disjunction_iff_uncertain :
+    s1 .excl .w₁₂ .A < s1 .excl .w₁₂ .AorX ∧
+    s1 .excl .w₁₂ .X < s1 .excl .w₁₂ .AorX ∧
+    s1 .excl .w₁ .AorX < s1 .excl .w₁ .A :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel),
+    PMF.ofScores_lt _ (by decide +kernel)⟩
 
 /-! ### Endorsement decomposition
 
 Eq. 15's two utility terms as independent components: informativity via
-the endorsement speaker `s2PMF` (S₂(u|w) ∝ L₁(w|u)) and expertise via
-lexicon signaling (`AorX_signals_excl_vs_A`). With β > 0 the speaker has
-both reasons to use the disjunction. -/
+the endorsement speaker `s2End` (S₂(u|w) ∝ L₁(w|u)) and expertise via
+lexicon signaling. With β > 0 the speaker has both reasons to use the
+disjunction. -/
 
-/-- Endorsement at w₁₂: "A or X" beats "A" ("A" is false at w₁₂ under
-every lexicon). -/
-theorem s2_w12_AorX_vs_A : s2End .w₁₂ .A < s2End .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- The informativity component alone already selects the disjunction
+exactly when uncertain ("A" is false at w₁₂ under every lexicon). -/
+theorem s2End_disjunction_iff_uncertain :
+    s2End .w₁₂ .A < s2End .w₁₂ .AorX ∧ s2End .w₁ .AorX < s2End .w₁ .A :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
-/-- Endorsement at w₁: the direct "A" beats the disjunction. -/
-theorem s2_w1_A_vs_AorX : s2End .w₁ .AorX < s2End .w₁ .A :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- "A or X" signals the `excl` lexicon more strongly than "A" does (all
-lexica agree on "A", so its lexicon posterior is near-uniform). This
-asymmetry is what β > 0 amplifies. -/
+/-- The expertise component: "A or X" signals the `excl` lexicon more
+strongly than "A" does (all lexica agree on "A", so its lexicon posterior
+is near-uniform). This asymmetry is what β > 0 amplifies. -/
 theorem AorX_signals_excl_vs_A : l1Lat .A .excl < l1Lat .AorX .excl :=
   PMF.ofScores_lt_cross _ _ (by decide +kernel)
 
 /-! ### Predictions at the stacked level (Figure 10) -/
 
-/-- L₂ hearing "A or X": w₁₂ > w₁. -/
-theorem l2_AorX_w12_vs_w1 : l2 .AorX .w₁ < l2 .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- L₂ hearing "A or X" reproduces the uncertainty ordering
+w₁₂ > w₁ > w₂ (Figure 10 world margins .91 > .09 > 0). -/
+theorem l2_uncertainty :
+    l2 .AorX .w₂ < l2 .AorX .w₁ ∧ l2 .AorX .w₁ < l2 .AorX .w₁₂ :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
-/-- L₂ hearing "A or X": w₁₂ > w₂. -/
-theorem l2_AorX_w12_vs_w2 : l2 .AorX .w₂ < l2 .AorX .w₁₂ :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- L₂ hearing "A or X" reproduces the lexicon ordering excl > base > syn
+(Figure 10 lexicon margins .49 > .34 > .17). -/
+theorem l2_lexicon :
+    l2Lat .AorX .syn < l2Lat .AorX .base ∧ l2Lat .AorX .base < l2Lat .AorX .excl :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
-/-- L₂ hearing "A or X": w₁ > w₂. -/
-theorem l2_AorX_w1_vs_w2 : l2 .AorX .w₂ < l2 .AorX .w₁ :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- L₂ lexicon inference: excl > base for "A or X". -/
-theorem l2_AorX_excl_vs_base : l2Lat .AorX .base < l2Lat .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- L₂ lexicon inference: excl > syn for "A or X". -/
-theorem l2_AorX_excl_vs_syn : l2Lat .AorX .syn < l2Lat .AorX .excl :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- L₂ lexicon inference: base > syn, completing excl > base > syn. -/
-theorem l2_AorX_base_vs_syn : l2Lat .AorX .syn < l2Lat .AorX .base :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- Marginalized S₂ at w₁₂ prefers "A or X" over "A" (p. 436). -/
-theorem s2Exp_w12_AorX_vs_A : s2Exp .w₁₂ .A < s2Exp .w₁₂ .AorX :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- Marginalized S₂ at w₁ prefers "A" over the disjunction. -/
-theorem s2Exp_w1_A_vs_AorX : s2Exp .w₁ .AorX < s2Exp .w₁ .A :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- The eq. 17 marginal speaker uses the disjunction exactly when
+uncertain (p. 436). -/
+theorem s2Exp_disjunction_iff_uncertain :
+    s2Exp .w₁₂ .A < s2Exp .w₁₂ .AorX ∧ s2Exp .w₁ .AorX < s2Exp .w₁ .A :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
 end PottsLevy2015
