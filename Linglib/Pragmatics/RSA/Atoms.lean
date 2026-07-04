@@ -39,17 +39,19 @@ noncomputable def rootAtom (X : ℝ) (n : ℕ) : ℝ := X ^ ((n : ℝ)⁻¹)
 theorem rootAtom_pos {X : ℝ} (hX : 0 < X) (n : ℕ) : 0 < rootAtom X n :=
   Real.rpow_pos_of_pos hX _
 
-/-- Lower certificate: `r ^ n ≤ X` gives `r ≤ ⁿ√X`. -/
+/-- Lower certificate: `r ^ n ≤ X` gives `r ≤ ⁿ√X`
+(mathlib's `Real.le_rpow_inv_iff_of_pos` at a natural exponent). -/
 theorem le_rootAtom_of_pow_le {r X : ℝ} {n : ℕ} (hn : n ≠ 0) (hr : 0 ≤ r)
-    (h : r ^ n ≤ X) : r ≤ rootAtom X n := by
-  rw [rootAtom, ← Real.pow_rpow_inv_natCast hr hn]
-  exact Real.rpow_le_rpow (by positivity) h (by positivity)
+    (h : r ^ n ≤ X) : r ≤ rootAtom X n :=
+  (Real.le_rpow_inv_iff_of_pos hr (le_trans (by positivity) h)
+    (by exact_mod_cast hn.bot_lt)).mpr (by rwa [Real.rpow_natCast])
 
-/-- Upper certificate: `X ≤ s ^ n` gives `ⁿ√X ≤ s`. -/
+/-- Upper certificate: `X ≤ s ^ n` gives `ⁿ√X ≤ s`
+(mathlib's `Real.rpow_inv_le_iff_of_pos` at a natural exponent). -/
 theorem rootAtom_le_of_le_pow {X s : ℝ} {n : ℕ} (hn : n ≠ 0) (hX : 0 ≤ X)
-    (hs : 0 ≤ s) (h : X ≤ s ^ n) : rootAtom X n ≤ s := by
-  rw [rootAtom, ← Real.pow_rpow_inv_natCast hs hn]
-  exact Real.rpow_le_rpow hX h (by positivity)
+    (hs : 0 ≤ s) (h : X ≤ s ^ n) : rootAtom X n ≤ s :=
+  (Real.rpow_inv_le_iff_of_pos hX hs
+    (by exact_mod_cast hn.bot_lt)).mpr (by rwa [Real.rpow_natCast])
 
 /-- Two-sided certificate from kernel-checkable power bounds. -/
 theorem rootAtom_mem_Icc {r X s : ℝ} {n : ℕ} (hn : n ≠ 0) (hr : 0 ≤ r)
@@ -77,6 +79,37 @@ theorem rootAtom_pow_mul_pow {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     Real.rpow_def_of_pos ha, Real.rpow_def_of_pos hb, ← Real.exp_add]
   congr 1
   ring
+
+/-! ### Two-factor geometric means
+
+`b ^ w * a ^ (1 − w)` is the channel-weighted geometric mean of two
+literal posteriors — eq.-7-style speaker utilities for a binary-support
+noise channel. The strict bounds against a comparison value need no
+magnitude computation: a weighted GM sits strictly between its factors. -/
+
+/-- A two-factor GM is strictly below `c` when one factor is at most `c`
+and the other strictly below, its weight positive. -/
+theorem rpow_mul_rpow_lt {a b c w w' : ℝ} (ha : 0 < a) (hc : 0 < c)
+    (hb : 0 < b) (hbc : b ≤ c) (hac : a < c) (hw : 0 ≤ w) (hw' : 0 < w')
+    (hsum : w + w' = 1) : b ^ w * a ^ w' < c := by
+  calc b ^ w * a ^ w'
+      ≤ c ^ w * a ^ w' := by gcongr
+    _ < c ^ w * c ^ w' :=
+        mul_lt_mul_of_pos_left (Real.rpow_lt_rpow ha.le hac hw') (by positivity)
+    _ = c := by rw [← Real.rpow_add hc, hsum, Real.rpow_one]
+
+/-- A two-factor GM is strictly above `c` when one factor is at least `c`
+and the other strictly above, its weight positive. -/
+theorem lt_rpow_mul_rpow {a b c w w' : ℝ} (hc : 0 < c) (ha : c < a)
+    (hcb : c ≤ b) (hw : 0 ≤ w) (hw' : 0 < w') (hsum : w + w' = 1) :
+    c < b ^ w * a ^ w' := by
+  calc c = c ^ w * c ^ w' := by rw [← Real.rpow_add hc, hsum, Real.rpow_one]
+    _ < c ^ w * a ^ w' :=
+        mul_lt_mul_of_pos_left (Real.rpow_lt_rpow hc.le ha hw') (by positivity)
+    _ ≤ b ^ w * a ^ w' :=
+        mul_le_mul_of_nonneg_right
+          (Real.rpow_le_rpow hc.le hcb hw)
+          (Real.rpow_nonneg (hc.trans ha).le _)
 
 /-! ### Exponential cost atoms -/
 
