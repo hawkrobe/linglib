@@ -1,3 +1,4 @@
+import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -445,53 +446,33 @@ noncomputable def l1Sal (u : Utterance) : PMF Object :=
 
 /-! ### The `exp(−1/2)` atom and its three numeric bounds -/
 
-private noncomputable def xc : ℝ := Real.exp (-(1/2))
+private noncomputable def xc : ℝ := RSA.expAtom (1/2)
 
-private theorem xc_pos : 0 < xc := Real.exp_pos _
+private theorem xc_pos : 0 < xc := RSA.expAtom_pos _
 
-private theorem xc_lt_one : xc < 1 := by
-  rw [xc, show (1 : ℝ) = Real.exp 0 from Real.exp_zero.symm]
-  exact Real.exp_lt_exp.mpr (by norm_num)
+private theorem e_half : ((2:ℕ) : ℝ) * (1/2) = 1 := by norm_num
 
-private theorem xc_sq : xc * xc = (Real.exp 1)⁻¹ := by
-  rw [xc, ← Real.exp_add, ← Real.exp_neg]
-  norm_num
-
-private theorem xc_sq_mul : xc * xc * Real.exp 1 = 1 := by
-  rw [xc_sq, inv_mul_cancel₀ (Real.exp_pos 1).ne']
+private theorem xc_lt_one : xc < 1 :=
+  RSA.expAtom_lt (n := 2) two_ne_zero (by norm_num)
+    (by rw [e_half, one_pow, one_mul]; nlinarith [Real.exp_one_gt_d9])
 
 /-- `exp(−1/2) > 1/2` ⟺ `e < 4` — [qing-franke-2015]'s Finding 2 needs the
 adjective's cost penalty to stay above the halved literal probability. -/
-private theorem xc_gt_half : 1/2 < xc := by
-  by_contra h
-  push Not at h
-  have h2 : xc * xc ≤ 1/4 := by nlinarith [xc_pos]
-  have h3 : Real.exp 1 * (xc * xc) ≤ Real.exp 1 * (1/4) :=
-    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
-  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
-  nlinarith [Real.exp_one_lt_d9]
+private theorem xc_gt_half : 1/2 < xc :=
+  RSA.lt_expAtom (n := 2) two_ne_zero (by norm_num)
+    (by rw [e_half]; nlinarith [Real.exp_one_lt_d9])
 
 /-- `exp(−1/2) < 139/169` ⟺ `e > (169/139)²` — the salience-belief speaker's
 circle-over-blue reversal at the blue circle. -/
-private theorem xc_lt_139_169 : xc < 139/169 := by
-  by_contra h
-  push Not at h
-  have h2 : (139/169 : ℝ) * (139/169) ≤ xc * xc := by nlinarith [xc_pos]
-  have h3 : Real.exp 1 * ((139/169 : ℝ) * (139/169)) ≤ Real.exp 1 * (xc * xc) :=
-    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
-  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
-  nlinarith [Real.exp_one_gt_d9]
+private theorem xc_lt_139_169 : xc < 139/169 :=
+  RSA.expAtom_lt (n := 2) two_ne_zero (by norm_num)
+    (by rw [e_half]; nlinarith [Real.exp_one_gt_d9])
 
 /-- `exp(−1/2) > 101/169` ⟺ `e < (169/101)²` ≈ 2.7998 — the tight bound
 (margin ≈ 0.08 over `exp_one_lt_d9`). -/
-private theorem xc_gt_101_169 : 101/169 < xc := by
-  by_contra h
-  push Not at h
-  have h2 : xc * xc ≤ (101/169 : ℝ) * (101/169) := by nlinarith [xc_pos]
-  have h3 : Real.exp 1 * (xc * xc) ≤ Real.exp 1 * ((101/169 : ℝ) * (101/169)) :=
-    mul_le_mul_of_nonneg_left h2 (Real.exp_pos 1).le
-  rw [show Real.exp 1 * (xc * xc) = xc * xc * Real.exp 1 from by ring, xc_sq_mul] at h3
-  nlinarith [Real.exp_one_lt_d9]
+private theorem xc_gt_101_169 : 101/169 < xc :=
+  RSA.lt_expAtom (n := 2) two_ne_zero (by norm_num)
+    (by rw [e_half]; nlinarith [Real.exp_one_lt_d9])
 
 /-! ### Cost-speaker values (for the listener comparisons) -/
 
@@ -523,7 +504,7 @@ private theorem Z_gs :
     show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm,
     ← ENNReal.ofReal_add (by norm_num) (by positivity)]
   congr 1
-  unfold xc
+  unfold xc RSA.expAtom
   norm_num
   ring
 
@@ -536,7 +517,7 @@ private theorem Z_bc :
   simp +decide
   rw [half_conv, ← ENNReal.ofReal_add (by norm_num) (by positivity)]
   congr 1
-  unfold xc
+  unfold xc RSA.expAtom
   norm_num
 
 private theorem Z_gc :
@@ -549,7 +530,7 @@ private theorem Z_gc :
   rw [half_conv, ← ENNReal.ofReal_mul (by norm_num),
     ← ENNReal.ofReal_add (by norm_num) (by positivity)]
   congr 1
-  unfold xc
+  unfold xc RSA.expAtom
   norm_num
   ring
 
@@ -572,7 +553,7 @@ private theorem green_weight :
       then (1 : ℝ≥0∞) else 2⁻¹) = 2⁻¹ from by simp +decide, qfCf_green, half_conv,
     ← ENNReal.ofReal_mul (by norm_num)]
   congr 1
-  unfold xc
+  unfold xc RSA.expAtom
   ring
 
 private theorem sc_circle_gc :
@@ -596,7 +577,7 @@ private theorem sc_green_gs :
     (by have := xc_pos; linarith)
 
 private theorem xc_eq : Real.exp (-2⁻¹) = xc := by
-  unfold xc
+  unfold xc RSA.expAtom
   norm_num
 
 private theorem qfCf_zero (u : Utterance) : qfCf 0 u = 1 := by
