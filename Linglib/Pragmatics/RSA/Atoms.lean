@@ -129,4 +129,29 @@ theorem expAtom_pow_mul_exp_eq_one {m : ℝ} {n : ℕ} (hn : n ≠ 0) :
       field_simp,
     ← Real.exp_add, neg_add_cancel, Real.exp_zero]
 
+/-- Power form of the inversion identity, stated at the atom's own
+exponent (no division shape): `expAtom q ^ n · exp (n·q) = 1`. -/
+theorem expAtom_pow_mul_exp_nat_mul {q : ℝ} (n : ℕ) :
+    expAtom q ^ n * Real.exp (n * q) = 1 := by
+  rw [expAtom, ← Real.exp_nat_mul, ← Real.exp_add, mul_neg, neg_add_cancel,
+    Real.exp_zero]
+
+/-- Lower certificate: `r ^ n · exp (n·q) < 1` gives `r < expAtom q`. -/
+theorem lt_expAtom {q r : ℝ} {n : ℕ} (hn : n ≠ 0) (hr : 0 ≤ r)
+    (h : r ^ n * Real.exp (n * q) < 1) : r < expAtom q := by
+  have hpos := expAtom_pos q
+  have hid := expAtom_pow_mul_exp_nat_mul (q := q) n
+  have he := Real.exp_pos ((n : ℝ) * q)
+  refine lt_of_pow_lt_pow_left₀ n hpos.le ?_
+  nlinarith [pow_nonneg hr n]
+
+/-- Upper certificate: `1 < s ^ n · exp (n·q)` gives `expAtom q < s`. -/
+theorem expAtom_lt {q s : ℝ} {n : ℕ} (hn : n ≠ 0) (hs : 0 ≤ s)
+    (h : 1 < s ^ n * Real.exp (n * q)) : expAtom q < s := by
+  have hpos := expAtom_pos q
+  have hid := expAtom_pow_mul_exp_nat_mul (q := q) n
+  have he := Real.exp_pos ((n : ℝ) * q)
+  refine lt_of_pow_lt_pow_left₀ n hs ?_
+  nlinarith [pow_pos hpos n]
+
 end RSA
