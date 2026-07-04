@@ -69,32 +69,31 @@ inductive Focused where
   | subject | verb | vp | object
   deriving DecidableEq, Repr
 
-/-- A focus configuration: what is focused, in which tense–aspect
-frame ([kidda-1985]'s inventory, `Fragments/Tangale/TAM.lean`), with a
-transitive or intransitive predicate. -/
+/-- A focus configuration of the paper's paradigm. -/
 structure Config where
-  focused    : Focused
-  tam        : Tangale.TAM
+  /-- The focused constituent. -/
+  focused : Focused
+  /-- The tense–aspect frame, from [kidda-1985]'s inventory. -/
+  tam : Tangale.TAM
+  /-- Whether the predicate is transitive. -/
   transitive : Bool
   deriving DecidableEq, Repr
 
-/-- The paper's paradigm: object focus presupposes a transitive
-predicate, and the marking facts are documented for the perfective and
-the continuous (the paper's progressive) frames. -/
+/-- The paper's paradigm: object focus needs a transitive predicate,
+and only the perfective and continuous (the paper's progressive)
+frames are documented. -/
 def Config.WF (c : Config) : Prop :=
-  (c.focused = .object → c.transitive = true) ∧
+  (c.focused = .object → c.transitive) ∧
   (c.tam = .perfective ∨ c.tam = .continuous)
 
 instance (c : Config) : Decidable c.WF :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The overt reflexes of each configuration: subjects surface
-displaced in every aspect ((17b)); intransitive predicate focus bears
-the morpheme *-i* ((24b)); transitive perfective non-subject foci get
-the prosodic boundary after the verb ((25a–c)); progressive non-subject
-foci receive nothing ((31)/(32a–c)). Frames beyond the paper's tested
-perfective and continuous fall to the unmarked default; claims about
-them are guarded by `Config.WF`. -/
+/-- The overt reflexes: subjects surface displaced ((17b));
+intransitive predicate focus bears *-i* ((24b)); transitive perfective
+foci get the boundary after the verb ((25a–c)); progressive foci
+receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
+default, guarded by `Config.WF`. -/
 def realize : Config → Realization Focused
   | ⟨.subject, _, _⟩        => ⟨.subject, [.displacement .subject]⟩
   | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
@@ -103,11 +102,9 @@ def realize : Config → Realization Focused
 
 /-- Focused subjects are overtly marked in every aspect — the paper's
 §6 subjects-vs-non-subjects generalization, shared with Hausa. -/
-theorem subject_always_marked (c : Config) (h : c.focused = .subject) :
-    (realize c).IsOvert := by
-  obtain ⟨f, a, t⟩ := c
-  cases h
-  exact List.cons_ne_nil _ _
+theorem subject_always_marked :
+    ∀ c : Config, c.focused = .subject → (realize c).IsOvert
+  | ⟨_, _, _⟩, rfl => List.cons_ne_nil _ _
 
 /-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
 contra Kidda 1993). -/
@@ -128,7 +125,7 @@ theorem focus_marking_not_obligatory :
 overt reflex — the Tangale side of the counterexample the Hausa
 chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
-    ¬ Semantics.Focus.EveryFocusPerceptible realize :=
+    ¬ EveryFocusPerceptible realize :=
   fun h => h ⟨.object, .continuous, true⟩ rfl
 
 /-- The perfective boundary underdetermines the focus extent: on
@@ -154,6 +151,7 @@ The winning parse's φ-edge is the `Reflex.boundary` of `realize`, and
 its audibility is the blocked elision cascade
 (`prosodic_reflex_audible`). -/
 
+/-- A minimal prosodic word. -/
 private def ω : Prosody.Tree := .node .om [.node .syl []]
 
 /-- V and O wrapped into one φ. -/
@@ -184,10 +182,8 @@ theorem neutral_parse_wraps :
     (Tableau.ofRanking [wrapped, separated] [starPhi]).optimal
       = {wrapped} := by decide
 
-/-- The derived contrast grounds the reflex: in the separated parse no
-φ spans both leaves, so the V–O juncture is phrase-external and
-elision is blocked (`Tangale.boundary_audible` supplies the audible
-difference); in the wrapped parse the juncture is φ-internal. -/
+/-- No φ spans the V–O juncture in the separated parse — elision is
+blocked there and applies in the wrapped one. -/
 theorem separated_edge_wrapped_internal :
     (0, 2) ∉ RoseTree.spansOf Prosody.Constituent.isPh separated ∧
     (0, 2) ∈ RoseTree.spansOf Prosody.Constituent.isPh wrapped := by decide
@@ -214,8 +210,11 @@ structure NumWorld where
   readBook    : Bool
   deriving DecidableEq, Repr
 
+/-- 'I bought the book.' -/
 def boughtBookP : Set NumWorld := {w | w.boughtBook}
+/-- 'I bought the shirt.' -/
 def boughtShirtP : Set NumWorld := {w | w.boughtShirt}
+/-- 'I read the book.' -/
 def readBookP : Set NumWorld := {w | w.readBook}
 
 /-- (36a): object association — alternatives to the book. -/
@@ -311,6 +310,7 @@ private def aspectLabel : Tangale.TAM → String
   | .continuous => "progressive"
   | _           => ""
 
+/-- The paradigm cells paired with their data rows. -/
 private def configRows :
     List (Config × Data.Examples.LinguisticExample) :=
   [(⟨.subject, .perfective, false⟩, Examples.ex17b),
