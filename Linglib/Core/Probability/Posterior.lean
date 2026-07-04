@@ -468,6 +468,21 @@ theorem mem_support_posterior_iff (κ : α → PMF β) (μ : PMF α) (b : β)
     a ∈ (posterior κ μ b h).support ↔ μ a ≠ 0 ∧ κ a b ≠ 0 :=
   mem_support_reweight_iff _ _ _ _ _
 
+/-- **A constant kernel is uninformative**: when the observation's likelihood
+does not depend on the hypothesis, the posterior is the prior. -/
+theorem posterior_eq_of_kernel_const (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) {c : ℝ≥0∞} (hc : ∀ a, κ a b = c) :
+    posterior κ μ b h = μ := by
+  have hm : marginal κ μ b = c := by
+    show (μ.bind κ) b = c
+    rw [PMF.bind_apply]
+    simp only [hc]
+    rw [ENNReal.tsum_mul_right, PMF.tsum_coe, one_mul]
+  have hc0 : c ≠ 0 := hm ▸ h
+  have hct : c ≠ ∞ := hm ▸ marginal_ne_top κ μ b
+  ext a
+  rw [posterior_apply, hc a, hm, mul_assoc, ENNReal.mul_inv_cancel hc0 hct, mul_one]
+
 /-- Bayes' rule: the joint factors as marginal × posterior. -/
 theorem marginal_mul_posterior_apply (κ : α → PMF β) (μ : PMF α) (b : β)
     (h : marginal κ μ b ≠ 0) (a : α) :
