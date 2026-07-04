@@ -216,7 +216,7 @@ noncomputable def ofWeights [Fintype W] (f : W → ℝ) (hn : ∀ w, 0 ≤ f w)
     (hpos : 0 < ∑ w, f w) : DistributionalCG W :=
   have hex : ∃ w, 0 < f w := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact absurd hpos (not_lt.mpr (Finset.sum_nonpos fun w _ => h w))
   ⟨PMF.ofRealWeightFn f hn hex.choose hex.choose_spec⟩
 
@@ -701,7 +701,7 @@ private theorem uniformMass (u : MFUtterance) :
   cases u
   case null =>
     simp only [show ∀ w, mfMeaning .null w = true from fun _ => rfl, if_true,
-      mul_one, reduceIte]
+      mul_one]
     exact four_quarters
   case studyHumanity =>
     rw [show mfMeaning .studyHumanity .ina = false from rfl,
@@ -715,14 +715,14 @@ private theorem uniformMass (u : MFUtterance) :
       show mfMeaning .studyScience .katie = true from rfl,
       show mfMeaning .studyScience .nancy = false from rfl,
       show mfMeaning .studyScience .sally = false from rfl]
-    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
+    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, add_zero]
     exact quarter_add_quarter
   case likeIndoors =>
     rw [show mfMeaning .likeIndoors .ina = true from rfl,
       show mfMeaning .likeIndoors .katie = false from rfl,
       show mfMeaning .likeIndoors .nancy = false from rfl,
       show mfMeaning .likeIndoors .sally = true from rfl]
-    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
+    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, add_zero]
     rw [show ((4 : ℝ≥0∞)⁻¹ + 4⁻¹) = 4⁻¹ + 4⁻¹ from rfl]
     exact quarter_add_quarter
   case likeOutdoors =>
@@ -746,7 +746,7 @@ private theorem cgL0_uniform_apply (u : MFUtterance) (w : MFWorld) :
   by_cases hw : mfMeaning u w = true
   · rw [hw]
     by_cases hn : u = .null <;>
-      simp only [hn, if_true, if_false, reduceIte, mul_one, inv_one, inv_inv]
+      simp only [hn, if_true, if_false, mul_one, inv_one, inv_inv]
     exact quarter_mul_two
   · rw [Bool.not_eq_true] at hw
     rw [hw]
@@ -782,7 +782,7 @@ private theorem Z_uniform (w : MFWorld) :
   rw [sumUtts]
   simp only [cgL0_uniform_apply]
   cases w <;>
-    · simp +decide [mfMeaning, worldMajor, worldLocation]
+    · simp +decide
       rw [half_conv, quarter_conv, ← ENNReal.ofReal_add (by norm_num) (by norm_num),
         ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
       norm_num
@@ -818,7 +818,7 @@ private theorem cgS1_uniform_true {u : MFUtterance} {w : MFWorld}
   rw [RSA.S1Belief_apply]
   simp only [ENNReal.rpow_one, mul_one]
   rw [Z_uniform' w, cgL0_uniform_apply, hw]
-  simp only [if_true, reduceIte]
+  simp only [if_true]
   rw [if_neg hn]
   exact s1_val_arith
 
@@ -829,7 +829,7 @@ private theorem cgS1_uniform_null (w : MFWorld) :
   rw [RSA.S1Belief_apply]
   simp only [ENNReal.rpow_one, mul_one]
   rw [Z_uniform' w, cgL0_uniform_apply]
-  simp only [show mfMeaning .null w = true from rfl, if_true, reduceIte]
+  simp only [show mfMeaning .null w = true from rfl, if_true]
   exact s1_null_arith
 
 /-- Turn-1 speaker value off support: `0`. -/
@@ -882,14 +882,14 @@ private theorem marginal_uniform (u : MFUtterance) :
           cgS1_uniform_true (by decide) (by decide),
           cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
           quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
-       simp only [mul_zero, zero_add, add_zero]
+       simp only [mul_zero, add_zero]
        rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
        norm_num)
     | (rw [cgS1_uniform_true (by decide) (by decide),
           cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
           cgS1_uniform_true (by decide) (by decide),
           quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
-       simp only [mul_zero, zero_add, add_zero]
+       simp only [mul_zero, add_zero]
        rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
        norm_num)
     | (rw [cgS1_uniform_false (by decide),
@@ -1083,10 +1083,6 @@ noncomputable def l1Turn2 : MFUtterance → PMF MFWorld := cgL1 cgTurn2PMF cgTur
 private theorem t2_sum : (∑' w, ENNReal.ofReal (cgTurn2 w)) = ENNReal.ofReal 10 := by
   rw [sumWorlds]
   norm_num [cgTurn2]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try norm_num
 
 private theorem cgTurn2PMF_apply (w : MFWorld) :
     cgTurn2PMF w = ENNReal.ofReal (cgTurn2 w / 10) := by
@@ -1110,14 +1106,13 @@ private theorem t2Mass (u : MFUtterance) :
   rw [sumWorlds]
   simp only [cgTurn2PMF_apply]
   cases u <;>
-    · simp +decide [mfMeaning, worldMajor, worldLocation, cgTurn2, t2MassQ]
+    · simp +decide [cgTurn2, t2MassQ]
       try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
       try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
       try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
       first
         | (rw [half_conv]; congr 1; norm_num)
         | norm_num
-        | rfl
 
 private theorem cgL0_t2_true {u : MFUtterance} {w : MFWorld}
     (hw : mfMeaning u w = true) :
@@ -1125,10 +1120,10 @@ private theorem cgL0_t2_true {u : MFUtterance} {w : MFWorld}
       = ENNReal.ofReal (cgTurn2 w / 10 / t2MassQ u) := by
   unfold cgL0
   rw [RSA.L0LassiterGoodman_apply, hw, t2Mass, cgTurn2PMF_apply]
-  simp only [if_true, mul_one, reduceIte]
+  simp only [if_true, mul_one]
   rw [← ENNReal.ofReal_inv_of_pos (by cases u <;> norm_num [t2MassQ]),
     ← ENNReal.ofReal_mul (by cases w <;> norm_num [cgTurn2])]
-  congr 1 <;> ring
+  congr 1
 
 private theorem cgL0_t2_false {u : MFUtterance} {w : MFWorld}
     (hw : mfMeaning u w = false) :
@@ -1178,7 +1173,7 @@ private theorem cgS1_t2_true {u : MFUtterance} {w : MFWorld}
     cgL0_t2_true hw,
     ← ENNReal.ofReal_inv_of_pos (by cases w <;> norm_num [Zt2Q]),
     ← ENNReal.ofReal_mul (by cases u <;> cases w <;> norm_num [cgTurn2, t2MassQ])]
-  congr 1 <;> ring
+  congr 1
 
 private theorem cgS1_t2_false {u : MFUtterance} {w : MFWorld}
     (hw : mfMeaning u w = false) :
