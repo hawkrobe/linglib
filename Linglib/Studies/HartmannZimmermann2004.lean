@@ -32,8 +32,8 @@ audible.
 ## Implementation notes
 
 Realisation uses the shared `Semantics.Focus.Realization` vocabulary
-(reflex lists; `Strategy` is the paper's label set, derived from the
-reflex shape). Configurations carry the fragment's
+(reflex lists; the paper's strategy labels are read off the reflex
+shape in the data linkage). Configurations carry the fragment's
 tense–aspect type directly (`Tangale.TAM`): the perfective rows are
 [kidda-1985]'s singular perfective and the paper's progressive is the
 fragment's continuous (preposed *né*), with the paradigm restriction
@@ -66,11 +66,6 @@ open OptimalityTheory (Tableau)
 /-- The focused constituent in the paper's paradigm. -/
 inductive Focused where
   | subject | verb | vp | object
-  deriving DecidableEq, Repr
-
-/-- The four marking strategies. -/
-inductive Strategy where
-  | postposing | suffixI | boundary | unmarked
   deriving DecidableEq, Repr
 
 /-- A focus configuration: what is focused, in which tense–aspect
@@ -112,15 +107,6 @@ def realize : Config → Realization Focused
   | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
   | ⟨f, .perfective, true⟩  => ⟨f, [.boundary .verb]⟩
   | ⟨f, _, _⟩               => ⟨f, []⟩
-
-/-- The paper's strategy labels, classified from the realization
-shape — a derived quotient, not a primitive tag. -/
-def marking (c : Config) : Strategy :=
-  match (realize c).reflexes with
-  | [.displacement _] => .postposing
-  | [.morpheme _]     => .suffixI
-  | [.boundary _]     => .boundary
-  | _                 => .unmarked
 
 /-- Focused subjects are overtly marked in every aspect — the paper's
 §6 subjects-vs-non-subjects generalization, shared with Hausa. -/
@@ -310,14 +296,16 @@ theorem vp_reading_strongest :
 
 /-! ## Data linkage
 
-The `marking` function is pinned to the `paperFeatures` of every focus
-row in `Data.Examples.HartmannZimmermann2004`. -/
+`realize` is pinned to the `paperFeatures` of every focus row in
+`Data.Examples.HartmannZimmermann2004`; the paper's strategy label is
+read off the reflex shape. -/
 
-private def strategyLabel : Strategy → String
-  | .postposing => "postposing"
-  | .suffixI    => "suffixI"
-  | .boundary   => "boundary"
-  | .unmarked   => "unmarked"
+private def strategyLabel (c : Config) : String :=
+  match (realize c).reflexes with
+  | [.displacement _] => "postposing"
+  | [.morpheme _]     => "suffixI"
+  | [.boundary _]     => "boundary"
+  | _                 => "unmarked"
 
 private def focusedLabel : Focused → String
   | .subject => "subject"
@@ -341,12 +329,12 @@ private def configRows :
    (⟨.vp, .continuous, true⟩, Examples.ex32b),
    (⟨.verb, .continuous, true⟩, Examples.ex32c)]
 
-/-- Every focus row's strategy is the `marking` of its configuration:
+/-- Every focus row's strategy label is read off `realize`'s reflexes:
 the conditioning function is derived from the data, not stipulated
 beside it. -/
 theorem marking_matches_rows :
     ∀ p ∈ configRows,
-      p.2.feature? "strategy" = some (strategyLabel (marking p.1)) ∧
+      p.2.feature? "strategy" = some (strategyLabel p.1) ∧
       p.2.feature? "focused" = some (focusedLabel p.1.focused) ∧
       p.2.feature? "aspect" = some (aspectLabel p.1.tam) := by decide
 
