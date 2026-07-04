@@ -202,7 +202,7 @@ theorem L1_latent_eq_policy (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
     for latent comparisons: since `L1_latent u l = L1_latent_agent.policy () l`,
     comparing L1_latent reduces to comparing L1_latent_agent scores.
 
-    Used by `rsa_predict` to eliminate the shared normalization constant
+    Eliminates the shared normalization constant
     when comparing `L1_latent u l₁ < L1_latent u l₂`. -/
 @[gcongr only]
 theorem L1_latent_lt_of_score_lt (cfg : RSAConfig U W) (u : U)
@@ -222,7 +222,7 @@ noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U)
     for marginal comparisons: since all L1(u,w) share the same totalScore(u),
     comparing marginal sums reduces to comparing score sums.
 
-    Used by `rsa_predict` to eliminate the shared normalization constant
+    Eliminates the shared normalization constant
     when comparing `L1_marginal u P < L1_marginal u Q`. -/
 @[gcongr only]
 theorem L1_marginal_lt_of_score_sum_lt (cfg : RSAConfig U W) (u : U)
@@ -295,7 +295,7 @@ matching eq 15 of [potts-levy-2015] when `bonus = L₁(L|u)` and
 `costFactor = exp(-C(u))`.
 
 The stacked config's L1 = L₂ (world posterior) and L1_latent = L₂_latent
-(lexicon posterior), all provable with `rsa_predict`. -/
+(lexicon posterior). -/
 noncomputable def stack (cfg : RSAConfig U W)
     (α₂ : ℝ) (hα₂ : 0 < α₂)
     (bonus : cfg.Latent → U → ℝ := fun _ _ => 1)

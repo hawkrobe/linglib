@@ -64,7 +64,7 @@ posterior.
 
 The bundled-`RSAConfig` formalisation in `LassiterGoodman2017.lean`
 (sibling file, in this directory) handles the empirical-fit reproduction
-via `rsa_predict` reflection. Its `defaultCfg.L1 : Utterance → Height →
+via interval reflection. Its `defaultCfg.L1 : Utterance → Height →
 ℝ` returns unnormalised real values via the bundled API; it is not
 PMF-shaped.
 

@@ -590,7 +590,7 @@ inventories.)
 Why the fresh `Word` type rather than a `{sedivyBundle with worlds := …}`
 update? Keeping `.short` in the lexicon while removing all of its
 referents leaves `incrementalSem [.short] _ = 0/0`, which mathlib treats
-as `0` but which the `rsa_predict` reflection evaluator cannot reduce.
+as `0` but which kernel evaluation of the ℚ face cannot reduce.
 The fresh type sidesteps the divide-by-zero pattern at the cost of mild
 bundle duplication. -/
 
@@ -715,7 +715,7 @@ open scoped ENNReal in
     `SedivyEtAl1999.SatisfiesSedivyPattern.contrast_reduces_competitor_looks`
     for this model. The proof reduces — via the `HasContrastCondition`
     lens applied to a destructured cell — to the per-cell L1 inequality,
-    dispatched by `rsa_predict`. -/
+    kernel-verified on the exact-ℚ face. -/
 theorem cgSedivyLooks_satisfy_contrast_reduces_competitor :
     ContrastReducesCompetitorLooks (Cell := SedivyEtAl1999.Cell) (R := ℝ≥0∞) cgSedivyLooks := by
   intro c
@@ -746,7 +746,7 @@ mid-utterance). The cost-dependent comparison theorem
 `S1^UTT-IP(red dress, STOP | R1) > S1^UTT-IP(dress, STOP | R1)` is
 left as future work — formalising it requires `Real.exp` over a cost
 schedule and a quantitative argument that does not reduce via
-`rsa_predict`. -/
+kernel comparison. -/
 
 namespace RubioFernandezScene
 

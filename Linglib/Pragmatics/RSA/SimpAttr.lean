@@ -11,7 +11,8 @@ The partition-cancelling RSA decomposition lemmas in `RSA/Operators.lean` and
 `RSA/Canonical.lean` are tagged `@[rsa]`. `simp [rsa]` rewrites an `S1`/`L1`
 *preference* goal (`S1 x < S1 y`, `(L1 …).fst w₁ < …`) to its structural
 score/posterior comparison — the normalisation factor cancels by rewriting, not by
-evaluating a state-space sum. This is the migration API replacing `rsa_predict`
+evaluating a state-space sum. This is the migration API that replaced the
+retired `rsa_predict` interval tactic
 reflection with simplification: a migrated prediction is `by simp [rsa]` down to a
 condition closed by a *theorem*, not a `decide`/`norm_num` over a sum.
 -/

@@ -10,7 +10,7 @@ the underlying scores, costs, and meanings — peeling off one layer of
 softmax/Bayes per rewrite. Companion to `Basic.lean`'s
 `L1_latent_lt_of_score_lt` and `L1_marginal_lt_of_score_sum_lt`.
 
-The intent is to shrink the footprint of the `rsa_predict` numerical-reflection
+The intent is to shrink the footprint of the retired numerical-reflection
 tactic: when an inequality holds because of a structural fact (denominator
 cancellation, monotonicity of softmax in the score, monotonicity of the
 score in `L0` or `cost`), prove it by chaining these lemmas instead of
@@ -33,9 +33,9 @@ values *at the same conditioning point*:
 
 For these comparisons, this file provides `*_lt_of_score_lt` lemmas that
 discharge the inequality from a score comparison alone, skipping the heavy
-softmax denominator computation that `rsa_predict` would otherwise verify
+softmax denominator computation that interval reflection would otherwise verify
 numerically. All such lemmas are tagged `@[gcongr]`, so user code can write
-`by gcongr; rsa_predict` instead of invoking the lemma by name.
+a `gcongr`-driven proof instead of invoking the lemma by name.
 
 ## Score-shape lemmas
 
@@ -49,7 +49,7 @@ the next reduction. For the two canonical `s1Score` patterns:
 
 These shape lemmas live below as `S1_belief_score_lt_iff` etc.; they are
 parameterized by the scoring rule, so a paper using a custom `s1Score` adds
-its own shape lemma instead of invoking `rsa_predict`.
+its own shape lemma instead of numeric reflection.
 -/
 
 namespace RSA
