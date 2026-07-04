@@ -53,6 +53,8 @@ namespace Discourse
 
 open CommonGround (ContextSet HasContextSet)
 
+variable {W : Type*}
+
 /-! ### The common ground as a distribution
 
 Anderson's distributional common ground *is* a `PMF W` ([anderson-2021]
@@ -63,62 +65,13 @@ support. -/
 
 /-- A distribution projects to [stalnaker-2002]'s context set: the
     positive-mass worlds. -/
-instance {W : Type*} : HasContextSet (PMF W) W := ⟨fun p w => w ∈ p.support⟩
+instance : HasContextSet (PMF W) W := ⟨fun p w => w ∈ p.support⟩
 
-@[simp] theorem pmf_toContextSet {W : Type*} (p : PMF W) (w : W) :
-    HasContextSet.toContextSet p w ↔ 0 < p.toRealFn w := by
-  show w ∈ p.support ↔ _
-  rw [PMF.mem_support_iff, PMF.toRealFn, ENNReal.toReal_pos_iff,
-    pos_iff_ne_zero]
-  exact (and_iff_left (lt_top_iff_ne_top.mpr (p.apply_ne_top w))).symm
-
-/-- Mass of the uniform distribution, in ℝ. -/
-@[simp] theorem _root_.PMF.uniformOfFintype_toRealFn (W : Type*) [Fintype W]
-    [Nonempty W] (w : W) :
-    (PMF.uniformOfFintype W).toRealFn w = (Fintype.card W : ℝ)⁻¹ := by
-  show ((PMF.uniformOfFintype W) w).toReal = _
-  rw [PMF.uniformOfFintype_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast]
-
-/-! ### Renormalising constructor -/
-
-variable {W : Type*}
-
-/-- Build a common ground from non-negative `ℝ` weights by renormalising
-    (Anderson 2021, footnote 3: *"the probabilities are renormalized"*).
-    Routes through `PMF.ofRealWeightFn`; the positivity witness is derived
-    from the positive total. -/
-noncomputable def ofWeights [Fintype W] (f : W → ℝ) (hn : ∀ w, 0 ≤ f w)
-    (hpos : 0 < ∑ w, f w) : PMF W :=
-  have hex : ∃ w, 0 < f w := by
-    by_contra h
-    push Not at h
-    exact absurd hpos (not_lt.mpr (Finset.sum_nonpos fun w _ => h w))
-  PMF.ofRealWeightFn f hn hex.choose hex.choose_spec
-
-/-- Closed form of a renormalised mass: each weight divided by the total.
-    Anderson's renormalisation made explicit (`CG(w) = f(w) / Σ f`). -/
-theorem ofWeights_weight_eq [Fintype W] (f : W → ℝ) (hn : ∀ w, 0 ≤ f w)
-    (hpos : 0 < ∑ w, f w) (w : W) :
-    (ofWeights f hn hpos).toRealFn w = f w / (∑ x, f x) := by
-  simp only [PMF.toRealFn, ofWeights, PMF.ofRealWeightFn_apply]
-  rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (hn w),
-    ← ENNReal.ofReal_sum_of_nonneg (fun x _ => hn x), ENNReal.toReal_inv,
-    ENNReal.toReal_ofReal hpos.le, div_eq_mul_inv]
-
-/-- Renormalisation preserves the strict ordering of weights — the same
-    positive total divides both sides. Drives the "beliefs favour world
-    `w`" comparisons. -/
-theorem ofWeights_weight_lt_iff [Fintype W] (f : W → ℝ) (hn : ∀ w, 0 ≤ f w)
-    (hpos : 0 < ∑ w, f w) (w₁ w₂ : W) :
-    (ofWeights f hn hpos).toRealFn w₁ < (ofWeights f hn hpos).toRealFn w₂ ↔
-      f w₁ < f w₂ := by
-  rw [ofWeights_weight_eq, ofWeights_weight_eq, div_lt_div_iff_of_pos_right hpos]
-
-/-- Renormalising an already-normalised weight vector recovers it exactly. -/
-theorem ofWeights_weight [Fintype W] (f : W → ℝ) (hn : ∀ w, 0 ≤ f w)
-    (hpos : 0 < ∑ w, f w) (hsum : ∑ w, f w = 1) (w : W) :
-    (ofWeights f hn hpos).toRealFn w = f w := by
-  rw [ofWeights_weight_eq, hsum, div_one]
+@[simp] theorem pmf_toContextSet (p : PMF W) (w : W) :
+    HasContextSet.toContextSet p w ↔ 0 < p.toRealFn w :=
+  (PMF.mem_support_iff p w).trans
+    ⟨fun h => ENNReal.toReal_pos h (p.apply_ne_top w),
+     fun h => pos_iff_ne_zero.mp (ENNReal.toReal_pos_iff.mp h).1⟩
 
 end Discourse
 
@@ -199,43 +152,19 @@ conversation-update and RSA content below consume them. -/
 
 /-! ### CommonGround Update -/
 
-/-- Convex-combination update for distributional common ground:
-
-    CommonGround'(w) = (1 - lr) · CommonGround(w) + lr · posterior(w)
-
-Both inputs are genuine distributions, so the `lr`-weighted mixture is
-automatically a distribution (no renormalisation needed) — built as a
-`PMF.ofFintype` mixture, exactly mirroring `PMF.midPMF`'s `1/2` case. The
-learning rate `lr ∈ [0,1]` controls how much weight is given to new
-information vs. the existing CommonGround. -/
-noncomputable def updateCG {W : Type*} [Fintype W] (cg post : PMF W)
+/-- Common-ground update ([anderson-2021] §6, Figure 2): the `lr`-mixture
+of the current common ground with the pragmatic-listener posterior —
+`PMF.mix` at the learning rate. -/
+noncomputable def updateCG {W : Type*} (cg post : PMF W)
     (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) : PMF W :=
-  (PMF.ofFintype
-    (fun w => ENNReal.ofReal (1 - lr) * cg w + ENNReal.ofReal lr * post w)
-    (by
-      have hcg : (∑ w, cg w) = 1 :=
-        (tsum_eq_sum (fun w (h : w ∉ Finset.univ) =>
-          absurd (Finset.mem_univ w) h)).symm.trans (PMF.tsum_coe cg)
-      have hpost : (∑ w, post w) = 1 :=
-        (tsum_eq_sum (fun w (h : w ∉ Finset.univ) =>
-          absurd (Finset.mem_univ w) h)).symm.trans (PMF.tsum_coe post)
-      rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hcg, hpost,
-        mul_one, mul_one, ← ENNReal.ofReal_add (by linarith) hlr, sub_add_cancel,
-        ENNReal.ofReal_one]))
+  PMF.mix ⟨lr, hlr⟩ (by exact_mod_cast hlr1) cg post
 
-/-- The CommonGround update is the convex combination
-`(1 - lr) · CommonGround(w) + lr · posterior(w)`, exactly — both inputs sum
-to one, so the mixture preserves total mass with no rescaling. -/
-theorem updateCG_eq {W : Type*} [Fintype W] (cg post : PMF W)
+/-- The update in ℝ: `(1 − lr)·CG + lr·posterior`, no rescaling needed. -/
+theorem updateCG_eq {W : Type*} (cg post : PMF W)
     (lr : ℝ) (h0 : 0 ≤ lr) (h1 : lr ≤ 1) (w : W) :
     (updateCG cg post lr h0 h1).toRealFn w =
-    (1 - lr) * cg.toRealFn w + lr * post.toRealFn w := by
-  simp only [PMF.toRealFn, updateCG, PMF.ofFintype_apply]
-  rw [ENNReal.toReal_add
-        (ENNReal.mul_ne_top ENNReal.ofReal_ne_top (cg.apply_ne_top w))
-        (ENNReal.mul_ne_top ENNReal.ofReal_ne_top (post.apply_ne_top w)),
-    ENNReal.toReal_mul, ENNReal.toReal_mul,
-    ENNReal.toReal_ofReal (by linarith : (0:ℝ) ≤ 1 - lr), ENNReal.toReal_ofReal h0]
+    (1 - lr) * cg.toRealFn w + lr * post.toRealFn w :=
+  PMF.toRealFn_mix _ _ cg post w
 
 /-- **Bridge to [luce-1959] linear learning**: the CommonGround update has the same
 algebraic form as `LinearLearner.update` with retention rate `1 - lr` and
@@ -246,7 +175,7 @@ reinforcement target `posterior`:
 
 Setting `α = 1 - lr` and `r = posterior` makes the formulas identical.
 Multi-turn conversation IS iterated learning over distributions. -/
-theorem updateCG_matches_linear_learning {W : Type*} [Fintype W]
+theorem updateCG_matches_linear_learning {W : Type*}
     (cg post : PMF W)
     (lr : ℝ) (h0 : 0 ≤ lr) (h1 : lr ≤ 1) (w : W) :
     (updateCG cg post lr h0 h1).toRealFn w =
@@ -254,13 +183,13 @@ theorem updateCG_matches_linear_learning {W : Type*} [Fintype W]
   rw [updateCG_eq]; ring
 
 /-- With learning rate 0, the CommonGround is unchanged (full retention). -/
-theorem updateCG_lr_zero {W : Type*} [Fintype W] (cg post : PMF W)
+theorem updateCG_lr_zero {W : Type*} (cg post : PMF W)
     (w : W) :
     (updateCG cg post 0 (le_refl 0) zero_le_one).toRealFn w = cg.toRealFn w := by
   rw [updateCG_eq]; ring
 
 /-- With learning rate 1, the CommonGround is replaced by the posterior. -/
-theorem updateCG_lr_one {W : Type*} [Fintype W] (cg post : PMF W)
+theorem updateCG_lr_one {W : Type*} (cg post : PMF W)
     (w : W) :
     (updateCG cg post 1 zero_le_one (le_refl 1)).toRealFn w = post.toRealFn w := by
   rw [updateCG_eq]; ring
@@ -297,27 +226,24 @@ noncomputable def ConversationState.initial {W : Type*} [Fintype W] [Nonempty W]
 
 /-! ### Observation Sampling -/
 
-/-- **Weighted sampling**: sample a world proportional to the speaker's belief.
-Biased toward truth (zero-probability worlds are never sampled) but can
-lead to flip-flopping when the speaker has no strong beliefs. -/
+/-- Weighted sampling (§7.1): a world sampled in proportion to the
+speaker's belief — truthful (zero-probability worlds never sampled) but
+flip-flop-prone for noncommittal speakers (Figure 12). -/
 noncomputable def weightedSample {W : Type*} (bel : PMF W) : W → ℝ :=
   bel.toRealFn
 
-/-- **Thresholded sampling**: filter out worlds below a confidence threshold.
-If no world exceeds the threshold, the speaker produces the null utterance
-(passes). Prevents noncommittal speakers from making random assertions. -/
+/-- Thresholded sampling (§7.1.1): worlds below the confidence threshold
+are filtered out; with none left the speaker passes with the null
+utterance and "all updates are skipped" (Figure 13). -/
 noncomputable def thresholdedSample {W : Type*}
     (bel : PMF W) (θ : ℝ) : W → ℝ :=
   λ w => if bel.toRealFn w ≥ θ then bel.toRealFn w else 0
 
-/-- **Difference-based sampling**: weight worlds by the positive difference
-between the speaker's belief and the current CommonGround. Worlds already established
-in the CommonGround get downweighted, favoring informative (non-redundant) contributions.
-
-    weight(w) = max(0, Bel(w) - CommonGround(w))
-
-This implements a pressure toward Gricean Quantity: don't repeat what's
-already in the common ground. -/
+/-- Difference-based sampling (§7.2.1): worlds weighted by "the largest
+(positive) difference in probability between the speaker's beliefs and
+the Common Ground" — the paper's own truncation at zero (its fn. 14:
+probability *reductions* are also informative but assertions can't convey
+them). Non-redundancy as Gricean Quantity. -/
 noncomputable def differenceSample {W : Type*}
     (bel cg : PMF W) : W → ℝ :=
   λ w => max 0 (bel.toRealFn w - cg.toRealFn w)
@@ -329,81 +255,49 @@ theorem differenceSample_nonneg {W : Type*}
 
 /-! ### BToM Shared-State Update -/
 
-/-- Anderson's CommonGround update expressed as a BToM shared-state update.
-
-Given a fixed posterior-computation function (from RSA inference), the CommonGround
-update has the type required by `BToMModel.sharedUpdate`:
-
-    Shared → Action → World → Shared
-
-with `Shared := PMF W` and `Action := U`.
-
-The `World` parameter is unused: the listener doesn't know the true world,
-so the CommonGround update depends on the *posterior* (derived from the utterance),
-not the true world directly. -/
+/-- Linglib bridge (not in the paper): the common-ground update has the
+type `BToMModel.sharedUpdate` expects (`Shared → Action → World → Shared`
+at `Shared := PMF W`), instantiating BToM's discourse dynamics with a
+distributional shared state. The `World` argument is unused — the update
+reads the utterance-derived posterior, never the true world. -/
 noncomputable def toBToMSharedUpdate {W U : Type*} [Fintype W]
     (posteriorFn : U → PMF W)
     (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) :
     PMF W → U → W → PMF W :=
   fun cg u _w => updateCG cg (posteriorFn u) lr hlr hlr1
 
-/-! ### Example Beliefs -/
+/-! ### The Figure-5 beliefs
 
-/-- The unnormalised belief weights: `peak` on one world, `1` elsewhere.
-Their total over the four MutualFriends worlds is `6`. -/
+The §5.1.1 scenario — A thinks the person is Nancy, B thinks Katie — is
+qualitative in the paper; the 3:1 peak (renormalised to ½ there, 1/6
+elsewhere) is this file's illustrative instantiation. -/
+
 private theorem mfWorld_sum_peak (peak : ℝ) (p : MFWorld) :
     (∑ x : MFWorld, if x = p then peak else 1) = peak + 3 := by
   rw [show (Finset.univ : Finset MFWorld) = {.ina, .katie, .nancy, .sally} from rfl]
   cases p <;>
     simp [Finset.sum_insert, Finset.mem_insert] <;> ring
 
-/-- A believes the person is Nancy: (unnormalised) weight 3 on Nancy, 1 on
-others — renormalised to the distribution `[1/6, 1/6, 1/2, 1/6]`. -/
-noncomputable def beliefsA : PMF MFWorld :=
-  Discourse.ofWeights (fun w => if w = .nancy then 3 else 1)
+/-- Beliefs peaked on one world: illustrative 3:1 weights, renormalised. -/
+noncomputable def peakedBeliefs (p : MFWorld) : PMF MFWorld :=
+  PMF.ofRealWeightFn (fun w => if w = p then 3 else 1)
     (fun w => by split <;> norm_num)
-    (Finset.sum_pos' (fun w _ => by split <;> norm_num)
-      ⟨.nancy, Finset.mem_univ _, by rw [if_pos rfl]; norm_num⟩)
+    (by rw [mfWorld_sum_peak]; norm_num)
 
-/-- B believes the person is Katie: (unnormalised) weight 3 on Katie, 1 on
-others — renormalised to the distribution `[1/6, 1/2, 1/6, 1/6]`. -/
-noncomputable def beliefsB : PMF MFWorld :=
-  Discourse.ofWeights (fun w => if w = .katie then 3 else 1)
-    (fun w => by split <;> norm_num)
-    (Finset.sum_pos' (fun w _ => by split <;> norm_num)
-      ⟨.katie, Finset.mem_univ _, by rw [if_pos rfl]; norm_num⟩)
+/-- A believes Nancy; B believes Katie (Figure 5). -/
+noncomputable def beliefsA : PMF MFWorld := peakedBeliefs .nancy
 
-/-- Closed form of A's renormalised beliefs: `3/6` on Nancy, `1/6` elsewhere. -/
-theorem beliefsA_weight (w : MFWorld) :
-    beliefsA.toRealFn w = (if w = .nancy then 3 else 1) / 6 := by
-  rw [beliefsA, Discourse.ofWeights_weight_eq, mfWorld_sum_peak]; norm_num
+/-- See `beliefsA`. -/
+noncomputable def beliefsB : PMF MFWorld := peakedBeliefs .katie
 
-/-- Closed form of B's renormalised beliefs: `3/6` on Katie, `1/6` elsewhere. -/
-theorem beliefsB_weight (w : MFWorld) :
-    beliefsB.toRealFn w = (if w = .katie then 3 else 1) / 6 := by
-  rw [beliefsB, Discourse.ofWeights_weight_eq, mfWorld_sum_peak]; norm_num
+theorem peakedBeliefs_weight (p w : MFWorld) :
+    (peakedBeliefs p).toRealFn w = (if w = p then 3 else 1) / 6 := by
+  rw [peakedBeliefs, PMF.ofRealWeightFn_toRealFn_apply, mfWorld_sum_peak]; norm_num
 
-/-- A's beliefs favor Nancy over all other worlds. -/
-theorem beliefsA_favors_nancy (w : MFWorld) (hw : w ≠ .nancy) :
-    beliefsA.toRealFn w < beliefsA.toRealFn .nancy := by
-  rw [beliefsA_weight w, beliefsA_weight .nancy, if_neg hw, if_pos rfl]; norm_num
-
-/-- B's beliefs favor Katie over all other worlds. -/
-theorem beliefsB_favors_katie (w : MFWorld) (hw : w ≠ .katie) :
-    beliefsB.toRealFn w < beliefsB.toRealFn .katie := by
-  rw [beliefsB_weight w, beliefsB_weight .katie, if_neg hw, if_pos rfl]; norm_num
-
-/-- Under difference-based sampling, A initially prioritizes Nancy
-(highest positive difference from uniform CommonGround). -/
-noncomputable def aDiffFromUniform : MFWorld → ℝ :=
-  differenceSample beliefsA (PMF.uniformOfFintype MFWorld)
-
-theorem a_diff_nancy_positive :
-    0 < aDiffFromUniform .nancy := by
-  rw [aDiffFromUniform, differenceSample, lt_max_iff]
-  right
-  rw [beliefsA_weight, PMF.uniformOfFintype_toRealFn, card_mfworld]
-  norm_num
+/-- Peaked beliefs favor their peak over every other world. -/
+theorem peakedBeliefs_favors (p w : MFWorld) (hw : w ≠ p) :
+    (peakedBeliefs p).toRealFn w < (peakedBeliefs p).toRealFn p := by
+  rw [peakedBeliefs_weight, peakedBeliefs_weight, if_neg hw, if_pos rfl]; norm_num
 
 /-! ### The Figure-4 model on ℚ≥0 scores -/
 
@@ -411,7 +305,7 @@ theorem a_diff_nancy_positive :
 
 Shared-CG RSA: `L0 ∝ ⟦u⟧·CG`, `S1 ∝ LitList` (α = 1, fn. 3), `L1 ∝
 PragSpeak·CG`, with the endorsement speaker `S2 ∝ L1`. -/
-/-! ### b. Score chain (CG-parameterized) -/
+/-! ### The score chain -/
 
 /-- CG-weighted literal listener ([anderson-2021] Figure 4: `L0 ∝ ⟦u⟧·CG`). -/
 def l0Score (cg : MFWorld → ℚ≥0) (u : MFUtterance) : MFWorld → ℚ≥0 :=
@@ -431,6 +325,47 @@ def l1Score (cg : MFWorld → ℚ≥0) (u : MFUtterance) : MFWorld → ℚ≥0 :
 the standard endorsement inversion of L1 over utterances. -/
 def s2Score (cg : MFWorld → ℚ≥0) (w : MFWorld) : MFUtterance → ℚ≥0 :=
   PMF.normalizeScores fun u => l1Score cg u w
+
+/-! ### The prior-transparency mechanism
+
+Worlds with the same truth profile get identical speaker columns — the
+common-ground factor cancels out of S1's normalization
+(`PMF.normalizeScores_mul_left`) — so L1 orders them purely by their
+common-ground weights. Every tie and tie-break below is an instance. -/
+
+/-- Same truth profile, same speaker column: the CG weight scales the
+whole L0 row and cancels under normalization. -/
+theorem s1Score_congr (cg : MFWorld → ℚ≥0) {w₁ w₂ : MFWorld}
+    (h₁ : cg w₁ ≠ 0) (h₂ : cg w₂ ≠ 0)
+    (hw : ∀ u, mfMeaning u w₁ = mfMeaning u w₂) :
+    s1Score cg w₁ = s1Score cg w₂ := by
+  have l0_eq : ∀ w : MFWorld, (∀ u, mfMeaning u w = mfMeaning u w₁) →
+      (fun u => l0Score cg u w) = fun u => cg w *
+        ((if mfMeaning u w₁ then 1 else 0) /
+          ∑ w', if mfMeaning u w' then cg w' else 0) := by
+    intro w hwp
+    funext u
+    rw [l0Score, PMF.normalizeScores, ← hwp u]
+    split
+    · rw [mul_one_div]
+    · rw [zero_div, mul_zero]
+  rw [s1Score, s1Score, l0_eq w₁ (fun _ => rfl), l0_eq w₂ (fun u => (hw u).symm),
+    PMF.normalizeScores_mul_left h₁, PMF.normalizeScores_mul_left h₂]
+
+/-- L1 orders same-profile worlds by their CG weights alone. -/
+theorem l1Score_lt_iff (cg : MFWorld → ℚ≥0) {u : MFUtterance} {w₁ w₂ : MFWorld}
+    (h₁ : cg w₁ ≠ 0) (h₂ : cg w₂ ≠ 0)
+    (hw : ∀ u', mfMeaning u' w₁ = mfMeaning u' w₂)
+    (hu : s1Score cg w₁ u ≠ 0) :
+    l1Score cg u w₁ < l1Score cg u w₂ ↔ cg w₁ < cg w₂ := by
+  have hs := s1Score_congr cg h₁ h₂ hw
+  have hZ : (∑ w, cg w * s1Score cg w u) ≠ 0 := by
+    intro h
+    exact hu (by simpa [h₁] using
+      (Finset.sum_eq_zero_iff.mp h w₁ (Finset.mem_univ _)))
+  rw [l1Score, PMF.normalizeScores, PMF.normalizeScores,
+    div_lt_div_iff_of_pos_right (pos_iff_ne_zero.mpr hZ), ← hs,
+    mul_lt_mul_iff_of_pos_right (pos_iff_ne_zero.mpr hu)]
 
 /-- Turn-1 speaker (uniform CommonGround, [anderson-2021] Figure 2:
 `CG = Uniform(worlds)`). -/
@@ -481,85 +416,35 @@ theorem l1Turn1_false {u : MFUtterance} {w : MFWorld}
   exact_mod_cast (by revert hw; cases u <;> cases w <;> decide +kernel :
     PMF.scoresWith .uniform (l1Score (fun _ => 1) u) w = 0)
 
-/-! ### Turn 1: S1 Predictions -/
+/-! ### Turn-1 predictions -/
 
-/-- A speaker who knows the person is Nancy prefers "studyHumanity" over
-"studyScience". Nancy studies German (a humanity), so "studyScience" has
-L0(nancy|studyScience) = 0, while "studyHumanity" has L0(nancy|studyHumanity) = 1/2. -/
-theorem s1_nancy_prefers_humanity :
-    s1Turn1 .nancy .studyScience < s1Turn1 .nancy .studyHumanity :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- The turn-1 speaker: true-and-specific beats false or uninformative;
+equal literal posteriors tie (`s1Score_congr` at the uniform CG). -/
+theorem s1_turn1_informativity :
+    (s1Turn1 .nancy .studyScience < s1Turn1 .nancy .studyHumanity) ∧
+    (s1Turn1 .nancy .null < s1Turn1 .nancy .studyHumanity) ∧
+    (s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors) ∧
+    ¬(s1Turn1 .nancy .null < s1Turn1 .nancy .studyScience) ∧
+    (s1Turn1 .ina .studyHumanity < s1Turn1 .ina .studyScience) ∧
+    (s1Turn1 .ina .studyScience = s1Turn1 .ina .likeIndoors) :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel),
+   not_lt.mpr (PMF.ofScores_le_cross _ _ (by decide +kernel)),
+   PMF.ofScores_lt _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel)⟩
 
-/-- A speaker who knows it's Nancy prefers "likeOutdoors" over "likeIndoors".
-Nancy likes being outdoors. -/
-theorem s1_nancy_prefers_outdoors :
-    s1Turn1 .nancy .likeIndoors < s1Turn1 .nancy .likeOutdoors :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- The turn-1 listener: utterances favor the worlds they discriminate and
+tie same-profile worlds at the uniform CG (`l1Score_lt_iff`). -/
+theorem l1_turn1_inferences :
+    (l1Turn1 .studyHumanity .ina < l1Turn1 .studyHumanity .nancy) ∧
+    (l1Turn1 .likeOutdoors .sally < l1Turn1 .likeOutdoors .nancy) ∧
+    (l1Turn1 .studyHumanity .nancy = l1Turn1 .studyHumanity .sally) ∧
+    (l1Turn1 .studyScience .ina = l1Turn1 .studyScience .katie) :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel)⟩
 
-/-- A speaker who knows it's Ina prefers "studyScience" over "studyHumanity".
-Ina studies Astronomy (a science). -/
-theorem s1_ina_prefers_science :
-    s1Turn1 .ina .studyHumanity < s1Turn1 .ina .studyScience :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- A speaker who knows it's Ina is indifferent between "studyScience" and
-"likeIndoors": both are true of exactly 2 worlds, giving equal L0 posteriors.
--/
-theorem s1_ina_science_eq_indoors :
-    s1Turn1 .ina .studyScience = s1Turn1 .ina .likeIndoors :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
-
-/-- The null utterance is always suboptimal: a speaker who knows it's Nancy
-strictly prefers any true specific utterance over saying nothing.
-Null is true of all 4 worlds (L0 = 1/4), while "studyHumanity" is true of
-only 2 (L0 = 1/2). -/
-theorem s1_null_suboptimal :
-    s1Turn1 .nancy .null < s1Turn1 .nancy .studyHumanity :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- Symmetry: S1(studyHumanity|nancy) = S1(likeOutdoors|nancy).
-Both utterances partition the 4 worlds into 2 true + 2 false, so
-L0(nancy|studyHumanity) = L0(nancy|likeOutdoors) = 1/2, hence equal S1. -/
-theorem s1_nancy_humanity_eq_outdoors :
-    s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
-
-/-- False utterances get zero S1 probability.
-"studyScience" is false of Nancy (she studies German), so S1 = 0.
--/
-theorem s1_nancy_science_not_gt_null :
-    ¬(s1Turn1 .nancy .null < s1Turn1 .nancy .studyScience) :=
-  not_lt.mpr (PMF.ofScores_le_cross _ _ (by decide +kernel))
-
-/-! ### Turn 1: L1 Predictions -/
-
-/-- After hearing "studyHumanity", L1 assigns higher probability to Nancy
-than to Ina. Nancy studies a humanity; Ina studies a science. -/
-theorem l1_humanity_favors_nancy :
-    l1Turn1 .studyHumanity .ina < l1Turn1 .studyHumanity .nancy :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- After hearing "likeOutdoors", L1 favors Nancy over Sally.
-Nancy likes outdoors; Sally likes indoors. -/
-theorem l1_outdoors_favors_nancy :
-    l1Turn1 .likeOutdoors .sally < l1Turn1 .likeOutdoors .nancy :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- After hearing "studyHumanity", L1 assigns equal probability to Nancy
-and Sally — both study a humanity, and S1 scores are symmetric. -/
-theorem l1_humanity_nancy_eq_sally :
-    l1Turn1 .studyHumanity .nancy = l1Turn1 .studyHumanity .sally :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
-
-/-- After hearing "studyScience", L1 assigns equal probability to Ina
-and Katie — both study a science. -/
-theorem l1_science_ina_eq_katie :
-    l1Turn1 .studyScience .ina = l1Turn1 .studyScience .katie :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
-
-/-- The null utterance conveys no information: L1 assigns equal probability
-to all worlds. Every world has S1(null|w) = 1/5 by the domain's symmetry
-(each world makes exactly 2 non-null utterances true). -/
+/-- The null utterance conveys nothing: L1 stays uniform. -/
 theorem l1_null_uniform (w₁ w₂ : MFWorld) :
     l1Turn1 .null w₁ = l1Turn1 .null w₂ := by
   rw [l1Turn1_null, l1Turn1_null]
@@ -591,114 +476,53 @@ noncomputable def s1Turn2 : MFWorld → PMF MFUtterance :=
 noncomputable def l1Turn2 : MFUtterance → PMF MFWorld :=
   fun u => .ofScores .uniform (l1Score cgTurn2 u)
 
-/-! ### Turn 2 Predictions -/
+/-! ### Turn-2 predictions -/
 
-/-- After CommonGround update from "studyHumanity", L1("likeOutdoors") now favors
-Nancy over Katie. In turn 1, they were symmetric (both like outdoors).
-The updated prior (3 vs 1) breaks the tie — Nancy's higher CommonGround weight
-makes her more probable. This is the key multi-turn prediction. -/
-theorem l1_turn2_outdoors_favors_nancy :
-    l1Turn2 .likeOutdoors .katie < l1Turn2 .likeOutdoors .nancy :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- After the "studyHumanity" update, L1 orders same-profile worlds by
+their new CG weights (`l1Score_lt_iff`): the outdoor pair breaks toward
+Nancy, the indoor pair toward Sally, equal-weight pairs stay tied. -/
+theorem l1_turn2_prior_effects :
+    (l1Turn2 .likeOutdoors .katie < l1Turn2 .likeOutdoors .nancy) ∧
+    (l1Turn2 .likeIndoors .ina < l1Turn2 .likeIndoors .sally) ∧
+    (l1Turn2 .studyScience .ina = l1Turn2 .studyScience .katie) ∧
+    (l1Turn2 .studyHumanity .nancy = l1Turn2 .studyHumanity .sally) :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel)⟩
 
-/-- After CommonGround update, "likeIndoors" favors Sally over Ina. Both like
-indoors, but Sally has higher prior (3 vs 1) from the CommonGround shift. -/
-theorem l1_turn2_indoors_favors_sally :
-    l1Turn2 .likeIndoors .ina < l1Turn2 .likeIndoors .sally :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- After CommonGround update, "studyScience" still treats Ina and Katie equally:
-both study a science and both have equal prior weight (1). -/
-theorem l1_turn2_science_ina_eq_katie :
-    l1Turn2 .studyScience .ina = l1Turn2 .studyScience .katie :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
-
-/-- After CommonGround update, "studyHumanity" still treats Nancy and Sally equally:
-both study a humanity and both have equal updated prior (3). -/
-theorem l1_turn2_humanity_nancy_eq_sally :
-    l1Turn2 .studyHumanity .nancy = l1Turn2 .studyHumanity .sally :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
-
-/-- CommonGround update breaks turn-1 symmetry: in turn 1, L1("likeOutdoors")
-assigned equal weight to Nancy and Katie. After the CommonGround shift, Nancy
-is favored. Multi-turn conversation enriches inference. -/
+/-- The key multi-turn prediction: turn 1 ties Nancy and Katie under
+"likeOutdoors"; the CG update breaks the tie toward Nancy. -/
 theorem turn2_breaks_symmetry :
     l1Turn1 .likeOutdoors .nancy = l1Turn1 .likeOutdoors .katie ∧
     l1Turn2 .likeOutdoors .katie < l1Turn2 .likeOutdoors .nancy :=
-  ⟨PMF.ofScores_eq_cross _ _ (by decide +kernel), l1_turn2_outdoors_favors_nancy⟩
+  ⟨PMF.ofScores_eq_cross _ _ (by decide +kernel), l1_turn2_prior_effects.1⟩
 
-/-! ### b. Turn 2: S1 CommonGround-Adapted Speaker -/
+/-! ### The CG-adapted speaker -/
 
-/-! ### Turn 2
+/-- The CG-weighted L0 makes speakers prefer new over redundant
+information: after the update, Nancy's speaker switches to "likeOutdoors"
+(re-asserting "studyHumanity" is redundant at 3:3 weights) and Ina's to
+"studyScience" (Sally now dominates the indoor partition). At turn 1 both
+pairs were symmetric (`s1_turn1_informativity`). -/
+theorem s1_turn2_cg_adapted :
+    (s1Turn2 .nancy .studyHumanity < s1Turn2 .nancy .likeOutdoors) ∧
+    (s1Turn2 .ina .likeIndoors < s1Turn2 .ina .studyScience) :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
 
-With the common ground entering L0, the same utterances convey different
-information after the first update. -/
-/-- **CommonGround-adapted informativity**: At turn 2, the speaker who knows it's Nancy
-prefers "likeOutdoors" over "studyHumanity". At turn 1, these were equal
-(both partition the 4-world space into 2+2). After the CommonGround shifts toward
-nancy/sally (weights [2,2,3,3]), "likeOutdoors" discriminates within
-the high-weight subspace (L0(nancy|likeOutdoors) = 3/5) while
-"studyHumanity" merely re-asserts what's already established
-(L0(nancy|studyHumanity) = 1/2).
-
-This is Anderson's key insight: the CommonGround-weighted L0 makes speakers prefer
-*new* information over *redundant* information. -/
-theorem s1_turn2_nancy_prefers_outdoors :
-    s1Turn2 .nancy .studyHumanity < s1Turn2 .nancy .likeOutdoors :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- At turn 1, the same two utterances were equal (pre-CommonGround-adaptation). -/
-theorem s1_turn1_nancy_humanity_eq_outdoors :
-    s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors :=
-  s1_nancy_humanity_eq_outdoors
-
-/-- CommonGround adaptation works differently for low-CommonGround worlds: at turn 2,
-Ina (weight 2) prefers "studyScience" over "likeIndoors" because
-sally (weight 3) dominates the indoor partition, making
-L0(ina|likeIndoors) = 2/5 < L0(ina|studyScience) = 1/2. The CommonGround shift
-makes the major dimension MORE informative for low-CommonGround worlds, the opposite
-of the high-CommonGround case (nancy, §12b above). -/
-theorem s1_turn2_ina_prefers_science :
-    s1Turn2 .ina .likeIndoors < s1Turn2 .ina .studyScience :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-! ### S2: Endorsement Predictions -/
-
-/-- S2 endorsement: given world Nancy, the pragmatic speaker endorses
-"studyHumanity" over "studyScience". S2(u|w) ∝ L1(w|u), and
-L1(nancy|studyHumanity) > 0 = L1(nancy|studyScience). -/
-theorem s2_nancy_endorses_humanity :
-    s2Turn1 .nancy .studyScience < s2Turn1 .nancy .studyHumanity :=
-  PMF.ofScores_lt _ (by decide +kernel)
-
-/-- S2 endorsement: given world Nancy, "studyHumanity" and "likeOutdoors"
-are equally endorsed (symmetric L1 posteriors). -/
-theorem s2_nancy_humanity_eq_outdoors :
-    s2Turn1 .nancy .studyHumanity = s2Turn1 .nancy .likeOutdoors :=
-  PMF.ofScores_eq_cross _ _ (by decide +kernel)
+/-- The endorsement speaker inverts L1: for Nancy, "studyHumanity" beats
+the false "studyScience" and ties the symmetric "likeOutdoors". -/
+theorem s2_endorsement :
+    (s2Turn1 .nancy .studyScience < s2Turn1 .nancy .studyHumanity) ∧
+    (s2Turn1 .nancy .studyHumanity = s2Turn1 .nancy .likeOutdoors) :=
+  ⟨PMF.ofScores_lt _ (by decide +kernel),
+   PMF.ofScores_eq_cross _ _ (by decide +kernel)⟩
 
 /-! ### Parametric RSA and Conversation Step -/
 
-/-- One step of the Shared CommonGround conversation loop (Figure 2), with
-the CommonGround carried on its ℚ≥0 score face (RSA normalizes, so the
-proportional weights determine the distribution `(.ofScores .uniform cg)`).
-
-Given the current CommonGround and an utterance:
-1. Build the Figure-4 chain at the current CommonGround (`s1Score`)
-2. Compute L1 posteriors: the pragmatic listener's world beliefs (`l1Score`)
-3. Update the CommonGround via convex combination with the posteriors
-
-This closes the loop: RSA inference → CommonGround update → new RSA model.
-The returned CommonGround serves as the world prior for the next turn's model.
-
-**Renormalisation** is intrinsic: `l1Score` is a `PMF.normalizeScores`
-application ([anderson-2021] fn. 3: *"the probabilities are renormalized"*),
-so `updateCG` is a genuine convex combination of distributions by
-construction. The guard handles the degenerate case of an utterance
-contradicting the entire common ground (dead score row, e.g. `studyHumanity`
-against a CG concentrated on Ina): the posterior carries no information and
-the CommonGround is left unchanged — matching Anderson's null-utterance
-"skip the update" behaviour (§7.1). -/
+/-- One Figure-2 loop step on the ℚ≥0 face: build the chain at the
+current common ground, take the L1 posterior, and mix it in at the
+learning rate. A dead score row — an utterance contradicting the whole
+common ground — skips the update (§7.1's null behaviour). -/
 noncomputable def conversationStep
     (cg : MFWorld → ℚ≥0) (u : MFUtterance)
     (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) :
@@ -706,13 +530,6 @@ noncomputable def conversationStep
   if 0 < ∑ w, cg w * s1Score cg w u then
     updateCG (.ofScores .uniform cg) (.ofScores .uniform (l1Score cg u)) lr hlr hlr1
   else .ofScores .uniform cg
-
-/-- The conversation step preserves CommonGround non-negativity (free:
-the result is a genuine distribution). -/
-theorem conversationStep_nonneg (cg : MFWorld → ℚ≥0)
-    (u : MFUtterance) (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) (w : MFWorld) :
-    0 ≤ (conversationStep cg u lr hlr hlr1).toRealFn w :=
-  (conversationStep cg u lr hlr hlr1).toRealFn_nonneg w
 
 /-- With lr = 0, the conversation step leaves the CommonGround unchanged. -/
 theorem conversationStep_lr_zero (cg : MFWorld → ℚ≥0) (u : MFUtterance) (w : MFWorld) :
@@ -725,31 +542,17 @@ theorem conversationStep_lr_zero (cg : MFWorld → ℚ≥0) (u : MFUtterance) (w
 
 /-! ### Qualitative information-sharing properties -/
 
-/-- L1 concentrates probability after an informative utterance:
-L1(nancy|studyHumanity) > L1(nancy|null). The null utterance gives
-uniform L1 (= 1/4), while "studyHumanity" concentrates on the 2
-German-studying worlds (= 1/2). -/
+/-- An informative utterance concentrates L1 above the uniform null
+baseline (1/2 vs 1/4 on Nancy). -/
 theorem l1_concentrates_after_utterance :
     l1Turn1 .null .nancy < l1Turn1 .studyHumanity .nancy :=
   PMF.ofScores_lt_cross _ _ (by decide +kernel)
 
-/-- Informed speakers are informative: S1 assigns higher probability
-to a true specific utterance than to null. -/
-theorem s1_informed_speaker_is_informative :
-    s1Turn1 .nancy .null < s1Turn1 .nancy .studyHumanity :=
-  s1_null_suboptimal
-
 /-! ### Bridge to Classical CommonGround Update -/
 
-/-- Anderson's distributional CommonGround update subsumes [stalnaker-2002]'s
-set-intersection update **only in the degenerate `lr = 1` limit**: when the
-whole prior CommonGround is discarded (`lr = 1`) and the posterior assigns
-zero mass to a world, that world drops out of the context set — recovering
-classical elimination.
-
-This is the *one* direction of the Stalnaker bridge that survives. The
-graded model diverges for every `lr < 1`; see
-`graded_update_keeps_false_world`. -/
+/-- The [stalnaker-2002] set-intersection update survives only at the
+lr = 1 limit: with the prior discarded, a zero-posterior world leaves
+the context set. -/
 theorem lr_one_excludes_false_worlds (cg post : PMF MFWorld)
     (w : MFWorld) (h : post.toRealFn w = 0) :
     ¬CommonGround.HasContextSet.toContextSet
@@ -757,14 +560,9 @@ theorem lr_one_excludes_false_worlds (cg post : PMF MFWorld)
   rw [Discourse.pmf_toContextSet, updateCG_lr_one, h]
   exact lt_irrefl 0
 
-/-- **The divergence the graded model insists on** (Anderson 2021, footnote
-7: *"worlds can regain probability"*). For any `lr < 1`, a world the
-utterance rules out (`post.toRealFn w = 0`) is **not** excluded from the
-context set — the prior CommonGround keeps it alive with mass
-`(1 - lr) · cg.toRealFn w`. This is exactly where Anderson's distributional
-update parts ways with Stalnaker's monotone set-intersection: graded
-interpolation never deletes a world unless it is *already* dead in the prior.
-Linglib surfaces the incompatibility rather than papering over it. -/
+/-- The graded divergence (fn. 7: "worlds can regain probability"): at
+any lr < 1 the prior keeps a ruled-out world alive with mass
+`(1 − lr)·cg w` — the update never deletes a world the prior supports. -/
 theorem graded_update_keeps_false_world (cg post : PMF MFWorld)
     (w : MFWorld) (hcg : 0 < cg.toRealFn w) (lr : ℝ) (h0 : 0 ≤ lr) (h1 : lr < 1) :
     CommonGround.HasContextSet.toContextSet (updateCG cg post lr h0 h1.le) w := by
@@ -966,27 +764,6 @@ theorem difference_positive_when_exceeds {W : Type*}
     0 < differenceSample bel cg w := by
   simp only [differenceSample]
   exact lt_of_lt_of_le (by linarith : (0 : ℝ) < bel.toRealFn w - cg.toRealFn w) (le_max_right 0 _)
-
-/-- A's initial difference from uniform CommonGround: Nancy has the highest
-positive difference (belief 3 vs CommonGround 1), so A's first contribution
-should describe Nancy — matching the stochastic trace in Figure 5. -/
-theorem a_initial_diff_nancy_highest :
-    aDiffFromUniform .nancy > aDiffFromUniform .ina ∧
-    aDiffFromUniform .nancy > aDiffFromUniform .katie ∧
-    aDiffFromUniform .nancy > aDiffFromUniform .sally := by
-  have hn : aDiffFromUniform .nancy = 1 / 4 := by
-    simp only [aDiffFromUniform, differenceSample, beliefsA_weight,
-      PMF.uniformOfFintype_toRealFn, card_mfworld, if_pos]
-    rw [max_eq_right (by norm_num)]; norm_num
-  have ho : ∀ w : MFWorld, w ≠ .nancy → aDiffFromUniform w = 0 := by
-    intro w hw
-    simp only [aDiffFromUniform, differenceSample, beliefsA_weight,
-      PMF.uniformOfFintype_toRealFn, card_mfworld, if_neg hw]
-    rw [max_eq_left (by norm_num)]
-  refine ⟨?_, ?_, ?_⟩ <;> rw [hn]
-  · rw [ho .ina (by decide)]; norm_num
-  · rw [ho .katie (by decide)]; norm_num
-  · rw [ho .sally (by decide)]; norm_num
 
 end Anderson2021
 
