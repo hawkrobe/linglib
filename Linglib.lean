@@ -2299,6 +2299,7 @@ import Linglib.Studies.Harbour2016
 import Linglib.Studies.HardingGerstenbergIcard2025
 import Linglib.Studies.HarizanovGribanova2019
 import Linglib.Studies.HarrisPotts2009
+import Linglib.Studies.HartmannZimmermann2004
 import Linglib.Studies.HartmannZimmermann2007
 import Linglib.Studies.HartshorneEtAl2016
 import Linglib.Studies.Haslinger2025
