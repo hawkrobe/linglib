@@ -1,4 +1,4 @@
-import Mathlib.Tactic.TypeStar
+import Mathlib.Data.Set.Insert
 
 /-!
 # Two-Dimensional Alternative Meanings
@@ -38,5 +38,18 @@ def AltMeaning.unfeatured {α : Type*} (x : α) : AltMeaning α :=
 
 @[simp] theorem AltMeaning.unfeatured_aValue {α : Type*} (x : α) :
     (AltMeaning.unfeatured x).aValue = [x] := rfl
+
+/-- The alternative set as a `Set` — the theory-side carrier; `aValue`
+is its list presentation. -/
+def AltMeaning.aSet {α : Type*} (m : AltMeaning α) : Set α :=
+  {a | a ∈ m.aValue}
+
+@[simp] theorem AltMeaning.mem_aSet {α : Type*} {m : AltMeaning α} {a : α} :
+    a ∈ m.aSet ↔ a ∈ m.aValue := Iff.rfl
+
+@[simp] theorem AltMeaning.unfeatured_aSet {α : Type*} (x : α) :
+    (AltMeaning.unfeatured x).aSet = {x} := by
+  ext a
+  exact List.mem_singleton.trans Set.mem_singleton_iff.symm
 
 end Alternatives
