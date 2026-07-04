@@ -252,26 +252,19 @@ surface string: the surface form does not determine the association. -/
 theorem num_readings_distinct :
     objReading ≠ vReading ∧ objReading ≠ vpReading ∧ vReading ≠ vpReading := by
   have h₁obj : w₁ ∈ objReading := by
-    intro q hq hwq
-    rcases hq with rfl | rfl
-    · rfl
-    · exact absurd hwq Bool.false_ne_true
+    rintro q (rfl | rfl) hwq
+    exacts [rfl, absurd hwq Bool.false_ne_true]
+  have h₂v : w₂ ∈ vReading := by
+    rintro q (rfl | rfl) hwq
+    exacts [rfl, absurd hwq Bool.false_ne_true]
   have h₁v : w₁ ∉ vReading := fun h =>
     readBook_ne_boughtBook (h readBookP (Or.inr rfl) rfl)
-  have h₂v : w₂ ∈ vReading := by
-    intro q hq hwq
-    rcases hq with rfl | rfl
-    · rfl
-    · exact absurd hwq Bool.false_ne_true
-  have h₂obj : w₂ ∉ objReading := fun h =>
-    boughtShirt_ne_boughtBook (h boughtShirtP (Or.inr rfl) rfl)
   have h₁vp : w₁ ∉ vpReading := fun h =>
     readBook_ne_boughtBook (h readBookP (Or.inr (Or.inr rfl)) rfl)
   have h₂vp : w₂ ∉ vpReading := fun h =>
     boughtShirt_ne_boughtBook (h boughtShirtP (Or.inr (Or.inl rfl)) rfl)
-  exact ⟨fun h => h₁v (h ▸ h₁obj),
-         fun h => h₁vp (h ▸ h₁obj),
-         fun h => h₂vp (h ▸ h₂v)⟩
+  exact ⟨ne_of_mem_of_not_mem' h₁obj h₁v, ne_of_mem_of_not_mem' h₁obj h₁vp,
+    ne_of_mem_of_not_mem' h₂v h₂vp⟩
 
 /-- The VP association is the strongest reading: 'I did nothing else'
 entails both 'I bought nothing else' and 'I did nothing else to the
