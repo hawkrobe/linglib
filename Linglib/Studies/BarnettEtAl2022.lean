@@ -3,41 +3,19 @@ import Linglib.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
 
 /-!
-# [barnett-griffiths-hawkins-2022]: A Pragmatic Account of the Weak Evidence Effect
-[barnett-griffiths-hawkins-2022]
+# [barnett-griffiths-hawkins-2022]: the weak evidence effect
 
-Extends RSA with a **persuasive speaker** who has a goal state w* that may differ
-from the true world state w. The speaker's utility combines epistemic and persuasive
-components (Eq. 6):
+RSA with a persuasive speaker whose utility adds `β · ln L0(w*|u)` for a
+goal state w* to the epistemic term (eq. 6; β = 0 is standard RSA). With
+w* = "longer" the speaker weight is `L0(longer|u)^β · 𝟙[u ∈ w]` (eq. 8;
+α = 1, so the exponent is β, here 2). A pragmatic listener who expects the
+strongest available evidence reads weak positive evidence as implying no
+stronger evidence exists — so it backfires.
 
-  U(u; w, w*) = U_epi(u; w) + β · U_pers(u; w*)
-
-where U_epi = ln P_L0(w|u) and U_pers = ln P_L0(w*|u). The parameter β controls
-persuasive bias (β=0 recovers standard RSA).
-
-## Key Result: The Weak Evidence Effect
-
-When β > 0, weak positive evidence can *backfire*: a pragmatic listener who expects
-the speaker to show the strongest available evidence infers that the absence of
-strong evidence means it doesn't exist, shifting beliefs in the opposite direction.
-
-## Stick Contest Domain
-
-The paper's experiment uses 5 sticks from {1,...,9} (C(9,5)=126 worlds, midpoint 5).
-We formalize a simplified Stick Contest (3 sticks from {1,...,5}, 10 worlds, midpoint 3)
-that preserves the key structural properties: the prior favors ¬longer (P(longer)=0.4),
-and sticks have monotonically increasing L0(longer|·) values. The simplification enables
-kernel-verified exact rational arithmetic on the PMF face.
-
-## Model design
-
-The paper's Eq. 8 gives:
-
-  S(u|w, w*=longer, β) ∝ L0(longer|u)^β · 𝟙[u ∈ w]
-
-Since the paper fixes α=1 and treats αβ as a single parameter, the speaker's exponent
-plays the role of β. The s1Score uses precomputed L0(longer|u) values squared
-(β=2), gated by stick availability.
+The paper's Stick Contest (5 sticks from {1,…,9}, 126 worlds) is
+formalized at 3 sticks from {1,…,5} (10 worlds, midpoint 3), preserving
+the load-bearing structure: the prior favors ¬longer (2/5) and
+`L0(longer|·)` is monotone in stick length.
 
 ## Main results
 
