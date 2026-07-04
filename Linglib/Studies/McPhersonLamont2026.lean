@@ -192,10 +192,7 @@ def lrDerivation (input : Form) : HSDerivation Form where
 namespace Fig3
 
 /-- Fig. 3 input `/kāk^H + rī^H + dō^H/`: each M linked, each H floating. -/
-def fig3Input : Form :=
-  let stems : List Syll := [.kak, .ri, .do]
-  FloatingForm.mkInput (stems.map seg) (stems.flatMap Syll.melody)
-    (links := {(0, 0), (2, 1), (4, 2)})
+def fig3Input : Form := .ofGraph (word [.kak, .ri, .do])
 
 /-- Directional-LR derivation (`*FLOAT^→`). -/
 def derivationLR : HSDerivation Form := lrDerivation fig3Input
@@ -300,10 +297,7 @@ end Fig3
 namespace Eq24
 
 /-- Eq. (24) input `/nãn + rī^H + nã/`; H-rī is the only floating tone. -/
-def eq24Input : Form :=
-  let stems : List Syll := [.nan, .ri, .na]
-  FloatingForm.mkInput (stems.map seg) (stems.flatMap Syll.melody)
-    (links := {(0, 0), (1, 1), (3, 2)})
+def eq24Input : Form := .ofGraph (word [.nan, .ri, .na])
 
 /-- Directional-LR derivation over `stdRanking`. -/
 def derivationLR : HSDerivation Form := lrDerivation eq24Input
@@ -333,10 +327,7 @@ end Eq24
 namespace Eq21
 
 /-- Eq. (21) input `/nãn + rī^H/` (phrase-final): no rightward landing site. -/
-def eq21Input : Form :=
-  let stems : List Syll := [.nan, .ri]
-  FloatingForm.mkInput (stems.map seg) (stems.flatMap Syll.melody)
-    (links := {(0, 0), (1, 1)})
+def eq21Input : Form := .ofGraph (word [.nan, .ri])
 
 /-- Directional-LR derivation; eq. (20)'s `*FLOAT, *TAUTDOCK ≫ MAX(H)` is a sub-ranking. -/
 def derivationLR : HSDerivation Form := lrDerivation eq21Input
@@ -358,10 +349,7 @@ end Eq21
 namespace Eq27
 
 /-- Eq. (27) input `/kāk^H + kǎ/`; kǎ carries a linked MH contour. -/
-def eq27Input : Form :=
-  let stems : List Syll := [.kak, .ka]
-  FloatingForm.mkInput (stems.map seg) (stems.flatMap Syll.melody)
-    (links := {(0, 0), (2, 1), (3, 1)})
+def eq27Input : Form := .ofGraph (word [.kak, .ka])
 
 /-- Directional-LR derivation over `stdRanking`. -/
 def derivationLR : HSDerivation Form := lrDerivation eq27Input
@@ -383,10 +371,7 @@ end Eq27
 namespace Eq30
 
 /-- Eq. (30) input `/kāk^H + ìlí/`; ìlí carries a linked LH contour (L% omitted). -/
-def eq30Input : Form :=
-  let stems : List Syll := [.kak, .ili]
-  FloatingForm.mkInput (stems.map seg) (stems.flatMap Syll.melody)
-    (links := {(0, 0), (2, 1), (3, 1)})
+def eq30Input : Form := .ofGraph (word [.kak, .ili])
 
 /-- Eq. (30) ranking: `stdRanking` plus `*M◁L` above *TAUTDOCK — the inversion that
     licenses tautomorphemic docking (30c). -/
@@ -417,10 +402,7 @@ end Eq30
 namespace Eq22
 
 /-- Eq. (22a) input `/nãn + rī^H + ne/`; ne is toneless. -/
-def eq22Input : Form :=
-  let stems : List Syll := [.nan, .ri, .ne]
-  FloatingForm.mkInput (stems.map seg) (stems.flatMap Syll.melody)
-    (links := {(0, 0), (1, 1)})
+def eq22Input : Form := .ofGraph (word [.nan, .ri, .ne])
 
 /-- Directional-LR derivation over `stdRanking`. -/
 def derivationLR : HSDerivation Form := lrDerivation eq22Input

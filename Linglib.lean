@@ -1329,6 +1329,7 @@ import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.Junction
+import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Autosegmental.MultiGraph
 import Linglib.Phonology.Autosegmental.NonCrossing
