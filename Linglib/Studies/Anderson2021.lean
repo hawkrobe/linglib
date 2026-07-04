@@ -1,9 +1,8 @@
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.Operators
 import Linglib.Core.Probability.Choice.Learning
-import Linglib.Discourse.CommonGround
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.Entropy
+import Linglib.Core.Probability.Scores
+import Linglib.Discourse.CommonGround
 
 /-!
 # Anderson (2021): Conversation Update for RSA
@@ -24,8 +23,8 @@ framework. The core contributions:
 
 ## Key Connections
 
-The CommonGround update rule `CommonGround'(w) = (1-lr)·CommonGround(w) + lr·post(w)` is algebraically
-identical to [luce-1959]'s linear learning rule with retention rate
+The CommonGround update rule `CommonGround'(w) = (1-lr)·CommonGround(w) + lr·post(w)`
+is algebraically identical to [luce-1959]'s linear learning rule with retention rate
 `1-lr` and reinforcement target `post`. This connects RSA pragmatics to
 learning theory: multi-turn conversation IS iterated learning over
 distributions.
@@ -47,6 +46,14 @@ learning-rate update.
 The paper illustrates predictions using the MutualFriends dataset, where
 worlds are individuals characterized by features (major, location) and
 utterances describe those features.
+
+## Implementation notes
+
+The Figure-4 chain is exact ℚ≥0, parameterized by CommonGround weights:
+each agent (`l0Score`/`s1Score`/`l1Score`/`s2Score`) is one
+`PMF.normalizeScores` application over the agent below it, the
+distributions are `PMF.ofScores`, and every prediction closes by the
+`ofScores` comparison family with one kernel certificate.
 -/
 
 /-!### Distributional Common Ground
@@ -264,6 +271,7 @@ end Discourse
 namespace Anderson2021
 
 open CommonGround (ContextSet)
+open scoped ENNReal NNReal NNRat
 
 -- ════════════════════════════════════════════════════
 -- § 1. MutualFriends Domain
@@ -429,7 +437,7 @@ approximation (not yet formalized).
 The distributional CommonGround enters the RSA model at two points
 (Figure 4): inside the literal listener and as the pragmatic listener's
 prior. At each turn the chain is rebuilt at the current CommonGround
-(`cgS1Total`/`conversationStep`). -/
+(`conversationStep`). -/
 structure ConversationState (W : Type*) where
   cg : DistributionalCG W
   belA : DistributionalCG W
@@ -563,10 +571,8 @@ theorem a_diff_nancy_positive :
   norm_num
 
 -- ════════════════════════════════════════════════════
--- § 8. The Figure-4 model on mathlib PMF
+-- § 8. The Figure-4 model on ℚ≥0 scores
 -- ════════════════════════════════════════════════════
-
-open RSA
 
 /-! Anderson's Shared CommonGround model ([anderson-2021] Figure 4) uses the
 distributional CommonGround at BOTH ends of the chain:
@@ -577,366 +583,80 @@ distributional CommonGround at BOTH ends of the chain:
     L1(w|u) ∝ S1(u|w) · CG(w)   -- CG enters the pragmatic listener
 
 At turn 1 the CommonGround is uniform, so the CG factor drops out of L0 and
-the meaning reduces to Boolean semantics. The chain below implements this on
-mathlib `PMF`, parameterized by the CommonGround. -/
+the meaning reduces to Boolean semantics. The chain below computes this on
+exact ℚ≥0 scores, parameterized by the CommonGround weights. -/
 
 -- ════════════════════════════════════════════════════
--- § 8b. PMF chain (CG-parameterized; local pending the RSA API pass)
+-- § 8b. Score chain (CG-parameterized)
 -- ════════════════════════════════════════════════════
-
-section PMFChain
-
-open scoped ENNReal
-
-/-- Every utterance is satisfiable (each has two true worlds; `null` four). -/
-private theorem mfMeaning_sat : ∀ u : MFUtterance, ∃ w, mfMeaning u w = true := by
-  decide
-
-private theorem cgL0_pos (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0) (u : MFUtterance) :
-    (∑' w, cg w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0)) ≠ 0 := by
-  obtain ⟨w, hw⟩ := mfMeaning_sat u
-  exact ENNReal.summable.tsum_ne_zero_iff.mpr
-    ⟨w, by rw [hw]; simpa using hcg w⟩
 
 /-- CG-weighted literal listener ([anderson-2021] Figure 4: `L0 ∝ ⟦u⟧·CG`). -/
-private noncomputable def cgL0 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (u : MFUtterance) : PMF MFWorld :=
-  RSA.L0LassiterGoodman cg mfMeaning u (cgL0_pos cg hcg u)
-
-private theorem cgL0_null (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0) (w : MFWorld) :
-    cgL0 cg hcg .null w = cg w := by
-  unfold cgL0
-  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+def l0Score (cg : MFWorld → ℚ≥0) (u : MFUtterance) : MFWorld → ℚ≥0 :=
+  PMF.normalizeScores fun w => if mfMeaning u w then cg w else 0
 
 /-- Pragmatic speaker ([anderson-2021] Figure 4: `S1 ∝ LitList`; fn. 3: the
 softmax terms are omitted and probabilities renormalized, i.e. `α = 1` and
 no cost — the speaker weight IS the literal-listener value). -/
-private noncomputable def cgS1 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (w : MFWorld) : PMF MFUtterance :=
-  RSA.S1Belief (cgL0 cg hcg) (fun _ => 1) 1 w
-    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, by
-      rw [cgL0_null cg hcg w]
-      exact mul_ne_zero
-        ((ENNReal.rpow_pos (pos_iff_ne_zero.mpr (hcg w)) (PMF.apply_ne_top _ _)).ne')
-        one_ne_zero⟩)
-    (ENNReal.tsum_ne_top_of_fintype fun u =>
-      ENNReal.mul_ne_top
-        (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
-        ENNReal.one_ne_top)
-
-private theorem cgS1_marginal_pos (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (u : MFUtterance) : PMF.marginal (cgS1 cg hcg) cg u ≠ 0 := by
-  obtain ⟨w, hw⟩ := mfMeaning_sat u
-  refine PMF.marginal_ne_zero _ _ _ (hcg w) ?_
-  have hL0 : cgL0 cg hcg u w ≠ 0 := by
-    unfold cgL0
-    rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
-    exact ⟨hcg w, hw⟩
-  unfold cgS1
-  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 one_ne_zero
+def s1Score (cg : MFWorld → ℚ≥0) (w : MFWorld) : MFUtterance → ℚ≥0 :=
+  PMF.normalizeScores fun u => l0Score cg u w
 
 /-- Pragmatic listener ([anderson-2021] Figure 4: `L1 ∝ PragSpeak·CG`). -/
-private noncomputable def cgL1 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (u : MFUtterance) : PMF MFWorld :=
-  PMF.posterior (cgS1 cg hcg) cg u (cgS1_marginal_pos cg hcg u)
+def l1Score (cg : MFWorld → ℚ≥0) (u : MFUtterance) : MFWorld → ℚ≥0 :=
+  PMF.normalizeScores fun w => cg w * s1Score cg w u
 
 /-- Endorsement speaker: `S2(u|w) ∝ L1(w|u)` (uniform utterance prior),
 the standard endorsement inversion of L1 over utterances. -/
-private noncomputable def cgS2 (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (w : MFWorld) : PMF MFUtterance :=
-  PMF.normalize (fun u => cgL1 cg hcg u w)
-    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, by
-      unfold cgL1
-      rw [← PMF.mem_support_iff, PMF.mem_support_posterior_iff]
-      refine ⟨hcg w, ?_⟩
-      unfold cgS1
-      exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _
-        (by rw [cgL0_null cg hcg w]; exact hcg w) one_ne_zero⟩)
-    (ENNReal.tsum_ne_top_of_fintype fun _ => PMF.apply_ne_top _ _)
+def s2Score (cg : MFWorld → ℚ≥0) (w : MFWorld) : MFUtterance → ℚ≥0 :=
+  PMF.normalizeScores fun u => l1Score cg u w
 
-/-- Turn-1 Common Ground: uniform ([anderson-2021] Figure 2:
+/-- Turn-1 speaker (uniform CommonGround, [anderson-2021] Figure 2:
 `CG = Uniform(worlds)`). -/
-private noncomputable def cgUniform : PMF MFWorld := PMF.uniformOfFintype MFWorld
+noncomputable def s1Turn1 : MFWorld → PMF MFUtterance :=
+  fun w => .ofScores .uniform (s1Score (fun _ => 1) w)
 
-private theorem cgUniform_pos (w : MFWorld) : cgUniform w ≠ 0 := by
-  rw [cgUniform, PMF.uniformOfFintype_apply]
-  simp
+/-- Turn-1 pragmatic listener. -/
+noncomputable def l1Turn1 : MFUtterance → PMF MFWorld :=
+  fun u => .ofScores .uniform (l1Score (fun _ => 1) u)
 
-private theorem quarter_eq_half_div : (4 : ℝ≥0∞)⁻¹ = 2⁻¹ / 2 := by
-  rw [div_eq_mul_inv, ← ENNReal.mul_inv (by norm_num) (by norm_num)]
-  norm_num
-
-private theorem quarter_add_quarter : (4 : ℝ≥0∞)⁻¹ + 4⁻¹ = 2⁻¹ := by
-  rw [quarter_eq_half_div, ENNReal.add_halves]
-
-private theorem four_quarters : (4 : ℝ≥0∞)⁻¹ + 4⁻¹ + 4⁻¹ + 4⁻¹ = 1 := by
-  rw [show (4 : ℝ≥0∞)⁻¹ + 4⁻¹ + 4⁻¹ + 4⁻¹ = (4⁻¹ + 4⁻¹) + (4⁻¹ + 4⁻¹) from by ring,
-    quarter_add_quarter, ENNReal.inv_two_add_inv_two]
-
-private theorem quarter_mul_two : (4 : ℝ≥0∞)⁻¹ * 2 = 2⁻¹ := by
-  rw [show (4 : ℝ≥0∞) = 2 * 2 from by norm_num,
-    ENNReal.mul_inv (by norm_num) (by norm_num), mul_assoc,
-    ENNReal.inv_mul_cancel (by norm_num) (by norm_num), mul_one]
-
-private theorem cgUniform_apply (w : MFWorld) : cgUniform w = 4⁻¹ := by
-  rw [cgUniform, PMF.uniformOfFintype_apply, card_mfworld]
-  norm_num
-
-private theorem sumWorlds (f : MFWorld → ℝ≥0∞) :
-    ∑' w, f w = f .ina + f .katie + f .nancy + f .sally := by
-  rw [tsum_fintype,
-    show (Finset.univ : Finset MFWorld) = {.ina, .katie, .nancy, .sally} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_singleton]
-  ring
-
-/-- Uniform extension masses: `1` for `null`, `1/2` for each specific
-utterance (true at exactly two of the four worlds). -/
-private theorem uniformMass (u : MFUtterance) :
-    (∑' w, cgUniform w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0))
-      = if u = .null then 1 else 2⁻¹ := by
-  rw [sumWorlds]
-  simp only [cgUniform_apply]
-  cases u
-  case null =>
-    simp only [show ∀ w, mfMeaning .null w = true from fun _ => rfl, if_true,
-      mul_one]
-    exact four_quarters
-  case studyHumanity =>
-    rw [show mfMeaning .studyHumanity .ina = false from rfl,
-      show mfMeaning .studyHumanity .katie = false from rfl,
-      show mfMeaning .studyHumanity .nancy = true from rfl,
-      show mfMeaning .studyHumanity .sally = true from rfl]
-    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
-    exact quarter_add_quarter
-  case studyScience =>
-    rw [show mfMeaning .studyScience .ina = true from rfl,
-      show mfMeaning .studyScience .katie = true from rfl,
-      show mfMeaning .studyScience .nancy = false from rfl,
-      show mfMeaning .studyScience .sally = false from rfl]
-    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, add_zero]
-    exact quarter_add_quarter
-  case likeIndoors =>
-    rw [show mfMeaning .likeIndoors .ina = true from rfl,
-      show mfMeaning .likeIndoors .katie = false from rfl,
-      show mfMeaning .likeIndoors .nancy = false from rfl,
-      show mfMeaning .likeIndoors .sally = true from rfl]
-    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, add_zero]
-    rw [show ((4 : ℝ≥0∞)⁻¹ + 4⁻¹) = 4⁻¹ + 4⁻¹ from rfl]
-    exact quarter_add_quarter
-  case likeOutdoors =>
-    rw [show mfMeaning .likeOutdoors .ina = false from rfl,
-      show mfMeaning .likeOutdoors .katie = true from rfl,
-      show mfMeaning .likeOutdoors .nancy = true from rfl,
-      show mfMeaning .likeOutdoors .sally = false from rfl]
-    simp only [reduceIte, reduceCtorEq, mul_one, mul_zero, zero_add, add_zero]
-    exact quarter_add_quarter
-
-/-- Literal-listener values under the uniform CG: `1/2` on a specific true
-utterance (mass `1/2` doubles the `1/4` prior), `1/4` on `null`, `0` off
-support. -/
-private theorem cgL0_uniform_apply (u : MFUtterance) (w : MFWorld) :
-    cgL0 cgUniform cgUniform_pos u w
-      = if mfMeaning u w then (if u = .null then 4⁻¹ else 2⁻¹) else 0 := by
-  unfold cgL0
-  rw [RSA.L0LassiterGoodman_apply,
-    show (∑' w', cgUniform w' * (if mfMeaning u w' then (1 : ℝ≥0∞) else 0))
-      = if u = .null then 1 else 2⁻¹ from uniformMass u, cgUniform_apply]
-  by_cases hw : mfMeaning u w = true
-  · rw [hw]
-    by_cases hn : u = .null <;>
-      simp only [hn, if_true, if_false, mul_one, inv_one, inv_inv]
-    exact quarter_mul_two
-  · rw [Bool.not_eq_true] at hw
-    rw [hw]
-    simp
-
-private theorem sumUtts (f : MFUtterance → ℝ≥0∞) :
-    ∑' u, f u = f .studyHumanity + f .studyScience + f .likeIndoors +
-      f .likeOutdoors + f .null := by
-  rw [tsum_fintype,
-    show (Finset.univ : Finset MFUtterance)
-      = {.studyHumanity, .studyScience, .likeIndoors, .likeOutdoors, .null} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_singleton]
-  ring
-
-private theorem half_conv : (2 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/2) := by
-  rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 from (ENNReal.ofReal_ofNat 2).symm,
-    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-  norm_num
-
-private theorem quarter_conv : (4 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/4) := by
-  rw [show (4 : ℝ≥0∞) = ENNReal.ofReal 4 from (ENNReal.ofReal_ofNat 4).symm,
-    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-  norm_num
-
-/-- The turn-1 speaker normaliser at every world: `1/2 + 1/2 + 1/4 = 5/4`
-(two true specific utterances plus `null`). -/
-private theorem Z_uniform (w : MFWorld) :
-    (∑' u, ((cgL0 cgUniform cgUniform_pos u w : ℝ≥0∞)) ^ (1 : ℝ) * 1)
-      = ENNReal.ofReal (5/4) := by
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [sumUtts]
-  simp only [cgL0_uniform_apply]
-  cases w <;>
-    · simp +decide
-      rw [half_conv, quarter_conv, ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-        ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-      norm_num
-
-/-- Turn-1 chain. -/
-noncomputable def s1Turn1 : MFWorld → PMF MFUtterance := cgS1 cgUniform cgUniform_pos
-
-private theorem Z_uniform' (w : MFWorld) :
-    (∑' u, cgL0 cgUniform cgUniform_pos u w) = ENNReal.ofReal (5/4) := by
-  have h := Z_uniform w
-  simpa [ENNReal.rpow_one] using h
-
-private theorem s1_val_arith :
-    (2 : ℝ≥0∞)⁻¹ * (ENNReal.ofReal (5/4))⁻¹ = ENNReal.ofReal (2/5) := by
-  rw [half_conv, ← ENNReal.ofReal_inv_of_pos (by norm_num),
-    ← ENNReal.ofReal_mul (by norm_num)]
-  norm_num
-
-private theorem s1_null_arith :
-    (4 : ℝ≥0∞)⁻¹ * (ENNReal.ofReal (5/4))⁻¹ = ENNReal.ofReal (1/5) := by
-  rw [quarter_conv, ← ENNReal.ofReal_inv_of_pos (by norm_num),
-    ← ENNReal.ofReal_mul (by norm_num)]
-  norm_num
-
-/-- Turn-1 speaker value on a true specific utterance: `2/5` — identical at
-every world (each satisfies exactly two specific utterances plus `null`).
-Derived from the Figure-4 equations; [anderson-2021]'s Figure 5 reports the
-qualitative multi-move profile. -/
-private theorem cgS1_uniform_true {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = true) (hn : u ≠ .null) :
-    cgS1 cgUniform cgUniform_pos w u = ENNReal.ofReal (2/5) := by
-  unfold cgS1
-  rw [RSA.S1Belief_apply]
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [Z_uniform' w, cgL0_uniform_apply, hw]
-  simp only [if_true]
-  rw [if_neg hn]
-  exact s1_val_arith
-
-/-- Turn-1 speaker value on `null`: `1/5` at every world. -/
-private theorem cgS1_uniform_null (w : MFWorld) :
-    cgS1 cgUniform cgUniform_pos w .null = ENNReal.ofReal (1/5) := by
-  unfold cgS1
-  rw [RSA.S1Belief_apply]
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [Z_uniform' w, cgL0_uniform_apply]
-  simp only [show mfMeaning .null w = true from rfl, if_true]
-  exact s1_null_arith
-
-/-- Turn-1 speaker value off support: `0`. -/
-private theorem cgS1_uniform_false {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = false) : cgS1 cgUniform cgUniform_pos w u = 0 := by
-  unfold cgS1
-  rw [RSA.S1Belief_apply]
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [cgL0_uniform_apply, hw]
-  simp
+/-- Turn-1 endorsement speaker. -/
+noncomputable def s2Turn1 : MFWorld → PMF MFUtterance :=
+  fun w => .ofScores .uniform (s2Score (fun _ => 1) w)
 
 /-- Turn-1 speaker values ([anderson-2021] Figure-4 equations at the uniform
 CG; derived exact rationals — Figure 5 reports the qualitative profile):
 `2/5` on each true specific utterance, `1/5` on `null`, `0` off support. -/
 theorem s1Turn1_true {u : MFUtterance} {w : MFWorld}
     (hw : mfMeaning u w = true) (hn : u ≠ .null) :
-    s1Turn1 w u = ENNReal.ofReal (2/5) := cgS1_uniform_true hw hn
+    s1Turn1 w u = (((2/5 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
+  PMF.ofScores_eq_ratCast _ (by revert hw hn; cases u <;> cases w <;> decide +kernel)
 
-theorem s1Turn1_null (w : MFWorld) : s1Turn1 w .null = ENNReal.ofReal (1/5) :=
-  cgS1_uniform_null w
+theorem s1Turn1_null (w : MFWorld) : s1Turn1 w .null = (((1/5 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
+  PMF.ofScores_eq_ratCast _ (by cases w <;> decide +kernel)
 
 theorem s1Turn1_false {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = false) : s1Turn1 w u = 0 := cgS1_uniform_false hw
-
-/-- The utterance marginal at turn 1 is `1/5` for every utterance: specific
-utterances collect `2 · (1/4)·(2/5)`, `null` collects `4 · (1/4)·(1/5)`. -/
-private theorem marginal_uniform (u : MFUtterance) :
-    PMF.marginal (cgS1 cgUniform cgUniform_pos) cgUniform u = ENNReal.ofReal (1/5) := by
-  show (cgUniform.bind (cgS1 cgUniform cgUniform_pos)) u = _
-  rw [PMF.bind_apply, sumWorlds]
-  simp only [cgUniform_apply]
-  cases u
-  case null =>
-    rw [cgS1_uniform_null, cgS1_uniform_null, cgS1_uniform_null, cgS1_uniform_null,
-      quarter_conv, ← ENNReal.ofReal_mul (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-    norm_num
-  all_goals
-    first
-    | (rw [cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
-          cgS1_uniform_true (by decide) (by decide),
-          cgS1_uniform_true (by decide) (by decide),
-          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
-       simp only [mul_zero, zero_add, add_zero]
-       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-       norm_num)
-    | (rw [cgS1_uniform_true (by decide) (by decide),
-          cgS1_uniform_true (by decide) (by decide),
-          cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
-          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
-       simp only [mul_zero, add_zero]
-       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-       norm_num)
-    | (rw [cgS1_uniform_true (by decide) (by decide),
-          cgS1_uniform_false (by decide), cgS1_uniform_false (by decide),
-          cgS1_uniform_true (by decide) (by decide),
-          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
-       simp only [mul_zero, add_zero]
-       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-       norm_num)
-    | (rw [cgS1_uniform_false (by decide),
-          cgS1_uniform_true (by decide) (by decide),
-          cgS1_uniform_true (by decide) (by decide),
-          cgS1_uniform_false (by decide),
-          quarter_conv, ← ENNReal.ofReal_mul (by norm_num)]
-       simp only [mul_zero, zero_add, add_zero]
-       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-       norm_num)
-noncomputable def l1Turn1 : MFUtterance → PMF MFWorld := cgL1 cgUniform cgUniform_pos
-
-private theorem l1_arith_true :
-    (4 : ℝ≥0∞)⁻¹ * ENNReal.ofReal (2/5) * (ENNReal.ofReal (1/5))⁻¹
-      = ENNReal.ofReal (1/2) := by
-  rw [quarter_conv, ← ENNReal.ofReal_mul (by norm_num),
-    ← ENNReal.ofReal_inv_of_pos (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
-  norm_num
-
-private theorem l1_arith_null :
-    (4 : ℝ≥0∞)⁻¹ * ENNReal.ofReal (1/5) * (ENNReal.ofReal (1/5))⁻¹
-      = ENNReal.ofReal (1/4) := by
-  rw [quarter_conv, ← ENNReal.ofReal_mul (by norm_num),
-    ← ENNReal.ofReal_inv_of_pos (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
-  norm_num
+    (hw : mfMeaning u w = false) : s1Turn1 w u = 0 := by
+  show PMF.ofScores .uniform (s1Score (fun _ => 1) w) u = 0
+  rw [PMF.ofScores_apply]
+  exact_mod_cast (by revert hw; cases u <;> cases w <;> decide +kernel :
+    PMF.scoresWith .uniform (s1Score (fun _ => 1) w) u = 0)
 
 /-- Turn-1 listener values (derived; `L1 ∝ PragSpeak·CG`, Figure 4): `1/2`
 on each world satisfying a specific utterance, `1/4` on every world after
 `null`, `0` off support. -/
 theorem l1Turn1_true {u : MFUtterance} {w : MFWorld}
     (hw : mfMeaning u w = true) (hn : u ≠ .null) :
-    l1Turn1 u w = ENNReal.ofReal (1/2) := by
-  unfold l1Turn1 cgL1
-  rw [PMF.posterior_apply, marginal_uniform, cgUniform_apply, cgS1_uniform_true hw hn]
-  exact l1_arith_true
+    l1Turn1 u w = (((1/2 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
+  PMF.ofScores_eq_ratCast _ (by revert hw hn; cases u <;> cases w <;> decide +kernel)
 
-theorem l1Turn1_null (w : MFWorld) : l1Turn1 .null w = ENNReal.ofReal (1/4) := by
-  unfold l1Turn1 cgL1
-  rw [PMF.posterior_apply, marginal_uniform, cgUniform_apply, cgS1_uniform_null]
-  exact l1_arith_null
+theorem l1Turn1_null (w : MFWorld) : l1Turn1 .null w = (((1/4 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
+  PMF.ofScores_eq_ratCast _ (by cases w <;> decide +kernel)
 
 theorem l1Turn1_false {u : MFUtterance} {w : MFWorld}
     (hw : mfMeaning u w = false) : l1Turn1 u w = 0 := by
-  unfold l1Turn1 cgL1
-  rw [PMF.posterior_apply, cgS1_uniform_false hw, mul_zero, zero_mul]
-noncomputable def s2Turn1 : MFWorld → PMF MFUtterance := cgS2 cgUniform cgUniform_pos
-
-end PMFChain
+  show PMF.ofScores .uniform (l1Score (fun _ => 1) u) w = 0
+  rw [PMF.ofScores_apply]
+  exact_mod_cast (by revert hw; cases u <;> cases w <;> decide +kernel :
+    PMF.scoresWith .uniform (l1Score (fun _ => 1) u) w = 0)
 
 -- ════════════════════════════════════════════════════
 -- § 9. Turn 1: S1 Predictions
@@ -946,55 +666,49 @@ end PMFChain
 "studyScience". Nancy studies German (a humanity), so "studyScience" has
 L0(nancy|studyScience) = 0, while "studyHumanity" has L0(nancy|studyHumanity) = 1/2. -/
 theorem s1_nancy_prefers_humanity :
-    s1Turn1 .nancy .studyHumanity > s1Turn1 .nancy .studyScience := by
-  rw [s1Turn1_true (by decide) (by decide), s1Turn1_false (by decide)]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+    s1Turn1 .nancy .studyScience < s1Turn1 .nancy .studyHumanity :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- A speaker who knows it's Nancy prefers "likeOutdoors" over "likeIndoors".
 Nancy likes being outdoors. -/
 theorem s1_nancy_prefers_outdoors :
-    s1Turn1 .nancy .likeOutdoors > s1Turn1 .nancy .likeIndoors := by
-  rw [s1Turn1_true (by decide) (by decide), s1Turn1_false (by decide)]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+    s1Turn1 .nancy .likeIndoors < s1Turn1 .nancy .likeOutdoors :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- A speaker who knows it's Ina prefers "studyScience" over "studyHumanity".
 Ina studies Astronomy (a science). -/
 theorem s1_ina_prefers_science :
-    s1Turn1 .ina .studyScience > s1Turn1 .ina .studyHumanity := by
-  rw [s1Turn1_true (by decide) (by decide), s1Turn1_false (by decide)]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+    s1Turn1 .ina .studyHumanity < s1Turn1 .ina .studyScience :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- A speaker who knows it's Ina is indifferent between "studyScience" and
 "likeIndoors": both are true of exactly 2 worlds, giving equal L0 posteriors.
 -/
 theorem s1_ina_science_eq_indoors :
-    s1Turn1 .ina .studyScience = s1Turn1 .ina .likeIndoors := by
-  rw [s1Turn1_true (by decide) (by decide), s1Turn1_true (by decide) (by decide)]
+    s1Turn1 .ina .studyScience = s1Turn1 .ina .likeIndoors :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-- The null utterance is always suboptimal: a speaker who knows it's Nancy
 strictly prefers any true specific utterance over saying nothing.
 Null is true of all 4 worlds (L0 = 1/4), while "studyHumanity" is true of
 only 2 (L0 = 1/2). -/
 theorem s1_null_suboptimal :
-    s1Turn1 .nancy .studyHumanity > s1Turn1 .nancy .null := by
-  rw [s1Turn1_true (by decide) (by decide), s1Turn1_null]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+    s1Turn1 .nancy .null < s1Turn1 .nancy .studyHumanity :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- Symmetry: S1(studyHumanity|nancy) = S1(likeOutdoors|nancy).
 Both utterances partition the 4 worlds into 2 true + 2 false, so
 L0(nancy|studyHumanity) = L0(nancy|likeOutdoors) = 1/2, hence equal S1. -/
 theorem s1_nancy_humanity_eq_outdoors :
-    s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors := by
-  rw [s1Turn1_true (by decide) (by decide), s1Turn1_true (by decide) (by decide)]
+    s1Turn1 .nancy .studyHumanity = s1Turn1 .nancy .likeOutdoors :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-- False utterances get zero S1 probability.
 "studyScience" is false of Nancy (she studies German), so S1 = 0.
 -/
 theorem s1_nancy_science_not_gt_null :
-    ¬(s1Turn1 .nancy .studyScience > s1Turn1 .nancy .null) := by
-  rw [gt_iff_lt,
-    s1Turn1_false (show mfMeaning .studyScience .nancy = false from by decide)]
-  simp
+    ¬(s1Turn1 .nancy .null < s1Turn1 .nancy .studyScience) :=
+  not_lt.mpr (PMF.ofScores_le_cross _ _ (by decide +kernel))
 
 -- ════════════════════════════════════════════════════
 -- § 10. Turn 1: L1 Predictions
@@ -1003,28 +717,26 @@ theorem s1_nancy_science_not_gt_null :
 /-- After hearing "studyHumanity", L1 assigns higher probability to Nancy
 than to Ina. Nancy studies a humanity; Ina studies a science. -/
 theorem l1_humanity_favors_nancy :
-    l1Turn1 .studyHumanity .nancy > l1Turn1 .studyHumanity .ina := by
-  rw [l1Turn1_true (by decide) (by decide), l1Turn1_false (by decide)]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+    l1Turn1 .studyHumanity .ina < l1Turn1 .studyHumanity .nancy :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- After hearing "likeOutdoors", L1 favors Nancy over Sally.
 Nancy likes outdoors; Sally likes indoors. -/
 theorem l1_outdoors_favors_nancy :
-    l1Turn1 .likeOutdoors .nancy > l1Turn1 .likeOutdoors .sally := by
-  rw [l1Turn1_true (by decide) (by decide), l1Turn1_false (by decide)]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+    l1Turn1 .likeOutdoors .sally < l1Turn1 .likeOutdoors .nancy :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- After hearing "studyHumanity", L1 assigns equal probability to Nancy
 and Sally — both study a humanity, and S1 scores are symmetric. -/
 theorem l1_humanity_nancy_eq_sally :
-    l1Turn1 .studyHumanity .nancy = l1Turn1 .studyHumanity .sally := by
-  rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)]
+    l1Turn1 .studyHumanity .nancy = l1Turn1 .studyHumanity .sally :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-- After hearing "studyScience", L1 assigns equal probability to Ina
 and Katie — both study a science. -/
 theorem l1_science_ina_eq_katie :
-    l1Turn1 .studyScience .ina = l1Turn1 .studyScience .katie := by
-  rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)]
+    l1Turn1 .studyScience .ina = l1Turn1 .studyScience .katie :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-- The null utterance conveys no information: L1 assigns equal probability
 to all worlds. Every world has S1(null|w) = 1/5 by the domain's symmetry
@@ -1050,141 +762,17 @@ CommonGround [1/4, 1/4, 1/4, 1/4] via `updateCG` with lr=0.2 (footnote 9) gives:
 The weights [2, 2, 3, 3] are proportional to [1/5, 1/5, 3/10, 3/10],
 which is the exact post-update CommonGround from the paper's Figure 5, panel 1A.
 Since RSA normalizes, proportional weights give identical predictions. -/
-def cgTurn2 : MFWorld → ℝ
+def cgTurn2 : MFWorld → ℚ≥0
   | .ina | .katie => 2
   | .nancy | .sally => 3
 
+/-- Turn-2 speaker at the post-update CommonGround. -/
+noncomputable def s1Turn2 : MFWorld → PMF MFUtterance :=
+  fun w => .ofScores .uniform (s1Score cgTurn2 w)
 
-section PMFChain
-
-open scoped ENNReal
-
-/-- Turn-2 Common Ground as a PMF: the normalised `[2,2,3,3]` weights
-(= `0.8·uniform + 0.2·L1(studyHumanity)`, [anderson-2021] fn. 9's lr = 0.2). -/
-private noncomputable def cgTurn2PMF : PMF MFWorld :=
-  PMF.normalize (fun w => ENNReal.ofReal (cgTurn2 w))
-    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.ina, by
-      rw [ENNReal.ofReal_ne_zero_iff]
-      norm_num [cgTurn2]⟩)
-    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
-
-private theorem cgTurn2PMF_pos (w : MFWorld) : cgTurn2PMF w ≠ 0 := by
-  rw [cgTurn2PMF, PMF.normalize_apply]
-  refine mul_ne_zero ?_ (ENNReal.inv_ne_zero.mpr
-    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top))
-  rw [ENNReal.ofReal_ne_zero_iff]
-  cases w <;> norm_num [cgTurn2]
-
-/-- Turn-2 chain. -/
-noncomputable def s1Turn2 : MFWorld → PMF MFUtterance := cgS1 cgTurn2PMF cgTurn2PMF_pos
-noncomputable def l1Turn2 : MFUtterance → PMF MFWorld := cgL1 cgTurn2PMF cgTurn2PMF_pos
-
-private theorem t2_sum : (∑' w, ENNReal.ofReal (cgTurn2 w)) = ENNReal.ofReal 10 := by
-  rw [sumWorlds]
-  norm_num [cgTurn2]
-
-private theorem cgTurn2PMF_apply (w : MFWorld) :
-    cgTurn2PMF w = ENNReal.ofReal (cgTurn2 w / 10) := by
-  rw [cgTurn2PMF, PMF.normalize_apply, t2_sum,
-    ← ENNReal.ofReal_inv_of_pos (by norm_num),
-    ← ENNReal.ofReal_mul (by cases w <;> norm_num [cgTurn2])]
-  rw [div_eq_mul_inv]
-
-/-- Turn-2 masses: `3/5` for humanity, `2/5` for science, `1/2` for each
-location, `1` for `null` (weights `[2,2,3,3]/10`). -/
-private noncomputable def t2MassQ : MFUtterance → ℝ
-  | .studyHumanity => 3/5
-  | .studyScience  => 2/5
-  | .likeIndoors   => 1/2
-  | .likeOutdoors  => 1/2
-  | .null          => 1
-
-private theorem t2Mass (u : MFUtterance) :
-    (∑' w, cgTurn2PMF w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0))
-      = ENNReal.ofReal (t2MassQ u) := by
-  rw [sumWorlds]
-  simp only [cgTurn2PMF_apply]
-  cases u <;>
-    · simp +decide [cgTurn2, t2MassQ]
-      try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-      try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-      try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-      first
-        | (rw [half_conv]; congr 1; norm_num)
-        | norm_num
-
-private theorem cgL0_t2_true {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = true) :
-    cgL0 cgTurn2PMF cgTurn2PMF_pos u w
-      = ENNReal.ofReal (cgTurn2 w / 10 / t2MassQ u) := by
-  unfold cgL0
-  rw [RSA.L0LassiterGoodman_apply, hw, t2Mass, cgTurn2PMF_apply]
-  simp only [if_true, mul_one]
-  rw [← ENNReal.ofReal_inv_of_pos (by cases u <;> norm_num [t2MassQ]),
-    ← ENNReal.ofReal_mul (by cases w <;> norm_num [cgTurn2])]
-  congr 1
-
-private theorem cgL0_t2_false {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = false) :
-    cgL0 cgTurn2PMF cgTurn2PMF_pos u w = 0 := by
-  unfold cgL0
-  rw [RSA.L0LassiterGoodman_apply, hw]
-  simp
-
-/-- Turn-2 speaker normalisers: `7/5` at the high-CG worlds (nancy, sally),
-`11/10` at the low-CG worlds (ina, katie). -/
-private noncomputable def Zt2Q : MFWorld → ℝ
-  | .ina | .katie => 11/10
-  | .nancy | .sally => 7/5
-
-private theorem Z_t2 (w : MFWorld) :
-    (∑' u, cgL0 cgTurn2PMF cgTurn2PMF_pos u w) = ENNReal.ofReal (Zt2Q w) := by
-  rw [sumUtts]
-  cases w <;>
-    · first
-      | rw [cgL0_t2_false (by decide), cgL0_t2_true (by decide),
-          cgL0_t2_true (by decide), cgL0_t2_false (by decide),
-          cgL0_t2_true (by decide)]
-      | rw [cgL0_t2_false (by decide), cgL0_t2_true (by decide),
-          cgL0_t2_false (by decide), cgL0_t2_true (by decide),
-          cgL0_t2_true (by decide)]
-      | rw [cgL0_t2_true (by decide), cgL0_t2_false (by decide),
-          cgL0_t2_false (by decide), cgL0_t2_true (by decide),
-          cgL0_t2_true (by decide)]
-      | rw [cgL0_t2_true (by decide), cgL0_t2_false (by decide),
-          cgL0_t2_true (by decide), cgL0_t2_false (by decide),
-          cgL0_t2_true (by decide)]
-      simp only [cgTurn2, t2MassQ, Zt2Q, zero_add, add_zero]
-      rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-        ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-      norm_num
-
-/-- Generic turn-2 speaker value on support. -/
-private theorem cgS1_t2_true {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = true) :
-    cgS1 cgTurn2PMF cgTurn2PMF_pos w u
-      = ENNReal.ofReal (cgTurn2 w / 10 / t2MassQ u / Zt2Q w) := by
-  unfold cgS1
-  rw [RSA.S1Belief_apply]
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [show (∑' u', cgL0 cgTurn2PMF cgTurn2PMF_pos u' w) = ENNReal.ofReal (Zt2Q w)
-      from Z_t2 w,
-    cgL0_t2_true hw,
-    ← ENNReal.ofReal_inv_of_pos (by cases w <;> norm_num [Zt2Q]),
-    ← ENNReal.ofReal_mul (by cases u <;> cases w <;> norm_num [cgTurn2, t2MassQ])]
-  congr 1
-
-private theorem cgS1_t2_false {u : MFUtterance} {w : MFWorld}
-    (hw : mfMeaning u w = false) :
-    cgS1 cgTurn2PMF cgTurn2PMF_pos w u = 0 := by
-  unfold cgS1
-  rw [RSA.S1Belief_apply]
-  simp only [ENNReal.rpow_one, mul_one]
-  rw [cgL0_t2_false hw]
-  simp
-
-end PMFChain
-
+/-- Turn-2 pragmatic listener. -/
+noncomputable def l1Turn2 : MFUtterance → PMF MFWorld :=
+  fun u => .ofScores .uniform (l1Score cgTurn2 u)
 
 -- ════════════════════════════════════════════════════
 -- § 12. Turn 2 Predictions
@@ -1195,61 +783,34 @@ Nancy over Katie. In turn 1, they were symmetric (both like outdoors).
 The updated prior (3 vs 1) breaks the tie — Nancy's higher CommonGround weight
 makes her more probable. This is the key multi-turn prediction. -/
 theorem l1_turn2_outdoors_favors_nancy :
-    l1Turn2 .likeOutdoors .nancy > l1Turn2 .likeOutdoors .katie := by
-  unfold l1Turn2 cgL1
-  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, cgTurn2PMF_apply, cgTurn2PMF_apply,
-    cgS1_t2_true (by decide), cgS1_t2_true (by decide),
-    ← ENNReal.ofReal_mul (by norm_num [cgTurn2]),
-    ← ENNReal.ofReal_mul (by norm_num [cgTurn2])]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
-    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
+    l1Turn2 .likeOutdoors .katie < l1Turn2 .likeOutdoors .nancy :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- After CommonGround update, "likeIndoors" favors Sally over Ina. Both like
 indoors, but Sally has higher prior (3 vs 1) from the CommonGround shift. -/
 theorem l1_turn2_indoors_favors_sally :
-    l1Turn2 .likeIndoors .sally > l1Turn2 .likeIndoors .ina := by
-  unfold l1Turn2 cgL1
-  rw [gt_iff_lt, PMF.posterior_lt_iff_score_lt, cgTurn2PMF_apply, cgTurn2PMF_apply,
-    cgS1_t2_true (by decide), cgS1_t2_true (by decide),
-    ← ENNReal.ofReal_mul (by norm_num [cgTurn2]),
-    ← ENNReal.ofReal_mul (by norm_num [cgTurn2])]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
-    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
+    l1Turn2 .likeIndoors .ina < l1Turn2 .likeIndoors .sally :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- After CommonGround update, "studyScience" still treats Ina and Katie equally:
 both study a science and both have equal prior weight (1). -/
 theorem l1_turn2_science_ina_eq_katie :
-    l1Turn2 .studyScience .ina = l1Turn2 .studyScience .katie := by
-  unfold l1Turn2 cgL1
-  have h : cgTurn2PMF .ina * cgS1 cgTurn2PMF cgTurn2PMF_pos .ina .studyScience
-      = cgTurn2PMF .katie * cgS1 cgTurn2PMF cgTurn2PMF_pos .katie .studyScience := by
-    rw [cgTurn2PMF_apply, cgTurn2PMF_apply, cgS1_t2_true (by decide),
-      cgS1_t2_true (by decide)]
-    norm_num [cgTurn2, Zt2Q]
-  exact le_antisymm ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.le)
-    ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.ge)
+    l1Turn2 .studyScience .ina = l1Turn2 .studyScience .katie :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-- After CommonGround update, "studyHumanity" still treats Nancy and Sally equally:
 both study a humanity and both have equal updated prior (3). -/
 theorem l1_turn2_humanity_nancy_eq_sally :
-    l1Turn2 .studyHumanity .nancy = l1Turn2 .studyHumanity .sally := by
-  unfold l1Turn2 cgL1
-  have h : cgTurn2PMF .nancy * cgS1 cgTurn2PMF cgTurn2PMF_pos .nancy .studyHumanity
-      = cgTurn2PMF .sally * cgS1 cgTurn2PMF cgTurn2PMF_pos .sally .studyHumanity := by
-    rw [cgTurn2PMF_apply, cgTurn2PMF_apply, cgS1_t2_true (by decide),
-      cgS1_t2_true (by decide)]
-    norm_num [cgTurn2, Zt2Q]
-  exact le_antisymm ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.le)
-    ((PMF.posterior_le_iff_score_le _ _ _ _ _ _).mpr h.ge)
+    l1Turn2 .studyHumanity .nancy = l1Turn2 .studyHumanity .sally :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 /-- CommonGround update breaks turn-1 symmetry: in turn 1, L1("likeOutdoors")
 assigned equal weight to Nancy and Katie. After the CommonGround shift, Nancy
 is favored. Multi-turn conversation enriches inference. -/
 theorem turn2_breaks_symmetry :
     l1Turn1 .likeOutdoors .nancy = l1Turn1 .likeOutdoors .katie ∧
-    l1Turn2 .likeOutdoors .nancy > l1Turn2 .likeOutdoors .katie :=
-  ⟨by rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)],
-   l1_turn2_outdoors_favors_nancy⟩
+    l1Turn2 .likeOutdoors .katie < l1Turn2 .likeOutdoors .nancy :=
+  ⟨PMF.ofScores_eq_cross _ _ (by decide +kernel), l1_turn2_outdoors_favors_nancy⟩
 
 -- ════════════════════════════════════════════════════
 -- § 12b. Turn 2: S1 CommonGround-Adapted Speaker
@@ -1272,11 +833,8 @@ the high-weight subspace (L0(nancy|likeOutdoors) = 3/5) while
 This is Anderson's key insight: the CommonGround-weighted L0 makes speakers prefer
 *new* information over *redundant* information. -/
 theorem s1_turn2_nancy_prefers_outdoors :
-    s1Turn2 .nancy .likeOutdoors > s1Turn2 .nancy .studyHumanity := by
-  show cgS1 _ _ _ _ > cgS1 _ _ _ _
-  rw [cgS1_t2_true (by decide), cgS1_t2_true (by decide)]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
-    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
+    s1Turn2 .nancy .studyHumanity < s1Turn2 .nancy .likeOutdoors :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- At turn 1, the same two utterances were equal (pre-CommonGround-adaptation). -/
 theorem s1_turn1_nancy_humanity_eq_outdoors :
@@ -1290,11 +848,8 @@ L0(ina|likeIndoors) = 2/5 < L0(ina|studyScience) = 1/2. The CommonGround shift
 makes the major dimension MORE informative for low-CommonGround worlds, the opposite
 of the high-CommonGround case (nancy, §12b above). -/
 theorem s1_turn2_ina_prefers_science :
-    s1Turn2 .ina .studyScience > s1Turn2 .ina .likeIndoors := by
-  show cgS1 _ _ _ _ > cgS1 _ _ _ _
-  rw [cgS1_t2_true (by decide), cgS1_t2_true (by decide)]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num [cgTurn2, t2MassQ, Zt2Q])).mpr
-    (by norm_num [cgTurn2, t2MassQ, Zt2Q])
+    s1Turn2 .ina .likeIndoors < s1Turn2 .ina .studyScience :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 -- ════════════════════════════════════════════════════
 -- § 13. S2: Endorsement Predictions
@@ -1304,90 +859,61 @@ theorem s1_turn2_ina_prefers_science :
 "studyHumanity" over "studyScience". S2(u|w) ∝ L1(w|u), and
 L1(nancy|studyHumanity) > 0 = L1(nancy|studyScience). -/
 theorem s2_nancy_endorses_humanity :
-    s2Turn1 .nancy .studyHumanity > s2Turn1 .nancy .studyScience := by
-  unfold s2Turn1 cgS2
-  rw [gt_iff_lt, PMF.normalize_lt_iff_lt]
-  show l1Turn1 .studyScience .nancy < l1Turn1 .studyHumanity .nancy
-  rw [l1Turn1_false (by decide), l1Turn1_true (by decide) (by decide)]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+    s2Turn1 .nancy .studyScience < s2Turn1 .nancy .studyHumanity :=
+  PMF.ofScores_lt _ (by decide +kernel)
 
 /-- S2 endorsement: given world Nancy, "studyHumanity" and "likeOutdoors"
 are equally endorsed (symmetric L1 posteriors). -/
 theorem s2_nancy_humanity_eq_outdoors :
-    s2Turn1 .nancy .studyHumanity = s2Turn1 .nancy .likeOutdoors := by
-  unfold s2Turn1 cgS2
-  rw [PMF.normalize_eq_iff_eq]
-  show l1Turn1 .studyHumanity .nancy = l1Turn1 .likeOutdoors .nancy
-  rw [l1Turn1_true (by decide) (by decide), l1Turn1_true (by decide) (by decide)]
+    s2Turn1 .nancy .studyHumanity = s2Turn1 .nancy .likeOutdoors :=
+  PMF.ofScores_eq_cross _ _ (by decide +kernel)
 
 -- ════════════════════════════════════════════════════
 -- § 14. Parametric RSA and Conversation Step
 -- ════════════════════════════════════════════════════
 
-section PMFChain
-
-open scoped ENNReal
-
-/-- Total literal listener at an arbitrary CommonGround (dite fallback for
-utterances whose extension has zero CG mass). -/
-noncomputable def cgL0Total (cg : PMF MFWorld) (u : MFUtterance) : PMF MFWorld :=
-  if h : (∑' w, cg w * (if mfMeaning u w then (1 : ℝ≥0∞) else 0)) ≠ 0 then
-    RSA.L0LassiterGoodman cg mfMeaning u h
-  else PMF.uniformOfFintype MFWorld
-
-/-- Total speaker at an arbitrary CommonGround — the general Figure-4
-production model used by the conversation loop (fallback to `null` at
-zero-support worlds). -/
-noncomputable def cgS1Total (cg : PMF MFWorld) (w : MFWorld) : PMF MFUtterance :=
-  if h : (∑' u, ((cgL0Total cg u) w : ℝ≥0∞) ^ (1 : ℝ) * 1) ≠ 0 then
-    RSA.S1Belief (cgL0Total cg) (fun _ => 1) 1 w h
-      (ENNReal.tsum_ne_top_of_fintype fun _ =>
-        ENNReal.mul_ne_top
-          (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
-          ENNReal.one_ne_top)
-  else PMF.pure .null
-
-end PMFChain
-
-/-- One step of the Shared CommonGround conversation loop (Figure 2).
+/-- One step of the Shared CommonGround conversation loop (Figure 2), with
+the CommonGround carried on its ℚ≥0 score face (RSA normalizes, so the
+proportional weights determine the distribution `⟨.ofScores .uniform cg⟩`).
 
 Given the current CommonGround and an utterance:
-1. Build the speaker chain at the current CommonGround (`cgS1Total`)
-2. Compute L1 posteriors: the pragmatic listener's world beliefs
+1. Build the Figure-4 chain at the current CommonGround (`s1Score`)
+2. Compute L1 posteriors: the pragmatic listener's world beliefs (`l1Score`)
 3. Update the CommonGround via convex combination with the posteriors
 
 This closes the loop: RSA inference → CommonGround update → new RSA model.
 The returned CommonGround serves as the world prior for the next turn's model.
 
-**Renormalisation** is now intrinsic: `PMF.posterior` IS the renormalised
-listener ([anderson-2021] fn. 3: *"the probabilities are renormalized"*), so
-`updateCG` is a genuine convex combination of distributions by construction.
-The guard handles the degenerate case of an utterance contradicting the
-entire common ground (marginal 0, e.g. `studyHumanity` against a CG
-concentrated on Ina): the posterior carries no information and the
-CommonGround is left unchanged — matching Anderson's null-utterance "skip
-the update" behaviour (§7.1). -/
+**Renormalisation** is intrinsic: `l1Score` is a `PMF.normalizeScores`
+application ([anderson-2021] fn. 3: *"the probabilities are renormalized"*),
+so `updateCG` is a genuine convex combination of distributions by
+construction. The guard handles the degenerate case of an utterance
+contradicting the entire common ground (dead score row, e.g. `studyHumanity`
+against a CG concentrated on Ina): the posterior carries no information and
+the CommonGround is left unchanged — matching Anderson's null-utterance
+"skip the update" behaviour (§7.1). -/
 noncomputable def conversationStep
-    (cg : DistributionalCG MFWorld) (u : MFUtterance)
+    (cg : MFWorld → ℚ≥0) (u : MFUtterance)
     (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) :
     DistributionalCG MFWorld :=
-  if h : PMF.marginal (cgS1Total cg.dist) cg.dist u ≠ 0 then
-    updateCG cg ⟨PMF.posterior (cgS1Total cg.dist) cg.dist u h⟩ lr hlr hlr1
-  else cg
+  if 0 < ∑ w, cg w * s1Score cg w u then
+    updateCG ⟨.ofScores .uniform cg⟩ ⟨.ofScores .uniform (l1Score cg u)⟩ lr hlr hlr1
+  else ⟨.ofScores .uniform cg⟩
 
-/-- The conversation step preserves CommonGround non-negativity (now free:
+/-- The conversation step preserves CommonGround non-negativity (free:
 the result is a genuine distribution). -/
-theorem conversationStep_nonneg (cg : DistributionalCG MFWorld)
+theorem conversationStep_nonneg (cg : MFWorld → ℚ≥0)
     (u : MFUtterance) (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) (w : MFWorld) :
     0 ≤ (conversationStep cg u lr hlr hlr1).weight w :=
   (conversationStep cg u lr hlr hlr1).weight_nonneg w
 
 /-- With lr = 0, the conversation step leaves the CommonGround unchanged. -/
-theorem conversationStep_lr_zero (cg : DistributionalCG MFWorld) (u : MFUtterance) (w : MFWorld) :
-    (conversationStep cg u 0 (le_refl 0) zero_le_one).weight w = cg.weight w := by
+theorem conversationStep_lr_zero (cg : MFWorld → ℚ≥0) (u : MFUtterance) (w : MFWorld) :
+    (conversationStep cg u 0 (le_refl 0) zero_le_one).weight w
+      = (⟨.ofScores .uniform cg⟩ : DistributionalCG MFWorld).weight w := by
   unfold conversationStep
   split
-  · exact updateCG_lr_zero cg _ w
+  · exact updateCG_lr_zero _ _ w
   · rfl
 
 -- ════════════════════════════════════════════════════
@@ -1411,14 +937,13 @@ L1(nancy|studyHumanity) > L1(nancy|null). The null utterance gives
 uniform L1 (= 1/4), while "studyHumanity" concentrates on the 2
 German-studying worlds (= 1/2). -/
 theorem l1_concentrates_after_utterance :
-    l1Turn1 .studyHumanity .nancy > l1Turn1 .null .nancy := by
-  rw [l1Turn1_true (by decide) (by decide), l1Turn1_null]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+    l1Turn1 .null .nancy < l1Turn1 .studyHumanity .nancy :=
+  PMF.ofScores_lt_cross _ _ (by decide +kernel)
 
 /-- Informed speakers are informative: S1 assigns higher probability
 to a true specific utterance than to null. -/
 theorem s1_informed_speaker_is_informative :
-    s1Turn1 .nancy .studyHumanity > s1Turn1 .nancy .null :=
+    s1Turn1 .nancy .null < s1Turn1 .nancy .studyHumanity :=
   s1_null_suboptimal
 
 -- ════════════════════════════════════════════════════
@@ -1474,7 +999,7 @@ S1(true u|w) = (1/2)/(5/4) = 2/5 and S1(null|w) = (1/4)/(5/4) = 1/5. -/
 -- S1(·|nancy): production probabilities given obs = Nancy
 
 theorem s1_nancy_studyHumanity_val :
-    s1Turn1 .nancy .studyHumanity = ENNReal.ofReal (2/5) :=
+    s1Turn1 .nancy .studyHumanity = (((2/5 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   s1Turn1_true (by decide) (by decide)
 
 theorem s1_nancy_studyScience_val :
@@ -1486,21 +1011,21 @@ theorem s1_nancy_likeIndoors_val :
   s1Turn1_false (by decide)
 
 theorem s1_nancy_likeOutdoors_val :
-    s1Turn1 .nancy .likeOutdoors = ENNReal.ofReal (2/5) :=
+    s1Turn1 .nancy .likeOutdoors = (((2/5 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   s1Turn1_true (by decide) (by decide)
 
 theorem s1_nancy_null_val :
-    s1Turn1 .nancy .null = ENNReal.ofReal (1/5) :=
+    s1Turn1 .nancy .null = (((1/5 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   s1Turn1_null .nancy
 
 -- L1(·|studyHumanity): posteriors used in CommonGround update → Figure 5 panel 1A
 
 theorem l1_studyHumanity_nancy_val :
-    l1Turn1 .studyHumanity .nancy = ENNReal.ofReal (1/2) :=
+    l1Turn1 .studyHumanity .nancy = (((1/2 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   l1Turn1_true (by decide) (by decide)
 
 theorem l1_studyHumanity_sally_val :
-    l1Turn1 .studyHumanity .sally = ENNReal.ofReal (1/2) :=
+    l1Turn1 .studyHumanity .sally = (((1/2 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   l1Turn1_true (by decide) (by decide)
 
 theorem l1_studyHumanity_ina_val :
@@ -1514,7 +1039,7 @@ theorem l1_studyHumanity_katie_val :
 /-- Null gives uniform L1: every world has the same S1(null|w) by the
 domain's symmetry, so L1(w|null) = CommonGround(w)/Σ CommonGround = 1/4. -/
 theorem l1_null_val (w : MFWorld) :
-    l1Turn1 .null w = ENNReal.ofReal (1/4) :=
+    l1Turn1 .null w = (((1/4 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
   l1Turn1_null w
 
 -- ════════════════════════════════════════════════════
@@ -1552,31 +1077,16 @@ noncomputable def ApproxCGState.initial {W : Type*} [Fintype W] [Nonempty W]
   lr := lr
   speakerIsA := true
 
-private theorem cgS1_marginal_pos' (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (bel : PMF MFWorld) (hbel : ∀ w, bel w ≠ 0) (u : MFUtterance) :
-    PMF.marginal (cgS1 cg hcg) bel u ≠ 0 := by
-  obtain ⟨w, hw⟩ := mfMeaning_sat u
-  refine PMF.marginal_ne_zero _ _ _ (hbel w) ?_
-  have hL0 : cgL0 cg hcg u w ≠ 0 := by
-    unfold cgL0
-    rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
-    exact ⟨hcg w, hw⟩
-  unfold cgS1
-  exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 one_ne_zero
-
 /-- Approximate comprehension listener ([anderson-2021] Figure 6): L0/S1 run
 over the listener's CommonGround approximation `CG_L`, but the Bayesian
-inversion uses the listener's private beliefs `B_L` as the prior. Stated for
-everywhere-positive `CG_L`/`B_L` (the degenerate-support cases go through
-the total conversation-loop constructions above). -/
-noncomputable def approxL1 (cgL : PMF MFWorld) (hcgL : ∀ w, cgL w ≠ 0)
-    (belL : PMF MFWorld) (hbelL : ∀ w, belL w ≠ 0) (u : MFUtterance) : PMF MFWorld :=
-  PMF.posterior (cgS1 cgL hcgL) belL u (cgS1_marginal_pos' cgL hcgL belL hbelL u)
+inversion uses the listener's private beliefs `B_L` as the prior. -/
+noncomputable def approxL1 (cgL belL : MFWorld → ℚ≥0) (u : MFUtterance) : PMF MFWorld :=
+  .ofScores .uniform (PMF.normalizeScores fun w => belL w * s1Score cgL w u)
 
 /-- When beliefs equal the CommonGround, the approximate model reduces to the
 shared CommonGround model — the split is only meaningful when they diverge. -/
-theorem approx_reduces_to_shared (cg : PMF MFWorld) (hcg : ∀ w, cg w ≠ 0)
-    (u : MFUtterance) : approxL1 cg hcg cg hcg u = cgL1 cg hcg u := rfl
+theorem approx_reduces_to_shared (cg : MFWorld → ℚ≥0) (u : MFUtterance) :
+    approxL1 cg cg u = .ofScores .uniform (l1Score cg u) := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 19. Belief Update Model (§6, Figure 8)
