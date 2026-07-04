@@ -64,6 +64,20 @@ theorem rootAtom_eq_exp {X : ℝ} (hX : 0 < X) (n : ℕ) :
     rootAtom X n = Real.exp (Real.log X / n) := by
   rw [rootAtom, Real.rpow_def_of_pos hX, div_eq_mul_inv]
 
+/-- The two-factor exponential form: the n-th root of `a^j · b^k` is the
+weighted geometric mean `exp ((j/n)·log a + (k/n)·log b)` — the shape of
+softmax utilities with denominator-`n` noise weights. -/
+theorem rootAtom_pow_mul_pow {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (j k n : ℕ) :
+    rootAtom (a ^ j * b ^ k) n =
+      Real.exp ((j / n : ℝ) * Real.log a + (k / n : ℝ) * Real.log b) := by
+  rw [rootAtom, Real.mul_rpow (by positivity) (by positivity),
+    ← Real.rpow_natCast a j, ← Real.rpow_natCast b k,
+    ← Real.rpow_mul ha.le, ← Real.rpow_mul hb.le,
+    Real.rpow_def_of_pos ha, Real.rpow_def_of_pos hb, ← Real.exp_add]
+  congr 1
+  ring
+
 /-! ### Exponential cost atoms -/
 
 /-- The multiplicative cost factor `exp (−q)` for a cost `q`. -/

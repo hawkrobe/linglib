@@ -347,43 +347,22 @@ private theorem l0_a_ob : l0Q .aliceWent .onlyBob = 1/201 := by decide +kernel
 private theorem l0_B_ob : l0Q .BOB_went .onlyBob = 1/2 := by decide +kernel
 
 /-- The atoms are the paper's exponentiated utilities (eq. 7): the
-`P_N`-weighted geometric mean of the literal posteriors. Stated for the
-unstressed atom; the stressed case is `Ya_eq_exp`. -/
+`P_N`-weighted geometric means of the literal posteriors. -/
 theorem Xa_eq_exp :
     Xa = Real.exp ((1 - (εQ : ℝ)) * Real.log (l0Q .bobWent .onlyBob : ℝ) +
       (εQ : ℝ) * Real.log (l0Q .aliceWent .onlyBob : ℝ)) := by
-  have hb : (0:ℝ) < (l0Q .bobWent .onlyBob : ℝ) := by rw [l0_b_ob]; norm_num
-  have ha : (0:ℝ) < (l0Q .aliceWent .onlyBob : ℝ) := by rw [l0_a_ob]; norm_num
-  rw [Real.exp_add, mul_comm ((1:ℝ) - (εQ:ℝ)) (Real.log _),
-    mul_comm ((εQ:ℝ)) (Real.log _),
-    ← Real.rpow_def_of_pos hb, ← Real.rpow_def_of_pos ha, Xa, RSA.rootAtom]
-  have : ((X200 : ℚ) : ℝ)
-      = (l0Q .bobWent .onlyBob : ℝ) ^ (198:ℕ) * (l0Q .aliceWent .onlyBob : ℝ) ^ (2:ℕ) := by
-    push_cast [X200]
-    ring
-  rw [this, Real.mul_rpow (by positivity) (by positivity),
-    ← Real.rpow_natCast ((l0Q .bobWent .onlyBob : ℝ)) 198,
-    ← Real.rpow_natCast ((l0Q .aliceWent .onlyBob : ℝ)) 2,
-    ← Real.rpow_mul hb.le, ← Real.rpow_mul ha.le]
-  norm_num [εQ, Nat.cast_ofNat]
+  rw [Xa, show ((X200 : ℚ) : ℝ) = (l0Q .bobWent .onlyBob : ℝ) ^ (198:ℕ) *
+      (l0Q .aliceWent .onlyBob : ℝ) ^ (2:ℕ) by push_cast [X200]; ring,
+    RSA.rootAtom_pow_mul_pow (by rw [l0_b_ob]; norm_num) (by rw [l0_a_ob]; norm_num)]
+  norm_num [εQ]
 
 theorem Ya_eq_exp :
     Ya = Real.exp ((1 - (εQ : ℝ)/2) * Real.log (l0Q .BOB_went .onlyBob : ℝ) +
       ((εQ : ℝ)/2) * Real.log (l0Q .bobWent .onlyBob : ℝ)) := by
-  have hB : (0:ℝ) < (l0Q .BOB_went .onlyBob : ℝ) := by rw [l0_B_ob]; norm_num
-  have hb : (0:ℝ) < (l0Q .bobWent .onlyBob : ℝ) := by rw [l0_b_ob]; norm_num
-  rw [Real.exp_add, mul_comm ((1:ℝ) - (εQ:ℝ)/2) (Real.log _),
-    mul_comm ((εQ:ℝ)/2) (Real.log _),
-    ← Real.rpow_def_of_pos hB, ← Real.rpow_def_of_pos hb, Ya, RSA.rootAtom]
-  have : ((Y200 : ℚ) : ℝ)
-      = (l0Q .BOB_went .onlyBob : ℝ) ^ (199:ℕ) * (l0Q .bobWent .onlyBob : ℝ) ^ (1:ℕ) := by
-    push_cast [Y200]
-    ring
-  rw [this, Real.mul_rpow (by positivity) (by positivity),
-    ← Real.rpow_natCast ((l0Q .BOB_went .onlyBob : ℝ)) 199,
-    ← Real.rpow_natCast ((l0Q .bobWent .onlyBob : ℝ)) 1,
-    ← Real.rpow_mul hB.le, ← Real.rpow_mul hb.le]
-  norm_num [εQ, Nat.cast_ofNat]
+  rw [Ya, show ((Y200 : ℚ) : ℝ) = (l0Q .BOB_went .onlyBob : ℝ) ^ (199:ℕ) *
+      (l0Q .bobWent .onlyBob : ℝ) ^ (1:ℕ) by push_cast [Y200]; ring,
+    RSA.rootAtom_pow_mul_pow (by rw [l0_B_ob]; norm_num) (by rw [l0_b_ob]; norm_num)]
+  norm_num [εQ]
 
 private theorem X200_pos : (0:ℚ) < X200 := by decide +kernel
 private theorem Y200_pos : (0:ℚ) < Y200 := by decide +kernel
@@ -604,36 +583,9 @@ theorem model_matches_stress_rows :
       ProsodyModel.l1PMF u_u .onlyBob < ProsodyModel.l1PMF u_s .onlyBob :=
   ⟨_, _, rfl, rfl, ProsodyModel.stress_increases_exhaustivity⟩
 
-/-! ### Connection to Unified Noise Theory -/
-
-/-!
-## Connection to RSA.Noise
-
-`RSA.Noise` defines the fundamental noise channel operation:
-
-    noiseChannel(match, mismatch, b) = match · b + mismatch · (1 - b)
-
-Both the ellipsis deletion channel and the prosody confusion channel are
-special cases. The key insight from [bergen-goodman-2015] is that noise
-can be **strategically exploited** — a feature not shared by
-[degen-etal-2020]'s semantic noise model
-(see `DegenEtAl2020`).
-
-| Property | [bergen-goodman-2015] | [degen-etal-2020] |
-|----------|---------------------------|----------------------|
-| Noise location | Channel (transmission) | Semantics (perception) |
-| Type | P_N(u_p \| u_i) | φ(u, o) ∈ [0,1] |
-| Effect | Word corruption | Graded feature match |
-| Strategic use | Yes (ellipsis, prosody) | No |
--/
-
-/-- Prosodic stress increases channel discrimination between intended
-    and confused utterances. Stressed "BOB went" has a larger gap between
-    correct and confused perception than unstressed "Bob went".
-
-    - Stressed gap: (1 - ε/2) - ε/2 = 1 - ε
-    - Unstressed gap: (1 - ε) - ε = 1 - 2ε
-    - Difference: ε > 0 -/
+/-- Stress widens the channel's correct-vs-confused gap by exactly ε
+(1 − ε stressed versus 1 − 2ε unstressed) — the mechanism behind
+`stress_increases_exhaustivity`, at every noise rate. -/
 theorem stress_increases_discrimination (ε : ℝ) (hε : 0 < ε) :
     ProsodyModel.noiseChannel ε .BOB_went .BOB_went -
       ProsodyModel.noiseChannel ε .BOB_went .bobWent >
