@@ -1,3 +1,4 @@
+import Mathlib.Order.Antichain
 import Linglib.Semantics.Questions.Basic
 
 /-!
@@ -255,6 +256,33 @@ theorem mem_alt_which_of_maximal {E : Type v} {D : Set E} {P : E → Set W}
     have : P e' = P e := hmax e' he'D hPePe'
     -- Now r ⊆ P e' = P e ⊆ r, so r = P e.
     exact Set.Subset.antisymm hPer (this ▸ hre')
+
+/-- For an antichain of nonempty per-element predicates, the
+alternatives of `which D P` are exactly the predicate family: the
+maximal elements of a lower closure of an antichain recover the
+antichain. -/
+theorem alt_which_of_antichain {E : Type v} {D : Set E} {P : E → Set W}
+    (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
+    (hA : IsAntichain (· ⊆ ·) (P '' D)) :
+    alt (which D P) = P '' D := by
+  ext q
+  constructor
+  · intro hq
+    rcases alt_which_iff_left hq with hempty | ⟨e, heD, rfl, _⟩
+    · subst hempty
+      obtain ⟨e₀, he₀⟩ := hD
+      obtain ⟨-, hmax⟩ := hq
+      have hmem : P e₀ ∈ which D P :=
+        mem_which.mpr (Or.inr ⟨e₀, he₀, subset_rfl⟩)
+      exact absurd (hmax _ hmem (Set.empty_subset _)).symm
+        (hne e₀ he₀).ne_empty
+    · exact ⟨e, heD, rfl⟩
+  · rintro ⟨e, heD, rfl⟩
+    refine mem_alt_which_of_maximal e heD (hne e heD) fun e' he'D hsub => ?_
+    by_cases heq : P e' = P e
+    · exact heq
+    · exact absurd hsub
+        (hA ⟨e, heD, rfl⟩ ⟨e', he'D, rfl⟩ fun h => heq h.symm)
 
 /-! ### Hamblin construction from a finite alternative list
 

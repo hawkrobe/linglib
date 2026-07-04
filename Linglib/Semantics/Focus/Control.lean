@@ -70,6 +70,39 @@ def Antecedent.use : Antecedent W → Use
   | .offer _        => .selective
   | .parallel _     => .contrastive
 
+@[simp] theorem contrastSet_question (q : PropFocusValue W) :
+    (Antecedent.question q).contrastSet = q := rfl
+@[simp] theorem contrastSet_assertion (p : Set W) (alts : PropFocusValue W) :
+    (Antecedent.assertion p alts).contrastSet = alts := rfl
+@[simp] theorem contrastSet_offer (alts : PropFocusValue W) :
+    (Antecedent.offer alts).contrastSet = alts := rfl
+@[simp] theorem contrastSet_parallel (alts : PropFocusValue W) :
+    (Antecedent.parallel alts).contrastSet = alts := rfl
+
+@[simp] theorem use_question (q : PropFocusValue W) :
+    (Antecedent.question q).use = .newInfo := rfl
+@[simp] theorem use_assertion (p : Set W) (alts : PropFocusValue W) :
+    (Antecedent.assertion p alts).use = .corrective := rfl
+@[simp] theorem use_offer (alts : PropFocusValue W) :
+    (Antecedent.offer alts).use = .selective := rfl
+@[simp] theorem use_parallel (alts : PropFocusValue W) :
+    (Antecedent.parallel alts).use = .contrastive := rfl
+
+/-- The canonical antecedent of each shape (empty payloads): a section
+of `Antecedent.use`. -/
+def Use.toAntecedent : Use → Antecedent W
+  | .newInfo     => .question ∅
+  | .corrective  => .assertion ∅ ∅
+  | .selective   => .offer ∅
+  | .contrastive => .parallel ∅
+
+@[simp] theorem use_toAntecedent (u : Use) :
+    (Use.toAntecedent (W := W) u).use = u := by cases u <;> rfl
+
+/-- Every pragmatic use is realised by some antecedent shape. -/
+theorem use_surjective : Function.Surjective (Antecedent.use (W := W)) :=
+  fun u => ⟨u.toAntecedent, use_toAntecedent u⟩
+
 /-- Roothian felicity of a focus value against an antecedent: `fip` on
 the antecedent's contrast set. -/
 def Antecedent.Admits (c : Antecedent W) (fv : PropFocusValue W) : Prop :=
@@ -78,6 +111,15 @@ def Antecedent.Admits (c : Antecedent W) (fv : PropFocusValue W) : Prop :=
 /-- The question case is the substrate's Q-A congruence. -/
 theorem question_admits_iff (q fv : PropFocusValue W) :
     (Antecedent.question q).Admits fv ↔ qaCongruentWeak fv q := Iff.rfl
+
+/-- `Admits` is monotone in the focus value. -/
+theorem Antecedent.Admits.mono {c : Antecedent W} {fv fv' : PropFocusValue W}
+    (hc : c.Admits fv) (h : fv ⊆ fv') : c.Admits fv' := hc.trans h
+
+/-- An intersection of focus values is admitted iff both are. -/
+theorem admits_inter_iff {c : Antecedent W} {fv fv' : PropFocusValue W} :
+    c.Admits (fv ∩ fv') ↔ c.Admits fv ∧ c.Admits fv' :=
+  Set.subset_inter_iff
 
 /-- Felicity factors through the contrast set: the semantics sees Γ,
 never the use label. -/
@@ -92,8 +134,7 @@ Roothian semantics — pragmatic, not semantic. -/
 theorem use_not_factorsThrough_contrastSet :
     ¬ Function.FactorsThrough (Antecedent.use (W := W))
         Antecedent.contrastSet :=
-  fun h => absurd (h (a := .question ∅) (b := .offer ∅) rfl)
-    (by simp [Antecedent.use])
+  fun h => absurd (h (a := .question ∅) (b := .offer ∅) rfl) (by simp)
 
 /-! ### Hamblin antecedents -/
 
@@ -116,23 +157,12 @@ singleton predicates are exactly the flat Hamblin set. -/
 theorem alt_which_singleton (D : Type*) [Nonempty D] :
     Question.alt (Question.which (Set.univ : Set D) fun d => ({d} : Set D)) =
       hamblin D := by
-  ext q
-  constructor
-  · intro hq
-    rcases Question.alt_which_iff_left hq with hempty | ⟨d, _, rfl, _⟩
-    · subst hempty
-      obtain ⟨-, hmax⟩ := hq
-      obtain ⟨d₀⟩ := ‹Nonempty D›
-      have hmem : ({d₀} : Set D) ∈
-          Question.which (Set.univ : Set D) fun d => ({d} : Set D) :=
-        Question.mem_which.mpr (Or.inr ⟨d₀, trivial, subset_rfl⟩)
-      exact absurd (hmax _ hmem (Set.empty_subset _)).symm
-        (Set.singleton_ne_empty d₀)
-    · exact ⟨d, rfl⟩
-  · rintro ⟨d, rfl⟩
-    exact Question.mem_alt_which_of_maximal d trivial (Set.singleton_nonempty d)
-      fun d' _ hsub => by
-        rw [Set.singleton_subset_singleton.mp hsub]
+  have hA : IsAntichain (· ⊆ ·) ((fun d => ({d} : Set D)) '' Set.univ) := by
+    rintro p ⟨a, -, rfl⟩ q ⟨b, -, rfl⟩ hne hsub
+    exact hne (by rw [Set.singleton_subset_singleton.mp hsub])
+  rw [Question.alt_which_of_antichain Set.univ_nonempty
+      (fun d _ => Set.singleton_nonempty d) hA, Set.image_univ]
+  rfl
 
 /-- The inquisitive wh-question and the flat Hamblin antecedent
 coincide. -/
