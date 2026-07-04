@@ -128,18 +128,15 @@ theorem tangale_refutes_perceptibility :
     ¬ EveryFocusPerceptible realize :=
   fun h => h ⟨.object, .continuous, true⟩ rfl
 
-/-- The perfective boundary underdetermines the focus extent: on
-transitive perfective non-subject configurations, `focused` does not
-factor through the reflexes — (25a–c) are string- and pitch-identical
-across the three extents. -/
+/-- The boundary underdetermines the focus extent: on the transitive
+perfective non-subject cells, `focused` does not factor through the
+reflexes — (25a–c) are string- and pitch-identical. -/
 theorem boundary_underdetermines_extent :
-    ¬ Function.FactorsThroughOn
-        Config.focused (fun c => (realize c).reflexes)
-        {c | c.tam = .perfective ∧ c.transitive = true ∧
-             c.focused ≠ .subject} := by
-  rw [Function.not_factorsThroughOn_iff_exists_witness]
-  exact ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
-    by decide, by decide, rfl, by decide⟩
+    ¬ Function.FactorsThroughOn Config.focused (fun c => (realize c).reflexes)
+        {c | c.tam = .perfective ∧ c.transitive ∧ c.focused ≠ .subject} :=
+  Function.not_factorsThroughOn_iff_exists_witness.mpr
+    ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
+      ⟨rfl, rfl, nofun⟩, ⟨rfl, rfl, nofun⟩, rfl, nofun⟩
 
 /-! ## Deriving the boundary ([truckenbrodt-1999]-style alignment)
 
