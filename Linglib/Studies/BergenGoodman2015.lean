@@ -39,33 +39,18 @@ paper's exponential form by `Xa_eq_exp`/`Ya_eq_exp`, and the predictions
 close by `nlinarith` over the bounds.
 -/
 
-open BigOperators RSA
-
-open scoped NNRat
+open BigOperators RSA Real
+open scoped NNRat ENNReal
 
 namespace BergenGoodman2015
 
 /-! ### Ellipsis: Sentence Fragments -/
 
-/-!
-## Ellipsis
+/-! ## Ellipsis (§3)
 
-From the paper (§3):
-
-> (1) A: Who went to the movies?
->     B: Bob
-
-The fragment "Bob" has no literal truth conditions. The listener interprets
-it as "Bob went to the movies" by reasoning that noise (word deletion)
-corrupted a full sentence into a fragment.
-
-### Model Setup
-
-- Meanings M = {aliceWent, bobWent, nobodyWent}
-- Utterances U = full sentences + fragments (7 total)
-- Noise: per-word deletion with probability δ
-- Only full sentences have literal meaning; fragments have none
--/
+Three meanings, seven utterances (full sentences plus fragments); only
+full sentences have literal meaning, and per-word deletion (rate δ) turns
+them into fragments. -/
 
 namespace EllipsisModel
 
@@ -104,16 +89,8 @@ noncomputable def utterancePrior : Utterance → ℝ
   | .nobodyWentToMovies => 1
   | _ => 0
 
-/-- Noise channel for ellipsis: word deletion with probability δ.
-
-    P_N(u_p | u_i):
-    - Full sentence heard correctly: 1 - δ
-    - Full sentence reduced to subject fragment: δ (predicate deleted)
-    - Everything else: 0
-
-    This models the subject-deletion path. The paper also considers
-    predicate deletion and multi-word deletion, but subject deletion is
-    the relevant path for the "Bob" example. -/
+/-- Deletion channel: a full sentence survives with probability 1 − δ or
+loses its predicate with probability δ (the path relevant to "Bob"). -/
 noncomputable def noiseChannel (δ : ℝ) : Utterance → Utterance → ℝ
   | .aliceWentToMovies, .aliceWentToMovies => 1 - δ
   | .aliceWentToMovies, .alice => δ
@@ -218,19 +195,7 @@ theorem l1_fragment_correct :
 
 /-! ### Parametric Robustness -/
 
-/-!
-### Parametric Robustness (Fig. 1, left panel)
-
-Fragment interpretation works for ANY noise rate δ > 0. Since "Bob" can
-only arise from "Bob went to the movies" via deletion, L0 assigns
-probability 1 regardless of δ. This is the paper's key theoretical
-result: "this reasoning will work even if the noise rate is arbitrarily
-close to 0, so long as it is positive."
-
-We prove this by showing that the noisy meaning at "bob" is zero for all
-meanings except bobWent, and nonzero (= δ) for bobWent. Since L0
-normalizes the meaning, L0(bobWent | bob) = δ/δ = 1.
--/
+/-! ### Parametric robustness (Fig. 1, left panel) -/
 
 /-- The noisy meaning at "bob" is δ for bobWent and 0 for all others.
 
@@ -256,13 +221,10 @@ theorem noisyMeaning_bob_nobodyWent (δ : ℝ) :
   apply Finset.sum_eq_zero
   intro u_i _; cases u_i <;> simp [literalMeaning, utterancePrior, noiseChannel]
 
-/-- **Robustness** (Fig. 1, left panel): Fragment interpretation works for
-    ANY noise rate δ > 0. Since "Bob" can only arise from "Bob went to the
-    movies" via deletion, L0 assigns probability 1 regardless of δ.
-
-    This is the paper's key theoretical result: "this reasoning will work
-    even if the noise rate is arbitrarily close to 0, so long as it is
-    positive." -/
+/-- Fragment interpretation at every noise rate δ > 0 — "this reasoning
+will work even if the noise rate is arbitrarily close to 0, so long as it
+is positive": "Bob" only arises from "Bob went", so L0 gives it
+probability δ/δ = 1. -/
 theorem l0_fragment_robust (δ₀ : ℝ) (hδ : δ₀ ≠ 0) :
     noisyMeaning δ₀ .bob .bobWent /
       (noisyMeaning δ₀ .bob .aliceWent + noisyMeaning δ₀ .bob .bobWent +
@@ -274,35 +236,12 @@ end EllipsisModel
 
 /-! ### Prosody: Strategic Noise Reduction -/
 
-/-!
-## Prosody
+/-! ## Prosody (§4)
 
-From the paper (§4):
-
-> (2) A: Who went to the movies?
->     B: BOB went to the movies.
-
-Prosodic stress reduces the noise rate on stressed words. The listener
-infers that stress → the speaker had reason to protect that word →
-the speaker has exhaustive knowledge → only Bob went.
-
-### Mechanism
-
-1. Speaker with exhaustive knowledge (only Bob went) needs listener
-   to correctly hear "Bob" — mishearing "Alice" would be wrong
-2. Therefore: stress "Bob" to reduce noise
-3. Speaker with non-exhaustive knowledge (Bob went, maybe others too)
-   has less need to protect — "Alice" is also compatible
-4. Listener infers: stress → exhaustive knowledge
-
-### Model Setup
-
-- Meanings: {onlyAlice, onlyBob, both} (who went)
-- Utterances: {aliceWent, ALICE_went, bobWent, BOB_went, aliceAndBobWent}
-- Noise: baseline ε, reduced to ε/2 for stressed words
-- The paper (§4.1): "placing stress on a word can reduce the noise rate of
-  that word from ε to ε/n for some reduction factor n > 1." We use n = 2.
--/
+Stress halves the noise rate on the stressed word (§4.1's ε/n at n = 2).
+An exhaustive-knowledge speaker must protect "Bob" from mishearing, a
+non-exhaustive one need not — so the listener reads stress as
+exhaustivity. -/
 
 namespace ProsodyModel
 
@@ -397,17 +336,11 @@ def X200 : ℚ := l0Q .bobWent .onlyBob ^ 198 * l0Q .aliceWent .onlyBob ^ 2
 `exp(U(BOB_went | onlyBob))²⁰⁰ = l0(B|ob)¹⁹⁹ · l0(b|ob)`. -/
 def Y200 : ℚ := l0Q .BOB_went .onlyBob ^ 199 * l0Q .bobWent .onlyBob
 
-open Real in
 /-- Unstressed speaker-utility atom `exp(U(bobWent | onlyBob))`. -/
 noncomputable def Xa : ℝ := RSA.rootAtom (X200 : ℝ) 200
 
-open Real in
 /-- Stressed speaker-utility atom `exp(U(BOB_went | onlyBob))`. -/
 noncomputable def Ya : ℝ := RSA.rootAtom (Y200 : ℝ) 200
-
-section AtomBridge
-
-open Real
 
 private theorem l0_b_ob : l0Q .bobWent .onlyBob = 199/402 := by decide +kernel
 private theorem l0_a_ob : l0Q .aliceWent .onlyBob = 1/201 := by decide +kernel
@@ -479,12 +412,6 @@ theorem Ya_bounds : (4999/10000 : ℝ) ≤ Ya ∧ Ya ≤ 1/2 :=
       (by rw [show ((1:ℝ)/2) = ((1/2 : ℚ) : ℝ) by norm_num]
           exact_mod_cast (by decide +kernel : Y200 ≤ (1/2 : ℚ) ^ 200))⟩
 
-end AtomBridge
-
-section ListenerFace
-
-open scoped ENNReal
-
 /-- Speaker-utility atom per (meaning, intended utterance): `Xa`/`Ya` for the
 single-subject meanings (the a ↔ b relabelling fixes the model, so the
 `onlyAlice` atoms coincide with the `onlyBob` ones — their 200th powers are
@@ -522,12 +449,6 @@ private theorem l1Score_nonneg (u_p : Utterance) (m : Meaning) :
 /-- Pragmatic listener (eq. 8), dite-total. -/
 noncomputable def l1PMF (u_p : Utterance) : PMF Meaning :=
   PMF.normalizeOrUniform fun m => ENNReal.ofReal (l1Score u_p m)
-
-end ListenerFace
-
-section Predictions
-
-open scoped ENNReal
 
 private theorem sumMeanings (f : Meaning → ℝ≥0∞) :
     ∑' m, f m = f .onlyAlice + f .onlyBob + f .both := by
@@ -637,8 +558,6 @@ theorem unstressed_both_positive :
   · refine div_lt_div_of_pos_right ?_ sum_pos_bob
     rw [div_lt_div_iff₀ (by positivity) (by norm_num)]
     nlinarith
-
-end Predictions
 
 end ProsodyModel
 
