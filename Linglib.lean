@@ -1987,6 +1987,7 @@ import Linglib.Studies.ArregiPietraszko2021
 import Linglib.Studies.ArreguiKusumoto1998
 import Linglib.Studies.AsherLascarides2003
 import Linglib.Studies.AsherPelletier2013
+import Linglib.Studies.AssmannEtAl2023
 import Linglib.Studies.Asudeh2022
 import Linglib.Studies.AugurzkyEtAl2023
 import Linglib.Studies.BachBrownMarslenWilson1986
