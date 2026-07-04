@@ -125,6 +125,23 @@ def empty : Graph α β := ⟨LabeledTuple.empty, LabeledTuple.empty, ∅⟩
 /-- **Planar** (no-crossing): the link set satisfies [goldsmith-1976]'s NCC. -/
 def IsPlanar : Prop := IsNonCrossing r.links
 
+/-! ### Link rewrites -/
+
+/-- Add an association line — the elementary *spread* step. -/
+def link (i j : ℕ) : Graph α β := { r with links := insert (i, j) r.links }
+
+/-- Erase an association line — the elementary *delink* step. -/
+def delink (i j : ℕ) : Graph α β := { r with links := r.links.erase (i, j) }
+
+@[simp] theorem mem_link_links {i j : ℕ} {p : ℕ × ℕ} :
+    p ∈ (r.link i j).links ↔ p = (i, j) ∨ p ∈ r.links := Finset.mem_insert
+
+@[simp] theorem mem_delink_links {i j : ℕ} {p : ℕ × ℕ} :
+    p ∈ (r.delink i j).links ↔ p ≠ (i, j) ∧ p ∈ r.links := Finset.mem_erase
+
+@[simp] theorem link_upper (i j : ℕ) : (r.link i j).upper = r.upper := rfl
+@[simp] theorem delink_upper (i j : ℕ) : (r.delink i j).upper = r.upper := rfl
+
 /-! ### Index predicates -/
 
 /-- Upper index `i` is **linked** to some lower position (no in-bounds check). -/

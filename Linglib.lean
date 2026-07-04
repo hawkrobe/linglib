@@ -1203,6 +1203,7 @@ import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tagalog.TenseAspect
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
+import Linglib.Fragments.Tangale.Phonology
 import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Tariana.Evidentiality
@@ -2381,6 +2382,7 @@ import Linglib.Studies.KatzirSingh2015
 import Linglib.Studies.Kawahara2015
 import Linglib.Studies.KayFillmore1999
 import Linglib.Studies.KayMichaelis2019
+import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeenanComrie1977
 import Linglib.Studies.KeenanStavi1986
 import Linglib.Studies.KehlerRohde2013
