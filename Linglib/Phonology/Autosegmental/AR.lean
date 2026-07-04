@@ -244,6 +244,16 @@ theorem concat_assoc : (A.concat B).concat C = A.concat (B.concat C) :=
     (by grind [links_concat, upper_concat, lower_concat, LabeledTuple.concat_len,
           Finset.image_union, Finset.image_image, shiftLink_comp])
 
+/-- Left-to-right concatenation of a list of graphs ([jardine-heinz-2015]
+    §5): tier juxtaposition with index-shifted links. -/
+def concatList (gs : List (Graph α β)) : Graph α β :=
+  gs.foldr concat empty
+
+@[simp] theorem concatList_nil : concatList ([] : List (Graph α β)) = empty := rfl
+
+@[simp] theorem concatList_cons (g : Graph α β) (gs : List (Graph α β)) :
+    concatList (g :: gs) = g.concat (concatList gs) := rfl
+
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
 /-- Concatenation preserves planarity, given `A.InBounds`: `A.links` and the
