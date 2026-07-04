@@ -2950,5 +2950,6 @@ import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Surfacing
 import Linglib.Data.ProtoRoles.Schema
 import Linglib.Data.ProtoRoles.Dowty1991
+import Linglib.Data.Examples.HartmannZimmermann2007
 
 

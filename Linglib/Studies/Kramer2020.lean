@@ -1239,7 +1239,7 @@ disagreement at theorem level. -/
 
 namespace Hausa
 
-open Hausa.Gender (Noun)
+open _root_.Hausa (Noun)
 
 /-- DM Set-1 categorizing-head projection from the theory-neutral
     Fragment fields. The four cells of (attestedGender × isNaturalGender)
@@ -1282,7 +1282,7 @@ end Hausa
 /-- Every Hausa Fragment entry projects to the expected Set-1 n-head.
     `decide` checks all 12 entries by structural reduction. -/
 theorem hausa_nHead_projection_correct :
-    Hausa.Gender.allNouns.all (fun n =>
+    Hausa.allNouns.all (fun n =>
       Hausa.nHead n == match n.attestedGender, n.isNaturalGender with
         | .feminine,  true  => CatHead.n_iFem
         | .masculine, true  => CatHead.n_iMasc
@@ -1293,52 +1293,52 @@ theorem hausa_nHead_projection_correct :
 /-- *yārinyā* 'girl' projects to natural feminine (i[+FEM]).
     Parallels `spanish_licensing_mujer` (§10). -/
 theorem hausa_licensing_yarinya :
-    Hausa.nHead Hausa.Gender.yarinya =
+    Hausa.nHead Hausa.yarinya =
       RootClass.femaleReferent.licensedNHead := rfl
 
 /-- *yārō* 'boy' projects to natural masculine (i[−FEM]). -/
 theorem hausa_licensing_yaro :
-    Hausa.nHead Hausa.Gender.yaro =
+    Hausa.nHead Hausa.yaro =
       RootClass.maleReferent.licensedNHead := rfl
 
 /-- *kāzā* 'hen' projects to natural feminine — Newman lists *kāzā*
     paired with *zàkarā* 'rooster' as a sex-paired entry, satisfying
     Kramer's "honoris causa" criterion ([kramer-2020] p. 57). -/
 theorem hausa_licensing_kaza :
-    Hausa.nHead Hausa.Gender.kaza =
+    Hausa.nHead Hausa.kaza =
       RootClass.femaleReferent.licensedNHead := rfl
 
 /-- *rīgā* 'gown' projects to arbitrary feminine (u[+FEM]). -/
 theorem hausa_licensing_riga :
-    Hausa.nHead Hausa.Gender.riga =
+    Hausa.nHead Hausa.riga =
       RootClass.arbitraryFem.licensedNHead := rfl
 
 /-- *gidā* 'house' projects to default masculine (plain n).
     [newman-2000] p. 209 erstwhile-plural class (c). -/
 theorem hausa_licensing_gida :
-    Hausa.nHead Hausa.Gender.gida =
+    Hausa.nHead Hausa.gida =
       RootClass.default.licensedNHead := rfl
 
 /-- *kadā̀* 'crocodile' projects to default masculine (plain n).
     [newman-2000] p. 209 native ā-final masculine class (a). -/
 theorem hausa_licensing_kada :
-    Hausa.nHead Hausa.Gender.kada =
+    Hausa.nHead Hausa.kada =
       RootClass.default.licensedNHead := rfl
 
 /-- *ùbā* 'father' projects to natural masculine (i[−FEM]).
     [newman-2000] p. 209 native ā-final masculine class (a),
     cited in [kramer-2015] Ch. 1. -/
 theorem hausa_licensing_uba :
-    Hausa.nHead Hausa.Gender.uba =
+    Hausa.nHead Hausa.uba =
       RootClass.maleReferent.licensedNHead := rfl
 
 /-- The Hausa Fragment covers all four Set-1 n-heads via its projection.
     Parallels `fragment_covers_inventory` for Spanish. -/
 theorem hausa_fragment_covers_inventory :
-    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_iFem) ∧
-    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_iMasc) ∧
-    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_uFem) ∧
-    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_plain) := by
+    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_iFem) ∧
+    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_iMasc) ∧
+    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_uFem) ∧
+    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_plain) := by
   decide
 
 -- § 15.2: §3.3.1 phonological-assignment refutation
@@ -1348,9 +1348,9 @@ theorem hausa_fragment_covers_inventory :
     Witness: *kadā̀* 'crocodile' (Kramer's cited example, attributed to
     [newman-2000] p. 209): ends in *-ā* but masculine. -/
 theorem exists_aa_masculine_noun :
-    ∃ n ∈ Hausa.Gender.allNouns,
+    ∃ n ∈ Hausa.allNouns,
       n.EndsInAa ∧ n.attestedGender = .masculine :=
-  ⟨Hausa.Gender.kada, by decide, by decide, rfl⟩
+  ⟨Hausa.kada, by decide, by decide, rfl⟩
 
 /-- **§3.3.1 converse, Newman-anchored** ([newman-2000] p. 208
     footnote [i]): the converse "feminine ⇒ ends-in-*-ā*" is also
@@ -1360,23 +1360,23 @@ theorem exists_aa_masculine_noun :
     forward direction. The converse failure is empirically real and
     well-anchored on Newman.) -/
 theorem exists_feminine_non_aa_noun :
-    ∃ n ∈ Hausa.Gender.allNouns,
+    ∃ n ∈ Hausa.allNouns,
       n.attestedGender = .feminine ∧ ¬ n.EndsInAa :=
-  ⟨Hausa.Gender.mace, by decide, rfl, by decide⟩
+  ⟨Hausa.mace, by decide, rfl, by decide⟩
 
 /-- *ùbā* 'father' is a second masculine *-ā* witness, beyond Kramer's
     *kadā̀*. [newman-2000] p. 209 lists ùbā in native masculine
     class (a); [kramer-2015] Ch. 1 cites it as a Hausa
     introductory example. -/
 theorem uba_masculine_aa :
-    Hausa.Gender.uba.EndsInAa ∧
-    Hausa.Gender.uba.attestedGender = .masculine := ⟨by decide, rfl⟩
+    Hausa.uba.EndsInAa ∧
+    Hausa.uba.attestedGender = .masculine := ⟨by decide, rfl⟩
 
 /-- *gidā* 'house' is a third masculine *-ā* witness, in Newman's
     erstwhile-plural class (c) — distinct historical class from kadā/ùbā. -/
 theorem gida_masculine_aa :
-    Hausa.Gender.gida.EndsInAa ∧
-    Hausa.Gender.gida.attestedGender = .masculine := ⟨by decide, rfl⟩
+    Hausa.gida.EndsInAa ∧
+    Hausa.gida.attestedGender = .masculine := ⟨by decide, rfl⟩
 
 -- § 15.3: Corbett-vs-Newman/Kramer disagreement (D5)
 
@@ -1385,8 +1385,8 @@ theorem gida_masculine_aa :
     predicts feminine (kadā̀ ends in *-ā*), structural predicts the
     actual fact (masculine). -/
 theorem corbett_kramer_diverge_on_kada :
-    Hausa.Predictors.corbettPhonological Hausa.Gender.kada ≠
-    Hausa.Predictors.newmanKramerStructural Hausa.Gender.kada := by
+    Hausa.Predictors.corbettPhonological Hausa.kada ≠
+    Hausa.Predictors.newmanKramerStructural Hausa.kada := by
   decide
 
 /-- The two rules diverge on EXACTLY four Fragment entries
@@ -1395,7 +1395,7 @@ theorem corbett_kramer_diverge_on_kada :
     phonology on 4/12 ≈ 33% of entries — a third of the Fragment
     load-bears the disagreement. -/
 theorem corbett_kramer_divergence_count :
-    (Hausa.Gender.allNouns.filter (fun n =>
+    (Hausa.allNouns.filter (fun n =>
       Hausa.Predictors.corbettPhonological n !=
       Hausa.Predictors.newmanKramerStructural n)).length = 4 := by
   decide
@@ -1403,11 +1403,11 @@ theorem corbett_kramer_divergence_count :
 /-- The four divergent entries are exactly mācè (converse direction),
     gidā / kadā̀ / ùbā (forward direction). -/
 theorem corbett_kramer_divergent_entries :
-    Hausa.Gender.allNouns.filter (fun n =>
+    Hausa.allNouns.filter (fun n =>
       Hausa.Predictors.corbettPhonological n !=
       Hausa.Predictors.newmanKramerStructural n) =
-    [Hausa.Gender.mace, Hausa.Gender.gida,
-     Hausa.Gender.kada, Hausa.Gender.uba] := by
+    [Hausa.mace, Hausa.gida,
+     Hausa.kada, Hausa.uba] := by
   decide
 
 -- § 15.4: Cross-language Set-1 parallels

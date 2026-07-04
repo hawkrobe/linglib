@@ -10,13 +10,13 @@ Selected formalization from Zimmermann's handbook chapter in
 [matthewson-2008], the first formal-semantic treatment of the
 Hausa quantifier system whose textbook description is given in
 [newman-2000] and [jaggar-2001]. The two reference grammars
-fix the inventory typed in `Hausa.Determiners`; this file
+fix the inventory typed in `Hausa`; this file
 consumes those entries, states Zimmermann's predicted denotations, and
 checks their consequences on a small concrete model.
 
 ## Main declarations
 
-* `Hausa.Determiners.UniversalQuantifier.z2008Denot` —
+* `Hausa.UniversalQuantifier.z2008Denot` —
   the predicted denotation each Hausa universal entry receives under
   Zimmermann 2008's GQ analysis, reframed via the
   [haslinger-etal-2025-nllt] Q_∀ + ONE decomposition.
@@ -59,7 +59,7 @@ exhibited here (see Todo).
 open Quantification.UnifiedUniversal
 open Quantification.ONEModifiers
 
-namespace Hausa.Determiners.UniversalQuantifier
+namespace Hausa.UniversalQuantifier
 
 /-- [zimmermann-2008]'s predicted denotation for each Hausa
 universal entry, reframed via the [haslinger-etal-2025-nllt]
@@ -71,11 +71,11 @@ def z2008Denot {α : Type*} [PartialOrder α] :
   | .kowWh => everyPresup
   | .duk   => QForall
 
-end Hausa.Determiners.UniversalQuantifier
+end Hausa.UniversalQuantifier
 
 namespace Zimmermann2008
 
-open Hausa.Determiners
+open Hausa
 open Quantification (some_sem)
 
 /-! ### A 3-passenger SG-count Hausa domain

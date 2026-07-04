@@ -30,7 +30,7 @@ Per-cell facts (e.g. *the plural template is dominant*) appear as
 `example`s — corollaries of the smart-constructor lemmas.
 -/
 
-namespace Hausa.Tone
+namespace Hausa
 
 open _root_.Tone (TRN)
 open _root_.Tone
@@ -182,4 +182,4 @@ example :
     `local` window leaves the surface to general phonology. -/
 example : tonalOverwrite demoStem referentialClitic.toSpec = demoStem := rfl
 
-end Hausa.Tone
+end Hausa

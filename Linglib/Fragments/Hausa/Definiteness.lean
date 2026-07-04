@@ -9,7 +9,7 @@ definiteness: a weak suffixal *-n* (situational uniqueness) and a strong *ɗîn*
 (anaphoric) — a *bipartite* article system ([schwarz-2013] §4.2).
 -/
 
-namespace Hausa.Definiteness
+namespace Hausa
 
 /-- Hausa: weak suffixal *-n* (uniqueness) and strong *ɗîn* (anaphoric) —
     two morphologically distinct definite forms. -/
@@ -22,4 +22,4 @@ def determiners : List Determiner.Entry :=
 /-- Hausa derives the `.bipartite` Moroney cell. -/
 theorem marking : Determiner.markingStrategy determiners = .bipartite := by decide
 
-end Hausa.Definiteness
+end Hausa
