@@ -10,54 +10,31 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Poko postlexical tone requires serial, directional evaluation
-[mcpherson-lamont-2026]
+[mcpherson-lamont-2026], *Phonology* 43, e1.
 
-McPherson, L. & Lamont, A. (2026). *Phonology* 43, e1.
+Poko postlexical tone (lexical data in `Fragments.Poko.Tone`) resists
+global constraint evaluation: no ranking or weighting of the paper's
+four faithfulness constraints derives both `/nān + rī^H + nā/` ('I ate
+a pig') and `/kāk^H + rī^H/` ('his pig'), while directional Harmonic
+Serialism ([lamont-2022b]) with `*FLOAT` evaluated left-to-right
+converges on every attested form. All step witnesses are
+`decide`-checked (no `sorry`).
 
-Poko (Skou; Sandaun Province, Papua New Guinea) has three contrastive
-tone levels (L, M, H) plus toneless syllables and floating tones.
-[mcpherson-lamont-2026] argue that the postlexical tone system
-cannot be modelled by classical parallel Optimality Theory or weighted
-Harmonic Grammar, but **does** yield to directional Harmonic Serialism
-([lamont-2022b]). The argument has two halves:
+## Main results
 
-1. **Negative**: parallel OT/HG is empirically inadequate. Four
-   faithfulness constraints needed to derive both `/nān + rī^H + nā/`
-   ('I ate a pig') and `/kāk^H + rī^H/` ('his pig') admit no consistent
-   ranking — the support is ERC-inconsistent (paper, eq. 59). The
-   ranking paradox carries over to weighted HG via a specific inequality
-   contradiction: deriving the first form requires the weight of `MAX(H)`
-   to *exceed* the sum of `{DEP(link)/H, MAX(M), MAX(link)/M}`, while
-   deriving the second requires the weight of `MAX(H)` to be *less* than
-   that sum (paper, page 32).
-
-2. **Positive**: directional HS, with `*FLOAT` evaluated left-to-right,
-   selects the leftmost-floating-H deletion at each derivational step
-   and converges on the attested form. Right-to-left evaluation yields
-   the wrong `*[kāk rī dó]` (paper, fig. 3; RL evaluation as in the
-   two-stem tableau eq. (61)); standard HS produces a
-   divergent tie ([pruitt-2009] sense — the term is from Pruitt's
-   2009 manuscript, cited in the §4 text accompanying fig. 3).
-
-The eq. 59 support uses only four of the ~20 constraints in the paper's
-Hasse diagram (fig. 2) because the paradox comparison is restricted to
-candidates that all satisfy `*FLOAT` (paper, page 31). Markedness
-constraints `*FLOAT`, `*CROWD`, `*FALL`, `*TAUTDOCK`, `*M<L`, `OCP(L)`
-etc. are active in the broader analysis but factored out of eq. 59 by
-this candidate restriction.
-
-## Scope of this file
-
-§§1–5 ship the **negative half**: the ranking-paradox theorem (eq. 59)
-plus the companion HG inadequacy theorem on rationals. The W/L pattern
-is derived from candidate violation profiles via `ercOfProfiles`, not
-stipulated as a hand-typed `Fin 4 → ERCVal`.
-
-§6 ships the **positive half**: the full multi-step LR convergence on
-fig. 3's `/kāk^H + rī^H + dō^H/` over an autosegmental `FloatingForm`
-candidate type with the paper's full constraint ranking, plus the RL
-counter-example showing it converges to a different surface form. All
-step witnesses are `decide`-checked (no `sorry`).
+* `parallel_OT_inadequate` — the eq. 59 support is ERC-inconsistent
+  (ranking paradox), with W/L patterns derived from candidate
+  violation profiles via `ercOfProfiles`, not stipulated.
+* `weighted_HG_inadequate` — the paper's weighting contradiction:
+  `MAX(H)` cannot both exceed and fall below the summed weights of
+  `{DEP(link)/H, MAX(M), MAX(link)/M}`.
+* `Fig3.fig3_LR_converged` / `Fig3.fig3_RL_converged` — LR converges
+  to attested `[kāk rī dō]`, RL to the wrong `*[kāk rī dó]` (fig. 3);
+  `Fig3.parallel_optimum_three_way_tie` — count-based `*FLOAT` yields
+  a divergent tie ([pruitt-2009]).
+* §§7–11 — further tableaux (eqs. 21, 22, 24, 27, 30) exercising
+  `*FALL` repair, `*CROWD` blocking, and `*M◁L`-forced tautomorphemic
+  docking.
 -/
 
 namespace McPhersonLamont2026
