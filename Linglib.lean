@@ -1192,6 +1192,7 @@ import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tagalog.TenseAspect
+import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
 import Linglib.Fragments.Taos.Agreement
