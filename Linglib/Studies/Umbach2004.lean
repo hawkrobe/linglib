@@ -1,5 +1,4 @@
 import Linglib.Features.InformationStructure
-import Linglib.Semantics.Focus.Comparability
 import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
@@ -57,8 +56,28 @@ three levels at which "contrast" appears:
 namespace Umbach2004
 
 open Features.InformationStructure
-open Semantics.Focus.Comparability
 open Discourse.Coherence
+
+/-! ### Alternative-set well-formedness (§2.2) -/
+
+/-- Two propositions are semantically independent iff neither entails
+the other (§2.2): required for alternatives in focus, coordination, and
+discourse relations. Violation explains the oddness of
+*#John had a drink and Mary had a martini*. -/
+def semanticallyIndependent {W : Type*} (a b : Set W) : Prop :=
+  ¬ a ⊆ b ∧ ¬ b ⊆ a
+
+/-- A common integrator subsumes all alternatives (§2.2, following
+[lang-1984]): coordinated elements and focus alternatives share a
+common superordinate concept — in "beer and martini", "drink". -/
+def commonIntegrator {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
+  ∀ a ∈ alts, a ⊆ integ
+
+/-- A well-formed alternative set is similar (common integrator) and
+dissimilar (pairwise independent) (§2.2). -/
+def wellFormedAlts {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
+  commonIntegrator alts integ ∧
+  ∀ a ∈ alts, ∀ b ∈ alts, a ≠ b → semanticallyIndependent a b
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  World Model

@@ -1685,10 +1685,9 @@ import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Focus.BackgroundedIslands
-import Linglib.Semantics.Focus.Comparability
+import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Particles
-import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Highlighting

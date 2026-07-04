@@ -24,10 +24,10 @@ Theme/Rheme and `JudgmentType` (Kuroda 1972) live here too — they
 predate Krifka's decomposition and target distinct phenomena
 (Prague-school packaging, categorical-vs-thetic judgments).
 
-Theory-level predicates over these taxonomies (Umbach's alt-set
-well-formedness, Erteschik-Shir/Abeillé extraction-IS clash) live in
-`Semantics/Focus/Comparability.lean`. Focus-specific compositional
-operations (`AltMeaning`) live in `Semantics/Alternatives/`.
+Theory-level predicates over these taxonomies (the Erteschik-Shir/Abeillé
+extraction-IS clash) live in `Semantics/Focus/ExtractionClash.lean`.
+Focus-specific compositional operations (`AltMeaning`) live in
+`Semantics/Alternatives/`.
 -/
 
 namespace Features.InformationStructure

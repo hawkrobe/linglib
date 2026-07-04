@@ -1,7 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Studies.Adger2025
 import Linglib.Features.Givenness
-import Linglib.Semantics.Focus.Comparability
+import Linglib.Semantics.Focus.ExtractionClash
 
 /-!
 # Cartner, Kogan, Webster, Wagers & Sichel (2026)
@@ -64,7 +64,7 @@ inductive ExtractionPosition where
 
 open Features (BinaryGivenness)
 open Features.InformationStructure (FocusMark)
-open Semantics.Focus.Comparability
+open Semantics.Focus.ExtractionClash
 
 namespace CartnerEtAl2026
 
@@ -126,7 +126,7 @@ theorem fillerFocus_varies :
     "A focused element should not be part of a backgrounded constituent."
 
 A violation occurs when a focused filler is extracted from a backgrounded
-domain. This is exactly `extractionISClash` from `Semantics/Focus/Comparability.lean`,
+domain. This is exactly `extractionISClash` from `Semantics/Focus/ExtractionClash.lean`,
 which unifies this constraint with [erteschik-shir-1973]'s Dominance
 Condition on Extraction. -/
 def fbcPredictsIsland (c : FGDConstruction) : Prop :=

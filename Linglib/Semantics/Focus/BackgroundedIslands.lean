@@ -3,7 +3,7 @@ import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUD.Basic
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
-import Linglib.Semantics.Focus.Comparability
+import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Discourse.QUD.AtIssueness
 import Linglib.Semantics.Focus.Interpretation
 
@@ -53,7 +53,7 @@ other; backgrounded constituents resist wh-extraction.
 
 open Features.InformationStructure (FocusMark)
 open Features (BinaryGivenness)
-open Semantics.Focus.Comparability
+open Semantics.Focus.ExtractionClash
 open Discourse.AtIssueness
 
 namespace Semantics.Focus.BackgroundedIslands
