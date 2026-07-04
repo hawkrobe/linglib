@@ -1602,6 +1602,109 @@ theorem bare_warm_prefers_moderate_pmf :
   rw [mul_comm (heightPriorPMF (deg 6)), mul_comm (heightPriorPMF (deg 4))]
   exact ENNReal.mul_lt_mul_right hC0 hCt hP
 
+/-! ## §5g. The posterior-boost fact
+
+`μ_unusual = μ_horrible` holds by definition (`muUnusualN_eq_muHorrible`),
+so every "unusually" prediction is the corresponding horribly theorem
+verbatim; no duplicates are stated. The remaining content of the old
+cross-measure comparison is the posterior-vs-prior boost below. -/
+
+theorem gval_ne_zero (vt : ValidThreshold) : gval vt ≠ 0 := by
+  unfold gval
+  rw [ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  constructor
+  · exact mul_ne_zero
+      (ENNReal.rpow_pos (ENNReal.inv_pos.mpr (evalMass_ne_top vt))
+        (ENNReal.inv_ne_top.mpr (evalMass_ne_zero vt))).ne'
+      (evalCostFactor_pos _)
+  · exact ENNReal.add_ne_top.mpr
+      ⟨ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+          (ENNReal.inv_ne_top.mpr (evalMass_ne_zero vt)))
+        (evalCostFactor_finite _),
+       ENNReal.one_ne_top⟩
+
+theorem evalMarginal_deg6 :
+    evalSpeakerMarginalHorrible (deg 6) .eval_pos
+      = 3⁻¹ * gval 0 + 3⁻¹ * gval 1 + 3⁻¹ * gval 2 := by
+  unfold evalSpeakerMarginalHorrible
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
+    evalSpeaker_apply_of_true 0 _ (by decide),
+    evalSpeaker_apply_of_true 1 _ (by decide),
+    evalSpeaker_apply_of_true 2 _ (by decide)]
+
+theorem evalMarginal_deg3 :
+    evalSpeakerMarginalHorrible (deg 3) .eval_pos = 0 := by
+  unfold evalSpeakerMarginalHorrible
+  rw [RSA.marginalizeKernel_apply, sumVT,
+    evalSpeaker_apply_of_false 0 _ (by decide),
+    evalSpeaker_apply_of_false 1 _ (by decide),
+    evalSpeaker_apply_of_false 2 _ (by decide), mul_zero, mul_zero, mul_zero,
+    add_zero, add_zero]
+
+/-- No height's evaluative marginal exceeds the extreme's: `deg 6` licenses
+every valid threshold, so it collects every mass-form value in full. -/
+private theorem evalMarginal_le_deg6 (h : Height) :
+    evalSpeakerMarginalHorrible h .eval_pos
+      ≤ evalSpeakerMarginalHorrible (deg 6) .eval_pos := by
+  have hle : ∀ vt : ValidThreshold,
+      evalSpeaker_horribleAt vt h .eval_pos ≤ gval vt := by
+    intro vt
+    by_cases hw : evalLex muHorrible (validToThreshold vt) .eval_pos h = true
+    · rw [evalSpeaker_apply_of_true vt h hw]
+    · rw [evalSpeaker_apply_of_false vt h (by simpa using hw)]
+      exact zero_le
+  rw [evalMarginal_deg6]
+  unfold evalSpeakerMarginalHorrible
+  rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior]
+  exact add_le_add (add_le_add (mul_le_mul_right (hle 0) _)
+    (mul_le_mul_right (hle 1) _)) (mul_le_mul_right (hle 2) _)
+
+private theorem evalMarginal_deg6_ne_zero :
+    evalSpeakerMarginalHorrible (deg 6) .eval_pos ≠ 0 := by
+  rw [evalMarginal_deg6]
+  intro hz
+  rcases mul_eq_zero.mp (add_eq_zero.mp (add_eq_zero.mp hz).1).1 with h | h
+  · exact ENNReal.inv_ne_zero.mpr (by norm_num) h
+  · exact gval_ne_zero 0 h
+
+/-- **The evaluative update boosts the extreme above its prior** — the deep
+form of the old `eval_unusual_boosts_extreme`: the constant-measure update is
+the identity (`priorAfterEvalPosUsual_eq_prior`), so the old cross-measure
+comparison at `deg 6` is posterior-vs-prior. Average argument: no height
+beats the extreme's marginal (`evalMarginal_le_deg6`) and the norm
+contributes zero (`evalMarginal_deg3`), so the normaliser sits strictly
+below the extreme's kernel value. -/
+theorem eval_unusual_boosts_extreme_pmf :
+    priorAfterEvalPos (deg 6) > heightPriorPMF (deg 6) := by
+  unfold priorAfterEvalPos evalL1Horrible
+  rw [gt_iff_lt, PMF.posterior_apply]
+  have hE6t : evalSpeakerMarginalHorrible (deg 6) .eval_pos ≠ ⊤ := PMF.apply_ne_top _ _
+  have hZlt : PMF.marginal evalSpeakerMarginalHorrible heightPriorPMF .eval_pos
+      < evalSpeakerMarginalHorrible (deg 6) .eval_pos := by
+    show (heightPriorPMF.bind evalSpeakerMarginalHorrible) .eval_pos < _
+    rw [PMF.bind_apply]
+    calc (∑' h, heightPriorPMF h * evalSpeakerMarginalHorrible h .eval_pos)
+        < ∑' h, heightPriorPMF h * evalSpeakerMarginalHorrible (deg 6) .eval_pos := by
+          refine ENNReal.tsum_lt_tsum (i := deg 3)
+            (ENNReal.tsum_ne_top_of_fintype fun h =>
+              ENNReal.mul_ne_top (PMF.apply_ne_top _ _) (PMF.apply_ne_top _ _))
+            (fun h => mul_le_mul_right (evalMarginal_le_deg6 h) _) ?_
+          rw [evalMarginal_deg3, mul_zero]
+          exact pos_iff_ne_zero.mpr
+            (mul_ne_zero (heightPriorPMF_pos _) evalMarginal_deg6_ne_zero)
+      _ = evalSpeakerMarginalHorrible (deg 6) .eval_pos := by
+          rw [ENNReal.tsum_mul_right, PMF.tsum_coe, one_mul]
+  calc heightPriorPMF (deg 6)
+      = heightPriorPMF (deg 6) * evalSpeakerMarginalHorrible (deg 6) .eval_pos *
+          (evalSpeakerMarginalHorrible (deg 6) .eval_pos)⁻¹ := by
+        rw [mul_assoc, ENNReal.mul_inv_cancel evalMarginal_deg6_ne_zero hE6t, mul_one]
+    _ < heightPriorPMF (deg 6) * evalSpeakerMarginalHorrible (deg 6) .eval_pos *
+          (PMF.marginal evalSpeakerMarginalHorrible heightPriorPMF .eval_pos)⁻¹ :=
+        ENNReal.mul_lt_mul_right
+          (mul_ne_zero (heightPriorPMF_pos _) evalMarginal_deg6_ne_zero)
+          (ENNReal.mul_ne_top (PMF.apply_ne_top _ _) hE6t)
+          (ENNReal.inv_lt_inv.mpr hZlt)
+
 /-! ## §6. Predictions
 
 The headline below states that "horribly warm" shifts probability toward
