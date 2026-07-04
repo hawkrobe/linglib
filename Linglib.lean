@@ -2274,6 +2274,7 @@ import Linglib.Studies.GroenendijkStokhof1991
 import Linglib.Studies.GroszJoshiWeinstein1995
 import Linglib.Studies.Grove2022
 import Linglib.Studies.GroveWhite2025
+import Linglib.Studies.Grubic2015
 import Linglib.Studies.GrusdtLassiterFranke2022
 import Linglib.Studies.Guerrini2026
 import Linglib.Studies.Gunlogson2001
