@@ -900,7 +900,6 @@ import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Hixkaryana.WordOrder
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Hungarian.Focus
 import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Hungarian.Morph
 import Linglib.Fragments.Hungarian.Phonology
