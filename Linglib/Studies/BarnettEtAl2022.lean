@@ -1,70 +1,50 @@
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.Operators
+import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
-import Mathlib.Data.Rat.Defs
 
 /-!
-# [barnett-griffiths-hawkins-2022]: A Pragmatic Account of the Weak Evidence Effect
-[barnett-griffiths-hawkins-2022]
+# [barnett-griffiths-hawkins-2022]: the weak evidence effect
 
-Extends RSA with a **persuasive speaker** who has a goal state w* that may differ
-from the true world state w. The speaker's utility combines epistemic and persuasive
-components (Eq. 6):
+RSA with a persuasive speaker whose utility adds `β · ln L0(w*|u)` for a
+goal state w* to the epistemic term (eq. 6; β = 0 is standard RSA). With
+w* = "longer" the speaker weight is `L0(longer|u)^β · 𝟙[u ∈ w]` (eq. 8;
+α = 1, so the exponent is β, here 2). A pragmatic listener who expects the
+strongest available evidence reads weak positive evidence as implying no
+stronger evidence exists — so it backfires.
 
-  U(u; w, w*) = U_epi(u; w) + β · U_pers(u; w*)
+The paper's Stick Contest (5 sticks from {1,…,9}, 126 worlds) is
+formalized at 3 sticks from {1,…,5} (10 worlds, midpoint 3), preserving
+the load-bearing structure: the prior favors ¬longer (2/5) and
+`L0(longer|·)` is monotone in stick length.
 
-where U_epi = ln P_L0(w|u) and U_pers = ln P_L0(w*|u). The parameter β controls
-persuasive bias (β=0 recovers standard RSA).
+## Main results
 
-## Key Result: The Weak Evidence Effect
+* `weak_evidence_effect`: at β = 2, stick 4 — positive literal evidence —
+  *backfires* under the pragmatic listener; `strong_evidence_works` shows
+  the strongest evidence cannot be explained away.
+* `l0_s5_positive` / `l0_s1_negative` / `l0_s5_strongest` / `l0_monotone`:
+  the literal-listener evidence ordering.
+* `argStr_positive_but_backfires`: stick 4 has positive
+  [cummins-franke-2021] argumentative strength yet backfires — the model's
+  wedge between argumentative and pragmatic evidence.
+* `model_predicts_interaction` / `pragmatic_backfire`: the predicted
+  listener-type × evidence interaction matches the behavioral data.
 
-When β > 0, weak positive evidence can *backfire*: a pragmatic listener who expects
-the speaker to show the strongest available evidence infers that the absence of
-strong evidence means it doesn't exist, shifting beliefs in the opposite direction.
+## Implementation notes
 
-## Stick Contest Domain
-
-The paper's experiment uses 5 sticks from {1,...,9} (C(9,5)=126 worlds, midpoint 5).
-We formalize a simplified Stick Contest (3 sticks from {1,...,5}, 10 worlds, midpoint 3)
-that preserves the key structural properties: the prior favors ¬longer (P(longer)=0.4),
-and sticks have monotonically increasing L0(longer|·) values. The simplification enables
-kernel-verified exact rational arithmetic on the PMF face.
-
-## Model design
-
-The paper's Eq. 8 gives:
-
-  S(u|w, w*=longer, β) ∝ L0(longer|u)^β · 𝟙[u ∈ w]
-
-Since the paper fixes α=1 and treats αβ as a single parameter, the speaker's exponent
-plays the role of β. The s1Score uses precomputed L0(longer|u) values squared
-(β=2), gated by stick availability.
-
-## Findings
-
-| # | Finding | Theorem |
-|---|---------|---------|
-| 1 | L0: stick 5 is positive evidence for "longer" | `l0_s5_positive` |
-| 2 | L0: stick 5 is the strongest evidence | `l0_s5_strongest` |
-| 3 | L0: stick 1 is evidence against "longer" | `l0_s1_negative` |
-| 4 | WEE: stick 4 backfires under L1 (β=2) | `weak_evidence_effect` |
-| 5 | Strong evidence works: stick 5 favors "longer" under L1 | `strong_evidence_works` |
-| 6 | L0(longer|·) is monotone in stick length | `l0_monotone` |
-| 7 | Stick 4 has positive argStr yet backfires | `argStr_positive_but_backfires` |
-| 8 | Model predicts the observed interaction effect | `model_predicts_interaction` |
-| 9 | Pragmatic group shows backfire in experiment | `pragmatic_backfire` |
-| 10 | RSA speaker-dependent model fits best | `rsa_speaker_dep_best_waic` |
+The uniform world prior cancels from both listeners, so the chain is two
+`PMF.ofScores` levels over ℚ≥0 scores and every prediction is one
+event-mass kernel certificate.
 -/
+
+open scoped ENNReal NNRat
 
 namespace BarnettEtAl2022
 
 open RSA.ArgumentativeStrength
 open RSA.CombinedUtility
 
--- ============================================================
--- §1. Domain Types
--- ============================================================
+/-! ### Domain Types -/
 
 /-- Stick lengths 1–5 -/
 inductive Stick where
@@ -99,370 +79,86 @@ def worldContains : StickWorld → Stick → Bool
   | .w345, .s3 | .w345, .s4 | .w345, .s5 => true
   | _, _ => false
 
-/-- A world is "longer" if the average stick length exceeds the midpoint (3).
-Equivalently, sum > 9 for 3 sticks. 4 of 10 worlds qualify. -/
-def IsLonger : StickWorld → Prop
-  | .w145 | .w235 | .w245 | .w345 => True
-  | _ => False
+/-- A world is "longer" if the average stick length exceeds the midpoint (3);
+equivalently, the three sticks sum past 9. 4 of 10 worlds qualify. -/
+def longer : StickWorld → Bool
+  | .w145 | .w235 | .w245 | .w345 => true
+  | _ => false
 
-instance : DecidablePred IsLonger := fun w => by
-  cases w <;> unfold IsLonger <;> infer_instance
+/-! ### Persuasive-speaker scores -/
 
--- ============================================================
--- §2. Persuasive-speaker scores
--- ============================================================
-
-/-- L0(longer|u) as ℚ for each stick. Each stick appears in C(4,2)=6 worlds;
-this gives the fraction where IsLonger holds.
-
-- s1: 1/6 (only w145 is longer)
-- s2: 2/6 = 1/3 (w235, w245)
-- s3: 2/6 = 1/3 (w235, w345)
-- s4: 3/6 = 1/2 (w145, w245, w345)
-- s5: 4/6 = 2/3 (w145, w235, w245, w345) -/
-def l0LongerQ : Stick → ℚ
+/-- The literal listener's longer-probability per stick: each stick
+appears in six worlds, and `l0LongerQ_eq_eventMass` certifies these
+fractions against the chain. -/
+def l0LongerQ : Stick → ℚ≥0
   | .s1 => 1/6
   | .s2 => 1/3
   | .s3 => 1/3
   | .s4 => 1/2
   | .s5 => 2/3
 
+/-- `l0LongerQ` agrees with the chain: it is the literal listener's
+longer-event mass at each stick. -/
+theorem l0LongerQ_eq_eventMass (u : Stick) :
+    l0LongerQ u = PMF.eventMass
+      (PMF.scoresWith .uniform fun w => if worldContains w u then 1 else 0)
+      longer := by
+  cases u <;> decide +kernel
+
 /-- Prior probability of "longer": 4 out of 10 worlds -/
 def priorLonger : ℚ := 2 / 5
 
-/-- S1 score as ℚ: L0(longer|u)^β · 𝟙[u ∈ w], at β=2. The squared L0 values
-are precomputed as literal fractions so that the reifier extracts concrete ℚ
-values from the ℚ→ℝ cast without needing to reduce function calls. -/
-def s1ScoreQ (w : StickWorld) (u : Stick) : ℚ :=
-  if worldContains w u then
-    match u with
-    | .s1 => 1/36   -- (1/6)²
-    | .s2 => 1/9    -- (1/3)²
-    | .s3 => 1/9    -- (1/3)²
-    | .s4 => 1/4    -- (1/2)²
-    | .s5 => 4/9    -- (2/3)²
-  else 0
+/-- Persuasive-speaker weight (eq. 8 at β = 2): `L0(longer|u)² · 𝟙[u ∈ w]`. -/
+def s1Score (w : StickWorld) (u : Stick) : ℚ≥0 :=
+  if worldContains w u then l0LongerQ u ^ 2 else 0
 
--- ============================================================
--- §2b. PMF chain (local pending the RSA API pass)
--- ============================================================
+/-! ### The chain
 
-section PMFChain
+The world prior is uniform, so it cancels from both listeners: L0 is the
+normalized extension indicator, the persuasive speaker normalizes
+`s1Score` per world, and L1 is the normalized speaker column. -/
 
-open scoped ENNReal
+/-- Literal listener over worlds (uniform prior conditioned on the
+extension). -/
+noncomputable def l0 (u : Stick) : PMF StickWorld :=
+  .ofScores .uniform fun w => if worldContains w u then 1 else 0
 
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
+/-- Event marginal of the literal listener. -/
+noncomputable def l0Event (u : Stick) (P : StickWorld → Bool) : ℝ≥0∞ :=
+  ∑' w, if P w then l0 u w else 0
 
-private theorem stickSat : ∀ u : Stick, ∃ w, worldContains w u = true := by decide
+/-- Persuasive speaker (eq. 8 at β = 2). -/
+noncomputable def s1Persuade (w : StickWorld) : PMF Stick :=
+  .ofScores .uniform (s1Score w)
 
-private noncomputable def bwPrior : PMF StickWorld := PMF.uniformOfFintype StickWorld
-
-private theorem bwPrior_pos (w : StickWorld) : bwPrior w ≠ 0 := by
-  rw [bwPrior, PMF.uniformOfFintype_apply]
-  simp
-
-private theorem bwPrior_apply (w : StickWorld) : bwPrior w = 10⁻¹ := by
-  rw [bwPrior, PMF.uniformOfFintype_apply,
-    show Fintype.card StickWorld = 10 from by decide]
-  norm_num
-
-private theorem sumWorlds (f : StickWorld → ℝ≥0∞) :
-    ∑' w, f w = f .w123 + f .w124 + f .w125 + f .w134 + f .w135 +
-      f .w145 + f .w234 + f .w235 + f .w245 + f .w345 := by
-  rw [tsum_fintype,
-    show (Finset.univ : Finset StickWorld)
-      = {.w123, .w124, .w125, .w134, .w135, .w145, .w234, .w235, .w245, .w345}
-      from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_singleton]
-  ring
-
-private theorem sumSticks (f : Stick → ℝ≥0∞) :
-    ∑' u, f u = f .s1 + f .s2 + f .s3 + f .s4 + f .s5 := by
-  rw [tsum_fintype,
-    show (Finset.univ : Finset Stick) = {.s1, .s2, .s3, .s4, .s5} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_singleton]
-  ring
-
-/-- Literal listener over worlds given a revealed stick (uniform prior;
-every stick appears in exactly six of the ten worlds). -/
-private noncomputable def bwL0 (u : Stick) : PMF StickWorld :=
-  RSA.L0LassiterGoodman bwPrior (fun u w => worldContains w u) u (by
-    obtain ⟨w, hw⟩ := stickSat u
-    exact ENNReal.summable.tsum_ne_zero_iff.mpr
-      ⟨w, by rw [hw]; simpa using bwPrior_pos w⟩)
-
-/-- Every stick's extension mass is `6/10`: L0 is `1/6` per containing world. -/
-private theorem bwL0_apply (u : Stick) (w : StickWorld) :
-    bwL0 u w = if worldContains w u then ENNReal.ofReal (1/6) else 0 := by
-  unfold bwL0
-  rw [RSA.L0LassiterGoodman_apply]
-  have hmass : (∑' w', bwPrior w' * (if worldContains w' u then (1 : ℝ≥0∞) else 0))
-      = ENNReal.ofReal (6/10) := by
-    rw [sumWorlds]
-    simp only [bwPrior_apply]
-    have h10 : (10 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/10) := by
-      rw [show (10 : ℝ≥0∞) = ENNReal.ofReal 10 from (ENNReal.ofReal_ofNat 10).symm,
-        ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-      norm_num
-    cases u <;>
-      · simp +decide
-        simp only [h10]
-        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-        try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-        norm_num
-  rw [hmass, bwPrior_apply]
-  by_cases hw : worldContains w u = true
-  · rw [hw]
-    simp only [if_true, mul_one]
-    rw [show (10 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/10) from by
-        rw [show (10 : ℝ≥0∞) = ENNReal.ofReal 10 from (ENNReal.ofReal_ofNat 10).symm,
-          ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-        norm_num,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num),
-      ← ENNReal.ofReal_mul (by norm_num)]
-    norm_num
-  · rw [Bool.not_eq_true] at hw
-    rw [hw]
-    simp
-
-/-- Event marginal of the literal listener (`P(E|u)` over the world posterior). -/
-noncomputable def l0Event (u : Stick) (P : StickWorld → Prop) [DecidablePred P] :
-    ℝ≥0∞ :=
-  ∑' w, if P w then bwL0 u w else 0
-
-/-! ### Persuasive speaker and skeptical listener -/
-
-private theorem worldSat : ∀ w : StickWorld, ∃ u : Stick, (0 : ℚ) < s1ScoreQ w u := by
-  intro w
-  cases w <;>
-    first
-      | (refine ⟨.s1, ?_⟩; norm_num [s1ScoreQ, worldContains]; done)
-      | (refine ⟨.s2, ?_⟩; norm_num [s1ScoreQ, worldContains]; done)
-      | (refine ⟨.s3, ?_⟩; norm_num [s1ScoreQ, worldContains]; done)
-
-private theorem s1ScoreQ_nonneg : ∀ (w : StickWorld) (u : Stick), (0 : ℚ) ≤ s1ScoreQ w u := by
-  intro w u
-  cases w <;> cases u <;> norm_num [s1ScoreQ, worldContains]
-
-/-- Persuasive speaker ([barnett-griffiths-hawkins-2022] eqs. 4–6; p. 175:
-"Because the speaker only has access to true utterances, all utterances have
-equal epistemic utility", so the softmax reduces to
-`L0(longer|u)^β · 𝟙[u ∈ w]` at αβ = 2 — the file's exact `s1ScoreQ` table).
-Local op pending the RSA API pass. -/
-private noncomputable def s1Persuade (w : StickWorld) : PMF Stick :=
-  PMF.normalize (fun u => ENNReal.ofReal ((s1ScoreQ w u : ℝ)))
-    (by
-      obtain ⟨u, hu⟩ := worldSat w
-      exact ENNReal.summable.tsum_ne_zero_iff.mpr ⟨u, by
-        rw [ENNReal.ofReal_ne_zero_iff]
-        exact_mod_cast hu⟩)
-    (ENNReal.tsum_ne_top_of_fintype fun _ => ENNReal.ofReal_ne_top)
-
-/-- Per-world speaker normaliser, exactly. -/
-private def ZQ (w : StickWorld) : ℚ :=
-  s1ScoreQ w .s1 + s1ScoreQ w .s2 + s1ScoreQ w .s3 + s1ScoreQ w .s4 + s1ScoreQ w .s5
-
-private theorem ZQ_pos : ∀ w : StickWorld, (0 : ℚ) < ZQ w := by
-  intro w
-  cases w <;> norm_num [ZQ, s1ScoreQ, worldContains]
-
-/-- Exact speaker values: `score/Z` as a single `ofReal` rational. -/
-private theorem s1Persuade_apply (w : StickWorld) (u : Stick) :
-    s1Persuade w u = ENNReal.ofReal ((s1ScoreQ w u : ℝ) / (ZQ w : ℝ)) := by
-  unfold s1Persuade
-  rw [PMF.normalize_apply]
-  have hn : ∀ u', (0 : ℝ) ≤ (s1ScoreQ w u' : ℝ) := fun u' => by
-    exact_mod_cast s1ScoreQ_nonneg w u'
-  have hmass : (∑' u', ENNReal.ofReal ((s1ScoreQ w u' : ℝ)))
-      = ENNReal.ofReal ((ZQ w : ℝ)) := by
-    rw [sumSticks, ← ENNReal.ofReal_add (hn _) (hn _),
-      ← ENNReal.ofReal_add (add_nonneg (hn _) (hn _)) (hn _),
-      ← ENNReal.ofReal_add (add_nonneg (add_nonneg (hn _) (hn _)) (hn _)) (hn _),
-      ← ENNReal.ofReal_add
-        (add_nonneg (add_nonneg (add_nonneg (hn _) (hn _)) (hn _)) (hn _)) (hn _)]
-    congr 1
-    simp only [ZQ]
-    push_cast
-    ring
-  rw [hmass, ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast ZQ_pos w),
-    ← ENNReal.ofReal_mul (hn u), div_eq_mul_inv]
-
-private theorem stickScoreSat : ∀ u : Stick, ∃ w : StickWorld, (0 : ℚ) < s1ScoreQ w u := by
-  intro u
-  cases u <;>
-    first
-      | (refine ⟨.w123, ?_⟩; norm_num [s1ScoreQ, worldContains]; done)
-      | (refine ⟨.w145, ?_⟩; norm_num [s1ScoreQ, worldContains]; done)
-
-private theorem s1Persuade_marginal_pos (u : Stick) :
-    PMF.marginal (fun w => s1Persuade w) bwPrior u ≠ 0 := by
-  obtain ⟨w, hw⟩ := stickScoreSat u
-  refine PMF.marginal_ne_zero _ _ _ (bwPrior_pos w) ?_
-  rw [s1Persuade_apply, ENNReal.ofReal_ne_zero_iff]
-  exact div_pos (by exact_mod_cast hw) (by exact_mod_cast ZQ_pos w)
-
-/-- Skeptical pragmatic listener ([barnett-griffiths-hawkins-2022] eq. 7:
-the listener "is able to be 'skeptical' of the speaker's agenda and discount
-their evidence accordingly"). -/
+/-- Pragmatic listener over worlds: the normalized speaker column (the
+uniform prior cancels). -/
 noncomputable def l1w (u : Stick) : PMF StickWorld :=
-  PMF.posterior (fun w => s1Persuade w) bwPrior u (s1Persuade_marginal_pos u)
+  .ofScores .uniform fun w => PMF.scoresWith .uniform (s1Score w) u
 
 /-- Event marginal of the pragmatic listener. -/
-noncomputable def l1Event (u : Stick) (P : StickWorld → Prop) [DecidablePred P] :
-    ℝ≥0∞ :=
+noncomputable def l1Event (u : Stick) (P : StickWorld → Bool) : ℝ≥0∞ :=
   ∑' w, if P w then l1w u w else 0
-
-/-- The uniform prior and the utterance marginal factor out of the event sum. -/
-private theorem l1Event_eq (u : Stick) (P : StickWorld → Prop) [DecidablePred P] :
-    l1Event u P = 10⁻¹ * (∑' w, if P w then s1Persuade w u else 0) *
-      (PMF.marginal (fun w => s1Persuade w) bwPrior u)⁻¹ := by
-  unfold l1Event l1w
-  rw [show (∑' w, if P w then
-        PMF.posterior (fun w' => s1Persuade w') bwPrior u
-          (s1Persuade_marginal_pos u) w else 0)
-      = ∑' w, 10⁻¹ * ((if P w then s1Persuade w u else 0) *
-          (PMF.marginal (fun w' => s1Persuade w') bwPrior u)⁻¹) from
-    tsum_congr fun w => by
-      by_cases h : P w
-      · simp only [h, if_true, PMF.posterior_apply, bwPrior_apply]
-        ring
-      · simp [h],
-    ENNReal.tsum_mul_left, ENNReal.tsum_mul_right, ← mul_assoc]
-
-private theorem S_sum_s4_longer :
-    (∑' w, if IsLonger w then s1Persuade w .s4 else 0) = ENNReal.ofReal (729/754) := by
-  rw [sumWorlds]
-  simp +decide [s1Persuade_apply, s1ScoreQ, ZQ]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-private theorem S_sum_s4_notLonger :
-    (∑' w, if ¬ IsLonger w then s1Persuade w .s4 else 0) = ENNReal.ofReal (216/119) := by
-  rw [sumWorlds]
-  simp +decide [s1Persuade_apply, s1ScoreQ, ZQ]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-private theorem S_sum_s5_longer :
-    (∑' w, if IsLonger w then s1Persuade w .s5 else 0) = ENNReal.ofReal (2698/1131) := by
-  rw [sumWorlds]
-  simp +decide [s1Persuade_apply, s1ScoreQ, ZQ]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-private theorem S_sum_s5_notLonger :
-    (∑' w, if ¬ IsLonger w then s1Persuade w .s5 else 0) = ENNReal.ofReal (32/21) := by
-  rw [sumWorlds]
-  simp +decide [s1Persuade_apply, s1ScoreQ, ZQ]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
-
-private theorem sixth_conv : (6 : ℝ≥0∞)⁻¹ = ENNReal.ofReal (1/6) := by
-  rw [show (6 : ℝ≥0∞) = ENNReal.ofReal 6 from (ENNReal.ofReal_ofNat 6).symm,
-    ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-  norm_num
-
-private theorem l0e_s5_longer : l0Event .s5 IsLonger = ENNReal.ofReal (4/6) := by
-  unfold l0Event
-  rw [sumWorlds]
-  simp +decide [bwL0_apply]
-  simp only [sixth_conv]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-private theorem l0e_s5_notLonger :
-    l0Event .s5 (fun w => ¬ IsLonger w) = ENNReal.ofReal (2/6) := by
-  unfold l0Event
-  rw [sumWorlds]
-  simp +decide [bwL0_apply]
-  simp only [sixth_conv]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-private theorem l0e_s4_longer : l0Event .s4 IsLonger = ENNReal.ofReal (3/6) := by
-  unfold l0Event
-  rw [sumWorlds]
-  simp +decide [bwL0_apply]
-  simp only [sixth_conv]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-private theorem l0e_s1_longer : l0Event .s1 IsLonger = ENNReal.ofReal (1/6) := by
-  unfold l0Event
-  rw [sumWorlds]
-  simp +decide [bwL0_apply]
-
-private theorem l0e_s1_notLonger :
-    l0Event .s1 (fun w => ¬ IsLonger w) = ENNReal.ofReal (5/6) := by
-  unfold l0Event
-  rw [sumWorlds]
-  simp +decide [bwL0_apply]
-  simp only [sixth_conv]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  try rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1
-  norm_num
-
-end PMFChain
 
 open scoped ENNReal
 
--- ============================================================
--- §3. Predictions — L0
--- ============================================================
+/-! ### Predictions — L0 -/
 
 /-- L0(longer|s5) > L0(¬longer|s5): stick 5 is positive evidence for "longer".
 4 of 6 worlds containing s5 are longer, vs 2 not-longer. -/
 theorem l0_s5_positive :
-    l0Event .s5 IsLonger > l0Event .s5 (fun w => ¬ IsLonger w) := by
-  rw [gt_iff_lt, l0e_s5_longer, l0e_s5_notLonger]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+    l0Event .s5 (fun w => !longer w) < l0Event .s5 longer :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-- L0(longer|s5) > L0(longer|s4): stick 5 provides stronger evidence than s4. -/
-theorem l0_s5_strongest :
-    l0Event .s5 IsLonger > l0Event .s4 IsLonger := by
-  rw [gt_iff_lt, l0e_s5_longer, l0e_s4_longer]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+theorem l0_s5_strongest : l0Event .s4 longer < l0Event .s5 longer :=
+  PMF.ofScores_event_lt_cross _ _ _ _ (by decide +kernel)
 
 /-- L0(¬longer|s1) > L0(longer|s1): stick 1 is evidence against "longer".
 Only 1 of 6 worlds containing s1 is longer. -/
 theorem l0_s1_negative :
-    l0Event .s1 (fun w => ¬ IsLonger w) > l0Event .s1 IsLonger := by
-  rw [gt_iff_lt, l0e_s1_longer, l0e_s1_notLonger]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+    l0Event .s1 longer < l0Event .s1 (fun w => !longer w) :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-- L0(longer|·) is monotonically increasing in stick length. This structural
 property ensures the simplified domain faithfully mirrors the paper's full domain
@@ -471,64 +167,32 @@ theorem l0_monotone :
     l0LongerQ .s1 ≤ l0LongerQ .s2 ∧
     l0LongerQ .s2 ≤ l0LongerQ .s3 ∧
     l0LongerQ .s3 ≤ l0LongerQ .s4 ∧
-    l0LongerQ .s4 ≤ l0LongerQ .s5 := by norm_num [l0LongerQ]
+    l0LongerQ .s4 ≤ l0LongerQ .s5 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp only [l0LongerQ] <;>
+    first
+      | rfl
+      | exact_mod_cast (by norm_num : (1:ℚ)/6 ≤ 1/3)
+      | exact_mod_cast (by norm_num : (1:ℚ)/3 ≤ 1/2)
+      | exact_mod_cast (by norm_num : (1:ℚ)/2 ≤ 2/3)
 
--- ============================================================
--- §4. Predictions — L1 (weak evidence effect)
--- ============================================================
+/-! ### Predictions — L1 (weak evidence effect) -/
 
-/-- **Weak evidence effect**: at β=2, showing stick 4 (positive literal evidence)
-*decreases* the pragmatic listener's belief in "longer" below the prior
-([barnett-griffiths-hawkins-2022] p. 172: "the absence of strong evidence
-from a speaker who would be highly motivated to show it statistically
-implies that no such evidence exists").
-
-Structurally, this is the Z-gap across the event partition: any longer world
-containing s4 also contains s5 or comparably strong sticks, inflating the
-speaker's normaliser (`Z ≥ 13/18`), while every ¬longer world containing s4
-has `Z ≤ 17/36` — so the s4-scores concentrate on the ¬longer side
-(`216/119 > 729/754`). -/
+/-- The weak evidence effect: at β = 2, showing stick 4 — positive literal
+evidence — *decreases* the pragmatic listener's belief in "longer" below
+the ¬longer mass (p. 172: "the absence of strong evidence from a speaker
+who would be highly motivated to show it statistically implies that no
+such evidence exists"). -/
 theorem weak_evidence_effect :
-    l1Event .s4 (fun w => ¬ IsLonger w) > l1Event .s4 IsLonger := by
-  rw [gt_iff_lt, l1Event_eq, l1Event_eq, S_sum_s4_longer, S_sum_s4_notLonger]
-  set M := PMF.marginal (fun w => s1Persuade w) bwPrior .s4 with hM
-  have hM0 : M ≠ 0 := s1Persuade_marginal_pos .s4
-  have hMt : M ≠ ⊤ := PMF.marginal_ne_top _ _ _
-  have hc0 : (10 : ℝ≥0∞)⁻¹ * M⁻¹ ≠ 0 :=
-    mul_ne_zero (ENNReal.inv_ne_zero.mpr (by norm_num)) (ENNReal.inv_ne_zero.mpr hMt)
-  have hct : (10 : ℝ≥0∞)⁻¹ * M⁻¹ ≠ ⊤ :=
-    ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr (by norm_num)) (ENNReal.inv_ne_top.mpr hM0)
-  calc 10⁻¹ * ENNReal.ofReal (729/754) * M⁻¹
-      = 10⁻¹ * M⁻¹ * ENNReal.ofReal (729/754) := by ring
-    _ < 10⁻¹ * M⁻¹ * ENNReal.ofReal (216/119) :=
-        ENNReal.mul_lt_mul_right hc0 hct
-          ((ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num))
-    _ = 10⁻¹ * ENNReal.ofReal (216/119) * M⁻¹ := by ring
+    l1Event .s4 longer < l1Event .s4 (fun w => !longer w) :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
-/-- Strong evidence does NOT backfire: stick 5 increases belief at β=2.
-
-The strongest available evidence is always effective because it cannot
-be "explained away" by the absence of something better. -/
+/-- Strong evidence works: the strongest available evidence cannot be
+explained away by the absence of something better. -/
 theorem strong_evidence_works :
-    l1Event .s5 IsLonger > l1Event .s5 (fun w => ¬ IsLonger w) := by
-  rw [gt_iff_lt, l1Event_eq, l1Event_eq, S_sum_s5_longer, S_sum_s5_notLonger]
-  set M := PMF.marginal (fun w => s1Persuade w) bwPrior .s5 with hM
-  have hM0 : M ≠ 0 := s1Persuade_marginal_pos .s5
-  have hMt : M ≠ ⊤ := PMF.marginal_ne_top _ _ _
-  have hc0 : (10 : ℝ≥0∞)⁻¹ * M⁻¹ ≠ 0 :=
-    mul_ne_zero (ENNReal.inv_ne_zero.mpr (by norm_num)) (ENNReal.inv_ne_zero.mpr hMt)
-  have hct : (10 : ℝ≥0∞)⁻¹ * M⁻¹ ≠ ⊤ :=
-    ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr (by norm_num)) (ENNReal.inv_ne_top.mpr hM0)
-  calc 10⁻¹ * ENNReal.ofReal (32/21) * M⁻¹
-      = 10⁻¹ * M⁻¹ * ENNReal.ofReal (32/21) := by ring
-    _ < 10⁻¹ * M⁻¹ * ENNReal.ofReal (2698/1131) :=
-        ENNReal.mul_lt_mul_right hc0 hct
-          ((ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num))
-    _ = 10⁻¹ * ENNReal.ofReal (2698/1131) * M⁻¹ := by ring
+    l1Event .s5 (fun w => !longer w) < l1Event .s5 longer :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
--- ============================================================
--- §5. Bridge Theorems
--- ============================================================
+/-! ### Bridge Theorems -/
 
 /-- At β=1, the persuasive utility equals combinedWeighted(1,1,...). -/
 theorem goalOriented_at_one (uEpi uPers : ℚ) :
@@ -544,12 +208,14 @@ theorem goalOriented_via_combined (uEpi uPers β : ℚ) (hβ : 0 ≤ β) :
 /-- Connection to ArgumentativeStrength: stick 4 has positive argumentative
 strength for the goal "longer" (L0(longer|s4) = 1/2 > 2/5 = P(longer)). -/
 theorem s4_positive_argStr :
-    hasPositiveArgStr (l0LongerQ .s4) priorLonger := by norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
+    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger := by
+  norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
 
 /-- Stick 3 does NOT have positive argumentative strength
 (L0(longer|s3) = 1/3 < 2/5 = P(longer)). -/
 theorem s3_not_positive_argStr :
-    ¬ hasPositiveArgStr (l0LongerQ .s3) priorLonger := by norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
+    ¬ hasPositiveArgStr (l0LongerQ .s3 : ℚ) priorLonger := by
+  norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
 
 /-- The weak evidence effect shows that argumentatively positive evidence
 can still backfire under a pragmatic listener model. This is the core
@@ -559,13 +225,11 @@ insight connecting [barnett-griffiths-hawkins-2022] to
 Stick 4 has positive argStr at L0 (1/2 > 2/5), yet L1 assigns more mass
 to ¬longer than longer after seeing s4. -/
 theorem argStr_positive_but_backfires :
-    hasPositiveArgStr (l0LongerQ .s4) priorLonger ∧
-    l1Event .s4 (fun w => ¬ IsLonger w) > l1Event .s4 IsLonger :=
+    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
+    l1Event .s4 longer < l1Event .s4 (fun w => !longer w) :=
   ⟨s4_positive_argStr, weak_evidence_effect⟩
 
--- ============================================================
--- §6. Experimental Design & Behavioral Data
--- ============================================================
+/-! ### Experimental Design & Behavioral Data -/
 
 /-- Listener type inferred from speaker expectation phase -/
 inductive ListenerType where
@@ -660,11 +324,10 @@ theorem literal_no_backfire : literalResult.meanSlider > 49 := by norm_num [lite
 
 /-- The two groups differ in the predicted direction -/
 theorem groups_differ :
-    pragmaticResult.meanSlider < literalResult.meanSlider := by norm_num [pragmaticResult, literalResult]
+    pragmaticResult.meanSlider < literalResult.meanSlider := by
+  norm_num [pragmaticResult, literalResult]
 
--- ============================================================
--- §7. Model Comparison (Table 1)
--- ============================================================
+/-! ### Model Comparison (Table 1) -/
 
 /-- Model families compared -/
 inductive ModelFamily where
@@ -709,9 +372,7 @@ theorem rsa_speaker_dep_best_likelihood :
 theorem rsa_speaker_dep_best_waic :
     (-164 : ℚ) / 10 < -133 / 10 := by norm_num
 
--- ============================================================
--- §8. Fitted Parameters
--- ============================================================
+/-! ### Fitted Parameters -/
 
 /-- Fitted parameters for the best model (RSA speaker-dependent).
 β̂ = 2.26 and mixture weights from main text (p. 178);
@@ -742,9 +403,7 @@ theorem pragmatic_group_uses_j1 :
 theorem literal_group_uses_j0 :
     bestModelParams.literalMixWeight < 2 / 10 := by norm_num [bestModelParams]
 
--- ============================================================
--- §9. Model–Data Connection
--- ============================================================
+/-! ### Model–Data Connection -/
 
 /-- The RSA model predicts the qualitative pattern underlying the observed
 interaction between listener type and evidence strength (t(718) = 5.2,
@@ -754,9 +413,9 @@ confirms exactly this divergence: pragmatic participants' mean (34.7) falls
 below neutral (50), while literal participants' mean (50.1) does not. -/
 theorem model_predicts_interaction :
     -- Model: L0 (literal) — s4 is positive evidence
-    hasPositiveArgStr (l0LongerQ .s4) priorLonger ∧
+    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
     -- Model: L1 (pragmatic) — s4 backfires
-    l1Event .s4 (fun w => ¬ IsLonger w) > l1Event .s4 IsLonger ∧
+    l1Event .s4 longer < l1Event .s4 (fun w => !longer w) ∧
     -- Data: pragmatic group shows backfire
     pragmaticResult.meanSlider < 50 ∧
     -- Data: literal group shows no backfire
