@@ -214,19 +214,14 @@ def boughtShirtP : Set NumWorld := {w | w.boughtShirt}
 /-- 'I read the book.' -/
 def readBookP : Set NumWorld := {w | w.readBook}
 
-/-- (36a): object association — alternatives to the book. -/
-def objReading : Set NumWorld :=
-  onlyVia {boughtBookP, boughtShirtP} boughtBookP
-
-/-- (36b): VP association — alternatives to the buying-the-book
-activity ('I did nothing else'). -/
-def vpReading : Set NumWorld :=
-  onlyVia {boughtBookP, boughtShirtP, readBookP} boughtBookP
-
-/-- (36c): verb association — alternative relations to the book ('but
-I have not read it yet'). -/
-def vReading : Set NumWorld :=
-  onlyVia {boughtBookP, readBookP} boughtBookP
+/-- The (36) readings by association extent: object ((36a),
+alternatives to the book), VP ((36b), 'I did nothing else'), verb
+((36c), 'but I have not read it yet'). Subjects are outside the (36)
+paradigm; the arm shares the verb value and is never queried. -/
+def numReading : Focused → Set NumWorld
+  | .object => onlyVia {boughtBookP, boughtShirtP} boughtBookP
+  | .vp     => onlyVia {boughtBookP, boughtShirtP, readBookP} boughtBookP
+  | _       => onlyVia {boughtBookP, readBookP} boughtBookP
 
 /-- Bought the book and read it, bought nothing else: verifies (36a),
 falsifies (36c). -/
@@ -247,28 +242,38 @@ private theorem boughtShirt_ne_boughtBook : boughtShirtP ≠ boughtBookP := by
   rw [h] at hmem
   exact absurd hmem Bool.false_ne_true
 
-/-- The three associations are semantically distinct readings of one
-surface string: the surface form does not determine the association. -/
-theorem num_readings_distinct :
-    objReading ≠ vReading ∧ objReading ≠ vpReading ∧ vReading ≠ vpReading := by
-  have h₁ : w₁ ∈ objReading := mem_onlyVia_of_forall_not_mem <| by
+/-- One surface string, three semantically distinct readings: the
+reading map is injective on exactly the extents whose marking
+`boundary_underdetermines_extent` collapses. -/
+theorem num_readings_injOn :
+    Set.InjOn numReading {.verb, .vp, .object} := by
+  have h₁ : w₁ ∈ numReading .object := mem_onlyVia_of_forall_not_mem <| by
     rintro q (rfl | rfl) hne
     exacts [absurd rfl hne, Bool.false_ne_true]
-  have h₂ : w₂ ∈ vReading := mem_onlyVia_of_forall_not_mem <| by
+  have h₂ : w₂ ∈ numReading .verb := mem_onlyVia_of_forall_not_mem <| by
     rintro q (rfl | rfl) hne
     exacts [absurd rfl hne, Bool.false_ne_true]
-  exact ⟨ne_of_mem_of_not_mem' h₁
-      (not_mem_onlyVia (Or.inr rfl) rfl readBook_ne_boughtBook),
+  have hov : numReading .object ≠ numReading .verb :=
     ne_of_mem_of_not_mem' h₁
-      (not_mem_onlyVia (Or.inr (Or.inr rfl)) rfl readBook_ne_boughtBook),
+      (not_mem_onlyVia (Or.inr rfl) rfl readBook_ne_boughtBook)
+  have hovp : numReading .object ≠ numReading .vp :=
+    ne_of_mem_of_not_mem' h₁
+      (not_mem_onlyVia (Or.inr (Or.inr rfl)) rfl readBook_ne_boughtBook)
+  have hvvp : numReading .verb ≠ numReading .vp :=
     ne_of_mem_of_not_mem' h₂
-      (not_mem_onlyVia (Or.inr (Or.inl rfl)) rfl boughtShirt_ne_boughtBook)⟩
+      (not_mem_onlyVia (Or.inr (Or.inl rfl)) rfl boughtShirt_ne_boughtBook)
+  rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
+    first
+      | rfl
+      | exact absurd h hvvp | exact absurd h.symm hvvp
+      | exact absurd h hov  | exact absurd h.symm hov
+      | exact absurd h hovp | exact absurd h.symm hovp
 
 /-- The VP association is the strongest reading: 'I did nothing else'
 entails both 'I bought nothing else' and 'I did nothing else to the
 book' — `onlyVia_antitone` over the contrast-set inclusions. -/
 theorem vp_reading_strongest :
-    vpReading ⊆ objReading ∧ vpReading ⊆ vReading :=
+    numReading .vp ⊆ numReading .object ∧ numReading .vp ⊆ numReading .verb :=
   ⟨onlyVia_antitone
       (fun _ hq => hq.elim Or.inl fun h => Or.inr (Or.inl h)) _,
    onlyVia_antitone
