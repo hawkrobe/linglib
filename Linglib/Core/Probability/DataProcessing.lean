@@ -318,20 +318,6 @@ information about another variable than the context itself
 
 variable {γ : Type*} [Fintype γ]
 
-/-- The joint is atomwise dominated by its first marginal. -/
-theorem apply_le_fst [DecidableEq α] (joint : PMF (α × β)) (x : α × β) :
-    joint x ≤ joint.fst x.1 := by
-  rw [fst_apply]
-  exact Finset.single_le_sum (f := fun b => joint (x.1, b))
-    (fun _ _ => zero_le) (Finset.mem_univ x.2)
-
-/-- The joint is atomwise dominated by its second marginal. -/
-theorem apply_le_snd [DecidableEq β] (joint : PMF (α × β)) (x : α × β) :
-    joint x ≤ joint.snd x.2 := by
-  rw [snd_apply]
-  exact Finset.single_le_sum (f := fun a => joint (a, x.2))
-    (fun _ _ => zero_le) (Finset.mem_univ x.1)
-
 /-- A joint distribution is absolutely continuous with respect to the product
     of its marginals. -/
 theorem toMeasure_absolutelyContinuous_product
@@ -427,28 +413,14 @@ theorem sum_mul_neg_log_bayes [DecidableEq β] (G : PMF (α × β)) :
     by_cases hx : (G x).toReal = 0
     · simp [hx, Real.negMulLog]
     · have hGx : G x ≠ 0 := fun h => hx (by rw [h, ENNReal.toReal_zero])
-      have hsnd : (G.snd x.2).toReal ≠ 0 :=
-        ENNReal.toReal_ne_zero.mpr
-          ⟨fun h => hGx (le_zero_iff.mp (h ▸ apply_le_snd G x)),
-            PMF.apply_ne_top _ _⟩
-      rw [Real.log_div hx hsnd, Real.negMulLog]
+      rw [Real.log_div hx (ENNReal.toReal_ne_zero.mpr
+          ⟨snd_apply_ne_zero hGx, PMF.apply_ne_top _ _⟩), Real.negMulLog]
       ring
   simp_rw [key]
-  rw [Finset.sum_add_distrib]
-  have h1 : ∑ x : α × β, Real.negMulLog (G x).toReal = G.entropy := rfl
-  have h2 : ∑ x : α × β, (G x).toReal * Real.log (G.snd x.2).toReal
-      = -G.snd.entropy := by
-    rw [Fintype.sum_prod_type, Finset.sum_comm]
-    unfold entropy
-    rw [← Finset.sum_neg_distrib]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    dsimp only
-    rw [← Finset.sum_mul,
-      show (∑ a, (G (a, b)).toReal) = (G.snd b).toReal from
-        (snd_toRealFn_eq_sum G b).symm,
-      Real.negMulLog]
-    ring
-  rw [h1, h2]
+  rw [Finset.sum_add_distrib,
+    sum_toReal_mul_snd G (fun b => Real.log (G.snd b).toReal),
+    show ∑ x : α × β, Real.negMulLog (G x).toReal = G.entropy from rfl,
+    entropy_eq_neg_sum_mul_log G.snd]
   ring
 
 end PMF

@@ -129,6 +129,7 @@ import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
+import Linglib.Core.InformationTheory.MutualInformation
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
