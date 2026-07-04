@@ -97,9 +97,13 @@ def Fallback.uniformOn [DecidableEq σ] (S : Finset σ) (hS : S.Nonempty) : Fall
 /-! ### Scores -/
 
 /-- The normalized score function both faces read: `f` normalized when it
-has mass, else the fallback normalized. The guard is a strict inequality
-(kernel-reduces via `Rat.blt`); never restate it as an equality, whose
-`Decidable` instance reduces along a path the kernel cannot always take. -/
+has mass, else the fallback normalized.
+
+Kernel hygiene: comparisons of `scoresWith` values reduce under
+`decide +kernel` provided the score chain's *base tables* are pattern
+matches or `Bool`-valued tables — a propositional `if x = y then … else …`
+over a derived `DecidableEq` anywhere in the chain blocks kernel reduction
+of order comparisons (equalities still reduce). -/
 def scoresWith (fb : Fallback σ) (f : σ → ℚ≥0) (x : σ) : ℚ≥0 :=
   if 0 < ∑ y, f y then f x / ∑ y, f y else fb.dist x / ∑ y, fb.dist y
 
