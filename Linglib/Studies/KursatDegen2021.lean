@@ -282,12 +282,25 @@ analogue of the color/material asymmetry tested in Exp 2. -/
 /-- The CI-RSA incremental model predicts English speakers use redundant
     color more than redundant size (Waldon & Degen 2021, Prediction 1).
     This is the color/size version of the color/material asymmetry
-    observed in Exp 2. -/
+    observed in Exp 2. Stated as the chain-rule trajectory comparison on
+    the exact-ℚ speaker face. -/
 theorem incremental_model_predicts_color_asymmetry :
-    WaldonDegen2021.englishSS.trajectoryProb ()
-      .smallBlue [.small, .blue, .pin, .stop] >
-    WaldonDegen2021.englishCS.trajectoryProb ()
-      .smallBlue [.small, .blue, .pin, .stop] :=
+    WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
+        .smallBlue [] .small *
+      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
+        .smallBlue [.small] .blue *
+      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
+        .smallBlue [.small, .blue] .pin *
+      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
+        .smallBlue [.small, .blue, .pin] .stop <
+    WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
+        .smallBlue [] .small *
+      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
+        .smallBlue [.small] .blue *
+      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
+        .smallBlue [.small, .blue] .pin *
+      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
+        .smallBlue [.small, .blue, .pin] .stop :=
   WaldonDegen2021.prediction1_english_asymmetry
 
 -- ============================================================================
