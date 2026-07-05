@@ -8,21 +8,21 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 /-!
 # The selection-driven head on the `SO` carrier
 
-[marcolli-chomsky-berwick-2025] §1.13 (Lemma 1.13.7). P3a of the single-carrier
-program: the **selection-driven head function** on the `SO` carrier — the
-section-free, computable head ([adger-2003] "the item that projects is the item
-that selects"). Re-homes `selCheck`/`selHead`/`outerCatC` onto `SO`, the foundation
-the Phase API consumes (`isPhaseHeadOf`, P3b).
+The **selection-driven head function** on the `SO` carrier: whichever sister's head
+c-selects the saturated other projects — [adger-2003]'s identification of the
+projecting item with the selecting item, instantiating the bare-phrase-structure
+projection ([chomsky-1995-bare] §4) that [marcolli-chomsky-berwick-2025] §1.13.3
+abstracts as head functions (Definition 1.13.6 / Lemma 1.13.7). Selection induces
+one head function among the tree's many (Lemma 1.13.4); like the book's, it is
+partial — `none` at exocentric nodes. `selCheck`/`selHead`/`outerCatC` on `SO` are
+the foundation the Phase API consumes (`isPhaseHeadOf`).
 
 The carrier-free selection combinators `selStep`/`selSide` (commutative —
-`selStep_comm`/`selSide_comm`) live here: they operate purely on selection states
-(`Option (LIToken × List Cat)`), so they are shared by the `SO`-carrier tree
-recursion below and the legacy section-based `Selection.lean`. Only the tree
-recursion is re-homed onto `RoseTree SOLabel` + the `SO` lift, exactly as `subtreesN`
-(P2a-ii). **Index-free traces** (P1): a bare trace leaf gets the canonical saturated
-value `(mkTraceToken 0, [])` — `selCheck` reads only the token's category (`.N`) and
-`outerSel` (`[]`), both index-independent, so this is behaviour-equivalent to the
-legacy `(mkTraceToken n, [])`.
+`selStep_comm`/`selSide_comm`) operate purely on selection states
+(`Option (LIToken × List Cat)`); the tree recursion lives on `RoseTree SOLabel` and
+lifts to `SO`, exactly as `subtreesN`. **Index-free traces**: a bare trace leaf gets
+the canonical saturated value `(mkTraceToken 0, [])` — `selCheck` reads only the
+token's category (`.N`) and `outerSel` (`[]`), both index-independent.
 -/
 
 namespace Minimalist
@@ -223,8 +223,8 @@ def SO.selHead (s : SO) : Option LIToken := s.selCheck.map (·.1)
 /-- Residual pending selectional features (`some []` = saturated). -/
 def SO.checkedSel (s : SO) : Option (List Cat) := s.selCheck.map (·.2)
 
-/-- The projecting head's **outer category** (the phase-head selector,
-    [marcolli-chomsky-berwick-2025] Lemma 1.13.7); `none` at exocentric nodes. -/
+/-- The projecting head's **outer category** (the phase-head selector); `none` at
+    exocentric nodes. -/
 def SO.outerCatC (s : SO) : Option Cat := s.selHead.map (·.item.outerCat)
 
 @[simp] theorem SO.selCheck_lexLeaf (tok : LIToken) :
@@ -239,6 +239,14 @@ def SO.outerCatC (s : SO) : Option Cat := s.selHead.map (·.item.outerCat)
   rw [SO.node_val, selCheckN_node]
 
 @[simp] theorem SO.selHead_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).selHead = some tok := rfl
+
+/-- **Endocentricity**: a node's projecting head is one of its daughters' heads —
+    bare-phrase-structure projection ([chomsky-1995-bare] §4, abstracted as
+    [marcolli-chomsky-berwick-2025] Definition 1.13.6 / Lemma 1.13.7). -/
+theorem SO.selHead_node {l r : SO} {h : LIToken}
+    (hlr : (SO.node l r).selHead = some h) : l.selHead = some h ∨ r.selHead = some h := by
+  simp only [SO.selHead, SO.selCheck_node] at hlr ⊢
+  exact selStep_fst hlr
 
 @[simp] theorem SO.outerCatC_lexLeaf (tok : LIToken) :
     (SO.lexLeaf tok).outerCatC = some tok.item.outerCat := rfl
