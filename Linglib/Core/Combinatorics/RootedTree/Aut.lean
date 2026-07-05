@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
@@ -53,8 +53,8 @@ top-level multiset of constituent trees.
 representative, defined by structural recursion over the children list
 (`(cs.map treeAutCard).prod` aggregates the children product; no aux
 twin — `RoseTree`'s nested-`List` recursion is handled by the equation
-compiler and its `@[induction_eliminator]`). `PermStep`-invariance is
-established via the standard swap/recurse case split, and the lift to
+compiler and its `@[induction_eliminator]`). `Perm`-invariance is
+established via a `PermList` companion pair, and the lift to
 `Nonplanar` uses `Nonplanar.lift`. `autCard_node` bridges to the
 `forestAutCard`-as-Finset-product form via `Finset.prod_multiset_map_count`
 (turning the all-children prod into a `∏ distinct, c ^ count`-form) +
@@ -72,7 +72,7 @@ variable {α : Type*}
 /-! ### RoseTree-representative substrate
 
 `treeAutCard` computes `|Aut(mk t)|` on a planar `RoseTree` representative
-`t`; `PermEquiv`-invariance (below) lets it descend to `Nonplanar.autCard`
+`t`; `Perm`-invariance (below) lets it descend to `Nonplanar.autCard`
 through the quotient. -/
 
 /-- Symmetry-factor at one node: `∏_{distinct c ∈ M} (M.count c)!`. Uses
@@ -83,7 +83,7 @@ noncomputable def multinomialFactor (M : Multiset (Nonplanar α)) : ℕ :=
 
 /-- The automorphism count `|Aut(mk t)|` of the nonplanar tree represented
     by a planar `RoseTree` `t`. Substrate for `Nonplanar.autCard` (which lifts
-    it through the `PermEquiv` quotient). At a node, the product of the
+    it through the `Perm` quotient). At a node, the product of the
     children's counts times `multinomialFactor` on the multiset of
     nonplanar-`mk` children (counting symmetric rearrangements). -/
 noncomputable def treeAutCard : RoseTree α → ℕ
@@ -95,37 +95,40 @@ theorem treeAutCard_node (a : α) (cs : List (RoseTree α)) :
       (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk)) := by
   rw [treeAutCard]
 
-/-! #### `treeAutCard` is `PermEquiv`-invariant -/
+/-! #### `treeAutCard` is `Perm`-invariant -/
 
-/-- `treeAutCard` is invariant under `PermStep`: a root swap permutes the
-    children list (so `(cs.map treeAutCard).prod` via `List.Perm.prod_eq`
-    and the `mk`-multiset via `Multiset.coe_eq_coe` are both fixed); a
-    recursive step rewrites one child by a `PermEquiv`-equal subtree (so
-    `treeAutCard` matches by the IH and `mk` by `mk_eq_mk_iff`). -/
-private theorem treeAutCard_permStep {t s : RoseTree α} (h : RoseTree.PermStep t s) :
-    treeAutCard t = treeAutCard s := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
+mutual
+/-- `treeAutCard` is invariant under `Perm`. At a node the algebra reads the
+    children only through the child-`treeAutCard` product and the `mk`-multiset,
+    both fixed by the `PermList` companion. -/
+theorem treeAutCard_perm : ∀ {t s : RoseTree α}, RoseTree.Perm t s →
+    treeAutCard t = treeAutCard s
+  | _, _, .node h => by
     rw [treeAutCard_node, treeAutCard_node]
-    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
-      (List.Perm.swap r l post).append_left pre
-    rw [(hperm.map treeAutCard).prod_eq, Multiset.coe_eq_coe.mpr (hperm.map mk)]
-  | @recurse a pre old new post _hstep ih =>
-    rw [treeAutCard_node, treeAutCard_node]
-    have hmk : (mk old : Nonplanar α) = mk new :=
-      mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step _hstep)
-    congr 1
-    · simp only [List.map_append, List.map_cons, List.prod_append, List.prod_cons, ih]
-    · simp only [List.map_append, List.map_cons, hmk]
+    obtain ⟨hprod, hmk⟩ := treeAutCard_permList h
+    rw [hprod, hmk]
+  | _, _, .trans h₁ h₂ => (treeAutCard_perm h₁).trans (treeAutCard_perm h₂)
 
-/-- `treeAutCard` is invariant under `PermEquiv`. By induction on `EqvGen`. -/
-theorem treeAutCard_permEquiv {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
-    treeAutCard t = treeAutCard s := by
-  induction h with
-  | rel _ _ hstep => exact treeAutCard_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- The two children statistics `treeAutCard` reads — the child-`treeAutCard`
+    product and the `mk`-multiset — are `PermList`-invariant: `cons` matches heads
+    by the mutual `treeAutCard_perm` and `mk_eq_mk_iff`, `swap` by commutativity
+    of `*` and `Multiset.cons_swap`. -/
+theorem treeAutCard_permList : ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
+    (cs.map treeAutCard).prod = (ds.map treeAutCard).prod ∧
+      (Multiset.ofList (cs.map mk) : Multiset (Nonplanar α)) = Multiset.ofList (ds.map mk)
+  | _, _, .nil => ⟨rfl, rfl⟩
+  | _, _, .cons h hs => by
+    obtain ⟨hprod, hmk⟩ := treeAutCard_permList hs
+    refine ⟨by simp only [List.map_cons, List.prod_cons, treeAutCard_perm h, hprod], ?_⟩
+    simp only [List.map_cons, ← Multiset.cons_coe]
+    rw [mk_eq_mk_iff.mpr h, hmk]
+  | _, _, .swap c d cs =>
+    ⟨by simp only [List.map_cons, List.prod_cons]; exact mul_left_comm _ _ _,
+     by simp only [List.map_cons, ← Multiset.cons_coe]; exact Multiset.cons_swap _ _ _⟩
+  | _, _, .trans h₁ h₂ =>
+    match treeAutCard_permList h₁, treeAutCard_permList h₂ with
+    | ⟨p₁, m₁⟩, ⟨p₂, m₂⟩ => ⟨p₁.trans p₂, m₁.trans m₂⟩
+end
 
 /-! #### Positivity of `treeAutCard` -/
 
@@ -154,9 +157,9 @@ theorem treeAutCard_pos (t : RoseTree α) : 0 < treeAutCard t := by
     `autCard t = ∏ distinct c ∈ M, (M.count c)! * (autCard c)^(M.count c)`
     (see `autCard_node`). A leaf has `autCard = 1` (`autCard_leaf`).
 
-    Defined by lifting `treeAutCard` through the `PermEquiv` quotient. -/
+    Defined by lifting `treeAutCard` through the `Perm` quotient. -/
 noncomputable def autCard : Nonplanar α → ℕ :=
-  Nonplanar.lift treeAutCard (fun _ _ h => treeAutCard_permEquiv h)
+  Nonplanar.lift treeAutCard (fun _ _ h => treeAutCard_perm h)
 
 @[simp] theorem autCard_mk (t : RoseTree α) : autCard (mk t) = treeAutCard t := rfl
 

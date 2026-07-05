@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
 import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Data.Multiset.AddSub
 import Mathlib.Data.Multiset.Bind
@@ -350,9 +350,9 @@ combinatorial formula at the `RoseTree` level (`PreLie/Insertion.lean`'s
 `RoseTree.Pathed.insertionForest`), descended through `Nonplanar.mk`
 (`Nonplanar.insertionMultiset`), then bilinear-extended via
 `Finsupp.linearCombination`. The substrate invariance theorems
-(PermEquiv on host/guest, Perm on multiset arguments) are proved
+(Perm on host/guest, Perm on multiset arguments) are proved
 sorry-free in `PreLie/Insertion.lean` and
-`Combinatorics/RootedTree/Nonplanar/Insertion.lean`. -/
+`Algebra/RootedTree/PreLie/InsertionNonplanar.lean`. -/
 
 /-- Basis-level multi-graft on Multiset forests: each pair `(F_basis,
     G_basis)` produces a multiset of grafted forests, summed as basis

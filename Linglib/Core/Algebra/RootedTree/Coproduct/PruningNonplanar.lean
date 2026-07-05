@@ -1,6 +1,6 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.LinearAlgebra.Finsupp.LSum
 import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.Bialgebra.Basic
@@ -16,7 +16,7 @@ The Nonplanar Δ^ρ is obtained by descending the tree-level Δ^ρ
 (`Coproduct.lean`) through the projection `mk : RoseTree α → Nonplanar α`.
 The descent requires showing that the projected cut summands
 (`(cutSummandsP T).map projSummand`) depend on `T : RoseTree α` only
-through `mk T`, i.e., are invariant under `RoseTree.PermEquiv`. Once
+through `mk T`, i.e., are invariant under `RoseTree.Perm`. Once
 established, `Nonplanar.lift` produces `cutSummandsN`, which extends to
 `comulTreeN`, `comulForestN`, and the algebra hom `comulAlgHomN`.
 
@@ -45,9 +45,9 @@ calculus of `BMinus.lean`, which imports this file). The full
 - **Cut-summand descent** (§3): pointwise projection
   (`projSummand`/`projForest`/`projAugAction`) plus a clean factoring of
   the `cutListSummandsP` cons case as a Nonplanar-level cartesian
-  product (`cutListSummandsP_cons_proj`); structural induction on
-  `PermStep` for the headline invariance, with pure `EqvGen`/`Forall₂`
-  lifts for `PermEquiv` and `List.Forall₂` versions.
+  product (`cutListSummandsP_cons_proj`); structural recursion over the
+  mutual `Perm`/`PermList` for the headline invariance, with a pure
+  `List.Forall₂` lift for the componentwise version.
 -/
 
 namespace RootedTree
@@ -62,7 +62,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 
 `Nonplanar.mk : RoseTree α → Nonplanar α` extends to an algebra hom on
 `ConnesKreimer R` via `AddMonoidAlgebra.mapDomainAlgHom`. Surjective at
-the carrier level; the kernel encodes PermEquiv-equivalence of forests
+the carrier level; the kernel encodes Perm-equivalence of forests
 of trees, which is what subsequent sub-phases will need to factor through. -/
 
 /-- The additive monoid hom from forests of tree-level trees to forests of
@@ -104,7 +104,7 @@ noncomputable def planarToNonplanarAlg :
 /-! ## Phase A.7-β — projection of cut summands, descent of Δ^ρ
 
 To descend Δ^ρ from `RoseTree` to `Nonplanar`, we need a Nonplanar-side
-cut-summand multiset that is `PermEquiv`-invariant. The strategy:
+cut-summand multiset that is `Perm`-invariant. The strategy:
 project each tree-level cut summand through `mk` componentwise, then prove
 the resulting multiset depends on `T : RoseTree α` only through `mk T`.
 
@@ -114,10 +114,11 @@ The proof factors through three layers:
 - **Combine factoring** (`cutListSummandsP_cons_proj`): the cons case of
   `cutListSummandsP` distributes over the projection, giving a clean
   cartesian-product recursion at the `Nonplanar` level.
-- **Headline lifts** (`cutSummandsP_proj_permStep`,
-  `cutSummandsP_proj_permEquiv`, `cutListSummandsP_proj_componentwise`):
-  structural induction on `PermStep` for the substantive content;
-  pure `EqvGen` / `Forall₂` lifts for the rest. -/
+- **Headline recursion** (`cutSummandsP_proj_perm` with its `PermList`
+  companion `cutListSummandsP_proj_permList`, and the derived
+  `cutListSummandsP_proj_componentwise`): structural recursion over the
+  mutual `Perm`/`PermList` for the substantive content; a pure
+  `List.Forall₂` lift for the rest. -/
 
 /-! ### Pointwise projection -/
 
@@ -129,7 +130,7 @@ def projSummand : Forest (RoseTree α) × RoseTree α →
 /-- Project a `cutListSummandsP` summand to nonplanar level, discarding
     the list-order of the remainder children. The discarded order doesn't
     affect the eventual `mk (.node a remainder)`, since `mk` is invariant
-    under children-list permutation (`RoseTree.permEquiv_root_perm`). -/
+    under children-list permutation (`RoseTree.Perm.node_of_perm`). -/
 def projForest : Forest (RoseTree α) × List (RoseTree α) →
     Forest (Nonplanar α) × Multiset (Nonplanar α) :=
   fun p => (p.1.map Nonplanar.mk, Multiset.ofList (p.2.map Nonplanar.mk))
@@ -390,35 +391,23 @@ theorem cutListSummandsP_proj_perm
     exact (swap_double_combinerProj _ _ _).symm
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### Headline: PermStep + EqvGen lift
+/-! ### Headline: `Perm` + `PermList` recursion
 
-Substantive content: `cutSummandsP_proj_permStep` proves projection
-invariance under a single elementary step (`PermStep`). The
-`PermEquiv` (`EqvGen`) and `Forall₂` versions follow as straightforward
-lifts. The structural induction on `PermStep` handles the recursion:
-the `recurse` case calls itself on a strictly smaller child tree. -/
+Structural recursion over the mutual `Perm`/`PermList`. The `node` case lifts
+the companion's list-level equality through the `Nonplanar.node a` wrapper; the
+`PermList.cons` case changes the head child then the tail; the `PermList.swap`
+case reorders identical siblings (`cutListSummandsP_proj_perm`). -/
 
-/-- Projection invariance under a single `PermStep`. Structural
-    induction on the step constructor: `swapAtRoot` uses
-    `cutListSummandsP_proj_perm`; `recurse` uses the inductive
-    hypothesis combined with `cutListSummandsP_proj_at_via_augAction`. -/
-theorem cutSummandsP_proj_permStep
-    {t s : RoseTree α} (h : RoseTree.PermStep t s) :
-    (cutSummandsP t).map projSummand =
-      (cutSummandsP s).map projSummand := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    -- t = .node a (pre ++ l :: r :: post), s = .node a (pre ++ r :: l :: post)
-    -- Use cutSummandsP_node + projSummand_node_factors + cutListSummandsP_proj_perm
+mutual
+/-- Projection invariance of `cutSummandsP` under `Perm`. -/
+theorem cutSummandsP_proj_perm :
+    ∀ {t s : RoseTree α}, RoseTree.Perm t s →
+      (cutSummandsP t).map projSummand = (cutSummandsP s).map projSummand
+  | _, _, @RoseTree.Perm.node _ a cs ds h => by
     rw [cutSummandsP_node, cutSummandsP_node, Multiset.map_map, Multiset.map_map]
-    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
-      List.Perm.append_left pre (List.Perm.swap r l post)
-    have hL : (cutListSummandsP (pre ++ l :: r :: post)).map projForest =
-              (cutListSummandsP (pre ++ r :: l :: post)).map projForest :=
-      cutListSummandsP_proj_perm hperm
-    -- LHS: (cutListSummandsP _).map ((projSummand) ∘ (fun p => (p.1, .node a p.2)))
-    --    = (cutListSummandsP _).map (fun p => ((projForest p).1, Nonplanar.node a (projForest p).2))
-    --    = ((cutListSummandsP _).map projForest).map (fun pf => (pf.1, Nonplanar.node a pf.2))
+    have hL : (cutListSummandsP cs).map projForest =
+              (cutListSummandsP ds).map projForest :=
+      cutListSummandsP_proj_permList h
     have eq_fn :
         (projSummand (α := α)) ∘
           (fun (p : Forest (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
@@ -427,82 +416,52 @@ theorem cutSummandsP_proj_permStep
       funext p
       exact projSummand_node_factors a p
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
-  | @recurse a pre old new post hsub ih =>
-    -- t = .node a (pre ++ old :: post), s = .node a (pre ++ new :: post)
-    -- ih : (cutSummandsP old).map projSummand = (cutSummandsP new).map projSummand
-    -- We need: (cutSummandsP t).map projSummand = (cutSummandsP s).map projSummand
-    rw [cutSummandsP_node, cutSummandsP_node, Multiset.map_map, Multiset.map_map]
-    have h_mk : Nonplanar.mk old = Nonplanar.mk new :=
-      Nonplanar.mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step hsub)
-    have h_aug : (augActionP old).map projAugAction =
-                 (augActionP new).map projAugAction :=
-      augActionP_proj_eq_of_step_data h_mk ih
-    have hL : (cutListSummandsP (pre ++ old :: post)).map projForest =
-              (cutListSummandsP (pre ++ new :: post)).map projForest :=
-      cutListSummandsP_proj_at_via_augAction h_aug
-    have eq_fn :
-        (projSummand (α := α)) ∘
-          (fun (p : Forest (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
-        (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
-          (pf.1, Nonplanar.node a pf.2)) ∘ (projForest (α := α)) := by
-      funext p
-      exact projSummand_node_factors a p
-    rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
+  | _, _, .trans h₁ h₂ => (cutSummandsP_proj_perm h₁).trans (cutSummandsP_proj_perm h₂)
 
-/-- Projection invariance under `PermEquiv`. Pure `EqvGen` lift of
-    `cutSummandsP_proj_permStep`. -/
-theorem cutSummandsP_proj_permEquiv
-    {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
-    (cutSummandsP t).map projSummand =
-      (cutSummandsP s).map projSummand := by
-  induction h with
-  | rel _ _ hstep => exact cutSummandsP_proj_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
-
-/-- Componentwise `PermEquiv` invariance for child lists. Pure
-    `Forall₂` induction using `cutListSummandsP_proj_at_via_augAction`
-    on the head and the IH on the tail. -/
-theorem cutListSummandsP_proj_componentwise
-    {cs ds : List (RoseTree α)}
-    (h : List.Forall₂ RoseTree.PermEquiv cs ds) :
-    (cutListSummandsP cs).map projForest =
-      (cutListSummandsP ds).map projForest := by
-  induction h with
-  | nil => rfl
-  | @cons c d cs' ds' hcd _ ih =>
-    -- Replace c with d at head, then push cs' → ds' under d via ih.
-    have h_mk : Nonplanar.mk c = Nonplanar.mk d :=
-      Nonplanar.mk_eq_mk_iff.mpr hcd
-    have h_proj : (cutSummandsP c).map projSummand =
-                  (cutSummandsP d).map projSummand :=
-      cutSummandsP_proj_permEquiv hcd
+/-- Companion: projection invariance of `cutListSummandsP` under `PermList`. -/
+private theorem cutListSummandsP_proj_permList :
+    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
+      (cutListSummandsP cs).map projForest = (cutListSummandsP ds).map projForest
+  | _, _, .nil => rfl
+  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
     have h_aug : (augActionP c).map projAugAction =
                  (augActionP d).map projAugAction :=
-      augActionP_proj_eq_of_step_data h_mk h_proj
+      augActionP_proj_eq_of_step_data (Nonplanar.mk_eq_mk_iff.mpr hcd)
+        (cutSummandsP_proj_perm hcd)
     have step1 : (cutListSummandsP (c :: cs')).map projForest =
-                 (cutListSummandsP (d :: cs')).map projForest := by
-      have := cutListSummandsP_proj_at_via_augAction (pre := []) (post := cs') h_aug
-      simpa using this
+                 (cutListSummandsP (d :: cs')).map projForest :=
+      cutListSummandsP_proj_at_via_augAction (pre := []) (post := cs') h_aug
     have step2 : (cutListSummandsP (d :: cs')).map projForest =
                  (cutListSummandsP (d :: ds')).map projForest :=
-      cutListSummandsP_proj_tail_lift d ih
+      cutListSummandsP_proj_tail_lift d (cutListSummandsP_proj_permList hs)
     exact step1.trans step2
+  | _, _, .swap c d cs => cutListSummandsP_proj_perm (List.Perm.swap c d cs)
+  | _, _, .trans h₁ h₂ =>
+    (cutListSummandsP_proj_permList h₁).trans (cutListSummandsP_proj_permList h₂)
+end
+
+/-- Componentwise `Perm` invariance for child lists, from the `PermList`
+    companion via `PermList.of_forall₂`. -/
+theorem cutListSummandsP_proj_componentwise
+    {cs ds : List (RoseTree α)}
+    (h : List.Forall₂ RoseTree.Perm cs ds) :
+    (cutListSummandsP cs).map projForest =
+      (cutListSummandsP ds).map projForest :=
+  cutListSummandsP_proj_permList (RoseTree.PermList.of_forall₂ h)
 
 /-! ### Δ^ρ on Nonplanar via descent
 
-The `cutSummandsP_proj_permEquiv` invariance lifts `cutSummandsP`
+The `cutSummandsP_proj_perm` invariance lifts `cutSummandsP`
 through `Nonplanar.lift`, giving a well-defined `cutSummandsN`. The
 tree-level coproduct `comulTreeN` then extends multiplicatively to a
 forest-level monoid hom and finally to the algebra hom `comulAlgHomN`. -/
 
 /-- The **Nonplanar cut-summand multiset**, defined via `Nonplanar.lift`
-    using the `cutSummandsP_proj_permEquiv` invariance. -/
+    using the `cutSummandsP_proj_perm` invariance. -/
 noncomputable def cutSummandsN :
     Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α) :=
   Nonplanar.lift (fun T => (cutSummandsP T).map projSummand)
-    (fun _ _ h => cutSummandsP_proj_permEquiv h)
+    (fun _ _ h => cutSummandsP_proj_perm h)
 
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
     cutSummandsN (Nonplanar.mk T) = (cutSummandsP T).map projSummand := rfl

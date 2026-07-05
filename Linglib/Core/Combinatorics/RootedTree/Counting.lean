@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 
 /-!
 # Size counting on nonplanar rooted trees and workspaces

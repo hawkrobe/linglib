@@ -421,7 +421,7 @@ private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bo
     children) vs "in A's subtrees" (recursive NIM).
 
     Descent through the quotient: the singleton host's canonical planar
-    representative is `PermEquiv`-swapped for a visible planar node,
+    representative is `Perm`-swapped for a visible planar node,
     `RoseTree.Pathed.insertion_node_split` provides the root-vs-subtree
     mask decomposition, and the mask enumeration is converted to the
     powerset bind via `listChoices_bridge_powerset_paired` plus the
@@ -447,7 +447,7 @@ private theorem nim_singleton_node_a_decomp
           (List.map_congr_left fun x _ => Quotient.out_eq x).trans
             (List.map_id _)]
     exact A'.coe_toList
-  have h_equiv : RoseTree.PermEquiv
+  have h_equiv : RoseTree.Perm
       (Quotient.out (Nonplanar.node a A'))
       (RoseTree.node a (A'.toList.map Quotient.out)) :=
     Nonplanar.mk_eq_mk_iff.mp
@@ -460,7 +460,7 @@ private theorem nim_singleton_node_a_decomp
     rw [Multiset.toList_singleton]
     rfl]
   -- §3: swap the host representative under the msform map.
-  have h_host := RoseTree.Pathed.insertionForest_permEquiv_host
+  have h_host := RoseTree.Pathed.insertionForest_perm_host
     (B.toList.map Quotient.out) (List.Forall₂.cons h_equiv List.Forall₂.nil)
   have h_host' :
       (RoseTree.Pathed.insertionForest [Quotient.out (Nonplanar.node a A')]

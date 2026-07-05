@@ -59,9 +59,9 @@ import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Combinatorics.RootedTree.DecEq
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
+import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
 import Linglib.Core.Combinatorics.RootedTree.Rebinarize
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
@@ -118,6 +118,7 @@ import Linglib.Core.Data.List.Fold
 import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
+import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic

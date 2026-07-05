@@ -22,7 +22,7 @@ view that the paper-anchored study files are written in; it is not a claim that
 movement *is* substitution.
 
 Built the established way (`subtreesN`): a planar recursion with quotient-level `target`
-matching, proved `PermEquiv`-invariant and lifted, then closed under `IsSO` via
+matching, proved `Perm`-invariant and lifted, then closed under `IsSO` via
 `SO.ind`. It is **noncomputable** (it rebuilds via `Nonplanar.node`); concrete results
 are related by the reduction lemmas (`replace_lexLeaf`/`_traceLeaf`/`_node`), not by
 `decide`.
@@ -49,54 +49,41 @@ noncomputable def replacePlanarList (target replacement : Nonplanar SOLabel) :
   | c :: cs => replacePlanar target replacement c ::ₘ replacePlanarList target replacement cs
 end
 
-/-- `replacePlanarList` is a multiset built child-by-child, hence permutation-invariant. -/
-private theorem replacePlanarList_perm (target replacement : Nonplanar SOLabel)
-    {cs ds : List (RoseTree SOLabel)} (h : cs.Perm ds) :
-    replacePlanarList target replacement cs = replacePlanarList target replacement ds := by
-  induction h with
-  | nil => rfl
-  | cons _ _ ih => simp only [replacePlanarList]; rw [ih]
-  | swap _ _ _ => simp only [replacePlanarList]; rw [Multiset.cons_swap]
-  | trans _ _ ih1 ih2 => exact ih1.trans ih2
-
-/-- Replacing one child by a `replacePlanar`-equal child preserves the list result. -/
-private theorem replacePlanarList_replace (target replacement : Nonplanar SOLabel)
-    (pre post : List (RoseTree SOLabel)) {old new : RoseTree SOLabel}
-    (h : replacePlanar target replacement old = replacePlanar target replacement new) :
-    replacePlanarList target replacement (pre ++ old :: post)
-      = replacePlanarList target replacement (pre ++ new :: post) := by
-  induction pre with
-  | nil => simp only [List.nil_append, replacePlanarList]; rw [h]
-  | cons hd tl ih => simp only [List.cons_append, replacePlanarList]; rw [ih]
-
-private theorem replacePlanar_permStep (target replacement : Nonplanar SOLabel)
-    {t s : RoseTree SOLabel} (hstep : RoseTree.PermStep t s) :
-    replacePlanar target replacement t = replacePlanar target replacement s := by
-  induction hstep with
-  | @swapAtRoot a l r pre post =>
+mutual
+/-- `replacePlanar` is `Perm`-invariant, so it descends to the quotient. At a node the
+    `if mk _ = target` guard is fixed because `mk` is `Perm`-invariant (`mk_eq_mk_iff`),
+    and the rebuilt child multiset by the `PermList` companion. -/
+theorem replacePlanar_perm (target replacement : Nonplanar SOLabel) :
+    ∀ {t s : RoseTree SOLabel}, RoseTree.Perm t s →
+      replacePlanar target replacement t = replacePlanar target replacement s
+  | _, _, .node h => by
     simp only [replacePlanar]
-    rw [Nonplanar.mk_step RoseTree.PermStep.swapAtRoot,
-        replacePlanarList_perm target replacement (List.Perm.append_left pre (.swap r l post))]
-  | @recurse a pre old new post hstep ih =>
-    simp only [replacePlanar]
-    rw [Nonplanar.mk_step (RoseTree.PermStep.recurse hstep),
-        replacePlanarList_replace target replacement pre post ih]
+    rw [Nonplanar.mk_eq_mk_iff.mpr (RoseTree.Perm.node h),
+        replacePlanarList_permList target replacement h]
+  | _, _, .trans h₁ h₂ =>
+    (replacePlanar_perm target replacement h₁).trans (replacePlanar_perm target replacement h₂)
 
-/-- `replacePlanar` is `PermEquiv`-invariant, so it descends to the quotient. -/
-theorem replacePlanar_permEquiv (target replacement : Nonplanar SOLabel)
-    {t s : RoseTree SOLabel} (h : RoseTree.PermEquiv t s) :
-    replacePlanar target replacement t = replacePlanar target replacement s := by
-  induction h with
-  | rel _ _ hstep => exact replacePlanar_permStep target replacement hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- The rebuilt child multiset is `PermList`-invariant: it is built child-by-child, the
+    `List.Perm`-style case split matching heads by the mutual `replacePlanar_perm` and
+    reordering by `Multiset.cons_swap`. -/
+theorem replacePlanarList_permList (target replacement : Nonplanar SOLabel) :
+    ∀ {cs ds : List (RoseTree SOLabel)}, RoseTree.PermList cs ds →
+      replacePlanarList target replacement cs = replacePlanarList target replacement ds
+  | _, _, .nil => rfl
+  | _, _, .cons h hs => by
+    simp only [replacePlanarList, replacePlanar_perm target replacement h,
+      replacePlanarList_permList target replacement hs]
+  | _, _, .swap _ _ _ => by simp only [replacePlanarList]; rw [Multiset.cons_swap]
+  | _, _, .trans h₁ h₂ =>
+    (replacePlanarList_permList target replacement h₁).trans
+      (replacePlanarList_permList target replacement h₂)
+end
 
 /-- Substitution lifted to the nonplanar carrier. -/
 noncomputable def replaceN (target replacement : Nonplanar SOLabel) :
     Nonplanar SOLabel → Nonplanar SOLabel :=
   Nonplanar.lift (replacePlanar target replacement)
-    (fun _ _ h => replacePlanar_permEquiv target replacement h)
+    (fun _ _ h => replacePlanar_perm target replacement h)
 
 @[simp] theorem replaceN_mk (target replacement : Nonplanar SOLabel) (p : RoseTree SOLabel) :
     replaceN target replacement (Nonplanar.mk p) = replacePlanar target replacement p := rfl

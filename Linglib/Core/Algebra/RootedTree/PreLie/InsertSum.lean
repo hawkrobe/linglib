@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.MapFold
 import Mathlib.Data.Multiset.ZeroCons
@@ -56,9 +56,9 @@ instance for MCB §1.7.
 - §2: Decomposition (`insertSum_eq_coe_map_insertAt`).
 - §3: Cardinality (`card_insertSum_eq_numNodes`), derived from §2.
 - §4: Cons-decomposition projection helpers (descent).
-- §5: Right invariance (`PermEquiv` on T₂).
-- §6: List-side perm + componentwise `PermEquiv` invariance.
-- §7: Left invariance (`PermStep` / `PermEquiv` on T₁).
+- §5: Right invariance (`Perm` on T₂).
+- §6: List-side perm + componentwise `Perm` invariance.
+- §7: Left invariance (`Perm` / `PermList` on T₁).
 - §8: Native `Nonplanar.insertSum` via `Quotient.lift₂`.
 - §9: Quotient-unfolding lemma + Nonplanar cardinality.
 - §10: Sanity tests.
@@ -250,7 +250,7 @@ end RoseTree
 /-! # Descent of `insertSum` through `Nonplanar.mk`
 
 The descent layer: lift `RoseTree.insertSum` to `Nonplanar α` via
-`Quotient.lift₂`, requiring invariance under `PermEquiv` on both
+`Quotient.lift₂`, requiring invariance under `Perm` on both
 arguments. -/
 
 namespace RootedTree
@@ -305,7 +305,7 @@ private theorem map_node_cons_via_mk (a : α) (cs : List (RoseTree α))
   apply Multiset.map_congr rfl
   intro c' _
   apply Nonplanar.mk_eq_mk_iff.mpr
-  apply RoseTree.permEquiv_recurse_lift [] cs
+  apply RoseTree.Perm.congr_child [] cs
   exact (Quotient.exact (Quotient.out_eq (Nonplanar.mk c'))).symm
 
 /-- Wrapper-shift helper for sibling-cons: factor a sibling-cons wrapper
@@ -321,11 +321,11 @@ private theorem map_node_sibling_cons_via_mk (a : α) (p : RoseTree α)
   apply Multiset.map_congr rfl
   intro cs' _
   apply Nonplanar.mk_eq_mk_iff.mpr
-  have hbase : RoseTree.PermEquiv (RoseTree.node a cs')
+  have hbase : RoseTree.Perm (RoseTree.node a cs')
                (Nonplanar.mk (RoseTree.node a cs')).out :=
     (Quotient.exact (Quotient.out_eq (Nonplanar.mk (RoseTree.node a cs')))).symm
   have hvalue : (Nonplanar.mk (RoseTree.node a cs')).out.value = a := by
-    have := RoseTree.value_permEquiv hbase
+    have := RoseTree.Perm.value_eq hbase
     simp only [RoseTree.value_node] at this
     exact this.symm
   have hform : (Nonplanar.mk (RoseTree.node a cs')).out =
@@ -336,30 +336,30 @@ private theorem map_node_sibling_cons_via_mk (a : α) (p : RoseTree α)
       simp only [RoseTree.value_node] at hvalue
       rw [hvalue]
       rfl
-  have hbase' : RoseTree.PermEquiv (RoseTree.node a cs')
+  have hbase' : RoseTree.Perm (RoseTree.node a cs')
       (RoseTree.node a (Nonplanar.mk (RoseTree.node a cs')).out.children) := by
     rw [← hform]; exact hbase
-  exact RoseTree.permEquiv_cons_lift p hbase'
+  exact RoseTree.Perm.cons_child p hbase'
 
 /-! ### Right invariance — `T₂ → T₂'`
 
-If `T₂ ≡ T₂'` (`PermEquiv`), then `(T₁ ◁ T₂).map mk = (T₁ ◁ T₂').map mk`
+If `T₂ ≡ T₂'` (`Perm`), then `(T₁ ◁ T₂).map mk = (T₁ ◁ T₂').map mk`
 for any T₁. Mutually inducted with the children-list version
 `insertSumList`. -/
 
 mutual
-private theorem insertSum_permEquiv_right_aux : ∀ (T₁ T₂ T₂' : RoseTree α)
-    (_ : RoseTree.PermEquiv T₂ T₂'),
+private theorem insertSum_perm_right_aux : ∀ (T₁ T₂ T₂' : RoseTree α)
+    (_ : RoseTree.Perm T₂ T₂'),
     (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
       (RoseTree.insertSum T₁ T₂').map Nonplanar.mk
   | .node a cs, T₂, T₂', h => by
     rw [insertSum_node_proj, insertSum_node_proj]
     congr 1
     · apply Nonplanar.mk_eq_mk_iff.mpr
-      exact RoseTree.permEquiv_recurse_lift [] cs h
-    · exact insertSumList_permEquiv_right_aux a cs T₂ T₂' h
-private theorem insertSumList_permEquiv_right_aux : ∀ (a : α) (cs : List (RoseTree α))
-    (T₂ T₂' : RoseTree α) (_ : RoseTree.PermEquiv T₂ T₂'),
+      exact RoseTree.Perm.congr_child [] cs h
+    · exact insertSumList_perm_right_aux a cs T₂ T₂' h
+private theorem insertSumList_perm_right_aux : ∀ (a : α) (cs : List (RoseTree α))
+    (T₂ T₂' : RoseTree α) (_ : RoseTree.Perm T₂ T₂'),
     (RoseTree.insertSumList cs T₂).map
         (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
     (RoseTree.insertSumList cs T₂').map
@@ -369,27 +369,27 @@ private theorem insertSumList_permEquiv_right_aux : ∀ (a : α) (cs : List (Ros
   | a, c :: cs, T₂, T₂', h => by
     rw [insertSumList_cons_proj, insertSumList_cons_proj]
     congr 1
-    · have ih := insertSum_permEquiv_right_aux c T₂ T₂' h
+    · have ih := insertSum_perm_right_aux c T₂ T₂' h
       rw [map_node_cons_via_mk a cs (M := RoseTree.insertSum c T₂),
           map_node_cons_via_mk a cs (M := RoseTree.insertSum c T₂'),
           ih]
-    · have ih_list := insertSumList_permEquiv_right_aux a cs T₂ T₂' h
+    · have ih_list := insertSumList_perm_right_aux a cs T₂ T₂' h
       rw [map_node_sibling_cons_via_mk a c (M := RoseTree.insertSumList cs T₂),
           map_node_sibling_cons_via_mk a c (M := RoseTree.insertSumList cs T₂'),
           ih_list]
 end
 
 /-- Right invariance for `insertSum`. -/
-theorem insertSum_permEquiv_right (T₁ : RoseTree α) {T₂ T₂' : RoseTree α}
-    (h : RoseTree.PermEquiv T₂ T₂') :
+theorem insertSum_perm_right (T₁ : RoseTree α) {T₂ T₂' : RoseTree α}
+    (h : RoseTree.Perm T₂ T₂') :
     (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
       (RoseTree.insertSum T₁ T₂').map Nonplanar.mk :=
-  insertSum_permEquiv_right_aux T₁ T₂ T₂' h
+  insertSum_perm_right_aux T₁ T₂ T₂' h
 
 /-! ### List-side `mk`-projection of `insertSumList`
 
 Two key properties of `(insertSumList cs T₂).map (mk ∘ .node a)`:
-Perm-invariance in `cs` and componentwise `PermEquiv`-invariance. -/
+Perm-invariance in `cs` and componentwise `Perm`-invariance. -/
 
 private theorem insertSumList_proj_perm_aux (a : α) (T₂ : RoseTree α) :
     ∀ {cs cs' : List (RoseTree α)},
@@ -411,7 +411,7 @@ private theorem insertSumList_proj_perm_aux (a : α) (T₂ : RoseTree α) :
       apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_root_perm
+      apply RoseTree.Perm.node_of_perm
       exact List.Perm.cons c' hperm
     rw [head_eq,
         map_node_sibling_cons_via_mk a x (M := RoseTree.insertSumList cs T₂),
@@ -462,7 +462,7 @@ private theorem insertSumList_proj_perm_aux (a : α) (T₂ : RoseTree α) :
       apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_root_perm
+      apply RoseTree.Perm.node_of_perm
       exact List.Perm.swap _ _ _
     have hBA' : (RoseTree.insertSum y T₂).map
                   (fun c' => Nonplanar.mk (RoseTree.node a (x :: c' :: cs))) =
@@ -471,7 +471,7 @@ private theorem insertSumList_proj_perm_aux (a : α) (T₂ : RoseTree α) :
       apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_root_perm
+      apply RoseTree.Perm.node_of_perm
       exact List.Perm.swap _ _ _
     have hCC' : (RoseTree.insertSumList cs T₂).map
                   (fun cs' => Nonplanar.mk (RoseTree.node a (x :: y :: cs'))) =
@@ -480,15 +480,19 @@ private theorem insertSumList_proj_perm_aux (a : α) (T₂ : RoseTree α) :
       apply Multiset.map_congr rfl
       intro cs' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_root_perm
+      apply RoseTree.Perm.node_of_perm
       exact List.Perm.swap _ _ _
     rw [hAB', hBA', hCC']
     abel
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### Left invariance — `T₁ → T₁'` via PermStep induction -/
+/-! ### Left invariance — `T₁ → T₁'`
 
-private theorem insertSumList_permStep_at_aux : ∀ (a : α) (T₂ : RoseTree α)
+Single-position substitution (`insertSumList_subst_at_aux`) is the building
+block; the headline `insertSum_perm_left` and its `PermList` companion recurse
+over the `Perm` structure. -/
+
+private theorem insertSumList_subst_at_aux : ∀ (a : α) (T₂ : RoseTree α)
     (pre : List (RoseTree α)) (post : List (RoseTree α)) (old new : RoseTree α),
     (RoseTree.insertSum old T₂).map Nonplanar.mk =
       (RoseTree.insertSum new T₂).map Nonplanar.mk →
@@ -507,7 +511,7 @@ private theorem insertSumList_permStep_at_aux : ∀ (a : α) (T₂ : RoseTree α
     · apply Multiset.map_congr rfl
       intro cs' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_recurse_lift [] cs'
+      apply RoseTree.Perm.congr_child [] cs'
       exact Nonplanar.mk_eq_mk_iff.mp h_mk
   | a, T₂, p :: pre', post, old, new, ih_sub, h_mk => by
     show (RoseTree.insertSumList (p :: (pre' ++ old :: post)) T₂).map
@@ -519,53 +523,73 @@ private theorem insertSumList_permStep_at_aux : ∀ (a : α) (T₂ : RoseTree α
     · apply Multiset.map_congr rfl
       intro c' _
       apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_recurse_lift (c' :: pre') post
+      apply RoseTree.Perm.congr_child (c' :: pre') post
       exact Nonplanar.mk_eq_mk_iff.mp h_mk
-    · have ih_tail := insertSumList_permStep_at_aux a T₂ pre' post old new ih_sub h_mk
+    · have ih_tail := insertSumList_subst_at_aux a T₂ pre' post old new ih_sub h_mk
       rw [map_node_sibling_cons_via_mk a p
             (M := RoseTree.insertSumList (pre' ++ old :: post) T₂),
           map_node_sibling_cons_via_mk a p
             (M := RoseTree.insertSumList (pre' ++ new :: post) T₂),
           ih_tail]
 
-/-- Left invariance for `insertSum` under a single `PermStep` on T₁. -/
-theorem insertSum_permStep_left {T₁ T₁' : RoseTree α}
-    (h : RoseTree.PermStep T₁ T₁') (T₂ : RoseTree α) :
-    (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
-      (RoseTree.insertSum T₁' T₂).map Nonplanar.mk := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    rw [insertSum_node_proj, insertSum_node_proj]
+mutual
+/-- Left invariance for `insertSum` under `Perm` of the host `T₁`. The
+    `node` case splits `insertSum` via `insertSum_node_proj` into the root
+    graft (a `Perm.cons_child`) and the sibling recursion (the `PermList`
+    companion). -/
+theorem insertSum_perm_left :
+    ∀ {T₁ T₁' : RoseTree α}, RoseTree.Perm T₁ T₁' → ∀ (T₂ : RoseTree α),
+      (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
+        (RoseTree.insertSum T₁' T₂).map Nonplanar.mk
+  | _, _, @RoseTree.Perm.node _ a cs ds h, T₂ => by
+    rw [insertSum_node_proj a cs T₂, insertSum_node_proj a ds T₂]
     congr 1
-    · apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_root_perm
-      apply List.Perm.cons
-      exact List.Perm.append_left pre (List.Perm.swap r l post)
-    · have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
-        List.Perm.append_left pre (List.Perm.swap r l post)
-      exact insertSumList_proj_perm_aux a T₂ hperm
-  | @recurse a pre old new post hsub ih =>
-    have h_mk : Nonplanar.mk old = Nonplanar.mk new :=
-      Nonplanar.mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step hsub)
-    rw [insertSum_node_proj, insertSum_node_proj]
-    congr 1
-    · apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_recurse_lift (T₂ :: pre) post
-      exact RoseTree.PermEquiv.of_step hsub
-    · exact insertSumList_permStep_at_aux a T₂ pre post old new ih h_mk
+    · exact Nonplanar.mk_eq_mk_iff.mpr
+        (RoseTree.Perm.cons_child T₂ (RoseTree.Perm.node h))
+    · exact insertSumList_permList_proj h a T₂
+  | _, _, .trans h₁ h₂, T₂ =>
+    (insertSum_perm_left h₁ T₂).trans (insertSum_perm_left h₂ T₂)
 
-/-! ### EqvGen lift to `PermEquiv` -/
-
-/-- Left invariance under `PermEquiv` on T₁. Standard `EqvGen` recipe. -/
-theorem insertSum_permEquiv_left {T₁ T₁' : RoseTree α}
-    (h : RoseTree.PermEquiv T₁ T₁') (T₂ : RoseTree α) :
-    (RoseTree.insertSum T₁ T₂).map Nonplanar.mk =
-      (RoseTree.insertSum T₁' T₂).map Nonplanar.mk := by
-  induction h with
-  | rel _ _ hstep => exact insertSum_permStep_left hstep T₂
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- Companion: sibling-level invariance of the projected `insertSumList`
+    under `PermList` of the children. The `cons` case changes the head child
+    (via `insertSum_perm_left`) then the tail (recursion); `swap` reorders
+    identical siblings (`insertSumList_proj_perm_aux`). -/
+private theorem insertSumList_permList_proj :
+    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
+      ∀ (a : α) (T₂ : RoseTree α),
+        (RoseTree.insertSumList cs T₂).map
+            (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+        (RoseTree.insertSumList ds T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs'))
+  | _, _, .nil, _, _ => rfl
+  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs, a, T₂ => by
+    have step1 :
+        (RoseTree.insertSumList (c :: cs') T₂).map
+            (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+        (RoseTree.insertSumList (d :: cs') T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs')) :=
+      insertSumList_subst_at_aux a T₂ [] cs' c d
+        (insertSum_perm_left hcd T₂) (Nonplanar.mk_eq_mk_iff.mpr hcd)
+    have step2 :
+        (RoseTree.insertSumList (d :: cs') T₂).map
+            (fun cs' => (Nonplanar.mk (RoseTree.node a cs') : Nonplanar α)) =
+        (RoseTree.insertSumList (d :: ds') T₂).map
+            (fun cs' => Nonplanar.mk (RoseTree.node a cs')) := by
+      rw [insertSumList_cons_proj a d cs' T₂, insertSumList_cons_proj a d ds' T₂]
+      congr 1
+      · apply Multiset.map_congr rfl
+        intro c' _
+        exact Nonplanar.mk_eq_mk_iff.mpr
+          (RoseTree.Perm.cons_child c' (RoseTree.Perm.node hs))
+      · rw [map_node_sibling_cons_via_mk a d (M := RoseTree.insertSumList cs' T₂),
+            map_node_sibling_cons_via_mk a d (M := RoseTree.insertSumList ds' T₂),
+            insertSumList_permList_proj hs a T₂]
+    exact step1.trans step2
+  | _, _, .swap c d cs, a, T₂ =>
+    insertSumList_proj_perm_aux a T₂ (List.Perm.swap c d cs)
+  | _, _, .trans h₁ h₂, a, T₂ =>
+    (insertSumList_permList_proj h₁ a T₂).trans (insertSumList_permList_proj h₂ a T₂)
+end
 
 /-! ### Native `Nonplanar.insertSum` via `Quotient.lift₂` -/
 
@@ -578,10 +602,10 @@ def insertSum : Nonplanar α → Nonplanar α → Multiset (Nonplanar α) :=
     (fun a₁ a₂ b₁ b₂ h₁ h₂ => by
       have step1 : (RoseTree.insertSum a₁ a₂).map Nonplanar.mk =
                    (RoseTree.insertSum b₁ a₂).map Nonplanar.mk :=
-        insertSum_permEquiv_left h₁ a₂
+        insertSum_perm_left h₁ a₂
       have step2 : (RoseTree.insertSum b₁ a₂).map Nonplanar.mk =
                    (RoseTree.insertSum b₁ b₂).map Nonplanar.mk :=
-        insertSum_permEquiv_right b₁ h₂
+        insertSum_perm_right b₁ h₂
       exact step1.trans step2)
 
 /-- Notation `T₁ ◁ T₂` for `Nonplanar.insertSum T₁ T₂`. Scoped to the

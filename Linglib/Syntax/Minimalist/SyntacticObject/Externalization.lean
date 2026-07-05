@@ -32,8 +32,8 @@ the book), c-selection computes the planar order.
 
 * `Minimalist.selLinPlanar_fst`: the paired fold's selection component is
   `selCheckPlanar`.
-* `Minimalist.linearizePlanar_permEquiv`: the yield descends to the nonplanar
-  quotient — by `RoseTree.fold_permEquiv`, since the algebra is
+* `Minimalist.linearizePlanar_perm`: the yield descends to the nonplanar
+  quotient — by `RoseTree.fold_perm`, since the algebra is
   permutation-invariant (`linCombine_perm`).
 
 ## Implementation notes
@@ -50,7 +50,7 @@ at `ConventionDir`).
 Linearization is the second component of one catamorphism `RoseTree.fold`, mirroring
 the book's switching "between these two descriptions without changing the notation":
 the head function as a head leaf (selection state) and as the ordered leaf sequence
-(yield). All `PermEquiv`-invariance is inherited from the algebra's
+(yield). All `Perm`-invariance is inherited from the algebra's
 permutation-invariance; there is no bespoke step induction.
 -/
 
@@ -184,14 +184,14 @@ theorem linearizePlanar_node_pair (side : ConventionDir) (l r : RoseTree SOLabel
 
 /-- `linearizePlanar side` descends to the quotient: the surface order is
     projection-determined, not representative-determined. -/
-theorem linearizePlanar_permEquiv (side : ConventionDir) {t s : RoseTree SOLabel}
-    (h : RoseTree.PermEquiv t s) : linearizePlanar side t = linearizePlanar side s :=
+theorem linearizePlanar_perm (side : ConventionDir) {t s : RoseTree SOLabel}
+    (h : RoseTree.Perm t s) : linearizePlanar side t = linearizePlanar side s :=
   congrArg Prod.snd
-    (RoseTree.fold_permEquiv (fun a _ _ h' => linCombine_perm side a h') h)
+    (RoseTree.fold_perm (fun a _ _ h' => linCombine_perm side a h') h)
 
 /-- Linearization lifted to the nonplanar carrier. -/
 def linearizeN (side : ConventionDir) : Nonplanar SOLabel → Option (List LIToken) :=
-  Nonplanar.lift (linearizePlanar side) (fun _ _ h => linearizePlanar_permEquiv side h)
+  Nonplanar.lift (linearizePlanar side) (fun _ _ h => linearizePlanar_perm side h)
 
 @[simp] theorem linearizeN_mk (side : ConventionDir) (p : RoseTree SOLabel) :
     linearizeN side (Nonplanar.mk p) = linearizePlanar side p := rfl

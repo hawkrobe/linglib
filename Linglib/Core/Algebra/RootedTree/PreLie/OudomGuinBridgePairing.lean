@@ -64,7 +64,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (Nonplanar α)]
 The cardinality preservation lemma `Nonplanar.insertionMultiset_card_eq`
 (every `F' ∈ NIM(A, B)` has `|F'| = |A|`) and its planar substrate
 `RoseTree.Pathed.insertionForest_length` now live in
-`Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion`. -/
+`Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar`. -/
 
 /-- `counit` of `insertionBasis A B` equals `if A = 0 ∧ B = 0 then 1 else 0`.
     For non-zero host A: every NIM output has cardinality |A| ≥ 1, so ε = 0.
