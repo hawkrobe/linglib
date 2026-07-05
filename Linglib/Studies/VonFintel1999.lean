@@ -1,4 +1,5 @@
 import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Semantics.Focus.Control
 import Linglib.Studies.KadmonLandman1993
 import Linglib.Studies.Lahiri1998
 import Linglib.Studies.Hoeksema1983
@@ -35,7 +36,9 @@ the paper.
 
 ## Coverage
 
-- §2 *only*: ex. 10, 11, 18 — formalized.
+- §2 *only*: ex. 10, 11, 18 — formalized; (15)'s individual-identity
+  exclusion reconciled with [rooth-1992]'s `onlyVia` over injective
+  individual-generated families (`onlyIndiv_eq_onlyVia`).
 - §2.2 *since* (Iatridou): exs. 20-22 — discussed; no `sinceFull` operator
   in the formal substrate yet.
 - §2.3 pseudo-anti-additivity (against Atlas): exs. 23-27 — discussed.
@@ -504,5 +507,59 @@ theorem bridge_hoeksema_gtOverSet_strawsonDE
     IsStrawsonDE (Core.Order.Comparison.gt.overSet μ) defined :=
   antitone_implies_strawsonDE _
     (Degree.gtOverSet_isAntiAdditive μ).antitone defined
+
+/-! ### (15) and Rooth's strong theory
+
+Von Fintel's (15) (p. 104) excludes by *individual* identity — "if
+defined, ⟦only⟧(x)(P) = True iff ¬∃y ≠ x: P(y) = True" — while
+[rooth-1992]'s strong theory (`Semantics.Focus.onlyVia`) excludes by
+*proposition* identity over a resolved alternative set. Over the
+individual-generated family the two coincide exactly when the family
+is injective: individuals with coinciding P-propositions are
+distinguished by (15) but invisible to `onlyVia`. World-constant
+propositions (the extensional `onlyFull`) are the degenerate case
+where injectivity fails wholesale, which is why the bridge is stated
+intensionally. -/
+
+section OnlyViaBridge
+
+variable {W ι : Type*}
+
+/-- (15)'s assertion, intensionalized: no individual distinct from the
+focus `x` has a true P-proposition. -/
+def onlyIndiv (P : ι → Set W) (x : ι) : Set W :=
+  {w | ∀ y, y ≠ x → w ∉ P y}
+
+/-- **(15) = strong-theory *only*** over an injective
+individual-generated alternative family: individual-identity exclusion
+coincides with `onlyVia`'s proposition-identity exclusion over
+`Set.range P`. -/
+theorem onlyIndiv_eq_onlyVia (P : ι → Set W) (x : ι)
+    (hP : Function.Injective P) :
+    onlyIndiv P x = Semantics.Focus.onlyVia (Set.range P) (P x) := by
+  ext w
+  simp only [onlyIndiv, Set.mem_setOf_eq, Semantics.Focus.mem_onlyVia]
+  constructor
+  · rintro h q ⟨y, rfl⟩ hw
+    by_cases hyx : y = x
+    · exact hyx ▸ rfl
+    · exact absurd hw (h y hyx)
+  · intro h y hyx hw
+    exact hyx (hP (h (P y) ⟨y, rfl⟩ hw))
+
+/-- Injectivity is essential: when two distinct individuals share one
+true proposition, (15) still excludes but `onlyVia` cannot see the
+distinction. -/
+theorem onlyIndiv_ne_onlyVia_of_collapse :
+    onlyIndiv (fun _ : Bool => (Set.univ : Set Bool)) true ≠
+      Semantics.Focus.onlyVia
+        (Set.range fun _ : Bool => (Set.univ : Set Bool)) Set.univ := by
+  intro h
+  have h0 : true ∈ onlyIndiv (fun _ : Bool => (Set.univ : Set Bool)) true := by
+    rw [h]
+    exact fun q hq _ => by obtain ⟨y, rfl⟩ := hq; rfl
+  exact h0 false (by decide) (Set.mem_univ true)
+
+end OnlyViaBridge
 
 end VonFintel1999
