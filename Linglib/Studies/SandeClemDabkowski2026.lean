@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
-import Linglib.Phonology.OptimalityTheory.Cophonology
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 
 /-!
@@ -47,8 +47,6 @@ than stipulating the table:
 * `guebiePICMode`: the paper's PIC stance, `PICStrength.linearizationBound` (§6.2).
 * `guebiePredicateDoubling`, `guebieFrontingDerivation`: schematic witnesses for
   §3's diagnosis that predicate fronting is narrow-syntactic.
-* `guebieVPCophonology`: the vP harmony domain as a `PhrasalCophonology`, with the
-  (46)/(47) subranking as payload.
 * `WolofRelClauseShape`: the Wolof relative-clause parallel (§7).
 
 ## Main results
@@ -78,9 +76,7 @@ Spell-out snapshots are `List String` terminal labels, as in
 [sande-2019]'s constraints ((46)/(47)) in [hansson-2014]'s Agreement-by-Projection
 framework and notes the "specific implementation of local harmony within the vP is
 not crucial"; `harmonyTableau` renders the ranking over a two-candidate output
-space, and the vP-boundedness is exhibited through
-[sande-jenks-inkelas-2020]-style `PhrasalCophonology` — a bridge of this
-formalization, not the paper's framing. §5's rejected purely-phonological
+space. §5's rejected purely-phonological
 approaches — autosegmental spreading ([clements-sezer-1982]), gestural
 ([gafos-1998]), Agreement by Correspondence ([rose-walker-2004]) — are formalized
 in `Studies/Sagey1986.lean`, `Studies/RoseWalker2004.lean`, and
@@ -100,7 +96,6 @@ open Minimalist (PICStrength)
 open Minimalist.Linearization (Consistent)
 open Constraints (Constraint)
 open OptimalityTheory
-open OptimalityTheory.Cophonology (PhrasalCophonology)
 
 /-! ### The ATR feature ([sande-clem-dabkowski-2026] (1))
 
@@ -359,31 +354,6 @@ def guebieFrontingDerivation : Derivation :=
 theorem guebie_VDIS_positive_instance :
     VerbDoublingIsSyntacticIn guebieFrontingDerivation guebieVerbLeaf := by
   decide
-
-/-! ### The vP harmony domain as a phrasal cophonology
-
-The vP-boundedness of the (46)/(47) subranking, exhibited through
-[sande-jenks-inkelas-2020]-style `PhrasalCophonology` — a bridge of this
-formalization, not the paper's framing. -/
-
-/-- Phase selector for the vP cophonology: matches v heads by outer category. -/
-def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
-  match s.getLIToken with
-  | some tok => tok.item.outerCat == .v
-  | none => false
-
-/-- The vP-cophonology bundle, with the (46)/(47) subranking as payload (list
-    order is ranking order). -/
-def guebieVPCophonology : PhrasalCophonology String HarmonyCand :=
-  { selector := guebieVPPhaseSelector
-    payload  := [("ATRHARM", atrHarm), ("IDENT-IO(ATR)", identIO)] }
-
-/-- The vP cophonology applies to a v head. -/
-theorem guebieVPCophonology_applies_to_v :
-    let vTok : LIToken := ⟨.simple .v [], 99⟩
-    let vHead : SyntacticObject := lexLeaf vTok
-    let vPhase : Minimalist.Phase := { tree := vHead, head := vTok }
-    guebieVPCophonology.appliesTo vPhase = true := by decide
 
 /-! ### The Wolof parallel (§7)
 
