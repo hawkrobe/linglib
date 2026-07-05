@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.Bias.Defs
-import Linglib.Studies.Stankova2026Typology
+import Linglib.Studies.Stankova2026
 
 /-!
 # Gärtner & Gyuris (2017): Delimiting the Space of Bias Profiles
@@ -559,7 +559,7 @@ theorem hungarianE_ppq_antibias :
 -- §13: Czech Integration — Derive G&G Profile from czechBiasProfile
 -- ============================================================================
 
-open Stankova2026Typology (CzechPQForm czechBiasProfile)
+open Stankova2026 (CzechPQForm czechBiasProfile)
 
 /-- Derive a G&G evidential bias choice for a Czech PQ form by checking
 which contextual evidence values admit that form (across any epistemic bias). -/

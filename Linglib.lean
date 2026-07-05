@@ -2674,7 +2674,6 @@ import Linglib.Studies.Spohn1988
 import Linglib.Studies.SprouseEtAl2012
 import Linglib.Studies.Stankova2026
 import Linglib.Studies.StankovaSimik2025
-import Linglib.Studies.Stankova2026Typology
 import Linglib.Studies.Stalnaker1975
 import Linglib.Studies.Stalnaker1981
 import Linglib.Studies.StankovaSimik2024.Data
