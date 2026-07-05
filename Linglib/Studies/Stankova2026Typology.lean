@@ -1,4 +1,4 @@
-import Linglib.Studies.Stakov2026
+import Linglib.Studies.Stankova2026
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Questions.Bias.Defs
 
@@ -57,7 +57,7 @@ def NegPosition.requiresFocus : NegPosition → Bool
 
 end Semantics.Negation.CzechNegation
 
-namespace Stakov2026Typology
+namespace Stankova2026Typology
 
 open Semantics.Negation.CzechNegation
 open Semantics.Questions.Bias
@@ -135,10 +135,10 @@ inductive VerbPosition where
   | nonV1
   deriving DecidableEq, Repr
 
-end Stakov2026Typology
+end Stankova2026Typology
 
 namespace Semantics.Negation.CzechNegation
-open Stakov2026Typology (VerbPosition)
+open Stankova2026Typology (VerbPosition)
 
 /-- Map negation positions to verb position.
 
@@ -151,10 +151,10 @@ def NegPosition.toVerbPosition : NegPosition → VerbPosition
 
 end Semantics.Negation.CzechNegation
 
-namespace Stakov2026Typology
+namespace Stankova2026Typology
 open Semantics.Negation.CzechNegation
 open Semantics.Questions.Bias
-open Stakov2026 (signature)
+open Stankova2026 (signature)
 
 /-- A Czech PQ negation example with its reading and Romero classification. -/
 structure CzechNegDatum where
@@ -414,10 +414,10 @@ def CzechPQForm.toPQForm : CzechPQForm → PQForm
 theorem interNPQ_is_hiNQ : CzechPQForm.interNPQ.toPQForm = .HiNQ := rfl
 theorem declNPQ_is_loNQ : CzechPQForm.declNPQ.toPQForm = .LoNQ := rfl
 
-end Stakov2026Typology
+end Stankova2026Typology
 
 namespace Semantics.Negation.CzechNegation
-open Stakov2026Typology (CzechPQForm)
+open Stankova2026Typology (CzechPQForm)
 
 /-- Map negation positions to Czech PQ forms.
 
@@ -430,7 +430,7 @@ def NegPosition.toCzechPQForm : NegPosition → CzechPQForm
 
 end Semantics.Negation.CzechNegation
 
-namespace Stakov2026Typology
+namespace Stankova2026Typology
 open Semantics.Negation.CzechNegation
 open Semantics.Questions.Bias
 
@@ -691,4 +691,4 @@ theorem explanationSeeking_most_common :
     interNPQDistribution .explanationSeeking >
     interNPQDistribution .belief := by decide
 
-end Stakov2026Typology
+end Stankova2026Typology
