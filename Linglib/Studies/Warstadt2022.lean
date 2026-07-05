@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
+import Linglib.Pragmatics.RSA.Silence
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -26,6 +27,7 @@ sprinter") triggers stronger accommodation than genus-level ("not runner").
 namespace Warstadt2022
 
 open Semantics.Presupposition
+open RSA (WithSilence liftMeaning)
 
 
 /-! ## Green Card Example (Table 1) -/
@@ -47,25 +49,24 @@ instance : Fintype GCWorld where
   elems := {.usCitizen, .gcHolder, .nonUS}
   complete := λ w => by cases w <;> simp
 
-/-- Utterances for the green card scenario.
+/-- Assertable content for the green card scenario (silence is added
+separately via `RSA.WithSilence`).
 
 - `us` / `notUS`: genus-level descriptions
-- `greenCard` / `notGreenCard`: species-level descriptions
-- `silence`: null utterance -/
-inductive GCUtterance where
+- `greenCard` / `notGreenCard`: species-level descriptions -/
+inductive GCAssertion where
   | us
   | notUS
   | greenCard
   | notGreenCard
-  | silence
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Utterances for the green card scenario: `none` is the null utterance,
+`some a` a paper-utterance. -/
+abbrev GCUtterance := WithSilence GCAssertion
 
 def allGCUtterances : List GCUtterance :=
-  [.us, .notUS, .greenCard, .notGreenCard, .silence]
-
-instance : Fintype GCUtterance where
-  elems := {.us, .notUS, .greenCard, .notGreenCard, .silence}
-  complete := λ u => by cases u <;> simp
+  [none, some .us, some .notUS, some .greenCard, some .notGreenCard]
 
 /-- QUDs for the green card scenario.
 
@@ -83,7 +84,7 @@ instance : Fintype GCQUD where
   complete := λ q => by cases q <;> simp
 
 /-- Truth conditions from Table 1. All negations are Boolean. -/
-def gcMeaning : GCUtterance → GCWorld → Bool
+def gcAssertionMeaning : GCAssertion → GCWorld → Bool
   | .us, .usCitizen => true
   | .us, _ => false
   | .notUS, .usCitizen => false
@@ -92,7 +93,9 @@ def gcMeaning : GCUtterance → GCWorld → Bool
   | .greenCard, _ => false
   | .notGreenCard, .gcHolder => false
   | .notGreenCard, _ => true
-  | .silence, _ => true
+
+/-- Utterance-level meaning: silence is universally true. -/
+def gcMeaning : GCUtterance → GCWorld → Bool := liftMeaning gcAssertionMeaning
 
 /-- QUD answer function: maps each QUD to a world's answer. -/
 def gcQUDAnswer : GCQUD → GCWorld → Bool
@@ -119,17 +122,17 @@ def greenCardPartialProp : PartialProp GCWorld where
 
 /-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem gcMeaning_greenCard_eq_prprop (w : GCWorld) :
-    (gcMeaning .greenCard w = true) ↔ (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) := by
-  cases w <;> simp [gcMeaning, greenCardPartialProp]
+    (gcMeaning (some .greenCard) w = true) ↔ (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) := by
+  cases w <;> simp [gcMeaning, gcAssertionMeaning, greenCardPartialProp]
 
 /-- "not green card" is Boolean negation of "green card". -/
 theorem gcMeaning_notGreenCard_eq_neg (w : GCWorld) :
-    gcMeaning .notGreenCard w = !gcMeaning .greenCard w := by
+    gcMeaning (some .notGreenCard) w = !gcMeaning (some .greenCard) w := by
   cases w <;> rfl
 
 /-- "not US" is Boolean negation of "US". -/
 theorem gcMeaning_notUS_eq_neg (w : GCWorld) :
-    gcMeaning .notUS w = !gcMeaning .us w := by
+    gcMeaning (some .notUS) w = !gcMeaning (some .us) w := by
   cases w <;> rfl
 
 /-- needVisa QUD partition: {usCitizen, gcHolder} (no) vs {nonUS} (yes). -/
@@ -167,33 +170,32 @@ instance : Fintype FGSWorld where
   elems := {.olympicSprinter, .runner, .otherAthlete, .nonAthlete}
   complete := λ w => by cases w <;> simp
 
-/-- Utterances for the family-genus-species scenario.
+/-- Assertable content for the family-genus-species scenario (silence is
+added separately via `RSA.WithSilence`).
 
-Seven utterances: three positive descriptions at each taxonomic level,
-their Boolean negations, plus silence. -/
-inductive FGSUtterance where
+Six utterances: three positive descriptions at each taxonomic level plus
+their Boolean negations. -/
+inductive FGSAssertion where
   | olympicSprinter
   | notOlympicSprinter
   | runner
   | notRunner
   | athlete
   | notAthlete
-  | silence
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Utterances for the family-genus-species scenario: `none` is the null
+utterance, `some a` a paper-utterance. -/
+abbrev FGSUtterance := WithSilence FGSAssertion
 
 def allFGSUtterances : List FGSUtterance :=
-  [.olympicSprinter, .notOlympicSprinter, .runner, .notRunner,
-   .athlete, .notAthlete, .silence]
-
-instance : Fintype FGSUtterance where
-  elems := {.olympicSprinter, .notOlympicSprinter, .runner, .notRunner,
-            .athlete, .notAthlete, .silence}
-  complete := λ u => by cases u <;> simp
+  [none, some .olympicSprinter, some .notOlympicSprinter, some .runner,
+   some .notRunner, some .athlete, some .notAthlete]
 
 /-- Truth conditions from Table 2.
 
 Respects the taxonomic hierarchy: Olympic sprinter ⊂ runner ⊂ athlete. -/
-def fgsMeaning : FGSUtterance → FGSWorld → Bool
+def fgsAssertionMeaning : FGSAssertion → FGSWorld → Bool
   | .olympicSprinter, .olympicSprinter => true
   | .olympicSprinter, _ => false
   | .notOlympicSprinter, .olympicSprinter => false
@@ -208,7 +210,9 @@ def fgsMeaning : FGSUtterance → FGSWorld → Bool
   | .athlete, _ => true
   | .notAthlete, .nonAthlete => true
   | .notAthlete, _ => false
-  | .silence, _ => true
+
+/-- Utterance-level meaning: silence is universally true. -/
+def fgsMeaning : FGSUtterance → FGSWorld → Bool := liftMeaning fgsAssertionMeaning
 
 /-- Non-uniform world prior from Table 2 (percentages). -/
 def fgsWorldPrior : FGSWorld → ℚ
@@ -224,32 +228,32 @@ def fgsQUDProject (w1 w2 : FGSWorld) : Bool := w1 == w2
 
 /-- Olympic sprinter entails runner. -/
 theorem olympicSprinter_entails_runner (w : FGSWorld) :
-    fgsMeaning .olympicSprinter w = true → fgsMeaning .runner w = true := by
-  cases w <;> simp [fgsMeaning]
+    fgsMeaning (some .olympicSprinter) w = true → fgsMeaning (some .runner) w = true := by
+  cases w <;> simp [fgsMeaning, fgsAssertionMeaning]
 
 /-- Runner entails athlete. -/
 theorem runner_entails_athlete (w : FGSWorld) :
-    fgsMeaning .runner w = true → fgsMeaning .athlete w = true := by
-  cases w <;> simp [fgsMeaning]
+    fgsMeaning (some .runner) w = true → fgsMeaning (some .athlete) w = true := by
+  cases w <;> simp [fgsMeaning, fgsAssertionMeaning]
 
 /-- Olympic sprinter entails athlete (transitivity). -/
 theorem olympicSprinter_entails_athlete (w : FGSWorld) :
-    fgsMeaning .olympicSprinter w = true → fgsMeaning .athlete w = true := by
-  cases w <;> simp [fgsMeaning]
+    fgsMeaning (some .olympicSprinter) w = true → fgsMeaning (some .athlete) w = true := by
+  cases w <;> simp [fgsMeaning, fgsAssertionMeaning]
 
 /-- Boolean negation: not Olympic sprinter = ¬ Olympic sprinter. -/
 theorem fgsMeaning_notOS_eq_neg (w : FGSWorld) :
-    fgsMeaning .notOlympicSprinter w = !fgsMeaning .olympicSprinter w := by
+    fgsMeaning (some .notOlympicSprinter) w = !fgsMeaning (some .olympicSprinter) w := by
   cases w <;> rfl
 
 /-- Boolean negation: not runner = ¬ runner. -/
 theorem fgsMeaning_notRunner_eq_neg (w : FGSWorld) :
-    fgsMeaning .notRunner w = !fgsMeaning .runner w := by
+    fgsMeaning (some .notRunner) w = !fgsMeaning (some .runner) w := by
   cases w <;> rfl
 
 /-- Boolean negation: not athlete = ¬ athlete. -/
 theorem fgsMeaning_notAthlete_eq_neg (w : FGSWorld) :
-    fgsMeaning .notAthlete w = !fgsMeaning .athlete w := by
+    fgsMeaning (some .notAthlete) w = !fgsMeaning (some .athlete) w := by
   cases w <;> rfl
 
 /-- FGS priors sum to 1. -/
@@ -332,13 +336,13 @@ def fgsQUDProjectBridge : FGSQUD → FGSWorld → FGSWorld → Bool
 
 /-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem greenCard_meaning_from_prprop (w : GCWorld) :
-    (gcMeaning .greenCard w = true) ↔
+    (gcMeaning (some .greenCard) w = true) ↔
     (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) :=
   gcMeaning_greenCard_eq_prprop w
 
 /-- "not green card" is Boolean negation — no presupposition in the semantics. -/
 theorem notGreenCard_is_boolean_negation (w : GCWorld) :
-    gcMeaning .notGreenCard w = !gcMeaning .greenCard w :=
+    gcMeaning (some .notGreenCard) w = !gcMeaning (some .greenCard) w :=
   gcMeaning_notGreenCard_eq_neg w
 
 end Warstadt2022
