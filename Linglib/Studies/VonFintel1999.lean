@@ -6,42 +6,45 @@ import Linglib.Studies.Lahiri1998
 import Linglib.Studies.Hoeksema1983
 
 /-!
-# [von-fintel-1999] — Strawson entailment as a rescue for Fauconnier-Ladusaw
+# Strawson entailment and NPI licensing (von Fintel 1999)
 
-von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
-Dependency. Journal of Semantics 16(2), 97–148.
+This file indexes [von-fintel-1999]'s defense of the Fauconnier-Ladusaw
+analysis of NPI licensing: four contexts that license NPIs without being
+classically downward entailing — *only*, adversative attitudes,
+superlatives, and conditional antecedents — are all Strawson-DE (his
+Definition 14). Each theorem is named after the paper's example number
+and discharged by specializing the corresponding substrate theorem from
+`Semantics/Entailment/StrawsonEntailment.lean`. The NPI stimuli are typed
+rows in `Data/Examples/VonFintel1999.json` (`Examples.ex10`, …); the
+inference schemata quoted in section docstrings are what the theorems
+formalize.
 
-The paper defends the Fauconnier-Ladusaw analysis of NPI licensing — NPIs
-are licensed in DE positions — against four arenas where NPIs are licensed
-although the host context is not classically DE: *only*, the adversative
-attitude predicates, superlatives, and conditional antecedents. The key
-move weakens classical DE to **Strawson-DE** (his Definition 14): the
-inference `f(q) ⊨ f(p)` need only hold assuming the conclusion's
-presupposition. All four contexts come out Strawson-DE.
+## Main results
 
-The Strawson-DE substrate lives in
-`Semantics/Entailment/StrawsonEntailment.lean`; this file is the
-paper-citation index — each theorem is named after the paper's example
-number(s) and discharged by specializing the corresponding substrate
-theorem. The NPI stimuli themselves are typed rows in
-`Data/Examples/VonFintel1999.json` (`Examples.ex10`, …); the inference
-schemata quoted in section docstrings are what the theorems formalize.
+* `ex11_only_not_DE`, `ex18_only_strawsonDE` — the §2 separation: *only*
+  is Strawson-DE but not classically DE.
+* `ex22_since_strawsonDE` — §2.2: *since* (Iatridou's exs. 20-22).
+* `ex30_sorry_not_DE`, `ex28b_sorry_strawsonDE` — the §3 adversative
+  separation.
+* `ex45_want_isUE`, `ex50_gladKL_isUE`, `ex52_gladVF_isUE` — §§3.2-3.3:
+  *want* and *glad* are upward entailing, so NPIs are not licensed.
+* `ex72_conditional_antecedent_DE`,
+  `conditional_antecedent_strawsonDE_under_restrictor` — §4.1, the
+  restrictor analysis.
+* `ex77_superlative_strawsonDE` — §4.2 superlatives.
+* `onlyIndiv_eq_onlyVia` — (15)'s individual-identity exclusion equals
+  [rooth-1992]'s `onlyVia` over injective individual-generated families.
+* `bridge_lahiri_glad_settle_overgeneration`,
+  `bridge_hoeksema_gtOverSet_strawsonDE` — cross-framework bridges.
 
-## Coverage
+Discussed without formalization: §2.3 pseudo-anti-additivity
+(exs. 23-27), ex. 31, and the §3.4 shifting-context material
+(exs. 60-68).
 
-- §2 *only*: exs. 10, 11, 18 — formalized; (15)'s individual-identity
-  exclusion reconciled with [rooth-1992]'s `onlyVia` over injective
-  individual-generated families (`onlyIndiv_eq_onlyVia`).
-- §2.2 *since* (Iatridou): exs. 20-22 — formalized via `sinceFull`.
-- §2.3 pseudo-anti-additivity (against Atlas): exs. 23-27 — discussed.
-- §3 *sorry/surprised/regret*: exs. 28-30 — formalized via `sorryFull`;
-  ex. 31 (Kadmon-Landman's coherence challenge) discussed.
-- §3.2 *want* (Asher/Heim): eq. 45 — formalized via `wantFull`.
-- §3.3 *glad* asymmetry: exs. 50, 52 — formalized.
-- §3.4 shifting contexts (exs. 60-65) and focus-*only* (exs. 66-68) —
-  discussed.
-- §4.1 conditional antecedents: exs. 70-73 — restrictor side formalized.
-- §4.2 superlatives: exs. 75-77 — formalized via `superlativeAssert`.
+## References
+
+* [von-fintel-1999], [kadmon-landman-1993], [lahiri-1998],
+  [hoeksema-1983], [rooth-1992], [atlas-1996].
 -/
 
 namespace VonFintel1999
