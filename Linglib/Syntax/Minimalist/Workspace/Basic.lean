@@ -48,7 +48,7 @@ on this carrier (the P1 spike, now as carrier tests).
 
 namespace Minimalist
 
-open RootedTree RootedTree.ConnesKreimer
+open RootedTree RootedTree.ConnesKreimer SyntacticObject
 
 /-! ### Workspaces (MCB Def 1.2.1)
 
@@ -71,6 +71,8 @@ abbrev Workspace : Type := Forest SyntacticObject
     that **replaces the legacy `⊕ Nat` trace index**. -/
 def Workspace.chainMultiplicity (S : SyntacticObject) (W : Workspace) : Nat := W.count S
 
+namespace SyntacticObject
+
 /-! ### External Merge: bridge to the algebra (Lemma 1.4.1) -/
 
 /-- **External Merge ↔ algebra** ([marcolli-chomsky-berwick-2025] Lemma 1.4.1,
@@ -78,11 +80,11 @@ def Workspace.chainMultiplicity (S : SyntacticObject) (W : Workspace) : Nat := W
     `{S, S'}` yields the singleton workspace of the carrier Merge `SyntacticObject.merge S S'`.
     The root label is the **bare** `Sum.inr ()` — the faithful departure from the
     head-decorated legacy bridge. -/
-theorem SyntacticObject.merge_toForest (S S' : SyntacticObject) :
+theorem merge_toForest (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) (Sum.inr ()) S.val S'.val
         (of' ({S.val, S'.val} : Forest (Nonplanar SOLabel)))
-      = of' (R := ℤ) ({(SyntacticObject.merge S S').val} : Forest (Nonplanar SOLabel)) := by
-  rw [Merge.mergeOp_pair, SyntacticObject.merge_val]
+      = of' (R := ℤ) ({(merge S S').val} : Forest (Nonplanar SOLabel)) := by
+  rw [Merge.mergeOp_pair, merge_val]
 
 /-! ### Internal Merge as composition (MCB Prop 1.4.2) -/
 
@@ -92,7 +94,7 @@ theorem SyntacticObject.merge_toForest (S S' : SyntacticObject) :
     composition `mergeOp (inr ()) ∘ mergeOpUnit mover` over `{T}` yields the singleton
     workspace of `SyntacticObject.intMerge mover remainder`. This is `mergeOp_im_composition`
     transported to the carrier with the `IsSO`-carrying result. -/
-theorem SyntacticObject.intMerge_toForest (mover remainder T : SyntacticObject)
+theorem intMerge_toForest (mover remainder T : SyntacticObject)
     (p0 : Forest (Nonplanar SOLabel) × Nonplanar SOLabel)
     (h_filter : (cutSummandsN T.val).filter
         (fun p => p.1 = ({mover.val} : Forest (Nonplanar SOLabel))) = {p0})
@@ -102,9 +104,11 @@ theorem SyntacticObject.intMerge_toForest (mover remainder T : SyntacticObject)
         (Merge.mergeOpUnit (R := ℤ) mover.val
           (of' ({T.val} : Forest (Nonplanar SOLabel))))
       = of' (R := ℤ)
-          ({(SyntacticObject.intMerge mover remainder).val} : Forest (Nonplanar SOLabel)) := by
+          ({(intMerge mover remainder).val} : Forest (Nonplanar SOLabel)) := by
   rw [Merge.mergeOp_im_composition (Sum.inr ()) mover.val T.val remainder.val
-        p0 h_filter h_remainder hT, SyntacticObject.intMerge_val]
+        p0 h_filter h_remainder hT, intMerge_val]
+
+end SyntacticObject
 
 /-! ### `decide` demonstrations (the P1 computability spike, as carrier tests)
 
@@ -116,10 +120,10 @@ noncomputable; ill-formed shapes are rejected. -/
 private def demoTok : LIToken := mkTraceToken 0
 
 /-- A lexical leaf is well-formed. -/
-example : IsSO (SyntacticObject.lexLeaf demoTok).val := by decide
+example : IsSO (lexLeaf demoTok).val := by decide
 
 /-- The bare trace leaf is well-formed. -/
-example : IsSO SyntacticObject.traceLeaf.val := by decide
+example : IsSO traceLeaf.val := by decide
 
 /-- An IM-result-shaped tree — bare binary node over a lexical leaf and a bare
     trace — is well-formed (built directly, no Merge operator). -/
@@ -139,7 +143,6 @@ example :
 
 /-- Workspace chain identity is decidable: two isomorphic components ⇒ chain of 2. -/
 example : Workspace.chainMultiplicity SyntacticObject.traceLeaf
-    {SyntacticObject.traceLeaf, SyntacticObject.traceLeaf} = 2 := by
-  decide
+    {SyntacticObject.traceLeaf, SyntacticObject.traceLeaf} = 2 := by decide
 
 end Minimalist

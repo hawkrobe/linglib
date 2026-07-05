@@ -65,7 +65,7 @@ in the "Applicative diagnostics" section below.
 
 namespace Pylkkanen2008
 
-open Minimalist
+open Minimalist SyntacticObject
 open RootedTree
 
 /-! ### Voice projection (relocated from Minimalist/VoiceProjection.lean)
@@ -350,16 +350,16 @@ theorem inapplicable_with_fails_classifies_low :
 -- § 1: Lexical Items
 -- ============================================================================
 
-def voice_ag_t  := SyntacticObject.mkLeafPhon .Voice [.V]    "Voice[AG]"  400
-def appl_low_t  := SyntacticObject.mkLeafPhon .Appl  [.D]    "Appl[LOW]"  402
-def appl_high_t := SyntacticObject.mkLeafPhon .Appl  [.V]    "Appl[HI]"   403
-def V_sent_t    := SyntacticObject.mkLeafPhon .V     [.Appl] "sent"        404
-def V_eat_t     := SyntacticObject.mkLeafPhon .V     [.D]    "eat"         405
-def DP_john_t   := SyntacticObject.mkLeafPhon .D     []      "John"        406
-def DP_mary_t   := SyntacticObject.mkLeafPhon .D     []      "Mary"        407
-def DP_letter_t := SyntacticObject.mkLeafPhon .D     []      "a letter"    408
-def DP_wife_t   := SyntacticObject.mkLeafPhon .D     []      "wife"        409
-def DP_food_t   := SyntacticObject.mkLeafPhon .D     []      "food"        410
+def voice_ag_t  := mkLeafPhon .Voice [.V]    "Voice[AG]"  400
+def appl_low_t  := mkLeafPhon .Appl  [.D]    "Appl[LOW]"  402
+def appl_high_t := mkLeafPhon .Appl  [.V]    "Appl[HI]"   403
+def V_sent_t    := mkLeafPhon .V     [.Appl] "sent"        404
+def V_eat_t     := mkLeafPhon .V     [.D]    "eat"         405
+def DP_john_t   := mkLeafPhon .D     []      "John"        406
+def DP_mary_t   := mkLeafPhon .D     []      "Mary"        407
+def DP_letter_t := mkLeafPhon .D     []      "a letter"    408
+def DP_wife_t   := mkLeafPhon .D     []      "wife"        409
+def DP_food_t   := mkLeafPhon .D     []      "food"        410
 
 /-! Planar leaf tokens, used to build the concrete trees the c-command
     theorems reason over (Merge `SyntacticObject.node` is noncomputable; trees are
@@ -390,13 +390,12 @@ private def t_DP_food   : LIToken := ⟨.simple .D [] (phonForm := "food"), 410�
     asymmetry that IO asymmetrically c-commands DO. Built planar-first
     so the c-command theorems `decide`. -/
 def ditransitiveTree : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_john)
-      (SyntacticObject.nodeP (SyntacticObject.leafP t_voice_ag)
-        (SyntacticObject.nodeP (SyntacticObject.leafP t_V_sent)
-          (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_mary)
-            (SyntacticObject.nodeP (SyntacticObject.leafP t_appl_low)
-              (SyntacticObject.leafP t_DP_letter))))))
+  ofPlanar
+    (nodeP (leafP t_DP_john)
+      (nodeP (leafP t_voice_ag)
+        (nodeP (leafP t_V_sent)
+          (nodeP (leafP t_DP_mary)
+            (nodeP (leafP t_appl_low) (leafP t_DP_letter))))))
 
 /-- High applicative benefactive (Chaga pattern): "he ate food for wife"
 
@@ -407,13 +406,12 @@ def ditransitiveTree : SyntacticObject :=
     theme). High Appl is attested in Bantu languages (Chaga, Luganda,
     Venda) and Albanian, but NOT in English. -/
 def benefactiveTree : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_john)
-      (SyntacticObject.nodeP (SyntacticObject.leafP t_voice_ag)
-        (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_wife)
-          (SyntacticObject.nodeP (SyntacticObject.leafP t_appl_high)
-            (SyntacticObject.nodeP (SyntacticObject.leafP t_V_eat)
-              (SyntacticObject.leafP t_DP_food))))))
+  ofPlanar
+    (nodeP (leafP t_DP_john)
+      (nodeP (leafP t_voice_ag)
+        (nodeP (leafP t_DP_wife)
+          (nodeP (leafP t_appl_high)
+            (nodeP (leafP t_V_eat) (leafP t_DP_food))))))
 
 -- ============================================================================
 -- § 3: C-command Predictions
@@ -423,40 +421,40 @@ def benefactiveTree : SyntacticObject :=
 
 /-- Agent c-commands goal. -/
 theorem ditransitive_agent_ccommands_goal :
-    SyntacticObject.cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by decide
+    cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by decide
 
 /-- Agent c-commands theme. -/
 theorem ditransitive_agent_ccommands_theme :
-    SyntacticObject.cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by decide
+    cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by decide
 
 /-- Goal c-commands theme — the [barss-lasnik-1986] asymmetry
     derived structurally from V selecting ApplP. -/
 theorem ditransitive_goal_ccommands_theme :
-    SyntacticObject.cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by decide
+    cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by decide
 
 /-- Theme does NOT c-command goal: the asymmetry is structural. -/
 theorem ditransitive_theme_not_ccommands_goal :
-    ¬ SyntacticObject.cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by decide
+    ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by decide
 
 -- Benefactive (high Appl): benefactive > theme
 
 /-- Benefactive c-commands theme. -/
 theorem benefactive_benef_ccommands_theme :
-    SyntacticObject.cCommandsIn benefactiveTree DP_wife_t DP_food_t := by decide
+    cCommandsIn benefactiveTree DP_wife_t DP_food_t := by decide
 
 /-- Theme does NOT c-command benefactive. -/
 theorem benefactive_theme_not_ccommands_benef :
-    ¬ SyntacticObject.cCommandsIn benefactiveTree DP_food_t DP_wife_t := by decide
+    ¬ cCommandsIn benefactiveTree DP_food_t DP_wife_t := by decide
 
 -- Appl head containment
 
 /-- Low applicative marks the ditransitive. -/
 theorem send_is_low_appl :
-    SyntacticObject.contains ditransitiveTree appl_low_t := by decide
+    contains ditransitiveTree appl_low_t := by decide
 
 /-- High applicative marks the benefactive. -/
 theorem eat_is_high_appl :
-    SyntacticObject.contains benefactiveTree appl_high_t := by decide
+    contains benefactiveTree appl_high_t := by decide
 
 -- ============================================================================
 -- § 4: ApplType Association
@@ -659,11 +657,11 @@ open Larson1988 in
     the `SyntacticObject` carrier.) -/
 theorem larson_modern_same_hierarchy :
     -- Larson's DOC: IO > DO
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
-    ¬ SyntacticObject.cCommandsIn docDativeShiftTree DP_letter DP_mary ∧
+    cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    ¬ cCommandsIn docDativeShiftTree DP_letter DP_mary ∧
     -- Modern Voice/Appl: goal > theme (same asymmetry)
-    SyntacticObject.cCommandsIn ditransitiveTree DP_mary_t DP_letter_t ∧
-    ¬ SyntacticObject.cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by
+    cCommandsIn ditransitiveTree DP_mary_t DP_letter_t ∧
+    ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §7. Voice as the head that introduces the external argument

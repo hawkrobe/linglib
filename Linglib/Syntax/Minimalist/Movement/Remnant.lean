@@ -89,6 +89,8 @@ their analysis. SCD 2026's predicate-fronting is remnant; Collins
 
 namespace Minimalist.Movement
 
+open SyntacticObject
+
 -- ============================================================================
 -- § 1: Remnant Fronting Record
 -- ============================================================================
@@ -119,7 +121,7 @@ structure RemnantFronting where
     heads' traces are spelled out (verb doubling vs. silent copy) — that
     is a per-construction choice. -/
 def properRemnant (rf : RemnantFronting) : Prop :=
-  ∀ h ∈ rf.evacuatedHeads, SyntacticObject.contains rf.frontedXP h
+  ∀ h ∈ rf.evacuatedHeads, contains rf.frontedXP h
 
 instance (rf : RemnantFronting) : Decidable (properRemnant rf) := by
   unfold properRemnant; infer_instance
@@ -151,7 +153,7 @@ structure PredicateDoubling extends RemnantFronting where
     sat originally inside the fronted XP. -/
 theorem predicateDoubling_verb_in_frontedXP
     (pd : PredicateDoubling) (h : properRemnant pd.toRemnantFronting) :
-    SyntacticObject.contains pd.frontedXP pd.verb :=
+    contains pd.frontedXP pd.verb :=
   h pd.verb pd.verb_evacuated
 
 end Minimalist.Movement

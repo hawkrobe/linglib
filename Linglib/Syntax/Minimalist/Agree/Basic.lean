@@ -43,7 +43,7 @@ This captures e.g. Mam's Infl probe, which has satisfaction condition
 
 namespace Minimalist
 
-open Features.Prominence
+open Features.Prominence SyntacticObject
 
 -- ============================================================================
 -- § 1: Extended Lexical Items with Features
@@ -84,7 +84,7 @@ structure AgreeRelation where
 
 /-- The probe c-commands the goal within a given tree -/
 def AgreeRelation.probeCommands (a : AgreeRelation) (root : SyntacticObject) : Prop :=
-  SyntacticObject.cCommandsIn root a.probe a.goal
+  cCommandsIn root a.probe a.goal
 
 /-- The goal has the relevant valued feature -/
 def AgreeRelation.goalHasFeature (a : AgreeRelation) : Bool :=
@@ -117,11 +117,10 @@ def validAgree (a : AgreeRelation) (root : SyntacticObject) : Prop :=
     `pred`-matching node c-commanded by `probe` c-commanding `goal`. -/
 def closestGoalB (root probe goal : SyntacticObject)
     (pred : SyntacticObject → Bool) : Bool :=
-  decide (SyntacticObject.cCommandsIn root probe goal) &&
+  decide (cCommandsIn root probe goal) &&
   pred goal &&
   (! @decide (∃ x ∈ root.subtrees,
-    x ≠ goal ∧ pred x = true ∧
-    SyntacticObject.cCommandsIn root probe x ∧ SyntacticObject.cCommandsIn root x goal)
+    x ≠ goal ∧ pred x = true ∧ cCommandsIn root probe x ∧ cCommandsIn root x goal)
     Multiset.decidableExistsMultiset)
 
 -- ============================================================================
@@ -130,14 +129,14 @@ def closestGoalB (root probe goal : SyntacticObject)
 
 /-- Per-vertex horizon predicate: leaf with category = horizonCat. -/
 private def isHorizonLeafFor (horizonCat : Cat) (n : SyntacticObject) : Prop :=
-  match SyntacticObject.getLIToken n with
+  match getLIToken n with
   | some tok => tok.item.outerCat = horizonCat
   | none => False
 
 instance (horizonCat : Cat) (n : SyntacticObject) :
     Decidable (isHorizonLeafFor horizonCat n) := by
   unfold isHorizonLeafFor
-  cases SyntacticObject.getLIToken n <;> infer_instance
+  cases getLIToken n <;> infer_instance
 
 /-- Is `target` behind a horizon of category `horizonCat` relative to
     `probe` in tree `root`?
@@ -161,9 +160,7 @@ instance (horizonCat : Cat) (n : SyntacticObject) :
 def behindHorizonB (root probe target : SyntacticObject)
     (horizonCat : Cat) : Bool :=
   @decide (∃ n ∈ root.subtrees,
-    isHorizonLeafFor horizonCat n ∧
-    SyntacticObject.cCommandsIn root n target ∧
-    SyntacticObject.cCommandsIn root probe n)
+    isHorizonLeafFor horizonCat n ∧ cCommandsIn root n target ∧ cCommandsIn root probe n)
     Multiset.decidableExistsMultiset
 
 -- ============================================================================

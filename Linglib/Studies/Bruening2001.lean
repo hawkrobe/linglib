@@ -68,7 +68,7 @@ This study uses it to connect DOC scope freezing to
 section Scope
 
 open ScopeTheory
-open Minimalist
+open Minimalist SyntacticObject
 
 -- Structural Positions
 
@@ -139,7 +139,7 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
     tree derivation. -/
 def superiorityFromTree (tree : SyntacticObject)
     (q1 q2 : SyntacticObject) : Bool :=
-  decide (SyntacticObject.asymCCommandsIn tree q1 q2)
+  decide (asymCCommandsIn tree q1 q2)
 
 -- Scope Economy ([fox-2000])
 
@@ -177,9 +177,9 @@ def economyBlocksQR (e : ScopeEconomy) : Bool :=
     in that domain is impenetrable by construction (`SyntacticObject.mem_phaseInterior`). -/
 theorem dp_phase_barrier_from_pic (φ : Phase) {goal : SyntacticObject}
     (hacc : goal ∈ φ.tree.Acc)
-    (hcc : φ.tree.cCommandsIn (SyntacticObject.lexLeaf φ.head) goal) :
+    (hcc : φ.tree.cCommandsIn (lexLeaf φ.head) goal) :
     φ.Impenetrable goal :=
-  SyntacticObject.mem_phaseInterior.mpr ⟨hacc, hcc⟩
+  mem_phaseInterior.mpr ⟨hacc, hcc⟩
 
 end Scope
 
@@ -480,7 +480,7 @@ end ScopeFreezing
 section MinimalistAnalysis
 
 open ScopeTheory
-open Minimalist
+open Minimalist SyntacticObject
 
 /-! Connects Minimalist QR / Scope Economy theory to the empirical
 scope-freezing data above. The central claim is Bruening's "QR obeys
@@ -617,13 +617,12 @@ def DP_letter_t : Minimalist.LIToken := ⟨.simple .D [] "a letter", 408⟩
     Spec-ApplP asymmetrically c-commands the theme (a letter) in the
     complement of Appl — the [barss-lasnik-1986] asymmetry, structural. -/
 def ditransitiveTree : Minimalist.SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP DP_john_t)
-      (SyntacticObject.nodeP (SyntacticObject.leafP voice_ag_t)
-        (SyntacticObject.nodeP (SyntacticObject.leafP V_sent_t)
-          (SyntacticObject.nodeP (SyntacticObject.leafP DP_mary_t)
-            (SyntacticObject.nodeP (SyntacticObject.leafP appl_low_t)
-              (SyntacticObject.leafP DP_letter_t))))))
+  ofPlanar
+    (nodeP (leafP DP_john_t)
+      (nodeP (leafP voice_ag_t)
+        (nodeP (leafP V_sent_t)
+          (nodeP (leafP DP_mary_t)
+            (nodeP (leafP appl_low_t) (leafP DP_letter_t))))))
 
 /-- DOC scope freezing config with the local low-Appl tree:
     superiority is derived from goal asymmetrically c-commanding theme
@@ -631,10 +630,10 @@ def ditransitiveTree : Minimalist.SyntacticObject :=
 def docScopeConfig : MinimalistScopeConfig :=
   { q1 := { quantifier := "every worker"
            , position := .specVP
-           , so := some (SyntacticObject.lexLeaf DP_mary_t) }
+           , so := some (lexLeaf DP_mary_t) }
   , q2 := { quantifier := "a paycheck"
            , position := .specVP
-           , so := some (SyntacticObject.lexLeaf DP_letter_t) }
+           , so := some (lexLeaf DP_letter_t) }
   , freezingContext := .doubleObject
   , tree := some ditransitiveTree }
 

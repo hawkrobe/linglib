@@ -61,6 +61,7 @@ open Semantics.Composition.Tree
 open Quantification.Quantifier
 open Quantification
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
+open Minimalist.SyntacticObject
 
 /-! ### Model and lexicon -/
 
@@ -332,7 +333,7 @@ The semantic type corresponding to a syntactic object.
 - Other SOs need lexical lookup
 -/
 def soSemanticType (so : Minimalist.SyntacticObject) : Option Ty :=
-  if Minimalist.SyntacticObject.isTrace so then some .e else none
+  if isTrace so then some .e else none
 
 /--
 Interpret a trace leaf in a syntactic object at a given index.
@@ -343,20 +344,19 @@ is not the trace leaf.
 -/
 def interpSOTrace {E : Type} (n : ℕ) (so : Minimalist.SyntacticObject) :
     Option (DenotG E Unit .e) :=
-  if Minimalist.SyntacticObject.isTrace so then some (interpTrace n) else none
+  if isTrace so then some (interpTrace n) else none
 
 /-- The trace leaf is recognized as type `e`. -/
 @[simp] theorem soSemanticType_traceLeaf :
-    soSemanticType Minimalist.SyntacticObject.traceLeaf = some .e := rfl
+    soSemanticType traceLeaf = some .e := rfl
 
 /-- A lexical leaf is not a trace, so it gets no carrier-level type. -/
 @[simp] theorem soSemanticType_lexLeaf (tok : Minimalist.LIToken) :
-    soSemanticType (Minimalist.SyntacticObject.lexLeaf tok) = none := by
-  have hne : ¬ Minimalist.SyntacticObject.isTrace (Minimalist.SyntacticObject.lexLeaf tok) := by
+    soSemanticType (lexLeaf tok) = none := by
+  have hne : ¬ isTrace (lexLeaf tok) := by
     intro h
-    have hg := congrArg Minimalist.SyntacticObject.getLIToken h
-    rw [Minimalist.SyntacticObject.getLIToken_lexLeaf,
-      Minimalist.SyntacticObject.getLIToken_traceLeaf] at hg
+    have hg := congrArg getLIToken h
+    rw [getLIToken_lexLeaf, getLIToken_traceLeaf] at hg
     exact Option.some_ne_none tok hg
   simp only [soSemanticType, if_neg hne]
 

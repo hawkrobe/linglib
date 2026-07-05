@@ -851,7 +851,7 @@ theorem tseltalan_case_locus :
 
 section AttractClosest
 
-open Minimalist
+open Minimalist SyntacticObject
 open RootedTree
 
 /-! ### Attract Closest on Concrete Trees
@@ -905,13 +905,13 @@ private def tPsm : LIToken := ⟨.simple .N [], 5⟩   -- Possessum (not D-beari
 private def tD₀  : LIToken := ⟨.simple .D [], 6⟩   -- D° head of specific nominal
 private def tAgt : LIToken := ⟨.simple .D [], 7⟩   -- Agent DP (D-bearing)
 
-private def T₀  : SyntacticObject := SyntacticObject.lexLeaf tT₀
-private def V₀  : SyntacticObject := SyntacticObject.lexLeaf tV₀
-private def v₀  : SyntacticObject := SyntacticObject.lexLeaf tv₀
-private def Psr : SyntacticObject := SyntacticObject.lexLeaf tPsr
-private def Psm : SyntacticObject := SyntacticObject.lexLeaf tPsm
-private def D₀  : SyntacticObject := SyntacticObject.lexLeaf tD₀
-private def Agt : SyntacticObject := SyntacticObject.lexLeaf tAgt
+private def T₀  : SyntacticObject := lexLeaf tT₀
+private def V₀  : SyntacticObject := lexLeaf tV₀
+private def v₀  : SyntacticObject := lexLeaf tv₀
+private def Psr : SyntacticObject := lexLeaf tPsr
+private def Psm : SyntacticObject := lexLeaf tPsm
+private def D₀  : SyntacticObject := lexLeaf tD₀
+private def Agt : SyntacticObject := lexLeaf tAgt
 
 /-! ### Clause Trees ([aissen-polian-2025] (9a-c))
 
@@ -924,37 +924,34 @@ private def Agt : SyntacticObject := SyntacticObject.lexLeaf tAgt
 Object is PossP (non-specific) or DP (specific). -/
 
 -- Non-specific possessive object: [PossP Psr Psm]
-private def possPp : RoseTree SOLabel :=
-  SyntacticObject.nodeP (SyntacticObject.leafP tPsr) (SyntacticObject.leafP tPsm)
+private def possPp : RoseTree SOLabel := nodeP (leafP tPsr) (leafP tPsm)
 
 -- Specific possessive object: [DP D° [PossP Psr Psm]]
-private def dpObjp : RoseTree SOLabel := SyntacticObject.nodeP (SyntacticObject.leafP tD₀) possPp
+private def dpObjp : RoseTree SOLabel := nodeP (leafP tD₀) possPp
 
 -- (9a) Unaccusative + non-specific: [TP T° [VP V° [PossP Psr Psm]]]
 private def treeUnaccPossP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tT₀)
-    (SyntacticObject.nodeP (SyntacticObject.leafP tV₀) possPp))
+  ofPlanar (nodeP (leafP tT₀) (nodeP (leafP tV₀) possPp))
 
 -- (9a') Unaccusative + specific: [TP T° [VP V° [DP D° [PossP Psr Psm]]]]
 private def treeUnaccDP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tT₀)
-    (SyntacticObject.nodeP (SyntacticObject.leafP tV₀) dpObjp))
+  ofPlanar (nodeP (leafP tT₀) (nodeP (leafP tV₀) dpObjp))
 
 -- (9b) Transitive + non-specific:
 -- [TP T° [vP Agt [v' v° [VP V° [PossP Psr Psm]]]]]
 private def treeTransPossP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tT₀)
-    (SyntacticObject.nodeP (SyntacticObject.leafP tAgt)
-      (SyntacticObject.nodeP (SyntacticObject.leafP tv₀)
-        (SyntacticObject.nodeP (SyntacticObject.leafP tV₀) possPp))))
+  ofPlanar (nodeP (leafP tT₀)
+    (nodeP (leafP tAgt)
+      (nodeP (leafP tv₀)
+        (nodeP (leafP tV₀) possPp))))
 
 -- (9b') Transitive + specific:
 -- [TP T° [vP Agt [v' v° [VP V° [DP D° [PossP Psr Psm]]]]]]
 private def treeTransDP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tT₀)
-    (SyntacticObject.nodeP (SyntacticObject.leafP tAgt)
-      (SyntacticObject.nodeP (SyntacticObject.leafP tv₀)
-        (SyntacticObject.nodeP (SyntacticObject.leafP tV₀) dpObjp))))
+  ofPlanar (nodeP (leafP tT₀)
+    (nodeP (leafP tAgt)
+      (nodeP (leafP tv₀)
+        (nodeP (leafP tV₀) dpObjp))))
 
 /-! ### Core Predictions
 
@@ -1045,25 +1042,23 @@ are now derived from tree geometry:
 -/
 
 private def tC₀ : LIToken := ⟨.simple .C [], 8⟩
-private def C₀ : SyntacticObject := SyntacticObject.lexLeaf tC₀
+private def C₀ : SyntacticObject := lexLeaf tC₀
 
 -- Planar bodies of the unaccusative trees, reused under the CP node.
 private def treeUnaccDPp : RoseTree SOLabel :=
-  SyntacticObject.nodeP (SyntacticObject.leafP tT₀)
-    (SyntacticObject.nodeP (SyntacticObject.leafP tV₀) dpObjp)
+  nodeP (leafP tT₀) (nodeP (leafP tV₀) dpObjp)
 private def treeUnaccPossPp : RoseTree SOLabel :=
-  SyntacticObject.nodeP (SyntacticObject.leafP tT₀)
-    (SyntacticObject.nodeP (SyntacticObject.leafP tV₀) possPp)
+  nodeP (leafP tT₀) (nodeP (leafP tV₀) possPp)
 
 -- CP wrapping unaccusative + DP:
 -- [CP C° [TP T° [VP V° [DP D° [PossP Psr Psm]]]]]
 private def treeCPUnaccDP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tC₀) treeUnaccDPp)
+  ofPlanar (nodeP (leafP tC₀) treeUnaccDPp)
 
 -- CP wrapping unaccusative + PossP:
 -- [CP C° [TP T° [VP V° [PossP Psr Psm]]]]
 private def treeCPUnaccPossP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tC₀) treeUnaccPossPp)
+  ofPlanar (nodeP (leafP tC₀) treeUnaccPossPp)
 
 /-! ### Core Predictions -/
 

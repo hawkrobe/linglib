@@ -16,7 +16,7 @@ English-derivation lexicon now lives).
 
 namespace Chomsky1995
 
-open Minimalist
+open Minimalist SyntacticObject
 open English.Predicates.Verbal (VerbEntry)
 open English.Nouns (NounEntry)
 
@@ -31,16 +31,15 @@ def verbToSelStack (v : VerbEntry) : SelStack :=
 
 /-- A `VerbEntry` as a `SyntacticObject` leaf (`Cat = .V`, selStack from `complementType`). -/
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
-  SyntacticObject.mkLeafPhon .V (verbToSelStack v) v.form3sg id
+  mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
 /-- A `NounEntry` as a leaf: proper names project as `.D`, common nouns as bare `.N`. -/
 def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
-  if n.proper then SyntacticObject.mkLeafPhon .D [] n.formSg id
-  else SyntacticObject.mkLeafPhon .N [] n.formSg id
+  if n.proper then mkLeafPhon .D [] n.formSg id else mkLeafPhon .N [] n.formSg id
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/
-def john_sees_mary : SyntacticObject.Derivation :=
+def john_sees_mary : Derivation :=
   { initial := verbToSO English.Predicates.Verbal.see 31
     steps   := [.emR (nounToSO English.Nouns.mary 11),
                 .emL (nounToSO English.Nouns.john 10)] }
