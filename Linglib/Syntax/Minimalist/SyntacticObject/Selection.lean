@@ -30,8 +30,8 @@ head functions it is partial: `none` at exocentric nodes.
 
 ## Main results
 
-* `Minimalist.selStep_comm`, `Minimalist.selSide_comm`: order-independence — the
-  formal content of Merge's unordered output.
+* `mul_comm` (via `CommMagma SelState`) and `Minimalist.selSide_comm`:
+  order-independence — the formal content of Merge's unordered output.
 * `Minimalist.SO.selHead_node`: endocentricity — a node's head is one of its
   daughters' heads.
 
@@ -57,10 +57,8 @@ abbrev SelState := Option (LIToken × List Cat)
 
 variable (x y : SelState)
 
-/-- The single selection decision at a binary node: which sister projects
-    (`true` = the left), the projecting head, and its residual stack — or `none`
-    at exocentric nodes (neither or both of the sisters selects the *saturated*
-    other). `selStep` and `selSide` are its projections. -/
+/-- The selection decision at a binary node — (which sister projects, head,
+    residual), `none` at exocentric nodes; `selStep`/`selSide` are its projections. -/
 def selCombine : SelState → SelState → Option (Bool × LIToken × List Cat)
   | some (ha, c :: rest), some (hb, []) =>
       if hb.item.outerCat = c then some (true, ha, rest) else none
@@ -68,12 +66,10 @@ def selCombine : SelState → SelState → Option (Bool × LIToken × List Cat)
       if ha.item.outerCat = c then some (false, hb, rest) else none
   | _, _ => none
 
-/-- Combine two sisters' selection states: the projecting head and residual stack
-    of the selection decision. Order-independent (`selStep_comm`). -/
+/-- The resulting selection state: the head-and-residual of the decision. -/
 def selStep (x y : SelState) : SelState := (selCombine x y).map (·.2)
 
-/-- Which daughter projects at a binary node: `some true` = the **left** sister is
-    the selector, `some false` = the **right**, `none` = exocentric. -/
+/-- Which daughter projects: `some true` = left, `some false` = right. -/
 def selSide (x y : SelState) : Option Bool := (selCombine x y).map (·.1)
 
 /-- Swapping the sisters flips the side and keeps the head and residual. -/
@@ -83,18 +79,19 @@ theorem selCombine_comm : selCombine x y = (selCombine y x).map fun p => (!p.1, 
     | rfl
     | (simp only [selCombine, Option.map]; split <;> rfl)
 
-theorem selStep_comm : selStep x y = selStep y x := by
-  simp only [selStep, selCombine_comm x y, Option.map_map]; rfl
-
+/-- S₂-equivariance: swap acts on the sisters, `Bool.not` on the side — the
+    coordinate form of MCB's per-vertex edge-marking (Lemma 1.13.4); the invariant
+    part of the decision is `selStep` (hence `mul_comm`). -/
 theorem selSide_comm : selSide x y = (selSide y x).map Bool.not := by
   simp only [selSide, selCombine_comm x y, Option.map_map]; rfl
 
-/-- `selStep` is the multiplication of a commutative magma on `SelState`: the
-    algebraic shape [marcolli-chomsky-berwick-2025] §1.13 assigns to Merge-local
-    head choice (Lemma 1.13.4's binary choice at each application of `M`). -/
+/-- `selStep` is a commutative magma multiplication ([marcolli-chomsky-berwick-2025]
+    §1.13's Merge-local head choice); commutativity projects from `selCombine_comm`. -/
 instance : Mul SelState := ⟨selStep⟩
 
-instance : CommMagma SelState := { mul_comm := selStep_comm }
+instance : CommMagma SelState where
+  mul_comm x y := show selStep x y = selStep y x by
+    simp only [selStep, selCombine_comm x y, Option.map_map]; rfl
 
 variable {x y}
 
@@ -162,7 +159,7 @@ private theorem selNode_big {l : List SelState} (h : 2 < l.length) :
   | [] | [_] | [_, _] => simp at h
 
 /-- `selNode` is invariant under permutation of the daughter states: only the
-    binary shape is order-sensitive, and there `selStep_comm` applies. -/
+    binary shape is order-sensitive, and there `mul_comm` applies. -/
 theorem selNode_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm l₂) :
     selNode a l₁ = selNode a l₂ := by
   cases a with
