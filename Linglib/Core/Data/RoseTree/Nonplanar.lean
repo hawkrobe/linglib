@@ -82,6 +82,17 @@ def lift {β : Sort*} (f : RoseTree α → β)
     (h : ∀ t s, RoseTree.Perm t s → f t = f s) (t : RoseTree α) :
     lift f h (mk t) = f t := rfl
 
+/-- Induction in `mk`-form (cf. `Multiset.induction_on`): goals display
+    `Nonplanar.mk` rather than `Quotient.mk`, so `mk`-stated lemmas rewrite. -/
+@[elab_as_elim] theorem inductionOn {motive : Nonplanar α → Prop} (t : Nonplanar α)
+    (mk : ∀ p, motive (mk p)) : motive t :=
+  Quotient.inductionOn t mk
+
+/-- Binary induction in `mk`-form. -/
+@[elab_as_elim] theorem inductionOn₂ {motive : Nonplanar α → Nonplanar α → Prop}
+    (t s : Nonplanar α) (mk : ∀ p q, motive (mk p) (mk q)) : motive t s :=
+  Quotient.inductionOn₂ t s mk
+
 /-! ### Smart leaf constructor + lifted counts
 
 A leaf in `Nonplanar α` is `mk (RoseTree.leaf a)`. `numNodes` is the

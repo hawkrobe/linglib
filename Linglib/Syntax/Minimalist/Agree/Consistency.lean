@@ -153,7 +153,7 @@ head-following toy model — deliberately the simplest illustration; §3.2.2 ref
     probe `Υ` applied to `T`'s §1.13 selection head (`selCheckN`); `inconsistent` (`−∞`) when `T`
     has no well-defined head (off the endocentric domain). -/
 def headProbeTree (Υ : LIToken → Consistency) (T : Nonplanar SOLabel) : Consistency :=
-  (selCheckN T).elim Consistency.inconsistent fun p => Υ p.1
+  (selCheckN T).head.elim Consistency.inconsistent Υ
 
 /-- `Υ_{s,h}` extended multiplicatively to forests (the semiring character of Lemma 3.2.5): a
     workspace is consistent iff each of its trees is. Mirrors `birkhoffMinusMonoidHom`. -/

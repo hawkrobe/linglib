@@ -111,6 +111,7 @@ import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
+import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
@@ -2900,6 +2901,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 import Linglib.Syntax.Minimalist.Linearization.Externalization
 import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
