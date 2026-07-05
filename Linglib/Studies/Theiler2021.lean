@@ -1,6 +1,7 @@
 import Linglib.Features.QParticleLayer
 import Linglib.Fragments.German.QuestionParticles
 import Linglib.Fragments.Mandarin.QuestionParticles
+import Linglib.Semantics.Questions.Bias.Defs
 
 /-!
 # Theiler (2021): *Denn* as a Highlighting-Sensitive Particle
@@ -31,25 +32,28 @@ open Features (QParticleLayer)
 /-- Theiler's layer assignment for *denn*. The `_` argument is unused
     because the layer is a theoretical overlay, not a computed property
     of the fragment entry. -/
-def denn_layer (_ : German.QuestionParticles.QParticleEntry) : QParticleLayer := .perspP
+def denn_layer (_ : Particle) : QParticleLayer := .perspP
 
 /-- *denn* sits at PerspP, the same layer as Mandarin *nandao*. -/
 theorem denn_is_PerspP :
     denn_layer German.QuestionParticles.denn = .perspP := rfl
 
-/-- *denn* imposes no bias requirement. Theiler's felicity condition is a
-    highlighting/precondition relation, not a contextual- or speaker-bias
-    requirement; this is the point on which *denn* differs from its
-    evidence-requiring Mandarin parallel *nandao*. -/
-theorem denn_imposes_no_bias :
-    German.QuestionParticles.denn.requiresContextualEvidence = none ∧
-    German.QuestionParticles.denn.requiresOriginalBias = none := ⟨rfl, rfl⟩
+/-- Theiler's bias classification of *denn*: no contextual-evidence and no
+    speaker-bias requirement — the felicity condition is a
+    highlighting/precondition relation instead. This is the point on which
+    *denn* differs from its evidence-requiring Mandarin parallel *nandao*
+    (whose classification lives in `Zheng2025`), and the point on which
+    Bayer/Obenauer-style evidence-sensitive analyses of *denn* would
+    disagree. -/
+def dennBias : Option Semantics.Questions.Bias.ContextualEvidence := none
 
-/-- Unlike Mandarin *nandao*, *denn* is compatible with *wh*-questions.
-    Both are PerspP-layer particles, but *denn* lacks *nandao*'s polar-only
-    restriction (and its contextual-evidence requirement). -/
+/-- Unlike Mandarin *nandao*, *denn* is licensed in constituent
+    questions. Both are PerspP-layer particles, but *denn* lacks
+    *nandao*'s polar-only restriction. Derived from the fragments'
+    distribution facets. -/
 theorem denn_wh_unlike_nandao :
-    German.QuestionParticles.denn.whOk = true ∧
-    Mandarin.QuestionParticles.nandao.whOk = false := ⟨rfl, rfl⟩
+    German.QuestionParticles.denn.LicensedIn .constituentInterrogative ∧
+    ¬ Mandarin.QuestionParticles.nandao.LicensedIn .constituentInterrogative := by
+  decide
 
 end Theiler2021

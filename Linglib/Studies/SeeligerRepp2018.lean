@@ -485,76 +485,69 @@ open German.PolarityMarking (dochPreUtterance)
 open Semantics.Polarity.Marking (Env)
 
 /-- Swedish *väl* is question-inducing — declaratives with *väl* are
-    questions, not assertions ([seeliger-repp-2018] §5.2). -/
+    questions, not assertions ([seeliger-repp-2018] §5.2). Derived from
+    the fragment's distribution facet. -/
 theorem val_creates_questions :
-    Swedish.QuestionParticles.val.questionInducing = true ∧
-    Swedish.QuestionParticles.val.declOk = false := ⟨rfl, rfl⟩
+    ¬ Swedish.QuestionParticles.val.LicensedIn .declarative := by decide
 
-/-- Swedish *väl* requires evidential bias — it is felicitous only in
-    contexts with contextual evidence for the proposition, matching the
-    evidential bias of PDQs and NRQs. -/
-theorem val_requires_evidence :
-    Swedish.QuestionParticles.val.requiresContextualEvidence = some .forP := rfl
+/-- S&R's bias classification of *väl* (formerly fragment fields; a
+    particle's bias requirement is the analysis, so it lives here):
+    felicitous only in contexts with contextual evidence for the
+    proposition, matching the evidential bias of PDQs and NRQs. -/
+def valContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
+  some .forP
 
-/-- Swedish *väl* signals epistemic uncertainty — the speaker suspects
-    p is true but is not certain. This corresponds to the [-positive]
-    epistemic bias of PDQs (speaker did not already assume p). -/
-theorem val_signals_uncertainty :
-    Swedish.QuestionParticles.val.signalsEpistemicUncertainty = true := rfl
+/-- S&R's classification, epistemic dimension: *väl* signals epistemic
+    *uncertainty* — the speaker suspects p but is not certain,
+    corresponding to the [-positive] epistemic bias of PDQs — so it
+    imposes no original-bias requirement (contrast `dochWohlOriginalBias`). -/
+def valOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10. German *doch wohl* marks RQs via REJECTQ
 -- ════════════════════════════════════════════════════════════════
 
-/-- German *doch wohl* requires both bias dimensions to be active,
-    consistent with the fact that RQs have both evidential and epistemic
-    presuppositions in the REJECTQ definition (eq. 40). Both presuppositions
-    must be satisfied for REJECTQ to be felicitous. -/
-theorem dochWohl_matches_rejectQ :
-    German.QuestionParticles.dochWohl.requiresContextualEvidence = some .forP ∧
-    German.QuestionParticles.dochWohl.requiresOriginalBias = some .againstP := ⟨rfl, rfl⟩
+/-- S&R's bias classification of *doch wohl*: both dimensions active —
+    contextual evidence for p (prototypical NRQ reading) and prior
+    speaker bias against p — consistent with RQs having both evidential
+    and epistemic presuppositions in the REJECTQ definition (eq. 40).
+    Shares its evidential value with `valContextualEvidence`; the
+    epistemic dimension is where German is stricter than Swedish. -/
+def dochWohlContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
+  some .forP
 
-/-- *doch wohl* is not usable in assertions — it marks questions. -/
+/-- See `dochWohlContextualEvidence`: prior speaker bias against p. -/
+def dochWohlOriginalBias : Option Semantics.Questions.Bias.OriginalBias :=
+  some .againstP
+
+/-- *doch wohl* is not usable in assertions — it marks questions.
+    Derived from the fragment's distribution facet. -/
 theorem dochWohl_not_assertion :
-    German.QuestionParticles.dochWohl.declOk = false := rfl
+    ¬ German.QuestionParticles.dochWohl.LicensedIn .declarative := by decide
 
-/-- *doch wohl* requires both bias dimensions to be "plus" (active bias),
-    matching the derived RQ property that RQ epistemic bias is always active.
-    This connects the Fragment entry to the theory-level theorem
-    `rq_epistemic_is_plus`. -/
-theorem dochWohl_both_biases_active :
-    dochWohl.requiresContextualEvidence = some .forP ∧
-    dochWohl.requiresOriginalBias = some .againstP ∧
+/-- The derived RQ property behind `dochWohlOriginalBias`: both DQ types
+    *doch wohl* can mark have active ("plus") epistemic bias — the
+    theory-level theorem `rq_epistemic_is_plus` in fragment-free form. -/
+theorem rq_bias_dimensions_active :
     DeclQuestionType.PRQ.biasProfile.epistemic.IsPlus ∧
-    DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨rfl, rfl, by decide, by decide⟩
+    DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11. Cross-linguistic comparison
 -- ════════════════════════════════════════════════════════════════
 
-/-- Both Swedish *väl* and German *doch wohl* require evidential bias.
-    This reflects the shared property that both languages require
-    contextual evidence for DQs/RQs. -/
+/-- Both Swedish *väl* and German *doch wohl* require evidential bias
+    (`valContextualEvidence` = `dochWohlContextualEvidence` = `some .forP`),
+    reflecting the shared property that both languages require contextual
+    evidence for DQs/RQs. Where they differ is the epistemic dimension:
+    *doch wohl* marks RQs (prior commitment against p,
+    `dochWohlOriginalBias`), *väl* marks DQs (uncertainty, no
+    original-bias requirement, `valOriginalBias`) — German is stricter.
+    German *denn* differs from both: it imposes no bias requirement at
+    all; its felicity condition is the highlighting/precondition relation
+    (see `Theiler2021`). -/
 theorem both_require_evidential :
-    Swedish.QuestionParticles.val.requiresContextualEvidence =
-    German.QuestionParticles.dochWohl.requiresContextualEvidence := rfl
-
-/-- German *doch wohl* additionally requires epistemic bias, while
-    Swedish *väl* signals epistemic *uncertainty* — a weaker condition.
-    This corresponds to the difference between RQs (epistemic commitment)
-    and DQs (epistemic non-commitment): *doch wohl* marks RQs (plus
-    epistemic), *väl* marks DQs (minus epistemic). -/
-theorem german_stricter_epistemic :
-    German.QuestionParticles.dochWohl.requiresOriginalBias = some .againstP ∧
-    Swedish.QuestionParticles.val.signalsEpistemicUncertainty = true := ⟨rfl, rfl⟩
-
-/-- German *denn* (flavoring particle) differs from *doch wohl* (RQ marker):
-    *denn* imposes no bias requirement — its felicity condition is the
-    highlighting/precondition relation (see `Theiler2021`), not bias —
-    whereas *doch wohl* requires both bias dimensions. -/
-theorem denn_vs_dochWohl :
-    German.QuestionParticles.denn.requiresOriginalBias = none ∧
-    German.QuestionParticles.dochWohl.requiresOriginalBias = some .againstP := ⟨rfl, rfl⟩
+    valContextualEvidence = dochWohlContextualEvidence := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 12. Non-compositional *doch wohl* and the dual role of *doch*
@@ -573,7 +566,7 @@ theorem dochWohl_is_complex :
     In RQs, *doch* has a "conflict" meaning — it signals surprise or
     realization — rather than the "reminding" function of assertive *doch*. -/
 theorem dochWohl_is_question_marker :
-    German.QuestionParticles.dochWohl.declOk = false := rfl
+    ¬ German.QuestionParticles.dochWohl.LicensedIn .declarative := by decide
 
 /-- German *doch* is formally ambiguous between two distinct roles:
     1. **Polarity-reversal *doch***: pre-utterance correction particle
@@ -594,7 +587,7 @@ theorem doch_dual_role :
     Env.correction ∈ dochPreUtterance.environments ∧
     Env.sentenceInternal ∉ dochPreUtterance.environments ∧
     -- The RQ *doch wohl* is a question marker (not usable in assertions)
-    dochWohl.declOk = false := ⟨rfl, by decide, by decide, rfl⟩
+    ¬ dochWohl.LicensedIn .declarative := ⟨rfl, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13. Romero-bridge applied to the Swedish/German data
@@ -619,8 +612,8 @@ open Features (QParticleLayer)
     [dayal-2025] cartography `[SAP [PerspP [CP ...]]]`. The `_`
     argument is unused: the layer is a theoretical overlay on the
     fragment particle, not a computed property of its lexical fields. -/
-def val_layer      (_ : Swedish.QuestionParticles.QParticleEntry) : QParticleLayer := .perspP
-def dochWohl_layer (_ : German.QuestionParticles.QParticleEntry)  : QParticleLayer := .perspP
+def val_layer      (_ : Particle) : QParticleLayer := .perspP
+def dochWohl_layer (_ : Particle) : QParticleLayer := .perspP
 
 /-- Both modal-particle complexes that mark RQs/DQs in this study sit
     at PerspP — the layer for biased, matrix-only question particles. -/

@@ -1,96 +1,43 @@
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Syntax.Particle.Basic
+
 /-!
 # Swedish Question Particles
 [seeliger-repp-2018]
 
-Lexical entries for Swedish modal particles that occur in declarative
-questions. The fragment commits only to theory-neutral lexical primitives;
-the left-peripheral layer assignment lives in
-`SeeligerRepp2018`.
-
-## Particles
-
-| Particle | Function | Position | DQ type |
-|----------|----------|----------|---------|
-| väl | question-inducing modal particle | clause-medial (after finite V) | PDQ / NRQ |
-
-Swedish *väl* signals that the speaker is not certain about the
-proposition but suspects it to be true, and expects confirmation from
-the addressee. It is functionally similar to German *wohl* but unlike
-*wohl*, *väl* can also occur in rejecting questions (NRQs) when
-combined with fronted negation.
+Lexical entry for Swedish *väl* as a `Particle` value. *väl* is a
+clause-medial modal particle that turns declaratives into questions:
+it signals speaker uncertainty and invites addressee confirmation.
+Functionally similar to German *wohl*, but unlike *wohl* it can occur in
+rejecting questions (NRQs) when combined with fronted negation. Its bias
+profile and the PDQ/NRQ analysis live in `SeeligerRepp2018`.
 
 Crucially, *väl* is distinct from *jo* (in `AnswerParticles.lean`):
-- *jo* is a polarity-reversing answer particle — it answers negative
-  questions with positive polarity
-- *väl* is a modal particle that turns declaratives into questions —
-  it marks speaker uncertainty and invites addressee confirmation
+*jo* is a polarity-reversing answer particle; *väl* marks declarative
+questions.
 
 ## Other Swedish particles
 
 Swedish also has clause-initial *visst* and *nog* which can mark PRQs,
 but these are not formalized here. [seeliger-repp-2018] note that
-*visst*/*nog* have no overlap in meaning with *väl* in clause-medial
+*visst* and *nog* have no overlap in meaning with *väl* in clause-medial
 position, and their clause-initial uses require further investigation.
-
-## Cross-Module Connections
-
-- `Swedish.AnswerParticles`: *jo* (polarity reversal, not DQ marking)
-- `German.QuestionParticles`: *doch wohl* (German RQ marker)
-- `Semantics.Questions.DeclarativeQuestions`: bias profile typology
 -/
 
 namespace Swedish.QuestionParticles
 
-open Semantics.Questions.Bias (ContextualEvidence)
-
-/-- A Swedish question/modal particle entry. -/
-structure QParticleEntry where
-  form : String
-  gloss : String
-  /-- Compatible with polar questions (declarative syntax)? -/
-  polarOk : Bool
-  /-- Compatible with declarative assertions? -/
-  declOk : Bool
-  /-- Compatible with wh-questions? -/
-  whOk : Bool
-  /-- Contextual-evidence bias the particle requires, or `none`. -/
-  requiresContextualEvidence : Option ContextualEvidence
-  /-- Does this particle signal epistemic uncertainty? -/
-  signalsEpistemicUncertainty : Bool
-  /-- Is this particle question-inducing? -/
-  questionInducing : Bool
-  deriving Repr, DecidableEq
-
-/-- *väl* — question-inducing modal particle.
-
-    [seeliger-repp-2018] SS 5.2: *väl* signals that the speaker is not
-    certain about the proposition but suspects it to be true. The speaker
-    expects a confirmation from the addressee. Declaratives with *väl*
-    cannot be assertions — they are declarative questions.
-
-    Positive *väl*-declaratives have the bias profile of PDQs:
-    evidential [+positive], epistemic [-positive].
-
-    When combined with fronted negation (*inte*), *väl* can mark NRQs:
-    "Inte kommer Peter?" / "Peter kommer väl inte?" -/
-def val : QParticleEntry where
+/-- *väl* — question-inducing modal particle, clause-medial (after the
+finite verb): declarative-syntax polar questions (recorded under
+`polarInterrogative` following the source schema's question-function
+reading), not plain assertions, not wh-questions. Epistemic-uncertainty
+signal and evidential bias live in `SeeligerRepp2018`. -/
+def val : Particle where
   form := "väl"
-  gloss := "MP (question-inducing uncertainty particle)"
-  polarOk := true
-  declOk := false  -- väl-declaratives are questions, not assertions
-  whOk := false
-  requiresContextualEvidence := some .forP
-  signalsEpistemicUncertainty := true
-  questionInducing := true
+  position := .clauseMedial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .optional
+      constituentInterrogative := some .excluded }
 
-def allQuestionParticles : List QParticleEntry := [val]
-
--- Verification theorems
-theorem val_form : val.form = "väl" := rfl
-theorem val_question_inducing : val.questionInducing = true := rfl
-theorem val_signals_uncertainty : val.signalsEpistemicUncertainty = true := rfl
-theorem val_requires_evidential : val.requiresContextualEvidence = some .forP := rfl
-theorem val_not_assertion : val.declOk = false := rfl
+def allQuestionParticles : List Particle := [val]
 
 end Swedish.QuestionParticles

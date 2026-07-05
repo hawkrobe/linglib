@@ -1,74 +1,43 @@
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Syntax.Particle.Basic
+
 /-!
 # Polish Question Particles
 [simik-2024]
 
-Lexical entries for Polish interrogative particles. The fragment
-commits only to theory-neutral lexical primitives; the left-peripheral
-layer assignment lives in `Simik2024`.
-
-## Particles
-
-| Particle | Gloss | Bias |
-|----------|-------|------|
-| czy | neutral PQ | none |
-| czyżby | RAZVE (mirative) | +evidential |
+Lexical entries for Polish interrogative particles as `Particle` values.
+Bias classifications (czyżby's evidential requirement) and layer
+assignments live in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `Simik2024.polish` (`Studies/Simik2024`): PQ strategy profile (clause-initial czy obligatory)
+- `Simik2024.polish` (`Studies/Simik2024`): PQ strategy profile
+  (clause-initial czy obligatory) and the neutral/evidential contrast
 - Cross-Slavic RAZVE family: czyżby is the Polish member
-
 -/
 
 namespace Polish.QuestionParticles
 
-open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
-
-/-- A Polish interrogative particle entry. -/
-structure QParticleEntry where
-  form : String
-  gloss : String
-  polarOk : Bool
-  declOk : Bool
-  whOk : Bool
-  requiresContextualEvidence : Option ContextualEvidence
-  requiresOriginalBias : Option OriginalBias
-  deriving Repr, DecidableEq
-
 /-- czy — obligatory clause-initial PQ particle ([simik-2024] ex. 30).
 Verb-initial PQs possible but unacceptable in quiz scenarios. -/
-def czy : QParticleEntry where
+def czy : Particle where
   form := "czy"
-  gloss := "PQ (clause-initial neutral)"
-  polarOk := true
-  declOk := false
-  whOk := true
-  requiresContextualEvidence := none
-  requiresOriginalBias := none
+  position := .clauseInitial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .obligatory
+      constituentInterrogative := some .optional }
 
-/-- czyżby — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
-Polish member of the cross-Slavic razve family. -/
-def czyzby : QParticleEntry where
+/-- czyżby — mirative/dubitative particle (RAZVE family, [simik-2024]
+§4.2.4). Polish member of the cross-Slavic razve family. Evidential
+classification in `Simik2024`. -/
+def czyzby : Particle where
   form := "czyżby"
-  gloss := "RAZVE (mirative/dubitative)"
-  polarOk := true
-  declOk := false
-  whOk := false
-  requiresContextualEvidence := some .forP
-  requiresOriginalBias := none
+  position := .clauseInitial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .optional
+      constituentInterrogative := some .excluded }
 
-def allQuestionParticles : List QParticleEntry := [czy, czyzby]
-
-theorem czy_neutral :
-    czy.requiresContextualEvidence = none ∧ czy.requiresOriginalBias = none :=
-  ⟨rfl, rfl⟩
-
-theorem czyzby_evidential : czyzby.requiresContextualEvidence = some .forP := rfl
-
-/-- czy and czyżby form a neutral/evidential contrast. -/
-theorem bias_contrast :
-    czy.requiresContextualEvidence = none ∧ czyzby.requiresContextualEvidence = some .forP :=
-  ⟨rfl, rfl⟩
+def allQuestionParticles : List Particle := [czy, czyzby]
 
 end Polish.QuestionParticles
