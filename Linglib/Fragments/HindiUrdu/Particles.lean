@@ -30,7 +30,7 @@ interrogative complements (and with responsive and rogative predicates
 alike). NOT a clause-typing particle. -/
 def ki : Particle where
   form := "ki"
-  position := .clauseInitial
+  position := some .clauseInitial
   embedding := some
     { matrix := some .excluded
       subordinated := some .optional
@@ -46,7 +46,7 @@ responsive selecting CP only); compatible with *pu:ch-na:* "ask" and
 derived in `BhattDayal2020`. -/
 def kya : Particle where
   form := "kya:"
-  position := .free
+  position := some .free
   distribution := some
     { polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
@@ -61,7 +61,7 @@ questions. Required in subordinated polar questions (since *kya:* is
 unavailable there); forms specifically alternative questions. -/
 def ya_nahi : Particle where
   form := "ya: nahii:"
-  position := .clauseFinal
+  position := some .clauseFinal
   distribution := some
     { alternativeInterrogative := some .optional }
   embedding := some

@@ -32,7 +32,7 @@ Licensed in quotation as well. -/
 def ka : Particle where
   form := "ka"
   script := some "か"
-  position := .clauseFinal
+  position := some .clauseFinal
   embedding := some
     { matrix := some .optional
       subordinated := some .obligatory
@@ -43,7 +43,7 @@ def ka : Particle where
 def no_ : Particle where
   form := "no"
   script := some "の"
-  position := .clauseFinal
+  position := some .clauseFinal
   embedding := some
     { matrix := some .optional
       subordinated := some .optional
@@ -56,7 +56,7 @@ Subordinated clauses only. -/
 def koto : Particle where
   form := "koto"
   script := some "こと"
-  position := .clauseFinal
+  position := some .clauseFinal
   embedding := some
     { matrix := some .excluded
       subordinated := some .optional
@@ -69,7 +69,7 @@ knows it. -/
 def kke : Particle where
   form := "kke"
   script := some "っけ"
-  position := .clauseFinal
+  position := some .clauseFinal
   embedding := some
     { matrix := some .optional
       subordinated := some .excluded
@@ -86,7 +86,7 @@ interrogatives (which use *ka*). -/
 def daroo : Particle where
   form := "daroo"
   script := some "だろう"
-  position := .clauseFinal
+  position := some .clauseFinal
   embedding := some
     { matrix := some .optional
       subordinated := some .excluded

@@ -1,3 +1,4 @@
+import Linglib.Syntax.Particle.Capabilities
 import Linglib.Semantics.Negation.CzechNegation
 
 /-!
@@ -9,7 +10,11 @@ licensing profiles for *náhodou* / *ještě* / *fakt* prove that the
 three negation positions of `Semantics.Negation.CzechNegation` are
 uniquely identified by particle signatures, and her §6 experiments
 separate the FALSUM-tied *náhodou* from the evidential-bias-tied
-*copak*.
+*copak*. Entries are `Particle` values (position cells `none` — the
+paper records no placement data); the classifications are Staňková's
+and live here as lookup tables, with Table 1 exposed as the
+`Distributed Particle NegPosition` instance — the negation-position
+licensing axis alongside the clause-type and embedding axes.
 
 ## Main results
 
@@ -21,6 +26,8 @@ separate the FALSUM-tied *náhodou* from the evidential-bias-tied
 * `requiresEvidentialBias`, `nahodou_copak_opposite_context` — the §6
   bias dimensions: *náhodou* context-insensitive, *copak*
   evidential-bias-sensitive.
+* `instance Distributed Particle NegPosition` — Table 1 as the third
+  licensing axis.
 
 ## References
 
@@ -31,6 +38,58 @@ separate the FALSUM-tied *náhodou* from the evidential-bias-tied
 namespace Stankova2025
 
 open Semantics.Negation.CzechNegation
+
+/-! ### The particles
+
+All six occur in Czech polar questions, the paper's domain; other
+clause-type cells and placements are unrecorded. -/
+
+/-- *náhodou* 'by (any) chance' — "only compatible with outer negation"
+([stankova-2025] §2.2.1): it modifies the ordering source of FALSUM's
+epistemic possibility component, absent from inner/medial negation. -/
+def nahodou : Particle where
+  form := "náhodou"
+  distribution := some { polarInterrogative := some .optional }
+
+/-- *ještě* 'yet, still' — "only compatible with inner negation"
+([stankova-2025] §2.2.2): its temporal-endpoint presupposition needs
+the propositional negation that only inner negation provides. -/
+def jeste : Particle where
+  form := "ještě"
+  distribution := some { polarInterrogative := some .optional }
+
+/-- *fakt* 'really' — "compatible with inner and medial negation but
+incompatible with outer negation" ([stankova-2025] §2.2.3): VERUM
+emphasis clashes with FALSUM. -/
+def fakt : Particle where
+  form := "fakt"
+  distribution := some { polarInterrogative := some .optional }
+
+/-- *vůbec* 'at all' — general NPI, licensed by inner (propositional)
+negation; outside Table 1. Parallels English *at all*. -/
+def vubec : Particle where
+  form := "vůbec"
+  distribution := some { polarInterrogative := some .optional }
+
+/-- *snad* 'perhaps, surely not' — adversative/mirative particle of the
+cross-Slavic RAZVE family ([simik-2024] §4.2.4, [nekula-1996],
+[stankova-2023]); not experimentally tested in [stankova-2025]. -/
+def snad : Particle where
+  form := "snad"
+  distribution := some { polarInterrogative := some .optional }
+
+/-- *copak* 'what then' — conflict between prior belief and contextual
+evidence ([stankova-2025] §6.2, [nekula-1996]): licensed in positive
+and negative PQs alike, but requires a biased context; the Czech member
+of the RAZVE family (*razve*, *nima*, *xiba*, *czyżby*, *zar*). -/
+def copak : Particle where
+  form := "copak"
+  distribution := some { polarInterrogative := some .optional }
+
+def allParticles : List Particle :=
+  [nahodou, jeste, fakt, vubec, snad, copak]
+
+/-! ### Staňková's classifications -/
 
 /-- [stankova-2025]'s semantic classification of the diagnostic
 particles. -/
@@ -49,71 +108,42 @@ inductive ParticleSemantics where
   | evidentialConflict
   deriving DecidableEq, Repr
 
-/-- A Czech diagnostic-particle entry: form, [stankova-2025]
-classification, Table 1 diagnostic if any, and NPI-hood. -/
-structure ParticleEntry where
-  /-- Surface form. -/
-  form : String
-  /-- [stankova-2025]'s semantic classification. -/
-  semantics : ParticleSemantics
-  /-- The Table 1 diagnostic this item realizes, if any. -/
-  diagnostic : Option Diagnostic := none
-  /-- Requires negation to be licensed. -/
-  requiresNeg : Bool := false
-  deriving DecidableEq, Repr
+/-- Staňková's classification, as a lookup table over the entries. -/
+def classification : List (Particle × ParticleSemantics) :=
+  [(nahodou, .orderingSourceModifier), (jeste, .temporalEndpoint),
+   (fakt, .veridicalEmphasis), (vubec, .npi),
+   (snad, .orderingSourceModifier), (copak, .evidentialConflict)]
 
-/-- *náhodou* 'by (any) chance' — "only compatible with outer negation"
-([stankova-2025] §2.2.1): it modifies the ordering source of FALSUM's
-epistemic possibility component, absent from inner/medial negation. -/
-def nahodou : ParticleEntry :=
-  { form := "náhodou", semantics := .orderingSourceModifier
-    diagnostic := some .nahodou }
+/-- Staňková's classification of `p`, if any. -/
+def semantics? (p : Particle) : Option ParticleSemantics :=
+  classification.lookup p
 
-/-- *ještě* 'yet, still' — "only compatible with inner negation"
-([stankova-2025] §2.2.2): its temporal-endpoint presupposition needs
-the propositional negation that only inner negation provides. -/
-def jeste : ParticleEntry :=
-  { form := "ještě", semantics := .temporalEndpoint
-    diagnostic := some .jeste, requiresNeg := true }
+/-- Table 1: which diagnostic each particle realizes. -/
+def table1 : List (Particle × Diagnostic) :=
+  [(nahodou, .nahodou), (jeste, .jeste), (fakt, .fakt)]
 
-/-- *fakt* 'really' — "compatible with inner and medial negation but
-incompatible with outer negation" ([stankova-2025] §2.2.3): VERUM
-emphasis clashes with FALSUM. -/
-def fakt : ParticleEntry :=
-  { form := "fakt", semantics := .veridicalEmphasis
-    diagnostic := some .fakt }
+/-- The Table 1 diagnostic realized by `p`, if any. -/
+def diagnostic? (p : Particle) : Option Diagnostic :=
+  table1.lookup p
 
-/-- *vůbec* 'at all' — general NPI, licensed by inner (propositional)
-negation; outside Table 1. Parallels English *at all*. -/
-def vubec : ParticleEntry :=
-  { form := "vůbec", semantics := .npi, requiresNeg := true }
-
-/-- *snad* 'perhaps, surely not' — adversative/mirative particle of the
-cross-Slavic RAZVE family ([simik-2024] §4.2.4, [nekula-1996],
-[stankova-2023]); not experimentally tested in [stankova-2025]. -/
-def snad : ParticleEntry :=
-  { form := "snad", semantics := .orderingSourceModifier }
-
-/-- *copak* 'what then' — conflict between prior belief and contextual
-evidence ([stankova-2025] §6.2, [nekula-1996]): licensed in positive
-and negative PQs alike, but requires a biased context; the Czech member
-of the RAZVE family. -/
-def copak : ParticleEntry :=
-  { form := "copak", semantics := .evidentialConflict }
-
-def allParticles : List ParticleEntry :=
-  [nahodou, jeste, fakt, vubec, snad, copak]
-
-/-! ### Table 1: negation-position fingerprints
+/-! ### Table 1 as the negation-position licensing axis
 
 Compatibility is read off the substrate's `licenses`; particles outside
-Table 1 (*vůbec*, *snad*, *copak*) carry no position constraint from
-[stankova-2025] and are not assigned one here. -/
+Table 1 (*vůbec*, *snad*, *copak*) carry no recorded position
+constraint. -/
+
+/-- Table 1 as a `Distributed` axis: negation position is a licensing
+context like clause type and embedding. -/
+instance : Distributed Particle NegPosition :=
+  ⟨fun p pos => (diagnostic? p).map fun d =>
+    if licenses pos d then .optional else .excluded⟩
 
 /-- Table 1 compatibility of a particle with a negation position, when
 the particle carries a diagnostic. -/
-def compatibleWith? (p : ParticleEntry) (pos : NegPosition) : Option Bool :=
-  p.diagnostic.map (licenses pos)
+def compatibleWith? (p : Particle) (pos : NegPosition) : Option Bool :=
+  (diagnostic? p).map (licenses pos)
+
+example : Distributed.LicensedIn nahodou NegPosition.outer := by decide
 
 /-- *náhodou* uniquely identifies outer negation. -/
 theorem nahodou_identifies_outer :
@@ -146,23 +176,23 @@ theorem particle_signatures_distinct :
   revert h1 h2 h3
   cases pos <;> cases pos' <;> decide
 
-/-! ### §6: bias dimensions -/
+/-! ### The §6 bias dimensions -/
 
 /-- Whether a particle requires evidential bias, per [stankova-2025]
 §6: `some true` for the *copak* class, `some false` for the
 experimentally confirmed FALSUM-tied *náhodou*, `none` where
 untested. -/
-def requiresEvidentialBias (p : ParticleEntry) : Option Bool :=
-  match p.semantics with
-  | .evidentialConflict => some true
-  | .orderingSourceModifier => p.diagnostic.map fun _ => false
+def requiresEvidentialBias (p : Particle) : Option Bool :=
+  match semantics? p with
+  | some .evidentialConflict => some true
+  | some .orderingSourceModifier => (diagnostic? p).map fun _ => false
   | _ => none
 
 theorem nahodou_context_insensitive :
-    requiresEvidentialBias nahodou = some false := rfl
+    requiresEvidentialBias nahodou = some false := by decide
 
 theorem copak_context_sensitive :
-    requiresEvidentialBias copak = some true := rfl
+    requiresEvidentialBias copak = some true := by decide
 
 /-- *náhodou* and *copak* express opposite bias dimensions: FALSUM-tied
 and context-insensitive vs evidential-bias-tied and context-sensitive
@@ -172,6 +202,6 @@ theorem nahodou_copak_opposite_context :
 
 /-- *copak* is outside Table 1: it appears in positive and negative PQs
 alike ([stankova-2025] ex. 19a-b). -/
-theorem copak_no_diagnostic : copak.diagnostic = none := rfl
+theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 
 end Stankova2025

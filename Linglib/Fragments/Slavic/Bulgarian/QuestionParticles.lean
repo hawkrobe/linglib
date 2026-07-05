@@ -24,7 +24,7 @@ constituent. -/
 def li : Particle where
   form := "li"
   script := some "ли"
-  position := .secondPosition
+  position := some .secondPosition
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
@@ -37,7 +37,7 @@ with prior expectations (Dukova-Zheleva). Evidential classification in
 def nima : Particle where
   form := "nima"
   script := some "нима"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

@@ -18,7 +18,7 @@ namespace Slovenian.QuestionParticles
 default PQs; incompatible with DeclPQs. -/
 def ali : Particle where
   form := "ali"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

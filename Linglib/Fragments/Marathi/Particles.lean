@@ -20,7 +20,7 @@ and the preferential-vs-doxastic classification live in
 `Studies/Deo2025.lean`. -/
 def bara : Particle where
   form := "bərə"
-  position := .clauseFinal
+  position := some .clauseFinal
   distribution := some
     { declarative := some .optional
       polarInterrogative := some .excluded
@@ -34,7 +34,7 @@ mirror of *bərə*). Only the imperative-augmenting use is attested in
 [deo-2023] formalization. -/
 def na : Particle where
   form := "na"
-  position := .clauseFinal
+  position := some .clauseFinal
   distribution := some
     { imperative := some .optional }
 

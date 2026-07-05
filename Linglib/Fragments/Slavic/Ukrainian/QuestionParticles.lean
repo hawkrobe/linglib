@@ -23,7 +23,7 @@ Neutral baseline. -/
 def cy : Particle where
   form := "čy"
   script := some "чи"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .obligatory
@@ -36,7 +36,7 @@ in `Simik2024`. -/
 def xiba : Particle where
   form := "xiba"
   script := some "хіба"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

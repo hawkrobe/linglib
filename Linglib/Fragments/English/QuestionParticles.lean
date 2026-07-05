@@ -17,7 +17,7 @@ urgency in a request for information. Ungrammatical in subordinated,
 quasi-subordinated, and quotation contexts ([dayal-2025] ex. (19)). -/
 def quick : Particle where
   form := "quick"
-  position := .clauseInitial
+  position := some .clauseInitial
   embedding := some
     { matrix := some .optional
       subordinated := some .excluded

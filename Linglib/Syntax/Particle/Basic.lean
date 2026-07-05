@@ -94,8 +94,8 @@ structure Particle where
   form : String
   /-- Native-script form, when `form` is a romanization (Mandarin 吗). -/
   script : Option String := none
-  /-- Host/position class. -/
-  position : Particle.Position
+  /-- Host/position class; `none` when the source records no placement. -/
+  position : Option Particle.Position := none
   /-- Clause-type distribution facet; `none` for particles with no
       clause-type restriction (focus particles, case particles). -/
   distribution : Option ClauseDistribution := none
