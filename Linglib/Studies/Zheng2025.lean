@@ -4,7 +4,6 @@ import Linglib.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
 import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Semantics.Questions.Singleton
-import Linglib.Studies.BhattDayal2020
 
 /-!
 # Zheng (2025): Nandao-Q Felicity [zheng-2025]
@@ -285,21 +284,14 @@ open Question (IsSingleton SingletonQuestion declarative
 universe u
 variable {W : Type u}
 
-/-- nandao is felicitous on a one-cell ("highlighted") polar — same
-    canonical good-input case as kya:. The proof reduces to
-    `isSingleton_declarative`, identical to the kya: side. -/
+/-- nandao is felicitous on a one-cell ("highlighted") polar — the same
+    canonical good-input case as kya:, and by construction the same
+    substrate fact: both this and `BhattDayal2020.kya_felicitous_singleton_polar`
+    are `isSingleton_declarative`, capturing the kya:–nandao convergence
+    [bhatt-dayal-2020] draw from [xu-2012]. -/
 theorem nandao_felicitous_declarative (p : Set W) :
     IsSingleton (declarative (W := W) p) :=
   isSingleton_declarative p
-
-/-- **Cross-particle agreement**: the felicity conditions for kya: and
-    nandao on a one-cell polar are *the same theorem* — both reduce to
-    `isSingleton_declarative`. The convergence noted in
-    [bhatt-dayal-2020] fn. 11 holds by construction. -/
-theorem nandao_kya_share_felicity (p : Set W) :
-    nandao_felicitous_declarative (W := W) p =
-      BhattDayal2020.kya_felicitous_declarative
-        (W := W) p := rfl
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Question-singleton)

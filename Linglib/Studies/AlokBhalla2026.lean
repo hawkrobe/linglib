@@ -26,7 +26,7 @@ where honorification surfaces (`HonDomain`).
 
 - **Agree.lean**: AA validity reduces to `validAgree`
 - **Phase.lean**: `isPhaseHeadOf .SA` — SAP as the highest phase
-- **Questions/Studies/BhattDayal2020.lean**: `sap_particles_not_in_quasi_sub`
+- **Studies/Dayal2025.lean**: `particle_layer_predicts_embedding`
   — SAP unembeddability parallels allocutive root-only restriction
 - **RSA/YoonEtAl2020**: Social utility (φ weighting) is the pragmatic analogue
   of syntactic [iHON] — both encode social relations between discourse
@@ -285,9 +285,9 @@ theorem hon_agree_values (level : HonLevel) :
       = some (.ofGramFeatures [.valued (.hon level)]) := by
   cases level <;> native_decide
 
-/-- Bridge to Studies/BhattDayal2020: SAP unembeddability
-    parallels `sap_particles_not_in_quasi_sub`. Both follow from SAP being
-    the speech-act layer that does not embed.
+/-- Bridge to Studies/Dayal2025: SAP unembeddability parallels the SAP
+    clause of `Dayal2025.particle_layer_predicts_embedding`. Both follow
+    from SAP being the speech-act layer that does not embed.
 
     Connection: SA-based allocutive markers (particles) pattern with
     SAP-layer question particles — neither appears in quasi-subordination.

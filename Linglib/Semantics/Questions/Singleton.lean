@@ -42,7 +42,7 @@ variable {W : Type u}
 /-- An inquisitive content is **singleton** iff its alternative set
     contains exactly one element. The shape encoded by the singleton
     presupposition of [bhatt-dayal-2020]'s eq. 23 (kya:) and the
-    parallel nandao analysis cited in [bhatt-dayal-2020] fn. 11. -/
+    parallel nandao analysis of [xu-2012] the paper draws on. -/
 def IsSingleton (P : Question W) : Prop :=
   ∃ p, alt P = {p}
 
