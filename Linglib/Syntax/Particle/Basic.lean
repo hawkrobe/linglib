@@ -1,4 +1,4 @@
-import Linglib.Syntax.Clause.Ctx
+import Linglib.Syntax.Clause.Context
 import Linglib.Syntax.Clause.Embedding
 import Linglib.Morphology.Word
 
@@ -7,7 +7,7 @@ import Linglib.Morphology.Word
 
 This file defines `Particle`, the lexical core for uninflectable
 function words ([zwicky-1985-clitics]): form, position, and optional
-three-valued distribution facets over `Clause.Ctx` and
+three-valued distribution facets over `Clause.Context` and
 `Clause.Embedding`. Facets record distributional felicity, not
 licensing mechanism (analytical, study-side); a `none` cell means the
 source records nothing, not exclusion.
@@ -23,7 +23,7 @@ source records nothing, not exclusion.
 
 set_option autoImplicit false
 
-open Clause (Ctx Embedding)
+open Clause (Context Embedding)
 
 /-- Where a particle sits relative to its host domain — the
 [zwicky-1985-clitics] positional diagnostic. -/
@@ -63,7 +63,7 @@ structure ClauseDistribution where
   deriving DecidableEq, Repr
 
 /-- Recorded status in context `c`, if any. -/
-def ClauseDistribution.status? (d : ClauseDistribution) : Clause.Ctx → Option ParticleStatus
+def ClauseDistribution.status? (d : ClauseDistribution) : Clause.Context → Option ParticleStatus
   | .declarative => d.declarative
   | .polarInterrogative => d.polarInterrogative
   | .alternativeInterrogative => d.alternativeInterrogative
@@ -107,17 +107,17 @@ structure Particle where
 namespace Particle
 
 /-- Recorded clause-type distribution status in context `c`, if any. -/
-def status? (p : Particle) (c : Clause.Ctx) : Option ParticleStatus :=
+def status? (p : Particle) (c : Clause.Context) : Option ParticleStatus :=
   p.distribution.bind (·.status? c)
 
 /-- The particle is positively recorded as available (obligatorily or
 optionally) in context `c`. -/
-def LicensedIn (p : Particle) (c : Clause.Ctx) : Prop :=
+def LicensedIn (p : Particle) (c : Clause.Context) : Prop :=
   match p.status? c with
   | some .obligatory | some .optional => True
   | _ => False
 
-instance (p : Particle) (c : Clause.Ctx) : Decidable (p.LicensedIn c) := by
+instance (p : Particle) (c : Clause.Context) : Decidable (p.LicensedIn c) := by
   unfold LicensedIn; exact match p.status? c with
     | some .obligatory => .isTrue trivial
     | some .optional => .isTrue trivial
