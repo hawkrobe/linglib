@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Algebra.Group.Hom.Defs
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
@@ -88,6 +89,13 @@ instance : Mul SelState := ⟨fun x y => (selCombine x y).map (·.2)⟩
 
 /-- `*` unfolded: the canonical accessor for the selection product. -/
 theorem SelState.mul_def : x * y = (selCombine x y).map (·.2) := rfl
+
+/-- `none` (the exocentric failure) is absorbing on the left. -/
+@[simp] theorem SelState.none_mul : (none : SelState) * x = none := rfl
+
+/-- `none` (the exocentric failure) is absorbing on the right. -/
+@[simp] theorem SelState.mul_none : x * none = none := by
+  rcases x with _ | ⟨h, _ | ⟨c, s⟩⟩ <;> rfl
 
 instance : CommMagma SelState where
   mul_comm x y := by
@@ -193,13 +201,9 @@ def selCheckN : Nonplanar SOLabel → SelState :=
 theorem selCheckN_node (a b : Nonplanar SOLabel) :
     selCheckN (Nonplanar.node (Sum.inr ()) {a, b}) = selCheckN a * selCheckN b := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
-  have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
-    rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
   show selCheckN (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
       = selCheckN (Nonplanar.mk pa) * selCheckN (Nonplanar.mk pb)
-  rw [key]; exact rfl
+  rw [Nonplanar.node_pair_mk]; exact rfl
 
 /-! ### The selection-driven head on `SO` -/
 
@@ -230,6 +234,15 @@ def SO.outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
     (SO.node l r).selCheck = l.selCheck * r.selCheck := by
   show selCheckN (SO.node l r).val = selCheckN l.val * selCheckN r.val
   rw [SO.node_val, selCheckN_node]
+
+/-- `selCheck` as a **morphism of magmas** — [marcolli-chomsky-berwick-2025] §1.13's
+    algebraic frame for head functions: Merge multiplies constituents, `selCheck`
+    multiplies their selection states. Contrast the externalization *readout*, which
+    is not a morphism — placing a yield needs the head
+    (`Linearization/Externalization.lean`). -/
+noncomputable def selCheckHom : SO →ₙ* SelState where
+  toFun := SO.selCheck
+  map_mul' := SO.selCheck_node
 
 @[simp] theorem SO.selHead_lexLeaf : (SO.lexLeaf tok).selHead = some tok := rfl
 
