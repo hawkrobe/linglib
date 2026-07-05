@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -5,393 +10,331 @@ import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 
 /-!
-# Sande, Clem & Dąbkowski (2026): Discontinuous vowel harmony in Guébie
-[sande-clem-dabkowski-2026]
+# Sande, Clem & Dąbkowski 2026: discontinuous vowel harmony in Guébie
 
-[sande-clem-dabkowski-2026] introduce the phenomenon of
-**discontinuous harmony**: a long-distance ATR-harmony pattern in
-Guébie (a Kru language of Côte d'Ivoire) where the trigger and
-target are separated by intervening *non-transparent*
-(harmony-eligible) segments. The pattern arises in particle-verb
-focus-fronting constructions; the analysis is local harmony followed
-by syntactic movement that pulls the harmonized element away from
-its trigger.
+[sande-clem-dabkowski-2026] introduce **discontinuous harmony**: in Guébie (Kru)
+particle-verb focus constructions, the fronted particle harmonizes in ATR with the
+clause-final verb across intervening harmony-eligible words (their (24)). The
+analysis: harmony is strictly local at vP Spell-out, and later A′-movement of the
+remnant VP separates target from trigger — a cyclic interleaving of syntax and
+phonology in which spelled-out material stays accessible to later syntax (§6.2,
+via [fox-pesetsky-2005]'s Cyclic Linearization).
 
-## Empirical core (the table at §6.1, (44))
+The §4 syntax has two parameters — does an auxiliary occupy T (blocking V-to-T),
+and does the remnant VP front — and the file derives the four attested orders,
+their two-phase Spell-outs, and the (44) harmony correlation from them, rather
+than stipulating the table:
 
-| word order   | particle-verb harmony? | verb spelled out in vP? |
-|--------------|------------------------|-------------------------|
-| `SVOPart`    | ×                      | ×                       |
-| `SAuxOPartV` | ✓                      | ✓                       |
-| `PartSVO`    | ×                      | ×                       |
-| `PartSAuxOV` | ✓                      | ✓                       |
+| word order   | particle-verb harmony | V spelled out in vP |
+|--------------|-----------------------|---------------------|
+| `SVOPart`    | ×                     | ×                   |
+| `SAuxOPartV` | ✓                     | ✓                   |
+| `PartSVO`    | ×                     | ×                   |
+| `PartSAuxOV` | ✓                     | ✓                   |
 
-Harmony applies iff V is spelled out inside vP — independent of the
-surface adjacency between V and the particle. In `PartSAuxOV`,
-predicate fronting separates them on the surface, but V was inside
-vP at the moment of vP-spell-out (when local harmony applied).
+## Main definitions
 
-## The analysis
+* `Clause`: the two syntactic parameters of §4; `Clause.vPSpellOut` and
+  `Clause.surfaceOrder` derive the Spell-out snapshots ((45)/(48)) and surface
+  strings ((31)–(34)); `WordOrder` names the four attested settings.
+* `Clause.harmony`, `surfaceATR`: trigger-locality at vP Spell-out (§6.1) and the
+  particle's surface value — the verb root's under harmony, the lexical default
+  otherwise ((12)–(13)).
+* `HarmonyCand`, `identIO`, `atrHarm`, `harmonyTableau`: the paper's constraint
+  implementation ((46)/(47), `ATRHARM ≫ IDENT-IO(ATR)`) as an OT tableau.
+* `FrozenATR`, `frozenATR?`: the append-only per-cycle record of harmony outcomes
+  (§6.1).
+* `guebiePICMode`: the paper's PIC stance, `PICStrength.linearizationBound` (§6.2).
+* `guebiePredicateDoubling`, `guebieFrontingDerivation`: schematic witnesses for
+  §3's diagnosis that predicate fronting is narrow-syntactic.
+* `guebieVPCophonology`: the vP harmony domain as a `PhrasalCophonology`, with the
+  (46)/(47) subranking as payload.
+* `WolofRelClauseShape`: the Wolof relative-clause parallel (§7).
 
-1. **Predicate fronting is remnant-VP movement** (extending
-   [koopman-1997]'s Vata/Nweh analysis). The particle is the
-   only overt element left in the remnant after V has moved through v
-   to T and the object has shifted out (where applicable).
+## Main results
 
-2. **vP and CP are spell-out phases**. Following the cyclic
-   spell-out of [newell-2008] / [chomsky-2001], vP is
-   spelled out upon Merge of C; CP is spelled out at the end.
+* `harmony_eq_hasAux`: the (44) correlation derived — harmony iff Aux blocks
+  V-to-T; `harmony_independent_of_fronting`: fronting is irrelevant to it.
+* `discontinuous_harmony`: in the fronted SAuxOV clause the particle and verb are
+  not surface-adjacent, yet harmony applies.
+* `all_clauses_consistent`: every parameter setting linearizes consistently
+  (`Minimalist.Linearization.Consistent`); `nonedge_particle_fronting_crashes`:
+  the §6.2 escape-hatch argument — fronting a particle that was not leftmost at
+  vP Spell-out creates an ordering cycle.
+* `optimal_eq_surfaceATR`: the OT winner under `ATRHARM ≫ IDENT-IO(ATR)` is
+  exactly `surfaceATR` — §6.1's mechanism derives the surface value.
+* `PartSAuxOV_atr_persists_through_fronting`: the frozen ATR value survives the CP
+  cycle (§6.1).
+* `guebie_VDIS_positive_instance`: Guébie as a positive instance of
+  `VerbDoublingIsSyntacticIn` (§3, (25)–(30)), contra [landau-2006]'s PF-driven
+  Hebrew analysis.
+* `wolof_harmony_uniform`: the Wolof parallel (§7, (49)–(50), [sy-2005],
+  [martinovic-2019]).
 
-3. **Local harmony in vP**. ATR harmony is a vP-domain cophonology
-   (per [sande-jenks-inkelas-2020]'s Cophonologies-by-Phrase
-   architecture, formalized in `Cophonology.lean`):
-   when V and Part are both spelled out in vP, harmony applies; when
-   only Part is in the vP-spell-out, no trigger is present and Part
-   surfaces with its default −ATR value.
+## Implementation notes
 
-4. **Frozen ATR survives later movement**. Once the particle has
-   harmonized to V's ATR value at vP-spell-out, the value persists
-   through subsequent A′-fronting of the remnant VP into Spec,CP
-   (Cyclic-Linearization-style preservation — `frozenValue` below).
+Spell-out snapshots are `List String` terminal labels, as in
+`Studies/FoxPesetsky2005.lean`. The paper implements local harmony with
+[sande-2019]'s constraints ((46)/(47)) in [hansson-2014]'s Agreement-by-Projection
+framework and notes the "specific implementation of local harmony within the vP is
+not crucial"; `harmonyTableau` renders the ranking over a two-candidate output
+space, and the vP-boundedness is exhibited through
+[sande-jenks-inkelas-2020]-style `PhrasalCophonology` — a bridge of this
+formalization, not the paper's framing. §5's rejected purely-phonological
+approaches — autosegmental spreading ([clements-sezer-1982]), gestural
+([gafos-1998]), Agreement by Correspondence ([rose-walker-2004]) — are formalized
+in `Studies/Sagey1986.lean`, `Studies/RoseWalker2004.lean`, and
+`Studies/Hansson2010.lean`; each predicts the strict locality that (24) violates.
+The doubling witnesses are schematic: an evacuation trace plus the verb copy, per
+their (31). Per-language Guébie data lives here, not in a Fragment.
 
-5. **Strict PIC is rejected**. For step 4 to work, already-spelled-out
-   material must remain accessible to later syntactic operations
-   (here, A′-movement of the remnant containing the particle). SCD
-   2026 §6.2 rejects both PIC₁ ([chomsky-2000]) and PIC₂
-   ([chomsky-2001]) in favor of a Cyclic-Linearization-bounded
-   regime — `PICStrength.linearizationBound` in `Phase.lean`.
-
-## What this study file establishes
-
-For each of the four word orders, the file:
-
-- proves the derivation is consistently linearizable
-  (`Minimalist.Linearization.Consistent`),
-- computes the predicted harmony status (true iff V is in vP-content),
-- decides the (44) table by `decide`,
-- registers Guébie predicate fronting as a positive instance of
-  `HarizanovGribanova2019.Amalgamation.VerbDoublingIsSyntactic`
-  (refactored from a universal axiom in light of this paper —
-  see `HarizanovGribanova2019Amalgamation.lean`).
-
-The Wolof relative-clause parallel (§7) is added as a sister
-construction with the same architectural shape; the Atchan
-nasal-harmony case (§7) is recorded as an open question with sparse
-data — Russell, p.c.
-
-## Verified preliminaries (rejected alternatives)
-
-[sande-clem-dabkowski-2026] §5 argues that purely phonological
-theories of harmony predict strict locality and so cannot derive the
-discontinuous pattern. The file does not formally simulate each
-rejected theory (autosegmental [clements-1985], gestural
-[gafos-1998], ABC [rose-walker-2004]), but cross-references
-their formalizations elsewhere in linglib —
-`Studies/RoseWalker2004.lean`,
-`Studies/Hansson2010.lean`,
-`Studies/Sagey1986.lean` — and notes how each
-predicts the observed locality bound that SCD 2026 demonstrates is
-empirically violated.
-
-## Architectural notes
-
-Substrate consumed (additions landed in this same overhaul):
-
-- `Phonology/OptimalityTheory/Cophonology.lean` —
-  [sande-jenks-inkelas-2020]'s phrasal extension of
-  [sande-jenks-2017]'s VI-anchored cophonology.
-- `Syntax/Minimalist/Movement/Remnant.lean` —
-  [koopman-1997] predicate-cleft remnant-XP movement.
-- `Syntax/Minimalist/Phase.lean` — added
-  `PICStrength.linearizationBound` and `admitsExtraction`.
-- `Syntax/Minimalist/Linearization/Cyclic.lean` — added
-  `FrozenFeature` / `frozenValue` for cross-phase feature preservation.
-- `Studies/HarizanovGribanova2019Amalgamation.lean`
-  — refactored `axiom verb_doubling_implies_syntactic` to a
-  per-construction `Prop`, motivated by SCD 2026's stance that the
-  universal version is too strong (Landau 2006 Hebrew counterexample).
-
-Per-language Guébie data lives entirely in this file (no
-`Fragments/Guebie/`), per CLAUDE.md "per-language paper-specific data
-lives in Studies, not Fragments".
+TODO: the Atchan nasal-harmony parallel ((51), Katherine Russell p.c.,
+[russell-2023]) awaits independent syntactic diagnostics for Atchan verb doubling
+(the analogue of §3); the paper leaves it open and so do we.
 -/
 
 namespace SandeClemDabkowski2026
 
+open List
 open Minimalist (PICStrength)
 open Minimalist.Linearization (Consistent)
+open Constraints (Constraint)
+open OptimalityTheory
 open OptimalityTheory.Cophonology (PhrasalCophonology)
 
--- ============================================================================
--- § 1: Guébie vowel inventory and ATR feature
--- ============================================================================
+/-! ### The ATR feature ([sande-clem-dabkowski-2026] (1))
 
-/-! ### Guébie vowel inventory ([sande-clem-dabkowski-2026] (1))
+Guébie has a ten-vowel system, +ATR `ə e i o u` vs. −ATR `a ɛ ɪ ɔ ʊ`, harmonizing
+as a binary feature; affixes and particles agree with the verb root when both are
+inside the same Spell-out domain. Only the per-terminal binary value matters here. -/
 
-```
-+ATR:  ə  e  i  o  u
--ATR:  a  ɛ  ɪ  ɔ  ʊ
-```
-
-Vowels harmonize as a binary +/−ATR feature within a morpheme; affixes
-agree with the root ([sande-2017], [sande-2019],
-[sande-2022]). Particles in particle-verb constructions inherit
-the ATR value of the verb root *when both are inside the same
-spell-out domain* — this is the discontinuous-harmony observation.
-
-We do not enumerate the full vowel inventory here; for the Table 44
-result we only need a per-terminal ATR value. -/
-
-/-- The ATR feature value carried by a phonological terminal.
-    `+ATR = true`, `−ATR = false`. -/
+/-- The ATR feature value of a terminal: `+ATR = true`, `−ATR = false`. -/
 abbrev ATR := Bool
 
-/-- The default ATR value for the particle when no vowel-harmony trigger
-    is present in its spell-out domain. [sande-clem-dabkowski-2026]
-    §2.5 — particles surface with their lexical (typically -ATR) value
-    when not local to a harmony trigger. -/
+/-- The particle's lexical default, surfacing when no harmony trigger is local
+    ((13)). Defaults are lexical per particle — /jɔkʊ/ is −ATR, others are +ATR
+    ((12)); we model the /jɔkʊ/ type. -/
 def particleDefaultATR : ATR := false
 
--- ============================================================================
--- § 2: The four word orders
--- ============================================================================
+/-! ### The §4 syntax: two parameters derive the four orders -/
 
-/-- The four particle-verb word orders that diagnose discontinuous
-    harmony ([sande-clem-dabkowski-2026] (44), §6.1). -/
+/-- The two parameters of [sande-clem-dabkowski-2026] §4's predicate-fronting
+    analysis: an auxiliary in T blocks V-to-T ((32)/(34)), and the remnant VP
+    (containing the particle) may front to Spec,CP ((33)/(34)). -/
+structure Clause where
+  hasAux  : Bool
+  fronted : Bool
+  deriving DecidableEq, Repr
+
+/-- V stays in v — hence inside the vP Spell-out — iff Aux occupies T (§4.1). -/
+def Clause.verbInVP (c : Clause) : Bool := c.hasAux
+
+/-- Overt terminals spelled out within vP ((45)/(48)): the particle, plus V iff it
+    has not raised past v. The object has independently shifted out. -/
+def Clause.vPSpellOut (c : Clause) : List String :=
+  "Part" :: if c.verbInVP then ["V"] else []
+
+/-- The surface clause, derived compositionally ((31)–(34)): fronted particle,
+    subject, T-material, object, in-situ particle, clause-final verb. -/
+def Clause.surfaceOrder (c : Clause) : List String :=
+  (if c.fronted then ["Part"] else []) ++ ["S"]
+    ++ (if c.hasAux then ["Aux"] else ["V"]) ++ ["O"]
+    ++ (if c.fronted then [] else ["Part"])
+    ++ (if c.hasAux then ["V"] else [])
+
+/-- The two-phase Cyclic-Linearization derivation: vP Spell-out, then the full
+    surface clause ([fox-pesetsky-2005]'s final Linearize). Previously-spelled-out
+    terminals recur, so Order Preservation is what makes consistency contentful. -/
+def Clause.derivation (c : Clause) : List (List String) :=
+  [c.vPSpellOut, c.surfaceOrder]
+
+/-- The four attested word orders as parameter settings
+    ([sande-clem-dabkowski-2026] (44)). -/
 inductive WordOrder where
-  /-- `S V O Part`: V moves to T; Part stays in vP; clause-final. -/
+  /-- `S V O Part`: V moves to T; Part stays in vP, clause-final. -/
   | SVOPart
-  /-- `S Aux O Part V`: V stays in v (Aux occupies T); both V and Part
-      in vP at vP-spell-out. -/
+  /-- `S Aux O Part V`: Aux occupies T, V stays in v; V and Part both in vP. -/
   | SAuxOPartV
-  /-- `Part S V O`: V moves to T; Part fronts to Spec,CP from vP. -/
+  /-- `Part S V O`: V moves to T; the remnant VP (just Part) fronts to Spec,CP. -/
   | PartSVO
-  /-- `Part S Aux O V`: V stays in v; remnant VP (containing Part)
-      fronts to Spec,CP. -/
+  /-- `Part S Aux O V`: V stays in v; the remnant VP (just Part) fronts. -/
   | PartSAuxOV
   deriving DecidableEq, Repr
 
-/-- The terminals spelled out within vP for each word order
-    ([sande-clem-dabkowski-2026] (45)/(48)). The decisive
-    difference: `SAuxOPartV` and `PartSAuxOV` keep V inside vP at
-    spell-out (V hasn't raised past v), while `SVOPart` and `PartSVO`
-    have V already in T at vP-spell-out, leaving only Part inside vP.
+/-- The parameter settings behind the four orders ((31)–(34)). -/
+def WordOrder.clause : WordOrder → Clause
+  | .SVOPart    => ⟨false, false⟩
+  | .SAuxOPartV => ⟨true,  false⟩
+  | .PartSVO    => ⟨false, true⟩
+  | .PartSAuxOV => ⟨true,  true⟩
 
-    The object has independently shifted out of vP in all four
-    derivations (per [koopman-1997]-style remnant-VP analysis,
-    extended in §4 of the paper), so it does not appear here. -/
-def vPSpellOut : WordOrder → List String
-  | .SVOPart    => ["Part"]
-  | .SAuxOPartV => ["Part", "V"]
-  | .PartSVO    => ["Part"]
-  | .PartSAuxOV => ["Part", "V"]
+/-- The derived surface strings are the attested orders. -/
+theorem surfaceOrder_attested :
+    WordOrder.SVOPart.clause.surfaceOrder    = ["S", "V", "O", "Part"] ∧
+    WordOrder.SAuxOPartV.clause.surfaceOrder = ["S", "Aux", "O", "Part", "V"] ∧
+    WordOrder.PartSVO.clause.surfaceOrder    = ["Part", "S", "V", "O"] ∧
+    WordOrder.PartSAuxOV.clause.surfaceOrder = ["Part", "S", "Aux", "O", "V"] := by
+  decide
 
-/-- The terminals introduced or first linearized at the CP-phase
-    spell-out. Each terminal is spelled out at exactly one phase per
-    Cyclic Linearization, *unless* it has moved between phases — in
-    which case the higher phase's linearization positions it again,
-    consistently with the lower phase's statements (Order Preservation).
+/-! ### Consistency: every setting linearizes; non-edge fronting would not -/
 
-    - In `SVOPart` and `SAuxOPartV`, the Part stays inside vP and
-      appears only in `vPSpellOut`, not here.
-    - In `PartSVO` and `PartSAuxOV`, the Part has fronted to Spec,CP
-      and so appears at the left edge of `cpSpellOut` (in addition to
-      its base position in `vPSpellOut`).
-    - The verb V appears here only when it has moved to T (i.e., in
-      `SVOPart` and `PartSVO`); when V stays in v (the SAuxOV cases),
-      it remains inside vP. -/
-def cpSpellOut : WordOrder → List String
-  | .SVOPart    => ["S", "V", "O"]            -- Part stays in vP
-  | .SAuxOPartV => ["S", "Aux", "O"]
-  | .PartSVO    => ["Part", "S", "V", "O"]    -- Part fronts to Spec,CP
-  | .PartSAuxOV => ["Part", "S", "Aux", "O"]
+/-- Every parameter setting linearizes consistently. -/
+theorem all_clauses_consistent :
+    ∀ aux fronted : Bool, Consistent (Clause.derivation ⟨aux, fronted⟩) := by decide
 
-/-- Cyclic-Linearization derivation: the two-phase spell-out for a
-    given word order. -/
-def derivation (wo : WordOrder) : List (List String) :=
-  [vPSpellOut wo, cpSpellOut wo]
+/-- The §6.2 escape-hatch argument: the particle can front because it is "the
+    leftmost overt element in the vP phase upon spell-out". A counterfactual vP
+    spelling the particle out to the right of V could not front it without an
+    ordering cycle. -/
+theorem nonedge_particle_fronting_crashes :
+    ¬ Consistent [["V", "Part"], ["Part", "S", "Aux", "O", "V"]] := by decide
 
--- ============================================================================
--- § 3: All four derivations are consistently linearizable
--- ============================================================================
+/-! ### The (44) correlation, derived -/
 
-/-- `SVOPart`: V in T, Part in clause-final position. Consistent. -/
-theorem SVOPart_consistent : Consistent (derivation .SVOPart) := by decide
+/-- Harmony applies iff the trigger V is spelled out within vP (§6.1). -/
+def Clause.harmony (c : Clause) : Bool :=
+  c.vPSpellOut.contains "V"
 
-/-- `SAuxOPartV`: V in v, both V and Part inside vP. Consistent. -/
-theorem SAuxOPartV_consistent : Consistent (derivation .SAuxOPartV) := by decide
+/-- The (44) correlation derived from the syntax: harmony iff Aux blocks V-to-T. -/
+theorem harmony_eq_hasAux (aux fronted : Bool) :
+    (Clause.mk aux fronted).harmony = aux := by decide +revert
 
-/-- `PartSVO`: V in T, Part fronts. Consistent under
-    Cyclic-Linearization (no contradiction with vP-internal order). -/
-theorem PartSVO_consistent : Consistent (derivation .PartSVO) := by decide
+/-- Fronting is irrelevant to harmony — the discontinuity is purely a surface
+    effect of later movement. -/
+theorem harmony_independent_of_fronting (aux f₁ f₂ : Bool) :
+    (Clause.mk aux f₁).harmony = (Clause.mk aux f₂).harmony := by decide +revert
 
-/-- `PartSAuxOV`: V in v, remnant VP fronts. Consistent. The crucial
-    derivation for discontinuous harmony — Part is local to V at
-    vP-spell-out, and the linearization remains coherent after
-    fronting. -/
-theorem PartSAuxOV_consistent : Consistent (derivation .PartSAuxOV) := by decide
+/-- Discontinuity as a theorem: in the fronted SAuxOV clause, particle and verb
+    are not surface-adjacent in either order, yet harmony applies ((24)). -/
+theorem discontinuous_harmony :
+    (Clause.mk true true).harmony = true ∧
+    ¬ (["Part", "V"] <:+: (Clause.mk true true).surfaceOrder ∨
+       ["V", "Part"] <:+: (Clause.mk true true).surfaceOrder) := by decide
 
--- ============================================================================
--- § 4: Predicted harmony status (Table 44)
--- ============================================================================
+/-- The particle's surface ATR: the verb root's value under harmony ((12)), its
+    lexical default otherwise ((13)). -/
+def surfaceATR (c : Clause) (vRoot : ATR) : ATR :=
+  if c.harmony then vRoot else particleDefaultATR
 
-/-- Harmony applies iff the trigger V is spelled out within vP.
-    Independent of the linear adjacency between V and Part at the
-    surface. The target Part is by stipulation always inside vP at
-    vP-spell-out (it's the Part of a particle-verb construction;
-    even when it later fronts, it starts in vP), so the trigger
-    presence is the only varying condition. -/
-def harmonyApplies (wo : WordOrder) : Bool :=
-  (vPSpellOut wo).contains "V"
+/-! ### §6.1's mechanism: the (46)/(47) ranking derives the surface value
 
-/-- The decisive empirical theorem: SCD 2026 Table 44, decided
-    structurally. Harmony applies in exactly the two SAuxOV-shape
-    derivations — the ones where V hasn't raised past v. -/
-theorem table_44 :
-    harmonyApplies .SVOPart    = false ∧
-    harmonyApplies .SAuxOPartV = true  ∧
-    harmonyApplies .PartSVO    = false ∧
-    harmonyApplies .PartSAuxOV = true  := by decide
+The paper implements local harmony as [sande-2019]'s constraints in
+[hansson-2014]'s Agreement by Projection, ranked `ATRHARM ≫ IDENT-IO(ATR)`
+within the vP domain; the winner harmonizes exactly when a trigger is local. -/
 
-/-- Discontinuous harmony at one glance: in `PartSAuxOV`, Part is
-    surface-non-local to V (the subject, auxiliary, and object
-    intervene at CP-spell-out), yet harmony applies. -/
-theorem partSAuxOV_discontinuous_yet_harmonizes :
-    harmonyApplies .PartSAuxOV = true ∧
-    "S" ∈ cpSpellOut .PartSAuxOV ∧
-    "Aux" ∈ cpSpellOut .PartSAuxOV ∧
-    "O" ∈ cpSpellOut .PartSAuxOV := by decide
-
--- ============================================================================
--- § 5: Frozen ATR survives later movement (SCD 2026 §6.1)
--- ============================================================================
-
-/-! ### Per-cycle frozen feature assignments
-
-[fox-pesetsky-2005]'s Order Preservation shape applied to *feature values*
-established by phase-bounded phonological computation: [sande-clem-dabkowski-2026]
-§6.1 argues the particle's ATR value is fixed at vP spell-out and preserved through
-later movement. The append-only accumulator below is the feature analogue of the
-spell-out order's never-deleted statements. -/
-
-/-- A frozen feature assignment: terminal `t` had feature `f` set to `value` at the
-    spell-out cycle that emitted this entry. -/
-structure FrozenFeature where
-  terminal : String
-  feature  : String
-  value    : Bool
+/-- An output candidate for the particle at vP Spell-out: lexical input value,
+    domain-local trigger (the verb root, when V is in the domain), and output. -/
+structure HarmonyCand where
+  lexical : ATR
+  trigger : Option ATR
+  out     : ATR
   deriving DecidableEq, Repr
 
-/-- Per-cycle log of feature assignments preserved across spell-out; append-only. -/
-abbrev FrozenFeatureTable := List FrozenFeature
+/-- (46) `IDENT-IO(ATR)`: one violation if the output differs from the input. -/
+def identIO : Constraint HarmonyCand :=
+  Constraints.Constraint.binary fun c => c.out ≠ c.lexical
 
-/-- Extend a frozen-feature table with the assignments emitted by one cycle. -/
-def extendFrozenFeatures (existing : FrozenFeatureTable)
-    (phaseFreezings : List FrozenFeature) : FrozenFeatureTable :=
-  existing ++ phaseFreezings
+/-- (47) `ATRHARM`: one violation if a domain-local trigger disagrees with the
+    output. -/
+def atrHarm : Constraint HarmonyCand :=
+  Constraints.Constraint.binary fun c => ∃ t ∈ c.trigger, t ≠ c.out
 
-/-- Order-Preservation analogue for features: freezings emitted at earlier phases
-    survive subsequent spell-out. -/
-theorem extendFrozenFeatures_preserves
-    (existing : FrozenFeatureTable) (phaseFreezings : List FrozenFeature)
-    (f : FrozenFeature) (h : f ∈ existing) :
-    f ∈ extendFrozenFeatures existing phaseFreezings := by
-  unfold extendFrozenFeatures; exact List.mem_append_left _ h
+/-- The domain-local trigger: the verb root's value when V is spelled out in vP. -/
+def vPTrigger (c : Clause) (vRoot : ATR) : Option ATR :=
+  if c.harmony then some vRoot else none
 
-/-- The most-recently-frozen value of `feature` on `terminal`, if any. -/
-def frozenValue (table : FrozenFeatureTable) (terminal feature : String) : Option Bool :=
-  (table.reverse.find? (fun f => f.terminal == terminal && f.feature == feature)).map (·.value)
+/-- The vP-domain tableau: both output values, ranked `ATRHARM ≫ IDENT-IO(ATR)`. -/
+def harmonyTableau (lex : ATR) (trig : Option ATR) : Tableau HarmonyCand 2 :=
+  Tableau.ofRanking [⟨lex, trig, true⟩, ⟨lex, trig, false⟩] [atrHarm, identIO]
+    (List.cons_ne_nil _ _)
 
-/-- A later phase that re-freezes the same feature overrides the earlier value —
-    the intended override semantics (not exercised by [sande-clem-dabkowski-2026],
-    which posits no CP-phase ATR re-write for the particle). -/
-theorem frozen_value_later_overrides :
-    frozenValue
-      (extendFrozenFeatures [⟨"Part", "ATR", true⟩] [⟨"Part", "ATR", false⟩])
-      "Part" "ATR" = some false := by decide
+/-- §6.1's mechanism, closed: the unique OT winner under `ATRHARM ≫ IDENT-IO(ATR)`
+    surfaces with exactly `surfaceATR` — harmonized when a trigger is local,
+    faithful to the lexical default otherwise. -/
+theorem optimal_eq_surfaceATR (aux fronted : Bool) (vRoot : ATR) :
+    (harmonyTableau particleDefaultATR (vPTrigger ⟨aux, fronted⟩ vRoot)).optimal
+      = {⟨particleDefaultATR, vPTrigger ⟨aux, fronted⟩ vRoot,
+          surfaceATR ⟨aux, fronted⟩ vRoot⟩} := by
+  cases aux <;> cases fronted <;> cases vRoot <;> decide
 
-/-- The ATR value frozen at vP-spell-out for `PartSAuxOV`: when V is
-    +ATR (e.g. /ni/ 'see', whose harmony yields the +ATR particle
-    surface form [joku], their (41)), Part inherits +ATR via local
-    vP-internal harmony. This is the freezing event. -/
-def vPFrozen_PartSAuxOV (vIsPlusATR : ATR) : FrozenFeatureTable :=
-  if vIsPlusATR then [⟨"Part", "ATR", true⟩]
-  else            [⟨"Part", "ATR", false⟩]
+/-! ### Frozen ATR survives later movement (§6.1)
 
-/-- After remnant-VP fronting at the CP-phase spell-out, no new ATR
-    assignments are issued for Part — the value is preserved. -/
-theorem PartSAuxOV_atr_persists_through_fronting (vIsPlusATR : ATR) :
-    frozenValue
-      (extendFrozenFeatures (vPFrozen_PartSAuxOV vIsPlusATR) [])
-      "Part" "ATR" = some vIsPlusATR := by
-  cases vIsPlusATR <;> decide
+[fox-pesetsky-2005]'s Order Preservation shape applied to harmony outcomes:
+[sande-clem-dabkowski-2026] §6.1 — the particle "will retain this ATR value when it
+undergoes focus fronting". The record is append-only across cycles. -/
 
--- ============================================================================
--- § 6: Strict PIC is rejected (SCD 2026 §6.2)
--- ============================================================================
+/-- Per-cycle log of frozen ATR values `(terminal, value)`; append-only. -/
+abbrev FrozenATR := List (String × ATR)
 
-/-- [sande-clem-dabkowski-2026]'s commitment: the PIC mode for
-    Guébie discontinuous harmony is `linearizationBound` — already
-    spelled-out material remains accessible to later syntax. Strict
-    PIC₁ or PIC₂ would block the remnant-VP movement of the particle
-    after its ATR value has been frozen. -/
+/-- Extend the log with one cycle's assignments. -/
+def extendFrozenATR (existing new : FrozenATR) : FrozenATR := existing ++ new
+
+/-- Order-Preservation analogue: earlier freezings survive later cycles. -/
+theorem extendFrozenATR_preserves (existing new : FrozenATR) {e : String × ATR}
+    (h : e ∈ existing) : e ∈ extendFrozenATR existing new :=
+  List.mem_append_left _ h
+
+/-- The most recently frozen value on `terminal`, if any. -/
+def frozenATR? (table : FrozenATR) (terminal : String) : Option ATR :=
+  (table.reverse.find? (·.1 == terminal)).map (·.2)
+
+/-- A later re-freeze overrides — the intended semantics, though
+    [sande-clem-dabkowski-2026] posit no CP-cycle ATR re-write for the particle. -/
+theorem frozenATR?_later_overrides :
+    frozenATR? (extendFrozenATR [("Part", true)] [("Part", false)]) "Part"
+      = some false := by decide
+
+/-- The vP-cycle freezing for `PartSAuxOV`: Part inherits the verb root's value
+    (e.g. /ni/ 'see' +ATR yields the particle surface form [joku], (11)–(12)). -/
+def vPFrozen_PartSAuxOV (vRoot : ATR) : FrozenATR := [("Part", vRoot)]
+
+/-- The CP cycle issues no new ATR assignment for Part; the vP value persists —
+    §6.1's "it will retain this ATR value when it undergoes focus fronting". -/
+theorem PartSAuxOV_atr_persists_through_fronting (vRoot : ATR) :
+    frozenATR? (extendFrozenATR (vPFrozen_PartSAuxOV vRoot) []) "Part"
+      = some vRoot := rfl
+
+/-! ### The PIC stance (§6.2) -/
+
+/-- [sande-clem-dabkowski-2026] §6.2: spelled-out material stays accessible to
+    later syntax; strict PIC₁/PIC₂ would block the remnant-VP movement. The
+    Cyclic-Linearization-bounded regime is `PICStrength.linearizationBound`. -/
 def guebiePICMode : PICStrength := .linearizationBound
 
-/-- Under the Guébie PIC mode, every phase admits extraction of any
-    goal at the phasehood layer; concrete crashes come from
-    `Consistent` instead. The four-derivation theorem above
-    confirms no derivation crashes. -/
+/-- Under the Guébie PIC mode every phase admits extraction; concrete crashes come
+    from `Consistent` instead (`nonedge_particle_fronting_crashes`). -/
 theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
     (goal : Minimalist.SyntacticObject) :
     Minimalist.admitsExtraction guebiePICMode φ goal := by
   unfold guebiePICMode; exact Minimalist.linearizationBound_admits_all φ goal
 
--- ============================================================================
--- § 7: Verb doubling diagnosed as syntactic (refutes Landau 2006 for Guébie)
--- ============================================================================
+/-! ### Predicate fronting is narrow-syntactic (§3)
 
-/-! [sande-clem-dabkowski-2026] §3 establishes via island
-    sensitivity (their (27)–(30)) that Guébie predicate-fronting verb
-    doubling is narrow-syntactic, not PF dislocation. This positions
-    Guébie alongside [harizanov-gribanova-2019]'s Russian as a
-    positive instance of `VerbDoublingIsSyntactic` — and against
-    [landau-2006]'s Hebrew analysis (which makes verb doubling
-    PF-driven).
+Three diagnostics: successive cyclicity ((25)–(26)), island sensitivity
+((27)–(28)), and island creation ((29)–(30)). This registers Guébie beside
+[harizanov-gribanova-2019]'s Russian as a positive instance of
+`VerbDoublingIsSyntactic`, against [landau-2006]'s PF-driven Hebrew analysis
+(the reason the substrate predicate is per-construction, not universal — see
+`HarizanovGribanova2019Amalgamation.lean`). The witnesses are schematic: the
+fronted remnant is an evacuation trace plus the verb copy, per their (31). -/
 
-    The previous formulation as a universal axiom was inconsistent
-    with Landau's Hebrew analysis; the SCD 2026 paper is the trigger
-    for the substrate refactor in
-    `HarizanovGribanova2019Amalgamation.lean`.
-
-    We register Guébie as a positive instance via a `RemnantFronting`
-    witness with a `PredicateDoubling` extension. The structural data
-    is schematic (we use `Minimalist.SyntacticObject.leaf` placeholders
-    for V and the fronted XP rather than a concrete tree) — this is
-    consistent with the rest of the file's spell-out-list abstraction.
-    What it does establish is that the substrate is *usable*: the
-    `properRemnant` predicate is decidable on the witness. -/
-
-open Minimalist (SyntacticObject LIToken LexicalItem SyntacticObject)
+open Minimalist (SyntacticObject LIToken VerbDoublingIsSyntacticIn)
 open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
 open Minimalist.SyntacticObject
 
-/-- A schematic verb leaf for the `PredicateDoubling` witness. -/
 private def guebieVerbTok : LIToken := ⟨.simple .V [], 1⟩
 private def guebieVerbLeaf : SyntacticObject := lexLeaf guebieVerbTok
 
-/-- A schematic remnant-VP node containing the verb leaf as a trace
-    pronounced for recoverability. Built planar-first (the smart
-    `SyntacticObject.node` is noncomputable) so the `decide` proofs below reduce. -/
+/-- The remnant VP of the verb-doubling configuration ((31)): an evacuation trace
+    plus the verb copy, pronounced for recoverability per [koopman-1997]. -/
 private def guebieFrontedVP : SyntacticObject :=
-  ofPlanar (nodeP (leafP guebieVerbTok) (leafP guebieVerbTok))
+  ofPlanar (nodeP traceP (leafP guebieVerbTok))
 
-/-- A schematic landing-site leaf (Spec,CP). -/
 private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
 private def guebieLandingSite : SyntacticObject := lexLeaf guebieLandingTok
 
-/-- The Guébie predicate-fronting witness: V evacuates the VP, and
-    the remnant VP fronts to Spec,CP. The trace is pronounced — verb
-    doubling. -/
+/-- The Guébie predicate-fronting witness: V evacuates, the remnant VP fronts to
+    Spec,CP, and the trace is pronounced — verb doubling. -/
 def guebiePredicateDoubling : PredicateDoubling :=
   { frontedXP        := guebieFrontedVP
     evacuatedHeads   := [guebieVerbLeaf]
@@ -400,142 +343,76 @@ def guebiePredicateDoubling : PredicateDoubling :=
     verb_evacuated   := List.mem_singleton.mpr rfl
     trace_pronounced := true }
 
-/-- The witness is a proper remnant: the evacuated verb originally
-    sat inside the fronted VP (true by construction here, since
-    `frontedVP = node verb verb`). -/
-theorem guebie_properRemnant : properRemnant guebiePredicateDoubling.toRemnantFronting := by
+/-- The evacuated verb sat inside the fronted remnant. -/
+theorem guebie_properRemnant :
+    properRemnant guebiePredicateDoubling.toRemnantFronting := by decide
+
+/-- On the carrier, Internal Merge leaves a trace at the deeper position
+    ([marcolli-chomsky-berwick-2025] §1.4.3); surface doubling is the pronunciation
+    of both positions. -/
+def guebieFrontingDerivation : Derivation :=
+  { initial := guebieFrontedVP
+    steps   := [.im guebieVerbLeaf] }
+
+/-- Guébie registered as a positive instance of `VerbDoublingIsSyntacticIn`
+    (§3's diagnostics; decidable from the derivation structure). -/
+theorem guebie_VDIS_positive_instance :
+    VerbDoublingIsSyntacticIn guebieFrontingDerivation guebieVerbLeaf := by
   decide
 
-/-! ### Guébie's vP cophonology as a `PhrasalCophonology` instance
+/-! ### The vP harmony domain as a phrasal cophonology
 
-The vP-domain ATR-harmony cophonology of [sande-jenks-inkelas-2020]
-applied to Guébie. The phase selector matches `v` heads (per the v*
-phase head of Chomsky 2000); the constraint-subranking payload is left
-abstract here (it would be `[ATRHARM ≫ IDENT-IO(ATR)]` over the
-candidate type the OT machinery uses, which we don't instantiate
-inline). -/
+The vP-boundedness of the (46)/(47) subranking, exhibited through
+[sande-jenks-inkelas-2020]-style `PhrasalCophonology` — a bridge of this
+formalization, not the paper's framing. -/
 
-/-- The phase-selector for Guébie's vP cophonology: matches v heads
-    (and only v heads). On the `SyntacticObject` carrier the selector reads the root
-    leaf's token (`PhrasalCophonology.appliesTo` only ever applies it to a
-    `SyntacticObject.lexLeaf` of the phase head), so a v head is detected by its
-    outer category. -/
+/-- Phase selector for the vP cophonology: matches v heads by outer category. -/
 def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
   match s.getLIToken with
   | some tok => tok.item.outerCat == .v
   | none => false
 
-/-- The Guébie vP-cophonology bundle. The subranking `payload` is left as an
-    empty list of constraints over `Unit` candidates because the
-    ATR-harmony cophonology's actual constraints (SPREAD/IDENT derived
-    from a `Harmony.System`) would require threading the OT-candidate type
-    through this study file — out of
-    scope. The substrate use is exhibited by the bundle's existence
-    and the matched-phase predicate `appliesTo`. -/
-def guebieVPCophonology : PhrasalCophonology Unit Unit :=
+/-- The vP-cophonology bundle, with the (46)/(47) subranking as payload (list
+    order is ranking order). -/
+def guebieVPCophonology : PhrasalCophonology String HarmonyCand :=
   { selector := guebieVPPhaseSelector
-    payload  := [] }
+    payload  := [("ATRHARM", atrHarm), ("IDENT-IO(ATR)", identIO)] }
 
-/-- The Guébie vP-cophonology applies to a v head. (Witness: a leaf
-    SyntacticObject whose token's category is `.v`.) -/
+/-- The vP cophonology applies to a v head. -/
 theorem guebieVPCophonology_applies_to_v :
     let vTok : LIToken := ⟨.simple .v [], 99⟩
     let vHead : SyntacticObject := lexLeaf vTok
     let vPhase : Minimalist.Phase := { tree := vHead, head := vTok }
     guebieVPCophonology.appliesTo vPhase = true := by decide
 
-/-! ### Guébie as a positive instance of `VerbDoublingIsSyntactic`
+/-! ### The Wolof parallel (§7)
 
-[sande-clem-dabkowski-2026] §3 provides three independent
-diagnostics that the Guébie verb-doubling movement is narrow-syntactic:
-successive cyclicity (their (25)–(26)), island sensitivity ((27)–(28)),
-and creates-island effects ((29)–(30)). On the basis of this evidence,
-we register the Guébie predicate-fronting case as a positive instance
-of `HarizanovGribanova2019.Amalgamation.VerbDoublingIsSyntactic`.
-
-The Lean statement uses the MCB-aligned `VerbDoublingIsSyntacticIn`
-(see `HarizanovGribanova2019Amalgamation.lean`), which takes a
-`Derivation` and asks whether the verb is among the `movedItems` of
-the derivation. Per MCB §1.4.3.1, Internal Merge IS the syntactic
-mechanism that produces surface verb doubling via PF copy/trace
-pronunciation rules — the verb appears once in the syntactic tree
-(deeper copy as `mkTrace`), but PF rules pronounce both. -/
-
-open Minimalist (VerbDoublingIsSyntacticIn)
-
-/-- A schematic Guébie Derivation: the verb undergoes Internal Merge
-    in the predicate-fronting derivation (per SCD 2026 §3 island
-    diagnostics establishing this is narrow-syntactic, not PF). -/
-def guebieFrontingDerivation : Derivation :=
-  { initial := guebieFrontedVP
-    steps   := [.im guebieVerbLeaf] }
-
-/-- Guébie predicate-fronting verb doubling registered as a positive
-    instance of `VerbDoublingIsSyntacticIn`: the verb is among
-    `guebieFrontingDerivation.movedItems`.
-
-    Decidable from the Derivation structure (no `sorry`). This
-    discharges the audit's outstanding sorry for Guébie VDIS. -/
-theorem guebie_VDIS_positive_instance :
-    VerbDoublingIsSyntacticIn guebieFrontingDerivation guebieVerbLeaf := by
-  decide
-
--- ============================================================================
--- § 8: Wolof relative-clause parallel (SCD 2026 §7)
--- ============================================================================
-
-/-! Wolof shows the same architectural shape as Guébie discontinuous
-    harmony, in a relative-clause construction ([sy-2005],
-    [martinovic-2019]). The head noun starts local to the
-    distal demonstrative inside DP; both spell out together with
-    local ATR harmony applying; the head noun then A′-moves to the
-    left edge of the relative clause; intervening stative-verb
-    material does not harmonize. -/
+Wolof relative clauses ([sy-2005], [martinovic-2019]) show the same shape: the DP
+containing head noun and distal demonstrative "is a phase, so the two are spelled
+out in a sufficiently local configuration for harmony to apply"; the head noun then
+A′-moves to the left edge, and intervening stative-verb material does not
+harmonize ((49)–(50)). -/
 
 inductive WolofRelClauseShape where
-  /-- Local DP, harmony applies (no relative clause):
-      `[DP head dem]` — head and dem in the same spell-out domain. -/
+  /-- Local DP, no relative clause ((49)): head and demonstrative surface-adjacent. -/
   | localDP
-  /-- Relative clause, harmony at distance:
-      `head … [stative-V] … dem` — head fronted out of DP, but its
-      ATR is set inside the DP-phase before fronting. -/
+  /-- Relative clause ((50)): head fronted, ATR set inside the DP phase. -/
   | relClause
   deriving DecidableEq, Repr
 
-def wolofVPSpellOut : WolofRelClauseShape → List String
+/-- Head noun and demonstrative are spelled out together at the DP phase in both
+    shapes. -/
+def wolofDPSpellOut : WolofRelClauseShape → List String
   | .localDP   => ["head", "dem"]
   | .relClause => ["head", "dem"]
 
 def wolofHarmonyApplies (s : WolofRelClauseShape) : Bool :=
-  (wolofVPSpellOut s).contains "head" && (wolofVPSpellOut s).contains "dem"
+  (wolofDPSpellOut s).contains "head" && (wolofDPSpellOut s).contains "dem"
 
-/-- Both Wolof shapes have the head and demonstrative spelled out
-    together at the DP-phase spell-out — predicting harmony in both,
-    consistent with [sy-2005]'s data. The discontinuous
-    appearance in the relative-clause case is post-spell-out
-    movement, not a different harmony mechanism. -/
+/-- Harmony is predicted in both shapes — the relative clause's discontinuous
+    appearance is post-Spell-out movement, not a different harmony mechanism. -/
 theorem wolof_harmony_uniform :
     wolofHarmonyApplies .localDP = true ∧
     wolofHarmonyApplies .relClause = true := by decide
-
--- ============================================================================
--- § 9: Atchan nasal-harmony stub (SCD 2026 §7, Russell p.c.)
--- ============================================================================
-
-/-! [russell-2023] reports a parallel pattern in Atchan nasal
-    harmony: a nasal singular subject pronoun triggers nasal harmony
-    on auxiliaries and the verb; in verb-doubling focus
-    constructions, the higher copy of the verb (in focus position)
-    also surfaces nasal even though it is not surface-local to the
-    nasal subject pronoun.
-
-    The data are sparse (a single personal-communication example,
-    SCD 2026 (51)) and the Atchan verb-doubling syntax is not yet
-    independently established as narrow-syntactic. Recorded here as
-    an open question.
-
-    TODO: Atchan formalization waits on independent syntactic
-    diagnostics for verb doubling (the analogue of SCD §3 for
-    Guébie). -/
 
 end SandeClemDabkowski2026
