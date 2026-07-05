@@ -41,7 +41,7 @@ constraint from cyclic linearization alone, without invoking the
 Phase Impenetrability Condition. This positions them at
 `PICStrength.linearizationBound` (per `Syntax/Minimalist/Phase.lean`):
 no opacity constraint per se, only ordering constraints from
-`SpelloutAndCheck`. Same regime adopted by
+`Consistent`. Same regime adopted by
 [sande-clem-dabkowski-2026] for Guébie discontinuous harmony,
 [branan-davis-2019] for agreement-edge unlocking, and others.
 The structural diagnostic that the meN-deletion derivation is
@@ -59,7 +59,7 @@ overt Voice creates a contradiction, while null Voice does not.
 
 namespace ErlewineSommerlot2025
 
-open Minimalist.Linearization
+open List Minimalist.Linearization
 open Malayic.VoiceSystem
 
 -- ============================================================================
@@ -161,38 +161,38 @@ Each grammatical derivation produces consistent ordering across phases.
 /-- Active clause is consistently linearizable.
     [erlewine-sommerlot-2025] (36). -/
 theorem active_consistent :
-    SpelloutAndCheck [voiceP_active, cp_active] := by decide
+    Consistent [voiceP_active, cp_active] := by decide
 
 /-- Active clause with short *N-* prefix (Desa free variation). -/
 theorem active_short_consistent :
-    SpelloutAndCheck [voiceP_active_short, cp_active_short] := by decide
+    Consistent [voiceP_active_short, cp_active_short] := by decide
 
 /-- Subject extraction from active is consistent.
     The subject (agent) was already leftmost in VoiceP and moves further
     left through Spec,TP to Spec,CP — classic edge movement (Scenario 1
     of [fox-pesetsky-2005]). -/
 theorem subject_extraction_consistent :
-    SpelloutAndCheck [voiceP_active, cp_subjExtr] := by decide
+    Consistent [voiceP_active, cp_subjExtr] := by decide
 
 /-- *di-* passive is consistently linearizable.
     [erlewine-sommerlot-2025] (37a). -/
 theorem di_passive_consistent :
-    SpelloutAndCheck [voiceP_diPassive, cp_diPassive] := by decide
+    Consistent [voiceP_diPassive, cp_diPassive] := by decide
 
 /-- Bare passive is consistently linearizable.
     [erlewine-sommerlot-2025] (37b)/(39c). -/
 theorem bare_passive_consistent :
-    SpelloutAndCheck [voiceP_barePassive, cp_barePassive] := by decide
+    Consistent [voiceP_barePassive, cp_barePassive] := by decide
 
 /-- Object extraction with null Voice (Desa) is consistent.
     [erlewine-sommerlot-2025] (44). -/
 theorem obj_extraction_desa_consistent :
-    SpelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] := by decide
+    Consistent [voiceP_objExtr_null, cp_objExtr_desa] := by decide
 
 /-- Object extraction with null Voice (SI/SM) is consistent.
     [erlewine-sommerlot-2025] (54)–(56). -/
 theorem obj_extraction_sism_consistent :
-    SpelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] := by decide
+    Consistent [voiceP_objExtr_null_sism, cp_objExtr_sism] := by decide
 
 /-! ### The ordering paradox: overt Voice in object extraction
 
@@ -212,20 +212,15 @@ establishing agent < *me-*. The two are contradictory.
 
     These two statements contradict: me- < agent ∧ agent < me-. -/
 theorem men_deletion :
-    ¬ SpelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] := by decide
+    ¬ Consistent [voiceP_objExtr_overt, cp_objExtr_overt] := by decide
 
-/-- The specific contradiction: VoiceP says me- before agent;
-    CP says agent before me-. -/
+/-- The specific contradiction: VoiceP spells out me- before agent;
+    CP spells out agent before me-. -/
 theorem men_deletion_witness :
-    -- me- < agent from VoiceP
-    (allPrecs voiceP_objExtr_overt).any
-      (λ s => s.before == "me-" && s.after == "agent") = true ∧
-    -- agent < me- from CP
-    (allPrecs cp_objExtr_overt).any
-      (λ s => s.before == "agent" && s.after == "me-") = true ∧
-    -- combined is inconsistent
-    HasContradiction
-      (allPrecs voiceP_objExtr_overt ++ allPrecs cp_objExtr_overt) := by decide
+    ["me-", "agent"] <+ voiceP_objExtr_overt ∧
+    ["agent", "me-"] <+ cp_objExtr_overt ∧
+    ¬ Consistent [voiceP_objExtr_overt, cp_objExtr_overt] :=
+  ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 4: Cross-Linguistic Predictions
@@ -305,7 +300,7 @@ Voice is overt.
 -- VoiceP: [PP, agent, me-, NV, theme]  (PP is leftmost, then agent)
 -- CP: [PP, agent, Aux, me-, NV, theme]
 theorem pp_extraction_with_overt_voice :
-    SpelloutAndCheck [["PP", "agent", "me-", "NV", "theme"],
+    Consistent [["PP", "agent", "me-", "NV", "theme"],
                       ["PP", "agent", "Aux", "me-", "NV", "theme"]] := by
   decide
 
@@ -318,19 +313,19 @@ theorem pp_extraction_with_overt_voice :
     Object extraction requires null Voice (derived, not stipulated). -/
 theorem all_grammatical_derivations_consistent :
     -- Active (with me-N-)
-    SpelloutAndCheck [voiceP_active, cp_active] ∧
+    Consistent [voiceP_active, cp_active] ∧
     -- Active (with N- only, Desa)
-    SpelloutAndCheck [voiceP_active_short, cp_active_short] ∧
+    Consistent [voiceP_active_short, cp_active_short] ∧
     -- Di-passive
-    SpelloutAndCheck [voiceP_diPassive, cp_diPassive] ∧
+    Consistent [voiceP_diPassive, cp_diPassive] ∧
     -- Bare passive
-    SpelloutAndCheck [voiceP_barePassive, cp_barePassive] ∧
+    Consistent [voiceP_barePassive, cp_barePassive] ∧
     -- Object extraction, null Voice (Desa)
-    SpelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] ∧
+    Consistent [voiceP_objExtr_null, cp_objExtr_desa] ∧
     -- Object extraction, null Voice (SI/SM)
-    SpelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] ∧
+    Consistent [voiceP_objExtr_null_sism, cp_objExtr_sism] ∧
     -- Object extraction, overt Voice → CRASH
-    ¬ SpelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] := by
+    ¬ Consistent [voiceP_objExtr_overt, cp_objExtr_overt] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================

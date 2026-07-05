@@ -52,8 +52,7 @@ vP at the moment of vP-spell-out (when local harmony applied).
 4. **Frozen ATR survives later movement**. Once the particle has
    harmonized to V's ATR value at vP-spell-out, the value persists
    through subsequent A′-fronting of the remnant VP into Spec,CP
-   (Cyclic-Linearization-style preservation —
-   `Minimalist.Linearization.frozenValue`).
+   (Cyclic-Linearization-style preservation — `frozenValue` below).
 
 5. **Strict PIC is rejected**. For step 4 to work, already-spelled-out
    material must remain accessible to later syntactic operations
@@ -67,7 +66,7 @@ vP at the moment of vP-spell-out (when local harmony applied).
 For each of the four word orders, the file:
 
 - proves the derivation is consistently linearizable
-  (`Minimalist.Linearization.SpelloutAndCheck`),
+  (`Minimalist.Linearization.Consistent`),
 - computes the predicted harmony status (true iff V is in vP-content),
 - decides the (44) table by `decide`,
 - registers Guébie predicate fronting as a positive instance of
@@ -120,9 +119,7 @@ lives in Studies, not Fragments".
 namespace SandeClemDabkowski2026
 
 open Minimalist (PICStrength)
-open Minimalist.Linearization
-  (SpelloutAndCheck FrozenFeature FrozenFeatureTable
-   extendFrozenFeatures frozenValue)
+open Minimalist.Linearization (Consistent)
 open OptimalityTheory.Cophonology (PhrasalCophonology)
 
 -- ============================================================================
@@ -219,20 +216,20 @@ def derivation (wo : WordOrder) : List (List String) :=
 -- ============================================================================
 
 /-- `SVOPart`: V in T, Part in clause-final position. Consistent. -/
-theorem SVOPart_consistent : SpelloutAndCheck (derivation .SVOPart) := by decide
+theorem SVOPart_consistent : Consistent (derivation .SVOPart) := by decide
 
 /-- `SAuxOPartV`: V in v, both V and Part inside vP. Consistent. -/
-theorem SAuxOPartV_consistent : SpelloutAndCheck (derivation .SAuxOPartV) := by decide
+theorem SAuxOPartV_consistent : Consistent (derivation .SAuxOPartV) := by decide
 
 /-- `PartSVO`: V in T, Part fronts. Consistent under
     Cyclic-Linearization (no contradiction with vP-internal order). -/
-theorem PartSVO_consistent : SpelloutAndCheck (derivation .PartSVO) := by decide
+theorem PartSVO_consistent : Consistent (derivation .PartSVO) := by decide
 
 /-- `PartSAuxOV`: V in v, remnant VP fronts. Consistent. The crucial
     derivation for discontinuous harmony — Part is local to V at
     vP-spell-out, and the linearization remains coherent after
     fronting. -/
-theorem PartSAuxOV_consistent : SpelloutAndCheck (derivation .PartSAuxOV) := by decide
+theorem PartSAuxOV_consistent : Consistent (derivation .PartSAuxOV) := by decide
 
 -- ============================================================================
 -- § 4: Predicted harmony status (Table 44)
@@ -269,6 +266,50 @@ theorem partSAuxOV_discontinuous_yet_harmonizes :
 -- § 5: Frozen ATR survives later movement (SCD 2026 §6.1)
 -- ============================================================================
 
+/-! ### Per-cycle frozen feature assignments
+
+[fox-pesetsky-2005]'s Order Preservation shape applied to *feature values*
+established by phase-bounded phonological computation: [sande-clem-dabkowski-2026]
+§6.1 argues the particle's ATR value is fixed at vP spell-out and preserved through
+later movement. The append-only accumulator below is the feature analogue of the
+spell-out order's never-deleted statements. -/
+
+/-- A frozen feature assignment: terminal `t` had feature `f` set to `value` at the
+    spell-out cycle that emitted this entry. -/
+structure FrozenFeature where
+  terminal : String
+  feature  : String
+  value    : Bool
+  deriving DecidableEq, Repr
+
+/-- Per-cycle log of feature assignments preserved across spell-out; append-only. -/
+abbrev FrozenFeatureTable := List FrozenFeature
+
+/-- Extend a frozen-feature table with the assignments emitted by one cycle. -/
+def extendFrozenFeatures (existing : FrozenFeatureTable)
+    (phaseFreezings : List FrozenFeature) : FrozenFeatureTable :=
+  existing ++ phaseFreezings
+
+/-- Order-Preservation analogue for features: freezings emitted at earlier phases
+    survive subsequent spell-out. -/
+theorem extendFrozenFeatures_preserves
+    (existing : FrozenFeatureTable) (phaseFreezings : List FrozenFeature)
+    (f : FrozenFeature) (h : f ∈ existing) :
+    f ∈ extendFrozenFeatures existing phaseFreezings := by
+  unfold extendFrozenFeatures; exact List.mem_append_left _ h
+
+/-- The most-recently-frozen value of `feature` on `terminal`, if any. -/
+def frozenValue (table : FrozenFeatureTable) (terminal feature : String) : Option Bool :=
+  (table.reverse.find? (fun f => f.terminal == terminal && f.feature == feature)).map (·.value)
+
+/-- A later phase that re-freezes the same feature overrides the earlier value —
+    the intended override semantics (not exercised by [sande-clem-dabkowski-2026],
+    which posits no CP-phase ATR re-write for the particle). -/
+theorem frozen_value_later_overrides :
+    frozenValue
+      (extendFrozenFeatures [⟨"Part", "ATR", true⟩] [⟨"Part", "ATR", false⟩])
+      "Part" "ATR" = some false := by decide
+
 /-- The ATR value frozen at vP-spell-out for `PartSAuxOV`: when V is
     +ATR (e.g. /joku/), Part inherits +ATR via local vP-internal
     harmony. This is the freezing event. -/
@@ -297,7 +338,7 @@ def guebiePICMode : PICStrength := .linearizationBound
 
 /-- Under the Guébie PIC mode, every phase admits extraction of any
     goal at the phasehood layer; concrete crashes come from
-    `SpelloutAndCheck` instead. The four-derivation theorem above
+    `Consistent` instead. The four-derivation theorem above
     confirms no derivation crashes. -/
 theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
     (goal : Minimalist.SyntacticObject) :
