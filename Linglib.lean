@@ -2494,6 +2494,7 @@ import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
 import Linglib.Studies.MarcoRasin2026
+import Linglib.Studies.MarcolliChomskyBerwick2025
 import Linglib.Studies.MartinRoseNichols2025
 import Linglib.Studies.MartinSchaeferKastner2025
 import Linglib.Studies.MartinezVera2026

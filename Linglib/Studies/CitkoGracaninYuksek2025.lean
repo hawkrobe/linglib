@@ -70,7 +70,7 @@ multidominance as the PF reduction mechanism.
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalist
+open Minimalist SyntacticObject
 open Syntax.Question
 
 /-! ### Multidominance (relocated from Minimalist/Multidominance.lean)
@@ -776,13 +776,13 @@ theorem cs_twoEFeature_wholeDeriv_pf_differs :
 /-- The adopted CWH structure: non-bulk-sharing MD, no ellipsis (paper's (10b)).
     Shared nodes: C and T are individually multiply dominated. -/
 def cwhStructure : PFReducedCoordination where
-  conjunct1 := SyntacticObject.mkLeaf .C [] 0
-  conjunct2 := SyntacticObject.mkLeaf .C [] 1
+  conjunct1 := mkLeaf .C [] 0
+  conjunct2 := mkLeaf .C [] 1
   mechanisms := [.multidominance]
   sharing := some .nonBulk
   sharedNodes :=
-    [ { node := SyntacticObject.mkLeaf .C [] 10, category := some .C, pronounced := true }
-    , { node := SyntacticObject.mkLeaf .T [] 11, category := some .T, pronounced := false } ]
+    [ { node := mkLeaf .C [] 10, category := some .C, pronounced := true }
+    , { node := mkLeaf .T [] 11, category := some .T, pronounced := false } ]
   pfOutput := ["what", "and", "when", "should", "you", "teach"]
 
 /-- The adopted CS structure: bulk-sharing MD + ellipsis (paper's (20b)).
@@ -790,14 +790,14 @@ def cwhStructure : PFReducedCoordination where
     triggers TP deletion, repairing the MWF violation at the vP edge.
     Shared nodes: entire C' is shared (includes C, TP, vP, VP). -/
 def csStructure : PFReducedCoordination where
-  conjunct1 := SyntacticObject.mkLeaf .C [] 0
-  conjunct2 := SyntacticObject.mkLeaf .C [] 1
+  conjunct1 := mkLeaf .C [] 0
+  conjunct2 := mkLeaf .C [] 1
   mechanisms := [.multidominance, .ellipsis]
   sharing := some .bulk
   sharedNodes :=
-    [ { node := SyntacticObject.mkLeaf .C [] 10, category := some .C, pronounced := true }
-    , { node := SyntacticObject.mkLeaf .T [] 11, category := some .T, pronounced := false }
-    , { node := SyntacticObject.mkLeaf .v [] 12, category := some .v, pronounced := false } ]
+    [ { node := mkLeaf .C [] 10, category := some .C, pronounced := true }
+    , { node := mkLeaf .T [] 11, category := some .T, pronounced := false }
+    , { node := mkLeaf .v [] 12, category := some .v, pronounced := false } ]
   pfOutput := ["what", "and", "when"]
 
 /-- Structural drift sentry over the four key properties of cwhStructure

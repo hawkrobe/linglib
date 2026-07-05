@@ -47,6 +47,8 @@ and to support qualified lookup if a future paper picks them up.
 
 namespace Minimalist.CMH
 
+open SyntacticObject
+
 -- ============================================================================
 -- § 1: Merge Features
 -- ============================================================================
@@ -379,7 +381,7 @@ private def isKLeaf (s : SyntacticObject) : Bool :=
     left/right symmetry is automatic. TODO Phase 2: refine via
     head-function-aware projection (`SyntacticObject.selHead`). -/
 private def isKP (s : SyntacticObject) : Prop :=
-  ∃ d, SyntacticObject.immediatelyContains s d ∧ isKLeaf d
+  ∃ d, immediatelyContains s d ∧ isKLeaf d
 
 /-! #### `isKP` detection — positive and negative witnesses
 
@@ -394,29 +396,25 @@ private def kProbeV  : LIToken := ⟨.simple .V [.D] (phonForm := "see"), 902⟩
 
 /-- A K-headed leaf is detected by `isKLeaf`; a D-headed leaf is not. -/
 private theorem isKLeaf_detects :
-    isKLeaf (SyntacticObject.lexLeaf kProbeK) = true ∧
-      isKLeaf (SyntacticObject.lexLeaf kProbeD) = false := by
+    isKLeaf (lexLeaf kProbeK) = true ∧ isKLeaf (lexLeaf kProbeD) = false := by
   decide
 
 /-- Positive: `[K DP]` (a K daughter present) is a KP. -/
 private theorem isKP_detects_kp :
-    isKP (SyntacticObject.node (SyntacticObject.lexLeaf kProbeK)
-      (SyntacticObject.lexLeaf kProbeD)) :=
-  ⟨SyntacticObject.lexLeaf kProbeK,
-    (SyntacticObject.immediatelyContains_node _ _ _).mpr (Or.inl rfl), by decide⟩
+    isKP (node (lexLeaf kProbeK) (lexLeaf kProbeD)) :=
+  ⟨lexLeaf kProbeK, (immediatelyContains_node _ _ _).mpr (Or.inl rfl), by decide⟩
 
 /-- Negative: `[V DP]` (no K daughter) is not a KP. -/
 private theorem isKP_rejects_non_kp :
-    ¬ isKP (SyntacticObject.node (SyntacticObject.lexLeaf kProbeV)
-      (SyntacticObject.lexLeaf kProbeD)) := by
+    ¬ isKP (node (lexLeaf kProbeV) (lexLeaf kProbeD)) := by
   rintro ⟨d, hd, hk⟩
-  rw [SyntacticObject.immediatelyContains_node] at hd
+  rw [immediatelyContains_node] at hd
   rcases hd with rfl | rfl <;> exact absurd hk (by decide)
 
 /-- Negative: a bare K *leaf* is a K head, not a KP — it has no daughters. -/
-private theorem isKP_rejects_bare_K_leaf : ¬ isKP (SyntacticObject.lexLeaf kProbeK) := by
+private theorem isKP_rejects_bare_K_leaf : ¬ isKP (lexLeaf kProbeK) := by
   rintro ⟨d, hd, _⟩
-  exact (SyntacticObject.immediatelyContains_lexLeaf kProbeK d) hd
+  exact (immediatelyContains_lexLeaf kProbeK d) hd
 
 -- ============================================================================
 -- § 9: Anti-Redundancy in Agreement
@@ -461,6 +459,7 @@ end Minimalist.CMH
 namespace Newman2024
 
 open Minimalist Minimalist.CMH
+open SyntacticObject
 
 -- ============================================================================
 -- § 1: The Space of Possible vPs
@@ -769,10 +768,10 @@ private def DO₁ : LIToken := tok .D "DO" 13
 private def XP₁ : LIToken := tok .P "to-Mary" 14
 
 def lowXPTree : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP agent₁)
-    (SyntacticObject.nodeP (SyntacticObject.leafP v₁)
-      (SyntacticObject.nodeP (SyntacticObject.leafP DO₁)
-        (SyntacticObject.nodeP (SyntacticObject.leafP V₁) (SyntacticObject.leafP XP₁)))))
+  ofPlanar (nodeP (leafP agent₁)
+    (nodeP (leafP v₁)
+      (nodeP (leafP DO₁)
+        (nodeP (leafP V₁) (leafP XP₁)))))
 
 -- DOC ditransitive: V: [·D·], v: [·D·][·X·][·V·]
 -- Structure: [vP VP [vP agent [v' v IO]]]
@@ -786,10 +785,9 @@ private def DO₂ : LIToken := tok .D "DO" 23
 private def IO₂ : LIToken := tok .D "IO" 24
 
 def docTree : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP
-    (SyntacticObject.nodeP (SyntacticObject.leafP V₂) (SyntacticObject.leafP DO₂))
-    (SyntacticObject.nodeP (SyntacticObject.leafP agent₂)
-      (SyntacticObject.nodeP (SyntacticObject.leafP v₂) (SyntacticObject.leafP IO₂))))
+  ofPlanar (nodeP (nodeP (leafP V₂) (leafP DO₂))
+    (nodeP (leafP agent₂)
+      (nodeP (leafP v₂) (leafP IO₂))))
 
 -- § 10a: Internal argument binding asymmetry
 
@@ -797,38 +795,30 @@ def docTree : SyntacticObject :=
     DO (specifier of V, by Non-DP First) c-commands into the
     complement position. -/
 theorem low_xp_DO_ccommands_XP :
-    SyntacticObject.cCommandsIn lowXPTree (SyntacticObject.lexLeaf DO₁)
-      (SyntacticObject.lexLeaf XP₁) := by decide
+    cCommandsIn lowXPTree (lexLeaf DO₁) (lexLeaf XP₁) := by decide
 
 theorem low_xp_XP_not_ccommands_DO :
-    ¬ SyntacticObject.cCommandsIn lowXPTree (SyntacticObject.lexLeaf XP₁)
-      (SyntacticObject.lexLeaf DO₁) := by decide
+    ¬ cCommandsIn lowXPTree (lexLeaf XP₁) (lexLeaf DO₁) := by decide
 
 /-- DOC: neither internal argument c-commands the other — symmetric.
     DO is inside VP (outer specifier), IO is complement of v.
     They are in separate branches. -/
 theorem doc_DO_not_ccommands_IO :
-    ¬ SyntacticObject.cCommandsIn docTree (SyntacticObject.lexLeaf DO₂)
-      (SyntacticObject.lexLeaf IO₂) := by decide
+    ¬ cCommandsIn docTree (lexLeaf DO₂) (lexLeaf IO₂) := by decide
 
 theorem doc_IO_not_ccommands_DO :
-    ¬ SyntacticObject.cCommandsIn docTree (SyntacticObject.lexLeaf IO₂)
-      (SyntacticObject.lexLeaf DO₂) := by decide
+    ¬ cCommandsIn docTree (lexLeaf IO₂) (lexLeaf DO₂) := by decide
 
 /-- The structural asymmetry derived from VP-as-specifier:
     VP-as-complement gives binding asymmetry between internal
     arguments; VP-as-specifier gives symmetric binding. -/
 theorem binding_asymmetry_iff_vp_complement :
     -- Low-XP (VP complement): DO c-commands XP, not vice versa
-    (SyntacticObject.cCommandsIn lowXPTree (SyntacticObject.lexLeaf DO₁)
-        (SyntacticObject.lexLeaf XP₁) ∧
-     ¬ SyntacticObject.cCommandsIn lowXPTree (SyntacticObject.lexLeaf XP₁)
-        (SyntacticObject.lexLeaf DO₁)) ∧
+    (cCommandsIn lowXPTree (lexLeaf DO₁) (lexLeaf XP₁) ∧
+     ¬ cCommandsIn lowXPTree (lexLeaf XP₁) (lexLeaf DO₁)) ∧
     -- DOC (VP specifier): neither c-commands the other
-    (¬ SyntacticObject.cCommandsIn docTree (SyntacticObject.lexLeaf DO₂)
-        (SyntacticObject.lexLeaf IO₂) ∧
-     ¬ SyntacticObject.cCommandsIn docTree (SyntacticObject.lexLeaf IO₂)
-        (SyntacticObject.lexLeaf DO₂)) := by
+    (¬ cCommandsIn docTree (lexLeaf DO₂) (lexLeaf IO₂) ∧
+     ¬ cCommandsIn docTree (lexLeaf IO₂) (lexLeaf DO₂)) := by
   refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> decide
 
 -- § 10b: Agent c-command differences
@@ -836,23 +826,19 @@ theorem binding_asymmetry_iff_vp_complement :
 /-- In the low-XP structure, the agent c-commands both internal
     arguments (VP is complement, fully inside agent's sister). -/
 theorem low_xp_agent_ccommands_DO :
-    SyntacticObject.cCommandsIn lowXPTree (SyntacticObject.lexLeaf agent₁)
-      (SyntacticObject.lexLeaf DO₁) := by decide
+    cCommandsIn lowXPTree (lexLeaf agent₁) (lexLeaf DO₁) := by decide
 
 theorem low_xp_agent_ccommands_XP :
-    SyntacticObject.cCommandsIn lowXPTree (SyntacticObject.lexLeaf agent₁)
-      (SyntacticObject.lexLeaf XP₁) := by decide
+    cCommandsIn lowXPTree (lexLeaf agent₁) (lexLeaf XP₁) := by decide
 
 /-- In the DOC structure with Tucking In, the agent (inner specifier)
     c-commands IO (complement of v) but NOT DO (inside VP, the outer
     specifier). The agent and VP are in separate branches — a direct
     consequence of VP being a specifier rather than a complement. -/
 theorem doc_agent_ccommands_IO :
-    SyntacticObject.cCommandsIn docTree (SyntacticObject.lexLeaf agent₂)
-      (SyntacticObject.lexLeaf IO₂) := by decide
+    cCommandsIn docTree (lexLeaf agent₂) (lexLeaf IO₂) := by decide
 
 theorem doc_agent_not_ccommands_DO :
-    ¬ SyntacticObject.cCommandsIn docTree (SyntacticObject.lexLeaf agent₂)
-      (SyntacticObject.lexLeaf DO₂) := by decide
+    ¬ cCommandsIn docTree (lexLeaf agent₂) (lexLeaf DO₂) := by decide
 
 end Newman2024

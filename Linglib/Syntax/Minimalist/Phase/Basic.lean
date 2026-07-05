@@ -37,6 +37,8 @@ projecting head's outer category — convention-independent (the carrier is unor
 
 namespace Minimalist
 
+open SyntacticObject
+
 -- ============================================================================
 -- Part 1: Phase Head Identification (the selection-driven head)
 -- ============================================================================
@@ -132,10 +134,10 @@ instance (φ : Phase) (goal : SyntacticObject) : Decidable (φ.Impenetrable goal
 
 /-- A genuine phase: its head projects nontrivially (`head ∈ L_Φ(T)`, MCB Def 1.14.3
     eq 1.14.1) — `γ_ℓ` reaches an internal vertex. -/
-def IsWellFormed (φ : Phase) : Prop := SyntacticObject.isPhaseHead φ.tree φ.head
+def IsWellFormed (φ : Phase) : Prop := isPhaseHead φ.tree φ.head
 
 instance (φ : Phase) : Decidable φ.IsWellFormed :=
-  inferInstanceAs (Decidable (SyntacticObject.isPhaseHead _ _))
+  inferInstanceAs (Decidable (isPhaseHead _ _))
 
 /-! ### Spell-out triggers
 
@@ -158,7 +160,7 @@ variable {P : Type*}
 /-- A trigger applies to a phase iff its `selector` matches the phase head (the head
 leaf `ph.head`, as a leaf SyntacticObject). -/
 def Trigger.appliesTo (tr : Trigger P) (ph : Phase) : Bool :=
-  tr.selector (SyntacticObject.lexLeaf ph.head)
+  tr.selector (lexLeaf ph.head)
 
 /-- The *first* registered trigger whose `selector` matches the phase head —
 first-match encodes lexicographic precedence (the elsewhere ordering of
@@ -266,7 +268,7 @@ structure FeatureInheritance where
   /-- The head receiving features (T, V, vMOD). -/
   target : SyntacticObject
   /-- Source must immediately contain target. -/
-  locality : SyntacticObject.immediatelyContains source target
+  locality : immediatelyContains source target
   /-- Which transfer operation applies (default: classical [chomsky-2008] donate). -/
   style : TransferStyle := .donate
   /-- The features transferred (default: none specified at this layer). -/

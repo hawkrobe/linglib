@@ -129,7 +129,7 @@ theorem different_mechanisms :
 -- Part II: Minimalist Analysis
 -- ============================================================================
 
-open Minimalist
+open Minimalist SyntacticObject
 
 /-! ### Mam Voice substrate (Minimalist)
 
@@ -458,20 +458,18 @@ private def cTok       : LIToken := ⟨.simple .C [.T] "", 6⟩
     successive-cyclic Ā-movement, surfacing at Spec,CP with a trace lower down.
     Structure: `[CP oblique [C' C [TP T [VoiceP oblique [Voice' Voice [VP V obj]]]]]]`. -/
 private def cp : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP obliqueTok)
-      (SyntacticObject.nodeP (SyntacticObject.leafP cTok)
-        (SyntacticObject.nodeP (SyntacticObject.leafP tTok)
-          (SyntacticObject.nodeP (SyntacticObject.leafP obliqueTok)
-            (SyntacticObject.nodeP (SyntacticObject.leafP voiceTok)
-              (SyntacticObject.nodeP (SyntacticObject.leafP verbTok)
-                (SyntacticObject.leafP objectTok)))))))
+  ofPlanar
+    (nodeP (leafP obliqueTok)
+      (nodeP (leafP cTok)
+        (nodeP (leafP tTok)
+          (nodeP (leafP obliqueTok)
+            (nodeP (leafP voiceTok)
+              (nodeP (leafP verbTok) (leafP objectTok)))))))
 
 theorem derivation_tree_size : cp.nodeCount = 6 := by decide
 
 theorem voice_has_uOblique :
-    hasUnvaluedFeature mamVoice.features (.oblique false) = true := by
-  decide
+    hasUnvaluedFeature mamVoice.features (.oblique false) = true := by decide
 
 private def oblique_goal_features : FeatureBundle := .ofGramFeatures [.valued (.oblique true)]
 

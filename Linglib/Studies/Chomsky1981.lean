@@ -40,7 +40,7 @@ tables.
 namespace Chomsky1981
 
 open Features.MinimalPairs
-open Minimalist
+open Minimalist SyntacticObject
 open Binding (SimpleClause Pos CommandRelation)
 
 private abbrev john := English.Nouns.john.toWordSg
@@ -85,26 +85,24 @@ private def wordTok (w : Word) (id : Nat) : LIToken :=
     `{subj, verb}`. C-command follows from the geometry. Built planar-first so
     the containment / c-command decision procedures reduce. -/
 def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
-  let subjP := SyntacticObject.leafP (wordTok clause.subject 0)
-  let verbP := SyntacticObject.leafP (wordTok clause.verb 1)
+  let subjP := leafP (wordTok clause.subject 0)
+  let verbP := leafP (wordTok clause.verb 1)
   match clause.object with
-  | none => SyntacticObject.ofPlanar (SyntacticObject.nodeP subjP verbP)
-  | some obj =>
-    SyntacticObject.ofPlanar (SyntacticObject.nodeP subjP
-      (SyntacticObject.nodeP verbP (SyntacticObject.leafP (wordTok obj 2))))
+  | none => ofPlanar (nodeP subjP verbP)
+  | some obj => ofPlanar (nodeP subjP (nodeP verbP (leafP (wordTok obj 2))))
 
 private def subjectSO (clause : SimpleClause) : SyntacticObject :=
-  SyntacticObject.lexLeaf (wordTok clause.subject 0)
+  lexLeaf (wordTok clause.subject 0)
 
 private def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
-  clause.object.map fun obj => SyntacticObject.lexLeaf (wordTok obj 2)
+  clause.object.map fun obj => lexLeaf (wordTok obj 2)
 
 /-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
     `{verb, obj}` contains the object. -/
 def subjectCCommandsObject (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => False
-  | some objSO => SyntacticObject.cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
+  | some objSO => cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
 
 instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := by
   unfold subjectCCommandsObject; cases objectSO? clause <;> infer_instance
@@ -114,7 +112,7 @@ instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := 
 def objectCCommandsSubject (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => False
-  | some objSO => SyntacticObject.cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
+  | some objSO => cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
 
 instance (clause : SimpleClause) : Decidable (objectCCommandsSubject clause) := by
   unfold objectCCommandsSubject; cases objectSO? clause <;> infer_instance
@@ -124,8 +122,8 @@ def sameLocalDomain (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => True
   | some objSO =>
-    SyntacticObject.contains (toSyntacticObject clause) (subjectSO clause) ∧
-    SyntacticObject.contains (toSyntacticObject clause) objSO
+    contains (toSyntacticObject clause) (subjectSO clause) ∧
+    contains (toSyntacticObject clause) objSO
 
 instance (clause : SimpleClause) : Decidable (sameLocalDomain clause) := by
   unfold sameLocalDomain; cases objectSO? clause <;> infer_instance

@@ -53,7 +53,7 @@ is future work.
 
 namespace Amato2025
 
-open Minimalist
+open Minimalist SyntacticObject
 open Amato2025.NestedAgree
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -120,10 +120,10 @@ theorem bulgarianMultiWh_is_nested :
     IsNestedAgreeConfig bulgarianMultiWh := by decide
 
 theorem bulgarianMultiWh_runStack_0 :
-    runStack bulgarianMultiWh 0 = some (SyntacticObject.lexLeaf aWhObj) := by decide
+    runStack bulgarianMultiWh 0 = some (lexLeaf aWhObj) := by decide
 
 theorem bulgarianMultiWh_runStack_1 :
-    runStack bulgarianMultiWh 1 = some (SyntacticObject.lexLeaf aWhObj) := by decide
+    runStack bulgarianMultiWh 1 = some (lexLeaf aWhObj) := by decide
 
 /-- **Apparent wh-subject intervention is not actual.** The
     wh-subject is in C's c-command (probe 0's full domain) but is
@@ -137,9 +137,9 @@ theorem bulgarianMultiWh_runStack_1 :
     structurally closer wh-phrase. wh-obj raises first; wh-sbj is
     raised in the (out-of-scope) restart phase. -/
 theorem bulgarianMultiWh_excludes_wh_subject :
-    SyntacticObject.lexLeaf aWhSbj ∈ bulgarianMultiWh.searchDomain 0 ∧
-    SyntacticObject.lexLeaf aWhSbj ∉ bulgarianMultiWh.searchDomain 1 :=
-  apparent_intervener_excluded bulgarianMultiWh 0 (SyntacticObject.lexLeaf aWhSbj)
+    lexLeaf aWhSbj ∈ bulgarianMultiWh.searchDomain 0 ∧
+    lexLeaf aWhSbj ∉ bulgarianMultiWh.searchDomain 1 :=
+  apparent_intervener_excluded bulgarianMultiWh 0 (lexLeaf aWhSbj)
     (by decide) (by decide)
 
 end Bulgarian

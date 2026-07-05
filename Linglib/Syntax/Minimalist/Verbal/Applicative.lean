@@ -36,6 +36,8 @@ The high/low distinction is read off the Merge complement's category via the hea
 
 namespace Minimalist
 
+open SyntacticObject
+
 /-! ### Applicative type and its Merge complement -/
 
 /-- High vs low applicatives ([pylkkanen-2008]): high relates to the event, low to the theme. -/
@@ -55,8 +57,7 @@ def ApplType.complement : ApplType → Cat
   | .lowSource    => .D
 
 /-- The complement constituent an applicative Merges with — a leaf headed by `a.complement`. -/
-def ApplType.complementSO (a : ApplType) : SyntacticObject :=
-  SyntacticObject.mkLeaf a.complement [] 0
+def ApplType.complementSO (a : ApplType) : SyntacticObject := mkLeaf a.complement [] 0
 
 /-- The Merge complement's categorial features, read via the §1.13 head function
 `SyntacticObject.outerCatC`. -/

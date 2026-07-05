@@ -51,19 +51,19 @@ needs four distinct categories.
 
 namespace Cinque2005
 
-open Minimalist
+open Minimalist SyntacticObject
 open RootedTree
 
 /-! ### The four elements (head-initial leaves) -/
 
 /-- Noun (the raising NP). -/
-def noun : SyntacticObject := SyntacticObject.mkLeaf .N [] 1
+def noun : SyntacticObject := mkLeaf .N [] 1
 /-- Adjective. -/
-def adj : SyntacticObject := SyntacticObject.mkLeaf .A [] 2
+def adj : SyntacticObject := mkLeaf .A [] 2
 /-- Numeral. -/
-def numl : SyntacticObject := SyntacticObject.mkLeaf .Num [] 3
+def numl : SyntacticObject := mkLeaf .Num [] 3
 /-- Demonstrative (encoded as `.D`; see module note). -/
-def dem : SyntacticObject := SyntacticObject.mkLeaf .D [] 4
+def dem : SyntacticObject := mkLeaf .D [] 4
 
 /-! ### Frequency buckets and the 24-order attestation table ([cinque-2005] (6))
 
@@ -132,57 +132,49 @@ NP-containing constituent (which contains the earlier `SyntacticObject.traceLeaf
 the planar DSL so the surface orders `decide`. -/
 
 /-- The four leaf tokens, used to build pied-piping movers planar-first. -/
-private def pN : RoseTree SOLabel := SyntacticObject.leafP ⟨.simple .N [], 1⟩
-private def pA : RoseTree SOLabel := SyntacticObject.leafP ⟨.simple .A [], 2⟩
-private def pNum : RoseTree SOLabel := SyntacticObject.leafP ⟨.simple .Num [], 3⟩
+private def pN : RoseTree SOLabel := leafP ⟨.simple .N [], 1⟩
+private def pA : RoseTree SOLabel := leafP ⟨.simple .A [], 2⟩
+private def pNum : RoseTree SOLabel := leafP ⟨.simple .Num [], 3⟩
 
 /-- The pied-piped `[N [A t]]` mover (N raised around A, then the whole `[A t]`
     with N on top). -/
-def movNAt : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP pN (SyntacticObject.nodeP pA SyntacticObject.traceP))
+def movNAt : SyntacticObject := ofPlanar (nodeP pN (nodeP pA traceP))
 /-- The pied-piped `[A N]` mover. -/
-def movAN : SyntacticObject := SyntacticObject.ofPlanar (SyntacticObject.nodeP pA pN)
+def movAN : SyntacticObject := ofPlanar (nodeP pA pN)
 /-- The pied-piped `[N [A t]]` constituent raised again past Num, with the Num
     sub-trace: `[N [Num [t [A t]]]]` — the (t) roll-up's third mover. -/
 def movNNumAt : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP pN
-    (SyntacticObject.nodeP pNum
-      (SyntacticObject.nodeP SyntacticObject.traceP
-        (SyntacticObject.nodeP pA SyntacticObject.traceP))))
+  ofPlanar (nodeP pN (nodeP pNum (nodeP traceP (nodeP pA traceP))))
 /-- The successive pied-pipe past Num for (x): `[[N [A t]] [Num t]]`. -/
 def movNAtNum : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP
-    (SyntacticObject.nodeP pN (SyntacticObject.nodeP pA SyntacticObject.traceP))
-    (SyntacticObject.nodeP pNum SyntacticObject.traceP))
+  ofPlanar (nodeP (nodeP pN (nodeP pA traceP)) (nodeP pNum traceP))
 
 /-- (a) Dem Num A N — no movement. -/
-def derA : SyntacticObject.Derivation := ⟨noun, [.emL adj, .emL numl, .emL dem]⟩
+def derA : Derivation := ⟨noun, [.emL adj, .emL numl, .emL dem]⟩
 
 /-- (b) Dem Num N A — NP raises around A (bare). -/
-def derB : SyntacticObject.Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .emL dem]⟩
+def derB : Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .emL dem]⟩
 
 /-- (c) Dem N Num A — NP raises around A then Num (partial, bare). -/
-def derC : SyntacticObject.Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem]⟩
+def derC : Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem]⟩
 
 /-- (d) N Dem Num A — NP raises around A, Num, Dem (total, bare). -/
-def derD : SyntacticObject.Derivation :=
+def derD : Derivation :=
   ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem, .im noun]⟩
 
 /-- (n) Dem A N Num — pied-pipe `[A N]` around Num (no sub-raise). -/
-def derN : SyntacticObject.Derivation := ⟨noun, [.emL adj, .emL numl, .im movAN, .emL dem]⟩
+def derN : Derivation := ⟨noun, [.emL adj, .emL numl, .im movAN, .emL dem]⟩
 
 /-- (o) Dem N A Num — raise N around A, then pied-pipe `[N A]` around Num. -/
-def derO : SyntacticObject.Derivation :=
-  ⟨noun, [.emL adj, .im noun, .emL numl, .im movNAt, .emL dem]⟩
+def derO : Derivation := ⟨noun, [.emL adj, .im noun, .emL numl, .im movNAt, .emL dem]⟩
 
 /-- (t) N Num A Dem — bare raise around A and Num, then pied-pipe `[N Num A]`
     around Dem. -/
-def derT : SyntacticObject.Derivation :=
+def derT : Derivation :=
   ⟨noun, [.emL adj, .im noun, .emL numl, .im noun, .emL dem, .im movNNumAt]⟩
 
 /-- (x) N A Num Dem — successive pied-piping all the way up (the roll-up). -/
-def derX : SyntacticObject.Derivation :=
+def derX : Derivation :=
   ⟨noun, [.emL adj, .im noun, .emL numl, .im movNAt, .emL dem, .im movNAtNum]⟩
 
 /-! ### The eight derivations produce their attested orders (kernel-checked) -/
@@ -247,7 +239,7 @@ private def pMovers (cur : RoseTree SOLabel) : List (RoseTree SOLabel) :=
     `SyntacticObject.traceP` (planar leftward movement) — `none` if `s` is absent. -/
 private def pMoveLeft (s : RoseTree SOLabel) (cur : RoseTree SOLabel) : Option (RoseTree SOLabel) :=
   if (pSubtrees cur).contains s then
-    some (SyntacticObject.nodeP s (planarReplaceWhereP (· == s) SyntacticObject.traceP cur))
+    some (nodeP s (planarReplaceWhereP (· == s) traceP cur))
   else none
 
 /-- At a spec: keep, or raise one eligible mover (leftward). -/
@@ -257,10 +249,9 @@ private def pOpt (cur : RoseTree SOLabel) : List (RoseTree SOLabel) :=
 /-- The whole legal derivation space (planar externalizations): merge A, Num, Dem
     head-initially with an optional raise at each spec. -/
 private def space : List (RoseTree SOLabel) :=
-  ([SyntacticObject.leafP tokN].map
-      (fun c => SyntacticObject.nodeP (SyntacticObject.leafP tokA) c)).flatMap pOpt
-    |>.map (fun c => SyntacticObject.nodeP (SyntacticObject.leafP tokNum) c) |>.flatMap pOpt
-    |>.map (fun c => SyntacticObject.nodeP (SyntacticObject.leafP tokD) c)   |>.flatMap pOpt
+  ([leafP tokN].map (fun c => nodeP (leafP tokA) c)).flatMap pOpt
+    |>.map (fun c => nodeP (leafP tokNum) c) |>.flatMap pOpt
+    |>.map (fun c => nodeP (leafP tokD) c)   |>.flatMap pOpt
 
 /-- The distinct surface orders reachable by Cinque's movement. -/
 def reachableOrders : List (List Cat) :=
@@ -381,9 +372,9 @@ private def stepCost (build : RoseTree SOLabel → RoseTree SOLabel) (p : RoseTr
 /-- The legal derivation space (as in `space`) carrying accumulated local
     marked-move cost. -/
 private def spaceCost : List (RoseTree SOLabel × Nat) :=
-  [(SyntacticObject.nodeP (SyntacticObject.leafP tokA) (SyntacticObject.leafP tokN), 0)]
-    |>.flatMap (stepCost (fun c => SyntacticObject.nodeP (SyntacticObject.leafP tokNum) c))
-    |>.flatMap (stepCost (fun c => SyntacticObject.nodeP (SyntacticObject.leafP tokD) c))
+  [(nodeP (leafP tokA) (leafP tokN), 0)]
+    |>.flatMap (stepCost (fun c => nodeP (leafP tokNum) c))
+    |>.flatMap (stepCost (fun c => nodeP (leafP tokD) c))
     |>.flatMap (stepCost id)
 
 /-- **Derived** local proxy: the minimum number of locally-marked moves over the

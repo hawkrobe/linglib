@@ -65,6 +65,8 @@ A/A-bar distinction.
 
 namespace Minimalist
 
+open SyntacticObject
+
 -- ============================================================================
 -- S 1: Generic Late-Merger Bleeding
 -- ============================================================================
@@ -228,7 +230,7 @@ theorem no_case_forces_reconstruction
     `SyntacticObject` trees, complementing the abstract chain-position
     analysis in `wlmForcesReconstruction`. -/
 def conditionCViolation (root binder rExpr : SyntacticObject) : Bool :=
-  decide (SyntacticObject.cCommandsIn root binder rExpr)
+  decide (cCommandsIn root binder rExpr)
 
 /-- Condition C is satisfied in a tree: the binder does NOT c-command
     the R-expression. Takes the tree after any WLM has applied.

@@ -75,21 +75,21 @@ DP arguments, not the position of V.
 
 namespace Larson1988
 
-open Minimalist
+open Minimalist SyntacticObject
 open RootedTree
 
 -- ============================================================================
 -- § 1: Lexical Items
 -- ============================================================================
 
-def V_send    := SyntacticObject.mkLeafPhon .V [.D]  "send"     300
-def P_to      := SyntacticObject.mkLeafPhon .P [.D]  "to"       301
-def DP_john   := SyntacticObject.mkLeafPhon .D []    "John"     302
-def DP_mary   := SyntacticObject.mkLeafPhon .D []    "Mary"     303
-def DP_letter := SyntacticObject.mkLeafPhon .D []    "a letter" 304
+def V_send    := mkLeafPhon .V [.D]  "send"     300
+def P_to      := mkLeafPhon .P [.D]  "to"       301
+def DP_john   := mkLeafPhon .D []    "John"     302
+def DP_mary   := mkLeafPhon .D []    "Mary"     303
+def DP_letter := mkLeafPhon .D []    "a letter" 304
 
-def V_kick    := SyntacticObject.mkLeafPhon .V [.D]  "kicked"   310
-def DP_ball   := SyntacticObject.mkLeafPhon .D []    "the ball" 311
+def V_kick    := mkLeafPhon .V [.D]  "kicked"   310
+def DP_ball   := mkLeafPhon .D []    "the ball" 311
 
 /-! Planar leaf tokens, used for building the result trees the derivations
     produce (the c-command theorems reason over these). -/
@@ -103,8 +103,7 @@ private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 3
 private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The `[PP to Mary]` constituent as a planar subtree. -/
-private def ppToMaryP : RoseTree SOLabel :=
-  SyntacticObject.nodeP (SyntacticObject.leafP tok_to) (SyntacticObject.leafP tok_mary)
+private def ppToMaryP : RoseTree SOLabel := nodeP (leafP tok_to) (leafP tok_mary)
 
 -- ============================================================================
 -- § 2: Oblique Dative Derivation
@@ -119,10 +118,10 @@ private def ppToMaryP : RoseTree SOLabel :=
     The direct object (a letter) c-commands the goal (Mary), but not
     vice versa — Mary is buried inside PP. -/
 
-def obliqueDative : SyntacticObject.Derivation :=
+def obliqueDative : Derivation :=
   { initial := V_send
     steps := [
-      .emR (SyntacticObject.ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
+      .emR (ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
       .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .emL DP_john                    -- [VP John [VP a_letter [V' send [PP to Mary]]]]
     ] }
@@ -130,22 +129,22 @@ def obliqueDative : SyntacticObject.Derivation :=
 /-- The oblique dative result tree: `[John [letter [send [to Mary]]]]`.
     Built planar-first; this is exactly what `obliqueDative` produces. -/
 def obliqueDativeTree : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP tok_john)
-      (SyntacticObject.nodeP (SyntacticObject.leafP tok_letter)
-        (SyntacticObject.nodeP (SyntacticObject.leafP tok_send) ppToMaryP)))
+  ofPlanar
+    (nodeP (leafP tok_john)
+      (nodeP (leafP tok_letter)
+        (nodeP (leafP tok_send) ppToMaryP)))
 
 -- Oblique dative c-command predictions
 
 theorem oblique_do_ccommands_goal :
-    SyntacticObject.cCommandsIn obliqueDativeTree DP_letter DP_mary := by decide
+    cCommandsIn obliqueDativeTree DP_letter DP_mary := by decide
 
 theorem oblique_goal_not_ccommands_do :
-    ¬ SyntacticObject.cCommandsIn obliqueDativeTree DP_mary DP_letter := by decide
+    ¬ cCommandsIn obliqueDativeTree DP_mary DP_letter := by decide
 
 theorem oblique_agent_ccommands_both :
-    SyntacticObject.cCommandsIn obliqueDativeTree DP_john DP_letter ∧
-    SyntacticObject.cCommandsIn obliqueDativeTree DP_john DP_mary := by
+    cCommandsIn obliqueDativeTree DP_john DP_letter ∧
+    cCommandsIn obliqueDativeTree DP_john DP_mary := by
   constructor <;> decide
 
 -- ============================================================================
@@ -168,10 +167,10 @@ Derivation steps:
    This promotes Mary above the direct object.
 4. EM-L the agent `John` -/
 
-def docDativeShift : SyntacticObject.Derivation :=
+def docDativeShift : Derivation :=
   { initial := V_send
     steps := [
-      .emR (SyntacticObject.ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
+      .emR (ofPlanar ppToMaryP),  -- [V' send [PP to Mary]]
       .emL DP_letter,                 -- [VP a_letter [V' send [PP to Mary]]]
       .im DP_mary,                    -- DATIVE SHIFT: Mary moves to Spec
       .emL DP_john                    -- [VP John [VP Mary_i [VP a_letter ...]]]
@@ -181,12 +180,12 @@ def docDativeShift : SyntacticObject.Derivation :=
     the shell, asymmetrically c-commanding the theme; the original Mary
     position is the bare trace. `[John [Mary [letter [send [to t]]]]]`. -/
 def docDativeShiftTree : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP tok_john)
-      (SyntacticObject.nodeP (SyntacticObject.leafP tok_mary)
-        (SyntacticObject.nodeP (SyntacticObject.leafP tok_letter)
-          (SyntacticObject.nodeP (SyntacticObject.leafP tok_send)
-            (SyntacticObject.nodeP (SyntacticObject.leafP tok_to) SyntacticObject.traceP)))))
+  ofPlanar
+    (nodeP (leafP tok_john)
+      (nodeP (leafP tok_mary)
+        (nodeP (leafP tok_letter)
+          (nodeP (leafP tok_send)
+            (nodeP (leafP tok_to) traceP)))))
 
 -- DOC c-command predictions: the asymmetries are REVERSED
 
@@ -197,15 +196,15 @@ def docDativeShiftTree : SyntacticObject :=
     - Quantifier binding: "I gave every worker his paycheck"
     - Weak crossover, superiority, *each...the other*, NPI licensing -/
 theorem doc_io_ccommands_do :
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_mary DP_letter := by decide
+    cCommandsIn docDativeShiftTree DP_mary DP_letter := by decide
 
 /-- The direct object does NOT c-command the indirect object in the DOC. -/
 theorem doc_do_not_ccommands_io :
-    ¬ SyntacticObject.cCommandsIn docDativeShiftTree DP_letter DP_mary := by decide
+    ¬ cCommandsIn docDativeShiftTree DP_letter DP_mary := by decide
 
 theorem doc_agent_ccommands_both :
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_john DP_mary ∧
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_john DP_letter := by
+    cCommandsIn docDativeShiftTree DP_john DP_mary ∧
+    cCommandsIn docDativeShiftTree DP_john DP_letter := by
   constructor <;> decide
 
 -- ============================================================================
@@ -217,7 +216,7 @@ the object moves to subject position. By using the same `SyntacticObject.Step.im
 constructor, the type system enforces Larson's thesis that Passive
 and Dative Shift share the same structural operation. -/
 
-def standardPassive : SyntacticObject.Derivation :=
+def standardPassive : Derivation :=
   { initial := V_kick
     steps := [
       .emR DP_ball,   -- [V' kicked [DP the ball]]
@@ -228,18 +227,18 @@ def standardPassive : SyntacticObject.Derivation :=
 /-- The passive result tree: the ball (promoted) sits above John (demoted),
     leaving a trace in object position. `[ball [John [kicked t]]]`. -/
 def standardPassiveTree : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP tok_ball)
-      (SyntacticObject.nodeP (SyntacticObject.leafP tok_john)
-        (SyntacticObject.nodeP (SyntacticObject.leafP tok_kick) SyntacticObject.traceP)))
+  ofPlanar
+    (nodeP (leafP tok_ball)
+      (nodeP (leafP tok_john)
+        (nodeP (leafP tok_kick) traceP)))
 
 -- Passive c-command: promoted object c-commands demoted subject
 
 theorem passive_object_ccommands_subject :
-    SyntacticObject.cCommandsIn standardPassiveTree DP_ball DP_john := by decide
+    cCommandsIn standardPassiveTree DP_ball DP_john := by decide
 
 theorem passive_subject_not_ccommands_object :
-    ¬ SyntacticObject.cCommandsIn standardPassiveTree DP_john DP_ball := by decide
+    ¬ cCommandsIn standardPassiveTree DP_john DP_ball := by decide
 
 -- ============================================================================
 -- § 5: Structural Parallel — Passive and Dative Shift
@@ -266,9 +265,9 @@ theorem passive_has_one_im :
     Passive:         Obj > Subj (ball c-commands John)  [reversed by SyntacticObject.Step.im] -/
 theorem passive_dativeShift_parallel :
     -- Both reverse c-command via the same SyntacticObject.Step.im mechanism
-    SyntacticObject.cCommandsIn obliqueDativeTree DP_letter DP_mary ∧
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
-    SyntacticObject.cCommandsIn standardPassiveTree DP_ball DP_john := by
+    cCommandsIn obliqueDativeTree DP_letter DP_mary ∧
+    cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    cCommandsIn standardPassiveTree DP_ball DP_john := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
@@ -326,8 +325,8 @@ theorem bl_six_asymmetries : blAsymmetries.length = 6 := rfl
 /-- All six asymmetries are derived from a single structural fact:
     in the DOC, NP1 (IO) asymmetrically c-commands NP2 (DO). -/
 theorem bl_asymmetries_from_ccommand :
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
-    ¬ SyntacticObject.cCommandsIn docDativeShiftTree DP_letter DP_mary := by
+    cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    ¬ cCommandsIn docDativeShiftTree DP_letter DP_mary := by
   constructor <;> decide
 
 -- ============================================================================
@@ -425,9 +424,9 @@ available. The data are recorded in `Bruening2001`
     which records "Someone gave every student a book" as `surfaceOnly`. -/
 theorem doc_scope_freezing_structural_basis :
     -- IO > DO (IO c-commands DO): surface scope available
-    SyntacticObject.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
     -- DO ≯ IO (DO does not c-command IO): inverse scope blocked
-    ¬ SyntacticObject.cCommandsIn docDativeShiftTree DP_letter DP_mary := by
+    ¬ cCommandsIn docDativeShiftTree DP_letter DP_mary := by
   constructor <;> decide
 
 -- ============================================================================
@@ -445,10 +444,10 @@ Both routes use the same operations (NP Movement = `SyntacticObject.Step.im`). W
 formalize the two-step route, which produces the same surface
 c-command relations. -/
 
-def V_sent     := SyntacticObject.mkLeafPhon .V [.D]  "was-sent" 320
-def DP_mary2   := SyntacticObject.mkLeafPhon .D []    "Mary"     321
-def DP_letter2 := SyntacticObject.mkLeafPhon .D []    "a letter" 322
-def P_to2      := SyntacticObject.mkLeafPhon .P [.D]  "to"       323
+def V_sent     := mkLeafPhon .V [.D]  "was-sent" 320
+def DP_mary2   := mkLeafPhon .D []    "Mary"     321
+def DP_letter2 := mkLeafPhon .D []    "a letter" 322
+def P_to2      := mkLeafPhon .P [.D]  "to"       323
 
 private def tok_sent    : LIToken := ⟨.simple .V [.D] (phonForm := "was-sent"), 320⟩
 private def tok_mary2   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 321⟩
@@ -461,11 +460,10 @@ private def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323�
     1. Build oblique dative base: [VP a_letter [V' send [PP to Mary]]]
     2. Dative Shift (IM Mary): Mary promotes to inner Spec
     3. Passive (IM Mary again): Mary promotes to outer Spec (subject) -/
-def indirectPassive : SyntacticObject.Derivation :=
+def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .emR (SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tok_to2)
-        (SyntacticObject.leafP tok_mary2))),
+      .emR (ofPlanar (nodeP (leafP tok_to2) (leafP tok_mary2))),
                        -- [V' sent [PP to Mary]]
       .emL DP_letter2, -- [VP a_letter [V' sent [PP to Mary]]]
       .im DP_mary2,    -- DATIVE SHIFT: Mary to inner Spec
@@ -483,17 +481,17 @@ def indirectPassive : SyntacticObject.Derivation :=
     intermediate landing site; it gives the same Mary-c-commands-letter
     asymmetry but is *not* what the two-step derivation emits.) -/
 def indirectPassiveTree : SyntacticObject :=
-  SyntacticObject.ofPlanar
-    (SyntacticObject.nodeP (SyntacticObject.leafP tok_mary2)
-      (SyntacticObject.nodeP SyntacticObject.traceP
-        (SyntacticObject.nodeP (SyntacticObject.leafP tok_letter2)
-          (SyntacticObject.nodeP (SyntacticObject.leafP tok_sent)
-            (SyntacticObject.nodeP (SyntacticObject.leafP tok_to2) SyntacticObject.traceP)))))
+  ofPlanar
+    (nodeP (leafP tok_mary2)
+      (nodeP traceP
+        (nodeP (leafP tok_letter2)
+          (nodeP (leafP tok_sent)
+            (nodeP (leafP tok_to2) traceP)))))
 
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/
 theorem indirect_passive_io_ccommands_do :
-    SyntacticObject.cCommandsIn indirectPassiveTree DP_mary2 DP_letter2 := by decide
+    cCommandsIn indirectPassiveTree DP_mary2 DP_letter2 := by decide
 
 /-- The indirect passive uses two Internal Merge steps:
     Dative Shift + Passive — both are `SyntacticObject.Step.im`. -/

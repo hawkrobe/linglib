@@ -50,7 +50,7 @@ to SpecSC. It does **not** capture:
 
 namespace Dendikken1995ParticleVerbs
 
-open Minimalist
+open Minimalist SyntacticObject
 
 /-! ## Particle verb inventory -/
 
@@ -80,8 +80,8 @@ with SpecSC empty. The current `SmallClause` shape forces a subject
 field, so we record the post-movement form. -/
 
 def pvToSmallClause (pv : ParticleVerb) (dpId prtId : Nat) : SmallClause :=
-  { subject := SyntacticObject.mkLeafPhon .D [] "DP" dpId
-    predicate := SyntacticObject.mkLeafPhon .P [] pv.particle prtId
+  { subject := mkLeafPhon .D [] "DP" dpId
+    predicate := mkLeafPhon .P [] pv.particle prtId
     predCat := .P }
 
 /-- All PVC small clauses have predicate category P. -/
@@ -103,8 +103,8 @@ unfolding `pvToSmallClause`. -/
 /-- Any PVC small clause is a 2-leaf binary tree (subject + predicate). -/
 theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).toSO.leafCount = 2 := by
-  simp only [pvToSmallClause, SmallClause.toSO, SyntacticObject.leafCount_merge,
-    SyntacticObject.mkLeafPhon, SyntacticObject.leafCount_lexLeaf]
+  simp only [pvToSmallClause, SmallClause.toSO, leafCount_merge,
+    mkLeafPhon, leafCount_lexLeaf]
 
 /-- The `predCat` field of `pvToSmallClause` agrees with the
     `predicate.headCat` reading — the well-formedness invariant

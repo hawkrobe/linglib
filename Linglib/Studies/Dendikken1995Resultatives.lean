@@ -40,7 +40,7 @@ onto SC predicate categories:
 
 namespace Dendikken1995Resultatives
 
-open Minimalist
+open Minimalist SyntacticObject
 open GoldbergJackendoff2004
 
 /-! ## §1. Resultative types → SC predicate categories
@@ -102,8 +102,8 @@ theorem resultative_cats_are_A_or_P (rt : ResultativeType) :
 
 /-- Build a small clause from a resultative datum. -/
 def datumToSC (d : ResultativeDatum) (dpId predId : Nat) : SmallClause :=
-  { subject := SyntacticObject.mkLeafPhon .D [] "DP_patient" dpId
-    predicate := SyntacticObject.mkLeafPhon (SCPredCategory.toCat (resToSCPred d.resType))
+  { subject := mkLeafPhon .D [] "DP_patient" dpId
+    predicate := mkLeafPhon (SCPredCategory.toCat (resToSCPred d.resType))
                                [] "XP_result" predId
     predCat := resToSCPred d.resType }
 

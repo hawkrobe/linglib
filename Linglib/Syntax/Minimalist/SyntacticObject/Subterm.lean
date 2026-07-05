@@ -25,36 +25,40 @@ variants.
 
 namespace Minimalist
 
-open RootedTree
+open RootedTree SyntacticObject
 
 /-! ### Immediate containment (via `Nonplanar.rootChildren`) -/
 
+namespace SyntacticObject
+
 /-- `x` **immediately contains** `y`: `y` is one of `x`'s root daughters
     ([marcolli-chomsky-berwick-2025] §1.1; Definition 13 of the legacy theory). -/
-def SyntacticObject.immediatelyContains (x y : SyntacticObject) : Prop :=
+def immediatelyContains (x y : SyntacticObject) : Prop :=
   y.val ∈ Nonplanar.rootChildren x.val
 
-instance (x y : SyntacticObject) : Decidable (SyntacticObject.immediatelyContains x y) :=
+instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-@[simp] theorem SyntacticObject.immediatelyContains_lexLeaf (tok : LIToken) (y : SyntacticObject) :
-    ¬ SyntacticObject.immediatelyContains (SyntacticObject.lexLeaf tok) y := by
-  simp only [SyntacticObject.immediatelyContains, SyntacticObject.lexLeaf, Nonplanar.leaf,
+@[simp] theorem immediatelyContains_lexLeaf (tok : LIToken) (y : SyntacticObject) :
+    ¬ immediatelyContains (lexLeaf tok) y := by
+  simp only [immediatelyContains, lexLeaf, Nonplanar.leaf,
     Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
     Multiset.notMem_zero, not_false_iff]
 
-@[simp] theorem SyntacticObject.immediatelyContains_traceLeaf (y : SyntacticObject) :
-    ¬ SyntacticObject.immediatelyContains SyntacticObject.traceLeaf y := by
-  simp only [SyntacticObject.immediatelyContains, SyntacticObject.traceLeaf, Nonplanar.leaf,
+@[simp] theorem immediatelyContains_traceLeaf (y : SyntacticObject) :
+    ¬ immediatelyContains traceLeaf y := by
+  simp only [immediatelyContains, traceLeaf, Nonplanar.leaf,
     Nonplanar.rootChildren_mk, RoseTree.leaf, RoseTree.children, List.map_nil, Multiset.coe_nil,
     Multiset.notMem_zero, not_false_iff]
 
-@[simp] theorem SyntacticObject.immediatelyContains_node (l r y : SyntacticObject) :
-    SyntacticObject.immediatelyContains (SyntacticObject.node l r) y ↔ y = l ∨ y = r := by
-  rw [SyntacticObject.immediatelyContains, SyntacticObject.node_val, Nonplanar.rootChildren_node,
+@[simp] theorem immediatelyContains_node (l r y : SyntacticObject) :
+    immediatelyContains (node l r) y ↔ y = l ∨ y = r := by
+  rw [immediatelyContains, node_val, Nonplanar.rootChildren_node,
       Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
   exact ⟨fun h => h.imp Subtype.ext Subtype.ext,
          fun h => h.imp (congrArg Subtype.val) (congrArg Subtype.val)⟩
+
+end SyntacticObject
 
 /-! ### Subterm enumeration
 
@@ -145,71 +149,71 @@ theorem self_mem_subtreesN (u : Nonplanar SOLabel) : u ∈ subtreesN u := by
 
 /-- Subtrees of a syntactic object are themselves syntactic objects. -/
 theorem subtreesN_closure (s : SyntacticObject) : ∀ m ∈ subtreesN s.val, IsSO m := by
-  induction s using SyntacticObject.ind with
+  induction s using ind with
   | lex tok =>
     intro m hm
-    rw [show (SyntacticObject.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+    rw [show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
         mem_subtreesN_leaf] at hm
-    subst hm; exact (SyntacticObject.lexLeaf tok).2
+    subst hm; exact (lexLeaf tok).2
   | trace =>
     intro m hm
-    rw [show SyntacticObject.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
         mem_subtreesN_leaf] at hm
-    subst hm; exact SyntacticObject.traceLeaf.2
+    subst hm; exact traceLeaf.2
   | node l r ihl ihr =>
     intro m hm
-    rw [SyntacticObject.node_val, mem_subtreesN_node] at hm
+    rw [node_val, mem_subtreesN_node] at hm
     rcases hm with rfl | hl | hr
-    · exact (SyntacticObject.node l r).2
+    · exact (node l r).2
     · exact ihl m hl
     · exact ihr m hr
 
+namespace SyntacticObject
+
 /-- All subtrees of a syntactic object (incl. the root), as syntactic objects
     ([marcolli-chomsky-berwick-2025] §1.2; the legacy `SyntacticObject.subtrees`). -/
-def SyntacticObject.subtrees (s : SyntacticObject) : Multiset SyntacticObject :=
+def subtrees (s : SyntacticObject) : Multiset SyntacticObject :=
   (subtreesN s.val).pmap (fun m h => ⟨m, h⟩) (subtreesN_closure s)
 
-@[simp] theorem SyntacticObject.mem_subtrees {x s : SyntacticObject} :
+@[simp] theorem mem_subtrees {x s : SyntacticObject} :
     x ∈ s.subtrees ↔ x.val ∈ subtreesN s.val := by
-  rw [SyntacticObject.subtrees, Multiset.mem_pmap]
+  rw [subtrees, Multiset.mem_pmap]
   constructor
   · rintro ⟨m, hm, he⟩; rw [← he]; exact hm
   · intro h; exact ⟨x.val, h, Subtype.ext rfl⟩
 
 /-- The root is among its own subtrees. -/
-theorem SyntacticObject.self_mem_subtrees (s : SyntacticObject) : s ∈ s.subtrees := by
-  rw [SyntacticObject.mem_subtrees]; exact self_mem_subtreesN s.val
+theorem self_mem_subtrees (s : SyntacticObject) : s ∈ s.subtrees := by
+  rw [mem_subtrees]; exact self_mem_subtreesN s.val
 
 /-- Subtree membership at a bare binary node: the node itself, or a subtree of a
     daughter. -/
-@[simp] theorem SyntacticObject.mem_subtrees_node {x l r : SyntacticObject} :
-    x ∈ (SyntacticObject.node l r).subtrees ↔
-      x = SyntacticObject.node l r ∨ x ∈ l.subtrees ∨ x ∈ r.subtrees := by
-  rw [SyntacticObject.mem_subtrees, SyntacticObject.node_val, mem_subtreesN_node,
-      ← SyntacticObject.mem_subtrees, ← SyntacticObject.mem_subtrees]
-  exact Iff.or ⟨fun h => Subtype.ext h, fun h => by rw [h, SyntacticObject.node_val]⟩ Iff.rfl
+@[simp] theorem mem_subtrees_node {x l r : SyntacticObject} :
+    x ∈ (node l r).subtrees ↔ x = node l r ∨ x ∈ l.subtrees ∨ x ∈ r.subtrees := by
+  rw [mem_subtrees, node_val, mem_subtreesN_node, ← mem_subtrees, ← mem_subtrees]
+  exact Iff.or ⟨fun h => Subtype.ext h, fun h => by rw [h, node_val]⟩ Iff.rfl
 
 /-- `subtrees` is downward-closed along the subtree relation: every subtree of a
     subtree of `s` is a subtree of `s`. -/
-theorem SyntacticObject.subtrees_subset_of_mem {w s : SyntacticObject} (h : w ∈ s.subtrees) :
+theorem subtrees_subset_of_mem {w s : SyntacticObject} (h : w ∈ s.subtrees) :
     w.subtrees ⊆ s.subtrees := by
-  induction s using SyntacticObject.ind with
+  induction s using ind with
   | lex tok =>
-    rw [SyntacticObject.mem_subtrees,
-        show (SyntacticObject.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+    rw [mem_subtrees, show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
         mem_subtreesN_leaf] at h
-    rw [(Subtype.ext h : w = SyntacticObject.lexLeaf tok)]; exact Multiset.Subset.refl _
+    rw [(Subtype.ext h : w = lexLeaf tok)]; exact Multiset.Subset.refl _
   | trace =>
-    rw [SyntacticObject.mem_subtrees,
-        show SyntacticObject.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+    rw [mem_subtrees, show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
         mem_subtreesN_leaf] at h
-    rw [(Subtype.ext h : w = SyntacticObject.traceLeaf)]; exact Multiset.Subset.refl _
+    rw [(Subtype.ext h : w = traceLeaf)]; exact Multiset.Subset.refl _
   | node l r ihl ihr =>
-    rw [SyntacticObject.mem_subtrees_node] at h
+    rw [mem_subtrees_node] at h
     rcases h with rfl | hl | hr
     · exact Multiset.Subset.refl _
-    · intro z hz; rw [SyntacticObject.mem_subtrees_node]; exact Or.inr (Or.inl (ihl hl hz))
-    · intro z hz; rw [SyntacticObject.mem_subtrees_node]; exact Or.inr (Or.inr (ihr hr hz))
+    · intro z hz; rw [mem_subtrees_node]; exact Or.inr (Or.inl (ihl hl hz))
+    · intro z hz; rw [mem_subtrees_node]; exact Or.inr (Or.inr (ihr hr hz))
+
+end SyntacticObject
 
 /-! ### Cardinality (MCB's vertex/accessible-term counts, Def 1.2.2 eq. 1.2.5) -/
 
@@ -232,11 +236,12 @@ theorem subtreesN_card (u : Nonplanar SOLabel) :
     (subtreesN u).card = Nonplanar.numNodes u :=
   Quotient.inductionOn u subtreesNPlanar_card
 
+namespace SyntacticObject
+
 /-- **`subtrees` enumerates the vertices** ([marcolli-chomsky-berwick-2025] Def 1.2.2:
     `subtrees = Acc'(T)`, so its size is `#V(T)`, the MCB workspace-size primitive). -/
-theorem SyntacticObject.subtrees_card (s : SyntacticObject) :
-    (s.subtrees).card = Nonplanar.numNodes s.val := by
-  rw [SyntacticObject.subtrees, Multiset.card_pmap, subtreesN_card]
+theorem subtrees_card (s : SyntacticObject) : (s.subtrees).card = Nonplanar.numNodes s.val := by
+  rw [subtrees, Multiset.card_pmap, subtreesN_card]
 
 /-! ### Accessible terms `Acc(T)` (Def 1.2.2) -/
 
@@ -244,25 +249,24 @@ theorem SyntacticObject.subtrees_card (s : SyntacticObject) :
     Def 1.2.2, eq. 1.2.2): the subtrees at **all non-root vertices** (leaves
     included — the counting identity eq. 1.2.5 `#V = b₀ + #Acc` forces this).
     Defined as `subtrees − {self}` (`Acc'(T) = {T} ∪ Acc(T)`, eq. 1.2.3). -/
-def SyntacticObject.Acc (s : SyntacticObject) : Multiset SyntacticObject := s.subtrees - {s}
+def Acc (s : SyntacticObject) : Multiset SyntacticObject := s.subtrees - {s}
 
 /-- **MCB counting identity** (eq. 1.2.5, one-component case): `#Acc(T) = #V(T) − 1`. -/
-theorem SyntacticObject.Acc_card (s : SyntacticObject) :
-    (s.Acc).card = Nonplanar.numNodes s.val - 1 := by
-  rw [SyntacticObject.Acc,
-      Multiset.card_sub (Multiset.singleton_le.mpr (SyntacticObject.self_mem_subtrees s)),
-      SyntacticObject.subtrees_card, Multiset.card_singleton]
+theorem Acc_card (s : SyntacticObject) : (s.Acc).card = Nonplanar.numNodes s.val - 1 := by
+  rw [Acc, Multiset.card_sub (Multiset.singleton_le.mpr (self_mem_subtrees s)),
+      subtrees_card, Multiset.card_singleton]
 
-@[simp] theorem SyntacticObject.Acc_lexLeaf (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).Acc = 0 := by
-  rw [← Multiset.card_eq_zero, SyntacticObject.Acc_card,
-      show (SyntacticObject.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+@[simp] theorem Acc_lexLeaf (tok : LIToken) : (lexLeaf tok).Acc = 0 := by
+  rw [← Multiset.card_eq_zero, Acc_card,
+      show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
       Nonplanar.numNodes_leaf]
 
-@[simp] theorem SyntacticObject.Acc_traceLeaf : SyntacticObject.traceLeaf.Acc = 0 := by
-  rw [← Multiset.card_eq_zero, SyntacticObject.Acc_card,
-      show SyntacticObject.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+@[simp] theorem Acc_traceLeaf : traceLeaf.Acc = 0 := by
+  rw [← Multiset.card_eq_zero, Acc_card,
+      show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
       Nonplanar.numNodes_leaf]
+
+end SyntacticObject
 
 /-! ### Containment / dominance -/
 
@@ -281,166 +285,157 @@ theorem weight_node_pair (a b : Nonplanar SOLabel) :
   show (RoseTree.node (Sum.inr ()) [pa, pb]).numNodes = pa.numNodes + pb.numNodes + 1
   simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]; omega
 
+namespace SyntacticObject
+
 /-- **Containment (dominance)** is the transitive closure of immediate containment
     ([marcolli-chomsky-berwick-2025] §1.1; the legacy `contains`). -/
-inductive SyntacticObject.contains : SyntacticObject → SyntacticObject → Prop
-  | imm : ∀ x y, SyntacticObject.immediatelyContains x y → SyntacticObject.contains x y
-  | trans : ∀ x y z, SyntacticObject.immediatelyContains x z → SyntacticObject.contains z y →
-      SyntacticObject.contains x y
+inductive contains : SyntacticObject → SyntacticObject → Prop
+  | imm : ∀ x y, immediatelyContains x y → contains x y
+  | trans : ∀ x y z, immediatelyContains x z → contains z y → contains x y
 
-theorem SyntacticObject.imm_implies_contains {x y : SyntacticObject}
-    (h : SyntacticObject.immediatelyContains x y) : SyntacticObject.contains x y := .imm x y h
+theorem imm_implies_contains {x y : SyntacticObject} (h : immediatelyContains x y) :
+    contains x y := .imm x y h
 
-theorem SyntacticObject.contains_trans {x y z : SyntacticObject}
-    (hxy : SyntacticObject.contains x y) (hyz : SyntacticObject.contains y z) :
-    SyntacticObject.contains x z := by
+theorem contains_trans {x y z : SyntacticObject} (hxy : contains x y) (hyz : contains y z) :
+    contains x z := by
   induction hxy with
   | imm x y himm => exact .trans x z y himm hyz
   | trans x y w himm _ ih => exact .trans x z w himm (ih hyz)
 
 /-- Immediate containment strictly decreases weight. -/
-theorem SyntacticObject.immediatelyContains_lt_weight {x y : SyntacticObject}
-    (h : SyntacticObject.immediatelyContains x y) :
+theorem immediatelyContains_lt_weight {x y : SyntacticObject} (h : immediatelyContains x y) :
     Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
-  rcases SyntacticObject.exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
-  · exact absurd h (SyntacticObject.immediatelyContains_lexLeaf tok y)
-  · exact absurd h (SyntacticObject.immediatelyContains_traceLeaf y)
-  · rw [SyntacticObject.immediatelyContains_node] at h
-    rw [SyntacticObject.node_val, weight_node_pair]
+  rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
+  · exact absurd h (immediatelyContains_lexLeaf tok y)
+  · exact absurd h (immediatelyContains_traceLeaf y)
+  · rw [immediatelyContains_node] at h
+    rw [node_val, weight_node_pair]
     rcases h with rfl | rfl <;> omega
 
 /-- Containment strictly decreases weight; hence it is irreflexive. -/
-theorem SyntacticObject.contains_lt_weight {x y : SyntacticObject}
-    (h : SyntacticObject.contains x y) :
+theorem contains_lt_weight {x y : SyntacticObject} (h : contains x y) :
     Nonplanar.numNodes y.val < Nonplanar.numNodes x.val := by
   induction h with
-  | imm _ _ himm => exact SyntacticObject.immediatelyContains_lt_weight himm
-  | trans _ _ _ himm _ ih => exact lt_trans ih (SyntacticObject.immediatelyContains_lt_weight himm)
+  | imm _ _ himm => exact immediatelyContains_lt_weight himm
+  | trans _ _ _ himm _ ih => exact lt_trans ih (immediatelyContains_lt_weight himm)
 
-theorem SyntacticObject.contains_irrefl (x : SyntacticObject) : ¬ SyntacticObject.contains x x :=
-  fun h => absurd (SyntacticObject.contains_lt_weight h) (lt_irrefl _)
+theorem contains_irrefl (x : SyntacticObject) : ¬ contains x x :=
+  fun h => absurd (contains_lt_weight h) (lt_irrefl _)
 
 /-! ### Subtree ↔ containment bridge -/
 
-theorem SyntacticObject.mem_subtrees_of_immediatelyContains {x y : SyntacticObject}
-    (h : SyntacticObject.immediatelyContains x y) :
-    y ∈ x.subtrees := by
-  rcases SyntacticObject.exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
-  · exact absurd h (SyntacticObject.immediatelyContains_lexLeaf tok y)
-  · exact absurd h (SyntacticObject.immediatelyContains_traceLeaf y)
-  · rw [SyntacticObject.immediatelyContains_node] at h
+theorem mem_subtrees_of_immediatelyContains {x y : SyntacticObject}
+    (h : immediatelyContains x y) : y ∈ x.subtrees := by
+  rcases exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
+  · exact absurd h (immediatelyContains_lexLeaf tok y)
+  · exact absurd h (immediatelyContains_traceLeaf y)
+  · rw [immediatelyContains_node] at h
     rcases h with heq | heq
-    · rw [heq, SyntacticObject.mem_subtrees_node]
-      exact Or.inr (Or.inl (SyntacticObject.self_mem_subtrees l))
-    · rw [heq, SyntacticObject.mem_subtrees_node]
-      exact Or.inr (Or.inr (SyntacticObject.self_mem_subtrees r))
+    · rw [heq, mem_subtrees_node]
+      exact Or.inr (Or.inl (self_mem_subtrees l))
+    · rw [heq, mem_subtrees_node]
+      exact Or.inr (Or.inr (self_mem_subtrees r))
 
-theorem SyntacticObject.mem_subtrees_of_contains {x y : SyntacticObject}
-    (h : SyntacticObject.contains x y) : y ∈ x.subtrees := by
+theorem mem_subtrees_of_contains {x y : SyntacticObject} (h : contains x y) :
+    y ∈ x.subtrees := by
   induction h with
-  | imm x y himm => exact SyntacticObject.mem_subtrees_of_immediatelyContains himm
+  | imm x y himm => exact mem_subtrees_of_immediatelyContains himm
   | trans x y w himm _ ih =>
-    exact SyntacticObject.subtrees_subset_of_mem
-      (SyntacticObject.mem_subtrees_of_immediatelyContains himm) ih
+    exact subtrees_subset_of_mem (mem_subtrees_of_immediatelyContains himm) ih
 
 /-- A subtree of `x` is either `x` itself or properly contained in `x`. -/
-theorem SyntacticObject.mem_subtrees_iff_eq_or_contains {x y : SyntacticObject} :
-    y ∈ x.subtrees ↔ y = x ∨ SyntacticObject.contains x y := by
-  refine ⟨fun h => ?_, fun h => h.elim (fun he => he ▸ SyntacticObject.self_mem_subtrees x)
-    SyntacticObject.mem_subtrees_of_contains⟩
-  induction x using SyntacticObject.ind with
+theorem mem_subtrees_iff_eq_or_contains {x y : SyntacticObject} :
+    y ∈ x.subtrees ↔ y = x ∨ contains x y := by
+  refine ⟨fun h => ?_, fun h => h.elim (fun he => he ▸ self_mem_subtrees x)
+    mem_subtrees_of_contains⟩
+  induction x using ind with
   | lex tok =>
-    rw [SyntacticObject.mem_subtrees,
-        show (SyntacticObject.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+    rw [mem_subtrees, show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
         mem_subtreesN_leaf] at h
     exact Or.inl (Subtype.ext h)
   | trace =>
-    rw [SyntacticObject.mem_subtrees,
-        show SyntacticObject.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+    rw [mem_subtrees, show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
         mem_subtreesN_leaf] at h
     exact Or.inl (Subtype.ext h)
   | node l r ihl ihr =>
-    rw [SyntacticObject.mem_subtrees_node] at h
+    rw [mem_subtrees_node] at h
     rcases h with rfl | hl | hr
     · exact Or.inl rfl
     · refine Or.inr ?_
       rcases ihl hl with heq | hc
-      · rw [heq]; exact .imm _ _ ((SyntacticObject.immediatelyContains_node l r l).mpr (Or.inl rfl))
-      · exact .trans _ _ l ((SyntacticObject.immediatelyContains_node l r l).mpr (Or.inl rfl)) hc
+      · rw [heq]; exact .imm _ _ ((immediatelyContains_node l r l).mpr (Or.inl rfl))
+      · exact .trans _ _ l ((immediatelyContains_node l r l).mpr (Or.inl rfl)) hc
     · refine Or.inr ?_
       rcases ihr hr with heq | hc
-      · rw [heq]; exact .imm _ _ ((SyntacticObject.immediatelyContains_node l r r).mpr (Or.inr rfl))
-      · exact .trans _ _ r ((SyntacticObject.immediatelyContains_node l r r).mpr (Or.inr rfl)) hc
+      · rw [heq]; exact .imm _ _ ((immediatelyContains_node l r r).mpr (Or.inr rfl))
+      · exact .trans _ _ r ((immediatelyContains_node l r r).mpr (Or.inr rfl)) hc
 
 /-- **Containment ↔ proper subtree membership.** Gives a decision procedure for
     `contains` without well-founded recursion: `y` is properly contained in `x` iff
     it is a subtree distinct from `x`. -/
-theorem SyntacticObject.contains_iff_mem_subtrees_and_ne {x y : SyntacticObject} :
-    SyntacticObject.contains x y ↔ y ∈ x.subtrees ∧ y ≠ x := by
+theorem contains_iff_mem_subtrees_and_ne {x y : SyntacticObject} :
+    contains x y ↔ y ∈ x.subtrees ∧ y ≠ x := by
   constructor
   · intro h
-    exact ⟨SyntacticObject.mem_subtrees_of_contains h,
-      fun he => SyntacticObject.contains_irrefl x (he ▸ h)⟩
+    exact ⟨mem_subtrees_of_contains h, fun he => contains_irrefl x (he ▸ h)⟩
   · rintro ⟨hmem, hne⟩
-    rcases SyntacticObject.mem_subtrees_iff_eq_or_contains.mp hmem with rfl | hc
+    rcases mem_subtrees_iff_eq_or_contains.mp hmem with rfl | hc
     · exact absurd rfl hne
     · exact hc
 
-instance (x y : SyntacticObject) : Decidable (SyntacticObject.contains x y) :=
-  decidable_of_iff _ SyntacticObject.contains_iff_mem_subtrees_and_ne.symm
+instance (x y : SyntacticObject) : Decidable (contains x y) :=
+  decidable_of_iff _ contains_iff_mem_subtrees_and_ne.symm
 
 /-! ### Term-of and reflexive containment -/
 
 /-- `x` is a **term of** `y`: `x = y` or `y` contains `x`. -/
-def SyntacticObject.isTermOf (x y : SyntacticObject) : Prop := x = y ∨ SyntacticObject.contains y x
+def isTermOf (x y : SyntacticObject) : Prop := x = y ∨ contains y x
 
-instance (x y : SyntacticObject) : Decidable (SyntacticObject.isTermOf x y) :=
+instance (x y : SyntacticObject) : Decidable (isTermOf x y) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-theorem SyntacticObject.isTermOf_iff_mem_subtrees (x y : SyntacticObject) :
-    SyntacticObject.isTermOf x y ↔ x ∈ y.subtrees :=
-  SyntacticObject.mem_subtrees_iff_eq_or_contains.symm
+theorem isTermOf_iff_mem_subtrees (x y : SyntacticObject) : isTermOf x y ↔ x ∈ y.subtrees :=
+  mem_subtrees_iff_eq_or_contains.symm
 
 /-- Reflexive containment. -/
-def SyntacticObject.containsOrEq (x y : SyntacticObject) : Prop :=
-  x = y ∨ SyntacticObject.contains x y
+def containsOrEq (x y : SyntacticObject) : Prop := x = y ∨ contains x y
 
-instance (x y : SyntacticObject) : Decidable (SyntacticObject.containsOrEq x y) :=
+instance (x y : SyntacticObject) : Decidable (containsOrEq x y) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-theorem SyntacticObject.containsOrEq_trans {x y z : SyntacticObject}
-    (hxy : SyntacticObject.containsOrEq x y) (hyz : SyntacticObject.containsOrEq y z) :
-    SyntacticObject.containsOrEq x z := by
+theorem containsOrEq_trans {x y z : SyntacticObject}
+    (hxy : containsOrEq x y) (hyz : containsOrEq y z) : containsOrEq x z := by
   rcases hxy with rfl | hxy
   · exact hyz
   · rcases hyz with rfl | hyz
     · exact Or.inr hxy
-    · exact Or.inr (SyntacticObject.contains_trans hxy hyz)
+    · exact Or.inr (contains_trans hxy hyz)
 
 /-! ### RoseTree-relative c-command ([reinhart-1976]) -/
 
 /-- `x` and `y` are **sisters in** `root`: distinct co-daughters of some subtree. -/
-def SyntacticObject.areSistersIn (root x y : SyntacticObject) : Prop :=
-  ∃ z ∈ root.subtrees,
-    SyntacticObject.immediatelyContains z x ∧ SyntacticObject.immediatelyContains z y ∧ x ≠ y
+def areSistersIn (root x y : SyntacticObject) : Prop :=
+  ∃ z ∈ root.subtrees, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
-instance (root x y : SyntacticObject) : Decidable (SyntacticObject.areSistersIn root x y) :=
+instance (root x y : SyntacticObject) : Decidable (areSistersIn root x y) :=
   Multiset.decidableExistsMultiset
 
 /-- `x` **c-commands** `y` in `root`: `x` has a sister (in `root`) that
     contains-or-equals `y`. -/
-def SyntacticObject.cCommandsIn (root x y : SyntacticObject) : Prop :=
-  ∃ z ∈ root.subtrees, SyntacticObject.areSistersIn root x z ∧ SyntacticObject.containsOrEq z y
+def cCommandsIn (root x y : SyntacticObject) : Prop :=
+  ∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y
 
-instance (root x y : SyntacticObject) : Decidable (SyntacticObject.cCommandsIn root x y) :=
+instance (root x y : SyntacticObject) : Decidable (cCommandsIn root x y) :=
   Multiset.decidableExistsMultiset
 
 /-- `x` **asymmetrically** c-commands `y` in `root`. -/
-def SyntacticObject.asymCCommandsIn (root x y : SyntacticObject) : Prop :=
-  SyntacticObject.cCommandsIn root x y ∧ ¬ SyntacticObject.cCommandsIn root y x
+def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
+  cCommandsIn root x y ∧ ¬ cCommandsIn root y x
 
-instance (root x y : SyntacticObject) : Decidable (SyntacticObject.asymCCommandsIn root x y) :=
+instance (root x y : SyntacticObject) : Decidable (asymCCommandsIn root x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+end SyntacticObject
 
 /-! ### `decide` demonstrations
 
@@ -457,9 +452,9 @@ private def demoT : SyntacticObject :=
     [.node (Sum.inl (mkTraceToken 0)) [], .node (Sum.inl (mkTraceToken 1)) []]), by decide⟩
 
 /-- The root properly contains its left daughter; the daughter does not contain the root. -/
-example : SyntacticObject.contains demoT demoL ∧ ¬ SyntacticObject.contains demoL demoT := by decide
+example : contains demoT demoL ∧ ¬ contains demoL demoT := by decide
 /-- The two daughters c-command each other in the root. -/
-example : SyntacticObject.cCommandsIn demoT demoL demoR := by decide
+example : cCommandsIn demoT demoL demoR := by decide
 /-- A node has one more vertex than the sum of its daughters' (eq. 1.2.5 witness). -/
 example : (demoT.subtrees).card = 3 := by decide
 
