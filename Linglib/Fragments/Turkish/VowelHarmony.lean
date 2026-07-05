@@ -52,7 +52,7 @@ namespace Turkish.VowelHarmony
 
 open Phonology (Segment Feature)
 open Autosegmental (agreeAt)
-open Subregular.Harmony (System HarmonyDir triggerValue)
+open Subregular.Harmony (System triggerValue)
 
 -- ============================================================================
 -- § 1: Turkish Vowel Inventory (8 vowels)

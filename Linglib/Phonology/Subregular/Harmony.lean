@@ -1,3 +1,4 @@
+import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.TierRule
 import Linglib.Core.Computability.Subregular.Function.OSL
@@ -41,8 +42,9 @@ autosegmental spreading ([goldsmith-1976]), Agreement-by-Correspondence
 predictions on transparency and opacity. The single-tier commitment is not
 universally adequate — Uyghur backness harmony is provably non-TSL
 ([mayer-major-2018]). Only the identity-tier case is currently proved
-subsequential (TierRule's non-trivial-tier classification is deferred); a
-theory-neutral harmony profile consumed by rival accounts is future work.
+subsequential (TierRule's non-trivial-tier classification is deferred). The
+theory-neutral pattern vocabulary these rival accounts share lives at
+`Phonology/Harmony/Basic.lean`.
 
 ## Operations
 
@@ -72,19 +74,12 @@ open Subregular (OSLRule IsLeftOutputStrictlyLocal)
 -- § 1: Direction
 -- ============================================================================
 
-/-- Direction of harmony spreading (Rose-Walker typological label). -/
-inductive HarmonyDir where
-  | rightward     -- stem → suffix (standard for suffix-controlled VH)
-  | leftward      -- suffix → stem (dominant-recessive systems)
-  | bidirectional -- both directions from trigger
-  deriving DecidableEq, Repr
-
-/-- Compile a typological direction to the side at which the underlying
-    `TierRule` reads its triggering context. Bidirectional collapses to
-    rightward operationally (the same `harmonyDomain`/`triggerValue`
-    computation handles both); the typological distinction lives only at
-    the smart-constructor argument site. -/
-def HarmonyDir.toSide : HarmonyDir → Side
+/-- Compile a pattern-level direction (`Phonology.Harmony.Direction`) to the
+    side at which the underlying `TierRule` reads its triggering context.
+    Bidirectional collapses to rightward operationally (the same
+    `harmonyDomain`/`triggerValue` computation handles both); the typological
+    distinction lives only at the smart-constructor argument site. -/
+def _root_.Phonology.Harmony.Direction.toSide : Phonology.Harmony.Direction → Side
   | .rightward | .bidirectional => .left
   | .leftward => .right
 
@@ -118,7 +113,7 @@ attribute [instance] System.decTarget' System.decBlocker
     duplicate field); `featureValue` is derived from `feature`. -/
 def System.mk' (feature : Feature)
     (isTrigger isTarget isTransparent : Segment → Bool)
-    (direction : HarmonyDir := .rightward)
+    (direction : Phonology.Harmony.Direction := .rightward)
     (isBlocker : Segment → Bool := fun _ => false) : System where
   toTierRule :=
     { tier := TierProjection.byClass (fun s => !isTransparent s = true)

@@ -84,7 +84,7 @@ set_option autoImplicit false
 namespace Hungarian.VowelHarmony
 
 open Phonology (Segment Feature)
-open Subregular.Harmony (System HarmonyDir triggerValue
+open Subregular.Harmony (System triggerValue
   harmonizeOne harmonyDomain spreadSuffix)
 
 -- ============================================================================

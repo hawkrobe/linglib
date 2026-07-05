@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Phonology.Harmony.Basic
 
 /-!
 # Tongue-root systems and the [ATR]-inventory correlation
@@ -27,8 +28,6 @@ Per-language rows live with fragments and studies, not here.
 * `ATR`: the tongue-root feature value.
 * `InventoryClass`: Casali's `/2IU/` vs `/1IU/` classification (applies only to
   systems with a tongue-root contrast at all — five-vowel systems are excluded).
-* `ControlType`: root-controlled vs dominant-recessive harmony — cross-cutting
-  the inventory classification.
 * `DominanceIndicator`: the five evidence types for a dominant value.
 * `TongueRootProfile`, `conformsToCorrelation`: a language's row schema and the
   correlation as a decidable predicate over it.
@@ -62,15 +61,6 @@ inductive InventoryClass where
   | oneIU
   deriving DecidableEq, Repr
 
-/-- Harmony control type — cross-cutting the inventory classification: affixes
-    harmonizing to the root regardless of value (root control, e.g. Degema,
-    Guébie) vs a designated value winning regardless of morphological position
-    (dominant-recessive, e.g. Maasai). -/
-inductive ControlType where
-  | rootControlled
-  | dominantRecessive (dominant : ATR)
-  deriving DecidableEq, Repr
-
 /-- The five evidence types for a dominant [ATR] value
     ([casali-2024-inventory] §15.2.1, following [casali-2003]). -/
 inductive DominanceIndicator where
@@ -86,11 +76,14 @@ inductive DominanceIndicator where
   | weakAssimilatory
   deriving DecidableEq, Repr
 
-/-- A language's tongue-root row: inventory class, control type, and the observed
-    dominant value with its evidence (`none` = symmetric/inert patterning). -/
+/-- A language's tongue-root row: inventory class, control type
+    (`Phonology.Harmony.ControlType` — cross-cutting the inventory
+    classification: root-controlled Degema and Guébie vs dominant-recessive
+    Maasai), and the observed dominant value with its evidence (`none` =
+    symmetric/inert patterning). -/
 structure TongueRootProfile where
   inventoryClass : InventoryClass
-  control        : ControlType
+  control        : Harmony.ControlType ATR
   dominant       : Option ATR
   evidence       : List DominanceIndicator := []
   deriving DecidableEq, Repr

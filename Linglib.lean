@@ -1341,7 +1341,6 @@ import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Directional
-import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.HarmonicGrammar.Cumulativity
@@ -1350,8 +1349,11 @@ import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
+import Linglib.Phonology.HarmonicGrammar.Score
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
+import Linglib.Phonology.Harmony.Basic
+import Linglib.Phonology.Harmony.TongueRoot
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Cophonology
@@ -1374,7 +1376,6 @@ import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory
 import Linglib.Phonology.Segmental.Geometry
-import Linglib.Phonology.Segmental.TongueRoot
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.Harmony
