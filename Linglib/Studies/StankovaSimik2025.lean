@@ -2,19 +2,20 @@ import Linglib.Syntax.Particle.Capabilities
 import Linglib.Semantics.Negation.CzechNegation
 
 /-!
-# Czech diagnostic particles (Staňková 2025)
+# Czech diagnostic particles (Staňková & Šimík 2025)
 
-This file formalizes [stankova-2025]'s particle diagnostics for the
-three-way negation distinction in Czech polar questions: her Table 1
-licensing profiles for *náhodou* / *ještě* / *fakt* prove that the
-three negation positions of `Semantics.Negation.CzechNegation` are
-uniquely identified by particle signatures, and her §6 experiments
-separate the FALSUM-tied *náhodou* from the evidential-bias-tied
-*copak*. Entries are `Particle` values (position cells `none` — the
-paper records no placement data); the classifications are Staňková's
-and live here as lookup tables, with Table 1 exposed as the
-`Distributed Particle NegPosition` instance — the negation-position
-licensing axis alongside the clause-type and embedding axes.
+This file formalizes [stankova-2025]'s particle results for negation in
+Czech polar questions — *náhodou* as an overt indicator of the covert
+FALSUM operator (§6.1 subexperiment) and *copak* as sensitive to
+contextual evidence (§6.2 subexperiment, exs. 19-20) — together with
+the Table 1 particle diagnostics for the three-way negation system of
+the companion work (`Stakov2026`), whose fingerprint theorems run over
+`Semantics.Negation.CzechNegation`.
+
+Source note: [stankova-2025] itself distinguishes two negation readings
+(inner and outer); the three-way inner/medial/outer system and the
+*ještě*/*fakt* diagnostics belong to the companion three-way analysis
+and are flagged UNVERIFIED below pending that source.
 
 ## Main results
 
@@ -23,11 +24,11 @@ licensing axis alongside the clause-type and embedding axes.
   pinned by its Table 1 diagnostic.
 * `particle_signatures_distinct` — the three diagnostics jointly
   fingerprint all three positions.
-* `requiresEvidentialBias`, `nahodou_copak_opposite_context` — the §6
-  bias dimensions: *náhodou* context-insensitive, *copak*
-  evidential-bias-sensitive.
-* `instance Distributed Particle NegPosition` — Table 1 as the third
-  licensing axis.
+* `requiresEvidentialBias`, `nahodou_copak_opposite_context` — the
+  experimentally separated bias dimensions: *náhodou*
+  context-insensitive, *copak* evidential-bias-sensitive.
+* `instance Distributed Particle NegPosition` — the diagnostics as the
+  third licensing axis.
 
 ## References
 
@@ -35,7 +36,7 @@ licensing axis alongside the clause-type and embedding axes.
   [nekula-1996].
 -/
 
-namespace Stankova2025
+namespace StankovaSimik2025
 
 open Semantics.Negation.CzechNegation
 
@@ -44,23 +45,29 @@ open Semantics.Negation.CzechNegation
 All six occur in Czech polar questions, the paper's domain; other
 clause-type cells and placements are unrecorded. -/
 
-/-- *náhodou* 'by (any) chance' — "only compatible with outer negation"
-([stankova-2025] §2.2.1): it modifies the ordering source of FALSUM's
-epistemic possibility component, absent from inner/medial negation. -/
+/-- *náhodou* 'by (any) chance' — licensed by FALSUM: the §6.1
+subexperiment shows NCIs (inner negation) degrade *náhodou* PQs
+(main effect of INDEFINITE, z = −12.845, p < .001), so *náhodou* "could
+be used as an overt indicator of the covert FALSUM operator being
+present in the structure" ([stankova-2025] §6.1). Insensitive to
+contextual evidence, unlike *copak*. -/
 def nahodou : Particle where
   form := "náhodou"
   distribution := some { polarInterrogative := some .optional }
 
-/-- *ještě* 'yet, still' — "only compatible with inner negation"
-([stankova-2025] §2.2.2): its temporal-endpoint presupposition needs
-the propositional negation that only inner negation provides. -/
+/-- *ještě* 'yet, still' — inner-negation diagnostic of the three-way
+system (`Stakov2026`); its temporal-endpoint presupposition needs
+propositional negation. -/
+-- UNVERIFIED: not discussed in [stankova-2025]; source location in the
+-- three-way companion pending.
 def jeste : Particle where
   form := "ještě"
   distribution := some { polarInterrogative := some .optional }
 
-/-- *fakt* 'really' — "compatible with inner and medial negation but
-incompatible with outer negation" ([stankova-2025] §2.2.3): VERUM
-emphasis clashes with FALSUM. -/
+/-- *fakt* 'really' — VERUM-related emphasis, compatible with inner and
+medial negation but not outer (three-way system, `Stakov2026`). -/
+-- UNVERIFIED: not discussed in [stankova-2025]; source location in the
+-- three-way companion pending.
 def fakt : Particle where
   form := "fakt"
   distribution := some { polarInterrogative := some .optional }
@@ -78,10 +85,14 @@ def snad : Particle where
   form := "snad"
   distribution := some { polarInterrogative := some .optional }
 
-/-- *copak* 'what then' — conflict between prior belief and contextual
-evidence ([stankova-2025] §6.2, [nekula-1996]): licensed in positive
-and negative PQs alike, but requires a biased context; the Czech member
-of the RAZVE family (*razve*, *nima*, *xiba*, *czyżby*, *zar*). -/
+/-- *copak* 'what then' — "strongly indicates a conflict between
+speaker's prior belief and the currently available evidence"
+([stankova-2025] §6.2, citing [nekula-1996]): licensed in positive and
+negative PQs alike (exs. 19a-b), requiring a context whose evidence
+matches the PQ's polarity; the §6.2 subexperiment confirms the biased >
+neutral preference (main effect of CONTEXT, z = 9.372, p < .001). The
+Czech member of the cross-Slavic family with Polish *czyby* and Russian
+*razve* (p. 12). -/
 def copak : Particle where
   form := "copak"
   distribution := some { polarInterrogative := some .optional }
@@ -89,10 +100,10 @@ def copak : Particle where
 def allParticles : List Particle :=
   [nahodou, jeste, fakt, vubec, snad, copak]
 
-/-! ### Staňková's classifications -/
+/-! ### The classifications -/
 
-/-- [stankova-2025]'s semantic classification of the diagnostic
-particles. -/
+/-- Semantic classification of the diagnostic particles ([stankova-2025]
+for *náhodou*/*copak*; the three-way companion for the rest). -/
 inductive ParticleSemantics where
   /-- Modifies the ordering source of an epistemic modal (*náhodou*). -/
   | orderingSourceModifier
@@ -108,17 +119,19 @@ inductive ParticleSemantics where
   | evidentialConflict
   deriving DecidableEq, Repr
 
-/-- Staňková's classification, as a lookup table over the entries. -/
+/-- The classification, as a lookup table over the entries. -/
 def classification : List (Particle × ParticleSemantics) :=
   [(nahodou, .orderingSourceModifier), (jeste, .temporalEndpoint),
    (fakt, .veridicalEmphasis), (vubec, .npi),
    (snad, .orderingSourceModifier), (copak, .evidentialConflict)]
 
-/-- Staňková's classification of `p`, if any. -/
+/-- The classification of `p`, if any. -/
 def semantics? (p : Particle) : Option ParticleSemantics :=
   classification.lookup p
 
-/-- Table 1: which diagnostic each particle realizes. -/
+/-- Table 1 of the three-way companion (`Stakov2026`): which diagnostic
+each particle realizes. -/
+-- UNVERIFIED: table attribution pending the three-way source.
 def table1 : List (Particle × Diagnostic) :=
   [(nahodou, .nahodou), (jeste, .jeste), (fakt, .fakt)]
 
@@ -126,7 +139,7 @@ def table1 : List (Particle × Diagnostic) :=
 def diagnostic? (p : Particle) : Option Diagnostic :=
   table1.lookup p
 
-/-! ### Table 1 as the negation-position licensing axis
+/-! ### The diagnostics as the negation-position licensing axis
 
 Compatibility is read off the substrate's `licenses`; particles outside
 Table 1 (*vůbec*, *snad*, *copak*) carry no recorded position
@@ -176,12 +189,11 @@ theorem particle_signatures_distinct :
   revert h1 h2 h3
   cases pos <;> cases pos' <;> decide
 
-/-! ### The §6 bias dimensions -/
+/-! ### The experimentally separated bias dimensions ([stankova-2025] §6) -/
 
-/-- Whether a particle requires evidential bias, per [stankova-2025]
-§6: `some true` for the *copak* class, `some false` for the
-experimentally confirmed FALSUM-tied *náhodou*, `none` where
-untested. -/
+/-- Whether a particle requires evidential bias: `some true` for the
+*copak* class (§6.2), `some false` for the FALSUM-tied *náhodou*
+(§6.1, acceptable in any type of context), `none` where untested. -/
 def requiresEvidentialBias (p : Particle) : Option Bool :=
   match semantics? p with
   | some .evidentialConflict => some true
@@ -196,12 +208,12 @@ theorem copak_context_sensitive :
 
 /-- *náhodou* and *copak* express opposite bias dimensions: FALSUM-tied
 and context-insensitive vs evidential-bias-tied and context-sensitive
-([stankova-2025] §6). -/
+([stankova-2025] §6, the two subexperiments). -/
 theorem nahodou_copak_opposite_context :
     requiresEvidentialBias nahodou ≠ requiresEvidentialBias copak := by decide
 
 /-- *copak* is outside Table 1: it appears in positive and negative PQs
-alike ([stankova-2025] ex. 19a-b). -/
+alike ([stankova-2025] exs. 19a-b). -/
 theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 
-end Stankova2025
+end StankovaSimik2025
