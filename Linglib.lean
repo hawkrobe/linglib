@@ -2867,7 +2867,8 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Syntax.Minimalist.Linearization
+import Linglib.Syntax.Minimalist.Linearization.Cyclic
+import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
@@ -2899,8 +2900,8 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
-import Linglib.Syntax.Minimalist.SyntacticObject.Externalization
-import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+import Linglib.Syntax.Minimalist.Linearization.Externalization
+import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+import Linglib.Syntax.Minimalist.Linearization.Replay
 
 /-!
 # Cinque 2005: Deriving Greenberg's Universal 20 [cinque-2005]

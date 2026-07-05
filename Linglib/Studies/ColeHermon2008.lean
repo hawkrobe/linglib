@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Fragments.TobaBatak.Basic
 

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Linearization
+import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
