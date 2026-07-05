@@ -12,9 +12,10 @@ left-peripheral layer assignment is derived from that facet in
 
 namespace English.QuestionParticles
 
-/-- *quick / quickly* — matrix-only meta-question adverb: signals
-urgency in a request for information. Ungrammatical in subordinated,
-quasi-subordinated, and quotation contexts ([dayal-2025] ex. (19)). -/
+/-- *quick / quickly* — meta-question adverb, signalling that the
+addressee should answer without delay: matrix questions and quotations
+only ([dayal-2025] pp. 670-671, the MQP class), ungrammatical embedded
+(ex. 19a "Mary asked Sue *quick/quickly where she hid the matza"). -/
 def quick : Particle where
   form := "quick"
   position := some .clauseInitial
@@ -22,7 +23,7 @@ def quick : Particle where
     { matrix := some .optional
       subordinated := some .excluded
       quasiSubordinated := some .excluded
-      quotation := some .excluded }
+      quotation := some .optional }
 
 def allQuestionParticles : List Particle := [quick]
 
