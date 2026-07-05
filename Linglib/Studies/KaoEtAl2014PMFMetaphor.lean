@@ -513,7 +513,7 @@ theorem literal_correct :
 without QUD inference. Kao's contribution is the joint inference over
 goals, opening the door to nonliteral interpretations.
 
-[goodman-stuhlmuller-2013] (`Studies/GoodmanStuhlmuller2013PMF.lean`)
+[goodman-stuhlmuller-2013] (`Studies/GoodmanStuhlmuller2013.lean`)
 shares the hypergeometric-kernel architecture with Kao's L0 (both use
 "P(features|category) if categories match"). The architectural difference:
 G&S2013 is one-step Bayesian (no goal inference); Kao's L1 is two-stage

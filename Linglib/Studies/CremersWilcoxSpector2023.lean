@@ -372,14 +372,14 @@ theorem baselineL0_AandB_wa : baselineL0 .AandB .w_a = ENNReal.ofReal 0 := by
 
 theorem baselineL0_AandB_wab : baselineL0 .AandB .w_ab = ENNReal.ofReal 1 := by
   apply baselineL0_ofReal; rw [tsum_fintype, CWSWorld_sum_univ]
-  simp only [baselineMeaning_apply, literalTruth, priorWeight, Bool.false_eq_true, if_false,
-    if_true, ↓reduceIte, add_zero, zero_add]
+  simp only [baselineMeaning_apply, literalTruth, priorWeight, Bool.false_eq_true,
+    ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]; simp
 
 theorem baselineL0_AandNotB_wa : baselineL0 .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply baselineL0_ofReal; rw [tsum_fintype, CWSWorld_sum_univ]
-  simp only [baselineMeaning_apply, literalTruth, priorWeight, Bool.false_eq_true, if_false,
-    if_true, ↓reduceIte, add_zero]
+  simp only [baselineMeaning_apply, literalTruth, priorWeight, Bool.false_eq_true,
+    ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]; simp
 
 theorem baselineL0_AandNotB_wab : baselineL0 .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -406,16 +406,20 @@ theorem baselineZ_ne_zero (w : CWSWorld) : (∑' u, (baselineL0 u w : ℝ≥0∞
   · rw [baselineL0_A_wab]; simp
 
 theorem baselineZ_wa : baselineZ .w_a = ENNReal.ofReal (17/16) := by
-  rw [baselineZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [baselineZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1/4) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem baselineZ_wab : baselineZ .w_ab = ENNReal.ofReal (25/16) := by
-  rw [baselineZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [baselineZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (3/4) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 /-- Baseline speaker (α = 2, no cost). With `Unit` latent this is the marginal
 speaker the listener inverts. -/
@@ -524,13 +528,13 @@ theorem exhLUL0_lit_AandB_wa : exhLUL0 .literal .AandB .w_a = ENNReal.ofReal 0 :
 theorem exhLUL0_lit_AandB_wab : exhLUL0 .literal .AandB .w_ab = ENNReal.ofReal 1 := by
   apply exhLUL0_unique; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [parseMeaningE_apply, parseMeaning, literalTruth, priorWeight, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem exhLUL0_lit_AandNotB_wa : exhLUL0 .literal .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply exhLUL0_unique; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [parseMeaningE_apply, parseMeaning, literalTruth, priorWeight, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero]
+    ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem exhLUL0_lit_AandNotB_wab : exhLUL0 .literal .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -540,7 +544,7 @@ theorem exhLUL0_lit_AandNotB_wab : exhLUL0 .literal .AandNotB .w_ab = ENNReal.of
 theorem exhLUL0_exh_A_wa : exhLUL0 .exh .A .w_a = ENNReal.ofReal 1 := by
   apply exhLUL0_unique; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [parseMeaningE_apply, parseMeaning, exhMeaning_A_wa, exhMeaning_A_wab, priorWeight,
-    Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero]
+    Bool.false_eq_true, ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem exhLUL0_exh_A_wab : exhLUL0 .exh .A .w_ab = ENNReal.ofReal 0 := by
@@ -552,13 +556,13 @@ theorem exhLUL0_exh_AandB_wa : exhLUL0 .exh .AandB .w_a = ENNReal.ofReal 0 := by
 theorem exhLUL0_exh_AandB_wab : exhLUL0 .exh .AandB .w_ab = ENNReal.ofReal 1 := by
   apply exhLUL0_unique; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [parseMeaningE_apply, parseMeaning, exhMeaning_AandB_wa, exhMeaning_AandB_wab,
-    priorWeight, Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    priorWeight, Bool.false_eq_true, ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem exhLUL0_exh_AandNotB_wa : exhLUL0 .exh .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply exhLUL0_unique; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [parseMeaningE_apply, parseMeaning, exhMeaning_AandNotB_wa, exhMeaning_AandNotB_wab,
-    priorWeight, Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero]
+    priorWeight, Bool.false_eq_true, ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem exhLUL0_exh_AandNotB_wab : exhLUL0 .exh .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -595,28 +599,35 @@ theorem exhLUZ_ne_zero (p : CWSParse) (w : CWSWorld) :
   · exact ⟨.AandB, by rw [rpow_two_mul_one, exhLUL0_exh_AandB_wab]; simp⟩
 
 theorem exhLUZ_lit_wa : exhLUZ .literal .w_a = ENNReal.ofReal (17/16) := by
-  rw [exhLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [exhLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1/4) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem exhLUZ_lit_wab : exhLUZ .literal .w_ab = ENNReal.ofReal (25/16) := by
-  rw [exhLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [exhLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (3/4) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem exhLUZ_exh_wa : exhLUZ .exh .w_a = ENNReal.ofReal 2 := by
-  rw [exhLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [exhLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem exhLUZ_exh_wab : exhLUZ .exh .w_ab = ENNReal.ofReal 1 := by
-  rw [exhLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [exhLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1:ℝ) (by norm_num)]
   simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  norm_num
 
 /-- EXH-LU per-parse speaker (α = 2, no cost). -/
 noncomputable def exhLUS1 (p : CWSParse) (w : CWSWorld) : PMF CWSUtterance :=
@@ -777,13 +788,13 @@ theorem svRSAL0_coarse_AandB_wa : svRSAL0 .coarse .AandB .w_a = ENNReal.ofReal 0
 
 theorem svRSAL0_coarse_AandB_wab : svRSAL0 .coarse .AandB .w_ab = ENNReal.ofReal 1 := by
   apply svRSAL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
-  simp only [qudMeaning_coarse_apply, literalTruth, Bool.false_eq_true, if_false, if_true,
+  simp only [qudMeaning_coarse_apply, literalTruth, Bool.false_eq_true,
     ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem svRSAL0_coarse_AandNotB_wa : svRSAL0 .coarse .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply svRSAL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
-  simp only [qudMeaning_coarse_apply, literalTruth, Bool.false_eq_true, if_false, if_true,
+  simp only [qudMeaning_coarse_apply, literalTruth, Bool.false_eq_true,
     ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
@@ -794,7 +805,7 @@ theorem svRSAL0_coarse_AandNotB_wab : svRSAL0 .coarse .AandNotB .w_ab = ENNReal.
 theorem svRSAL0_fine_A_wa : svRSAL0 .fine .A .w_a = ENNReal.ofReal 1 := by
   apply svRSAL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [qudMeaning_fine_apply, exhMeaning_A_wa, exhMeaning_A_wab, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero]
+    ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem svRSAL0_fine_A_wab : svRSAL0 .fine .A .w_ab = ENNReal.ofReal 0 := by
@@ -806,13 +817,13 @@ theorem svRSAL0_fine_AandB_wa : svRSAL0 .fine .AandB .w_a = ENNReal.ofReal 0 := 
 theorem svRSAL0_fine_AandB_wab : svRSAL0 .fine .AandB .w_ab = ENNReal.ofReal 1 := by
   apply svRSAL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [qudMeaning_fine_apply, exhMeaning_AandB_wa, exhMeaning_AandB_wab, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem svRSAL0_fine_AandNotB_wa : svRSAL0 .fine .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply svRSAL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [qudMeaning_fine_apply, exhMeaning_AandNotB_wa, exhMeaning_AandNotB_wab,
-    Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero]
+    Bool.false_eq_true, ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem svRSAL0_fine_AandNotB_wab : svRSAL0 .fine .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -849,28 +860,35 @@ theorem svRSAZ_ne_zero (q : CWSQUD) (w : CWSWorld) :
   · exact ⟨.AandB, by rw [rpow_two_mul_one, svRSAL0_fine_AandB_wab]; simp⟩
 
 theorem svRSAZ_coarse_wa : svRSAZ .coarse .w_a = ENNReal.ofReal (5/4) := by
-  rw [svRSAZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [svRSAZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1/2) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem svRSAZ_coarse_wab : svRSAZ .coarse .w_ab = ENNReal.ofReal (5/4) := by
-  rw [svRSAZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [svRSAZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1/2) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem svRSAZ_fine_wa : svRSAZ .fine .w_a = ENNReal.ofReal 2 := by
-  rw [svRSAZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [svRSAZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem svRSAZ_fine_wab : svRSAZ .fine .w_ab = ENNReal.ofReal 1 := by
-  rw [svRSAZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [svRSAZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1:ℝ) (by norm_num)]
   simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  norm_num
 
 noncomputable def svRSAS1 (q : CWSQUD) (w : CWSWorld) : PMF CWSUtterance :=
   RSA.S1Belief (svRSAL0 q) (fun _ => 1) 2 w (svRSAZ_ne_zero q w) (svRSAZ_ne_top q w)
@@ -1033,13 +1051,13 @@ theorem freeLUL0_lit_AandB_wa : freeLUL0 .literal .AandB .w_a = ENNReal.ofReal 0
 theorem freeLUL0_lit_AandB_wab : freeLUL0 .literal .AandB .w_ab = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, literalTruth, priorWeight, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_lit_AandNotB_wa : freeLUL0 .literal .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, literalTruth, priorWeight, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero]
+    ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_lit_AandNotB_wab : freeLUL0 .literal .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -1048,7 +1066,7 @@ theorem freeLUL0_lit_AandNotB_wab : freeLUL0 .literal .AandNotB .w_ab = ENNReal.
 theorem freeLUL0_exh_A_wa : freeLUL0 .exh .A .w_a = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, exhMeaning_A_wa, exhMeaning_A_wab, priorWeight,
-    Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero]
+    Bool.false_eq_true, ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_exh_A_wab : freeLUL0 .exh .A .w_ab = ENNReal.ofReal 0 := by
@@ -1060,13 +1078,13 @@ theorem freeLUL0_exh_AandB_wa : freeLUL0 .exh .AandB .w_a = ENNReal.ofReal 0 := 
 theorem freeLUL0_exh_AandB_wab : freeLUL0 .exh .AandB .w_ab = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, exhMeaning_AandB_wa, exhMeaning_AandB_wab,
-    priorWeight, Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    priorWeight, Bool.false_eq_true, ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_exh_AandNotB_wa : freeLUL0 .exh .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, exhMeaning_AandNotB_wa, exhMeaning_AandNotB_wab,
-    priorWeight, Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero]
+    priorWeight, Bool.false_eq_true, ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_exh_AandNotB_wab : freeLUL0 .exh .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -1078,7 +1096,7 @@ theorem freeLUL0_anti_A_wa : freeLUL0 .antiExh .A .w_a = ENNReal.ofReal 0 := by
 theorem freeLUL0_anti_A_wab : freeLUL0 .antiExh .A .w_ab = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, antiExhMeaning, priorWeight, Bool.false_eq_true,
-    if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_anti_AandB_wa : freeLUL0 .antiExh .AandB .w_a = ENNReal.ofReal 0 := by
@@ -1087,13 +1105,13 @@ theorem freeLUL0_anti_AandB_wa : freeLUL0 .antiExh .AandB .w_a = ENNReal.ofReal 
 theorem freeLUL0_anti_AandB_wab : freeLUL0 .antiExh .AandB .w_ab = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, antiExhMeaning, literalTruth, priorWeight,
-    Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero, zero_add]
+    Bool.false_eq_true, ↓reduceIte, add_zero, zero_add]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_anti_AandNotB_wa : freeLUL0 .antiExh .AandNotB .w_a = ENNReal.ofReal 1 := by
   apply freeLUL0_one; rw [tsum_fintype, CWSWorld_sum_univ]
   simp only [interpMeaningE_apply, interpMeaning, antiExhMeaning, literalTruth, priorWeight,
-    Bool.false_eq_true, if_false, if_true, ↓reduceIte, add_zero]
+    Bool.false_eq_true, ↓reduceIte, add_zero]
   rw [ENNReal.mul_inv_cancel (by simp) (by simp)]
 
 theorem freeLUL0_anti_AandNotB_wab : freeLUL0 .antiExh .AandNotB .w_ab = ENNReal.ofReal 0 := by
@@ -1134,22 +1152,28 @@ theorem freeLUZ_ne_zero (i : CWSInterpretation) (w : CWSWorld) :
   · exact ⟨.A, by rw [rpow_two_mul_one, freeLUL0_anti_A_wab]; simp⟩
 
 theorem freeLUZ_lit_wa : freeLUZ .literal .w_a = ENNReal.ofReal (17/16) := by
-  rw [freeLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [freeLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1/4) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem freeLUZ_lit_wab : freeLUZ .literal .w_ab = ENNReal.ofReal (25/16) := by
-  rw [freeLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [freeLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (3/4) (by norm_num), sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 theorem freeLUZ_anti_wab : freeLUZ .antiExh .w_ab = ENNReal.ofReal 2 := by
-  rw [freeLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+  rw [freeLUZ_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
   rw [sq_ofReal (1:ℝ) (by norm_num)]
-  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-  ennreal_close
+  simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 noncomputable def freeLUS1 (i : CWSInterpretation) (w : CWSWorld) : PMF CWSUtterance :=
   RSA.S1Belief (freeLUL0 i) (fun _ => 1) 2 w (freeLUZ_ne_zero i w) (freeLUZ_ne_top i w)
@@ -1177,10 +1201,12 @@ theorem freeLUS1_exh_A_wa : freeLUS1 .exh .w_a .A = ENNReal.ofReal (1/2) := by
       show (∑' u', (freeLUL0 .exh u' .w_a : ℝ≥0∞) ^ (2 : ℝ) * 1) = freeLUZ .exh .w_a from rfl]
   -- freeLUZ .exh .w_a = 2 (A=1, AandB=0, AandNotB=1 squared)
   rw [show freeLUZ .exh .w_a = ENNReal.ofReal 2 by
-        rw [freeLUZ_eq_sum, tsum_fintype]; pmf_eval_only
+        rw [freeLUZ_eq_sum, tsum_fintype]
+        simp +decide only [pmf_eval_simps, ENNReal.ofReal_zero, add_zero]
         rw [sq_ofReal (1:ℝ) (by norm_num)]
-        simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, zero_add]
-        ennreal_close,
+        simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_add]
+        rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+        congr 1; norm_num,
       freeLUL0_exh_A_wa, sq_ofReal _ (by norm_num),
       ← ENNReal.ofReal_inv_of_pos (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]; norm_num
 
