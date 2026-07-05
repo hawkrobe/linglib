@@ -34,10 +34,16 @@ inductive Vowel where
   | I | E | a | O | U
   deriving DecidableEq, Repr
 
-/-- The ±ATR split ([sande-clem-dabkowski-2026] (1)): `+ATR = true`. -/
-def Vowel.atr : Vowel → Bool
-  | .i | .e | .schwa | .o | .u => true
-  | .I | .E | .a | .O | .U => false
+/-- The tongue-root feature value: `[+ATR]` or `[−ATR]`. -/
+inductive ATR where
+  | plus
+  | minus
+  deriving DecidableEq, Repr
+
+/-- The ±ATR split ([sande-clem-dabkowski-2026] (1)). -/
+def Vowel.atr : Vowel → ATR
+  | .i | .e | .schwa | .o | .u => .plus
+  | .I | .E | .a | .O | .U => .minus
 
 /-- A Guébie morpheme: transcription, vowel skeleton, optional gloss. -/
 structure Morpheme where
@@ -46,10 +52,11 @@ structure Morpheme where
   gloss  : Option String := none
   deriving DecidableEq, Repr
 
-/-- The lexical ATR value: the value of the morpheme's (agreeing) vowels;
-    `false` for the rare vowelless morphemes. -/
-def Morpheme.atr (m : Morpheme) : Bool :=
-  (m.vowels.head?.map Vowel.atr).getD false
+/-- The lexical ATR value: the value of the morpheme's (agreeing) vowels. The
+    rare vowelless morphemes are treated as `[−ATR]`; they neither trigger nor
+    block (kɔ-ɲ 'give' surfaces −ATR, (10)). -/
+def Morpheme.atr (m : Morpheme) : ATR :=
+  (m.vowels.head?.map Vowel.atr).getD .minus
 
 /-- Morpheme-internal vowels agree in ATR ([sande-clem-dabkowski-2026] §2.1). -/
 def Morpheme.ATRUniform (m : Morpheme) : Prop :=
@@ -95,7 +102,7 @@ structure ParticleVerb where
 
 /-- The particle's surface ATR in SAuxOV contexts: the verb root's value
     ([sande-clem-dabkowski-2026] (12)). -/
-def ParticleVerb.harmonizedParticleATR (pv : ParticleVerb) : Bool :=
+def ParticleVerb.harmonizedParticleATR (pv : ParticleVerb) : ATR :=
   pv.verb.atr
 
 /-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ pair. -/
@@ -114,7 +121,7 @@ theorem particleVerbs_ATRUniform :
 /-- The (11)–(12) alternation: −ATR /jɔkʊ/ surfaces +ATR ([joku]) under harmony
     with the +ATR root /ni/ 'see'. -/
 theorem joku_alternation :
-    jOkU.atr = false ∧
-    (ParticleVerb.mk jOkU ni "see").harmonizedParticleATR = true := by decide
+    jOkU.atr = .minus ∧
+    (ParticleVerb.mk jOkU ni "see").harmonizedParticleATR = .plus := by decide
 
 end Guebie
