@@ -1,78 +1,47 @@
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Syntax.Particle.Basic
+
 /-!
 # Ukrainian Question Particles
 [simik-2024]
 
-Lexical entries for Ukrainian interrogative particles. The fragment
-commits only to theory-neutral lexical primitives; the left-peripheral
-layer assignment lives in `Simik2024`.
-
-## Particles
-
-| Particle | Romanization | Gloss | Bias |
-|----------|-------------|-------|------|
-| чи | čy | neutral PQ | none |
-| хіба | xiba | RAZVE (mirative) | +evidential |
+Lexical entries for Ukrainian interrogative particles as `Particle`
+values. Bias classifications (xiba's evidential requirement) and layer
+assignments live in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `Simik2024.ukrainian` (`Studies/Simik2024`): PQ strategy profile (clause-initial čy obligatory)
-- Cross-Slavic RAZVE family: xiba is the Ukrainian cognate of Russian razve
-
+- `Simik2024.ukrainian` (`Studies/Simik2024`): PQ strategy profile
+  (clause-initial čy obligatory) and the neutral/evidential contrast
+- Cross-Slavic RAZVE family: xiba is the Ukrainian cognate of Russian
+  razve
 -/
 
 namespace Ukrainian.QuestionParticles
 
-open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
-
-/-- A Ukrainian interrogative particle entry. -/
-structure QParticleEntry where
-  form : String
-  romanization : String
-  gloss : String
-  polarOk : Bool
-  declOk : Bool
-  whOk : Bool
-  requiresContextualEvidence : Option ContextualEvidence
-  requiresOriginalBias : Option OriginalBias
-  deriving Repr, DecidableEq
-
 /-- чи čy — obligatory clause-initial PQ particle ([simik-2024] ex. 29).
-Neutral baseline, no bias requirements. -/
-def cy : QParticleEntry where
-  form := "чи"
-  romanization := "čy"
-  gloss := "PQ (clause-initial neutral)"
-  polarOk := true
-  declOk := false
-  whOk := true
-  requiresContextualEvidence := none
-  requiresOriginalBias := none
+Neutral baseline. -/
+def cy : Particle where
+  form := "čy"
+  script := some "чи"
+  position := .clauseInitial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .obligatory
+      constituentInterrogative := some .optional }
 
-/-- хіба xiba — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
-Ukrainian cognate of Russian razve. Indicates conflict between speaker's
-prior state and contextual evidence. -/
-def xiba : QParticleEntry where
-  form := "хіба"
-  romanization := "xiba"
-  gloss := "RAZVE (mirative/dubitative)"
-  polarOk := true
-  declOk := false
-  whOk := false
-  requiresContextualEvidence := some .forP
-  requiresOriginalBias := none
+/-- хіба xiba — mirative/dubitative particle (RAZVE family, [simik-2024]
+§4.2.4). Ukrainian cognate of Russian razve: indicates conflict between
+speaker's prior state and contextual evidence. Evidential classification
+in `Simik2024`. -/
+def xiba : Particle where
+  form := "xiba"
+  script := some "хіба"
+  position := .clauseInitial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .optional
+      constituentInterrogative := some .excluded }
 
-def allQuestionParticles : List QParticleEntry := [cy, xiba]
-
-theorem cy_neutral :
-    cy.requiresContextualEvidence = none ∧ cy.requiresOriginalBias = none :=
-  ⟨rfl, rfl⟩
-
-theorem xiba_evidential : xiba.requiresContextualEvidence = some .forP := rfl
-
-/-- čy and xiba form a neutral/evidential contrast. -/
-theorem bias_contrast :
-    cy.requiresContextualEvidence = none ∧ xiba.requiresContextualEvidence = some .forP :=
-  ⟨rfl, rfl⟩
+def allQuestionParticles : List Particle := [cy, xiba]
 
 end Ukrainian.QuestionParticles
