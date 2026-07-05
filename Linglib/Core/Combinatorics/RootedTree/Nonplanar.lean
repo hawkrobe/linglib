@@ -117,51 +117,43 @@ Functions `RoseTree α → β` that are invariant under `PermStep` lift
 through the equivalence closure to functions `Nonplanar α → β`. Below
 we lift `numNodes` (vertex count) and the other counts as worked examples.
 
-The pattern: prove invariance under the elementary `PermStep`, then
-extend to `PermEquiv` with `PermEquiv.lift_eq`. On `RoseTree` the
-counts sum/`foldr`-max directly over `cs.map …`, so permutation
-invariance is just `List.Perm.sum_eq` / `List.Perm.foldr_eq` on the
-child list. -/
+Two keystones: `PermEquiv.lift_eq` extends any `Eq`-valued step-invariant
+to the closure, and `fold_permEquiv` discharges the step case generically
+for any `fold` whose algebra is permutation-invariant. The counts
+(`numNodes`, `numLeaves`, `depth`) are such folds — their invariance is
+just `List.Perm.sum_eq` / `List.Perm.foldr_eq` on the algebra. -/
 
-/-! #### Node count invariance -/
-
-/-- `numNodes` is invariant under `PermStep`: a root swap permutes the
-    children list (`List.Perm.sum_eq`); a recursive step rewrites one
-    child by an equal-count subtree. -/
-private theorem numNodes_permStep {t s : RoseTree α} (h : PermStep t s) :
-    t.numNodes = s.numNodes := by
+/-- A `fold` whose algebra is invariant under permutations of the folded-children
+    list is invariant under `PermStep`. -/
+private theorem fold_permStep {β : Type*} {g : α → List β → β}
+    (hg : ∀ (a : α) (l₁ l₂ : List β), l₁.Perm l₂ → g a l₁ = g a l₂)
+    {t s : RoseTree α} (h : PermStep t s) : fold g t = fold g s := by
   induction h with
   | @swapAtRoot a l r pre post =>
-    simp only [numNodes_node]
-    congr 1
-    exact (((List.Perm.swap r l post).append_left pre).map numNodes).sum_eq
+    simp only [fold_node]
+    exact hg a _ _ (((List.Perm.swap r l post).append_left pre).map (fold g))
   | @recurse a pre old new post _ ih =>
-    simp only [numNodes_node, List.map_append, List.map_cons, List.sum_append,
-      List.sum_cons, ih]
+    simp only [fold_node, List.map_append, List.map_cons, ih]
 
-/-- `numNodes` is invariant under `PermEquiv`. -/
+/-- A `fold` with a permutation-invariant algebra descends to the nonplanar
+    quotient: the generic dissolver of per-function `PermStep` inductions. -/
+theorem fold_permEquiv {β : Type*} {g : α → List β → β}
+    (hg : ∀ (a : α) (l₁ l₂ : List β), l₁.Perm l₂ → g a l₁ = g a l₂)
+    {t s : RoseTree α} (h : PermEquiv t s) : fold g t = fold g s :=
+  PermEquiv.lift_eq (fun _ _ h' => fold_permStep hg h') h
+
+/-! #### Count invariance -/
+
+/-- `numNodes` is invariant under `PermEquiv`: the fold of a permutation-invariant
+    algebra (`List.Perm.sum_eq`). -/
 theorem numNodes_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
     t.numNodes = s.numNodes :=
-  PermEquiv.lift_eq (fun _ _ h' => numNodes_permStep h') h
-
-/-! #### Leaf-count invariance -/
-
-/-- `numLeaves` is invariant under `PermStep`. -/
-private theorem numLeaves_permStep {t s : RoseTree α} (h : PermStep t s) :
-    t.numLeaves = s.numLeaves := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    simp only [numLeaves_node]
-    congr 1
-    exact (((List.Perm.swap r l post).append_left pre).map numLeaves).sum_eq
-  | @recurse a pre old new post _ ih =>
-    simp only [numLeaves_node, List.map_append, List.map_cons, List.sum_append,
-      List.sum_cons, ih]
+  fold_permEquiv (fun _ _ _ h' => congrArg (1 + ·) h'.sum_eq) h
 
 /-- `numLeaves` is invariant under `PermEquiv`. -/
 theorem numLeaves_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
     t.numLeaves = s.numLeaves :=
-  PermEquiv.lift_eq (fun _ _ h' => numLeaves_permStep h') h
+  fold_permEquiv (fun _ _ _ h' => congrArg (max 1) h'.sum_eq) h
 
 /-! #### Value invariance -/
 
@@ -285,10 +277,9 @@ theorem permEquiv_node_componentwise {a : α} {cs ds : List (RoseTree α)}
 
 /-! #### Arity / depth / isLeaf invariance
 
-Three more invariants of tree structure that are preserved by
-`PermEquiv`. The pattern follows `numNodes`: prove `*_permStep`
-by case on the step constructor, then lift to `*_permEquiv` via
-`PermEquiv.lift_eq`. -/
+Arity and leaf-ness are root-shape invariants: prove `*_permStep` by
+case on the step constructor, then lift via `PermEquiv.lift_eq`. Depth
+is another permutation-invariant fold. -/
 
 /-- Arity (root child count) is invariant under `PermStep`: both
     `swapAtRoot` and `recurse` keep the children list's length fixed. -/
@@ -301,23 +292,11 @@ theorem arity_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
     t.arity = s.arity :=
   PermEquiv.lift_eq (fun _ _ h' => arity_permStep h') h
 
-/-- Depth is invariant under `PermStep`. The `swapAtRoot` case uses
-    `List.Perm.foldr_eq` (`max` is left-commutative); the `recurse` case
-    rewrites one child by an equal-depth subtree. -/
-private theorem depth_permStep {t s : RoseTree α} (h : PermStep t s) :
-    t.depth = s.depth := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    simp only [depth_node]
-    congr 1
-    exact (((List.Perm.swap r l post).append_left pre).map depth).foldr_eq 0
-  | @recurse a pre old new post _ ih =>
-    simp only [depth_node, List.map_append, List.map_cons, ih]
-
-/-- Depth is invariant under `PermEquiv`. -/
+/-- Depth is invariant under `PermEquiv`: the fold of a permutation-invariant
+    algebra (`List.Perm.foldr_eq`, `max` being commutative). -/
 theorem depth_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
     t.depth = s.depth :=
-  PermEquiv.lift_eq (fun _ _ h' => depth_permStep h') h
+  fold_permEquiv (fun _ _ _ h' => congrArg (1 + ·) (h'.foldr_eq 0)) h
 
 /-- Leaf-ness is invariant under `PermStep`. Both `swapAtRoot` and
     `recurse` keep a non-empty children list on both sides, so both are

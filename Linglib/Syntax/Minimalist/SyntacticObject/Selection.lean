@@ -19,10 +19,12 @@ the foundation the Phase API consumes (`isPhaseHeadOf`).
 
 The carrier-free selection combinators `selStep`/`selSide` (commutative —
 `selStep_comm`/`selSide_comm`) operate purely on selection states
-(`Option (LIToken × List Cat)`); the tree recursion lives on `RoseTree SOLabel` and
-lifts to `SO`, exactly as `subtreesN`. **Index-free traces**: a bare trace leaf gets
-the canonical saturated value `(mkTraceToken 0, [])` — `selCheck` reads only the
-token's category (`.N`) and `outerSel` (`[]`), both index-independent.
+(`Option (LIToken × List Cat)`). The tree recursion is the catamorphism
+`RoseTree.fold selCombine`; since the algebra is permutation-invariant
+(`selCombine_perm`), invariance and the `SO` lift come from `fold_permEquiv` — no
+bespoke step induction. **Index-free traces**: a bare trace leaf gets the canonical
+saturated value `(mkTraceToken 0, [])` — `selCheck` reads only the token's category
+(`.N`) and `outerSel` (`[]`), both index-independent.
 -/
 
 namespace Minimalist
@@ -123,74 +125,65 @@ theorem selStep_eq_some {x y : Option (LIToken × List Cat)} {hd : LIToken}
 
 /-! ### Selection check on the planar carrier -/
 
-/-- Selection check on a planar `SO`-tree: the projecting head + residual pending
-    features, or `none` outside the endocentric domain. Lexical leaf ↦ its token +
-    `outerSel`; bare trace leaf ↦ canonical `(mkTraceToken 0, [])` (index-free);
-    bare binary node ↦ `selStep` of the daughters. -/
-def selCheckPlanar : RoseTree SOLabel → Option (LIToken × List Cat)
-  | .node (.inl tok) _     => some (tok, tok.item.outerSel)
-  | .node (.inr ()) []     => some (mkTraceToken 0, [])
-  | .node (.inr ()) [l, r] => selStep (selCheckPlanar l) (selCheckPlanar r)
-  | .node (.inr ()) _      => none
+/-- The selection algebra: combine a node label with its daughters' selection
+    states. Lexical leaf ↦ its token + `outerSel`; bare trace leaf ↦ canonical
+    `(mkTraceToken 0, [])` (index-free); bare binary node ↦ `selStep` of the
+    daughters; other arities ↦ `none`. -/
+def selCombine : SOLabel → List (Option (LIToken × List Cat)) →
+    Option (LIToken × List Cat)
+  | .inl tok, _     => some (tok, tok.item.outerSel)
+  | .inr (), []     => some (mkTraceToken 0, [])
+  | .inr (), [x, y] => selStep x y
+  | .inr (), _      => none
 
-/-- A non-binary, non-leaf bare node has no selection value. -/
-private theorem selCheckPlanar_node_none {cs : List (RoseTree SOLabel)}
-    (h0 : cs.length ≠ 0) (h2 : cs.length ≠ 2) :
-    selCheckPlanar (RoseTree.node (Sum.inr ()) cs) = none := by
-  match cs with
-  | [] => exact absurd rfl h0
-  | [_] => rfl
-  | [_, _] => exact absurd rfl h2
+/-- A daughter list of three or more has no selection value. -/
+private theorem selCombine_big {l : List (Option (LIToken × List Cat))}
+    (h : 2 < l.length) : selCombine (Sum.inr ()) l = none := by
+  match l with
   | _ :: _ :: _ :: _ => rfl
+  | [] | [_] | [_, _] => simp at h
 
-private theorem selCheckPlanar_permStep {t s : RoseTree SOLabel}
-    (hstep : RoseTree.PermStep t s) : selCheckPlanar t = selCheckPlanar s := by
-  induction hstep with
-  | @swapAtRoot a l r pre post =>
-    cases a with
-    | inl _ => simp only [selCheckPlanar]
-    | inr u =>
-      cases u
-      cases pre with
-      | nil => cases post with
-        | nil => exact selStep_comm _ _
-        | cons c cs => simp only [List.nil_append, selCheckPlanar]
-      | cons q qs =>
-        have h2 : ((q :: qs) ++ l :: r :: post).length ≠ 2 := by
-          simp only [List.length_append, List.length_cons]; omega
-        have h2' : ((q :: qs) ++ r :: l :: post).length ≠ 2 := by
-          simp only [List.length_append, List.length_cons]; omega
-        rw [selCheckPlanar_node_none (by simp) h2, selCheckPlanar_node_none (by simp) h2']
-  | @recurse a pre old new post _hstep ih =>
-    cases a with
-    | inl _ => simp only [selCheckPlanar]
-    | inr u =>
-      cases u
-      cases pre with
-      | nil => cases post with
-        | nil => simp only [List.nil_append, selCheckPlanar]
-        | cons c cs => cases cs with
-          | nil => simp only [List.nil_append, selCheckPlanar, ih]
-          | cons d ds => simp only [List.nil_append, selCheckPlanar]
-      | cons q qs => cases qs with
-        | nil => cases post with
-          | nil => simp only [List.cons_append, List.nil_append, selCheckPlanar, ih]
-          | cons d ds => simp only [List.cons_append, List.nil_append, selCheckPlanar]
-        | cons q2 qs2 =>
-          have h2 : ((q :: q2 :: qs2) ++ old :: post).length ≠ 2 := by
-            simp only [List.length_append, List.length_cons]; omega
-          have h2' : ((q :: q2 :: qs2) ++ new :: post).length ≠ 2 := by
-            simp only [List.length_append, List.length_cons]; omega
-          rw [selCheckPlanar_node_none (by simp) h2, selCheckPlanar_node_none (by simp) h2']
+/-- `selCombine` is invariant under permutation of the daughter states: only the
+    binary shape is order-sensitive, and there `selStep_comm` applies. -/
+theorem selCombine_perm (a : SOLabel) {l₁ l₂ : List (Option (LIToken × List Cat))}
+    (h : l₁.Perm l₂) : selCombine a l₁ = selCombine a l₂ := by
+  cases a with
+  | inl tok => rfl
+  | inr u =>
+    cases u
+    induction h with
+    | nil => rfl
+    | @cons x l₁ l₂ h _ih =>
+      match l₁, l₂, h with
+      | [], l₂, h => rw [show l₂ = [] from h.symm.eq_nil]
+      | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
+      | _ :: _ :: _, l₂, h =>
+        rw [selCombine_big (by simp +arith),
+            selCombine_big (by
+              have hl := h.length_eq
+              simp only [List.length_cons] at hl ⊢
+              omega)]
+    | swap x y l =>
+      cases l with
+      | nil => exact selStep_comm y x
+      | cons z l => rfl
+    | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- Selection check on a planar `SO`-tree: the projecting head + residual pending
+    features, or `none` outside the endocentric domain — the catamorphism of
+    `selCombine`. -/
+def selCheckPlanar : RoseTree SOLabel → Option (LIToken × List Cat) :=
+  RoseTree.fold selCombine
+
+/-- Reduction of `selCheckPlanar` at a node: fold the algebra over the daughters. -/
+theorem selCheckPlanar_node (a : SOLabel) (cs : List (RoseTree SOLabel)) :
+    selCheckPlanar (RoseTree.node a cs) = selCombine a (cs.map selCheckPlanar) :=
+  RoseTree.fold_node ..
 
 /-- `selCheckPlanar` is `PermEquiv`-invariant, so it descends to the quotient. -/
 theorem selCheckPlanar_permEquiv {t s : RoseTree SOLabel}
-    (h : RoseTree.PermEquiv t s) : selCheckPlanar t = selCheckPlanar s := by
-  induction h with
-  | rel _ _ hstep => exact selCheckPlanar_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    (h : RoseTree.PermEquiv t s) : selCheckPlanar t = selCheckPlanar s :=
+  RoseTree.fold_permEquiv (fun a _ _ h' => selCombine_perm a h') h
 
 /-- Selection check lifted to the nonplanar carrier. -/
 def selCheckN : Nonplanar SOLabel → Option (LIToken × List Cat) :=
@@ -208,7 +201,7 @@ theorem selCheckN_node (a b : Nonplanar SOLabel) :
           = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
   show selCheckN (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
       = selStep (selCheckN (Nonplanar.mk pa)) (selCheckN (Nonplanar.mk pb))
-  rw [key]; simp only [selCheckN_mk, selCheckPlanar]
+  rw [key]; exact rfl
 
 /-! ### The selection-driven head on `SO` -/
 
