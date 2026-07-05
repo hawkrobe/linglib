@@ -95,24 +95,18 @@ instance : CommMagma SelState where
 
 variable {x y}
 
-/-- The selection decision determines side and head coherently: the projected head
-    is the head of the sister on the side it reports. The single raw analysis;
-    `SelState.mul_fst` and `SelState.mul_eq_some` are corollaries. -/
+/-- The selection decision is coherent: the projected head is the head of the
+    sister on the side it reports. The single raw analysis; `SelState.mul_fst` and
+    `SelState.mul_eq_some` are corollaries. -/
 theorem selCombine_eq_some {b : Bool} {hd : LIToken} {res : List Cat}
     (h : selCombine x y = some (b, hd, res)) :
-    (b = true ∧ x.map (·.1) = some hd) ∨ (b = false ∧ y.map (·.1) = some hd) := by
+    (bif b then x else y).map (·.1) = some hd := by
   match x, y with
-  | some (ha, c :: rest'), some (hb, []) =>
-    simp only [selCombine] at h
-    split_ifs at h with hcat
-    simp only [Option.some.injEq, Prod.mk.injEq] at h
-    exact Or.inl ⟨h.1.symm, by simp [h.2.1]⟩
+  | some (ha, c :: rest'), some (hb, [])
   | some (ha, []), some (hb, c :: rest') =>
     simp only [selCombine] at h
-    split_ifs at h with hcat
-    simp only [Option.some.injEq, Prod.mk.injEq] at h
-    exact Or.inr ⟨h.1.symm, by simp [h.2.1]⟩
-  | some (_, []), some (_, []) | some (_, _ :: _), some (_, _ :: _) => simp [selCombine] at h
+    split_ifs at h; cases h; rfl
+  | some (_, []), some (_, []) | some (_, _ :: _), some (_, _ :: _)
   | none, _ | some _, none => simp [selCombine] at h
 
 /-- The head of `x * y` (when defined) is one of `x`/`y`'s heads. -/
@@ -121,9 +115,10 @@ theorem SelState.mul_fst {r : LIToken}
     x.map (·.1) = some r ∨ y.map (·.1) = some r := by
   simp only [SelState.mul_def, Option.map_map, Option.map_eq_some_iff] at h
   obtain ⟨⟨b, hd, res⟩, hproj, rfl⟩ := h
-  rcases selCombine_eq_some hproj with ⟨_, hx⟩ | ⟨_, hy⟩
-  · exact Or.inl hx
-  · exact Or.inr hy
+  have hside := selCombine_eq_some hproj
+  cases b
+  · exact Or.inr hside
+  · exact Or.inl hside
 
 /-- When the product is defined, its head is the projecting daughter's head, and
     `selSide` agrees on which daughter projects. -/
@@ -134,9 +129,10 @@ theorem SelState.mul_eq_some {hd : LIToken} {res : List Cat}
   simp only [SelState.mul_def, Option.map_eq_some_iff] at h
   obtain ⟨⟨b, hd', res'⟩, hproj, heq⟩ := h
   obtain ⟨rfl, rfl⟩ : hd' = hd ∧ res' = res := by simpa using heq
-  rcases selCombine_eq_some hproj with ⟨rfl, hx⟩ | ⟨rfl, hy⟩
-  · exact Or.inl ⟨by simp [selSide, hproj], hx⟩
-  · exact Or.inr ⟨by simp [selSide, hproj], hy⟩
+  have hside := selCombine_eq_some hproj
+  cases b
+  · exact Or.inr ⟨by simp [selSide, hproj], hside⟩
+  · exact Or.inl ⟨by simp [selSide, hproj], hside⟩
 
 /-! ### Selection check on the planar carrier -/
 
