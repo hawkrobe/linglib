@@ -8,14 +8,14 @@ This file formalizes [stankova-2025]'s particle results for negation in
 Czech polar questions — *náhodou* as an overt indicator of the covert
 FALSUM operator (§6.1 subexperiment) and *copak* as sensitive to
 contextual evidence (§6.2 subexperiment, exs. 19-20) — together with
-the Table 1 particle diagnostics for the three-way negation system of
-the companion work (`Stakov2026`), whose fingerprint theorems run over
+the [stankova-2026] Table 1 particle diagnostics for the three-way
+negation system, whose fingerprint theorems run over
 `Semantics.Negation.CzechNegation`.
 
-Source note: [stankova-2025] itself distinguishes two negation readings
-(inner and outer); the three-way inner/medial/outer system and the
-*ještě*/*fakt* diagnostics belong to the companion three-way analysis
-and are flagged UNVERIFIED below pending that source.
+Two anchors: [stankova-2025] is two-way (inner/outer) and contributes
+the experiments; [stankova-2026] proposes the three LF positions
+(inner/medial/outer, her (2)/(16)) and the *náhodou*/*ještě*/*fakt*
+diagnostics (Table 1).
 
 ## Main results
 
@@ -32,8 +32,8 @@ and are flagged UNVERIFIED below pending that source.
 
 ## References
 
-* [stankova-2025], [stankova-2023], [simik-2024], [romero-2019],
-  [nekula-1996].
+* [stankova-2025], [stankova-2026], [stankova-2023], [simik-2024],
+  [romero-2019], [nekula-1996].
 -/
 
 namespace StankovaSimik2025
@@ -55,25 +55,26 @@ def nahodou : Particle where
   form := "náhodou"
   distribution := some { polarInterrogative := some .optional }
 
-/-- *ještě* 'yet, still' — inner-negation diagnostic of the three-way
-system (`Stakov2026`); its temporal-endpoint presupposition needs
-propositional negation. -/
--- UNVERIFIED: not discussed in [stankova-2025]; source location in the
--- three-way companion pending.
+/-- *ještě* 'yet, still' — inner-negation diagnostic ([stankova-2026]
+§2.2.2, (14)): with telic predicates it requires negation and in PQs is
+felicitous only under inner negation (NCI or wide-scoping PPI), not
+medial or outer; atelic *ještě* occurs without negation ((13a)). -/
 def jeste : Particle where
   form := "ještě"
   distribution := some { polarInterrogative := some .optional }
 
-/-- *fakt* 'really' — VERUM-related emphasis, compatible with inner and
-medial negation but not outer (three-way system, `Stakov2026`). -/
--- UNVERIFIED: not discussed in [stankova-2025]; source location in the
--- three-way companion pending.
+/-- *fakt* 'really' — licensed by inner and medial negation, repelled by
+outer on its canonical reading ([stankova-2026] §2.2.3, (15); the
+'after all' reading is exempt, fn. 8). The paper defers its semantic
+contribution, noting the parallels to English *really* (Romero & Han's
+VERUM) and Russian *razve*. -/
 def fakt : Particle where
   form := "fakt"
   distribution := some { polarInterrogative := some .optional }
 
-/-- *vůbec* 'at all' — general NPI, licensed by inner (propositional)
-negation; outside Table 1. Parallels English *at all*. -/
+/-- *vůbec* 'at all' — NPI, licensed by inner negation only among the
+three readings ([stankova-2026] (9)-(10)); outside Table 1. Parallels
+English *at all*. -/
 def vubec : Particle where
   form := "vůbec"
   distribution := some { polarInterrogative := some .optional }
@@ -103,14 +104,16 @@ def allParticles : List Particle :=
 /-! ### The classifications -/
 
 /-- Semantic classification of the diagnostic particles ([stankova-2025]
-for *náhodou*/*copak*; the three-way companion for the rest). -/
+§6 for *náhodou*/*copak*; [stankova-2026] §2.2 for the rest). -/
 inductive ParticleSemantics where
-  /-- Modifies the ordering source of an epistemic modal (*náhodou*). -/
+  /-- Modifies the ordering source of an epistemic modal (*náhodou*;
+      both papers' hypothesis). -/
   | orderingSourceModifier
-  /-- Temporal-endpoint presupposition; needs propositional negation
-      (*ještě*). -/
+  /-- Temporal-endpoint presupposition; with telic predicates needs
+      propositional negation (*ještě*). -/
   | temporalEndpoint
-  /-- Veridical (VERUM-related) emphasis (*fakt*). -/
+  /-- 'Really'-type emphasis (*fakt*; semantics deferred by
+      [stankova-2026], cf. VERUM). -/
   | veridicalEmphasis
   /-- General NPI (*vůbec*). -/
   | npi
@@ -129,9 +132,8 @@ def classification : List (Particle × ParticleSemantics) :=
 def semantics? (p : Particle) : Option ParticleSemantics :=
   classification.lookup p
 
-/-- Table 1 of the three-way companion (`Stakov2026`): which diagnostic
-each particle realizes. -/
--- UNVERIFIED: table attribution pending the three-way source.
+/-- [stankova-2026]'s Table 1: which diagnostic each particle
+realizes. -/
 def table1 : List (Particle × Diagnostic) :=
   [(nahodou, .nahodou), (jeste, .jeste), (fakt, .fakt)]
 
@@ -141,9 +143,10 @@ def diagnostic? (p : Particle) : Option Diagnostic :=
 
 /-! ### The diagnostics as the negation-position licensing axis
 
-Compatibility is read off the substrate's `licenses`; particles outside
-Table 1 (*vůbec*, *snad*, *copak*) carry no recorded position
-constraint. -/
+Compatibility is read off the substrate's `licenses`, which encodes
+[stankova-2026]'s Table 1 rows (náhodou: outer only; ještě: inner only;
+fakt: inner and medial); particles outside the table (*vůbec*, *snad*,
+*copak*) carry no recorded position constraint. -/
 
 /-- Table 1 as a `Distributed` axis: negation position is a licensing
 context like clause type and embedding. -/
