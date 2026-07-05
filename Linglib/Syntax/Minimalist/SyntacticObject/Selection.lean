@@ -21,7 +21,7 @@ head functions it is partial: `none` at exocentric nodes.
   together with its residual selectional stack.
 * `Minimalist.selStep`, `Minimalist.selSide`: the carrier-free combinators — a
   node's state from its daughters', and which daughter projects.
-* `Minimalist.selCombine`, `Minimalist.selCheckPlanar`, `Minimalist.SO.selCheck`:
+* `Minimalist.selNode`, `Minimalist.selCheckPlanar`, `Minimalist.SO.selCheck`:
   the selection algebra, its catamorphism, and the `SO` lift.
 * `Minimalist.SO.selHead`, `Minimalist.SO.outerCatC`: the head token and its outer
   category — the foundation the Phase API consumes (`isPhaseHeadOf`).
@@ -37,8 +37,8 @@ head functions it is partial: `none` at exocentric nodes.
 
 ## Implementation notes
 
-The tree recursion is the catamorphism `RoseTree.fold selCombine`; the algebra is
-permutation-invariant (`selCombine_perm`), so invariance and the quotient lift come
+The tree recursion is the catamorphism `RoseTree.fold selNode`; the algebra is
+permutation-invariant (`selNode_perm`), so invariance and the quotient lift come
 from `fold_perm` — no bespoke step induction. **Index-free traces**: a bare trace
 leaf gets the canonical saturated value `(mkTraceToken 0, [])`; `selCheck` reads
 only the token's category and `outerSel`, both index-independent.
@@ -57,32 +57,37 @@ abbrev SelState := Option (LIToken × List Cat)
 
 variable (x y : SelState)
 
-/-- Combine two sisters' selection states. Order-independent (`selStep_comm`):
-    whichever sister's head c-selects the *saturated* other projects, yielding its
-    residual stack; `none` at exocentric nodes (neither or both qualify). -/
-def selStep : SelState → SelState → SelState
+/-- The single selection decision at a binary node: which sister projects
+    (`true` = the left), the projecting head, and its residual stack — or `none`
+    at exocentric nodes (neither or both of the sisters selects the *saturated*
+    other). `selStep` and `selSide` are its projections. -/
+def selCombine : SelState → SelState → Option (Bool × LIToken × List Cat)
   | some (ha, c :: rest), some (hb, []) =>
-      if hb.item.outerCat = c then some (ha, rest) else none
+      if hb.item.outerCat = c then some (true, ha, rest) else none
   | some (ha, []), some (hb, c :: rest) =>
-      if ha.item.outerCat = c then some (hb, rest) else none
+      if ha.item.outerCat = c then some (false, hb, rest) else none
   | _, _ => none
 
-/-- Which daughter projects at a binary node under c-selection: `some true` = the
-    **left** sister is the selector, `some false` = the **right**, `none` =
-    exocentric (neither uniquely selects the saturated other). Mirrors `selStep`. -/
-def selSide : SelState → SelState → Option Bool
-  | some (_, c :: _), some (hb, []) => if hb.item.outerCat = c then some true else none
-  | some (ha, []), some (_, c :: _) => if ha.item.outerCat = c then some false else none
-  | _, _ => none
+/-- Combine two sisters' selection states: the projecting head and residual stack
+    of the selection decision. Order-independent (`selStep_comm`). -/
+def selStep (x y : SelState) : SelState := (selCombine x y).map (·.2)
 
-theorem selStep_comm : selStep x y = selStep y x := by
-  rcases x with _ | ⟨hx, _ | ⟨cx, sx⟩⟩ <;> rcases y with _ | ⟨hy, _ | ⟨cy, sy⟩⟩ <;> rfl
+/-- Which daughter projects at a binary node: `some true` = the **left** sister is
+    the selector, `some false` = the **right**, `none` = exocentric. -/
+def selSide (x y : SelState) : Option Bool := (selCombine x y).map (·.1)
 
-theorem selSide_comm : selSide x y = (selSide y x).map Bool.not := by
+/-- Swapping the sisters flips the side and keeps the head and residual. -/
+theorem selCombine_comm : selCombine x y = (selCombine y x).map fun p => (!p.1, p.2) := by
   rcases x with _ | ⟨hx, _ | ⟨cx, sx⟩⟩ <;> rcases y with _ | ⟨hy, _ | ⟨cy, sy⟩⟩ <;>
     first
     | rfl
-    | (simp only [selSide, Option.map]; split <;> rfl)
+    | (simp only [selCombine, Option.map]; split <;> rfl)
+
+theorem selStep_comm : selStep x y = selStep y x := by
+  simp only [selStep, selCombine_comm x y, Option.map_map]; rfl
+
+theorem selSide_comm : selSide x y = (selSide y x).map Bool.not := by
+  simp only [selSide, selCombine_comm x y, Option.map_map]; rfl
 
 /-- `selStep` is the multiplication of a commutative magma on `SelState`: the
     algebraic shape [marcolli-chomsky-berwick-2025] §1.13 assigns to Merge-local
@@ -93,15 +98,35 @@ instance : CommMagma SelState := { mul_comm := selStep_comm }
 
 variable {x y}
 
+/-- The selection decision determines side and head coherently: the projected head
+    is the head of the sister on the side it reports. The single raw analysis;
+    `selStep_fst` and `selStep_eq_some` are corollaries. -/
+theorem selCombine_eq_some {b : Bool} {hd : LIToken} {res : List Cat}
+    (h : selCombine x y = some (b, hd, res)) :
+    (b = true ∧ x.map (·.1) = some hd) ∨ (b = false ∧ y.map (·.1) = some hd) := by
+  match x, y with
+  | some (ha, c :: rest'), some (hb, []) =>
+    simp only [selCombine] at h
+    split_ifs at h with hcat
+    simp only [Option.some.injEq, Prod.mk.injEq] at h
+    exact Or.inl ⟨h.1.symm, by simp [h.2.1]⟩
+  | some (ha, []), some (hb, c :: rest') =>
+    simp only [selCombine] at h
+    split_ifs at h with hcat
+    simp only [Option.some.injEq, Prod.mk.injEq] at h
+    exact Or.inr ⟨h.1.symm, by simp [h.2.1]⟩
+  | some (_, []), some (_, []) | some (_, _ :: _), some (_, _ :: _) => simp [selCombine] at h
+  | none, _ | some _, none => simp [selCombine] at h
+
 /-- The head of `selStep x y` (when defined) is one of `x`/`y`'s heads. -/
 theorem selStep_fst {r : LIToken}
     (h : (selStep x y).map (·.1) = some r) :
     x.map (·.1) = some r ∨ y.map (·.1) = some r := by
-  unfold selStep at h
-  split at h
-  · split_ifs at h <;> simp_all
-  · split_ifs at h <;> simp_all
-  · simp at h
+  simp only [selStep, Option.map_map, Option.map_eq_some_iff] at h
+  obtain ⟨⟨b, hd, res⟩, hproj, rfl⟩ := h
+  rcases selCombine_eq_some hproj with ⟨_, hx⟩ | ⟨_, hy⟩
+  · exact Or.inl hx
+  · exact Or.inr hy
 
 /-- When `selStep` returns a head, that head is the projecting daughter's head, and
     `selSide` agrees on which daughter projects: the bridge between the
@@ -110,23 +135,12 @@ theorem selStep_eq_some {hd : LIToken} {res : List Cat}
     (h : selStep x y = some (hd, res)) :
     (selSide x y = some true ∧ x.map (·.1) = some hd) ∨
     (selSide x y = some false ∧ y.map (·.1) = some hd) := by
-  match x, y with
-  | some (ha, c :: rest'), some (hb, []) =>
-    simp only [selStep] at h
-    by_cases hcat : hb.item.outerCat = c
-    · rw [if_pos hcat] at h
-      simp only [Option.some.injEq, Prod.mk.injEq] at h
-      exact Or.inl ⟨by simp [selSide, hcat], by simp [h.1]⟩
-    · simp [if_neg hcat] at h
-  | some (ha, []), some (hb, c :: rest') =>
-    simp only [selStep] at h
-    by_cases hcat : ha.item.outerCat = c
-    · rw [if_pos hcat] at h
-      simp only [Option.some.injEq, Prod.mk.injEq] at h
-      exact Or.inr ⟨by simp [selSide, hcat], by simp [h.1]⟩
-    · simp [if_neg hcat] at h
-  | some (_, []), some (_, []) | some (_, _ :: _), some (_, _ :: _) => simp [selStep] at h
-  | none, _ | some _, none => simp [selStep] at h
+  simp only [selStep, Option.map_eq_some_iff] at h
+  obtain ⟨⟨b, hd', res'⟩, hproj, heq⟩ := h
+  obtain ⟨rfl, rfl⟩ : hd' = hd ∧ res' = res := by simpa using heq
+  rcases selCombine_eq_some hproj with ⟨rfl, hx⟩ | ⟨rfl, hy⟩
+  · exact Or.inl ⟨by simp [selSide, hproj], hx⟩
+  · exact Or.inr ⟨by simp [selSide, hproj], hy⟩
 
 /-! ### Selection check on the planar carrier -/
 
@@ -134,23 +148,23 @@ theorem selStep_eq_some {hd : LIToken} {res : List Cat}
     states. Lexical leaf ↦ its token + `outerSel`; bare trace leaf ↦ canonical
     `(mkTraceToken 0, [])` (index-free); bare binary node ↦ `selStep` of the
     daughters (the `SelState` magma multiplication); other arities ↦ `none`. -/
-def selCombine : SOLabel → List SelState → SelState
+def selNode : SOLabel → List SelState → SelState
   | .inl tok, _     => some (tok, tok.item.outerSel)
   | .inr (), []     => some (mkTraceToken 0, [])
   | .inr (), [x, y] => x * y
   | .inr (), _      => none
 
 /-- A daughter list of three or more has no selection value. -/
-private theorem selCombine_big {l : List SelState} (h : 2 < l.length) :
-    selCombine (Sum.inr ()) l = none := by
+private theorem selNode_big {l : List SelState} (h : 2 < l.length) :
+    selNode (Sum.inr ()) l = none := by
   match l with
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
 
-/-- `selCombine` is invariant under permutation of the daughter states: only the
+/-- `selNode` is invariant under permutation of the daughter states: only the
     binary shape is order-sensitive, and there `selStep_comm` applies. -/
-theorem selCombine_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm l₂) :
-    selCombine a l₁ = selCombine a l₂ := by
+theorem selNode_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm l₂) :
+    selNode a l₁ = selNode a l₂ := by
   cases a with
   | inl tok => rfl
   | inr u =>
@@ -163,8 +177,8 @@ theorem selCombine_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm
       | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
       | _ :: _ :: _, l₂, h =>
         have hl := h.length_eq
-        rw [selCombine_big (by simp +arith),
-            selCombine_big (by simp only [List.length_cons] at hl ⊢; omega)]
+        rw [selNode_big (by simp +arith),
+            selNode_big (by simp only [List.length_cons] at hl ⊢; omega)]
     | swap x y l =>
       cases l with
       | nil => exact mul_comm y x
@@ -173,19 +187,19 @@ theorem selCombine_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm
 
 /-- Selection check on a planar `SO`-tree: the projecting head + residual pending
     features, or `none` outside the endocentric domain — the catamorphism of
-    `selCombine`. -/
+    `selNode`. -/
 def selCheckPlanar : RoseTree SOLabel → SelState :=
-  RoseTree.fold selCombine
+  RoseTree.fold selNode
 
 /-- Reduction of `selCheckPlanar` at a node: fold the algebra over the daughters. -/
 theorem selCheckPlanar_node (a : SOLabel) (cs : List (RoseTree SOLabel)) :
-    selCheckPlanar (RoseTree.node a cs) = selCombine a (cs.map selCheckPlanar) :=
+    selCheckPlanar (RoseTree.node a cs) = selNode a (cs.map selCheckPlanar) :=
   RoseTree.fold_node ..
 
 /-- `selCheckPlanar` is `Perm`-invariant, so it descends to the quotient. -/
 theorem selCheckPlanar_perm {t s : RoseTree SOLabel} (h : RoseTree.Perm t s) :
     selCheckPlanar t = selCheckPlanar s :=
-  RoseTree.fold_perm (fun a _ _ h' => selCombine_perm a h') h
+  RoseTree.fold_perm (fun a _ _ h' => selNode_perm a h') h
 
 /-- Selection check lifted to the nonplanar carrier. -/
 def selCheckN : Nonplanar SOLabel → SelState :=
