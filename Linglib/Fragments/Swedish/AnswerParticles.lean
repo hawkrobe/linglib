@@ -6,6 +6,10 @@ import Linglib.Features.AnsweringSystem
 # Swedish Answer Particles
 [holmberg-2016]
 
+Answer particles are pro-sentential — they stand alone as utterances
+rather than associating with a host constituent — so they deliberately
+do not instantiate the host-associated `Syntax/Particle` core.
+
 Swedish has a three-way answer particle system:
 - *ja* — affirmative ("yes")
 - *nej* — negative ("no")

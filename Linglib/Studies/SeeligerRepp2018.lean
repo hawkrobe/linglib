@@ -2,7 +2,7 @@ import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Features.Polarity
 import Linglib.Features.QParticleLayer
 import Linglib.Fragments.Swedish.QuestionParticles
-import Linglib.Fragments.German.QuestionParticles
+import Linglib.Fragments.German.Particles
 import Linglib.Fragments.German.PolarityMarking
 
 /-!
@@ -480,7 +480,7 @@ theorem dq_epistemic_lacks_romero_counterpart :
 -- ════════════════════════════════════════════════════════════════
 
 open Swedish.QuestionParticles
-open German.QuestionParticles
+open German.Particles
 open German.PolarityMarking (dochPreUtterance)
 open Semantics.Polarity.Marking (Env)
 
@@ -523,7 +523,7 @@ def dochWohlOriginalBias : Option Semantics.Questions.Bias.OriginalBias :=
 /-- *doch wohl* is not usable in assertions — it marks questions.
     Derived from the fragment's distribution facet. -/
 theorem dochWohl_not_assertion :
-    ¬ German.QuestionParticles.dochWohl.LicensedIn .declarative := by decide
+    ¬ German.Particles.dochWohl.LicensedIn .declarative := by decide
 
 /-- The derived RQ property behind `dochWohlOriginalBias`: both DQ types
     *doch wohl* can mark have active ("plus") epistemic bias — the
@@ -559,14 +559,14 @@ theorem both_require_evidential :
     should have a reading combining conflict (doch) + reportativity (wohl),
     but this reading is unavailable in RQs. -/
 theorem dochWohl_is_complex :
-    German.QuestionParticles.dochWohl.form = "doch wohl" := rfl
+    German.Particles.dochWohl.form = "doch wohl" := rfl
 
 /-- The *doch* in *doch wohl* has a different meaning from polarity-
     reversal *doch* (as in `German.PolarityMarking.dochPreUtterance`).
     In RQs, *doch* has a "conflict" meaning — it signals surprise or
     realization — rather than the "reminding" function of assertive *doch*. -/
 theorem dochWohl_is_question_marker :
-    ¬ German.QuestionParticles.dochWohl.LicensedIn .declarative := by decide
+    ¬ German.Particles.dochWohl.LicensedIn .declarative := by decide
 
 /-- German *doch* is formally ambiguous between two distinct roles:
     1. **Polarity-reversal *doch***: pre-utterance correction particle
@@ -619,7 +619,7 @@ def dochWohl_layer (_ : Particle) : QParticleLayer := .perspP
     at PerspP — the layer for biased, matrix-only question particles. -/
 theorem rq_markers_are_PerspP :
     val_layer Swedish.QuestionParticles.val = .perspP ∧
-    dochWohl_layer German.QuestionParticles.dochWohl = .perspP :=
+    dochWohl_layer German.Particles.dochWohl = .perspP :=
   ⟨rfl, rfl⟩
 
 end SeeligerRepp2018
