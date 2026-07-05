@@ -22,7 +22,7 @@ Used by:
 - [herbstritt-franke-2019]: urn-based probability expressions (N=10)
 
 The general formula replaces paper-specific match tables (e.g., `obsPriorTable`
-in `GoodmanStuhlmuller2013PMF.lean`), enabling reuse across RSA models with
+in `GoodmanStuhlmuller2013.lean`), enabling reuse across RSA models with
 different population sizes.
 -/
 
