@@ -1,6 +1,7 @@
 import Linglib.Semantics.Mood.Gutzmann
+import Linglib.Semantics.UseConditional.LTU
 import Linglib.Fragments.German.ClauseTypes
-import Linglib.Fragments.German.ModalParticles
+import Linglib.Fragments.German.Particles
 import Linglib.Features.ClauseForm
 
 /-!
@@ -36,7 +37,7 @@ namespace Gutzmann2015
 open Features
 open Semantics.Mood.Gutzmann
 open German.ClauseTypes
-open German.ModalParticles
+open German.Particles
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -94,37 +95,43 @@ theorem v2_vs_vl_interrog {W : Type*}
 -- § 3. Modal Particle–Mood Interaction
 -- ════════════════════════════════════════════════════════════════
 
+/-- Gutzmann's L_TU classification (§6.5): *ja/denn/halt/doch* are
+functional-expletive UCIs of type `⟨⟨s,t⟩, u⟩`, restricted via
+use-conditional conflict. (Formerly fragment fields; the typing is this
+book's analysis.) -/
+def uciParticles : List Particle := [ja, denn, halt, doch]
+
+/-- *wohl* is Gutzmann's sole UC-modifier among the common MPs: type
+`⟨⟨⟨s,t⟩,u⟩, ⟨⟨s,t⟩,u⟩⟩`, modifying EPIS, restricted selectionally. -/
+def ucModifiers : List Particle := [wohl]
+
+/-- Restriction kind per Gutzmann: UCIs restrict via use-conditional
+conflict, UC-modifiers selectionally (imperatives lack EPIS — a type
+mismatch, not a pragmatic conflict). -/
+def restrictionKind (p : Particle) : Semantics.UseConditional.RestrictionKind :=
+  if p ∈ ucModifiers then .selectional else .ucConflict
+
 /-- *wohl*'s distribution is fully derived from EPIS presence: wohl is
 licensed in a clause type iff that clause type has an epistemic mood
-operator. This is the formal content of the selectional restriction
-analysis — wohl has type `⟨⟨⟨s,t⟩,u⟩, ⟨⟨s,t⟩,u⟩⟩` and modifies EPIS,
-so clause types lacking EPIS produce a type mismatch. -/
+operator — the formal content of the selectional restriction
+analysis. -/
 theorem wohl_derived_from_epis {f : ClauseForm} (ct : GermanClauseType f) :
-    wohl.licensedInClause ct = ct.moodStructure.hasEpistemic :=
+    licensedInClause wohl ct = ct.moodStructure.hasEpistemic :=
   wohl_iff_epis ct
 
 /-- *ja* is restricted to declaratives, matching the clause type with
 deontic + epistemic mood but without the hearer knowledge condition. -/
 theorem ja_declarative_restriction :
-    ja.declOk = true ∧ ja.interrogOk = false := ⟨rfl, rfl⟩
+    ja.LicensedIn .declarative ∧ ¬ ja.LicensedIn .polarInterrogative := by decide
 
 /-- *denn* is the interrogative counterpart of *ja*. -/
 theorem denn_interrogative_restriction :
-    denn.declOk = false ∧ denn.interrogOk = true := ⟨rfl, rfl⟩
+    ¬ denn.LicensedIn .declarative ∧ denn.LicensedIn .polarInterrogative := by decide
 
 /-- *ja* and *denn* partition clause types: they are never both
 licensed in the same clause type. -/
 theorem ja_denn_partition {f : ClauseForm} (ct : GermanClauseType f) :
-    ¬(ja.licensedInClause ct = true ∧ denn.licensedInClause ct = true) :=
+    ¬(licensedInClause ja ct = true ∧ licensedInClause denn ct = true) :=
   ja_denn_complementary ct
-
-/-- The restriction kind for all particles reflects the UCI/UC-modifier
-distinction: UCIs have conflict restrictions, UC-modifiers have
-selectional restrictions. -/
-theorem restriction_reflects_kind :
-    ∀ mp ∈ allModalParticles,
-      (mp.exprKind = .uci → mp.restrictionKind = .ucConflict) ∧
-      (mp.exprKind = .ucModifier → mp.restrictionKind = .selectional) :=
-  restriction_tracks_kind
 
 end Gutzmann2015

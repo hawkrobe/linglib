@@ -1,80 +1,44 @@
+import Linglib.Syntax.Particle.Basic
+
 /-!
 # Marathi Utterance-Final Particles
 [deo-2025-bara] [deo-2023]
 
-Lexical entries for Marathi utterance-final discourse particles. The
-semantic/pragmatic content lives in `Studies/Deo2025.lean`;
-this file just packages the basic morphological + clause-type-distribution data.
+Utterance-final Marathi discourse particles as `Particle` values. The
+commitment semantics (dependent vs independent uptake) is analytical
+and lives in `Studies/Deo2025.lean`.
 -/
 
 namespace Marathi.Particles
 
-/-- A Marathi utterance-final particle entry, with the clause types and
-    illocutionary acts it is felicitous in.
-
-    Boolean-valued lookup fields would be the lower-tech encoding;
-    `Prop` lets the felicity facts plug directly into proofs without a
-    `decide` translation. -/
-structure ParticleEntry where
-  /-- Surface form (in IPA-ish romanization). -/
-  form : String
-  /-- Standard gloss. -/
-  gloss : String
-  /-- Felicitous in declaratives. -/
-  inDeclaratives : Prop
-  /-- Felicitous in imperatives. -/
-  inImperatives : Prop
-  /-- Felicitous in wh-interrogatives. -/
-  inWhInterrogatives : Prop
-  /-- Felicitous in polar interrogatives. [deo-2025-bara] reports
-      `bərə` is *never* used in polar interrogatives (§ 1, p. 387). -/
-  inPolarInterrogatives : Prop
-  /-- The particle conventionally signals a *preferential* commitment
-      dimension on top of the clause-type-determined commitment.
-      `bərə` does ([deo-2025-bara] (20)); pure clause-typing particles
-      like `ka` (polar Q) do not. -/
-  carriesPreferentialCommitment : Prop
-
-/-- *bərə* — utterance-final particle that conventionally signals the
-    speaker's preference that the addressee take on the prejacent as a
-    *dependent* doxastic or preferential commitment, with a felicity
-    condition tying this uptake to a salient addressee-benefiting goal.
-
-    [deo-2025-bara] (20)–(21). The semantic/pragmatic apparatus
-    lives in `Studies/Deo2025.lean`. -/
-def bara : ParticleEntry where
-  form  := "bərə"
-  gloss := "BARA"
-  inDeclaratives := True
-  inImperatives := True
-  inWhInterrogatives := True
-  inPolarInterrogatives := False
-  carriesPreferentialCommitment := True
+/-- *bərə* — utterance-final particle combining with declaratives,
+imperatives, and wh-interrogatives, never polar interrogatives
+([deo-2025-bara] §1). Conventionally signals that the speaker requests
+*dependent* doxastic or preferential commitment uptake tied to an
+addressee-benefiting goal ([deo-2025-bara] (20)–(21)); the apparatus
+and the preferential-vs-doxastic classification live in
+`Studies/Deo2025.lean`. -/
+def bara : Particle where
+  form := "bərə"
+  position := .clauseFinal
+  distribution := some
+    { declarative := some .optional
+      polarInterrogative := some .excluded
+      constituentInterrogative := some .optional
+      imperative := some .optional }
 
 /-- *na* — utterance-final particle analyzed in [deo-2023] as
-    signalling preference for *independent* shared commitment (CommonGround
-    update; doxastic sourcehood mirror of `bərə`'s dependent-uptake
-    convention).
-
-    Stub entry — full lexical/semantic apparatus deferred to a future
-    `Studies/Deo2023.lean`. The clause-type
-    distribution fields are placeholders; [deo-2025-bara]
-    footnote 6 (p. 392) only attests *na* as one of the four
-    imperative-augmenting particles (*na, hã/h̆ə, ki, bərə*); the
-    declarative/interrogative pattern is unverified pending the
-    [deo-2023] formalization.
-    `carriesPreferentialCommitment := false` reflects [deo-2023]'s
-    framing as a *doxastic* (CommonGround-update) particle, not preferential. -/
-def na : ParticleEntry where
-  form  := "na"
-  gloss := "NA"
-  inDeclaratives := True
-  inImperatives := True
-  inWhInterrogatives := False
-  inPolarInterrogatives := False
-  carriesPreferentialCommitment := False
+signalling preference for *independent* shared commitment (the doxastic
+mirror of *bərə*). Only the imperative-augmenting use is attested in
+[deo-2025-bara] (fn. 6, p. 392); other cells are unrecorded pending a
+[deo-2023] formalization. -/
+def na : Particle where
+  form := "na"
+  position := .clauseFinal
+  distribution := some
+    { imperative := some .optional }
 
 /-- All Marathi utterance-final particles indexed in this file. -/
-def allParticles : List ParticleEntry := [bara, na]
+def allParticles : List Particle := [bara, na]
 
 end Marathi.Particles

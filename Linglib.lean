@@ -843,7 +843,6 @@ import Linglib.Fragments.German.Evidentiality
 import Linglib.Fragments.German.Gender
 import Linglib.Fragments.German.Indefinites
 import Linglib.Fragments.German.ModalIndefinites
-import Linglib.Fragments.German.ModalParticles
 import Linglib.Fragments.German.Morph
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.Phonology
@@ -852,7 +851,7 @@ import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.German.Pronouns
-import Linglib.Fragments.German.QuestionParticles
+import Linglib.Fragments.German.Particles
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Relativization
 import Linglib.Fragments.German.TemporalDeictic
