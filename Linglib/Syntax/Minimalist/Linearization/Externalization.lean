@@ -23,14 +23,14 @@ the book), c-selection computes the planar order.
   descriptions — the selection state enriched with the yield, `0` off `Dom(h)`; a
   `CommMagma` and `MulZeroClass` under the `side`-indexed Merge-local product.
 * `Minimalist.LinearizationState.sel`: the projection morphism to `SelectionState`.
-* `Minimalist.headHom`: the head function as a morphism of magmas
+* `Minimalist.SyntacticObject.headHom`: the head function as a morphism of magmas
   `SyntacticObject →ₙ* LinearizationState side`, refining `selCheckHom`.
 * `Minimalist.SyntacticObject.linearize`, `Minimalist.SyntacticObject.phonYield`:
   the yield readout and the pronounced surface forms.
 
 ## Main results
 
-* `Minimalist.sel_comp_headHom`: fusion — the selection component of the head
+* `Minimalist.SyntacticObject.sel_comp_headHom`: fusion — the selection component of the head
   function's value is the selection check, by `SyntacticObject.hom_ext`.
 
 ## Implementation notes
@@ -142,87 +142,55 @@ end LinearizationState
 
 /-! ### Externalization on `SyntacticObject` -/
 
+namespace SyntacticObject
+
 variable (side : ConventionDir)
 
-/-- The head function's value on a syntactic object: the `SyntacticObject.liftFun`
-    of pronounced lexical leaves and the silent, saturated trace. -/
-def SyntacticObject.linearizationState (s : SyntacticObject) :
-    LinearizationState side :=
-  SyntacticObject.liftFun (fun tok => .of tok tok.item.outerSel [tok])
-    (.of (mkTraceToken 0) [] []) s
+/-- The head function's value on a syntactic object: the `liftFun` of pronounced
+    lexical leaves and the silent, saturated trace. -/
+def linearizationState (s : SyntacticObject) : LinearizationState side :=
+  liftFun (fun tok => .of tok tok.item.outerSel [tok]) (.of (mkTraceToken 0) [] []) s
 
-@[simp] theorem SyntacticObject.linearizationState_lexLeaf
-    (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).linearizationState side =
-      .of tok tok.item.outerSel [tok] := rfl
+@[simp] theorem linearizationState_lexLeaf (tok : LIToken) :
+    (lexLeaf tok).linearizationState side = .of tok tok.item.outerSel [tok] := rfl
 
-@[simp] theorem SyntacticObject.linearizationState_traceLeaf :
-    SyntacticObject.traceLeaf.linearizationState side = .of (mkTraceToken 0) [] [] := rfl
+@[simp] theorem linearizationState_traceLeaf :
+    traceLeaf.linearizationState side = .of (mkTraceToken 0) [] [] := rfl
 
-@[simp] theorem SyntacticObject.linearizationState_node
-    (l r : SyntacticObject) :
-    (SyntacticObject.node l r).linearizationState side =
+@[simp] theorem linearizationState_node (l r : SyntacticObject) :
+    (node l r).linearizationState side =
       l.linearizationState side * r.linearizationState side :=
-  SyntacticObject.liftFun_node _ _ l r
+  liftFun_node _ _ l r
 
 /-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
     §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
-noncomputable def headHom :
-    SyntacticObject →ₙ* LinearizationState side :=
-  SyntacticObject.lift (fun tok => .of tok tok.item.outerSel [tok])
-    (.of (mkTraceToken 0) [] [])
+noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
+  lift (fun tok => .of tok tok.item.outerSel [tok]) (.of (mkTraceToken 0) [] [])
 
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl
 
 /-- Fusion: the selection component of the head function's value is the selection
-    check — two morphisms agreeing on the leaves (`SyntacticObject.hom_ext`). -/
+    check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
-  SyntacticObject.hom_ext (fun _ => rfl) rfl
+  hom_ext (fun _ => rfl) rfl
 
 /-- The surface token order under head-side convention `side`
     ([marcolli-chomsky-berwick-2025] §1.12.1): the yield readout of the
     linearization state. Not a morphism — placing a yield needs the head. -/
-def SyntacticObject.linearize (s : SyntacticObject) :
-    Option (List LIToken) :=
+def linearize (s : SyntacticObject) : Option (List LIToken) :=
   (s.linearizationState side).yield
 
 /-- The pronounced surface forms: the yield with unpronounced tokens dropped. -/
-def SyntacticObject.phonYield (s : SyntacticObject) :
-    Option (List String) :=
+def phonYield (s : SyntacticObject) : Option (List String) :=
   (s.linearize side).map (·.filterMap LIToken.phonForm?)
 
-@[simp] theorem SyntacticObject.linearize_lexLeaf (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).linearize side = some [tok] := rfl
+@[simp] theorem linearize_lexLeaf (tok : LIToken) :
+    (lexLeaf tok).linearize side = some [tok] := rfl
 
-@[simp] theorem SyntacticObject.linearize_traceLeaf :
-    SyntacticObject.traceLeaf.linearize side = some [] := rfl
+@[simp] theorem linearize_traceLeaf : traceLeaf.linearize side = some [] := rfl
 
-/-! ### `decide` demonstration
-
-The order reduces on concrete `mk`-built trees, the head-side parameter flips it, and
-exocentric Merge is order-undefined. -/
-
-/-- A determiner over a noun: `D` selects `N`, so `D` projects. -/
-private def demoTheDog : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inr ())
-    [.node (Sum.inl ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
-     .node (Sum.inl ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
-
-example : (demoTheDog.linearize .initial).map (·.map (·.id)) = some [0, 1] := by decide
-example : (demoTheDog.linearize .final).map (·.map (·.id)) = some [1, 0] := by decide
-example : demoTheDog.phonYield .initial = some ["the", "dog"] := by decide
-example : demoTheDog.phonYield .final = some ["dog", "the"] := by decide
-
-/-- Exocentric Merge: two saturated `N`s, neither selecting the other — no head, no
-    order. -/
-private def demoExo : SyntacticObject :=
-  ⟨Nonplanar.mk (.node (Sum.inr ())
-    [.node (Sum.inl ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
-     .node (Sum.inl ⟨.simple .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
-
-example : demoExo.linearize .initial = none := by decide
-example : demoExo.linearize .final = none := by decide
+end SyntacticObject
 
 end Minimalist

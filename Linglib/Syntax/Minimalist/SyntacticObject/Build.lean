@@ -30,47 +30,44 @@ is workspace-level), so there is exactly **one** trace leaf — `SyntacticObject
 
 namespace Minimalist
 
-open RootedTree
+open RootedTree SyntacticObject
+
+namespace SyntacticObject
 
 /-! ### Computable planar construction DSL -/
 
 /-- Planar builder: a lexical leaf. -/
-abbrev SyntacticObject.leafP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inl tok) []
+abbrev leafP (tok : LIToken) : RoseTree SOLabel := .node (Sum.inl tok) []
 /-- Planar builder: the bare trace leaf. -/
-abbrev SyntacticObject.traceP : RoseTree SOLabel := .node (Sum.inr ()) []
+abbrev traceP : RoseTree SOLabel := .node (Sum.inr ()) []
 /-- Planar builder: a bare binary node. -/
-abbrev SyntacticObject.nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel :=
-  .node (Sum.inr ()) [l, r]
+abbrev nodeP (l r : RoseTree SOLabel) : RoseTree SOLabel := .node (Sum.inr ()) [l, r]
 
 /-- Build a syntactic object from a planar tree, discharging well-formedness by
     `decide` (concrete trees) — the computable entry point for `decide`-based studies. -/
-def SyntacticObject.ofPlanar (p : RoseTree SOLabel) (h : isSOPlanar p = true :=
+def ofPlanar (p : RoseTree SOLabel) (h : isSOPlanar p = true :=
   by first | rfl | decide) : SyntacticObject :=
   ⟨Nonplanar.mk p, h⟩
 
-@[simp] theorem SyntacticObject.ofPlanar_leafP (tok : LIToken) :
-    SyntacticObject.ofPlanar (SyntacticObject.leafP tok) = SyntacticObject.lexLeaf tok := rfl
+@[simp] theorem ofPlanar_leafP (tok : LIToken) : ofPlanar (leafP tok) = lexLeaf tok := rfl
 
-@[simp] theorem SyntacticObject.ofPlanar_traceP :
-    SyntacticObject.ofPlanar SyntacticObject.traceP = SyntacticObject.traceLeaf := rfl
+@[simp] theorem ofPlanar_traceP : ofPlanar traceP = traceLeaf := rfl
 
 /-- Default syntactic object: the bare trace leaf. Lets structures with an `SyntacticObject`
     field be `Inhabited`/`deriving Repr`-free of bespoke witnesses. -/
-instance : Inhabited SyntacticObject := ⟨SyntacticObject.traceLeaf⟩
+instance : Inhabited SyntacticObject := ⟨traceLeaf⟩
 
 /-! ### Merge as multiplication -/
 
 /-- `*` is (External) Merge: the bare binary node. Noncomputable — build concrete
     trees with the planar DSL above, not `*`. -/
-noncomputable instance : Mul SyntacticObject := ⟨SyntacticObject.node⟩
+noncomputable instance : Mul SyntacticObject := ⟨node⟩
 
-@[simp] theorem SyntacticObject.mul_def (l r : SyntacticObject) :
-    l * r = SyntacticObject.node l r := rfl
+@[simp] theorem mul_def (l r : SyntacticObject) : l * r = node l r := rfl
 
-theorem SyntacticObject.mul_comm (l r : SyntacticObject) : l * r = r * l := by
+theorem mul_comm (l r : SyntacticObject) : l * r = r * l := by
   apply Subtype.ext
-  rw [SyntacticObject.mul_def, SyntacticObject.mul_def, SyntacticObject.node_val,
-      SyntacticObject.node_val, Multiset.pair_comm]
+  rw [mul_def, mul_def, node_val, node_val, Multiset.pair_comm]
 
 /-! ### The canonical Merge operators (carrier primitives)
 
@@ -88,11 +85,10 @@ computable `DecidableEq (Nonplanar …)` (#792) in scope. -/
     the
     re-merge stage of Internal Merge. Noncomputable; build concrete results with the
     planar DSL + `decide`. -/
-noncomputable def SyntacticObject.merge (S S' : SyntacticObject) : SyntacticObject :=
-  SyntacticObject.node S S'
+noncomputable def merge (S S' : SyntacticObject) : SyntacticObject := node S S'
 
-@[simp] theorem SyntacticObject.merge_val (S S' : SyntacticObject) :
-    (SyntacticObject.merge S S').val = Nonplanar.node (Sum.inr ()) {S.val, S'.val} := rfl
+@[simp] theorem merge_val (S S' : SyntacticObject) :
+    (merge S S').val = Nonplanar.node (Sum.inr ()) {S.val, S'.val} := rfl
 
 /-- **Internal Merge on the carrier** ([marcolli-chomsky-berwick-2025] Prop 1.4.2):
     re-Merge the `mover` with the **deletion remainder** `remainder = T/mover` (the
@@ -100,66 +96,58 @@ noncomputable def SyntacticObject.merge (S S' : SyntacticObject) : SyntacticObje
     primitive — it is `SyntacticObject.merge` of the remainder and the mover. The mover ↔ trace
     correspondence (the chain) is read at the workspace level (`Workspace.chainMultiplicity`),
     not from an index. -/
-noncomputable def SyntacticObject.intMerge (mover remainder : SyntacticObject) : SyntacticObject :=
-  SyntacticObject.merge remainder mover
+noncomputable def intMerge (mover remainder : SyntacticObject) : SyntacticObject :=
+  merge remainder mover
 
-@[simp] theorem SyntacticObject.intMerge_val (mover remainder : SyntacticObject) :
-    (SyntacticObject.intMerge mover remainder).val
-      = Nonplanar.node (Sum.inr ()) {remainder.val, mover.val} := rfl
+@[simp] theorem intMerge_val (mover remainder : SyntacticObject) :
+    (intMerge mover remainder).val = Nonplanar.node (Sum.inr ()) {remainder.val, mover.val} := rfl
 
 /-! ### Lexical-leaf construction (the legacy `mkLeaf` API) -/
 
 /-- A lexical leaf from a category and selectional stack. -/
-def SyntacticObject.mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SyntacticObject :=
-  SyntacticObject.lexLeaf ⟨.simple cat sel, id⟩
+def mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SyntacticObject :=
+  lexLeaf ⟨.simple cat sel, id⟩
 
 /-- A lexical leaf with a phonological form. -/
-def SyntacticObject.mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) :
-    SyntacticObject :=
-  SyntacticObject.lexLeaf ⟨.simple cat sel (phonForm := phon), id⟩
+def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SyntacticObject :=
+  lexLeaf ⟨.simple cat sel (phonForm := phon), id⟩
 
 /-! ### Accessors -/
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
-def SyntacticObject.getLIToken (s : SyntacticObject) : Option LIToken :=
+def getLIToken (s : SyntacticObject) : Option LIToken :=
   match Nonplanar.rootValue s.val with
   | .inl tok => some tok
   | .inr () => none
 
-@[simp] theorem SyntacticObject.getLIToken_lexLeaf (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).getLIToken = some tok := rfl
+@[simp] theorem getLIToken_lexLeaf (tok : LIToken) : (lexLeaf tok).getLIToken = some tok := rfl
 
-@[simp] theorem SyntacticObject.getLIToken_traceLeaf :
-    SyntacticObject.traceLeaf.getLIToken = none := rfl
+@[simp] theorem getLIToken_traceLeaf : traceLeaf.getLIToken = none := rfl
 
-@[simp] theorem SyntacticObject.getLIToken_node (l r : SyntacticObject) :
-    (SyntacticObject.node l r).getLIToken = none := by
-  rw [SyntacticObject.getLIToken, SyntacticObject.node_val, Nonplanar.rootValue_node]
+@[simp] theorem getLIToken_node (l r : SyntacticObject) : (node l r).getLIToken = none := by
+  rw [getLIToken, node_val, Nonplanar.rootValue_node]
 
 /-- A trace is the unique bare trace leaf (chain identity is workspace-level). -/
-def SyntacticObject.isTrace (s : SyntacticObject) : Prop := s = SyntacticObject.traceLeaf
+def isTrace (s : SyntacticObject) : Prop := s = traceLeaf
 
-instance (s : SyntacticObject) : Decidable (SyntacticObject.isTrace s) :=
+instance (s : SyntacticObject) : Decidable (isTrace s) :=
   inferInstanceAs (Decidable (_ = _))
 
-@[simp] theorem SyntacticObject.isTrace_traceLeaf :
-    SyntacticObject.isTrace SyntacticObject.traceLeaf := rfl
+@[simp] theorem isTrace_traceLeaf : isTrace traceLeaf := rfl
 
 /-- Leaf count (number of leaves + traces). -/
-def SyntacticObject.leafCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val
+def leafCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val
 
 /-- Is `s` a leaf (lexical or trace)? A leaf has a single vertex; a bare binary node
     has ≥ 2 leaves. -/
-def SyntacticObject.isLeaf (s : SyntacticObject) : Bool := s.leafCount == 1
+def isLeaf (s : SyntacticObject) : Bool := s.leafCount == 1
 
 /-- Is `s` a (bare binary) internal node? The complement of `SyntacticObject.isLeaf`. -/
-def SyntacticObject.isNode (s : SyntacticObject) : Bool := !s.isLeaf
+def isNode (s : SyntacticObject) : Bool := !s.isLeaf
 
-@[simp] theorem SyntacticObject.isLeaf_lexLeaf (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).isLeaf = true := rfl
-@[simp] theorem SyntacticObject.isLeaf_traceLeaf : SyntacticObject.traceLeaf.isLeaf = true := rfl
-@[simp] theorem SyntacticObject.isNode_lexLeaf (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).isNode = false := rfl
+@[simp] theorem isLeaf_lexLeaf (tok : LIToken) : (lexLeaf tok).isLeaf = true := rfl
+@[simp] theorem isLeaf_traceLeaf : traceLeaf.isLeaf = true := rfl
+@[simp] theorem isNode_lexLeaf (tok : LIToken) : (lexLeaf tok).isNode = false := rfl
 
 /-- A lightweight `Repr` so structures with an `SyntacticObject` field can `deriving Repr`. The full
     tree is a `Nonplanar` quotient (no faithful structural readout without `Quot.out`);
@@ -172,26 +160,25 @@ instance : Repr SyntacticObject where
       else f!"⟨SyntacticObject node, {s.leafCount} leaves⟩"
 
 /-- Internal-node count = leaf count − 1 (full binary tree). -/
-def SyntacticObject.nodeCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val - 1
+def nodeCount (s : SyntacticObject) : Nat := Nonplanar.numLeaves s.val - 1
 
-@[simp] theorem SyntacticObject.leafCount_lexLeaf (tok : LIToken) :
-    (SyntacticObject.lexLeaf tok).leafCount = 1 := rfl
-@[simp] theorem SyntacticObject.leafCount_traceLeaf : SyntacticObject.traceLeaf.leafCount = 1 := rfl
+@[simp] theorem leafCount_lexLeaf (tok : LIToken) : (lexLeaf tok).leafCount = 1 := rfl
+@[simp] theorem leafCount_traceLeaf : traceLeaf.leafCount = 1 := rfl
+
+end SyntacticObject
 
 /-! ### `decide` demonstrations -/
 
 private def demoVP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP (mkTraceToken 0))
-    (SyntacticObject.leafP (mkTraceToken 1)))
+  ofPlanar (nodeP (leafP (mkTraceToken 0)) (leafP (mkTraceToken 1)))
 
 /-- The DSL-built tree is a genuine syntactic object. -/
 example : IsSO demoVP.val := by decide
 /-- Its head token reads back via `getLIToken` of the left leaf. -/
-example : (SyntacticObject.lexLeaf (mkTraceToken 0)).getLIToken = some (mkTraceToken 0) := by decide
+example : (lexLeaf (mkTraceToken 0)).getLIToken = some (mkTraceToken 0) := by decide
 /-- It has two leaves and one internal node. -/
 example : demoVP.leafCount = 2 ∧ demoVP.nodeCount = 1 := by decide
 /-- The trace leaf is recognized; a lexical leaf is not a trace. -/
-example : SyntacticObject.isTrace SyntacticObject.traceLeaf ∧
-    ¬ SyntacticObject.isTrace (SyntacticObject.lexLeaf (mkTraceToken 0)) := by decide
+example : isTrace traceLeaf ∧ ¬ isTrace (lexLeaf (mkTraceToken 0)) := by decide
 
 end Minimalist

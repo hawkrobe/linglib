@@ -331,21 +331,21 @@ theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
 
 open Minimalist (SyntacticObject LIToken LexicalItem SyntacticObject)
 open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
+open Minimalist.SyntacticObject
 
 /-- A schematic verb leaf for the `PredicateDoubling` witness. -/
 private def guebieVerbTok : LIToken := ⟨.simple .V [], 1⟩
-private def guebieVerbLeaf : SyntacticObject := SyntacticObject.lexLeaf guebieVerbTok
+private def guebieVerbLeaf : SyntacticObject := lexLeaf guebieVerbTok
 
 /-- A schematic remnant-VP node containing the verb leaf as a trace
     pronounced for recoverability. Built planar-first (the smart
     `SyntacticObject.node` is noncomputable) so the `decide` proofs below reduce. -/
 private def guebieFrontedVP : SyntacticObject :=
-  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP guebieVerbTok)
-    (SyntacticObject.leafP guebieVerbTok))
+  ofPlanar (nodeP (leafP guebieVerbTok) (leafP guebieVerbTok))
 
 /-- A schematic landing-site leaf (Spec,CP). -/
 private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
-private def guebieLandingSite : SyntacticObject := SyntacticObject.lexLeaf guebieLandingTok
+private def guebieLandingSite : SyntacticObject := lexLeaf guebieLandingTok
 
 /-- The Guébie predicate-fronting witness: V evacuates the VP, and
     the remnant VP fronts to Spec,CP. The trace is pronounced — verb
@@ -398,7 +398,7 @@ def guebieVPCophonology : PhrasalCophonology Unit Unit :=
     SyntacticObject whose token's category is `.v`.) -/
 theorem guebieVPCophonology_applies_to_v :
     let vTok : LIToken := ⟨.simple .v [], 99⟩
-    let vHead : SyntacticObject := SyntacticObject.lexLeaf vTok
+    let vHead : SyntacticObject := lexLeaf vTok
     let vPhase : Minimalist.Phase := { tree := vHead, head := vTok }
     guebieVPCophonology.appliesTo vPhase = true := by decide
 
@@ -424,7 +424,7 @@ open Minimalist (VerbDoublingIsSyntacticIn)
 /-- A schematic Guébie Derivation: the verb undergoes Internal Merge
     in the predicate-fronting derivation (per SCD 2026 §3 island
     diagnostics establishing this is narrow-syntactic, not PF). -/
-def guebieFrontingDerivation : Minimalist.SyntacticObject.Derivation :=
+def guebieFrontingDerivation : Derivation :=
   { initial := guebieFrontedVP
     steps   := [.im guebieVerbLeaf] }
 

@@ -65,7 +65,7 @@ namespace Amato2025Auxiliary
 
 open ArgumentStructure.AuxiliarySelection
 open Olivier2026Auxiliary
-open Minimalist
+open Minimalist SyntacticObject
 open Amato2025.NestedAgree
 
 /-! ## Probe stack (Nested Agree on Perf) -/
@@ -329,7 +329,7 @@ private def perfProbe : Probe.Profile := ⟨.T, some .C⟩
     φ-active iff `VIsPhiActive c`; all other heads are phi-active. -/
 def toNestedConfig (c : RestructuringClauseAmato) : NestedAgreeConfig :=
   standardConfig perfProbe aT aDPsubj aV aDPobj aV
-    (fun y => if y = SyntacticObject.lexLeaf aV then decide (VIsPhiActive c) else true)
+    (fun y => if y = lexLeaf aV then decide (VIsPhiActive c) else true)
 
 /-- Every Amato clause whose v is φ-active yields a well-formed Nested
     Agree configuration. The precondition is structurally meaningful
@@ -346,15 +346,15 @@ theorem amato_clause_is_nested (c : RestructuringClauseAmato)
   rw [Multiset.mem_filter]
   refine ⟨?_, ?_⟩
   · -- .leaf aV ∈ standardLinearTree _.subtrees: purely structural after unfold.
-    show SyntacticObject.lexLeaf aV ∈
+    show lexLeaf aV ∈
       (standardLinearTree aT aDPsubj aV aDPobj).subtrees
     decide
   · -- (decide (cCommandsIn _ perf v) && validGoal v) = true
     rw [Bool.and_eq_true]
     refine ⟨?_, ?_⟩
     · -- Perf c-commands v in the standardLinearTree: purely structural.
-      show decide (SyntacticObject.cCommandsIn (standardLinearTree aT aDPsubj aV aDPobj)
-        (SyntacticObject.lexLeaf aT) (SyntacticObject.lexLeaf aV)) = true
+      show decide (cCommandsIn (standardLinearTree aT aDPsubj aV aDPobj)
+        (lexLeaf aT) (lexLeaf aV)) = true
       decide
     · -- validGoal (.leaf aV) = decide (VIsPhiActive c) = true (from h).
       show (decide (VIsPhiActive c)) = true
@@ -379,7 +379,7 @@ theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
       decide
     · -- goalHead ∈ searchDomain 1 = daughters; reflexively in its
       -- own daughters when phi-active.
-      show SyntacticObject.lexLeaf aV ∈ (toNestedConfig c).searchDomain 1
+      show lexLeaf aV ∈ (toNestedConfig c).searchDomain 1
       rw [searchDomain_succ]
       exact goalHead_mem_daughters _ (amato_clause_is_nested c h)
   · rintro ⟨_, hMem⟩

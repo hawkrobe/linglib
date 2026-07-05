@@ -30,7 +30,7 @@ are related by the reduction lemmas (`replace_lexLeaf`/`_traceLeaf`/`_node`), no
 
 namespace Minimalist
 
-open RootedTree
+open RootedTree SyntacticObject
 
 /-! ### Substitution on the planar carrier -/
 
@@ -130,78 +130,70 @@ theorem replaceN_self (t r : Nonplanar SOLabel) : replaceN t r t = r := by
     `SyntacticObject` yields an `SyntacticObject` (the arity of every node is preserved). -/
 theorem replaceN_isSO (target replacement s : SyntacticObject) :
     IsSO (replaceN target.val replacement.val s.val) := by
-  induction s using SyntacticObject.ind with
+  induction s using ind with
   | lex tok =>
-    rw [show (SyntacticObject.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
-        replaceN_leaf]
+    rw [show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl, replaceN_leaf]
     split
     · exact replacement.2
-    · exact (SyntacticObject.lexLeaf tok).2
+    · exact (lexLeaf tok).2
   | trace =>
-    rw [show SyntacticObject.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl, replaceN_leaf]
+    rw [show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl, replaceN_leaf]
     split
     · exact replacement.2
-    · exact SyntacticObject.traceLeaf.2
+    · exact traceLeaf.2
   | node l r ihl ihr =>
-    rw [SyntacticObject.node_val, replaceN_node]
+    rw [node_val, replaceN_node]
     split
     · exact replacement.2
     · show isSO (Nonplanar.node (Sum.inr ())
         {replaceN target.val replacement.val l.val, replaceN target.val replacement.val r.val}) = true
       rw [isSO_node_pair, ihl, ihr]; rfl
 
+namespace SyntacticObject
+
 /-- **Structural substitution** on the `SyntacticObject` carrier ([marcolli-chomsky-berwick-2025]
     §1.2): replace every subterm of `s` equal to `target` by `replacement`. The
     copy-theory use is `s.replace mover SyntacticObject.traceLeaf`. Noncomputable (rebuilds via
     `SyntacticObject.node`); reduce concrete cases via `replace_self`/`replace_node_of_ne`/
     `replace_lexLeaf_of_ne`. -/
-noncomputable def SyntacticObject.replace (s target replacement : SyntacticObject) :
-    SyntacticObject :=
+noncomputable def replace (s target replacement : SyntacticObject) : SyntacticObject :=
   ⟨replaceN target.val replacement.val s.val, replaceN_isSO target replacement s⟩
 
-@[simp] theorem SyntacticObject.replace_val (s target replacement : SyntacticObject) :
-    (SyntacticObject.replace s target replacement).val
-      = replaceN target.val replacement.val s.val := rfl
+@[simp] theorem replace_val (s target replacement : SyntacticObject) :
+    (replace s target replacement).val = replaceN target.val replacement.val s.val := rfl
 
 /-- Replacing the whole object by `replacement`. -/
-@[simp] theorem SyntacticObject.replace_self (target replacement : SyntacticObject) :
-    SyntacticObject.replace target target replacement = replacement :=
-  Subtype.ext (by rw [SyntacticObject.replace_val, replaceN_self])
+@[simp] theorem replace_self (target replacement : SyntacticObject) :
+    replace target target replacement = replacement :=
+  Subtype.ext (by rw [replace_val, replaceN_self])
 
 /-- At a node that is not itself the `target`, substitution recurses into both
     daughters (the Head Feature Principle of substitution: structure is preserved). -/
-theorem SyntacticObject.replace_node_of_ne {l r target replacement : SyntacticObject}
-    (h : SyntacticObject.node l r ≠ target) :
-    SyntacticObject.replace (SyntacticObject.node l r) target replacement
-      = SyntacticObject.node (SyntacticObject.replace l target replacement)
-          (SyntacticObject.replace r target replacement) := by
+theorem replace_node_of_ne {l r target replacement : SyntacticObject} (h : node l r ≠ target) :
+    replace (node l r) target replacement
+      = node (replace l target replacement) (replace r target replacement) := by
   apply Subtype.ext
-  rw [SyntacticObject.replace_val, SyntacticObject.node_val, replaceN_node, if_neg,
-      SyntacticObject.node_val, SyntacticObject.replace_val, SyntacticObject.replace_val]
-  rw [← SyntacticObject.node_val]
+  rw [replace_val, node_val, replaceN_node, if_neg, node_val, replace_val, replace_val]
+  rw [← node_val]
   exact fun heq => h (Subtype.ext heq)
 
 /-- A lexical leaf that is not the `target` is left unchanged. -/
-theorem SyntacticObject.replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObject}
-    (h : SyntacticObject.lexLeaf tok ≠ target) :
-    SyntacticObject.replace (SyntacticObject.lexLeaf tok) target replacement
-      = SyntacticObject.lexLeaf tok := by
+theorem replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObject}
+    (h : lexLeaf tok ≠ target) : replace (lexLeaf tok) target replacement = lexLeaf tok := by
   apply Subtype.ext
-  rw [SyntacticObject.replace_val,
-      show (SyntacticObject.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+  rw [replace_val, show (lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
       replaceN_leaf, if_neg]
   exact fun heq => h (Subtype.ext heq)
 
 /-- The bare trace leaf, not being the `target`, is left unchanged. -/
-theorem SyntacticObject.replace_traceLeaf_of_ne {target replacement : SyntacticObject}
-    (h : SyntacticObject.traceLeaf ≠ target) :
-    SyntacticObject.replace SyntacticObject.traceLeaf target replacement
-      = SyntacticObject.traceLeaf := by
+theorem replace_traceLeaf_of_ne {target replacement : SyntacticObject}
+    (h : traceLeaf ≠ target) : replace traceLeaf target replacement = traceLeaf := by
   apply Subtype.ext
-  rw [SyntacticObject.replace_val,
-      show SyntacticObject.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+  rw [replace_val, show traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
       replaceN_leaf, if_neg]
   exact fun heq => h (Subtype.ext heq)
+
+end SyntacticObject
 
 /-! ### Worked example
 
@@ -212,10 +204,8 @@ from weight via `Subterm`'s `immediatelyContains_lt_weight`), taken as a hypothe
 here to keep this module's dependencies minimal. Substitution is noncomputable, so this
 is a structural proof, not a `decide`. -/
 
-example (l r : SyntacticObject) (h : SyntacticObject.node l r ≠ r) :
-    SyntacticObject.replace (SyntacticObject.node l r) r SyntacticObject.traceLeaf
-      = SyntacticObject.node (SyntacticObject.replace l r SyntacticObject.traceLeaf)
-          SyntacticObject.traceLeaf := by
-  rw [SyntacticObject.replace_node_of_ne h, SyntacticObject.replace_self]
+example (l r : SyntacticObject) (h : node l r ≠ r) :
+    replace (node l r) r traceLeaf = node (replace l r traceLeaf) traceLeaf := by
+  rw [replace_node_of_ne h, replace_self]
 
 end Minimalist
