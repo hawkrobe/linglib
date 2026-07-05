@@ -116,6 +116,34 @@ This is the book's deepest explanatory contribution: the binary answering-system
 parameter is not stipulated but derived from independently motivated syntactic
 variation in negation height. -/
 
+/-! ## Answer particles
+
+An answer particle assigns a value to the question's [±Pol] variable
+and is lexically restricted to antecedent contexts of certain
+polarities. Reversal-hood is derived, not stored. Answer particles are
+pro-sentential — deliberately outside the host-associated
+`Syntax/Particle` core. -/
+
+/-- An answer particle: assigns a polarity, responds to antecedent
+contexts of the recorded polarities. -/
+structure AnswerParticle where
+  /-- Citation form. -/
+  form : String
+  /-- The polarity value assigned to [±Pol]. -/
+  assigns : Polarity
+  /-- Polarities of antecedent context the particle can respond to. -/
+  respondsTo : List Polarity
+  deriving DecidableEq, Repr
+
+/-- A polarity-reversing particle assigns [+Pol] while responding only
+to negative contexts (Swedish *jo*, German *doch*, French *si*;
+[holmberg-2016]). -/
+def AnswerParticle.IsReversal (p : AnswerParticle) : Prop :=
+  p.assigns = .positive ∧ p.respondsTo = [.negative]
+
+instance : DecidablePred AnswerParticle.IsReversal :=
+  fun _ => inferInstanceAs (Decidable (_ ∧ _))
+
 /-- Structural height of sentential negation relative to PolP.
 
     Note: this classifies *constructions*, not languages. A single language
