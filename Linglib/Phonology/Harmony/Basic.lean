@@ -128,11 +128,18 @@ structure Pattern (α : Type u) (V : Type v) where
 def AgreeOn (p : Pattern α V) (w : List α) : Prop :=
   w.Pairwise fun a b => p.value a = p.value b
 
-/-- The harmonic tier: participating and opaque segments. Transparent and icy
-    segments project out; opaque segments stay because they delimit spans. -/
+/-- Tier membership: participating and opaque segments are on the harmonic
+    tier. Transparent and icy segments project out; opaque segments stay
+    because they delimit spans. -/
+def Pattern.OnTier (p : Pattern α V) (s : α) : Prop :=
+  p.participation s = .participating ∨ p.participation s = .opaque
+
+instance (p : Pattern α V) : DecidablePred p.OnTier := fun s => by
+  unfold Pattern.OnTier; infer_instance
+
+/-- The harmonic tier of a string. -/
 def Pattern.tier (p : Pattern α V) (w : List α) : List α :=
-  w.filter fun s =>
-    decide (p.participation s = .participating ∨ p.participation s = .opaque)
+  w.filter fun s => decide (p.OnTier s)
 
 /-- Adjacent harmonic compatibility: two neighbouring tier segments agree in
     value unless either is an opaque blocker
@@ -140,6 +147,9 @@ def Pattern.tier (p : Pattern α V) (w : List α) : List α :=
 def Pattern.Compatible (p : Pattern α V) (a b : α) : Prop :=
   p.participation a = .opaque ∨ p.participation b = .opaque ∨
     p.value a = p.value b
+
+instance [DecidableEq V] (p : Pattern α V) : DecidableRel p.Compatible :=
+  fun a b => by unfold Pattern.Compatible; infer_instance
 
 /-- Surface harmonicity: the tier is a chain of compatible segments — within
     every opaque-delimited span, participating segments agree in value. -/
@@ -154,7 +164,7 @@ theorem Pattern.harmonic_insert_transparent {p : Pattern α V} {t : α}
     (ho : p.participation t ≠ .opaque) :
     p.Harmonic (w₁ ++ t :: w₂) ↔ p.Harmonic (w₁ ++ w₂) := by
   unfold Pattern.Harmonic Pattern.tier
-  simp [List.filter_append, hp, ho]
+  simp [List.filter_append, Pattern.OnTier, hp, ho]
 
 /-- Without opaque segments, harmonicity is pairwise agreement on the whole
     tier: adjacent compatibility is plain value-agreement, which is transitive,
@@ -166,6 +176,7 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
     p.Harmonic w ↔ AgreeOn p (p.tier w) := by
   have hmem : ∀ s ∈ p.tier w, p.participation s ≠ .opaque :=
     fun s hs => h s (List.mem_of_mem_filter hs)
+
   haveI : Trans (fun a b => p.value a = p.value b)
       (fun a b => p.value a = p.value b) (fun a b => p.value a = p.value b) :=
     ⟨fun h₁ h₂ => h₁.trans h₂⟩
