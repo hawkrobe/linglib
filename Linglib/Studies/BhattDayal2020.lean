@@ -31,26 +31,23 @@ variable {W : Type*}
 
 `⟦kya:⟧ = λQ⟨st⟩t : ∃p ∈ Q[∀q[q ∈ Q → q = p]].Q` — defined only when the
 sister question `Q` has a singleton alternative set, and then the identity
-on `Q`. The presupposition is `Question.IsSingleton`; the well-typed
-"felicitous sister" is the subtype `SingletonQuestion W`. -/
+on `Q`. The presupposition is `Question.IsSingleton`; the felicitous sister
+is the subtype `SingletonQuestion W`. In the paper a polar question denotes
+a singleton (eq. 22b: ⟦did John leave⟧ = {John left}) — the substrate's
+one-cell `declarative p`, not its two-cell Hamblin `polar`. -/
 
-/-- Felicitous case: the paper's polar question denotes a singleton set
-(eq. 22b: ⟦did John leave⟧ = {John left}) — in substrate terms the one-cell
-`declarative p`, not the two-cell Hamblin polar. -/
+/-- Felicitous case: a polar question in the paper's sense is a singleton. -/
 theorem kya_felicitous_singleton_polar (p : Set W) :
     IsSingleton (declarative (W := W) p) :=
   isSingleton_declarative p
 
-/-- Defined case: on a felicitous sister, kya: returns the question
-unchanged. -/
+/-- Defined case: on a felicitous sister, kya: is the identity. -/
 theorem kya_interp (p : Set W) :
     (SingletonQuestion.ofDeclarative (W := W) p).issue = declarative p :=
   SingletonQuestion.ofDeclarative_issue p
 
-/-- The headline restriction (ex. 4): kya: occurs in polar questions but not
-in wh-questions. A wh-question whose answer cells form an antichain with two
-distinct nonempty members has a non-singleton alternative set, so the
-presupposition fails. -/
+/-- The headline restriction (ex. 4): a wh-question with two distinct answer
+cells is non-singleton, so kya: rejects it. -/
 theorem kya_infelicitous_wh {E : Type*} {D : Set E} {P : E → Set W}
     (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
     (hA : IsAntichain (· ⊆ ·) (P '' D))
@@ -60,9 +57,7 @@ theorem kya_infelicitous_wh {E : Type*} {D : Set E} {P : E → Set W}
     rw [alt_which_of_antichain hD hne hA]
   exacts [⟨e₁, h₁, rfl⟩, ⟨e₂, h₂, rfl⟩]
 
-/-- A two-cell Hamblin polar also fails the presupposition: the
-kya:-compatible polar denotation is the singleton of eq. 22b, not
-`{p, pᶜ}`. -/
+/-- A two-cell Hamblin polar likewise fails the presupposition. -/
 theorem kya_infelicitous_two_cell_polar {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     ¬ IsSingleton (polar (W := W) p) :=
