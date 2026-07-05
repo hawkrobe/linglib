@@ -211,7 +211,7 @@ noncomputable def L0 (lex : Lexicon) (u : Utterance) : PMF World :=
   RSA.L0OfBoolMeaning (utteranceTruth lex) u (ext_nonempty lex u)
 
 /-- Closed-form `L0` value: `ENNReal.ofReal (1 / |extension|)` at true worlds,
-`0` otherwise. The `pmf_eval`-friendly if-form. -/
+`0` otherwise. The `pmf_eval_simps`-friendly if-form. -/
 theorem L0_apply (lex : Lexicon) (u : Utterance) (w : World) :
     L0 lex u w =
       if utteranceTruth lex u w
@@ -235,8 +235,8 @@ theorem L0_null (lex : Lexicon) (w : World) :
     norm_num
 
 /-- Sum-over-`Utterance` unfolder (the 9 `stmt` + `null`), proved by `rfl`.
-Local-tagged for `pmf_eval` so partition sums reduce to a concrete 10-term
-sum. -/
+Local-tagged for `pmf_eval_simps` so partition sums reduce to a concrete
+10-term sum. -/
 theorem Utterance_sum_univ {β : Type*} [AddCommMonoid β] (f : Utterance → β) :
     ∑ i, f i =
       f (.stmt .every .all) + (f (.stmt .every .none_) + (f (.stmt .every .some_) +
@@ -249,7 +249,7 @@ theorem Utterance_sum_univ {β : Type*} [AddCommMonoid β] (f : Utterance → β
 Per-`(lexicon, utterance)` extension sizes, `decide`-checked and locally tagged
 for `pmf_eval_simps` so `L0_apply` reduces to concrete `ofReal((c)⁻¹)` values.
 The local tag keeps these private paper-specific cards out of the substrate
-simp set (audit hygiene rule, following `GoodmanStuhlmuller2013PMF`). -/
+simp set (audit hygiene rule, following `GoodmanStuhlmuller2013`). -/
 
 private theorem card_w_ea : (RSA.extensionOf (utteranceTruth .weak) (.stmt .every .all)).card = 1 := by decide
 private theorem card_w_en : (RSA.extensionOf (utteranceTruth .weak) (.stmt .every .none_)).card = 1 := by decide
@@ -280,7 +280,9 @@ attribute [local pmf_eval_simps] L0_apply Utterance_sum_univ
 
 `S1Belief` with α = 1 and unit cost has score `(L0 u w)^1 · 1 = L0 u w`, so the
 partition function is `Z lex w = ∑' u, L0 lex u w`. Each value is `ofReal` of a
-rational; the closed forms below are computed by `pmf_eval_only; ennreal_close`. -/
+rational; the closed forms below are computed by `simp +decide only
+[pmf_eval_simps, ...]` (reducing to a sum of concrete `ofReal (c⁻¹)` terms)
+followed by explicit `ENNReal.ofReal_add` folding and `norm_num`. -/
 
 /-- With α = 1 and unit cost, the speaker score is just `L0 lex u w`. -/
 theorem score_eq (lex : Lexicon) (w : World) (u : Utterance) :
@@ -306,26 +308,73 @@ theorem Z_ne_zero (lex : Lexicon) (w : World) :
 
 -- DE partitions (under "no … some"): NNN, AAA where the comparison lives.
 private theorem Z_w_NNN : Z .weak .NNN = ENNReal.ofReal (47 / 20) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_s_NNN : Z .strong .NNN = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_s_NNA : Z .strong .NNA = ENNReal.ofReal (41 / 60) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_s_NAA : Z .strong .NAA = ENNReal.ofReal (41 / 60) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_s_AAA : Z .strong .AAA = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 -- UE partitions (under "every … some"): SSS, SSA, SAA, AAA.
 private theorem Z_w_SSS : Z .weak .SSS = ENNReal.ofReal (17 / 20) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_s_SSS : Z .strong .SSS = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_w_SSA : Z .weak .SSA = ENNReal.ofReal (14 / 15) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_w_SAA : Z .weak .SAA = ENNReal.ofReal (3 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 private theorem Z_w_AAA : Z .weak .AAA = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]; pmf_eval_only; ennreal_close
+  rw [Z_eq_sum, tsum_fintype]
+  simp +decide only [pmf_eval_simps, ↓reduceIte, add_zero, zero_add]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  congr 1; norm_num
 
 /-! ### Per-lexicon speaker `S1`
 
@@ -537,7 +586,7 @@ with the shared quantifier semantics `Alternatives.Quantifiers.worldMeaning`.
 This grounds the stipulated `utteranceTruth` in the shared quantifier
 infrastructure.
 
-Compare `GoodmanStuhlmuller2013PMF`'s `qMeaning`, an independent implementation
+Compare `GoodmanStuhlmuller2013`'s `qMeaning`, an independent implementation
 of the same count-threshold semantics. -/
 
 private theorem predCount_lt_four (sq : ShotQ) (lex : Lexicon) (w : World) :
