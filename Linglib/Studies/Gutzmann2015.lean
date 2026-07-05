@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mood.Gutzmann
 import Linglib.Semantics.UseConditional.LTU
 import Linglib.Fragments.German.ClauseTypes
-import Linglib.Fragments.German.ModalParticles
+import Linglib.Fragments.German.Particles
 import Linglib.Features.ClauseForm
 
 /-!
@@ -37,7 +37,7 @@ namespace Gutzmann2015
 open Features
 open Semantics.Mood.Gutzmann
 open German.ClauseTypes
-open German.ModalParticles
+open German.Particles
 
 
 -- ════════════════════════════════════════════════════════════════

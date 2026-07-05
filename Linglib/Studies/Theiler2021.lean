@@ -1,5 +1,5 @@
 import Linglib.Features.QParticleLayer
-import Linglib.Fragments.German.QuestionParticles
+import Linglib.Fragments.German.Particles
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Semantics.Questions.Bias.Defs
 
@@ -36,7 +36,7 @@ def denn_layer (_ : Particle) : QParticleLayer := .perspP
 
 /-- *denn* sits at PerspP, the same layer as Mandarin *nandao*. -/
 theorem denn_is_PerspP :
-    denn_layer German.QuestionParticles.denn = .perspP := rfl
+    denn_layer German.Particles.denn = .perspP := rfl
 
 /-- Theiler's bias classification of *denn*: no contextual-evidence and no
     speaker-bias requirement — the felicity condition is a
@@ -52,7 +52,7 @@ def dennBias : Option Semantics.Questions.Bias.ContextualEvidence := none
     *nandao*'s polar-only restriction. Derived from the fragments'
     distribution facets. -/
 theorem denn_wh_unlike_nandao :
-    German.QuestionParticles.denn.LicensedIn .constituentInterrogative ∧
+    German.Particles.denn.LicensedIn .constituentInterrogative ∧
     ¬ Mandarin.QuestionParticles.nandao.LicensedIn .constituentInterrogative := by
   decide
 
