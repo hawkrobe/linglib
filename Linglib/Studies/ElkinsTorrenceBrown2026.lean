@@ -453,18 +453,19 @@ private def voiceTok   : LIToken := ⟨.simple .Voice [.V] "", 4⟩
 private def tTok       : LIToken := ⟨.simple .T [.Voice] "", 5⟩
 private def cTok       : LIToken := ⟨.simple .C [.T] "", 6⟩
 
-/-- The full CP derivation, built planar-first (Merge `SO.node` is noncomputable,
+/-- The full CP derivation, built planar-first (Merge `SyntacticObject.node` is noncomputable,
     so concrete `decide`-able trees use the planar DSL): the oblique DP undergoes
     successive-cyclic Ā-movement, surfacing at Spec,CP with a trace lower down.
     Structure: `[CP oblique [C' C [TP T [VoiceP oblique [Voice' Voice [VP V obj]]]]]]`. -/
-private def cp : SO :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP obliqueTok)
-      (SO.nodeP (SO.leafP cTok)
-        (SO.nodeP (SO.leafP tTok)
-          (SO.nodeP (SO.leafP obliqueTok)
-            (SO.nodeP (SO.leafP voiceTok)
-              (SO.nodeP (SO.leafP verbTok) (SO.leafP objectTok)))))))
+private def cp : SyntacticObject :=
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP obliqueTok)
+      (SyntacticObject.nodeP (SyntacticObject.leafP cTok)
+        (SyntacticObject.nodeP (SyntacticObject.leafP tTok)
+          (SyntacticObject.nodeP (SyntacticObject.leafP obliqueTok)
+            (SyntacticObject.nodeP (SyntacticObject.leafP voiceTok)
+              (SyntacticObject.nodeP (SyntacticObject.leafP verbTok)
+                (SyntacticObject.leafP objectTok)))))))
 
 theorem derivation_tree_size : cp.nodeCount = 6 := by decide
 

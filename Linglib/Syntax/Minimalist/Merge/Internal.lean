@@ -159,8 +159,8 @@ theorem mergeOp_im_composition
 /-! The linguistic Internal-Merge bridge `mergeOp_im_matches_Step` (which related the
 `mergeOp ∘ mergeOpUnit` composition on the head-decorated `toNonplanar` projection to
 the legacy `Step.im` + `⊕ Nat` trace index) has been retired by the single-carrier
-migration. On the bare `SO` carrier the bridge is `Workspace.lean`'s
-`SO.intMerge_toForest` (`mergeOp_im_composition` with the bare `Sum.inr ()` label and
-the index-free `SO.traceLeaf`). -/
+migration. On the bare `SyntacticObject` carrier the bridge is `Workspace.lean`'s
+`SyntacticObject.intMerge_toForest` (`mergeOp_im_composition` with the bare `Sum.inr ()` label and
+the index-free `SyntacticObject.traceLeaf`). -/
 
 end Minimalist.Merge

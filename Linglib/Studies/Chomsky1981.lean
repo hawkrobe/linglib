@@ -75,7 +75,7 @@ combine it with English's binding-class classifier.
 /-! #### C-command from tree geometry -/
 
 /-- Convert a word to a Minimalist lexical-item token (UPOS mapped to `Cat`,
-    phonological form attached). The smart Merge `SO.node` is noncomputable, so
+    phonological form attached). The smart Merge `SyntacticObject.node` is noncomputable, so
     concrete trees are built planar-first from these tokens and `decide`d over. -/
 private def wordTok (w : Word) (id : Nat) : LIToken :=
   ⟨.simple (uposToCat w.cat) [] w.form, id⟩
@@ -85,24 +85,26 @@ private def wordTok (w : Word) (id : Nat) : LIToken :=
     `{subj, verb}`. C-command follows from the geometry. Built planar-first so
     the containment / c-command decision procedures reduce. -/
 def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
-  let subjP := SO.leafP (wordTok clause.subject 0)
-  let verbP := SO.leafP (wordTok clause.verb 1)
+  let subjP := SyntacticObject.leafP (wordTok clause.subject 0)
+  let verbP := SyntacticObject.leafP (wordTok clause.verb 1)
   match clause.object with
-  | none => SO.ofPlanar (SO.nodeP subjP verbP)
-  | some obj => SO.ofPlanar (SO.nodeP subjP (SO.nodeP verbP (SO.leafP (wordTok obj 2))))
+  | none => SyntacticObject.ofPlanar (SyntacticObject.nodeP subjP verbP)
+  | some obj =>
+    SyntacticObject.ofPlanar (SyntacticObject.nodeP subjP
+      (SyntacticObject.nodeP verbP (SyntacticObject.leafP (wordTok obj 2))))
 
 private def subjectSO (clause : SimpleClause) : SyntacticObject :=
-  SO.lexLeaf (wordTok clause.subject 0)
+  SyntacticObject.lexLeaf (wordTok clause.subject 0)
 
 private def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
-  clause.object.map fun obj => SO.lexLeaf (wordTok obj 2)
+  clause.object.map fun obj => SyntacticObject.lexLeaf (wordTok obj 2)
 
 /-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
     `{verb, obj}` contains the object. -/
 def subjectCCommandsObject (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => False
-  | some objSO => SO.cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
+  | some objSO => SyntacticObject.cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
 
 instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := by
   unfold subjectCCommandsObject; cases objectSO? clause <;> infer_instance
@@ -112,7 +114,7 @@ instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := 
 def objectCCommandsSubject (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => False
-  | some objSO => SO.cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
+  | some objSO => SyntacticObject.cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
 
 instance (clause : SimpleClause) : Decidable (objectCCommandsSubject clause) := by
   unfold objectCCommandsSubject; cases objectSO? clause <;> infer_instance
@@ -122,8 +124,8 @@ def sameLocalDomain (clause : SimpleClause) : Prop :=
   match objectSO? clause with
   | none => True
   | some objSO =>
-    SO.contains (toSyntacticObject clause) (subjectSO clause) ∧
-    SO.contains (toSyntacticObject clause) objSO
+    SyntacticObject.contains (toSyntacticObject clause) (subjectSO clause) ∧
+    SyntacticObject.contains (toSyntacticObject clause) objSO
 
 instance (clause : SimpleClause) : Decidable (sameLocalDomain clause) := by
   unfold sameLocalDomain; cases objectSO? clause <;> infer_instance
@@ -244,7 +246,8 @@ def complementaryDistributionData : PhenomenonData := {
 /-- Reciprocals require a plural/coordinated antecedent and local binding. -/
 def reciprocalCoreferenceData : PhenomenonData := {
   name := "Reciprocal Coreference"
-  generalization := "Reciprocals require a c-commanding semantically plural antecedent in the local domain"
+  generalization :=
+    "Reciprocals require a c-commanding semantically plural antecedent in the local domain"
   pairs := [
     -- Coordinated antecedent required
     { lhs := [sam, and_, pat, saw, eachOther]

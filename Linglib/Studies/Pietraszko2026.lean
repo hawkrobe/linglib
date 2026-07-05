@@ -149,17 +149,18 @@ def subjectTraceToken : LIToken :=
   { item := LexicalItem.simple .D [], id := idSubjectTrace }
 
 /-- The subject DP at its base position (Spec,vP). Class 1 (uZondi). -/
-def subjectAtBase : SyntacticObject := SO.lexLeaf subjectToken
+def subjectAtBase : SyntacticObject := SyntacticObject.lexLeaf subjectToken
 
 /-- The subject DP after movement to Spec,VoiceP (a fresh copy, since
     each `LIToken` in copy theory is a distinct token). -/
-def subjectAtSpecVoiceP : SyntacticObject := SO.lexLeaf subjectToken
+def subjectAtSpecVoiceP : SyntacticObject := SyntacticObject.lexLeaf subjectToken
 
 /-- A trace at the base position after movement (distinct LIToken). -/
-def subjectTrace : SyntacticObject := SO.lexLeaf subjectTraceToken
+def subjectTrace : SyntacticObject := SyntacticObject.lexLeaf subjectTraceToken
 
-/-! The trees below are built **planar-first** via the DSL (`SO.ofPlanar`
-    / `SO.nodeP` / `SO.leafP`) because the smart Merge `SO.node` is
+/-! The trees below are built **planar-first** via the DSL (`SyntacticObject.ofPlanar`
+    / `SyntacticObject.nodeP` / `SyntacticObject.leafP`) because the smart Merge
+    `SyntacticObject.node` is
     noncomputable; planar construction keeps the `decide` PIC proofs
     reducing. -/
 
@@ -167,17 +168,18 @@ def subjectTrace : SyntacticObject := SO.lexLeaf subjectTraceToken
     Structure: `voice (subject v)`. Voice is the phase; its complement
     is the entire vP, which contains the subject. -/
 def voiceP_noSpec : SyntacticObject :=
-  SO.ofPlanar (SO.nodeP (SO.leafP voiceToken)
-    (SO.nodeP (SO.leafP subjectToken) (SO.leafP vToken)))
+  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP voiceToken)
+    (SyntacticObject.nodeP (SyntacticObject.leafP subjectToken) (SyntacticObject.leafP vToken)))
 
 /-- The Voice projection with subject at Spec,VoiceP (phase edge).
     Structure: `subject (voice (trace v))`. The OUTER node is not the
     phase; the inner `voice (trace v)` is the phase, and the subject
     (sister to it) is at the edge. -/
 def voiceP_withSpec : SyntacticObject :=
-  SO.ofPlanar (SO.nodeP (SO.leafP subjectToken)
-    (SO.nodeP (SO.leafP voiceToken)
-      (SO.nodeP (SO.leafP subjectTraceToken) (SO.leafP vToken))))
+  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP subjectToken)
+    (SyntacticObject.nodeP (SyntacticObject.leafP voiceToken)
+      (SyntacticObject.nodeP (SyntacticObject.leafP subjectTraceToken)
+        (SyntacticObject.leafP vToken))))
 
 /-- The Voice phase for `voiceP_noSpec`: phase head `voiceToken`, tree
     `voiceP_noSpec`. Its interior (= the head's c-command domain, the
@@ -194,21 +196,23 @@ def voicePhase_withSpec : Phase :=
 
 /-- The full Aux-V tree (T > Asp > Voice > vP) with subject in situ. -/
 def auxVTree_inSitu : SyntacticObject :=
-  SO.ofPlanar (SO.nodeP (SO.leafP tToken)
-    (SO.nodeP (SO.leafP aspToken)
-      (SO.nodeP (SO.leafP voiceToken)
-        (SO.nodeP (SO.leafP subjectToken) (SO.leafP vToken)))))
+  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tToken)
+    (SyntacticObject.nodeP (SyntacticObject.leafP aspToken)
+      (SyntacticObject.nodeP (SyntacticObject.leafP voiceToken)
+        (SyntacticObject.nodeP (SyntacticObject.leafP subjectToken)
+          (SyntacticObject.leafP vToken)))))
 
 /-- The full Aux-V tree with subject moved to Spec,VoiceP. T's probe will
     additionally attract the subject to Spec,TP — that movement is the
     derivational step we don't model here; the salient question is just
     whether T's probe *finds* the subject under PIC. -/
 def auxVTree_subjectMoved : SyntacticObject :=
-  SO.ofPlanar (SO.nodeP (SO.leafP tToken)
-    (SO.nodeP (SO.leafP aspToken)
-      (SO.nodeP (SO.leafP subjectToken)
-        (SO.nodeP (SO.leafP voiceToken)
-          (SO.nodeP (SO.leafP subjectTraceToken) (SO.leafP vToken))))))
+  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP tToken)
+    (SyntacticObject.nodeP (SyntacticObject.leafP aspToken)
+      (SyntacticObject.nodeP (SyntacticObject.leafP subjectToken)
+        (SyntacticObject.nodeP (SyntacticObject.leafP voiceToken)
+          (SyntacticObject.nodeP (SyntacticObject.leafP subjectTraceToken)
+            (SyntacticObject.leafP vToken))))))
 
 end Sample
 

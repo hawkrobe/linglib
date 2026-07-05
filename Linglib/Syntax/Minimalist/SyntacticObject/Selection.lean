@@ -7,7 +7,7 @@ import Mathlib.Algebra.Group.Hom.Defs
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
-# Selection-driven heads on the `SO` carrier
+# Selection-driven heads on the `SyntacticObject` carrier
 
 This file defines the c-selection head of a syntactic object: whichever sister's
 head selects the saturated other projects — [adger-2003]'s identification of the
@@ -22,18 +22,19 @@ head functions it is partial: `none` at exocentric nodes.
   together with its residual selectional stack.
 * `Mul SelState` and `Minimalist.selSide`: the carrier-free combinators — the
   selection product, and which daughter projects.
-* `Minimalist.selNode`, `Minimalist.selCheckPlanar`, `Minimalist.SO.selCheck`:
-  the selection algebra, its catamorphism, and the `SO` lift.
-* `Minimalist.SO.selHead`, `Minimalist.SO.outerCatC`: the head token and its outer
+* `Minimalist.selNode`, `Minimalist.selCheckPlanar`, `Minimalist.SyntacticObject.selCheck`:
+  the selection algebra, its catamorphism, and the `SyntacticObject` lift.
+* `Minimalist.SyntacticObject.selHead`, `Minimalist.SyntacticObject.outerCatC`: the head token and
+its outer
   category — the foundation the Phase API consumes (`isPhaseHeadOf`).
-* `Minimalist.selCheckHom`: `selCheck` as a morphism of magmas `SO →ₙ* SelState` —
+* `Minimalist.selCheckHom`: `selCheck` as a morphism of magmas `SyntacticObject →ₙ* SelState` —
   the book's algebraic frame, with `SelState` a `CommMagma`.
 
 ## Main results
 
 * `mul_comm` (via `CommMagma SelState`) and `Minimalist.selSide_comm`:
   order-independence — the formal content of Merge's unordered output.
-* `Minimalist.SO.selHead_node`: endocentricity — a node's head is one of its
+* `Minimalist.SyntacticObject.selHead_node`: endocentricity — a node's head is one of its
   daughters' heads.
 
 ## Implementation notes
@@ -175,7 +176,7 @@ theorem selNode_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm l�
   | inl tok => rfl
   | inr u => cases u; exact h.congr_arity₂ (fun x y => mul_comm x y) (fun _ h => selNode_big h)
 
-/-- Selection check on a planar `SO`-tree: the projecting head + residual pending
+/-- Selection check on a planar `SyntacticObject`-tree: the projecting head + residual pending
     features, or `none` outside the endocentric domain — the catamorphism of
     `selNode`. -/
 def selCheckPlanar : RoseTree SOLabel → SelState :=
@@ -205,56 +206,58 @@ theorem selCheckN_node (a b : Nonplanar SOLabel) :
       = selCheckN (Nonplanar.mk pa) * selCheckN (Nonplanar.mk pb)
   rw [Nonplanar.node_pair_mk]; exact rfl
 
-/-! ### The selection-driven head on `SO` -/
+/-! ### The selection-driven head on `SyntacticObject` -/
 
-variable (s : SO) (tok : LIToken)
+variable (s : SyntacticObject) (tok : LIToken)
 
-/-- **Selection-driven head check** on `SO`: the projecting head + residual
+/-- **Selection-driven head check** on `SyntacticObject`: the projecting head + residual
     features, or `none` off the endocentric domain. Section-free and computable;
     the selection instance of [marcolli-chomsky-berwick-2025]'s head functions. -/
-def SO.selCheck : SelState := selCheckN s.val
+def SyntacticObject.selCheck : SelState := selCheckN s.val
 
 /-- The projecting head's lexical item, by c-selection. -/
-def SO.selHead : Option LIToken := s.selCheck.map (·.1)
+def SyntacticObject.selHead : Option LIToken := s.selCheck.map (·.1)
 
 /-- Residual pending selectional features (`some []` = saturated). -/
-def SO.checkedSel : Option (List Cat) := s.selCheck.map (·.2)
+def SyntacticObject.checkedSel : Option (List Cat) := s.selCheck.map (·.2)
 
 /-- The projecting head's **outer category** (the phase-head selector); `none` at
     exocentric nodes. -/
-def SO.outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
+def SyntacticObject.outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
 
-@[simp] theorem SO.selCheck_lexLeaf :
-    (SO.lexLeaf tok).selCheck = some (tok, tok.item.outerSel) := rfl
+@[simp] theorem SyntacticObject.selCheck_lexLeaf :
+    (SyntacticObject.lexLeaf tok).selCheck = some (tok, tok.item.outerSel) := rfl
 
-@[simp] theorem SO.selCheck_traceLeaf :
-    SO.traceLeaf.selCheck = some (mkTraceToken 0, []) := rfl
+@[simp] theorem SyntacticObject.selCheck_traceLeaf :
+    SyntacticObject.traceLeaf.selCheck = some (mkTraceToken 0, []) := rfl
 
-@[simp] theorem SO.selCheck_node (l r : SO) :
-    (SO.node l r).selCheck = l.selCheck * r.selCheck := by
-  show selCheckN (SO.node l r).val = selCheckN l.val * selCheckN r.val
-  rw [SO.node_val, selCheckN_node]
+@[simp] theorem SyntacticObject.selCheck_node (l r : SyntacticObject) :
+    (SyntacticObject.node l r).selCheck = l.selCheck * r.selCheck := by
+  show selCheckN (SyntacticObject.node l r).val = selCheckN l.val * selCheckN r.val
+  rw [SyntacticObject.node_val, selCheckN_node]
 
 /-- `selCheck` as a **morphism of magmas** — [marcolli-chomsky-berwick-2025] §1.13's
     algebraic frame for head functions: Merge multiplies constituents, `selCheck`
     multiplies their selection states. Contrast the externalization *readout*, which
     is not a morphism — placing a yield needs the head
     (`Linearization/Externalization.lean`). -/
-noncomputable def selCheckHom : SO →ₙ* SelState where
-  toFun := SO.selCheck
-  map_mul' := SO.selCheck_node
+noncomputable def selCheckHom : SyntacticObject →ₙ* SelState where
+  toFun := SyntacticObject.selCheck
+  map_mul' := SyntacticObject.selCheck_node
 
-@[simp] theorem SO.selHead_lexLeaf : (SO.lexLeaf tok).selHead = some tok := rfl
+@[simp] theorem SyntacticObject.selHead_lexLeaf :
+    (SyntacticObject.lexLeaf tok).selHead = some tok := rfl
 
 /-- **Endocentricity**: a node's projecting head is one of its daughters' heads —
     bare-phrase-structure projection ([chomsky-1995-bare] §4, abstracted as
     [marcolli-chomsky-berwick-2025] Definition 1.13.6 / Lemma 1.13.7). -/
-theorem SO.selHead_node {l r : SO} {h : LIToken}
-    (hlr : (SO.node l r).selHead = some h) : l.selHead = some h ∨ r.selHead = some h := by
-  simp only [SO.selHead, SO.selCheck_node] at hlr ⊢
+theorem SyntacticObject.selHead_node {l r : SyntacticObject} {h : LIToken}
+    (hlr : (SyntacticObject.node l r).selHead = some h) : l.selHead = some h ∨ r.selHead = some h :=
+      by
+  simp only [SyntacticObject.selHead, SyntacticObject.selCheck_node] at hlr ⊢
   exact SelState.mul_fst hlr
 
-@[simp] theorem SO.outerCatC_lexLeaf :
-    (SO.lexLeaf tok).outerCatC = some tok.item.outerCat := rfl
+@[simp] theorem SyntacticObject.outerCatC_lexLeaf :
+    (SyntacticObject.lexLeaf tok).outerCatC = some tok.item.outerCat := rfl
 
 end Minimalist

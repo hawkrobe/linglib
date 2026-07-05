@@ -226,7 +226,7 @@ structure HonRelation (E : Type*) where
   level : HonLevel
 
 /-- HonP: a functional projection in the nominal spine that hosts [iHON].
-    Wraps a DP's SO with an honorific feature. -/
+    Wraps a DP's SyntacticObject with an honorific feature. -/
 structure HonP where
   /-- The underlying DP -/
   dp : SyntacticObject

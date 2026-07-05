@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
-# Externalization on the `SO` carrier
+# Externalization on the `SyntacticObject` carrier
 
 This file defines the selection-induced linearization of syntactic objects
 ([marcolli-chomsky-berwick-2025] §1.12.1, §1.13): the surface token order obtained by
@@ -25,8 +25,9 @@ the book), c-selection computes the planar order.
 * `Minimalist.LinearizationState.sel`: the projection morphism to `SelState`,
   forgetting the order description.
 * `Minimalist.headHom`: the head function as a morphism of magmas
-  `SO →ₙ* LinearizationState side`, refining `selCheckHom` with the yield.
-* `Minimalist.SO.linearize`, `Minimalist.SO.phonYield`: the yield readout and the
+  `SyntacticObject →ₙ* LinearizationState side`, refining `selCheckHom` with the yield.
+* `Minimalist.SyntacticObject.linearize`, `Minimalist.SyntacticObject.phonYield`: the yield readout
+and the
   pronounced surface forms.
 
 ## Main results
@@ -164,7 +165,7 @@ theorem sel_headNode (side : ConventionDir) (a : SOLabel) (ps : List (Linearizat
 
 /-! ### The head function on the planar and nonplanar carriers -/
 
-/-- The head function on planar `SO`-trees: the catamorphism of the head algebra. -/
+/-- The head function on planar `SyntacticObject`-trees: the catamorphism of the head algebra. -/
 def headPlanar (side : ConventionDir) : RoseTree SOLabel → LinearizationState side :=
   RoseTree.fold (headNode side)
 
@@ -195,25 +196,27 @@ theorem headN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
       = headN side (Nonplanar.mk pa) * headN side (Nonplanar.mk pb)
   rw [Nonplanar.node_pair_mk]; exact rfl
 
-/-! ### Externalization on `SO` -/
+/-! ### Externalization on `SyntacticObject` -/
 
 /-- The linearization state of a syntactic object: the value of the head function
     in both descriptions. -/
-def SO.linearizationState (side : ConventionDir) (s : SO) : LinearizationState side :=
+def SyntacticObject.linearizationState (side : ConventionDir) (s : SyntacticObject) :
+    LinearizationState side :=
   headN side s.val
 
-@[simp] theorem SO.linearizationState_node (side : ConventionDir) (l r : SO) :
-    (SO.node l r).linearizationState side
+@[simp] theorem SyntacticObject.linearizationState_node (side : ConventionDir)
+    (l r : SyntacticObject) :
+    (SyntacticObject.node l r).linearizationState side
       = l.linearizationState side * r.linearizationState side := by
-  show headN side (SO.node l r).val = headN side l.val * headN side r.val
-  rw [SO.node_val, headN_node]
+  show headN side (SyntacticObject.node l r).val = headN side l.val * headN side r.val
+  rw [SyntacticObject.node_val, headN_node]
 
-/-- **The head function is a morphism of magmas** `SO →ₙ* LinearizationState side`
+/-- **The head function is a morphism of magmas** `SyntacticObject →ₙ* LinearizationState side`
     ([marcolli-chomsky-berwick-2025] §1.13's algebraic frame): Merge multiplies
     constituents, the head function multiplies linearization states. -/
-noncomputable def headHom (side : ConventionDir) : SO →ₙ* LinearizationState side where
-  toFun := SO.linearizationState side
-  map_mul' := SO.linearizationState_node side
+noncomputable def headHom (side : ConventionDir) : SyntacticObject →ₙ* LinearizationState side where
+  toFun := SyntacticObject.linearizationState side
+  map_mul' := SyntacticObject.linearizationState_node side
 
 /-- **Fusion as a commuting triangle**: projecting the head function's value to its
     selection component is the selection check —
@@ -230,19 +233,20 @@ theorem sel_comp_headHom (side : ConventionDir) :
     section σ_L, defined on `Dom(h)` only (the book's σ_L must extend it
     *noncanonically* off `Dom(h)`). The readout alone is not a morphism: placing a
     yield needs the head leaf, which is why `LinearizationState` carries both descriptions. -/
-def SO.linearize (side : ConventionDir) (s : SO) : Option (List LIToken) :=
+def SyntacticObject.linearize (side : ConventionDir) (s : SyntacticObject) :
+    Option (List LIToken) :=
   Option.map (·.2) (s.linearizationState side)
 
 /-- The pronounced surface forms: the yield with unpronounced (empty-`phonForm`)
     tokens dropped. Traces, being the bare `Sum.inr ()` leaf, contribute nothing. -/
-def SO.phonYield (side : ConventionDir) (s : SO) : Option (List String) :=
-  (SO.linearize side s).map (·.filterMap LIToken.phonForm?)
+def SyntacticObject.phonYield (side : ConventionDir) (s : SyntacticObject) : Option (List String) :=
+  (SyntacticObject.linearize side s).map (·.filterMap LIToken.phonForm?)
 
-@[simp] theorem SO.linearize_lexLeaf (side : ConventionDir) (tok : LIToken) :
-    (SO.lexLeaf tok).linearize side = some [tok] := rfl
+@[simp] theorem SyntacticObject.linearize_lexLeaf (side : ConventionDir) (tok : LIToken) :
+    (SyntacticObject.lexLeaf tok).linearize side = some [tok] := rfl
 
-@[simp] theorem SO.linearize_traceLeaf (side : ConventionDir) :
-    SO.traceLeaf.linearize side = some [] := rfl
+@[simp] theorem SyntacticObject.linearize_traceLeaf (side : ConventionDir) :
+    SyntacticObject.traceLeaf.linearize side = some [] := rfl
 
 /-! ### `decide` demonstration
 
@@ -251,7 +255,7 @@ exocentric Merge is order-undefined. -/
 
 /-- A determiner (category `D`, selecting `N`) over a noun: `D` projects, so
     head-initial yields `the dog` and head-final yields `dog the`. -/
-private def demoTheDog : SO :=
+private def demoTheDog : SyntacticObject :=
   ⟨Nonplanar.mk (.node (Sum.inr ())
     [.node (Sum.inl ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
      .node (Sum.inl ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
@@ -263,7 +267,7 @@ example : demoTheDog.phonYield .final = some ["dog", "the"] := by decide
 
 /-- Exocentric Merge — two saturated `N`s, neither selecting the other — determines
     no head and hence no order: linearization is undefined off `Dom(h)`. -/
-private def demoExo : SO :=
+private def demoExo : SyntacticObject :=
   ⟨Nonplanar.mk (.node (Sum.inr ())
     [.node (Sum.inl ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
      .node (Sum.inl ⟨.simple .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩

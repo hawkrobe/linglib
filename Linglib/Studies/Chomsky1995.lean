@@ -31,15 +31,16 @@ def verbToSelStack (v : VerbEntry) : SelStack :=
 
 /-- A `VerbEntry` as a `SyntacticObject` leaf (`Cat = .V`, selStack from `complementType`). -/
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
-  SO.mkLeafPhon .V (verbToSelStack v) v.form3sg id
+  SyntacticObject.mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
 /-- A `NounEntry` as a leaf: proper names project as `.D`, common nouns as bare `.N`. -/
 def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
-  if n.proper then SO.mkLeafPhon .D [] n.formSg id else SO.mkLeafPhon .N [] n.formSg id
+  if n.proper then SyntacticObject.mkLeafPhon .D [] n.formSg id
+  else SyntacticObject.mkLeafPhon .N [] n.formSg id
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/
-def john_sees_mary : SO.Derivation :=
+def john_sees_mary : SyntacticObject.Derivation :=
   { initial := verbToSO English.Predicates.Verbal.see 31
     steps   := [.emR (nounToSO English.Nouns.mary 11),
                 .emL (nounToSO English.Nouns.john 10)] }
@@ -47,7 +48,7 @@ def john_sees_mary : SO.Derivation :=
 /-- The phonological yield of `john_sees_mary` is the SVO string
     "John sees Mary": the Minimalist derivation (built by `emR` then
     `emL` over `verbToSO`/`nounToSO`) linearizes subject-verb-object via the
-    derivation-grounded computable externalization (`SO.Derivation.surfacePhon`). -/
+    derivation-grounded computable externalization (`SyntacticObject.Derivation.surfacePhon`). -/
 theorem models_svo_word_order :
     String.intercalate " " john_sees_mary.surfacePhon = "John sees Mary" := by decide
 

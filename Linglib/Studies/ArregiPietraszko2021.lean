@@ -133,7 +133,7 @@ structure GenHMRelation where
   /-- The containing tree -/
   root : SyntacticObject
   /-- Structural condition: probe c-commands goal -/
-  probe_commands_goal : SO.cCommandsIn root probe goal
+  probe_commands_goal : SyntacticObject.cCommandsIn root probe goal
   /-- The goal bears valued M-features -/
   goal_has_mvalue : hasValuedFeature mValue feature = true
   /-- The probe bears unvalued M-features -/

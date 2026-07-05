@@ -350,20 +350,20 @@ theorem inapplicable_with_fails_classifies_low :
 -- § 1: Lexical Items
 -- ============================================================================
 
-def voice_ag_t  := SO.mkLeafPhon .Voice [.V]    "Voice[AG]"  400
-def appl_low_t  := SO.mkLeafPhon .Appl  [.D]    "Appl[LOW]"  402
-def appl_high_t := SO.mkLeafPhon .Appl  [.V]    "Appl[HI]"   403
-def V_sent_t    := SO.mkLeafPhon .V     [.Appl] "sent"        404
-def V_eat_t     := SO.mkLeafPhon .V     [.D]    "eat"         405
-def DP_john_t   := SO.mkLeafPhon .D     []      "John"        406
-def DP_mary_t   := SO.mkLeafPhon .D     []      "Mary"        407
-def DP_letter_t := SO.mkLeafPhon .D     []      "a letter"    408
-def DP_wife_t   := SO.mkLeafPhon .D     []      "wife"        409
-def DP_food_t   := SO.mkLeafPhon .D     []      "food"        410
+def voice_ag_t  := SyntacticObject.mkLeafPhon .Voice [.V]    "Voice[AG]"  400
+def appl_low_t  := SyntacticObject.mkLeafPhon .Appl  [.D]    "Appl[LOW]"  402
+def appl_high_t := SyntacticObject.mkLeafPhon .Appl  [.V]    "Appl[HI]"   403
+def V_sent_t    := SyntacticObject.mkLeafPhon .V     [.Appl] "sent"        404
+def V_eat_t     := SyntacticObject.mkLeafPhon .V     [.D]    "eat"         405
+def DP_john_t   := SyntacticObject.mkLeafPhon .D     []      "John"        406
+def DP_mary_t   := SyntacticObject.mkLeafPhon .D     []      "Mary"        407
+def DP_letter_t := SyntacticObject.mkLeafPhon .D     []      "a letter"    408
+def DP_wife_t   := SyntacticObject.mkLeafPhon .D     []      "wife"        409
+def DP_food_t   := SyntacticObject.mkLeafPhon .D     []      "food"        410
 
 /-! Planar leaf tokens, used to build the concrete trees the c-command
-    theorems reason over (Merge `SO.node` is noncomputable; trees are
-    built planar-first via `SO.ofPlanar`). -/
+    theorems reason over (Merge `SyntacticObject.node` is noncomputable; trees are
+    built planar-first via `SyntacticObject.ofPlanar`). -/
 
 private def t_voice_ag  : LIToken := ⟨.simple .Voice [.V] (phonForm := "Voice[AG]"), 400⟩
 private def t_appl_low  : LIToken := ⟨.simple .Appl [.D] (phonForm := "Appl[LOW]"), 402⟩
@@ -390,12 +390,13 @@ private def t_DP_food   : LIToken := ⟨.simple .D [] (phonForm := "food"), 410�
     asymmetry that IO asymmetrically c-commands DO. Built planar-first
     so the c-command theorems `decide`. -/
 def ditransitiveTree : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP t_DP_john)
-      (SO.nodeP (SO.leafP t_voice_ag)
-        (SO.nodeP (SO.leafP t_V_sent)
-          (SO.nodeP (SO.leafP t_DP_mary)
-            (SO.nodeP (SO.leafP t_appl_low) (SO.leafP t_DP_letter))))))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_john)
+      (SyntacticObject.nodeP (SyntacticObject.leafP t_voice_ag)
+        (SyntacticObject.nodeP (SyntacticObject.leafP t_V_sent)
+          (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_mary)
+            (SyntacticObject.nodeP (SyntacticObject.leafP t_appl_low)
+              (SyntacticObject.leafP t_DP_letter))))))
 
 /-- High applicative benefactive (Chaga pattern): "he ate food for wife"
 
@@ -406,12 +407,13 @@ def ditransitiveTree : SyntacticObject :=
     theme). High Appl is attested in Bantu languages (Chaga, Luganda,
     Venda) and Albanian, but NOT in English. -/
 def benefactiveTree : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP t_DP_john)
-      (SO.nodeP (SO.leafP t_voice_ag)
-        (SO.nodeP (SO.leafP t_DP_wife)
-          (SO.nodeP (SO.leafP t_appl_high)
-            (SO.nodeP (SO.leafP t_V_eat) (SO.leafP t_DP_food))))))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_john)
+      (SyntacticObject.nodeP (SyntacticObject.leafP t_voice_ag)
+        (SyntacticObject.nodeP (SyntacticObject.leafP t_DP_wife)
+          (SyntacticObject.nodeP (SyntacticObject.leafP t_appl_high)
+            (SyntacticObject.nodeP (SyntacticObject.leafP t_V_eat)
+              (SyntacticObject.leafP t_DP_food))))))
 
 -- ============================================================================
 -- § 3: C-command Predictions
@@ -421,40 +423,40 @@ def benefactiveTree : SyntacticObject :=
 
 /-- Agent c-commands goal. -/
 theorem ditransitive_agent_ccommands_goal :
-    SO.cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by decide
+    SyntacticObject.cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by decide
 
 /-- Agent c-commands theme. -/
 theorem ditransitive_agent_ccommands_theme :
-    SO.cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by decide
+    SyntacticObject.cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by decide
 
 /-- Goal c-commands theme — the [barss-lasnik-1986] asymmetry
     derived structurally from V selecting ApplP. -/
 theorem ditransitive_goal_ccommands_theme :
-    SO.cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by decide
+    SyntacticObject.cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by decide
 
 /-- Theme does NOT c-command goal: the asymmetry is structural. -/
 theorem ditransitive_theme_not_ccommands_goal :
-    ¬ SO.cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by decide
+    ¬ SyntacticObject.cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by decide
 
 -- Benefactive (high Appl): benefactive > theme
 
 /-- Benefactive c-commands theme. -/
 theorem benefactive_benef_ccommands_theme :
-    SO.cCommandsIn benefactiveTree DP_wife_t DP_food_t := by decide
+    SyntacticObject.cCommandsIn benefactiveTree DP_wife_t DP_food_t := by decide
 
 /-- Theme does NOT c-command benefactive. -/
 theorem benefactive_theme_not_ccommands_benef :
-    ¬ SO.cCommandsIn benefactiveTree DP_food_t DP_wife_t := by decide
+    ¬ SyntacticObject.cCommandsIn benefactiveTree DP_food_t DP_wife_t := by decide
 
 -- Appl head containment
 
 /-- Low applicative marks the ditransitive. -/
 theorem send_is_low_appl :
-    SO.contains ditransitiveTree appl_low_t := by decide
+    SyntacticObject.contains ditransitiveTree appl_low_t := by decide
 
 /-- High applicative marks the benefactive. -/
 theorem eat_is_high_appl :
-    SO.contains benefactiveTree appl_high_t := by decide
+    SyntacticObject.contains benefactiveTree appl_high_t := by decide
 
 -- ============================================================================
 -- § 4: ApplType Association
@@ -654,14 +656,14 @@ open Larson1988 in
     prediction for [barss-lasnik-1986] asymmetries. (Larson's side is
     stated over `docDativeShiftTree`, the planar-built result tree of his
     Dative-Shift derivation; `docDativeShift.final` is noncomputable on
-    the `SO` carrier.) -/
+    the `SyntacticObject` carrier.) -/
 theorem larson_modern_same_hierarchy :
     -- Larson's DOC: IO > DO
-    SO.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
-    ¬ SO.cCommandsIn docDativeShiftTree DP_letter DP_mary ∧
+    SyntacticObject.cCommandsIn docDativeShiftTree DP_mary DP_letter ∧
+    ¬ SyntacticObject.cCommandsIn docDativeShiftTree DP_letter DP_mary ∧
     -- Modern Voice/Appl: goal > theme (same asymmetry)
-    SO.cCommandsIn ditransitiveTree DP_mary_t DP_letter_t ∧
-    ¬ SO.cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by
+    SyntacticObject.cCommandsIn ditransitiveTree DP_mary_t DP_letter_t ∧
+    ¬ SyntacticObject.cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §7. Voice as the head that introduces the external argument
@@ -671,7 +673,8 @@ theorem larson_modern_same_hierarchy :
 "Eliminating Linking"): the external argument is *not* projected by
 the verb itself but by a separate Voice head, following
 [kratzer-1996]. Voice combines with VP via Event Identification
-(Event Identification, Ch. 1; -- UNVERIFIED: eq. number), introducing the external argument and relating it to
+(Event Identification, Ch. 1; -- UNVERIFIED: eq. number), introducing the external argument and
+relating it to
 the event described by the verb.
 
 This is one of the two competing views of Voice surveyed in
@@ -836,7 +839,8 @@ theorem analyses_oppose_on_qbind :
 
 Japanese adversity passives split into *gapped* (low source applicative)
 and *gapless* (high applicative). The gapped/gapless distinction itself
-is Kubo's 1992 work (cited by [pylkkanen-2008]; not yet in linglib bib)'s; [pylkkanen-2008]'s contribution is the
+is Kubo's 1992 work (cited by [pylkkanen-2008]; not yet in linglib bib)'s; [pylkkanen-2008]'s
+contribution is the
 reanalysis as a low-source vs. high applicative typology. Both share
 the *-rare-* passive morphology; the distinguishing criterion is the
 possessive/transfer relation to the direct object — the gapped (low

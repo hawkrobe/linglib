@@ -267,11 +267,11 @@ theorem seatOfKnowledge_imperative_resolves {W E P T : Type*}
 theorem sa_is_phase_head (so : SyntacticObject)
     (h : so.outerCatC = some .SA) :
     isPhaseHeadOf .SA so = true := by
-  simp only [isPhaseHeadOf, SO.isPhaseHeadOf, h, beq_self_eq_true]
+  simp only [isPhaseHeadOf, SyntacticObject.isPhaseHeadOf, h, beq_self_eq_true]
 
 /-- SAP is derivation-final (the highest phase). -/
 theorem sa_phase_derivation_final :
-    isPhaseHeadOf .SA (SO.mkLeaf .SA [] 0) = true := by
+    isPhaseHeadOf .SA (SyntacticObject.mkLeaf .SA [] 0) = true := by
   decide
 
 /-- SAP outranks CP on the extended-projection F-hierarchy

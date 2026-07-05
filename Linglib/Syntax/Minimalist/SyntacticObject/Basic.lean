@@ -18,7 +18,7 @@ P0's carrier skeleton: the well-formed subset of `Nonplanar (LIToken ⊕ Unit)`.
 
 ## Faithful labelling (§1.1.3.1: "no labels at any non-leaf vertices")
 
-MCB's SO is a **binary, nonplanar** rooted tree with **leaves labelled by SO₀**
+MCB's SyntacticObject is a **binary, nonplanar** rooted tree with **leaves labelled by SO₀**
 (lexical items + features) and **internal vertices bare** — the head is *not* on
 the tree; it comes from a separate labelling algorithm (§1.15, the head function).
 So on `Nonplanar (LIToken ⊕ Unit)` (the algebra's `α ⊕ β`, `β = Unit`), **role by arity**:
@@ -35,11 +35,11 @@ legacy `toNonplanar` image, which decorated internal nodes with the head
 
 ## Scope
 
-The carrier + `IsSO` + decidability + the `SO` subtype, with the faithful three-role
+The carrier + `IsSO` + decidability + the `SyntacticObject` subtype, with the faithful three-role
 alphabet (lexical/trace leaves + bare internals). **Out of scope (later phases):**
 workspaces + Merge on the carrier (EM + IM-via-coproduct, MCB Prop 1.4.2 — uses the
 existing `comul{D,C}N`; P1 continued), the structural ops (`contains`/`subtrees` =
-`Acc'`) + flip `SyntacticObject := SO` (P2), the head function + Phase API re-home
+`Acc'`) + the `SyntacticObject` naming flip (P2, landed), the head function + Phase API re-home
 (P3), retiring `FreeCommMagma`/`toNonplanar` (P4). See `scratch/p1-spec-and-audit.md`.
 -/
 
@@ -47,7 +47,7 @@ namespace Minimalist
 
 open RootedTree
 
-/-- The SO label alphabet, in the algebra's `α ⊕ β` form (`α = LIToken` lexical,
+/-- The SyntacticObject label alphabet, in the algebra's `α ⊕ β` form (`α = LIToken` lexical,
     `β = Unit` bare). Each **role is fixed by arity**, not by a third label:
 
     - `Sum.inl tok` on a **leaf** — a lexical item (`LIToken` ≈ SO₀);
@@ -111,9 +111,9 @@ theorem isSOPlanarList_permList : ∀ {cs ds : List (RoseTree SOLabel)},
   | _, _, .trans h₁ h₂ => (isSOPlanarList_permList h₁).trans (isSOPlanarList_permList h₂)
 end
 
-/-! ### The carrier: `IsSO` on `Nonplanar` + the `SO` subtype -/
+/-! ### The carrier: `IsSO` on `Nonplanar` + the `SyntacticObject` subtype -/
 
-/-- Well-formed-SO check on the nonplanar carrier, lifted from `isSOPlanar`. -/
+/-- Well-formed-SyntacticObject check on the nonplanar carrier, lifted from `isSOPlanar`. -/
 def isSO : Nonplanar SOLabel → Bool :=
   Nonplanar.lift isSOPlanar (fun _ _ h => isSOPlanar_perm h)
 
@@ -128,26 +128,27 @@ def IsSO (t : Nonplanar SOLabel) : Prop := isSO t = true
 instance : DecidablePred IsSO := fun t => inferInstanceAs (Decidable (isSO t = true))
 
 /-- The MCB-faithful **syntactic object** carrier: well-formed nonplanar trees over
-    `SOLabel`. This is the target type that will become `SyntacticObject` once the
-    operations (P2) and the head function / Phase API (P3) are ported onto it. -/
-def SO : Type := { t : Nonplanar SOLabel // IsSO t }
+    `SOLabel`. Formerly `SO`; renamed once the operations (P2) and the head
+    function / Phase API (P3) were ported onto it. -/
+def SyntacticObject : Type := { t : Nonplanar SOLabel // IsSO t }
 
-instance : DecidableEq SO := Subtype.instDecidableEq
+instance : DecidableEq SyntacticObject := Subtype.instDecidableEq
 
 /-! ### Smart constructors: leaves and the bare binary node
 
 The three faithful shapes (§1.1.3.1): a **lexical leaf** (`Sum.inl tok`), a
 **trace leaf** (bare `Sum.inr ()`, index-free — chain identity is workspace-level,
-MCB Def 1.2.1), and a **bare binary node** (`Sum.inr ()`, internal). `SO.node` is the
-structural binary constructor; `Workspace.lean`'s `SO.merge`/`SO.intMerge` are its
+MCB Def 1.2.1), and a **bare binary node** (`Sum.inr ()`, internal). `SyntacticObject.node` is the
+structural binary constructor; `Workspace.lean`'s `SyntacticObject.merge`/`SyntacticObject.intMerge`
+are its
 Merge semantics. -/
 
 /-- A **lexical leaf**: a childless `Sum.inl tok` (an SO₀ item). -/
-def SO.lexLeaf (tok : LIToken) : SO := ⟨Nonplanar.leaf (Sum.inl tok), rfl⟩
+def SyntacticObject.lexLeaf (tok : LIToken) : SyntacticObject := ⟨Nonplanar.leaf (Sum.inl tok), rfl⟩
 
 /-- The **trace leaf**: a childless, **bare** `Sum.inr ()` vertex
     ([marcolli-chomsky-berwick-2025] Def 1.2.7's ρ-vertex), index-free. -/
-def SO.traceLeaf : SO := ⟨Nonplanar.leaf (Sum.inr ()), by decide⟩
+def SyntacticObject.traceLeaf : SyntacticObject := ⟨Nonplanar.leaf (Sum.inr ()), by decide⟩
 
 /-- `isSO` of a bare binary node is the conjunction of `isSO` on the two children:
     `Sum.inr ()` at arity 2 is well-formed exactly when both daughters are.
@@ -169,24 +170,24 @@ theorem isSO_node_pair (a b : Nonplanar SOLabel) :
     well-formed internal vertex over two syntactic objects, with no head label.
     Noncomputable (it uses the smart `Nonplanar.node`); build concrete results via
     `node_mk` + `decide`. -/
-noncomputable def SO.node (l r : SO) : SO :=
+noncomputable def SyntacticObject.node (l r : SyntacticObject) : SyntacticObject :=
   ⟨Nonplanar.node (Sum.inr ()) {l.val, r.val}, by
     show isSO (Nonplanar.node (Sum.inr ()) {l.val, r.val}) = true
     have hl : isSO l.val = true := l.2
     have hr : isSO r.val = true := r.2
     rw [isSO_node_pair, hl, hr, Bool.and_self]⟩
 
-@[simp] theorem SO.node_val (l r : SO) :
-    (SO.node l r).val = Nonplanar.node (Sum.inr ()) {l.val, r.val} := rfl
+@[simp] theorem SyntacticObject.node_val (l r : SyntacticObject) :
+    (SyntacticObject.node l r).val = Nonplanar.node (Sum.inr ()) {l.val, r.val} := rfl
 
 /-- **Construction bridge**: a `node` of two `mk`-built objects is the single `RoseTree`
     binary node `mk (.node (inr ()) [pl, pr])` — built *without* the smart `node`'s
     `Quotient.out`, so concrete results are `decide`-able. -/
-theorem SO.node_mk (pl pr : RoseTree SOLabel)
+theorem SyntacticObject.node_mk (pl pr : RoseTree SOLabel)
     (hl : IsSO (Nonplanar.mk pl)) (hr : IsSO (Nonplanar.mk pr)) :
-    (SO.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩).val
+    (SyntacticObject.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩).val
       = Nonplanar.mk (.node (Sum.inr ()) [pl, pr]) := by
-  rw [SO.node_val,
+  rw [SyntacticObject.node_val,
       show ({Nonplanar.mk pl, Nonplanar.mk pr} : Multiset (Nonplanar SOLabel))
         = Multiset.ofList ([pl, pr].map Nonplanar.mk) from rfl,
       Nonplanar.node_mk_tree_list]
@@ -207,17 +208,17 @@ theorem isSOPlanar_of_mem {cs : List (RoseTree SOLabel)} (h : isSOPlanarList cs 
     · exact ih h.2 c hmem
 
 /-- **Induction on syntactic objects** ([marcolli-chomsky-berwick-2025] §1.1.3.1).
-    Every `SO` is a lexical leaf, the (bare) trace leaf, or a bare binary node of two
+    Every `SyntacticObject` is a lexical leaf, the (bare) trace leaf, or a bare binary node of two
     syntactic objects — the faithful analogue of the legacy `SyntacticObject.ind`
-    (leaf/trace/mul), with the `mul` case the bare `SO.node`. Proved by strong
+    (leaf/trace/mul), with the `mul` case the bare `SyntacticObject.node`. Proved by strong
     induction on the node count (`numNodes`; the two daughters of a binary node are
     strictly smaller). -/
 @[elab_as_elim]
-theorem SO.ind {motive : SO → Prop}
-    (lex : ∀ tok, motive (SO.lexLeaf tok))
-    (trace : motive SO.traceLeaf)
-    (node : ∀ l r : SO, motive l → motive r → motive (SO.node l r))
-    (s : SO) : motive s := by
+theorem SyntacticObject.ind {motive : SyntacticObject → Prop}
+    (lex : ∀ tok, motive (SyntacticObject.lexLeaf tok))
+    (trace : motive SyntacticObject.traceLeaf)
+    (node : ∀ l r : SyntacticObject, motive l → motive r → motive (SyntacticObject.node l r))
+    (s : SyntacticObject) : motive s := by
   suffices H : ∀ n (p : RoseTree SOLabel) (hp : IsSO (Nonplanar.mk p)),
       p.numNodes = n → motive ⟨Nonplanar.mk p, hp⟩ by
     obtain ⟨t, ht⟩ := s
@@ -243,9 +244,9 @@ theorem SO.ind {motive : SO → Prop}
       · simp at hlen
       · have hl : isSOPlanar pl = true := isSOPlanar_of_mem hlist pl (by simp)
         have hr : isSOPlanar pr = true := isSOPlanar_of_mem hlist pr (by simp)
-        have hnode : (⟨Nonplanar.mk (RoseTree.node (Sum.inr ()) [pl, pr]), hp⟩ : SO)
-            = SO.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩ :=
-          Subtype.ext (SO.node_mk pl pr hl hr).symm
+        have hnode : (⟨Nonplanar.mk (RoseTree.node (Sum.inr ()) [pl, pr]), hp⟩ : SyntacticObject)
+            = SyntacticObject.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩ :=
+          Subtype.ext (SyntacticObject.node_mk pl pr hl hr).symm
         rw [hnode]
         simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
           List.sum_nil] at hw
@@ -254,21 +255,12 @@ theorem SO.ind {motive : SO → Prop}
 
 /-- **Case analysis** ([marcolli-chomsky-berwick-2025] §1.1.3.1): every syntactic
     object is a lexical leaf, the bare trace leaf, or a bare binary node. -/
-theorem SO.exists_form (s : SO) :
-    (∃ tok, s = SO.lexLeaf tok) ∨ s = SO.traceLeaf ∨ (∃ l r, s = SO.node l r) := by
-  induction s using SO.ind with
+theorem SyntacticObject.exists_form (s : SyntacticObject) :
+    (∃ tok, s = SyntacticObject.lexLeaf tok) ∨ s = SyntacticObject.traceLeaf ∨
+      (∃ l r, s = SyntacticObject.node l r) := by
+  induction s using SyntacticObject.ind with
   | lex tok => exact Or.inl ⟨tok, rfl⟩
   | trace => exact Or.inr (Or.inl rfl)
   | node l r _ _ => exact Or.inr (Or.inr ⟨l, r, rfl⟩)
-
-/-! ### The `SyntacticObject` carrier
-
-`SyntacticObject` is the linguistic-facing name for the MCB-faithful `SO` carrier
-([marcolli-chomsky-berwick-2025] §1.1.3.1: binary, nonplanar, rooted trees with
-bare internal vertices). It is a reducible abbreviation, so dot-notation on a value
-`s : SyntacticObject` dispatches to the `SO.*` API for free. The former
-`FreeCommMagma (LIToken ⊕ Nat)` carrier (with head-decorated nodes and `⊕ Nat`
-trace indices) has been retired in favour of this one. -/
-abbrev SyntacticObject : Type := SO
 
 end Minimalist

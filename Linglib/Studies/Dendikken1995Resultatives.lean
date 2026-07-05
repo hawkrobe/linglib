@@ -102,8 +102,8 @@ theorem resultative_cats_are_A_or_P (rt : ResultativeType) :
 
 /-- Build a small clause from a resultative datum. -/
 def datumToSC (d : ResultativeDatum) (dpId predId : Nat) : SmallClause :=
-  { subject := SO.mkLeafPhon .D [] "DP_patient" dpId
-    predicate := SO.mkLeafPhon (SCPredCategory.toCat (resToSCPred d.resType))
+  { subject := SyntacticObject.mkLeafPhon .D [] "DP_patient" dpId
+    predicate := SyntacticObject.mkLeafPhon (SCPredCategory.toCat (resToSCPred d.resType))
                                [] "XP_result" predId
     predCat := resToSCPred d.resType }
 

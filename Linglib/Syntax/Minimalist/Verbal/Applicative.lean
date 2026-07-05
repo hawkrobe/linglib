@@ -20,7 +20,7 @@ to it; a **low** applicative Merges with the theme (recipient = transfer *to*, s
 semantically null Voice (middles, anticausatives); low applicatives are Voice-independent.
 
 The high/low distinction is read off the Merge complement's category via the head function
-`SO.outerCatC`, so the typology follows from attachment height by construction.
+`SyntacticObject.outerCatC`, so the typology follows from attachment height by construction.
 
 ## Main definitions
 
@@ -55,10 +55,11 @@ def ApplType.complement : ApplType → Cat
   | .lowSource    => .D
 
 /-- The complement constituent an applicative Merges with — a leaf headed by `a.complement`. -/
-def ApplType.complementSO (a : ApplType) : SO :=
-  SO.mkLeaf a.complement [] 0
+def ApplType.complementSO (a : ApplType) : SyntacticObject :=
+  SyntacticObject.mkLeaf a.complement [] 0
 
-/-- The Merge complement's categorial features, read via the §1.13 head function `SO.outerCatC`. -/
+/-- The Merge complement's categorial features, read via the §1.13 head function
+`SyntacticObject.outerCatC`. -/
 def ApplType.complementFeatures (a : ApplType) : CatFeatures :=
   a.complementSO.outerCatC.elim ⟨false, false⟩ catFeatures
 
