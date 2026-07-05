@@ -1374,6 +1374,7 @@ import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory
 import Linglib.Phonology.Segmental.Geometry
+import Linglib.Phonology.Segmental.TongueRoot
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.Harmony

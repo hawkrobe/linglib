@@ -73,9 +73,8 @@ Guébie has a ten-vowel system, +ATR `ə e i o u` vs. −ATR `a ɛ ɪ ɔ ʊ`, ha
 as a binary feature; affixes and particles agree with the verb root when both are
 inside the same Spell-out domain. Only the per-terminal binary value matters here. -/
 
-/-- The ATR feature value, from the fragment lexicon
-    (`Guebie.ATR`: `.plus`/`.minus`). -/
-abbrev ATR := Guebie.ATR
+/-- The tongue-root feature value (`Phonology.TongueRoot.ATR`). -/
+abbrev ATR := Phonology.TongueRoot.ATR
 
 /-- The particle's lexical default, surfacing when no harmony trigger is local
     ((13)). Defaults are lexical per particle ((12)); we model the /jɔkʊ/ type,
