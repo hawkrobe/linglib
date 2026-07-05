@@ -56,7 +56,7 @@ open PreLie.OudomGuinCirc
 
 /-! ### Per-tree basis assignment -/
 
-variable {α : Type*}
+variable {α : Type*} [DecidableEq α]
 
 /-- `LL` (not `L`) avoids clashing with the named argument `(LL := ...)` in
     `algHomL`. -/
@@ -71,7 +71,6 @@ noncomputable def ιTree (t : Nonplanar α) : SL :=
 /-- The value of `B⁻_a` on a tree `t`: the SL-product of `ι (ofTree c)` over
     the root's children if `rootValue t = a`, else `0`. -/
 noncomputable def psiA_basis (a : α) (t : Nonplanar α) : SL :=
-  letI : Decidable (Nonplanar.rootValue t = a) := Classical.dec _
   if Nonplanar.rootValue t = a then
     ((Nonplanar.rootChildren t).map (fun c => ιTree c)).prod
   else 0
@@ -165,22 +164,26 @@ noncomputable def psiA_tensor (a : α) : TensorAlgebra ℤ LL →ₗ[ℤ] SL :=
 
 /-! ### Definitional bridges -/
 
+omit [DecidableEq α] in
 open PreLie.OudomGuinCircConstruct in
 /-- `algHomL` is `SymmetricAlgebra.algHom` as a linear map (definitional). -/
 @[simp] private theorem algHomL_apply (z : TensorAlgebra ℤ LL) :
     algHomL (R := ℤ) (L := LL) z = SymmetricAlgebra.algHom ℤ LL z := rfl
 
+omit [DecidableEq α] in
 /-- `SymmetricAlgebra.algHom` sends generators to generators (definitional). -/
 @[simp] private theorem algHom_ι (x : LL) :
     SymmetricAlgebra.algHom ℤ LL (TensorAlgebra.ι ℤ x) =
       SymmetricAlgebra.ι ℤ LL x := rfl
 
+omit [DecidableEq α] in
 open PreLie.OudomGuinCircConstruct in
 /-- `algHomL` sends generators to generators (definitional). -/
 private theorem algHomL_ι (x : LL) :
     algHomL (R := ℤ) (L := LL) (TensorAlgebra.ι ℤ x) =
       SymmetricAlgebra.ι ℤ LL x := rfl
 
+omit [DecidableEq α] in
 /-- The empty tensor product is `1`. -/
 private theorem tprod_zero (f : Fin 0 → LL) :
     TensorAlgebra.tprod ℤ LL 0 f = (1 : TensorAlgebra ℤ LL) := by
@@ -193,6 +196,7 @@ private theorem tprod_zero (f : Fin 0 → LL) :
 degree ≥ 2, and any wrapped `r * (ι X * ι Y) * d` element has degree ≥ 2,
 so both swap-orderings map to `0`. -/
 
+omit [DecidableEq α] in
 open PreLie.OudomGuinCircConstruct in
 /-- A product `tprod m r' * (ι X * ι Y) * tprod n d'` is a single tprod of
     grade `m + 2 + n`. -/
@@ -401,6 +405,7 @@ private theorem bMinusLin_SL_ι_mul_ι (a : α) (Z W : LL) :
       psiA_tensor_tprod, psiA_multi_succ_succ]
   rfl
 
+omit [DecidableEq α] in
 /-- `algebraMapInv ∘ algHomL` vanishes on positive-grade tprods: the image is
     a product of `n + 1` ι-elements, each killed by `algebraMapInv`. -/
 private theorem algebraMapInv_algHom_tprod_succ (n : ℕ) (f : Fin (n+1) → LL) :
@@ -502,6 +507,7 @@ private theorem bMinusLin_SL_mul_eps (a : α) (X Y : SL) :
     simp only [add_smul, smul_add]
     abel
 
+omit [DecidableEq α] in
 /-- `oudomGuinCirc (ι T) B = ι (circByT_total T B)` (definitional through
     `circHom`). -/
 private theorem oudomGuinCirc_ι_apply (T : LL) (B : SL) :
@@ -716,7 +722,7 @@ substrate); deferred to avoid concurrent edits. -/
     elements. Disjoint-union product (NOT GL); proof: realize both sides
     as `R`-bilinear maps that agree on basis pairs. Relocation candidate
     to `BMinus.lean`. -/
-private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
+private theorem bMinusLin_mul_eps (a : α)
     (X Y : ConnesKreimer ℤ (Nonplanar α)) :
     bMinusLin (R := ℤ) a (X * Y) =
       counit X • bMinusLin (R := ℤ) a Y +
@@ -840,7 +846,7 @@ private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
 /-- Bridge: the CK counit pulled back along `ckIsoSymmetricAlgebra` equals
     the SL counit `SymmetricAlgebra.algebraMapInv`. Both sides are AlgHoms
     `SL →ₐ[ℤ] ℤ`; agree on `ι (single t 1)`. -/
-private theorem counit_ckIso [DecidableEq (Nonplanar α)] (X : SL) :
+private theorem counit_ckIso (X : SL) :
     counit (ckIsoSymmetricAlgebra X) =
     SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) X := by
   -- Show the AlgHoms are equal pointwise.
@@ -900,8 +906,7 @@ private theorem counit_ckIso [DecidableEq (Nonplanar α)] (X : SL) :
     `ckIso`, equals `of' M` in CK. Used in the `ι x` case of
     `bMinusLin_ckIso` to identify `ckIso (psiA_basis a t)` with
     `bMinusBasis a {t}` when `rootValue t = a`. -/
-private theorem ckIso_prod_ιTree [DecidableEq (Nonplanar α)]
-    (M : Multiset (Nonplanar α)) :
+private theorem ckIso_prod_ιTree    (M : Multiset (Nonplanar α)) :
     ckIsoSymmetricAlgebra ((M.map (fun c => ιTree c)).prod) =
     (ConnesKreimer.of' M : ConnesKreimer ℤ (Nonplanar α)) := by
   induction M using Multiset.induction with
@@ -935,7 +940,7 @@ private theorem ckIso_prod_ιTree [DecidableEq (Nonplanar α)]
     linearity, the `ι x` case routes through `ckIsoSymmetricAlgebra_ι_single`
     + `ckIso_prod_ιTree`, and the `mul` case combines `bMinusLin_SL_mul_eps`
     (SL side) with `bMinusLin_mul_eps` + `counit_ckIso` (CK side). -/
-theorem bMinusLin_ckIso [DecidableEq (Nonplanar α)] (a : α) (X : SL) :
+theorem bMinusLin_ckIso (a : α) (X : SL) :
     bMinusLin (R := ℤ) a (ckIsoSymmetricAlgebra X) =
     ckIsoSymmetricAlgebra (bMinusLin_SL a X) := by
   induction X using SymmetricAlgebra.induction with
@@ -1012,7 +1017,6 @@ theorem bMinusLin_ckIso [DecidableEq (Nonplanar α)] (a : α) (X : SL) :
            ckIsoSymmetricAlgebra (psiA_basis a t)
       rw [bMinusLin_of']
       -- Split on rootValue t = a.
-      letI : Decidable (Nonplanar.rootValue t = a) := Classical.dec _
       unfold psiA_basis
       by_cases hlab : Nonplanar.rootValue t = a
       · -- rootValue t = a: t = node a (rootChildren t); both sides = of'(rootChildren t).
@@ -1061,6 +1065,7 @@ identity takes the form
 `ι (ofTree (node a A')) = ι (ofTree (leaf a)) ○ ∏ c ∈ A', ι (ofTree c)`
 (`iotaTree_node_via_circ`). -/
 
+omit [DecidableEq α] in
 /-- `leaf a = node a 0`: the singleton-vertex tree is the empty-children
     node. -/
 theorem leaf_eq_node_zero (a : α) :
@@ -1068,6 +1073,7 @@ theorem leaf_eq_node_zero (a : α) :
 
 /-! ### Helpers for the cancellation argument -/
 
+omit [DecidableEq α] in
 /-- Leibniz formula for `○ ι X` over a multiset product (Notation 2.2 of
     [oudom-guin-2008]):
 
@@ -1114,8 +1120,7 @@ private theorem cons_add_swap {β : Type*} (x : β) (B C : Multiset β) :
 /-- Prefix-generalized auxiliary form of `insertSum_node_decompose`. The
     induction substrate: list-induction on `cs` with an arbitrary prefix
     `pre` carried in the inner `node`'s children-multiset. -/
-private theorem insertSumList_bind_lift_aux [DecidableEq (Nonplanar α)]
-    (a : α) (pre : Multiset (Nonplanar α))
+private theorem insertSumList_bind_lift_aux    (a : α) (pre : Multiset (Nonplanar α))
     (cs : List (RoseTree α)) (c_pl : RoseTree α) :
     (RoseTree.insertSumList cs c_pl).map (fun cs' =>
       Nonplanar.node a (pre + ↑(cs'.map Nonplanar.mk))) =
@@ -1183,8 +1188,7 @@ private theorem insertSumList_bind_lift_aux [DecidableEq (Nonplanar α)]
 /-- Grafting `c` at each vertex of `node a A''` splits into the root-graft
     summand `node a (c ::ₘ A'')` plus a bind over `A''` of subtree-grafts at
     each child `d ∈ A''`. -/
-private theorem insertSum_node_decompose [DecidableEq (Nonplanar α)]
-    (a : α) (A'' : Multiset (Nonplanar α)) (c : Nonplanar α) :
+private theorem insertSum_node_decompose    (a : α) (A'' : Multiset (Nonplanar α)) (c : Nonplanar α) :
     Nonplanar.insertSum (Nonplanar.node a A'') c =
       Nonplanar.node a (c ::ₘ A'') ::ₘ
       A''.bind (fun d => (Nonplanar.insertSum d c).map
@@ -1244,6 +1248,7 @@ private theorem insertSum_node_decompose [DecidableEq (Nonplanar α)]
       simp only [Multiset.cons_add, Multiset.zero_add]
     rw [hLHS_eq, insertSumList_bind_lift_aux (α := α) a 0 cs c_pl, hRHS_eq]
 
+omit [DecidableEq α] in
 /-- `ι (ofMultiset M) = Σ_{t ∈ M} ι (ofTree t)`. -/
 private theorem iota_ofMultiset (M : Multiset (Nonplanar α)) :
     SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofMultiset M) =
@@ -1449,8 +1454,7 @@ private theorem psiA_basis_node_ne (a a' : α) (h : a' ≠ a)
 
 /-- Cocycle rule for `psiA_L` on the insertion algebra:
     `psiA_L a (Y * Z) = (psiA_L a Y) ○ ι Z + psiA_L a Y * ι Z`. -/
-private theorem psiA_L_mul_eq [DecidableEq (Nonplanar α)]
-    (a : α) (Y Z : LL) :
+private theorem psiA_L_mul_eq    (a : α) (Y Z : LL) :
     psiA_L a (Y * Z) =
       oudomGuinCirc (R := ℤ) (psiA_L a Y) (SymmetricAlgebra.ι ℤ LL Z) +
       psiA_L a Y * SymmetricAlgebra.ι ℤ LL Z := by
@@ -1631,6 +1635,7 @@ private theorem psiA_L_mul_eq [DecidableEq (Nonplanar α)]
           zero_mul, add_zero]
     rw [h_LHS_zero, h_RHS_zero]
 
+omit [DecidableEq α] in
 open PreLie.OudomGuinCircConstruct in
 /-- Peel the last factor of a tprod through `algHomL`:
     `algHomL (tprod (n+1) f) = algHomL (tprod n (init f)) * ι (f (last n))`. -/
@@ -1679,8 +1684,7 @@ private theorem psiA_L_circByT_eq_of_per_tprod (a : α) (T : LL)
 
 /-- `psiA_L a` inverts grafting onto an `a`-colored leaf:
     `psiA_L a (circByT_total (leaf a) X) = X`. -/
-private theorem psiA_L_circByT_leaf_eq_id [DecidableEq (Nonplanar α)]
-    (a : α) (X : SL) :
+private theorem psiA_L_circByT_leaf_eq_id    (a : α) (X : SL) :
     psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
       (InsertionAlgebra.ofTree (Nonplanar.leaf a)) X) = X := by
   classical
@@ -1707,8 +1711,7 @@ private theorem psiA_L_circByT_leaf_eq_id [DecidableEq (Nonplanar α)]
 
 /-- `psiA_L a` kills grafting onto an off-color leaf: for `a' ≠ a`,
     `psiA_L a (circByT_total (leaf a') X) = 0`. -/
-private theorem psiA_L_circByT_leaf_eq_zero [DecidableEq (Nonplanar α)]
-    (a a' : α) (h : a' ≠ a) (X : SL) :
+private theorem psiA_L_circByT_leaf_eq_zero    (a a' : α) (h : a' ≠ a) (X : SL) :
     psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
       (InsertionAlgebra.ofTree (Nonplanar.leaf a')) X) = 0 := by
   classical
@@ -1733,8 +1736,7 @@ private theorem psiA_L_circByT_leaf_eq_zero [DecidableEq (Nonplanar α)]
 /-- `psiA_L a (circByT_total Y B) = oudomGuinStar (psiA_L a Y) B`. Factors a
     basis tree as root ○ children (`iotaTree_node_via_circ`) and reassociates
     via Prop 2.8.v of [oudom-guin-2008] (`circ_assoc_via_comul`). -/
-private theorem psiA_L_circByT_total_eq [DecidableEq (Nonplanar α)]
-    (a : α) (Y : LL) (B : SL) :
+private theorem psiA_L_circByT_total_eq    (a : α) (Y : LL) (B : SL) :
     psiA_L a
         ((PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) (L := LL) Y) B) =
       oudomGuinStar (psiA_L a Y) B := by
@@ -1982,8 +1984,7 @@ private theorem bMinusLin_SL_star_eq (a : α) (A B : SL) :
     `bMinusLin_SL a (A ★ B) = ε(A) • bMinusLin_SL a B + bMinusLin_SL a A ★ B`
 
     SL-side analog of the Connes-Kreimer-side `bMinusLin_gl_mul`. -/
-theorem bMinusLin_SL_oudomGuinStar [DecidableEq (Nonplanar α)]
-    (a : α) (A B : SL) :
+theorem bMinusLin_SL_oudomGuinStar    (a : α) (A B : SL) :
     bMinusLin_SL a (oudomGuinStar A B) =
       SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) A •
         bMinusLin_SL a B +

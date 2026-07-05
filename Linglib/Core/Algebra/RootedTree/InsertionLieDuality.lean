@@ -333,7 +333,7 @@ namespace ConnesKreimer
 open scoped TensorProduct
 open Coalgebra Bialgebra
 
-variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R] {α : Type*}
+variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R] {α : Type*} [DecidableEq α]
 
 /-- The **delta functional on a singleton forest**: extracts the
     coefficient of `{T}` (the forest containing only `T`) from a

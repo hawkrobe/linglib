@@ -262,7 +262,7 @@ factorization needs `H` to be a Hopf algebra, hence `CharZero R` and `NoZeroDivi
 
 section Factorization
 
-variable [CharZero R] [NoZeroDivisors R]
+variable [CharZero R] [NoZeroDivisors R] [DecidableEq α]
 
 /-- **The convolution inverse of a character is `character ∘ S`.** For a character
     `ψ : H →ₐ[R] R`, the antipode-composite `ψ ∘ S` is its left convolution inverse in the
@@ -283,7 +283,7 @@ theorem antipodeComp_convMul_self (ψ : ConnesKreimer R (Nonplanar α) →ₐ[R]
     Subsingleton.elim (ψ.comp (Algebra.ofId R (ConnesKreimer R (Nonplanar α))))
       (Algebra.ofId R ℛ)]
 
-omit [CharZero R] [NoZeroDivisors R] in
+omit [CharZero R] [NoZeroDivisors R] [DecidableEq α] in
 /-- `Algebra.TensorProduct.lift` of two characters agrees with `mul' ∘ map` on every tensor: the
     bridge between the character convolution (`AlgHom.convMul_apply`, `lift` form) and the keystone
     (`mul' ∘ map` form). -/

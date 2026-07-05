@@ -33,7 +33,7 @@ namespace GrossmanLarson
 
 open ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Helper lemmas
 
@@ -49,6 +49,7 @@ private theorem antidiagonal_singleton {β : Type*} (a : β) :
   rw [Multiset.antidiagonal_cons, Multiset.antidiagonal_zero]
   simp [Multiset.map_singleton, Prod.map]
 
+omit [DecidableEq α] in
 /-- A `NIM {T} G` output is always a singleton forest (card 1). This is the
     `Nonplanar.insertionMultiset_card_eq` specialization to a singleton host. -/
 private theorem insertionMultiset_singleton_host_singleton
@@ -181,11 +182,10 @@ private theorem triple_partition_reindex_flip {β γ : Type*} [DecidableEq β]
 /-- Antidiagonal of `(X_T + X_A')` where `X_T` is a singleton multiset
     `{T'}`: by `antidiagonal_add` + `antidiagonal_singleton`, the result
     splits into two summands "T' joins right" + "T' joins left". -/
-private theorem antidiagonal_singleton_add {β : Type*} (T' : β) (Y : Multiset β) :
+private theorem antidiagonal_singleton_add {β : Type*} [DecidableEq β] (T' : β) (Y : Multiset β) :
     Multiset.antidiagonal (({T'} : Multiset β) + Y) =
       (Multiset.antidiagonal Y).map (fun pA' => (pA'.1, ({T'} : Multiset β) + pA'.2)) +
       (Multiset.antidiagonal Y).map (fun pA' => (({T'} : Multiset β) + pA'.1, pA'.2)) := by
-  letI : DecidableEq β := Classical.decEq _
   rw [Multiset.antidiagonal_add, antidiagonal_singleton]
   show ({(0, {T'}), ({T'}, 0)} :
             Multiset (Multiset β × Multiset β)).bind (fun pT =>
@@ -229,7 +229,6 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_antidiagonal
         (Multiset.antidiagonal G).bind (fun pg =>
           (Nonplanar.insertionMultiset pa.1 pg.1) ×ˢ
             (Nonplanar.insertionMultiset pa.2 pg.2))) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   induction A using Multiset.induction_on generalizing G with
   | empty =>
     -- A = 0. Case on G.
@@ -827,7 +826,6 @@ private theorem quadBind_middle_swap {β γ : Type*} (B : Multiset β)
     formal sum of `of'` over this multiset (`of'_mul_of'_nim_form`). -/
 private noncomputable def productIdx (A' B' : Forest (Nonplanar α)) :
     Multiset (Forest (Nonplanar α)) :=
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   B'.powerset.bind (fun H =>
     (Nonplanar.insertionMultiset A' H).map (fun X => X + (B' - H)))
 
@@ -836,7 +834,6 @@ private theorem productIdx_eq_antidiagonal (A' B' : Forest (Nonplanar α)) :
     productIdx A' B' =
       (Multiset.antidiagonal B').bind (fun u =>
         (Nonplanar.insertionMultiset A' u.2).map (fun X => X + u.1)) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   unfold productIdx
   exact powerset_bind_eq_antidiagonal_bind B'
     (fun H Bf => (Nonplanar.insertionMultiset A' H).map (fun X => X + Bf))
@@ -847,7 +844,6 @@ private theorem pairing_product_of'_expand (A' B' : Forest (Nonplanar α))
     pairing (R := R) (product (ConnesKreimer.of' A') (ConnesKreimer.of' B')) z =
       ((productIdx A' B').map (fun W =>
         pairing (R := R) (ConnesKreimer.of' W) z)).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   have hexp : product (ConnesKreimer.of' (R := R) A') (ConnesKreimer.of' B') =
       (((productIdx A' B').map (fun W => ConnesKreimer.of' (R := R) W)).sum :
         ConnesKreimer R (Nonplanar α)) := by
@@ -875,13 +871,11 @@ private theorem pairing_product_of'_expand (A' B' : Forest (Nonplanar α))
     two-factor product equals the doubly-split product index. The multiset
     backbone of `pairing_product_of'_mul_of'`. -/
 private theorem productIdx_mul_split (A B : Forest (Nonplanar α)) :
-    (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-     B.powerset.bind (fun B₁ =>
+    (B.powerset.bind (fun B₁ =>
        (Nonplanar.insertionMultiset A B₁).bind (fun X =>
          Multiset.antidiagonal (X + (B - B₁))))) =
       (Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).bind (fun pq =>
         productIdx pq.1.1 pq.2.1 ×ˢ productIdx pq.1.2 pq.2.2) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Step A+B+C+D: inner antidiagonal split + Lemma G, per B₁.
   have stepACD : ∀ B₁ ∈ B.powerset,
       ((Nonplanar.insertionMultiset A B₁).bind (fun X =>
@@ -1005,7 +999,6 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (Nonplanar α)) :
         pairing (R := R)
             (product (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2))
             (ConnesKreimer.of' C₂))).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- φ evaluates a split pair against (C₁, C₂).
   set φ : Forest (Nonplanar α) × Forest (Nonplanar α) → R :=
     fun p => pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *

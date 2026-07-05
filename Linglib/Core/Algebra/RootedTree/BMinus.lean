@@ -52,7 +52,7 @@ namespace GrossmanLarson
 
 open ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### `bMinusBasis` via per-list branching with perm-invariance -/
 
@@ -62,7 +62,6 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 private noncomputable def bMinusList (a : α) :
     List (Nonplanar α) → ConnesKreimer R (Nonplanar α)
   | [T] =>
-      letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
       if Nonplanar.rootValue T = a then
         of' (R := R) (Nonplanar.rootChildren T)
       else 0
@@ -123,9 +122,7 @@ noncomputable def bMinusBasis (a : α) (F : Forest (Nonplanar α)) :
   show Quotient.liftOn (↑[Nonplanar.node a F] : Multiset (Nonplanar α))
       (bMinusList (R := R) a) _ = of' F
   show bMinusList (R := R) a [Nonplanar.node a F] = of' F
-  show (letI : Decidable (Nonplanar.rootValue (Nonplanar.node a F) = a) :=
-            Classical.dec _
-        if Nonplanar.rootValue (Nonplanar.node a F) = a then
+  show (if Nonplanar.rootValue (Nonplanar.node a F) = a then
           of' (R := R) (Nonplanar.rootChildren (Nonplanar.node a F))
         else 0) = of' F
   rw [Nonplanar.rootValue_node, if_pos rfl, Nonplanar.rootChildren_node]
@@ -159,9 +156,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
   -- ofTree T = of' {T}.
   have hRHS : pairing (R := R) (of' F)
       (ofTree (Nonplanar.node a G) : ConnesKreimer R (Nonplanar α)) =
-    (letI : Decidable (F = ({Nonplanar.node a G} : Forest (Nonplanar α))) :=
-        Classical.dec _
-      if F = ({Nonplanar.node a G} : Forest (Nonplanar α)) then
+    (if F = ({Nonplanar.node a G} : Forest (Nonplanar α)) then
         (forestAutCard F : R) else 0) := by
     show pairing (R := R) (of' F)
         (of' ({Nonplanar.node a G} : Forest (Nonplanar α))) = _
@@ -177,14 +172,12 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
   -- RHS = [F = {node a G}] · forestAutCard F.
   -- Match: F = {node a G''} = {node a G} ↔ G'' = G; forestAutCard {node a G} = forestAutCard {node a G''}.
   -- So both sides are: [F = {node a G}] · forestAutCard F.
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
   by_cases hF : ∃ G' : Forest (Nonplanar α), F = {Nonplanar.node a G'}
   · obtain ⟨G', hFG'⟩ := hF
     subst hFG'
     rw [bMinusBasis_singleton_node]
     have hLHS : pairing (R := R) (of' G') (of' G) =
-        (letI : Decidable (G' = G) := Classical.dec _
-         if G' = G then (forestAutCard G' : R) else 0) :=
+        (if G' = G then (forestAutCard G' : R) else 0) :=
       pairing_of'_of' G' G
     rw [hLHS]
     by_cases hG : G' = G
@@ -194,7 +187,6 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
           ((Nonplanar.forestAutCard ({Nonplanar.node a G'} : Forest _) : R))
       congr 1
       -- forestAutCard {node a G'} = autCard (node a G') = forestAutCard G'.
-      letI : DecidableEq (Nonplanar α) := Classical.decEq _
       show Nonplanar.forestAutCard G' =
         Nonplanar.forestAutCard ({Nonplanar.node a G'} : Forest _)
       conv_rhs => unfold Nonplanar.forestAutCard
@@ -226,8 +218,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
       rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
       · rfl
       · -- lst = [T]; F = ↑[T] = {T}. Need: T ≠ Nonplanar.node a (anything).
-        show (letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
-              if Nonplanar.rootValue T = a then
+        show (if Nonplanar.rootValue T = a then
                 of' (R := R) (Nonplanar.rootChildren T)
               else 0) = 0
         rw [if_neg]
@@ -374,6 +365,7 @@ product). This is `singleton_node_a_insertion_eq_bPlus_gl_mul` below.
 private theorem bind_eq_map_sum {γ δ : Type*} (s : Multiset γ)
     (f : γ → Multiset δ) : s.bind f = (s.map f).sum := rfl
 
+omit [DecidableEq α] in
 /-- The `true`-bucket of a zip over `Quotient.out` representatives has
     the nonplanar `true`-bucket as its `mk`-image. -/
 private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bool) :
@@ -395,6 +387,7 @@ private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bo
         rfl
       | false => exact ih assn
 
+omit [DecidableEq α] in
 /-- The `false`-bucket analog of `filterMap_zip_out_mk_t`. -/
 private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bool) :
     (((l.map Quotient.out).zip assn).filterMap
@@ -431,11 +424,9 @@ private theorem nim_singleton_node_a_decomp
     (a : α) (A' B : Forest (Nonplanar α)) :
     Nonplanar.insertionMultiset
         ({Nonplanar.node a A'} : Forest (Nonplanar α)) B =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       B.powerset.bind fun B₁ =>
+      (B.powerset.bind fun B₁ =>
          (Nonplanar.insertionMultiset A' B₁).map fun F' =>
            ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- §1: the canonical planar representative of the host is equivalent to
   -- the visible node on A''s canonical children list.
   have h_mk2 : Nonplanar.mk (RoseTree.node a (A'.toList.map Quotient.out)) =
@@ -605,14 +596,13 @@ private theorem nim_singleton_node_a_decomp
     proved from the NIM-level decomposition `nim_singleton_node_a_decomp`. -/
 private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     (a : α) (A' B : Forest (Nonplanar α)) :
-    GrossmanLarson.insertion (R := R)
+    insertion (R := R)
         (GrossmanLarson.of' ({Nonplanar.node a A'} : Forest (Nonplanar α)))
         (GrossmanLarson.of' B) =
       ConnesKreimer.bPlusLin (R := R) a
-        (GrossmanLarson.unop
+        (unop
           ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
             GrossmanLarson.of' B)) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Common form: (B.powerset.map (fun B₁ =>
   --   ((NIM A' B₁).map (fun F' => of' {node a (F' + (B - B₁))})).sum)).sum
   set common : ConnesKreimer R (Nonplanar α) :=
@@ -622,11 +612,11 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
           ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))).sum).sum
     with h_common
   -- Step 1: LHS = common.
-  have hLHS : (GrossmanLarson.insertion (R := R)
+  have hLHS : (insertion (R := R)
       (GrossmanLarson.of' ({Nonplanar.node a A'} : Forest (Nonplanar α)))
       (GrossmanLarson.of' B) : GrossmanLarson R α) = common := by
-    rw [GrossmanLarson.insertion_of'_of']
-    unfold GrossmanLarson.insertionBasis
+    rw [insertion_of'_of']
+    unfold insertionBasis
     rw [nim_singleton_node_a_decomp a A' B]
     rw [Multiset.map_bind, Multiset.sum_bind, h_common]
     congr 1
@@ -636,24 +626,24 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     rfl
   -- Step 2: RHS = common.
   have hRHS : ConnesKreimer.bPlusLin (R := R) a
-      (GrossmanLarson.unop
+      (unop
         ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
           GrossmanLarson.of' B)) = common := by
     -- Per-summand identity:
     have h_summand : ∀ B₁ : Forest (Nonplanar α),
         ConnesKreimer.bPlusLin (R := R) a
-          ((GrossmanLarson.unop
-            (GrossmanLarson.insertion (R := R)
+          ((unop
+            (insertion (R := R)
               (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
               ConnesKreimer R (Nonplanar α)) *
-            (GrossmanLarson.unop (GrossmanLarson.of' (R := R) (B - B₁)))) =
+            (unop (GrossmanLarson.of' (R := R) (B - B₁)))) =
         ((Nonplanar.insertionMultiset A' B₁).map fun F' =>
           ConnesKreimer.of' (R := R)
             ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))).sum := by
       intro B₁
       -- insertion (of' A') (of' B₁) = insertionBasis A' B₁ = (NIM ...).map of').sum.
-      rw [GrossmanLarson.insertion_of'_of']
-      unfold GrossmanLarson.insertionBasis
+      rw [insertion_of'_of']
+      unfold insertionBasis
       -- Goal: bPlusLin a ((NIM A' B₁).map of').sum.unop * of'(B - B₁).unop) = ...
       -- unop on basis sum is the same sum on CK side.
       show ConnesKreimer.bPlusLin (R := R) a
@@ -701,7 +691,7 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     -- Apply per-summand identity to RHS structure.
     -- RHS = bPlusLin a (unop (productForest powerset sum)).
     rw [GrossmanLarson.of'_mul_of']
-    unfold GrossmanLarson.productForest
+    unfold productForest
     rw [h_common]
     -- Define the per-B₁ summand function and use linearity.
     -- For each B₁, the summand is op (unop (insertion ...) * unop (of' ...)),
@@ -710,26 +700,26 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     -- Use h_summand B₁ for each.
     -- Push unop through Multiset.sum (it's linear) — define a helper.
     have h_unop_sum : ∀ (s : Multiset (Forest (Nonplanar α))),
-        GrossmanLarson.unop
+        unop
             (s.map fun B₁ =>
-              GrossmanLarson.op
-                (GrossmanLarson.unop
-                    (GrossmanLarson.insertion (R := R)
+              op
+                (unop
+                    (insertion (R := R)
                       (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) *
-                  GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))).sum =
+                  unop (GrossmanLarson.of' (B - B₁)))).sum =
           (s.map fun B₁ =>
-            (GrossmanLarson.unop
-                (GrossmanLarson.insertion (R := R)
+            (unop
+                (insertion (R := R)
                   (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
               ConnesKreimer R (Nonplanar α)) *
-              GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))).sum := by
+              unop (GrossmanLarson.of' (B - B₁))).sum := by
       intro s
       induction s using Multiset.induction with
       | empty => rfl
       | cons B₁ rest ih =>
         simp only [Multiset.map_cons, Multiset.sum_cons]
-        show (GrossmanLarson.unop
-              ((GrossmanLarson.op _ : GrossmanLarson R α) + (rest.map _).sum)) =
+        show (unop
+              ((op _ : GrossmanLarson R α) + (rest.map _).sum)) =
           _ + (rest.map _).sum
         rfl
     rw [h_unop_sum B.powerset]
@@ -737,18 +727,18 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     have h_bPlus_sum : ∀ (s : Multiset (Forest (Nonplanar α))),
         ConnesKreimer.bPlusLin (R := R) a
             (s.map fun B₁ =>
-              (GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+              (unop
+                  (insertion (R := R)
                     (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
                 ConnesKreimer R (Nonplanar α)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))).sum =
+                unop (GrossmanLarson.of' (B - B₁))).sum =
           (s.map fun B₁ =>
             ConnesKreimer.bPlusLin (R := R) a
-              ((GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+              ((unop
+                  (insertion (R := R)
                     (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
                 ConnesKreimer R (Nonplanar α)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))).sum := by
+                unop (GrossmanLarson.of' (B - B₁)))).sum := by
       intro s
       induction s using Multiset.induction with
       | empty => simp
@@ -780,8 +770,7 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
   rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
   · rfl
   · -- lst = [T]; F = ↑[T] = {T}. Need: T's root label ≠ a.
-    show (letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
-          if Nonplanar.rootValue T = a then
+    show (if Nonplanar.rootValue T = a then
             of' (R := R) (Nonplanar.rootChildren T) else 0) = 0
     rw [if_neg]
     intro hlab
@@ -797,10 +786,8 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
 private theorem counit_of'_eq (F : Forest (Nonplanar α)) :
     (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
       (ConnesKreimer.of' F) =
-      (letI : Decidable (F = 0) := Classical.dec _
-       if F = 0 then (1 : R) else 0) := by
+      (if F = 0 then (1 : R) else 0) := by
   rw [ConnesKreimer.counit_of']
-  letI : Decidable (F = 0) := Classical.dec _
   by_cases h : F = 0
   · subst h; simp
   · have hne : F.card ≠ 0 := fun hc => h (Multiset.card_eq_zero.mp hc)
@@ -816,10 +803,8 @@ private theorem counit_of'_eq (F : Forest (Nonplanar α)) :
 private theorem bMinusBasis_singleton_node_add (a : α)
     (F G : Forest (Nonplanar α)) :
     bMinusBasis (R := R) a ({Nonplanar.node a F} + G) =
-      (letI : Decidable (G = 0) := Classical.dec _
-       if G = 0 then (ConnesKreimer.of' (R := R) F : ConnesKreimer R (Nonplanar α))
+      (if G = 0 then (ConnesKreimer.of' (R := R) F : ConnesKreimer R (Nonplanar α))
        else 0) := by
-  letI : Decidable (G = 0) := Classical.dec _
   by_cases hG : G = 0
   · subst hG
     rw [add_zero, if_pos rfl, bMinusBasis_singleton_node]
@@ -845,9 +830,7 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     bMinusLin (R := R) a
       (ConnesKreimer.bPlusLin (R := R) a Y *
         ConnesKreimer.of' (R := R) G) =
-      (letI : Decidable (G = 0) := Classical.dec _
-       if G = 0 then Y else 0) := by
-  letI : Decidable (G = 0) := Classical.dec _
+      (if G = 0 then Y else 0) := by
   refine ConnesKreimer.induction_linear Y ?_ ?_ ?_
   · -- Y = 0
     show bMinusLin (R := R) a
@@ -907,10 +890,8 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
 private lemma sum_powerset_diff_zero_indicator
     {β : Type*} [AddCommMonoid β]
     (B : Forest (Nonplanar α)) (f : Forest (Nonplanar α) → β) :
-    letI : DecidableEq (Nonplanar α) := Classical.decEq _
     (B.powerset.map fun B₁ =>
       if B - B₁ = (0 : Forest (Nonplanar α)) then f B₁ else (0 : β)).sum = f B := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   induction B using Multiset.induction generalizing f with
   | empty =>
     rw [Multiset.powerset_zero, Multiset.map_singleton, Multiset.sum_singleton]
@@ -965,8 +946,6 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
     (hA : ¬ ∃ G' : Forest (Nonplanar α), A = ({Nonplanar.node a G'} : Forest _))
     (hF' : F' ∈ Nonplanar.insertionMultiset A B₁) :
     bMinusBasis (R := R) a (F' + B') = 0 := by
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   apply bMinusBasis_eq_zero_of_not_singleton_a
   rintro ⟨G, hG⟩
   -- (F' + B').card = |A| + |B'|; must equal 1.
@@ -1028,11 +1007,9 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       ((ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (ConnesKreimer.of' A)) •
         bMinusLin (R := R) a (ConnesKreimer.of' B) +
-      GrossmanLarson.unop
-        ((GrossmanLarson.op (bMinusLin (R := R) a (ConnesKreimer.of' A))) *
+      unop
+        ((op (bMinusLin (R := R) a (ConnesKreimer.of' A))) *
           GrossmanLarson.of' B) := by
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   by_cases hA : ∃ A' : Forest (Nonplanar α), A = ({Nonplanar.node a A'} : Forest _)
   · -- Hard case: A = {node a A'}. Uses singleton_node_a_insertion_eq_bPlus_gl_mul.
     obtain ⟨A', hAA'⟩ := hA
@@ -1057,19 +1034,19 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
     -- Both sides equal unop(of' A' *_GL of' B) (op/unop are identity coercions).
     -- Convert * to productForest using show (mul_def is rfl) + of'_mul_of'.
     show bMinusLin (R := R) a
-        (GrossmanLarson.product
+        (product
           (GrossmanLarson.of' (R := R)
             ({Nonplanar.node a A'} : Forest (Nonplanar α)))
           (GrossmanLarson.of' B)) = _
-    rw [show GrossmanLarson.product
+    rw [show product
             (GrossmanLarson.of' (R := R)
               ({Nonplanar.node a A'} : Forest (Nonplanar α)))
             (GrossmanLarson.of' B) =
-          GrossmanLarson.productForest
+          productForest
             (GrossmanLarson.of' (R := R)
               ({Nonplanar.node a A'} : Forest (Nonplanar α))) B from
         GrossmanLarson.of'_mul_of' _ _]
-    unfold GrossmanLarson.productForest
+    unfold productForest
     -- Push bMinusLin a through Multiset.sum (generic lemma).
     have h_push_sum_generic : ∀ s : Multiset (ConnesKreimer R (Nonplanar α)),
         bMinusLin (R := R) a s.sum = (s.map (bMinusLin (R := R) a)).sum := by
@@ -1079,45 +1056,45 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       | cons head rest ih => simp [ih]
     have h_push_sum : bMinusLin (R := R) a
           ((B.powerset.map fun B₁ =>
-            GrossmanLarson.op
-              (GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+            op
+              (unop
+                  (insertion (R := R)
                     (GrossmanLarson.of'
                       ({Nonplanar.node a A'} : Forest (Nonplanar α)))
                     (GrossmanLarson.of' B₁)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))).sum) =
+                unop (GrossmanLarson.of' (B - B₁)))).sum) =
         (B.powerset.map fun B₁ =>
           bMinusLin (R := R) a
-            (GrossmanLarson.op
-              (GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+            (op
+              (unop
+                  (insertion (R := R)
                     (GrossmanLarson.of'
                       ({Nonplanar.node a A'} : Forest (Nonplanar α)))
                     (GrossmanLarson.of' B₁)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))))).sum := by
+                unop (GrossmanLarson.of' (B - B₁))))).sum := by
       have h := h_push_sum_generic (B.powerset.map fun B₁ =>
-        GrossmanLarson.op
-          (GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := R)
+        op
+          (unop
+              (insertion (R := R)
                 (GrossmanLarson.of'
                   ({Nonplanar.node a A'} : Forest (Nonplanar α)))
                 (GrossmanLarson.of' B₁)) *
-            GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))))
+            unop (GrossmanLarson.of' (B - B₁))))
       rw [Multiset.map_map] at h
       exact h
     rw [h_push_sum]
     -- Per-summand: apply singleton bridge then helper 2.
     have h_summand : ∀ B₁ : Forest (Nonplanar α),
         bMinusLin (R := R) a
-          (GrossmanLarson.op
-            (GrossmanLarson.unop
-                (GrossmanLarson.insertion (R := R)
+          (op
+            (unop
+                (insertion (R := R)
                   (GrossmanLarson.of'
                     ({Nonplanar.node a A'} : Forest (Nonplanar α)))
                   (GrossmanLarson.of' B₁)) *
-              GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))) =
+              unop (GrossmanLarson.of' (B - B₁)))) =
         (if B - B₁ = (0 : Forest (Nonplanar α)) then
-           GrossmanLarson.unop
+           unop
              ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
                GrossmanLarson.of' B₁)
          else 0) := by
@@ -1127,23 +1104,23 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       -- = bMinusLin a (bPlusLin a (unop(of' A' * of' B₁)) * of'(B - B₁))   [op, unop are id]
       show bMinusLin (R := R) a
           ((ConnesKreimer.bPlusLin (R := R) a
-              (GrossmanLarson.unop
+              (unop
                 ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
                   GrossmanLarson.of' B₁))) *
             ConnesKreimer.of' (R := R) (B - B₁)) = _
       rw [bMinusLin_bPlusLin_mul_of']
     have h_map_eq : (B.powerset.map fun B₁ =>
           bMinusLin (R := R) a
-            (GrossmanLarson.op
-              (GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+            (op
+              (unop
+                  (insertion (R := R)
                     (GrossmanLarson.of'
                       ({Nonplanar.node a A'} : Forest (Nonplanar α)))
                     (GrossmanLarson.of' B₁)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))))) =
+                unop (GrossmanLarson.of' (B - B₁))))) =
         B.powerset.map (fun B₁ =>
           if B - B₁ = (0 : Forest (Nonplanar α)) then
-            GrossmanLarson.unop
+            unop
               ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
                 GrossmanLarson.of' B₁)
           else 0) := by
@@ -1153,11 +1130,9 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
     rw [h_map_eq]
     -- Collapse via helper 3.
     have h_collapse := sum_powerset_diff_zero_indicator B (fun B₁ =>
-        GrossmanLarson.unop
+        unop
           ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
             GrossmanLarson.of' B₁))
-    -- h_collapse uses Classical.decEq for the if-then-else; goal uses local instance.
-    -- Decidable instances on the same proposition are subsingletons.
     convert h_collapse using 4
     · rfl
   · -- A is not singleton-a-rooted. bMinusLin a (of' A) = 0 and counit (of' A) handled by sub-cases.
@@ -1171,17 +1146,17 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
         ((ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
             (ConnesKreimer.of' A)) •
           bMinusLin (R := R) a (ConnesKreimer.of' B) +
-        GrossmanLarson.unop
-          ((GrossmanLarson.op (0 : ConnesKreimer R (Nonplanar α))) *
+        unop
+          ((op (0 : ConnesKreimer R (Nonplanar α))) *
             GrossmanLarson.of' B)
     -- Simplify `(op 0 * of' B).unop = 0` using `product`'s linearity.
-    have hZero : (GrossmanLarson.op (0 : ConnesKreimer R (Nonplanar α)) :
+    have hZero : (op (0 : ConnesKreimer R (Nonplanar α)) :
         GrossmanLarson R α) * GrossmanLarson.of' B =
       (0 : GrossmanLarson R α) := by
-      show GrossmanLarson.product (0 : GrossmanLarson R α)
+      show product (0 : GrossmanLarson R α)
             (GrossmanLarson.of' B) = 0
       rw [LinearMap.map_zero, LinearMap.zero_apply]
-    rw [hZero, show GrossmanLarson.unop (0 : GrossmanLarson R α) =
+    rw [hZero, show unop (0 : GrossmanLarson R α) =
                   (0 : ConnesKreimer R (Nonplanar α)) from rfl,
         add_zero]
     -- Goal: bMinusLin a (of' A *_GL of' B) = counit (of' A) • bMinusLin a (of' B).
@@ -1202,19 +1177,19 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
         ConnesKreimer.of' B
       rw [show (GrossmanLarson.of' (R := R) (0 : Forest (Nonplanar α)) :
               GrossmanLarson R α) = 1 from GrossmanLarson.of'_zero]
-      exact GrossmanLarson.one_mul _
+      exact one_mul _
     · rw [counit_of'_eq, if_neg hA0, zero_smul]
       -- LHS = 0; A ≠ 0 and A is not singleton-a-rooted.
       -- Expand of' A *_GL of' B via productForest = powerset-sum.
       change bMinusLin (R := R) a
-          (GrossmanLarson.product
+          (product
             (GrossmanLarson.of' (R := R) A)
             (GrossmanLarson.of' B)) = 0
-      rw [show GrossmanLarson.product
+      rw [show product
               (GrossmanLarson.of' (R := R) A) (GrossmanLarson.of' B) =
-            GrossmanLarson.productForest (GrossmanLarson.of' (R := R) A) B from
+            productForest (GrossmanLarson.of' (R := R) A) B from
           GrossmanLarson.of'_mul_of' _ _]
-      unfold GrossmanLarson.productForest
+      unfold productForest
       -- Push bMinusLin a through Multiset.sum.
       have h_push_sum : ∀ s : Multiset (ConnesKreimer R (Nonplanar α)),
           bMinusLin (R := R) a s.sum = (s.map (bMinusLin (R := R) a)).sum := by
@@ -1225,26 +1200,26 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       -- Treat the GrossmanLarson-typed sum as a CK-typed sum (defeq).
       have h_push : bMinusLin (R := R) a
           (B.powerset.map fun B₁ =>
-            GrossmanLarson.op
-              (GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+            op
+              (unop
+                  (insertion (R := R)
                     (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))).sum =
+                unop (GrossmanLarson.of' (B - B₁)))).sum =
           (B.powerset.map fun B₁ =>
             bMinusLin (R := R) a
-              (GrossmanLarson.op
-                (GrossmanLarson.unop
-                    (GrossmanLarson.insertion (R := R)
+              (op
+                (unop
+                    (insertion (R := R)
                       (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
-                  GrossmanLarson.unop
+                  unop
                     (GrossmanLarson.of' (B - B₁))) :
                 ConnesKreimer R (Nonplanar α))).sum := by
         have h := h_push_sum (B.powerset.map fun B₁ =>
-            (GrossmanLarson.op
-              (GrossmanLarson.unop
-                  (GrossmanLarson.insertion (R := R)
+            (op
+              (unop
+                  (insertion (R := R)
                     (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
-                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))) :
+                unop (GrossmanLarson.of' (B - B₁))) :
               ConnesKreimer R (Nonplanar α)))
         rw [Multiset.map_map] at h
         exact h
@@ -1266,19 +1241,19 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       -- no-op on the underlying carrier; the goal already has CK as the
       -- ambient bMinusLin argument.
       have h_step : bMinusLin (R := R) a
-          (((GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := R)
+          (((unop
+              (insertion (R := R)
                 (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) :
               ConnesKreimer R (Nonplanar α)) *
-            GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))) = 0 := by
+            unop (GrossmanLarson.of' (B - B₁)))) = 0 := by
         -- Unfold insertion (of' A) (of' B₁) = insertionBasis A B₁.
-        rw [show (GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := R)
+        rw [show (unop
+              (insertion (R := R)
                 (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) :
               ConnesKreimer R (Nonplanar α)) =
-            GrossmanLarson.insertionBasis A B₁ from by
-          rw [GrossmanLarson.insertion_of'_of']; rfl]
-        unfold GrossmanLarson.insertionBasis
+            insertionBasis A B₁ from by
+          rw [insertion_of'_of']; rfl]
+        unfold insertionBasis
         -- Now: bMinusLin a (((NIM A B₁).map of').sum * unop (of' (B-B₁))) = 0.
         show bMinusLin (R := R) a
             ((((Nonplanar.insertionMultiset A B₁).map fun F' =>
@@ -1317,32 +1292,32 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
 theorem bMinusLin_gl_mul (a : α)
     (x y : ConnesKreimer R (Nonplanar α)) :
     bMinusLin (R := R) a
-      ((GrossmanLarson.op x : GrossmanLarson R α) * GrossmanLarson.op y) =
+      ((op x : GrossmanLarson R α) * op y) =
       ((ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x) •
         bMinusLin (R := R) a y +
-      GrossmanLarson.unop
-        ((GrossmanLarson.op (bMinusLin (R := R) a x)) *
-          GrossmanLarson.op y) := by
+      unop
+        ((op (bMinusLin (R := R) a x)) *
+          op y) := by
   refine ConnesKreimer.induction_linear x ?_ ?_ ?_
   · -- x = 0
     change bMinusLin (R := R) a
-        ((0 : GrossmanLarson R α) * GrossmanLarson.op y) =
+        ((0 : GrossmanLarson R α) * op y) =
       ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) 0) •
         bMinusLin (R := R) a y +
-      GrossmanLarson.unop
-        (((GrossmanLarson.op (bMinusLin (R := R) a 0)) : GrossmanLarson R α) *
-          GrossmanLarson.op y)
-    rw [GrossmanLarson.zero_mul_gl,
+      unop
+        (((op (bMinusLin (R := R) a 0)) : GrossmanLarson R α) *
+          op y)
+    rw [zero_mul_gl,
         show bMinusLin (R := R) a (0 : ConnesKreimer R (Nonplanar α)) =
             (0 : ConnesKreimer R (Nonplanar α)) from
           (bMinusLin (R := R) a).map_zero,
         map_zero, zero_smul]
     change (0 : ConnesKreimer R (Nonplanar α)) =
       0 +
-      GrossmanLarson.unop
-        (((0 : GrossmanLarson R α)) * GrossmanLarson.op y)
-    rw [GrossmanLarson.zero_mul_gl,
-        show GrossmanLarson.unop (0 : GrossmanLarson R α) =
+      unop
+        (((0 : GrossmanLarson R α)) * op y)
+    rw [zero_mul_gl,
+        show unop (0 : GrossmanLarson R α) =
             (0 : ConnesKreimer R (Nonplanar α)) from rfl,
         zero_add]
   · -- x = x₁ + x₂
@@ -1350,22 +1325,22 @@ theorem bMinusLin_gl_mul (a : α)
     let x₁' : ConnesKreimer R (Nonplanar α) := x₁
     let x₂' : ConnesKreimer R (Nonplanar α) := x₂
     show bMinusLin (R := R) a
-        ((GrossmanLarson.op (x₁' + x₂') : GrossmanLarson R α) * GrossmanLarson.op y) =
+        ((op (x₁' + x₂') : GrossmanLarson R α) * op y) =
       ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) (x₁' + x₂')) •
         bMinusLin (R := R) a y +
-      GrossmanLarson.unop
-        ((GrossmanLarson.op (bMinusLin (R := R) a (x₁' + x₂'))) * GrossmanLarson.op y)
-    rw [show (GrossmanLarson.op (x₁' + x₂') : GrossmanLarson R α) =
-          GrossmanLarson.op x₁' + GrossmanLarson.op x₂' from rfl,
+      unop
+        ((op (bMinusLin (R := R) a (x₁' + x₂'))) * op y)
+    rw [show (op (x₁' + x₂') : GrossmanLarson R α) =
+          op x₁' + op x₂' from rfl,
         add_mul]
     -- Push bMinusLin a through + (using explicit map_add to bypass FunLike issue).
     rw [show bMinusLin (R := R) a
-          ((GrossmanLarson.op x₁' : GrossmanLarson R α) * GrossmanLarson.op y +
-            GrossmanLarson.op x₂' * GrossmanLarson.op y) =
+          ((op x₁' : GrossmanLarson R α) * op y +
+            op x₂' * op y) =
         bMinusLin (R := R) a
-            ((GrossmanLarson.op x₁' : GrossmanLarson R α) * GrossmanLarson.op y) +
+            ((op x₁' : GrossmanLarson R α) * op y) +
           bMinusLin (R := R) a
-            ((GrossmanLarson.op x₂' : GrossmanLarson R α) * GrossmanLarson.op y) from
+            ((op x₂' : GrossmanLarson R α) * op y) from
         map_add _ _ _]
     rw [ih₁, ih₂,
         map_add (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x₁' x₂',
@@ -1373,20 +1348,20 @@ theorem bMinusLin_gl_mul (a : α)
         show bMinusLin (R := R) a (x₁' + x₂') =
             bMinusLin (R := R) a x₁' + bMinusLin (R := R) a x₂' from
           map_add _ _ _,
-        show (GrossmanLarson.op (bMinusLin (R := R) a x₁' +
+        show (op (bMinusLin (R := R) a x₁' +
               bMinusLin (R := R) a x₂') : GrossmanLarson R α) =
-            GrossmanLarson.op (bMinusLin (R := R) a x₁') +
-            GrossmanLarson.op (bMinusLin (R := R) a x₂') from rfl,
+            op (bMinusLin (R := R) a x₁') +
+            op (bMinusLin (R := R) a x₂') from rfl,
         add_mul,
-        show GrossmanLarson.unop
-              ((GrossmanLarson.op (bMinusLin (R := R) a x₁') :
-                GrossmanLarson R α) * GrossmanLarson.op y +
-                GrossmanLarson.op (bMinusLin (R := R) a x₂') *
-                  GrossmanLarson.op y) =
-            GrossmanLarson.unop ((GrossmanLarson.op (bMinusLin (R := R) a x₁') :
-                GrossmanLarson R α) * GrossmanLarson.op y) +
-              GrossmanLarson.unop (GrossmanLarson.op (bMinusLin (R := R) a x₂') *
-                GrossmanLarson.op y) from rfl]
+        show unop
+              ((op (bMinusLin (R := R) a x₁') :
+                GrossmanLarson R α) * op y +
+                op (bMinusLin (R := R) a x₂') *
+                  op y) =
+            unop ((op (bMinusLin (R := R) a x₁') :
+                GrossmanLarson R α) * op y) +
+              unop (op (bMinusLin (R := R) a x₂') *
+                op y) from rfl]
     abel
   · -- x = single F r
     intro F r
@@ -1394,27 +1369,27 @@ theorem bMinusLin_gl_mul (a : α)
     · -- y = 0
       let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       show bMinusLin (R := R) a
-          ((GrossmanLarson.op x_single : GrossmanLarson R α) *
-            GrossmanLarson.op (0 : ConnesKreimer R (Nonplanar α))) =
+          ((op x_single : GrossmanLarson R α) *
+            op (0 : ConnesKreimer R (Nonplanar α))) =
         ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single) •
           bMinusLin (R := R) a 0 +
-        GrossmanLarson.unop
-          ((GrossmanLarson.op (bMinusLin (R := R) a x_single)) *
-            GrossmanLarson.op (0 : ConnesKreimer R (Nonplanar α)))
+        unop
+          ((op (bMinusLin (R := R) a x_single)) *
+            op (0 : ConnesKreimer R (Nonplanar α)))
       change bMinusLin (R := R) a
-          ((GrossmanLarson.op x_single : GrossmanLarson R α) *
+          ((op x_single : GrossmanLarson R α) *
             (0 : GrossmanLarson R α)) =
         ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single) •
           bMinusLin (R := R) a 0 +
-        GrossmanLarson.unop
-          ((GrossmanLarson.op (bMinusLin (R := R) a x_single) : GrossmanLarson R α) *
+        unop
+          ((op (bMinusLin (R := R) a x_single) : GrossmanLarson R α) *
             (0 : GrossmanLarson R α))
-      rw [GrossmanLarson.mul_zero_gl, GrossmanLarson.mul_zero_gl,
+      rw [mul_zero_gl, mul_zero_gl,
           show bMinusLin (R := R) a (0 : ConnesKreimer R (Nonplanar α)) =
               (0 : ConnesKreimer R (Nonplanar α)) from
             (bMinusLin (R := R) a).map_zero,
           smul_zero,
-          show GrossmanLarson.unop (0 : GrossmanLarson R α) =
+          show unop (0 : GrossmanLarson R α) =
               (0 : ConnesKreimer R (Nonplanar α)) from rfl, add_zero]
       exact (bMinusLin (R := R) a).map_zero
     · -- y = y₁ + y₂
@@ -1423,51 +1398,51 @@ theorem bMinusLin_gl_mul (a : α)
       let y₁' : ConnesKreimer R (Nonplanar α) := y₁
       let y₂' : ConnesKreimer R (Nonplanar α) := y₂
       show bMinusLin (R := R) a
-          ((GrossmanLarson.op x_single : GrossmanLarson R α) *
-            GrossmanLarson.op (y₁' + y₂')) =
+          ((op x_single : GrossmanLarson R α) *
+            op (y₁' + y₂')) =
         ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single) •
           bMinusLin (R := R) a (y₁' + y₂') +
-        GrossmanLarson.unop
-          ((GrossmanLarson.op (bMinusLin (R := R) a x_single)) *
-            GrossmanLarson.op (y₁' + y₂'))
-      rw [show (GrossmanLarson.op (y₁' + y₂') : GrossmanLarson R α) =
-            GrossmanLarson.op y₁' + GrossmanLarson.op y₂' from rfl,
+        unop
+          ((op (bMinusLin (R := R) a x_single)) *
+            op (y₁' + y₂'))
+      rw [show (op (y₁' + y₂') : GrossmanLarson R α) =
+            op y₁' + op y₂' from rfl,
           mul_add]
       rw [show bMinusLin (R := R) a
-            ((GrossmanLarson.op x_single : GrossmanLarson R α) * GrossmanLarson.op y₁' +
-              GrossmanLarson.op x_single * GrossmanLarson.op y₂') =
+            ((op x_single : GrossmanLarson R α) * op y₁' +
+              op x_single * op y₂') =
           bMinusLin (R := R) a
-              ((GrossmanLarson.op x_single : GrossmanLarson R α) * GrossmanLarson.op y₁') +
+              ((op x_single : GrossmanLarson R α) * op y₁') +
             bMinusLin (R := R) a
-              ((GrossmanLarson.op x_single : GrossmanLarson R α) * GrossmanLarson.op y₂') from
+              ((op x_single : GrossmanLarson R α) * op y₂') from
           map_add _ _ _]
       rw [ih₁, ih₂,
           show bMinusLin (R := R) a (y₁' + y₂') =
               bMinusLin (R := R) a y₁' + bMinusLin (R := R) a y₂' from
             map_add _ _ _,
           smul_add, mul_add,
-          show GrossmanLarson.unop
-                ((GrossmanLarson.op (bMinusLin (R := R) a x_single) :
-                  GrossmanLarson R α) * GrossmanLarson.op y₁' +
-                  GrossmanLarson.op (bMinusLin (R := R) a x_single) *
-                    GrossmanLarson.op y₂') =
-              GrossmanLarson.unop ((GrossmanLarson.op (bMinusLin (R := R) a x_single) :
-                  GrossmanLarson R α) * GrossmanLarson.op y₁') +
-                GrossmanLarson.unop (GrossmanLarson.op (bMinusLin (R := R) a x_single) *
-                  GrossmanLarson.op y₂') from rfl]
+          show unop
+                ((op (bMinusLin (R := R) a x_single) :
+                  GrossmanLarson R α) * op y₁' +
+                  op (bMinusLin (R := R) a x_single) *
+                    op y₂') =
+              unop ((op (bMinusLin (R := R) a x_single) :
+                  GrossmanLarson R α) * op y₁') +
+                unop (op (bMinusLin (R := R) a x_single) *
+                  op y₂') from rfl]
       abel
     · -- y = single G s: factor out r, s, then apply bMinusLin_gl_mul_basis F G.
       intro G s
       let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
       let y_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single G s
       show bMinusLin (R := R) a
-          ((GrossmanLarson.op x_single : GrossmanLarson R α) *
-            GrossmanLarson.op y_single) =
+          ((op x_single : GrossmanLarson R α) *
+            op y_single) =
         ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single) •
           bMinusLin (R := R) a y_single +
-        GrossmanLarson.unop
-          ((GrossmanLarson.op (bMinusLin (R := R) a x_single)) *
-            GrossmanLarson.op y_single)
+        unop
+          ((op (bMinusLin (R := R) a x_single)) *
+            op y_single)
       have hx : x_single = r • (ConnesKreimer.of' (R := R) F) := by
         show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
             r • (ConnesKreimer.single F (1 : R) : ConnesKreimer R (Nonplanar α))
@@ -1478,32 +1453,32 @@ theorem bMinusLin_gl_mul (a : α)
         exact ConnesKreimer.smul_single_one G s
       rw [hx, hy]
       -- Pull r, s through op (op is linear, rfl since op = id).
-      rw [show (GrossmanLarson.op (r • ConnesKreimer.of' (R := R) F) :
+      rw [show (op (r • ConnesKreimer.of' (R := R) F) :
             GrossmanLarson R α) =
-          r • GrossmanLarson.op (ConnesKreimer.of' (R := R) F) from rfl,
-          show (GrossmanLarson.op (s • ConnesKreimer.of' (R := R) G) :
+          r • op (ConnesKreimer.of' (R := R) F) from rfl,
+          show (op (s • ConnesKreimer.of' (R := R) G) :
             GrossmanLarson R α) =
-          s • GrossmanLarson.op (ConnesKreimer.of' (R := R) G) from rfl]
+          s • op (ConnesKreimer.of' (R := R) G) from rfl]
       -- Pull r, s through * using smul_mul_gl/mul_smul_gl.
-      rw [GrossmanLarson.smul_mul_gl,
-          GrossmanLarson.mul_smul_gl]
+      rw [smul_mul_gl,
+          mul_smul_gl]
       -- Push bMinusLin a through smul (explicit show to bypass FunLike).
       rw [show bMinusLin (R := R) a
-              (r • s • ((GrossmanLarson.op (ConnesKreimer.of' (R := R) F) :
-                GrossmanLarson R α) * GrossmanLarson.op
+              (r • s • ((op (ConnesKreimer.of' (R := R) F) :
+                GrossmanLarson R α) * op
                   (ConnesKreimer.of' (R := R) G))) =
             r • bMinusLin (R := R) a
-              (s • ((GrossmanLarson.op (ConnesKreimer.of' (R := R) F) :
-                GrossmanLarson R α) * GrossmanLarson.op
+              (s • ((op (ConnesKreimer.of' (R := R) F) :
+                GrossmanLarson R α) * op
                   (ConnesKreimer.of' (R := R) G))) from
           (bMinusLin (R := R) a).map_smul r _,
           show bMinusLin (R := R) a
-              (s • ((GrossmanLarson.op (ConnesKreimer.of' (R := R) F) :
-                GrossmanLarson R α) * GrossmanLarson.op
+              (s • ((op (ConnesKreimer.of' (R := R) F) :
+                GrossmanLarson R α) * op
                   (ConnesKreimer.of' (R := R) G))) =
             s • bMinusLin (R := R) a
-              ((GrossmanLarson.op (ConnesKreimer.of' (R := R) F) :
-                GrossmanLarson R α) * GrossmanLarson.op
+              ((op (ConnesKreimer.of' (R := R) F) :
+                GrossmanLarson R α) * op
                   (ConnesKreimer.of' (R := R) G)) from
           (bMinusLin (R := R) a).map_smul s _]
       -- RHS side: factor r, s out.
@@ -1520,19 +1495,19 @@ theorem bMinusLin_gl_mul (a : α)
               (r • ConnesKreimer.of' (R := R) F) =
             r • bMinusLin (R := R) a (ConnesKreimer.of' (R := R) F) from
           (bMinusLin (R := R) a).map_smul r _,
-          show (GrossmanLarson.op (r • bMinusLin (R := R) a
+          show (op (r • bMinusLin (R := R) a
               (ConnesKreimer.of' (R := R) F)) : GrossmanLarson R α) =
-            r • GrossmanLarson.op (bMinusLin (R := R) a
+            r • op (bMinusLin (R := R) a
               (ConnesKreimer.of' (R := R) F)) from rfl,
-          GrossmanLarson.smul_mul_gl, GrossmanLarson.mul_smul_gl]
+          smul_mul_gl, mul_smul_gl]
       -- Push unop through smul (unop is identity).
-      rw [show GrossmanLarson.unop (r • s • ((GrossmanLarson.op
+      rw [show unop (r • s • ((op
               (bMinusLin (R := R) a (ConnesKreimer.of' (R := R) F)) :
-              GrossmanLarson R α) * GrossmanLarson.op
+              GrossmanLarson R α) * op
                 (ConnesKreimer.of' (R := R) G))) =
-            r • s • GrossmanLarson.unop ((GrossmanLarson.op
+            r • s • unop ((op
                 (bMinusLin (R := R) a (ConnesKreimer.of' (R := R) F)) :
-              GrossmanLarson R α) * GrossmanLarson.op
+              GrossmanLarson R α) * op
                 (ConnesKreimer.of' (R := R) G)) from rfl]
       -- Apply bMinusLin_gl_mul_basis F G.
       -- Use `change` (isDefEq) to coerce `op (CK.of' _)` → `GL.of' _` so that
@@ -1545,8 +1520,8 @@ theorem bMinusLin_gl_mul (a : α)
         (r • (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
             (ConnesKreimer.of' (R := R) F)) •
           s • bMinusLin (R := R) a (ConnesKreimer.of' (R := R) G) +
-        r • s • GrossmanLarson.unop
-          ((GrossmanLarson.op (bMinusLin (R := R) a
+        r • s • unop
+          ((op (bMinusLin (R := R) a
               (ConnesKreimer.of' (R := R) F)) : GrossmanLarson R α) *
             GrossmanLarson.of' G)
       rw [bMinusLin_gl_mul_basis a F G]
