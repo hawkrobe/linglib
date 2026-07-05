@@ -118,30 +118,19 @@ private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     have hu_pos : ∀ i, (0 : ℝ) < u i := fun _ => div_pos one_pos hWpos
     have hu_sum : ∑ i : ι, u i = 1 := by
       simp [u, sum_const, nsmul_eq_mul, Nat.cast_ne_zero.mpr hW]
-    -- PMF substrate setup: discrete MeasurableSpace + nonempty.
-    haveI : Nonempty ι := Fintype.card_pos_iff.mp (Nat.pos_of_ne_zero hW)
+    -- PMF substrate setup: discrete MeasurableSpace.
     letI : MeasurableSpace ι := ⊤
     haveI : MeasurableSingletonClass ι :=
       ⟨fun _ => MeasurableSpace.measurableSet_top⟩
-    -- q has at least one positive mass (else its sum would be 0, contradicting hq_sum = 1).
-    have hq_exists_pos : ∃ i, 0 < q i := by
-      by_contra h_no_pos
-      push_neg at h_no_pos
-      have hsum_zero : ∑ i, q i = 0 := Finset.sum_eq_zero (fun i _ =>
-        le_antisymm (h_no_pos i) (hq_nonneg i))
-      linarith
-    let i₀ := hq_exists_pos.choose
-    have hq_pos_i₀ : 0 < q i₀ := hq_exists_pos.choose_spec
     -- Construct PMFs from q and u. Both round-trip losslessly (already normalized).
-    let i_u : ι := Classical.arbitrary ι
-    let q_pmf := PMF.ofRealWeightFn q hq_nonneg i₀ hq_pos_i₀
-    let u_pmf := PMF.ofRealWeightFn u (fun i => le_of_lt (hu_pos i))
-                   i_u (hu_pos i_u)
+    have hq_pos : (0 : ℝ) < ∑ i : ι, q i := by rw [hq_sum]; exact one_pos
+    have hu_pos_sum : (0 : ℝ) < ∑ i : ι, u i := by rw [hu_sum]; exact one_pos
+    let q_pmf := PMF.ofRealWeightFn q hq_nonneg hq_pos
+    let u_pmf := PMF.ofRealWeightFn u (fun i => le_of_lt (hu_pos i)) hu_pos_sum
     have hq_eq : q_pmf.toRealFn = q :=
-      PMF.ofRealWeightFn_toRealFn_eq q hq_nonneg i₀ hq_pos_i₀ hq_sum
+      PMF.ofRealWeightFn_toRealFn_eq q hq_nonneg hq_pos hq_sum
     have hu_eq : u_pmf.toRealFn = u :=
-      PMF.ofRealWeightFn_toRealFn_eq u (fun i => le_of_lt (hu_pos i))
-        i_u (hu_pos i_u) hu_sum
+      PMF.ofRealWeightFn_toRealFn_eq u (fun i => le_of_lt (hu_pos i)) hu_pos_sum hu_sum
     -- Gibbs' inequality: KL ≥ 0 by type. Discrete sum form via PMF bridge.
     have hkl_nn : 0 ≤ (q_pmf.klDiv u_pmf).toReal := ENNReal.toReal_nonneg
     rw [PMF.toReal_klDiv_eq_sum_log_div q_pmf u_pmf (hu_eq ▸ hu_pos)] at hkl_nn
