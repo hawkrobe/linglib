@@ -1,3 +1,5 @@
+import Linglib.Syntax.Particle.Capabilities
+import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Studies.StankovaSimik2025
 import Linglib.Semantics.Questions.Bias.Defs
@@ -71,42 +73,21 @@ theorem only_inner_licenses_nci :
 
 /-! ### The diagnostic particles ([stankova-2026] §2.2, Table 1)
 
-*náhodou* and *copak* live with the experiments in
-`StankovaSimik2025`; this paper contributes *ještě*, *fakt*, *vůbec*,
-the Table 1 assignments, and the fingerprint results. -/
+Entries live in `Czech.Particles`; this paper contributes the §2.2
+licensing profiles — *ještě* felicitous in PQs only under inner
+negation (§2.2.2, (14); with telic predicates it requires negation,
+(13)), *fakt* licensed by inner and medial but repelled by outer on its
+canonical reading (§2.2.3, (15), fn. 8), *vůbec* an NPI licensed by
+inner only ((9)-(10)) — plus the Table 1 assignments and the
+fingerprint results. -/
 
-open StankovaSimik2025 (nahodou copak snad ParticleSemantics)
-
-/-- *ještě* 'yet, still' — inner-negation diagnostic ([stankova-2026]
-§2.2.2, (14)): with telic predicates it requires negation and in PQs is
-felicitous only under inner negation (NCI or wide-scoping PPI), not
-medial or outer; atelic *ještě* occurs without negation ((13a)). -/
-def jeste : Particle where
-  form := "ještě"
-  distribution := some { polarInterrogative := some .optional }
-
-/-- *fakt* 'really' — licensed by inner and medial negation, repelled by
-outer on its canonical reading ([stankova-2026] §2.2.3, (15); the
-'after all' reading is exempt, fn. 8). The paper defers its semantic
-contribution, noting the parallels to English *really* (Romero & Han's
-VERUM) and Russian *razve*. -/
-def fakt : Particle where
-  form := "fakt"
-  distribution := some { polarInterrogative := some .optional }
-
-/-- *vůbec* 'at all' — NPI, licensed by inner negation only among the
-three readings ([stankova-2026] (9)-(10)); outside Table 1. Parallels
-English *at all*. -/
-def vubec : Particle where
-  form := "vůbec"
-  distribution := some { polarInterrogative := some .optional }
-
-/-- The full six-particle inventory across the two papers. -/
-def allParticles : List Particle :=
-  [nahodou, jeste, fakt, vubec, snad, copak]
+open Czech.Particles (nahodou jeste fakt vubec snad copak)
+open StankovaSimik2025 (ParticleSemantics)
 
 /-- This paper's classification of its three particles (the others are
-classified in `StankovaSimik2025.classification`). -/
+classified in `StankovaSimik2025.classification`). The paper defers
+*fakt*'s semantics, noting the parallels to English *really* (Romero &
+Han's VERUM) and Russian *razve*. -/
 def classification : List (Particle × ParticleSemantics) :=
   [(jeste, .temporalEndpoint), (fakt, .veridicalEmphasis), (vubec, .npi)]
 

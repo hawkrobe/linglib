@@ -1,4 +1,4 @@
-import Linglib.Syntax.Particle.Capabilities
+import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Semantics.Negation.CzechNegation
 
 /-!
@@ -7,9 +7,9 @@ import Linglib.Semantics.Negation.CzechNegation
 This file formalizes [stankova-2025]'s particle results: *náhodou* as
 an overt indicator of the covert FALSUM operator (§6.1 subexperiment)
 and *copak* as sensitive to contextual evidence (§6.2 subexperiment,
-exs. 19-20). The paper distinguishes two negation readings (inner and
-outer); the three-way system and its Table 1 diagnostics are
-[stankova-2026]'s and live in `Stankova2026`.
+exs. 19-20). The lexical entries live in `Czech.Particles`; the
+three-way system and its Table 1 diagnostics are [stankova-2026]'s and
+live in `Stankova2026`.
 
 ## Main results
 
@@ -24,39 +24,7 @@ outer); the three-way system and its Table 1 diagnostics are
 
 namespace StankovaSimik2025
 
-/-! ### The particles
-
-All occur in Czech polar questions, the paper's domain; other
-clause-type cells and placements are unrecorded. -/
-
-/-- *náhodou* 'by (any) chance' — licensed by FALSUM: the §6.1
-subexperiment shows NCIs (inner negation) degrade *náhodou* PQs
-(main effect of INDEFINITE, z = −12.845, p < .001), so *náhodou* "could
-be used as an overt indicator of the covert FALSUM operator being
-present in the structure" ([stankova-2025] §6.1). Insensitive to
-contextual evidence, unlike *copak*. -/
-def nahodou : Particle where
-  form := "náhodou"
-  distribution := some { polarInterrogative := some .optional }
-
-/-- *snad* 'perhaps, surely not' — adversative/mirative particle of the
-cross-Slavic RAZVE family ([simik-2024] §4.2.4, [nekula-1996],
-[stankova-2023]); not experimentally tested in [stankova-2025]. -/
-def snad : Particle where
-  form := "snad"
-  distribution := some { polarInterrogative := some .optional }
-
-/-- *copak* 'what then' — "strongly indicates a conflict between
-speaker's prior belief and the currently available evidence"
-([stankova-2025] §6.2, citing [nekula-1996]): licensed in positive and
-negative PQs alike (exs. 19a-b), requiring a context whose evidence
-matches the PQ's polarity; the §6.2 subexperiment confirms the biased >
-neutral preference (main effect of CONTEXT, z = 9.372, p < .001). The
-Czech member of the cross-Slavic family with Polish *czyby* and Russian
-*razve* (p. 12). -/
-def copak : Particle where
-  form := "copak"
-  distribution := some { polarInterrogative := some .optional }
+open Czech.Particles (nahodou snad copak)
 
 /-! ### Classification -/
 
@@ -94,9 +62,19 @@ def requiresEvidentialBias (p : Particle) : Option Bool :=
   else if p = nahodou then some false
   else none
 
+/-- The §6.1 subexperiment: NCIs (inner negation) degrade *náhodou* PQs
+(main effect of INDEFINITE, z = −12.845, p < .001), so *náhodou* "could
+be used as an overt indicator of the covert FALSUM operator being
+present in the structure" — and FALSUM is context-insensitive. -/
 theorem nahodou_context_insensitive :
     requiresEvidentialBias nahodou = some false := by decide
 
+/-- The §6.2 subexperiment: *copak* "strongly indicates a conflict
+between speaker's prior belief and the currently available evidence"
+(citing [nekula-1996]) — biased > neutral contexts, main effect of
+CONTEXT, z = 9.372, p < .001; licensed in positive and negative PQs
+alike (exs. 19a-b). Cross-Slavic kin: Polish *czyby*, Russian *razve*
+(p. 12). -/
 theorem copak_context_sensitive :
     requiresEvidentialBias copak = some true := by decide
 

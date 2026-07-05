@@ -1126,6 +1126,7 @@ import Linglib.Fragments.Slavic.Cassubian.Case
 import Linglib.Fragments.Slavic.Czech.Case
 import Linglib.Fragments.Slavic.Czech.Determiners
 import Linglib.Fragments.Slavic.Czech.Negation
+import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Fragments.Slavic.Czech.Reciprocals
 import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
