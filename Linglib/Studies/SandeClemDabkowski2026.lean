@@ -329,22 +329,23 @@ theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
     What it does establish is that the substrate is *usable*: the
     `properRemnant` predicate is decidable on the witness. -/
 
-open Minimalist (SyntacticObject LIToken LexicalItem SO)
+open Minimalist (SyntacticObject LIToken LexicalItem SyntacticObject)
 open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
 
 /-- A schematic verb leaf for the `PredicateDoubling` witness. -/
 private def guebieVerbTok : LIToken := ⟨.simple .V [], 1⟩
-private def guebieVerbLeaf : SyntacticObject := SO.lexLeaf guebieVerbTok
+private def guebieVerbLeaf : SyntacticObject := SyntacticObject.lexLeaf guebieVerbTok
 
 /-- A schematic remnant-VP node containing the verb leaf as a trace
     pronounced for recoverability. Built planar-first (the smart
-    `SO.node` is noncomputable) so the `decide` proofs below reduce. -/
+    `SyntacticObject.node` is noncomputable) so the `decide` proofs below reduce. -/
 private def guebieFrontedVP : SyntacticObject :=
-  SO.ofPlanar (SO.nodeP (SO.leafP guebieVerbTok) (SO.leafP guebieVerbTok))
+  SyntacticObject.ofPlanar (SyntacticObject.nodeP (SyntacticObject.leafP guebieVerbTok)
+    (SyntacticObject.leafP guebieVerbTok))
 
 /-- A schematic landing-site leaf (Spec,CP). -/
 private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
-private def guebieLandingSite : SyntacticObject := SO.lexLeaf guebieLandingTok
+private def guebieLandingSite : SyntacticObject := SyntacticObject.lexLeaf guebieLandingTok
 
 /-- The Guébie predicate-fronting witness: V evacuates the VP, and
     the remnant VP fronts to Spec,CP. The trace is pronounced — verb
@@ -373,9 +374,9 @@ candidate type the OT machinery uses, which we don't instantiate
 inline). -/
 
 /-- The phase-selector for Guébie's vP cophonology: matches v heads
-    (and only v heads). On the `SO` carrier the selector reads the root
+    (and only v heads). On the `SyntacticObject` carrier the selector reads the root
     leaf's token (`PhrasalCophonology.appliesTo` only ever applies it to a
-    `SO.lexLeaf` of the phase head), so a v head is detected by its
+    `SyntacticObject.lexLeaf` of the phase head), so a v head is detected by its
     outer category. -/
 def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
   match s.getLIToken with
@@ -394,10 +395,10 @@ def guebieVPCophonology : PhrasalCophonology Unit Unit :=
     payload  := [] }
 
 /-- The Guébie vP-cophonology applies to a v head. (Witness: a leaf
-    SO whose token's category is `.v`.) -/
+    SyntacticObject whose token's category is `.v`.) -/
 theorem guebieVPCophonology_applies_to_v :
     let vTok : LIToken := ⟨.simple .v [], 99⟩
-    let vHead : SyntacticObject := SO.lexLeaf vTok
+    let vHead : SyntacticObject := SyntacticObject.lexLeaf vTok
     let vPhase : Minimalist.Phase := { tree := vHead, head := vTok }
     guebieVPCophonology.appliesTo vPhase = true := by decide
 
@@ -423,7 +424,7 @@ open Minimalist (VerbDoublingIsSyntacticIn)
 /-- A schematic Guébie Derivation: the verb undergoes Internal Merge
     in the predicate-fronting derivation (per SCD 2026 §3 island
     diagnostics establishing this is narrow-syntactic, not PF). -/
-def guebieFrontingDerivation : Minimalist.SO.Derivation :=
+def guebieFrontingDerivation : Minimalist.SyntacticObject.Derivation :=
   { initial := guebieFrontedVP
     steps   := [.im guebieVerbLeaf] }
 

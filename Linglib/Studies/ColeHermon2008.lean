@@ -34,13 +34,14 @@ base-generation. Three lines of evidence converge:
 
 ## Carrier note (P4 single-carrier flip)
 
-On the MCB-faithful `SO` carrier, Merge (`SO.node`/`*`) is noncomputable,
-so `SO.Derivation.final`/`.stageAt` do not `decide`. The computable layers —
+On the MCB-faithful `SyntacticObject` carrier, Merge (`SyntacticObject.node`/`*`) is noncomputable,
+so `SyntacticObject.Derivation.final`/`.stageAt` do not `decide`. The computable layers —
 `movedItems` and the externalized surface order (`surfacePhon`) — are proved
-over the `SO.Derivation` directly. The c-command predictions are stated over
-the **derived/base trees built planar-first** (`SO.ofPlanar (SO.nodeP …)`),
+over the `SyntacticObject.Derivation` directly. The c-command predictions are stated over
+the **derived/base trees built planar-first** (`SyntacticObject.ofPlanar (SyntacticObject.nodeP
+…)`),
 i.e. the very trees each derivation produces, written out explicitly per the
-prose diagrams; c-command (`SO.cCommandsIn`) reduces on those.
+prose diagrams; c-command (`SyntacticObject.cCommandsIn`) reduces on those.
 
 ## Simplification
 
@@ -100,19 +101,19 @@ open RootedTree
 -- ============================================================================
 
 /-- "mangatuk" — ACT-hit (active voice transitive verb). -/
-def v_mangatuk := SO.mkLeafPhon .V [] "mangatuk" 1
+def v_mangatuk := SyntacticObject.mkLeafPhon .V [] "mangatuk" 1
 
 /-- "biangi" — dog-DEF (definite object DP). -/
-def n_biangi := SO.mkLeafPhon .N [] "biangi" 2
+def n_biangi := SyntacticObject.mkLeafPhon .N [] "biangi" 2
 
 /-- "dakdanakan" — child-that (subject DP). -/
-def n_dakdanakan := SO.mkLeafPhon .N [] "dakdanakan" 3
+def n_dakdanakan := SyntacticObject.mkLeafPhon .N [] "dakdanakan" 3
 
 /-- Little v (silent, selects VP). -/
-def v_head := SO.mkLeaf .v [.V] 4
+def v_head := SyntacticObject.mkLeaf .v [.V] 4
 
 /-- T (silent, selects vP). -/
-def t_head := SO.mkLeaf .T [.v] 5
+def t_head := SyntacticObject.mkLeaf .T [.v] 5
 
 /-! Planar leaf tokens for building the result/base trees. -/
 
@@ -125,10 +126,12 @@ private def tok_t          : LIToken := ⟨.simple .T [.v], 5⟩
 /-- The VP constituent `[VP V Obj]` — the phrase that raises. Built
     planar-first so containment over it `decide`s. -/
 def vp : SyntacticObject :=
-  SO.ofPlanar (SO.nodeP (SO.leafP tok_mangatuk) (SO.leafP tok_biangi))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP tok_mangatuk) (SyntacticObject.leafP tok_biangi))
 
 /-- The VP as a planar subtree (for embedding in larger result trees). -/
-private def vpP : RoseTree SOLabel := SO.nodeP (SO.leafP tok_mangatuk) (SO.leafP tok_biangi)
+private def vpP : RoseTree SOLabel :=
+  SyntacticObject.nodeP (SyntacticObject.leafP tok_mangatuk) (SyntacticObject.leafP tok_biangi)
 
 -- ============================================================================
 -- § 2: Toba Batak VOS Derivation
@@ -142,7 +145,7 @@ private def vpP : RoseTree SOLabel := SO.nodeP (SO.leafP tok_mangatuk) (SO.leafP
     3. EM-L Subj → `[vP Subj [v' v VP]]`
     4. EM-L T  → `[TP T [vP Subj [v' v VP]]]`
     5. IM VP   → `[TP VP [T' T [vP Subj [v' v tVP]]]]` -/
-def tobaBatakVOS : SO.Derivation :=
+def tobaBatakVOS : SyntacticObject.Derivation :=
   { initial := v_mangatuk
     steps := [
       .emR n_biangi,
@@ -155,30 +158,30 @@ def tobaBatakVOS : SO.Derivation :=
 /-- The VOS **base** tree at stage 4 (pre-movement):
     `[TP T [vP Subj [v' v [VP V Obj]]]]`. Built planar-first. -/
 def tobaBatakBaseTree : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP tok_t)
-      (SO.nodeP (SO.leafP tok_dakdanakan)
-        (SO.nodeP (SO.leafP tok_v) vpP)))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP tok_t)
+      (SyntacticObject.nodeP (SyntacticObject.leafP tok_dakdanakan)
+        (SyntacticObject.nodeP (SyntacticObject.leafP tok_v) vpP)))
 
 /-- The VOS **derived** tree after VP-raising:
     `[TP [VP V Obj] [T' T [vP Subj [v' v tVP]]]]`. The raised VP sits at
     the left edge; the original VP position is the bare trace. -/
 def tobaBatakDerivedTree : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP vpP
-      (SO.nodeP (SO.leafP tok_t)
-        (SO.nodeP (SO.leafP tok_dakdanakan)
-          (SO.nodeP (SO.leafP tok_v) SO.traceP))))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP vpP
+      (SyntacticObject.nodeP (SyntacticObject.leafP tok_t)
+        (SyntacticObject.nodeP (SyntacticObject.leafP tok_dakdanakan)
+          (SyntacticObject.nodeP (SyntacticObject.leafP tok_v) SyntacticObject.traceP))))
 
 -- ============================================================================
 -- § 3: English SVO Derivation (Comparison)
 -- ============================================================================
 
-def v_saw   := SO.mkLeafPhon .V [] "saw" 11
-def n_mary  := SO.mkLeafPhon .N [] "Mary" 12
-def n_john  := SO.mkLeafPhon .N [] "John" 13
-def v_head2 := SO.mkLeaf .v [.V] 14
-def t_head2 := SO.mkLeaf .T [.v] 15
+def v_saw   := SyntacticObject.mkLeafPhon .V [] "saw" 11
+def n_mary  := SyntacticObject.mkLeafPhon .N [] "Mary" 12
+def n_john  := SyntacticObject.mkLeafPhon .N [] "John" 13
+def v_head2 := SyntacticObject.mkLeaf .v [.V] 14
+def t_head2 := SyntacticObject.mkLeaf .T [.v] 15
 
 private def tok_saw   : LIToken := ⟨.simple .V [] (phonForm := "saw"), 11⟩
 private def tok_mary_en : LIToken := ⟨.simple .N [] (phonForm := "Mary"), 12⟩
@@ -189,7 +192,7 @@ private def tok_t2    : LIToken := ⟨.simple .T [.v], 15⟩
 /-- English SVO via subject-raising to Spec,TP.
 
     Same base as Toba Batak, but the subject (not VP) moves to Spec,TP. -/
-def englishSVO : SO.Derivation :=
+def englishSVO : SyntacticObject.Derivation :=
   { initial := v_saw
     steps := [
       .emR n_mary,
@@ -203,11 +206,12 @@ def englishSVO : SO.Derivation :=
     `[TP T [vP John [v' v [VP saw Mary]]]]`. Built planar-first; same shape
     as `tobaBatakBaseTree`, modulo lexical content. -/
 def englishBaseTree : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP tok_t2)
-      (SO.nodeP (SO.leafP tok_john_en)
-        (SO.nodeP (SO.leafP tok_v2)
-          (SO.nodeP (SO.leafP tok_saw) (SO.leafP tok_mary_en)))))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP tok_t2)
+      (SyntacticObject.nodeP (SyntacticObject.leafP tok_john_en)
+        (SyntacticObject.nodeP (SyntacticObject.leafP tok_v2)
+          (SyntacticObject.nodeP (SyntacticObject.leafP tok_saw)
+            (SyntacticObject.leafP tok_mary_en)))))
 
 -- ============================================================================
 -- § 4: Word Order Predictions
@@ -223,8 +227,8 @@ theorem english_is_svo :
 
 /-- Both base trees (stage 4, pre-movement) have the same shape — same node
     and leaf counts. The only parametric difference is *what* moves in step 5.
-    Stated over the explicit base trees (the `SO.Derivation.stageAt` fold is
-    noncomputable on the `SO` carrier; the planar-built base trees are the
+    Stated over the explicit base trees (the `SyntacticObject.Derivation.stageAt` fold is
+    noncomputable on the `SyntacticObject` carrier; the planar-built base trees are the
     trees those stages produce). -/
 theorem same_base_counts :
     tobaBatakBaseTree.nodeCount = englishBaseTree.nodeCount ∧
@@ -262,7 +266,7 @@ theorem english_moves_subject :
     does not entail that the DO (properly contained within VP) individually
     c-commands the subject. -/
 theorem vp_ccommands_subject :
-    SO.cCommandsIn tobaBatakDerivedTree vp n_dakdanakan := by decide
+    SyntacticObject.cCommandsIn tobaBatakDerivedTree vp n_dakdanakan := by decide
 
 -- ============================================================================
 -- § 6: EPP Parameter
@@ -302,7 +306,7 @@ These predictions match the Toba Batak extraction data formalized in
 
     This is verified computationally: `n_biangi` is contained in `vp`. -/
 theorem object_inside_fronted_vp :
-    SO.contains vp n_biangi := by decide
+    SyntacticObject.contains vp n_biangi := by decide
 
 /-- The subject is NOT contained within the fronted VP. It is stranded
     outside the moved constituent and remains accessible for extraction.
@@ -311,7 +315,7 @@ theorem object_inside_fronted_vp :
     only the subject (= pivot) survives VP-raising in a position where
     Ā-extraction is possible. -/
 theorem subject_outside_fronted_vp :
-    ¬ SO.contains vp n_dakdanakan := by decide
+    ¬ SyntacticObject.contains vp n_dakdanakan := by decide
 
 /-- Extraction prediction: the VP-raising analysis predicts exactly the
     extraction pattern found in Toba Batak.
@@ -324,10 +328,10 @@ theorem subject_outside_fronted_vp :
     and `TobaBatak.avPatientExtraction` (ungrammatical). -/
 theorem extraction_matches_vp_containment :
     -- Agent is outside VP → extractable (matches AV agent = grammatical)
-    ¬ SO.contains vp n_dakdanakan ∧
+    ¬ SyntacticObject.contains vp n_dakdanakan ∧
     TobaBatak.avAgentExtraction.judgment = .grammatical ∧
     -- Object is inside VP → frozen (matches AV patient = ungrammatical)
-    SO.contains vp n_biangi ∧
+    SyntacticObject.contains vp n_biangi ∧
     TobaBatak.avPatientExtraction.judgment = .ungrammatical := by
   refine ⟨?_, rfl, ?_, rfl⟩ <;> decide
 
@@ -445,7 +449,7 @@ theorem binding_acceptability_pattern :
     c-commands into VP (can bind a reflexive DO), but the DO (inside VP)
     cannot c-command out past VP (cannot bind a reflexive subject). -/
 theorem object_does_not_ccommand_subject :
-    ¬ SO.cCommandsIn tobaBatakDerivedTree n_biangi n_dakdanakan := by
+    ¬ SyntacticObject.cCommandsIn tobaBatakDerivedTree n_biangi n_dakdanakan := by
   decide
 
 -- ============================================================================
@@ -509,7 +513,7 @@ the Linear Correspondence Axiom (LCA).
 -/
 
 /-- F head (higher functional projection above TP). -/
-def f_head := SO.mkLeaf .C [.T] 6
+def f_head := SyntacticObject.mkLeaf .C [.T] 6
 
 /-- Toba Batak SVO via the VOS Hypothesis.
 
@@ -519,7 +523,7 @@ def f_head := SO.mkLeaf .C [.T] 6
     7. IM Subj → `[FP Subj [F' F [TP VP [T' T [vP tSubj [v' v tVP]]]]]]`
 
     The subject raises past the fronted VP, yielding S-V-O surface order. -/
-def tobaBatakSVO : SO.Derivation :=
+def tobaBatakSVO : SyntacticObject.Derivation :=
   { initial := v_mangatuk
     steps := [
       .emR n_biangi,
@@ -538,15 +542,15 @@ theorem toba_batak_svo_order :
 /-- SVO goes through VOS: at stage 5 (before subject-raising), the
     intermediate tree has VOS order — the same as `tobaBatakVOS.final`. -/
 theorem svo_passes_through_vos :
-    (⟨tobaBatakSVO.initial, tobaBatakSVO.steps.take 5⟩ : SO.Derivation).surfacePhon
+    (⟨tobaBatakSVO.initial, tobaBatakSVO.steps.take 5⟩ : SyntacticObject.Derivation).surfacePhon
       = tobaBatakVOS.surfacePhon := by decide
 
 /-- The VOS Hypothesis predicts identical extraction restrictions for SVO:
     the DO is still inside the fronted VP, regardless of whether the
     subject subsequently raises past it. -/
 theorem svo_same_extraction_as_vos :
-    SO.contains vp n_biangi ∧
-    ¬ SO.contains vp n_dakdanakan := by
+    SyntacticObject.contains vp n_biangi ∧
+    ¬ SyntacticObject.contains vp n_dakdanakan := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- SVO requires two movement steps (VP-raising + subject-raising). -/
@@ -581,11 +585,11 @@ We model the English passive with the agent as a low complement of V
 (following [larson-1988]), with no external argument in Spec,vP.
 -/
 
-def v_injured     := SO.mkLeafPhon .V [] "was-injured" 21
-def n_boy         := SO.mkLeafPhon .N [] "the-boy" 22
-def n_by_himself  := SO.mkLeafPhon .N [] "by-himself" 23
-def v_head_pass   := SO.mkLeaf .v [.V] 24
-def t_head_pass   := SO.mkLeaf .T [.v] 25
+def v_injured     := SyntacticObject.mkLeafPhon .V [] "was-injured" 21
+def n_boy         := SyntacticObject.mkLeafPhon .N [] "the-boy" 22
+def n_by_himself  := SyntacticObject.mkLeafPhon .N [] "by-himself" 23
+def v_head_pass   := SyntacticObject.mkLeaf .v [.V] 24
+def t_head_pass   := SyntacticObject.mkLeaf .T [.v] 25
 
 private def tok_injured    : LIToken := ⟨.simple .V [] (phonForm := "was-injured"), 21⟩
 private def tok_boy        : LIToken := ⟨.simple .N [] (phonForm := "the-boy"), 22⟩
@@ -595,8 +599,10 @@ private def tok_t_pass     : LIToken := ⟨.simple .T [.v], 25⟩
 
 /-- The passive VP: `[VP patient [V' V agent-PP]]`. Built planar-first. -/
 def vp_passive : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP tok_boy) (SO.nodeP (SO.leafP tok_injured) (SO.leafP tok_by_himself)))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP tok_boy)
+      (SyntacticObject.nodeP (SyntacticObject.leafP tok_injured)
+        (SyntacticObject.leafP tok_by_himself)))
 
 /-- English passive derivation (trees 97–100 of the paper).
 
@@ -606,7 +612,7 @@ def vp_passive : SyntacticObject :=
     3. EM-L v        → `[v' v VP]` (no external argument — passive)
     4. EM-L T        → `[TP T [vP v VP]]`
     5. IM patient    → `[TP patient [T' T [vP v [VP t [V' V agent]]]]]` -/
-def englishPassive : SO.Derivation :=
+def englishPassive : SyntacticObject.Derivation :=
   { initial := v_injured
     steps := [
       .emR n_by_himself,
@@ -621,12 +627,13 @@ def englishPassive : SO.Derivation :=
     sits at the top edge above its base trace; the agent is a low
     complement of V. -/
 def englishPassiveDerivedTree : SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP tok_boy)
-      (SO.nodeP (SO.leafP tok_t_pass)
-        (SO.nodeP (SO.leafP tok_v_pass)
-          (SO.nodeP SO.traceP
-            (SO.nodeP (SO.leafP tok_injured) (SO.leafP tok_by_himself))))))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP tok_boy)
+      (SyntacticObject.nodeP (SyntacticObject.leafP tok_t_pass)
+        (SyntacticObject.nodeP (SyntacticObject.leafP tok_v_pass)
+          (SyntacticObject.nodeP SyntacticObject.traceP
+            (SyntacticObject.nodeP (SyntacticObject.leafP tok_injured)
+              (SyntacticObject.leafP tok_by_himself))))))
 
 /-- English passive yields patient-verb-agent surface order. -/
 theorem english_passive_order :
@@ -653,14 +660,14 @@ Both predictions follow from c-command in the derived tree:
 - Both: patient (raised to Spec,TP/FP) c-commands agent
 
 The formalization verifies the c-command predictions computationally
-using `SO.cCommandsIn` over the derived trees.
+using `SyntacticObject.cCommandsIn` over the derived trees.
 -/
 
 /-- In the English passive, the patient (raised to Spec,TP) c-commands
     the by-phrase agent. This is why "The boy was injured by himself" is
     grammatical: the patient can bind a reflexive in the agent position. -/
 theorem english_passive_patient_ccommands_agent :
-    SO.cCommandsIn englishPassiveDerivedTree n_boy n_by_himself := by
+    SyntacticObject.cCommandsIn englishPassiveDerivedTree n_boy n_by_himself := by
   decide
 
 /-- In the English passive, the by-phrase agent does NOT c-command the
@@ -668,7 +675,7 @@ theorem english_passive_patient_ccommands_agent :
     ungrammatical: the agent (low adjunct inside VP) cannot bind a
     reflexive in subject position. -/
 theorem english_passive_agent_not_ccommands_patient :
-    ¬ SO.cCommandsIn englishPassiveDerivedTree n_by_himself n_boy := by
+    ¬ SyntacticObject.cCommandsIn englishPassiveDerivedTree n_by_himself n_boy := by
   decide
 
 /-- In the TB active **base structure** (pre-movement, stage 4), the
@@ -680,7 +687,7 @@ theorem english_passive_agent_not_ccommands_patient :
     contains the object. After VP-raising, the object moves to a
     different branch; reconstruction restores the base c-command. -/
 theorem tb_active_subject_ccommands_object_at_base :
-    SO.cCommandsIn tobaBatakBaseTree n_dakdanakan n_biangi := by
+    SyntacticObject.cCommandsIn tobaBatakBaseTree n_dakdanakan n_biangi := by
   decide
 
 /-- Cross-linguistic contrast verified: same c-command theory, different
@@ -693,11 +700,11 @@ theorem tb_active_subject_ccommands_object_at_base :
     4. English passive (derived): agent does not c-command patient (ex. 96) -/
 theorem cross_linguistic_binding_contrast :
     -- TB active (base stage for binding, derived stage for anti-binding)
-    SO.cCommandsIn tobaBatakBaseTree n_dakdanakan n_biangi ∧
-    ¬ SO.cCommandsIn tobaBatakDerivedTree n_biangi n_dakdanakan ∧
+    SyntacticObject.cCommandsIn tobaBatakBaseTree n_dakdanakan n_biangi ∧
+    ¬ SyntacticObject.cCommandsIn tobaBatakDerivedTree n_biangi n_dakdanakan ∧
     -- English passive (derived tree)
-    SO.cCommandsIn englishPassiveDerivedTree n_boy n_by_himself ∧
-    ¬ SO.cCommandsIn englishPassiveDerivedTree n_by_himself n_boy := by
+    SyntacticObject.cCommandsIn englishPassiveDerivedTree n_boy n_by_himself ∧
+    ¬ SyntacticObject.cCommandsIn englishPassiveDerivedTree n_by_himself n_boy := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 end ColeHermon2008

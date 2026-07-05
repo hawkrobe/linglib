@@ -114,7 +114,7 @@ end DerivationCost
     numeration draw.)
     `mergeOps`: total step count.
     `agreeOps`/`ellipsisOps`: not tracked by the step-based model. -/
-def SO.Derivation.cost (d : SO.Derivation) : DerivationCost where
+def SyntacticObject.Derivation.cost (d : SyntacticObject.Derivation) : DerivationCost where
   lexicalItems :=
     d.steps.filter
       (match · with | .emL _ | .emR _ => true | _ => false)

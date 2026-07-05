@@ -37,10 +37,10 @@ docstring), each chain position is marked by a `.trace n` leaf
 sharing the index `n` with its mover. Either encoding licenses the
 same Late Merger reasoning: the sub-constituent is introduced at any
 admissible chain position, regardless of how that position is
-materialized in the SO. This file's `chain : List ChainPosition`
+materialized in the SyntacticObject. This file's `chain : List ChainPosition`
 abstraction is encoding-agnostic at the API level; the substrate
 choice (trace-as-leaf) shows up only at the level of the concrete
-SO produced after IM.
+SyntacticObject produced after IM.
 
 If the late-merged constituent contains an R-expression that would be
 c-commanded by a coreferential pronoun at the base position, full
@@ -228,7 +228,7 @@ theorem no_case_forces_reconstruction
     `SyntacticObject` trees, complementing the abstract chain-position
     analysis in `wlmForcesReconstruction`. -/
 def conditionCViolation (root binder rExpr : SyntacticObject) : Bool :=
-  decide (SO.cCommandsIn root binder rExpr)
+  decide (SyntacticObject.cCommandsIn root binder rExpr)
 
 /-- Condition C is satisfied in a tree: the binder does NOT c-command
     the R-expression. Takes the tree after any WLM has applied.

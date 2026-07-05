@@ -139,7 +139,7 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
     tree derivation. -/
 def superiorityFromTree (tree : SyntacticObject)
     (q1 q2 : SyntacticObject) : Bool :=
-  decide (SO.asymCCommandsIn tree q1 q2)
+  decide (SyntacticObject.asymCCommandsIn tree q1 q2)
 
 -- Scope Economy ([fox-2000])
 
@@ -172,14 +172,14 @@ def economyBlocksQR (e : ScopeEconomy) : Bool :=
 
     This derives the previously-stipulated `QRBarrier.dpPhase` from deeper
     principles: PIC makes DP-internal material inaccessible to operations outside
-    DP. On the MCB-faithful `SO` phase API the **interior Φ°_ℓ *is* the head's
+    DP. On the MCB-faithful `SyntacticObject` phase API the **interior Φ°_ℓ *is* the head's
     c-command domain** (Def 1.14.3, "Z is the interior of the phase"), so a goal
-    in that domain is impenetrable by construction (`SO.mem_phaseInterior`). -/
+    in that domain is impenetrable by construction (`SyntacticObject.mem_phaseInterior`). -/
 theorem dp_phase_barrier_from_pic (φ : Phase) {goal : SyntacticObject}
     (hacc : goal ∈ φ.tree.Acc)
-    (hcc : φ.tree.cCommandsIn (SO.lexLeaf φ.head) goal) :
+    (hcc : φ.tree.cCommandsIn (SyntacticObject.lexLeaf φ.head) goal) :
     φ.Impenetrable goal :=
-  SO.mem_phaseInterior.mpr ⟨hacc, hcc⟩
+  SyntacticObject.mem_phaseInterior.mpr ⟨hacc, hcc⟩
 
 end Scope
 
@@ -521,7 +521,7 @@ structure MinimalistScopeConfig where
 
 /-- Check if superiority blocks QR in this configuration.
 
-    When a tree and SO positions are provided, superiority is DERIVED
+    When a tree and SyntacticObject positions are provided, superiority is DERIVED
     from asymmetric c-command. Otherwise falls back to the freezing
     context annotation. -/
 def superiorityBlocked (config : MinimalistScopeConfig) : Bool :=
@@ -594,10 +594,10 @@ c-commands the theme in complement of Appl. QR of the theme over the goal
 is blocked by superiority, derived from c-command rather than stipulated.
 
 The Voice + low-Appl tree is rebuilt locally (planar-first, since the smart
-Merge `SO.node` is noncomputable) so this study stays self-contained and the
+Merge `SyntacticObject.node` is noncomputable) so this study stays self-contained and the
 `decide` proof reduces. It mirrors `Pylkkanen2008.ditransitiveTree`'s
 structure (`[John [Voice [sent [Mary [Appl letter]]]]]`); a future dedup can
-re-point at that tree once the `SO`-carrier flip reaches `Studies/Pylkkanen2008`. -/
+re-point at that tree once the `SyntacticObject`-carrier flip reaches `Studies/Pylkkanen2008`. -/
 
 /-- Voice[AG] head (introduces the external argument, [kratzer-1996]). -/
 def voice_ag_t  : Minimalist.LIToken := ⟨.simple .Voice [.V] "Voice[AG]", 400⟩
@@ -617,12 +617,13 @@ def DP_letter_t : Minimalist.LIToken := ⟨.simple .D [] "a letter", 408⟩
     Spec-ApplP asymmetrically c-commands the theme (a letter) in the
     complement of Appl — the [barss-lasnik-1986] asymmetry, structural. -/
 def ditransitiveTree : Minimalist.SyntacticObject :=
-  SO.ofPlanar
-    (SO.nodeP (SO.leafP DP_john_t)
-      (SO.nodeP (SO.leafP voice_ag_t)
-        (SO.nodeP (SO.leafP V_sent_t)
-          (SO.nodeP (SO.leafP DP_mary_t)
-            (SO.nodeP (SO.leafP appl_low_t) (SO.leafP DP_letter_t))))))
+  SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP DP_john_t)
+      (SyntacticObject.nodeP (SyntacticObject.leafP voice_ag_t)
+        (SyntacticObject.nodeP (SyntacticObject.leafP V_sent_t)
+          (SyntacticObject.nodeP (SyntacticObject.leafP DP_mary_t)
+            (SyntacticObject.nodeP (SyntacticObject.leafP appl_low_t)
+              (SyntacticObject.leafP DP_letter_t))))))
 
 /-- DOC scope freezing config with the local low-Appl tree:
     superiority is derived from goal asymmetrically c-commanding theme
@@ -630,10 +631,10 @@ def ditransitiveTree : Minimalist.SyntacticObject :=
 def docScopeConfig : MinimalistScopeConfig :=
   { q1 := { quantifier := "every worker"
            , position := .specVP
-           , so := some (SO.lexLeaf DP_mary_t) }
+           , so := some (SyntacticObject.lexLeaf DP_mary_t) }
   , q2 := { quantifier := "a paycheck"
            , position := .specVP
-           , so := some (SO.lexLeaf DP_letter_t) }
+           , so := some (SyntacticObject.lexLeaf DP_letter_t) }
   , freezingContext := .doubleObject
   , tree := some ditransitiveTree }
 

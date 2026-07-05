@@ -10,10 +10,11 @@ import Linglib.Syntax.Minimalist.Features
 # Phase Theory (linguistic-facing API)
 
 Formalization of derivational phases following [chomsky-2000], [abels-2012], and
-[citko-2014], built **directly on the `SO`-carrier phase domain**
+[citko-2014], built **directly on the `SyntacticObject`-carrier phase domain**
 (`Phase/Domain.lean`, MCB §1.14). This file packages the carrier-native
-primitives (`SO.isPhaseHeadOf`, `SO.phase`/`phaseInterior`/`phaseEdge`,
-`SO.Impenetrable`, `SO.isPhaseHead`) into the study-facing `Phase` record + the
+primitives (`SyntacticObject.isPhaseHeadOf`, `SyntacticObject.phase`/`phaseInterior`/`phaseEdge`,
+`SyntacticObject.Impenetrable`, `SyntacticObject.isPhaseHead`) into the study-facing `Phase` record
++ the
 PIC-strength / Transfer / feature-inheritance / DP-deactivation layer that the
 paper-anchored study files consume.
 
@@ -27,10 +28,10 @@ paper-anchored study files consume.
 
 ## Design
 
-A `Phase` is a `tree`-relative `(tree, head)` pair: the head function on `SO` is the
-**selection-driven head** (`SO.selHead`, Lemma 1.13.7), so the phase domain is read
+A `Phase` is a `tree`-relative `(tree, head)` pair: the head function on `SyntacticObject` is the
+**selection-driven head** (`SyntacticObject.selHead`, Lemma 1.13.7), so the phase domain is read
 off the carrier with no separate head-function field. Every phase notion delegates to
-the `SO.*` phase API, so concrete PIC checks `decide`. `isPhaseHeadOf c so` is the
+the `SyntacticObject.*` phase API, so concrete PIC checks `decide`. `isPhaseHeadOf c so` is the
 projecting head's outer category — convention-independent (the carrier is unordered).
 -/
 
@@ -44,7 +45,7 @@ namespace Minimalist
     exactly `c`? ([marcolli-chomsky-berwick-2025] Lemma 1.13.7 — the selector
     projects.) Computable and convention-independent; `none` (≠ `some c`) at
     exocentric nodes. -/
-def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool := SO.isPhaseHeadOf c so
+def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool := SyntacticObject.isPhaseHeadOf c so
 
 /-! ### Phase-head selectors
 
@@ -88,15 +89,15 @@ inductive PICStrength where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- Part 3: Phase (MCB §1.14 — grounded in the selection head on `SO`)
+-- Part 3: Phase (MCB §1.14 — grounded in the selection head on `SyntacticObject`)
 -- ============================================================================
 
 /-- A **phase** ([marcolli-chomsky-berwick-2025] §1.14): a phase-head leaf `head`
     together with the containing tree `tree`. Phases are tree-relative; the head
-    function is the carrier-native selection head (`SO.selHead`), so no separate
+    function is the carrier-native selection head (`SyntacticObject.selHead`), so no separate
     head-function field is needed. Every phase notion — content `Φ_ℓ` (eq 1.14.2),
     interior `Φ°_ℓ` (eq 1.14.3), edge `∂Φ_ℓ` (eq 1.14.4) — is a derived accessor over
-    the `SO.*` phase API.
+    the `SyntacticObject.*` phase API.
 
     Per-analysis discipline (Keine 2020 C-only; Chomsky 2000/2001 C+v; Pietraszko 2026
     / Erlewine & Sommerlot 2025 also Voice; Citko 2014 also D) is expressed by *which
@@ -131,10 +132,10 @@ instance (φ : Phase) (goal : SyntacticObject) : Decidable (φ.Impenetrable goal
 
 /-- A genuine phase: its head projects nontrivially (`head ∈ L_Φ(T)`, MCB Def 1.14.3
     eq 1.14.1) — `γ_ℓ` reaches an internal vertex. -/
-def IsWellFormed (φ : Phase) : Prop := SO.isPhaseHead φ.tree φ.head
+def IsWellFormed (φ : Phase) : Prop := SyntacticObject.isPhaseHead φ.tree φ.head
 
 instance (φ : Phase) : Decidable φ.IsWellFormed :=
-  inferInstanceAs (Decidable (SO.isPhaseHead _ _))
+  inferInstanceAs (Decidable (SyntacticObject.isPhaseHead _ _))
 
 /-! ### Spell-out triggers
 
@@ -155,9 +156,9 @@ structure Trigger (P : Type*) where
 variable {P : Type*}
 
 /-- A trigger applies to a phase iff its `selector` matches the phase head (the head
-leaf `ph.head`, as a leaf SO). -/
+leaf `ph.head`, as a leaf SyntacticObject). -/
 def Trigger.appliesTo (tr : Trigger P) (ph : Phase) : Bool :=
-  tr.selector (SO.lexLeaf ph.head)
+  tr.selector (SyntacticObject.lexLeaf ph.head)
 
 /-- The *first* registered trigger whose `selector` matches the phase head —
 first-match encodes lexicographic precedence (the elsewhere ordering of
@@ -265,7 +266,7 @@ structure FeatureInheritance where
   /-- The head receiving features (T, V, vMOD). -/
   target : SyntacticObject
   /-- Source must immediately contain target. -/
-  locality : SO.immediatelyContains source target
+  locality : SyntacticObject.immediatelyContains source target
   /-- Which transfer operation applies (default: classical [chomsky-2008] donate). -/
   style : TransferStyle := .donate
   /-- The features transferred (default: none specified at this layer). -/

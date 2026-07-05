@@ -12,7 +12,8 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 [marcolli-chomsky-berwick-2025]'s account of the syntax–semantics interface replaces a per-feature
 checking *lifecycle* (the retired activate → check → erase state machine with a Boolean
-`convergesAtLF`-style verdict) by a **single recursive map** `φ₊` — the renormalized character of a Birkhoff
+`convergesAtLF`-style verdict) by a **single recursive map** `φ₊` — the renormalized character of a
+Birkhoff
 factorization over the Connes–Kreimer Hopf algebra of the syntactic object, which "recursively
 modifies an initially chosen assignment of semantic values so as to incorporate the consistency
 checking over all substructures" (§3.1.5).
@@ -31,7 +32,7 @@ structural proof.
 ## Main definitions
 
 - `Consistency`: the Boolean consistency semiring (MCB §3.5 Boolean parsing).
-- `SyntacticObject.toCK`: the SO → Connes–Kreimer Hopf algebra bridge `ofTree S.val`.
+- `SyntacticObject.toCK`: the SyntacticObject → Connes–Kreimer Hopf algebra bridge `ofTree S.val`.
 
 ## References
 
@@ -98,7 +99,7 @@ def rbId : RotaBaxterSemiring Consistency where
 
 end Consistency
 
-/-! ### The SO → Hopf algebra bridge -/
+/-! ### The SyntacticObject → Hopf algebra bridge -/
 
 /-- The syntactic object as an element of the Connes–Kreimer Hopf algebra over `ℕ`: the singleton
     forest of its underlying nonplanar tree `S.val : Nonplanar SOLabel`. The base ring is `ℕ`
@@ -114,7 +115,7 @@ noncomputable def SyntacticObject.toCK (S : SyntacticObject) :
 open scoped TensorProduct
 
 /-- The **feature-consistency map** `φ₊` on a syntactic object: the renormalized value of a feature
-    character `φ` (with weight-`+1` Rota–Baxter operator `R`) at the SO. This is
+    character `φ` (with weight-`+1` Rota–Baxter operator `R`) at the SyntacticObject. This is
     [marcolli-chomsky-berwick-2025]'s "single recursive map [that] recursively modifies an
     initially chosen assignment of semantic values so as to incorporate the consistency checking
     over all substructures" — superseding the retired per-feature checking lifecycle. -/
@@ -124,7 +125,8 @@ noncomputable def featureConsistency
   SemiringRenorm.birkhoffPlusTree φ RB S.val
 
 /-- The feature-consistency map factors as the semiring Birkhoff convolution `φ₊ = φ₋ ⋆ φ`
-    ([marcolli-chomsky-berwick-2025] Def. 3.1.6, Prop. 3.1.9): on the SO's Hopf-algebra image
+    ([marcolli-chomsky-berwick-2025] Def. 3.1.6, Prop. 3.1.9): on the SyntacticObject's Hopf-algebra
+    image
     `S.toCK`, the convolution of the Bogolyubov counterterm `φ₋` with the character `φ` recovers the
     consistency verdict. Needs `φ` unital. -/
 theorem featureConsistency_eq_convMul

@@ -165,7 +165,7 @@ structure SharedNode where
 
     **Substrate note (post-MCB Phase 1.0).** The `conjunct1` / `conjunct2`
     field names are **stipulated planar labels** at the coord-structure
-    *meta*-level, NOT inherited from the SO substrate (which is nonplanar
+    *meta*-level, NOT inherited from the SyntacticObject substrate (which is nonplanar
     via FreeCommMagma — see `Minimalist.merge_comm`). The first-vs-second
     conjunct distinction tracked by these fields is a *coordination-
     specific stipulation* about which conjunct hosts the shared / deleted
@@ -776,13 +776,13 @@ theorem cs_twoEFeature_wholeDeriv_pf_differs :
 /-- The adopted CWH structure: non-bulk-sharing MD, no ellipsis (paper's (10b)).
     Shared nodes: C and T are individually multiply dominated. -/
 def cwhStructure : PFReducedCoordination where
-  conjunct1 := SO.mkLeaf .C [] 0
-  conjunct2 := SO.mkLeaf .C [] 1
+  conjunct1 := SyntacticObject.mkLeaf .C [] 0
+  conjunct2 := SyntacticObject.mkLeaf .C [] 1
   mechanisms := [.multidominance]
   sharing := some .nonBulk
   sharedNodes :=
-    [ { node := SO.mkLeaf .C [] 10, category := some .C, pronounced := true }
-    , { node := SO.mkLeaf .T [] 11, category := some .T, pronounced := false } ]
+    [ { node := SyntacticObject.mkLeaf .C [] 10, category := some .C, pronounced := true }
+    , { node := SyntacticObject.mkLeaf .T [] 11, category := some .T, pronounced := false } ]
   pfOutput := ["what", "and", "when", "should", "you", "teach"]
 
 /-- The adopted CS structure: bulk-sharing MD + ellipsis (paper's (20b)).
@@ -790,14 +790,14 @@ def cwhStructure : PFReducedCoordination where
     triggers TP deletion, repairing the MWF violation at the vP edge.
     Shared nodes: entire C' is shared (includes C, TP, vP, VP). -/
 def csStructure : PFReducedCoordination where
-  conjunct1 := SO.mkLeaf .C [] 0
-  conjunct2 := SO.mkLeaf .C [] 1
+  conjunct1 := SyntacticObject.mkLeaf .C [] 0
+  conjunct2 := SyntacticObject.mkLeaf .C [] 1
   mechanisms := [.multidominance, .ellipsis]
   sharing := some .bulk
   sharedNodes :=
-    [ { node := SO.mkLeaf .C [] 10, category := some .C, pronounced := true }
-    , { node := SO.mkLeaf .T [] 11, category := some .T, pronounced := false }
-    , { node := SO.mkLeaf .v [] 12, category := some .v, pronounced := false } ]
+    [ { node := SyntacticObject.mkLeaf .C [] 10, category := some .C, pronounced := true }
+    , { node := SyntacticObject.mkLeaf .T [] 11, category := some .T, pronounced := false }
+    , { node := SyntacticObject.mkLeaf .v [] 12, category := some .v, pronounced := false } ]
   pfOutput := ["what", "and", "when"]
 
 /-- Structural drift sentry over the four key properties of cwhStructure
@@ -920,13 +920,15 @@ def rnr_pureMD : RNRDatum :=
 /-- Ellipsis + MD: verb morphology mismatch forces ellipsis for VP,
     but PP pivot is still shared via MD (ex 52/53). -/
 def rnr_ellipsisPlusMD : RNRDatum :=
-  { sentence := "Alice must work on different topics, and Iris ought to be working on different topics."
+  { sentence :=
+    "Alice must work on different topics, and Iris ought to be working on different topics."
   , pivot := "on different topics"
   , morphologicalIdentity := false
   , mdProperties := true
   , involvesEllipsis := true
   , pivotType := .minimal
-  , notes := "Morphological mismatch (work vs working); PP shared via MD, VP ellipsis in first conjunct" }
+  , notes :=
+    "Morphological mismatch (work vs working); PP shared via MD, VP ellipsis in first conjunct" }
 
 /-- Vehicle-change diagnostic from [barros-vicente-2011] ex (47):
     morphological mismatch signals ellipsis (not MD).

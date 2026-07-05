@@ -312,7 +312,7 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
 /-! The linguistic External-Merge bridges `mergeOp_emR/emL_matches_Step` (which
 related `mergeOp (Sum.inl L)` on the head-decorated `toNonplanar` projection to the
 legacy `Step.emR/emL`) have been retired by the single-carrier migration. On the
-bare `SO` carrier the bridge is `Workspace.lean`'s `SO.merge_toForest`
+bare `SyntacticObject` carrier the bridge is `Workspace.lean`'s `SyntacticObject.merge_toForest`
 (`mergeOp_pair` with the bare `Sum.inr ()` label). -/
 
 end Minimalist.Merge

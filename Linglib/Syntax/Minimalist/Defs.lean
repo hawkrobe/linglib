@@ -9,7 +9,7 @@ import Linglib.Data.UD.Basic
 The **lexical alphabet** of the Minimalist Program: categorial features,
 lexical items, and the `LIToken` leaves over which syntactic objects are
 built. The `SyntacticObject` carrier itself — the MCB-faithful nonplanar
-`SO` type — lives in `SyntacticObject.lean` (which imports this file for the
+`SyntacticObject` type — lives in `SyntacticObject.lean` (which imports this file for the
 alphabet), so this `Defs` module is carrier-agnostic.
 
 Per [marcolli-chomsky-berwick-2025] Def 1.1.1 (book p. 22), `SO₀` consists of
@@ -178,7 +178,7 @@ def LIToken.phonForm? (tok : LIToken) : Option String :=
 
 /-- LIToken-level c-selection: `selector` selects `selected` iff
     `selector`'s outermost selectional feature equals `selected`'s outer
-    category. A pure `LIToken` relation; no SO structure involved. -/
+    category. A pure `LIToken` relation; no SyntacticObject structure involved. -/
 def LIToken.selects (selector selected : LIToken) : Prop :=
   selector.item.outerSel.head? = some selected.item.outerCat
 
@@ -189,7 +189,7 @@ instance (lt1 lt2 : LIToken) : Decidable (LIToken.selects lt1 lt2) := by
     when a selection check needs an `LIToken` at that position. The `index`
     is recorded in the `id` field (sentinel ≥ 10000) but is **not** part of
     chain identity — MCB chain identity is workspace-level (Def 1.2.1), and the
-    `SO` carrier's trace leaf is bare/index-free. Selection reads only the
+    `SyntacticObject` carrier's trace leaf is bare/index-free. Selection reads only the
     token's category (`.N`) and `outerSel` (`[]`), both index-independent. -/
 def mkTraceToken (index : Nat) : LIToken :=
   ⟨.simple .N [] (phonForm := ""), index + 10000⟩

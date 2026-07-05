@@ -109,10 +109,10 @@ def icelandicOrderingA : NestedAgreeConfig :=
 theorem orderingA_is_nested : IsNestedAgreeConfig icelandicOrderingA := by decide
 
 theorem orderingA_runStack_0 :
-    runStack icelandicOrderingA 0 = some (SO.lexLeaf aDPnom) := by decide
+    runStack icelandicOrderingA 0 = some (SyntacticObject.lexLeaf aDPnom) := by decide
 
 theorem orderingA_runStack_1 :
-    runStack icelandicOrderingA 1 = some (SO.lexLeaf aDPnom) := by decide
+    runStack icelandicOrderingA 1 = some (SyntacticObject.lexLeaf aDPnom) := by decide
 
 /-- **Apparent dative intervention is not actual.** The dative subject
     is in T's c-command (probe 0's domain) but is *not* in DPnom's
@@ -120,9 +120,9 @@ theorem orderingA_runStack_1 :
     above DPnom). DPdat is excluded from probe 1's truncated domain
     by Nested Agree. -/
 theorem orderingA_excludes_dative :
-    SO.lexLeaf aDPdat ∈ icelandicOrderingA.searchDomain 0 ∧
-    SO.lexLeaf aDPdat ∉ icelandicOrderingA.searchDomain 1 :=
-  apparent_intervener_excluded icelandicOrderingA 0 (SO.lexLeaf aDPdat)
+    SyntacticObject.lexLeaf aDPdat ∈ icelandicOrderingA.searchDomain 0 ∧
+    SyntacticObject.lexLeaf aDPdat ∉ icelandicOrderingA.searchDomain 1 :=
+  apparent_intervener_excluded icelandicOrderingA 0 (SyntacticObject.lexLeaf aDPdat)
     (by decide) (by decide)
 
 /-! ### Configuration B — default agreement -/
@@ -132,7 +132,7 @@ theorem orderingA_excludes_dative :
     quirky/defective for finite T's valuation purposes. -/
 def icelandicOrderingB : NestedAgreeConfig :=
   standardConfig tProbe aT aDPdat aV aDPnom aDPdat
-    (fun y => decide (y ≠ SO.lexLeaf aDPdat))
+    (fun y => decide (y ≠ SyntacticObject.lexLeaf aDPdat))
 
 /-- Ordering B is *not* well-formed: the chosen goal is φ-defective.
     The formal expression of "default agreement surfaces because
@@ -251,10 +251,10 @@ def lakPerfective : NestedAgreeConfig :=
 theorem lakPerfective_is_nested : IsNestedAgreeConfig lakPerfective := by decide
 
 theorem lakPerfective_runStack_0 :
-    runStack lakPerfective 0 = some (SO.lexLeaf aV) := by decide
+    runStack lakPerfective 0 = some (SyntacticObject.lexLeaf aV) := by decide
 
 theorem lakPerfective_runStack_1 :
-    runStack lakPerfective 1 = some (SO.lexLeaf aV) := by decide
+    runStack lakPerfective 1 = some (SyntacticObject.lexLeaf aV) := by decide
 
 /-- **Apparent ergative intervention is not actual.** The ergative
     subject is in Asp's c-command (probe 0's domain) but is *not* in
@@ -268,9 +268,9 @@ theorem lakPerfective_runStack_1 :
     presence. Surface result: agreement with Abs (transitively
     through v's prior cyclic Agree). -/
 theorem lakPerfective_excludes_ergative :
-    SO.lexLeaf aErg ∈ lakPerfective.searchDomain 0 ∧
-    SO.lexLeaf aErg ∉ lakPerfective.searchDomain 1 :=
-  apparent_intervener_excluded lakPerfective 0 (SO.lexLeaf aErg)
+    SyntacticObject.lexLeaf aErg ∈ lakPerfective.searchDomain 0 ∧
+    SyntacticObject.lexLeaf aErg ∉ lakPerfective.searchDomain 1 :=
+  apparent_intervener_excluded lakPerfective 0 (SyntacticObject.lexLeaf aErg)
     (by decide) (by decide)
 
 end Lak

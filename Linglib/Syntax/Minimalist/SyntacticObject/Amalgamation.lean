@@ -57,8 +57,8 @@ namespace Minimalist
     This is the "closest" c-command relation, used to define amalgamation
     locality (HMC compliance). -/
 def immediatelyCCommands (x y root : SyntacticObject) : Prop :=
-  SO.cCommandsIn root x y ∧
-  ¬∃ z, z ≠ x ∧ z ≠ y ∧ SO.cCommandsIn root x z ∧ SO.cCommandsIn root z y
+  SyntacticObject.cCommandsIn root x y ∧
+  ¬∃ z, z ≠ x ∧ z ≠ y ∧ SyntacticObject.cCommandsIn root x z ∧ SyntacticObject.cCommandsIn root z y
 
 -- ============================================================================
 -- § 2: Amalgamation
@@ -95,7 +95,7 @@ structure Amalgamation where
     the definition: `is_local` requires no intervener. -/
 theorem amalgamation_no_intervener (a : Amalgamation) (root : SyntacticObject) :
     ¬∃ z, z ≠ a.host ∧ z ≠ a.target ∧
-      SO.cCommandsIn root a.host z ∧ SO.cCommandsIn root z a.target := by
+      SyntacticObject.cCommandsIn root a.host z ∧ SyntacticObject.cCommandsIn root z a.target := by
   have h := a.is_local root
   unfold immediatelyCCommands at h
   exact h.2
@@ -107,8 +107,8 @@ theorem intervener_rules_out_amalgamation
     (host target intervener root : SyntacticObject)
     (h_neq_host : intervener ≠ host)
     (h_neq_target : intervener ≠ target)
-    (h_host_cmd : SO.cCommandsIn root host intervener)
-    (h_int_cmd : SO.cCommandsIn root intervener target) :
+    (h_host_cmd : SyntacticObject.cCommandsIn root host intervener)
+    (h_int_cmd : SyntacticObject.cCommandsIn root intervener target) :
     ¬∃ (a : Amalgamation), a.host = host ∧ a.target = target := by
   intro ⟨a, hHost, hTarget⟩
   have hLocal := a.is_local root
@@ -120,7 +120,7 @@ theorem intervener_rules_out_amalgamation
 
 /-- Amalgamation respects locality: the host c-commands the target. -/
 theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticObject) :
-    SO.cCommandsIn root a.host a.target := by
+    SyntacticObject.cCommandsIn root a.host a.target := by
   have h := a.is_local root
   unfold immediatelyCCommands at h
   exact h.1
@@ -157,10 +157,10 @@ theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticO
     rewrite will rebuild HG2019's amalgamation-as-covering analysis
     on top of the MCB-native `Minimalist.Labeling.isMaximalAt h /
     isHeadIn h` predicates. -/
-def VerbDoublingIsSyntacticIn (d : SO.Derivation) (x : SyntacticObject) : Prop :=
+def VerbDoublingIsSyntacticIn (d : SyntacticObject.Derivation) (x : SyntacticObject) : Prop :=
   x ∈ d.movedItems
 
-instance (d : SO.Derivation) (x : SyntacticObject) :
+instance (d : SyntacticObject.Derivation) (x : SyntacticObject) :
     Decidable (VerbDoublingIsSyntacticIn d x) := by
   unfold VerbDoublingIsSyntacticIn; infer_instance
 
