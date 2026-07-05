@@ -83,9 +83,9 @@ variable {R : Type*} [CommSemiring R] {α β : Type*}
 Mirrors `Coproduct/PruningNonplanar.lean`'s descent of `cutSummandsP`,
 but for the generic `cutSummandsG` (which uses a `List`-shaped per-cut
 remainder rather than `Option`). The descent applies whenever the
-`extract` policy is invariant under `RoseTree.PermEquiv` modulo
+`extract` policy is invariant under `RoseTree.Perm` modulo
 `Nonplanar.mk`. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this follows
-from `value_permEquiv`. -/
+from `Perm.value_eq`. -/
 
 namespace ConnesKreimer
 
@@ -181,9 +181,9 @@ private theorem cutListSummandsG_cons_proj
 /-! ### Extract-policy invariance
 
 The hypothesis on the `extract` policy: its return value, projected
-component-wise through `Nonplanar.mk`, is the same on `PermEquiv`-equal
+component-wise through `Nonplanar.mk`, is the same on `Perm`-equal
 inputs. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this holds because the
-root label and the τ value are both `PermEquiv`-invariant. -/
+root label and the τ value are both `Perm`-invariant. -/
 
 /-- An extract policy is **`Nonplanar.mk`-invariant** if its return
     value, projected componentwise through `Nonplanar.mk`, depends on
@@ -376,28 +376,27 @@ private theorem cutListSummandsG_proj_perm
     exact (swap_double_combinerProjG _ _ _).symm
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### Headline: PermStep + EqvGen lift
+/-! ### Headline: `Perm` + `PermList` recursion
 
-Structural induction on `PermStep`. The `swapAtRoot` case uses
-`cutListSummandsG_proj_perm`; the `recurse` case uses the inductive
-hypothesis combined with `cutListSummandsG_proj_at_via_augAction`. -/
+Structural recursion over the mutual `Perm`/`PermList`. The `node` case lifts
+the companion's list-level equality through the `Nonplanar.node a` wrapper; the
+`PermList.cons` case changes the head child (via `cutSummandsG_proj_perm` and
+`augActionG_proj_eq_of_step_data`) then the tail; the `PermList.swap` case is
+the identical-siblings reorder (`cutListSummandsG_proj_perm`). -/
 
-/-- Projection invariance under a single `PermStep`. -/
-theorem cutSummandsG_proj_permStep
+mutual
+/-- Projection invariance of `cutSummandsG` under `Perm`. -/
+theorem cutSummandsG_proj_perm
     {extract : RoseTree α → Option (List (RoseTree α))}
-    (hExt : ExtractInvariant extract)
-    {t s : RoseTree α} (h : RoseTree.PermStep t s) :
-    (cutSummandsG extract t).map projSummand =
-      (cutSummandsG extract s).map projSummand := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    rw [cutSummandsG_node, cutSummandsG_node,
-        Multiset.map_map, Multiset.map_map]
-    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
-      List.Perm.append_left pre (List.Perm.swap r l post)
-    have hL : (cutListSummandsG extract (pre ++ l :: r :: post)).map projForestG =
-              (cutListSummandsG extract (pre ++ r :: l :: post)).map projForestG :=
-      cutListSummandsG_proj_perm extract hperm
+    (hExt : ExtractInvariant extract) :
+    ∀ {t s : RoseTree α}, RoseTree.Perm t s →
+      (cutSummandsG extract t).map projSummand =
+        (cutSummandsG extract s).map projSummand
+  | _, _, @RoseTree.Perm.node _ a cs ds h => by
+    rw [cutSummandsG_node, cutSummandsG_node, Multiset.map_map, Multiset.map_map]
+    have hL : (cutListSummandsG extract cs).map projForestG =
+              (cutListSummandsG extract ds).map projForestG :=
+      cutListSummandsG_proj_permList hExt h
     have eq_fn :
         (projSummand (α := α)) ∘
           (fun (p : Forest (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
@@ -406,38 +405,34 @@ theorem cutSummandsG_proj_permStep
       funext p
       exact projSummand_node_factors a p
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
-  | @recurse a pre old new post hsub ih =>
-    rw [cutSummandsG_node, cutSummandsG_node,
-        Multiset.map_map, Multiset.map_map]
-    have h_mk : Nonplanar.mk old = Nonplanar.mk new :=
-      Nonplanar.mk_eq_mk_iff.mpr (RoseTree.PermEquiv.of_step hsub)
-    have h_aug : (augActionG extract old).map projForestG =
-                 (augActionG extract new).map projForestG :=
-      augActionG_proj_eq_of_step_data hExt h_mk ih
-    have hL : (cutListSummandsG extract (pre ++ old :: post)).map projForestG =
-              (cutListSummandsG extract (pre ++ new :: post)).map projForestG :=
-      cutListSummandsG_proj_at_via_augAction extract h_aug
-    have eq_fn :
-        (projSummand (α := α)) ∘
-          (fun (p : Forest (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
-        (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
-          (pf.1, Nonplanar.node a pf.2)) ∘ (projForestG (α := α)) := by
-      funext p
-      exact projSummand_node_factors a p
-    rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
+  | _, _, .trans h₁ h₂ =>
+    (cutSummandsG_proj_perm hExt h₁).trans (cutSummandsG_proj_perm hExt h₂)
 
-/-- Projection invariance under `PermEquiv`. Pure `EqvGen` lift. -/
-theorem cutSummandsG_proj_permEquiv
+/-- Companion: projection invariance of `cutListSummandsG` under `PermList`. -/
+private theorem cutListSummandsG_proj_permList
     {extract : RoseTree α → Option (List (RoseTree α))}
-    (hExt : ExtractInvariant extract)
-    {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
-    (cutSummandsG extract t).map projSummand =
-      (cutSummandsG extract s).map projSummand := by
-  induction h with
-  | rel _ _ hstep => exact cutSummandsG_proj_permStep hExt hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    (hExt : ExtractInvariant extract) :
+    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
+      (cutListSummandsG extract cs).map projForestG =
+        (cutListSummandsG extract ds).map projForestG
+  | _, _, .nil => rfl
+  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
+    have h_mk : Nonplanar.mk c = Nonplanar.mk d := Nonplanar.mk_eq_mk_iff.mpr hcd
+    have h_aug : (augActionG extract c).map projForestG =
+                 (augActionG extract d).map projForestG :=
+      augActionG_proj_eq_of_step_data hExt h_mk (cutSummandsG_proj_perm hExt hcd)
+    have step1 : (cutListSummandsG extract (c :: cs')).map projForestG =
+                 (cutListSummandsG extract (d :: cs')).map projForestG :=
+      cutListSummandsG_proj_at_via_augAction extract (pre := []) (post := cs') h_aug
+    have step2 : (cutListSummandsG extract (d :: cs')).map projForestG =
+                 (cutListSummandsG extract (d :: ds')).map projForestG :=
+      cutListSummandsG_proj_tail_lift extract d (cutListSummandsG_proj_permList hExt hs)
+    exact step1.trans step2
+  | _, _, .swap c d cs =>
+    cutListSummandsG_proj_perm extract (List.Perm.swap c d cs)
+  | _, _, .trans h₁ h₂ =>
+    (cutListSummandsG_proj_permList hExt h₁).trans (cutListSummandsG_proj_permList hExt h₂)
+end
 
 /-! ### Trace specialization
 
@@ -446,16 +441,16 @@ The Δ^c policy `extractC (τ ∘ Nonplanar.mk)` is `ExtractInvariant`:
 - For `Sum.inr _`-rooted inputs, `extractC` returns `none`.
 
 Both cases are determined by the root label and the τ value, both of
-which are `PermEquiv`-invariant. -/
+which are `Perm`-invariant. -/
 
 /-- The Δ^c extract policy is `ExtractInvariant`. -/
 theorem extractC_mkComp_invariant (τ : Nonplanar (α ⊕ β) → β) :
     ExtractInvariant (extractC (τ ∘ Nonplanar.mk)) := by
   intro t s hmk
-  -- Root labels match (permEquiv-invariant), so the extractC branches match.
+  -- Root labels match (perm-invariant), so the extractC branches match.
   have hlabel : t.value = s.value := by
-    have heq : RoseTree.PermEquiv t s := Nonplanar.mk_eq_mk_iff.mp hmk
-    exact RoseTree.value_permEquiv heq
+    have heq : RoseTree.Perm t s := Nonplanar.mk_eq_mk_iff.mp hmk
+    exact RoseTree.Perm.value_eq heq
   -- Destructure both trees as nodes; rewrite root labels via hlabel.
   obtain ⟨at_, cs_t⟩ := t
   obtain ⟨as, cs_s⟩ := s
@@ -479,12 +474,12 @@ theorem extractC_mkComp_invariant (τ : Nonplanar (α ⊕ β) → β) :
          (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inr b) cs_s)).map _
     simp only [extractC_inr, Option.map_none]
 
-/-- Δ^c cut-summand-projection invariance under `PermEquiv`. -/
-theorem cutSummandsCP_proj_permEquiv (τ : Nonplanar (α ⊕ β) → β)
-    {t s : RoseTree (α ⊕ β)} (h : RoseTree.PermEquiv t s) :
+/-- Δ^c cut-summand-projection invariance under `Perm`. -/
+theorem cutSummandsCP_proj_perm (τ : Nonplanar (α ⊕ β) → β)
+    {t s : RoseTree (α ⊕ β)} (h : RoseTree.Perm t s) :
     (cutSummandsCP (τ ∘ Nonplanar.mk) t).map projSummand =
       (cutSummandsCP (τ ∘ Nonplanar.mk) s).map projSummand :=
-  cutSummandsG_proj_permEquiv (extractC_mkComp_invariant τ) h
+  cutSummandsG_proj_perm (extractC_mkComp_invariant τ) h
 
 end ConnesKreimer
 
@@ -492,13 +487,13 @@ end ConnesKreimer
 
 /-- The Nonplanar Δ^c cut summands, descended from `cutSummandsCP` via
     `Nonplanar.lift` using the descent invariance
-    `cutSummandsCP_proj_permEquiv`. -/
+    `cutSummandsCP_proj_perm`. -/
 noncomputable def cutSummandsCN (τ : Nonplanar (α ⊕ β) → β) :
     Nonplanar (α ⊕ β) → Multiset (Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) :=
   Nonplanar.lift
     (fun T => (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
       ConnesKreimer.projSummand)
-    (fun _ _ h => ConnesKreimer.cutSummandsCP_proj_permEquiv τ h)
+    (fun _ _ h => ConnesKreimer.cutSummandsCP_proj_perm τ h)
 
 @[simp] theorem cutSummandsCN_mk (τ : Nonplanar (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
     cutSummandsCN τ (Nonplanar.mk T) =

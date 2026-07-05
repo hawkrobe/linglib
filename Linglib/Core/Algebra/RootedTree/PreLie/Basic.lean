@@ -79,7 +79,7 @@ RoseTree one.
 For mathlib upstream, a sibling `DecidableEq (Nonplanar α)` instance
 under `[LinearOrder α]` would let consumers opt into computability;
 that's deferred to a separate file
-(`Combinatorics/RootedTree/Nonplanar/Decidable.lean`?).
+(`Core/Data/RoseTree/DecEq.lean`).
 
 The pattern matches mathlib's `LieAlgebra.UniversalEnveloping` and
 `TensorProduct`: noncomputable for "abstract algebraic structure where
@@ -315,27 +315,28 @@ noncomputable instance instNonUnitalNonAssocRing :
     NonUnitalNonAssocRing (InsertionAlgebra α) :=
   { instAddCommGroup, instNonUnitalNonAssocSemiring with }
 
-/-! ### Source-self swap `PermEquiv`
+/-! ### Source-self swap `Perm`
 
 The pre-Lie identity reduces, after the lifted/preserved cancellations,
 to a `mk`-equality between two singleton trees that differ by a
 children-list swap at the source vertex `e`. Realized by structural
-induction on `e : Path` + `t₁ : RoseTree α`: a `swapAtRoot` `PermStep`
-at the root-path case, `recurse_lift` at the in-child cases. This is
+induction on `e : Path` + `t₁ : RoseTree α`: a root children-list swap
+(`Perm.node_of_perm`) at the root-path case, `Perm.congr_child` at the
+in-child cases. This is
 the only Nonplanar-specific cancellation in the pre-Lie identity
 proof; everything else holds at the planar level. -/
 
 /-- Inserting `T₂` then `T₃` at path `e`, vs inserting `T₃` then `T₂` at
-    path `e`, produces planar trees related by a `PermEquiv`
+    path `e`, produces planar trees related by a `Perm`
     (children-list swap at the source vertex `e`).
 
-    Path form of `mk_insertAt_sourceSelf_swap_permEquiv`: since
+    Path form of `mk_insertAt_sourceSelf_swap_perm`: since
     `Pathed.sourceSelf e = e` (the source vertex's path doesn't shift),
     the LHS/RHS shape just inserts twice at the same path with the two
     grafts in opposite orders. -/
-private theorem mk_insertAt_sourceSelf_swap_permEquiv :
+private theorem mk_insertAt_sourceSelf_swap_perm :
     ∀ (e : RoseTree.Pathed.Path) (t₁ T₂ T₃ : RoseTree α),
-    RoseTree.PermEquiv
+    RoseTree.Perm
       (RoseTree.Pathed.insertAt e T₃ (RoseTree.Pathed.insertAt e T₂ t₁))
       (RoseTree.Pathed.insertAt e T₂ (RoseTree.Pathed.insertAt e T₃ t₁))
   | [], .node a cs, T₂, T₃ => by
@@ -344,15 +345,13 @@ private theorem mk_insertAt_sourceSelf_swap_permEquiv :
     -- A single `swapAtRoot` step suffices.
     rw [RoseTree.Pathed.insertAt_nil, RoseTree.Pathed.insertAt_nil,
         RoseTree.Pathed.insertAt_nil, RoseTree.Pathed.insertAt_nil]
-    exact RoseTree.PermEquiv.of_step
-      (RoseTree.PermStep.swapAtRoot (a := a) (l := T₃) (r := T₂)
-        (pre := []) (post := cs))
+    exact RoseTree.Perm.node_of_perm (List.Perm.swap T₂ T₃ cs)
   | i :: rest, .node a cs, T₂, T₃ => by
     by_cases hi : i < cs.length
     · -- In-bounds: collapse the nested sets via `List.set_set` + `getElem_set_self`,
       -- apply IH on `rest, cs[i]`, then lift through `node a (cs.set i ·)` via
-      -- `permEquiv_recurse_lift (pre := cs.take i) (post := cs.drop (i+1))`.
-      have ih := mk_insertAt_sourceSelf_swap_permEquiv rest (cs[i]'hi) T₂ T₃
+      -- `Perm.congr_child (pre := cs.take i) (post := cs.drop (i+1))`.
+      have ih := mk_insertAt_sourceSelf_swap_perm rest (cs[i]'hi) T₂ T₃
       have hlen_T2 : i < (cs.set i (RoseTree.Pathed.insertAt rest T₂ (cs[i]'hi))).length := by
         rw [List.length_set]; exact hi
       have hlen_T3 : i < (cs.set i (RoseTree.Pathed.insertAt rest T₃ (cs[i]'hi))).length := by
@@ -375,10 +374,10 @@ private theorem mk_insertAt_sourceSelf_swap_permEquiv :
                   (RoseTree.Pathed.insertAt rest T₃ (cs[i]'hi))
                   :: cs.drop (i + 1) from by
             rw [List.set_eq_take_append_cons_drop, if_pos hi]]
-      exact RoseTree.permEquiv_recurse_lift (cs.take i) (cs.drop (i + 1)) ih
+      exact RoseTree.Perm.congr_child (cs.take i) (cs.drop (i + 1)) ih
     · -- Out-of-bounds: both `insertAt` calls are no-ops.
       simp only [RoseTree.Pathed.insertAt_cons_of_not_lt _ _ _ _ _ hi]
-      exact RoseTree.PermEquiv.refl _
+      exact RoseTree.Perm.refl _
 
 /-- Source-self swap as a `Nonplanar` equality. The form needed when the
     pre-Lie identity's source-self class is contracted. -/
@@ -386,7 +385,7 @@ private theorem mk_insertAt_sourceSelf_swap
     (e : RoseTree.Pathed.Path) (t₁ T₂ T₃ : RoseTree α) :
     Nonplanar.mk (RoseTree.Pathed.insertAt e T₃ (RoseTree.Pathed.insertAt e T₂ t₁)) =
     Nonplanar.mk (RoseTree.Pathed.insertAt e T₂ (RoseTree.Pathed.insertAt e T₃ t₁)) :=
-  Nonplanar.mk_eq_mk_iff.mpr (mk_insertAt_sourceSelf_swap_permEquiv e t₁ T₂ T₃)
+  Nonplanar.mk_eq_mk_iff.mpr (mk_insertAt_sourceSelf_swap_perm e t₁ T₂ T₃)
 
 /-! ### Multiset bilinearity helpers
 

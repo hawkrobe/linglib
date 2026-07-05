@@ -4,13 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.Multiset.Rel
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 
 /-!
 # Decidable equality of nonplanar rose trees
 
 Two rose trees represent the same nonplanar tree exactly when they are equal up to
-reordering the children of every vertex (`RoseTree.PermEquiv`). This file shows that the
+reordering the children of every vertex (`RoseTree.Perm`). This file shows that the
 relation is decidable, and computably so: the decision procedure reduces in the kernel,
 so concrete `Nonplanar` equalities close by `decide`.
 
@@ -21,8 +21,8 @@ so concrete `Nonplanar` equalities close by `decide`.
 
 ## Main results
 
-- `RoseTree.eqv_iff_permEquiv`: `eqv` decides `PermEquiv`.
-- `RoseTree.instDecidableRelPermEquiv`: the resulting `DecidableRel PermEquiv`.
+- `RoseTree.eqv_iff_perm`: `eqv` decides `Perm`.
+- `RoseTree.instDecidableRelPerm`: the resulting `DecidableRel Perm`.
 - `RootedTree.Nonplanar.instDecidableEq`: decidable equality on the quotient, via
   `Quotient.decidableEq`.
 
@@ -42,10 +42,10 @@ open RootedTree
 
 variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s : RoseTree α}
 
-/-! ### Deciding `PermEquiv`: equality up to child reordering -/
+/-! ### Deciding `Perm`: equality up to child reordering -/
 
 /-- `eqv t s` decides whether `t` and `s` are equal up to child reordering
-    (`eqv_iff_permEquiv`). -/
+    (`eqv_iff_perm`). -/
 def eqv : RoseTree α → RoseTree α → Bool
   | .node a cs, .node b ds => decide (a = b) && go cs ds
 where
@@ -60,7 +60,7 @@ where
 /-! #### Correctness of the greedy matcher
 
 `eqv.go` is `List.isPermBy eqv`, so the generic soundness and completeness of the
-greedy matcher (`Core/Data/Multiset/Rel.lean`) reduce `eqv_iff_permEquiv` to one
+greedy matcher (`Core/Data/Multiset/Rel.lean`) reduce `eqv_iff_perm` to one
 size-bounded induction against `mk`-equality. -/
 
 /-- `eqv` as a `Prop`-valued relation. -/
@@ -128,20 +128,20 @@ private theorem eqv_iff_mk_eq :
         (ih x z hx hz).mpr (((ih x y hx hy).mp h1).trans ((ih y z hy hz).mp h2)))
       hcsN hdsN (h.mono fun x hx y hy hxy => (ih x y (hcsN x hx) (hdsN y hy)).mpr hxy)
 
-/-- `eqv` decides `PermEquiv`: two ordered trees are `eqv`-related iff they are equal up
+/-- `eqv` decides `Perm`: two ordered trees are `eqv`-related iff they are equal up
     to reordering the children of every vertex. Composite of `eqv_iff_mk_eq` (at a
     sum-of-sizes bound) with `Nonplanar.mk_eq_mk_iff`. -/
-theorem eqv_iff_permEquiv : eqv t s = true ↔ PermEquiv t s :=
+theorem eqv_iff_perm : eqv t s = true ↔ Perm t s :=
   ((eqv_iff_mk_eq (sizeOf t + sizeOf s + 1) t s (by omega) (by omega)).trans
     Nonplanar.mk_eq_mk_iff)
 
-/-- `PermEquiv` is decidable, computably so: decided by `eqv`, which reduces in the
+/-- `Perm` is decidable, computably so: decided by `eqv`, which reduces in the
     kernel. -/
-instance instDecidableRelPermEquiv : DecidableRel (PermEquiv (α := α)) :=
-  fun _ _ => decidable_of_iff _ eqv_iff_permEquiv
+instance instDecidableRelPerm : DecidableRel (Perm (α := α)) :=
+  fun _ _ => decidable_of_iff _ eqv_iff_perm
 
 instance : DecidableRel ((· ≈ ·) : RoseTree α → RoseTree α → Prop) :=
-  instDecidableRelPermEquiv
+  instDecidableRelPerm
 
 end RoseTree
 
@@ -153,6 +153,6 @@ variable {α : Type*} [DecidableEq α]
     computable: `Quotient.decidableEq` over `RoseTree.eqv` on representatives, which
     reduces in the kernel, so concrete `Nonplanar` equalities close by `decide`. -/
 instance instDecidableEq : DecidableEq (Nonplanar α) :=
-  inferInstanceAs (DecidableEq (Quotient (RoseTree.instSetoid (α := α))))
+  inferInstanceAs (DecidableEq (Quotient (RoseTree.isSetoid (α := α))))
 
 end RootedTree.Nonplanar

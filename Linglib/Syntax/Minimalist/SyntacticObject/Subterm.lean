@@ -56,7 +56,7 @@ instance (x y : SO) : Decidable (SO.immediatelyContains x y) :=
 
 `Nonplanar.rootChildren` is single-level, so deep enumeration is built fresh at the
 planar level and lifted. The result is a multiset of *nonplanar* subtrees; its
-`PermEquiv`-invariance lets it descend to the quotient. -/
+`Perm`-invariance lets it descend to the quotient. -/
 
 mutual
 /-- All subtrees of a planar tree (incl. the root), as nonplanar trees. -/
@@ -68,47 +68,33 @@ def subtreesNPlanarList : List (RoseTree SOLabel) → Multiset (Nonplanar SOLabe
   | c :: cs => subtreesNPlanar c + subtreesNPlanarList cs
 end
 
-/-- `subtreesNPlanarList` is a multiset sum, hence permutation-invariant. -/
-private theorem subtreesNPlanarList_perm {cs ds : List (RoseTree SOLabel)}
-    (h : cs.Perm ds) : subtreesNPlanarList cs = subtreesNPlanarList ds := by
-  induction h with
-  | nil => rfl
-  | cons _ _ ih => simp only [subtreesNPlanarList]; rw [ih]
-  | swap _ _ _ => simp only [subtreesNPlanarList]; rw [add_left_comm]
-  | trans _ _ ih1 ih2 => exact ih1.trans ih2
-
-/-- Replacing one child by a subtree-equal child preserves the list sum. -/
-private theorem subtreesNPlanarList_replace (pre post : List (RoseTree SOLabel))
-    {old new : RoseTree SOLabel} (h : subtreesNPlanar old = subtreesNPlanar new) :
-    subtreesNPlanarList (pre ++ old :: post) = subtreesNPlanarList (pre ++ new :: post) := by
-  induction pre with
-  | nil => simp only [List.nil_append, subtreesNPlanarList]; rw [h]
-  | cons hd tl ih => simp only [List.cons_append, subtreesNPlanarList]; rw [ih]
-
-private theorem subtreesNPlanar_permStep {t s : RoseTree SOLabel}
-    (hstep : RoseTree.PermStep t s) : subtreesNPlanar t = subtreesNPlanar s := by
-  induction hstep with
-  | @swapAtRoot a l r pre post =>
+mutual
+/-- `subtreesNPlanar` is `Perm`-invariant, so it descends to `Nonplanar`. At a node the
+    root `mk`-image is fixed by `mk_eq_mk_iff` and the child-list sum by the `PermList`
+    companion. -/
+theorem subtreesNPlanar_perm : ∀ {t s : RoseTree SOLabel}, RoseTree.Perm t s →
+    subtreesNPlanar t = subtreesNPlanar s
+  | _, _, .node h => by
     simp only [subtreesNPlanar]
-    rw [Nonplanar.mk_step RoseTree.PermStep.swapAtRoot,
-        subtreesNPlanarList_perm (List.Perm.append_left pre (.swap r l post))]
-  | @recurse a pre old new post hstep ih =>
-    simp only [subtreesNPlanar]
-    rw [Nonplanar.mk_step (RoseTree.PermStep.recurse hstep),
-        subtreesNPlanarList_replace pre post ih]
+    rw [Nonplanar.mk_eq_mk_iff.mpr (RoseTree.Perm.node h), subtreesNPlanarList_permList h]
+  | _, _, .trans h₁ h₂ => (subtreesNPlanar_perm h₁).trans (subtreesNPlanar_perm h₂)
 
-/-- `subtreesNPlanar` is `PermEquiv`-invariant, so it descends to `Nonplanar`. -/
-theorem subtreesNPlanar_permEquiv {t s : RoseTree SOLabel}
-    (h : RoseTree.PermEquiv t s) : subtreesNPlanar t = subtreesNPlanar s := by
-  induction h with
-  | rel _ _ hstep => exact subtreesNPlanar_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- The child-list subtree sum is `PermList`-invariant: it is a multiset sum, and the
+    `List.Perm`-style case split matches heads by the mutual `subtreesNPlanar_perm` and
+    reorders by `add_left_comm`. -/
+theorem subtreesNPlanarList_permList : ∀ {cs ds : List (RoseTree SOLabel)},
+    RoseTree.PermList cs ds → subtreesNPlanarList cs = subtreesNPlanarList ds
+  | _, _, .nil => rfl
+  | _, _, .cons h hs => by
+    simp only [subtreesNPlanarList, subtreesNPlanar_perm h, subtreesNPlanarList_permList hs]
+  | _, _, .swap _ _ _ => by simp only [subtreesNPlanarList]; rw [add_left_comm]
+  | _, _, .trans h₁ h₂ =>
+    (subtreesNPlanarList_permList h₁).trans (subtreesNPlanarList_permList h₂)
+end
 
 /-- All subtrees of a nonplanar tree (incl. the root). -/
 def subtreesN : Nonplanar SOLabel → Multiset (Nonplanar SOLabel) :=
-  Nonplanar.lift subtreesNPlanar (fun _ _ h => subtreesNPlanar_permEquiv h)
+  Nonplanar.lift subtreesNPlanar (fun _ _ h => subtreesNPlanar_perm h)
 
 @[simp] theorem subtreesN_mk (t : RoseTree SOLabel) :
     subtreesN (Nonplanar.mk t) = subtreesNPlanar t := rfl

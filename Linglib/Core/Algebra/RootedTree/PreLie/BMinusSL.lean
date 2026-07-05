@@ -7,7 +7,7 @@ import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.RootedTree.PreLie.Basic
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.BMinus
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 

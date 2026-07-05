@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
-import Linglib.Core.Combinatorics.RootedTree.DecEq
+import Linglib.Core.Data.RoseTree.DecEq
 
 /-!
 # External Merge bridge: algebraic ↔ linguistic

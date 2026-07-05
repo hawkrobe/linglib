@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Linglib.Core.Combinatorics.RootedTree.DecEq
+import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Syntax.Minimalist.Defs
 
 /-!
@@ -77,57 +77,45 @@ def isSOPlanarList : List (RoseTree SOLabel) → Bool
   | c :: cs => isSOPlanar c && isSOPlanarList cs
 end
 
-/-! ### `isSOPlanar` is `PermEquiv`-invariant (so it lifts) -/
+/-! ### `isSOPlanar` is `Perm`-invariant (so it lifts) -/
 
-/-- `isSOPlanarList` is a conjunction over children, hence permutation-invariant. -/
-private theorem isSOPlanarList_perm (cs ds : List (RoseTree SOLabel)) (h : cs.Perm ds) :
-    isSOPlanarList cs = isSOPlanarList ds := by
-  induction h with
-  | nil => rfl
-  | cons _ _ ih => simp only [isSOPlanarList]; rw [ih]
-  | swap _ _ _ => simp only [isSOPlanarList, Bool.and_left_comm]
-  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+/-- Congruence for `isSOPlanar` at a node whose children agree in length and in
+    `isSOPlanarList`: a lexical label reads only the emptiness (via length), a bare
+    label only the arity check (length) and the recursive `isSOPlanarList`. -/
+private theorem isSOPlanar_node_congr {a : SOLabel} {cs ds : List (RoseTree SOLabel)}
+    (hlen : cs.length = ds.length) (hlist : isSOPlanarList cs = isSOPlanarList ds) :
+    isSOPlanar (.node a cs) = isSOPlanar (.node a ds) := by
+  cases a with
+  | inl _ =>
+    simp only [isSOPlanar]
+    rw [Bool.eq_iff_iff]
+    simp only [List.isEmpty_iff_length_eq_zero, hlen]
+  | inr u => cases u; simp only [isSOPlanar, hlen, hlist]
 
-/-- Replacing one child by an `isSOPlanar`-equal child preserves `isSOPlanarList`. -/
-private theorem isSOPlanarList_replace (pre post : List (RoseTree SOLabel))
-    {old new : RoseTree SOLabel} (h : isSOPlanar old = isSOPlanar new) :
-    isSOPlanarList (pre ++ old :: post) = isSOPlanarList (pre ++ new :: post) := by
-  induction pre with
-  | nil => simp only [List.nil_append, isSOPlanarList]; rw [h]
-  | cons hd tl ih => simp only [List.cons_append, isSOPlanarList]; rw [ih]
+mutual
+/-- `isSOPlanar` is invariant under `Perm`, hence descends to the quotient. At a node
+    the arity check is fixed by the equal children lengths and the recursive check by
+    the `PermList` companion. -/
+theorem isSOPlanar_perm : ∀ {t s : RoseTree SOLabel}, RoseTree.Perm t s →
+    isSOPlanar t = isSOPlanar s
+  | _, _, .node h => isSOPlanar_node_congr h.length_eq (isSOPlanarList_permList h)
+  | _, _, .trans h₁ h₂ => (isSOPlanar_perm h₁).trans (isSOPlanar_perm h₂)
 
-private theorem isSOPlanar_permStep {t s : RoseTree SOLabel} (h : RoseTree.PermStep t s) :
-    isSOPlanar t = isSOPlanar s := by
-  induction h with
-  | swapAtRoot =>
-    rename_i a l r pre post
-    cases a with
-    | inl _ => simp only [isSOPlanar]; cases pre <;> simp [List.isEmpty_cons]
-    | inr u => cases u
-               simp only [isSOPlanar, List.length_append, List.length_cons,
-                 isSOPlanarList_perm _ _ (List.Perm.append_left pre (.swap r l post))]
-  | recurse _ ih =>
-    rename_i a pre old new post _hstep
-    cases a with
-    | inl _ => simp only [isSOPlanar]; cases pre <;> simp [List.isEmpty_cons]
-    | inr u => cases u
-               simp only [isSOPlanar, List.length_append, List.length_cons,
-                 isSOPlanarList_replace pre post ih]
-
-/-- `isSOPlanar` is invariant under `PermEquiv`, hence descends to the quotient. -/
-theorem isSOPlanar_permEquiv {t s : RoseTree SOLabel} (h : RoseTree.PermEquiv t s) :
-    isSOPlanar t = isSOPlanar s := by
-  induction h with
-  | rel _ _ hstep => exact isSOPlanar_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- `isSOPlanarList` is a conjunction over children, hence `PermList`-invariant. -/
+theorem isSOPlanarList_permList : ∀ {cs ds : List (RoseTree SOLabel)},
+    RoseTree.PermList cs ds → isSOPlanarList cs = isSOPlanarList ds
+  | _, _, .nil => rfl
+  | _, _, .cons h hs => by
+    simp only [isSOPlanarList, isSOPlanar_perm h, isSOPlanarList_permList hs]
+  | _, _, .swap _ _ _ => by simp only [isSOPlanarList, Bool.and_left_comm]
+  | _, _, .trans h₁ h₂ => (isSOPlanarList_permList h₁).trans (isSOPlanarList_permList h₂)
+end
 
 /-! ### The carrier: `IsSO` on `Nonplanar` + the `SO` subtype -/
 
 /-- Well-formed-SO check on the nonplanar carrier, lifted from `isSOPlanar`. -/
 def isSO : Nonplanar SOLabel → Bool :=
-  Nonplanar.lift isSOPlanar (fun _ _ h => isSOPlanar_permEquiv h)
+  Nonplanar.lift isSOPlanar (fun _ _ h => isSOPlanar_perm h)
 
 @[simp] theorem isSO_mk (t : RoseTree SOLabel) : isSO (Nonplanar.mk t) = isSOPlanar t := rfl
 

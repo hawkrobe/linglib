@@ -1185,7 +1185,7 @@ theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
 
 `(insertionForest host gs).map msform` depends only on the multiset image
 of `gs.map mk`, not on the `RoseTree` representatives or order. This combines
-guest-Perm invariance + guest-PermEquiv invariance into a single lemma
+guest-Perm invariance + guest-Perm invariance into a single lemma
 matching the level used by `Nonplanar.insertionMultiset`. -/
 
 /-- General `Perm` lifting: if `(l₁.map f).Perm (l₂.map f)`, there exists
@@ -1225,12 +1225,12 @@ private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁
     · exact hperm_l₁.trans (hperm_rest.cons a)
     · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
 
-/-- A bucket slice preserves `Forall₂ PermEquiv` on guests: equivalent guest
+/-- A bucket slice preserves `Forall₂ Perm` on guests: equivalent guest
     lists yield equivalent slices, for either bucket. -/
-private theorem bucketSlice_preserves_permEquiv
-    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ PermEquiv Ts Ts')
+private theorem bucketSlice_preserves_perm
+    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts')
     (assn : List Bool) (t : Bool) :
-    List.Forall₂ PermEquiv (bucketSlice Ts assn t) (bucketSlice Ts' assn t) := by
+    List.Forall₂ Perm (bucketSlice Ts assn t) (bucketSlice Ts' assn t) := by
   induction h generalizing assn with
   | nil => simp [bucketSlice]
   | @cons T T' Ts_tail Ts'_tail hd_pe _tail_pe ih =>
@@ -1242,13 +1242,13 @@ private theorem bucketSlice_preserves_permEquiv
       · rw [if_pos hb, if_pos hb]; exact List.Forall₂.cons hd_pe (ih assn_rest)
       · rw [if_neg hb, if_neg hb]; exact ih assn_rest
 
-/-- **Forest version of guest-PermEquiv invariance**: `Forall₂ PermEquiv`
+/-- **Forest version of guest-Perm invariance**: `Forall₂ Perm`
     on guests preserves `(insertionForest F Ts).map (List.map mk)`.
-    Mirrors `insertionForest_permEquiv_host` (Insertion.lean §6) but for
+    Mirrors `insertionForest_perm_host` (Insertion.lean §6) but for
     the guest list. -/
-private theorem insertionForest_permEquiv_guests
+private theorem insertionForest_forall₂_perm_guests
     (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)}
-    (h : List.Forall₂ PermEquiv Ts Ts') :
+    (h : List.Forall₂ Perm Ts Ts') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
     (insertionForest F Ts').map (List.map Nonplanar.mk) := by
   induction F generalizing Ts Ts' with
@@ -1265,15 +1265,15 @@ private theorem insertionForest_permEquiv_guests
     rw [hlen]
     rw [Multiset.map_bind, Multiset.map_bind]
     refine Multiset.bind_congr fun assn _ => ?_
-    have h_ft : List.Forall₂ PermEquiv
+    have h_ft : List.Forall₂ Perm
         ((Ts.zip assn).filterMap (fun p => if p.snd then some p.fst else none))
         ((Ts'.zip assn).filterMap (fun p => if p.snd then some p.fst else none)) :=
-      bucketSlice_preserves_permEquiv h assn true
-    have h_ff : List.Forall₂ PermEquiv
+      bucketSlice_preserves_perm h assn true
+    have h_ff : List.Forall₂ Perm
         ((Ts.zip assn).filterMap (fun p => if p.snd then none else some p.fst))
         ((Ts'.zip assn).filterMap (fun p => if p.snd then none else some p.fst)) := by
       rw [← bucketSlice_bool_false Ts assn, ← bucketSlice_bool_false Ts' assn]
-      exact bucketSlice_preserves_permEquiv h assn false
+      exact bucketSlice_preserves_perm h assn false
     rw [Multiset.map_bind, Multiset.map_bind]
     simp only [Multiset.map_map, Function.comp, List.map_cons]
     let f_T : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
@@ -1287,7 +1287,7 @@ private theorem insertionForest_permEquiv_guests
     change (insertion T_h _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
            (insertion T_h _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
     rw [← Multiset.bind_map, ← Multiset.bind_map]
-    rw [insertion_permEquiv_guests T_h h_ft]
+    rw [insertion_forall₂_perm_guests T_h h_ft]
     refine Multiset.bind_congr fun mk_T_ins _ => ?_
     show (insertionForest F_h ((Ts.zip assn).filterMap
               (fun p => if p.snd then none else some p.fst))).map
@@ -1307,7 +1307,7 @@ theorem insertionForest_msform_invariance_guests
     (insertionForest host gs1).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
     (insertionForest host gs2).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
   obtain ⟨gs_mid, hperm_planar, hmap_eq⟩ := perm_lift_through_map Nonplanar.mk h
-  have h_forall : List.Forall₂ PermEquiv gs_mid gs2 := by
+  have h_forall : List.Forall₂ Perm gs_mid gs2 := by
     have hlen : gs_mid.length = gs2.length := by
       have := congrArg List.length hmap_eq
       simpa using this
@@ -1334,7 +1334,7 @@ theorem insertionForest_msform_invariance_guests
     insertionForest_perm_guests host hperm_planar
   have step2 : (insertionForest host gs_mid).map (List.map Nonplanar.mk) =
                (insertionForest host gs2).map (List.map Nonplanar.mk) :=
-    insertionForest_permEquiv_guests host h_forall
+    insertionForest_forall₂_perm_guests host h_forall
   have h_combined : (insertionForest host gs1).map (List.map Nonplanar.mk) =
                     (insertionForest host gs2).map (List.map Nonplanar.mk) :=
     step1.trans step2

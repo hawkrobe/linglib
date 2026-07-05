@@ -1,5 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 
 set_option autoImplicit false
 

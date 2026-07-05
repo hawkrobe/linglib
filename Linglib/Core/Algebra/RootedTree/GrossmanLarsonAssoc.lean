@@ -393,11 +393,11 @@ private theorem perm_lift_mk {l₂ l₁ : List (RoseTree α)}
     · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
 
 /-- A `mk`-equality on lists `l₁.map mk = l₂.map mk` lifts to componentwise
-    `Forall₂ PermEquiv l₁ l₂`. -/
-private theorem forall2_permEquiv_of_map_mk_eq :
+    `Forall₂ Perm l₁ l₂`. -/
+private theorem forall2_perm_of_map_mk_eq :
     ∀ {l₁ l₂ : List (RoseTree α)},
       l₁.map Nonplanar.mk = l₂.map Nonplanar.mk →
-      List.Forall₂ RoseTree.PermEquiv l₁ l₂
+      List.Forall₂ RoseTree.Perm l₁ l₂
   | [], [], _ => List.Forall₂.nil
   | [], _ :: _, h => by simp at h
   | _ :: _, [], h => by simp at h
@@ -405,17 +405,17 @@ private theorem forall2_permEquiv_of_map_mk_eq :
     rw [List.map_cons, List.map_cons, List.cons.injEq] at h
     exact List.Forall₂.cons
       (Nonplanar.mk_eq_mk_iff.mp h.1)
-      (forall2_permEquiv_of_map_mk_eq h.2)
+      (forall2_perm_of_map_mk_eq h.2)
 
-/-- `Forall₂ PermEquiv` is symmetric (componentwise symmetry of `PermEquiv`). -/
-private theorem forall2_permEquiv_symm :
+/-- `Forall₂ Perm` is symmetric (componentwise symmetry of `Perm`). -/
+private theorem forall2_perm_symm :
     ∀ {l₁ l₂ : List (RoseTree α)},
-      List.Forall₂ RoseTree.PermEquiv l₁ l₂ →
-      List.Forall₂ RoseTree.PermEquiv l₂ l₁
+      List.Forall₂ RoseTree.Perm l₁ l₂ →
+      List.Forall₂ RoseTree.Perm l₂ l₁
   | [], [], _ => List.Forall₂.nil
   | x :: xs, y :: ys, h => by
     cases h with
-    | cons hd tl => exact List.Forall₂.cons hd.symm (forall2_permEquiv_symm tl)
+    | cons hd tl => exact List.Forall₂.cons hd.symm (forall2_perm_symm tl)
 
 /-- **Representative invariance for NIM**: `Nonplanar.insertionMultiset F G`
     can be computed on ANY `RoseTree`-level representative lists `hosts`, `guests`
@@ -462,16 +462,16 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_eq_of_reps
     apply Multiset.coe_eq_coe.mp
     rw [h_hosts, h_canon_hosts_mk]
     exact F.coe_toList.symm
-  -- §3: Lift the host mk-Perm to a `RoseTree`-level Perm + Forall₂ PermEquiv bridge.
+  -- §3: Lift the host mk-Perm to a `RoseTree`-level Perm + Forall₂ Perm bridge.
   obtain ⟨hosts_mid, h_hosts_tree_perm, h_hosts_map_eq⟩ :=
     perm_lift_mk h_hosts_perm
   have h_hosts_forall :
-      List.Forall₂ RoseTree.PermEquiv hosts_mid (F.toList.map Quotient.out) :=
-    forall2_permEquiv_of_map_mk_eq h_hosts_map_eq
-  -- §4: Unfold NIM (canonical reps) and bridge via host-Perm + host-PermEquiv.
+      List.Forall₂ RoseTree.Perm hosts_mid (F.toList.map Quotient.out) :=
+    forall2_perm_of_map_mk_eq h_hosts_map_eq
+  -- §4: Unfold NIM (canonical reps) and bridge via host-Perm + host-Perm.
   unfold Nonplanar.insertionMultiset
   -- Bridge from `(canon_hosts) gs_canon` back to `(hosts) guests`:
-  --   canon_hosts ←(Forall₂ PermEquiv, symm)← hosts_mid ←(Perm, symm)← hosts
+  --   canon_hosts ←(Forall₂ Perm, symm)← hosts_mid ←(Perm, symm)← hosts
   -- For guests, use `insertionForest_msform_invariance_guests` directly.
   have h_guests_perm_mk :
       (guests.map Nonplanar.mk).Perm
@@ -479,7 +479,7 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_eq_of_reps
     apply Multiset.coe_eq_coe.mp
     rw [h_guests, h_canon_guests_mk]
     exact G.coe_toList.symm
-  -- Swap canonical hosts for `hosts_mid` (PermEquiv host invariance).
+  -- Swap canonical hosts for `hosts_mid` (Perm host invariance).
   have h_step1 :
       (RoseTree.Pathed.insertionForest (F.toList.map Quotient.out)
           (G.toList.map Quotient.out)).map
@@ -490,8 +490,8 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_eq_of_reps
     have h2 := congrArg
       (Multiset.map (fun l : List (Nonplanar α) =>
         (Multiset.ofList l : Multiset (Nonplanar α))))
-      (RoseTree.Pathed.insertionForest_permEquiv_host
-        (G.toList.map Quotient.out) (forall2_permEquiv_symm h_hosts_forall))
+      (RoseTree.Pathed.insertionForest_perm_host
+        (G.toList.map Quotient.out) (forall2_perm_symm h_hosts_forall))
     -- h2 : map (ofList) (iF mid gs .map (List.map mk)) = map (ofList) (iF canon gs .map (List.map mk))
     -- Collapse the inner map composition.
     rw [Multiset.map_map, Multiset.map_map] at h2

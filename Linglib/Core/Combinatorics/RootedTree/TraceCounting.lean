@@ -62,28 +62,19 @@ theorem traceLeafCount_node_of_ne_nil (v : α ⊕ β) (cs : List (RoseTree (α �
   | nil => rfl
   | cons c cs => exact traceLeafCount_node_of_ne_nil _ _ (by simp)
 
-/-! #### Trace-leaf-count invariance under `PermEquiv` -/
+/-! #### Trace-leaf-count invariance under `Perm` -/
 
-/-- `traceLeafCount` is invariant under a single `PermStep`: a root swap
-    permutes the children (`List.Perm.sum_eq`), a recursive step rewrites one
-    child by an equal-count subtree. -/
-private theorem traceLeafCount_permStep {t s : RoseTree (α ⊕ β)}
-    (h : PermStep t s) : t.traceLeafCount = s.traceLeafCount := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    rw [traceLeafCount_node_of_ne_nil _ _ (by simp), traceLeafCount_node_of_ne_nil _ _ (by simp)]
-    exact (((List.Perm.swap r l post).append_left pre).map traceLeafCount).sum_eq
-  | @recurse a pre old new post _ ih =>
-    rw [traceLeafCount_node_of_ne_nil _ _ (by simp), traceLeafCount_node_of_ne_nil _ _ (by simp)]
-    simp only [List.map_append, List.map_cons, List.sum_append, List.sum_cons, ih]
-
-theorem traceLeafCount_permEquiv {t s : RoseTree (α ⊕ β)}
-    (h : PermEquiv t s) : t.traceLeafCount = s.traceLeafCount := by
-  induction h with
-  | rel _ _ hstep => exact traceLeafCount_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- `traceLeafCount` is a `Perm`-invariant: the fold of a permutation-invariant
+    algebra (the shape split is nil-vs-nonempty, which `List.Perm` preserves). -/
+theorem traceLeafCount_perm {t s : RoseTree (α ⊕ β)}
+    (h : Perm t s) : t.traceLeafCount = s.traceLeafCount := by
+  refine fold_perm (fun v l₁ l₂ h' => ?_) h
+  cases l₁ with
+  | nil => rw [← h'.nil_eq]
+  | cons x xs =>
+    cases l₂ with
+    | nil => exact absurd h'.eq_nil (by simp)
+    | cons y ys => cases v <;> exact h'.sum_eq
 
 /-! ### `traceDepthSum` — depth-weighted trace-marker count (Minimal Search depth)
 
@@ -143,30 +134,33 @@ theorem traceDepthSum_node_eq (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β)))
   | nil => rfl
   | cons c cs ih => simp only [List.map_cons, List.sum_cons]; omega
 
-/-! #### Trace-depth invariance under `PermEquiv` -/
+/-! #### Trace-depth invariance under `Perm` -/
 
-private theorem traceDepthSum_permStep {t s : RoseTree (α ⊕ β)}
-    (h : PermStep t s) : t.traceDepthSum = s.traceDepthSum := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
-      (List.Perm.swap r l post).append_left pre
-    rw [traceDepthSum_node, traceDepthSum_node, traceDepthSumList_eq_sum_map,
-      traceDepthSumList_eq_sum_map, (hperm.map traceDepthSum).sum_eq,
-      (hperm.map traceLeafCount).sum_eq]
-  | @recurse a pre old new post hstep ih =>
-    have hlc : old.traceLeafCount = new.traceLeafCount := traceLeafCount_permStep hstep
-    rw [traceDepthSum_node, traceDepthSum_node, traceDepthSumList_eq_sum_map,
-      traceDepthSumList_eq_sum_map]
-    simp only [List.map_append, List.map_cons, List.sum_append, List.sum_cons, ih, hlc]
+mutual
+/-- `traceDepthSum` is a `Perm`-invariant. Not a fold (the recurrence couples to
+    `traceLeafCount`), so the invariance is the mutual induction with its
+    child-list companion. -/
+theorem traceDepthSum_perm : ∀ {t s : RoseTree (α ⊕ β)}, Perm t s →
+    t.traceDepthSum = s.traceDepthSum
+  | _, _, .node h => by
+    rw [traceDepthSum_node_eq, traceDepthSum_node_eq]
+    exact traceDepthSumMap_permList h
+  | _, _, .trans h₁ h₂ => (traceDepthSum_perm h₁).trans (traceDepthSum_perm h₂)
 
-theorem traceDepthSum_permEquiv {t s : RoseTree (α ⊕ β)}
-    (h : PermEquiv t s) : t.traceDepthSum = s.traceDepthSum := by
-  induction h with
-  | rel _ _ hstep => exact traceDepthSum_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- The combined per-child statistic is `PermList`-invariant. -/
+theorem traceDepthSumMap_permList : ∀ {cs ds : List (RoseTree (α ⊕ β))}, PermList cs ds →
+    (cs.map (fun c => traceDepthSum c + traceLeafCount c)).sum
+      = (ds.map (fun c => traceDepthSum c + traceLeafCount c)).sum
+  | _, _, .nil => rfl
+  | _, _, .cons h hs => by
+    simp only [List.map_cons, List.sum_cons, traceDepthSum_perm h, traceLeafCount_perm h,
+      traceDepthSumMap_permList hs]
+  | _, _, .swap c d cs => by
+    simp only [List.map_cons, List.sum_cons]
+    omega
+  | _, _, .trans h₁ h₂ =>
+    (traceDepthSumMap_permList h₁).trans (traceDepthSumMap_permList h₂)
+end
 
 /-- The children's trace leaves are bounded by the node's: a `Sum.inr` root
     can only *add* a trace leaf (the empty-trace-leaf case), never remove one. -/
@@ -196,7 +190,7 @@ variable {α β : Type*}
     tree, lifted from `RoseTree.traceLeafCount`. -/
 def traceLeafCount : Nonplanar (α ⊕ β) → ℕ :=
   Nonplanar.lift RoseTree.traceLeafCount
-    (fun _ _ h => RoseTree.traceLeafCount_permEquiv h)
+    (fun _ _ h => RoseTree.traceLeafCount_perm h)
 
 @[simp] theorem traceLeafCount_mk (t : RoseTree (α ⊕ β)) :
     (mk t).traceLeafCount = t.traceLeafCount := rfl
@@ -212,7 +206,7 @@ def traceLeafCount : Nonplanar (α ⊕ β) → ℕ :=
     cut, `traceDepthSum` of the quotient is the total extraction depth. -/
 def traceDepthSum : Nonplanar (α ⊕ β) → ℕ :=
   Nonplanar.lift RoseTree.traceDepthSum
-    (fun _ _ h => RoseTree.traceDepthSum_permEquiv h)
+    (fun _ _ h => RoseTree.traceDepthSum_perm h)
 
 @[simp] theorem traceDepthSum_mk (t : RoseTree (α ⊕ β)) :
     (mk t).traceDepthSum = t.traceDepthSum := rfl

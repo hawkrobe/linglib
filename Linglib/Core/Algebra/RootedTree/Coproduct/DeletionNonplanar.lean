@@ -130,15 +130,15 @@ end
 /-! ## Descent to `Nonplanar`
 
 Lift `RoseTree.stripTrace` through the quotient. The lift requires that
-`stripTrace ∘ Nonplanar.mk` be well-defined modulo `PermEquiv`, which
+`stripTrace ∘ Nonplanar.mk` be well-defined modulo `Perm`, which
 holds because:
-* `PermEquiv` permutes children; `stripTraceList` commutes with
+* `Perm` permutes children; `stripTraceList` commutes with
   permutations up to `List.Perm` on the resulting list.
 * At the `Nonplanar.mk` level, child-list order collapses, so
-  PermEquiv-related stripped trees become equal.
+  Perm-related stripped trees become equal.
 -/
 
-/-- The PermEquiv-invariant strip-then-mk composition. Used to lift
+/-- The Perm-invariant strip-then-mk composition. Used to lift
     `RoseTree.stripTrace` through the Nonplanar quotient. -/
 private def stripTraceQuotient (t : RoseTree (α ⊕ β)) : Option (Nonplanar α) :=
   (RoseTree.stripTrace t).map Nonplanar.mk
@@ -159,97 +159,69 @@ private theorem stripTraceList_eq_filterMap (cs : List (RoseTree (α ⊕ β))) :
     | none => simp [List.filterMap_cons_none h, ih]
     | some t => simp [List.filterMap_cons_some h, ih]
 
-/-- `PermStep` invariance of the strip-then-mk composition. Two cases:
-    swapping children permutes the strip-filtered list (`Perm.filterMap`);
-    recursive step lifts via `permEquiv_recurse_lift`. -/
-private theorem stripTraceQuotient_permStep :
-    ∀ {t t' : RoseTree (α ⊕ β)}, RoseTree.PermStep t t' →
-      stripTraceQuotient t = stripTraceQuotient t' := by
-  intro t t' h
-  induction h with
-  | @swapAtRoot a l r pre post =>
+mutual
+/-- **Perm invariance** of the strip-then-mk composition. The `node` case is
+    by root-label: an `inr` root strips to `none` on both sides, an `inl` root
+    lifts the companion's `PermList` on the stripped children through `mk`. -/
+private theorem stripTraceQuotient_perm :
+    ∀ {t t' : RoseTree (α ⊕ β)}, RoseTree.Perm t t' →
+      stripTraceQuotient t = stripTraceQuotient t'
+  | _, _, @RoseTree.Perm.node _ a cs ds h => by
     cases a with
     | inl a' =>
-      show ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') (pre ++ l :: r :: post))).map
-              Nonplanar.mk) =
-           ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') (pre ++ r :: l :: post))).map
-              Nonplanar.mk)
-      simp only [RoseTree.stripTrace_inl, Option.map_some, stripTraceList_eq_filterMap]
+      show ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') cs)).map Nonplanar.mk) =
+           ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') ds)).map Nonplanar.mk)
+      simp only [RoseTree.stripTrace_inl, Option.map_some]
       congr 1
-      apply Nonplanar.mk_eq_mk_iff.mpr
-      apply RoseTree.permEquiv_root_perm
-      exact List.Perm.filterMap _ (List.Perm.append_left pre (List.Perm.swap r l post))
+      exact Nonplanar.mk_eq_mk_iff.mpr (RoseTree.Perm.node (stripTraceList_permList h))
     | inr b =>
-      show ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) (pre ++ l :: r :: post))).map
-              Nonplanar.mk) =
-           ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) (pre ++ r :: l :: post))).map
-              Nonplanar.mk)
+      show ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) cs)).map Nonplanar.mk) =
+           ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) ds)).map Nonplanar.mk)
       simp only [RoseTree.stripTrace_inr, Option.map_none]
-  | @recurse a pre old new post _hstep ih =>
-    cases a with
-    | inl a' =>
-      show ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') (pre ++ old :: post))).map
-              Nonplanar.mk) =
-           ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') (pre ++ new :: post))).map
-              Nonplanar.mk)
-      simp only [RoseTree.stripTrace_inl, Option.map_some, stripTraceList_eq_filterMap,
-                 List.filterMap_append]
-      congr 1
-      apply Nonplanar.mk_eq_mk_iff.mpr
-      -- ih has type stripTraceQuotient old = stripTraceQuotient new, i.e.
-      --   (RoseTree.stripTrace old).map Nonplanar.mk = (RoseTree.stripTrace new).map Nonplanar.mk
-      -- ih has type stripTraceQuotient old = stripTraceQuotient new.
-      have ih' : (RoseTree.stripTrace old).map Nonplanar.mk =
-                 (RoseTree.stripTrace new).map Nonplanar.mk := ih
-      cases hold : RoseTree.stripTrace old with
-      | none =>
-        rw [hold] at ih'
-        simp only [Option.map_none] at ih'
-        have hnew : RoseTree.stripTrace new = none := by
-          cases hnew' : RoseTree.stripTrace new with
-          | none => rfl
-          | some _ =>
-            rw [hnew'] at ih'
-            simp at ih'
-        simp only [List.filterMap_cons_none hold, List.filterMap_cons_none hnew]
-        exact RoseTree.PermEquiv.refl _
-      | some t_old =>
-        rw [hold] at ih'
-        simp only [Option.map_some] at ih'
-        -- ih' : some (Nonplanar.mk t_old) = (RoseTree.stripTrace new).map Nonplanar.mk
-        cases hnew : RoseTree.stripTrace new with
-        | none =>
-          exfalso
-          rw [hnew] at ih'
-          simp at ih'
-        | some t_new =>
-          rw [hnew] at ih'
-          simp only [Option.map_some, Option.some_inj] at ih'
-          simp only [List.filterMap_cons_some hold, List.filterMap_cons_some hnew]
-          exact RoseTree.permEquiv_recurse_lift (pre.filterMap RoseTree.stripTrace)
-                  (post.filterMap RoseTree.stripTrace) (Nonplanar.mk_eq_mk_iff.mp ih')
-    | inr b =>
-      show ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) (pre ++ old :: post))).map
-              Nonplanar.mk) =
-           ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) (pre ++ new :: post))).map
-              Nonplanar.mk)
-      simp only [RoseTree.stripTrace_inr, Option.map_none]
+  | _, _, .trans h₁ h₂ => (stripTraceQuotient_perm h₁).trans (stripTraceQuotient_perm h₂)
 
-/-- **PermEquiv invariance** of the strip-then-mk composition.
-    By `Relation.EqvGen` induction, reduces to `PermStep` invariance. -/
-private theorem stripTraceQuotient_permEquiv :
-    ∀ (t t' : RoseTree (α ⊕ β)), t ≈ t' →
-      stripTraceQuotient t = stripTraceQuotient t' := by
-  intro t t' h
-  induction h with
-  | rel _ _ hstep => exact stripTraceQuotient_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- Companion: `stripTraceList` sends `PermList`-related children to
+    `PermList`-related stripped lists. `cons` case-splits on whether the
+    `Perm`-related heads survive the strip (both drop, or both survive with
+    `Perm`-related results via the sibling); `swap` filters through the plain
+    `List.Perm`. -/
+private theorem stripTraceList_permList :
+    ∀ {cs ds : List (RoseTree (α ⊕ β))}, RoseTree.PermList cs ds →
+      RoseTree.PermList (RoseTree.stripTraceList cs) (RoseTree.stripTraceList ds)
+  | _, _, .nil => .nil
+  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
+    have hq : (RoseTree.stripTrace c).map Nonplanar.mk =
+              (RoseTree.stripTrace d).map Nonplanar.mk :=
+      stripTraceQuotient_perm hcd
+    rw [stripTraceList_eq_filterMap, stripTraceList_eq_filterMap]
+    cases hc : RoseTree.stripTrace c with
+    | none =>
+      have hd : RoseTree.stripTrace d = none := by
+        have h2 := hq.symm; rw [hc] at h2; simpa using h2
+      rw [List.filterMap_cons_none hc, List.filterMap_cons_none hd,
+          ← stripTraceList_eq_filterMap, ← stripTraceList_eq_filterMap]
+      exact stripTraceList_permList hs
+    | some t_c =>
+      cases hd : RoseTree.stripTrace d with
+      | none => rw [hc, hd] at hq; simp at hq
+      | some t_d =>
+        rw [hc, hd] at hq
+        simp only [Option.map_some, Option.some.injEq] at hq
+        rw [List.filterMap_cons_some hc, List.filterMap_cons_some hd,
+            ← stripTraceList_eq_filterMap, ← stripTraceList_eq_filterMap]
+        exact RoseTree.PermList.cons (Nonplanar.mk_eq_mk_iff.mp hq)
+          (stripTraceList_permList hs)
+  | _, _, .swap c d cs => by
+    rw [stripTraceList_eq_filterMap, stripTraceList_eq_filterMap]
+    exact RoseTree.PermList.of_perm
+      (List.Perm.filterMap RoseTree.stripTrace (List.Perm.swap c d cs))
+  | _, _, .trans h₁ h₂ =>
+    (stripTraceList_permList h₁).trans (stripTraceList_permList h₂)
+end
 
 /-- Strip trace-placeholder subtrees from a `Nonplanar` tree. -/
 noncomputable def Nonplanar.stripTrace : Nonplanar (α ⊕ β) → Option (Nonplanar α) :=
-  Quotient.lift stripTraceQuotient stripTraceQuotient_permEquiv
+  Quotient.lift stripTraceQuotient (fun _ _ h => stripTraceQuotient_perm h)
 
 @[simp] theorem Nonplanar.stripTrace_mk (t : RoseTree (α ⊕ β)) :
     Nonplanar.stripTrace (Nonplanar.mk t) =

@@ -21,7 +21,7 @@ The carrier-free selection combinators `selStep`/`selSide` (commutative —
 `selStep_comm`/`selSide_comm`) operate purely on selection states
 (`Option (LIToken × List Cat)`). The tree recursion is the catamorphism
 `RoseTree.fold selCombine`; since the algebra is permutation-invariant
-(`selCombine_perm`), invariance and the `SO` lift come from `fold_permEquiv` — no
+(`selCombine_perm`), invariance and the `SO` lift come from `fold_perm` — no
 bespoke step induction. **Index-free traces**: a bare trace leaf gets the canonical
 saturated value `(mkTraceToken 0, [])` — `selCheck` reads only the token's category
 (`.N`) and `outerSel` (`[]`), both index-independent.
@@ -180,14 +180,14 @@ theorem selCheckPlanar_node (a : SOLabel) (cs : List (RoseTree SOLabel)) :
     selCheckPlanar (RoseTree.node a cs) = selCombine a (cs.map selCheckPlanar) :=
   RoseTree.fold_node ..
 
-/-- `selCheckPlanar` is `PermEquiv`-invariant, so it descends to the quotient. -/
-theorem selCheckPlanar_permEquiv {t s : RoseTree SOLabel}
-    (h : RoseTree.PermEquiv t s) : selCheckPlanar t = selCheckPlanar s :=
-  RoseTree.fold_permEquiv (fun a _ _ h' => selCombine_perm a h') h
+/-- `selCheckPlanar` is `Perm`-invariant, so it descends to the quotient. -/
+theorem selCheckPlanar_perm {t s : RoseTree SOLabel}
+    (h : RoseTree.Perm t s) : selCheckPlanar t = selCheckPlanar s :=
+  RoseTree.fold_perm (fun a _ _ h' => selCombine_perm a h') h
 
 /-- Selection check lifted to the nonplanar carrier. -/
 def selCheckN : Nonplanar SOLabel → Option (LIToken × List Cat) :=
-  Nonplanar.lift selCheckPlanar (fun _ _ h => selCheckPlanar_permEquiv h)
+  Nonplanar.lift selCheckPlanar (fun _ _ h => selCheckPlanar_perm h)
 
 @[simp] theorem selCheckN_mk (p : RoseTree SOLabel) : selCheckN (Nonplanar.mk p) = selCheckPlanar p :=
   rfl

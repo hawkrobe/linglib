@@ -1,4 +1,4 @@
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 
 /-!
 # Rebinarization: contracting unary (non-branching) nodes
@@ -89,58 +89,51 @@ theorem numNodes_contractUnary_add (t : RoseTree α) :
       List.length_map]
     split_ifs <;> omega
 
-/-! ### `unaryCount` is `PermEquiv`-invariant -/
+/-! ### `unaryCount` is `Perm`-invariant -/
 
-private theorem unaryCount_permStep {t s : RoseTree α} (h : PermStep t s) :
-    t.unaryCount = s.unaryCount := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    simp only [unaryCount_node, List.length_append, List.length_cons]
-    congr 1
-    exact (((List.Perm.swap r l post).append_left pre).map unaryCount).sum_eq
-  | @recurse a pre old new post _ ih =>
-    simp only [unaryCount_node, List.length_append, List.length_cons, List.map_append,
-      List.map_cons, List.sum_append, List.sum_cons, ih]
+/-- `unaryCount` is a `Perm`-invariant: the fold of a permutation-invariant algebra
+    (length and sum). -/
+theorem unaryCount_perm {t s : RoseTree α} (h : Perm t s) :
+    t.unaryCount = s.unaryCount :=
+  fold_perm (fun _ _ _ h' => by rw [h'.length_eq, h'.sum_eq]) h
 
-theorem unaryCount_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.unaryCount = s.unaryCount := by
-  induction h with
-  | rel _ _ hstep => exact unaryCount_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-! ### `contractUnary` is `Perm`-invariant -/
 
-/-! ### `contractUnary` is `PermEquiv`-invariant -/
+private theorem forall₂_map_contract : ∀ {cs cs' : List (RoseTree α)},
+    (∀ c ∈ cs, ∀ s, Perm c s → Perm (contractUnary c) (contractUnary s)) →
+    List.Forall₂ Perm cs cs' →
+    List.Forall₂ Perm (cs.map contractUnary) (cs'.map contractUnary)
+  | _, _, _, .nil => .nil
+  | _, _, ih, .cons hcc hf =>
+    .cons (ih _ List.mem_cons_self _ hcc)
+      (forall₂_map_contract (fun x hx s h => ih x (List.mem_cons_of_mem _ hx) s h) hf)
 
-private theorem two_le_length_append_of {pre post : List (RoseTree α)} {x : RoseTree α}
-    (h : ¬ (pre = [] ∧ post = [])) : 2 ≤ (pre ++ x :: post).length := by
-  rcases pre with _ | ⟨p, ps⟩ <;> rcases post with _ | ⟨q, qs⟩
-  · exact absurd ⟨rfl, rfl⟩ h
-  all_goals simp only [List.length_append, List.length_nil, List.length_cons]; omega
-
-theorem contractUnary_permStep {t s : RoseTree α} (h : PermStep t s) :
-    PermEquiv (contractUnary t) (contractUnary s) := by
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    rw [contractUnary_node_of_two_le a (pre ++ l :: r :: post) (two_le_length_append_of (by simp)),
-        contractUnary_node_of_two_le a (pre ++ r :: l :: post) (two_le_length_append_of (by simp))]
-    exact permEquiv_root_perm (((List.Perm.swap r l post).append_left pre).map contractUnary)
-  | @recurse a pre old new post _ ih =>
-    by_cases h1 : pre = [] ∧ post = []
-    · obtain ⟨rfl, rfl⟩ := h1
-      exact ih
-    · rw [contractUnary_node_of_two_le a (pre ++ old :: post) (two_le_length_append_of h1),
-          contractUnary_node_of_two_le a (pre ++ new :: post) (two_le_length_append_of h1)]
-      simp only [List.map_append, List.map_cons]
-      exact permEquiv_recurse_lift (pre.map contractUnary) (post.map contractUnary) ih
-
-theorem contractUnary_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    PermEquiv (contractUnary t) (contractUnary s) := by
-  induction h with
-  | rel _ _ hstep => exact contractUnary_permStep hstep
-  | refl _ => exact PermEquiv.refl _
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-- `contractUnary` maps `Perm`-related trees to `Perm`-related trees: contraction
+    is well-defined on the nonplanar quotient. -/
+theorem contractUnary_perm {t s : RoseTree α} (h : Perm t s) :
+    Perm (contractUnary t) (contractUnary s) := by
+  induction t using RoseTree.rec' generalizing s with
+  | node a cs ih =>
+    obtain ⟨b, ds⟩ := s
+    obtain ⟨rfl, hrel⟩ := perm_node_iff.mp h
+    obtain ⟨cs', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp hrel
+    have hPL : PermList (cs.map contractUnary) (ds.map contractUnary) :=
+      (PermList.of_forall₂ (forall₂_map_contract (fun c hc s hcs => ih c hc hcs) hf)).trans
+        (PermList.of_perm (hperm.map contractUnary))
+    rw [contractUnary_node, contractUnary_node]
+    revert hPL
+    generalize cs.map contractUnary = L₁
+    generalize ds.map contractUnary = L₂
+    intro hPL
+    match L₁, L₂, hPL.length_eq, hPL with
+    | [], [], _, _ => exact Perm.refl _
+    | [x], [y], _, hPL => exact hPL.singleton_inv
+    | x :: x' :: xs, y :: y' :: ys, _, hPL => exact .node hPL
+    | [], _ :: _, hl, _ => simp at hl
+    | [_], [], hl, _ => simp at hl
+    | [_], _ :: _ :: _, hl, _ => simp at hl
+    | _ :: _ :: _, [], hl, _ => simp at hl
+    | _ :: _ :: _, [_], hl, _ => simp at hl
 
 end RoseTree
 
@@ -152,13 +145,13 @@ variable {α : Type*}
 
 /-- The number of unary nodes of a nonplanar tree. -/
 def unaryCount : Nonplanar α → ℕ :=
-  Nonplanar.lift RoseTree.unaryCount (fun _ _ h => RoseTree.unaryCount_permEquiv h)
+  Nonplanar.lift RoseTree.unaryCount (fun _ _ h => RoseTree.unaryCount_perm h)
 
 @[simp] theorem unaryCount_mk (t : RoseTree α) : (mk t).unaryCount = t.unaryCount := rfl
 
 /-- Rebinarize: contract every unary node (MCB Δᵈ, Def. 1.2.5). -/
 def contractUnary : Nonplanar α → Nonplanar α :=
-  Quotient.map RoseTree.contractUnary (fun _ _ h => RoseTree.contractUnary_permEquiv h)
+  Quotient.map RoseTree.contractUnary (fun _ _ h => RoseTree.contractUnary_perm h)
 
 @[simp] theorem contractUnary_mk (t : RoseTree α) :
     contractUnary (mk t) = mk (RoseTree.contractUnary t) := rfl

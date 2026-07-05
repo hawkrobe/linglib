@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
-import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Data.Multiset.Bind
 
 set_option autoImplicit false
@@ -27,10 +27,10 @@ namespace `RoseTree.Pathed`.
 - §2: `insertion` — Foissy 2021 Theorem 5.1, single-tree host.
 - §3: `insertionForest` — forest host + identity/nil lemmas.
 - §4: Pair-list `Perm`-invariance for `multiGraft`.
-- §5: Guest-list invariance for `insertion` (`insertion_permEquiv_guests`).
+- §5: Guest-list invariance for `insertion` (`insertion_perm_guests`).
 - §5.5: Validity discharge for `listChoices`-derived pair lists.
 - §6: Host invariance via the `swapPathAt` path-relabel bijection.
-- §7: Forest invariance (`insertionForest_permEquiv_host`,
+- §7: Forest invariance (`insertionForest_perm_host`,
   `insertionForest_perm_guests`).
 - §8: Singleton-host insertion.
 
@@ -139,36 +139,36 @@ theorem insertionForest_cons_cons
 
 /-! ## §4: Pair-list `Perm` invariance for `multiGraft`
 
-`multiGraft T pairs` is `PermEquiv`-invariant under permutation of the
+`multiGraft T pairs` is `Perm`-invariant under permutation of the
 pair list: grafts at distinct paths commute, and grafts at the same
-path are root-list permutations (lift via `permEquiv_root_perm`).
+path are root-list permutations (lift via `Perm.node_of_perm`).
 
 Path-based reformulation of the legacy `multiGraft_perm_pair` /
 `multiGraftList_perm_pair`. -/
 
 mutual
-/-- `PermEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
+/-- `Perm` of `multiGraft T pairs` and `multiGraft T pairs'`
     follows from a `List.Perm` between `pairs` and `pairs'`. Mutual
     recursion on `T` with the children-list aux. -/
 private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
     {pairs pairs' : List (Path × RoseTree α)},
     pairs.Perm pairs' →
-    PermEquiv (multiGraft T pairs) (multiGraft T pairs')
+    Perm (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
     rw [multiGraft_node, multiGraft_node]
-    exact (permEquiv_root_perm
+    exact (Perm.node_of_perm
             ((h.filterMap rootPrependFilter).append_right _)).trans
-          (permEquiv_node_componentwise
+          (Perm.node_of_forall₂
             (List.rel_append
-              (List.forall₂_same.mpr fun _ _ => PermEquiv.refl _)
+              (List.forall₂_same.mpr fun _ _ => Perm.refl _)
               (multiGraftChildren_perm_pair cs h)))
 /-- List-level companion to `multiGraft_perm_pair`: pair-list `Perm`
-    lifts to `Forall₂ PermEquiv` on the children list output of
+    lifts to `Forall₂ Perm` on the children list output of
     `multiGraftChildren`. -/
 private theorem multiGraftChildren_perm_pair : ∀ (cs : List (RoseTree α))
     {pairs pairs' : List (Path × RoseTree α)},
     pairs.Perm pairs' →
-    List.Forall₂ PermEquiv
+    List.Forall₂ Perm
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
   | [],      _, _, _ => List.Forall₂.nil
   | c :: cs, pairs, pairs', h => by
@@ -180,12 +180,12 @@ end
 
 /-! ### Forall₂-version of `multiGraft_perm_pair`
 
-For `insertion_permEquiv_guests` we need: when `Ts ~ᶠ Ts'` (Forall₂
-PermEquiv) and we zip with the same choice, the resulting pair lists
-satisfy a Forall₂ relation (same fst, PermEquiv snd). Then this lifts
-to `multiGraft T pairs ~ multiGraft T pairs'` (`PermEquiv`).
+For `insertion_perm_guests` we need: when `Ts ~ᶠ Ts'` (Forall₂
+Perm) and we zip with the same choice, the resulting pair lists
+satisfy a Forall₂ relation (same fst, Perm snd). Then this lifts
+to `multiGraft T pairs ~ multiGraft T pairs'` (`Perm`).
 
-Path-based version of the legacy `multiGraft_permEquiv_pair_Forall₂`. -/
+Path-based version of the legacy `multiGraft_perm_pair_Forall₂`. -/
 
 private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
     (choice : List β) :
@@ -203,41 +203,41 @@ private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
       exact List.Forall₂.cons ⟨rfl, hTT'⟩ (ih hrest)
 
 mutual
-/-- `PermEquiv` of `multiGraft T pairs` and `multiGraft T pairs'`
-    follows from pair-`Forall₂` (same fst, `PermEquiv` snds). -/
-private theorem multiGraft_permEquiv_pair_Forall₂ : ∀ (T : RoseTree α)
+/-- `Perm` of `multiGraft T pairs` and `multiGraft T pairs'`
+    follows from pair-`Forall₂` (same fst, `Perm` snds). -/
+private theorem multiGraft_perm_pair_Forall₂ : ∀ (T : RoseTree α)
     {pairs pairs' : List (Path × RoseTree α)},
     List.Forall₂ (fun p p' : Path × RoseTree α =>
-        p.fst = p'.fst ∧ PermEquiv p.snd p'.snd) pairs pairs' →
-    PermEquiv (multiGraft T pairs) (multiGraft T pairs')
+        p.fst = p'.fst ∧ Perm p.snd p'.snd) pairs pairs' →
+    Perm (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
     rw [multiGraft_node, multiGraft_node]
-    apply permEquiv_node_componentwise
+    apply Perm.node_of_forall₂
     apply List.rel_append
-    · -- root-prepended children: Forall₂ PermEquiv after filterMap
-      refine List.rel_filterMap (P := PermEquiv) ?_ h
+    · -- root-prepended children: Forall₂ Perm after filterMap
+      refine List.rel_filterMap (P := Perm) ?_ h
       rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
       simp only at hfst
       subst hfst
       cases xfst with
       | nil       => exact Option.Rel.some hsnd
       | cons _ _  => exact Option.Rel.none
-    · -- children: Forall₂ PermEquiv on multiGraftChildren output
-      exact multiGraftChildren_permEquiv_pair_Forall₂ cs h
+    · -- children: Forall₂ Perm on multiGraftChildren output
+      exact multiGraftChildren_perm_pair_Forall₂ cs h
 
 /-- List-level companion. -/
-private theorem multiGraftChildren_permEquiv_pair_Forall₂ :
+private theorem multiGraftChildren_perm_pair_Forall₂ :
     ∀ (cs : List (RoseTree α))
     {pairs pairs' : List (Path × RoseTree α)},
     List.Forall₂ (fun p p' : Path × RoseTree α =>
-        p.fst = p'.fst ∧ PermEquiv p.snd p'.snd) pairs pairs' →
-    List.Forall₂ PermEquiv
+        p.fst = p'.fst ∧ Perm p.snd p'.snd) pairs pairs' →
+    List.Forall₂ Perm
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
   | [],      _, _, _ => List.Forall₂.nil
   | c :: cs, pairs, pairs', h => by
     rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs]
     refine List.Forall₂.cons ?_ ?_
-    · apply multiGraft_permEquiv_pair_Forall₂
+    · apply multiGraft_perm_pair_Forall₂
       refine List.rel_filterMap ?_ h
       rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
       simp only at hfst
@@ -248,7 +248,7 @@ private theorem multiGraftChildren_permEquiv_pair_Forall₂ :
         cases k with
         | zero   => exact Option.Rel.some ⟨rfl, hsnd⟩
         | succ _ => exact Option.Rel.none
-    · apply multiGraftChildren_permEquiv_pair_Forall₂
+    · apply multiGraftChildren_perm_pair_Forall₂
       refine List.rel_filterMap ?_ h
       rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
       simp only at hfst
@@ -364,9 +364,9 @@ private theorem insertion_perm_guests (t : RoseTree α)
   unfold pairSum at this
   simpa [insertion_def, Multiset.map_coe, List.map_map, Function.comp_def] using this
 
-/-- Guest-list `Forall₂ PermEquiv` lifts to `insertion mk`-equality. -/
-theorem insertion_permEquiv_guests (t : RoseTree α)
-    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ PermEquiv Ts Ts') :
+/-- Guest-list `Forall₂ Perm` lifts to `insertion mk`-equality. -/
+theorem insertion_forall₂_perm_guests (t : RoseTree α)
+    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t Ts').map Nonplanar.mk := by
   have hlen : Ts.length = Ts'.length := h.length_eq
@@ -377,8 +377,8 @@ theorem insertion_permEquiv_guests (t : RoseTree α)
   intro choice _
   apply Nonplanar.mk_eq_mk_iff.mpr
   -- multiGraft t (choice.zip Ts) ~ multiGraft t (choice.zip Ts')
-  -- via List.Forall₂ for the pair (fst eq, snd permEquiv)
-  exact multiGraft_permEquiv_pair_Forall₂ t (zip_pair_Forall₂ choice h)
+  -- via List.Forall₂ for the pair (fst eq, snd perm)
+  exact multiGraft_perm_pair_Forall₂ t (zip_pair_Forall₂ choice h)
 
 /-! ## §5.5: Validity discharge for `listChoices`-derived pair lists
 
@@ -424,7 +424,7 @@ theorem forall_zip_isValidPath_of_listChoices
 
 /-! ## §6: Host invariance via path-swap bijection
 
-`insertion T Ts` is `mk`-invariant under `PermEquiv` of the host: the
+`insertion T Ts` is `mk`-invariant under `Perm` of the host: the
 original blocker for the path-based refactor.
 
 Strategy:
@@ -434,12 +434,13 @@ Strategy:
    `node a (pre ++ r :: l :: post)`. Reduces to a `List.Perm` of two
    appendable middle blocks, via `verticesAux_append` + a
    `List.perm_append_comm`.
-3. `multiGraft_swap_permEquiv` — the multiGraft results differ only by
-   the swap of l/r in the root children list; lift via
-   `PermStep.swapAtRoot`.
-4. Combine via listChoices Perm-respect → `insertion_swap_invariant`.
-5. Lift via `PermStep` (recurse case) and `PermEquiv = EqvGen
-   PermStep`. -/
+3. `multiGraft_swap_perm` — the multiGraft results differ only by
+   the swap of l/r in the root children list.
+4. `vertices_recurse_perm` / `multiGraft_recurse_perm` — the child-recursion
+   building block, lifting an inner bijection via `pathLiftRecurse`.
+5. `hasPathBij_of_perm` (with its `PermList` companion) assembles these
+   building blocks over the mutual `Perm`/`PermList` structure;
+   `insertion_eq_of_pathBij` turns the bijection into `mk`-equality. -/
 
 /-- Swap the first index `n ↔ n+1` of a path. Acts as identity on paths
     starting outside `{n, n+1}` and on the root path `[]`. -/
@@ -541,7 +542,7 @@ private theorem vertices_swap_perm (a : α) (pre : List (RoseTree α))
   refine List.Perm.append_right _ ?_
   exact List.perm_append_comm
 
-/-! ### §6.2 substrate: pair-relabel + permEquiv prefix-cons-lift -/
+/-! ### §6.2 substrate: pair-relabel + perm prefix-cons-lift -/
 
 /-- The path-relabel function for swapAtRoot. -/
 private def pathRelabelSwap (n : ℕ) : Path × RoseTree α → Path × RoseTree α :=
@@ -553,7 +554,7 @@ private def pathRelabelSwap (n : ℕ) : Path × RoseTree α → Path × RoseTree
 @[simp] private theorem pathRelabelSwap_snd (n : ℕ) (p : Path × RoseTree α) :
     (pathRelabelSwap n p).snd = p.snd := rfl
 
-/-- Path bijection induced by `PermStep.recurse`: lift an inner path
+/-- Path bijection for a single-child recursion: lift an inner path
     bijection `f` (applicable to vertices of the changed subtree at child
     position `n`) to the whole tree. Identity on paths not going through
     child `n`. -/
@@ -608,7 +609,7 @@ private theorem map_pathLiftRecurse_verticesAux_above
       exact pathLiftRecurse_cons_of_ne n start f q (by omega : start ≠ n)
     · exact ih (start + 1) h'
 
-/-- Vertices Perm under `PermStep.recurse`: given a path bijection on
+/-- Vertices Perm under a single-child recursion: given a path bijection on
     the changed subtree, lift to a Perm on the bigger tree's vertices. -/
 private theorem vertices_recurse_perm (a : α) (pre : List (RoseTree α))
     (old new : RoseTree α) (post : List (RoseTree α)) (f : Path → Path)
@@ -639,29 +640,29 @@ private theorem vertices_recurse_perm (a : α) (pre : List (RoseTree α))
   rw [h_map_eq]
   exact hf.map _
 
-/-- Helper: `PermEquiv` of two trees with a common children prefix.
+/-- Helper: `Perm` of two trees with a common children prefix.
     Lifts `(node a cs) ~ (node a ds)` to `(node a (pre ++ cs)) ~ (node a (pre ++ ds))`
-    by iterated `permEquiv_cons_lift`. -/
-private theorem permEquiv_append_left_node {a : α} (pre : List (RoseTree α))
+    by iterated `Perm.cons_child`. -/
+private theorem perm_append_left_node {a : α} (pre : List (RoseTree α))
     {cs ds : List (RoseTree α)}
-    (h : PermEquiv (.node a cs) (.node a ds)) :
-    PermEquiv (.node a (pre ++ cs)) (.node a (pre ++ ds)) := by
+    (h : Perm (.node a cs) (.node a ds)) :
+    Perm (.node a (pre ++ cs)) (.node a (pre ++ ds)) := by
   induction pre with
   | nil => exact h
-  | cons p pre' ih => exact permEquiv_cons_lift p ih
+  | cons p pre' ih => exact Perm.cons_child p ih
 
-/-- `multiGraft` is `PermEquiv`-invariant under a `PermStep.recurse`:
+/-- `multiGraft` is `Perm`-invariant under a single-child recursion:
     if the inner subtree change `old → new` admits a path-bijection `f`
     that turns `multiGraft old` into `multiGraft new ∘ relabel-via-f`, then
     the same holds for the host with prefix `pre` and suffix `post`, using
     `pathLiftRecurse pre.length f`. -/
-private theorem multiGraft_recurse_permEquiv (a : α)
+private theorem multiGraft_recurse_perm (a : α)
     {old new : RoseTree α} (f : Path → Path)
-    (hf : ∀ sub_pairs, PermEquiv (multiGraft old sub_pairs)
+    (hf : ∀ sub_pairs, Perm (multiGraft old sub_pairs)
                                     (multiGraft new (sub_pairs.map (Prod.map f id)))) :
     ∀ (pre : List (RoseTree α)) (post : List (RoseTree α))
       (pairs : List (Path × RoseTree α)),
-    PermEquiv
+    Perm
       (multiGraft (RoseTree.node a (pre ++ old :: post)) pairs)
       (multiGraft (RoseTree.node a (pre ++ new :: post))
                   (pairs.map (Prod.map (pathLiftRecurse pre.length f) id))) := by
@@ -716,8 +717,8 @@ private theorem multiGraft_recurse_permEquiv (a : α)
     -- Goal: node a (RP ++ multiGraft old cP :: mGC post csP) ~PE~
     --        node a (RP ++ multiGraft new cP' :: mGC post csP) where
     --        cP' = (pairs.map ...).filterMap headChildFilter = cP.map (Prod.map f id)
-    exact permEquiv_append_left_node _
-      (permEquiv_recurse_lift [] _ h_old)
+    exact perm_append_left_node _
+      (Perm.congr_child [] _ h_old)
   | cons c pre' ih =>
     rw [show (c :: pre') ++ old :: post = c :: (pre' ++ old :: post) from rfl,
         show (c :: pre') ++ new :: post = c :: (pre' ++ new :: post) from rfl,
@@ -808,31 +809,31 @@ private theorem multiGraft_recurse_permEquiv (a : α)
     rw [← h_RP, ← h_cP]
     -- Goal: node a (RP ++ multiGraft c cP :: mGC (pre' ++ old :: post) csP) ~PE~
     --        node a (RP ++ multiGraft c cP :: mGC (pre' ++ new :: post) csP_relabeled)
-    exact permEquiv_append_left_node _ (permEquiv_cons_lift _ h_ih)
+    exact perm_append_left_node _ (Perm.cons_child _ h_ih)
 
-/-- `multiGraft` is `PermEquiv`-invariant under swap of two adjacent
+/-- `multiGraft` is `Perm`-invariant under swap of two adjacent
     root children, with pairs relabeled via `swapPathAt`. The proof
     decomposes both sides into matching children lists (up to a single
-    swap), then applies `PermStep.swapAtRoot`.
+    swap of the two adjacent root children).
 
     Sub-lemmas for the filter equalities are proved inline as `have`
     statements to ensure the inline-match expressions unify with the
     matcher generated by `multiGraft_node`. -/
-private theorem multiGraft_swap_permEquiv
+private theorem multiGraft_swap_perm
     (a : α) (pre : List (RoseTree α)) (l r : RoseTree α)
     (post : List (RoseTree α)) (pairs : List (Path × RoseTree α)) :
-    PermEquiv
+    Perm
       (multiGraft (RoseTree.node a (pre ++ l :: r :: post)) pairs)
       (multiGraft (RoseTree.node a (pre ++ r :: l :: post))
                   (pairs.map (pathRelabelSwap pre.length))) := by
   -- The cleanest path: induct on pre, peeling off one child at a time.
   -- Base case (pre = []) does the actual swap; inductive case lifts via
-  -- permEquiv_cons_lift.
+  -- Perm.cons_child.
   induction pre generalizing pairs with
   | nil =>
     simp only [List.nil_append, List.length_nil]
     rw [multiGraft_node, multiGraft_node]
-    -- Build sub-perms and combine via permEquiv_root_perm.
+    -- Build sub-perms and combine via Perm.node_of_perm.
     have h_RP_perm : (pairs.filterMap fun pair => match pair.fst with
                                                     | []     => some pair.snd
                                                     | _ :: _ => none).Perm
@@ -923,7 +924,7 @@ private theorem multiGraft_swap_permEquiv
                 | succ k => simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
       rw [h_l, h_r, h_post]
       exact List.Perm.swap _ _ _
-    exact permEquiv_root_perm (List.Perm.append h_RP_perm h_mGC_perm)
+    exact Perm.node_of_perm (List.Perm.append h_RP_perm h_mGC_perm)
   | cons c pre' ih =>
     -- pre = c :: pre'. n = pre'.length + 1.
     -- Strategy: peel off `c` via multiGraftChildren_cons_cs, identify the
@@ -992,7 +993,7 @@ private theorem multiGraft_swap_permEquiv
                     swapPathAt_cons_of_ne pre'.length j rest hjne hjne2]
     -- Use IH on pre' with input = pairs.filterMap tailChildFilter.
     have h_ih := ih (pairs.filterMap tailChildFilter)
-    -- IH: PermEquiv (multiGraft (node a (pre' ++ l :: r :: post)) X_pre)
+    -- IH: Perm (multiGraft (node a (pre' ++ l :: r :: post)) X_pre)
     --                 (multiGraft (node a (pre' ++ r :: l :: post)) (X_pre.map ...))
     -- Unfold both sides of IH to expose mGC.
     rw [multiGraft_node, multiGraft_node] at h_ih
@@ -1033,11 +1034,11 @@ private theorem multiGraft_swap_permEquiv
                     swapPathAt_cons_of_ne pre'.length j rest hj1 hj2]
     rw [h_empty_RP_lhs, List.nil_append] at h_ih
     rw [h_empty_RP_rhs, List.nil_append] at h_ih
-    -- Now h_ih has form: PermEquiv (node a (mGC ... X_pre)) (node a (mGC ... X_pre_relabeled))
+    -- Now h_ih has form: Perm (node a (mGC ... X_pre)) (node a (mGC ... X_pre_relabeled))
     -- Use h_X_pre to rewrite X_pre_relabeled inside.
     rw [← h_X_pre] at h_ih
     -- Lift IH through cons (multiGraft c X_l ::) and append_left (RP ++).
-    have h_after_cons : PermEquiv
+    have h_after_cons : Perm
         (RoseTree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
                          multiGraftChildren (pre' ++ l :: r :: post)
                            (pairs.filterMap tailChildFilter)))
@@ -1045,19 +1046,19 @@ private theorem multiGraft_swap_permEquiv
                          multiGraftChildren (pre' ++ r :: l :: post)
                            ((pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
                              tailChildFilter))) :=
-      permEquiv_cons_lift _ h_ih
-    have h_after_append := permEquiv_append_left_node
+      Perm.cons_child _ h_ih
+    have h_after_append := perm_append_left_node
                             (pairs.filterMap rootPrependFilter) h_after_cons
     -- Goal's RHS uses relabeled forms; rewrite back to unrelabeled to match
     -- h_after_append.
     rw [← h_RP, ← h_X_l]
     exact h_after_append
 
-/-! ### §6.3 substrate for `insertion_permEquiv_host`
+/-! ### §6.3 substrate for `insertion_perm_host`
 
 The `swapAtRoot` case of `insertion_permStep_host` needs to lift a Perm
 of vertices into a Perm of choice lists (via `listChoices`), then combine
-with `multiGraft_swap_permEquiv` to get equal `mk`-mapped insertion
+with `multiGraft_swap_perm` to get equal `mk`-mapped insertion
 outputs. Helpers below build this bridge. -/
 
 /-- `listChoices` is compatible with `List.map`: applying `f` element-wise
@@ -1093,12 +1094,12 @@ private theorem listChoices_perm {β : Type*} {xs ys : List β}
 
 /-- Generic lifting: a path bijection `f` that turns vertices of `t` into a
     `Perm` of vertices of `t'` and turns `multiGraft t pairs` into a
-    `PermEquiv` of `multiGraft t' (pairs.map (Prod.map f id))` lifts to
+    `Perm` of `multiGraft t' (pairs.map (Prod.map f id))` lifts to
     `mk`-equality of `insertion t Ts` and `insertion t' Ts`. -/
 private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
     (f : Path → Path)
     (hf_perm : ((vertices t).map f).Perm (vertices t'))
-    (hf_graft : ∀ pairs, PermEquiv (multiGraft t pairs)
+    (hf_graft : ∀ pairs, Perm (multiGraft t pairs)
                                       (multiGraft t' (pairs.map (Prod.map f id))))
     (Ts : List (RoseTree α)) :
     (insertion t Ts).map Nonplanar.mk = (insertion t' Ts).map Nonplanar.mk := by
@@ -1135,64 +1136,89 @@ private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
     exact this
   exact step1.trans step2
 
-/-- Every `PermStep` admits a path bijection that respects both vertex
-    enumeration (up to `Perm`) and `multiGraft` (up to `PermEquiv` after
-    `Prod.map f id` relabel). For `swapAtRoot` the bijection is
-    `swapPathAt pre.length`; for `recurse` it is `pathLiftRecurse pre.length`
-    of the inner bijection. -/
-private theorem exists_pathBijection_permStep :
-    ∀ {t t' : RoseTree α}, PermStep t t' →
-    ∃ f : Path → Path,
-      ((vertices t).map f).Perm (vertices t') ∧
-      ∀ pairs, PermEquiv (multiGraft t pairs)
-                            (multiGraft t' (pairs.map (Prod.map f id))) := by
-  intro t t' h
-  induction h with
-  | @swapAtRoot a l r pre post =>
-    exact ⟨swapPathAt pre.length, vertices_swap_perm a pre l r post,
-           fun pairs => multiGraft_swap_permEquiv a pre l r post pairs⟩
-  | @recurse a pre old new post h_inner ih =>
-    obtain ⟨f', hf_perm', hf_graft'⟩ := ih
-    exact ⟨pathLiftRecurse pre.length f',
-           vertices_recurse_perm a pre old new post f' hf_perm',
-           fun pairs => multiGraft_recurse_permEquiv a f' hf_graft' pre post pairs⟩
+/-- A path bijection `f` relating the vertex enumeration and `multiGraft`
+    behaviour of `t` and `t'`, the data `insertion_eq_of_pathBij` turns into
+    `mk`-equality. Reflexive and transitive, and produced by every `Perm`
+    of hosts (`hasPathBij_of_perm`). -/
+private def HasPathBij (t t' : RoseTree α) : Prop :=
+  ∃ f : Path → Path,
+    ((vertices t).map f).Perm (vertices t') ∧
+    ∀ pairs, Perm (multiGraft t pairs)
+                  (multiGraft t' (pairs.map (Prod.map f id)))
 
-/-- `insertion T Ts` is `mk`-invariant under a single `PermStep` of the
-    host. Direct application of `exists_pathBijection_permStep` +
-    `insertion_eq_of_pathBij`. -/
-private theorem insertion_permStep_host (Ts : List (RoseTree α))
-    {t t' : RoseTree α} (h : PermStep t t') :
+private theorem HasPathBij.refl (t : RoseTree α) : HasPathBij t t :=
+  ⟨id, by simp, fun pairs => by simpa using Perm.refl _⟩
+
+private theorem HasPathBij.trans {t t' t'' : RoseTree α}
+    (h₁ : HasPathBij t t') (h₂ : HasPathBij t' t'') : HasPathBij t t'' := by
+  obtain ⟨f, hvf, hgf⟩ := h₁
+  obtain ⟨g, hvg, hgg⟩ := h₂
+  refine ⟨g ∘ f, ?_, fun pairs => ?_⟩
+  · rw [← List.map_map]
+    exact (hvf.map g).trans hvg
+  · refine (hgf pairs).trans ?_
+    have h := hgg (pairs.map (Prod.map f id))
+    rw [List.map_map,
+        show (Prod.map g id ∘ Prod.map f id) = Prod.map (g ∘ f) id from
+          funext fun _ => rfl] at h
+    exact h
+
+mutual
+/-- Every `Perm` of hosts admits a path bijection. For a `swap` of two root
+    children the bijection is `swapPathAt`; for a `cons` (a `Perm` on one
+    child) it is `pathLiftRecurse` of the child's bijection; both thread a
+    child-prefix context via the mutually-recursive `PermList` companion. -/
+private theorem hasPathBij_of_perm :
+    ∀ {t t' : RoseTree α}, Perm t t' → HasPathBij t t'
+  | _, _, .node h => hasPathBij_of_permList h _ []
+  | _, _, .trans h₁ h₂ => (hasPathBij_of_perm h₁).trans (hasPathBij_of_perm h₂)
+
+/-- Companion of `hasPathBij_of_perm`: a `PermList` of children, in any
+    prefix context, gives a path bijection on the enclosing node. -/
+private theorem hasPathBij_of_permList :
+    ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
+      ∀ (a : α) (pre : List (RoseTree α)),
+        HasPathBij (.node a (pre ++ cs)) (.node a (pre ++ ds))
+  | _, _, .nil, _, _ => .refl _
+  | _, _, @PermList.cons _ c d cs ds hcd hs, a, pre => by
+    obtain ⟨f, hvf, hgf⟩ := hasPathBij_of_perm hcd
+    have head : HasPathBij (.node a (pre ++ c :: cs)) (.node a (pre ++ d :: cs)) :=
+      ⟨pathLiftRecurse pre.length f,
+       vertices_recurse_perm a pre c d cs f hvf,
+       fun pairs => multiGraft_recurse_perm a f hgf pre cs pairs⟩
+    have tail := hasPathBij_of_permList hs a (pre ++ [d])
+    simp only [List.append_assoc, List.singleton_append] at tail
+    exact head.trans tail
+  | _, _, .swap c d cs, a, pre =>
+    ⟨swapPathAt pre.length, vertices_swap_perm a pre d c cs,
+     fun pairs => multiGraft_swap_perm a pre d c cs pairs⟩
+  | _, _, .trans h₁ h₂, a, pre =>
+    (hasPathBij_of_permList h₁ a pre).trans (hasPathBij_of_permList h₂ a pre)
+end
+
+/-- `insertion T Ts` is `mk`-invariant under `Perm` of the host. -/
+private theorem insertion_perm_host (Ts : List (RoseTree α))
+    {t t' : RoseTree α} (h : Perm t t') :
     (insertion t Ts).map Nonplanar.mk =
       (insertion t' Ts).map Nonplanar.mk := by
-  obtain ⟨f, hf_perm, hf_graft⟩ := exists_pathBijection_permStep h
+  obtain ⟨f, hf_perm, hf_graft⟩ := hasPathBij_of_perm h
   exact insertion_eq_of_pathBij f hf_perm hf_graft Ts
 
-/-- `insertion T Ts` is `mk`-invariant under `PermEquiv` of the host. -/
-private theorem insertion_permEquiv_host (Ts : List (RoseTree α))
-    {t t' : RoseTree α} (h : PermEquiv t t') :
-    (insertion t Ts).map Nonplanar.mk =
-      (insertion t' Ts).map Nonplanar.mk := by
-  induction h with
-  | rel _ _ hstep => exact insertion_permStep_host Ts hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
-
-/-- `List.Forall₂ PermEquiv` lifts to `List` equality after mapping by
+/-- `List.Forall₂ Perm` lifts to `List` equality after mapping by
     `Nonplanar.mk` — used for the `Ts = []` base case of forest host
     invariance. -/
-private theorem map_mk_eq_of_forall2_permEquiv {F F' : List (RoseTree α)}
-    (h : List.Forall₂ PermEquiv F F') :
+private theorem map_mk_eq_of_forall2_perm {F F' : List (RoseTree α)}
+    (h : List.Forall₂ Perm F F') :
     F.map Nonplanar.mk = F'.map Nonplanar.mk := by
   induction h with
   | nil => rfl
   | cons hd_pe _ ih => simp [Nonplanar.mk_eq_mk_iff.mpr hd_pe, ih]
 
-/-- Forest host invariance: `Forall₂ PermEquiv F F'` lifts to
+/-- Forest host invariance: `Forall₂ Perm F F'` lifts to
     `mk`-equality of `insertionForest F Ts` and `insertionForest F' Ts`. -/
-theorem insertionForest_permEquiv_host
+theorem insertionForest_perm_host
     (Ts : List (RoseTree α)) {F F' : List (RoseTree α)}
-    (h : List.Forall₂ PermEquiv F F') :
+    (h : List.Forall₂ Perm F F') :
     (insertionForest F Ts).map (List.map Nonplanar.mk) =
       (insertionForest F' Ts).map (List.map Nonplanar.mk) := by
   induction h generalizing Ts with
@@ -1205,7 +1231,7 @@ theorem insertionForest_permEquiv_host
     | nil =>
       simp [insertionForest_cons_host_nil_guests, Multiset.map_singleton,
             List.map_cons, Nonplanar.mk_eq_mk_iff.mpr hd_pe,
-            map_mk_eq_of_forall2_permEquiv tail_pe]
+            map_mk_eq_of_forall2_perm tail_pe]
     | cons T_g Ts_inner =>
       rw [insertionForest_cons_cons, insertionForest_cons_cons]
       rw [Multiset.map_bind, Multiset.map_bind]
@@ -1225,7 +1251,7 @@ theorem insertionForest_permEquiv_host
       change (insertion T _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
              (insertion T' _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
       rw [← Multiset.bind_map, ← Multiset.bind_map]
-      rw [insertion_permEquiv_host _ hd_pe]
+      rw [insertion_perm_host _ hd_pe]
       refine Multiset.bind_congr fun mk_T_ins _ => ?_
       show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk) =
            (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
