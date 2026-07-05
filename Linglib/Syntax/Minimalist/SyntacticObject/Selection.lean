@@ -133,11 +133,11 @@ theorem selStep_eq_some {hd : LIToken} {res : List Cat}
 /-- The selection algebra: combine a node label with its daughters' selection
     states. Lexical leaf ↦ its token + `outerSel`; bare trace leaf ↦ canonical
     `(mkTraceToken 0, [])` (index-free); bare binary node ↦ `selStep` of the
-    daughters; other arities ↦ `none`. -/
+    daughters (the `SelState` magma multiplication); other arities ↦ `none`. -/
 def selCombine : SOLabel → List SelState → SelState
   | .inl tok, _     => some (tok, tok.item.outerSel)
   | .inr (), []     => some (mkTraceToken 0, [])
-  | .inr (), [x, y] => selStep x y
+  | .inr (), [x, y] => x * y
   | .inr (), _      => none
 
 /-- A daughter list of three or more has no selection value. -/
@@ -167,7 +167,7 @@ theorem selCombine_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm
             selCombine_big (by simp only [List.length_cons] at hl ⊢; omega)]
     | swap x y l =>
       cases l with
-      | nil => exact selStep_comm y x
+      | nil => exact mul_comm y x
       | cons z l => rfl
     | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
 
