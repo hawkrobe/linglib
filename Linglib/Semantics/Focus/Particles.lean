@@ -150,18 +150,28 @@ inductive EvenThreshold where
 
 /-- Count of alternatives that the prejacent exceeds under a decidable ordering. -/
 def countExceeded {α : Type*} (prejacent : α) (alternatives : List α)
-    (moreSurprising : α → α → Bool) : Nat :=
-  (alternatives.filter (moreSurprising prejacent)).length
+    (moreSurprising : α → α → Prop) [DecidableRel moreSurprising] : Nat :=
+  (alternatives.filter (fun a => decide (moreSurprising prejacent a))).length
 
 /-- Generalized EVEN presupposition parameterized by threshold.
-    `moreSurprising a b` returns `true` when `a` is more surprising
-    (less likely) than `b`. -/
+    `moreSurprising a b` holds when `a` is more surprising (less
+    likely) than `b`. -/
 def evenPresupWith {α : Type*} (prejacent : α) (alternatives : List α)
-    (moreSurprising : α → α → Bool) (threshold : EvenThreshold) : Bool :=
+    (moreSurprising : α → α → Prop) [DecidableRel moreSurprising]
+    (threshold : EvenThreshold) : Prop :=
   let n := countExceeded prejacent alternatives moreSurprising
   match threshold with
-  | .existential => decide (n > 0)
-  | .universal => decide (n = alternatives.length)
-  | .most => decide (n * 2 > alternatives.length)
+  | .existential => n > 0
+  | .universal => n = alternatives.length
+  | .most => n * 2 > alternatives.length
+
+instance {α : Type*} (prejacent : α) (alternatives : List α)
+    (moreSurprising : α → α → Prop) [DecidableRel moreSurprising]
+    (threshold : EvenThreshold) :
+    Decidable (evenPresupWith prejacent alternatives moreSurprising threshold) := by
+  unfold evenPresupWith; exact match threshold with
+    | .existential => inferInstanceAs (Decidable (_ > _))
+    | .universal => inferInstanceAs (Decidable (_ = _))
+    | .most => inferInstanceAs (Decidable (_ > _))
 
 end Semantics.Focus.Particles
