@@ -311,8 +311,9 @@ theorem frozen_value_later_overrides :
       "Part" "ATR" = some false := by decide
 
 /-- The ATR value frozen at vP-spell-out for `PartSAuxOV`: when V is
-    +ATR (e.g. /joku/), Part inherits +ATR via local vP-internal
-    harmony. This is the freezing event. -/
+    +ATR (e.g. /ni/ 'see', whose harmony yields the +ATR particle
+    surface form [joku], their (41)), Part inherits +ATR via local
+    vP-internal harmony. This is the freezing event. -/
 def vPFrozen_PartSAuxOV (vIsPlusATR : ATR) : FrozenFeatureTable :=
   if vIsPlusATR then [⟨"Part", "ATR", true⟩]
   else            [⟨"Part", "ATR", false⟩]
