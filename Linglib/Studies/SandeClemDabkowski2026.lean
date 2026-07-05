@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Fragments.Guebie.ParticleVerbs
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -76,9 +77,9 @@ inside the same Spell-out domain. Only the per-terminal binary value matters her
 abbrev ATR := Bool
 
 /-- The particle's lexical default, surfacing when no harmony trigger is local
-    ((13)). Defaults are lexical per particle — /jɔkʊ/ is −ATR, others are +ATR
-    ((12)); we model the /jɔkʊ/ type. -/
-def particleDefaultATR : ATR := false
+    ((13)). Defaults are lexical per particle ((12)); we model the /jɔkʊ/ type,
+    derived from the fragment lexicon (`Fragments/Guebie/ParticleVerbs.lean`). -/
+def particleDefaultATR : ATR := Guebie.jOkU.atr
 
 /-! ### The §4 syntax: two parameters derive the four orders -/
 
@@ -179,6 +180,13 @@ theorem discontinuous_harmony :
     lexical default otherwise ((13)). -/
 def surfaceATR (c : ClauseConfig) (vRoot : ATR) : ATR :=
   if c.harmony then vRoot else particleDefaultATR
+
+/-- The (24) contrast on the real lexicon: fronted /jɔkʊ/ surfaces [joku] (+ATR,
+    harmonized with /ni/ 'see') in the SAuxOV clause, but with its −ATR default in
+    the SVO clause. -/
+example :
+    surfaceATR ⟨true, true⟩ Guebie.ni.atr = true ∧
+    surfaceATR ⟨false, true⟩ Guebie.ni.atr = Guebie.jOkU.atr := by decide
 
 /-! ### §6.1's mechanism: the (46)/(47) ranking derives the surface value
 

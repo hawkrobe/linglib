@@ -878,6 +878,7 @@ import Linglib.Fragments.Greek.StandardModern.Possession
 import Linglib.Fragments.Greek.StandardModern.Reciprocals
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
+import Linglib.Fragments.Guebie.ParticleVerbs
 import Linglib.Fragments.HaitianCreole.Definiteness
 import Linglib.Fragments.Hausa.Coordination
 import Linglib.Fragments.Hausa.Definiteness
