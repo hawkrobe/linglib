@@ -116,6 +116,7 @@ import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Data.List.Fold
+import Linglib.Core.Data.List.Sublist
 import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
@@ -2217,6 +2218,7 @@ import Linglib.Studies.Fox2018
 import Linglib.Studies.FoxHackl2006
 import Linglib.Studies.FoxHackl2006Numerals
 import Linglib.Studies.FoxKatzir2011
+import Linglib.Studies.FoxPesetsky2005
 import Linglib.Studies.FoxSpector2018
 import Linglib.Studies.Francescotti1995
 import Linglib.Studies.FrancikClark1985

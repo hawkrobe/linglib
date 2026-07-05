@@ -645,27 +645,31 @@ converges. This is why `WhDependencyType.binding` is not constrained
 by the PIC — it cannot create the ordering conflicts that the PIC
 (via Order Preservation) is designed to prevent.
 
-The `extendOrderingTable` function from `Minimalist.Linearization`
-takes an existing `OrderingTable` and a list of terminals that move —
-for binding, this list is empty, so the table is unchanged and
-trivially consistent. -/
+An in-situ binding dependency contributes an empty Spell-out snapshot to
+`Minimalist.Linearization.spelloutOrder`, and an empty snapshot leaves the
+induced order unchanged. -/
 
-/-- Binding adds no precedence statements: when no elements move
-(the terminal list is empty), `extendOrderingTable` returns the
-existing table unchanged. This is the formal content of "binding does
-not change linear order" ([fox-pesetsky-2005], as applied in
-[shen-huang-2026] §4.2). -/
-theorem binding_no_new_precedences (existing : OrderingTable) :
-    extendOrderingTable existing [] = existing := by
-  unfold extendOrderingTable allPrecs; simp
+/-- Binding adds no precedence statements: an empty Spell-out snapshot leaves the
+spell-out order unchanged. The formal content of "binding does not change linear
+order" ([fox-pesetsky-2005], as applied in [shen-huang-2026] §4.2). -/
+theorem binding_no_new_precedences (phases : List (List String)) :
+    spelloutOrder (phases ++ [[]]) = spelloutOrder phases := by
+  funext a b
+  refine propext ⟨Relation.TransGen.mono ?_, Relation.TransGen.mono ?_⟩ <;>
+    rintro x y ⟨p, hp, hs⟩
+  · rcases List.mem_append.mp hp with hp | hp
+    · exact ⟨p, hp, hs⟩
+    · rw [List.mem_singleton] at hp
+      subst hp
+      simp at hs
+  · exact ⟨p, List.mem_append_left _ hp, hs⟩
 
-/-- Consequence: binding never creates an ordering contradiction.
-If the existing ordering table is consistent, it stays consistent
-after a binding operation (because nothing changes). -/
-theorem binding_preserves_consistency (existing : OrderingTable)
-    (h : Consistent existing) :
-    Consistent (extendOrderingTable existing []) := by
-  rw [binding_no_new_precedences]; exact h
+/-- Consequence: binding never creates an ordering contradiction. -/
+theorem binding_preserves_consistency (phases : List (List String))
+    (h : Consistent phases) : Consistent (phases ++ [[]]) := by
+  intro a
+  rw [binding_no_new_precedences]
+  exact h a
 
 -- ============================================================================
 -- §14. Bridge: Phase Theory → Violation Model
