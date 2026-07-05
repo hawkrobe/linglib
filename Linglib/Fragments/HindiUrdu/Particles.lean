@@ -1,72 +1,73 @@
+import Linglib.Syntax.Particle.Basic
+
 /-!
 # Hindi-Urdu Interrogative Particles
 [bhatt-dayal-2014] [bhatt-dayal-2020] [dayal-2025]
 
-Particles related to question formation in Hindi-Urdu, following
-[bhatt-dayal-2014] and [dayal-2025].
+Particles related to question formation in Hindi-Urdu, as `Particle`
+values with embedding-distribution facets, following [bhatt-dayal-2014]
+and [dayal-2025].
 
-Hindi-Urdu lacks a dedicated *wh*-complementizer for polar questions (unlike
-English *whether* or Italian *se*). Instead, it uses:
+Hindi-Urdu lacks a dedicated *wh*-complementizer for polar questions
+(unlike English *whether* or Italian *se*). Instead, it uses:
 
-1. *kya:* — a polar question particle (PQP), placed at PerspP (not CP).
-   Appears in matrix and quasi-subordinated questions, but NOT subordinated.
-2. *ki* — a general subordinator (like Hungarian *hogy*), compatible with
-   both declarative and interrogative complements.
+1. *kya:* — analyzed by [bhatt-dayal-2020] as a polar question particle
+   at PerspP (not CP); the layer is derived from the embedding facet in
+   `BhattDayal2020`, together with its predicate-selection profile.
+2. *ki* — a general subordinator (like Hungarian *hogy*), compatible
+   with both declarative and interrogative complements.
 
 The absence of a clause-typing particle means:
 - Simplex polar questions (just *p*, no "or not") cannot be subordinated
   (clause-typing cannot be forced at CP).
 - *kya:* in embedded position is the hallmark of quasi-subordination.
-
 -/
 
 namespace HindiUrdu.Particles
 
-/-- A Hindi-Urdu particle entry. -/
-structure ParticleEntry where
-  form : String
-  gloss : String
-  /-- Is this a clause-typing particle (CP-level)? -/
-  clauseTyping : Bool
-  /-- Is this a polar question particle (PerspP-level)? -/
-  polarQuestion : Bool
-  /-- Can it appear in subordinated interrogatives? -/
-  inSubordinated : Bool
-  /-- Can it appear in quasi-subordinated interrogatives? -/
-  inQuasiSub : Bool
-  /-- Compatible with responsive predicates? -/
-  withResponsive : Bool
-  /-- Compatible with rogative predicates? -/
-  withRogative : Bool
-  deriving Repr, BEq
-
 /-- *ki* — general subordinator. Compatible with both declarative and
-    interrogative complements. NOT a clause-typing particle. -/
-def ki : ParticleEntry :=
-  { form := "ki", gloss := "SUB (subordinator)"
-  , clauseTyping := false, polarQuestion := false
-  , inSubordinated := true, inQuasiSub := true
-  , withResponsive := true, withRogative := true }
+interrogative complements (and with responsive and rogative predicates
+alike). NOT a clause-typing particle. -/
+def ki : Particle where
+  form := "ki"
+  position := .clauseInitial
+  embedding := some
+    { matrix := some .excluded
+      subordinated := some .optional
+      quasiSubordinated := some .optional }
 
-/-- *kya:* — polar question particle (PQP). Sits at PerspP, not CP.
-    Appears in matrix and quasi-subordinated contexts only.
-    Incompatible with *nirbhar kar-na:* "depend on" (rogativeCP: selects CP only).
-    Compatible with *pu:ch-na:* "ask" (rogativeSAP) and
-    *sava:l yeh hai* "the question is" (rogativePerspP). -/
-def kya : ParticleEntry :=
-  { form := "kya:", gloss := "PQP (polar question particle)"
-  , clauseTyping := false, polarQuestion := true
-  , inSubordinated := false, inQuasiSub := true
-  , withResponsive := false, withRogative := true }
+/-- *kya:* — [bhatt-dayal-2020]'s polar question particle: occurs in
+polar questions but not wh-questions, optionally in matrix and in a
+restricted way in embedded questions, with flexible clause-internal
+positioning ("can occur almost anywhere within a clause", §2).
+Selectionally: incompatible with *nirbhar kar-na:* "depend on" (a
+responsive selecting CP only); compatible with *pu:ch-na:* "ask" and
+*sava:l yeh hai* "the question is" (rogatives). Its PerspP layer is
+derived in `BhattDayal2020`. -/
+def kya : Particle where
+  form := "kya:"
+  position := .free
+  distribution := some
+    { polarInterrogative := some .optional
+      constituentInterrogative := some .excluded }
+  embedding := some
+    { matrix := some .optional
+      subordinated := some .excluded
+      quasiSubordinated := some .optional
+      quotation := some .excluded }
 
-/-- *ya: nahii:* — "or not", provides overt alternative for polar questions.
-    Required in subordinated polar questions (since *kya:* is unavailable). -/
-def ya_nahi : ParticleEntry :=
-  { form := "ya: nahii:", gloss := "or not"
-  , clauseTyping := false, polarQuestion := false
-  , inSubordinated := true, inQuasiSub := true
-  , withResponsive := true, withRogative := true }
+/-- *ya: nahii:* — "or not", provides an overt alternative for polar
+questions. Required in subordinated polar questions (since *kya:* is
+unavailable there); forms specifically alternative questions. -/
+def ya_nahi : Particle where
+  form := "ya: nahii:"
+  position := .clauseFinal
+  distribution := some
+    { alternativeInterrogative := some .optional }
+  embedding := some
+    { subordinated := some .obligatory
+      quasiSubordinated := some .optional }
 
-def allParticles : List ParticleEntry := [ki, kya, ya_nahi]
+def allParticles : List Particle := [ki, kya, ya_nahi]
 
 end HindiUrdu.Particles

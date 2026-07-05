@@ -23,8 +23,10 @@ three-way `cp / perspP / sap` split:
 | SAP    | Japanese    | *kke*           | matrix + quotation   |
 | SAP    | English     | *quick(ly)*     | matrix only          |
 
-The layer assignments are theoretical overlays on the fragment particles —
-the fragments themselves carry only theory-neutral distributional fields.
+The layer of each particle is DERIVED from its fragment's
+embedding-distribution facet by `layerOf` — the cartography's defining
+correlation (layer ↔ embedding distribution), stated once as a
+classifier rather than stipulated per particle.
 -/
 
 namespace BhattDayal2020
@@ -37,130 +39,36 @@ open Japanese.Particles (ka kke)
 open English.QuestionParticles (quick)
 
 -- ============================================================================
--- §1 — Layer Assignments (per-paper theoretical overlay)
+-- §1 — The layer classifier (derived, not stipulated)
 -- ============================================================================
 
-/-- Bhatt & Dayal (2020): Hindi-Urdu *kya:* sits at PerspP. -/
-def hindi_urdu_kya_layer (_ : HindiUrdu.Particles.ParticleEntry) :
-    QParticleLayer := .perspP
+/-- The [dayal-2025] cartography's defining correlation, as a
+    classifier: a question particle's left-peripheral layer is read off
+    its embedding distribution — subordinated-licensed → CP
+    (clause-typing); subordinated-excluded but quasi-subordinated-
+    licensed → PerspP; quasi-subordinated-excluded but matrix-licensed →
+    SAP. Defined for question particles only — Japanese *koto* (a
+    declarative complementizer, kept in the fragment for the *ka*
+    contrast at [dayal-2025] (15)) is outside its intended domain. -/
+def layerOf (p : Particle) : Option QParticleLayer :=
+  if p.LicensedInEmbed .subordinated then some .cp
+  else if p.LicensedInEmbed .quasiSubordinated then some .perspP
+  else if p.LicensedInEmbed .matrix then some .sap
+  else none
 
-/-- [dayal-2025]: Japanese *ka* is the canonical CP-layer Q-morpheme. -/
-def japanese_ka_layer (_ : Japanese.Particles.ParticleEntry) :
-    QParticleLayer := .cp
-
-/-- [sauerland-yatsushiro-2017]: Japanese *kke* is an MQP at SAP. -/
-def japanese_kke_layer (_ : Japanese.Particles.ParticleEntry) :
-    QParticleLayer := .sap
-
-/-- [dayal-2025] ex. (19): English *quick/quickly* is an MQP-adverb at SAP. -/
-def english_quick_layer (_ : English.QuestionParticles.QParticleEntry) :
-    QParticleLayer := .sap
-
--- ============================================================================
--- §2 — Q-Particle Datum (Fragment-driven typology row)
--- ============================================================================
-
-/-- A row in the cross-linguistic Q-particle typology: a Fragment particle
-    plus its theoretical layer assignment and a language label. -/
-structure QParticleDatum where
-  language : String
-  form : String
-  layer : QParticleLayer
-  /-- Appears in matrix questions? -/
-  inMatrix : Bool
-  /-- Appears in subordinated interrogatives? -/
-  inSubordinated : Bool
-  /-- Appears in quasi-subordinated interrogatives? -/
-  inQuasiSub : Bool
-  /-- Appears in quotations? -/
-  inQuotation : Bool
-  deriving Repr
-
-/-- Japanese *ka* — clause-typing particle (CP). -/
-def japanese_ka : QParticleDatum where
-  language := "Japanese"
-  form := ka.romaji
-  layer := japanese_ka_layer ka
-  inMatrix := ka.inMatrix
-  inSubordinated := ka.inSubordinated
-  inQuasiSub := ka.inQuasiSub
-  -- Japanese ka is grammatical in quotation (subsumed by inSubordinated/inMatrix in fragment).
-  inQuotation := true
-
-/-- Hindi-Urdu *kya:* — polar question particle (PerspP). -/
-def hindi_urdu_kya : QParticleDatum where
-  language := "Hindi-Urdu"
-  form := kya.form
-  layer := hindi_urdu_kya_layer kya
-  -- kya is a PQP licensed in matrix + quasi-sub but not in subordinated clauses.
-  inMatrix := true
-  inSubordinated := kya.inSubordinated
-  inQuasiSub := kya.inQuasiSub
-  inQuotation := false
-
-/-- Japanese *kke* — meta question particle (SAP). -/
-def japanese_kke : QParticleDatum where
-  language := "Japanese"
-  form := kke.romaji
-  layer := japanese_kke_layer kke
-  inMatrix := kke.inMatrix
-  inSubordinated := kke.inSubordinated
-  inQuasiSub := kke.inQuasiSub
-  -- [sauerland-yatsushiro-2017]: kke is licensed in quotation as well as matrix.
-  inQuotation := true
-
-/-- English *quick/quickly* — MQP-like adverb (SAP). -/
-def english_quick : QParticleDatum where
-  language := "English"
-  form := quick.form
-  layer := english_quick_layer quick
-  inMatrix := quick.inMatrix
-  inSubordinated := quick.inSubordinated
-  inQuasiSub := quick.inQuasiSub
-  inQuotation := quick.inQuotation
-
-def allQParticleData : List QParticleDatum :=
-  [japanese_ka, hindi_urdu_kya, japanese_kke, english_quick]
+/-- The four representative layer assignments, DERIVED from the
+    fragments' embedding facets: *ka* CP ([dayal-2025]), *kya:* PerspP
+    ([bhatt-dayal-2020]), *kke* SAP ([sauerland-yatsushiro-2017]),
+    *quick* SAP ([dayal-2025] ex. (19)). Formerly four stipulated
+    constants; now one classifier plus kernel-checked facts. -/
+theorem layers_derived :
+    layerOf ka = some .cp ∧
+    layerOf kya = some .perspP ∧
+    layerOf kke = some .sap ∧
+    layerOf quick = some .sap := by decide
 
 -- ============================================================================
--- §3 — Typology Theorems (layer ⇒ embedding distribution)
--- ============================================================================
-
-/-- CP-layer particles appear in subordinated position. -/
-theorem cp_particles_in_subordination :
-    ∀ d ∈ allQParticleData,
-      d.layer = .cp → d.inSubordinated = true := by
-  intro d hd _
-  simp [allQParticleData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;>
-    simp_all [japanese_ka, hindi_urdu_kya, japanese_kke, english_quick,
-              japanese_ka_layer, hindi_urdu_kya_layer, japanese_kke_layer,
-              english_quick_layer, ka, kya, kke, quick]
-
-/-- PerspP-layer particles do NOT appear in subordinated position. -/
-theorem perspP_particles_not_in_subordination :
-    ∀ d ∈ allQParticleData,
-      d.layer = .perspP → d.inSubordinated = false := by
-  intro d hd _
-  simp [allQParticleData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;>
-    simp_all [japanese_ka, hindi_urdu_kya, japanese_kke, english_quick,
-              japanese_ka_layer, hindi_urdu_kya_layer, japanese_kke_layer,
-              english_quick_layer, ka, kya, kke, quick]
-
-/-- SAP-layer particles do NOT appear in quasi-subordinated position. -/
-theorem sap_particles_not_in_quasi_sub :
-    ∀ d ∈ allQParticleData,
-      d.layer = .sap → d.inQuasiSub = false := by
-  intro d hd _
-  simp [allQParticleData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;>
-    simp_all [japanese_ka, hindi_urdu_kya, japanese_kke, english_quick,
-              japanese_ka_layer, hindi_urdu_kya_layer, japanese_kke_layer,
-              english_quick_layer, ka, kya, kke, quick]
-
--- ============================================================================
--- §4 — Singleton-Alternative Presupposition (eq. 23)
+-- §2 — Singleton-Alternative Presupposition (eq. 23)
 -- ============================================================================
 
 /-! [bhatt-dayal-2020] eq. 23:
@@ -205,12 +113,12 @@ theorem kya_infelicitous_two_cell_polar {p : Set W}
     ¬ IsSingleton (polar (W := W) p) :=
   not_isSingleton_polar_of_nontrivial hne hnu
 
-/-- **Bridge to fragment**: the kya: entry's `polarQuestion` field is
-    the surface signal of the singleton-presupposition analysis — the
-    fragment data field flags the particle whose interpretation is
-    given by the `IsSingleton` presupposition + identity on
-    `SingletonQuestion`. -/
-theorem kya_polarQuestion_signals_singletonPresup :
-    HindiUrdu.Particles.kya.polarQuestion = true := rfl
+/-- **Bridge to fragment**: the PerspP layer derived from kya:'s
+    embedding facet (`layers_derived`) is the surface signal of the
+    singleton-presupposition analysis — the PerspP-layer particle is
+    the one whose interpretation is given by the `IsSingleton`
+    presupposition + identity on `SingletonQuestion`. -/
+theorem kya_perspP_signals_singletonPresup :
+    layerOf kya = some .perspP := layers_derived.2.1
 
 end BhattDayal2020

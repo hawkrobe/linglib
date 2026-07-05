@@ -1,3 +1,4 @@
+import Linglib.Syntax.Particle.Basic
 import Linglib.Features.Expressive
 
 /-!
@@ -6,10 +7,9 @@ import Linglib.Features.Expressive
 
 ## Part 1: Interrogative Particles
 
-Q-morphemes and related particles in Japanese. The fragment commits only to
-theory-neutral lexical primitives (clause-internal distribution); the
-left-peripheral layer assignment lives in
-`BhattDayal2020`.
+Q-morphemes and related particles in Japanese, as `Particle` values with
+embedding-distribution facets. The left-peripheral layer assignments are
+derived from those facets in `BhattDayal2020`.
 
 1. *ka/no*: Clause-typing Q-morphemes — appear in subordinated interrogatives
 2. *koto*: Declarative complementizer (contrast with *ka* in interrogatives)
@@ -22,60 +22,77 @@ Adverbs and focus particles that express subjective evaluation and manage
 discourse stances, following [kubota-2026]. The fragment carries the theory-neutral
 lexical inventory (form + category); [kubota-2026]'s stance classification and modal
 selectional restrictions live in `Studies/Kubota2026.lean`.
-
 -/
 
 namespace Japanese.Particles
 
-/-- A Japanese particle entry. -/
-structure ParticleEntry where
-  form : String
-  romaji : String
-  /-- Does this particle appear in subordinated interrogatives? -/
-  inSubordinated : Bool
-  /-- Does this particle appear in quasi-subordinated interrogatives? -/
-  inQuasiSub : Bool
-  /-- Does this particle appear in matrix questions? -/
-  inMatrix : Bool
-  deriving Repr, BEq
-
-/-- *ka* — clause-typing Q-morpheme. Obligatory in subordinated interrogatives,
-    optional in matrix (can be dropped). Marks CP as +WH. -/
-def ka : ParticleEntry :=
-  { form := "か", romaji := "ka"
-  , inSubordinated := true, inQuasiSub := true, inMatrix := true }
+/-- *ka* — clause-typing Q-morpheme. Obligatory in subordinated
+interrogatives, optional in matrix (can be dropped). Marks CP as +WH.
+Licensed in quotation as well. -/
+def ka : Particle where
+  form := "ka"
+  script := some "か"
+  position := .clauseFinal
+  embedding := some
+    { matrix := some .optional
+      subordinated := some .obligatory
+      quasiSubordinated := some .optional
+      quotation := some .optional }
 
 /-- *no* — clause-typing particle for questions (informal). -/
-def no_ : ParticleEntry :=
-  { form := "の", romaji := "no"
-  , inSubordinated := true, inQuasiSub := true, inMatrix := true }
+def no_ : Particle where
+  form := "no"
+  script := some "の"
+  position := .clauseFinal
+  embedding := some
+    { matrix := some .optional
+      subordinated := some .optional
+      quasiSubordinated := some .optional }
 
 /-- *koto* — complementizer for declarative clauses. Contrast with *ka*:
-    having *ka* in the embedded clause suffices for interrogative interpretation,
-    while *koto* marks a declarative ([dayal-2025]: (15)). -/
-def koto : ParticleEntry :=
-  { form := "こと", romaji := "koto"
-  , inSubordinated := true, inQuasiSub := false, inMatrix := false }
+having *ka* in the embedded clause suffices for interrogative
+interpretation, while *koto* marks a declarative ([dayal-2025]: (15)).
+Subordinated clauses only. -/
+def koto : Particle where
+  form := "koto"
+  script := some "こと"
+  position := .clauseFinal
+  embedding := some
+    { matrix := some .excluded
+      subordinated := some .optional
+      quasiSubordinated := some .excluded }
 
-/-- *kke* — meta question particle (MQP). Only in matrix questions and quotations.
-    Has a "remind-me" presupposition: speaker has forgotten Ans(Q) and believes
-    the addressee knows it. -/
-def kke : ParticleEntry :=
-  { form := "っけ", romaji := "kke"
-  , inSubordinated := false, inQuasiSub := false, inMatrix := true }
+/-- *kke* — meta question particle (MQP). Only in matrix questions and
+quotations ([sauerland-yatsushiro-2017]). Has a "remind-me"
+presupposition: speaker has forgotten Ans(Q) and believes the addressee
+knows it. -/
+def kke : Particle where
+  form := "kke"
+  script := some "っけ"
+  position := .clauseFinal
+  embedding := some
+    { matrix := some .optional
+      subordinated := some .excluded
+      quasiSubordinated := some .excluded
+      quotation := some .optional }
 
 /-- *daroo* (だろう) — conjectural/epistemic copula.
-    With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
-    With interrogative complement: "x wonders Q" (⟦daroo⟧(Q)(x) = INQ_x ⊆ Q).
-    The dual reading arises from the absence of an ignorance component,
-    unlike wonder ([roelofsen-uegaki-2020], [uegaki-roelofsen-2018]).
-    Appears in matrix and quasi-subordinated contexts but not in subordinated
-    interrogatives (which use *ka*). -/
-def daroo : ParticleEntry :=
-  { form := "だろう", romaji := "daroo"
-  , inSubordinated := false, inQuasiSub := true, inMatrix := true }
+With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
+With interrogative complement: "x wonders Q" (⟦daroo⟧(Q)(x) = INQ_x ⊆ Q).
+The dual reading arises from the absence of an ignorance component,
+unlike wonder ([roelofsen-uegaki-2020], [uegaki-roelofsen-2018]).
+Appears in matrix and quasi-subordinated contexts but not in subordinated
+interrogatives (which use *ka*). -/
+def daroo : Particle where
+  form := "daroo"
+  script := some "だろう"
+  position := .clauseFinal
+  embedding := some
+    { matrix := some .optional
+      subordinated := some .excluded
+      quasiSubordinated := some .optional }
 
-def allParticles : List ParticleEntry := [ka, no_, koto, kke, daroo]
+def allParticles : List Particle := [ka, no_, koto, kke, daroo]
 
 end Japanese.Particles
 
