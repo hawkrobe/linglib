@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Studies.KadmonLandman1993
-import Linglib.Pragmatics.RSA.BToM
+import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Questions.Partition.QUD
@@ -822,6 +822,44 @@ theorem rsa_btom_bridge (u : Utterance) (h : PMF.marginal S ddprJoint u ≠ 0)
   rw [PMF.fst_apply, ddprBToM_worldMarginal_eq, Finset.sum_mul]
   exact Finset.sum_congr rfl fun l _ => by
     rw [ddprListener, RSA.Canonical.L1, PMF.posterior_apply]
+
+/-! ### Latent classification (cognitive-level interpretation)
+
+RSA chains bundle all non-world latent variables into a single `Latent` type.
+A `LatentClassification` assigns each component to a BToM ontological category
+([baker-jara-ettinger-saxe-tenenbaum-2017]), making the cognitive
+interpretation explicit. Different theoretical positions correspond to
+different classifications — strong Gricean (everything is mental state
+attribution), channel-theoretic ([clark-1996]-adjacent: some variables are
+medium properties), and so on. Different classifications of the same model
+yield identical behavioural predictions: marginalisation doesn't care about
+labels, so `classify` is never called by the inference machinery. The
+classifications diverge only on cognitive-level claims about what kind of
+inference the listener is performing. -/
+
+/-- A classification of RSA latent variables into BToM ontological categories.
+
+Cognitive-level commitment saying what *kind* of thing each latent variable
+represents. Does not affect behavioural predictions: `classify` is never
+called by `toBToM` or the inference machinery, so different classifications
+yield identical BToM world marginals. -/
+structure LatentClassification (Latent : Type*) where
+  /-- Assign each latent variable value to a BToM category. -/
+  classify : Latent → LatentCategory
+  /-- Assign each latent variable a temporal dynamics.
+      Default: episodic (each observation is independent). -/
+  dynamics : Latent → FactorDynamics := fun _ => .episodic
+
+/-- The strong Gricean classification: all latent variables are mental states.
+    L1's inference is entirely Theory of Mind. -/
+def griceanClassification (Latent : Type*) : LatentClassification Latent where
+  classify _ := .mental
+
+/-- The channel-theoretic classification: all latent variables are medium
+    properties (structural ambiguity, conventions, channel noise).
+    L1's inference is entirely signal disambiguation. -/
+def channelClassification (Latent : Type*) : LatentClassification Latent where
+  classify _ := .medium
 
 /-- When all discourse participants share the same spatial scene, they
     derive the same DDRP — a prerequisite for successful communication

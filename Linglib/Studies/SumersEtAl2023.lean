@@ -61,7 +61,7 @@ Human speakers trade off truthfulness and relevance:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
+import Linglib.Pragmatics.RSA.CombinedUtility
 
 namespace SumersEtAl2023
 

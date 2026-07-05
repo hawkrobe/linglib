@@ -26,6 +26,8 @@ constructional diversity and Jensen-Shannon divergence for grammar similarity.
 
 namespace ConstructionGrammar
 
+open RSA (Lexicon)
+
 -- ============================================================================
 -- §1. Core Types
 -- ============================================================================

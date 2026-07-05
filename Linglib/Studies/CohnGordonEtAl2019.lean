@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.Incremental
+import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Processing.VisualWorld
 import Linglib.Studies.SedivyEtAl1999
 
@@ -32,13 +32,13 @@ where U is the set of complete utterances and ⊑ is the prefix relation.
 
 ## Formalization via the `IncrementalSemantics` bundle
 
-Each scene in this file is a single value of `RSA.IncrementalSemantics U W`
-(in `Pragmatics/RSA/Incremental.lean`), specifying just the lexicon
-(`wordApplies`), the closed set of complete utterances, and the world set.
-The file derives the chain-rule speaker (α = 1, no cost, uniform priors)
-and extension-based L0 from the bundle, so the three scenes (Figure 1, the
-[sedivy-2007] reference game, the [rubio-fernandez-2016] display) share
-machinery rather than duplicating it.
+Each scene in this file is a single value of `IncrementalSemantics U W`
+(defined below), specifying just the lexicon (`wordApplies`), the closed set
+of complete utterances, and the world set. The file derives the chain-rule
+speaker (α = 1, no cost, uniform priors) and extension-based L0 from the
+bundle, so the three scenes (Figure 1, the [sedivy-2007] reference game,
+the [rubio-fernandez-2016] display) share machinery rather than duplicating
+it.
 
 The bundle exposes a single deep theorem, `l0Utt_ge_inv_card`, proving
 the §2.4 weakly-informative bound generically: any complete utterance true
@@ -76,6 +76,113 @@ open scoped NNRat
 namespace CohnGordonEtAl2019
 
 open RSA
+
+/-! ### `IncrementalSemantics` bundle
+
+A scene-specific incremental RSA model factors into three pieces —
+`wordApplies : U → W → Bool`, `completeUtterances : List (List U)`, and
+`worlds : List W`. Utterance-level truth, extension-based incremental
+semantics ⟦pfx⟧(r), the chain-rule speaker, and the literal-listener
+categorical L0^UTT are all *derived* from those three pieces. The bundle
+exposes `l0Utt_ge_inv_card` (§2.4 weakly-informative bound) generically. -/
+
+/-- Bundle of scene-specific data for an incremental RSA model.
+
+The three fields jointly determine the entire model: `incrementalSem`
+derives the extension-based meaning function (§2.2) and `l0Utt` projects
+the literal listener over complete utterances; studies build their
+No-Brevity chains (`s1Score = L0`, α = 1, no cost) from these. -/
+structure IncrementalSemantics (U W : Type) [DecidableEq U] where
+  /-- Word-level Boolean truth: does word `u` apply to world `w`? -/
+  wordApplies : U → W → Bool
+  /-- Closed set of complete utterances available in the scene. -/
+  completeUtterances : List (List U)
+  /-- Referents to normalize over (e.g. the visual display). -/
+  worlds : List W
+
+namespace IncrementalSemantics
+
+variable {U W : Type} [DecidableEq U]
+
+/-- Utterance-level Boolean semantics: conjunction of word applicability. -/
+def uttSem (sem : IncrementalSemantics U W) (utt : List U) (r : W) : Bool :=
+  utt.all (fun w => sem.wordApplies w r)
+
+/-- Number of complete utterances extending `pfx` that are true of `r`. -/
+def trueExtCount (sem : IncrementalSemantics U W) (pfx : List U) (r : W) : ℕ :=
+  (sem.completeUtterances.filter
+    (fun u => pfx.isPrefixOf u && sem.uttSem u r)).length
+
+/-- Number of complete utterances extending `pfx` that are true of at
+    least one referent in `sem.worlds`. -/
+def viableExtCount (sem : IncrementalSemantics U W) (pfx : List U) : ℕ :=
+  (sem.completeUtterances.filter
+    (fun u => pfx.isPrefixOf u && sem.worlds.any (fun r => sem.uttSem u r))).length
+
+/-- Extension-based incremental semantics (§2.2):
+
+      ⟦pfx⟧(r) = trueExtCount(pfx, r) / viableExtCount(pfx) -/
+noncomputable def incrementalSem (sem : IncrementalSemantics U W)
+    (pfx : List U) (r : W) : ℝ :=
+  (sem.trueExtCount pfx r : ℝ) / (sem.viableExtCount pfx : ℝ)
+
+theorem incrementalSem_nonneg (sem : IncrementalSemantics U W)
+    (pfx : List U) (r : W) : 0 ≤ sem.incrementalSem pfx r :=
+  div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+
+/-- Literal listener over **complete** utterances:
+    L0^UTT(r | utt) = ⟦utt⟧(r) / Σ_{r'} ⟦utt⟧(r').
+    For complete utt with no proper extensions, ⟦utt⟧ collapses to
+    Boolean truth, so this is uniform-prior Bayes over `worlds`. -/
+noncomputable def l0Utt (sem : IncrementalSemantics U W)
+    (utt : List U) (r : W) : ℝ :=
+  if ((sem.worlds.filter (fun r' => sem.uttSem utt r')).length : ℝ) = 0 then 0
+  else (if sem.uttSem utt r = true then (1 : ℝ) else 0) /
+       ((sem.worlds.filter (fun r' => sem.uttSem utt r')).length : ℝ)
+
+theorem l0Utt_nonneg (sem : IncrementalSemantics U W)
+    (utt : List U) (r : W) : 0 ≤ sem.l0Utt utt r := by
+  unfold l0Utt
+  split_ifs with h h'
+  · exact le_refl (0 : ℝ)
+  · positivity
+  · positivity
+
+/-- **§2.4 weakly-informative bound** (generic).
+
+    For *any* complete utterance `utt` true of `r` (with `r ∈ worlds`),
+    the literal listener assigns posterior at least `1 / worlds.length`
+    to `r`. The proof is purely combinatorial: the numerator is 1 (since
+    `utt` is true of `r`), and the total counts referents satisfying `utt`,
+    which is at most `worlds.length` and at least 1.
+
+    Cohn-Gordon et al. use this bound to certify that greedy unrolling —
+    even without a global view of the utterance space — never produces an
+    utterance arbitrarily worse than uniform. Studies that build a greedy
+    unroller for a specific scene need only prove that the output is in
+    `completeUtterances` and is true of the target; the bound then follows. -/
+theorem l0Utt_ge_inv_card (sem : IncrementalSemantics U W)
+    (utt : List U) (r : W)
+    (hr : r ∈ sem.worlds) (htrue : sem.uttSem utt r = true) :
+    sem.l0Utt utt r ≥ 1 / (sem.worlds.length : ℝ) := by
+  have hmem : r ∈ sem.worlds.filter (fun r' => sem.uttSem utt r') :=
+    List.mem_filter.mpr ⟨hr, htrue⟩
+  have hn_pos : 0 < (sem.worlds.filter (fun r' => sem.uttSem utt r')).length :=
+    List.length_pos_of_mem hmem
+  have hn_le : (sem.worlds.filter (fun r' => sem.uttSem utt r')).length ≤
+      sem.worlds.length :=
+    List.length_filter_le _ _
+  have hnR_pos : (0 : ℝ) <
+      ((sem.worlds.filter (fun r' => sem.uttSem utt r')).length : ℝ) := by
+    exact_mod_cast hn_pos
+  have hnR_ne : ((sem.worlds.filter (fun r' => sem.uttSem utt r')).length : ℝ) ≠ 0 :=
+    ne_of_gt hnR_pos
+  unfold l0Utt
+  rw [if_neg hnR_ne, if_pos htrue, ge_iff_le]
+  apply one_div_le_one_div_of_le hnR_pos
+  exact_mod_cast hn_le
+
+end IncrementalSemantics
 
 /-! ### Domain Types (Figure 1a) -/
 
@@ -231,8 +338,8 @@ theorem incremental_prefers_bare_noun :
 
 /-! §2.4's weakly informative bound — greedy unrolling reaches a complete
 utterance whose literal posterior for the target is at least 1/|W| — is
-proved generically as `l0Utt_ge_inv_card` in `Incremental.lean`; here we
-define the Figure 1 unroller and discharge its premises. -/
+proved generically as `IncrementalSemantics.l0Utt_ge_inv_card` above;
+here we define the Figure 1 unroller and discharge its premises. -/
 
 /-- Greedy unrolling for Figure 1's scene: at each step pick the word
     maximizing L0(r | ctx ++ [w]); stop when ctx is a complete utterance.
@@ -245,10 +352,10 @@ def greedyUnroll : Referent → List Word
 /-- §2.4 weakly informative bound, instantiated for Figure 1.
 
     Each of the three greedy outputs is a complete utterance true of its
-    target referent, so the generic `l0Utt_ge_inv_card` theorem from
-    `Incremental.lean` immediately gives the 1/|worlds| = 1/3 bound. The
-    actual values for this scene are 1, 1/2, 1/2 — the bound is loose here
-    by design: it certifies architectural sanity, not optimality. -/
+    target referent, so the generic `l0Utt_ge_inv_card` above immediately
+    gives the 1/|worlds| = 1/3 bound. The actual values for this scene are
+    1, 1/2, 1/2 — the bound is loose here by design: it certifies
+    architectural sanity, not optimality. -/
 theorem greedyUnroll_weakly_informative (r : Referent) :
     figureOne.l0Utt (greedyUnroll r) r ≥ 1 / 3 := by
   have hlen_nat : figureOne.worlds.length = 3 := by decide

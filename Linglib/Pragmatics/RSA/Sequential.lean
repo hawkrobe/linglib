@@ -5,27 +5,20 @@ import Mathlib.Algebra.Order.Field.Rat
 /-!
 # Sequential RSA: prefix-meaning composition
 
-[cohn-gordon-goodman-potts-2019] [degen-etal-2020] [waldon-degen-2021] [schlotterbeck-wang-2023]
+[degen-etal-2020] [waldon-degen-2021]
 
-The Product-of-Experts (PoE) prefix meaning underlying noisy / incremental
-RSA models: a per-word lex function `lex : U → W → R` is composed
-multiplicatively over a list of tokens. Higher layers (`Noisy.lean`,
-`Incremental.lean`) bundle this for study-level chains.
-
-The substrate exists because two distinct study files
-([waldon-degen-2021], [schlotterbeck-wang-2023]) independently
-restipulated `lexContinuousQ`, `prefixMeaningQ`, and the order-independence
-swap lemmas. With this file, both reduce to corollaries of
-`List.Perm.prod_eq` from mathlib.
+The Product-of-Experts (PoE) prefix meaning underlying noisy RSA models:
+a per-word lex function `lex : U → W → R` is composed multiplicatively
+over a list of tokens. Consumed by [waldon-degen-2021]'s `NoisyLex`
+bundle (in `Studies/WaldonDegen2021.lean`).
 
 ## Generality
 
 `prefixMeaning` is polymorphic over any `[CommMonoid R]`. The default
-arithmetic instance is ℚ for computable studies (S&W, W&D), but the same
-operator applies over ℝ (proof studies) or PMF-valued semantics (future
-mathlib-PMF migration, see MEMORY.md). Order-related lemmas
-(`prefixMeaning_nonneg`, `_pos`) require the additional structure that
-ℚ and ℝ both provide.
+arithmetic instance is ℚ for computable studies, but the same operator
+applies over ℝ (proof studies) or PMF-valued semantics (future mathlib-PMF
+migration, see MEMORY.md). Order-related lemmas (`prefixMeaning_nonneg`,
+`_pos`) require the additional structure that ℚ and ℝ both provide.
 -/
 
 namespace RSA
