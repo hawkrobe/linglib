@@ -3,90 +3,57 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.Phase.Basic
+import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
-import Linglib.Phonology.OptimalityTheory.Tableau
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 
 /-!
 # Sande, Clem & Dąbkowski 2026: discontinuous vowel harmony in Guébie
 
-[sande-clem-dabkowski-2026] introduce **discontinuous harmony**: in Guébie (Kru)
-particle-verb focus constructions, the fronted particle harmonizes in ATR with the
-clause-final verb across intervening harmony-eligible words (their (24)). The
-analysis: harmony is strictly local at vP Spell-out, and later A′-movement of the
-remnant VP separates target from trigger — a cyclic interleaving of syntax and
-phonology in which spelled-out material stays accessible to later syntax (§6.2,
-via [fox-pesetsky-2005]'s Cyclic Linearization).
-
-The §4 syntax has two parameters — does an auxiliary occupy T (blocking V-to-T),
-and does the remnant VP front — and the file derives the four attested orders,
-their two-phase Spell-outs, and the (44) harmony correlation from them, rather
-than stipulating the table:
-
-| word order   | particle-verb harmony | V spelled out in vP |
-|--------------|-----------------------|---------------------|
-| `SVOPart`    | ×                     | ×                   |
-| `SAuxOPartV` | ✓                     | ✓                   |
-| `PartSVO`    | ×                     | ×                   |
-| `PartSAuxOV` | ✓                     | ✓                   |
+[sande-clem-dabkowski-2026]: in Guébie particle-verb focus constructions, the
+fronted particle harmonizes in ATR with the clause-final verb across intervening
+harmony-eligible words (their (24)). The analysis: harmony is strictly local at vP
+Spell-out, and later A′-movement separates target from trigger — spelled-out
+material staying accessible to later syntax (§6.2, via [fox-pesetsky-2005]'s
+Cyclic Linearization). Everything below is derived from the two §4 parameters
+(Aux blocking V-to-T, remnant fronting) rather than stipulated; the empirical core
+is their (44): harmony iff V is spelled out inside vP.
 
 ## Main definitions
 
-* `Clause`: the two syntactic parameters of §4; `Clause.vPSpellOut` and
-  `Clause.surfaceOrder` derive the Spell-out snapshots ((45)/(48)) and surface
-  strings ((31)–(34)); `WordOrder` names the four attested settings.
-* `Clause.harmony`, `surfaceATR`: trigger-locality at vP Spell-out (§6.1) and the
-  particle's surface value — the verb root's under harmony, the lexical default
-  otherwise ((12)–(13)).
-* `HarmonyCand`, `identIO`, `atrHarm`, `harmonyTableau`: the paper's constraint
-  implementation ((46)/(47), `ATRHARM ≫ IDENT-IO(ATR)`) as an OT tableau.
-* `FrozenATR`, `frozenATR?`: the append-only per-cycle record of harmony outcomes
-  (§6.1).
-* `guebiePICMode`: the paper's PIC stance, `PICStrength.linearizationBound` (§6.2).
-* `guebiePredicateDoubling`, `guebieFrontingDerivation`: schematic witnesses for
-  §3's diagnosis that predicate fronting is narrow-syntactic.
-* `WolofRelClauseShape`: the Wolof relative-clause parallel (§7).
+* `Clause`, `WordOrder`: the §4 parameters and the four attested settings, with
+  derived Spell-outs ((45)/(48)) and surface strings ((31)–(34)).
+* `Clause.harmony`, `surfaceATR`, `harmonyTableau`: trigger-locality (§6.1), the
+  particle's surface value ((12)–(13)), and the (46)/(47) ranking as a tableau.
+* `FrozenATR`, `guebiePICMode`: the per-cycle harmony record (§6.1) and the PIC
+  stance (§6.2).
+* `guebiePredicateDoubling`, `WolofRelClauseShape`: the §3 movement witnesses and
+  the §7 Wolof parallel.
 
 ## Main results
 
-* `harmony_eq_hasAux`: the (44) correlation derived — harmony iff Aux blocks
-  V-to-T; `harmony_independent_of_fronting`: fronting is irrelevant to it.
-* `discontinuous_harmony`: in the fronted SAuxOV clause the particle and verb are
-  not surface-adjacent, yet harmony applies.
-* `all_clauses_consistent`: every parameter setting linearizes consistently
-  (`Minimalist.Linearization.Consistent`); `nonedge_particle_fronting_crashes`:
-  the §6.2 escape-hatch argument — fronting a particle that was not leftmost at
-  vP Spell-out creates an ordering cycle.
-* `optimal_eq_surfaceATR`: the OT winner under `ATRHARM ≫ IDENT-IO(ATR)` is
-  exactly `surfaceATR` — §6.1's mechanism derives the surface value.
-* `PartSAuxOV_atr_persists_through_fronting`: the frozen ATR value survives the CP
-  cycle (§6.1).
-* `guebie_VDIS_positive_instance`: Guébie as a positive instance of
-  `VerbDoublingIsSyntacticIn` (§3, (25)–(30)), contra [landau-2006]'s PF-driven
-  Hebrew analysis.
-* `wolof_harmony_uniform`: the Wolof parallel (§7, (49)–(50), [sy-2005],
-  [martinovic-2019]).
+* `harmony_eq_hasAux`, `discontinuous_harmony`: the (44) correlation derived;
+  harmony without surface adjacency.
+* `all_clauses_consistent`, `nonedge_particle_fronting_crashes`: every setting
+  linearizes; the §6.2 escape-hatch counterfactual crashes.
+* `optimal_eq_surfaceATR`, `PartSAuxOV_atr_persists_through_fronting`: the ranking
+  derives the surface value, and it survives the CP cycle.
+* `guebie_VDIS_positive_instance`, `wolof_harmony_uniform`: doubling is
+  narrow-syntactic ((25)–(30), contra [landau-2006]); the Wolof parallel
+  ([sy-2005], [martinovic-2019]).
 
 ## Implementation notes
 
-Spell-out snapshots are `List String` terminal labels, as in
-`Studies/FoxPesetsky2005.lean`. The paper implements local harmony with
-[sande-2019]'s constraints ((46)/(47)) in [hansson-2014]'s Agreement-by-Projection
-framework and notes the "specific implementation of local harmony within the vP is
-not crucial"; `harmonyTableau` renders the ranking over a two-candidate output
-space. §5's rejected purely-phonological
-approaches — autosegmental spreading ([clements-sezer-1982]), gestural
-([gafos-1998]), Agreement by Correspondence ([rose-walker-2004]) — are formalized
-in `Studies/Sagey1986.lean`, `Studies/RoseWalker2004.lean`, and
-`Studies/Hansson2010.lean`; each predicts the strict locality that (24) violates.
-The doubling witnesses are schematic: an evacuation trace plus the verb copy, per
-their (31). Per-language Guébie data lives here, not in a Fragment.
-
-TODO: the Atchan nasal-harmony parallel ((51), Katherine Russell p.c.,
-[russell-2023]) awaits independent syntactic diagnostics for Atchan verb doubling
-(the analogue of §3); the paper leaves it open and so do we.
+Spell-out snapshots are `List String` labels, as in `Studies/FoxPesetsky2005.lean`.
+The paper deems the harmony implementation "not crucial" ([sande-2019]'s (46)/(47)
+in [hansson-2014]'s Agreement by Projection); `harmonyTableau` renders only the
+ranking. §5's rejected phonological approaches ([clements-sezer-1982],
+[gafos-1998], [rose-walker-2004]) are formalized in `Studies/Sagey1986.lean`,
+`Studies/RoseWalker2004.lean`, `Studies/Hansson2010.lean`. TODO: the Atchan
+parallel ((51), Katherine Russell p.c., [russell-2023]) awaits movement
+diagnostics; the paper leaves it open and so do we.
 -/
 
 namespace SandeClemDabkowski2026
