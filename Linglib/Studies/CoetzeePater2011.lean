@@ -2,7 +2,7 @@ import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.Constraints.Harmony
+import Linglib.Phonology.HarmonicGrammar.Score
 import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
