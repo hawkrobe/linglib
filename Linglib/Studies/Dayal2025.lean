@@ -9,35 +9,36 @@ import Linglib.Fragments.English.QuestionParticles
 [dayal-2025] [mccloskey-2006] [zu-2018]
 [bhatt-dayal-2020]
 
-Veneeta Dayal (2025), *Linguistic Inquiry* 56(4):663-712. Develops the
-three-layer cartographic split `[SAP [PerspP [CP ...]]]` and uses it to
-account for cross-linguistic clause-typing variation, the responsive/
-rogative split, and McCloskey-style quasi-subordination.
+Veneeta Dayal (2025), *Linguistic Inquiry* 56(4):663–712, develops the
+three-layer split `[SAP [PerspP [CP ...]]]` of the interrogative left
+periphery and derives cross-linguistic clause-typing variation, the
+responsive/rogative split, and McCloskey-style quasi-subordination from it.
 
-This study file is the canonical home for:
+## Main declarations
 
-1. **Clause-typing typology** (§§4.3–4.4): the two orthogonal parameters —
-   polar wh-complementizer and delayed typing — behind English/Italian/
-   Hindi-Urdu variation.
-2. **Hindi-Urdu shiftiness** (§3.2): the McCloskey parallel for Hindi-Urdu
-   *jaanna:*.
-3. **Left-Periphery verification**: the LeftPeriphery `SelectionClass`
-   apparatus checked against the English embedding data (§1.2) and the
-   cross-linguistic shiftiness data.
-4. **Three-layer particle classifier** (§1.3): CP / PerspP / SAP read off
-   embedding distribution.
+* `ClauseTyping`: the two orthogonal clause-typing parameters (§§4.3–4.4),
+  polar wh-complementizer and delayed typing.
+* `simplex_subordination_matches_complementizer`,
+  `neutral_decl_matches_delay`: the per-parameter typological projections
+  over the English/Italian/Hindi-Urdu sample.
+* `cross_linguistic_shiftiness_predicted`: Hindi-Urdu *kya:* shiftiness
+  (§3.2) derived by the same `allowsQuasiSub` account as McCloskey's
+  English data.
+* `theory_predicts_embedding`: the `SelectionClass` apparatus checked
+  against the §1.2 English embedding judgments.
+* `layerOf`, `layers_derived`, `particle_layer_predicts_embedding`: the
+  CP / PerspP / SAP particle classifier (§1.3), read off embedding
+  distribution.
 
-## Cross-framework relations
+## Implementation notes
 
-- **Rizzi 1997 / `Syntax/Minimalist/Questions.lean`** places clause-typing
-  at `Force⁰[+Q]`; Dayal places it at `C` with a downstream `PerspP` shift.
-- **Holmberg 2016 / `Studies/Holmberg2016.lean`** places the polar-Q-typing
-  locus at `PolP` and competes for the same matrix-polar facts.
-- **Speas-Tenny / `Studies/SpeasTenny2003.lean`** derives the seat of
-  knowledge from a feature matrix; Dayal places it in PerspP with PRO. Both
-  predict the Newari conjunct/disjunct flip (paper §5.2, via [zu-2018]),
-  which the paper reads as matrix perspective shift only, leaving open
-  whether PerspP is Zu's SentienceP.
+Rival analyses of the same facts: Rizzi-style `Force⁰[+Q]` typing lives in
+`Syntax/Minimalist/Questions.lean`, Holmberg's `PolP` locus in
+`Studies/Holmberg2016.lean`, and the Speas–Tenny seat-of-knowledge matrix
+in `Studies/SpeasTenny2003.lean`. Both Dayal and Speas–Tenny predict the
+Newari conjunct/disjunct flip (§5.2, via [zu-2018]), which the paper reads
+as matrix perspective shift only, leaving open whether PerspP is Zu's
+SentienceP.
 -/
 
 namespace Dayal2025
