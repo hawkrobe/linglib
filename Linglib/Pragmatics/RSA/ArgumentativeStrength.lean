@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
+import Linglib.Pragmatics.RSA.CombinedUtility
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 

@@ -1,26 +1,20 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Lexical Uncertainty: Core Types
+# Lexical uncertainty: the `Lexicon` type
 
-The `Lexicon` type used by lexical uncertainty models in RSA.
-
-For RSA models with lexical uncertainty, use a latent-lexicon chain with
-`Latent := YourLexiconType` (see [potts-etal-2016] and
-[potts-levy-2015] for examples). This file provides the
-shared `Lexicon` type used by:
-- `GrammarDist.lean` (Construction Grammar as distribution over lexica)
-- `SDS/Marginalization.lean` (SDS ↔ LU-RSA bidirectional translation)
+The shared `Lexicon` type for lexical-uncertainty RSA models: models
+marginalize over a latent lexicon (`Latent := YourLexiconType`; see
+[potts-etal-2016] and [potts-levy-2015]). Consumed by
+`Syntax/ConstructionGrammar/GrammarDist.lean` (grammars as distributions
+over lexica) and `Studies/Clark1983.lean`.
 -/
 
-/--
-A lexicon maps each utterance to a truth function over worlds.
+namespace RSA
 
-In [bergen-levy-goodman-2016] notation:
-  L(u, w) = 1 if w ∈ ⟦u⟧_L, else 0
-
-For graded semantics, we allow values in [0,1].
--/
+/-- A lexicon maps each utterance to a graded truth function over worlds —
+[bergen-levy-goodman-2016]'s `L(u, w)`, with values in `[0,1]` to allow
+graded semantics. -/
 structure Lexicon (Utterance World : Type) where
   /-- The meaning function for this lexicon -/
   meaning : Utterance → World → ℚ
@@ -41,3 +35,5 @@ def refines (L_refined L_base : Lexicon U W) : Prop :=
 notation:50 L' " ≤ₗ " L => refines L' L
 
 end Lexicon
+
+end RSA

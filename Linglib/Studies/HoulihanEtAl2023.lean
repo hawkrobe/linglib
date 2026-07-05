@@ -2,7 +2,7 @@ import Linglib.Pragmatics.Emotion
 import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.GameTheory
 import Linglib.Semantics.Questions.DecisionTheory
-import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
+import Linglib.Pragmatics.RSA.CombinedUtility
 import Linglib.Semantics.Degree.Gradability.Classification
 
 /-!
@@ -425,7 +425,7 @@ of `RSA.CombinedUtility.combined3` with negative social weights:
     U_FS = 1·vSelf + (−α)·DI + (−β)·AI
 
 This connects the social cognition infrastructure (`Core`)
-to the RSA combined utility framework (`Pragmatics.RSA.Core`). -/
+to the RSA combined utility framework (`RSA.CombinedUtility`). -/
 theorem fehrSchmidt_eq_combined3 (vSelf vOther α β : ℚ) :
     fehrSchmidt vSelf vOther α β =
     RSA.CombinedUtility.combined3 1 (-α) (-β)

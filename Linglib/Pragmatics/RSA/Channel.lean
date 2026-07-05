@@ -50,14 +50,14 @@ perceptually optimised.
 The `noiseChannel` operation is the per-feature primitive consumed by
 *structure-shaped* bundles, not a typeclass. Every paper picks its own
 reliability parameters, so there is no canonical `NoisySemantics` instance
-per `(U, W)` pair — each study constructs an explicit value of one of:
+per `(U, W)` pair — each study constructs its own bundle:
 
-- `RSA.NoisyLex` (`Noisy.lean`) — Product-of-Experts noisy semantics
-  ([degen-etal-2020], [waldon-degen-2021],
-  [schlotterbeck-wang-2023]). PoE prefix product via
-  `RSA.prefixMeaning` (`Sequential.lean`).
-- `RSA.IncrementalSemantics` (`Incremental.lean`) — extension-counting
-  Boolean semantics ([cohn-gordon-goodman-potts-2019]).
+- Product-of-Experts noisy semantics (`WaldonDegen2021.NoisyLex` in
+  `Studies/WaldonDegen2021.lean`; [degen-etal-2020], [waldon-degen-2021]).
+  PoE prefix product via `RSA.prefixMeaning` (`Sequential.lean`).
+- Extension-counting Boolean semantics
+  (`CohnGordonEtAl2019.IncrementalSemantics` in
+  `Studies/CohnGordonEtAl2019.lean`; [cohn-gordon-goodman-potts-2019]).
 
 Information-theoretic refinement (channel capacity `C = 1 - H(ε)` for
 binary symmetric channels) is a future direction; the current
