@@ -7,7 +7,6 @@ import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Pragmatics.DecisionTheoretic.But
-import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
 
 /-!
@@ -50,7 +49,6 @@ three levels at which "contrast" appears:
 - QUD / implicit questions: `Question`, `Question.isPartialAnswer` ([roberts-2012])
 - DTS "but": `DTS.But` ([merin-1999])
 - Coherence relations: `Discourse.Coherence` ([kehler-2002])
-- Focus particles: `English.FocusParticles`
 -/
 
 namespace Umbach2004
@@ -244,7 +242,7 @@ theorem wellformed_implies_fip_compatible {W : Type}
 -- §4  Exclusion Varieties ([umbach-2004] §2.3)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! [umbach-2004] (§2.3 UNVERIFIED) distinguishes two varieties of
+/-! [umbach-2004] §2.3 distinguishes two varieties of
 exclusion that cross-cut information structure and discourse structure:
 *only*-phrases exclude *additional* alternatives (mapping to the
 CONTRAST discourse relation), while contrastive focus excludes *by
@@ -254,12 +252,6 @@ two-cell IS taxonomy is recoverable from `Discourse.Coherence.CoherenceRelation`
 the IS-side enum redundant once the discourse-side cases exist. The
 prior `ExclusionVariety` substrate enum was deleted in the
 0.230.488 cleanup. -/
-
-/-- The English "only" Fragment entry carries the contrast (= additional)
-    exclusion. -/
-theorem only_fragment_exclusion :
-    English.FocusParticles.only_.exclusionVariety =
-    some .contrast := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5  Confirm+Deny Condition on "but" ([umbach-2004] §3.1)
@@ -517,7 +509,7 @@ theorem contrast_correction_structurally_distinct :
 -- §8  Summary Taxonomy
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! [umbach-2004] Conclusion (Table 1 UNVERIFIED): the notion of
+/-! [umbach-2004]'s concluding decomposition: the notion of
 contrast decomposes into three nested layers, each adding a requirement:
 
 ```
