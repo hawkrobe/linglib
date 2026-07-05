@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Option.NAry
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
@@ -20,38 +19,48 @@ the book), c-selection computes the planar order.
 
 ## Main declarations
 
-* `Minimalist.linCombine`: the externalization algebra — selection state and yield
-  computed together, the book's two descriptions of a head function.
-* `Minimalist.linearizePlanar`: the yield of a planar `SO`-tree; `Option`-valued,
-  `none` off `Dom(h)`.
-* `Minimalist.SO.linearize`: the yield of a syntactic object, via the quotient lift
-  `linearizeN`.
-* `Minimalist.SO.phonYield`: the pronounced surface forms.
+* `Minimalist.LinearizationState`: the value of the book's head function in its two
+  descriptions — the selection state enriched with the yield, `none` off `Dom(h)`;
+  a `CommMagma` under the `side`-indexed Merge-local product.
+* `Minimalist.LinearizationState.sel`: the projection morphism to `SelState`,
+  forgetting the order description.
+* `Minimalist.headHom`: the head function as a morphism of magmas
+  `SO →ₙ* LinearizationState side`, refining `selCheckHom` with the yield.
+* `Minimalist.SO.linearize`, `Minimalist.SO.phonYield`: the yield readout and the
+  pronounced surface forms.
 
 ## Main results
 
-* `Minimalist.selLinPlanar_fst`: the paired fold's selection component is
-  `selCheckPlanar`.
-* `Minimalist.linearizePlanar_perm`: the yield descends to the nonplanar
-  quotient — by `RoseTree.fold_perm`, since the algebra is
-  permutation-invariant (`linCombine_perm`).
+* `Minimalist.sel_comp_headHom`: fusion — the selection component of the head
+  function's value is the selection check, as a commuting triangle of magma
+  morphisms.
+* `Minimalist.headNode_perm`: the head algebra is permutation-invariant
+  (`List.Perm.congr_arity₂` on `mul_comm`), so the state descends to the nonplanar
+  quotient by `RoseTree.fold_perm`.
 
 ## Implementation notes
 
 Head functions are partial ([marcolli-chomsky-berwick-2025] §1.13.2): at exocentric
 nodes no daughter projects and no order is determined — the book rejects inducing one
-from a total order on labels as "not a realistic linguistic assumption" — so
-linearization returns `none` there, matching the book's elimination of nonparsable
-objects at externalization. Only the two harmonic sections are realized: uniform
-head-side placement is right for head–complement structure but does not model
-specifier placement (that needs the `headSide : Cat → ConventionDir` refinement noted
-at `ConventionDir`).
+from a total order on labels as "not a realistic linguistic assumption" — so the
+state is `none` there, matching the book's elimination of nonparsable objects at
+externalization. The selection state and the yield are the book's two descriptions
+of *one* head function: eq. (1.13.3) reads `h(T)` as "a single leaf (the head)" or
+as the ordered leaf sequence, "switch[ing] between these two descriptions without
+changing the notation". `LinearizationState` fuses them into a single `Option`,
+making `Dom(yield) = Dom(h)` true by construction. **Naming**: the head-function
+*maps* (`headNode`, `headPlanar`, `headN`, `headHom`) carry the book's name for `h`;
+the *value* type does not — the book restricts "the term head to terminal elements"
+(quoting [chomsky-1995-bare] §4), and the strict head is recovered via `sel`. The
+`side` index is phantom in the carrier and read by the multiplication (the `WithLp`
+pattern); the head-leaf description is side-invariant, only the yield description is
+convention-relative. Conceptually the yield component is
+`WithZero (FreeMonoid LIToken)`: a silent trace is the unit, exocentricity the
+absorbing zero, and head-final placement is multiplication in the opposite monoid.
 
-Linearization is the second component of one catamorphism `RoseTree.fold`, mirroring
-the book's switching "between these two descriptions without changing the notation":
-the head function as a head leaf (selection state) and as the ordered leaf sequence
-(yield). All `Perm`-invariance is inherited from the algebra's
-permutation-invariance; there is no bespoke step induction.
+Only the two harmonic sections are realized: uniform head-side placement is right
+for head–complement structure but does not model specifier placement (that needs the
+`headSide : Cat → ConventionDir` refinement noted at `ConventionDir`).
 -/
 
 namespace Minimalist
@@ -64,169 +73,165 @@ def placeYield : ConventionDir → List LIToken → List LIToken → List LIToke
   | .initial, headY, otherY => headY ++ otherY
   | .final,   headY, otherY => otherY ++ headY
 
-/-! ### The externalization algebra -/
+/-! ### The linearization state -/
 
-/-- The externalization algebra: a node's selection state (`selNode` over the
-    daughters' states) paired with its yield. A lexical leaf is pronounced, a bare
-    trace leaf is silent (the cancelled `T/d` copy of [marcolli-chomsky-berwick-2025]
-    §1.12), and a bare binary node places the projecting daughter's yield on the
-    `side`-convention side; the yield is `none` at exocentric nodes (off `Dom(h)`,
-    §1.13.2) and at bare nodes of non-`SO` arity. -/
-def linCombine (side : ConventionDir) (a : SOLabel)
-    (ps : List (Option (LIToken × List Cat) × Option (List LIToken))) :
-    Option (LIToken × List Cat) × Option (List LIToken) :=
-  (selNode a (ps.map Prod.fst),
-   match a, ps with
-   | .inl tok, _ => some [tok]
-   | .inr (), [] => some []
-   | .inr (), [(cl, yl), (cr, yr)] =>
-       match selSide cl cr with
-       | some true  => Option.map₂ (placeYield side) yl yr
-       | some false => Option.map₂ (placeYield side) yr yl
-       | none       => none
-   | .inr (), _ => none)
+set_option linter.unusedVariables false in
+/-- The linearization state of a constituent under head-side convention `side`: the
+    projecting head with its residual selectional stack (the `SelState` data)
+    enriched with the yield, `none` off `Dom(h)` — the value of
+    [marcolli-chomsky-berwick-2025]'s head function in its two descriptions, "a
+    single leaf (the head)" or the ordered leaf sequence (eq. (1.13.3)), which the
+    book reads interchangeably "without changing the notation". The `side` parameter
+    is phantom in the carrier — the multiplication reads it (the `WithLp` pattern). -/
+def LinearizationState (side : ConventionDir) : Type :=
+  Option ((LIToken × List Cat) × List LIToken)
 
-/-- A daughter list of three or more has no yield. -/
-private theorem linCombine_snd_big (side : ConventionDir)
-    {ps : List (Option (LIToken × List Cat) × Option (List LIToken))}
-    (h : 2 < ps.length) : (linCombine side (Sum.inr ()) ps).2 = none := by
-  match ps with
+namespace LinearizationState
+
+variable {side : ConventionDir}
+
+/-- Merge-local externalization: the `selCombine` decision projects the head and
+    places the projecting daughter's yield on the convention side. -/
+instance : Mul (LinearizationState side) :=
+  ⟨fun x y =>
+    match x, y with
+    | some (s₁, y₁), some (s₂, y₂) =>
+        (selCombine (some s₁) (some s₂)).map fun p =>
+          (p.2, placeYield side (bif p.1 then y₁ else y₂) (bif p.1 then y₂ else y₁))
+    | _, _ => none⟩
+
+instance : CommMagma (LinearizationState side) where
+  mul_comm x y := by
+    match x, y with
+    | none, none | none, some _ | some _, none => rfl
+    | some (s₁, y₁), some (s₂, y₂) =>
+      show (selCombine (some s₁) (some s₂)).map _ = (selCombine (some s₂) (some s₁)).map _
+      rw [selCombine_comm]
+      cases selCombine (some s₂) (some s₁) with
+      | none => rfl
+      | some p => obtain ⟨b, hd, res⟩ := p; cases b <;> rfl
+
+/-- The projection to the selection state, as a morphism of magmas: forgetting the
+    order description of the head. -/
+def sel : LinearizationState side →ₙ* SelState where
+  toFun := Option.map (·.1)
+  map_mul' x y := by
+    match x, y with
+    | none, _ => rfl
+    | some _, none => exact (SelState.mul_none _).symm
+    | some (s₁, y₁), some (s₂, y₂) =>
+      show Option.map _ ((selCombine (some s₁) (some s₂)).map _) = _
+      rw [Option.map_map]; rfl
+
+end LinearizationState
+
+/-! ### The head algebra -/
+
+/-- The head algebra: a lexical leaf is pronounced carrying its `outerSel` stack, a
+    bare trace leaf is silent and saturated (the cancelled copy of
+    [marcolli-chomsky-berwick-2025] §1.12), a bare binary node is the `LinearizationState`
+    product, and other arities are off `Dom(h)`. -/
+def headNode (side : ConventionDir) :
+    SOLabel → List (LinearizationState side) → LinearizationState side
+  | .inl tok, _     => some ((tok, tok.item.outerSel), [tok])
+  | .inr (), []     => some ((mkTraceToken 0, []), [])
+  | .inr (), [x, y] => x * y
+  | .inr (), _      => none
+
+/-- A daughter list of three or more is off `Dom(h)`. -/
+private theorem headNode_big {side : ConventionDir} {l : List (LinearizationState side)}
+    (h : 2 < l.length) : headNode side (Sum.inr ()) l = none := by
+  match l with
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
 
-/-- `linCombine` is invariant under permutation of the daughter values: the selection
-    component by `selNode_perm`, the yield because only the binary shape is
-    order-sensitive, where `selSide_comm` swaps the placement decision with the
-    arguments. -/
-theorem linCombine_perm (side : ConventionDir) (a : SOLabel)
-    {l₁ l₂ : List (Option (LIToken × List Cat) × Option (List LIToken))}
-    (h : l₁.Perm l₂) : linCombine side a l₁ = linCombine side a l₂ := by
-  refine Prod.ext (selNode_perm a (h.map Prod.fst)) ?_
+/-- `headNode` is invariant under permutation of the daughter states: only the
+    binary shape is order-sensitive, and there `mul_comm` applies. -/
+theorem headNode_perm (side : ConventionDir) (a : SOLabel) {l₁ l₂ : List (LinearizationState side)}
+    (h : l₁.Perm l₂) : headNode side a l₁ = headNode side a l₂ := by
   cases a with
   | inl tok => rfl
-  | inr u =>
-    cases u
-    induction h with
-    | nil => rfl
-    | @cons x l₁ l₂ h _ih =>
-      match l₁, l₂, h with
-      | [], l₂, h => rw [show l₂ = [] from h.symm.eq_nil]
-      | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
-      | _ :: _ :: _, l₂, h =>
-        rw [linCombine_snd_big side (by simp +arith),
-            linCombine_snd_big side (by
-              have hl := h.length_eq
-              simp only [List.length_cons] at hl ⊢
-              omega)]
-    | swap x y l =>
-      cases l with
-      | nil =>
-        obtain ⟨cx, yx⟩ := x
-        obtain ⟨cy, yy⟩ := y
-        show (match selSide cy cx with
-              | some true  => Option.map₂ (placeYield side) yy yx
-              | some false => Option.map₂ (placeYield side) yx yy
-              | none       => none)
-           = (match selSide cx cy with
-              | some true  => Option.map₂ (placeYield side) yx yy
-              | some false => Option.map₂ (placeYield side) yy yx
-              | none       => none)
-        rw [selSide_comm cy cx]
-        cases selSide cx cy with
-        | none => rfl
-        | some b => cases b <;> rfl
-      | cons z l => rfl
-    | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+  | inr u => cases u; exact h.congr_arity₂ (fun x y => mul_comm x y) fun _ h => headNode_big h
 
-/-! ### Linearization on the planar carrier -/
+/-- `LinearizationState.sel` intertwines the head and selection algebras. -/
+theorem sel_headNode (side : ConventionDir) (a : SOLabel) (ps : List (LinearizationState side)) :
+    LinearizationState.sel (headNode side a ps) = selNode a (ps.map LinearizationState.sel) := by
+  match a, ps with
+  | .inl tok, _ => rfl
+  | .inr (), [] => rfl
+  | .inr (), [x, y] => exact map_mul LinearizationState.sel x y
+  | .inr (), [_] | .inr (), _ :: _ :: _ :: _ => rfl
 
-/-- Selection state and yield of a planar `SO`-tree, computed together:
-    [marcolli-chomsky-berwick-2025]'s dual description of a head function as a head
-    leaf and as an ordered leaf sequence. -/
-def selLinPlanar (side : ConventionDir) :
-    RoseTree SOLabel → Option (LIToken × List Cat) × Option (List LIToken) :=
-  RoseTree.fold (linCombine side)
+/-! ### The head function on the planar and nonplanar carriers -/
 
-/-- Selection-induced yield of a planar `SO`-tree: the yield component of
-    `selLinPlanar`. -/
-def linearizePlanar (side : ConventionDir) (t : RoseTree SOLabel) :
-    Option (List LIToken) :=
-  (selLinPlanar side t).2
+/-- The head function on planar `SO`-trees: the catamorphism of the head algebra. -/
+def headPlanar (side : ConventionDir) : RoseTree SOLabel → LinearizationState side :=
+  RoseTree.fold (headNode side)
 
-/-- Fusion: the selection component of the paired fold is `selCheckPlanar`. -/
-theorem selLinPlanar_fst (side : ConventionDir) (t : RoseTree SOLabel) :
-    (selLinPlanar side t).1 = selCheckPlanar t := by
-  induction t with
-  | node a cs ih =>
-    show (RoseTree.fold (linCombine side) (.node a cs)).1 = selCheckPlanar (.node a cs)
-    rw [RoseTree.fold_node, selCheckPlanar_node]
-    show selNode a ((cs.map (RoseTree.fold (linCombine side))).map Prod.fst)
-       = selNode a (cs.map selCheckPlanar)
-    rw [List.map_map]
-    exact congrArg (selNode a) (List.map_congr_left fun c hc => ih c hc)
+/-- **Fusion** on the planar carrier: the selection component of the head
+    function's value is the selection check. -/
+theorem sel_headPlanar (side : ConventionDir) (t : RoseTree SOLabel) :
+    LinearizationState.sel (headPlanar side t) = selCheckPlanar t :=
+  RoseTree.fold_hom _ (sel_headNode side) t
 
-/-- Reduction of the yield at a bare binary node, through the fusion theorem. -/
-theorem linearizePlanar_node_pair (side : ConventionDir) (l r : RoseTree SOLabel) :
-    linearizePlanar side (.node (.inr ()) [l, r]) =
-      (match selSide (selCheckPlanar l) (selCheckPlanar r) with
-       | some true  =>
-           Option.map₂ (placeYield side) (linearizePlanar side l) (linearizePlanar side r)
-       | some false =>
-           Option.map₂ (placeYield side) (linearizePlanar side r) (linearizePlanar side l)
-       | none       => none) := by
-  show (match selSide (selLinPlanar side l).1 (selLinPlanar side r).1 with
-        | some true  =>
-            Option.map₂ (placeYield side) (selLinPlanar side l).2 (selLinPlanar side r).2
-        | some false =>
-            Option.map₂ (placeYield side) (selLinPlanar side r).2 (selLinPlanar side l).2
-        | none       => none) = _
-  rw [selLinPlanar_fst side l, selLinPlanar_fst side r]; exact rfl
+/-- The state is projection-determined, not representative-determined: it descends
+    to the nonplanar quotient. -/
+theorem headPlanar_perm (side : ConventionDir) {t s : RoseTree SOLabel}
+    (h : RoseTree.Perm t s) : headPlanar side t = headPlanar side s :=
+  RoseTree.fold_perm (fun a _ _ h' => headNode_perm side a h') h
 
-/-- `linearizePlanar side` descends to the quotient: the surface order is
-    projection-determined, not representative-determined. -/
-theorem linearizePlanar_perm (side : ConventionDir) {t s : RoseTree SOLabel}
-    (h : RoseTree.Perm t s) : linearizePlanar side t = linearizePlanar side s :=
-  congrArg Prod.snd
-    (RoseTree.fold_perm (fun a _ _ h' => linCombine_perm side a h') h)
+/-- The head function on the nonplanar carrier. -/
+def headN (side : ConventionDir) : Nonplanar SOLabel → LinearizationState side :=
+  Nonplanar.lift (headPlanar side) fun _ _ h => headPlanar_perm side h
 
-/-- Linearization lifted to the nonplanar carrier. -/
-def linearizeN (side : ConventionDir) : Nonplanar SOLabel → Option (List LIToken) :=
-  Nonplanar.lift (linearizePlanar side) (fun _ _ h => linearizePlanar_perm side h)
+@[simp] theorem headN_mk (side : ConventionDir) (p : RoseTree SOLabel) :
+    headN side (Nonplanar.mk p) = headPlanar side p := rfl
 
-@[simp] theorem linearizeN_mk (side : ConventionDir) (p : RoseTree SOLabel) :
-    linearizeN side (Nonplanar.mk p) = linearizePlanar side p := rfl
-
-theorem linearizeN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
-    linearizeN side (Nonplanar.node (Sum.inr ()) {a, b}) =
-      (match selSide (selCheckN a) (selCheckN b) with
-       | some true  => Option.map₂ (placeYield side) (linearizeN side a) (linearizeN side b)
-       | some false => Option.map₂ (placeYield side) (linearizeN side b) (linearizeN side a)
-       | none       => none) := by
+/-- The nonplanar magma law: Merge multiplies linearization states. -/
+theorem headN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
+    headN side (Nonplanar.node (Sum.inr ()) {a, b}) = headN side a * headN side b := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
-  have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
-           = Nonplanar.mk (RoseTree.node (Sum.inr ()) [pa, pb]) := by
-    rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_tree_list]
-  show linearizeN side (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
-      = (match selSide (selCheckN (Nonplanar.mk pa)) (selCheckN (Nonplanar.mk pb)) with
-         | some true  =>
-             Option.map₂ (placeYield side)
-               (linearizeN side (Nonplanar.mk pa)) (linearizeN side (Nonplanar.mk pb))
-         | some false =>
-             Option.map₂ (placeYield side)
-               (linearizeN side (Nonplanar.mk pb)) (linearizeN side (Nonplanar.mk pa))
-         | none       => none)
-  rw [key]
-  simp only [linearizeN_mk, selCheckN_mk, linearizePlanar_node_pair]
+  show headN side (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
+      = headN side (Nonplanar.mk pa) * headN side (Nonplanar.mk pb)
+  rw [Nonplanar.node_pair_mk]; exact rfl
 
 /-! ### Externalization on `SO` -/
 
+/-- The linearization state of a syntactic object: the value of the head function
+    in both descriptions. -/
+def SO.linearizationState (side : ConventionDir) (s : SO) : LinearizationState side :=
+  headN side s.val
+
+@[simp] theorem SO.linearizationState_node (side : ConventionDir) (l r : SO) :
+    (SO.node l r).linearizationState side
+      = l.linearizationState side * r.linearizationState side := by
+  show headN side (SO.node l r).val = headN side l.val * headN side r.val
+  rw [SO.node_val, headN_node]
+
+/-- **The head function is a morphism of magmas** `SO →ₙ* LinearizationState side`
+    ([marcolli-chomsky-berwick-2025] §1.13's algebraic frame): Merge multiplies
+    constituents, the head function multiplies linearization states. -/
+noncomputable def headHom (side : ConventionDir) : SO →ₙ* LinearizationState side where
+  toFun := SO.linearizationState side
+  map_mul' := SO.linearizationState_node side
+
+/-- **Fusion as a commuting triangle**: projecting the head function's value to its
+    selection component is the selection check —
+    `LinearizationState.sel ∘ headHom = selCheckHom`. -/
+theorem sel_comp_headHom (side : ConventionDir) :
+    LinearizationState.sel.comp (headHom side) = selCheckHom :=
+  MulHom.ext fun s => by
+    show LinearizationState.sel (headN side s.val) = selCheckN s.val
+    exact Quotient.inductionOn s.val (sel_headPlanar side)
+
 /-- The surface token order of a syntactic object under the head-side convention
-    `side` ([marcolli-chomsky-berwick-2025] §1.12.1): the selection-induced harmonic
-    candidate for the externalization section σ_L, defined on `Dom(h)` only — the
-    book's σ_L must extend it *noncanonically* off `Dom(h)`. -/
+    `side` ([marcolli-chomsky-berwick-2025] §1.12.1): the yield readout of the
+    linearization state — the selection-induced harmonic candidate for the externalization
+    section σ_L, defined on `Dom(h)` only (the book's σ_L must extend it
+    *noncanonically* off `Dom(h)`). The readout alone is not a morphism: placing a
+    yield needs the head leaf, which is why `LinearizationState` carries both descriptions. -/
 def SO.linearize (side : ConventionDir) (s : SO) : Option (List LIToken) :=
-  linearizeN side s.val
+  Option.map (·.2) (s.linearizationState side)
 
 /-- The pronounced surface forms: the yield with unpronounced (empty-`phonForm`)
     tokens dropped. Traces, being the bare `Sum.inr ()` leaf, contribute nothing. -/
@@ -238,16 +243,6 @@ def SO.phonYield (side : ConventionDir) (s : SO) : Option (List String) :=
 
 @[simp] theorem SO.linearize_traceLeaf (side : ConventionDir) :
     SO.traceLeaf.linearize side = some [] := rfl
-
-theorem SO.linearize_node (side : ConventionDir) (l r : SO) :
-    (SO.node l r).linearize side =
-      (match selSide l.selCheck r.selCheck with
-       | some true  => Option.map₂ (placeYield side) (l.linearize side) (r.linearize side)
-       | some false => Option.map₂ (placeYield side) (r.linearize side) (l.linearize side)
-       | none       => none) := by
-  show linearizeN side (SO.node l r).val = _
-  rw [SO.node_val, linearizeN_node]
-  simp only [SO.selCheck, SO.linearize]
 
 /-! ### `decide` demonstration
 
