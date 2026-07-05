@@ -29,8 +29,9 @@ is their (44): harmony iff V is spelled out inside vP.
   particle's surface value ((12)–(13)), and the (46)/(47) ranking as a tableau.
 * `FrozenATR`, `guebiePICMode`: the per-cycle harmony record (§6.1) and the PIC
   stance (§6.2).
-* `guebiePredicateDoubling`, `WolofRelClauseShape`: the §3 movement witnesses and
-  the §7 Wolof parallel.
+* `guebiePredicateDoubling`: the §3 movement witnesses.
+* `HarmonyProfile`, `WolofShape`: the §7 prediction schema — trigger and target
+  co-spelled-out low, movement after — instantiated by Guébie and Wolof.
 
 ## Main results
 
@@ -40,9 +41,10 @@ is their (44): harmony iff V is spelled out inside vP.
   linearizes; the §6.2 escape-hatch counterfactual crashes.
 * `optimal_eq_surfaceATR`, `PartSAuxOV_atr_persists_through_fronting`: the ranking
   derives the surface value, and it survives the CP cycle.
-* `guebie_VDIS_positive_instance`, `wolof_harmony_uniform`: doubling is
-  narrow-syntactic ((25)–(30), contra [landau-2006]); the Wolof parallel
-  ([sy-2005], [martinovic-2019]).
+* `guebie_VDIS_positive_instance`: doubling is narrow-syntactic ((25)–(30),
+  contra [landau-2006]).
+* `guebie_profile`, `wolof_profile`, `wolof_discontinuous`: both languages
+  instantiate the §7 schema ([sy-2005], [martinovic-2019]).
 
 ## Implementation notes
 
@@ -322,34 +324,60 @@ theorem guebie_VDIS_positive_instance :
     VerbDoublingIsSyntacticIn guebieFrontingDerivation guebieVerbLeaf := by
   decide
 
-/-! ### The Wolof parallel (§7)
+/-! ### The §7 prediction and the Wolof parallel
 
-Wolof relative clauses ([sy-2005], [martinovic-2019]) show the same shape: the DP
-containing head noun and distal demonstrative "is a phase, so the two are spelled
-out in a sufficiently local configuration for harmony to apply"; the head noun then
-A′-moves to the left edge, and intervening stative-verb material does not
-harmonize ((49)–(50)). -/
+The analysis predicts that "the target and trigger of harmony must be local at
+some point in the derivation, namely at an instance of spell-out", with later
+movement of one of them deriving surface discontinuity (§7). Guébie instantiates
+it with the target (particle) moving; Wolof relative clauses ([sy-2005],
+[martinovic-2019]) with the trigger (head noun) moving out of the DP phase, past
+non-harmonizing stative-verb material ((49)–(50)). -/
 
-inductive WolofRelClauseShape where
-  /-- Local DP, no relative clause ((49)): head and demonstrative surface-adjacent. -/
+/-- The §7 prediction schema: trigger and target co-spelled-out at a low phase,
+    and the two-phase derivation linearizes. -/
+def HarmonyProfile (low surface : List String) (trigger target : String) : Prop :=
+  trigger ∈ low ∧ target ∈ low ∧ Consistent [low, surface]
+
+instance (low surface : List String) (trigger target : String) :
+    Decidable (HarmonyProfile low surface trigger target) := by
+  unfold HarmonyProfile; infer_instance
+
+/-- Guébie's fronted SAuxOV clause instantiates the §7 profile: V and Part are
+    co-spelled-out in vP, and the fronted surface linearizes consistently. -/
+theorem guebie_profile :
+    HarmonyProfile (Clause.mk true true).vPSpellOut
+      (Clause.mk true true).surfaceOrder "V" "Part" := by decide
+
+/-- The Wolof shapes ([sy-2005] (49)–(50)): a bare noun–demonstrative DP, or a
+    relative clause with the head noun fronted past the stative verb. -/
+inductive WolofShape where
+  /-- `head dem` ((49)): no relative clause. -/
   | localDP
-  /-- Relative clause ((50)): head fronted, ATR set inside the DP phase. -/
+  /-- `head rel stative dem` ((50)): head noun A′-moved to the left edge. -/
   | relClause
   deriving DecidableEq, Repr
 
 /-- Head noun and demonstrative are spelled out together at the DP phase in both
-    shapes. -/
-def wolofDPSpellOut : WolofRelClauseShape → List String
+    shapes — harmony's locality is phase-internal, not surface. -/
+def WolofShape.dpSpellOut : WolofShape → List String :=
+  fun _ => ["head", "dem"]
+
+/-- The surface strings of (49)–(50). -/
+def WolofShape.surfaceOrder : WolofShape → List String
   | .localDP   => ["head", "dem"]
-  | .relClause => ["head", "dem"]
+  | .relClause => ["head", "rel", "stative", "dem"]
 
-def wolofHarmonyApplies (s : WolofRelClauseShape) : Bool :=
-  (wolofDPSpellOut s).contains "head" && (wolofDPSpellOut s).contains "dem"
+/-- Both Wolof shapes instantiate the §7 profile — the same schema Guébie
+    satisfies, with the trigger rather than the target moving. -/
+theorem wolof_profile (sh : WolofShape) :
+    HarmonyProfile sh.dpSpellOut sh.surfaceOrder "head" "dem" := by
+  cases sh <;> decide
 
-/-- Harmony is predicted in both shapes — the relative clause's discontinuous
-    appearance is post-Spell-out movement, not a different harmony mechanism. -/
-theorem wolof_harmony_uniform :
-    wolofHarmonyApplies .localDP = true ∧
-    wolofHarmonyApplies .relClause = true := by decide
+/-- Wolof discontinuity: in the relative clause the head and demonstrative are not
+    surface-adjacent, yet they were co-spelled-out at the DP phase. -/
+theorem wolof_discontinuous :
+    ¬ (["head", "dem"] <:+: WolofShape.relClause.surfaceOrder) ∧
+    "head" ∈ WolofShape.relClause.dpSpellOut ∧
+    "dem" ∈ WolofShape.relClause.dpSpellOut := by decide
 
 end SandeClemDabkowski2026
