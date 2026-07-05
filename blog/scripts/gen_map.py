@@ -52,8 +52,8 @@ NODES = [
     # Luce cluster
     {"id": "RationalAction", "root": "luce",      "file_path": "Core/RationalAction.lean"},
     {"id": "UtilityTheory",  "root": "luce",      "file_path": "Core/UtilityTheory.lean"},
-    {"id": "RSAConfig",      "root": "luce",      "file_path": "Pragmatics/RSA/Core/Config.lean"},
-    {"id": "RSAImpl",        "root": "luce",      "file_path": "Pragmatics/RSA/Implementations/*"},
+    {"id": "RSAConfig",      "root": "luce",      "file_path": "Pragmatics/RSA/Operators.lean"},
+    {"id": "RSAImpl",        "root": "luce",      "file_path": "Pragmatics/RSA/*"},
     # Proposition cluster
     {"id": "Proposition",    "root": "proposition", "file_path": "Core/Proposition.lean"},
     {"id": "Kleene",         "root": "proposition", "file_path": "Core/Kleene.lean"},

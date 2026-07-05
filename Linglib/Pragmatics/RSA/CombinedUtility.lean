@@ -1,32 +1,17 @@
-/-
-# RSA/Core/CombinedUtility.lean
-[hawkins-etal-2025] [sumers-etal-2023]
-
-Combined utility models for trading off multiple objectives.
-
-## Overview
-
-Many RSA models involve trading off two (or more) utility components:
-- **[sumers-etal-2023]**: truthfulness vs relevance
-- **PRIOR-PQ**: informativity vs action-relevance
-- **[yoon-etal-2020]**: informativity vs social utility
-
-This module provides a unified framework for such combined utility models.
-
-## Key Concepts
-
-**Combined Utility**: U_combined = (1-λ)·U_A + λ·U_B - cost
-
-- λ = 0: Pure U_A (e.g., pure truthfulness)
-- λ = 1: Pure U_B (e.g., pure relevance)
-- λ ∈ (0,1): Weighted combination
-
--/
-
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp
+
+/-!
+# Combined utility models
+[hawkins-etal-2025] [sumers-etal-2023]
+
+Many RSA models trade off two utility components — [sumers-etal-2023]
+truthfulness vs relevance, [yoon-etal-2020] informativity vs social
+utility. `combined` is the shared weighted-interpolation form
+`U = (1-λ)·U_A + λ·U_B − cost`: λ = 0 is pure `U_A`, λ = 1 pure `U_B`.
+-/
 
 namespace RSA.CombinedUtility
 

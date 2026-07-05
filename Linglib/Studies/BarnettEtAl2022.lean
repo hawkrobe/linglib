@@ -1,6 +1,6 @@
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
-import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
+import Linglib.Pragmatics.RSA.CombinedUtility
 
 /-!
 # [barnett-griffiths-hawkins-2022]: the weak evidence effect

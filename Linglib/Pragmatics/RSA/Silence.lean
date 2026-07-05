@@ -40,6 +40,8 @@ its own `cover_silent` as a 1-line application of `liftMeaning_none`.
 
 namespace RSA
 
+open scoped ENNReal
+
 variable {U W : Type*}
 
 /-- Silence-extended utterance type. `some u` is a paper-utterance;
@@ -60,6 +62,29 @@ def liftMeaning (m : U → W → Bool) : WithSilence U → W → Bool
 
 @[simp] theorem liftMeaning_none (m : U → W → Bool) (w : W) :
     liftMeaning m none w = true := rfl
+
+/-! ### Costed silence
+
+[bergen-levy-goodman-2016] disfavor the null utterance by *cost*: the speaker
+utility is informativity minus cost, so the softmax weight factors as
+`L0 ^ α · exp (−α·c)` — a per-utterance cost factor, the slot `RSA.S1Belief`
+already carries. `liftCostFactor` extends a content-utterance cost factor to
+`WithSilence U` with a designated silence weight `κ`: silence maximally
+expensive (`κ` minimal) recovers the regime of [bergen-levy-goodman-2016],
+where silence is a never-preferred honesty fallback; silence free with costly
+speech gives the decision-to-speak regime of [rohde-etal-2022], where
+*whether* the speaker talks is itself informative. -/
+
+/-- Extend a cost factor to `WithSilence U`, with silence weighted `κ`. -/
+def liftCostFactor (κ : ℝ≥0∞) (c : U → ℝ≥0∞) : WithSilence U → ℝ≥0∞
+  | some u => c u
+  | none   => κ
+
+@[simp] theorem liftCostFactor_some (κ : ℝ≥0∞) (c : U → ℝ≥0∞) (u : U) :
+    liftCostFactor κ c (some u) = c u := rfl
+
+@[simp] theorem liftCostFactor_none (κ : ℝ≥0∞) (c : U → ℝ≥0∞) :
+    liftCostFactor κ c none = κ := rfl
 
 /-! ### The extension of silence
 

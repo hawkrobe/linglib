@@ -91,7 +91,8 @@ action `a`, the observer estimates agent credence by marginalizing:
     Pr_obs(Agent, φ | a) = Σ_b P(b | a) · ⟦φ⟧_b
 
 where P(b | a) is the BToM belief marginal (`BToMModel.beliefMarginal`).
-Through the RSA-BToM bridge (`L1_eq_btom_worldMarginal`), this connects
+Through the RSA-BToM bridge (`rsa_btom_bridge` in
+`Studies/RitchieSchiller2024.lean`), this connects
 to the pragmatic listener's interpretation of epistemic language.
 
 -/

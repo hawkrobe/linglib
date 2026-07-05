@@ -56,7 +56,7 @@ substrate `Studies/FrancikClark1985.lean` and
 The DM bridge in `§I` consumes `Morphology.DM.Categorizer`'s
 `Recategorization.denominal` for the syntactic operation underlying nonce
 verbs. The LU-RSA bridge in `§H` consumes
-`Pragmatics.RSA.LexicalUncertainty.Lexicon`.
+`RSA.Lexicon`.
 
 The shared mechanism Clark posits in `§K` is operationalized as a typed
 projection: both `IndirectAct` and `DenominalVerbConvention` provide a
@@ -68,6 +68,7 @@ level rather than a vacuous law-of-excluded-middle.
 namespace Clark1983
 
 open CommonGround
+open RSA (Lexicon)
 open Morphology.DM (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)
 
