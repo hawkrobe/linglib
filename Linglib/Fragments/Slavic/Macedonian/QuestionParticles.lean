@@ -23,7 +23,7 @@ namespace Macedonian.QuestionParticles
 def dali : Particle where
   form := "dali"
   script := some "дали"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

@@ -21,7 +21,7 @@ namespace Polish.QuestionParticles
 Verb-initial PQs possible but unacceptable in quiz scenarios. -/
 def czy : Particle where
   form := "czy"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .obligatory
@@ -32,7 +32,7 @@ def czy : Particle where
 classification in `Simik2024`. -/
 def czyzby : Particle where
   form := "czyżby"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

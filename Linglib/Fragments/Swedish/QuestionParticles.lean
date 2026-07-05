@@ -32,7 +32,7 @@ reading), not plain assertions, not wh-questions. Epistemic-uncertainty
 signal and evidential bias live in `SeeligerRepp2018`. -/
 def val : Particle where
   form := "väl"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

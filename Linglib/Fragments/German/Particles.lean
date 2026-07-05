@@ -28,7 +28,7 @@ imperative non-epistemicity (`Gutzmann2015`). Distinct from answer
 particle *ja* (`PolarityMarking.lean`). -/
 def ja : Particle where
   form := "ja"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .optional
       polarInterrogative := some .excluded
@@ -46,7 +46,7 @@ highlighting-sensitive flavoring particle (bias profile in
 from declaratives and imperatives. -/
 def denn : Particle where
   form := "denn"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
@@ -61,7 +61,7 @@ def denn : Particle where
 `wohl_iff_epis` and the selectional analysis in `Gutzmann2015`. -/
 def wohl : Particle where
   form := "wohl"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .optional
       polarInterrogative := some .optional
@@ -75,7 +75,7 @@ def wohl : Particle where
 is"). Declaratives only. -/
 def halt : Particle where
   form := "halt"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .optional
       polarInterrogative := some .excluded
@@ -91,7 +91,7 @@ polarity-reversal response *doch* (`PolarityMarking.lean`; the ambiguity
 is formalized in `SeeligerRepp2018.doch_dual_role`). -/
 def doch : Particle where
   form := "doch"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .optional
       polarInterrogative := some .excluded
@@ -108,7 +108,7 @@ question-function reading), not assertions and not wh-questions. The
 PRQ/NRQ bias profile lives in `SeeligerRepp2018`. -/
 def dochWohl : Particle where
   form := "doch wohl"
-  position := .clauseMedial
+  position := some .clauseMedial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

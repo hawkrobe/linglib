@@ -30,7 +30,7 @@ declarative into a yes/no question. Bias-neutral (see `Zheng2025`). -/
 def ma : Particle where
   form := "ma"
   script := some "吗"
-  position := .clauseFinal
+  position := some .clauseFinal
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
@@ -43,7 +43,7 @@ answer and seeks confirmation, comparable to English tag questions
 def ba : Particle where
   form := "ba"
   script := some "吧"
-  position := .clauseFinal
+  position := some .clauseFinal
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
@@ -58,7 +58,7 @@ Its evidential requirement lives in `Zheng2025`. -/
 def nandao : Particle where
   form := "nándào"
   script := some "难道"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

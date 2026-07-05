@@ -23,7 +23,7 @@ Staňková corpus). -/
 def li : Particle where
   form := "li"
   script := some "ли"
-  position := .secondPosition
+  position := some .secondPosition
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
@@ -36,7 +36,7 @@ negation. Evidential classification in `Simik2024`. -/
 def razve_ : Particle where
   form := "razve"
   script := some "разве"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional

@@ -20,7 +20,7 @@ namespace Serbian.QuestionParticles
 clause-initial particle + verb movement. Neutral baseline. -/
 def daLi : Particle where
   form := "da li"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
@@ -31,7 +31,7 @@ def daLi : Particle where
 razve). Evidential classification in `Simik2024`. -/
 def zar_ : Particle where
   form := "zar"
-  position := .clauseInitial
+  position := some .clauseInitial
   distribution := some
     { declarative := some .excluded
       polarInterrogative := some .optional
