@@ -1,4 +1,6 @@
-import Linglib.Fragments.English.FocusParticles
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
+import Linglib.Semantics.Focus.Particles
 
 /-!
 # [francescotti-1995]
@@ -22,39 +24,23 @@ of its true neighbors.
 
 ## Formalization
 
-We derive the Equivalence Thesis and threshold choice from the English
-fragment entry, then encode the two key counterexamples as finite scenarios
-and prove that only Francescotti's "most" threshold gives the correct
-predictions for both.
+We encode the two key counterexamples as finite scenarios and prove that
+only Francescotti's "most" threshold gives the correct predictions for both.
 -/
 
 namespace Francescotti1995
 
 open Semantics.Focus.Particles (EvenThreshold evenPresupWith)
-open English.FocusParticles (even_)
 
--- ============================================================
--- Section 1: Equivalence Thesis (from fragment)
--- ============================================================
+/-! ### Francescotti's threshold -/
 
-/-- **Equivalence Thesis** (§V(a)): "Even A is F" is true just in case
-    "A is F" is true. "Even" does not make a truth-functional difference.
-    Derived from the fragment entry. -/
-theorem equivalence_thesis :
-    even_.truthFunctional = false := rfl
+/-- Francescotti's revised felicity condition (§IV, p. 162; restated as
+    Conclusion §V(d)): S* must be more surprising than MOST of its true
+    neighbors — pace [bennett-1982]'s one-neighbor condition and
+    [karttunen-peters-1979]'s all-neighbors condition. -/
+def evenThreshold : EvenThreshold := .most
 
-/-- "Even" contributes via conventional implicature, not assertion.
-    Derived from the fragment entry. -/
-theorem even_contributes_via_ci :
-    even_.contributionLayer = .implicature := rfl
-
-/-- The fragment specifies Francescotti's "most" threshold. -/
-theorem even_threshold_is_most :
-    even_.threshold = some .most := rfl
-
--- ============================================================
--- Section 2: Threshold Predictions
--- ============================================================
+/-! ### Threshold predictions -/
 
 /-- A scenario for testing "even" felicity predictions.
     Each scenario specifies surprise levels for the prejacent and its
@@ -74,18 +60,10 @@ structure EvenScenario where
 def predict (s : EvenScenario) (t : EvenThreshold) : Bool :=
   evenPresupWith s.prejacent s.neighbors (fun a b => decide (a > b)) t
 
-/-- Predict felicity using the threshold from the English fragment. -/
-def predictFromFragment (s : EvenScenario) : Bool :=
-  match even_.threshold with
-  | some t => predict s t
-  | none => false
-
--- ============================================================
--- Scenario 1: Bennett's threshold is too weak (p. 155)
--- ============================================================
-
 /-!
-## Scenario 1: "Even Albert passed the exam"
+### Scenario 1: Bennett's threshold is too weak (p. 155)
+
+"Even Albert passed the exam"
 
 Albert is one of the best chemistry students. He and Marie (the very best)
 are both very likely to pass. Three weaker students have higher surprise
@@ -105,23 +83,21 @@ def scenario1 : EvenScenario :=
 
 /-- Bennett (∃) wrongly predicts felicitous: Albert(2) exceeds Marie(1). -/
 theorem bennett_wrong_on_scenario1 :
-    predict scenario1 .existential ≠ scenario1.felicitous := by native_decide
+    predict scenario1 .existential ≠ scenario1.felicitous := by decide
 
 /-- K-P (∀) correctly predicts infelicitous here (but will fail on scenario 2). -/
 theorem kp_correct_on_scenario1 :
-    predict scenario1 .universal = scenario1.felicitous := by native_decide
+    predict scenario1 .universal = scenario1.felicitous := by decide
 
 /-- Francescotti (most) correctly predicts infelicitous:
     Albert(2) exceeds only 1 of 4 neighbors (25% < 50%). -/
 theorem francescotti_correct_on_scenario1 :
-    predict scenario1 .most = scenario1.felicitous := by native_decide
-
--- ============================================================
--- Scenario 2: K-P's threshold is too strong (p. 156)
--- ============================================================
+    predict scenario1 evenThreshold = scenario1.felicitous := by decide
 
 /-!
-## Scenario 2: "Even Albert failed the exam"
+### Scenario 2: K-P's threshold is too strong (p. 156)
+
+"Even Albert failed the exam"
 
 Albert is one of the best students, so failing is very surprising.
 Marie is even better, so her failing would be even MORE surprising.
@@ -141,41 +117,29 @@ def scenario2 : EvenScenario :=
 
 /-- Bennett (∃) correctly predicts felicitous here. -/
 theorem bennett_correct_on_scenario2 :
-    predict scenario2 .existential = scenario2.felicitous := by native_decide
+    predict scenario2 .existential = scenario2.felicitous := by decide
 
 /-- K-P (∀) wrongly predicts infelicitous: Albert(8) doesn't exceed Marie(9). -/
 theorem kp_wrong_on_scenario2 :
-    predict scenario2 .universal ≠ scenario2.felicitous := by native_decide
+    predict scenario2 .universal ≠ scenario2.felicitous := by decide
 
 /-- Francescotti (most) correctly predicts felicitous:
     Albert(8) exceeds 3 of 4 neighbors (75% > 50%). -/
 theorem francescotti_correct_on_scenario2 :
-    predict scenario2 .most = scenario2.felicitous := by native_decide
+    predict scenario2 evenThreshold = scenario2.felicitous := by decide
 
--- ============================================================
--- Section 3: Summary and fragment-derived predictions
--- ============================================================
+/-! ### Summary -/
 
 /-- Francescotti's "most" threshold is the only one that matches
     observed felicity judgments on both scenarios. -/
 theorem francescotti_uniquely_correct :
-    predict scenario1 .most = scenario1.felicitous ∧
-    predict scenario2 .most = scenario2.felicitous ∧
+    predict scenario1 evenThreshold = scenario1.felicitous ∧
+    predict scenario2 evenThreshold = scenario2.felicitous ∧
     predict scenario1 .existential ≠ scenario1.felicitous ∧
-    predict scenario2 .universal ≠ scenario2.felicitous := by native_decide
-
-/-- The English fragment entry for "even" gives correct predictions
-    on both scenarios (since it specifies `.most`). -/
-theorem fragment_predictions_correct :
-    predictFromFragment scenario1 = scenario1.felicitous ∧
-    predictFromFragment scenario2 = scenario2.felicitous := by native_decide
-
--- ============================================================
--- Section 4: Gradient felicity (pp. 163–164)
--- ============================================================
+    predict scenario2 .universal ≠ scenario2.felicitous := by decide
 
 /-!
-## Gradient Felicity
+### Gradient felicity (pp. 163–164)
 
 Francescotti argues that felicity comes in degrees, determined by:
 (a) how much S* surpasses neighbors in surprise (degree of excess), and
@@ -198,7 +162,7 @@ def proportionExceeded (s : EvenScenario) : Rat :=
 def meanExcess (s : EvenScenario) : Rat :=
   let exceeded := s.neighbors.filter (· < s.prejacent)
   if exceeded.length = 0 then 0
-  else let total : Rat := exceeded.foldl (fun acc n => acc + (s.prejacent : Rat) - (n : Rat)) 0
+  else let total : Rat := exceeded.foldl (fun (acc : Rat) (n : Nat) => acc + (s.prejacent : Rat) - (n : Rat)) 0
        total / (exceeded.length : Rat)
 
 /-- Combined felicity degree: proportion × mean excess.
@@ -210,7 +174,8 @@ def felicityDegree (s : EvenScenario) : Rat :=
     (Albert passing), matching the intuition that scenario 2 is felicitous
     and scenario 1 is not. -/
 theorem scenario2_more_felicitous_than_scenario1 :
-    felicityDegree scenario1 < felicityDegree scenario2 := by native_decide
+    felicityDegree scenario1 < felicityDegree scenario2 := by
+  norm_num [felicityDegree, proportionExceeded, meanExcess, scenario1, scenario2]
 
 /-- Andre far above average: very high felicity degree. -/
 def scenarioAndreFar : EvenScenario :=
@@ -229,6 +194,7 @@ def scenarioAndreBarely : EvenScenario :=
 /-- Andre by far exceeds more, matching Francescotti's gradient intuition. -/
 theorem andre_far_more_felicitous :
     felicityDegree scenarioAndreBarely < felicityDegree scenarioAndreFar := by
-  native_decide
+  norm_num [felicityDegree, proportionExceeded, meanExcess, scenarioAndreBarely,
+    scenarioAndreFar]
 
 end Francescotti1995

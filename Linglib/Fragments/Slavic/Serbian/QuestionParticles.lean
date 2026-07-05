@@ -1,74 +1,42 @@
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Syntax.Particle.Basic
+
 /-!
 # Serbian Question Particles
 [simik-2024]
 
-Lexical entries for Serbian interrogative particles. The fragment
-commits only to theory-neutral lexical primitives; the left-peripheral
-layer assignment lives in `Simik2024`.
-
-## Particles
-
-| Particle | Gloss | Bias |
-|----------|-------|------|
-| da li | neutral PQ | none |
-| zar | RAZVE (mirative) | +evidential |
+Lexical entries for Serbian interrogative particles as `Particle` values.
+Bias classifications (zar's evidential requirement) and layer assignments
+live in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `Simik2024.serbian` (`Studies/Simik2024`): PQ strategy profile (da li + verb movement)
-- Layer assignments and Fragment-derived bias theorems in `Studies/Simik2024`
-
+- `Simik2024.serbian` (`Studies/Simik2024`): PQ strategy profile
+  (da li + verb movement) and the neutral/evidential contrast
 -/
 
 namespace Serbian.QuestionParticles
 
-open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
-
-/-- A Serbian interrogative particle entry. -/
-structure QParticleEntry where
-  form : String
-  gloss : String
-  polarOk : Bool
-  declOk : Bool
-  whOk : Bool
-  requiresContextualEvidence : Option ContextualEvidence
-  requiresOriginalBias : Option OriginalBias
-  deriving Repr, DecidableEq
-
-/-- da li — default PQ particle combination ([simik-2024] ex. 31).
-Particle + verb movement. Neutral baseline. -/
-def daLi : QParticleEntry where
+/-- da li — default PQ particle combination ([simik-2024] ex. 31):
+clause-initial particle + verb movement. Neutral baseline. -/
+def daLi : Particle where
   form := "da li"
-  gloss := "PQ (particle + movement)"
-  polarOk := true
-  declOk := false
-  whOk := false
-  requiresContextualEvidence := none
-  requiresOriginalBias := none
+  position := .clauseInitial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .optional
+      constituentInterrogative := some .excluded }
 
-/-- zar — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
-Compatible with both outer and inner negation (like Russian razve). -/
-def zar_ : QParticleEntry where
+/-- zar — mirative/dubitative particle (RAZVE family, [simik-2024]
+§4.2.4). Compatible with both outer and inner negation (like Russian
+razve). Evidential classification in `Simik2024`. -/
+def zar_ : Particle where
   form := "zar"
-  gloss := "RAZVE (mirative/dubitative)"
-  polarOk := true
-  declOk := false
-  whOk := false
-  requiresContextualEvidence := some .forP
-  requiresOriginalBias := none
+  position := .clauseInitial
+  distribution := some
+    { declarative := some .excluded
+      polarInterrogative := some .optional
+      constituentInterrogative := some .excluded }
 
-def allQuestionParticles : List QParticleEntry := [daLi, zar_]
-
-theorem daLi_neutral :
-    daLi.requiresContextualEvidence = none ∧ daLi.requiresOriginalBias = none :=
-  ⟨rfl, rfl⟩
-
-theorem zar_evidential : zar_.requiresContextualEvidence = some .forP := rfl
-
-/-- da li and zar form a neutral/evidential contrast. -/
-theorem bias_contrast :
-    daLi.requiresContextualEvidence = none ∧ zar_.requiresContextualEvidence = some .forP :=
-  ⟨rfl, rfl⟩
+def allQuestionParticles : List Particle := [daLi, zar_]
 
 end Serbian.QuestionParticles

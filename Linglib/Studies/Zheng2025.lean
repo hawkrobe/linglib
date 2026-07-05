@@ -2,6 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
+import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Semantics.Questions.Singleton
 import Linglib.Studies.BhattDayal2020
 
@@ -25,10 +26,9 @@ nor sufficient**.
 
 ## Predictions verified
 
-- `fragment_data_evidential`: Fragment entry's evidential bias requirement
-  matches the empirical generalization
-- `fragment_data_epistemic`: Fragment entry correctly does not require
-  epistemic bias
+- `nandaoContextualEvidence` / `nandaoOriginalBias`: Zheng's bias
+  classification of *nandao*, grounded in `evidential_bias_necessary`
+  and `epistemic_bias_not_necessary`
 - `kernel_requires_evidence`: Kernel `nandaoFelicitous` entails
   `evidenceSupports`
 - `nandaoFullFelicity`: integrated two-layer felicity (singleton sister
@@ -215,23 +215,21 @@ theorem dataset_size : allData.length = 9 := by native_decide
 open Mandarin.QuestionParticles (nandao)
 open Semantics.Modality (Kernel Background nandaoFelicitous World)
 
-/-- The nandao Fragment entry's evidential bias requirement matches the
-empirical generalization: all felicitous nandao-Qs have evidential bias. -/
-theorem fragment_data_evidential :
-    nandao.requiresContextualEvidence = some .forP ∧
-    (allData.filter (·.felicitous)).all (·.evidentialBias) = true :=
-  ⟨rfl, by native_decide⟩
+/-- Zheng's evidential classification of *nandao*: requires contextual
+evidence for p — the lexical face of `evidential_bias_necessary`.
+(Formerly a fragment field; a particle's bias requirement is the
+analysis, so it lives here.) -/
+def nandaoContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
+  some .forP
 
-/-- The nandao Fragment entry correctly does NOT require epistemic bias,
-matching the empirical finding that some felicitous nandao-Qs lack it. -/
-theorem fragment_data_epistemic :
-    nandao.requiresOriginalBias = none ∧
-    (allData.filter (λ d => d.felicitous && !d.epistemicBias)).length > 0 :=
-  ⟨rfl, by native_decide⟩
+/-- Zheng's classification: *nandao* does NOT require epistemic bias —
+compatible with a neutral epistemic state (pure inquiry use, ex. 3);
+the lexical face of `epistemic_bias_not_necessary`. -/
+def nandaoOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
 
 /-- Kernel `nandaoFelicitous` entails `evidenceSupports`, connecting the
-Theory predicate to the Fragment's `requiresContextualEvidence = some .forP` and
-the empirical generalization `evidential_bias_necessary`. -/
+Theory predicate to `nandaoContextualEvidence` and the empirical
+generalization `evidential_bias_necessary`. -/
 theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ : (World → Prop))
     [DecidablePred φ] (h : nandaoFelicitous k u φ) :
     k.evidenceSupports φ :=
@@ -242,15 +240,15 @@ theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ :
 -- ════════════════════════════════════════════════════════════════════════════
 
 open Features (QParticleLayer)
-open Mandarin.QuestionParticles (QuestionParticleEntry ma ba)
+open Mandarin.QuestionParticles (ma ba)
 
 /-- Zheng's layer assignments for the three Mandarin Q-particles in the
     [dayal-2025] cartography `[SAP [PerspP [CP ...]]]`. The `_`
     argument is unused: the layer is a theoretical overlay on the
     fragment particle, not a computed property of its lexical fields. -/
-def ma_layer     (_ : QuestionParticleEntry) : QParticleLayer := .cp
-def ba_layer     (_ : QuestionParticleEntry) : QParticleLayer := .perspP
-def nandao_layer (_ : QuestionParticleEntry) : QParticleLayer := .perspP
+def ma_layer     (_ : Particle) : QParticleLayer := .cp
+def ba_layer     (_ : Particle) : QParticleLayer := .perspP
+def nandao_layer (_ : Particle) : QParticleLayer := .perspP
 
 /-- *ma* is the unmarked CP-layer particle: widest distribution
     (matrix, subordinated, quasi-subordinated). -/
@@ -261,14 +259,12 @@ theorem ma_is_CP : ma_layer ma = .cp := rfl
 theorem ba_nandao_PerspP :
     ba_layer ba = .perspP ∧ nandao_layer nandao = .perspP := ⟨rfl, rfl⟩
 
-/-- The layer split mirrors the bias-profile split: the unbiased
-    particle is CP, the biased ones are PerspP. -/
-theorem layer_correlates_with_bias :
-    ma_layer ma = .cp ∧
-    ma.requiresContextualEvidence = none ∧ ma.requiresOriginalBias = none ∧
-    ba_layer ba = .perspP ∧ ba.requiresOriginalBias = some .forP ∧
-    nandao_layer nandao = .perspP ∧ nandao.requiresContextualEvidence = some .forP :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- Zheng's classification of *ba*: speaker-bias (expects a positive
+    answer, seeks confirmation), no evidential requirement; the unbiased
+    *ma* imposes neither. The layer split mirrors this bias split — the
+    unbiased particle is CP (`ma_is_CP`), the biased ones PerspP
+    (`ba_nandao_PerspP`). -/
+def baOriginalBias : Option Semantics.Questions.Bias.OriginalBias := some .forP
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- §4 — Singleton-Alternative Presupposition (parallel to kya:)
