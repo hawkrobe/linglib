@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.TierRule
@@ -54,14 +60,9 @@ theory-neutral pattern vocabulary these rival accounts share lives at
 - `spreadSuffix`: walk a suffix list (a convenience over the recognizer)
 - `transduce`: the harmonized-string function, as a 2-OSL transducer
 
-## Instances
-
-- **Turkish palatal harmony**: [back] from last stem vowel → all suffix vowels
-- **Turkish labial harmony**: [round] from last stem vowel → high suffix vowels only
-- **Finnish palatal harmony**: [back] from last harmonic stem vowel →
-  non-neutral suffix vowels; neutral vowels (/e/, /i/) are transparent
-- **Hungarian palatal harmony**: [back] from last harmonic stem vowel →
-  non-neutral suffix vowels; neutral vowels (/i, í, e, é/) are transparent
+Language instances live in `Fragments/{Turkish,Finnish,Hungarian}/VowelHarmony.lean`.
+The pattern-layer bridge `Phonology.Harmony.Pattern.harmonic_iff_mem_tsl` is
+also housed here (connection files live in the downstream tree).
 -/
 
 namespace Subregular.Harmony
@@ -70,9 +71,7 @@ open Phonology (Segment Feature)
 open Phonology
 open Subregular (OSLRule IsLeftOutputStrictlyLocal)
 
--- ============================================================================
--- § 1: Direction
--- ============================================================================
+/-! ### Direction -/
 
 /-- Compile a pattern-level direction (`Phonology.Harmony.Direction`) to the
     side at which the underlying `TierRule` reads its triggering context.
@@ -83,9 +82,7 @@ def _root_.Phonology.Harmony.Direction.toSide : Phonology.Harmony.Direction → 
   | .rightward | .bidirectional => .left
   | .leftward => .right
 
--- ============================================================================
--- § 2: System — TierRule + transduction discipline
--- ============================================================================
+/-! ### System — TierRule + transduction discipline -/
 
 /-- A harmony system: a tier-based AGREE rule (`TierRule`, the recognizer
     half, inherited via `extends`) plus the transduction discipline — which
@@ -126,9 +123,7 @@ def System.mk' (feature : Feature)
   isTarget := fun s => isTarget s = true
   isBlocker := fun s => isBlocker s = true
 
--- ============================================================================
--- § 3: Recovering the Rose-Walker Typology
--- ============================================================================
+/-! ### Recovering the Rose-Walker Typology -/
 
 /-- The trigger predicate (= the inherited `targetIsContext`). Convenience
     `Bool` accessor for the [rose-walker-2011] typological decomposition;
@@ -136,9 +131,7 @@ def System.mk' (feature : Feature)
 @[inline] def isTrigger (sys : System) (s : Segment) : Bool :=
   decide (sys.targetIsContext s)
 
--- ============================================================================
--- § 4: Harmony Domain
--- ============================================================================
+/-! ### Harmony Domain -/
 
 /-- The **harmony domain**: the portion of the stem that governs suffix
     harmony. For left-context (rightward / bidirectional) rules, this is
@@ -152,9 +145,7 @@ def harmonyDomain (sys : System) (stem : List Segment) : List Segment :=
   | .left  => (stem.reverse.takeWhile (fun s => !decide (sys.isBlocker s))).reverse
   | .right => stem.takeWhile (fun s => !decide (sys.isBlocker s))
 
--- ============================================================================
--- § 5: Trigger Value Extraction
--- ============================================================================
+/-! ### Trigger Value Extraction -/
 
 /-- The harmony value predicted at the suffix slot: dispatch the inherited
     `TierRule` recognizer on the harmony domain.
@@ -169,9 +160,7 @@ def triggerValue (sys : System) (stem : List Segment) : Option Bool :=
   | .left  => sys.toTierRule.apply domain []
   | .right => sys.toTierRule.apply [] domain
 
--- ============================================================================
--- § 6: Segment-Level Harmony
--- ============================================================================
+/-! ### Segment-Level Harmony -/
 
 /-- Write harmonic value `v` into a segment's `feature` slot. -/
 def writeFeature (feature : Feature) (v : Bool) (s : Segment) : Segment :=
@@ -182,9 +171,7 @@ def writeFeature (feature : Feature) (v : Bool) (s : Segment) : Segment :=
 def harmonizeOne (sys : System) (val : Bool) (s : Segment) : Segment :=
   if sys.isTarget s then writeFeature sys.feature val s else s
 
--- ============================================================================
--- § 7: Suffix Spreading (convenience over the recognizer)
--- ============================================================================
+/-! ### Suffix Spreading (convenience over the recognizer) -/
 
 /-- Apply harmony through a suffix segment list, respecting blockers.
     Walks left-to-right: a **blocker** halts (this and subsequent segments
@@ -200,9 +187,7 @@ def spreadSuffix (sys : System) (val : Bool)
     if sys.isBlocker s then s :: rest
     else harmonizeOne sys val s :: spreadSuffix sys val rest
 
--- ============================================================================
--- § 8: Transducer grounding — harmony as an OSL function
--- ============================================================================
+/-! ### Transducer grounding — harmony as an OSL function -/
 
 /-- Harmony as a **2-Output-Strictly-Local rule** ([chandlee-eyraud-heinz-2015]):
     scanning left-to-right, each target takes the harmonic value of the
@@ -233,9 +218,7 @@ theorem System.transduce_isLeftOSL (sys : System) :
     IsLeftOutputStrictlyLocal 2 sys.transduce :=
   sys.spreadRule.isLeftOutputStrictlyLocal_apply
 
--- ============================================================================
--- § 9: Properties
--- ============================================================================
+/-! ### Properties -/
 
 /-- Non-target segments are unchanged by harmonization. -/
 theorem harmonizeOne_nontarget {sys : System} {val : Bool} {s : Segment}
@@ -279,5 +262,28 @@ theorem spreadSuffix_blocker (sys : System) (val : Bool)
     (s : Segment) (rest : List Segment) (hb : sys.isBlocker s) :
     spreadSuffix sys val (s :: rest) = s :: rest := by
   simp [spreadSuffix, hb]
+
+/-! ### Patterns are TSL₂ -/
+
+section Pattern
+
+open Phonology.Harmony (Pattern)
+
+/-- **Harmony is TSL₂ by construction** ([aksenova-rawski-graf-heinz-2024]):
+    a pattern's surface harmonicity is membership in the tier-based strictly
+    2-local grammar whose tier is `Pattern.OnTier` and whose banned bigrams
+    are the incompatible pairs. Strictly local grammars cannot express harmony
+    (unbounded distance) and strictly piecewise grammars cannot express
+    blocking; the tier-based class captures both. -/
+theorem _root_.Phonology.Harmony.Pattern.harmonic_iff_mem_tsl {α : Type*}
+    {V : Type*} [DecidableEq V] (p : Pattern α V) (w : List α) :
+    p.Harmonic w ↔
+      w ∈ (TSLGrammar.ofForbiddenPairs
+        (R := fun a b => ¬ p.Compatible a b) p.OnTier).lang := by
+  rw [Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  unfold Phonology.Harmony.Pattern.Harmonic Phonology.Harmony.Pattern.tier
+  simp only [not_not]
+
+end Pattern
 
 end Subregular.Harmony
