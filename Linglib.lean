@@ -2945,6 +2945,7 @@ import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
+import Linglib.Data.Examples.VonFintel1999
 /-
 # Linglib
 

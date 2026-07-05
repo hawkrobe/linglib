@@ -1,5 +1,6 @@
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Focus.Control
+import Linglib.Data.Examples.VonFintel1999
 import Linglib.Studies.KadmonLandman1993
 import Linglib.Studies.Lahiri1998
 import Linglib.Studies.Hoeksema1983
@@ -7,54 +8,40 @@ import Linglib.Studies.Hoeksema1983
 /-!
 # [von-fintel-1999] — Strawson entailment as a rescue for Fauconnier-Ladusaw
 
-  von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
-  Dependency. Journal of Semantics 16(2), 97–148.
+von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
+Dependency. Journal of Semantics 16(2), 97–148.
 
-The paper defends the Fauconnier-Ladusaw analysis of NPI licensing — that NPIs
-are licensed in DE positions — against four "recalcitrant" arenas where NPIs
-are licensed despite the host context not being classically DE: `only`, the
-adversative attitude predicates (`sorry`, `surprised`, `regret`), superlatives,
-and conditional antecedents. The key move is to weaken classical DE to
-**Strawson-DE** (Definition 14): an inference `f(q) ⊨ f(p)` need only hold
-under the additional assumption that the conclusion's presupposition is
-satisfied. With this weakening, all four contexts come out DE and the
-Fauconnier-Ladusaw schema goes through.
+The paper defends the Fauconnier-Ladusaw analysis of NPI licensing — NPIs
+are licensed in DE positions — against four arenas where NPIs are licensed
+although the host context is not classically DE: *only*, the adversative
+attitude predicates, superlatives, and conditional antecedents. The key
+move weakens classical DE to **Strawson-DE** (his Definition 14): the
+inference `f(q) ⊨ f(p)` need only hold assuming the conclusion's
+presupposition. All four contexts come out Strawson-DE.
 
-## What this study file does
-
-It is *not* a re-derivation of Strawson-DE — that lives in
-`Semantics/Entailment/StrawsonEntailment.lean`, which already
-proves `onlyFull_isStrawsonDE`, `sorryFull_isStrawsonDE`, `gladFull_isUE`,
-`superlative_isStrawsonDE`, `conditional_antecedent_strawsonDE`, and the
-relevant non-DE lemmas. This file is the *paper-citation index*: each
-theorem is named after the paper's example number(s) and discharged by
-specializing the corresponding theorem from `StrawsonEntailment.lean` to
-the example's lexical instance. NPI grammaticality judgments themselves
-(starred or unstarred sentences) are not theorems — they are the empirical
-motivation, recorded in section docstrings with the sentences quoted from
-the paper.
+The Strawson-DE substrate lives in
+`Semantics/Entailment/StrawsonEntailment.lean`; this file is the
+paper-citation index — each theorem is named after the paper's example
+number(s) and discharged by specializing the corresponding substrate
+theorem. The NPI stimuli themselves are typed rows in
+`Data/Examples/VonFintel1999.json` (`Examples.ex10`, …); the inference
+schemata quoted in section docstrings are what the theorems formalize.
 
 ## Coverage
 
-- §2 *only*: ex. 10, 11, 18 — formalized; (15)'s individual-identity
+- §2 *only*: exs. 10, 11, 18 — formalized; (15)'s individual-identity
   exclusion reconciled with [rooth-1992]'s `onlyVia` over injective
   individual-generated families (`onlyIndiv_eq_onlyVia`).
-- §2.2 *since* (Iatridou): exs. 20-22 — discussed; no `sinceFull` operator
-  in the formal substrate yet.
+- §2.2 *since* (Iatridou): exs. 20-22 — formalized via `sinceFull`.
 - §2.3 pseudo-anti-additivity (against Atlas): exs. 23-27 — discussed.
-- §3 *sorry/surprised/regret*: exs. 28, 29, 30 — formalized via `sorryFull`.
-- §3.1 ex. 31 (the prima-facie incoherence anchor for Kadmon-Landman) —
-  discussed in the §3 section docstring.
-- §3.3 *glad* asymmetry: ex. 52 — formalized via `gladFull_isUE`.
-- §3.4 shifting contexts (exs. 60-65): discussed; requires a dynamic-context
-  treatment not yet in the substrate.
-- §3.4 Curveball #2 focus-`only` (exs. 66-68): discussed (subsumed by
-  `onlyFull_isStrawsonDE`).
-- §4.1 conditional antecedents: exs. 70-74 — formalized for the restrictor
-  analysis (under which conditionals *are* DE); the Stalnaker-Lewis
-  Strengthening-the-Antecedent failures are discussed.
-- §4.2 superlatives: exs. 75, 76, 77 — partially formalized via
-  `superlative_isStrawsonDE`.
+- §3 *sorry/surprised/regret*: exs. 28-30 — formalized via `sorryFull`;
+  ex. 31 (Kadmon-Landman's coherence challenge) discussed.
+- §3.2 *want* (Asher/Heim): eq. 45 — formalized via `wantFull`.
+- §3.3 *glad* asymmetry: exs. 50, 52 — formalized.
+- §3.4 shifting contexts (exs. 60-65) and focus-*only* (exs. 66-68) —
+  discussed.
+- §4.1 conditional antecedents: exs. 70-73 — restrictor side formalized.
+- §4.2 superlatives: exs. 75-77 — formalized via `superlativeAssert`.
 -/
 
 namespace VonFintel1999
@@ -63,66 +50,53 @@ open Entailment
 
 /-! ## §2 — *only*
 
-The Fauconnier-Ladusaw puzzle: `only John` licenses NPIs in its scope
-(ex. 10) yet the canonical DE inference fails (ex. 11) — extending the
-inference to a narrower scope (kale ⊆ vegetables) is not classically
-truth-preserving because the conclusion `Only John ate kale` carries a
-presupposition (someone ate kale) that the premise does not guarantee.
-Strawson-DE plugs the gap (ex. 18): with the conclusion's presupposition
-added as an extra premise, the DE inference goes through, and Strawson-DE
-is sufficient for NPI licensing.
+The Fauconnier-Ladusaw puzzle: *only John* licenses NPIs in its scope
+(`Examples.ex10`) yet the canonical DE inference fails (ex. 11) —
+narrowing the scope (kale ⊆ vegetables) is not classically
+truth-preserving because the conclusion carries a presupposition
+(someone ate kale) the premise does not guarantee. Strawson-DE plugs the
+gap (ex. 18), and Strawson-DE suffices for NPI licensing.
 
-> (10) Only John ever ate any kale for breakfast. (p. 101)
-> (11) Only John ate vegetables for breakfast. ⇏ Only John ate kale for breakfast. (p. 101)
-> (18) Kale is a vegetable. John ate kale for breakfast. Only John ate vegetables for
->      breakfast. ∴ Only John ate kale for breakfast. (p. 104)
+> (11) Only John ate vegetables for breakfast. ⇏ Only John ate kale for
+>      breakfast. (p. 101)
+> (18) Kale is a vegetable. John ate kale for breakfast. Only John ate
+>      vegetables for breakfast. ∴ Only John ate kale for breakfast. (p. 104)
 -/
 
-/-- Ex. 11 (p. 101): `only` is not classically downward entailing.
-    Witness: kale ⊆ vegetables but the inference fails because the
-    conclusion's existence presupposition (someone ate kale) is not
-    guaranteed by the premise. -/
-theorem ex11_only_not_DE :
-    ¬ IsDownwardEntailing (onlyFull (· = World.w0)) :=
+/-- The §2 operator: *only John*, with the focus individual modeled as
+the world-predicate `· = World.w0`. -/
+def onlyJohn : Set World → Set World := onlyFull (· = World.w0)
+
+/-- *Only John*'s existence presupposition: some `John`-world satisfies
+the scope. -/
+def onlyJohnDefined (scope : Set World) (_w : World) : Prop :=
+  ∃ w', w' = World.w0 ∧ scope w'
+
+/-- Ex. 11 (p. 101): *only* is not classically downward entailing —
+together with `ex18_only_strawsonDE`, the paper's headline separation
+for §2. -/
+theorem ex11_only_not_DE : ¬ IsDownwardEntailing onlyJohn :=
   onlyFull_not_de
 
-/-- Ex. 18 (p. 104): `only` is Strawson-DE. The definedness predicate
-    encodes the existence presupposition: there is some `w'` such that
-    the focused individual `John` (here `· == .w0`) holds at `w'` and the
-    scope predicate holds at `w'`. -/
-theorem ex18_only_strawsonDE :
-    IsStrawsonDE (onlyFull (· = World.w0))
-      (fun scope _w => ∃ w', w' = World.w0 ∧ scope w') :=
+/-- Ex. 18 (p. 104): *only* is Strawson-DE relative to its existence
+presupposition. -/
+theorem ex18_only_strawsonDE : IsStrawsonDE onlyJohn onlyJohnDefined :=
   onlyFull_isStrawsonDE _
-
-/-- Ex. 11 + 18: the central separation. `only` is Strawson-DE without
-    being classically DE — and Strawson-DE is enough to license NPIs
-    under von Fintel's revised Fauconnier-Ladusaw schema. This is the
-    paper's headline result for §2. -/
-theorem ex11_18_only_strawson_separation :
-    IsStrawsonDE (onlyFull (· = World.w0))
-        (fun scope _w => ∃ w', w' = World.w0 ∧ scope w') ∧
-    ¬ IsDownwardEntailing (onlyFull (· = World.w0)) :=
-  ⟨onlyFull_isStrawsonDE _, onlyFull_not_de⟩
 
 /-! ### §2.2 *since* (Iatridou, p.c.)
 
-Von Fintel relays an example from Sabine Iatridou:
+*Since* licenses NPIs in its complement (`Examples.ex21`) but is not
+classically DE (ex. 20); adding the temporal presupposition (a past
+`p`-event existed) restores the inference (ex. 22):
 
 > (20) It's been five years since I saw a bird of prey in this area. ⇏
 >      It's been five years since I saw an eagle in this area. (p. 107)
-> (21) It's been five years since I saw any bird of prey in this area. ✓
-> (22) (with the additional premise "Five years ago I saw an eagle") the
->      inference of (20) is restored.
-
-Same dialectical shape as `only`: `since` licenses NPIs but is not
-classically DE; adding the temporal presupposition (the eagle-sighting)
-makes the inference go through.
+> (22) …with the additional premise "Five years ago I saw an eagle",
+>      the inference of (20) is restored.
 -/
 
-/-- Ex. 22 (p. 107): `since` is Strawson-DE in its complement. The
-    definedness predicate is the temporal presupposition (a past
-    `p`-event existed). -/
+/-- Ex. 22 (p. 107): *since* is Strawson-DE in its complement, relative
+to the temporal presupposition. -/
 theorem ex22_since_strawsonDE (pastEvent sinceWindow : World → Set World) :
     IsStrawsonDE (sinceFull pastEvent sinceWindow)
       (fun p w => ∃ w' ∈ pastEvent w, p w') :=
@@ -130,235 +104,156 @@ theorem ex22_since_strawsonDE (pastEvent sinceWindow : World → Set World) :
 
 /-! ### §2.3 — pseudo-anti-additivity is useless for NPI licensing
 
-[atlas-1996] suggests that `only John` is "pseudo-anti-additive"
-(ex. 25, p. 109): it satisfies the half of anti-additivity in which
-`f(x) ∧ f(y) → f(x ∨ y)`. Von Fintel shows this is "useless for the
-analysis of NPI licensing" (p. 110): pseudo-anti-additivity is too weak —
-it is shared by many quantifiers that license NPIs (`no student`) and
-many that do not (`some student`, `every student`, `at least three
-students`); see exs. 26 and 27. The negative argument doesn't admit a
-single-theorem formalization — it is a survey of counterexamples — but
-the upshot for the formal substrate is exactly what we already have:
-Strawson-DE, not pseudo-AA, is the operative notion.
--/
+[atlas-1996] suggests *only John* is "pseudo-anti-additive" (ex. 25,
+p. 109): it satisfies the `f(x) ∧ f(y) → f(x ∨ y)` half of
+anti-additivity. Von Fintel shows this is "useless for the analysis of
+NPI licensing" (p. 110): the property is shared by licensers (*no
+student*) and non-licensers (*some/every/at least three students*)
+alike (exs. 26-27). The negative argument is a survey of
+counterexamples, not a single theorem; its upshot is the substrate as
+it stands — Strawson-DE, not pseudo-AA, is the operative notion. -/
 
 /-! ## §3 — adversative attitude predicates
 
-Adversative factive verbs (`sorry`, `regret`, `surprised`, `amazed`)
-license NPIs in their complement clauses despite the complement position
-not being classically DE.
+Adversative factives (*sorry*, *regret*, *surprised*, *amazed*) license
+NPIs in their complements (`Examples.ex28a`, `Examples.ex28b`) although
+the complement position is not classically DE: factivity blocks the
+narrowing inference (exs. 29-30), and Strawson-DE restores it by adding
+factivity at the evaluation world.
 
-> (28a) Sandy is amazed/surprised that Robin ever ate kale. (p. 111)
-> (28b) Sandy is sorry/regrets that Robin bought any car. (p. 111)
-> (29)  Robin ate kale ⇒ Robin ate a green vegetable; but
->       Sandy is amazed that Robin ate a green vegetable
->       ⇏ Sandy is amazed that Robin ate kale. (p. 111)
-> (30)  Robin bought a Honda Civic ⇒ Robin bought a car; but
->       Sandy is sorry that Robin bought a car
->       ⇏ Sandy is sorry that Robin bought a Honda Civic. (p. 111)
+> (29) Robin ate kale ⇒ Robin ate a green vegetable; but Sandy is amazed
+>      that Robin ate a green vegetable ⇏ Sandy is amazed that Robin ate
+>      kale. (p. 111)
+> (30) Robin bought a Honda Civic ⇒ Robin bought a car; but Sandy is
+>      sorry that Robin bought a car ⇏ Sandy is sorry that Robin bought
+>      a Honda Civic. (p. 111)
 
-The factivity presupposition (the complement holds at the evaluation
-world) blocks classical DE: the conclusion's narrower complement may not
-hold even when the premise does. Strawson-DE rescues the inference by
-adding factivity at the world of evaluation.
-
-### Ex. 31 — Kadmon-Landman's prima-facie coherence challenge
-
-> (31) Sandy regrets that Robin bought a car, but Sandy does not regret
->      that Robin bought a Honda Civic. (p. 112)
-
-If `regret` were uniformly DE, (31) should be incoherent.
-[kadmon-landman-1993] defend monotonicity by appealing to a *change
-of perspective* between the conjuncts; von Fintel's §3.1 reanalysis
-treats this as a shift of the modal-base parameter rather than a failure
-of the underlying operator's monotonicity. The Strawson-DE result for
-`sorry` below holds on a *constant* perspective.
+Ex. 31 (p. 112) — "Sandy regrets that Robin bought a car, but Sandy does
+not regret that Robin bought a Honda Civic" — is [kadmon-landman-1993]'s
+prima-facie coherence challenge: if *regret* were uniformly DE, (31)
+should be incoherent. Von Fintel's §3.1 reanalysis treats the coherence
+as a shift of the modal-base parameter; the Strawson-DE results below
+hold on a constant perspective.
 -/
 
-/-- Ex. 30 (p. 111): `sorry` is not classically DE in its complement.
-    The factivity component is what blocks DE: doxastic factivity of
-    the narrower complement `p ⊆ q` may fail at the evaluation world
-    even when `q`'s does. -/
-theorem ex30_sorry_not_DE :
-    ¬ IsDownwardEntailing
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World))) :=
+section Adversatives
+
+variable (dox bestOf : World → Set World)
+
+/-- The concrete `sorryFull` frame of the substrate's DE counterexample:
+identity doxastic state, preference fixed on `w1`. -/
+def sorryFrame : Set World → Set World :=
+  sorryFull (fun w => ({w} : Set World)) (fun _ => ({World.w1} : Set World))
+
+/-- Ex. 30 (p. 111): *sorry* is not classically DE in its complement —
+factivity of the narrower complement may fail at the evaluation world
+even when the wider one's holds. -/
+theorem ex30_sorry_not_DE : ¬ IsDownwardEntailing sorryFrame :=
   sorryFull_not_de
 
-/-- Ex. 28b (p. 111) — *the explanatory result*: `sorry` is Strawson-DE.
-    The definedness predicate is doxastic factivity (`dox w ⊆ p`):
-    the agent at the evaluation world `w` believes `p`. Given doxastic
-    factivity of the conclusion's complement and `p ⊆ q`, the
-    inference `sorry q ⊨ sorry p` goes through.
-
-    This explains why "Sandy is sorry that Robin bought any car"
-    licenses `any` despite the complement position not being classically DE. -/
-theorem ex28b_sorry_strawsonDE (dox bestOf : World → Set World) :
+/-- Ex. 28b (p. 111): *sorry* is Strawson-DE relative to doxastic
+factivity (`dox w ⊆ p`) — the explanatory result behind
+`Examples.ex28b`, and the §3 counterpart of the §2 separation
+(`ex30_sorry_not_DE`). -/
+theorem ex28b_sorry_strawsonDE :
     IsStrawsonDE (sorryFull dox bestOf) (fun p w => ∀ w' ∈ dox w, p w') :=
   sorryFull_isStrawsonDE dox bestOf
 
-/-- Ex. 30 + ex. 28b — the adversative analogue of the only-separation:
-    `sorry` is Strawson-DE without being classically DE. -/
-theorem ex28_30_sorry_strawson_separation :
-    IsStrawsonDE
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World)))
-      (fun p w => ∀ w' ∈ ({w} : Set World), p w') ∧
-    ¬ IsDownwardEntailing
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World))) :=
-  sorryFull_strictly_strawsonDE
-
 /-! ### §3.2 — `want` and the Asher/Heim non-monotonicity puzzle
 
-vF §3.2 (pp. 115-121) defends `want` as upward entailing under a
-doxastic modal base (`DOX*`), in response to the Asher 1987 Concorde
-example (eq. 46) and the Heim 1992 couch example (eq. 48). The
-"non-monotonicity" of `want` collapses to a context shift in the
-modal base, parallel to the §3.4 shifting-context analysis for
-adversatives. Headline: `want` is monotonic relative to a constant
-context.
--/
+vF §3.2 (pp. 115-121) defends *want* as upward entailing under a
+doxastic modal base, against the Asher 1987 Concorde example (eq. 46)
+and the Heim 1992 couch example (eq. 48): the apparent non-monotonicity
+is a context shift in the modal base, parallel to §3.4. -/
 
-/-- `want` is upward entailing in its complement (vF §3.2 headline; eq. 45). -/
-theorem ex45_want_isUE (bestOf : World → Set World) :
-    Monotone (wantFull bestOf) :=
+/-- vF §3.2 headline (eq. 45): *want* is upward entailing in its
+complement. -/
+theorem ex45_want_isUE : Monotone (wantFull bestOf) :=
   wantFull_isUE bestOf
 
 /-! ### §3 footnote 8 — Asher's WDE as a sibling notion
 
 vF p. 112 (footnote 8) cites [asher-1987]'s Weakened Downward
-Entailment as a related but formally distinct notion: it has a
-*doxastic* side condition (belief in the conclusion's complement) and
-operates in the *upward* direction, in contrast to Strawson-DE's
-presuppositional side condition in the downward direction. The
-substrate's `IsWDE` predicate captures this; classical UE implies WDE
-trivially (`monotone_implies_WDE`).
--/
+Entailment: a *doxastic* side condition in the *upward* direction, in
+contrast to Strawson-DE's presuppositional side condition downward. The
+substrate's `IsWDE` captures it; classical UE implies WDE
+(`monotone_implies_WDE`). -/
 
 /-! ### §3.3 — *glad* is upward entailing, hence does not license NPIs
 
-> (52) `glad` is UE: from `α is glad that p` and `p ⇒ q`, infer `α is
->      glad that q` (paraphrasing the analysis on p. 124).
-
-The asymmetry between `sorry` (DE in the complement under Strawson-DE)
-and `glad` (UE) is what predicts the asymmetry in NPI licensing:
-"*Sandy is glad that Robin bought any car" is ungrammatical; the same
-sentence with `sorry` is fine.
+The *sorry*/*glad* asymmetry (`Examples.glad_any` vs `Examples.ex28b`):
+*sorry* is Strawson-DE in its complement, *glad* is UE, and the
+monotonicity asymmetry tracks the NPI-licensing asymmetry — for both
+the K&L (ex. 50) and vF (ex. 52) semantics of *glad*.
 
 The same adversative/non-adversative asymmetry shows up in Hindi
-([lahiri-1998] §4.5): *aaScarya* 'surprised' licenses *koii bhii* /
-*ek bhii*; *khuS* 'glad' does not. See `Studies/Lahiri1998.lean`
-for the Hindi data (`npi_adversative_surprise_ek`,
-`npi_adversative_surprise_koii`, `npi_glad_bad`). The two papers offer
-different explanations — Lahiri posits a covert anti-additive operator
-over the complement; von Fintel derives the asymmetry from the lexical
-monotonicity of the attitude — but they make the same predictions on
-the basic English/Hindi data.
+([lahiri-1998] §4.5): *aaScarya* 'surprised' licenses *koii bhii* / *ek
+bhii*; *khuS* 'glad' does not (`Studies/Lahiri1998.lean`,
+`npi_adversative_surprise_ek`, `npi_glad_bad`). Lahiri posits a covert
+anti-additive operator; von Fintel derives the asymmetry from lexical
+monotonicity — same predictions on the basic English/Hindi data.
 -/
 
-/-- Ex. 50 / K&L (p. 122): `glad` (K&L eq. 50 semantics) is upward
-    entailing. Predicts NPIs are *not* licensed in the complement of `glad`. -/
-theorem ex50_gladKL_isUE (dox bestOf : World → Set World) :
-    Monotone (gladFull dox bestOf) :=
+/-- Ex. 50 / K&L (p. 122): *glad* under the K&L semantics is upward
+entailing — NPIs are not licensed in its complement. -/
+theorem ex50_gladKL_isUE : Monotone (gladFull dox bestOf) :=
   gladFull_isUE dox bestOf
 
-/-- Ex. 52 (p. 124) — *vF's preferred replacement*: `glad` (vF eq. 52
-    semantics) is also upward entailing. Same NPI-licensing prediction,
-    different content (cf. vF's Honda Civic example, p. 124-125). -/
+/-- Ex. 52 (p. 124), vF's preferred replacement: *glad* is upward
+entailing on the vF semantics too — same NPI prediction, different
+content (his Honda Civic example, pp. 124-125). -/
 theorem ex52_gladVF_isUE (dox relevant : World → Set World)
     (lt : World → World → World → Prop) :
     Monotone (gladFullVF dox relevant lt) :=
   gladFullVF_isUE dox relevant lt
 
-/-- The §3 headline: `sorry` and `glad` agree on factivity but differ on
-    monotonicity in the complement, and this monotonicity asymmetry
-    directly tracks the NPI-licensing asymmetry. Holds for *both* the
-    K&L and the vF analyses of `glad`. -/
-theorem ex28_vs_ex52_sorry_glad_asymmetry (dox bestOf : World → Set World) :
-    IsStrawsonDE (sorryFull dox bestOf) (fun p w => ∀ w' ∈ dox w, p w') ∧
-    Monotone (gladFull dox bestOf) :=
-  ⟨sorryFull_isStrawsonDE dox bestOf, gladFull_isUE dox bestOf⟩
+end Adversatives
 
 /-! ### §3.4 — shifting contexts
 
-The coherent sequences
+The coherent sequences (60)/(61) (p. 129) — "Sandy is glad that Robin
+bought a car, but sorry that Robin bought a Honda" and its mirror — do
+not threaten monotonicity: their coherence rests on a *shift* of the
+modal-base parameter between conjuncts, and monotone validity is
+checked against a constant context. A formal treatment needs
+dynamic-context machinery not yet in `StrawsonEntailment.lean`.
 
-> (60) Sandy is glad that Robin bought a car, but Sandy is sorry/not glad that
->      Robin bought a Honda. (p. 129)
-> (61) Sandy is sorry that Robin bought a car, but Sandy is glad/not sorry that
->      Robin bought a Honda. (p. 129)
-
-Von Fintel argues these do not threaten the monotonicity analysis: their
-coherence depends on a *shift* in the modal-base parameter between the
-conjuncts (an "implicit conditionalization"; see ex. 61 discussion).
-Validity of monotonic inferences is checked against a *constant* context.
-A formal treatment requires dynamic-context machinery not yet present in
-`StrawsonEntailment.lean`.
-
-### §3.4 — Curveball #2: focus-sensitive *only* over a non-name (p. 133)
-
-> (66) There only was any precipitation in [MEDFORD]_F.
-> (67) (66) plus "There was rain in Medford" ⊢_S There only was rain in
->      [MEDFORD]_F. (p. 133)
-
-Focus-sensitive `only` over a place name (or any non-proper-name
-associate) is also Strawson-DE in its prejacent. Von Fintel notes
-(eq. 68 (a/b), p. 134) that this requires the option-(a) semantics for
-propositional `only` (weakening the asserted claim by closure under
-entailment of the prejacent), not the option-(b) semantics adopted in
-[von-fintel-1997]. The substrate's `onlyFull` already captures the
-option-(a) reading via its assertion clause "no `y ≠ x` satisfies the
-scope".
--/
+Curveball #2 (exs. 66-68, pp. 133-134): focus-sensitive *only* over a
+non-name associate is also Strawson-DE in its prejacent, provided the
+option-(a) propositional semantics (closure under entailment of the
+prejacent) rather than [von-fintel-1997]'s option (b). The substrate's
+`onlyFull` captures option (a) via its assertion clause. -/
 
 /-! ## §4 — conditional antecedents and superlatives
 
 ### §4.1 — conditional antecedents
 
-> (70a) If John subscribes to any newspaper, he is probably well informed. (p. 135)
-> (70b) If he has ever told a lie, he must go to confession. (p. 135)
-> (70c) If you had left any later, you would have missed the plane. (p. 135)
+Conditional antecedents license NPIs (`Examples.ex70a`). Whether they
+are DE depends on the analysis:
 
-Conditional antecedents license NPIs (ex. 70). Whether they are DE
-depends on the conditional analysis adopted:
-
-- *Restrictor analysis* ([kratzer-1986]; eq. 72, p. 137):
-  the if-clause restricts the modal base of the consequent's modal
-  operator. With an *idle* ordering source, antecedent strengthening
-  only shrinks the domain, so the antecedent position is classically
-  DE. The substrate's `condNecessity` formalizes precisely this
-  idle-ordering case (the simpler subcase of eq. 72 with `max_g` set
-  to identity); the full Kratzer conditional with non-trivial
-  ordering source is *not* monotone, which is exactly the §4 puzzle.
-- *Stalnaker-Lewis non-monotonic analysis* ([stalnaker-1968],
-  [lewis-1973]; ex. 73, p. 138): Strengthening the Antecedent
-  fails, so the antecedent is not DE. Von Fintel §4.3 (p. 141)
-  defends a dynamic monotonic semantics in [von-fintel-2000]
-  under which the apparent failures reduce to context shifts,
-  parallel to §3.4.
-
-We formalize the restrictor side. Stalnaker-Lewis non-monotonicity is
-a property of a different operator (a similarity-based `would`) not yet
-in the substrate.
+- *Restrictor analysis* ([kratzer-1986]; eq. 72, p. 137): the if-clause
+  restricts the modal base. With an idle ordering source, antecedent
+  strengthening only shrinks the domain, so the position is classically
+  DE — `condNecessity` formalizes exactly this subcase; the full
+  Kratzer conditional with a non-trivial ordering source is not
+  monotone, which is the §4 puzzle.
+- *Stalnaker-Lewis* ([stalnaker-1968], [lewis-1973]; ex. 73, p. 138):
+  Strengthening the Antecedent fails. Von Fintel §4.3 (p. 141) defends
+  a dynamic monotonic semantics in [von-fintel-2000] under which the
+  failures reduce to context shifts, parallel to §3.4. That operator is
+  not yet in the substrate.
 -/
 
-/-- Ex. 72 (p. 137), restrictor analysis with *idle ordering source*:
-    a Kratzer-style `condNecessity` is classically DE in its antecedent.
-    Domain restriction is monotone.
-
-    Note: this is the strict subcase of vF eq. 72 where `max_g` is
-    trivial. The full Kratzer/Stalnaker-Lewis conditional with a
-    non-trivial preference ordering is *not* monotone — see the
-    `ex73_*` theorems below for the counterexample built from the
-    real Kratzer apparatus in `Conditionals/Restrictor.lean`. -/
+/-- Ex. 72 (p. 137), restrictor analysis with idle ordering source:
+`condNecessity` is classically DE in its antecedent — domain
+restriction is antitone. -/
 theorem ex72_conditional_antecedent_DE
     (domain : World → Set World) (β : Set World) :
     IsDownwardEntailing (fun α => condNecessity domain α β) :=
   conditional_antecedent_antitone domain β
 
-/-- Restrictor-style conditional antecedents are *a fortiori* Strawson-DE
-    (since classical DE implies Strawson-DE via `de_implies_strawsonDE`). -/
+/-- Restrictor-style conditional antecedents are a fortiori Strawson-DE
+(`de_implies_strawsonDE`). -/
 theorem conditional_antecedent_strawsonDE_under_restrictor
     (domain : World → Set World) (β : Set World)
     (defined : Set World → World → Prop) :
@@ -367,140 +262,82 @@ theorem conditional_antecedent_strawsonDE_under_restrictor
 
 /-! ### §4.2 — superlatives
 
-> (75) Emma is the tallest girl to ever win the dance contest. (p. 138)
-> (76) Emma is the tallest girl in her class. ⇏
->      Emma is the tallest girl in her class to have learned the alphabet. (p. 139)
-> (77) Emma has learned the alphabet. Emma is the tallest girl in her class.
->      ∴ Emma is the tallest girl in her class to have learned the alphabet. (p. 139)
+Superlatives license NPIs in their restriction (`Examples.ex75`); adding
+a restriction can change the ranking, so the position is not classically
+DE (ex. 76), but with the presupposition that the subject satisfies the
+new restriction the inference is Strawson-valid (ex. 77):
 
-Adding a restriction to the comparison class can change the ranking, so
-ex. 76 is not classically DE. With the additional premise that Emma
-satisfies the new restriction (ex. 77's "Emma has learned the alphabet"),
-the inference is Strawson-valid.
+> (76) Emma is the tallest girl in her class. ⇏ Emma is the tallest girl
+>      in her class to have learned the alphabet. (p. 139)
+> (77) Emma has learned the alphabet. Emma is the tallest girl in her
+>      class. ∴ Emma is the tallest girl in her class to have learned
+>      the alphabet. (p. 139)
 
-The substrate's `superlativeAssert` and `superlative_isStrawsonDE`
-encode this for the *predicative* use of the superlative (ex. 75 / 77).
-The non-predicative case where the superlative restricts a definite
-description (ex. 80 p. 140) does not have local Strawson-DE — this is
-documented in the substrate's superlative section.
+`superlativeAssert` encodes the predicative use (exs. 75/77); the
+definite-description use (ex. 80, p. 140) lacks local Strawson-DE — see
+the substrate's superlative section.
 -/
 
-/-- Ex. 77 (p. 139): the superlative is Strawson-DE in the restriction
-    position. The definedness predicate encodes the presupposition that
-    the designated subject α (Emma) satisfies the restriction (has learned
-    the alphabet). -/
+/-- Ex. 77 (p. 139): the superlative is Strawson-DE in its restriction,
+relative to the presupposition that the subject satisfies the
+restriction. -/
 theorem ex77_superlative_strawsonDE (α : World) :
     IsStrawsonDE (superlativeAssert α) (superlativePresup α) :=
   superlative_isStrawsonDE α
 
 /-! ## Hierarchy connection
 
-The paper's §1 establishes the standard DE / AA / AM hierarchy and von
-Fintel's §2 (Strawson move) extends it with Strawson-DE as the weakest
-licensing level. The substrate proves AM → AA → DE → Strawson-DE
-(`de_implies_strawsonDE`); this study file just records that the four
-recalcitrant operators (`onlyFull`, `sorryFull`, `superlativeAssert`,
-`condNecessity`) all land at *exactly* Strawson-DE, while `gladFull`
-sits outside the hierarchy entirely (UE).
+The paper's §1 sets up the AM → AA → DE hierarchy; §2 extends it
+downward with Strawson-DE (`de_implies_strawsonDE` in the substrate).
+The four recalcitrant operators — `onlyJohn` (`ex18_only_strawsonDE`),
+`sorryFull` (`ex28b_sorry_strawsonDE`), `condNecessity`
+(`conditional_antecedent_strawsonDE_under_restrictor`), and
+`superlativeAssert` (`ex77_superlative_strawsonDE`) — land at exactly
+Strawson-DE, while `gladFull` sits outside the hierarchy entirely (UE).
 -/
-
-/-- The four "recalcitrant" Strawson-DE operators of [von-fintel-1999],
-    each strict (Strawson-DE without classical DE) where applicable: -/
-theorem strawson_DE_recalcitrants :
-    -- §2 only: Strawson-DE without classical DE
-    (IsStrawsonDE (onlyFull (· = World.w0))
-        (fun scope _w => ∃ w', w' = World.w0 ∧ scope w') ∧
-     ¬ IsDownwardEntailing (onlyFull (· = World.w0))) ∧
-    -- §3 sorry: Strawson-DE without classical DE (doxastic factivity)
-    (IsStrawsonDE
-        (sorryFull (fun (w : World) => ({w} : Set World))
-                   (fun (_ : World) => ({World.w1} : Set World)))
-        (fun p w => ∀ w' ∈ ({w} : Set World), p w') ∧
-     ¬ IsDownwardEntailing
-        (sorryFull (fun (w : World) => ({w} : Set World))
-                   (fun (_ : World) => ({World.w1} : Set World)))) ∧
-    -- §4.1 conditional antecedent (restrictor analysis): classically DE,
-    -- so trivially Strawson-DE
-    IsStrawsonDE (fun α => condNecessity (fun (_ : World) =>
-        ({World.w0, World.w1} : Set World)) α (fun _ => True)) (fun _ _ => True) ∧
-    -- §4.2 superlative: Strawson-DE in restriction position (subject = w0)
-    IsStrawsonDE (superlativeAssert World.w0)
-      (superlativePresup World.w0) :=
-  ⟨⟨onlyFull_isStrawsonDE _, onlyFull_not_de⟩,
-   sorryFull_strictly_strawsonDE,
-   conditional_antecedent_strawsonDE _ _ _,
-   superlative_isStrawsonDE _⟩
 
 /-! ## Cross-framework bridges
 
-These theorems make explicit the relationships between vF's Strawson-DE
-analysis and three sibling NPI theories already formalized in linglib.
-Per CLAUDE.md "chronological dependency" rule: this file may reference
-[kadmon-landman-1993] (1993 < 1999), [lahiri-1998] (1998 < 1999),
-and [hoeksema-1983] (1983 < 1999), but not the reverse.
--/
+Chronology rule: this file may reference [kadmon-landman-1993],
+[lahiri-1998], and [hoeksema-1983] (all earlier), not the reverse.
 
-/-- **K&L ≡ vF on the basic adversative asymmetry.** Both
-    [kadmon-landman-1993] (K&L) and [von-fintel-1999] (vF)
-    derive the `sorry`/`glad` asymmetry from formally identical Lean
-    theorems — K&L via "lexical entailment to *want ¬A*", vF via
-    Strawson-DE / UE of the attitude operator. The two prose
-    explanations are different; the formalizations agree by `rfl`.
+**K&L ≡ vF on the adversative asymmetry.** Both derive the
+*sorry*/*glad* asymmetry from the same substrate theorems
+(`sorryFull_isStrawsonDE`, `gladFull_isUE`) — K&L glossing them as
+"lexical entailment to *want ¬A*", vF as Strawson-DE/UE of the
+attitude. The `example`s below check the statement identity: K&L's
+proof terms discharge this file's statements verbatim. The prose
+explanations differ; distinguishing them empirically requires the
+settle-for-less data below. -/
 
-    This is exactly the kind of theoretical-incompatibility-collapse
-    that linglib's interconnection-density discipline aims to surface.
-    The empirical predictions are the same; choosing between the two
-    analyses requires looking at examples that distinguish their
-    semantic predictions, e.g. K&L's "settle for less" reading
-    (`bridge_lahiri_glad_settle_overgeneration` below). -/
-theorem bridge_kl_vf_sorry_strawsonDE_agreement
-    (dox bestOf : World → Set World) :
-    KadmonLandman1993.sorry_licenses_any dox bestOf =
-    ex28b_sorry_strawsonDE dox bestOf :=
-  rfl
+example (dox bestOf : World → Set World) :
+    IsStrawsonDE (sorryFull dox bestOf) (fun p w => ∀ w' ∈ dox w, p w') :=
+  KadmonLandman1993.sorry_licenses_any dox bestOf
 
-theorem bridge_kl_vf_glad_UE_agreement
-    (dox bestOf : World → Set World) :
-    KadmonLandman1993.glad_does_not_license dox bestOf =
-    ex50_gladKL_isUE dox bestOf :=
-  rfl
+example (dox bestOf : World → Set World) :
+    Monotone (gladFull dox bestOf) :=
+  KadmonLandman1993.glad_does_not_license dox bestOf
 
-/-- **`gladFull_isUE` overgenerates against Lahiri's "settle for less"
-    Hindi data.** [lahiri-1998] §4.5 (datum
-    `npi_glad_settle`) records that Hindi *khuS* + NPI *koii bhii* IS
-    grammatical on a "settle for less" reading. K&L flag the same in
-    English (file `KadmonLandman1993.settleGladAnybody`,
-    `settleGladTickets`). The substrate's `gladFull_isUE` predicts
-    uniformly NO licensing — so the substrate undergenerates here, and
-    the "settle for less" reading would require either (a) a different
-    `gladFull` semantics with a perspective shift, or (b) a Strawson-DE
-    treatment of the rescued reading.
-
-    This theorem records the empirical refutation as a Lean-checkable
-    incompatibility between the substrate and the data. -/
+/-- **`gladFull_isUE` undergenerates against the settle-for-less data.**
+[lahiri-1998] §4.5 records Hindi *khuS* 'glad' + NPI as grammatical on
+a "settle for less" reading (`npi_glad_settle`); [kadmon-landman-1993]
+flag the same in English (`settleGladAnybody`, `settleGladTickets`).
+`gladFull_isUE` predicts uniformly no licensing, so the rescued reading
+needs machinery the substrate lacks — a perspective-shifted `bestOf` or
+a Strawson-DE treatment of the shifted reading. This records the
+data-side of that gap. -/
 theorem bridge_lahiri_glad_settle_overgeneration :
-    -- Lahiri 1998: Hindi 'glad'-NPI is grammatical on settle-for-less reading
     Lahiri1998.npi_glad_settle.grammatical = true ∧
-    -- K&L 1993: same in English
     KadmonLandman1993.settleGladAnybody.grammatical = true ∧
-    KadmonLandman1993.settleGladTickets.grammatical = true ∧
-    -- Substrate's gladFull predicts uniformly UE → NPI not licensed.
-    -- The substrate cannot capture the settle-for-less reading without
-    -- additional machinery (e.g., a perspective-shifted bestOf).
-    -- This conjunction merely records the empirical facts; the substrate
-    -- gap is documented in the docstring, not proved as a contradiction.
-    True :=
-  ⟨rfl, rfl, rfl, trivial⟩
+    KadmonLandman1993.settleGladTickets.grammatical = true :=
+  ⟨rfl, rfl, rfl⟩
 
-/-- **Hoeksema's S-comparative is anti-additive, hence trivially Strawson-DE.**
-    [hoeksema-1983] proves the S-comparative anti-additive
-    (`Degree.gtOverSet_isAntiAdditive`); the
-    inheritance chain AA → DE → Strawson-DE makes the bridge automatic.
-
-    This places the S-comparative in the same Strawson-DE class as
-    [von-fintel-1999]'s recalcitrants, but with the additional
-    classical AA backing — meaning S-comparatives license *strong* NPIs
-    too (whereas vF's `only` only licenses weak NPIs). -/
+/-- **Hoeksema's S-comparative is anti-additive, hence Strawson-DE.**
+[hoeksema-1983] proves the S-comparative anti-additive
+(`Degree.gtOverSet_isAntiAdditive`); AA → DE → Strawson-DE makes the
+bridge automatic. This places the S-comparative in the Strawson-DE
+class of vF's recalcitrants with classical AA to spare — S-comparatives
+license *strong* NPIs where vF's *only* licenses only weak ones. -/
 theorem bridge_hoeksema_gtOverSet_strawsonDE
     {Entity D : Type*} [Preorder D] (μ : Entity → D)
     (defined : Set D → Entity → Prop) :
@@ -512,16 +349,17 @@ theorem bridge_hoeksema_gtOverSet_strawsonDE
 
 Von Fintel's (15) (p. 104) excludes by *individual* identity — "if
 defined, ⟦only⟧(x)(P) = True iff ¬∃y ≠ x: P(y) = True" — while
-[rooth-1992]'s strong theory (`Semantics.Focus.onlyVia`) excludes by
-*proposition* identity over a resolved alternative set. Over the
-individual-generated family the two coincide exactly when the family
-is injective: individuals with coinciding P-propositions are
-distinguished by (15) but invisible to `onlyVia`. World-constant
-propositions (the extensional `onlyFull`) are the degenerate case
-where injectivity fails wholesale, which is why the bridge is stated
-intensionally. -/
+[rooth-1992]'s strong theory (`onlyVia`) excludes by *proposition*
+identity over a resolved alternative set. The two coincide over the
+individual-generated family exactly when the family is injective:
+individuals with coinciding P-propositions are distinguished by (15)
+but invisible to `onlyVia`. World-constant propositions (the
+extensional `onlyFull`) are the degenerate case where injectivity fails
+wholesale, which is why the bridge is stated intensionally. -/
 
 section OnlyViaBridge
+
+open Semantics.Focus (onlyVia mem_onlyVia)
 
 variable {W ι : Type*}
 
@@ -536,9 +374,9 @@ coincides with `onlyVia`'s proposition-identity exclusion over
 `Set.range P`. -/
 theorem onlyIndiv_eq_onlyVia (P : ι → Set W) (x : ι)
     (hP : Function.Injective P) :
-    onlyIndiv P x = Semantics.Focus.onlyVia (Set.range P) (P x) := by
+    onlyIndiv P x = onlyVia (Set.range P) (P x) := by
   ext w
-  simp only [onlyIndiv, Set.mem_setOf_eq, Semantics.Focus.mem_onlyVia]
+  simp only [onlyIndiv, Set.mem_setOf_eq, mem_onlyVia]
   constructor
   · rintro h q ⟨y, rfl⟩ hw
     by_cases hyx : y = x
@@ -552,8 +390,7 @@ true proposition, (15) still excludes but `onlyVia` cannot see the
 distinction. -/
 theorem onlyIndiv_ne_onlyVia_of_collapse :
     onlyIndiv (fun _ : Bool => (Set.univ : Set Bool)) true ≠
-      Semantics.Focus.onlyVia
-        (Set.range fun _ : Bool => (Set.univ : Set Bool)) Set.univ := by
+      onlyVia (Set.range fun _ : Bool => (Set.univ : Set Bool)) Set.univ := by
   intro h
   have h0 : true ∈ onlyIndiv (fun _ : Bool => (Set.univ : Set Bool)) true := by
     rw [h]
