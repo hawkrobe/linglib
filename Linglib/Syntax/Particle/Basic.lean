@@ -1,52 +1,32 @@
-import Linglib.Features.ClauseCtx
+import Linglib.Syntax.Clause.Context
+import Linglib.Syntax.Clause.Embedding
 import Linglib.Morphology.Word
 
 /-!
 # Particle
-[zwicky-1985-clitics]
 
-Lexical core for the particle as a grammatical object: an uninflectable
-function word associated with a host constituent. Per [zwicky-1985-clitics],
-"particle" is a residual class — membership is non-inflectability plus
-function-word status, not a rich natural kind — so the core carries only
-what every particle has (form, position), and everything else lives in
-domain-layer facets and study files.
-
-The clause-type distribution facet records *distributional felicity*
-across [sadock-zwicky-1985] clause contexts, three-valued per cell
-(obligatory / optional / excluded, cf. WALS ch. 116 on polar-question
-marking: Polish *czy* is obligatory in polar interrogatives, Japanese
-*ka* optional in matrix but obligatory in subordinated clauses). It does
-NOT record the licensing *mechanism* (use-conditional conflict,
-clause-typing, selection) — that is analytical and stays in study files.
-A cell is `none` when the anchoring source records nothing for it —
-absence of a record is not a claim of exclusion.
+This file defines `Particle`, the lexical core for uninflectable
+function words ([zwicky-1985-clitics]): form, position, and optional
+three-valued distribution facets over `Clause.Context` and
+`Clause.Embedding`. Facets record distributional felicity, not
+licensing mechanism (analytical, study-side); a `none` cell means the
+source records nothing, not exclusion.
 
 ## Main declarations
 
-* `Particle` — the core: surface `form`, optional native `script`,
-  `position`, and an optional clause-type `distribution` facet
-  (particles with no clause-type restriction — focus, case — carry
-  `none`).
-* `Particle.Position` — host/position class (the [zwicky-1985-clitics]
-  positional diagnostic; second-position = Wackernagel).
-* `ParticleStatus` / `ClauseDistribution` — three-valued per-cell
-  distribution over `Features.ClauseCtx`.
-* `Particle.status?` / `Particle.LicensedIn` — derived distribution
-  views; `status?` is the class-ready signature a future
-  `Distributed α Ctx` capability abstracts.
-* `Particle.toWord` — projection to `Word` (UD `PART`).
+* `Particle`, `Particle.Position`
+* `ParticleStatus`, `ClauseDistribution`, `EmbedDistribution`
+* `Particle.LicensedIn`, `Particle.LicensedInEmbed` — derived,
+  decidable
+* `Particle.toWord` — projection to `Word` (UD `PART`)
 -/
 
 set_option autoImplicit false
 
-open Features (ClauseCtx)
+open Clause (Context Embedding)
 
-/-- Where a particle sits relative to its host domain
-([zwicky-1985-clitics]'s positional diagnostic; the cline from free
-word to clitic surfaces here — Polish *czy* clause-initial free word,
-Slavic *li* second-position Wackernagel clitic, Japanese *ka*
-clause-final clitic/suffix). -/
+/-- Where a particle sits relative to its host domain — the
+[zwicky-1985-clitics] positional diagnostic. -/
 inductive Particle.Position where
   | clauseInitial
   /-- Second position (Wackernagel; Slavic *li*). -/
@@ -58,11 +38,12 @@ inductive Particle.Position where
   | preHost
   /-- Immediately after a host constituent. -/
   | postHost
+  /-- No fixed position (Hindi-Urdu *kya:*, [bhatt-dayal-2020] §2). -/
+  | free
   deriving DecidableEq, Repr
 
-/-- Three-valued distribution status of a particle in a clause context
-(cf. WALS ch. 116): obligatorily present, optionally present, or
-excluded. -/
+/-- Three-valued distribution status of a particle in a licensing
+context (cf. WALS ch. 116). -/
 inductive ParticleStatus where
   | obligatory
   | optional
@@ -82,7 +63,7 @@ structure ClauseDistribution where
   deriving DecidableEq, Repr
 
 /-- Recorded status in context `c`, if any. -/
-def ClauseDistribution.status? (d : ClauseDistribution) : ClauseCtx → Option ParticleStatus
+def ClauseDistribution.status? (d : ClauseDistribution) : Clause.Context → Option ParticleStatus
   | .declarative => d.declarative
   | .polarInterrogative => d.polarInterrogative
   | .alternativeInterrogative => d.alternativeInterrogative
@@ -90,8 +71,24 @@ def ClauseDistribution.status? (d : ClauseDistribution) : ClauseCtx → Option P
   | .imperative => d.imperative
   | .exclamative => d.exclamative
 
-/-- A particle: an uninflectable function word associated with a host
-constituent. -/
+/-- Per-embedding-context distribution record ([bhatt-dayal-2020]
+axis). Same `Option`-valued honesty convention as `ClauseDistribution`. -/
+structure EmbedDistribution where
+  matrix : Option ParticleStatus := none
+  subordinated : Option ParticleStatus := none
+  quasiSubordinated : Option ParticleStatus := none
+  quotation : Option ParticleStatus := none
+  deriving DecidableEq, Repr
+
+/-- Recorded status in embedding context `c`, if any. -/
+def EmbedDistribution.status? (d : EmbedDistribution) : Clause.Embedding → Option ParticleStatus
+  | .matrix => d.matrix
+  | .subordinated => d.subordinated
+  | .quasiSubordinated => d.quasiSubordinated
+  | .quotation => d.quotation
+
+/-- An uninflectable function word associated with a host constituent
+([zwicky-1985-clitics]). -/
 structure Particle where
   /-- Surface form (romanization or orthographic). -/
   form : String
@@ -102,24 +99,44 @@ structure Particle where
   /-- Clause-type distribution facet; `none` for particles with no
       clause-type restriction (focus particles, case particles). -/
   distribution : Option ClauseDistribution := none
+  /-- Interrogative-embedding distribution facet ([bhatt-dayal-2020]
+      axis); `none` when the source records no embedding data. -/
+  embedding : Option EmbedDistribution := none
   deriving DecidableEq, Repr
 
 namespace Particle
 
-/-- Recorded distribution status in context `c`, if any. Class-ready
-signature: a future `Distributed α Ctx` capability exposes exactly this. -/
-def status? (p : Particle) (c : ClauseCtx) : Option ParticleStatus :=
+/-- Recorded clause-type distribution status in context `c`, if any. -/
+def status? (p : Particle) (c : Clause.Context) : Option ParticleStatus :=
   p.distribution.bind (·.status? c)
 
 /-- The particle is positively recorded as available (obligatorily or
 optionally) in context `c`. -/
-def LicensedIn (p : Particle) (c : ClauseCtx) : Prop :=
+def LicensedIn (p : Particle) (c : Clause.Context) : Prop :=
   match p.status? c with
   | some .obligatory | some .optional => True
   | _ => False
 
-instance (p : Particle) (c : ClauseCtx) : Decidable (p.LicensedIn c) := by
+instance (p : Particle) (c : Clause.Context) : Decidable (p.LicensedIn c) := by
   unfold LicensedIn; exact match p.status? c with
+    | some .obligatory => .isTrue trivial
+    | some .optional => .isTrue trivial
+    | some .excluded => .isFalse nofun
+    | none => .isFalse nofun
+
+/-- Recorded embedding-distribution status in context `c`, if any. -/
+def embedStatus? (p : Particle) (c : Clause.Embedding) : Option ParticleStatus :=
+  p.embedding.bind (·.status? c)
+
+/-- The particle is positively recorded as available in embedding
+context `c`. -/
+def LicensedInEmbed (p : Particle) (c : Clause.Embedding) : Prop :=
+  match p.embedStatus? c with
+  | some .obligatory | some .optional => True
+  | _ => False
+
+instance (p : Particle) (c : Clause.Embedding) : Decidable (p.LicensedInEmbed c) := by
+  unfold LicensedInEmbed; exact match p.embedStatus? c with
     | some .obligatory => .isTrue trivial
     | some .optional => .isTrue trivial
     | some .excluded => .isFalse nofun
