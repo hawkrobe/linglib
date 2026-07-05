@@ -73,8 +73,9 @@ Guébie has a ten-vowel system, +ATR `ə e i o u` vs. −ATR `a ɛ ɪ ɔ ʊ`, ha
 as a binary feature; affixes and particles agree with the verb root when both are
 inside the same Spell-out domain. Only the per-terminal binary value matters here. -/
 
-/-- The ATR feature value of a terminal: `+ATR = true`, `−ATR = false`. -/
-abbrev ATR := Bool
+/-- The ATR feature value, from the fragment lexicon
+    (`Guebie.ATR`: `.plus`/`.minus`). -/
+abbrev ATR := Guebie.ATR
 
 /-- The particle's lexical default, surfacing when no harmony trigger is local
     ((13)). Defaults are lexical per particle ((12)); we model the /jɔkʊ/ type,
@@ -185,7 +186,7 @@ def surfaceATR (c : ClauseConfig) (vRoot : ATR) : ATR :=
     harmonized with /ni/ 'see') in the SAuxOV clause, but with its −ATR default in
     the SVO clause. -/
 example :
-    surfaceATR ⟨true, true⟩ Guebie.ni.atr = true ∧
+    surfaceATR ⟨true, true⟩ Guebie.ni.atr = .plus ∧
     surfaceATR ⟨false, true⟩ Guebie.ni.atr = Guebie.jOkU.atr := by decide
 
 /-! ### §6.1's mechanism: the (46)/(47) ranking derives the surface value
@@ -217,7 +218,7 @@ def vPTrigger (c : ClauseConfig) (vRoot : ATR) : Option ATR :=
 
 /-- The vP-domain tableau: both output values, ranked `ATRHARM ≫ IDENT-IO(ATR)`. -/
 def harmonyTableau (lex : ATR) (trig : Option ATR) : Tableau HarmonyCand 2 :=
-  Tableau.ofRanking [⟨lex, trig, true⟩, ⟨lex, trig, false⟩] [atrHarm, identIO]
+  Tableau.ofRanking [⟨lex, trig, .plus⟩, ⟨lex, trig, .minus⟩] [atrHarm, identIO]
     (List.cons_ne_nil _ _)
 
 /-- §6.1's mechanism, closed: the unique OT winner under `ATRHARM ≫ IDENT-IO(ATR)`
@@ -253,8 +254,8 @@ def frozenATR? (table : FrozenATR) (terminal : String) : Option ATR :=
 /-- A later re-freeze overrides — the intended semantics, though
     [sande-clem-dabkowski-2026] posit no CP-cycle ATR re-write for the particle. -/
 theorem frozenATR?_later_overrides :
-    frozenATR? (extendFrozenATR [("Part", true)] [("Part", false)]) "Part"
-      = some false := by decide
+    frozenATR? (extendFrozenATR [("Part", .plus)] [("Part", .minus)]) "Part"
+      = some .minus := by decide
 
 /-- The vP-cycle freezing for `PartSAuxOV`: Part inherits the verb root's value
     (e.g. /ni/ 'see' +ATR yields the particle surface form [joku], (11)–(12)). -/
