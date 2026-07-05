@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -56,9 +61,7 @@ land it once a Studies file needs to invoke the bridge concretely.
 namespace Subregular
 
 
--- ============================================================================
--- § 1: Schema
--- ============================================================================
+/-! ### Schema -/
 
 /-- Belth's `Agree`/`Disagree` distinction ([belth-2026]). -/
 inductive Relation where
@@ -147,9 +150,7 @@ def applyAt (r : TierRule α) (pre : List α) : Option Bool :=
 def flipRelation (r : TierRule α) : TierRule α :=
   { r with relation := r.relation.flip }
 
--- ============================================================================
--- § 2: Generic Properties
--- ============================================================================
+/-! ### Generic Properties -/
 
 /-- Flipping the relation twice returns the original rule. -/
 @[simp] theorem flipRelation_flipRelation (r : TierRule α) :

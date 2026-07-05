@@ -33,9 +33,9 @@ mechanism, not in these descriptors.
 
 * `harmonic_insert_transparent`: transparent segments interrupt harmlessly —
   inserting one never changes harmonicity.
-* `agreeOn_iff_chain'`: pairwise agreement equals adjacent agreement on the
-  participating tier — the interface of the tier-based agreement machinery
-  (`Phonology/Subregular/Agree.lean`).
+* `Pattern.harmonic_iff_agreeOn`: without blockers, harmonicity is pairwise
+  agreement on the whole tier — the local (chain) and global (pairwise)
+  formulations coincide.
 -/
 
 namespace Phonology.Harmony
@@ -125,7 +125,7 @@ structure Pattern (α : Type u) (V : Type v) where
   control       : ControlType V := .rootControlled
 
 /-- Pairwise agreement in harmonic value. -/
-def AgreeOn (p : Pattern α V) (w : List α) : Prop :=
+def Pattern.AgreeOn (p : Pattern α V) (w : List α) : Prop :=
   w.Pairwise fun a b => p.value a = p.value b
 
 /-- Tier membership: participating and opaque segments are on the harmonic
@@ -173,14 +173,14 @@ theorem Pattern.harmonic_insert_transparent {p : Pattern α V} {t : α}
     (`Phonology/Subregular/Agree.lean`). -/
 theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
     (h : ∀ s ∈ w, p.participation s ≠ .opaque) :
-    p.Harmonic w ↔ AgreeOn p (p.tier w) := by
+    p.Harmonic w ↔ p.AgreeOn (p.tier w) := by
   have hmem : ∀ s ∈ p.tier w, p.participation s ≠ .opaque :=
     fun s hs => h s (List.mem_of_mem_filter hs)
 
   haveI : Trans (fun a b => p.value a = p.value b)
       (fun a b => p.value a = p.value b) (fun a b => p.value a = p.value b) :=
     ⟨fun h₁ h₂ => h₁.trans h₂⟩
-  unfold Pattern.Harmonic AgreeOn
+  unfold Pattern.Harmonic Pattern.AgreeOn
   rw [← List.isChain_iff_pairwise]
   suffices key : ∀ l : List α, (∀ s ∈ l, p.participation s ≠ .opaque) →
       (l.IsChain p.Compatible ↔ l.IsChain fun a b => p.value a = p.value b) from
