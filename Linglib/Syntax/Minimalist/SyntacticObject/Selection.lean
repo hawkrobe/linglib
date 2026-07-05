@@ -137,29 +137,35 @@ private theorem selNode_big {l : List SelState} (h : 2 < l.length) :
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
 
+/-- A list function symmetric on pairs and constant above length two is
+    `Perm`-invariant: lengths ≤ 1 are rigid under permutation, pairs by the
+    symmetry, longer lists by the constancy. -/
+theorem _root_.List.Perm.congr_arity₂ {β γ : Type*} {g : List β → γ} {c : γ}
+    (hswap : ∀ x y, g [x, y] = g [y, x])
+    (hbig : ∀ l : List β, 2 < l.length → g l = c)
+    {l₁ l₂ : List β} (h : l₁.Perm l₂) : g l₁ = g l₂ := by
+  induction h with
+  | nil => rfl
+  | @cons x l₁ l₂ h _ih =>
+    match l₁, l₂, h with
+    | [], l₂, h => rw [show l₂ = [] from h.symm.eq_nil]
+    | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
+    | _ :: _ :: _, l₂, h =>
+      have hl := h.length_eq
+      rw [hbig _ (by simp +arith), hbig _ (by simp only [List.length_cons] at hl ⊢; omega)]
+  | swap x y l =>
+    match l with
+    | [] => exact hswap y x
+    | _ :: _ => rw [hbig _ (by simp +arith), hbig _ (by simp +arith)]
+  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
 /-- `selNode` is invariant under permutation of the daughter states: only the
     binary shape is order-sensitive, and there `mul_comm` applies. -/
 theorem selNode_perm (a : SOLabel) {l₁ l₂ : List SelState} (h : l₁.Perm l₂) :
     selNode a l₁ = selNode a l₂ := by
   cases a with
   | inl tok => rfl
-  | inr u =>
-    cases u
-    induction h with
-    | nil => rfl
-    | @cons x l₁ l₂ h _ih =>
-      match l₁, l₂, h with
-      | [], l₂, h => rw [show l₂ = [] from h.symm.eq_nil]
-      | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
-      | _ :: _ :: _, l₂, h =>
-        have hl := h.length_eq
-        rw [selNode_big (by simp +arith),
-            selNode_big (by simp only [List.length_cons] at hl ⊢; omega)]
-    | swap x y l =>
-      cases l with
-      | nil => exact mul_comm y x
-      | cons z l => rfl
-    | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+  | inr u => cases u; exact h.congr_arity₂ (fun x y => mul_comm x y) (fun _ h => selNode_big h)
 
 /-- Selection check on a planar `SO`-tree: the projecting head + residual pending
     features, or `none` outside the endocentric domain — the catamorphism of
