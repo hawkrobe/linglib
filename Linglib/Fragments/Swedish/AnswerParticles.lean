@@ -6,6 +6,10 @@ import Linglib.Features.AnsweringSystem
 # Swedish Answer Particles
 [holmberg-2016]
 
+Answer particles are pro-sentential — they stand alone as utterances
+rather than associating with a host constituent — so they deliberately
+do not instantiate the host-associated `Syntax/Particle` core.
+
 Swedish has a three-way answer particle system:
 - *ja* — affirmative ("yes")
 - *nej* — negative ("no")
@@ -26,73 +30,39 @@ open Features.Polarity
 open Semantics.Polarity.Marking (Entry Strategy Env)
 open Features (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
-/-- A Swedish answer particle entry. -/
-structure AnswerParticle where
-  /-- Citation form -/
-  form : String
-  /-- The polarity this particle assigns -/
-  polarity : Features.Polarity
-  /-- Does this particle require a negative context? -/
-  requiresNegativeContext : Bool
-  /-- Is this a polarity-reversing particle? -/
-  isPolarityReversal : Bool := requiresNegativeContext
-  /-- Is this particle blocked (ungrammatical) in negative contexts?
-      [holmberg-2016] p165: Swedish *ja* is ungrammatical (not just
-      infelicitous) as a response to negative questions. -/
-  blockedInNegativeContext : Bool := false
-  deriving Repr
+/-- *ja* — standard affirmative. Assigns [+Pol]. Responds only to
+    positive contexts: "Dricker han inte?" → *"Ja" is ungrammatical
+    ([holmberg-2016], p165). Swedish uses *jo* instead. -/
+def ja : Features.AnswerParticle :=
+  { form := "ja", assigns := .positive, respondsTo := [.positive] }
 
-/-- *ja* — standard affirmative. Assigns [+Pol].
-    Blocked in negative contexts: "Dricker han inte?" → *"Ja" is
-    ungrammatical ([holmberg-2016], p165). Swedish uses *jo* instead. -/
-def ja : AnswerParticle :=
-  { form := "ja"
-  , polarity := .positive
-  , requiresNegativeContext := false
-  , blockedInNegativeContext := true
-  }
+/-- *nej* — standard negative. Assigns [-Pol]; responds to positive and
+    negative contexts alike. -/
+def nej : Features.AnswerParticle :=
+  { form := "nej", assigns := .negative, respondsTo := [.positive, .negative] }
 
-/-- *nej* — standard negative. Assigns [-Pol]. -/
-def nej : AnswerParticle :=
-  { form := "nej"
-  , polarity := .negative
-  , requiresNegativeContext := false
-  }
+/-- *jo* — polarity-reversing affirmative: "Dricker han inte?" → "Jo" =
+    "He does drink". Infelicitous responding to positive questions or
+    out of the blue (no negative context to reverse). -/
+def jo : Features.AnswerParticle :=
+  { form := "jo", assigns := .positive, respondsTo := [.negative] }
 
-/-- *jo* — polarity-reversing affirmative. Assigns [+Pol] while
-    contradicting a negative context.
-
-    "Dricker han inte?" (Doesn't he drink?)
-    → "Jo" = "He does drink" (reverses the expected negative polarity)
-
-    Cannot be used in response to positive questions or out of the blue:
-    "Dricker han?" (Does he drink?)
-    → *"Jo" is infelicitous (no negative context to reverse) -/
-def jo : AnswerParticle :=
-  { form := "jo"
-  , polarity := .positive
-  , requiresNegativeContext := true
-  }
-
-/-- *jo* is a polarity-reversing particle. -/
-theorem jo_is_reversal : jo.isPolarityReversal = true := rfl
+/-- *jo* is a polarity-reversing particle — derived from its
+    assign/respond profile. -/
+theorem jo_is_reversal : jo.IsReversal := by decide
 
 /-- *ja* is not polarity-reversing. -/
-theorem ja_not_reversal : ja.isPolarityReversal = false := rfl
+theorem ja_not_reversal : ¬ ja.IsReversal := by decide
 
-/-- *jo* and *ja* both assign positive polarity. The difference is
-    context: *jo* requires a negative context, *ja* does not. -/
-theorem jo_ja_same_polarity : jo.polarity = ja.polarity := rfl
+/-- *jo* and *ja* both assign positive polarity; only the antecedent
+    contexts differ. -/
+theorem jo_ja_same_polarity : jo.assigns = ja.assigns := rfl
 
-/-- *ja* is blocked in negative contexts — this is why *jo* exists. -/
-theorem ja_blocked_in_negative : ja.blockedInNegativeContext = true := rfl
-
-/-- *ja* and *jo* are in complementary distribution: *ja* is blocked where
-    *jo* is required (negative contexts), and *jo* is blocked where *ja*
-    is available (positive contexts). -/
+/-- *ja* and *jo* partition the context polarities: *ja* is blocked
+    where *jo* is required (negative contexts) and vice versa. -/
 theorem ja_jo_complementary :
-    ja.blockedInNegativeContext = true ∧ jo.requiresNegativeContext = true ∧
-    ja.requiresNegativeContext = false ∧ jo.blockedInNegativeContext = false := ⟨rfl, rfl, rfl, rfl⟩
+    Features.Polarity.negative ∉ ja.respondsTo ∧
+    Features.Polarity.positive ∉ jo.respondsTo := by decide
 
 /-- *jo* — Swedish polarity-reversing affirmative particle.
     Assigns [+Pol] while contradicting a negative context.

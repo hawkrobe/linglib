@@ -56,6 +56,13 @@ def layerOf (p : Particle) : Option QParticleLayer :=
   else if p.LicensedInEmbed .matrix then some .sap
   else none
 
+/-- `layerOf`'s intended domain: the question particles this study
+    classifies. Membership is a claim about what the particle *does*
+    (question-forming), not about its distribution — Japanese *koto*
+    (declarative complementizer) has an embedding facet but is
+    deliberately outside. -/
+def qParticles : List Particle := [ka, kya, kke, quick]
+
 /-- The four representative layer assignments, DERIVED from the
     fragments' embedding facets: *ka* CP ([dayal-2025]), *kya:* PerspP
     ([bhatt-dayal-2020]), *kke* SAP ([sauerland-yatsushiro-2017]),
@@ -66,6 +73,9 @@ theorem layers_derived :
     layerOf kya = some .perspP ∧
     layerOf kke = some .sap ∧
     layerOf quick = some .sap := by decide
+
+/-- Every particle in the classifier's domain receives a layer. -/
+theorem qParticles_layered : ∀ p ∈ qParticles, (layerOf p).isSome := by decide
 
 -- ============================================================================
 -- §2 — Singleton-Alternative Presupposition (eq. 23)

@@ -5,6 +5,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Semantics.Mood.ClauseType
 import Linglib.Features.Polarity
 import Linglib.Fragments.Swedish.AnswerParticles
+import Linglib.Fragments.German.PolarityMarking
 import Linglib.Data.Examples.Holmberg2016
 
 /-!
@@ -329,6 +330,15 @@ def japaneseProfile : PolarAnswerProfile :=
     Derived from `Swedish.AnswerParticles.profile`. -/
 def swedishProfile : PolarAnswerProfile :=
   Swedish.AnswerParticles.profile
+
+/-- The cross-linguistic polarity-reversal class: Swedish *jo* and
+    German *doch* have the same assign/respond profile — [+Pol]
+    assignment restricted to negative antecedent contexts. Holmberg's
+    class membership derived from the fragments' profiles rather than
+    stipulated. -/
+theorem reversal_class :
+    Swedish.AnswerParticles.jo.IsReversal ∧
+    German.PolarityMarking.dochAnswer.IsReversal := by decide
 
 /-- Finnish polar answer profile (mixed: verb echo + *kyllä*, polarity-based). -/
 def finnishProfile : PolarAnswerProfile :=
