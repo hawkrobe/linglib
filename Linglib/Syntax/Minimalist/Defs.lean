@@ -143,7 +143,7 @@ instance : DecidableEq LIToken := λ a b =>
 
     A carrier-free parameter (it names a directionality, not a tree shape), so it
     lives in the alphabet layer alongside `Cat`. Consumed by the selection-induced
-    externalization (`SyntacticObject/Externalization.lean`). Mixed-direction
+    externalization (`Linearization/Externalization.lean`). Mixed-direction
     languages (German head-final VP + head-initial CP) need a
     `headSide : Cat → ConventionDir` refinement, out of scope for §1.13-§1.16. -/
 inductive ConventionDir where

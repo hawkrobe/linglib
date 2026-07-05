@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Syntax.Minimalist.Features
 
 /-!
@@ -11,7 +11,7 @@ import Linglib.Syntax.Minimalist.Features
 
 Formalization of derivational phases following [chomsky-2000], [abels-2012], and
 [citko-2014], built **directly on the `SO`-carrier phase domain**
-(`SyntacticObject/Phase.lean`, MCB §1.14). This file packages the carrier-native
+(`Phase/Domain.lean`, MCB §1.14). This file packages the carrier-native
 primitives (`SO.isPhaseHeadOf`, `SO.phase`/`phaseInterior`/`phaseEdge`,
 `SO.Impenetrable`, `SO.isPhaseHead`) into the study-facing `Phase` record + the
 PIC-strength / Transfer / feature-inheritance / DP-deactivation layer that the

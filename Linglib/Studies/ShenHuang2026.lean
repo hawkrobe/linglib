@@ -8,7 +8,7 @@ import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Syntax.Minimalist.Linearization
+import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Phase.Basic
 
 set_option autoImplicit false
