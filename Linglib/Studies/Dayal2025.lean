@@ -51,22 +51,19 @@ open English.QuestionParticles (quick)
 
 /-! ### Clause-typing typology
 
-Two orthogonal parameters govern polar-question syntax. Whether the
-language has a dedicated wh-complementizer for polar questions (English
-*whether*, Italian *se*; Hindi-Urdu has none) governs simplex-polar
-subordination (§4.4, ex. 70–71). Whether clause-typing may be delayed past
-C to PerspP (Italian and Hindi-Urdu, ex. 66) or is forced at the earliest
-opportunity (English) governs whether a rising declarative can be a
-neutral question (§4.3, ex. 63b). English and Italian share the first
-parameter but differ on the second, so the two must not be collapsed. -/
+Two orthogonal parameters govern polar-question syntax (§§4.3–4.4): a
+polar wh-complementizer licenses simplex-polar subordination, and delayed
+clause-typing admits neutral rising declaratives. English and Italian
+share the first but differ on the second, so the two must not be
+collapsed. -/
 
 /-- A language's clause-typing profile for polar questions. -/
 structure ClauseTyping where
   /-- Has a dedicated polar wh-complementizer (English *whether*,
-  Italian *se*). -/
+  Italian *se*; Hindi-Urdu has none). -/
   hasPolarComplementizer : Bool
-  /-- Clause-typing may be delayed past C to PerspP; forced-early languages
-  type at C immediately. -/
+  /-- Clause-typing may be delayed past C to PerspP (ex. 66); forced-early
+  languages type at C immediately. -/
   delayedTyping : Bool
   deriving DecidableEq, Repr
 
@@ -110,14 +107,13 @@ def hindi_urdu_polar : PolarSyntaxDatum :=
 def allPolarSyntaxData : List PolarSyntaxDatum :=
   [english_polar, italian_polar, hindi_urdu_polar]
 
-/-- Simplex-polar subordination tracks the complementizer parameter. -/
+/-- Simplex-polar subordination tracks the complementizer parameter (§4.4). -/
 theorem simplex_subordination_matches_complementizer :
     ∀ d ∈ allPolarSyntaxData,
       d.subordinationOk = d.typing.hasPolarComplementizer := by decide
 
-/-- Neutral rising declaratives track the delayed-typing parameter: forced
-early typing leaves only the biased reading (English); delayable typing
-admits the neutral question (Italian, Hindi-Urdu). -/
+/-- Neutral rising declaratives track the delayed-typing parameter
+(§4.3, ex. 63b). -/
 theorem neutral_decl_matches_delay :
     ∀ d ∈ allPolarSyntaxData,
       d.neutralDeclOk = d.typing.delayedTyping := by decide
@@ -302,13 +298,8 @@ theorem cross_linguistic_shiftiness_predicted :
 
 /-! ### The three-layer classifier for question particles
 
-The cartography's defining correlation as a classifier: a question
-particle's left-peripheral layer is read off its embedding distribution —
-subordinated-licensed → CP (clause-typing); subordinated-excluded but
-quasi-subordinated-licensed → PerspP; quasi-subordinated-excluded but
-matrix-licensed → SAP (§1.3). [bhatt-dayal-2020]'s ForceP location for
-Hindi-Urdu *kya:* is recast here as PerspP (a terminological change by the
-paper's own fn. 3).
+A question particle's left-peripheral layer is read off its embedding
+distribution (§1.3); the four representative assignments:
 
 | Layer  | Language    | Particle    | Distribution         |
 |--------|-------------|-------------|----------------------|
@@ -316,7 +307,9 @@ paper's own fn. 3).
 | PerspP | Hindi-Urdu  | *kya:*      | matrix + QS, no sub  |
 | SAP    | Japanese    | *kke*       | matrix + quotation   |
 | SAP    | English     | *quick(ly)* | matrix + quotation   |
--/
+
+[bhatt-dayal-2020]'s ForceP location for *kya:* is recast here as PerspP
+(a terminological change by the paper's own fn. 3). -/
 
 /-- A question particle's layer, read off its embedding distribution.
     Defined for question particles only — Japanese *koto* (a declarative
