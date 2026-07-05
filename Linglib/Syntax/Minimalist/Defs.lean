@@ -171,6 +171,11 @@ def uposToCat : UD.UPOS → Cat
 def LIToken.phonForm (tok : LIToken) : String :=
   tok.item.features.head?.map (·.phonForm) |>.getD ""
 
+/-- The phonological form of a pronounced token; `none` when the form is empty. -/
+def LIToken.phonForm? (tok : LIToken) : Option String :=
+  let p := tok.phonForm
+  if p.isEmpty then none else some p
+
 /-- LIToken-level c-selection: `selector` selects `selected` iff
     `selector`'s outermost selectional feature equals `selected`'s outer
     category. A pure `LIToken` relation; no SO structure involved. -/
