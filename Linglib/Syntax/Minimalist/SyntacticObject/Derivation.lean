@@ -238,7 +238,7 @@ def surfaceCats (d : SO.Derivation) : List Cat := d.surfaceTokens.map (·.item.o
 
 /-- Surface phonological string: pronounced forms left-to-right (empty forms dropped). -/
 def surfacePhon (d : SO.Derivation) : List String :=
-  d.surfaceTokens.filterMap fun t => let p := t.phonForm; if p.isEmpty then none else some p
+  d.surfaceTokens.filterMap LIToken.phonForm?
 
 end SO.Derivation
 

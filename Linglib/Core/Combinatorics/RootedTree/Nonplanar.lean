@@ -102,6 +102,13 @@ theorem of_step {t s : RoseTree α} (h : PermStep t s) : PermEquiv t s :=
 theorem isEquivalence : Equivalence (PermEquiv : RoseTree α → RoseTree α → Prop) :=
   Relation.EqvGen.is_equivalence _
 
+/-- Extend an `Eq`-valued invariant from single steps to the equivalence closure:
+    a function unchanged by every `PermStep` is unchanged by `PermEquiv`. -/
+theorem lift_eq {β : Sort*} {f : RoseTree α → β}
+    (hf : ∀ t s : RoseTree α, PermStep t s → f t = f s)
+    {t s : RoseTree α} (h : PermEquiv t s) : f t = f s :=
+  congrArg (Quot.lift f hf) (Quot.eqvGen_sound h)
+
 end PermEquiv
 
 /-! ### Lifting structural invariants from `RoseTree` to `Nonplanar`
@@ -111,10 +118,10 @@ through the equivalence closure to functions `Nonplanar α → β`. Below
 we lift `numNodes` (vertex count) and the other counts as worked examples.
 
 The pattern: prove invariance under the elementary `PermStep`, then
-extend to `PermEquiv = EqvGen PermStep` by an `EqvGen` induction. On
-`RoseTree` the counts sum/`foldr`-max directly over `cs.map …`, so
-permutation invariance is just `List.Perm.sum_eq` / `List.Perm.foldr_eq`
-on the child list. -/
+extend to `PermEquiv` with `PermEquiv.lift_eq`. On `RoseTree` the
+counts sum/`foldr`-max directly over `cs.map …`, so permutation
+invariance is just `List.Perm.sum_eq` / `List.Perm.foldr_eq` on the
+child list. -/
 
 /-! #### Node count invariance -/
 
@@ -132,14 +139,10 @@ private theorem numNodes_permStep {t s : RoseTree α} (h : PermStep t s) :
     simp only [numNodes_node, List.map_append, List.map_cons, List.sum_append,
       List.sum_cons, ih]
 
-/-- `numNodes` is invariant under `PermEquiv`. By induction on `EqvGen`. -/
+/-- `numNodes` is invariant under `PermEquiv`. -/
 theorem numNodes_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.numNodes = s.numNodes := by
-  induction h with
-  | rel _ _ hstep => exact numNodes_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    t.numNodes = s.numNodes :=
+  PermEquiv.lift_eq (fun _ _ h' => numNodes_permStep h') h
 
 /-! #### Leaf-count invariance -/
 
@@ -157,12 +160,8 @@ private theorem numLeaves_permStep {t s : RoseTree α} (h : PermStep t s) :
 
 /-- `numLeaves` is invariant under `PermEquiv`. -/
 theorem numLeaves_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.numLeaves = s.numLeaves := by
-  induction h with
-  | rel _ _ hstep => exact numLeaves_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    t.numLeaves = s.numLeaves :=
+  PermEquiv.lift_eq (fun _ _ h' => numLeaves_permStep h') h
 
 /-! #### Value invariance -/
 
@@ -175,12 +174,8 @@ private theorem permStep_value_eq {t s : RoseTree α} (h : PermStep t s) :
 
 /-- The root value is preserved by `PermEquiv`. -/
 theorem value_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.value = s.value := by
-  induction h with
-  | rel _ _ hstep => exact permStep_value_eq hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    t.value = s.value :=
+  PermEquiv.lift_eq (fun _ _ h' => permStep_value_eq h') h
 
 /-! #### Lifting child-list operations to `PermEquiv`
 
@@ -293,7 +288,7 @@ theorem permEquiv_node_componentwise {a : α} {cs ds : List (RoseTree α)}
 Three more invariants of tree structure that are preserved by
 `PermEquiv`. The pattern follows `numNodes`: prove `*_permStep`
 by case on the step constructor, then lift to `*_permEquiv` via
-`EqvGen` induction. -/
+`PermEquiv.lift_eq`. -/
 
 /-- Arity (root child count) is invariant under `PermStep`: both
     `swapAtRoot` and `recurse` keep the children list's length fixed. -/
@@ -303,12 +298,8 @@ private theorem arity_permStep {t s : RoseTree α} (h : PermStep t s) :
 
 /-- Arity is invariant under `PermEquiv`. -/
 theorem arity_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.arity = s.arity := by
-  induction h with
-  | rel _ _ hstep => exact arity_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    t.arity = s.arity :=
+  PermEquiv.lift_eq (fun _ _ h' => arity_permStep h') h
 
 /-- Depth is invariant under `PermStep`. The `swapAtRoot` case uses
     `List.Perm.foldr_eq` (`max` is left-commutative); the `recurse` case
@@ -325,12 +316,8 @@ private theorem depth_permStep {t s : RoseTree α} (h : PermStep t s) :
 
 /-- Depth is invariant under `PermEquiv`. -/
 theorem depth_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.depth = s.depth := by
-  induction h with
-  | rel _ _ hstep => exact depth_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    t.depth = s.depth :=
+  PermEquiv.lift_eq (fun _ _ h' => depth_permStep h') h
 
 /-- Leaf-ness is invariant under `PermStep`. Both `swapAtRoot` and
     `recurse` keep a non-empty children list on both sides, so both are
@@ -343,12 +330,8 @@ private theorem isLeaf_permStep {t s : RoseTree α} (h : PermStep t s) :
 
 /-- Leaf-ness is invariant under `PermEquiv`. -/
 theorem isLeaf_permEquiv {t s : RoseTree α} (h : PermEquiv t s) :
-    t.isLeaf = s.isLeaf := by
-  induction h with
-  | rel _ _ hstep => exact isLeaf_permStep hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    t.isLeaf = s.isLeaf :=
+  PermEquiv.lift_eq (fun _ _ h' => isLeaf_permStep h') h
 
 /-! ### Setoid instance -/
 
@@ -471,12 +454,8 @@ private theorem childrenMk_permStep {t s : RoseTree α} (h : RoseTree.PermStep t
     simp [RoseTree.children, mk_step h]
 
 private theorem childrenMk_permEquiv {t s : RoseTree α} (h : RoseTree.PermEquiv t s) :
-    (↑(t.children.map mk) : Multiset (Nonplanar α)) = ↑(s.children.map mk) := by
-  induction h with
-  | rel _ _ h => exact childrenMk_permStep h
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+    (↑(t.children.map mk) : Multiset (Nonplanar α)) = ↑(s.children.map mk) :=
+  RoseTree.PermEquiv.lift_eq (fun _ _ h' => childrenMk_permStep h') h
 
 /-- The children of a nonplanar tree, as a multiset of nonplanar trees. -/
 def children : Nonplanar α → Multiset (Nonplanar α) :=
