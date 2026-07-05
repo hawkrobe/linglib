@@ -21,7 +21,7 @@ pairing the Grossman-Larson product against the pruning coproduct
 through the symmetry-weighted pairing, and its consequence: Δ^ρ
 coassociativity (`comulRhoN_coassoc`) and the
 `Bialgebra R (ConnesKreimer R (Nonplanar α))` instance
-(`instBialgebraRho`), both transported from `GrossmanLarson.mul_assoc`.
+(`instBialgebraRho`), both transported from `mul_assoc`.
 
 ## Orientation
 
@@ -66,8 +66,9 @@ namespace RootedTree
 namespace ConnesKreimer
 
 open scoped TensorProduct
+open GrossmanLarson
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Adjoint through the second tensor slot -/
 
@@ -80,12 +81,12 @@ private lemma pairing₂_lTensor_bPlusLin (a : α)
     (V : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
     pairing₂ (R := R) (u ⊗ₜ[R] v)
         ((LinearMap.lTensor _ (bPlusLin (R := R) a)) V) =
-      pairing₂ (R := R) (u ⊗ₜ[R] (GrossmanLarson.bMinusLin (R := R) a v)) V := by
+      pairing₂ (R := R) (u ⊗ₜ[R] (bMinusLin (R := R) a v)) V := by
   induction V using TensorProduct.induction_on with
   | zero => simp
   | tmul p q =>
     rw [LinearMap.lTensor_tmul, pairing₂_tmul_tmul, pairing₂_tmul_tmul,
-        ← GrossmanLarson.bMinusLin_pairing_adjoint]
+        ← bMinusLin_pairing_adjoint]
   | add V₁ V₂ ih₁ ih₂ => simp only [map_add, ih₁, ih₂]
 
 /-! ### Pairing against the unit -/
@@ -93,18 +94,18 @@ private lemma pairing₂_lTensor_bPlusLin (a : α)
 /-- `⟨w, 1⟩ = ε(w)`: pairing against the empty forest extracts the
     counit (the coefficient of the empty forest). -/
 private lemma pairing_apply_one (w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R) w (1 : ConnesKreimer R (Nonplanar α)) =
+    pairing (R := R) w (1 : ConnesKreimer R (Nonplanar α)) =
       (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) w := by
   refine ConnesKreimer.induction_linear w ?_ ?_ ?_
-  · show GrossmanLarson.pairing (R := R)
+  · show pairing (R := R)
         (0 : ConnesKreimer R (Nonplanar α)) 1 =
       (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (0 : ConnesKreimer R (Nonplanar α))
-    rw [GrossmanLarson.pairing_zero_left, map_zero]
+    rw [pairing_zero_left, map_zero]
   · intro a b iha ihb
     let a' : ConnesKreimer R (Nonplanar α) := a
     let b' : ConnesKreimer R (Nonplanar α) := b
-    show GrossmanLarson.pairing (R := R) (a' + b') 1 =
+    show pairing (R := R) (a' + b') 1 =
       (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) (a' + b')
     rw [map_add, LinearMap.add_apply, map_add]
     exact congrArg₂ (· + ·) iha ihb
@@ -114,14 +115,14 @@ private lemma pairing_apply_one (w : ConnesKreimer R (Nonplanar α)) :
       show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
           r • (ConnesKreimer.single F 1 : ConnesKreimer R (Nonplanar α))
       exact ConnesKreimer.smul_single_one F r
-    show GrossmanLarson.pairing (R := R) w' 1 =
+    show pairing (R := R) w' 1 =
       (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) w'
     rw [hsingle, map_smul, LinearMap.smul_apply, map_smul, smul_eq_mul,
         smul_eq_mul]
     congr 1
-    show GrossmanLarson.pairing (R := R) (ConnesKreimer.of' F)
+    show pairing (R := R) (ConnesKreimer.of' F)
         (ConnesKreimer.of' (0 : Forest (Nonplanar α))) = _
-    rw [GrossmanLarson.pairing_of'_of', ConnesKreimer.counit_of']
+    rw [pairing_of'_of', ConnesKreimer.counit_of']
     by_cases h : F = (0 : Forest (Nonplanar α))
     · subst h
       rw [if_pos rfl, if_pos Multiset.card_zero]
@@ -134,8 +135,8 @@ private lemma pairing_apply_one (w : ConnesKreimer R (Nonplanar α)) :
 /-- The pairing product rule through both slots of `pairing₂`: for basis
     second components, multiplying the second argument decomposes over
     independent antidiagonal splits of the two basis forests. Tensor
-    counterpart of `GrossmanLarson.pairing_of'_mul`, aligned with the
-    index order of `GrossmanLarson.pairing_product_of'_mul_of'`. -/
+    counterpart of `pairing_of'_mul`, aligned with the
+    index order of `pairing_product_of'_mul_of'`. -/
 private lemma pairing₂_of'_of'_mul (A B : Forest (Nonplanar α))
     (U V : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
     pairing₂ (R := R) (ConnesKreimer.of' B ⊗ₜ[R] ConnesKreimer.of' A) (U * V) =
@@ -169,8 +170,8 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (Nonplanar α))
       rw [map_add, mul_add]
     | tmul v₁ v₂ =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, pairing₂_tmul_tmul,
-          GrossmanLarson.pairing_of'_mul B u₁ v₁,
-          GrossmanLarson.pairing_of'_mul A u₂ v₂]
+          pairing_of'_mul B u₁ v₁,
+          pairing_of'_mul A u₂ v₂]
       rw [show ((Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).map (fun pq =>
             pairing₂ (R := R)
                 (ConnesKreimer.of' pq.2.1 ⊗ₜ[R] ConnesKreimer.of' pq.1.1)
@@ -179,106 +180,106 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (Nonplanar α))
                 (ConnesKreimer.of' pq.2.2 ⊗ₜ[R] ConnesKreimer.of' pq.1.2)
                 (v₁ ⊗ₜ[R] v₂))) =
           ((Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).map (fun pq =>
-            (GrossmanLarson.pairing (R := R)
+            (pairing (R := R)
                 (ConnesKreimer.of' pq.1.1) u₂ *
-             GrossmanLarson.pairing (R := R)
+             pairing (R := R)
                 (ConnesKreimer.of' pq.1.2) v₂) *
-            (GrossmanLarson.pairing (R := R)
+            (pairing (R := R)
                 (ConnesKreimer.of' pq.2.1) u₁ *
-             GrossmanLarson.pairing (R := R)
+             pairing (R := R)
                 (ConnesKreimer.of' pq.2.2) v₁))) from
         Multiset.map_congr rfl fun pq _ => by
           rw [pairing₂_tmul_tmul, pairing₂_tmul_tmul]; ring]
-      rw [GrossmanLarson.sum_map_product_mul (Multiset.antidiagonal A)
+      rw [sum_map_product_mul (Multiset.antidiagonal A)
           (Multiset.antidiagonal B)
-          (fun pa => GrossmanLarson.pairing (R := R)
+          (fun pa => pairing (R := R)
               (ConnesKreimer.of' pa.1) u₂ *
-            GrossmanLarson.pairing (R := R) (ConnesKreimer.of' pa.2) v₂)
-          (fun pb => GrossmanLarson.pairing (R := R)
+            pairing (R := R) (ConnesKreimer.of' pa.2) v₂)
+          (fun pb => pairing (R := R)
               (ConnesKreimer.of' pb.1) u₁ *
-            GrossmanLarson.pairing (R := R) (ConnesKreimer.of' pb.2) v₁)]
+            pairing (R := R) (ConnesKreimer.of' pb.2) v₁)]
       ring
 
 /-! ### CK-typed linearity of the GL product in its first slot
 
-`GrossmanLarson.product` is a `LinearMap` at the `GrossmanLarson` carrier;
+`product` is a `LinearMap` at the `GrossmanLarson` carrier;
 these restate first-slot linearity with all terms ascribed at
 `ConnesKreimer` (definitionally equal carriers, syntactically different
 instances), so they can be used as rewrite rules in CK-typed goals. -/
 
 private lemma pairing_product_zero_left (y w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R)
-      (GrossmanLarson.product (0 : ConnesKreimer R (Nonplanar α)) y) w = 0 := by
-  have h1 : (GrossmanLarson.product (R := R) (α := α)
+    pairing (R := R)
+      (product (0 : ConnesKreimer R (Nonplanar α)) y) w = 0 := by
+  have h1 : (product (R := R) (α := α)
       (0 : ConnesKreimer R (Nonplanar α)) y :
       ConnesKreimer R (Nonplanar α)) = 0 :=
-    LinearMap.map_zero₂ (GrossmanLarson.product (R := R) (α := α)) y
-  exact (congrArg (fun u => GrossmanLarson.pairing (R := R) u w) h1).trans
-    (GrossmanLarson.pairing_zero_left w)
+    LinearMap.map_zero₂ (product (R := R) (α := α)) y
+  exact (congrArg (fun u => pairing (R := R) u w) h1).trans
+    (pairing_zero_left w)
 
 private lemma pairing_product_add_left (a b y w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R) (GrossmanLarson.product (a + b) y) w =
-      GrossmanLarson.pairing (R := R) (GrossmanLarson.product a y) w +
-      GrossmanLarson.pairing (R := R) (GrossmanLarson.product b y) w := by
-  have h1 : (GrossmanLarson.product (R := R) (α := α) (a + b) y :
+    pairing (R := R) (product (a + b) y) w =
+      pairing (R := R) (product a y) w +
+      pairing (R := R) (product b y) w := by
+  have h1 : (product (R := R) (α := α) (a + b) y :
       ConnesKreimer R (Nonplanar α)) =
-      ((GrossmanLarson.product a y : ConnesKreimer R (Nonplanar α)) +
-       (GrossmanLarson.product b y : ConnesKreimer R (Nonplanar α)) :
+      ((product a y : ConnesKreimer R (Nonplanar α)) +
+       (product b y : ConnesKreimer R (Nonplanar α)) :
         ConnesKreimer R (Nonplanar α)) :=
-    LinearMap.map_add₂ (GrossmanLarson.product (R := R) (α := α)) a b y
-  exact (congrArg (fun u => GrossmanLarson.pairing (R := R) u w) h1).trans
+    LinearMap.map_add₂ (product (R := R) (α := α)) a b y
+  exact (congrArg (fun u => pairing (R := R) u w) h1).trans
     (LinearMap.congr_fun
-      (map_add (GrossmanLarson.pairing (R := R) (α := α)) _ _) w)
+      (map_add (pairing (R := R) (α := α)) _ _) w)
 
 private lemma pairing_product_smul_left (r : R)
     (a y w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R) (GrossmanLarson.product (r • a) y) w =
-      r • GrossmanLarson.pairing (R := R) (GrossmanLarson.product a y) w := by
-  have h1 : (GrossmanLarson.product (R := R) (α := α) (r • a) y :
+    pairing (R := R) (product (r • a) y) w =
+      r • pairing (R := R) (product a y) w := by
+  have h1 : (product (R := R) (α := α) (r • a) y :
       ConnesKreimer R (Nonplanar α)) =
-      (r • (GrossmanLarson.product a y : ConnesKreimer R (Nonplanar α)) :
+      (r • (product a y : ConnesKreimer R (Nonplanar α)) :
         ConnesKreimer R (Nonplanar α)) :=
-    LinearMap.map_smul₂ (GrossmanLarson.product (R := R) (α := α)) r a y
-  exact (congrArg (fun u => GrossmanLarson.pairing (R := R) u w) h1).trans
+    LinearMap.map_smul₂ (product (R := R) (α := α)) r a y
+  exact (congrArg (fun u => pairing (R := R) u w) h1).trans
     (LinearMap.congr_fun
-      (map_smul (GrossmanLarson.pairing (R := R) (α := α)) r _) w)
+      (map_smul (pairing (R := R) (α := α)) r _) w)
 
 private lemma pairing_product_zero_right (x w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R)
-      (GrossmanLarson.product x (0 : ConnesKreimer R (Nonplanar α))) w = 0 := by
-  have h1 : (GrossmanLarson.product (R := R) (α := α) x
+    pairing (R := R)
+      (product x (0 : ConnesKreimer R (Nonplanar α))) w = 0 := by
+  have h1 : (product (R := R) (α := α) x
       (0 : ConnesKreimer R (Nonplanar α)) :
       ConnesKreimer R (Nonplanar α)) = 0 :=
-    map_zero (GrossmanLarson.product (R := R) (α := α) x)
-  exact (congrArg (fun u => GrossmanLarson.pairing (R := R) u w) h1).trans
-    (GrossmanLarson.pairing_zero_left w)
+    map_zero (product (R := R) (α := α) x)
+  exact (congrArg (fun u => pairing (R := R) u w) h1).trans
+    (pairing_zero_left w)
 
 private lemma pairing_product_add_right (x a b w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R) (GrossmanLarson.product x (a + b)) w =
-      GrossmanLarson.pairing (R := R) (GrossmanLarson.product x a) w +
-      GrossmanLarson.pairing (R := R) (GrossmanLarson.product x b) w := by
-  have h1 : (GrossmanLarson.product (R := R) (α := α) x (a + b) :
+    pairing (R := R) (product x (a + b)) w =
+      pairing (R := R) (product x a) w +
+      pairing (R := R) (product x b) w := by
+  have h1 : (product (R := R) (α := α) x (a + b) :
       ConnesKreimer R (Nonplanar α)) =
-      ((GrossmanLarson.product x a : ConnesKreimer R (Nonplanar α)) +
-       (GrossmanLarson.product x b : ConnesKreimer R (Nonplanar α)) :
+      ((product x a : ConnesKreimer R (Nonplanar α)) +
+       (product x b : ConnesKreimer R (Nonplanar α)) :
         ConnesKreimer R (Nonplanar α)) :=
-    map_add (GrossmanLarson.product (R := R) (α := α) x) a b
-  exact (congrArg (fun u => GrossmanLarson.pairing (R := R) u w) h1).trans
+    map_add (product (R := R) (α := α) x) a b
+  exact (congrArg (fun u => pairing (R := R) u w) h1).trans
     (LinearMap.congr_fun
-      (map_add (GrossmanLarson.pairing (R := R) (α := α)) _ _) w)
+      (map_add (pairing (R := R) (α := α)) _ _) w)
 
 private lemma pairing_product_smul_right (r : R)
     (x a w : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing (R := R) (GrossmanLarson.product x (r • a)) w =
-      r • GrossmanLarson.pairing (R := R) (GrossmanLarson.product x a) w := by
-  have h1 : (GrossmanLarson.product (R := R) (α := α) x (r • a) :
+    pairing (R := R) (product x (r • a)) w =
+      r • pairing (R := R) (product x a) w := by
+  have h1 : (product (R := R) (α := α) x (r • a) :
       ConnesKreimer R (Nonplanar α)) =
-      (r • (GrossmanLarson.product x a : ConnesKreimer R (Nonplanar α)) :
+      (r • (product x a : ConnesKreimer R (Nonplanar α)) :
         ConnesKreimer R (Nonplanar α)) :=
-    map_smul (GrossmanLarson.product (R := R) (α := α) x) r a
-  exact (congrArg (fun u => GrossmanLarson.pairing (R := R) u w) h1).trans
+    map_smul (product (R := R) (α := α) x) r a
+  exact (congrArg (fun u => pairing (R := R) u w) h1).trans
     (LinearMap.congr_fun
-      (map_smul (GrossmanLarson.pairing (R := R) (α := α)) r _) w)
+      (map_smul (pairing (R := R) (α := α)) r _) w)
 
 /-! ### The duality theorem -/
 
@@ -291,22 +292,21 @@ private lemma pairing_product_smul_right (r : R)
     (`y` against pruned crowns, `x` against root trunks). -/
 theorem pairing_gl_eq_pairing_coproduct_Rho
     (x y z : ConnesKreimer R (Nonplanar α)) :
-    GrossmanLarson.pairing
-        (GrossmanLarson.product x y) z =
+    pairing
+        (product x y) z =
       pairing₂ (R := R)
         (y ⊗ₜ[R] x)
         (comulAlgHomN (R := R) z) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Core statement at basis `z = of' C`, strong induction on total weight.
   suffices core : ∀ (n : ℕ) (C : Forest (Nonplanar α)),
       (C.map Nonplanar.numNodes).sum = n →
       ∀ x y : ConnesKreimer R (Nonplanar α),
-      GrossmanLarson.pairing (R := R)
-          (GrossmanLarson.product x y) (ConnesKreimer.of' C) =
+      pairing (R := R)
+          (product x y) (ConnesKreimer.of' C) =
         pairing₂ (R := R) (y ⊗ₜ[R] x)
           (comulAlgHomN (R := R) (ConnesKreimer.of' C)) by
     refine ConnesKreimer.induction_linear z ?_ ?_ ?_
-    · show GrossmanLarson.pairing (R := R) (GrossmanLarson.product x y)
+    · show pairing (R := R) (product x y)
           (0 : ConnesKreimer R (Nonplanar α)) =
         pairing₂ (R := R) (y ⊗ₜ[R] x)
           (comulAlgHomN (R := R) (0 : ConnesKreimer R (Nonplanar α)))
@@ -314,7 +314,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
     · intro a b iha ihb
       let a' : ConnesKreimer R (Nonplanar α) := a
       let b' : ConnesKreimer R (Nonplanar α) := b
-      show GrossmanLarson.pairing (R := R) (GrossmanLarson.product x y)
+      show pairing (R := R) (product x y)
           (a' + b') =
         pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (R := R) (a' + b'))
       rw [map_add, map_add, map_add]
@@ -325,7 +325,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
         show (ConnesKreimer.single C r : ConnesKreimer R (Nonplanar α)) =
             r • (ConnesKreimer.single C 1 : ConnesKreimer R (Nonplanar α))
         exact ConnesKreimer.smul_single_one C r
-      show GrossmanLarson.pairing (R := R) (GrossmanLarson.product x y) z' =
+      show pairing (R := R) (product x y) z' =
         pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (R := R) z')
       rw [hsingle, map_smul, map_smul, map_smul]
       exact congrArg (r • ·) (core _ C rfl x y)
@@ -347,12 +347,12 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
           pairing₂_tmul_tmul, pairing_apply_one, pairing_apply_one,
           pairing_apply_one]
       rw [show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
-            (GrossmanLarson.product x y) =
+            (product x y) =
           (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
-            (GrossmanLarson.unop
-              ((GrossmanLarson.op x : GrossmanLarson R α) *
-                GrossmanLarson.op y)) from rfl,
-          GrossmanLarson.counit_gl_mul]
+            (unop
+              ((op x : GrossmanLarson R α) *
+                op y)) from rfl,
+          counit_gl_mul]
       exact mul_comm _ _
     · obtain ⟨C', rfl⟩ := Multiset.exists_cons_of_mem hT
       rcases Multiset.empty_or_exists_mem C' with hC'0 | ⟨T₂, hT₂⟩
@@ -380,15 +380,15 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
           rfl
         rw [hofT]
         -- LHS: the B⁺/B⁻ recurrence.
-        rw [show GrossmanLarson.pairing (R := R)
-              (GrossmanLarson.product x y)
+        rw [show pairing (R := R)
+              (product x y)
               (bPlusLin (R := R) (Nonplanar.rootValue T)
                 (ConnesKreimer.of' (Nonplanar.rootChildren T))) =
-            GrossmanLarson.pairing (R := R) (GrossmanLarson.unop
-              ((GrossmanLarson.op x : GrossmanLarson R α) * GrossmanLarson.op y))
+            pairing (R := R) (unop
+              ((op x : GrossmanLarson R α) * op y))
               (bPlusLin (R := R) (Nonplanar.rootValue T)
                 (ConnesKreimer.of' (Nonplanar.rootChildren T))) from rfl]
-        rw [GrossmanLarson.pairing_apply_bPlus_gl_mul]
+        rw [pairing_apply_bPlus_gl_mul]
         -- RHS: the Hochschild cocycle + adjoint.
         rw [show comulAlgHomN (R := R)
               (bPlusLin (R := R) (Nonplanar.rootValue T)
@@ -405,7 +405,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
           (comulAlgHomN_apply_of' _).symm]
         rw [← IH _ hWlt (Nonplanar.rootChildren T) rfl
-            (GrossmanLarson.bMinusLin (R := R) (Nonplanar.rootValue T) x) y]
+            (bMinusLin (R := R) (Nonplanar.rootValue T) x) y]
         rw [show (ConnesKreimer.ofTree (R := R)
               (Nonplanar.node (Nonplanar.rootValue T)
                 (Nonplanar.rootChildren T)) :
@@ -413,15 +413,15 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
             bPlusLin (R := R) (Nonplanar.rootValue T)
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
           (bPlusLin_of' _ _).symm]
-        rw [← GrossmanLarson.bMinusLin_pairing_adjoint, pairing_apply_one]
-        rw [show GrossmanLarson.pairing (R := R)
-              (GrossmanLarson.product
-                (GrossmanLarson.bMinusLin (R := R) (Nonplanar.rootValue T) x) y)
+        rw [← bMinusLin_pairing_adjoint, pairing_apply_one]
+        rw [show pairing (R := R)
+              (product
+                (bMinusLin (R := R) (Nonplanar.rootValue T) x) y)
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) =
-            GrossmanLarson.pairing (R := R) (GrossmanLarson.unop
-              ((GrossmanLarson.op (GrossmanLarson.bMinusLin (R := R)
+            pairing (R := R) (unop
+              ((op (bMinusLin (R := R)
                   (Nonplanar.rootValue T) x) : GrossmanLarson R α) *
-                GrossmanLarson.op y))
+                op y))
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from rfl]
         ring
       · -- Multi-tree: C = T ::ₘ C' with C' ≠ 0; split and use both
@@ -440,8 +440,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
         have hC'lt : (C'.map Nonplanar.numNodes).sum < n := by omega
         -- Reduce x, y to basis vectors (both sides are bilinear in (x, y)).
         refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-        · show GrossmanLarson.pairing (R := R)
-              (GrossmanLarson.product (0 : ConnesKreimer R (Nonplanar α)) y)
+        · show pairing (R := R)
+              (product (0 : ConnesKreimer R (Nonplanar α)) y)
               (ConnesKreimer.of' (T ::ₘ C')) = pairing₂ (R := R)
               (y ⊗ₜ[R] (0 : ConnesKreimer R (Nonplanar α)))
               (comulAlgHomN (R := R) (ConnesKreimer.of' (T ::ₘ C')))
@@ -450,8 +450,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
         · intro a b iha ihb
           let a' : ConnesKreimer R (Nonplanar α) := a
           let b' : ConnesKreimer R (Nonplanar α) := b
-          show GrossmanLarson.pairing (R := R)
-              (GrossmanLarson.product (a' + b') y)
+          show pairing (R := R)
+              (product (a' + b') y)
               (ConnesKreimer.of' (T ::ₘ C')) = pairing₂ (R := R)
               (y ⊗ₜ[R] (a' + b'))
               (comulAlgHomN (R := R) (ConnesKreimer.of' (T ::ₘ C')))
@@ -464,8 +464,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
             show (ConnesKreimer.single A rA : ConnesKreimer R (Nonplanar α)) =
                 rA • (ConnesKreimer.single A 1 : ConnesKreimer R (Nonplanar α))
             exact ConnesKreimer.smul_single_one A rA
-          show GrossmanLarson.pairing (R := R)
-              (GrossmanLarson.product xA y)
+          show pairing (R := R)
+              (product xA y)
               (ConnesKreimer.of' (T ::ₘ C')) = pairing₂ (R := R)
               (y ⊗ₜ[R] xA)
               (comulAlgHomN (R := R) (ConnesKreimer.of' (T ::ₘ C')))
@@ -474,8 +474,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
               map_smul, LinearMap.smul_apply]
           refine congrArg (rA • ·) ?_
           refine ConnesKreimer.induction_linear y ?_ ?_ ?_
-          · show GrossmanLarson.pairing (R := R)
-                (GrossmanLarson.product (ConnesKreimer.of' A)
+          · show pairing (R := R)
+                (product (ConnesKreimer.of' A)
                   (0 : ConnesKreimer R (Nonplanar α)))
                 (ConnesKreimer.of' (T ::ₘ C')) = pairing₂ (R := R)
                 ((0 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ConnesKreimer.of' A)
@@ -485,8 +485,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
           · intro a b iha ihb
             let a' : ConnesKreimer R (Nonplanar α) := a
             let b' : ConnesKreimer R (Nonplanar α) := b
-            show GrossmanLarson.pairing (R := R)
-                (GrossmanLarson.product (ConnesKreimer.of' A) (a' + b'))
+            show pairing (R := R)
+                (product (ConnesKreimer.of' A) (a' + b'))
                 (ConnesKreimer.of' (T ::ₘ C')) = pairing₂ (R := R)
                 ((a' + b') ⊗ₜ[R] ConnesKreimer.of' A)
                 (comulAlgHomN (R := R) (ConnesKreimer.of' (T ::ₘ C')))
@@ -499,8 +499,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
               show (ConnesKreimer.single B rB : ConnesKreimer R (Nonplanar α)) =
                   rB • (ConnesKreimer.single B 1 : ConnesKreimer R (Nonplanar α))
               exact ConnesKreimer.smul_single_one B rB
-            show GrossmanLarson.pairing (R := R)
-                (GrossmanLarson.product (ConnesKreimer.of' A) yB)
+            show pairing (R := R)
+                (product (ConnesKreimer.of' A) yB)
                 (ConnesKreimer.of' (T ::ₘ C')) = pairing₂ (R := R)
                 (yB ⊗ₜ[R] ConnesKreimer.of' A)
                 (comulAlgHomN (R := R) (ConnesKreimer.of' (T ::ₘ C')))
@@ -514,7 +514,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
                 ConnesKreimer.of' ({T} : Forest (Nonplanar α)) *
                   ConnesKreimer.of' C' := by
               rw [← ConnesKreimer.of'_add, Multiset.singleton_add]
-            rw [hsplit, GrossmanLarson.pairing_product_of'_mul_of',
+            rw [hsplit, pairing_product_of'_mul_of',
                 map_mul, pairing₂_of'_of'_mul]
             refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
             rw [IH _ hTlt ({T} : Forest (Nonplanar α)) rfl
@@ -555,7 +555,7 @@ private lemma pairing₃_assoc_rTensor_comul_rho
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((TensorProduct.assoc R _ _ _)
           ((comulAlgHomN (R := R)).toLinearMap.rTensor _ V)) =
-      pairing₂ (R := R) (GrossmanLarson.product y x ⊗ₜ[R] z') V := by
+      pairing₂ (R := R) (product y x ⊗ₜ[R] z') V := by
   induction V using TensorProduct.induction_on with
   | zero => simp
   | tmul a b =>
@@ -572,7 +572,7 @@ private lemma pairing₃_lTensor_comul_rho
           ConnesKreimer R (Nonplanar α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((comulAlgHomN (R := R)).toLinearMap.lTensor _ W) =
-      pairing₂ (R := R) (x ⊗ₜ[R] GrossmanLarson.product z' y) W := by
+      pairing₂ (R := R) (x ⊗ₜ[R] product z' y) W := by
   induction W using TensorProduct.induction_on with
   | zero => simp
   | tmul a b =>
@@ -587,15 +587,15 @@ private lemma pairing₃_lTensor_comul_rho
 theorem pairing₃_coassocLHSLinRho
     (x y z' z : ConnesKreimer R (Nonplanar α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocLHSLinRho (R := R) z) =
-      GrossmanLarson.pairing
-        (GrossmanLarson.product z' (GrossmanLarson.product y x)) z := by
+      pairing
+        (product z' (product y x)) z := by
   show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((TensorProduct.assoc R _ _ _)
           ((comulAlgHomN (R := R)).toLinearMap.rTensor _
             ((comulAlgHomN (R := R)).toLinearMap z))) = _
   rw [AlgHom.toLinearMap_apply, pairing₃_assoc_rTensor_comul_rho]
   exact (pairing_gl_eq_pairing_coproduct_Rho z'
-          (GrossmanLarson.product y x) z).symm
+          (product y x) z).symm
 
 /-- **RHS chain via the duality (twice)**: pairing the RHS coassoc
     expression against a pure triple tensor reduces to pairing the
@@ -603,14 +603,14 @@ theorem pairing₃_coassocLHSLinRho
 theorem pairing₃_coassocRHSLinRho
     (x y z' z : ConnesKreimer R (Nonplanar α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocRHSLinRho (R := R) z) =
-      GrossmanLarson.pairing
-        (GrossmanLarson.product (GrossmanLarson.product z' y) x) z := by
+      pairing
+        (product (product z' y) x) z := by
   show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((comulAlgHomN (R := R)).toLinearMap.lTensor _
           ((comulAlgHomN (R := R)).toLinearMap z)) = _
   rw [AlgHom.toLinearMap_apply, pairing₃_lTensor_comul_rho]
   exact (pairing_gl_eq_pairing_coproduct_Rho
-          (GrossmanLarson.product z' y) x z).symm
+          (product z' y) x z).symm
 
 /-! ### Coassociativity of Δ^ρ via GL/CK duality (LinearMap form)
 
@@ -619,7 +619,7 @@ proof uses subtraction (via `sub_eq_zero` in `pairing₃_unique`), which
 requires `R` to be a Ring (so `CK R T` has `AddCommGroup`). -/
 
 section CoassocCommRingRho
-variable {R' : Type*} [CommRing R'] {α' : Type*}
+variable {R' : Type*} [CommRing R'] {α' : Type*} [DecidableEq α']
 
 /-- **Coassociativity of `comulAlgHomN`** (LinearMap form), via GL/CK
     duality. Parallel to `TraceNonplanar.comulCN_coassoc` for Δ^c.
@@ -632,7 +632,7 @@ variable {R' : Type*} [CommRing R'] {α' : Type*}
     4. `pairing₃_coassocLHSLinRho` / `pairing₃_coassocRHSLinRho`: reduce
        both sides to GL products against `z` (two duality applications
        each).
-    5. `GrossmanLarson.mul_assoc z' y x` closes. -/
+    5. `mul_assoc z' y x` closes. -/
 theorem comulRhoN_coassoc [CharZero R'] [NoZeroDivisors R'] :
     (TensorProduct.assoc R'
         (ConnesKreimer R' (Nonplanar α'))
@@ -654,8 +654,8 @@ theorem comulRhoN_coassoc [CharZero R'] [NoZeroDivisors R'] :
       show pairing₃ (x ⊗ₜ[R'] (y ⊗ₜ[R'] z')) (coassocLHSLinRho z) =
            pairing₃ (x ⊗ₜ[R'] (y ⊗ₜ[R'] z')) (coassocRHSLinRho z)
       rw [pairing₃_coassocLHSLinRho, pairing₃_coassocRHSLinRho,
-          ← GrossmanLarson.mul_def, ← GrossmanLarson.mul_def,
-          ← GrossmanLarson.mul_def, ← GrossmanLarson.mul_def,
+          ← mul_def, ← mul_def,
+          ← mul_def, ← mul_def,
           GrossmanLarson.mul_assoc]
     | add a b iha ihb =>
       simp only [TensorProduct.tmul_add, map_add, LinearMap.add_apply,
@@ -688,7 +688,8 @@ forces `[CommRing R] [CharZero R] [NoZeroDivisors R]`; the counit laws
 hold over `[CommSemiring R]` and are automatically satisfied. -/
 
 noncomputable instance instBialgebraRho
-    {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*} :
+    {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*}
+    [DecidableEq α'] :
     Bialgebra R' (ConnesKreimer R' (Nonplanar α')) :=
   Bialgebra.ofAlgHom comulAlgHomN counit
     comulAlgHomN_coassoc_algHom

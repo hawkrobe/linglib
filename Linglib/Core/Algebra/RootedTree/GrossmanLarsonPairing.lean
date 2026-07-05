@@ -68,7 +68,7 @@ namespace RootedTree
 
 namespace GrossmanLarson
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Automorphism count
 
@@ -88,21 +88,19 @@ noncomputable def forestAutCard (F : Forest (Nonplanar α)) : ℕ :=
 
 /-! ### The bilinear pairing -/
 
+omit [DecidableEq α] in
 /-- Finsupp-level symmetry-weighted pairing on the bare forest basis. The
     public `pairing` is this transported through the Connes-Kreimer
     structure's `toFinsuppAlgEquiv`. -/
 private noncomputable def pairingAux :
     (Forest (Nonplanar α) →₀ R) →ₗ[R] (Forest (Nonplanar α) →₀ R) →ₗ[R] R :=
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
   Finsupp.lift _ R (Forest (Nonplanar α)) (fun F =>
     Finsupp.lift R R (Forest (Nonplanar α)) (fun G =>
       if F = G then (forestAutCard F : R) else 0))
 
 private theorem pairingAux_single_single (F G : Forest (Nonplanar α)) :
     pairingAux (R := R) (Finsupp.single F 1) (Finsupp.single G 1) =
-      (letI : Decidable (F = G) := Classical.dec _
-       if F = G then (forestAutCard F : R) else 0) := by
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+      (if F = G then (forestAutCard F : R) else 0) := by
   show (Finsupp.lift _ R (Forest (Nonplanar α)) (fun F' =>
     Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
       if F' = G' then (forestAutCard F' : R) else 0)))
@@ -117,6 +115,7 @@ private theorem pairingAux_single_single (F G : Forest (Nonplanar α)) :
     · simp
   · simp
 
+omit [DecidableEq α] in
 /-- The **symmetry-weighted pairing** `⟨·, ·⟩ : H × H → R`. On basis
     elements, `⟨of' F, of' G⟩ = if F = G then forestAutCard F else 0`
     (in `R`, via `Nat.cast`). Bilinearly extended, transported from the
@@ -134,8 +133,7 @@ private theorem pairing_apply (x y : ConnesKreimer R (Nonplanar α)) :
 @[simp] theorem pairing_of'_of' (F G : Forest (Nonplanar α)) :
     pairing (R := R) (ConnesKreimer.of' (R := R) F)
                      (ConnesKreimer.of' (R := R) G) =
-      (letI : Decidable (F = G) := Classical.dec _
-       if F = G then (forestAutCard F : R) else 0) := by
+      (if F = G then (forestAutCard F : R) else 0) := by
   rw [pairing_apply, ConnesKreimer.toFinsupp_of', ConnesKreimer.toFinsupp_of']
   exact pairingAux_single_single F G
 
@@ -182,7 +180,7 @@ theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
     pairing (R := R) x (ConnesKreimer.of' G) =
       x.coeff G * (forestAutCard G : R) := by
   refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · simp [pairing_zero_left]
+  · simp
   · intro x₁ x₂ ih₁ ih₂
     rw [map_add, LinearMap.add_apply, ih₁, ih₂, ConnesKreimer.coeff_add, add_mul]
   · intro F r
@@ -190,7 +188,6 @@ theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
           from ConnesKreimer.smul_single_one F r]
     simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of',
       ConnesKreimer.coeff_smul]
-    letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
     rw [ConnesKreimer.coeff_of']
     by_cases h : F = G
     · subst h
@@ -239,7 +236,6 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
       ((Multiset.antidiagonal W).map (fun p =>
         pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
         pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' C₂))).sum := by
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
   -- Step 1: collapse `of' C₁ * of' C₂` to `of' (C₁ + C₂)`, then evaluate
   -- the pairing on the diagonal.
   rw [← ConnesKreimer.of'_add, pairing_of'_of']
@@ -257,7 +253,6 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
     rw [pairing_of'_of', pairing_of'_of']
   rw [h_rhs_simp]
   -- Step 3: split on whether `W = C₁ + C₂` using `split_ifs` to handle the
-  -- Classical.dec instance baked into `pairing_of'_of'`.
   by_cases hW : W = C₁ + C₂
   · -- W = C₁ + C₂. LHS = forestAutCard W.
     rw [if_pos hW]
@@ -323,7 +318,7 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
     -- Decidable instances on Forest = Multiset (Nonplanar α) are unique up to
     -- propositional equality; `convert` closes the residual.
     convert hcast.symm using 4
-  · -- W ≠ C₁ + C₂. LHS = 0. The if uses Classical.dec (from `pairing_of'_of'`'s `letI`).
+  · -- W ≠ C₁ + C₂. LHS = 0. The if now uses the ambient instance.
     simp only [if_neg hW]
     -- Every p ∈ antidiagonal W has p.1 + p.2 = W ≠ C₁ + C₂. So at every p, the term is 0.
     symm

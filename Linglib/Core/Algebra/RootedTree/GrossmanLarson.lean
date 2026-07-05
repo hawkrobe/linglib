@@ -7,6 +7,7 @@ import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
+import Linglib.Core.Data.RoseTree.DecEq
 import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Data.Multiset.AddSub
 import Mathlib.Data.Multiset.Bind
@@ -110,7 +111,7 @@ def GrossmanLarson (R : Type*) [CommSemiring R] (α : Type*) : Type _ :=
 
 namespace GrossmanLarson
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Forwarded module instances
 
@@ -148,9 +149,11 @@ def op (x : ConnesKreimer R (Nonplanar α)) : GrossmanLarson R α := x
     `ConnesKreimer R (Nonplanar α)` element (identity at the carrier level). -/
 def unop (x : GrossmanLarson R α) : ConnesKreimer R (Nonplanar α) := x
 
+omit [DecidableEq α] in
 @[simp] theorem op_unop (x : GrossmanLarson R α) :
     op (unop (R := R) x) = x := rfl
 
+omit [DecidableEq α] in
 @[simp] theorem unop_op (x : ConnesKreimer R (Nonplanar α)) :
     unop (op (R := R) (α := α) x) = x := rfl
 
@@ -167,6 +170,7 @@ noncomputable def of' (F : Forest (Nonplanar α)) : GrossmanLarson R α :=
 noncomputable def ofTree (t : Nonplanar α) : GrossmanLarson R α :=
   ConnesKreimer.ofTree (R := R) t
 
+omit [DecidableEq α] in
 @[simp] theorem of'_zero :
     (of' (R := R) (0 : Forest (Nonplanar α)) : GrossmanLarson R α) = 1 :=
   ConnesKreimer.of'_zero
@@ -185,22 +189,26 @@ private noncomputable def basisLift {M : Type*} [AddCommMonoid M] [Module R M]
   (Finsupp.linearCombination R f).comp
     (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
 
+omit [DecidableEq α] in
 private theorem basisLift_single {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (Nonplanar α) → M) (F : Forest (Nonplanar α)) (r : R) :
     basisLift f (ConnesKreimer.single F r) = r • f F := by
   show Finsupp.linearCombination R f (ConnesKreimer.single F r).toFinsupp = r • f F
   rw [ConnesKreimer.toFinsupp_single, Finsupp.linearCombination_single]
 
+omit [DecidableEq α] in
 private theorem basisLift_of' {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (Nonplanar α) → M) (F : Forest (Nonplanar α)) :
     basisLift f (of' (R := R) F) = f F :=
   (basisLift_single f F 1).trans (one_smul _ _)
 
+omit [DecidableEq α] in
 private theorem basisLift_one {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (Nonplanar α) → M) :
     basisLift f (1 : GrossmanLarson R α) = f 0 := by
   rw [← of'_zero (R := R) (α := α)]; exact basisLift_of' f 0
 
+omit [DecidableEq α] in
 /-- The basis extension of the embedding `of'` is the identity: the
     transported form of `Finsupp.sum_single`. -/
 private theorem basisLift_of'_apply (x : GrossmanLarson R α) :
@@ -229,7 +237,6 @@ vector for the resulting forest `S ::ₘ F.erase S` with `S` replaced by
     tree of `F`, summed over (tree, vertex). -/
 noncomputable def insertTreeForest (T : Nonplanar α) (F : Forest (Nonplanar α)) :
     GrossmanLarson R α :=
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   (F.bind fun S =>
     (Nonplanar.insertSum S T).map fun S' => of' (R := R) (S' ::ₘ F.erase S)).sum
 
@@ -267,7 +274,6 @@ private theorem unop_insertTreeForest_cons
         (fun S' => unop (of' (R := R) (S' ::ₘ F)))).sum +
       unop (of' (R := R) ({S} : Forest (Nonplanar α))) *
         unop (insertTreeForest (R := R) T F) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- `unop` is the identity; unfolding both `unop` and `insertTreeForest`
   -- + `of'` (which is `ConnesKreimer.of'` definitionally) reduces the
   -- statement to a pure CK equality.
@@ -367,6 +373,7 @@ private noncomputable def insertionBasisLin (G_basis : Forest (Nonplanar α)) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   basisLift (fun F_basis => insertionBasis (R := R) F_basis G_basis)
 
+omit [DecidableEq α] in
 private theorem insertionBasisLin_of' (G_basis F_basis : Forest (Nonplanar α)) :
     insertionBasisLin (R := R) G_basis (of' F_basis) = insertionBasis F_basis G_basis :=
   basisLift_of' _ F_basis
@@ -379,6 +386,7 @@ noncomputable def insertion :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   (basisLift (insertionBasisLin (R := R) (α := α))).flip
 
+omit [DecidableEq α] in
 /-- Bridge: on basis vectors, `insertion (of' F) (of' G) = insertionBasis F G`.
     Unfolds the bilinear extension on both basis arguments. -/
 theorem insertion_of'_of' (F G : Forest (Nonplanar α)) :
@@ -398,7 +406,6 @@ ascription a no-op). -/
 /-- Forest-level Grossman-Larson product. -/
 noncomputable def productForest (F : GrossmanLarson R α)
     (G : Forest (Nonplanar α)) : GrossmanLarson R α :=
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   (G.powerset.map fun G₁ =>
     op (unop (insertion F (of' (R := R) G₁)) * unop (of' (R := R) (G - G₁)))).sum
 
@@ -406,7 +413,6 @@ noncomputable def productForest (F : GrossmanLarson R α)
     ...) = op (0 * ...) = 0` by bilinearity of `insertion`. -/
 private theorem productForest_zero_left (G : Forest (Nonplanar α)) :
     productForest (0 : GrossmanLarson R α) G = 0 := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   unfold productForest
   rw [show (G.powerset.map fun G₁ =>
         op (unop (insertion (R := R) (α := α) 0 (of' (R := R) G₁)) *
@@ -427,7 +433,6 @@ private theorem productForest_zero_left (G : Forest (Nonplanar α)) :
 private theorem productForest_add_left
     (F₁ F₂ : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     productForest (F₁ + F₂) G = productForest F₁ G + productForest F₂ G := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   show ((G.powerset.map fun G₁ =>
       op (unop (insertion (F₁ + F₂) (of' (R := R) G₁)) *
           unop (of' (R := R) (G - G₁)))).sum : GrossmanLarson R α) =
@@ -458,7 +463,6 @@ private theorem productForest_add_left
 private theorem productForest_smul_left
     (c : R) (F : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     productForest (c • F) G = c • productForest F G := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   show ((G.powerset.map fun G₁ =>
       op (unop (insertion (c • F) (of' (R := R) G₁)) *
           unop (of' (R := R) (G - G₁)))).sum : GrossmanLarson R α) =
@@ -567,6 +571,7 @@ guest case) and `insertionBasis 0 G_basis = if G_basis = 0 then 1 else 0`
 (empty-host case). These let `mul_one` and `one_mul` reduce via the
 powerset formula. -/
 
+omit [DecidableEq α] in
 /-- `insertionBasis F 0 = of' F`: with no guests, the multi-graft leaves
     F unchanged. -/
 private theorem insertionBasis_zero_right (F_basis : Forest (Nonplanar α)) :
@@ -575,12 +580,14 @@ private theorem insertionBasis_zero_right (F_basis : Forest (Nonplanar α)) :
   rw [Nonplanar.insertionMultiset_zero_right, Multiset.map_singleton,
       Multiset.sum_singleton]
 
+omit [DecidableEq α] in
 /-- `insertionBasis 0 0 = 1`: inserting nothing into the empty forest
     gives the empty forest. -/
 private theorem insertionBasis_zero_zero :
     insertionBasis (R := R) (0 : Forest (Nonplanar α)) 0 = 1 := by
   rw [insertionBasis_zero_right, of'_zero]
 
+omit [DecidableEq α] in
 /-- `insertionBasis 0 G = 0` for non-empty G: no host vertices to graft
     guests into. -/
 private theorem insertionBasis_zero_left_of_ne_zero
@@ -590,6 +597,7 @@ private theorem insertionBasis_zero_left_of_ne_zero
   rw [Nonplanar.insertionMultiset_zero_left_of_ne_zero G_basis h,
       Multiset.map_zero, Multiset.sum_zero]
 
+omit [DecidableEq α] in
 /-- `insertion F 1 = F`. The bilinear extension at the unit of H reduces
     to summing `insertionBasis F_basis 0 = of' F_basis` over F's basis
     decomposition, which equals F by `basisLift_of'_apply`. -/
@@ -609,7 +617,6 @@ theorem insertion_one_right (F : GrossmanLarson R α) :
     `(0:Multiset).powerset = {0}` collapses to a single summand, which
     reduces via `insertion_one_right` to F. -/
 theorem mul_one (F : GrossmanLarson R α) : F * 1 = F := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   show product F 1 = F
   show (basisLift (productForestLin (R := R) (α := α))).flip F 1 = F
   rw [LinearMap.flip_apply, basisLift_one]
@@ -630,6 +637,7 @@ theorem mul_one (F : GrossmanLarson R α) : F * 1 = F := by
         (1 : GrossmanLarson R α) from of'_zero]
   exact insertion_one_right F
 
+omit [DecidableEq α] in
 /-- Auxiliary: `insertion 1 (of' 0) = 1`. -/
 private theorem insertion_one_of'_zero :
     insertion (1 : GrossmanLarson R α)
@@ -638,6 +646,7 @@ private theorem insertion_one_of'_zero :
   conv_lhs => rw [← of'_zero (R := R) (α := α)]
   rw [insertion_of'_of', insertionBasis_zero_zero]
 
+omit [DecidableEq α] in
 /-- `insertion 1 (of' G₁) = 0` for non-empty G₁. -/
 theorem insertion_one_of'_ne_zero (G₁ : Forest (Nonplanar α))
     (h : G₁ ≠ 0) :
@@ -651,8 +660,7 @@ theorem insertion_one_of'_ne_zero (G₁ : Forest (Nonplanar α))
     base case via `powerset_zero = {0}`; cons case via `powerset_cons`
     splits the count additively, and the `map (cons a)` half contains
     no `0` (by `cons_ne_zero`). -/
-private theorem count_zero_powerset [DecidableEq (Nonplanar α)]
-    (s : Multiset (Nonplanar α)) :
+private theorem count_zero_powerset (s : Multiset (Nonplanar α)) :
     Multiset.count (0 : Forest (Nonplanar α)) s.powerset = 1 := by
   induction s using Multiset.induction with
   | empty =>
@@ -671,7 +679,6 @@ private theorem count_zero_powerset [DecidableEq (Nonplanar α)]
     once. The `G₁ ≠ 0` summands vanish via `insertion_one_of'_ne_zero`. -/
 private theorem productForest_one_left (G_basis : Forest (Nonplanar α)) :
     productForest (1 : GrossmanLarson R α) G_basis = of' G_basis := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   unfold productForest
   -- Split powerset as `0 ::ₘ powerset.erase 0`
   have h0_mem : (0 : Forest (Nonplanar α)) ∈ G_basis.powerset :=

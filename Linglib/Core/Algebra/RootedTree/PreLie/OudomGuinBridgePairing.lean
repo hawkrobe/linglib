@@ -57,7 +57,7 @@ open PreLie.OudomGuinCirc
 
 namespace GrossmanLarson
 
-variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (Nonplanar α)]
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### ε is multiplicative for the GL product
 
@@ -175,9 +175,6 @@ private theorem counit_gl_mul_basis (A B : Forest (Nonplanar α)) :
         (ConnesKreimer.of' B) = 0 := by
       rw [ConnesKreimer.counit_of', if_neg hBcard]
     rw [hCBzero, mul_zero]
-    -- Override DecidableEq with Classical so that B.powerset, B - B₁, etc. match
-    -- the instance used in productForest's `letI : DecidableEq ... := Classical.decEq _`.
-    letI : DecidableEq (Nonplanar α) := Classical.decEq _
     -- Strategy: expand of' A * of' B via productForest formula, push counit through
     -- the Multiset.sum, show each summand reduces to counit(of' A) * counit(of' B) = 0,
     -- so the sum is 0.
@@ -420,7 +417,6 @@ theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
 
 /-! ### Phase D's pairing-side recurrence -/
 
-omit [DecidableEq (Nonplanar α)] in
 /-- Phase D RHS recurrence: `⟨unop (op X * op Y), bPlusLin a z⟩` unfolds
     via B+/B- adjoint + Phase C `bMinusLin_gl_mul`.
 

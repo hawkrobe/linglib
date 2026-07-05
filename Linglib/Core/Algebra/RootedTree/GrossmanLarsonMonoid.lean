@@ -46,7 +46,7 @@ namespace RootedTree
 
 namespace GrossmanLarson
 
-variable {α : Type*}
+variable {α : Type*} [DecidableEq α]
 
 /-! ### `(M.map of').sum` coefficient extraction (multiset injectivity) -/
 
@@ -54,7 +54,7 @@ variable {α : Type*}
     Nat to R. Holds for any `CommSemiring R`. Used to extract multiset
     equality from sum equality at `R = ℤ`. -/
 private theorem sum_of'_apply
-    {R : Type*} [CommSemiring R] [DecidableEq (Nonplanar α)]
+    {R : Type*} [CommSemiring R]
     (M : Multiset (Forest (Nonplanar α))) (H : Forest (Nonplanar α)) :
     (((M.map (fun F => (of' (R := R) F : GrossmanLarson R α))).sum :
         GrossmanLarson R α) H : R) = (M.count H : R) := by
@@ -86,7 +86,7 @@ private theorem sum_of'_apply
     · rw [if_neg hFH, if_neg (fun h => hFH h.symm), add_comm]
 
 /-- Multiset equality at `R = ℤ` from sum equality. -/
-private theorem multiset_eq_of_sum_eq_int [DecidableEq (Nonplanar α)]
+private theorem multiset_eq_of_sum_eq_int
     (M₁ M₂ : Multiset (Forest (Nonplanar α)))
     (h : ((M₁.map (fun F => (of' (R := ℤ) F : GrossmanLarson ℤ α))).sum :
           GrossmanLarson ℤ α) =
@@ -105,6 +105,7 @@ private theorem multiset_eq_of_sum_eq_int [DecidableEq (Nonplanar α)]
   rw [h1, h2] at heq
   exact_mod_cast heq
 
+omit [DecidableEq α] in
 /-- Map-then-sum of `of'` is preserved under multiset equality (R-generic). -/
 private theorem sum_of'_congr
     {R : Type*} [CommSemiring R]
@@ -121,7 +122,6 @@ private theorem sum_of'_congr
 private noncomputable def lhsMultiset
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     Multiset (Forest (Nonplanar α)) :=
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   F₂.powerset.bind fun B₁ =>
     (Nonplanar.insertionMultiset F₁ B₁).bind fun X =>
       F₃.powerset.bind fun C₁ =>
@@ -134,7 +134,6 @@ private noncomputable def lhsMultiset
 private noncomputable def rhsMultiset
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     Multiset (Forest (Nonplanar α)) :=
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   F₃.powerset.bind fun C₁' =>
     (Nonplanar.insertionMultiset F₂ C₁').bind fun Z =>
       Z.powerset.bind fun P_Z =>
@@ -150,7 +149,6 @@ private theorem lhs_eq_sum_of'
       (((lhsMultiset F₁ F₂ F₃).map
           (fun F => (of' (R := R) F : GrossmanLarson R α))).sum :
         GrossmanLarson R α) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   rw [lhs_quadruple_form]
   -- Goal: nested-bind sum with `of'` inside = (lhsMultiset.map of').sum
   -- Push `map of'` outside by induction over the binds.
@@ -169,7 +167,6 @@ private theorem rhs_eq_sum_of'
       (((rhsMultiset F₁ F₂ F₃).map
           (fun F => (of' (R := R) F : GrossmanLarson R α))).sum :
         GrossmanLarson R α) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   rw [rhs_quintuple_form]
   unfold rhsMultiset
   simp only [Multiset.map_bind, Multiset.map_map, Function.comp]
@@ -178,7 +175,7 @@ private theorem rhs_eq_sum_of'
     invoking the closed integer case `mul_assoc_basis_via_oudom_guin_pbw`
     and pulling out the multiset equality via `Finsupp` coefficient
     extraction. -/
-private theorem lhsMultiset_eq_rhsMultiset [DecidableEq (Nonplanar α)]
+private theorem lhsMultiset_eq_rhsMultiset
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     lhsMultiset F₁ F₂ F₃ = rhsMultiset F₁ F₂ F₃ := by
   apply multiset_eq_of_sum_eq_int
@@ -194,7 +191,6 @@ theorem mul_assoc_basis {R : Type*} [CommSemiring R]
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
       of' F₁ * (of' F₂ * of' F₃) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   rw [lhs_eq_sum_of' (R := R), rhs_eq_sum_of' (R := R),
       sum_of'_congr (lhsMultiset_eq_rhsMultiset F₁ F₂ F₃)]
 

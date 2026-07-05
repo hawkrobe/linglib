@@ -52,7 +52,7 @@ namespace GrossmanLarson
 
 open ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### `bMinusBasis` via per-list branching with perm-invariance -/
 
@@ -62,7 +62,6 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 private noncomputable def bMinusList (a : α) :
     List (Nonplanar α) → ConnesKreimer R (Nonplanar α)
   | [T] =>
-      letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
       if Nonplanar.rootValue T = a then
         of' (R := R) (Nonplanar.rootChildren T)
       else 0
@@ -123,9 +122,7 @@ noncomputable def bMinusBasis (a : α) (F : Forest (Nonplanar α)) :
   show Quotient.liftOn (↑[Nonplanar.node a F] : Multiset (Nonplanar α))
       (bMinusList (R := R) a) _ = of' F
   show bMinusList (R := R) a [Nonplanar.node a F] = of' F
-  show (letI : Decidable (Nonplanar.rootValue (Nonplanar.node a F) = a) :=
-            Classical.dec _
-        if Nonplanar.rootValue (Nonplanar.node a F) = a then
+  show (if Nonplanar.rootValue (Nonplanar.node a F) = a then
           of' (R := R) (Nonplanar.rootChildren (Nonplanar.node a F))
         else 0) = of' F
   rw [Nonplanar.rootValue_node, if_pos rfl, Nonplanar.rootChildren_node]
@@ -159,9 +156,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
   -- ofTree T = of' {T}.
   have hRHS : pairing (R := R) (of' F)
       (ofTree (Nonplanar.node a G) : ConnesKreimer R (Nonplanar α)) =
-    (letI : Decidable (F = ({Nonplanar.node a G} : Forest (Nonplanar α))) :=
-        Classical.dec _
-      if F = ({Nonplanar.node a G} : Forest (Nonplanar α)) then
+    (if F = ({Nonplanar.node a G} : Forest (Nonplanar α)) then
         (forestAutCard F : R) else 0) := by
     show pairing (R := R) (of' F)
         (of' ({Nonplanar.node a G} : Forest (Nonplanar α))) = _
@@ -177,14 +172,12 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
   -- RHS = [F = {node a G}] · forestAutCard F.
   -- Match: F = {node a G''} = {node a G} ↔ G'' = G; forestAutCard {node a G} = forestAutCard {node a G''}.
   -- So both sides are: [F = {node a G}] · forestAutCard F.
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
   by_cases hF : ∃ G' : Forest (Nonplanar α), F = {Nonplanar.node a G'}
   · obtain ⟨G', hFG'⟩ := hF
     subst hFG'
     rw [bMinusBasis_singleton_node]
     have hLHS : pairing (R := R) (of' G') (of' G) =
-        (letI : Decidable (G' = G) := Classical.dec _
-         if G' = G then (forestAutCard G' : R) else 0) :=
+        (if G' = G then (forestAutCard G' : R) else 0) :=
       pairing_of'_of' G' G
     rw [hLHS]
     by_cases hG : G' = G
@@ -194,7 +187,6 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
           ((Nonplanar.forestAutCard ({Nonplanar.node a G'} : Forest _) : R))
       congr 1
       -- forestAutCard {node a G'} = autCard (node a G') = forestAutCard G'.
-      letI : DecidableEq (Nonplanar α) := Classical.decEq _
       show Nonplanar.forestAutCard G' =
         Nonplanar.forestAutCard ({Nonplanar.node a G'} : Forest _)
       conv_rhs => unfold Nonplanar.forestAutCard
@@ -226,8 +218,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
       rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
       · rfl
       · -- lst = [T]; F = ↑[T] = {T}. Need: T ≠ Nonplanar.node a (anything).
-        show (letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
-              if Nonplanar.rootValue T = a then
+        show (if Nonplanar.rootValue T = a then
                 of' (R := R) (Nonplanar.rootChildren T)
               else 0) = 0
         rw [if_neg]
@@ -374,6 +365,7 @@ product). This is `singleton_node_a_insertion_eq_bPlus_gl_mul` below.
 private theorem bind_eq_map_sum {γ δ : Type*} (s : Multiset γ)
     (f : γ → Multiset δ) : s.bind f = (s.map f).sum := rfl
 
+omit [DecidableEq α] in
 /-- The `true`-bucket of a zip over `Quotient.out` representatives has
     the nonplanar `true`-bucket as its `mk`-image. -/
 private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bool) :
@@ -395,6 +387,7 @@ private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bo
         rfl
       | false => exact ih assn
 
+omit [DecidableEq α] in
 /-- The `false`-bucket analog of `filterMap_zip_out_mk_t`. -/
 private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bool) :
     (((l.map Quotient.out).zip assn).filterMap
@@ -431,11 +424,9 @@ private theorem nim_singleton_node_a_decomp
     (a : α) (A' B : Forest (Nonplanar α)) :
     Nonplanar.insertionMultiset
         ({Nonplanar.node a A'} : Forest (Nonplanar α)) B =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       B.powerset.bind fun B₁ =>
+      (B.powerset.bind fun B₁ =>
          (Nonplanar.insertionMultiset A' B₁).map fun F' =>
            ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- §1: the canonical planar representative of the host is equivalent to
   -- the visible node on A''s canonical children list.
   have h_mk2 : Nonplanar.mk (RoseTree.node a (A'.toList.map Quotient.out)) =
@@ -612,7 +603,6 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
         (GrossmanLarson.unop
           ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
             GrossmanLarson.of' B)) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Common form: (B.powerset.map (fun B₁ =>
   --   ((NIM A' B₁).map (fun F' => of' {node a (F' + (B - B₁))})).sum)).sum
   set common : ConnesKreimer R (Nonplanar α) :=
@@ -780,8 +770,7 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
   rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
   · rfl
   · -- lst = [T]; F = ↑[T] = {T}. Need: T's root label ≠ a.
-    show (letI : Decidable (Nonplanar.rootValue T = a) := Classical.dec _
-          if Nonplanar.rootValue T = a then
+    show (if Nonplanar.rootValue T = a then
             of' (R := R) (Nonplanar.rootChildren T) else 0) = 0
     rw [if_neg]
     intro hlab
@@ -797,10 +786,8 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
 private theorem counit_of'_eq (F : Forest (Nonplanar α)) :
     (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
       (ConnesKreimer.of' F) =
-      (letI : Decidable (F = 0) := Classical.dec _
-       if F = 0 then (1 : R) else 0) := by
+      (if F = 0 then (1 : R) else 0) := by
   rw [ConnesKreimer.counit_of']
-  letI : Decidable (F = 0) := Classical.dec _
   by_cases h : F = 0
   · subst h; simp
   · have hne : F.card ≠ 0 := fun hc => h (Multiset.card_eq_zero.mp hc)
@@ -816,10 +803,8 @@ private theorem counit_of'_eq (F : Forest (Nonplanar α)) :
 private theorem bMinusBasis_singleton_node_add (a : α)
     (F G : Forest (Nonplanar α)) :
     bMinusBasis (R := R) a ({Nonplanar.node a F} + G) =
-      (letI : Decidable (G = 0) := Classical.dec _
-       if G = 0 then (ConnesKreimer.of' (R := R) F : ConnesKreimer R (Nonplanar α))
+      (if G = 0 then (ConnesKreimer.of' (R := R) F : ConnesKreimer R (Nonplanar α))
        else 0) := by
-  letI : Decidable (G = 0) := Classical.dec _
   by_cases hG : G = 0
   · subst hG
     rw [add_zero, if_pos rfl, bMinusBasis_singleton_node]
@@ -845,9 +830,7 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     bMinusLin (R := R) a
       (ConnesKreimer.bPlusLin (R := R) a Y *
         ConnesKreimer.of' (R := R) G) =
-      (letI : Decidable (G = 0) := Classical.dec _
-       if G = 0 then Y else 0) := by
-  letI : Decidable (G = 0) := Classical.dec _
+      (if G = 0 then Y else 0) := by
   refine ConnesKreimer.induction_linear Y ?_ ?_ ?_
   · -- Y = 0
     show bMinusLin (R := R) a
@@ -907,10 +890,8 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
 private lemma sum_powerset_diff_zero_indicator
     {β : Type*} [AddCommMonoid β]
     (B : Forest (Nonplanar α)) (f : Forest (Nonplanar α) → β) :
-    letI : DecidableEq (Nonplanar α) := Classical.decEq _
     (B.powerset.map fun B₁ =>
       if B - B₁ = (0 : Forest (Nonplanar α)) then f B₁ else (0 : β)).sum = f B := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   induction B using Multiset.induction generalizing f with
   | empty =>
     rw [Multiset.powerset_zero, Multiset.map_singleton, Multiset.sum_singleton]
@@ -965,8 +946,6 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
     (hA : ¬ ∃ G' : Forest (Nonplanar α), A = ({Nonplanar.node a G'} : Forest _))
     (hF' : F' ∈ Nonplanar.insertionMultiset A B₁) :
     bMinusBasis (R := R) a (F' + B') = 0 := by
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   apply bMinusBasis_eq_zero_of_not_singleton_a
   rintro ⟨G, hG⟩
   -- (F' + B').card = |A| + |B'|; must equal 1.
@@ -1031,8 +1010,6 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       GrossmanLarson.unop
         ((GrossmanLarson.op (bMinusLin (R := R) a (ConnesKreimer.of' A))) *
           GrossmanLarson.of' B) := by
-  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   by_cases hA : ∃ A' : Forest (Nonplanar α), A = ({Nonplanar.node a A'} : Forest _)
   · -- Hard case: A = {node a A'}. Uses singleton_node_a_insertion_eq_bPlus_gl_mul.
     obtain ⟨A', hAA'⟩ := hA
@@ -1156,8 +1133,6 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
         GrossmanLarson.unop
           ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
             GrossmanLarson.of' B₁))
-    -- h_collapse uses Classical.decEq for the if-then-else; goal uses local instance.
-    -- Decidable instances on the same proposition are subsingletons.
     convert h_collapse using 4
     · rfl
   · -- A is not singleton-a-rooted. bMinusLin a (of' A) = 0 and counit (of' A) handled by sub-cases.

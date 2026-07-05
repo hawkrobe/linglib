@@ -48,7 +48,7 @@ namespace RootedTree
 
 namespace GrossmanLarson
 
-variable {R : Type*} [CommSemiring R] {α : Type*}
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### §1: Prop 2.7.iii — `∘` distributes over disjoint union via shuffle Δ
 
@@ -73,12 +73,10 @@ separately and prove by descent from the `RoseTree`-level `insertionForest`.
 theorem _root_.RootedTree.Nonplanar.insertionMultiset_add_host
     (A B C : Forest (Nonplanar α)) :
     Nonplanar.insertionMultiset (A + B) C =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       C.powerset.bind fun C₁ =>
+      (C.powerset.bind fun C₁ =>
         ((Nonplanar.insertionMultiset A C₁) ×ˢ
           (Nonplanar.insertionMultiset B (C - C₁))).map
           (fun p => p.1 + p.2)) := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Steps 1-5: Unfold NIM, apply host-Perm bridge, hostBucketSum bridge, assignment
   -- rewrite, and push msform through the outer bind.
   unfold Nonplanar.insertionMultiset
@@ -378,7 +376,6 @@ private theorem perm_lift_mk {l₂ l₁ : List (RoseTree α)}
       rw [List.map_cons]
       exact List.mem_cons_self
     obtain ⟨a, ha_mem, hfa_eq⟩ := List.mem_map.mp hfb_mem
-    letI : DecidableEq (RoseTree α) := Classical.decEq _
     have hperm_l₁ : l₁.Perm (a :: l₁.erase a) := List.perm_cons_erase ha_mem
     have h' : ((a :: l₁.erase a).map Nonplanar.mk).Perm
         ((b :: l₂_rest).map Nonplanar.mk) :=
@@ -392,6 +389,7 @@ private theorem perm_lift_mk {l₂ l₁ : List (RoseTree α)}
     · exact hperm_l₁.trans (hperm_rest.cons a)
     · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
 
+omit [DecidableEq α] in
 /-- A `mk`-equality on lists `l₁.map mk = l₂.map mk` lifts to componentwise
     `Forall₂ Perm l₁ l₂`. -/
 private theorem forall2_perm_of_map_mk_eq :
@@ -407,6 +405,7 @@ private theorem forall2_perm_of_map_mk_eq :
       (Nonplanar.mk_eq_mk_iff.mp h.1)
       (forall2_perm_of_map_mk_eq h.2)
 
+omit [DecidableEq α] in
 /-- `Forall₂ Perm` is symmetric (componentwise symmetry of `Perm`). -/
 private theorem forall2_perm_symm :
     ∀ {l₁ l₂ : List (RoseTree α)},
@@ -670,11 +669,9 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_singleton_assoc
     disjoint-union product `·`. -/
 theorem insertion_mul_distrib (A B C : Forest (Nonplanar α)) :
     insertion (R := R) (of' (A + B)) (of' C) =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       C.powerset.map fun C₁ =>
+      (C.powerset.map fun C₁ =>
         op (unop (insertion (of' A) (of' C₁)) *
             unop (insertion (of' B) (of' (C - C₁))))).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Unfold `insertion (of' F) (of' G)` to `insertionBasis F G = (NIM F G).map of' |>.sum`.
   simp_rw [insertion_of'_of']
   unfold insertionBasis
@@ -739,11 +736,8 @@ complement. This is the "cocommutativity of Δ" component of Lemma 2.10.
     sums for `B_(2) ∘ C` matching. -/
 theorem powerset_partition_swap {β : Type*} [AddCommMonoid β]
     (C : Forest (Nonplanar α)) (f : Forest (Nonplanar α) → Forest (Nonplanar α) → β) :
-    (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-     C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       C.powerset.map fun C₁ => f (C - C₁) C₁).sum :=
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+    (C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
+      (C.powerset.map fun C₁ => f (C - C₁) C₁).sum :=
   Multiset.powerset_partition_swap C f
 
 /-! ### §4: Closing `mul_assoc_basis` via Oudom-Guin Lemma 2.10's chain
@@ -781,11 +775,9 @@ scalar-of-basis) reductions to the basis form. -/
     Finsupp/GrossmanLarson type-alias mismatches in the induction. -/
 theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     product X (of' G) =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       G.powerset.map fun G₁ =>
+      (G.powerset.map fun G₁ =>
         op (unop (insertion X (of' G₁)) *
             unop (of' (G - G₁)))).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   refine ConnesKreimer.induction_linear X ?_ ?_ ?_
   · -- X = 0
     have h_prod_zero : (product : GrossmanLarson R α →ₗ[R] _) 0 (of' G) =
@@ -886,8 +878,7 @@ theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α
 /-- Corollary: `mul_of'_sum_form` (the `*` form, given by `mul_def`). -/
 theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     X * of' G =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       G.powerset.map fun G₁ =>
+      (G.powerset.map fun G₁ =>
         op (unop (insertion X (of' G₁)) *
             unop (of' (G - G₁)))).sum :=
   product_of'_sum_form X G
@@ -919,6 +910,7 @@ theorem of'_mul_sum_form (A : Forest (Nonplanar α))
          ((of' A : GrossmanLarson R α) * s.sum) = _
     rw [ih]
 
+omit [DecidableEq α] in
 /-- `insertion` distributes over a `Multiset.sum` in its first argument
     (since the LinearMap on the first arg pushes through Multiset.sum). -/
 theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
@@ -937,6 +929,7 @@ theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
          insertion a G + (s.map (fun X => insertion X G)).sum
     rw [ih]
 
+omit [DecidableEq α] in
 /-- `insertion` distributes over a `Multiset.sum` in its second argument. -/
 theorem insertion_sum_right (F : GrossmanLarson R α)
     (s : Multiset (GrossmanLarson R α)) :
@@ -955,11 +948,9 @@ theorem insertion_sum_right (F : GrossmanLarson R α)
 theorem insertion_mul_distrib_gen
     (X : GrossmanLarson R α) (Y C : Forest (Nonplanar α)) :
     insertion (R := R) (op (unop X * unop (of' Y))) (of' C) =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       C.powerset.map fun C₁ =>
+      (C.powerset.map fun C₁ =>
         op (unop (insertion X (of' C₁)) *
             unop (insertion (of' Y) (of' (C - C₁))))).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   refine ConnesKreimer.induction_linear X ?_ ?_ ?_
   · -- X = 0 case: both sides reduce to 0.
     -- LHS = insertion (op (0 * unop (of' Y))) (of' C) = insertion 0 (of' C) = 0
@@ -1079,11 +1070,9 @@ Each helper expresses one stage of the LHS or RHS expansion. -/
     `insertion_of'_of'` and `of'_add` to collapse to a forest sum. -/
 theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (Nonplanar α)) :
     (of' F₁ : GrossmanLarson R α) * of' F₂ =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       F₂.powerset.bind fun B₁ =>
+      (F₂.powerset.bind fun B₁ =>
         (Nonplanar.insertionMultiset F₁ B₁).map
           fun X => (of' (R := R) (X + (F₂ - B₁)) : GrossmanLarson R α)).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   rw [mul_of'_sum_form, Multiset.sum_bind]
   apply congr_arg Multiset.sum
   apply Multiset.map_congr rfl
@@ -1139,8 +1128,7 @@ private theorem sum_mul_of' (s : Multiset (GrossmanLarson R α))
     associativity LHS / RHS at the multiset-indexing level (R-generic). -/
 theorem lhs_quadruple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       F₂.powerset.bind fun B₁ =>
+      (F₂.powerset.bind fun B₁ =>
         (Nonplanar.insertionMultiset F₁ B₁).bind fun X =>
           F₃.powerset.bind fun C₁ =>
             (C₁.powerset.bind fun D =>
@@ -1148,7 +1136,6 @@ theorem lhs_quadruple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
                 (Nonplanar.insertionMultiset (F₂ - B₁) (C₁ - D))).map
                   fun p => (of' (R := R) (p.1 + p.2 + (F₃ - C₁)) :
                     GrossmanLarson R α))).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Step 1: rewrite (A * B) using of'_mul_of'_nim_form.
   rw [of'_mul_of'_nim_form]
   -- Step 2: push `(...) * of' F₃` through the outer sums.
@@ -1207,15 +1194,13 @@ theorem lhs_quadruple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     `lhs_quadruple_form` to derive R-generic associativity. -/
 theorem rhs_quintuple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     (of' F₁ : GrossmanLarson R α) * (of' F₂ * of' F₃) =
-      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
-       F₃.powerset.bind fun C₁' =>
+      (F₃.powerset.bind fun C₁' =>
         (Nonplanar.insertionMultiset F₂ C₁').bind fun Z =>
           Z.powerset.bind fun P_Z =>
             (F₃ - C₁').powerset.bind fun P_F =>
               (Nonplanar.insertionMultiset F₁ (P_Z + P_F)).map
                 fun W => (of' (R := R) (W + ((Z - P_Z) + ((F₃ - C₁') - P_F))) :
                   GrossmanLarson R α)).sum := by
-  letI : DecidableEq (Nonplanar α) := Classical.decEq _
   -- Step 1: rewrite of' F₂ * of' F₃ via of'_mul_of'_nim_form.
   rw [of'_mul_of'_nim_form]
   -- Step 2: push of' F₁ * (.).sum through using of'_mul_sum_form.

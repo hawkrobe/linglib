@@ -1191,7 +1191,7 @@ matching the level used by `Nonplanar.insertionMultiset`. -/
 /-- General `Perm` lifting: if `(l₁.map f).Perm (l₂.map f)`, there exists
     a `RoseTree` list `l_mid` such that `l₁.Perm l_mid` and `l_mid.map f = l₂.map f`
     AS LISTS (so `Forall₂ (mk · = mk ·) l_mid l₂` follows). -/
-private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁) :
+private theorem perm_lift_through_map {α₁ β₁ : Type*} [DecidableEq α₁] (f : α₁ → β₁) :
     ∀ {l₂ l₁ : List α₁}, (l₁.map f).Perm (l₂.map f) →
     ∃ l_mid : List α₁, l₁.Perm l_mid ∧ l_mid.map f = l₂.map f := by
   intro l₂
@@ -1210,7 +1210,6 @@ private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁
       rw [List.map_cons]
       exact List.mem_cons_self
     obtain ⟨a, ha_mem, hfa_eq⟩ := List.mem_map.mp hfb_mem
-    letI : DecidableEq α₁ := Classical.decEq _
     -- l₁ Perm (a :: l₁.erase a)
     have hperm_l₁ : l₁.Perm (a :: l₁.erase a) := List.perm_cons_erase ha_mem
     -- ((a :: l₁.erase a).map f) Perm ((b :: l₂_rest).map f)
@@ -1301,7 +1300,7 @@ private theorem insertionForest_forall₂_perm_guests
     rw [ih_F h_ff]
 
 /-- **Combined guest invariance** at the multiset-of-multiset level. -/
-theorem insertionForest_msform_invariance_guests
+theorem insertionForest_msform_invariance_guests [DecidableEq α]
     (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
     (h : (gs1.map Nonplanar.mk).Perm (gs2.map Nonplanar.mk)) :
     (insertionForest host gs1).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
