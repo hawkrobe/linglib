@@ -1,134 +1,78 @@
-import Linglib.Features.QParticleLayer
 import Linglib.Semantics.Questions.Singleton
+import Linglib.Semantics.Questions.Hamblin
 import Linglib.Fragments.HindiUrdu.Particles
-import Linglib.Fragments.Japanese.Particles
-import Linglib.Fragments.English.QuestionParticles
 
 /-!
-# Bhatt & Dayal (2020): PQP analysis of Hindi-Urdu *kya:* [bhatt-dayal-2020]
+# Bhatt & Dayal (2020): the polar question particle *kya:*
+[bhatt-dayal-2020]
 
-Polar Question Particle analysis: Hindi-Urdu *kya:* sits at PerspP, not CP.
-Combined with [dayal-2025]'s three-layer cartography
-`[SAP [PerspP [CP ...]]]` and [sauerland-yatsushiro-2017]'s analysis
-of Japanese *kke* as a meta question particle (MQP).
-
-This study file is the canonical home for the layer assignments of
-the four typologically representative particles that motivate the
-three-way `cp / perspP / sap` split:
-
-| Layer  | Language    | Particle        | Distribution         |
-|--------|-------------|-----------------|----------------------|
-| CP     | Japanese    | *ka*            | matrix + subord + QS |
-| PerspP | Hindi-Urdu  | *kya:*          | matrix + QS, no sub  |
-| SAP    | Japanese    | *kke*           | matrix + quotation   |
-| SAP    | English     | *quick(ly)*     | matrix only          |
-
-The layer of each particle is DERIVED from its fragment's
-embedding-distribution facet by `layerOf` — the cartography's defining
-correlation (layer ↔ embedding distribution), stated once as a
-classifier rather than stipulated per particle.
+Hindi-Urdu polar *kya:* is a **polar question particle** (PQP) — a class
+distinct from clause-typing Q-morphemes like Japanese *ka*: it occurs only in
+polar questions (not in wh-questions), sits in a projection above CP the
+paper labels ForceP, and embeds only in the quasi-subordinated configuration
+of [dayal-grimshaw-2009] (complements of rogatives), not in ordinary
+subordination. Semantically kya: presupposes that its sister question has a
+**singleton** alternative set (eq. 23) and is otherwise the identity; a polar
+question denotes the singleton `{p}` (eq. 22b). The same singleton
+restriction models the (bias-introducing) Mandarin particle *nandao* in
+[xu-2012] (cross-linguistic picture in [xu-2017]), which the paper draws on.
 -/
 
 namespace BhattDayal2020
 
-open Features (QParticleLayer)
-open Question (IsSingleton SingletonQuestion declarative polar
-  isSingleton_declarative not_isSingleton_polar_of_nontrivial)
+open Question (IsSingleton SingletonQuestion declarative polar which
+  isSingleton_declarative not_isSingleton_polar_of_nontrivial
+  not_isSingleton_of_two_alternatives alt_which_of_antichain)
 open HindiUrdu.Particles (kya)
-open Japanese.Particles (ka kke)
-open English.QuestionParticles (quick)
 
--- ============================================================================
--- §1 — The layer classifier (derived, not stipulated)
--- ============================================================================
+variable {W : Type*}
 
-/-- The [dayal-2025] cartography's defining correlation, as a
-    classifier: a question particle's left-peripheral layer is read off
-    its embedding distribution — subordinated-licensed → CP
-    (clause-typing); subordinated-excluded but quasi-subordinated-
-    licensed → PerspP; quasi-subordinated-excluded but matrix-licensed →
-    SAP. Defined for question particles only — Japanese *koto* (a
-    declarative complementizer, kept in the fragment for the *ka*
-    contrast at [dayal-2025] (15)) is outside its intended domain. -/
-def layerOf (p : Particle) : Option QParticleLayer :=
-  if p.LicensedInEmbed .subordinated then some .cp
-  else if p.LicensedInEmbed .quasiSubordinated then some .perspP
-  else if p.LicensedInEmbed .matrix then some .sap
-  else none
+/-! ### The singleton-alternative presupposition (eq. 23)
 
-/-- `layerOf`'s intended domain: the question particles this study
-    classifies. Membership is a claim about what the particle *does*
-    (question-forming), not about its distribution — Japanese *koto*
-    (declarative complementizer) has an embedding facet but is
-    deliberately outside. -/
-def qParticles : List Particle := [ka, kya, kke, quick]
+`⟦kya:⟧ = λQ⟨st⟩t : ∃p ∈ Q[∀q[q ∈ Q → q = p]].Q` — defined only when the
+sister question `Q` has a singleton alternative set, and then the identity
+on `Q`. The presupposition is `Question.IsSingleton`; the felicitous sister
+is the subtype `SingletonQuestion W`. In the paper a polar question denotes
+a singleton (eq. 22b: ⟦did John leave⟧ = {John left}) — the substrate's
+one-cell `declarative p`, not its two-cell Hamblin `polar`. -/
 
-/-- The four representative layer assignments, DERIVED from the
-    fragments' embedding facets: *ka* CP ([dayal-2025]), *kya:* PerspP
-    ([bhatt-dayal-2020]), *kke* SAP ([sauerland-yatsushiro-2017]),
-    *quick* SAP ([dayal-2025] ex. (19)). Formerly four stipulated
-    constants; now one classifier plus kernel-checked facts. -/
-theorem layers_derived :
-    layerOf ka = some .cp ∧
-    layerOf kya = some .perspP ∧
-    layerOf kke = some .sap ∧
-    layerOf quick = some .sap := by decide
-
-/-- Every particle in the classifier's domain receives a layer. -/
-theorem qParticles_layered : ∀ p ∈ qParticles, (layerOf p).isSome := by decide
-
--- ============================================================================
--- §2 — Singleton-Alternative Presupposition (eq. 23)
--- ============================================================================
-
-/-! [bhatt-dayal-2020] eq. 23:
-`⟦kya:⟧ = λp[∃q ∈ Q[∀q′[q′ ∈ Q → q′ = q]].Q`
-i.e. *kya:* is interpreted only when its sister question `Q` has a
-singleton alternative set, in which case the particle is the identity
-on `Q`. The presupposition is exactly `Question.IsSingleton`; the
-well-typed analogue of "felicitous sister content" is the subtype
-`SingletonQuestion W` (a question paired with a proof that its
-alternative set is a singleton). The "highlighted" terminology of
-[roelofsen-farkas-2015] corresponds to `declarative p` in this
-setting (one-cell denotation, in contrast to the two-cell `polar p`).
-
-[bhatt-dayal-2020] fn. 11 cites the parallel Mandarin *nandao*
-analysis as the model for kya:; the shared `IsSingleton` predicate
-captures that convergence by construction. See
-`Zheng2025` for the nandao binding. -/
-
-universe u
-variable {W : Type u}
-
-/-- **Empirical prediction (felicitous case)**: kya: composes
-    felicitously with a one-cell "highlighted" polar — i.e. with the
-    declarative content `declarative p`, the singleton-alternative
-    analogue of the standard two-cell polar. The canonical good input. -/
-theorem kya_felicitous_declarative (p : Set W) :
+/-- Felicitous case: a polar question in the paper's sense is a singleton. -/
+theorem kya_felicitous_singleton_polar (p : Set W) :
     IsSingleton (declarative (W := W) p) :=
   isSingleton_declarative p
 
-/-- **Empirical prediction (defined case)**: kya: on a felicitous
-    sister returns the question unchanged — packaged as a
-    `SingletonQuestion` whose underlying issue is the input declarative.
-    Mathlib pattern: subtype + `.val` rather than `Option`. -/
-theorem kya_interp_declarative (p : Set W) :
-    (SingletonQuestion.ofDeclarative (W := W) p).issue = declarative p := rfl
+/-- Defined case: on a felicitous sister, kya: is the identity. -/
+theorem kya_interp (p : Set W) :
+    (SingletonQuestion.ofDeclarative (W := W) p).issue = declarative p :=
+  SingletonQuestion.ofDeclarative_issue p
 
-/-- **Empirical prediction (infelicitous case)**: kya: cannot license
-    a two-cell Hamblin polar with a non-trivial proposition — the
-    presupposition fails because such a polar has two alternatives. -/
+/-- The headline restriction (ex. 4): a wh-question with two distinct answer
+cells is non-singleton, so kya: rejects it. -/
+theorem kya_infelicitous_wh {E : Type*} {D : Set E} {P : E → Set W}
+    (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
+    (hA : IsAntichain (· ⊆ ·) (P '' D))
+    {e₁ e₂ : E} (h₁ : e₁ ∈ D) (h₂ : e₂ ∈ D) (hPne : P e₁ ≠ P e₂) :
+    ¬ IsSingleton (which D P) := by
+  refine not_isSingleton_of_two_alternatives _ ?_ ?_ hPne <;>
+    rw [alt_which_of_antichain hD hne hA]
+  exacts [⟨e₁, h₁, rfl⟩, ⟨e₂, h₂, rfl⟩]
+
+/-- A two-cell Hamblin polar likewise fails the presupposition. -/
 theorem kya_infelicitous_two_cell_polar {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     ¬ IsSingleton (polar (W := W) p) :=
   not_isSingleton_polar_of_nontrivial hne hnu
 
-/-- **Bridge to fragment**: the PerspP layer derived from kya:'s
-    embedding facet (`layers_derived`) is the surface signal of the
-    singleton-presupposition analysis — the PerspP-layer particle is
-    the one whose interpretation is given by the `IsSingleton`
-    presupposition + identity on `SingletonQuestion`. -/
-theorem kya_perspP_signals_singletonPresup :
-    layerOf kya = some .perspP := layers_derived.2.1
+/-! ### Embedding: quasi-subordination only
+
+kya: appears in matrix polar questions and in the quasi-subordinated
+configuration of [dayal-grimshaw-2009] (complements of rogatives, ex. 9)
+but not in ordinary subordination (complements of responsives, ex. 8) —
+read off the fragment's embedding facet. -/
+
+theorem kya_embedding_profile :
+    kya.LicensedInEmbed .matrix ∧ kya.LicensedInEmbed .quasiSubordinated ∧
+      ¬ kya.LicensedInEmbed .subordinated := by
+  decide
 
 end BhattDayal2020

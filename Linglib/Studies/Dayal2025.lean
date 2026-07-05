@@ -1,5 +1,8 @@
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Studies.BhattDayal2020
+import Linglib.Features.QParticleLayer
+import Linglib.Fragments.HindiUrdu.Particles
+import Linglib.Fragments.Japanese.Particles
+import Linglib.Fragments.English.QuestionParticles
 
 /-!
 # Dayal (2025): Three-layer cartography for clause-typing
@@ -43,7 +46,10 @@ This study file is the canonical home for:
 namespace Dayal2025
 
 open Minimalist.LeftPeriphery
-open BhattDayal2020
+open Features (QParticleLayer)
+open HindiUrdu.Particles (kya)
+open Japanese.Particles (ka kke)
+open English.QuestionParticles (quick)
 
 -- ============================================================================
 -- §1. Clause-typing typology (Dayal 2025 §4.4)
@@ -407,6 +413,50 @@ theorem cross_linguistic_shiftiness_predicted :
           classifyCrossLingVerb,
           hindi_urdu_want_to_know, hindi_urdu_know_bare,
           hindi_urdu_know_negated, hindi_urdu_know_questioned]
+
+/-! ### The three-layer classifier for question particles
+
+The cartography's defining correlation as a classifier: a question
+particle's left-peripheral layer is read off its embedding distribution —
+subordinated-licensed → CP (clause-typing); subordinated-excluded but
+quasi-subordinated-licensed → PerspP; quasi-subordinated-excluded but
+matrix-licensed → SAP. [bhatt-dayal-2020]'s ForceP location for Hindi-Urdu
+*kya:* is recast here as PerspP.
+
+| Layer  | Language    | Particle    | Distribution         |
+|--------|-------------|-------------|----------------------|
+| CP     | Japanese    | *ka*        | matrix + subord + QS |
+| PerspP | Hindi-Urdu  | *kya:*      | matrix + QS, no sub  |
+| SAP    | Japanese    | *kke*       | matrix + quotation   |
+| SAP    | English     | *quick(ly)* | matrix only          |
+-/
+
+/-- A question particle's layer, read off its embedding distribution.
+    Defined for question particles only — Japanese *koto* (a declarative
+    complementizer) is outside the intended domain. -/
+def layerOf (p : Particle) : Option QParticleLayer :=
+  if p.LicensedInEmbed .subordinated then some .cp
+  else if p.LicensedInEmbed .quasiSubordinated then some .perspP
+  else if p.LicensedInEmbed .matrix then some .sap
+  else none
+
+/-- The classifier's intended domain: the question particles this study
+    classifies. Membership is a claim about what the particle *does*
+    (question-forming), not about its distribution. -/
+def qParticles : List Particle := [ka, kya, kke, quick]
+
+/-- The four representative layer assignments, derived from the fragments'
+    embedding facets: *ka* CP, *kya:* PerspP (recasting
+    [bhatt-dayal-2020]'s ForceP), *kke* SAP ([sauerland-yatsushiro-2017]),
+    *quick* SAP. -/
+theorem layers_derived :
+    layerOf ka = some .cp ∧
+    layerOf kya = some .perspP ∧
+    layerOf kke = some .sap ∧
+    layerOf quick = some .sap := by decide
+
+/-- Every particle in the classifier's domain receives a layer. -/
+theorem qParticles_layered : ∀ p ∈ qParticles, (layerOf p).isSome := by decide
 
 /-- Q-particle embedding follows from which left-peripheral layer they occupy:
     CP-layer particles are licensed in subordination, PerspP- and SAP-layer
