@@ -16,10 +16,12 @@ placing the projecting daughter's yield on a language's harmonic head side. Lemm
 Lemma 1.13.7 identifies head functions with bare-phrase-structure projection
 ([chomsky-1995-bare]); composed with [adger-2003]'s identification of the projecting
 item as the selecting item (a synthesis step of this formalization, not a claim of
-the book), c-selection (`selSide`) computes the planar order.
+the book), c-selection computes the planar order.
 
 ## Main declarations
 
+* `Minimalist.linCombine`: the externalization algebra — selection state and yield
+  computed together, the book's two descriptions of a head function.
 * `Minimalist.linearizePlanar`: the yield of a planar `SO`-tree; `Option`-valued,
   `none` off `Dom(h)`.
 * `Minimalist.SO.linearize`: the yield of a syntactic object, via the quotient lift
@@ -28,8 +30,11 @@ the book), c-selection (`selSide`) computes the planar order.
 
 ## Main results
 
-* `Minimalist.linearizePlanar_permEquiv`: the yield is invariant under sibling
-  permutation, hence descends to the nonplanar quotient.
+* `Minimalist.selLinPlanar_fst`: the paired fold's selection component is
+  `selCheckPlanar`.
+* `Minimalist.linearizePlanar_permEquiv`: the yield descends to the nonplanar
+  quotient — by `RoseTree.fold_permEquiv`, since the algebra is
+  permutation-invariant (`linCombine_perm`).
 
 ## Implementation notes
 
@@ -41,6 +46,12 @@ objects at externalization. Only the two harmonic sections are realized: uniform
 head-side placement is right for head–complement structure but does not model
 specifier placement (that needs the `headSide : Cat → ConventionDir` refinement noted
 at `ConventionDir`).
+
+Linearization is the second component of one catamorphism `RoseTree.fold`, mirroring
+the book's switching "between these two descriptions without changing the notation":
+the head function as a head leaf (selection state) and as the ordered leaf sequence
+(yield). All `PermEquiv`-invariance is inherited from the algebra's
+permutation-invariance; there is no bespoke step induction.
 -/
 
 namespace Minimalist
@@ -53,72 +64,130 @@ def placeYield : ConventionDir → List LIToken → List LIToken → List LIToke
   | .initial, headY, otherY => headY ++ otherY
   | .final,   headY, otherY => otherY ++ headY
 
-/-! ### Linearization on the planar carrier -/
+/-! ### The externalization algebra -/
 
-/-- Selection-induced yield of a planar `SO`-tree: a lexical leaf is pronounced, a
-    bare trace leaf is silent (the cancelled `T/d` copy of
-    [marcolli-chomsky-berwick-2025] §1.12), and a bare binary node places the
-    projecting daughter's yield on the `side`-convention side. `none` at exocentric
-    nodes (off `Dom(h)`, §1.13.2) and at bare nodes of non-`SO` arity. -/
-def linearizePlanar (side : ConventionDir) : RoseTree SOLabel → Option (List LIToken)
-  | .node (.inl tok) _     => some [tok]
-  | .node (.inr ()) []     => some []
-  | .node (.inr ()) [l, r] =>
-      match selSide (selCheckPlanar l) (selCheckPlanar r) with
-      | some true  =>
-          Option.map₂ (placeYield side) (linearizePlanar side l) (linearizePlanar side r)
-      | some false =>
-          Option.map₂ (placeYield side) (linearizePlanar side r) (linearizePlanar side l)
-      | none       => none
-  | .node (.inr ()) _      => none
+/-- The externalization algebra: a node's selection state (`selCombine` over the
+    daughters' states) paired with its yield. A lexical leaf is pronounced, a bare
+    trace leaf is silent (the cancelled `T/d` copy of [marcolli-chomsky-berwick-2025]
+    §1.12), and a bare binary node places the projecting daughter's yield on the
+    `side`-convention side; the yield is `none` at exocentric nodes (off `Dom(h)`,
+    §1.13.2) and at bare nodes of non-`SO` arity. -/
+def linCombine (side : ConventionDir) (a : SOLabel)
+    (ps : List (Option (LIToken × List Cat) × Option (List LIToken))) :
+    Option (LIToken × List Cat) × Option (List LIToken) :=
+  (selCombine a (ps.map Prod.fst),
+   match a, ps with
+   | .inl tok, _ => some [tok]
+   | .inr (), [] => some []
+   | .inr (), [(cl, yl), (cr, yr)] =>
+       match selSide cl cr with
+       | some true  => Option.map₂ (placeYield side) yl yr
+       | some false => Option.map₂ (placeYield side) yr yl
+       | none       => none
+   | .inr (), _ => none)
 
-/-- A bare node with more than two children is not an `SO` shape and has no yield. -/
-private theorem linearizePlanar_node_big (side : ConventionDir)
-    {cs : List (RoseTree SOLabel)} (h : 2 < cs.length) :
-    linearizePlanar side (RoseTree.node (Sum.inr ()) cs) = none := by
-  match cs with
+/-- A daughter list of three or more has no yield. -/
+private theorem linCombine_snd_big (side : ConventionDir)
+    {ps : List (Option (LIToken × List Cat) × Option (List LIToken))}
+    (h : 2 < ps.length) : (linCombine side (Sum.inr ()) ps).2 = none := by
+  match ps with
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
 
-private theorem linearizePlanar_permStep (side : ConventionDir) {t s : RoseTree SOLabel}
-    (hstep : RoseTree.PermStep t s) :
-    linearizePlanar side t = linearizePlanar side s := by
-  induction hstep with
-  | @swapAtRoot a l r pre post =>
-    cases a with
-    | inl _ => simp only [linearizePlanar]
-    | inr u =>
-      cases u
-      match pre, post with
-      | [], [] =>
-        simp only [List.nil_append, linearizePlanar,
-          selSide_comm (selCheckPlanar r) (selCheckPlanar l)]
-        cases selSide (selCheckPlanar l) (selCheckPlanar r) with
+/-- `linCombine` is invariant under permutation of the daughter values: the selection
+    component by `selCombine_perm`, the yield because only the binary shape is
+    order-sensitive, where `selSide_comm` swaps the placement decision with the
+    arguments. -/
+theorem linCombine_perm (side : ConventionDir) (a : SOLabel)
+    {l₁ l₂ : List (Option (LIToken × List Cat) × Option (List LIToken))}
+    (h : l₁.Perm l₂) : linCombine side a l₁ = linCombine side a l₂ := by
+  refine Prod.ext (selCombine_perm a (h.map Prod.fst)) ?_
+  cases a with
+  | inl tok => rfl
+  | inr u =>
+    cases u
+    induction h with
+    | nil => rfl
+    | @cons x l₁ l₂ h _ih =>
+      match l₁, l₂, h with
+      | [], l₂, h => rw [show l₂ = [] from h.symm.eq_nil]
+      | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
+      | _ :: _ :: _, l₂, h =>
+        rw [linCombine_snd_big side (by simp +arith),
+            linCombine_snd_big side (by
+              have hl := h.length_eq
+              simp only [List.length_cons] at hl ⊢
+              omega)]
+    | swap x y l =>
+      cases l with
+      | nil =>
+        obtain ⟨cx, yx⟩ := x
+        obtain ⟨cy, yy⟩ := y
+        show (match selSide cy cx with
+              | some true  => Option.map₂ (placeYield side) yy yx
+              | some false => Option.map₂ (placeYield side) yx yy
+              | none       => none)
+           = (match selSide cx cy with
+              | some true  => Option.map₂ (placeYield side) yx yy
+              | some false => Option.map₂ (placeYield side) yy yx
+              | none       => none)
+        rw [selSide_comm cy cx]
+        cases selSide cx cy with
         | none => rfl
         | some b => cases b <;> rfl
-      | [], _ :: _ | _ :: _, _ =>
-        rw [linearizePlanar_node_big side (by simp +arith),
-            linearizePlanar_node_big side (by simp +arith)]
-  | @recurse a pre old new post _hstep ih =>
-    cases a with
-    | inl _ => simp only [linearizePlanar]
-    | inr u =>
-      cases u
-      have hsc : selCheckPlanar old = selCheckPlanar new :=
-        selCheckPlanar_permEquiv (RoseTree.PermEquiv.of_step _hstep)
-      match pre, post with
-      | [], [] => simp only [List.nil_append, linearizePlanar]
-      | [], [_] => simp only [List.nil_append, linearizePlanar, hsc, ih]
-      | [_], [] => simp only [List.cons_append, List.nil_append, linearizePlanar, hsc, ih]
-      | [], _ :: _ :: _ | [_], _ :: _ | _ :: _ :: _, _ =>
-        rw [linearizePlanar_node_big side (by simp +arith),
-            linearizePlanar_node_big side (by simp +arith)]
+      | cons z l => rfl
+    | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
 
-/-- `linearizePlanar side` is `PermEquiv`-invariant, so it descends to the quotient:
-    the surface order is projection-determined, not representative-determined. -/
+/-! ### Linearization on the planar carrier -/
+
+/-- Selection state and yield of a planar `SO`-tree, computed together:
+    [marcolli-chomsky-berwick-2025]'s dual description of a head function as a head
+    leaf and as an ordered leaf sequence. -/
+def selLinPlanar (side : ConventionDir) :
+    RoseTree SOLabel → Option (LIToken × List Cat) × Option (List LIToken) :=
+  RoseTree.fold (linCombine side)
+
+/-- Selection-induced yield of a planar `SO`-tree: the yield component of
+    `selLinPlanar`. -/
+def linearizePlanar (side : ConventionDir) (t : RoseTree SOLabel) :
+    Option (List LIToken) :=
+  (selLinPlanar side t).2
+
+/-- Fusion: the selection component of the paired fold is `selCheckPlanar`. -/
+theorem selLinPlanar_fst (side : ConventionDir) (t : RoseTree SOLabel) :
+    (selLinPlanar side t).1 = selCheckPlanar t := by
+  induction t with
+  | node a cs ih =>
+    show (RoseTree.fold (linCombine side) (.node a cs)).1 = selCheckPlanar (.node a cs)
+    rw [RoseTree.fold_node, selCheckPlanar_node]
+    show selCombine a ((cs.map (RoseTree.fold (linCombine side))).map Prod.fst)
+       = selCombine a (cs.map selCheckPlanar)
+    rw [List.map_map]
+    exact congrArg (selCombine a) (List.map_congr_left fun c hc => ih c hc)
+
+/-- Reduction of the yield at a bare binary node, through the fusion theorem. -/
+theorem linearizePlanar_node_pair (side : ConventionDir) (l r : RoseTree SOLabel) :
+    linearizePlanar side (.node (.inr ()) [l, r]) =
+      (match selSide (selCheckPlanar l) (selCheckPlanar r) with
+       | some true  =>
+           Option.map₂ (placeYield side) (linearizePlanar side l) (linearizePlanar side r)
+       | some false =>
+           Option.map₂ (placeYield side) (linearizePlanar side r) (linearizePlanar side l)
+       | none       => none) := by
+  show (match selSide (selLinPlanar side l).1 (selLinPlanar side r).1 with
+        | some true  =>
+            Option.map₂ (placeYield side) (selLinPlanar side l).2 (selLinPlanar side r).2
+        | some false =>
+            Option.map₂ (placeYield side) (selLinPlanar side r).2 (selLinPlanar side l).2
+        | none       => none) = _
+  rw [selLinPlanar_fst side l, selLinPlanar_fst side r]; exact rfl
+
+/-- `linearizePlanar side` descends to the quotient: the surface order is
+    projection-determined, not representative-determined. -/
 theorem linearizePlanar_permEquiv (side : ConventionDir) {t s : RoseTree SOLabel}
     (h : RoseTree.PermEquiv t s) : linearizePlanar side t = linearizePlanar side s :=
-  RoseTree.PermEquiv.lift_eq (fun _ _ h' => linearizePlanar_permStep side h') h
+  congrArg Prod.snd
+    (RoseTree.fold_permEquiv (fun a _ _ h' => linCombine_perm side a h') h)
 
 /-- Linearization lifted to the nonplanar carrier. -/
 def linearizeN (side : ConventionDir) : Nonplanar SOLabel → Option (List LIToken) :=
@@ -147,7 +216,8 @@ theorem linearizeN_node (side : ConventionDir) (a b : Nonplanar SOLabel) :
              Option.map₂ (placeYield side)
                (linearizeN side (Nonplanar.mk pb)) (linearizeN side (Nonplanar.mk pa))
          | none       => none)
-  rw [key]; simp only [linearizeN_mk, linearizePlanar, selCheckN_mk]
+  rw [key]
+  simp only [linearizeN_mk, selCheckN_mk, linearizePlanar_node_pair]
 
 /-! ### Externalization on `SO` -/
 
