@@ -164,6 +164,16 @@ theorem foldList_eq (f : α → List β → β) (cs : List (RoseTree α)) :
     fold f (node a cs) = f a (cs.map (fold f)) := by
   rw [show fold f (node a cs) = f a (foldList f cs) from rfl, foldList_eq]
 
+/-- Fusion: postcomposing a fold with `h` is the fold of the pushed-forward algebra —
+the `RoseTree` sibling of `List.foldr_hom`. -/
+theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ → γ}
+    (hfg : ∀ a ps, h (f a ps) = g a (ps.map h)) (t : RoseTree α) :
+    h (fold f t) = fold g t := by
+  induction t with
+  | node a cs ih =>
+    rw [fold_node, fold_node, hfg, List.map_map]
+    exact congrArg (g a) (List.map_congr_left fun c hc => ih c hc)
+
 /-! ### Functoriality -/
 
 /-- Relabel every node by `f`, preserving shape. -/

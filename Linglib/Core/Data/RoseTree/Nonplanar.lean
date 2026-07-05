@@ -228,6 +228,11 @@ theorem node_mk_tree_list (a : α) (ps : List (RoseTree α)) :
     refine List.Forall₂.cons ?_ ih
     exact Quotient.exact (Quotient.out_eq (mk p))
 
+/-- Binary case of `node_mk_tree_list`: a bare pair of `mk`-lifted trees. -/
+theorem node_pair_mk (a : α) (p q : RoseTree α) :
+    node a {mk p, mk q} = mk (.node a [p, q]) :=
+  node_mk_tree_list a [p, q]
+
 /-! #### Sanity tests -/
 
 /-- Sibling order doesn't matter at the root: this is built into the
