@@ -58,7 +58,7 @@ structure EvenScenario where
 
 /-- Predict felicity for a scenario under a given threshold. -/
 def predict (s : EvenScenario) (t : EvenThreshold) : Bool :=
-  evenPresupWith s.prejacent s.neighbors (fun a b => decide (a > b)) t
+  decide (evenPresupWith s.prejacent s.neighbors (· > ·) t)
 
 /-!
 ### Scenario 1: Bennett's threshold is too weak (p. 155)
