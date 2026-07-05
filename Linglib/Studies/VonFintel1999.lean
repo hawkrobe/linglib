@@ -66,8 +66,7 @@ def onlyJohnDefined (scope : Set World) (_w : World) : Prop :=
 theorem ex11_only_not_DE : ¬ IsDownwardEntailing onlyJohn :=
   onlyFull_not_de
 
-/-- Ex. 18 (p. 104): *only* is Strawson-DE relative to its existence
-presupposition. -/
+/-- Ex. 18 (p. 104): *only* is Strawson-DE relative to its existence presupposition. -/
 theorem ex18_only_strawsonDE : IsStrawsonDE onlyJohn onlyJohnDefined :=
   onlyFull_isStrawsonDE _
 
@@ -108,8 +107,7 @@ def sorryFrame : Set World → Set World :=
 theorem ex30_sorry_not_DE : ¬ IsDownwardEntailing sorryFrame :=
   sorryFull_not_de
 
-/-- Ex. 28b (p. 111): *sorry* is Strawson-DE relative to doxastic
-factivity. -/
+/-- Ex. 28b (p. 111): *sorry* is Strawson-DE relative to doxastic factivity. -/
 theorem ex28b_sorry_strawsonDE :
     IsStrawsonDE (sorryFull dox bestOf) (fun p w => ∀ w' ∈ dox w, p w') :=
   sorryFull_isStrawsonDE dox bestOf
@@ -129,8 +127,7 @@ theorem ex45_want_isUE : Monotone (wantFull bestOf) :=
 theorem ex50_gladKL_isUE : Monotone (gladFull dox bestOf) :=
   gladFull_isUE dox bestOf
 
-/-- Ex. 52 (p. 124): *glad* on vF's replacement semantics is likewise
-upward entailing. -/
+/-- Ex. 52 (p. 124): *glad* on vF's replacement semantics is likewise upward entailing. -/
 theorem ex52_gladVF_isUE (dox relevant : World → Set World)
     (lt : World → World → World → Prop) :
     Monotone (gladFullVF dox relevant lt) :=
@@ -160,8 +157,7 @@ theorem ex72_conditional_antecedent_DE
     IsDownwardEntailing (fun α => condNecessity domain α β) :=
   conditional_antecedent_antitone domain β
 
-/-- Restrictor-style conditional antecedents are a fortiori
-Strawson-DE. -/
+/-- Restrictor-style conditional antecedents are a fortiori Strawson-DE. -/
 theorem conditional_antecedent_strawsonDE_under_restrictor
     (domain : World → Set World) (β : Set World)
     (defined : Set World → World → Prop) :
@@ -174,8 +170,7 @@ Adding a restriction can reorder the comparison class (ex. 76), so the
 position is not classically DE; predicative use only (`Examples.ex75`),
 the definite-description use (ex. 80) lacking local Strawson-DE. -/
 
-/-- Ex. 77 (p. 139): the superlative is Strawson-DE in its restriction
-position. -/
+/-- Ex. 77 (p. 139): the superlative is Strawson-DE in its restriction position. -/
 theorem ex77_superlative_strawsonDE (α : World) :
     IsStrawsonDE (superlativeAssert α) (superlativePresup α) :=
   superlative_isStrawsonDE α
@@ -227,13 +222,11 @@ open Semantics.Focus (onlyVia mem_onlyVia)
 
 variable {W ι : Type*}
 
-/-- (15)'s assertion, intensionalized: no individual distinct from `x`
-has a true P-proposition. -/
+/-- (15)'s assertion, intensionalized: no individual other than `x` satisfies P. -/
 def onlyIndiv (P : ι → Set W) (x : ι) : Set W :=
   {w | ∀ y, y ≠ x → w ∉ P y}
 
-/-- (15) coincides with `onlyVia` over an injective individual-generated
-alternative family. -/
+/-- (15) coincides with `onlyVia` over an injective individual-generated alternative family. -/
 theorem onlyIndiv_eq_onlyVia (P : ι → Set W) (x : ι)
     (hP : Function.Injective P) :
     onlyIndiv P x = onlyVia (Set.range P) (P x) := by
@@ -247,8 +240,7 @@ theorem onlyIndiv_eq_onlyVia (P : ι → Set W) (x : ι)
   · intro h y hyx hw
     exact hyx (hP (h (P y) ⟨y, rfl⟩ hw))
 
-/-- Injectivity is essential: `onlyVia` cannot distinguish cotrue
-alternatives that (15) separates. -/
+/-- `onlyVia` cannot distinguish cotrue alternatives that (15) separates. -/
 theorem onlyIndiv_ne_onlyVia_of_collapse :
     onlyIndiv (fun _ : Bool => (Set.univ : Set Bool)) true ≠
       onlyVia (Set.range fun _ : Bool => (Set.univ : Set Bool)) Set.univ := by
