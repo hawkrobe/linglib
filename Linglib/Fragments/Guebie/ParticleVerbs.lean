@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Phonology.Segmental.TongueRoot
 
 /-!
 # Guébie: vowels, ATR, and particle verbs
@@ -34,11 +35,7 @@ inductive Vowel where
   | I | E | a | O | U
   deriving DecidableEq, Repr
 
-/-- The tongue-root feature value: `[+ATR]` or `[−ATR]`. -/
-inductive ATR where
-  | plus
-  | minus
-  deriving DecidableEq, Repr
+open Phonology.TongueRoot (ATR)
 
 /-- The ±ATR split ([sande-clem-dabkowski-2026] (1)). -/
 def Vowel.atr : Vowel → ATR
@@ -123,5 +120,11 @@ theorem particleVerbs_ATRUniform :
 theorem joku_alternation :
     jOkU.atr = .minus ∧
     (ParticleVerb.mk jOkU ni "see").harmonizedParticleATR = .plus := by decide
+
+/-- Guébie's tongue-root row: a ten-vowel `/2IU/` system with root-controlled
+    harmony ([sande-clem-dabkowski-2026] §2.1; [casali-2024-inventory] (1)). No
+    dominance pattern is reported. -/
+def tongueRoot : Phonology.TongueRoot.TongueRootProfile :=
+  { inventoryClass := .twoIU, control := .rootControlled, dominant := none }
 
 end Guebie
