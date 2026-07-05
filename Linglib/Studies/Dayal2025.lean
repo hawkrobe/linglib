@@ -408,19 +408,18 @@ theorem cross_linguistic_shiftiness_predicted :
           hindi_urdu_want_to_know, hindi_urdu_know_bare,
           hindi_urdu_know_negated, hindi_urdu_know_questioned]
 
-/-- Q-particle embedding follows from which left-peripheral layer they occupy.
-    CP-layer particles appear in subordination; PerspP and SAP particles do
-    not. -/
+/-- Q-particle embedding follows from which left-peripheral layer they occupy:
+    CP-layer particles are licensed in subordination, PerspP- and SAP-layer
+    particles are not, and SAP-layer particles are excluded even from
+    quasi-subordination. Stated over `layerOf`, which derives the layer from
+    the embedding facet, so this is the kernel-checked converse guarantee for
+    the study's particle sample. -/
 theorem particle_layer_predicts_embedding :
-    ∀ d ∈ allQParticleData,
-      (d.layer = .cp → d.inSubordinated = true) ∧
-      (d.layer = .perspP → d.inSubordinated = false) ∧
-      (d.layer = .sap → d.inQuasiSub = false) := by
-  intro d hd
-  refine ⟨?_, ?_, ?_⟩
-  · exact cp_particles_in_subordination d hd
-  · exact perspP_particles_not_in_subordination d hd
-  · exact sap_particles_not_in_quasi_sub d hd
+    ∀ p ∈ qParticles,
+      (layerOf p = some .cp → p.LicensedInEmbed .subordinated) ∧
+      (layerOf p = some .perspP → ¬ p.LicensedInEmbed .subordinated) ∧
+      (layerOf p = some .sap → ¬ p.LicensedInEmbed .quasiSubordinated) := by
+  decide
 
 -- ============================================================================
 -- §7. Cross-layer agreement
