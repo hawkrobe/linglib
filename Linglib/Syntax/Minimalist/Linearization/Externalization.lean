@@ -66,7 +66,7 @@ def placeYield : ConventionDir → List LIToken → List LIToken → List LIToke
 
 /-! ### The externalization algebra -/
 
-/-- The externalization algebra: a node's selection state (`selCombine` over the
+/-- The externalization algebra: a node's selection state (`selNode` over the
     daughters' states) paired with its yield. A lexical leaf is pronounced, a bare
     trace leaf is silent (the cancelled `T/d` copy of [marcolli-chomsky-berwick-2025]
     §1.12), and a bare binary node places the projecting daughter's yield on the
@@ -75,7 +75,7 @@ def placeYield : ConventionDir → List LIToken → List LIToken → List LIToke
 def linCombine (side : ConventionDir) (a : SOLabel)
     (ps : List (Option (LIToken × List Cat) × Option (List LIToken))) :
     Option (LIToken × List Cat) × Option (List LIToken) :=
-  (selCombine a (ps.map Prod.fst),
+  (selNode a (ps.map Prod.fst),
    match a, ps with
    | .inl tok, _ => some [tok]
    | .inr (), [] => some []
@@ -95,13 +95,13 @@ private theorem linCombine_snd_big (side : ConventionDir)
   | [] | [_] | [_, _] => simp at h
 
 /-- `linCombine` is invariant under permutation of the daughter values: the selection
-    component by `selCombine_perm`, the yield because only the binary shape is
+    component by `selNode_perm`, the yield because only the binary shape is
     order-sensitive, where `selSide_comm` swaps the placement decision with the
     arguments. -/
 theorem linCombine_perm (side : ConventionDir) (a : SOLabel)
     {l₁ l₂ : List (Option (LIToken × List Cat) × Option (List LIToken))}
     (h : l₁.Perm l₂) : linCombine side a l₁ = linCombine side a l₂ := by
-  refine Prod.ext (selCombine_perm a (h.map Prod.fst)) ?_
+  refine Prod.ext (selNode_perm a (h.map Prod.fst)) ?_
   cases a with
   | inl tok => rfl
   | inr u =>
@@ -160,10 +160,10 @@ theorem selLinPlanar_fst (side : ConventionDir) (t : RoseTree SOLabel) :
   | node a cs ih =>
     show (RoseTree.fold (linCombine side) (.node a cs)).1 = selCheckPlanar (.node a cs)
     rw [RoseTree.fold_node, selCheckPlanar_node]
-    show selCombine a ((cs.map (RoseTree.fold (linCombine side))).map Prod.fst)
-       = selCombine a (cs.map selCheckPlanar)
+    show selNode a ((cs.map (RoseTree.fold (linCombine side))).map Prod.fst)
+       = selNode a (cs.map selCheckPlanar)
     rw [List.map_map]
-    exact congrArg (selCombine a) (List.map_congr_left fun c hc => ih c hc)
+    exact congrArg (selNode a) (List.map_congr_left fun c hc => ih c hc)
 
 /-- Reduction of the yield at a bare binary node, through the fusion theorem. -/
 theorem linearizePlanar_node_pair (side : ConventionDir) (l r : RoseTree SOLabel) :
