@@ -1,29 +1,34 @@
-import Mathlib.Init
-
-set_option autoImplicit false
+import Linglib.Pragmatics.RSA.Operators
 
 /-!
-# Silence as a low-prior alternative
+# Silence as a null alternative
 [bergen-levy-goodman-2016]
 
 `WithSilence U := Option U` is the standard wrapper that adds a "silence"
-element to any utterance type. `none` represents silence; `some u` represents
-a paper-utterance.
+element to any utterance type: `none` is silence, `some u` a paper-utterance.
+`liftMeaning` gives silence universal extension — true at every world —
+following the null utterance of [bergen-levy-goodman-2016], which is true in
+every world so that the speaker always has an honest option.
 
-Following [bergen-levy-goodman-2016], silence has universal extension
-(`liftMeaning` makes it true at every world), giving it the smallest lex
-value (`1/card W`) under the standard `extensionOf`-based literal listener.
-This disfavors silence at the softmax when stronger utterances are honest.
-At observations where no non-silent utterance is honest, silence absorbs
-all probability — dissolving the "no `qOk` witness" defect that would
-otherwise make `(access, word) ∉ {sensible}` cases vacuous in PMF
-formalizations of [goodman-stuhlmuller-2013]-style models.
+**Deviation from the source**: [bergen-levy-goodman-2016] disfavor their null
+utterance by *cost* (it is the most expensive alternative), and observe that a
+sufficiently cheap null utterance *is* used in the fully ignorant knowledge
+state. This costless rendering disfavors silence by informativity alone:
+universal extension gives it the smallest literal-listener value (`1/card W`
+under the `extensionOf`-based literal listener), so the softmax speaker
+prefers any honest informative utterance, and silence absorbs all probability
+exactly where none exists. That dissolves the "no `qOk` witness" defect that
+would otherwise make some observation cells vacuous in PMF formalizations of
+[goodman-stuhlmuller-2013]-style models (whose own utterance sets have no
+null utterance).
 
 ## Main definitions
 
 - `WithSilence U` — `Option U`, where `none` = silence.
 - `liftMeaning m` — extends `m : U → W → Bool` to `WithSilence U → W → Bool`,
   with silence true at every world.
+- `extensionOf_liftMeaning_none` — silence's extension is the whole world
+  space.
 
 ## Per-paper specialisations
 
@@ -35,6 +40,8 @@ its own `cover_silent` as a 1-line application of `liftMeaning_none`.
 
 namespace RSA
 
+variable {U W : Type*}
+
 /-- Silence-extended utterance type. `some u` is a paper-utterance;
 `none` is the "say nothing" alternative.
 
@@ -43,20 +50,35 @@ Definitionally `Option U` so it inherits all standard instances
 abbrev WithSilence (U : Type*) := Option U
 
 /-- Lift a meaning function to handle silence. Silence is "vacuously honest"
-— true at every world (commits to nothing).
-
-This is the canonical lifting that makes silence the universally-qOk
-fallback: at any observation, the only worlds the speaker considers are
-those compatible with the obs, and silence is true at all of them
-trivially. -/
-def liftMeaning {U W : Type*} (m : U → W → Bool) : WithSilence U → W → Bool
+— true at every world (commits to nothing). -/
+def liftMeaning (m : U → W → Bool) : WithSilence U → W → Bool
   | some u, w => m u w
   | none,   _ => true
 
-@[simp] theorem liftMeaning_some {U W : Type*} (m : U → W → Bool) (u : U) (w : W) :
+@[simp] theorem liftMeaning_some (m : U → W → Bool) (u : U) (w : W) :
     liftMeaning m (some u) w = m u w := rfl
 
-@[simp] theorem liftMeaning_none {U W : Type*} (m : U → W → Bool) (w : W) :
+@[simp] theorem liftMeaning_none (m : U → W → Bool) (w : W) :
     liftMeaning m none w = true := rfl
+
+/-! ### The extension of silence
+
+Universal truth makes silence's extension the whole world space — the
+largest possible, hence the smallest uniform literal-listener value. -/
+
+variable [Fintype W]
+
+@[simp] theorem extensionOf_liftMeaning_none (m : U → W → Bool) :
+    extensionOf (liftMeaning m) (none : WithSilence U) = Finset.univ := by
+  ext w; simp
+
+theorem card_extensionOf_liftMeaning_none (m : U → W → Bool) :
+    (extensionOf (liftMeaning m) (none : WithSilence U)).card = Fintype.card W := by
+  simp
+
+/-- Every paper-utterance's extension is contained in silence's. -/
+theorem extensionOf_liftMeaning_some_subset (m : U → W → Bool) (u : U) :
+    extensionOf (liftMeaning m) (some u) ⊆ extensionOf (liftMeaning m) none := by
+  simp
 
 end RSA

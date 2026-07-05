@@ -2270,7 +2270,7 @@ import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.GoldszmidtPearl1996
 import Linglib.Studies.GoldwaterJohnson2003
 import Linglib.Studies.Gong2022
-import Linglib.Studies.GoodmanStuhlmuller2013PMF
+import Linglib.Studies.GoodmanStuhlmuller2013
 import Linglib.Studies.Graf2019
 import Linglib.Studies.Grano2024
 import Linglib.Studies.Greco2020

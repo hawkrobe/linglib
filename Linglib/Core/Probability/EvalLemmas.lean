@@ -7,8 +7,8 @@ import Mathlib.Probability.Distributions.Uniform
 /-!
 # `pmf_eval_simps` lemma tags
 
-Universal closed-form PMF reductions tagged for the `pmf_eval` simp set.
-This is the consumer file for the attribute registered in `Eval.lean`.
+Universal closed-form PMF reductions tagged into the `pmf_eval_simps` simp
+set. This is the consumer file for the attribute registered in `Eval.lean`.
 Tagging is split out because Lean requires `register_simp_attr` and
 `attribute [...]` to live in different files.
 
@@ -16,8 +16,7 @@ Tagging is split out because Lean requires `register_simp_attr` and
 
 **Only** lemmas of the form "PMF expression at a point = closed form".
 Arithmetic glue (`if_true`, `if_false`, `add_zero`, `Fin.sum_univ_*`, etc.)
-is composed at the call site by the `pmf_eval` macro itself, not tagged
-into this set.
+is composed explicitly at each call site, not tagged into this set.
 
 Domain-specific reductions (RSA softmaxBelief if-form, paper-specific
 extension cardinalities) belong with their declaration site, scoped
