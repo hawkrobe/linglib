@@ -17,8 +17,15 @@ A harmony system in the [rose-walker-2011] typological decomposition: a
 distinctive feature value spreads from trigger segments to target segments,
 optionally skipping transparent segments and halting at opaque blockers
 ([rose-walker-2011], [belth-2026]). `System` couples the tier-based AGREE
-recognizer (`TierRule`, inherited via `extends`) with the transduction
-discipline that turns it into a structure-changing map.
+recognizer with the transduction discipline that turns it into a
+structure-changing map.
+
+`System` is a machine schema: at each concrete alphabet it instantiates to a
+familiar finite-state object — `transduce` to a subsequential transducer whose
+only state is one lens readout (at Turkish's alphabet, the classic two-state
+front/back machine), the recognizer to a last-trigger-decides subsequential
+function. The theorems are proved once at the schema level, so every
+instantiation inherits them.
 
 ## Main definitions
 
