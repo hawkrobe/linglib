@@ -167,16 +167,11 @@ end SetOfDegrees
 /-! ### Max-quantified comparative
 [von-stechow-1984] [rullmann-1995]
 
-The clausal comparative: the *than*-clause contributes the set of degrees its
-witnesses reach, and the comparative asserts that some matrix witness measures
-strictly above that set's maximum (the max operator of [von-stechow-1984],
-[rullmann-1995]). Matrix and *than* restrictions are independent predicates
-over an arbitrary witness sort (entities, events, or states), so heterogeneous
-comparatives ("Ann hates Bill more than Matt hates Jeff") are the general case
-and the shared-predicate comparative a specialization. The shared core of the
-cross-categorial comparatives of `Studies/Wellwood2015`, the intensity
-comparatives of `Studies/Pasternak2019`, and the confidence comparatives of
-`Semantics/Attitudes/Confidence`. -/
+The clausal comparative: some matrix witness measures strictly above the
+maximum of the *than*-clause degree set. Matrix and *than* restrictions are
+independent predicates over an arbitrary witness sort, so heterogeneous
+comparatives are the general case. Shared by `Studies/Wellwood2015`,
+`Studies/Pasternak2019`, and `Semantics/Attitudes/Confidence`. -/
 
 section MaxQuantified
 variable {α D : Type*} [Preorder D]
