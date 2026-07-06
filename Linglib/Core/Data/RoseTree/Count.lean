@@ -103,6 +103,8 @@ theorem leafCountP_node_of_not (a : α)
   · simp [h]
   · simp
 
+variable {p}
+
 theorem leafCountP_pos {t : RoseTree α} : 0 < leafCountP p t ↔ ∃ a ∈ t.leaves, p a :=
   Multiset.countP_pos
 
@@ -115,6 +117,8 @@ theorem leafCountP_eq_numLeaves {t : RoseTree α} :
     leafCountP p t = t.numLeaves ↔ ∀ a ∈ t.leaves, p a := by
   rw [← card_leaves t]
   exact Multiset.countP_eq_card
+
+variable (p)
 
 @[simp] theorem leafDepthSumP_leaf (a : α) :
     leafDepthSumP p (node a []) = 0 := by
