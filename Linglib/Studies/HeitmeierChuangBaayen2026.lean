@@ -1,3 +1,4 @@
+import Linglib.Processing.Lexical.Discriminative.Coding
 import Linglib.Processing.Lexical.Discriminative.Training
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
@@ -108,6 +109,24 @@ theorem not_isAnalogicallyRegular_of_xor {f : Bool → Bool → FormVec n}
     simp only [Pi.sub_apply] at hj
     linarith
   exact hne ((hxor.1.trans h0).trans hxor.2.symm)
+
+/-! ### The coding interface
+
+The stem-exponent setting is the two-primitive case of the DLM coding
+interface: a paradigm cell's semantic primitives are its stem and cell
+tags, and conceptualization over `Sum.elim σ ε` is the imputed additive
+semantics. The fourth proportional above is `conceptualize_analogy` at the
+multiset relation `{st, c} + {st', c'} = {st, c'} + {st', c}`. -/
+
+instance : SemanticPrimitives (Stem × Cell) (Stem ⊕ Cell) :=
+  ⟨fun p => {Sum.inl p.1, Sum.inr p.2}⟩
+
+@[simp] theorem primitives_pair (st : Stem) (c : Cell) :
+    primitives (Prim := Stem ⊕ Cell) (st, c) = {Sum.inl st, Sum.inr c} := rfl
+
+theorem conceptualize_sumElim (st : Stem) (c : Cell) :
+    conceptualize (Sum.elim σ ε) (st, c) = σ st + ε c := by
+  simp [conceptualize]
 
 variable [Fintype Stem] [Fintype Cell]
 
