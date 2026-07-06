@@ -310,7 +310,7 @@ def puzzleC : List PuzzleDatum :=
     condition in the clause cannot be satisfied.
 
     Bridge: this connects to `measurePhrase_positive_only` in `Kennedy1999.lean`
-    and `admitsMeasurePhrase` in `Differential.lean`. -/
+    and `AdmitsMeasurePhrase` in `Differential.lean`. -/
 def puzzleD : List PuzzleDatum :=
   [ { sentence := "Mary is more than six feet tall"
     , acceptable := true

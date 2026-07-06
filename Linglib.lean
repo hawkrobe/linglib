@@ -1618,7 +1618,7 @@ import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Semantics.Degree.Little
-import Linglib.Semantics.Degree.MeasureFunction
+import Linglib.Semantics.Degree.MeasureOfChange
 import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Degree.Measurement
 import Linglib.Semantics.Degree.Predicate

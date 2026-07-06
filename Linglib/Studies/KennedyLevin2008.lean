@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.Gradability.Dimension
-import Linglib.Semantics.Degree.MeasureFunction
+import Linglib.Semantics.Degree.MeasureOfChange
 import Linglib.Semantics.Degree.Bounds
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
@@ -333,7 +333,7 @@ dimensions the K&L verbs measure. -/
 
 open ArgumentStructure.Affectedness
 open Degree (Dimension)
-open Degree.MeasureFunction
+open Degree
 
 /-! #### Telicity from the scale's order structure (order-theoretic K&L thesis)
 

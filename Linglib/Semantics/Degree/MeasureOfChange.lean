@@ -59,13 +59,12 @@ quantify over the scale's maximum (or its absence).
 
 -/
 
-namespace Degree.MeasureFunction
+namespace Degree
 
 open ArgumentStructure.Affectedness
 
 /-! ### MeasureFunction ([hay-kennedy-levin-1999] eq. 11) -/
 
-set_option linter.dupNamespace false in
 /-- A **time-indexed measure function** `m : α → Time → δ`
     ([hay-kennedy-levin-1999] eq. 11; restated in
     [kennedy-levin-2008] §7.3.1 main text p. 167): a function
@@ -263,4 +262,4 @@ def HasLatentScale.ofHasMeasureFunction
     HasLatentScale α (Event Time) where
   latentScale _ _ := True
 
-end Degree.MeasureFunction
+end Degree
