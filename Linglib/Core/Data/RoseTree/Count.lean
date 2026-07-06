@@ -11,8 +11,10 @@ import Linglib.Core.Data.RoseTree.Leaves
 
 ## Main definitions
 
-* `RoseTree.leafCountP` / `RoseTree.leafDepthSumP` (with `Nonplanar` descents): leaf
-  statistics by predicate, as `Multiset.countP`-computations over the leaf projection.
+* `RoseTree.leafCountP` / `RoseTree.leafDepthsP` / `RoseTree.leafDepthSumP` (with
+  `Nonplanar` descents): leaf statistics by predicate over the leaf projection — the
+  count is `Multiset.countP`, and the depth statistics are the card and sum of the
+  depth multiset (`card_leafDepthsP`).
 * `RootedTree.Nonplanar.numEdges`: the edge count `numNodes - 1` of a rooted tree.
 * `RootedTree.Forest.numNodes` / `RootedTree.Forest.numEdges`: the forest totals.
 
@@ -36,28 +38,43 @@ variable {γ : Type*} (q : γ → Prop) [DecidablePred q]
 /-- The number of leaves whose label satisfies `p`. -/
 def leafCountP (t : RoseTree α) : ℕ := t.leaves.countP p
 
+/-- The multiset of root-distances of the leaves whose label satisfies `p`. -/
+def leafDepthsP (t : RoseTree α) : Multiset ℕ :=
+  (t.leavesWithDepth.filter fun q => p q.1).map Prod.snd
+
 /-- The sum of root-distances of the leaves whose label satisfies `p`. -/
-def leafDepthSumP (t : RoseTree α) : ℕ :=
-  (t.leavesWithDepth.map fun q => if p q.1 then q.2 else 0).sum
+def leafDepthSumP (t : RoseTree α) : ℕ := (leafDepthsP p t).sum
 
 private theorem countP_list_sum (l : List (Multiset γ)) : l.sum.countP q = (l.map fun m => m.countP q).sum := by
   induction l with
   | nil => rfl
   | cons m l ih => simp only [List.sum_cons, Multiset.countP_add, ih, List.map_cons]
 
-private theorem sum_map_list_sum (g : γ → ℕ) (l : List (Multiset γ)) :
-    (l.sum.map g).sum = (l.map fun m => (m.map g).sum).sum := by
+private theorem filter_list_sum (l : List (Multiset γ)) :
+    l.sum.filter q = (l.map (Multiset.filter q)).sum := by
   induction l with
   | nil => rfl
-  | cons m l ih =>
-    simp only [List.sum_cons, Multiset.map_add, Multiset.sum_add, ih, List.map_cons]
+  | cons m l ih => simp only [List.sum_cons, Multiset.filter_add, ih, List.map_cons]
 
-private theorem sum_map_ite_one (m : Multiset γ) : (m.map fun x => if q x then 1 else 0).sum = m.countP q := by
+private theorem map_list_sum {δ : Type*} (f : γ → δ) (l : List (Multiset γ)) :
+    l.sum.map f = (l.map (Multiset.map f)).sum := by
+  induction l with
+  | nil => rfl
+  | cons m l ih => simp only [List.sum_cons, Multiset.map_add, ih, List.map_cons]
+
+private theorem sum_list_sum (l : List (Multiset ℕ)) :
+    l.sum.sum = (l.map Multiset.sum).sum := by
+  induction l with
+  | nil => rfl
+  | cons m l ih => simp only [List.sum_cons, Multiset.sum_add, ih, List.map_cons]
+
+private theorem sum_map_add_one (m : Multiset ℕ) :
+    (m.map (· + 1)).sum = m.sum + Multiset.card m := by
   induction m using Multiset.induction_on with
   | empty => rfl
   | cons x m ih =>
-    simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.countP_cons, ih]
-    split_ifs <;> omega
+    simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.card_cons, ih]
+    omega
 
 private theorem sum_map_le_sum_map (f g : γ → ℕ) (l : List γ)
     (h : ∀ x ∈ l, f x ≤ g x) : (l.map f).sum ≤ (l.map g).sum := by
@@ -69,31 +86,22 @@ private theorem sum_map_le_sum_map (f g : γ → ℕ) (l : List γ)
     have := ih fun y hy => h y (List.mem_cons_of_mem _ hy)
     omega
 
-private theorem leafCountP_eq_countP_leavesWithDepth
-    (t : RoseTree α) : leafCountP p t = t.leavesWithDepth.countP fun q => p q.1 := by
-  rw [leafCountP, leaves, Multiset.countP_map]
-  exact (Multiset.countP_eq_card_filter _ _).symm
-
 @[simp] theorem leafCountP_leaf (a : α) :
     leafCountP p (node a []) = if p a then 1 else 0 := by
-  rw [leafCountP, leaves_leaf]
-  show Multiset.countP p (a ::ₘ 0) = _
-  rw [Multiset.countP_cons, Multiset.countP_zero]
-  simp
+  simp only [leafCountP, leaves_leaf, ← Multiset.cons_zero, Multiset.countP_cons,
+    Multiset.countP_zero, Nat.zero_add]
 
 @[simp] theorem leafCountP_node_cons (a : α)
     (c : RoseTree α) (cs : List (RoseTree α)) :
     leafCountP p (node a (c :: cs)) = ((c :: cs).map (leafCountP p)).sum := by
-  rw [leafCountP, leaves_node_cons, countP_list_sum, List.map_map]
-  exact congrArg List.sum (List.map_congr_left fun t _ => rfl)
+  rw [leafCountP, leaves_node_cons, countP_list_sum, List.map_map]; rfl
 
 /-- On a non-leaf node the count is the children's total, for any root label. -/
 theorem leafCountP_node_of_ne_nil (a : α)
     (cs : List (RoseTree α)) (h : cs ≠ []) :
     leafCountP p (node a cs) = (cs.map (leafCountP p)).sum := by
-  rcases cs with _ | ⟨c, cs⟩
-  · exact absurd rfl h
-  · simp
+  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
+  simp
 
 /-- A root failing `p` contributes nothing, for any child list. -/
 theorem leafCountP_node_of_not (a : α)
@@ -120,43 +128,53 @@ theorem leafCountP_eq_numLeaves {t : RoseTree α} :
 
 variable (p)
 
+/-- The counted leaves are exactly the depth entries: `leafCountP` is their number. -/
+@[simp] theorem card_leafDepthsP (t : RoseTree α) :
+    Multiset.card (leafDepthsP p t) = leafCountP p t := by
+  rw [leafDepthsP, Multiset.card_map, leafCountP, leaves, Multiset.countP_map]
+
 @[simp] theorem leafDepthSumP_leaf (a : α) :
     leafDepthSumP p (node a []) = 0 := by
-  simp [leafDepthSumP]
+  rw [leafDepthSumP, leafDepthsP, leavesWithDepth_leaf, Multiset.filter_singleton]
+  split_ifs <;> rfl
+
+/-- The counted-leaf depths of a node are the children's, each one edge deeper. -/
+theorem leafDepthsP_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
+    leafDepthsP p (node a (c :: cs))
+      = ((c :: cs).map fun t => (leafDepthsP p t).map (· + 1)).sum := by
+  rw [leafDepthsP, leavesWithDepth_node_cons, filter_list_sum, map_list_sum,
+    List.map_map, List.map_map]
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  simp only [Function.comp_def, Multiset.filter_map, Multiset.map_map, leafDepthsP]
 
 /-- Each child contributes its own depth-weighted count plus one per counted leaf it
     carries (the extra edge from the node to the child). -/
-@[simp] theorem leafDepthSumP_node (a : α)
-    (cs : List (RoseTree α)) :
+@[simp] theorem leafDepthSumP_node (a : α) (cs : List (RoseTree α)) :
     leafDepthSumP p (node a cs)
       = (cs.map fun c => leafDepthSumP p c + leafCountP p c).sum := by
   rcases cs with _ | ⟨c, cs⟩
-  · simp [leafDepthSumP]
-  · rw [leafDepthSumP, leavesWithDepth_node_cons, sum_map_list_sum, List.map_map]
+  · simp
+  · rw [leafDepthSumP, leafDepthsP_node_cons, sum_list_sum, List.map_map]
     refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
-    show ((t.leavesWithDepth.map fun q => (q.1, q.2 + 1)).map
-        fun q => if p q.1 then q.2 else 0).sum = _
-    rw [Multiset.map_map]
-    have hsplit : ((fun q : α × ℕ => if p q.1 then q.2 else 0)
-          ∘ fun q : α × ℕ => (q.1, q.2 + 1))
-        = fun q : α × ℕ => (if p q.1 then q.2 else 0) + (if p q.1 then 1 else 0) := by
-      funext q
-      by_cases hq : p q.1 <;> simp [hq]
-    rw [hsplit, Multiset.sum_map_add, sum_map_ite_one,
-      ← leafCountP_eq_countP_leavesWithDepth]
+    show ((leafDepthsP p t).map (· + 1)).sum = _
+    rw [sum_map_add_one, card_leafDepthsP]
     rfl
 
 /-- `leafCountP` is a `Perm`-invariant. -/
-theorem leafCountP_perm {t s : RoseTree α}
-    (h : Perm t s) : leafCountP p t = leafCountP p s := by
-  unfold leafCountP
-  rw [leaves_perm h]
+theorem leafCountP_perm {t s : RoseTree α} (h : Perm t s) :
+    leafCountP p t = leafCountP p s :=
+  congrArg (Multiset.countP p) (leaves_perm h)
+
+/-- `leafDepthsP` is a `Perm`-invariant. -/
+theorem leafDepthsP_perm {t s : RoseTree α} (h : Perm t s) :
+    leafDepthsP p t = leafDepthsP p s := by
+  unfold leafDepthsP
+  rw [leavesWithDepth_perm h]
 
 /-- `leafDepthSumP` is a `Perm`-invariant. -/
-theorem leafDepthSumP_perm {t s : RoseTree α}
-    (h : Perm t s) : leafDepthSumP p t = leafDepthSumP p s := by
-  unfold leafDepthSumP
-  rw [leavesWithDepth_perm h]
+theorem leafDepthSumP_perm {t s : RoseTree α} (h : Perm t s) :
+    leafDepthSumP p t = leafDepthSumP p s :=
+  congrArg Multiset.sum (leafDepthsP_perm p h)
 
 /-- The children's counted leaves are bounded by the node's. -/
 theorem sum_map_leafCountP_le_node (a : α)
@@ -169,7 +187,7 @@ theorem sum_map_leafCountP_le_node (a : α)
 /-- A counted leaf is a vertex: `Multiset.countP_le_card` through the leaf projection. -/
 theorem leafCountP_le_numNodes (t : RoseTree α) :
     leafCountP p t ≤ t.numNodes :=
-  (Multiset.countP_le_card _ _).trans (by rw [card_leaves]; exact numLeaves_le_numNodes t)
+  (Multiset.countP_le_card _ _).trans ((card_leaves t).trans_le (numLeaves_le_numNodes t))
 
 /-- A root failing `p` is an uncounted vertex, so the count is strict. -/
 theorem leafCountP_lt_numNodes_of_not (a : α)
@@ -186,11 +204,7 @@ theorem leafCountP_le_leafDepthSumP_of_not (a : α)
     (cs : List (RoseTree α)) (h : ¬p a) :
     leafCountP p (node a cs) ≤ leafDepthSumP p (node a cs) := by
   rw [leafCountP_node_of_not p a cs h, leafDepthSumP_node]
-  induction cs with
-  | nil => exact Nat.le_refl _
-  | cons c cs ih =>
-    simp only [List.map_cons, List.sum_cons]
-    omega
+  exact sum_map_le_sum_map _ _ cs fun c _ => Nat.le_add_left _ _
 
 end RoseTree
 
@@ -204,8 +218,7 @@ variable {α : Type*} (p : α → Prop) [DecidablePred p]
     has exactly one parent edge. -/
 def numEdges (t : Nonplanar α) : ℕ := t.numNodes - 1
 
-@[simp] theorem numEdges_leaf (a : α) : (leaf a : Nonplanar α).numEdges = 0 := by
-  simp [numEdges]
+@[simp] theorem numEdges_leaf (a : α) : (leaf a : Nonplanar α).numEdges = 0 := rfl
 
 theorem numEdges_eq_numNodes_sub_one (t : Nonplanar α) : t.numEdges = t.numNodes - 1 := rfl
 
@@ -238,9 +251,8 @@ def leafCountP : Nonplanar α → ℕ :=
     (mk t).leafCountP p = t.leafCountP p := rfl
 
 @[simp] theorem leafCountP_leaf (a : α) :
-    (leaf a : Nonplanar α).leafCountP p = if p a then 1 else 0 := by
-  show (mk (.node a [])).leafCountP p = _
-  rw [leafCountP_mk, RoseTree.leafCountP_leaf]
+    (leaf a : Nonplanar α).leafCountP p = if p a then 1 else 0 :=
+  RoseTree.leafCountP_leaf p a
 
 /-- A root failing `p` contributes nothing: the count is the children's total. -/
 theorem leafCountP_node_of_not (a : α)
@@ -262,9 +274,8 @@ def leafDepthSumP : Nonplanar α → ℕ :=
     (mk t).leafDepthSumP p = t.leafDepthSumP p := rfl
 
 @[simp] theorem leafDepthSumP_leaf (a : α) :
-    (leaf a : Nonplanar α).leafDepthSumP p = 0 := by
-  show (mk (.node a [])).leafDepthSumP p = _
-  rw [leafDepthSumP_mk, RoseTree.leafDepthSumP_leaf]
+    (leaf a : Nonplanar α).leafDepthSumP p = 0 :=
+  RoseTree.leafDepthSumP_leaf p a
 
 /-- Each child contributes its own depth-weighted count plus one per counted leaf it
     carries. -/
@@ -309,9 +320,8 @@ theorem leafCountP_le_leafDepthSumP_of_not_root
 
 /-- Counted leaves are among the non-root vertices whenever some vertex is uncounted. -/
 theorem leafCountP_le_numEdges (t : Nonplanar α)
-    (h : t.leafCountP p < t.numNodes) : t.leafCountP p ≤ t.numEdges := by
-  rw [Nonplanar.numEdges_eq_numNodes_sub_one]
-  omega
+    (h : t.leafCountP p < t.numNodes) : t.leafCountP p ≤ t.numEdges :=
+  Nat.le_sub_one_of_lt h
 
 end Nonplanar
 
