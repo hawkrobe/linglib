@@ -153,6 +153,13 @@ def Pattern.Compatible (p : Pattern α V) (a b : α) : Prop :=
 instance [DecidableEq V] (p : Pattern α V) : DecidableRel p.Compatible :=
   fun a b => by unfold Pattern.Compatible; infer_instance
 
+/-- Compatibility is symmetric. -/
+theorem Pattern.compatible_comm {p : Pattern α V} {a b : α} :
+    p.Compatible a b ↔ p.Compatible b a := by
+  unfold Pattern.Compatible
+  rw [eq_comm]
+  tauto
+
 /-- Surface harmonicity: the tier is a chain of compatible segments — within
     every opaque-delimited span, participating segments agree in value. -/
 def Pattern.Harmonic (p : Pattern α V) (w : List α) : Prop :=

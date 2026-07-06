@@ -29,8 +29,9 @@ Per-language rows live with fragments and studies, not here.
 * `InventoryClass`: Casali's `/2IU/` vs `/1IU/` classification (applies only to
   systems with a tongue-root contrast at all — five-vowel systems are excluded).
 * `DominanceIndicator`: the five evidence types for a dominant value.
-* `TongueRootProfile`, `conformsToCorrelation`: a language's row schema and the
-  correlation as a decidable predicate over it.
+* `TongueRootProfile`, `InventoryClass.predictedDominant`: a language's row
+  schema and the correlation as a prediction function; conformance is stated
+  inline at use sites (`∀ v ∈ p.dominant, v = p.inventoryClass.predictedDominant`).
 -/
 
 namespace Phonology.TongueRoot
@@ -88,19 +89,14 @@ structure TongueRootProfile where
   evidence       : List DominanceIndicator := []
   deriving DecidableEq, Repr
 
-/-- The [ATR]-inventory correlation ([casali-2024-inventory]): a `/2IU/` system
-    with observed dominance has [+ATR] dominant; a `/1IU/` system does not have
-    [+ATR] dominant. Symmetric systems (no observed dominance) conform trivially.
-    A defeasible tendency over rows — Casali's chapter records the exceptions —
-    so this is a predicate for per-language conformance, never a theorem. -/
-def conformsToCorrelation (p : TongueRootProfile) : Prop :=
-  match p.inventoryClass, p.dominant with
-  | _, none => True
-  | .twoIU, some v => v = .plus
-  | .oneIU, some v => v = .minus
-
-instance (p : TongueRootProfile) : Decidable (conformsToCorrelation p) := by
-  unfold conformsToCorrelation
-  rcases p with ⟨_ | _, _, _ | _, _⟩ <;> exact inferInstanceAs (Decidable _)
+/-- The dominant value the [ATR]-inventory correlation predicts from inventory
+    structure ([casali-2024-inventory]): `/2IU/` systems tend to [+ATR]
+    dominance, `/1IU/` systems to [−ATR] dominance. A defeasible tendency —
+    the chapter records the exceptions — so studies state per-language
+    conformance inline (`∀ v ∈ p.dominant, v = p.inventoryClass.predictedDominant`),
+    never as a universal theorem. -/
+def InventoryClass.predictedDominant : InventoryClass → ATR
+  | .twoIU => .plus
+  | .oneIU => .minus
 
 end Phonology.TongueRoot
