@@ -247,13 +247,11 @@ def leafCountP : Nonplanar α → ℕ :=
 theorem leafCountP_node_of_not (a : α)
     (F : Multiset (Nonplanar α)) (h : ¬p a) :
     (Nonplanar.node a F).leafCountP p = (F.map (Nonplanar.leafCountP p)).sum := by
-  refine Quotient.inductionOn F fun lst => ?_
-  show (mk (.node a (lst.map Quotient.out))).leafCountP p = _
-  rw [leafCountP_mk, RoseTree.leafCountP_node_of_not p a _ h, List.map_map]
-  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
-  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
-  show (mk (Quotient.out t)).leafCountP p = Nonplanar.leafCountP p t
-  exact congrArg (Nonplanar.leafCountP p) (Quotient.out_eq t)
+  induction F using forest_inductionOn with
+  | h cs =>
+    rw [node_mk_tree_list, leafCountP_mk, RoseTree.leafCountP_node_of_not p a cs h,
+      Multiset.map_coe, Multiset.sum_coe, List.map_map]
+    rfl
 
 /-- The sum of root-distances of the leaves whose label satisfies `p`. -/
 def leafDepthSumP : Nonplanar α → ℕ :=
@@ -272,16 +270,11 @@ def leafDepthSumP : Nonplanar α → ℕ :=
     (F : Multiset (Nonplanar α)) :
     (Nonplanar.node a F).leafDepthSumP p
       = (F.map fun c => c.leafDepthSumP p + c.leafCountP p).sum := by
-  refine Quotient.inductionOn F fun lst => ?_
-  show (mk (.node a (lst.map Quotient.out))).leafDepthSumP p = _
-  rw [leafDepthSumP_mk, RoseTree.leafDepthSumP_node, List.map_map]
-  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
-  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
-  show RoseTree.leafDepthSumP p (Quotient.out t) + RoseTree.leafCountP p (Quotient.out t)
-      = Nonplanar.leafDepthSumP p t + Nonplanar.leafCountP p t
-  congr 1
-  · exact congrArg (Nonplanar.leafDepthSumP p) (Quotient.out_eq t)
-  · exact congrArg (Nonplanar.leafCountP p) (Quotient.out_eq t)
+  induction F using forest_inductionOn with
+  | h cs =>
+    rw [node_mk_tree_list, leafDepthSumP_mk, RoseTree.leafDepthSumP_node,
+      Multiset.map_coe, Multiset.sum_coe, List.map_map]
+    rfl
 
 /-- A root failing `p` is an uncounted vertex, so the count is strict. -/
 theorem leafCountP_lt_numNodes_of_not_root
