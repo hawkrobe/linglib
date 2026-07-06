@@ -112,11 +112,11 @@ theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : Nonplanar (α ⊕ �
 
 /-- `im_pair_size_deltas_deletion` with the α relation discharged from a Δᵈ
     admissible cut: deleting `mover` from `T` and rebinarizing the remainder
-    (`contractUnary p.2`) leaves `b₀`, `α`, `σ` unchanged. `unaryCount p.2 = 1`
+    (`contractUnary p.2`) leaves `b₀`, `α`, `σ` unchanged. `numUnary p.2 = 1`
     characterizes a single edge cut at a binary node. -/
 theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : Nonplanar (α ⊕ β))
     (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ ConnesKreimer.cutSummandsN T)
-    (mover : Nonplanar (α ⊕ β)) (hcard : p.1 = {mover}) (huc : p.2.unaryCount = 1) :
+    (mover : Nonplanar (α ⊕ β)) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
     Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
         : Forest (Nonplanar (α ⊕ β))) = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
       ∧ Forest.alpha ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
