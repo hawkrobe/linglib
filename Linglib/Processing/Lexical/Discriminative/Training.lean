@@ -2,7 +2,10 @@ import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 import Mathlib.LinearAlgebra.Pi
+import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -46,6 +49,14 @@ of both `S` and `C` — `ermSolution_iff_rescaled` connects the two forms.
 * `isERMSolution_of_interpolates` — **T-Interpolation**:
   interpolating maps are ERM, so `IsERMSolution` is nonvacuous on
   interpolable data.
+* `TrainingExperience.sqrtScale`, `isELSolution_sqrtScale_iff` —
+  **T-Sqrt-transport**: FIL under `q` is EL on the `√q`-premultiplied
+  experience — the [gahl-baayen-2024]-appendix `√Q` construction, whose
+  equivalence with frequency-replicated data is
+  [heitmeier-chuang-baayen-2026]'s.
+* `exists_isERMSolution` — **T-Existence**: ERM solutions exist for any
+  nonnegative weights, by the Hilbert projection theorem applied
+  columnwise to the prediction subspace.
 
 ## Implementation notes
 
@@ -58,8 +69,8 @@ carrier structure. The PMF view of `q.normalize` is a derived bridge
 
 ## TODO
 
-* General existence `exists_isERMSolution` via the normal equations /
-  closed form `G = (SᵀS)⁻¹SᵀC` ([heitmeier-chuang-baayen-2026] ch. 6)
+* Closed form `G = (SᵀS)⁻¹SᵀC` under full column rank
+  ([heitmeier-chuang-baayen-2026] ch. 6; [gahl-baayen-2024] appendix)
   — a future `Training/ClosedForm.lean`.
 * Iterative Widrow-Hoff convergence to the FIL solution.
 * Approximate-decodability gap bounds for `semSup` (quantitative form
@@ -99,7 +110,9 @@ structure TrainingExperience (numEvents formDim meaningDim : ℕ) where
 
     - `q ≡ 1` (uniform): type-based learning → EL
     - `q i = #occurrences i`: frequency-informed → FIL
-    - `q i = log(#occurrences i)`: log-frequency learning
+    - `q i = log(#occurrences i)`: log-frequency learning (which
+      [gahl-baayen-2024]'s appendix cautions distorts learning relative
+      to incremental Widrow-Hoff)
     - `q i = exp(-decay · timeAgo i)`: recency-weighted
 
     All instantiations of `FrequencyVector` correspond to different
@@ -154,12 +167,14 @@ theorem squaredDist_nonneg (a b : FormVec n) : 0 ≤ squaredDist a b :=
     where `‖·‖²` is squared coordinate-distance (= squared Frobenius
     norm on the form-vector slot).
 
-    This is the paper's loss in its appendix §A1.3 form, before
-    being recast as the matrix expression `‖√Q (SG − C)‖²_F`. The
-    cognitive commitment is at the level of this loss function:
-    the learner minimises the per-event squared mismatch between
-    the produced and observed form vectors, weighted by frequency
-    of occurrence. -/
+    The papers specify the mapping procedurally — premultiply `S` and `C`
+    by `√Q` and solve the normal equations ([gahl-baayen-2024] appendix;
+    [heitmeier-chuang-baayen-2026]); this loss is the standard variational
+    characterisation of that procedure, connected to it by
+    `weightedLoss_sqrtScale`. The cognitive commitment is at the level of
+    this loss function: the learner minimises the per-event squared
+    mismatch between produced and observed form vectors, weighted by
+    frequency of occurrence. -/
 def weightedLoss
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : ℝ :=
@@ -458,6 +473,116 @@ theorem isERMSolution_of_same_normalize
     IsERMSolution data q₁ G ↔ IsERMSolution data q₂ G := by
   rw [← isERMSolution_normalize_iff data q₁ G h₁,
       ← isERMSolution_normalize_iff data q₂ G h₂, hnorm]
+
+/-! ### √Q transport and existence of ERM solutions
+
+[gahl-baayen-2024]'s appendix computes EL from the normal equations of
+regression and FIL by solving the EL problem on `√Q`-premultiplied `S` and
+`C` matrices; [heitmeier-chuang-baayen-2026] gives the same construction, and
+[heitmeier-2024] proves the equivalence with frequency-replicated training
+data via the closed-form normal-equations solution, under invertibility.
+Here the premultiplied experience is `TrainingExperience.sqrtScale`, the
+equivalence (`isELSolution_sqrtScale_iff`) is stated invertibility-free at
+the level of ERM solution sets, and ERM existence follows by orthogonal
+projection onto the prediction subspace, columnwise. -/
+
+/-- The `√q`-premultiplied training experience: event `i` scaled by
+    `√(q i)` in both meaning and form — the `√Q`-premultiplication of `S`
+    and `C` of [gahl-baayen-2024]'s appendix and
+    [heitmeier-chuang-baayen-2026]. -/
+def TrainingExperience.sqrtScale (data : TrainingExperience m n d)
+    (q : FrequencyVector m) : TrainingExperience m n d where
+  meanings i := Real.sqrt (q i) • data.meanings i
+  forms i := Real.sqrt (q i) • data.forms i
+
+theorem squaredDist_smul (c : ℝ) (a b : FormVec n) :
+    squaredDist (c • a) (c • b) = c ^ 2 * squaredDist a b := by
+  unfold squaredDist
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun j _ => by
+    simp only [Pi.smul_apply, smul_eq_mul]; ring
+
+/-- **T-Sqrt-transport** (loss level): the uniform-weight loss on the
+    `√q`-premultiplied experience is the `q`-weighted loss on the original. -/
+theorem weightedLoss_sqrtScale (data : TrainingExperience m n d)
+    {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    weightedLoss (data.sqrtScale q) (uniformFrequency m) G
+      = weightedLoss data q G := by
+  unfold weightedLoss
+  refine Finset.sum_congr rfl fun i _ => ?_
+  show 1 * squaredDist (G (Real.sqrt (q i) • data.meanings i))
+        (Real.sqrt (q i) • data.forms i) = _
+  rw [one_mul, map_smul, squaredDist_smul, Real.sq_sqrt (hq i)]
+
+/-- **T-Sqrt-transport**: FIL under `q` is exactly EL on the
+    `√q`-premultiplied experience — [heitmeier-2024]'s FIL-EL equivalence,
+    invertibility-free. -/
+theorem isELSolution_sqrtScale_iff (data : TrainingExperience m n d)
+    {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    IsELSolution (data.sqrtScale q) G ↔ IsERMSolution data q G := by
+  unfold IsELSolution IsERMSolution
+  exact forall_congr' fun G' => by
+    rw [weightedLoss_sqrtScale data hq, weightedLoss_sqrtScale data hq]
+
+private theorem coordResidual_uniform_eq_norm_sq (data : TrainingExperience m n d)
+    (pred : Fin m → ℝ) (j : Fin n) :
+    coordResidual data (uniformFrequency m) pred j
+      = ‖WithLp.toLp 2 (fun k => data.forms k j)
+          - WithLp.toLp 2 pred‖ ^ 2 := by
+  rw [EuclideanSpace.norm_sq_eq]
+  unfold coordResidual
+  refine Finset.sum_congr rfl fun k _ => ?_
+  show 1 * (pred k - data.forms k j) ^ 2 = _
+  rw [one_mul, ← WithLp.toLp_sub]
+  simp only [Pi.sub_apply, Real.norm_eq_abs, sq_abs]
+  ring
+
+private theorem exists_forall_coordResidual_le (data : TrainingExperience m n d)
+    (j : Fin n) :
+    ∃ w : MeaningVec d →ₗ[ℝ] ℝ, ∀ w' : MeaningVec d →ₗ[ℝ] ℝ,
+      coordResidual data (uniformFrequency m) (fun k => w (data.meanings k)) j
+        ≤ coordResidual data (uniformFrequency m) (fun k => w' (data.meanings k)) j := by
+  classical
+  -- prediction subspace: range of the evaluation map into Euclidean event space
+  set Ev : (MeaningVec d →ₗ[ℝ] ℝ) →ₗ[ℝ] EuclideanSpace ℝ (Fin m) :=
+    (WithLp.linearEquiv 2 ℝ (Fin m → ℝ)).symm.toLinearMap.comp
+      (LinearMap.pi fun k => LinearMap.applyₗ (data.meanings k)) with hEv
+  set y : EuclideanSpace ℝ (Fin m) := WithLp.toLp 2 (fun k => data.forms k j) with hy
+  haveI : CompleteSpace ↥(LinearMap.range Ev) := FiniteDimensional.complete ℝ _
+  obtain ⟨w, hw⟩ := LinearMap.mem_range.mp ((LinearMap.range Ev).starProjection_apply_mem y)
+  refine ⟨w, fun w' => ?_⟩
+  have hmin : ∀ v : ↥(LinearMap.range Ev),
+      ‖y - (LinearMap.range Ev).starProjection y‖ ≤ ‖y - ↑v‖ := fun v => by
+    rw [Submodule.starProjection_minimal]
+    exact ciInf_le ⟨0, by rintro r ⟨x, rfl⟩; exact norm_nonneg _⟩ v
+  have hle : ‖y - Ev w‖ ≤ ‖y - Ev w'‖ := by
+    rw [hw]
+    exact hmin ⟨Ev w', LinearMap.mem_range_self _ _⟩
+  have hsq := pow_le_pow_left₀ (norm_nonneg _) hle 2
+  have hEvw : ∀ v : MeaningVec d →ₗ[ℝ] ℝ,
+      Ev v = WithLp.toLp 2 (fun k => v (data.meanings k)) := fun _ => rfl
+  rw [coordResidual_uniform_eq_norm_sq, coordResidual_uniform_eq_norm_sq]
+  rw [hEvw w, hEvw w', hy] at hsq
+  exact hsq
+
+/-- **T-EL-existence**: endstate solutions exist — the normal-equations
+    solvability of [gahl-baayen-2024]'s appendix, by orthogonal projection
+    of each observed form column onto the prediction subspace. -/
+theorem exists_isELSolution (data : TrainingExperience m n d) :
+    ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, IsELSolution data G := by
+  choose w hw using exists_forall_coordResidual_le data
+  refine ⟨LinearMap.pi w, (isERMSolution_iff_coordResidual _ _ _).mpr fun j w' => ?_⟩
+  simpa only [LinearMap.pi_apply] using hw j w'
+
+/-- **T-Existence**: ERM solutions exist for any nonnegative frequency
+    vector, via `exists_isELSolution` on the `√q`-premultiplied experience. -/
+theorem exists_isERMSolution (data : TrainingExperience m n d)
+    {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i) :
+    ∃ G, IsERMSolution data q G :=
+  let ⟨G, hG⟩ := exists_isELSolution (data.sqrtScale q)
+  ⟨G, (isELSolution_sqrtScale_iff data hq G).mp hG⟩
 
 end TrainingSubstrate
 
