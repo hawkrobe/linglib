@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.Choice.Learning
+import Linglib.Core.Learning.Luce
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Scores

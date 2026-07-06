@@ -260,7 +260,9 @@ import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Choice.ChoiceApproximations
 import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Probability.Choice.Learning
+import Linglib.Core.Learning.Luce
+import Linglib.Core.Learning.RescorlaWagner
+import Linglib.Core.Learning.WidrowHoff
 import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Choice.SemiorderRanking
@@ -1456,6 +1458,8 @@ import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Equilibrium
+import Linglib.Processing.Lexical.Discriminative.Existence
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Linglib.Processing.Lexical.Discriminative.Normed
 import Linglib.Processing.Lexical.Discriminative.Training

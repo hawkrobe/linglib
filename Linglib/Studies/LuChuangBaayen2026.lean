@@ -54,21 +54,14 @@ visible to the eye" but reportedly incomplete; [lu-chuang-baayen-2026]
 
 ## Substrate
 
-The `LinearDiscriminativeLexicon` substrate
-(`Processing/Lexical/Discriminative/Defs.lean`) is **reused
-verbatim** — this is the second paper-anchored study consuming it
-([chuang-bell-tseng-baayen-2026] is the first). This file
-specialises the substrate to:
+This file specialises the `LinearDiscriminativeLexicon` substrate
+(`Processing/Lexical/Discriminative/Defs.lean`) to:
 
 - **100-dimensional** pitch vectors (vs. Chuang's 50-dim) — paper §4.1;
 - the **same 768-dimensional** CKIP GPT-2 embedding space
   (`CKIPGPT2HiddenDim`, reused from `ChuangEtAl2026`);
 - a **20-element** `TonePattern20` enum covering all disyllabic
   combinations of T1/T2/T3/T4/T0.
-
-The fact that the same substrate parameterises cleanly to both 50-dim
-and 100-dim form vectors validates the dimension-polymorphic carrier
-typing of `LinearDiscriminativeLexicon`.
 
 ## Cross-framework note: vs. autosegmental T3 sandhi
 
