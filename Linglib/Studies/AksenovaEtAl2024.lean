@@ -9,44 +9,20 @@ import Linglib.Phonology.Harmony.Basic
 /-!
 # Aksënova, Rawski, Graf & Heinz 2024: the computational power of harmonic forms
 
-[aksenova-rawski-graf-heinz-2024] survey the subregular characterization of
-harmony: strictly local grammars cannot express it (unbounded distance),
-strictly piecewise grammars cannot express blocking, and tier-based strictly
-local grammars capture both. Their §34.3.1 works out three double vowel
-harmonies with the full TSL grammars printed (their Tables 34.3–34.5), showing
-a single tier always suffices for double VH.
+[aksenova-rawski-graf-heinz-2024] §34.3.1 works out three double vowel
+harmonies with their TSL grammars printed (Tables 34.3–34.5); a single tier
+always suffices. This study transcribes the grammars featurally and
+stress-tests `Phonology.Harmony.Pattern`: Kirghiz is the conjunction of two
+patterns on one tier (`kirghiz_two_patterns`); Buryat's asymmetric blocking
+defeats every symmetric relation (`buryat_not_symmetric`) — the finding that
+forced blocker imposition into `Pattern.Compatible` — and with imposition is
+expressible (`buryat_expressible`, certified on the (9) forms); Yakut's
+harmonizing blockers show the same asymmetry (`yakut_asymmetric`); whether its
+configuration-dependent grammar is a conjunction of patterns is left open.
 
-This study transcribes the three grammars featurally (the tables' banned-bigram
-sets are their extensions) and stress-tests `Phonology.Harmony.Pattern` against
-them:
-
-* **Kirghiz** ((5), Table 34.3): frontness and rounding spread together over
-  all vowels. Expressible — the grammar is exactly the conjunction of two
-  `Pattern` compatibilities on the same tier (`kirghiz_two_patterns`).
-* **Buryat** ((9), Table 34.4): ATR harmony over all vowels; rounding agreement
-  among non-high vowels, blocked by high vowels. The blocking clause
-  `*[+high][−high,+round]` is asymmetric, so no symmetric adjacency relation
-  renders the grammar (`buryat_not_symmetric`) — the finding that forced
-  blocker-imposition into `Pattern.Compatible`. With imposition, Buryat is
-  expressible: `buryat_expressible` certifies ATR ∧ rounding-with-opaque-highs
-  against the printed table by kernel `decide`.
-* **Yakut** ((14), Table 34.5): fronting over all vowels; rounding spreads
-  high→high and nonhigh→any, but not high→low — low vowels are harmonizing
-  blockers (the icy-target class of `Phonology.Harmony.Participation`), and the
-  ban `*[+high][−high,+round]` is again asymmetric (`yakut_asymmetric`);
-  whether the full grammar is a conjunction of patterns is left open.
-
-The Buryat finding is the stress-test payload that reshaped the substrate:
-blocker-imposition ((8c) of [ritter-vanderhulst-2024-themes]) entered
-`Pattern.Compatible` because `buryat_not_symmetric` proved the symmetric
-formulation could not render Table 34.4. Whether Yakut's
-configuration-dependent blocking is expressible as a conjunction of patterns
-is left open; its asymmetry witness stands either way.
-
-Vowel constructor names ASCII-ize the chapter's IPA: `ih` = ɨ, `oe` = ö,
-`ue` = ü, `oh` = ɔ, `uh` = ʊ. The chapter's §34.3.4 tier-relation typology
-(same/embedded/disjoint attested, partial overlap unattested) is not yet
-formalized here. TODO: `TierRelation` classifier over Table 34.8's rows.
+Constructor names ASCII-ize the IPA: `ih` = ɨ, `oe` = ö, `ue` = ü, `oh` = ɔ,
+`uh` = ʊ. TODO: the §34.3.4 tier-relation typology (same/embedded/disjoint
+attested, partial overlap unattested) over Table 34.8's rows.
 -/
 
 namespace AksenovaEtAl2024
@@ -72,8 +48,7 @@ def round : KirghizV → Bool
 
 end KirghizV
 
-/-- Table 34.3's banned bigrams, featurally: any tier-adjacent pair disagreeing
-    in fronting or rounding. -/
+/-- Table 34.3, featurally: pairs disagreeing in fronting or rounding. -/
 def kirghizBanned (x y : KirghizV) : Prop :=
   x.front ≠ y.front ∨ x.round ≠ y.round
 
@@ -88,15 +63,13 @@ def kirghizFront : Pattern KirghizV Bool :=
 def kirghizRound : Pattern KirghizV Bool :=
   { value := fun v => some v.round, participation := fun _ => .participating }
 
-/-- Kirghiz's printed grammar is the conjunction of the two patterns'
-    compatibilities: double harmony on a single tier, as the chapter says. -/
+/-- Kirghiz's grammar is the conjunction of the two patterns' compatibilities. -/
 theorem kirghiz_two_patterns (x y : KirghizV) :
     kirghizBanned x y ↔
       ¬ (kirghizFront.Compatible x y ∧ kirghizRound.Compatible x y) := by
   revert x y; decide
 
-/-- Spot-checks against Table 34.3's extension: `*ai` and `*oe` are banned,
-    `üö` (agreeing in both features) is not. -/
+/-- Spot-checks against Table 34.3: `*ai`, `*oe` banned; `üö` licensed. -/
 example : kirghizBanned .a .i ∧ kirghizBanned .o .e ∧
     ¬ kirghizBanned .ue .oe := by decide
 
@@ -123,9 +96,7 @@ def round : BuryatV → Bool
 
 end BuryatV
 
-/-- Table 34.4's banned bigrams, featurally: ATR disagreement (`H_ATR`),
-    rounding disagreement between non-high vowels (`H_r1`), and a rounded
-    non-high vowel after a high vowel (`H_r2`). -/
+/-- Table 34.4, featurally: `H_ATR ∪ H_r1 ∪ H_r2`. -/
 def buryatBanned (x y : BuryatV) : Prop :=
   x.tense ≠ y.tense ∨
     (¬ x.high ∧ ¬ y.high ∧ x.round ≠ y.round) ∨
@@ -134,9 +105,7 @@ def buryatBanned (x y : BuryatV) : Prop :=
 instance : DecidableRel buryatBanned := fun x y => by
   unfold buryatBanned; infer_instance
 
-/-- The `H_r2` clause is asymmetric: `*ʊɔ` is banned but `ɔʊ` is fine
-    ((9b): the perfective no longer agrees in rounding across the high
-    causative). -/
+/-- `H_r2` is asymmetric: `*ʊɔ` is banned but `ɔʊ` is fine ((9b)). -/
 theorem buryat_asymmetric : buryatBanned .uh .oh ∧ ¬ buryatBanned .oh .uh := by
   decide
 
@@ -147,38 +116,32 @@ theorem buryat_not_symmetric (R : BuryatV → BuryatV → Prop)
   exact buryat_asymmetric.2 ((h _ _).mp ((hsymm _ _).mp ((h _ _).mpr
     buryat_asymmetric.1)))
 
-/-- ATR harmony as a pattern: all tier vowels participate. -/
+/-- ATR harmony: all tier vowels participate. -/
 def buryatATR : Pattern BuryatV Bool :=
   { value := fun v => some v.tense, participation := fun _ => .participating }
 
-/-- Rounding harmony as a pattern: high vowels are opaque blockers whose
-    transmitted value is [−round] — they license only unrounded non-high
-    vowels after themselves (`H_r2`). -/
+/-- Rounding harmony: high vowels are opaque blockers transmitting [−round]
+    (`H_r2`). -/
 def buryatRound : Pattern BuryatV Bool :=
   { value := fun v => some (if v.high then false else v.round)
     participation := fun v => if v.high then .opaque else .participating }
 
-/-- With blocker-imposition in `Pattern.Compatible`, Buryat is expressible:
-    the printed grammar is exactly the conjunction of the ATR pattern and the
-    rounding pattern with opaque high vowels. The asymmetry that defeats every
-    symmetric relation (`buryat_not_symmetric`) is carried by the imposition
-    clause. -/
+/-- With imposition, Buryat is expressible: the printed grammar is exactly
+    ATR ∧ rounding-with-opaque-highs. -/
 theorem buryat_expressible (x y : BuryatV) :
     buryatBanned x y ↔
       ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
   revert x y; decide
 
-/-- Buryat surface well-formedness: harmonic for both patterns. -/
+/-- Buryat well-formedness: harmonic for both patterns. -/
 def buryatWellFormed (w : List BuryatV) : Prop :=
   buryatATR.Harmonic w ∧ buryatRound.Harmonic w
 
 instance (w : List BuryatV) : Decidable (buryatWellFormed w) := by
   unfold buryatWellFormed; infer_instance
 
-/-- The (9) forms, as vowel skeletons: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` are
-    well-formed — the second because the high causative transmits [−round] to
-    the perfective (the imposition path) — while `*ɔr-aːd` (rounding agreement
-    skipped) and `*ɔr-ʊːl-ɔːd` (rounded vowel after the blocker) are not. -/
+/-- The (9) forms: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` in (the latter through the
+    imposition path); `*ɔr-aːd` and `*ɔr-ʊːl-ɔːd` out. -/
 example : buryatWellFormed [.oh, .oh] ∧ ¬ buryatWellFormed [.oh, .a] ∧
     buryatWellFormed [.oh, .uh, .a] ∧ ¬ buryatWellFormed [.oh, .uh, .oh] := by
   decide
@@ -206,10 +169,7 @@ def high : YakutV → Bool
 
 end YakutV
 
-/-- Table 34.5's banned bigrams, featurally: fronting disagreement (`H_front`),
-    rounding disagreement between high vowels (`H_r1`), a rounded low vowel
-    after a high vowel (`H_r2`), and rounding disagreement after a non-high
-    vowel (`H_r3`). -/
+/-- Table 34.5, featurally: `H_front ∪ H_r1 ∪ H_r2 ∪ H_r3`. -/
 def yakutBanned (x y : YakutV) : Prop :=
   x.front ≠ y.front ∨
     (x.high ∧ y.high ∧ x.round ≠ y.round) ∨
@@ -219,13 +179,11 @@ def yakutBanned (x y : YakutV) : Prop :=
 instance : DecidableRel yakutBanned := fun x y => by
   unfold yakutBanned; infer_instance
 
-/-- Yakut's low vowels are harmonizing blockers ((14g): `ojum-lar`, not
-    `*ojum-lor`): rounding spreads from `o` to `u` but not from `u` to `o` —
-    the icy-target configuration, and again asymmetric. -/
+/-- Yakut's harmonizing blockers ((14g)): rounding spreads `o`→`u` but not
+    `u`→`o`. -/
 theorem yakut_asymmetric : yakutBanned .u .o ∧ ¬ yakutBanned .o .u := by decide
 
-/-- Spot-checks against (14): `oɣo-lor` (rounding spreads low→low) and
-    `murum-u` (high→high) are well-formed; `*tünnük-lör` ((14h)) is banned. -/
+/-- Spot-checks against (14): `oɣo-lor`, `murum-u` licensed; `*tünnük-lör` banned. -/
 example : ¬ yakutBanned .o .o ∧ ¬ yakutBanned .u .u ∧
     yakutBanned .ue .oe := by decide
 
