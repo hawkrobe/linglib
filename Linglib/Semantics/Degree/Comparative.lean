@@ -234,6 +234,17 @@ theorem maxComparative_unique {Pmatrix Pthan : α → Prop} {μ : α → D} {xa 
   · exact fun hlt =>
       ⟨μ xb, isGreatest_thanDegrees_of_unique hb hb_unique, xa, ha, hlt⟩
 
+/-- Max-quantified equative: the `Pthan` degree set has a greatest element
+δ, and some `Pmatrix`-witness measures at least δ — `maxComparative` with
+the weak threshold. -/
+def maxEquative (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
+  ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ ≤ μ x
+
+/-- The strict comparative entails the equative. -/
+theorem maxComparative_entails_maxEquative (Pmatrix Pthan : α → Prop) (μ : α → D) :
+    maxComparative Pmatrix Pthan μ → maxEquative Pmatrix Pthan μ :=
+  fun ⟨δ, hδ, x, hx, hlt⟩ => ⟨δ, hδ, x, hx, hlt.le⟩
+
 /-- Singleton collapse: comparing unique individuals is direct measure
 comparison. -/
 theorem maxComparative_eq_iff (μ : α → D) (xa xb : α) :

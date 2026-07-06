@@ -308,7 +308,7 @@ theorem mentalStateHomogeneity_iff {Event : Type*} [Preorder Event]
 
 /-! ## §5.1 Intensity Comparative Max-Reduction
 
-The Pasternak analog of `Wellwood2015.adjectival_max_reduces`: under
+The Pasternak unique-witness collapse: under
 unique-witness assumptions on both sides, the intensity comparative
 reduces to direct measure comparison. Pasternak fn 25 (PDF p.298)
 explicitly rejects the unique-state assumption, so this reduction is a
@@ -317,10 +317,8 @@ when the max-quantified than-clause adds noise. -/
 
 /-- Pasternak's intensity comparative reduces to direct measure
     comparison `v.μint eb < v.μint ea` when both sides have unique
-    witness eventualities. This is the Pasternak analog of
-    `Wellwood2015.adjectival_max_reduces`, derived by specializing
-    `Degree.maxComparative_unique` to the intensity case (experiencer
-    plus themed predicates). -/
+    witness eventualities, by specializing `Degree.maxComparative_unique`
+    to the intensity case (experiencer plus themed predicates). -/
 theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {v : MentalStateVerb Time}
