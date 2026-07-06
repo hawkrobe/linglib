@@ -185,7 +185,7 @@ def classifyVowel (s : Segment) : HarmonyRole :=
     Structurally identical to `finnishHarmony` but with a larger neutral
     class (4 vowels vs 2). [siptar-torkenczy-2000] §3.2.1,
     [rose-walker-2011]. -/
-def hungarianPalatalHarmony : System :=
+def hungarianPalatalHarmony : System Segment :=
   System.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
@@ -201,7 +201,7 @@ def hungarianPalatalHarmony : System :=
 
     The rounding value only matters for front stems (back stems always
     get the back suffix variant regardless of rounding). -/
-def hungarianLabialHarmony : System :=
+def hungarianLabialHarmony : System Segment :=
   System.mk' (feature := .round)
     (isTrigger     := (·.HasValue .syllabic true))
     (isTarget      := (·.HasValue .syllabic true))
@@ -608,16 +608,16 @@ theorem víz_twoDim :
     for three-way suffixes) targets all relevant suffix positions. -/
 
 theorem hungarian_finnish_same_feature :
-    hungarianPalatalHarmony.feature = Feature.back := rfl
+    hungarianPalatalHarmony.pattern.value = (fun s => s Feature.back) := rfl
 
 theorem hungarian_finnish_same_direction :
-    hungarianPalatalHarmony.side = .left := rfl
+    hungarianPalatalHarmony.pattern.direction = .rightward := rfl
 
 /-- Both Hungarian and Turkish have two-dimensional harmony:
     palatal ([back]) + labial ([round]). -/
 theorem hungarian_turkish_both_twoDim :
-    hungarianPalatalHarmony.feature = .back ∧
-    hungarianLabialHarmony.feature = .round := ⟨rfl, rfl⟩
+    hungarianPalatalHarmony.pattern.value = (fun s => s Feature.back) ∧
+    hungarianLabialHarmony.pattern.value = (fun s => s Feature.round) := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 13: Blocker Model — /e/ as opaque ([siptar-torkenczy-2000] §3.2.3)
@@ -643,7 +643,7 @@ theorem hungarian_turkish_both_twoDim :
     Only /i, í/ are transparent; /e, é/ block spreading.
     [siptar-torkenczy-2000] §3.2.3: /e/ is the least transparent
     neutral vowel (most likely to block). -/
-def palatalHarmony_eBlocks : System :=
+def palatalHarmony_eBlocks : System Segment :=
   System.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
