@@ -158,6 +158,20 @@ theorem weightedLoss_eq_sum_coordResidual :
   simp_rw [Finset.mul_sum]
   exact Finset.sum_comm
 
+/-- Minimising a separable finite sum over a product is exactly minimising
+    each coordinate. `[UPSTREAM]` candidate. -/
+private theorem sum_min_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {β : ι → Type*} (g : ∀ i, β i → ℝ) (x : ∀ i, β i) :
+    (∀ y : ∀ i, β i, ∑ i, g i (x i) ≤ ∑ i, g i (y i)) ↔
+      ∀ i, ∀ b : β i, g i (x i) ≤ g i b := by
+  refine ⟨fun h i b => ?_, fun h y => Finset.sum_le_sum fun i _ => h i (y i)⟩
+  have hy := h (Function.update x i b)
+  simp_rw [Function.apply_update (fun j => g j) x i b] at hy
+  rw [Finset.sum_update_of_mem (Finset.mem_univ i),
+      ← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ i),
+      Finset.erase_eq] at hy
+  linarith
+
 /-- `G` is an ERM solution iff at every form coordinate its column's residual
     is at most that of any linear functional of the meanings — ERM is
     columnwise-unbeatable regression. No sign condition on `q`. -/
@@ -167,24 +181,12 @@ theorem isERMSolution_iff_coordResidual :
         coordResidual data q (fun k => G (data.meanings k) j₀) j₀
           ≤ coordResidual data q (fun k => w (data.meanings k)) j₀ := by
   constructor
-  · intro hG j₀ w
-    -- the competitor: `G` with column `j₀` replaced by `w`
-    have h := hG (LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w))
-    rw [weightedLoss_eq_sum_coordResidual, weightedLoss_eq_sum_coordResidual] at h
-    have hcols : (fun j => coordResidual data q
-          (fun k => LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w)
-            (data.meanings k) j) j)
-        = Function.update
-            (fun j => coordResidual data q (fun k => G (data.meanings k) j) j) j₀
-            (coordResidual data q (fun k => w (data.meanings k)) j₀) := by
-      funext j
-      rcases eq_or_ne j j₀ with rfl | hj
-      · simp [LinearMap.pi_apply]
-      · simp [LinearMap.pi_apply, Function.update_of_ne hj]
-    rw [hcols, Finset.sum_update_of_mem (Finset.mem_univ j₀),
-        ← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ j₀),
-        Finset.erase_eq] at h
-    linarith
+  · intro hG
+    refine (sum_min_iff (fun j (w : MeaningVec d →ₗ[ℝ] ℝ) =>
+        coordResidual data q (fun k => w (data.meanings k)) j)
+        (fun j => (LinearMap.proj j).comp G)).mp fun y => ?_
+    have h := hG (LinearMap.pi y)
+    rwa [weightedLoss_eq_sum_coordResidual, weightedLoss_eq_sum_coordResidual] at h
   · intro h G'
     rw [weightedLoss_eq_sum_coordResidual data q G,
       weightedLoss_eq_sum_coordResidual data q G']
