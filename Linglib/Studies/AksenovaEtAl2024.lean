@@ -96,7 +96,8 @@ def round : BuryatV → Bool
 
 end BuryatV
 
-/-- Table 34.4, featurally: `H_ATR ∪ H_r1 ∪ H_r2`. -/
+/-- Table 34.4's bans: ATR disagreement anywhere; rounding disagreement
+    between non-high vowels; a rounded non-high vowel after a high vowel. -/
 def buryatBanned (x y : BuryatV) : Prop :=
   x.tense ≠ y.tense ∨
     (¬ x.high ∧ ¬ y.high ∧ x.round ≠ y.round) ∨
@@ -105,7 +106,8 @@ def buryatBanned (x y : BuryatV) : Prop :=
 instance : DecidableRel buryatBanned := fun x y => by
   unfold buryatBanned; infer_instance
 
-/-- `H_r2` is asymmetric: `*ʊɔ` is banned but `ɔʊ` is fine ((9b)). -/
+/-- The high-vowel blocking clause is asymmetric: `*ʊɔ` is banned but `ɔʊ`
+    is fine ((9b)). -/
 theorem buryat_asymmetric : buryatBanned .uh .oh ∧ ¬ buryatBanned .oh .uh := by
   decide
 
@@ -120,14 +122,14 @@ theorem buryat_not_symmetric (R : BuryatV → BuryatV → Prop)
 def buryatATR : Pattern BuryatV Bool :=
   { value := fun v => some v.tense, participation := fun _ => .participating }
 
-/-- Rounding harmony: high vowels are opaque blockers transmitting [−round]
-    (`H_r2`). -/
+/-- Rounding harmony: high vowels are opaque blockers transmitting
+    unroundedness to what follows. -/
 def buryatRound : Pattern BuryatV Bool :=
   { value := fun v => some (if v.high then false else v.round)
     participation := fun v => if v.high then .opaque else .participating }
 
 /-- With imposition, Buryat is expressible: the printed grammar is exactly
-    ATR ∧ rounding-with-opaque-highs. -/
+    the conjunction of the ATR pattern and the rounding pattern. -/
 theorem buryat_expressible (x y : BuryatV) :
     buryatBanned x y ↔
       ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
@@ -140,8 +142,9 @@ def buryatWellFormed (w : List BuryatV) : Prop :=
 instance (w : List BuryatV) : Decidable (buryatWellFormed w) := by
   unfold buryatWellFormed; infer_instance
 
-/-- The (9) forms: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` in (the latter through the
-    imposition path); `*ɔr-aːd` and `*ɔr-ʊːl-ɔːd` out. -/
+/-- The (9) forms as vowel skeletons: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` are
+    well-formed — the latter because the high causative transmits unroundedness
+    to the perfective — while `*ɔr-aːd` and `*ɔr-ʊːl-ɔːd` are not. -/
 example : buryatWellFormed [.oh, .oh] ∧ ¬ buryatWellFormed [.oh, .a] ∧
     buryatWellFormed [.oh, .uh, .a] ∧ ¬ buryatWellFormed [.oh, .uh, .oh] := by
   decide
@@ -169,7 +172,9 @@ def high : YakutV → Bool
 
 end YakutV
 
-/-- Table 34.5, featurally: `H_front ∪ H_r1 ∪ H_r2 ∪ H_r3`. -/
+/-- Table 34.5's bans: fronting disagreement anywhere; rounding disagreement
+    between high vowels; a rounded non-high vowel after a high vowel; rounding
+    disagreement after a non-high vowel. -/
 def yakutBanned (x y : YakutV) : Prop :=
   x.front ≠ y.front ∨
     (x.high ∧ y.high ∧ x.round ≠ y.round) ∨
@@ -179,8 +184,8 @@ def yakutBanned (x y : YakutV) : Prop :=
 instance : DecidableRel yakutBanned := fun x y => by
   unfold yakutBanned; infer_instance
 
-/-- Yakut's harmonizing blockers ((14g)): rounding spreads `o`→`u` but not
-    `u`→`o`. -/
+/-- Yakut's low vowels are harmonizing blockers ((14g)): rounding spreads
+    from `o` to `u` but not from `u` to `o` — the icy-target configuration. -/
 theorem yakut_asymmetric : yakutBanned .u .o ∧ ¬ yakutBanned .o .u := by decide
 
 /-- Spot-checks against (14): `oɣo-lor`, `murum-u` licensed; `*tünnük-lör` banned. -/
