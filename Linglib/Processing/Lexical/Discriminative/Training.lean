@@ -481,39 +481,31 @@ end TrainingSubstrate
 
 /-! ### Connection to `LinearDiscriminativeLexicon` -/
 
-section Connection
+namespace LinearDiscriminativeLexicon
 
 variable {m n d : ℕ}
+  (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
+  (data : TrainingExperience m n d) (q : FrequencyVector m)
 
 /-- `D` is **trained on** `data` under weights `q` if its production map is
     an ERM solution. -/
-def LinearDiscriminativeLexicon.IsTrainedOn
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (data : TrainingExperience m n d) (q : FrequencyVector m) : Prop :=
-  IsERMSolution data q D.production
+def IsTrainedOn : Prop := IsERMSolution data q D.production
 
 /-- A DLM is **EL-trained** for given data iff its production map is
     the type-uniform ERM solution. -/
-abbrev LinearDiscriminativeLexicon.IsELTrainedOn
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (data : TrainingExperience m n d) : Prop :=
-  D.IsTrainedOn data (uniformFrequency m)
+abbrev IsELTrainedOn : Prop := D.IsTrainedOn data (uniformFrequency m)
 
 /-- A DLM is **FIL-trained** with a given frequency vector iff its
     production map is the corresponding ERM solution. -/
-abbrev LinearDiscriminativeLexicon.IsFILTrainedOn
-    (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
-    (data : TrainingExperience m n d) (q : FrequencyVector m) : Prop :=
-  D.IsTrainedOn data q
+abbrev IsFILTrainedOn : Prop := D.IsTrainedOn data q
 
-variable {D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
-  {data : TrainingExperience m n d} {q : FrequencyVector m}
+variable {D data q}
 
 /-- A trained DLM's semantic support at a linearly decodable form coordinate
     equals the observed form value on every positively-weighted training
     event; any contrast carried by that coordinate — categorical or graded —
     transfers to `semSup` exactly. -/
-theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
+theorem IsTrainedOn.semSup_eq_of_decodable
     (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
     {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
@@ -524,7 +516,7 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
     semantic support at every experienced meaning
     (`IsERMSolution.apply_meanings_eq`); `semSup` is thus a well-defined
     property of the training experience, not of the particular ERM solution. -/
-theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq
+theorem IsTrainedOn.semSup_eq
     {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
     (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q)
     (hq : ∀ i, 0 < q i) (i : Fin m) (j : Fin n) :
@@ -535,7 +527,7 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq
     in the span of experienced ones — the model generalizes by linear
     combination of experienced meanings. Off the span, predictions are
     underdetermined (`IsERMSolution.exists_apply_ne`). -/
-theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_mem_span
+theorem IsTrainedOn.semSup_eq_of_mem_span
     {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
     (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q)
     (hq : ∀ i, 0 < q i) {s : MeaningVec d}
@@ -547,7 +539,7 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_mem_span
     [heitmeier-chuang-baayen-2026]) — `semSupWord` over a word's cue
     coordinates — equals the sum of the observed form values whenever each
     coordinate is linearly decodable from the meanings. -/
-theorem LinearDiscriminativeLexicon.IsTrainedOn.semSupWord_eq_of_decodable
+theorem IsTrainedOn.semSupWord_eq_of_decodable
     (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
     {js : List (Fin n)}
     (hw : ∀ j ∈ js, ∃ w : MeaningVec d →ₗ[ℝ] ℝ,
@@ -560,6 +552,6 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSupWord_eq_of_decodable
   obtain ⟨w, hwj⟩ := hw j hj
   exact hD.semSup_eq_of_decodable hq hwj i
 
-end Connection
+end LinearDiscriminativeLexicon
 
 end Processing.Lexical.Discriminative
