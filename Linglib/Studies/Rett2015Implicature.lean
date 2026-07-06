@@ -59,7 +59,7 @@ namespace Rett2015Implicature
 open Implicature
 open Implicature.Markedness
 open Degree (AdjectivalConstruction)
-open Semantics.Gradability
+open Degree
 
 
 -- ============================================================================

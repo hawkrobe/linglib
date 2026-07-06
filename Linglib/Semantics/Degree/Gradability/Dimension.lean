@@ -35,7 +35,7 @@ open Core.Order (Boundedness ScalePolarity LicensingPipeline)
 open Degree (HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
 open Features (Telicity VendlerClass)
 
-namespace Semantics.Gradability
+namespace Degree
 
 /-- The scalar dimension a gradable predicate measures along — the union of the
     perceptual adjective dimensions and the scalar-change verb dimensions. -/
@@ -96,7 +96,8 @@ abbrev _root_.Core.Order.Boundedness.degreeShape : Boundedness → Type
   | .open_ | .lowerBounded => ℕ
   | .upperBounded | .closed => WithTop ℕ
 
-instance (b : Boundedness) : LinearOrder b.degreeShape := by cases b <;> exact inferInstance
+instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShape := by
+  cases b <;> exact inferInstance
 
 /-- **Grounding, proved once at the 4-case level.** -/
 theorem _root_.Core.Order.Boundedness.hasGreatest_degreeShape_iff (b : Boundedness) :
@@ -110,7 +111,8 @@ theorem _root_.Core.Order.Boundedness.hasGreatest_degreeShape_iff (b : Boundedne
 /-- Each dimension's degree type — inherited from its boundedness, so the grounding
     transports rather than re-casing per dimension. -/
 abbrev Dimension.degree (d : Dimension) : Type := d.boundedness.degreeShape
-instance (d : Dimension) : LinearOrder d.degree := inferInstance
+instance instLinearOrderDimensionDegree (d : Dimension) : LinearOrder d.degree :=
+  inferInstance
 
 /-- The scale's order structure has a greatest element exactly when the dimension's
     canonical scale `HasMax` — grounded for all dimensions in one application. -/
@@ -146,4 +148,4 @@ theorem Dimension.defaultTelicity_telic_iff_hasGreatest (d : Dimension) :
 instance : LicensingPipeline Dimension where
   toBoundedness := Dimension.boundedness
 
-end Semantics.Gradability
+end Degree

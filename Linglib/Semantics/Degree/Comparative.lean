@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Bounds
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Core.Order.Comparison
 
@@ -54,10 +54,12 @@ abbrev ScaleDirection := ScalePolarity
 /-! ### Comparative and equative semantics -/
 
 section Direct
-variable {Entity : Type*} {α : Type*} [LinearOrder α]
+variable {Entity : Type*} {α : Type*} [Preorder α]
 
 /-- Comparative semantics ([rett-2026], [schwarzschild-2008]): "A is Adj-er
-than B" iff `μ a` exceeds `μ b` on the directed scale. -/
+than B" iff `μ a` exceeds `μ b` on the directed scale. Only `[Preorder α]`
+— connectedness-agnostic background orderings (CSW confidence states)
+are in scope. -/
 def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
   match dir with
   | .positive => μ a > μ b
@@ -83,9 +85,10 @@ theorem equativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
 
 /-- **MAX–direct bridge**: the direct comparison `μ a > μ b` is equivalent to
 the MAX-based formulation. -/
-theorem comparativeSem_eq_MAX (μ : Entity → α) (a b : Entity) :
+theorem comparativeSem_eq_MAX {β : Type*} [LinearOrder β] (μ : Entity → β)
+    (a b : Entity) :
     comparativeSem μ a b .positive ↔
-      ∃ m ∈ maxOnScale .gt ({μ b} : Set α), μ a > m := by
+      ∃ m ∈ maxOnScale .gt ({μ b} : Set β), μ a > m := by
   simp only [comparativeSem, maxOnScale_singleton, Set.mem_singleton_iff, exists_eq_left]
 
 /-! ### Antonymy as scale reversal -/
@@ -319,5 +322,58 @@ theorem negatedEquative_iff_posExt_ssubset [LinearOrder D] (μ : Entity → D) (
   (posExt_ssubset_iff μ a b).symm
 
 end Equative
+
+/-! ### Subcomparatives
+[schwarzschild-wilkinson-2002] -/
+
+/-- Subcomparative ("longer than it is wide"): two commensurable measure
+functions compared in shared units. -/
+def subcomparative {Entity D : Type*} [LinearOrder D]
+    (μ₁ μ₂ : Entity → D) (a b : Entity) : Prop :=
+  μ₁ a > μ₂ b
+
+/-! ### Superlatives
+[heim-1999] [szabolcsi-1986] [bobaljik-2012]
+
+`-est` universally quantifies the comparative over a comparison class
+([heim-1999]; the semantic reflex of [bobaljik-2012]'s containment
+`[[[ADJ] CMPR] SPRL]`): absolute readings fix the class extensionally,
+relative readings via focus alternatives. -/
+
+section Superlative
+variable {Entity D : Type*} [LinearOrder D]
+
+/-- Absolute superlative: `x` is the G-est entity in comparison class `C` —
+`x` beats every other member on the comparative. -/
+def absoluteSuperlative (μ : Entity → D) (C : Set Entity) (x : Entity) : Prop :=
+  x ∈ C ∧ ∀ y ∈ C, y ≠ x → comparativeSem μ x y .positive
+
+/-- Relative superlative ([heim-1999]): the focused alternative's entity
+outranks every other alternative's under `f`. -/
+def relativeSuperlative {Alt : Type*} (μ : Entity → D) (f : Alt → Entity)
+    (focusedAlt : Alt) (alternatives : Set Alt) : Prop :=
+  ∀ a ∈ alternatives, a ≠ focusedAlt →
+    comparativeSem μ (f focusedAlt) (f a) .positive
+
+/-- At most one entity satisfies the absolute superlative. -/
+theorem absolute_unique (μ : Entity → D) (C : Set Entity) (x y : Entity)
+    (hx : absoluteSuperlative μ C x) (hy : absoluteSuperlative μ C y) :
+    x = y := by
+  by_contra hne
+  exact absurd (hx.2 y hy.1 (Ne.symm hne))
+    (not_lt.mpr (le_of_lt (hy.2 x hx.1 hne)))
+
+/-- The absolute superlative makes `μ x` the greatest element of the degree
+image `μ '' C`; the converse fails (ties). -/
+theorem absoluteSuperlative_isGreatest (μ : Entity → D) (C : Set Entity)
+    (x : Entity) (h : absoluteSuperlative μ C x) :
+    IsGreatest (μ '' C) (μ x) := by
+  refine ⟨Set.mem_image_of_mem μ h.1, fun d hd => ?_⟩
+  obtain ⟨y, hy, rfl⟩ := hd
+  rcases eq_or_ne y x with rfl | hne
+  · exact le_refl _
+  · exact le_of_lt (h.2 y hy hne)
+
+end Superlative
 
 end Degree

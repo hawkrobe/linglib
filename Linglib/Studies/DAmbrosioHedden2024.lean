@@ -36,10 +36,10 @@ DOI: 10.1080/00048402.2023.2277923
 
 namespace DAmbrosioHedden2024
 
-open Semantics.Gradability (DimensionBindingType conjunctiveBinding
+open Degree (DimensionBindingType conjunctiveBinding
   disjunctiveBinding)
-open Semantics.Gradability.Aggregation
-open Semantics.Gradability.Aggregation
+open Degree.Aggregation
+open Degree.Aggregation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Arrow's Constraints

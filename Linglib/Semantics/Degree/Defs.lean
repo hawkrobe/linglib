@@ -1,113 +1,21 @@
-import Mathlib.Order.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Card
-import Mathlib.Order.Fin.Basic
-import Mathlib.Tactic.NormNum
-
 /-!
-# Degree semantics: core types and classification carriers
+# Degree semantics: classification carriers
 
-Foundational definitions for degree-based analyses of gradable expressions
-[heim-2001] [kennedy-2007] [schwarzschild-2008] [beltrama-2025]:
-
-* the discrete scale types `Degree max` / `Threshold max` (the finite carriers used
-  by the RSA fragment), and
-* the Kennedy-style classification enums (`PositiveStandard`, `AdjectiveClass`, …).
-
-Positive-form semantics is in `Basic.lean`; Kennedy 2007's interpretive economy is in
-`Kennedy.lean`. The abstract theory works with plain measure functions `μ : E → α`
-into a linear order — there is no measure typeclass.
-Klein-style delineation [klein-1980] has no measure function and lives in
-`Gradability/Delineation.lean`.
+The framework-independent DegP taxonomy and the Kennedy-style
+classification enums [kennedy-2007] [kennedy-mcnally-2005] [klein-1980]
+[beltrama-2025]. The abstract degree theory (measure functions into a
+preorder) is in `Comparative.lean`/`Extent.lean`; the discrete
+`Fin`-backed carriers are in `Discrete.lean`; Kennedy 2007's
+interpretive economy is in `Kennedy.lean`.
 
 ## Main definitions
 
-* `Degree max`, `Threshold max` — discrete bounded scale types (`Fin`-backed).
 * `DegPType` — DegP compositional taxonomy.
-* `PositiveStandard`, `AdjectiveClass` — Kennedy-style classification carriers.
-
-Adjectival surface-construction types (`AdjectivalConstruction`) live in
-`Gradability/Construction.lean`.
+* `PositiveStandard`, `AdjectiveClass` — Kennedy-style classification
+  carriers.
 -/
 
 namespace Degree
-
-/-! ### Discrete bounded scales
-
-`Degree max` wraps `Fin (max + 1)` with `LinearOrder`, `BoundedOrder`, `Fintype`;
-`Threshold max` wraps `Fin max` with a coercion to `Degree max`. These are the
-discretized carriers used by the gradable-adjective RSA fragment. -/
-
-/-- A degree on a scale from 0 to `max` — a discretized continuous value
-    (height, temperature, …). -/
-structure Degree (max : Nat) where
-  value : Fin (max + 1)
-  deriving Repr, DecidableEq
-
-instance {n : Nat} : Inhabited (Degree n) := ⟨⟨0, Nat.zero_lt_succ n⟩⟩
-
-/-- `Degree max` inherits a linear order from `Fin (max + 1)`. -/
-instance {max : Nat} : LinearOrder (Degree max) :=
-  LinearOrder.lift' Degree.value (fun a b h => by cases a; cases b; simp_all)
-
-/-- `Degree max` is bounded: 0 is the minimum, `max` the maximum. -/
-instance {max : Nat} : BoundedOrder (Degree max) where
-  top := ⟨Fin.last max⟩
-  le_top d := Fin.le_last d.value
-  bot := ⟨0, Nat.zero_lt_succ max⟩
-  bot_le d := Fin.zero_le d.value
-
-/-- All degrees from 0 to `max`. -/
-def allDegrees (max : Nat) : List (Degree max) :=
-  List.finRange (max + 1) |>.map (⟨·⟩)
-
-/-- Degree from `Nat` (clamped to `max`). -/
-def Degree.ofNat (max : Nat) (n : Nat) : Degree max :=
-  ⟨⟨min n max, by omega⟩⟩
-
-/-- The numeric value of a degree. -/
-def Degree.toNat {max : Nat} (d : Degree max) : Nat := d.value.val
-
-/-- A threshold for a gradable adjective: `x` is "tall" iff `degree x > threshold`. -/
-structure Threshold (max : Nat) where
-  value : Fin max
-  deriving Repr, DecidableEq
-
-instance {n : Nat} [NeZero n] : Inhabited (Threshold n) :=
-  ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩⟩
-
-/-- `Threshold max` inherits a linear order from `Fin max`. -/
-instance {max : Nat} : LinearOrder (Threshold max) :=
-  LinearOrder.lift' Threshold.value (fun a b h => by cases a; cases b; simp_all)
-
-/-- All thresholds from 0 to `max - 1`. -/
-def allThresholds (max : Nat) (_ : 0 < max := by omega) : List (Threshold max) :=
-  List.finRange max |>.map (⟨·⟩)
-
-/-- The numeric value of a threshold. -/
-def Threshold.toNat {max : Nat} (t : Threshold max) : Nat := t.value.val
-
-instance {max : Nat} : Fintype (Degree max) :=
-  Fintype.ofEquiv (Fin (max + 1)) ⟨Degree.mk, Degree.value, fun _ => rfl, fun ⟨_⟩ => rfl⟩
-
-instance {max : Nat} [NeZero max] : Fintype (Threshold max) :=
-  Fintype.ofEquiv (Fin max) ⟨Threshold.mk, Threshold.value, fun _ => rfl, fun ⟨_⟩ => rfl⟩
-
-/-- Coercion: a `Threshold` embeds into `Degree` via `Fin.castSucc`. -/
-instance {max : Nat} : Coe (Threshold max) (Degree max) where
-  coe t := ⟨t.value.castSucc⟩
-
-theorem coe_threshold_toNat {max : Nat} (t : Threshold max) :
-    (t : Degree max).toNat = t.toNat := rfl
-
-/-- Construct a degree by literal: `deg 5 : Degree 10`. -/
-abbrev deg (n : Nat) {max : Nat} (h : n ≤ max := by omega) : Degree max :=
-  ⟨⟨n, by omega⟩⟩
-
-/-- Construct a threshold by literal: `thr 5 : Threshold 10`. -/
-abbrev thr (n : Nat) {max : Nat} (h : n < max := by omega) : Threshold max :=
-  ⟨⟨n, h⟩⟩
 
 /-! ### DegP compositional taxonomy -/
 

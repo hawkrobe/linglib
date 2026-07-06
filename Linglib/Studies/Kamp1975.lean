@@ -45,7 +45,7 @@ motivates the move to supervaluation / probability over completions.
 
 namespace Kamp1975
 
-open Semantics.Gradability.Classification
+open Degree.Classification
 
 /-! ### Bridge to single-world predicates
 

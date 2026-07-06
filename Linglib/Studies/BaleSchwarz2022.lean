@@ -1,7 +1,7 @@
 import Linglib.Features.Acceptability
 import Linglib.Features.Dimension
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Degree.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
@@ -49,7 +49,7 @@ the 2026 paper shows this is reformulable using multiplication only.
 
 namespace BaleSchwarz2022
 
-open Semantics.Measurement
+open Degree
 open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
 open English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
 open Semantics.Presupposition (PartialProp PartialValue)

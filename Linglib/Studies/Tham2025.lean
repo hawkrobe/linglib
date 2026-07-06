@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Sassoon2013
@@ -86,9 +86,9 @@ the paper's argument is that disturbance predicates are a uniform class.
 namespace Tham2025
 
 open Core.Order (Boundedness LicensingPipeline)
-open Semantics.Gradability (DimensionBindingType GradableAdjective
+open Degree (DimensionBindingType GradableAdjective
   adjMeasure closedAdj_licensed conjunctiveBinding disjunctiveBinding)
-open Semantics.Gradability.Aggregation (weightedScore boolMeasures
+open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Lexical
@@ -879,7 +879,7 @@ theorem small_vase_cracked_large_vase_not :
 theorem largeVase_score_le_one :
     spatialNormalizedScore equalWeights vaseMeasures Vase.spatial largeVase
       ≤ 1 := by
-  apply Semantics.Gradability.Aggregation.spatialNormalizedScore_le_one
+  apply Degree.Aggregation.spatialNormalizedScore_le_one
   · rw [weighted_score_vase]; show (1 : ℚ) ≤ 4; norm_num
   · show (0 : ℚ) < 4; norm_num
 

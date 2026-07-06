@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Degree.Gradability.MLScale
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Syntax.Adjective.Basic
 
@@ -32,11 +32,9 @@ threshold semantics (`positiveMeaning`, `negativeMeaning`) in `Semantics/Degree/
 The intersective/subsective/privative classification lives in `Classification.lean`.
 -/
 
-namespace Semantics.Gradability
+namespace Degree
 
 open Core.Order (Boundedness)
-open Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds
-  PositiveStandard AdjectiveClass interpretiveEconomy)
 open Features (NegationType)
 
 /-! ### Two-threshold model for contrary antonyms -/
@@ -274,14 +272,14 @@ open Core.Order Degree
 
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
     Degree.DirectedMeasure α W where
-  ml : Semantics.Gradability.MLScale α
+  ml : Degree.MLScale α
 
 def marginalityPositive {α : Type*} [LinearOrder α]
-    (ml : Semantics.Gradability.MLScale α) (norm degree : α) : Prop :=
+    (ml : Degree.MLScale α) (norm degree : α) : Prop :=
   ml.L norm degree
 
 theorem marginality_entails_standard {α : Type*} [LinearOrder α]
-    (ml : Semantics.Gradability.MLScale α) (norm degree : α)
+    (ml : Degree.MLScale α) (norm degree : α)
     (h : marginalityPositive ml norm degree) : norm < degree :=
   h.1
 
@@ -324,4 +322,4 @@ theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
     (DirectedMeasure.numeral μ).μ = μ :=
   rfl
 
-end Semantics.Gradability
+end Degree

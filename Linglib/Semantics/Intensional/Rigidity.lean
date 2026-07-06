@@ -356,7 +356,7 @@ The operator-side dual of `IsRigid`: an operator on intensions is
 through the argument's extension at `w` (local truth-functionality at
 `β = Prop`). Negation and the other pointwise connectives are extensional
 everywhere; quantifiers over indices (`Core.Logic.Modal.box`) are not.
-`Semantics.Gradability.Classification.isExtensional` (Kamp 1975's
+`Degree.Classification.isExtensional` (Kamp 1975's
 extensional adjective operators) is the entity-indexed `∀ w`-closure of
 this notion. -/
 

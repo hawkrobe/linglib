@@ -90,7 +90,7 @@ paper-anchored here since the footnote is Bochnak-specific.
 
 namespace Bochnak2015
 
-open Semantics.Gradability.Delineation
+open Degree.Delineation
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Degree Semantics Parameter

@@ -63,7 +63,7 @@ aggregation).
 
 namespace WaldonEtAl2023
 
-open Semantics.Gradability.Aggregation
+open Degree.Aggregation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Domain Types

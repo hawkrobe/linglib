@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Basic
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.ComparativeScale
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Attitudes.Confidence
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum

@@ -32,7 +32,7 @@ This is the adjectival realization of a property concept; when a verb- or
 noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 -/
 
-open Semantics.Gradability (Dimension)
+open Degree (Dimension)
 open Morphology.DegreeContainment (DegreePattern)
 
 set_option autoImplicit false
@@ -79,7 +79,7 @@ structure Adjective where
   form : String
   /-- Native script form, when distinct. -/
   script : Option String := none
-  /-- The scalar dimension measured, as a `Semantics.Gradability.Dimension` key.
+  /-- The scalar dimension measured, as a `Degree.Dimension` key.
       `none` for classifying/relational adjectives (*wooden*, *former*, *medical*)
       and other non-gradables. -/
   dimension : Option Dimension := none

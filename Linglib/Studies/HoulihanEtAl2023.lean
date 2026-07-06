@@ -452,23 +452,23 @@ The threshold θ makes them gradable ([kennedy-2007]): "more generous"
 /-- "Generous" as an intersective adjective meaning:
 ⟦generous N⟧(p) = N(p) ∧ ω_AIA(p) > θ. -/
 def generousAdj (θ : ℚ) :
-    Semantics.Gradability.Classification.AdjMeaning Unit SocialValueProfile :=
+    Degree.Classification.AdjMeaning Unit SocialValueProfile :=
   fun N _ p => p.ωAIA > θ ∧ N () p
 
 /-- "Fair-minded" as an intersective adjective meaning:
 ⟦fair-minded N⟧(p) = N(p) ∧ ω_DIA(p) > θ. -/
 def fairMindedAdj (θ : ℚ) :
-    Semantics.Gradability.Classification.AdjMeaning Unit SocialValueProfile :=
+    Degree.Classification.AdjMeaning Unit SocialValueProfile :=
   fun N _ p => p.ωDIA > θ ∧ N () p
 
-open Semantics.Gradability.Classification in
+open Degree.Classification in
 /-- Evaluative adjectives grounded in BToM-inferred preferences are
 intersective: ⟦generous N⟧ = ⟦N⟧ ∩ {x | ω_AIA(x) > θ}. -/
 theorem generous_is_intersective (θ : ℚ) :
     isIntersective (generousAdj θ) :=
   ⟨fun _ p => p.ωAIA > θ, fun _ _ _ => Iff.rfl⟩
 
-open Semantics.Gradability.Classification in
+open Degree.Classification in
 /-- Fair-minded is intersective. -/
 theorem fairMinded_is_intersective (θ : ℚ) :
     isIntersective (fairMindedAdj θ) :=

@@ -33,7 +33,7 @@ namespace TenWolde2023
 
 open Quantification.Binominal
 open Quantification.Binominal
-open Semantics.Gradability.GradableNouns (exampleIdiot)
+open Degree.GradableNouns (exampleIdiot)
 open English.Binominals
 
 -- ═══════════════════════════════════════════════════════════════
@@ -232,13 +232,13 @@ worked examples from `Semantics/Lexical/Noun/Binominal`. -/
     BI → EM (proved), but EBNP is independent of EM. -/
 theorem entailment_summary :
     -- BI entails EM (bi_entails_em instantiated)
-    (biSemantics (Semantics.Gradability.Intensification.muHorrible 10)
+    (biSemantics (Degree.Intensification.muHorrible 10)
       doctorQuality (Degree.thr 5) (Degree.thr 3) isDoctor .george = true →
-     emSemantics (Semantics.Gradability.Intensification.muHorrible 10)
+     emSemantics (Degree.Intensification.muHorrible 10)
       doctorQuality (Degree.thr 3) isDoctor .george = true) ∧
     -- EBNP and EM have different truth conditions
     (ebnpSemantics exampleIdiot isDoctor .sarah = true ∧
-     emSemantics (Semantics.Gradability.Intensification.muHorrible 10)
+     emSemantics (Degree.Intensification.muHorrible 10)
       doctorQuality (Degree.thr 3) isDoctor .sarah = false) := by
   constructor
   · exact bi_entails_em _ _ _ _ _ _

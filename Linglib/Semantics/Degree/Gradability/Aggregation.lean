@@ -31,19 +31,13 @@ available aggregation functions:
 
 Plus §6 Sassoon 2013 subsumption theorems showing all binding types
 reduce to counting aggregation.
-
-This file consolidates the previous `Semantics/Degree/Aggregation.lean`
-+ `Semantics/Gradability/Aggregation.lean` (shim) per master plan v4
-Phase C.4 (no-backcompat fix).
 -/
 
-namespace Semantics.Gradability.Aggregation
+namespace Degree.Aggregation
 
 variable {α : Type}
 
--- ════════════════════════════════════════════════════
--- § 1. Counting Aggregation
--- ════════════════════════════════════════════════════
+/-! ### Counting Aggregation -/
 
 /-- Counting aggregation: x satisfies the predicate iff at least `k` of
     the dimension predicates in `dims` return `true` for `x`.
@@ -62,9 +56,7 @@ def countBinding (k : Nat) (dims : List (α → Bool)) (x : α) : Bool :=
 def majorityBinding (dims : List (α → Bool)) (x : α) : Bool :=
   decide (2 * (dims.filter (fun d => d x)).length > dims.length)
 
--- ════════════════════════════════════════════════════
--- § 2. Weighted Aggregation (Unified ℚ)
--- ════════════════════════════════════════════════════
+/-! ### Weighted Aggregation (Unified ℚ) -/
 
 /-- Lift Bool dimension predicates to ℚ-valued measure functions.
     Each `d : α → Bool` becomes `fun x => if d x then 1 else 0`. -/
@@ -112,9 +104,7 @@ def spatialNormalizedBinding (weights : List ℚ) (θ : ℚ)
     (dims : List (α → Bool)) (spatial : α → ℚ) (x : α) : Bool :=
   decide (spatialNormalizedScore weights (boolMeasures dims) spatial x ≥ θ)
 
--- ════════════════════════════════════════════════════
--- § 3. Properties
--- ════════════════════════════════════════════════════
+/-! ### Properties -/
 
 /-- Counting with threshold 0 is always satisfied (vacuously true). -/
 theorem countBinding_zero (dims : List (α → Bool)) (x : α) :
@@ -173,9 +163,7 @@ theorem spatialNormalizedScore_nonneg
   · rw [if_pos h]
   · rw [if_neg h]; exact div_nonneg hnum hspatial
 
--- ════════════════════════════════════════════════════
--- § 4. Multiplicative Aggregation (Cobb-Douglas)
--- ════════════════════════════════════════════════════
+/-! ### Multiplicative Aggregation (Cobb-Douglas) -/
 
 /-- Multiplicative (Cobb-Douglas) score: Πᵢ fᵢ(x).
     [sassoon-fadlon-2017] argue natural kind nouns compose
@@ -184,9 +172,7 @@ theorem spatialNormalizedScore_nonneg
 def multiplicativeScore (measures : List (α → ℚ)) (x : α) : ℚ :=
   measures.foldl (fun acc f => acc * f x) 1
 
--- ════════════════════════════════════════════════════
--- § 5. Classification
--- ════════════════════════════════════════════════════
+/-! ### Classification -/
 
 /-- Classification of dimensional aggregation mechanisms.
     Each type corresponds to an escape route from Arrow's impossibility. -/
@@ -199,9 +185,7 @@ inductive AggregationType where
   | cobbDouglas
   deriving Repr, DecidableEq
 
--- ════════════════════════════════════════════════════
--- § 6. Sassoon 2013 Subsumption Theorems
--- ════════════════════════════════════════════════════
+/-! ### Sassoon 2013 Subsumption Theorems -/
 
 private theorem all_eq_decide_filter_ge_length :
     ∀ (dims : List (α → Bool)) (x : α),
@@ -236,26 +220,26 @@ private theorem any_eq_decide_filter_ge_one :
 /-- Conjunctive binding = counting with threshold k = dims.length.
     [sassoon-2013]'s ∀-binding is a special case of counting. -/
 theorem conjunctive_is_countAll (dims : List (α → Bool)) (x : α) :
-    Semantics.Gradability.conjunctiveBinding dims x = countBinding dims.length dims x :=
+    Degree.conjunctiveBinding dims x = countBinding dims.length dims x :=
   all_eq_decide_filter_ge_length dims x
 
 /-- Disjunctive binding = counting with threshold k = 1.
     [sassoon-2013]'s ∃-binding is a special case of counting. -/
 theorem disjunctive_is_countOne (dims : List (α → Bool)) (x : α) :
-    Semantics.Gradability.disjunctiveBinding dims x = countBinding 1 dims x :=
+    Degree.disjunctiveBinding dims x = countBinding 1 dims x :=
   any_eq_decide_filter_ge_one dims x
 
 /-- [sassoon-2013]'s binding types all map to counting aggregation.
     The key gap: Sassoon has no utilitarian or Cobb-Douglas mechanism. -/
-def toAggregationType : Semantics.Gradability.DimensionBindingType → AggregationType
+def toAggregationType : Degree.DimensionBindingType → AggregationType
   | .conjunctive => .counting
   | .disjunctive => .counting
   | .mixed => .counting
 
 /-- All of Sassoon 2013's binding types are counting aggregation. -/
 theorem sassoon_all_counting :
-    ∀ b : Semantics.Gradability.DimensionBindingType,
+    ∀ b : Degree.DimensionBindingType,
       toAggregationType b = AggregationType.counting := by
   intro b; cases b <;> rfl
 
-end Semantics.Gradability.Aggregation
+end Degree.Aggregation

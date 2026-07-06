@@ -37,12 +37,10 @@ bridge theorem `statesBased_iff_kennedy` shows when they agree.
 
 -/
 
-namespace Semantics.Gradability.StatesBased
+namespace Degree
 
 open Core.Order (ComparativeScale Boundedness)
--- ════════════════════════════════════════════════════
--- § 1. States-Based Entry
--- ════════════════════════════════════════════════════
+/-! ### States-Based Entry -/
 
 /-- A states-based gradable predicate entry.
 
@@ -101,9 +99,7 @@ theorem disjoint_regions {S : Type*} [Preorder S]
   intro ⟨h_pos, h_low⟩
   exact h_strict (le_trans h_pos h_low)
 
--- ════════════════════════════════════════════════════
--- § 2. Scale-Mate Relationship
--- ════════════════════════════════════════════════════
+/-! ### Scale-Mate Relationship -/
 
 /-- Two entries are scale-mates iff they share a background ordering
     (same `scale`) but differ in their contrast points. Scale-mates
@@ -132,76 +128,15 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
   intro h_pos
   exact le_trans h h_pos
 
--- ════════════════════════════════════════════════════
--- § 3. Comparative Morphology on States
--- ════════════════════════════════════════════════════
+-- Comparative morphology on states is shared substrate: measure
+-- admissibility (CSW (21)/(31)) is `Degree.admissibleMeasure`
+-- (`Measure.lean`); the direct comparative (CSW (32)) is
+-- `Degree.comparativeSem μ · · .positive`; the faithful max-quantified
+-- comparative (CSW (46)/(47)) is `Degree.maxComparative`, with CSW fn
+-- 25's unique-state collapse at `Degree.maxComparative_eq_iff`.
+-- Confidence reports instantiate these in `Semantics/Attitudes/Confidence.lean`.
 
-/-- The monotonicity-preservation requirement on measure functions used in
-    monotonicity-requiring constructions: `μ` is admissible for a background
-    ordering iff `s₁ ≺ s₂` entails `μ(s₁) < μ(s₂)`. This is Mathlib's
-    `StrictMono`.
-
-    **Single-name canonical Prop for a multi-tradition convergence.** This
-    one Prop names the same condition that appears under different labels
-    across the literature; linglib hosts it once here and lets every
-    consumer credit its own source:
-
-    - [schwarzschild-2002] [schwarzschild-2006] — *Monotonicity Constraint*
-      on the measure function in nominal pseudopartitives.
-    - [krifka-1989] — extensive measure functions on quantized objects.
-    - [wellwood-2015] — `μ` admissibility for `much`-comparatives;
-      `Semantics/Measurement.lean::admissibleMeasure_of_mereoDim`
-      bridges to the bundled `MereoDim` typeclass.
-    - [cariani-santorio-wellwood-2024] (eq. 21) — CSW use this exact
-      formulation for confidence orderings.
-    - [pasternak-2019] (def 4) — `μ_int` monotonicity on the
-      part-whole structure of mental states.
-    - [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025] —
-      `EpistemicThreshold.isProbabilistic` is a strengthening of this
-      (Monotone, not StrictMono).
-
-    The bundled-typeclass form is `MereoDim` in `Semantics/Mereology.lean`
-    (with `[PartialOrder]` carriers); the unbundled-Prop form is here
-    (with `[Preorder]`, more permissive). Use `MereoDim` when typeclass
-    inference is desired; use `admissibleMeasure` when the witness is
-    passed explicitly. -/
-abbrev admissibleMeasure {D : Type*} [Preorder D] (μ : S → D) : Prop :=
-  StrictMono μ
-
-/-- Comparative semantics on states (CSW (32)): "A is more G than B"
-    iff the measure of A's state exceeds the measure of B's state.
-
-    The key CSW insight (§3.4): the comparative uses only the background
-    ordering (via an admissible measure), not the contrast point. This is
-    captured architecturally by the type signature — `statesComparativeSem`
-    takes no `StatesBasedEntry` parameter, so the contrast point that
-    distinguishes scale-mates (`confident`/`certain`, `warm`/`hot`) is
-    invisible to the comparative. Scale-mate comparative equivalence
-    (CSW (72)) holds by construction. -/
-def statesComparativeSem {D : Type*} [Preorder D]
-    (μ : S → D) (s_a s_b : S) : Prop :=
-  μ s_b < μ s_a
-
-/-- An admissible measure makes the background ordering entail the comparative:
-    if `s_b ≺ s_a` in the background ordering and `μ` is admissible (`StrictMono`,
-    CSW (21)/(31)), then `A is more G of s_a than s_b`. This is the spine that
-    ties the measure-comparative to the background ordering — over a `Preorder`
-    only the forward direction holds (the reverse needs a linear order, which
-    CSW's connectedness-agnostic ordering need not be). -/
-theorem statesComparativeSem_of_lt {D : Type*} [Preorder D]
-    (μ : S → D) (h : admissibleMeasure μ) {s_a s_b : S} (hlt : s_b < s_a) :
-    statesComparativeSem μ s_a s_b :=
-  h hlt
-
--- The faithful max-quantified comparative (CSW (46)/(47)) is the general
--- `Degree.maxComparative` (`Semantics/Degree/Comparative.lean`); CSW fn 25's
--- unique-state collapse to `statesComparativeSem` is
--- `Degree.maxComparative_eq_iff`. Confidence reports instantiate it in
--- `Semantics/Attitudes/Confidence.lean`.
-
--- ════════════════════════════════════════════════════
--- § 4. Bridge: States-Based ↔ Kennedy
--- ════════════════════════════════════════════════════
+/-! ### Bridge: States-Based ↔ Kennedy -/
 
 /-- When a monotone measure maps the contrast point to a Kennedy threshold,
     the states-based positive form agrees with degree-based comparison.
@@ -228,4 +163,4 @@ theorem statesBased_iff_kennedy
     rw [hBridge] at this
     exact absurd h (not_le.mpr this)
 
-end Semantics.Gradability.StatesBased
+end Degree

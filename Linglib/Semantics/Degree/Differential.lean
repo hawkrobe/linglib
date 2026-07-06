@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -24,9 +24,7 @@ not just an ordinal or interval scale. Hence "3 inches taller" ✓ but
 
 namespace Degree.Differential
 
--- ════════════════════════════════════════════════════
--- § 1. Differential Semantics
--- ════════════════════════════════════════════════════
+/-! ### Differential Semantics -/
 
 /-- Differential comparative: "A is d-much Adj-er than B" iff the
     difference μ(A) - μ(B) = d.
@@ -51,9 +49,7 @@ theorem differential_positive_iff {Entity : Type*}
   simp only [differentialComparative] at h
   linarith
 
--- ════════════════════════════════════════════════════
--- § 2. Scale Type Restrictions
--- ════════════════════════════════════════════════════
+/-! ### Scale Type Restrictions -/
 
 /-- Measurement level: what kind of scale an adjective's degrees live on.
     Measure phrase differentials require at least interval scale;
@@ -64,21 +60,21 @@ inductive MeasurementLevel where
   | ratio      -- meaningful zero + distances (height, weight)
   deriving DecidableEq, Repr
 
-/-- Does this measurement level admit measure phrase differentials? -/
-def admitsMeasurePhrase : MeasurementLevel → Bool
-  | .ratio    => true
-  | .interval => true   -- "10 degrees warmer"
-  | .ordinal  => false  -- "*3 units more beautiful"
+/-- Measure-phrase differentials ("10 degrees warmer") require at least
+    interval scale ("*3 units more beautiful" is ordinal). -/
+def AdmitsMeasurePhrase (l : MeasurementLevel) : Prop := l ≠ .ordinal
 
-/-- Does this measurement level admit factor phrases ("twice as tall")? -/
-def admitsFactorPhrase : MeasurementLevel → Bool
-  | .ratio    => true   -- "twice as tall" (zero point meaningful)
-  | .interval => false  -- "*twice as hot" (in °C; no meaningful zero)
-  | .ordinal  => false
+instance : DecidablePred AdmitsMeasurePhrase :=
+  fun l => inferInstanceAs (Decidable (l ≠ .ordinal))
 
--- ════════════════════════════════════════════════════
--- § 3. Factor Phrases
--- ════════════════════════════════════════════════════
+/-- Factor phrases ("twice as tall") require ratio scale — a meaningful
+    zero point ("*twice as hot" in °C is interval). -/
+def AdmitsFactorPhrase (l : MeasurementLevel) : Prop := l = .ratio
+
+instance : DecidablePred AdmitsFactorPhrase :=
+  fun l => inferInstanceAs (Decidable (l = .ratio))
+
+/-! ### Factor Phrases -/
 
 /-- Factor phrase equative: "A is n times as tall as B" iff μ(A) = n × μ(B).
     Requires ratio scale: a meaningful zero point. -/
@@ -86,9 +82,7 @@ def factorEquative {Entity D : Type*} [Mul D]
     (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
 
--- ════════════════════════════════════════════════════
--- § 4. Extensive Scales and Cross-Dimensional Comparison
--- ════════════════════════════════════════════════════
+/-! ### Extensive Scales and Cross-Dimensional Comparison -/
 
 /-- **Extensive measurement level**: a ratio scale that additionally
     permits cross-dimensional comparison. Spatial extent is the
@@ -118,34 +112,13 @@ inductive MeasurementLevelExt where
 
     This explains why "shorter than high" ✓ (both spatial extent),
     "??hotter than expensive" ✗ (temperature ≠ price). -/
-def admitsSubcomparative : MeasurementLevelExt → Bool
-  | .extensive => true
-  | _          => false
+def AdmitsSubcomparative (l : MeasurementLevelExt) : Prop := l = .extensive
 
-/-- Extensive scales admit everything lower scales do. -/
-theorem extensive_admits_measure : admitsMeasurePhrase .ratio = true := rfl
-theorem extensive_admits_factor : admitsFactorPhrase .ratio = true := rfl
+instance : DecidablePred AdmitsSubcomparative :=
+  fun l => inferInstanceAs (Decidable (l = .extensive))
 
-/-- Cross-dimensional comparison data: only spatial extent (extensive
-    scale) licenses subcomparatives. -/
-structure SubcomparativeAdmissibilityDatum where
-  matrixAdj : String
-  embeddedAdj : String
-  sharedScale : String
-  level : MeasurementLevelExt
-  acceptable : Bool
-  deriving Repr
-
-def subcomparativeAdmissibility : List SubcomparativeAdmissibilityDatum :=
-  [ ⟨"long", "wide", "spatial extent", .extensive, true⟩
-  , ⟨"tall", "wide", "spatial extent", .extensive, true⟩
-  , ⟨"deep", "tall", "spatial extent", .extensive, true⟩
-  , ⟨"hot", "expensive", "(none)", .ordinal, false⟩
-  , ⟨"smart", "tall", "(none)", .ordinal, false⟩
-  ]
-
--- Subcomparative acceptability tracks extensive level.
-#guard subcomparativeAdmissibility.all (λ d =>
-  d.acceptable == admitsSubcomparative d.level)
+/-- Ratio scales admit both differential constructions. -/
+theorem ratio_admits_measure : AdmitsMeasurePhrase .ratio := by decide
+theorem ratio_admits_factor : AdmitsFactorPhrase .ratio := rfl
 
 end Degree.Differential

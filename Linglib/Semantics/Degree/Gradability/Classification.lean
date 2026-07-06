@@ -48,7 +48,7 @@ the licensing mechanism (NVP + HPP) lives in
 `Semantics/Composition/Coercion.lean`.
 -/
 
-namespace Semantics.Gradability.Classification
+namespace Degree.Classification
 
 /-- An intensional property: a function from worlds to characteristic
     predicates over entities. -/
@@ -230,4 +230,4 @@ def RevisedClass.satisfies : RevisedClass → AdjMeaning W E → Prop
 
 end Revised
 
-end Semantics.Gradability.Classification
+end Degree.Classification

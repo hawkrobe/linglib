@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Core.Probability.SoftmaxLimits
 import Linglib.Core.Probability.Finite

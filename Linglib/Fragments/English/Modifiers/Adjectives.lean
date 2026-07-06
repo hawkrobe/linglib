@@ -27,7 +27,7 @@ import Linglib.Morphology.Word
 
 namespace English.Modifiers.Adjectives
 
-open Semantics.Gradability (AntonymRelation)
+open Degree (AntonymRelation)
 open Core.Order (Boundedness)
 open Features (NegationType)
 
@@ -51,7 +51,7 @@ structure AdjModifierEntry where
   /-- Scale boundedness (from [kennedy-2007]) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
-  dimension : Semantics.Gradability.Dimension
+  dimension : Degree.Dimension
   /-- Antonym form (if any) -/
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/

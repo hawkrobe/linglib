@@ -275,7 +275,7 @@ Three semantic subtypes:
    surface -/
 
 /-- Reuse the theory-level `SpatialConfigType` from `Adjective.Theory`. -/
-abbrev SpatialAdjType := Semantics.Gradability.SpatialConfigType
+abbrev SpatialAdjType := Degree.SpatialConfigType
 
 /-- All six attested adjectives have a spatial classification in their
     Fragment entries (structural, not string-based). -/

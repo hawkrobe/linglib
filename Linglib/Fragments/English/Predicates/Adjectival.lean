@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Gradability.Basic
 /-! # Adjectival Predicate Lexicon Fragment
 
 Gradable adjective entries following [kennedy-2007], typed with
-`Semantics.Gradability.GradableAdjective` (the syntactic `Syntax/Adjective` lexeme
+`Degree.GradableAdjective` (the syntactic `Syntax/Adjective` lexeme
 refined with the degree-semantic layer). Each entry stores its surface form, scalar
 `dimension`, lexicalized pole (`isLowerEndpoint`) or `standardOverride`, and antonym
 data; the scale shape (`scaleType`), positive `standard`, and Kennedy `adjectiveClass`
@@ -14,7 +14,7 @@ Kennedy classification is exercised at the end of this file.
 
 namespace English.Predicates.Adjectival
 
-open Semantics.Gradability (AntonymRelation GradableAdjective)
+open Degree (AntonymRelation GradableAdjective)
 open Core.Order (Boundedness)
 open Features (EvaluativeValence)
 open Features (NegationType)

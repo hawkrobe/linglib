@@ -546,7 +546,7 @@ Fragment annotations. -/
 
 section Bridge
 
-open Semantics.Gradability
+open Degree
 open English.Predicates.Adjectival
 open Core.Order
 

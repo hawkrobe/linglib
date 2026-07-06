@@ -1,6 +1,6 @@
 import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Gradability.Delineation
-import Linglib.Semantics.Degree.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
 
 /-!
 # Degree Semantics Hierarchy
@@ -45,14 +45,12 @@ function can induce.
 11. **very_degree_chain**: Klein's `very` = two-step degree chain
 -/
 
-namespace Semantics.Gradability.Hierarchy
+namespace Degree.Hierarchy
 
-open Semantics.Gradability.Delineation
-open Semantics.Measurement (MeasureFn)
+open Degree.Delineation
+
 open Features.Dimension (Dimension)
--- ════════════════════════════════════════════════════
--- § 1. Measurement → Degree
--- ════════════════════════════════════════════════════
+/-! ### Measurement → Degree -/
 
 /-! A `MeasureFn E` carries a typed dimension (mass, volume, cardinality, ...)
     and a non-negative measure `apply : E → ℚ`. Forgetting the dimension and
@@ -67,9 +65,7 @@ open Features.Dimension (Dimension)
 def measure_to_degree {E : Type*} (μ : MeasureFn E) : E → ℚ :=
   μ.apply
 
--- ════════════════════════════════════════════════════
--- § 2. Degree → Delineation
--- ════════════════════════════════════════════════════
+/-! ### Degree → Delineation -/
 
 /-! Any degree function `μ : E → D` over a linear order induces a Klein
     delineation via `measureDelineation`: entity x is "A-in-C" iff x
@@ -91,9 +87,7 @@ def measure_to_delineation {E : Type} (μ : MeasureFn E) :
     ComparisonClass E → E → Prop :=
   measureDelineation μ.apply
 
--- ════════════════════════════════════════════════════
--- § 3. Faithfulness of the Embedding
--- ════════════════════════════════════════════════════
+/-! ### Faithfulness of the Embedding -/
 
 /-- The degree→delineation embedding is faithful: Klein's ordering
     under the induced delineation exactly matches degree comparison.
@@ -120,9 +114,7 @@ theorem degree_delineations_are_linear {E D : Type*} [LinearOrder D]
     IsLinearDelineation (degree_to_delineation μ) :=
   measureDelineation_is_linear μ
 
--- ════════════════════════════════════════════════════
--- § 4. Strict Separation: Delineation > Degree
--- ════════════════════════════════════════════════════
+/-! ### Strict Separation: Delineation > Degree -/
 
 /-! Klein's delineation framework is STRICTLY more general than degree
     semantics. The key witness: **nonlinear adjectives** like "clever"
@@ -197,9 +189,7 @@ theorem delineation_strictly_more_general :
   ⟨fun _ _ _ μ => measureDelineation_monotone μ,
    ⟨NL2, nlDel, nonlinear_delineation_exists⟩⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Degree = Monotone Delineation (Characterization)
--- ════════════════════════════════════════════════════
+/-! ### Degree = Monotone Delineation (Characterization) -/
 
 /-! The degree-based frameworks correspond EXACTLY to the monotone
     fragment of Klein's delineation theory. This is not a coincidence:
@@ -228,9 +218,7 @@ theorem degree_characterization {E D : Type*} [LinearOrder D]
    measureDelineation_is_linear μ,
    fun cc a b ha hb => ordering_iff_degree μ cc a b ha hb⟩
 
--- ════════════════════════════════════════════════════
--- § 6. Measurement = Degree + Dimension Typing
--- ════════════════════════════════════════════════════
+/-! ### Measurement = Degree + Dimension Typing -/
 
 /-! The relationship between measurement semantics ([scontras-2014],
     [bale-schwarz-2022]) and degree semantics ([kennedy-2007])
@@ -268,9 +256,7 @@ theorem measurement_to_delineation_faithful {E : Type}
     ordering (measure_to_delineation μ) cc a b ↔ μ.apply b < μ.apply a :=
   ordering_iff_degree μ.apply cc a b ha hb
 
--- ════════════════════════════════════════════════════
--- § 7. Impossibility: Nonlinear ≠ Degree-Representable
--- ════════════════════════════════════════════════════
+/-! ### Impossibility: Nonlinear ≠ Degree-Representable -/
 
 /-! The strict separation theorem (§ 4) shows that nonlinear delineations
     exist. This section strengthens the result: the specific nonlinear
@@ -309,9 +295,7 @@ theorem nlDel_not_degree_representable :
     (mono_transfer nlDel (measureDelineation μ) h (measureDelineation_monotone μ))
     nonlinear_delineation_exists
 
--- ════════════════════════════════════════════════════
--- § 8. Nondistinctness = Equal Degree
--- ════════════════════════════════════════════════════
+/-! ### Nondistinctness = Equal Degree -/
 
 /-! [klein-1980] §4.2 defines degrees as equivalence classes under
     nondistinctness: `degree(u) = {u' : u ≈ u'}`. For measure-induced
@@ -360,9 +344,7 @@ theorem nondistinct_iff_equal_measure {E D : Type*} [LinearOrder D]
   · intro heq X _ _ _
     simp only [measureDelineation, heq]
 
--- ════════════════════════════════════════════════════
--- § 9. Strict Weak Order for Degree Delineations
--- ════════════════════════════════════════════════════
+/-! ### Strict Weak Order for Degree Delineations -/
 
 /-! Under a degree-induced delineation, Klein's ordering is a **strict
     weak order**: asymmetric and negatively transitive. These two
@@ -397,9 +379,7 @@ theorem degree_ordering_trans {E D : Type*} [LinearOrder D]
   · exact absurd h (ordering_asymm _ (measureDelineation_monotone μ) cc u v huv)
   · exact h
 
--- ════════════════════════════════════════════════════
--- § 10. Very = Threshold Chain (Degree Correspondence)
--- ════════════════════════════════════════════════════
+/-! ### Very = Threshold Chain (Degree Correspondence) -/
 
 /-! Klein's `very` (§4.1, eq 42) narrows the comparison class to the
     positive extension. Under a degree-induced delineation, this
@@ -447,4 +427,4 @@ theorem very_strictly_stronger_degree :
   simp only [id] at hlt_z hlt_y
   omega
 
-end Semantics.Gradability.Hierarchy
+end Degree.Hierarchy

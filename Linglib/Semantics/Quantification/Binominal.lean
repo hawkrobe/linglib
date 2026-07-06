@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Degree.Gradability.GradableNouns
-import Linglib.Semantics.Degree.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
 import Linglib.Semantics.Degree.Gradability.Intensification
 
 /-!
@@ -39,9 +39,9 @@ in [ten-wolde-2023]'s taxonomy.
 
 namespace Quantification.Binominal
 
-open Semantics.Gradability
-open Semantics.Gradability.GradableNouns (GradableNoun)
-open Semantics.Measurement (QuantizingNounClass)
+open Degree
+open Degree.GradableNouns (GradableNoun)
+open Degree (QuantizingNounClass)
 
 /-! ### : Evaluative BNP Semantics -/
 
@@ -109,7 +109,7 @@ Using the `Person` type and `exampleIdiot` from `GradableNouns`:
 - Floyd: idiocy degree 1 (below standard 3 → not an idiot)
 -/
 
-open Semantics.Gradability.GradableNouns (exampleIdiot)
+open Degree.GradableNouns (exampleIdiot)
 
 /-- A doctor predicate for the worked example. -/
 def isDoctor : GradableNouns.Person → Prop
@@ -153,7 +153,7 @@ measure function ([nouwen-2024]) to a contextually-determined
 property of N₂. -/
 
 section EM
-open Semantics.Gradability.Intensification (EvaluativeMeasure intensifiedMeaning)
+open Degree.Intensification (EvaluativeMeasure intensifiedMeaning)
 open Degree (Degree Threshold Degree.toNat Threshold.toNat)
 /-- EM semantics: N₁ as evaluative modifier of a contextual property of N₂.
 
@@ -242,7 +242,7 @@ Uses `muHorrible 10` as the evaluative measure for *hell*:
 μ_hell(d) = |d − 5|, peaking at extreme degrees. -/
 
 section EMBIExample
-open Semantics.Gradability.Intensification (muHorrible EvaluativeMeasure)
+open Degree.Intensification (muHorrible EvaluativeMeasure)
 open Degree (Degree deg thr)
 /-- Quality measure for EM: contextually-determined goodness as a doctor.
 George (9) is an outstanding doctor; Sarah (6) is decent; Floyd (3) is poor. -/
@@ -279,7 +279,7 @@ theorem sarah_not_hell_of_doctor :
 theorem george_hell_of_good_doctor :
     biSemantics hellEval doctorQuality (thr 5) (thr 3) isDoctorB .george = true := by
   simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
-             Semantics.Gradability.Intensification.intensifiedMeaning,
+             Degree.Intensification.intensifiedMeaning,
              Degree.positiveMeaning,
              Degree.Degree.toNat, Degree.Threshold.toNat,
              Bool.and_eq_true, decide_eq_true_eq]
@@ -292,7 +292,7 @@ theorem george_hell_of_good_doctor :
 theorem sarah_not_hell_of_good_doctor :
     biSemantics hellEval doctorQuality (thr 5) (thr 3) isDoctorB .sarah = false := by
   simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
-             Semantics.Gradability.Intensification.intensifiedMeaning,
+             Degree.Intensification.intensifiedMeaning,
              Degree.positiveMeaning,
              Degree.Degree.toNat, Degree.Threshold.toNat,
              Bool.and_eq_false_iff, decide_eq_false_iff_not]

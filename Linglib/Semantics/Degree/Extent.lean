@@ -1,4 +1,5 @@
 import Mathlib.Order.Interval.Set.LinearOrder
+import Mathlib.Order.Bounds.Basic
 
 /-!
 # Extent Functions
@@ -123,5 +124,12 @@ abbrev crossExtentInclusion [Preorder D] (μ : Entity → D) (a b : Entity) : Pr
 theorem crossExtent_always_false [LinearOrder D]
     (μ : Entity → D) (a b : Entity) : ¬ crossExtentInclusion μ a b :=
   fun h => absurd (h (min_le_left (μ a) (μ b))) (not_lt.mpr (min_le_right _ _))
+
+/-- The maximum of the positive extent is `μ a` itself: `isGreatest_Iic`
+    specialized to degree semantics. Grounds the Heim–Kennedy equivalence
+    `max{d : tall(a,d)} = μ(a)` and the phrasal than-clause standard. -/
+theorem isGreatest_posExt [Preorder D] (μ : Entity → D) (a : Entity) :
+    IsGreatest (posExt μ a) (μ a) :=
+  isGreatest_Iic
 
 end Degree

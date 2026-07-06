@@ -23,7 +23,7 @@ Principle of [kamp-partee-1995]. Consumed by
 
 namespace Semantics.Composition.Coercion
 
-open Semantics.Gradability.Classification
+open Degree.Classification
 
 variable {W E : Type*}
 

@@ -19,7 +19,7 @@ all are Wellwood-style verbal comparatives with a measure function `μ`
 satisfying the Schwarzschild Monotonicity Constraint (Pasternak (4)).
 
 The substrate already hosts every primitive Pasternak's §1–§4 needs:
-- Monotonicity = `Semantics.Gradability.StatesBased.admissibleMeasure`
+- Monotonicity = `Degree.admissibleMeasure`
   (`StrictMono` over a preorder; multi-tradition naming credits
   Schwarzschild, Wellwood, Krifka, CSW, Pasternak, LaBToM in one
   docstring).
@@ -85,7 +85,7 @@ do not exist. Corrected:
 
 namespace Pasternak2019
 
-open Semantics.Gradability.StatesBased
+open Degree
 open Semantics.Attitudes.Confidence
 open ArgumentStructure (ThematicFrame)
 
@@ -94,7 +94,7 @@ open ArgumentStructure (ThematicFrame)
 Pasternak's def 4 (PDF p.272): `μ` is monotonic on `⊑^c` in `A` iff for
 all `x, y ∈ A`, `x ⊏^c y` entails `μ(x) < μ(y)`.
 
-The substrate's `StatesBased.admissibleMeasure` is `StrictMono` over a
+The substrate's `Degree.admissibleMeasure` is `StrictMono` over a
 preorder — exactly Pasternak's def with `⊑^c` realized as the ambient
 `[Preorder S]` instance and the domain `A` implicit in the carrier
 type. The substrate's docstring credits all six traditions
@@ -346,7 +346,7 @@ and a g-homogeneity bridge to `Semantics/Mereology.lean::gHomogeneous`
 
 CSW [cariani-santorio-wellwood-2024] share Pasternak's monotonicity
 discipline: their eq. (21) is the same `StrictMono` constraint exposed
-as `StatesBased.admissibleMeasure` (multi-tradition naming there). The
+as `Degree.admissibleMeasure` (multi-tradition naming there). The
 architectural mismatch with Pasternak is theme typing — Pasternak's
 `Thm : Entity → Event → Prop` is entity-themed (§4 transitive psych
 verbs); CSW's `theme : W → Prop` is propositional (gradable attitude

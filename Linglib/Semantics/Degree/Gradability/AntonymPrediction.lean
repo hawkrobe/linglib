@@ -43,11 +43,9 @@ primitives via `Iff.rfl` bridges that survive substrate transparency
 (both denotations are `abbrev`s).
 -/
 
-namespace Semantics.Gradability
+namespace Degree
 
-open Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
-open Degree (positiveMeaning)
 
 -- ============================================================================
 -- § 1. The Four Surface Forms
@@ -220,4 +218,4 @@ def predictionForAntonymy : NegationType → Asymmetry
 def predictionForEntry (e : GradableAdjective) : Asymmetry :=
   e.antonymRelation.elim .symmetric predictionForAntonymy
 
-end Semantics.Gradability
+end Degree

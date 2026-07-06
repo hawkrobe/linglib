@@ -1,5 +1,4 @@
 import Linglib.Studies.Heim2001
-import Linglib.Semantics.Degree.Abstraction
 
 /-!
 # Fox & Hackl 2006: Degree Questions and Negative Islands
@@ -34,11 +33,9 @@ dependency: 2006 imports 2001).
 
 namespace FoxHackl2006
 
-open Degree.Abstraction (negatedDegreePredicate)
+open Heim2001 (negatedDegreePredicate)
 
--- ════════════════════════════════════════════════════
--- § 1. Basic Degree Question Data
--- ════════════════════════════════════════════════════
+/-! ### Basic Degree Question Data -/
 
 /-- A degree question acceptability datum. -/
 structure DegreeQuestionDatum where
@@ -58,9 +55,7 @@ def degreeQuestionExamples : List DegreeQuestionDatum :=
     , mechanism := "simple degree question" }
   ]
 
--- ════════════════════════════════════════════════════
--- § 2. Negative Islands
--- ════════════════════════════════════════════════════
+/-! ### Negative Islands -/
 
 /-- [fox-hackl-2006] negative island data. -/
 def negativeIslandExamples : List DegreeQuestionDatum :=
@@ -86,9 +81,7 @@ theorem negativeIsland_via_no_max {Entity D : Type*} [LinearOrder D]
     ¬ ∃ m, IsGreatest {d | negatedDegreePredicate μ a d} m :=
   Heim2001.negation_high_DegP_undefined μ a
 
--- ════════════════════════════════════════════════════
--- § 3. Modal Obviation
--- ════════════════════════════════════════════════════
+/-! ### Modal Obviation -/
 
 /-- [fox-hackl-2006] modal obviation data. -/
 def modalObviationExamples : List DegreeQuestionDatum :=

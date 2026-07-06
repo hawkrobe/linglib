@@ -1,6 +1,5 @@
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Semantics.Degree.Abstraction
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.Gradability.Delineation
@@ -42,10 +41,9 @@ open Degree (comparativeSem equativeSem ScaleDirection)
 open Degree.Differential (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 
-Migrated from `Semantics/Degree/Intensional.lean` (single-paper
-substrate). World-indexed degree semantics for comparative constructions
-requiring intensional infrastructure: Russell's ambiguity, modal
-comparatives, ambiguous counterfactuals.
+World-indexed degree semantics for comparative constructions requiring
+intensional infrastructure: Russell's ambiguity, modal comparatives,
+ambiguous counterfactuals.
 
 The central contribution: Russell's ambiguity ("I thought your yacht was
 larger than it is") is explained by presence or absence of an ACTUALLY
@@ -308,9 +306,7 @@ theorem littleBox_collapse_when_uniform {W D : Type*} [LinearOrder D]
   · exact boxOverLittle_implies_littleOverBox acc μw d hne
 
 
--- ════════════════════════════════════════════════════
--- § 1. Descriptive Adequacy Scorecard (Table xvii, p. 4)
--- ════════════════════════════════════════════════════
+/-! ### Descriptive Adequacy Scorecard (Table xvii, p. 4) -/
 
 /-- Theory families evaluated by von Stechow. -/
 inductive TheoryFamily where
@@ -416,9 +412,7 @@ def scorecard : List ScorecardEntry :=
 -- No other theory handles all 9.
 #guard (scorecard.filter (λ e => e.theory == .cresswell && e.score == .plus)).length == 5
 
--- ════════════════════════════════════════════════════
--- § 2. Russell's Ambiguity via ACTUALLY (§§II–V)
--- ════════════════════════════════════════════════════
+/-! ### Russell's Ambiguity via ACTUALLY (§§II–V) -/
 
 -- Cross-reference: [heim-2001] independently notes the Russell
 -- ambiguity is not DegP-scope. Von Stechow's ACTUALLY analysis is
@@ -443,9 +437,7 @@ section RussellExample
 
 end RussellExample
 
--- ════════════════════════════════════════════════════
--- § 3. Ambiguous Counterfactuals (§III)
--- ════════════════════════════════════════════════════
+/-! ### Ambiguous Counterfactuals (§III) -/
 
 /-- "If Mary had smoked less than she did, she would be healthier
     than she is" (p. 12, ex. 26). The nontrivial reading requires
@@ -464,9 +456,7 @@ def ambiguousCounterfactual : AmbiguousCounterfactualDatum :=
   , informativeReading := "if actual smoking were reduced, actual health would improve"
   , requiresActually := true }
 
--- ════════════════════════════════════════════════════
--- § 4. NPI Licensing in Than-Clauses (§VI)
--- ════════════════════════════════════════════════════
+/-! ### NPI Licensing in Than-Clauses (§VI) -/
 
 -- Von Stechow's explanation: the Max operator makes the than-clause
 -- a downward-entailing environment. Replacing the than-clause S̄ with
@@ -496,9 +486,7 @@ def npiData : List NPIDatum :=
   , ⟨"*He has got more support than you already have", "already", false⟩
   ]
 
--- ════════════════════════════════════════════════════
--- § 5. Quantifiers and Connectives in Than-Clauses (§VII)
--- ════════════════════════════════════════════════════
+/-! ### Quantifiers and Connectives in Than-Clauses (§VII) -/
 
 /-- "Konstanz is nicer than Düsseldorf or Stuttgart" entails
     "Konstanz is nicer than Düsseldorf and Stuttgart" (p. 2, ex. v).
@@ -547,9 +535,7 @@ def negativeQuantifierData : List InferenceDatum :=
    , false, "Russell: ιd[no one is d-pretty] doesn't denote"⟩
   ]
 
--- ════════════════════════════════════════════════════
--- § 6. Modal Comparatives (§VIII)
--- ════════════════════════════════════════════════════
+/-! ### Modal Comparatives (§VIII) -/
 
 /-- "A polar bear could be bigger than a grizzly bear could be" (p. 3).
     Only Seuren/Lewis can treat this natively. Russell's theory fails
@@ -579,9 +565,7 @@ theorem modalComparative_from_maxDeg {W : Type*} {D : Type*} [LinearOrder D]
     ∃ w ∈ acc, ∀ v ∈ acc, μPolar w > μGrizzly v :=
   maxDeg_witness acc μPolar μGrizzly maxP maxG hmaxP hmaxG hgt
 
--- ════════════════════════════════════════════════════
--- § 7. Klein Criticism (§XI)
--- ════════════════════════════════════════════════════
+/-! ### Klein Criticism (§XI) -/
 
 /-- [klein-1980]'s degree-free approach cannot handle:
     1. Differential readings: "John is six inches taller than Mary"
@@ -623,14 +607,12 @@ theorem klein_agrees_on_simple {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (cc : Set Entity) (a b : Entity)
     (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
-      Semantics.Gradability.Delineation.ordering
-        (Semantics.Gradability.Delineation.measureDelineation μ) cc a b := by
+      Degree.Delineation.ordering
+        (Degree.Delineation.measureDelineation μ) cc a b := by
   simp only [comparativeSem,
-    Semantics.Gradability.Delineation.ordering_iff_degree μ cc a b ha hb]
+    Degree.Delineation.ordering_iff_degree μ cc a b ha hb]
 
--- ════════════════════════════════════════════════════
--- § 8. Cross-Category Generalization (§XI.4)
--- ════════════════════════════════════════════════════
+/-! ### Cross-Category Generalization (§XI.4) -/
 
 /-- Von Stechow's rules R7–R8 extend *more* uniformly across categories.
     Plural nouns: "more toads" = |X| > n (cardinality as degree).
@@ -652,9 +634,7 @@ def crossCategoryData : List CrossCategoryDatum :=
    , "multihead comparative", "cardinality on both subject and by-phrase"⟩
   ]
 
--- ════════════════════════════════════════════════════
--- § 9. *too* as Counterfactual Comparative (§XI.6)
--- ════════════════════════════════════════════════════
+/-! ### *too* as Counterfactual Comparative (§XI.6) -/
 
 /-- R13: *too* is a counterfactual comparative morpheme.
     "This pack is at least 50 kg too heavy to lift" means:

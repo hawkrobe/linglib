@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Gradability.Aggregation
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.Defs
@@ -83,7 +83,7 @@ same scalar foundation.
 
 namespace Solt2018Proportional
 
-open Semantics.Gradability.Aggregation (spatialNormalizedScore
+open Degree.Aggregation (spatialNormalizedScore
   spatialNormalizedScore_unit spatialNormalizedScore_le_one
   spatialNormalizedScore_nonneg weightedScore)
 open Semantics.Kinds.SortedOntology (PredicateLevel)

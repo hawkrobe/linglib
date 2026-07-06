@@ -14,7 +14,7 @@ determines licensing from boundedness, while an `MLScale` adds granularity
 structure (marginal vs. large difference) on the same `LinearOrder`.
 -/
 
-namespace Semantics.Gradability
+namespace Degree
 
 /-- ML theory ([dinis-jacinto-2026], Fig. 1): a linear order enriched with
     a primitive "marginally smaller than" relation M satisfying five axioms.
@@ -81,4 +81,4 @@ theorem m_bounded (x y z : α) (hxz : ml.M x z) (hxy : x < y) (hyz : y < z) :
 
 end MLScale
 
-end Semantics.Gradability
+end Degree

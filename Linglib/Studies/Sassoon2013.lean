@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Gradability.Basic
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.Defs
@@ -62,7 +62,7 @@ shift, not context-driven).
 
 namespace Sassoon2013
 
-open Semantics.Gradability (DimensionBindingType conjunctiveBinding
+open Degree (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
   deMorgan_disjunctive_conjunctive predictedBinding)
 open Degree (interpretiveEconomy)

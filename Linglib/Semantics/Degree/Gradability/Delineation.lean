@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Supervaluation.Basic
 
 /-!
@@ -59,25 +59,19 @@ For the formal subsumption hierarchy (Klein ← Kennedy ← Measurement),
 see `Semantics/Comparison/Hierarchy.lean`.
 -/
 
-namespace Semantics.Gradability.Delineation
+namespace Degree.Delineation
 
 
--- ════════════════════════════════════════════════════
--- § 1. Comparison Class
--- ════════════════════════════════════════════════════
+/-! ### Comparison Class -/
 
 /-- A comparison class: a set of entities relevant for evaluating
     a gradable predicate. In Klein's framework, this is the only
     contextual parameter — there are no degrees or thresholds. -/
 abbrev ComparisonClass (Entity : Type*) := Set Entity
 
--- ════════════════════════════════════════════════════
--- § 2. Positive Form
--- ════════════════════════════════════════════════════
+/-! ### Positive Form -/
 
--- ════════════════════════════════════════════════════
--- § 3. Comparative via Supervaluation
--- ════════════════════════════════════════════════════
+/-! ### Comparative via Supervaluation -/
 
 /-- Klein's comparative: "Kim is taller than Lee" is true iff there
     EXISTS a comparison class C such that Kim is tall-in-C but Lee is
@@ -90,9 +84,7 @@ def comparativeSem {Entity : Type*}
     (a b : Entity) : Prop :=
   ∃ C, delineation C a ∧ ¬ delineation C b
 
--- ════════════════════════════════════════════════════
--- § 4. Properties
--- ════════════════════════════════════════════════════
+/-! ### Properties -/
 
 /-- Klein's comparative is asymmetric: if a is taller than b, then
     b is not taller than a.
@@ -110,9 +102,7 @@ def IsMonotoneDelineation {Entity : Type*}
       delineation C₁ a → ¬ delineation C₁ b →
       delineation C₂ b → delineation C₂ a
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge: Klein ↔ Fine (Supervaluation)
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Klein ↔ Fine (Supervaluation) -/
 
 /-! [klein-1980]'s comparative is the **existential dual** of
     [fine-1975]'s supervaluation. Where supervaluation asks "true at
@@ -166,9 +156,7 @@ theorem comparative_prevents_superTrue {Entity : Type*}
   simp only [decide_eq_true_eq] at this
   exact hnotb this
 
--- ════════════════════════════════════════════════════
--- § 6. Partial Extensions (Klein §2.3, eqs 12–13)
--- ════════════════════════════════════════════════════
+/-! ### Partial Extensions (Klein §2.3, eqs 12–13) -/
 
 /-- Klein's partial extension function (§2.3, eq 12). For a vague
     predicate ζ at context c, `F_ζ(c)` assigns each entity in the
@@ -208,9 +196,7 @@ theorem PartialDelineation.trichotomy {Entity : Type*}
   | some false => exact Or.inr rfl
   | none => exact absurd hv hdom
 
--- ════════════════════════════════════════════════════
--- § 7. Context-Relative Ordering (Klein §3.3, eq 29)
--- ════════════════════════════════════════════════════
+/-! ### Context-Relative Ordering (Klein §3.3, eq 29) -/
 
 /-- Klein's ordering at context c (eq 29): `u >_{c,ζ} u'` iff there
     exists a comparison class X ⊆ 𝒰(c) that puts u in the positive
@@ -269,9 +255,7 @@ theorem ordering_neg_trans {Entity : Type*}
   · exact Or.inr ⟨X, hX, hdel, hnw⟩
   · exact Or.inl ⟨X, hX, hu, hdel⟩
 
--- ════════════════════════════════════════════════════
--- § 8. Nondistinctness (Klein §3.3, eq 30)
--- ════════════════════════════════════════════════════
+/-! ### Nondistinctness (Klein §3.3, eq 30) -/
 
 /-- Two entities are NONDISTINCT w.r.t. ζ at c (eq 30) iff no
     comparison class containing both can distinguish them.
@@ -317,9 +301,7 @@ theorem nondistinct_of_incomparable {Entity : Type*}
   · intro hdu; exact by_contra fun hdnu' => hno1 ⟨X, hX, hdu, hdnu'⟩
   · intro hdu'; exact by_contra fun hdnu => hno2 ⟨X, hX, hdu', hdnu⟩
 
--- ════════════════════════════════════════════════════
--- § 9. Linear vs. Nonlinear (Klein §2.2, eq 9; §3.3)
--- ════════════════════════════════════════════════════
+/-! ### Linear vs. Nonlinear (Klein §2.2, eq 9; §3.3) -/
 
 /-- A delineation is LINEAR (eq 9) iff the ordering it induces is
     connected: for any two distinct members of a comparison class,
@@ -353,9 +335,7 @@ def IsNonlinearDelineation {Entity : Type*}
   ∃ cc : ComparisonClass Entity, ∃ u u' : Entity,
     ordering delineation cc u u' ∧ ordering delineation cc u' u
 
--- ════════════════════════════════════════════════════
--- § 10. Measure-Induced Delineation (Degree ↔ Delineation Bridge)
--- ════════════════════════════════════════════════════
+/-! ### Measure-Induced Delineation (Degree ↔ Delineation Bridge) -/
 
 /-! A measure function μ : E → D naturally induces a Klein delineation:
     entity x is "tall in C" iff x is strictly taller than some member
@@ -441,9 +421,7 @@ theorem measureDelineation_is_linear {E D : Type*} [LinearOrder D]
     simp only [measureDelineation, heq]
   · left; exact degree_implies_ordering μ cc u u' hu hu' hgt
 
--- ════════════════════════════════════════════════════
--- § 11. Degree Modifiers as CC Narrowers (Klein §4.1, eqs 42–43)
--- ════════════════════════════════════════════════════
+/-! ### Degree Modifiers as CC Narrowers (Klein §4.1, eqs 42–43) -/
 
 /-! Klein handles degree modifiers WITHOUT degrees: `very` and `fairly`
     are comparison-class narrowers. Under the correspondence with degree
@@ -502,9 +480,7 @@ theorem fairly_excludes_very {Entity : Type*}
     ¬ veryDelineation delineation C x :=
   (hcc _ x hf).2
 
--- ════════════════════════════════════════════════════
--- § 12. Preorder on Entities (Klein §5.3, eq 89b)
--- ════════════════════════════════════════════════════
+/-! ### Preorder on Entities (Klein §5.3, eq 89b) -/
 
 /-- Klein's delineation induces a `Preorder` on entities:
     `u ≤ v` iff every comparison class where `v` qualifies also
@@ -520,9 +496,7 @@ theorem fairly_excludes_very {Entity : Type*}
   le_refl _ := fun _ h => h
   le_trans _ _ _ hab hbc := fun C hc => hab C (hbc C hc)
 
--- ════════════════════════════════════════════════════
--- § 13. Faithfulness Predicates (Soundness + Completeness)
--- ════════════════════════════════════════════════════
+/-! ### Faithfulness Predicates (Soundness + Completeness) -/
 
 /-! Two typeclasses recording how a delineation `del` relates to an
     abstract scalar relation `R : Entity → Entity → Prop`. Both are
@@ -643,4 +617,4 @@ instance instCompleteMeasureDelineation {E D : Type*} [LinearOrder D]
         (Set.mem_univ _) (Set.mem_univ _) hR
     exact ⟨C, hpos, hneg⟩
 
-end Semantics.Gradability.Delineation
+end Degree.Delineation
