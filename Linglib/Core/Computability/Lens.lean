@@ -15,10 +15,14 @@ the put-get law. Lenses originate in the view-update problem
 transformation literature ([foster-greenwald-moore-pierce-schmitt-2007]).
 Very-well-behaved lenses are simultaneously the coalgebras of the store comonad
 and the algebras of the state monad (the two are adjoint); this structure
-carries the put-get fragment. The total-getter case could equivalently be a
-lawful state-monad interface (`LawfulMonadStateOf`, Batteries), but the partial
-read here has no lawful `set none`, so the first-order presentation is
-primitive.
+carries the put-get fragment. Equivalently this could be a lawful state-monad
+interface (`LawfulMonadStateOf`, Batteries) over the `Option V` slot — but that
+demands a lawful erasing write (`set none`), which is unsatisfiable whenever
+the valuation is total (a vowel inventory in which every vowel carries the
+feature has no unvalued symbol to erase to). Alphabets with representable
+underspecification do support erasure (`Function.update _ _ none`); requiring
+it would exclude the fully-specified alphabets, so only valued writes are
+demanded here.
 
 A lens-equipped alphabet is a data-word alphabet (symbol paired with a value
 slot). With an infinite value domain, a transducer whose state is one slot
