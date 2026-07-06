@@ -55,11 +55,7 @@ instances live in `Fragments/{Turkish,Finnish,Hungarian}/VowelHarmony.lean`.
 
 namespace Phonology.Harmony
 
-/-- Compile a pattern-level direction to the side at which the underlying
-    `TierRule` reads its triggering context. Bidirectional collapses to
-    rightward operationally (the same `harmonyDomain`/`triggerValue`
-    computation handles both); the typological distinction lives only at the
-    smart-constructor argument site. -/
+/-- Compile a direction to the `TierRule` context side (bidirectional ↦ rightward). -/
 def Direction.toSide : Direction → Subregular.Side
   | .rightward | .bidirectional => .left
   | .leftward => .right
@@ -72,12 +68,8 @@ open Phonology (Segment Feature)
 
 /-! ### System — TierRule + transduction discipline -/
 
-/-- A harmony system: a tier-based AGREE rule (`TierRule`, the recognizer
-    half, inherited via `extends`) plus the transduction discipline — which
-    segments undergo the change (`isTarget`) and which are opaque blockers
-    (`isBlocker`). The trigger predicate is the inherited `targetIsContext`;
-    the spreading feature is `feature` (the inherited `featureValue` is
-    `fun s => s feature` by construction, set by `mk'`). -/
+/-- A harmony system: a tier-based AGREE recognizer (`TierRule`) plus the
+    transduction discipline — the spreading feature, its targets, its blockers. -/
 structure System extends TierRule Segment where
   /-- The distinctive feature that spreads. -/
   feature   : Feature
@@ -91,11 +83,8 @@ structure System extends TierRule Segment where
 
 attribute [instance] System.decTarget' System.decBlocker
 
-/-- Smart constructor exposing the [rose-walker-2011] six-way decomposition,
-    compiling it into the inherited `TierRule` plus the transduction fields.
-    `Bool`-lambda args stay ergonomic for fragment authors; they are stored as
-    the decidable `Prop` fields. Trigger lives only in `targetIsContext` (no
-    duplicate field); `featureValue` is derived from `feature`. -/
+/-- Compile the [rose-walker-2011] six-way decomposition into a `System`;
+    `Bool` lambdas are stored as the decidable `Prop` fields. -/
 def System.mk' (feature : Feature)
     (isTrigger isTarget isTransparent : Segment → Bool)
     (direction : Phonology.Harmony.Direction := .rightward)
@@ -115,21 +104,14 @@ variable (sys : System) (val : Bool)
 
 /-! ### Recovering the Rose-Walker Typology -/
 
-/-- The trigger predicate (= the inherited `targetIsContext`). Convenience
-    `Bool` accessor for the [rose-walker-2011] typological decomposition;
-    decidability is in scope via the inherited `decTarget`. -/
+/-- The trigger predicate: `Bool` accessor for the inherited `targetIsContext`. -/
 @[inline] def isTrigger (s : Segment) : Bool :=
   decide (sys.targetIsContext s)
 
 /-! ### Harmony Domain -/
 
-/-- The harmony domain: the portion of the stem that governs suffix
-    harmony. For left-context (rightward / bidirectional) rules, this is
-    everything after the last blocker; for right-context (leftward),
-    everything before the first blocker. Without blockers, the full stem.
-
-    Example: stem = [a, BLOCKER, i] with rightward spreading →
-    domain = [i] (only the suffix-adjacent segment governs). -/
+/-- The stem portion governing suffix harmony: everything after (rightward) or
+    before (leftward) the blocker nearest the suffix. -/
 def harmonyDomain (stem : List Segment) : List Segment :=
   match sys.side with
   | .left  => (stem.reverse.takeWhile (fun s => !decide (sys.isBlocker s))).reverse
@@ -137,13 +119,8 @@ def harmonyDomain (stem : List Segment) : List Segment :=
 
 /-! ### Trigger Value Extraction -/
 
-/-- The harmony value predicted at the suffix slot: dispatch the inherited
-    `TierRule` recognizer on the harmony domain.
-
-    *True by construction*: this IS the rule's prediction at the
-    suffix-adjacent position, after truncating the stem at the first
-    blocker. No bridge theorem is needed — the typological decomposition was
-    compiled into the inherited fields by the smart constructor. -/
+/-- The harmony value predicted at the suffix slot: the recognizer applied to
+    the harmony domain. -/
 def triggerValue (stem : List Segment) : Option Bool :=
   let domain := harmonyDomain sys stem
   match sys.side with
@@ -156,19 +133,14 @@ def triggerValue (stem : List Segment) : Option Bool :=
 def writeFeature (feature : Feature) (v : Bool) (s : Segment) : Segment :=
   fun f => if f == feature then some v else s f
 
-/-- Apply harmony to a single segment: if the segment is a target, set
-    the harmony feature to the given value; otherwise return unchanged. -/
+/-- Set a target's harmony feature to the given value; non-targets are unchanged. -/
 def harmonizeOne (s : Segment) : Segment :=
   if sys.isTarget s then writeFeature sys.feature val s else s
 
 /-! ### Suffix Spreading (convenience over the recognizer) -/
 
-/-- Apply harmony through a suffix segment list, respecting blockers.
-    Walks left-to-right: a blocker halts (this and subsequent segments
-    unchanged); a target is harmonized and spreading continues; anything
-    else passes through. Without blockers this maps `harmonizeOne` over the
-    suffix. For the genuine subregular semantics (blockers re-trigger), see
-    `transduce`. -/
+/-- Walk a suffix: blockers halt spreading, targets harmonize, all else passes
+    through. For the re-triggering subregular semantics, see `transduce`. -/
 def spreadSuffix (suffix : List Segment) : List Segment :=
   match suffix with
   | [] => []
@@ -178,12 +150,8 @@ def spreadSuffix (suffix : List Segment) : List Segment :=
 
 /-! ### Transducer grounding — harmony as an OSL function -/
 
-/-- Harmony as a 2-Output-Strictly-Local rule ([chandlee-eyraud-heinz-2015]):
-    scanning left-to-right, each target takes the harmonic value of the
-    immediately preceding *output* segment (the propagated value); blockers and
-    non-targets emit unchanged, and a blocker's own value enters the output
-    window — so subsequent targets re-trigger from the blocker. This is the
-    genuine subregular object harmony computes. -/
+/-- Harmony as a 2-OSL rule ([chandlee-eyraud-heinz-2015]): each target copies
+    the harmonic value of the preceding output segment; blockers re-trigger. -/
 def System.spreadRule : OSLRule 2 Segment Segment where
   windowOutput window s :=
     if sys.isBlocker s then [s]
@@ -200,8 +168,7 @@ def System.spreadRule : OSLRule 2 Segment Segment where
 def System.transduce : List Segment → List Segment :=
   sys.spreadRule.apply
 
-/-- The harmonized string is a 2-OSL function by construction: class membership
-    is a theorem about the transducer, not a post-hoc classification. -/
+/-- The harmonized string is 2-OSL by construction. -/
 theorem System.transduce_isLeftOSL :
     IsLeftOutputStrictlyLocal 2 sys.transduce :=
   sys.spreadRule.isLeftOutputStrictlyLocal_apply
@@ -218,8 +185,7 @@ theorem harmonizeOne_nontarget {s : Segment} (h : ¬ sys.isTarget s) :
 /-- Spreading through an empty suffix returns an empty list. -/
 theorem spreadSuffix_nil : spreadSuffix sys val [] = [] := rfl
 
-/-- Suffix length is preserved by spreading (even with blockers — blocked
-    segments are returned unchanged, not removed). -/
+/-- Spreading preserves length: blocked segments are kept, not removed. -/
 theorem spreadSuffix_length (suffix : List Segment) :
     (spreadSuffix sys val suffix).length = suffix.length := by
   induction suffix with
@@ -235,8 +201,7 @@ theorem harmonyDomain_no_blockers {stem : List Segment}
   · rw [List.takeWhile_eq_self_iff.mpr (by simp_all), List.reverse_reverse]
   · exact List.takeWhile_eq_self_iff.mpr (by simp_all)
 
-/-- Blockers in the suffix halt spreading: segments at and after the first
-    blocker are returned unchanged. -/
+/-- A leading blocker halts spreading: the suffix is returned unchanged. -/
 theorem spreadSuffix_blocker {s : Segment} {rest : List Segment}
     (hb : sys.isBlocker s) :
     spreadSuffix sys val (s :: rest) = s :: rest := by
