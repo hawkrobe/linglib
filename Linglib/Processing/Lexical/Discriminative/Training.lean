@@ -295,23 +295,45 @@ variable {data q G}
 
 /-! ### ERM characterisations, uniqueness, and transport -/
 
+/-- Graded transfer: if some linear functional of the meanings decodes
+    coordinate `j₀` within total weighted squared error `ε`, then any ERM
+    solution's prediction at a positively-weighted event deviates from the
+    observed value by at most `√(ε / q i)`. Exact decodability is the `ε = 0`
+    case (`IsERMSolution.coord_eq_of_decodable`). -/
+theorem IsERMSolution.abs_coord_sub_le (hq : ∀ i, 0 < q i)
+    (hG : IsERMSolution data q G)
+    {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ} {ε : ℝ}
+    (hw : coordResidual data q (fun k => w (data.meanings k)) j₀ ≤ ε)
+    (i : Fin m) :
+    |G (data.meanings i) j₀ - data.forms i j₀| ≤ Real.sqrt (ε / q i) := by
+  have hle := (isERMSolution_iff_coordResidual data q G).1 hG j₀ w
+  have hterm : q i * (G (data.meanings i) j₀ - data.forms i j₀) ^ 2
+      ≤ coordResidual data q (fun k => G (data.meanings k) j₀) j₀ :=
+    Finset.single_le_sum
+      (f := fun k => q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2)
+      (fun k _ => mul_nonneg (hq k).le (sq_nonneg _)) (Finset.mem_univ i)
+  have hsq : (G (data.meanings i) j₀ - data.forms i j₀) ^ 2 ≤ ε / q i := by
+    rw [le_div_iff₀ (hq i)]
+    linarith [mul_comm (q i) ((G (data.meanings i) j₀ - data.forms i j₀) ^ 2)]
+  calc |G (data.meanings i) j₀ - data.forms i j₀|
+      = Real.sqrt ((G (data.meanings i) j₀ - data.forms i j₀) ^ 2) :=
+        (Real.sqrt_sq_eq_abs _).symm
+    _ ≤ Real.sqrt (ε / q i) := Real.sqrt_le_sqrt hsq
+
 /-- If some linear functional `w` of the meanings exactly reproduces
     coordinate `j₀` of the observed forms, then any ERM solution under
-    positive weights also reproduces it exactly on the training events. -/
+    positive weights also reproduces it exactly on the training events —
+    the `ε = 0` case of `IsERMSolution.abs_coord_sub_le`. -/
 theorem IsERMSolution.coord_eq_of_decodable (hq : ∀ i, 0 < q i)
     (hG : IsERMSolution data q G)
     {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
     G (data.meanings i) j₀ = data.forms i j₀ := by
-  have hB : coordResidual data q (fun k => w (data.meanings k)) j₀ = 0 := by
-    simp [coordResidual, hw]
-  have h0 : coordResidual data q (fun k => G (data.meanings k) j₀) j₀ = 0 :=
-    le_antisymm (hB ▸ (isERMSolution_iff_coordResidual data q G).1 hG j₀ w)
-      (coordResidual_nonneg data q (fun k => (hq k).le) _ _)
-  have hterm := (Finset.sum_eq_zero_iff_of_nonneg
-    fun k _ => mul_nonneg (hq k).le (sq_nonneg _)).1 h0 i (Finset.mem_univ i)
-  exact sub_eq_zero.1 (sq_eq_zero_iff.1
-    ((mul_eq_zero.1 hterm).resolve_left (hq i).ne'))
+  have h0 := hG.abs_coord_sub_le hq (le_of_eq
+    (by simp [coordResidual, hw] :
+      coordResidual data q (fun k => w (data.meanings k)) j₀ = (0:ℝ))) i
+  rw [zero_div, Real.sqrt_zero] at h0
+  exact sub_eq_zero.1 (abs_nonpos_iff.1 h0)
 
 /-- A map that reproduces every training form exactly is an ERM solution
     under any nonnegative weights — `IsERMSolution` is nonvacuous whenever
@@ -514,6 +536,20 @@ theorem IsTrainedOn.semSup_eq_of_decodable
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
     semSup D (data.meanings i) j₀ = data.forms i j₀ :=
   IsERMSolution.coord_eq_of_decodable hq hD hw i
+
+/-- Graded form of `semSup_eq_of_decodable`: a trained DLM's semantic support
+    at a coordinate decoded within total weighted squared error `ε` deviates
+    from the observed form value by at most `√(ε / q i)` — the transfer
+    theorem in the graded form the applications actually use, where decoding
+    is estimated rather than exact ([gahl-baayen-2024];
+    [heitmeier-chuang-baayen-2026]). -/
+theorem IsTrainedOn.abs_semSup_sub_le
+    (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
+    {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ} {ε : ℝ}
+    (hw : coordResidual data q (fun k => w (data.meanings k)) j₀ ≤ ε)
+    (i : Fin m) :
+    |semSup D (data.meanings i) j₀ - data.forms i j₀| ≤ Real.sqrt (ε / q i) :=
+  IsERMSolution.abs_coord_sub_le hq hD hw i
 
 /-- Two DLMs trained on the same experience and weights have identical
     semantic support at every experienced meaning
