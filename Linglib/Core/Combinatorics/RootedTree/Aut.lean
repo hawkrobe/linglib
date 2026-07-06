@@ -40,9 +40,6 @@ Grossman-Larson pairing (`Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing`
 `Perm`-invariance (`treeAutCard_perm`) descends it to `Nonplanar.autCard` through the quotient.
 `[UPSTREAM]` candidate; eventual mathlib home would be `Mathlib.Combinatorics.RootedTree.Aut`.
 
-## Tags
-
-rooted tree, automorphism, symmetry factor, multinomial
 -/
 
 namespace RootedTree

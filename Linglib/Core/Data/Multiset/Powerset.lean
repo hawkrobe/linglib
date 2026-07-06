@@ -29,9 +29,6 @@ unconditional induction hypothesis absorbs the `s ≰ t` boundary cases by
 `Nat.choose` vanishing. `[UPSTREAM]` candidate; eventual mathlib home
 `Mathlib.Data.Multiset.Powerset`.
 
-## Tags
-
-multiset, powerset, count, binomial coefficient
 -/
 
 namespace Multiset

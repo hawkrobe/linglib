@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Linglib.Core.Data.RoseTree.Nonplanar
 
@@ -20,10 +25,6 @@ count (`sigma_eq_sum_numNodes`) — the forest case of `#V = b₀ + #E`.
 * `RootedTree.Forest.sigma_eq_sum_numNodes`: `sigma F = (F.map numNodes).sum`.
 
 `[UPSTREAM]` candidate alongside the `Nonplanar` carrier.
-
-## Tags
-
-rooted tree, forest, counting, vertex count
 -/
 
 namespace RootedTree
