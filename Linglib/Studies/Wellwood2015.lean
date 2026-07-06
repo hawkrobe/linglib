@@ -19,15 +19,21 @@ not lexical category (§3.4).
 ## Main declarations
 
 * `comparativeTruth`: the shared truth condition, an instance of
-  `Degree.maxComparative`; `comparativeTruth_max` collapses it to direct
-  measure comparison under unique eventualities.
+  `Degree.maxComparative`; `derivation_eq_comparativeTruth` proves the
+  paper's step-by-step composition (`matrixDegP`, `absDegP`, `predMod`,
+  `thanClause`) yields it, and `comparativeTruth_max` collapses it to
+  direct measure comparison under unique eventualities.
 * `nominalComparative`, `verbalComparative`, `adjectivalComparative`:
   the three domain instantiations (role × extraction).
 * `felicity_matches_data`: `much`-felicity predicted from mereological
-  status across the §§2–3 data.
-* `dimension_tracks_domain` / `dimension_not_category`: §3.4's
-  domain-based dimension predictor verified on exs. 82–89; the
-  category-based rival refuted on the reversal data.
+  status across the §§2–3 data; `qua_measures_vacuously_admissible` and
+  `cum_thanDegrees_no_max` give the mereological reason (antichains
+  trivialize monotone measurement; cumulative supply keeps the scale
+  maximless).
+* `model_restricted_iff` / `dimension_tracks_domain` /
+  `dimension_not_category`: §3.4 as order theory — exactly the state
+  domain's model is `DimensionallyRestricted`, matching the intensive
+  dimensions of exs. 82–89, while the category-based rival is refuted.
 * `very_tracks_much_deletion`: the §6.3 `very` asymmetry derived from
   [bresnan-1973] Much Deletion.
 
@@ -161,6 +167,49 @@ theorem comparativeTruth_max {Ent α Measured : Type*}
   maxComparative_unique ha (fun e he => ha_unique e he.1 he.2)
     hb (fun e he => hb_unique e he.1 he.2)
 
+/-! ### The compositional derivation (§§2.1–3.2)
+
+The paper's derivation steps as combinators, proven to compose to
+`comparativeTruth`. -/
+
+section Derivation
+variable {Ent α : Type*}
+
+/-- ⟦much_μ⟧^A = A(μ) composed with ⟦-er⟧: a strict degree threshold
+    (37.i/45.i). -/
+def matrixDegP (μ : α → ℚ) (δ : ℚ) (e : α) : Prop := μ e > δ
+
+/-- ABS (38.ii): the weak degree threshold of the than-clause. -/
+def absDegP (μ : α → ℚ) (d : ℚ) (e : α) : Prop := μ e ≥ d
+
+/-- Predicate Modification: intersective conjunction (37.iii/45.iii). -/
+def predMod (P Q : α → Prop) (e : α) : Prop := P e ∧ Q e
+
+/-- The than-clause (39–41/47): degree abstraction over the ∃-closed
+    ABS-composed clause. -/
+def thanClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ)
+    (b : Ent) : Set ℚ :=
+  {d | ∃ e, role b e ∧ predMod P (absDegP μ d) e}
+
+/-- The matrix clause (37.viii/45.vi): ∃-closure over the PM of the base
+    predicate with the DegP at standard δ. -/
+def matrixClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ)
+    (a : Ent) (δ : ℚ) : Prop :=
+  ∃ e, role a e ∧ predMod P (matrixDegP μ δ) e
+
+/-- The derivation composes: max-selecting the than-clause standard for
+    the matrix clause is `comparativeTruth` (eqs. 42/48/65). -/
+theorem derivation_eq_comparativeTruth {Measured : Type*}
+    (role : Ent → α → Prop) (P : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
+    (∃ δ, IsGreatest (thanClause role P (fun e => μ (extract e)) b) δ ∧
+        matrixClause role P (fun e => μ (extract e)) a δ) ↔
+      comparativeTruth role P extract μ a b := by
+  simp only [comparativeTruth, maxComparative, Degree.thanDegrees, thanClause,
+    matrixClause, predMod, matrixDegP, absDegP, ge_iff_le, gt_iff_lt, and_assoc]
+
+end Derivation
+
 /-! ### Three domain instantiations -/
 
 section Domains
@@ -260,6 +309,28 @@ theorem felicity_matches_data :
         d.felicitousWithMuch = true) := by
   decide
 
+/-- Why quantized reference blocks `much`: a quantized extension is an
+    antichain, so every measure is vacuously admissible on it — monotone
+    measurement cannot discriminate, leaving only counting (`many`). -/
+theorem qua_measures_vacuously_admissible {α : Type*} [PartialOrder α]
+    {P : α → Prop} (hQ : Mereology.QUA P) (μ : α → ℚ) :
+    StrictMonoOn μ {x | P x} :=
+  fun _ hx _ hy hlt => absurd hlt.le (hQ hx hy hlt.ne)
+
+/-- Why cumulative reference keeps the `much` scale open: with disjoint
+    supply, the degree set of an extensively measured cumulative predicate
+    has no maximum (via `Mereology.cum_measure_unbounded`). -/
+theorem cum_thanDegrees_no_max {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [Mereology.ExtMeasure α μ] {P : α → Prop}
+    (hCum : Mereology.CUM P) {δ : ℚ} (hδ : 0 < δ)
+    (hSupply : ∀ x, P x → ∃ y, P y ∧ ¬ Mereology.Overlap x y ∧ δ ≤ μ y)
+    {x₀ : α} (hx₀ : P x₀) :
+    ¬ ∃ M, IsGreatest (Degree.thanDegrees P μ) M := by
+  rintro ⟨M, _, hub⟩
+  obtain ⟨z, hz, hgt⟩ :=
+    Mereology.DimensionChain.cum_measure_unbounded hCum hδ hSupply x₀ hx₀ M
+  exact absurd (hub ⟨z, hz, le_refl _⟩) (not_le.mpr hgt)
+
 /-- Mass/atelic/GA share cumulative status and count/telic/non-GA
     quantized, via independent substrate routes (§§2–3). -/
 theorem cross_categorial_parallel :
@@ -271,19 +342,36 @@ theorem cross_categorial_parallel :
 
 /-! ### Dimensional restriction (§3.4) -/
 
-/-- The §3.4 predictor: intensive iff the measured domain is states —
-    linearly ordered (`linearOrder_dimensionallyRestricted`), unlike
-    entity/event domains (`prod_not_dimensionallyRestricted`). -/
-def domainRestricted (m : MeasuredDomain) : Prop := m = .state
+/-- Order model of a measured domain: states are linearly ordered;
+    entity and event domains have incomparable parts (weight × volume,
+    distance × duration). -/
+abbrev MeasuredDomain.Model : MeasuredDomain → Type
+  | .state  => ℚ
+  | .entity => ℚ × ℚ
+  | .event  => ℚ × ℚ
 
-instance : DecidablePred domainRestricted :=
-  fun m => inferInstanceAs (Decidable (m = .state))
+instance : (m : MeasuredDomain) → Preorder m.Model
+  | .state  => inferInstanceAs (Preorder ℚ)
+  | .entity => inferInstanceAs (Preorder (ℚ × ℚ))
+  | .event  => inferInstanceAs (Preorder (ℚ × ℚ))
 
-/-- Intensive dimensions occur exactly in state-measuring comparatives
-    (exs. 82–89). -/
+/-- §3.4 as order theory: exactly the state domain is dimensionally
+    restricted. -/
+theorem model_restricted_iff : ∀ m : MeasuredDomain,
+    DimensionallyRestricted m.Model ↔ m = .state
+  | .state  => iff_of_true (linearOrder_dimensionallyRestricted (α := ℚ)) rfl
+  | .entity => iff_of_false prod_not_dimensionallyRestricted (by decide)
+  | .event  => iff_of_false prod_not_dimensionallyRestricted (by decide)
+
+/-- Admissible measures agree exactly on the state-measuring comparatives
+    (exs. 82–89): the observed dimension is intensive iff the measured
+    domain's order model is dimensionally restricted. -/
 theorem dimension_tracks_domain :
     ∀ d ∈ dimensionReversalData,
-      (domainRestricted d.measuredDomain ↔ d.intensive = true) := by
+      (DimensionallyRestricted d.measuredDomain.Model ↔ d.intensive = true) := by
+  intro d hd
+  rw [model_restricted_iff]
+  revert d hd
   decide
 
 /-- The lexicalist rival: dimension fixed iff the category is GA. -/
