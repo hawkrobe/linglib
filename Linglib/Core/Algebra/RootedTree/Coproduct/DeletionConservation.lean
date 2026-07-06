@@ -1,6 +1,6 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
-import Linglib.Core.Combinatorics.RootedTree.Rebinarize
+import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Counting
 
 /-!
@@ -154,14 +154,14 @@ theorem cutSummandsN_self_not_mem_crown (T : Nonplanar α)
 /-- **Single-cut Δᵈ accessible-term extraction** (MCB eq. 1.6.7): deleting one
     accessible subtree `mover` from `T` and rebinarizing the remainder
     (`contractUnary p.2`) removes two accessible terms — the subtree's edge and
-    the contracted parent. The hypothesis `unaryCount p.2 = 1` characterizes a
+    the contracted parent. The hypothesis `numUnary p.2 = 1` characterizes a
     single edge cut at a binary node (exactly one unary node is created). -/
 theorem cutSummandsN_accCount_single_deletion (T : Nonplanar α)
     (p : Forest (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T)
-    (mover : Nonplanar α) (hcard : p.1 = {mover}) (huc : p.2.unaryCount = 1) :
+    (mover : Nonplanar α) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
     T.accCount = mover.accCount + (Nonplanar.contractUnary p.2).accCount + 2 := by
   have hw := cutSummandsN_numNodes T p hp
-  have hcu := Nonplanar.numNodes_contractUnary_add p.2
+  have hcu := Nonplanar.numNodes_contractUnary_add_numUnary p.2
   have hmT := T.numNodes_pos
   have hmm := mover.numNodes_pos
   have hmp := p.2.numNodes_pos

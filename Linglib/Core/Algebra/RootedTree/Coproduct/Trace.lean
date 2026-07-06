@@ -12,9 +12,9 @@ The **trace-preserving variant** of the Connes-Kreimer admissible-cut
 coproduct on n-ary rooted trees, parameterized by a trace encoder
 `τ : RoseTree (α ⊕ β) → β`. For a tree T:
 
-  Δ^c_τ(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderTrace c)
+  Δ^c_τ(T) = T ⊗ 1 + Σ_{(F, R) ∈ cutSummandsCP τ T} of' F ⊗ ofTree R
 
-where `remainderTrace c` keeps a placeholder leaf at every cut site —
+where the remainder `R` keeps a placeholder leaf at every cut site —
 the leaf's label is `Sum.inr (τ T_v)` for the cut subtree `T_v`. This
 contrasts with the deletion variant `Δ^ρ` (sibling `Pruning.lean`),
 where cut sites simply disappear (the parent loses a child).
