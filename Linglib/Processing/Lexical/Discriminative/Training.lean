@@ -51,11 +51,11 @@ namespace Processing.Lexical.Discriminative
 
 noncomputable section TrainingSubstrate
 
-variable {m n d : ℕ}  -- m = numEvents, n = formDim, d = meaningDim
+variable {m n d : ℕ}
 
 /-! ### Substrate types -/
 
-/-- A **training experience**: a finite indexed family of (meaning, form)
+/-- A **training experience** is a finite indexed family of (meaning, form)
     observation pairs — the rows of the papers' `S` and `C` matrices. -/
 structure TrainingExperience (numEvents formDim meaningDim : ℕ) where
   meanings : Fin numEvents → MeaningVec meaningDim
@@ -70,20 +70,17 @@ abbrev FrequencyVector (numEvents : ℕ) : Type := Fin numEvents → ℝ
 
 /-- The constant-1 frequency vector: every event counts once (endstate
     learning). -/
-def uniformFrequency (m : ℕ) : FrequencyVector m :=
-  fun _ => 1
+def uniformFrequency (m : ℕ) : FrequencyVector m := fun _ => 1
 
 variable (data : TrainingExperience m n d) (q : FrequencyVector m)
   (G : MeaningVec d →ₗ[ℝ] FormVec n)
 
 /-- The sum of all event weights. -/
-def FrequencyVector.totalMass : ℝ :=
-  ∑ i, q i
+def FrequencyVector.totalMass : ℝ := ∑ i, q i
 
 /-- The empirical distribution over events: `q` normalised to sum to 1
     (for the `PMF` cast use `PMF.ofRealWeightFn`). -/
-def FrequencyVector.normalize : FrequencyVector m :=
-  fun i => q i / q.totalMass
+def FrequencyVector.normalize : FrequencyVector m := fun i => q i / q.totalMass
 
 @[simp] theorem FrequencyVector.normalize_apply (i : Fin m) :
     q.normalize i = q i / q.totalMass := rfl
@@ -91,8 +88,7 @@ def FrequencyVector.normalize : FrequencyVector m :=
 /-! ### The weighted loss -/
 
 /-- Squared coordinate-distance `Σⱼ (a j − b j)²` between two form vectors. -/
-def squaredDist (a b : FormVec n) : ℝ :=
-  ∑ j, (a j - b j) ^ 2
+def squaredDist (a b : FormVec n) : ℝ := ∑ j, (a j - b j) ^ 2
 
 theorem squaredDist_self (a : FormVec n) : squaredDist a a = 0 :=
   Finset.sum_eq_zero fun _ _ => by rw [sub_self]; ring
@@ -104,8 +100,7 @@ theorem squaredDist_nonneg (a b : FormVec n) : 0 ≤ squaredDist a b :=
     `Σᵢ qᵢ · squaredDist (G (meanings i)) (forms i)` — the variational
     characterisation of the papers' procedural `√Q` normal-equations
     specification ([gahl-baayen-2024] appendix; see `weightedLoss_sqrtScale`). -/
-def weightedLoss : ℝ :=
-  ∑ i, q i * squaredDist (G (data.meanings i)) (data.forms i)
+def weightedLoss : ℝ := ∑ i, q i * squaredDist (G (data.meanings i)) (data.forms i)
 
 theorem weightedLoss_nonneg (hq : ∀ i, 0 ≤ q i) :
     0 ≤ weightedLoss data q G :=
@@ -160,8 +155,7 @@ functional decodes exactly is reproduced exactly. -/
 
 /-- Weighted squared residual of a predicted column `pred` against
     form coordinate `j₀` of the training data. -/
-def coordResidual (pred : Fin m → ℝ) (j₀ : Fin n) : ℝ :=
-  ∑ k, q k * (pred k - data.forms k j₀) ^ 2
+def coordResidual (pred : Fin m → ℝ) (j₀ : Fin n) : ℝ := ∑ k, q k * (pred k - data.forms k j₀) ^ 2
 
 theorem coordResidual_nonneg (hq : ∀ i, 0 ≤ q i) (pred : Fin m → ℝ)
     (j₀ : Fin n) : 0 ≤ coordResidual data q pred j₀ :=
