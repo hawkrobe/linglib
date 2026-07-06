@@ -61,8 +61,7 @@ private theorem contractUnary_node :
     contractUnary (node a [c]) = contractUnary c := rfl
 
 @[simp] theorem contractUnary_node_cons₂ :
-    contractUnary (node a (c :: d :: cs)) =
-      node a (contractUnary c :: contractUnary d :: cs.map contractUnary) := by
+    contractUnary (node a (c :: d :: cs)) = node a ((c :: d :: cs).map contractUnary) := by
   rw [contractUnary_node, List.map_cons, List.map_cons, contractCombine_cons₂]
 
 /-- The number of unary (single-child) vertices. -/
@@ -92,35 +91,25 @@ theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 
-private theorem numUnary_contractCombine (h : ∀ c ∈ cs, c.numUnary = 0) :
-    (contractCombine a cs).numUnary = 0 := by
-  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
-  · rfl
-  · exact h c List.mem_cons_self
-  · rw [contractCombine_cons₂, numUnary_node, if_neg (by simp only [List.length_cons]; omega),
-      Nat.zero_add]
-    exact List.sum_eq_zero fun n hn => by
-      obtain ⟨c', hc', rfl⟩ := List.mem_map.mp hn
-      exact h c' hc'
+/-- Contraction never creates a unary root: a unary root collapses away, and any other
+    root keeps its arity, so the unary count at a node is the children's total. -/
+theorem numUnary_contractUnary_node :
+    (contractUnary (node a cs)).numUnary = (cs.map fun c => (contractUnary c).numUnary).sum := by
+  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [Function.comp_def]
 
 /-- After contraction no unary vertices remain. -/
 @[simp] theorem numUnary_contractUnary (t : RoseTree α) : (contractUnary t).numUnary = 0 := by
   induction t with
   | node a cs ih =>
-    rw [contractUnary_node]
-    exact numUnary_contractCombine a _ fun c hc => by
-      obtain ⟨c', hc', rfl⟩ := List.mem_map.mp hc
-      exact ih c' hc'
+    rw [numUnary_contractUnary_node, List.map_congr_left ih]
+    simp
 
-private theorem eq_zero_of_sum_eq_zero {l : List ℕ} (h : l.sum = 0) {n : ℕ} (hn : n ∈ l) :
-    n = 0 := by
+private theorem eq_zero_of_sum_eq_zero {l : List ℕ} (h : l.sum = 0) : ∀ n ∈ l, n = 0 := by
   induction l with
-  | nil => cases hn
+  | nil => simp
   | cons x xs ih =>
-    rw [List.sum_cons] at h
-    rcases List.mem_cons.mp hn with rfl | hmem
-    · omega
-    · exact ih (by omega) hmem
+    rw [List.sum_cons, Nat.add_eq_zero_iff] at h
+    exact List.forall_mem_cons.mpr ⟨h.1, ih h.2⟩
 
 /-- The fixed points of `contractUnary` are exactly the unary-free trees. -/
 theorem contractUnary_eq_self_iff {t : RoseTree α} :
@@ -128,22 +117,12 @@ theorem contractUnary_eq_self_iff {t : RoseTree α} :
   refine ⟨fun h => h ▸ numUnary_contractUnary t, fun h => ?_⟩
   induction t with
   | node a cs ih =>
-    rw [numUnary_node] at h
-    have hlen : cs.length ≠ 1 := by
-      intro hl
-      rw [if_pos hl] at h
-      omega
-    rw [if_neg hlen, Nat.zero_add] at h
-    have hch : ∀ c ∈ cs, c.numUnary = 0 := fun c hc =>
-      eq_zero_of_sum_eq_zero h (List.mem_map.mpr ⟨c, hc, rfl⟩)
-    have hmap : cs.map contractUnary = cs := by
-      conv_rhs => rw [← List.map_id cs]
-      exact List.map_congr_left fun c hc => ih c hc (hch c hc)
-    rw [contractUnary_node, hmap]
     rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
     · rfl
-    · exact absurd rfl hlen
-    · rfl
+    · simp at h
+    · rw [numUnary_node, if_neg (by simp only [List.length_cons]; omega), Nat.zero_add] at h
+      rw [contractUnary_node_cons₂, List.map_congr_left fun x hx =>
+          ih x hx (eq_zero_of_sum_eq_zero h _ (List.mem_map_of_mem hx)), List.map_id']
 
 /-- `contractUnary` is idempotent. -/
 @[simp] theorem contractUnary_idem (t : RoseTree α) :
@@ -156,25 +135,18 @@ theorem contractUnary_eq_self_iff {t : RoseTree α} :
 theorem numUnary_perm {t s : RoseTree α} (h : Perm t s) : t.numUnary = s.numUnary :=
   fold_perm (fun _ _ _ h' => by rw [h'.length_eq, h'.sum_eq]) h
 
-private theorem contractCombine_perm :
-    ∀ {L₁ L₂ : List (RoseTree α)}, PermList L₁ L₂ →
-      Perm (contractCombine a L₁) (contractCombine a L₂)
-  | _, _, .nil => Perm.refl _
-  | _, _, @PermList.cons _ _ _ cs ds h hs =>
-    match cs, ds, hs.length_eq, hs with
-    | [], [], _, _ => h
-    | _ :: _, _ :: _, _, hs' => .node (.cons h hs')
-    | [], _ :: _, hlen, _ => by simp at hlen
-    | _ :: _, [], hlen, _ => by simp at hlen
-  | _, _, .swap c d cs => .node (.swap c d cs)
-  | _, _, .trans h₁ h₂ => (contractCombine_perm h₁).trans (contractCombine_perm h₂)
-
 /-- `contractUnary` respects `Perm`: contraction descends to the nonplanar quotient
-    (`fold_rel` at `S := Perm`, fed by the combinator congruence). -/
+    (`fold_rel` at `S := Perm`; the algebra congruence is the inline match). -/
 theorem Perm.contractUnary {t s : RoseTree α} (h : Perm t s) :
     Perm t.contractUnary s.contractUnary :=
   fold_rel Perm.refl (fun h₁ h₂ => h₁.trans h₂)
-    (fun a {_ _} h' => contractCombine_perm a (PermList.of_rel h')) h
+    (fun a {L₁ L₂} h' =>
+      match L₁, L₂, (PermList.of_rel h').length_eq, PermList.of_rel h' with
+      | [], [], _, _ => .refl _
+      | [_], [_], _, h => h.singleton_inv
+      | _ :: _ :: _, _ :: _ :: _, _, h => .node h
+      | [], _ :: _, hl, _ | [_], [], hl, _ | [_], _ :: _ :: _, hl, _
+      | _ :: _ :: _, [], hl, _ | _ :: _ :: _, [_], hl, _ => by simp at hl) h
 
 end RoseTree
 
