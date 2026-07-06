@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Rat.Defs
 
 /-!
 # Intensional Logic: Types and Denotations
@@ -34,6 +35,10 @@ intensionality is a type-forming operation, not a separate domain. -/
 inductive Ty where
   | e : Ty
   | t : Ty
+  /-- Degrees (type `d`): the scale sort of degree semantics
+      ([heim-2001], [wellwood-2015]). Denoted by ℚ, the repo's exact
+      degree carrier. -/
+  | d : Ty
   | fn : Ty → Ty → Ty
   | intens : Ty → Ty
   deriving Repr, DecidableEq
@@ -55,6 +60,7 @@ abbrev Ty.indConcept : Ty := .intens .e
 def Ty.isConjoinable : Ty → Bool
   | .t => true
   | .e => false
+  | .d => false
   | .fn _ τ => τ.isConjoinable
   | .intens a => a.isConjoinable
 
@@ -76,6 +82,7 @@ def Ty.isConjoinable : Ty → Bool
 def Denot (E W : Type) : Ty → Type
   | .e => E
   | .t => Prop
+  | .d => ℚ
   | .fn a b => Denot E W a → Denot E W b
   | .intens a => W → Denot E W a
 
