@@ -259,7 +259,7 @@ def accCountC (t : Nonplanar (α ⊕ β)) : ℕ := t.accCount - t.traceLeafCount
 theorem accCountC_merge (a : α) (l r : Nonplanar (α ⊕ β))
     (hl : l.traceLeafCount < l.numNodes) (hr : r.traceLeafCount < r.numNodes) :
     (Nonplanar.node (Sum.inl a) {l, r}).accCountC = l.accCountC + r.accCountC + 2 := by
-  have hw := Nonplanar.accCount_merge (Sum.inl a) l r
+  have hw := Nonplanar.accCount_node_pair (Sum.inl a) l r
   have htl : (Nonplanar.node (Sum.inl a) {l, r}).traceLeafCount
       = l.traceLeafCount + r.traceLeafCount := by
     rw [traceLeafCount_node_inl]
@@ -313,6 +313,9 @@ def sigmaC (F : Multiset (Nonplanar (α ⊕ β))) : ℕ := b₀ F + alphaC F
     (F : Multiset (Nonplanar (α ⊕ β))) :
     sigmaC (T ::ₘ F) = T.accCountC + 1 + sigmaC F := by
   simp only [sigmaC, b₀_cons, alphaC_cons]; omega
+@[simp] theorem sigmaC_singleton (T : Nonplanar (α ⊕ β)) :
+    sigmaC ({T} : Multiset (Nonplanar (α ⊕ β))) = T.accCountC + 1 := by
+  simp only [sigmaC, b₀_singleton, alphaC_singleton]; omega
 @[simp] theorem sigmaC_add (F G : Multiset (Nonplanar (α ⊕ β))) :
     sigmaC (F + G) = sigmaC F + sigmaC G := by
   simp only [sigmaC, b₀_add, alphaC_add]; omega

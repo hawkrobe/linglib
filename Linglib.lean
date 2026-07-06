@@ -59,7 +59,6 @@ import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Counting
-import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
