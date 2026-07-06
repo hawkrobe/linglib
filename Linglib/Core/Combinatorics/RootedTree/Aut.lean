@@ -32,13 +32,6 @@ automorphisms of a forest.
 * `RootedTree.Nonplanar.forestAutCard_add`: the multinomial split identity
   `forestAutCard (F + G) = (antidiagonal (F + G)).count (F, G) * (forestAutCard F *
   forestAutCard G)`, the combinatorial core of the pairing's product-coproduct adjunction.
-
-## Implementation notes
-
-`treeAutCard` computes the count by structural recursion on a planar `RoseTree` representative;
-`Perm`-invariance (`treeAutCard_perm`) descends it to `Nonplanar.autCard` through the quotient.
-`[UPSTREAM]` candidate; eventual mathlib home would be `Mathlib.Combinatorics.RootedTree.Aut`.
-
 -/
 
 namespace RootedTree

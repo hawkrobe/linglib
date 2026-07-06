@@ -52,6 +52,22 @@ def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
 
 @[simp] theorem leaves_leaf : leaves (node a []) = {a} := rfl
 
+private theorem map_list_sum {β γ : Type*} (f : β → γ) (l : List (Multiset β)) :
+    Multiset.map f l.sum = (l.map (Multiset.map f)).sum := by
+  induction l with
+  | nil => rfl
+  | cons m l ih => simp only [List.sum_cons, Multiset.map_add, ih, List.map_cons]
+
+/-- Depth-forgetting collapses the shift: the leaf labels of a node are the children's
+    leaf labels. -/
+@[simp] theorem leaves_node_cons :
+    leaves (node a (c :: cs)) = ((c :: cs).map leaves).sum := by
+  rw [leaves, leavesWithDepth_node_cons, map_list_sum, List.map_map]
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  show (t.leavesWithDepth.map fun p => (p.1, p.2 + 1)).map Prod.fst = _
+  rw [Multiset.map_map]
+  rfl
+
 /-! ### Cardinality -/
 
 /-- The projection has one element per leaf. -/

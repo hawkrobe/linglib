@@ -1,5 +1,4 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
-import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 
 set_option autoImplicit false

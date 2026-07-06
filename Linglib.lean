@@ -62,7 +62,6 @@ import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
-import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
