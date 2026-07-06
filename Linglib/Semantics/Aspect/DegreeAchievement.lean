@@ -39,7 +39,7 @@ structure DegreeAchievementScale where
   /-- The scalar dimension the base adjective measures. Its boundedness is the
       order-mixin profile of the dimension's degree type, recovered by the derived
       `scaleBoundedness` below — not stored. -/
-  dimension : Degree.Dimension
+  dimension : Features.ScalarDimension
   /-- Citation form of the base adjective (if deadjectival). -/
   baseAdjective : Option String := none
   deriving Repr, BEq
@@ -55,13 +55,13 @@ instance : Inhabited DegreeAchievementScale where
 /-- Derive default telicity from scale boundedness — the central claim of
     [kennedy-levin-2008]. Scales with a maximum → telic; scales without → atelic.
 
-    Delegates to `Dimension.defaultTelicity` — a scale with a maximal degree gives
+    Delegates to `ScalarDimension.defaultTelicity` — a scale with a maximal degree gives
     a telic verb — grounded to the order mixin by
-    `Degree.Dimension.defaultTelicity_telic_iff_hasGreatest`. -/
+    `Features.ScalarDimension.defaultTelicity_telic_iff_hasGreatest`. -/
 def DegreeAchievementScale.defaultTelicity (s : DegreeAchievementScale) : Telicity :=
   s.dimension.defaultTelicity
 
-/-- Default Vendler class, delegating to `Dimension.defaultVendlerClass`:
+/-- Default Vendler class, delegating to `ScalarDimension.defaultVendlerClass`:
     closed scale → accomplishment, open → activity. -/
 def DegreeAchievementScale.defaultVendlerClass (s : DegreeAchievementScale) : VendlerClass :=
   s.dimension.defaultVendlerClass
@@ -96,14 +96,14 @@ end
 theorem default_vendler_is_dynamic (s : DegreeAchievementScale) :
     s.defaultVendlerClass = .accomplishment ∨ s.defaultVendlerClass = .activity := by
   simp only [DegreeAchievementScale.defaultVendlerClass,
-    Degree.Dimension.defaultVendlerClass]
+    Features.ScalarDimension.defaultVendlerClass]
   cases s.dimension.boundedness <;> simp
 
 /-- defaultTelicity agrees with the telicity of defaultVendlerClass. -/
 theorem telicity_vendler_agree (s : DegreeAchievementScale) :
     s.defaultVendlerClass.telicity = s.defaultTelicity := by
   simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity,
-    Degree.Dimension.defaultVendlerClass, Degree.Dimension.defaultTelicity]
+    Features.ScalarDimension.defaultVendlerClass, Features.ScalarDimension.defaultTelicity]
   cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 -- ════════════════════════════════════════════════════

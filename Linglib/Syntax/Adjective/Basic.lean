@@ -23,7 +23,7 @@ This file deliberately does not depend on the Degree/Kennedy semantics.
 
 * Agreement φ-features + `toWord` realization — added when an agreeing-language fragment
   sets them (φ with no setter would be dead fields).
-* Dixon `PCClass` view (`Dimension.pcClass`) — waits on a lightweight `PCClass` home
+* Dixon `PCClass` view (`ScalarDimension.pcClass`) — waits on a lightweight `PCClass` home
   (it currently sits in the heavy `Morphology/RootTypology.lean`).
 * The `Modifier`/`Gradable` capability classes — built at the second-carrier trigger
   (an `Adverb`/degree-word struct), exactly as `Pronoun` deferred `Proform`.
@@ -32,7 +32,7 @@ This is the adjectival realization of a property concept; when a verb- or
 noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 -/
 
-open Degree (Dimension)
+open Features (ScalarDimension)
 open Morphology.DegreeContainment (DegreePattern)
 
 set_option autoImplicit false
@@ -79,10 +79,10 @@ structure Adjective where
   form : String
   /-- Native script form, when distinct. -/
   script : Option String := none
-  /-- The scalar dimension measured, as a `Degree.Dimension` key.
+  /-- The scalar dimension measured, as a `Features.ScalarDimension` key.
       `none` for classifying/relational adjectives (*wooden*, *former*, *medical*)
       and other non-gradables. -/
-  dimension : Option Dimension := none
+  dimension : Option ScalarDimension := none
   /-- Which pole of the scale the adjective lexicalizes (*short*, *empty*, *wet*):
       the only thing distinguishing polar scale-mates that share one `dimension`. -/
   isLowerEndpoint : Bool := false
