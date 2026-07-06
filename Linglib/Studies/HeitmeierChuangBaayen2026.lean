@@ -113,21 +113,20 @@ theorem not_isAnalogicallyRegular_of_xor {f : Bool → Bool → FormVec n}
 /-! ### The coding interface
 
 The stem-exponent setting is the two-primitive case of the DLM coding
-interface: a paradigm cell's primitives are its stem and cell tags, and
-`embedSem` over `Sum.elim σ ε` is the imputed additive semantics. The
-fourth proportional above is `embedSem_analogy` at the multiset relation
-`{st, c} + {st', c'} = {st, c'} + {st', c}`. -/
+interface: a paradigm cell's semantic primitives are its stem and cell
+tags, and conceptualization over `Sum.elim σ ε` is the imputed additive
+semantics. The fourth proportional above is `conceptualize_analogy` at the
+multiset relation `{st, c} + {st', c'} = {st, c'} + {st', c}`. -/
 
-instance : SemDecomposable (Stem × Cell) (Stem ⊕ Cell) :=
+instance : SemanticPrimitives (Stem × Cell) (Stem ⊕ Cell) :=
   ⟨fun p => {Sum.inl p.1, Sum.inr p.2}⟩
 
-@[simp] theorem prims_pair (st : Stem) (c : Cell) :
-    SemDecomposable.prims (Prim := Stem ⊕ Cell) (st, c)
-      = {Sum.inl st, Sum.inr c} := rfl
+@[simp] theorem primitives_pair (st : Stem) (c : Cell) :
+    primitives (Prim := Stem ⊕ Cell) (st, c) = {Sum.inl st, Sum.inr c} := rfl
 
-theorem embedSem_sumElim (st : Stem) (c : Cell) :
-    embedSem (Sum.elim σ ε) (st, c) = σ st + ε c := by
-  simp [embedSem]
+theorem conceptualize_sumElim (st : Stem) (c : Cell) :
+    conceptualize (Sum.elim σ ε) (st, c) = σ st + ε c := by
+  simp [conceptualize]
 
 variable [Fintype Stem] [Fintype Cell]
 

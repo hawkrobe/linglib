@@ -12,16 +12,16 @@ symbol string; its cues are the `k`-factors of the boundary-augmented
 string — the same windowing as subregular locality (`Subregular.SLGrammar`)
 — and its form vector is the binary cue indicator (Box 4.2: the `C` matrix
 holds only 1s and 0s, not counts; the count refinement is where strict
-locality's unit margin lives, `Subregular.SLGrammar`). A `SemDecomposable`
-type yields a multiset of semantic primitives — lexeme plus
-inflectional-function tags — and its meaning vector is the sum of primitive
-embeddings (the book's additive decomposition, ch. 5, generalising the
-multi-hot coding it attributes to naive discriminative learning).
+locality's unit margin lives, `Subregular.SLGrammar`). A `SemanticPrimitives`
+type yields a multiset of atomic semantic primitives — a lexeme plus
+inflectional-function tags (the book's term, ch. 5) — and `conceptualize`
+builds its meaning vector as the sum of primitive embeddings: the book's
+additive decomposition (eq. 5.3) and its verb for the operation (§16.3).
 
-`embedSem_analogy` is the general form of proportional analogy: a linear
-map respects every multiset-level relation among primitive decompositions.
-The stem-exponent fourth proportional of `Studies/HeitmeierChuangBaayen2026`
-is the two-primitive case.
+`conceptualize_analogy` is the general form of proportional analogy: a
+linear map respects every multiset-level relation among primitive
+decompositions. The stem-exponent fourth proportional of
+`Studies/HeitmeierChuangBaayen2026` is the two-primitive case.
 -/
 
 namespace Processing.Lexical.Discriminative
@@ -57,23 +57,26 @@ def Discriminable (k : ℕ) (lexicon : Set W) : Prop :=
 
 /-! ### Meaning side -/
 
-/-- A meaning type that decomposes into a multiset of semantic primitives —
-    lexeme and inflectional-function tags. -/
-class SemDecomposable (M : Type*) (Prim : outParam Type*) where
-  prims : M → Multiset Prim
+/-- A meaning type with atomic semantic primitives — a lexeme and
+    inflectional-function tags. -/
+class SemanticPrimitives (M : Type*) (Prim : outParam Type*) where
+  primitives : M → Multiset Prim
 
-variable {M Prim : Type*} [SemDecomposable M Prim] {d n : ℕ}
+export SemanticPrimitives (primitives)
 
-/-- The additive semantic embedding: the meaning vector is the sum of its
+variable {M Prim : Type*} [SemanticPrimitives M Prim] {d n : ℕ}
+
+/-- **Conceptualization**: the meaning vector of an object is the sum of its
     primitives' vectors. -/
-def embedSem (emb : Prim → MeaningVec d) (m : M) : MeaningVec d :=
-  ((SemDecomposable.prims m).map emb).sum
+def conceptualize (emb : Prim → MeaningVec d) (m : M) : MeaningVec d :=
+  ((primitives m).map emb).sum
 
-theorem embedSem_add_of_prims_add (emb : Prim → MeaningVec d) {m₁ m₂ m₃ m₄ : M}
-    (h : SemDecomposable.prims m₁ + SemDecomposable.prims m₂
-       = SemDecomposable.prims m₃ + SemDecomposable.prims m₄) :
-    embedSem emb m₁ + embedSem emb m₂ = embedSem emb m₃ + embedSem emb m₄ := by
-  unfold embedSem
+theorem conceptualize_add_of_primitives_add (emb : Prim → MeaningVec d)
+    {m₁ m₂ m₃ m₄ : M}
+    (h : primitives m₁ + primitives m₂ = primitives m₃ + primitives m₄) :
+    conceptualize emb m₁ + conceptualize emb m₂
+      = conceptualize emb m₃ + conceptualize emb m₄ := by
+  unfold conceptualize
   rw [← Multiset.sum_add, ← Multiset.map_add, h, Multiset.map_add,
       Multiset.sum_add]
 
@@ -81,12 +84,11 @@ theorem embedSem_add_of_prims_add (emb : Prim → MeaningVec d) {m₁ m₂ m₃ 
     multiset-level relation among primitive decompositions. The
     stem-exponent fourth proportional is the case
     `{lex, PL} + {lex', SG} = {lex, SG} + {lex', PL}`. -/
-theorem embedSem_analogy (emb : Prim → MeaningVec d)
+theorem conceptualize_analogy (emb : Prim → MeaningVec d)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) {m₁ m₂ m₃ m₄ : M}
-    (h : SemDecomposable.prims m₁ + SemDecomposable.prims m₂
-       = SemDecomposable.prims m₃ + SemDecomposable.prims m₄) :
-    G (embedSem emb m₁) + G (embedSem emb m₂)
-      = G (embedSem emb m₃) + G (embedSem emb m₄) := by
-  rw [← map_add, embedSem_add_of_prims_add emb h, map_add]
+    (h : primitives m₁ + primitives m₂ = primitives m₃ + primitives m₄) :
+    G (conceptualize emb m₁) + G (conceptualize emb m₂)
+      = G (conceptualize emb m₃) + G (conceptualize emb m₄) := by
+  rw [← map_add, conceptualize_add_of_primitives_add emb h, map_add]
 
 end Processing.Lexical.Discriminative
