@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.List
 import Linglib.Core.Data.RoseTree.Leaves
 
 /-!
@@ -76,16 +77,6 @@ private theorem sum_map_add_one (m : Multiset ℕ) :
     simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.card_cons, ih]
     omega
 
-private theorem sum_map_le_sum_map (f g : γ → ℕ) (l : List γ)
-    (h : ∀ x ∈ l, f x ≤ g x) : (l.map f).sum ≤ (l.map g).sum := by
-  induction l with
-  | nil => exact Nat.le_refl _
-  | cons x l ih =>
-    simp only [List.map_cons, List.sum_cons]
-    have := h x List.mem_cons_self
-    have := ih fun y hy => h y (List.mem_cons_of_mem _ hy)
-    omega
-
 @[simp] theorem leafCountP_leaf (a : α) :
     leafCountP p (node a []) = if p a then 1 else 0 := by
   simp only [leafCountP, leaves_leaf, ← Multiset.cons_zero, Multiset.countP_cons,
@@ -107,9 +98,7 @@ theorem leafCountP_node_of_ne_nil (a : α)
 theorem leafCountP_node_of_not (a : α)
     (cs : List (RoseTree α)) (h : ¬p a) :
     leafCountP p (node a cs) = (cs.map (leafCountP p)).sum := by
-  rcases cs with _ | ⟨c, cs⟩
-  · simp [h]
-  · simp
+  cases cs <;> simp_all
 
 variable {p}
 
@@ -194,7 +183,7 @@ theorem leafCountP_lt_numNodes_of_not (a : α)
     (cs : List (RoseTree α)) (h : ¬p a) :
     leafCountP p (node a cs) < numNodes (node a cs) := by
   rw [leafCountP_node_of_not p a cs h, numNodes_node]
-  have := sum_map_le_sum_map (leafCountP p) numNodes cs
+  have := List.sum_le_sum (l := cs) (f := leafCountP p) (g := numNodes)
     fun c _ => leafCountP_le_numNodes p c
   omega
 
@@ -204,7 +193,7 @@ theorem leafCountP_le_leafDepthSumP_of_not (a : α)
     (cs : List (RoseTree α)) (h : ¬p a) :
     leafCountP p (node a cs) ≤ leafDepthSumP p (node a cs) := by
   rw [leafCountP_node_of_not p a cs h, leafDepthSumP_node]
-  exact sum_map_le_sum_map _ _ cs fun c _ => Nat.le_add_left _ _
+  exact List.sum_le_sum fun c _ => Nat.le_add_left _ _
 
 end RoseTree
 
