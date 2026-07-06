@@ -96,6 +96,16 @@ def squaredDist (a b : FormVec n) : ℝ := ∑ j, (a j - b j) ^ 2
 theorem squaredDist_self (a : FormVec n) : squaredDist a a = 0 :=
   Finset.sum_eq_zero fun _ _ => by rw [sub_self]; ring
 
+theorem squaredDist_eq_zero_iff {a b : FormVec n} : squaredDist a b = 0 ↔ a = b := by
+  constructor
+  · intro h
+    funext j
+    have hj := (Finset.sum_eq_zero_iff_of_nonneg fun j _ => sq_nonneg _).1 h j
+      (Finset.mem_univ j)
+    exact sub_eq_zero.1 (sq_eq_zero_iff.1 hj)
+  · rintro rfl
+    exact squaredDist_self a
+
 theorem squaredDist_nonneg (a b : FormVec n) : 0 ≤ squaredDist a b :=
   Finset.sum_nonneg fun _ _ => sq_nonneg _
 
@@ -108,6 +118,18 @@ def weightedLoss : ℝ := ∑ i, q i * squaredDist (G (data.meanings i)) (data.f
 theorem weightedLoss_nonneg (hq : ∀ i, 0 ≤ q i) :
     0 ≤ weightedLoss data q G :=
   Finset.sum_nonneg fun k _ => mul_nonneg (hq k) (squaredDist_nonneg _ _)
+
+/-- Under positive weights the loss vanishes exactly on interpolating maps. -/
+theorem weightedLoss_eq_zero_iff (hq : ∀ i, 0 < q i) :
+    weightedLoss data q G = 0 ↔ ∀ i, G (data.meanings i) = data.forms i := by
+  constructor
+  · intro h0 i
+    have hterm := (Finset.sum_eq_zero_iff_of_nonneg fun k _ =>
+      mul_nonneg (hq k).le (squaredDist_nonneg _ _)).1 h0 i (Finset.mem_univ i)
+    exact squaredDist_eq_zero_iff.1
+      ((mul_eq_zero.1 hterm).resolve_left (hq i).ne')
+  · intro h
+    simp [weightedLoss, h, squaredDist_self]
 
 /-! ### Solution Props: ERM and EL -/
 
