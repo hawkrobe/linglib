@@ -22,7 +22,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.PropertyDomain
 import Linglib.Morphology.Exponence
 import Linglib.Morphology.DegreeContainment
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Morphology.Word
 
 namespace English.Modifiers.Adjectives
@@ -51,7 +51,7 @@ structure AdjModifierEntry where
   /-- Scale boundedness (from [kennedy-2007]) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
-  dimension : Degree.Dimension
+  dimension : Features.ScalarDimension
   /-- Antonym form (if any) -/
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/

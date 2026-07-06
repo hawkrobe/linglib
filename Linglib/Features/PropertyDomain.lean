@@ -11,7 +11,7 @@ These channels, together with `size`, carry the noise parameters used by the RSA
 reference model; the remaining domains are inventoried for typological
 completeness.
 
-`PropertyDomain` is the codomain of `Degree.Dimension.domain`; the
+`PropertyDomain` is the codomain of `Features.ScalarDimension.domain`; the
 bridge to noise parameters (`Features.PropertyDomain.noiseDiscrimination`) lives in
 `Pragmatics/RSA/Channel.lean`.
 -/

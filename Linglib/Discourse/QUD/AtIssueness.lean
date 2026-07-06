@@ -3,7 +3,6 @@ import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUD.Basic
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Rat01
-import Linglib.Semantics.Degree.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 /-!

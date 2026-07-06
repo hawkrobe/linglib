@@ -22,7 +22,7 @@ The key point: these are objective, measurable properties. Different theories
 
 -/
 
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Degree.Gradability.Construction
 import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Rat.Defs
@@ -359,7 +359,7 @@ structure MAlternativeSet where
   /-- The unmarked (cheaper) form -/
   unmarked : String
   /-- The dimension they share (e.g., .height) -/
-  dimension : Degree.Dimension
+  dimension : Features.ScalarDimension
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/

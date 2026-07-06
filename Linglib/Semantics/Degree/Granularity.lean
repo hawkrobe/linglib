@@ -7,7 +7,6 @@ import Mathlib.Order.Basic
 import Mathlib.Data.Finset.Max
 import Linglib.Core.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Group.Defs
-import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUD.Basic

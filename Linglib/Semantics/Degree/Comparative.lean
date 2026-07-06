@@ -1,6 +1,5 @@
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Bounds
-import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Core.Order.Comparison
 
@@ -50,6 +49,26 @@ open Core.Order (ScalePolarity Comparison)
 `positive` ("taller") makes MAX pick the highest degrees; `negative`
 ("shorter") the lowest. -/
 abbrev ScaleDirection := ScalePolarity
+
+/-- The compositional structure of a Degree Phrase (DegP).
+
+In all degree frameworks, DegP is the syntactic locus where degree
+comparison happens. The internal structure varies — Kennedy posits
+`[DegP [Deg -er/as/est] [DegComplement than-clause]]`, Heim posits a
+sentential `-er` operator — but the framework-independent taxonomy is
+captured here. -/
+inductive DegPType where
+  /-- `-er` / *more*. -/
+  | comparative
+  /-- `as...as`. -/
+  | equative
+  /-- `-est` / *most*. -/
+  | superlative
+  /-- *too*. -/
+  | excessive
+  /-- *enough*. -/
+  | sufficiency
+  deriving DecidableEq, Repr
 
 /-! ### Comparative and equative semantics -/
 

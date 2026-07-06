@@ -687,6 +687,7 @@ import Linglib.Features.Polarity
 import Linglib.Features.Possession
 import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
+import Linglib.Features.ScalarDimension
 import Linglib.Features.Prosody
 import Linglib.Features.QParticleLayer
 import Linglib.Features.Register
@@ -1597,14 +1598,13 @@ import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Degree.Gradability.AntonymPrediction
 import Linglib.Semantics.Degree.Gradability.Antonymy
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Degree.Gradability.Classification
 import Linglib.Semantics.Degree.Gradability.ClauseEmbedding
 import Linglib.Semantics.Degree.Gradability.Construction

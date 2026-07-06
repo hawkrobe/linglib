@@ -1,91 +1,30 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.Boundedness
+import Linglib.Features.ScalarDimension
 import Linglib.Features.Aktionsart
-import Linglib.Features.PropertyDomain
 import Linglib.Semantics.Degree.Bounds
 
 /-!
-# Scalar dimensions
+# Degree structure of scalar dimensions
 
-The axis a gradable predicate — an adjective, or a degree-achievement verb's base
-adjective — measures along. This is the single carrier the former
-`Features.PerceptualDimension` (perceptual channel) and `ScalarTelicity.Dimension`
-(scale structure) were both approximating; they are unified here so that RSA noise,
-adjective comparison-class dependence, and verb telicity are all *views of one key*.
+The order-theoretic apparatus over `Features.ScalarDimension`: a
+computable degree carrier per scale shape, the endpoint grounding, and
+the derived aspectual views ([kennedy-levin-2008]).
 
-Physical measurement dimensions (mass, volume-as-litres, …) are a different
-fibration — an extensive ℚ-measure, not a gradable scale — and stay in
-`Features.Dimension`.
+## Main declarations
 
-## Views
-
-* `Dimension.domain` — the perceptual/cognitive channel (drives RSA noise via
-  `Features.PropertyDomain.noiseDiscrimination`).
-* `Dimension.boundedness` — the canonical scale shape, the derived source of both
-  adjective standard-type and verb telicity.
-* `Dimension.degree` — a computable order-proxy for the scale, grounded to
-  `boundedness` by `hasGreatest_degree_iff`; only the `OrderTop`/`NoMaxOrder` mixin
-  is meaningful, not the carrier ([kennedy-levin-2008]).
-
-`Dimension` is one more `Core.Order.LicensingPipeline` instance, so it shares the
-endpoint-licensing pipeline with `Boundedness`, `MereoTag`, and `EpistemicTag`.
+* `Core.Order.Boundedness.degreeShape` — degree carrier per scale shape;
+  `ScalarDimension.degree` inherits it, grounded by
+  `hasGreatest_degree_iff`.
+* `ScalarDimension.defaultTelicity` / `defaultVendlerClass` — the
+  Kennedy–Levin telicity defaults, with
+  `defaultTelicity_telic_iff_hasGreatest` deriving them from the scale's
+  order structure.
 -/
 
 open Core.Order (Boundedness ScalePolarity LicensingPipeline)
 open Degree (HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
-open Features (Telicity VendlerClass)
+open Features (Telicity VendlerClass ScalarDimension)
 
-namespace Degree
-
-/-- The scalar dimension a gradable predicate measures along — the union of the
-    perceptual adjective dimensions and the scalar-change verb dimensions. -/
-inductive Dimension
-  -- Size
-  | height | width | length | weight | thickness | depth | speed | strength
-  | age | generalSize
-  -- Sensory
-  | temperature | brightness | volume
-  -- Evaluative
-  | happiness | cost | price | quality | value | danger | beauty | importance | safety
-  -- Psychological
-  | intelligence | expectation | possibility | confidence
-  -- State (adjective + deadjectival-verb change dimensions)
-  | fullness | wetness | cleanliness | straightness | flatness | openness
-  | freedom | tightness | alive | pregnancy | hardness | smoothness | purity
-  | cracking | denting | scratching | shattering
-  -- Perceptual colour + verb-only scalar-change dimensions
-  | color | curvature | boiling | corrosion | quantity | unspecified
-  deriving DecidableEq, Repr, Fintype, Inhabited, BEq
-
-/-- The perceptual/cognitive channel — drives RSA noise. -/
-def Dimension.domain : Dimension → Features.PropertyDomain
-  | .height | .width | .length | .weight | .thickness | .depth | .speed
-  | .strength | .age | .generalSize | .quantity => .size
-  | .temperature | .brightness | .volume => .sensory
-  | .happiness | .cost | .price | .quality | .value | .danger | .beauty
-  | .importance | .safety => .evaluative
-  | .intelligence | .expectation | .possibility | .confidence => .psychological
-  | .fullness | .wetness | .cleanliness | .straightness | .flatness | .openness
-  | .freedom | .tightness | .alive | .pregnancy | .hardness | .smoothness | .purity
-  | .cracking | .denting | .scratching | .shattering
-  | .curvature | .boiling | .corrosion | .unspecified => .state
-  | .color => .color
-
-/-- The dimension's canonical scale shape. Polarity/standard-type are not here —
-    they live on the adjective entry (`min`/`max`-standard adjectives select a pole
-    of a closed scale). Reducible so the `degree` fiber's `OrderTop`/`NoMaxOrder`
-    instances synthesise through it. -/
-abbrev Dimension.boundedness : Dimension → Boundedness
-  | .straightness | .flatness | .openness | .cleanliness | .curvature
-  | .cracking | .denting | .scratching | .boiling
-  | .alive | .freedom | .fullness | .purity | .shattering | .smoothness
-  | .tightness | .wetness | .pregnancy => .closed
-  | .height | .width | .length | .weight | .thickness | .depth | .speed
-  | .strength | .age | .generalSize | .temperature | .brightness | .volume
-  | .happiness | .cost | .price | .quality | .value | .danger | .beauty
-  | .importance | .safety | .intelligence | .expectation | .possibility
-  | .confidence | .hardness | .color | .corrosion | .quantity
-  | .unspecified => .open_
+namespace Features
 
 /-! ### Degree fiber, grounded through `Boundedness` (proved once, not per dimension) -/
 
@@ -110,13 +49,13 @@ theorem _root_.Core.Order.Boundedness.hasGreatest_degreeShape_iff (b : Boundedne
 
 /-- Each dimension's degree type — inherited from its boundedness, so the grounding
     transports rather than re-casing per dimension. -/
-abbrev Dimension.degree (d : Dimension) : Type := d.boundedness.degreeShape
-instance instLinearOrderDimensionDegree (d : Dimension) : LinearOrder d.degree :=
+abbrev ScalarDimension.degree (d : ScalarDimension) : Type := d.boundedness.degreeShape
+instance instLinearOrderDimensionDegree (d : ScalarDimension) : LinearOrder d.degree :=
   inferInstance
 
 /-- The scale's order structure has a greatest element exactly when the dimension's
     canonical scale `HasMax` — grounded for all dimensions in one application. -/
-theorem Dimension.hasGreatest_degree_iff (d : Dimension) :
+theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
     HasGreatest d.degree ↔ d.boundedness.HasMax :=
   Boundedness.hasGreatest_degreeShape_iff d.boundedness
 
@@ -124,14 +63,14 @@ theorem Dimension.hasGreatest_degree_iff (d : Dimension) :
 
 /-- Default telicity of a degree achievement on this dimension: a scale with a
     greatest degree gives a telic reading ([kennedy-levin-2008]). -/
-def Dimension.defaultTelicity (d : Dimension) : Telicity :=
+def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
   match d.boundedness with
   | .closed | .upperBounded => .telic
   | .open_ | .lowerBounded => .atelic
 
 /-- Default Vendler class: degree achievements are dynamic and durative, so a
     closed scale gives an accomplishment, an open one an activity. -/
-def Dimension.defaultVendlerClass (d : Dimension) : VendlerClass :=
+def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
   match d.boundedness with
   | .closed | .upperBounded => .accomplishment
   | .open_ | .lowerBounded => .activity
@@ -139,13 +78,13 @@ def Dimension.defaultVendlerClass (d : Dimension) : VendlerClass :=
 /-- **The Kennedy–Levin thesis as a theorem.** `defaultTelicity` is exactly the
     order-theoretic fact: a degree achievement is telic iff its scale's degree type
     has a greatest element — grounded in the scale's order structure, not stipulated. -/
-theorem Dimension.defaultTelicity_telic_iff_hasGreatest (d : Dimension) :
+theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
     d.defaultTelicity = .telic ↔ HasGreatest d.degree := by
-  rw [Dimension.hasGreatest_degree_iff]; cases d <;> decide
+  rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
 
 /-! ### The endpoint: one more `LicensingPipeline` instance -/
 
-instance : LicensingPipeline Dimension where
-  toBoundedness := Dimension.boundedness
+instance : LicensingPipeline ScalarDimension where
+  toBoundedness := ScalarDimension.boundedness
 
-end Degree
+end Features

@@ -35,7 +35,7 @@ The intersective/subsective/privative classification lives in `Classification.le
 namespace Degree
 
 open Core.Order (Boundedness)
-open Features (NegationType)
+open Features (NegationType ScalarDimension)
 
 /-! ### Two-threshold model for contrary antonyms -/
 
@@ -149,7 +149,7 @@ namespace GradableAdjective
 /-- The scale's intrinsic shape — read off the `dimension` key, not stored
     (`.open_` for a non-gradable, which has no scale). -/
 def scaleType (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map Dimension.boundedness).getD .open_
+  (g.dimension.map ScalarDimension.boundedness).getD .open_
 
 /-- The effective positive standard: the default from (scale shape, pole),
     overridable by `standardOverride`. This is the quantity the old `scaleType` field
@@ -158,7 +158,7 @@ def scaleType (g : GradableAdjective) : Boundedness :=
     bound. ([kennedy-2007]'s Interpretive Economy on the open/singly-bounded cases.) -/
 def standard (g : GradableAdjective) : PositiveStandard :=
   g.standardOverride.getD <|
-    match g.dimension.map Dimension.boundedness, g.isLowerEndpoint with
+    match g.dimension.map ScalarDimension.boundedness, g.isLowerEndpoint with
     | some .closed, true  => .minEndpoint
     | some .closed, false => .maxEndpoint
     | some b,       _     => interpretiveEconomy b

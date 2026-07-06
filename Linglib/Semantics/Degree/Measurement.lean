@@ -1,6 +1,5 @@
 import Linglib.Semantics.Mereology
 import Linglib.Core.Order.Comparison
-import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum

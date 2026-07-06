@@ -332,7 +332,7 @@ feeding [beavers-2011]'s affectedness hierarchy. Here it is instantiated at the
 dimensions the K&L verbs measure. -/
 
 open ArgumentStructure.Affectedness
-open Degree (Dimension)
+open Features (ScalarDimension)
 open Degree
 
 /-! #### Telicity from the scale's order structure (order-theoretic K&L thesis)
@@ -341,7 +341,7 @@ The telic reading is "the patient reaches the maximal degree `⊤`", available o
 on a scale with a greatest element (`OrderTop`); the atelic reading is "reaches
 *some* degree", always satisfiable. So telicity is a Quantized-witness existence
 fact over the dimension's `degree` fiber, derived from the order mixin — not a
-stored flag. The `Dimension` carrier lives in `Semantics/Gradability/Dimension.lean`;
+stored flag. The `ScalarDimension` carrier lives in `Semantics/Gradability/ScalarDimension.lean`;
 the event machinery below is specific to this paper's degree-achievement analysis. -/
 
 /-- Trivial patient: the measure of change ignores the patient's identity, so a
@@ -408,14 +408,14 @@ end
 /-- *straighten* measures straightness — a closed scale — so a telic reading is
     available, derived from the dimension's `OrderTop` (not a stored `HasMax`). -/
 theorem straighten_telic :
-    ∃ g : Dimension.straightness.degree,
-      Quantized (reachesTop (δ := Dimension.straightness.degree)) g :=
+    ∃ g : ScalarDimension.straightness.degree,
+      Quantized (reachesTop (δ := ScalarDimension.straightness.degree)) g :=
   telic_of_orderTop
 
 /-- *widen* measures width — unbounded above — so no telic reading exists. -/
 theorem widen_atelic :
-    ¬ ∃ g : Dimension.width.degree,
-      Quantized (reachesSome (δ := Dimension.width.degree)) g :=
+    ¬ ∃ g : ScalarDimension.width.degree,
+      Quantized (reachesSome (δ := ScalarDimension.width.degree)) g :=
   atelic_of_noMaxOrder
 
 /-- The fragment stores each verb's *dimension* directly (boundedness is derived):
