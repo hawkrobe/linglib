@@ -61,14 +61,14 @@ structure TrainingExperience (numEvents formDim meaningDim : ℕ) where
   meanings : Fin numEvents → MeaningVec meaningDim
   forms    : Fin numEvents → FormVec formDim
 
-/-- A **frequency vector**: one weight per usage event, the diagonal of the
-    papers' `Q` ([gahl-baayen-2024] appendix). The choice of `q` is the
-    cognitive commitment (uniform = EL, token counts = FIL; log-transforms
-    distort learning per [gahl-baayen-2024]); nonnegativity is a per-theorem
-    hypothesis. -/
+/-- A **frequency vector** assigns one weight to each usage event — the
+    diagonal of the papers' `Q` ([gahl-baayen-2024] appendix). The choice of
+    `q` is the cognitive commitment: uniform weights give EL and token counts
+    give FIL (log-transforms distort learning per [gahl-baayen-2024]).
+    Nonnegativity is a per-theorem hypothesis. -/
 abbrev FrequencyVector (numEvents : ℕ) : Type := Fin numEvents → ℝ
 
-/-- The constant-1 frequency vector: every event counts once (endstate
+/-- The constant-1 frequency vector counts every event once (endstate
     learning). -/
 def uniformFrequency (m : ℕ) : FrequencyVector m := fun _ => 1
 
@@ -78,8 +78,8 @@ variable (data : TrainingExperience m n d) (q : FrequencyVector m)
 /-- The sum of all event weights. -/
 def FrequencyVector.totalMass : ℝ := ∑ i, q i
 
-/-- The empirical distribution over events: `q` normalised to sum to 1
-    (for the `PMF` cast use `PMF.ofRealWeightFn`). -/
+/-- `q.normalize` rescales `q` to sum to 1, giving the empirical
+    distribution over events. For the `PMF` cast use `PMF.ofRealWeightFn`. -/
 def FrequencyVector.normalize : FrequencyVector m := fun i => q i / q.totalMass
 
 @[simp] theorem FrequencyVector.normalize_apply (i : Fin m) :
@@ -97,7 +97,7 @@ theorem squaredDist_nonneg (a b : FormVec n) : 0 ≤ squaredDist a b :=
   Finset.sum_nonneg fun _ _ => sq_nonneg _
 
 /-- The **frequency-weighted training loss**
-    `Σᵢ qᵢ · squaredDist (G (meanings i)) (forms i)` — the variational
+    `Σᵢ qᵢ · squaredDist (G (meanings i)) (forms i)`. This is the variational
     characterisation of the papers' procedural `√Q` normal-equations
     specification ([gahl-baayen-2024] appendix; see `weightedLoss_sqrtScale`). -/
 def weightedLoss : ℝ := ∑ i, q i * squaredDist (G (data.meanings i)) (data.forms i)
@@ -108,14 +108,14 @@ theorem weightedLoss_nonneg (hq : ∀ i, 0 ≤ q i) :
 
 /-! ### Solution Props: ERM and EL -/
 
-/-- `G` is an **empirical risk minimiser** (ERM) for `data` under `q`:
+/-- `G` is an **empirical risk minimiser** (ERM) for `data` under `q` if
     no linear map achieves a smaller weighted loss. -/
 def IsERMSolution : Prop :=
   ∀ G' : MeaningVec d →ₗ[ℝ] FormVec n,
     weightedLoss data q G ≤ weightedLoss data q G'
 
-/-- An **endstate-learning** (EL) solution: ERM under uniform weights
-    ([gahl-baayen-2024] appendix). -/
+/-- An **endstate-learning** (EL) solution is an ERM solution under uniform
+    weights ([gahl-baayen-2024] appendix). -/
 abbrev IsELSolution : Prop :=
   IsERMSolution data (uniformFrequency m) G
 
@@ -124,26 +124,13 @@ abbrev IsELSolution : Prop :=
 /-- The weighted loss is linear in the frequency vector. -/
 theorem weightedLoss_smul_frequency (c : ℝ) :
     weightedLoss data (c • q) G = c * weightedLoss data q G := by
-  unfold weightedLoss
-  rw [Finset.mul_sum (Finset.univ : Finset (Fin m))]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  show (c • q) i * _ = c * (q i * _)
-  rw [Pi.smul_apply, smul_eq_mul, mul_assoc]
+  simp [weightedLoss, Finset.mul_sum, mul_assoc]
 
 /-- ERM solutions are invariant under positive rescaling
     of the frequency vector — only relative frequencies matter. -/
 theorem isERMSolution_iff_rescaled {c : ℝ} (hc : 0 < c) :
     IsERMSolution data (c • q) G ↔ IsERMSolution data q G := by
-  unfold IsERMSolution
-  constructor
-  · intro h G'
-    have h' := h G'
-    rw [weightedLoss_smul_frequency, weightedLoss_smul_frequency] at h'
-    nlinarith
-  · intro h G'
-    have h' := h G'
-    rw [weightedLoss_smul_frequency, weightedLoss_smul_frequency]
-    nlinarith
+  simp only [IsERMSolution, weightedLoss_smul_frequency, mul_le_mul_iff_right₀ hc]
 
 /-! ### Per-coordinate residual optimality
 
@@ -252,10 +239,9 @@ Here the premultiplied experience is `TrainingExperience.sqrtScale` and the
 equivalence (`isELSolution_sqrtScale_iff`) is stated invertibility-free at
 the level of ERM solution sets; `Existence.lean` derives existence from it. -/
 
-/-- The `√q`-premultiplied training experience: event `i` scaled by
-    `√(q i)` in both meaning and form — the `√Q`-premultiplication of `S`
-    and `C` of [gahl-baayen-2024]'s appendix and
-    [heitmeier-chuang-baayen-2026]. -/
+/-- The `√q`-premultiplied training experience scales event `i` by `√(q i)`
+    in both meaning and form — the `√Q`-premultiplication of `S` and `C` of
+    [gahl-baayen-2024]'s appendix and [heitmeier-chuang-baayen-2026]. -/
 def TrainingExperience.sqrtScale : TrainingExperience m n d where
   meanings i := Real.sqrt (q i) • data.meanings i
   forms i := Real.sqrt (q i) • data.forms i
@@ -277,9 +263,9 @@ the quadratic loss. Fitted values on experienced meanings are therefore unique
 across ERM solutions, which is what makes the model's predictions (and the
 `semSup` measures) well-defined properties of the training experience. -/
 
-/-- The `q`-weighted pairing of `G`'s residuals with `H`'s predictions:
-    `∑ᵢ qᵢ ⟨G(sᵢ) − cᵢ, H(sᵢ)⟩`. The normal equations say this vanishes
-    for every `H` exactly at the ERM solutions. -/
+/-- The `q`-weighted pairing `∑ᵢ qᵢ ⟨G(sᵢ) − cᵢ, H(sᵢ)⟩` of `G`'s residuals
+    with `H`'s predictions. The normal equations say this vanishes for every
+    `H` exactly at the ERM solutions. -/
 def residualPairing (H : MeaningVec d →ₗ[ℝ] FormVec n) : ℝ :=
   ∑ i, q i * ∑ j, (G (data.meanings i) j - data.forms i j) * H (data.meanings i) j
 
@@ -305,8 +291,8 @@ theorem predictionEnergy_smul (t : ℝ) (H : MeaningVec d →ₗ[ℝ] FormVec n)
   simp only [LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
-/-- Quadratic expansion of the weighted loss around `G`: perturbing by `H`
-    adds twice the residual pairing plus the energy of the perturbation. -/
+/-- Perturbing the weighted loss around `G` by `H` adds twice the residual
+    pairing plus the energy of the perturbation. -/
 theorem weightedLoss_add (H : MeaningVec d →ₗ[ℝ] FormVec n) :
     weightedLoss data q (G + H)
       = weightedLoss data q G + 2 * residualPairing data q G H
@@ -357,9 +343,9 @@ theorem isERMSolution_of_interpolates (hq : ∀ i, 0 ≤ q i)
   rw [h0]
   exact weightedLoss_nonneg data q G' hq
 
-/-- `G` is an ERM solution iff every residual-prediction pairing vanishes —
-    the first-order condition of the quadratic loss, with no invertibility
-    hypothesis. -/
+/-- `G` is an ERM solution iff every residual-prediction pairing vanishes.
+    This is the first-order condition of the quadratic loss, with no
+    invertibility hypothesis. -/
 theorem isERMSolution_iff_residualPairing_eq_zero (hq : ∀ i, 0 ≤ q i) :
     IsERMSolution data q G ↔
       ∀ H : MeaningVec d →ₗ[ℝ] FormVec n, residualPairing data q G H = 0 := by
@@ -389,10 +375,11 @@ theorem isERMSolution_iff_residualPairing_eq_zero (hq : ∀ i, 0 ≤ q i) :
     have := predictionEnergy_nonneg data q hq (G' - G)
     linarith [hexp.ge, hexp.le]
 
-/-- The normal equations in the papers' columnwise form: for every form
-    coordinate, the `q`-weighted residual column is orthogonal to every linear
-    functional of the meanings — quantifying over functionals is `SᵀQ(SG − C) = 0`
-    with `Sᵀ`'s rows generalized to the full dual space. -/
+/-- In the papers' columnwise form of the normal equations, `G` is an ERM
+    solution iff at every form coordinate the `q`-weighted residual column is
+    orthogonal to every linear functional of the meanings. Quantifying over
+    functionals is `SᵀQ(SG − C) = 0` with `Sᵀ`'s rows generalized to the full
+    dual space. -/
 theorem isERMSolution_iff_forall_column (hq : ∀ i, 0 ≤ q i) :
     IsERMSolution data q G ↔
       ∀ (j : Fin n) (w : MeaningVec d →ₗ[ℝ] ℝ),
@@ -448,8 +435,8 @@ theorem IsERMSolution.apply_meanings_eq (hq : ∀ i, 0 < q i)
     simpa [LinearMap.sub_apply, Pi.sub_apply] using sq_eq_zero_iff.mp hj
   linarith [sub_eq_zero.mp h0]
 
-/-- Uniqueness of fitted values extends by linearity: ERM solutions agree at
-    every meaning in the **span** of the experienced ones. Together with
+/-- ERM solutions agree at every meaning in the **span** of the experienced
+    ones. Together with
     `IsERMSolution.exists_apply_ne`, novel-item predictions are well-defined
     exactly on the span of experience — the model generalizes by linear
     combination of experienced meanings and is unconstrained beyond them. -/
@@ -530,7 +517,7 @@ section Connection
 
 variable {m n d : ℕ}
 
-/-- `D` is **trained on** `data` under weights `q`: its production map is
+/-- `D` is **trained on** `data` under weights `q` if its production map is
     an ERM solution. -/
 def LinearDiscriminativeLexicon.IsTrainedOn
     (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
@@ -565,10 +552,10 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
     semSup D (data.meanings i) j₀ = data.forms i j₀ :=
   IsERMSolution.coord_eq_of_decodable hq hD hw i
 
-/-- Two DLMs trained on the same experience and weights have identical semantic
-    support at every experienced meaning (`IsERMSolution.apply_meanings_eq`):
-    `semSup` is a well-defined property of the training experience, not of the
-    particular ERM solution. -/
+/-- Two DLMs trained on the same experience and weights have identical
+    semantic support at every experienced meaning
+    (`IsERMSolution.apply_meanings_eq`); `semSup` is thus a well-defined
+    property of the training experience, not of the particular ERM solution. -/
 theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq
     {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
     (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q)

@@ -31,7 +31,7 @@ namespace Core
 
 variable {k n : ℕ}
 
-/-- The **Widrow-Hoff correction** on observing `(x, y)`: the rank-one
+/-- The **Widrow-Hoff correction** on observing `(x, y)` is the rank-one
     error-driven update direction `x' ↦ ⟨x', x⟩ • (y − W x)`
     ([widrow-hoff-1960]'s `xᵀ(y − ŷ)`). -/
 def whCorrection (x : Fin k → ℝ) (y : Fin n → ℝ)
@@ -96,8 +96,8 @@ private theorem errorSum_add_residSum {m : ℕ} (x : Fin m → Fin k → ℝ)
   rw [← Finset.sum_add_distrib]
   exact Finset.sum_eq_zero fun i _ => by ring
 
-/-- The **orthogonality principle** for the Widrow-Hoff rule
-    ([widrow-hoff-1960]): the weighted total correction over a family of
+/-- By the **orthogonality principle** for the Widrow-Hoff rule
+    ([widrow-hoff-1960]), the weighted total correction over a family of
     observations vanishes — the rule is at a fixed point in expectation —
     iff every weighted residual column is orthogonal to every linear
     functional of the inputs. The equilibrium condition is order-invariant
@@ -160,10 +160,10 @@ theorem whUpdate_single_eq_rescorlaWagner_update
   rw [hind]
   split_ifs with h <;> ring
 
-/-- **Blocking transfers** to Widrow-Hoff: when the outcome is already fully
-    predicted on the trial, the step leaves every cue weight unchanged —
-    `Core.RescorlaWagner.no_learning_at_equilibrium` through the
-    specialization ([ellis-2006]). -/
+/-- When the outcome is already fully predicted on the trial, the
+    Widrow-Hoff step leaves every cue weight unchanged — blocking transfers
+    through the specialization, as in
+    `Core.RescorlaWagner.no_learning_at_equilibrium` ([ellis-2006]). -/
 theorem whUpdate_single_eq_self_of_blocked
     (rw : RescorlaWagner (Fin k)) (hsal : ∀ c, rw.salience c = 1)
     (present : Finset (Fin k)) (V : Fin k → ℝ) (l : Fin k)
