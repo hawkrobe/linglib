@@ -49,6 +49,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
+import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
@@ -1458,7 +1459,7 @@ import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Lexical.Discriminative.Defs
-import Linglib.Processing.Lexical.Discriminative.Existence
+import Linglib.Processing.Lexical.Discriminative.Regression
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Linglib.Processing.Lexical.Discriminative.Normed
 import Linglib.Processing.Lexical.Discriminative.Training
