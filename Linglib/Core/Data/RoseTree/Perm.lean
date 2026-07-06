@@ -117,6 +117,13 @@ theorem PermList.of_perm {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
   | swap x y l => exact .swap x y l
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
 
+/-- `Multiset.Rel Perm` between coerced children lists gives `PermList`: the bridge
+    feeding `fold_rel` at `S := Perm`. -/
+theorem PermList.of_rel {cs ds : List (RoseTree α)}
+    (h : Multiset.Rel (Perm (α := α)) ↑cs ↑ds) : PermList cs ds := by
+  obtain ⟨l', hf, hp⟩ := Multiset.rel_coe_iff_exists.mp h
+  exact (PermList.of_forall₂ hf).trans (PermList.of_perm hp)
+
 /-- A plain `List.Perm` of the children relates the nodes. -/
 theorem Perm.node_of_perm {a : α} {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
     Perm (.node a cs) (.node a ds) :=
