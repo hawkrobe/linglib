@@ -125,6 +125,7 @@ import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Get
+import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
