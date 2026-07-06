@@ -269,20 +269,20 @@ section Pattern
 
 open Phonology.Harmony (Pattern)
 
+variable {α V : Type*}
+
 /-- **Harmony is TSL₂ by construction** ([aksenova-rawski-graf-heinz-2024]):
     a pattern's surface harmonicity is membership in the tier-based strictly
     2-local grammar whose tier is `Pattern.OnTier` and whose banned bigrams
     are the incompatible pairs. Strictly local grammars cannot express harmony
     (unbounded distance) and strictly piecewise grammars cannot express
     blocking; the tier-based class captures both. -/
-theorem _root_.Phonology.Harmony.Pattern.harmonic_iff_mem_tsl {α : Type*}
-    {V : Type*} [DecidableEq V] (p : Pattern α V) (w : List α) :
+theorem _root_.Phonology.Harmony.Pattern.harmonic_iff_mem_tsl
+    (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔
-      w ∈ (TSLGrammar.ofForbiddenPairs
-        (R := fun a b => ¬ p.Compatible a b) p.OnTier).lang := by
-  rw [Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
-  unfold Phonology.Harmony.Pattern.Harmonic Phonology.Harmony.Pattern.tier
-  simp only [not_not]
+      w ∈ (TSLGrammar.ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
+  simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic,
+    Pattern.tier, not_not]
 
 end Pattern
 
