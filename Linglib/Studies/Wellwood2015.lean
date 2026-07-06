@@ -5,6 +5,8 @@ import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Features.Aktionsart
 import Linglib.Core.Order.Boundedness
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.Wellwood2015
 import Linglib.Studies.Bresnan1973
 
@@ -29,8 +31,9 @@ not lexical category (§3.4).
   direct measure comparison under unique eventualities.
 * `nominalComparative`, `verbalComparative`, `adjectivalComparative`:
   the three domain instantiations (role × extraction).
-* `felicity_matches_data`: `much`-felicity predicted from mereological
-  status across the §§2–3 data; `qua_measures_vacuously_admissible` and
+* `coffee_much_matches` … `wooden_much_matches`: the §§2–3 felicity
+  judgments predicted per-lexeme from fragment entries and substrate
+  status maps; `qua_measures_vacuously_admissible` and
   `cum_thanDegrees_no_max` give the mereological reason (antichains
   trivialize monotone measurement; cumulative supply keeps the scale
   maximless).
@@ -44,9 +47,10 @@ not lexical category (§3.4).
 ## Implementation notes
 
 Monotonicity of `A(μ)` is a felicity condition on the assignment, not
-part of the denotation. Example rows are generated from
-`Data/Examples/Wellwood2015.json` and projected into typed data via
-`paperFeatures` adapters.
+part of the denotation. Example sentences and judgments are generated
+from `Data/Examples/Wellwood2015.json`; theorems consume them directly,
+with lexical categories derived from `Fragments/English` entries rather
+than annotated.
 -/
 
 namespace Wellwood2015
@@ -56,92 +60,24 @@ open Features
 open Degree
 open Semantics.Kinds.MeaningPreservation (NumberFeature)
 
-/-! ### Lexical categories -/
+/-! ### The measured domain (§3.4) -/
 
-/-- Lexical categories relevant to the cross-categorial analysis. -/
-inductive LexCat where
-  | massNoun       -- coffee, rock, gold
-  | countNoun      -- cup, idea
-  | atelicVP       -- ran, slept, ran in the park
-  | telicVP        -- ran to the park, graduated high school
-  | gradableAdj    -- hot, tall, heavy
-  | nonGradableAdj -- wooden, triangular
-  deriving DecidableEq, Repr
-
-/-- Observed felicity of `much`/`more` with a lexical category (§§2–3). -/
-structure MuchFelicityDatum where
-  category : LexCat
-  felicitousWithMuch : Bool
-  deriving DecidableEq, Repr
-
-/-- The ontological domain a comparative measures; dimension type tracks
-    this, not the lexical category (§3.4). -/
+/-- What a comparative measures — the ontological domain whose
+    mereological structure determines the available dimensions.
+    The key §3.4 insight: dimension type (intensive vs extensive)
+    tracks the measured domain, not lexical category. -/
 inductive MeasuredDomain where
   | entity  -- physical objects (coffee, plastic, glass)
   | event   -- events/processes (driving, singing)
   | state   -- states (heat, hardness, speed, loudness)
   deriving DecidableEq, Repr
 
-/-- A §3.4 dimension observation (exs. 82–89): form, category, measured
-    domain, and dimension type. -/
-structure DimensionReversalDatum where
-  form : String
-  category : LexCat
-  measuredDomain : MeasuredDomain
-  intensive : Bool
-  deriving DecidableEq, Repr
-
-/-! ### Example data
-
-Typed rows projected from `Data.Examples.Wellwood2015` via
-`paperFeatures`; the anonymous `example`s guard against a silently empty
-adapter image. -/
-
-open Data.Examples (LinguisticExample)
-
-/-- Parse a `category` paper-feature. -/
-def lexCatOfFeature : String → Option LexCat
-  | "massNoun"       => some .massNoun
-  | "countNoun"      => some .countNoun
-  | "atelicVP"       => some .atelicVP
-  | "telicVP"        => some .telicVP
-  | "gradableAdj"    => some .gradableAdj
-  | "nonGradableAdj" => some .nonGradableAdj
-  | _                => none
-
-/-- Parse a `measuredDomain` paper-feature. -/
+/-- Parse a `measuredDomain` paper-feature of a generated example. -/
 def measuredDomainOfFeature : String → Option MeasuredDomain
   | "entity" => some .entity
   | "event"  => some .event
   | "state"  => some .state
   | _        => none
-
-/-- Project a `muchFelicity` example; felicity is an `acceptable` judgment. -/
-def MuchFelicityDatum.ofExample (e : LinguisticExample) : Option MuchFelicityDatum := do
-  guard (e.feature? "dataset" = some "muchFelicity")
-  let c ← lexCatOfFeature (← e.feature? "category")
-  return ⟨c, e.judgment == .acceptable⟩
-
-/-- The six felicity observations of §§2–3. -/
-def muchFelicityData : List MuchFelicityDatum :=
-  Examples.all.filterMap MuchFelicityDatum.ofExample
-
-example : (⟨.massNoun, true⟩ : MuchFelicityDatum) ∈ muchFelicityData := by decide
-
-/-- Project a `dimension` example (exs. 82–89). -/
-def DimensionReversalDatum.ofExample (e : LinguisticExample) :
-    Option DimensionReversalDatum := do
-  guard (e.feature? "dataset" = some "dimension")
-  let c ← lexCatOfFeature (← e.feature? "category")
-  let m ← measuredDomainOfFeature (← e.feature? "measuredDomain")
-  return ⟨e.primaryText, c, m, e.feature? "intensive" == some "true"⟩
-
-/-- The ten dimension observations of §3.4. -/
-def dimensionReversalData : List DimensionReversalDatum :=
-  Examples.all.filterMap DimensionReversalDatum.ofExample
-
-example : (⟨"fuller", .gradableAdj, .entity, false⟩ : DimensionReversalDatum) ∈
-    dimensionReversalData := by decide
 
 /-! ### The comparative truth condition (§§2.1–3.2) -/
 
@@ -362,16 +298,11 @@ theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic)
     telicityToStatus p.atelicize.telicity = .cumulative :=
   ⟨by rw [h]; rfl, rfl⟩
 
-/-! ### Theory–data bridges (§§2–3) -/
+/-! ### Felicity from the lexicon (§§2–3)
 
-/-- Map `LexCat` to `MereologicalStatus` using the theory's bridges. -/
-def lexCatToStatus : LexCat → MereologicalStatus
-  | .massNoun       => numberToStatus .mass
-  | .countNoun      => numberToStatus .sg
-  | .atelicVP       => telicityToStatus .atelic
-  | .telicVP        => telicityToStatus .telic
-  | .gradableAdj    => gradableToStatus
-  | .nonGradableAdj => nonGradableToStatus
+Each felicity observation predicted from shared substrate: fragment
+entries where the lexicon has them (`coffee`, `idea`, `run`, `hot`),
+the paper's feature assignment otherwise. -/
 
 /-- `much` is predicted felicitous exactly with cumulative status. -/
 def predictsFelicitous (s : MereologicalStatus) : Prop := s = .cumulative
@@ -379,13 +310,50 @@ def predictsFelicitous (s : MereologicalStatus) : Prop := s = .cumulative
 instance : DecidablePred predictsFelicitous :=
   fun s => inferInstanceAs (Decidable (s = .cumulative))
 
-/-- Predicted felicity matches the observed judgment for all six
-    categories (§§2–3). -/
-theorem felicity_matches_data :
-    ∀ d ∈ muchFelicityData,
-      (predictsFelicitous (lexCatToStatus d.category) ↔
-        d.felicitousWithMuch = true) := by
-  decide
+/-- The lexical-level number feature of a fragment noun entry. -/
+def nounNumber (e : English.Nouns.NounEntry) : NumberFeature :=
+  match e.countable with
+  | .mass  => .mass
+  | .count => .sg
+
+/-- "Al bought more coffee than Bill did" (§2.1): the fragment's mass
+    entry gives cumulative status, predicting the recorded judgment. -/
+theorem coffee_much_matches :
+    predictsFelicitous (numberToStatus (nounNumber English.Nouns.coffee)) ↔
+      Examples.felicity_mass.judgment = .acceptable := by decide
+
+/-- "?Al has more idea than Bill does" (§2.1): count entry ⇒ quantized ⇒
+    anomalous. -/
+theorem idea_much_matches :
+    predictsFelicitous (numberToStatus (nounNumber English.Nouns.idea)) ↔
+      Examples.felicity_count.judgment = .acceptable := by decide
+
+/-- "Al ran more than Bill did" (§2.2): `run` is an activity in the
+    fragment; atelic status predicts the recorded judgment. -/
+theorem run_much_matches :
+    English.Predicates.Verbal.run.vendlerClass = some .activity ∧
+    (predictsFelicitous (telicityToStatus .atelic) ↔
+      Examples.felicity_atelic.judgment = .acceptable) :=
+  ⟨rfl, by decide⟩
+
+/-- "?Al graduated high school more than Bill did" (§2.2): telic ⇒
+    quantized ⇒ anomalous. -/
+theorem telic_much_matches :
+    predictsFelicitous (telicityToStatus .telic) ↔
+      Examples.felicity_telic.judgment = .acceptable := by decide
+
+/-- "Al's coffee is hotter than Bill's" (§3.1): GA state domains form
+    mereologies (`English.Predicates.Adjectival.hot` carries a scalar
+    dimension). -/
+theorem hot_much_matches :
+    predictsFelicitous gradableToStatus ↔
+      Examples.felicity_ga.judgment = .acceptable := by decide
+
+/-- "?This piece of wood is more wooden than that one" (ex. 53a):
+    non-GA states are atomic and unordered ⇒ anomalous. -/
+theorem wooden_much_matches :
+    predictsFelicitous nonGradableToStatus ↔
+      Examples.felicity_nonga.judgment = .acceptable := by decide
 
 /-- Why quantized reference blocks `much`: a quantized extension is an
     antichain, so every measure is vacuously admissible on it — monotone
@@ -409,13 +377,14 @@ theorem cum_thanDegrees_no_max {α : Type*} [SemilatticeSup α]
     Mereology.DimensionChain.cum_measure_unbounded hCum hδ hSupply x₀ hx₀ M
   exact absurd (hub ⟨z, hz, le_refl _⟩) (not_le.mpr hgt)
 
-/-- Mass/atelic/GA share cumulative status and count/telic/non-GA
-    quantized, via independent substrate routes (§§2–3). -/
+/-- The cross-categorial parallel (§§2–3): mass, atelic, and gradable
+    routes agree on cumulative status; count, telic, and non-gradable on
+    quantized — each via an independent substrate map. -/
 theorem cross_categorial_parallel :
-    lexCatToStatus .massNoun = lexCatToStatus .atelicVP ∧
-    lexCatToStatus .atelicVP = lexCatToStatus .gradableAdj ∧
-    lexCatToStatus .countNoun = lexCatToStatus .telicVP ∧
-    lexCatToStatus .telicVP = lexCatToStatus .nonGradableAdj :=
+    numberToStatus .mass = telicityToStatus .atelic ∧
+    telicityToStatus .atelic = gradableToStatus ∧
+    numberToStatus .sg = telicityToStatus .telic ∧
+    telicityToStatus .telic = nonGradableToStatus :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### Dimensional restriction (§3.4) -/
@@ -441,27 +410,28 @@ theorem model_restricted_iff : ∀ m : MeasuredDomain,
   | .entity => iff_of_false prod_not_dimensionallyRestricted (by decide)
   | .event  => iff_of_false prod_not_dimensionallyRestricted (by decide)
 
-/-- Admissible measures agree exactly on the state-measuring comparatives
-    (exs. 82–89): the observed dimension is intensive iff the measured
-    domain's order model is dimensionally restricted. -/
+/-- §3.4 verified over the example annotations (exs. 82–89): the
+    measured domain's order model is dimensionally restricted iff the
+    observed dimension is intensive. -/
 theorem dimension_tracks_domain :
-    ∀ d ∈ dimensionReversalData,
-      (DimensionallyRestricted d.measuredDomain.Model ↔ d.intensive = true) := by
-  intro d hd
+    ∀ e ∈ Examples.all, ∀ m : MeasuredDomain,
+      (e.feature? "measuredDomain").bind measuredDomainOfFeature = some m →
+        (DimensionallyRestricted m.Model ↔
+          e.feature? "intensive" = some "true") := by
+  intro e he m hm
   rw [model_restricted_iff]
-  revert d hd
+  revert e he m hm
   decide
 
-/-- The lexicalist rival: dimension fixed iff the category is GA. -/
-def categoryRestricted (c : LexCat) : Prop := c = .gradableAdj
+example : Examples.dim_84a_fuller.feature? "measuredDomain" = some "entity" := rfl
 
-instance : DecidablePred categoryRestricted :=
-  fun c => inferInstanceAs (Decidable (c = .gradableAdj))
-
-/-- The category predictor fails on the reversal data (`fuller`, ex. 84a). -/
+/-- The lexicalist rival §3.4 argues against — dimension fixed by
+    category — fails on the reversal data (`fuller`, ex. 84a; `more
+    heat`, ex. 85a). -/
 theorem dimension_not_category :
-    ¬ ∀ d ∈ dimensionReversalData,
-      (categoryRestricted d.category ↔ d.intensive = true) := by
+    ¬ ∀ e ∈ Examples.all, e.feature? "dataset" = some "dimension" →
+      (e.feature? "category" = some "gradableAdj" ↔
+        e.feature? "intensive" = some "true") := by
   decide
 
 /-! ### Grammar shifts measurement (§5) -/
@@ -507,33 +477,16 @@ theorem overt_much_no_deletion :
 
 /-! ### `very` distribution (§6.3) -/
 
-/-- Whether `very` requires overt `much` (§6.3, exs. 117–118). -/
-structure VeryDistributionDatum where
-  category : LexCat
-  requiresOvertMuch : Bool
-  deriving DecidableEq, Repr
-
-/-- Project a `very` example. -/
-def VeryDistributionDatum.ofExample (e : LinguisticExample) :
-    Option VeryDistributionDatum := do
-  guard (e.feature? "dataset" = some "very")
-  let c ← lexCatOfFeature (← e.feature? "category")
-  return ⟨c, e.feature? "requiresOvertMuch" == some "true"⟩
-
-/-- The three `very` observations of §6.3. -/
-def veryDistributionData : List VeryDistributionDatum :=
-  Examples.all.filterMap VeryDistributionDatum.ofExample
-
-example : (⟨.gradableAdj, false⟩ : VeryDistributionDatum) ∈ veryDistributionData := by
-  decide
-
-/-- The `very` asymmetry follows from Much Deletion: only GAs host
-    covert `much`. -/
+/-- The §6.3 `very` asymmetry (exs. 117–118) follows from Much
+    Deletion: `much` deletes exactly before adjectives, so only GAs host
+    covert `much`, and `very` requires overt `much` everywhere else. -/
 theorem very_tracks_much_deletion :
-    ∀ d ∈ veryDistributionData,
-      d.requiresOvertMuch =
-        !(Bresnan1973.muchDeletionApplies .much
-            (adjFollows := d.category == .gradableAdj)) := by
+    ∀ e ∈ Examples.all, e.feature? "dataset" = some "very" →
+      (e.feature? "requiresOvertMuch" = some "true" ↔
+        Bresnan1973.muchDeletionApplies .much
+          (adjFollows := e.feature? "category" == some "gradableAdj") = false) := by
   decide
+
+example : Examples.very_ga.feature? "dataset" = some "very" := rfl
 
 end Wellwood2015

@@ -148,6 +148,7 @@ def gold : NounEntry := { formSg := "gold", formPl := none, countable := .mass }
 def air : NounEntry := { formSg := "air", formPl := none, countable := .mass }
 def wine : NounEntry := { formSg := "wine", formPl := none, countable := .mass }
 def coffee : NounEntry := { formSg := "coffee", formPl := none, countable := .mass }
+def idea : NounEntry := { formSg := "idea", formPl := some "ideas" }
 def beer : NounEntry := { formSg := "beer", formPl := none, countable := .mass }
 def milk : NounEntry := { formSg := "milk", formPl := none, countable := .mass }
 def tea : NounEntry := { formSg := "tea", formPl := none, countable := .mass }
