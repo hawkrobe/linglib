@@ -260,7 +260,7 @@ import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Choice.ChoiceApproximations
 import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Learning.Choice
+import Linglib.Core.Learning.Luce
 import Linglib.Core.Learning.RescorlaWagner
 import Linglib.Core.Learning.WidrowHoff
 import Linglib.Core.Probability.Choice.RankOrderings
