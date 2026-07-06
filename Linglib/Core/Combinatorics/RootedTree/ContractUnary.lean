@@ -44,9 +44,6 @@ private def contractCombine (a : α) : List (RoseTree α) → RoseTree α
   | [c] => c
   | cs  => node a cs
 
-private theorem contractCombine_singleton (a : α) (c : RoseTree α) :
-    contractCombine a [c] = c := rfl
-
 private theorem contractCombine_cons₂ (a : α) (c d : RoseTree α) (cs : List (RoseTree α)) :
     contractCombine a (c :: d :: cs) = node a (c :: d :: cs) := rfl
 
@@ -78,12 +75,11 @@ def numUnary : RoseTree α → ℕ :=
 
 /-! ### Vertex-count conservation -/
 
-private theorem numNodes_contractCombine (a : α) (cs : List (RoseTree α)) :
-    (contractCombine a cs).numNodes = (if cs.length = 1 then 0 else 1) + (cs.map numNodes).sum := by
-  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
-  · simp [contractCombine]
-  · simp [contractCombine_singleton]
-  · rw [contractCombine_cons₂, numNodes_node, if_neg (by simp only [List.length_cons]; omega)]
+/-- Conservation at one vertex: `contractCombine` loses the root exactly when unary. -/
+private theorem numNodes_contractCombine_add (a : α) (cs : List (RoseTree α)) :
+    (contractCombine a cs).numNodes + (if cs.length = 1 then 1 else 0)
+      = 1 + (cs.map numNodes).sum := by
+  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [contractCombine, Nat.add_comm]
 
 /-- Each contracted unary vertex removes exactly one vertex. -/
 theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
@@ -93,10 +89,11 @@ theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
     have key : ((cs.map contractUnary).map numNodes).sum + (cs.map numUnary).sum
         = (cs.map numNodes).sum := by
       rw [List.map_map, ← List.sum_map_add]
-      exact congrArg List.sum (List.map_congr_left fun c hc => ih c hc)
-    rw [contractUnary_node, numNodes_contractCombine, numUnary_node, numNodes_node,
-      List.length_map]
-    split_ifs <;> omega
+      exact congrArg List.sum (List.map_congr_left ih)
+    have hroot := numNodes_contractCombine_add a (cs.map contractUnary)
+    rw [List.length_map] at hroot
+    rw [contractUnary_node, numUnary_node, numNodes_node]
+    omega
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 
