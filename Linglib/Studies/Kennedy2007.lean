@@ -4,7 +4,6 @@ import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.DirectedMeasure
-import Linglib.Semantics.Degree.Defs
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 

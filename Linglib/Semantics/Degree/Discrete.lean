@@ -1,4 +1,3 @@
-import Linglib.Semantics.Degree.Defs
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
