@@ -61,7 +61,7 @@ namespace AlexandropoulouGotzner2024
 
 open Core.Order (Boundedness)
 open Degree (Degree Threshold deg thr)
-open Semantics.Gradability (GradableAdjective ThresholdPair inGapRegion
+open Degree (GradableAdjective ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
 open Degree (positiveMeaning notPositiveMeaning positiveMeaning_monotone)
 open English.Predicates.Adjectival
@@ -168,14 +168,14 @@ theorem gap_iff_neither {max : Nat}
 theorem contradictory_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     positiveMeaning d θ ∨ notPositiveMeaning d θ :=
-  Semantics.Gradability.Antonymy.contradictory_exhaustive d θ
+  Degree.Antonymy.contradictory_exhaustive d θ
 
 /-- `notPositiveMeaning` is the propositional complement of `positiveMeaning`.
     Delegates to the substrate lemma in `Antonymy.lean`. -/
 theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     notPositiveMeaning d θ ↔ ¬ positiveMeaning d θ :=
-  Semantics.Gradability.Antonymy.contradictory_is_complement d θ
+  Degree.Antonymy.contradictory_is_complement d θ
 
 -- ============================================================================
 -- § 5. Monotonicity → Strength & Precision

@@ -45,10 +45,10 @@ function can induce.
 11. **very_degree_chain**: Klein's `very` = two-step degree chain
 -/
 
-namespace Semantics.Gradability.Hierarchy
+namespace Degree.Hierarchy
 
-open Semantics.Gradability.Delineation
-open Degree (MeasureFn)
+open Degree.Delineation
+
 open Features.Dimension (Dimension)
 /-! ### Measurement → Degree -/
 
@@ -427,4 +427,4 @@ theorem very_strictly_stronger_degree :
   simp only [id] at hlt_z hlt_y
   omega
 
-end Semantics.Gradability.Hierarchy
+end Degree.Hierarchy

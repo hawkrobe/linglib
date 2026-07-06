@@ -26,7 +26,7 @@ Polish NP-splitting data from [nowak-2000] is the empirical wedge.
 
 namespace Partee2010
 
-open Semantics.Gradability.Classification
+open Degree.Classification
 open Semantics.Composition.Coercion
 
 variable {W E : Type*}

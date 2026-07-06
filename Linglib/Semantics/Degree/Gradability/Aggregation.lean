@@ -33,7 +33,7 @@ Plus §6 Sassoon 2013 subsumption theorems showing all binding types
 reduce to counting aggregation.
 -/
 
-namespace Semantics.Gradability.Aggregation
+namespace Degree.Aggregation
 
 variable {α : Type}
 
@@ -220,26 +220,26 @@ private theorem any_eq_decide_filter_ge_one :
 /-- Conjunctive binding = counting with threshold k = dims.length.
     [sassoon-2013]'s ∀-binding is a special case of counting. -/
 theorem conjunctive_is_countAll (dims : List (α → Bool)) (x : α) :
-    Semantics.Gradability.conjunctiveBinding dims x = countBinding dims.length dims x :=
+    Degree.conjunctiveBinding dims x = countBinding dims.length dims x :=
   all_eq_decide_filter_ge_length dims x
 
 /-- Disjunctive binding = counting with threshold k = 1.
     [sassoon-2013]'s ∃-binding is a special case of counting. -/
 theorem disjunctive_is_countOne (dims : List (α → Bool)) (x : α) :
-    Semantics.Gradability.disjunctiveBinding dims x = countBinding 1 dims x :=
+    Degree.disjunctiveBinding dims x = countBinding 1 dims x :=
   any_eq_decide_filter_ge_one dims x
 
 /-- [sassoon-2013]'s binding types all map to counting aggregation.
     The key gap: Sassoon has no utilitarian or Cobb-Douglas mechanism. -/
-def toAggregationType : Semantics.Gradability.DimensionBindingType → AggregationType
+def toAggregationType : Degree.DimensionBindingType → AggregationType
   | .conjunctive => .counting
   | .disjunctive => .counting
   | .mixed => .counting
 
 /-- All of Sassoon 2013's binding types are counting aggregation. -/
 theorem sassoon_all_counting :
-    ∀ b : Semantics.Gradability.DimensionBindingType,
+    ∀ b : Degree.DimensionBindingType,
       toAggregationType b = AggregationType.counting := by
   intro b; cases b <;> rfl
 
-end Semantics.Gradability.Aggregation
+end Degree.Aggregation

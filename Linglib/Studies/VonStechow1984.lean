@@ -607,10 +607,10 @@ theorem klein_agrees_on_simple {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (cc : Set Entity) (a b : Entity)
     (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
-      Semantics.Gradability.Delineation.ordering
-        (Semantics.Gradability.Delineation.measureDelineation μ) cc a b := by
+      Degree.Delineation.ordering
+        (Degree.Delineation.measureDelineation μ) cc a b := by
   simp only [comparativeSem,
-    Semantics.Gradability.Delineation.ordering_iff_degree μ cc a b ha hb]
+    Degree.Delineation.ordering_iff_degree μ cc a b ha hb]
 
 /-! ### Cross-Category Generalization (§XI.4) -/
 

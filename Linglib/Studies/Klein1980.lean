@@ -52,7 +52,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 
 namespace Klein1980
 
-open Semantics.Gradability.Delineation
+open Degree.Delineation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Nonlinear Delineation Witness

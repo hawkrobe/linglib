@@ -370,7 +370,7 @@ def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
 
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
-    Option Semantics.Gradability.GradableAdjective :=
+    Option Degree.GradableAdjective :=
   English.Predicates.Adjectival.lookup e.adjBase
 
 /-- Bridge: pleasant's Fragment entry has positive evaluative valence,
@@ -589,7 +589,7 @@ abbrev Threshold := Degree.Threshold 6
 
 open Degree (deg thr)
 open Features (EvaluativeValence)
-open Semantics.Gradability.Intensification (EvaluativeMeasure)
+open Degree.Intensification (EvaluativeMeasure)
 open Degree (positiveMeaning)
 
 /-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ, specialized to scale 6. -/
@@ -674,9 +674,9 @@ def meaning (u : Utterance) (h : Height) (θ θ_e : Threshold) : Bool :=
     `Intensification.muHorrible` on every height. The theory definition
     `(d : ℕ → ℚ) - norm` collapses to `|d - 3|` when norm = 6/2 = 3 and d : ℕ. -/
 private lemma muHorrible_eq (h : Height) :
-    (Semantics.Gradability.Intensification.muHorrible 6).mu h.toNat =
+    (Degree.Intensification.muHorrible 6).mu h.toNat =
     (muHorrible h : ℚ) := by
-  unfold Semantics.Gradability.Intensification.muHorrible muHorrible
+  unfold Degree.Intensification.muHorrible muHorrible
   fin_cases h <;> simp [Degree.Degree.toNat] <;> norm_num
 
 /--
@@ -686,16 +686,16 @@ theory-layer `Intensification.muHorrible`.
 -/
 theorem meaning_grounded_horribly (h : Height) (θ θ_e : Threshold) :
     (meaning .horribly_warm h θ θ_e = true) ↔
-    Semantics.Gradability.Intensification.intensifiedMeaning
-      (Semantics.Gradability.Intensification.muHorrible 6) h θ θ_e := by
+    Degree.Intensification.intensifiedMeaning
+      (Degree.Intensification.muHorrible 6) h θ θ_e := by
   simp only [meaning, tallMeaning, Bool.and_eq_true, decide_eq_true_eq,
-             Semantics.Gradability.Intensification.intensifiedMeaning,
+             Degree.Intensification.intensifiedMeaning,
              muHorrible_eq, Nat.cast_lt]
 
 private lemma muPleasant_eq (h : Height) :
-    (Semantics.Gradability.Intensification.muPleasant 6).mu h.toNat =
+    (Degree.Intensification.muPleasant 6).mu h.toNat =
     (muPleasant h : ℚ) := by
-  unfold Semantics.Gradability.Intensification.muPleasant muPleasant
+  unfold Degree.Intensification.muPleasant muPleasant
   fin_cases h <;> simp [Degree.Degree.toNat] <;> norm_num
 
 /--
@@ -705,10 +705,10 @@ theory-layer `Intensification.muPleasant`.
 -/
 theorem meaning_grounded_pleasantly (h : Height) (θ θ_e : Threshold) :
     (meaning .pleasantly_warm h θ θ_e = true) ↔
-    Semantics.Gradability.Intensification.intensifiedMeaning
-      (Semantics.Gradability.Intensification.muPleasant 6) h θ θ_e := by
+    Degree.Intensification.intensifiedMeaning
+      (Degree.Intensification.muPleasant 6) h θ θ_e := by
   simp only [meaning, tallMeaning, Bool.and_eq_true, decide_eq_true_eq,
-             Semantics.Gradability.Intensification.intensifiedMeaning,
+             Degree.Intensification.intensifiedMeaning,
              muPleasant_eq, Nat.cast_lt]
 
 -- Structural Semantics: Goldilocks, Wheeler, and Licensing Support

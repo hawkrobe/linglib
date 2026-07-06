@@ -46,7 +46,7 @@ namespace Fine1975
 
 open Core.Duality (Truth3)
 open Degree (Degree Threshold Degree.toNat Threshold.toNat)
-open Semantics.Gradability (ThresholdPair inGapRegion)
+open Degree (ThresholdPair inGapRegion)
 open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)
 
 -- ════════════════════════════════════════════════════

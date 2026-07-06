@@ -83,7 +83,7 @@ same scalar foundation.
 
 namespace Solt2018Proportional
 
-open Semantics.Gradability.Aggregation (spatialNormalizedScore
+open Degree.Aggregation (spatialNormalizedScore
   spatialNormalizedScore_unit spatialNormalizedScore_le_one
   spatialNormalizedScore_nonneg weightedScore)
 open Semantics.Kinds.SortedOntology (PredicateLevel)

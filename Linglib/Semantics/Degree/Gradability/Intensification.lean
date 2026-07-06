@@ -31,11 +31,9 @@ about the degree, not directly to the degree. This simplification suffices
 for the RSA pragmatic model.
 -/
 
-namespace Semantics.Gradability.Intensification
+namespace Degree.Intensification
 
 open Features (EvaluativeValence)
-open Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open Degree (positiveMeaning)
 
 -- Evaluative Measure Functions
 
@@ -181,4 +179,4 @@ theorem positive_valence_norm_peak :
     (muPleasant 10).mu 5 ≥ (muPleasant 10).mu 10 :=
   ⟨rfl, muPleasant_peaks_at_norm_10⟩
 
-end Semantics.Gradability.Intensification
+end Degree.Intensification

@@ -29,9 +29,9 @@ import Mathlib.Data.Rat.Defs
 
 namespace Implicature.Markedness
 
-open Semantics.Gradability
+open Degree
 open Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open Semantics.Gradability (ThresholdPair)
+open Degree (ThresholdPair)
 open Features (NegationType)
 open English.Predicates.Adjectival (tall short happy unhappy)
 
@@ -359,7 +359,7 @@ structure MAlternativeSet where
   /-- The unmarked (cheaper) form -/
   unmarked : String
   /-- The dimension they share (e.g., .height) -/
-  dimension : Semantics.Gradability.Dimension
+  dimension : Degree.Dimension
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/

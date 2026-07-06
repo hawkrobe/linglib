@@ -28,12 +28,8 @@ are defined in `Gradability/Basic.lean`.
 
 set_option autoImplicit false
 
-namespace Semantics.Gradability.Antonymy
+namespace Degree.Antonymy
 
-open Degree (Degree Threshold Threshold.toNat)
-open Semantics.Gradability (ThresholdPair contradictoryNeg
-  positiveMeaning' contraryNegMeaning notContraryNegMeaning inGapRegion)
-open Degree (positiveMeaning notPositiveMeaning)
 
 /-! ### Contradictory Negation: Involutory (DNE holds) -/
 
@@ -90,4 +86,4 @@ theorem gap_nonempty {max : Nat} (tp : ThresholdPair max)
   obtain ⟨d, h1, h2⟩ := contrary_gap_exists tp h
   exact ⟨d, (gap_iff_not_neg_and_not_pos d tp).mpr ⟨h1, h2⟩⟩
 
-end Semantics.Gradability.Antonymy
+end Degree.Antonymy

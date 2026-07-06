@@ -43,7 +43,7 @@ construction.
 
 namespace Elbourne2026
 
-open Semantics.Gradability.Classification
+open Degree.Classification
   (Property AdjMeaning isIntersective isSubsective)
 
 /-! ### ⟨et,et⟩ Adjective Denotations -/

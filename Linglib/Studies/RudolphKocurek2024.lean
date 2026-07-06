@@ -258,14 +258,14 @@ variable (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
 comparison classes are the extensions of `R` in the ≤-cone; `x` is R-in-C iff
 `x ∈ C`. Instantiates [klein-1980]'s comparison-class parameter. -/
 def interpretationDelineation (i : I) :
-    Semantics.Gradability.Delineation.ComparisonClass E → E → Prop :=
+    Degree.Delineation.ComparisonClass E → E → Prop :=
   fun C x =>
     (∃ i', ord.le i' i ∧ C = (interp i' w).ext₁ R) ∧ x ∈ C
 
 /-- The delineation comparative over the induced delineation is the ∃-witness
 clause of the MC: some cone extension separates `a` from `b`. -/
 theorem delineation_comparativeSem_iff (i : I) (a b : E) :
-    Semantics.Gradability.Delineation.comparativeSem
+    Degree.Delineation.comparativeSem
       (interpretationDelineation interp ord R w i) a b ↔
     ∃ i', ord.le i' i ∧ a ∈ (interp i' w).ext₁ R ∧ b ∉ (interp i' w).ext₁ R := by
   constructor
@@ -283,7 +283,7 @@ domination clause of the MC semantics redundant. -/
 theorem eval_mc_iff_delineation_of_noReversal (i : I) (a b : E)
     (hnr : NoReversal interp ord R w b a) :
     Eval interp (.comp (.matom R a) (.matom R b)) ord i w ↔
-    Semantics.Gradability.Delineation.comparativeSem
+    Degree.Delineation.comparativeSem
       (interpretationDelineation interp ord R w i) a b := by
   rw [Eval, CompFormula.realize_comp_iff, delineation_comparativeSem_iff]
   simp only [CompFormula.realize_matom, ← Structure.mem_ext₁]
@@ -2092,7 +2092,7 @@ theorem nr_tall_ben_ann :
 substrate's delineation comparative. -/
 example (i : I3) :
     Eval interpNR (.comp Ta Tb) ord₃ i .w0 ↔
-    Semantics.Gradability.Delineation.comparativeSem
+    Degree.Delineation.comparativeSem
       (interpretationDelineation interpNR ord₃ Pred1.tall .w0 i) .ann .ben :=
   eval_mc_iff_delineation_of_noReversal interpNR ord₃ .tall .w0 i .ann .ben
     nr_tall_ben_ann
@@ -2124,7 +2124,7 @@ i₀, violating the domination clause), but the simple delineation
 condition (∃ Fa∧¬Fb) is TRUE (i₀ is a witness). -/
 theorem mc_delineation_diverge_without_nr :
     ¬ Eval interpNR_bad (.comp Ta Tb) ord₃ .i2 .w0 ∧
-    Semantics.Gradability.Delineation.comparativeSem
+    Degree.Delineation.comparativeSem
       (interpretationDelineation interpNR_bad ord₃ Pred1.tall .w0 .i2) .ann .ben :=
   ⟨by decide,
    (delineation_comparativeSem_iff interpNR_bad ord₃ Pred1.tall .w0 .i2 .ann .ben).mpr

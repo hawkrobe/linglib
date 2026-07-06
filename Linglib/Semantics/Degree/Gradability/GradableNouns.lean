@@ -21,7 +21,7 @@ degree scale. The full denotation is:
   ⟦MEAS_N⟧ = λg.λm.λx . [min{d : d ∈ scale(g) ∧ m(d)} ≤ g(x)] ∧ [standard(g) ≤ g(x)]
 -/
 
-namespace Semantics.Gradability.GradableNouns
+namespace Degree.GradableNouns
 
 open Degree
 /-- Degree on a 0–10 scale, backed by the canonical `Degree 10` type. -/
@@ -188,4 +188,4 @@ theorem small_idiot_same_as_idiot :
 
 end Examples
 
-end Semantics.Gradability.GradableNouns
+end Degree.GradableNouns

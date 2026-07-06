@@ -59,7 +59,7 @@ For the formal subsumption hierarchy (Klein ← Kennedy ← Measurement),
 see `Semantics/Comparison/Hierarchy.lean`.
 -/
 
-namespace Semantics.Gradability.Delineation
+namespace Degree.Delineation
 
 
 /-! ### Comparison Class -/
@@ -617,4 +617,4 @@ instance instCompleteMeasureDelineation {E D : Type*} [LinearOrder D]
         (Set.mem_univ _) (Set.mem_univ _) hR
     exact ⟨C, hpos, hneg⟩
 
-end Semantics.Gradability.Delineation
+end Degree.Delineation

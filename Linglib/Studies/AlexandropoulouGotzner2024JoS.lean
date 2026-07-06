@@ -81,7 +81,7 @@ namespace AlexandropoulouGotzner2024JoS
 
 open Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
-open Semantics.Gradability (GradableAdjective ThresholdPair positiveMeaning'
+open Degree (GradableAdjective ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm
   predictionForAntonymy predictionForEntry)
 open Degree (notPositiveMeaning)
@@ -104,8 +104,8 @@ inductive AGCase where
     (GradableAdjective → Asymmetry projection) are now substrate, in
     `Features/Antonymy.lean` and `Semantics/Gradability/AntonymPrediction.lean`
     respectively. The substrate-anchor theorems
-    `Semantics.Gradability.contradictoryDenot_synonymy` and
-    `Semantics.Gradability.strengthenedDenot_breaks_synonymy` make the
+    `Degree.contradictoryDenot_synonymy` and
+    `Degree.strengthenedDenot_breaks_synonymy` make the
     `.contrary → .asymmetric` / `.contradictory → .symmetric` mapping
     Lean-checkable from the canonical denotations. -/
 

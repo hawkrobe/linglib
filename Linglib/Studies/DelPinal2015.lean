@@ -61,7 +61,7 @@ satisfies `extension_implies_formal`.
 
 namespace DelPinal2015
 
-open Semantics.Gradability.Classification
+open Degree.Classification
 open Semantics.Composition.Coercion (LicensedCoercion)
 
 /-- Pustejovsky-style four-role qualia profile. -/
@@ -191,7 +191,7 @@ theorem DelPinalReanalysis.no_LicensedCoercion
 /-- Lift a classical `AdjMeaning` to a `DCAdjMeaning` by computing the
     extension via the classical adj and inheriting the input noun's
     qualia (the C-structure passes through unchanged). -/
-def _root_.Semantics.Gradability.Classification.AdjMeaning.toDCAdjMeaning
+def _root_.Degree.Classification.AdjMeaning.toDCAdjMeaning
     (adj : AdjMeaning W E) : DCAdjMeaning W E :=
   fun N => { extension := adj N.extension, qualia := N.qualia }
 
