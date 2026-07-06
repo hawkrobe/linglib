@@ -478,10 +478,12 @@ theorem isERMSolution_of_same_normalize
 
 [gahl-baayen-2024]'s appendix computes EL from the normal equations of
 regression and FIL by solving the EL problem on `√Q`-premultiplied `S` and
-`C` matrices; [heitmeier-chuang-baayen-2026] gives the same construction and
-states its equivalence with frequency-replicated training data. Here the
-premultiplied experience is `TrainingExperience.sqrtScale`, the equivalence
-is `isELSolution_sqrtScale_iff`, and ERM existence follows by orthogonal
+`C` matrices; [heitmeier-chuang-baayen-2026] gives the same construction, and
+[heitmeier-2024] proves the equivalence with frequency-replicated training
+data via the closed-form normal-equations solution, under invertibility.
+Here the premultiplied experience is `TrainingExperience.sqrtScale`, the
+equivalence (`isELSolution_sqrtScale_iff`) is stated invertibility-free at
+the level of ERM solution sets, and ERM existence follows by orthogonal
 projection onto the prediction subspace, columnwise. -/
 
 /-- The `√q`-premultiplied training experience: event `i` scaled by
@@ -514,7 +516,8 @@ theorem weightedLoss_sqrtScale (data : TrainingExperience m n d)
   rw [one_mul, map_smul, squaredDist_smul, Real.sq_sqrt (hq i)]
 
 /-- **T-Sqrt-transport**: FIL under `q` is exactly EL on the
-    `√q`-premultiplied experience. -/
+    `√q`-premultiplied experience — [heitmeier-2024]'s FIL-EL equivalence,
+    invertibility-free. -/
 theorem isELSolution_sqrtScale_iff (data : TrainingExperience m n d)
     {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) :
