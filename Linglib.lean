@@ -1354,7 +1354,6 @@ import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Harmony.TongueRoot
-import Linglib.Phonology.Harmony.TSL
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Cophonology
