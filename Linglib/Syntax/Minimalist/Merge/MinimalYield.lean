@@ -76,7 +76,7 @@ theorem em_pair_satisfiesMinimalYield (lbl : α) (S S' : Nonplanar (α ⊕ β)) 
     MinimalYield ({S, S'} : Forest (Nonplanar (α ⊕ β)))
                  ({Nonplanar.node (Sum.inl lbl) {S, S'}}) := by
   have hnode : (Nonplanar.node (Sum.inl lbl) {S, S'}).accCount
-      = S.accCount + S'.accCount + 2 := Nonplanar.accCount_merge (Sum.inl lbl) S S'
+      = S.accCount + S'.accCount + 2 := Nonplanar.accCount_node_pair (Sum.inl lbl) S S'
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · simp only [Forest.b₀_singleton, Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_zero]
     omega
@@ -102,7 +102,7 @@ theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : Nonplanar (α ⊕ �
       ∧ Forest.sigma ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
         = Forest.sigma ({T} : Forest (Nonplanar (α ⊕ β))) := by
   have hnode : (Nonplanar.node (Sum.inl lbl) {mover, Q}).accCount
-      = mover.accCount + Q.accCount + 2 := Nonplanar.accCount_merge (Sum.inl lbl) mover Q
+      = mover.accCount + Q.accCount + 2 := Nonplanar.accCount_node_pair (Sum.inl lbl) mover Q
   refine ⟨rfl, ?_, ?_⟩
   · rw [Forest.alpha_singleton, Forest.alpha_singleton, hnode]
     omega
