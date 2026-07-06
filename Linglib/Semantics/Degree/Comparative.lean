@@ -1,6 +1,5 @@
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Bounds
-import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Core.Order.Comparison
 

@@ -1,6 +1,5 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.ComparativeScale
-import Linglib.Semantics.Degree.Gradability.Basic
 
 /-!
 # States-Based Gradable Adjective Semantics

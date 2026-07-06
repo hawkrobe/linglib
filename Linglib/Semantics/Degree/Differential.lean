@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Discrete
 import Mathlib.Tactic.Linarith
 
 /-!
