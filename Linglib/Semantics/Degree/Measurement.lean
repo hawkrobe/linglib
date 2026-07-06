@@ -16,8 +16,9 @@ assignment A:
 
 The measure function must be **monotonic**: for all α, β in a
 part-whole ordered domain, if α ≺^Part β then μ(α) ≺^Deg μ(β). This is
-[schwarzschild-wilkinson-2002]'s monotonicity condition, and corresponds exactly
-to `StrictMono` / `MereoDim` / CSW's `admissibleMeasure` in linglib.
+the monotonicity condition of [schwarzschild-2002] and [schwarzschild-2006],
+and corresponds exactly to `StrictMono` / `MereoDim` / CSW's
+`admissibleMeasure` in linglib.
 
 The key insight is a three-way cross-categorial parallel:
 
@@ -51,12 +52,20 @@ mereologies" — ordered domains with proper parts. We classify
 them as `.cumulative` because the structural consequence is the same:
 mereological structure enables monotonic measurement by `much`.
 
+Likewise, identifying dimensional restriction with a `LinearOrder` on the
+measured domain is a reconstruction, not the paper's own statement: the paper
+argues dimension availability tracks the measured domain (states vs
+entities/events) without stating the totality condition, and describes GA
+state domains as mereologies (partial orders). The linear-order reading is
+the tightest order-theoretic condition delivering her generalization
+(`linearOrder_dimensionallyRestricted` and, conversely,
+`prod_not_dimensionallyRestricted`).
+
 -/
 
 namespace Semantics.Measurement
 
 open _root_.Mereology
-open Features
 open Features
 open Semantics.Kinds.MeaningPreservation (NumberFeature)
 
@@ -209,9 +218,8 @@ theorem accomplishment_is_quantized : vendlerToStatus .accomplishment = .quantiz
     `AspectualProfile.telicize` operation. -/
 theorem telicize_shifts_status (p : AspectualProfile) (h : p.telicity = .atelic) :
     telicityToStatus p.telicity = .cumulative ∧
-    telicityToStatus p.telicize.telicity = .quantized := by
-  exact ⟨by simp only [h, telicityToStatus],
-         by simp only [AspectualProfile.telicize, telicityToStatus]⟩
+    telicityToStatus p.telicize.telicity = .quantized :=
+  ⟨by rw [h]; rfl, rfl⟩
 
 /-- Atelicization shifts measurement status from quantized to cumulative.
 
@@ -219,9 +227,8 @@ theorem telicize_shifts_status (p : AspectualProfile) (h : p.telicity = .atelic)
     house") restores extensive dimensions. -/
 theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic) :
     telicityToStatus p.telicity = .quantized ∧
-    telicityToStatus p.atelicize.telicity = .cumulative := by
-  exact ⟨by simp only [h, telicityToStatus],
-         by simp only [AspectualProfile.atelicize, telicityToStatus]⟩
+    telicityToStatus p.atelicize.telicity = .cumulative :=
+  ⟨by rw [h]; rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Dimensional Restriction
@@ -231,8 +238,9 @@ theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic)
     functions (StrictMono maps to ℚ) agree on the comparative ordering
     of all elements.
 
-    This captures claim that GAs lexically fix a single
-    dimension while nouns/verbs allow contextual dimension selection:
+    This captures the claim that the state domains GAs measure afford a
+    single dimension while entity/event domains allow contextual
+    dimension selection:
 
     - GA state domains: linearly ordered → any two StrictMono μ₁, μ₂
       agree on the comparative → dimensionally restricted
@@ -250,24 +258,40 @@ def DimensionallyRestricted (α : Type*) [Preorder α] : Prop :=
 
 /-- Linear orders are dimensionally restricted: the comparative ordering
     is uniquely determined by the ambient order, regardless of which
-    admissible measure function is chosen.
-
-    Proof: on a linear order, `StrictMono` reflects the strict order
-    (by trichotomy + irreflexivity), so μ₁ a < μ₁ b ↔ a < b ↔ μ₂ a < μ₂ b. -/
+    admissible measure function is chosen. -/
 theorem linearOrder_dimensionallyRestricted {α : Type*} [LinearOrder α] :
-    DimensionallyRestricted α := by
-  intro μ₁ μ₂ hμ₁ hμ₂ a b
-  constructor
-  · intro h
-    rcases lt_trichotomy a b with hab | hab | hab
-    · exact hμ₂ hab
-    · subst hab; exact absurd h (lt_irrefl _)
-    · exact absurd (lt_trans h (hμ₁ hab)) (lt_irrefl _)
-  · intro h
-    rcases lt_trichotomy a b with hab | hab | hab
-    · exact hμ₁ hab
-    · subst hab; exact absurd h (lt_irrefl _)
-    · exact absurd (lt_trans h (hμ₂ hab)) (lt_irrefl _)
+    DimensionallyRestricted α :=
+  fun _ _ hμ₁ hμ₂ _ _ => hμ₁.lt_iff_lt.trans hμ₂.lt_iff_lt.symm
+
+/-- If two admissible measures disagree on some pair, the domain is NOT
+    dimensionally restricted. -/
+theorem not_restricted_of_disagreement {α : Type*} [Preorder α]
+    {μ₁ μ₂ : α → ℚ} (hμ₁ : StrictMono μ₁) (hμ₂ : StrictMono μ₂)
+    {a b : α} (h₁ : μ₁ a < μ₁ b) (h₂ : ¬ μ₂ a < μ₂ b) :
+    ¬ DimensionallyRestricted α :=
+  fun hDR => h₂ ((hDR μ₁ μ₂ hμ₁ hμ₂ a b).mp h₁)
+
+/-- The converse witness: a partially ordered domain with incomparable
+    elements is not dimensionally restricted. On `ℚ × ℚ` (componentwise
+    order — think weight × volume on portions of matter), the two
+    admissible measures `2·w + v` and `w + v` order the incomparable
+    portions `(0, 1)` and `(1, 0)` differently, so the choice of measure
+    function matters — the multi-dimensional signature of entity/event
+    domains. -/
+theorem prod_not_dimensionallyRestricted :
+    ¬ DimensionallyRestricted (ℚ × ℚ) := by
+  have hmono : ∀ c : ℚ, 0 < c → StrictMono (fun p : ℚ × ℚ => c * p.1 + p.2) := by
+    intro c hc p q hpq
+    rcases Prod.lt_iff.mp hpq with ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · have := mul_lt_mul_of_pos_left h1 hc
+      dsimp only
+      nlinarith
+    · have := mul_le_mul_of_nonneg_left h1 hc.le
+      dsimp only
+      nlinarith
+  exact not_restricted_of_disagreement (μ₁ := fun p => 2 * p.1 + p.2)
+    (μ₂ := fun p => 1 * p.1 + p.2) (hmono 2 (by norm_num)) (hmono 1 (by norm_num))
+    (a := (0, 1)) (b := (1, 0)) (by norm_num) (by norm_num)
 
 /-- A `StatesBasedEntry` over a linearly ordered state domain is
     dimensionally restricted: the comparative meaning is independent

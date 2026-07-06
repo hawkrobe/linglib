@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
+import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
-import Linglib.Studies.Wellwood2015
 import Linglib.Semantics.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -23,8 +23,9 @@ The substrate already hosts every primitive Pasternak's §1–§4 needs:
   (`StrictMono` over a preorder; multi-tradition naming credits
   Schwarzschild, Wellwood, Krifka, CSW, Pasternak, LaBToM in one
   docstring).
-- Comparative LF = `Wellwood2015.IsMaxDeg` over a than-clause degree
-  set, with the `comparativeTruth_max` reduction lemma.
+- Comparative LF = `Degree.maxComparative` over a than-clause degree
+  set (`Degree.thanDegrees`), with the `Degree.maxComparative_unique`
+  reduction lemma.
 - Mental-state homogeneity = `Mereology.DIV` (downward-closure on the
   part-whole preorder; Pasternak (55) is the biconditional form, which
   reduces to `DIV` modulo preorder reflexivity).
@@ -45,7 +46,7 @@ mental-state preorder (§6).
 | (4)       | Monotonicity = `admissibleMeasure` (substrate-level, multi-tradition)      |
 | §2        | Five monotonicity-requiring constructions enumerated as data               |
 | (27),(48b)| `MentalStateVerb` LGH-style lexical entry; `holdsAtDegree` denotation      |
-| (50),(53) | `intensityComparative` LF using `Wellwood2015.IsMaxDeg` directly           |
+| (50),(53) | `intensityComparative` LF using `Degree.maxComparative` directly           |
 | (60)–(63) | `positive_entailment_matrix` + `positive_non_entailment_than_clause_witness` |
 | (55)      | `MentalStateHomogeneity := Mereology.DIV` + biconditional bridge           |
 | §3.1      | `pseudopartitive_blocks_speed`: non-monotonic `μ_speed` blocked            |
@@ -174,36 +175,31 @@ Pasternak (53) (PDF p.287) for `Ann hates Bill more than Matt hates Jeff`:
 Matrix and than-clause use the same verb (`hate`) but different themes
 (`bill` vs `jeff`). Adjectival comparatives like `taller than` use the
 same predicate on both sides; intensity comparatives don't. The
-substrate's `Wellwood2015.comparativeTruthHetero` (newly added)
-generalizes the comparative to allow distinct matrix/than predicates;
-Pasternak's intensity case is one specialization. -/
+substrate's `Degree.maxComparative` takes independent matrix/than
+predicates, so Pasternak's intensity case is one instantiation. -/
 
 /-- The themed predicate `fun e => v.predicate e ∧ frame.theme x e`:
-    eventualities of verb `v` with theme `x`. Used to specialize
-    Wellwood's `comparativeTruthHetero` for Pasternak's intensity case. -/
+    eventualities of verb `v` with theme `x`. Used to instantiate
+    `Degree.maxComparative` for Pasternak's intensity case. -/
 @[simp] def themedPredicate {Entity Time : Type*} [LinearOrder Time]
     (v : MentalStateVerb Time) (frame : ThematicFrame Entity Time)
     (x : Entity) : Event Time → Prop :=
   fun e => v.predicate e ∧ frame.theme x e
 
 /-- The intensity comparative `α V x more than β V y` (Pasternak (53)):
-    a specialization of `Wellwood2015.comparativeTruthHetero` with
-    `role = frame.experiencer`, hetero matrix/than predicates differing
-    in theme assignment, `extract = id` (states are measured directly),
-    and `μ = v.μint`. The substrate's `IsMaxDeg`-based than-clause
+    `Degree.maxComparative` with experiencer-restricted matrix/than
+    predicates differing in theme assignment and `μ = v.μint` (states
+    are measured directly). The `IsGreatest`-based than-clause
     quantification handles the empty-than-clause case via Pasternak (62)
     structurally — no zero-degree disjunct needed at this level (see
     §4.1 below for the non-entailment witness). -/
 def intensityComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (v : MentalStateVerb Time) (α β x y : Entity) : Prop :=
-  Wellwood2015.comparativeTruthHetero
-    frame.experiencer
-    (themedPredicate v frame x)
-    (themedPredicate v frame y)
-    id
+  Degree.maxComparative
+    (fun e => frame.experiencer α e ∧ themedPredicate v frame x e)
+    (fun e => frame.experiencer β e ∧ themedPredicate v frame y e)
     v.μint
-    α β
 
 /-! ### §4.1 Positive entailment asymmetry (Pasternak (60)–(63))
 
@@ -226,14 +222,14 @@ theorem. -/
 /-- Matrix entailment (Pasternak (60), PDF p.292): the comparative
     entails there is an α-eventuality of the verb with theme `x`.
     Trivial substrate consequence of the matrix existential in
-    `comparativeTruthHetero`. -/
+    `Degree.maxComparative`. -/
 theorem positive_entailment_matrix {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {v : MentalStateVerb Time} {α β x y : Entity}
     (h : intensityComparative frame v α β x y) :
     ∃ e : Event Time,
       frame.experiencer α e ∧ v.predicate e ∧ frame.theme x e := by
-  obtain ⟨e, hExp, ⟨hPred, hThm⟩, _⟩ := h
+  obtain ⟨_, _, e, ⟨hExp, hPred, hThm⟩, _⟩ := h
   exact ⟨e, hExp, hPred, hThm⟩
 
 /-- Pasternak (62) augmentation: the than-clause degree set with zero
@@ -241,8 +237,9 @@ theorem positive_entailment_matrix {Entity Time : Type*} [LinearOrder Time]
 def thanDegreesAug62 {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (v : MentalStateVerb Time) (β y : Entity) : Set ℚ :=
-  {0} ∪ Wellwood2015.thanDegreesHetero frame.experiencer
-          (themedPredicate v frame y) id v.μint β
+  {0} ∪ Degree.thanDegrees
+          (fun e => frame.experiencer β e ∧ themedPredicate v frame y e)
+          v.μint
 
 /-- The (62)-augmented intensity comparative used in §4.4 for the
     non-entailment data. Identical to `intensityComparative` modulo
@@ -252,7 +249,7 @@ def intensityComparativeAug62 {Entity Time : Type*} [LinearOrder Time]
     (v : MentalStateVerb Time) (α β x y : Entity) : Prop :=
   ∃ ea : Event Time,
     frame.experiencer α ea ∧ themedPredicate v frame x ea ∧
-    ∃ δ : ℚ, Wellwood2015.IsMaxDeg (thanDegreesAug62 frame v β y) δ ∧
+    ∃ δ : ℚ, IsGreatest (thanDegreesAug62 frame v β y) δ ∧
               v.μint ea > δ
 
 /-- Than-clause non-entailment under (62) augmentation (Pasternak
@@ -280,7 +277,7 @@ theorem positive_non_entailment_than_clause_witness
     left; rfl
   · -- ∀ d ∈ thanDegreesAug62, d ≤ 0
     intro d hd
-    rcases hd with hd_zero | ⟨e, hExp_β, ⟨hPred_β, hThm_β⟩, hμ_β⟩
+    rcases hd with hd_zero | ⟨e, ⟨hExp_β, hPred_β, hThm_β⟩, hμ_β⟩
     · exact le_of_eq hd_zero
     · exact le_trans hμ_β (hβ_empty e hExp_β hPred_β hThm_β)
 
@@ -316,14 +313,14 @@ unique-witness assumptions on both sides, the intensity comparative
 reduces to direct measure comparison. Pasternak fn 25 (PDF p.298)
 explicitly rejects the unique-state assumption, so this reduction is a
 *working simplification*, not Pasternak's official semantics — useful
-when the type-level `comparativeTruthHetero` quantification adds noise. -/
+when the max-quantified than-clause adds noise. -/
 
 /-- Pasternak's intensity comparative reduces to direct measure
     comparison `v.μint eb < v.μint ea` when both sides have unique
     witness eventualities. This is the Pasternak analog of
     `Wellwood2015.adjectival_max_reduces`, derived by specializing
-    `Wellwood2015.comparativeTruthHetero_max` to the intensity case
-    (themed predicates, `extract = id`). -/
+    `Degree.maxComparative_unique` to the intensity case (experiencer
+    plus themed predicates). -/
 theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {v : MentalStateVerb Time}
@@ -333,7 +330,8 @@ theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
     (hb : frame.experiencer β eb ∧ themedPredicate v frame y eb)
     (hb_unique : ∀ e, frame.experiencer β e → themedPredicate v frame y e → e = eb) :
     intensityComparative frame v α β x y ↔ v.μint eb < v.μint ea :=
-  Wellwood2015.comparativeTruthHetero_max ha ha_unique hb hb_unique
+  Degree.maxComparative_unique ha (fun e he => ha_unique e he.1 he.2)
+    hb (fun e he => hb_unique e he.1 he.2)
 
 /-! ## §6. Bridge to Event Mereology + CSW
 

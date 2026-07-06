@@ -33,10 +33,10 @@ and intensional verbs.
 
 ## Order-Theoretic Foundations
 
-Heim's maximality operator `IsMaxDeg` is Mathlib's `IsGreatest`.
-Heim's matrix degree predicate `λd. μ(a) ≥ d` is [kennedy-1999]'s
-`posExt μ a` — the principal downset `Set.Iic (μ a)`, the same
-mathematical object arrived at from different linguistic
+Heim's maximality operator is Mathlib's `IsGreatest`, used directly
+(`isGreatest_posExt`). Heim's matrix degree predicate `λd. μ(a) ≥ d` is
+[kennedy-1999]'s `posExt μ a` — the principal downset `Set.Iic (μ a)`,
+the same mathematical object arrived at from different linguistic
 motivations. The scope collapse theorems factor through the degree
 image `μ '' {x | R x}`, connecting to `gc_sSup_Iic` under
 `ConditionallyCompleteLattice`.
@@ -56,23 +56,10 @@ open Degree
     after degree abstraction. -/
 def DegreePredicate (D : Type*) := D → Prop
 
-/-- Heim's maximality operator (paper def. (6)):
-    max(P) := ιd. P(d) ∧ ∀d', P(d') → d' ≤ d
-
-    We define it relationally: `d` is the maximum of `P` when it
-    satisfies `P` and is an upper bound. -/
-def IsMaxDeg {D : Type*} [LE D] (P : DegreePredicate D) (d : D) : Prop :=
-  P d ∧ ∀ d', P d' → d' ≤ d
-
-/-- Heim's maximality = Mathlib's `IsGreatest`.
-
-    `IsMaxDeg P d` ("d is the maximum of predicate P") is
-    `IsGreatest {d | P d} d` ("d is the greatest element of the
-    set satisfying P"). The equivalence makes all of
-    `Mathlib.Order.Bounds` available for degree-semantic reasoning. -/
-theorem isMaxDeg_iff_isGreatest {D : Type*} [LE D] (P : DegreePredicate D) (d : D) :
-    IsMaxDeg P d ↔ IsGreatest {d' | P d'} d :=
-  ⟨fun ⟨h1, h2⟩ => ⟨h1, h2⟩, fun ⟨h1, h2⟩ => ⟨h1, h2⟩⟩
+-- Heim's maximality operator (paper def. (6)) —
+-- max(P) := ιd. P(d) ∧ ∀d', P(d') → d' ≤ d — is Mathlib's `IsGreatest`,
+-- used directly; all of `Mathlib.Order.Bounds` is available for
+-- degree-semantic reasoning.
 
 /-- The than-clause degree predicate for "B is d-tall": λd. μ(B) ≥ d. -/
 def thanClausePredicate {Entity D : Type*} [Preorder D]
@@ -94,10 +81,10 @@ def thanClausePredicate {Entity D : Type*} [Preorder D]
 
     This is Mathlib's `isGreatest_Iic` — the greatest element of
     `{d | d ≤ μ(a)}` is `μ(a)` — specialized to degree semantics. -/
-theorem isMaxDeg_posExt {Entity D : Type*} [LinearOrder D]
+theorem isGreatest_posExt {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (a : Entity) :
-    IsMaxDeg (posExt μ a) (μ a) :=
-  (isMaxDeg_iff_isGreatest _ _).mpr isGreatest_Iic
+    IsGreatest (posExt μ a) (μ a) :=
+  isGreatest_Iic
 
 -- ════════════════════════════════════════════════════
 -- § 2. Monotonicity
@@ -262,7 +249,7 @@ def negatedDegreePredicate {Entity D : Type*} [Preorder D]
   fun d => ¬ (μ a ≥ d)
 
 /-- The negated degree set is `negExt` ([kennedy-1999]): the
-    degrees entity `a` "lacks". The failure of `IsMaxDeg` for this
+    degrees entity `a` "lacks". The failure of maximality for this
     predicate corresponds to `negExt` (= `Set.Ioi`) having no
     `IsGreatest` element — it is unbounded above. -/
 theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
