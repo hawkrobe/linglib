@@ -1,3 +1,4 @@
+import Linglib.Core.Probability.Choice.Learning
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Mathlib.Algebra.BigOperators.Pi
@@ -12,85 +13,42 @@ import Mathlib.Tactic.Ring
 
 /-!
 # DLM training: endstate vs frequency-informed learning
-[baayen-2019] [gahl-baayen-2024] [heitmeier-chuang-baayen-2026]
+[baayen-2019] [gahl-baayen-2024] [heitmeier-2024] [heitmeier-chuang-baayen-2026]
 
-What counts as a learned production map: the optimization characterization
-of EndState Learning (EL) and Frequency-Informed Learning (FIL). The
-cognitive theory choice IS the choice of frequency weights `q`; the
-optimization — minimise the weighted squared loss — is fixed across
-theories. `FrequencyVector` is [gahl-baayen-2024]'s diagonal `Q`
-(appendix §A1.3); [heitmeier-chuang-baayen-2026] (ch. 6) introduces the
-same device with max-normalised entries applied as `√P` premultiplication
-of both `S` and `C` — `ermSolution_iff_rescaled` connects the two forms.
+The DLM's trained production map, characterised as the minimiser of a
+frequency-weighted quadratic loss. The choice of frequency weights `q` is the
+cognitive commitment (uniform = endstate learning, token counts =
+frequency-informed learning); the optimisation is fixed across theories.
 
-## Main declarations
+## Main definitions
 
-* `TrainingExperience`, `FrequencyVector`, `weightedLoss`,
-  `IsERMSolution` — data, weights, loss, and minimiser Prop;
-  `IsELSolution` / `IsFILSolution` are the uniform and
-  frequency-weighted cases.
-* `ermSolution_iff_rescaled` — **T-Rescaling**: ERM solutions are
-  invariant under positive rescaling of `q`; corollaries
-  `isERMSolution_normalize_iff` / `isERMSolution_of_same_normalize` cast
-  this as "only the empirical distribution `q.normalize` matters",
-  the bridge for comparisons against probabilistic word-learning models.
-* `weightedLoss_zero_event_drops` — **T-Support**: unexperienced
-  events cannot update the lexicon.
-* `coordResidual`, `weightedLoss_eq_sum_coordResidual` —
-  **T-Separability**: the loss is a sum of per-coordinate regression
-  residuals.
-* `isERMSolution_iff_coordResidual` — **T-Coordinate-optimality**:
-  ERM = columnwise-unbeatable regression; no sign condition on `q`.
-* `IsERMSolution.coord_eq_of_decodable` — **T-Decodable-exact-fit**:
-  an exactly decodable form coordinate is reproduced exactly under
-  positive weights; corollaries `IsTrainedOn.semSup_eq_of_decodable`
-  and `semSupWord_eq_of_decodable` transfer this to the semantic-
-  support measures — the architectural core of
-  [saito-tomaschek-baayen-2025]'s inflectional-status finding.
-* `isERMSolution_of_interpolates` — **T-Interpolation**:
-  interpolating maps are ERM, so `IsERMSolution` is nonvacuous on
-  interpolable data.
-* `TrainingExperience.sqrtScale`, `isELSolution_sqrtScale_iff` —
-  **T-Sqrt-transport**: FIL under `q` is EL on the `√q`-premultiplied
-  experience — the [gahl-baayen-2024]-appendix `√Q` construction, whose
-  equivalence with frequency-replicated data is
-  [heitmeier-chuang-baayen-2026]'s.
-* `exists_isERMSolution` — **T-Existence**: ERM solutions exist for any
-  nonnegative weights, by the Hilbert projection theorem applied
-  columnwise to the prediction subspace.
-* `residualPairing`, `isERMSolution_iff_residualPairing_eq_zero`,
-  `isERMSolution_iff_forall_column` — **T-Normal-equations**: ERM iff every
-  residual-prediction pairing vanishes — the papers' `SᵀQ(SG − C) = 0`,
-  invertibility-free.
-* `IsERMSolution.apply_meanings_eq` — **T-Unique-fit**: fitted values on
-  experienced meanings agree across all ERM solutions under positive
-  weights, extending to the whole span (`apply_eq_of_mem_span`) and
-  genuinely diverging off it (`exists_apply_ne` — **T-Underdetermination**);
-  `IsTrainedOn.semSup_eq` transfers well-definedness to the
-  semantic-support measures.
-* `whCorrection`, `whUpdate`, `isERMSolution_iff_whEquilibrium` —
-  **T-Equilibrium**: the endstate of learning is exactly the equilibrium
-  of frequency-weighted Widrow-Hoff error-driven learning.
+* `TrainingExperience`, `FrequencyVector`, `weightedLoss`, `IsERMSolution`,
+  with `IsELSolution`/`IsFILSolution` the uniform and frequency-weighted cases.
+* `TrainingExperience.sqrtScale`, `residualPairing`, `whCorrection`, `whUpdate`.
 
-## Implementation notes
+## Main results
 
-This is not generic regression formalization: the loss function is the
-cognitive commitment ([gahl-baayen-2024] §3) and the frequency-weight
-parameterisation is the cross-theory axis. `squaredDist` is the L²
-kernel the quadratic loss uses, distinct from `Normed.lean`'s sup-norm
-carrier structure. The PMF view of `q.normalize` is a derived bridge
-(`PMF.ofRealWeightFn` in `Core.Probability.Constructions`).
+* `ermSolution_iff_rescaled`: only the empirical distribution of `q` matters.
+* `isERMSolution_iff_coordResidual`: ERM is columnwise-unbeatable regression.
+* `isELSolution_sqrtScale_iff`: FIL under `q` is EL on the `√q`-premultiplied
+  experience ([heitmeier-2024]'s FIL-EL equivalence, invertibility-free).
+* `exists_isERMSolution`: ERM solutions exist, by columnwise orthogonal
+  projection.
+* `isERMSolution_iff_residualPairing_eq_zero`: the normal equations
+  `SᵀQ(SG − C) = 0` as an invertibility-free iff.
+* `IsERMSolution.apply_eq_of_mem_span` / `exists_apply_ne`: fitted values are
+  unique exactly on the span of experienced meanings.
+* `isERMSolution_iff_whEquilibrium`: the endstate of learning is the
+  equilibrium of Widrow-Hoff error-driven learning.
+* `whUpdate_single_eq_rescorlaWagner_update`: on binary cues with uniform
+  salience, a Widrow-Hoff step is a Rescorla-Wagner trial
+  (`Core.RescorlaWagner`).
 
 ## TODO
 
-* Closed form `G = (SᵀS)⁻¹SᵀC` under full column rank
-  ([heitmeier-chuang-baayen-2026] ch. 6; [gahl-baayen-2024] appendix)
-  — a future `Training/ClosedForm.lean`.
-* Widrow-Hoff trajectory convergence to the equilibrium (stochastic
-  approximation); `isERMSolution_iff_whEquilibrium` gives the fixed-point
-  half.
-* Approximate-decodability gap bounds for `semSup` (quantitative form
-  of the Saito contrast).
+Closed form `G = (SᵀS)⁻¹SᵀC` under full column rank; Widrow-Hoff trajectory
+convergence (the fixed-point half is `isERMSolution_iff_whEquilibrium`);
+approximate-decodability gap bounds for `semSup`.
 -/
 
 namespace Processing.Lexical.Discriminative
@@ -775,6 +733,30 @@ theorem isERMSolution_iff_whEquilibrium
     have hzero := errorSum_add_residSum data q G
       (fun l => w fun j' => if l = j' then 1 else 0) j
     linarith
+
+/-- **T-RW-specialization**: on a binary cue vector with uniform salience, one
+    Widrow-Hoff step reproduces one Rescorla-Wagner trial: the updated weight
+    of each cue `l` — the updated map evaluated on the `l`-th basis vector, at
+    the single outcome coordinate — is `Core.RescorlaWagner.update`. The
+    discrete NDL special case of the DLM's learning rule ([heitmeier-2024];
+    [rescorla-wagner-1972] via `Core.Probability.Choice.Learning`). -/
+theorem whUpdate_single_eq_rescorlaWagner_update
+    (rw : Core.RescorlaWagner (Fin d)) (hsal : ∀ c, rw.salience c = 1)
+    (present : Finset (Fin d)) (V : Fin d → ℝ) (l : Fin d) :
+    whUpdate rw.learnRate (fun c => if c ∈ present then (1:ℝ) else 0)
+        ((fun _ => rw.maxCond) : FormVec 1)
+        ((dotFunctional V).smulRight fun _ => 1)
+        (Pi.single l 1) 0
+      = rw.update present V l := by
+  have hsum : (∑ l', if l' ∈ present then V l' else 0) = ∑ c ∈ present, V c := by
+    simp [Finset.sum_ite_mem, Finset.univ_inter]
+  unfold whUpdate Core.RescorlaWagner.update Core.RescorlaWagner.predictionError
+  simp only [LinearMap.add_apply, LinearMap.smul_apply, whCorrection_apply,
+             LinearMap.smulRight_apply, Pi.add_apply, Pi.smul_apply,
+             smul_eq_mul, Pi.sub_apply, dotFunctional_apply, Pi.single_apply,
+             mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
+             if_true, hsal, hsum]
+  split_ifs with h <;> ring
 
 /-! ### Rescaling invariance
 
