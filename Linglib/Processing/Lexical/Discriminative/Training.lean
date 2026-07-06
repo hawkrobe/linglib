@@ -656,11 +656,12 @@ theorem isERMSolution_iff_whEquilibrium
     linarith
 
 /-- **T-RW-specialization**: on a binary cue vector with uniform salience, one
-    Widrow-Hoff step reproduces one Rescorla-Wagner trial: the updated weight
-    of each cue `l` — the updated map evaluated on the `l`-th basis vector, at
-    the single outcome coordinate — is `Core.RescorlaWagner.update`. The
-    discrete NDL special case of the DLM's learning rule ([heitmeier-2024];
-    [rescorla-wagner-1972] via `Core.Probability.Choice.Learning`). -/
+    Widrow-Hoff step reproduces one `Core.RescorlaWagner` trial, reading cue
+    `l`'s weight off the map at the `l`-th basis vector ([heitmeier-2024];
+    [rescorla-wagner-1972]). This is the discrete binary-cue regime of naive
+    discriminative learning (not otherwise formalized in linglib); non-uniform
+    salience has no channel in binary cue coding, so Rescorla-Wagner
+    *overshadowing* is out of scope while *blocking* transfers. -/
 theorem whUpdate_single_eq_rescorlaWagner_update
     (rw : Core.RescorlaWagner (Fin d)) (hsal : ∀ c, rw.salience c = 1)
     (present : Finset (Fin d)) (V : Fin d → ℝ) (l : Fin d) :
