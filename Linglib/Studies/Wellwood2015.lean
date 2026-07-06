@@ -7,46 +7,36 @@ import Linglib.Studies.Bresnan1973
 /-!
 # [wellwood-2015]: On the Semantics of Comparison Across Categories
 
-Data and verification theorems from [wellwood-2015]. All comparative
-sentences — nominal, verbal, and adjectival — share a uniform DegP
-pipeline in which `much` introduces a monotonic measure function μ.
-The cross-categorial parallel (mass/atelic/GA vs count/telic/non-GA)
-follows from mereological status, and dimension availability (§3.4)
-tracks what is measured (states vs entities/events), not lexical
-category.
+Nominal ("more coffee"), verbal ("ran more"), and adjectival ("hotter")
+comparatives share one DegP pipeline: covert `much` denotes an
+assignment-supplied monotonic measure function (eqs. 7/28) and `-er`
+compares strictly against the maximal than-clause degree (eq. 38;
+[von-stechow-1984], [rullmann-1995]), yielding the same truth condition
+in all three domains (eqs. 42/48/65). Felicity with `much` tracks
+mereological status; dimension availability tracks the measured domain,
+not lexical category (§3.4).
 
-## Data sources
+## Main declarations
 
-- §2.1: nominal comparatives (mass vs count nouns)
-- §2.2: verbal comparatives (atelic vs telic VPs)
-- §3.1–3.2: adjectival comparatives (gradable vs non-gradable adjectives)
-- §3.3: morphosyntax — `more` = `much` + `-er` ([bresnan-1973])
-- §3.4: dimension availability tracks the measured domain (exs. 82–89)
-- §5: grammar shifts measurement (exs. 104–105)
-- §6.3: `very` distribution and covert `much` (exs. 117–118)
+* `comparativeTruth`: the shared truth condition, an instance of
+  `Degree.maxComparative`; `comparativeTruth_max` collapses it to direct
+  measure comparison under unique eventualities.
+* `nominalComparative`, `verbalComparative`, `adjectivalComparative`:
+  the three domain instantiations (role × extraction).
+* `felicity_matches_data`: `much`-felicity predicted from mereological
+  status across the §§2–3 data.
+* `dimension_tracks_domain` / `dimension_not_category`: §3.4's
+  domain-based dimension predictor verified on exs. 82–89; the
+  category-based rival refuted on the reversal data.
+* `very_tracks_much_deletion`: the §6.3 `very` asymmetry derived from
+  [bresnan-1973] Much Deletion.
 
-## Compositional pieces
+## Implementation notes
 
-1. `⟦much_μ⟧^A = A(μ)` — the measure function comes from the variable
-   assignment (eqs. 7/28); its monotonicity is a felicity condition on
-   the assignment, not part of the denotation
-2. `⟦-er⟧` — strict comparison (>) against a standard
-3. `⟦than⟧ = λD. max(D)` — the standard is the maximal degree of the
-   than-clause degree set (eq. 38.i; [von-stechow-1984], [rullmann-1995])
-4. `⟦ABS⟧ = λg.λd.λα. g(α) ≥ d` — links degrees to eventuality
-   predicates in the than-clause (eq. 38.ii): matrix `>`, standard `≥`
-5. Predicate Modification conjoins DegP with the base predicate;
-   existential closure applies to the matrix eventuality
-
-The result, for all three domains (eqs. 42, 48, 65):
-
-    ∃α. role(a, α) ∧ P(α) ∧ μ(extract(α)) >
-        max{d | ∃α'. role(b, α') ∧ P(α') ∧ μ(extract(α')) ≥ d}
-
-formalized as `comparativeTruth` via the substrate's
-`Degree.maxComparative`. Under unique-eventuality assumptions it
-collapses to `μ(extract(α_a)) > μ(extract(α_b))` (`comparativeTruth_max`),
-the direct comparison `Degree.comparativeSem` ([schwarzschild-2008]).
+Monotonicity of `A(μ)` is a felicity condition on the assignment, not
+part of the denotation. Example rows are generated from
+`Data/Examples/Wellwood2015.json` and projected into typed data via
+`paperFeatures` adapters.
 -/
 
 namespace Wellwood2015
@@ -68,38 +58,22 @@ inductive LexCat where
   | nonGradableAdj -- wooden, triangular
   deriving DecidableEq, Repr
 
-/-! ### Felicity with `much`/`more` (§2.1, §2.2, §3.1–3.2) -/
-
-/-- Observed felicity of `much`/`more` with a lexical category.
-
-    - "Al bought more coffee than Bill did." ✓ (mass)
-    - "?Al has more idea than Bill does." ✗ (count)
-    - "Al ran more than Bill did." ✓ (atelic)
-    - "?Al graduated high school more than Bill did." ✗ (telic)
-    - "Al's coffee is hotter than Bill's." ✓ (gradable)
-    - "?This piece of wood is more wooden than that one." ✗ (non-gradable, ex. 53a) -/
+/-- Observed felicity of `much`/`more` with a lexical category (§§2–3). -/
 structure MuchFelicityDatum where
   category : LexCat
   felicitousWithMuch : Bool
   deriving DecidableEq, Repr
 
-/-! ### The measured domain (§3.4) -/
-
-/-- What a comparative measures — the ontological domain whose
-    mereological structure determines the available dimensions.
-    The key §3.4 insight: dimension type (intensive vs extensive)
-    tracks the measured domain, not lexical category. -/
+/-- The ontological domain a comparative measures; dimension type tracks
+    this, not the lexical category (§3.4). -/
 inductive MeasuredDomain where
   | entity  -- physical objects (coffee, plastic, glass)
   | event   -- events/processes (driving, singing)
   | state   -- states (heat, hardness, speed, loudness)
   deriving DecidableEq, Repr
 
-/-- A dimension datum (§3.4, exs. 82–89): a comparative form, its lexical
-    category, the domain it measures, and whether the available dimension
-    is intensive. The reversal cases — `fuller`/`heavier` (GAs measuring
-    entities → extensive, ex. 84) and `more heat`/`more firmness` (nouns
-    measuring states → intensive, ex. 85) — cross category against domain. -/
+/-- A §3.4 dimension observation (exs. 82–89): form, category, measured
+    domain, and dimension type. -/
 structure DimensionReversalDatum where
   form : String
   category : LexCat
@@ -109,11 +83,9 @@ structure DimensionReversalDatum where
 
 /-! ### Example data
 
-The paper's examples live in `Data/Examples/Wellwood2015.json` (generated
-module `Data.Examples.Wellwood2015`); the adapters below project the
-`paperFeatures` of each dataset into the typed rows the verification
-theorems quantify over. Positive-witness examples guard against a
-silently empty adapter image. -/
+Typed rows projected from `Data.Examples.Wellwood2015` via
+`paperFeatures`; the anonymous `example`s guard against a silently empty
+adapter image. -/
 
 open Data.Examples (LinguisticExample)
 
@@ -134,8 +106,7 @@ def measuredDomainOfFeature : String → Option MeasuredDomain
   | "state"  => some .state
   | _        => none
 
-/-- Adapter: a `muchFelicity` example as a typed row; felicity is an
-    `acceptable` judgment. -/
+/-- Project a `muchFelicity` example; felicity is an `acceptable` judgment. -/
 def MuchFelicityDatum.ofExample (e : LinguisticExample) : Option MuchFelicityDatum := do
   guard (e.feature? "dataset" = some "muchFelicity")
   let c ← lexCatOfFeature (← e.feature? "category")
@@ -147,7 +118,7 @@ def muchFelicityData : List MuchFelicityDatum :=
 
 example : (⟨.massNoun, true⟩ : MuchFelicityDatum) ∈ muchFelicityData := by decide
 
-/-- Adapter: a `dimension` example (exs. 82–89) as a typed row. -/
+/-- Project a `dimension` example (exs. 82–89). -/
 def DimensionReversalDatum.ofExample (e : LinguisticExample) :
     Option DimensionReversalDatum := do
   guard (e.feature? "dataset" = some "dimension")
@@ -155,86 +126,19 @@ def DimensionReversalDatum.ofExample (e : LinguisticExample) :
   let m ← measuredDomainOfFeature (← e.feature? "measuredDomain")
   return ⟨e.primaryText, c, m, e.feature? "intensive" == some "true"⟩
 
-/-- The ten dimension observations of §3.4 (exs. 82–89). -/
+/-- The ten dimension observations of §3.4. -/
 def dimensionReversalData : List DimensionReversalDatum :=
   Examples.all.filterMap DimensionReversalDatum.ofExample
 
 example : (⟨"fuller", .gradableAdj, .entity, false⟩ : DimensionReversalDatum) ∈
     dimensionReversalData := by decide
 
-/-! ### Comparative derivations (§2.1–2.3, §3.2)
+/-! ### The comparative truth condition (§§2.1–3.2) -/
 
-### Nominal comparative derivation (§2.1, eqs. 36–42)
-
-    "Al drank more coffee than Bill did"
-
-    Bottom-up composition (eq. 37):
-
-    1. ⟦Deg'⟧^A = λd.λα. A(μ)(α) > d                     (eq. 37.i: IE, FA)
-    2. ⟦DegP⟧^A = λα. A(μ)(α) > δ                         (eq. 37.ii: FA with δ)
-    3. ⟦NP⟧^A = λy. coffee(y) ∧ A(μ)(y) > δ               (eq. 37.iii: PM)
-    4. ⟦eP⟧^A = εy[coffee(y) ∧ A(μ)(y) > δ]               (eq. 37.iv: ε)
-    5. ⟦VP⟧^A = λe. drink(e)(εy[...])                      (eq. 37.v: FA)
-    6. ⟦vP⟧^A = λx.λe. Agent(e)(x) ∧ VP(e)                (eq. 37.vi: EI)
-    7. ⟦S⟧^A = λe. Agent(e)(a) ∧ VP(e)                     (eq. 37.vii: FA)
-    8. = ⊤ iff ∃e[Agent(e)(a) ∧ ...]                       (eq. 37.viii: ∃-closure)
-
-    Than-clause (eqs. 39–41):
-    δ = max(λd.∃e[Agent(e)(b) ∧ drink(e)(εy[coffee(y) ∧ A(μ)(y) ≥ d])])
-
-    Full truth conditions (eq. 42):
-    ∃e[Agent(e)(a) ∧ drink(e)(εx[coffee(x) ∧ A(μ)(x) >
-      max(λd.∃e'[Agent(e')(b) ∧ drink(e')(εy[coffee(y) ∧ A(μ)(y) ≥ d])])])]
-
-    Abstracting away ε, with `themeOf` extracting the measured entity:
-    ∃ea. Agent(a, ea) ∧ P(ea) ∧ μ(theme(ea)) >
-      max{d | ∃eb. Agent(b, eb) ∧ P(eb) ∧ μ(theme(eb)) ≥ d}
-
-### Verbal comparative derivation (§2.2, eqs. 43–48)
-
-    "Al ran more than Bill did"
-
-    1. ⟦Deg'⟧^A = λd.λα. A(μ)(α) > d                     (eq. 45.i)
-    2. ⟦DegP⟧^A = λα. A(μ)(α) > δ                         (eq. 45.ii)
-    3. ⟦VP⟧^A = λe. run(e) ∧ A(μ)(e) > δ                  (eq. 45.iii: PM)
-    4. ⟦vP⟧^A = λx.λe. Agent(e)(x) ∧ run(e) ∧ A(μ)(e) > δ (eq. 45.iv: EI)
-    5. ⟦S⟧^A = λe. Agent(e)(a) ∧ run(e) ∧ A(μ)(e) > δ     (eq. 45.v: FA)
-    6. = ⊤ iff ∃e[Agent(e)(a) ∧ run(e) ∧ A(μ)(e) > δ]     (eq. 45.vi: ∃-closure)
-
-    Than-clause (eq. 47):
-    δ = max(λd.∃e[Agent(e)(b) ∧ run(e) ∧ A(μ)(e) ≥ d])
-
-    Full truth conditions (eq. 48):
-    ∃e'[Agent(e')(a) ∧ run(e') ∧ A(μ)(e') >
-      max(λd.∃e[Agent(e)(b) ∧ run(e) ∧ A(μ)(e) ≥ d])]
-
-### Adjectival comparative derivation (§3.2, eqs. 57–65)
-
-    "Al's coffee is hotter than Bill's"
-
-    1. ⟦hot⟧ = λs.hot(s)                                   (eq. 57a)
-    2. `-er` composes with `much` first, and the resulting
-       Deg' = λd.λs. A(μ)(s) > d combines with the GA by PM
-    3. ⟦AP⟧ = λs. hot(s) ∧ A(μ)(s) > δ                    (eq. 61.iii)
-    4. ∃s[Holder(s)(a) ∧ hot(s) ∧ A(μ)(s) > δ]             (eq. 65)
--/
-
-/-! ### The comparative truth condition -/
-
-/-- The compositional comparative truth condition (eqs. 42, 48, 65):
-    "a V-s more P than b does" is true iff some a-eventuality satisfies
-    `P` and its measured value strictly exceeds the maximum of the
-    than-clause degree set — `Degree.maxComparative` with role-restricted
-    matrix and than-clause predicates and measure `μ ∘ extract`.
-
-    The three domains differ only in the thematic role, extraction
-    function, and measured ontological sort:
-
-    | Domain     | role   | extract  | Measured | Example            |
-    |------------|--------|----------|----------|--------------------|
-    | Nominal    | Agent  | themeOf  | Entity   | "more coffee than" |
-    | Verbal     | Agent  | id       | Event    | "ran more than"    |
-    | Adjectival | Holder | id       | State    | "hotter than"      | -/
+/-- The truth condition shared by eqs. 42/48/65: some role-`a`
+    eventuality satisfies `P` and measures strictly above the maximal
+    than-clause degree. The domains differ only in role (Agent/Holder)
+    and extraction (`themeOf`/`id`). -/
 def comparativeTruth {Ent α Measured : Type*}
     (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ)
@@ -242,9 +146,8 @@ def comparativeTruth {Ent α Measured : Type*}
   maxComparative (fun e => role a e ∧ P e) (fun e => role b e ∧ P e)
     (fun e => μ (extract e))
 
-/-- Maximality reduction: when `a` and `b` each have a unique
-    P-eventuality, the comparative reduces to direct measure comparison
-    (`Degree.maxComparative_unique`). -/
+/-- Unique matrix and than eventualities collapse the comparative to
+    direct measure comparison. -/
 theorem comparativeTruth_max {Ent α Measured : Type*}
     {role : Ent → α → Prop} {P : α → Prop}
     {extract : α → Measured} {μ : Measured → ℚ}
@@ -263,27 +166,20 @@ theorem comparativeTruth_max {Ent α Measured : Type*}
 section Domains
 variable {Entity Time : Type*} [LinearOrder Time]
 
-/-- Nominal comparative (§2.1, eq. 42):
-    "Al bought more coffee than Bill did."
-
-    Measured domain: entities (via `themeOf`). Role: Agent. -/
+/-- Nominal comparative (§2.1, eq. 42): Agent role, entities measured via
+    `themeOf`. -/
 def nominalComparative (frame : ThematicFrame Entity Time)
     (P : Event Time → Prop) (themeOf : Event Time → Entity)
     (μ : Entity → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P themeOf μ a b
 
-/-- Verbal comparative (§2.2, eq. 48):
-    "Al ran more than Bill did."
-
-    Measured domain: events directly (extract = id). Role: Agent. -/
+/-- Verbal comparative (§2.2, eq. 48): Agent role, events measured directly. -/
 def verbalComparative (frame : ThematicFrame Entity Time)
     (P : Event Time → Prop) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
 
-/-- Adjectival comparative (§3.2, eq. 65):
-    "This coffee is hotter than that coffee."
-
-    Measured domain: states directly (extract = id). Role: Holder. -/
+/-- Adjectival comparative (§3.2, eq. 65): Holder role, states measured
+    directly. -/
 def adjectivalComparative (frame : ThematicFrame Entity Time)
     (P : Event Time → Prop) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
@@ -321,7 +217,7 @@ theorem adjectival_max_reduces {frame : ThematicFrame Entity Time}
     adjectivalComparative frame P μ a b ↔ μ sb < μ sa :=
   comparativeTruth_max ha ha_unique hb hb_unique
 
-/-- Under maximality, every domain's comparative is the direct comparison
+/-- Under maximality, every domain's comparative is
     `Degree.comparativeSem` ([schwarzschild-2008]) on measured values. -/
 theorem max_eq_comparativeSem {Measured : Type*}
     {role : Entity → Event Time → Prop}
@@ -350,25 +246,22 @@ def lexCatToStatus : LexCat → MereologicalStatus
   | .gradableAdj    => gradableToStatus
   | .nonGradableAdj => nonGradableToStatus
 
-/-- The theory's felicity prediction: `much` requires mereological
-    structure, i.e. cumulative status. -/
+/-- `much` is predicted felicitous exactly with cumulative status. -/
 def predictsFelicitous (s : MereologicalStatus) : Prop := s = .cumulative
 
 instance : DecidablePred predictsFelicitous :=
   fun s => inferInstanceAs (Decidable (s = .cumulative))
 
-/-- §§2–3 verified: the predicted felicity matches the observed judgment
-    for all six lexical categories. -/
+/-- Predicted felicity matches the observed judgment for all six
+    categories (§§2–3). -/
 theorem felicity_matches_data :
     ∀ d ∈ muchFelicityData,
       (predictsFelicitous (lexCatToStatus d.category) ↔
         d.felicitousWithMuch = true) := by
   decide
 
-/-- The cross-categorial parallel (§§2–3): mass nouns, atelic VPs, and
-    GAs share cumulative status; count nouns, telic VPs, and non-GAs
-    share quantized status — each derived through an independent
-    substrate route (number, telicity, gradability). -/
+/-- Mass/atelic/GA share cumulative status and count/telic/non-GA
+    quantized, via independent substrate routes (§§2–3). -/
 theorem cross_categorial_parallel :
     lexCatToStatus .massNoun = lexCatToStatus .atelicVP ∧
     lexCatToStatus .atelicVP = lexCatToStatus .gradableAdj ∧
@@ -376,55 +269,36 @@ theorem cross_categorial_parallel :
     lexCatToStatus .telicVP = lexCatToStatus .nonGradableAdj :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-! ### Dimensional restriction (§3.4)
+/-! ### Dimensional restriction (§3.4) -/
 
-§3.4's generalization: available dimensions track the measured domain.
-State domains afford exactly one dimension; entity/event domains afford
-several (weight, volume; distance, duration). Order-theoretically:
-state domains are linearly ordered, so any two admissible measures
-agree (`Semantics.Measurement.linearOrder_dimensionallyRestricted`);
-entity/event domains have incomparable parts, over which admissible
-measures can disagree (`Semantics.Measurement.prod_not_dimensionallyRestricted`). -/
-
-/-- The domain-based §3.4 predictor: the dimension is intensive (fixed)
-    iff the measured domain is a state domain. Backed by
-    `linearOrder_dimensionallyRestricted` (states) and
-    `prod_not_dimensionallyRestricted` (entities/events). -/
+/-- The §3.4 predictor: intensive iff the measured domain is states —
+    linearly ordered (`linearOrder_dimensionallyRestricted`), unlike
+    entity/event domains (`prod_not_dimensionallyRestricted`). -/
 def domainRestricted (m : MeasuredDomain) : Prop := m = .state
 
 instance : DecidablePred domainRestricted :=
   fun m => inferInstanceAs (Decidable (m = .state))
 
-/-- §3.4 verified: across all ten dimension data (exs. 82–89), intensive
-    dimensions occur exactly in state-measuring comparatives. -/
+/-- Intensive dimensions occur exactly in state-measuring comparatives
+    (exs. 82–89). -/
 theorem dimension_tracks_domain :
     ∀ d ∈ dimensionReversalData,
       (domainRestricted d.measuredDomain ↔ d.intensive = true) := by
   decide
 
-/-- The lexicalist rival §3.4 argues against: dimension fixed by lexical
-    category (GAs and only GAs have a lexically fixed dimension). -/
+/-- The lexicalist rival: dimension fixed iff the category is GA. -/
 def categoryRestricted (c : LexCat) : Prop := c = .gradableAdj
 
 instance : DecidablePred categoryRestricted :=
   fun c => inferInstanceAs (Decidable (c = .gradableAdj))
 
-/-- §3.4's argument-by-reversal: the category-based predictor fails on
-    the reversal data — `fuller` is a GA measuring entities (extensive,
-    ex. 84a), `more heat` a noun measuring states (intensive, ex. 85a). -/
+/-- The category predictor fails on the reversal data (`fuller`, ex. 84a). -/
 theorem dimension_not_category :
     ¬ ∀ d ∈ dimensionReversalData,
       (categoryRestricted d.category ↔ d.intensive = true) := by
   decide
 
-/-! ### Grammar shifts measurement (§5)
-
-(104) "more rock" (WEIGHT/VOLUME, *NUMBER) vs "more rocks"
-(*WEIGHT/*VOLUME, NUMBER): the plural shifts mass to count.
-(105) "ran in the park more" (DISTANCE/DURATION/NUMBER) vs "ran to the
-park more" (*DISTANCE/*DURATION, NUMBER): the directional PP shifts
-atelic to telic. Both shifts flip mereological status, blocking the
-extensive dimensions. -/
+/-! ### Grammar shifts measurement (§5) -/
 
 /-- Ex. (104): the plural morpheme shifts cumulative to quantized. -/
 theorem rock_shift_status :
@@ -432,16 +306,14 @@ theorem rock_shift_status :
   ⟨rfl, rfl⟩
 
 /-- Ex. (105): telicization (the directional PP) shifts cumulative to
-    quantized, via `AspectualProfile.telicize` on the activity profile. -/
+    quantized. -/
 theorem run_shift_via_telicize :
     let p : AspectualProfile := activityProfile
     telicityToStatus p.telicity = .cumulative ∧
     telicityToStatus p.telicize.telicity = .quantized :=
   telicize_shifts_status _ rfl
 
-/-- Atelicization (e.g. the progressive) shifts quantized back to
-    cumulative, via `AspectualProfile.atelicize` on the accomplishment
-    profile — the reverse of the (105) shift. -/
+/-- Atelicization (the progressive) reverses the (105) shift. -/
 theorem build_shift_via_atelicize :
     let p : AspectualProfile := accomplishmentProfile
     telicityToStatus p.telicity = .quantized ∧
@@ -450,12 +322,8 @@ theorem build_shift_via_atelicize :
 
 /-! ### Bresnan's decomposition (§3.3) -/
 
-/-- [bresnan-1973] decomposition: `more` = `-er` + `much`. The SAME QP
-    underlies `more` across nominal ("more coffee"), verbal ("ran more"),
-    and adverbial ("more quickly") domains; adjectival comparatives
-    ("taller") differ only by Much Deletion — `much` → ∅ before an
-    adjective (Wellwood's (74)). The QP structure and suppletion are in
-    `Bresnan1973`. -/
+/-- [bresnan-1973]'s QP `-er` + `much`, underlying `more` in all domains;
+    adjectives differ only by Much Deletion (Wellwood's (74)). -/
 def crossCategorialQP : Bresnan1973.QP := ⟨.er, .much⟩
 
 /-- The surface form "more" derives from Bresnan's suppletion. -/
@@ -463,29 +331,23 @@ theorem crossCategorial_more_from_suppletion :
     Bresnan1973.suppletion crossCategorialQP = some "more" := rfl
 
 /-- Covert `much` on GAs (§6.3) is Much Deletion: `much` → ∅ before an
-    adjective (Wellwood's (74)). -/
+    adjective. -/
 theorem covert_much_is_bresnan_deletion :
     Bresnan1973.muchDeletionApplies .much (adjFollows := true) = true := rfl
 
-/-- N/V retain overt `much` because Much Deletion only applies before
-    an adjective. -/
+/-- N/V retain overt `much`: Much Deletion only applies before an adjective. -/
 theorem overt_much_no_deletion :
     Bresnan1973.muchDeletionApplies .much (adjFollows := false) = false := rfl
 
 /-! ### `very` distribution (§6.3) -/
 
-/-- §6.3 (exs. 117–118): whether `very` requires overt `much`.
-
-    - GAs: `much` is covert → `very` combines directly
-      ("very hot", *"very much hot")
-    - N/V: `much` must be overt → `very` requires overt `much`
-      ("very much coffee", *"very coffee"; "ran very much") -/
+/-- Whether `very` requires overt `much` (§6.3, exs. 117–118). -/
 structure VeryDistributionDatum where
   category : LexCat
   requiresOvertMuch : Bool
   deriving DecidableEq, Repr
 
-/-- Adapter: a `very` example as a typed row. -/
+/-- Project a `very` example. -/
 def VeryDistributionDatum.ofExample (e : LinguisticExample) :
     Option VeryDistributionDatum := do
   guard (e.feature? "dataset" = some "very")
@@ -499,9 +361,8 @@ def veryDistributionData : List VeryDistributionDatum :=
 example : (⟨.gradableAdj, false⟩ : VeryDistributionDatum) ∈ veryDistributionData := by
   decide
 
-/-- The `very` asymmetry follows from Much Deletion: `much` deletes
-    exactly before adjectives, so only GAs host covert `much`, and
-    `very` requires overt `much` everywhere else. -/
+/-- The `very` asymmetry follows from Much Deletion: only GAs host
+    covert `much`. -/
 theorem very_tracks_much_deletion :
     ∀ d ∈ veryDistributionData,
       d.requiresOvertMuch =
