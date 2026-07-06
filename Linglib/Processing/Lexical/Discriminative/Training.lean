@@ -57,6 +57,14 @@ of both `S` and `C` — `ermSolution_iff_rescaled` connects the two forms.
 * `exists_isERMSolution` — **T-Existence**: ERM solutions exist for any
   nonnegative weights, by the Hilbert projection theorem applied
   columnwise to the prediction subspace.
+* `residualPairing`, `isERMSolution_iff_residualPairing_eq_zero`,
+  `isERMSolution_iff_forall_column` — **T-Normal-equations**: ERM iff every
+  residual-prediction pairing vanishes — the papers' `SᵀQ(SG − C) = 0`,
+  invertibility-free.
+* `IsERMSolution.apply_meanings_eq` — **T-Unique-fit**: fitted values on
+  experienced meanings agree across all ERM solutions under positive
+  weights; `IsTrainedOn.semSup_eq` transfers this to the semantic-support
+  measures.
 
 ## Implementation notes
 
@@ -434,6 +442,161 @@ theorem isERMSolution_of_interpolates
   rw [h0]
   exact weightedLoss_nonneg data hq G'
 
+/-! ### Normal equations: ERM ⟺ residual orthogonality
+
+[gahl-baayen-2024]'s appendix and [heitmeier-2024] compute the mappings from
+the normal equations of regression (`SᵀQ(SG − C) = 0` premultiplied into closed
+form under invertibility). Stated invertibility-free: `G` is an ERM solution
+iff every residual-prediction pairing vanishes — the first-order condition of
+the quadratic loss. Fitted values on experienced meanings are therefore unique
+across ERM solutions, which is what makes the model's predictions (and the
+`semSup` measures) well-defined properties of the training experience. -/
+
+/-- The `q`-weighted pairing of `G`'s residuals with `H`'s predictions:
+    `∑ᵢ qᵢ ⟨G(sᵢ) − cᵢ, H(sᵢ)⟩`. The normal equations say this vanishes
+    for every `H` exactly at the ERM solutions. -/
+def residualPairing (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (G H : MeaningVec d →ₗ[ℝ] FormVec n) : ℝ :=
+  ∑ i, q i * ∑ j, (G (data.meanings i) j - data.forms i j) * H (data.meanings i) j
+
+/-- The `q`-weighted squared magnitude of `H`'s predictions on the
+    training meanings. -/
+def predictionEnergy (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (H : MeaningVec d →ₗ[ℝ] FormVec n) : ℝ :=
+  ∑ i, q i * ∑ j, H (data.meanings i) j ^ 2
+
+theorem predictionEnergy_nonneg (data : TrainingExperience m n d)
+    {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    (H : MeaningVec d →ₗ[ℝ] FormVec n) : 0 ≤ predictionEnergy data q H :=
+  Finset.sum_nonneg fun i _ =>
+    mul_nonneg (hq i) (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+
+theorem residualPairing_smul (data : TrainingExperience m n d)
+    (q : FrequencyVector m) (G : MeaningVec d →ₗ[ℝ] FormVec n) (t : ℝ)
+    (H : MeaningVec d →ₗ[ℝ] FormVec n) :
+    residualPairing data q G (t • H) = t * residualPairing data q G H := by
+  unfold residualPairing
+  simp only [LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+
+theorem predictionEnergy_smul (data : TrainingExperience m n d)
+    (q : FrequencyVector m) (t : ℝ) (H : MeaningVec d →ₗ[ℝ] FormVec n) :
+    predictionEnergy data q (t • H) = t ^ 2 * predictionEnergy data q H := by
+  unfold predictionEnergy
+  simp only [LinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+
+/-- Quadratic expansion of the weighted loss around `G`: perturbing by `H`
+    adds twice the residual pairing plus the energy of the perturbation. -/
+theorem weightedLoss_add (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (G H : MeaningVec d →ₗ[ℝ] FormVec n) :
+    weightedLoss data q (G + H)
+      = weightedLoss data q G + 2 * residualPairing data q G H
+        + predictionEnergy data q H := by
+  unfold weightedLoss residualPairing predictionEnergy squaredDist
+  simp only [LinearMap.add_apply, Pi.add_apply, Finset.mul_sum]
+  rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl fun j _ => by ring
+
+/-- **T-Normal-equations**: `G` is an ERM solution iff every residual-prediction
+    pairing vanishes — the first-order condition of the quadratic loss, with no
+    invertibility hypothesis. -/
+theorem isERMSolution_iff_residualPairing_eq_zero
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} :
+    IsERMSolution data q G ↔
+      ∀ H : MeaningVec d →ₗ[ℝ] FormVec n, residualPairing data q G H = 0 := by
+  constructor
+  · intro hG H
+    set B := residualPairing data q G H with hB
+    set E := predictionEnergy data q H with hE
+    have hE0 : 0 ≤ E := predictionEnergy_nonneg data hq H
+    have key := hG (G + (-(B / (E + 1))) • H)
+    rw [weightedLoss_add, residualPairing_smul, predictionEnergy_smul] at key
+    have hE1 : (0:ℝ) < E + 1 := by linarith
+    set t : ℝ := -(B / (E + 1)) with ht'
+    have ht : t * (E + 1) = -B := by
+      rw [ht']; field_simp
+    have htB : t * B = -(t ^ 2 * (E + 1)) := by
+      have hBt : B = -(t * (E + 1)) := by rw [ht]; ring
+      rw [hBt]; ring
+    have h0 : 0 ≤ 2 * (t * B) + t ^ 2 * E := by linarith
+    have ht2 : t ^ 2 ≤ 0 := by nlinarith [sq_nonneg t, hE0]
+    have htz : t = 0 := sq_eq_zero_iff.mp (le_antisymm ht2 (sq_nonneg t))
+    have hBz : -B = 0 := by rw [← ht, htz]; ring
+    linarith
+  · intro h G'
+    have hG' : G + (G' - G) = G' := by abel
+    have hexp := weightedLoss_add data q G (G' - G)
+    rw [hG', h (G' - G)] at hexp
+    have := predictionEnergy_nonneg data hq (G' - G)
+    linarith [hexp.ge, hexp.le]
+
+/-- The normal equations in the papers' columnwise form: for every form
+    coordinate, the `q`-weighted residual column is orthogonal to every linear
+    functional of the meanings — quantifying over functionals is `SᵀQ(SG − C) = 0`
+    with `Sᵀ`'s rows generalized to the full dual space. -/
+theorem isERMSolution_iff_forall_column
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} :
+    IsERMSolution data q G ↔
+      ∀ (j : Fin n) (w : MeaningVec d →ₗ[ℝ] ℝ),
+        ∑ i, q i * ((G (data.meanings i) j - data.forms i j) * w (data.meanings i))
+          = 0 := by
+  rw [isERMSolution_iff_residualPairing_eq_zero hq]
+  have hswap : ∀ H : MeaningVec d →ₗ[ℝ] FormVec n,
+      residualPairing data q G H
+        = ∑ j, ∑ i, q i *
+            ((G (data.meanings i) j - data.forms i j) * H (data.meanings i) j) := by
+    intro H
+    unfold residualPairing
+    simp only [Finset.mul_sum]
+    exact Finset.sum_comm
+  constructor
+  · intro h j w
+    have := h ((LinearMap.single ℝ (fun _ : Fin n => ℝ) j).comp w)
+    rw [hswap] at this
+    simpa [LinearMap.comp_apply, LinearMap.single_apply, Pi.single_apply,
+           mul_ite, mul_zero, Finset.sum_ite_irrel, Finset.sum_const_zero,
+           Finset.sum_ite_eq', Finset.mem_univ] using this
+  · intro h H
+    rw [hswap]
+    refine Finset.sum_eq_zero fun j _ => ?_
+    simpa using h j ((LinearMap.proj j).comp H)
+
+/-- **T-Unique-fit**: all ERM solutions under positive weights produce the same
+    predicted form for every experienced meaning — fitted values are unique even
+    when the ERM map is not. Differences between ERM solutions live entirely off
+    the training span. -/
+theorem IsERMSolution.apply_meanings_eq
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 < q i)
+    {G G' : MeaningVec d →ₗ[ℝ] FormVec n}
+    (hG : IsERMSolution data q G) (hG' : IsERMSolution data q G') (i : Fin m) :
+    G (data.meanings i) = G' (data.meanings i) := by
+  have hB := (isERMSolution_iff_residualPairing_eq_zero fun k => (hq k).le).mp
+    hG (G' - G)
+  have hGadd : G + (G' - G) = G' := by abel
+  have hexp := weightedLoss_add data q G (G' - G)
+  rw [hGadd, hB] at hexp
+  have hE : predictionEnergy data q (G' - G) = 0 := by
+    have h1 := hG G'
+    have h2 := hG' G
+    linarith
+  have hterm : ∀ k ∈ Finset.univ,
+      (0:ℝ) ≤ q k * ∑ j, (G' - G) (data.meanings k) j ^ 2 := fun k _ =>
+    mul_nonneg (hq k).le (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+  have hi := (Finset.sum_eq_zero_iff_of_nonneg hterm).mp hE i (Finset.mem_univ i)
+  have hsum : ∑ j, (G' - G) (data.meanings i) j ^ 2 = 0 :=
+    (mul_eq_zero.mp hi).resolve_left (hq i).ne'
+  funext j
+  have hj := (Finset.sum_eq_zero_iff_of_nonneg fun j _ => sq_nonneg _).mp
+    hsum j (Finset.mem_univ j)
+  have h0 : G' (data.meanings i) j - G (data.meanings i) j = 0 := by
+    simpa [LinearMap.sub_apply, Pi.sub_apply] using sq_eq_zero_iff.mp hj
+  linarith [sub_eq_zero.mp h0]
+
 /-! ### Rescaling invariance
 
 The "frequency-vector-as-counts" view (DLM-paper-faithful) and the
@@ -632,6 +795,17 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
     semSup D (data.meanings i) j₀ = data.forms i j₀ :=
   IsERMSolution.coord_eq_of_decodable hq hD hw i
+
+/-- Two DLMs trained on the same experience and weights have identical semantic
+    support at every experienced meaning (`IsERMSolution.apply_meanings_eq`):
+    `semSup` is a well-defined property of the training experience, not of the
+    particular ERM solution. -/
+theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq
+    {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
+    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q)
+    (hq : ∀ i, 0 < q i) (i : Fin m) (j : Fin n) :
+    semSup D (data.meanings i) j = semSup D' (data.meanings i) j :=
+  congrFun (IsERMSolution.apply_meanings_eq hq hD hD' i) j
 
 /-- [heitmeier-chuang-baayen-2026]'s *Semantic Support for Form* — `semSupWord`
     over a word's cue coordinates — equals the sum of the observed form values
