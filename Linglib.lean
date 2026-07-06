@@ -119,6 +119,8 @@ import Linglib.Core.Data.List.Factors
 import Linglib.Core.Data.List.Fold
 import Linglib.Core.Data.List.Sublist
 import Linglib.Core.Data.List.TakeDrop
+import Linglib.Core.Data.Multiset.Antidiagonal
+import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Perm
