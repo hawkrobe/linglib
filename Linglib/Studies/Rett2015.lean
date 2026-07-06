@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Degree.Gradability.Construction
 
 /-!
