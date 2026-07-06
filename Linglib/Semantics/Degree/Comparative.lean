@@ -54,10 +54,12 @@ abbrev ScaleDirection := ScalePolarity
 /-! ### Comparative and equative semantics -/
 
 section Direct
-variable {Entity : Type*} {α : Type*} [LinearOrder α]
+variable {Entity : Type*} {α : Type*} [Preorder α]
 
 /-- Comparative semantics ([rett-2026], [schwarzschild-2008]): "A is Adj-er
-than B" iff `μ a` exceeds `μ b` on the directed scale. -/
+than B" iff `μ a` exceeds `μ b` on the directed scale. Only `[Preorder α]`
+— connectedness-agnostic background orderings (CSW confidence states)
+are in scope. -/
 def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
   match dir with
   | .positive => μ a > μ b
@@ -83,9 +85,10 @@ theorem equativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
 
 /-- **MAX–direct bridge**: the direct comparison `μ a > μ b` is equivalent to
 the MAX-based formulation. -/
-theorem comparativeSem_eq_MAX (μ : Entity → α) (a b : Entity) :
+theorem comparativeSem_eq_MAX {β : Type*} [LinearOrder β] (μ : Entity → β)
+    (a b : Entity) :
     comparativeSem μ a b .positive ↔
-      ∃ m ∈ maxOnScale .gt ({μ b} : Set α), μ a > m := by
+      ∃ m ∈ maxOnScale .gt ({μ b} : Set β), μ a > m := by
   simp only [comparativeSem, maxOnScale_singleton, Set.mem_singleton_iff, exists_eq_left]
 
 /-! ### Antonymy as scale reversal -/

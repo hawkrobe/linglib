@@ -57,7 +57,7 @@ witnesses the central cross-framework disagreement against
 
 namespace CarianiSantorioWellwood2024
 
-open Semantics.Gradability.StatesBased
+open Degree
 open Semantics.Attitudes.Confidence
 open Semantics.Attitudes.EpistemicThreshold (AgentCredence isProbabilistic
   meetsThreshold prob_conjunction_elim confidence_not_probabilistic)
@@ -237,7 +237,7 @@ certain that p than that q" are truth-conditionally equivalent.
 
 CSW p.31 explanation: the comparative discards the contrast function
 and uses only the shared background ordering. The substrate captures
-this **architecturally** — `statesComparativeSem` takes no
+this **architecturally** — `Degree.comparativeSem` takes no
 `StatesBasedEntry` parameter, so the contrast point that distinguishes
 `confident` from `certain` is invisible to the comparative. The
 prediction holds by construction. -/
@@ -253,7 +253,7 @@ prediction holds by construction. -/
 theorem comparative_equivalence_structural {E W D : Type*} [Preorder D]
     (μ : ConfidenceState E W → D)
     (s_p s_q : ConfidenceState E W) :
-    statesComparativeSem μ s_p s_q ↔ μ s_q < μ s_p :=
+    comparativeSem μ s_p s_q .positive ↔ μ s_q < μ s_p :=
   Iff.rfl
 
 /-! ## §5. POS-Free Positive Form (CSW §3.3)

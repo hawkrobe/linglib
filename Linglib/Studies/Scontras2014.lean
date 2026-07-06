@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
@@ -56,7 +56,7 @@ Dependency chain:
 
 namespace Scontras2014
 
-open Semantics.Measurement
+open Degree
   (QuantizingNounClass ContainerReading licensesMeasureReading)
 open English.MeasurePhrases
 

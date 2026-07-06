@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Degree.Gradability.GradableNouns
-import Linglib.Semantics.Degree.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
 import Linglib.Semantics.Degree.Gradability.Intensification
 
 /-!
@@ -41,7 +41,7 @@ namespace Quantification.Binominal
 
 open Semantics.Gradability
 open Semantics.Gradability.GradableNouns (GradableNoun)
-open Semantics.Measurement (QuantizingNounClass)
+open Degree (QuantizingNounClass)
 
 /-! ### : Evaluative BNP Semantics -/
 

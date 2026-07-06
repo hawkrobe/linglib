@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Gradability.StatesBased
+import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Degree.Comparative
 
 /-!
@@ -48,7 +49,7 @@ It does NOT validate:
 
 namespace Semantics.Attitudes.Confidence
 
-open Semantics.Gradability.StatesBased
+open Degree
 open Core.Order (ComparativeScale Boundedness)
 /-! ## §1. Confidence States -/
 
@@ -313,7 +314,7 @@ def comparativeConfidenceLogicalForm {E W : Type*}
     s_p.holder = holder ∧ s_p.theme = p ∧
     s_q.holder = holder ∧ s_q.theme = q ∧
     letI := co.toPreorder
-    statesComparativeSem μ s_p s_q
+    comparativeSem μ s_p s_q .positive
 
 /-! ### Faithful comparative (CSW (47)) and the admissibility spine -/
 
@@ -340,8 +341,8 @@ theorem confidence_more_of_ordering {E W D : Type*} [Preorder D]
     (co : ConfidenceOrdering E W) (μ : ConfidenceState E W → D)
     {s_p s_q : ConfidenceState E W} :
     letI := co.toPreorder
-    admissibleMeasure μ → s_q < s_p → statesComparativeSem μ s_p s_q := by
+    admissibleMeasure μ → s_q < s_p → comparativeSem μ s_p s_q .positive := by
   letI := co.toPreorder
-  exact fun h hlt => statesComparativeSem_of_lt μ h hlt
+  exact fun h hlt => h hlt
 
 end Semantics.Attitudes.Confidence

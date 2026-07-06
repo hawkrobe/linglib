@@ -1,5 +1,5 @@
 import Linglib.Features.Dimension
-import Linglib.Semantics.Degree.Measurement.Basic
+import Linglib.Semantics.Degree.Measurement
 
 /-!
 # English Measure Phrase Fragment
@@ -35,7 +35,7 @@ open Features.Dimension (Dimension QuotientDimension DimensionType)
 
 This is the Fragment-level data for measure terms. The Theory-level semantics
 (`MeasureFn`, `MeasureFn.applyNumeral`) is in
-`Semantics.Measurement.Basic`. -/
+`Degree/Measurement.lean`. -/
 structure MeasureTermEntry where
   /-- Surface form (e.g., "gram", "milliliter", "mile"). -/
   form : String
@@ -73,7 +73,7 @@ def allMeasureTerms : List MeasureTermEntry :=
 -- § 2. Quantizing Noun Entries ([scontras-2014], Ch. 3)
 -- ============================================================================
 
-open Semantics.Measurement (QuantizingNounClass ContainerReading)
+open Degree (QuantizingNounClass ContainerReading)
 
 /-- A quantizing noun entry: an English noun that turns a mass term into a
 countable expression.

@@ -1,6 +1,10 @@
-import Linglib.Semantics.Degree.Measurement
-import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.Kinds.MeaningPreservation
+import Linglib.Features.Aktionsart
+import Linglib.Core.Order.Boundedness
 import Linglib.Data.Examples.Wellwood2015
 import Linglib.Studies.Bresnan1973
 
@@ -48,9 +52,9 @@ part of the denotation. Example rows are generated from
 namespace Wellwood2015
 
 open ArgumentStructure (ThematicFrame)
-open Semantics.Measurement
 open Features
-open Degree (maxComparative maxComparative_unique)
+open Degree
+open Semantics.Kinds.MeaningPreservation (NumberFeature)
 
 /-! ### Lexical categories -/
 
@@ -283,6 +287,80 @@ theorem max_eq_comparativeSem {Measured : Type*}
   comparativeTruth_max ha ha_unique hb hb_unique
 
 end Domains
+
+/-! ### Mereological status (§§2–3)
+
+The paper's two-way cross-categorial classification and its bridges to
+the feature substrate. Interpretive notes: the paper does not label GA
+state domains "cumulative" in Krifka's technical sense — it argues they
+"form mereologies" (ordered domains with proper parts); we classify them
+`.cumulative` because the structural consequence (monotonic
+measurability) is the same. -/
+
+/-- Cross-categorial mereological classification (§§2–3): `cumulative`
+    domains have proper-part structure enabling monotonic measurement by
+    `much` (mass nouns, atelic VPs, GA state domains); `quantized`
+    domains lack it (count nouns, telic VPs, non-GA states). -/
+inductive MereologicalStatus where
+  | cumulative
+  | quantized
+  deriving DecidableEq, Repr
+
+/-- CUM → no inherent endpoint → open scale; QUA → inherent endpoint →
+    closed scale ([kennedy-2007]). -/
+def MereologicalStatus.toBoundedness : MereologicalStatus → Core.Order.Boundedness
+  | .cumulative => .open_
+  | .quantized  => .closed
+
+/-- Lift to [krifka-1989]'s cum/qua labels for cross-framework dialogue. -/
+def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Order.MereoTag
+  | .cumulative => .cum
+  | .quantized  => .qua
+
+/-- The status-based and tag-based boundedness routes agree. -/
+theorem toBoundedness_matches_mereoTag :
+    MereologicalStatus.cumulative.toBoundedness =
+      Core.Order.MereoTag.cum.toBoundedness ∧
+    MereologicalStatus.quantized.toBoundedness =
+      Core.Order.MereoTag.qua.toBoundedness :=
+  ⟨rfl, rfl⟩
+
+/-- `MereologicalStatus` joins the cross-framework endpoint-licensing
+    pipeline alongside `Boundedness` and `MereoTag`. -/
+instance : Core.Order.LicensingPipeline MereologicalStatus where
+  toBoundedness := MereologicalStatus.toBoundedness
+
+/-- Telicity determines status: atelic VPs are CUM, telic VPs QUA. -/
+def telicityToStatus : Telicity → MereologicalStatus
+  | .atelic => .cumulative
+  | .telic  => .quantized
+
+/-- Number determines status: mass CUM; count (sg/pl/neutral) QUA at the
+    lexical level (plural CUM-at-plurality measures only NUMBER;
+    number-neutral nouns have identifiable atoms, [moroney-2021] §2.2). -/
+def numberToStatus : NumberFeature → MereologicalStatus
+  | .mass    => .cumulative
+  | .sg      => .quantized
+  | .pl      => .quantized
+  | .neutral => .quantized
+
+/-- GA state domains form mereologies (see the section note). -/
+def gradableToStatus : MereologicalStatus := .cumulative
+
+/-- Non-GA states are atomic and unordered — QUA as the closest label. -/
+def nonGradableToStatus : MereologicalStatus := .quantized
+
+/-- Telicization (§5) shifts status from cumulative to quantized. -/
+theorem telicize_shifts_status (p : AspectualProfile) (h : p.telicity = .atelic) :
+    telicityToStatus p.telicity = .cumulative ∧
+    telicityToStatus p.telicize.telicity = .quantized :=
+  ⟨by rw [h]; rfl, rfl⟩
+
+/-- Atelicization (the progressive) shifts quantized back to cumulative. -/
+theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic) :
+    telicityToStatus p.telicity = .quantized ∧
+    telicityToStatus p.atelicize.telicity = .cumulative :=
+  ⟨by rw [h]; rfl, rfl⟩
 
 /-! ### Theory–data bridges (§§2–3) -/
 
