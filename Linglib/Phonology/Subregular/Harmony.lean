@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Channel
+import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Segmental.Basic
@@ -24,7 +24,7 @@ discipline that turns it into a structure-changing map.
 
 * `Subregular.Harmony.System`: a `Phonology.Harmony.Pattern` plus the
   mechanism-side residue — trigger context, targets, and the feature write.
-  The valuation and write form a lawful lens (`System.channel`, a `Channel`);
+  The valuation and write form a lawful lens (`System.lens`, a `Lens`);
   blockers, the tier, and the recognizer (`System.toTierRule`) are derived
   from the pattern; `System.mk'` compiles the six-way decomposition.
 * `Subregular.Harmony.harmonyDomain`, `triggerValue`: the stem portion
@@ -72,7 +72,7 @@ open Phonology.Harmony (Pattern)
 /-! ### System — a pattern plus its transduction discipline -/
 
 /-- Write harmonic value `v` into a segment's `feature` slot: the function-type
-    channel (`Channel.proj`) written at `feature`. -/
+    lens (`Lens.proj`) written at `feature`. -/
 def writeFeature (feature : Feature) (v : Bool) (s : Segment) : Segment :=
   Function.update s feature (some v)
 
@@ -104,10 +104,10 @@ def System.isBlocker (s : α) : Prop :=
 instance : DecidablePred sys.isBlocker := fun s => by
   unfold System.isBlocker; infer_instance
 
-/-- The system's read/write channel: the lawful lens `(pattern.value, write)`.
-    Lawful lenses are store-comonad coalgebras; the channel readout is the only
-    state the OSL transducer carries. -/
-def System.channel : Channel α Bool :=
+/-- The system's lens: `(pattern.value, write)` with the get-put law. Lawful
+    lenses are store-comonad coalgebras; the slot readout is the only state the
+    OSL transducer carries. -/
+def System.lens : Lens α Bool :=
   ⟨sys.pattern.value, sys.write, sys.value_write⟩
 
 /-- The recognizer core, derived from the pattern: an agree `TierRule` over the
