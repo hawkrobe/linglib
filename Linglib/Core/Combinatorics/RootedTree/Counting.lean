@@ -7,22 +7,21 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Linglib.Core.Data.RoseTree.Leaves
 
 /-!
-# Size measures on forests of rooted nonplanar trees
-
-For a forest `F : Multiset (Nonplanar α)`: `b₀` counts component trees, `alpha` counts
-non-root vertices (equivalently, edges), and `sigma = b₀ + alpha` is the total vertex
-count (`sigma_eq_sum_numNodes`) — the forest case of `#V = b₀ + #E`.
+# Size measures on rooted nonplanar trees and their forests
 
 ## Main definitions
 
-* `RootedTree.Nonplanar.accCount`: the non-root vertex count `numNodes - 1` of a tree.
-* `RootedTree.Forest.b₀`: the number of component trees.
-* `RootedTree.Forest.alpha`: the total non-root vertex count.
-* `RootedTree.Forest.sigma`: `b₀ + alpha`.
+* `RoseTree.leafCountP` / `RoseTree.leafDepthSumP` (with `Nonplanar` descents): leaf
+  statistics by predicate, as `Multiset.countP`-computations over the leaf projection.
+* `RootedTree.Nonplanar.numEdges`: the edge count `numNodes - 1` of a rooted tree.
+* `RootedTree.Forest.numNodes` / `RootedTree.Forest.numEdges`: the forest totals.
 
 ## Main results
 
-* `RootedTree.Forest.sigma_eq_sum_numNodes`: `sigma F = (F.map numNodes).sum`.
+* `RootedTree.Forest.numNodes_eq_card_add_numEdges`: Euler's relation `#V = b₀ + #E`
+  for forests, with `Multiset.card` the component count.
+* `RoseTree.leafCountP_le_numNodes`: a counted leaf is a vertex; strict when the root
+  is uncounted (`leafCountP_lt_numNodes_of_not`).
 
 `[UPSTREAM]` candidate alongside the `Nonplanar` carrier.
 -/
@@ -185,30 +184,31 @@ namespace Nonplanar
 
 variable {α : Type*}
 
-/-- The number of non-root vertices of a rooted tree, `numNodes - 1` (equivalently, its
-    edge count). -/
-def accCount (t : Nonplanar α) : ℕ := t.numNodes - 1
+/-- The number of edges of a rooted tree, `numNodes - 1`: every vertex except the root
+    has exactly one parent edge. -/
+def numEdges (t : Nonplanar α) : ℕ := t.numNodes - 1
 
-@[simp] theorem accCount_leaf (a : α) : (leaf a : Nonplanar α).accCount = 0 := by
-  simp [accCount]
+@[simp] theorem numEdges_leaf (a : α) : (leaf a : Nonplanar α).numEdges = 0 := by
+  simp [numEdges]
 
-theorem accCount_eq_numNodes_sub_one (t : Nonplanar α) : t.accCount = t.numNodes - 1 := rfl
+theorem numEdges_eq_numNodes_sub_one (t : Nonplanar α) : t.numEdges = t.numNodes - 1 := rfl
 
-/-- `accCount + 1` recovers the vertex count. -/
-theorem accCount_add_one (t : Nonplanar α) : t.accCount + 1 = t.numNodes :=
+/-- Euler's relation for a rooted tree: `#V = 1 + #E`. -/
+theorem numEdges_add_one (t : Nonplanar α) : t.numEdges + 1 = t.numNodes :=
   Nat.succ_pred_eq_of_pos t.numNodes_pos
 
-/-- `accCount` at a node is the total vertex count of the children. -/
-theorem accCount_node (a : α) (F : Multiset (Nonplanar α)) :
-    (node a F).accCount = (F.map numNodes).sum := by
-  simp [accCount]
+/-- The edges of a node are the root-to-child edges plus each child's own: the total
+    vertex count of the children. -/
+theorem numEdges_node (a : α) (F : Multiset (Nonplanar α)) :
+    (node a F).numEdges = (F.map numNodes).sum := by
+  simp [numEdges]
 
-/-- Adjoining a root above a pair of trees adds two non-root vertices. -/
-theorem accCount_node_pair (a : α) (l r : Nonplanar α) :
-    (node a {l, r}).accCount = l.accCount + r.accCount + 2 := by
-  rw [accCount_node]
+/-- Adjoining a root above a pair of trees adds two edges. -/
+theorem numEdges_node_pair (a : α) (l r : Nonplanar α) :
+    (node a {l, r}).numEdges = l.numEdges + r.numEdges + 2 := by
+  rw [numEdges_node]
   simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
-    Multiset.sum_cons, Multiset.sum_singleton, ← accCount_add_one]
+    Multiset.sum_cons, Multiset.sum_singleton, ← numEdges_add_one]
   omega
 
 
@@ -291,33 +291,10 @@ theorem leafCountP_le_leafDepthSumP_of_not_root (p : α → Prop) [DecidablePred
     rw [Nonplanar.leafCountP_mk, Nonplanar.leafDepthSumP_mk]
     exact RoseTree.leafCountP_le_leafDepthSumP_of_not p x cs h
 
-/-! ### Discounted accessible-term count -/
-
-/-- Non-root vertices, discounting the `p`-leaves. Truncated subtraction covers the
-    single-`p`-leaf tree, whose root is its one leaf. -/
-def accCountP (p : α → Prop) [DecidablePred p] (t : Nonplanar α) : ℕ :=
-  t.accCount - t.leafCountP p
-
 /-- Counted leaves are among the non-root vertices whenever some vertex is uncounted. -/
-theorem leafCountP_le_accCount (p : α → Prop) [DecidablePred p] (t : Nonplanar α)
-    (h : t.leafCountP p < t.numNodes) : t.leafCountP p ≤ t.accCount := by
-  rw [Nonplanar.accCount_eq_numNodes_sub_one]
-  omega
-
-/-- Adjoining a root (not counted by `p`) above a pair adds two discounted
-    accessible terms. -/
-theorem accCountP_node_pair (p : α → Prop) [DecidablePred p] (a : α)
-    (l r : Nonplanar α) (hpa : ¬p a)
-    (hl : l.leafCountP p < l.numNodes) (hr : r.leafCountP p < r.numNodes) :
-    (Nonplanar.node a {l, r}).accCountP p = l.accCountP p + r.accCountP p + 2 := by
-  have hw := Nonplanar.accCount_node_pair a l r
-  have htl : (Nonplanar.node a {l, r}).leafCountP p = l.leafCountP p + r.leafCountP p := by
-    rw [leafCountP_node_of_not p a _ hpa]
-    simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
-      Multiset.map_singleton, Multiset.sum_singleton]
-  have hbl := leafCountP_le_accCount p l hl
-  have hbr := leafCountP_le_accCount p r hr
-  simp only [accCountP, htl, hw]
+theorem leafCountP_le_numEdges (p : α → Prop) [DecidablePred p] (t : Nonplanar α)
+    (h : t.leafCountP p < t.numNodes) : t.leafCountP p ≤ t.numEdges := by
+  rw [Nonplanar.numEdges_eq_numNodes_sub_one]
   omega
 
 end Nonplanar
@@ -328,87 +305,44 @@ namespace Forest
 
 variable {α : Type*}
 
-/-- The number of component trees of a forest (its zeroth Betti number). -/
-def b₀ (F : Multiset (Nonplanar α)) : ℕ := Multiset.card F
+/-- The total vertex count of a forest. -/
+def numNodes (F : Multiset (Nonplanar α)) : ℕ := (F.map Nonplanar.numNodes).sum
 
-@[simp] theorem b₀_zero : b₀ (0 : Multiset (Nonplanar α)) = 0 := Multiset.card_zero
-@[simp] theorem b₀_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
-    b₀ (T ::ₘ F) = b₀ F + 1 := Multiset.card_cons T F
-@[simp] theorem b₀_singleton (T : Nonplanar α) :
-    b₀ ({T} : Multiset (Nonplanar α)) = 1 := Multiset.card_singleton T
-@[simp] theorem b₀_add (F G : Multiset (Nonplanar α)) :
-    b₀ (F + G) = b₀ F + b₀ G := Multiset.card_add F G
+@[simp] theorem numNodes_zero : numNodes (0 : Multiset (Nonplanar α)) = 0 := rfl
+@[simp] theorem numNodes_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+    numNodes (T ::ₘ F) = T.numNodes + numNodes F := by
+  simp only [numNodes, Multiset.map_cons, Multiset.sum_cons]
+@[simp] theorem numNodes_singleton (T : Nonplanar α) :
+    numNodes ({T} : Multiset (Nonplanar α)) = T.numNodes := by
+  simp only [numNodes, Multiset.map_singleton, Multiset.sum_singleton]
+@[simp] theorem numNodes_add (F G : Multiset (Nonplanar α)) :
+    numNodes (F + G) = numNodes F + numNodes G := by
+  simp only [numNodes, Multiset.map_add, Multiset.sum_add]
 
-/-- The total non-root vertex count of a forest. -/
-def alpha (F : Multiset (Nonplanar α)) : ℕ := (F.map Nonplanar.accCount).sum
+/-- The total edge count of a forest. -/
+def numEdges (F : Multiset (Nonplanar α)) : ℕ := (F.map Nonplanar.numEdges).sum
 
-@[simp] theorem alpha_zero : alpha (0 : Multiset (Nonplanar α)) = 0 := rfl
-@[simp] theorem alpha_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
-    alpha (T ::ₘ F) = T.accCount + alpha F := by
-  simp only [alpha, Multiset.map_cons, Multiset.sum_cons]
-@[simp] theorem alpha_singleton (T : Nonplanar α) :
-    alpha ({T} : Multiset (Nonplanar α)) = T.accCount := by
-  simp only [alpha, Multiset.map_singleton, Multiset.sum_singleton]
-@[simp] theorem alpha_add (F G : Multiset (Nonplanar α)) :
-    alpha (F + G) = alpha F + alpha G := by
-  simp only [alpha, Multiset.map_add, Multiset.sum_add]
+@[simp] theorem numEdges_zero : numEdges (0 : Multiset (Nonplanar α)) = 0 := rfl
+@[simp] theorem numEdges_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+    numEdges (T ::ₘ F) = T.numEdges + numEdges F := by
+  simp only [numEdges, Multiset.map_cons, Multiset.sum_cons]
+@[simp] theorem numEdges_singleton (T : Nonplanar α) :
+    numEdges ({T} : Multiset (Nonplanar α)) = T.numEdges := by
+  simp only [numEdges, Multiset.map_singleton, Multiset.sum_singleton]
+@[simp] theorem numEdges_add (F G : Multiset (Nonplanar α)) :
+    numEdges (F + G) = numEdges F + numEdges G := by
+  simp only [numEdges, Multiset.map_add, Multiset.sum_add]
 
-/-- `b₀ + alpha`: the total vertex count of a forest (`sigma_eq_sum_numNodes`). -/
-def sigma (F : Multiset (Nonplanar α)) : ℕ := b₀ F + alpha F
-
-@[simp] theorem sigma_zero : sigma (0 : Multiset (Nonplanar α)) = 0 := rfl
-@[simp] theorem sigma_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
-    sigma (T ::ₘ F) = T.numNodes + sigma F := by
-  simp only [sigma, b₀_cons, alpha_cons, ← Nonplanar.accCount_add_one]
-  omega
-@[simp] theorem sigma_singleton (T : Nonplanar α) :
-    sigma ({T} : Multiset (Nonplanar α)) = T.numNodes := by
-  simp only [sigma, b₀_singleton, alpha_singleton, ← Nonplanar.accCount_add_one]
-  omega
-@[simp] theorem sigma_add (F G : Multiset (Nonplanar α)) :
-    sigma (F + G) = sigma F + sigma G := by
-  simp only [sigma, b₀_add, alpha_add]; omega
-
-/-- `sigma` is the total vertex count: the forest case of `#V = b₀ + #E`. -/
-theorem sigma_eq_sum_numNodes (F : Multiset (Nonplanar α)) :
-    sigma F = (F.map Nonplanar.numNodes).sum := by
+/-- Euler's relation for forests: `#V = b₀ + #E`, with `Multiset.card` the number of
+    component trees. -/
+theorem numNodes_eq_card_add_numEdges (F : Multiset (Nonplanar α)) :
+    numNodes F = Multiset.card F + numEdges F := by
   induction F using Multiset.induction with
   | empty => rfl
-  | cons T F ih => rw [sigma_cons, ih, Multiset.map_cons, Multiset.sum_cons]
-
-
-/-- Discounted accessible terms across a forest. -/
-def alphaP (p : α → Prop) [DecidablePred p] (F : Multiset (Nonplanar α)) : ℕ :=
-  (F.map (Nonplanar.accCountP p)).sum
-
-@[simp] theorem alphaP_zero (p : α → Prop) [DecidablePred p] :
-    alphaP p (0 : Multiset (Nonplanar α)) = 0 := rfl
-@[simp] theorem alphaP_cons (p : α → Prop) [DecidablePred p] (T : Nonplanar α)
-    (F : Multiset (Nonplanar α)) : alphaP p (T ::ₘ F) = T.accCountP p + alphaP p F := by
-  simp only [alphaP, Multiset.map_cons, Multiset.sum_cons]
-@[simp] theorem alphaP_singleton (p : α → Prop) [DecidablePred p] (T : Nonplanar α) :
-    alphaP p ({T} : Multiset (Nonplanar α)) = T.accCountP p := by
-  simp only [alphaP, Multiset.map_singleton, Multiset.sum_singleton]
-@[simp] theorem alphaP_add (p : α → Prop) [DecidablePred p]
-    (F G : Multiset (Nonplanar α)) : alphaP p (F + G) = alphaP p F + alphaP p G := by
-  simp only [alphaP, Multiset.map_add, Multiset.sum_add]
-
-/-- Discounted forest size: components plus discounted accessible terms. Unlike
-    `sigma`, this is not the vertex count when counted leaves exist. -/
-def sigmaP (p : α → Prop) [DecidablePred p] (F : Multiset (Nonplanar α)) : ℕ :=
-  b₀ F + alphaP p F
-
-@[simp] theorem sigmaP_zero (p : α → Prop) [DecidablePred p] :
-    sigmaP p (0 : Multiset (Nonplanar α)) = 0 := rfl
-@[simp] theorem sigmaP_cons (p : α → Prop) [DecidablePred p] (T : Nonplanar α)
-    (F : Multiset (Nonplanar α)) : sigmaP p (T ::ₘ F) = T.accCountP p + 1 + sigmaP p F := by
-  simp only [sigmaP, b₀_cons, alphaP_cons]; omega
-@[simp] theorem sigmaP_singleton (p : α → Prop) [DecidablePred p] (T : Nonplanar α) :
-    sigmaP p ({T} : Multiset (Nonplanar α)) = T.accCountP p + 1 := by
-  simp only [sigmaP, b₀_singleton, alphaP_singleton]; omega
-@[simp] theorem sigmaP_add (p : α → Prop) [DecidablePred p]
-    (F G : Multiset (Nonplanar α)) : sigmaP p (F + G) = sigmaP p F + sigmaP p G := by
-  simp only [sigmaP, b₀_add, alphaP_add]; omega
+  | cons T F ih =>
+    simp only [numNodes_cons, numEdges_cons, Multiset.card_cons, ih,
+      ← Nonplanar.numEdges_add_one T]
+    omega
 
 end Forest
 
