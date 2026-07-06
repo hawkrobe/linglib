@@ -4,7 +4,7 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 /-!
-# Existence of ERM solutions
+# DLM training as weighted regression
 [gahl-baayen-2024] [heitmeier-2024]
 
 The weighted loss is a least-squares residual: `√q`-scaling embeds the

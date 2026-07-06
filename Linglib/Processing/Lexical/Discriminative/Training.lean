@@ -36,8 +36,9 @@ frequency-informed learning); the optimisation is fixed across theories.
 * `IsERMSolution.apply_eq_of_mem_span` / `exists_apply_ne`: fitted values are
   unique exactly on the span of experienced meanings.
 
-Existence of ERM solutions is in `Existence.lean`, via the least-squares
-keystone `Core.IsLeastSquares`. The endstate theory is rule-agnostic: composing
+The identification of DLM training with weighted regression — and existence
+of ERM solutions — is in `Regression.lean`, via the least-squares keystone
+`Core.IsLeastSquares`. The endstate theory is rule-agnostic: composing
 `isERMSolution_iff_forall_column` with the orthogonality principle
 `Core.sum_whCorrection_eq_zero_iff` identifies the ERM set with the
 equilibria of any error-driven rule in the Widrow-Hoff family.
@@ -221,7 +222,7 @@ regression and FIL by solving the EL problem on `√Q`-premultiplied `S` and
 data via the closed-form normal-equations solution, under invertibility.
 Here the premultiplied experience is `TrainingExperience.sqrtScale` and the
 equivalence (`isELSolution_sqrtScale_iff`) is stated invertibility-free at
-the level of ERM solution sets. (`Existence.lean` applies the same `√q`
+the level of ERM solution sets. (`Regression.lean` applies the same `√q`
 scaling inside its design map.) -/
 
 /-- The `√q`-premultiplied training experience scales event `i` by `√(q i)`
