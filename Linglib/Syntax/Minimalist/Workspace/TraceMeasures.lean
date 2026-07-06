@@ -15,8 +15,9 @@ MCB's vocabulary over the generic measures of `Counting.lean`: the letter names
 the trace-marker color class `Sum.isRight` (`traceLeafCount`, `traceDepthSum`,
 `accCountC`, `alphaC`, `sigmaC`).
 
-This file is domain vocabulary and moves out of `Core/` together with the MCB layer of
-`Coproduct/Conservation.lean`, which consumes it from the algebra layer.
+Domain vocabulary over the generic substrate of `Core/Data/RoseTree/Count.lean`;
+consumed by the workspace conservation laws (`Workspace/Conservation.lean`) and the
+Merge economy files.
 -/
 
 namespace RoseTree

@@ -16,10 +16,8 @@ import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
-import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.GenericNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
@@ -61,7 +59,6 @@ import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
-import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
@@ -2923,6 +2920,9 @@ import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
+import Linglib.Syntax.Minimalist.Workspace.Conservation
+import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
+import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
 import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Numeral.Basic
