@@ -2327,6 +2327,7 @@ import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.Heim1982.FileChangeSemantics
 import Linglib.Studies.Heim1983
+import Linglib.Studies.HeitmeierChuangBaayen2026
 import Linglib.Studies.Heim1992Desire
 import Linglib.Studies.Heim1992Projection
 import Linglib.Studies.Heim1994
