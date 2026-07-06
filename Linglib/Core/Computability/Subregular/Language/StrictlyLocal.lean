@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Computability.Language
 import Linglib.Core.Computability.Subregular.Language.Boundary
 import Linglib.Core.Data.List.Factors
@@ -54,6 +55,33 @@ def ofForbidden (forbidden : Set (Augmented α)) : SLGrammar α := forbiddenᶜ
     w ∈ (ofForbidden forbidden).language k
       ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∉ forbidden :=
   Iff.rfl
+
+/-! ### Count-vector characterisation
+
+Membership in a forbidden-factor SL language is a zero-test of a single
+linear functional of the word's `k`-factor count vector — the total count of
+forbidden factors — with unit margin on nonmembers. Strict locality is thus
+linearly detectable on the factor-count (cue) representation. -/
+
+variable [DecidableEq α]
+
+/-- SL membership is the vanishing of the forbidden-factor count. -/
+theorem mem_ofForbidden_language_iff_sum_count_eq_zero
+    (F : Finset (Augmented α)) (k : ℕ) (w : List α) :
+    w ∈ (ofForbidden ↑F).language k
+      ↔ ∑ f ∈ F, (List.kFactors k (boundary k w)).count f = 0 := by
+  simp only [mem_ofForbidden_language, Finset.mem_coe, Finset.sum_eq_zero_iff,
+             List.count_eq_zero]
+  exact ⟨fun h f hf hmem => h f hmem hf, fun h f hmem hf => h f hf hmem⟩
+
+/-- Nonmembers score at least `1` on the forbidden-factor count: the linear
+    detector has unit margin. -/
+theorem one_le_sum_count_of_not_mem_ofForbidden_language
+    {F : Finset (Augmented α)} {k : ℕ} {w : List α}
+    (h : w ∉ (ofForbidden ↑F).language k) :
+    1 ≤ ∑ f ∈ F, (List.kFactors k (boundary k w)).count f :=
+  Nat.one_le_iff_ne_zero.mpr fun h0 =>
+    h ((mem_ofForbidden_language_iff_sum_count_eq_zero F k w).mpr h0)
 
 end SLGrammar
 
