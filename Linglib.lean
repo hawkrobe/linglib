@@ -49,6 +49,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
+import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat

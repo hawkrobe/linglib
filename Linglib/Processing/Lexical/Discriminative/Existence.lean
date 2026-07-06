@@ -1,16 +1,18 @@
+import Linglib.Core.Analysis.LeastSquares
 import Linglib.Processing.Lexical.Discriminative.Training
 import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 /-!
 # Existence of ERM solutions
 [gahl-baayen-2024] [heitmeier-2024]
 
-ERM solutions exist for any nonnegative frequency vector: each observed form
-column is orthogonally projected onto the prediction subspace
-(`Submodule.starProjection`), and the columns assemble through
-`isERMSolution_iff_coordResidual`. The normal-equations solvability of
+The weighted loss is a least-squares residual: `√q`-scaling embeds the
+training objective into `EuclideanSpace ℝ (Fin m × Fin n)`
+(`weightedLoss_eq_norm_sq`), identifying the ERM solutions with the
+least-squares solutions of the design map (`isERMSolution_iff_isLeastSquares`).
+Existence then follows from the Hilbert projection theorem via
+`Core.exists_isLeastSquares` — the normal-equations solvability of
 [gahl-baayen-2024]'s appendix, with no invertibility hypothesis.
 -/
 
@@ -20,64 +22,79 @@ noncomputable section
 
 variable {m n d : ℕ}
 
-private theorem coordResidual_uniform_eq_norm_sq (data : TrainingExperience m n d)
-    (pred : Fin m → ℝ) (j : Fin n) :
-    coordResidual data (uniformFrequency m) pred j
-      = ‖WithLp.toLp 2 (fun k => data.forms k j)
-          - WithLp.toLp 2 pred‖ ^ 2 := by
+/-- The `√q`-scaled **design map**: the linear embedding of candidate
+    production maps into Euclidean event-coordinate space whose residual
+    against `scaledTarget` is the weighted loss. -/
+def designMap (data : TrainingExperience m n d) (q : FrequencyVector m) :
+    (MeaningVec d →ₗ[ℝ] FormVec n) →ₗ[ℝ] EuclideanSpace ℝ (Fin m × Fin n) :=
+  (WithLp.linearEquiv 2 ℝ (Fin m × Fin n → ℝ)).symm.toLinearMap ∘ₗ
+    LinearMap.pi fun p => Real.sqrt (q p.1) •
+      (LinearMap.proj p.2 ∘ₗ LinearMap.applyₗ (data.meanings p.1))
+
+@[simp] theorem designMap_apply (data : TrainingExperience m n d)
+    (q : FrequencyVector m) (G : MeaningVec d →ₗ[ℝ] FormVec n)
+    (p : Fin m × Fin n) :
+    designMap data q G p = Real.sqrt (q p.1) * G (data.meanings p.1) p.2 := rfl
+
+/-- The `√q`-scaled observed forms, as a point of Euclidean
+    event-coordinate space. -/
+def scaledTarget (data : TrainingExperience m n d) (q : FrequencyVector m) :
+    EuclideanSpace ℝ (Fin m × Fin n) :=
+  WithLp.toLp 2 fun p => Real.sqrt (q p.1) * data.forms p.1 p.2
+
+/-- The weighted loss is the squared least-squares residual of the design
+    map against the scaled target. -/
+theorem weightedLoss_eq_norm_sq (data : TrainingExperience m n d)
+    {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    weightedLoss data q G
+      = ‖designMap data q G - scaledTarget data q‖ ^ 2 := by
   rw [EuclideanSpace.norm_sq_eq]
-  unfold coordResidual
-  refine Finset.sum_congr rfl fun k _ => ?_
-  show 1 * (pred k - data.forms k j) ^ 2 = _
-  rw [one_mul, ← WithLp.toLp_sub]
-  simp only [Pi.sub_apply, Real.norm_eq_abs, sq_abs]
-  ring
+  unfold weightedLoss squaredDist
+  rw [Fintype.sum_prod_type]
+  simp_rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+  have hs : (Real.sqrt (q i) * G (data.meanings i) j
+        - Real.sqrt (q i) * data.forms i j) ^ 2
+      = Real.sqrt (q i) ^ 2 * (G (data.meanings i) j - data.forms i j) ^ 2 := by
+    ring
+  simp only [PiLp.sub_apply, designMap_apply, scaledTarget,
+             Real.norm_eq_abs, sq_abs]
+  rw [hs, Real.sq_sqrt (hq i)]
 
-private theorem exists_forall_coordResidual_le (data : TrainingExperience m n d)
-    (j : Fin n) :
-    ∃ w : MeaningVec d →ₗ[ℝ] ℝ, ∀ w' : MeaningVec d →ₗ[ℝ] ℝ,
-      coordResidual data (uniformFrequency m) (fun k => w (data.meanings k)) j
-        ≤ coordResidual data (uniformFrequency m) (fun k => w' (data.meanings k)) j := by
-  classical
-  -- prediction subspace: range of the evaluation map into Euclidean event space
-  set Ev : (MeaningVec d →ₗ[ℝ] ℝ) →ₗ[ℝ] EuclideanSpace ℝ (Fin m) :=
-    (WithLp.linearEquiv 2 ℝ (Fin m → ℝ)).symm.toLinearMap.comp
-      (LinearMap.pi fun k => LinearMap.applyₗ (data.meanings k)) with hEv
-  set y : EuclideanSpace ℝ (Fin m) := WithLp.toLp 2 (fun k => data.forms k j) with hy
-  haveI : CompleteSpace ↥(LinearMap.range Ev) := FiniteDimensional.complete ℝ _
-  obtain ⟨w, hw⟩ := LinearMap.mem_range.mp ((LinearMap.range Ev).starProjection_apply_mem y)
-  refine ⟨w, fun w' => ?_⟩
-  have hmin : ∀ v : ↥(LinearMap.range Ev),
-      ‖y - (LinearMap.range Ev).starProjection y‖ ≤ ‖y - ↑v‖ := fun v => by
-    rw [Submodule.starProjection_minimal]
-    exact ciInf_le ⟨0, by rintro r ⟨x, rfl⟩; exact norm_nonneg _⟩ v
-  have hle : ‖y - Ev w‖ ≤ ‖y - Ev w'‖ := by
-    rw [hw]
-    exact hmin ⟨Ev w', LinearMap.mem_range_self _ _⟩
-  have hsq := pow_le_pow_left₀ (norm_nonneg _) hle 2
-  have hEvw : ∀ v : MeaningVec d →ₗ[ℝ] ℝ,
-      Ev v = WithLp.toLp 2 (fun k => v (data.meanings k)) := fun _ => rfl
-  rw [coordResidual_uniform_eq_norm_sq, coordResidual_uniform_eq_norm_sq]
-  rw [hEvw w, hEvw w', hy] at hsq
-  exact hsq
+/-- ERM solutions are exactly the least-squares solutions of the design
+    map — the DLM training problem, seen through `√q`-scaling, is weighted
+    linear regression. -/
+theorem isERMSolution_iff_isLeastSquares (data : TrainingExperience m n d)
+    {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} :
+    IsERMSolution data q G
+      ↔ Core.IsLeastSquares (designMap data q) (scaledTarget data q) G := by
+  unfold IsERMSolution Core.IsLeastSquares
+  refine forall_congr' fun G' => ?_
+  rw [weightedLoss_eq_norm_sq data hq, weightedLoss_eq_norm_sq data hq]
+  constructor
+  · intro h
+    have hroot := Real.sqrt_le_sqrt h
+    rwa [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)] at hroot
+  · intro h
+    exact pow_le_pow_left₀ (norm_nonneg _) h 2
 
-/-- Endstate solutions exist — the normal-equations
-    solvability of [gahl-baayen-2024]'s appendix, by orthogonal projection
-    of each observed form column onto the prediction subspace. -/
-theorem exists_isELSolution (data : TrainingExperience m n d) :
-    ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, IsELSolution data G := by
-  choose w hw using exists_forall_coordResidual_le data
-  refine ⟨LinearMap.pi w, (isERMSolution_iff_coordResidual _ _ _).mpr fun j w' => ?_⟩
-  simpa only [LinearMap.pi_apply] using hw j w'
-
-/-- ERM solutions exist for any nonnegative frequency
-    vector, via `exists_isELSolution` on the `√q`-premultiplied experience. -/
+/-- ERM solutions exist for any nonnegative frequency vector, by the
+    Hilbert projection theorem (`Core.exists_isLeastSquares`). -/
 theorem exists_isERMSolution (data : TrainingExperience m n d)
     {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i) :
-    ∃ G, IsERMSolution data q G :=
-  let ⟨G, hG⟩ := exists_isELSolution (data.sqrtScale q)
-  ⟨G, (isELSolution_sqrtScale_iff hq).mp hG⟩
+    ∃ G, IsERMSolution data q G := by
+  haveI : CompleteSpace ↥(LinearMap.range (designMap data q)) :=
+    FiniteDimensional.complete ℝ _
+  obtain ⟨G, hG⟩ := Core.exists_isLeastSquares
+    (A := designMap data q) (b := scaledTarget data q)
+  exact ⟨G, (isERMSolution_iff_isLeastSquares data hq).mpr hG⟩
 
+/-- Endstate solutions exist. -/
+theorem exists_isELSolution (data : TrainingExperience m n d) :
+    ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, IsELSolution data G :=
+  exists_isERMSolution data fun _ => zero_le_one
 
 end
 
