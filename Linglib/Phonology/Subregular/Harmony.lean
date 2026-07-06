@@ -20,12 +20,12 @@ optionally skipping transparent segments and halting at opaque blockers
 recognizer with the transduction discipline that turns it into a
 structure-changing map.
 
-`System` is a machine schema: at each concrete alphabet it instantiates to a
+`System` is alphabet-generic; at each concrete alphabet it instantiates to a
 familiar finite-state object — `transduce` to a subsequential transducer whose
 only state is one lens readout (at Turkish's alphabet, the classic two-state
 front/back machine), the recognizer to a last-trigger-decides subsequential
-function. The theorems are proved once at the schema level, so every
-instantiation inherits them.
+function. The theorems are proved once, generically; every instantiation
+inherits them.
 
 ## Main definitions
 
