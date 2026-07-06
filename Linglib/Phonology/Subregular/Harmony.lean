@@ -263,7 +263,11 @@ theorem spreadSuffix_blocker (sys : System) (val : Bool)
     spreadSuffix sys val (s :: rest) = s :: rest := by
   simp [spreadSuffix, hb]
 
-/-! ### Patterns are TSL₂ -/
+/-! ### Patterns are TSL₂
+
+Strictly local grammars cannot express harmony (unbounded distance) and
+strictly piecewise grammars cannot express blocking; the tier-based class
+captures both ([aksenova-rawski-graf-heinz-2024]). -/
 
 end Subregular.Harmony
 
@@ -273,12 +277,7 @@ open Subregular TSLGrammar
 
 variable {α V : Type*}
 
-/-- **Harmony is TSL₂ by construction** ([aksenova-rawski-graf-heinz-2024]):
-    a pattern's surface harmonicity is membership in the tier-based strictly
-    2-local grammar whose tier is `Pattern.OnTier` and whose banned bigrams
-    are the incompatible pairs. Strictly local grammars cannot express harmony
-    (unbounded distance) and strictly piecewise grammars cannot express
-    blocking; the tier-based class captures both. -/
+/-- **Harmony is TSL₂ by construction** ([aksenova-rawski-graf-heinz-2024]). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
   simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic, Pattern.tier, not_not]
