@@ -269,7 +269,7 @@ end Subregular.Harmony
 
 namespace Phonology.Harmony
 
-open Subregular
+open Subregular TSLGrammar
 
 variable {α V : Type*}
 
@@ -280,7 +280,7 @@ variable {α V : Type*}
     (unbounded distance) and strictly piecewise grammars cannot express
     blocking; the tier-based class captures both. -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
-    p.Harmonic w ↔ w ∈ (TSLGrammar.ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
+    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
   simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic, Pattern.tier, not_not]
 
 end Phonology.Harmony
