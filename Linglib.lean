@@ -1458,7 +1458,6 @@ import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Lexical.Discriminative.Defs
-import Linglib.Processing.Lexical.Discriminative.Equilibrium
 import Linglib.Processing.Lexical.Discriminative.Existence
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Linglib.Processing.Lexical.Discriminative.Normed
