@@ -59,57 +59,30 @@ variable {m n d : ℕ}  -- m = numEvents, n = formDim, d = meaningDim
 
 /-! ### Substrate types -/
 
-/-- A **training experience** is a finite indexed collection of
-    `(meaning, form)` observation pairs. The paper's `S` matrix has
-    rows `data.meanings i` and `C` matrix has rows `data.forms i`,
-    indexed by event `i : Fin m`.
-
-    The cognitive interpretation: each `i : Fin m` is a "usage event"
-    — a single attestation of a (meaning, form) pair. Type-based
-    learning treats each unique pair as one event; frequency-informed
-    learning may have multiple events per pair (replication = weight,
-    deferred). -/
+/-- A **training experience**: a finite indexed family of (meaning, form)
+    observation pairs — the rows of the papers' `S` and `C` matrices. -/
 structure TrainingExperience (numEvents formDim meaningDim : ℕ) where
   meanings : Fin numEvents → MeaningVec meaningDim
   forms    : Fin numEvents → FormVec formDim
 
-/-- A **frequency vector** — paper notation `Q` (the diagonal entries
-    of the weight matrix in [gahl-baayen-2024] appendix §A1.3).
-    One nonneg weight per usage event.
-
-    We use `Fin m → ℝ` (rather than `Fin m → NNReal`) for proof
-    convenience; nonnegativity is documented and asserted as a
-    hypothesis in theorems that need it. The cognitive theory choice
-    IS the choice of `q`:
-
-    - `q ≡ 1` (uniform): type-based learning → EL
-    - `q i = #occurrences i`: frequency-informed → FIL
-    - `q i = log(#occurrences i)`: log-frequency learning (which
-      [gahl-baayen-2024]'s appendix cautions distorts learning relative
-      to incremental Widrow-Hoff)
-    - `q i = exp(-decay · timeAgo i)`: recency-weighted
-
-    All instantiations of `FrequencyVector` correspond to different
-    cognitive commitments about which usage events count for learning. -/
+/-- A **frequency vector**: one weight per usage event, the diagonal of the
+    papers' `Q` ([gahl-baayen-2024] appendix). The choice of `q` is the
+    cognitive commitment (uniform = EL, token counts = FIL; log-transforms
+    distort learning per [gahl-baayen-2024]); nonnegativity is a per-theorem
+    hypothesis. -/
 abbrev FrequencyVector (numEvents : ℕ) : Type := Fin numEvents → ℝ
 
-/-- The constant-1 frequency vector — type-uniform weighting; every
-    event counts once regardless of frequency. Endstate learning
-    operates with this `q`. -/
+/-- The constant-1 frequency vector: every event counts once (endstate
+    learning). -/
 def uniformFrequency (m : ℕ) : FrequencyVector m :=
   fun _ => 1
 
-/-- Total mass of a frequency vector — the sum of all event weights.
-    Cognitive interpretation: the total accumulated experience the
-    learner has been exposed to. -/
+/-- The sum of all event weights. -/
 def FrequencyVector.totalMass (q : FrequencyVector m) : ℝ :=
   ∑ i, q i
 
-/-- Normalise a frequency vector so its weights sum to 1. The result
-    represents the **empirical distribution** over events. Note this
-    is a `FrequencyVector` (still typed as `Fin m → ℝ`); for the
-    actual `PMF` cast use `PMF.ofRealWeightFn` from
-    `Core.Probability.Constructions`. -/
+/-- The empirical distribution over events: `q` normalised to sum to 1
+    (for the `PMF` cast use `PMF.ofRealWeightFn`). -/
 def FrequencyVector.normalize (q : FrequencyVector m) : FrequencyVector m :=
   fun i => q i / q.totalMass
 
@@ -119,11 +92,7 @@ def FrequencyVector.normalize (q : FrequencyVector m) : FrequencyVector m :=
 
 /-! ### The weighted loss -/
 
-/-- Squared coordinate-distance between two form vectors:
-    `Σⱼ (a j - b j)²`. Direct formula, no normed-space machinery
-    required. Distinct from the bare-Pi sup-norm in `Normed.lean`;
-    here we want the L² (Frobenius) inner product structure on
-    `Fin n → ℝ` that the paper's quadratic loss uses. -/
+/-- Squared coordinate-distance `Σⱼ (a j − b j)²` between two form vectors. -/
 def squaredDist (a b : FormVec n) : ℝ :=
   ∑ j, (a j - b j) ^ 2
 
@@ -133,22 +102,10 @@ theorem squaredDist_self (a : FormVec n) : squaredDist a a = 0 :=
 theorem squaredDist_nonneg (a b : FormVec n) : 0 ≤ squaredDist a b :=
   Finset.sum_nonneg fun _ _ => sq_nonneg _
 
-/-- The **frequency-weighted training loss** for a candidate
-    production map `G`:
-
-    `weightedLoss data q G = Σᵢ qᵢ · ‖G(meaningsᵢ) − formsᵢ‖²`
-
-    where `‖·‖²` is squared coordinate-distance (= squared Frobenius
-    norm on the form-vector slot).
-
-    The papers specify the mapping procedurally — premultiply `S` and `C`
-    by `√Q` and solve the normal equations ([gahl-baayen-2024] appendix;
-    [heitmeier-chuang-baayen-2026]); this loss is the standard variational
-    characterisation of that procedure, connected to it by
-    `weightedLoss_sqrtScale`. The cognitive commitment is at the level of
-    this loss function: the learner minimises the per-event squared
-    mismatch between produced and observed form vectors, weighted by
-    frequency of occurrence. -/
+/-- The **frequency-weighted training loss**
+    `Σᵢ qᵢ · squaredDist (G (meanings i)) (forms i)` — the variational
+    characterisation of the papers' procedural `√Q` normal-equations
+    specification ([gahl-baayen-2024] appendix; see `weightedLoss_sqrtScale`). -/
 def weightedLoss
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : ℝ :=
@@ -162,37 +119,23 @@ theorem weightedLoss_nonneg
 
 /-! ### Solution Props: ERM, EL, FIL -/
 
-/-- A linear map `G` is an **empirical risk minimiser** (ERM) for
-    the experience `data` under frequency vector `q` if no other
-    linear map achieves a smaller weighted loss.
-
-    The cognitive theory choice IS the choice of `q`. Different
-    theories of learning specify different `q`'s; the optimisation
-    procedure (minimise the resulting weighted L² loss) is fixed
-    across them. -/
+/-- `G` is an **empirical risk minimiser** (ERM) for `data` under `q`:
+    no linear map achieves a smaller weighted loss. -/
 def IsERMSolution
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : Prop :=
   ∀ G' : MeaningVec d →ₗ[ℝ] FormVec n,
     weightedLoss data q G ≤ weightedLoss data q G'
 
-/-- An **endstate-learning solution** for the experience: an ERM
-    solution under type-uniform weights. Paper appendix §A1.1 of
-    [gahl-baayen-2024]. -/
+/-- An **endstate-learning** (EL) solution: ERM under uniform weights
+    ([gahl-baayen-2024] appendix). -/
 abbrev IsELSolution
     (data : TrainingExperience m n d)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : Prop :=
   IsERMSolution data (uniformFrequency m) G
 
-/-- A **frequency-informed learning solution** — abbreviation for
-    ERM under arbitrary `q`. The cognitive interpretation that `q`
-    is "token frequencies of usage events" lives in the choice of
-    `q` the consumer passes; the substrate is agnostic about which
-    `q` is empirically correct.
-
-    Paper appendix §A1.3 of [gahl-baayen-2024] introduces FIL
-    with `q` = corpus token frequencies; future cognitive theories
-    may motivate other `q` choices. -/
+/-- A **frequency-informed learning** (FIL) solution: ERM under
+    token-frequency weights `q` ([gahl-baayen-2024] appendix). -/
 abbrev IsFILSolution
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : Prop :=
@@ -225,19 +168,8 @@ theorem weightedLoss_add_frequency
   show (q₁ + q₂) i * _ = q₁ i * _ + q₂ i * _
   rw [Pi.add_apply, add_mul]
 
-/-- **T-Rescaling**: ERM solutions are invariant under positive
-    rescaling of the frequency vector. Relative frequencies matter;
-    absolute scale doesn't.
-
-    Cognitive content: a learner who has experienced word A 100
-    times and word B 50 times has the same trained lexicon as one
-    who experienced A 200 times and B 100 times. Time of accumulated
-    experience (= overall scale of `q`) doesn't affect the trained
-    end-state — only the relative ratios.
-
-    Proved via `weightedLoss_smul_frequency`: scaling `q` by `c > 0`
-    scales the loss by `c`; argmins are invariant under positive
-    scalar multiples. -/
+/-- **T-Rescaling**: ERM solutions are invariant under positive rescaling
+    of the frequency vector — only relative frequencies matter. -/
 theorem ermSolution_iff_rescaled
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) {c : ℝ} (hc : 0 < c) :
@@ -253,16 +185,8 @@ theorem ermSolution_iff_rescaled
     rw [weightedLoss_smul_frequency, weightedLoss_smul_frequency]
     nlinarith
 
-/-- **T-Support (weak form)**: if `q i = 0`, event `i` contributes
-    nothing to the weighted loss.
-
-    Cognitive content: events that the learner has not experienced
-    (`q i = 0`) cannot update the trained lexicon. Novel words and
-    pseudowords don't retroactively modify the production map; they
-    can only be processed by the existing `D.production` (which is
-    polymorphic over the entire meaning space, hence applies to any
-    meaning vector — but the trained map's coefficients reflect
-    only the support of `q`). -/
+/-- **T-Support**: a zero-weight event contributes nothing to the weighted
+    loss — unexperienced events cannot shape the lexicon. -/
 theorem weightedLoss_zero_event_drops
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) (i₀ : Fin m) (h : q i₀ = 0) :
@@ -274,11 +198,8 @@ theorem weightedLoss_zero_event_drops
   · subst hi; rw [h, Function.update_self]
   · rw [Function.update_of_ne hi]
 
-/-- **Definitional equivalence**: an `IsELSolution` is exactly an ERM
-    solution under uniform weights. Paper-canonical: paper §3.1 of
-    [gahl-baayen-2024] introduces EL as the special case of FIL
-    with `Q = I`. Here `uniformFrequency = fun _ => 1` is the discrete
-    analogue. -/
+/-- An `IsELSolution` is definitionally an ERM solution under uniform
+    weights — EL as FIL with `Q = I` ([gahl-baayen-2024]). -/
 theorem isELSolution_eq_isERM_uniform
     (data : TrainingExperience m n d)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) :
@@ -766,13 +687,8 @@ identical predictions about which production maps are ERM-optimal. For the
 `PMF (Fin m)` cast of `q.normalize`, call `PMF.ofRealWeightFn` from
 `Core.Probability.Constructions` directly. -/
 
-/-- **Normalisation preserves ERM solutions.** A FrequencyVector and
-    its empirical distribution agree on which production maps are ERM
-    solutions. This is the formal statement that the cognitive content
-    is in the *relative weights* (= the normalised distribution) and
-    not in the absolute scale.
-
-    Direct application of `ermSolution_iff_rescaled` with `c = 1/totalMass`. -/
+/-- A frequency vector and its empirical distribution agree on which
+    production maps are ERM solutions. -/
 theorem isERMSolution_normalize_iff
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) (h : 0 < q.totalMass) :
@@ -785,10 +701,8 @@ theorem isERMSolution_normalize_iff
   rw [hnorm]
   exact ermSolution_iff_rescaled data q G hinv
 
-/-- **Two FrequencyVectors with identical empirical distributions are
-    ERM-equivalent.** The cognitive content lives at the level of the
-    normalised distribution; theories that assign different absolute
-    scales but the same relative frequencies make the same predictions. -/
+/-- Frequency vectors with identical empirical distributions are
+    ERM-equivalent. -/
 theorem isERMSolution_of_same_normalize
     (data : TrainingExperience m n d) (q₁ q₂ : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n)
@@ -916,14 +830,8 @@ section Connection
 
 variable {m n d : ℕ}
 
-/-- A `LinearDiscriminativeLexicon`'s production map is the
-    **trained** production map for given training data and
-    frequency weights iff the production map is an ERM solution.
-
-    The substrate is agnostic about which `q` is empirically
-    correct; this predicate just records the relationship between
-    a DLM's production map and a particular cognitive theory's
-    training data. -/
+/-- `D` is **trained on** `data` under weights `q`: its production map is
+    an ERM solution. -/
 def LinearDiscriminativeLexicon.IsTrainedOn
     (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) (q : FrequencyVector m) : Prop :=
