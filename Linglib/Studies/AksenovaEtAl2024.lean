@@ -25,19 +25,23 @@ them:
   `Pattern` compatibilities on the same tier (`kirghiz_two_patterns`).
 * **Buryat** ((9), Table 34.4): ATR harmony over all vowels; rounding agreement
   among non-high vowels, blocked by high vowels. The blocking clause
-  `*[+high][−high,+round]` is **asymmetric**, and `Pattern.Compatible` is
-  symmetric — so no pattern, nor any conjunction of patterns, renders Buryat's
-  grammar (`buryat_not_symmetric`, `buryat_no_pattern`).
+  `*[+high][−high,+round]` is asymmetric, so no symmetric adjacency relation
+  renders the grammar (`buryat_not_symmetric`) — the finding that forced
+  blocker-imposition into `Pattern.Compatible`. With imposition, Buryat is
+  expressible: `buryat_expressible` certifies ATR ∧ rounding-with-opaque-highs
+  against the printed table by kernel `decide`.
 * **Yakut** ((14), Table 34.5): fronting over all vowels; rounding spreads
   high→high and nonhigh→any, but not high→low — low vowels are harmonizing
   blockers (the icy-target class of `Phonology.Harmony.Participation`), and the
-  ban `*[+high][−high,+round]` is again asymmetric (`yakut_asymmetric`).
+  ban `*[+high][−high,+round]` is again asymmetric (`yakut_asymmetric`);
+  whether the full grammar is a conjunction of patterns is left open.
 
-The Buryat/Yakut findings are the stress-test payload: the pattern layer's
-symmetric adjacent-compatibility semantics covers plain and double harmony with
-symmetric blocking, but directional blocker-imposition requires the asymmetric
-relation of the underlying forbidden-pairs machinery
-(`Subregular.TSLGrammar.ofForbiddenPairs` takes an arbitrary `R`).
+The Buryat finding is the stress-test payload that reshaped the substrate:
+blocker-imposition ((8c) of [ritter-vanderhulst-2024-themes]) entered
+`Pattern.Compatible` because `buryat_not_symmetric` proved the symmetric
+formulation could not render Table 34.4. Whether Yakut's
+configuration-dependent blocking is expressible as a conjunction of patterns
+is left open; its asymmetry witness stands either way.
 
 Vowel constructor names ASCII-ize the chapter's IPA: `ih` = ɨ, `oe` = ö,
 `ue` = ü, `oh` = ɔ, `uh` = ʊ. The chapter's §34.3.4 tier-relation typology
@@ -101,7 +105,7 @@ example : kirghizBanned .a .i ∧ kirghizBanned .o .e ∧
 /-- The Buryat vowel tier `T = {a, e, ɔ, o, ʊ, u}` (transparent /i/ excluded). -/
 inductive BuryatV where
   | a | e | oh | o | uh | u
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 namespace BuryatV
 
@@ -143,12 +147,26 @@ theorem buryat_not_symmetric (R : BuryatV → BuryatV → Prop)
   exact buryat_asymmetric.2 ((h _ _).mp ((hsymm _ _).mp ((h _ _).mpr
     buryat_asymmetric.1)))
 
-/-- In particular no single `Pattern`'s incompatibility does
-    (`Pattern.Compatible` is symmetric) — nor any conjunction of patterns,
-    since symmetric relations are closed under conjunction. -/
-theorem buryat_no_pattern (p : Pattern BuryatV Bool) :
-    ¬ ∀ x y, ¬ p.Compatible x y ↔ buryatBanned x y :=
-  buryat_not_symmetric _ fun _ _ => not_congr Pattern.compatible_comm
+/-- ATR harmony as a pattern: all tier vowels participate. -/
+def buryatATR : Pattern BuryatV Bool :=
+  { value := fun v => some v.tense, participation := fun _ => .participating }
+
+/-- Rounding harmony as a pattern: high vowels are opaque blockers whose
+    transmitted value is [−round] — they license only unrounded non-high
+    vowels after themselves (`H_r2`). -/
+def buryatRound : Pattern BuryatV Bool :=
+  { value := fun v => some (if v.high then false else v.round)
+    participation := fun v => if v.high then .opaque else .participating }
+
+/-- With blocker-imposition in `Pattern.Compatible`, Buryat is expressible:
+    the printed grammar is exactly the conjunction of the ATR pattern and the
+    rounding pattern with opaque high vowels. The asymmetry that defeats every
+    symmetric relation (`buryat_not_symmetric`) is carried by the imposition
+    clause. -/
+theorem buryat_expressible (x y : BuryatV) :
+    buryatBanned x y ↔
+      ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
+  revert x y; decide
 
 /-! ### Yakut ((14), Table 34.5): harmonizing blockers -/
 
