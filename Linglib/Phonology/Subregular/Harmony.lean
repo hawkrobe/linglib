@@ -25,7 +25,9 @@ familiar finite-state object — `transduce` to a subsequential transducer whose
 only state is one lens readout (at Turkish's alphabet, the classic two-state
 front/back machine), the recognizer to a last-trigger-decides subsequential
 function. The theorems are proved once, generically; every instantiation
-inherits them.
+inherits them. Finiteness is supplied at instantiation, not in the structure
+(mathlib's `DFA` convention: `[Fintype α]` appears only on the theorems that
+consume it).
 
 ## Main definitions
 
