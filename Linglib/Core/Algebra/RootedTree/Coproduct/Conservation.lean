@@ -1,5 +1,6 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
+import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 
 set_option autoImplicit false
 
@@ -383,46 +384,6 @@ nodes), and the trunk keeps the tree's root. -/
 
 end RootedTree
 
-namespace RoseTree
-
-variable {α β : Type*}
-
-mutual
-/-- A trace leaf is a vertex, so a tree has at least as many vertices as
-    trace leaves. -/
-theorem traceLeafCount_le_numNodes :
-    ∀ (t : RoseTree (α ⊕ β)), traceLeafCount t ≤ numNodes t
-  | .node (Sum.inl _) cs => by
-    rw [traceLeafCount_node_inl, numNodes_node]
-    have := traceLeafCountSum_le_numNodesSum cs
-    omega
-  | .node (Sum.inr _) [] => by simp
-  | .node (Sum.inr _) (c :: cs) => by
-    rw [traceLeafCount_node_of_ne_nil _ _ (by simp), numNodes_node]
-    have := traceLeafCountSum_le_numNodesSum (c :: cs)
-    omega
-theorem traceLeafCountSum_le_numNodesSum :
-    ∀ (cs : List (RoseTree (α ⊕ β))),
-      (cs.map traceLeafCount).sum ≤ (cs.map numNodes).sum
-  | [] => by simp
-  | c :: cs => by
-    simp only [List.map_cons, List.sum_cons]
-    have h1 := traceLeafCount_le_numNodes c
-    have h2 := traceLeafCountSum_le_numNodesSum cs
-    omega
-end
-
-/-- A lexical-rooted tree has a non-trace vertex (its root), so its trace
-    leaves number strictly fewer than its vertices. -/
-theorem traceLeafCount_lt_numNodes_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    traceLeafCount (RoseTree.node (Sum.inl a) cs) <
-      numNodes (RoseTree.node (Sum.inl a) cs) := by
-  rw [traceLeafCount_node_inl, numNodes_node]
-  have := traceLeafCountSum_le_numNodesSum cs
-  omega
-
-end RoseTree
-
 namespace RootedTree
 
 namespace ConnesKreimer
@@ -486,40 +447,6 @@ theorem extractC_ne_none_imp_inl (τ : RoseTree (α ⊕ β) → β) (t : RoseTre
     | inr b => rw [extractC_inr] at h; exact absurd rfl h
 
 end ConnesKreimer
-
-namespace Nonplanar
-
-variable {α β : Type*}
-
-/-- A lexical-rooted (`Sum.inl`) nonplanar tree has a non-trace vertex
-    (its root), so its trace leaves number strictly fewer than its vertices. -/
-theorem traceLeafCount_lt_numNodes_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
-    (h : t.rootValue = Sum.inl a) : t.traceLeafCount < t.numNodes := by
-  obtain ⟨t₀, rfl⟩ : ∃ t₀ : RoseTree (α ⊕ β), t = Nonplanar.mk t₀ :=
-    ⟨t.out, (Quotient.out_eq t).symm⟩
-  rw [Nonplanar.rootValue_mk] at h
-  cases t₀ with
-  | node x cs =>
-    rw [RoseTree.value_node] at h
-    subst h
-    rw [Nonplanar.traceLeafCount_mk, Nonplanar.numNodes_mk]
-    exact RoseTree.traceLeafCount_lt_numNodes_of_inl a cs
-
-/-- A lexical-rooted nonplanar tree puts every trace marker at depth ≥ 1, so its
-    depth-weighted trace count dominates its plain trace count. -/
-theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
-    (h : t.rootValue = Sum.inl a) : t.traceLeafCount ≤ t.traceDepthSum := by
-  obtain ⟨t₀, rfl⟩ : ∃ t₀ : RoseTree (α ⊕ β), t = Nonplanar.mk t₀ :=
-    ⟨t.out, (Quotient.out_eq t).symm⟩
-  rw [Nonplanar.rootValue_mk] at h
-  cases t₀ with
-  | node x cs =>
-    rw [RoseTree.value_node] at h
-    subst h
-    rw [Nonplanar.traceLeafCount_mk, Nonplanar.traceDepthSum_mk]
-    exact RoseTree.traceLeafCount_le_traceDepthSum_of_inl a cs
-
-end Nonplanar
 
 /-! ### α extraction identity (MCB eq. 1.6.8) -/
 

@@ -1,5 +1,6 @@
 import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
+import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder

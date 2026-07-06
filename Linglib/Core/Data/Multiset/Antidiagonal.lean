@@ -23,9 +23,6 @@ multiplicities*; this file computes those multiplicities: `(u, v)` occurs
 `[UPSTREAM]` candidate; eventual mathlib home `Mathlib.Data.Multiset.Antidiagonal`, where
 the closed form also evaluates `Finsupp.antidiagonal'`.
 
-## Tags
-
-multiset, antidiagonal, count, binomial coefficient
 -/
 
 namespace Multiset
