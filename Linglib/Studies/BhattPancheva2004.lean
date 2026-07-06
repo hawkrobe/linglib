@@ -82,9 +82,7 @@ open Semantics.Polarity.Licensing (contextProperties)
 
 variable {Entity : Type*}
 
--- ════════════════════════════════════════════════════
--- § 1. Late merger of degree clauses (B&P §3, §5.1)
--- ════════════════════════════════════════════════════
+/-! ### Late merger of degree clauses (B&P §3, §5.1) -/
 
 /-- Instantiation of the generic WLM bleeding profile at the
     degree-clause admissibility predicate (`scopeOK`): a scope-licit
@@ -101,9 +99,7 @@ theorem degree_lm_bleeds_iff_scope_position_above
     degreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight = true :=
   scopeOK_above_binder_bleeds chain binderHeight h hgt
 
--- ════════════════════════════════════════════════════
--- § 2. Heim-Kennedy Constraint (B&P §4.1)
--- ════════════════════════════════════════════════════
+/-! ### Heim-Kennedy Constraint (B&P §4.1) -/
 
 /-- B&P §4.1: HKC's characteristic prohibition. A QP whose trace is
     in the DegP's restrictor cannot scope strictly above the DegP at
@@ -113,9 +109,7 @@ theorem hkc_blocks_QP_above_bound_DegP
     ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
   not_isHeimKennedy_QP_above_bound_DegP degH qpH h
 
--- ════════════════════════════════════════════════════
--- § 3. Williams 1974 derived (B&P §5.2)
--- ════════════════════════════════════════════════════
+/-! ### Williams 1974 derived (B&P §5.2) -/
 
 /-- B&P's analytic hypothesis about the intensional-verb data: a verb
     is in the high-DegP-blocking class iff its (raised) subject binds
@@ -149,9 +143,7 @@ theorem bp_hkc_matches_heim_intensional_data :
   cases h : d.highDegPAvailable <;>
     simp [bpHypothesizedBinding, IsHeimKennedy, h]
 
--- ════════════════════════════════════════════════════
--- § 4. Reduction theorem (B&P §3.9 link to Hoeksema 1983)
--- ════════════════════════════════════════════════════
+/-! ### Reduction theorem (B&P §3.9 link to Hoeksema 1983) -/
 
 /-- B&P's clausal-source than-clause denotation `{d | d ≤ μ b}` (the
     standard's positive extent `posExt μ b`) collapses to the singleton
@@ -177,9 +169,7 @@ theorem npGQ_principal_eq_sComp_thanClause
   rw [npComparativeGQ_principal_eq_gtOverSet_singleton,
       ← thanClause_reduces_to_max]
 
--- ════════════════════════════════════════════════════
--- § 5. Polarity asymmetry preserved
--- ════════════════════════════════════════════════════
+/-! ### Polarity asymmetry preserved -/
 
 /-- The B&P reduction is a coincidence of *values*, not of *signatures*.
     The licensing-context registry continues to classify the

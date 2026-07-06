@@ -40,9 +40,7 @@ bridge theorem `statesBased_iff_kennedy` shows when they agree.
 namespace Semantics.Gradability.StatesBased
 
 open Core.Order (ComparativeScale Boundedness)
--- ════════════════════════════════════════════════════
--- § 1. States-Based Entry
--- ════════════════════════════════════════════════════
+/-! ### States-Based Entry -/
 
 /-- A states-based gradable predicate entry.
 
@@ -101,9 +99,7 @@ theorem disjoint_regions {S : Type*} [Preorder S]
   intro ⟨h_pos, h_low⟩
   exact h_strict (le_trans h_pos h_low)
 
--- ════════════════════════════════════════════════════
--- § 2. Scale-Mate Relationship
--- ════════════════════════════════════════════════════
+/-! ### Scale-Mate Relationship -/
 
 /-- Two entries are scale-mates iff they share a background ordering
     (same `scale`) but differ in their contrast points. Scale-mates
@@ -132,9 +128,7 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
   intro h_pos
   exact le_trans h h_pos
 
--- ════════════════════════════════════════════════════
--- § 3. Comparative Morphology on States
--- ════════════════════════════════════════════════════
+/-! ### Comparative Morphology on States -/
 
 /-- The monotonicity-preservation requirement on measure functions used in
     monotonicity-requiring constructions: `μ` is admissible for a background
@@ -199,9 +193,7 @@ theorem statesComparativeSem_of_lt {D : Type*} [Preorder D]
 -- `Degree.maxComparative_eq_iff`. Confidence reports instantiate it in
 -- `Semantics/Attitudes/Confidence.lean`.
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge: States-Based ↔ Kennedy
--- ════════════════════════════════════════════════════
+/-! ### Bridge: States-Based ↔ Kennedy -/
 
 /-- When a monotone measure maps the contrast point to a Kennedy threshold,
     the states-based positive form agrees with degree-based comparison.

@@ -63,9 +63,7 @@ namespace Degree.MeasureFunction
 
 open ArgumentStructure.Affectedness
 
--- ════════════════════════════════════════════════════
--- § 1. MeasureFunction ([hay-kennedy-levin-1999] eq. 11)
--- ════════════════════════════════════════════════════
+/-! ### MeasureFunction ([hay-kennedy-levin-1999] eq. 11) -/
 
 set_option linter.dupNamespace false in
 /-- A **time-indexed measure function** `m : α → Time → δ`
@@ -119,9 +117,7 @@ class HasMeasureFunction (α : Type*) (δ : Type*) (Time : Type*) where
   /-- The verb's canonical time-indexed measure function. -/
   measure : α → Time → δ
 
--- ════════════════════════════════════════════════════
--- § 2. Difference Function (K&L 2008 eq. 23)
--- ════════════════════════════════════════════════════
+/-! ### Difference Function (K&L 2008 eq. 23) -/
 
 /-- [kennedy-levin-2008] eq. (23) **Difference function** `m_d^↑`:
     just like measure function `m` except clamped at `d` as the new
@@ -154,9 +150,7 @@ theorem differenceFunction_eq_measure {α δ Time : Type*} [LinearOrder δ]
     differenceFunction m d x t = m x t := by
   simp [differenceFunction, max_eq_right h]
 
--- ════════════════════════════════════════════════════
--- § 3. Measure of Change (K&L 2008 eq. 25)
--- ════════════════════════════════════════════════════
+/-! ### Measure of Change (K&L 2008 eq. 25) -/
 
 /-- [kennedy-levin-2008] eq. (25) **Measure of change**
     `m_Δ(x)(e) = m_{m(x)(init(e))}^↑(x)(fin(e))`.
@@ -202,9 +196,7 @@ theorem measureOfChange_eq_final {α δ Time : Type*} [LinearOrder δ]
     measureOfChange m x initT finT = m x finT :=
   differenceFunction_eq_measure m (m x initT) x finT h
 
--- ════════════════════════════════════════════════════
--- § 4. Event-specialised Measure of Change
--- ════════════════════════════════════════════════════
+/-! ### Event-specialised Measure of Change -/
 
 /-- Specialisation of `measureOfChange` to `Event Time` events: extract
     init/fin times from the event's runtime interval. -/
@@ -212,9 +204,7 @@ def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Ti
     (m : MeasureFunction α δ Time) (x : α) (e : Event Time) : δ :=
   measureOfChange m x e.runtime.fst e.runtime.snd
 
--- ════════════════════════════════════════════════════
--- § 5. Auto-synthesis bridges to Beavers' substrate
--- ════════════════════════════════════════════════════
+/-! ### Auto-synthesis bridges to Beavers' substrate -/
 
 /-- **Auto-synthesis instance**: a verb with a canonical measure
     function (`[HasMeasureFunction α δ Time]`) automatically has a

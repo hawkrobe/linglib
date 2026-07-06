@@ -35,9 +35,7 @@ namespace FoxHackl2006
 
 open Heim2001 (negatedDegreePredicate)
 
--- ════════════════════════════════════════════════════
--- § 1. Basic Degree Question Data
--- ════════════════════════════════════════════════════
+/-! ### Basic Degree Question Data -/
 
 /-- A degree question acceptability datum. -/
 structure DegreeQuestionDatum where
@@ -57,9 +55,7 @@ def degreeQuestionExamples : List DegreeQuestionDatum :=
     , mechanism := "simple degree question" }
   ]
 
--- ════════════════════════════════════════════════════
--- § 2. Negative Islands
--- ════════════════════════════════════════════════════
+/-! ### Negative Islands -/
 
 /-- [fox-hackl-2006] negative island data. -/
 def negativeIslandExamples : List DegreeQuestionDatum :=
@@ -85,9 +81,7 @@ theorem negativeIsland_via_no_max {Entity D : Type*} [LinearOrder D]
     ¬ ∃ m, IsGreatest {d | negatedDegreePredicate μ a d} m :=
   Heim2001.negation_high_DegP_undefined μ a
 
--- ════════════════════════════════════════════════════
--- § 3. Modal Obviation
--- ════════════════════════════════════════════════════
+/-! ### Modal Obviation -/
 
 /-- [fox-hackl-2006] modal obviation data. -/
 def modalObviationExamples : List DegreeQuestionDatum :=

@@ -81,9 +81,7 @@ def positiveInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
 def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
   ⟨(μ x, ⊤), le_top⟩
--- ════════════════════════════════════════════════════
--- § 1. LITTLE: Degree Negation on Extents
--- ════════════════════════════════════════════════════
+/-! ### LITTLE: Degree Negation on Extents -/
 
 -- LITTLE is in the theory layer at `Semantics/Degree/Little.lean`:
 --   littlePred, little_posExt_eq_negExt, little_involution,
@@ -103,9 +101,7 @@ theorem little_positive_to_negative {Entity D : Type*}
     (negativeInterval μ x).fst = (positiveInterval μ x).snd := by
   simp [negativeInterval, positiveInterval]
 
--- ════════════════════════════════════════════════════
--- § 2. Cross-Polar Anomaly: Algebraic Impossibility
--- ════════════════════════════════════════════════════
+/-! ### Cross-Polar Anomaly: Algebraic Impossibility -/
 
 /-- **Cross-polar anomaly** = attempting to compare a positive extent
     with a negative extent on the same dimension.
@@ -126,9 +122,7 @@ theorem crossPolar_anomaly_impossible {Entity D : Type*} [LinearOrder D]
     ¬ crossExtentInclusion μ a b :=
   crossExtent_always_false μ a b
 
--- ════════════════════════════════════════════════════
--- § 3. Cross-Polar Pattern (Data)
--- ════════════════════════════════════════════════════
+/-! ### Cross-Polar Pattern (Data) -/
 
 /-- Classification of cross-polar configurations (p. 3). -/
 inductive CrossPolarType where
@@ -159,9 +153,7 @@ def crossPolarData : List CrossPolarDatum :=
 #guard crossPolarData.all (λ d =>
   d.grammatical == (d.classification == .nomaly))
 
--- ════════════════════════════════════════════════════
--- § 4. Cross-Polar Nomalies = Subcomparatives
--- ════════════════════════════════════════════════════
+/-! ### Cross-Polar Nomalies = Subcomparatives -/
 
 -- Cross-polar nomalies are subcomparatives ([schwarzschild-wilkinson-2002]):
 -- comparing two different measure functions on a shared spatial extent
@@ -194,9 +186,7 @@ section Nomalies
 
 end Nomalies
 
--- ════════════════════════════════════════════════════
--- § 5. Concrete Example
--- ════════════════════════════════════════════════════
+/-! ### Concrete Example -/
 
 section LadderHouse
 
@@ -214,9 +204,7 @@ section LadderHouse
 
 end LadderHouse
 
--- ════════════════════════════════════════════════════
--- § 6. Why Anomalies Are Blocked
--- ════════════════════════════════════════════════════
+/-! ### Why Anomalies Are Blocked -/
 
 /-- [buring-2007]'s syntactic explanation for why direct-antonym
     cross-polar constructions are anomalous (§3.2): when A⁻ and
@@ -248,9 +236,7 @@ def anomalyBlocking : List AnomalyBlockingDatum :=
    , "(no well-formed competitor)"⟩
   ]
 
--- ════════════════════════════════════════════════════
--- § 7. Bridge to Von Stechow's Klein Limitation
--- ════════════════════════════════════════════════════
+/-! ### Bridge to Von Stechow's Klein Limitation -/
 
 /-- [von-stechow-1984]'s Klein limitation 3: "Ede is more tall
     than broad" is a cross-dimensional comparison that Klein's
@@ -268,9 +254,7 @@ theorem klein_limitation_is_subcomparative {Entity D : Type*} [LinearOrder D]
     subcomparative μ₁ μ₂ a a ↔ (μ₁ a > μ₂ a) :=
   Iff.rfl
 
--- ════════════════════════════════════════════════════
--- § 8. Modal Scope Diagnostic (§6)
--- ════════════════════════════════════════════════════
+/-! ### Modal Scope Diagnostic (§6) -/
 
 -- [buring-2007] §6: modals in the than-clause disambiguate the
 -- two competing analyses. The key test case (p. 11, ex. 29):
@@ -355,9 +339,7 @@ section ModalDiagnostic
 
 end ModalDiagnostic
 
--- ════════════════════════════════════════════════════
--- § 9. Existential Modal Variant (§6.2)
--- ════════════════════════════════════════════════════
+/-! ### Existential Modal Variant (§6.2) -/
 
 /-- [buring-2007] §6.2 (p. 14, ex. 38): existential modals
     produce the same disambiguation.

@@ -149,9 +149,7 @@ theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
     negatedDegreePredicate μ a d ↔ d > μ a := by
   simp [negatedDegreePredicate, not_le]
 
--- ════════════════════════════════════════════════════
--- § 1. Lattice substrate (the Galois identity)
--- ════════════════════════════════════════════════════
+/-! ### Lattice substrate (the Galois identity) -/
 
 /-- The intersection of principal downsets is the principal downset of the
 infimum. Pure order-theoretic fact, dual to mathlib's `iUnion_Iic`. -/
@@ -168,9 +166,7 @@ theorem sSup_iInter_Iic_eq_iInf {α : Type*} [CompleteLinearOrder α]
     sSup (⋂ i, Iic (f i)) = ⨅ i, f i := by
   rw [iInter_Iic_eq_Iic_iInf]; exact csSup_Iic
 
--- ════════════════════════════════════════════════════
--- § 2. Heim §2.1: monotone collapse (exs 8–16)
--- ════════════════════════════════════════════════════
+/-! ### Heim §2.1: monotone collapse (exs 8–16) -/
 
 /-- **Heim §2.1, ∃-side**: high-DegP and low-DegP collapse for existentially
 quantified subjects ("Some girl is taller than 4 feet"). Re-export of the
@@ -207,9 +203,7 @@ theorem heim_collapse_forall_low_to_high {α D : Type*} [LinearOrder D]
     lowDegP_forall R μ t → highDegP_forall R μ t :=
   forall_more_low_to_high R μ t w hw hmin
 
--- ════════════════════════════════════════════════════
--- § 3. Heim §2.1: negation (exs 17–19)
--- ════════════════════════════════════════════════════
+/-! ### Heim §2.1: negation (exs 17–19) -/
 
 /-- **The lattice fact behind Heim's negation argument**: on any
 `NoMaxOrder` linear order, the strict upper interval `Ioi a` has no
@@ -240,9 +234,7 @@ theorem negation_high_DegP_undefined {Entity D : Type*} [LinearOrder D]
     rfl
   rw [h]; exact no_isGreatest_Ioi_of_noMaxOrder (μ a)
 
--- ════════════════════════════════════════════════════
--- § 4. Heim §2.2: Kennedy's generalization (exs 20–27)
--- ════════════════════════════════════════════════════
+/-! ### Heim §2.2: Kennedy's generalization (exs 20–27) -/
 
 /-- **Kennedy's generalization** (paper ex. (27)): "If the scope of a
 quantificational DP contains the trace of a DegP, it also contains that
@@ -265,9 +257,7 @@ exemplar binding `⟨0, 1, 1, true⟩` (high-DegP attempted; QP binds DegP). -/
 example : ¬ IsHeimKennedy ⟨0, 1, 1, true⟩ :=
   nonMonotone_blocked_by_HKC 0 1 (by omega)
 
--- ════════════════════════════════════════════════════
--- § 5. Heim §2.3: intensional verb data (exs 28–36)
--- ════════════════════════════════════════════════════
+/-! ### Heim §2.3: intensional verb data (exs 28–36) -/
 
 /-- Heim's classification of intensional verbs by whether they admit the
 high-DegP reading with `exactly`-differentials or `less`. Heim presents
@@ -341,9 +331,7 @@ theorem verbClass_predicts_highDegPAvailable :
   simp only [intensionalVerbData, List.mem_cons, List.not_mem_nil, or_false] at hd
   rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Heim §2.4: Russell ambiguity ≠ DegP-scope (exs 37–42)
--- ════════════════════════════════════════════════════
+/-! ### Heim §2.4: Russell ambiguity ≠ DegP-scope (exs 37–42) -/
 
 -- Heim follows von Stechow 1984's diagnosis: the Russell ambiguity in
 -- "John thinks the yacht is longer than it is" arises from de re vs de
@@ -362,9 +350,7 @@ theorem verbClass_predicts_highDegPAvailable :
 -- mechanism. Heim's free-world-variable implementation is not currently
 -- in the linglib substrate.
 
--- ════════════════════════════════════════════════════
--- § 7. Heim §3.2: superlative semantic ellipsis (exs 58–64)
--- ════════════════════════════════════════════════════
+/-! ### Heim §3.2: superlative semantic ellipsis (exs 58–64) -/
 
 -- Heim §3.2 argues that `-est` in "John screamed (the) loudest" uses its
 -- complement `R` twice in the semantic calculation (paper ex. (59)),

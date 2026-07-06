@@ -22,18 +22,13 @@ reified `Core.Order.Comparison` IS the canonical scale-comparison primitive, so
 there is no separate named family. `c.over μ n` is a `Set W`; `w ∈ c.over μ n ↔
 c.rel (μ w) n` (`Comparison.mem_over`), and `c.rel` unfolds to the order
 relation per case.
-
-This file is part of the Phase A decomposition of the legacy
-`Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
 namespace Degree
 
 open Core.Order
 
--- ════════════════════════════════════════════════════
--- § 3. Informativity on Scales
--- ════════════════════════════════════════════════════
+/-! ### Informativity on Scales -/
 
 variable {α : Type*} [LinearOrder α]
 
@@ -90,9 +85,7 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
     ¬ AdmitsOptimum P :=
   fun h => h (bimonotone_constant P hUp hDown)
 
--- ════════════════════════════════════════════════════
--- § 3b. Maximal informativity is downstream
--- ════════════════════════════════════════════════════
+/-! ### Maximal informativity is downstream -/
 
 /-! The cross-world entailment-based `IsMaxInf` (Fox 2007 / vFFI 2014 /
     Beck-Rullmann 1999 / Rouillard 2026) is linguistic substrate, not
@@ -103,9 +96,7 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
     monotonicity is mathlib's `MonotoneOn.map_isLeast` family
     (`Mathlib.Order.Bounds.Image`). -/
 
--- ════════════════════════════════════════════════════
--- § 5. Licensing Predictions (Data-Level)
--- ════════════════════════════════════════════════════
+/-! ### Licensing Predictions (Data-Level) -/
 
 /-- Closed scales predict licensing (Kennedy: "completely full" ✓;
     Rouillard: telic VP E-TIA ✓). -/
@@ -115,9 +106,7 @@ theorem closed_isLicensed : Boundedness.closed.IsLicensed := trivial
     Rouillard: atelic VP E-TIA ✗). -/
 theorem open_notLicensed : ¬ Boundedness.open_.IsLicensed := id
 
--- ════════════════════════════════════════════════════
--- § 6. Degree Properties ([fox-hackl-2006])
--- ════════════════════════════════════════════════════
+/-! ### Degree Properties ([fox-hackl-2006]) -/
 
 /-! ### Degree properties as `Comparison.over`
 
@@ -158,9 +147,7 @@ theorem gtOver_eq_geOver_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) :
     `Semantics/Entailment/Extremum.lean` since they depend on
     the linguistic-substrate `IsMaxInf` predicate. -/
 
--- ════════════════════════════════════════════════════
--- § 6c. Existential Lowering (Type-Shifting)
--- ════════════════════════════════════════════════════
+/-! ### Existential Lowering (Type-Shifting) -/
 
 /-! ## Existential lowering: exact → "at least"
 
@@ -188,9 +175,7 @@ theorem typeLower_eqOver_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
   rintro ⟨d', hd', heq⟩
   exact heq.symm ▸ hd'
 
--- ════════════════════════════════════════════════════
--- § 6d. [kennedy-2015]'s De-Fregean GQ
--- ════════════════════════════════════════════════════
+/-! ### [kennedy-2015]'s De-Fregean GQ -/
 
 /-! ## A unified GQ denotation via `Core.Order.Comparison`
 
@@ -206,9 +191,7 @@ comparison primitive; it selects which `rel`/`interval` to use, and the Class
 A vs Class B distinction ([geurts-nouwen-2007], [nouwen-2010]) is its
 `Comparison.boundary_mem` (non-strict comparisons keep the endpoint). -/
 
--- ════════════════════════════════════════════════════
--- § 6e. Anti-Horn-Scale Lemmas (general)
--- ════════════════════════════════════════════════════
+/-! ### Anti-Horn-Scale Lemmas (general) -/
 
 /-! ## Why exact bare numerals are not part of a Horn scale
 
@@ -288,9 +271,7 @@ theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ 
   rintro ⟨x, h⟩
   exact hne ((h k₁ (Or.inl rfl)).symm.trans (h k₂ (Or.inr rfl)))
 
--- ════════════════════════════════════════════════════
--- § 7. "At most" Symmetry (Rouillard's direction)
--- ════════════════════════════════════════════════════
+/-! ### "At most" Symmetry (Rouillard's direction) -/
 
 /-- "At most" is upward monotone: larger thresholds are easier to satisfy. -/
 theorem leOver_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (Comparison.le.over μ) :=

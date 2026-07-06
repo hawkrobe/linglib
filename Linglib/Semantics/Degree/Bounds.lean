@@ -28,9 +28,7 @@ open Core.Order
 
 variable {α : Type*} [LinearOrder α]
 
--- ════════════════════════════════════════════════════
--- § 4. Typeclass-Based Licensing Theorems
--- ════════════════════════════════════════════════════
+/-! ### Typeclass-Based Licensing Theorems -/
 
 /-- On a scale with no maximum (`NoMaxOrder`), any upward monotone family
     that is nontrivial (i.e., some value yields a different set of worlds
@@ -117,9 +115,7 @@ theorem not_noMaxOrder_of_orderTop {β : Type*} [Preorder β] [OrderTop β] :
   obtain ⟨c, hc⟩ := h.exists_gt ⊤
   exact absurd (lt_of_lt_of_le hc le_top) (lt_irrefl ⊤)
 
--- ════════════════════════════════════════════════════
--- § 6b. Order-Sensitive MAX ([rett-2026])
--- ════════════════════════════════════════════════════
+/-! ### Order-Sensitive MAX ([rett-2026]) -/
 
 /-! ### Scale-sensitive maximality operator
 
