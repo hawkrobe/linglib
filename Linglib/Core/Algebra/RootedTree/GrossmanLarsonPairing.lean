@@ -310,14 +310,14 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
     have hS1 := Nonplanar.forestAutCard_add C₁ C₂
     have hcast := congr_arg (Nat.cast (R := R)) hS1
     push_cast at hcast
-    -- hcast : ↑count * (↑forestAutCard C₁ * ↑forestAutCard C₂) = ↑forestAutCard (C₁+C₂)
+    -- hcast : ↑forestAutCard (C₁+C₂) = ↑count * (↑forestAutCard C₁ * ↑forestAutCard C₂)
     -- `forestAutCard` here is the GL re-export of `Nonplanar.forestAutCard`.
     show (Nonplanar.forestAutCard (C₁ + C₂) : R) =
         ((Multiset.count (C₁, C₂) (Multiset.antidiagonal (C₁ + C₂)) : ℕ) : R) *
           ((Nonplanar.forestAutCard C₁ : R) * (Nonplanar.forestAutCard C₂ : R))
     -- Decidable instances on Forest = Multiset (Nonplanar α) are unique up to
     -- propositional equality; `convert` closes the residual.
-    convert hcast.symm using 4
+    convert hcast using 4
   · -- W ≠ C₁ + C₂. LHS = 0. The if now uses the ambient instance.
     simp only [if_neg hW]
     -- Every p ∈ antidiagonal W has p.1 + p.2 = W ≠ C₁ + C₂. So at every p, the term is 0.

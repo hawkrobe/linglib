@@ -38,15 +38,12 @@ namespace Multiset
 
 variable {α : Type*} [DecidableEq α]
 
-/-- Workhorse for `count_powerset`: the product may be taken over any fixed `Finset`
-    containing the supports of both multisets. -/
-private theorem count_powerset_subset {S : Finset α} :
-    ∀ t : Multiset α, t.toFinset ⊆ S → ∀ s : Multiset α, s.toFinset ⊆ S →
-      t.powerset.count s = ∏ x ∈ S, (t.count x).choose (s.count x) := by
-  intro t
-  induction t using Multiset.induction_on with
+/-- Workhorse for `count_powerset_of_le` and `count_powerset`: the product may be taken
+    over any fixed `Finset` containing the supports of both multisets. -/
+private theorem count_powerset_subset {S : Finset α} {t s : Multiset α} (ht : t.toFinset ⊆ S)
+    (hs : s.toFinset ⊆ S) : t.powerset.count s = ∏ x ∈ S, (t.count x).choose (s.count x) := by
+  induction t using Multiset.induction_on generalizing s hs with
   | empty =>
-    intro _ s hs
     rw [powerset_zero, count_singleton]
     split_ifs with h
     · subst h
@@ -56,21 +53,18 @@ private theorem count_powerset_subset {S : Finset α} :
       rw [← Finset.mul_prod_erase S _ (hs (mem_toFinset.mpr hx)), count_zero,
           Nat.choose_eq_zero_of_lt (count_pos.mpr hx), Nat.zero_mul]
   | cons a t' ih =>
-    intro ht s hs
     have haS : a ∈ S := ht (mem_toFinset.mpr (mem_cons_self a t'))
-    have ht' : t'.toFinset ⊆ S := fun x hx => ht (by
-      rw [toFinset_cons]; exact Finset.mem_insert_of_mem hx)
+    have ht' : t'.toFinset ⊆ S := (toFinset_subset.mpr (subset_cons t' a)).trans ht
     have hQ : ∏ x ∈ S.erase a, ((a ::ₘ t').count x).choose (s.count x)
         = ∏ x ∈ S.erase a, (t'.count x).choose (s.count x) :=
       Finset.prod_congr rfl fun x hx => by
         rw [count_cons_of_ne (Finset.ne_of_mem_erase hx)]
-    rw [powerset_cons, count_add, ih ht' s hs,
+    rw [powerset_cons, count_add, ih ht' hs,
         ← Finset.mul_prod_erase S (fun x => ((a ::ₘ t').count x).choose (s.count x)) haS,
         ← Finset.mul_prod_erase S (fun x => (t'.count x).choose (s.count x)) haS,
         count_cons_self, hQ]
     by_cases has : a ∈ s
-    · have hs' : (s.erase a).toFinset ⊆ S := fun x hx =>
-        hs (mem_toFinset.mpr (mem_of_subset (erase_subset a s) (mem_toFinset.mp hx)))
+    · have hs' : (s.erase a).toFinset ⊆ S := (toFinset_subset.mpr (erase_subset a s)).trans hs
       have hmap : (t'.powerset.map (Multiset.cons a)).count s
           = t'.powerset.count (s.erase a) := by
         conv_lhs => rw [← cons_erase has]
@@ -79,7 +73,7 @@ private theorem count_powerset_subset {S : Finset α} :
           = ∏ x ∈ S.erase a, (t'.count x).choose (s.count x) :=
         Finset.prod_congr rfl fun x hx => by
           rw [count_erase_of_ne (Finset.ne_of_mem_erase hx)]
-      rw [hmap, ih ht' (s.erase a) hs',
+      rw [hmap, ih ht' hs',
           ← Finset.mul_prod_erase S (fun x => (t'.count x).choose ((s.erase a).count x)) haS,
           count_erase_self, hR, Nat.choose_succ_left _ _ (count_pos.mpr has),
           ← Nat.add_mul, Nat.add_comm ((t'.count a).choose (s.count a))]
@@ -94,14 +88,18 @@ private theorem count_powerset_subset {S : Finset α} :
     `x`, choose `s.count x` of the `t.count x` copies. -/
 theorem count_powerset_of_le {s t : Multiset α} (h : s ≤ t) :
     t.powerset.count s = ∏ x ∈ t.toFinset, (t.count x).choose (s.count x) :=
-  count_powerset_subset t Finset.Subset.rfl s (toFinset_subset.mpr (subset_of_le h))
+  count_powerset_subset Finset.Subset.rfl (toFinset_subset.mpr (subset_of_le h))
 
 /-- Hypothesis-free form of `count_powerset_of_le`: over `(s + t).toFinset`, some factor
     `(t.count x).choose (s.count x)` vanishes whenever `s ≰ t`, so both sides are `0`. -/
 theorem count_powerset (s t : Multiset α) :
     t.powerset.count s = ∏ x ∈ (s + t).toFinset, (t.count x).choose (s.count x) :=
-  count_powerset_subset t (by rw [toFinset_add]; exact Finset.subset_union_right)
-    s (by rw [toFinset_add]; exact Finset.subset_union_left)
+  count_powerset_subset (by rw [toFinset_add]; exact Finset.subset_union_right)
+    (by rw [toFinset_add]; exact Finset.subset_union_left)
+
+/-- A multiset that is not below `t` does not occur in `t.powerset`. -/
+theorem count_powerset_eq_zero {s t : Multiset α} (h : ¬s ≤ t) : t.powerset.count s = 0 :=
+  count_eq_zero.mpr (mt mem_powerset.mp h)
 
 @[simp] theorem count_zero_powerset (t : Multiset α) : t.powerset.count 0 = 1 := by
   rw [count_powerset_of_le (zero_le t)]
