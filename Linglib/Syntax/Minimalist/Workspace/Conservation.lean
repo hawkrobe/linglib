@@ -1,5 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
-import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
+import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 
 set_option autoImplicit false
 

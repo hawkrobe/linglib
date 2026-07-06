@@ -1,7 +1,7 @@
 import Linglib.Core.Data.RoseTree.Count
-import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
-import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
-import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
+import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
+import Linglib.Syntax.Minimalist.Workspace.Conservation
+import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 

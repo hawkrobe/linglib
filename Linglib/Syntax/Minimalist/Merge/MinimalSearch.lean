@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Core.Algebra.RootedTree.Coproduct.GenericNonplanar
-import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
+import Linglib.Syntax.Minimalist.Workspace.Conservation
 
 set_option autoImplicit false
 

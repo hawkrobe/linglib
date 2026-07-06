@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Defs
-import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
+import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Data.RoseTree.DecEq
