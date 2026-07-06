@@ -4,6 +4,7 @@ import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.Pi
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Tactic.Linarith
@@ -63,8 +64,13 @@ of both `S` and `C` — `ermSolution_iff_rescaled` connects the two forms.
   invertibility-free.
 * `IsERMSolution.apply_meanings_eq` — **T-Unique-fit**: fitted values on
   experienced meanings agree across all ERM solutions under positive
-  weights; `IsTrainedOn.semSup_eq` transfers this to the semantic-support
-  measures.
+  weights, extending to the whole span (`apply_eq_of_mem_span`) and
+  genuinely diverging off it (`exists_apply_ne` — **T-Underdetermination**);
+  `IsTrainedOn.semSup_eq` transfers well-definedness to the
+  semantic-support measures.
+* `whCorrection`, `whUpdate`, `isERMSolution_iff_whEquilibrium` —
+  **T-Equilibrium**: the endstate of learning is exactly the equilibrium
+  of frequency-weighted Widrow-Hoff error-driven learning.
 
 ## Implementation notes
 
@@ -80,7 +86,9 @@ carrier structure. The PMF view of `q.normalize` is a derived bridge
 * Closed form `G = (SᵀS)⁻¹SᵀC` under full column rank
   ([heitmeier-chuang-baayen-2026] ch. 6; [gahl-baayen-2024] appendix)
   — a future `Training/ClosedForm.lean`.
-* Iterative Widrow-Hoff convergence to the FIL solution.
+* Widrow-Hoff trajectory convergence to the equilibrium (stochastic
+  approximation); `isERMSolution_iff_whEquilibrium` gives the fixed-point
+  half.
 * Approximate-decodability gap bounds for `semSup` (quantitative form
   of the Saito contrast).
 -/
@@ -597,6 +605,177 @@ theorem IsERMSolution.apply_meanings_eq
     simpa [LinearMap.sub_apply, Pi.sub_apply] using sq_eq_zero_iff.mp hj
   linarith [sub_eq_zero.mp h0]
 
+/-- Uniqueness of fitted values extends by linearity: ERM solutions agree at
+    every meaning in the **span** of the experienced ones. Together with
+    `IsERMSolution.exists_apply_ne`, novel-item predictions are well-defined
+    exactly on the span of experience — the model generalizes by linear
+    combination of experienced meanings and is unconstrained beyond them. -/
+theorem IsERMSolution.apply_eq_of_mem_span
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 < q i)
+    {G G' : MeaningVec d →ₗ[ℝ] FormVec n}
+    (hG : IsERMSolution data q G) (hG' : IsERMSolution data q G')
+    {s : MeaningVec d} (hs : s ∈ Submodule.span ℝ (Set.range data.meanings)) :
+    G s = G' s := by
+  have hker : Submodule.span ℝ (Set.range data.meanings)
+      ≤ LinearMap.ker (G' - G) := by
+    rw [Submodule.span_le]
+    rintro _ ⟨i, rfl⟩
+    have h := IsERMSolution.apply_meanings_eq hq hG hG' i
+    simp only [SetLike.mem_coe, LinearMap.mem_ker, LinearMap.sub_apply,
+               sub_eq_zero]
+    exact h.symm
+  have hmem := hker hs
+  rw [LinearMap.mem_ker, LinearMap.sub_apply, sub_eq_zero] at hmem
+  exact hmem.symm
+
+/-- **T-Underdetermination**: off the span of experienced meanings, ERM
+    solutions are genuinely underdetermined — any ERM solution can be modified
+    into another with a different prediction at any unexperienced meaning
+    direction, by adding a correction supported on the annihilator of the span. -/
+theorem IsERMSolution.exists_apply_ne [NeZero n]
+    {data : TrainingExperience m n d} {q : FrequencyVector m}
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} (hG : IsERMSolution data q G)
+    {s : MeaningVec d} (hs : s ∉ Submodule.span ℝ (Set.range data.meanings)) :
+    ∃ G' : MeaningVec d →ₗ[ℝ] FormVec n,
+      IsERMSolution data q G' ∧ G s ≠ G' s := by
+  have h1 : ¬ ∀ φ ∈ (Submodule.span ℝ (Set.range data.meanings)).dualAnnihilator,
+      φ s = 0 := fun h => hs
+    ((Subspace.forall_mem_dualAnnihilator_apply_eq_zero_iff _ s).mp h)
+  push Not at h1
+  obtain ⟨φ, hφmem, hφs⟩ := h1
+  have hφ0 : ∀ x ∈ Submodule.span ℝ (Set.range data.meanings), φ x = 0 :=
+    (Submodule.mem_dualAnnihilator φ).mp hφmem
+  refine ⟨G + φ.smulRight (Pi.single 0 1), fun G'' => ?_, fun h => ?_⟩
+  · have hsame : weightedLoss data q (G + φ.smulRight (Pi.single 0 1))
+        = weightedLoss data q G := by
+      unfold weightedLoss
+      refine Finset.sum_congr rfl fun i _ => ?_
+      have hzero : φ (data.meanings i) = 0 :=
+        hφ0 _ (Submodule.subset_span (Set.mem_range_self i))
+      simp [LinearMap.add_apply, LinearMap.smulRight_apply, hzero]
+    rw [hsame]
+    exact hG G''
+  · have h0 := congrFun h (0 : Fin n)
+    simp only [LinearMap.add_apply, LinearMap.smulRight_apply, Pi.add_apply,
+               Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one] at h0
+    exact hφs (by linarith)
+
+/-! ### Widrow-Hoff dynamics: the endstate as equilibrium
+
+[heitmeier-2024] learns the mappings incrementally by the Widrow-Hoff rule
+`Fₜ₊₁ = Fₜ + cₜᵀ(sₜ − ŝₜ)·η` — an error-driven rank-one correction per usage
+event, with frequencies entering as replicated learning events —
+and [heitmeier-chuang-baayen-2026] observes the rule is stochastic gradient
+descent on the quadratic loss. `whCorrection` is the production-direction
+correction; `isERMSolution_iff_whEquilibrium` earns the *endstate* name as a
+theorem: the ERM solutions are exactly the equilibria of frequency-weighted
+error-driven learning. -/
+
+/-- The dot-product functional `s' ↦ ∑ l, x l * s' l`. -/
+def dotFunctional {k : ℕ} (x : Fin k → ℝ) : (Fin k → ℝ) →ₗ[ℝ] ℝ where
+  toFun s := ∑ l, x l * s l
+  map_add' s s' := by
+    simp only [Pi.add_apply, mul_add]
+    exact Finset.sum_add_distrib
+  map_smul' t s := by
+    simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun l _ => by ring
+
+theorem dotFunctional_apply {k : ℕ} (x s : Fin k → ℝ) :
+    dotFunctional x s = ∑ l, x l * s l := rfl
+
+theorem dotFunctional_comm {k : ℕ} (x y : Fin k → ℝ) :
+    dotFunctional x y = dotFunctional y x := by
+  rw [dotFunctional_apply, dotFunctional_apply]
+  exact Finset.sum_congr rfl fun l _ => mul_comm _ _
+
+/-- Every linear functional on `MeaningVec d` is a dot product. -/
+private theorem eq_dotFunctional (w : MeaningVec d →ₗ[ℝ] ℝ) :
+    w = dotFunctional (fun l => w fun j' => if l = j' then 1 else 0) := by
+  refine LinearMap.ext fun s => ?_
+  rw [LinearMap.pi_apply_eq_sum_univ w s, dotFunctional_apply]
+  exact Finset.sum_congr rfl fun l _ => by rw [smul_eq_mul, mul_comm]
+
+/-- The single-event **Widrow-Hoff correction** to a production map: the
+    rank-one error-driven update direction `s' ↦ ⟨s, s'⟩ • (c − G s)`
+    ([heitmeier-2024]'s `cᵀ(s − ŝ)`, production direction). -/
+def whCorrection (s : MeaningVec d) (c : FormVec n)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) : MeaningVec d →ₗ[ℝ] FormVec n :=
+  (dotFunctional s).smulRight (c - G s)
+
+@[simp] theorem whCorrection_apply (s : MeaningVec d) (c : FormVec n)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) (s' : MeaningVec d) :
+    whCorrection s c G s' = dotFunctional s s' • (c - G s) := rfl
+
+/-- One **Widrow-Hoff learning step** on the observation `(s, c)` with
+    learning rate `η`. -/
+def whUpdate (η : ℝ) (s : MeaningVec d) (c : FormVec n)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) : MeaningVec d →ₗ[ℝ] FormVec n :=
+  G + η • whCorrection s c G
+
+/-- A single event's update fixes `G` iff that event's correction vanishes. -/
+theorem whUpdate_eq_self_iff {η : ℝ} (hη : η ≠ 0) (s : MeaningVec d)
+    (c : FormVec n) (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    whUpdate η s c G = G ↔ whCorrection s c G = 0 := by
+  unfold whUpdate
+  constructor
+  · intro h
+    have h' : G + η • whCorrection s c G = G + 0 := by simpa using h
+    exact (smul_eq_zero.mp (add_left_cancel h')).resolve_left hη
+  · intro h
+    rw [h, smul_zero, add_zero]
+
+private theorem sum_whCorrection_apply (data : TrainingExperience m n d)
+    (q : FrequencyVector m) (G : MeaningVec d →ₗ[ℝ] FormVec n)
+    (s' : MeaningVec d) (j : Fin n) :
+    (∑ i, q i • whCorrection (data.meanings i) (data.forms i) G) s' j
+      = ∑ i, q i * ((data.forms i j - G (data.meanings i) j)
+          * dotFunctional s' (data.meanings i)) := by
+  simp only [LinearMap.sum_apply, LinearMap.smul_apply, whCorrection_apply,
+             Finset.sum_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [dotFunctional_comm s' (data.meanings i)]
+  ring
+
+/-- The error-form and residual-form pairings sum to zero. -/
+private theorem errorSum_add_residSum (data : TrainingExperience m n d)
+    (q : FrequencyVector m) (G : MeaningVec d →ₗ[ℝ] FormVec n)
+    (s' : MeaningVec d) (j : Fin n) :
+    (∑ i, q i * ((data.forms i j - G (data.meanings i) j)
+        * dotFunctional s' (data.meanings i)))
+      + ∑ i, q i * ((G (data.meanings i) j - data.forms i j)
+          * dotFunctional s' (data.meanings i)) = 0 := by
+  rw [← Finset.sum_add_distrib]
+  exact Finset.sum_eq_zero fun i _ => by ring
+
+/-- **T-Equilibrium**: `G` is an ERM solution iff the frequency-weighted total
+    Widrow-Hoff correction vanishes. The *endstate of learning* is exactly the
+    equilibrium of error-driven learning — regression solutions and learning
+    equilibria coincide, with no invertibility hypothesis. -/
+theorem isERMSolution_iff_whEquilibrium
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} :
+    IsERMSolution data q G ↔
+      ∑ i, q i • whCorrection (data.meanings i) (data.forms i) G = 0 := by
+  rw [isERMSolution_iff_forall_column hq]
+  constructor
+  · intro h
+    refine LinearMap.ext fun s' => funext fun j => ?_
+    rw [sum_whCorrection_apply]
+    have hres := h j (dotFunctional s')
+    have hzero := errorSum_add_residSum data q G s' j
+    simp only [LinearMap.zero_apply, Pi.zero_apply]
+    linarith
+  · intro h j w
+    rw [eq_dotFunctional w]
+    have h0 := congrFun
+      (LinearMap.congr_fun h (fun l => w fun j' => if l = j' then 1 else 0)) j
+    rw [sum_whCorrection_apply] at h0
+    simp only [LinearMap.zero_apply, Pi.zero_apply] at h0
+    have hzero := errorSum_add_residSum data q G
+      (fun l => w fun j' => if l = j' then 1 else 0) j
+    linarith
+
 /-! ### Rescaling invariance
 
 The "frequency-vector-as-counts" view (DLM-paper-faithful) and the
@@ -806,6 +985,18 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq
     (hq : ∀ i, 0 < q i) (i : Fin m) (j : Fin n) :
     semSup D (data.meanings i) j = semSup D' (data.meanings i) j :=
   congrFun (IsERMSolution.apply_meanings_eq hq hD hD' i) j
+
+/-- `semSup` is well-defined for **novel** meanings too, as long as they lie in
+    the span of experienced ones — the model's analogical-generalization regime.
+    Off the span, predictions are underdetermined
+    (`IsERMSolution.exists_apply_ne`). -/
+theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_mem_span
+    {D' : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
+    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q)
+    (hq : ∀ i, 0 < q i) {s : MeaningVec d}
+    (hs : s ∈ Submodule.span ℝ (Set.range data.meanings)) (j : Fin n) :
+    semSup D s j = semSup D' s j :=
+  congrFun (IsERMSolution.apply_eq_of_mem_span hq hD hD' hs) j
 
 /-- [heitmeier-chuang-baayen-2026]'s *Semantic Support for Form* — `semSupWord`
     over a word's cue coordinates — equals the sum of the observed form values
