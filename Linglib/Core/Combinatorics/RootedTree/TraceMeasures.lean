@@ -94,7 +94,7 @@ namespace RootedTree
 
 namespace Nonplanar
 
-variable {α β : Type*}
+variable {α β : Type*} (p : α → Prop) [DecidablePred p]
 
 /-! ### MCB's letter vocabulary for the generic measures -/
 
@@ -121,12 +121,12 @@ theorem accCount_node_pair (a : α) (l r : Nonplanar α) :
 
 /-- Accessible terms discounting the `p`-leaves. Truncated subtraction covers the
     single-`p`-leaf tree, whose root is its one leaf. -/
-def accCountP (p : α → Prop) [DecidablePred p] (t : Nonplanar α) : ℕ :=
+def accCountP (t : Nonplanar α) : ℕ :=
   t.numEdges - t.leafCountP p
 
 /-- Adjoining a root (not counted by `p`) above a pair adds two discounted
     accessible terms. -/
-theorem accCountP_node_pair (p : α → Prop) [DecidablePred p] (a : α)
+theorem accCountP_node_pair (a : α)
     (l r : Nonplanar α) (hpa : ¬p a)
     (hl : l.leafCountP p < l.numNodes) (hr : r.leafCountP p < r.numNodes) :
     (Nonplanar.node a {l, r}).accCountP p = l.accCountP p + r.accCountP p + 2 := by
@@ -213,7 +213,7 @@ end Nonplanar
 
 namespace Forest
 
-variable {α β : Type*}
+variable {α β : Type*} (p : α → Prop) [DecidablePred p]
 
 /-! ### MCB's letter vocabulary for the forest measures -/
 
@@ -262,35 +262,35 @@ theorem sigma_eq_sum_numNodes (F : Multiset (Nonplanar α)) :
   (numNodes_eq_card_add_numEdges F).symm
 
 /-- Discounted accessible terms across a workspace. -/
-def alphaP (p : α → Prop) [DecidablePred p] (F : Multiset (Nonplanar α)) : ℕ :=
+def alphaP (F : Multiset (Nonplanar α)) : ℕ :=
   (F.map (Nonplanar.accCountP p)).sum
 
-@[simp] theorem alphaP_zero (p : α → Prop) [DecidablePred p] :
+@[simp] theorem alphaP_zero :
     alphaP p (0 : Multiset (Nonplanar α)) = 0 := rfl
-@[simp] theorem alphaP_cons (p : α → Prop) [DecidablePred p] (T : Nonplanar α)
+@[simp] theorem alphaP_cons (T : Nonplanar α)
     (F : Multiset (Nonplanar α)) : alphaP p (T ::ₘ F) = T.accCountP p + alphaP p F := by
   simp only [alphaP, Multiset.map_cons, Multiset.sum_cons]
-@[simp] theorem alphaP_singleton (p : α → Prop) [DecidablePred p] (T : Nonplanar α) :
+@[simp] theorem alphaP_singleton (T : Nonplanar α) :
     alphaP p ({T} : Multiset (Nonplanar α)) = T.accCountP p := by
   simp only [alphaP, Multiset.map_singleton, Multiset.sum_singleton]
-@[simp] theorem alphaP_add (p : α → Prop) [DecidablePred p]
+@[simp] theorem alphaP_add
     (F G : Multiset (Nonplanar α)) : alphaP p (F + G) = alphaP p F + alphaP p G := by
   simp only [alphaP, Multiset.map_add, Multiset.sum_add]
 
 /-- Discounted workspace size: components plus discounted accessible terms. Unlike
     `sigma`, this is not the vertex count when counted leaves exist. -/
-def sigmaP (p : α → Prop) [DecidablePred p] (F : Multiset (Nonplanar α)) : ℕ :=
+def sigmaP (F : Multiset (Nonplanar α)) : ℕ :=
   b₀ F + alphaP p F
 
-@[simp] theorem sigmaP_zero (p : α → Prop) [DecidablePred p] :
+@[simp] theorem sigmaP_zero :
     sigmaP p (0 : Multiset (Nonplanar α)) = 0 := rfl
-@[simp] theorem sigmaP_cons (p : α → Prop) [DecidablePred p] (T : Nonplanar α)
+@[simp] theorem sigmaP_cons (T : Nonplanar α)
     (F : Multiset (Nonplanar α)) : sigmaP p (T ::ₘ F) = T.accCountP p + 1 + sigmaP p F := by
   simp only [sigmaP, b₀_cons, alphaP_cons]; omega
-@[simp] theorem sigmaP_singleton (p : α → Prop) [DecidablePred p] (T : Nonplanar α) :
+@[simp] theorem sigmaP_singleton (T : Nonplanar α) :
     sigmaP p ({T} : Multiset (Nonplanar α)) = T.accCountP p + 1 := by
   simp only [sigmaP, b₀_singleton, alphaP_singleton]; omega
-@[simp] theorem sigmaP_add (p : α → Prop) [DecidablePred p]
+@[simp] theorem sigmaP_add
     (F G : Multiset (Nonplanar α)) : sigmaP p (F + G) = sigmaP p F + sigmaP p G := by
   simp only [sigmaP, b₀_add, alphaP_add]; omega
 
