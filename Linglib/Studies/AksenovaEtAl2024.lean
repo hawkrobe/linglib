@@ -21,8 +21,11 @@ harmonizing blockers show the same asymmetry (`yakut_asymmetric`); whether its
 configuration-dependent grammar is a conjunction of patterns is left open.
 
 Constructor names ASCII-ize the IPA: `ih` = ɨ, `oe` = ö, `ue` = ü, `oh` = ɔ,
-`uh` = ʊ. TODO: the §34.3.4 tier-relation typology (same/embedded/disjoint
-attested, partial overlap unattested) over Table 34.8's rows.
+`uh` = ʊ. The §34.3.4 tier-relation typology is formalized as a classifier
+computed from patterns' tiers (`tierRelation`); the vowel-language rows of
+Table 34.8 check out as single-tier (`kirghiz_same_tier`, `buryat_same_tier`).
+TODO: the embedded/disjoint rows (Imdlawn Tashlhiyt sibilants, Kikongo) need
+their consonant alphabets.
 -/
 
 namespace AksenovaEtAl2024
@@ -195,5 +198,41 @@ theorem yakut_asymmetric : yakutBanned .u .o ∧ ¬ yakutBanned .o .u := by deci
 /-- `oɣo-lor` and `murum-u` are licensed; `*tünnük-lör` is banned ((14)). -/
 example : ¬ yakutBanned .o .o ∧ ¬ yakutBanned .u .u ∧
     yakutBanned .ue .oe := by decide
+
+/-! ### The tier-relation typology (§34.3.4, Table 34.8)
+
+Of the four logical relations between two tier alphabets, only three are
+attested: same, embedded, and disjoint. Partially overlapping tiers are
+unattested — a typological tendency (the chapter reports it excludes 95% of the
+possible tier organizations for a ten-element alphabet), stated per row, never
+as a theorem. -/
+
+/-- The four logical relations between two tier alphabets (Figure 34.2). -/
+inductive TierRelation where
+  | same
+  | embedded
+  | disjoint
+  | overlapping
+  deriving DecidableEq, Repr
+
+open Phonology.Harmony in
+/-- `tierRelation p q` classifies the relation between two patterns' tier
+    alphabets, computed from their participation functions. -/
+def tierRelation {α : Type} {V W : Type} [Fintype α] [DecidableEq α]
+    (p : Pattern α V) (q : Pattern α W) : TierRelation :=
+  let T₁ := Finset.univ.filter fun s => decide (p.OnTier s)
+  let T₂ := Finset.univ.filter fun s => decide (q.OnTier s)
+  if T₁ = T₂ then .same
+  else if T₁ ⊆ T₂ ∨ T₂ ⊆ T₁ then .embedded
+  else if Disjoint T₁ T₂ then .disjoint
+  else .overlapping
+
+/-- Kirghiz's two harmonies share one tier — Table 34.8's S row. -/
+theorem kirghiz_same_tier : tierRelation kirghizFront kirghizRound = .same := by
+  decide
+
+/-- Buryat's two harmonies share one tier — Table 34.8's S row. -/
+theorem buryat_same_tier : tierRelation buryatATR buryatRound = .same := by
+  decide
 
 end AksenovaEtAl2024
