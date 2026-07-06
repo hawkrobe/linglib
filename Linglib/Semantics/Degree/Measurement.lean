@@ -271,13 +271,10 @@ theorem not_restricted_of_disagreement {α : Type*} [Preorder α]
     ¬ DimensionallyRestricted α :=
   fun hDR => h₂ ((hDR μ₁ μ₂ hμ₁ hμ₂ a b).mp h₁)
 
-/-- The converse witness: a partially ordered domain with incomparable
-    elements is not dimensionally restricted. On `ℚ × ℚ` (componentwise
-    order — think weight × volume on portions of matter), the two
-    admissible measures `2·w + v` and `w + v` order the incomparable
-    portions `(0, 1)` and `(1, 0)` differently, so the choice of measure
-    function matters — the multi-dimensional signature of entity/event
-    domains. -/
+/-- The converse witness: on the componentwise-ordered `ℚ × ℚ` (weight ×
+    volume), the admissible measures `2·w + v` and `w + v` order the
+    incomparable elements `(0, 1)` and `(1, 0)` differently — the
+    multi-dimensional signature of entity/event domains. -/
 theorem prod_not_dimensionallyRestricted :
     ¬ DimensionallyRestricted (ℚ × ℚ) := by
   have hmono : ∀ c : ℚ, 0 < c → StrictMono (fun p : ℚ × ℚ => c * p.1 + p.2) := by
