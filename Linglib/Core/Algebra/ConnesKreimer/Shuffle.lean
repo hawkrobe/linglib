@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+import Linglib.Core.Data.Multiset.Antidiagonal
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.LinearAlgebra.Finsupp.LSum
 import Mathlib.Algebra.BigOperators.Ring.Multiset
@@ -256,26 +257,6 @@ theorem comulShuffle_mul [DecidableEq T] (F G : ConnesKreimer R T) :
 The shuffle Δ is cocommutative: swapping the two tensor factors leaves
 Δ unchanged. This follows from the involution `F₁ ↦ F - F₁` on
 `F.powerset`. -/
-
-/-- **Δ-cocommutativity at the antidiagonal level**: `s.antidiagonal` is
-    invariant under `Prod.swap`. Pairs `(s₁, s₂)` with `s₁ + s₂ = s` map
-    bijectively to `(s₂, s₁)` with the same constraint, since `+` is
-    commutative.
-
-    In Oudom-Guin §2 / Sweedler notation this is the cocommutativity
-    `(swap ∘ Δ) = Δ` for the symmetric algebra coproduct.
-
-    Mathlib has the analogue `Multiset.Nat.antidiagonal_map_swap` for
-    `Nat` antidiagonal but not (as of mathlib 4.30) for the general
-    `Multiset.antidiagonal`. `[UPSTREAM]` candidate for
-    `Mathlib.Data.Multiset.Antidiagonal`. -/
-theorem _root_.Multiset.antidiagonal_swap {α : Type*} (s : Multiset α) :
-    s.antidiagonal.map Prod.swap = s.antidiagonal := by
-  induction s using Multiset.induction_on with
-  | empty => rfl
-  | cons a t ih =>
-    simp only [Multiset.antidiagonal_cons, Multiset.map_add, Multiset.map_map,
-      ← Prod.map_comp_swap, ← Multiset.map_map _ Prod.swap, ih, add_comm]
 
 /-- Reindex a partition-sum over `C.powerset` using the involution
     `C₁ ↦ C - C₁`. Specialisation of `antidiagonal_swap` to a
