@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Data.Examples.TesslerGoodman2022

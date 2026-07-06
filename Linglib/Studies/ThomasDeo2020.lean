@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Gradability.Construction
 
 /-!

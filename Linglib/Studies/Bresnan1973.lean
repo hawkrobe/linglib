@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Differential
 
@@ -79,9 +79,7 @@ inductive ThanClauseType where
   | phrasal
   | clausal
   deriving DecidableEq, Repr
--- ════════════════════════════════════════════════════
--- § 1. QP Structure (Det + Q)
--- ════════════════════════════════════════════════════
+/-! ### QP Structure (Det + Q) -/
 
 /-- The Det position of the QP: hosts degree/comparison morphemes.
     This is Bresnan's precursor to the modern Deg° head. -/
@@ -114,9 +112,7 @@ structure QP where
   q : Q
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. Bridge: QP → DegPType
--- ════════════════════════════════════════════════════
+/-! ### Bridge: QP → DegPType -/
 
 /-- Map Bresnan's QP Det to the modern DegP type classification.
     The Det determines the comparison type; Q determines mass/count. -/
@@ -137,9 +133,7 @@ theorem degPType_equative_from_as : Det.toDegPType .as_ = .equative := rfl
 theorem degPType_superlative_from_est : Det.toDegPType .est = .superlative := rfl
 theorem degPType_excessive_from_too : Det.toDegPType .too = .excessive := rfl
 
--- ════════════════════════════════════════════════════
--- § 3. Morphological Derivation
--- ════════════════════════════════════════════════════
+/-! ### Morphological Derivation -/
 
 /-- Suppletion: the surface form resulting from `-er`/`-est` Encliticizing
     onto Q. Returns `none` for regular (non-suppletive) combinations.
@@ -197,9 +191,7 @@ def Q.canModifyAdjective : Q → Bool
 def muchDeletionApplies (q : Q) (adjFollows : Bool) : Bool :=
   q.canModifyAdjective && adjFollows
 
--- ════════════════════════════════════════════════════
--- § 4. Introductory Puzzles (A)–(D)
--- ════════════════════════════════════════════════════
+/-! ### Introductory Puzzles (A)–(D) -/
 
 /-- An acceptability judgment with structural explanation. -/
 structure PuzzleDatum where
@@ -342,9 +334,7 @@ def puzzleD : List PuzzleDatum :=
     , explanation := "Bresnan (p. 334): 'certainly no problem'; clause QP [five feet] matches head QP" }
   ]
 
--- ════════════════════════════════════════════════════
--- § 5. Comparative Deletion (Identity Condition)
--- ════════════════════════════════════════════════════
+/-! ### Comparative Deletion (Identity Condition) -/
 
 /-- The syntactic category of the constituent deleted from the than-clause.
     Bresnan's key insight: the deleted element must be "nondistinct" (same
@@ -383,9 +373,7 @@ theorem subdeletion_identity_holds :
 theorem np_qp_identity_fails :
     identityHolds .qp .np = false := rfl
 
--- ════════════════════════════════════════════════════
--- § 6. All Than-Clauses Are Underlyingly Clausal
--- ════════════════════════════════════════════════════
+/-! ### All Than-Clauses Are Underlyingly Clausal -/
 
 /-- Bresnan's strongest syntactic claim: ALL comparatives are underlyingly
     clausal. What appears as a "phrasal" comparative ("taller than Bill")
@@ -414,9 +402,7 @@ def bresnanAnalysisOf : ThanClauseType → BresnanThanClauseAnalysis
   | .clausal => .partialDeletion
   | .phrasal => .maximalDeletion
 
--- ════════════════════════════════════════════════════
--- § 7. Privative Adjective Measure Phrase Constraint
--- ════════════════════════════════════════════════════
+/-! ### Privative Adjective Measure Phrase Constraint -/
 
 /-- Whether an adjective admits definite measure phrase modification
     ("five feet tall" ✓ vs "*five feet short" ✗).
@@ -473,9 +459,7 @@ theorem measurePhrase_polarity_correlation :
   simp [measurePhraseConstraintData] at hd
   rcases hd with rfl | rfl | rfl | rfl <;> simp_all
 
--- ════════════════════════════════════════════════════
--- § 8. Det Inventory Paradigms
--- ════════════════════════════════════════════════════
+/-! ### Det Inventory Paradigms -/
 
 /-- Bresnan's paradigms (4) and (5): the Det items form a closed class
     that combine with both `much` and `little` (mass) / `many` and `few`
@@ -533,9 +517,7 @@ theorem countParadigm_suppletion_consistent :
   simp [countParadigm] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all [suppletion]
 
--- ════════════════════════════════════════════════════
--- § 9. QP Well-Formedness
--- ════════════════════════════════════════════════════
+/-! ### QP Well-Formedness -/
 
 /-- `enough` requires a null Det — `*so enough`, `*too enough`, `*as enough`,
     `*enougher` are all impossible (Bresnan p. 286).
@@ -553,9 +535,7 @@ theorem enough_requires_null_det :
 
 theorem enough_null_wellformed : QP.isWellFormed ⟨.null, .enough⟩ = true := rfl
 
--- ════════════════════════════════════════════════════
--- § 10. QP-AP Parallelism
--- ════════════════════════════════════════════════════
+/-! ### QP-AP Parallelism -/
 
 /-- Bresnan's "archicategory" X̄ unifies QP and AP:
     both have left-recursive specifier + head structure.
@@ -577,9 +557,7 @@ inductive BarCategory where
   | np   -- noun phrase
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 11. Comparative Semantics Bridge
--- ════════════════════════════════════════════════════
+/-! ### Comparative Semantics Bridge -/
 
 /-- Bresnan's analysis is primarily syntactic, but the truth conditions
     it derives are compatible with the modern degree-semantic consensus.

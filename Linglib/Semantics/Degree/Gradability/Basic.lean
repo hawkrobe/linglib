@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Degree.Gradability.MLScale
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Syntax.Adjective.Basic
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 
 /-!
 # Kennedy 1999: Projecting the Adjective

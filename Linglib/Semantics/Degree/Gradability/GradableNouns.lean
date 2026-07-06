@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
-import Linglib.Semantics.Degree.Defs
+import Linglib.Semantics.Degree.Discrete
 
 /-!
 # Gradable Nouns as Measure Functions

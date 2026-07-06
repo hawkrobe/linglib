@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Gradability.Basic
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.Defs

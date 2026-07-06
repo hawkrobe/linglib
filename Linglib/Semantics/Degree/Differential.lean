@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -24,9 +24,7 @@ not just an ordinal or interval scale. Hence "3 inches taller" ✓ but
 
 namespace Degree.Differential
 
--- ════════════════════════════════════════════════════
--- § 1. Differential Semantics
--- ════════════════════════════════════════════════════
+/-! ### Differential Semantics -/
 
 /-- Differential comparative: "A is d-much Adj-er than B" iff the
     difference μ(A) - μ(B) = d.
@@ -51,9 +49,7 @@ theorem differential_positive_iff {Entity : Type*}
   simp only [differentialComparative] at h
   linarith
 
--- ════════════════════════════════════════════════════
--- § 2. Scale Type Restrictions
--- ════════════════════════════════════════════════════
+/-! ### Scale Type Restrictions -/
 
 /-- Measurement level: what kind of scale an adjective's degrees live on.
     Measure phrase differentials require at least interval scale;
@@ -76,9 +72,7 @@ def admitsFactorPhrase : MeasurementLevel → Bool
   | .interval => false  -- "*twice as hot" (in °C; no meaningful zero)
   | .ordinal  => false
 
--- ════════════════════════════════════════════════════
--- § 3. Factor Phrases
--- ════════════════════════════════════════════════════
+/-! ### Factor Phrases -/
 
 /-- Factor phrase equative: "A is n times as tall as B" iff μ(A) = n × μ(B).
     Requires ratio scale: a meaningful zero point. -/
@@ -86,9 +80,7 @@ def factorEquative {Entity D : Type*} [Mul D]
     (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
 
--- ════════════════════════════════════════════════════
--- § 4. Extensive Scales and Cross-Dimensional Comparison
--- ════════════════════════════════════════════════════
+/-! ### Extensive Scales and Cross-Dimensional Comparison -/
 
 /-- **Extensive measurement level**: a ratio scale that additionally
     permits cross-dimensional comparison. Spatial extent is the

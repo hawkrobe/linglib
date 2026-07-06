@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Gradability.Basic
-import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Discrete
 
 /-!
 # Antonymy: Contradictory vs. Contrary Negation
@@ -35,9 +35,7 @@ open Semantics.Gradability (ThresholdPair contradictoryNeg
   positiveMeaning' contraryNegMeaning notContraryNegMeaning inGapRegion)
 open Degree (positiveMeaning notPositiveMeaning)
 
--- ════════════════════════════════════════════════════
--- § 1. Contradictory Negation: Involutory (DNE holds)
--- ════════════════════════════════════════════════════
+/-! ### Contradictory Negation: Involutory (DNE holds) -/
 
 /-- Contradictory negation is the propositional complement of positive meaning.
     Both compute threshold comparisons: `d ≤ ↑θ` vs `↑θ < d`. -/
@@ -65,9 +63,7 @@ theorem contradictory_exhaustive {max : Nat}
   · exact Or.inl h
   · exact Or.inr ((contradictory_is_complement d θ).mpr h)
 
--- ════════════════════════════════════════════════════
--- § 2. Contrary Negation: Gap (DNE fails)
--- ════════════════════════════════════════════════════
+/-! ### Contrary Negation: Gap (DNE fails) -/
 
 /-- The gap region is exactly "not unhappy" ∧ "not happy": degrees that escape
     the contrary negative without reaching the positive threshold. -/
