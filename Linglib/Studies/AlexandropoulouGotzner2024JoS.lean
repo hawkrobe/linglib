@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Degree.Gradability.Antonymy
 import Linglib.Semantics.Degree.Gradability.AntonymPrediction
 import Linglib.Studies.Krifka2007

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Degree.Discrete
 
 /-!
@@ -23,7 +23,7 @@ models are formalized here; the pragmatic derivation connecting them is in
 
 The core operations (`contradictoryNeg`, `contraryNeg`, `inGapRegion`,
 `ThresholdPair`, `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`)
-are defined in `Gradability/Basic.lean`.
+are defined in `Gradability/Adjective.lean`.
 -/
 
 set_option autoImplicit false

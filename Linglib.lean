@@ -1604,7 +1604,7 @@ import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Degree.Gradability.AntonymPrediction
 import Linglib.Semantics.Degree.Gradability.Antonymy
-import Linglib.Semantics.Degree.Gradability.Basic
+import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Degree.Gradability.Classification
 import Linglib.Semantics.Degree.Gradability.ClauseEmbedding
 import Linglib.Semantics.Degree.Gradability.Construction

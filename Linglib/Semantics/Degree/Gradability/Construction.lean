@@ -8,7 +8,7 @@ implicature computes alternatives over them
 (`Pragmatics/Implicature/Markedness.lean`).
 
 The degree-substrate DegP taxonomy (`DegPType`, covering degree *heads* rather
-than adjectival surface constructions) lives in `Semantics/Degree/Defs.lean`.
+than adjectival surface constructions) lives in `Semantics/Degree/Comparative.lean`.
 -/
 
 namespace Degree
