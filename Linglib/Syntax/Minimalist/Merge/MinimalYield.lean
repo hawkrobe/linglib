@@ -1,4 +1,4 @@
-import Linglib.Core.Combinatorics.RootedTree.Counting
+import Linglib.Core.Data.RoseTree.Count
 import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
