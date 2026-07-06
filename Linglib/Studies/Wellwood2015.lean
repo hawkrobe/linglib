@@ -24,19 +24,17 @@ not lexical category (§3.4).
 
 ## Main declarations
 
-* `comparativeTruth`: the shared truth condition, an instance of
-  `Degree.maxComparative`; `derivation_eq_comparativeTruth` proves the
+* `comparativeTruth` / `equativeTruth`: the shared truth conditions for
+  `-er` and `as` (eq. 27), instances of `Degree.maxComparative` /
+  `Degree.maxEquative`; `derivation_eq_comparativeTruth` proves the
   paper's step-by-step composition (`matrixDegP`, `absDegP`, `predMod`,
-  `thanClause`) yields it, and `comparativeTruth_max` collapses it to
-  direct measure comparison under unique eventualities.
+  `thanClause`) yields the former.
 * `nominalComparative`, `verbalComparative`, `adjectivalComparative`:
   the three domain instantiations (role × extraction).
 * `coffee_much_matches` … `wooden_much_matches`: the §§2–3 felicity
   judgments predicted per-lexeme from fragment entries and substrate
-  status maps; `qua_measures_vacuously_admissible` and
-  `cum_thanDegrees_no_max` give the mereological reason (antichains
-  trivialize monotone measurement; cumulative supply keeps the scale
-  maximless).
+  status maps; `qua_measures_vacuously_admissible` gives the
+  mereological reason (antichains trivialize monotone measurement).
 * `model_restricted_iff` / `dimension_tracks_domain` /
   `dimension_not_category`: §3.4 as order theory — exactly the state
   domain's model is `DimensionallyRestricted`, matching the intensive
@@ -92,20 +90,23 @@ def comparativeTruth {Ent α Measured : Type*}
   maxComparative (fun e => role a e ∧ P e) (fun e => role b e ∧ P e)
     (fun e => μ (extract e))
 
-/-- Unique matrix and than eventualities collapse the comparative to
-    direct measure comparison. -/
-theorem comparativeTruth_max {Ent α Measured : Type*}
-    {role : Ent → α → Prop} {P : α → Prop}
-    {extract : α → Measured} {μ : Measured → ℚ}
-    {a b : Ent} {ea eb : α}
-    (ha : role a ea ∧ P ea)
-    (ha_unique : ∀ e, role a e → P e → e = ea)
-    (hb : role b eb ∧ P eb)
-    (hb_unique : ∀ e, role b e → P e → e = eb) :
-    comparativeTruth role P extract μ a b ↔
-      μ (extract eb) < μ (extract ea) :=
-  maxComparative_unique ha (fun e he => ha_unique e he.1 he.2)
-    hb (fun e he => hb_unique e he.1 he.2)
+/-- The equative truth condition (eq. 27.ii): `as much` compares weakly —
+    some role-`a` eventuality satisfies `P` and measures at least the
+    maximal as-clause degree. The same pipeline as `comparativeTruth`
+    with `⪰` for `≻` ([bresnan-1973]'s `as` filling the same Det slot). -/
+def equativeTruth {Ent α Measured : Type*}
+    (role : Ent → α → Prop) (P : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ)
+    (a b : Ent) : Prop :=
+  maxEquative (fun e => role a e ∧ P e) (fun e => role b e ∧ P e)
+    (fun e => μ (extract e))
+
+/-- `-er` is strictly stronger than `as` (eq. 27.i ⇒ 27.ii). -/
+theorem comparativeTruth_entails_equativeTruth {Ent α Measured : Type*}
+    (role : Ent → α → Prop) (P : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
+    comparativeTruth role P extract μ a b → equativeTruth role P extract μ a b :=
+  maxComparative_entails_maxEquative _ _ _
 
 /-! ### The compositional derivation (§§2.1–3.2)
 
@@ -173,55 +174,6 @@ def adjectivalComparative (frame : ThematicFrame Entity Time)
     (P : Event Time → Prop) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
 
-/-- Nominal comparative under maximality: `μ(theme(eb)) < μ(theme(ea))`. -/
-theorem nominal_max_reduces {frame : ThematicFrame Entity Time}
-    {P : Event Time → Prop} {themeOf : Event Time → Entity} {μ : Entity → ℚ}
-    {a b : Entity} {ea eb : Event Time}
-    (ha : frame.agent a ea ∧ P ea)
-    (ha_unique : ∀ e, frame.agent a e → P e → e = ea)
-    (hb : frame.agent b eb ∧ P eb)
-    (hb_unique : ∀ e, frame.agent b e → P e → e = eb) :
-    nominalComparative frame P themeOf μ a b ↔ μ (themeOf eb) < μ (themeOf ea) :=
-  comparativeTruth_max ha ha_unique hb hb_unique
-
-/-- Verbal comparative under maximality: `μ(eb) < μ(ea)`. -/
-theorem verbal_max_reduces {frame : ThematicFrame Entity Time}
-    {P : Event Time → Prop} {μ : Event Time → ℚ}
-    {a b : Entity} {ea eb : Event Time}
-    (ha : frame.agent a ea ∧ P ea)
-    (ha_unique : ∀ e, frame.agent a e → P e → e = ea)
-    (hb : frame.agent b eb ∧ P eb)
-    (hb_unique : ∀ e, frame.agent b e → P e → e = eb) :
-    verbalComparative frame P μ a b ↔ μ eb < μ ea :=
-  comparativeTruth_max ha ha_unique hb hb_unique
-
-/-- Adjectival comparative under maximality: `μ(sb) < μ(sa)`. -/
-theorem adjectival_max_reduces {frame : ThematicFrame Entity Time}
-    {P : Event Time → Prop} {μ : Event Time → ℚ}
-    {a b : Entity} {sa sb : Event Time}
-    (ha : frame.holder a sa ∧ P sa)
-    (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
-    (hb : frame.holder b sb ∧ P sb)
-    (hb_unique : ∀ s, frame.holder b s → P s → s = sb) :
-    adjectivalComparative frame P μ a b ↔ μ sb < μ sa :=
-  comparativeTruth_max ha ha_unique hb hb_unique
-
-/-- Under maximality, every domain's comparative is
-    `Degree.comparativeSem` ([schwarzschild-2008]) on measured values. -/
-theorem max_eq_comparativeSem {Measured : Type*}
-    {role : Entity → Event Time → Prop}
-    {P : Event Time → Prop}
-    {extract : Event Time → Measured}
-    {μ : Measured → ℚ}
-    {a b : Entity} {ea eb : Event Time}
-    (ha : role a ea ∧ P ea)
-    (ha_unique : ∀ e, role a e → P e → e = ea)
-    (hb : role b eb ∧ P eb)
-    (hb_unique : ∀ e, role b e → P e → e = eb) :
-    comparativeTruth role P extract μ a b ↔
-      Degree.comparativeSem (μ ∘ extract) ea eb .positive :=
-  comparativeTruth_max ha ha_unique hb hb_unique
-
 end Domains
 
 /-! ### Mereological status (§§2–3)
@@ -242,38 +194,13 @@ inductive MereologicalStatus where
   | quantized
   deriving DecidableEq, Repr
 
-/-- CUM → no inherent endpoint → open scale; QUA → inherent endpoint →
-    closed scale ([kennedy-2007]). -/
-def MereologicalStatus.toBoundedness : MereologicalStatus → Core.Order.Boundedness
-  | .cumulative => .open_
-  | .quantized  => .closed
-
-/-- Lift to [krifka-1989]'s cum/qua labels for cross-framework dialogue. -/
-def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Order.MereoTag
-  | .cumulative => .cum
-  | .quantized  => .qua
-
-/-- The status-based and tag-based boundedness routes agree. -/
-theorem toBoundedness_matches_mereoTag :
-    MereologicalStatus.cumulative.toBoundedness =
-      Core.Order.MereoTag.cum.toBoundedness ∧
-    MereologicalStatus.quantized.toBoundedness =
-      Core.Order.MereoTag.qua.toBoundedness :=
-  ⟨rfl, rfl⟩
-
-/-- `MereologicalStatus` joins the cross-framework endpoint-licensing
-    pipeline alongside `Boundedness` and `MereoTag`. -/
-instance : Core.Order.LicensingPipeline MereologicalStatus where
-  toBoundedness := MereologicalStatus.toBoundedness
-
 /-- Telicity determines status: atelic VPs are CUM, telic VPs QUA. -/
 def telicityToStatus : Telicity → MereologicalStatus
   | .atelic => .cumulative
   | .telic  => .quantized
 
 /-- Number determines status: mass CUM; count (sg/pl/neutral) QUA at the
-    lexical level (plural CUM-at-plurality measures only NUMBER;
-    number-neutral nouns have identifiable atoms, [moroney-2021] §2.2). -/
+    lexical level (plural CUM-at-plurality measures only NUMBER). -/
 def numberToStatus : NumberFeature → MereologicalStatus
   | .mass    => .cumulative
   | .sg      => .quantized
@@ -290,12 +217,6 @@ def nonGradableToStatus : MereologicalStatus := .quantized
 theorem telicize_shifts_status (p : AspectualProfile) (h : p.telicity = .atelic) :
     telicityToStatus p.telicity = .cumulative ∧
     telicityToStatus p.telicize.telicity = .quantized :=
-  ⟨by rw [h]; rfl, rfl⟩
-
-/-- Atelicization (the progressive) shifts quantized back to cumulative. -/
-theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic) :
-    telicityToStatus p.telicity = .quantized ∧
-    telicityToStatus p.atelicize.telicity = .cumulative :=
   ⟨by rw [h]; rfl, rfl⟩
 
 /-! ### Felicity from the lexicon (§§2–3)
@@ -363,30 +284,6 @@ theorem qua_measures_vacuously_admissible {α : Type*} [PartialOrder α]
     StrictMonoOn μ {x | P x} :=
   fun _ hx _ hy hlt => absurd hlt.le (hQ hx hy hlt.ne)
 
-/-- Why cumulative reference keeps the `much` scale open: with disjoint
-    supply, the degree set of an extensively measured cumulative predicate
-    has no maximum (via `Mereology.cum_measure_unbounded`). -/
-theorem cum_thanDegrees_no_max {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [Mereology.ExtMeasure α μ] {P : α → Prop}
-    (hCum : Mereology.CUM P) {δ : ℚ} (hδ : 0 < δ)
-    (hSupply : ∀ x, P x → ∃ y, P y ∧ ¬ Mereology.Overlap x y ∧ δ ≤ μ y)
-    {x₀ : α} (hx₀ : P x₀) :
-    ¬ ∃ M, IsGreatest (Degree.thanDegrees P μ) M := by
-  rintro ⟨M, _, hub⟩
-  obtain ⟨z, hz, hgt⟩ :=
-    Mereology.DimensionChain.cum_measure_unbounded hCum hδ hSupply x₀ hx₀ M
-  exact absurd (hub ⟨z, hz, le_refl _⟩) (not_le.mpr hgt)
-
-/-- The cross-categorial parallel (§§2–3): mass, atelic, and gradable
-    routes agree on cumulative status; count, telic, and non-gradable on
-    quantized — each via an independent substrate map. -/
-theorem cross_categorial_parallel :
-    numberToStatus .mass = telicityToStatus .atelic ∧
-    telicityToStatus .atelic = gradableToStatus ∧
-    numberToStatus .sg = telicityToStatus .telic ∧
-    telicityToStatus .telic = nonGradableToStatus :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
 /-! ### Dimensional restriction (§3.4) -/
 
 /-- Order model of a measured domain: states are linearly ordered;
@@ -436,11 +333,6 @@ theorem dimension_not_category :
 
 /-! ### Grammar shifts measurement (§5) -/
 
-/-- Ex. (104): the plural morpheme shifts cumulative to quantized. -/
-theorem rock_shift_status :
-    numberToStatus .mass = .cumulative ∧ numberToStatus .pl = .quantized :=
-  ⟨rfl, rfl⟩
-
 /-- Ex. (105): telicization (the directional PP) shifts cumulative to
     quantized. -/
 theorem run_shift_via_telicize :
@@ -448,13 +340,6 @@ theorem run_shift_via_telicize :
     telicityToStatus p.telicity = .cumulative ∧
     telicityToStatus p.telicize.telicity = .quantized :=
   telicize_shifts_status _ rfl
-
-/-- Atelicization (the progressive) reverses the (105) shift. -/
-theorem build_shift_via_atelicize :
-    let p : AspectualProfile := accomplishmentProfile
-    telicityToStatus p.telicity = .quantized ∧
-    telicityToStatus p.atelicize.telicity = .cumulative :=
-  atelicize_shifts_status _ rfl
 
 /-! ### Bresnan's decomposition (§3.3) -/
 
@@ -465,15 +350,6 @@ def crossCategorialQP : Bresnan1973.QP := ⟨.er, .much⟩
 /-- The surface form "more" derives from Bresnan's suppletion. -/
 theorem crossCategorial_more_from_suppletion :
     Bresnan1973.suppletion crossCategorialQP = some "more" := rfl
-
-/-- Covert `much` on GAs (§6.3) is Much Deletion: `much` → ∅ before an
-    adjective. -/
-theorem covert_much_is_bresnan_deletion :
-    Bresnan1973.muchDeletionApplies .much (adjFollows := true) = true := rfl
-
-/-- N/V retain overt `much`: Much Deletion only applies before an adjective. -/
-theorem overt_much_no_deletion :
-    Bresnan1973.muchDeletionApplies .much (adjFollows := false) = false := rfl
 
 /-! ### `very` distribution (§6.3) -/
 

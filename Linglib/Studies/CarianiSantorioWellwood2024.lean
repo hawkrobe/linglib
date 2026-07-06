@@ -396,9 +396,9 @@ theorem confidence_adjectives_share_dimension :
 /-! ## §8. Compositional Bridge: Wellwood 2015 → CSW
 
 CSW build their analysis on Wellwood's [wellwood-2015]
-cross-categorial comparative. The bridge below specializes Wellwood's
-`adjectival_max_reduces` (which proves the comparative reduces to a
-direct degree comparison under unique-eventuality assumptions) to the
+cross-categorial comparative. The bridge below specializes the
+substrate's `Degree.maxComparative_unique` (the comparative reduces to
+a direct degree comparison under unique-eventuality assumptions) to the
 shape CSW use.
 
 This is the only bridge in the file that does substantive composition —
@@ -420,7 +420,8 @@ theorem confidence_comparative_reduces
     (hb : frame.holder b sb ∧ P sb)
     (hb_unique : ∀ s, frame.holder b s → P s → s = sb) :
     Wellwood2015.adjectivalComparative frame P μ a b ↔ μ sb < μ sa :=
-  Wellwood2015.adjectival_max_reduces ha ha_unique hb hb_unique
+  Degree.maxComparative_unique ha (fun s hs => ha_unique s hs.1 hs.2)
+    hb (fun s hs => hb_unique s hs.1 hs.2)
 
 /-! ## §9. Future Work
 
