@@ -34,33 +34,33 @@ rose tree, unary vertex, contraction, series reduction
 
 namespace RoseTree
 
-variable {α : Type*}
+variable {α : Type*} (a : α) (c d : RoseTree α) (cs : List (RoseTree α))
 
 /-! ### The contraction -/
 
 /-- Rebuild a node from already-contracted children: a lone child replaces the node,
     otherwise the node is kept. -/
-private def contractCombine (a : α) : List (RoseTree α) → RoseTree α
+private def contractCombine : List (RoseTree α) → RoseTree α
   | [c] => c
   | cs  => node a cs
 
-private theorem contractCombine_cons₂ (a : α) (c d : RoseTree α) (cs : List (RoseTree α)) :
+private theorem contractCombine_cons₂ :
     contractCombine a (c :: d :: cs) = node a (c :: d :: cs) := rfl
 
 /-- Contract every unary (single-child) vertex into its child. -/
 def contractUnary : RoseTree α → RoseTree α :=
   fold contractCombine
 
-private theorem contractUnary_node (a : α) (cs : List (RoseTree α)) :
+private theorem contractUnary_node :
     contractUnary (node a cs) = contractCombine a (cs.map contractUnary) := by
   simp only [contractUnary, fold_node]
 
-@[simp] theorem contractUnary_leaf (a : α) : contractUnary (leaf a) = leaf a := rfl
+@[simp] theorem contractUnary_leaf : contractUnary (leaf a) = leaf a := rfl
 
-@[simp] theorem contractUnary_node_singleton (a : α) (c : RoseTree α) :
+@[simp] theorem contractUnary_node_singleton :
     contractUnary (node a [c]) = contractUnary c := rfl
 
-@[simp] theorem contractUnary_node_cons₂ (a : α) (c d : RoseTree α) (cs : List (RoseTree α)) :
+@[simp] theorem contractUnary_node_cons₂ :
     contractUnary (node a (c :: d :: cs)) =
       node a (contractUnary c :: contractUnary d :: cs.map contractUnary) := by
   rw [contractUnary_node, List.map_cons, List.map_cons, contractCombine_cons₂]
@@ -69,14 +69,14 @@ private theorem contractUnary_node (a : α) (cs : List (RoseTree α)) :
 def numUnary : RoseTree α → ℕ :=
   fold fun _ ns => (if ns.length = 1 then 1 else 0) + ns.sum
 
-@[simp] theorem numUnary_node (a : α) (cs : List (RoseTree α)) :
+@[simp] theorem numUnary_node :
     numUnary (node a cs) = (if cs.length = 1 then 1 else 0) + (cs.map numUnary).sum := by
   simp only [numUnary, fold_node, List.length_map]
 
 /-! ### Vertex-count conservation -/
 
 /-- Conservation at one vertex: `contractCombine` loses the root exactly when unary. -/
-private theorem numNodes_contractCombine_add (a : α) (cs : List (RoseTree α)) :
+private theorem numNodes_contractCombine_add :
     (contractCombine a cs).numNodes + (if cs.length = 1 then 1 else 0)
       = 1 + (cs.map numNodes).sum := by
   rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [contractCombine, Nat.add_comm]
@@ -97,8 +97,8 @@ theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 
-private theorem numUnary_contractCombine (a : α) (cs : List (RoseTree α))
-    (h : ∀ c ∈ cs, c.numUnary = 0) : (contractCombine a cs).numUnary = 0 := by
+private theorem numUnary_contractCombine (h : ∀ c ∈ cs, c.numUnary = 0) :
+    (contractCombine a cs).numUnary = 0 := by
   rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
   · rfl
   · exact h c List.mem_cons_self
@@ -161,7 +161,7 @@ theorem contractUnary_eq_self_iff {t : RoseTree α} :
 theorem numUnary_perm {t s : RoseTree α} (h : Perm t s) : t.numUnary = s.numUnary :=
   fold_perm (fun _ _ _ h' => by rw [h'.length_eq, h'.sum_eq]) h
 
-private theorem contractCombine_perm (a : α) :
+private theorem contractCombine_perm :
     ∀ {L₁ L₂ : List (RoseTree α)}, PermList L₁ L₂ →
       Perm (contractCombine a L₁) (contractCombine a L₂)
   | _, _, .nil => Perm.refl _
@@ -172,7 +172,7 @@ private theorem contractCombine_perm (a : α) :
     | [], _ :: _, hlen, _ => by simp at hlen
     | _ :: _, [], hlen, _ => by simp at hlen
   | _, _, .swap c d cs => .node (.swap c d cs)
-  | _, _, .trans h₁ h₂ => (contractCombine_perm a h₁).trans (contractCombine_perm a h₂)
+  | _, _, .trans h₁ h₂ => (contractCombine_perm h₁).trans (contractCombine_perm h₂)
 
 /-- `contractUnary` respects `Perm`: contraction descends to the nonplanar quotient
     (`fold_rel` at `S := Perm`, fed by the combinator congruence). -/
