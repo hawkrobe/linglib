@@ -18,8 +18,7 @@ import Mathlib.Tactic.Ring
 For a rooted nonplanar tree whose children form the multiset `M = {c₁ × k₁, …, cₙ × kₙ}`
 (distinct subtrees `cᵢ` with multiplicity `kᵢ`), the automorphism group has cardinality
 `∏ᵢ kᵢ! · |Aut(cᵢ)| ^ kᵢ`; the same formula applied to the top-level multiset counts the
-automorphisms of a forest. These counts are the symmetry weights of the Connes-Kreimer /
-Grossman-Larson pairing (`Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing`).
+automorphisms of a forest.
 
 ## Main definitions
 

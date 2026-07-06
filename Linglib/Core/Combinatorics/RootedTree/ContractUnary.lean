@@ -27,9 +27,6 @@ number of unary vertices.
 
 `[UPSTREAM]` candidate alongside the `RoseTree` carrier.
 
-## Tags
-
-rose tree, unary vertex, contraction, series reduction
 -/
 
 namespace RoseTree
