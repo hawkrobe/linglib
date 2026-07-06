@@ -23,6 +23,7 @@ Composition principles:
    β expects an intension `⟨s,σ⟩` and γ has type σ ([von-fintel-heim-2011] Step 10)
 5. Predicate Modification (PM): combine two `⟨e,t⟩` predicates (Ch. 4)
 6. Predicate Abstraction (PA): `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}` (Ch. 5)
+7. Event Identification (EI): role head + eventuality predicate ([kratzer-1996])
 
 Two effect-discipline choices, both visible rather than stipulated:
 
@@ -163,10 +164,27 @@ def tryPM {E W : Type} {M : Type → Type} [Applicative M]
     some ⟨.fn .e .t, Modifier.intersective <$> p1 <*> p2⟩
   | _, _ => none
 
-/-- Binary node: try FA, then IFA, then PM. -/
+/-- EI: Event Identification ([kratzer-1996]): a role head `⟨e,⟨e,t⟩⟩`
+combines with an eventuality predicate `⟨e,t⟩`, conjoining the predicate
+onto the head's event argument — `λx.λe. f(x)(e) ∧ g(e)`. Tried in both
+orders; effects sequence in linear order. -/
+def tryEI {E W : Type} {M : Type → Type} [Applicative M]
+    (d1 d2 : TypedDenot E W M) : Option (TypedDenot E W M) :=
+  match h1 : d1.ty, h2 : d2.ty with
+  | .fn .e (.fn .e .t), .fn .e .t =>
+    let f : M (Denot E W (.e ⇒ .e ⇒ .t)) := h1 ▸ d1.val
+    let p : M (Denot E W (.e ⇒ .t)) := h2 ▸ d2.val
+    some ⟨.e ⇒ .e ⇒ .t, (λ fv pv => λ x e => fv x e ∧ pv e) <$> f <*> p⟩
+  | .fn .e .t, .fn .e (.fn .e .t) =>
+    let p : M (Denot E W (.e ⇒ .t)) := h1 ▸ d1.val
+    let f : M (Denot E W (.e ⇒ .e ⇒ .t)) := h2 ▸ d2.val
+    some ⟨.e ⇒ .e ⇒ .t, (λ pv fv => λ x e => fv x e ∧ pv e) <$> p <*> f⟩
+  | _, _ => none
+
+/-- Binary node: try FA, then IFA, then PM, then EI. -/
 def interpBinary {E W : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : TypedDenot E W M) : Option (TypedDenot E W M) :=
-  tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2
+  tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2 <|> tryEI d1 d2
 
 /-! ### Tree interpretation -/
 
@@ -273,7 +291,7 @@ theorem tryPM_preserves_type {E W : Type} [Applicative M] (d1 d2 : TypedDenot E 
 
 theorem interpBinary_eq {E W : Type} [Applicative M] (d1 d2 : TypedDenot E W M) :
     interpBinary d1 d2 =
-    (tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2) := rfl
+    (tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2 <|> tryEI d1 d2) := rfl
 
 end Properties
 

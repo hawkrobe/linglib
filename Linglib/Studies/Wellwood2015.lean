@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Measure
+import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
@@ -26,9 +27,12 @@ not lexical category (§3.4).
 
 * `comparativeTruth` / `equativeTruth`: the shared truth conditions for
   `-er` and `as` (eq. 27), instances of `Degree.maxComparative` /
-  `Degree.maxEquative`; `derivation_eq_comparativeTruth` proves the
-  paper's step-by-step composition (`matrixDegP`, `absDegP`, `predMod`,
-  `thanClause`) yields the former.
+  `Degree.maxEquative`.
+* `matrix_derivation_denotes` / `than_derivation_denotes`: the
+  derivations run type-driven through the [heim-kratzer-1998] engine —
+  one lexicon (`-er`, `much`, `ABS`, a role head) and one tree derive
+  every domain's matrix and than-clause by FA/PM/EI/closure, and
+  `derivation_eq_comparativeTruth` assembles them into eqs. 42/48/65.
 * `nominalComparative`, `verbalComparative`, `adjectivalComparative`:
   the three domain instantiations (role × extraction).
 * `coffee_much_matches` … `wooden_much_matches`: the §§2–3 felicity
@@ -150,6 +154,95 @@ theorem derivation_eq_comparativeTruth {Measured : Type*}
     matrixClause, predMod, matrixDegP, absDegP, ge_iff_le, gt_iff_lt, and_assoc]
 
 end Derivation
+
+
+/-! ### The derivations, type-driven
+
+The step-licensed derivations (37.i–viii, 45.i–vi, 61) run through the
+shared [heim-kratzer-1998] engine (`Semantics/Composition/Tree.lean`):
+one lexicon — `-er`, `much` (eqs. 7/28), `ABS` (38.ii), the standard δ,
+a base predicate, and a [kratzer-1996] role head — and one tree shape,
+composed by FA, PM, EI, FA, and existential closure. Degree abstraction
+for the than-clause (39–41) is the meta-language λ over the same tree
+with `ABS` in place of `-er`. The cross-categorial thesis is the
+parametricity: nominal, verbal, and adjectival matrices are the SAME
+tree at different (role, predicate, measure) cells. -/
+
+section TypeDriven
+
+open Semantics.Composition.Tree
+open Semantics.Montague (Lexicon)
+open Intensional (Ty Denot)
+open Syntax (Tree)
+
+variable {Ent α : Type}
+
+/-- The sorted composition domain: individuals ⊕ eventualities. -/
+abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
+
+/-- Wellwood's lexicon over the engine: `much` is the assignment-supplied
+    measure (eqs. 7/28), `-er` the strict and `ABS` (38.ii) the weak
+    degree head, `role` a [kratzer-1996] role head composing by EI. -/
+def lexicon (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
+    (subj : Ent) (δ : ℚ) : Lexicon (Dom Ent α) Unit := fun w =>
+  match w with
+  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → ℚ from fun x => match x with
+      | .inr e => μ0 e
+      | .inl _ => 0⟩
+  | "er" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
+      show (Dom Ent α → ℚ) → ℚ → Dom Ent α → Prop from fun m d x => m x > d⟩
+  | "ABS" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
+      show (Dom Ent α → ℚ) → ℚ → Dom Ent α → Prop from fun m d x => m x ≥ d⟩
+  | "δ" => some ⟨.d, show ℚ from δ⟩
+  | "pred" => some ⟨.e ⇒ .t, fun x => match x with
+      | .inr e => P e
+      | .inl _ => False⟩
+  | "role" => some ⟨.e ⇒ .e ⇒ .t, fun x ev => match x, ev with
+      | .inl i, .inr e => role i e
+      | _, _ => False⟩
+  | "subj" => some ⟨.e, .inl subj⟩
+  | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, fun p => ∃ e : α, p (.inr e)⟩
+  | _ => none
+
+/-- The shared matrix tree (37.i–viii / 45.i–vi):
+    `[EC [subj [role [pred [[er much] δ]]]]]` — Deg′ = FA(-er, much),
+    DegP = FA(Deg′, δ), VP = PM, vP = EI, S = FA, then closure. -/
+def matrixTree : Tree Unit String :=
+  .node () [.terminal () "EC",
+    .node () [.terminal () "subj",
+      .node () [.terminal () "role",
+        .node () [.terminal () "pred",
+          .node () [.node () [.terminal () "er", .terminal () "much"],
+            .terminal () "δ"]]]]]
+
+/-- The than-clause body (39–41/47): the same tree with `ABS` (38.ii)
+    for `-er`. -/
+def thanTree : Tree Unit String :=
+  .node () [.terminal () "EC",
+    .node () [.terminal () "subj",
+      .node () [.terminal () "role",
+        .node () [.terminal () "pred",
+          .node () [.node () [.terminal () "ABS", .terminal () "much"],
+            .terminal () "δ"]]]]]
+
+/-- The engine derives the matrix clause: type-driven interpretation of
+    `matrixTree` succeeds and denotes `matrixClause` (45.vi / 37.viii). -/
+theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
+    (μ0 : α → ℚ) (a : Ent) (δ : ℚ) (g : Core.Assignment (Dom Ent α)) :
+    interp (Dom Ent α) Unit (lexicon role P μ0 a δ) g matrixTree =
+      some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
+  rfl
+
+/-- The engine derives the than-clause degree set pointwise: at each
+    degree `d`, `thanTree` denotes membership of `d` in `thanClause`
+    (39–41/47); degree abstraction is the meta-language λ over `d`. -/
+theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
+    (μ0 : α → ℚ) (b : Ent) (d : ℚ) (g : Core.Assignment (Dom Ent α)) :
+    interp (Dom Ent α) Unit (lexicon role P μ0 b d) g thanTree =
+      some ⟨.t, pure (d ∈ thanClause role P μ0 b)⟩ :=
+  rfl
+
+end TypeDriven
 
 /-! ### Three domain instantiations -/
 
