@@ -104,9 +104,8 @@ def System.isBlocker (s : α) : Prop :=
 instance : DecidablePred sys.isBlocker := fun s => by
   unfold System.isBlocker; infer_instance
 
-/-- The system's lens: `(pattern.value, write)` with the get-put law. Lawful
-    lenses are store-comonad coalgebras; the slot readout is the only state the
-    OSL transducer carries. -/
+/-- The system's lens: `(pattern.value, write)` with the put-get law. The slot
+    readout is the only state the OSL transducer carries. -/
 def System.lens : Lens α Bool :=
   ⟨sys.pattern.value, sys.write, sys.value_write⟩
 

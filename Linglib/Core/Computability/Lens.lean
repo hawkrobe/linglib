@@ -10,18 +10,26 @@ import Mathlib.Logic.Function.Basic
 
 A lens onto an `Option V`-valued slot of `α`, exposed through its `some`-writes:
 `read` may find the slot unvalued, `write` always values it, and `read_write` is
-the get-put law. Lenses originate in the view-update problem
+the put-get law. Lenses originate in the view-update problem
 ([bancilhon-spyratos-1981]) and were named and axiomatized in the bidirectional
-transformation literature ([foster-greenwald-moore-pierce-schmitt-2007]); lawful
-lenses are the coalgebras of the store comonad. Here a lens equips a transducer
-alphabet with the designated slot its machines read and write, which is what
-lets an alphabet-generic subregular transducer compress its state to the slot
-readout rather than carry a full symbol (`Subregular.Harmony.System` runs its
-harmony feature through one).
+transformation literature ([foster-greenwald-moore-pierce-schmitt-2007]).
+Very-well-behaved lenses are simultaneously the coalgebras of the store comonad
+and the algebras of the state monad (the two are adjoint); this structure
+carries the put-get fragment.
+
+A lens-equipped alphabet is a data-word alphabet (symbol paired with a value
+slot). With an infinite value domain, a transducer whose state is one slot
+readout is a one-register machine in the sense of [kaminski-francez-1994];
+with finite `V` — the case here — everything stays classical finite-state,
+which is what lets an alphabet-generic subregular transducer compress its
+state to the slot readout rather than carry a full symbol
+(`Subregular.Harmony.System` runs its harmony feature through one). The
+"monadic" of `BMRS` (monadic second-order logic, one free variable) is
+unrelated.
 
 ## Main definitions
 
-* `Lens`: the read/write pair with the get-put law.
+* `Lens`: the read/write pair with the put-get law.
 * `Lens.proj`: the canonical lens of a function type at an index — evaluation
   paired with `Function.update`.
 -/
@@ -35,7 +43,7 @@ structure Lens (α : Type u) (V : Type v) where
   read : α → Option V
   /-- Write a value into the slot. -/
   write : V → α → α
-  /-- Get-put: reading back a written value gives that value. -/
+  /-- Put-get: reading back a written value gives that value. -/
   read_write : ∀ v s, read (write v s) = some v
 
 namespace Lens
