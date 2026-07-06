@@ -25,6 +25,11 @@ method of [heitmeier-chuang-baayen-2026].
 - `FormVec`, `MeaningVec`: `Fin n → ℝ` carriers for the Studies specialisations.
 - `broadcast`: the coordinate-broadcast linear map, a witness for
   non-degenerate example DLMs.
+
+Not formalized here: the deep replacements for the linear maps — ResLDL
+([chuang-bell-tseng-baayen-2026]: LDL plus a network fitted to its residuals)
+and DDL ([heitmeier-schmidt-lensch-baayen-2025], who find deep mappings do
+not reliably beat linear ones for Taiwan Mandarin).
 -/
 
 namespace Processing.Lexical.Discriminative
