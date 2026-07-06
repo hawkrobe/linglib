@@ -51,7 +51,7 @@ structure AdjModifierEntry where
   /-- Scale boundedness (from [kennedy-2007]) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
-  dimension : Degree.Dimension
+  dimension : Features.ScalarDimension
   /-- Antonym form (if any) -/
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/

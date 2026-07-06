@@ -687,6 +687,7 @@ import Linglib.Features.Polarity
 import Linglib.Features.Possession
 import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
+import Linglib.Features.ScalarDimension
 import Linglib.Features.Prosody
 import Linglib.Features.QParticleLayer
 import Linglib.Features.Register
