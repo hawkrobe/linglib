@@ -141,7 +141,7 @@ theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : Nonplanar (α ⊕
   · rw [Forest.alphaC_singleton, Forest.alphaC_singleton,
         Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
     omega
-  · simp only [Forest.sigmaC, Forest.b₀_singleton, Forest.alphaC_singleton]
+  · simp only [Forest.sigmaC_eq, Forest.b₀_singleton, Forest.alphaC_singleton]
     rw [Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
     omega
 

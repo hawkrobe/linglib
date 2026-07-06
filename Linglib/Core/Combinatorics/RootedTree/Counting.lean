@@ -31,11 +31,7 @@ namespace RoseTree
 
 variable {α : Type*}
 
-/-! ### Leaf statistics by predicate
-
-Counts over the leaf projection (`Linglib.Core.Data.RoseTree.Leaves`): the count is
-`Multiset.countP`, the vertex bound is inherited from `Multiset.countP_le_card`, and
-`Perm`-descent is inherited from the projection's. -/
+/-! ### Leaf statistics by predicate -/
 
 /-- The number of leaves whose label satisfies `p`. -/
 def leafCountP (p : α → Prop) [DecidablePred p] (t : RoseTree α) : ℕ := t.leaves.countP p
@@ -215,6 +211,115 @@ theorem accCount_node_pair (a : α) (l r : Nonplanar α) :
     Multiset.sum_cons, Multiset.sum_singleton, ← accCount_add_one]
   omega
 
+
+/-! ### Leaf statistics by predicate, on the quotient -/
+
+/-- The number of leaves whose label satisfies `p`. -/
+def leafCountP (p : α → Prop) [DecidablePred p] : Nonplanar α → ℕ :=
+  Nonplanar.lift (RoseTree.leafCountP p) fun _ _ => RoseTree.leafCountP_perm p
+
+@[simp] theorem leafCountP_mk (p : α → Prop) [DecidablePred p] (t : RoseTree α) :
+    (mk t).leafCountP p = t.leafCountP p := rfl
+
+@[simp] theorem leafCountP_leaf (p : α → Prop) [DecidablePred p] (a : α) :
+    (leaf a : Nonplanar α).leafCountP p = if p a then 1 else 0 := by
+  show (mk (.node a [])).leafCountP p = _
+  rw [leafCountP_mk, RoseTree.leafCountP_leaf]
+
+/-- A root failing `p` contributes nothing: the count is the children's total. -/
+theorem leafCountP_node_of_not (p : α → Prop) [DecidablePred p] (a : α)
+    (F : Multiset (Nonplanar α)) (h : ¬p a) :
+    (Nonplanar.node a F).leafCountP p = (F.map (Nonplanar.leafCountP p)).sum := by
+  refine Quotient.inductionOn F fun lst => ?_
+  show (mk (.node a (lst.map Quotient.out))).leafCountP p = _
+  rw [leafCountP_mk, RoseTree.leafCountP_node_of_not p a _ h, List.map_map]
+  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  show (mk (Quotient.out t)).leafCountP p = Nonplanar.leafCountP p t
+  exact congrArg (Nonplanar.leafCountP p) (Quotient.out_eq t)
+
+/-- The sum of root-distances of the leaves whose label satisfies `p`. -/
+def leafDepthSumP (p : α → Prop) [DecidablePred p] : Nonplanar α → ℕ :=
+  Nonplanar.lift (RoseTree.leafDepthSumP p) fun _ _ => RoseTree.leafDepthSumP_perm p
+
+@[simp] theorem leafDepthSumP_mk (p : α → Prop) [DecidablePred p] (t : RoseTree α) :
+    (mk t).leafDepthSumP p = t.leafDepthSumP p := rfl
+
+@[simp] theorem leafDepthSumP_leaf (p : α → Prop) [DecidablePred p] (a : α) :
+    (leaf a : Nonplanar α).leafDepthSumP p = 0 := by
+  show (mk (.node a [])).leafDepthSumP p = _
+  rw [leafDepthSumP_mk, RoseTree.leafDepthSumP_leaf]
+
+/-- Each child contributes its own depth-weighted count plus one per counted leaf it
+    carries. -/
+@[simp] theorem leafDepthSumP_node (p : α → Prop) [DecidablePred p] (a : α)
+    (F : Multiset (Nonplanar α)) :
+    (Nonplanar.node a F).leafDepthSumP p
+      = (F.map fun c => c.leafDepthSumP p + c.leafCountP p).sum := by
+  refine Quotient.inductionOn F fun lst => ?_
+  show (mk (.node a (lst.map Quotient.out))).leafDepthSumP p = _
+  rw [leafDepthSumP_mk, RoseTree.leafDepthSumP_node, List.map_map]
+  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  show RoseTree.leafDepthSumP p (Quotient.out t) + RoseTree.leafCountP p (Quotient.out t)
+      = Nonplanar.leafDepthSumP p t + Nonplanar.leafCountP p t
+  congr 1
+  · exact congrArg (Nonplanar.leafDepthSumP p) (Quotient.out_eq t)
+  · exact congrArg (Nonplanar.leafCountP p) (Quotient.out_eq t)
+
+/-- A root failing `p` is an uncounted vertex, so the count is strict. -/
+theorem leafCountP_lt_numNodes_of_not_root (p : α → Prop) [DecidablePred p]
+    (t : Nonplanar α) (h : ¬p t.rootValue) : t.leafCountP p < t.numNodes := by
+  obtain ⟨t₀, rfl⟩ : ∃ t₀ : RoseTree α, t = Nonplanar.mk t₀ :=
+    ⟨t.out, (Quotient.out_eq t).symm⟩
+  rw [Nonplanar.rootValue_mk] at h
+  cases t₀ with
+  | node x cs =>
+    rw [RoseTree.value_node] at h
+    rw [Nonplanar.leafCountP_mk, Nonplanar.numNodes_mk]
+    exact RoseTree.leafCountP_lt_numNodes_of_not p x cs h
+
+/-- A root failing `p` puts every counted leaf at depth ≥ 1. -/
+theorem leafCountP_le_leafDepthSumP_of_not_root (p : α → Prop) [DecidablePred p]
+    (t : Nonplanar α) (h : ¬p t.rootValue) : t.leafCountP p ≤ t.leafDepthSumP p := by
+  obtain ⟨t₀, rfl⟩ : ∃ t₀ : RoseTree α, t = Nonplanar.mk t₀ :=
+    ⟨t.out, (Quotient.out_eq t).symm⟩
+  rw [Nonplanar.rootValue_mk] at h
+  cases t₀ with
+  | node x cs =>
+    rw [RoseTree.value_node] at h
+    rw [Nonplanar.leafCountP_mk, Nonplanar.leafDepthSumP_mk]
+    exact RoseTree.leafCountP_le_leafDepthSumP_of_not p x cs h
+
+/-! ### Discounted accessible-term count -/
+
+/-- Non-root vertices, discounting the `p`-leaves. Truncated subtraction covers the
+    single-`p`-leaf tree, whose root is its one leaf. -/
+def accCountP (p : α → Prop) [DecidablePred p] (t : Nonplanar α) : ℕ :=
+  t.accCount - t.leafCountP p
+
+/-- Counted leaves are among the non-root vertices whenever some vertex is uncounted. -/
+theorem leafCountP_le_accCount (p : α → Prop) [DecidablePred p] (t : Nonplanar α)
+    (h : t.leafCountP p < t.numNodes) : t.leafCountP p ≤ t.accCount := by
+  rw [Nonplanar.accCount_eq_numNodes_sub_one]
+  omega
+
+/-- Adjoining a root (not counted by `p`) above a pair adds two discounted
+    accessible terms. -/
+theorem accCountP_node_pair (p : α → Prop) [DecidablePred p] (a : α)
+    (l r : Nonplanar α) (hpa : ¬p a)
+    (hl : l.leafCountP p < l.numNodes) (hr : r.leafCountP p < r.numNodes) :
+    (Nonplanar.node a {l, r}).accCountP p = l.accCountP p + r.accCountP p + 2 := by
+  have hw := Nonplanar.accCount_node_pair a l r
+  have htl : (Nonplanar.node a {l, r}).leafCountP p = l.leafCountP p + r.leafCountP p := by
+    rw [leafCountP_node_of_not p a _ hpa]
+    simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
+      Multiset.map_singleton, Multiset.sum_singleton]
+  have hbl := leafCountP_le_accCount p l hl
+  have hbr := leafCountP_le_accCount p r hr
+  simp only [accCountP, htl, hw]
+  omega
+
 end Nonplanar
 
 /-! ### Forest measures -/
@@ -270,6 +375,40 @@ theorem sigma_eq_sum_numNodes (F : Multiset (Nonplanar α)) :
   induction F using Multiset.induction with
   | empty => rfl
   | cons T F ih => rw [sigma_cons, ih, Multiset.map_cons, Multiset.sum_cons]
+
+
+/-- Discounted accessible terms across a forest. -/
+def alphaP (p : α → Prop) [DecidablePred p] (F : Multiset (Nonplanar α)) : ℕ :=
+  (F.map (Nonplanar.accCountP p)).sum
+
+@[simp] theorem alphaP_zero (p : α → Prop) [DecidablePred p] :
+    alphaP p (0 : Multiset (Nonplanar α)) = 0 := rfl
+@[simp] theorem alphaP_cons (p : α → Prop) [DecidablePred p] (T : Nonplanar α)
+    (F : Multiset (Nonplanar α)) : alphaP p (T ::ₘ F) = T.accCountP p + alphaP p F := by
+  simp only [alphaP, Multiset.map_cons, Multiset.sum_cons]
+@[simp] theorem alphaP_singleton (p : α → Prop) [DecidablePred p] (T : Nonplanar α) :
+    alphaP p ({T} : Multiset (Nonplanar α)) = T.accCountP p := by
+  simp only [alphaP, Multiset.map_singleton, Multiset.sum_singleton]
+@[simp] theorem alphaP_add (p : α → Prop) [DecidablePred p]
+    (F G : Multiset (Nonplanar α)) : alphaP p (F + G) = alphaP p F + alphaP p G := by
+  simp only [alphaP, Multiset.map_add, Multiset.sum_add]
+
+/-- Discounted forest size: components plus discounted accessible terms. Unlike
+    `sigma`, this is not the vertex count when counted leaves exist. -/
+def sigmaP (p : α → Prop) [DecidablePred p] (F : Multiset (Nonplanar α)) : ℕ :=
+  b₀ F + alphaP p F
+
+@[simp] theorem sigmaP_zero (p : α → Prop) [DecidablePred p] :
+    sigmaP p (0 : Multiset (Nonplanar α)) = 0 := rfl
+@[simp] theorem sigmaP_cons (p : α → Prop) [DecidablePred p] (T : Nonplanar α)
+    (F : Multiset (Nonplanar α)) : sigmaP p (T ::ₘ F) = T.accCountP p + 1 + sigmaP p F := by
+  simp only [sigmaP, b₀_cons, alphaP_cons]; omega
+@[simp] theorem sigmaP_singleton (p : α → Prop) [DecidablePred p] (T : Nonplanar α) :
+    sigmaP p ({T} : Multiset (Nonplanar α)) = T.accCountP p + 1 := by
+  simp only [sigmaP, b₀_singleton, alphaP_singleton]; omega
+@[simp] theorem sigmaP_add (p : α → Prop) [DecidablePred p]
+    (F G : Multiset (Nonplanar α)) : sigmaP p (F + G) = sigmaP p F + sigmaP p G := by
+  simp only [sigmaP, b₀_add, alphaP_add]; omega
 
 end Forest
 
