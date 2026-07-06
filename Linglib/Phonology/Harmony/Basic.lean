@@ -28,6 +28,8 @@ mechanism, not in these descriptors.
 * `Pattern`: a harmony pattern over a segment type — valuation, participation,
   direction, domain, control. `Pattern.Harmonic` is its surface semantics:
   within every opaque-delimited span, participating segments agree in value.
+  At a finite alphabet a pattern presents a TSL₂ grammar
+  (`Pattern.harmonic_iff_mem_tsl`) — a small DFA on the tier.
 
 ## Main results
 

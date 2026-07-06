@@ -96,7 +96,7 @@ def o_vowel : Segment := Segment.ofSpecs
 
 /-- Palatal harmony: [back] spreads from the last stem vowel to all suffix
     vowels. Every vowel is both trigger and target; no transparency. -/
-def palatalHarmony : System :=
+def palatalHarmony : System Segment :=
   System.mk' (feature := .back)
     (isTrigger     := (·.HasValue .syllabic true))
     (isTarget      := (·.HasValue .syllabic true))
@@ -105,7 +105,7 @@ def palatalHarmony : System :=
 
 /-- Labial harmony: [round] spreads from the last stem vowel to high suffix
     vowels only. Every vowel triggers; only [+high] vowels are targets. -/
-def labialHarmony : System :=
+def labialHarmony : System Segment :=
   System.mk' (feature := .round)
     (isTrigger     := (·.HasValue .syllabic true))
     (isTarget      := (λ s => s.HasValue .syllabic true && s.HasValue .high true))
