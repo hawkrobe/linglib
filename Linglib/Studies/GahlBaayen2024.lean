@@ -53,7 +53,7 @@ substrate (`Processing/Lexical/Discriminative/Defs.lean`),
 after `ChuangEtAl2026`, `LuChuangBaayen2026`, and `Saito2025`. It is
 also the **second** consumer of the `semSup` family (after Saito
 2025), the consumer that triggered the `semSup`/`semSupWord` lift
-to `Measures.lean` (CHANGELOG 0.231.18).
+to `Measures.lean`.
 
 Carrier instantiation: 5,600-dim binary triphone vectors × 200-dim
 fastText English embeddings (paper §3.4, appendix §A2). The substrate
