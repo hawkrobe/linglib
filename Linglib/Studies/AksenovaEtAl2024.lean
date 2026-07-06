@@ -48,28 +48,30 @@ def round : KirghizV → Bool
 
 end KirghizV
 
-/-- Table 34.3, featurally: pairs disagreeing in fronting or rounding. -/
+/-- `kirghizBanned x y`: the tier bigram `xy` disagrees in fronting or in
+    rounding (Table 34.3). -/
 def kirghizBanned (x y : KirghizV) : Prop :=
   x.front ≠ y.front ∨ x.round ≠ y.round
 
 instance : DecidableRel kirghizBanned := fun x y => by
   unfold kirghizBanned; infer_instance
 
-/-- Frontness harmony as a pattern: all vowels participate. -/
+/-- `kirghizFront` is Kirghiz frontness harmony: every vowel participates. -/
 def kirghizFront : Pattern KirghizV Bool :=
   { value := fun v => some v.front, participation := fun _ => .participating }
 
-/-- Rounding harmony as a pattern on the same tier. -/
+/-- `kirghizRound` is Kirghiz rounding harmony, on the same tier. -/
 def kirghizRound : Pattern KirghizV Bool :=
   { value := fun v => some v.round, participation := fun _ => .participating }
 
-/-- Kirghiz's grammar is the conjunction of the two patterns' compatibilities. -/
+/-- Kirghiz double harmony fits a single tier: the printed grammar is the
+    conjunction of the two patterns' compatibilities. -/
 theorem kirghiz_two_patterns (x y : KirghizV) :
     kirghizBanned x y ↔
       ¬ (kirghizFront.Compatible x y ∧ kirghizRound.Compatible x y) := by
   revert x y; decide
 
-/-- Spot-checks against Table 34.3: `*ai`, `*oe` banned; `üö` licensed. -/
+/-- `*ai` and `*oe` are banned; `üö` is licensed (Table 34.3). -/
 example : kirghizBanned .a .i ∧ kirghizBanned .o .e ∧
     ¬ kirghizBanned .ue .oe := by decide
 
@@ -96,8 +98,9 @@ def round : BuryatV → Bool
 
 end BuryatV
 
-/-- Table 34.4's bans: ATR disagreement anywhere; rounding disagreement
-    between non-high vowels; a rounded non-high vowel after a high vowel. -/
+/-- `buryatBanned x y`: the bigram disagrees in ATR; or disagrees in rounding
+    between non-high vowels; or places a rounded non-high vowel after a high
+    vowel (Table 34.4). -/
 def buryatBanned (x y : BuryatV) : Prop :=
   x.tense ≠ y.tense ∨
     (¬ x.high ∧ ¬ y.high ∧ x.round ≠ y.round) ∨
@@ -106,8 +109,8 @@ def buryatBanned (x y : BuryatV) : Prop :=
 instance : DecidableRel buryatBanned := fun x y => by
   unfold buryatBanned; infer_instance
 
-/-- The high-vowel blocking clause is asymmetric: `*ʊɔ` is banned but `ɔʊ`
-    is fine ((9b)). -/
+/-- Buryat blocking is directional: `*ʊɔ` is banned but `ɔʊ` is licensed
+    ((9b)). -/
 theorem buryat_asymmetric : buryatBanned .uh .oh ∧ ¬ buryatBanned .oh .uh := by
   decide
 
@@ -118,12 +121,12 @@ theorem buryat_not_symmetric (R : BuryatV → BuryatV → Prop)
   exact buryat_asymmetric.2 ((h _ _).mp ((hsymm _ _).mp ((h _ _).mpr
     buryat_asymmetric.1)))
 
-/-- ATR harmony: all tier vowels participate. -/
+/-- `buryatATR` is Buryat ATR harmony: every tier vowel participates. -/
 def buryatATR : Pattern BuryatV Bool :=
   { value := fun v => some v.tense, participation := fun _ => .participating }
 
-/-- Rounding harmony: high vowels are opaque blockers transmitting
-    unroundedness to what follows. -/
+/-- `buryatRound` is Buryat rounding harmony: high vowels are opaque blockers
+    transmitting unroundedness to what follows. -/
 def buryatRound : Pattern BuryatV Bool :=
   { value := fun v => some (if v.high then false else v.round)
     participation := fun v => if v.high then .opaque else .participating }
@@ -135,7 +138,8 @@ theorem buryat_expressible (x y : BuryatV) :
       ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
   revert x y; decide
 
-/-- Buryat well-formedness: harmonic for both patterns. -/
+/-- `buryatWellFormed w` says the skeleton `w` is harmonic for both Buryat
+    patterns. -/
 def buryatWellFormed (w : List BuryatV) : Prop :=
   buryatATR.Harmonic w ∧ buryatRound.Harmonic w
 
@@ -172,9 +176,9 @@ def high : YakutV → Bool
 
 end YakutV
 
-/-- Table 34.5's bans: fronting disagreement anywhere; rounding disagreement
-    between high vowels; a rounded non-high vowel after a high vowel; rounding
-    disagreement after a non-high vowel. -/
+/-- `yakutBanned x y`: the bigram disagrees in fronting; or disagrees in
+    rounding between high vowels; or places a rounded non-high vowel after a
+    high vowel; or disagrees in rounding after a non-high vowel (Table 34.5). -/
 def yakutBanned (x y : YakutV) : Prop :=
   x.front ≠ y.front ∨
     (x.high ∧ y.high ∧ x.round ≠ y.round) ∨
@@ -188,7 +192,7 @@ instance : DecidableRel yakutBanned := fun x y => by
     from `o` to `u` but not from `u` to `o` — the icy-target configuration. -/
 theorem yakut_asymmetric : yakutBanned .u .o ∧ ¬ yakutBanned .o .u := by decide
 
-/-- Spot-checks against (14): `oɣo-lor`, `murum-u` licensed; `*tünnük-lör` banned. -/
+/-- `oɣo-lor` and `murum-u` are licensed; `*tünnük-lör` is banned ((14)). -/
 example : ¬ yakutBanned .o .o ∧ ¬ yakutBanned .u .u ∧
     yakutBanned .ue .oe := by decide
 
