@@ -277,7 +277,7 @@ open Subregular TSLGrammar
 
 variable {α V : Type*}
 
-/-- Harmony is TSL₂ by construction ([aksenova-rawski-graf-heinz-2024]). -/
+/-- Harmony is TSL₂ by construction. -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
   simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic, Pattern.tier, not_not]
