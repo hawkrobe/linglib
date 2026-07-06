@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Gradability.StatesBased
+import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Confidence and Certainty as Gradable Attitudes
@@ -273,9 +274,9 @@ and comparative confidence reports respectively. The substrate exposes
 both via `confidenceLogicalForm` (presupposition-flattened) and
 `comparativeConfidenceLogicalForm` (under unique-state simplification —
 CSW fn. 25 explicitly reject this, but it is convenient as a working
-form; full (47) requires a `max`-quantified than-clause that
-`Wellwood2015.adjectival_max_reduces` already provides at study-file
-level).
+form; the faithful `max`-quantified (47) is `confidenceComparative`
+below, via `Degree.maxComparative`, with the unique-state collapse
+provided by `Degree.maxComparative_unique`).
 -/
 
 /-- Truth-conditional content of CSW (44) (presupposition flattened).
@@ -317,7 +318,7 @@ def comparativeConfidenceLogicalForm {E W : Type*}
 /-! ### Faithful comparative (CSW (47)) and the admissibility spine -/
 
 /-- Comparative confidence (CSW (47)): "A is more confident that `p` than that
-    `q`" — `StatesBased.statesComparative` with the holder/theme predicates as
+    `q`" — `Degree.maxComparative` with the holder/theme predicates as
     the matrix (`p`) and than-clause (`q`) restrictions. The `max`-quantified
     than-clause does **not** assume a unique state per theme (CSW fn 25), unlike
     `comparativeConfidenceLogicalForm`, which is its unique-state reduction. It
@@ -325,8 +326,8 @@ def comparativeConfidenceLogicalForm {E W : Type*}
     equivalence (CSW (72)) holds by construction. -/
 def confidenceComparative {E W D : Type*} [Preorder D]
     (μ : ConfidenceState E W → D) (holder : E) (p q : W → Prop) : Prop :=
-  statesComparative (fun s => s.holder = holder ∧ s.theme = p)
-                    (fun s => s.holder = holder ∧ s.theme = q) μ
+  Degree.maxComparative (fun s => s.holder = holder ∧ s.theme = p)
+                        (fun s => s.holder = holder ∧ s.theme = q) μ
 
 /-- The admissibility spine (CSW (21)/(31)): when the measure `μ` is admissible
     (`StrictMono` w.r.t. the holder's confidence ordering), the ordering entails

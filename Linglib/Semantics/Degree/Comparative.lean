@@ -33,6 +33,9 @@ consumers in `Studies/Hoeksema1983.lean`.
   collapsing to the binary comparator at a singleton via `Comparison.overSet_singleton`.
 * `gtOverSet_eq_singleton_of_isGreatest` — a than-clause with a greatest degree
   reduces to that degree ([bhatt-pancheva-2004], order-theoretic form).
+* `maxComparative` — the max-quantified clausal comparative ([von-stechow-1984],
+  [rullmann-1995]): independent matrix/than witness predicates over `thanDegrees`,
+  with the unique-witness collapse `maxComparative_unique`.
 * `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
 * `comparative_iff_posExt_ssubset` — comparison as extent inclusion ([kennedy-1999]).
 -/
@@ -160,6 +163,80 @@ theorem gtOverSet_eq_singleton_of_isGreatest (μ : Entity → D) {Δ : Set D}
   · exact lt_of_le_of_lt (hm.2 hd) (h rfl)
 
 end SetOfDegrees
+
+/-! ### Max-quantified comparative
+[von-stechow-1984] [rullmann-1995]
+
+The clausal comparative: the *than*-clause contributes the set of degrees its
+witnesses reach, and the comparative asserts that some matrix witness measures
+strictly above that set's maximum (the max operator of [von-stechow-1984],
+[rullmann-1995]). Matrix and *than* restrictions are independent predicates
+over an arbitrary witness sort (entities, events, or states), so heterogeneous
+comparatives ("Ann hates Bill more than Matt hates Jeff") are the general case
+and the shared-predicate comparative a specialization. The shared core of the
+cross-categorial comparatives of `Studies/Wellwood2015`, the intensity
+comparatives of `Studies/Pasternak2019`, and the confidence comparatives of
+`Semantics/Attitudes/Confidence`. -/
+
+section MaxQuantified
+variable {α D : Type*} [Preorder D]
+
+/-- The than-clause degree set: degrees reached by some `Pthan`-witness.
+Generalizes the phrasal principal-downset standard (`thanDegrees_singleton`)
+to clausal standards with arbitrary witness predicates. -/
+def thanDegrees (Pthan : α → Prop) (μ : α → D) : Set D :=
+  {d | ∃ x, Pthan x ∧ d ≤ μ x}
+
+/-- A unique standard collapses the than-clause degree set to the principal
+downset of its measure — the phrasal standard (`ThanClause.thanClauseDenotation`). -/
+theorem thanDegrees_singleton (μ : α → D) (b : α) :
+    thanDegrees (· = b) μ = Set.Iic (μ b) := by
+  ext d; simp [thanDegrees]
+
+/-- The max-quantified comparative: the `Pthan` degree set has a greatest
+element δ, and some `Pmatrix`-witness measures strictly above δ. -/
+def maxComparative (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
+  ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ < μ x
+
+/-- A unique `Pthan`-witness makes its measure the greatest than-clause degree. -/
+theorem isGreatest_thanDegrees_of_unique {Pthan : α → Prop} {μ : α → D} {xb : α}
+    (hb : Pthan xb) (hb_unique : ∀ x, Pthan x → x = xb) :
+    IsGreatest (thanDegrees Pthan μ) (μ xb) :=
+  ⟨⟨xb, hb, le_refl _⟩, fun _ ⟨x, hx, hle⟩ => hb_unique x hx ▸ hle⟩
+
+/-- Under unique matrix and than witnesses, the max-quantified comparative
+reduces to direct measure comparison. -/
+theorem maxComparative_unique {Pmatrix Pthan : α → Prop} {μ : α → D} {xa xb : α}
+    (ha : Pmatrix xa) (ha_unique : ∀ x, Pmatrix x → x = xa)
+    (hb : Pthan xb) (hb_unique : ∀ x, Pthan x → x = xb) :
+    maxComparative Pmatrix Pthan μ ↔ μ xb < μ xa := by
+  constructor
+  · rintro ⟨δ, hδ, x, hx, hlt⟩
+    rw [ha_unique x hx] at hlt
+    exact lt_of_le_of_lt (hδ.2 ⟨xb, hb, le_refl _⟩) hlt
+  · exact fun hlt =>
+      ⟨μ xb, isGreatest_thanDegrees_of_unique hb hb_unique, xa, ha, hlt⟩
+
+/-- Singleton collapse: comparing unique individuals is direct measure
+comparison. -/
+theorem maxComparative_eq_iff (μ : α → D) (xa xb : α) :
+    maxComparative (· = xa) (· = xb) μ ↔ μ xb < μ xa :=
+  maxComparative_unique rfl (fun _ h => h) rfl (fun _ h => h)
+
+/-- Grounding in the S-comparative: when the than-clause degree set has a
+maximum, a matrix witness clears it iff it clears the whole set
+(`Comparison.gt.overSet`, via `gtOverSet_eq_singleton_of_isGreatest`). -/
+theorem maxComparative_iff_gtOverSet (Pmatrix Pthan : α → Prop) (μ : α → D) :
+    maxComparative Pmatrix Pthan μ ↔
+      (∃ δ, IsGreatest (thanDegrees Pthan μ) δ) ∧
+        ∃ x, Pmatrix x ∧ x ∈ Comparison.gt.overSet μ (thanDegrees Pthan μ) := by
+  constructor
+  · rintro ⟨δ, hδ, x, hx, hlt⟩
+    exact ⟨⟨δ, hδ⟩, x, hx, fun d hd => lt_of_le_of_lt (hδ.2 hd) hlt⟩
+  · rintro ⟨⟨δ, hδ⟩, x, hx, hclear⟩
+    exact ⟨δ, hδ, x, hx, hclear hδ.1⟩
+
+end MaxQuantified
 
 /-! ### Downward-entailingness of than-clauses -/
 

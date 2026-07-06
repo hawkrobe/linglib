@@ -1,0 +1,396 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Wellwood2015` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Wellwood2015.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Wellwood2015.Examples`.
+-/
+
+namespace Wellwood2015.Examples
+
+open Data.Examples
+
+def felicity_mass : LinguisticExample :=
+  { id := "wellwood2015_felicity_mass"
+    source := ⟨"wellwood-2015", "§2.1"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al bought more coffee than Bill did."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al bought more coffee than Bill did."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "muchFelicity"), ("category", "massNoun")]
+    comment := "Mass-noun nominal comparative; VOLUME or WEIGHT dimension available."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def felicity_count : LinguisticExample :=
+  { id := "wellwood2015_felicity_count"
+    source := ⟨"wellwood-2015", "§2.1"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al has more idea than Bill does."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al has more idea than Bill does."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "muchFelicity"), ("category", "countNoun")]
+    comment := "Singular count noun anomalous under much-comparison."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def felicity_atelic : LinguisticExample :=
+  { id := "wellwood2015_felicity_atelic"
+    source := ⟨"wellwood-2015", "§2.2"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al ran more than Bill did."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al ran more than Bill did."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "muchFelicity"), ("category", "atelicVP")]
+    comment := "Atelic VP verbal comparative; DURATION or DISTANCE dimension available."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def felicity_telic : LinguisticExample :=
+  { id := "wellwood2015_felicity_telic"
+    source := ⟨"wellwood-2015", "§2.2"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al graduated high school more than Bill did."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al graduated high school more than Bill did."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "muchFelicity"), ("category", "telicVP")]
+    comment := "Telic VP anomalous under much-comparison."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def felicity_ga : LinguisticExample :=
+  { id := "wellwood2015_felicity_ga"
+    source := ⟨"wellwood-2015", "§3.1"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al's coffee is hotter than Bill's."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al's coffee is hotter than Bill's."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "muchFelicity"), ("category", "gradableAdj")]
+    comment := "Gradable adjective comparative; TEMPERATURE dimension."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def felicity_nonga : LinguisticExample :=
+  { id := "wellwood2015_felicity_nonga"
+    source := ⟨"wellwood-2015", "ex. (53a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "This piece of wood is more wooden than that one."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "This piece of wood is more wooden than that one."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "muchFelicity"), ("category", "nonGradableAdj")]
+    comment := "Non-gradable adjective anomalous under comparison."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_82a_hotter : LinguisticExample :=
+  { id := "wellwood2015_dim_82a_hotter"
+    source := ⟨"wellwood-2015", "ex. (82a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "hotter"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "hotter"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "temperature"), ("intensive", "true")]
+    comment := "GA measuring states: intensive dimension."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_82b_harder : LinguisticExample :=
+  { id := "wellwood2015_dim_82b_harder"
+    source := ⟨"wellwood-2015", "ex. (82b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "harder"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "harder"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "hardness"), ("intensive", "true")]
+    comment := "GA measuring states: intensive dimension."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_83a_more_coffee : LinguisticExample :=
+  { id := "wellwood2015_dim_83a_more_coffee"
+    source := ⟨"wellwood-2015", "ex. (83a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "more coffee"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "more coffee"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "massNoun"), ("measuredDomain", "entity"), ("dimension", "volume"), ("intensive", "false")]
+    comment := "Mass noun measuring entities: extensive dimension."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_83b_more_plastic : LinguisticExample :=
+  { id := "wellwood2015_dim_83b_more_plastic"
+    source := ⟨"wellwood-2015", "ex. (83b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "more plastic"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "more plastic"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "massNoun"), ("measuredDomain", "entity"), ("dimension", "weight"), ("intensive", "false")]
+    comment := "Mass noun measuring entities: extensive dimension."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_84a_fuller : LinguisticExample :=
+  { id := "wellwood2015_dim_84a_fuller"
+    source := ⟨"wellwood-2015", "ex. (84a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "fuller"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "fuller"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "gradableAdj"), ("measuredDomain", "entity"), ("dimension", "volume"), ("intensive", "false")]
+    comment := "Reversal: GA but extensive, because the measured domain is entities."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_84b_heavier : LinguisticExample :=
+  { id := "wellwood2015_dim_84b_heavier"
+    source := ⟨"wellwood-2015", "ex. (84b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "heavier"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "heavier"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "gradableAdj"), ("measuredDomain", "entity"), ("dimension", "weight"), ("intensive", "false")]
+    comment := "Reversal: GA but extensive, because the measured domain is entities."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_85a_more_heat : LinguisticExample :=
+  { id := "wellwood2015_dim_85a_more_heat"
+    source := ⟨"wellwood-2015", "ex. (85a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "more heat"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "more heat"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "massNoun"), ("measuredDomain", "state"), ("dimension", "temperature"), ("intensive", "true")]
+    comment := "Reversal: noun but intensive, because the measured domain is states."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_85b_more_firmness : LinguisticExample :=
+  { id := "wellwood2015_dim_85b_more_firmness"
+    source := ⟨"wellwood-2015", "ex. (85b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "more firmness"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "more firmness"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "massNoun"), ("measuredDomain", "state"), ("dimension", "hardness"), ("intensive", "true")]
+    comment := "Reversal: noun but intensive, because the measured domain is states."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_89a_sped_up : LinguisticExample :=
+  { id := "wellwood2015_dim_89a_sped_up"
+    source := ⟨"wellwood-2015", "ex. (89a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "sped up more"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "sped up more"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "atelicVP"), ("measuredDomain", "state"), ("dimension", "speed"), ("intensive", "true")]
+    comment := "Reversal: verb but intensive, because the measured domain is states."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def dim_87a_drove : LinguisticExample :=
+  { id := "wellwood2015_dim_87a_drove"
+    source := ⟨"wellwood-2015", "ex. (87a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "drove more"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "drove more"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "dimension"), ("category", "atelicVP"), ("measuredDomain", "event"), ("dimension", "distance"), ("intensive", "false")]
+    comment := "Atelic VP measuring events: extensive dimension."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def very_ga : LinguisticExample :=
+  { id := "wellwood2015_very_ga"
+    source := ⟨"wellwood-2015", "§6.3, exs. (117)–(118)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "very hot"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "very hot"
+    context := ""
+    judgment := .acceptable
+    alternatives := [("very much hot", .ungrammatical)]
+    readings := []
+    paperFeatures := [("dataset", "very"), ("category", "gradableAdj"), ("requiresOvertMuch", "false")]
+    comment := "GAs host covert much, so very combines directly."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def very_noun : LinguisticExample :=
+  { id := "wellwood2015_very_noun"
+    source := ⟨"wellwood-2015", "§6.3, exs. (117)–(118)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "very much coffee"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "very much coffee"
+    context := ""
+    judgment := .acceptable
+    alternatives := [("very coffee", .ungrammatical)]
+    readings := []
+    paperFeatures := [("dataset", "very"), ("category", "massNoun"), ("requiresOvertMuch", "true")]
+    comment := "Nouns need overt much for very."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def very_verb : LinguisticExample :=
+  { id := "wellwood2015_very_verb"
+    source := ⟨"wellwood-2015", "ex. (117b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al didn't run very much."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al didn't run very much."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dataset", "very"), ("category", "atelicVP"), ("requiresOvertMuch", "true")]
+    comment := "Verbs need overt much for very; much follows the verb."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def shift_104_rock : LinguisticExample :=
+  { id := "wellwood2015_shift_104_rock"
+    source := ⟨"wellwood-2015", "ex. (104)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al found more rock than Bill did."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al found more rock than Bill did."
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Al found more rocks than Bill did.", .acceptable)]
+    readings := []
+    paperFeatures := [("dataset", "grammarShift"), ("shift", "numberMorphology")]
+    comment := "Mass 'more rock': WEIGHT/VOLUME, *NUMBER. Plural 'more rocks': *WEIGHT/*VOLUME, NUMBER. The plural shifts mass to count, restricting measurement to NUMBER."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def shift_105_run : LinguisticExample :=
+  { id := "wellwood2015_shift_105_run"
+    source := ⟨"wellwood-2015", "ex. (105)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Al ran in the park more than Bill did."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Al ran in the park more than Bill did."
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Al ran to the park more than Bill did.", .acceptable)]
+    readings := []
+    paperFeatures := [("dataset", "grammarShift"), ("shift", "telicization")]
+    comment := "Atelic 'ran in the park more': DISTANCE/DURATION/NUMBER. Telic 'ran to the park more': *DISTANCE/*DURATION, NUMBER. The directional PP telicizes, restricting measurement to NUMBER."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [felicity_mass, felicity_count, felicity_atelic, felicity_telic, felicity_ga, felicity_nonga, dim_82a_hotter, dim_82b_harder, dim_83a_more_coffee, dim_83b_more_plastic, dim_84a_fuller, dim_84b_heavier, dim_85a_more_heat, dim_85b_more_firmness, dim_89a_sped_up, dim_87a_drove, very_ga, very_noun, very_verb, shift_104_rock, shift_105_run]
+
+end Wellwood2015.Examples

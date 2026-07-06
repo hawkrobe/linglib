@@ -1,7 +1,6 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.ComparativeScale
 import Linglib.Semantics.Degree.Gradability.Basic
-import Mathlib.Order.Bounds.Basic
 
 /-!
 # States-Based Gradable Adjective Semantics
@@ -194,42 +193,11 @@ theorem statesComparativeSem_of_lt {D : Type*} [Preorder D]
     statesComparativeSem μ s_a s_b :=
   h hlt
 
-/-! ### The max-quantified comparative (CSW (46)/(47), Wellwood §2–3)
-
-`statesComparativeSem` above is the unique-state *collapse* of the comparative
-(direct two-state measure comparison). CSW fn 25 explicitly reject this as the
-general picture: the faithful comparative compares a matrix state's measure
-against the **maximum** of the than-clause degree set. The full form is
-contrast-blind (no `StatesBasedEntry` argument), so scale-mate equivalence
-(CSW (72)) holds by construction. -/
-
-/-- The than-clause degree set (CSW (46)): the degrees met by some
-    `Pthan`-state. -/
-def thanDegrees {D : Type*} [Preorder D] (Pthan : S → Prop) (μ : S → D) : Set D :=
-  {d | ∃ s, Pthan s ∧ d ≤ μ s}
-
-/-- The max-quantified comparative (CSW (47)): some `Pmatrix`-state's measure
-    strictly exceeds the maximum of the `Pthan` degree set. -/
-def statesComparative {D : Type*} [Preorder D]
-    (Pmatrix Pthan : S → Prop) (μ : S → D) : Prop :=
-  ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ s, Pmatrix s ∧ δ < μ s
-
-omit [Preorder S] in
-/-- Under unique matrix and than states, the max-quantified comparative reduces
-    to the direct comparison `statesComparativeSem` (= `μ s_b < μ s_a`) — the
-    simplification CSW fn 25 set aside. So the collapse is a *corollary* of the
-    faithful form, not the definition. -/
-theorem statesComparative_unique_reduces {D : Type*} [Preorder D]
-    (μ : S → D) (s_a s_b : S) :
-    statesComparative (· = s_a) (· = s_b) μ ↔ statesComparativeSem μ s_a s_b := by
-  constructor
-  · rintro ⟨δ, ⟨_, hub⟩, s, rfl, hlt⟩
-    exact lt_of_le_of_lt (hub (show μ s_b ∈ thanDegrees (· = s_b) μ from
-      ⟨s_b, rfl, le_refl _⟩)) hlt
-  · intro h
-    refine ⟨μ s_b, ⟨⟨s_b, rfl, le_refl _⟩, ?_⟩, s_a, rfl, h⟩
-    rintro d ⟨s, rfl, hle⟩
-    exact hle
+-- The faithful max-quantified comparative (CSW (46)/(47)) is the general
+-- `Degree.maxComparative` (`Semantics/Degree/Comparative.lean`); CSW fn 25's
+-- unique-state collapse to `statesComparativeSem` is
+-- `Degree.maxComparative_eq_iff`. Confidence reports instantiate it in
+-- `Semantics/Attitudes/Confidence.lean`.
 
 -- ════════════════════════════════════════════════════
 -- § 4. Bridge: States-Based ↔ Kennedy
