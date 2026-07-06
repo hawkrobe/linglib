@@ -168,6 +168,18 @@ theorem buryat_expressible (x y : BuryatV) :
       ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
   revert x y; decide
 
+/-- Buryat surface well-formedness: harmonic for both patterns. -/
+def buryatWellFormed (w : List BuryatV) : Prop :=
+  buryatATR.Harmonic w ∧ buryatRound.Harmonic w
+
+/-- The (9) forms, as vowel skeletons: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` are
+    well-formed — the second because the high causative transmits [−round] to
+    the perfective (the imposition path) — while `*ɔr-aːd` (rounding agreement
+    skipped) and `*ɔr-ʊːl-ɔːd` (rounded vowel after the blocker) are not. -/
+example : buryatWellFormed [.oh, .oh] ∧ ¬ buryatWellFormed [.oh, .a] ∧
+    buryatWellFormed [.oh, .uh, .a] ∧ ¬ buryatWellFormed [.oh, .uh, .oh] := by
+  decide
+
 /-! ### Yakut ((14), Table 34.5): harmonizing blockers -/
 
 /-- The Yakut vowel tier `T = {a, ɨ, e, i, o, ö, u, ü}`. -/
