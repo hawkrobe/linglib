@@ -16,10 +16,9 @@ approximate-inverse properties.
 
 ## Why this is the substantive substrate layer
 
-The `Defs.lean` substrate establishes only **architectural capacity** —
-DLMs *can* distinguish meanings (via `linear_dlm_distinguishes_meanings`)
-and DLMs *can* neutralize them (via `dlm_neutralizes_meanings_in_kernel`).
-Both theorems are about **exact** equality / inequality of form vectors.
+The `Defs.lean` substrate characterises only **exact** form identity: two
+meanings surface identically iff their difference lies in the production
+map's kernel (`LinearDiscriminativeLexicon.production_eq_iff`).
 
 The headline empirical claim of [chuang-bell-tseng-baayen-2026]
 (predictions iii / iv) and [lu-chuang-baayen-2026] (paper §4 form-
@@ -62,9 +61,7 @@ contour proximity).
 
 namespace Processing.Lexical.Discriminative
 
--- ============================================================================
--- §1: Lipschitz continuity of the production map
--- ============================================================================
+/-! ### Lipschitz continuity of the production map -/
 
 section Lipschitz
 
@@ -105,9 +102,7 @@ theorem dlm_lipschitz_comprehension
 
 end Lipschitz
 
--- ============================================================================
--- §2: Neighbor preservation
--- ============================================================================
+/-! ### Neighbor preservation -/
 
 section NeighborPreservation
 
@@ -139,9 +134,7 @@ theorem dlm_neighbor_centroids_imply_neighbor_contours
 
 end NeighborPreservation
 
--- ============================================================================
--- §3: Approximate-inverse / form-meaning ε-isomorphism
--- ============================================================================
+/-! ### Approximate-inverse / form-meaning ε-isomorphism -/
 
 section ApproximateInverse
 

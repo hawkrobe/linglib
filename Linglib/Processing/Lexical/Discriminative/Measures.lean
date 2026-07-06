@@ -29,7 +29,7 @@ the per-coordinate, per-word, and per-region projections of
 Specialised to `FormVec n` / `MeaningVec d` (i.e. `Fin n → ℝ` /
 `Fin d → ℝ`), the most common DLM carrier types. All current consumers
 (`ChuangEtAl2026`, `LuChuangBaayen2026`, `Saito2025`, `GahlBaayen2024`)
-use these. A `Measures/EuclideanSpace.lean` sibling can host
+use these. A `Measures/InnerProduct.lean` sibling can host
 inner-product-typed variants if a future consumer needs cosine
 similarities directly.
 -/
@@ -40,9 +40,7 @@ noncomputable section SemSupMeasures
 
 variable {n d : ℕ}
 
--- ============================================================================
--- §1: Semantic support — coordinate projection of production
--- ============================================================================
+/-! ### Semantic support — coordinate projection of production -/
 
 /-- **Semantic support** for coordinate `j` of the form vector predicted
     from meaning vector `s`: `semSup D s j = D.production s j`.
@@ -64,10 +62,6 @@ def semSup (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
 def semSupWord (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (s : MeaningVec d) (js : List (Fin n)) : ℝ :=
   (js.map (semSup D s)).sum
-
--- ============================================================================
--- §2: Linearity-in-meaning lemmas
--- ============================================================================
 
 /-! ### `semSup` is linear in the meaning vector
 

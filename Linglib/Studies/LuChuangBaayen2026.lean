@@ -40,8 +40,8 @@ the four most frequent tonal contexts (4.4, 3.4, 4.1, 4.0).
    differ only by elements that lie in the **kernel of the trained
    production map**, so their surface pitch contours are identical
    ("complete neutralization for Taiwan Mandarin", paper §5; consistent
-   with previous corpus measurement showing T3-T3 ≡ T2-T3 surface in
-   spontaneous Taiwan Mandarin).
+   with [lu-chuang-baayen-2025]'s corpus measurement showing T3-T3 ≡
+   T2-T3 surface in spontaneous Taiwan Mandarin).
 
 The substantive theoretical claim is that **a word-and-paradigm DLM
 suffices to predict every disyllabic tone pattern's surface realisation
@@ -86,8 +86,8 @@ The DLM-side account differs both **architecturally** and
 
 - **Architecturally**, no rule is invoked. The neutralisation falls out
   of the kernel of the trained meaning→form map. `t3_sandhi_via_kernel`
-  in §4 below states this as a direct application of the structural
-  lemma `ChuangEtAl2026.dlm_neutralizes_meanings_in_kernel`.
+  below states this as a direct application of the kernel
+  characterisation `LinearDiscriminativeLexicon.production_eq_iff`.
 - **Predictively**, the DLM accommodates **dialect variation** in
   sandhi completeness without re-stipulating the rule: Taiwan Mandarin's
   complete neutralisation = the kernel-difference holds; Standard
@@ -103,11 +103,11 @@ not. Until then, this comparison lives in prose.
 
 ## Sections
 
-- §1 Substrate import and paper-specific dimensional instantiation
-- §2 The 20 disyllabic tone patterns of Mandarin
-- §3 Tone sandhi neutralization as DLM kernel application
-- §4 DLM dialect flexibility: same architecture, different kernels
-- §5 Empirical content (AIC, accuracies, isomorphism metrics)
+- Substrate import and paper-specific dimensional instantiation
+- The 20 disyllabic tone patterns of Mandarin
+- Tone sandhi neutralization as DLM kernel application
+- DLM dialect flexibility: same architecture, different kernels
+- Empirical content (AIC, accuracies, isomorphism metrics)
 -/
 
 namespace LuChuangBaayen2026
@@ -115,9 +115,7 @@ namespace LuChuangBaayen2026
 open Processing.Lexical.Discriminative
 open ChuangEtAl2026
 
--- ============================================================================
--- §1: Substrate import + paper-specific instantiation
--- ============================================================================
+/-! ### Substrate import + paper-specific instantiation -/
 
 /-- The paper uses 100 evenly-spaced f0 samples per token (paper §4.1).
     Distinct from [chuang-bell-tseng-baayen-2026]'s 50; the
@@ -135,9 +133,7 @@ abbrev LuPitchContour : Type := FormVec LuPitchSampleCount
 abbrev LuTaiwanMandarinDLM : Type :=
   LinearDiscriminativeLexicon ℝ LuPitchContour ContextualEmbedding
 
--- ============================================================================
--- §2: The 20 disyllabic tone patterns
--- ============================================================================
+/-! ### The 20 disyllabic tone patterns -/
 
 /-- The 20 disyllabic tone patterns of Mandarin (paper Table 1).
     Enumerated as the row-major Cartesian-product list of
@@ -154,9 +150,7 @@ inductive TonePattern20 where
   | T4_T1 | T4_T2 | T4_T3 | T4_T4 | T4_T0
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §3: Tone sandhi neutralization as DLM kernel application
--- ============================================================================
+/-! ### Tone sandhi neutralization as DLM kernel application -/
 
 /-- **T3 tone sandhi neutralization via DLM kernel**.
 
@@ -175,16 +169,16 @@ inductive TonePattern20 where
 
     The specific patterns `T3_T3` and `T2_T3` are **load-bearing in
     the type signature**: the theorem witnesses the paper's specific
-    empirical claim, not a generic two-pattern claim. The body is a
-    direct application of the structural sister lemma
-    `ChuangEtAl2026.dlm_neutralizes_meanings_in_kernel`. -/
+    empirical claim, not a generic two-pattern claim. The body is the
+    kernel characterisation
+    `LinearDiscriminativeLexicon.production_eq_iff`. -/
 theorem t3_sandhi_via_kernel
     (D : LuTaiwanMandarinDLM)
     (centroidOf : TonePattern20 → ContextualEmbedding)
     (h_kernel :
-      D.production (centroidOf .T3_T3 - centroidOf .T2_T3) = 0) :
+      centroidOf .T3_T3 - centroidOf .T2_T3 ∈ LinearMap.ker D.production) :
     D.production (centroidOf .T3_T3) = D.production (centroidOf .T2_T3) :=
-  dlm_neutralizes_meanings_in_kernel D h_kernel
+  D.production_eq_iff.mpr h_kernel
 
 /-- **Quantitative refinement of `t3_sandhi_via_kernel`.** The exact-
     kernel hypothesis is the limiting case; in real data the centroid
@@ -208,9 +202,7 @@ theorem t3_sandhi_quantitative
       ‖D.production.toContinuousLinearMap‖ * ε :=
   dlm_neighbor_centroids_imply_neighbor_contours D h
 
--- ============================================================================
--- §4: Dialect flexibility via different production maps
--- ============================================================================
+/-! ### Dialect flexibility via different production maps -/
 
 /-- **DLMs accommodate dialect variation in neutralization without
     rule modification.** The same `LinearDiscriminativeLexicon`
@@ -222,11 +214,11 @@ theorem t3_sandhi_quantitative
 
     Witness: the all-zero DLM has every `MeaningVec` mapping to the
     zero contour — every meaning pair is "neutralized" (degenerate
-    Taiwan-Mandarin extreme); a DLM with a non-degenerate production
-    map distinguishes the same pair (Standard-Chinese-like extreme).
-    The architectural point survives the witness's simplicity: a SINGLE
-    `LinearDiscriminativeLexicon` type accommodates both regimes; only
-    the trained weights differ.
+    Taiwan-Mandarin extreme); a DLM with the non-degenerate `broadcast`
+    production map distinguishes the same pair (Standard-Chinese-like
+    extreme). The architectural point survives the witness's simplicity:
+    a SINGLE `LinearDiscriminativeLexicon` type accommodates both
+    regimes; only the trained weights differ.
 
     Cross-framework significance: a rule-based account requires
     dialect-specific rule modification (or stochastic optionality) to
@@ -236,23 +228,12 @@ theorem dlm_dialect_flexibility :
     ∃ (D₁ D₂ : LuTaiwanMandarinDLM) (e₁ e₂ : ContextualEmbedding),
       D₁.production e₁ = D₁.production e₂ ∧
       D₂.production e₁ ≠ D₂.production e₂ := by
-  refine ⟨⟨0, 0⟩,
-          ⟨0, broadcastFirstCoord (by decide : 0 < CKIPGPT2HiddenDim)⟩,
-          0,
-          Function.update (0 : ContextualEmbedding) ⟨0, by decide⟩ 1,
-          ?_, ?_⟩
-  · -- D₁ has zero production: both e₁ and e₂ map to zero contour.
-    simp
-  · -- D₂ has broadcastFirstCoord production: outputs differ at sample 0.
-    intro h
-    have h0 := congrFun h ⟨0, by decide⟩
-    simp only [broadcastFirstCoord_apply, Pi.zero_apply,
-               Function.update_self] at h0
-    exact zero_ne_one h0
+  refine ⟨⟨0, 0⟩, ⟨0, broadcast 0⟩, 0, Pi.single 0 1, rfl, fun h => ?_⟩
+  have h0 := congrFun h 0
+  simp only [broadcast_apply, Pi.zero_apply, Pi.single_eq_same] at h0
+  exact zero_ne_one h0
 
--- ============================================================================
--- §5: Empirical content (prose)
--- ============================================================================
+/-! ### Empirical content (prose) -/
 
 /-! ### Methods + accuracies as paper-supplied empirical facts
 

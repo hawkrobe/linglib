@@ -26,7 +26,10 @@ of both `S` and `C` — `ermSolution_iff_rescaled` connects the two forms.
   `IsELSolution` / `IsFILSolution` are the uniform and
   frequency-weighted cases.
 * `ermSolution_iff_rescaled` — **T-Rescaling**: ERM solutions are
-  invariant under positive rescaling of `q`.
+  invariant under positive rescaling of `q`; corollaries
+  `isERMSolution_normalize_iff` / `isERMSolution_of_same_normalize` cast
+  this as "only the empirical distribution `q.normalize` matters",
+  the bridge for comparisons against probabilistic word-learning models.
 * `weightedLoss_zero_event_drops` — **T-Support**: unexperienced
   events cannot update the lexicon.
 * `coordResidual`, `weightedLoss_eq_sum_coordResidual` —
@@ -415,6 +418,46 @@ theorem isERMSolution_of_interpolates
     Finset.sum_eq_zero fun k _ => by rw [hG k, squaredDist_self, mul_zero]
   rw [h0]
   exact weightedLoss_nonneg data hq G'
+
+/-! ### Rescaling invariance
+
+The "frequency-vector-as-counts" view (DLM-paper-faithful) and the
+"frequency-vector-as-empirical-distribution" view (Bayesian-tradition) make
+identical predictions about which production maps are ERM-optimal. For the
+`PMF (Fin m)` cast of `q.normalize`, call `PMF.ofRealWeightFn` from
+`Core.Probability.Constructions` directly. -/
+
+/-- **Normalisation preserves ERM solutions.** A FrequencyVector and
+    its empirical distribution agree on which production maps are ERM
+    solutions. This is the formal statement that the cognitive content
+    is in the *relative weights* (= the normalised distribution) and
+    not in the absolute scale.
+
+    Direct application of `ermSolution_iff_rescaled` with `c = 1/totalMass`. -/
+theorem isERMSolution_normalize_iff
+    (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) (h : 0 < q.totalMass) :
+    IsERMSolution data q.normalize G ↔ IsERMSolution data q G := by
+  have hinv : (0:ℝ) < (q.totalMass)⁻¹ := inv_pos.mpr h
+  have hnorm : q.normalize = (q.totalMass)⁻¹ • q := by
+    funext i
+    show q i / q.totalMass = (q.totalMass)⁻¹ * q i
+    rw [div_eq_inv_mul]
+  rw [hnorm]
+  exact ermSolution_iff_rescaled data q G hinv
+
+/-- **Two FrequencyVectors with identical empirical distributions are
+    ERM-equivalent.** The cognitive content lives at the level of the
+    normalised distribution; theories that assign different absolute
+    scales but the same relative frequencies make the same predictions. -/
+theorem isERMSolution_of_same_normalize
+    (data : TrainingExperience m n d) (q₁ q₂ : FrequencyVector m)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n)
+    (h₁ : 0 < q₁.totalMass) (h₂ : 0 < q₂.totalMass)
+    (hnorm : q₁.normalize = q₂.normalize) :
+    IsERMSolution data q₁ G ↔ IsERMSolution data q₂ G := by
+  rw [← isERMSolution_normalize_iff data q₁ G h₁,
+      ← isERMSolution_normalize_iff data q₂ G h₂, hnorm]
 
 end TrainingSubstrate
 

@@ -44,21 +44,20 @@ orthogonal modules of grammar.
 ## Substrate
 
 The DLM substrate (`LinearDiscriminativeLexicon`, `FormVec`, `MeaningVec`,
-`broadcastFirstCoord`, `linear_dlm_distinguishes_meanings`,
-`dlm_neutralizes_meanings_in_kernel`, `linear_dlm_admits_meaning_specific_contours`)
+`broadcast`, `LinearDiscriminativeLexicon.production_eq_iff`)
 lives in `Processing/Lexical/Discriminative/Defs.lean`
 [baayen-2019] [heitmeier-chuang-baayen-2026]. This file
 imports it and supplies the paper-specific instantiation: 50-dim pitch
-contours, 768-dim CKIP GPT-2 contextualised embeddings, the 51 RF
-disyllabic word types of the corpus.
+contours and 768-dim CKIP GPT-2 contextualised embeddings.
 
-The DLM's defining architectural commitment is that the lexicon
-contains **no stored representations** — only the connection weights
-of comprehension and production maps. The substrate `structure` has
-exactly two fields, both `LinearMap`s; there is no `entries`-typed
-projection. This is the substantive reason DLM is housed under
+The DLM's defining architectural commitment is that the lexicon is not
+an inventory of stored, decomposed form-meaning entries — the trained
+connection weights of the comprehension and production maps carry all
+form-meaning knowledge. The substrate `structure` has exactly two
+fields, both `LinearMap`s; there is no `entries`-typed projection.
+This is the substantive reason the DLM is housed under
 `Processing/Lexical/` rather than `Theories/Lexicon/` — see
-the substrate file's docstring for the full architectural argument.
+the substrate file's docstring.
 
 ## Relation to existing usage-based / frequency-channel theories
 
@@ -123,27 +122,26 @@ The two formalisations are sibling responses to homophony pressure at
 different levels of phonological/phonetic resolution. Their structural
 common generalisation is **injectivity of the meaning→form map**:
 Storme's `*HOMOPHONY` enforces it categorically over a discrete
-output paradigm; the present file's `linear_dlm_distinguishes_meanings`
-expresses it for the linear meaning→form map of a `LinearDLM`. A formal
+output paradigm; the Discriminative Lexicon substrate expresses it via
+the kernel characterisation `production_eq_iff` (distinct meanings
+surface distinctly exactly when their difference avoids
+`ker production`). A formal
 subsumption result would require a substrate that admits both
 discrete-segmental and continuous-sub-segmental representations of
 "the same" lexical item; linglib does not currently provide one.
 
 ## Sections
 
-- §1 Paper-specific instantiation: Taiwan Mandarin RF disyllables
-- §2 RF disyllabic word types from the corpus (representative subset)
-- §3 Quantitative form of prediction (iv) via Lipschitz continuity
-- §4 Empirical content (the four predictions, in prose)
+- Paper-specific instantiation: Taiwan Mandarin RF disyllables
+- Quantitative form of prediction (iv) via Lipschitz continuity
+- Empirical content (the four predictions, in prose)
 -/
 
 namespace ChuangEtAl2026
 
 open Processing.Lexical.Discriminative
 
--- ============================================================================
--- §1: Paper-specific instantiation — Taiwan Mandarin RF disyllables
--- ============================================================================
+/-! ### Paper-specific instantiation — Taiwan Mandarin RF disyllables -/
 
 /-- The paper uses 50 evenly-spaced f0 samples per token (paper §3.2). -/
 abbrev TaiwanMandarinPitchSampleCount : ℕ := 50
@@ -167,49 +165,7 @@ abbrev ContextualEmbedding : Type := MeaningVec CKIPGPT2HiddenDim
 abbrev TaiwanMandarinRFDLM : Type :=
   LinearDiscriminativeLexicon ℝ PitchContour ContextualEmbedding
 
--- ============================================================================
--- §2: RF disyllabic word types (representative subset)
--- ============================================================================
-
-/-- A representative subset of the paper's 51 RF (rise-fall, T2-T4)
-    Mandarin disyllabic word types (paper §2.5). The first five are
-    the high-frequency words sampled at 300 tokens each (paper §2.2);
-    the remainder are mid- and lower-frequency types used for
-    visualisation in Fig. 5 / Fig. 18. The list is **not exhaustive** —
-    downstream theorems should not depend on `Fintype.card RFWordType`.
-
-    **Note on the apparent tension with the substrate's no-stored-
-    representations commitment**: this enum is a label set for
-    navigating the *corpus*, not a list of stored *model entries*.
-    The DLM does not store these labels; they serve only to refer to
-    attested word-token clusters in the dataset. The substantive
-    "no stored representations" claim is about the *model*, not the
-    empirical labelling apparatus. -/
-inductive RFWordType where
-  -- High-frequency (paper §2.2)
-  | ran2hou4    -- 'and then'
-  | shi2hou4    -- 'during which'
-  | bu2hui4     -- 'cannot'
-  | hai2shi4    -- 'still'
-  | yi2yang4    -- 'likewise'
-  -- Mid- and lower-frequency representatives (Fig. 5)
-  | xue2xiao4   -- 'school'
-  | xi2guan4    -- 'habit'
-  | yi4ban4     -- 'half'
-  | za2zhi4     -- 'magazine'
-  | quan2bu4    -- 'all'
-  | rong2yi4    -- 'easy'
-  | wen2hua4    -- 'culture'
-  | bu2shi4     -- 'not be'
-  | jue2ding4   -- 'decision'
-  | qian2mian4  -- 'front'
-  | cheng2shi4  -- 'city' / 'computer program' (homograph pair, §2.1)
-  | bu2yao4     -- 'don't' (4 senses; paper §2.7 Fig. 11)
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- §3: Quantitative form of prediction (iv) via Lipschitz continuity
--- ============================================================================
+/-! ### Quantitative form of prediction (iv) via Lipschitz continuity -/
 
 /-- **Quantitative form of prediction (iv).** Paper §3.4 reports that
     the trained DLM production net maps similar CEs to similar contours
@@ -229,10 +185,6 @@ theorem dlm_close_meanings_imply_close_contours
     ‖D.production e₁ - D.production e₂‖ ≤
       ‖D.production.toContinuousLinearMap‖ * ε :=
   dlm_neighbor_centroids_imply_neighbor_contours D h
-
--- ============================================================================
--- §4: Empirical content (prose)
--- ============================================================================
 
 /-! ### The four predictions as paper-supplied empirical facts
 
