@@ -90,6 +90,25 @@ theorem exists_linear_iff_isAnalogicallyRegular [Nonempty Stem]
     rw [map_add, hσ, hε, ← hreg st st₀ c c₀]
     abel
 
+/-- Proportional analogy is the vanishing of second differences — the same
+    equation as the XOR obstruction of linear separability (§16.6's
+    hub-and-neighbour classification example): a table realising XOR on a
+    coordinate, `f ⊤ ⊤ = f ⊥ ⊥ ≠ f ⊤ ⊥ = f ⊥ ⊤`, violates analogy, so no
+    linear map over additive semantics produces it. Analogy, linear
+    separability, and absence of interaction terms are one constraint. -/
+theorem not_isAnalogicallyRegular_of_xor {f : Bool → Bool → FormVec n}
+    (hxor : f true true = f false false ∧ f true false = f false true)
+    (hne : f true true ≠ f true false) :
+    ¬ IsAnalogicallyRegular f := fun hreg => by
+  have h := hreg true false true false
+  rw [hxor.1, hxor.2] at h
+  have h0 : f false false = f false true := by
+    funext j
+    have hj := congrFun h j
+    simp only [Pi.sub_apply] at hj
+    linarith
+  exact hne ((hxor.1.trans h0).trans hxor.2.symm)
+
 variable [Fintype Stem] [Fintype Cell]
 
 /-- The paradigm as a training experience: imputed additive semantics as the
