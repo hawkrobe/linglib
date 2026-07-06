@@ -48,12 +48,9 @@ attributed to frequency.
 
 ## Substrate (this file)
 
-This is the **fourth** consumer of the `LinearDiscriminativeLexicon`
-substrate (`Processing/Lexical/Discriminative/Defs.lean`),
-after `ChuangEtAl2026`, `LuChuangBaayen2026`, and `Saito2025`. It is
-also the **second** consumer of the `semSup` family (after Saito
-2025), the consumer that triggered the `semSup`/`semSupWord` lift
-to `Measures.lean`.
+Built on the `LinearDiscriminativeLexicon` substrate
+(`Processing/Lexical/Discriminative/Defs.lean`) and the `semSup` family
+(`Measures.lean`).
 
 Carrier instantiation: 5,600-dim binary triphone vectors × 200-dim
 fastText English embeddings (paper §3.4, appendix §A2). The substrate
@@ -173,9 +170,7 @@ noncomputable abbrev semSupForm (D : EnglishHomophoneDLM)
     duration estimation) implies close predicted durations.
 
     Direct application of `dlm_neighbor_centroids_imply_neighbor_contours`
-    to the English homophone DLM. The fourth consumer of this Lipschitz
-    theorem (after Chuang, Lu, Saito), validating it as DLM-substrate-
-    canonical. -/
+    to the English homophone DLM. -/
 theorem homophone_similarity_implies_form_similarity
     (D : EnglishHomophoneDLM) (s₁ s₂ : EnglishFastTextVec) {ε : ℝ}
     (h : ‖s₁ - s₂‖ ≤ ε) :
