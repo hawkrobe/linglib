@@ -8,36 +8,26 @@ import Mathlib.Data.List.Chain
 /-!
 # Vowel harmony: pattern-level vocabulary
 
-The theory-neutral typological vocabulary of vowel harmony, anchored on
-[ritter-vanderhulst-2024-themes], the framing chapter of
-[ritter-vanderhulst-2024]: participation roles, directionality, control type,
-domain, and the harmonic feature types. Mechanisms — subregular transduction
-(`Phonology/Subregular/Harmony.lean`), autosegmental spreading, constraint
-ranking — consume this vocabulary; rival analyses of one pattern differ in
-mechanism, not in these descriptors.
+The theory-neutral vocabulary of vowel harmony, anchored on
+[ritter-vanderhulst-2024-themes]: the typological enums and `Pattern`, the
+descriptive object mechanisms derive. At a finite alphabet a pattern presents
+a TSL₂ grammar (`Pattern.harmonic_iff_mem_tsl`). Segment-level participation
+cannot express parasitic harmony ((8b)) or configuration-dependent blocking
+(Yakut); those need the general forbidden-pairs machinery.
 
 ## Main definitions
 
-* `Participation`: how a segment participates — full participant, transparent,
-  opaque (blocker), or icy target.
-* `Direction`: the direction of the agreement relation.
-* `ControlType`: root-controlled vs dominant-recessive vs affix-controlled,
-  parameterized by the harmonic value type.
-* `Domain`: the morphological or prosodic domain delimiting harmony.
-* `HarmonyType`: the attested harmonic feature types.
-* `Pattern`: a harmony pattern over a segment type — valuation, participation,
-  direction, domain, control. `Pattern.Harmonic` is its surface semantics:
-  within every opaque-delimited span, participating segments agree in value.
-  At a finite alphabet a pattern presents a TSL₂ grammar
-  (`Pattern.harmonic_iff_mem_tsl`) — a small DFA on the tier.
+* `Participation`, `Direction`, `ControlType`, `Domain`, `HarmonyType`: the
+  typological enums.
+* `Pattern`: valuation, participation, descriptors; `Pattern.Harmonic` is the
+  surface semantics — tier-adjacent compatibility with blocker imposition and
+  icy absorption.
 
 ## Main results
 
-* `harmonic_insert_transparent`: transparent segments interrupt harmlessly —
-  inserting one never changes harmonicity.
-* `Pattern.harmonic_iff_agreeOn`: without blockers, harmonicity is pairwise
-  agreement on the whole tier — the local (chain) and global (pairwise)
-  formulations coincide.
+* `Pattern.harmonic_insert_transparent`: transparency interrupts harmlessly.
+* `Pattern.harmonic_iff_agreeOn`: with all segments participating, the chain
+  and pairwise formulations coincide.
 -/
 
 namespace Phonology.Harmony
@@ -46,81 +36,85 @@ universe u v
 
 variable {α : Type u} {V : Type v}
 
-/-- How a segment participates in harmony ([ritter-vanderhulst-2024-themes]
-    §1.3): full participants alternate and propagate; transparent (neutral)
-    vowels are skipped harmlessly; opaque vowels (blockers) impose their own
-    value on subsequent targets; icy targets (absorbing vowels) undergo harmony
-    without passing it on. -/
+/-- How a segment participates in harmony ([ritter-vanderhulst-2024-themes] §1.3). -/
 inductive Participation where
+  /-- Alternates and propagates. -/
   | participating
+  /-- Skipped harmlessly (neutral). -/
   | transparent
+  /-- Does not undergo; imposes its value on what follows ((8c)). -/
   | opaque
+  /-- Undergoes without passing on ([jurgec-2011]'s absorbing vowels). -/
   | icyTarget
   deriving DecidableEq, Repr
 
-/-- Direction of the harmonic agreement relation
-    ([ritter-vanderhulst-2024-themes] §1.2.3): prototypical harmony is
-    bidirectional, moving outward from the root; unidirectional cases are
-    either stipulated or derived from target criteria or domain exclusions. -/
+/-- Direction of the agreement relation ([ritter-vanderhulst-2024-themes] §1.2.3). -/
 inductive Direction where
   | rightward
   | leftward
+  /-- The prototype: outward from the root, no stipulated direction. -/
   | bidirectional
   deriving DecidableEq, Repr
 
-/-- Who determines the harmonic value ([ritter-vanderhulst-2024-themes]
-    §1.2.4): the root (morphologically determined trigger; affixes alternate,
-    roots do not), a designated dominant value regardless of morphological
-    position (phonologically determined, typical of ATR systems), or affixes
-    (metaphony and umlaut). Parameterized by the harmonic value type `V`. -/
+/-- Who determines the harmonic value ([ritter-vanderhulst-2024-themes] §1.2.4). -/
 inductive ControlType (V : Type u) where
+  /-- Roots do not alternate; affixes harmonize to them (morphologically determined). -/
   | rootControlled
+  /-- A designated value wins regardless of position (phonologically determined). -/
   | dominantRecessive (dominant : V)
+  /-- Posed as an open question by the chapter: metaphony and umlaut, where
+      stress attracts the harmonic value. -/
   | affixControlled
   deriving DecidableEq, Repr
 
-/-- The domain delimiting harmony ([ritter-vanderhulst-2024-themes] §1.2.2):
-    morphological (root, stem, word) or prosodic (foot, as in metaphony and
-    umlaut; phrase, in post-lexical harmony); `stemAndFirstAffix` is the
-    bounded bisyllabic agreement the chapter singles out. -/
+/-- The domain delimiting harmony ([ritter-vanderhulst-2024-themes] §1.2.2). -/
 inductive Domain where
   | root
   | stem
+  /-- Bounded bisyllabic agreement: the stem-final vowel and first suffix vowel only. -/
   | stemAndFirstAffix
   | word
+  /-- As in metaphony and umlaut. -/
   | foot
+  /-- Post-lexical harmony. -/
   | phrase
   deriving DecidableEq, Repr
 
-/-- The harmonic feature types surveyed in [ritter-vanderhulst-2024-themes]
-    §1.5: palatal and labial harmony occur frequently; height, tongue-root
-    ([ATR]/[RTR] — `Phonology/Harmony/TongueRoot.lean`), tense-lax, nasal,
-    emphasis (post-velar), retroflexion, and total (echo) harmony are attested.
-    Tonal harmony is unattested. -/
+/-- The feature types of [ritter-vanderhulst-2024-themes] §1.5; tonal harmony
+    is unattested. -/
 inductive HarmonyType where
   | palatal
   | labial
   | height
+  /-- [ATR]/[RTR]; see `Phonology/Harmony/TongueRoot.lean`. -/
   | tongueRoot
   | tenseLax
   | nasal
+  /-- Post-velar harmony. -/
   | emphasis
   | retroflex
+  /-- Echo/copy harmony: all features. -/
   | total
   deriving DecidableEq, Repr
 
 /-! ### Patterns and their surface semantics
 
-The descriptive object every mechanism must derive
-([ritter-vanderhulst-2024-themes] (2)): harmony creates likeness among the
-participating vowels of a domain. Transparent segments are skipped; opaque
-segments delimit the spans within which agreement holds. -/
+The descriptive object every mechanism must derive: harmony creates likeness
+among the participating vowels of a domain ((2) of
+[ritter-vanderhulst-2024-themes]). The undergoer/blocker/transparent
+decomposition follows [aksenova-rawski-graf-heinz-2024]: transparent segments
+are skipped; opaque blockers do not undergo but impose their transmitted value
+on what follows ((8c)); icy targets undergo without passing on
+([jurgec-2011]). -/
 
-/-- A harmony pattern over segment type `α` with harmonic values in `V`: the
-    feature valuation (`none` = no harmonic counterpart), the participation
-    classification, and the typological descriptors. -/
+/-- A harmony pattern over segment type `α` with harmonic values in `V`. -/
 structure Pattern (α : Type u) (V : Type v) where
+  /-- The valuation; `none` = no harmonic counterpart. For opaque and icy
+      segments, the value transmitted (not necessarily the phonetic one). -/
   value         : α → Option V
+  /-- Stored independently of the valuation: neutral vowels' transparent-vs-opaque
+      behavior is not predictable (§1.3.2). Discipline:
+      `value s = none → participation s ≠ .participating`. -/
   participation : α → Participation
   direction     : Direction := .bidirectional
   domain        : Domain := .word
@@ -130,11 +124,9 @@ structure Pattern (α : Type u) (V : Type v) where
 def Pattern.AgreeOn (p : Pattern α V) (w : List α) : Prop :=
   w.Pairwise fun a b => p.value a = p.value b
 
-/-- Tier membership: participating and opaque segments are on the harmonic
-    tier. Transparent and icy segments project out; opaque segments stay
-    because they delimit spans. -/
+/-- Tier membership: everything but transparent segments. -/
 def Pattern.OnTier (p : Pattern α V) (s : α) : Prop :=
-  p.participation s = .participating ∨ p.participation s = .opaque
+  p.participation s ≠ .transparent
 
 instance (p : Pattern α V) : DecidablePred p.OnTier := fun s => by
   unfold Pattern.OnTier; infer_instance
@@ -143,47 +135,37 @@ instance (p : Pattern α V) : DecidablePred p.OnTier := fun s => by
 def Pattern.tier (p : Pattern α V) (w : List α) : List α :=
   w.filter fun s => decide (p.OnTier s)
 
-/-- Adjacent harmonic compatibility: two neighbouring tier segments agree in
-    value unless either is an opaque blocker
-    ([ritter-vanderhulst-2024-themes] (8c)). -/
+/-- Adjacent compatibility, left to right: an opaque right member is exempt
+    (blockers do not undergo), an icy left member is exempt (no passing on);
+    otherwise the values agree. Deliberately asymmetric. -/
 def Pattern.Compatible (p : Pattern α V) (a b : α) : Prop :=
-  p.participation a = .opaque ∨ p.participation b = .opaque ∨
+  p.participation a = .icyTarget ∨ p.participation b = .opaque ∨
     p.value a = p.value b
 
 instance [DecidableEq V] (p : Pattern α V) : DecidableRel p.Compatible :=
   fun a b => by unfold Pattern.Compatible; infer_instance
 
-/-- Compatibility is symmetric. -/
-theorem Pattern.compatible_comm {p : Pattern α V} {a b : α} :
-    p.Compatible a b ↔ p.Compatible b a := by
-  unfold Pattern.Compatible
-  rw [eq_comm]
-  tauto
-
-/-- Surface harmonicity: the tier is a chain of compatible segments — within
-    every opaque-delimited span, participating segments agree in value. -/
+/-- Surface harmonicity: the tier is a chain of compatible segments. -/
 def Pattern.Harmonic (p : Pattern α V) (w : List α) : Prop :=
   (p.tier w).IsChain p.Compatible
 
-/-- **Transparency is harmless interruption** ([ritter-vanderhulst-2024-themes]
-    §1.3.2): inserting a non-participating, non-opaque segment never changes
-    harmonicity. -/
+instance [DecidableEq V] (p : Pattern α V) (w : List α) :
+    Decidable (p.Harmonic w) := by
+  unfold Pattern.Harmonic; infer_instance
+
+/-- Transparency interrupts harmlessly ([ritter-vanderhulst-2024-themes] §1.3.2). -/
 theorem Pattern.harmonic_insert_transparent {p : Pattern α V} {t : α}
-    (w₁ w₂ : List α) (hp : p.participation t ≠ .participating)
-    (ho : p.participation t ≠ .opaque) :
+    (w₁ w₂ : List α) (ht : p.participation t = .transparent) :
     p.Harmonic (w₁ ++ t :: w₂) ↔ p.Harmonic (w₁ ++ w₂) := by
   unfold Pattern.Harmonic Pattern.tier
-  simp [List.filter_append, Pattern.OnTier, hp, ho]
+  simp [List.filter_append, Pattern.OnTier, ht]
 
-/-- Without opaque segments, harmonicity is pairwise agreement on the whole
-    tier: adjacent compatibility is plain value-agreement, which is transitive,
-    so the local (chain) and global (pairwise) formulations coincide. The chain
-    formulation is the interface of the tier-based agreement machinery
-    (`Phonology/Subregular/Agree.lean`). -/
+/-- With all segments participating, the chain and pairwise formulations
+    coincide (value-agreement is transitive). -/
 theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
-    (h : ∀ s ∈ w, p.participation s ≠ .opaque) :
+    (h : ∀ s ∈ w, p.participation s = .participating) :
     p.Harmonic w ↔ p.AgreeOn (p.tier w) := by
-  have hmem : ∀ s ∈ p.tier w, p.participation s ≠ .opaque :=
+  have hmem : ∀ s ∈ p.tier w, p.participation s = .participating :=
     fun s hs => h s (List.mem_of_mem_filter hs)
 
   haveI : Trans (fun a b => p.value a = p.value b)
@@ -191,7 +173,7 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
     ⟨fun h₁ h₂ => h₁.trans h₂⟩
   unfold Pattern.Harmonic Pattern.AgreeOn
   rw [← List.isChain_iff_pairwise]
-  suffices key : ∀ l : List α, (∀ s ∈ l, p.participation s ≠ .opaque) →
+  suffices key : ∀ l : List α, (∀ s ∈ l, p.participation s = .participating) →
       (l.IsChain p.Compatible ↔ l.IsChain fun a b => p.value a = p.value b) from
     key _ hmem
   intro l hl
@@ -203,7 +185,8 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
     | cons b l =>
       have ha := hl a (by simp)
       have hb := hl b (by simp)
-      simp only [List.isChain_cons_cons, Pattern.Compatible, ha, hb, false_or,
+      simp only [List.isChain_cons_cons, Pattern.Compatible, ha, hb,
+        reduceCtorEq, false_or,
         ih fun s hs => hl s (List.mem_cons_of_mem a hs)]
 
 end Phonology.Harmony
