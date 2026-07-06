@@ -96,6 +96,33 @@ theorem exists_isELSolution (data : TrainingExperience m n d) :
     ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, IsELSolution data G :=
   exists_isERMSolution data fun _ => zero_le_one
 
+/-- The trained lexicon is **uniquely determined** exactly when the
+    experienced meanings span the whole meaning space — the coordinate-free
+    form of the papers' full-column-rank condition on the closed-form
+    solution ([gahl-baayen-2024] appendix; [heitmeier-2024]). Below that
+    threshold the ERM map is genuinely underdetermined
+    (`IsERMSolution.exists_apply_ne`), though its fitted values never are
+    (`IsERMSolution.apply_meanings_eq`). -/
+theorem existsUnique_isERMSolution_iff [NeZero n]
+    (data : TrainingExperience m n d) {q : FrequencyVector m}
+    (hq : ∀ i, 0 < q i) :
+    (∃! G : MeaningVec d →ₗ[ℝ] FormVec n, IsERMSolution data q G)
+      ↔ Submodule.span ℝ (Set.range data.meanings) = ⊤ := by
+  constructor
+  · rintro ⟨G, hG, huniq⟩
+    by_contra hne
+    obtain ⟨s, hs⟩ : ∃ s, s ∉ Submodule.span ℝ (Set.range data.meanings) := by
+      by_contra hall
+      push Not at hall
+      exact hne (Submodule.eq_top_iff'.mpr hall)
+    obtain ⟨G', hG', hne'⟩ := hG.exists_apply_ne hs
+    exact hne' (by rw [huniq G' hG'])
+  · intro htop
+    obtain ⟨G, hG⟩ := exists_isERMSolution data fun i => (hq i).le
+    exact ⟨G, hG, fun G' hG' => LinearMap.ext fun s =>
+      IsERMSolution.apply_eq_of_mem_span hq hG' hG
+        (Submodule.eq_top_iff'.mp htop s)⟩
+
 end
 
 end Processing.Lexical.Discriminative
