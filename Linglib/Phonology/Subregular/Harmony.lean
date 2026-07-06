@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Computability.Channel
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Segmental.Basic
@@ -23,7 +24,8 @@ discipline that turns it into a structure-changing map.
 
 * `Subregular.Harmony.System`: a `Phonology.Harmony.Pattern` plus the
   mechanism-side residue — trigger context, targets, and the feature write.
-  Blockers, the tier, and the recognizer (`System.toTierRule`) are derived
+  The valuation and write form a lawful lens (`System.channel`, a `Channel`);
+  blockers, the tier, and the recognizer (`System.toTierRule`) are derived
   from the pattern; `System.mk'` compiles the six-way decomposition.
 * `Subregular.Harmony.harmonyDomain`, `triggerValue`: the stem portion
   governing suffix harmony, and the recognizer's prediction over it.
@@ -69,9 +71,10 @@ open Phonology.Harmony (Pattern)
 
 /-! ### System — a pattern plus its transduction discipline -/
 
-/-- Write harmonic value `v` into a segment's `feature` slot. -/
+/-- Write harmonic value `v` into a segment's `feature` slot: the function-type
+    channel (`Channel.proj`) written at `feature`. -/
 def writeFeature (feature : Feature) (v : Bool) (s : Segment) : Segment :=
-  fun f => if f == feature then some v else s f
+  Function.update s feature (some v)
 
 /-- A harmony system: the descriptive `Phonology.Harmony.Pattern` (valuation,
     blockers, transparency, direction) plus the mechanism-side residue — the
@@ -100,6 +103,12 @@ def System.isBlocker (s : α) : Prop :=
 
 instance : DecidablePred sys.isBlocker := fun s => by
   unfold System.isBlocker; infer_instance
+
+/-- The system's read/write channel: the lawful lens `(pattern.value, write)`.
+    Lawful lenses are store-comonad coalgebras; the channel readout is the only
+    state the OSL transducer carries. -/
+def System.channel : Channel α Bool :=
+  ⟨sys.pattern.value, sys.write, sys.value_write⟩
 
 /-- The recognizer core, derived from the pattern: an agree `TierRule` over the
     pattern's tier, reading the pattern's valuation from the pattern's side. -/
