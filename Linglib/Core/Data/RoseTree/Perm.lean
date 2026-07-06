@@ -224,34 +224,54 @@ end
 
 /-! ### Fold invariance
 
-A `fold` whose algebra is invariant under `List.Perm` of the folded children is
-`Perm`-invariant: the generic dissolver of per-function invariance inductions.
-The counts below are such folds. -/
+A `fold` whose algebra is congruent along `Multiset.Rel S` of the folded children
+carries `Perm` to `S` (`fold_rel`): the generic dissolver of per-function invariance
+inductions, relational so that tree-valued folds descend too. `fold_perm` is the
+`S := Eq` case; the counts below are such folds. -/
+
+private theorem rel_refl_coe {β : Type*} {S : β → β → Prop} (hrefl : ∀ b, S b b) :
+    ∀ L : List β, Multiset.Rel S ↑L ↑L
+  | [] => Multiset.Rel.zero
+  | b :: L => Multiset.Rel.cons (hrefl b) (rel_refl_coe hrefl L)
 
 mutual
+/-- A `fold` whose algebra is congruent along `Multiset.Rel S` carries `Perm` to any
+    reflexive transitive `S`. -/
+theorem fold_rel {β : Type*} {S : β → β → Prop} {g : α → List β → β}
+    (hrefl : ∀ b, S b b) (htrans : ∀ {b₁ b₂ b₃}, S b₁ b₂ → S b₂ b₃ → S b₁ b₃)
+    (hg : ∀ (a : α) {l₁ l₂ : List β}, Multiset.Rel S ↑l₁ ↑l₂ → S (g a l₁) (g a l₂)) :
+    ∀ {t s : RoseTree α}, Perm t s → S (fold g t) (fold g s)
+  | _, _, .node h => by
+    rw [fold_node, fold_node]
+    exact hg _ (foldList_rel hrefl htrans hg h)
+  | _, _, .trans h₁ h₂ =>
+    htrans (fold_rel hrefl htrans hg h₁) (fold_rel hrefl htrans hg h₂)
+
+/-- Folded children of `PermList`-related lists are `Multiset.Rel S`-related. -/
+theorem foldList_rel {β : Type*} {S : β → β → Prop} {g : α → List β → β}
+    (hrefl : ∀ b, S b b) (htrans : ∀ {b₁ b₂ b₃}, S b₁ b₂ → S b₂ b₃ → S b₁ b₃)
+    (hg : ∀ (a : α) {l₁ l₂ : List β}, Multiset.Rel S ↑l₁ ↑l₂ → S (g a l₁) (g a l₂)) :
+    ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
+      Multiset.Rel S ↑(cs.map (fold g)) ↑(ds.map (fold g))
+  | _, _, .nil => Multiset.Rel.zero
+  | _, _, .cons h hs => by
+    simp only [List.map_cons, ← Multiset.cons_coe]
+    exact Multiset.Rel.cons (fold_rel hrefl htrans hg h) (foldList_rel hrefl htrans hg hs)
+  | _, _, .swap c d cs => by
+    simp only [List.map_cons, ← Multiset.cons_coe]
+    rw [Multiset.cons_swap]
+    exact Multiset.Rel.cons (hrefl _) (Multiset.Rel.cons (hrefl _) (rel_refl_coe hrefl _))
+  | _, _, .trans h₁ h₂ =>
+    Multiset.rel_trans_of_trans_on (fun _ _ _ _ _ _ h₁' h₂' => htrans h₁' h₂')
+      (foldList_rel hrefl htrans hg h₁) (foldList_rel hrefl htrans hg h₂)
+end
+
 /-- A `fold` with a permutation-invariant algebra is `Perm`-invariant. -/
 theorem fold_perm {β : Type*} {g : α → List β → β}
     (hg : ∀ (a : α) (l₁ l₂ : List β), l₁.Perm l₂ → g a l₁ = g a l₂) :
-    ∀ {t s : RoseTree α}, Perm t s → fold g t = fold g s
-  | _, _, .node h => by
-    rw [fold_node, fold_node]
-    exact hg _ _ _ (foldList_permList hg h)
-  | _, _, .trans h₁ h₂ => (fold_perm hg h₁).trans (fold_perm hg h₂)
-
-/-- Folded children of `PermList`-related lists are `List.Perm`-related. -/
-theorem foldList_permList {β : Type*} {g : α → List β → β}
-    (hg : ∀ (a : α) (l₁ l₂ : List β), l₁.Perm l₂ → g a l₁ = g a l₂) :
-    ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
-      (cs.map (fold g)).Perm (ds.map (fold g))
-  | _, _, .nil => .nil
-  | _, _, .cons h hs => by
-    rw [List.map_cons, List.map_cons, fold_perm hg h]
-    exact .cons _ (foldList_permList hg hs)
-  | _, _, .swap c d cs => by
-    simp only [List.map_cons]
-    exact .swap _ _ _
-  | _, _, .trans h₁ h₂ => (foldList_permList hg h₁).trans (foldList_permList hg h₂)
-end
+    ∀ {t s : RoseTree α}, Perm t s → fold g t = fold g s :=
+  fold_rel (fun _ => rfl) (fun h₁ h₂ => h₁.trans h₂)
+    (fun a {l₁ l₂} h => hg a l₁ l₂ (Multiset.coe_eq_coe.mp (Multiset.rel_eq.mp h)))
 
 /-- `numNodes` is a `Perm`-invariant (`List.Perm.sum_eq`). -/
 theorem numNodes_perm {t s : RoseTree α} (h : Perm t s) : t.numNodes = s.numNodes :=
