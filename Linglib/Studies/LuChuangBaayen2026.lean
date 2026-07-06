@@ -87,7 +87,7 @@ The DLM-side account differs both **architecturally** and
 - **Architecturally**, no rule is invoked. The neutralisation falls out
   of the kernel of the trained meaning→form map. `t3_sandhi_via_kernel`
   below states this as a direct application of the kernel
-  characterisation `LinearDiscriminativeLexicon.production_eq_iff`.
+  characterisation `LinearDiscriminativeLexicon.sub_mem_ker_iff`.
 - **Predictively**, the DLM accommodates **dialect variation** in
   sandhi completeness without re-stipulating the rule: Taiwan Mandarin's
   complete neutralisation = the kernel-difference holds; Standard
@@ -171,14 +171,14 @@ inductive TonePattern20 where
     the type signature**: the theorem witnesses the paper's specific
     empirical claim, not a generic two-pattern claim. The body is the
     kernel characterisation
-    `LinearDiscriminativeLexicon.production_eq_iff`. -/
+    `LinearDiscriminativeLexicon.sub_mem_ker_iff`. -/
 theorem t3_sandhi_via_kernel
     (D : LuTaiwanMandarinDLM)
     (centroidOf : TonePattern20 → ContextualEmbedding)
     (h_kernel :
       centroidOf .T3_T3 - centroidOf .T2_T3 ∈ LinearMap.ker D.production) :
     D.production (centroidOf .T3_T3) = D.production (centroidOf .T2_T3) :=
-  D.production_eq_iff.mpr h_kernel
+  D.sub_mem_ker_iff.mp h_kernel
 
 /-- **Quantitative refinement of `t3_sandhi_via_kernel`.** The exact-
     kernel hypothesis is the limiting case; in real data the centroid

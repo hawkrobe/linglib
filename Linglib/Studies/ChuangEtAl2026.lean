@@ -44,7 +44,7 @@ orthogonal modules of grammar.
 ## Substrate
 
 The DLM substrate (`LinearDiscriminativeLexicon`, `FormVec`, `MeaningVec`,
-`broadcast`, `LinearDiscriminativeLexicon.production_eq_iff`)
+`broadcast`, `LinearDiscriminativeLexicon.sub_mem_ker_iff`)
 lives in `Processing/Lexical/Discriminative/Defs.lean`
 [baayen-2019] [heitmeier-chuang-baayen-2026]. This file
 imports it and supplies the paper-specific instantiation: 50-dim pitch
@@ -123,7 +123,7 @@ different levels of phonological/phonetic resolution. Their structural
 common generalisation is **injectivity of the meaning→form map**:
 Storme's `*HOMOPHONY` enforces it categorically over a discrete
 output paradigm; the Discriminative Lexicon substrate expresses it via
-the kernel characterisation `production_eq_iff` (distinct meanings
+the kernel characterisation `sub_mem_ker_iff` (distinct meanings
 surface distinctly exactly when their difference avoids
 `ker production`). A formal
 subsumption result would require a substrate that admits both
