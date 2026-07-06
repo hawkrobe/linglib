@@ -1458,6 +1458,7 @@ import Linglib.Processing.Expectation.Defs
 import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
+import Linglib.Processing.Lexical.Discriminative.Coding
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Regression
 import Linglib.Processing.Lexical.Discriminative.Measures
