@@ -55,7 +55,7 @@ private theorem contractUnary_node :
     contractUnary (node a cs) = contractCombine a (cs.map contractUnary) := by
   simp only [contractUnary, fold_node]
 
-@[simp] theorem contractUnary_leaf : contractUnary (leaf a) = leaf a := rfl
+@[simp] theorem contractUnary_leaf : contractUnary (node a []) = node a [] := rfl
 
 @[simp] theorem contractUnary_node_singleton :
     contractUnary (node a [c]) = contractUnary c := rfl
@@ -75,25 +75,20 @@ def numUnary : RoseTree α → ℕ :=
 
 /-! ### Vertex-count conservation -/
 
-/-- Conservation at one vertex: `contractCombine` loses the root exactly when unary. -/
-private theorem numNodes_contractCombine_add :
-    (contractCombine a cs).numNodes + (if cs.length = 1 then 1 else 0)
-      = 1 + (cs.map numNodes).sum := by
-  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [contractCombine, Nat.add_comm]
+/-- The unary tick exactly compensates the root count: at a unary node the root is
+    contracted away and the tick is `1`; otherwise the root survives and the tick is `0`. -/
+theorem numNodes_contractUnary_node :
+    (contractUnary (node a cs)).numNodes + (if cs.length = 1 then 1 else 0)
+      = 1 + (cs.map fun c => (contractUnary c).numNodes).sum := by
+  rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [Nat.add_comm, Function.comp_def]
 
 /-- Each contracted unary vertex removes exactly one vertex. -/
 theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
     (contractUnary t).numNodes + t.numUnary = t.numNodes := by
   induction t with
   | node a cs ih =>
-    have key : ((cs.map contractUnary).map numNodes).sum + (cs.map numUnary).sum
-        = (cs.map numNodes).sum := by
-      rw [List.map_map, ← List.sum_map_add]
-      exact congrArg List.sum (List.map_congr_left ih)
-    have hroot := numNodes_contractCombine_add a (cs.map contractUnary)
-    rw [List.length_map] at hroot
-    rw [contractUnary_node, numUnary_node, numNodes_node]
-    omega
+    rw [numUnary_node, numNodes_node, ← List.map_congr_left ih, List.sum_map_add,
+      ← Nat.add_assoc, numNodes_contractUnary_node, Nat.add_assoc]
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 
