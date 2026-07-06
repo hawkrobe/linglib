@@ -134,11 +134,10 @@ theorem isERMSolution_iff_rescaled {c : ℝ} (hc : 0 < c) :
 
 /-! ### Per-coordinate residual optimality
 
-The loss separates across form coordinates: each column of `G`
-regresses one cue's support on the semantic dimensions, "optimal in
-the least-squares sense" ([heitmeier-chuang-baayen-2026] ch. 6). So
-ERM is exactly columnwise unbeatability, and a coordinate that some
-functional decodes exactly is reproduced exactly. -/
+The loss separates across form coordinates — each column of `G` regresses one
+cue's support on the semantic dimensions, "optimal in the least-squares sense"
+([heitmeier-chuang-baayen-2026] ch. 6) — so ERM is exactly columnwise
+unbeatability. -/
 
 /-- Weighted squared residual of a predicted column `pred` against
     form coordinate `j₀` of the training data. -/
@@ -158,19 +157,6 @@ theorem weightedLoss_eq_sum_coordResidual :
   simp_rw [Finset.mul_sum]
   exact Finset.sum_comm
 
-private theorem squaredDist_update (a b : FormVec n) (j₀ : Fin n) (x : ℝ) :
-    squaredDist (Function.update a j₀ x) b
-      = squaredDist a b - (a j₀ - b j₀) ^ 2 + (x - b j₀) ^ 2 := by
-  unfold squaredDist
-  rw [← Finset.add_sum_erase Finset.univ
-        (fun j => (Function.update a j₀ x j - b j) ^ 2) (Finset.mem_univ j₀),
-      ← Finset.add_sum_erase Finset.univ
-        (fun j => (a j - b j) ^ 2) (Finset.mem_univ j₀),
-      Finset.sum_congr rfl fun j hj => by
-        rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]]
-  simp only [Function.update_self]
-  ring
-
 /-- `G` is an ERM solution iff at every form coordinate its column's residual
     is at most that of any linear functional of the meanings — ERM is
     columnwise-unbeatable regression. No sign condition on `q`. -/
@@ -181,27 +167,22 @@ theorem isERMSolution_iff_coordResidual :
           ≤ coordResidual data q (fun k => w (data.meanings k)) j₀ := by
   constructor
   · intro hG j₀ w
-    -- the competitor: `G` with coordinate `j₀` replaced by `w`
-    have happ : ∀ s,
-        LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w) s
-          = Function.update (G s) j₀ (w s) := fun s => by
-      funext j
-      rcases eq_or_ne j j₀ with hj | hj
-      · subst hj; simp only [LinearMap.pi_apply, Function.update_self]
-      · simp only [LinearMap.pi_apply, Function.update_of_ne hj,
-          LinearMap.comp_apply, LinearMap.proj_apply]
-    have hloss : weightedLoss data q
-          (LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w))
-        = weightedLoss data q G
-          - coordResidual data q (fun k => G (data.meanings k) j₀) j₀
-          + coordResidual data q (fun k => w (data.meanings k)) j₀ := by
-      unfold weightedLoss coordResidual
-      rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
-      refine Finset.sum_congr rfl fun k _ => ?_
-      rw [happ, squaredDist_update]
-      ring
+    -- the competitor: `G` with column `j₀` replaced by `w`
     have h := hG (LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w))
-    rw [hloss] at h
+    rw [weightedLoss_eq_sum_coordResidual, weightedLoss_eq_sum_coordResidual] at h
+    have hcols : (fun j => coordResidual data q
+          (fun k => LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w)
+            (data.meanings k) j) j)
+        = Function.update
+            (fun j => coordResidual data q (fun k => G (data.meanings k) j) j) j₀
+            (coordResidual data q (fun k => w (data.meanings k)) j₀) := by
+      funext j
+      rcases eq_or_ne j j₀ with rfl | hj
+      · simp [LinearMap.pi_apply]
+      · simp [LinearMap.pi_apply, Function.update_of_ne hj]
+    rw [hcols, Finset.sum_update_of_mem (Finset.mem_univ j₀),
+        ← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ j₀),
+        Finset.erase_eq] at h
     linarith
   · intro h G'
     rw [weightedLoss_eq_sum_coordResidual data q G,
