@@ -377,6 +377,24 @@ theorem isERMSolution_iff_forall_column (hq : ∀ i, 0 ≤ q i) :
     refine Finset.sum_eq_zero fun j _ => ?_
     simpa using h j ((LinearMap.proj j).comp H)
 
+/-- Under positive weights the prediction energy is definite: it vanishes iff
+    the predictions vanish on every training meaning. -/
+theorem predictionEnergy_eq_zero_iff (hq : ∀ i, 0 < q i)
+    {H : MeaningVec d →ₗ[ℝ] FormVec n} :
+    predictionEnergy data q H = 0 ↔ ∀ i, H (data.meanings i) = 0 := by
+  constructor
+  · intro hE i
+    have hi := (Finset.sum_eq_zero_iff_of_nonneg fun k _ =>
+      mul_nonneg (hq k).le (Finset.sum_nonneg fun _ _ => sq_nonneg _)).mp
+      hE i (Finset.mem_univ i)
+    have hsum := (mul_eq_zero.mp hi).resolve_left (hq i).ne'
+    funext j
+    exact sq_eq_zero_iff.mp
+      ((Finset.sum_eq_zero_iff_of_nonneg fun j _ => sq_nonneg _).mp hsum j
+        (Finset.mem_univ j))
+  · intro h
+    simp [predictionEnergy, h]
+
 /-- All ERM solutions under positive weights produce the same predicted form
     for every experienced meaning — fitted values are unique even when the
     ERM map is not. -/
@@ -384,25 +402,13 @@ theorem IsERMSolution.apply_meanings_eq (hq : ∀ i, 0 < q i)
     {G' : MeaningVec d →ₗ[ℝ] FormVec n}
     (hG : IsERMSolution data q G) (hG' : IsERMSolution data q G') (i : Fin m) :
     G (data.meanings i) = G' (data.meanings i) := by
-  have hB := (isERMSolution_iff_residualPairing_eq_zero fun k => (hq k).le).mp
-    hG (G' - G)
   have hexp := weightedLoss_add data q G (G' - G)
-  rw [show G + (G' - G) = G' by abel, hB] at hexp
-  have hE : predictionEnergy data q (G' - G) = 0 := by
-    have h1 := hG G'
-    have h2 := hG' G
-    linarith
-  have hterm : ∀ k ∈ Finset.univ,
-      (0:ℝ) ≤ q k * ∑ j, (G' - G) (data.meanings k) j ^ 2 := fun k _ =>
-    mul_nonneg (hq k).le (Finset.sum_nonneg fun _ _ => sq_nonneg _)
-  have hi := (Finset.sum_eq_zero_iff_of_nonneg hterm).mp hE i (Finset.mem_univ i)
-  have hsum : ∑ j, (G' - G) (data.meanings i) j ^ 2 = 0 :=
-    (mul_eq_zero.mp hi).resolve_left (hq i).ne'
-  funext j
-  have hj := (Finset.sum_eq_zero_iff_of_nonneg fun j _ => sq_nonneg _).mp
-    hsum j (Finset.mem_univ j)
-  have h0 : G' (data.meanings i) j = G (data.meanings i) j := by
-    simpa [sub_eq_zero] using sq_eq_zero_iff.mp hj
+  rw [show G + (G' - G) = G' by abel,
+      (isERMSolution_iff_residualPairing_eq_zero fun k => (hq k).le).mp
+        hG (G' - G)] at hexp
+  have hE : predictionEnergy data q (G' - G) = 0 := by linarith [hG G', hG' G]
+  have h0 : G' (data.meanings i) = G (data.meanings i) := by
+    simpa [sub_eq_zero] using (predictionEnergy_eq_zero_iff hq).mp hE i
   exact h0.symm
 
 /-- ERM solutions agree at every meaning in the **span** of the experienced
