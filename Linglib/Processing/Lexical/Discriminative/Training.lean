@@ -45,7 +45,8 @@ equilibria of any error-driven rule in the Widrow-Hoff family.
 
 ## TODO
 
-Closed form `G = (SᵀS)⁻¹SᵀC` under full column rank; approximate-decodability
+Matrix closed form `G = (SᵀS)⁻¹SᵀC` (the uniqueness half is
+`existsUnique_isERMSolution_iff` in `Regression.lean`); approximate-decodability
 gap bounds for `semSup`.
 -/
 
