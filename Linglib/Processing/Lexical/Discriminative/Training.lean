@@ -430,6 +430,17 @@ theorem IsERMSolution.apply_eq_of_mem_span (hq : ∀ i, 0 < q i)
     simpa [LinearMap.mem_ker, sub_eq_zero] using hker hs
   exact h0.symm
 
+/-- Adding a map that vanishes on every training meaning preserves ERM: the
+    ERM solutions are closed under the data-annihilating directions (and by
+    `IsERMSolution.apply_meanings_eq` they form exactly such a coset). -/
+theorem IsERMSolution.add_of_forall_eq_zero (hG : IsERMSolution data q G)
+    {H : MeaningVec d →ₗ[ℝ] FormVec n} (hH : ∀ i, H (data.meanings i) = 0) :
+    IsERMSolution data q (G + H) := fun G' => by
+  have h0 : weightedLoss data q (G + H) = weightedLoss data q G := by
+    rw [weightedLoss_add]
+    simp [residualPairing, predictionEnergy, hH]
+  exact h0 ▸ hG G'
+
 /-- Off the span of experienced meanings, ERM solutions are genuinely
     underdetermined — any ERM solution can be modified into another with a
     different prediction at any unexperienced meaning direction, by adding a
@@ -439,27 +450,20 @@ theorem IsERMSolution.exists_apply_ne [NeZero n]
     {s : MeaningVec d} (hs : s ∉ Submodule.span ℝ (Set.range data.meanings)) :
     ∃ G' : MeaningVec d →ₗ[ℝ] FormVec n,
       IsERMSolution data q G' ∧ G s ≠ G' s := by
-  have h1 : ¬ ∀ φ ∈ (Submodule.span ℝ (Set.range data.meanings)).dualAnnihilator,
-      φ s = 0 := fun h => hs
-    ((Subspace.forall_mem_dualAnnihilator_apply_eq_zero_iff _ s).mp h)
-  push Not at h1
-  obtain ⟨φ, hφmem, hφs⟩ := h1
-  have hφ0 : ∀ x ∈ Submodule.span ℝ (Set.range data.meanings), φ x = 0 :=
-    (Submodule.mem_dualAnnihilator φ).mp hφmem
-  refine ⟨G + φ.smulRight (Pi.single 0 1), fun G'' => ?_, fun h => ?_⟩
-  · have hsame : weightedLoss data q (G + φ.smulRight (Pi.single 0 1))
-        = weightedLoss data q G := by
-      unfold weightedLoss
-      refine Finset.sum_congr rfl fun i _ => ?_
-      have hzero : φ (data.meanings i) = 0 :=
-        hφ0 _ (Submodule.subset_span (Set.mem_range_self i))
-      simp [LinearMap.add_apply, LinearMap.smulRight_apply, hzero]
-    rw [hsame]
-    exact hG G''
-  · have h0 := congrFun h (0 : Fin n)
-    simp only [LinearMap.add_apply, LinearMap.smulRight_apply, Pi.add_apply,
-               Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one] at h0
-    exact hφs (by linarith)
+  obtain ⟨φ, hφ, hφs⟩ : ∃ φ ∈ (Submodule.span ℝ
+      (Set.range data.meanings)).dualAnnihilator, φ s ≠ 0 := by
+    have h := mt (Subspace.forall_mem_dualAnnihilator_apply_eq_zero_iff _ s).mp hs
+    push Not at h
+    exact h
+  refine ⟨G + φ.smulRight (Pi.single 0 1),
+    hG.add_of_forall_eq_zero fun i => by
+      simp [(Submodule.mem_dualAnnihilator φ).mp hφ _
+        (Submodule.subset_span (Set.mem_range_self i))],
+    fun h => ?_⟩
+  have h0 := congrFun h (0 : Fin n)
+  simp only [LinearMap.add_apply, LinearMap.smulRight_apply, Pi.add_apply,
+             Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one] at h0
+  exact hφs (by linarith)
 
 /-- The uniform-weight loss on the `√q`-premultiplied experience is the
     `q`-weighted loss on the original. -/
