@@ -1,6 +1,7 @@
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.QuadraticDiscriminant
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Analysis.Real.Sqrt
 import Mathlib.LinearAlgebra.Dual.Lemmas
@@ -324,23 +325,16 @@ theorem isERMSolution_iff_residualPairing_eq_zero (hq : ∀ i, 0 ≤ q i) :
       ∀ H : MeaningVec d →ₗ[ℝ] FormVec n, residualPairing data q G H = 0 := by
   constructor
   · intro hG H
-    set B := residualPairing data q G H with hB
-    set E := predictionEnergy data q H with hE
-    have hE0 : 0 ≤ E := predictionEnergy_nonneg data q hq H
-    have key := hG (G + (-(B / (E + 1))) • H)
-    rw [weightedLoss_add, residualPairing_smul, predictionEnergy_smul] at key
-    have hE1 : (0:ℝ) < E + 1 := by linarith
-    set t : ℝ := -(B / (E + 1)) with ht'
-    have ht : t * (E + 1) = -B := by
-      rw [ht']; field_simp
-    have htB : t * B = -(t ^ 2 * (E + 1)) := by
-      have hBt : B = -(t * (E + 1)) := by rw [ht]; ring
-      rw [hBt]; ring
-    have h0 : 0 ≤ 2 * (t * B) + t ^ 2 * E := by linarith
-    have ht2 : t ^ 2 ≤ 0 := by nlinarith [sq_nonneg t, hE0]
-    have htz : t = 0 := sq_eq_zero_iff.mp (le_antisymm ht2 (sq_nonneg t))
-    have hBz : -B = 0 := by rw [← ht, htz]; ring
-    linarith
+    -- along direction `H` the loss is a nonnegative quadratic in `t`,
+    -- so its discriminant is nonpositive
+    have key : ∀ t : ℝ, 0 ≤ predictionEnergy data q H * (t * t)
+        + 2 * residualPairing data q G H * t + 0 := fun t => by
+      have h := hG (G + t • H)
+      rw [weightedLoss_add, residualPairing_smul, predictionEnergy_smul] at h
+      nlinarith [h]
+    have hd := discrim_le_zero key
+    simp only [discrim] at hd
+    exact sq_eq_zero_iff.mp (le_antisymm (by nlinarith [hd]) (sq_nonneg _))
   · intro h G'
     have hexp := weightedLoss_add data q G (G' - G)
     rw [show G + (G' - G) = G' by abel, h (G' - G)] at hexp
