@@ -1,5 +1,4 @@
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Features.Aktionsart
 

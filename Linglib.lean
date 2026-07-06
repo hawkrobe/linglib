@@ -1598,7 +1598,6 @@ import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Extent

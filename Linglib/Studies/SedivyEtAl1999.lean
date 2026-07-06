@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
-import Linglib.Semantics.Degree.Defs
+import Linglib.Semantics.Degree.Kennedy
 import Linglib.Processing.VisualWorld
 
 /-!

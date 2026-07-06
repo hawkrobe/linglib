@@ -1,10 +1,10 @@
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Gradability.Basic
 import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.Defs
 
 /-!
 # Beltrama 2025: Evaluation, thresholds, and practical commitments
