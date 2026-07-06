@@ -56,18 +56,12 @@ open Hungarian.VowelHarmony
 -- `Phonology/Process/Harmony/OT.lean` (this file was its sole consumer).
 -- ============================================================================
 
-/-- Feature BEq is reflexive. Needed because `Feature` derives `BEq`
-    separately from `DecidableEq`, so `beq_self_eq_true` may not
-    fire automatically. -/
-private theorem feature_beq_self (f : Feature) : (f == f) = true := by
-  cases f <;> rfl
-
 /-- SPREAD violations: count target segments whose harmony feature value
     doesn't match `triggerVal`. -/
-def spreadViolations (sys : System) (triggerVal : Bool)
+def spreadViolations (sys : System Segment) (triggerVal : Bool)
     (suffix : List Segment) : Nat :=
   suffix.filter (λ s =>
-    sys.isTarget s && !((s sys.feature) == some triggerVal)
+    sys.isTarget s && !((sys.pattern.value s) == some triggerVal)
   ) |>.length
 
 /-- IDENT-[F] violations: count positions where the harmony feature
@@ -75,15 +69,15 @@ def spreadViolations (sys : System) (triggerVal : Bool)
 
     **Derived from `Corr.identViol`** on the `(false, true)` edge of a
     binary parallel-pair correspondence between the feature-projected
-    tiers `input.map (· sys.feature)` and
-    `output.map (· sys.feature)`. This structurally identifies
+    tiers `input.map sys.pattern.value` and
+    `output.map sys.pattern.value`. This structurally identifies
     IDENT-[F] as IDENT-IO of [mccarthy-prince-1995] restricted to
     the harmony feature. -/
-def identViolations (sys : System)
+def identViolations (sys : System Segment)
     (input output : List Segment) : Nat :=
   (Corr.parallel
-    (input.map  (· sys.feature))
-    (output.map (· sys.feature))).identViol .lhs .rhs
+    (input.map  sys.pattern.value)
+    (output.map sys.pattern.value)).identViol .lhs .rhs
 
 /-- A vowel harmony candidate for OT evaluation.
 
@@ -102,7 +96,7 @@ structure VHCandidate where
 
 /-- SPREAD as a `Constraint`: penalizes unharmonized targets in the
     output suffix. Returns 0 when the stem has no trigger. -/
-def mkSpread (sys : System) :
+def mkSpread (sys : System Segment) :
     Constraint VHCandidate :=
   λ c =>
     match triggerValue sys c.stem with
@@ -111,39 +105,39 @@ def mkSpread (sys : System) :
 
 /-- IDENT-[F] as a `Constraint`: penalizes feature changes from
     underlying to surface suffix. -/
-def mkIdentHarmony (sys : System) :
+def mkIdentHarmony (sys : System Segment) :
     Constraint VHCandidate :=
   λ c => identViolations sys c.suffixIn c.suffixOut
 
 /-- After harmonization, a target's harmony feature is set to `val`. -/
-theorem harmonizeOne_spec_feature (sys : System) (val : Bool)
+theorem harmonizeOne_spec_feature (sys : System Segment) (val : Bool)
     (s : Segment) (ht : sys.isTarget s) :
-    (harmonizeOne sys val s) sys.feature = some val := by
-  simp only [harmonizeOne, if_pos ht, writeFeature, feature_beq_self, if_true]
+    sys.pattern.value (harmonizeOne sys val s) = some val := by
+  rw [harmonizeOne, if_pos ht]; exact sys.value_write val s
 
 /-- `harmonizeOne` never creates SPREAD violations: the result either
     has the correct feature value (target case) or isn't a target
     (non-target case, returned unchanged). -/
-private theorem harmonizeOne_no_spread (sys : System) (val : Bool)
+private theorem harmonizeOne_no_spread (sys : System Segment) (val : Bool)
     (s : Segment) :
     (sys.isTarget (harmonizeOne sys val s) &&
-     !((harmonizeOne sys val s) sys.feature == some val)) = false := by
+     !(sys.pattern.value (harmonizeOne sys val s) == some val)) = false := by
   by_cases ht : sys.isTarget s
   · rw [harmonizeOne_spec_feature sys val s ht]; simp
   · rw [harmonizeOne_nontarget ht]; simp [ht]
 
 /-- Cons lemma: if the head satisfies SPREAD, the violation count on a
     cons equals the count on the tail. -/
-private theorem spreadViolations_cons_ok (sys : System) (val : Bool)
+private theorem spreadViolations_cons_ok (sys : System Segment) (val : Bool)
     (s : Segment) (rest : List Segment)
-    (hp : (sys.isTarget s && !((s sys.feature) == some val)) = false) :
+    (hp : (sys.isTarget s && !((sys.pattern.value s) == some val)) = false) :
     spreadViolations sys val (s :: rest) = spreadViolations sys val rest := by
   simp only [spreadViolations, List.filter_cons, hp, Bool.false_eq_true, ↓reduceIte]
 
 /-- **`spreadSuffix` produces zero SPREAD violations** (when no blockers
     intervene). By induction: `harmonizeOne` fixes each target's feature
     value, so no target in the output disagrees with the trigger. -/
-theorem spreadSuffix_zero_spread (sys : System) (val : Bool)
+theorem spreadSuffix_zero_spread (sys : System Segment) (val : Bool)
     (suffix : List Segment)
     (h : ∀ s ∈ suffix, sys.isBlocker s = false) :
     spreadViolations sys val (spreadSuffix sys val suffix) = 0 := by
@@ -157,13 +151,13 @@ theorem spreadSuffix_zero_spread (sys : System) (val : Bool)
 
 /-- The faithful candidate (no changes) has zero IDENT violations.
     Derived from `Corr.identity_ident_zero`. -/
-theorem faithful_zero_ident (sys : System) (suffix : List Segment) :
+theorem faithful_zero_ident (sys : System Segment) (suffix : List Segment) :
     identViolations sys suffix suffix = 0 := by
   show (Corr.identity _).identViol .lhs .rhs = 0
   exact Corr.identity_ident_zero _
 
 /-- IDENT on empty suffixes is zero. -/
-theorem identViolations_nil (sys : System) :
+theorem identViolations_nil (sys : System Segment) :
     identViolations sys [] [] = 0 := faithful_zero_ident sys []
 
 /-- The output of `spreadSuffix` achieves zero SPREAD violations for the
@@ -171,7 +165,7 @@ theorem identViolations_nil (sys : System) :
     trade-off: the faithful candidate has SPREAD > 0, IDENT = 0; the
     harmonized candidate has SPREAD = 0, IDENT ≥ 0. Under SPREAD ≫ IDENT,
     the harmonized output wins. -/
-theorem spreadSuffix_ot_motivation (sys : System)
+theorem spreadSuffix_ot_motivation (sys : System Segment)
     (stem suffix : List Segment) (val : Bool)
     (h_no_blockers : ∀ s ∈ suffix, sys.isBlocker s = false)
     (hv : triggerValue sys stem = some val) :

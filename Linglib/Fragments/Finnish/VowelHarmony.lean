@@ -133,7 +133,7 @@ def classifyVowel (s : Segment) : HarmonyClass :=
 /-- Finnish palatal harmony: [back] spreads from the last harmonic (non-neutral)
     stem vowel to non-neutral suffix vowels. Neutral vowels /e/, /i/ are
     transparent — they neither trigger nor undergo harmony. -/
-def finnishHarmony : System :=
+def finnishHarmony : System Segment :=
   System.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))

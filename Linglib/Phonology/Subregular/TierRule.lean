@@ -93,7 +93,7 @@ abbrev Side := Subregular.Direction
 /-- A tier-based alternation rule over alphabet `α`: project the word onto a tier,
     find the adjacent context segment on `side`, and fill the target's feature by
     `relation` to it, falling back to `default`. -/
-structure TierRule (α : Type) where
+structure TierRule (α : Type*) where
   /-- The erasing projection ([goldsmith-1976]) onto which the context-class check is
       performed. -/
   tier : TierProjection α α
@@ -117,7 +117,7 @@ structure TierRule (α : Type) where
 
 namespace TierRule
 
-variable {α : Type}
+variable {α : Type*}
 
 attribute [instance] TierRule.decTarget
 
@@ -220,7 +220,7 @@ Land the general witness here once a Studies file consumes it. -/
 namespace Subregular.TierRule
 
 
-variable {α : Type}
+variable {α : Type*}
 
 /-- The prediction function shared by `applyAt` (under identity tier +
 left side) and the SFST construction: given an "accumulated last
