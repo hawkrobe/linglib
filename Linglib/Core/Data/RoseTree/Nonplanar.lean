@@ -244,6 +244,20 @@ theorem node_pair_mk (a : α) (p q : RoseTree α) :
     node a {mk p, mk q} = mk (.node a [p, q]) :=
   node_mk_tree_list a [p, q]
 
+/-- Choose planar representatives for a whole forest at once: every
+    `Multiset (Nonplanar α)` is the `mk`-image of a list of planar trees. Descent
+    proofs that use this eliminator meet `node_mk_tree_list` on the nose, with no
+    `Quotient.out` repair. -/
+@[elab_as_elim]
+theorem forest_inductionOn {motive : Multiset (Nonplanar α) → Prop}
+    (F : Multiset (Nonplanar α))
+    (h : ∀ cs : List (RoseTree α), motive (Multiset.ofList (cs.map mk))) : motive F := by
+  refine Quotient.inductionOn F fun lst => ?_
+  have hrep : (lst.map Quotient.out).map mk = lst := by
+    rw [List.map_map]
+    exact (List.map_congr_left fun x _ => x.out_eq).trans (List.map_id lst)
+  exact hrep ▸ h (lst.map Quotient.out)
+
 /-! #### Sanity tests -/
 
 /-- Sibling order doesn't matter at the root: this is built into the

@@ -58,7 +58,6 @@ import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
@@ -122,6 +121,7 @@ import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
+import Linglib.Core.Data.RoseTree.Count
 import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves

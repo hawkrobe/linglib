@@ -511,7 +511,7 @@ theorem cutSummandsCN_accCountC_single (τ : Nonplanar (α ⊕ β) → β)
       ((cutSummandsCN_trunk_rootValue τ T p hp).trans hT_root)
   rw [hcard] at hw hl
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw hl
-  simp only [Nonplanar.accCountC_eq, Nonplanar.accCount]
+  simp only [Nonplanar.accCountC_eq, Nonplanar.accCount_eq_numNodes_sub_one]
   omega
 
 /-- **Two-cut accessible-term extraction** (MCB eq. 1.6.8 for a 2-edge admissible
@@ -542,7 +542,7 @@ theorem cutSummandsCN_accCountC_pair (τ : Nonplanar (α ⊕ β) → β)
   simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
     Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_cons,
     Multiset.card_singleton] at hw hl
-  simp only [Nonplanar.accCountC_eq, Nonplanar.accCount]
+  simp only [Nonplanar.accCountC_eq, Nonplanar.accCount_eq_numNodes_sub_one]
   omega
 
 /-! ### Minimal-Search positivity (MCB Prop 1.5.1, Sideward direction) -/

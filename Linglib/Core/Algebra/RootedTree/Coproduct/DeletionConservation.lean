@@ -1,7 +1,8 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-import Linglib.Core.Combinatorics.RootedTree.Counting
+import Linglib.Core.Data.RoseTree.Count
+import Linglib.Core.Combinatorics.RootedTree.TraceMeasures
 
 /-!
 # Vertex conservation for the Δ^ρ / Δᵈ (deletion) cut enumeration

@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Algebra.Order.Group.Multiset
+import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Algebra.Order.Group.Nat
 
 /-!
 # Leaf projections of a rose tree
@@ -104,14 +106,7 @@ theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := 
   induction t with
   | node a cs ih =>
     rw [numLeaves_node, numNodes_node]
-    have hsum : (cs.map numLeaves).sum ≤ (cs.map numNodes).sum := by
-      induction cs with
-      | nil => simp
-      | cons c cs' ihs =>
-        simp only [List.map_cons, List.sum_cons]
-        have h1 := ih c List.mem_cons_self
-        have h2 := ihs fun x hx => ih x (List.mem_cons_of_mem _ hx)
-        omega
+    have := List.sum_le_sum (f := numLeaves) (g := numNodes) ih
     omega
 
 /-! ### `Perm` invariance -/
