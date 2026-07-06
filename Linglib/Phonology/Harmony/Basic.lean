@@ -178,6 +178,10 @@ instance [DecidableEq V] (p : Pattern α V) : DecidableRel p.Compatible :=
 def Pattern.Harmonic (p : Pattern α V) (w : List α) : Prop :=
   (p.tier w).IsChain p.Compatible
 
+instance [DecidableEq V] (p : Pattern α V) (w : List α) :
+    Decidable (p.Harmonic w) := by
+  unfold Pattern.Harmonic; infer_instance
+
 /-- **Transparency is harmless interruption** ([ritter-vanderhulst-2024-themes]
     §1.3.2): inserting a non-participating, non-opaque segment never changes
     harmonicity. -/

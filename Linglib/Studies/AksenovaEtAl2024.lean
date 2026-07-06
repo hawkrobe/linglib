@@ -172,6 +172,9 @@ theorem buryat_expressible (x y : BuryatV) :
 def buryatWellFormed (w : List BuryatV) : Prop :=
   buryatATR.Harmonic w ∧ buryatRound.Harmonic w
 
+instance (w : List BuryatV) : Decidable (buryatWellFormed w) := by
+  unfold buryatWellFormed; infer_instance
+
 /-- The (9) forms, as vowel skeletons: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` are
     well-formed — the second because the high causative transmits [−round] to
     the perfective (the imposition path) — while `*ɔr-aːd` (rounding agreement
