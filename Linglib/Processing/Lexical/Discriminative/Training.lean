@@ -36,8 +36,10 @@ frequency-informed learning); the optimisation is fixed across theories.
   unique exactly on the span of experienced meanings.
 
 Existence of ERM solutions (by columnwise orthogonal projection) is in
-`Existence.lean`; the Widrow-Hoff equilibrium characterisation is in
-`Equilibrium.lean`, over the rule in `Core/Learning/WidrowHoff.lean`.
+`Existence.lean`. The endstate theory is rule-agnostic: composing
+`isERMSolution_iff_forall_column` with the orthogonality principle
+`Core.sum_whCorrection_eq_zero_iff` identifies the ERM set with the
+equilibria of any error-driven rule in the Widrow-Hoff family.
 
 ## TODO
 
