@@ -265,9 +265,11 @@ theorem spreadSuffix_blocker (sys : System) (val : Bool)
 
 /-! ### Patterns are TSL₂ -/
 
-section Pattern
+end Subregular.Harmony
 
-open Phonology.Harmony (Pattern)
+namespace Phonology.Harmony
+
+open Subregular
 
 variable {α V : Type*}
 
@@ -277,11 +279,8 @@ variable {α V : Type*}
     are the incompatible pairs. Strictly local grammars cannot express harmony
     (unbounded distance) and strictly piecewise grammars cannot express
     blocking; the tier-based class captures both. -/
-theorem _root_.Phonology.Harmony.Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
+theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (TSLGrammar.ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
-  simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic,
-    Pattern.tier, not_not]
+  simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic, Pattern.tier, not_not]
 
-end Pattern
-
-end Subregular.Harmony
+end Phonology.Harmony
