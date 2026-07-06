@@ -13,9 +13,9 @@ The **admissible-cut, root-component pruning** variant of the
 Connes-Kreimer coproduct on ordered (planar) n-ary rooted trees `RoseTree α`.
 For a tree T:
 
-  Δ^ρ(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderDeletion c)
+  Δ^ρ(T) = T ⊗ 1 + Σ_{(F, R) ∈ cutSummandsP T} of' F ⊗ ofTree R
 
-where the empty cut contributes `1 ⊗ T` (since cutForest empty = ∅).
+where the empty cut's summand is `1 ⊗ T` (its forest is empty).
 
 **Naming.** Linglib's "Δ^ρ" corresponds to MCB Definition 1.2.6's
 **Δ^ρ** (book p. 31) — the admissible-cut coproduct whose right channel
