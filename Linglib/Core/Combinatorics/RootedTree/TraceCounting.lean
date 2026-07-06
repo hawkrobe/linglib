@@ -34,11 +34,15 @@ A trace marker is a `Sum.inr`-labeled vertex (always a leaf in practice).
 A `fold` over `RoseTree (α ⊕ β)`: at a node, sum the children's counts, adding
 `1` only for a bare `Sum.inr`-leaf. -/
 
+/-- The trace-leaf algebra: `1` at a bare `Sum.inr` leaf, else the children's total. -/
+private def tlcAlg (v : α ⊕ β) (ns : List ℕ) : ℕ :=
+  match v, ns with
+  | Sum.inr _, [] => 1
+  | _,         ns => ns.sum
+
 /-- The number of `Sum.inr`-labeled leaves (trace markers) in a tree. -/
 def traceLeafCount : RoseTree (α ⊕ β) → ℕ :=
-  fold fun v ns => match v, ns with
-    | Sum.inr _, [] => 1
-    | _,         ns => ns.sum
+  fold tlcAlg
 
 @[simp] theorem traceLeafCount_leaf_inr (b : β) :
     traceLeafCount (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 1 := rfl
@@ -52,7 +56,7 @@ theorem traceLeafCount_node_of_ne_nil (v : α ⊕ β) (cs : List (RoseTree (α �
     (h : cs ≠ []) : traceLeafCount (.node v cs) = (cs.map traceLeafCount).sum := by
   cases cs with
   | nil => exact absurd rfl h
-  | cons c cs => cases v <;> simp only [traceLeafCount, fold_node, List.map_cons]
+  | cons c cs => cases v <;> simp only [traceLeafCount, tlcAlg, fold_node, List.map_cons]
 
 /-- On a `Sum.inl` root the count is just the children's total (the lexical
     root is never itself a trace leaf), for any child list. -/
@@ -79,38 +83,27 @@ theorem traceLeafCount_perm {t s : RoseTree (α ⊕ β)}
 /-! ### `traceDepthSum` — depth-weighted trace-marker count (Minimal Search depth)
 
 The **Minimal Search depth** `d_v` of MCB §1.5.2 (book p. 59): the sum over
-trace-marker leaves of their distance from the root. Descending into the
-children adds `1` per trace leaf below them (`+ (cs.map traceLeafCount).sum`),
-so a trace leaf at depth `d` is counted `d` times, contributing `d`. A bare
-trace leaf at the root contributes `0`.
-
-The recurrence couples to `traceLeafCount` at each level, so a single `fold`
-does not express it; it is structural recursion with a child-list companion.
+trace-marker leaves of their distance from the root. The recurrence couples to
+`traceLeafCount` — descending into a child adds one per trace leaf below it — so both
+statistics are computed by one paired fold (`traceStats`), with `fold_hom` recovering
+`traceLeafCount` as the first component and one `fold_perm` giving both
+`Perm`-invariances.
 
 For a Δ^c cut, the quotient (trunk) places a trace leaf at each cut site at
-exactly the cut depth (`Coproduct.Trace.traceLeaf`), so
-`traceDepthSum(quotient)` reads off the total extraction depth `Σ d_{v_i}`
-of MCB rule 1 directly — no enumeration tagging required. -/
+exactly the cut depth (`Coproduct.Trace.traceLeaf`), so `traceDepthSum(quotient)`
+reads off the total extraction depth `Σ d_{v_i}` of MCB rule 1 directly. -/
 
-mutual
+/-- The paired statistic `(traceLeafCount t, traceDepthSum t)` as a single fold: the
+    depth leg adds, per child, its own depth plus one per trace leaf it carries. -/
+private def traceStats : RoseTree (α ⊕ β) → ℕ × ℕ :=
+  fold fun v ps => (tlcAlg v (ps.map Prod.fst), (ps.map fun p => p.2 + p.1).sum)
+
+private theorem traceStats_fst (t : RoseTree (α ⊕ β)) :
+    (traceStats t).1 = traceLeafCount t :=
+  fold_hom Prod.fst (fun _ _ => rfl) t
+
 /-- Sum of root-distances of the `Sum.inr`-labeled (trace-marker) leaves. -/
-def traceDepthSum : RoseTree (α ⊕ β) → ℕ
-  | .node _ cs => traceDepthSumList cs + (cs.map traceLeafCount).sum
-/-- Auxiliary: trace-depth across a list of children, measured in the
-    children's own frame (the parent adds the `+1`-per-level offset). -/
-def traceDepthSumList : List (RoseTree (α ⊕ β)) → ℕ
-  | []      => 0
-  | t :: ts => traceDepthSum t + traceDepthSumList ts
-end
-
-theorem traceDepthSum_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
-    traceDepthSum (.node v cs) = traceDepthSumList cs + (cs.map traceLeafCount).sum := rfl
-
-@[simp] theorem traceDepthSumList_nil :
-    traceDepthSumList ([] : List (RoseTree (α ⊕ β))) = 0 := rfl
-
-@[simp] theorem traceDepthSumList_cons (t : RoseTree (α ⊕ β)) (ts : List (RoseTree (α ⊕ β))) :
-    traceDepthSumList (t :: ts) = traceDepthSum t + traceDepthSumList ts := rfl
+def traceDepthSum (t : RoseTree (α ⊕ β)) : ℕ := (traceStats t).2
 
 @[simp] theorem traceDepthSum_leaf_inl (a : α) :
     traceDepthSum (.node (Sum.inl a) [] : RoseTree (α ⊕ β)) = 0 := rfl
@@ -118,49 +111,34 @@ theorem traceDepthSum_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
 @[simp] theorem traceDepthSum_leaf_inr (b : β) :
     traceDepthSum (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 0 := rfl
 
-theorem traceDepthSumList_eq_sum_map (cs : List (RoseTree (α ⊕ β))) :
-    traceDepthSumList cs = (cs.map traceDepthSum).sum := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [traceDepthSumList_cons, List.map_cons, List.sum_cons, ih]
-
-/-- The per-child contribution `traceDepthSum c + traceLeafCount c` summed:
-    combines the two child statistics into one map. -/
-theorem traceDepthSum_node_eq (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
+/-- Each child contributes its own trace-depth plus one per trace leaf it carries. -/
+theorem traceDepthSum_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     traceDepthSum (.node v cs)
-      = (cs.map (fun c => traceDepthSum c + traceLeafCount c)).sum := by
-  rw [traceDepthSum_node, traceDepthSumList_eq_sum_map]
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => simp only [List.map_cons, List.sum_cons]; omega
+      = (cs.map fun c => traceDepthSum c + traceLeafCount c).sum := by
+  show (traceStats (.node v cs)).2 = _
+  unfold traceStats
+  simp only [fold_node, List.map_map]
+  exact congrArg List.sum (List.map_congr_left fun c _ =>
+    congrArg ((traceStats c).2 + ·) (traceStats_fst c))
 
 /-! #### Trace-depth invariance under `Perm` -/
 
-mutual
-/-- `traceDepthSum` is a `Perm`-invariant. Not a fold (the recurrence couples to
-    `traceLeafCount`), so the invariance is the mutual induction with its
-    child-list companion. -/
-theorem traceDepthSum_perm : ∀ {t s : RoseTree (α ⊕ β)}, Perm t s →
-    t.traceDepthSum = s.traceDepthSum
-  | _, _, .node h => by
-    rw [traceDepthSum_node_eq, traceDepthSum_node_eq]
-    exact traceDepthSumMap_permList h
-  | _, _, .trans h₁ h₂ => (traceDepthSum_perm h₁).trans (traceDepthSum_perm h₂)
+/-- The paired algebra is permutation-invariant, so one `fold_perm` covers the pair. -/
+private theorem traceStats_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
+    traceStats t = traceStats s := by
+  refine fold_perm (fun v l₁ l₂ h' => ?_) h
+  refine Prod.ext ?_ ((h'.map _).sum_eq)
+  cases l₁ with
+  | nil => rw [← h'.nil_eq]
+  | cons x xs =>
+    cases l₂ with
+    | nil => exact absurd h'.eq_nil (by simp)
+    | cons y ys => cases v <;> exact (h'.map Prod.fst).sum_eq
 
-/-- The combined per-child statistic is `PermList`-invariant. -/
-theorem traceDepthSumMap_permList : ∀ {cs ds : List (RoseTree (α ⊕ β))}, PermList cs ds →
-    (cs.map (fun c => traceDepthSum c + traceLeafCount c)).sum
-      = (ds.map (fun c => traceDepthSum c + traceLeafCount c)).sum
-  | _, _, .nil => rfl
-  | _, _, .cons h hs => by
-    simp only [List.map_cons, List.sum_cons, traceDepthSum_perm h, traceLeafCount_perm h,
-      traceDepthSumMap_permList hs]
-  | _, _, .swap c d cs => by
-    simp only [List.map_cons, List.sum_cons]
-    omega
-  | _, _, .trans h₁ h₂ =>
-    (traceDepthSumMap_permList h₁).trans (traceDepthSumMap_permList h₂)
-end
+/-- `traceDepthSum` is a `Perm`-invariant. -/
+theorem traceDepthSum_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
+    t.traceDepthSum = s.traceDepthSum :=
+  congrArg Prod.snd (traceStats_perm h)
 
 /-- The children's trace leaves are bounded by the node's: a `Sum.inr` root
     can only *add* a trace leaf (the empty-trace-leaf case), never remove one. -/
@@ -176,7 +154,11 @@ theorem traceLeafCount_le_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))
 theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
     traceLeafCount (.node (Sum.inl a) cs) ≤ traceDepthSum (.node (Sum.inl a) cs) := by
   rw [traceLeafCount_node_inl, traceDepthSum_node]
-  exact Nat.le_add_left _ _
+  induction cs with
+  | nil => exact Nat.le_refl _
+  | cons c cs ih =>
+    simp only [List.map_cons, List.sum_cons]
+    omega
 
 end RoseTree
 
@@ -225,7 +207,7 @@ def traceDepthSum : Nonplanar (α ⊕ β) → ℕ :=
       = (F.map (fun c => c.traceDepthSum + c.traceLeafCount)).sum := by
   refine Quotient.inductionOn F fun lst => ?_
   show (mk (.node (Sum.inl a) (lst.map Quotient.out))).traceDepthSum = _
-  rw [traceDepthSum_mk, RoseTree.traceDepthSum_node_eq, List.map_map]
+  rw [traceDepthSum_mk, RoseTree.traceDepthSum_node, List.map_map]
   simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
   refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
   show RoseTree.traceDepthSum (Quotient.out t) + RoseTree.traceLeafCount (Quotient.out t)

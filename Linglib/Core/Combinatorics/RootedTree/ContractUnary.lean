@@ -174,27 +174,12 @@ private theorem contractCombine_perm (a : α) :
   | _, _, .swap c d cs => .node (.swap c d cs)
   | _, _, .trans h₁ h₂ => (contractCombine_perm a h₁).trans (contractCombine_perm a h₂)
 
-mutual
-/-- `contractUnary` respects `Perm`: contraction descends to the nonplanar quotient. -/
-theorem Perm.contractUnary : ∀ {t s : RoseTree α}, Perm t s →
-    Perm t.contractUnary s.contractUnary
-  | _, _, .node h => by
-    rw [RoseTree.contractUnary_node, RoseTree.contractUnary_node]
-    exact contractCombine_perm _ (PermList.map_contractUnary h)
-  | _, _, .trans h₁ h₂ => (Perm.contractUnary h₁).trans (Perm.contractUnary h₂)
-
-/-- Mapping `contractUnary` preserves `PermList`. -/
-theorem PermList.map_contractUnary : ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
-    PermList (cs.map RoseTree.contractUnary) (ds.map RoseTree.contractUnary)
-  | _, _, .nil => .nil
-  | _, _, .cons h hs => by
-    simp only [List.map_cons]
-    exact .cons (Perm.contractUnary h) (PermList.map_contractUnary hs)
-  | _, _, .swap c d cs => by
-    simp only [List.map_cons]
-    exact .swap _ _ _
-  | _, _, .trans h₁ h₂ => (PermList.map_contractUnary h₁).trans (PermList.map_contractUnary h₂)
-end
+/-- `contractUnary` respects `Perm`: contraction descends to the nonplanar quotient
+    (`fold_rel` at `S := Perm`, fed by the combinator congruence). -/
+theorem Perm.contractUnary {t s : RoseTree α} (h : Perm t s) :
+    Perm t.contractUnary s.contractUnary :=
+  fold_rel Perm.refl (fun h₁ h₂ => h₁.trans h₂)
+    (fun a {_ _} h' => contractCombine_perm a (PermList.of_rel h')) h
 
 end RoseTree
 
