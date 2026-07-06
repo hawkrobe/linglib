@@ -69,7 +69,6 @@ end Phonology.Harmony
 namespace Subregular.Harmony
 
 open Phonology (Segment Feature)
-open Subregular (OSLRule IsLeftOutputStrictlyLocal)
 
 /-! ### System — TierRule + transduction discipline -/
 
