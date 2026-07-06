@@ -320,4 +320,57 @@ theorem negatedEquative_iff_posExt_ssubset [LinearOrder D] (μ : Entity → D) (
 
 end Equative
 
+/-! ### Subcomparatives
+[schwarzschild-wilkinson-2002] -/
+
+/-- Subcomparative ("longer than it is wide"): two commensurable measure
+functions compared in shared units. -/
+def subcomparative {Entity D : Type*} [LinearOrder D]
+    (μ₁ μ₂ : Entity → D) (a b : Entity) : Prop :=
+  μ₁ a > μ₂ b
+
+/-! ### Superlatives
+[heim-1999] [szabolcsi-1986] [bobaljik-2012]
+
+`-est` universally quantifies the comparative over a comparison class
+([heim-1999]; the semantic reflex of [bobaljik-2012]'s containment
+`[[[ADJ] CMPR] SPRL]`): absolute readings fix the class extensionally,
+relative readings via focus alternatives. -/
+
+section Superlative
+variable {Entity D : Type*} [LinearOrder D]
+
+/-- Absolute superlative: `x` is the G-est entity in comparison class `C` —
+`x` beats every other member on the comparative. -/
+def absoluteSuperlative (μ : Entity → D) (C : Set Entity) (x : Entity) : Prop :=
+  x ∈ C ∧ ∀ y ∈ C, y ≠ x → comparativeSem μ x y .positive
+
+/-- Relative superlative ([heim-1999]): the focused alternative's entity
+outranks every other alternative's under `f`. -/
+def relativeSuperlative {Alt : Type*} (μ : Entity → D) (f : Alt → Entity)
+    (focusedAlt : Alt) (alternatives : Set Alt) : Prop :=
+  ∀ a ∈ alternatives, a ≠ focusedAlt →
+    comparativeSem μ (f focusedAlt) (f a) .positive
+
+/-- At most one entity satisfies the absolute superlative. -/
+theorem absolute_unique (μ : Entity → D) (C : Set Entity) (x y : Entity)
+    (hx : absoluteSuperlative μ C x) (hy : absoluteSuperlative μ C y) :
+    x = y := by
+  by_contra hne
+  exact absurd (hx.2 y hy.1 (Ne.symm hne))
+    (not_lt.mpr (le_of_lt (hy.2 x hx.1 hne)))
+
+/-- The absolute superlative makes `μ x` the greatest element of the degree
+image `μ '' C`; the converse fails (ties). -/
+theorem absoluteSuperlative_isGreatest (μ : Entity → D) (C : Set Entity)
+    (x : Entity) (h : absoluteSuperlative μ C x) :
+    IsGreatest (μ '' C) (μ x) := by
+  refine ⟨Set.mem_image_of_mem μ h.1, fun d hd => ?_⟩
+  obtain ⟨y, hy, rfl⟩ := hd
+  rcases eq_or_ne y x with rfl | hne
+  · exact le_refl _
+  · exact le_of_lt (h.2 y hy hne)
+
+end Superlative
+
 end Degree

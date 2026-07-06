@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.ThanClause
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Differential
 
@@ -71,9 +70,15 @@ against Fragment `formComp` entries.
 namespace Bresnan1973
 
 open Degree (DegPType)
-open Degree.ThanClause (ThanClauseType)
 open Degree (comparativeSem)
 open Core.Order (ScalePolarity Boundedness)
+
+/-- The two syntactic forms of than-clauses: phrasal "than Bill" vs
+    clausal "than Bill is tall". -/
+inductive ThanClauseType where
+  | phrasal
+  | clausal
+  deriving DecidableEq, Repr
 -- ════════════════════════════════════════════════════
 -- § 1. QP Structure (Det + Q)
 -- ════════════════════════════════════════════════════

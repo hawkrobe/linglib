@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Semantics.Degree.Intervals
 import Linglib.Semantics.Degree.Little
+import Mathlib.Order.Interval.Basic
 import Linglib.Studies.VonStechow1984
 
 /-!
@@ -67,8 +67,20 @@ namespace Buring2007
 open Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
 open Degree.Little (littlePred little_posExt_eq_negExt little_involution
   little_reverses_comparison)
-open Degree.Intervals (subcomparative negativeInterval)
-open Degree (posExt negExt crossExtentInclusion crossExtent_always_false)
+open Degree (subcomparative posExt negExt crossExtentInclusion
+  crossExtent_always_false)
+
+/-- Schwarzschild-style positive interval `[⊥, μ x]` — the bundled
+    (`NonemptyInterval`) face of `posExt μ x`. -/
+def positiveInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
+  ⟨(⊥, μ x), bot_le⟩
+
+/-- Negative interval `[μ x, ⊤]` (§4: ⟦short⟧ = ⟦LITTLE tall⟧ inverts
+    the positive interval) — the bundled face of `negExt μ x`. -/
+def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
+  ⟨(μ x, ⊤), le_top⟩
 -- ════════════════════════════════════════════════════
 -- § 1. LITTLE: Degree Negation on Extents
 -- ════════════════════════════════════════════════════
@@ -88,8 +100,8 @@ open Degree (posExt negExt crossExtentInclusion crossExtent_always_false)
 theorem little_positive_to_negative {Entity D : Type*}
     [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) :
-    (negativeInterval μ x).fst = (Degree.Intervals.positiveInterval μ x).snd := by
-  simp [negativeInterval, Degree.Intervals.positiveInterval]
+    (negativeInterval μ x).fst = (positiveInterval μ x).snd := by
+  simp [negativeInterval, positiveInterval]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Cross-Polar Anomaly: Algebraic Impossibility

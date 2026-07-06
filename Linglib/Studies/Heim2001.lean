@@ -1,5 +1,4 @@
 import Linglib.Studies.Kennedy1999
-import Linglib.Semantics.Degree.Abstraction
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
@@ -47,7 +46,7 @@ re-exported below.
 | §2.2 Kennedy's generalization (20–27) | `nonMonotone_blocked_by_HKC`                |
 | §2.3 intensional verbs (28–36)       | `intensionalVerbData` + `BhattPancheva2004` HKC bridge |
 | §2.4 Russell ambiguity (37–42)       | docstring only — see `VonStechow1984.lean`   |
-| §3.2 semantic ellipsis (58–64)       | reference to `Superlative.absoluteSuperlative` |
+| §3.2 semantic ellipsis (58–64)       | reference to `Degree.absoluteSuperlative` |
 
 ## What this file does NOT formalize
 
@@ -61,9 +60,8 @@ re-exported below.
   LF mechanism.
 - **Typed ⟨dt,t⟩ DegP-as-generalized-quantifier denotations** over
   arbitrary degree predicates. For monotone adjectives the max-set
-  computation reduces to a measure-function form already in the substrate
-  (`Abstraction.heimComparativeWithMeasure = Comparative.comparativeSem`,
-  proved by `Iff.rfl` at `Abstraction.heim_extensional_equivalence`).
+  computation reduces to the substrate's measure-function comparative
+  `Degree.comparativeSem` (via `Degree.isGreatest_posExt`).
 
 ## Recent literature this file does not engage
 
@@ -77,13 +75,79 @@ re-exported below.
 namespace Heim2001
 
 open Set
-open Degree.Abstraction
-  (lowDegP_forall lowDegP_exists highDegP_forall highDegP_exists
-   forall_more_high_to_low forall_more_low_to_high exists_more_scope_collapse
-   negatedDegreePredicate negatedDegreePredicate_eq)
 open Degree (comparativeSem)
 open Minimalist.DegreeMovement
   (IsHeimKennedy ScopeBinding not_isHeimKennedy_QP_above_bound_DegP)
+
+/-! ### Degree-scope configurations
+
+Heim's DegP-scope LFs for quantified subjects, and the §2.1 monotone
+collapse arguments. -/
+
+/-- Low-DegP for ∀ ("every girl is taller than 4ft"): each restrictor
+entity exceeds the threshold. -/
+def lowDegP_forall {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∀ x, restrictor x → μ x > threshold
+
+/-- High-DegP for ∀: the maximal degree to which every restrictor entity
+measures exceeds the threshold. -/
+def highDegP_forall {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∃ d, (∀ x, restrictor x → μ x ≥ d) ∧ d > threshold
+
+/-- Low-DegP for ∃: some restrictor entity exceeds the threshold. -/
+def lowDegP_exists {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∃ x, restrictor x ∧ μ x > threshold
+
+/-- High-DegP for ∃: some degree above the threshold is reached by some
+restrictor entity. -/
+def highDegP_exists {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∃ d, (∃ x, restrictor x ∧ μ x ≥ d) ∧ d > threshold
+
+/-- Monotone collapse (§2.1), ∀ + more: high-DegP entails low-DegP. -/
+theorem forall_more_high_to_low {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
+    highDegP_forall restrictor μ threshold →
+    lowDegP_forall restrictor μ threshold := by
+  rintro ⟨d, hall, hgt⟩ x hR
+  exact lt_of_lt_of_le hgt (hall x hR)
+
+/-- Monotone collapse (§2.1), ∀ + more: low-DegP entails high-DegP given
+a minimal witness. -/
+theorem forall_more_low_to_high {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D)
+    (w : Entity) (hw : restrictor w)
+    (hmin : ∀ x, restrictor x → μ x ≥ μ w) :
+    lowDegP_forall restrictor μ threshold →
+    highDegP_forall restrictor μ threshold := by
+  intro hlow
+  exact ⟨μ w, hmin, hlow w hw⟩
+
+/-- Monotone collapse, ∃ + more: the two scope readings coincide. -/
+theorem exists_more_scope_collapse {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
+    lowDegP_exists restrictor μ threshold ↔
+    highDegP_exists restrictor μ threshold := by
+  constructor
+  · rintro ⟨x, hR, hgt⟩
+    exact ⟨μ x, ⟨x, hR, le_refl _⟩, hgt⟩
+  · rintro ⟨d, ⟨x, hR, hge⟩, hgt⟩
+    exact ⟨x, hR, lt_of_lt_of_le hgt hge⟩
+
+/-- The negated degree predicate `{d : ¬(μ(a) ≥ d)}` — the degrees `a`
+lacks (p. 220); extensionally `Degree.negExt`. -/
+def negatedDegreePredicate {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a : Entity) (d : D) : Prop :=
+  ¬ (μ a ≥ d)
+
+/-- The negated degree set is `Set.Ioi (μ a)`. -/
+theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a : Entity) (d : D) :
+    negatedDegreePredicate μ a d ↔ d > μ a := by
+  simp [negatedDegreePredicate, not_le]
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lattice substrate (the Galois identity)
@@ -306,7 +370,7 @@ theorem verbClass_predicts_highDegPAvailable :
 -- complement `R` twice in the semantic calculation (paper ex. (59)),
 -- giving evidence for DegP-movement independent of VP-ellipsis. The
 -- semantic decomposition `λR. λx. max{d : R(x,d)} > max{d : ∃y ≠ x. R(y,d)}`
--- is formalized as `Degree.Superlative.absoluteSuperlative`;
+-- is formalized as `Degree.absoluteSuperlative`;
 -- consumers should reference the substrate definition directly.
 --
 -- The contrast "Kim climbed the highest mountain" / "KIM climbed the

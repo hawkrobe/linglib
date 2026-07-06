@@ -1,5 +1,4 @@
 import Linglib.Studies.Heim2001
-import Linglib.Semantics.Degree.Abstraction
 
 /-!
 # Fox & Hackl 2006: Degree Questions and Negative Islands
@@ -34,7 +33,7 @@ dependency: 2006 imports 2001).
 
 namespace FoxHackl2006
 
-open Degree.Abstraction (negatedDegreePredicate)
+open Heim2001 (negatedDegreePredicate)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Basic Degree Question Data

@@ -1594,7 +1594,6 @@ import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Semantics.Degree.Abstraction
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.Comparative
@@ -1617,15 +1616,12 @@ import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Semantics.Degree.Gradability.MLScale
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Intervals
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Semantics.Degree.Little
 import Linglib.Semantics.Degree.MeasureFunction
 import Linglib.Semantics.Degree.Measurement
 import Linglib.Semantics.Degree.Measurement.Basic
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Degree.Superlative
-import Linglib.Semantics.Degree.ThanClause
 import Linglib.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Semantics.Dynamic.Bilateral.ICDRT
 import Linglib.Semantics.Dynamic.Bilateral.ICDRTConnectives
