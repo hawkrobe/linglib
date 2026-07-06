@@ -297,21 +297,15 @@ theorem IsERMSolution.coord_eq_of_decodable (hq : ∀ i, 0 < q i)
     {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
     G (data.meanings i) j₀ = data.forms i j₀ := by
-  have hle := (isERMSolution_iff_coordResidual data q G).1 hG j₀ w
-  have hB : coordResidual data q (fun k => w (data.meanings k)) j₀ = 0 :=
-    Finset.sum_eq_zero fun k _ => by
-      show q k * (w (data.meanings k) - data.forms k j₀) ^ 2 = 0
-      rw [hw k, sub_self]; ring
-  rw [hB] at hle
+  have hB : coordResidual data q (fun k => w (data.meanings k)) j₀ = 0 := by
+    simp [coordResidual, hw]
   have h0 : coordResidual data q (fun k => G (data.meanings k) j₀) j₀ = 0 :=
-    le_antisymm hle (coordResidual_nonneg data q (fun k => (hq k).le) _ _)
-  have hnn : ∀ k ∈ Finset.univ,
-      (0:ℝ) ≤ q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2 :=
-    fun k _ => mul_nonneg (hq k).le (sq_nonneg _)
-  have hterm := (Finset.sum_eq_zero_iff_of_nonneg hnn).1 h0 i (Finset.mem_univ i)
-  have hsq : (G (data.meanings i) j₀ - data.forms i j₀) ^ 2 = 0 :=
-    (mul_eq_zero.1 hterm).resolve_left (hq i).ne'
-  exact sub_eq_zero.1 (sq_eq_zero_iff.1 hsq)
+    le_antisymm (hB ▸ (isERMSolution_iff_coordResidual data q G).1 hG j₀ w)
+      (coordResidual_nonneg data q (fun k => (hq k).le) _ _)
+  have hterm := (Finset.sum_eq_zero_iff_of_nonneg
+    fun k _ => mul_nonneg (hq k).le (sq_nonneg _)).1 h0 i (Finset.mem_univ i)
+  exact sub_eq_zero.1 (sq_eq_zero_iff.1
+    ((mul_eq_zero.1 hterm).resolve_left (hq i).ne'))
 
 /-- A map that reproduces every training form exactly is an ERM solution
     under any nonnegative weights — `IsERMSolution` is nonvacuous whenever
@@ -319,10 +313,8 @@ theorem IsERMSolution.coord_eq_of_decodable (hq : ∀ i, 0 < q i)
 theorem isERMSolution_of_interpolates (hq : ∀ i, 0 ≤ q i)
     (hG : ∀ i, G (data.meanings i) = data.forms i) :
     IsERMSolution data q G := fun G' => by
-  have h0 : weightedLoss data q G = 0 :=
-    Finset.sum_eq_zero fun k _ => by rw [hG k, squaredDist_self, mul_zero]
-  rw [h0]
-  exact weightedLoss_nonneg data q G' hq
+  have h0 : weightedLoss data q G = 0 := by simp [weightedLoss, hG, squaredDist_self]
+  exact h0 ▸ weightedLoss_nonneg data q G' hq
 
 /-- `G` is an ERM solution iff every residual-prediction pairing vanishes.
     This is the first-order condition of the quadratic loss, with no
@@ -350,11 +342,9 @@ theorem isERMSolution_iff_residualPairing_eq_zero (hq : ∀ i, 0 ≤ q i) :
     have hBz : -B = 0 := by rw [← ht, htz]; ring
     linarith
   · intro h G'
-    have hG' : G + (G' - G) = G' := by abel
     have hexp := weightedLoss_add data q G (G' - G)
-    rw [hG', h (G' - G)] at hexp
-    have := predictionEnergy_nonneg data q hq (G' - G)
-    linarith [hexp.ge, hexp.le]
+    rw [show G + (G' - G) = G' by abel, h (G' - G)] at hexp
+    linarith [predictionEnergy_nonneg data q hq (G' - G)]
 
 /-- In the papers' columnwise form of the normal equations, `G` is an ERM
     solution iff at every form coordinate the `q`-weighted residual column is
@@ -396,9 +386,8 @@ theorem IsERMSolution.apply_meanings_eq (hq : ∀ i, 0 < q i)
     G (data.meanings i) = G' (data.meanings i) := by
   have hB := (isERMSolution_iff_residualPairing_eq_zero fun k => (hq k).le).mp
     hG (G' - G)
-  have hGadd : G + (G' - G) = G' := by abel
   have hexp := weightedLoss_add data q G (G' - G)
-  rw [hGadd, hB] at hexp
+  rw [show G + (G' - G) = G' by abel, hB] at hexp
   have hE : predictionEnergy data q (G' - G) = 0 := by
     have h1 := hG G'
     have h2 := hG' G
@@ -412,9 +401,9 @@ theorem IsERMSolution.apply_meanings_eq (hq : ∀ i, 0 < q i)
   funext j
   have hj := (Finset.sum_eq_zero_iff_of_nonneg fun j _ => sq_nonneg _).mp
     hsum j (Finset.mem_univ j)
-  have h0 : G' (data.meanings i) j - G (data.meanings i) j = 0 := by
-    simpa [LinearMap.sub_apply, Pi.sub_apply] using sq_eq_zero_iff.mp hj
-  linarith [sub_eq_zero.mp h0]
+  have h0 : G' (data.meanings i) j = G (data.meanings i) j := by
+    simpa [sub_eq_zero] using sq_eq_zero_iff.mp hj
+  exact h0.symm
 
 /-- ERM solutions agree at every meaning in the **span** of the experienced
     ones. Together with
@@ -427,16 +416,13 @@ theorem IsERMSolution.apply_eq_of_mem_span (hq : ∀ i, 0 < q i)
     {s : MeaningVec d} (hs : s ∈ Submodule.span ℝ (Set.range data.meanings)) :
     G s = G' s := by
   have hker : Submodule.span ℝ (Set.range data.meanings)
-      ≤ LinearMap.ker (G' - G) := by
-    rw [Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
-    have h := IsERMSolution.apply_meanings_eq hq hG hG' i
-    simp only [SetLike.mem_coe, LinearMap.mem_ker, LinearMap.sub_apply,
-               sub_eq_zero]
-    exact h.symm
-  have hmem := hker hs
-  rw [LinearMap.mem_ker, LinearMap.sub_apply, sub_eq_zero] at hmem
-  exact hmem.symm
+      ≤ LinearMap.ker (G' - G) :=
+    Submodule.span_le.mpr <| Set.range_subset_iff.mpr fun i => by
+      simp [LinearMap.mem_ker,
+            (IsERMSolution.apply_meanings_eq hq hG hG' i).symm]
+  have h0 : G' s = G s := by
+    simpa [LinearMap.mem_ker, sub_eq_zero] using hker hs
+  exact h0.symm
 
 /-- Off the span of experienced meanings, ERM solutions are genuinely
     underdetermined — any ERM solution can be modified into another with a
@@ -474,19 +460,14 @@ theorem IsERMSolution.exists_apply_ne [NeZero n]
 theorem weightedLoss_sqrtScale (hq : ∀ i, 0 ≤ q i) :
     weightedLoss (data.sqrtScale q) (uniformFrequency m) G
       = weightedLoss data q G := by
-  unfold weightedLoss
-  refine Finset.sum_congr rfl fun i _ => ?_
-  show 1 * squaredDist (G (Real.sqrt (q i) • data.meanings i))
-        (Real.sqrt (q i) • data.forms i) = _
-  rw [one_mul, map_smul, squaredDist_smul, Real.sq_sqrt (hq i)]
+  simp [weightedLoss, TrainingExperience.sqrtScale, uniformFrequency,
+        map_smul, squaredDist_smul, Real.sq_sqrt, hq]
 
 /-- FIL under `q` is exactly EL on the `√q`-premultiplied experience —
     [heitmeier-2024]'s FIL-EL equivalence, invertibility-free. -/
 theorem isELSolution_sqrtScale_iff (hq : ∀ i, 0 ≤ q i) :
     IsELSolution (data.sqrtScale q) G ↔ IsERMSolution data q G := by
-  unfold IsELSolution IsERMSolution
-  exact forall_congr' fun G' => by
-    rw [weightedLoss_sqrtScale hq, weightedLoss_sqrtScale hq]
+  simp only [IsELSolution, IsERMSolution, weightedLoss_sqrtScale hq]
 
 
 
