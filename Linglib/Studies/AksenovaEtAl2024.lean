@@ -142,9 +142,9 @@ def buryatWellFormed (w : List BuryatV) : Prop :=
 instance (w : List BuryatV) : Decidable (buryatWellFormed w) := by
   unfold buryatWellFormed; infer_instance
 
-/-- The (9) forms as vowel skeletons: `ɔr-ɔːd` and `ɔr-ʊːl-aːd` are
-    well-formed — the latter because the high causative transmits unroundedness
-    to the perfective — while `*ɔr-aːd` and `*ɔr-ʊːl-ɔːd` are not. -/
+/-- The (9) forms as vowel skeletons: the attested `ɔr-ɔːd` and `ɔr-ʊːl-aːd`
+    are accepted — the latter because the high causative transmits unroundedness
+    to the perfective — and the starred `*ɔr-aːd` and `*ɔr-ʊːl-ɔːd` rejected. -/
 example : buryatWellFormed [.oh, .oh] ∧ ¬ buryatWellFormed [.oh, .a] ∧
     buryatWellFormed [.oh, .uh, .a] ∧ ¬ buryatWellFormed [.oh, .uh, .oh] := by
   decide
