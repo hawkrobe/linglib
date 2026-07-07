@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Standard
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Fragments.English.Predicates.Adjectival

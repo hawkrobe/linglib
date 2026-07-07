@@ -1614,7 +1614,6 @@ import Linglib.Semantics.Degree.Hom
 import Linglib.Semantics.Degree.Intensification
 import Linglib.Studies.DinisJacinto2026
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Standard
 import Linglib.Studies.Bale2008
 import Linglib.Studies.Buring2007
 import Linglib.Semantics.Degree.Measure.Temporal
