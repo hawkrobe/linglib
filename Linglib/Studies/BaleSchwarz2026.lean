@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Features.Dimension
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Studies.BaleSchwarz2022
 
@@ -306,7 +306,7 @@ theorem simplex_is_compositional_2022 :
 extends to the 2026 analysis: the simplex examples here predict
 that the entity's volume must meet the per-unit threshold. -/
 theorem unit_sensitivity_carries_forward {E : Type*}
-    (μ : Degree.MeasureFn E) (x : E)
+    (μ : Degree.DimensionedMeasure E) (x : E)
     (h : μ.apply x = 5) :
     perPresup μ 1 x = true ∧ perPresup μ 1000 x = false := by
   simp [perPresup, h]; decide

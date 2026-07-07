@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 
 /-!
 # Marginality Scales
@@ -10,7 +10,7 @@ relation M. From R (= `<`) and M one derives L (largely smaller than):
 L(x,y) := x < y ∧ ¬ M x y. Five axioms govern M; Theorem 2.2 derives
 M-TRANSITIVITY and M-BOUNDEDNESS as consequences.
 
-This sits alongside `DirectedMeasure` (in `Degree`): a `DirectedMeasure`
+This sits alongside `PolarMeasure` (in `Degree`): a `PolarMeasure`
 determines licensing from boundedness, while an `MLScale` adds granularity
 structure (marginal vs. large difference) on the same `LinearOrder`.
 -/
@@ -87,7 +87,7 @@ end MLScale
 open Core.Order Degree
 
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
-    Degree.DirectedMeasure α W where
+    Degree.PolarMeasure α W where
   ml : MLScale α
 
 def marginalityPositive {α : Type*} [LinearOrder α]

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Semantics.Degree.MeasureOfChange
+import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Core.Order.Boundedness
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -20,7 +20,7 @@ telicity: bounded difference → telic; unbounded difference → atelic.
 ## Sections
 
 - §1 — HKL's `INCREASE` operator (eq 16) + bridge note to K&L 2008's
-  `measureOfChange` substrate (`Semantics/Degree/MeasureOfChange.lean`).
+  `measureOfChange` substrate (`Semantics/Degree/Measure/Temporal.lean`).
 - §2 — Central matrix prediction (HKL §3.2): closed-range adjective →
   telic DA verb; open-range adjective → atelic DA verb. Verified against
   fragment `degreeAchievementScale` annotations on *straighten* (closed →
@@ -35,7 +35,7 @@ telicity: bounded difference → telic; unbounded difference → atelic.
 ## Relation to KennedyLevin2008.lean
 
 K&L 2008 is the mature successor of HKL 1999. The K&L `measureOfChange`
-function (eq 25, in `MeasureOfChange.lean`) refines HKL's INCREASE with
+function (eq 25, in `Measure/Temporal.lean`) refines HKL's INCREASE with
 explicit clamping at the initial degree (`differenceFunction`, K&L eq 23).
 Per-verb derivation of `vendlerClass` from
 `degreeAchievementScale.scaleBoundedness` is in
@@ -65,8 +65,8 @@ open English.Predicates.Verbal
 
 /-- HKL eq 11: `[long(x)(t)] = the degree to which x is long at time t`.
     A gradable adjective denotes a time-indexed measure function — the
-    same shape as K&L 2008's `MeasureFunction α δ Time` in
-    `Semantics/Degree/MeasureOfChange.lean`. -/
+    same shape as K&L 2008's `TemporalMeasure α δ Time` in
+    `Semantics/Degree/Measure/Temporal.lean`. -/
 abbrev TimedAdjective (α δ Time : Type*) := α → Time → δ
 
 /-- HKL eq 16, the INCREASE function:

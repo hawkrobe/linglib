@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Features.ScalarDimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -14,7 +14,7 @@ Adjective-specific degree semantics, layered on the syntactic `Adjective`
 (`Syntax/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
 classification, the two-threshold model for contrary antonyms, multidimensional
 binding ([sassoon-2013]), and the bridge from a concrete `Degree` scale to the
-abstract `DirectedMeasure`.
+abstract `PolarMeasure`.
 
 ## Main definitions
 
@@ -23,7 +23,7 @@ abstract `DirectedMeasure`.
 * `ThresholdPair` — the two thresholds of a contrary antonym pair, with a gap.
 * `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024]).
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
-* `adjMeasure` — a `GradableAdjective` read as a `DirectedMeasure` over a scale.
+* `adjMeasure` — a `GradableAdjective` read as a `PolarMeasure` over a scale.
 
 Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`; the
 threshold semantics (`positiveMeaning`, `negativeMeaning`) in `Semantics/Degree/Basic`.
@@ -263,30 +263,30 @@ def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .contextual   => .mixed
   | .functional   => .mixed   -- evaluative; context-dependent like contextual
 
-/-! ### Degree–DirectedMeasure bridge
+/-! ### Degree–PolarMeasure bridge
 
 `Degree max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`), so the
 abstract theorems in `MeasurementScale.lean` apply directly to concrete RSA degree
 computations. -/
 
 def adjMeasure {max : Nat} {W : Type*} (μ : W → Degree max)
-    (entry : GradableAdjective) : DirectedMeasure (Degree max) W :=
-  DirectedMeasure.adjective μ entry.scaleType
+    (entry : GradableAdjective) : PolarMeasure (Degree max) W :=
+  PolarMeasure.adjective μ entry.scaleType
 
 theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjective) (h : entry.scaleType = .closed) :
     (adjMeasure μ entry).IsLicensed := by
-  simp [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
+  simp [adjMeasure, PolarMeasure.adjective,
+        PolarMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
 theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjective) (h : entry.scaleType = .open_) :
     ¬ (adjMeasure μ entry).IsLicensed := by
-  simp [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
+  simp [adjMeasure, PolarMeasure.adjective,
+        PolarMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
 theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (DirectedMeasure.numeral μ).μ = μ :=
+    (PolarMeasure.numeral μ).μ = μ :=
   rfl
 
 end Degree

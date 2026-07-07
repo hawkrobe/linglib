@@ -7,18 +7,18 @@ import Linglib.Semantics.Degree.Predicate
 # Directed measurement primitive
 [kennedy-2007] [kennedy-2015] [lassiter-goodman-2017] [krantz-1971]
 
-A `DirectedMeasure D E` packages a degree type, entity type, measure function,
+A `PolarMeasure D E` packages a degree type, entity type, measure function,
 boundedness classification, and direction. The common algebraic core of the
 degree-domain constructors and epistemic threshold semantics.
 
 ## Main declarations
 
-- `DirectedMeasure`: the bundled measure structure.
-- `DirectedMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
-- `DirectedMeasure.degreeProperty`: the degree property derived from
+- `PolarMeasure`: the bundled measure structure.
+- `PolarMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
+- `PolarMeasure.degreeProperty`: the degree property derived from
   `direction` (`Comparison.ge.over` positive, `Comparison.le.over` negative); its
   maximal informativity is characterized in `Semantics/Entailment/Extremum.lean`.
-- `DirectedMeasure.numeral`, `DirectedMeasure.adjective`: Kennedy-style
+- `PolarMeasure.numeral`, `PolarMeasure.adjective`: Kennedy-style
   numeral and gradable-adjective domains.
 
 ## Scale types as Mathlib typeclass combinations
@@ -41,19 +41,19 @@ namespace Degree
 
 open Core.Order
 
-/-! ### DirectedMeasure -/
+/-! ### PolarMeasure -/
 
 /-- A directed measurement on a bounded scale: a degree type `D` (the scale),
     an entity type `E`, a measure function `μ : E → D`, boundedness
     (from `ComparativeScale`), and a direction.
 
     Common algebraic core of the `numeral`/`adjective` domain constructors and
-    epistemic thresholds (`epistemicAsDirectedMeasure`, on
-    `DirectedMeasure ℚ (E × (W → Bool))`). The degree property
+    epistemic thresholds (`epistemicAsPolarMeasure`, on
+    `PolarMeasure ℚ (E × (W → Bool))`). The degree property
     (`Comparison.ge.over` for positive, `Comparison.le.over` for negative) is
     derived from `direction`, not stored — per [lassiter-goodman-2017], the
     binary direction choice is the fundamental parameter. -/
-structure DirectedMeasure (D : Type*) [LinearOrder D] (E : Type*) extends ComparativeScale D where
+structure PolarMeasure (D : Type*) [LinearOrder D] (E : Type*) extends ComparativeScale D where
   /-- Measure function: maps entities to degrees on the scale -/
   μ : E → D
   /-- Scale direction: positive (μ(x) ≥ θ) or negative (μ(x) ≤ θ).
@@ -62,7 +62,7 @@ structure DirectedMeasure (D : Type*) [LinearOrder D] (E : Type*) extends Compar
       unlikely, empty. -/
   direction : ScalePolarity := .positive
 
-namespace DirectedMeasure
+namespace PolarMeasure
 
 variable {D : Type*} [LinearOrder D] {E : Type*}
 
@@ -70,21 +70,21 @@ variable {D : Type*} [LinearOrder D] {E : Type*}
     See `Boundedness.IsLicensed` for the caveat — this checks
     "any endpoint exists", not [kennedy-2007]'s full
     modifier-class licensing matrix. -/
-def IsLicensed (dm : DirectedMeasure D E) : Prop := dm.boundedness.IsLicensed
+def IsLicensed (dm : PolarMeasure D E) : Prop := dm.boundedness.IsLicensed
 
-instance (dm : DirectedMeasure D E) : Decidable dm.IsLicensed :=
+instance (dm : PolarMeasure D E) : Decidable dm.IsLicensed :=
   inferInstanceAs (Decidable dm.boundedness.IsLicensed)
 
 /-- The degree property derived from the measure's direction: `Comparison.ge.over`
     for positive scales (tall, likely), `Comparison.le.over` for negative ones
     (short, unlikely). The derivation the structure docstring promises:
     `direction` is the stored parameter, the property follows. -/
-def degreeProperty (dm : DirectedMeasure D E) : D → Set E :=
+def degreeProperty (dm : PolarMeasure D E) : D → Set E :=
   match dm.direction with
   | .positive => Comparison.ge.over dm.μ
   | .negative => Comparison.le.over dm.μ
 
-end DirectedMeasure
+end PolarMeasure
 
 /-! ### Numeral and adjective domains
 
@@ -96,19 +96,19 @@ informative degree) live in `Semantics/Entailment/Extremum.lean`
 (`isMaxInf_atLeast_iff_eq`, `isMaxInf_atMost_iff_eq`) and are discharged
 over real numeral meanings in `Studies/FoxHackl2006Numerals.lean`. -/
 
-namespace DirectedMeasure
+namespace PolarMeasure
 
 variable {α : Type*} [LinearOrder α] {W : Type*}
 
 /-- [kennedy-2015] numeral domain: "at least n" over cardinality.
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to `Comparison.ge.over`. -/
-def numeral (μ : W → α) : DirectedMeasure α W :=
+def numeral (μ : W → α) : PolarMeasure α W :=
   { boundedness := .closed, μ := μ }
 
 /-- [kennedy-2007] gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
-def adjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
+def adjective (μ : W → α) (b : Boundedness) : PolarMeasure α W :=
   { boundedness := b, μ := μ }
 
 /-! ### Licensing theorems -/
@@ -125,6 +125,6 @@ theorem classB_licensed (μ : W → α) :
 theorem classA_blocked (μ : W → α) :
     ¬ (adjective μ .open_).IsLicensed := id
 
-end DirectedMeasure
+end PolarMeasure
 
 end Degree

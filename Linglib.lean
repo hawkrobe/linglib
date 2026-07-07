@@ -1600,7 +1600,7 @@ import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.MeasurePhrase
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Adjective
@@ -1617,9 +1617,9 @@ import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Standard
 import Linglib.Studies.Bale2008
 import Linglib.Studies.Buring2007
-import Linglib.Semantics.Degree.MeasureOfChange
-import Linglib.Semantics.Degree.Measure
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Temporal
+import Linglib.Semantics.Degree.Measure.Basic
+import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Semantics.Dynamic.Bilateral.ICDRT

@@ -1,5 +1,5 @@
 import Linglib.Features.Dimension
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # English Measure Phrase Fragment
@@ -15,8 +15,8 @@ This fragment provides the English-specific data layer for measurement:
 ## Architecture
 
 The `Dimension` / `QuotientDimension` / `DimensionType` taxonomies live
-in `Features/Dimension.lean`. The `MeasureFn` structure and
-`MeasureFn.applyNumeral` semantics live in
+in `Features/Dimension.lean`. The `DimensionedMeasure` structure and
+`DimensionedMeasure.applyNumeral` semantics live in
 `Semantics/Measurement/Basic.lean`. This file
 provides English lexical entries — pure data typed by those substrate
 types, following the Theories → Fragments dependency discipline.
@@ -34,8 +34,8 @@ open Features.Dimension (Dimension QuotientDimension DimensionType)
 /-- A measure term entry: an English noun that names a specific measure function.
 
 This is the Fragment-level data for measure terms. The Theory-level semantics
-(`MeasureFn`, `MeasureFn.applyNumeral`) is in
-`Degree/Measurement.lean`. -/
+(`DimensionedMeasure`, `DimensionedMeasure.applyNumeral`) is in
+`Degree/Measure/Dimensioned.lean`. -/
 structure MeasureTermEntry where
   /-- Surface form (e.g., "gram", "milliliter", "mile"). -/
   form : String

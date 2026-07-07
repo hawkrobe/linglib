@@ -1,6 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Core.Order.Comparison
-import Linglib.Semantics.Degree.Measure
+import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Features.Dimension
@@ -32,7 +32,7 @@ specific physical dimension:
     μ : Entity → ℚ≥0
 
 The dimension tag (mass, volume, distance, time, cardinality, ...) lives in
-`Features/Dimension.lean`; this module imports it and exposes `MeasureFn`,
+`Features/Dimension.lean`; this module imports it and exposes `DimensionedMeasure`,
 which carries the tag plus the underlying `apply` function.
 
 ### Measure Terms
@@ -43,7 +43,7 @@ Its (intransitive) denotation in [scontras-2014], eq. (33):
     ⟦kilo⟧ = λn. λx. μ_kg(x) = n
 
 This is a function from a numeral to a predicate — a modifier of type
-⟨n, ⟨e,t⟩⟩. The Lean encoding is `MeasureFn.applyNumeral`.
+⟨n, ⟨e,t⟩⟩. The Lean encoding is `DimensionedMeasure.applyNumeral`.
 
 ### CARD
 
@@ -55,7 +55,7 @@ so a bare numeral phrase composes with a kind-denoting noun via CARD,
 yielding a predicate restricted to individuals of the appropriate
 cardinality. The point of the alignment is that the same #-head machinery
 governs both `one boy` (via CARD + μ_CARD) and `one kilo of apples`
-(via μ_kg). Here we expose `μ_CARD` as a `MeasureFn` (`cardMeasure`); the
+(via μ_kg). Here we expose `μ_CARD` as a `DimensionedMeasure` (`cardMeasure`); the
 CARD Num-head itself lives at the syntactic level.
 
 ### Connection to Scale Infrastructure
@@ -65,7 +65,7 @@ linear order. This module adds:
 
 - typed dimensions (what μ measures), via `Features.Dimension.Dimension`
 - multiple measure functions per entity (a box has weight AND volume AND
-  cardinality — `MeasureFn` is not a typeclass)
+  cardinality — `DimensionedMeasure` is not a typeclass)
 - the quantity-uniform property (Scontras's QU_μ, eq. (44) p. 43)
 
 ## Connection to [bale-schwarz-2026]
@@ -96,7 +96,7 @@ by its dimension: μ_kg measures mass, μ_L measures volume, μ_CARD counts.
 
 We use ℚ rather than ℝ to match the library's exact-arithmetic convention
 for computational semantics. -/
-structure MeasureFn (E : Type*) where
+structure DimensionedMeasure (E : Type*) where
   /-- Which dimension this function measures. -/
   dimension : Dimension
   /-- The measure function itself: maps an entity to its magnitude. -/
@@ -105,7 +105,7 @@ structure MeasureFn (E : Type*) where
   nonneg : ∀ e, apply e ≥ 0
 
 /-- Apply a measure function to an entity. -/
-instance {E : Type*} : CoeFun (MeasureFn E) (fun _ => E → ℚ) where
+instance {E : Type*} : CoeFun (DimensionedMeasure E) (fun _ => E → ℚ) where
   coe μ := μ.apply
 
 -- ============================================================================
@@ -122,15 +122,15 @@ predicate. This is the **exact (`=`) case of the shared comparison-over-a-
 measure primitive** `Core.Order.Comparison.over`: `⟦kilo⟧(n)` is
 `Comparison.eq.over μ_kg n`. Modified readings (`> n`, `≥ n`, …) are the other
 `Comparison`s over the same `μ`. -/
-def MeasureFn.applyNumeral {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) : Prop :=
+def DimensionedMeasure.applyNumeral {E : Type*} (μ : DimensionedMeasure E) (n : ℚ) (x : E) : Prop :=
   x ∈ Core.Order.Comparison.eq.over μ.apply n
 
 /-- `applyNumeral` is exact measure predication: `μ(x) = n` (definitionally,
     the `.eq` interval-membership). -/
-@[simp] theorem MeasureFn.applyNumeral_iff {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
+@[simp] theorem DimensionedMeasure.applyNumeral_iff {E : Type*} (μ : DimensionedMeasure E) (n : ℚ) (x : E) :
     μ.applyNumeral n x ↔ μ.apply x = n := Iff.rfl
 
-instance {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
+instance {E : Type*} (μ : DimensionedMeasure E) (n : ℚ) (x : E) :
     Decidable (μ.applyNumeral n x) :=
   inferInstanceAs (Decidable (μ.apply x = n))
 
@@ -148,9 +148,9 @@ The CARD Num-head originates with [zabbal-2005]; its relational shape
 
 aligning it with measure terms whose intransitive form (eq. (33)) is
 ⟦kilo⟧ = λn. λx. μ_kg(x) = n. This file exposes the underlying μ_CARD as
-a `MeasureFn`; the CARD Num-head itself (which composes with a kind) lives
+a `DimensionedMeasure`; the CARD Num-head itself (which composes with a kind) lives
 at the syntactic level. -/
-def cardMeasure (E : Type*) (cardFn : E → ℚ) (h : ∀ e, cardFn e ≥ 0) : MeasureFn E :=
+def cardMeasure (E : Type*) (cardFn : E → ℚ) (h : ∀ e, cardFn e ≥ 0) : DimensionedMeasure E :=
   { dimension := .cardinality, apply := cardFn, nonneg := h }
 
 -- ============================================================================
@@ -173,7 +173,7 @@ is QU under some relevant μ, with that μ supplying the "1-ness" presupposition
 of singular morphology (eq. (54), p. 48). Predicates fail QU when they are
 not measure-modified — e.g. bare `boy` is not QU under μ_CARD because two
 distinct boys can have different cardinalities (one vs. plural). -/
-def IsQuantityUniform {E : Type*} (P : E → Prop) (μ : MeasureFn E) : Prop :=
+def IsQuantityUniform {E : Type*} (P : E → Prop) (μ : DimensionedMeasure E) : Prop :=
   ∀ x y, P x → P y → μ.apply x = μ.apply y
 
 -- ============================================================================
@@ -311,7 +311,7 @@ MIP applied to the at-least degree property at n yields μ(x) = n.
 *Formalization-internal observation* — not stated by Scontras or Kennedy.
 Bridges Scontras's exact measure-term meaning with the `max{n | ...} = n`
 form of Kennedy's de-Fregean analysis. -/
-theorem scontras_kennedy_dense {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E)
+theorem scontras_kennedy_dense {E : Type*} (μ : DimensionedMeasure E) (n : ℚ) (x : E)
     (hHit : ∃ e, μ.apply e = n) :
     IsMaxInf (Comparison.ge.over μ.apply) n x ↔ μ.apply x = n :=
   Entailment.isMaxInf_atLeast_of_hit μ.apply n x hHit
@@ -327,41 +327,41 @@ theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
 -- § 7. Bridges to Mereology (Krifka) and admissibleMeasure (Wellwood)
 -- ============================================================================
 
-/-! `MeasureFn` is the concrete Scontras-flavored substrate (a function plus a
+/-! `DimensionedMeasure` is the concrete Scontras-flavored substrate (a function plus a
 typed dimension and a non-negativity proof). The abstract characterizations
 elsewhere in linglib — Krifka extensivity (`Mereology.ExtMeasure`),
 Wellwood admissibility (`StrictMono` / `admissibleMeasure`) — are properties
-that a `MeasureFn` may carry. The bridges below let consumers move between
+that a `DimensionedMeasure` may carry. The bridges below let consumers move between
 the concrete and abstract views without re-stipulation. -/
 
-/-- A `MeasureFn` is **extensive** in the [krifka-1998] sense (additive
+/-- A `DimensionedMeasure` is **extensive** in the [krifka-1998] sense (additive
 over non-overlapping entities, positive, strictly monotone over the part-whole
 order; the formalism traces to [krifka-1989]'s cumulative/quantized
 distinction). Definitionally `Mereology.ExtMeasure E μ.apply`; declared as
 `abbrev` so the underlying class instance elaborates through it without manual
 unfolding. -/
-abbrev MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
-    (μ : MeasureFn E) : Prop :=
+abbrev DimensionedMeasure.IsExtensive {E : Type*} [SemilatticeSup E]
+    (μ : DimensionedMeasure E) : Prop :=
   Mereology.ExtMeasure E μ.apply
 
-/-- A `MeasureFn` is **admissible** (in [wellwood-2015]'s /
+/-- A `DimensionedMeasure` is **admissible** (in [wellwood-2015]'s /
 [schwarzschild-2006]'s Monotonicity Constraint sense) iff its underlying
 function is `StrictMono` on the part-whole order. Definitionally equal to
 `Degree.admissibleMeasure μ.apply` — both are
 `StrictMono μ.apply` — so consumers can prove the equivalence by `Iff.rfl`
 when both abbrevs are in scope. -/
-abbrev MeasureFn.IsAdmissible {E : Type*} [Preorder E]
-    (μ : MeasureFn E) : Prop :=
+abbrev DimensionedMeasure.IsAdmissible {E : Type*} [Preorder E]
+    (μ : DimensionedMeasure E) : Prop :=
   admissibleMeasure μ.apply
 
-/-- **Scontras-Krifka bridge.** When a `MeasureFn` is extensive, applying
+/-- **Scontras-Krifka bridge.** When a `DimensionedMeasure` is extensive, applying
 [krifka-1989]'s QMOD with that measure function at any positive value
 produces a QUA predicate. Measure terms ("three kilos of rice") yield
 quantized predicates because their measure function is extensive. -/
 theorem extensive_measureFn_qmod_qua
     {E : Type*} [inst : SemilatticeSup E]
-    {μ : MeasureFn E}
-    (hExt : MeasureFn.IsExtensive μ)
+    {μ : DimensionedMeasure E}
+    (hExt : DimensionedMeasure.IsExtensive μ)
     {R : E → Prop} {n : ℚ} (_hn : 0 < n) :
     Mereology.QUA (Mereology.QMOD R μ.apply n) := by
   haveI : @Mereology.ExtMeasure E inst μ.apply := hExt
@@ -369,9 +369,9 @@ theorem extensive_measureFn_qmod_qua
 
 /-- **Bridge to QMOD.** Scontras's `applyNumeral` and Krifka's `QMOD` check the
 same condition `μ(x) = n` when QMOD's restrictor is taken to be trivial. -/
-theorem MeasureFn.applyNumeral_iff_qmod {E : Type*}
-    (μ : MeasureFn E) (n : ℚ) (x : E) :
+theorem DimensionedMeasure.applyNumeral_iff_qmod {E : Type*}
+    (μ : DimensionedMeasure E) (n : ℚ) (x : E) :
     μ.applyNumeral n x ↔ Mereology.QMOD (fun _ => True) μ.apply n x := by
-  simp [MeasureFn.applyNumeral_iff, Mereology.QMOD]
+  simp [DimensionedMeasure.applyNumeral_iff, Mereology.QMOD]
 
 end Degree
