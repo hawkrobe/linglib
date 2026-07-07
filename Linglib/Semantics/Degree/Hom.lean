@@ -1,3 +1,7 @@
+import Mathlib.Order.Antisymmetrization
+import Mathlib.Data.Fintype.Card
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Tactic.GCongr
 import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Measurement
@@ -428,5 +432,97 @@ theorem very_strictly_stronger_degree :
   intro ⟨y, ⟨z, _, hlt_z⟩, hlt_y⟩
   simp only [id] at hlt_z hlt_y
   omega
+
+
+/-! ### The degree construction ([cresswell-1976] §4, [bale-2008])
+
+Degrees built from comparisons rather than assumed: [cresswell-1976]
+(4.1) quotients an arbitrary comparison relation `φ` by two-sided
+φ-indistinguishability, and (4.2) shows the induced comparison on
+classes is well-defined. On a preorder the construction coincides with
+mathlib's `Antisymmetrization` (`cresswellSetoid_le_iff`). [bale-2008]
+then maps any finite scale into the universal scale Ω ≅ ℚ ∩ (0, 1] by
+relative position (`relativeRank`), the homomorphism that licenses
+indirect cross-scale comparison. -/
+
+/-- Two-sided indistinguishability under a comparison `φ`
+    ([cresswell-1976] (4.1)): same φ-profile on the left and right. -/
+def cresswellSetoid {E : Type*} (φ : E → E → Prop) : Setoid E where
+  r a b := (∀ c, φ a c ↔ φ b c) ∧ (∀ c, φ c a ↔ φ c b)
+  iseqv :=
+    ⟨fun _ => ⟨fun _ => Iff.rfl, fun _ => Iff.rfl⟩,
+     fun h => ⟨fun c => (h.1 c).symm, fun c => (h.2 c).symm⟩,
+     fun h₁ h₂ => ⟨fun c => (h₁.1 c).trans (h₂.1 c),
+                   fun c => (h₁.2 c).trans (h₂.2 c)⟩⟩
+
+/-- Degrees of comparison as φ-equivalence classes ([cresswell-1976] (4.1)). -/
+abbrev CresswellDegree {E : Type*} (φ : E → E → Prop) : Type _ :=
+  Quotient (cresswellSetoid φ)
+
+/-- The induced comparison on degrees; well-definedness is
+    [cresswell-1976]'s own consistency proof for (4.2). -/
+def CresswellDegree.rel {E : Type*} {φ : E → E → Prop} :
+    CresswellDegree φ → CresswellDegree φ → Prop :=
+  Quotient.lift₂ φ fun _ b c _ hac hbd =>
+    propext ((hac.1 b).trans (hbd.2 c))
+
+/-- [cresswell-1976] (4.2): `ā >_φ b̄ iff φ(a, b)`. -/
+@[simp] theorem CresswellDegree.rel_mk {E : Type*} {φ : E → E → Prop} (a b : E) :
+    CresswellDegree.rel (⟦a⟧ : CresswellDegree φ) ⟦b⟧ ↔ φ a b :=
+  Iff.rfl
+
+/-- On a preorder, φ-indistinguishability under `≤` is mathlib's
+    `AntisymmRel`: the Cresswell quotient IS `Antisymmetrization`. -/
+theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
+    (cresswellSetoid (· ≤ ·)).r a b ↔ AntisymmRel (· ≤ ·) a b := by
+  constructor
+  · intro ⟨h₁, h₂⟩
+    exact ⟨(h₁ b).mpr le_rfl, (h₁ a).mp le_rfl⟩
+  · intro ⟨hab, hba⟩
+    exact ⟨fun c => ⟨hba.trans, hab.trans⟩,
+           fun c => ⟨(le_trans · hab), (le_trans · hba)⟩⟩
+
+/-- [bale-2008]'s universal-degree homomorphism on a finite scale: the
+    relative position of `d`, in Ω ≅ ℚ ∩ (0, 1]. Defined on whatever
+    carrier plays the primary scale — in Bale's regime the *quotient*,
+    so equivalent individuals share a universal degree by construction
+    and the value counts equivalence classes, not individuals. -/
+def relativeRank {D : Type*} [Fintype D] [LinearOrder D] (d : D) : ℚ :=
+  (Finset.univ.filter (· ≤ d)).card / Fintype.card D
+
+/-- The universal-degree map preserves the primary scale's order
+    ([bale-2008]: ℌ preserves ≥_δ). -/
+theorem relativeRank_strictMono {D : Type*} [Fintype D] [LinearOrder D] :
+    StrictMono (relativeRank (D := D)) := by
+  intro a b hab
+  have hD : 0 < (Fintype.card D : ℚ) := by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨a⟩
+  have hcard : ((Finset.univ.filter (· ≤ a)).card : ℚ) <
+      ((Finset.univ.filter (· ≤ b)).card : ℚ) := by
+    have h : (Finset.univ.filter (· ≤ a)).card <
+        (Finset.univ.filter (· ≤ b)).card := by
+      apply Finset.card_lt_card
+      refine ⟨fun c hc => ?_, fun hsub => ?_⟩
+      · simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hc ⊢
+        exact hc.trans hab.le
+      · have hb := hsub (Finset.mem_filter.mpr ⟨Finset.mem_univ b, le_rfl⟩)
+        simp only [Finset.mem_filter] at hb
+        exact absurd hb.2 (not_le.mpr hab)
+    exact_mod_cast h
+  unfold relativeRank
+  rw [div_eq_mul_inv, div_eq_mul_inv]
+  exact mul_lt_mul_of_pos_right hcard (inv_pos.mpr hD)
+
+/-- Universal degrees land in (0, 1]. -/
+theorem relativeRank_mem_Ioc {D : Type*} [Fintype D] [LinearOrder D] (d : D) :
+    relativeRank d ∈ Set.Ioc (0 : ℚ) 1 := by
+  have hD : 0 < (Fintype.card D : ℚ) := by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨d⟩
+  unfold relativeRank
+  refine ⟨div_pos ?_ hD, ?_⟩
+  · exact_mod_cast Finset.card_pos.mpr ⟨d, by simp⟩
+  · rw [div_le_one hD]
+    exact_mod_cast Finset.card_filter_le _ _
+
 
 end Degree
