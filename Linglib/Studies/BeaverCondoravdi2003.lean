@@ -1,7 +1,7 @@
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Degree.Bounds
+import Linglib.Semantics.Degree.Comparative
 
 /-!
 # [beaver-condoravdi-2003]: Uniform Analysis with `earliest`

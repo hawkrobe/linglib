@@ -1,6 +1,11 @@
 import Linglib.Features.ScalarDimension
 import Linglib.Features.Aktionsart
-import Linglib.Semantics.Degree.Bounds
+import Mathlib.Order.Basic
+import Mathlib.Order.WithBot
+import Mathlib.Tactic.NormNum
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Order.Max
+import Mathlib.Data.Set.Basic
 
 /-!
 # Degree structure of scalar dimensions
@@ -21,7 +26,6 @@ the derived aspectual views ([kennedy-levin-2008]).
 -/
 
 open Core.Order (Boundedness ScalePolarity LicensingPipeline)
-open Degree (HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
 open Features (Telicity VendlerClass ScalarDimension)
 
 namespace Features
@@ -40,12 +44,12 @@ instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShap
 
 /-- **Grounding, proved once at the 4-case level.** -/
 theorem _root_.Core.Order.Boundedness.hasGreatest_degreeShape_iff (b : Boundedness) :
-    HasGreatest b.degreeShape ↔ b.HasMax := by
+    (∃ m : b.degreeShape, IsTop m) ↔ b.HasMax := by
   cases b
-  · exact iff_of_false not_hasGreatest_of_noMaxOrder (by decide)
-  · exact iff_of_false not_hasGreatest_of_noMaxOrder (by decide)
-  · exact iff_of_true hasGreatest_of_orderTop (by decide)
-  · exact iff_of_true hasGreatest_of_orderTop (by decide)
+  · exact iff_of_false (fun ⟨m, hm⟩ => not_isMax m hm.isMax) (by decide)
+  · exact iff_of_false (fun ⟨m, hm⟩ => not_isMax m hm.isMax) (by decide)
+  · exact iff_of_true ⟨⊤, isTop_top⟩ (by decide)
+  · exact iff_of_true ⟨⊤, isTop_top⟩ (by decide)
 
 /-- Each dimension's degree type — inherited from its boundedness, so the grounding
     transports rather than re-casing per dimension. -/
@@ -56,7 +60,7 @@ instance instLinearOrderDimensionDegree (d : ScalarDimension) : LinearOrder d.de
 /-- The scale's order structure has a greatest element exactly when the dimension's
     canonical scale `HasMax` — grounded for all dimensions in one application. -/
 theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
-    HasGreatest d.degree ↔ d.boundedness.HasMax :=
+    (∃ m : d.degree, IsTop m) ↔ d.boundedness.HasMax :=
   Boundedness.hasGreatest_degreeShape_iff d.boundedness
 
 /-! ### Derived aspectual views (verb side) -/
@@ -79,7 +83,7 @@ def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
     order-theoretic fact: a degree achievement is telic iff its scale's degree type
     has a greatest element — grounded in the scale's order structure, not stipulated. -/
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
-    d.defaultTelicity = .telic ↔ HasGreatest d.degree := by
+    d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m := by
   rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
 
 /-! ### The endpoint: one more `LicensingPipeline` instance -/
