@@ -1,4 +1,3 @@
-import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
