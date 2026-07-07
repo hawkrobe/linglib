@@ -1616,6 +1616,7 @@ import Linglib.Studies.DinisJacinto2026
 import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Standard
+import Linglib.Studies.Bale2008
 import Linglib.Studies.Buring2007
 import Linglib.Semantics.Degree.MeasureOfChange
 import Linglib.Semantics.Degree.Measure
@@ -2170,6 +2171,7 @@ import Linglib.Studies.DegenTonhauser2021
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.Dekier2021
 import Linglib.Studies.Dekker2012
+import Linglib.Studies.Cresswell1976
 import Linglib.Studies.DelPinal2015
 import Linglib.Studies.DelPinalBassiSauerland2024
 import Linglib.Studies.DelPrete2013
