@@ -4,28 +4,27 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mood Categories
-[holmberg-2016] [rizzi-1997] [lakoff-1970]
 
-The definitions core of `Semantics/Mood/`: the category enums for
-grammatical mood and illocutionary force, their cross-product
-`ClauseType`, the lexical classification of mood-selecting predicates,
-and the corpus bridge from `UD.Mood`. This file carries the categories
-only; their semantics lives in the sibling `Semantics/Mood/` files
-(`Situation`, `Eventuality`, `Dynamic`, `Component`, `Modal`, `State`,
-`Verbal`, `SpeechEvent`), and the discourse-act extensions of force
-(Searle classes, direction of fit) in `Discourse/SpeechAct.lean`.
+A clause carries two independent mood dimensions: an illocutionary
+force (the speech-act type — the F in F(p)) and a grammatical mood
+(the indicative/subjunctive verb morphology). The dimensions cross
+freely ([holmberg-2016]): a polar question is [interrogative,
+indicative], while the Spanish deliberative "¿Que duerma?" is
+[interrogative, subjunctive]. This file defines the two category
+enums, their pairing `ClauseType`, the mood-selection classes of
+embedding predicates, and the bridge from the UD `Mood` feature.
 
 ## Main declarations
 
 * `Grammatical`, `SubjunctiveType` — verb-morphological mood.
-* `Illocutionary`, `Illocutionary.authority` — speech-act force
-  (the F in F(p)) and its epistemic-authority assignment.
-* `ClauseType` — force × mood. The dimensions are independent
-  ([holmberg-2016]): a clause can be [interrogative, indicative]
-  ("Does he sleep?") or [interrogative, subjunctive] (Spanish "¿Que
-  duerma?"). Both are distinct from `SpeasTenny2003.SAPMood`.
+* `Illocutionary`, `Illocutionary.authority` — speech-act force and
+  its epistemic-authority assignment.
+* `ClauseType` — force × mood.
 * `Selector` — mood selection by embedding predicate class.
 * `UD.Mood.toClauseType` — corpus bridge.
+
+The Searle-class and direction-of-fit API for `Illocutionary` is in
+`Discourse/SpeechAct.lean`.
 -/
 
 namespace Semantics.Mood
@@ -34,7 +33,7 @@ open Discourse (DiscourseRole)
 
 /-! ### Grammatical mood -/
 
-/-- Grammatical (verb-morphological) mood: the indicative/subjunctive contrast. -/
+/-- Grammatical (verb-morphological) mood. -/
 inductive Grammatical where
   /-- The default, "realis" mood. -/
   | indicative
@@ -104,18 +103,9 @@ def ClauseType.declInd : ClauseType :=
 def ClauseType.polarQuestion : ClauseType :=
   { force := .interrogative, mood := .indicative }
 
-/-- Force and mood are independent: changing one doesn't change the other. -/
-theorem force_mood_independent :
-    ClauseType.declInd.mood = ClauseType.polarQuestion.mood ∧
-    ClauseType.declInd.force ≠ ClauseType.polarQuestion.force := ⟨rfl, nofun⟩
-
 /-- The epistemic authority of a clause type, via its force. -/
 def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
   Illocutionary.authority ct.force
-
-/-- Polar questions have addressee authority regardless of mood. -/
-theorem polarQuestion_addressee_authority :
-    ClauseType.polarQuestion.authority = .addressee := rfl
 
 /-! ### Mood selection by predicate class -/
 
@@ -134,33 +124,13 @@ inductive Selector where
 
 end Semantics.Mood
 
-/-! ### Bridge to UD.Mood
-
-`UD.Mood` is a flat enum conflating illocutionary force (Imp, Jus, Adm)
-with grammatical mood (Ind, Sub) and finer irrealis subtypes (Cnd, Opt,
-Pot, Nec, Irr). The bridge picks the most defensible default
-cross-product:
-
-| UD.Mood | force         | mood        |
-|---------|---------------|-------------|
-| Ind     | declarative   | indicative  |
-| Sub     | declarative   | subjunctive |
-| Imp     | imperative    | indicative  |
-| Cnd     | declarative   | subjunctive |
-| Opt     | declarative   | subjunctive |
-| Jus     | imperative    | subjunctive |
-| Pot     | declarative   | subjunctive |
-| Qot     | declarative   | indicative  |
-| Adm     | exclamative   | indicative  |
-| Nec     | declarative   | subjunctive |
-| Irr     | declarative   | subjunctive |
--/
+/-! ### Bridge to UD.Mood -/
 
 namespace UD.Mood
 
-/-- The default force × mood cross-product for a `UD.Mood` value —
-non-injective by design, since `UD.Mood` draws finer irrealis
-distinctions than force × mood records. -/
+/-- The default `ClauseType` for a `UD.Mood` value. The UD feature is a
+flat enum conflating force with mood, so the map is a non-injective
+default cross-product. -/
 def toClauseType : UD.Mood → Semantics.Mood.ClauseType
   | .Ind => { force := .declarative, mood := .indicative }
   | .Sub => { force := .declarative, mood := .subjunctive }
@@ -173,13 +143,5 @@ def toClauseType : UD.Mood → Semantics.Mood.ClauseType
   | .Adm => { force := .exclamative, mood := .indicative }
   | .Nec => { force := .declarative, mood := .subjunctive }
   | .Irr => { force := .declarative, mood := .subjunctive }
-
-/-- The UD `Imp` mood projects to imperative force. -/
-theorem Imp_is_imperative :
-    (toClauseType .Imp).force = .imperative := rfl
-
-/-- The UD `Sub` mood projects to subjunctive grammatical mood. -/
-theorem Sub_is_subjunctive :
-    (toClauseType .Sub).mood = .subjunctive := rfl
 
 end UD.Mood
