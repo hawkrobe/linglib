@@ -7,51 +7,41 @@ import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Modality.EventRelativity
 
 /-!
-# The Speech Event and Its Content
-[hacquard-2006] [speas-tenny-2003] [portner-2004]
+# The speech event and its content
 
 [hacquard-2006] (pp. 141–3) adopts [speas-tenny-2003]'s Speech Act
 Phrase — every matrix clause is headed by a SAP whose head introduces
-a speech event `e*` and encodes illocutionary force (her (219)–(220))
-— and adds one assumption: **the speech event has CONTENT**, varying
-with the type of speech act. For a declarative, `CON(e*)` is the
-speaker's beliefs; for an imperative, it is the addressee's To-Do List
-(the TDL of [portner-2004]). A modal bound by `e*` reads `CON(e*)` as
-its conversational background, so the speech act type determines the
-modal's flavor with no lexical ambiguity (her (221)–(222)).
+a speech event `e*` and encodes illocutionary force — and adds one
+assumption: the speech event has *content*, varying with the type of
+speech act. For a declarative, `CON(e*)` is the speaker's beliefs;
+for an imperative, the addressee's To-Do List ([portner-2004]). A
+modal bound by `e*` reads `CON(e*)` as its conversational background,
+so the speech act type determines the modal's flavor with no lexical
+ambiguity. Here `CON(e*)` enters the mood state through the
+force-targeted update — declarative content is `assert`ed, imperative
+content `promote`d — and the licensed modal and flavor are read off
+the targeted component.
 
-This file renders that theory inside the Mood API rather than as
-free-standing apparatus:
+## Main declarations
 
-- **CON(e*) enters the state through the force-targeted update.** A
-  `SpeechEvent` induces an `ExpState` (`SpeechEvent.toState`) by
-  folding its content through the update morphism of the component its
-  force targets: declarative content is `assert`ed (informational),
-  imperative content is `promote`d (preferential).
-- **The licensed modal is the targeted component's necessity modal.**
-  `SpeechEvent.modal := boxOn ∘ target` on the induced state: a
-  declarative `e*` yields `boxCs` over belief-compatible worlds,
-  an imperative `e*` yields `boxLe` over the TDL-best worlds.
-- **Flavor factors through the component classification.**
-  `Illocutionary.primaryFlavor := Component.flavor ∘ target` — the
-  epistemic/deontic split Hacquard derives from `CON(e*)` is the
-  image of [portner-2018]'s component targeting under the reading
-  informational ↦ epistemic, preferential ↦ deontic.
+* `SpeechEvent` — a force together with `CON(e*)`.
+* `SpeechEvent.toState`, `SpeechEvent.modal` — the induced state and
+  its licensed necessity modal.
+* `Component.flavor`, `Illocutionary.primaryFlavor` — Hacquard's
+  flavor assignment, derived from component targeting.
+* `HasTarget ModalFlavor` — the third instance of [portner-2018]'s
+  classification.
 
-**Inventory caveat.** [speas-tenny-2003] (as adopted by
-[hacquard-2006]) grammaticalize exactly four speech acts —
-declarative, interrogative, imperative, and *quotative*. We type
-`SpeechEvent.force` by the library-wide five-way `Illocutionary`
-(no quotative; promissive and exclamative extra); the promissive and
-exclamative flavor/target assignments are linglib extensions, and
-quotatives are unmodeled. Hacquard gives content clauses only for
-declaratives and imperatives; the interrogative case (inquisitive
-component) is left degenerate here.
+## Implementation notes
 
-Binding height — *which* event a modal is bound by, and hence whether
-it reads `CON(e*)` at all — is `Semantics/Modality/EventRelativity`'s
-territory; this file consumes its `EventProjection` for the
-participant structure of `e*`.
+[speas-tenny-2003] grammaticalize exactly four speech acts
+(declarative, interrogative, imperative, quotative). `SpeechEvent`
+uses the library-wide five-way `Illocutionary` — no quotative;
+promissive and exclamative are conjectural linglib extensions — and
+Hacquard gives content clauses only for declaratives and imperatives,
+so the inquisitive route induces the initial state. Binding height
+(*which* event a modal is bound by) is
+`Semantics/Modality/EventRelativity`'s territory.
 -/
 
 namespace Mood
@@ -66,39 +56,27 @@ variable {W : Type*}
 /-! ### Speech events -/
 
 /-- A speech act event `e*` with its content `CON(e*)`
-    ([hacquard-2006], her assumption 4, pp. 142–3): the force the SAP
-    head encodes, and the world-indexed conversational background the
-    speech event carries — the speaker's beliefs for a declarative,
-    the addressee's To-Do List ([portner-2004]) for an imperative. -/
+([hacquard-2006], her assumption 4, pp. 142–3). -/
 structure SpeechEvent (W : Type*) where
   /-- The illocutionary force the SAP head encodes. -/
   force : Illocutionary
   /-- `CON(e*)`: the propositional content of the speech event. -/
   content : W → List (W → Prop)
 
-/-- A declarative speech event: `CON(e*)` = the speaker's beliefs
-    ([hacquard-2006], her (222) `SPEECH ACT_DECLARATIVE(e*)`). -/
+/-- A declarative speech event: `CON(e*)` is the speaker's beliefs
+([hacquard-2006], her (222)). -/
 def SpeechEvent.declarative (beliefs : W → List (W → Prop)) : SpeechEvent W :=
   ⟨.declarative, beliefs⟩
 
-/-- An imperative speech event: `CON(e*)` = the addressee's To-Do List
-    ([hacquard-2006] after [portner-2004]). -/
+/-- An imperative speech event: `CON(e*)` is the addressee's To-Do
+List ([hacquard-2006] after [portner-2004]). -/
 def SpeechEvent.imperative (todo : W → List (W → Prop)) : SpeechEvent W :=
   ⟨.imperative, todo⟩
 
-/-! ### The induced state: content enters through the targeted update
+/-! ### The induced state -/
 
-`CON(e*)` lands in the component the force targets, through that
-component's update morphism: `assert` for informational forces,
-`promote` for preferential ones. This is the update-side face of the
-`HasTarget` classification — the same routing that sends assertion to
-`+` and direction to `⋆` in [portner-2018]. -/
-
-/-- The expectation state a speech event induces at anchor world `w₀`:
-    fold `CON(e*)(w₀)` through the update morphism of the targeted
-    component. Interrogative (and the extension forces routed to the
-    inquisitive component) induce the initial state — question content
-    is beyond this file. -/
+/-- The state a speech event induces at anchor world `w₀`: fold
+`CON(e*)(w₀)` through the targeted component's update. -/
 def SpeechEvent.toState (sa : SpeechEvent W) (w₀ : W) : ExpState W :=
   match target sa.force with
   | .informational => (sa.content w₀).foldl ExpState.assert ExpState.init
@@ -115,9 +93,8 @@ def SpeechEvent.toState (sa : SpeechEvent W) (w₀ : W) : ExpState W :=
     (SpeechEvent.imperative todo).toState w₀ =
       (todo w₀).foldl ExpState.promote ExpState.init := rfl
 
-/-- A declarative's induced information state is exactly the worlds
-    compatible with every belief in `CON(e*)` — Hacquard's "worlds
-    compatible with the content of my beliefs". -/
+/-- A declarative's information state is the worlds compatible with
+every belief in `CON(e*)`. -/
 theorem SpeechEvent.mem_toState_declarative_info
     (beliefs : W → List (W → Prop)) (w₀ v : W) :
     v ∈ ((SpeechEvent.declarative beliefs).toState w₀).info ↔
@@ -125,10 +102,9 @@ theorem SpeechEvent.mem_toState_declarative_info
   rw [SpeechEvent.toState_declarative, ExpState.mem_foldl_assert_info]
   simp [ExpState.init]
 
-/-- An imperative's induced ordering prefers TDL-compliant worlds: `w`
-    is at least as good as `v` iff every To-Do item true at `v` is true
-    at `w`. The [kratzer-1981] ordering-source construction, arrived at
-    by promotion. -/
+/-- An imperative's ordering prefers TDL-compliant worlds — the
+[kratzer-1981] ordering-source construction, arrived at by
+promotion. -/
 theorem SpeechEvent.toState_imperative_le
     (todo : W → List (W → Prop)) (w₀ w v : W) :
     ((SpeechEvent.imperative todo).toState w₀).order.le w v ↔
@@ -136,40 +112,33 @@ theorem SpeechEvent.toState_imperative_le
   rw [SpeechEvent.toState_imperative, ExpState.foldl_promote_order_le]
   exact ⟨And.right, fun h => ⟨trivial, h⟩⟩
 
-/-- An imperative's content does not restrict the information state:
-    the To-Do List ranks worlds, it does not eliminate them. -/
+/-- The To-Do List ranks worlds; it does not eliminate them. -/
 theorem SpeechEvent.toState_imperative_info
     (todo : W → List (W → Prop)) (w₀ : W) :
     ((SpeechEvent.imperative todo).toState w₀).info = Set.univ := by
   rw [SpeechEvent.toState_imperative, ExpState.foldl_promote_info]
   rfl
 
-/-! ### The licensed modal: `boxOn ∘ target` on the induced state -/
+/-! ### The licensed modal -/
 
 /-- The necessity modal a speech event licenses: the targeted
-    component's modal, run on the induced state. A declarative `e*`
-    yields `□_cs` over belief-compatible worlds ([hacquard-2006]'s
-    epistemic reading, the necessity dual of her (222)); an imperative
-    `e*` yields `□_≤` over TDL-best worlds (her deontic reading). -/
+component's modal on the induced state ([hacquard-2006]'s epistemic
+and deontic readings). -/
 def SpeechEvent.modal (sa : SpeechEvent W) (w₀ : W) : (W → Prop) → Prop :=
   (target sa.force).boxOn (State.ofExpState (sa.toState w₀))
 
-/-- The declarative modal is informational necessity over the induced
-    state. -/
 @[simp] theorem SpeechEvent.modal_declarative
     (beliefs : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
     (SpeechEvent.declarative beliefs).modal w₀ p =
       ((SpeechEvent.declarative beliefs).toState w₀).boxCs p := rfl
 
-/-- The imperative modal is preferential necessity over the induced
-    state. -/
 @[simp] theorem SpeechEvent.modal_imperative
     (todo : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
     (SpeechEvent.imperative todo).modal w₀ p =
       ((SpeechEvent.imperative todo).toState w₀).boxLe p := rfl
 
-/-- Hacquard's declarative reading, spelled out: the licensed modal
-    quantifies over exactly the belief-compatible worlds. -/
+/-- The declarative modal quantifies over exactly the
+belief-compatible worlds. -/
 theorem SpeechEvent.modal_declarative_iff
     (beliefs : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
     (SpeechEvent.declarative beliefs).modal w₀ p ↔
@@ -183,13 +152,10 @@ theorem SpeechEvent.modal_declarative_iff
 /-! ### Flavor factors through the component classification -/
 
 /-- Modal flavors target the component their Kratzer parameter feeds:
-modal-base flavors the informational component, ordering-source
-flavors the preferential ([kratzer-1981]'s parameter roles under
-[portner-2018]'s component identification — imperatives as deontic
-ordering-source modals, desires as the ordering in his (4)). The
-third `HasTarget` instance, beside sentence mood (`Mood/Defs.lean`)
-and verbal mood (`Mood/Verbal.lean`): Portner's unification of
-verbal mood, sentence mood, and modal flavor as one classification. -/
+modal-base flavors the informational, ordering-source flavors the
+preferential ([kratzer-1981]'s parameter roles; [portner-2018],
+p. 233). The third instance of the one classification, beside
+sentence and verbal mood. -/
 instance : HasTarget Semantics.Modality.ModalFlavor where
   target
     | .epistemic      => .informational
@@ -197,24 +163,16 @@ instance : HasTarget Semantics.Modality.ModalFlavor where
     | .bouletic       => .preferential
     | .circumstantial => .informational
 
-/-- The modal flavor a POSW component licenses, on [hacquard-2006]'s
-    reading of `CON(e*)`: the informational component carries belief
-    content (epistemic), the preferential component carries To-Do
-    content (deontic). The inquisitive component is routed to
-    epistemic (question content is belief-adjacent; a finer treatment
-    awaits an interrogative-content story). -/
+/-- The flavor a component licenses on [hacquard-2006]'s reading of
+`CON(e*)`; the inquisitive component is routed to epistemic pending
+an interrogative-content story. -/
 def Component.flavor : Component → ModalFlavor
   | .informational => .epistemic
   | .preferential  => .deontic
   | .inquisitive   => .epistemic
 
-/-- The primary modal flavor each speech act type licenses
-    ([hacquard-2006]: declarative → epistemic, imperative → deontic) —
-    **derived** as the targeted component's flavor, not enumerated.
-    The promissive and exclamative values are linglib extensions
-    (via their conjectural `HasTarget` assignments); [speas-tenny-2003]
-    and [hacquard-2006] recognize only declarative, interrogative,
-    imperative, and quotative acts. -/
+/-- The primary flavor a speech act licenses ([hacquard-2006]):
+the targeted component's flavor. -/
 def Illocutionary.primaryFlavor (f : Illocutionary) : ModalFlavor :=
   (target f).flavor
 
@@ -225,38 +183,23 @@ theorem target_flavor (c : Component) (h : c ≠ .inquisitive) :
     target c.flavor = c := by
   cases c <;> first | rfl | exact absurd rfl h
 
-/-- Hacquard's flavor assignment factors through [portner-2018]'s
-    component targeting — definitionally. -/
-theorem primaryFlavor_eq_flavor_target :
-    Illocutionary.primaryFlavor = fun f => (target f).flavor := rfl
-
 @[simp] theorem primaryFlavor_declarative :
     Illocutionary.declarative.primaryFlavor = .epistemic := rfl
 
 @[simp] theorem primaryFlavor_imperative :
     Illocutionary.imperative.primaryFlavor = .deontic := rfl
 
-/-- Different speech act types yield different primary flavors for the
-    same modal — the "must" ambiguity without lexical ambiguity:
-    "John must be home" (declarative, epistemic) vs "Go home!"
-    (imperative context, deontic). Same modal, different speech
-    events, different readings. -/
+/-- Different speech acts, different flavors — the "must" ambiguity
+without lexical ambiguity. -/
 theorem speech_act_determines_flavor :
     Illocutionary.declarative.primaryFlavor ≠
       Illocutionary.imperative.primaryFlavor := by decide
 
 /-! ### Worked example: "You can leave"
 
-Same modal, same proposition, different speech events:
-
-1. **Declarative** (informing): `CON(e*)` = speaker's evidence, here
-   uninformative — both outcomes compatible, so neither is necessary.
-2. **Imperative** (permitting): `CON(e*)` = the addressee's To-Do
-   List containing *leave* — the best worlds are leave-worlds, so
-   leaving is preferentially necessary and staying is not.
-
-The speech act type, mediated through `CON(e*)` and the targeted
-component, determines the modal domain. -/
+Same modal, same proposition, different speech events: the force,
+routed through its targeted component, determines the modal
+domain. -/
 
 /-- Two outcomes: leave or stay. -/
 inductive LeaveWorld where | leave | stay
@@ -271,16 +214,15 @@ def declarativeEvidence : SpeechEvent LeaveWorld :=
 def imperativePermission : SpeechEvent LeaveWorld :=
   .imperative (fun _ => [(· = .leave)])
 
-/-- Under the declarative, leaving is not informationally necessary —
-    the speaker's evidence leaves staying open. -/
+/-- Under the declarative, the speaker's evidence leaves staying
+open. -/
 theorem declarative_leave_not_necessary :
     ¬ declarativeEvidence.modal .leave (· = .leave) := by
   intro h
   exact LeaveWorld.noConfusion
     (h .stay ((SpeechEvent.mem_toState_declarative_info _ _ _).mpr (by simp)))
 
-/-- Under the imperative, leaving is preferentially necessary: every
-    TDL-best world is a leave-world. -/
+/-- Under the imperative, every TDL-best world is a leave-world. -/
 theorem imperative_leave_required :
     imperativePermission.modal .leave (· = .leave) := by
   have hchar : ∀ v ∈ (imperativePermission.toState LeaveWorld.leave).optimal,
@@ -298,24 +240,7 @@ theorem imperative_leave_required :
       LeaveWorld.leave).mp hvl (· = LeaveWorld.leave) (List.mem_singleton_self _) rfl)
   exact fun v hv => hchar v hv
 
-/-- The core contrast: the same necessity claim over the same
-    proposition flips between the two speech events. The force,
-    routed through its targeted component, determines the modal
-    domain. -/
-theorem speech_act_modulates_domain :
-    ¬ declarativeEvidence.modal .leave (· = .leave) ∧
-      imperativePermission.modal .leave (· = .leave) :=
-  ⟨declarative_leave_not_necessary, imperative_leave_required⟩
-
-/-! ### Participant projection
-
-The speech event projects to a holder-time pair ([hacquard-2006];
-participant structure per [speas-tenny-2003]): the *performer* is
-the speaker throughout; content is keyed to the speaker's beliefs for
-declaratives and the addressee's To-Do List for imperatives. Distinct
-from the *seat of knowledge* ([speas-tenny-2003]), which is the
-hearer for interrogatives — that notion is tracked per-force by
-`Illocutionary.authority`. -/
+/-! ### Participant projection -/
 
 /-- Speaker and addressee for the projection example. -/
 inductive Interlocutor where | speaker | addressee
@@ -325,9 +250,9 @@ inductive Interlocutor where | speaker | addressee
 inductive SpeechTime where | now
   deriving DecidableEq, Repr, Inhabited
 
-/-- The event projection for speech events: whose attitudes provide
-    `CON(e*)`, at speech time. Declarative: the speaker's beliefs.
-    Imperative: the addressee's obligations. -/
+/-- Whose attitudes provide `CON(e*)`, at speech time
+([speas-tenny-2003]'s participant structure; distinct from the seat
+of knowledge, tracked per-force by `Illocutionary.authority`). -/
 def speechActProjection : EventProjection Illocutionary Interlocutor SpeechTime where
   holder
     | .declarative => .speaker
@@ -336,13 +261,5 @@ def speechActProjection : EventProjection Illocutionary Interlocutor SpeechTime 
     | .interrogative => .speaker
     | .exclamative => .speaker
   time _ := .now
-
-/-- Declarative content is keyed to (speaker, now). -/
-theorem declarative_projects_to_speaker :
-    speechActProjection.toPair .declarative = ⟨.speaker, .now⟩ := rfl
-
-/-- Imperative content is keyed to (addressee, now). -/
-theorem imperative_projects_to_addressee :
-    speechActProjection.toPair .imperative = ⟨.addressee, .now⟩ := rfl
 
 end Mood
