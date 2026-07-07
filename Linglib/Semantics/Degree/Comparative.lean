@@ -1,4 +1,5 @@
-import Linglib.Semantics.Degree.Extent
+import Mathlib.Order.Interval.Set.LinearOrder
+import Mathlib.Order.Bounds.Basic
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.Boundedness
@@ -36,7 +37,7 @@ consumers in `Studies/Hoeksema1983.lean`.
   [rullmann-1995]): independent matrix/than witness predicates over `thanDegrees`,
   with the unique-witness collapse `maxComparative_unique`.
 * `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
-* `comparative_iff_posExt_ssubset` — comparison as extent inclusion ([kennedy-1999]).
+* `comparative_iff_Iic_ssubset` — comparison as extent inclusion ([kennedy-1999]).
 -/
 
 namespace Degree
@@ -394,9 +395,10 @@ theorem comparative_than_DE {α : Type*} (R : α → α → Prop) (μ_a : α)
 
 /-! ### Comparison as extent inclusion
 
-Three faces of the `posExt` / `negExt` correspondence ([kennedy-1999]): the
-binary comparator equals strict extent inclusion, and antonymy follows from
-extent complementarity rather than being stipulated. -/
+Kennedy's positive/negative extents are `Set.Iic (μ x)` / `Set.Ioi (μ x)`
+directly ([kennedy-1999]); the binary comparator equals strict extent
+inclusion, and antonymy follows from extent complementarity rather than
+being stipulated. -/
 
 section Extent
 variable {Entity D : Type*} [LinearOrder D]
@@ -409,18 +411,17 @@ theorem gtOverSet_atomic_eq_comparativeSem (μ : Entity → D) (a b : Entity) :
     a ∈ Comparison.gt.overSet μ {μ b} ↔ comparativeSem μ a b .positive := by
   rw [Comparison.overSet_singleton, ← comparativeSem_positive_eq_over]
 
-/-- "A is taller than B" iff A's positive extent strictly contains B's
-([kennedy-1999]). Bridges the point comparison to `Set.Iic_ssubset_Iic`. -/
-theorem comparative_iff_posExt_ssubset (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=
+/-- "A is taller than B" iff A's positive extent (`Set.Iic (μ a)`,
+[kennedy-1999]) strictly contains B's. -/
+theorem comparative_iff_Iic_ssubset (μ : Entity → D) (a b : Entity) :
+    comparativeSem μ a b .positive ↔ Set.Iic (μ b) ⊂ Set.Iic (μ a) :=
   Set.Iic_ssubset_Iic.symm
 
-/-- "A taller than B" iff "B shorter than A", derived from the complementarity
-of positive and negative extents rather than stipulated as a lexical property
-of antonym pairs ([kennedy-1999]). -/
-theorem comparative_iff_negExt_ssubset (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ negExt μ a ⊂ negExt μ b := by
-  rw [comparative_iff_posExt_ssubset, antonymy_biconditional]
+/-- "A taller than B" iff "B shorter than A" on the negative extents
+(`Set.Ioi`), derived rather than stipulated ([kennedy-1999]). -/
+theorem comparative_iff_Ioi_ssubset (μ : Entity → D) (a b : Entity) :
+    comparativeSem μ a b .positive ↔ Set.Ioi (μ a) ⊂ Set.Ioi (μ b) :=
+  Set.Ioi_ssubset_Ioi_iff.symm
 
 end Extent
 
@@ -455,15 +456,15 @@ theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : E
   simp only [negatedEquative, equativeSem, ge_iff_le, not_le]
 
 /-- Equative as positive extent inclusion ([kennedy-1999]): "A is as tall as B"
-iff `posExt μ b ⊆ posExt μ a` — every degree B has, A also has. -/
-theorem equativeSem_iff_posExt_subset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
-    equativeSem μ a b .positive ↔ posExt μ b ⊆ posExt μ a :=
+iff every degree B has (`Set.Iic (μ b)`), A also has. -/
+theorem equativeSem_iff_Iic_subset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    equativeSem μ a b .positive ↔ Set.Iic (μ b) ⊆ Set.Iic (μ a) :=
   Set.Iic_subset_Iic.symm
 
 /-- Negated equative as strict extent inclusion: B has strictly more degrees
 than A. -/
-theorem negatedEquative_iff_posExt_ssubset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
-    negatedEquative μ a b ↔ posExt μ a ⊂ posExt μ b :=
+theorem negatedEquative_iff_Iic_ssubset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    negatedEquative μ a b ↔ Set.Iic (μ a) ⊂ Set.Iic (μ b) :=
   Set.Iic_ssubset_Iic.symm
 
 end Equative

@@ -24,7 +24,7 @@ the degree argument.
 3. **Cross-polar anomaly**: "Kim is as tall as Lee is short" is anomalous
    because the equative tries to compare a positive extent with a negative
    extent — structurally incompatible (proved always-false in
-   `Degree.crossExtent_always_false`).
+   `crossExtent_always_false`).
 
 4. **Antonymy biconditional**: "BK is longer than The Idiot iff The Idiot is
    shorter than BK" is DERIVED from extent complementarity, not stipulated
@@ -62,12 +62,45 @@ distribution), [bhatt-pancheva-2004] and [lechner-2004]
 namespace Kennedy1999
 
 open Degree (comparativeSem equativeSem
-  comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset
-  equativeSem_iff_posExt_subset)
-open Degree (posExt negExt crossExtentInclusion crossExtent_always_false extent_galois_antitone)
--- ════════════════════════════════════════════════════
--- § 1. Cross-Polar Anomaly Data
--- ════════════════════════════════════════════════════
+  comparative_iff_Iic_ssubset comparative_iff_Ioi_ssubset
+  equativeSem_iff_Iic_subset)
+
+/-! ### Extents (Ch. 3)
+
+Kennedy's positive/negative extents are `Set.Iic (μ x)` / `Set.Ioi (μ x)`.
+Boundary convention: eqs (30)–(31) define POSδ and NEGδ both with `≤`
+(a cover; eqs (52)–(53) state their join-complementarity); we use strict
+`Ioi` for the negative extent, a strict partition. The antonymy
+biconditional (eq (54)) is convention-independent;
+`crossExtent_always_false` is convention-specific, and models the
+lattice-algebraic shadow of the paper's own *sortal* cross-polar anomaly
+argument (§3.1.7), not the sortal analysis itself. -/
+
+/-- Antonymy biconditional (eq (54)): "A is taller than B" iff "B is
+    shorter than A", derived from extent algebra. -/
+theorem antonymy_biconditional {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    Set.Iic (μ b) ⊂ Set.Iic (μ a) ↔ Set.Ioi (μ a) ⊂ Set.Ioi (μ b) := by
+  rw [Set.Iic_ssubset_Iic, Set.Ioi_ssubset_Ioi_iff]
+
+/-- Weak-inclusion antonymy: the Galois-antitone face of eq (54). -/
+theorem extent_galois_antitone {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    Set.Iic (μ a) ⊆ Set.Iic (μ b) ↔ Set.Ioi (μ b) ⊆ Set.Ioi (μ a) := by
+  rw [Set.Iic_subset_Iic, Set.Ioi_subset_Ioi_iff]
+
+/-- Cross-polar inclusion: one entity's positive extent inside another's
+    negative extent — the LF a cross-polar equative would assign. -/
+abbrev crossExtentInclusion {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a b : Entity) : Prop :=
+  Set.Iic (μ a) ⊆ Set.Ioi (μ b)
+
+/-- Cross-polar non-inclusion (convention-specific; see the section note). -/
+theorem crossExtent_always_false {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) : ¬ crossExtentInclusion μ a b :=
+  fun h => absurd (h (min_le_left (μ a) (μ b))) (not_lt.mpr (min_le_right _ _))
+
+/-! ### Cross-Polar Anomaly Data -/
 
 /-- A cross-polar anomaly judgment. -/
 structure CrossPolarDatum where
@@ -131,8 +164,8 @@ theorem crossPolar_predicted {Entity D : Type*} [LinearOrder D]
     This reduces to μ(subject) ≥ μ(standard). -/
 theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    equativeSem μ a b .positive ↔ posExt μ b ⊆ posExt μ a :=
-  equativeSem_iff_posExt_subset μ a b
+    equativeSem μ a b .positive ↔ Set.Iic (μ b) ⊆ Set.Iic (μ a) :=
+  equativeSem_iff_Iic_subset μ a b
 
 -- ════════════════════════════════════════════════════
 -- § 4. Comparative = Strict Extent Inclusion
@@ -140,11 +173,11 @@ theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
 
 /-- "A is taller than B" iff B's positive extent is strictly contained
     in A's. Bridges the consensus comparative to the algebraic
-    `Set.Iic_ssubset_Iic` through the `posExt` abbrev. -/
+    `Set.Iic_ssubset_Iic`. -/
 theorem comparative_extent_bridge {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=
-  comparative_iff_posExt_ssubset μ a b
+    comparativeSem μ a b .positive ↔ Set.Iic (μ b) ⊂ Set.Iic (μ a) :=
+  comparative_iff_Iic_ssubset μ a b
 
 -- ════════════════════════════════════════════════════
 -- § 5. Antonymy Biconditional
@@ -162,17 +195,17 @@ theorem comparative_extent_bridge {Entity D : Type*} [LinearOrder D]
     complementary projections of the same scale point. -/
 theorem antonymy_derived {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ negExt μ a ⊂ negExt μ b :=
-  comparative_iff_negExt_ssubset μ a b
+    comparativeSem μ a b .positive ↔ Set.Ioi (μ a) ⊂ Set.Ioi (μ b) :=
+  comparative_iff_Ioi_ssubset μ a b
 
 /-- The antonymy biconditional also holds for equatives:
     "A is as tall as B" iff "B is as short as A" — extent inclusion
-    in one polarity implies extent inclusion in the other.
-    Follows from the Galois connection on extents (Extent.lean § 7). -/
+    in one polarity implies extent inclusion in the other
+    (`extent_galois_antitone`). -/
 theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    equativeSem μ a b .positive ↔ negExt μ a ⊆ negExt μ b := by
-  rw [equativeSem_iff_posExt_subset, extent_galois_antitone]
+    equativeSem μ a b .positive ↔ Set.Ioi (μ a) ⊆ Set.Ioi (μ b) := by
+  rw [equativeSem_iff_Iic_subset, extent_galois_antitone]
 
 -- ════════════════════════════════════════════════════
 -- § 6. Historical: DegP Projection
