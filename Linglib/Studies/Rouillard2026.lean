@@ -295,7 +295,7 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval T
     `TimeMeasure.extensibleLeft`. -/
 theorem gTIAPropertyOpen_upwardMonotone {μ : NonemptyInterval Time → α}
     [TimeMeasure Time μ] (P : W → Event Time → Prop) (s : Time) :
-    IsUpwardMonotone (gTIAPropertyOpen P μ s) := by
+    Monotone (gTIAPropertyOpen P μ s) := by
   rintro n m hnm w ⟨ptsGI, hOpen, hRight, hμ, e, hP, hSub⟩
   obtain ⟨j, hij, hjsnd, hjμ⟩ :=
     TimeMeasure.extensibleLeft ptsGI.toInterval m (hμ ▸ hnm)
@@ -318,9 +318,9 @@ theorem gTIAPropertyOpen_upwardMonotone {μ : NonemptyInterval Time → α}
     monotonicity that `gTIANeg_hasIsGreatest` needs. -/
 theorem gTIAPropertyOpenNeg_downwardMonotone {μ : NonemptyInterval Time → α}
     [TimeMeasure Time μ] (P : W → Event Time → Prop) (s : Time) :
-    IsDownwardMonotone (gTIAPropertyOpenNeg P μ s) :=
+    Antitone (gTIAPropertyOpenNeg P μ s) :=
   fun x y hxy w hy hx =>
-    hy (gTIAPropertyOpen_upwardMonotone P s x y hxy w hx)
+    hy (gTIAPropertyOpen_upwardMonotone P s hxy w hx)
 
 /-! ### The MIP licensing predicate
 
@@ -377,7 +377,7 @@ theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → α} [TimeMeasur
     measures via `TimeMeasure.extensible`. -/
 theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : NonemptyInterval Time) :
-    IsUpwardMonotone (eTIAProperty P μ g1) := by
+    Monotone (eTIAProperty P μ g1) := by
   intro n m hnm w ⟨t, hμ, e, hP, hg1, hsub⟩
   have h_le : μ t ≤ m := by rw [hμ]; exact hnm
   obtain ⟨j, hj_sup, hj_μ⟩ := TimeMeasure.extensible (μ := μ) t m h_le
@@ -391,7 +391,7 @@ theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → α} [TimeMeasu
     `ℕ`: extremum existence needs a well-founded codomain, which dense `α`
     deliberately lacks (that failure IS the G-TIA collapse below). -/
 theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
-    {P : ℕ → W → Prop} (_hUp : IsUpwardMonotone P) (w : W)
+    {P : ℕ → W → Prop} (_hUp : Monotone P) (w : W)
     [DecidablePred (fun n => P n w)]
     (h_witness : ∃ n, P n w) :
     ∃ x, IsLeast {y | P y w} x := by
@@ -529,7 +529,7 @@ example {W : Type*} (P : W → Event ℚ → Prop) (s : ℚ) :
     bridge is `Extremum.isMaxInf_of_isGreatest_downward`. Pinned to `ℕ` for
     the same well-foundedness reason as its dual. -/
 theorem downwardMonotone_hasIsGreatest_of_bound {W : Type*}
-    {P : ℕ → W → Prop} (hDown : IsDownwardMonotone P) (w : W)
+    {P : ℕ → W → Prop} (hDown : Antitone P) (w : W)
     [DecidablePred (fun n => P n w)]
     (h_witness : ∃ n, P n w) (h_bound : ∃ n, ¬ P n w) :
     ∃ x, IsGreatest {y | P y w} x := by
@@ -537,13 +537,13 @@ theorem downwardMonotone_hasIsGreatest_of_bound {W : Type*}
   obtain ⟨n₀, hn₀⟩ := h_witness
   have h_pos : 0 < Nat.find h_bound :=
     Nat.pos_of_ne_zero fun h =>
-      (h ▸ Nat.find_spec h_bound) (hDown 0 n₀ (Nat.zero_le _) w hn₀)
+      (h ▸ Nat.find_spec h_bound) (hDown (Nat.zero_le _) w hn₀)
   refine ⟨Nat.find h_bound - 1,
     not_not.mp (Nat.find_min h_bound (Nat.sub_lt h_pos one_pos)),
     fun y hy => ?_⟩
   have h_lt : y < Nat.find h_bound := by
     by_contra h_ge
-    exact Nat.find_spec h_bound (hDown _ y (not_lt.mp h_ge) w hy)
+    exact Nat.find_spec h_bound (hDown (not_lt.mp h_ge) w hy)
   omega
 
 /-- **Negated G-TIAs satisfy the MIP at the gap length**. With a true

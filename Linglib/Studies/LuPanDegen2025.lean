@@ -1146,19 +1146,19 @@ def factiveComplementAI : AtIssuenessDegree := ⟨3/4, by norm_num, by norm_num�
 
 private theorem isAtIssue_lexical :
     ¬ isAtIssue (complementAtIssueness .lexical) defaultThreshold := by
-  simp only [isAtIssue, Core.Order.Rat01.exceeds, complementAtIssueness,
+  simp only [isAtIssue, Core.Order.Rat01.exceeds, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, complementAtIssueness,
              defaultThreshold, Core.Order.Rat01.half, not_lt]
   norm_num
 
 private theorem isAtIssue_none :
     isAtIssue (complementAtIssueness .none) defaultThreshold := by
-  simp only [isAtIssue, Core.Order.Rat01.exceeds, complementAtIssueness,
+  simp only [isAtIssue, Core.Order.Rat01.exceeds, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, complementAtIssueness,
              defaultThreshold, Core.Order.Rat01.half]
   norm_num
 
 private theorem isAtIssue_factive :
     isAtIssue factiveComplementAI defaultThreshold := by
-  simp only [isAtIssue, Core.Order.Rat01.exceeds, factiveComplementAI,
+  simp only [isAtIssue, Core.Order.Rat01.exceeds, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, factiveComplementAI,
              defaultThreshold, Core.Order.Rat01.half]
   norm_num
 
@@ -1210,6 +1210,7 @@ theorem predictIsland_monotone (d₁ d₂ : AtIssuenessDegree)
     simp [h₁, h₂]
   -- Contradictory case: d₁ at-issue but d₂ not, yet d₁.val ≤ d₂.val
   unfold isAtIssue Core.Order.Rat01.exceeds at h₁ h₂
+  simp only [Core.Order.Comparison.mem_over, Core.Order.Comparison.rel] at h₁ h₂
   rw [not_lt] at h₂
   exact absurd (lt_of_lt_of_le h₁ (le_trans h h₂)) (lt_irrefl _)
 

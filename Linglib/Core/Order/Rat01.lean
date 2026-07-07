@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
+import Linglib.Core.Order.Comparison
 import Mathlib.Tactic.Linarith
 import Mathlib.Order.Monotone.Basic
 
@@ -55,8 +56,10 @@ def one : Rat01 := ⟨1, by norm_num, by norm_num⟩
 /-- The midpoint ½, the standard default threshold. -/
 def half : Rat01 := ⟨1/2, by norm_num, by norm_num⟩
 
-/-- Does the value strictly exceed a threshold? -/
-def exceeds (d θ : Rat01) : Prop := θ.val < d.val
+/-- Does the value strictly exceed a threshold? The `Rat01` face of
+`Core.Order.Comparison.gt.over`. -/
+def exceeds (d θ : Rat01) : Prop :=
+  d ∈ Core.Order.Comparison.gt.over Subtype.val θ.val
 
 instance (d θ : Rat01) : Decidable (exceeds d θ) :=
   inferInstanceAs (Decidable (θ.val < d.val))

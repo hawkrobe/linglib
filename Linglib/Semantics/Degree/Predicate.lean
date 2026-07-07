@@ -11,7 +11,8 @@ import Linglib.Core.Order.Comparison
 
 Predicate transformers over a measure function `μ : W → α`:
 
-- `IsUpwardMonotone` / `IsDownwardMonotone` / `IsConstant` / `AdmitsOptimum`
+- `IsConstant` / `AdmitsOptimum` (informativity; monotonicity is mathlib's
+  `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
 - `typeLower` (Partee 1987 existential lowering)
 - monotonicity / anti-Horn-scale lemmas about the `Core.Order.Comparison.over`
   degree predicates (general)
@@ -32,17 +33,11 @@ open Core.Order
 
 variable {α : Type*} [LinearOrder α]
 
-/-- A family of propositions indexed by scale values is **upward monotone**
-    (entailments go from smaller to larger values).
-    Kennedy: "tall" — if x is tall, x is tall-or-more.
-    Rouillard: E-TIA with telic VP — if event fits in n days, it fits in m ≥ n days. -/
-def IsUpwardMonotone {W : Type*} (P : α → W → Prop) : Prop :=
-  ∀ (x y : α), x ≤ y → ∀ w, P x w → P y w
-
-/-- A family is **downward monotone**: entailments go from larger to smaller.
-    Rouillard: E-TIA with atelic VP — if sick during n-day time, sick during m ≤ n day time. -/
-def IsDownwardMonotone {W : Type*} (P : α → W → Prop) : Prop :=
-  ∀ (x y : α), x ≤ y → ∀ w, P y w → P x w
+-- A family of propositions indexed by scale values is **upward monotone**
+-- (entailments go from smaller to larger; Kennedy: if x is tall, x is
+-- tall-or-more; Rouillard: telic E-TIA) exactly when it is mathlib's
+-- `Monotone` under the pointwise order on `W → Prop` (`p ≤ q ↔ p → q`);
+-- downward monotone (atelic E-TIA) is `Antitone`. No local aliases.
 
 /-- A family is **constant**: every value yields the same proposition.
     This is information collapse — no value is more informative than another.
@@ -52,18 +47,18 @@ def IsConstant {W : Type*} (P : α → W → Prop) : Prop :=
 
 /-- If P is both upward and downward monotone, it is constant. -/
 theorem bimonotone_constant {W : Type*} (P : α → W → Prop)
-    (hUp : IsUpwardMonotone P) (hDown : IsDownwardMonotone P) :
+    (hUp : Monotone P) (hDown : Antitone P) :
     IsConstant P := by
   intro x y w
   constructor
   · intro hx
     rcases le_total x y with h | h
-    · exact hUp x y h w hx
-    · exact hDown y x h w hx
+    · exact hUp h w hx
+    · exact hDown h w hx
   · intro hy
     rcases le_total y x with h | h
-    · exact hUp y x h w hy
-    · exact hDown x y h w hy
+    · exact hUp h w hy
+    · exact hDown h w hy
 
 /-- **Informativity licensing**: a scale admits a well-defined optimum iff
     it is NOT constant. When the family is constant (information collapse),
@@ -81,7 +76,7 @@ def AdmitsOptimum {W : Type*} (P : α → W → Prop) : Prop :=
     maximally informative. This is the abstract core of why open-scale
     degree modification and atelic-VP E-TIAs are both blocked. -/
 theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
-    (hUp : IsUpwardMonotone P) (hDown : IsDownwardMonotone P) :
+    (hUp : Monotone P) (hDown : Antitone P) :
     ¬ AdmitsOptimum P :=
   fun h => h (bimonotone_constant P hUp hDown)
 
@@ -97,14 +92,6 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
     (`Mathlib.Order.Bounds.Image`). -/
 
 /-! ### Licensing Predictions (Data-Level) -/
-
-/-- Closed scales predict licensing (Kennedy: "completely full" ✓;
-    Rouillard: telic VP E-TIA ✓). -/
-theorem closed_isLicensed : Boundedness.closed.IsLicensed := trivial
-
-/-- Open scales predict blocking (Kennedy: "??completely tall";
-    Rouillard: atelic VP E-TIA ✗). -/
-theorem open_notLicensed : ¬ Boundedness.open_.IsLicensed := id
 
 /-! ### Degree Properties ([fox-hackl-2006]) -/
 
@@ -127,13 +114,9 @@ The key divergence: on ℕ, `>` collapses to `≥` with successor, so both
 have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
 This is the UDM prediction ([fox-hackl-2006]). -/
 
-/-- "At least" is downward monotone: weaker thresholds are easier to satisfy. -/
-theorem geOver_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (Comparison.ge.over μ) :=
-  fun _ _ hxy _ hy => le_trans hxy hy
-
-/-- "More than" is downward monotone: weaker thresholds are easier to satisfy. -/
-theorem gtOver_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (Comparison.gt.over μ) :=
-  fun _ _ hxy _ hy => lt_of_le_of_lt hxy hy
+-- "At least"/"more than" are threshold-antitone and "at most" is
+-- threshold-monotone: `Comparison.antitone_ge_over`, `antitone_gt_over`,
+-- `monotone_le_over` (Core/Order/Comparison.lean).
 
 /-- On ℕ, `>` collapses to `≥` with successor: "more than m" ↔ "at least m+1".
     This is the discrete equivalence that density breaks. -/
@@ -270,12 +253,6 @@ theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ 
     ¬ ∃ x, ∀ k, k = k₁ ∨ k = k₂ → x = k := by
   rintro ⟨x, h⟩
   exact hne ((h k₁ (Or.inl rfl)).symm.trans (h k₂ (Or.inr rfl)))
-
-/-! ### "At most" Symmetry (Rouillard's direction) -/
-
-/-- "At most" is upward monotone: larger thresholds are easier to satisfy. -/
-theorem leOver_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (Comparison.le.over μ) :=
-  fun _ _ hxy _ hy => le_trans hy hxy
 
 /-! IsMaxInf-flavored consequences of "at most" (`atMost_hasMaxInf`,
     `isMaxInf_atMost_iff_eq`) live in

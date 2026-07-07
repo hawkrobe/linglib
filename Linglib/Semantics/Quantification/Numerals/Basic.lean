@@ -100,7 +100,7 @@ of the corresponding `Core.Order.Comparison.over` degree property. They capture
 where `n` plays the role of `max{d | #P ≥ d}` and `m` is the numeral.
 `bareMeaning` is the exact (Kennedy) reading; the lower-bound (Horn) reading
 of bare numerals is `atLeastMeaning`. Grounding in `Comparison.over` makes the
-density predictions (`geOver_downMono`, `moreThan_noMaxInf`,
+density predictions (`Comparison.antitone_ge_over`, `moreThan_noMaxInf`,
 `atLeast_hasMaxInf`, etc.) hold by construction. -/
 
 /-- Bare numeral meaning (exact reading): `n = m`. -/
