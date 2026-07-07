@@ -181,7 +181,8 @@ substrate alone. -/
 /-- Separation state: total information over `Bool`, ordered by the
     criterion preorder for `POSWQ.sepProp` (the ordering that
     `ExpState.promote` would install from the total order). Under it
-    `false` — the unique `sepProp`-world — is the unique best world. -/
+    `false` — the unique `sepProp`-world — is the unique optimal
+    world. -/
 def sepState : ExpState Bool :=
   ⟨Set.univ, Core.Order.Normality.crit POSWQ.sepProp⟩
 
@@ -193,8 +194,8 @@ def sepPOSWQ_triv : POSWQ Bool := POSWQ.ofExpState sepState
 /-- The subjunctive operator accepts `(sepPOSWQ_triv, sepProp)`. -/
 theorem subjunctive_accepts_separation :
     VerbalMoodOp.subjunctive.interp sepPOSWQ_triv POSWQ.sepProp := by
-  intro w hbest
-  exact hbest.2 false (Set.mem_univ false) rfl
+  intro w hw
+  exact hw.2 (Set.mem_univ false) (fun _ => rfl) rfl
 
 /-- The indicative operator rejects `(sepPOSWQ_triv, sepProp)`. -/
 theorem indicative_rejects_separation :
@@ -228,13 +229,16 @@ theorem interrogative_ne_indicative :
 
 `VerbalMoodOp` is in bijection with `POSWTarget`: each operator
 *exactly* picks out one POSW component, and conversely each component
-is targeted by *exactly* one operator. [portner-2018] states the
-corresponding licensing conditions one-way and defeasibly (an
-indicative clause's context is relevantly like a root assertion); the
-biconditional form below reflects only the bijection between this
-three-element operator enum and the three components — at the
-verbal-mood layer, mood selection and POSWQ-component selection are
-the same thing by construction. -/
+is targeted by *exactly* one operator. [portner-2018] states his
+**Indicative and Subjunctive principles** one-way — "If a clause φ is
+operated on by the informational modal, its form is indicative"; "If
+a clause φ is operated on by the preference modal, its form is
+subjunctive" — with an update-based variant pair (via his (11)
+fixpoints) and the note that a theory may endorse one or both, the
+other mood arising by default. The biconditional form below reflects
+only the bijection between this three-element operator enum and the
+three components — at the verbal-mood layer, mood selection and
+POSWQ-component selection are the same thing by construction. -/
 
 theorem verbal_mood_target_informational_iff_indicative (m : VerbalMoodOp) :
     Semantics.Mood.target m = .informational ↔ m = .indicative := by

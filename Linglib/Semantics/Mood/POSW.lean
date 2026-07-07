@@ -4,15 +4,17 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 # POSW: Portner's Modal API over Expectation States
 [portner-2018] [veltman-1996] [kratzer-1981] [stalnaker-1978] [condoravdi-lauer-2012]
 
-[portner-2018]'s **partially ordered set of worlds** (POSW) — the pair
-`⟨cs, ≤⟩` of a context set and an ordering that his mood unification
-(Ch. 4) has verbal mood (Ch. 2), sentence mood (Ch. 3), and modal
-flavor operate on — is [veltman-1996]'s expectation state `ExpState`
-read at the discourse level: `info` is the Stalnakerian context set
-([stalnaker-1978]), `order` the Kratzerian ordering source
-([kratzer-1981]), `ExpState.assert` the `+`-update, and
-`ExpState.promote` the `⋆`-update ([portner-2004]'s To-Do-List
-update). Portner's central architectural insight — belief vs. desire
+[portner-2018]'s **partially ordered set of worlds** (posw, his (1),
+Ch. 4) — the pair `⟨cs, ≤⟩` of a context set and an ordering that his
+mood unification has verbal mood, sentence mood, and modal flavor
+operate on — is [veltman-1996]'s expectation state `ExpState` read at
+the discourse level, a lineage Portner makes explicit: his update
+operations (2) "build on the techniques of update logic developed by"
+[veltman-1996], with the `⋆`-update written via Veltman's `∘`
+refinement. `info` is the Stalnakerian context set ([stalnaker-1978]),
+`order` the Kratzerian ordering source ([kratzer-1981]),
+`ExpState.assert` the `+`-update (his (2a)), and `ExpState.promote`
+the `⋆`-update (his (2b); [portner-2004]'s To-Do-List update). Portner's central architectural insight — belief vs. desire
 is `□_cs` vs. `□_≤` over the same agent's state, assertion vs.
 directive is `+` vs. `⋆` over the discourse state — becomes: the two
 updates touch disjoint components (`ExpState.assert_order`,
@@ -40,9 +42,16 @@ update a *support* condition (`ExpState.le_assert_iff`,
   φ*). Connectedness can be destroyed by `promote` itself; Veltman's
   ambiguous states are exactly the disconnected ones.
 
-That the informational component is the one where support and
-necessity coincide is the type-level face of assertion's special
-status among the updates.
+The support conditions are linguistically load-bearing:
+[portner-2018]'s (11) reformulates the attitudes as update fixpoints
+— *believe* as `m + φ = m` and *want* as `m ⋆ φ = m`, extending
+[farkas-2003]'s Heim-style assertive fixpoint to the preferential
+side — so his (11a)/(11b) are exactly `ExpState.le_assert_iff` /
+`ExpState.le_promote_iff`, and `boxLe_of_respects` is the formal
+relation between his two semantics for *want* (the modal (5b) vs. the
+fixpoint (11b)). That the informational component is the one where
+support and necessity coincide is the type-level face of assertion's
+special status among the updates.
 
 **Caveat** on the preferential side: [condoravdi-lauer-2012]'s
 *preference structures* are strict partial orders on **propositions**,
@@ -59,36 +68,22 @@ open Core.Order
 
 variable {W : Type*}
 
-/-- **Informational necessity** `□_cs` ([portner-2018], Ch. 2): `p`
+/-- **Informational necessity** `□_cs` ([portner-2018], (3a)): `p`
     holds at every world in the information state. The semantics of
-    `believe` and the Stalnakerian context-set entailment. -/
+    `believe` (his (5a)) and the Stalnakerian context-set
+    entailment. -/
 def boxCs (σ : ExpState W) (p : W → Prop) : Prop :=
   ∀ w ∈ σ.info, p w
 
-/-- Portner's **best** worlds: members of the information state at
-    least as good as every other member — `IsLeast σ.info` under the
-    state's ordering, as `ExpState.optimal` is its `Minimal`. These
-    are [veltman-1996]'s *normal* worlds relativized to the fact set;
-    his *optimal* worlds (`ExpState.optimal`) require only
-    non-domination, so `best ⊆ optimal`, with equality on connected
-    orders. -/
-def best (σ : ExpState W) : Set W :=
-  {w ∈ σ.info | ∀ v ∈ σ.info, σ.order.le w v}
-
-/-- **Preferential necessity** `□_≤` ([portner-2018], Ch. 2): `p`
-    holds at every `≤`-best world of the information state. The
-    semantics of `want` and Kratzerian deontic/bouletic modals
-    ([kratzer-1981], [condoravdi-lauer-2012]). -/
+/-- **Preferential necessity** `□_≤` ([portner-2018], (3b)): `p`
+    holds at every optimal (best-ranked) world of the information
+    state — Portner's `m_c` is `ExpState.optimal`, "worlds compared
+    to which there are no higher-ranked worlds". The semantics of
+    `want` (his (5b)) and Kratzerian deontic/bouletic modals
+    ([kratzer-1981], [condoravdi-lauer-2012]); also exactly the test
+    condition of [veltman-1996]'s *presumably* (`presumablyTest`). -/
 def boxLe (σ : ExpState W) (p : W → Prop) : Prop :=
-  ∀ w ∈ σ.best, p w
-
-theorem best_subset_optimal (σ : ExpState W) : σ.best ⊆ σ.optimal :=
-  fun _ hw => ⟨hw.1, fun v hv _ => hw.2 v hv⟩
-
-theorem best_eq_optimal_of_connected (σ : ExpState W)
-    (hconn : Normality.connected σ.order) : σ.best = σ.optimal :=
-  Set.Subset.antisymm σ.best_subset_optimal
-    (fun w hw => ⟨hw.1, fun v hv => (hconn w v).elim id (fun h => hw.2 hv h)⟩)
+  ∀ w ∈ σ.optimal, p w
 
 /-- `□_cs` is upward monotone. -/
 theorem boxCs_mono (σ : ExpState W) (p q : W → Prop)
@@ -124,19 +119,21 @@ theorem le_assert_iff_boxCs (σ : ExpState W) (p : W → Prop) :
   σ.le_assert_iff p
 
 /-- **Support implies preferential necessity on connected orders**
-    ([veltman-1996]'s *normally φ ⊩ presumably φ*): if the ordering
-    already respects `p` (the `promote`-support condition,
-    `ExpState.le_promote_iff`) and is connected, and the information
-    state has a `p`-world, then `p` holds at every best world. The
-    converse fails, and without connectedness so does this direction —
-    Veltman's ambiguous states. -/
+    ([veltman-1996]'s *normally φ ⊩ presumably φ*, and the bridge
+    between [portner-2018]'s fixpoint semantics for *want* (11b) and
+    his modal semantics (5b)): if the ordering already respects `p`
+    (the `promote`-support condition, `ExpState.le_promote_iff`) and
+    is connected, and the information state has a `p`-world, then `p`
+    holds at every optimal world. The converse fails, and without
+    connectedness so does this direction — Veltman's ambiguous
+    states. -/
 theorem boxLe_of_respects (σ : ExpState W) (p : W → Prop)
     (hresp : Normality.respects σ.order p)
     (hconn : Normality.connected σ.order)
     (hex : ∃ w ∈ σ.info, p w) : σ.boxLe p :=
   fun _ hw =>
     (Normality.optimal_of_respects_connected σ.order p σ.info hresp hconn hex
-      (σ.best_subset_optimal hw)).2
+      hw).2
 
 end Semantics.Dynamic.Default.ExpState
 
@@ -173,6 +170,6 @@ instance (σ : ExpState W) : NormalModality W σ.boxCs where
 
 instance (σ : ExpState W) : NormalModality W σ.boxLe where
   necessitation := fun _ _ => trivial
-  K _ _ hpq hp w hbest := hpq w hbest (hp w hbest)
+  K _ _ hpq hp w hopt := hpq w hopt (hp w hopt)
 
 end Semantics.Mood
