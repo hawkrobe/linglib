@@ -268,8 +268,8 @@ theorem klein_strict_weak_order {Entity : Type*}
     -- (ii) Negatively transitive
     (∀ u v w, ordering delineation cc u w →
       ordering delineation cc u v ∨ ordering delineation cc v w) :=
-  ⟨ordering_asymm delineation hmono cc,
-   fun u v w => ordering_neg_trans delineation cc u v w⟩
+  ⟨fun _ _ => ordering_asymm delineation hmono,
+   fun _ _ _ => ordering_neg_trans delineation⟩
 
 /-- Transitivity as a corollary of the strict weak order properties:
     asymmetry + negative transitivity → transitivity. This shows the
@@ -283,8 +283,8 @@ theorem klein_transitivity_derived {Entity : Type*}
   intro huv hvw
   -- Apply negative transitivity on v > w with u as the middle entity:
   -- gives v > u ∨ u > w
-  rcases ordering_neg_trans delineation cc v u w hvw with h | h
-  · exact absurd h (ordering_asymm delineation hmono cc u v huv)
+  rcases ordering_neg_trans (v := u) delineation hvw with h | h
+  · exact absurd h (ordering_asymm delineation hmono huv)
   · exact h
 
 /-- Almost connected: incomparable entities are nondistinct. Combined
@@ -301,7 +301,7 @@ theorem klein_almost_connected {Entity : Type*}
   · exact Or.inl h1
   · by_cases h2 : ordering delineation cc v u
     · exact Or.inr (Or.inl h2)
-    · exact Or.inr (Or.inr (nondistinct_of_incomparable delineation cc u v h1 h2))
+    · exact Or.inr (Or.inr (nondistinct_of_incomparable h1 h2))
 
 -- ════════════════════════════════════════════════════
 -- § 7. Bridge: kleinPreorder = kampPreorder (over Set.univ)
