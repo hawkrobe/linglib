@@ -50,12 +50,12 @@ inductive HaspelmathFunction where
   | question
   /-- Function 5: Conditional protasis. -/
   | conditional
-  /-- Function 6: Standard of comparison. -/
+  /-- Function 8: Standard of comparison. -/
   | comparative
-  /-- Function 7: Indirect negation (superordinate or implicit negation:
+  /-- Function 6: Indirect negation (superordinate or implicit negation:
       *without*, *doubt*, *deny*). -/
   | indirectNeg
-  /-- Function 8: Direct (clause-mate) negation. -/
+  /-- Function 7: Direct (clause-mate) negation. -/
   | directNeg
   /-- Function 9: Free choice. -/
   | freeChoice
@@ -66,24 +66,31 @@ def HaspelmathFunction.all : List HaspelmathFunction :=
   [ .specificKnown, .specificUnknown, .irrealis, .question
   , .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice ]
 
-/-- Adjacency on [haspelmath-1997]'s implicational map.
+/-- Adjacency on [haspelmath-1997]'s implicational map (Fig. 4.4, verified
+    against the book): two-dimensional, with the specificity chain feeding
+    parallel question and conditional tracks.
 
     ```
-    specKnown — specUnknown — irrealis — question — conditional — indNeg — dirNeg
-                                                                              |
-                                                    freeChoice — comparative —+
+                          (4) question —— (6) indirect neg —— (7) direct neg
+                               |                |
+    (1) SK — (2) SU — (3) irr <
+                               |                |
+                          (5) conditional — (8) comparative — (9) free choice
     ```
 
-    Crucial typological claim: any indefinite series covers a *contiguous* region. -/
+    Edges: 1–2, 2–3, 3–4, 3–5, 4–5, 4–6, 5–8, 6–7, 6–8, 8–9. Note direct
+    negation hangs off indirect negation only, and comparative links
+    conditional, indirect negation, and free choice. Crucial typological
+    claim: any indefinite series covers a *contiguous* region. -/
 def HaspelmathFunction.adjacent : HaspelmathFunction → List HaspelmathFunction
   | .specificKnown   => [.specificUnknown]
   | .specificUnknown => [.specificKnown, .irrealis]
-  | .irrealis        => [.specificUnknown, .question]
-  | .question        => [.irrealis, .conditional]
-  | .conditional     => [.question, .indirectNeg]
-  | .indirectNeg     => [.conditional, .directNeg]
-  | .directNeg       => [.indirectNeg, .comparative]
-  | .comparative     => [.directNeg, .freeChoice]
+  | .irrealis        => [.specificUnknown, .question, .conditional]
+  | .question        => [.irrealis, .conditional, .indirectNeg]
+  | .conditional     => [.irrealis, .question, .comparative]
+  | .indirectNeg     => [.question, .directNeg, .comparative]
+  | .directNeg       => [.indirectNeg]
+  | .comparative     => [.conditional, .indirectNeg, .freeChoice]
   | .freeChoice      => [.comparative]
 
 /-- Is `f` a downward-entailing / nonveridical context (the classical

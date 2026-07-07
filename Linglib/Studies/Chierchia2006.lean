@@ -1,4 +1,4 @@
-import Linglib.Studies.Haspelmath1997Polarity
+import Linglib.Studies.Haspelmath1997
 import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
@@ -56,7 +56,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 
 namespace Chierchia2006
 
-open Haspelmath1997Polarity
+open Haspelmath1997
 open Indefinite
 open Chierchia2013 (FCIFlavor)
 open Farsi.Determiners (EFCIRescue)
@@ -298,9 +298,15 @@ theorem english_anyFC_matches :
     functionsSubset (seriesFunctions english "any- (FC)")
       npiFCI.predictedFunctions = true := by decide
 
--- German: irgendwer ⊆ EFCI NPI/FCI eligible region
+-- German: irgendwer ⊆ EFCI NPI/FCI eligible region, modulo specific-unknown.
+-- The book-verified paradigm row ([haspelmath-1997] A.1, Table 4.1:
+-- *irgend* 2345689) includes specificUnknown — the Kratzer–Shimoyama
+-- ignorance reading — which `predictedFunctions` (isDE ∪ isFC ∪ irrealis)
+-- does not generate. The exemption records that gap in Chierchia's
+-- eligibility encoding rather than hiding it in the data.
 theorem german_irgendwer_matches :
-    functionsSubset (seriesFunctions german "irgendwer")
+    functionsSubset
+      ((seriesFunctions german "irgendwer").filter (· != .specificUnknown))
       efciNpiFci.predictedFunctions = true := by decide
 
 -- Mandarin: 谁 covers the full NPI/FCI eligible region

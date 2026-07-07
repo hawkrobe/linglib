@@ -1,5 +1,5 @@
 import Linglib.Studies.DeganoAloni2025
-import Linglib.Studies.Haspelmath1997Polarity
+import Linglib.Studies.Haspelmath1997
 import Linglib.Morphology.Containment.Superset
 import Linglib.Syntax.Case.Order
 import Linglib.Studies.Dekier2021
@@ -339,7 +339,7 @@ theorem irgend_compatible_classifications :
 -- it could equally live inside DeganoAloni2025.lean since neither paper
 -- explicitly cites the Haspelmath-side English some- encoding.
 
-open Haspelmath1997Polarity in
+open Haspelmath1997 in
 /-- **Russian *kto-to*: within-D&A interpretive disagreement.** Both encodings
     apply D&A 2025's classification, but reach different `functions` sets:
     the Polarity-side file (`Polarity/Studies/Haspelmath1997.lean:226`)
@@ -355,7 +355,7 @@ theorem fragment_polarity_disagree_on_kto_to :
     russian.forms[1]?.map (·.functions) ≠
     some Russian.Indefinites.toEntry.functions := by decide
 
-open Haspelmath1997Polarity in
+open Haspelmath1997 in
 /-- **English *some-*: genuine cross-framework disagreement.** The Fragment
     (`Fragments/English/Indefinites.lean:27`) encodes *some-* as D&A type-i
     unmarked, profile {SK, SU, irrealis} — *some-* covers everything D&A's

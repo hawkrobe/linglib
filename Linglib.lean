@@ -2304,7 +2304,6 @@ import Linglib.Studies.Haslinger2025
 import Linglib.Studies.HaslingerEtAl2025
 import Linglib.Studies.HaslingerHienEtAl2025
 import Linglib.Studies.Haspelmath1997
-import Linglib.Studies.Haspelmath1997Polarity
 import Linglib.Studies.Haspelmath2001
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.Haspelmath2021
