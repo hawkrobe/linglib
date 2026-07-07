@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.State
 
 /-!

@@ -1,6 +1,6 @@
 import Linglib.Semantics.TypeTheoretic.Basic
 import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Defs
 import Linglib.Features.ClauseForm
 
 /-!

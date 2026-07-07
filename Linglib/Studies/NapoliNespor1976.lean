@@ -2,7 +2,7 @@ import Linglib.Pragmatics.Bias
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Napoli & Nespor (1976): Negatives in Comparatives [napoli-nespor-1976]

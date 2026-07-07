@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Component
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Verbal Mood as State Component Selection
@@ -79,7 +79,7 @@ variable {W : Type*}
     `.subjunctive` cases are [portner-2018]'s; `.interrogative`
     is our extension to question-embedding predicates. The
     `crossLinguistic` and `neutral` cases of `Selector`
-    (Mood/Categories.lean) project to `none` via
+    (Mood/Defs.lean) project to `none` via
     `Selector.toVerbalOp` because their selection pattern is
     not committed to a single State component by lexical class
     alone. -/
@@ -254,7 +254,7 @@ theorem verbal_mood_target_inquisitive_iff_interrogative (m : VerbalOp) :
 
 /-! ### Bridge to `Selector`
 
-The `Selector` enum (Mood/Categories.lean, taxonomic by predicate
+The `Selector` enum (Mood/Defs.lean, taxonomic by predicate
 class — knowledge/belief, preference/desire, etc.) projects onto
 `VerbalOp` for the predicate classes that select the *same*
 mood across [portner-2018]'s indicative/subjunctive languages.

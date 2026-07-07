@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Searlean Speech Acts: F(p) and S(r)

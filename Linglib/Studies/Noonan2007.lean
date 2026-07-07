@@ -1,7 +1,7 @@
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-! # Noonan (2007): Complementation Typology + Bridge Theorems
@@ -34,7 +34,7 @@ subject omission is pro-drop, not Noonan-equi; English *hope* has
 Five bridges connecting CTPClass to existing infrastructure:
 1. CTPClass ↔ VerbEntry (Verbal.lean) — derive CTP class from verb features
 2. CTPClass ↔ SelectionClass (LeftPeriphery.lean) — map CTP to question embedding
-3. CTPClass ↔ Selector (Mood/Categories.lean) — map CTP to mood selection
+3. CTPClass ↔ Selector (Mood/Defs.lean) — map CTP to mood selection
 4. ComplementType ↔ NoonanCompType — via the substrate adapter
    `ComplementType.toNoonan` (`Syntax/Clause/Complementation.lean`)
 5. VerbEntry → Selector — derive mood selection from verb features
@@ -308,7 +308,7 @@ theorem ctp_selection_consistent_ask :
     ctpToDefaultSelectionClass .utterance = deriveSelectionClass ask := by native_decide
 
 -- ============================================================================
--- C. Bridge 3: CTPClass ↔ Selector (Mood/Categories.lean)
+-- C. Bridge 3: CTPClass ↔ Selector (Mood/Defs.lean)
 -- ============================================================================
 
 /-! ## C1. Map CTP classes to mood selection
@@ -373,7 +373,7 @@ theorem clausal_complements_have_noonan_type :
 /-! ## E1. Derive Selector from VerbEntry fields
 
 This is placed in Bridge.lean (not Verbal.lean) to avoid circular imports:
-it needs both Verbal and Mood/Categories. Follows the `deriveSelectionClass` pattern. -/
+it needs both Verbal and Mood/Defs. Follows the `deriveSelectionClass` pattern. -/
 
 /-- Derive mood selection from a VerbEntry's primitive fields.
 

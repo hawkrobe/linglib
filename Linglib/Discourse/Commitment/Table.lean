@@ -1,6 +1,6 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
-import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # The Table Model

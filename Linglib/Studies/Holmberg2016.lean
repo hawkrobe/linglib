@@ -2,7 +2,7 @@ import Linglib.Features.AnsweringSystem
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Semantics.Mood.ClauseType
+import Linglib.Semantics.Mood.Defs
 import Linglib.Features.Polarity
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.German.PolarityMarking

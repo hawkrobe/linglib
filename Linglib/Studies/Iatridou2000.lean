@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Exclusion
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 import Linglib.Data.Examples.Iatridou2000
 import Linglib.Fragments.English.Conditionals
 import Mathlib.Data.Finset.Basic

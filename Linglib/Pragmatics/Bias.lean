@@ -1,5 +1,5 @@
 import Linglib.Semantics.Negation.Expletive
-import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Bias-Conditioned Negation: A Shared Licensing Predicate

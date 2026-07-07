@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Assert
+import Linglib.Semantics.Mood.Assert
 
 /-!
 # French Modal Auxiliaries and Modal Constructions
@@ -41,7 +41,7 @@ in position-sensitive flavor selection ([hacquard-2006]).
 namespace French.Modals
 
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
-open Semantics.Modality.Assert (primaryFlavor)
+open Semantics.Mood.Assert (primaryFlavor)
 open Semantics.Mood (Illocutionary)
 
 

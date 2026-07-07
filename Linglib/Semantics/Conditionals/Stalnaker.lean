@@ -1,6 +1,6 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Discourse.CommonGround
 
