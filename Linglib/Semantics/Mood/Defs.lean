@@ -4,28 +4,30 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mood Categories
-[holmberg-2016] [rizzi-1997] [lakoff-1970]
 
-The definitions core of `Semantics/Mood/`: the category enums for
-grammatical mood and illocutionary force, their cross-product
-`ClauseType`, the lexical classification of mood-selecting predicates,
-and the corpus bridge from `UD.Mood`. This file carries the categories
-only; their semantics lives in the sibling `Semantics/Mood/` files
-(`Situation`, `Eventuality`, `Dynamic`, `Component`, `Modal`, `State`,
-`Verbal`, `SpeechEvent`), and the discourse-act extensions of force
-(Searle classes, direction of fit) in `Discourse/SpeechAct.lean`.
+A clause carries two independent mood dimensions: an illocutionary
+force (the speech-act type — the F in F(p)) and a grammatical mood
+(the indicative/subjunctive verb morphology). The dimensions cross
+freely ([holmberg-2016]): a polar question is [interrogative,
+indicative], while the Spanish deliberative "¿Que duerma?" is
+[interrogative, subjunctive]. This file defines the two category
+enums, their pairing `ClauseType`, the mood-selection classes of
+embedding predicates, and the bridge from the UD `Mood` feature;
+the semantics of the categories lives in the sibling
+`Semantics/Mood/` files.
 
 ## Main declarations
 
 * `Grammatical`, `SubjunctiveType` — verb-morphological mood.
-* `Illocutionary`, `Illocutionary.authority` — speech-act force
-  (the F in F(p)) and its epistemic-authority assignment.
-* `ClauseType` — force × mood. The dimensions are independent
-  ([holmberg-2016]): a clause can be [interrogative, indicative]
-  ("Does he sleep?") or [interrogative, subjunctive] (Spanish "¿Que
-  duerma?"). Both are distinct from `SpeasTenny2003.SAPMood`.
+* `Illocutionary`, `Illocutionary.authority` — speech-act force and
+  its epistemic-authority assignment.
+* `ClauseType` — force × mood.
 * `Selector` — mood selection by embedding predicate class.
 * `UD.Mood.toClauseType` — corpus bridge.
+
+Discourse-act extensions of force (Searle classes, direction of fit)
+live in `Discourse/SpeechAct.lean`, keeping the category layer free of
+pragmatic-act commitments.
 -/
 
 namespace Semantics.Mood
