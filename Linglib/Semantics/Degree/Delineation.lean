@@ -55,8 +55,8 @@ Klein handles degree modifiers via comparison-class narrowing (§4.1,
 eqs 42–43) and measure phrases via equivalence classes on a measurement
 scale (§4.2), though the degree-based treatment is arguably more direct.
 
-For the formal subsumption hierarchy (Klein ← Kennedy ← Measurement),
-see `Semantics/Comparison/Hierarchy.lean`.
+For the representation maps between the frameworks (Klein ← Kennedy ←
+Measurement) and the strict-separation theorem, see `Degree/Hom.lean`.
 -/
 
 namespace Degree.Delineation
@@ -369,8 +369,7 @@ theorem measureDelineation_monotone {E D : Type*} [LinearOrder D]
   intro C₁ C₂ _ _ a b ha hnotb hb
   obtain ⟨y₁, hy₁, hlt_a⟩ := ha
   obtain ⟨y₂, hy₂, hlt_b⟩ := hb
-  have hle : μ b ≤ μ y₁ := by
-    by_contra h; push_neg at h; exact hnotb ⟨y₁, hy₁, h⟩
+  have hle : μ b ≤ μ y₁ := not_lt.mp fun h => hnotb ⟨y₁, hy₁, h⟩
   exact ⟨y₂, hy₂, lt_trans hlt_b (lt_of_le_of_lt hle hlt_a)⟩
 
 /-- For a fixed entity x, `measureDelineation μ · x` is `Monotone` in
@@ -393,8 +392,7 @@ theorem ordering_implies_degree {E D : Type*} [LinearOrder D]
     ordering (measureDelineation μ) cc a b → μ b < μ a := by
   intro ⟨_, _, hpos, hneg⟩
   obtain ⟨y, hy, hlt⟩ := hpos
-  have hle : μ b ≤ μ y := by
-    by_contra h; push_neg at h; exact hneg ⟨y, hy, h⟩
+  have hle : μ b ≤ μ y := not_lt.mp fun h => hneg ⟨y, hy, h⟩
   exact lt_of_le_of_lt hle hlt
 
 /-- **Backward**: degree ordering entails Klein's ordering
@@ -529,24 +527,20 @@ theorem fairly_excludes_very {Entity : Type*}
     uniformly without going through any paper-specific anchor file.
 
     [bochnak-2015] eq. (28a) **Consistency Constraint a** is exactly
-    `IsMonotoneDelineation _ Set.univ` (§4 above) — no separate
-    typeclass needed.
+    `IsMonotoneDelineation _ Set.univ` — no separate typeclass needed.
 
     ## Cross-framework engagement
 
-    - **`Hierarchy.lean`**: the measure-induced instance theorems below
-      factor through `ordering_implies_degree` and
-      `degree_implies_ordering` from `Hierarchy.lean`'s established
-      bridge content. `comparativeSem_iff_of_sound_and_complete`
-      instantiated at `measureDelineation μ` is the `Set.univ`
-      restriction of `ordering_iff_degree μ Set.univ`.
+    - **`Degree/Hom.lean`**: the measure-induced instances below factor
+      through `ordering_implies_degree` / `degree_implies_ordering`;
+      `comparativeSem_iff_of_sound_and_complete` at `measureDelineation μ`
+      is the `Set.univ` restriction of `ordering_iff_degree`.
     - **[kamp-1975]**: `IsCompleteDelineation`'s "R-distinguished
       pairs admit a discriminating context" is the existential dual of
-      Kamp's preorder universal `∀ C, del C v → del C u`. For monotone
-      delineations, the equivalence fires via `comparativeSem ↔
-      kleinPreorder.lt` (§12 above).
-    - **[fine-1975]**: `monotone_comparative_superTrue` (§5 above)
-      shows monotonicity carries `comparativeSem` into Fine's super-true
+      Kamp's preorder universal `∀ C, del C v → del C u`
+      (`kleinPreorder`).
+    - **[fine-1975]**: `monotone_comparative_superTrue` shows
+      monotonicity carries `comparativeSem` into Fine's super-true
       entailment. CC-b is the delineation-side statement of the same
       supervaluationist content under the Klein↔Fine duality.
     - **Tension with [cobreros-etal-2012]**: CC-b
@@ -563,8 +557,7 @@ theorem fairly_excludes_very {Entity : Type*}
     not constrained to be a strict order or scale-induced.
 
     Generalises [bochnak-2015] eq. (28b) from the measure-induced
-    case to arbitrary relations. The Bochnak citation tag is preserved
-    in `ConsistencyConstraints.lean`. -/
+    case to arbitrary relations. -/
 class IsSoundDelineation {Entity : Type*}
     (del : ComparisonClass Entity → Entity → Prop)
     (R : Entity → Entity → Prop) : Prop where
