@@ -71,6 +71,7 @@ matrix predicate (`Selector` for declarative-embedders;
 namespace Mood
 
 open Semantics.Dynamic.Default
+open HasTarget (target)
 
 variable {W : Type*}
 
@@ -110,13 +111,13 @@ instance : HasTarget VerbalOp where
     | .interrogative => .inquisitive
 
 @[simp] theorem target_indicative :
-    Mood.target VerbalOp.indicative = .informational := rfl
+    target VerbalOp.indicative = .informational := rfl
 
 @[simp] theorem target_subjunctive :
-    Mood.target VerbalOp.subjunctive = .preferential := rfl
+    target VerbalOp.subjunctive = .preferential := rfl
 
 @[simp] theorem target_interrogative :
-    Mood.target VerbalOp.interrogative = .inquisitive := rfl
+    target VerbalOp.interrogative = .inquisitive := rfl
 
 /-- Compositional interpretation of a verbal-mood operator against an
     embedding State and an embedded proposition: run the necessity
@@ -133,7 +134,7 @@ def VerbalOp.interp (m : VerbalOp) : State W → (W → Prop) → Prop :=
     definition: `target` is not just a typological label. -/
 @[simp] theorem interp_eq_target_boxOn (m : VerbalOp) (c : State W)
     (p : W → Prop) :
-    m.interp c p = (Mood.target m).boxOn c p := rfl
+    m.interp c p = (target m).boxOn c p := rfl
 
 /-! ### Definitional equalities -/
 
@@ -240,15 +241,15 @@ three components — at the verbal-mood layer, mood selection and
 State-component selection are the same thing by construction. -/
 
 theorem verbal_mood_target_informational_iff_indicative (m : VerbalOp) :
-    Mood.target m = .informational ↔ m = .indicative := by
+    target m = .informational ↔ m = .indicative := by
   cases m <;> decide
 
 theorem verbal_mood_target_preferential_iff_subjunctive (m : VerbalOp) :
-    Mood.target m = .preferential ↔ m = .subjunctive := by
+    target m = .preferential ↔ m = .subjunctive := by
   cases m <;> decide
 
 theorem verbal_mood_target_inquisitive_iff_interrogative (m : VerbalOp) :
-    Mood.target m = .inquisitive ↔ m = .interrogative := by
+    target m = .inquisitive ↔ m = .interrogative := by
   cases m <;> decide
 
 /-! ### Bridge to `Selector`
@@ -329,6 +330,6 @@ def QuestionEmbedder.toVerbalOp : QuestionEmbedder → VerbalOp :=
     interrogative column are reached by *disjoint* lexical-class
     enums, with no overlap and no gap. -/
 theorem QuestionEmbedder.toVerbalOp_target (q : QuestionEmbedder) :
-    Mood.target q.toVerbalOp = .inquisitive := rfl
+    target q.toVerbalOp = .inquisitive := rfl
 
 end Mood

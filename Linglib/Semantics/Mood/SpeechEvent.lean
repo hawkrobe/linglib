@@ -53,6 +53,7 @@ namespace Mood
 
 open Semantics.Dynamic.Default
 open Semantics.Modality (ModalFlavor)
+open HasTarget (target)
 open Semantics.Modality.EventRelativity (EventProjection)
 
 variable {W : Type*}
