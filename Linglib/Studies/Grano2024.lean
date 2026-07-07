@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Eventuality
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Studies.Noonan2007
@@ -50,7 +50,7 @@ When neither departure is present, only indicative mood is possible.
 namespace Grano2024
 
 open Semantics.Lexical
-open Semantics.Mood (Grammatical Effect)
+open Semantics.Mood (Grammatical EventDenotation)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
 
@@ -194,38 +194,41 @@ theorem hope_selector_matches_data :
   native_decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. Bridge: Effect → Indicative Rejection
+-- § 4. Bridge: Event Denotation → Indicative Rejection
 -- ════════════════════════════════════════════════════════════════
 
-/-- Indicative mood closes the eventuality argument. Therefore,
-    predicates requiring eventuality abstraction (CAUSE* binds the
-    event variable) reject indicative complements.
+/-- Indicative mood closes the eventuality argument: its event-level
+    denotation lands in the `closed` constructor, so predicates
+    requiring eventuality abstraction (CAUSE* binds the event
+    variable) reject indicative complements.
 
     This is the formal correlate of [grano-2024]'s argument chain:
     Premise 2 (CAUSE* needs open event arg) + Premise 3 (IND closes it)
     → Conclusion (intention reports reject IND). -/
-theorem ind_incompatible_with_eventuality_abstraction :
-    Grammatical.indicative.effect.eventualityOpen = false := rfl
+theorem ind_incompatible_with_eventuality_abstraction {E : Type*} (P : E → Prop) :
+    Grammatical.indicative.eventDenotation P = .closed (∃ e, P e) := rfl
 
-/-- Subjunctive mood leaves the eventuality argument open, enabling
-    CAUSE* to bind it. This is why 'intend' and causatives accept SBJV. -/
-theorem subj_enables_eventuality_abstraction :
-    Grammatical.subjunctive.effect.eventualityOpen = true := rfl
+/-- Subjunctive mood leaves the eventuality argument open — its
+    denotation lands in `abstracted` with the predicate intact —
+    enabling CAUSE* to bind it. This is why 'intend' and causatives
+    accept SBJV. -/
+theorem subj_enables_eventuality_abstraction {E : Type*} (P : E → Prop) :
+    Grammatical.subjunctive.eventDenotation P = .abstracted P := rfl
 
 /-- The three-premise argument chain:
     1. `intentionHolds` requires P : E → W → Event Time → Prop (open event arg)
-    2. IND closes the event argument (eventualityOpen = false)
-    3. SBJV leaves it open (eventualityOpen = true)
+    2. IND closes the event argument (`eventDenotation` lands in `closed`)
+    3. SBJV leaves it open (`eventDenotation` lands in `abstracted`)
     → intention reports require SBJV, reject IND -/
 theorem grano_argument_chain :
-    -- Premise 3: IND closes, SBJV opens
-    Grammatical.indicative.effect.eventualityOpen = false ∧
-    Grammatical.subjunctive.effect.eventualityOpen = true ∧
+    -- Premise 3: IND closes, SBJV opens (event denotations by constructor)
+    (∀ P : Unit → Prop, Grammatical.indicative.eventDenotation P = .closed (∃ e, P e)) ∧
+    (∀ P : Unit → Prop, Grammatical.subjunctive.eventDenotation P = .abstracted P) ∧
     -- Empirical confirmation: intend rejects IND
     intendData.all (·.rejectsIndicative) = true ∧
     -- Empirical confirmation: causatives also reject IND (independent support)
     causativeData.all (·.rejectsIndicative) = true := by
-  refine ⟨rfl, rfl, ?_, ?_⟩ <;> native_decide
+  refine ⟨fun _ => rfl, fun _ => rfl, ?_, ?_⟩ <;> native_decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Bridge: Unified Theory — Two Kinds of Departure

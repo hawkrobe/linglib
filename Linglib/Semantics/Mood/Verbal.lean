@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Component
-import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Categories
 
 /-!
 # Verbal Mood as State Component Selection
@@ -79,7 +79,7 @@ variable {W : Type*}
     `.subjunctive` cases are [portner-2018]'s; `.interrogative`
     is our extension to question-embedding predicates. The
     `crossLinguistic` and `neutral` cases of `Selector`
-    (Mood/Basic.lean) project to `none` via
+    (Mood/Categories.lean) project to `none` via
     `Selector.toVerbalOp` because their selection pattern is
     not committed to a single State component by lexical class
     alone. -/
@@ -254,7 +254,7 @@ theorem verbal_mood_target_inquisitive_iff_interrogative (m : VerbalOp) :
 
 /-! ### Bridge to `Selector`
 
-The `Selector` enum (Mood/Basic.lean, taxonomic by predicate
+The `Selector` enum (Mood/Categories.lean, taxonomic by predicate
 class — knowledge/belief, preference/desire, etc.) projects onto
 `VerbalOp` for the predicate classes that select the *same*
 mood across [portner-2018]'s indicative/subjunctive languages.
@@ -279,14 +279,6 @@ def Selector.toVerbalOp : Selector → Option VerbalOp
   | .subjunctiveSelecting         => some .subjunctive
   | .crossLinguisticallyVariable  => none
   | .moodNeutral                  => none
-
-/-- The `prefersSubjunctive` boolean (Mood/Basic.lean) and the
-    `toVerbalOp` projection agree on whether the result is the
-    subjunctive operator. Two surface representations of the same
-    lexical-class commitment, equivalent by construction. -/
-theorem prefersSubjunctive_eq_subjunctive (m : Selector) :
-    prefersSubjunctive m = true ↔ m.toVerbalOp = some .subjunctive := by
-  cases m <;> simp [prefersSubjunctive, Selector.toVerbalOp]
 
 /-- `Selector.toVerbalOp` never projects to `.interrogative`:
     the declarative-complement classification is *closed* under the

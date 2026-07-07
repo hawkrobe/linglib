@@ -1,6 +1,6 @@
 import Linglib.Semantics.Context.Tower
 import Linglib.Semantics.Context.Shifts
-import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Situation
 
 /-!
 # Exclusion features and X/O-marking strategies

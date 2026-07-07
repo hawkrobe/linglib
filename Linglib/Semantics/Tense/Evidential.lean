@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Compositional
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Categories
 import Linglib.Semantics.Context.Shifts
 
 /-!

@@ -1,44 +1,33 @@
-/-
-# Mood Semantics
-
-Semantic operators for grammatical mood (IND, SUBJ), operating at two
-independent levels:
-
-## Two Dimensions of Mood
-
-**Situation-level** ([mendes-2025]): Mood operators function like
-determiners for situations:
-- **SUBJ**: Introduces a new situation dref (like indefinite "a")
-- **IND**: Retrieves/uses an existing situation (like definite "the")
-
-**Event-level** ([grano-2024]): Mood morphemes existentially close
-or leave open the complement clause's eventuality argument:
-- **IND**: ∃e.P(e) — existentially closes, yielding a proposition
-- **SBJV₁**: P — leaves open, enabling eventuality abstraction
-- **SBJV₂**: P + CAUSE* — leaves open with causal self-reference (intentions)
-
-These dimensions are complementary: situation introduction enables temporal
-anchoring, while eventuality openness enables abstraction (required by
-causatives, intention reports, aspectual predicates, memory/perception reports).
-
-## Subordinate Future
-
-The "Subordinate Future" (SF) in Portuguese/Spanish:
-- Uses present morphology for future reference in subordinate contexts
-- Is actually **subjunctive** - introduces a situation dref
-- This dref is retrieved by the main clause for temporal anchoring
-
-## CDRT Connection
-
-In CDRT, these operators compose dynamically:
-- SUBJ introduces a situation variable and updates the context
-- IND retrieves a situation from the context
-
--/
-
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Context.Shifts
-import Linglib.Semantics.Mood.Categories
+
+/-!
+# Situation-Level Mood Operators
+[mendes-2025]
+
+[mendes-2025]'s mood operators work like determiners for situations:
+`SUBJ` introduces a new situation dref constrained to the historical
+alternatives of the anchor (like indefinite *a*), `IND` retrieves an
+existing situation and tests same-worldhood (like definite *the*).
+This is the situation-level dimension of grammatical mood — see
+`Semantics/Mood/Eventuality.lean` for the complementary event-level
+dimension ([grano-2024]) and `Semantics/Mood/Dynamic.lean` for the
+dynamic lifts (`dynSUBJ` generative, `dynIND` eliminative).
+
+The Subordinate Future (SF) of Portuguese/Spanish — present morphology
+with future reference in subordinate contexts — is [mendes-2025]'s
+main application: SF is subjunctive, introducing a future situation
+dref that the main clause retrieves for temporal anchoring
+(`conditionalSF`).
+
+## Main declarations
+
+* `SitPred`, `sameWorld` — situation predicates and the modal kernel.
+* `SUBJ`, `IND` — the situation-level mood operators.
+* `conditionalSF` — the SF conditional.
+* `nonVeridical`, `subj_nonveridical` — subjunctive non-veridicality.
+* `subjShift`, `subj_as_tower_push` — SUBJ as a tower context shift.
+-/
 
 namespace Semantics.Mood
 
@@ -107,103 +96,6 @@ def IND {W Time : Type*}
     (P : SitPred W Time)
     (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
   sameWorld s₂ s₁ ∧ P s₂ s₁
-
--- ════════════════════════════════════════════════════════════════
--- § Event-Level Mood Operators ([grano-2024])
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Mood as Event Closure
-
-[grano-2024] proposes that mood morphemes operate on the eventuality
-argument of the complement clause:
-
-- **IND**: existentially closes the eventuality argument (87),
-  yielding a proposition
-- **SBJV₁**: leaves the eventuality argument open (88a),
-  yielding an event predicate (identity function)
-- **SBJV₂**: leaves the eventuality argument open AND requires
-  causal self-reference (134), for intention reports
-
-This is independent of — and complementary to — the situation-level
-SUBJ/IND operators defined above.
--/
-
-/-- IND existentially closes the eventuality argument ([grano-2024], (87)).
-
-    ⟦INDIC⟧ = λP_(⟨vt⟩).∃e.P(e)
-
-    The eventuality variable is bound; the complement denotes a proposition. -/
-def INDev {Event : Type*} (P : Event → Prop) : Prop := ∃ e, P e
-
-/-- SBJV₁ leaves the eventuality argument open ([grano-2024], (88a);
-    §7 Subjunctive₃ (135)).
-
-    ⟦SBJV₁⟧ = λP_(⟨vt⟩).P
-
-    The complement retains type ⟨vt⟩ — an event predicate, not a proposition.
-    In the core proposal (§5, (88a)), this is the general non-closing mood
-    operator. In the §7 unified theory, it becomes specifically Subjunctive₃
-    (135) — the identity variant for perception predicates ('see'), causative
-    predicates ('make'), and aspectual predicates ('begin'). These predicates
-    require or are compatible with eventuality abstraction but do not involve
-    causal self-reference or ordering semantics. Distinct from the 'want'
-    variant (§7, Subjunctive₁ (133)), which uses Portner & Rubinstein's `ln`
-    (local necessity), and the 'intend' variant (Subjunctive₂ (134) =
-    `SBJVev₂`), which incorporates CAUSE*. -/
-def SBJVev₁ {Event : Type*} (P : Event → Prop) : Event → Prop := P
-
-/-- SBJV₂ leaves the eventuality argument open AND requires causal
-    self-reference ([grano-2024], (134); unified theory §7).
-
-    ⟦Subjunctive₂⟧ = λPλe[sn({λw.∃e'.CAUSE*(e,e',w) & P(w)(e')}, content(e), e)]
-
-    This is the variant operative with 'intend' in the §7 unified theory,
-    which integrates CAUSE* from the core proposal (§4, (79)) with Portner
-    & Rubinstein's ([portner-rubinstein-2020]) modal quantification
-    framework. The attitude state e must causally bring about the described
-    event e' "in the right way" ([searle-1983]; [harman-1976]). -/
-def SBJVev₂ {Event W : Type*}
-    (causeStar : Event → Event → W → Prop)  -- CAUSE*(state, event, world)
-    (content : Event → W → Prop)          -- content of the attitude state
-    (P : W → Event → Prop)               -- world-indexed event predicate
-    (e : Event) : Prop :=
-  ∀ w, content e w → ∃ e', causeStar e e' w ∧ P w e'
-
-/-- IND closure yields a proposition (no free eventuality variable). -/
-theorem INDev_is_propositional {Event : Type*} (P : Event → Prop) :
-    (INDev P) = (∃ e, P e) := rfl
-
-/-- SBJV₁ is the identity on event predicates. -/
-theorem SBJVev₁_is_identity {Event : Type*} (P : Event → Prop) :
-    SBJVev₁ P = P := rfl
-
-
-/--
-Mood selection by embedding predicates.
-
-Certain predicates select for specific moods in their complement:
-- "know", "see" → typically indicative
-- "want", "wish" → robustly subjunctive cross-linguistically
-- "hope" → cross-linguistically variable ([grano-2024], Table 1)
-- "say", "think" → mood-neutral (pragmatically flexible)
--/
-inductive Selector where
-  | indicativeSelecting          -- "know", "see", "believe"
-  | subjunctiveSelecting         -- "want", "wish", "demand", "intend"
-  | crossLinguisticallyVariable  -- "hope", "expect": SBJV in some languages,
-                                 -- IND in others ([grano-2024], Table 1)
-  | moodNeutral                  -- "say", "think" (pragmatically flexible)
-  deriving DecidableEq, Repr
-
-/--
-Does the selector prefer subjunctive?
--/
-def prefersSubjunctive : Selector → Bool
-  | .indicativeSelecting => false
-  | .subjunctiveSelecting => true
-  | .crossLinguisticallyVariable => false  -- default: variable, not robust SBJV
-  | .moodNeutral => false  -- default to indicative
 
 /--
 Conditional with SF antecedent ([mendes-2025], main application).
@@ -323,12 +215,7 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
   -- ¬(s₀ = s₁)
   exact hne
 
--- ════════════════════════════════════════════════════════════════
--- § Bridge: SUBJ and Attitude Temporal Anchoring
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### SUBJ as Temporal Anchor
+/-! ### SUBJ as temporal anchor
 [giannakidou-1998] [mendes-2025] [muskens-1996]
 
 Both SUBJ's situation introduction and attitude embedding create new temporal
@@ -371,12 +258,7 @@ theorem subj_temporal_anchor {W Time : Type*} [LE Time]
 
 end AttitudeTemporalAnchor
 
--- ════════════════════════════════════════════════════════════════
--- § Tower Integration: SUBJ as Context Shift
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### SUBJ as Tower Push
+/-! ### SUBJ as tower push
 
 SUBJ introduces a new situation from the historical base. In the tower
 framework, this corresponds to pushing a mood-labeled context shift that
