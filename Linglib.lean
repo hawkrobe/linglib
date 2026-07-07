@@ -1596,7 +1596,7 @@ import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Clausal
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Differential

@@ -37,7 +37,8 @@ is simpler and better motivated than competing scope-based analyses.
 
 namespace VonStechow1984
 
-open Degree (comparativeSem equativeSem ScaleDirection)
+open Degree (comparativeSem equativeSem)
+open Core.Order (ScalePolarity)
 open Degree.Differential (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 

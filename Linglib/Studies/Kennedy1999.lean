@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Clausal
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.Discrete
 
 /-!
