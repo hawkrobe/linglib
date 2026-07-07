@@ -1,4 +1,4 @@
-import Linglib.Studies.Haspelmath1997Polarity
+import Linglib.Studies.Haspelmath1997
 import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
@@ -56,7 +56,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 
 namespace Chierchia2006
 
-open Haspelmath1997Polarity
+open Haspelmath1997
 open Indefinite
 open Chierchia2013 (FCIFlavor)
 open Farsi.Determiners (EFCIRescue)

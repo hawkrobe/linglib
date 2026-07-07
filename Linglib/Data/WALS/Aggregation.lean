@@ -3,7 +3,7 @@
 
 Shared row struct for WALS distribution tables. Promoted from
 `Linglib/Typology/{Complementation, Morphology, Possession}.lean` and
-`Linglib/Studies/Haspelmath1997Polarity.lean` to eliminate the
+`Linglib/Studies/Haspelmath1997.lean` to eliminate the
 4-way duplication of this primitive.
 
 `WALSCount` records a single category label paired with the number of
