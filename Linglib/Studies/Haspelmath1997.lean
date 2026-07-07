@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Data.WALS.Features.F46A
 import Linglib.Fragments.English.Indefinites
@@ -8,50 +13,31 @@ import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Slavic.Russian.Indefinites
 
 /-!
-# Haspelmath (1997): Indefinite Pronoun Typology
-[haspelmath-1997] [wals-2013]
+# Haspelmath (1997): indefinite pronoun typology
 
-Haspelmath, Martin (1997). *Indefinite Pronouns*. Oxford Studies in
-Typology and Linguistic Theory. Oxford University Press.
+Fragment-derived `IndefiniteParadigm`s for a six-language sample (English,
+German, Yakut, Latin, Kannada, Russian), following [haspelmath-1997]'s
+nine-function semantic map: per-language bridge theorems verify that each
+Fragment's morphological-basis encoding derives the [wals-2013] F46A
+classification of the same language (ISO 639-3 join), and per-paradigm
+SK/SU/NS syncretism witnesses record the attested patterns. Latin is
+absent from F46A's 326-language sample, so it has no bridge theorem;
+German and Kannada have gaps in the SK/SU/NS region, so their
+`syncretism` is `none` and they have no witness.
 
-Cross-linguistic indefinite-pronoun survey following [haspelmath-1997]'s
-9-function semantic map (specificKnown / specificUnknown / irrealis / question
-/ conditional / comparative / indirectNeg / directNeg / freeChoice). Pulls
-together a six-language sample of `IndefiniteParadigm`s (each anchored to its
-Fragment file's per-form data) and proves cross-cutting universals plus WALS
-bridge theorems verifying that each Fragment's encoded morphological-basis
-distribution matches the [wals-2013] F46A classification of the same
-language by ISO 639-3 join.
+The polarity-side projection of the map lives in the sibling
+`Studies/Haspelmath1997Polarity.lean`. Substrate:
+`Features/Indefinite.lean` (map, morphological bases) and
+`Syntax/Pronoun/IndefiniteParadigm.lean` (paradigms, WALS converters).
 
-The substrate (`HaspelmathFunction` enum + `IndefinitePronoun`/`IndefiniteParadigm`
-structs + `MorphologicalBasis` + WALS converters) lives in
-`Typology/Indefinite.lean`.
+## Main results
 
-## Sample
-
-| Language | ISO | Forms                            | F46A class       | Synchretism |
-|----------|-----|----------------------------------|------------------|-------------|
-| English  | eng | someone, somebody, something     | genericNounBased | AAA         |
-| German   | deu | irgend-, jemand, etwas           | mixed            | (SK gap)    |
-| Yakut    | sah | kim ere, kim eme, kim bayarar, kim da | interrogative | ABB     |
-| Russian  | rus | kto-nibud', kto-to, koe-kto      | interrogative    | ABC         |
-| Latin    | lat | aliquis, quidam                  | (not in WALS)    | AAB         |
-| Kannada  | kan | yāru-oo, yāru-aadaruu            | interrogative    | (SK gap)    |
-
-The Latin entry has no WALS bridge theorem because Latin is not in WALS
-F46A's 326-language sample; the morphological-basis encoding is recorded
-for cross-linguistic comparison anyway.
-
-## What this file proves
-
-1. **Per-language WALS bridge theorems**: for each language with a WALS
-   F46A entry, the Fragment-derived F46A classification matches WALS by
-   `decide`. This is the headline verification — every encoded paradigm
-   independently agrees with the WALS classification.
-
-2. **Cross-linguistic universals**: every paradigm in the sample has a
-   non-empty form list; [haspelmath-1997]'s ABA-ban holds on every
-   paradigm whose SK/SU/NS region is fully populated.
+* `english_matches_wals_F46A`, `german_matches_wals_F46A`,
+  `yakut_matches_wals_F46A`, `russian_matches_wals_F46A`,
+  `kannada_matches_wals_F46A` — Fragment-derived F46A classification
+  agrees with WALS.
+* `english_paradigm_AAA`, `yakut_paradigm_ABB`, `latin_paradigm_AAB`,
+  `russian_paradigm_ABC` — syncretism witnesses.
 -/
 
 namespace Haspelmath1997
@@ -59,72 +45,39 @@ namespace Haspelmath1997
 open _root_.Indefinite
 open Data.WALS
 
--- ============================================================================
--- §1. Per-language WALS F46A bridge theorems
--- ============================================================================
+/-! ### WALS F46A bridges -/
 
-/-- Yakut: paradigm-derived F46A classification matches WALS. All four
-    forms (`kim ere/eme/bayarar/da`) use the interrogative `kim` as their
-    host → derives `.interrogativeBased`, matching WALS for iso "sah". -/
+/-- All four Yakut forms host on interrogative *kim*, deriving
+    `.interrogativeBased`, matching WALS for iso "sah". -/
 theorem yakut_matches_wals_F46A :
     Yakut.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "sah").map (·.value) := by decide
 
-/-- English: paradigm-derived F46A classification matches WALS.
-    *some-* prefix on generic-noun stems (-one, -body, -thing) →
-    `.genericNounBased`, matching WALS for iso "eng". -/
+/-- *some-* on generic-noun stems derives `.genericNounBased`, matching
+    WALS for iso "eng". -/
 theorem english_matches_wals_F46A :
     English.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "eng").map (·.value) := by decide
 
-/-- German: paradigm-derived F46A classification matches WALS.
-    Two distinct bases (special *irgend-* + generic-noun *jemand*/*etwas*)
-    → `.mixed`, matching WALS for iso "deu". -/
+/-- Special *irgend-* plus generic-noun *jemand*/*etwas* derives `.mixed`,
+    matching WALS for iso "deu". -/
 theorem german_matches_wals_F46A :
     German.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "deu").map (·.value) := by decide
 
-/-- Russian: paradigm-derived F46A classification matches WALS.
-    All three forms attach to interrogative bases (`kto-nibud'`,
-    `kto-to`, `koe-kto`) → `.interrogativeBased`, matching WALS for
-    iso "rus". -/
+/-- All three Russian forms attach to interrogative bases, deriving
+    `.interrogativeBased`, matching WALS for iso "rus". -/
 theorem russian_matches_wals_F46A :
     Russian.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "rus").map (·.value) := by decide
 
-/-- Kannada: paradigm-derived F46A classification matches WALS.
-    Both forms attach to interrogative `yāru` → `.interrogativeBased`,
-    matching WALS for iso "kan". -/
+/-- Both Kannada forms attach to interrogative *yāru*, deriving
+    `.interrogativeBased`, matching WALS for iso "kan". -/
 theorem kannada_matches_wals_F46A :
     Kannada.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "kan").map (·.value) := by decide
 
--- Latin: not in WALS F46A's 326-language sample, so no bridge theorem.
--- The paradigm-derived classification is `some .interrogativeBased`
--- (recorded in `Latin.Indefinites` for comparison).
-
--- ============================================================================
--- §2. Sample
--- ============================================================================
-
-/-- Curated 6-language sample of `IndefiniteParadigm`s for cross-paradigm
-    comparison. -/
-def fragmentSample : List IndefiniteParadigm :=
-  [ English.Indefinites.paradigm
-  , German.Indefinites.paradigm
-  , Yakut.Indefinites.paradigm
-  , Latin.Indefinites.paradigm
-  , Kannada.Indefinites.paradigm
-  , Russian.Indefinites.paradigm
-  ]
-
--- ============================================================================
--- §3. Per-paradigm syncretism witnesses
--- ============================================================================
-
-/-! Per-paradigm syncretism patterns (where the SK/SU/NS region is
-    fully populated). German and Kannada have gaps in this region —
-    their `syncretism` returns `none` and is omitted here. -/
+/-! ### Syncretism witnesses -/
 
 theorem english_paradigm_AAA :
     English.Indefinites.paradigm.syncretism = some .AAA := rfl
