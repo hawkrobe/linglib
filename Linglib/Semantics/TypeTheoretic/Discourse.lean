@@ -1,6 +1,6 @@
 import Linglib.Semantics.TypeTheoretic.Basic
 import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Illocutionary
 import Linglib.Features.ClauseForm
 
 /-!
@@ -10,7 +10,7 @@ import Linglib.Features.ClauseForm
 Discourse-level infrastructure for TTR ([cooper-2023], Chapters 2, 4, 5):
 
 **Signs & Illocutionary Force**: TTRSign, ForcedSign (§2.5–2.6) — the
-illocutionary force component reuses `Semantics.Mood.IllocutionaryMood` rather
+illocutionary force component reuses `Semantics.Mood.Illocutionary` rather
 than [cooper-2023]'s parallel four-way `IllocForce` enum (the surface
 distinction `assertion | query | command | acknowledgement` is the
 declarative/interrogative/imperative slice plus a backchannel constructor;
@@ -47,53 +47,53 @@ open Features
 Signs may carry illocutionary force. [cooper-2023]'s ex (91)
 introduces a four-way TTR-internal enum `assertion | query | command |
 acknowledgement`. We collapse `assertion/query/command` into
-`Semantics.Mood.IllocutionaryMood`'s `declarative/interrogative/imperative`
+`Semantics.Mood.Illocutionary`'s `declarative/interrogative/imperative`
 (the same Searlean cuts) and let backchannel acknowledgements be handled
 where dialogue moves live (`Pragmatics/Dialogue/Gameboard/`). The
 result: TTR signs share the rest of the library's mood vocabulary
 rather than re-stipulating it. -/
 
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 /-- A sign with illocutionary force. [cooper-2023] ex (91), with
-    `IllocForce` replaced by `Semantics.Mood.IllocutionaryMood`. -/
+    `IllocForce` replaced by `Semantics.Mood.Illocutionary`. -/
 structure ForcedSign (Phon Cont : Type) extends TTRSign Phon Cont where
-  illoc : IllocutionaryMood
+  illoc : Illocutionary
 
 /-- ForcedSign ⊑ TTRSign (adding illoc = more fields = subtype). -/
 instance (Phon Cont : Type) : Coe (ForcedSign Phon Cont) (TTRSign Phon Cont) where
   coe := ForcedSign.toTTRSign
 
-/-- Bridge: `IllocutionaryMood` → form-level `ClauseForm`. The two
+/-- Bridge: `Illocutionary` → form-level `ClauseForm`. The two
     question form distinctions (matrix vs embedded) are not visible from
     illocutionary force alone, so we project to the matrix variant.
 
     Imperatives, promissives, and exclamatives have no `ClauseForm`
     form-counterpart in `Features.ClauseForm` (which only enumerates the
     declarative/question word-order distinctions); they map to `none`. -/
-def IllocutionaryMood.toClauseForm? : IllocutionaryMood → Option ClauseForm
+def Illocutionary.toClauseForm? : Illocutionary → Option ClauseForm
   | .declarative   => some .declarative
   | .interrogative => some .matrixQuestion
   | .imperative    => none
   | .promissive    => none
   | .exclamative   => none
 
-/-- Bridge: form-level `ClauseForm` → `IllocutionaryMood`. The form
+/-- Bridge: form-level `ClauseForm` → `Illocutionary`. The form
     distinction between matrix and embedded questions collapses on the
     force side. -/
-def IllocutionaryMood.fromClauseForm : ClauseForm → IllocutionaryMood
+def Illocutionary.fromClauseForm : ClauseForm → Illocutionary
   | .declarative      => .declarative
   | .matrixQuestion   => .interrogative
   | .embeddedQuestion => .interrogative
 
 /-- Round-trip: `fromClauseForm` preserves the declarative slot. -/
 theorem illoc_declarative_roundtrip :
-    IllocutionaryMood.toClauseForm? (IllocutionaryMood.fromClauseForm .declarative) =
+    Illocutionary.toClauseForm? (Illocutionary.fromClauseForm .declarative) =
     some .declarative := rfl
 
 /-- Round-trip: `fromClauseForm` preserves the matrix-question slot. -/
 theorem illoc_question_roundtrip :
-    IllocutionaryMood.toClauseForm? (IllocutionaryMood.fromClauseForm .matrixQuestion) =
+    Illocutionary.toClauseForm? (Illocutionary.fromClauseForm .matrixQuestion) =
     some .matrixQuestion := rfl
 
 -- ============================================================================
@@ -213,7 +213,7 @@ example : (fetchThrow ⌢ fetchRunAfter).events = [.throw, .runAfter] := rfl
 /-- The three type acts map to the three Searlean basic illocutionary
     moods (declarative, interrogative, imperative). -/
 theorem typeAct_covers_illoc :
-    ∀ ta : TypeAct, ∃ i : IllocutionaryMood,
+    ∀ ta : TypeAct, ∃ i : Illocutionary,
       (ta = .judge ∧ i = .declarative) ∨
       (ta = .query ∧ i = .interrogative) ∨
       (ta = .create ∧ i = .imperative) := by

@@ -40,7 +40,7 @@ LEM-fails witness.
 For Hamblin constructions (`polar`, `which`), see
 `Core/Question/Hamblin.lean`. For partial-answerhood and Roberts
 QUD-relevance predicates, see `Core/Question/Relevance.lean`. For
-the `Setoid → Question` embedding (used by `POSWQ`), see
+the `Setoid → Question` embedding (used by `State`), see
 `Semantics/Mood/PartitionAsInquiry.lean`.
 
 ## Mathlib alignment

@@ -188,7 +188,7 @@ Certain predicates select for specific moods in their complement:
 - "hope" → cross-linguistically variable ([grano-2024], Table 1)
 - "say", "think" → mood-neutral (pragmatically flexible)
 -/
-inductive MoodSelector where
+inductive Selector where
   | indicativeSelecting          -- "know", "see", "believe"
   | subjunctiveSelecting         -- "want", "wish", "demand", "intend"
   | crossLinguisticallyVariable  -- "hope", "expect": SBJV in some languages,
@@ -199,7 +199,7 @@ inductive MoodSelector where
 /--
 Does the selector prefer subjunctive?
 -/
-def prefersSubjunctive : MoodSelector → Bool
+def prefersSubjunctive : Selector → Bool
   | .indicativeSelecting => false
   | .subjunctiveSelecting => true
   | .crossLinguisticallyVariable => false  -- default: variable, not robust SBJV

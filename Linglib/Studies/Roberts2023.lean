@@ -1,8 +1,8 @@
 import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Mood.IllocutionaryMood
-import Linglib.Semantics.Mood.POSW
-import Linglib.Semantics.Mood.POSWTarget
+import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Modal
+import Linglib.Semantics.Mood.Component
 import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
@@ -13,7 +13,7 @@ import Mathlib.Data.List.Sort
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Semantics.Mood.POSWQ
+import Linglib.Semantics.Mood.State
 
 /-!
 # Roberts (2023): Imperatives in Dynamic Pragmatics
@@ -49,7 +49,7 @@ standalone formalization of an imperative mood ontology:
   `TeleologicalFlavor` (no parallel types).
 - The architectural commitment "imperative force targets the
   preferential POSW component, not the informational" is
-  `Semantics.Mood.POSWTarget`'s `HasPOSWTarget IllocutionaryMood`
+  `Semantics.Mood.Component`'s `HasTarget Illocutionary`
   instance — Roberts agrees with [portner-2018] on the
   POSW component, disagrees with [kaufmann-2012] only on
   the prejacent's modal flavor.
@@ -85,12 +85,12 @@ Acc (accepted).
 
 namespace Discourse
 
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 /-- An illocutionary move: a speech act performed by an agent. -/
 structure Move (W : Type*) where
   /-- Which kind of speech act. -/
-  mood : IllocutionaryMood
+  mood : Illocutionary
   /-- Propositional content (for assertions and questions; for directions,
       the propositional closure of the targeted property). -/
   content : W → Prop
@@ -123,7 +123,7 @@ Force Linking Principle ([roberts-2023]).
 
 namespace Discourse
 
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 variable {W : Type*}
 
@@ -187,7 +187,7 @@ inductive SemanticType where
 
 /-- Illocutionary Force Linking Principle: the default illocutionary
     force of a root sentence is determined by its semantic type. -/
-def forceLinkingPrinciple : SemanticType → IllocutionaryMood
+def forceLinkingPrinciple : SemanticType → Illocutionary
   | .proposition       => .declarative
   | .setOfPropositions  => .interrogative
   | .indexedProperty    => .imperative
@@ -202,7 +202,7 @@ def forceLinkingPrinciple : SemanticType → IllocutionaryMood
     forceLinkingPrinciple .indexedProperty = .imperative := rfl
 
 /-- The default semantic type for each illocutionary mood (inverse of IFLP). -/
-def defaultSemanticType : IllocutionaryMood → SemanticType
+def defaultSemanticType : Illocutionary → SemanticType
   | .declarative   => .proposition
   | .interrogative  => .setOfPropositions
   | .imperative     => .indexedProperty
@@ -325,7 +325,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 
 The scoreboard's CommonGround and G components project jointly into a
 the POSW substrate (`Semantics.Dynamic.Default.ExpState` under its
-`Semantics/Mood/POSW.lean` modal reading): CommonGround via
+`Semantics/Mood/Modal.lean` modal reading): CommonGround via
 `contextSet`, G via the goal-induced preference ordering. Assertion ↔
 `assert`, direction ↔ `promote`. -/
 
@@ -438,16 +438,16 @@ theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
     (toExpState_direction_eq_promote K p s t pr hin w v).mp hlt
   exact hpw ((Core.Order.Normality.refine_le.mp hstar).2 hpv)
 
-/-! ### POSWQ inquiry-partition bridge
+/-! ### State inquiry-partition bridge
 
-QUD projects into POSWQ's inquiry partition: meet of polar Setoids
+QUD projects into State's inquiry partition: meet of polar Setoids
 over the QUD stack. Interrogation ↔ `inquire`. -/
 
 /-- Inquiry partition from the QUD stack: meet of polar Setoids
     (`⊤` as identity). Cons-right convention so that consing reduces
     definitionally to `inquire`. -/
 def qudInquiry (K : Scoreboard W) : Setoid W :=
-  K.qud.foldr (fun q s => s ⊓ Semantics.Mood.POSWQ.polarSetoid q) ⊤
+  K.qud.foldr (fun q s => s ⊓ Semantics.Mood.State.polarSetoid q) ⊤
 
 @[simp] theorem qudInquiry_nil (K : Scoreboard W) (h : K.qud = []) :
     K.qudInquiry = (⊤ : Setoid W) := by
@@ -456,8 +456,8 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
 @[simp] theorem qudInquiry_cons (K : Scoreboard W) (q : W → Prop)
     (rest : List (W → Prop)) (h : K.qud = q :: rest) :
     K.qudInquiry =
-      (rest.foldr (fun q s => s ⊓ Semantics.Mood.POSWQ.polarSetoid q) ⊤) ⊓
-        Semantics.Mood.POSWQ.polarSetoid q := by
+      (rest.foldr (fun q s => s ⊓ Semantics.Mood.State.polarSetoid q) ⊤) ⊓
+        Semantics.Mood.State.polarSetoid q := by
   simp [qudInquiry, h]
 
 /-- Interrogation update preserves goal contents (doesn't touch G). -/
@@ -465,28 +465,28 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).goalContents = K.goalContents := rfl
 
-/-- Project the scoreboard into a POSWQ: underlying state + QUD inquiry. -/
-def toPOSWQ (K : Scoreboard W) : Semantics.Mood.POSWQ W :=
+/-- Project the scoreboard into a State: underlying state + QUD inquiry. -/
+def toMoodState (K : Scoreboard W) : Semantics.Mood.State W :=
   { K.toExpState with inquiry := K.qudInquiry }
 
-@[simp] theorem toPOSWQ_toExpState (K : Scoreboard W) :
-    K.toPOSWQ.toExpState = K.toExpState := rfl
+@[simp] theorem toMoodState_toExpState (K : Scoreboard W) :
+    K.toMoodState.toExpState = K.toExpState := rfl
 
-@[simp] theorem toPOSWQ_inquiry (K : Scoreboard W) :
-    K.toPOSWQ.inquiry = K.qudInquiry := rfl
+@[simp] theorem toMoodState_inquiry (K : Scoreboard W) :
+    K.toMoodState.inquiry = K.qudInquiry := rfl
 
 /-- Interrogation-as-`?`-update bridge: `interrogationUpdate` refines
-    the projected POSWQ's `inquiry` exactly as `POSWQ.inquire` does. -/
-theorem toPOSWQ_interrogation_eq_inquire (K : Scoreboard W)
+    the projected State's `inquiry` exactly as `State.inquire` does. -/
+theorem toMoodState_interrogation_eq_inquire (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
-    (K.interrogationUpdate q a).toPOSWQ.inquiry =
-      (K.toPOSWQ.inquire (Semantics.Mood.POSWQ.polarSetoid q)).inquiry := rfl
+    (K.interrogationUpdate q a).toMoodState.inquiry =
+      (K.toMoodState.inquire (Semantics.Mood.State.polarSetoid q)).inquiry := rfl
 
 /-- After posing `q`, the polar partition of `q` is settled by
-    the new POSWQ (inquiry analogue of `boxCs_after_assertion`). -/
+    the new State (inquiry analogue of `boxCs_after_assertion`). -/
 theorem boxAns_polar_after_interrogation (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
-    (K.interrogationUpdate q a).toPOSWQ.boxAns q := by
+    (K.interrogationUpdate q a).toMoodState.boxAns q := by
   intro w v _ _ hwv
   exact hwv.2
 
@@ -498,8 +498,8 @@ namespace Roberts2023
 
 open Intensional (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
-open Semantics.Mood.IllocutionaryMood (sincerityCondition)
-open Semantics.Mood (POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
+open Semantics.Mood.Illocutionary (sincerityCondition)
+open Semantics.Mood (State Component Illocutionary HasTarget)
 open Semantics.Dynamic.Default (ExpState)
 open HistoricalAlternatives
 open Semantics.Modality.Kratzer
@@ -563,12 +563,12 @@ def ImperativeCharacter.conservativeOn {W : Type*}
 Roberts's central architectural claim is that the deontic flavor of
 imperatives is **pragmatic** — it lives in the preferential POSW
 component (the addressee's goals/plans), not in the LF as a deontic
-modal. This is precisely the [portner-2018] `POSWTarget`
-assignment for `IllocutionaryMood.imperative`, derived (not
+modal. This is precisely the [portner-2018] `Component`
+assignment for `Illocutionary.imperative`, derived (not
 restipulated) here. -/
 
 /-- **Roberts's architectural commitment**, derived from
-    [portner-2018]'s `HasPOSWTarget IllocutionaryMood`
+    [portner-2018]'s `HasTarget Illocutionary`
     instance: the imperative targets the preferential POSW
     component (= the addressee's preference structure), not the
     informational component (= CommonGround).
@@ -579,7 +579,7 @@ restipulated) here. -/
     (via `ExpState.promote` / `Scoreboard.directionUpdate`) rather
     than the informational one. -/
 theorem imperative_targets_preferential :
-    HasPOSWTarget.target IllocutionaryMood.imperative = .preferential := rfl
+    HasTarget.target Illocutionary.imperative = .preferential := rfl
 
 /-- **Pragmatic-deontic routing** ([roberts-2023] §3, headline claim).
 
@@ -600,7 +600,7 @@ theorem imperative_targets_preferential :
     the addressee must be a real participant for the directive to
     have its preferential effect. Composes
     `Scoreboard.direction_demotes_violators` (the substrate theorem
-    that does the work) with the POSWTarget assignment
+    that does the work) with the Component assignment
     `imperative_targets_preferential` (the architectural commitment
     that this preference-side change *is* the deontic content). -/
 theorem pragmatic_deontic_routing
@@ -626,7 +626,7 @@ theorem futurate {W T : Type*} [LT T]
 
 /-! ## §2.2 Force Linking — integration tests
 
-These are smoke tests that the `IllocutionaryMood` infrastructure
+These are smoke tests that the `Illocutionary` infrastructure
 agrees with Roberts's IFLP and her sincerity-condition triad.
 Each `rfl` is a structural check that the `Scoreboard` enum
 assignment matches the paper. -/

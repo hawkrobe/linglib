@@ -1760,12 +1760,12 @@ import Linglib.Semantics.Mood.Categories
 import Linglib.Semantics.Mood.ClauseType
 import Linglib.Semantics.Mood.Dynamic
 import Linglib.Semantics.Mood.Gutzmann
-import Linglib.Semantics.Mood.IllocutionaryMood
-import Linglib.Semantics.Mood.POSW
-import Linglib.Semantics.Mood.POSWQ
-import Linglib.Semantics.Mood.POSWTarget
+import Linglib.Semantics.Mood.Component
+import Linglib.Semantics.Mood.Illocutionary
+import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.PartitionAsInquiry
-import Linglib.Semantics.Mood.VerbalMood
+import Linglib.Semantics.Mood.State
+import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs

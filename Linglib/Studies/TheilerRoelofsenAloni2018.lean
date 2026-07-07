@@ -36,7 +36,7 @@ example from Section 3.1, which justifies the existence of
    *no* `Setoid W` produces this content via `fromSetoid`.
 
    This is the forcing theorem for the architectural decision in the
-   "Architectural note" docstring of `Semantics/Mood/POSWQ.lean` (added
+   "Architectural note" docstring of `Semantics/Mood/State.lean` (added
    0.229.922) — it shows that `Setoid → Question` is a
    strictly weaker representation, and so the sibling-structure
    architecture is necessary rather than redundant.

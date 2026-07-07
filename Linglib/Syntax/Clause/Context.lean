@@ -4,7 +4,7 @@
 This file defines `Clause.Context`, the [sadock-zwicky-1985] sentence types
 with the interrogative split into polar, alternative, and constituent
 subtypes. `Clause.Embedding` is the orthogonal embedding axis;
-`Semantics.Mood.IllocutionaryMood`, `Semantics.Mood.ClauseType`, and
+`Semantics.Mood.Illocutionary`, `Semantics.Mood.ClauseType`, and
 `Features.ClauseForm` are coarser cuts.
 -/
 

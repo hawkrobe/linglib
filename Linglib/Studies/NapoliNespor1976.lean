@@ -198,10 +198,10 @@ inductive CliticPresence where
 
 /-- §3.21: grammatical mood of the *than*-clause. Subjunctive surfaces
     iff *non₂* is underlyingly present (modulo lexical mood control by
-    *credere* etc., abstracted away here). Returning `Semantics.Mood.GramMood`
+    *credere* etc., abstracted away here). Returning `Semantics.Mood.Grammatical`
     rather than `Bool` connects this prediction to the mood semantics in
     `Semantics/Mood/`. -/
-def predictsGramMood (p : BiasLicensingProfile) : Semantics.Mood.GramMood :=
+def predictsGrammatical (p : BiasLicensingProfile) : Semantics.Mood.Grammatical :=
   if p.licenses then .subjunctive else .indicative
 
 /-- §3.11 ex. 46–48: under bias-licensed negation the comparative admits
@@ -254,7 +254,7 @@ def predictsLoClitic (p : BiasLicensingProfile) : CliticPresence :=
     the Italian Fragment's `neanche.licensingContexts` and needs `decide`
     on the registry data. -/
 theorem licensed_diagnostics_agree :
-    predictsGramMood licensedProfile = .subjunctive ∧
+    predictsGrammatical licensedProfile = .subjunctive ∧
     predictsWeakNPISurface licensedProfile = some pur.form ∧
     predictsSpecificity licensedProfile = .nonspecificOnly ∧
     predictsNeancheConjunction licensedProfile ∧
@@ -267,7 +267,7 @@ theorem licensed_diagnostics_agree :
     the six diagnostics are genuinely *predictive* (their values vary
     with the bias profile) rather than constant functions. -/
 theorem blocked_diagnostics_agree :
-    predictsGramMood blockedProfile = .indicative ∧
+    predictsGrammatical blockedProfile = .indicative ∧
     predictsWeakNPISurface blockedProfile = none ∧
     predictsSpecificity blockedProfile = .unrestricted ∧
     ¬ predictsNeancheConjunction blockedProfile ∧

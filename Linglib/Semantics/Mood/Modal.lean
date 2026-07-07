@@ -1,7 +1,7 @@
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 
 /-!
-# POSW: Portner's Modal API over Expectation States
+# Mood Modals: Portner's POSW API over Expectation States
 [portner-2018] [veltman-1996] [kratzer-1981] [stalnaker-1978] [condoravdi-lauer-2012]
 
 [portner-2018]'s **partially ordered set of worlds** (posw, his (1),
@@ -149,15 +149,15 @@ variable {W : Type u}
 `boxCs` and `boxLe` are both **normal modalities** in the modal-logic
 sense: each satisfies necessitation (`□⊤`) and the K-axiom
 (`□(p→q) → □p → □q`) — one shape of the inf-preservation pattern that
-`∀` over any subset enjoys. The third POSWQ modal `boxAns` is *not*
-normal (see `Semantics/Mood/POSWQ.lean`); it has its own closure
+`∀` over any subset enjoys. The third State modal `boxAns` is *not*
+normal (see `Semantics/Mood/State.lean`); it has its own closure
 structure under boolean operations instead. -/
 
 /-- A **normal modality** in the sense of basic modal logic:
     quantifies a unary box over `W → Prop` predicates, satisfying
     necessitation (`box ⊤`) and the K-axiom (`box (p → q) → box p
     → box q`). The two universal modals `ExpState.boxCs` and
-    `ExpState.boxLe` are normal; `POSWQ.boxAns` is not. -/
+    `ExpState.boxLe` are normal; `State.boxAns` is not. -/
 class NormalModality (W : Type u) (box : (W → Prop) → Prop) : Prop where
   /-- Necessitation: the box always holds for `⊤`. -/
   necessitation : box (fun _ => True)

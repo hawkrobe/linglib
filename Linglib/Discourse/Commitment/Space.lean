@@ -77,7 +77,7 @@ open Discourse.Commitment
    HasSupport CommitmentGrade)
 open Discourse (DiscourseRole)
 open CommonGround (ContextSet)
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Commitment Space: Tree Structure ([krifka-2015], eq. (2), p. 329)
@@ -637,7 +637,7 @@ structure SpeechAct (W : Type*) where
   /-- Propositional content (TP layer) -/
   content : W → Prop
   /-- Speech act type: assertion (.) or question (?) -/
-  actType : IllocutionaryMood := .declarative
+  actType : Illocutionary := .declarative
   /-- Actor/committer assignment -/
   roles : ActorCommitter := assertionRoles
 

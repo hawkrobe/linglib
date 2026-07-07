@@ -38,7 +38,7 @@ namespace Semantics.Modality.Assert
 
 open Semantics.Modality.EventRelativity
 open Semantics.Modality (ModalFlavor)
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 
 -- ════════════════════════════════════════════════════
@@ -50,10 +50,10 @@ open Semantics.Mood (IllocutionaryMood)
 [hacquard-2006]: "The content of the speech event
 is different depending on the type of speech act."
 
-Now unified with `IllocutionaryMood` from `Discourse`. The five
+Now unified with `Illocutionary` from `Discourse`. The five
 constructors — declarative, interrogative, imperative, promissive,
 exclamative — classify the pragmatic act performed. -/
-abbrev SpeechActType := IllocutionaryMood
+abbrev SpeechActType := Illocutionary
 
 /-- All speech acts are contentful events. This is definitional:
 a speech act IS the performance of propositional content.
@@ -343,7 +343,7 @@ speech act (always the speaker in Hacquard's framework). This is distinct
 from the SEAT OF KNOWLEDGE, which is the hearer for
 interrogatives — that notion captures who has epistemic authority over
 the content, not who initiates the speech event. That notion is tracked per-mood by
-`Semantics.Mood.moodAuthority`. -/
+`Semantics.Mood.Illocutionary.authority`. -/
 def speechActProjection : EventProjection SpeechActType Interlocutor SpeechTime where
   holder
     | .declarative => .speaker

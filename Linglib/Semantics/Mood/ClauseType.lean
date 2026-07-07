@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mood.Basic
-import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Illocutionary
 import Linglib.Discourse.Roles
 import Linglib.Data.UD.Basic
 
@@ -8,8 +8,8 @@ import Linglib.Data.UD.Basic
 [holmberg-2016] [rizzi-1997]
 
 A clause type is a pair of independent dimensions:
-- **Force** (`IllocutionaryMood`): declarative, interrogative, imperative, ...
-- **Mood** (`GramMood`): indicative, subjunctive
+- **Force** (`Illocutionary`): declarative, interrogative, imperative, ...
+- **Mood** (`Grammatical`): indicative, subjunctive
 
 These are orthogonal — [holmberg-2016]'s analysis requires both:
 a polar question is [interrogative, indicative], while a deliberative
@@ -37,9 +37,9 @@ open Discourse (DiscourseRole)
     with grammatical mood. -/
 structure ClauseType where
   /-- Illocutionary force: the speech act performed -/
-  force : IllocutionaryMood
+  force : Illocutionary
   /-- Grammatical mood: verb morphology -/
-  mood : GramMood
+  mood : Grammatical
   deriving DecidableEq, Repr
 
 /-- A standard declarative-indicative clause. -/
@@ -57,7 +57,7 @@ theorem force_mood_independent :
 
 /-- Map from `ClauseType` to epistemic authority (via force, ignoring mood). -/
 def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
-  moodAuthority ct.force
+  Illocutionary.authority ct.force
 
 /-- Polar questions have addressee authority regardless of mood. -/
 theorem polarQuestion_addressee_authority :
