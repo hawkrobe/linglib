@@ -54,8 +54,7 @@ inductive EventDenotation (Event : Type*) where
   | abstracted (p : Event → Prop)
 
 /-- The event-level denotation of a complement under each grammatical
-mood ([grano-2024]): the assignment is the theory's sole stipulation;
-openness facts follow from the constructors. -/
+mood ([grano-2024]). -/
 def Grammatical.eventDenotation (P : Event → Prop) :
     Grammatical → EventDenotation Event
   | .indicative  => .closed (INDev P)
