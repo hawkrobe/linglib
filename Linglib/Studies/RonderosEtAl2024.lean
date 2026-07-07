@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
-import Linglib.Semantics.Degree.Standard
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Processing.VisualWorld
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.SedivyEtAl1999
