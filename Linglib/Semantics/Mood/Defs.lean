@@ -12,9 +12,7 @@ freely ([holmberg-2016]): a polar question is [interrogative,
 indicative], while the Spanish deliberative "¿Que duerma?" is
 [interrogative, subjunctive]. This file defines the two category
 enums, their pairing `ClauseType`, the mood-selection classes of
-embedding predicates, and the bridge from the UD `Mood` feature;
-the semantics of the categories lives in the sibling
-`Semantics/Mood/` files.
+embedding predicates, and the bridge from the UD `Mood` feature.
 
 ## Main declarations
 
@@ -25,9 +23,8 @@ the semantics of the categories lives in the sibling
 * `Selector` — mood selection by embedding predicate class.
 * `UD.Mood.toClauseType` — corpus bridge.
 
-Discourse-act extensions of force (Searle classes, direction of fit)
-live in `Discourse/SpeechAct.lean`, keeping the category layer free of
-pragmatic-act commitments.
+The Searle-class and direction-of-fit API for `Illocutionary` is in
+`Discourse/SpeechAct.lean`.
 -/
 
 namespace Semantics.Mood
@@ -36,7 +33,7 @@ open Discourse (DiscourseRole)
 
 /-! ### Grammatical mood -/
 
-/-- Grammatical (verb-morphological) mood: the indicative/subjunctive contrast. -/
+/-- Grammatical (verb-morphological) mood. -/
 inductive Grammatical where
   /-- The default, "realis" mood. -/
   | indicative
