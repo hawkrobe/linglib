@@ -293,14 +293,18 @@ structure PolarityItemEntry where
 -- § 8. Predicates
 -- ════════════════════════════════════════════════════
 
-/-- The [zwarts-1998] strength class an item requires of its licensor,
-    derived from `polarityType`: weak NPIs (and the NPI face of dual
-    NPI/FCIs) need weak DE, strong NPIs need anti-additivity; FCIs and
-    PPIs are not strength-keyed. The superstrong class (*a tad bit*,
-    anti-morphic) has no registry items yet — extend `PolarityType`
-    when one lands. -/
+/-- The [zwarts-1998] strength class an item requires of its licensor.
+    N-words (`nWordStatus = some .nWord`) require an anti-morphic licensor —
+    extensionally, clausal negation: the strict-negative-concord distribution
+    ([giannakidou-2000], [watanabe-2004]) read at the context-enum grain
+    (concord locality lives in `nWordStatus`, not in this projection). Other
+    items derive from `polarityType`: weak NPIs (and the NPI face of dual
+    NPI/FCIs) need weak DE, strong NPIs anti-additivity; FCIs and PPIs are
+    not strength-keyed. A genuine superstrong NPI (*a tad bit*) would still
+    extend `PolarityType` when one lands. -/
 def PolarityItemEntry.strength (e : PolarityItemEntry) :
     Option NaturalLogic.DEStrength :=
+  if e.nWordStatus = some .nWord then some .antiMorphic else
   match e.polarityType with
   | .npiWeak => some .weak
   | .npiFci => some .weak

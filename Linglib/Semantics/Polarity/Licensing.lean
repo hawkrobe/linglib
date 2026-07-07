@@ -310,6 +310,45 @@ theorem zwartsScale_licenses_iff (e : Semantics.Polarity.PolarityItemEntry)
   cases (contextProperties c).strawsonSignature.toDEStrength <;>
     cases e.strength <;> simp
 
+/-! ### The licensing keystone -/
+
+/-- The item↔context licensing relation (stipulated grade), read
+context-side: `c.licenses e` says environment `c` licenses item `e`.
+Dispatched on the row's `LicensingMechanism`:
+
+- signature rows (`byStrengthening`, `byStrawsonDE`): Zwarts-strength
+  licensing — the row's Strawson signature supplies at least `e.strength`
+  (n-words require anti-morphic strength, so clausal negation is the only
+  qualifying row);
+- `byGenericIndefinite` rows license free choice items;
+- `byEntropy` rows (questions, [van-rooy-2003-npi]) license weak NPIs;
+- `strengtheningFails` rows license nothing.
+
+The grounded grade — deriving the signature side from the context
+witnesses of `Witnesses.lean` via the Kadmon–Landman strengthening
+chain — is planned (N1 of the NPI-API sweep). -/
+def _root_.Features.LicensingContext.licenses (c : LicensingContext)
+    (e : Semantics.Polarity.PolarityItemEntry) : Prop :=
+  match (contextProperties c).mechanism with
+  | .byStrengthening | .byStrawsonDE => LicensedBySignature e c
+  | .byGenericIndefinite => e.isFCI
+  | .byEntropy => e.strength = some .weak
+  | .strengtheningFails => False
+
+instance (c : LicensingContext) (e : Semantics.Polarity.PolarityItemEntry) :
+    Decidable (c.licenses e) := by
+  unfold Features.LicensingContext.licenses; split <;> infer_instance
+
+/-- On signature-mechanism rows the keystone is exactly Zwarts-strength
+licensing (`LicensedBySignature`). -/
+theorem licenses_iff_signature (c : LicensingContext)
+    (e : Semantics.Polarity.PolarityItemEntry)
+    (h : (contextProperties c).mechanism = .byStrengthening ∨
+         (contextProperties c).mechanism = .byStrawsonDE) :
+    c.licenses e ↔ LicensedBySignature e c := by
+  unfold Features.LicensingContext.licenses
+  rcases h with h | h <;> rw [h]
+
 /-- A context is **Strawson-only** when no classical signature row holds
 ([von-fintel-1999]): only-focus, adversatives, temporal *since*,
 superlatives. -/

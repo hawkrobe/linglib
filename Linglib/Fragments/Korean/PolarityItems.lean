@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Korean Polarity-Sensitive Items
@@ -54,6 +54,17 @@ def nwukwuNa : PolarityItemEntry :=
   , morphology := .indefPlusEven }
 
 /-! ### Verification -/
+
+/-- The licensing keystone characterizes *nwukwu-to* exactly: as an n-word it
+    requires an anti-morphic licensor, and clausal negation is the only such
+    row — predicted distribution and attested list coincide. -/
+theorem nwukwuTo_licensing_characterized :
+    ∀ c, c.licenses nwukwuTo ↔ c ∈ nwukwuTo.licensingContexts := by decide
+
+/-- Every attested context of every Korean entry is predicted licensed. -/
+theorem korean_licensing_sound :
+    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts,
+      c.licenses e := by decide
 
 theorem korean_npis_strengthening :
     [nwukwu, nwukwuTo].all

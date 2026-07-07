@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Features.LicensingContext
 [ladusaw-1979] [kadmon-landman-1993]
@@ -84,6 +86,6 @@ inductive LicensingContext where
   | universalRestrictor -- Restrictor of universal: "everyone who saw anyone"
   | doubtVerb         -- DE attitude verbs: "I doubt anyone came"
   | denyVerb          -- Anti-additive attitude verbs: "She denied seeing anyone"
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 end Features
