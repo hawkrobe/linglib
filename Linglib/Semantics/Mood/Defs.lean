@@ -107,10 +107,6 @@ def ClauseType.polarQuestion : ClauseType :=
 def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
   Illocutionary.authority ct.force
 
-/-- Polar questions have addressee authority regardless of mood. -/
-theorem polarQuestion_addressee_authority :
-    ClauseType.polarQuestion.authority = .addressee := rfl
-
 /-! ### Mood selection by predicate class -/
 
 /-- The mood-selection class of an embedding predicate; the projection onto
@@ -147,13 +143,5 @@ def toClauseType : UD.Mood → Semantics.Mood.ClauseType
   | .Adm => { force := .exclamative, mood := .indicative }
   | .Nec => { force := .declarative, mood := .subjunctive }
   | .Irr => { force := .declarative, mood := .subjunctive }
-
-/-- The UD `Imp` mood projects to imperative force. -/
-theorem Imp_is_imperative :
-    (toClauseType .Imp).force = .imperative := rfl
-
-/-- The UD `Sub` mood projects to subjunctive grammatical mood. -/
-theorem Sub_is_subjunctive :
-    (toClauseType .Sub).mood = .subjunctive := rfl
 
 end UD.Mood
