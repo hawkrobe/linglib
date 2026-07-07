@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Adjective
+import Linglib.Semantics.Degree.Adjective
 
 /-! # Adjectival Predicate Lexicon Fragment
 

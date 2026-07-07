@@ -1,5 +1,5 @@
 import Linglib.Features.Dimension
-import Linglib.Semantics.Degree.Gradability.Delineation
+import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Measurement
 
 /-!

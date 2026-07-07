@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Aggregation
+import Linglib.Semantics.Degree.Aggregation
 import Linglib.Core.Probability.Posterior
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Data.Rat.Defs

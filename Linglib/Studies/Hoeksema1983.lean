@@ -4,7 +4,7 @@ import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
 import Linglib.Semantics.Entailment.AntiAdditivity
-import Linglib.Semantics.Degree.Clausal
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Polarity.Item
 
 /-!

@@ -71,7 +71,7 @@ consumer): `⟦LITTLE⟧ = λP.λd. ¬ P d`; `short = LITTLE tall`,
 `less = LITTLE -er`.
 -/
 
-open _root_.Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
+open _root_.Degree (comparativeSem taller_shorter_antonymy)
 
 /-- LITTLE on degree predicates: complementation. -/
 def littlePred {D : Type*} (P : D → Prop) : D → Prop :=
@@ -99,7 +99,7 @@ theorem little_reverses_comparison {Entity α : Type*} [LinearOrder α]
     comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
   taller_shorter_antonymy μ a b
 
-open Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
+open Degree (comparativeSem taller_shorter_antonymy)
 open Degree (subcomparative)
 open Kennedy1999 (crossExtentInclusion crossExtent_always_false)
 

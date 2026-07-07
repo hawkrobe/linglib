@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Delineation
+import Linglib.Semantics.Degree.Delineation
 import Linglib.Studies.Kamp1975
 
 /-!

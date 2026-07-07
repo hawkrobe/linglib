@@ -54,13 +54,13 @@ variable {Entity : Type*} {α : Type*} [Preorder α]
 than B" iff `μ a` exceeds `μ b` on the directed scale. Only `[Preorder α]`
 — connectedness-agnostic background orderings (CSW confidence states)
 are in scope. -/
-def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
+def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScalePolarity) : Prop :=
   match dir with
   | .positive => μ a > μ b
   | .negative => μ a < μ b
 
 /-- Equative semantics: "A is as Adj as B" iff `μ a ≥ μ b` on the directed scale. -/
-def equativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
+def equativeSem (μ : Entity → α) (a b : Entity) (dir : ScalePolarity) : Prop :=
   match dir with
   | .positive => μ a ≥ μ b
   | .negative => μ a ≤ μ b

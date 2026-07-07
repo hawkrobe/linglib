@@ -4,21 +4,16 @@ import Linglib.Core.Order.Boundedness
 # Shape enums for degree constructions
 [rett-2015] [beck-2011]
 
-The shared taxonomies of degree morphosyntax: `ScaleDirection` (antonym
-polarity), `DegPType` (degree heads), `AdjectivalConstruction` (surface
-constructions, tracked by evaluativity analyses and markedness implicature).
+The shared taxonomies of degree morphosyntax: `DegPType` (degree heads) and
+`AdjectivalConstruction` (surface constructions, tracked by evaluativity
+analyses and markedness implicature). Antonym polarity is the spine's
+`Core.Order.ScalePolarity` directly — no local alias.
 -/
 
 namespace Degree
 
 open Core.Order (ScalePolarity)
 
-/-! ### Scale direction -/
-
-/-- Comparative direction reuses scale polarity from `Core.Order`.
-`positive` ("taller") makes MAX pick the highest degrees; `negative`
-("shorter") the lowest. -/
-abbrev ScaleDirection := ScalePolarity
 
 /-- The compositional structure of a Degree Phrase (DegP).
 

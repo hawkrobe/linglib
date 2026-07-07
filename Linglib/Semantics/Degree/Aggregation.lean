@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Algebra.Order.Field.Basic
-import Linglib.Semantics.Degree.Gradability.Adjective
+import Linglib.Semantics.Degree.Adjective
 
 /-!
 # Dimensional Aggregation for Multidimensional Predicates

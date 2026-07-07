@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Delineation
+import Linglib.Semantics.Degree.Delineation
 
 /-!
 # [bochnak-2015] Degree Semantics Parameter and Washo

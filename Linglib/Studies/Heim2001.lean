@@ -1,5 +1,5 @@
 import Linglib.Studies.Kennedy1999
-import Linglib.Semantics.Degree.Clausal
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Order.Interval.Set.Disjoint

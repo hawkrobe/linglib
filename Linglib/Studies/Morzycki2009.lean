@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.GradableNouns
+import Linglib.Semantics.Degree.GradableNouns
 
 /-!
 # Morzycki (2009)

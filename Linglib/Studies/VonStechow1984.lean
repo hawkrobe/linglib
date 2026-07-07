@@ -2,7 +2,7 @@ import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Differential
-import Linglib.Semantics.Degree.Gradability.Delineation
+import Linglib.Semantics.Degree.Delineation
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -37,7 +37,8 @@ is simpler and better motivated than competing scope-based analyses.
 
 namespace VonStechow1984
 
-open Degree (comparativeSem equativeSem ScaleDirection)
+open Degree (comparativeSem equativeSem)
+open Core.Order (ScalePolarity)
 open Degree.Differential (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 
