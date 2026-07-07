@@ -1,4 +1,3 @@
-import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Degree.Quantifier
 
@@ -50,7 +49,6 @@ It does NOT validate:
 namespace Semantics.Attitudes.Confidence
 
 open Degree
-open Core.Order (ComparativeScale Boundedness)
 /-! ## §1. Confidence States -/
 
 /-- A confidence state: a state with a holder and a propositional theme.
@@ -91,97 +89,46 @@ structure ConfidenceOrdering (E W : Type*)
   holder_consistent : ∀ s₁ s₂ : ConfidenceState E W, le s₁ s₂ →
     s₁.holder = holder ∧ s₂.holder = holder
 
-/-! ## §3. Confident and Certain as StatesBasedEntry
+/-! ## §3. Confident, certain, and doubts as contrast points
 
-`confident` and `certain` share a `ConfidenceOrdering` but pick out
-different positive regions via different `contrastPoint`s. CSW Figures 2
-and 3: same background ordering, different cut-offs.
-
-The lexical entries are POS-free (CSW §3.3): the positive form is
-`contrastPoint ≤ s` directly on the preorder, with no covert `pos`
-morpheme. This is the central architectural commitment of CSW.
+`confident`, `certain`, and `doubts` share a `ConfidenceOrdering` and
+differ only in a **contrast point** on it (CSW Figures 2–3: same
+background ordering, different cut-offs). The lexical entries are
+POS-free (CSW §3.3): the positive form is `co.le contrastPt s` directly
+on the preorder — no covert `pos` morpheme, no degree, and (post
+substrate dissolution) no entry struct: a CSW lexical entry IS its
+contrast point. `certain`'s point is maximal for ordinary holders (CSW
+§5.2, hedged per-theorem via `h_top`); `doubts` is negative-polarity,
+holding of states *below* its point.
 -/
-
-/-- Build a `StatesBasedEntry` for a gradable attitude adjective on a
-    confidence ordering. The `contrastPt` determines where the positive
-    region begins. The boundedness flag classifies the scale shape. -/
-def confidenceEntry {E W : Type*} (co : ConfidenceOrdering E W)
-    (contrastPt : ConfidenceState E W) (b : Boundedness := .upperBounded) :
-    @StatesBasedEntry (ConfidenceState E W) co.toPreorder :=
-  letI := co.toPreorder
-  { scale := { boundedness := b }
-    contrastPoint := contrastPt }
-
-/-- `confident`: positive region begins at a moderate contrast point in
-    the upper portion of the confidence ordering (CSW Figure 2). -/
-abbrev confidentEntry {E W : Type*} (co : ConfidenceOrdering E W)
-    (contrastPt : ConfidenceState E W) :
-    @StatesBasedEntry (ConfidenceState E W) co.toPreorder :=
-  confidenceEntry co contrastPt
-
-/-- `certain`: positive region IS the set of maximal states (CSW §5.2,
-    Figure 3, eq. (69) "fully/100% confident = certain"). The maximality
-    of `maxPt` is asserted as a separate hypothesis at use sites
-    (`certain_entails_confident`) rather than baked into the constructor,
-    matching CSW p.19's "for ordinary individuals" hedge.
-
-    Note: structurally identical to `confidentEntry` — the difference
-    between `certain` and `confident` is the *value* of the contrast
-    point relative to the ordering, not the entry's shape. -/
-abbrev certainEntry {E W : Type*} (co : ConfidenceOrdering E W)
-    (maxPt : ConfidenceState E W) :
-    @StatesBasedEntry (ConfidenceState E W) co.toPreorder :=
-  confidenceEntry co maxPt
-
-/-- `doubts`: a negative-polarity entry on the same confidence ordering
-    as `confident`/`certain`. The "positive region" of `doubts` (the
-    set of states the predicate holds of) is the *lower* portion of the
-    confidence ordering — states the holder has *low* confidence in
-    relative to `doubtPt`.
-
-    Structurally identical to `confidentEntry`/`certainEntry` — the
-    difference is which region predicate consumers invoke. `confident`
-    and `certain` use `inPositiveRegion`; `doubts` uses `inLowerRegion`.
-
-    CSW §5.2 (63c) places "Ann doubts that the dress is blue" in this
-    lower region; the inconsistency with (63a)/(63b) is then
-    `confident_excludes_doubts` below. -/
-abbrev doubtsEntry {E W : Type*} (co : ConfidenceOrdering E W)
-    (doubtPt : ConfidenceState E W) :
-    @StatesBasedEntry (ConfidenceState E W) co.toPreorder :=
-  confidenceEntry co doubtPt
 
 /-- `certain` entails `confident` (CSW (65)/(66)).
 
     Given that `maxPt` is the top of the ordering (CSW's "ordinary holder"
     assumption), the certainty contrast point dominates any confidence
-    contrast point, so by `asymEntails_positive_region` every state in the
-    certainty region is also in the confidence region. -/
+    contrast point, so every state in the certainty region is also in
+    the confidence region. -/
 theorem certain_entails_confident {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
-    (h_top : ∀ s : ConfidenceState E W, co.le s maxPt) :
-    letI := co.toPreorder
-    asymEntails (certainEntry co maxPt) (confidentEntry co confPt) := by
-  show co.le confPt maxPt
-  exact h_top confPt
+    (h_top : ∀ s : ConfidenceState E W, co.le s maxPt)
+    (s : ConfidenceState E W) (h_certain : co.le maxPt s) :
+    co.le confPt s :=
+  co.le_trans _ _ _ (h_top confPt) h_certain
 
 /-- The entailment is asymmetric (CSW (65b)/(66b)): confidence does NOT
     entail certainty whenever the ordering admits a state strictly above
     the confidence contrast point that is not in the certainty region.
 
-    Concretely: if `maxPt` is the certainty contrast point and `confPt`
-    is strictly below it (`¬co.le maxPt confPt`), then there is no
-    `asymEntails confidentEntry certainEntry` because the contrast points
-    don't match in the right direction. -/
+    Concretely: if `confPt` sits strictly below the certainty point
+    (`¬co.le maxPt confPt`), the state `confPt` itself witnesses
+    confidence without certainty. -/
 theorem confident_not_entails_certain {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
     (h_strict : ¬co.le maxPt confPt) :
-    letI := co.toPreorder
-    ¬ asymEntails (confidentEntry co confPt) (certainEntry co maxPt) := by
-  show ¬co.le maxPt confPt
-  exact h_strict
+    ∃ s : ConfidenceState E W, co.le confPt s ∧ ¬ co.le maxPt s :=
+  ⟨confPt, co.le_refl confPt, h_strict⟩
 
 /-! ## §4. Logic of Confidence Reports (CSW §4.6) -/
 
@@ -220,13 +167,11 @@ theorem comparative_antisymmetric {E W D : Type*} [LinearOrder D]
     region — by transitivity through the contrast point. -/
 theorem confidence_upward_monotone {E W : Type*}
     (co : ConfidenceOrdering E W)
-    (entry : @StatesBasedEntry _ co.toPreorder)
-    (s_p s_q : ConfidenceState E W)
-    (h_conf : @StatesBasedEntry.inPositiveRegion _ co.toPreorder entry s_p)
+    (contrastPt s_p s_q : ConfidenceState E W)
+    (h_conf : co.le contrastPt s_p)
     (h_more : co.le s_p s_q) :
-    @StatesBasedEntry.inPositiveRegion _ co.toPreorder entry s_q :=
-  letI := co.toPreorder
-  le_trans h_conf h_more
+    co.le contrastPt s_q :=
+  co.le_trans _ _ _ h_conf h_more
 
 /-- CSW (63a)/(63c): `confident` and `doubts` are mutually exclusive.
 
@@ -246,11 +191,8 @@ theorem confident_excludes_doubts {E W : Type*}
     (confPt doubtPt : ConfidenceState E W)
     (h_strict : ¬ co.le confPt doubtPt)
     (s : ConfidenceState E W) :
-    letI := co.toPreorder
-    ¬ (StatesBasedEntry.inPositiveRegion (confidentEntry co confPt) s ∧
-       StatesBasedEntry.inLowerRegion (doubtsEntry co doubtPt) s) := by
-  letI := co.toPreorder
-  exact disjoint_regions (confidentEntry co confPt) (doubtsEntry co doubtPt) h_strict s
+    ¬ (co.le confPt s ∧ co.le s doubtPt) :=
+  fun ⟨h₁, h₂⟩ => h_strict (co.le_trans _ _ _ h₁ h₂)
 
 /-! ### Conjunction-fallacy compatibility (CSW (52))
 
@@ -289,12 +231,10 @@ provided by `Degree.maxComparative_unique`).
     bookkeeping a separate domain-restricted variant would be needed. -/
 def confidenceLogicalForm {E W : Type*}
     (co : ConfidenceOrdering E W)
-    (entry : @StatesBasedEntry _ co.toPreorder)
+    (contrastPt : ConfidenceState E W)
     (holder : E) (p : W → Prop) : Prop :=
   ∃ s : ConfidenceState E W,
-    s.holder = holder ∧
-    @StatesBasedEntry.inPositiveRegion _ co.toPreorder entry s ∧
-    s.theme = p
+    s.holder = holder ∧ co.le contrastPt s ∧ s.theme = p
 
 /-- Schematic comparative content under the unique-state simplification.
 

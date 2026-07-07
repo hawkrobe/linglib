@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Degree.Differential
+import Linglib.Semantics.Degree.MeasurePhrase
 
 /-!
 # Bresnan 1973: Syntax of the Comparative Clause Construction in English
@@ -310,7 +310,7 @@ def puzzleC : List PuzzleDatum :=
     condition in the clause cannot be satisfied.
 
     Bridge: this connects to `measurePhrase_positive_only` in `Kennedy1999.lean`
-    and `AdmitsMeasurePhrase` in `Differential.lean`. -/
+    and `AdmitsMeasurePhrase` in `MeasurePhrase.lean`. -/
 def puzzleD : List PuzzleDatum :=
   [ { sentence := "Mary is more than six feet tall"
     , acceptable := true

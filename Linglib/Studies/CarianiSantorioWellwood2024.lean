@@ -1,4 +1,3 @@
-import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -17,7 +16,7 @@ contribution is a POS-morpheme-free account of the positive form
 (CSW §3.3) plus a per-holder, non-probabilistic confidence ordering
 (CSW §4.1) that admits Tversky–Kahneman conjunction fallacies (CSW §4.6).
 
-The substrate machinery lives in `Semantics/Gradability/StatesBased.lean`
+The substrate machinery lives in `Semantics/Attitudes/Confidence.lean`
 (positive-region predicates over a preorder) and
 `Semantics/Attitudes/Confidence.lean` (`ConfidenceOrdering`,
 `confidentEntry`/`certainEntry`, the §4.6 logic theorems). This study
@@ -29,7 +28,7 @@ witnesses the central cross-framework disagreement against
 
 | CSW section | What this file covers                                                |
 |-------------|----------------------------------------------------------------------|
-| §3.3        | POS-free positive form: `inPositiveRegion` over `confidentEntry`     |
+| §3.3        | POS-free positive form: contrast-point `co.le` on the ordering       |
 | §4.6 (52)   | Conjunction fallacy: `conjunction_fallacy_predicted` (→ `confidence_not_probabilistic`) |
 | §4.6 (53)   | Upward monotonicity (`Confidence.confidence_upward_monotone`)        |
 | §4.6 (54)   | Transitivity of comparative confidence                               |
@@ -92,7 +91,7 @@ CSW (66b) "?Bob has certainty, but not confidence, that p."
 
 The adjectival pair (65) is more sharply contrasted (??) than the
 nominal pair (66) (?). Both directions are encoded; the substrate
-predicts the direction from `certainEntry`'s maximality assumption. -/
+predicts the direction from certainty's maximality assumption. -/
 
 /-- The (65a)/(66a) felicitous pair: confidence without certainty is
     consistent. Predicted by `confident_not_entails_certain`: when
@@ -102,8 +101,7 @@ theorem confident_without_certain_consistent {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
     (h_strict : ¬ co.le maxPt confPt) :
-    letI := co.toPreorder
-    ¬ asymEntails (confidentEntry co confPt) (certainEntry co maxPt) :=
+    ∃ s : ConfidenceState E W, co.le confPt s ∧ ¬ co.le maxPt s :=
   confident_not_entails_certain co confPt maxPt h_strict
 
 /-- The (65b)/(66b) infelicitous pair: certainty without confidence is
@@ -113,10 +111,10 @@ theorem confident_without_certain_consistent {E W : Type*}
 theorem certain_without_confident_inconsistent {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
-    (h_top : ∀ s : ConfidenceState E W, co.le s maxPt) :
-    letI := co.toPreorder
-    asymEntails (certainEntry co maxPt) (confidentEntry co confPt) :=
-  certain_entails_confident co confPt maxPt h_top
+    (h_top : ∀ s : ConfidenceState E W, co.le s maxPt)
+    (s : ConfidenceState E W) (h_certain : co.le maxPt s) :
+    co.le confPt s :=
+  certain_entails_confident co confPt maxPt h_top s h_certain
 
 /-- Empirical record of the (65)/(66) felicity gradient.
     Keeps adjectival (65b) and nominal (66b) markings distinct rather
@@ -199,12 +197,11 @@ theorem conjunction_fallacy_predicted :
     transitivity through the contrast point. -/
 theorem upward_monotonicity_predicted {E W : Type*}
     (co : ConfidenceOrdering E W)
-    (entry : @StatesBasedEntry _ co.toPreorder)
-    (s_p s_q : ConfidenceState E W)
-    (h_conf : @StatesBasedEntry.inPositiveRegion _ co.toPreorder entry s_p)
+    (contrastPt s_p s_q : ConfidenceState E W)
+    (h_conf : co.le contrastPt s_p)
     (h_more : co.le s_p s_q) :
-    @StatesBasedEntry.inPositiveRegion _ co.toPreorder entry s_q :=
-  confidence_upward_monotone co entry s_p s_q h_conf h_more
+    co.le contrastPt s_q :=
+  confidence_upward_monotone co contrastPt s_p s_q h_conf h_more
 
 /-! ### §3.6 Doubts Triangle (CSW (63a)–(63c)) -/
 
@@ -216,18 +213,16 @@ theorem upward_monotonicity_predicted {E W : Type*}
     `certain_entails_confident`); (63b) is inconsistent with (63c)
     `doubts(p)` (this theorem); so (63a) is inconsistent with (63c).
 
-    The substrate models `doubts` as a negative-polarity entry on the
-    same `ConfidenceOrdering` as `confident`/`certain`: same entry shape
-    (`StatesBasedEntry`), but consumers test `inLowerRegion` rather than
-    `inPositiveRegion`. -/
+    The substrate models `doubts` as a negative-polarity contrast point
+    on the same `ConfidenceOrdering` as `confident`/`certain`: it holds
+    of states *below* its point (`co.le s doubtPt`) where `confident`
+    holds *above* its own (`co.le confPt s`). -/
 theorem doubts_excludes_confidence_predicted {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt doubtPt : ConfidenceState E W)
     (h_strict : ¬ co.le confPt doubtPt)
     (s : ConfidenceState E W) :
-    letI := co.toPreorder
-    ¬ (StatesBasedEntry.inPositiveRegion (confidentEntry co confPt) s ∧
-       StatesBasedEntry.inLowerRegion (doubtsEntry co doubtPt) s) :=
+    ¬ (co.le confPt s ∧ co.le s doubtPt) :=
   confident_excludes_doubts co confPt doubtPt h_strict s
 
 /-! ## §4. Comparative Scale-Mate Equivalence (CSW (72))
@@ -238,7 +233,7 @@ certain that p than that q" are truth-conditionally equivalent.
 CSW p.31 explanation: the comparative discards the contrast function
 and uses only the shared background ordering. The substrate captures
 this **architecturally** — `Degree.comparativeSem` takes no
-`StatesBasedEntry` parameter, so the contrast point that distinguishes
+contrast-point parameter, so the contrast point that distinguishes
 `confident` from `certain` is invisible to the comparative. The
 prediction holds by construction. -/
 
@@ -262,11 +257,10 @@ The central architectural commitment of the paper. CSW (28b)/(40):
 the positive form `g-ness_C(s)` holds iff `s ≿ contrast(g-ness)` —
 no covert `pos` morpheme is invoked.
 
-The substrate (`StatesBased.inPositiveRegion`) implements this
-directly: `entry.contrastPoint ≤ s` over the background preorder.
-Different lexical entries (`confidentEntry`, `certainEntry`) on the
-*same* `ConfidenceOrdering` have *different* positive regions because
-their `contrastPoint`s differ — exactly CSW's analysis without ever
+The substrate implements this directly: `co.le contrastPt s` over the
+background preorder. Different lexical entries on the *same*
+`ConfidenceOrdering` have *different* positive regions because their
+contrast points differ — exactly CSW's analysis without ever
 introducing POS. -/
 
 /-- POS-free positive form: `confident` and `certain` produce different
@@ -280,15 +274,8 @@ theorem positive_form_pos_free {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
     (h_strict : ¬ co.le maxPt confPt) :
-    letI := co.toPreorder
-    ∃ s : ConfidenceState E W,
-      StatesBasedEntry.inPositiveRegion (confidentEntry co confPt) s ∧
-      ¬ StatesBasedEntry.inPositiveRegion (certainEntry co maxPt) s := by
-  refine ⟨confPt, ?_, ?_⟩
-  · show co.le confPt confPt
-    exact co.le_refl _
-  · show ¬ co.le maxPt confPt
-    exact h_strict
+    ∃ s : ConfidenceState E W, co.le confPt s ∧ ¬ co.le maxPt s :=
+  ⟨confPt, co.le_refl _, h_strict⟩
 
 /-! ## §6. Cross-Framework Refutation: States-Based vs Threshold-Probabilistic
 

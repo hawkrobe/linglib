@@ -1599,7 +1599,7 @@ import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Differential
+import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
@@ -1613,7 +1613,6 @@ import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Hom
 import Linglib.Semantics.Degree.Intensification
 import Linglib.Studies.DinisJacinto2026
-import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Standard
 import Linglib.Studies.Bale2008
