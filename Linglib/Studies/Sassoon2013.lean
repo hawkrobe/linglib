@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Standard
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Core.Order.Boundedness
 
 /-!

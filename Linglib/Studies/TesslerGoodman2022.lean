@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Standard
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Semantics.Quantification.DomainRestriction
