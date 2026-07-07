@@ -87,7 +87,7 @@ section Examples310
 /-- After "normally p", learning ¬p doesn't crash — the info state
     still has ¬p-worlds. Rules can have exceptions. -/
 theorem ex310_i_exception :
-    (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).info.Nonempty :=
+    ((σ₀.promote atomP).assert (fun w => ¬atomP w)).info.Nonempty :=
   ⟨w₀, ⟨Set.mem_univ _, atomP_w₀⟩⟩
 
 /-- After "normally p", the globally optimal worlds are exactly the
@@ -95,11 +95,11 @@ theorem ex310_i_exception :
     satisfies ¬p. This is [veltman-1996]'s coherence check
     (Definition 3.9). -/
 theorem ex310_i_conflict :
-    ¬∃ w ∈ Normality.optimal (normallyUpdate atomP σ₀).order Set.univ, ¬atomP w := by
+    ¬∃ w ∈ Normality.optimal (σ₀.promote atomP).order Set.univ, ¬atomP w := by
   intro ⟨w, hw_opt, hnp⟩
   have hex : ∃ v ∈ (Set.univ : Set PQWorld), atomP v :=
     ⟨w₁, Set.mem_univ _, atomP_w₁⟩
-  simp only [normallyUpdate, σ₀, ExpState.init] at hw_opt
+  simp only [ExpState.promote, σ₀, ExpState.init] at hw_opt
   rw [Normality.refine_total_optimal atomP Set.univ hex] at hw_opt
   exact hnp hw_opt.2
 
@@ -111,11 +111,11 @@ theorem ex310_i_conflict :
 
     [veltman-1996], Examples 3.10(ii): normally p, ¬p ⊬ presumably p. -/
 theorem ex310_ii_defeat :
-    ¬∀ w ∈ (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).optimal,
+    ¬∀ w ∈ ((σ₀.promote atomP).assert (fun w => ¬atomP w)).optimal,
       atomP w := by
   intro h
   apply h w₀
-  simp only [ExpState.optimal, assertUpdate, normallyUpdate, σ₀, ExpState.init,
+  simp only [ExpState.optimal, ExpState.assert, ExpState.promote, σ₀, ExpState.init,
     Normality.optimal]
   refine ⟨⟨Set.mem_univ _, atomP_w₀⟩, fun v ⟨_, hnpv⟩ _ => ?_⟩
   exact ⟨True.intro, fun hpv => absurd hpv hnpv⟩
@@ -124,8 +124,8 @@ theorem ex310_ii_defeat :
 
     [veltman-1996], Examples 3.10(ii): normally p, ¬p ⊩ normally p. -/
 theorem ex310_ii_rule_persists :
-    Normality.respects (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).order atomP :=
-  persistence_assert (normallyUpdate atomP σ₀) atomP _ (normally_creates_respect σ₀ atomP)
+    Normality.respects ((σ₀.promote atomP).assert (fun w => ¬atomP w)).order atomP :=
+  persistence_assert (σ₀.promote atomP) atomP _ (normally_creates_respect σ₀ atomP)
 
 -- ─── Example 3.10(iii): Irrelevant information ───
 
@@ -134,9 +134,9 @@ theorem ex310_ii_rule_persists :
 
     [veltman-1996], Examples 3.10(iii): normally p, q ⊩ presumably p. -/
 theorem ex310_iii_irrelevant :
-    ∀ w ∈ (assertUpdate atomQ (normallyUpdate atomP σ₀)).optimal, atomP w := by
+    ∀ w ∈ ((σ₀.promote atomP).assert atomQ).optimal, atomP w := by
   intro w ⟨⟨_, hqw⟩, hopt⟩
-  simp only [normallyUpdate, σ₀, ExpState.init] at hopt
+  simp only [ExpState.promote, σ₀, ExpState.init] at hopt
   by_contra hnpw
   have hle : (Normality.refine Normality.total atomP).le w₃ w :=
     ⟨True.intro, fun _ => atomP_w₃⟩
@@ -151,11 +151,10 @@ theorem ex310_iii_irrelevant :
     [veltman-1996], Examples 3.10(iv):
     normally p, normally q, ¬p ⊩ presumably q. -/
 theorem ex310_iv_independence :
-    ∀ w ∈ (assertUpdate (fun w => ¬atomP w)
-            (normallyUpdate atomQ (normallyUpdate atomP σ₀))).optimal,
+    ∀ w ∈ (((σ₀.promote atomP).promote atomQ).assert (fun w => ¬atomP w)).optimal,
       atomQ w := by
   intro w ⟨⟨_, hnpw⟩, hopt⟩
-  simp only [normallyUpdate, σ₀, ExpState.init] at hopt
+  simp only [ExpState.promote, σ₀, ExpState.init] at hopt
   by_contra hnqw
   -- w₂ (¬p, q) dominates any ¬p ∧ ¬q world
   have hle : (Normality.refine (Normality.refine Normality.total atomP) atomQ).le w₂ w :=
@@ -172,12 +171,11 @@ theorem ex310_iv_independence :
     [veltman-1996], Examples 3.10(v):
     normally p, normally q, ¬(p ∧ q) ⊬ presumably p. -/
 theorem ex310_v_ambiguity_p :
-    ¬∀ w ∈ (assertUpdate (fun w => ¬(atomP w ∧ atomQ w))
-             (normallyUpdate atomQ (normallyUpdate atomP σ₀))).optimal,
+    ¬∀ w ∈ (((σ₀.promote atomP).promote atomQ).assert (fun w => ¬(atomP w ∧ atomQ w))).optimal,
       atomP w := by
   intro h
   apply h w₂
-  simp only [ExpState.optimal, assertUpdate, normallyUpdate, σ₀, ExpState.init,
+  simp only [ExpState.optimal, ExpState.assert, ExpState.promote, σ₀, ExpState.init,
     Normality.optimal]
   refine ⟨⟨Set.mem_univ _, fun ⟨hp, _⟩ => atomP_w₂ hp⟩, fun v ⟨_, hnpq⟩ hle => ?_⟩
   -- hle gives atomQ v (via the atomQ-refinement component evaluated at w₂)
@@ -191,12 +189,11 @@ theorem ex310_v_ambiguity_p :
     [veltman-1996], Examples 3.10(v):
     normally p, normally q, ¬(p ∧ q) ⊬ presumably q. -/
 theorem ex310_v_ambiguity_q :
-    ¬∀ w ∈ (assertUpdate (fun w => ¬(atomP w ∧ atomQ w))
-             (normallyUpdate atomQ (normallyUpdate atomP σ₀))).optimal,
+    ¬∀ w ∈ (((σ₀.promote atomP).promote atomQ).assert (fun w => ¬(atomP w ∧ atomQ w))).optimal,
       atomQ w := by
   intro h
   apply h w₁
-  simp only [ExpState.optimal, assertUpdate, normallyUpdate, σ₀, ExpState.init,
+  simp only [ExpState.optimal, ExpState.assert, ExpState.promote, σ₀, ExpState.init,
     Normality.optimal]
   refine ⟨⟨Set.mem_univ _, fun ⟨_, hq⟩ => atomQ_w₁ hq⟩, fun v ⟨_, hnpq⟩ hle => ?_⟩
   -- hle gives atomP v (via the atomP-refinement component evaluated at w₁)

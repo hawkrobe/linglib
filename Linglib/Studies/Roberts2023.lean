@@ -55,8 +55,8 @@ standalone formalization of an imperative mood ontology:
   the prejacent's modal flavor.
 - The scoreboard updates are `Discourse.Scoreboard`'s
   assertion/interrogation/direction; the *derivation* that
-  `directionUpdate` factors as `POSW.star` lives in Scoreboard.lean
-  (`toPOSW_direction_eq_star`).
+  `directionUpdate` factors as `ExpState.promote` lives in the
+  Scoreboard section (`toExpState_direction_eq_promote`).
 
 ## Equation citations
 
@@ -324,8 +324,10 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 /-! ### POSW substrate bridge
 
 The scoreboard's CommonGround and G components project jointly into a
-`Semantics.Mood.POSW`: CommonGround via `contextSet`, G via the goal-induced
-preference ordering. Assertion ↔ `plus`, direction ↔ `star`. -/
+the POSW substrate (`Semantics.Dynamic.Default.ExpState` under its
+`Semantics/Mood/POSW.lean` modal reading): CommonGround via
+`contextSet`, G via the goal-induced preference ordering. Assertion ↔
+`assert`, direction ↔ `promote`. -/
 
 /-- Flat list of goal contents across all agents. -/
 def goalContents (K : Scoreboard W) : List (W → Prop) :=
@@ -375,42 +377,47 @@ lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
   exact mem_addGoalAt_flatMap K.goals t 0 ⟨p, fun _ => True, pr⟩
     (Nat.zero_le _) (by simpa using hin) q
 
-/-- Project the scoreboard into a POSW: `cs` from CommonGround, `le` from
-    goal-induced preference. -/
-def toPOSW (K : Scoreboard W) : Semantics.Mood.POSW W where
-  cs := K.contextSet
-  le := fun w v => ∀ p ∈ K.goalContents, p v → p w
-  le_refl  := fun _ _ _ _ hp => hp
-  le_trans := fun _ _ _ _ _ _ hwu huv p hp hpv => hwu p hp (huv p hp hpv)
+/-- Project the scoreboard into a POSW-style expectation state: `info`
+    from CommonGround, `order` from goal-induced preference. -/
+def toExpState (K : Scoreboard W) : Semantics.Dynamic.Default.ExpState W where
+  info := K.contextSet
+  order := Preorder.ofLE (fun w v => ∀ p ∈ K.goalContents, p v → p w)
+    (fun _ _ _ hp => hp)
+    (fun _ _ _ hwu huv p hp hpv => hwu p hp (huv p hp hpv))
 
-@[simp] theorem toPOSW_cs (K : Scoreboard W) :
-    K.toPOSW.cs = K.contextSet := rfl
+@[simp] theorem toExpState_info (K : Scoreboard W) :
+    K.toExpState.info = K.contextSet := rfl
 
-@[simp] theorem toPOSW_le (K : Scoreboard W) (w v : W) :
-    K.toPOSW.le w v ↔ ∀ p ∈ K.goalContents, p v → p w := Iff.rfl
+@[simp] theorem toExpState_le (K : Scoreboard W) (w v : W) :
+    K.toExpState.order.le w v ↔ ∀ p ∈ K.goalContents, p v → p w := Iff.rfl
 
 /-- Assertion-as-`+`-update bridge: `assertionUpdate` refines the
-    projected POSW's `cs` exactly as `POSW.plus` does. -/
-theorem toPOSW_assertion_eq_plus (K : Scoreboard W) (p : W → Prop) (a : Nat) (w : W) :
-    (K.assertionUpdate p a).toPOSW.cs w ↔ (K.toPOSW.plus p).cs w := by
-  simp [toPOSW, contextSet, assertionUpdate, Semantics.Mood.POSW.plus]
+    projected state's `info` exactly as `ExpState.assert` does. -/
+theorem toExpState_assertion_eq_assert (K : Scoreboard W) (p : W → Prop) (a : Nat) (w : W) :
+    w ∈ (K.assertionUpdate p a).toExpState.info ↔
+      w ∈ (K.toExpState.assert p).info := by
+  show (∀ q ∈ p :: K.cg, q w) ↔ (∀ q ∈ K.cg, q w) ∧ p w
+  rw [List.forall_mem_cons]
   exact And.comm
 
 /-- After asserting `p`, `p` is informationally necessary on the
-    projected POSW (Stalnakerian assertion principle). -/
+    projected state (Stalnakerian assertion principle). -/
 theorem boxCs_after_assertion (K : Scoreboard W) (p : W → Prop) (a : Nat) :
-    (K.assertionUpdate p a).toPOSW.boxCs p := by
+    (K.assertionUpdate p a).toExpState.boxCs p := by
   intro w hw
-  have hplus : (K.toPOSW.plus p).cs w := (toPOSW_assertion_eq_plus K p a w).mp hw
-  exact Semantics.Mood.POSW.boxCs_plus_self K.toPOSW p w hplus
+  have hassert : w ∈ (K.toExpState.assert p).info :=
+    (toExpState_assertion_eq_assert K p a w).mp hw
+  exact K.toExpState.boxCs_assert_self p w hassert
 
 /-- Direction-as-`⋆`-update bridge: `directionUpdate` refines the
-    projected POSW's `le` exactly as `POSW.star` does
+    projected state's `order` exactly as `ExpState.promote` does
     (modulo target-in-bounds). -/
-theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
+theorem toExpState_direction_eq_promote (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W) :
-    (K.directionUpdate p s t pr).toPOSW.le w v ↔ (K.toPOSW.star p).le w v := by
-  simp only [toPOSW_le, Semantics.Mood.POSW.star_le]
+    (K.directionUpdate p s t pr).toExpState.order.le w v ↔
+      (K.toExpState.promote p).order.le w v := by
+  simp only [toExpState_le, Semantics.Dynamic.Default.ExpState.promote_order,
+    Core.Order.Normality.refine_le, toExpState_le]
   constructor
   · intro h
     refine ⟨fun q hq => h q ?_, h p ?_⟩
@@ -425,11 +432,11 @@ theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
 theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W)
     (hpv : p v) (hpw : ¬ p w) :
-    ¬ (K.directionUpdate p s t pr).toPOSW.le w v := by
+    ¬ (K.directionUpdate p s t pr).toExpState.order.le w v := by
   intro hlt
-  have hstar : (K.toPOSW.star p).le w v :=
-    (toPOSW_direction_eq_star K p s t pr hin w v).mp hlt
-  exact hpw (hstar.2 hpv)
+  have hstar : (K.toExpState.promote p).order.le w v :=
+    (toExpState_direction_eq_promote K p s t pr hin w v).mp hlt
+  exact hpw ((Core.Order.Normality.refine_le.mp hstar).2 hpv)
 
 /-! ### POSWQ inquiry-partition bridge
 
@@ -458,12 +465,12 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).goalContents = K.goalContents := rfl
 
-/-- Project the scoreboard into a POSWQ: underlying POSW + QUD inquiry. -/
+/-- Project the scoreboard into a POSWQ: underlying state + QUD inquiry. -/
 def toPOSWQ (K : Scoreboard W) : Semantics.Mood.POSWQ W :=
-  { K.toPOSW with inquiry := K.qudInquiry }
+  { K.toExpState with inquiry := K.qudInquiry }
 
-@[simp] theorem toPOSWQ_toPOSW (K : Scoreboard W) :
-    K.toPOSWQ.toPOSW = K.toPOSW := rfl
+@[simp] theorem toPOSWQ_toExpState (K : Scoreboard W) :
+    K.toPOSWQ.toExpState = K.toExpState := rfl
 
 @[simp] theorem toPOSWQ_inquiry (K : Scoreboard W) :
     K.toPOSWQ.inquiry = K.qudInquiry := rfl
@@ -492,7 +499,8 @@ namespace Roberts2023
 open Intensional (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
 open Semantics.Mood.IllocutionaryMood (sincerityCondition)
-open Semantics.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
+open Semantics.Mood (POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
+open Semantics.Dynamic.Default (ExpState)
 open HistoricalAlternatives
 open Semantics.Modality.Kratzer
 
@@ -568,8 +576,8 @@ restipulated) here. -/
     This is the type-level shadow of "deontic force is pragmatic,
     not LF": deontic-style content lives where the preference
     component does, and the imperative refines that component
-    (via `POSW.star` / `Scoreboard.directionUpdate`) rather than
-    the informational one. -/
+    (via `ExpState.promote` / `Scoreboard.directionUpdate`) rather
+    than the informational one. -/
 theorem imperative_targets_preferential :
     HasPOSWTarget.target IllocutionaryMood.imperative = .preferential := rfl
 
@@ -579,7 +587,7 @@ theorem imperative_targets_preferential :
     the **preferential** component of the projected POSW: every
     prejacent-violator `w` (`¬ p w`) is demoted relative to every
     prejacent-satisfier `v` (`p v`) in the preference order
-    (`¬ (· ).toPOSW.le w v`).
+    (`¬ (· ).toExpState.order.le w v`).
 
     The dual negative claim — that the **informational** component
     (CommonGround) is untouched — is `Scoreboard.direction_preserves_cg` (a
@@ -598,7 +606,7 @@ theorem imperative_targets_preferential :
 theorem pragmatic_deontic_routing
     {W : Type*} (K : Scoreboard W) (p : W → Prop) (s t pr : Nat)
     (hin : t < K.goals.length) {w v : W} (hpv : p v) (hpw : ¬ p w) :
-    ¬ (K.directionUpdate p s t pr).toPOSW.le w v :=
+    ¬ (K.directionUpdate p s t pr).toExpState.order.le w v :=
   Scoreboard.direction_demotes_violators K p s t pr hin w v hpv hpw
 
 /-! ## §1 Desideratum (h): Futurate Flavor
@@ -680,7 +688,7 @@ theorem disagrees_with_ruytenbeek_imperative_flavor :
     theorem (deleted after Ruytenbeek's `directiveCompatible` wrapper
     was inlined): under Roberts, an imperative is directive *despite*
     not having deontic flavor in its prejacent — the directive force
-    comes from the `POSW.star` update on the addressee's preference
+    comes from the `ExpState.promote` update on the addressee's preference
     structure (see `pragmatic_deontic_routing`), not from the
     prejacent's flavor matching the imperative's. -/
 theorem disagrees_with_assert :

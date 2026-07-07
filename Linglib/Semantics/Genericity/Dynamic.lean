@@ -484,7 +484,7 @@ theorem disjoint_pair_consistent
 [kirkpatrick-2024] Appendix A (pp. 544–548) shows that
 [veltman-1996]'s update semantics predicts both generic Sobel
 sequences and their reverses are consistent, because Veltman's
-`normallyUpdate` is commutative (`normallyUpdate_comm` in
+`ExpState.promote` is commutative (`promote_comm` in
 `UpdateSemantics/Default.lean`): the final expectation state σ₁ = σ₂
 regardless of processing order, since the expectation frame π₁ = π₂.
 
@@ -502,7 +502,7 @@ variable {G S : Type}
     on the final state gives the same truth value in both orders.
 
     This is the formal content of Kirkpatrick's argument against Veltman:
-    since `normallyUpdate` commutes, the consistency predicate cannot
+    since `ExpState.promote` commutes, the consistency predicate cannot
     distinguish σ[φ₁][φ₂] from σ[φ₂][φ₁]. In particular, if a Sobel
     sequence is consistent under Veltman's semantics, its reverse must
     be too — contrary to empirical judgment.
