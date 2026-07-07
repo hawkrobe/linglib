@@ -1599,7 +1599,6 @@ import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.DirectedMeasure
-import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Gradability.Aggregation
 import Linglib.Semantics.Degree.Gradability.AntonymPrediction
 import Linglib.Semantics.Degree.Gradability.Antonymy

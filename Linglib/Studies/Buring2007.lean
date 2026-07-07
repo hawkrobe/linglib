@@ -2,6 +2,7 @@ import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Little
 import Mathlib.Order.Interval.Basic
 import Linglib.Studies.VonStechow1984
+import Linglib.Studies.Kennedy1999
 
 /-!
 # Büring 2007: Cross-Polar Nomalies
@@ -51,7 +52,7 @@ disambiguate the two, favoring Analysis 1.
 
 ## Formal Connections
 
-- **LITTLE as extent complement**: `littlePred` maps `posExt` to `negExt`,
+- **LITTLE as extent complement**: `littlePred` maps `Set.Iic` to `Set.Ioi`,
   connecting to [kennedy-1999]'s extent algebra in `Degree`.
 - **Cross-polar anomaly = algebraic impossibility**: same-dimension
   cross-polar comparison requires `crossExtentInclusion`, which
@@ -65,33 +66,33 @@ disambiguate the two, favoring Analysis 1.
 namespace Buring2007
 
 open Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
-open Degree.Little (littlePred little_posExt_eq_negExt little_involution
+open Degree.Little (littlePred littlePred_Iic_eq_Ioi little_involution
   little_reverses_comparison)
-open Degree (subcomparative posExt negExt crossExtentInclusion
-  crossExtent_always_false)
+open Degree (subcomparative)
+open Kennedy1999 (crossExtentInclusion crossExtent_always_false)
 
 /-- Schwarzschild-style positive interval `[⊥, μ x]` — the bundled
-    (`NonemptyInterval`) face of `posExt μ x`. -/
+    (`NonemptyInterval`) face of `Set.Iic (μ x)`. -/
 def positiveInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
   ⟨(⊥, μ x), bot_le⟩
 
 /-- Negative interval `[μ x, ⊤]` (§4: ⟦short⟧ = ⟦LITTLE tall⟧ inverts
-    the positive interval) — the bundled face of `negExt μ x`. -/
+    the positive interval) — the bundled face of `Set.Ioi (μ x)`. -/
 def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
   ⟨(μ x, ⊤), le_top⟩
 /-! ### LITTLE: Degree Negation on Extents -/
 
 -- LITTLE is in the theory layer at `Semantics/Degree/Little.lean`:
---   littlePred, little_posExt_eq_negExt, little_involution,
+--   littlePred, littlePred_Iic_eq_Ioi, little_involution,
 --   little_reverses_comparison.
 -- This section adds Büring-specific bridges.
 
 /-- LITTLE maps positive intervals to negative intervals
     ([buring-2007] §4, def. 22): the positive interval [⊥, μ(x)]
     becomes the negative interval [μ(x), ⊤]. This is the interval-level
-    counterpart of `little_posExt_eq_negExt` (which operates on extent sets).
+    counterpart of `littlePred_Iic_eq_Ioi` (which operates on extent sets).
 
     The bridge connects the interval framework (Schwarzschild) to the
     extent framework (Kennedy) via LITTLE. -/
@@ -106,11 +107,11 @@ theorem little_positive_to_negative {Entity D : Type*}
 /-- **Cross-polar anomaly** = attempting to compare a positive extent
     with a negative extent on the same dimension.
 
-    "?*John is shorter than Mary is tall" requires posExt(Mary) ⊆
-    negExt(John), but `crossExtent_always_false` from
+    "?*John is shorter than Mary is tall" requires Iic(μ Mary) ⊆
+    Ioi(μ John), but `crossExtent_always_false` from
     [kennedy-1999]'s extent algebra proves this is impossible on
-    any linear order: the boundary degree μ(a) belongs to posExt but
-    not negExt, so posExt can never be a subset of negExt.
+    any linear order: the boundary degree μ(a) belongs to the positive
+    extent but not the negative one, so the inclusion always fails.
 
     Note: [buring-2007]'s explanation is syntactic (MaxElide §3.2),
     not algebraic. The algebraic impossibility is a stronger claim:

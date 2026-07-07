@@ -61,7 +61,7 @@ re-exported below.
 - **Typed ⟨dt,t⟩ DegP-as-generalized-quantifier denotations** over
   arbitrary degree predicates. For monotone adjectives the max-set
   computation reduces to the substrate's measure-function comparative
-  `Degree.comparativeSem` (via `Degree.isGreatest_posExt`).
+  `Degree.comparativeSem` (via `isGreatest_Iic`).
 
 ## Recent literature this file does not engage
 
@@ -138,7 +138,7 @@ theorem exists_more_scope_collapse {Entity D : Type*} [LinearOrder D]
     exact ⟨x, hR, lt_of_lt_of_le hgt hge⟩
 
 /-- The negated degree predicate `{d : ¬(μ(a) ≥ d)}` — the degrees `a`
-lacks (p. 220); extensionally `Degree.negExt`. -/
+lacks (p. 220); extensionally `Set.Ioi (μ a)`. -/
 def negatedDegreePredicate {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (a : Entity) (d : D) : Prop :=
   ¬ (μ a ≥ d)
