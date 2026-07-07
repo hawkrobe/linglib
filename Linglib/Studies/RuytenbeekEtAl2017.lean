@@ -1,5 +1,5 @@
 import Linglib.Discourse.SpeechAct
-import Linglib.Semantics.Mood.Assert
+import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Fragments.French.Modals
 
 /-!
@@ -63,7 +63,7 @@ regression coefficients.
 
 ## Cross-paper bridges
 
-- `Semantics/Mood/Assert.lean`: the imperative's
+- `Semantics/Mood/SpeechEvent.lean`: the imperative's
   `primaryFlavor = .deontic` is the layered foundation;
   `SentType.modalFlavor` for the imperative branch derives from it.
 - `Studies/Roberts2023.lean`: a chronologically
@@ -89,7 +89,7 @@ namespace RuytenbeekEtAl2017
 
 open Semantics.Modality (ModalFlavor ModalForce)
 open Semantics.Mood (Illocutionary)
-open Semantics.Mood.Assert (primaryFlavor)
+open Semantics.Mood.Illocutionary (primaryFlavor)
 
 /-! ### Sentence types and modal projections -/
 
@@ -145,7 +145,7 @@ def SentType.mood : SentType → Illocutionary
 /-- Contextually salient modal flavor for each sentence type.
 
     The imperative branch is **derived** from
-    `Semantics.Mood.Assert.primaryFlavor` rather than restipulated
+    `Semantics.Mood.Illocutionary.primaryFlavor` rather than restipulated
     (layered grounding — see `imperative_modalFlavor_eq_assert` below).
 
     `canDeclarative = .deontic` follows the paper's §3.4 Discussion
