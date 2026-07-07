@@ -1,4 +1,5 @@
 import Mathlib.Order.BoundedOrder.Basic
+import Linglib.Core.Order.Comparison
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Order.Fin.Basic
@@ -107,36 +108,29 @@ section Concrete
 
 variable {max : Nat}
 
-/-- Positive form (*tall*): `t < d`. -/
+/-- Positive form (*tall*): `t < d` — the strict threshold face of
+`Core.Order.Comparison.gt.over` on the discrete carrier. -/
 def positiveMeaning (d : Degree max) (t : Threshold max) : Prop :=
-  (t : Degree max) < d
+  d ∈ Core.Order.Comparison.gt.over id (t : Degree max)
 
 /-- Polar antonym (*short*): `d < t`, evaluated against the antonym's own
 threshold (which may sit below the positive's — see `Gradability.ThresholdPair`). -/
 def negativeMeaning (d : Degree max) (t : Threshold max) : Prop :=
-  d < (t : Degree max)
+  d ∈ Core.Order.Comparison.lt.over id (t : Degree max)
 
 /-- Contradictory negation (*not tall*): `d ≤ t`, the complement of
 `positiveMeaning`. Not the polar antonym — that is `negativeMeaning`. -/
 def notPositiveMeaning (d : Degree max) (t : Threshold max) : Prop :=
-  d ≤ (t : Degree max)
+  d ∈ Core.Order.Comparison.le.over id (t : Degree max)
 
 instance (d : Degree max) (t : Threshold max) : Decidable (positiveMeaning d t) :=
-  inferInstanceAs (Decidable (_ < _))
+  inferInstanceAs (Decidable ((t : Degree max) < d))
 
 instance (d : Degree max) (t : Threshold max) : Decidable (negativeMeaning d t) :=
-  inferInstanceAs (Decidable (_ < _))
+  inferInstanceAs (Decidable (d < (t : Degree max)))
 
 instance (d : Degree max) (t : Threshold max) : Decidable (notPositiveMeaning d t) :=
-  inferInstanceAs (Decidable (_ ≤ _))
-
-/-- Monotonicity of `positiveMeaning` in the threshold: a higher threshold
-is informationally stronger. Grounds the weak-vs-strong-adjective
-distinction (`InformationalStrength`). -/
-theorem positiveMeaning_monotone (d : Degree max) (θ_weak θ_strong : Threshold max)
-    (h_ord : θ_weak ≤ θ_strong) (h_strong : positiveMeaning d θ_strong) :
-    positiveMeaning d θ_weak :=
-  lt_of_le_of_lt h_ord h_strong
+  inferInstanceAs (Decidable (d ≤ (t : Degree max)))
 
 end Concrete
 

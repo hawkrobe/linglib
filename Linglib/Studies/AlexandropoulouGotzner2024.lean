@@ -32,7 +32,8 @@ theorem (lexical commitment ↔ output of pragmatic strengthening) lives there.
 ## Substrate consumed
 
 - `Semantics/Degree/Basic.lean` — `positiveMeaning`, `notPositiveMeaning`,
-  `positiveMeaning_monotone` (all `Prop`-valued, decidable).
+  threshold antitonicity (`Comparison.antitone_gt_over`; all `Prop`-valued,
+  decidable).
 - `Semantics/Gradability/Theory.lean` — `ThresholdPair`,
   `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`,
   `inGapRegion` (all `abbrev`s over the Core primitives).
@@ -63,7 +64,8 @@ open Core.Order (Boundedness)
 open Degree (Degree Threshold deg thr)
 open Degree (GradableAdjective ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
-open Degree (positiveMeaning notPositiveMeaning positiveMeaning_monotone)
+open Degree (positiveMeaning notPositiveMeaning)
+open Core.Order (Comparison)
 open English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
 
@@ -181,8 +183,9 @@ theorem contradictory_is_complement {max : Nat}
 -- § 5. Monotonicity → Strength & Precision
 -- ============================================================================
 
-/-! `positiveMeaning_monotone` (Core): higher threshold ⇒ informationally
-    stronger. This single substrate theorem grounds both:
+/-! Threshold antitonicity (`Comparison.antitone_gt_over`): higher
+    threshold ⇒ informationally stronger. This single substrate theorem
+    grounds both:
     1. Strong adjectives entail weak (gigantic ⇒ large).
     2. Precision upshift entails standard (pristine-precision ⇒ standard
        precision; cf. Glossa §4.2 precision-shift mechanism in §7 below). -/
@@ -192,15 +195,17 @@ theorem strong_entails_weak (θ_weak θ_strong : Thr5)
     (h_ord : θ_weak ≤ θ_strong) (d : Deg5)
     (h_strong : positiveMeaning d θ_strong) :
     positiveMeaning d θ_weak :=
-  positiveMeaning_monotone d θ_weak θ_strong h_ord h_strong
+  Comparison.antitone_gt_over id
+    (show (θ_weak : Deg5) ≤ (θ_strong : Deg5) from h_ord) h_strong
 
 /-- Concrete witness: degree 4 is positive at the weak threshold (thr 2)
     BECAUSE it is positive at the strong threshold (thr 3) and monotonicity
     propagates. -/
 theorem gigantic_entails_large :
     positiveMeaning (deg 4 : Deg5) (thr 2 : Thr5) :=
-  positiveMeaning_monotone (deg 4) (thr 2 : Thr5) (thr 3 : Thr5)
-    (by decide) (by decide)
+  Comparison.antitone_gt_over id
+    (show ((thr 2 : Thr5) : Deg5) ≤ ((thr 3 : Thr5) : Deg5) by decide)
+    (by decide)
 
 /-- Precision upshift entails the standard reading: a degree satisfying
     "clean" at pristine precision (θ = 3) satisfies "clean" at standard
@@ -208,7 +213,8 @@ theorem gigantic_entails_large :
 theorem precision_entails_standard (d : Deg5)
     (h : positiveMeaning d (thr 3 : Thr5)) :
     positiveMeaning d (thr 1 : Thr5) :=
-  positiveMeaning_monotone d (thr 1 : Thr5) (thr 3 : Thr5) (by decide) h
+  Comparison.antitone_gt_over id
+    (show ((thr 1 : Thr5) : Deg5) ≤ ((thr 3 : Thr5) : Deg5) by decide) h
 
 -- ============================================================================
 -- § 6. Predictions for Contrary Antonyms

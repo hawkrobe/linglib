@@ -152,4 +152,61 @@ the point predication. Makes [hoeksema-1983]'s NP↔S equivalence definitional. 
     (c : Comparison) (μ : E → α) (n : α) : c.overSet μ {n} = c.over μ n := by
   simp only [Comparison.overSet, Comparison.over, Comparison.bounds_singleton]
 
+/-! ### Threshold and measure monotonicity
+
+The shared content of every threshold-semantics face (Kennedy positive
+form, CSW positive region, credence thresholds): raising a non-strict
+lower threshold shrinks the extension, raising the measure preserves
+membership, and on a linear order the positive/negative poles are
+complementary and comparison reduces to a separating threshold (Klein). -/
+
+section ThresholdMonotone
+
+variable {E α : Type*} [Preorder α] (μ : E → α)
+
+/-- Raising an `at least` threshold shrinks the extension. -/
+theorem Comparison.antitone_ge_over : Antitone (Comparison.ge.over μ) :=
+  fun _ _ h _ hx => le_trans h hx
+
+/-- Raising a `more than` threshold shrinks the extension. -/
+theorem Comparison.antitone_gt_over : Antitone (Comparison.gt.over μ) :=
+  fun _ _ h _ hx => lt_of_le_of_lt h hx
+
+/-- Raising an `at most` threshold grows the extension. -/
+theorem Comparison.monotone_le_over : Monotone (Comparison.le.over μ) :=
+  fun _ _ h _ hx => le_trans hx h
+
+/-- Raising a `less than` threshold grows the extension. -/
+theorem Comparison.monotone_lt_over : Monotone (Comparison.lt.over μ) :=
+  fun _ _ h _ hx => lt_of_lt_of_le hx h
+
+/-- Membership in an `at least` extension transports up the measure. -/
+theorem Comparison.mem_ge_over_of_le {θ : α} {x y : E}
+    (hx : x ∈ Comparison.ge.over μ θ) (hxy : μ x ≤ μ y) :
+    y ∈ Comparison.ge.over μ θ :=
+  le_trans hx hxy
+
+end ThresholdMonotone
+
+section ThresholdLinear
+
+variable {E α : Type*} [LinearOrder α] (μ : E → α)
+
+/-- Polarity duality: clearing the threshold is exactly not falling
+    below it. -/
+theorem Comparison.mem_ge_over_iff_not_mem_lt_over {θ : α} {x : E} :
+    x ∈ Comparison.ge.over μ θ ↔ x ∉ Comparison.lt.over μ θ := by
+  simp [Comparison.mem_over, Comparison.rel, not_lt]
+
+/-- The Klein reduction: strict comparison holds iff some threshold
+    separates the two measures. -/
+theorem Comparison.lt_iff_separating_threshold {x y : E} :
+    μ y < μ x ↔ ∃ θ, x ∈ Comparison.ge.over μ θ ∧ y ∉ Comparison.ge.over μ θ := by
+  constructor
+  · exact fun h => ⟨μ x, le_refl _, not_le.mpr h⟩
+  · rintro ⟨θ, hx, hy⟩
+    exact lt_of_lt_of_le (not_le.mp hy) hx
+
+end ThresholdLinear
+
 end Core.Order

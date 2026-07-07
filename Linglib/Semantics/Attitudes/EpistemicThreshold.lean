@@ -196,7 +196,7 @@ variable {E W : Type*}
     `measure(entity) ≥ threshold`. -/
 def meetsThreshold (cr : AgentCredence E W) (θ : ℚ)
     (a : E) (φ : (W → Bool)) : Prop :=
-  cr a φ ≥ θ
+  φ ∈ Core.Order.Comparison.ge.over (cr a) θ
 
 /-- Reversed threshold: agent `a`'s credence in `φ` is strictly BELOW `θ`.
 
@@ -204,7 +204,7 @@ def meetsThreshold (cr : AgentCredence E W) (θ : ℚ)
     Pr(A, φ) < θ_uncertain ∧ Pr(A, ψ) < θ_uncertain (Table 1(a)). -/
 def failsThreshold (cr : AgentCredence E W) (θ : ℚ)
     (a : E) (φ : (W → Bool)) : Prop :=
-  cr a φ < θ
+  φ ∈ Core.Order.Comparison.lt.over (cr a) θ
 
 /-- Full epistemic evaluation: credence meets threshold, plus factivity.
 
@@ -253,16 +253,6 @@ def mostStr (cr : AgentCredence E W) (entry : EpistemicEntry)
 -- §4. Entailment Properties
 -- ============================================================================
 
-/-- Higher thresholds entail lower thresholds.
-
-    If an expression with threshold θ₂ holds, then any expression with
-    a lower threshold θ₁ ≤ θ₂ also holds. This derives the entailment
-    patterns of epistemic vocabulary from the threshold ordering alone. -/
-theorem threshold_monotone (cr : AgentCredence E W)
-    (a : E) (φ : (W → Bool)) {θ₁ θ₂ : ℚ} (h : θ₁ ≤ θ₂) :
-    meetsThreshold cr θ₂ a φ → meetsThreshold cr θ₁ a φ :=
-  fun h₂ => le_trans h h₂
-
 /-- Generic `holdsAt` entailment: a stronger entry (higher threshold,
     weaker factivity) entails a weaker one.
 
@@ -274,7 +264,7 @@ theorem holdsAt_mono_of_le {e₁ e₂ : EpistemicEntry}
     (cr : AgentCredence E W) (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr e₂ a φ w → holdsAt cr e₁ a φ w := by
   intro ⟨hcr, hfact⟩
-  refine ⟨threshold_monotone cr a φ hθ hcr, ?_⟩
+  refine ⟨Core.Order.Comparison.antitone_ge_over (cr a) hθ hcr, ?_⟩
   intro h₁
   exact hfact (hf h₁)
 
@@ -337,17 +327,6 @@ theorem moreCredent_transitive (cr : AgentCredence E W)
     (h₁ : moreCredent cr a φ ψ) (h₂ : moreCredent cr a ψ χ) :
     moreCredent cr a φ χ :=
   lt_trans h₂ h₁
-
-/-- Upward monotonicity of belief under the credence ordering.
-
-    If the agent believes φ and is at least as confident of ψ as of φ,
-    then the agent believes ψ. This is the credence-based analogue of
-    `confidence_upward_monotone` in `Confidence.lean` (CSW (53)). -/
-theorem credence_upward_monotone (cr : AgentCredence E W)
-    (θ : ℚ) (a : E) (φ ψ : (W → Bool))
-    (h_bel : meetsThreshold cr θ a φ) (h_more : cr a φ ≤ cr a ψ) :
-    meetsThreshold cr θ a ψ :=
-  le_trans h_bel h_more
 
 -- ============================================================================
 -- §6. Probabilistic Credence and Conjunction
@@ -494,17 +473,6 @@ def epistemicAsDirectedMeasure (cr : AgentCredence E W) (_entry : EpistemicEntry
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
 
-/-- The degree-threshold identity: `meetsThreshold` is the ≥-threshold
-    condition `θ ≤ μ(entity)` with credence as the measure function.
-
-    This is the formal statement that epistemic threshold semantics IS
-    degree semantics (the positive-form `Comparison.ge.over μ θ`
-    condition) with credence as the measure function. -/
-theorem meetsThreshold_eq_threshold (cr : AgentCredence E W) (θ : ℚ)
-    (a : E) (φ : (W → Bool)) :
-    meetsThreshold cr θ a φ ↔ θ ≤ cr a φ := by
-  rfl
-
 /-- The epistemic scale is licensed: closed → admits absolute standards.
 
     Since credence is bounded by [0, 1], [kennedy-2007]'s licensing
@@ -543,36 +511,6 @@ Table 1(b) are points on a finitely additive probability scale that
 satisfies System FA (and hence all of W ⊂ F ⊂ FA).
 -/
 
-/-- Threshold semantics is upward monotone in the credence ordering:
-    if `cr a φ ≥ θ` and `cr a φ ≤ cr a ψ`, then `cr a ψ ≥ θ`.
-
-    This is an instance of `Degree.IsUpwardMonotone` applied to the
-    epistemic scale. The family of propositions `P(θ) = meetsThreshold θ`
-    is upward monotone in credence — higher credence always satisfies
-    lower thresholds.
-
-    Connects to CSW's `confidence_upward_monotone` and to Lassiter's
-    observation that epistemic modals form a Horn scale ordered by
-    threshold strength. -/
-theorem threshold_upwardMonotone (cr : AgentCredence E W)
-    (a : E) (φ : (W → Bool)) :
-    ∀ (θ₁ θ₂ : ℚ), θ₁ ≤ θ₂ →
-    meetsThreshold cr θ₂ a φ → meetsThreshold cr θ₁ a φ :=
-  fun _ _ h h₂ => le_trans h h₂
-
-/-- `failsThreshold` is downward monotone: if credence is below θ₁
-    and θ₁ ≤ θ₂, then credence is below θ₂. This is the polarity
-    reversal for `uncertain`/`unlikely`: higher thresholds are easier
-    to fail.
-
-    Connects to Kennedy's negative adjective pattern (short, cold):
-    negative polarity on the same scale. -/
-theorem failsThreshold_downwardMonotone (cr : AgentCredence E W)
-    (a : E) (φ : (W → Bool)) :
-    ∀ (θ₁ θ₂ : ℚ), θ₁ ≤ θ₂ →
-    failsThreshold cr θ₁ a φ → failsThreshold cr θ₂ a φ :=
-  fun _ _ h h₁ => lt_of_lt_of_le h₁ h
-
 /-- The epistemic threshold scale forms a `ComparativeScale` with
     closed boundedness. This places it in the same categorical
     structure as Kennedy's adjective scales, Krifka's mereological
@@ -608,70 +546,6 @@ comparative implies a separating threshold exists (uses the witness
 the comparative hypothesis). This is a genuine mathematical fact about
 the structure of threshold semantics on a linear order.
 -/
-
-/-- **Klein's reduction**: the comparative reduces to the positive form.
-
-    "φ more likely than ψ" iff there exists a threshold that φ meets
-    and ψ fails. This is THE structural theorem connecting comparative
-    and positive-form degree semantics, originally due to
-    [klein-1980]'s delineation semantics for adjectives and
-    extended to epistemic vocabulary by treating credence as a measure
-    function.
-
-    - Forward: if cr(a,ψ) < cr(a,φ), witness θ = cr(a,φ).
-    - Backward: if θ separates, then cr(a,ψ) < θ ≤ cr(a,φ).
-
-    Note: linglib's `Semantics/Gradability/Theory.lean` follows
-    [kennedy-2007]'s degree typology (open/closed scales,
-    min/max-standard adjectives), which is downstream of Klein's
-    comparative reduction. -/
-theorem comparative_from_positive (cr : AgentCredence E W)
-    (a : E) (φ ψ : (W → Bool)) :
-    moreCredent cr a φ ψ ↔
-    ∃ θ : ℚ, meetsThreshold cr θ a φ ∧ ¬meetsThreshold cr θ a ψ := by
-  constructor
-  · intro h
-    exact ⟨cr a φ, le_refl _, not_le.mpr h⟩
-  · intro ⟨θ, hφ, hψ⟩
-    exact lt_of_lt_of_le (not_le.mp hψ) hφ
-
-/-- Polarity duality: `meetsThreshold` (positive) ↔ ¬`failsThreshold`.
-
-    On a linear order, cr(a,φ) ≥ θ iff ¬(cr(a,φ) < θ). This is not
-    `rfl` — it requires `not_lt` on `ℚ`'s linear order.
-
-    On a probability scale, positive and negative epistemic modals are
-    contradictories, not contraries — the same threshold θ separates
-    "likely" from "unlikely" (cf. [lassiter-goodman-2017] fn. 8
-    for the analogous tall/short case). -/
-theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
-    (θ : ℚ) (a : E) (φ : (W → Bool)) :
-    meetsThreshold cr θ a φ ↔ ¬failsThreshold cr θ a φ := by
-  simp [meetsThreshold, failsThreshold, not_lt]
-
-/-- **Antonymy from polarity**: the comparative holds iff there exists a
-    threshold where the *positive* predicate holds for φ and the
-    *negative* predicate holds for ψ.
-
-    This is the formal content of "antonymy = scale reversal": the
-    comparative "more likely" decomposes into a threshold that is
-    simultaneously *met* by φ (positive: likely_θ) and *failed* by ψ
-    (negative: unlikely_θ). Unlike the `rfl`-level type coincidence,
-    this *derives* the antonymy connection from `comparative_from_positive`
-    + `meetsThreshold_iff_not_failsThreshold`.
-
-    The likely/unlikely pattern parallels [lassiter-goodman-2017]'s
-    tall/short (Eqs. 22–23): same scale, reversed polarity. -/
-theorem antonymy_from_polarity (cr : AgentCredence E W)
-    (a : E) (φ ψ : (W → Bool)) :
-    moreCredent cr a φ ψ ↔
-    ∃ θ : ℚ, meetsThreshold cr θ a φ ∧ failsThreshold cr θ a ψ := by
-  rw [comparative_from_positive]
-  constructor
-  · intro ⟨θ, hφ, hψ⟩
-    exact ⟨θ, hφ, not_le.mp hψ⟩
-  · intro ⟨θ, hφ, hψ⟩
-    exact ⟨θ, hφ, not_le.mpr hψ⟩
 
 -- ============================================================================
 -- §11. Quantified Operators (Table 1(a))
@@ -754,8 +628,10 @@ theorem uncertainAbout_contradicts_certainAbout (cr : AgentCredence E W)
     (h_cert : certainAbout cr a C φ) : False := by
   obtain ⟨x, hC, hcr⟩ := h_cert
   have h_fail := h_unc x hC
-  simp only [failsThreshold, EpistemicEntry.uncertain_] at h_fail
-  simp only [meetsThreshold, EpistemicEntry.certain_] at hcr
+  simp only [failsThreshold, EpistemicEntry.uncertain_,
+    Core.Order.Comparison.mem_over, Core.Order.Comparison.rel] at h_fail
+  simp only [meetsThreshold, EpistemicEntry.certain_,
+    Core.Order.Comparison.mem_over, Core.Order.Comparison.rel] at hcr
   linarith
 
 -- ============================================================================
