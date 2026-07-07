@@ -14,7 +14,6 @@ All types are polymorphic over the world type `W`. Propositions are
 
 import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Core.Order.Normality
-import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Core.Order.OfCriteria
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
@@ -150,39 +149,17 @@ These are exactly the worlds in ⋂f(w) — worlds compatible with all facts in 
 def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
-/-! ### The induced expectation state
-
-[portner-2018] identifies the two components of his mood state with
-Kratzer's parameters: "If we think of ⟨cs_c, <_c⟩ as a modal base and
-ordering source, □_cs φ expresses simple necessity and □_< φ expresses
-human necessity" (his commentary on (3), citing [kratzer-1981]).
-`stateAt` is that identification read in the other direction: a
-Kratzer pair is a world-indexed family of expectation states. -/
-
-open Semantics.Dynamic.Default in
-/-- The expectation state a modal base and ordering source induce at a
-world: accessible worlds as information, the ordering-source ranking
-as pattern. -/
-def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
-    ExpState W :=
-  ⟨accessibleWorlds f w, kratzerNormality (g w)⟩
-
-@[simp] theorem stateAt_info (f : ModalBase W) (g : OrderingSource W) (w : W) :
-    (stateAt f g w).info = accessibleWorlds f w := rfl
-
-@[simp] theorem stateAt_order (f : ModalBase W) (g : OrderingSource W) (w : W) :
-    (stateAt f g w).order = kratzerNormality (g w) := rfl
-
 /-- The best accessible worlds: those no accessible world strictly
-betters — `ExpState.optimal` at the induced state. [kratzer-1981]'s
-official human necessity is the limit-free `humanNecessity`; it
-quantifies over exactly this set under the Limit Assumption
-(`humanNecessity_iff_necessity`). Her practical-inference tripartition
-(pp. 66-67) is non-connected by construction, so the stronger
+betters. [kratzer-1981]'s official necessity is the limit-free
+`humanNecessity`; it quantifies over exactly this set under the Limit
+Assumption (`humanNecessity_iff_necessity`). Her practical-inference
+tripartition (pp. 66-67) is non-connected by construction — the
+ordering "is not necessarily connected. Technically, ≤_A is a partial
+preorder" ([kratzer-2012], her note 12 chapter) — so the stronger
 dominance form (at least as good as *every* accessible world) would
 be empty there; minimality is the faithful reading. -/
 def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Set W :=
-  (stateAt f g w).optimal
+  Core.Order.Normality.optimal (kratzerNormality (g w)) (accessibleWorlds f w)
 
 /--
 **Theorem 3: Empty ordering source reduces to simple accessibility.**
@@ -201,11 +178,10 @@ theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
   unfold emptyBackground
   exact empty_ordering_simple f w
 
-/-- Realism is fiber-reflexivity: a modal base is realistic iff every
-world belongs to its own induced information state. -/
-theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
-    (g : OrderingSource W) :
-    isRealistic f ↔ ∀ w, w ∈ (stateAt f g w).info :=
+/-- A modal base is realistic iff every world is accessible from
+itself. -/
+theorem isRealistic_iff_mem_accessible (f : ModalBase W) :
+    isRealistic f ↔ ∀ w, w ∈ accessibleWorlds f w :=
   ⟨fun h w p hp => h w p hp, fun h w p hp => h w p hp⟩
 
 /-- The best worlds among a given set: members no other member strictly

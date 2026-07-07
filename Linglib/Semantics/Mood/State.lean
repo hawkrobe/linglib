@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Setoid.Basic
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
+import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Mood State: POSW with Inquiry Partition
@@ -424,5 +425,63 @@ def Component.boxOn : Component → State W → (W → Prop) → Prop
 
 @[simp] theorem boxOn_inquisitive (c : State W) (p : W → Prop) :
     Component.inquisitive.boxOn c p = c.boxAns p := rfl
+
+/-! ### Kratzer backgrounds induce states
+
+[portner-2018]'s gloss on his (3): reading the mood state's components
+as a modal base and ordering source ([kratzer-1981]), `□_cs` expresses
+simple necessity and `□_≤` human necessity. `stateAt` is that
+identification read in the other direction — a Kratzer pair is a
+world-indexed family of expectation states — and the theorems below
+are his (3a)/(3b). -/
+
+open Semantics.Modality.Kratzer
+
+/-- The expectation state a modal base and ordering source induce at a
+world: accessible worlds as information, the ordering-source ranking
+as pattern. -/
+def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
+    ExpState W :=
+  ⟨accessibleWorlds f w, kratzerNormality (g w)⟩
+
+@[simp] theorem stateAt_info (f : ModalBase W) (g : OrderingSource W) (w : W) :
+    (stateAt f g w).info = accessibleWorlds f w := rfl
+
+@[simp] theorem stateAt_order (f : ModalBase W) (g : OrderingSource W) (w : W) :
+    (stateAt f g w).order = kratzerNormality (g w) := rfl
+
+/-- Kratzer's best worlds are the induced state's optimal worlds. -/
+theorem bestWorlds_eq_optimal (f : ModalBase W) (g : OrderingSource W)
+    (w : W) :
+    bestWorlds f g w = (stateAt f g w).optimal := rfl
+
+/-- Simple necessity is informational necessity over the induced state
+(the ordering source is irrelevant) — [portner-2018]'s (3a). -/
+theorem simpleNecessity_iff_boxCs (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W) :
+    simpleNecessity f p w ↔ (stateAt f g w).boxCs p :=
+  Iff.rfl
+
+/-- Kratzer necessity is preferential necessity over the induced state
+— human necessity as `□_≤`, [portner-2018]'s (3b). -/
+theorem necessity_iff_boxLe (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W) :
+    necessity f g p w ↔ (stateAt f g w).boxLe p :=
+  Iff.rfl
+
+/-- Veltman acceptance at a Kratzer state: the induced state supports
+asserting `p` iff `p` is a simple necessity. -/
+theorem le_assert_iff_simpleNecessity (f : ModalBase W)
+    (g : OrderingSource W) (p : W → Prop) (w : W) :
+    stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
+  ((stateAt f g w).le_assert_iff p).trans
+    (simpleNecessity_iff_boxCs f g p w).symm
+
+/-- Kratzer realism is fiber-reflexivity: a modal base is realistic iff
+every world belongs to its own induced information state. -/
+theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
+    (g : OrderingSource W) :
+    isRealistic f ↔ ∀ w, w ∈ (stateAt f g w).info :=
+  isRealistic_iff_mem_accessible f
 
 end Mood

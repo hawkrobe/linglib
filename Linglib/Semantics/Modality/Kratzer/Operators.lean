@@ -38,7 +38,6 @@ Sources:
 
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Core.Logic.Modal.Basic
-import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 
 namespace Semantics.Modality.Kratzer
 
@@ -93,37 +92,6 @@ def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) 
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   diamond (kratzerBestR f g) p w
 
-/-! ### The Portner identification
-
-[portner-2018]'s gloss on his (3): reading the mood state's components
-as a modal base and ordering source, `□_cs` expresses simple necessity
-and `□_≤` human necessity ([kratzer-1981]). Stated over `stateAt`. -/
-
-open Semantics.Dynamic.Default in
-/-- Simple necessity is informational necessity over the induced state
-(the ordering source is irrelevant). -/
-theorem simpleNecessity_iff_boxCs (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Prop) (w : W) :
-    simpleNecessity f p w ↔ (stateAt f g w).boxCs p :=
-  Iff.rfl
-
-open Semantics.Dynamic.Default in
-/-- Kratzer necessity is preferential necessity over the induced state
-— human necessity as `□_≤` ([portner-2018]'s (3b) identification). -/
-theorem necessity_iff_boxLe (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Prop) (w : W) :
-    necessity f g p w ↔ (stateAt f g w).boxLe p :=
-  Iff.rfl
-
-open Semantics.Dynamic.Default ExpState in
-/-- Veltman acceptance at a Kratzer state: the induced state supports
-asserting `p` iff `p` is a simple necessity. -/
-theorem le_assert_iff_simpleNecessity (f : ModalBase W)
-    (g : OrderingSource W) (p : W → Prop) (w : W) :
-    stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
-  ((stateAt f g w).le_assert_iff p).trans
-    (simpleNecessity_iff_boxCs f g p w).symm
-
 /-! ### Human necessity
 
 [kratzer-1981]'s official definition needs no Limit Assumption: it
@@ -131,8 +99,10 @@ asks each accessible world to see, at least as good, a witness below
 which only `p`-worlds occur. `necessity` (universal quantification
 over `bestWorlds`) is its Limit-Assumption collapse. -/
 
-/-- Human necessity ([kratzer-1981]): every accessible world has an
-accessible world at least as good, below which `p` holds throughout. -/
+/-- Human necessity ([kratzer-1981]; restated verbatim as "Necessity"
+in [kratzer-2012]): every accessible world has an accessible world at
+least as good, below which `p` holds throughout. Neutral with respect
+to the Limit Assumption, after Lewis's counterfactual semantics. -/
 def humanNecessity (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) : Prop :=
   ∀ u ∈ accessibleWorlds f w, ∃ v ∈ accessibleWorlds f w,
@@ -171,6 +141,12 @@ theorem humanNecessity_iff_necessity {f : ModalBase W} {g : OrderingSource W}
     {p : W → Prop} {w : W} (hlim : LimitAssumption f g w) :
     humanNecessity f g p w ↔ necessity f g p w :=
   ⟨necessity_of_humanNecessity, humanNecessity_of_necessity hlim⟩
+
+/-- Human possibility ([kratzer-2012]: "a possibility ... iff its
+negation ... is not a necessity"): the dual of `humanNecessity`. -/
+def humanPossibility (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W) : Prop :=
+  ¬ humanNecessity f g (fun v => ¬ p v) w
 
 /-- With the empty ordering source, human necessity is simple necessity
 ([kratzer-1981], her equivalence for arbitrary `f` and empty `g`). -/
