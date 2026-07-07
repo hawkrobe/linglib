@@ -182,18 +182,22 @@ def traditionalMoralBase : ModalBase World := fun _ => [(fun w' => w' = 0)]
 theorem ex59_holds (w : World) :
     necessity emptyBackground morallyGood (fun w' => ¬ injustice w') w := by
   rw [necessity_iff_all]
-  intro w' ⟨_, hBest⟩
+  intro w' ⟨_, hmin⟩
   -- w0 is accessible (vacuously, since emptyBackground gives universal access)
   have hAccW0 : (0 : World) ∈ accessibleWorlds emptyBackground w := by
     intro p hp
     simp [emptyBackground] at hp
-  -- w0 satisfies "¬ injustice"
-  have hP1AtW0 : ¬ injustice (0 : World) := by decide
-  -- The proposition "¬ injustice" is in morallyGood w
   have hP1MemG : (fun w'' => ¬ injustice w'') ∈ morallyGood w := by
     simp [morallyGood]
-  -- Since w' is best, w' is at-least-as-good as w0; transferring p1
-  exact hBest (0 : World) hAccW0 (fun w'' => ¬ injustice w'') hP1MemG hP1AtW0
+  -- w0 satisfies every moral ideal, so it is at-least-as-good as anything
+  have hTop : atLeastAsGoodAs (morallyGood w) (0 : World) w' := by
+    intro q hq _
+    simp [morallyGood] at hq
+    rcases hq with rfl | rfl
+    · decide
+    · exact fun h => absurd h (by decide)
+  -- minimality returns the comparison; transfer the ideal ¬ injustice
+  exact hmin hAccW0 hTop _ hP1MemG (by decide)
 
 /-- **(60) "If injustice, must be amended"** under Kratzer's analysis succeeds.
     With empty modal base restricted by `injustice` + morally-good ordering,
@@ -202,7 +206,7 @@ theorem ex59_holds (w : World) :
 theorem ex60_holds (w : World) :
     necessity (restrictedBase emptyBackground injustice) morallyGood amended w := by
   rw [necessity_iff_all]
-  intro w' ⟨hAcc, hBest⟩
+  intro w' ⟨hAcc, hmin⟩
   -- w' has injustice (it's in the restricted base)
   have hInjW' : injustice w' := hAcc injustice (by simp [restrictedBase])
   -- w1 is accessible (injustice + emptyBackground)
@@ -211,14 +215,16 @@ theorem ex60_holds (w : World) :
     simp [restrictedBase, emptyBackground] at hp
     subst hp
     decide
-  -- w1 satisfies "injustice → amended"
-  have hP2AtW1 : injustice (1 : World) → amended (1 : World) := fun _ => by decide
   have hP2MemG : (fun w'' => injustice w'' → amended w'') ∈ morallyGood w := by
     simp [morallyGood]
-  -- Transfer to w' via best-ness
-  have hP2AtW' : injustice w' → amended w' :=
-    hBest (1 : World) hAccW1 (fun w'' => injustice w'' → amended w'') hP2MemG hP2AtW1
-  exact hP2AtW' hInjW'
+  -- w1 is at-least-as-good as w' (¬ injustice fails at w', the other ideal holds at w1)
+  have hTop : atLeastAsGoodAs (morallyGood w) (1 : World) w' := by
+    intro q hq hqw'
+    simp [morallyGood] at hq
+    rcases hq with rfl | rfl
+    · exact absurd hInjW' hqw'
+    · exact fun _ => by decide
+  exact hmin hAccW1 hTop _ hP2MemG (fun _ => by decide) hInjW'
 
 /-- **(61) "If injustice, must be rewarded"** under Kratzer's analysis fails.
     The best injustice-world is w1, but w1 is NOT rewarded. -/
@@ -246,7 +252,7 @@ theorem ex61_fails (w : World) :
     · -- p = injustice → amended. We need w1 satisfies p, i.e., amended (1 : World).
       subst hp2
       intro _; decide
-  have : rewarded (1 : World) := hNec 1 ⟨hAccW1, hBestW1⟩
+  have : rewarded (1 : World) := hNec 1 ⟨hAccW1, fun {u} hu _ => hBestW1 u hu⟩
   exact absurd this (by decide)
 
 /-! ## §4. Headline: Kratzer differentiates (60) and (61); traditional analysis collapses them. -/

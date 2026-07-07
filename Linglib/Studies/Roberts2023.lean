@@ -761,7 +761,8 @@ private theorem empty_best (w : World) :
     w ∈ bestWorlds (W := World) emptyBackground emptyBackground w := by
   have hAcc : w ∈ accessibleWorlds (emptyBackground (W := World)) w := by
     rw [empty_base_universal_access]; exact Set.mem_univ _
-  exact ⟨hAcc, fun _ _ q hq _ => by simp [emptyBackground] at hq⟩
+  rw [empty_ordering_emptyBackground]
+  exact hAcc
 
 theorem nobody_move_total_prohibition :
     ∀ w, ¬ nobodyMoveExample.realize w := by
@@ -822,16 +823,12 @@ open Semantics.Modality.Directive in
 theorem cookie_is_suggestion :
     haveCookieExample.weakRealize
       (λ _ => [λ w => w = (0 : World)]) (0 : World) := by
-  show necessity _ _ _ _
-  rw [necessity_iff_all]
-  intro w hw
-  by_contra hne
-  rcases hw with ⟨_, hBest⟩
-  have hw0Acc : (0 : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
-    rw [empty_base_universal_access]; exact Set.mem_univ _
-  have hgoal : (λ w' : World => w' = (0 : World)) (0 : World) := rfl
-  have hweq : w = (0 : World) := hBest (0 : World) hw0Acc (λ w' : World => w' = (0 : World))
-    (by simp [combineOrdering]) hgoal
-  exact hne hweq
+  rintro w ⟨_, hmin⟩
+  have hTop : atLeastAsGoodAs [λ w' : World => w' = (0 : World)] (0 : World) w := by
+    intro q hq _
+    have hq' : q = λ w' : World => w' = (0 : World) := by simpa using hq
+    subst hq'; rfl
+  exact hmin (0 : World) (empty_best (0 : World)) hTop _
+    (List.mem_singleton.mpr rfl) rfl
 
 end Roberts2023

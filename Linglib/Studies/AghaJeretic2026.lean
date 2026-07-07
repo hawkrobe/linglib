@@ -367,16 +367,16 @@ condition — the domain is a subsingleton — and differ only in how each const
 that domain. -/
 
 /-- **Domain-restriction (von Fintel & Iatridou) wired to the shared lemma.** VFI
-    weak necessity neg-raises at `(f, g, g', w)` iff its refined best-world domain
-    `bestWorlds f (g ∪ g') w` is a subsingleton — the same
+    weak necessity neg-raises at `(f, g, g', w)` iff its nested best-world domain
+    `bestAmong (bestWorlds f g w) (g' w)` is a subsingleton — the same
     `Homogeneity.negRaising_iff_subsingleton` characterization as Rubinstein's
     `BEST(favored, negotiable)` and A&J's gap domain. -/
 theorem vfiWeak_negRaises_iff {W : Type*} (f : ModalBase W) (g g' : OrderingSource W)
     (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w →
         weakNecessity f g g' (fun w' => ¬ p w') w) ↔
-      (bestWorlds f (combineOrdering g g') w).Subsingleton := by
-  simp only [weakNecessity, necessity_iff_all]
+      (bestAmong (bestWorlds f g w) (g' w)).Subsingleton := by
+  simp only [weakNecessity]
   exact negRaising_iff_subsingleton _
 
 end AghaJeretic2026
