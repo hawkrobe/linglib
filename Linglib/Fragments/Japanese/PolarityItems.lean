@@ -2,13 +2,14 @@ import Linglib.Semantics.Polarity.Item
 
 /-!
 # Japanese Polarity-Sensitive Items
-[haspelmath-1997]
+[haspelmath-1997] [kratzer-shimoyama-2002] [shimoyama-2011] [watanabe-2004]
 
 Japanese indefinite pronoun polarity items, typed by the categories from
 `Semantics.Polarity`.
 
-Japanese builds polarity items compositionally from wh-words + particles:
-- **dare-mo** (neg): wh + mo under negation → NPI (nobody)
+Japanese builds polarity items from wh-indeterminates + particles
+([kratzer-shimoyama-2002]):
+- **dare-mo** (with clausemate negation): wh + mo → 'nobody'
 - **dare-demo**: wh + demo → FCI (anyone/whoever)
 -/
 
@@ -16,38 +17,49 @@ namespace Japanese.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPI
--- ============================================================================
+/-! ### NPI -/
 
-/-- *dare-mo* (under negation) — N-word.
-    wh + mo under negation: 'dare-mo konakatta' (nobody came). -/
+/-- *dare-mo* (with clausemate negation) — n-word: *dare-mo ko-nakat-ta*
+    'nobody came'. Requires clausemate sentential negation and is
+    ungrammatical in weak-DE contexts like questions and conditionals, which
+    take *dare-ka* or bare indeterminates instead ([shimoyama-2011]);
+    [watanabe-2004] analyzes it as a negative-concord item.
+
+    `baseForce` follows the Hamblin-universal analysis of *-mo*
+    ([shimoyama-2006], [kratzer-shimoyama-2002]; so also
+    `Japanese.Determiners.dare_mo`), on which *dare-mo…nai* is ∀ scoping over
+    negation; the rival negative-indefinite tradition posits ¬∃
+    (truth-conditionally equivalent under plain clausemate negation, teased
+    apart by the scope diagnostics of [shimoyama-2011]). The affirmative
+    *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItemEntry :=
   { form := "dare-mo (誰も, neg)"
-  , polarityType := .npiWeak
-  , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
+  , polarityType := .npiStrong
+  , baseForce := .universal
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , notes := "wh + mo under negation: nobody" }
+  , morphology := .indefPlusEven
+  , alternativeType := .domain
+  , nWordStatus := some .nWord }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### FCI -/
 
-/-- *dare-demo* — Free choice item.
-    wh + demo: 'dare-demo dekiru' (anyone can do it). -/
+/-- *dare-demo* — free choice item: *dare-demo dekiru* 'anyone can do it'.
+    wh + demo (built on the additive/'even' particle *mo*); free choice and
+    concessive-conditional uses ([kratzer-shimoyama-2002]). -/
 def dareDemo : PolarityItemEntry :=
   { form := "dare-demo (誰でも)"
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , notes := "wh + demo: free choice / concessive conditional" }
+  , morphology := .indefPlusEven
+  , alternativeType := .domain }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-theorem dareMo_dareDemo_distinct :
-    dareMo.polarityType ≠ dareDemo.polarityType := by decide
+/-- Complementary distribution: the n-word and the FCI are licensed in
+    disjoint context sets (clausemate negation vs modal/imperative/generic). -/
+theorem dareMo_dareDemo_licensing_disjoint :
+    ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by decide
 
 end Japanese.PolarityItems
