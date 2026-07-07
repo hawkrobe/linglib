@@ -39,7 +39,7 @@ namespace VonStechow1984
 
 open Degree (comparativeSem equativeSem)
 open Core.Order (ScalePolarity)
-open Degree.Differential (differentialComparative factorEquative)
+open Degree (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 
 World-indexed degree semantics for comparative constructions requiring
