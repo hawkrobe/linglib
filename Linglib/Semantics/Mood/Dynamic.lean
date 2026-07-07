@@ -38,10 +38,9 @@ a stipulated feature.
 
 namespace Mood
 
-open _root_.Core (Assignment)
-open _root_.Intensional (WorldTimeIndex)
-open HistoricalAlternatives
-open Semantics.Dynamic.Core
+open Core (Assignment)
+open Intensional (WorldTimeIndex)
+open HistoricalAlternatives Semantics.Dynamic.Core
 
 variable {W Time : Type*} [LE Time] (history : HistoricalAlternatives W Time)
   (v : SVar) (c : SitContext W Time)
