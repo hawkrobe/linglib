@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Mood.Modal
+import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
@@ -324,7 +324,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 
 The scoreboard's CommonGround and G components project jointly into a
 the POSW substrate (`Semantics.Dynamic.Default.ExpState` under its
-`Semantics/Mood/Modal.lean` modal reading): CommonGround via
+`Semantics/Dynamic/UpdateSemantics/Necessity.lean` modal reading): CommonGround via
 `contextSet`, G via the goal-induced preference ordering. Assertion ↔
 `assert`, direction ↔ `promote`. -/
 

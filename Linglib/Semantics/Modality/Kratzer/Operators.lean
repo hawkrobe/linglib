@@ -38,6 +38,7 @@ Sources:
 
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Core.Logic.Modal.Basic
+import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 
 namespace Semantics.Modality.Kratzer
 
@@ -91,6 +92,48 @@ def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) 
     `⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')`. -/
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   diamond (kratzerBestR f g) p w
+
+/-! ### The Portner identification
+
+[portner-2018]'s gloss on his (3): reading the mood state's components
+as a modal base and ordering source, `□_cs` expresses simple necessity
+and `□_≤` human necessity ([kratzer-1981]). Stated over `stateAt`. -/
+
+open Semantics.Dynamic.Default in
+/-- Simple necessity is informational necessity over the induced state
+(the ordering source is irrelevant). -/
+theorem simpleNecessity_iff_boxCs (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W) :
+    simpleNecessity f p w ↔ (stateAt f g w).boxCs p :=
+  Iff.rfl
+
+open Semantics.Dynamic.Default in
+/-- Preferential necessity over the induced state implies Kratzer
+necessity: `bestWorlds` is contained in the state's optimal set. -/
+theorem necessity_of_boxLe (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W)
+    (h : (stateAt f g w).boxLe p) : necessity f g p w :=
+  fun w' hw' => h w' (bestWorlds_subset_optimal f g w hw')
+
+open Semantics.Dynamic.Default in
+/-- On connected ordering sources, Kratzer necessity is preferential
+necessity over the induced state — human necessity as `□_≤`. -/
+theorem necessity_iff_boxLe_of_connected (f : ModalBase W)
+    (g : OrderingSource W) (p : W → Prop) (w : W)
+    (hconn : Core.Order.Normality.connected (kratzerNormality (g w))) :
+    necessity f g p w ↔ (stateAt f g w).boxLe p := by
+  rw [show necessity f g p w ↔ ∀ w' ∈ bestWorlds f g w, p w' from Iff.rfl,
+    bestWorlds_eq_optimal_of_connected f g w hconn]
+  exact Iff.rfl
+
+open Semantics.Dynamic.Default ExpState in
+/-- Veltman acceptance at a Kratzer state: the induced state supports
+asserting `p` iff `p` is a simple necessity. -/
+theorem le_assert_iff_simpleNecessity (f : ModalBase W)
+    (g : OrderingSource W) (p : W → Prop) (w : W) :
+    stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
+  ((stateAt f g w).le_assert_iff p).trans
+    (simpleNecessity_iff_boxCs f g p w).symm
 
 /-! ### Characterization lemmas -/
 

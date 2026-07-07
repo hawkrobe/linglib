@@ -1661,6 +1661,7 @@ import Linglib.Semantics.Dynamic.Postsupposition
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Semantics.Dynamic.UpdateSemantics.Frames
+import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.AsymStronger
 import Linglib.Semantics.Entailment.Basic
@@ -1730,7 +1731,6 @@ import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Dynamic
 import Linglib.Semantics.Mood.Eventuality
-import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.SpeechEvent

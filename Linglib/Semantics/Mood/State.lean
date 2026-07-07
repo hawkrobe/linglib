@@ -5,14 +5,14 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Setoid.Basic
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Mood.Modal
+import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 
 /-!
 # Mood State: POSW with Inquiry Partition
 [portner-2018] [groenendijk-stokhof-1984] [roberts-2012]
 
 This file is **our extension** of the POSW substrate
-(`Semantics/Mood/Modal.lean`: [veltman-1996]'s `ExpState` under
+(`Semantics/Dynamic/UpdateSemantics/Necessity.lean`: [veltman-1996]'s `ExpState` under
 [portner-2018]'s modal reading) to interrogative force, by way of a
 third component recording the open question: `info` and `order` stay
 intact and `inquiry : Setoid W` is a separate third coordinate, so
