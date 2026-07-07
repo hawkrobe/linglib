@@ -14,12 +14,7 @@ following [grano-2024]: mood morphemes operate on the eventuality
 argument of the complement clause. Indicative existentially closes
 it, yielding a proposition; subjunctive leaves it open, as required
 by causatives, intention reports, aspectual predicates, and
-memory/perception reports. `Grammatical.eventDenotation` assigns each
-mood its operator, landing in the constructor-distinguished
-`EventDenotation`, so the closed/open contrast is read off the
-constructor rather than stipulated in a feature table. The
-situation-level dimension is `Semantics/Mood/Situation.lean`, the
-dynamic lifts `Semantics/Mood/Dynamic.lean`.
+memory/perception reports.
 -/
 
 namespace Mood
