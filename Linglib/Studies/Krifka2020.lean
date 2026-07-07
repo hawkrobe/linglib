@@ -58,7 +58,7 @@ the other — and study files target whichever is appropriate:
 
 namespace Discourse.Krifka
 
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Commitment Strength

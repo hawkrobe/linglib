@@ -200,7 +200,7 @@ automatically a consumer of the inquisitive-content API: `info`,
 mention-some/IE-question forcing arguments all become available
 without rewriting the underlying state. -/
 
-namespace Semantics.Mood
+namespace Mood
 
 namespace State
 
@@ -224,4 +224,4 @@ def inquiryContent (c : State W) : Question W :=
 
 end State
 
-end Semantics.Mood
+end Mood

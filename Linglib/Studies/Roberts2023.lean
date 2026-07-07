@@ -49,7 +49,7 @@ standalone formalization of an imperative mood ontology:
   `TeleologicalFlavor` (no parallel types).
 - The architectural commitment "imperative force targets the
   preferential POSW component, not the informational" is
-  `Semantics.Mood.Component`'s `HasTarget Illocutionary`
+  `Mood.Component`'s `HasTarget Illocutionary`
   instance — Roberts agrees with [portner-2018] on the
   POSW component, disagrees with [kaufmann-2012] only on
   the prejacent's modal flavor.
@@ -85,7 +85,7 @@ Acc (accepted).
 
 namespace Discourse
 
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 /-- An illocutionary move: a speech act performed by an agent. -/
 structure Move (W : Type*) where
@@ -123,7 +123,7 @@ Force Linking Principle ([roberts-2023]).
 
 namespace Discourse
 
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 variable {W : Type*}
 
@@ -447,7 +447,7 @@ over the QUD stack. Interrogation ↔ `inquire`. -/
     (`⊤` as identity). Cons-right convention so that consing reduces
     definitionally to `inquire`. -/
 def qudInquiry (K : Scoreboard W) : Setoid W :=
-  K.qud.foldr (fun q s => s ⊓ Semantics.Mood.State.polarSetoid q) ⊤
+  K.qud.foldr (fun q s => s ⊓ Mood.State.polarSetoid q) ⊤
 
 @[simp] theorem qudInquiry_nil (K : Scoreboard W) (h : K.qud = []) :
     K.qudInquiry = (⊤ : Setoid W) := by
@@ -456,8 +456,8 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
 @[simp] theorem qudInquiry_cons (K : Scoreboard W) (q : W → Prop)
     (rest : List (W → Prop)) (h : K.qud = q :: rest) :
     K.qudInquiry =
-      (rest.foldr (fun q s => s ⊓ Semantics.Mood.State.polarSetoid q) ⊤) ⊓
-        Semantics.Mood.State.polarSetoid q := by
+      (rest.foldr (fun q s => s ⊓ Mood.State.polarSetoid q) ⊤) ⊓
+        Mood.State.polarSetoid q := by
   simp [qudInquiry, h]
 
 /-- Interrogation update preserves goal contents (doesn't touch G). -/
@@ -466,7 +466,7 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
     (K.interrogationUpdate q a).goalContents = K.goalContents := rfl
 
 /-- Project the scoreboard into a State: underlying state + QUD inquiry. -/
-def toMoodState (K : Scoreboard W) : Semantics.Mood.State W :=
+def toMoodState (K : Scoreboard W) : Mood.State W :=
   { K.toExpState with inquiry := K.qudInquiry }
 
 @[simp] theorem toMoodState_toExpState (K : Scoreboard W) :
@@ -480,7 +480,7 @@ def toMoodState (K : Scoreboard W) : Semantics.Mood.State W :=
 theorem toMoodState_interrogation_eq_inquire (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).toMoodState.inquiry =
-      (K.toMoodState.inquire (Semantics.Mood.State.polarSetoid q)).inquiry := rfl
+      (K.toMoodState.inquire (Mood.State.polarSetoid q)).inquiry := rfl
 
 /-- After posing `q`, the polar partition of `q` is settled by
     the new State (inquiry analogue of `boxCs_after_assertion`). -/
@@ -498,8 +498,8 @@ namespace Roberts2023
 
 open Intensional (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
-open Semantics.Mood.Illocutionary (sincerityCondition)
-open Semantics.Mood (State Component Illocutionary HasTarget)
+open Mood.Illocutionary (sincerityCondition)
+open Mood (State Component Illocutionary HasTarget)
 open Semantics.Dynamic.Default (ExpState)
 open HistoricalAlternatives
 open Semantics.Modality.Kratzer
@@ -693,7 +693,7 @@ theorem disagrees_with_ruytenbeek_imperative_flavor :
     prejacent's flavor matching the imperative's. -/
 theorem disagrees_with_assert :
     robertsImperativeFlavor ≠
-    Semantics.Mood.Illocutionary.primaryFlavor .imperative := by decide
+    Mood.Illocutionary.primaryFlavor .imperative := by decide
 
 /-- **Mechanism wedge** (post-2026-05-13: empirical wedge collapsed).
     `possibleDecl` ("Il est possible de VP") was previously the lone

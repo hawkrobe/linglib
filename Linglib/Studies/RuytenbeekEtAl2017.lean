@@ -77,7 +77,7 @@ regression coefficients.
 
 ## Mood substrate choice
 
-This file uses `Semantics.Mood.Illocutionary` rather than the
+This file uses `Mood.Illocutionary` rather than the
 Minimalist-derived `SAPMood`. The two are isomorphic on the
 declarative/interrogative/imperative cases used here, and
 `Illocutionary` is the canonical substrate (`SAPMood` adds
@@ -88,8 +88,8 @@ keeps the file independent of the Minimalist substrate.
 namespace RuytenbeekEtAl2017
 
 open Semantics.Modality (ModalFlavor ModalForce)
-open Semantics.Mood (Illocutionary)
-open Semantics.Mood.Illocutionary (primaryFlavor)
+open Mood (Illocutionary)
+open Mood.Illocutionary (primaryFlavor)
 
 /-! ### Sentence types and modal projections -/
 
@@ -145,7 +145,7 @@ def SentType.mood : SentType → Illocutionary
 /-- Contextually salient modal flavor for each sentence type.
 
     The imperative branch is **derived** from
-    `Semantics.Mood.Illocutionary.primaryFlavor` rather than restipulated
+    `Mood.Illocutionary.primaryFlavor` rather than restipulated
     (layered grounding — see `imperative_modalFlavor_eq_assert` below).
 
     `canDeclarative = .deontic` follows the paper's §3.4 Discussion

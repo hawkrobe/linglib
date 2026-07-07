@@ -46,7 +46,7 @@ namespace Noonan2007
 open Data.Complementation Data.Complementation.Noonan2007
 open English.Predicates.Verbal
 open Minimalist.LeftPeriphery
-open Semantics.Mood
+open Mood
 
 -- ============================================================================
 -- Part I: Noonan's generalizations over the generated CTP sample

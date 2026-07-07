@@ -42,7 +42,7 @@ of dynamic semantics:
   on situation contexts. `dynRelationOn` is `Set.filter`; `dynIntroduce`
   is `Set.bind` (Kleisli composition).
 
-`Semantics.Mood.IND` and `Semantics.Mood.SUBJ` (defined in
+`Mood.IND` and `Mood.SUBJ` (defined in
 `Mood/Situation.lean`) call the same two kernels (`sameWorld` and
 `historicalBase`) directly. The static and dynamic faces share *one
 modal constraint and one alternative-generator*, lifted from a
@@ -73,7 +73,7 @@ operator and the modal donkey anaphora chain that consumes
 `dynSUBJ`/`dynIND`).
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 open _root_.Core (Assignment)
 open _root_.Intensional (WorldTimeIndex)
@@ -317,4 +317,4 @@ theorem dynIND_after_dynSUBJ_same_var {W Time : Type*} [LE Time]
   show sameWorld gs.2 (gs.1 v)
   rw [dynSUBJ_binds_current history v c gs h_mem]
 
-end Semantics.Mood
+end Mood

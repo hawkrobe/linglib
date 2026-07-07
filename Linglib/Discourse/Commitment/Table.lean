@@ -27,7 +27,7 @@ namespace Discourse.Commitment.Table
 
 open Discourse.Commitment (TaggedSlate CommitmentSource CommitmentForce)
 open CommonGround (HasContextSet)
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 /-- An at-issue item on the conversational table. -/
 structure Item (A W : Type*) where

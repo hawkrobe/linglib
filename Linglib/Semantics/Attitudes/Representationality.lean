@@ -158,7 +158,7 @@ theorem licensing_requires_information_state (r : Representationality)
 -- § 4. Mood Selection Correlation
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Mood
+open Mood
 
 /-- Map mood selector to expected representationality.
 

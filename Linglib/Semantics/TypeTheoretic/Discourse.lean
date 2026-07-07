@@ -10,7 +10,7 @@ import Linglib.Features.ClauseForm
 Discourse-level infrastructure for TTR ([cooper-2023], Chapters 2, 4, 5):
 
 **Signs & Illocutionary Force**: TTRSign, ForcedSign (§2.5–2.6) — the
-illocutionary force component reuses `Semantics.Mood.Illocutionary` rather
+illocutionary force component reuses `Mood.Illocutionary` rather
 than [cooper-2023]'s parallel four-way `IllocForce` enum (the surface
 distinction `assertion | query | command | acknowledgement` is the
 declarative/interrogative/imperative slice plus a backchannel constructor;
@@ -47,16 +47,16 @@ open Features
 Signs may carry illocutionary force. [cooper-2023]'s ex (91)
 introduces a four-way TTR-internal enum `assertion | query | command |
 acknowledgement`. We collapse `assertion/query/command` into
-`Semantics.Mood.Illocutionary`'s `declarative/interrogative/imperative`
+`Mood.Illocutionary`'s `declarative/interrogative/imperative`
 (the same Searlean cuts) and let backchannel acknowledgements be handled
 where dialogue moves live (`Pragmatics/Dialogue/Gameboard/`). The
 result: TTR signs share the rest of the library's mood vocabulary
 rather than re-stipulating it. -/
 
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 /-- A sign with illocutionary force. [cooper-2023] ex (91), with
-    `IllocForce` replaced by `Semantics.Mood.Illocutionary`. -/
+    `IllocForce` replaced by `Mood.Illocutionary`. -/
 structure ForcedSign (Phon Cont : Type) extends TTRSign Phon Cont where
   illoc : Illocutionary
 

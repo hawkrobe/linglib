@@ -57,7 +57,7 @@ namespace Holmberg2016
 open Question
 open Features (AnsweringSystem PolarAnswerProfile)
 open Minimalist
-open Semantics.Mood (ClauseType Grammatical Illocutionary)
+open Mood (ClauseType Grammatical Illocutionary)
 
 /-! ### Syntactic polarity: PolP and [±Pol] (relocated from Minimalist/Polarity.lean)
 
@@ -205,7 +205,7 @@ unformalized — silent divergences, not committed disagreements.
 
 ## Connection to ClauseType
 
-A clause's `Semantics.Mood.ClauseType` (force × mood) is determined by
+A clause's `Mood.ClauseType` (force × mood) is determined by
 the syntactic projections:
 - Force⁰[+Q] → `Illocutionary.interrogative`
 - Force⁰[-Q] → `Illocutionary.declarative`

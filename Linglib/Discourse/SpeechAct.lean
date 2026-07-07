@@ -40,7 +40,7 @@ from sincere belief to public commitment.
 * [searle-1969], [searle-1979], [searle-1983], [francik-clark-1985]
 -/
 
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 /-! ### Direction of fit -/
 
@@ -109,7 +109,7 @@ def PsychMode.directionOfFit : PsychMode → DirectionOfFit
 
 /-! ### Mood bridges — class and sincerity condition -/
 
-namespace Semantics.Mood.Illocutionary
+namespace Mood.Illocutionary
 
 /-- The [searle-1979] illocutionary class of each mood. -/
 def searleClass : Illocutionary → SearleClass
@@ -138,7 +138,7 @@ theorem sincerityCondition_directionOfFit (m : Illocutionary) :
     m.sincerityCondition.directionOfFit = m.directionOfFit := by
   cases m <;> rfl
 
-end Semantics.Mood.Illocutionary
+end Mood.Illocutionary
 
 /-! ### Causal self-referentiality -/
 

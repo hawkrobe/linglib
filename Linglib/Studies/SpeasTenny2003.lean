@@ -59,7 +59,7 @@ namespace SpeasTenny2003
 
 open Minimalist
 open Semantics.Context (KContext ContextTower ContextShift)
-open Semantics.Mood (Illocutionary ClauseType)
+open Mood (Illocutionary ClauseType)
 open Semantics.Epistemicity (EpistemicAuthority EpistemicProfile)
 
 /-! ### Pragmatic roles -/

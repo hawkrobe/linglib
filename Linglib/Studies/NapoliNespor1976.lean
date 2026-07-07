@@ -198,10 +198,10 @@ inductive CliticPresence where
 
 /-- §3.21: grammatical mood of the *than*-clause. Subjunctive surfaces
     iff *non₂* is underlyingly present (modulo lexical mood control by
-    *credere* etc., abstracted away here). Returning `Semantics.Mood.Grammatical`
+    *credere* etc., abstracted away here). Returning `Mood.Grammatical`
     rather than `Bool` connects this prediction to the mood semantics in
     `Semantics/Mood/`. -/
-def predictsGrammatical (p : BiasLicensingProfile) : Semantics.Mood.Grammatical :=
+def predictsGrammatical (p : BiasLicensingProfile) : Mood.Grammatical :=
   if p.licenses then .subjunctive else .indicative
 
 /-- §3.11 ex. 46–48: under bias-licensed negation the comparative admits

@@ -142,7 +142,7 @@ inductive Intonation where
     are explicitly out of scope.
 
     This triple refines the coarse declarative/interrogative cut of
-    `Semantics.Mood.Illocutionary` (which `Item.mood` carries). -/
+    `Mood.Illocutionary` (which `Item.mood` carries). -/
 structure MarkerTriple where
   clauseType : ClauseType
   intonation : Intonation
