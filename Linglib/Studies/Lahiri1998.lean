@@ -1,7 +1,7 @@
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Polarity
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 import Linglib.Fragments.Hindi.PolarityItems
 
 /-!
@@ -727,20 +727,13 @@ theorem licensing_context_iff_grammatical :
       (d.grammatical → d.context.isSome) ∧
       (¬d.grammatical → d.context.isNone)) := by decide
 
-/-- All licensing contexts in the grammatical data are DE environments
-    (or questions, which license via negative bias rather than pure DE). -/
-def isDEOrQuestion : LicensingContext → Prop
-  | .negation            => True
-  | .conditionalAntecedent     => True
-  | .universalRestrictor => True
-  | .beforeClause       => True
-  | .question            => True
-  | .adversative         => True  -- Strawson-DE ([von-fintel-1999])
-  | .denyVerb            => True  -- semantically negative
-  | _                    => False
-
-instance : DecidablePred isDEOrQuestion := fun x => by
-  cases x <;> unfold isDEOrQuestion <;> infer_instance
+/-- A DE-or-question licenser, derived from `contextProperties`: the
+    context's Strawson row supplies Zwarts strength, or it licenses by
+    entropy (questions, which license via negative bias rather than
+    pure DE). -/
+abbrev isDEOrQuestion (c : LicensingContext) : Prop :=
+  ((Semantics.Polarity.Licensing.contextProperties c).strawsonSignature.toDEStrength).isSome ∨
+    (Semantics.Polarity.Licensing.contextProperties c).mechanism = .byEntropy
 
 /-- Predicate: a datum's context is some DE-or-question licenser. -/
 def hasDELicenser (d : HindiNPIDatum) : Prop :=

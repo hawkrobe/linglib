@@ -1,83 +1,58 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.NaturalLogic
 import Linglib.Features.LicensingContext
 import Linglib.Features.Indefinite
 import Linglib.Semantics.Polarity.Item
 
 /-!
-# Semantics.Polarity.Licensing
-[ladusaw-1979] [kadmon-landman-1993] [zwarts-1998] [vanderwouden-1997]
-[von-fintel-1999] [chierchia-2006]
-[horn-1996] [hoeksema-1983] [bhatt-pancheva-2004]
-[heim-2006] [iatridou-2000] [dayal-1996]
-[van-rooy-2003-npi]
+# Polarity licensing
+[ladusaw-1979] [kadmon-landman-1993] [zwarts-1998] [von-fintel-1999]
+[van-rooy-2003-npi] [hoeksema-1983] [bhatt-pancheva-2004] [heim-2006]
+[iatridou-2000] [dayal-1996] [horn-1996] [vanderwouden-1997]
 
-Monotonicity-based licensing infrastructure for polarity-sensitive items:
-the `LicensingContext` enum (~22 contexts), the `LicensingMechanism`
-classification (K&L domain-widening + strengthening, plus refinements
-for non-K&L licensing), the `ContextProperties` synthesis bundling
-DE-strength signatures with mechanism + Strawson-DE flagging, and the
-canonical `contextProperties` map projecting each context to its
-theoretical lineage.
+The monotonicity-based licensing theory for `Polarity.Item`:
+`contextProperties` assigns every `LicensingContext` its Strawson and
+classical entailment signatures, its [kadmon-landman-1993] licensing
+mechanism, and its citation lineage; `StrengthScale` is the polymorphic
+item↔context strength pattern with `zwartsScale` as its canonical
+instance; and the keystone `LicensingContext.licenses` dispatches on the
+row's mechanism — Zwarts strength on signature rows, free choice on
+generic-indefinite rows ([dayal-1996]), entropy on questions
+([van-rooy-2003-npi]). Per-paper classifiers (`Ladusaw1979`,
+`KadmonLandman1993`) project from `contextProperties` rather than
+parallel-stipulating; the grounded grade — deriving the signatures from
+the model witnesses of `Witnesses.lean` via the Kadmon–Landman
+strengthening chain — is the planned next step.
 
-## Provenance
+## Main declarations
 
-Split from `Core/Lexical/PolarityItem.lean` in the cleanup that
-dissolved `Core/Lexical/`. The Israel scalar machinery
-(`ScalarValue`/`ScalarDirection`/`Canonicity`/`LikelihoodEffect`)
-moved to the sibling file `Typology/PolarityItem.lean` (which also
-holds `PolarityItemEntry` and `predictCanonicity`); the cross-file
-gap between Israel's scalar model and Ladusaw/K&L's monotonicity
-model is documented there.
+* `LicensingMechanism`, `ContextProperties`, `contextProperties` — the
+  per-context theory table.
+* `StrengthScale`, `zwartsScale` — polymorphic strength licensing.
+* `LicensingContext.licenses` — the item↔context licensing keystone.
+* `IsStrawsonOnly` and the Haspelmath-map grounding theorems.
 
-## Framework commitment
+## Implementation notes
 
-The `contextProperties` map encodes the **monotonicity-based**
-licensing tradition: [ladusaw-1979] (DE-licensing), [zwarts-1998]
-(anti-additive/anti-morphic refinement), [kadmon-landman-1993]
-(domain widening + strengthening), [von-fintel-1999] (Strawson-DE
-extension), and the every-restrictor-as-LAA result (variously
-attributed to Zwarts 1981 / van Benthem 1986 / Sánchez Valencia 1991;
-none currently in `references.bib`).
-Per-paper classifiers (`Ladusaw1979.licensingStrength`,
-`KadmonLandman1993.klExplanation`) project from this single record
-rather than parallel-stipulating.
-
-The `LicensingMechanism` 5-way enum refines the original 3-way
-{byStrengthening, byGenericIndefinite, byOtherMechanism} into the
-substantively distinct cases:
-
-- `byStrengthening`: K&L-canonical DE + widening (covers Ladusaw 1979).
-- `byGenericIndefinite`: non-DE FC any (modals, generics, free relatives).
-- `byStrawsonDE`: licensing via Strawson entailment (superlatives) —
-  [von-fintel-1999] / Herdan & Sharvit (UNVERIFIED — bib entry missing).
-- `byEntropy`: entropy-based licensing (questions per [van-rooy-2003-npi]).
-- `strengtheningFails`: contexts that *don't* license despite surface
-  appearance (e.g., NP-comparatives that lack covert clausal structure).
-
-The earlier `byOtherMechanism` constructor used by some study files
-(e.g., `KadmonLandman1993.lean` for ungrammatical examples) maps to
-`strengtheningFails`; the legitimate non-K&L cases (entropy questions,
-Strawson-DE superlatives) get their own dedicated constructors.
-
-## Out of scope: Israel↔Ladusaw cross-framework gap
-
-This file's `contextProperties.signature` field is Ladusaw/Zwarts/P&W
-canonical: each context has *one* DE/anti-additive/anti-morphic
-signature, regardless of which item is being licensed. Israel's scalar
-model rejects this per-context signature framing — for him,
-polarity-sensitivity is determined by the item's scale + role, not by
-the context's monotonicity. The cross-framework gap is real and is
-NOT closed by this restructure; see `Typology/PolarityItem.lean` for
-the Israel-side machinery and the documented refutation-theorem TODO.
+The table's signatures are Ladusaw/Zwarts/von-Fintel canonical — one row
+per context regardless of item; [israel-2001]'s scalar model rejects
+exactly this framing (predictions in `Semantics/Polarity/Israel.lean`).
+The NP-comparative row licenses nothing ([hoeksema-1983]); surface NPIs
+in "than NP" route through the clausal row ([bhatt-pancheva-2004],
+[heim-2006]). The every-restrictor-as-LAA signature is standard but of
+contested attribution (Zwarts 1981 / van Benthem 1986 / Sánchez Valencia
+1991; none in `references.bib`).
 -/
 
 namespace Semantics.Polarity.Licensing
 
 open Features (LicensingContext)
 
--- ════════════════════════════════════════════════════
--- § 1. Licensing Mechanism (refined 5-way)
--- ════════════════════════════════════════════════════
+/-! ### Licensing Mechanism (refined 5-way) -/
 
 /-- The mechanism by which a context licenses NPIs.
 
@@ -105,9 +80,7 @@ inductive LicensingMechanism where
   | strengtheningFails
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. Context Properties (single source of truth)
--- ════════════════════════════════════════════════════
+/-! ### Context Properties (single source of truth) -/
 
 /-- The bundle of theory-relevant facts about a licensing context.
 
@@ -251,31 +224,12 @@ def contextProperties : LicensingContext → ContextProperties
       , citations := ["UNVERIFIED-bib-missing:herdan-sharvit", "von-fintel-1999"]
       , classicalSignature := none }
 
-/-- Zwarts-strength licensing, derived ([zwarts-1998], [gajewski-2011]):
-the context's Strawson-operative row supplies at least the item's required
-strength (the item's `licensor` field). `false` when either side is not
-strength-keyed — those
-items/contexts license via mechanism (`LicensingMechanism`), not
-signature. -/
-def strengthLicenses (e : Semantics.Polarity.Item)
-    (c : LicensingContext) : Bool :=
-  match (contextProperties c).strawsonSignature.toDEStrength, e.licensor with
-  | some supplied, some required =>
-      NaturalLogic.strengthSufficient supplied required
-  | _, _ => false
+/-! ### Strength scales
 
-/-- `strengthLicenses` as a proposition. -/
-abbrev LicensedBySignature (e : Semantics.Polarity.Item)
-    (c : LicensingContext) : Prop :=
-  strengthLicenses e c = true
-
-/-! ### Polymorphic strength scales
-
-`strengthLicenses` is the Zwarts/`DEStrength` instance of a general pattern: a
-theory of NPI strength is an *ordered carrier* `S` plus how items and contexts
-project onto it, with licensing = `≤` on `S`. Different theories of strength
-(Gajewski plain-vs-exhaustified, Giannakidou veridicality, gradient) instantiate
-it with different carriers — see `scratch/npi-api-design.md`. -/
+A theory of NPI strength is an *ordered carrier* `S` plus how items and
+contexts project onto it, with licensing = `≤` on `S`. Different theories of
+strength (Gajewski plain-vs-exhaustified, Giannakidou veridicality, gradient)
+instantiate different carriers. -/
 
 /-- A **strength scale** for NPI licensing: how items and contexts project onto
 an ordered strength carrier `S`. `none` on either side = "no strength here" (the
@@ -292,24 +246,19 @@ def StrengthScale.licenses {Item Context S : Type*} [Preorder S]
     (L : StrengthScale Item Context S) (i : Item) (c : Context) : Prop :=
   ∃ r ∈ L.required i, ∃ s ∈ L.supplied c, r ≤ s
 
-/-- The canonical Zwarts/[ladusaw-1979] scale: carrier `DEStrength`, item
-strength from `Item.licensor`, context strength from the row's
-Strawson signature. The first instance of `StrengthScale`. -/
+instance {Item Context S : Type*} [Preorder S]
+    [DecidableRel (α := S) (· ≤ ·)] (L : StrengthScale Item Context S)
+    (i : Item) (c : Context) : Decidable (L.licenses i c) := by
+  unfold StrengthScale.licenses; infer_instance
+
+/-- The canonical Zwarts scale ([ladusaw-1979], [zwarts-1998],
+[gajewski-2011]): carrier `DEStrength`, item strength from `Item.licensor`,
+context strength from the row's Strawson signature. -/
 def zwartsScale :
     StrengthScale Semantics.Polarity.Item LicensingContext
       NaturalLogic.DEStrength where
   required e := e.licensor
   supplied c := (contextProperties c).strawsonSignature.toDEStrength
-
-/-- The polymorphic scale subsumes the bespoke predicate: `zwartsScale.licenses`
-is exactly `LicensedBySignature` (derive-don't-duplicate). -/
-theorem zwartsScale_licenses_iff (e : Semantics.Polarity.Item)
-    (c : LicensingContext) :
-    zwartsScale.licenses e c ↔ LicensedBySignature e c := by
-  simp only [StrengthScale.licenses, zwartsScale, LicensedBySignature,
-    strengthLicenses, NaturalLogic.strengthSufficient]
-  cases (contextProperties c).strawsonSignature.toDEStrength <;>
-    cases e.licensor <;> simp
 
 /-! ### The licensing keystone -/
 
@@ -331,7 +280,7 @@ chain — is planned (N1 of the NPI-API sweep). -/
 def _root_.Features.LicensingContext.licenses (c : LicensingContext)
     (e : Semantics.Polarity.Item) : Prop :=
   match (contextProperties c).mechanism with
-  | .byStrengthening | .byStrawsonDE => LicensedBySignature e c
+  | .byStrengthening | .byStrawsonDE => zwartsScale.licenses e c
   | .byGenericIndefinite => e.isFCI
   | .byEntropy => e.licensor = some .weak
   | .strengtheningFails => False
@@ -339,16 +288,6 @@ def _root_.Features.LicensingContext.licenses (c : LicensingContext)
 instance (c : LicensingContext) (e : Semantics.Polarity.Item) :
     Decidable (c.licenses e) := by
   unfold Features.LicensingContext.licenses; split <;> infer_instance
-
-/-- On signature-mechanism rows the keystone is exactly Zwarts-strength
-licensing (`LicensedBySignature`). -/
-theorem licenses_iff_signature (c : LicensingContext)
-    (e : Semantics.Polarity.Item)
-    (h : (contextProperties c).mechanism = .byStrengthening ∨
-         (contextProperties c).mechanism = .byStrawsonDE) :
-    c.licenses e ↔ LicensedBySignature e c := by
-  unfold Features.LicensingContext.licenses
-  rcases h with h | h <;> rw [h]
 
 /-! ### The Haspelmath map meets the licensing table
 

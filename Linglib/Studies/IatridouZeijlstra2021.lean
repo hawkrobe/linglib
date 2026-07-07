@@ -1,3 +1,4 @@
+import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Core.Order.Interval
@@ -95,15 +96,6 @@ theorem pts_uts_mirror :
 -- § 2. Boundary Adverbial Structure
 -- ════════════════════════════════════════════════════
 
-/-- NPI strength classification. Strong NPIs require antiadditive
-    environments; weak NPIs require only DE environments.
-    [zwarts-1998] [gajewski-2011] -/
-inductive NPIStrength where
-  | strong  -- requires antiadditive (not, nobody, never)
-  | weak    -- requires DE (few, at most, before)
-  | none_   -- not an NPI
-  deriving DecidableEq, Repr
-
 /-- A boundary adverbial: a temporal expression that sets one boundary
     of a time span (PTS or UTS).
 
@@ -119,8 +111,10 @@ structure BoundaryAdverbial where
   boundary : BoundaryKind
   /-- Does this adverbial introduce subdomain alternatives? -/
   introducesDomainAlts : Bool
-  /-- Is this adverbial a (strong) NPI? -/
-  npiStrength : NPIStrength
+  /-- Minimum Zwarts strength of a licensing environment, in the shared
+      `Polarity.Item` vocabulary (`none` = not an NPI); strong NPIs
+      require anti-additivity ([zwarts-1998], [gajewski-2011]). -/
+  licensor : Option NaturalLogic.DEStrength := none
   /-- Is the adverbial always contrastively focused?
       [chierchia-2013]: domain widening requires contrastive focus
       under negation. *In years* is always contrastively focused;
@@ -146,7 +140,7 @@ def inYears : BoundaryAdverbial where
   timeSpan := .pts
   boundary := .left
   introducesDomainAlts := true
-  npiStrength := .strong
+  licensor := some .antiAdditive
   alwaysContrastive := true
   compatiblePerfect := [.existential]
 
@@ -159,7 +153,7 @@ def inTheLast5Years : BoundaryAdverbial where
   timeSpan := .pts
   boundary := .left
   introducesDomainAlts := false
-  npiStrength := .none_
+  licensor := none
   alwaysContrastive := false
   compatiblePerfect := [.existential, .universal]
 
@@ -171,7 +165,7 @@ def since2015 : BoundaryAdverbial where
   timeSpan := .pts
   boundary := .left
   introducesDomainAlts := false
-  npiStrength := .none_
+  licensor := none
   alwaysContrastive := false
 
 /-- *Until (5pm / I left)*: unified RB adverbial.
@@ -183,7 +177,7 @@ def until_ : BoundaryAdverbial where
   timeSpan := .uts
   boundary := .right
   introducesDomainAlts := true
-  npiStrength := .strong
+  licensor := some .antiAdditive
   alwaysContrastive := false  -- only contrastively focused under negation
 
 -- ════════════════════════════════════════════════════
@@ -203,7 +197,7 @@ theorem both_domain_wideners :
 
 /-- *In years* and *until* are both strong NPIs. -/
 theorem both_strong_npis :
-    inYears.npiStrength = .strong ∧ until_.npiStrength = .strong :=
+    inYears.licensor = some .antiAdditive ∧ until_.licensor = some .antiAdditive :=
   ⟨rfl, rfl⟩
 
 /-- *In years* is always contrastive; *until* is not. -/
@@ -443,14 +437,14 @@ def isDomainWidener (adv : BoundaryAdverbial) : Bool :=
 
 /-- Domain wideners among boundary adverbials are strong NPIs. -/
 theorem domain_widener_is_strong_npi :
-    (isDomainWidener inYears = true ∧ inYears.npiStrength = .strong) ∧
-    (isDomainWidener until_ = true ∧ until_.npiStrength = .strong) :=
+    (isDomainWidener inYears = true ∧ inYears.licensor = some .antiAdditive) ∧
+    (isDomainWidener until_ = true ∧ until_.licensor = some .antiAdditive) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 /-- Non-widener boundary adverbials are not NPIs. -/
 theorem non_widener_not_npi :
-    (isDomainWidener since2015 = false ∧ since2015.npiStrength = .none_) ∧
-    (isDomainWidener inTheLast5Years = false ∧ inTheLast5Years.npiStrength = .none_) :=
+    (isDomainWidener since2015 = false ∧ since2015.licensor = none) ∧
+    (isDomainWidener inTheLast5Years = false ∧ inTheLast5Years.licensor = none) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 
