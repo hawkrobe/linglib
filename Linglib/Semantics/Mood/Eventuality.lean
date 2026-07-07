@@ -26,22 +26,16 @@ namespace Mood
 
 variable {Event : Type*}
 
-/-- Indicative closure of the eventuality argument ([grano-2024], (87)):
-`⟦INDIC⟧ = λP.∃e.P(e)`. The complement denotes a proposition. -/
+/-- Indicative closure ([grano-2024], (87)): `⟦INDIC⟧ = λP.∃e.P(e)`,
+so the complement denotes a proposition. -/
 def INDev (P : Event → Prop) : Prop := ∃ e, P e
 
-/-- Subjunctive non-closure ([grano-2024], (88a); Subjunctive₃ (135) in
-his §7 unified theory): `⟦SBJV₁⟧ = λP.P`. The complement stays an event
-predicate, open for abstraction — the variant for perception,
-causative, and aspectual predicates, without the causal
-self-reference of `SBJVev₂` or the ordering semantics of his
-Subjunctive₁. -/
+/-- Subjunctive non-closure ([grano-2024], (88a)): `⟦SBJV₁⟧ = λP.P`,
+leaving the complement open for eventuality abstraction. -/
 def SBJVev₁ (P : Event → Prop) : Event → Prop := P
 
-/-- The *intend* variant, with causal self-reference ([grano-2024],
-(134), integrating CAUSE* with [portner-rubinstein-2020]'s modal
-framework): the attitude state must causally bring about the
-described event "in the right way" ([searle-1983]; [harman-1976]). -/
+/-- The *intend* variant ([grano-2024], (134)): the attitude state must
+causally bring about the described event ([searle-1983]). -/
 def SBJVev₂ {W : Type*}
     (causeStar : Event → Event → W → Prop)  -- CAUSE*(state, event, world)
     (content : Event → W → Prop)          -- content of the attitude state
