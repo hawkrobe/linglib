@@ -1,12 +1,12 @@
 import Mathlib.Data.Setoid.Basic
-import Linglib.Semantics.Mood.POSW
+import Linglib.Semantics.Mood.Modal
 
 /-!
-# POSW with Inquiry Partition (POSWQ)
+# Mood State: POSW with Inquiry Partition
 [portner-2018] [groenendijk-stokhof-1984] [roberts-2012]
 
 This file is **our extension** of the POSW substrate
-(`Semantics/Mood/POSW.lean`: [veltman-1996]'s `ExpState` under
+(`Semantics/Mood/Modal.lean`: [veltman-1996]'s `ExpState` under
 [portner-2018]'s modal reading) to interrogative force, by way of a
 third component recording the open question: `info` and `order` stay
 intact and `inquiry : Setoid W` is a separate third coordinate, so
@@ -17,7 +17,7 @@ interrogatives: his **pposw** (his (10)) *replaces* `cs` with a
 partition of it, fusing the informational and inquisitive components;
 and he names the alternative of "adding a third component, a question
 set, to the basic definition of a posw", crediting [roberts-1996],
-[roberts-2012], and [portner-2004]. `POSWQ` adopts the second option,
+[roberts-2012], and [portner-2004]. `State` adopts the second option,
 which preserves the disjoint-target architecture. (He also notes that
 his update-based mood-selection principles would treat interrogative
 sentence mood via the `+`-update — a further alternative to the
@@ -84,7 +84,7 @@ intermediate-exhaustive readings as theorems and shows that
 [groenendijk-stokhof-1984]'s partition theory provably cannot.
 When that study is formalized in `Studies/`, the
 `InquisitiveContent W` type becomes load-bearing; until then, every
-existing POSWQ use case is partition-based and `Setoid W` is the
+existing State use case is partition-based and `Setoid W` is the
 right structure (mathlib already provides its `CompleteLattice`).
 
 The lift, when it happens, should be a **sibling** structure (parallel
@@ -97,7 +97,7 @@ namespace Semantics.Mood
 
 open Semantics.Dynamic.Default
 
-/-- A **POSW with an inquiry partition** (POSWQ): the POSW substrate
+/-- A **POSW with an inquiry partition** (State): the POSW substrate
     (an `ExpState`) enriched with a third component recording the open
     question. The `inquiry : Setoid W` partitions worlds into
     "answers"; its `⊤` element is "no question". [portner-2018]'s own
@@ -105,21 +105,21 @@ open Semantics.Dynamic.Default
     `cs` with a partition; the third-coordinate design here is the
     alternative he names — a separate question set à la
     [roberts-1996] and [portner-2004]. -/
-structure POSWQ (W : Type*) extends ExpState W where
+structure State (W : Type*) extends ExpState W where
   /-- The inquiry partition: `inquiry.r w v` means worlds `w` and `v`
       are indistinguishable answers to the open question. -/
   inquiry : Setoid W
 
-namespace POSWQ
+namespace State
 
 variable {W : Type*}
 
 /-! ### Constructors -/
 
-/-- Lift an expectation state to a POSWQ with no question under
+/-- Lift an expectation state to a State with no question under
     discussion (trivial inquiry partition: every world is in the same
     cell). -/
-def ofExpState (σ : ExpState W) : POSWQ W :=
+def ofExpState (σ : ExpState W) : State W :=
   { σ with inquiry := ⊤ }
 
 @[simp] theorem ofExpState_toExpState (σ : ExpState W) :
@@ -162,22 +162,22 @@ def polarSetoid (q : W → Prop) : Setoid W where
     The meet of two equivalence relations on `W` is "agree on both";
     refining the inquiry by `q` shrinks each cell down to its
     intersection with `q`'s cells (jointly-finer partition). -/
-def inquire (c : POSWQ W) (q : Setoid W) : POSWQ W :=
+def inquire (c : State W) (q : Setoid W) : State W :=
   { c with inquiry := c.inquiry ⊓ q }
 
-@[simp] theorem inquire_toExpState (c : POSWQ W) (q : Setoid W) :
+@[simp] theorem inquire_toExpState (c : State W) (q : Setoid W) :
     (c.inquire q).toExpState = c.toExpState := rfl
 
-@[simp] theorem inquire_info (c : POSWQ W) (q : Setoid W) :
+@[simp] theorem inquire_info (c : State W) (q : Setoid W) :
     (c.inquire q).info = c.info := rfl
 
-@[simp] theorem inquire_order (c : POSWQ W) (q : Setoid W) :
+@[simp] theorem inquire_order (c : State W) (q : Setoid W) :
     (c.inquire q).order = c.order := rfl
 
 /-- `?`-update is meet in `Setoid.completeLattice W` — the inquiry-side
     analogue of `assert` (meet in `W → Prop`) and `promote` (meet with
     the criterion preorder, `Normality.refine`). Definitional. -/
-@[simp] theorem inquire_inquiry_eq_inf (c : POSWQ W) (q : Setoid W) :
+@[simp] theorem inquire_inquiry_eq_inf (c : State W) (q : Setoid W) :
     (c.inquire q).inquiry = c.inquiry ⊓ q := rfl
 
 /-! ### The third modal: `boxAns` (informational answerhood) -/
@@ -193,36 +193,36 @@ def inquire (c : POSWQ W) (q : Setoid W) : POSWQ W :=
     `p`: a strengthening of `p` can break the constant-truth property
     on a cell. The natural monotonicity for `boxAns` is *anti*-monotone
     in the inquiry partition (`boxAns_anti` below). -/
-def boxAns (c : POSWQ W) (p : W → Prop) : Prop :=
+def boxAns (c : State W) (p : W → Prop) : Prop :=
   ∀ w v, w ∈ c.info → v ∈ c.info → c.inquiry.r w v → (p w ↔ p v)
 
 /-! ### Refinement preorder
 
-`POSWQ W` inherits a refinement preorder componentwise from the
+`State W` inherits a refinement preorder componentwise from the
 `ExpState` refinement preorder and the `Setoid W` lattice:
 `c₁ ≤ c₂` iff `c₁.toExpState ≤ c₂.toExpState` and
 `c₁.inquiry ≤ c₂.inquiry`. All components agree on "finer ≤
 coarser". -/
 
-instance : Preorder (POSWQ W) where
+instance : Preorder (State W) where
   le c₁ c₂ := c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry
   le_refl c := ⟨le_refl _, le_refl _⟩
   le_trans _ _ _ h₁₂ h₂₃ :=
     ⟨le_trans h₁₂.1 h₂₃.1, le_trans h₁₂.2 h₂₃.2⟩
 
-theorem le_iff (c₁ c₂ : POSWQ W) :
+theorem le_iff (c₁ c₂ : State W) :
     c₁ ≤ c₂ ↔ c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry :=
   Iff.rfl
 
 /-- `?`-update lands below the input: refining `inquiry` by meet with
-    `q` can only constrain the POSWQ further. The third-component
+    `q` can only constrain the State further. The third-component
     analogue of `ExpState.assert_le_self` and
     `ExpState.promote_le_self`. -/
-theorem inquire_le_self (c : POSWQ W) (q : Setoid W) : c.inquire q ≤ c :=
+theorem inquire_le_self (c : State W) (q : Setoid W) : c.inquire q ≤ c :=
   ⟨le_refl _, inf_le_left⟩
 
-/-- `?`-update is monotone in the underlying POSWQ. -/
-theorem inquire_mono {c₁ c₂ : POSWQ W} (h : c₁ ≤ c₂) (q : Setoid W) :
+/-- `?`-update is monotone in the underlying State. -/
+theorem inquire_mono {c₁ c₂ : State W} (h : c₁ ≤ c₂) (q : Setoid W) :
     c₁.inquire q ≤ c₂.inquire q :=
   ⟨h.1, inf_le_inf_right q h.2⟩
 
@@ -230,32 +230,32 @@ theorem inquire_mono {c₁ c₂ : POSWQ W} (h : c₁ ≤ c₂) (q : Setoid W) :
     `?`-update iff its inquiry already refines the question. The
     third-coordinate instance of [veltman-1996]'s acceptance
     (`ExpState.le_assert_iff`, `ExpState.le_promote_iff`). -/
-theorem le_inquire_iff (c : POSWQ W) (q : Setoid W) :
+theorem le_inquire_iff (c : State W) (q : Setoid W) :
     c ≤ c.inquire q ↔ c.inquiry ≤ q :=
   ⟨fun h => le_trans h.2 inf_le_right,
    fun h => ⟨le_refl _, le_inf (le_refl _) h⟩⟩
 
 /-- Support implies answerhood: if the inquiry already refines `p`'s
     polar partition, `p` is settled by the question. -/
-theorem boxAns_of_inquiry_le_polarSetoid (c : POSWQ W) (p : W → Prop)
+theorem boxAns_of_inquiry_le_polarSetoid (c : State W) (p : W → Prop)
     (h : c.inquiry ≤ polarSetoid p) : c.boxAns p :=
   fun _ _ _ _ hwv => h hwv
 
 /-- On states with total information (`info = Set.univ`), answerhood
     *is* inquiry-support for the polar partition: the `info`-guards in
     `boxAns` are the only gap between the two. -/
-theorem inquiry_le_polarSetoid_iff_boxAns_of_univ (c : POSWQ W)
+theorem inquiry_le_polarSetoid_iff_boxAns_of_univ (c : State W)
     (p : W → Prop) (h : c.info = Set.univ) :
     c.inquiry ≤ polarSetoid p ↔ c.boxAns p :=
   ⟨fun hle => c.boxAns_of_inquiry_le_polarSetoid p hle,
    fun hbox w v hwv =>
      hbox w v (h ▸ Set.mem_univ w) (h ▸ Set.mem_univ v) hwv⟩
 
-/-- Refining the POSWQ *strengthens* informational answerhood: if
+/-- Refining the State *strengthens* informational answerhood: if
     `c₁` is more refined than `c₂` and `p` is settled by the question
     at `c₂`, then `p` is settled at `c₁` too. The answerhood
     counterpart of `ExpState.boxCs_anti`. -/
-theorem boxAns_anti (c₁ c₂ : POSWQ W) (h : c₁ ≤ c₂) (p : W → Prop) :
+theorem boxAns_anti (c₁ c₂ : State W) (h : c₁ ≤ c₂) (p : W → Prop) :
     c₂.boxAns p → c₁.boxAns p :=
   fun hbox w v hw hv hwv =>
     hbox w v (h.1.1 hw) (h.1.1 hv) (h.2 hwv)
@@ -268,21 +268,21 @@ operations — answers to a question can be combined like ordinary
 propositions. -/
 
 /-- Negation preserves answerhood. -/
-theorem boxAns_not (c : POSWQ W) (p : W → Prop) :
+theorem boxAns_not (c : State W) (p : W → Prop) :
     c.boxAns p → c.boxAns (fun w => ¬ p w) :=
   fun hp w v hw hv hwv =>
     ⟨fun hnpw hpv => hnpw ((hp w v hw hv hwv).mpr hpv),
      fun hnpv hpw => hnpv ((hp w v hw hv hwv).mp hpw)⟩
 
 /-- Conjunction preserves answerhood. -/
-theorem boxAns_and (c : POSWQ W) (p q : W → Prop) :
+theorem boxAns_and (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w => p w ∧ q w) :=
   fun hp hq w v hw hv hwv =>
     ⟨fun ⟨hpw, hqw⟩ => ⟨(hp w v hw hv hwv).mp hpw, (hq w v hw hv hwv).mp hqw⟩,
      fun ⟨hpv, hqv⟩ => ⟨(hp w v hw hv hwv).mpr hpv, (hq w v hw hv hwv).mpr hqv⟩⟩
 
 /-- Disjunction preserves answerhood. -/
-theorem boxAns_or (c : POSWQ W) (p q : W → Prop) :
+theorem boxAns_or (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w => p w ∨ q w) :=
   fun hp hq w v hw hv hwv =>
     ⟨fun hpqw => hpqw.elim
@@ -294,7 +294,7 @@ theorem boxAns_or (c : POSWQ W) (p q : W → Prop) :
 
 /-- Material implication preserves answerhood. Follows from the
     Boolean-algebra closure of constant-on-cell propositions. -/
-theorem boxAns_imp (c : POSWQ W) (p q : W → Prop) :
+theorem boxAns_imp (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w => p w → q w) :=
   fun hp hq w v hw hv hwv =>
     ⟨fun himp hpv => (hq w v hw hv hwv).mp (himp ((hp w v hw hv hwv).mpr hpv)),
@@ -302,70 +302,70 @@ theorem boxAns_imp (c : POSWQ W) (p q : W → Prop) :
 
 /-! ### Three-component update disjointness
 
-The three updates `assert`, `promote`, `inquire` touch disjoint POSWQ
-components, so they pairwise commute when lifted to act on `POSWQ`.
+The three updates `assert`, `promote`, `inquire` touch disjoint State
+components, so they pairwise commute when lifted to act on `State`.
 The lifts are defined here because `ExpState.assert` and
-`ExpState.promote` strip the inquiry field; `POSWQ.assert` and
-`POSWQ.promote` are the inquiry-preserving counterparts. -/
+`ExpState.promote` strip the inquiry field; `State.assert` and
+`State.promote` are the inquiry-preserving counterparts. -/
 
-/-- POSWQ-side `+`-update: refine `info` while preserving the inquiry
+/-- State-side `+`-update: refine `info` while preserving the inquiry
     partition. The inquiry-preserving lift of `ExpState.assert`. -/
-def assert (c : POSWQ W) (p : W → Prop) : POSWQ W :=
+def assert (c : State W) (p : W → Prop) : State W :=
   { c.toExpState.assert p with inquiry := c.inquiry }
 
-/-- POSWQ-side `⋆`-update: refine `order` while preserving the inquiry
+/-- State-side `⋆`-update: refine `order` while preserving the inquiry
     partition. The inquiry-preserving lift of `ExpState.promote`. -/
-def promote (c : POSWQ W) (p : W → Prop) : POSWQ W :=
+def promote (c : State W) (p : W → Prop) : State W :=
   { c.toExpState.promote p with inquiry := c.inquiry }
 
-@[simp] theorem assert_toExpState (c : POSWQ W) (p : W → Prop) :
+@[simp] theorem assert_toExpState (c : State W) (p : W → Prop) :
     (c.assert p).toExpState = c.toExpState.assert p := rfl
 
-@[simp] theorem assert_inquiry (c : POSWQ W) (p : W → Prop) :
+@[simp] theorem assert_inquiry (c : State W) (p : W → Prop) :
     (c.assert p).inquiry = c.inquiry := rfl
 
-@[simp] theorem promote_toExpState (c : POSWQ W) (p : W → Prop) :
+@[simp] theorem promote_toExpState (c : State W) (p : W → Prop) :
     (c.promote p).toExpState = c.toExpState.promote p := rfl
 
-@[simp] theorem promote_inquiry (c : POSWQ W) (p : W → Prop) :
+@[simp] theorem promote_inquiry (c : State W) (p : W → Prop) :
     (c.promote p).inquiry = c.inquiry := rfl
 
-/-- `assert` and `promote` commute on POSWQ: the components never
+/-- `assert` and `promote` commute on State: the components never
     interact. -/
-@[simp] theorem assert_promote_comm (c : POSWQ W) (p q : W → Prop) :
+@[simp] theorem assert_promote_comm (c : State W) (p q : W → Prop) :
     (c.assert p).promote q = (c.promote q).assert p := rfl
 
-/-- `assert` and `inquire` commute on POSWQ: each touches a different
+/-- `assert` and `inquire` commute on State: each touches a different
     component. -/
-@[simp] theorem assert_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
+@[simp] theorem assert_inquire_comm (c : State W) (p : W → Prop) (s : Setoid W) :
     (c.assert p).inquire s = (c.inquire s).assert p := rfl
 
-/-- `promote` and `inquire` commute on POSWQ: each touches a different
+/-- `promote` and `inquire` commute on State: each touches a different
     component. -/
-@[simp] theorem promote_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
+@[simp] theorem promote_inquire_comm (c : State W) (p : W → Prop) (s : Setoid W) :
     (c.promote p).inquire s = (c.inquire s).promote p := rfl
 
 /-- `?`-update is idempotent on the same partition: refining inquiry
     by `s` twice equals refining once. The Setoid-meet is idempotent
     in the `CompleteLattice (Setoid W)`. -/
-theorem inquire_inquire_self (c : POSWQ W) (s : Setoid W) :
+theorem inquire_inquire_self (c : State W) (s : Setoid W) :
     ((c.inquire s).inquire s).inquiry = (c.inquire s).inquiry := by
   show (c.inquiry ⊓ s) ⊓ s = c.inquiry ⊓ s
   rw [inf_assoc, inf_idem]
 
 /-! ### Distinctness witness: `boxAns` ≠ `boxCs` ∘ projection
 
-The third modal genuinely differs from `boxCs`. We exhibit a POSWQ
+The third modal genuinely differs from `boxCs`. We exhibit a State
 where some `p` is settled by the question (`boxAns p`) but is *not*
 informationally necessary (`¬ boxCs p`). The witness is a non-trivial
 inquiry partition with two cells, where `p` is true on one cell and
 false on the other: it has a constant truth value per cell (so
 `boxAns`), but is not uniformly true on `info` (so not `boxCs`). -/
 
-/-- Two-cell inquiry POSWQ: `info = Set.univ` over `Bool`, `order`
+/-- Two-cell inquiry State: `info = Set.univ` over `Bool`, `order`
     total, with `inquiry` the identity Setoid (each Bool in its own
     cell). -/
-def sepPOSWQ : POSWQ Bool where
+def sepInquiry : State Bool where
   info := Set.univ
   order := Core.Order.Normality.total
   inquiry := { r := fun w v => w = v, iseqv :=
@@ -375,26 +375,26 @@ def sepPOSWQ : POSWQ Bool where
 def sepProp : Bool → Prop := fun w => w = false
 
 /-- The separation proposition is settled by the question at
-    `sepPOSWQ`: within each (singleton) cell, its truth value is
+    `sepInquiry`: within each (singleton) cell, its truth value is
     constant. -/
-theorem boxAns_sepPOSWQ_sepProp : sepPOSWQ.boxAns sepProp := by
+theorem boxAns_sepInquiry_sepProp : sepInquiry.boxAns sepProp := by
   intro w v _ _ hwv
   rw [show w = v from hwv]
 
 /-- The separation proposition is *not* informationally necessary at
-    `sepPOSWQ.toExpState`: `true` is in `info` but does not satisfy
+    `sepInquiry.toExpState`: `true` is in `info` but does not satisfy
     `p`. -/
-theorem not_boxCs_sepPOSWQ_sepProp : ¬ sepPOSWQ.toExpState.boxCs sepProp := by
+theorem not_boxCs_sepInquiry_sepProp : ¬ sepInquiry.toExpState.boxCs sepProp := by
   intro h
   exact Bool.noConfusion (h true trivial)
 
 /-- **`boxAns` and `boxCs` are not interderivable** on the POSW substrate
-    alone: there exists a POSWQ and a proposition where `boxAns` holds
+    alone: there exists a State and a proposition where `boxAns` holds
     and `boxCs` fails. The inquiry component is doing genuine work. -/
 theorem boxAns_not_reducible_to_boxCs :
-    ∃ (c : POSWQ Bool) (p : Bool → Prop),
+    ∃ (c : State Bool) (p : Bool → Prop),
       c.boxAns p ∧ ¬ c.toExpState.boxCs p :=
-  ⟨sepPOSWQ, sepProp, boxAns_sepPOSWQ_sepProp, not_boxCs_sepPOSWQ_sepProp⟩
+  ⟨sepInquiry, sepProp, boxAns_sepInquiry_sepProp, not_boxCs_sepInquiry_sepProp⟩
 
-end POSWQ
+end State
 end Semantics.Mood

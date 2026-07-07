@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mood.Basic
-import Linglib.Semantics.Mood.VerbalMood
+import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Studies.Noonan2007
 import Linglib.Fragments.Greek.StandardModern.MoodChoice
@@ -50,7 +50,7 @@ When neither departure is present, only indicative mood is possible.
 namespace Grano2024
 
 open Semantics.Lexical
-open Semantics.Mood (GramMood MoodEffect)
+open Semantics.Mood (Grammatical Effect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
 
@@ -173,28 +173,28 @@ theorem causatives_pattern_with_intend :
   native_decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 3. Bridge: Empirical Data → MoodSelector
+-- § 3. Bridge: Empirical Data → Selector
 -- ════════════════════════════════════════════════════════════════
 
-open Noonan2007 (deriveMoodSelector)
+open Noonan2007 (deriveSelector)
 open English.Predicates.Verbal (want hope)
 
-/-- The deriveMoodSelector function correctly classifies 'want' as
+/-- The deriveSelector function correctly classifies 'want' as
     robustly subjunctive-selecting, matching the cross-linguistic data. -/
 theorem want_selector_matches_data :
-    deriveMoodSelector want = .subjunctiveSelecting ∧
+    deriveSelector want = .subjunctiveSelecting ∧
     wantData.all (·.rejectsIndicative) = true := by
   native_decide
 
-/-- The deriveMoodSelector function correctly classifies 'hope' as
+/-- The deriveSelector function correctly classifies 'hope' as
     cross-linguistically variable, matching the data showing variation. -/
 theorem hope_selector_matches_data :
-    deriveMoodSelector hope = .crossLinguisticallyVariable ∧
+    deriveSelector hope = .crossLinguisticallyVariable ∧
     hopeData.all (·.rejectsIndicative) = false := by
   native_decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. Bridge: MoodEffect → Indicative Rejection
+-- § 4. Bridge: Effect → Indicative Rejection
 -- ════════════════════════════════════════════════════════════════
 
 /-- Indicative mood closes the eventuality argument. Therefore,
@@ -205,12 +205,12 @@ theorem hope_selector_matches_data :
     Premise 2 (CAUSE* needs open event arg) + Premise 3 (IND closes it)
     → Conclusion (intention reports reject IND). -/
 theorem ind_incompatible_with_eventuality_abstraction :
-    GramMood.indicative.effect.eventualityOpen = false := rfl
+    Grammatical.indicative.effect.eventualityOpen = false := rfl
 
 /-- Subjunctive mood leaves the eventuality argument open, enabling
     CAUSE* to bind it. This is why 'intend' and causatives accept SBJV. -/
 theorem subj_enables_eventuality_abstraction :
-    GramMood.subjunctive.effect.eventualityOpen = true := rfl
+    Grammatical.subjunctive.effect.eventualityOpen = true := rfl
 
 /-- The three-premise argument chain:
     1. `intentionHolds` requires P : E → W → Event Time → Prop (open event arg)
@@ -219,8 +219,8 @@ theorem subj_enables_eventuality_abstraction :
     → intention reports require SBJV, reject IND -/
 theorem grano_argument_chain :
     -- Premise 3: IND closes, SBJV opens
-    GramMood.indicative.effect.eventualityOpen = false ∧
-    GramMood.subjunctive.effect.eventualityOpen = true ∧
+    Grammatical.indicative.effect.eventualityOpen = false ∧
+    Grammatical.subjunctive.effect.eventualityOpen = true ∧
     -- Empirical confirmation: intend rejects IND
     intendData.all (·.rejectsIndicative) = true ∧
     -- Empirical confirmation: causatives also reject IND (independent support)
@@ -269,7 +269,7 @@ inductive DepartureKind where
       IND existentially closes the event argument, making it
       type-incompatible with CAUSE* / aspect / perception. No
       simplification can rescue IND here. -/
-def DepartureKind.moodPrediction : DepartureKind → MoodSelector
+def DepartureKind.moodPrediction : DepartureKind → Selector
   | .comparisonSimplifiable    => .crossLinguisticallyVariable
   | .comparisonNonSimplifiable => .subjunctiveSelecting
   | .eventualityAbstraction    => .subjunctiveSelecting
@@ -470,61 +470,61 @@ theorem cp_to_indicative :
 -- rather than computed from VerbEntry fields because the crucial
 -- distinction — whether a predicate has a causative component (CAUSE*)
 -- — is not yet captured by a VerbEntry field. The classifications are
--- verified to agree with the independently derived `deriveMoodSelector`.
+-- verified to agree with the independently derived `deriveSelector`.
 
 /-- 'want' involves non-simplifiable comparison (robust SBJV). -/
 theorem want_moodPrediction_agrees :
     DepartureKind.comparisonNonSimplifiable.moodPrediction =
-      deriveMoodSelector want := by native_decide
+      deriveSelector want := by native_decide
 
 /-- 'hope' involves simplifiable comparison (variable mood). -/
 theorem hope_moodPrediction_agrees :
     DepartureKind.comparisonSimplifiable.moodPrediction =
-      deriveMoodSelector hope := by native_decide
+      deriveSelector hope := by native_decide
 
 /-- 'intend' involves both comparison and eventuality abstraction
     (robust SBJV). -/
 theorem intend_moodPrediction_agrees :
     DepartureKind.comparisonAndAbstraction.moodPrediction =
-      deriveMoodSelector intend := by native_decide
+      deriveSelector intend := by native_decide
 
 /-- Causatives involve eventuality abstraction (robust SBJV). -/
 theorem causative_moodPrediction_agrees :
     DepartureKind.eventualityAbstraction.moodPrediction =
-      deriveMoodSelector English.Predicates.Verbal.make := by native_decide
+      deriveSelector English.Predicates.Verbal.make := by native_decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 8b. Bridge: deriveMoodSelector → VerbalMoodOp
+-- § 8b. Bridge: deriveSelector → VerbalOp
 -- ════════════════════════════════════════════════════════════════
 
-/-! Per-verb closure of `deriveMoodSelector` under
-`MoodSelector.toVerbalMood`. The cross-linguistic mood-choice
-data (§3) flows through `deriveMoodSelector` (§3) and into the
-POSWQ-typed verbal-mood operator (`VerbalMood.lean`). For
+/-! Per-verb closure of `deriveSelector` under
+`Selector.toVerbalOp`. The cross-linguistic mood-choice
+data (§3) flows through `deriveSelector` (§3) and into the
+State-typed verbal-mood operator (`VerbalMood.lean`). For
 robustly subjunctive predicates, the projection lands in
 `some .subjunctive`; for cross-linguistically variable predicates,
-in `none`. The chain `verb → MoodSelector → VerbalMoodOp` makes
+in `none`. The chain `verb → Selector → VerbalOp` makes
 the lexical-class commitment of [grano-2024] operationally
-ready to feed POSWQ-side glosses (`ExpState.boxLe` for subjunctive,
+ready to feed State-side glosses (`ExpState.boxLe` for subjunctive,
 `ExpState.boxCs` for indicative). -/
 
-/-- 'want' lifts to the subjunctive POSWQ operator. -/
+/-- 'want' lifts to the subjunctive State operator. -/
 theorem want_verbalMood :
-    (deriveMoodSelector want).toVerbalMood = some .subjunctive := by
+    (deriveSelector want).toVerbalOp = some .subjunctive := by
   native_decide
 
 /-- 'hope' is cross-linguistically variable, so it lifts to `none`. -/
 theorem hope_verbalMood :
-    (deriveMoodSelector hope).toVerbalMood = none := by
+    (deriveSelector hope).toVerbalOp = none := by
   native_decide
 
 /-- The robust subjunctive predicates (e.g. 'want') project to the
     `preferential` POSW component — they quantify over the best-ranked
-    subset of the POSWQ via `ExpState.boxLe`. The composed projection
-    (`MoodSelector → VerbalMoodOp → POSWTarget`) makes the operational
+    subset of the State via `ExpState.boxLe`. The composed projection
+    (`Selector → VerbalOp → Component`) makes the operational
     target explicit. -/
 theorem want_target :
-    Option.map (Semantics.Mood.target ·) (deriveMoodSelector want).toVerbalMood
+    Option.map (Semantics.Mood.target ·) (deriveSelector want).toVerbalOp
       = some .preferential := by
   native_decide
 
@@ -538,7 +538,7 @@ The cross-linguistic fragment files encode verb properties that should be
 consistent with the mood choice data. For predicates in the want-class
 (levinClass = .want), the datum should have rejectsIndicative = true.
 For predicates NOT in the want-class (like 'hope'), the mood variability
-is captured by deriveMoodSelector returning .crossLinguisticallyVariable. -/
+is captured by deriveSelector returning .crossLinguisticallyVariable. -/
 
 -- Greek fragments match Greek data
 theorem greek_want_fragment_consistent :

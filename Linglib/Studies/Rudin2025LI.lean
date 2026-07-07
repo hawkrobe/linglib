@@ -99,7 +99,7 @@ simultaneously be both values.
 namespace Discourse.QuotationFBOntology
 
 open Discourse.Commitment.Table
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 open Semantics.Quotation.Demonstration
 
 -- ════════════════════════════════════════════════════
@@ -118,7 +118,7 @@ inductive Volume where
     update. -/
 structure FBPerformance (W : Type*) where
   /-- Sentence form (declarative / interrogative). -/
-  form : IllocutionaryMood
+  form : Illocutionary
   /-- Propositional content. -/
   content : Set W
   /-- Whether the performance is linguistic material. False allows

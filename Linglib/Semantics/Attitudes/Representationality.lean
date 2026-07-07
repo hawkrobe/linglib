@@ -166,7 +166,7 @@ This captures the strong (but imperfect) correlation between mood
 selection and representationality across Romance. The correlation
 is imperfect because subjunctive tracks preferences, not
 representationality directly ([anand-hacquard-2013], §6). -/
-def fromMoodSelector : MoodSelector → Representationality
+def fromSelector : Selector → Representationality
   | .indicativeSelecting         => .representational
   | .subjunctiveSelecting        => .nonRepresentational
   | .crossLinguisticallyVariable => .hybrid
@@ -175,17 +175,17 @@ def fromMoodSelector : MoodSelector → Representationality
 /-- Indicative-selecting attitudes are representational:
     they provide an information state and license epistemics. -/
 theorem indicative_representational :
-    fromMoodSelector .indicativeSelecting = .representational := rfl
+    fromSelector .indicativeSelecting = .representational := rfl
 
 /-- Subjunctive-selecting attitudes are non-representational:
     they use comparative semantics and block epistemics. -/
 theorem subjunctive_nonRepresentational :
-    fromMoodSelector .subjunctiveSelecting = .nonRepresentational := rfl
+    fromSelector .subjunctiveSelecting = .nonRepresentational := rfl
 
 /-- Cross-linguistically variable attitudes are hybrid:
     they have both representational and preference components. -/
 theorem variable_hybrid :
-    fromMoodSelector .crossLinguisticallyVariable = .hybrid := rfl
+    fromSelector .crossLinguisticallyVariable = .hybrid := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Attitude Verb Classification

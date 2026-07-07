@@ -59,7 +59,7 @@ equivalence within an appropriate context (the
 namespace Semantics.Conditionals
 
 open CommonGround (ContextSet)
-open Semantics.Mood (GramMood)
+open Semantics.Mood (Grammatical)
 open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
 open Core.Order (SimilarityOrdering)
 
@@ -116,12 +116,12 @@ is captured by which selection functions are admissible (see
 
 Single source of truth: indicative and subjunctive conditionals do not
 have distinct semantic clauses. -/
-def moodedConditional {W : Type*} (_m : GramMood) (s : SelectionFunction W)
+def moodedConditional {W : Type*} (_m : Grammatical) (s : SelectionFunction W)
     (p q : W → Prop) : W → Prop :=
   selectionConditional s p q
 
 /-- `moodedConditional` is decidable when its consequent is. -/
-instance moodedConditional_decidable {W : Type*} (m : GramMood)
+instance moodedConditional_decidable {W : Type*} (m : Grammatical)
     (s : SelectionFunction W) (p q : W → Prop) [DecidablePred q] (w : W) :
     Decidable (moodedConditional m s p q w) :=
   inferInstanceAs (Decidable (selectionConditional s p q w))
@@ -141,7 +141,7 @@ clause:
 This makes "indicative vs subjunctive" a property of the
 *selection-function / context pairing*, not a separate semantic
 operator. -/
-def Mood.admissibleSelection {W : Type*} (m : GramMood) (s : SelectionFunction W)
+def Mood.admissibleSelection {W : Type*} (m : Grammatical) (s : SelectionFunction W)
     (C : ContextSet W) : Prop :=
   match m with
   | .indicative  => pragmaticConstraint s C
@@ -160,7 +160,7 @@ theorem admissibleSelection_subjunctive {W : Type*} (s : SelectionFunction W)
 /-- **Mood is irrelevant to the truth-conditional clause**
 ([stalnaker-1975]). For any grammatical mood, the mooded
 conditional reduces to the bare selection conditional. -/
-theorem moodedConditional_eq_selectionConditional {W : Type*} (m : GramMood)
+theorem moodedConditional_eq_selectionConditional {W : Type*} (m : Grammatical)
     (s : SelectionFunction W) (p q : W → Prop) :
     moodedConditional m s p q = selectionConditional s p q := rfl
 

@@ -1,6 +1,6 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Mood.POSWQ
+import Linglib.Semantics.Mood.State
 
 /-!
 # Partition as Inquiry — Setoid → Question embedding
@@ -8,7 +8,7 @@ import Linglib.Semantics.Mood.POSWQ
 [puncochar-2019]
 
 The faithful embedding of partition-based inquiry (`Setoid W` — what
-`POSWQ.inquiry` carries) into the more general inquisitive-content
+`State.inquiry` carries) into the more general inquisitive-content
 representation (`Question W` — downward-closed nonempty
 families of information states).
 
@@ -16,8 +16,8 @@ families of information states).
 
 This file implements the embedding direction prescribed in the
 "Architectural note: Setoid vs. Question" section of
-`POSWQ.lean` (added 0.229.922): we keep `inquiry : Setoid W` as the
-field of `POSWQ` (partitions are the right shape for the propositional-
+`State.lean` (added 0.229.922): we keep `inquiry : Setoid W` as the
+field of `State` (partitions are the right shape for the propositional-
 discourse use cases that currently exist), and provide a *one-way*
 embedding `Setoid → Question`. The embedding goes this way
 and not the other because every Setoid-based partition can be expressed
@@ -191,10 +191,10 @@ theorem class_mem_alt_fromSetoid (r : Setoid W) {c : Set W}
 end Question
 
 
-/-! ## POSWQ bridge
+/-! ## State bridge
 
-Lift the partition-based inquiry component of a `POSWQ` to its full
-`Question`. This makes every existing POSWQ-using study
+Lift the partition-based inquiry component of a `State` to its full
+`Question`. This makes every existing State-using study
 automatically a consumer of the inquisitive-content API: `info`,
 `alt`, `isInquisitive`, the lattice operations, and the
 mention-some/IE-question forcing arguments all become available
@@ -202,26 +202,26 @@ without rewriting the underlying state. -/
 
 namespace Semantics.Mood
 
-namespace POSWQ
+namespace State
 
 -- open removed: Question is top-level after Semantics/Questions/ relocation
 
 universe u
 variable {W : Type u}
 
-/-- The inquisitive content embedded in a POSWQ via its inquiry
+/-- The inquisitive content embedded in a State via its inquiry
     partition. Always non-informative (`info = univ`); inquisitive
     iff the partition has more than one cell. -/
-def inquiryContent (c : POSWQ W) : Question W :=
+def inquiryContent (c : State W) : Question W :=
   Question.fromSetoid c.inquiry
 
-@[simp] theorem inquiryContent_eq (c : POSWQ W) :
+@[simp] theorem inquiryContent_eq (c : State W) :
     c.inquiryContent = Question.fromSetoid c.inquiry := rfl
 
-@[simp] theorem info_inquiryContent (c : POSWQ W) :
+@[simp] theorem info_inquiryContent (c : State W) :
     c.inquiryContent.info = Set.univ :=
   Question.info_fromSetoid c.inquiry
 
-end POSWQ
+end State
 
 end Semantics.Mood

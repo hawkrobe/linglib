@@ -77,10 +77,10 @@ regression coefficients.
 
 ## Mood substrate choice
 
-This file uses `Semantics.Mood.IllocutionaryMood` rather than the
+This file uses `Semantics.Mood.Illocutionary` rather than the
 Minimalist-derived `SAPMood`. The two are isomorphic on the
 declarative/interrogative/imperative cases used here, and
-`IllocutionaryMood` is the canonical substrate (`SAPMood` adds
+`Illocutionary` is the canonical substrate (`SAPMood` adds
 syntax-derivation machinery the paper does not invoke). This also
 keeps the file independent of the Minimalist substrate.
 -/
@@ -88,7 +88,7 @@ keeps the file independent of the Minimalist substrate.
 namespace RuytenbeekEtAl2017
 
 open Semantics.Modality (ModalFlavor ModalForce)
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 open Semantics.Modality.Assert (primaryFlavor)
 
 /-! ### Sentence types and modal projections -/
@@ -132,7 +132,7 @@ inductive SentType where
   deriving DecidableEq, Repr
 
 /-- Morphosyntactic mood of each sentence type. -/
-def SentType.mood : SentType → IllocutionaryMood
+def SentType.mood : SentType → Illocutionary
   | .imperative       => .imperative
   | .canYouInterrog   => .interrogative
   | .possibleInterrog => .interrogative
@@ -362,7 +362,7 @@ the existence of force–type mismatch witnesses below. -/
     interpretation. The five mismatch cases (`mustDeclarative`,
     `canDeclarative`, `possibleDecl`, `canYouInterrog`,
     `possibleInterrog`) all instantiate this. -/
-abbrev SentType.forceTypeMismatch (s : SentType) (m : IllocutionaryMood) : Prop :=
+abbrev SentType.forceTypeMismatch (s : SentType) (m : Illocutionary) : Prop :=
   s.mood = m ∧ s.isDirective
 
 /-- The literalist Searle default for declarative mood is
@@ -370,7 +370,7 @@ abbrev SentType.forceTypeMismatch (s : SentType) (m : IllocutionaryMood) : Prop 
     consequence "declarative-mood utterances cannot carry directive
     force" (witnessed by `anti_literalism_for_declaratives`). -/
 theorem declarative_default_searleClass :
-    IllocutionaryMood.declarative.searleClass = .assertive := rfl
+    Illocutionary.declarative.searleClass = .assertive := rfl
 
 /-- Anti-literalism witness: there is a sentence type whose
     morphosyntactic mood is declarative yet which licenses directive

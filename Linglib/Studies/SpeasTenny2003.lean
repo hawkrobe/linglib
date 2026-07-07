@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Context.Tower
 import Linglib.Discourse.Roles
-import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Illocutionary
 import Linglib.Semantics.Mood.ClauseType
 import Linglib.Semantics.Epistemicity
 import Linglib.Features.Evidentiality
@@ -44,7 +44,7 @@ the content.
 - **Phase.lean**: `isPhaseHeadOf .SA` — SAP is the highest phase.
 - **ExtendedProjection/Basic.lean**: `fValue .SA = 7 > fValue .C = 6`.
 - **Semantics/Mood/ClauseType.lean**: the configurational seat-of-knowledge
-  *diverges* from Lakoff's deontic `moodAuthority` on imperatives
+  *diverges* from Lakoff's deontic `Illocutionary.authority` on imperatives
   (`seatOfKnowledge_diverges_from_authority_on_imperative`).
 - **Semantics/Epistemicity.lean**: EvalP-spec → `EpistemicProfile.authority`,
   EvidP-spec → `EpistemicProfile.source`; S&T's seat is the speech-act-
@@ -60,7 +60,7 @@ namespace SpeasTenny2003
 
 open Minimalist
 open Semantics.Context (KContext ContextTower ContextShift)
-open Semantics.Mood (IllocutionaryMood ClauseType)
+open Semantics.Mood (Illocutionary ClauseType)
 open Semantics.Epistemicity (EpistemicAuthority EpistemicProfile)
 
 /-! ### Pragmatic roles -/
@@ -141,7 +141,7 @@ theorem features_deriveMood (f h : Bool) :
     - `.imperative`    → ⟨imperative, indicative⟩  (mood often neutralized)
     - `.subjunctive`   → ⟨declarative, subjunctive⟩
 
-    The subjunctive mapping is a *lossy placeholder*: `IllocutionaryMood` has
+    The subjunctive mapping is a *lossy placeholder*: `Illocutionary` has
     no token for S&T's configurational subjunctive (Latin promise/wish/jussive;
     the speaker is "responsible for choosing the preferred world", p.335), so
     the force component falls back to `.declarative`. (The earlier `.promissive`
@@ -155,7 +155,7 @@ def SAPMood.toClauseType : SAPMood → ClauseType
   | .subjunctive    => { force := .declarative,   mood := .subjunctive }
 
 /-- Convenience projection: SAPMood's illocutionary force component. -/
-def SAPMood.toForce (m : SAPMood) : IllocutionaryMood :=
+def SAPMood.toForce (m : SAPMood) : Illocutionary :=
   m.toClauseType.force
 
 /-! ### Seat of knowledge (derived) -/
@@ -193,7 +193,7 @@ def PRole.toEpistemicAuthority : PRole → EpistemicAuthority
   | .seatOfKnowledge => .ego
 
 /-- **Divergence (the empirical content).** S&T's configurational
-    seat-of-knowledge and Lakoff's deontic `moodAuthority`
+    seat-of-knowledge and Lakoff's deontic `Illocutionary.authority`
     ([lakoff-1970], via `ClauseType.authority`) DISAGREE on imperatives:
     S&T locate the seat with the HEARER (who must realize the unrealized
     proposition, p.335), Lakoff with the SPEAKER (who has authority to

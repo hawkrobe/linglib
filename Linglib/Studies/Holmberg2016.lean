@@ -57,7 +57,7 @@ namespace Holmberg2016
 open Question
 open Features (AnsweringSystem PolarAnswerProfile)
 open Minimalist
-open Semantics.Mood (ClauseType GramMood IllocutionaryMood)
+open Semantics.Mood (ClauseType Grammatical Illocutionary)
 
 /-! ### Syntactic polarity: PolP and [±Pol] (relocated from Minimalist/Polarity.lean)
 
@@ -207,8 +207,8 @@ unformalized — silent divergences, not committed disagreements.
 
 A clause's `Semantics.Mood.ClauseType` (force × mood) is determined by
 the syntactic projections:
-- Force⁰[+Q] → `IllocutionaryMood.interrogative`
-- Force⁰[-Q] → `IllocutionaryMood.declarative`
+- Force⁰[+Q] → `Illocutionary.interrogative`
+- Force⁰[-Q] → `Illocutionary.declarative`
 - Mood is determined lower (by T/Fin morphology), not by ForceP.
 -/
 
@@ -224,7 +224,7 @@ def QFeature.toFeatureVal : QFeature → FeatureVal
   | .minusQ => .q false
 
 /-- Map the Q-feature to illocutionary force. -/
-def QFeature.toForce : QFeature → IllocutionaryMood
+def QFeature.toForce : QFeature → Illocutionary
   | .plusQ  => .interrogative
   | .minusQ => .declarative
 
@@ -249,7 +249,7 @@ theorem polP_always_projected :
     The Q-feature on Force determines illocutionary force; mood is
     determined by the morphological properties of the verb (indicative
     vs subjunctive), independent of Force. -/
-def clauseType (q : QFeature) (m : GramMood) : ClauseType :=
+def clauseType (q : QFeature) (m : Grammatical) : ClauseType :=
   { force := q.toForce, mood := m }
 
 /-- A polar question with indicative mood. -/

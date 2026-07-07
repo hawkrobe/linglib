@@ -4,7 +4,7 @@
 Morphological mood categories: indicative vs subjunctive (and subtypes).
 
 This is the verb-morphological distinction, independent of:
-- `IllocutionaryMood` (declarative/interrogative/imperative — speech act force)
+- `Illocutionary` (declarative/interrogative/imperative — speech act force)
 - `SAPMood` (configurational mood from Speas & Tenny's 2×2 matrix)
 
 The two dimensions are orthogonal: a clause can be
@@ -14,7 +14,7 @@ The two dimensions are orthogonal: a clause can be
 See `Semantics/Mood/Basic.lean` for the semantic operators (SUBJ, IND)
 that interpret these categories.
 
-This file lives in `Semantics/Mood/` alongside `IllocutionaryMood.lean` (force) and
+This file lives in `Semantics/Mood/` alongside `Illocutionary.lean` (force) and
 `ClauseType.lean` (force × mood); together they form the unified mood-category
 namespace `Semantics.Mood`. Discourse-act material (Searle classes, direction of
 fit, preparatory conditions, discourse roles) lives in
@@ -30,7 +30,7 @@ Following the typological literature:
 - **Indicative**: The default, "realis" mood
 - **Subjunctive**: Non-default, "irrealis" mood (covers many subtypes)
 -/
-inductive GramMood where
+inductive Grammatical where
   | indicative
   | subjunctive
   deriving DecidableEq, Repr, Inhabited
@@ -65,7 +65,7 @@ anchoring (SF in Portuguese/Spanish), while eventuality openness enables
 abstraction over the event argument (required by causatives, intention reports,
 aspectual predicates, and memory/perception reports).
 -/
-structure MoodEffect where
+structure Effect where
   /-- SUBJ introduces a new situation dref ([mendes-2025]) -/
   introducesSituation : Bool
   /-- SBJV leaves the eventuality argument open for abstraction ([grano-2024]) -/
@@ -79,18 +79,18 @@ structure MoodEffect where
 
     Subjunctive mood does both: it introduces a new situation dref and
     leaves the eventuality argument open for abstraction. -/
-def GramMood.effect : GramMood → MoodEffect
+def Grammatical.effect : Grammatical → Effect
   | .indicative  => { introducesSituation := false, eventualityOpen := false }
   | .subjunctive => { introducesSituation := true,  eventualityOpen := true }
 
 /-- Indicative mood closes the eventuality argument. -/
-theorem ind_closes_eventuality : GramMood.indicative.effect.eventualityOpen = false := rfl
+theorem ind_closes_eventuality : Grammatical.indicative.effect.eventualityOpen = false := rfl
 
 /-- Subjunctive mood leaves the eventuality argument open. -/
-theorem subj_opens_eventuality : GramMood.subjunctive.effect.eventualityOpen = true := rfl
+theorem subj_opens_eventuality : Grammatical.subjunctive.effect.eventualityOpen = true := rfl
 
 /-- Indicative and subjunctive differ on both dimensions. -/
 theorem mood_effects_differ :
-    GramMood.indicative.effect ≠ GramMood.subjunctive.effect := by decide
+    Grammatical.indicative.effect ≠ Grammatical.subjunctive.effect := by decide
 
 end Semantics.Mood

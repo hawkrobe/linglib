@@ -58,7 +58,7 @@ the other — and study files target whichever is appropriate:
 
 namespace Discourse.Krifka
 
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Commitment Strength
@@ -98,7 +98,7 @@ theorem strength_ordering :
 
     Each layer is independent: the epistemic status (JP) can vary without
     affecting the commitment strength (ComP), and vice versa. The actType
-    uses `IllocutionaryMood` from `Discourse/SpeechAct.lean`. -/
+    uses `Illocutionary` from `Discourse/SpeechAct.lean`. -/
 structure LayeredAssertion (W : Type*) where
   /-- TP: the propositional content -/
   content : Set W
@@ -107,7 +107,7 @@ structure LayeredAssertion (W : Type*) where
   /-- ComP: the strength of the speaker's public commitment -/
   commitmentStrength : CommitmentStrength := .standard
   /-- ActP: the type of speech act performed -/
-  actType : IllocutionaryMood := .declarative
+  actType : Illocutionary := .declarative
 
 -- ════════════════════════════════════════════════════
 -- § 3. Informative vs Performative Updates

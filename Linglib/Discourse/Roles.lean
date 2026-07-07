@@ -8,9 +8,9 @@ the function that resolves them through a `ContextTower` to concrete
 entities.
 
 This file exists separately from `Discourse/SpeechAct.lean`
-to break a would-be cycle between `Semantics/Mood/IllocutionaryMood.lean` (which
-needs `DiscourseRole` for `moodAuthority`) and the act-side material in
-`SpeechAct.lean` (which extends `IllocutionaryMood` with Searle
+to break a would-be cycle between `Semantics/Mood/Illocutionary.lean` (which
+needs `DiscourseRole` for `Illocutionary.authority`) and the act-side material in
+`SpeechAct.lean` (which extends `Illocutionary` with Searle
 classes and direction of fit).
 -/
 

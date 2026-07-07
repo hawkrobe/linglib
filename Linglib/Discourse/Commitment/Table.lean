@@ -1,6 +1,6 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
-import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Illocutionary
 
 /-!
 # The Table Model
@@ -27,7 +27,7 @@ namespace Discourse.Commitment.Table
 
 open Discourse.Commitment (TaggedSlate CommitmentSource CommitmentForce)
 open CommonGround (HasContextSet)
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 /-- An at-issue item on the conversational table. -/
 structure Item (A W : Type*) where
@@ -36,7 +36,7 @@ structure Item (A W : Type*) where
   /-- Addressee. -/
   addressee : A
   /-- Illocutionary force. -/
-  mood : IllocutionaryMood
+  mood : Illocutionary
   /-- Alternatives at issue: `[p]` for assertion, `[p, ¬p]` for
       polar question, the answer set for wh-questions. -/
   alternatives : List (W → Prop)

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Negation.Expletive
-import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Illocutionary
 
 /-!
 # Bias-Conditioned Negation: A Shared Licensing Predicate
@@ -75,7 +75,7 @@ commitment-update ([farkas-bruce-2010]) reanalyses.
 namespace Pragmatics.Bias
 
 open Semantics.Negation (PolarityLicensing weakENProfile)
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The four licensing conditions
@@ -83,7 +83,7 @@ open Semantics.Mood (IllocutionaryMood)
 
 /-- Bias-licensing profile: one bit per [napoli-nespor-1976] §2
     condition (with the assertive-force axis recorded as a full
-    `IllocutionaryMood`). The licensing predicate `licenses` is the
+    `Illocutionary`). The licensing predicate `licenses` is the
     conjunction of the four axes; see §2. -/
 structure BiasLicensingProfile where
   /-- Speaker presupposes the assertion contradicts a prior belief.
@@ -92,7 +92,7 @@ structure BiasLicensingProfile where
   /-- Illocutionary force of the move. The licensing predicate fires
       only on `.declarative`; `isAssertive` is the projection.
       [napoli-nespor-1976] §2.1 ex. 10b, 12b. -/
-  illocutionaryMood : IllocutionaryMood
+  illocutionaryMood : Illocutionary
   /-- The matrix predicate is not negated.
       [napoli-nespor-1976] §2.2 ex. 18. -/
   matrixUnnegated : Bool

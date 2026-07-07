@@ -8,13 +8,13 @@ The category of speech-act force a clause is associated with: declarative,
 interrogative, imperative, promissive, exclamative. This is the F in F(p).
 
 Distinct from:
-- `Semantics.Mood.GramMood` (indicative/subjunctive morphology — see `Basic.lean`)
+- `Semantics.Mood.Grammatical` (indicative/subjunctive morphology — see `Basic.lean`)
 - `SpeasTenny2003.SAPMood` (Speas & Tenny's 2×2 configuration)
 
-The pair `(IllocutionaryMood, GramMood)` is `Semantics.Mood.ClauseType`.
+The pair `(Illocutionary, Grammatical)` is `Semantics.Mood.ClauseType`.
 
 This file contains only the *category* — the enum + its sole intrinsic
-property `moodAuthority` (which participant has epistemic authority). The
+property `Illocutionary.authority` (which participant has epistemic authority). The
 *act-side* extensions (Searle classes, direction of fit, preparatory
 conditions) live in `Discourse/SpeechAct.lean`, which imports
 this file. The split keeps `Semantics/Mood/` framework-agnostic and free of
@@ -30,10 +30,10 @@ open Discourse (DiscourseRole)
 
 /-- Illocutionary mood — the speech-act force of an utterance.
 
-    Distinct from `GramMood` (indicative/subjunctive morphology) and the
+    Distinct from `Grammatical` (indicative/subjunctive morphology) and the
     Minimalist `SAPMood` (configurational). This classifies the pragmatic
     act performed — the F in F(p). -/
-inductive IllocutionaryMood where
+inductive Illocutionary where
   | declarative
   | interrogative
   | imperative
@@ -45,7 +45,7 @@ inductive IllocutionaryMood where
 
     [lakoff-1970]: in declaratives, imperatives, and promissives the
     speaker is the seat of knowledge; in interrogatives the addressee is. -/
-def moodAuthority : IllocutionaryMood → DiscourseRole
+def Illocutionary.authority : Illocutionary → DiscourseRole
   | .declarative   => .speaker
   | .interrogative  => .addressee
   | .imperative     => .speaker

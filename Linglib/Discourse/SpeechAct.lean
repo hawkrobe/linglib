@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Illocutionary
 
 /-!
 # Searlean Speech Acts: F(p) and S(r)
@@ -14,13 +14,13 @@ conditions for directives, in the inventory of [francik-clark-1985].
 * `DirectionOfFit` — how responsibility for matching state and world is distributed.
 * `SearleClass` — [searle-1979]'s five illocutionary classes.
 * `PsychMode` — the psychological modes (the `S` in `S(r)`).
-* `IllocutionaryMood.searleClass`, `IllocutionaryMood.sincerityCondition` — the
+* `Illocutionary.searleClass`, `Illocutionary.sincerityCondition` — the
   per-mood illocutionary class and the `F → S` bridge.
 * `CausalSelfRef`, `PsychMode.causalSelfRef` — whether a mode must figure in the
   causal chain producing its own conditions of satisfaction.
 * `PreparatoryCondition` — felicity preconditions for directives, ordered by the
   `subsumes` specificity relation.
-* `IllocutionaryMood.sincerityCondition_directionOfFit` — the sincerity
+* `Illocutionary.sincerityCondition_directionOfFit` — the sincerity
   condition's direction of fit matches the speech act's.
 * `PsychMode.causalSelfRef_not_determined_by_directionOfFit` — causal
   self-referentiality is not a function of direction of fit.
@@ -32,7 +32,7 @@ sincerity states (gratitude, pleasure, regret, ...) into a single mode; its null
 direction of fit is [searle-1979]'s claim about the expressive class.
 Commitment-based accounts (`CommitmentForce.doxastic` "act-as-if-believe", per
 [condoravdi-lauer-2012] and [lauer-2013]; Brandom's commitment-without-entitlement)
-deliberately weaken `IllocutionaryMood.sincerityCondition .declarative = .belief`
+deliberately weaken `Illocutionary.sincerityCondition .declarative = .belief`
 from sincere belief to public commitment.
 
 ## References
@@ -40,7 +40,7 @@ from sincere belief to public commitment.
 * [searle-1969], [searle-1979], [searle-1983], [francik-clark-1985]
 -/
 
-open Semantics.Mood (IllocutionaryMood)
+open Semantics.Mood (Illocutionary)
 
 /-! ### Direction of fit -/
 
@@ -109,10 +109,10 @@ def PsychMode.directionOfFit : PsychMode → DirectionOfFit
 
 /-! ### Mood bridges — class and sincerity condition -/
 
-namespace Semantics.Mood.IllocutionaryMood
+namespace Semantics.Mood.Illocutionary
 
 /-- The [searle-1979] illocutionary class of each mood. -/
-def searleClass : IllocutionaryMood → SearleClass
+def searleClass : Illocutionary → SearleClass
   | .declarative   => .assertive
   | .interrogative => .directive
   | .imperative    => .directive
@@ -120,12 +120,12 @@ def searleClass : IllocutionaryMood → SearleClass
   | .exclamative   => .expressive
 
 /-- Direction of fit for an illocutionary mood, derived via Searle class. -/
-def directionOfFit (m : IllocutionaryMood) : DirectionOfFit :=
+def directionOfFit (m : Illocutionary) : DirectionOfFit :=
   m.searleClass.directionOfFit
 
 /-- Sincerity condition ([searle-1969]): performing a speech act with mood `F`
 expresses the corresponding Intentional state `S`. -/
-def sincerityCondition : IllocutionaryMood → PsychMode
+def sincerityCondition : Illocutionary → PsychMode
   | .declarative   => .belief      -- asserting `p` expresses `Bel(p)`
   | .interrogative => .desire      -- asking expresses `Des(addressee answers)`
   | .imperative    => .desire      -- ordering expresses `Des(hearer does A)`
@@ -134,11 +134,11 @@ def sincerityCondition : IllocutionaryMood → PsychMode
 
 /-- The sincerity condition's direction of fit matches the speech act's:
 [searle-1983]'s central `F(p)` / `S(r)` parallel. -/
-theorem sincerityCondition_directionOfFit (m : IllocutionaryMood) :
+theorem sincerityCondition_directionOfFit (m : Illocutionary) :
     m.sincerityCondition.directionOfFit = m.directionOfFit := by
   cases m <;> rfl
 
-end Semantics.Mood.IllocutionaryMood
+end Semantics.Mood.Illocutionary
 
 /-! ### Causal self-referentiality -/
 

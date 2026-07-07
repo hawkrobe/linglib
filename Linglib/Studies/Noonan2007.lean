@@ -34,10 +34,10 @@ subject omission is pro-drop, not Noonan-equi; English *hope* has
 Five bridges connecting CTPClass to existing infrastructure:
 1. CTPClass ↔ VerbEntry (Verbal.lean) — derive CTP class from verb features
 2. CTPClass ↔ SelectionClass (LeftPeriphery.lean) — map CTP to question embedding
-3. CTPClass ↔ MoodSelector (Mood/Basic.lean) — map CTP to mood selection
+3. CTPClass ↔ Selector (Mood/Basic.lean) — map CTP to mood selection
 4. ComplementType ↔ NoonanCompType — via the substrate adapter
    `ComplementType.toNoonan` (`Syntax/Clause/Complementation.lean`)
-5. VerbEntry → MoodSelector — derive mood selection from verb features
+5. VerbEntry → Selector — derive mood selection from verb features
 
 -/
 
@@ -308,7 +308,7 @@ theorem ctp_selection_consistent_ask :
     ctpToDefaultSelectionClass .utterance = deriveSelectionClass ask := by native_decide
 
 -- ============================================================================
--- C. Bridge 3: CTPClass ↔ MoodSelector (Mood/Basic.lean)
+-- C. Bridge 3: CTPClass ↔ Selector (Mood/Basic.lean)
 -- ============================================================================
 
 /-! ## C1. Map CTP classes to mood selection
@@ -319,7 +319,7 @@ The realis/irrealis split predicts mood selection. -/
 /-- Map CTP class to mood selection.
     Realis CTPs select indicative; irrealis select subjunctive.
     Some are language-dependent (moodNeutral). -/
-def ctpToMoodSelector : CTPClass → MoodSelector
+def ctpToSelector : CTPClass → Selector
   | .knowledge => .indicativeSelecting
   | .utterance => .moodNeutral        -- "say" varies: IND in English, SUBJ in some Romance
   | .propAttitude => .indicativeSelecting
@@ -337,17 +337,17 @@ def ctpToMoodSelector : CTPClass → MoodSelector
 theorem realis_not_subjunctive :
     ∀ c : CTPClass,
       ctpRealityStatus c = .realis →
-      ctpToMoodSelector c ≠ .subjunctiveSelecting := by
+      ctpToSelector c ≠ .subjunctiveSelecting := by
   intro c h
-  cases c <;> simp_all [ctpRealityStatus, ctpToMoodSelector]
+  cases c <;> simp_all [ctpRealityStatus, ctpToSelector]
 
 /-- Irrealis CTPs select subjunctive or are mood-neutral (never indicative-selecting). -/
 theorem irrealis_not_indicative :
     ∀ c : CTPClass,
       ctpRealityStatus c = .irrealis →
-      ctpToMoodSelector c ≠ .indicativeSelecting := by
+      ctpToSelector c ≠ .indicativeSelecting := by
   intro c h
-  cases c <;> simp_all [ctpRealityStatus, ctpToMoodSelector]
+  cases c <;> simp_all [ctpRealityStatus, ctpToSelector]
 
 -- ============================================================================
 -- D. Bridge 4: English ComplementType ↔ NoonanCompType
@@ -367,10 +367,10 @@ theorem clausal_complements_have_noonan_type :
     ComplementType.toNoonan .smallClause ≠ none := by decide
 
 -- ============================================================================
--- E. Gap fix: VerbEntry → MoodSelector (derived function)
+-- E. Gap fix: VerbEntry → Selector (derived function)
 -- ============================================================================
 
-/-! ## E1. Derive MoodSelector from VerbEntry fields
+/-! ## E1. Derive Selector from VerbEntry fields
 
 This is placed in Bridge.lean (not Verbal.lean) to avoid circular imports:
 it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern. -/
@@ -391,7 +391,7 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
     - Causative → subjunctive (make: irrealis)
     - Implicative → moodNeutral (manage: varies)
     - Otherwise → moodNeutral -/
-def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
+def deriveSelector (v : VerbEntry) : Selector :=
   match v.attitude with
   | some (.preferential (.degreeComparison .positive)) =>
     if v.levinClass == some .want then .subjunctiveSelecting
@@ -411,53 +411,53 @@ def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
 
 -- Indicative-selecting verbs
 theorem know_selects_indicative :
-    deriveMoodSelector know = .indicativeSelecting := by native_decide
+    deriveSelector know = .indicativeSelecting := by native_decide
 theorem believe_selects_indicative :
-    deriveMoodSelector believe = .indicativeSelecting := by native_decide
+    deriveSelector believe = .indicativeSelecting := by native_decide
 theorem think_selects_indicative :
-    deriveMoodSelector think = .indicativeSelecting := by native_decide
+    deriveSelector think = .indicativeSelecting := by native_decide
 theorem realize_selects_indicative :
-    deriveMoodSelector realize = .indicativeSelecting := by native_decide
+    deriveSelector realize = .indicativeSelecting := by native_decide
 theorem see_selects_indicative :
-    deriveMoodSelector see = .indicativeSelecting := by native_decide
+    deriveSelector see = .indicativeSelecting := by native_decide
 theorem fear_selects_indicative :
-    deriveMoodSelector fear = .indicativeSelecting := by native_decide
+    deriveSelector fear = .indicativeSelecting := by native_decide
 theorem worry_selects_indicative :
-    deriveMoodSelector worry = .indicativeSelecting := by native_decide
+    deriveSelector worry = .indicativeSelecting := by native_decide
 
 -- Subjunctive-selecting verbs (robustly SBJV cross-linguistically)
 theorem want_selects_subjunctive :
-    deriveMoodSelector want = .subjunctiveSelecting := by native_decide
+    deriveSelector want = .subjunctiveSelecting := by native_decide
 theorem wish_selects_subjunctive :
-    deriveMoodSelector wish = .subjunctiveSelecting := by native_decide
+    deriveSelector wish = .subjunctiveSelecting := by native_decide
 theorem intend_selects_subjunctive :
-    deriveMoodSelector intend = .subjunctiveSelecting := by native_decide
+    deriveSelector intend = .subjunctiveSelecting := by native_decide
 theorem cause_selects_subjunctive :
-    deriveMoodSelector cause = .subjunctiveSelecting := by native_decide
+    deriveSelector cause = .subjunctiveSelecting := by native_decide
 theorem make_selects_subjunctive :
-    deriveMoodSelector make = .subjunctiveSelecting := by native_decide
+    deriveSelector make = .subjunctiveSelecting := by native_decide
 theorem decide_selects_subjunctive :
-    deriveMoodSelector decide_ = .subjunctiveSelecting := by native_decide
+    deriveSelector decide_ = .subjunctiveSelecting := by native_decide
 
 -- Cross-linguistically variable verbs ([grano-2024], Table 1:
 -- 'hope' is SBJV in Spanish, IND/%SBJV in French, IND/SBJV in Portuguese,
 -- %IND in Italian, IND/SBJV in Greek/Romanian, IND/for-to in English)
 theorem hope_mood_variable :
-    deriveMoodSelector hope = .crossLinguisticallyVariable := by native_decide
+    deriveSelector hope = .crossLinguisticallyVariable := by native_decide
 theorem expect_mood_variable :
-    deriveMoodSelector expect = .crossLinguisticallyVariable := by native_decide
+    deriveSelector expect = .crossLinguisticallyVariable := by native_decide
 
 -- Mood-neutral verbs
 theorem say_mood_neutral :
-    deriveMoodSelector say = .moodNeutral := by native_decide
+    deriveSelector say = .moodNeutral := by native_decide
 theorem tell_mood_neutral :
-    deriveMoodSelector tell = .moodNeutral := by native_decide
+    deriveSelector tell = .moodNeutral := by native_decide
 theorem stop_mood_neutral :
-    deriveMoodSelector stop = .moodNeutral := by native_decide
+    deriveSelector stop = .moodNeutral := by native_decide
 theorem start_mood_neutral :
-    deriveMoodSelector start = .moodNeutral := by native_decide
+    deriveSelector start = .moodNeutral := by native_decide
 theorem manage_mood_neutral :
-    deriveMoodSelector manage = .moodNeutral := by native_decide
+    deriveSelector manage = .moodNeutral := by native_decide
 
 -- ============================================================================
 -- F. Cross-bridge consistency
@@ -471,50 +471,50 @@ from VerbEntry should be consistent with the CTP-based derivation. -/
 /-- The CTP-based mood mapping agrees with the direct derivation for
     representative verbs from each CTP class. -/
 theorem ctp_mood_consistent_knowledge :
-    ctpToMoodSelector .knowledge = deriveMoodSelector know := by native_decide
+    ctpToSelector .knowledge = deriveSelector know := by native_decide
 theorem ctp_mood_consistent_propAttitude :
-    ctpToMoodSelector .propAttitude = deriveMoodSelector believe := by native_decide
+    ctpToSelector .propAttitude = deriveSelector believe := by native_decide
 theorem ctp_mood_consistent_desiderative :
-    ctpToMoodSelector .desiderative = deriveMoodSelector want := by native_decide
+    ctpToSelector .desiderative = deriveSelector want := by native_decide
 theorem ctp_mood_consistent_manipulative :
-    ctpToMoodSelector .manipulative = deriveMoodSelector cause := by native_decide
+    ctpToSelector .manipulative = deriveSelector cause := by native_decide
 theorem ctp_mood_consistent_perception :
-    ctpToMoodSelector .perception = deriveMoodSelector see := by native_decide
+    ctpToSelector .perception = deriveSelector see := by native_decide
 
 /-! ## F2. Three-way agreement for key verbs
 
 For important verbs, all three classification systems agree:
 1. deriveCTPClass → CTP class
 2. deriveSelectionClass → question embedding
-3. deriveMoodSelector → mood selection -/
+3. deriveSelector → mood selection -/
 
 /-- "know" is classified consistently across all three bridges:
     knowledge CTP, responsive selection, indicative mood. -/
 theorem know_triple_consistency :
     deriveCTPClass know = some .knowledge ∧
     deriveSelectionClass know = .responsive ∧
-    deriveMoodSelector know = .indicativeSelecting := by native_decide
+    deriveSelector know = .indicativeSelecting := by native_decide
 
 /-- "believe" is classified consistently:
     propAttitude CTP, uninterrogative, indicative mood. -/
 theorem believe_triple_consistency :
     deriveCTPClass believe = some .propAttitude ∧
     deriveSelectionClass believe = .uninterrogative ∧
-    deriveMoodSelector believe = .indicativeSelecting := by native_decide
+    deriveSelector believe = .indicativeSelecting := by native_decide
 
 /-- "want" is classified consistently:
     desiderative CTP, uninterrogative (anti-rogative), subjunctive mood. -/
 theorem want_triple_consistency :
     deriveCTPClass want = some .desiderative ∧
     deriveSelectionClass want = .uninterrogative ∧
-    deriveMoodSelector want = .subjunctiveSelecting := by native_decide
+    deriveSelector want = .subjunctiveSelecting := by native_decide
 
 /-- "ask" is classified consistently:
     utterance CTP, rogativeSAP, mood-neutral. -/
 theorem ask_triple_consistency :
     deriveCTPClass ask = some .utterance ∧
     deriveSelectionClass ask = .rogativeSAP ∧
-    deriveMoodSelector ask = .moodNeutral := by native_decide
+    deriveSelector ask = .moodNeutral := by native_decide
 
 -- ============================================================================
 -- G. Bridge 5: CTPClass → ComplementSize ([egressy-2026])
