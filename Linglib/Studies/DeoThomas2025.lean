@@ -29,7 +29,7 @@ import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Granularity
-import Linglib.Semantics.Mood.PartitionAsInquiry
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Defs
 import Linglib.Data.Examples.DeoThomas2025

@@ -1,43 +1,142 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
-# Question — partition predicate, Setoid bridge, QUD bridge
-[groenendijk-stokhof-1984] [roberts-2012]
-[ciardelli-groenendijk-roelofsen-2018]
+# Partition questions
 
-Bridge from `Question W` (downward-closed nonempty families of information
-states) to **partition-style inquiry** in mathlib's `Setoid.IsPartition`
-sense, plus a legacy bridge to the Bool-based `QUD W`.
+The correspondence between partition-style inquiry
+([groenendijk-stokhof-1984]'s question semantics, a `Setoid W`) and
+the more general inquisitive content `Question W`
+([ciardelli-groenendijk-roelofsen-2018]). The embedding is one-way:
+every partition is an issue whose alternatives are its cells, but
+mention-some, intermediate-exhaustive, and conditional-question
+alternative sets are non-disjoint or non-exhaustive and are not the
+classes of any equivalence relation.
 
 ## Main definitions
 
-- `IsPartition P` — `Setoid.IsPartition (alt P)`. Mention-some,
-  intermediate-exhaustive, and conditional-question alternative sets are
-  not partitions and so fail this predicate.
-- `toSetoid h` — the equivalence relation derived from a partition issue
-  (two worlds equivalent iff they share an alternative cell).
-- `toQUD h` — bridge to legacy Bool-based `QUD W`. `noncomputable`,
-  uses classical decidability of the underlying equivalence.
+- `fromSetoid r` — the issue whose alternatives are the cells of `r`.
+- `IsPartition P` — `Setoid.IsPartition (alt P)`.
+- `toSetoid h` — the equivalence relation of a partition issue.
+- `toQUD h` — bridge to the legacy Bool-based `QUD W`.
 
 ## Main theorems
 
-- `info_eq_univ`, `pairwiseDisjoint`, `nonempty_of_mem_alt`,
-  `sUnion_alt_eq_univ` — partition issues are non-informative and their
-  alternative sets are partitions in the standard sense.
+- `fromSetoid_le_iff` — the embedding is an order embedding: partition
+  refinement is issue entailment.
+- `info_fromSetoid`, `info_eq_univ` — partition issues are
+  non-informative.
 - `isPartition_polar`, `isPartition_ofList` — the basic Hamblin
-  constructions yield partition issues under nontriviality / disjointness
-  / cover hypotheses.
-- `toSetoid_fromSetoid` — `Setoid → Question → Setoid` is the identity
-  (round-trip with `fromSetoid` from `Semantics/Mood/PartitionAsInquiry.lean`).
+  constructions yield partition issues under nontriviality /
+  disjointness / cover hypotheses.
+- `toSetoid_fromSetoid` — `Setoid → Question → Setoid` is the
+  identity.
 -/
 
 
 namespace Question
 
 variable {W : Type*}
+
+/-! ### The `Setoid → Question` embedding -/
+
+/-- The issue raised by a setoid `r`: a state `q` resolves it iff `q`
+is empty or contained in an `r`-equivalence class. -/
+def fromSetoid (r : Setoid W) : Question W :=
+  ofLowerSet {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c} (Or.inl rfl) <| by
+    rintro a b hba (rfl | ⟨c, hc, hac⟩)
+    · exact Or.inl (Set.subset_empty_iff.mp hba)
+    · exact Or.inr ⟨c, hc, hba.trans hac⟩
+
+/-- Partition-derived issues are non-informative: they raise an issue
+but supply no information. -/
+theorem info_fromSetoid (r : Setoid W) : (fromSetoid r).info = Set.univ := by
+  ext w
+  simp only [info, fromSetoid, props_ofLowerSet, Set.mem_sUnion, Set.mem_setOf_eq,
+             Set.mem_univ, iff_true]
+  refine ⟨{x | r x w}, ?_, ?_⟩
+  · exact Or.inr ⟨{x | r x w}, Setoid.mem_classes r w, subset_rfl⟩
+  · exact Setoid.refl' r w
+
+/-- A setoid with two distinct cells yields an inquisitive content; the
+trivial partition yields a declarative. -/
+theorem isInquisitive_fromSetoid_of_two_classes
+    (r : Setoid W) (w₁ w₂ : W) (hne : ¬ r w₁ w₂) :
+    (fromSetoid r).isInquisitive := by
+  show (fromSetoid r).info ∉ (fromSetoid r).props
+  rw [info_fromSetoid]
+  rintro (huniv | ⟨c, hc, hsub⟩)
+  · exact (huniv ▸ Set.mem_univ w₁ : w₁ ∈ (∅ : Set W)).elim
+  · obtain ⟨v, hv, rfl⟩ := hc
+    have h1 : r w₁ v := hsub (Set.mem_univ w₁)
+    have h2 : r w₂ v := hsub (Set.mem_univ w₂)
+    exact hne (Setoid.trans' r h1 (Setoid.symm' r h2))
+
+/-- The embedding reflects the order: a setoid is finer than another
+iff its issue entails the other's — Groenendijk–Stokhof's "partition
+refinement is question entailment". -/
+theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
+    fromSetoid r₁ ≤ fromSetoid r₂ ↔ r₁ ≤ r₂ := by
+  refine ⟨?_, ?_⟩
+  · -- the doubleton {x, y} resolves fromSetoid r₁, hence fromSetoid r₂
+    intro hle x y hxy
+    have hpair : ({x, y} : Set W) ∈ fromSetoid r₁ := by
+      refine Or.inr ⟨{z | r₁ z x}, Setoid.mem_classes r₁ x, ?_⟩
+      rintro z (rfl | hz)
+      · exact Setoid.refl' r₁ z
+      · rw [Set.mem_singleton_iff] at hz; subst hz
+        exact Setoid.symm' r₁ hxy
+    have hpair' : ({x, y} : Set W) ∈ fromSetoid r₂ := hle hpair
+    rcases hpair' with hempty | ⟨c, hc, hsub⟩
+    · have : x ∈ ({x, y} : Set W) := Set.mem_insert x _
+      rw [hempty] at this; exact this.elim
+    · obtain ⟨v, _hv, rfl⟩ := hc
+      have hxv : r₂ x v := hsub (Set.mem_insert x _)
+      have hyv : r₂ y v := hsub (Set.mem_insert_of_mem x rfl)
+      exact Setoid.trans' r₂ hxv (Setoid.symm' r₂ hyv)
+  · -- a state in an r₁-cell is in the surrounding r₂-cell
+    intro hle q hq
+    rcases hq with hempty | ⟨c, hc, hqc⟩
+    · subst hempty; exact (fromSetoid r₂).contains_empty
+    · obtain ⟨v, _hv, rfl⟩ := hc
+      refine Or.inr ⟨{z | r₂ z v}, Setoid.mem_classes r₂ v, ?_⟩
+      intro z hz
+      exact hle (hqc hz)
+
+/-- Monotonicity of the embedding. -/
+theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
+    fromSetoid r₁ ≤ fromSetoid r₂ :=
+  (fromSetoid_le_iff r₁ r₂).mpr h
+
+/-- Every alternative of `fromSetoid r` is the empty state or a cell of
+`r` (the empty case only when `W` is empty). -/
+theorem alt_fromSetoid_subset_classes (r : Setoid W) {p : Set W}
+    (hp : p ∈ alt (fromSetoid r)) : p = ∅ ∨ p ∈ r.classes := by
+  obtain ⟨hp_props, hmax⟩ := hp
+  rcases hp_props with hempty | ⟨c, hc, hpc⟩
+  · exact Or.inl hempty
+  · have hc_props : c ∈ (fromSetoid r).props :=
+      Or.inr ⟨c, hc, subset_rfl⟩
+    have heq : p = c := hmax c hc_props hpc
+    exact Or.inr (heq ▸ hc)
+
+/-- Each cell of `r` is an alternative of `fromSetoid r`. -/
+theorem class_mem_alt_fromSetoid (r : Setoid W) {c : Set W}
+    (hc : c ∈ r.classes) : c ∈ alt (fromSetoid r) := by
+  refine ⟨Or.inr ⟨c, hc, subset_rfl⟩, ?_⟩
+  obtain ⟨v, _hv, rfl⟩ := hc
+  intro q hq hcq
+  rcases hq with hempty | ⟨c', hc', hqc'⟩
+  · have hv : v ∈ ({x | r x v} : Set W) := Setoid.refl' r v
+    rw [hempty] at hcq
+    exact (hcq hv).elim
+  · obtain ⟨v', _hv', rfl⟩ := hc'
+    have hvv' : r v v' := hqc' (hcq (Setoid.refl' r v))
+    apply Set.Subset.antisymm hcq
+    intro x hxq
+    have hxv' : r x v' := hqc' hxq
+    exact Setoid.trans' r hxv' (Setoid.symm' r hvv')
 
 /-! ### `IsPartition` predicate -/
 
@@ -153,7 +252,7 @@ theorem cell_toQUD_eq {P : Question W} (h : P.IsPartition) {p : Set W}
 /-! ### Round-trip with `fromSetoid`
 
 The `Setoid → Question` embedding (`fromSetoid`, in
-`Semantics/Mood/PartitionAsInquiry.lean`) and `Question → Setoid` projection
+`Semantics/Questions/Partition/Basic.lean`) and `Question → Setoid` projection
 (`toSetoid`) compose to the identity on partition-shaped issues. -/
 
 /-- Under `Nonempty W`, `fromSetoid r` is a partition issue. The

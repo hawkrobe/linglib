@@ -3,7 +3,7 @@ import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Relevance
-import Linglib.Semantics.Mood.PartitionAsInquiry
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Pragmatics.DecisionTheoretic.But

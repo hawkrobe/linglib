@@ -26,7 +26,7 @@ the Bool-view (`sameAnswer`), and the `ProductQUD` projections.
 `Core/QUD/` directory) as the construction-side API for partition-shaped
 questions. The inquisitive `Question W` (`Core/Question/Basic.lean`) is
 the consumer-side type with the richer lattice and answerhood structure;
-`Question.fromSetoid` (`Semantics/Mood/PartitionAsInquiry.lean`) is the
+`Question.fromSetoid` (`Semantics/Questions/Partition/Basic.lean`) is the
 canonical bridge from a `Setoid` (or `QUD`) into an inquisitive
 `Question`. Long-term mathlib alignment is `abbrev QUD M := Setoid M`
 once the Bool-API consumer sites have migrated to `[DecidableRel s.r]`
