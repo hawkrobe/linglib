@@ -7,26 +7,20 @@ import Linglib.Semantics.Mood.Defs
 # Dynamic mood operators
 
 This file defines the dynamic counterparts of the static mood
-operators of `Mood/Situation.lean`, as updates on situation contexts:
-
-* `dynIND` filters a context by the `sameWorld` kernel, comparing each
-  entry's current situation with the situation bound to a variable;
-* `dynSUBJ` replaces each entry with one entry per situation in the
-  historical base of its current situation, binding the fresh
-  situation to a variable.
-
-These are the two basic operations of the powerset monad on contexts:
-a filter and a Kleisli bind. The eliminative/generative contrast
-between them is the classical two-sorted update repertoire of dynamic
-semantics. `Grammatical.dynOp` assigns an operator to each grammatical
-mood, so the polarity of a mood is a theorem about the assignment
-(`dynOp_indicative_isFilter`, `dynOp_subjunctive_introduces`) rather
-than a stipulated feature.
+operators of `Mood/Situation.lean`: `dynIND` and `dynSUBJ` are the
+two basic operations of the powerset monad on situation contexts — a
+filter and a Kleisli bind. This eliminative/generative contrast is
+the classical two-sorted update repertoire of dynamic semantics, and
+`Grammatical.dynOp` assigns an operator to each grammatical mood, so
+the polarity of a mood is a theorem about the assignment rather than
+a stipulated feature.
 
 ## Main statements
 
 * `dynSUBJ_realizes_SUBJ`: on singleton contexts, `dynSUBJ` realizes
   the static existential `SUBJ` of [mendes-2025].
+* `dynOp_indicative_isFilter`, `dynOp_subjunctive_introduces`: the
+  polarity contrast, derived from the `dynOp` assignment.
 * `dynIND_after_dynSUBJ_same_var`: indicative retrieval of a
   just-introduced subjunctive variable is vacuous.
 
