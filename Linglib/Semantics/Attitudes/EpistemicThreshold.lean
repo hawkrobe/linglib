@@ -3,7 +3,7 @@ import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.ComparativeScale
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Attitudes.Confidence
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -50,7 +50,7 @@ function maps an entity to a degree on a scale, and the predicate holds
 iff the degree meets a contextual/lexical threshold. Epistemic expressions
 are gradable predicates on a probability scale bounded by [0, 1].
 
-This connection is formalized in §8 via `epistemicAsDirectedMeasure`.
+This connection is formalized in §8 via `epistemicAsPolarMeasure`.
 
 ## Unification of Three Formalizations
 
@@ -459,7 +459,7 @@ expressions.
 def epistemicBoundedness : Core.Order.Boundedness := .closed
 
 /-- An epistemic gradable predicate: an `EpistemicEntry` viewed as a
-    `DirectedMeasure` on the probability scale.
+    `PolarMeasure` on the probability scale.
 
     The entity type is `E × (W → Bool)` (agent–proposition pairs), and the
     measure function is agent credence `cr`. This makes the structural
@@ -468,8 +468,8 @@ def epistemicBoundedness : Core.Order.Boundedness := .closed
     Polarity: threshold entries (`believes`, `must`, `likely`) are positive
     (upward monotone: higher credence → more likely to satisfy). Reversed
     entries (`uncertain`, `unlikely`) are negative (downward monotone). -/
-def epistemicAsDirectedMeasure (cr : AgentCredence E W) (_entry : EpistemicEntry)
-    : Degree.DirectedMeasure ℚ (E × (W → Bool)) where
+def epistemicAsPolarMeasure (cr : AgentCredence E W) (_entry : EpistemicEntry)
+    : Degree.PolarMeasure ℚ (E × (W → Bool)) where
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
 

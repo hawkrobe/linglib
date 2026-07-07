@@ -191,11 +191,11 @@ structure SoltScale where
 def cardinalityScale : SoltScale := { dimension := "cardinality" }
 
 /-- A measure function for a given α maps individuals to ℚ degrees. -/
-abbrev MeasureFn (α : Type) := α → ℚ
+abbrev DimensionedMeasure (α : Type) := α → ℚ
 
 /-- Solt eq. (18) Monotonicity constraint: if `x ⊑ y` then
     `μ(x) ≺ μ(y)`. Stated relative to a part-whole relation `subPart`. -/
-def Monotonic {α : Type} (μ : MeasureFn α) (subPart : α → α → Prop) : Prop :=
+def Monotonic {α : Type} (μ : DimensionedMeasure α) (subPart : α → α → Prop) : Prop :=
   ∀ x y, subPart x y → μ x < μ y
 
 -- ════════════════════════════════════════════════════
@@ -216,12 +216,12 @@ def Monotonic {α : Type} (μ : MeasureFn α) (subPart : α → α → Prop) : P
 /-- Solt eq. (21): the proportional measure function for dimension DIM
     relative to totality `tot`, applied to part `y`. Returns
     `μ_DIM(y) / μ_DIM(tot)`. -/
-def proportionalMeasure {α : Type} (μ_DIM : MeasureFn α)
+def proportionalMeasure {α : Type} (μ_DIM : DimensionedMeasure α)
     (tot : α) (y : α) : ℚ :=
   spatialNormalizedScore [1] [μ_DIM] (fun _ => μ_DIM tot) y
 
 /-- Solt eq. (21) computed: `μ_DIM(y) / μ_DIM(tot)` (when `μ_DIM(tot) ≠ 0`). -/
-theorem proportionalMeasure_eq {α : Type} (μ_DIM : MeasureFn α)
+theorem proportionalMeasure_eq {α : Type} (μ_DIM : DimensionedMeasure α)
     (tot y : α) (h : μ_DIM tot ≠ 0) :
     proportionalMeasure μ_DIM tot y = μ_DIM y / μ_DIM tot := by
   show spatialNormalizedScore [1] [μ_DIM] (fun _ => μ_DIM tot) y =
@@ -238,7 +238,7 @@ theorem proportionalMeasure_eq {α : Type} (μ_DIM : MeasureFn α)
 /-- Edge case: when the totality has zero measure (empty domain), the
     proportional measure returns 0. Matches the
     `spatialNormalizedScore` zero-extent convention. -/
-theorem proportionalMeasure_zero {α : Type} (μ_DIM : MeasureFn α)
+theorem proportionalMeasure_zero {α : Type} (μ_DIM : DimensionedMeasure α)
     (tot y : α) (h : μ_DIM tot = 0) :
     proportionalMeasure μ_DIM tot y = 0 := by
   show spatialNormalizedScore [1] [μ_DIM] (fun _ => μ_DIM tot) y = 0
@@ -366,7 +366,7 @@ theorem stage_individual_distribution_gap :
     constant denominator; Tham's eq. 47b uses multiple weighted
     dimensions with a per-host denominator. -/
 theorem solt_proportional_is_single_dim_spatial_normalized
-    {α : Type} (μ_DIM : MeasureFn α) (tot y : α) :
+    {α : Type} (μ_DIM : DimensionedMeasure α) (tot y : α) :
     proportionalMeasure μ_DIM tot y =
       spatialNormalizedScore [1] [μ_DIM] (fun _ => μ_DIM tot) y := rfl
 
@@ -379,7 +379,7 @@ theorem solt_proportional_is_single_dim_spatial_normalized
     theorem shows it is preserved by the eq. (21) proportional
     construction whenever `μ_DIM(tot) > 0`. -/
 theorem proportionalMeasure_monotonic {α : Type}
-    (μ_DIM : MeasureFn α) (subPart : α → α → Prop)
+    (μ_DIM : DimensionedMeasure α) (subPart : α → α → Prop)
     (μ_mono : Monotonic μ_DIM subPart) (tot y z : α)
     (htot : 0 < μ_DIM tot) (hyz : subPart y z) :
     proportionalMeasure μ_DIM tot y < proportionalMeasure μ_DIM tot z := by
@@ -400,7 +400,7 @@ theorem proportionalMeasure_monotonic {α : Type}
     The "saturates at the totality" property. -/
 @[simp]
 theorem proportionalMeasure_self_eq_one {α : Type}
-    (μ_DIM : MeasureFn α) (tot : α) (htot : 0 < μ_DIM tot) :
+    (μ_DIM : DimensionedMeasure α) (tot : α) (htot : 0 < μ_DIM tot) :
     proportionalMeasure μ_DIM tot tot = 1 := by
   rw [proportionalMeasure_eq μ_DIM tot tot htot.ne']
   exact div_self htot.ne'
@@ -409,7 +409,7 @@ theorem proportionalMeasure_self_eq_one {α : Type}
     Used to discharge the substrate-side hypothesis when consuming
     `spatialNormalizedScore_le_one` and `_nonneg` from `Aggregation.lean`. -/
 private theorem weightedScore_singleton {α : Type}
-    (μ_DIM : MeasureFn α) (y : α) :
+    (μ_DIM : DimensionedMeasure α) (y : α) :
     weightedScore [1] [μ_DIM] y = μ_DIM y := by
   unfold weightedScore
   show ((0 : ℚ) + 1 * μ_DIM y) = μ_DIM y
@@ -418,7 +418,7 @@ private theorem weightedScore_singleton {α : Type}
 /-- Solt's proportional measure is nonnegative when the underlying
     measure is. Consumes the substrate's `spatialNormalizedScore_nonneg`. -/
 theorem proportionalMeasure_nonneg {α : Type}
-    (μ_DIM : MeasureFn α) (μ_nonneg : ∀ x, 0 ≤ μ_DIM x)
+    (μ_DIM : DimensionedMeasure α) (μ_nonneg : ∀ x, 0 ≤ μ_DIM x)
     (tot y : α) :
     0 ≤ proportionalMeasure μ_DIM tot y := by
   apply spatialNormalizedScore_nonneg
@@ -429,7 +429,7 @@ theorem proportionalMeasure_nonneg {α : Type}
     a subpart of the totality (under a monotonic measure). Consumes the
     substrate's `spatialNormalizedScore_le_one`. -/
 theorem proportionalMeasure_le_one {α : Type}
-    (μ_DIM : MeasureFn α) (subPart : α → α → Prop)
+    (μ_DIM : DimensionedMeasure α) (subPart : α → α → Prop)
     (μ_mono_le : ∀ x y, subPart x y → μ_DIM x ≤ μ_DIM y)
     (tot y : α) (hy : subPart y tot) (htot : 0 < μ_DIM tot) :
     proportionalMeasure μ_DIM tot y ≤ 1 := by
@@ -450,7 +450,7 @@ theorem proportionalMeasure_le_one {α : Type}
     measure* — the discrete-probability analogue of conditional measure
     `P(Y | X)` in measure theory. -/
 theorem proportionalMeasure_mem_unit_interval {α : Type}
-    (μ_DIM : MeasureFn α)
+    (μ_DIM : DimensionedMeasure α)
     (μ_nonneg : ∀ x, 0 ≤ μ_DIM x)
     (subPart : α → α → Prop)
     (μ_mono_le : ∀ x y, subPart x y → μ_DIM x ≤ μ_DIM y)
@@ -468,7 +468,7 @@ theorem proportionalMeasure_mem_unit_interval {α : Type}
     invariant under unit conversion (people-per-thousand vs people-per-
     million); only the cardinal reading depends on the absolute unit. -/
 theorem proportionalMeasure_scale_invariant {α : Type}
-    (k : ℚ) (hk : k ≠ 0) (μ_DIM : MeasureFn α)
+    (k : ℚ) (hk : k ≠ 0) (μ_DIM : DimensionedMeasure α)
     (tot y : α) (htot : μ_DIM tot ≠ 0) :
     proportionalMeasure (fun x => k * μ_DIM x) tot y =
     proportionalMeasure μ_DIM tot y := by

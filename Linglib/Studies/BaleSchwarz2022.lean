@@ -1,7 +1,7 @@
 import Linglib.Features.Acceptability
 import Linglib.Features.Dimension
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
@@ -71,7 +71,7 @@ def perDivision (r q : ℚ) : ℚ := q / r
 Takes a unit quantity q and an entity x, returns a pure number:
 the entity's measure in q's dimension, divided by q. The entity
 argument is supplied by a covert pronoun *pro* (eq. 17). -/
-def perAnaphoric {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : ℚ :=
+def perAnaphoric {E : Type*} (μ : DimensionedMeasure E) (q : ℚ) (x : E) : ℚ :=
   μ.apply x / q
 
 -- ============================================================================
@@ -83,7 +83,7 @@ def perAnaphoric {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : ℚ :=
 A measurement verb maps a quantity to a predicate over entities. The verb's
 measure function determines which simplex dimension is measured:
 μ_WT for *weigh*, μ_VOL for *contain* (in measure readings). -/
-def measureVerbSem {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : Bool :=
+def measureVerbSem {E : Type*} (μ : DimensionedMeasure E) (q : ℚ) (x : E) : Bool :=
   decide (μ.apply x = q)
 
 -- ============================================================================
@@ -207,7 +207,7 @@ No dimension mismatch arises. -/
 
 /-- Truth conditions under the anaphoric theory (eq. 22):
 μ_WT(sample) = numeral * (μ_VOL(sample) / perUnit). -/
-def anaphoricTC {E : Type*} (μ_wt μ_vol : MeasureFn E)
+def anaphoricTC {E : Type*} (μ_wt μ_vol : DimensionedMeasure E)
     (sample : E) (numeral perUnit : ℚ) : Prop :=
   μ_wt.apply sample = numeral * perAnaphoric μ_vol perUnit sample
 
@@ -223,7 +223,7 @@ composed values in simplex dimensions. This matters because the anaphoric
 theory can then add the unit sensitivity presupposition (eq. 43), while the
 division theory cannot (the per-unit is structurally inaccessible). -/
 theorem anaphoric_tc_equivalent {E : Type*}
-    (μ_wt μ_vol : MeasureFn E) (sample : E) (numeral perUnit : ℚ) :
+    (μ_wt μ_vol : DimensionedMeasure E) (sample : E) (numeral perUnit : ℚ) :
     -- The anaphoric TC unfolds to: μ_wt(sample) = numeral * (μ_vol(sample) / perUnit)
     anaphoricTC μ_wt μ_vol sample numeral perUnit ↔
       μ_wt.apply sample = numeral * (μ_vol.apply sample / perUnit) := by
@@ -245,7 +245,7 @@ element MUCH mediates pseudo-partitives (eq. 24). MUCH's denotation (eq. 25):
 
     ⟦MUCH⟧ = λq. λx. μ(x) = q
 
-This is identical to `MeasureFn.applyNumeral` — MUCH IS a measure term,
+This is identical to `DimensionedMeasure.applyNumeral` — MUCH IS a measure term,
 but with an underspecified measure function μ resolved contextually:
 - μ_WT in "0.9 grams of salt" (eq. 24a)
 - μ_VOL in "0.8 milliliters of salt" (eq. 24b)
@@ -254,19 +254,19 @@ but with an underspecified measure function μ resolved contextually:
 /-- MUCH as a measure function (eq. 25). The measure function μ is
 underspecified — resolved contextually to the appropriate dimension.
 After the substrate refactor, the measure-term layer collapses into
-`MeasureFn` itself, so MUCH is just the identity at the type level;
+`DimensionedMeasure` itself, so MUCH is just the identity at the type level;
 the def survives as the linguistic name for the construct. -/
-def MUCH {E : Type*} (μ : MeasureFn E) : MeasureFn E := μ
+def MUCH {E : Type*} (μ : DimensionedMeasure E) : DimensionedMeasure E := μ
 
 /-- MUCH's denotation matches measure term semantics by construction:
-⟦MUCH⟧(q)(x) ↔ (μ(x) = q) = MeasureFn.applyNumeral(q)(x). -/
-theorem MUCH_is_measureTerm {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
+⟦MUCH⟧(q)(x) ↔ (μ(x) = q) = DimensionedMeasure.applyNumeral(q)(x). -/
+theorem MUCH_is_measureTerm {E : Type*} (μ : DimensionedMeasure E) (n : ℚ) (x : E) :
     (MUCH μ).applyNumeral n x ↔ μ.apply x = n := Iff.rfl
 
 /-- The measure verb semantics (eq. 5) is used in the anaphoric derivation:
 the truth conditions are stated as measureVerbSem μ_wt q sample = true,
 where q is the composed quantity from the anaphoric per-phrase. -/
-theorem measureVerb_applied {E : Type*} (μ_wt : MeasureFn E) (q : ℚ) (x : E) :
+theorem measureVerb_applied {E : Type*} (μ_wt : DimensionedMeasure E) (q : ℚ) (x : E) :
     measureVerbSem μ_wt q x = decide (μ_wt.apply x = q) := rfl
 
 -- ============================================================================
@@ -423,32 +423,32 @@ theorem text_unit_sensitivity :
 This is the canonical use case for `PartialValue`: the at-issue content is
 a pure number (ℚ), not a truth value (Bool). `PartialProp` cannot represent
 this directly — it only handles presupposed propositions. -/
-def perAnaphoricWithPresup {E : Type*} (μ : MeasureFn E) (q : ℚ)
+def perAnaphoricWithPresup {E : Type*} (μ : DimensionedMeasure E) (q : ℚ)
     (x : E) : PartialValue Unit ℚ where
   presup := fun _ => μ.apply x ≥ q
   value := fun _ => perAnaphoric μ q x
 
 /-- The unit sensitivity presupposition (eq. 43): μ_{dim(q)}(x) ≥ q. -/
-def perPresup {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : Prop :=
+def perPresup {E : Type*} (μ : DimensionedMeasure E) (q : ℚ) (x : E) : Prop :=
   μ.apply x ≥ q
 
 /-- The presupposition is satisfied iff the entity's measure ≥ the unit. -/
-theorem presup_satisfied_iff {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
+theorem presup_satisfied_iff {E : Type*} (μ : DimensionedMeasure E) (q : ℚ) (x : E) :
     (perAnaphoricWithPresup μ q x).presup () ↔ μ.apply x ≥ q := Iff.rfl
 
 /-- The at-issue value is the pure number μ(x)/q. -/
-theorem perValue_eq {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
+theorem perValue_eq {E : Type*} (μ : DimensionedMeasure E) (q : ℚ) (x : E) :
     (perAnaphoricWithPresup μ q x).value () = perAnaphoric μ q x := rfl
 
 /-- At the sentence level, `PartialValue ℚ` composes with a measurement verb
 to produce a `PartialProp` — presupposition projects, assertion is boolean. -/
-def perSentenceWithPresup {E : Type*} (μ_wt μ_vol : MeasureFn E)
+def perSentenceWithPresup {E : Type*} (μ_wt μ_vol : DimensionedMeasure E)
     (perUnit : ℚ) (numeral : ℚ) (x : E) : PartialProp Unit where
   presup := fun _ => perPresup μ_vol perUnit x
   assertion := fun _ => measureVerbSem μ_wt (numeral * perAnaphoric μ_vol perUnit x) x
 
 /-- The sentence-level assertion matches `anaphoricTC`. -/
-theorem assertion_matches_tc {E : Type*} (μ_wt μ_vol : MeasureFn E)
+theorem assertion_matches_tc {E : Type*} (μ_wt μ_vol : DimensionedMeasure E)
     (perUnit numeral : ℚ) (x : E) :
     (perSentenceWithPresup μ_wt μ_vol perUnit numeral x).assertion () = true ↔
       anaphoricTC μ_wt μ_vol x numeral perUnit := by
@@ -472,7 +472,7 @@ theorem presup_predicts_felicity :
 
 /-- The anaphoric theory distinguishes "per milliliter" from "per liter"
 via different presuppositions, even when the ratios are numerically equal. -/
-theorem anaphoric_distinguishes_units {E : Type*} (μ : MeasureFn E) (x : E)
+theorem anaphoric_distinguishes_units {E : Type*} (μ : DimensionedMeasure E) (x : E)
     (h : μ.apply x = 5) :
     -- per milliliter: presup μ(x) ≥ 1 — satisfied (5 ≥ 1)
     decide (μ.apply x ≥ 1) = true ∧
@@ -627,12 +627,12 @@ def quantityTimesNumber (q : Quantity) (n : ℚ) : Quantity :=
 /-- ⟦per milliliter⟧ = λx. μ_VOL(x) / mL (eq. 15).
 Instance of eq. (16): ⟦per⟧ = λq. λx. μ_{dim(q)}(x) / q.
 Output type: E → ℚ (entity to **pure number**). -/
-def step_perMilliliter (μ_vol : MeasureFn E) (mL : Quantity) : E → ℚ :=
+def step_perMilliliter (μ_vol : DimensionedMeasure E) (mL : Quantity) : E → ℚ :=
   fun x => μ_vol.apply x / mL.value
 
 /-- ⟦[PP pro [per milliliter]]⟧ = μ_VOL(pro) / mL (FA).
 *pro* is resolved to the subject. Result: a **pure number**. -/
-def step_PP (μ_vol : MeasureFn E) (mL : Quantity) (pro : E) : ℚ :=
+def step_PP (μ_vol : DimensionedMeasure E) (mL : Quantity) (pro : E) : ℚ :=
   step_perMilliliter μ_vol mL pro
 
 /-- ⟦[MP 0.9 grams]⟧ = 0.9 * g = 0.9g.
@@ -643,19 +643,19 @@ def step_innerMP (numeral : ℚ) (unit : Quantity) : Quantity :=
 /-- ⟦[MP [MP 0.9 grams] [PP pro per mL]]⟧ = 0.9g * (μ_VOL(pro)/mL) (eq. 18).
 Quantity × pure number → **quantity in dimension WT** (eq. 19).
 The dimension is STILL .mass — no quotient dimension arises. -/
-def step_fullMP (μ_vol : MeasureFn E) (pro : E) (numeral : ℚ)
+def step_fullMP (μ_vol : DimensionedMeasure E) (pro : E) (numeral : ℚ)
     (unit mL : Quantity) : Quantity :=
   quantityTimesNumber (step_innerMP numeral unit) (step_PP μ_vol mL pro)
 
 /-- ⟦weighs⟧ = λq. λx. μ_WT(x) = q (eq. 5).
 Takes a **quantity** and returns a predicate. The verb's measure
 function must match the quantity's dimension. -/
-def step_weighs (μ_wt : MeasureFn E) (q : Quantity) (x : E) : Bool :=
+def step_weighs (μ_wt : DimensionedMeasure E) (q : Quantity) (x : E) : Bool :=
   decide (μ_wt.apply x = q.value)
 
 /-- ⟦[S [the sample] [VP weighs [MP]]]⟧ — the full sentence (eq. 22).
 Applies the VP to the subject entity. -/
-def step_sentence (μ_wt μ_vol : MeasureFn E) (sample : E)
+def step_sentence (μ_wt μ_vol : DimensionedMeasure E) (sample : E)
     (numeral : ℚ) (unit mL : Quantity) : Bool :=
   step_weighs μ_wt (step_fullMP μ_vol sample numeral unit mL) sample
 
@@ -677,13 +677,13 @@ theorem innerMP_dimension :
 This is the paper's key claim: the anaphoric theory never forms a
 quotient dimension. The *per*-PP contributes a dimensionless scalar,
 and multiplication preserves the original dimension. -/
-theorem fullMP_dimension (μ_vol : MeasureFn E) (pro : E) :
+theorem fullMP_dimension (μ_vol : DimensionedMeasure E) (pro : E) :
     (step_fullMP μ_vol pro (9/10) gram_unit mL_unit).dim = .mass := rfl
 
 /-- `weigh`'s measure function is in dimension WT. When the composed
 quantity is also in WT, dimensions match — no type error. -/
-theorem dimensions_match (μ_wt : MeasureFn E) (hwt : μ_wt.dimension = .mass)
-    (μ_vol : MeasureFn E) (pro : E) :
+theorem dimensions_match (μ_wt : DimensionedMeasure E) (hwt : μ_wt.dimension = .mass)
+    (μ_vol : DimensionedMeasure E) (pro : E) :
     μ_wt.dimension = (step_fullMP μ_vol pro (9/10) gram_unit mL_unit).dim :=
   hwt
 
@@ -701,12 +701,12 @@ theorem division_theory_mismatch :
 /-- The derivation yields eq. (22): μ_WT(sample) = (0.9 * μ_VOL(sample)/mL) g.
 The numerical content is: μ_WT(sample) = 0.9 * 1 * (μ_VOL(sample) / 1),
 which simplifies to μ_WT(sample) = 0.9 * μ_VOL(sample). -/
-theorem derivation_eq22 (μ_wt μ_vol : MeasureFn E) (sample : E) :
+theorem derivation_eq22 (μ_wt μ_vol : DimensionedMeasure E) (sample : E) :
     step_sentence μ_wt μ_vol sample (9/10) gram_unit mL_unit =
       decide (μ_wt.apply sample = 9 / 10 * 1 * (μ_vol.apply sample / 1)) := rfl
 
 /-- The derivation matches `anaphoricTC` (modulo unit normalization). -/
-theorem derivation_matches_tc (μ_wt μ_vol : MeasureFn E) (sample : E)
+theorem derivation_matches_tc (μ_wt μ_vol : DimensionedMeasure E) (sample : E)
     (numeral : ℚ) :
     (step_sentence μ_wt μ_vol sample numeral gram_unit mL_unit = true) ↔
       anaphoricTC μ_wt μ_vol sample numeral 1 := by
@@ -719,10 +719,10 @@ theorem derivation_matches_tc (μ_wt μ_vol : MeasureFn E) (sample : E)
 -- Concrete verification
 -- ════════════════════════════════════════════════════
 
-private def μ_wt_concrete : MeasureFn Unit where
+private def μ_wt_concrete : DimensionedMeasure Unit where
   dimension := .mass; apply := fun _ => 9; nonneg := fun _ => by norm_num
 
-private def μ_vol_concrete : MeasureFn Unit where
+private def μ_vol_concrete : DimensionedMeasure Unit where
   dimension := .volume; apply := fun _ => 10; nonneg := fun _ => by norm_num
 
 /-- A sample with μ_WT = 9g, μ_VOL = 10mL: "weighs 0.9 grams per
@@ -763,7 +763,7 @@ is that MUCH applies this quantity as a predicate, rather than *weigh*. -/
 /-- MUCH applied to the composed quantity (eq. 25 + eq. 42).
 ⟦MUCH⟧(q)(x) = (μ(x) = q.value), where μ is contextually resolved
 to μ_WT for "grams of salt". -/
-def step_MUCH (μ : MeasureFn E) (q : Quantity) (x : E) : Bool :=
+def step_MUCH (μ : DimensionedMeasure E) (q : Quantity) (x : E) : Bool :=
   decide (μ.apply x = q.value)
 
 /-- Pseudo-partitive truth conditions (eq. 32):
@@ -772,7 +772,7 @@ def step_MUCH (μ : MeasureFn E) (q : Quantity) (x : E) : Bool :=
 We represent the existential as a check over a domain list, matching the
 paper's eq. (26). -/
 def step_pseudoPartitive (salt : E → Bool) (contain : E → E → Bool)
-    (μ_wt μ_vol : MeasureFn E) (mixture : E)
+    (μ_wt μ_vol : DimensionedMeasure E) (mixture : E)
     (numeral : ℚ) (unit mL : Quantity) (domain : List E) : Bool :=
   domain.any fun x =>
     salt x && step_MUCH μ_wt (step_fullMP μ_vol mixture numeral unit mL) x
@@ -781,7 +781,7 @@ def step_pseudoPartitive (salt : E → Bool) (contain : E → E → Bool)
 /-- The pseudo-partitive MP has the same dimension as the measurement
 verb MP — mass in both cases. This confirms that the anaphoric theory
 uses the same derivation mechanism for both environments. -/
-theorem pseudoPartitive_same_dimension (μ_vol : MeasureFn E) (mixture : E) :
+theorem pseudoPartitive_same_dimension (μ_vol : DimensionedMeasure E) (mixture : E) :
     (step_fullMP μ_vol mixture (1/10) gram_unit mL_unit).dim =
     (step_fullMP μ_vol mixture (9/10) gram_unit mL_unit).dim := rfl
 
@@ -790,13 +790,13 @@ with the composed quantity, where `x` is the salt entity and `mixture`
 is the container (pro's referent). These are DIFFERENT entities — unlike
 the measurement verb case where the same entity is both subject and
 pro's referent. -/
-theorem pseudoPartitive_eq32 (μ_wt μ_vol : MeasureFn E) (mixture x : E) :
+theorem pseudoPartitive_eq32 (μ_wt μ_vol : DimensionedMeasure E) (mixture x : E) :
     step_MUCH μ_wt (step_fullMP μ_vol mixture (1/10) gram_unit mL_unit) x =
       decide (μ_wt.apply x = 1 / 10 * 1 * (μ_vol.apply mixture / 1)) := rfl
 
 /-- In the measurement verb case, pro = subject, so the pseudo-partitive
 machinery specializes to `anaphoricTC` when we set mixture = x. -/
-theorem pseudoPartitive_specializes_to_measureVerb (μ_wt μ_vol : MeasureFn E)
+theorem pseudoPartitive_specializes_to_measureVerb (μ_wt μ_vol : DimensionedMeasure E)
     (sample : E) (numeral : ℚ) :
     (step_MUCH μ_wt (step_fullMP μ_vol sample numeral gram_unit mL_unit)
       sample = true) ↔ anaphoricTC μ_wt μ_vol sample numeral 1 := by

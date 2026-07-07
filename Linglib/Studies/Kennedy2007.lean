@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 
@@ -45,7 +45,7 @@ central claims against the degree substrate and the English adjective Fragment.
 * `Licenses` — the eq. (61) modifier-class licensing matrix.
 * `k2007_matrix_agrees_with_typology`, `k2007_modifier_data_agrees`,
   `pipeline_agrees_with_measure` — the matrix agrees with the per-adjective
-  typology data and with the `DirectedMeasure` / `LicensingPipeline` substrate.
+  typology data and with the `PolarMeasure` / `LicensingPipeline` substrate.
 * `tall_requires_cc`, `full_no_cc` (etc.) — comparison-class sensitivity
   read off each Fragment adjective's scale structure.
 -/
@@ -549,31 +549,31 @@ open Degree
 open English.Predicates.Adjectival
 open Core.Order
 
-/-! #### Fragment → DirectedMeasure licensing -/
+/-! #### Fragment → PolarMeasure licensing -/
 
-/-- "tall" (open scale) → DirectedMeasure blocks degree modification. -/
+/-- "tall" (open scale) → PolarMeasure blocks degree modification. -/
 theorem tall_blocks_completely {max : Nat} {W : Type*} (μ : W → Degree max) :
     ¬ (adjMeasure μ tall).IsLicensed :=
   openAdj_blocked μ tall rfl
 
-/-- "full" (closed scale) → DirectedMeasure licenses degree modification. -/
+/-- "full" (closed scale) → PolarMeasure licenses degree modification. -/
 theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Degree max) :
     (adjMeasure μ full).IsLicensed :=
   closedAdj_licensed μ full rfl
 
-/-- "wet" (closed scale) → DirectedMeasure licenses. -/
+/-- "wet" (closed scale) → PolarMeasure licenses. -/
 theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
     (adjMeasure μ wet).IsLicensed :=
   closedAdj_licensed μ wet rfl
 
-/-- "dry" (closed scale) → DirectedMeasure licenses. -/
+/-- "dry" (closed scale) → PolarMeasure licenses. -/
 theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
     (adjMeasure μ dry).IsLicensed :=
   closedAdj_licensed μ dry rfl
 
-/-! #### DirectedMeasure → data bridges -/
+/-! #### PolarMeasure → data bridges -/
 
-/-- The closure puzzle is predicted by DirectedMeasure:
+/-- The closure puzzle is predicted by PolarMeasure:
     closed-scale adjectives license "completely", open-scale ones don't.
     Matches `closurePuzzle.worksWithClosed` / `.worksWithOpen`. -/
 theorem closurePuzzle_predicted {max : Nat} {W : Type*} (μ : W → Degree max) :
@@ -608,7 +608,7 @@ theorem adj_pipeline_wet :
 theorem adj_pipeline_dry :
     LicensingPipeline.IsLicensed dry.scaleType := trivial
 
-/-- Pipeline agrees with DirectedMeasure for all four test adjectives. -/
+/-- Pipeline agrees with PolarMeasure for all four test adjectives. -/
 theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree max) :
     (LicensingPipeline.IsLicensed tall.scaleType ↔ (adjMeasure μ tall).IsLicensed) ∧
     (LicensingPipeline.IsLicensed full.scaleType ↔ (adjMeasure μ full).IsLicensed) ∧

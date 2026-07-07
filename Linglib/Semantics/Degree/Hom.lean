@@ -5,7 +5,7 @@ import Mathlib.Tactic.GCongr
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Delineation
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # Morphisms between gradability representations
@@ -19,7 +19,7 @@ representation maps in `Phonology/Autosegmental` (AR ↔ tone strings):
 Klein (Delineation)          — most general
   ↑ measureDelineation
 Kennedy (threshold degrees)  — specialization: single linear scale
-  ↑ MeasureFn.apply
+  ↑ DimensionedMeasure.apply
 Scontras / Bale & Schwarz (typed measurement)
 ```
 
@@ -39,7 +39,7 @@ no degree function induces (`delineation_strictly_more_general`,
 
 ## Theorems in this file
 
-1. **measure_to_degree**: every `MeasureFn` forgets to a plain degree function
+1. **measure_to_degree**: every `DimensionedMeasure` forgets to a plain degree function
 2. **degree_to_delineation**: every degree function induces a Klein delineation
 3. **ordering_faithful**: the induced delineation's ordering = degree comparison
 4. **degree_delineations_are_linear**: all degree-induced delineations are linear
@@ -60,7 +60,7 @@ open Features.Dimension (Dimension)
 /-! ### Measurement → Degree → Delineation
 
 The maps themselves carry no new definitions: measurement forgets to a
-bare degree function by the `MeasureFn.apply` projection
+bare degree function by the `DimensionedMeasure.apply` projection
 ([scontras-2014]'s insight that measure terms and CARD are one
 degree-assigning operation), and any degree function `μ` over a linear
 order induces a Klein delineation via `Degree.Delineation.measureDelineation`
@@ -181,9 +181,9 @@ theorem degree_characterization {E D : Type*} [LinearOrder D]
     [bale-schwarz-2022]) and degree semantics ([kennedy-2007])
     is simple: measurement adds typed dimensions to degree functions.
 
-    A `MeasureFn E` is a degree function `apply : E → ℚ` PLUS a
+    A `DimensionedMeasure E` is a degree function `apply : E → ℚ` PLUS a
     `dimension : Dimension` label. The degree function is recoverable
-    via `MeasureFn.toHasDegree`, but the dimension label is lost.
+    via `DimensionedMeasure.toHasDegree`, but the dimension label is lost.
 
     What dimension typing buys you:
     - Multiple measure functions per entity (weight AND volume AND count)

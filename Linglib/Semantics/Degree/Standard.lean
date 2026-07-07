@@ -89,7 +89,7 @@ inductive AdjectiveClass where
   /-- Necessity-relative threshold — *decent*, *acceptable* ([beltrama-2025]). -/
   | mildlyPositive
   /-- Non-gradable: no degree argument, no scale — *atomic*, *prime*,
-  *deceased*, *pregnant*. Outside the gradable (`DirectedMeasure`) system;
+  *deceased*, *pregnant*. Outside the gradable (`PolarMeasure`) system;
   consumers that classify a general adjective should map non-gradables
   here rather than coercing them into a gradable class. -/
   | nonGradable

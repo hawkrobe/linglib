@@ -1,6 +1,6 @@
 import Mathlib.Order.Bounds.Image
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 
 /-!
 # Cross-world extremum under entailment
@@ -254,9 +254,9 @@ theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
     IsMaxInf (Comparison.ge.over μ) m w ↔ IsMaxInf (Comparison.le.over μ) m w := by
   rw [mip_atLeast_is_exact μ m w hSurj, mip_atMost_is_exact μ m w hSurj]
 
-/-! ### The bundled form: `DirectedMeasure.degreeProperty`
+/-! ### The bundled form: `PolarMeasure.degreeProperty`
 
-`DirectedMeasure.degreeProperty` derives "at least" or "at most" from the
+`PolarMeasure.degreeProperty` derives "at least" or "at most" from the
 stored `direction`; under maximal informativity either direction yields
 exact meaning at the true measure value. This ties the algebraic
 constructor layer (`numeral`, `adjective`, epistemic thresholds) to the
@@ -264,23 +264,23 @@ entailment-theoretic MIP layer. -/
 
 /-- The maximally informative degree of a directed measure's derived
     property is the true measure value, whichever the direction. -/
-theorem _root_.Degree.DirectedMeasure.isMaxInf_degreeProperty_iff
-    {W : Type*} (dm : DirectedMeasure α W) (m : α) (w : W)
+theorem _root_.Degree.PolarMeasure.isMaxInf_degreeProperty_iff
+    {W : Type*} (dm : PolarMeasure α W) (m : α) (w : W)
     (hSurj : Function.Surjective dm.μ) :
     IsMaxInf dm.degreeProperty m w ↔ dm.μ w = m := by
   cases h : dm.direction with
   | positive =>
-      simp only [DirectedMeasure.degreeProperty, h]
+      simp only [PolarMeasure.degreeProperty, h]
       exact isMaxInf_atLeast_iff_eq dm.μ m w hSurj
   | negative =>
-      simp only [DirectedMeasure.degreeProperty, h]
+      simp only [PolarMeasure.degreeProperty, h]
       exact isMaxInf_atMost_iff_eq dm.μ m w hSurj
 
 /-- Direction-invariance, bundled: two directed measures sharing a measure
     function agree on maximal informativity regardless of direction or
     boundedness — the constructor-level form of `mip_direction_invariant`. -/
-theorem _root_.Degree.DirectedMeasure.isMaxInf_degreeProperty_congr
-    {W : Type*} (dm₁ dm₂ : DirectedMeasure α W) (hμ : dm₁.μ = dm₂.μ)
+theorem _root_.Degree.PolarMeasure.isMaxInf_degreeProperty_congr
+    {W : Type*} (dm₁ dm₂ : PolarMeasure α W) (hμ : dm₁.μ = dm₂.μ)
     (m : α) (w : W) (hSurj : Function.Surjective dm₁.μ) :
     IsMaxInf dm₁.degreeProperty m w ↔ IsMaxInf dm₂.degreeProperty m w := by
   rw [dm₁.isMaxInf_degreeProperty_iff m w hSurj,

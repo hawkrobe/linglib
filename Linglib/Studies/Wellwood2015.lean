@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Measure
+import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Mereology

@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Quantification.Numerals.Basic
@@ -126,15 +126,15 @@ theorem foxHackl_atLeast_verified :
 
 /-- Kennedy numeral domains are always licensed (closed scale). -/
 theorem kennedy_numeral_licensed {W : Type*} (μ : W → ℕ) :
-    (DirectedMeasure.numeral μ).IsLicensed := trivial
+    (PolarMeasure.numeral μ).IsLicensed := trivial
 
-/-- [kennedy-2015]'s de-Fregean type-shift at the `DirectedMeasure`
+/-- [kennedy-2015]'s de-Fregean type-shift at the `PolarMeasure`
     constructor level: the maximally informative degree of a numeral
     domain's derived property is the true cardinality — the bundled form
     of `isMaxInf_atLeast_iff_eq`. -/
 theorem kennedy_numeral_isMaxInf {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (DirectedMeasure.numeral μ).degreeProperty m w ↔ μ w = m :=
-  (DirectedMeasure.numeral μ).isMaxInf_degreeProperty_iff m w hSurj
+    IsMaxInf (PolarMeasure.numeral μ).degreeProperty m w ↔ μ w = m :=
+  (PolarMeasure.numeral μ).isMaxInf_degreeProperty_iff m w hSurj
 
 end FoxHackl2006Numerals

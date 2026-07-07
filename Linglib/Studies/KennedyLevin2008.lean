@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Features.ScalarDimension
-import Linglib.Semantics.Degree.MeasureOfChange
+import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
@@ -354,7 +354,7 @@ variable {δ : Type*} [LinearOrder δ]
 
 /-- The patient's degree at a time is that time — the temporal trace — so the final
     degree of an event is its end-time. -/
-instance traceMeasure : HasMeasureFunction Patient δ δ where
+instance traceMeasure : HasTemporalMeasure Patient δ δ where
   measure _ t := t
 
 /-- Companion `HasLatentScale` ([beavers-2011] eq. (60c)). -/

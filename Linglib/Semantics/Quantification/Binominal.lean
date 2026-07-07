@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Degree.Noun
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Intensification
 
 /-!

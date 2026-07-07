@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Measurement
+import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
