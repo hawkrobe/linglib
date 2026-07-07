@@ -12,11 +12,16 @@ third component recording the open question: `info` and `order` stay
 intact and `inquiry : Setoid W` is a separate third coordinate, so
 `assert`, `promote`, `inquire` each touch one component and the
 inquiry partition composes orthogonally with the other two
-refinements. [portner-2018]'s verbal-mood unification itself is
-stated over the two POSW components only; the separate question
-coordinate follows the architecture of [portner-2004]'s discourse
-model, which keeps the Question Set apart from the Common Ground and
-the To-Do Lists.
+refinements. [portner-2018] considers two ways to extend the posw to
+interrogatives: his **pposw** (his (10)) *replaces* `cs` with a
+partition of it, fusing the informational and inquisitive components;
+and he names the alternative of "adding a third component, a question
+set, to the basic definition of a posw", crediting [roberts-1996],
+[roberts-2012], and [portner-2004]. `POSWQ` adopts the second option,
+which preserves the disjoint-target architecture. (He also notes that
+his update-based mood-selection principles would treat interrogative
+sentence mood via the `+`-update — a further alternative to the
+separate `?`-update used here.)
 
 The third-component idea is grounded in the dynamic-question tradition:
 [groenendijk-stokhof-1984]'s partition theory takes the meaning of
@@ -95,11 +100,11 @@ open Semantics.Dynamic.Default
 /-- A **POSW with an inquiry partition** (POSWQ): the POSW substrate
     (an `ExpState`) enriched with a third component recording the open
     question. The `inquiry : Setoid W` partitions worlds into
-    "answers"; its `⊤` element is "no question". The three-coordinate
-    packaging is ours; the separate question coordinate follows
-    [portner-2004]'s Question Set (kept apart from the Common Ground),
-    while [portner-2018]'s verbal-mood unification is stated over the
-    two POSW components only. -/
+    "answers"; its `⊤` element is "no question". [portner-2018]'s own
+    interrogative variant is the pposw (his (10)), which *replaces*
+    `cs` with a partition; the third-coordinate design here is the
+    alternative he names — a separate question set à la
+    [roberts-1996] and [portner-2004]. -/
 structure POSWQ (W : Type*) extends ExpState W where
   /-- The inquiry partition: `inquiry.r w v` means worlds `w` and `v`
       are indistinguishable answers to the open question. -/

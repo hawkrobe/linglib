@@ -43,10 +43,11 @@ namespace Semantics.Mood
       mood (Ch. 2) and imperative force (Ch. 3): directive via
       `⋆`-update, desire via `□_≤`.
     - `partition`: the inquiry component. Targeted by interrogative
-      force. Portner's discourse model keeps the question component
-      separate from the common ground ([portner-2004]'s Question Set);
-      our `POSWQ` renders it as a third coordinate. Verbal mood does
-      not select for partition in [portner-2018]; see
+      force. [portner-2018] offers a partition-variant pposw (his
+      (10), replacing `cs`) and the alternative of a separate
+      question-set coordinate ([roberts-1996]; [portner-2004]);
+      `POSWQ` adopts the latter. Verbal mood does not select for
+      partition in [portner-2018]; see
       `Semantics/Mood/VerbalMood.lean` for our extension. -/
 inductive POSWTarget where
   | informational
