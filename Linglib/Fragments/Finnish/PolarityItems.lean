@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Finnish Polarity-Sensitive Items
@@ -25,9 +25,7 @@ namespace Finnish.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPI
--- ============================================================================
+/-! ### NPI -/
 
 /-- *kukaan* — Polarity-sensitive indefinite.
     Decomposes morphologically as *kuka* 'who' + *-kAAn* concessive clitic
@@ -37,19 +35,16 @@ open Semantics.Polarity
     `morphology := .indefPlusEven`. In direct negation, co-occurs with the
     appropriate person/number form of the negation verb *ei*: 'ei kukaan
     tullut' (nobody came). -/
-def kukaan : PolarityItemEntry :=
+def kukaan : Item :=
   { form := "kukaan"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent, .negation]
   , scalarDirection := .strengthening
   , morphology := .indefPlusEven
-  , alternativeType := .domain
-  , notes := "kuka 'who' + -kAAn concessive clitic; co-occurs with negation verb ei in direct negation (ei kukaan tullut 'nobody came')" }
+  , alternativeType := .domain }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### FCI -/
 
 /-- *kuka tahansa* — Free choice item.
     'Whoever / anyone at all'. One cell of a productive *X tahansa* paradigm
@@ -58,26 +53,22 @@ def kukaan : PolarityItemEntry :=
     [haspelmath-1997] A.27 lists this as the *-hyvänsä*-series, used
     mainly in the free-choice function and predicted by his implicational map
     to extend to comparative. Not covered in [karlsson-2017]. -/
-def kukaTahansa : PolarityItemEntry :=
+def kukaTahansa : Item :=
   { form := "kuka tahansa"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , scalarDirection := .strengthening
-  , notes := "Free choice: 'kuka tahansa voi tehdä sen' (anyone can do it); productive over wh-words (mikä/milloin/missä tahansa)" }
+  , scalarDirection := .strengthening }
 
--- ============================================================================
--- Joint
--- ============================================================================
+/-! ### Joint -/
 
 /-- All Finnish polarity-sensitive entries declared in this Fragment. -/
-def items : List PolarityItemEntry := [kukaan, kukaTahansa]
+def items : List Item := [kukaan, kukaTahansa]
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-theorem kukaan_kukaTahansa_distinct :
-    kukaan.polarityType ≠ kukaTahansa.polarityType := by decide
+/-- Every attested context of every entry is predicted licensed. -/
+theorem finnish_licensing_sound :
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
 
 end Finnish.PolarityItems

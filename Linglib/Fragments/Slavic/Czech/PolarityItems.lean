@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Czech Polarity-Sensitive Items
@@ -27,78 +27,62 @@ open Semantics.Polarity
 /-- *nikdo* — N-word for human ('nobody').
     Strict NC: requires the *ne-* prefix on the verb regardless of
     position. -/
-def nikdo : PolarityItemEntry :=
+def nikdo : Item :=
   { form := "nikdo"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , morphology := .indefPlusNeg
-  , nWordStatus := some .nWord
-  , notes := "Strict-NC n-word; *Nikdo nepřišel* / *Neviděl nikoho*" }
+  , morphology := .indefPlusNeg }
 
 /-- *nic* — N-word for non-human ('nothing'). -/
-def nic : PolarityItemEntry :=
+def nic : Item :=
   { form := "nic"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , morphology := .indefPlusNeg
-  , nWordStatus := some .nWord
-  , notes := "Non-human n-word; *Nic neviděl*" }
+  , morphology := .indefPlusNeg }
 
 /-- *nikdy* — Temporal n-word ('never'). -/
-def nikdy : PolarityItemEntry :=
+def nikdy : Item :=
   { form := "nikdy"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .temporal
-  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , morphology := .indefPlusNeg
-  , nWordStatus := some .nWord
-  , notes := "Temporal n-word; *Nikdy nepřišel*" }
+  , morphology := .indefPlusNeg }
 
 /-- *nikam* — Locative n-word ('nowhere'). -/
-def nikam : PolarityItemEntry :=
+def nikam : Item :=
   { form := "nikam"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , morphology := .indefPlusNeg
-  , nWordStatus := some .nWord
-  , notes := "Locative directional n-word; *Nikam nejde* 'goes nowhere'" }
+  , morphology := .indefPlusNeg }
 
 /-- *žádný* — Determiner n-word ('no/none'). -/
-def zadny : PolarityItemEntry :=
+def zadny : Item :=
   { form := "žádný"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening
-  , nWordStatus := some .nWord
-  , notes :=
-      "Determiner/pronoun n-word ('no/none'); morphologically distinct " ++
-      "from the *ni-* series but functionally parallel" }
+  , licensingContexts := [.negation]
+  , scalarDirection := .strengthening }
 
--- ============================================================================
--- Joint
--- ============================================================================
+/-! ### Joint -/
 
 /-- The Czech polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
-def items : List PolarityItemEntry :=
+def items : List Item :=
   [nikdo, nic, nikdy, nikam, zadny]
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-/-- All Czech n-words are licensed by negation. -/
-theorem all_npis_licensed_by_negation :
-    items.all (fun e => e.licensingContexts.contains .negation) = true := by
-  decide
+/-- The strict-NC *ni-* series characterized exactly: clausemate negation is
+    the only licensing environment. -/
+theorem niSeries_licensing_characterized :
+    ∀ e ∈ items, ∀ c, c.licenses e ↔ c ∈ e.licensingContexts := by decide
 
 /-- The *ni-* series is morphologically marked as `indefPlusNeg`. -/
 theorem niSeries_morphology :

@@ -805,8 +805,8 @@ def subjectNPI : SubjectNPIContrast :=
 
 open Hindi.PolarityItems (koiiBhii koiiNahiin)
 
-theorem koiiBhii_is_fci : koiiBhii.polarityType = .fci := rfl
-theorem koiiNahiin_is_npi : koiiNahiin.polarityType = .npiWeak := rfl
+theorem koiiBhii_is_fci : koiiBhii.freeChoice = true := rfl
+theorem koiiNahiin_is_npi : koiiNahiin.licensor = some .weak := rfl
 
 /-- The decomposition in this study matches the fragment entry. -/
 theorem decomposition_matches_fragment :

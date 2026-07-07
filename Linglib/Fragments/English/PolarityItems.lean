@@ -25,25 +25,24 @@ Theory-neutral lexical entries for polarity-sensitive items:
 
 -/
 
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Israel
 
 namespace English.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- The Polarity Item Lexicon
--- ============================================================================
+/-! ### The Polarity Item Lexicon -/
 
 -- ----------------------------------------------------------------------------
 -- Weak NPIs
 -- ----------------------------------------------------------------------------
 
 /-- "any" - the prototypical NPI/FCI -/
-def any : PolarityItemEntry :=
+def any : Item :=
   { form := "any"
-  , polarityType := .npiFci
+  , licensor := some .weak
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
       [ .negation, .nobody, .conditionalAntecedent, .question
@@ -54,13 +53,12 @@ def any : PolarityItemEntry :=
   , canonicity := .canonical           -- low NPI = canonical
   , likelihoodEffect := .impeding      -- theme/patient role in typical use
   , alternativeType := .domain         -- D-MIN domain alternatives (Chierchia 2006)
-  , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC. Also licensed in focus of 'only' ([von-fintel-1999] ex. 10) and adversative complements (ex. 28b)"
   }
 
 /-- "ever" - temporal NPI -/
-def ever : PolarityItemEntry :=
+def ever : Item :=
   { form := "ever"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts :=
       [ .negation, .nobody, .conditionalAntecedent, .question
@@ -69,65 +67,58 @@ def ever : PolarityItemEntry :=
   , scalarValue := .low               -- minimal temporal extent
   , canonicity := .canonical
   , alternativeType := .domain         -- D-MAX domain alternatives (Chierchia 2006)
-  , notes := "Temporal NPI; also in superlatives ('best ever'), focus of 'only' ([von-fintel-1999] ex. 10), and adversative attitudes (ex. 28a)"
   }
 
 /-- "yet" - temporal NPI (different from "ever") -/
-def yet : PolarityItemEntry :=
+def yet : Item :=
   { form := "yet"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .question]
-  , notes := "Restricted distribution; requires relevance to 'now'"
   }
 
 /-- "anymore" - temporal NPI -/
-def anymore : PolarityItemEntry :=
+def anymore : Item :=
   { form := "anymore"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , notes := "Very restricted; mainly with negation"
   }
 
 /-- "at all" - degree NPI -/
-def atAll : PolarityItemEntry :=
+def atAll : Item :=
   { form := "at all"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .degree
   , licensingContexts :=
       [.negation, .nobody, .conditionalAntecedent, .question]
   , scalarDirection := .strengthening -- emphatic: "not at all" = complete negation (Figure 1)
   , scalarValue := .low              -- minimal degree
   , canonicity := .canonical
-  , notes := "Degree emphasis; 'Did you sleep at all?'"
   }
 
 /-- "in the least" - degree NPI -/
-def inTheLeast : PolarityItemEntry :=
+def inTheLeast : Item :=
   { form := "in the least"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation, .question]
-  , notes := "Formal register"
   }
 
 /-- "a single" - emphatic existential NPI -/
-def aSingle : PolarityItemEntry :=
+def aSingle : Item :=
   { form := "a single"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , notes := "'I didn't see a single person'"
   }
 
 /-- "whatsoever" - emphatic NPI (post-nominal) -/
-def whatsoever : PolarityItemEntry :=
+def whatsoever : Item :=
   { form := "whatsoever"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .manner
   , licensingContexts := [.negation, .nobody]
-  , notes := "Post-nominal: 'no reason whatsoever'"
   }
 
 -- ----------------------------------------------------------------------------
@@ -135,9 +126,9 @@ def whatsoever : PolarityItemEntry :=
 -- ----------------------------------------------------------------------------
 
 /-- "lift a finger" - idiomatic strong NPI -/
-def liftAFinger : PolarityItemEntry :=
+def liftAFinger : Item :=
   { form := "lift a finger"
-  , polarityType := .npiStrong
+  , licensor := some .antiAdditive
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening  -- emphatic minimizer (§1, Figure 1)
@@ -145,13 +136,12 @@ def liftAFinger : PolarityItemEntry :=
   , canonicity := .canonical      -- low-value NPI = canonical
   , likelihoodEffect := .impeding -- patient/increment: more effort → less likely
   , morphology := .idiomatic
-  , notes := "Idiomatic; requires anti-additive (*few people lifted a finger)"
   }
 
 /-- "budge an inch" - idiomatic strong NPI -/
-def budgeAnInch : PolarityItemEntry :=
+def budgeAnInch : Item :=
   { form := "budge an inch"
-  , polarityType := .npiStrong
+  , licensor := some .antiAdditive
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening  -- emphatic minimizer (§1, Figure 1)
@@ -159,25 +149,22 @@ def budgeAnInch : PolarityItemEntry :=
   , canonicity := .canonical      -- low-value NPI = canonical
   , likelihoodEffect := .impeding -- increment: more distance → less likely
   , morphology := .idiomatic
-  , notes := "Idiomatic strong NPI"
   }
 
 /-- "in years" - temporal strong NPI -/
-def inYears : PolarityItemEntry :=
+def inYears : Item :=
   { form := "in years"
-  , polarityType := .npiStrong
+  , licensor := some .antiAdditive
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody]
-  , notes := "'I haven't seen him in years' (*Few people have seen him in years)"
   }
 
 /-- "until" - temporal strong NPI (in some analyses) -/
-def until_ : PolarityItemEntry :=
+def until_ : Item :=
   { form := "until"
-  , polarityType := .npiStrong
+  , licensor := some .antiAdditive
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , notes := "Durative 'until' is NPI: 'didn't leave until 5'"
   }
 
 /-- "either" — additive strong NPI ([rullmann-2003], [gajewski-2011]).
@@ -187,12 +174,11 @@ def until_ : PolarityItemEntry :=
     is sorry that she likes pancakes, either — strong NPI ungrammatical under
     Strawson-DE / Strawson-AA operators despite vF1999 having shown those
     contexts to be Strawson-DE. -/
-def either_npi : PolarityItemEntry :=
+def either_npi : Item :=
   { form := "either"
-  , polarityType := .npiStrong
+  , licensor := some .antiAdditive
   , baseForce := .additive
   , licensingContexts := [.negation, .nobody]
-  , notes := "Strong additive NPI per [rullmann-2003], [gajewski-2011]: ungrammatical under SAA-only operators (only, conditional antecedents, emotive factives)"
   }
 
 -- ----------------------------------------------------------------------------
@@ -200,33 +186,30 @@ def either_npi : PolarityItemEntry :=
 -- ----------------------------------------------------------------------------
 
 /-- "whatever" - free relative FCI -/
-def whatever : PolarityItemEntry :=
+def whatever : Item :=
   { form := "whatever"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
       [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative]
-  , notes := "Free relative; 'Read whatever you want'"
   }
 
 /-- "whoever" - free relative FCI -/
-def whoever : PolarityItemEntry :=
+def whoever : Item :=
   { form := "whoever"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
       [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative]
-  , notes := "Free relative; 'Invite whoever you like'"
   }
 
 /-- "whichever" - free relative FCI -/
-def whichever : PolarityItemEntry :=
+def whichever : Item :=
   { form := "whichever"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
       [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative]
-  , notes := "Free relative with restriction; 'whichever book you prefer'"
   }
 
 -- ----------------------------------------------------------------------------
@@ -234,48 +217,44 @@ def whichever : PolarityItemEntry :=
 -- ----------------------------------------------------------------------------
 
 /-- "some" (stressed) - PPI reading -/
-def some_ppi : PolarityItemEntry :=
+def some_ppi : Item :=
   { form := "some (stressed)"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .existential
   , licensingContexts := []  -- Empty = requires positive
   , scalarDirection := .attenuating  -- weaker than "many"/"all"
   , scalarValue := .low              -- low on quantifier scale
   , canonicity := .canonical         -- low-value attenuating PPI = canonical
-  , notes := "Stressed 'some' is PPI: '*I didn't see SOME students'"
   }
 
 /-- "already" - temporal PPI -/
-def already : PolarityItemEntry :=
+def already : Item :=
   { form := "already"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .temporal
   , licensingContexts := []
-  , notes := "PPI: '*I didn't already finish' (on temporal reading)"
   }
 
 /-- "somewhat" - degree PPI -/
-def somewhat : PolarityItemEntry :=
+def somewhat : Item :=
   { form := "somewhat"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .attenuating  -- weaker than "very"
   , scalarValue := .low              -- low degree
   , canonicity := .canonical         -- low-value attenuating PPI = canonical
-  , notes := "PPI: '*I'm not somewhat tired'"
   }
 
 /-- "rather" - degree PPI -/
-def rather : PolarityItemEntry :=
+def rather : Item :=
   { form := "rather"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .attenuating  -- weaker than "very"
   , scalarValue := .low              -- low-to-mid degree
   , canonicity := .canonical         -- low-value attenuating PPI = canonical
-  , notes := "PPI (in degree sense): '*I don't rather like it'"
   }
 
 -- ----------------------------------------------------------------------------
@@ -284,28 +263,26 @@ def rather : PolarityItemEntry :=
 
 /-- "tons of" - canonical emphatic PPI (high value)
     "She has tons of friends." -/
-def tonsOf : PolarityItemEntry :=
+def tonsOf : Item :=
   { form := "tons of"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .strengthening  -- emphatic: maximal quantity
   , scalarValue := .high               -- high on quantity scale
   , canonicity := .canonical           -- high-value emphatic PPI = canonical
-  , notes := "Figure 1: canonical emphatic PPI"
   }
 
 /-- "utterly" - canonical emphatic PPI (high degree)
     "I was utterly depressed." -/
-def utterly : PolarityItemEntry :=
+def utterly : Item :=
   { form := "utterly"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .strengthening  -- emphatic: maximal degree
   , scalarValue := .high               -- high on degree scale
   , canonicity := .canonical           -- high-value emphatic PPI = canonical
-  , notes := "Figure 1: canonical emphatic PPI"
   }
 
 -- ----------------------------------------------------------------------------
@@ -314,9 +291,9 @@ def utterly : PolarityItemEntry :=
 
 /-- "wild horses" - inverted emphatic NPI (high scalar value, stimulus role)
     "Wild horses couldn't keep me away." -/
-def wildHorses : PolarityItemEntry :=
+def wildHorses : Item :=
   { form := "wild horses"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation]
   , scalarDirection := .strengthening
@@ -324,14 +301,13 @@ def wildHorses : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- stimulus: more powerful → more likely to move
   , morphology := .idiomatic
-  , notes := "§3: maximizer NPI; stimulus/agent role"
   }
 
 /-- "all the tea in China" - inverted emphatic NPI (high value, reward role)
     "I wouldn't do it for all the tea in China." -/
-def allTheTeaInChina : PolarityItemEntry :=
+def allTheTeaInChina : Item :=
   { form := "all the tea in China"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation]
   , scalarDirection := .strengthening
@@ -339,14 +315,13 @@ def allTheTeaInChina : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- reward: bigger reward → more likely to act
   , morphology := .idiomatic
-  , notes := "§3: maximizer NPI; reward role"
   }
 
 /-- "a ten-foot pole" - inverted emphatic NPI (high value, instrument role)
     "I wouldn't touch it with a ten-foot pole." -/
-def aTenFootPole : PolarityItemEntry :=
+def aTenFootPole : Item :=
   { form := "a ten-foot pole"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation]
   , scalarDirection := .strengthening
@@ -354,14 +329,13 @@ def aTenFootPole : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- instrument: bigger → easier to reach
   , morphology := .idiomatic
-  , notes := "§3: maximizer NPI; instrument role"
   }
 
 /-- "in a million years" - inverted emphatic NPI (high temporal value)
     "I wouldn't marry that woman in a million years." -/
-def inAMillionYears : PolarityItemEntry :=
+def inAMillionYears : Item :=
   { form := "in a million years"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation]
   , scalarDirection := .strengthening
@@ -369,7 +343,6 @@ def inAMillionYears : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- duration: more time → more likely (punctual event)
   , morphology := .idiomatic
-  , notes := "§3–4: inverted temporal NPI; bounded interval for punctual event"
   }
 
 -- ----------------------------------------------------------------------------
@@ -378,9 +351,9 @@ def inAMillionYears : PolarityItemEntry :=
 
 /-- "at the drop of a hat" - inverted emphatic PPI (low value, stimulus role)
     "He's scared of his own shadow / at the drop of a hat." -/
-def atTheDropOfAHat : PolarityItemEntry :=
+def atTheDropOfAHat : Item :=
   { form := "at the drop of a hat"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .strengthening  -- emphatic: minimal stimulus → maximal reaction
@@ -388,14 +361,13 @@ def atTheDropOfAHat : PolarityItemEntry :=
   , canonicity := .inverted            -- low-value PPI = inverted
   , likelihoodEffect := .facilitating  -- stimulus: any stimulus triggers event
   , morphology := .idiomatic
-  , notes := "§3: minimizer PPI; stimulus role"
   }
 
 /-- "in a jiffy" - inverted emphatic PPI (low temporal value)
     "We'll be back in a jiffy." -/
-def inAJiffy : PolarityItemEntry :=
+def inAJiffy : Item :=
   { form := "in a jiffy"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .temporal
   , licensingContexts := []
   , scalarDirection := .strengthening  -- emphatic: tiny interval → impressive speed
@@ -403,14 +375,13 @@ def inAJiffy : PolarityItemEntry :=
   , canonicity := .inverted            -- low-value PPI = inverted
   , likelihoodEffect := .facilitating  -- bounded interval: short → event very likely
   , morphology := .idiomatic
-  , notes := "§3–4: inverted temporal PPI"
   }
 
 /-- "for a pittance" - inverted emphatic PPI (low monetary value, reward role)
     "He got Madonna to play for peanuts." -/
-def forAPittance : PolarityItemEntry :=
+def forAPittance : Item :=
   { form := "for a pittance"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .strengthening  -- emphatic: tiny cost → impressive deal
@@ -418,14 +389,13 @@ def forAPittance : PolarityItemEntry :=
   , canonicity := .inverted            -- low-value PPI = inverted
   , likelihoodEffect := .facilitating  -- reward/price: small cost → exchange more likely
   , morphology := .idiomatic
-  , notes := "§3–4: inverted pecuniary PPI; reward role"
   }
 
 /-- "for a song" - inverted emphatic PPI (low monetary value, reward role)
     "He bought that painting for a song." -/
-def forASong : PolarityItemEntry :=
+def forASong : Item :=
   { form := "for a song"
-  , polarityType := .ppi
+  , ppi := true
   , baseForce := .degree
   , licensingContexts := []
   , scalarDirection := .strengthening
@@ -433,56 +403,51 @@ def forASong : PolarityItemEntry :=
   , canonicity := .inverted
   , likelihoodEffect := .facilitating
   , morphology := .idiomatic
-  , notes := "§3: inverted pecuniary PPI; reward role"
   }
 
--- ============================================================================
--- Lexicon Access
--- ============================================================================
+/-! ### Lexicon Access -/
 
 /-- All weak NPIs -/
-def weakNPIs : List PolarityItemEntry :=
+def weakNPIs : List Item :=
   [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever]
 
 /-- All strong NPIs -/
-def strongNPIs : List PolarityItemEntry :=
+def strongNPIs : List Item :=
   [liftAFinger, budgeAnInch, inYears, until_]
 
 /-- Inverted (maximizer) NPIs (§3) -/
-def invertedNPIs : List PolarityItemEntry :=
+def invertedNPIs : List Item :=
   [wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears]
 
 /-- All NPIs (weak + strong + inverted) -/
-def allNPIs : List PolarityItemEntry := weakNPIs ++ strongNPIs ++ invertedNPIs
+def allNPIs : List Item := weakNPIs ++ strongNPIs ++ invertedNPIs
 
 /-- All FCIs -/
-def allFCIs : List PolarityItemEntry :=
+def allFCIs : List Item :=
   [any, whatever, whoever, whichever]
 
 /-- Canonical PPIs -/
-def canonicalPPIs : List PolarityItemEntry :=
+def canonicalPPIs : List Item :=
   [some_ppi, already, somewhat, rather, tonsOf, utterly]
 
 /-- Inverted (minimizer) PPIs (§3) -/
-def invertedPPIs : List PolarityItemEntry :=
+def invertedPPIs : List Item :=
   [atTheDropOfAHat, inAJiffy, forAPittance, forASong]
 
 /-- All PPIs -/
-def allPPIs : List PolarityItemEntry :=
+def allPPIs : List Item :=
   canonicalPPIs ++ invertedPPIs
 
 /-- All polarity items -/
-def allPolarityItems : List PolarityItemEntry :=
+def allPolarityItems : List Item :=
   weakNPIs ++ strongNPIs ++ invertedNPIs ++
   [whatever, whoever, whichever] ++ allPPIs
 
 /-- Lookup by form -/
-def lookup (form : String) : Option PolarityItemEntry :=
+def lookup (form : String) : Option Item :=
   allPolarityItems.find? λ p => p.form == form
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
 -- "any" is both NPI and FCI
 example : any.isNPI := by decide
@@ -494,7 +459,6 @@ example : ¬ ever.isFCI := by decide
 
 -- "whatever" is FCI but not (plain) NPI
 example : whatever.isFCI := by decide
-#guard whatever.polarityType == .fci
 
 -- PPIs have empty licensing contexts
 #guard already.licensingContexts.isEmpty
@@ -536,8 +500,10 @@ example : whatever.isFCI := by decide
 -- All classified items have consistent canonicity predictions
 example : ∀ p ∈ allPolarityItems, p.canonicityConsistent := by decide
 
--- ============================================================================
--- Summary
--- ============================================================================
+/-- Every attested context of every entry is predicted licensed. -/
+theorem english_licensing_sound :
+    ∀ e ∈ allPolarityItems, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
+
+/-! ### Summary -/
 
 end English.PolarityItems

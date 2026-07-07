@@ -32,24 +32,23 @@ open Semantics.Polarity
     (truth-conditionally equivalent under plain clausemate negation, teased
     apart by the scope diagnostics of [shimoyama-2011]). The affirmative
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
-def dareMo : PolarityItemEntry :=
+def dareMo : Item :=
   { form := "dare-mo (誰も, neg)"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .universal
   , licensingContexts := [.negation]
   , scalarDirection := .strengthening
   , morphology := .indefPlusEven
-  , alternativeType := .domain
-  , nWordStatus := some .nWord }
+  , alternativeType := .domain }
 
 /-! ### FCI -/
 
 /-- *dare-demo* — free choice item: *dare-demo dekiru* 'anyone can do it'.
     wh + demo (built on the additive/'even' particle *mo*); free choice and
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
-def dareDemo : PolarityItemEntry :=
+def dareDemo : Item :=
   { form := "dare-demo (誰でも)"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , morphology := .indefPlusEven

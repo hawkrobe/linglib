@@ -253,19 +253,19 @@ def contextProperties : LicensingContext → ContextProperties
 
 /-- Zwarts-strength licensing, derived ([zwarts-1998], [gajewski-2011]):
 the context's Strawson-operative row supplies at least the item's required
-strength (`PolarityItemEntry.strength`, itself derived from
-`polarityType`). `false` when either side is not strength-keyed — those
+strength (the item's `licensor` field). `false` when either side is not
+strength-keyed — those
 items/contexts license via mechanism (`LicensingMechanism`), not
 signature. -/
-def strengthLicenses (e : Semantics.Polarity.PolarityItemEntry)
+def strengthLicenses (e : Semantics.Polarity.Item)
     (c : LicensingContext) : Bool :=
-  match (contextProperties c).strawsonSignature.toDEStrength, e.strength with
+  match (contextProperties c).strawsonSignature.toDEStrength, e.licensor with
   | some supplied, some required =>
       NaturalLogic.strengthSufficient supplied required
   | _, _ => false
 
 /-- `strengthLicenses` as a proposition. -/
-abbrev LicensedBySignature (e : Semantics.Polarity.PolarityItemEntry)
+abbrev LicensedBySignature (e : Semantics.Polarity.Item)
     (c : LicensingContext) : Prop :=
   strengthLicenses e c = true
 
@@ -293,23 +293,23 @@ def StrengthScale.licenses {Item Context S : Type*} [Preorder S]
   ∃ r ∈ L.required i, ∃ s ∈ L.supplied c, r ≤ s
 
 /-- The canonical Zwarts/[ladusaw-1979] scale: carrier `DEStrength`, item
-strength from `PolarityItemEntry.strength`, context strength from the row's
+strength from `Item.licensor`, context strength from the row's
 Strawson signature. The first instance of `StrengthScale`. -/
 def zwartsScale :
-    StrengthScale Semantics.Polarity.PolarityItemEntry LicensingContext
+    StrengthScale Semantics.Polarity.Item LicensingContext
       NaturalLogic.DEStrength where
-  required e := e.strength
+  required e := e.licensor
   supplied c := (contextProperties c).strawsonSignature.toDEStrength
 
 /-- The polymorphic scale subsumes the bespoke predicate: `zwartsScale.licenses`
 is exactly `LicensedBySignature` (derive-don't-duplicate). -/
-theorem zwartsScale_licenses_iff (e : Semantics.Polarity.PolarityItemEntry)
+theorem zwartsScale_licenses_iff (e : Semantics.Polarity.Item)
     (c : LicensingContext) :
     zwartsScale.licenses e c ↔ LicensedBySignature e c := by
   simp only [StrengthScale.licenses, zwartsScale, LicensedBySignature,
     strengthLicenses, NaturalLogic.strengthSufficient]
   cases (contextProperties c).strawsonSignature.toDEStrength <;>
-    cases e.strength <;> simp
+    cases e.licensor <;> simp
 
 /-! ### The licensing keystone -/
 
@@ -318,7 +318,7 @@ context-side: `c.licenses e` says environment `c` licenses item `e`.
 Dispatched on the row's `LicensingMechanism`:
 
 - signature rows (`byStrengthening`, `byStrawsonDE`): Zwarts-strength
-  licensing — the row's Strawson signature supplies at least `e.strength`
+  licensing — the row's Strawson signature supplies at least `e.licensor`
   (n-words require anti-morphic strength, so clausal negation is the only
   qualifying row);
 - `byGenericIndefinite` rows license free choice items;
@@ -329,21 +329,21 @@ The grounded grade — deriving the signature side from the context
 witnesses of `Witnesses.lean` via the Kadmon–Landman strengthening
 chain — is planned (N1 of the NPI-API sweep). -/
 def _root_.Features.LicensingContext.licenses (c : LicensingContext)
-    (e : Semantics.Polarity.PolarityItemEntry) : Prop :=
+    (e : Semantics.Polarity.Item) : Prop :=
   match (contextProperties c).mechanism with
   | .byStrengthening | .byStrawsonDE => LicensedBySignature e c
   | .byGenericIndefinite => e.isFCI
-  | .byEntropy => e.strength = some .weak
+  | .byEntropy => e.licensor = some .weak
   | .strengtheningFails => False
 
-instance (c : LicensingContext) (e : Semantics.Polarity.PolarityItemEntry) :
+instance (c : LicensingContext) (e : Semantics.Polarity.Item) :
     Decidable (c.licenses e) := by
   unfold Features.LicensingContext.licenses; split <;> infer_instance
 
 /-- On signature-mechanism rows the keystone is exactly Zwarts-strength
 licensing (`LicensedBySignature`). -/
 theorem licenses_iff_signature (c : LicensingContext)
-    (e : Semantics.Polarity.PolarityItemEntry)
+    (e : Semantics.Polarity.Item)
     (h : (contextProperties c).mechanism = .byStrengthening ∨
          (contextProperties c).mechanism = .byStrawsonDE) :
     c.licenses e ↔ LicensedBySignature e c := by

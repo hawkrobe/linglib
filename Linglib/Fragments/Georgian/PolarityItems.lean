@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Georgian Polarity-Sensitive Items
@@ -22,38 +22,32 @@ namespace Georgian.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPI
--- ============================================================================
+/-! ### NPI -/
 
 /-- *aravin* (არავინ) — Negative indefinite.
     Morphologically ara- (NEG) + vin (who): 'aravin (ar) mosula' (nobody came).
     Non-strict negative concord: verbal negation *ar* is optional. -/
-def aravin : PolarityItemEntry :=
+def aravin : Item :=
   { form := "aravin (არავინ)"
-  , polarityType := .npiWeak
+  , licensor := some .antiAdditive
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
-  , notes := "Negative indefinite: ara- (NEG) + vin (who); non-strict NC" }
+  , licensingContexts := [.negation, .nobody] }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### FCI -/
 
 /-- *nebismieri* (ნებისმიერი) — Free choice item.
     'Any / whichever': 'nebismier matarebels' (any train). -/
-def nebismieri : PolarityItemEntry :=
+def nebismieri : Item :=
   { form := "nebismieri (ნებისმიერი)"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , notes := "Free choice: any/every" }
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-theorem aravin_nebismieri_distinct :
-    aravin.polarityType ≠ nebismieri.polarityType := by decide
+/-- Every attested context of every entry is predicted licensed. -/
+theorem georgian_licensing_sound :
+    ∀ e ∈ [aravin, nebismieri], ∀ c ∈ e.licensingContexts, c.licenses e := by
+  decide
 
 end Georgian.PolarityItems

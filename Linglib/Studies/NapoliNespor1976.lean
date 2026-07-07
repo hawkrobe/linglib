@@ -69,7 +69,7 @@ open Pragmatics.Bias
    noContradictionProfile questionedProfile matrixNegatedProfile
    preciseProfile imperativeProfile)
 open Italian.PolarityItems (pur affatto neanche)
-open Semantics.Polarity (LicensingContext PolarityItemEntry)
+open Semantics.Polarity (LicensingContext Item)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Dario/Paolo dialogue paradigm (§2)
@@ -311,10 +311,10 @@ shows them follow from the bias profile. -/
 
     `.comparativeS` rather than `.comparativeNP` because surface NP-
     comparatives are not NPI environments ([hoeksema-1983] §3.6). -/
-def predictsWeakNPI (p : BiasLicensingProfile) (npi : PolarityItemEntry) : Prop :=
+def predictsWeakNPI (p : BiasLicensingProfile) (npi : Item) : Prop :=
   p.licenses ∧ npi.licensingContexts.contains .comparativeS = true
 
-instance (p : BiasLicensingProfile) (npi : PolarityItemEntry) :
+instance (p : BiasLicensingProfile) (npi : Item) :
     Decidable (predictsWeakNPI p npi) :=
   inferInstanceAs (Decidable (_ ∧ _))
 

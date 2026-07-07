@@ -28,7 +28,6 @@ without committing to a syntactic analysis. The syntactic derivation
 
 namespace Semantics.Negation
 
-open Semantics.Polarity (PolarityType)
 
 /-! ### EN blocking reasons -/
 
@@ -235,39 +234,5 @@ instance : OrderTop PolarityLicensing where
 
 /-- Strong EN (⊥) ≤ weak EN in the licensing lattice. -/
 theorem strongEN_le_weakEN : strongENProfile ≤ weakENProfile := by decide
-
-/-! ### Bridge: PolarityClass ↔ PolarityType -/
-
-/-- Partial map from PolarityClass to PolarityType.
-    Two of the four Greco classes correspond directly to PolarityType
-    constructors. N-words and not-also conjunctions are Italian-specific
-    categories without a PolarityType counterpart. -/
-def PolarityClass.toPolarityType? : PolarityClass → Option PolarityType
-  | .weakNPI   => some .npiWeak
-  | .strongNPI => some .npiStrong
-  | _          => none
-
-/-- Inverse: map PolarityType to PolarityClass (partial — only NPIs). -/
-def PolarityClass.fromPolarityType? : PolarityType → Option PolarityClass
-  | .npiWeak  => some .weakNPI
-  | .npiStrong => some .strongNPI
-  | _          => none
-
-/-- Round-trip: PolarityType → PolarityClass → PolarityType is identity
-    (for the NPI types that have counterparts). -/
-theorem PolarityClass.roundtrip_npiWeak :
-    (PolarityClass.fromPolarityType? .npiWeak).bind PolarityClass.toPolarityType?
-    = some .npiWeak := rfl
-
-theorem PolarityClass.roundtrip_npiStrong :
-    (PolarityClass.fromPolarityType? .npiStrong).bind PolarityClass.toPolarityType?
-    = some .npiStrong := rfl
-
-/-- Compose the bridges: look up a PolarityType in a licensing profile
-    by routing through PolarityClass. Returns `none` for types without
-    a PolarityClass counterpart (FCIs, PPIs, NPI-FCIs). -/
-def PolarityLicensing.licensesType (p : PolarityLicensing) (t : PolarityType) :
-    Option Bool :=
-  (PolarityClass.fromPolarityType? t).map p.licenses
 
 end Semantics.Negation

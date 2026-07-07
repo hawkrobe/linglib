@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Mandarin Polarity-Sensitive Items
@@ -17,29 +17,27 @@ namespace Mandarin.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPI/FCI
--- ============================================================================
+/-! ### NPI/FCI -/
 
 /-- *shéi* (谁, non-interrogative) — NPI/FCI.
     Wh-word as indefinite covers 7 Haspelmath functions: irrealis through
     free choice. Functions as both NPI (under negation, in questions) and
     FCI (in modal/generic contexts). -/
-def shei : PolarityItemEntry :=
+def shei : Item :=
   { form := "shéi (谁, non-interrog.)"
-  , polarityType := .npiFci
+  , licensor := some .weak
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
       [ .negation, .nobody, .question, .conditionalAntecedent
       , .modalPossibility, .modalNecessity, .imperative, .generic
       , .comparativeS ]
-  , scalarDirection := .strengthening
-  , notes := "Wh-word covers 7 functions: irrealis through free choice" }
+  , scalarDirection := .strengthening }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-theorem shei_is_npi_fci : shei.polarityType = .npiFci := rfl
+/-- Every attested context is predicted licensed. -/
+theorem shei_licensing_sound :
+    ∀ c ∈ shei.licensingContexts, c.licenses shei := by decide
 
 end Mandarin.PolarityItems
