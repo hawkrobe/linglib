@@ -182,6 +182,21 @@ theorem SpeechEvent.modal_declarative_iff
 
 /-! ### Flavor factors through the component classification -/
 
+/-- Modal flavors target the component their Kratzer parameter feeds:
+modal-base flavors the informational component, ordering-source
+flavors the preferential ([kratzer-1981]'s parameter roles under
+[portner-2018]'s component identification — imperatives as deontic
+ordering-source modals, desires as the ordering in his (4)). The
+third `HasTarget` instance, beside sentence mood (`Mood/Defs.lean`)
+and verbal mood (`Mood/Verbal.lean`): Portner's unification of
+verbal mood, sentence mood, and modal flavor as one classification. -/
+instance : HasTarget Semantics.Modality.ModalFlavor where
+  target
+    | .epistemic      => .informational
+    | .deontic        => .preferential
+    | .bouletic       => .preferential
+    | .circumstantial => .informational
+
 /-- The modal flavor a POSW component licenses, on [hacquard-2006]'s
     reading of `CON(e*)`: the informational component carries belief
     content (epistemic), the preferential component carries To-Do
@@ -202,6 +217,13 @@ def Component.flavor : Component → ModalFlavor
     imperative, and quotative acts. -/
 def Illocutionary.primaryFlavor (f : Illocutionary) : ModalFlavor :=
   (target f).flavor
+
+/-- `Component.flavor` is a section of the modal-flavor targeting on
+the two POSW components: the representative flavor of a component
+targets that component back. -/
+theorem target_flavor (c : Component) (h : c ≠ .inquisitive) :
+    target c.flavor = c := by
+  cases c <;> first | rfl | exact absurd rfl h
 
 /-- Hacquard's flavor assignment factors through [portner-2018]'s
     component targeting — definitionally. -/

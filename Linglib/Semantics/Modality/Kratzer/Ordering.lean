@@ -211,6 +211,13 @@ theorem bestWorlds_subset_optimal (f : ModalBase W) (g : OrderingSource W)
     bestWorlds f g w ⊆ (stateAt f g w).optimal :=
   fun _ hw => ⟨hw.1, fun v hv _ => hw.2 v hv⟩
 
+/-- Realism is fiber-reflexivity: a modal base is realistic iff every
+world belongs to its own induced information state. -/
+theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
+    (g : OrderingSource W) :
+    isRealistic f ↔ ∀ w, w ∈ (stateAt f g w).info :=
+  ⟨fun h w p hp => h w p hp, fun h w p hp => h w p hp⟩
+
 /-- On connected orderings the two best-world notions coincide. -/
 theorem bestWorlds_eq_optimal_of_connected (f : ModalBase W)
     (g : OrderingSource W) (w : W)
