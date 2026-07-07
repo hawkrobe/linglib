@@ -130,13 +130,6 @@ def licensedInClause (p : Particle) : ∀ {f : ClauseForm}, GermanClauseType f �
   | _, .vlInterrogative => decide (p.LicensedIn .constituentInterrogative)
   | _, .imperative      => decide (p.LicensedIn .imperative)
 
-/-- *wohl*'s licensing across German clause types is exactly the
-presence of EPIS in the clause type's mood structure — the formal
-content of the selectional restriction analysis. -/
-theorem wohl_iff_epis {f : ClauseForm} (ct : GermanClauseType f) :
-    licensedInClause wohl ct = ct.moodStructure.hasEpistemic := by
-  cases ct <;> rfl
-
 /-- Every MP is excluded from dass-VL clauses. -/
 theorem all_excluded_from_dassVL :
     ∀ mp ∈ modalParticles, licensedInClause mp .dassVL = false :=

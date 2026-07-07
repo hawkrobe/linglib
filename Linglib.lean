@@ -1759,7 +1759,6 @@ import Linglib.Semantics.Mood.Basic
 import Linglib.Semantics.Mood.Categories
 import Linglib.Semantics.Mood.ClauseType
 import Linglib.Semantics.Mood.Dynamic
-import Linglib.Semantics.Mood.Gutzmann
 import Linglib.Semantics.Mood.Component
 import Linglib.Semantics.Mood.Illocutionary
 import Linglib.Semantics.Mood.Modal
@@ -1911,7 +1910,6 @@ import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.TypeTheoretic.Basic
 import Linglib.Semantics.TypeTheoretic.Discourse
 import Linglib.Semantics.TypeTheoretic.WitnessQuantification
-import Linglib.Semantics.UseConditional.LTU
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.Verb.Defs
 import Linglib.Semantics.Verb.Denotation
