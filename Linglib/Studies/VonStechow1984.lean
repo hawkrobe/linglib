@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Differential
+import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Delineation
 import Mathlib.Tactic.Linarith
 
@@ -39,7 +39,7 @@ namespace VonStechow1984
 
 open Degree (comparativeSem equativeSem)
 open Core.Order (ScalePolarity)
-open Degree.Differential (differentialComparative factorEquative)
+open Degree (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 
 World-indexed degree semantics for comparative constructions requiring

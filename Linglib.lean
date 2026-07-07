@@ -1599,7 +1599,7 @@ import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Differential
+import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
