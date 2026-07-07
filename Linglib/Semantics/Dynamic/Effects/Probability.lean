@@ -286,12 +286,6 @@ This probability is the graded truth value.
 variable {ε : Type}
 
 /--
-Threshold semantics: entity satisfies predicate if measure exceeds threshold.
--/
-def thresholdSem (measure : ε → ℚ) (threshold : ℚ) (x : ε) : Bool :=
-  measure x > threshold
-
-/--
 Graded truth from threshold uncertainty.
 
 Given a prior over thresholds, the graded truth is the probability

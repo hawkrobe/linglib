@@ -145,7 +145,8 @@ theorem nestedThreshold_const_iff {E W : Type*}
     (cr : AgentCredence E W) (θ : ℚ) (a : E) (φ : (W → Bool)) (w : W) :
     (nestedThreshold (liftCredence cr) θ a φ) w = true ↔
     meetsThreshold cr θ a φ := by
-  simp only [nestedThreshold, liftCredence, meetsThreshold, decide_eq_true_eq]
+  simp only [nestedThreshold, liftCredence, meetsThreshold,
+    Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, id_eq, decide_eq_true_eq]
 
 -- ============================================================================
 -- §4. Standard Thresholds for Probability Expressions

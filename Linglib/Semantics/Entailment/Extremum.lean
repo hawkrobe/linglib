@@ -97,18 +97,18 @@ def InformationCollapse {W : Type*} (P : α → W → Prop) : Prop :=
     cross-world maximally informative. The converse requires
     threshold-witness assumptions on the world space (one direction only). -/
 theorem isMaxInf_of_isLeast_upward {W : Type*}
-    {P : α → W → Prop} (hUp : IsUpwardMonotone P) (w : W) (x : α)
+    {P : α → W → Prop} (hUp : Monotone P) (w : W) (x : α)
     (h : IsLeast {y | P y w} x) : IsMaxInf P x w := by
   refine ⟨h.1, fun y hy w' hx_w' => ?_⟩
-  exact hUp x y (h.2 hy) w' hx_w'
+  exact hUp (h.2 hy) w' hx_w'
 
 /-- Dually for downward-monotone families: the per-world largest-true value
     is cross-world maximally informative. -/
 theorem isMaxInf_of_isGreatest_downward {W : Type*}
-    {P : α → W → Prop} (hDown : IsDownwardMonotone P) (w : W) (x : α)
+    {P : α → W → Prop} (hDown : Antitone P) (w : W) (x : α)
     (h : IsGreatest {y | P y w} x) : IsMaxInf P x w := by
   refine ⟨h.1, fun y hy w' hx_w' => ?_⟩
-  exact hDown y x (h.2 hy) w' hx_w'
+  exact hDown (h.2 hy) w' hx_w'
 
 -- ════════════════════════════════════════════════════
 -- § 3. MIP licensing

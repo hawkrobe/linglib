@@ -38,7 +38,8 @@ namespace Degree.Antonymy
 @[simp] theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     contradictoryNeg d θ ↔ ¬ positiveMeaning d θ := by
-  simp only [contradictoryNeg, notPositiveMeaning, positiveMeaning, not_lt]
+  simp only [contradictoryNeg, notPositiveMeaning, positiveMeaning,
+    Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, id_eq, not_lt]
 
 /-- Double contradictory negation eliminates: "not [not happy]" = "happy".
 
@@ -67,7 +68,8 @@ theorem contradictory_exhaustive {max : Nat}
     (d : Degree max) (tp : ThresholdPair max) :
     inGapRegion d tp ↔ notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
   simp only [inGapRegion, notContraryNegMeaning, positiveMeaning',
-             Degree.positiveMeaning, not_lt]
+             Degree.positiveMeaning, Core.Order.Comparison.mem_over,
+             Core.Order.Comparison.rel, id_eq, not_lt]
 
 /-- When the gap is strict (θ_neg < θ_pos), there exists a degree that is
     "not unhappy" but NOT "happy" — double negation through contrary fails.
@@ -76,7 +78,8 @@ theorem contrary_gap_exists {max : Nat} (tp : ThresholdPair max)
     (h : (tp.neg : Degree max) < (tp.pos : Degree max)) :
     ∃ d : Degree max, notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
   refine ⟨↑tp.neg, le_refl _, ?_⟩
-  simp only [positiveMeaning', Degree.positiveMeaning, not_lt]
+  simp only [positiveMeaning', Degree.positiveMeaning,
+    Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, id_eq, not_lt]
   exact le_of_lt h
 
 /-- The gap region is nonempty when θ_neg < θ_pos. -/

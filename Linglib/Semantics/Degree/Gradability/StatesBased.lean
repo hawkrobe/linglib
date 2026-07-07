@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.ComparativeScale
 
 /-!
@@ -68,7 +69,7 @@ variable {S : Type*} [Preorder S]
     instead of `d > θ` (degree exceeds threshold), we have `c ≤ s`
     (state is at or above the contrast point in the preorder). -/
 def StatesBasedEntry.inPositiveRegion (entry : StatesBasedEntry S) (s : S) : Prop :=
-  entry.contrastPoint ≤ s
+  s ∈ Core.Order.Comparison.ge.over id entry.contrastPoint
 
 /-- A state is in the *lower* region iff it is at or below the contrast
     point. The dual of `inPositiveRegion`, used for negative-polarity
@@ -80,7 +81,7 @@ def StatesBasedEntry.inPositiveRegion (entry : StatesBasedEntry S) (s : S) : Pro
     `Mathlib.Order.UpperLower` provides `UpperSet` and `LowerSet` as
     separate types over the same preorder. -/
 def StatesBasedEntry.inLowerRegion (entry : StatesBasedEntry S) (s : S) : Prop :=
-  s ≤ entry.contrastPoint
+  s ∈ Core.Order.Comparison.le.over id entry.contrastPoint
 
 /-- Two entries with strictly-ordered contrast points carve out
     disjoint upper/lower regions. If `e_pos.contrastPoint > e_low.contrastPoint`
