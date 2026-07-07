@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mood.Component
+import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Modality.EventRelativity
 
 /-!

@@ -1,4 +1,5 @@
 import Mathlib.Data.Setoid.Basic
+import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Modal
 
 /-!
@@ -397,4 +398,26 @@ theorem boxAns_not_reducible_to_boxCs :
   ⟨sepInquiry, sepProp, boxAns_sepInquiry_sepProp, not_boxCs_sepInquiry_sepProp⟩
 
 end State
+
+/-! ### The modal projection -/
+
+variable {W : Type*}
+
+/-- The necessity modal quantifying over a component — `boxCs`,
+`boxLe`, or `boxAns`. Mood interpretations factor through it as
+`boxOn ∘ target` (`VerbalOp.interp`, `SpeechEvent.modal`). -/
+def Component.boxOn : Component → State W → (W → Prop) → Prop
+  | .informational, c, p => c.toExpState.boxCs p
+  | .preferential,  c, p => c.toExpState.boxLe p
+  | .inquisitive,   c, p => c.boxAns p
+
+@[simp] theorem boxOn_informational (c : State W) (p : W → Prop) :
+    Component.informational.boxOn c p = c.toExpState.boxCs p := rfl
+
+@[simp] theorem boxOn_preferential (c : State W) (p : W → Prop) :
+    Component.preferential.boxOn c p = c.toExpState.boxLe p := rfl
+
+@[simp] theorem boxOn_inquisitive (c : State W) (p : W → Prop) :
+    Component.inquisitive.boxOn c p = c.boxAns p := rfl
+
 end Mood

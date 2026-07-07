@@ -21,6 +21,8 @@ embedding predicates, and the bridge from the UD `Mood` feature.
   its epistemic-authority assignment.
 * `ClauseType` — force × mood.
 * `Selector` — mood selection by embedding predicate class.
+* `Component`, `HasTarget` — [portner-2018]'s classification: the
+  coordinate of the mood state each category operates on.
 * `UD.Mood.toClauseType` — corpus bridge.
 
 The Searle-class and direction-of-fit API for `Illocutionary` is in
@@ -106,6 +108,43 @@ def ClauseType.polarQuestion : ClauseType :=
 /-- The epistemic authority of a clause type, via its force. -/
 def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
   Illocutionary.authority ct.force
+
+/-! ### Mood components -/
+
+/-- The component of the mood state that a mood-bearing object operates
+on ([portner-2018], Ch. 4): his unification thesis is that the surface
+diversity of mood phenomena reduces to which component gets touched. -/
+inductive Component where
+  /-- The information coordinate (`State.info`, Portner's context set). -/
+  | informational
+  /-- The ordering coordinate (`State.order`). -/
+  | preferential
+  /-- The inquiry coordinate (`State.inquiry`). -/
+  | inquisitive
+  deriving DecidableEq, Repr
+
+/-- The class of mood-bearing types: `target m` is the component `m`
+operates on. "Target" is selection-side vocabulary — a verbal mood is
+*selected by* the embedding attitude ([portner-2018], Ch. 2), so its
+target is the component the selecting predicate's modality quantifies
+over, not an operation the morpheme performs. -/
+class HasTarget (M : Type*) where
+  target : M → Component
+
+export HasTarget (target)
+
+/-- Sentence-mood targets ([portner-2018], Ch. 3). The promissive and
+exclamative assignments are linglib extensions beyond Portner's
+declarative/imperative/interrogative trichotomy; the exclamative one
+sits in tension with its null direction of fit
+(`Discourse/SpeechAct.lean`) and is a conjectural placeholder. -/
+instance : HasTarget Illocutionary where
+  target
+    | .declarative   => .informational
+    | .imperative    => .preferential
+    | .promissive    => .preferential
+    | .interrogative => .inquisitive
+    | .exclamative   => .informational
 
 /-! ### Mood selection by predicate class -/
 
