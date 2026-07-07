@@ -2,6 +2,7 @@ import Mathlib.Order.Antisymmetrization
 import Mathlib.Data.Fintype.Card
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.GCongr
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Features.Dimension
 import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Measurement
@@ -483,10 +484,13 @@ theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
            fun c => ⟨(le_trans · hab), (le_trans · hba)⟩⟩
 
 /-- [bale-2008]'s universal-degree homomorphism on a finite scale: the
-    relative position of `d`, in Ω ≅ ℚ ∩ (0, 1]. Defined on whatever
-    carrier plays the primary scale — in Bale's regime the *quotient*,
-    so equivalent individuals share a universal degree by construction
-    and the value counts equivalence classes, not individuals. -/
+    relative position of `d`, valued in an order-isomorphic *model* of
+    Ω (the paper takes Ω to be isomorphic to ℚ ∩ [0, 1]; only the order
+    on the values is ever consumed — universal degrees are ordinal, not
+    arithmetic). Defined on whatever carrier plays the primary scale —
+    in Bale's regime the *quotient*, so equivalent individuals share a
+    universal degree by construction and the value counts equivalence
+    classes, not individuals. -/
 def relativeRank {D : Type*} [Fintype D] [LinearOrder D] (d : D) : ℚ :=
   (Finset.univ.filter (· ≤ d)).card / Fintype.card D
 
@@ -523,6 +527,93 @@ theorem relativeRank_mem_Ioc {D : Type*} [Fintype D] [LinearOrder D] (d : D) :
   · exact_mod_cast Finset.card_pos.mpr ⟨d, by simp⟩
   · rw [div_le_one hD]
     exact_mod_cast Finset.card_filter_le _ _
+
+
+
+/-! ### Transport: which operators are natural in the scale
+
+The functoriality table for degree operators under change of scale
+representation (a `StrictMono` map between scales — precisely the
+`admissibleMeasure` condition, so an admissible measure IS a
+scale-morphism): comparatives, equatives, and the max-quantified
+comparative are invariant; the positive form transports only if the
+threshold rides along. This derives the classic observation that
+comparatives are context-independent while the positive form needs a
+contextually fixed standard: *pos* is the one non-natural operator. -/
+
+section Transport
+
+variable {Entity D D' : Type*} [LinearOrder D] [Preorder D']
+  {f : D → D'} {μ : Entity → D}
+
+/-- Comparatives are invariant under change of scale representation. -/
+theorem comparativeSem_comp (hf : StrictMono f) (a b : Entity)
+    (dir : Core.Order.ScalePolarity) :
+    comparativeSem (f ∘ μ) a b dir ↔ comparativeSem μ a b dir := by
+  cases dir <;> exact hf.lt_iff_lt
+
+/-- Equatives are invariant under change of scale representation. -/
+theorem equativeSem_comp (hf : StrictMono f) (a b : Entity)
+    (dir : Core.Order.ScalePolarity) :
+    equativeSem (f ∘ μ) a b dir ↔ equativeSem μ a b dir := by
+  cases dir <;> exact hf.le_iff_le
+
+end Transport
+
+section TransportMax
+
+variable {Entity D D' : Type*} [LinearOrder D] [LinearOrder D']
+  {f : D → D'} {μ : Entity → D}
+
+/-- The max-quantified comparative is invariant under change of scale
+    representation. Not immediate: `thanDegrees` is a downset and images
+    of downsets need not be downsets, but the greatest element rides
+    along (`f δ` is greatest in the transported set, and conversely any
+    greatest transported degree is `f` of a witness measure). -/
+theorem maxComparative_comp (hf : StrictMono f)
+    (Pmatrix Pthan : Entity → Prop) :
+    maxComparative Pmatrix Pthan (f ∘ μ) ↔ maxComparative Pmatrix Pthan μ := by
+  constructor
+  · rintro ⟨δ', ⟨⟨x₀, hQ, hδx₀⟩, hub⟩, x, hP, hlt⟩
+    have hx₀mem : f (μ x₀) ∈ thanDegrees Pthan (f ∘ μ) := ⟨x₀, hQ, le_rfl⟩
+    have hδeq : δ' = f (μ x₀) := le_antisymm hδx₀ (hub hx₀mem)
+    refine ⟨μ x₀, ⟨⟨x₀, hQ, le_rfl⟩, ?_⟩, x, hP, ?_⟩
+    · rintro d ⟨y, hQy, hdy⟩
+      have : f (μ y) ≤ δ' := hub ⟨y, hQy, le_rfl⟩
+      exact hdy.trans (hf.le_iff_le.mp (hδeq ▸ this))
+    · exact hf.lt_iff_lt.mp (hδeq ▸ hlt)
+  · rintro ⟨δ, ⟨hδmem, hub⟩, x, hP, hlt⟩
+    refine ⟨f δ, ⟨?_, ?_⟩, x, hP, hf hlt⟩
+    · obtain ⟨y, hQy, hδy⟩ := hδmem
+      exact ⟨y, hQy, hf.monotone hδy⟩
+    · rintro d ⟨y, hQy, hdy⟩
+      exact hdy.trans (hf.monotone (hub ⟨y, hQy, le_rfl⟩))
+
+/-- The positive form transports only as a *pair*: rescaling the measure
+    commutes with membership when the threshold is rescaled too. -/
+theorem mem_ge_over_comp (hf : StrictMono f) (θ : D) (x : Entity) :
+    x ∈ Core.Order.Comparison.ge.over (f ∘ μ) (f θ) ↔ x ∈ Core.Order.Comparison.ge.over μ θ :=
+  hf.le_iff_le
+
+/-- With a *fixed* threshold the positive form is not natural: some
+    strictly monotone rescaling changes the verdict. The one non-natural
+    operator in the table — the formal face of the positive form's
+    context-dependence. -/
+theorem positive_not_natural :
+    ∃ f : ℚ → ℚ, StrictMono f ∧ ∃ (μ : ℚ → ℚ) (θ x : ℚ),
+      x ∈ Core.Order.Comparison.ge.over μ θ ∧ x ∉ Core.Order.Comparison.ge.over (f ∘ μ) θ := by
+  refine ⟨(· - 1), fun a b h => by simpa, id, 0, 0, ?_, ?_⟩ <;>
+    simp [Core.Order.Comparison.mem_over, Core.Order.Comparison.rel]
+
+end TransportMax
+
+/-- Universal property of the degree construction: any φ-invariant map
+    factors through `CresswellDegree φ` — the quotient is the initial
+    scale a comparison relation determines. -/
+theorem factors_through_cresswellDegree {E X : Type*} {φ : E → E → Prop}
+    (g : E → X) (hg : ∀ a b, (cresswellSetoid φ).r a b → g a = g b) :
+    ∃ ĝ : CresswellDegree φ → X, ĝ ∘ (Quotient.mk (cresswellSetoid φ)) = g :=
+  ⟨Quotient.lift g hg, rfl⟩
 
 
 end Degree
