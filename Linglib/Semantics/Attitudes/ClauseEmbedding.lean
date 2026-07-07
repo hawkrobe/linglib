@@ -16,7 +16,7 @@ adjective. English requires "be", Mandarin and Japanese do not. The
 copula and its syntax belong in the Theory/Syntax layer, not here.
 -/
 
-namespace Degree
+namespace Semantics.Attitudes
 
 open Features (Attitude)
 open NaturalLogic (EntailmentSig)
@@ -40,4 +40,4 @@ structure ClauseEmbeddingAdj where
   complementSig : Option EntailmentSig := none
   deriving Repr, BEq
 
-end Degree
+end Semantics.Attitudes

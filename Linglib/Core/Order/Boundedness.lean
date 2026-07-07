@@ -1,4 +1,8 @@
 import Mathlib.Order.Basic
+import Mathlib.Order.WithBot
+import Mathlib.Order.Nat
+import Mathlib.Order.Max
+import Mathlib.Order.BoundedOrder.Basic
 
 /-!
 # Scale boundedness and the licensing pipeline
@@ -191,5 +195,31 @@ inductive ScalePolarity where
   | positive
   | negative
   deriving DecidableEq, Repr
+
+
+/-! ### Degree carrier per scale shape
+
+A computable order-proxy carrier for each boundedness shape — only the
+`OrderTop`/`NoMaxOrder` mixin matters, not the carrier. The grounding is
+proved once at the 4-case level; per-dimension views transport it
+(`Features.ScalarDimension.degree`). -/
+
+/-- Degree carrier per boundedness shape: a greatest element exists exactly
+    when the scale `HasMax`. -/
+abbrev Boundedness.degreeShape : Boundedness → Type
+  | .open_ | .lowerBounded => ℕ
+  | .upperBounded | .closed => WithTop ℕ
+
+instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShape := by
+  cases b <;> exact inferInstance
+
+/-- A greatest degree exists exactly when the classification says `HasMax`. -/
+theorem Boundedness.hasGreatest_degreeShape_iff (b : Boundedness) :
+    (∃ m : b.degreeShape, IsTop m) ↔ b.HasMax := by
+  cases b
+  · exact iff_of_false (fun ⟨m, hm⟩ => not_isMax m hm.isMax) (by decide)
+  · exact iff_of_false (fun ⟨m, hm⟩ => not_isMax m hm.isMax) (by decide)
+  · exact iff_of_true ⟨⊤, isTop_top⟩ (by decide)
+  · exact iff_of_true ⟨⊤, isTop_top⟩ (by decide)
 
 end Core.Order

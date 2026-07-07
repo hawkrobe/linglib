@@ -1,4 +1,5 @@
 import Mathlib.Order.Basic
+import Linglib.Semantics.Degree.DirectedMeasure
 
 /-!
 # Marginality Scales
@@ -14,7 +15,7 @@ determines licensing from boundedness, while an `MLScale` adds granularity
 structure (marginal vs. large difference) on the same `LinearOrder`.
 -/
 
-namespace Degree
+namespace DinisJacinto2026
 
 /-- ML theory ([dinis-jacinto-2026], Fig. 1): a linear order enriched with
     a primitive "marginally smaller than" relation M satisfying five axioms.
@@ -81,4 +82,21 @@ theorem m_bounded (x y z : α) (hxz : ml.M x z) (hxy : x < y) (hyz : y < z) :
 
 end MLScale
 
-end Degree
+/-! ### Marginality scales ([dinis-jacinto-2026]) -/
+
+open Core.Order Degree
+
+structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
+    Degree.DirectedMeasure α W where
+  ml : MLScale α
+
+def marginalityPositive {α : Type*} [LinearOrder α]
+    (ml : MLScale α) (norm degree : α) : Prop :=
+  ml.L norm degree
+
+theorem marginality_entails_standard {α : Type*} [LinearOrder α]
+    (ml : MLScale α) (norm degree : α)
+    (h : marginalityPositive ml norm degree) : norm < degree :=
+  h.1
+
+end DinisJacinto2026

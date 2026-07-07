@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.ClauseEmbedding
+import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Verb.Basic
 
 /-!
@@ -15,7 +15,7 @@ that need a uniform `Verb` interface.
 
 namespace English.Predicates.Copular
 
-open Degree (ClauseEmbeddingAdj)
+open Semantics.Attitudes (ClauseEmbeddingAdj)
 open Semantics.Lexical
 
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
@@ -57,8 +57,8 @@ open Semantics.Lexical in
     The copula contributes "be"; the adjective contributes the semantics.
     This is English-specific — other languages realize clause-embedding
     adjectives differently (zero copula, verbal adjectives, etc.). -/
-def Degree.ClauseEmbeddingAdj.toVerb
-    (a : Degree.ClauseEmbeddingAdj) : Verb where
+def Semantics.Attitudes.ClauseEmbeddingAdj.toVerb
+    (a : Semantics.Attitudes.ClauseEmbeddingAdj) : Verb where
   form := "be " ++ a.adjForm
   frames := [a.complementType.toFrame]
   presupType := a.presupType

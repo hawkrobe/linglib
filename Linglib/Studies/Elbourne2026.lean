@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Classification
+import Linglib.Semantics.Modification.Adjective
 
 /-!
 # Elbourne (2026): Adjectives without syntactic categories

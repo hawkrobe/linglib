@@ -3,7 +3,7 @@ import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.GameTheory
 import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Pragmatics.RSA.CombinedUtility
-import Linglib.Semantics.Degree.Gradability.Classification
+import Linglib.Semantics.Modification.Adjective
 
 /-!
 # [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] — Emotion Prediction as

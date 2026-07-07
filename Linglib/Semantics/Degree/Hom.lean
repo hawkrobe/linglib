@@ -3,24 +3,26 @@ import Linglib.Semantics.Degree.Gradability.Delineation
 import Linglib.Semantics.Degree.Measurement
 
 /-!
-# Degree Semantics Hierarchy
+# Morphisms between gradability representations
 [klein-1980] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
 
-Three frameworks for gradable predicate semantics form a strict
-subsumption hierarchy:
+The maps between the three framework objects for gradable predicates,
+with their faithfulness theorems — the degree-semantic analogue of the
+representation maps in `Phonology/Autosegmental` (AR ↔ tone strings):
 
 ```
 Klein (Delineation)          — most general
-  ↑ measureDelineation
-Kennedy (Degree)             — specialization: single linear scale
-  ↑ MeasureFn.toHasDegree
-Scontras / Bale & Schwarz (Measurement) — specialization: typed dimension
+  ↑ degree_to_delineation
+Kennedy (threshold degrees)  — specialization: single linear scale
+  ↑ measure_to_degree
+Scontras / Bale & Schwarz (typed measurement)
 ```
 
-Each arrow is an embedding: the lower framework's predictions are a
-special case of the higher framework's. The hierarchy is **strict**:
-delineation can express nonlinear adjectives ("clever") that no degree
-function can induce.
+Each map is an embedding (`ordering_faithful`,
+`measurement_refines_degree`); the composite is `measure_to_delineation`.
+Strictness: delineation expresses nonlinear adjectives ("clever") that
+no degree function induces (`delineation_strictly_more_general`,
+`nonlinear_delineation_exists`).
 
 ## What each framework adds
 
@@ -45,7 +47,7 @@ function can induce.
 11. **very_degree_chain**: Klein's `very` = two-step degree chain
 -/
 
-namespace Degree.Hierarchy
+namespace Degree
 
 open Degree.Delineation
 
@@ -427,4 +429,4 @@ theorem very_strictly_stronger_degree :
   simp only [id] at hlt_z hlt_y
   omega
 
-end Degree.Hierarchy
+end Degree
