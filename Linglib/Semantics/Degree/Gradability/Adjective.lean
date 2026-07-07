@@ -4,7 +4,7 @@ import Linglib.Features.ScalarDimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Degree.Standard
 import Linglib.Syntax.Adjective.Basic
 
 /-!

@@ -1614,7 +1614,7 @@ import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Studies.DinisJacinto2026
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Degree.Standard
 import Linglib.Studies.Buring2007
 import Linglib.Semantics.Degree.MeasureOfChange
 import Linglib.Semantics.Degree.Measure

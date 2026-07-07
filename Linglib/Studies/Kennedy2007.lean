@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Degree.Standard
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Fragments.English.Predicates.Adjectival
