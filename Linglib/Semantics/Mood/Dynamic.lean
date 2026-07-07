@@ -4,32 +4,42 @@ import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.Defs
 
 /-!
-# Dynamic Mood Operators
+# Dynamic mood operators
 
-`dynIND` and `dynSUBJ` are the dynamic counterparts of the static
-`Mood.IND` and `Mood.SUBJ` of [mendes-2025] (`Mood/Situation.lean`),
-instantiating the two basic operations of the powerset monad on
-situation contexts: `dynIND` is *eliminative* — the `dynRelationOn`
-filter on the `sameWorld` kernel, comparing the entry's current
-situation with a bound variable — and `dynSUBJ` is *generative* — the
-`dynIntroduce` Kleisli composition over the `historicalBase`
-generator, binding the freshly drawn situation. The static and
-dynamic faces call the same kernel and the same generator, lifted
-from a state-level predicate to a context-level operation
-(`dynSUBJ_realizes_SUBJ`).
+This file defines the dynamic counterparts of the static mood
+operators of `Mood/Situation.lean`, as updates on situation contexts:
 
-The eliminative/generative split is the canonical algebraic shape of
-dynamic semantics: [heim-1982]'s file change is intersection for a
-static condition and file-card creation for an indefinite;
-[veltman-1996] formalizes the eliminative side as the test
-`[φ]σ = {w ∈ σ : w ⊨ φ}`; [groenendijk-stokhof-veltman-1996] split
-context updates into eliminative tests and generative introductions
-for discourse referents; [charlow-2021] casts both as monadic effects
-— here `dynRelationOn` is `Set.filter` and `dynIntroduce` is
-`Set.bind` — with [de-groote-2006]'s CPS translation as the
-continuation-style rendering. `Grammatical.dynOp` assigns each
-grammatical mood its operator, so the polarity contrast is a pair of
-theorems about the assignment rather than a stipulated feature.
+* `dynIND` filters a context by the `sameWorld` kernel, comparing each
+  entry's current situation with the situation bound to a variable;
+* `dynSUBJ` replaces each entry with one entry per situation in the
+  historical base of its current situation, binding the fresh
+  situation to a variable.
+
+These are the two basic operations of the powerset monad on contexts:
+a filter and a Kleisli bind. The eliminative/generative contrast
+between them is the classical two-sorted update repertoire of dynamic
+semantics. `Grammatical.dynOp` assigns an operator to each grammatical
+mood, so the polarity of a mood is a theorem about the assignment
+(`dynOp_indicative_isFilter`, `dynOp_subjunctive_introduces`) rather
+than a stipulated feature.
+
+## Main statements
+
+* `dynSUBJ_realizes_SUBJ`: on singleton contexts, `dynSUBJ` realizes
+  the static existential `SUBJ` of [mendes-2025].
+* `dynIND_after_dynSUBJ_same_var`: indicative retrieval of a
+  just-introduced subjunctive variable is vacuous.
+
+## References
+
+* [heim-1982]: file change semantics — intersection for conditions,
+  file-card creation for indefinites.
+* [veltman-1996]: the eliminative test `[φ]σ = {w ∈ σ : w ⊨ φ}`.
+* [groenendijk-stokhof-veltman-1996]: eliminative tests and
+  generative introductions for discourse referents.
+* [charlow-2021], [de-groote-2006]: the monadic and
+  continuation-style renderings; here `dynRelationOn` is `Set.filter`
+  and `dynIntroduce` is `Set.bind`.
 -/
 
 namespace Mood
