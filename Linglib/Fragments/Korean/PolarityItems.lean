@@ -9,7 +9,7 @@ Korean indefinite pronoun polarity items, typed by the categories from
 
 Korean, like Japanese, builds polarity items from wh-words + particles:
 - **nwukwu** (bare): Weak NPI in non-interrogative uses
-- **nwukwu-to** (neg): wh + to under negation → NPI (nobody)
+- **nwukwu-to** (with clausemate negation): wh + to → 'nobody'
 - **nwukwu-na**: wh + na → FCI (anyone)
 -/
 
@@ -17,9 +17,7 @@ namespace Korean.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPIs
--- ============================================================================
+/-! ### NPIs -/
 
 /-- *nwukwu* (누구, bare) — Weak NPI.
     Bare wh-word as indefinite in non-interrogative non-specific contexts
@@ -29,22 +27,22 @@ def nwukwu : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent]
-  , scalarDirection := .strengthening
-  , notes := "Bare wh-word as non-specific indefinite" }
+  , scalarDirection := .strengthening }
 
-/-- *nwukwu-to* (누구도, under negation) — N-word.
-    wh + to under negation: 'nwukwu-to an wass-ta' (nobody came). -/
+/-- *nwukwu-to* (누구도, with clausemate negation) — n-word: *nwukwu-to an
+    wass-ta* 'nobody came'. wh + the additive/'even' particle *-to*, requiring
+    clausemate negation — the strict-negative-concord parallel of Japanese
+    *dare-mo* (see `Japanese.PolarityItems.dareMo`). -/
 def nwukwuTo : PolarityItemEntry :=
   { form := "nwukwu-to (누구도, neg)"
-  , polarityType := .npiWeak
+  , polarityType := .npiStrong
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , notes := "wh + to under negation: nobody" }
+  , morphology := .indefPlusEven
+  , nWordStatus := some .nWord }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### FCI -/
 
 /-- *nwukwu-na* (누구나) — Free choice item.
     wh + na: 'nwukwu-na hal su issda' (anyone can do it). -/
@@ -53,11 +51,9 @@ def nwukwuNa : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , notes := "wh + na: free choice / universal" }
+  , morphology := .indefPlusEven }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
 theorem korean_npis_strengthening :
     [nwukwu, nwukwuTo].all
