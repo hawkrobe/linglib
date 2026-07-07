@@ -4,19 +4,23 @@ import Mathlib.Order.Lattice
 
 /-!
 # Partially Ordered Set of Worlds (POSW)
-[portner-2018] [kratzer-1981] [stalnaker-1978] [farkas-2003] [condoravdi-lauer-2012]
+[portner-2018] [veltman-1996] [kratzer-1981] [stalnaker-1978] [condoravdi-lauer-2012]
 
 [portner-2018] (Ch. 4) argues that the apparently disparate "mood"
-phenomena — verbal mood (indicative/subjunctive selection by attitudes),
-sentence mood (declarative/imperative/interrogative force), and modal
-flavor (epistemic/deontic/bouletic) — all share a single mathematical
-substrate: a **partially ordered set of worlds** that the relevant
-linguistic objects update or quantify over. The pair-of-information-and-
-ordering structure with `+`/`⋆` updates predates [portner-2018];
-[farkas-2003] introduces it for assertion-vs-direction, and the
-Stalnakerian context-set/Kratzerian ordering-source decomposition behind
-it goes back to [stalnaker-1978] and [kratzer-1981].
-[condoravdi-lauer-2012] works out the preferential-modal side
+phenomena — verbal mood (indicative/subjunctive selection by
+attitudes, Ch. 2), sentence mood (declarative/imperative/interrogative
+force, Ch. 3), and modal flavor (epistemic/deontic/bouletic) — all
+share a single mathematical substrate: a **partially ordered set of
+worlds** that the relevant linguistic objects update or quantify over.
+The pair-of-information-and-ordering structure predates
+[portner-2018]: it is [veltman-1996]'s expectation state `⟨ε, s⟩` (§3
+there) — a fact set plus a normality preorder on worlds, where factual
+update refines the set and `normally`-update refines the ordering —
+and the Stalnakerian context-set/Kratzerian ordering-source
+decomposition behind it goes back to [stalnaker-1978] and
+[kratzer-1981]. [farkas-2003] contributes the assertive fixed-point
+characterization of the informational side (§ *Assertive fixed-point*
+below). [condoravdi-lauer-2012] works out the preferential-modal side
 (desire predicates over orderings) in detail. **Caveat**: C&L's
 *preference structures* are strict partial orders on **propositions**
 (`Set (Set W)`), one type level above POSW's preorder on **worlds**
@@ -62,20 +66,23 @@ mathematical core of Portner's unification thesis.
 - We work with `W → Prop` (classical propositions) rather than `W → Bool`
   (decidable propositions) because POSW is the foundational substrate;
   decidability concerns belong downstream.
-- [portner-2018] (Ch. 4, footnote 3) flags a strict-typing wart:
-  on his definition `c + p` is technically not a POSW because the
-  ordering is not restricted to the new (smaller) `cs`. We inherit the
-  same wart (our `plus` keeps `c.le` unchanged), and the same
-  workaround: read the `le_refl` / `le_trans` axioms as conditioned on
-  `cs`-membership, so behaviour outside `cs` is irrelevant.
+- [portner-2018] flags a strict-typing wart (-- UNVERIFIED: footnote
+  number): on his definition `c + p` is technically not a POSW because
+  the ordering is not restricted to the new (smaller) `cs`. We keep
+  the same behaviour (our `plus` leaves `c.le` unchanged) —
+  deliberately, not as a workaround: [veltman-1996] (fn. 5) shows the
+  ordering must live on all of `W` rather than on the current fact
+  set, or rule-persistence fails under factual update. The `le_refl` /
+  `le_trans` axioms are conditioned on `cs`-membership, so behaviour
+  outside `cs` is irrelevant.
 - We use a reflexive partial preorder `le` matching the partition /
   `Setoid` lattice convention (finer ≤ coarser).
 
 ## Lattice unification (linglib extension)
 
-[portner-2018] writes eq. (2a) as set intersection and eq. (2b)
-via Condoravdi-Lauer ordering refinement; the `?`-update (our
-extension) is naturally a `Setoid` meet. All three updates turn out
+[portner-2018] defines the `+`-update as set intersection and the
+`⋆`-update via Condoravdi-Lauer ordering refinement; the `?`-update
+(our extension) is naturally a `Setoid` meet. All three updates turn out
 to be **`inf` in three parallel mathlib lattices**, none of which
 appear in [portner-2018]:
 
@@ -91,7 +98,7 @@ lattice. Commutativity (`star_star_comm_le`), idempotency
 (`star_star_self_le`), and the corresponding theorems on the other
 two updates all collapse to one-line invocations of `inf_right_comm`
 / `inf_idem` in the appropriate lattice. The `K`-axiom for `boxCs` /
-`boxLe` (§8) is the universal-quantification-preserves-inf pattern.
+`boxLe` (the *Normal modality structure* section) is the universal-quantification-preserves-inf pattern.
 -/
 
 namespace Semantics.Mood
@@ -102,7 +109,8 @@ universe u
     `cs` of worlds equipped with a reflexive transitive ordering `le`
     on `cs`. [portner-2018] (Ch. 4) writes the ordering `<`
     (at-least-as-good); we use `le` for mathlib alignment. The
-    underlying pair structure appears already in [farkas-2003].
+    underlying pair structure appears already in [veltman-1996]'s
+    expectation states.
 
     Non-emptiness is not enforced at the type level — empty POSWs are
     pathological but algebraically permitted (e.g., the result of
@@ -123,24 +131,25 @@ namespace POSW
 
 variable {W : Type u}
 
-/-! ## §1. Updates: `+` and `⋆` -/
+/-! ### Updates: `+` and `⋆` -/
 
-/-- **`+`-update** ([portner-2018], Ch. 4 §4.1; [farkas-2003]):
-    refine `cs` by intersection with `p`. Leaves `≤` untouched.
+/-- **`+`-update** ([portner-2018]; [stalnaker-1978]): refine `cs` by
+    intersection with `p`. Leaves `≤` untouched.
 
     Used by assertion (Stalnakerian context-set update) and by `□_cs`
     modals' restriction.
 
-    *Footnote 3 wart*: the resulting `le` is not strictly restricted to
-    the new `cs`, but the structure satisfies the (cs-conditioned)
-    POSW axioms. -/
+    The resulting `le` is not restricted to the new `cs` — deliberately
+    (see the module docstring's note on [veltman-1996], fn. 5); the
+    structure satisfies the (cs-conditioned) POSW axioms. -/
 def plus (c : POSW W) (p : W → Prop) : POSW W where
   cs := fun w => c.cs w ∧ p w
   le := c.le
   le_refl  := fun w hw => c.le_refl w hw.1
   le_trans := fun w u v hw hu hv => c.le_trans w u v hw.1 hu.1 hv.1
 
-/-- **`⋆`-update** ([portner-2018], Ch. 4 §4.1; [farkas-2003]):
+/-- **`⋆`-update** ([portner-2018]; ordering refinement as in
+    [veltman-1996]'s `normally`-update):
     refine `≤` by promoting `p`-worlds. The new ordering keeps the old
     ordering and additionally requires that whenever the upper world
     satisfies `p`, the lower world does too.
@@ -154,7 +163,7 @@ def star (c : POSW W) (p : W → Prop) : POSW W where
   le_trans := fun w u v hw hu hv => fun ⟨hwu, hwu'⟩ ⟨huv, huv'⟩ =>
     ⟨c.le_trans w u v hw hu hv hwu huv, fun hp => hwu' (huv' hp)⟩
 
-/-! ## §2. Modals: `□_cs` and `□_≤` -/
+/-! ### Modals: `□_cs` and `□_≤` -/
 
 /-- A world is **best** in `c` if it is in `cs` and at least as good
     as every other `cs`-world. The quantification domain of
@@ -162,23 +171,20 @@ def star (c : POSW W) (p : W → Prop) : POSW W where
 def best (c : POSW W) (w : W) : Prop :=
   c.cs w ∧ ∀ v, c.cs v → c.le v w
 
-/-- **Informational necessity** `□_cs` ([portner-2018], Ch. 4 §4.1):
+/-- **Informational necessity** `□_cs` ([portner-2018], Ch. 2):
     `p` holds at every world in the context set. The semantics of
     `believe` and the Stalnakerian context-set entailment. -/
 def boxCs (c : POSW W) (p : W → Prop) : Prop :=
   ∀ w, c.cs w → p w
 
-/-- **Preferential necessity** `□_≤` ([portner-2018], Ch. 4 §4.1):
+/-- **Preferential necessity** `□_≤` ([portner-2018], Ch. 2):
     `p` holds at every `≤`-best world in the context set. The
     semantics of `want` and Kratzerian deontic/bouletic modals
     ([kratzer-1981], [condoravdi-lauer-2012]). -/
 def boxLe (c : POSW W) (p : W → Prop) : Prop :=
   ∀ w, c.best w → p w
 
-@[deprecated boxLe (since := "2026-04-18")]
-abbrev boxLt (c : POSW W) (p : W → Prop) : Prop := c.boxLe p
-
-/-! ## §3. Algebraic facts -/
+/-! ### Algebraic facts -/
 
 @[simp] theorem plus_cs (c : POSW W) (p : W → Prop) (w : W) :
     (c.plus p).cs w ↔ c.cs w ∧ p w := Iff.rfl
@@ -197,13 +203,14 @@ abbrev boxLt (c : POSW W) (p : W → Prop) : Prop := c.boxLe p
 `+`-update on `cs` *is* meet in the Heyting algebra `W → Prop`: the new
 context set is the pointwise conjunction of the old context set and the
 asserted proposition. The identity is definitional — no proof obligation.
-This puts the [portner-2018] eq. (2a) "`c + ϕ = ⟨cs_c ∩ ⟦ϕ⟧^c, <_c⟩`"
+This puts [portner-2018]'s intersective definition of `+`-update
 on the same algebraic footing as the `Setoid` meet that defines
-`POSWQ.inquire` and the relation meet that defines `star` (§6). The
+`POSWQ.inquire` and the relation meet that defines `star` (`star_le_eq_inf`). The
 mathlib instance chain is `Prop.instDistribLattice` → `Pi.instLattice`. -/
 
-/-- `+`-update on `cs` is meet in `W → Prop`. The Heyting characterization
-    of [portner-2018] eq. (2a) — `c + ϕ` intersects `cs` with `ϕ`. -/
+/-- `+`-update on `cs` is meet in `W → Prop`: the Heyting form of
+    [portner-2018]'s intersective definition — `c + ϕ` intersects
+    `cs` with `ϕ`. -/
 @[simp] theorem plus_cs_eq_inf (c : POSW W) (p : W → Prop) :
     (c.plus p).cs = c.cs ⊓ p := rfl
 
@@ -241,20 +248,14 @@ theorem boxLe_mono (c : POSW W) (p q : W → Prop)
     c.boxLe p → c.boxLe q :=
   fun hp w hw => h w (hp w hw)
 
-@[deprecated boxLe_mono (since := "2026-04-18")]
-theorem boxLt_mono (c : POSW W) (p q : W → Prop)
-    (h : ∀ w, p w → q w) :
-    c.boxLe p → c.boxLe q :=
-  boxLe_mono c p q h
-
 /-- After `+`-updating with `p`, `p` becomes informationally necessary.
     The Stalnakerian assertion principle: asserting `p` makes `p`
-    common ground. [stalnaker-1978], [portner-2018] (Ch. 4). -/
+    common ground. [stalnaker-1978]; [portner-2018]. -/
 theorem boxCs_plus_self (c : POSW W) (p : W → Prop) :
     (c.plus p).boxCs p :=
   fun _ hw => hw.2
 
-/-! ## §4. Refinement preorder
+/-! ### Refinement preorder
 
 A POSW is more *refined* than another when it carries strictly more
 information: a smaller context set, and a smaller (i.e., more
@@ -330,7 +331,7 @@ theorem boxCs_anti (c₁ c₂ : POSW W) (h : c₁ ≤ c₂) (p : W → Prop) :
     c₂.boxCs p → c₁.boxCs p :=
   fun hbox w hcs => hbox w (h.1 w hcs)
 
-/-! ## §5. Subtype Preorder
+/-! ### Subtype preorder
 
 `POSW W` is *not* a `Preorder W` (the `le` axioms are conditioned on
 `cs`-membership). But it *is* a `Preorder (Subtype c.cs)` — the
@@ -348,13 +349,13 @@ instance instPreorderSubtype (c : POSW W) : Preorder {w // c.cs w} where
   le_refl w := c.le_refl w.1 w.2
   le_trans w u v := c.le_trans w.1 u.1 v.1 w.2 u.2 v.2
 
-/-! ## §6. The `promote` preorder and `⋆`-update as relation meet
+/-! ### The `promote` preorder and `⋆`-update as relation meet
 
 `⋆`-update has a clean lattice-theoretic identity: it is meet in the
 relation lattice `W → W → Prop` of the existing preorder with the
 **promotion preorder** of `p`, where `promote p w v` says "if `p`
 holds at the lower world it holds at the higher one too". This is
-the relation-side analogue of `plus_cs_eq_inf` (§3): `+`-update is
+the relation-side analogue of `plus_cs_eq_inf`: `+`-update is
 meet in `W → Prop`, `⋆`-update is meet in `W → W → Prop`. Both reduce
 their respective updates to the same mathematical operation —
 `Pi.instLattice` over `Prop.instDistribLattice` — and inherit
@@ -408,22 +409,25 @@ theorem star_star_self_le (c : POSW W) (p : W → Prop) :
   show c.le ⊓ promote p ⊓ promote p = c.le ⊓ promote p
   rw [inf_assoc, inf_idem]
 
-/-! ## §7. Farkas-style update fixed-point
+/-! ### Assertive fixed-point
 
-[farkas-2003]'s eq. 11 alternative to the [portner-2018]
-Indicative/Subjunctive Principles characterizes mood selection by
-*update type*: declarative `+`-update vs. directive `⋆`-update, rather
-than by the matrix operator. The mathematical core is the
-**update-fixedpoint** characterization: an update *adds nothing*
-exactly when its content is already consequential at the input.
+[farkas-2003] characterizes indicative-licensing (assertive) contexts
+via a Stalnakerian fixed-point: an update is assertive when its
+content can be non-vacuously added, and `p` is already *accepted* when
+adding it changes nothing (`c + p = c`). This is [veltman-1996]'s
+acceptance relation (`σ ⊩ φ` iff `σ[φ] = σ`, §1 there) specialized to
+the `+`-update. Farkas's account covers the indicative/assertive side
+only; the `⋆` (To-Do-List) update belongs to [portner-2004] and plays
+no role in [farkas-2003].
 
 For `+`-update on `cs`: `c` already implies `p` (i.e. `c.boxCs p`)
 iff `c ≤ c.plus p` (i.e. `c.plus p` doesn't shrink `cs`). -/
 
-/-- **Farkas update-fixedpoint** for `+`: the input refines the
-    `+`-update iff the proposition is already informationally necessary.
-    Formal content of [farkas-2003]'s eq. 11 distinction between
-    consequential and merely-redundant assertions. -/
+/-- **Assertive fixed-point**: the input refines the `+`-update iff
+    the proposition is already informationally necessary —
+    [veltman-1996]'s acceptance (`σ[φ] = σ`) for the `+`-update, and
+    the formal core of [farkas-2003]'s assertive characterization of
+    indicative-licensing contexts. -/
 theorem le_plus_iff_boxCs (c : POSW W) (p : W → Prop) :
     c ≤ c.plus p ↔ c.boxCs p := by
   constructor
@@ -432,7 +436,7 @@ theorem le_plus_iff_boxCs (c : POSW W) (p : W → Prop) :
   · intro hp
     refine ⟨fun w hw => ⟨hw, hp w hw⟩, fun _ _ h => h⟩
 
-/-! ## §8. Normal modality structure
+/-! ### Normal modality structure
 
 `boxCs` and `boxLe` are both **normal modalities** in the sense of
 modal logic: each satisfies necessitation (`□⊤`) and the K-axiom

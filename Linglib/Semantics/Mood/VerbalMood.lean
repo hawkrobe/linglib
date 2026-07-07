@@ -17,11 +17,11 @@ component for question-embedding predicates.
 [portner-2018] (Ch. 2) identifies two main intuitions about what
 distinguishes indicative from subjunctive complementation:
 
-- **Truth intuition** (Farkas 1985, Portner 1997 tradition):
+- **Truth intuition** ([farkas-1985], [portner-1997] tradition):
   indicative is selected for clauses true throughout a designated
   modal base. Subjunctive is selected when this universal-truth
   pattern fails.
-- **Comparison intuition** (Giorgi & Pianesi 1997 tradition):
+- **Comparison intuition** ([giorgi-pianesi-1997] tradition):
   subjunctive is selected when the embedding predicate involves
   ordering or comparison among alternatives — preference, doxastic
   ranking, intention.
@@ -44,9 +44,11 @@ the same POSWQ substrate to give all three operators a uniform type.
 
 This file formalizes the selection as the `interp` function on a
 three-element `VerbalMoodOp`, with signature `POSWQ W → (W → Prop)
-→ Prop`. The split is *type-driven*: `boxCs`, `boxLe`, and `boxAns`
-operate on the same POSWQ and the same proposition; only which
-component they consult differs.
+→ Prop`. `interp` is defined as `boxOn ∘ target` — each operator's
+`HasPOSWTarget` label selects the component, and the label's modal
+projection does the quantifying — so the operator/component
+correspondence holds by construction rather than by a bridge
+theorem.
 
 ## Connection to sentence mood
 
@@ -69,10 +71,7 @@ matrix predicate (`MoodSelector` for declarative-embedders;
 
 namespace Semantics.Mood
 
-open Semantics.Mood
-
-universe u
-variable {W : Type u}
+variable {W : Type*}
 
 /-- The three verbal-mood operators on POSWQ. The `.indicative` and
     `.subjunctive` cases are [portner-2018]'s; `.interrogative`
@@ -97,18 +96,45 @@ inductive VerbalMoodOp where
   | interrogative
   deriving DecidableEq, Repr
 
-/-- Compositional interpretation of a verbal-mood operator against
-    an embedding POSWQ and an embedded proposition. The three cases
-    consult disjoint POSWQ components:
+/-- The POSWQ component each verbal-mood operator consults. `target`
+    here is selection-side vocabulary: the component the selecting
+    predicate's modality quantifies over ([portner-2018], Ch. 2), not
+    an operation the mood morpheme performs. Packaged as the same
+    `HasPOSWTarget` typeclass that `IllocutionaryMood` instantiates in
+    `Semantics/Mood/POSWTarget.lean`. -/
+instance : HasPOSWTarget VerbalMoodOp where
+  target
+    | .indicative    => .informational
+    | .subjunctive   => .preferential
+    | .interrogative => .partition
+
+@[simp] theorem target_indicative :
+    Semantics.Mood.target VerbalMoodOp.indicative = .informational := rfl
+
+@[simp] theorem target_subjunctive :
+    Semantics.Mood.target VerbalMoodOp.subjunctive = .preferential := rfl
+
+@[simp] theorem target_interrogative :
+    Semantics.Mood.target VerbalMoodOp.interrogative = .partition := rfl
+
+/-- Compositional interpretation of a verbal-mood operator against an
+    embedding POSWQ and an embedded proposition: run the necessity
+    modal of the operator's POSW target on the embedded proposition.
+    Definitionally `boxOn ∘ target`, so the three cases consult
+    disjoint POSWQ components:
     `.indicative ↦ POSW.boxCs`,
     `.subjunctive ↦ POSW.boxLe`,
     `.interrogative ↦ POSWQ.boxAns`. -/
-def VerbalMoodOp.interp : VerbalMoodOp → POSWQ W → (W → Prop) → Prop
-  | .indicative,    c, p => c.toPOSW.boxCs p
-  | .subjunctive,   c, p => c.toPOSW.boxLe p
-  | .interrogative, c, p => c.boxAns p
+def VerbalMoodOp.interp (m : VerbalMoodOp) : POSWQ W → (W → Prop) → Prop :=
+  (target m).boxOn
 
-/-! ## §1. Definitional equalities -/
+/-- The interpretation is the target component's necessity modal, by
+    definition: `target` is not just a typological label. -/
+@[simp] theorem interp_eq_target_boxOn (m : VerbalMoodOp) (c : POSWQ W)
+    (p : W → Prop) :
+    m.interp c p = (Semantics.Mood.target m).boxOn c p := rfl
+
+/-! ### Definitional equalities -/
 
 @[simp] theorem interp_indicative (c : POSWQ W) (p : W → Prop) :
     VerbalMoodOp.indicative.interp c p = c.toPOSW.boxCs p := rfl
@@ -119,7 +145,7 @@ def VerbalMoodOp.interp : VerbalMoodOp → POSWQ W → (W → Prop) → Prop
 @[simp] theorem interp_interrogative (c : POSWQ W) (p : W → Prop) :
     VerbalMoodOp.interrogative.interp c p = c.boxAns p := rfl
 
-/-! ## §2. Operator-specific monotonicity
+/-! ### Operator-specific monotonicity
 
 `boxCs` and `boxLe` are upward-monotone in the embedded proposition:
 strengthening the modal base preserves universal truth there.
@@ -143,7 +169,7 @@ theorem interp_subjunctive_mono (c : POSWQ W) (p q : W → Prop)
     VerbalMoodOp.subjunctive.interp c p → VerbalMoodOp.subjunctive.interp c q :=
   POSW.boxLe_mono c.toPOSW p q h
 
-/-! ## §3. Distinctness witnesses
+/-! ### Distinctness witnesses
 
 The three mood operators are pairwise non-equivalent — each consults
 a disjoint POSWQ component. We exhibit concrete witnesses showing
@@ -202,48 +228,17 @@ theorem interrogative_ne_indicative :
       ¬ VerbalMoodOp.indicative.interp c p :=
   POSWQ.boxAns_not_reducible_to_boxCs
 
-/-! ## §4. Operational `POSWTarget` projection
-
-Each verbal-mood operator selects exactly one POSWQ component. That
-selection is the `HasPOSWTarget` instance below, packaged as the same
-typeclass that `GramMood` and `IllocutionaryMood` use in
-`Semantics/Mood/POSWTarget.lean`. With this in hand, `interp` factors as
-`boxOn ∘ target` — the verbal mood's interpretation is exactly "run
-the target component's necessity modal on the embedded
-proposition". -/
-
-instance : Semantics.Mood.HasPOSWTarget VerbalMoodOp where
-  target
-    | .indicative    => .informational
-    | .subjunctive   => .preferential
-    | .interrogative => .partition
-
-@[simp] theorem target_indicative :
-    Semantics.Mood.target VerbalMoodOp.indicative = .informational := rfl
-
-@[simp] theorem target_subjunctive :
-    Semantics.Mood.target VerbalMoodOp.subjunctive = .preferential := rfl
-
-@[simp] theorem target_interrogative :
-    Semantics.Mood.target VerbalMoodOp.interrogative = .partition := rfl
-
-/-- **Operational factoring**: the verbal-mood interpretation is
-    exactly the necessity modal selected by the operator's POSW
-    target. Says that `target` is not just a typological label —
-    it determines `interp` definitionally. -/
-@[simp] theorem interp_eq_target_boxOn (m : VerbalMoodOp) (c : POSWQ W)
-    (p : W → Prop) :
-    m.interp c p = (Semantics.Mood.target m).boxOn c p := by
-  cases m <;> rfl
-
-/-! ## Verbal-mood biconditional characterization
+/-! ### Verbal-mood biconditional characterization
 
 `VerbalMoodOp` is in bijection with `POSWTarget`: each operator
 *exactly* picks out one POSW component, and conversely each component
-is targeted by *exactly* one operator. The biconditionals below are
-the type-level shadow of [portner-2018]'s Indicative / Subjunctive
-Principles extended to interrogative — at the verbal-mood layer, mood
-selection and POSWQ-component selection are the same thing. -/
+is targeted by *exactly* one operator. [portner-2018] states the
+corresponding licensing conditions one-way and defeasibly (an
+indicative clause's context is relevantly like a root assertion); the
+biconditional form below reflects only the bijection between this
+three-element operator enum and the three components — at the
+verbal-mood layer, mood selection and POSWQ-component selection are
+the same thing by construction. -/
 
 theorem verbal_mood_target_informational_iff_indicative (m : VerbalMoodOp) :
     Semantics.Mood.target m = .informational ↔ m = .indicative := by
@@ -257,7 +252,7 @@ theorem verbal_mood_target_partition_iff_interrogative (m : VerbalMoodOp) :
     Semantics.Mood.target m = .partition ↔ m = .interrogative := by
   cases m <;> decide
 
-/-! ## §5. Bridge to `MoodSelector`
+/-! ### Bridge to `MoodSelector`
 
 The `MoodSelector` enum (Mood/Basic.lean, taxonomic by predicate
 class — knowledge/belief, preference/desire, etc.) projects onto
@@ -301,7 +296,7 @@ theorem toVerbalMood_ne_interrogative (m : MoodSelector) :
     m.toVerbalMood ≠ some .interrogative := by
   cases m <;> simp [MoodSelector.toVerbalMood]
 
-/-! ## §6. Bridge to `QuestionEmbedder`
+/-! ### Bridge to `QuestionEmbedder`
 
 `MoodSelector` covers declarative-complement-taking predicates only;
 its `toVerbalMood` projection cannot land in `.interrogative`
@@ -311,7 +306,7 @@ question-embedding predicates like `wonder`, `ask`, `know-Q`,
 property: every `QuestionEmbedder` projects to `.interrogative`,
 never to `.indicative` or `.subjunctive`.
 
-The factive/non-factive split (Karttunen 1977 tradition) is the
+The factive/non-factive split ([karttunen-1977] tradition) is the
 standard subdivision of question embedders; we record it for future
 expansion (e.g., a finer projection that distinguishes factive-Q
 embedders' presupposition profile) without committing to particular
@@ -319,7 +314,7 @@ semantic consequences here. -/
 
 /-- Question-embedding predicate class. Disjoint from `MoodSelector`,
     which covers only declarative-complement embedders. The
-    factive/non-factive split follows Karttunen's typology. -/
+    factive/non-factive split follows [karttunen-1977]'s typology. -/
 inductive QuestionEmbedder where
   /-- Factive question-embedders: `know-Q`, `discover-Q`, `realize-Q`. -/
   | factive
