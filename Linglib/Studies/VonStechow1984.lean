@@ -1,6 +1,6 @@
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.Gradability.Delineation
 import Mathlib.Tactic.Linarith

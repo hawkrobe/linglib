@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Semantics.Degree.Gradability.Adjective
-import Linglib.Semantics.Degree.Gradability.Construction
+import Linglib.Semantics.Degree.Defs
 
 /-!
 # Evaluativity: Empirical Patterns

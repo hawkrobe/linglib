@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.Implicative

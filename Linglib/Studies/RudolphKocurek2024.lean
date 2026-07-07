@@ -5,7 +5,7 @@ import Linglib.Discourse.CommonGround
 import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Logic.FirstOrder.Comparative
 import Linglib.Core.Order.ComparativeProbability.Systems
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Gradability.Delineation
 
 /-!

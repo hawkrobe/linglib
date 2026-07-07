@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Mathlib.Order.Interval.Basic
 import Linglib.Studies.VonStechow1984
 import Linglib.Studies.Kennedy1999

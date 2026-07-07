@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.Canonical
-import Linglib.Semantics.Degree.Gradability.Construction
+import Linglib.Semantics.Degree.Defs
 import Linglib.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod

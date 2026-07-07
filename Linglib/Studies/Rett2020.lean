@@ -1,5 +1,5 @@
 import Linglib.Studies.Anscombe1964
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Studies.Karttunen1974
@@ -47,7 +47,7 @@ open Core.Order
 open NonemptyInterval
 open Features
 open Features.ChangeOfState
-open Degree (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
+open Core.Order (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
 variable {Time : Type*} [LinearOrder Time]
 
 -- ============================================================================

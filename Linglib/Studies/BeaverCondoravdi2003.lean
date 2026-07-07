@@ -1,7 +1,7 @@
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 
 /-!
 # [beaver-condoravdi-2003]: Uniform Analysis with `earliest`
@@ -46,7 +46,7 @@ across historical alternatives.
 
 namespace Tense.TemporalConnectives.BeaverCondoravdi
 
-open Degree (maxOnScale)
+open Core.Order (maxOnScale)
 variable {W T : Type*} [LinearOrder T]
 
 -- ============================================================================

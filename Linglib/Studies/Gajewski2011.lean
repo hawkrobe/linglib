@@ -2,7 +2,7 @@ import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Clausal
 import Linglib.Studies.VonFintel1999
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Semantics.Polarity.Item

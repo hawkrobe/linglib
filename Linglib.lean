@@ -1596,7 +1596,9 @@ import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Clausal
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Degree.DirectedMeasure
 import Linglib.Semantics.Degree.Gradability.Aggregation
@@ -1605,7 +1607,7 @@ import Linglib.Semantics.Degree.Gradability.Antonymy
 import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Semantics.Modification.Adjective
 import Linglib.Semantics.Attitudes.ClauseEmbedding
-import Linglib.Semantics.Degree.Gradability.Construction
+import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Gradability.Delineation
 import Linglib.Features.ScalarDimension
 import Linglib.Semantics.Degree.Gradability.GradableNouns
@@ -1614,7 +1616,7 @@ import Linglib.Semantics.Degree.Gradability.Intensification
 import Linglib.Studies.DinisJacinto2026
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Degree.Standard
 import Linglib.Studies.Buring2007
 import Linglib.Semantics.Degree.MeasureOfChange
 import Linglib.Semantics.Degree.Measure

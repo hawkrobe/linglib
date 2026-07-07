@@ -1,7 +1,7 @@
 import Linglib.Core.Order.Boundedness
 
 /-!
-# Kennedy 2007: Interpretive Economy
+# Positive-form standards and Interpretive Economy
 
 Kennedy's classification of gradable adjectives by scale structure, and the
 derivation of standard type from scale boundedness [kennedy-2007]
