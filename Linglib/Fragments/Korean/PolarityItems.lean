@@ -45,13 +45,16 @@ def nwukwuTo : PolarityItemEntry :=
 /-! ### FCI -/
 
 /-- *nwukwu-na* (누구나) — Free choice item.
-    wh + na: 'nwukwu-na hal su issda' (anyone can do it). -/
+    wh + na: 'nwukwu-na hal su issda' (anyone can do it). The suffix *-na*
+    derives from the adversative mood of *i-* 'be' ('whoever it may be')
+    and also means 'or' ([haspelmath-1997] A.39.2) — an 'it may be'-type
+    source, not an additive/'even' particle, so `morphology` stays
+    `.plain` (the enum lacks a disjunctive-source case). -/
 def nwukwuNa : PolarityItemEntry :=
   { form := "nwukwu-na (누구나)"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , morphology := .indefPlusEven }
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
 /-! ### Verification -/
 
