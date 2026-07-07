@@ -2,6 +2,9 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Polarity marking: strategy typology
+
+(A separate system from the `Polarity.Item` licensing API — the two share
+only the `Semantics.Polarity` namespace.)
 [turco-braun-dimroth-2014] [bluhdorn-lohnstein-2012] [sudhoff-2012]
 [hohle-1992] [holmberg-2016]
 

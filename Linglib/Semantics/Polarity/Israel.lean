@@ -1,53 +1,25 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Polarity.Item
 
 /-!
-# Semantics.Polarity.Israel
+# Israel's scalar model: canonicity predictions
 [israel-1996] [israel-2001] [israel-2011]
 
-Israel's theoretical predictions on polarity-sensitive items: the
-`predictCanonicity` function and `canonicityConsistent` validation
-predicate. The Israel scalar enums themselves
-(`ScalarValue`/`ScalarDirection`/`Canonicity`/`LikelihoodEffect`)
-live in `Typology/PolarityItem.lean` (Fragment-importable substrate);
-the *predictions* about how they relate to each other are theoretical
-content and live here.
-
-## Provenance
-
-Extracted from `Typology/PolarityItem.lean` after audit consensus
-that `predictCanonicity` is Israel's main empirical claim — not
-neutral typology — and belongs in `Theories/`. Sibling of
-`Semantics/Polarity/Licensing.lean` (the Ladusaw/K&L
-monotonicity theory hub).
-
-## Framework commitment
-
-Israel's central empirical claim ([israel-2001]) is that for
-emphatic polarity items, canonicality is determined principally by
-**likelihood effect** (propositional role): impeding roles
-(patient/theme) → canonical items, facilitating roles (agent/stimulus)
-→ inverted items. The pecuniary-paradox dissolution
-(*a red cent* NPI vs *for peanuts* PPI in the same monetary domain) is
-the canonical witness of role-likelihood mapping carrying explanatory
-weight that pure-monotonicity accounts (Ladusaw, K&L) lack.
-
-This file enshrines the Israel framework. Alternative scalar accounts
-([lahiri-1998] EVEN-based, [chierchia-2006] EXH+D-alternatives,
-Krifka 1995 STA) would live as sibling Theories files; the
-`Typology/PolarityItem.lean` Israel-shaped data fields would carry
-each framework's analysis as an optional projection.
-
-## Cross-framework gap (Israel ↔ Ladusaw)
-
-The cross-file gap with `Semantics/Polarity/Licensing.lean`
-remains unclosed by this restructure. The refutation theorem —
-showing a context where Israel's role-likelihood mapping and Ladusaw's
-monotonicity-licensing diverge in their predictions — is **planned**
-for `Studies/Israel2001.lean`. The natural witness
-is the pecuniary paradox above. NOTE: `Israel2001.lean §8` currently
-formalizes Israel↔Ladusaw *agreement* via a `ScaleDirection` bridge
-enum — that's the wrong direction; the refutation work is genuinely
-deferred.
+Israel's central empirical claim: for emphatic polarity items,
+canonical vs inverted is determined by likelihood effect (impeding
+roles → canonical, facilitating → inverted), dissolving the pecuniary
+paradox (*a red cent* NPI vs *for peanuts* PPI in one monetary domain)
+— explanatory weight that per-context monotonicity accounts lack. The
+scalar axes live on `Polarity.Item`; this file holds the predictions:
+`predictCanonicity` and the `canonicityConsistent` validation
+predicate (checked over the English lexicon and `Studies/Israel2001`).
+The Israel↔Ladusaw refutation theorem — a context where role-likelihood
+and monotonicity licensing diverge — remains deferred to
+`Studies/Israel2001.lean`.
 -/
 
 namespace Semantics.Polarity
@@ -63,13 +35,13 @@ namespace Semantics.Polarity
     effect determines WHETHER the item is canonical or inverted.
 
     **CAVEATS** (the function is a strong reading, not Israel verbatim):
-    - The `_, .fci => .unknown` case reflects an editorial decision that
-      the substrate declines to predict canonicity for FCIs; Israel 2001
+    - The pure-FC case returns `.unknown`: an editorial decision that the
+      substrate declines to predict canonicity for FCIs; Israel 2001
       mostly bracketed FCIs rather than asserting they have no canonicity.
     - Israel's role-likelihood mapping is most robust for emphatic
       strengtheners (NPIs) and PPIs; attenuators interact differently
       (he allows lexical exceptions). The function applies the impeding/
-      facilitating mapping uniformly across `PolarityType` regardless of
+      facilitating mapping uniformly across item classes regardless of
       `ScalarDirection`; downstream consumers should consult the
       `scalarDirection` field separately when distinguishing emphatic
       from attenuating items.
