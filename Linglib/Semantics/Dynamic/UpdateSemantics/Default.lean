@@ -188,6 +188,44 @@ theorem promote_mono {σ τ : ExpState W} (h : σ ≤ τ) (φ : W → Prop) :
     σ.promote φ ≤ τ.promote φ :=
   ⟨h.1, inf_le_inf_right _ h.2⟩
 
+/-- Membership in the information state after a sequence of assertions:
+    the input's information, filtered by every asserted proposition. -/
+theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : ExpState W) (v : W) :
+    v ∈ (ps.foldl ExpState.assert σ).info ↔ v ∈ σ.info ∧ ∀ p ∈ ps, p v := by
+  induction ps generalizing σ with
+  | nil => simp
+  | cons p ps ih =>
+    rw [List.foldl_cons, ih]
+    simp only [assert_info, Set.mem_setOf_eq, List.mem_cons, Set.mem_sep_iff]
+    constructor
+    · rintro ⟨⟨hv, hp⟩, hps⟩
+      exact ⟨hv, fun q hq => hq.elim (fun h => h ▸ hp) (hps q)⟩
+    · rintro ⟨hv, hall⟩
+      exact ⟨⟨hv, hall p (Or.inl rfl)⟩, fun q hq => hall q (Or.inr hq)⟩
+
+/-- The ordering after a sequence of promotions: the input's ordering,
+    refined by the criterion preorder of every promoted proposition. -/
+theorem foldl_promote_order_le (ps : List (W → Prop)) (σ : ExpState W) (w v : W) :
+    (ps.foldl ExpState.promote σ).order.le w v ↔
+      σ.order.le w v ∧ ∀ p ∈ ps, p v → p w := by
+  induction ps generalizing σ with
+  | nil => exact ⟨fun h => ⟨h, by simp⟩, And.left⟩
+  | cons p ps ih =>
+    rw [List.foldl_cons, ih]
+    simp only [promote_order, Core.Order.Normality.refine_le, List.mem_cons]
+    constructor
+    · rintro ⟨⟨hle, hp⟩, hps⟩
+      exact ⟨hle, fun q hq => hq.elim (fun h => h ▸ hp) (hps q)⟩
+    · rintro ⟨hle, hall⟩
+      exact ⟨⟨hle, hall p (Or.inl rfl)⟩, fun q hq => hall q (Or.inr hq)⟩
+
+/-- Promotion sequences leave the information state fixed. -/
+@[simp] theorem foldl_promote_info (ps : List (W → Prop)) (σ : ExpState W) :
+    (ps.foldl ExpState.promote σ).info = σ.info := by
+  induction ps generalizing σ with
+  | nil => rfl
+  | cons p ps ih => rw [List.foldl_cons, ih]; rfl
+
 /-- **Acceptance fixpoint for assertion** ([veltman-1996], §1): the
     input refines its own assertion iff φ already holds throughout the
     information state. -/

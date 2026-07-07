@@ -6,7 +6,7 @@ import Linglib.Semantics.Mood.Component
 import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Mood.Assert
+import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Studies.RuytenbeekEtAl2017
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.List.Sort
@@ -681,7 +681,7 @@ theorem disagrees_with_ruytenbeek_imperative_flavor :
     RuytenbeekEtAl2017.SentType.imperative.modalFlavor := by decide
 
 /-- [kaufmann-2012]'s position is exposed in
-    `Semantics/Mood/Assert.lean` as
+    `Semantics/Mood/SpeechEvent.lean` as
     `primaryFlavor .imperative = .deontic`. Roberts disagrees.
 
     This subsumes a previous `roberts_fails_ruytenbeek_mechanism_one`
@@ -693,7 +693,7 @@ theorem disagrees_with_ruytenbeek_imperative_flavor :
     prejacent's flavor matching the imperative's. -/
 theorem disagrees_with_assert :
     robertsImperativeFlavor ≠
-    Semantics.Mood.Assert.primaryFlavor .imperative := by decide
+    Semantics.Mood.Illocutionary.primaryFlavor .imperative := by decide
 
 /-- **Mechanism wedge** (post-2026-05-13: empirical wedge collapsed).
     `possibleDecl` ("Il est possible de VP") was previously the lone

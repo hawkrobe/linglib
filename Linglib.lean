@@ -1727,7 +1727,6 @@ import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
-import Linglib.Semantics.Mood.Assert
 import Linglib.Semantics.Mood.Component
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Dynamic
@@ -1735,6 +1734,7 @@ import Linglib.Semantics.Mood.Eventuality
 import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Semantics.Mood.Situation
+import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Modality.BranchingTime
