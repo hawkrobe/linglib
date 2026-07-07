@@ -103,11 +103,6 @@ def ClauseType.declInd : ClauseType :=
 def ClauseType.polarQuestion : ClauseType :=
   { force := .interrogative, mood := .indicative }
 
-/-- Force and mood are independent: changing one doesn't change the other. -/
-theorem force_mood_independent :
-    ClauseType.declInd.mood = ClauseType.polarQuestion.mood ∧
-    ClauseType.declInd.force ≠ ClauseType.polarQuestion.force := ⟨rfl, nofun⟩
-
 /-- The epistemic authority of a clause type, via its force. -/
 def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
   Illocutionary.authority ct.force
