@@ -1,9 +1,8 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.DirectedMeasure
-import Linglib.Semantics.Degree.Gradability.Dimension
+import Linglib.Features.ScalarDimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
-import Linglib.Semantics.Degree.Gradability.MLScale
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Syntax.Adjective.Basic
@@ -263,24 +262,6 @@ def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .minEndpoint  => .disjunctive
   | .contextual   => .mixed
   | .functional   => .mixed   -- evaluative; context-dependent like contextual
-
-/-! ### Marginality scales ([dinis-jacinto-2026]) -/
-
--- The tail of the file works with the full `DirectedMeasure`/order API.
-open Core.Order Degree
-
-structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
-    Degree.DirectedMeasure α W where
-  ml : Degree.MLScale α
-
-def marginalityPositive {α : Type*} [LinearOrder α]
-    (ml : Degree.MLScale α) (norm degree : α) : Prop :=
-  ml.L norm degree
-
-theorem marginality_entails_standard {α : Type*} [LinearOrder α]
-    (ml : Degree.MLScale α) (norm degree : α)
-    (h : marginalityPositive ml norm degree) : norm < degree :=
-  h.1
 
 /-! ### Degree–DirectedMeasure bridge
 
