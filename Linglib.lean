@@ -1757,9 +1757,9 @@ import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Mood.Categories
 import Linglib.Semantics.Mood.ClauseType
+import Linglib.Semantics.Mood.Component
 import Linglib.Semantics.Mood.Dynamic
 import Linglib.Semantics.Mood.Eventuality
-import Linglib.Semantics.Mood.Component
 import Linglib.Semantics.Mood.Illocutionary
 import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.PartitionAsInquiry
