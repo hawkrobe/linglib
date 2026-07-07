@@ -37,7 +37,7 @@ namespace Iatridou2000
 
 open Semantics.Modality.Exclusion
 open Semantics.Context
-open Semantics.Mood (subjShift)
+open Mood (subjShift)
 open Data.Examples (LinguisticExample)
 
 /-! ### Iatridou's counterfactual typology -/
@@ -123,9 +123,9 @@ def iatridouSubjGeneralization (hasPastSubj requiresSubj : Bool) : Prop :=
   requiresSubj = hasPastSubj
 
 /-- All three CF types collapse to the framework-agnostic
-    `Semantics.Mood.SubjunctiveType.counterfactual` tag. -/
+    `Mood.SubjunctiveType.counterfactual` tag. -/
 def CounterfactualType.toSubjunctiveType (_ : CounterfactualType) :
-    Semantics.Mood.SubjunctiveType := .counterfactual
+    Mood.SubjunctiveType := .counterfactual
 
 theorem all_counterfactuals_are_counterfactual (t : CounterfactualType) :
     t.toSubjunctiveType = .counterfactual := by cases t <;> rfl

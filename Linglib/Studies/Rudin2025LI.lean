@@ -99,7 +99,7 @@ simultaneously be both values.
 namespace Discourse.QuotationFBOntology
 
 open Discourse.Commitment.Table
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 open Semantics.Quotation.Demonstration
 
 -- ════════════════════════════════════════════════════

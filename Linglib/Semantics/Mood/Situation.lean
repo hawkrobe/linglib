@@ -29,7 +29,7 @@ dref that the main clause retrieves for temporal anchoring
 * `subjShift`, `subj_as_tower_push` — SUBJ as a tower context shift.
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 open Intensional (WorldTimeIndex)
 
@@ -50,7 +50,7 @@ The `sameWorld` kernel: two situations share their world coordinate.
 
 This is the modal counterpart of the temporal kernels
 (`Tense.precedes`/`coincides`/`follows`). The static `IND`
-operator and its dynamic lift `Semantics.Mood.dynIND` both call this
+operator and its dynamic lift `Mood.dynIND` both call this
 kernel; they share *the same modal constraint*, lifted from a static
 situation predicate to a context filter via
 `Semantics.Dynamic.Core.dynRelationOn`.
@@ -319,4 +319,4 @@ theorem subj_as_tower_push [LE Time]
 
 end TowerMood
 
-end Semantics.Mood
+end Mood

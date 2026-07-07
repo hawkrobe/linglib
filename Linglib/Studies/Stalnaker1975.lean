@@ -182,7 +182,7 @@ end Discourse.ReasonableInference
 
 namespace Stalnaker1975
 
-open Semantics.Mood (Grammatical)
+open Mood (Grammatical)
 open CommonGround (ContextSet)
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals

@@ -137,7 +137,7 @@ theorem boxLe_of_respects (σ : ExpState W) (p : W → Prop)
 
 end Semantics.Dynamic.Default.ExpState
 
-namespace Semantics.Mood
+namespace Mood
 
 open Semantics.Dynamic.Default
 
@@ -172,4 +172,4 @@ instance (σ : ExpState W) : NormalModality W σ.boxLe where
   necessitation := fun _ _ => trivial
   K _ _ hpq hp w hopt := hpq w hopt (hp w hopt)
 
-end Semantics.Mood
+end Mood

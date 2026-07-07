@@ -49,7 +49,7 @@ territory; this file consumes its `EventProjection` for the
 participant structure of `e*`.
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 open Semantics.Dynamic.Default
 open Semantics.Modality (ModalFlavor)
@@ -317,4 +317,4 @@ theorem declarative_projects_to_speaker :
 theorem imperative_projects_to_addressee :
     speechActProjection.toPair .imperative = ⟨.addressee, .now⟩ := rfl
 
-end Semantics.Mood
+end Mood

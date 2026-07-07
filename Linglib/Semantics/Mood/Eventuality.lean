@@ -23,7 +23,7 @@ closes and subjunctive abstracts is then read off the constructor
 than stipulated in a feature table.
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 /-- IND existentially closes the eventuality argument ([grano-2024], (87)).
 
@@ -116,4 +116,4 @@ def Grammatical.eventDenotation {Event : Type*} (P : Event → Prop) :
 @[simp] theorem eventDenotation_subjunctive {Event : Type*} (P : Event → Prop) :
     Grammatical.subjunctive.eventDenotation P = .abstracted P := rfl
 
-end Semantics.Mood
+end Mood

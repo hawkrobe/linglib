@@ -27,7 +27,7 @@ The Searle-class and direction-of-fit API for `Illocutionary` is in
 `Discourse/SpeechAct.lean`.
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 open Discourse (DiscourseRole)
 
@@ -122,7 +122,7 @@ inductive Selector where
   | moodNeutral
   deriving DecidableEq, Repr
 
-end Semantics.Mood
+end Mood
 
 /-! ### Bridge to UD.Mood -/
 
@@ -131,7 +131,7 @@ namespace UD.Mood
 /-- The default `ClauseType` for a `UD.Mood` value. The UD feature is a
 flat enum conflating force with mood, so the map is a non-injective
 default cross-product. -/
-def toClauseType : UD.Mood → Semantics.Mood.ClauseType
+def toClauseType : UD.Mood → Mood.ClauseType
   | .Ind => { force := .declarative, mood := .indicative }
   | .Sub => { force := .declarative, mood := .subjunctive }
   | .Imp => { force := .imperative,  mood := .indicative }

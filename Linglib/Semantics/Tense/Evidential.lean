@@ -184,7 +184,7 @@ structure TAMEEntry where
   /-- Utterance perspective constraint: T vs S -/
   up : UPCondition
   /-- Grammatical mood (indicative, subjunctive), if specified -/
-  mood : Option Semantics.Mood.Grammatical := none
+  mood : Option Mood.Grammatical := none
   /-- Mirativity value (expected, unexpected, neutral), if specified -/
   mirative : Option MirativityValue := none
 

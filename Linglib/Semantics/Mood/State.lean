@@ -93,7 +93,7 @@ rather than a replacement — mirroring how mathlib keeps `Set`/`Finset`
 and `Filter`/`Ultrafilter` parallel rather than collapsing them.
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 open Semantics.Dynamic.Default
 
@@ -397,4 +397,4 @@ theorem boxAns_not_reducible_to_boxCs :
   ⟨sepInquiry, sepProp, boxAns_sepInquiry_sepProp, not_boxCs_sepInquiry_sepProp⟩
 
 end State
-end Semantics.Mood
+end Mood

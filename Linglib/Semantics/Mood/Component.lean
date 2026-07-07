@@ -31,7 +31,7 @@ Modal flavors would get their own instance if `Semantics/Modality/`
 is ever rephrased over POSW.
 -/
 
-namespace Semantics.Mood
+namespace Mood
 
 /-- The component of a `POSW` (or of `State`, for `.inquisitive`) that a
     mood-bearing object operates on. [portner-2018], Ch. 4.
@@ -116,4 +116,4 @@ def Component.boxOn : Component → State W → (W → Prop) → Prop
 @[simp] theorem boxOn_inquisitive (c : State W) (p : W → Prop) :
     Component.inquisitive.boxOn c p = c.boxAns p := rfl
 
-end Semantics.Mood
+end Mood

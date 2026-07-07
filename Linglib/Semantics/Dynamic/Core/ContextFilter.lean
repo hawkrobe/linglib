@@ -88,7 +88,7 @@ common specializations are:
 
 - `dynRelation` (both projections look up bound variables `gs.1 v₁`,
   `gs.1 v₂`) — used by `Tense.dynPAST`/`dynPRES`/`dynFUT`.
-- `Semantics.Mood.dynIND` (one projection is the entry's current
+- `Mood.dynIND` (one projection is the entry's current
   situation `gs.2`, the other is a bound variable `gs.1 v`).
 
 Mathlib precedent: `Set.image2` over `Set.image`.
@@ -230,7 +230,7 @@ is exactly the `Set.filter` vs `Set.bind` dichotomy of the powerset monad.
 fresh entries by binding a situation variable to alternatives drawn from
 a Kleisli arrow `gen : WorldTimeIndex → Set WorldTimeIndex`.
 
-This is the canonical primitive behind `Semantics.Mood.dynSUBJ` (with
+This is the canonical primitive behind `Mood.dynSUBJ` (with
 `gen = historicalBase history`) and any other operator that introduces
 a fresh situation dref.
 -/

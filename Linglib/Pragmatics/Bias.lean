@@ -75,7 +75,7 @@ commitment-update ([farkas-bruce-2010]) reanalyses.
 namespace Pragmatics.Bias
 
 open Semantics.Negation (PolarityLicensing weakENProfile)
-open Semantics.Mood (Illocutionary)
+open Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The four licensing conditions

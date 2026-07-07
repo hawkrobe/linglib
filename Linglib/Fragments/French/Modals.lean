@@ -41,8 +41,8 @@ in position-sensitive flavor selection ([hacquard-2006]).
 namespace French.Modals
 
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
-open Semantics.Mood.Illocutionary (primaryFlavor)
-open Semantics.Mood (Illocutionary)
+open Mood.Illocutionary (primaryFlavor)
+open Mood (Illocutionary)
 
 
 -- ════════════════════════════════════════════════════

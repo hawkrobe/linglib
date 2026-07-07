@@ -47,7 +47,7 @@ distinguish live from non-live possibilities.
 namespace Semantics.Modality.Exclusion
 
 open Semantics.Context (KContext ContextTower temporalShift)
-open Semantics.Mood (subjShift)
+open Mood (subjShift)
 
 /-! ### ExclF: the exclusion feature -/
 

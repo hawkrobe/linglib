@@ -42,7 +42,7 @@ open Intensional (WorldTimeIndex)
 open HistoricalAlternatives
 open Semantics.Dynamic.Core
 open Tense
-open Semantics.Mood
+open Mood
 
 
 -- ════════════════════════════════════════════════════════════════
