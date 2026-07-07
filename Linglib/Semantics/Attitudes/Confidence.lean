@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.StatesBased
+import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Degree.Clausal
 

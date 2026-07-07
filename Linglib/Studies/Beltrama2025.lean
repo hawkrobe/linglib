@@ -1,8 +1,8 @@
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Standard
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Gradability.Adjective
-import Linglib.Semantics.Degree.Gradability.Intensification
+import Linglib.Semantics.Degree.Adjective
+import Linglib.Semantics.Degree.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
 

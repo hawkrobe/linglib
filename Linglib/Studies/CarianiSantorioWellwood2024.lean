@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.StatesBased
+import Linglib.Semantics.Degree.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Modifiers.Adjectives

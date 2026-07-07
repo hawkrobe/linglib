@@ -136,7 +136,12 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
 -- 25's unique-state collapse at `Degree.maxComparative_eq_iff`.
 -- Confidence reports instantiate these in `Semantics/Attitudes/Confidence.lean`.
 
-/-! ### Bridge: States-Based ↔ Kennedy -/
+/-! ### Morphisms
+
+The transport out of the states-based representation:
+`statesBased_iff_kennedy` (CSW ↔ Kennedy threshold, along a `StrictMono`
+degree assignment). Cross-framework maps between measurement, threshold
+degrees, and delineation live in `Degree/Hom.lean`. -/
 
 /-- When a monotone measure maps the contrast point to a Kennedy threshold,
     the states-based positive form agrees with degree-based comparison.

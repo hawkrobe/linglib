@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Adjective
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Standard
 import Linglib.Core.Order.Boundedness

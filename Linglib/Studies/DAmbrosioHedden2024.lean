@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Gradability.Aggregation
+import Linglib.Semantics.Degree.Aggregation
 import Linglib.Studies.Sassoon2013
 
 /-!

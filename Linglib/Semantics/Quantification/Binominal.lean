@@ -1,7 +1,7 @@
 import Linglib.Semantics.Quantification.BinominalDefs
-import Linglib.Semantics.Degree.Gradability.GradableNouns
+import Linglib.Semantics.Degree.GradableNouns
 import Linglib.Semantics.Degree.Measurement
-import Linglib.Semantics.Degree.Gradability.Intensification
+import Linglib.Semantics.Degree.Intensification
 
 /-!
 # Binominal Noun Phrase Semantics

@@ -1,6 +1,6 @@
-import Linglib.Semantics.Degree.Gradability.Adjective
-import Linglib.Semantics.Degree.Gradability.Antonymy
-import Linglib.Semantics.Degree.Gradability.AntonymPrediction
+import Linglib.Semantics.Degree.Adjective
+import Linglib.Semantics.Degree.Antonymy
+import Linglib.Semantics.Degree.Antonymy
 import Linglib.Studies.Krifka2007
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!

@@ -1,5 +1,5 @@
-import Linglib.Semantics.Degree.Gradability.Antonymy
-import Linglib.Semantics.Degree.Gradability.AntonymPrediction
+import Linglib.Semantics.Degree.Antonymy
+import Linglib.Semantics.Degree.Antonymy
 import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Phonology.Constraints.Defs

@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Semantics.Degree.Gradability.Intensification
+import Linglib.Semantics.Degree.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Rat.Defs

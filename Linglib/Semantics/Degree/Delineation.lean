@@ -343,6 +343,18 @@ def IsNonlinearDelineation {Entity : Type*}
     world (Klein): the delineation is determined by the measure, but
     the semantics never mentions degrees directly. -/
 
+/-! ### Morphisms
+
+The map INTO delineation from threshold degrees: `measureDelineation`
+(a measure induces a comparison-class-relative delineation;
+`measureDelineation_monotone` = faithfulness). Its strictness — some
+delineations come from no measure — and the composite from typed
+measurement are in `Degree/Hom.lean` (`degree_to_delineation`,
+`delineation_strictly_more_general`). The soundness/completeness pair
+(`IsSoundDelineation`/`IsCompleteDelineation`) makes Klein's
+`comparativeSem` agree with the point-standard `Degree.comparativeSem`
+(`comparativeSem_iff_of_sound_and_complete`). -/
+
 /-- Delineation induced by a measure function: x is "A-in-C" iff
     there exists a member of C that x strictly exceeds on μ. -/
 def measureDelineation {E D : Type*} [LinearOrder D]

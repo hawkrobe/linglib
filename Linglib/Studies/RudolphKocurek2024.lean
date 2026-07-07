@@ -6,7 +6,7 @@ import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Logic.FirstOrder.Comparative
 import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Gradability.Delineation
+import Linglib.Semantics.Degree.Delineation
 
 /-!
 # [rudolph-kocurek-2024]: Metalinguistic Gradability
