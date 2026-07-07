@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Clausal
 import Linglib.Semantics.Degree.Differential
 
 /-!

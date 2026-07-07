@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Gradability.StatesBased
 import Linglib.Semantics.Degree.Measure
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Clausal
 
 /-!
 # Confidence and Certainty as Gradable Attitudes

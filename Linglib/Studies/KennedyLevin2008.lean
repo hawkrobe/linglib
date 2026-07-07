@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Features.ScalarDimension
 import Linglib.Semantics.Degree.MeasureOfChange
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Order.WithBot

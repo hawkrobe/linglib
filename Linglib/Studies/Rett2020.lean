@@ -1,5 +1,5 @@
 import Linglib.Studies.Anscombe1964
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Studies.Karttunen1974

@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Pragmatics.Implicature.Basic
 import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Semantics.Degree.Gradability.Adjective
-import Linglib.Semantics.Degree.Gradability.Construction
+import Linglib.Semantics.Degree.Defs
 import Linglib.Studies.Rett2015
 
 /-!

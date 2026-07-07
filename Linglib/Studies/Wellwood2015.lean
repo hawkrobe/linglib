@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Measure
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Clausal
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Kinds.MeaningPreservation

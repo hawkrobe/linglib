@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Standard
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Gradability.Adjective
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness

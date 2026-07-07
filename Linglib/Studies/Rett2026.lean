@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Studies.JinKoenig2021
 import Linglib.Semantics.Negation.Expletive

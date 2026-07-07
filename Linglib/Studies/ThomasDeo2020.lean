@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Gradability.Construction
+import Linglib.Semantics.Degree.Defs
 
 /-!
 # Granularity and *Just*: Degree Morphology [thomas-deo-2020]
