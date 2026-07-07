@@ -410,10 +410,10 @@ theorem gtOverSet_atomic_eq_comparativeSem (μ : Entity → D) (a b : Entity) :
   rw [Comparison.overSet_singleton, ← comparativeSem_positive_eq_over]
 
 /-- "A is taller than B" iff A's positive extent strictly contains B's
-([kennedy-1999]). Bridges the point comparison to `posExt_ssubset_iff`. -/
+([kennedy-1999]). Bridges the point comparison to `Set.Iic_ssubset_Iic`. -/
 theorem comparative_iff_posExt_ssubset (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=
-  (posExt_ssubset_iff μ b a).symm
+  Set.Iic_ssubset_Iic.symm
 
 /-- "A taller than B" iff "B shorter than A", derived from the complementarity
 of positive and negative extents rather than stipulated as a lexical property
@@ -458,13 +458,13 @@ theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : E
 iff `posExt μ b ⊆ posExt μ a` — every degree B has, A also has. -/
 theorem equativeSem_iff_posExt_subset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     equativeSem μ a b .positive ↔ posExt μ b ⊆ posExt μ a :=
-  (posExt_subset_iff μ b a).symm
+  Set.Iic_subset_Iic.symm
 
 /-- Negated equative as strict extent inclusion: B has strictly more degrees
 than A. -/
 theorem negatedEquative_iff_posExt_ssubset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     negatedEquative μ a b ↔ posExt μ a ⊂ posExt μ b :=
-  (posExt_ssubset_iff μ a b).symm
+  Set.Iic_ssubset_Iic.symm
 
 end Equative
 
