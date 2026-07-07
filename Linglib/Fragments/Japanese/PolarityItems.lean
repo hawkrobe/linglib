@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Japanese Polarity-Sensitive Items
@@ -56,6 +56,17 @@ def dareDemo : PolarityItemEntry :=
   , alternativeType := .domain }
 
 /-! ### Verification -/
+
+/-- The licensing keystone characterizes *dare-mo* exactly: as an n-word it
+    requires an anti-morphic licensor, and clausal negation is the only such
+    row — predicted distribution and attested list coincide. -/
+theorem dareMo_licensing_characterized :
+    ∀ c, c.licenses dareMo ↔ c ∈ dareMo.licensingContexts := by decide
+
+/-- Every attested *dare-demo* context is predicted licensed: all four rows
+    license free choice items. -/
+theorem dareDemo_licensing_sound :
+    ∀ c ∈ dareDemo.licensingContexts, c.licenses dareDemo := by decide
 
 /-- Complementary distribution: the n-word and the FCI are licensed in
     disjoint context sets (clausemate negation vs modal/imperative/generic). -/
