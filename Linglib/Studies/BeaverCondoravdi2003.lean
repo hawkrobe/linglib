@@ -46,7 +46,7 @@ across historical alternatives.
 
 namespace Tense.TemporalConnectives.BeaverCondoravdi
 
-open Degree (maxOnScale)
+open Core.Order (maxOnScale)
 variable {W T : Type*} [LinearOrder T]
 
 -- ============================================================================
