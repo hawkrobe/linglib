@@ -150,35 +150,6 @@ These are exactly the worlds in ⋂f(w) — worlds compatible with all facts in 
 def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
-/--
-The **best** worlds among accessible worlds, according to ordering source g.
-
-These are the accessible worlds that are maximal under ≤_{g(w)}:
-worlds w' such that for all accessible w'', w' ≤_{g(w)} w''.
-
-When g(w) = ∅, all accessible worlds are best (by Theorem 2).
--/
-def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Set W :=
-  {w' | w' ∈ accessibleWorlds f w ∧
-        ∀ w'' ∈ accessibleWorlds f w, atLeastAsGoodAs (g w) w' w''}
-
-/--
-**Theorem 3: Empty ordering source reduces to simple accessibility.**
-
-When g(w) = ∅, bestWorlds = accessibleWorlds.
--/
-theorem empty_ordering_simple (f : ModalBase W) (w : W) :
-    bestWorlds f (fun _ => []) w = accessibleWorlds f w := by
-  ext w'
-  refine ⟨fun h => h.1, fun h => ⟨h, fun w'' _ => ?_⟩⟩
-  exact (empty_ordering_all_equivalent w' w'').1
-
-/-- Variant of `empty_ordering_simple` matching `emptyBackground` by name. -/
-theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
-    bestWorlds f emptyBackground w = accessibleWorlds f w := by
-  unfold emptyBackground
-  exact empty_ordering_simple f w
-
 /-! ### The induced expectation state
 
 [portner-2018] identifies the two components of his mood state with
@@ -202,14 +173,33 @@ def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
 @[simp] theorem stateAt_order (f : ModalBase W) (g : OrderingSource W) (w : W) :
     (stateAt f g w).order = kratzerNormality (g w) := rfl
 
-/-- Dominant best worlds are optimal: `bestWorlds` requires being at
-least as good as every accessible world, `ExpState.optimal` only
-non-domination, so the former is the stronger notion on non-connected
-orderings. -/
-theorem bestWorlds_subset_optimal (f : ModalBase W) (g : OrderingSource W)
-    (w : W) :
-    bestWorlds f g w ⊆ (stateAt f g w).optimal :=
-  fun _ hw => ⟨hw.1, fun v hv _ => hw.2 v hv⟩
+/-- The best accessible worlds: those no accessible world strictly
+betters — `ExpState.optimal` at the induced state. [kratzer-1981]'s
+official human necessity is the limit-free `humanNecessity`; it
+quantifies over exactly this set under the Limit Assumption
+(`humanNecessity_iff_necessity`). Her practical-inference tripartition
+(pp. 66-67) is non-connected by construction, so the stronger
+dominance form (at least as good as *every* accessible world) would
+be empty there; minimality is the faithful reading. -/
+def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Set W :=
+  (stateAt f g w).optimal
+
+/--
+**Theorem 3: Empty ordering source reduces to simple accessibility.**
+
+When g(w) = ∅, bestWorlds = accessibleWorlds.
+-/
+theorem empty_ordering_simple (f : ModalBase W) (w : W) :
+    bestWorlds f (fun _ => []) w = accessibleWorlds f w := by
+  ext w'
+  refine ⟨fun h => h.1, fun h => ⟨h, fun v _ _ => ?_⟩⟩
+  exact (empty_ordering_all_equivalent w' v).1
+
+/-- Variant of `empty_ordering_simple` matching `emptyBackground` by name. -/
+theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
+    bestWorlds f emptyBackground w = accessibleWorlds f w := by
+  unfold emptyBackground
+  exact empty_ordering_simple f w
 
 /-- Realism is fiber-reflexivity: a modal base is realistic iff every
 world belongs to its own induced information state. -/
@@ -218,28 +208,22 @@ theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
     isRealistic f ↔ ∀ w, w ∈ (stateAt f g w).info :=
   ⟨fun h w p hp => h w p hp, fun h w p hp => h w p hp⟩
 
-/-- On connected orderings the two best-world notions coincide. -/
-theorem bestWorlds_eq_optimal_of_connected (f : ModalBase W)
-    (g : OrderingSource W) (w : W)
-    (hconn : Core.Order.Normality.connected (kratzerNormality (g w))) :
-    bestWorlds f g w = (stateAt f g w).optimal :=
-  Set.Subset.antisymm (bestWorlds_subset_optimal f g w)
-    (fun w' hw' => ⟨hw'.1, fun v hv =>
-      (hconn w' v).elim id (fun h => hw'.2 hv h)⟩)
-
-/-- The best worlds among a given set, ranked by an ordering.
-    Unlike `bestWorlds` which computes accessible worlds from a modal base,
-    `bestAmong` takes a precomputed world set. This is needed when the
-    domain has already been restricted (e.g., by promoted priorities in
-    [rubinstein-2014]'s favored worlds). -/
+/-- The best worlds among a given set: members no other member strictly
+    betters. Unlike `bestWorlds`, which computes the domain from a modal
+    base, `bestAmong` takes a precomputed world set — the form needed
+    when the domain is already restricted, by promoted priorities in
+    [rubinstein-2014]'s favored worlds or by a primary ordering in the
+    lexicographic refinement of [kratzer-1981]'s Conclusion. -/
 def bestAmong (worlds : Set W) (ordering : List (W → Prop)) : Set W :=
-  {w' | w' ∈ worlds ∧ ∀ w'' ∈ worlds, atLeastAsGoodAs ordering w' w''}
+  {w' | w' ∈ worlds ∧
+        ∀ w'' ∈ worlds, atLeastAsGoodAs ordering w'' w' →
+          atLeastAsGoodAs ordering w' w''}
 
 /-- With empty ordering, all worlds are best (Kratzer's theorem 2). -/
 theorem bestAmong_empty (worlds : Set W) :
     bestAmong worlds [] = worlds := by
   ext w
-  refine ⟨fun h => h.1, fun h => ⟨h, fun w' _ => ?_⟩⟩
+  refine ⟨fun h => h.1, fun h => ⟨h, fun w' _ _ => ?_⟩⟩
   exact (empty_ordering_all_equivalent w w').1
 
 /-- bestAmong is a subset of the input worlds. -/
@@ -247,16 +231,15 @@ theorem bestAmong_sub (worlds : Set W) (ordering : List (W → Prop)) :
     bestAmong worlds ordering ⊆ worlds :=
   fun _ hw => hw.1
 
-/-- Best worlds in a superset that belong to a subset are best in the subset.
-
-    If w' beats every world in a larger set, it certainly beats every world
-    in any subset. This is the key lemma for showing that star-revision
-    (domain widening) preserves strong necessity. -/
+/-- Best worlds in a superset that belong to a subset are best in the
+    subset: unbettered among more competitors, unbettered among fewer.
+    The key lemma for showing that star-revision (domain widening)
+    preserves strong necessity. -/
 theorem bestAmong_superset {sub sup : Set W} {ordering : List (W → Prop)} {w' : W}
     (hSub : sub ⊆ sup)
     (hBest : w' ∈ bestAmong sup ordering)
     (hMem : w' ∈ sub) :
     w' ∈ bestAmong sub ordering :=
-  ⟨hMem, fun v hv => hBest.2 v (hSub hv)⟩
+  ⟨hMem, fun v hv hle => hBest.2 v (hSub hv) hle⟩
 
 end Semantics.Modality.Kratzer

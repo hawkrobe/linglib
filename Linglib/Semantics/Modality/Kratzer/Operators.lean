@@ -108,23 +108,12 @@ theorem simpleNecessity_iff_boxCs (f : ModalBase W) (g : OrderingSource W)
   Iff.rfl
 
 open Semantics.Dynamic.Default in
-/-- Preferential necessity over the induced state implies Kratzer
-necessity: `bestWorlds` is contained in the state's optimal set. -/
-theorem necessity_of_boxLe (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Prop) (w : W)
-    (h : (stateAt f g w).boxLe p) : necessity f g p w :=
-  fun w' hw' => h w' (bestWorlds_subset_optimal f g w hw')
-
-open Semantics.Dynamic.Default in
-/-- On connected ordering sources, Kratzer necessity is preferential
-necessity over the induced state — human necessity as `□_≤`. -/
-theorem necessity_iff_boxLe_of_connected (f : ModalBase W)
-    (g : OrderingSource W) (p : W → Prop) (w : W)
-    (hconn : Core.Order.Normality.connected (kratzerNormality (g w))) :
-    necessity f g p w ↔ (stateAt f g w).boxLe p := by
-  rw [show necessity f g p w ↔ ∀ w' ∈ bestWorlds f g w, p w' from Iff.rfl,
-    bestWorlds_eq_optimal_of_connected f g w hconn]
-  exact Iff.rfl
+/-- Kratzer necessity is preferential necessity over the induced state
+— human necessity as `□_≤` ([portner-2018]'s (3b) identification). -/
+theorem necessity_iff_boxLe (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W) :
+    necessity f g p w ↔ (stateAt f g w).boxLe p :=
+  Iff.rfl
 
 open Semantics.Dynamic.Default ExpState in
 /-- Veltman acceptance at a Kratzer state: the induced state supports
@@ -134,6 +123,67 @@ theorem le_assert_iff_simpleNecessity (f : ModalBase W)
     stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
   ((stateAt f g w).le_assert_iff p).trans
     (simpleNecessity_iff_boxCs f g p w).symm
+
+/-! ### Human necessity
+
+[kratzer-1981]'s official definition needs no Limit Assumption: it
+asks each accessible world to see, at least as good, a witness below
+which only `p`-worlds occur. `necessity` (universal quantification
+over `bestWorlds`) is its Limit-Assumption collapse. -/
+
+/-- Human necessity ([kratzer-1981]): every accessible world has an
+accessible world at least as good, below which `p` holds throughout. -/
+def humanNecessity (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Prop) (w : W) : Prop :=
+  ∀ u ∈ accessibleWorlds f w, ∃ v ∈ accessibleWorlds f w,
+    atLeastAsGoodAs (g w) v u ∧
+    ∀ z ∈ accessibleWorlds f w, atLeastAsGoodAs (g w) z v → p z
+
+/-- Human necessity implies best-worlds necessity, unconditionally. -/
+theorem necessity_of_humanNecessity {f : ModalBase W} {g : OrderingSource W}
+    {p : W → Prop} {w : W}
+    (h : humanNecessity f g p w) : necessity f g p w := by
+  rintro w' ⟨hacc, hmin⟩
+  obtain ⟨v, hvacc, hvle, hall⟩ := h w' hacc
+  exact hall w' hacc (hmin hvacc hvle)
+
+/-- The Limit Assumption at `w`: every accessible world sees a best
+world at least as good. -/
+def LimitAssumption (f : ModalBase W) (g : OrderingSource W) (w : W) : Prop :=
+  ∀ u ∈ accessibleWorlds f w, ∃ v ∈ bestWorlds f g w,
+    atLeastAsGoodAs (g w) v u
+
+/-- Under the Limit Assumption, best-worlds necessity implies human
+necessity. -/
+theorem humanNecessity_of_necessity {f : ModalBase W} {g : OrderingSource W}
+    {p : W → Prop} {w : W}
+    (hlim : LimitAssumption f g w) (h : necessity f g p w) :
+    humanNecessity f g p w := by
+  intro u hu
+  obtain ⟨v, hvbest, hvle⟩ := hlim u hu
+  refine ⟨v, hvbest.1, hvle, fun z hz hzv => h z ⟨hz, fun z' hz' hz'z => ?_⟩⟩
+  exact ordering_transitive (g w) z v z' hzv
+    (hvbest.2 hz' (ordering_transitive (g w) z' z v hz'z hzv))
+
+/-- Under the Limit Assumption, [kratzer-1981]'s human necessity is
+exactly universal quantification over the best worlds. -/
+theorem humanNecessity_iff_necessity {f : ModalBase W} {g : OrderingSource W}
+    {p : W → Prop} {w : W} (hlim : LimitAssumption f g w) :
+    humanNecessity f g p w ↔ necessity f g p w :=
+  ⟨necessity_of_humanNecessity, humanNecessity_of_necessity hlim⟩
+
+/-- With the empty ordering source, human necessity is simple necessity
+([kratzer-1981], her equivalence for arbitrary `f` and empty `g`). -/
+theorem humanNecessity_emptyBackground_iff (f : ModalBase W)
+    (p : W → Prop) (w : W) :
+    humanNecessity f emptyBackground p w ↔ simpleNecessity f p w := by
+  constructor
+  · intro h u hu
+    obtain ⟨v, _, _, hall⟩ := h u hu
+    exact hall u hu ((empty_ordering_all_equivalent u v).1)
+  · intro h u hu
+    exact ⟨u, hu, (empty_ordering_all_equivalent u u).1,
+      fun z hz _ => h z hz⟩
 
 /-! ### Characterization lemmas -/
 
@@ -207,7 +257,7 @@ theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W)
     (hNec : necessity f g p w) : p w := by
   have hSelf : kratzerBestR f g w w := by
-    refine ⟨?_, fun w'' hw'' => ?_⟩
+    refine ⟨?_, fun w'' hw'' _ => ?_⟩
     · show w ∈ propIntersection (f w)
       rw [hTotal w]; rfl
     · have : w'' ∈ propIntersection (f w) := hw''

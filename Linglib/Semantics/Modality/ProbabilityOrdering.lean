@@ -100,12 +100,19 @@ private lemma w0_mem_univ_toList :
 theorem prob_ordering_best_w0 (w : World) :
     bestWorlds emptyBackground (probToOrdering skewedProb) w = ({0} : Set World) := by
   ext w'
-  rw [bestWorlds, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [Set.mem_singleton_iff]
   refine ⟨?_, ?_⟩
-  · rintro ⟨_, hAll⟩
+  · rintro ⟨_, hMin⟩
     have hUniv : (0 : World) ∈ accessibleWorlds emptyBackground w := by
       rw [empty_base_universal_access]; exact Set.mem_univ _
-    have hLeq := hAll _ hUniv
+    have hDom : atLeastAsGoodAs (probToOrdering skewedProb w) 0 w' := by
+      apply higher_prob_dominates
+      match w' with
+      | 0 => simp [skewedProb]
+      | 1 => simp [skewedProb]; norm_num
+      | 2 => simp [skewedProb]; norm_num
+      | 3 => simp [skewedProb]; norm_num
+    have hLeq := hMin hUniv hDom
     have hp_mem : (λ x => skewedProb x ≥ skewedProb (0 : World))
         ∈ probToOrdering skewedProb w := by
       rw [probToOrdering, List.mem_map]
@@ -119,8 +126,9 @@ theorem prob_ordering_best_w0 (w : World) :
     | 3 => simp [skewedProb] at h_w'; norm_num at h_w'
   · rintro rfl
     refine ⟨?_, ?_⟩
-    · rw [empty_base_universal_access]; exact Set.mem_univ _
-    · intro w'' _
+    · show (0 : World) ∈ accessibleWorlds emptyBackground w
+      rw [empty_base_universal_access]; exact Set.mem_univ _
+    · intro w'' _ _
       apply higher_prob_dominates
       match w'' with
       | 0 => simp [skewedProb]

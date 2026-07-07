@@ -103,16 +103,90 @@ abbrev sn (f : ModalBase W) (g : OrderingSource W)
 /-! ### Key equation: WN ≡ SN_Xg -/
 
 theorem wn_equiv_snXg (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Prop) (w : W) :
-    weakNecessity f g (λ _ => [p]) p w ↔ snXg f g p w := Iff.rfl
+    (p : W → Prop) (w : W)
+    (hconn : Core.Order.Normality.connected (kratzerNormality (g w))) :
+    weakNecessity f g (λ _ => [p]) p w ↔ snXg f g p w := by
+  constructor
+  · intro hweak
+    rintro w' ⟨hacc, hmin⟩
+    by_cases hp : p w'
+    · exact hp
+    have hminG : w' ∈ bestWorlds f g w := by
+      refine ⟨hacc, ?_⟩
+      intro v hv hvle
+      have hvle' : atLeastAsGoodAs (xMarkOrdering g p w) v w' := by
+        intro q hq hqw'
+        rcases List.mem_append.mp hq with hq | hq
+        · exact hvle q hq hqw'
+        · rcases List.mem_singleton.mp hq with rfl
+          exact absurd hqw' hp
+      intro q hq hqw'
+      exact hmin hv hvle' q (List.mem_append_left _ hq) hqw'
+    have hnop : ∀ v ∈ bestWorlds f g w, ¬ p v := by
+      intro v hv hpv
+      have hvle : atLeastAsGoodAs (xMarkOrdering g p w) v w' := by
+        intro q hq hqw'
+        rcases List.mem_append.mp hq with hq | hq
+        · rcases hconn v w' with h | h
+          · exact h q hq hqw'
+          · exact hv.2 hminG.1 h q hq hqw'
+        · rcases List.mem_singleton.mp hq with rfl
+          exact absurd hqw' hp
+      exact hp (hmin hv.1 hvle p
+        (List.mem_append_right _ (List.mem_singleton.mpr rfl)) hpv)
+    have hwmem : w' ∈ bestAmong (bestWorlds f g w) ((fun _ => [p]) w) := by
+      refine ⟨hminG, ?_⟩
+      intro v hv _ q hq hqv
+      rcases List.mem_singleton.mp hq with rfl
+      exact absurd hqv (hnop v hv)
+    exact absurd (hweak w' hwmem) hp
+  · intro hsnxg
+    rintro w' ⟨hwB, hmin⟩
+    by_cases hp : p w'
+    · exact hp
+    refine hsnxg w' ⟨hwB.1, ?_⟩
+    intro v hv hvle
+    have hvleG : atLeastAsGoodAs (g w) v w' := fun q hq hqw' =>
+      hvle q (List.mem_append_left _ hq) hqw'
+    have hwlev : atLeastAsGoodAs (g w) w' v := hwB.2 hv hvleG
+    have hvB : v ∈ bestWorlds f g w := by
+      refine ⟨hv, ?_⟩
+      intro u hu hule
+      have huw' : atLeastAsGoodAs (g w) u w' :=
+        ordering_transitive _ u v w' hule hvleG
+      exact ordering_transitive _ v w' u hvleG (hwB.2 hu huw')
+    have hnopv : ¬ p v := by
+      intro hpv
+      have hvlp : atLeastAsGoodAs [p] v w' := by
+        intro q hq hqw'
+        rcases List.mem_singleton.mp hq with rfl
+        exact absurd hqw' hp
+      exact hp (hmin v hvB hvlp p (List.mem_singleton.mpr rfl) hpv)
+    intro q hq hqv
+    rcases List.mem_append.mp hq with hq | hq
+    · exact hwlev q hq hqv
+    · rcases List.mem_singleton.mp hq with rfl
+      exact absurd hqv hnopv
 
 /-! ### Entailment: SN → SN_Xg (must → ought) -/
 
 theorem sn_entails_snXg (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W)
     (h : sn f g p w) :
-    snXg f g p w :=
-  strong_entails_weak f g (λ _ => [p]) p w h
+    snXg f g p w := by
+  rintro w' ⟨hacc, hmin⟩
+  by_cases hp : p w'
+  · exact hp
+  · refine h w' ⟨hacc, ?_⟩
+    intro v hv hvle
+    have hvle' : atLeastAsGoodAs (xMarkOrdering g p w) v w' := by
+      intro q hq hqw'
+      rcases List.mem_append.mp hq with hq | hq
+      · exact hvle q hq hqw'
+      · rcases List.mem_singleton.mp hq with rfl
+        exact absurd hqw' hp
+    intro q hq hqw'
+    exact hmin hv hvle' q (List.mem_append_left _ hq) hqw'
 
 /-- The converse fails: SN_Xg ⊭ SN.
 
@@ -130,16 +204,21 @@ theorem snXg_not_entails_sn :
   have hAcc : ∀ w' : Bool, w' ∈ accessibleWorlds f true := by
     intro w' q hq; cases hq
   have hSnXg : snXg f g p true := by
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
+    rintro w' ⟨_, hmin⟩
     have hIdent : (fun w : Bool => w = true) ∈ xMarkOrdering g p true := by
       simp [xMarkOrdering, combineOrdering, g, p, emptyBackground]
-    exact hBest true (hAcc true) (fun w => w = true) hIdent rfl
+    have hTop : atLeastAsGoodAs (xMarkOrdering g p true) true w' := by
+      intro q hq _
+      have hq' : q = fun w => w = true := by
+        simpa [xMarkOrdering, combineOrdering, g, p, emptyBackground] using hq
+      subst hq'; rfl
+    exact hmin (hAcc true) hTop _ hIdent rfl
   have hNotSn : ¬ sn f g p true := by
     intro hSn
     have hFalseBest : false ∈ bestWorlds f g true := by
-      refine ⟨hAcc false, fun w'' _ q hq _ => ?_⟩
-      simp [g, emptyBackground] at hq
+      show false ∈ bestWorlds f emptyBackground true
+      rw [empty_ordering_emptyBackground]
+      exact hAcc false
     exact Bool.false_ne_true (hSn false hFalseBest)
   exact hNotSn (h Bool f g p true hSnXg)
 
@@ -212,11 +291,15 @@ theorem xMarked_unmarked_independent :
       · exact (this rfl).elim
       · rfl
   have hSnXfg : snXfg f' g p true := by
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
+    rintro w' ⟨_, hmin⟩
     have hIdent : (fun w : Bool => w = true) ∈ xMarkOrdering g p true := by
       simp [xMarkOrdering, combineOrdering, g, p, emptyBackground]
-    exact hBest true (hAccF' true) (fun w => w = true) hIdent rfl
+    have hTop : atLeastAsGoodAs (xMarkOrdering g p true) true w' := by
+      intro q hq _
+      have hq' : q = fun w => w = true := by
+        simpa [xMarkOrdering, combineOrdering, g, p, emptyBackground] using hq
+      subst hq'; rfl
+    exact hmin (hAccF' true) hTop _ hIdent rfl
   have hNotSnXg : ¬ snXg f g p true := by
     intro hSnXg
     have hAccFalse : false ∈ accessibleWorlds f true := by
@@ -224,11 +307,11 @@ theorem xMarked_unmarked_independent :
       rcases List.mem_singleton.mp hq with rfl
       rfl
     have hFalseBest : false ∈ bestWorlds f (xMarkOrdering g p) true := by
-      refine ⟨hAccFalse, fun w'' hw'' q _ hqw'' => ?_⟩
-      have hw : w'' = false :=
-        hw'' (fun w => w = false) (List.mem_singleton.mpr rfl)
-      subst hw
-      exact hqw''
+      refine ⟨hAccFalse, ?_⟩
+      intro v hv _
+      have hv' : v = false := hv (fun w => w = false) (List.mem_singleton.mpr rfl)
+      subst hv'
+      exact ordering_reflexive _ _
     exact Bool.false_ne_true (hSnXg false hFalseBest)
   exact hNotSnXg (h Bool f f' g p true hRev hSnXfg)
 
@@ -243,16 +326,21 @@ theorem snXfg_not_entails_snXf :
   have hAcc : ∀ w' : Bool, w' ∈ accessibleWorlds f' true := by
     intro w' q hq; cases hq
   have hSnXfg : snXfg f' g p true := by
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
+    rintro w' ⟨_, hmin⟩
     have hIdent : (fun w : Bool => w = true) ∈ xMarkOrdering g p true := by
       simp [xMarkOrdering, combineOrdering, g, p, emptyBackground]
-    exact hBest true (hAcc true) (fun w => w = true) hIdent rfl
+    have hTop : atLeastAsGoodAs (xMarkOrdering g p true) true w' := by
+      intro q hq _
+      have hq' : q = fun w => w = true := by
+        simpa [xMarkOrdering, combineOrdering, g, p, emptyBackground] using hq
+      subst hq'; rfl
+    exact hmin (hAcc true) hTop _ hIdent rfl
   have hNotSnXf : ¬ snXf f' g p true := by
     intro hSnXf
     have hFalseBest : false ∈ bestWorlds f' g true := by
-      refine ⟨hAcc false, fun w'' _ q hq _ => ?_⟩
-      simp [g, emptyBackground] at hq
+      show false ∈ bestWorlds f' emptyBackground true
+      rw [empty_ordering_emptyBackground]
+      exact hAcc false
     exact Bool.false_ne_true (hSnXf false hFalseBest)
   exact hNotSnXf (h Bool f' g p true hSnXfg)
 
@@ -339,20 +427,25 @@ theorem dever_not_entails_terQue :
     intro w'; rw [empty_base_universal_access]; exact Set.mem_univ _
   have hSnXg : snXg (emptyBackground (W := World)) (emptyBackground (W := World))
                  (fun w : World => w = (0 : World)) (0 : World) := by
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
+    rintro w' ⟨_, hmin⟩
     have hIdent : (fun w : World => w = (0 : World)) ∈
         xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = (0 : World)) (0 : World) := by
       simp [xMarkOrdering, combineOrdering, emptyBackground]
-    exact hBest (0 : World) (hAcc (0 : World)) (fun w : World => w = (0 : World)) hIdent rfl
+    have hTop : atLeastAsGoodAs
+        (xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = (0 : World)) (0 : World))
+        (0 : World) w' := by
+      intro q hq _
+      have hq' : q = fun w : World => w = (0 : World) := by
+        simpa [xMarkOrdering, combineOrdering, emptyBackground] using hq
+      subst hq'; rfl
+    exact hmin (hAcc (0 : World)) hTop _ hIdent rfl
   -- snXg → sn would force w1 = w0, contradiction
   have hSn := hCE hSnXg
   rw [sn, necessity_iff_all] at hSn
   have hW1Best : ((1 : World) : World) ∈
       bestWorlds (emptyBackground (W := World)) (emptyBackground (W := World)) (0 : World) := by
-    refine ⟨hAcc (1 : World), ?_⟩
-    intro w'' _ q hq _
-    simp [emptyBackground] at hq
+    rw [empty_ordering_emptyBackground]
+    exact hAcc (1 : World)
   have : ((1 : World) : World) = (0 : World) := hSn (1 : World) hW1Best
   exact absurd this (by decide)
 
@@ -387,14 +480,20 @@ theorem dever_consistent_with_not_p :
          (0 : World),
          ?_, ?_⟩
   · -- snXg: every best world satisfies p
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
+    rintro w' ⟨_, hmin⟩
     have hAcc1 : ((1 : World) : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
       rw [empty_base_universal_access]; exact Set.mem_univ _
     have hIdent : (fun w : World => w = (1 : World)) ∈
         xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = (1 : World)) (0 : World) := by
       simp [xMarkOrdering, combineOrdering, emptyBackground]
-    exact hBest (1 : World) hAcc1 (fun w : World => w = (1 : World)) hIdent rfl
+    have hTop : atLeastAsGoodAs
+        (xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = (1 : World)) (0 : World))
+        (1 : World) w' := by
+      intro q hq _
+      have hq' : q = fun w : World => w = (1 : World) := by
+        simpa [xMarkOrdering, combineOrdering, emptyBackground] using hq
+      subst hq'; rfl
+    exact hmin hAcc1 hTop _ hIdent rfl
   · -- ¬ p (0 : World)
     intro h; exact absurd h (by decide)
 
@@ -451,19 +550,24 @@ theorem devia_not_entails_deve :
       · exact hw0
       · exact absurd hw1 hNotW1
   have hSnXfg : snXfg fWide (emptyBackground (W := World)) p (0 : World) := by
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
+    rintro w' ⟨_, hmin⟩
     have hAcc0 : ((0 : World) : World) ∈ accessibleWorlds fWide (0 : World) := (hWideAcc (0 : World)).mpr (Or.inl rfl)
     have hPMem : p ∈ xMarkOrdering (emptyBackground (W := World)) p (0 : World) := by
       simp [xMarkOrdering, combineOrdering, emptyBackground]
-    exact hBest (0 : World) hAcc0 p hPMem rfl
+    have hTop : atLeastAsGoodAs
+        (xMarkOrdering (emptyBackground (W := World)) p (0 : World)) (0 : World) w' := by
+      intro q hq _
+      have hq' : q = p := by
+        simpa [xMarkOrdering, combineOrdering, emptyBackground] using hq
+      subst hq'; rfl
+    exact hmin hAcc0 hTop p hPMem rfl
   have hNotSnXg : ¬ snXg fNarrow (emptyBackground (W := World)) p (0 : World) := by
     intro hSn
     have hAcc1 : ((1 : World) : World) ∈ accessibleWorlds fNarrow (0 : World) := (hNarrowAcc (1 : World)).mpr rfl
     have hBest1 : ((1 : World) : World) ∈
         bestWorlds fNarrow (xMarkOrdering (emptyBackground (W := World)) p) (0 : World) := by
       refine ⟨hAcc1, ?_⟩
-      intro w'' hw''
+      intro w'' hw'' _
       have hw''1 : w'' = (1 : World) := (hNarrowAcc w'').mp hw''
       subst hw''1
       exact ordering_reflexive _ ((1 : World) : World)

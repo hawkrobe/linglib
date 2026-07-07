@@ -155,11 +155,16 @@ theorem weak_not_entails_strong_R :
   -- `ce_p` (= "is w₁") holds at every BEST world: w₁ is favored and tops the ordering.
   have hWeak : weakNecessityR ce_pt ce_p w₀ := by
     intro w' hw'
-    obtain ⟨_hMem, hBest⟩ := hw'
+    obtain ⟨_hMem, hmin⟩ := hw'
     have hW1Fav : w₁ ∈ favoredWorlds ce_pt w₀ := by rw [hFav]; exact Set.mem_univ _
     have hProp : (λ w : World => w = w₁) ∈ ce_pt.negotiable w₀ := by
       simp only [ce_pt, List.mem_singleton]
-    exact hBest w₁ hW1Fav (λ w : World => w = w₁) hProp rfl
+    have hTop : atLeastAsGoodAs (ce_pt.negotiable w₀) w₁ w' := by
+      intro q hq _
+      have hq' : q = fun w : World => w = w₁ := by
+        simpa [ce_pt] using hq
+      subst hq'; rfl
+    exact hmin w₁ hW1Fav hTop _ hProp rfl
   -- but it fails at the favored world w₀, so strong necessity does not hold.
   have hNotStrong : ¬ strongNecessityR ce_pt ce_p w₀ := by
     intro hS
@@ -282,8 +287,12 @@ theorem tax_should_holds :
     unfold reportInternational; left; rfl
   have hPropMem : reportInternational ∈ taxScenarioA.negotiable w₀ := by
     simp only [taxScenarioA, List.mem_singleton]
-  -- w' is at-least-as-good as w₀, which satisfies the negotiable ideal, so w' does too.
-  have hInt : reportInternational w' := hBest w₀ hW0Fav reportInternational hPropMem hW0Int
+  -- w₀ tops the negotiable ordering, so minimality transfers its ideal to w'.
+  have hTop : atLeastAsGoodAs (taxScenarioA.negotiable w₀) w₀ w' := by
+    intro q hq _
+    have hq' : q = reportInternational := by simpa [taxScenarioA] using hq
+    subst hq'; exact hW0Int
+  have hInt : reportInternational w' := hBest w₀ hW0Fav hTop reportInternational hPropMem hW0Int
   exact ⟨hDom, hInt⟩
 
 /-- In scenario A, strong necessity FAILS: not all favored worlds
@@ -466,8 +475,12 @@ theorem comparative_split :
     obtain ⟨_, hB⟩ := hb
     have hPmem : (fun w : World => w = w₁) ∈ ce_pt.negotiable w₀ := by
       simp only [ce_pt, List.mem_singleton]
-    have hav : a = w₁ := hA w₁ (Set.mem_univ w₁) (fun w => w = w₁) hPmem rfl
-    have hbv : b = w₁ := hB w₁ (Set.mem_univ w₁) (fun w => w = w₁) hPmem rfl
+    have hTop : ∀ x : World, atLeastAsGoodAs (ce_pt.negotiable w₀) w₁ x := by
+      intro x q hq _
+      have hq' : q = fun w : World => w = w₁ := by simpa [ce_pt] using hq
+      subst hq'; rfl
+    have hav : a = w₁ := hA w₁ (Set.mem_univ w₁) (hTop a) (fun w => w = w₁) hPmem rfl
+    have hbv : b = w₁ := hB w₁ (Set.mem_univ w₁) (hTop b) (fun w => w = w₁) hPmem rfl
     rw [hav, hbv]
 
 /-- Membership in Rubinstein's comparative natural class: an evaluative

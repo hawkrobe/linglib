@@ -258,8 +258,8 @@ theorem izvorski_koev_diverge :
   rw [necessity_iff_all] at h
   have hAcc : (1 : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
     rw [empty_base_universal_access]; exact Set.mem_univ _
-  have hBest : (1 : World) ∈ bestWorlds emptyBackground emptyBackground (W := World) (0 : World) :=
-    ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
+  have hBest : (1 : World) ∈ bestWorlds emptyBackground emptyBackground (W := World) (0 : World) := by
+    rw [empty_ordering_emptyBackground]; exact hAcc
   exact (h (1 : World) hBest : pOnlyW0 (1 : World))
 
 theorem izvorski_collapses_to_koev_when_realistic

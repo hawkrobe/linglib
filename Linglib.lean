@@ -2422,6 +2422,7 @@ import Linglib.Studies.KonukEtAl2026
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Studies.Kramer2020
 import Linglib.Studies.Kratzer1977
+import Linglib.Studies.Kratzer1981
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Kratzer1998
 import Linglib.Studies.Kratzer2012Conditionals

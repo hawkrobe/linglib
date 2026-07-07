@@ -15,17 +15,19 @@ Strong and weak necessity share the same modal base (circumstantial) but differ
 in ordering:
 
 - **Strong necessity** (must φ): necessity under ordering g
-- **Weak necessity** (ought φ): necessity under refined ordering g ∪ g'
+- **Weak necessity** (ought φ): necessity over the g'-best of the
+  g-best worlds
 
-The secondary ordering g' adds criteria beyond the primary norms, creating a
-more discriminating ranking. More criteria → smaller "best" set → the universal
-quantification is over a subset, making it a weaker (easier to satisfy) claim.
+The secondary ordering g' selects *within* the primary best set — the
+lexicographic refinement of [kratzer-1981]'s Conclusion, where later
+ordering sources undo the ties left by their predecessors. Selecting
+within a set can only shrink it, so the universal quantification is
+over a subset, making the claim weaker (easier to satisfy).
 
 ## Key Result
 
-`strong_entails_weak`: strong necessity entails weak necessity. If all g-best
-worlds have φ, then all (g∪g')-best worlds have φ, because the refined best
-set is a subset of the original.
+`strong_entails_weak`: strong necessity entails weak necessity, since
+the g'-best of the g-best worlds are g-best (`bestAmong_sub`).
 
 `weak_not_entails_strong`: the converse fails. A concrete counterexample shows
 that refining the ordering can eliminate a world where φ fails, making weak
@@ -70,27 +72,12 @@ def strongNecessity (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) : Prop :=
   necessity f g p w
 
-/-- **Weak necessity** ("ought φ"): Kratzer necessity under refined ordering g ∪ g'. -/
+/-- **Weak necessity** ("ought φ"): necessity over the g'-best of the
+    g-best worlds — the lexicographic refinement of [kratzer-1981]'s
+    Conclusion. -/
 def weakNecessity (f : ModalBase W) (g g' : OrderingSource W)
     (p : W → Prop) (w : W) : Prop :=
-  necessity f (combineOrdering g g') p w
-
-/-! ## Ordering extension lemma -/
-
-private theorem ordering_extension_mono (A extra : List (W → Prop)) (w z : W)
-    (h : atLeastAsGoodAs (A ++ extra) w z) :
-    atLeastAsGoodAs A w z :=
-  fun p hp hpz => h p (List.mem_append_left _ hp) hpz
-
-/-! ## Best worlds monotonicity -/
-
-/-- Refining the ordering can only shrink the set of best worlds. -/
-theorem best_refines (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
-    ∀ w', w' ∈ bestWorlds f (combineOrdering g g') w →
-          w' ∈ bestWorlds f g w := by
-  intro w' hw'
-  refine ⟨hw'.1, fun w'' hw'' => ?_⟩
-  exact ordering_extension_mono (g w) (g' w) w' w'' (hw'.2 w'' hw'')
+  ∀ w' ∈ bestAmong (bestWorlds f g w) (g' w), p w'
 
 /-! ## Main entailment -/
 
@@ -100,18 +87,17 @@ theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W)
     (h : strongNecessity f g p w) :
     weakNecessity f g g' p w := by
   rw [strongNecessity, necessity_iff_all] at h
-  rw [weakNecessity, necessity_iff_all]
   intro w' hw'
-  exact h w' (best_refines f g g' w w' hw')
+  exact h w' (bestAmong_sub _ _ hw')
 
 /-! ## The converse fails -/
 
 /-- Weak necessity does NOT entail strong necessity.
 
-    Counterexample: W = Bool. g is the trivial ordering (all worlds tied);
-    g' identifies `true`. Under g, both `true` and `false` are best; under
-    g∪g', only `true` is best. With p = (· = true), weakNecessity holds
-    (only `true` ∈ best), but strongNecessity fails (`false` ∈ best, p false). -/
+    Counterexample: W = Bool. g is the trivial ordering (all worlds tied),
+    so both worlds are g-best; g' identifies `true`, so only `true` is
+    g'-best among them. With p = (· = true), weakNecessity holds but
+    strongNecessity fails at the g-best world `false`. -/
 theorem weak_not_entails_strong :
     ¬(∀ (W : Type)
         (f : ModalBase W) (g g' : OrderingSource W) (p : W → Prop) (w : W),
@@ -121,27 +107,36 @@ theorem weak_not_entails_strong :
   let g : OrderingSource Bool := fun _ => [fun _ => True]
   let g' : OrderingSource Bool := fun _ => [fun w => w = true]
   let p : Bool → Prop := fun w => w = true
-  -- All worlds are accessible (empty modal base).
   have hAcc : ∀ w' : Bool, w' ∈ accessibleWorlds f true := by
-    intro w'
-    intro q hq
+    intro w' q hq
     cases hq
-  -- Weak necessity holds: only `true` is best under g∪g'.
+  have hTriv : ∀ a b : Bool, atLeastAsGoodAs (g true) a b := by
+    intro a b q hq _
+    cases hq with
+    | head => trivial
+    | tail _ h => cases h
+  have hBestAll : ∀ w' : Bool, w' ∈ bestWorlds f g true := by
+    intro w'
+    refine ⟨hAcc w', ?_⟩
+    intro v _ _
+    exact hTriv w' v
+  -- Weak necessity holds: only `true` is g'-best among the g-best.
   have hWeak : weakNecessity f g g' p true := by
-    intro w' hw'
-    obtain ⟨_, hBest⟩ := hw'
-    have hIdent : (fun w : Bool => w = true) ∈ combineOrdering g g' true := by
-      simp [combineOrdering, g, g']
-    exact hBest true (hAcc true) (fun w => w = true) hIdent rfl
-  -- Strong necessity fails: `false` is best under g (trivial), but p false is false.
-  have hNot : ¬ strongNecessity f g p true := by
-    intro hStrong
-    have hFalseBest : false ∈ bestWorlds f g true := by
-      refine ⟨hAcc false, fun w'' _ q hq _ => ?_⟩
-      simp [g] at hq
-      rw [hq]
-      trivial
-    exact Bool.false_ne_true (hStrong false hFalseBest)
+    rintro w' ⟨_, hmin⟩
+    cases w' with
+    | true => rfl
+    | false =>
+      have hTF : atLeastAsGoodAs (g' true) true false := by
+        intro q hq _
+        cases hq with
+        | head => rfl
+        | tail _ h => cases h
+      have hFT := hmin true (hBestAll true) hTF
+      exact absurd (hFT (fun w => w = true) List.mem_cons_self rfl)
+        Bool.false_ne_true
+  -- Strong necessity fails at the g-best world `false`.
+  have hNot : ¬ strongNecessity f g p true := fun hStrong =>
+    Bool.false_ne_true (hStrong false (hBestAll false))
   exact hNot (h Bool f g g' p true hWeak)
 
 /-! ## Deontic application -/
@@ -174,11 +169,9 @@ theorem weak_eq_strong_no_secondary (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) :
     weakNecessity f g (emptyBackground (W := W)) p w ↔
     strongNecessity f g p w := by
-  simp only [weakNecessity, strongNecessity, necessity_iff_all]
-  constructor <;> intro h
-  · rwa [show bestWorlds f (combineOrdering g (emptyBackground (W := W))) w =
-      bestWorlds f g w from by unfold combineOrdering emptyBackground; simp] at h
-  · rwa [show bestWorlds f g w = bestWorlds f (combineOrdering g (emptyBackground (W := W))) w
-      from by unfold combineOrdering emptyBackground; simp] at h
+  unfold weakNecessity strongNecessity
+  rw [show bestAmong (bestWorlds f g w) ((emptyBackground (W := W)) w) =
+    bestWorlds f g w from bestAmong_empty _]
+  exact (necessity_iff_all f g p w).symm
 
 end Semantics.Modality.Directive
