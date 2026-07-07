@@ -64,7 +64,7 @@ namespace Kennedy1999
 open Degree (comparativeSem equativeSem
   comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset
   equativeSem_iff_posExt_subset)
-open Degree (posExt negExt crossExtentInclusion crossExtent_always_false posExt_subset_iff negExt_subset_iff extent_galois_antitone)
+open Degree (posExt negExt crossExtentInclusion crossExtent_always_false extent_galois_antitone)
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Polar Anomaly Data
 -- ════════════════════════════════════════════════════
@@ -140,7 +140,7 @@ theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
 
 /-- "A is taller than B" iff B's positive extent is strictly contained
     in A's. Bridges the consensus comparative to the algebraic
-    `posExt_ssubset_iff` from `Degree`. -/
+    `Set.Iic_ssubset_Iic` through the `posExt` abbrev. -/
 theorem comparative_extent_bridge {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=

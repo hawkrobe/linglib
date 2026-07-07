@@ -57,25 +57,9 @@ abbrev posExt [Preorder D] (μ : Entity → D) (x : Entity) : Set D :=
 abbrev negExt [Preorder D] (μ : Entity → D) (x : Entity) : Set D :=
   Set.Ioi (μ x)
 
-/-- Higher degree ↔ larger positive extent. -/
-theorem posExt_subset_iff [Preorder D] (μ : Entity → D) (a b : Entity) :
-    posExt μ a ⊆ posExt μ b ↔ μ a ≤ μ b :=
-  Set.Iic_subset_Iic
-
-/-- Strict version of `posExt_subset_iff`. -/
-theorem posExt_ssubset_iff [Preorder D] (μ : Entity → D) (a b : Entity) :
-    posExt μ a ⊂ posExt μ b ↔ μ a < μ b :=
-  Set.Iic_ssubset_Iic
-
-/-- Higher degree ↔ SMALLER negative extent (reverse monotonicity). -/
-theorem negExt_subset_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
-    negExt μ a ⊆ negExt μ b ↔ μ b ≤ μ a :=
-  Set.Ioi_subset_Ioi_iff
-
-/-- Strict version of `negExt_subset_iff`. -/
-theorem negExt_ssubset_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
-    negExt μ a ⊂ negExt μ b ↔ μ b < μ a :=
-  Set.Ioi_ssubset_Ioi_iff
+-- Extent inclusion/complement algebra is mathlib's, applying through the
+-- abbrevs directly: `Set.Iic_subset_Iic`, `Set.Iic_ssubset_Iic`,
+-- `Set.Ioi_subset_Ioi_iff`, `Set.Ioi_ssubset_Ioi_iff`, `Set.compl_Iic`.
 
 /-- **Antonymy biconditional** ([kennedy-1999] eq (54)).
 
@@ -90,14 +74,7 @@ theorem negExt_ssubset_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     a lexical antonymy property — survives the convention deviation. -/
 theorem antonymy_biconditional [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     posExt μ b ⊂ posExt μ a ↔ negExt μ a ⊂ negExt μ b := by
-  rw [posExt_ssubset_iff, negExt_ssubset_iff]
-
-/-- `posExt` and `negExt` are set-theoretic complements on a linear order
-    (`Set.compl_Iic` under the abbrev). The lattice expression of
-    [kennedy-1999] eqs (52)–(53)'s join-complementarity. -/
-theorem compl_posExt [LinearOrder D] (μ : Entity → D) (x : Entity) :
-    (posExt μ x)ᶜ = negExt μ x :=
-  Set.compl_Iic
+  rw [Set.Iic_ssubset_Iic, Set.Ioi_ssubset_Ioi_iff]
 
 /-- Order-reversing equivalence between `posExt`- and `negExt`-inclusions.
     The Galois-antitone framing is `compl_subset_compl` specialized at
@@ -108,7 +85,7 @@ theorem compl_posExt [LinearOrder D] (μ : Entity → D) (x : Entity) :
     but the algebraic shadow of LITTLE *is* this antitone identity. -/
 theorem extent_galois_antitone [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     posExt μ a ⊆ posExt μ b ↔ negExt μ b ⊆ negExt μ a := by
-  rw [posExt_subset_iff, negExt_subset_iff]
+  rw [Set.Iic_subset_Iic, Set.Ioi_subset_Ioi_iff]
 
 /-- The set-theoretic claim of "cross-polar inclusion": that the positive
     extent of one entity is included in the negative extent of another.
