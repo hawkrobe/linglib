@@ -136,33 +136,13 @@ inductive Selector where
 
 end Semantics.Mood
 
-/-! ### Bridge to UD.Mood
-
-`UD.Mood` is a flat enum conflating illocutionary force (Imp, Jus, Adm)
-with grammatical mood (Ind, Sub) and finer irrealis subtypes (Cnd, Opt,
-Pot, Nec, Irr). The bridge picks the most defensible default
-cross-product:
-
-| UD.Mood | force         | mood        |
-|---------|---------------|-------------|
-| Ind     | declarative   | indicative  |
-| Sub     | declarative   | subjunctive |
-| Imp     | imperative    | indicative  |
-| Cnd     | declarative   | subjunctive |
-| Opt     | declarative   | subjunctive |
-| Jus     | imperative    | subjunctive |
-| Pot     | declarative   | subjunctive |
-| Qot     | declarative   | indicative  |
-| Adm     | exclamative   | indicative  |
-| Nec     | declarative   | subjunctive |
-| Irr     | declarative   | subjunctive |
--/
+/-! ### Bridge to UD.Mood -/
 
 namespace UD.Mood
 
-/-- The default force × mood cross-product for a `UD.Mood` value —
-non-injective by design, since `UD.Mood` draws finer irrealis
-distinctions than force × mood records. -/
+/-- The default `ClauseType` for a `UD.Mood` value. The UD feature is a
+flat enum conflating force with mood, so the map is a non-injective
+default cross-product. -/
 def toClauseType : UD.Mood → Semantics.Mood.ClauseType
   | .Ind => { force := .declarative, mood := .indicative }
   | .Sub => { force := .declarative, mood := .subjunctive }
