@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Extent
-import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Core.Order.Comparison
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Framework-Independent Comparative Semantics
@@ -69,6 +69,121 @@ inductive DegPType where
   /-- *enough*. -/
   | sufficiency
   deriving DecidableEq, Repr
+
+/-! ### Order-Sensitive MAX ([rett-2026]) -/
+
+/-! ### Scale-sensitive maximality operator
+
+[rett-2026]: MAX_c(X) picks the element(s)
+of X that c-dominate all other members. For the `<` scale (`.lt`) this is the GLB
+(earliest / smallest), for `>` (`.gt`) the LUB (latest / largest). The same operator
+underlies both temporal connectives (*before*/*after*) and degree comparatives.
+
+- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
+-/
+
+/-- Order-sensitive maximality ([rett-2026], def. 1):
+    MAX_c(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → c.rel x x' }.
+    The dominance relation is the reified `Core.Order.Comparison` rather than a
+    lawless `R : α → α → Prop` — removing the "fake generality" of an unconstrained
+    relation parameter. Each concrete `c` (`.lt`, `.gt`, `.ge`, …) names an
+    order relation via `Comparison.rel`. -/
+def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α :=
+  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.rel x x' }
+
+/-- MAX on a singleton is that singleton: MAX_c({x}) = {x}.
+    The universal quantifier is vacuously satisfied, so this holds for any `c`. -/
+theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α) :
+    maxOnScale c {x} = {x} := by
+  ext y
+  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl, _⟩; rfl
+  · rintro rfl
+    exact ⟨rfl, fun x' hx' hne => absurd hx' hne⟩
+
+/-- MAX₍<₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` is the singleton `{s}`.
+    The minimum element s R-dominates all others on the `<` scale.
+    Dual: MAX₍>₎ on the same interval is `{f}`. -/
+theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
+    (s f : α) (hsf : s ≤ f) :
+    maxOnScale .lt { x : α | s ≤ x ∧ x ≤ f } = {s} := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨⟨hxs, _⟩, hdom⟩
+    by_contra hne
+    have : s < x := lt_of_le_of_ne hxs (Ne.symm hne)
+    have := hdom s ⟨le_refl _, hsf⟩ (ne_of_lt ‹s < x›)
+    exact absurd ‹s < x› (not_lt.mpr (le_of_lt this))
+  · rintro rfl
+    exact ⟨⟨le_refl _, hsf⟩, fun x' ⟨hx's, _⟩ hne =>
+      lt_of_le_of_ne hx's (Ne.symm hne)⟩
+
+/-- MAX₍>₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` is the singleton `{f}`.
+    The maximum element R-dominates all others on the `>` scale. -/
+theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
+    (s f : α) (hsf : s ≤ f) :
+    maxOnScale .gt { x : α | s ≤ x ∧ x ≤ f } = {f} := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨⟨_, hxf⟩, hdom⟩
+    by_contra hne
+    have : x < f := lt_of_le_of_ne hxf hne
+    have := hdom f ⟨hsf, le_refl _⟩ (ne_of_gt ‹x < f›)
+    exact absurd ‹x < f› (not_lt.mpr (le_of_lt this))
+  · rintro rfl
+    exact ⟨⟨hsf, le_refl _⟩, fun x' ⟨_, hx'f⟩ hne =>
+      lt_of_le_of_ne hx'f hne⟩
+
+/-- A scalar construction f is **ambidirectional** iff
+    applying f to a set B and to its complement Bᶜ yields the same result,
+    because MAX picks the same informative boundary from both.
+    This is the mechanism behind expletive negation licensing: when
+    f(B) ↔ f(Bᶜ), negating B is truth-conditionally vacuous. -/
+def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
+  f B ↔ f Bᶜ
+
+
+/-- **Bridge**: `maxOnScale .ge` applied to the "at least" degree set
+    `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true
+    value. This connects the relational MAX to `IsMaxInf`.
+
+    The convention: `maxOnScale c X` picks elements x ∈ X with `c.rel x x'` for
+    all other x'. With `c = .ge`, this picks elements ≥ all others,
+    i.e., the maximum. -/
+theorem maxOnScale_atLeast_singleton {W α : Type*} [LinearOrder α] (μ : W → α) (w : W) :
+    maxOnScale .ge { d : α | d ≤ μ w } = { μ w } := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff, ge_iff_le]
+  constructor
+  · rintro ⟨hx, hdom⟩
+    by_contra hne
+    have hlt : x < μ w := lt_of_le_of_ne hx hne
+    have := hdom (μ w) (le_refl _) (Ne.symm hne)
+    exact not_le.mpr hlt this
+  · rintro rfl
+    exact ⟨le_refl _, fun x' hx' hne => le_of_lt (lt_of_le_of_ne hx' hne)⟩
+
+/-- MAX₍≥₎ on {d | d ≤ b} is {b}. Corollary of `maxOnScale_atLeast_singleton`
+    with `μ = id`. Used by the comparative boundary theorems. -/
+theorem maxOnScale_ge_atMost {α : Type*} [LinearOrder α] (b : α) :
+    maxOnScale .ge {d | d ≤ b} = {b} :=
+  maxOnScale_atLeast_singleton id b
+
+/-- Grounding: `MAX₍≥₎` is mathlib's `IsGreatest` (the `x' = x` case of the
+    dominance quantifier holds by reflexivity). -/
+theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
+    maxOnScale .ge X = {x | IsGreatest X x} := by
+  ext x
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, IsGreatest,
+    upperBounds, ge_iff_le]
+  refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩,
+    fun ⟨hx, hub⟩ => ⟨hx, fun y hy _ => hub hy⟩⟩
+  rcases eq_or_ne y x with rfl | hne
+  · exact le_refl _
+  · exact hdom y hy hne
 
 /-! ### Comparative and equative semantics -/
 

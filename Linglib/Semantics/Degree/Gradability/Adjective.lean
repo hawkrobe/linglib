@@ -1,6 +1,5 @@
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.DirectedMeasure
-import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.Gradability.Dimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -304,19 +303,6 @@ theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
     ¬ (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, DirectedMeasure.adjective,
         DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
-
-theorem degree_nontrivial {max : Nat} (h : 1 ≤ max) :
-    ∃ x : Degree max, x ≠ ⊤ := by
-  refine ⟨⟨⟨0, by omega⟩⟩, ?_⟩
-  intro heq
-  simp [Top.top, Fin.last, Degree.mk.injEq] at heq
-  omega
-
-theorem degree_admits_optimum {max : Nat} (h : 1 ≤ max) :
-    ∃ (P : Degree max → Prop),
-      (∀ x y : Degree max, x ≤ y → P x → P y) ∧
-      ¬ (∀ x y : Degree max, P x ↔ P y) :=
-  upperBound_admits_optimum (degree_nontrivial h)
 
 theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
     (DirectedMeasure.numeral μ).μ = μ :=
