@@ -2,7 +2,6 @@ import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Modal
-import Linglib.Semantics.Mood.Component
 import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive

@@ -1,6 +1,5 @@
 import Linglib.Semantics.Mood.Modal
 import Linglib.Semantics.Mood.State
-import Linglib.Semantics.Mood.Component
 import Linglib.Semantics.Mood.Defs
 
 /-!
@@ -103,7 +102,7 @@ inductive VerbalOp where
     predicate's modality quantifies over ([portner-2018], Ch. 2), not
     an operation the mood morpheme performs. Packaged as the same
     `HasTarget` typeclass that `Illocutionary` instantiates in
-    `Semantics/Mood/Component.lean`. -/
+    `Semantics/Mood/Defs.lean`. -/
 instance : HasTarget VerbalOp where
   target
     | .indicative    => .informational
