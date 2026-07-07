@@ -1,5 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
+import Linglib.Features.LicensingContext
 
 /-!
 # Indefinite series — feature taxonomy and the word-class-neutral capability
@@ -51,9 +52,10 @@ inductive HaspelmathFunction where
   | conditional
   /-- Function 6: Standard of comparison. -/
   | comparative
-  /-- Function 7: Indirect (clause-mate) negation. -/
+  /-- Function 7: Indirect negation (superordinate or implicit negation:
+      *without*, *doubt*, *deny*). -/
   | indirectNeg
-  /-- Function 8: Direct negation. -/
+  /-- Function 8: Direct (clause-mate) negation. -/
   | directNeg
   /-- Function 9: Free choice. -/
   | freeChoice
@@ -98,6 +100,40 @@ def HaspelmathFunction.isDE : HaspelmathFunction → Bool
 def HaspelmathFunction.isFC : HaspelmathFunction → Bool
   | .comparative | .freeChoice => true
   | _ => false
+
+/-- The [haspelmath-1997] map function a licensing environment realizes, for
+    the polarity-relevant reading of an indefinite in that environment.
+    Partial: `none` for environments outside the map's function inventory
+    (the Ladusaw-tradition rows `few`, `atMost`, `superlative`, `onlyFocus`,
+    `tooTo`, `universalRestrictor`, `sinceTemporal`; also `nobody`,
+    `beforeClause`, `adversative`, whose placement between direct and
+    indirect negation is not verified against the book and is left unmapped).
+    Interpretation-light judgment calls, documented: the modal, imperative,
+    generic, and free-relative rows map to `freeChoice` — their
+    polarity-relevant realization — although the same environments host plain
+    irrealis uses of non-polarity indefinites; both comparative rows realize
+    the standard-of-comparison function regardless of NPI-licensability
+    (`comparativeNP` licenses no NPIs, [hoeksema-1983]). -/
+def _root_.Features.LicensingContext.haspelmathFunction :
+    Features.LicensingContext → Option HaspelmathFunction
+  | .negation => some .directNeg
+  | .withoutClause | .doubtVerb | .denyVerb => some .indirectNeg
+  | .question => some .question
+  | .conditionalAntecedent => some .conditional
+  | .comparativeS | .comparativeNP => some .comparative
+  | .modalPossibility | .modalNecessity | .imperative | .generic
+  | .freeRelative => some .freeChoice
+  | _ => none
+
+/-- The licensing environments realizing a map function — the preimage of
+    `Features.LicensingContext.haspelmathFunction`. Empty for the specificity
+    triangle (`specificKnown`, `specificUnknown`, `irrealis`), whose
+    realizations are positive or irrealis clauses outside the
+    licensing-context inventory (matching the Fragment convention that an
+    empty `licensingContexts` list means the item needs positive contexts). -/
+def HaspelmathFunction.contexts (f : HaspelmathFunction) :
+    Finset Features.LicensingContext :=
+  Finset.univ.filter (·.haspelmathFunction = some f)
 
 /-- BFS on the implicational map restricted to a given set of functions.
     Returns the set of nodes reachable from `start` through edges whose
