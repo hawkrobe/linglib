@@ -26,7 +26,7 @@ This module formalizes Veltman's §3: expectation states, the operators
 - "Normally p; presumably p" succeeds (`normally_presumably_succeeds`)
 - Conflicting defaults yield agnosticism (`conflicting_defaults_iff_agree`)
 - Compatible defaults reinforce (`compatible_defaults_optimal`)
-- "Normally" is idempotent and commutative (`normallyUpdate_idempotent`, `normallyUpdate_comm`)
+- Promotion is idempotent and commutative (`promote_respects_idempotent`, `promote_comm`)
 
 ## What's not here (§5)
 
@@ -95,20 +95,23 @@ def ExpState.optimal (σ : ExpState W) : Set W :=
 
 -- ═══ Update Operations ═══
 
-/-- **Assertion update**: eliminate non-p-worlds, preserve pattern.
-
-    This is the standard eliminative update from CCP.lean, lifted to
-    expectation states. Information grows; expectations are unchanged. -/
-def assertUpdate (φ : W → Prop) (σ : ExpState W) : ExpState W :=
+/-- **Assertion update** (Veltman's factual update): eliminate
+    non-φ-worlds, preserve the pattern. Information grows; expectations
+    are unchanged. This is [portner-2018]'s `+`-update on the context
+    set, and the standard eliminative update from CCP.lean lifted to
+    expectation states. -/
+def ExpState.assert (σ : ExpState W) (φ : W → Prop) : ExpState W :=
   ⟨{ w ∈ σ.info | φ w }, σ.order⟩
 
-/-- **"Normally p"**: refine the pattern so p-worlds are preferred.
-    The information state is unchanged — we don't learn that p is true,
-    only that p is *expected*.
+/-- **Promotion update** (Veltman's *normally φ*): refine the pattern
+    so φ-worlds are preferred. The information state is unchanged — we
+    don't learn that φ is true, only that φ is *expected*.
 
     This is the core innovation of [veltman-1996]: defaults operate on
-    the expectation pattern, not on the information state. -/
-def normallyUpdate (φ : W → Prop) (σ : ExpState W) : ExpState W :=
+    the expectation pattern, not on the information state. Read at the
+    discourse level it is [portner-2018]'s `⋆`-update (the To-Do-List
+    update of [portner-2004]). -/
+def ExpState.promote (σ : ExpState W) (φ : W → Prop) : ExpState W :=
   ⟨σ.info, Normality.refine σ.order φ⟩
 
 section Classical
@@ -133,17 +136,79 @@ end Classical
 
 -- ═══ Basic Properties ═══
 
-/-- Assertion preserves the normality ordering. -/
-theorem assertUpdate_preserves_order (φ : W → Prop) (σ : ExpState W) :
-    (assertUpdate φ σ).order = σ.order := rfl
+namespace ExpState
 
-/-- "Normally" preserves the information state. -/
-theorem normallyUpdate_preserves_info (φ : W → Prop) (σ : ExpState W) :
-    (normallyUpdate φ σ).info = σ.info := rfl
+@[simp] theorem assert_info (σ : ExpState W) (φ : W → Prop) :
+    (σ.assert φ).info = { w ∈ σ.info | φ w } := rfl
+
+/-- Assertion preserves the normality ordering. -/
+@[simp] theorem assert_order (σ : ExpState W) (φ : W → Prop) :
+    (σ.assert φ).order = σ.order := rfl
+
+/-- Promotion preserves the information state. -/
+@[simp] theorem promote_info (σ : ExpState W) (φ : W → Prop) :
+    (σ.promote φ).info = σ.info := rfl
+
+@[simp] theorem promote_order (σ : ExpState W) (φ : W → Prop) :
+    (σ.promote φ).order = Normality.refine σ.order φ := rfl
 
 /-- Assertion is eliminative: it can only shrink the info state. -/
-theorem assertUpdate_eliminative (φ : W → Prop) (σ : ExpState W) :
-    (assertUpdate φ σ).info ⊆ σ.info := fun _ hw => hw.1
+theorem assert_info_subset (σ : ExpState W) (φ : W → Prop) :
+    (σ.assert φ).info ⊆ σ.info := fun _ hw => hw.1
+
+/-! Refinement order on expectation states: more constrained ≤ less
+constrained, componentwise — finer ≤ coarser, matching the `Setoid`
+convention. (NB [veltman-1996] orients his `≤` the other way, weaker
+below stronger; the content is the same.) Both updates are
+deflationary, monotone, and idempotent for this order, and
+*acceptance* — [veltman-1996]'s `σ ⊩ φ` iff `σ[φ] = σ` — is the
+fixpoint condition `σ ≤ σ[φ]`. -/
+
+instance : Preorder (ExpState W) where
+  le σ τ := σ.info ⊆ τ.info ∧ σ.order ≤ τ.order
+  le_refl _ := ⟨subset_rfl, le_refl _⟩
+  le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
+
+theorem le_iff {σ τ : ExpState W} :
+    σ ≤ τ ↔ σ.info ⊆ τ.info ∧ σ.order ≤ τ.order := Iff.rfl
+
+/-- Assertion lands below the input. -/
+theorem assert_le_self (σ : ExpState W) (φ : W → Prop) : σ.assert φ ≤ σ :=
+  ⟨σ.assert_info_subset φ, le_refl _⟩
+
+/-- Promotion lands below the input. -/
+theorem promote_le_self (σ : ExpState W) (φ : W → Prop) : σ.promote φ ≤ σ :=
+  ⟨subset_rfl, inf_le_left⟩
+
+theorem assert_mono {σ τ : ExpState W} (h : σ ≤ τ) (φ : W → Prop) :
+    σ.assert φ ≤ τ.assert φ :=
+  ⟨fun _ hw => ⟨h.1 hw.1, hw.2⟩, h.2⟩
+
+theorem promote_mono {σ τ : ExpState W} (h : σ ≤ τ) (φ : W → Prop) :
+    σ.promote φ ≤ τ.promote φ :=
+  ⟨h.1, inf_le_inf_right _ h.2⟩
+
+/-- **Acceptance fixpoint for assertion** ([veltman-1996], §1): the
+    input refines its own assertion iff φ already holds throughout the
+    information state. -/
+theorem le_assert_iff (σ : ExpState W) (φ : W → Prop) :
+    σ ≤ σ.assert φ ↔ ∀ w ∈ σ.info, φ w :=
+  ⟨fun h w hw => (h.1 hw).2, fun h => ⟨fun _ hw => ⟨hw, h _ hw⟩, le_refl _⟩⟩
+
+/-- **Acceptance fixpoint for promotion** ([veltman-1996]: `e` is a
+    *default* in `ε` iff `ε ∘ e = ε`, his Def 4.2): the input refines
+    its own promotion iff the ordering already respects φ. This is the
+    support notion for the preferential component — "φ is already on
+    the To-Do List" — distinct from truth at the best worlds. -/
+theorem le_promote_iff (σ : ExpState W) (φ : W → Prop) :
+    σ ≤ σ.promote φ ↔ Normality.respects σ.order φ := by
+  constructor
+  · intro h w v hle hv
+    exact (h.2 hle).2 hv
+  · intro h
+    exact ⟨subset_rfl, le_inf (le_refl _) (fun w v hle hv => h w v hle hv)⟩
+
+end ExpState
 
 /-- Presumably is a test: it either returns the state or empties info. -/
 theorem presumably_isTest (φ : W → Prop) (σ : ExpState W) :
@@ -192,8 +257,8 @@ theorem presumably_passes (σ : ExpState W) (φ : W → Prop)
 theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
     (hex : ∃ w ∈ d, φ w) :
     let σ : ExpState W := ⟨d, Normality.total⟩
-    presumablyTest φ (normallyUpdate φ σ) = normallyUpdate φ σ := by
-  simp only [presumablyTest, normallyUpdate, ExpState.optimal]
+    presumablyTest φ (σ.promote φ) = σ.promote φ := by
+  simp only [presumablyTest, ExpState.promote, ExpState.optimal]
   rw [if_pos]
   intro w hw
   rw [Normality.refine_total_optimal φ d hex] at hw
@@ -209,7 +274,7 @@ theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
     [veltman-1996], Proposition 3.6(iv). -/
 theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
     (h : Normality.respects σ.order φ) :
-    Normality.respects (assertUpdate ψ σ).order φ := h
+    Normality.respects (σ.assert ψ).order φ := h
 
 /-- **Persistence under further defaults**: if the ordering respects p,
     then processing "normally q" (for any q) preserves this. Later
@@ -218,13 +283,13 @@ theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
     [veltman-1996], Proposition 3.6(iv). -/
 theorem persistence_normally (σ : ExpState W) (φ ψ : W → Prop)
     (h : Normality.respects σ.order φ) :
-    Normality.respects (normallyUpdate ψ σ).order φ :=
+    Normality.respects (σ.promote ψ).order φ :=
   Normality.refine_preserves_respects σ.order φ ψ h
 
 /-- After "normally p", the ordering respects p. Combined with
     persistence, this means "normally p" creates a permanent expectation. -/
 theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
-    Normality.respects (normallyUpdate φ σ).order φ :=
+    Normality.respects (σ.promote φ).order φ :=
   Normality.refine_respects σ.order φ
 
 
@@ -234,22 +299,22 @@ theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
     ordering respects φ), then processing "normally φ" again is a no-op.
 
     [veltman-1996], Proposition 3.6(ii) at the state level. -/
-theorem normallyUpdate_idempotent (σ : ExpState W) (φ : W → Prop)
+theorem promote_respects_idempotent (σ : ExpState W) (φ : W → Prop)
     (h : Normality.respects σ.order φ) :
-    normallyUpdate φ σ = σ := by
+    σ.promote φ = σ := by
   show ExpState.mk σ.info (Normality.refine σ.order φ) = σ
   congr 1
   exact Normality.refine_of_respects σ.order φ h
 
 /-- Corollary: "normally φ; normally φ" = "normally φ" from any state. -/
-theorem normallyUpdate_normally_idempotent (σ : ExpState W) (φ : W → Prop) :
-    normallyUpdate φ (normallyUpdate φ σ) = normallyUpdate φ σ :=
-  normallyUpdate_idempotent _ φ (normally_creates_respect σ φ)
+theorem promote_promote_self (σ : ExpState W) (φ : W → Prop) :
+    (σ.promote φ).promote φ = σ.promote φ :=
+  promote_respects_idempotent _ φ (normally_creates_respect σ φ)
 
 /-- **Commutativity**: the order of defaults doesn't matter.
     "Normally φ; normally ψ" = "normally ψ; normally φ". -/
-theorem normallyUpdate_comm (σ : ExpState W) (φ ψ : W → Prop) :
-    normallyUpdate ψ (normallyUpdate φ σ) = normallyUpdate φ (normallyUpdate ψ σ) := by
+theorem promote_comm (σ : ExpState W) (φ ψ : W → Prop) :
+    (σ.promote φ).promote ψ = (σ.promote ψ).promote φ := by
   show ExpState.mk σ.info (Normality.refine (Normality.refine σ.order φ) ψ) =
        ExpState.mk σ.info (Normality.refine (Normality.refine σ.order ψ) φ)
   congr 1

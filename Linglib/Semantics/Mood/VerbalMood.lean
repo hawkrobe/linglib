@@ -29,9 +29,9 @@ distinguishes indicative from subjunctive complementation:
 [portner-2018]'s unification of these two: *both intuitions are
 correct* because they target two different POSW components. The
 **information component** (`cs`) underwrites Truth-style universal
-quantification (`POSW.boxCs`); the **preference component** (`le`)
+quantification (`ExpState.boxCs`); the **preference component** (`order`)
 underwrites Comparison-style quantification over the best-ranked
-subset (`POSW.boxLe`).
+subset (`ExpState.boxLe`).
 
 We add a third operator `.interrogative` for question-embedding
 predicates (`wonder`, `ask`, `investigate`), which select for clauses
@@ -70,6 +70,8 @@ matrix predicate (`MoodSelector` for declarative-embedders;
 -/
 
 namespace Semantics.Mood
+
+open Semantics.Dynamic.Default
 
 variable {W : Type*}
 
@@ -122,8 +124,8 @@ instance : HasPOSWTarget VerbalMoodOp where
     modal of the operator's POSW target on the embedded proposition.
     Definitionally `boxOn ∘ target`, so the three cases consult
     disjoint POSWQ components:
-    `.indicative ↦ POSW.boxCs`,
-    `.subjunctive ↦ POSW.boxLe`,
+    `.indicative ↦ ExpState.boxCs`,
+    `.subjunctive ↦ ExpState.boxLe`,
     `.interrogative ↦ POSWQ.boxAns`. -/
 def VerbalMoodOp.interp (m : VerbalMoodOp) : POSWQ W → (W → Prop) → Prop :=
   (target m).boxOn
@@ -137,10 +139,10 @@ def VerbalMoodOp.interp (m : VerbalMoodOp) : POSWQ W → (W → Prop) → Prop :
 /-! ### Definitional equalities -/
 
 @[simp] theorem interp_indicative (c : POSWQ W) (p : W → Prop) :
-    VerbalMoodOp.indicative.interp c p = c.toPOSW.boxCs p := rfl
+    VerbalMoodOp.indicative.interp c p = c.toExpState.boxCs p := rfl
 
 @[simp] theorem interp_subjunctive (c : POSWQ W) (p : W → Prop) :
-    VerbalMoodOp.subjunctive.interp c p = c.toPOSW.boxLe p := rfl
+    VerbalMoodOp.subjunctive.interp c p = c.toExpState.boxLe p := rfl
 
 @[simp] theorem interp_interrogative (c : POSWQ W) (p : W → Prop) :
     VerbalMoodOp.interrogative.interp c p = c.boxAns p := rfl
@@ -162,12 +164,12 @@ which carry different lattice structures. -/
 theorem interp_indicative_mono (c : POSWQ W) (p q : W → Prop)
     (h : ∀ w, p w → q w) :
     VerbalMoodOp.indicative.interp c p → VerbalMoodOp.indicative.interp c q :=
-  POSW.boxCs_mono c.toPOSW p q h
+  c.toExpState.boxCs_mono p q h
 
 theorem interp_subjunctive_mono (c : POSWQ W) (p q : W → Prop)
     (h : ∀ w, p w → q w) :
     VerbalMoodOp.subjunctive.interp c p → VerbalMoodOp.subjunctive.interp c q :=
-  POSW.boxLe_mono c.toPOSW p q h
+  c.toExpState.boxLe_mono p q h
 
 /-! ### Distinctness witnesses
 
@@ -176,35 +178,29 @@ a disjoint POSWQ component. We exhibit concrete witnesses showing
 that no operator can be defined in terms of the others on the POSWQ
 substrate alone. -/
 
-/-- Separation POSW: `cs = ⊤` over `Bool`, with `le w v = (w = false →
-    v = false)`. Under this ordering `false` is the unique element
-    `w` such that every `v` satisfies `le v w`, so `false` is the
-    unique world picked out by `POSW.best`. -/
-def sepPOSW : POSW Bool where
-  cs := fun _ => True
-  le := fun w v => w = false → v = false
-  le_refl  := fun _ _ h => h
-  le_trans := fun _ _ _ _ _ _ hwu huv hw => huv (hwu hw)
+/-- Separation state: total information over `Bool`, ordered by the
+    criterion preorder for `POSWQ.sepProp` (the ordering that
+    `ExpState.promote` would install from the total order). Under it
+    `false` — the unique `sepProp`-world — is the unique best world. -/
+def sepState : ExpState Bool :=
+  ⟨Set.univ, Core.Order.Normality.crit POSWQ.sepProp⟩
 
-/-- Lift of `sepPOSW` to a POSWQ with trivial inquiry. Used to
+/-- Lift of `sepState` to a POSWQ with trivial inquiry. Used to
     distinguish indicative from subjunctive without engaging the
     inquiry component. -/
-def sepPOSWQ_triv : POSWQ Bool := POSWQ.ofPOSW sepPOSW
-
-/-- Separation proposition: only `false` satisfies it. -/
-def sepProp : Bool → Prop := fun w => w = false
+def sepPOSWQ_triv : POSWQ Bool := POSWQ.ofExpState sepState
 
 /-- The subjunctive operator accepts `(sepPOSWQ_triv, sepProp)`. -/
 theorem subjunctive_accepts_separation :
-    VerbalMoodOp.subjunctive.interp sepPOSWQ_triv sepProp := by
+    VerbalMoodOp.subjunctive.interp sepPOSWQ_triv POSWQ.sepProp := by
   intro w hbest
-  exact (hbest.2 false trivial) rfl
+  exact hbest.2 false (Set.mem_univ false) rfl
 
 /-- The indicative operator rejects `(sepPOSWQ_triv, sepProp)`. -/
 theorem indicative_rejects_separation :
-    ¬ VerbalMoodOp.indicative.interp sepPOSWQ_triv sepProp := by
+    ¬ VerbalMoodOp.indicative.interp sepPOSWQ_triv POSWQ.sepProp := by
   intro h
-  exact Bool.noConfusion (h true trivial)
+  exact Bool.noConfusion (h true (Set.mem_univ true))
 
 /-- **Indicative ≠ subjunctive**. The two mood operators are
     distinguishable: there exists a POSWQ and a proposition on which
@@ -214,7 +210,7 @@ theorem indicative_ne_subjunctive :
     ∃ (c : POSWQ Bool) (p : Bool → Prop),
       VerbalMoodOp.subjunctive.interp c p ∧
       ¬ VerbalMoodOp.indicative.interp c p :=
-  ⟨sepPOSWQ_triv, sepProp,
+  ⟨sepPOSWQ_triv, POSWQ.sepProp,
     subjunctive_accepts_separation, indicative_rejects_separation⟩
 
 /-- **Interrogative ≠ indicative**. Reuses the witness from

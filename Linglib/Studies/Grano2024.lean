@@ -505,8 +505,8 @@ robustly subjunctive predicates, the projection lands in
 `some .subjunctive`; for cross-linguistically variable predicates,
 in `none`. The chain `verb → MoodSelector → VerbalMoodOp` makes
 the lexical-class commitment of [grano-2024] operationally
-ready to feed POSWQ-side glosses (`POSW.boxLe` for subjunctive,
-`POSW.boxCs` for indicative). -/
+ready to feed POSWQ-side glosses (`ExpState.boxLe` for subjunctive,
+`ExpState.boxCs` for indicative). -/
 
 /-- 'want' lifts to the subjunctive POSWQ operator. -/
 theorem want_verbalMood :
@@ -520,7 +520,7 @@ theorem hope_verbalMood :
 
 /-- The robust subjunctive predicates (e.g. 'want') project to the
     `preferential` POSW component — they quantify over the best-ranked
-    subset of the POSWQ via `POSW.boxLe`. The composed projection
+    subset of the POSWQ via `ExpState.boxLe`. The composed projection
     (`MoodSelector → VerbalMoodOp → POSWTarget`) makes the operational
     target explicit. -/
 theorem want_target :

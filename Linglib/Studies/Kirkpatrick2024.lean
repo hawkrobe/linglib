@@ -321,10 +321,10 @@ arises: the subset relation between restrictors (albino raven ⊆ raven)
 creates asymmetric blocking in horizon evolution. The abstract
 impossibility theorem (`commutative_implies_equal_verdicts` in
 `Genericity/Basic.lean`) then rules out ANY commutative framework — including
-[veltman-1996]'s `normallyUpdate` — from modeling this asymmetry.
+[veltman-1996]'s `ExpState.promote` — from modeling this asymmetry.
 
-[veltman-1996]'s `normallyUpdate` is commutative
-(`normallyUpdate_comm` in `UpdateSemantics/Default.lean`), meaning that
+[veltman-1996]'s `ExpState.promote` is commutative
+(`promote_comm` in `UpdateSemantics/Default.lean`), meaning that
 processing "normally (ravens are black)" then "normally (albino ravens
 aren't black)" produces the same expectation state as the reverse order.
 Since the state is identical, any consistency test must give the same

@@ -5,12 +5,14 @@ import Linglib.Semantics.Mood.POSW
 # POSW with Inquiry Partition (POSWQ)
 [portner-2018] [groenendijk-stokhof-1984] [roberts-2012]
 
-This file is **our extension** of [portner-2018]'s POSW substrate to
-interrogative force, by way of a third component recording the open
-question: `cs` stays intact and `inquiry : Setoid W` is a separate
-third coordinate, so `+`, `⋆`, `?` each touch one component and the
-inquiry partition composes orthogonally with `cs`-refinement and
-`≤`-refinement. [portner-2018]'s verbal-mood unification itself is
+This file is **our extension** of the POSW substrate
+(`Semantics/Mood/POSW.lean`: [veltman-1996]'s `ExpState` under
+[portner-2018]'s modal reading) to interrogative force, by way of a
+third component recording the open question: `info` and `order` stay
+intact and `inquiry : Setoid W` is a separate third coordinate, so
+`assert`, `promote`, `inquire` each touch one component and the
+inquiry partition composes orthogonally with the other two
+refinements. [portner-2018]'s verbal-mood unification itself is
 stated over the two POSW components only; the separate question
 coordinate follows the architecture of [portner-2004]'s discourse
 model, which keeps the Question Set apart from the Common Ground and
@@ -29,39 +31,29 @@ makes the partition view directly available via mathlib's
 
 | layer            | declarative      | imperative       | interrogative      |
 |------------------|------------------|------------------|--------------------|
-| sentence mood    | assertion (`+`)  | direction (`⋆`)  | inquiry (`?`)      |
+| sentence mood    | `assert` (`+`)   | `promote` (`⋆`)  | `inquire` (`?`)    |
 | modal necessity  | `boxCs`          | `boxLe`          | `boxAns`           |
 | verbal mood      | `.indicative`    | (no analogue)    | `.interrogative`   |
 
-The columns are the three POSW components (`cs`, `le`, `inquiry`); the
+The columns are the three components (`info`, `order`, `inquiry`); the
 rows are the operations on each component (refining update,
 quantification). Refinement of the inquiry partition (`?`-update),
 the modal `boxAns`, and the third column entries are this library's
-extensions; they do not appear in [portner-2018].
+extensions; they do not appear in [portner-2018]. Each update is meet
+in its component's lattice (`Pi` over `Prop` for `info`; the preorder
+lattice via `Normality.refine` for `order`; `Setoid.completeLattice`
+for `inquiry`), so commutativity and idempotency are one-line
+`inf`-facts throughout.
 
-## Mathlib alignment
+## Support vs necessity, inquiry column
 
-- `inquiry : Setoid W` uses mathlib's `CompleteLattice (Setoid W)`
-  instance directly: `⊓` for partition meet (jointly-finer), `≤` for
-  refinement (finer ≤ coarser).
-- The Setoid `≤` convention (`r ≤ s ↔ ∀ x y, r x y → s x y`) coincides
-  with the POSW refinement preorder convention from
-  `Linglib/Semantics/Mood/POSW.lean`'s refinement-preorder section: finer ≤ coarser, more
-  discriminating ≤ less discriminating.
-- `extends POSW W` mirrors `Group extends Monoid`: a POSWQ *is* a POSW
-  (via the auto-generated `POSWQ.toPOSW`) plus extra structure.
-
-## Three-lattice unification (third corner)
-
-The POSWQ `?`-update is the third corner of the linglib lattice
-unification described in `Mood/POSW.lean`'s "Lattice unification"
-docstring: each of `cs`, `le`, `inquiry` carries a mathlib lattice,
-and each of `+`, `⋆`, `?` is meet in its component's lattice. The
-`inquiry` corner uses `Setoid.completeLattice α` (mathlib), so the
-`?`-update inherits not just `inf` but `iInf` over arbitrary index
-sets — reading off "asking the conjunction of a family of questions"
-as `iInf` is then a one-line consequence. The `?`-update inherits
-`inf_assoc`, `inf_idem`, and `inf_comm` directly (`inquire_inquire_self` is a one-liner via `inf_assoc + inf_idem`).
+Acceptance-as-fixpoint extends to the third coordinate: the state
+supports `inquire q` iff its inquiry already refines `q`
+(`le_inquire_iff`). Routing a proposition through `polarSetoid`,
+support implies answerhood (`boxAns_of_inquiry_le_polarSetoid`), and
+the two coincide when `info = Set.univ`
+(`inquiry_le_polarSetoid_iff_boxAns_of_univ`) — `boxAns` is
+`info`-relativized while the inquiry coordinate is not.
 
 ## Architectural note: Setoid vs. InquisitiveContent
 
@@ -98,36 +90,38 @@ and `Filter`/`Ultrafilter` parallel rather than collapsing them.
 
 namespace Semantics.Mood
 
-universe u
+open Semantics.Dynamic.Default
 
-/-- A **POSW with an inquiry partition** (POSWQ): the [portner-2018]
-    POSW substrate enriched with a third component recording the open
+/-- A **POSW with an inquiry partition** (POSWQ): the POSW substrate
+    (an `ExpState`) enriched with a third component recording the open
     question. The `inquiry : Setoid W` partitions worlds into
     "answers"; its `⊤` element is "no question". The three-coordinate
     packaging is ours; the separate question coordinate follows
     [portner-2004]'s Question Set (kept apart from the Common Ground),
     while [portner-2018]'s verbal-mood unification is stated over the
     two POSW components only. -/
-structure POSWQ (W : Type u) extends POSW W where
+structure POSWQ (W : Type*) extends ExpState W where
   /-- The inquiry partition: `inquiry.r w v` means worlds `w` and `v`
       are indistinguishable answers to the open question. -/
   inquiry : Setoid W
 
 namespace POSWQ
 
-variable {W : Type u}
+variable {W : Type*}
 
 /-! ### Constructors -/
 
-/-- Lift a POSW to a POSWQ with no question under discussion (trivial
-    inquiry partition: every world is in the same cell). -/
-def ofPOSW (c : POSW W) : POSWQ W :=
-  { c with inquiry := ⊤ }
+/-- Lift an expectation state to a POSWQ with no question under
+    discussion (trivial inquiry partition: every world is in the same
+    cell). -/
+def ofExpState (σ : ExpState W) : POSWQ W :=
+  { σ with inquiry := ⊤ }
 
-@[simp] theorem ofPOSW_toPOSW (c : POSW W) : (ofPOSW c).toPOSW = c := rfl
+@[simp] theorem ofExpState_toExpState (σ : ExpState W) :
+    (ofExpState σ).toExpState = σ := rfl
 
-@[simp] theorem ofPOSW_inquiry (c : POSW W) :
-    (ofPOSW c).inquiry = (⊤ : Setoid W) := rfl
+@[simp] theorem ofExpState_inquiry (σ : ExpState W) :
+    (ofExpState σ).inquiry = (⊤ : Setoid W) := rfl
 
 /-- The **polar Setoid** of a proposition `q : W → Prop`: two worlds
     are equivalent iff they agree on `q`. The smallest piece of
@@ -157,9 +151,8 @@ def polarSetoid (q : W → Prop) : Setoid W where
 
 /-- **`?`-update** (our extension; not in [portner-2018]): refine
     the inquiry partition by meet with `q`. The partition-side
-    analogue of `+`-update on `cs` and `⋆`-update on `le`: it
-    constrains the third POSW component without touching the other
-    two.
+    analogue of `assert` on `info` and `promote` on `order`: it
+    constrains the third component without touching the other two.
 
     The meet of two equivalence relations on `W` is "agree on both";
     refining the inquiry by `q` shrinks each cell down to its
@@ -167,21 +160,18 @@ def polarSetoid (q : W → Prop) : Setoid W where
 def inquire (c : POSWQ W) (q : Setoid W) : POSWQ W :=
   { c with inquiry := c.inquiry ⊓ q }
 
-@[simp] theorem inquire_toPOSW (c : POSWQ W) (q : Setoid W) :
-    (c.inquire q).toPOSW = c.toPOSW := rfl
+@[simp] theorem inquire_toExpState (c : POSWQ W) (q : Setoid W) :
+    (c.inquire q).toExpState = c.toExpState := rfl
 
-@[simp] theorem inquire_cs (c : POSWQ W) (q : Setoid W) :
-    (c.inquire q).cs = c.cs := rfl
+@[simp] theorem inquire_info (c : POSWQ W) (q : Setoid W) :
+    (c.inquire q).info = c.info := rfl
 
-@[simp] theorem inquire_le (c : POSWQ W) (q : Setoid W) :
-    (c.inquire q).le = c.le := rfl
+@[simp] theorem inquire_order (c : POSWQ W) (q : Setoid W) :
+    (c.inquire q).order = c.order := rfl
 
-theorem inquire_inquiry (c : POSWQ W) (q : Setoid W) :
-    (c.inquire q).inquiry = c.inquiry ⊓ q := rfl
-
-/-- `?`-update is meet in `Setoid.completeLattice W`. The inquiry-side
-    analogue of `POSW.plus_cs_eq_inf` (meet in `W → Prop`) and
-    `POSW.star_le_eq_inf` (meet in `W → W → Prop`). Definitional. -/
+/-- `?`-update is meet in `Setoid.completeLattice W` — the inquiry-side
+    analogue of `assert` (meet in `W → Prop`) and `promote` (meet with
+    the criterion preorder, `Normality.refine`). Definitional. -/
 @[simp] theorem inquire_inquiry_eq_inf (c : POSWQ W) (q : Setoid W) :
     (c.inquire q).inquiry = c.inquiry ⊓ q := rfl
 
@@ -189,50 +179,40 @@ theorem inquire_inquiry (c : POSWQ W) (q : Setoid W) :
 
 /-- **Informational answerhood** (our extension): `p` is *settled by the
     question* at `c` iff `p` has a constant truth value within every
-    cell of `c.inquiry` (restricted to the context set). The
-    answerhood counterpart of [portner-2018]'s `boxCs` (truth
-    throughout `cs`) and `boxLe` (truth at every best world); the
-    formulation is closest in spirit to [groenendijk-stokhof-1984]
-    answerhood.
+    cell of `c.inquiry` (restricted to the information state). The
+    answerhood counterpart of `boxCs` (truth throughout `info`) and
+    `boxLe` (truth at every best world); the formulation is closest in
+    spirit to [groenendijk-stokhof-1984] answerhood.
 
     Unlike `boxCs` and `boxLe`, `boxAns` is *not* upward-monotone in
     `p`: a strengthening of `p` can break the constant-truth property
     on a cell. The natural monotonicity for `boxAns` is *anti*-monotone
     in the inquiry partition (`boxAns_anti` below). -/
 def boxAns (c : POSWQ W) (p : W → Prop) : Prop :=
-  ∀ w v, c.cs w → c.cs v → c.inquiry.r w v → (p w ↔ p v)
-
-/-! ### Disjointness of components
-
-The `+`-, `⋆`-, and `?`-updates target *disjoint* components of the
-POSWQ. The first two leave `inquiry` alone (vacuously, since they're
-defined on the underlying POSW), and `?`-update leaves both `cs` and
-`le` alone. The Portner unification thesis extends to three columns. -/
-
-theorem inquire_targets_disjoint_components (c : POSWQ W) (q : Setoid W) :
-    (c.inquire q).cs = c.cs ∧ (c.inquire q).le = c.le :=
-  ⟨rfl, rfl⟩
+  ∀ w v, w ∈ c.info → v ∈ c.info → c.inquiry.r w v → (p w ↔ p v)
 
 /-! ### Refinement preorder
 
-`POSWQ W` inherits a refinement preorder componentwise from `POSW W`'s
-refinement preorder (Mood/POSW.lean) and the `Setoid W` lattice:
-`c₁ ≤ c₂` iff `c₁.toPOSW ≤ c₂.toPOSW` and `c₁.inquiry ≤ c₂.inquiry`.
-Both directions agree on "finer ≤ coarser". -/
+`POSWQ W` inherits a refinement preorder componentwise from the
+`ExpState` refinement preorder and the `Setoid W` lattice:
+`c₁ ≤ c₂` iff `c₁.toExpState ≤ c₂.toExpState` and
+`c₁.inquiry ≤ c₂.inquiry`. All components agree on "finer ≤
+coarser". -/
 
 instance : Preorder (POSWQ W) where
-  le c₁ c₂ := c₁.toPOSW ≤ c₂.toPOSW ∧ c₁.inquiry ≤ c₂.inquiry
+  le c₁ c₂ := c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry
   le_refl c := ⟨le_refl _, le_refl _⟩
   le_trans _ _ _ h₁₂ h₂₃ :=
     ⟨le_trans h₁₂.1 h₂₃.1, le_trans h₁₂.2 h₂₃.2⟩
 
 theorem le_iff (c₁ c₂ : POSWQ W) :
-    c₁ ≤ c₂ ↔ c₁.toPOSW ≤ c₂.toPOSW ∧ c₁.inquiry ≤ c₂.inquiry :=
+    c₁ ≤ c₂ ↔ c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry :=
   Iff.rfl
 
 /-- `?`-update lands below the input: refining `inquiry` by meet with
     `q` can only constrain the POSWQ further. The third-component
-    analogue of `POSW.plus_le_self` and `POSW.star_le_self`. -/
+    analogue of `ExpState.assert_le_self` and
+    `ExpState.promote_le_self`. -/
 theorem inquire_le_self (c : POSWQ W) (q : Setoid W) : c.inquire q ≤ c :=
   ⟨le_refl _, inf_le_left⟩
 
@@ -241,18 +221,43 @@ theorem inquire_mono {c₁ c₂ : POSWQ W} (h : c₁ ≤ c₂) (q : Setoid W) :
     c₁.inquire q ≤ c₂.inquire q :=
   ⟨h.1, inf_le_inf_right q h.2⟩
 
+/-- **Acceptance fixpoint for `inquire`**: the input refines its own
+    `?`-update iff its inquiry already refines the question. The
+    third-coordinate instance of [veltman-1996]'s acceptance
+    (`ExpState.le_assert_iff`, `ExpState.le_promote_iff`). -/
+theorem le_inquire_iff (c : POSWQ W) (q : Setoid W) :
+    c ≤ c.inquire q ↔ c.inquiry ≤ q :=
+  ⟨fun h => le_trans h.2 inf_le_right,
+   fun h => ⟨le_refl _, le_inf (le_refl _) h⟩⟩
+
+/-- Support implies answerhood: if the inquiry already refines `p`'s
+    polar partition, `p` is settled by the question. -/
+theorem boxAns_of_inquiry_le_polarSetoid (c : POSWQ W) (p : W → Prop)
+    (h : c.inquiry ≤ polarSetoid p) : c.boxAns p :=
+  fun _ _ _ _ hwv => h hwv
+
+/-- On states with total information (`info = Set.univ`), answerhood
+    *is* inquiry-support for the polar partition: the `info`-guards in
+    `boxAns` are the only gap between the two. -/
+theorem inquiry_le_polarSetoid_iff_boxAns_of_univ (c : POSWQ W)
+    (p : W → Prop) (h : c.info = Set.univ) :
+    c.inquiry ≤ polarSetoid p ↔ c.boxAns p :=
+  ⟨fun hle => c.boxAns_of_inquiry_le_polarSetoid p hle,
+   fun hbox w v hwv =>
+     hbox w v (h ▸ Set.mem_univ w) (h ▸ Set.mem_univ v) hwv⟩
+
 /-- Refining the POSWQ *strengthens* informational answerhood: if
     `c₁` is more refined than `c₂` and `p` is settled by the question
     at `c₂`, then `p` is settled at `c₁` too. The answerhood
-    counterpart of `POSW.boxCs_anti`. -/
+    counterpart of `ExpState.boxCs_anti`. -/
 theorem boxAns_anti (c₁ c₂ : POSWQ W) (h : c₁ ≤ c₂) (p : W → Prop) :
     c₂.boxAns p → c₁.boxAns p :=
   fun hbox w v hw hv hwv =>
-    hbox w v (h.1.1 w hw) (h.1.1 v hv) (h.2 hwv)
+    hbox w v (h.1.1 hw) (h.1.1 hv) (h.2 hwv)
 
 /-! ### Closure properties of `boxAns`
 
-`boxAns p` says "`p` is constant on each inquiry cell within `cs`".
+`boxAns p` says "`p` is constant on each inquiry cell within `info`".
 This class of propositions is closed under the standard logical
 operations — answers to a question can be combined like ordinary
 propositions. -/
@@ -292,46 +297,48 @@ theorem boxAns_imp (c : POSWQ W) (p q : W → Prop) :
 
 /-! ### Three-component update disjointness
 
-The three updates `+`, `⋆`, `?` touch disjoint POSWQ components, so
-they pairwise commute when lifted to act on `POSWQ`. The lifts are
-defined here because `POSW.plus` and `POSW.star` strip the inquiry
-field; `POSWQ.plus` and `POSWQ.star` are the inquiry-preserving
-counterparts. -/
+The three updates `assert`, `promote`, `inquire` touch disjoint POSWQ
+components, so they pairwise commute when lifted to act on `POSWQ`.
+The lifts are defined here because `ExpState.assert` and
+`ExpState.promote` strip the inquiry field; `POSWQ.assert` and
+`POSWQ.promote` are the inquiry-preserving counterparts. -/
 
-/-- POSWQ-side `+`-update: refine `cs` while preserving the inquiry
-    partition. The inquiry-preserving lift of `POSW.plus`. -/
-def plus (c : POSWQ W) (p : W → Prop) : POSWQ W :=
-  { c.toPOSW.plus p with inquiry := c.inquiry }
+/-- POSWQ-side `+`-update: refine `info` while preserving the inquiry
+    partition. The inquiry-preserving lift of `ExpState.assert`. -/
+def assert (c : POSWQ W) (p : W → Prop) : POSWQ W :=
+  { c.toExpState.assert p with inquiry := c.inquiry }
 
-/-- POSWQ-side `⋆`-update: refine `le` while preserving the inquiry
-    partition. The inquiry-preserving lift of `POSW.star`. -/
-def star (c : POSWQ W) (p : W → Prop) : POSWQ W :=
-  { c.toPOSW.star p with inquiry := c.inquiry }
+/-- POSWQ-side `⋆`-update: refine `order` while preserving the inquiry
+    partition. The inquiry-preserving lift of `ExpState.promote`. -/
+def promote (c : POSWQ W) (p : W → Prop) : POSWQ W :=
+  { c.toExpState.promote p with inquiry := c.inquiry }
 
-@[simp] theorem plus_toPOSW (c : POSWQ W) (p : W → Prop) :
-    (c.plus p).toPOSW = c.toPOSW.plus p := rfl
+@[simp] theorem assert_toExpState (c : POSWQ W) (p : W → Prop) :
+    (c.assert p).toExpState = c.toExpState.assert p := rfl
 
-@[simp] theorem plus_inquiry (c : POSWQ W) (p : W → Prop) :
-    (c.plus p).inquiry = c.inquiry := rfl
+@[simp] theorem assert_inquiry (c : POSWQ W) (p : W → Prop) :
+    (c.assert p).inquiry = c.inquiry := rfl
 
-@[simp] theorem star_toPOSW (c : POSWQ W) (p : W → Prop) :
-    (c.star p).toPOSW = c.toPOSW.star p := rfl
+@[simp] theorem promote_toExpState (c : POSWQ W) (p : W → Prop) :
+    (c.promote p).toExpState = c.toExpState.promote p := rfl
 
-@[simp] theorem star_inquiry (c : POSWQ W) (p : W → Prop) :
-    (c.star p).inquiry = c.inquiry := rfl
+@[simp] theorem promote_inquiry (c : POSWQ W) (p : W → Prop) :
+    (c.promote p).inquiry = c.inquiry := rfl
 
-/-- `+` and `⋆` commute on POSWQ: applying `+`-then-`⋆` and `⋆`-then-`+`
-    produces the same POSWQ. The components never interact. -/
-@[simp] theorem plus_star_comm (c : POSWQ W) (p q : W → Prop) :
-    (c.plus p).star q = (c.star q).plus p := rfl
+/-- `assert` and `promote` commute on POSWQ: the components never
+    interact. -/
+@[simp] theorem assert_promote_comm (c : POSWQ W) (p q : W → Prop) :
+    (c.assert p).promote q = (c.promote q).assert p := rfl
 
-/-- `+` and `?` commute on POSWQ: each touches a different component. -/
-@[simp] theorem plus_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
-    (c.plus p).inquire s = (c.inquire s).plus p := rfl
+/-- `assert` and `inquire` commute on POSWQ: each touches a different
+    component. -/
+@[simp] theorem assert_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
+    (c.assert p).inquire s = (c.inquire s).assert p := rfl
 
-/-- `⋆` and `?` commute on POSWQ: each touches a different component. -/
-@[simp] theorem star_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
-    (c.star p).inquire s = (c.inquire s).star p := rfl
+/-- `promote` and `inquire` commute on POSWQ: each touches a different
+    component. -/
+@[simp] theorem promote_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
+    (c.promote p).inquire s = (c.inquire s).promote p := rfl
 
 /-- `?`-update is idempotent on the same partition: refining inquiry
     by `s` twice equals refining once. The Setoid-meet is idempotent
@@ -348,15 +355,14 @@ where some `p` is settled by the question (`boxAns p`) but is *not*
 informationally necessary (`¬ boxCs p`). The witness is a non-trivial
 inquiry partition with two cells, where `p` is true on one cell and
 false on the other: it has a constant truth value per cell (so
-`boxAns`), but is not uniformly true on `cs` (so not `boxCs`). -/
+`boxAns`), but is not uniformly true on `info` (so not `boxCs`). -/
 
-/-- Two-cell inquiry POSWQ: `cs = ⊤` over `Bool`, `le = ⊤`, with
-    `inquiry` the identity Setoid (each Bool in its own cell). -/
+/-- Two-cell inquiry POSWQ: `info = Set.univ` over `Bool`, `order`
+    total, with `inquiry` the identity Setoid (each Bool in its own
+    cell). -/
 def sepPOSWQ : POSWQ Bool where
-  cs := fun _ => True
-  le := fun _ _ => True
-  le_refl  := fun _ _ => trivial
-  le_trans := fun _ _ _ _ _ _ _ _ => trivial
+  info := Set.univ
+  order := Core.Order.Normality.total
   inquiry := { r := fun w v => w = v, iseqv :=
     ⟨fun _ => rfl, fun {_ _} h => h.symm, fun {_ _ _} h₁ h₂ => h₁.trans h₂⟩ }
 
@@ -371,8 +377,9 @@ theorem boxAns_sepPOSWQ_sepProp : sepPOSWQ.boxAns sepProp := by
   rw [show w = v from hwv]
 
 /-- The separation proposition is *not* informationally necessary at
-    `sepPOSWQ.toPOSW`: `true` is in `cs` but does not satisfy `p`. -/
-theorem not_boxCs_sepPOSWQ_sepProp : ¬ sepPOSWQ.toPOSW.boxCs sepProp := by
+    `sepPOSWQ.toExpState`: `true` is in `info` but does not satisfy
+    `p`. -/
+theorem not_boxCs_sepPOSWQ_sepProp : ¬ sepPOSWQ.toExpState.boxCs sepProp := by
   intro h
   exact Bool.noConfusion (h true trivial)
 
@@ -381,7 +388,7 @@ theorem not_boxCs_sepPOSWQ_sepProp : ¬ sepPOSWQ.toPOSW.boxCs sepProp := by
     and `boxCs` fails. The inquiry component is doing genuine work. -/
 theorem boxAns_not_reducible_to_boxCs :
     ∃ (c : POSWQ Bool) (p : Bool → Prop),
-      c.boxAns p ∧ ¬ c.toPOSW.boxCs p :=
+      c.boxAns p ∧ ¬ c.toExpState.boxCs p :=
   ⟨sepPOSWQ, sepProp, boxAns_sepPOSWQ_sepProp, not_boxCs_sepPOSWQ_sepProp⟩
 
 end POSWQ

@@ -16,9 +16,9 @@ typeclass `HasPOSWTarget`, instantiated here for `IllocutionaryMood`
 (sentence mood) and in `Semantics/Mood/VerbalMood.lean` for
 `VerbalMoodOp` (verbal mood). The companion *value-level*
 implementation lives in `Semantics/Mood/POSWQ.lean`: the `POSWQ`
-structure exposes `cs`, `le`, and `inquiry` as actual fields, and the
-updates `POSW.plus`/`POSW.star`/`POSWQ.inquire` do the work that this
-file's enum labels. The link between the two views is the projection
+structure exposes `info`, `order`, and `inquiry` as actual fields, and
+the updates `assert`/`promote`/`inquire` do the work that this file's
+enum labels. The link between the two views is the projection
 `POSWTarget.boxOn` below, which sends each label to the necessity
 modal quantifying over the labelled component.
 
@@ -102,15 +102,15 @@ variable {W : Type*}
 /-- The modal projection: each `POSWTarget` selects the necessity
     modal that quantifies over the labelled POSWQ component. -/
 def POSWTarget.boxOn : POSWTarget → POSWQ W → (W → Prop) → Prop
-  | .informational, c, p => c.toPOSW.boxCs p
-  | .preferential,  c, p => c.toPOSW.boxLe p
+  | .informational, c, p => c.toExpState.boxCs p
+  | .preferential,  c, p => c.toExpState.boxLe p
   | .partition,     c, p => c.boxAns p
 
 @[simp] theorem boxOn_informational (c : POSWQ W) (p : W → Prop) :
-    POSWTarget.informational.boxOn c p = c.toPOSW.boxCs p := rfl
+    POSWTarget.informational.boxOn c p = c.toExpState.boxCs p := rfl
 
 @[simp] theorem boxOn_preferential (c : POSWQ W) (p : W → Prop) :
-    POSWTarget.preferential.boxOn c p = c.toPOSW.boxLe p := rfl
+    POSWTarget.preferential.boxOn c p = c.toExpState.boxLe p := rfl
 
 @[simp] theorem boxOn_partition (c : POSWQ W) (p : W → Prop) :
     POSWTarget.partition.boxOn c p = c.boxAns p := rfl
