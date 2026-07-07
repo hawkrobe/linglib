@@ -232,7 +232,8 @@ inductive BaseForce where
     via the negative-concord framework (planned), not via this morphology
     field. -/
 inductive NPIMorphology where
-  | indefPlusEven  -- indefinite + 'even' particle (Hindi bhii, Korean -do/-na)
+  | indefPlusEven  -- indefinite + 'even'/'also' particle (Hindi bhii,
+                   -- Japanese -mo, Korean -to; [haspelmath-1997] A.38.2, A.39.2)
   | indefPlusNeg   -- indefinite + negation (Romanian nimic; some Slavic n-words)
   | plain          -- morphologically simple (English 'any', 'ever')
   | idiomatic      -- frozen idiom ('lift a finger')

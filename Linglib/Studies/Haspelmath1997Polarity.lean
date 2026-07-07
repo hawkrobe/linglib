@@ -1,6 +1,3 @@
-import Linglib.Data.UD.Basic
-import Linglib.Data.WALS.Aggregation
-import Linglib.Data.WALS.Features.F46A
 import Linglib.Semantics.Polarity.Item
 import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Fragments.English.PolarityItems
@@ -36,16 +33,19 @@ indefinite-typology angle (Fragment-derived `IndefiniteParadigm`s for a
 6-language sample, with WALS-bridge theorems checking the F46A
 classification), this file owns the polarity-side claims:
 
-- 17-language sample with hand-stipulated `IndefiniteParadigm` instances
-- NPI-cluster + FC-region + neg-concord theorems
-- WALS Ch 46 distribution and per-language `wals46A` lookups
+- 17-language sample of `IndefiniteParadigm` instances; the German,
+  Hungarian, Japanese, Korean, and Quechua paradigms are verified against
+  the book's appendix A distributions (A.1, A.26, A.37, A.38, A.39) and
+  Table 4.1; the rest remain hand-stipulated pending the same pass
+- contiguity + coverage theorems on [haspelmath-1997]'s Fig. 4.4 map
 - `FragmentBridges` decide-checks against `Fragments/{Lang}/PolarityItems.lean`
   entries (verifies that NPI items the polarity Fragments declare are
   licensed in the contexts the Haspelmath polarity-sensitive forms cover)
 
-The substrate (`HaspelmathFunction`, `IndefinitePronoun`, `IndefiniteParadigm`,
-`MorphologicalBasis`, contiguity / coverage / disjointness predicates,
-`wals46A` and converters) lives in `Typology/Indefinite.lean`.
+The substrate (`HaspelmathFunction` with the Fig. 4.4 map geometry,
+`MorphologicalBasis`) lives in `Features/Indefinite.lean`;
+`IndefinitePronoun`, `IndefiniteParadigm`, and the contiguity / coverage /
+disjointness predicates live in `Syntax/Pronoun/IndefiniteParadigm.lean`.
 
 ## Sample
 
@@ -56,7 +56,7 @@ The substrate (`HaspelmathFunction`, `IndefinitePronoun`, `IndefiniteParadigm`,
 - Sino-Tibetan: Mandarin
 - Japonic / Koreanic: Japanese, Korean
 - Kartvelian: Georgian
-- Quechuan: Quechua (Imbabura)
+- Quechuan: Quechua (Ancash)
 - Niger-Congo: Yoruba, Swahili
 - Kra-Dai: Thai
 - Austronesian: Tagalog
@@ -70,11 +70,14 @@ existing Fragment-side analysis (Degano-Aloni 2025 / Bubnov 2026's
 competition-driven encoding) on three of the 17 languages where Fragments
 already exist (English, German, Russian).
 
-Concrete disagreement: Haspelmath polarity-view English `some-` covers
-`{SK, SU}` only, with `any- (NPI)` owning `{irrealis, question, conditional,
-indirectNeg}`; the D&A-shape Fragment's `someEntry` covers `{SK, SU,
-irrealis}` with no `any-` form. This is a real analytical disagreement,
-not a missing-data gap.
+Concrete disagreement: this file's polarity-view English allocation gives
+`some-` `{SK, SU}` only, with `any- (NPI)` owning `{irrealis, question,
+conditional, indirectNeg}`; the D&A-shape Fragment's `someEntry` covers
+`{SK, SU, irrealis}` with no `any-` form. (The book's own coding is broader
+still — Table 4.1: *some-* 12345, *any-* 456789, overlapping on question
+and conditional — so the English rows below await the book-faithfulness
+pass applied to German, Hungarian, Japanese, Korean, and Quechua.) This is
+a real analytical disagreement, not a missing-data gap.
 
 Audit history (see `project_indefinite_substrate_contested.md` memory note):
 - A first-pass audit framed this as a 5-framework conflict and recommended
@@ -126,36 +129,16 @@ phenomena when the contributions split cleanly. The split here:
 namespace Haspelmath1997Polarity
 
 open _root_.Indefinite
-open Data.WALS
 
--- ============================================================================
--- §1. WALS Chapter 46 distribution
--- ============================================================================
-
-/-! `WALSCount` is imported from `Linglib/Data/WALS/Aggregation.lean`. -/
-
-open Data.WALS (WALSCount)
-
-private abbrev ch46 := Data.WALS.F46A.allData
-
-/-- WALS Ch 46 distribution (N = 326). -/
-def ch46Counts : List WALSCount :=
-  [ ⟨"Interrogative-based", (ch46.filter (·.value == .interrogativeBased)).length⟩
-  , ⟨"Generic-noun-based",  (ch46.filter (·.value == .genericNounBased)).length⟩
-  , ⟨"Special",             (ch46.filter (·.value == .special)).length⟩
-  , ⟨"Mixed",               (ch46.filter (·.value == .mixed)).length⟩
-  , ⟨"Existential construction",
-      (ch46.filter (·.value == .existentialConstruction)).length⟩ ]
-
-/-! Helpers (`wals46A`, `formCount`, `allFunctions`, `AllContiguous`,
+/-! Helpers (`formCount`, `allFunctions`, `AllContiguous`,
     `CoversAllFunctions`, `FormsDisjoint`, `IndefinitePronoun.coverage`)
     are defined on `IndefiniteParadigm` / `IndefinitePronoun` in
-    `Typology/Indefinite.lean`. The `Prop`-valued predicates have
-    `Decidable` instances; theorems use them directly without `= true`
-    tails (mathlib idiom). -/
+    `Syntax/Pronoun/IndefiniteParadigm.lean`. The `Prop`-valued predicates
+    have `Decidable` instances; theorems use them directly without
+    `= true` tails (mathlib idiom). -/
 
 -- ============================================================================
--- §2. Per-language paradigms — 17-language sample
+-- §1. Per-language paradigms — 17-language sample
 -- ============================================================================
 
 /-- English (Indo-European): 4 series, generic-noun-based.
@@ -234,8 +217,12 @@ def russian : IndefiniteParadigm :=
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
-/-- German (Indo-European): 5 series, mixed bases (jemand generic-noun,
-    irgend- special). -/
+/-- German (Indo-European): 4 series, mixed bases, per [haspelmath-1997]
+    appendix A.1 (Fig. A.1) and Table 4.1 (*etwas* 123456, *irgend*
+    2345689, *jeder* 689, *n-* 7), using each series' person form. The
+    temporal *je*-series (4568) has no person form and is omitted. The
+    series overlap heavily — the book's norm (p. 76) — so German fails
+    `FormsDisjoint`. -/
 def german : IndefiniteParadigm :=
   { language := "German"
   , isoCode := "deu"
@@ -243,15 +230,13 @@ def german : IndefiniteParadigm :=
     [ { form := "jemand",
         ontology := .person,
         basis := .genericNoun,
-        functions := {.specificKnown, .specificUnknown} }
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional, .indirectNeg} }
     , { form := "irgendwer",
         ontology := .person,
         basis := .special,
-        functions := {.irrealis, .question} }
-    , { form := "wer (conditional)",
-        ontology := .person,
-        basis := .interrogative,
-        functions := {.conditional, .indirectNeg} }
+        functions := {.specificUnknown, .irrealis, .question, .conditional,
+                      .indirectNeg, .comparative, .freeChoice} }
     , { form := "niemand",
         ontology := .person,
         basis := .genericNoun,
@@ -259,9 +244,14 @@ def german : IndefiniteParadigm :=
     , { form := "jeder",
         ontology := .person,
         basis := .genericNoun,
-        functions := {.comparative, .freeChoice} } ] }
+        functions := {.indirectNeg, .comparative, .freeChoice} } ] }
 
-/-- Japanese (Japonic): 3 series, interrogative-based. wh + particle. -/
+/-- Japanese (Japonic): 3 series, interrogative-based, per
+    [haspelmath-1997] appendix A.38 (Fig. A.38): the *ka*-series covers
+    the non-negative functions; the *mo*-series covers the negative
+    functions **and the comparative** (*dare-yori-mo* 'than anyone',
+    A284), co-occurring with verbal negation in direct negation; the
+    *demo*-series covers free choice only (A287). -/
 def japanese : IndefiniteParadigm :=
   { language := "Japanese"
   , isoCode := "jpn"
@@ -274,11 +264,11 @@ def japanese : IndefiniteParadigm :=
     , { form := "dare-mo (neg)",
         ontology := .person,
         basis := .interrogative,
-        functions := {.indirectNeg, .directNeg} }
+        functions := {.indirectNeg, .directNeg, .comparative} }
     , { form := "dare-demo",
         ontology := .person,
         basis := .interrogative,
-        functions := {.comparative, .freeChoice} } ] }
+        functions := {.freeChoice} } ] }
 
 /-- Mandarin (Sino-Tibetan): 2 series, mixed (yǒu rén existential, shéi
     interrogative). -/
@@ -381,7 +371,13 @@ def finnish : IndefiniteParadigm :=
         basis := .special,
         functions := {.comparative, .freeChoice} } ] }
 
-/-- Korean (Koreanic): 4 series, interrogative-based (wh + particle). -/
+/-- Korean (Koreanic): 4 series, interrogative-based (wh + particle), per
+    [haspelmath-1997] appendix A.39 (Fig. A.39): the bare-wh and *-nka*
+    series cover the non-negative span (split here into a specific and a
+    non-specific row); the *-to*-series covers both negations **and the
+    standard of comparison** (A294), co-occurring with verbal negation in
+    direct negation; *-na* (with *-tunci*) covers free choice only
+    (A291). -/
 def korean : IndefiniteParadigm :=
   { language := "Korean"
   , isoCode := "kor"
@@ -397,13 +393,20 @@ def korean : IndefiniteParadigm :=
     , { form := "nwukwu-to (누구도, neg)",
         ontology := .person,
         basis := .interrogative,
-        functions := {.indirectNeg, .directNeg} }
+        functions := {.indirectNeg, .directNeg, .comparative} }
     , { form := "nwukwu-na (누구나)",
         ontology := .person,
         basis := .interrogative,
-        functions := {.comparative, .freeChoice} } ] }
+        functions := {.freeChoice} } ] }
 
-/-- Hungarian (Uralic): 4 series, interrogative-based (vala- / akár-). -/
+/-- Hungarian (Uralic): 3 series, interrogative-based, per
+    [haspelmath-1997] appendix A.26 (Fig. A.26) and Table 4.1 (*akár*
+    4589): the *vala*-series "is used in all functions from 'specific' to
+    'indirect negation'"; *sem* covers direct negation; the *akár*- and
+    *bár*- series cover question, conditional, comparative, and free
+    choice — contiguous precisely via the map's question–conditional edge.
+    *valaki* and *akárki* overlap on question/conditional, so Hungarian
+    fails `FormsDisjoint`. -/
 def hungarian : IndefiniteParadigm :=
   { language := "Hungarian"
   , isoCode := "hun"
@@ -411,19 +414,16 @@ def hungarian : IndefiniteParadigm :=
     [ { form := "valaki",
         ontology := .person,
         basis := .interrogative,
-        functions := {.specificKnown, .specificUnknown} }
-    , { form := "valaki (irrealis)",
-        ontology := .person,
-        basis := .interrogative,
-        functions := {.irrealis, .question} }
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional, .indirectNeg} }
     , { form := "senki",
         ontology := .person,
         basis := .interrogative,
-        functions := {.conditional, .indirectNeg, .directNeg} }
+        functions := {.directNeg} }
     , { form := "akárki / bárki",
         ontology := .person,
         basis := .interrogative,
-        functions := {.comparative, .freeChoice} } ] }
+        functions := {.question, .conditional, .comparative, .freeChoice} } ] }
 
 /-- Georgian (Kartvelian): 4 series, interrogative-based. -/
 def georgian : IndefiniteParadigm :=
@@ -447,27 +447,27 @@ def georgian : IndefiniteParadigm :=
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
-/-- Quechua (Imbabura): 4 series, special. (Not in WALS F46A's sample.) -/
+/-- Quechua (Ancash): 2 series, per [haspelmath-1997] appendix A.37
+    (Fig. A.37): bare interrogatives for the specific functions (the
+    figure's merged 'specific' node — the SK/SU distinction is not
+    documented), and the *-pis* series ('also, even') for all
+    non-specific functions, including both negations (direct negation
+    with the discontinuous negator *mana … -tsu*, A279), comparative
+    (A277), and free choice (A278). Not in WALS F46A (the WALS Quechua
+    datapoint is Imbabura, a different variety). -/
 def quechua : IndefiniteParadigm :=
-  { language := "Quechua (Imbabura)"
-  , isoCode := "qvi"
+  { language := "Quechua (Ancash)"
+  , isoCode := "qwh"
   , forms :=
-    [ { form := "pi-taj",
+    [ { form := "pi (bare interrogative)",
         ontology := .person,
         basis := .interrogative,
-        functions := {.specificKnown, .specificUnknown, .irrealis, .question} }
-    , { form := "pi-pash",
+        functions := {.specificKnown, .specificUnknown} }
+    , { form := "pi-pis",
         ontology := .person,
         basis := .interrogative,
-        functions := {.conditional, .indirectNeg} }
-    , { form := "mana pi-pash",
-        ontology := .person,
-        basis := .interrogative,
-        functions := {.directNeg} }
-    , { form := "maijan-pash",
-        ontology := .person,
-        basis := .interrogative,
-        functions := {.comparative, .freeChoice} } ] }
+        functions := {.irrealis, .question, .conditional, .indirectNeg,
+                      .directNeg, .comparative, .freeChoice} } ] }
 
 /-- Yoruba (Niger-Congo): 2 series, generic-noun-based (`ẹnìkan` 'person'). -/
 def yoruba : IndefiniteParadigm :=
@@ -545,7 +545,7 @@ def swahili : IndefiniteParadigm :=
         functions := {.comparative, .freeChoice} } ] }
 
 -- ============================================================================
--- §4. Aggregate sample
+-- §2. Aggregate sample
 -- ============================================================================
 
 /-- All language paradigms in the polarity-typology sample (17 languages). -/
@@ -554,10 +554,8 @@ def allLanguages : List IndefiniteParadigm :=
   , italian, finnish, korean, hungarian, georgian, quechua, yoruba
   , thai, tagalog, swahili ]
 
-theorem sample_size : allLanguages.length = 17 := by decide
-
 -- ============================================================================
--- §5. Contiguity verification
+-- §3. Contiguity verification
 -- ============================================================================
 
 /-- [haspelmath-1997]'s key constraint: every form covers a contiguous
@@ -566,181 +564,60 @@ theorem all_languages_contiguous :
     ∀ p ∈ allLanguages, p.AllContiguous := by decide
 
 -- ============================================================================
--- §6. Coverage + partition verification
+-- §4. Coverage + overlap verification
 -- ============================================================================
 
 /-- Every language in the sample covers all nine functions on the map. -/
 theorem all_languages_cover_all_functions :
     ∀ p ∈ allLanguages, p.CoversAllFunctions := by decide
 
-/-- 16 of 17 languages in the sample have disjoint forms (no function
-    appears in two different forms). Russian is the exception: per
-    [degano-aloni-2025] Table 2, both -то (Epistemic, {SU, NS}) and
-    -нибудь (Non-specific, {NS}) cover NS. D&A treat overlapping forms as
-    a real empirical phenomenon to be explained — see the Russian paragraph
-    on p. 960 — not a violation. `FormsDisjoint` is a Prop predicate on
-    `IndefiniteParadigm`, not a structural requirement, so paradigms
-    failing it are well-formed; we just enumerate the witnesses. -/
+/-- 14 of 17 languages in the sample have disjoint forms (no function
+    appears in two different forms). Russian fails per [degano-aloni-2025]
+    Table 2 (-то and -нибудь both cover NS); German and Hungarian fail per
+    [haspelmath-1997]'s own distributions (A.1, A.26) — the book treats
+    massive series overlap as the cross-linguistic norm (p. 76).
+    `FormsDisjoint` is a Prop predicate on `IndefiniteParadigm`, not a
+    structural requirement, so paradigms failing it are well-formed; we
+    just enumerate the witnesses. -/
 theorem disjoint_languages_count :
-    (allLanguages.filter (·.FormsDisjoint)).length = 16 := by decide
+    (allLanguages.filter (·.FormsDisjoint)).length = 14 := by decide
 
 /-- Russian fails `FormsDisjoint` per D&A 2025: -то ({SU, NS}) and
     -нибудь ({NS}) overlap on NS. -/
 theorem russian_not_disjoint : ¬ russian.FormsDisjoint := by decide
 
-/-- The 16 non-Russian languages in the sample DO satisfy `FormsDisjoint`. -/
-theorem nonRussian_languages_disjoint :
-    ∀ p ∈ allLanguages.filter (·.FormsDisjoint), p.FormsDisjoint := by decide
+/-- German fails `FormsDisjoint`: *jemand* and *irgendwer* overlap from
+    SU through indirect negation ([haspelmath-1997] A.1). -/
+theorem german_not_disjoint : ¬ german.FormsDisjoint := by decide
 
-/-- **Coverage + contiguity theorem** (the disjointness conjunct from the
-    earlier `all_languages_partition` is dropped — Russian breaks it per
-    D&A 2025 — leaving the universal claim that every paradigm covers all
-    nine functions with each form covering a contiguous region). -/
-theorem all_languages_covering_and_contiguous :
-    ∀ p ∈ allLanguages,
-      p.AllContiguous ∧ p.CoversAllFunctions := by
-  decide
+/-- Hungarian fails `FormsDisjoint`: *valaki* and *akárki* overlap on
+    question and conditional ([haspelmath-1997] A.26). -/
+theorem hungarian_not_disjoint : ¬ hungarian.FormsDisjoint := by decide
 
 -- ============================================================================
--- §7. Typological generalizations
+-- §5. Typological generalizations
 -- ============================================================================
 
-/-- Every language has a form covering direct negation. -/
-theorem every_language_has_direct_neg :
-    ∀ p ∈ allLanguages, ∃ e ∈ p.forms, e.covers .directNeg := by decide
-
-/-- Free choice and comparative are always in the same form. -/
-theorem freeChoice_comparative_together :
-    ∀ p ∈ allLanguages, ∃ e ∈ p.forms,
-      e.covers .freeChoice ∧ e.covers .comparative := by decide
-
-/-- Specific known and direct negation are never in the same form. -/
-theorem specificKnown_directNeg_disjoint :
+/-- A multi-function form covering free choice always covers the
+    comparative — free choice's only map neighbour ([haspelmath-1997]
+    Fig. 4.4). Single-function FC forms (Japanese *dare-demo*, Korean
+    *nwukwu-na*) are the trivial exception. -/
+theorem freeChoice_multifunction_implies_comparative :
     ∀ p ∈ allLanguages, ∀ e ∈ p.forms,
-      ¬ (e.covers .specificKnown ∧ e.covers .directNeg) := by decide
-
-/-- Mandarin (2 forms) has fewer forms than Russian (6 forms), but its
-    total coverage is at most Russian's. (Equality held when Russian had 5
-    disjoint forms and total coverage 9 = Mandarin's; per [degano-aloni-2025]
-    Russian -то now covers {SU, NS} not {SU}, so total coverage rises to
-    10 > Mandarin's 9 — the relation weakens to ≤.) -/
-theorem fewer_forms_broader_coverage :
-    mandarin.formCount < russian.formCount ∧
-    (mandarin.forms.map (·.coverage)).sum ≤
-      (russian.forms.map (·.coverage)).sum := by
+      e.covers .freeChoice → e.coverage > 1 → e.covers .comparative := by
   decide
 
-/-- The polarity cluster: in every language, some form covers at least two
-    of {question, conditional, indirectNeg}. -/
-theorem polarity_cluster_exists :
-    ∀ p ∈ allLanguages, ∃ e ∈ p.forms,
-      (e.covers .question ∧ e.covers .conditional) ∨
-      (e.covers .conditional ∧ e.covers .indirectNeg) ∨
-      (e.covers .question ∧ e.covers .indirectNeg) := by decide
+/-- The comparative need not pattern with free choice: Japanese *-mo*
+    covers comparative together with the negation functions and without
+    free choice ([haspelmath-1997] A.38; the *dare-yori-mo* pattern,
+    §4.7.1). -/
+theorem japanese_comparative_patterns_with_negation :
+    ∃ e ∈ japanese.forms,
+      e.covers .comparative ∧ e.covers .directNeg ∧
+        ¬ e.covers .freeChoice := by decide
 
 -- ============================================================================
--- §8. Form-count distribution
--- ============================================================================
-
-/-- Count of languages with a given number of forms. -/
-def countByFormCount (langs : List IndefiniteParadigm) (n : Nat) : Nat :=
-  (langs.filter (fun p => p.formCount == n)).length
-
-theorem sample_2_forms : countByFormCount allLanguages 2 = 2 := by decide
-theorem sample_3_forms : countByFormCount allLanguages 3 = 5 := by decide
-theorem sample_4_forms : countByFormCount allLanguages 4 = 7 := by decide
-theorem sample_5_forms : countByFormCount allLanguages 5 = 2 := by decide
-theorem sample_6_forms : countByFormCount allLanguages 6 = 1 := by decide
-
-/-- Per-language form-count summary for the 17-language sample. -/
-theorem language_form_counts :
-    allLanguages.map (fun p => (p.isoCode, p.formCount)) =
-      [ ("eng", 4), ("rus", 6), ("deu", 5), ("jpn", 3), ("cmn", 2)
-      , ("tur", 5), ("hin", 3), ("ita", 3), ("fin", 4), ("kor", 4)
-      , ("hun", 4), ("kat", 4), ("qvi", 4), ("yor", 2), ("tha", 3)
-      , ("tgl", 4), ("swh", 3) ] := by
-  decide
-
--- ============================================================================
--- §9. WALS 46A bridge
--- ============================================================================
-
-/-! 16 of 17 languages appear in WALS F46A; Quechua (Imbabura, iso `qvi`)
-    is absent. The Polarity-side annotations of `basis : MorphologicalBasis`
-    on each form derive a paradigm-level F46A classification via
-    `IndefiniteParadigm.toWALS46A` — but for the polarity sample, the
-    paradigm-derived value may differ from WALS for languages where the
-    forms span multiple bases (e.g., German `mixed`). We verify the
-    `lookupISO`-derived classification rather than the structural derivation. -/
-
-open Data.WALS.F46A (IndefinitePronouns) in
-/-- WALS 46A morphological-source classification per language. -/
-theorem language_wals_classifications :
-    allLanguages.map (fun p => (p.isoCode, p.wals46A)) =
-      [ ("eng", some .genericNounBased)
-      , ("rus", some .interrogativeBased)
-      , ("deu", some .mixed)
-      , ("jpn", some .interrogativeBased)
-      , ("cmn", some .mixed)
-      , ("tur", some .genericNounBased)
-      , ("hin", some .special)
-      , ("ita", some .genericNounBased)
-      , ("fin", some .special)
-      , ("kor", some .interrogativeBased)
-      , ("hun", some .interrogativeBased)
-      , ("kat", some .interrogativeBased)
-      , ("qvi", some .interrogativeBased)   -- Imbabura Quechua (WALS code qim)
-      , ("yor", some .genericNounBased)
-      , ("tha", some .interrogativeBased)
-      , ("tgl", some .existentialConstruction)
-      , ("swh", some .genericNounBased) ] := by
-  decide
-
-/-- All 17 languages in our sample appear in WALS F46A. -/
-theorem all_languages_in_wals :
-    ∀ p ∈ allLanguages, p.wals46A.isSome := by decide
-
--- ============================================================================
--- §10. Cross-linguistic pattern tests
--- ============================================================================
-
-/-- Wh-based indefinite languages (Japanese, Korean, Mandarin, Thai). -/
-def whBasedLanguages : List IndefiniteParadigm :=
-  [japanese, korean, mandarin, thai]
-
-theorem wh_based_fewer_forms :
-    (whBasedLanguages.map (·.formCount)).sum ≤ whBasedLanguages.length * 4 := by
-  decide
-
-/-- Negative concord languages (Russian, Italian, Hungarian). -/
-def negConcordLanguages : List IndefiniteParadigm :=
-  [russian, italian, hungarian]
-
-/-- In some neg-concord language, directNeg is in a multi-function form. -/
-theorem neg_concord_directNeg_grouped :
-    ∃ p ∈ negConcordLanguages, ∃ e ∈ p.forms,
-      e.covers .directNeg ∧ e.coverage > 1 := by decide
-
-open Data.WALS.F46A (IndefinitePronouns) in
-/-- All four wh-based languages are interrogative-based or mixed in WALS 46A. -/
-theorem wh_based_are_interrogative_or_mixed :
-    ∀ p ∈ whBasedLanguages,
-      p.wals46A = some .interrogativeBased ∨
-      p.wals46A = some .mixed := by decide
-
-/-- Languages classified as interrogative-based in WALS 46A. -/
-def interrogativeBasedProfiles : List IndefiniteParadigm :=
-  allLanguages.filter (fun p =>
-    p.wals46A == some Data.WALS.F46A.IndefinitePronouns.interrogativeBased)
-
-theorem interrogative_based_sample_count :
-    interrogativeBasedProfiles.length = 7 := by decide
-
-theorem interrogative_based_avg_forms :
-    (interrogativeBasedProfiles.map (·.formCount)).sum ≤ 28 := by decide
-
--- ============================================================================
--- §11. Non-contiguous sets are impossible (negative tests)
+-- §6. Non-contiguous sets are impossible (negative tests)
 -- ============================================================================
 
 /-- {specificKnown, directNeg} skipping intermediates is non-contiguous. -/
@@ -772,7 +649,7 @@ theorem all_nine_contiguous :
     HaspelmathFunction.isContiguous HaspelmathFunction.all = true := by decide
 
 -- ============================================================================
--- §12. NPI / FC region structure
+-- §7. NPI / FC region structure
 -- ============================================================================
 
 /-- The NPI region (question through directNeg) is contiguous. -/
@@ -795,31 +672,7 @@ theorem polarity_sensitive_region_contiguous :
       [.question, .conditional, .indirectNeg, .directNeg,
        .comparative, .freeChoice] = true := by decide
 
--- ============================================================================
--- §13. Summary statistics
--- ============================================================================
-
-/-- Minimum form count in our sample. -/
-theorem min_form_count :
-    (allLanguages.map (·.formCount)).foldl min 100 = 2 := by decide
-
-/-- Maximum form count in our sample. -/
-theorem max_form_count :
-    (allLanguages.map (·.formCount)).foldl max 0 = 6 := by decide
-
-/-- Total number of distinct forms across the sample. -/
-theorem total_forms : (allLanguages.map (·.formCount)).sum = 63 := by decide
-
-/-- The most common form count in the sample is 4 (six languages). -/
-theorem most_common_form_count :
-    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 2 ∧
-    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 3 ∧
-    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 5 ∧
-    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 6 := by
-  decide
-
--- ============================================================================
--- §14. Fragment bridges (PolarityItems consistency)
+-- §8. Fragment bridges (PolarityItems consistency)
 -- ============================================================================
 
 /-! Verify that each language's `Fragments/{Lang}/PolarityItems.lean` NPI

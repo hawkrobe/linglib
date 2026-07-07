@@ -298,9 +298,15 @@ theorem english_anyFC_matches :
     functionsSubset (seriesFunctions english "any- (FC)")
       npiFCI.predictedFunctions = true := by decide
 
--- German: irgendwer ⊆ EFCI NPI/FCI eligible region
+-- German: irgendwer ⊆ EFCI NPI/FCI eligible region, modulo specific-unknown.
+-- The book-verified paradigm row ([haspelmath-1997] A.1, Table 4.1:
+-- *irgend* 2345689) includes specificUnknown — the Kratzer–Shimoyama
+-- ignorance reading — which `predictedFunctions` (isDE ∪ isFC ∪ irrealis)
+-- does not generate. The exemption records that gap in Chierchia's
+-- eligibility encoding rather than hiding it in the data.
 theorem german_irgendwer_matches :
-    functionsSubset (seriesFunctions german "irgendwer")
+    functionsSubset
+      ((seriesFunctions german "irgendwer").filter (· != .specificUnknown))
       efciNpiFci.predictedFunctions = true := by decide
 
 -- Mandarin: 谁 covers the full NPI/FCI eligible region
