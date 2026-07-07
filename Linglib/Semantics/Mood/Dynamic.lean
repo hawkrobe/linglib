@@ -49,40 +49,36 @@ open _root_.Intensional (WorldTimeIndex)
 open HistoricalAlternatives
 open Semantics.Dynamic.Core
 
+variable {W Time : Type*} [LE Time] (history : HistoricalAlternatives W Time)
+  (v : SVar) (c : SitContext W Time)
+  (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+
 /-- Dynamic IND: the eliminative update filtering entries whose current
 situation shares its world with the situation bound to `v`. -/
-def dynIND {W Time : Type*}
-    (v : SVar) : SitContext W Time → SitContext W Time :=
+def dynIND : SitContext W Time → SitContext W Time :=
   dynRelationOn (fun gs => gs.2) (fun gs => gs.1 v)
     (sameWorld (W := W) (Time := Time))
 
 /-- Dynamic SUBJ: the generative update sending each entry `(g, s₀)` to
 `(g[v ↦ s₁], s₁)` for every `s₁ ∈ historicalBase history s₀`. -/
-def dynSUBJ {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time)
-    (v : SVar) : SitContext W Time → SitContext W Time :=
+def dynSUBJ : SitContext W Time → SitContext W Time :=
   dynIntroduce (historicalBase history) v
 
 /-! ### The eliminative side -/
 
 /-- `dynIND` is a context filter. -/
-theorem dynIND_isFilter {W Time : Type*} (v : SVar) :
+theorem dynIND_isFilter :
     IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (dynIND v) :=
   dynRelationOn_isFilter _ _ _
 
 /-- Surviving `dynIND` means the current and bound situations share a
 world. -/
-theorem dynIND_same_world {W Time : Type*}
-    (v : SVar)
-    (c : SitContext W Time)
-    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
-    (h : gs ∈ dynIND v c) :
+theorem dynIND_same_world (h : gs ∈ dynIND v c) :
     gs.2.world = (gs.1 v).world := h.2
 
 /-- `dynIND` is idempotent. -/
-theorem dynIND_idempotent {W Time : Type*}
-    (v : SVar) (c : SitContext W Time) :
+theorem dynIND_idempotent :
     dynIND v (dynIND v c) = dynIND v c :=
   dynRelationOn_idempotent _ _ _ c
 
@@ -90,22 +86,12 @@ theorem dynIND_idempotent {W Time : Type*}
 
 /-- Every `dynSUBJ` output situation is drawn from the historical base
 of some input situation. -/
-theorem dynSUBJ_existential {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time)
-    (v : SVar)
-    (c : SitContext W Time)
-    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
-    (h : gs ∈ dynSUBJ history v c) :
+theorem dynSUBJ_existential (h : gs ∈ dynSUBJ history v c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧ gs.2 ∈ historicalBase history s₀ :=
   dynIntroduce_current_in_gen _ _ _ _ h
 
 /-- After `dynSUBJ`, looking up `v` returns the current situation. -/
-theorem dynSUBJ_binds_current {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time)
-    (v : SVar)
-    (c : SitContext W Time)
-    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
-    (h : gs ∈ dynSUBJ history v c) :
+theorem dynSUBJ_binds_current (h : gs ∈ dynSUBJ history v c) :
     gs.1 v = gs.2 :=
   dynIntroduce_binds_current _ _ _ _ h
 
@@ -113,10 +99,7 @@ theorem dynSUBJ_binds_current {W Time : Type*} [LE Time]
 
 /-- The exact output of `dynSUBJ` on a singleton context:
 `(g[v↦s₁], s₁)` for each `s₁` in the historical base of `s₀`. -/
-theorem dynSUBJ_singleton_eq {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time)
-    (v : SVar)
-    (g : Assignment (WorldTimeIndex W Time))
+theorem dynSUBJ_singleton_eq (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time) :
     dynSUBJ history v ({(g, s₀)} : SitContext W Time) =
     { gs | ∃ s₁ ∈ historicalBase history s₀, gs = (Function.update g v s₁, s₁) } := by
@@ -132,12 +115,8 @@ theorem dynSUBJ_singleton_eq {W Time : Type*} [LE Time]
 
 /-- `dynSUBJ` realizes the static `SUBJ`: on a singleton context, some
 output satisfies `P` at the bound variable iff `SUBJ` holds. -/
-theorem dynSUBJ_realizes_SUBJ {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time)
-    (v : SVar)
-    (g : Assignment (WorldTimeIndex W Time))
-    (s₀ : WorldTimeIndex W Time)
-    (P : SitPred W Time) :
+theorem dynSUBJ_realizes_SUBJ (g : Assignment (WorldTimeIndex W Time))
+    (s₀ : WorldTimeIndex W Time) (P : SitPred W Time) :
     (∃ gs ∈ dynSUBJ history v ({(g, s₀)} : SitContext W Time),
       P (gs.1 v) s₀) ↔
     SUBJ history P s₀ := by
@@ -155,10 +134,7 @@ theorem dynSUBJ_realizes_SUBJ {W Time : Type*} [LE Time]
 
 /-- Indicative retrieval of a just-introduced subjunctive variable is
 vacuous: the filter's projections are forced equal by `dynSUBJ`. -/
-theorem dynIND_after_dynSUBJ_same_var {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time)
-    (v : SVar)
-    (c : SitContext W Time) :
+theorem dynIND_after_dynSUBJ_same_var :
     dynIND v (dynSUBJ history v c) = dynSUBJ history v c := by
   apply Set.ext; intro gs
   refine ⟨fun ⟨h_mem, _⟩ => h_mem, fun h_mem => ⟨h_mem, ?_⟩⟩
@@ -169,25 +145,20 @@ theorem dynIND_after_dynSUBJ_same_var {W Time : Type*} [LE Time]
 
 /-- The dynamic operator each grammatical mood denotes: indicative the
 eliminative `dynIND`, subjunctive the generative `dynSUBJ`. -/
-def Grammatical.dynOp {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time) :
+def Grammatical.dynOp :
     Grammatical → SVar → SitContext W Time → SitContext W Time
   | .indicative  => dynIND
   | .subjunctive => dynSUBJ history
 
 /-- Indicative's dynamic operator is eliminative: a context filter. -/
-theorem dynOp_indicative_isFilter {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time) (v : SVar) :
+theorem dynOp_indicative_isFilter :
     IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (Grammatical.indicative.dynOp history v) :=
   dynIND_isFilter v
 
 /-- Subjunctive's dynamic operator is generative: every output entry
 carries a freshly introduced situation, bound to `v`. -/
-theorem dynOp_subjunctive_introduces {W Time : Type*} [LE Time]
-    (history : HistoricalAlternatives W Time) (v : SVar)
-    (c : SitContext W Time)
-    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+theorem dynOp_subjunctive_introduces
     (h : gs ∈ Grammatical.subjunctive.dynOp history v c) :
     gs.1 v = gs.2 ∧ ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧ gs.2 ∈ historicalBase history s₀ :=
   ⟨dynSUBJ_binds_current history v c gs h, dynSUBJ_existential history v c gs h⟩
