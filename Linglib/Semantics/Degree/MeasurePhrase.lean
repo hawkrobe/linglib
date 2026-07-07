@@ -3,7 +3,7 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 
 /-!
-# Differential and factor comparatives
+# Measure-phrase modification of degree constructions
 [schwarzschild-2005] [solt-2015] [winter-2005] [buring-2007]
 
 Measure-phrase differentials ("3 inches taller") and factor phrases
