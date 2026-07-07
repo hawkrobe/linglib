@@ -26,16 +26,16 @@ namespace Mood
 
 variable {Event : Type*}
 
-/-- Indicative closure ([grano-2024], (87)): `⟦INDIC⟧ = λP.∃e.P(e)`,
-so the complement denotes a proposition. -/
+/-- The indicative existentially closes the complement's event
+argument, yielding a proposition ([grano-2024], (87)). -/
 def INDev (P : Event → Prop) : Prop := ∃ e, P e
 
-/-- Subjunctive non-closure ([grano-2024], (88a)): `⟦SBJV₁⟧ = λP.P`,
-leaving the complement open for eventuality abstraction. -/
+/-- The subjunctive leaves the complement's event argument open for
+abstraction ([grano-2024], (88a)). -/
 def SBJVev₁ (P : Event → Prop) : Event → Prop := P
 
-/-- The *intend* variant ([grano-2024], (134)): the attitude state must
-causally bring about the described event ([searle-1983]). -/
+/-- The *intend* subjunctive: the attitude state must causally bring
+about the described event ([grano-2024], (134); [searle-1983]). -/
 def SBJVev₂ {W : Type*}
     (causeStar : Event → Event → W → Prop)  -- CAUSE*(state, event, world)
     (content : Event → W → Prop)          -- content of the attitude state
