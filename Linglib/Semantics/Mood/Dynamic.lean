@@ -1,7 +1,7 @@
 import Linglib.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Situation
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Dynamic Mood as Eliminative + Generative Updates of Static Mood

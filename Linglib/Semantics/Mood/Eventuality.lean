@@ -1,5 +1,5 @@
 import Mathlib.Tactic.TypeStar
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Event-Level Mood Operators

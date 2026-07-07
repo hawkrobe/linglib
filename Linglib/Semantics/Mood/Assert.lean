@@ -34,7 +34,7 @@ modal flavors — without lexical ambiguity in the modal.
 
 -/
 
-namespace Semantics.Modality.Assert
+namespace Semantics.Mood.Assert
 
 open Semantics.Modality.EventRelativity
 open Semantics.Modality (ModalFlavor)
@@ -369,4 +369,4 @@ theorem different_holders :
     speechActProjection.toPair .imperative := by decide
 
 
-end Semantics.Modality.Assert
+end Semantics.Mood.Assert

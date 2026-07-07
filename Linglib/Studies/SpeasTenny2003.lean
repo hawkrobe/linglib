@@ -9,8 +9,7 @@ import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Context.Tower
 import Linglib.Discourse.Roles
-import Linglib.Semantics.Mood.Illocutionary
-import Linglib.Semantics.Mood.ClauseType
+import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Epistemicity
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
@@ -43,7 +42,7 @@ the content.
   `Discourse.resolveRole` over a `ContextTower`.
 - **Phase.lean**: `isPhaseHeadOf .SA` — SAP is the highest phase.
 - **ExtendedProjection/Basic.lean**: `fValue .SA = 7 > fValue .C = 6`.
-- **Semantics/Mood/ClauseType.lean**: the configurational seat-of-knowledge
+- **Semantics/Mood/Defs.lean**: the configurational seat-of-knowledge
   *diverges* from Lakoff's deontic `Illocutionary.authority` on imperatives
   (`seatOfKnowledge_diverges_from_authority_on_imperative`).
 - **Semantics/Epistemicity.lean**: EvalP-spec → `EpistemicProfile.authority`,

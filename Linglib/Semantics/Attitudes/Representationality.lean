@@ -1,6 +1,6 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Preferential
-import Linglib.Semantics.Mood.Categories
+import Linglib.Semantics.Mood.Defs
 
 /-!
 # Representationality and Epistemic Licensing
