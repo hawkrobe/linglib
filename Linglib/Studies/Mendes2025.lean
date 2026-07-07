@@ -799,7 +799,7 @@ theorem subjIndChain_entails_conditionalSF {W Time : Type*} [LE Time]
 ### Bridge to Hofmann (2025) accessibility
 
 The same-world constraint enforced by `dynIND` (via the `sameWorld`
-kernel in `Mood/Basic.lean`) parallels [hofmann-2025]'s
+kernel in `Mood/Situation.lean`) parallels [hofmann-2025]'s
 veridicality-based accessibility for individual drefs:
 
 - **Situation level** (this file, [mendes-2025]): `dynIND`

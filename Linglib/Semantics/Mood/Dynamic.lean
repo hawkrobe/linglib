@@ -1,6 +1,7 @@
 import Linglib.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Situation
+import Linglib.Semantics.Mood.Categories
 
 /-!
 # Dynamic Mood as Eliminative + Generative Updates of Static Mood
@@ -8,7 +9,7 @@ import Linglib.Semantics.Mood.Basic
 [de-groote-2006] [charlow-2021] [mendes-2025]
 
 `dynIND` and `dynSUBJ` are the dynamic-context-update counterparts of
-the static `Mood.IND` and `Mood.SUBJ` operators in `Mood/Basic.lean`.
+the static `Mood.IND` and `Mood.SUBJ` operators in `Mood/Situation.lean`.
 Together they instantiate the two basic operations of the powerset
 monad on situation contexts:
 
@@ -42,7 +43,7 @@ of dynamic semantics:
   is `Set.bind` (Kleisli composition).
 
 `Semantics.Mood.IND` and `Semantics.Mood.SUBJ` (defined in
-`Mood/Basic.lean`) call the same two kernels (`sameWorld` and
+`Mood/Situation.lean`) call the same two kernels (`sameWorld` and
 `historicalBase`) directly. The static and dynamic faces share *one
 modal constraint and one alternative-generator*, lifted from a
 state-level predicate to a context-level operation.
@@ -66,7 +67,7 @@ vacuous — the algebraic fact that a `dynRelationOn` filter is
 trivially satisfied after the projections it compares are forced
 equal by the preceding `dynIntroduce`.
 
-Sibling of `Mood/Basic.lean` and `Tense/Dynamic.lean`. Used by
+Sibling of `Mood/Situation.lean` and `Tense/Dynamic.lean`. Used by
 `Studies/Mendes2025.lean` (which hosts the SF
 operator and the modal donkey anaphora chain that consumes
 `dynSUBJ`/`dynIND`).
@@ -256,6 +257,47 @@ theorem dynSUBJ_realizes_SUBJ {W Time : Type*} [LE Time]
     refine ⟨(Function.update g v s₁, s₁), ?_, ?_⟩
     · exact ⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩
     · simp only [Function.update_self]; exact h_P
+
+/-!
+### Mood as update polarity, by assignment
+
+`Grammatical.dynOp` assigns each grammatical mood its dynamic
+operator. The eliminative/generative contrast — indicative *tests*
+(a context filter), subjunctive *introduces* (a fresh dref) — is then
+a pair of theorems about the assignment, not a stipulated feature:
+this replaces the former `Effect.introducesSituation` table. -/
+
+/-- The dynamic operator each grammatical mood denotes: indicative the
+    eliminative `dynIND`, subjunctive the generative `dynSUBJ`. The
+    assignment is the theory's sole stipulation; its polarity facts
+    (`dynOp_indicative_isFilter`, `dynOp_subjunctive_introduces`)
+    follow. -/
+def Grammatical.dynOp {W Time : Type*} [LE Time]
+    (history : HistoricalAlternatives W Time) :
+    Grammatical → SVar → SitContext W Time → SitContext W Time
+  | .indicative  => dynIND
+  | .subjunctive => dynSUBJ history
+
+/-- Indicative's dynamic operator is eliminative: a context filter.
+    Half of the polarity contrast formerly stipulated as
+    `introducesSituation := false`. -/
+theorem dynOp_indicative_isFilter {W Time : Type*} [LE Time]
+    (history : HistoricalAlternatives W Time) (v : SVar) :
+    IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+      (Grammatical.indicative.dynOp history v) :=
+  dynIND_isFilter v
+
+/-- Subjunctive's dynamic operator is generative: every output entry
+    carries a freshly introduced situation from the historical base,
+    bound to `v`. Half of the polarity contrast formerly stipulated as
+    `introducesSituation := true`. -/
+theorem dynOp_subjunctive_introduces {W Time : Type*} [LE Time]
+    (history : HistoricalAlternatives W Time) (v : SVar)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    (h : gs ∈ Grammatical.subjunctive.dynOp history v c) :
+    gs.1 v = gs.2 ∧ ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧ gs.2 ∈ historicalBase history s₀ :=
+  ⟨dynSUBJ_binds_current history v c gs h, dynSUBJ_existential history v c gs h⟩
 
 /--
 IND is identity after SUBJ on the same variable.

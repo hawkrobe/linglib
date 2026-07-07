@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Categories
 import Linglib.Semantics.Mood.Illocutionary
 import Linglib.Discourse.Roles
 import Linglib.Data.UD.Basic
