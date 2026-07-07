@@ -48,8 +48,7 @@ standalone formalization of an imperative mood ontology:
   `TeleologicalFlavor` (no parallel types).
 - The architectural commitment "imperative force targets the
   preferential POSW component, not the informational" is
-  `Mood.Component`'s `HasTarget Illocutionary`
-  instance — Roberts agrees with [portner-2018] on the
+  the `HasTarget Illocutionary` instance (`Mood/Defs.lean`) — Roberts agrees with [portner-2018] on the
   POSW component, disagrees with [kaufmann-2012] only on
   the prejacent's modal flavor.
 - The scoreboard updates are `Discourse.Scoreboard`'s
