@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Extent
+import Mathlib.Order.Interval.Set.LinearOrder
 import Linglib.Semantics.Degree.Comparative
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Semantics.Degree.Comparative
 The LITTLE operator [heim-2006] [buring-2007] as degree-predicate
 complementation: `short = LITTLE tall`, `less = LITTLE -er`,
 `fewer = LITTLE many`. Semantically, `⟦LITTLE⟧(P)(d) = ¬P(d)`. On extents,
-LITTLE maps `posExt` to `negExt`; on intervals (see `Intervals.lean §6`), it
+LITTLE maps `Set.Iic` extents to `Set.Ioi` extents; on intervals, it
 inverts the measured region.
 
 [buring-2007] uses LITTLE to analyse cross-polar nomalies:
@@ -21,7 +21,7 @@ inverts the measured region.
 
 ## Main theorems
 
-* `little_posExt_eq_negExt` — the formal content of "short = LITTLE tall"
+* `littlePred_Iic_eq_Ioi` — the formal content of "short = LITTLE tall"
 * `little_involution` — LITTLE is its own inverse
 * `little_reverses_comparison` — LITTLE flips comparison direction
 -/
@@ -38,11 +38,11 @@ def littlePred {D : Type*} (P : D → Prop) : D → Prop :=
 `LITTLE({d | d ≤ μ(x)}) = {d | μ(x) < d}`. The formal content of
 "short = LITTLE tall" — the degree predicate for 'short' is the
 complement of the degree predicate for 'tall', exactly the relation
-between `posExt` and `negExt` from [kennedy-1999]. -/
-theorem little_posExt_eq_negExt {Entity D : Type*} [LinearOrder D]
+between positive and negative extents from [kennedy-1999]. -/
+theorem littlePred_Iic_eq_Ioi {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (x : Entity) (d : D) :
-    littlePred (· ∈ Degree.posExt μ x) d ↔ d ∈ Degree.negExt μ x := by
-  simp [littlePred, Degree.posExt, Degree.negExt]
+    littlePred (· ∈ Set.Iic (μ x)) d ↔ d ∈ Set.Ioi (μ x) := by
+  simp [littlePred, Set.mem_Iic, Set.mem_Ioi, not_le]
 
 /-- LITTLE is an involution: double degree negation cancels. -/
 theorem little_involution {D : Type*} (P : D → Prop) (d : D) :

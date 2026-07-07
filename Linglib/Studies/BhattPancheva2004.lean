@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Licensing
 import Linglib.Studies.Heim2001
 import Linglib.Studies.Bresnan1973
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
-import Linglib.Semantics.Degree.Extent
+import Mathlib.Order.Interval.Set.LinearOrder
 import Linglib.Semantics.Polarity.Item
 
 /-!
@@ -76,7 +76,6 @@ open Minimalist.DegreeMovement
    williams_scope_correlation williams_exempt_when_no_binding)
 open Core.Order (Comparison)
 open Degree (gtOverSet_eq_singleton_of_isGreatest)
-open Degree (posExt isGreatest_posExt)
 open Semantics.Polarity (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
 
@@ -146,15 +145,15 @@ theorem bp_hkc_matches_heim_intensional_data :
 /-! ### Reduction theorem (B&P §3.9 link to Hoeksema 1983) -/
 
 /-- B&P's clausal-source than-clause denotation `{d | d ≤ μ b}` (the
-    standard's positive extent `posExt μ b`) collapses to the singleton
+    standard's positive extent `Set.Iic (μ b)`) collapses to the singleton
     `{μ b}` when fed to the S-comparative. Direct corollary of
     `gtOverSet_eq_singleton_of_isGreatest` instantiated at the
-    than-clause's greatest element (`isGreatest_posExt`). -/
+    than-clause's greatest element (`isGreatest_Iic`). -/
 theorem thanClause_reduces_to_max
     {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
-    Comparison.gt.overSet μ (posExt μ b) =
+    Comparison.gt.overSet μ (Set.Iic (μ b)) =
       Comparison.gt.overSet μ ({μ b} : Set D) :=
-  gtOverSet_eq_singleton_of_isGreatest μ (isGreatest_posExt μ b)
+  gtOverSet_eq_singleton_of_isGreatest μ isGreatest_Iic
 
 /-- Combining [hoeksema-1983] §3.9 (the principal-ultrafilter /
     singleton-degree-set equivalence) with the B&P reduction:
@@ -165,7 +164,7 @@ theorem thanClause_reduces_to_max
 theorem npGQ_principal_eq_sComp_thanClause
     {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
     npComparativeGQ μ (principalUltrafilter b) =
-      Comparison.gt.overSet μ (posExt μ b) := by
+      Comparison.gt.overSet μ (Set.Iic (μ b)) := by
   rw [npComparativeGQ_principal_eq_gtOverSet_singleton,
       ← thanClause_reduces_to_max]
 
