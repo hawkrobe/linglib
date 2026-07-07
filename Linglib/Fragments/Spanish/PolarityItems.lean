@@ -28,51 +28,46 @@ open Semantics.Polarity
 
 /-- *nadie* — N-word for human ('nobody').
     Preverbal alone: *Nadie vino*. Postverbal with *no*: *No vino nadie*. -/
-def nadie : PolarityItemEntry :=
+def nadie : Item :=
   { form := "nadie"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening
-  , notes := "N-word; co-occurs with *no* postverbally, alone preverbally" }
+  , scalarDirection := .strengthening }
 
 /-- *nada* — N-word for non-human ('nothing'). Same distribution as *nadie*. -/
-def nada : PolarityItemEntry :=
+def nada : Item :=
   { form := "nada"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening
-  , notes := "Non-human N-word; *No vi nada* / *Nada vi*" }
+  , scalarDirection := .strengthening }
 
 /-- *nunca* — Temporal N-word ('never'). -/
-def nunca : PolarityItemEntry :=
+def nunca : Item :=
   { form := "nunca"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening
-  , notes := "Temporal N-word; *Nunca viene* / *No viene nunca*" }
+  , scalarDirection := .strengthening }
 
 /-- *ninguno* — N-word adjective/pronoun ('none / no'). -/
-def ninguno : PolarityItemEntry :=
+def ninguno : Item :=
   { form := "ninguno"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening
-  , notes := "N-word adjective/pronoun; *Ninguno vino* / *No vi a ninguno*" }
+  , scalarDirection := .strengthening }
 
 /-- *jamás* — Temporal N-word ('never', emphatic register).
     Functional variant of *nunca*; both can co-occur (*nunca jamás*) for
     superlative emphasis. -/
-def jamas : PolarityItemEntry :=
+def jamas : Item :=
   { form := "jamás"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening
-  , notes := "Emphatic temporal N-word; cf. *nunca* (more frequent)" }
+  , scalarDirection := .strengthening }
 
 -- ============================================================================
 -- Joint
@@ -80,7 +75,7 @@ def jamas : PolarityItemEntry :=
 
 /-- The Spanish polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
-def items : List PolarityItemEntry :=
+def items : List Item :=
   [nadie, nada, nunca, ninguno, jamas]
 
 -- ============================================================================

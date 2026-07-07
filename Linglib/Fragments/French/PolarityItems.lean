@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # French Polarity-Sensitive Items
@@ -21,11 +21,12 @@ co-occur with *ne* (where *ne* is preserved): *Je n'ai vu personne*
 In *ne*-drop registers, the n-word alone carries the negation:
 *J'ai vu personne*.
 
-The bipartite-marker dependency (the "*ne*-clitic requirement" of older
-schemas) is encoded here as the `.negation` licensing context — the
-syntactic detail that *ne* is the visible licenser when present is
-captured in the `notes` field. A future typed model of bipartite
-licensing would live in the substrate, not per-Fragment.
+French negative concord is non-strict (n-words license each other and
+*ne* is droppable), so *personne*/*rien* carry
+`licensor := some .antiAdditive` — concord under a negative quantifier is
+anti-additive licensing at this grain — while *jamais* keeps the weak-NPI
+distribution of its ever face (questions). A typed model of the
+bipartite *ne* dependency would live in the substrate, not per-Fragment.
 -/
 
 namespace French.PolarityItems
@@ -35,73 +36,56 @@ open Semantics.Polarity
 /-- *personne* — N-word for human ('nobody').
     Grammaticalized from the noun 'person'. Co-occurs with *ne* in
     formal French; stands alone in colloquial *ne*-drop registers. -/
-def personne : PolarityItemEntry :=
+def personne : Item :=
   { form := "personne"
-  , polarityType := .npiWeak
+  , licensor := some .antiAdditive
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause, .question]
-  , scalarDirection := .strengthening
-  , notes :=
-      "N-word from 'person'; *Je n'ai vu personne*; co-occurs with " ++
-      "*ne* in formal register, stands alone in colloquial *ne*-drop" }
+  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , scalarDirection := .strengthening }
 
 /-- *rien* — N-word for non-human ('nothing').
     Grammaticalized from a Latin noun 'thing'. Same distribution as
     *personne*. -/
-def rien : PolarityItemEntry :=
+def rien : Item :=
   { form := "rien"
-  , polarityType := .npiWeak
+  , licensor := some .antiAdditive
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause, .question]
-  , scalarDirection := .strengthening
-  , notes :=
-      "N-word from 'thing'; *Je n'ai rien vu*; same distribution as " ++
-      "*personne*" }
+  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , scalarDirection := .strengthening }
 
 /-- *jamais* — Temporal n-word ('never').
     Grammaticalized from 'ever'. Pre-Jespersen *jamais* was a positive
     indefinite; modern *jamais* is the negative, requiring *ne*-licensing
     in formal register. -/
-def jamais : PolarityItemEntry :=
+def jamais : Item :=
   { form := "jamais"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause, .question]
-  , scalarDirection := .strengthening
-  , notes :=
-      "Temporal n-word from 'ever'; *Je n'irai jamais*; Jespersen " ++
-      "shift from positive to negative" }
+  , scalarDirection := .strengthening }
 
 /-- *plus* — Temporal/quantitative n-word ('no more', 'no longer').
     Same lexeme as positive *plus* 'more'; the negative reading requires
     co-occurrence with *ne* (or *ne*-drop register) and contextual
     triggering. -/
-def plus : PolarityItemEntry :=
+def plus : Item :=
   { form := "plus"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
-  , notes :=
-      "N-word 'no more' / 'no longer'; *Il n'y a plus de pain*; " ++
-      "homophonous with positive *plus* 'more'" }
+  , scalarDirection := .strengthening }
 
--- ============================================================================
--- Joint
--- ============================================================================
+/-! ### Joint -/
 
 /-- The French polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
-def items : List PolarityItemEntry :=
+def items : List Item :=
   [personne, rien, jamais, plus]
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-/-- All French n-words are weak NPIs licensed by negation. -/
-theorem all_npis_licensed_by_negation :
-    items.all (fun e => e.licensingContexts.contains .negation) = true := by
-  decide
+/-- Every attested context of every entry is predicted licensed. -/
+theorem french_licensing_sound :
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
 
 end French.PolarityItems

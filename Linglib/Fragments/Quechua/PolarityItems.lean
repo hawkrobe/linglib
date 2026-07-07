@@ -1,62 +1,38 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# Quechua (Imbabura) Polarity-Sensitive Items
+# Quechua (Ancash) Polarity-Sensitive Items
 [haspelmath-1997]
 
-Quechua indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
-
-- **pi-pash**: Weak NPI (wh + pash in conditional/neg scope)
-- **mana pi-pash**: Negative indefinite (negation + wh + pash)
-- **maijan-pash**: Free choice item
-
+The Ancash Quechua *-pis* series (appendix A.37): interrogative + *-pis*
+('also, even'), used in all non-specific functions — questions,
+conditionals, both negation functions (direct negation with the
+discontinuous negator *mana … -tsu*, A279), comparatives (A277), and free
+choice (A278). A dual NPI/FCI on the indefinite-plus-even pattern of
+[lahiri-1998].
 -/
 
 namespace Quechua.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPIs
--- ============================================================================
-
-/-- *pi-pash* — Weak NPI.
-    wh + pash: used in conditional and indirect negation contexts. -/
-def piPash : PolarityItemEntry :=
-  { form := "pi-pash"
-  , polarityType := .npiWeak
+/-- *pi-pis* — wh + 'also/even': dual NPI/FCI covering the map's whole
+    non-specific span (A.37). -/
+def piPis : Item :=
+  { form := "pi-pis"
+  , licensor := some .weak
+  , freeChoice := true
   , baseForce := .existential
-  , licensingContexts := [.conditionalAntecedent, .negation]
-  , notes := "wh + pash: conditional/neg scope" }
+  , licensingContexts :=
+      [.negation, .question, .conditionalAntecedent, .comparativeS,
+       .modalPossibility, .imperative, .generic]
+  , scalarDirection := .strengthening
+  , morphology := .indefPlusEven }
 
-/-- *mana pi-pash* — Negative indefinite.
-    negation + wh + pash: nobody. -/
-def manaPiPash : PolarityItemEntry :=
-  { form := "mana pi-pash"
-  , polarityType := .npiWeak
-  , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
-  , notes := "Negation + wh + pash: nobody" }
+/-! ### Verification -/
 
--- ============================================================================
--- FCI
--- ============================================================================
-
-/-- *maijan-pash* — Free choice item.
-    'Anyone': free choice use. -/
-def maijanPash : PolarityItemEntry :=
-  { form := "maijan-pash"
-  , polarityType := .fci
-  , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , notes := "Free choice: anyone" }
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-theorem piPash_manaPiPash_distinct :
-    piPash.polarityType = manaPiPash.polarityType := rfl
+/-- Every attested context is predicted licensed. -/
+theorem piPis_licensing_sound :
+    ∀ c ∈ piPis.licensingContexts, c.licenses piPis := by decide
 
 end Quechua.PolarityItems

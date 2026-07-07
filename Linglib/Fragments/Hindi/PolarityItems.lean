@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Hindi Polarity-Sensitive Items
@@ -16,43 +16,37 @@ namespace Hindi.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPI
--- ============================================================================
+/-! ### NPI -/
 
 /-- *koii nahiiN* — Negative indefinite.
     koii + negation: 'koii nahiiN aayaa' (nobody came). -/
-def koiiNahiin : PolarityItemEntry :=
+def koiiNahiin : Item :=
   { form := "koii nahiiN"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
+  , licensingContexts := [.negation]
   , scalarDirection := .strengthening
   , morphology := .indefPlusNeg
-  , alternativeType := .contextualProperty
-  , notes := "koii + negation: nobody" }
+  , alternativeType := .contextualProperty }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### FCI -/
 
 /-- *koii bhii* — Free choice item.
     koii + bhii (even/also): 'koii bhii yah kar saktaa hai'
     (anyone can do this). [lahiri-1998] -/
-def koiiBhii : PolarityItemEntry :=
+def koiiBhii : Item :=
   { form := "koii bhii"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , morphology := .indefPlusEven
-  , alternativeType := .contextualProperty
-  , notes := "koii + bhii (even/also): anyone at all (FC)" }
+  , alternativeType := .contextualProperty }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
-theorem koiiNahiin_koiiBhii_distinct :
-    koiiNahiin.polarityType ≠ koiiBhii.polarityType := by decide
+/-- Every attested context of every entry is predicted licensed. -/
+theorem hindi_licensing_sound :
+    ∀ e ∈ [koiiNahiin, koiiBhii], ∀ c ∈ e.licensingContexts, c.licenses e := by
+  decide
 
 end Hindi.PolarityItems

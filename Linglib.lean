@@ -1192,7 +1192,6 @@ import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Swahili.Phonology
 import Linglib.Fragments.Swahili.Plurals
-import Linglib.Fragments.Swahili.PolarityItems
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Relativization
@@ -1205,7 +1204,6 @@ import Linglib.Fragments.Tagalog.Comparison
 import Linglib.Fragments.Tagalog.Morph
 import Linglib.Fragments.Tagalog.Phonology
 import Linglib.Fragments.Tagalog.Plurals
-import Linglib.Fragments.Tagalog.PolarityItems
 import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Tagalog.TemporalConnectives
@@ -1222,7 +1220,6 @@ import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Thai.Morph
-import Linglib.Fragments.Thai.PolarityItems
 import Linglib.Fragments.Thai.TenseAspect
 import Linglib.Fragments.Tibetan.Coordination
 import Linglib.Fragments.Tibetan.Evidentiality
@@ -1275,7 +1272,6 @@ import Linglib.Fragments.Yoruba.Comparison
 import Linglib.Fragments.Yoruba.Coordination
 import Linglib.Fragments.Yoruba.FocusParticles
 import Linglib.Fragments.Yoruba.Phonology
-import Linglib.Fragments.Yoruba.PolarityItems
 import Linglib.Fragments.Yoruba.Possession
 import Linglib.Fragments.Yoruba.Relativization
 import Linglib.Fragments.Yoruba.TenseAspect

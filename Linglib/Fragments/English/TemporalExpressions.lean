@@ -34,7 +34,7 @@ namespace English.TemporalExpressions
 
 open Features
 open Tense.TemporalAdverbials (AdverbialType)
-open Semantics.Polarity (PolarityType)
+open Semantics.Polarity
 
 -- ============================================================================
 -- § 1: Shared Types
@@ -528,7 +528,7 @@ structure DurationExprEntry where
   /-- Polarity-item type if `polaritySensitive` (Zwarts 1998 strong/weak).
       Strong NPIs (*in years*) require anti-additive licensors; weak NPIs
       require any DE licensor. -/
-  polarityType : Option PolarityType := none
+  npiLicensor : Option NaturalLogic.DEStrength := none
   /-- Distributional licensing flags (theory-neutral surface facts). -/
   requiresPerfect : Prop := False
   requiresNegation : Prop := False
@@ -558,7 +558,7 @@ def inGap : DurationExprEntry :=
     kind := .npiGap
     iaiClassification := some .durative
     polaritySensitive := True
-    polarityType := some .npiStrong
+    npiLicensor := some .antiAdditive
     requiresPerfect := True
     requiresNegation := True }
 

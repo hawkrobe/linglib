@@ -1,68 +1,37 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # German Polarity-Sensitive Items
 [haspelmath-1997] [chierchia-2006]
 
-German indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
-
-German's *irgendein* is a key example in [chierchia-2006]'s typology
-as an existential FCI with both NPI and FCI uses:
-- **irgendein/irgendwer**: NPI/FCI (*irgend-* prefix = domain widening)
-- **wer** (conditional): Bare wh-word as weak NPI
-- **niemand**: Negative indefinite
+German *irgendein*, [chierchia-2006]'s existential FCI (EFCI): NPI uses in
+questions and conditionals, FCI uses under modals, with the *irgend-*
+prefix marking domain widening. The negative quantifier *niemand* negates
+rather than being licensed, and bare *wer* is a plain colloquial
+indefinite ([haspelmath-1997] A.1) — neither is a polarity item, so
+neither has an entry here.
 -/
 
 namespace German.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPIs
--- ============================================================================
-
-/-- *irgendein/irgendwer* — NPI/FCI.
-    [chierchia-2006]'s EFCI class: existential FCI with both
-    NPI uses (questions) and FCI uses (irrealis, modals).
-    The *irgend-* prefix marks non-specificity / domain widening. -/
-def irgendein : PolarityItemEntry :=
+/-- *irgendein/irgendwer* — [chierchia-2006]'s EFCI class: existential FCI
+    with NPI uses (questions, conditionals) and FCI uses (modals,
+    imperatives); *irgend-* marks domain widening. -/
+def irgendein : Item :=
   { form := "irgendein/irgendwer"
-  , polarityType := .npiFci
+  , licensor := some .weak
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
       [.question, .conditionalAntecedent, .modalPossibility, .modalNecessity, .imperative]
-  , scalarDirection := .strengthening
-  , notes := "irgend- prefix = domain widening; Chierchia's EFCI class" }
+  , scalarDirection := .strengthening }
 
-/-- *wer* (conditional/negative) — Bare wh-word as weak NPI.
-    Used as indefinite in conditionals and indirect negation contexts. -/
-def wer : PolarityItemEntry :=
-  { form := "wer (conditional)"
-  , polarityType := .npiWeak
-  , baseForce := .existential
-  , licensingContexts := [.conditionalAntecedent, .negation]
-  , scalarDirection := .strengthening
-  , notes := "Bare wh-word in conditional/neg contexts" }
+/-! ### Verification -/
 
-/-- *niemand* — Negative indefinite.
-    Direct negation; no negative concord (unlike Russian/Italian N-words). -/
-def niemand : PolarityItemEntry :=
-  { form := "niemand"
-  , polarityType := .npiWeak
-  , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening
-  , notes := "Negative quantifier: 'Niemand kam' (nobody came)" }
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-theorem irgendein_is_npi_fci : irgendein.polarityType = .npiFci := rfl
-
-theorem german_npis_strengthening :
-    [irgendein, wer, niemand].all
-      (λ e => e.scalarDirection == .strengthening) = true := by decide
+/-- Every attested context is predicted licensed. -/
+theorem irgendein_licensing_sound :
+    ∀ c ∈ irgendein.licensingContexts, c.licenses irgendein := by decide
 
 end German.PolarityItems

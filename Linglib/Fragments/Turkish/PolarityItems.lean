@@ -1,4 +1,4 @@
-import Linglib.Semantics.Polarity.Item
+import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Turkish Polarity-Sensitive Items
@@ -16,50 +16,50 @@ namespace Turkish.PolarityItems
 
 open Semantics.Polarity
 
--- ============================================================================
--- NPIs
--- ============================================================================
+/-! ### NPIs -/
 
 /-- *kimse* — Weak NPI.
     Historically 'person'; now polarity-sensitive in questions,
     conditionals, and indirect negation. -/
-def kimse : PolarityItemEntry :=
+def kimse : Item :=
   { form := "kimse"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent, .negation]
-  , scalarDirection := .strengthening
-  , notes := "Polarity-sensitive; historically 'person' > NPI" }
+  , scalarDirection := .strengthening }
 
 /-- *hiç kimse* — Emphatic negative indefinite.
     *hiç* intensifier + *kimse*; direct negation only. -/
-def hicKimse : PolarityItemEntry :=
+def hicKimse : Item :=
   { form := "hiç kimse"
-  , polarityType := .npiWeak
+  , licensor := some .antiMorphic
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening
-  , notes := "hiç intensifier: 'hiç kimse gelmedi' (nobody came)" }
+  , licensingContexts := [.negation]
+  , scalarDirection := .strengthening }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### FCI -/
 
 /-- *herhangi biri* — Free choice item.
     'Any person at all'. -/
-def herhangiBiri : PolarityItemEntry :=
+def herhangiBiri : Item :=
   { form := "herhangi biri"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , notes := "Free choice: 'herhangi biri yapabilir' (anyone can do it)" }
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
 theorem turkish_npis_strengthening :
     [kimse, hicKimse].all
       (λ e => e.scalarDirection == .strengthening) = true := by decide
+
+/-- *hiç kimse* characterized exactly: obligatory co-occurrence with verbal
+    negation ([haspelmath-1997] A179). -/
+theorem hicKimse_licensing_characterized :
+    ∀ c, c.licenses hicKimse ↔ c ∈ hicKimse.licensingContexts := by decide
+
+theorem turkish_licensing_sound :
+    ∀ e ∈ [kimse, hicKimse, herhangiBiri], ∀ c ∈ e.licensingContexts,
+      c.licenses e := by decide
 
 end Turkish.PolarityItems

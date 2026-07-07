@@ -636,7 +636,7 @@ Gajewski's prediction: no strong NPI lists any Strawson-only
 context. The substrate makes this `decide`-checkable.
 -/
 
-open Semantics.Polarity (PolarityType LicensingContext)
+open Semantics.Polarity (LicensingContext)
 open Semantics.Polarity.Licensing
   (contextProperties IsStrawsonOnly LicensedBySignature)
 open English.PolarityItems

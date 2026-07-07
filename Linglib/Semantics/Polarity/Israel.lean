@@ -76,19 +76,20 @@ namespace Semantics.Polarity
     - Israel acknowledges lexical exceptions; `canonicityConsistent` below
       tolerates `.unknown` either side to permit data without forcing the
       prediction. -/
-def predictCanonicity (le : LikelihoodEffect) (pt : PolarityType) : Canonicity :=
-  match le, pt with
-  | _, .fci => .unknown  -- editorial decision; see docstring caveat
-  | .impeding, _ => .canonical
-  | .facilitating, _ => .inverted
-  | .unknown, _ => .unknown
+def predictCanonicity (le : LikelihoodEffect) (pureFC : Bool) : Canonicity :=
+  if pureFC then .unknown  -- editorial decision; see docstring caveat
+  else match le with
+  | .impeding => .canonical
+  | .facilitating => .inverted
+  | .unknown => .unknown
 
 /-- Check if a polarity item's stated canonicity agrees with the prediction.
     Holds if canonicity or likelihood effect is unknown (insufficient data),
     or if the stated canonicity matches the prediction from likelihood effect. -/
-abbrev PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Prop :=
+abbrev Item.canonicityConsistent (p : Item) : Prop :=
   p.canonicity = .unknown ∨
   p.likelihoodEffect = .unknown ∨
-  p.canonicity = predictCanonicity p.likelihoodEffect p.polarityType
+  p.canonicity =
+    predictCanonicity p.likelihoodEffect (p.freeChoice && p.licensor.isNone)
 
 end Semantics.Polarity

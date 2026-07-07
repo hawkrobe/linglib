@@ -22,9 +22,9 @@ open Semantics.Polarity
 /-- *nwukwu* (누구, bare) — Weak NPI.
     Bare wh-word as indefinite in non-interrogative non-specific contexts
     (conditionals, irrealis). -/
-def nwukwu : PolarityItemEntry :=
+def nwukwu : Item :=
   { form := "nwukwu (누구)"
-  , polarityType := .npiWeak
+  , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent]
   , scalarDirection := .strengthening }
@@ -33,14 +33,13 @@ def nwukwu : PolarityItemEntry :=
     wass-ta* 'nobody came'. wh + the additive/'even' particle *-to*, requiring
     clausemate negation — the strict-negative-concord parallel of Japanese
     *dare-mo* (see `Japanese.PolarityItems.dareMo`). -/
-def nwukwuTo : PolarityItemEntry :=
+def nwukwuTo : Item :=
   { form := "nwukwu-to (누구도, neg)"
-  , polarityType := .npiStrong
+  , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
   , scalarDirection := .strengthening
-  , morphology := .indefPlusEven
-  , nWordStatus := some .nWord }
+  , morphology := .indefPlusEven }
 
 /-! ### FCI -/
 
@@ -50,9 +49,9 @@ def nwukwuTo : PolarityItemEntry :=
     and also means 'or' ([haspelmath-1997] A.39.2) — an 'it may be'-type
     source, not an additive/'even' particle, so `morphology` stays
     `.plain` (the enum lacks a disjunctive-source case). -/
-def nwukwuNa : PolarityItemEntry :=
+def nwukwuNa : Item :=
   { form := "nwukwu-na (누구나)"
-  , polarityType := .fci
+  , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 

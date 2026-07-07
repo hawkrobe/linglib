@@ -433,10 +433,10 @@ theorem pureNPI_no_rescue :
 /-!
 ## Bridging PSI profiles to Fragment entries
 
-`Semantics.Polarity.PolarityType` is a 5-way distributional
-classification. `PSIProfile` is a 4-parameter theoretical decomposition.
-Each PSI class predicts exactly one `PolarityType`, and each Fragment
-entry's `polarityType` should match its PSI profile's predicted type.
+`PSIProfile` is a 4-parameter theoretical decomposition; each PSI class
+predicts the item's licensing parameters (`licensor` strength and
+free-choice licensing), and each Fragment entry's instantiated parameters
+should match its profile's prediction.
 -/
 
 open Semantics.Polarity
@@ -445,41 +445,49 @@ open Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)
 open German.PolarityItems (irgendein)
 
-/-- Map a PSI profile to the expected PolarityType. -/
-def PSIProfile.toPolarityType (p : PSIProfile) : PolarityType :=
-  if !p.obligatoryDomainAlts then .ppi  -- no obligatory alts = plain indefinite/PPI
+/-- The licensor strength a PSI profile predicts (`none` = not
+    strength-licensed). -/
+def PSIProfile.predictedLicensor (p : PSIProfile) :
+    Option NaturalLogic.DEStrength :=
+  if !p.obligatoryDomainAlts then none
   else match p.grain, p.requiresProperStrengthening with
-    | .max, false => .npiWeak    -- D-MAX, weak σ → pure NPI
-    | .max, true  => .npiStrong  -- D-MAX, presuppositional → strong NPI (unattested)
-    | .min, false => .npiFci    -- D-MIN, weak σ → NPI/FCI (any)
-    | .min, true  => .fci        -- D-MIN, presuppositional σ̃ → pure FCI (qualsiasi)
+    | .max, false => some .weak         -- D-MAX, weak σ → pure NPI
+    | .max, true  => some .antiAdditive -- D-MAX, presuppositional (unattested)
+    | .min, false => some .weak         -- D-MIN, weak σ → NPI/FCI (any)
+    | .min, true  => none               -- D-MIN, σ̃ → pure FCI (qualsiasi)
 
--- Verify the mapping is correct for all five named classes
-theorem pureNPI_polarityType : pureNPI.toPolarityType = .npiWeak := rfl
-theorem npiFCI_polarityType : npiFCI.toPolarityType = .npiFci := rfl
-theorem pureFCI_polarityType : pureFCI.toPolarityType = .fci := rfl
-theorem efciNpiFci_polarityType : efciNpiFci.toPolarityType = .npiFci := rfl
-theorem efciPureFci_polarityType : efciPureFci.toPolarityType = .fci := rfl
+/-- Whether the profile predicts free-choice (mechanism) licensing. -/
+def PSIProfile.predictedFC (p : PSIProfile) : Bool :=
+  p.obligatoryDomainAlts && p.grain == .min
 
--- Fragment entries match their PSI profile's predicted PolarityType
+-- Fragment entries match their PSI profile's predicted parameters
 theorem any_profile_consistent :
-    any.polarityType = npiFCI.toPolarityType := rfl
+    any.licensor = npiFCI.predictedLicensor ∧ any.freeChoice = npiFCI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem ever_profile_consistent :
-    ever.polarityType = pureNPI.toPolarityType := rfl
+    ever.licensor = pureNPI.predictedLicensor ∧ ever.freeChoice = pureNPI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem mai_profile_consistent :
-    mai.polarityType = pureNPI.toPolarityType := rfl
+    mai.licensor = pureNPI.predictedLicensor ∧ mai.freeChoice = pureNPI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem alcuno_profile_consistent :
-    alcuno.polarityType = pureNPI.toPolarityType := rfl
+    alcuno.licensor = pureNPI.predictedLicensor ∧ alcuno.freeChoice = pureNPI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem nessuno_profile_consistent :
-    nessuno.polarityType = pureNPI.toPolarityType := rfl
+    nessuno.licensor = pureNPI.predictedLicensor ∧ nessuno.freeChoice = pureNPI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem qualsiasi_profile_consistent :
-    qualsiasi.polarityType = pureFCI.toPolarityType := rfl
+    qualsiasi.licensor = pureFCI.predictedLicensor ∧ qualsiasi.freeChoice = pureFCI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem qualunque_profile_consistent :
-    qualunque.polarityType = pureFCI.toPolarityType := rfl
+    qualunque.licensor = pureFCI.predictedLicensor ∧ qualunque.freeChoice = pureFCI.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem uno_qualsiasi_profile_consistent :
-    uno_qualsiasi.polarityType = efciPureFci.toPolarityType := rfl
+    uno_qualsiasi.licensor = efciPureFci.predictedLicensor ∧ uno_qualsiasi.freeChoice = efciPureFci.predictedFC :=
+  ⟨rfl, rfl⟩
 theorem irgendein_profile_consistent :
-    irgendein.polarityType = efciNpiFci.toPolarityType := rfl
+    irgendein.licensor = efciNpiFci.predictedLicensor ∧ irgendein.freeChoice = efciNpiFci.predictedFC :=
+  ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- §10. Exhaustification Theory: σ̃, SI Vacuity, and O⁻

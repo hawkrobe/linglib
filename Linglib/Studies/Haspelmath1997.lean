@@ -24,10 +24,6 @@ import Linglib.Fragments.Finnish.PolarityItems
 import Linglib.Fragments.Hungarian.PolarityItems
 import Linglib.Fragments.Georgian.PolarityItems
 import Linglib.Fragments.Quechua.PolarityItems
-import Linglib.Fragments.Yoruba.PolarityItems
-import Linglib.Fragments.Thai.PolarityItems
-import Linglib.Fragments.Tagalog.PolarityItems
-import Linglib.Fragments.Swahili.PolarityItems
 
 /-!
 # Haspelmath (1997): indefinite pronoun typology
@@ -577,28 +573,27 @@ Each paradigm's polarity-sensitive forms correspond to
 `Fragments/{Lang}/PolarityItems.lean` entries licensed in the matching
 contexts. -/
 
-/-- Every direct-negation form's Fragment counterpart is licensed under
-    clausal negation. -/
+/-- Every direct-negation form with a Fragment counterpart is licensed
+    under clausal negation. -/
 theorem bridges_negation :
     ∀ e ∈ [Italian.PolarityItems.nessuno, Russian.PolarityItems.nikto,
-           German.PolarityItems.niemand, Japanese.PolarityItems.dareMo,
-           Korean.PolarityItems.nwukwuTo, Hungarian.PolarityItems.senki,
-           Georgian.PolarityItems.aravin, Quechua.PolarityItems.manaPiPash,
-           Thai.PolarityItems.majMiiKhraj, Swahili.PolarityItems.hakunaMtu],
+           Japanese.PolarityItems.dareMo, Korean.PolarityItems.nwukwuTo,
+           Hungarian.PolarityItems.senki, Georgian.PolarityItems.aravin,
+           Quechua.PolarityItems.piPis],
       .negation ∈ e.licensingContexts := by decide
 
 /-- Every question-span form's Fragment counterpart is licensed in
     questions. -/
 theorem bridges_question :
     ∀ e ∈ [English.PolarityItems.any, Turkish.PolarityItems.kimse,
-           Finnish.PolarityItems.kukaan, Tagalog.PolarityItems.sinuman],
+           Finnish.PolarityItems.kukaan],
       .question ∈ e.licensingContexts := by decide
 
 /-- The single-form wide-coverage items are dual NPI/FCIs in their
-    Fragments. -/
+    Fragments: weak-strength licensor plus free-choice licensing. -/
 theorem bridges_npiFci :
-    ∀ e ∈ [German.PolarityItems.irgendein, Mandarin.PolarityItems.shei,
-           Yoruba.PolarityItems.enikeni],
-      e.polarityType = Semantics.Polarity.PolarityType.npiFci := by decide
+    ∀ e ∈ [German.PolarityItems.irgendein, Mandarin.PolarityItems.shei],
+      e.licensor = some NaturalLogic.DEStrength.weak ∧ e.freeChoice = true := by
+  decide
 
 end Haspelmath1997

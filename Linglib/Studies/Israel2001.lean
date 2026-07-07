@@ -54,7 +54,7 @@ NPI contexts are scale-reversing (DE); PPI contexts are scale-preserving (UE). -
 
 /-- A polarity item datum with its Israel 2001 classification. -/
 structure IsraelDatum where
-  item : PolarityItemEntry
+  item : Item
   /-- Example sentence -/
   sentence : String
   /-- Is the item grammatical in this sentence? -/
@@ -68,7 +68,7 @@ structure IsraelDatum where
 /-- "I didn't sleep a wink." — canonical emphatic NPI (low, impeding) -/
 def sleepAWink : IsraelDatum :=
   { item := { form := "a wink"
-            , polarityType := .npiWeak, baseForce := .degree
+            , licensor := some .weak, baseForce := .degree
             , licensingContexts := [.negation]
             , scalarDirection := .strengthening
             , scalarValue := .low, canonicity := .canonical
@@ -86,7 +86,7 @@ def didntBudge : IsraelDatum :=
 /-- "She is insanely good-looking." — canonical emphatic PPI (high) -/
 def insanely : IsraelDatum :=
   { item := { form := "insanely"
-            , polarityType := .ppi, baseForce := .degree
+            , ppi := true, baseForce := .degree
             , licensingContexts := []
             , scalarDirection := .strengthening
             , scalarValue := .high, canonicity := .canonical }
@@ -96,7 +96,7 @@ def insanely : IsraelDatum :=
 /-- "She's sorta clever." — canonical attenuating PPI (low) -/
 def sorta : IsraelDatum :=
   { item := { form := "sorta"
-            , polarityType := .ppi, baseForce := .degree
+            , ppi := true, baseForce := .degree
             , licensingContexts := []
             , scalarDirection := .attenuating
             , scalarValue := .low, canonicity := .canonical }
@@ -106,7 +106,7 @@ def sorta : IsraelDatum :=
 /-- "He's not all that clever." — canonical attenuating NPI (high) -/
 def allThat : IsraelDatum :=
   { item := { form := "all that"
-            , polarityType := .npiWeak, baseForce := .degree
+            , licensor := some .weak, baseForce := .degree
             , licensingContexts := [.negation]
             , scalarDirection := .attenuating
             , scalarValue := .high, canonicity := .canonical
@@ -142,7 +142,7 @@ def tenFootPoleDatum : IsraelDatum :=
 /-- "Godfrey is scared of his own shadow." — inverted emphatic PPI (low, facilitating) -/
 def ownShadowDatum : IsraelDatum :=
   { item := { form := "his own shadow"
-            , polarityType := .ppi, baseForce := .degree
+            , ppi := true, baseForce := .degree
             , licensingContexts := []
             , scalarDirection := .strengthening
             , scalarValue := .low, canonicity := .inverted
@@ -154,7 +154,7 @@ def ownShadowDatum : IsraelDatum :=
 /-- "You could have knocked me over with a feather." — inverted emphatic PPI (low, facilitating) -/
 def withAFeatherDatum : IsraelDatum :=
   { item := { form := "with a feather"
-            , polarityType := .ppi, baseForce := .degree
+            , ppi := true, baseForce := .degree
             , licensingContexts := []
             , scalarDirection := .strengthening
             , scalarValue := .low, canonicity := .inverted
@@ -190,7 +190,7 @@ propositional roles.
 /-- "He won't spend a red cent on your wedding." — canonical NPI, resource/expense -/
 def redCentDatum : IsraelDatum :=
   { item := { form := "a red cent"
-            , polarityType := .npiWeak, baseForce := .degree
+            , licensor := some .weak, baseForce := .degree
             , licensingContexts := [.negation]
             , scalarDirection := .strengthening
             , scalarValue := .low, canonicity := .canonical
@@ -202,7 +202,7 @@ def redCentDatum : IsraelDatum :=
 /-- "He got Madonna to play for peanuts." — inverted PPI, reward -/
 def forPeanutsDatum : IsraelDatum :=
   { item := { form := "for peanuts"
-            , polarityType := .ppi, baseForce := .degree
+            , ppi := true, baseForce := .degree
             , licensingContexts := []
             , scalarDirection := .strengthening
             , scalarValue := .low, canonicity := .inverted
@@ -343,18 +343,19 @@ inductive ScaleDirection where
   | preserving  -- PPI-licensing: low → high (= UE)
   deriving DecidableEq, Repr
 
-/-- Map from polarity type to expected scale direction in licensing contexts. -/
-def expectedScaleDirection : PolarityType → Option ScaleDirection
-  | .npiWeak | .npiStrong | .npiFci => some .reversing
-  | .ppi => some .preserving
-  | .fci => none  -- FCIs require non-veridicality, not DE/UE
+/-- Expected scale direction in licensing contexts, from the item's
+    parameters: strength-licensed items need scale reversal (= DE), PPIs
+    scale preservation (= UE), pure FCIs neither (non-veridicality). -/
+def expectedScaleDirection (e : Item) : Option ScaleDirection :=
+  if e.ppi then some .preserving
+  else if e.licensor.isSome then some .reversing
+  else none
 
--- NPIs need scale-reversing (= DE) contexts
-#guard expectedScaleDirection .npiWeak == some .reversing
-#guard expectedScaleDirection .npiStrong == some .reversing
--- PPIs need scale-preserving (= UE) contexts
-#guard expectedScaleDirection .ppi == some .preserving
--- FCIs are orthogonal to this distinction
-#guard expectedScaleDirection .fci == none
+-- NPIs need scale-reversing (= DE) contexts, PPIs scale-preserving (= UE)
+example : ∀ e : Item, e.isNPI → expectedScaleDirection e = some .reversing ∨
+    e.ppi = true := by
+  intro e h
+  simp only [expectedScaleDirection, Item.isNPI] at *
+  split <;> simp_all
 
 end Israel2001
