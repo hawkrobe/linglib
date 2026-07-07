@@ -6,8 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 
 /-!
-# Mood Modals: Portner's POSW API over Expectation States
-[portner-2018] [veltman-1996] [kratzer-1981] [stalnaker-1978] [condoravdi-lauer-2012]
+# Necessity modals over expectation states
 
 [portner-2018]'s **partially ordered set of worlds** (posw, his (1),
 Ch. 4) — the pair `⟨cs, ≤⟩` of a context set and an ordering that his
@@ -142,12 +141,9 @@ theorem boxLe_of_respects (σ : ExpState W) (p : W → Prop)
 
 end Semantics.Dynamic.Default.ExpState
 
-namespace Mood
+namespace Semantics.Dynamic.Default
 
-open Semantics.Dynamic.Default
-
-universe u
-variable {W : Type u}
+variable {W : Type*}
 
 /-! ### Normal modality structure
 
@@ -163,7 +159,7 @@ structure under boolean operations instead. -/
     necessitation (`box ⊤`) and the K-axiom (`box (p → q) → box p
     → box q`). The two universal modals `ExpState.boxCs` and
     `ExpState.boxLe` are normal; `State.boxAns` is not. -/
-class NormalModality (W : Type u) (box : (W → Prop) → Prop) : Prop where
+class NormalModality (W : Type*) (box : (W → Prop) → Prop) : Prop where
   /-- Necessitation: the box always holds for `⊤`. -/
   necessitation : box (fun _ => True)
   /-- The K-axiom: distribution of the box over implication. -/
@@ -177,4 +173,4 @@ instance (σ : ExpState W) : NormalModality W σ.boxLe where
   necessitation := fun _ _ => trivial
   K _ _ hpq hp w hopt := hpq w hopt (hp w hopt)
 
-end Mood
+end Semantics.Dynamic.Default
