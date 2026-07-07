@@ -1609,7 +1609,7 @@ import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Delineation
 import Linglib.Features.ScalarDimension
-import Linglib.Semantics.Degree.GradableNouns
+import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Hom
 import Linglib.Semantics.Degree.Intensification
 import Linglib.Studies.DinisJacinto2026

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.GradableNouns
+import Linglib.Semantics.Degree.Noun
 
 /-!
 # Morzycki (2009)
@@ -37,13 +37,13 @@ The Bigness Generalization is *derived* from scale structure (§4.4, eqs. 81–8
 - **Positive (big)**: min{d : big(d)} = θ_big > 0 → substantive restriction
 - **Negative (small)**: min{d : small(d)} = d₀ → vacuous; "small N" ≡ bare "N"
 
-`small_idiot_vacuous` and `big_idiot_restrictive` from `GradableNouns.lean`
+`small_idiot_vacuous` and `big_idiot_restrictive` from `Degree/Noun.lean`
 predict the acceptability pattern recorded in the data below.
 -/
 
 namespace Morzycki2009
 
-open Degree.GradableNouns
+open Degree
 open Degree (deg)
 -- ═══════════════════════════════════════════════════════════════
 -- Data: Bigness Generalization (§2.2)

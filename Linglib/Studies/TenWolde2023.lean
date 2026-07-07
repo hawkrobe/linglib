@@ -33,7 +33,7 @@ namespace TenWolde2023
 
 open Quantification.Binominal
 open Quantification.Binominal
-open Degree.GradableNouns (exampleIdiot)
+open Degree (exampleIdiot)
 open English.Binominals
 
 -- ═══════════════════════════════════════════════════════════════

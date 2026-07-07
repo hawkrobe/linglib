@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.BinominalDefs
-import Linglib.Semantics.Degree.GradableNouns
+import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Measurement
 import Linglib.Semantics.Degree.Intensification
 
@@ -40,7 +40,7 @@ in [ten-wolde-2023]'s taxonomy.
 namespace Quantification.Binominal
 
 open Degree
-open Degree.GradableNouns (GradableNoun)
+open Degree (GradableNoun)
 open Degree (QuantizingNounClass)
 
 /-! ### : Evaluative BNP Semantics -/
@@ -109,10 +109,10 @@ Using the `Person` type and `exampleIdiot` from `GradableNouns`:
 - Floyd: idiocy degree 1 (below standard 3 → not an idiot)
 -/
 
-open Degree.GradableNouns (exampleIdiot)
+open Degree (exampleIdiot)
 
 /-- A doctor predicate for the worked example. -/
-def isDoctor : GradableNouns.Person → Prop
+def isDoctor : Degree.Person → Prop
   | .george => True
   | .sarah  => True
   | .floyd  => False
@@ -120,7 +120,7 @@ def isDoctor : GradableNouns.Person → Prop
 instance : DecidablePred isDoctor := fun p => by unfold isDoctor; cases p <;> infer_instance
 
 /-- Bool view of `isDoctor`, for consumers expecting `Person → Bool`. -/
-def isDoctorB (p : GradableNouns.Person) : Bool := decide (isDoctor p)
+def isDoctorB (p : Degree.Person) : Bool := decide (isDoctor p)
 
 /-- George is "that idiot of a doctor": he is a doctor (true) and
     his idiocy degree (8) exceeds the standard (3). -/
@@ -246,7 +246,7 @@ open Degree.Intensification (muHorrible EvaluativeMeasure)
 open Degree (Degree deg thr)
 /-- Quality measure for EM: contextually-determined goodness as a doctor.
 George (9) is an outstanding doctor; Sarah (6) is decent; Floyd (3) is poor. -/
-def doctorQuality : GradableNouns.Person → Degree 10
+def doctorQuality : Degree.Person → Degree 10
   | .george => deg 9
   | .sarah  => deg 6
   | .floyd  => deg 3
