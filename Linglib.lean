@@ -1731,7 +1731,6 @@ import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Dynamic
 import Linglib.Semantics.Mood.Eventuality
-import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State
