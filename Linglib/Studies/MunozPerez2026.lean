@@ -19,7 +19,7 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 * `spanishFissionRule` — instantiation of the generic
   `Morphology.DM.FissionRule` with Chilean-Spanish-specific data
 * `voice_semantically_vacuous` — re-export of
-  `Minimalist.nonThematic_no_semantics`
+  `Minimalist.Voice.nonThematic_no_semantics`
 * `three_way_synonymy_from_vacuity`,
   `fission_person_restriction`, `stylLE_requires_inchoative`,
   `unmarked_blocks_stylLE` — bridge theorems for the empirical
@@ -243,7 +243,7 @@ theorem negative_controls_unacceptable :
 
 /-! ### Spanish Fission instantiation -/
 
-open Minimalist
+open Minimalist Minimalist.Voice
 open Morphology.DM
 open Spanish.PersonFeatures
 open Spanish.Predicates
@@ -385,12 +385,12 @@ theorem syncretism_aligns_with_fission :
 
 /-! ### Three-way synonymy -/
 
-/-- Re-export of `Minimalist.nonThematic_no_semantics` in the Muñoz-Pérez
+/-- Re-export of `Minimalist.Voice.nonThematic_no_semantics` in the Muñoz-Pérez
     frame. SE is purely a PF marker — its presence or absence is
     phonological, not semantic. -/
 theorem voice_semantically_vacuous :
-    ¬ Minimalist.voiceAnticausative.HasSemantics :=
-  Minimalist.nonThematic_no_semantics
+    ¬ Minimalist.Voice.anticausative.HasSemantics :=
+  Minimalist.Voice.nonThematic_no_semantics
 
 /-- The empirical three-way synonymy is consistent with Voice
     vacuity: the three `.ok` judgments co-hold with the proof that
@@ -399,7 +399,7 @@ theorem three_way_synonymy_from_vacuity :
     romper_se_me.acceptability = .ok ∧
     romper_me_le.acceptability = .ok ∧
     romper_se_me_le.acceptability = .ok ∧
-    ¬ Minimalist.voiceAnticausative.HasSemantics := by
+    ¬ Minimalist.Voice.anticausative.HasSemantics := by
   refine ⟨rfl, rfl, rfl, ?_⟩; exact voice_semantically_vacuous
 
 /-! ### Fission verification -/
@@ -471,7 +471,7 @@ yet stated as a Lean theorem.
 ## Todo
 
 * **MSK comparison as a real bridge theorem.** Analogously,
-  `MartinSchaeferKastner2025.seVoiceOptions : List VoiceFlavor` is a
+  `MartinSchaeferKastner2025.seVoiceOptions : List Flavor` is a
   list literal `[.nonThematic, .reflexive]`. A subset claim against any
   hand-written Muñoz list of flavors is decided by `decide` over list
   literals — no real Voice-flavor mechanism is engaged. A genuine

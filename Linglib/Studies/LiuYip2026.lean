@@ -42,7 +42,7 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
 
 - The substrate-level addition [liu-yip-2026]'s analysis *does* motivate
   is the bipartite split-aspect typing: `AspFlavor` and `AspHead`, landed in
-  `Syntax/Minimalist/Aspect.lean` parallel to `VoiceHead { flavor }`.
+  `Syntax/Minimalist/Aspect.lean` parallel to `Voice.Head { flavor }`.
   That commitment is independent of the analytical claims of this paper —
   it is consumed by [travis-2010], [macdonald-2008],
   [tsai-2008], [sybesma-2017], and [liu-yip-2026] jointly —

@@ -42,7 +42,7 @@ Texas at Austin.
 - `eat_licenses_accomplishment` → `RootLicensesTemplate` (ArgDerivation)
 - `eat_argTemplate_is_consumption` → `LevinClass.argTemplate` (LevinClassProfiles)
 - `accomplishment_has_variant` → `Template.intransitiveVariant`
-- `anticausative_no_theta` / `middle_no_theta` → `VoiceHead` (Minimalist syntax)
+- `anticausative_no_theta` / `middle_no_theta` → `Voice.Head` (Minimalist syntax)
 -/
 
 namespace Krejci2012
@@ -351,11 +351,11 @@ theorem anticausative_blocks_bySelf :
 
 /-- Anticausative Voice does not assign a θ-role (no external argument). -/
 theorem anticausative_no_theta :
-    ¬ Minimalist.voiceAnticausative.AssignsTheta := by decide
+    ¬ Minimalist.Voice.anticausative.AssignsTheta := by decide
 
 /-- Middle Voice does not assign a θ-role. -/
 theorem middle_no_theta :
-    ¬ Minimalist.voiceMiddle.AssignsTheta := by decide
+    ¬ Minimalist.Voice.middle.AssignsTheta := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-Linguistic Causativizability

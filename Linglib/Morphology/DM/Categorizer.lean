@@ -56,7 +56,7 @@ in `VocabularyInsertion.lean`.
 
 namespace Morphology.DM
 
-open Minimalist
+open Minimalist Minimalist.Voice
 open Verb
 
 -- ============================================================================
@@ -742,7 +742,7 @@ theorem deadjectival_source_target :
       domain of idiosyncratic interpretation.
 
    Formal consequence: categorizers are never phase heads,
-   while `VoiceHead.IsPhasal` can be `true`. -/
+   while `Head.IsPhasal` can be `true`. -/
 
 /-- Categorizers are never phase heads ([harley-2014] §4). -/
 def Categorizer.isPhaseHead : Categorizer → Bool
@@ -754,20 +754,20 @@ theorem categorizer_never_phase (c : Categorizer) :
 
 /-- Agentive Voice IS a phase head — it demarcates the boundary above which
     interpretation must be compositional ([harley-2014] §4). -/
-theorem agentive_voice_is_phase : voiceAgent.IsPhasal := by decide
+theorem agentive_voice_is_phase : agentive.IsPhasal := by decide
 
 /-- The phase-boundary asymmetry: Voice can be a phase head while
     categorizers never are. This is why idiosyncratic interpretation
     extends past categorizers but not past Voice ([harley-2014] §4). -/
 theorem phase_boundary_at_voice_not_categorizer (c : Categorizer) :
-    c.isPhaseHead = false ∧ voiceAgent.IsPhasal :=
+    c.isPhaseHead = false ∧ agentive.IsPhasal :=
   ⟨by cases c <;> rfl, by decide⟩
 
 /-- Voice introduces the external argument ([harley-2014] §4, following
     [kratzer-1996]). The categorizer does NOT introduce arguments —
     complement selection is a root property (§3). -/
 theorem voice_introduces_external_arg :
-    voiceAgent.HasD ∧ voiceAgent.AssignsTheta := by
+    agentive.HasD ∧ agentive.AssignsTheta := by
   refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================

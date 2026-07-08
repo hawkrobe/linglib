@@ -48,10 +48,8 @@ sits outside it — a linglib cross-reference Hewett does not draw.
 
 namespace Hewett2026
 
-open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus
-  ActivationIndex ApplHead applHigh applLowRecipient buildDecomposition
-  voiceAgent voiceCauser voicePassive voiceAnticausative isCausative
-  low_licensed_with_any high_licensed_of_assignsTheta)
+open Minimalist (VerbHead Cat FeatureStatus ActivationIndex ApplHead applHigh applLowRecipient isCausative low_licensed_with_any high_licensed_of_assignsTheta)
+open Minimalist.Voice (Flavor Head buildDecomposition agentive causer passive anticausative)
 open Morphology.DM (CategorizedRoot Categorizer)
 open Morphology.MirrorPrinciple (MorphDomain)
 open Wood2015 (Construction)
@@ -80,14 +78,14 @@ inductive SemiticTemplate where
     v/Voice (p. 201), and deliberately leaves the inventory open (fn. 8); the
     mapping below follows the templates' traditional active, causative, and
     medio-passive glosses. -/
-def SemiticTemplate.toVoiceHead : SemiticTemplate → VoiceHead
-  | .XaYaZ => voiceAgent
-  | .XaYYaZ | .hiXYiZ | .XiYeZ => voiceCauser
-  | .nXaYaZ | .huXYaZ | .XuYaZ => voicePassive
-  | .tXaYYaZ => voiceAnticausative
+def SemiticTemplate.toVoiceHead : SemiticTemplate → Head
+  | .XaYaZ => agentive
+  | .XaYYaZ | .hiXYiZ | .XiYeZ => causer
+  | .nXaYaZ | .huXYaZ | .XuYaZ => passive
+  | .tXaYYaZ => anticausative
 
 /-- The Voice flavor a template realizes, derived from `toVoiceHead`. -/
-def SemiticTemplate.toVoiceFlavor (t : SemiticTemplate) : VoiceFlavor :=
+def SemiticTemplate.toVoiceFlavor (t : SemiticTemplate) : Flavor :=
   t.toVoiceHead.flavor
 
 /-- Templates are nonconcatenative, hence outside the Mirror Principle's scope as
@@ -292,7 +290,7 @@ def VerbalizedRoot.lSelectedP (vr : VerbalizedRoot) : Option SemiticPrep :=
   lSelect vr.rootLabel vr.template
 
 /-- The Voice flavor, determined by the template rather than the root. -/
-def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : VoiceFlavor :=
+def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : Flavor :=
   vr.template.toVoiceFlavor
 
 /-- Arity is template-invariant (root-level), unlike l-selection: c-selection and
@@ -344,14 +342,14 @@ passing, as a language where Voice is overt): Semitic templates and Icelandic -s
 relate to Voice differently. Each Semitic template *realizes* a single Voice flavor
 (including the θ-assigning ones); -st is a clitic that merely *co-occurs* with a
 Voice flavor without realizing it ([wood-2015]). Read as coverage sets over
-`VoiceFlavor`, the Semitic image and the set of flavors -st appears with overlap on
+`Flavor`, the Semitic image and the set of flavors -st appears with overlap on
 the non-thematic and agentive flavors (the latter because -st appears in agentive
 figure reflexives) but diverge elsewhere. The Icelandic set is derived from
 [wood-2015]'s `Construction.voiceFlavor`, so the theorem relates the two studies' actual
 mappings. -/
 
 /-- The Voice flavors Semitic templates realize: the image of `toVoiceFlavor`. -/
-def semiticVoiceFlavors : List VoiceFlavor :=
+def semiticVoiceFlavors : List Flavor :=
   [SemiticTemplate.XaYaZ.toVoiceFlavor, SemiticTemplate.XaYYaZ.toVoiceFlavor,
    SemiticTemplate.nXaYaZ.toVoiceFlavor, SemiticTemplate.tXaYYaZ.toVoiceFlavor]
 
@@ -361,7 +359,7 @@ theorem template_flavors_in_coverage (t : SemiticTemplate) :
 
 /-- The host-clause Voice flavors Icelandic -st co-occurs with, derived from
     [wood-2015]'s `Construction.voiceFlavor`. -/
-def icelandicStFlavors : List VoiceFlavor :=
+def icelandicStFlavors : List Flavor :=
   [Construction.anticausative.voiceFlavor, Construction.middle.voiceFlavor,
    Construction.reflexive.voiceFlavor, Construction.subjectExp.voiceFlavor]
 
@@ -376,14 +374,14 @@ theorem stType_flavors_in_coverage (st : Construction) :
     alone realizes the causer and passive flavors, Icelandic -st alone appears
     with the expletive Voice of the generic middle. -/
 theorem voice_coverage_complementary :
-    (.nonThematic : VoiceFlavor) ∈ semiticVoiceFlavors ∧
-    (.nonThematic : VoiceFlavor) ∈ icelandicStFlavors ∧
-    (.agentive : VoiceFlavor) ∈ semiticVoiceFlavors ∧
-    (.agentive : VoiceFlavor) ∈ icelandicStFlavors ∧
-    (.causer : VoiceFlavor) ∉ icelandicStFlavors ∧
-    (.passive : VoiceFlavor) ∉ icelandicStFlavors ∧
-    (.expletive : VoiceFlavor) ∈ icelandicStFlavors ∧
-    (.expletive : VoiceFlavor) ∉ semiticVoiceFlavors := by decide
+    (.nonThematic : Flavor) ∈ semiticVoiceFlavors ∧
+    (.nonThematic : Flavor) ∈ icelandicStFlavors ∧
+    (.agentive : Flavor) ∈ semiticVoiceFlavors ∧
+    (.agentive : Flavor) ∈ icelandicStFlavors ∧
+    (.causer : Flavor) ∉ icelandicStFlavors ∧
+    (.passive : Flavor) ∉ icelandicStFlavors ∧
+    (.expletive : Flavor) ∈ icelandicStFlavors ∧
+    (.expletive : Flavor) ∉ semiticVoiceFlavors := by decide
 
 /-- The Semitic XaYaZ ~ tXaYYaZ alternation instantiates [kratzer-1996]'s causative
     alternation: `toVoiceHead` maps the two templates to the canonical heads, so the
@@ -400,7 +398,7 @@ applicatives require Voice with event semantics, low applicatives are
 unconditional. Pulled back along `toVoiceHead`, the Voice-predicate chain
 `assignsTheta ⊂ hasSemantics = licenses high Appl ⊂ licenses low Appl = ⊤`
 yields: +θ templates ⊊ high-Appl-licensing templates ⊊ all templates. The general
-inclusions live in the substrate (`VoiceHead.AssignsTheta.hasSemantics`,
+inclusions live in the substrate (`Head.AssignsTheta.hasSemantics`,
 `high_licensed_of_assignsTheta`, `low_licensed_with_any`); this section
 instantiates them for the Semitic template space, paralleling the Icelandic
 asymmetry in `Wood2015.dative_voice_asymmetry`. -/
@@ -567,12 +565,12 @@ inventory). -/
 /-- Mono-eventive causative decomposition: θ-assigning Voice over a root structure
     lacking the becoming subevent vGO. -/
 def monoEventiveCausative : List VerbHead :=
-  buildDecomposition voiceCauser [.vCAUSE, .vBE]
+  buildDecomposition causer [.vCAUSE, .vBE]
 
 /-- Bi-eventive causative decomposition (analytic causatives): θ-assigning Voice
     over the full change-of-state root structure. -/
 def biEventiveCausative : List VerbHead :=
-  buildDecomposition voiceCauser [.vCAUSE, .vGO, .vBE]
+  buildDecomposition causer [.vCAUSE, .vGO, .vBE]
 
 /-- Mono-eventive causatives have CAUSE but lack GO. -/
 theorem mono_eventive_has_cause_no_go :

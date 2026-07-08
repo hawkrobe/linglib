@@ -29,7 +29,7 @@ voice shows); `Middle.lean` is the interaction case. "Voice" in
 [creissels-2025]'s sense is the *coded* subset of the alternations here
 (`AlternationMarking.isVoice`); the Voice functional head of Minimalist
 syntax projects onto these operations via
-`VoiceFlavor.alternation` (`Syntax/Minimalist/Verbal/Voice.lean`).
+`Voice.Flavor.alternation` (`Syntax/Minimalist/Verbal/Voice.lean`).
 
 ## TR-roles
 

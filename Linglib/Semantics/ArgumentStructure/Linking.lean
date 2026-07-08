@@ -35,7 +35,7 @@ Theories in the literature differ along three dimensions:
 The `LinkingTheory` structure captures this variation by parameterizing
 over BOTH the verb representation type (`Verb`) and the structural
 context type (`Ctx`). Theories that ignore structure use `Unit` for
-`Ctx`; theories that care about Voice use `VoiceFlavor`; theories
+`Ctx`; theories that care about Voice use `Voice.Flavor`; theories
 with richer decompositions bring their own types.
 
 The role output is always `ThetaRole` — the shared vocabulary that
@@ -52,7 +52,7 @@ Accounts expressible via this interface (non-exhaustive):
 
 | Account | Ctx | compatible | predict uses verb? |
 |---------|-----|------------|-------------------|
-| Severing | VoiceFlavor | verb-constrained | no |
+| Severing | Voice.Flavor | verb-constrained | no |
 | Lexicalist | Unit | always [] | yes |
 | Zero morphology | (custom) | verb-constrained | yes |
 | First Phase Syntax | (custom) | verb-constrained | yes |
@@ -271,7 +271,7 @@ inductive ArgPosition where
     - `Ctx`: what the theory considers relevant about the syntactic
       structure beyond the verb itself:
       - `Unit` for theories that derive everything from the verb
-      - `VoiceFlavor` for the severing account
+      - `Voice.Flavor` for the severing account
       - A richer type for Ramchand, Goldberg, Pylkkänen, etc.
 
     The theory provides two functions:

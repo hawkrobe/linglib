@@ -20,21 +20,21 @@ Glossed Chuj sentences with root, voice suffix, and grammaticality.
 
 ## Minimalist analysis (§§3–9)
 
-Voice heads as `Minimalist.VoiceHead` instances, event decomposition via
+Voice heads as `Minimalist.Voice.Head` instances, event decomposition via
 `buildDecomposition`, existential closure (-aj), and division of labor /
 causative alternation proved from the Voice–root split.
 
 ## Bridge theorems (§§10–16)
 
 Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
-`isGrammatical`, etc.) to Minimalist VoiceHead properties and to the
+`isGrammatical`, etc.) to Minimalist Head properties and to the
 [beavers-etal-2021] root typology.
 
 ### Chuj fragment bridge (§§10–15)
 
 1. **Root class ↔ Root arity**: `CRootClass` maps to `RootClassification` values.
    √TV = selectsTheme, others = noTheme.
-2. **Voice suffix ↔ VoiceHead**: theta assignment, D feature, phase head.
+2. **Voice suffix ↔ Head**: theta assignment, D feature, phase head.
 3. **Paradigm predictions**: `isGrammatical` matches data attestation.
 4. **-aj predictions**: `hasImplicitExternal` / `triggersAj` match -aj
    distribution.
@@ -152,11 +152,11 @@ theorem examples_grammaticality :
 -- § 3. Minimalist Voice Analysis ([coon-2019], ex. (78))
 -- ════════════════════════════════════════════════════
 
-open Minimalist
+open Minimalist Minimalist.Voice
 
 /-- Active transitive v/Voice⁰ (Ø): introduces overt agent in Spec,VoiceP,
     assigns ergative case, phase head (v*). -/
-def vØ : VoiceHead :=
+def vØ : Head :=
   { flavor := .agentive, hasD := true }
 
 /-- Agentive intransitive v/Voice⁰ (-w): introduces overt agent in
@@ -167,14 +167,14 @@ def vØ : VoiceHead :=
     Also models the null intransitive v/Voice⁰ for √ITV roots (p. 40):
     both introduce an agent and assign absolutive, differing only in
     overt (-w) vs null morphological realization. -/
-def v_w : VoiceHead :=
+def v_w : Head :=
   { flavor := .agentive, hasD := true, phaseOverride := some false }
 
 /-- Passive v/Voice⁰ (-ch): assigns θ-role to an implicit (existentially
     bound) external argument (p. 68–69). Agent-oriented adverbs and
     by-phrases are licensed, confirming semantic presence of agent.
     Only combines with √TV roots. -/
-def v_ch : VoiceHead :=
+def v_ch : Head :=
   { flavor := .agentive, hasD := false, phaseOverride := some false }
 
 /-- Agentless passive v/Voice⁰ (-j): verbalizes stem but introduces
@@ -183,7 +183,7 @@ def v_ch : VoiceHead :=
     argument"). No agent-oriented adverbs, no agentive by-phrases.
     Used with √TV (agentless passive) and non-transitive roots
     (inchoative/stative readings). -/
-def v_j : VoiceHead :=
+def v_j : Head :=
   { flavor := .nonThematic, hasD := false }
 
 -- ════════════════════════════════════════════════════
@@ -255,7 +255,7 @@ theorem nom_agentive :
 
 /-- Does this Voice head have an implicit (existentially bound) external
     argument? True when Voice assigns θ but has no overt specifier. -/
-def hasImplicitExternal (v : VoiceHead) : Bool :=
+def hasImplicitExternal (v : Head) : Bool :=
   decide v.AssignsTheta && !v.hasD
 
 /-- -aj (Existential Closure) surfaces when there is any implicit argument:
@@ -264,7 +264,7 @@ def hasImplicitExternal (v : VoiceHead) : Bool :=
 
     `implicitInternal` is true when a √TV root's theme is not filled
     by an overt DP (absolutive antipassive, not incorporation antipassive). -/
-def triggersAj (v : VoiceHead) (implicitInternal : Bool) : Bool :=
+def triggersAj (v : Head) (implicitInternal : Bool) : Bool :=
   hasImplicitExternal v || implicitInternal
 
 /-- -ch always triggers -aj (implicit external agent; p. 69). -/
@@ -368,11 +368,11 @@ theorem bare_transitive_iff_theme (rc : CRootClass) :
   cases rc <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 11. Voice Suffix ↔ VoiceHead
+-- § 11. Voice Suffix ↔ Head
 -- ════════════════════════════════════════════════════
 
-/-- Map the phenomena's voice suffix to the Minimalist VoiceHead. -/
-def toVoiceHead : ChujVoiceSuffix → VoiceHead
+/-- Map the phenomena's voice suffix to the Minimalist Head. -/
+def toVoiceHead : ChujVoiceSuffix → Head
   | .null => vØ
   | .ch   => v_ch
   | .j    => v_j

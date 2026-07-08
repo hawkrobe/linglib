@@ -131,7 +131,7 @@ def Verb.assertsSufficiency (v : Verb) : Bool :=
     - unaccusative / measure → theme
     - default → agent
 
-    Contrasts with the Kratzer severing prediction (`VoiceFlavor.thetaRole`),
+    Contrasts with the Kratzer severing prediction (`Voice.Flavor.thetaRole`),
     which derives the role from Voice flavor rather than verb-internal
     semantics. Studies comparing the two accounts can apply both to the
     same `Verb` and inspect divergence. -/

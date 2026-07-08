@@ -43,7 +43,7 @@ inductive InverseVoiceKind where
     constraint). -/
 structure InverseVoiceConstruction where
   kind : InverseVoiceKind
-  voice : VoiceHead
+  voice : Voice.Head
   /-- True iff the constituent that smuggles to Spec,VoiceP contains
       at most one Case-needing DP (Storment §5 transitivity constraint).
       When false, the derivation crashes on Case licensing. -/
@@ -71,7 +71,7 @@ theorem InverseVoiceConstruction.licensed_iff (c : InverseVoiceConstruction) :
 /-- An agentive Voice can never appear in an inverse-voice construction:
     the family invariant fails. -/
 theorem InverseVoiceConstruction.agentive_voice_not_wellformed
-    (c : InverseVoiceConstruction) (h : c.voice = voiceAgent) :
+    (c : InverseVoiceConstruction) (h : c.voice = Voice.agentive) :
     c.voiceWellFormed = false := by
   unfold InverseVoiceConstruction.voiceWellFormed
   rw [h]; exact agentive_blocks_smuggling
@@ -94,14 +94,14 @@ their own study files before adding canonical instances here. -/
     permits smuggling of the VP containing the quotative operator. -/
 def qiCanonical : InverseVoiceConstruction where
   kind := .quotativeInversion
-  voice := voiceAnticausative
+  voice := Voice.anticausative
   satisfiesTransitivityConstraint := true
 
 /-- Locative inversion in its canonical form: same Voice mechanism as
     QI per [storment-2026], §6. -/
 def liCanonical : InverseVoiceConstruction where
   kind := .locativeInversion
-  voice := voiceAnticausative
+  voice := Voice.anticausative
   satisfiesTransitivityConstraint := true
 
 /-- The passive in its canonical form ([collins-2005]): Voice
@@ -111,7 +111,7 @@ def liCanonical : InverseVoiceConstruction where
     anticausative Voice projected by unaccusatives. -/
 def passiveCanonical : InverseVoiceConstruction where
   kind := .passive
-  voice := voicePassive
+  voice := Voice.passive
   satisfiesTransitivityConstraint := true
 
 /-- QI, LI, and passive are all licensed inverse-voice constructions.

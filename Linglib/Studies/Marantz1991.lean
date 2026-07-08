@@ -284,7 +284,7 @@ end Minimalist
 
 namespace Marantz1991
 
-open Minimalist
+open Minimalist Minimalist.Voice
 open Syntax.Case
 open Georgian.Agreement
 
@@ -472,11 +472,11 @@ theorem nonthematic_subject_with_acc :
 
 /-- Voice determines NP count: θ-assigning Voice adds an external argument.
     This bridges Voice theory to the configural case algorithm. -/
-def npCount (voice : VoiceHead) (internalArgs : Nat) : Nat :=
+def npCount (voice : Head) (internalArgs : Nat) : Nat :=
   if voice.AssignsTheta then 1 + internalArgs else internalArgs
 
-theorem agentive_two_nps : npCount voiceAgent 1 = 2 := rfl
-theorem anticausative_one_np : npCount voiceAnticausative 1 = 1 := rfl
+theorem agentive_two_nps : npCount agentive 1 = 2 := rfl
+theorem anticausative_one_np : npCount anticausative 1 = 1 := rfl
 
 -- ============================================================================
 -- § 8: Hindi Split Ergativity
@@ -647,29 +647,29 @@ theorem class2_unmarked_highest_accessibility :
 
 /-- Build NP list from Voice: if Voice assigns θ, include both subject
     and object; otherwise include only the theme. -/
-def npsFromVoice (voice : VoiceHead) : List NPInDomain :=
+def npsFromVoice (voice : Head) : List NPInDomain :=
   if voice.AssignsTheta then [⟨"subj", none⟩, ⟨"obj", none⟩]
   else [⟨"theme", none⟩]
 
 /-- End-to-end: agentive Voice → 2 NPs → object gets dependent ACC. -/
 theorem voice_to_case_transitive :
-    getCaseOf "obj" (assignCases .accusative (npsFromVoice voiceAgent)) = some .acc ∧
-    getSourceOf "obj" (assignCases .accusative (npsFromVoice voiceAgent)) = some .dependent := by
+    getCaseOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .acc ∧
+    getSourceOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .dependent := by
   native_decide
 
 /-- End-to-end: anticausative Voice → 1 NP → theme gets unmarked NOM. -/
 theorem voice_to_case_unaccusative :
-    getCaseOf "theme" (assignCases .accusative (npsFromVoice voiceAnticausative)) = some .nom ∧
-    getSourceOf "theme" (assignCases .accusative (npsFromVoice voiceAnticausative)) = some .unmarked := by
+    getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom ∧
+    getSourceOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .unmarked := by
   native_decide
 
 /-- The Burzio effect derived end-to-end: ACC presence tracks Voice's
     θ-assignment. This is the full chain: Voice → NP count → case. -/
 theorem burzio_from_voice :
     -- Agentive Voice: ACC on object
-    getCaseOf "obj" (assignCases .accusative (npsFromVoice voiceAgent)) = some .acc ∧
+    getCaseOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .acc ∧
     -- Non-thematic Voice: no ACC (sole NP gets NOM)
-    getCaseOf "theme" (assignCases .accusative (npsFromVoice voiceAnticausative)) = some .nom := by
+    getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom := by
   native_decide
 
 -- ============================================================================

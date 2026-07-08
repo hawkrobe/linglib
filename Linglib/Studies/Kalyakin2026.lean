@@ -48,7 +48,7 @@ vVPE's deletion domain, mismatches in Voice are tolerated.
 namespace Kalyakin2026
 
 open Semantics.Lexical
-open Minimalist
+open Minimalist Minimalist.Voice
 open Minimalist.Ellipsis
 
 -- ════════════════════════════════════════════════════
@@ -77,9 +77,9 @@ structure AlternationDatum where
   /-- Description -/
   description : String
   /-- Voice flavor of the antecedent -/
-  antecedentVoice : VoiceFlavor
+  antecedentVoice : Flavor
   /-- Voice flavor of the ellipsis site -/
-  targetVoice : VoiceFlavor
+  targetVoice : Flavor
   /-- Root event structure (shared between antecedent and target) -/
   rootStructure : List VerbHead
   /-- Is the alternation grammatical under the given ellipsis type? -/
@@ -123,8 +123,8 @@ def englishAlternationBlocked : AlternationDatum :=
     under different Voice flavors — this is the causative alternation
     from Voice.lean. -/
 theorem alternation_same_root :
-    buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE] = [.vDO, .vCAUSE, .vGO, .vBE] ∧
-    buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE] = [.vCAUSE, .vGO, .vBE] := by
+    buildDecomposition agentive [.vCAUSE, .vGO, .vBE] = [.vDO, .vCAUSE, .vGO, .vBE] ∧
+    buildDecomposition anticausative [.vCAUSE, .vGO, .vBE] = [.vCAUSE, .vGO, .vBE] := by
   constructor <;> rfl
 
 /-- The causative alternation is tolerated under vVPE because
@@ -142,7 +142,7 @@ theorem causative_alternation_blocked_english :
     requires identity of the VP, which contains the shared root. -/
 theorem shared_vp_core :
     let root := [VerbHead.vCAUSE, VerbHead.vGO, VerbHead.vBE]
-    buildDecomposition voiceAgent root ≠ buildDecomposition voiceAnticausative root ∧
+    buildDecomposition agentive root ≠ buildDecomposition anticausative root ∧
     root = root := by
   constructor
   · intro h; cases h
@@ -221,8 +221,8 @@ theorem vVPE_below_englishVPE :
     vVPE is grammatical — matches the prediction. -/
 theorem end_to_end_causative_chain :
     -- Step 1: Voice determines causativity (Kratzer/Cuervo)
-    isCausative (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true ∧
-    isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true ∧
+    isCausative (buildDecomposition agentive [.vCAUSE, .vGO, .vBE]) = true ∧
+    isInchoative (buildDecomposition anticausative [.vCAUSE, .vGO, .vBE]) = true ∧
     -- Step 2: vVPE tolerates the transitivity difference (Merchant)
     canMismatch vVPE transitivityMismatch ∧
     -- Step 3: Alternation under vVPE is grammatical (Kalyakin)

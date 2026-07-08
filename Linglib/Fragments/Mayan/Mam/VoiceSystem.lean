@@ -5,7 +5,7 @@ import Linglib.Syntax.Voice.Basic
 
 Theory-neutral typological profile of the Mam voice system.
 
-The Minimalist `VoiceHead`, `ClauseSpine`, and `MamDirHead` apparatus
+The Minimalist `Voice.Head`, `ClauseSpine`, and `MamDirHead` apparatus
 that previously lived in this file (=(y)a' analysis, antipassive)
 moved to:
 
