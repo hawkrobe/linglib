@@ -1,6 +1,7 @@
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.Lexical.LevinClassProfiles
 
 /-!
 # Variable Agentivity: Polysemy or Underspecification?
@@ -77,9 +78,6 @@ verbs ([levin-krejci-2019]), and *drown*.
 
 ## Todo
 
-* Bridge `broomSweep` to the instrument-subclass template
-  `Features.LevinClassProfiles.wipeInstrument` (Levin 10.4.2), whose subject
-  profile is the fragment's `sweep_instr` entry value.
 * Formalize the lexicon-uniformity blocker for some causative-alternation
   pairs ([rappaport-hovav-2014] on direct-causation requirement).
 * Engage [ramchand-2008]'s first-phase syntax and
@@ -526,5 +524,44 @@ def WipingVerb.levinClass : WipingVerb → LevinClass := fun _ => wipingLevinCla
 
 @[simp] theorem WipingVerb.all_in_wipe (v : WipingVerb) : v.levinClass = .wipe := by
   cases v <;> rfl
+
+/-! ### The two senses on the agentivity lattice -/
+
+section AgentivityBridge
+
+open Features.LevinClassProfiles
+open ArgumentStructure.AgentivityLattice
+
+/-- The two *sweep* senses pair with the two Levin 10.4 subclass templates:
+    basic-*sweep* (moving entity unsaturated) with the manner subclass, whose
+    subject is underspecified for volition; broom-*sweep* (saturated) with the
+    instrument subclass (`wipeInstrument`), whose subject is an obligatory
+    volitional agent. -/
+theorem sweep_senses_match_templates :
+    (¬ basicSweep.IsLexicallySaturated ∧
+      wipeManner.subjectProfile.volition = false) ∧
+    (broomSweep.IsLexicallySaturated ∧
+      wipeInstrument.subjectProfile.volition = true) :=
+  ⟨⟨id, rfl⟩, ⟨trivial, rfl⟩⟩
+
+/-- Basic-*sweep* projects to {motion} on [grimm-2011]'s agentivity lattice —
+    the lattice image of variable agentivity. -/
+theorem wipeManner_agentivity :
+    AgentivityNode.fromEntailmentProfile wipeManner.subjectProfile
+      = ⟨false, false, false, true⟩ := rfl
+
+/-- Broom-*sweep* projects to the full agent {V, S, I, M}. -/
+theorem wipeInstrument_agentivity :
+    AgentivityNode.fromEntailmentProfile wipeInstrument.subjectProfile
+      = ⟨true, true, true, true⟩ := rfl
+
+/-- Instrument lexicalization strictly raises agentivity on the lattice:
+    the paper's obligatory-agentivity claim as strict lattice dominance. -/
+theorem instrument_lexicalization_increases_agentivity :
+    AgentivityNode.fromEntailmentProfile wipeManner.subjectProfile <
+      AgentivityNode.fromEntailmentProfile wipeInstrument.subjectProfile := by
+  decide
+
+end AgentivityBridge
 
 end RappaportHovavLevin2024

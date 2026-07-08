@@ -65,7 +65,7 @@ inductive AnimacyLevel where
   | animate
   /-- Least prominent: inanimate referents -/
   | inanimate
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Numeric rank on the animacy scale: Human (2) > Animate (1) > Inanimate (0). -/
 def AnimacyLevel.rank : AnimacyLevel → Nat
@@ -175,7 +175,7 @@ inductive DefinitenessLevel where
   | indefiniteSpecific
   /-- Least prominent: non-specific indefinites -/
   | nonSpecific
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Numeric rank on the definiteness scale:
     Pronoun (4) > Proper (3) > Definite (2) > IndSp (1) > NonSp (0). -/
