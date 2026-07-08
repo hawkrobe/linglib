@@ -430,7 +430,7 @@ theorem changed_lower_than_unaffected :
     `degreeToPersistence` correspondence for potential change. Beavers'
     surface-contact classification ([beavers-2011] eq. (60c)); note
     [grimm-2011]'s own Fig. 5 instead places contact-verb objects at
-    quPersBeginning (`TransitivityRank.contact.patientNode`), a genuine
+    quPersBeginning (`TransitivityRank.contact.patientType`), a genuine
     cross-paper disagreement over whether contact entails impingement. -/
 theorem kick_grimm_beavers_consistent :
     PersistenceLevel.fromPatientProfile contactObject = .totalPersistence ∧
@@ -466,32 +466,32 @@ theorem grimm_beavers_monotone_canonical :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. ArgTemplate → GrimmNode Bridge
+-- § 11. ArgTemplate → ParticipantType Bridge
 -- ════════════════════════════════════════════════════
 
 /-! Cross-framework bridge from Levin/RHL `ArgTemplate` (event-template
-    decomposition) to Grimm's `GrimmNode` (privative agentivity lattice) and
+    decomposition) to Grimm's `ParticipantType` (privative agentivity lattice) and
     Beavers' affectedness degree. Each canonical template is verified to
     project into the predicted positions in both systems, and the consistency
     of affectedness ↔ persistence is checked. -/
 
 
-/-- Project an ArgTemplate's subject profile to a GrimmNode. -/
+/-- Project an ArgTemplate's subject profile to a ParticipantType. -/
 def _root_.Features.LevinClassProfiles.ArgTemplate.subjectGrimm
-    (t : ArgTemplate) : GrimmNode :=
-  GrimmNode.fromSubjectProfile t.subjectProfile
+    (t : ArgTemplate) : ParticipantType :=
+  ParticipantType.fromSubjectProfile t.subjectProfile
 
-/-- Project an ArgTemplate's object profile (if any) to a GrimmNode. -/
+/-- Project an ArgTemplate's object profile (if any) to a ParticipantType. -/
 def _root_.Features.LevinClassProfiles.ArgTemplate.objectGrimm
-    (t : ArgTemplate) : Option GrimmNode :=
-  t.objectProfile.map GrimmNode.fromObjectProfile
+    (t : ArgTemplate) : Option ParticipantType :=
+  t.objectProfile.map ParticipantType.fromObjectProfile
 
 /-- Project an ArgTemplate's object to its affectedness degree. -/
 def _root_.Features.LevinClassProfiles.ArgTemplate.objectAffectedness
     (t : ArgTemplate) : Option AffectednessDegree :=
   t.objectProfile.map profileToDegree
 
--- ── Per-template GrimmNode verification ──
+-- ── Per-template ParticipantType verification ──
 
 /-- Manner-contact subject → full agent on the Grimm lattice. -/
 theorem mannerContact_subject_grimm :

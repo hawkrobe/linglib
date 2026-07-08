@@ -47,7 +47,7 @@ Agentivity decomposes into **intentionality × control** (following
 ## Bridges
 
 - `CauserType.toCausalSource` → `CausalSource` (psych causation)
-- `CauserType.toAgentivityNode` → `AgentivityNode` (agentivity lattice)
+- `CauserType.toAgentivity` → `Agentivity` (agentivity lattice)
 - `CauserType.volitionality` → `Volitionality` (root dimensions)
 - `CauserType.agentivityDegree` → `AgentivityDegree`
 - `CausativeConstruction` bundles complexity + mediation + causer/causee
@@ -75,7 +75,7 @@ namespace Causation.Morphological
 
 open Verb
 open Causation.Psych (CausalSource)
-open ArgumentStructure (AgentivityNode)
+open ArgumentStructure (Agentivity)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causer Type ([hafeez-2025], [comrie-1989])
@@ -335,10 +335,10 @@ def CauserType.volitionality : CauserType → Volitionality
 /-- Intentional human causers map to the agentive pole of the lattice
     (volition + sentience + instigation); accidental humans retain
     sentience but lack volition; natural forces have instigation only. -/
-def CauserType.toAgentivityNode : CauserType → AgentivityNode
-  | .intentionalHuman => ⟨true, true, true, false⟩   -- V+S+I
-  | .accidentalHuman  => ⟨false, true, true, false⟩  -- S+I (sentient but not volitional)
-  | .naturalForce     => ⟨false, false, true, false⟩  -- I only
+def CauserType.toAgentivity : CauserType → Agentivity
+  | .intentionalHuman => .mk true true true false   -- V+S+I
+  | .accidentalHuman  => .mk false true true false  -- S+I (sentient but not volitional)
+  | .naturalForce     => .mk false false true false  -- I only
 
 -- ════════════════════════════════════════════════════
 -- § 9. Bridge Theorems
@@ -346,18 +346,18 @@ def CauserType.toAgentivityNode : CauserType → AgentivityNode
 
 /-- Intentional human causers have maximal agentivity among causer types. -/
 theorem intentional_max_agentivity :
-    (CauserType.toAgentivityNode .intentionalHuman).volition = true ∧
-    (CauserType.toAgentivityNode .intentionalHuman).sentience = true ∧
-    (CauserType.toAgentivityNode .intentionalHuman).instigation = true := ⟨rfl, rfl, rfl⟩
+    (CauserType.toAgentivity .intentionalHuman).volition = true ∧
+    (CauserType.toAgentivity .intentionalHuman).sentience = true ∧
+    (CauserType.toAgentivity .intentionalHuman).instigation = true := ⟨rfl, rfl, rfl⟩
 
 /-- Accidental human causers retain sentience but lack volition. -/
 theorem accidental_sentient_not_volitional :
-    (CauserType.toAgentivityNode .accidentalHuman).sentience = true ∧
-    (CauserType.toAgentivityNode .accidentalHuman).volition = false := ⟨rfl, rfl⟩
+    (CauserType.toAgentivity .accidentalHuman).sentience = true ∧
+    (CauserType.toAgentivity .accidentalHuman).volition = false := ⟨rfl, rfl⟩
 
 /-- Natural force causers have only instigation (no sentience, no volition). -/
 theorem naturalForce_instigation_only :
-    (CauserType.toAgentivityNode .naturalForce) = ⟨false, false, true, false⟩ := rfl
+    (CauserType.toAgentivity .naturalForce) = .mk false false true false := rfl
 
 /-- All causer types project to external `CausalSource`. -/
 theorem all_causers_external (ct : CauserType) :
