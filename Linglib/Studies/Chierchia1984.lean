@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Studies.Landau2015
@@ -402,7 +402,7 @@ The derivation has three steps:
    semantic controller.
 
 2. **What does the alternation do to that argument?** Passivization
-   denucleativizes A and maintains P (`Syntax.ArgumentStructure.Alternation.passivization`).
+   denucleativizes A and maintains P (`Voice.passivization`).
    Antipassivization (detransitivization) denucleativizes P and maintains A.
 
 3. **Does removing the controller break the CP?** If the alternation
@@ -410,9 +410,9 @@ The derivation has three steps:
    satisfied → the alternation is blocked.
 
 This replaces the stipulated `predictedPassivizable` case-split with a
-derivation from `Syntax.ArgumentStructure.Alternation.passivization` and `ControlType`. -/
+derivation from `Voice.passivization` and `ControlType`. -/
 
-open Syntax.ArgumentStructure.Alternation
+open Voice
 
 /-- Which TR-role serves as the controller, per [chierchia-1984]'s CP.
 

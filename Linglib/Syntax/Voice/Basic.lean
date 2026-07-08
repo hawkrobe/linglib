@@ -7,7 +7,11 @@ import Linglib.Syntax.Extraction
 
 Theory-neutral types for cross-linguistic voice-system typology — how languages
 map argument roles to a privileged syntactic position (the "pivot") via voice
-alternation. Per-language data are bare `def voices : List VoiceEntry` and
+alternation. This is the **pivot axis** of the `Syntax/Voice/` area; the
+**valency axis** (coding-frame operations: passivization, antipassivization,
+causativization, …) is `Alternation.lean`, and the two are orthogonal —
+symmetrical voice remaps the pivot without changing valency, while e.g. a
+passive does both. Per-language data are bare `def voices : List VoiceEntry` and
 `def symmetry : VoiceSystemSymmetry` in `Fragments/<Lang>/…`; the queries below
 operate on the voice list.
 

@@ -22,6 +22,15 @@ This file is substrate: it defines the alternation *types*. Per-paper data and
 cross-linguistic distributions live in the consuming study files (e.g.
 `Studies/Creissels2025.lean`).
 
+Within `Syntax/Voice/` this file owns the **valency axis** (what happens to
+the coding frame); `Basic.lean` owns the **pivot axis** (which argument is
+the privileged one — orthogonal to valency, as Austronesian symmetrical
+voice shows); `Middle.lean` is the interaction case. "Voice" in
+[creissels-2025]'s sense is the *coded* subset of the alternations here
+(`AlternationMarking.isVoice`); the Voice functional head of Minimalist
+syntax projects onto these operations via
+`VoiceFlavor.alternation` (`Syntax/Minimalist/Verbal/Voice.lean`).
+
 ## TR-roles
 
 [creissels-2025] §1.3.3 defines Transitivity-Related roles (A, P, S, X)
@@ -53,7 +62,7 @@ while [creissels-2025]'s voice alternations are *coded* (marked by
 verbal morphology). The `marking` field captures this.
 -/
 
-namespace Syntax.ArgumentStructure.Alternation
+namespace Voice
 
 open Features.Prominence (ArgumentRole)
 open Semantics.Lexical (DiathesisAlternation)
@@ -807,4 +816,4 @@ theorem p_ambi_is_uncoded_decausativization :
 theorem a_ambi_is_uncoded_antipassivization :
     antipassivization.involvesDenucleativization = true := rfl
 
-end Syntax.ArgumentStructure.Alternation
+end Voice

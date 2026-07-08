@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Minimalist.Verbal.Applicative
@@ -23,7 +23,7 @@ languages. The book proposes a unified framework based on:
   where the same morpheme marks multiple voice alternation types (§8.2)
 
 This study file bridges [creissels-2025]'s framework (formalized in
-`Syntax/ArgumentStructure/Alternation.lean`) to existing linglib infrastructure:
+`Syntax/Voice/Alternation.lean`) to existing linglib infrastructure:
 
 - `Semantics/Causation/Morphological.lean`: causativization and decausativization
 - `Typology/VoiceSystem.lean`: pivot-based voice system typology
@@ -32,7 +32,7 @@ This study file bridges [creissels-2025]'s framework (formalized in
 
 namespace Creissels2025
 
-open Syntax.ArgumentStructure.Alternation
+open Voice
 open Causation.Morphological
   (IntransitivizationType CausativeComplexity CausativeConstruction
    CausativizabilityData)
