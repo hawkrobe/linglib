@@ -207,14 +207,6 @@ def PersistenceLevel.quPersE : PersistenceLevel → Bool
   | .exPersEnd | .totalPersistence => true
   | _ => false
 
-/-- Number of positive persistence features. -/
-def PersistenceLevel.featureCount : PersistenceLevel → Nat
-  | .totalNonPersistence => 0
-  | .exPersEnd => 2           -- {ExPE, QuPE}
-  | .exPersBeginning => 2     -- {ExPB, QuPB}
-  | .quPersBeginning => 3     -- {ExPB, ExPE, QuPB}
-  | .totalPersistence => 4    -- {ExPB, ExPE, QuPB, QuPE}
-
 instance : Fintype PersistenceLevel where
   elems := {.totalNonPersistence, .exPersEnd, .exPersBeginning,
             .quPersBeginning, .totalPersistence}
@@ -323,10 +315,6 @@ def ParticipantType.Valid (n : ParticipantType) : Prop :=
 instance (n : ParticipantType) : Decidable n.Valid := by
   unfold ParticipantType.Valid; infer_instance
 
-/-- Total feature count (agentivity + persistence). -/
-def ParticipantType.featureCount (n : ParticipantType) : Nat :=
-  n.agentivity.featureCount + n.persistence.featureCount
-
 def ParticipantType.equiv : ParticipantType ≃ (Agentivity × PersistenceLevel) where
   toFun n := (n.agentivity, n.persistence)
   invFun p := ⟨p.1, p.2⟩
@@ -374,10 +362,10 @@ instance : Lattice ParticipantType where
 
 /-! ### Named participant types -/
 
-/-- Maximal Agent (Fig. 4): all agentivity features,
-    total persistence. The prototypical transitive subject. -/
-def maximalAgent : ParticipantType :=
-  ⟨⊤, .totalPersistence⟩
+/-- Maximal Agent (Fig. 4): all agentivity features at total persistence —
+    the top of the participant lattice. The prototypical transitive
+    subject. -/
+def maximalAgent : ParticipantType := ⊤
 
 /-- Maximal Patient (Fig. 4): no agentivity features,
     existential persistence (beginning). The prototypical affected object
@@ -391,20 +379,12 @@ def maximalPatient : ParticipantType :=
 def effectorAgent : ParticipantType :=
   ⟨.mk false false true true, .totalPersistence⟩
 
-/-- The lattice position {sentience} × qualitative persistence (beginning).
-    Per Grimm 2011 §5.1, diverse uses of the dative converge on this single
-    region — recipients, experiencers, and benefactives are aliases below. -/
+/-- Sentience without instigation, at qualitative persistence (beginning):
+    the single position where Grimm's §5.1 dative uses converge —
+    recipients, dative experiencers, and second arguments of two-place
+    communication/service verbs (Fig. 7). -/
 def sentientNonInstigator : ParticipantType :=
   ⟨.mk false true false false, .quPersBeginning⟩
-
-/-- Dative experiencer of psych verbs (§5.1.1). Alias of
-    `sentientNonInstigator` — the convergence with `recipientType` is by
-    construction, not a theorem. -/
-abbrev experiencerType : ParticipantType := sentientNonInstigator
-
-/-- Canonical dative recipient (Fig. 7). Alias of `sentientNonInstigator`
-    — see the docstring there for the unified treatment. -/
-abbrev recipientType : ParticipantType := sentientNonInstigator
 
 /-! ### Transitivity region (§3, Fig. 4) -/
 
@@ -451,111 +431,5 @@ def TransitivityRank.patientType : TransitivityRank → ParticipantType
   | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
   | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
   | .pursuit              => ⟨⊥, .totalNonPersistence⟩ -- IIIp
-
-/-! ### Lattice properties (from Mathlib instances)
-
-Reflexivity, transitivity, antisymmetry are provided by `PartialOrder`;
-`⊥ ≤ a`, `a ≤ ⊤` by `OrderBot`/`OrderTop`; join/meet associativity,
-commutativity, absorption by `Lattice`. -/
-
-/-- Persistence incomparability: exPersEnd and exPersBeginning are
-    incomparable — neither is a subset of the other's features. -/
-theorem exPersEnd_incomparable_exPersBeginning :
-    ¬ (PersistenceLevel.exPersEnd ≤ PersistenceLevel.exPersBeginning) ∧
-    ¬ (PersistenceLevel.exPersBeginning ≤ PersistenceLevel.exPersEnd) := by
-  decide
-
-/-- Their join is ⊤ (totalPersistence). -/
-theorem exPersEnd_sup_exPersBeginning :
-    PersistenceLevel.exPersEnd ⊔ PersistenceLevel.exPersBeginning = ⊤ := by
-  decide
-
-/-- Their meet is ⊥ (totalNonPersistence). -/
-theorem exPersEnd_inf_exPersBeginning :
-    PersistenceLevel.exPersEnd ⊓ PersistenceLevel.exPersBeginning = ⊥ := by
-  decide
-
-/-- Maximal agent is ⊤ on the combined lattice. -/
-@[simp]
-theorem maximalAgent_eq_top : maximalAgent = ⊤ := by decide
-
-/-! ### Named participant verification -/
-
--- Validity
-
-theorem maximalAgent_valid : maximalAgent.Valid := by decide
-theorem maximalPatient_valid : maximalPatient.Valid := by decide
-theorem effectorAgent_valid : effectorAgent.Valid := by decide
-theorem experiencerType_valid : experiencerType.Valid := by decide
-
--- Maximal agent is at the top, maximal patient is lower
-
-theorem maximalAgent_featureCount :
-    maximalAgent.featureCount = 8 := by decide
-
-theorem maximalPatient_featureCount :
-    maximalPatient.featureCount = 2 := by decide
-
-theorem maximalPatient_le_maximalAgent :
-    maximalPatient ≤ maximalAgent := by decide
-
-theorem maximalAgent_not_le_maximalPatient :
-    ¬ maximalAgent ≤ maximalPatient := by decide
-
--- Maximal agent and patient are in the transitivity region
-
-theorem maximalAgent_in_transitiveRegion :
-    maximalAgent.InTransitiveRegion := by decide
-
-theorem maximalPatient_in_transitiveRegion :
-    maximalPatient.InTransitiveRegion := by decide
-
-/-! ### Upward/downward closure (§2.3, p.528) -/
-
-/-- Agents are **upwards closed** in the agentivity dimension
-    (p.528): if `a` qualifies as agent for a predicate
-    (i.e., `a` has at least the entailments required by the verb), then
-    any `b ≥ a` also qualifies. An entity with *more* agentive properties
-    can always fill an agent role requiring fewer.
-
-    Formally: the set of acceptable agents for a verb with minimum
-    requirement `minReq` is `{a | minReq ≤ a}`, which is an upper set. -/
-theorem agent_upward_closed (minReq a b : Agentivity)
-    (ha : minReq ≤ a) (hab : a ≤ b) :
-    minReq ≤ b :=
-  le_trans ha hab
-
-/-- Patients are **downwards closed** in the persistence dimension
-    (p.528): if `p` qualifies as patient (i.e., `p`
-    has at most the persistence features of the verb's patient slot),
-    then any `q ≤ p` also qualifies. A *more* affected entity (less
-    persistence) can always fill a patient role.
-
-    Formally: the set of acceptable patients for a verb with maximum
-    persistence `maxPers` is `{p | p ≤ maxPers}`, which is a lower set. -/
-theorem patient_downward_closed (maxPers p q : PersistenceLevel)
-    (hp : p ≤ maxPers) (hqp : q ≤ p) :
-    q ≤ maxPers :=
-  le_trans hqp hp
-
-/-! ### Persistence covering relations (Fig. 2) -/
-
-/-- exPersEnd and quPersBeginning are incomparable (neither ≤ the other).
-    Their feature sets are {ExPE, QuPE} and {ExPB, ExPE, QuPB} —
-    QuPE ∉ {ExPB, ExPE, QuPB} and ExPB ∉ {ExPE, QuPE}.
-    This means the persistence lattice has TWO independent paths from ⊥ to ⊤:
-    (1) ⊥ → exPersEnd → ⊤
-    (2) ⊥ → exPersBeginning → quPersBeginning → ⊤ -/
-theorem exPersEnd_incomparable_quPersBeginning :
-    ¬ (PersistenceLevel.exPersEnd ≤ PersistenceLevel.quPersBeginning) ∧
-    ¬ (PersistenceLevel.quPersBeginning ≤ PersistenceLevel.exPersEnd) := by
-  decide
-
-/-- The persistence lattice inclusion chain (2) from Fig. 2:
-    exPersBeginning ≤ quPersBeginning ≤ totalPersistence. -/
-theorem persistence_chain :
-    PersistenceLevel.exPersBeginning ≤ PersistenceLevel.quPersBeginning ∧
-    PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence := by
-  decide
 
 end ArgumentStructure

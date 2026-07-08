@@ -16,9 +16,10 @@ referential-property treatment the paper attributes to [grimm-2005].
 
 ## Main results
 
-- `kill_subject_range`: §2.3's closure claim — every node above *kill*'s
-  minimal agent is NOM/ERG, from the substrate's interval characterization
-  of the case regions (`toCaseRegion_eq_nomErg_iff`).
+- `subject_region_iff_causation` / `kill_subject_range`: for every
+  [dowty-1991] profile the subject is NOM/ERG iff it entails causation, and
+  every node above *kill*'s minimal agent qualifies — both from the
+  substrate's interval characterization of the regions.
 - `russian_dom_matches_lattice` / `spanish_dom_within_lattice` /
   `animate_dom_object_is_dative_node`: the lattice predicts DOM for exactly
   {animate, human}, and the animate DOM object is literally the dative node.
@@ -76,12 +77,17 @@ theorem canonical_verbs_valid :
     sitAgentivity.Valid ∧ knowAgentivity.Valid ∧ discoverAgentivity.Valid ∧
     lookAtAgentivity.Valid ∧ assassinateAgentivity.Valid := by decide
 
+/-- The perception template's subject projects to exactly the know/see
+    node — the [dowty-1991] bridge lands on the chain. -/
+theorem see_subject_agentivity :
+    Agentivity.fromEntailmentProfile perception.subjectProfile
+      = knowAgentivity := rfl
+
 /-! ### Tsunoda's transitivity hierarchy (§3, example 8)
 
 Resultative Effective Action (kill, break) >> Contact (shoot, hit) >>
 Pursuit (search, seek): the lower the patient's persistence, the more
-prototypically transitive the verb. Case regions for the patient nodes are
-substrate facts (`Agentivity/CaseRegions.lean`). -/
+prototypically transitive the verb. -/
 
 /-- Class I/II patients are in the transitivity region; Class III (pursuit)
     is outside. -/
@@ -97,6 +103,17 @@ theorem tsunoda_patient_chain :
       TransitivityRank.resultativeEffective.patientType ∧
     TransitivityRank.resultativeEffective.patientType ≤
       TransitivityRank.contact.patientType := by decide
+
+/-- Fig. 5 placements: the shared agent (Ia/IIa) is NOM/ERG; Class I/II
+    patients are ACC/ABS; the pursuit patient falls outside the core
+    object region. -/
+theorem tsunoda_case_regions :
+    effectorAgent.toCaseRegion = .nomErg ∧
+    (TransitivityRank.resultativeEffective.patientType).toCaseRegion
+      = .accAbs ∧
+    (TransitivityRank.contact.patientType).toCaseRegion = .accAbs ∧
+    (TransitivityRank.pursuit.patientType).toCaseRegion = .oblique := by
+  decide
 
 /-! ### Case regions for canonical verb classes (§4)
 
@@ -170,16 +187,20 @@ theorem die_case_region :
     (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion.toErgativeCase
       = .abs := by decide
 
-/-- Instigation (Dowty's causation) exactly divides NOM/ERG subjects from
-    oblique ones. -/
-theorem instigation_is_the_dividing_feature :
-    mannerContact.subjectProfile.causation = true ∧
-    creation.subjectProfile.causation = true ∧
-    consumption.subjectProfile.causation = true ∧
-    possessionTransfer.subjectProfile.causation = true ∧
-    perception.subjectProfile.causation = false ∧
-    selfMotion.subjectProfile.causation = false ∧
-    directedMotion.subjectProfile.causation = false := by decide
+/-- **Instigation exactly divides the subjects**: for every [dowty-1991]
+    profile, the subject lands in NOM/ERG iff it entails causation —
+    the per-verb facts above are instances. From the interval
+    characterization and `Agentivity.le_iff`, not enumeration. -/
+theorem subject_region_iff_causation (p : EntailmentProfile) :
+    (ParticipantType.fromSubjectProfile p).toCaseRegion = .nomErg ↔
+      p.causation = true := by
+  rw [ParticipantType.toCaseRegion_eq_nomErg_iff]
+  constructor
+  · exact fun h => ((Agentivity.le_iff _ _).mp h.1).2.2.1 rfl
+  · intro hc
+    exact ⟨(Agentivity.le_iff _ _).mpr
+      ⟨fun h => Bool.noConfusion h, fun h => Bool.noConfusion h,
+       fun _ => hc, fun h => Bool.noConfusion h⟩, le_refl _⟩
 
 /-! ### Acceptable-argument ranges (§2.3, p.528)
 
@@ -201,27 +222,15 @@ theorem kill_subject_endpoints :
     (⊤ : ParticipantType).toCaseRegion = .nomErg :=
   ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
 
-/-! ### Accusative and ergative alignment (§4, Fig. 6)
+/-! ### Accusative and ergative alignment (§4, Fig. 6) -/
 
-Morphological readout of the substrate region facts
-(`maximalAgent_toCaseRegion` etc.) under the two alignments. -/
-
-/-- Accusative alignment: maximal agent → NOM, maximal patient → ACC. -/
-theorem accusative_alignment :
+/-- The poles read out to the core markers of both systems: NOM/ACC in an
+    accusative alignment, ERG/ABS in an ergative one. -/
+theorem pole_alignment :
     maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
-    maximalPatient.toCaseRegion.toAccusativeCase = .acc := ⟨rfl, rfl⟩
-
-/-- Ergative alignment: maximal agent → ERG, maximal patient → ABS. -/
-theorem ergative_alignment :
+    maximalPatient.toCaseRegion.toAccusativeCase = .acc ∧
     maximalAgent.toCaseRegion.toErgativeCase = .erg ∧
-    maximalPatient.toCaseRegion.toErgativeCase = .abs := ⟨rfl, rfl⟩
-
-/-- eat in an accusative system: NOM subject, ACC object. -/
-theorem eat_alignment :
-    (ParticipantType.fromSubjectProfile consumption.subjectProfile).toCaseRegion.toAccusativeCase
-      = .nom ∧
-    (ParticipantType.fromObjectProfile consumptionObject).toCaseRegion.toAccusativeCase
-      = .acc := by decide
+    maximalPatient.toCaseRegion.toErgativeCase = .abs := by decide
 
 /-! ### Differential object marking (§4, p.534; [grimm-2005])
 
@@ -376,29 +385,16 @@ free to regularize); oblique-region subjects leave DOM discriminating.
 (Von Heusinger's own classification keys on object animacy — the other
 side of the same opposition.) -/
 
-/-- The subject profile lands in NOM/ERG. -/
-def SubjectInAgentRegion (p : EntailmentProfile) : Prop :=
-  (ParticipantType.fromSubjectProfile p).toCaseRegion = .nomErg
-
-instance (p : EntailmentProfile) : Decidable (SubjectInAgentRegion p) := by
-  unfold SubjectInAgentRegion; infer_instance
-
 /-- Accomplishment (kill-type) verbs: NOM/ERG subject and ACC/ABS object —
-    maximal contrast (*matar*). -/
+    maximal contrast (*matar*). Perception verbs lose the contrast on the
+    subject side (`see_case_region`: oblique, *ver*); creation verbs have
+    NOM/ERG subjects (`build_case_regions`) but no DOM question at all
+    (`creation_dom_inapplicable`). -/
 theorem kill_type_maximal_contrast :
-    SubjectInAgentRegion accomplishmentSubjectProfile ∧
+    (ParticipantType.fromSubjectProfile accomplishmentSubjectProfile).toCaseRegion
+      = .nomErg ∧
     (ParticipantType.fromObjectProfile accomplishmentObjectProfile).toCaseRegion
       = .accAbs := by decide
-
-/-- Perception subjects fall outside NOM/ERG — reduced contrast (*ver*). -/
-theorem perception_subject_not_in_agent_region :
-    ¬ SubjectInAgentRegion perception.subjectProfile := by decide
-
-/-- Creation subjects are in NOM/ERG, but the object is outside the
-    transitivity region, so the contrast is moot
-    (`creation_dom_inapplicable`). -/
-theorem creation_subject_in_agent_region :
-    SubjectInAgentRegion creation.subjectProfile := by decide
 
 /-! ### The Russian genitive/accusative alternation (§5.2, Fig. 8)
 
@@ -406,20 +402,14 @@ Objects of intensional verbs (*want*, *seek*, *await*; p.539–541) take
 accusative under the specific reading and genitive under the non-specific
 one — a case contrast between two lattice nodes. -/
 
-/-- Specific reading: the object exists — `exPersBeginning`. -/
-def specificIntensionalObject : ParticipantType := ⟨⊥, .exPersBeginning⟩
-
-/-- Non-specific reading: existence not entailed — total non-persistence. -/
-def nonspecificIntensionalObject : ParticipantType := ⟨⊥, .totalNonPersistence⟩
-
-/-- The specific reading sits in the ACC/ABS region. -/
-theorem specific_reading_in_accAbs :
-    specificIntensionalObject.toCaseRegion = .accAbs := by decide
-
-/-- The non-specific reading is the lattice bottom — Grimm's governed
-    genitive at "the lowest node of the lattice" (p.540). -/
-theorem nonspecific_reading_at_bottom :
-    nonspecificIntensionalObject = ⊥ := rfl
+/-- The specific reading (object exists, `exPersBeginning`) sits in
+    ACC/ABS; the non-specific reading (existence not entailed) is the
+    lattice bottom — Grimm's governed genitive at "the lowest node of the
+    lattice" (p.540). -/
+theorem genAcc_reading_regions :
+    (⟨⊥, .exPersBeginning⟩ : ParticipantType).toCaseRegion = .accAbs ∧
+    (⟨⊥, .totalNonPersistence⟩ : ParticipantType) = ⊥ :=
+  ⟨by decide, rfl⟩
 
 /-- Only the entailment-free P-Patient profile reaches the genitive node:
     the lattice form of "the alternation is limited to intensional verbs"
@@ -528,31 +518,5 @@ theorem lattice_diverges_from_dependent_case :
       = .dat ∧
     Case.acc ≠ Case.dat :=
   ⟨rfl, by decide, by decide⟩
-
-/-! ### Bridge verification: template subjects on the lattice
-
-Template subjects project to the expected lattice nodes; *see* lands on the
-chain's know/see node. (The *sweep* pair lives in
-`Studies/RappaportHovavLevin2024.lean`.) -/
-
-/-- kick subject: full agent (⊤). -/
-theorem kick_subject_agentivity :
-    Agentivity.fromEntailmentProfile mannerContact.subjectProfile = ⊤ := by
-  decide
-
-/-- run subject: {V, S, M} — no instigation. -/
-theorem run_subject_agentivity :
-    Agentivity.fromEntailmentProfile selfMotion.subjectProfile
-      = .mk true true false true := rfl
-
-/-- arrive subject: {M}. -/
-theorem arrive_subject_agentivity :
-    Agentivity.fromEntailmentProfile directedMotion.subjectProfile
-      = .mk false false false true := rfl
-
-/-- see subject: the chain's know/see node. -/
-theorem see_subject_agentivity :
-    Agentivity.fromEntailmentProfile perception.subjectProfile
-      = knowAgentivity := rfl
 
 end Grimm2011

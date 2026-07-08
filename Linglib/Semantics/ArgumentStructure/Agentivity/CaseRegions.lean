@@ -158,44 +158,4 @@ theorem oblique_not_orderConvex :
                  (by decide) (by decide) (by decide) (by decide)
   exact absurd habs (by decide)
 
-/-! ### Named participants (§3–§4, Figs. 4–6) -/
-
-/-- The maximal agent sits in the NOM/ERG region — core case markers spread
-    outwards from it (Fig. 6). -/
-theorem maximalAgent_toCaseRegion : maximalAgent.toCaseRegion = .nomErg := by decide
-
-/-- The maximal patient sits in the ACC/ABS region (Fig. 6). -/
-theorem maximalPatient_toCaseRegion : maximalPatient.toCaseRegion = .accAbs := by decide
-
-/-- The effector agent of break/kill (Fig. 5, Ia/IIa) sits in NOM/ERG. -/
-theorem effectorAgent_toCaseRegion : effectorAgent.toCaseRegion = .nomErg := by decide
-
-/-- The destroyed patient of Class I verbs (Fig. 5, Ip) sits in ACC/ABS. -/
-theorem resultativeEffective_patient_toCaseRegion :
-    (TransitivityRank.resultativeEffective.patientType).toCaseRegion = .accAbs := by decide
-
-/-- The affected-but-persisting patient of Class II verbs (Fig. 5, IIp) sits
-    in ACC/ABS. -/
-theorem contact_patient_toCaseRegion :
-    (TransitivityRank.contact.patientType).toCaseRegion = .accAbs := by decide
-
-/-- The possibly-nonexistent patient of Class III pursuit verbs (Fig. 5, IIIp)
-    falls outside the core object region. -/
-theorem pursuit_patient_toCaseRegion :
-    (TransitivityRank.pursuit.patientType).toCaseRegion = .oblique := by decide
-
-/-! ### Dative polysemy (§5.1) -/
-
-/-- The dative region unifies recipients, experiencers, and second
-    arguments of communication/service verbs — they all share the
-    semantic properties of **sentience** and **qualitative persistence
-    (beginning)** (Fig. 7, p.536).
-
-    Because `recipientType` and `experiencerType` are abbrevs of
-    `sentientNonInstigator`, the convergence is by construction; the
-    theorem below asserts only that this single lattice position falls in
-    the dative case region. -/
-theorem sentientNonInstigator_in_dative :
-    sentientNonInstigator.toCaseRegion = .dative := rfl
-
 end ArgumentStructure
