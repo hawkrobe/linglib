@@ -1625,6 +1625,7 @@ import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Predicate
+import Linglib.Semantics.Dynamic.Accessibility
 import Linglib.Semantics.Dynamic.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.ContextChange
@@ -1636,7 +1637,6 @@ import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.DRS.Semantics
 import Linglib.Semantics.Dynamic.DiscourseRef
-import Linglib.Semantics.Dynamic.HasFiberedLookup
 import Linglib.Semantics.Dynamic.Intensional
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Epistemic
