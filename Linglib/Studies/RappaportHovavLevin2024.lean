@@ -1,5 +1,5 @@
 import Linglib.Semantics.Lexical.EventStructure
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.LevinClassProfiles
 
