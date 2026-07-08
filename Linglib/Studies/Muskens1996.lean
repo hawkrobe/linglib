@@ -181,7 +181,7 @@ theorem wp_test (C : Condition S) (χ : Condition S) :
 theorem wp_seq (D₁ D₂ : Update S) (χ : Condition S) :
     wp (dseq D₁ D₂) χ = wp D₁ (wp D₂ χ) := by
   ext i
-  simp only [wp, dseq]
+  simp only [wp, dseq, Relation.Comp]
   constructor
   · rintro ⟨j, ⟨h, hD₁, hD₂⟩, hχ⟩
     exact ⟨h, hD₁, j, hD₂, hχ⟩

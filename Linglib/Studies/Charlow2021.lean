@@ -358,7 +358,7 @@ def reify (p : PostSupp S (Update S)) : Update S := dseq p.val p.postsup
 /-- Truth of a bi-dimensional meaning at an assignment (eq. 56): the reified
 update is true at `i` in the substrate sense. -/
 def trueAt (p : PostSupp S (Update S)) (i : S) : Prop :=
-  Semantics.Dynamic.Core.trueAt p.reify i
+  Semantics.Dynamic.Core.closure p.reify i
 
 end PostSupp
 

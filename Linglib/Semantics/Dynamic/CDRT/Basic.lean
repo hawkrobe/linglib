@@ -70,9 +70,9 @@ spine's `ddisj` via `test`. -/
 abbrev DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
   test (Semantics.Dynamic.Core.DynProp.ddisj φ ψ)
 
-/-- Truth at a state: the spine's `trueAt`. -/
+/-- Truth at a state: the spine's `closure`. -/
 abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=
-  trueAt φ i
+  closure φ i
 
 /-- Dynamic entailment: every output of `φ` can be extended by `ψ`. -/
 def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
@@ -88,13 +88,13 @@ theorem DProp.neg_output {E : Type*} {φ : DProp E} {i o : State E}
 the consequent. -/
 theorem DProp.impl_true_at {E : Type*} (φ ψ : DProp E) (i : State E) :
     DProp.true_at (DProp.impl φ ψ) i ↔ ∀ k, φ i k → DProp.true_at ψ k := by
-  simp only [DProp.true_at, trueAt, DProp.impl, test, dimpl]
+  simp only [DProp.true_at, closure, DProp.impl, test, dimpl]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
 
 /-- A static `DProp` is true at `i` iff its static content holds. -/
 theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : State E) :
     DProp.true_at (DProp.ofStatic p) i ↔ p i := by
-  simp only [DProp.true_at, trueAt, DProp.ofStatic, test]
+  simp only [DProp.true_at, closure, DProp.ofStatic, test]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
 
 end Semantics.Dynamic.CDRT

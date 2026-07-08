@@ -556,7 +556,7 @@ theorem toDynProp_eq_lift_fiberDRS (D : ICDRTUpdate W E) :
 theorem fiberDRS_seq (D₁ D₂ : ICDRTUpdate W E) :
     fiberDRS (ICDRTUpdate.seq D₁ D₂) = dseq (fiberDRS D₁) (fiberDRS D₂) := by
   funext p q; cases p; cases q
-  simp only [fiberDRS, ICDRTUpdate.seq, dseq, eq_iff_iff]
+  simp only [fiberDRS, ICDRTUpdate.seq, dseq, Relation.Comp, eq_iff_iff]
   constructor
   · rintro ⟨rfl, k, h1, h2⟩
     exact ⟨⟨k, _⟩, ⟨rfl, h1⟩, ⟨rfl, h2⟩⟩

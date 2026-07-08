@@ -94,7 +94,7 @@ then continuing with `φ` equals cylindrifying `φ` at `n`. -/
 theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
     closure (DProp.new n ;; φ) =
     cylindrify n (closure φ) := by
-  ext g; simp only [closure, DProp.seq, dseq, DProp.new, cylindrify]
+  ext g; simp only [closure, DProp.seq, dseq, Relation.Comp, DProp.new, cylindrify]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
     exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩

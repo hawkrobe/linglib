@@ -1,4 +1,5 @@
 import Mathlib.Algebra.Group.Defs
+import Mathlib.Logic.Relation
 import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.ByContra
 import Mathlib.Tactic.Use
@@ -130,12 +131,12 @@ theorem eq_of_test {C : Condition S} {i j : S} (h : test C i j) : i = j :=
 
 /-- Dynamic conjunction (sequencing): `D₁ ; D₂`.
 
-Relational composition: there exists an intermediate state `h`
-witnessing both transitions. This is [heim-1982]'s successive
-file change, [kamp-reyle-1993]'s Update sequencing, and
-[groenendijk-stokhof-1991]'s DPL conjunction. -/
+Mathlib's relational composition `Relation.Comp` at endorelations: there
+exists an intermediate state witnessing both transitions. This is
+[heim-1982]'s successive file change, [kamp-reyle-1993]'s Update
+sequencing, and [groenendijk-stokhof-1991]'s DPL conjunction. -/
 def dseq (D₁ D₂ : Update S) : Update S :=
-  λ i j => ∃ h, D₁ i h ∧ D₂ h j
+  Relation.Comp D₁ D₂
 
 infixl:65 " ⨟ " => dseq
 
@@ -172,16 +173,13 @@ section Truth
 
 variable {S : Type*}
 
-/-- A Update `D` is true relative to input `i` iff some output `j` satisfies `D`. -/
-def trueAt (D : Update S) (i : S) : Prop := ∃ j, D i j
-
-/-- A Update `D` is valid iff true at all inputs. -/
-def valid (D : Update S) : Prop := ∀ i, trueAt D i
+/-- An `Update` is valid iff satisfiable (`closure`) at every input. -/
+def valid (D : Update S) : Prop := ∀ i, closure D i
 
 /-- Dynamic entailment: `D₁ ⊨ D₂` iff every output of `D₁` can be
 extended by `D₂`. -/
 def entails (D₁ D₂ : Update S) : Prop :=
-  ∀ i, (∃ j, D₁ i j) → ∀ j, D₁ i j → ∃ k, D₂ j k
+  ∀ i j, D₁ i j → closure D₂ j
 
 scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
 
@@ -193,22 +191,16 @@ section Theorems
 
 variable {S : Type*}
 
-/-- Sequencing is associative. -/
+/-- Sequencing is associative: mathlib's `Relation.comp_assoc`. -/
 theorem dseq_assoc (D₁ D₂ D₃ : Update S) :
-    (D₁ ⨟ D₂) ⨟ D₃ = D₁ ⨟ (D₂ ⨟ D₃) := by
-  funext i j
-  simp only [dseq, eq_iff_iff]
-  constructor
-  · intro ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
-    exact ⟨h', hD₁, h, hD₂, hD₃⟩
-  · intro ⟨h', hD₁, h, hD₂, hD₃⟩
-    exact ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
+    (D₁ ⨟ D₂) ⨟ D₃ = D₁ ⨟ (D₂ ⨟ D₃) :=
+  Relation.comp_assoc
 
 /-- Test is left identity for sequencing (when condition holds everywhere). -/
 theorem test_dseq (C : Condition S) (D : Update S) (hC : ∀ i, C i) :
     test C ⨟ D = D := by
   funext i j
-  simp only [dseq, test, eq_iff_iff]
+  simp only [dseq, Relation.Comp, test, eq_iff_iff]
   constructor
   · intro ⟨h, ⟨hih, _⟩, hD⟩
     subst hih
@@ -222,7 +214,7 @@ a monoid. -/
 theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
     D ⨟ test C = D := by
   funext i j
-  simp only [dseq, test, eq_iff_iff]
+  simp only [dseq, Relation.Comp, test, eq_iff_iff]
   constructor
   · intro ⟨h, hD, hhj, _⟩
     subst hhj
@@ -279,7 +271,7 @@ theorem closure_closure (D : Update S) :
 theorem dseq_closure (D₁ D₂ : Update S) :
     closure (D₁ ⨟ D₂) = λ i => ∃ h, D₁ i h ∧ closure D₂ h := by
   funext i
-  simp only [closure, dseq, eq_iff_iff]
+  simp only [closure, dseq, Relation.Comp, eq_iff_iff]
   constructor
   · intro ⟨j, h, hD₁, hD₂⟩
     exact ⟨h, hD₁, j, hD₂⟩

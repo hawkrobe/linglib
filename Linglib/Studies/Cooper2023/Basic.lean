@@ -179,7 +179,7 @@ to the same classical truth conditions.
 -/
 
 open Semantics.Dynamic.CDRT (DProp State SProp)
-open Semantics.Dynamic.Core (trueAt dseq test dneg dimpl)
+open Semantics.Dynamic.Core.DynProp (closure dseq test dneg dimpl)
 open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
 open Cooper2023Ch7 (purify purifyUniv)
 
@@ -198,7 +198,7 @@ def ttr_exists (P : E → Prop) : Type := (x : E) × propT (P x)
 the same truth conditions. Both reduce to `∃ x, P x`. -/
 theorem exists_equiv (n : Nat) (P : E → Prop) (i : State E) :
     DProp.true_at (cdrt_exists n P) i ↔ Nonempty (ttr_exists P) := by
-  simp only [DProp.true_at, trueAt, cdrt_exists, DProp.seq, dseq, DProp.new,
+  simp only [DProp.true_at, Semantics.Dynamic.Core.DynProp.closure, cdrt_exists, DProp.seq, dseq, Relation.Comp, DProp.new,
     DProp.ofStatic, test, ttr_exists]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, rfl, hp⟩
@@ -228,7 +228,7 @@ def ttr_donkey (P Q : E → Prop) : Type :=
 the same truth conditions. Both reduce to `∀ x, P x → Q x`. -/
 theorem donkey_equiv (n : Nat) (P Q : E → Prop) (i : State E) :
     DProp.true_at (cdrt_donkey n P Q) i ↔ Nonempty (ttr_donkey P Q) := by
-  simp only [DProp.true_at, trueAt, cdrt_donkey, DProp.impl, dimpl, DProp.seq, dseq,
+  simp only [DProp.true_at, Semantics.Dynamic.Core.DynProp.closure, cdrt_donkey, DProp.impl, dimpl, DProp.seq, dseq, Relation.Comp,
     DProp.new, DProp.ofStatic, test, ttr_donkey]
   constructor
   · rintro ⟨o, rfl, hall⟩
@@ -269,7 +269,7 @@ private theorem donkey_antecedent_iff
      DProp.new 1 ;; DProp.ofStatic (λ r => donkey_ (r 1) ∧ owns (r 0) (r 1))) i k ↔
     ∃ x y, k = (λ m => if m = 1 then y else if m = 0 then x else i m) ∧
       farmer x ∧ donkey_ y ∧ owns x y := by
-  simp only [DProp.seq, dseq, DProp.new, DProp.ofStatic, test]
+  simp only [DProp.seq, dseq, Relation.Comp, DProp.new, DProp.ofStatic, test]
   constructor
   · rintro ⟨k₃, ⟨k₂, ⟨k₁, ⟨e₀, rfl⟩, rfl, hf⟩, ⟨e₁, rfl⟩⟩, rfl, hd, ho⟩
     exact ⟨e₀, e₁, rfl, by simpa, by simpa, by simpa⟩
@@ -361,7 +361,7 @@ the *input* register (no binding). -/
 theorem dne_same_truth (n : Nat) (P : E → Prop) (i : State E) :
     DProp.true_at (DProp.neg (DProp.neg (cdrt_exists n P))) i ↔
     DProp.true_at (cdrt_exists n P) i := by
-  simp only [DProp.true_at, trueAt, DProp.neg, test, dneg]
+  simp only [DProp.true_at, Semantics.Dynamic.Core.DynProp.closure, DProp.neg, test, dneg]
   constructor
   · rintro ⟨_, rfl, h⟩
     exact Classical.byContradiction (λ hno => h ⟨i, rfl, hno⟩)
