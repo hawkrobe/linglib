@@ -62,8 +62,7 @@ Accounts expressible via this interface (non-exhaustive):
 
 -/
 
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 1. Theta Role Labels (derived convenience names)
@@ -237,7 +236,7 @@ theorem patient_maximal_pPatient :
 /-- All canonical profiles satisfy the well-formedness constraint:
     volition entails sentience. -/
 theorem canonical_profiles_wellformed (r : ThetaRole) :
-    (r.canonicalProfile).WellFormedInternal := by
+    WellFormedInternal r.canonicalProfile := by
   cases r <;> decide
 
 -- ════════════════════════════════════════════════════════════════════════

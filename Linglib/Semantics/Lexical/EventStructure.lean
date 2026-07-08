@@ -29,7 +29,7 @@ namespace Semantics.Lexical.EventStructure
 
 open Semantics.Lexical
 open _root_.ArgumentStructure (EntailmentProfile)
-open _root_.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure
 open Features
 
 /-! ### Event structure templates -/

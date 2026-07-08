@@ -35,8 +35,7 @@ derived corollary `MAP_subset` / `MapHolds.oblique_le`, via the substrate's
 
 namespace Beavers2010
 
-open ArgumentStructure.EntailmentProfile
-open ArgumentStructure.AgentivityLattice
+open ArgumentStructure
 open Features.LevinClassProfiles
 open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)

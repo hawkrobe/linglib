@@ -54,7 +54,7 @@ The bridges to [dowty-1991]'s `EntailmentProfile` live in
 `Agentivity/CaseRegions.lean`.
 -/
 
-namespace ArgumentStructure.AgentivityLattice
+namespace ArgumentStructure
 
 /-! ### Agentivity primitives (Table 2, §2.1) -/
 
@@ -581,4 +581,4 @@ theorem persistence_chain :
     PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence := by
   decide
 
-end ArgumentStructure.AgentivityLattice
+end ArgumentStructure

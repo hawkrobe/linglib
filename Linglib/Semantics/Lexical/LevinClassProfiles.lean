@@ -31,8 +31,7 @@ Individual verbs can override class-level profiles via explicit
 namespace Features.LevinClassProfiles
 
 open Semantics.Lexical
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -229,8 +228,7 @@ end Features.LevinClassProfiles
 
 namespace Semantics.Lexical
 open Features.LevinClassProfiles
-open _root_.ArgumentStructure (EntailmentProfile)
-open _root_.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure
 
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
@@ -296,7 +294,7 @@ end Semantics.Lexical
 
 namespace Features.LevinClassProfiles
 open Semantics.Lexical
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open Verb
 open Verb.Root.Kinds
 
@@ -490,18 +488,18 @@ theorem build_subject_agrees :
     profile is well-formed. -/
 theorem derived_subjects_wellformed :
     (toArgTemplate causativeResult).elim False
-      (·.subjectProfile.WellFormedInternal) ∧
+      (WellFormedInternal ·.subjectProfile) ∧
     (toArgTemplate pureManner).elim False
-      (·.subjectProfile.WellFormedInternal) ∧
+      (WellFormedInternal ·.subjectProfile) ∧
     (toArgTemplate pureResult).elim False
-      (·.subjectProfile.WellFormedInternal) ∧
+      (WellFormedInternal ·.subjectProfile) ∧
     (toArgTemplate propertyConcept).elim False
-      (·.subjectProfile.WellFormedInternal) := by
+      (WellFormedInternal ·.subjectProfile) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · show resultChange.subjectProfile.WellFormedInternal; decide
-  · show selfMotion.subjectProfile.WellFormedInternal; decide
-  · show unaccusativeCoS.subjectProfile.WellFormedInternal; decide
-  · show perception.subjectProfile.WellFormedInternal; decide
+  · show WellFormedInternal resultChange.subjectProfile; decide
+  · show WellFormedInternal selfMotion.subjectProfile; decide
+  · show WellFormedInternal unaccusativeCoS.subjectProfile; decide
+  · show WellFormedInternal perception.subjectProfile; decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. Grimm persistence placements
@@ -509,7 +507,8 @@ theorem derived_subjects_wellformed :
 
 section GrimmPlacements
 
-open ArgumentStructure.AgentivityLattice
+open ArgumentStructure
+
 
 /-! [grimm-2011]'s persistence bridge (`PersistenceLevel.fromPatientProfile`)
 evaluated on the class-level object profiles — the canonical placements

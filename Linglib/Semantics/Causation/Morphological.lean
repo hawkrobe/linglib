@@ -75,7 +75,7 @@ namespace Causation.Morphological
 
 open Verb
 open Causation.Psych (CausalSource)
-open ArgumentStructure.AgentivityLattice (AgentivityNode)
+open ArgumentStructure (AgentivityNode)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causer Type ([hafeez-2025], [comrie-1989])

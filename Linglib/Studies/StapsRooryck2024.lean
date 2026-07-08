@@ -59,8 +59,7 @@ open Intensional (WorldTimeIndex)
 
 open Semantics.Presupposition
 open French.Predicates
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open ArgumentStructure.Affectedness
 open Features
 open Semantics.Lexical
@@ -444,7 +443,7 @@ theorem active_implies_pAgent_ge_1 (p : EntailmentProfile)
     p.pAgentScore ≥ 1 := by
   obtain ⟨v, s, c, m, ie, cos, it, ca, st, de⟩ := p
   simp only [hasActiveAgentEntailment] at h
-  simp only [pAgentScore]
+  simp only [EntailmentProfile.pAgentScore]
   cases v <;> cases c <;> cases m <;> simp_all (config := { decide := false }) <;> omega
 
 /-- Converse fails: experiencer profiles have pAgentScore ≥ 1 but no

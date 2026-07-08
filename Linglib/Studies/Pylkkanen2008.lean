@@ -1112,6 +1112,7 @@ clash is now wired in via `Semantics/ArgumentStructure/ArgumentIntroduction.lean
 and consumed in §15c below (`low_appl_blocks_unergative_denotational`,
 `low_external_arg_clash`). -/
 
+
 open ArgumentStructure (EntailmentProfile)
 
 /-- A verb has an unsaturated theme argument iff its object entailment

@@ -16,15 +16,22 @@ referential-property treatment the paper attributes to [grimm-2005].
 
 ## Main results
 
-- `russian_dom_matches_lattice` / `spanish_dom_within_lattice`: for canonical
-  transitives the lattice predicts DOM for exactly {animate, human} — the
-  Russian pattern; Spanish marks a proper subset.
+- `kill_subject_range`: §2.3's closure claim — every node above *kill*'s
+  minimal agent is NOM/ERG, from the substrate's interval characterization
+  of the case regions (`toCaseRegion_eq_nomErg_iff`).
+- `russian_dom_matches_lattice` / `spanish_dom_within_lattice` /
+  `animate_dom_object_is_dative_node`: the lattice predicts DOM for exactly
+  {animate, human}, and the animate DOM object is literally the dative node.
 - `domPredicted_monotone`, `latticeDOM_isMonotone`,
   `latticeDOM_matches_aissen_type2`: the lattice derives [aissen-2003]'s
   monotonicity universal and reproduces OT Type 2.
-- `wellFormedPair_not_preserved`, `arrive_cross_theory`,
-  `kiss_flat_count_from_lattice`: what the lattice projection of
-  [dowty-1991]'s profiles loses and what it fixes.
+- `genitive_requires_entailment_free`: only the entailment-free object
+  profile reaches the genitive node — the §5.2 intensionality restriction
+  as a theorem over all [dowty-1991] profiles.
+- `wellFormedPair_not_preserved`, `kiss_outranking_from_dominance`,
+  `arrive_cross_theory`: what the lattice projection of Dowty's profiles
+  loses, and the ASP re-derived from dominance
+  (`outranks_of_lattice_dominance`) rather than checked per verb.
 - `lattice_diverges_from_dependent_case`: the semantic-case vs
   structural-case fault line on animate objects, made explicit against the
   dependent-case pipeline in `Studies/Aissen2003.lean`.
@@ -32,9 +39,7 @@ referential-property treatment the paper attributes to [grimm-2005].
 
 namespace Grimm2011
 
-open ArgumentStructure.AgentivityLattice
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open Features.LevinClassProfiles
 open Features.Prominence
 open Aissen2003
@@ -176,6 +181,26 @@ theorem instigation_is_the_dividing_feature :
     selfMotion.subjectProfile.causation = false ∧
     directedMotion.subjectProfile.causation = false := by decide
 
+/-! ### Acceptable-argument ranges (§2.3, p.528)
+
+Argument acceptability is closure-based: any node above a verb's minimal
+agent requirement qualifies. Since *kill*'s agent requires only instigation,
+its subject range at total persistence is the whole NOM/ERG interval — from
+natural forces to intentional agents. -/
+
+/-- Everything above *kill*'s minimal agent is NOM/ERG: upward closure plus
+    the interval characterization `toCaseRegion_eq_nomErg_iff`. -/
+theorem kill_subject_range {n : GrimmNode} (h : minimalInstigator ≤ n) :
+    n.toCaseRegion = .nomErg :=
+  (GrimmNode.toCaseRegion_eq_nomErg_iff n).mpr h
+
+/-- The range's endpoints, derived: electricity (instigation only) and the
+    assassin (⊤) are both acceptable *kill*-subjects. -/
+theorem kill_subject_endpoints :
+    minimalInstigator.toCaseRegion = .nomErg ∧
+    (⊤ : GrimmNode).toCaseRegion = .nomErg :=
+  ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
+
 /-! ### Accusative and ergative alignment (§4, Fig. 6)
 
 Morphological readout of the substrate region facts
@@ -242,6 +267,13 @@ theorem object_regions_by_animacy :
       = .dative ∧
     (objectNodeWithAnimacy .human .quPersBeginning).toCaseRegion
       = .dative := by decide
+
+/-- The animate DOM object at `quPersBeginning` IS `sentientNonInstigatorNode`
+    — one lattice point shared with recipients and experiencers (Fig. 7).
+    On this account DOM marking is dative marking (Spanish *a*). -/
+theorem animate_dom_object_is_dative_node :
+    objectNodeWithAnimacy .animate .quPersBeginning
+      = sentientNonInstigatorNode := rfl
 
 /-- DOM is predicted: the object node is in the transitivity region but
     outside ACC/ABS. -/
@@ -389,6 +421,27 @@ theorem specific_reading_in_accAbs :
 theorem nonspecific_reading_at_bottom :
     nonspecificIntensionalObject = ⊥ := rfl
 
+/-- Only the entailment-free P-Patient profile reaches the genitive node:
+    the lattice form of "the alternation is limited to intensional verbs"
+    (p.541), for every [dowty-1991] profile. -/
+theorem genitive_requires_entailment_free (p : EntailmentProfile) :
+    PersistenceLevel.fromPatientProfile p = .totalNonPersistence ↔
+      p.changeOfState = false ∧ p.incrementalTheme = false ∧
+      p.causallyAffected = false ∧ p.stationary = false ∧
+      p.dependentExistence = false := by
+  rcases p with ⟨v, s, c, m, ie, cos, it, ca, st, de⟩
+  cases v <;> cases s <;> cases c <;> cases m <;> cases ie <;>
+    cases cos <;> cases it <;> cases ca <;> cases st <;> cases de <;> decide
+
+/-- Limitation: [dowty-1991] (30e) codes de-dicto objects (*needs a car*)
+    with dependent existence, which the bridge reads as destruction — the
+    desire-class object lands at `exPersBeginning`, not at Grimm's ⊥
+    placement for *want*. Dowty's features cannot separate "never entailed
+    to exist" from "ceases to exist". -/
+theorem desire_object_bridge_tension :
+    desire.objectProfile.map PersistenceLevel.fromPatientProfile
+      = some .exPersBeginning := rfl
+
 /-! ### Grimm vs [dowty-1991]
 
 §2.1 recasts Dowty's ten entailments as four agentivity features plus
@@ -441,6 +494,14 @@ theorem kiss_subject_dominates :
     AgentivityNode.fromEntailmentProfile Dowty1991.kissObjectProfile <
       AgentivityNode.fromEntailmentProfile Dowty1991.kissSubjectProfile := by
   decide
+
+/-- Subject selection for *kiss* from lattice dominance alone
+    (`outranks_of_lattice_dominance`): the ASP mechanized, re-deriving
+    `Dowty1991.kiss_subject_outranks` without counting or `decide`. -/
+theorem kiss_outranking_from_dominance :
+    OutranksForSubject Dowty1991.kissSubjectProfile
+      Dowty1991.kissObjectProfile :=
+  outranks_of_lattice_dominance _ _ kiss_subject_dominates fun _ => rfl
 
 /-- Dowty's count comparison follows from lattice dominance via
     `featureCount_monotone` and `pAgentScore_decomposition`. -/

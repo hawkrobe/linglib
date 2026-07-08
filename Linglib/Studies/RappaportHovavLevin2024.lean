@@ -88,7 +88,7 @@ verbs ([levin-krejci-2019]), and *drown*.
 namespace RappaportHovavLevin2024
 
 open Semantics.Lexical.EventStructure
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open Semantics.Lexical
 
 /-! ### Force-dynamic primitives -/
@@ -530,7 +530,6 @@ def WipingVerb.levinClass : WipingVerb → LevinClass := fun _ => wipingLevinCla
 section AgentivityBridge
 
 open Features.LevinClassProfiles
-open ArgumentStructure.AgentivityLattice
 
 /-- The two *sweep* senses pair with the two Levin 10.4 subclass templates:
     basic-*sweep* (moving entity unsaturated) with the manner subclass, whose
