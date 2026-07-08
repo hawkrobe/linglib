@@ -59,4 +59,21 @@ def anSuffix : Marker :=
 /-- Marker inventory. -/
 def markers : List Marker := [anSuffix]
 
+/-- Lexical reciprocal verbs ([palmieri-2024], Appendix C): *-an-*-formed
+    verbs with lexicalized reciprocal entries, diagnosed by singular
+    predication (modal embedding, habituality) and affix ordering. The
+    binary base is morphologically distinct, sometimes with semantic
+    drift (*pambana* 'fight' < *pamba* 'decorate'); *jibizana* lacks a
+    binary base altogether (\**jibiza*). -/
+def lexicalReciprocals : List LexicalVerb :=
+  [ { form := "achana", gloss := "break up, divorce", transitiveAlternate := some "acha" }
+  , { form := "gawana", gloss := "share", transitiveAlternate := some "gawa" }
+  , { form := "gombana", gloss := "quarrel", transitiveAlternate := some "gomba" }
+  , { form := "gongana", gloss := "collide", transitiveAlternate := some "gonga" }
+  , { form := "jibizana", gloss := "discuss, talk, dialogue" }
+  , { form := "pambana", gloss := "fight, be in conflict", transitiveAlternate := some "pamba" }
+  , { form := "patana", gloss := "agree", transitiveAlternate := some "pata" }
+  , { form := "pigana", gloss := "fight", transitiveAlternate := some "piga" }
+  , { form := "shindana", gloss := "compete", transitiveAlternate := some "shinda" } ]
+
 end Swahili.Reciprocals

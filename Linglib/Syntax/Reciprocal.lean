@@ -29,6 +29,8 @@ valency effect derives from the coding-frame operation a strategy realizes
 * `Valency`, `Formation` + `Formation.allowsDiscontinuous`.
 * `Reading`, `Marker`, `ofInventory` — marker inventories and the derived
   WALS Ch 106 value.
+* `LexicalVerb` — verbs with inherently reciprocal entries (the lexical
+  strategy marks predicates, not forms).
 
 Per-language inventories live in `Fragments/{Lang}/Reciprocals.lean`;
 WALS-data grounding lives with the studies that use it (e.g.
@@ -143,6 +145,18 @@ inductive Reading where
   | collective
   | sociative
   | iterative
+  deriving DecidableEq, Repr
+
+/-- A verb with an inherently reciprocal (lexical) entry. -/
+structure LexicalVerb where
+  /-- Citation form of the reciprocal entry. -/
+  form : String
+  /-- Gloss of the reciprocal entry. -/
+  gloss : String
+  /-- Form of the binary (transitive) alternate: homophonous in Romance,
+      morphologically distinct in Bantu (Swahili *acha* > *achana*),
+      `none` when no alternate exists. -/
+  transitiveAlternate : Option String := none
   deriving DecidableEq, Repr
 
 /-- A reciprocal exponent: form, strategy, and the readings it covers. -/
