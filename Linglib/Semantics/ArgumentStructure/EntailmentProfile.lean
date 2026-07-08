@@ -1,3 +1,5 @@
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.ArgumentStructure.Agentivity.Defs
 
 /-!
@@ -73,9 +75,49 @@ structure EntailmentProfile where
   dependentExistence : Bool := false
   deriving DecidableEq, Repr
 
+/-- The ten proto-role entailments as a feature index ([dowty-1991]
+pp.572–573): five Proto-Agent, then five Proto-Patient. -/
+inductive ProtoRoleFeature where
+  | volition | sentience | causation | movement | independentExistence
+  | changeOfState | incrementalTheme | causallyAffected | stationary
+  | dependentExistence
+  deriving DecidableEq, Repr, Fintype
+
 namespace EntailmentProfile
 
 variable (p q subj obj : EntailmentProfile)
+
+/-- A profile as its feature-indicator function: the profile *is* a point
+of the Boolean cube on `ProtoRoleFeature`. -/
+def feature (p : EntailmentProfile) : ProtoRoleFeature → Bool
+  | .volition => p.volition
+  | .sentience => p.sentience
+  | .causation => p.causation
+  | .movement => p.movement
+  | .independentExistence => p.independentExistence
+  | .changeOfState => p.changeOfState
+  | .incrementalTheme => p.incrementalTheme
+  | .causallyAffected => p.causallyAffected
+  | .stationary => p.stationary
+  | .dependentExistence => p.dependentExistence
+
+/-- `EntailmentProfile` is the Boolean cube `ProtoRoleFeature → Bool`; the
+`Fintype` instance (and any order or Boolean-algebra structure a consumer
+needs) transports along this equivalence. -/
+def equivFeatures : EntailmentProfile ≃ (ProtoRoleFeature → Bool) where
+  toFun := feature
+  invFun g :=
+    { volition := g .volition, sentience := g .sentience
+      causation := g .causation, movement := g .movement
+      independentExistence := g .independentExistence
+      changeOfState := g .changeOfState
+      incrementalTheme := g .incrementalTheme
+      causallyAffected := g .causallyAffected, stationary := g .stationary
+      dependentExistence := g .dependentExistence }
+  left_inv p := by cases p; rfl
+  right_inv g := by funext f; cases f <;> rfl
+
+instance : Fintype EntailmentProfile := Fintype.ofEquiv _ equivFeatures.symm
 
 /-! ### Feature counting -/
 
@@ -428,6 +470,20 @@ theorem pAgentDominates_iff (p q : EntailmentProfile) :
     obtain ⟨h1, h2, h3, h4⟩ := grimm_agentivity_consistent_with_dowty q p hle
     exact ⟨fun hq => by simpa [hq] using h1, fun hq => by simpa [hq] using h2,
            fun hq => by simpa [hq] using h3, fun hq => by simpa [hq] using h4, hie⟩
+
+/-- [grimm-2011]'s Argument Selection Principle as lattice dominance: if
+    `subj`'s agentivity node strictly dominates `obj`'s and independent
+    existence is preserved, `subj` is selected — for every profile pair,
+    via `pAgentDominates_iff`, not per-verb checking. -/
+theorem outranks_of_lattice_dominance (subj obj : EntailmentProfile)
+    (hlt : AgentivityNode.fromEntailmentProfile obj <
+      AgentivityNode.fromEntailmentProfile subj)
+    (hIE : obj.independentExistence = true → subj.independentExistence = true) :
+    OutranksForSubject subj obj :=
+  .inl ⟨(pAgentDominates_iff subj obj).mpr ⟨hlt.le, hIE⟩,
+    fun hqp =>
+      absurd ((pAgentDominates_iff obj subj).mp hqp).1
+        (lt_iff_le_not_ge.mp hlt).2⟩
 
 end AgentivityLattice
 
