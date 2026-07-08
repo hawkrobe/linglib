@@ -47,7 +47,7 @@ and `VendlerClass`, connecting to the affectedness hierarchy
   (`accomplishmentSubjectProfile`, `experiencerProfile`,
   `activitySubjectProfile`) rather than duplicating them, making the
   connection structural.
-- Passive voice connects to [collins-2005]'s `voicePassive` —
+- Passive voice connects to [collins-2005]'s `Voice.passive` —
   Case-checking by Voice is the syntactic correlate of the preposition's
   semantic contribution.
 - Object affectedness derives from [beavers-2010]'s `profileToDegree`.
@@ -362,7 +362,7 @@ theorem par_de_different_causal_type :
     structural position for the preposition. The par/de choice is
     then determined by proto-agentivity. -/
 theorem passive_provides_case_position :
-    voicePassive.ChecksCase ∧ ¬ voicePassive.AssignsTheta := by decide
+    Voice.passive.ChecksCase ∧ ¬ Voice.passive.AssignsTheta := by decide
 
 -- ============================================================================
 -- § 8. Causal Chain Distances (§3.5)

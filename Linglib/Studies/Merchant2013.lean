@@ -60,8 +60,8 @@ def pseudogapping : EllipsisType := ⟨.T, "pseudogapping"⟩
 /-- A voice mismatch datum across an ellipsis boundary. -/
 structure VoiceMismatchDatum where
   description : String
-  antecedentVoice : VoiceFlavor
-  targetVoice : VoiceFlavor
+  antecedentVoice : Voice.Flavor
+  targetVoice : Voice.Flavor
   ellipsisType : EllipsisType
   grammatical : Bool
   language : String := "English"
@@ -314,7 +314,7 @@ theorem voice_between_boundaries :
     are both grammatical, matching `canMismatch`. -/
 theorem end_to_end_voice_chain :
     -- Step 1: Active and passive are distinct Voice flavors
-    VoiceFlavor.agentive ≠ VoiceFlavor.passive ∧
+    Voice.Flavor.agentive ≠ Voice.Flavor.passive ∧
     -- Step 2: Voice is external to VPE's deletion domain
     canMismatch englishVPE voiceMismatch ∧
     -- Step 3: Empirical data matches

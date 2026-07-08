@@ -9,7 +9,7 @@ import Linglib.Features.Aktionsart
 Substrate types for the bipartite split-aspect cartography that has emerged
 from work on Mandarin and Cantonese (and before them, English event-structure
 decomposition). Following the convention that `.Voice` is a single `Cat`
-constructor distinguished by `VoiceFlavor` (`Syntax/Minimalist/Verbal/Voice.lean`),
+constructor distinguished by `Voice.Flavor` (`Syntax/Minimalist/Verbal/Voice.lean`),
 we keep `Cat.Asp` as a single F2 constructor and represent the
 `AspP_outer` / `AspP_inner` distinction as `AspFlavor` on an `AspHead`
 record. This avoids a new constructor (no fValue collision below v at F1)
@@ -20,7 +20,7 @@ unchanged.
 
 - `AspFlavor` — outer / inner.
 - `AspHead` — the analytical record (flavor + selectional spec + optional
-  Probe + feature stack), parallel to `VoiceHead`.
+  Probe + feature stack), parallel to `Voice.Head`.
 - A small number of substrate predicates (`isOuter`, `isInner`, `defaultFLevel`).
 
 ## What does NOT live here
@@ -122,7 +122,7 @@ def AspFlavor.defaultFLevel : AspFlavor → Nat
 -- § 2. Aspect Heads
 -- ============================================================================
 
-/-- An aspect head, parallel to `VoiceHead`.
+/-- An aspect head, parallel to `Voice.Head`.
 
     Carries: (a) which flavor (outer/inner), (b) optional selectional
     requirement on the complement's dynamicity, (c) optional `Probe.Profile`

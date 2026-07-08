@@ -103,15 +103,15 @@ def applLowSource : ApplHead := { applType := .lowSource }
 /-! ### Voice–applicative licensing ([pylkkanen-2008], [schaefer-2008]) -/
 
 /-- `appl.Licensed voice`: if `appl` requires event semantics, `voice` supplies them. -/
-def ApplHead.Licensed (appl : ApplHead) (voice : VoiceHead) : Prop :=
+def ApplHead.Licensed (appl : ApplHead) (voice : Voice.Head) : Prop :=
   appl.applType.RequiresEventSemantics → voice.HasSemantics
 
-instance (appl : ApplHead) (voice : VoiceHead) : Decidable (appl.Licensed voice) :=
+instance (appl : ApplHead) (voice : Voice.Head) : Decidable (appl.Licensed voice) :=
   inferInstanceAs (Decidable (_ → _))
 
 /-! ### Licensing predictions -/
 
-variable (v : VoiceHead)
+variable (v : Voice.Head)
 
 /-- High applicatives require event semantics. -/
 theorem high_requires_event : ApplType.RequiresEventSemantics .high := by decide
@@ -131,21 +131,21 @@ theorem high_licensed_of_assignsTheta (h : v.AssignsTheta) : applHigh.Licensed v
   fun _ => h.hasSemantics
 
 /-- Ethical datives (high Appl) are licensed with agentive Voice. -/
-theorem ethical_dative_with_agent : applHigh.Licensed voiceAgent := by decide
+theorem ethical_dative_with_agent : applHigh.Licensed Voice.agentive := by decide
 
 /-- High Appl is blocked with middle Voice (no event semantics) ([pylkkanen-2008]). -/
-theorem ethical_dative_blocked_in_middle : ¬ applHigh.Licensed voiceMiddle := by decide
+theorem ethical_dative_blocked_in_middle : ¬ applHigh.Licensed Voice.middle := by decide
 
 /-- Possessive datives (low Appl) survive in middles. -/
-theorem possessive_dative_survives_middle : applLowRecipient.Licensed voiceMiddle := by decide
+theorem possessive_dative_survives_middle : applLowRecipient.Licensed Voice.middle := by decide
 
 /-- Possessive datives survive in anticausatives. -/
 theorem possessive_dative_survives_anticausative :
-    applLowRecipient.Licensed voiceAnticausative := by decide
+    applLowRecipient.Licensed Voice.anticausative := by decide
 
 /-- The asymmetry: ethical blocked but possessive survives in middles. -/
 theorem ethical_possessive_middle_asymmetry :
-    ¬ applHigh.Licensed voiceMiddle ∧ applLowRecipient.Licensed voiceMiddle :=
+    ¬ applHigh.Licensed Voice.middle ∧ applLowRecipient.Licensed Voice.middle :=
   ⟨ethical_dative_blocked_in_middle, possessive_dative_survives_middle⟩
 
 /-! ### Case-based blocking of SpecApplP ([wood-2015]) -/

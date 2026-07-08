@@ -65,7 +65,7 @@ open Features.LevinClassProfiles
 
     Captures the external-argument dimension of the verb's syntactic frame
     without committing to a specific syntactic framework. Maps to
-    `Minimalist.VoiceFlavor` via bridge theorems in interface files.
+    `Minimalist.Voice.Flavor` via bridge theorems in interface files.
 
     - `agentive`: External argument introduced (transitive/unergative)
     - `nonThematic`: No external argument (unaccusative/anticausative)

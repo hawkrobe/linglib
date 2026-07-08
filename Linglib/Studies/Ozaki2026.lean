@@ -299,17 +299,17 @@ open Japanese.Predicates
 /-- Departure verbs predict no external argument: non-thematic Voice
     does not assign a θ-role ([kratzer-1996], [schaefer-2025]). -/
 theorem departure_no_external :
-    ¬ voiceAnticausative.AssignsTheta := by decide
+    ¬ Voice.anticausative.AssignsTheta := by decide
 
 /-- Departure verbs have inchoative event structure (vGO + vBE, no vDO).
-    Verified via `buildDecomposition` from `Core/Voice.lean`. -/
+    Verified via `Voice.buildDecomposition` from `Core/Voice.lean`. -/
 theorem departure_is_inchoative :
-    isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true := by
+    isInchoative (Voice.buildDecomposition Voice.anticausative [.vCAUSE, .vGO, .vBE]) = true := by
   native_decide
 
 /-- Non-thematic Voice assigns no θ-role. -/
 theorem departure_voice_no_theta :
-    ¬ voiceAnticausative.AssignsTheta := by decide
+    ¬ Voice.anticausative.AssignsTheta := by decide
 
 /-- ACC variant produces dependent ACC on source, unmarked NOM on leaver. -/
 theorem acc_derivation_correct :
@@ -331,16 +331,16 @@ theorem abl_source_from_lexical_p :
 
 /-- Anticausative Voice is not a phase head. -/
 theorem agree_acc_needs_phase_head :
-    ¬ voiceAnticausative.IsPhasal := by decide
+    ¬ Voice.anticausative.IsPhasal := by decide
 
 /-- Agentive Voice IS a phase head. -/
 theorem agentive_has_phase_head :
-    voiceAgent.IsPhasal := by decide
+    Voice.agentive.IsPhasal := by decide
 
 /-- The accusative unaccusative paradox. -/
 theorem accusative_unaccusative_paradox :
-    ¬ voiceAnticausative.AssignsTheta ∧
-    ¬ voiceAnticausative.IsPhasal ∧
+    ¬ Voice.anticausative.AssignsTheta ∧
+    ¬ Voice.anticausative.IsPhasal ∧
     getCaseOf "source" accVariantResult = some .acc ∧
     getSourceOf "source" accVariantResult = some .dependent := by
   refine ⟨?_, ?_, ?_, ?_⟩
@@ -372,7 +372,7 @@ theorem passive_data_matches_fragment :
 
 /-- Non-passivizability follows from Voice theory. -/
 theorem passive_follows_from_voice :
-    ¬ voiceAnticausative.AssignsTheta ∧
+    ¬ Voice.anticausative.AssignsTheta ∧
     Japanese.Predicates.hanareru.passivizable = false := by
   refine ⟨?_, rfl⟩; decide
 
@@ -415,7 +415,7 @@ theorem deru_stored_matches_derived :
 /-- Direct passive requires thematic Voice, which departure verbs lack. -/
 theorem direct_passive_requires_voice :
     PassiveType.requiresThematicVoice .direct = true ∧
-    ¬ voiceAnticausative.AssignsTheta := by
+    ¬ Voice.anticausative.AssignsTheta := by
   refine ⟨rfl, ?_⟩; decide
 
 end Ozaki2026

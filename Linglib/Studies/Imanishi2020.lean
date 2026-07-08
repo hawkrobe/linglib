@@ -210,26 +210,26 @@ theorem absPos_insufficient :
 /-- Passive Voice satisfies the RON: no θ-role assignment means no
     external argument is projected. -/
 theorem passive_satisfies_ron :
-    ¬ voicePassive.AssignsTheta := by decide
+    ¬ Voice.passive.AssignsTheta := by decide
 
 /-- Agentive Voice violates the RON: it projects an external argument. -/
 theorem agentive_violates_ron :
-    voiceAgent.AssignsTheta := by decide
+    Voice.agentive.AssignsTheta := by decide
 
 /-- A Voice head is compatible with the RON iff it does not assign a
     θ-role (and hence does not project an external argument). -/
-def RonCompatibleVoice (v : VoiceHead) : Prop :=
+def RonCompatibleVoice (v : Voice.Head) : Prop :=
   ¬ v.AssignsTheta
 
-instance (v : VoiceHead) : Decidable (RonCompatibleVoice v) := by
+instance (v : Voice.Head) : Decidable (RonCompatibleVoice v) := by
   unfold RonCompatibleVoice; infer_instance
 
-theorem passive_ron_compatible : RonCompatibleVoice voicePassive := by decide
+theorem passive_ron_compatible : RonCompatibleVoice Voice.passive := by decide
 
-theorem agentive_ron_incompatible : ¬ RonCompatibleVoice voiceAgent := by decide
+theorem agentive_ron_incompatible : ¬ RonCompatibleVoice Voice.agentive := by decide
 
 theorem anticausative_ron_compatible :
-    RonCompatibleVoice voiceAnticausative := by decide
+    RonCompatibleVoice Voice.anticausative := by decide
 
 -- ============================================================================
 -- § 8: Bridge to Existing Fragments

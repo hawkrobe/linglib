@@ -700,8 +700,8 @@ theorem passive_lacks_D : passiveV.features.hasD = false := rfl
     (anticausative for SE marking, passive for *by*-phrase licensing)
     but assignsTheta = false (no θ-role). -/
 theorem voice_hasD_ne_assignsTheta :
-    voiceAnticausative.HasD ∧ ¬ voiceAnticausative.AssignsTheta ∧
-    voicePassive.HasD ∧ ¬ voicePassive.AssignsTheta := by decide
+    Voice.anticausative.HasD ∧ ¬ Voice.anticausative.AssignsTheta ∧
+    Voice.passive.HasD ∧ ¬ Voice.passive.AssignsTheta := by decide
 
 -- ============================================================================
 -- § 9: Feature Failure (Assumption 19c)

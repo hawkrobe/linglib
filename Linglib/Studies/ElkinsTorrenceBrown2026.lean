@@ -133,7 +133,7 @@ open Minimalist SyntacticObject
 
 /-! ### Mam Voice substrate (Minimalist)
 
-This subsection houses the Minimalist `VoiceHead`, `ClauseSpine`, and
+This subsection houses the Minimalist `Voice.Head`, `ClauseSpine`, and
 `MamDirHead` definitions for Mam, formerly in
 `Linglib/Fragments/Mayan/Mam/VoiceSystem.lean`. Per CLAUDE.md
 "Per-language paper-specific apparatus lives in Studies, not
@@ -151,7 +151,7 @@ the per-language `Mam.VoiceSystem.voices`/`symmetry` defs.
     Ā-moved constituent. When an oblique DP moves through Spec,VoiceP,
     Agree values [uOblique] as [+oblique], which is then spelled out
     as =(y)a' at PF. -/
-def mamVoice : VoiceHead :=
+def mamVoice : Voice.Head :=
   { flavor := .agentive
   , hasD := true
   , features := .ofGramFeatures [.unvalued (.oblique false)] }
@@ -203,14 +203,14 @@ def mamVoiceVocab : Vocabulary := [eqYaVocab]
 /-- Mam passive Voice head: carries [uOblique] just like agentive Voice.
     [elkins-torrence-brown-2026] §7.2: =(y)a' co-occurs with
     passive *-njtz*. -/
-def mamPassiveVoice : VoiceHead :=
+def mamPassiveVoice : Voice.Head :=
   { flavor := .nonThematic
   , hasD := false
   , features := .ofGramFeatures [.unvalued (.oblique false)] }
 
 /-- Mam antipassive Voice head ([scott-2023] §2.5.4.1).
     Subject gets ABS not ERG; not a phase head. -/
-def mamAntipassiveVoice : VoiceHead :=
+def mamAntipassiveVoice : Voice.Head :=
   { flavor := .antipassive
   , hasD := true
   , features := ⊥ }

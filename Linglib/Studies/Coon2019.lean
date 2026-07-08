@@ -20,21 +20,21 @@ Glossed Chuj sentences with root, voice suffix, and grammaticality.
 
 ## Minimalist analysis (§§3–9)
 
-Voice heads as `Minimalist.VoiceHead` instances, event decomposition via
-`buildDecomposition`, existential closure (-aj), and division of labor /
+Voice heads as `Minimalist.Voice.Head` instances, event decomposition via
+`Voice.buildDecomposition`, existential closure (-aj), and division of labor /
 causative alternation proved from the Voice–root split.
 
 ## Bridge theorems (§§10–16)
 
 Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
-`isGrammatical`, etc.) to Minimalist VoiceHead properties and to the
+`isGrammatical`, etc.) to Minimalist Voice.Head properties and to the
 [beavers-etal-2021] root typology.
 
 ### Chuj fragment bridge (§§10–15)
 
 1. **Root class ↔ Root arity**: `CRootClass` maps to `RootClassification` values.
    √TV = selectsTheme, others = noTheme.
-2. **Voice suffix ↔ VoiceHead**: theta assignment, D feature, phase head.
+2. **Voice suffix ↔ Voice.Head**: theta assignment, D feature, phase head.
 3. **Paradigm predictions**: `isGrammatical` matches data attestation.
 4. **-aj predictions**: `hasImplicitExternal` / `triggersAj` match -aj
    distribution.
@@ -156,7 +156,7 @@ open Minimalist
 
 /-- Active transitive v/Voice⁰ (Ø): introduces overt agent in Spec,VoiceP,
     assigns ergative case, phase head (v*). -/
-def vØ : VoiceHead :=
+def vØ : Voice.Head :=
   { flavor := .agentive, hasD := true }
 
 /-- Agentive intransitive v/Voice⁰ (-w): introduces overt agent in
@@ -167,14 +167,14 @@ def vØ : VoiceHead :=
     Also models the null intransitive v/Voice⁰ for √ITV roots (p. 40):
     both introduce an agent and assign absolutive, differing only in
     overt (-w) vs null morphological realization. -/
-def v_w : VoiceHead :=
+def v_w : Voice.Head :=
   { flavor := .agentive, hasD := true, phaseOverride := some false }
 
 /-- Passive v/Voice⁰ (-ch): assigns θ-role to an implicit (existentially
     bound) external argument (p. 68–69). Agent-oriented adverbs and
     by-phrases are licensed, confirming semantic presence of agent.
     Only combines with √TV roots. -/
-def v_ch : VoiceHead :=
+def v_ch : Voice.Head :=
   { flavor := .agentive, hasD := false, phaseOverride := some false }
 
 /-- Agentless passive v/Voice⁰ (-j): verbalizes stem but introduces
@@ -183,7 +183,7 @@ def v_ch : VoiceHead :=
     argument"). No agent-oriented adverbs, no agentive by-phrases.
     Used with √TV (agentless passive) and non-transitive roots
     (inchoative/stative readings). -/
-def v_j : VoiceHead :=
+def v_j : Voice.Head :=
   { flavor := .nonThematic, hasD := false }
 
 -- ════════════════════════════════════════════════════
@@ -216,38 +216,38 @@ theorem only_vØ_is_phase :
     vØ.IsPhasal ∧ ¬ v_w.IsPhasal ∧ ¬ v_ch.IsPhasal ∧ ¬ v_j.IsPhasal := by decide
 
 -- ════════════════════════════════════════════════════
--- § 6. Verb Building (buildDecomposition)
+-- § 6. Verb Building (Voice.buildDecomposition)
 -- ════════════════════════════════════════════════════
 
 /-- √TV result + Ø → causative [vDO, vGO, vBE] (active transitive). -/
 theorem tv_res_active :
-    isCausative (buildDecomposition vØ resultLower) = true := by decide
+    isCausative (Voice.buildDecomposition vØ resultLower) = true := by decide
 
 /-- √TV result + -ch → causative [vDO, vGO, vBE] (passive with implicit agent).
     Event structure is still causative — the agent is semantically present. -/
 theorem tv_res_passive_ch :
-    isCausative (buildDecomposition v_ch resultLower) = true := by decide
+    isCausative (Voice.buildDecomposition v_ch resultLower) = true := by decide
 
 /-- √TV result + -j → inchoative [vGO, vBE] (agentless passive / anticausative).
     No agent at all — the event is a pure change-of-state (p. 70). -/
 theorem tv_res_agentless :
-    isInchoative (buildDecomposition v_j resultLower) = true := by decide
+    isInchoative (Voice.buildDecomposition v_j resultLower) = true := by decide
 
 /-- √ITV + v/Voice⁰ → activity [vDO] (intransitive).
     Uses v_w, which shares formal properties with the null intransitive
     v/Voice⁰ for √ITV (both are agentive, non-ERG-assigning; p. 40). -/
 theorem itv_intransitive :
-    isActivity (buildDecomposition v_w activityLower) = true := by decide
+    isActivity (Voice.buildDecomposition v_w activityLower) = true := by decide
 
 /-- √POS + -w → [vDO, vBE]: agent assumes a position (agentive stative).
     (p. 48, (23)): chot-w-i "The frog hopped." -/
 theorem pos_agentive :
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] := by decide
+    Voice.buildDecomposition v_w positionalLower = [.vDO, .vBE] := by decide
 
 /-- √NOM + -w → activity [vDO] (denominal agentive intransitive).
     (p. 45, (16b)): chanhal-w-i "I danced." -/
 theorem nom_agentive :
-    isActivity (buildDecomposition v_w activityLower) = true := by decide
+    isActivity (Voice.buildDecomposition v_w activityLower) = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Existential Closure (-aj)
@@ -255,7 +255,7 @@ theorem nom_agentive :
 
 /-- Does this Voice head have an implicit (existentially bound) external
     argument? True when Voice assigns θ but has no overt specifier. -/
-def hasImplicitExternal (v : VoiceHead) : Bool :=
+def hasImplicitExternal (v : Voice.Head) : Bool :=
   decide v.AssignsTheta && !v.hasD
 
 /-- -aj (Existential Closure) surfaces when there is any implicit argument:
@@ -264,7 +264,7 @@ def hasImplicitExternal (v : VoiceHead) : Bool :=
 
     `implicitInternal` is true when a √TV root's theme is not filled
     by an overt DP (absolutive antipassive, not incorporation antipassive). -/
-def triggersAj (v : VoiceHead) (implicitInternal : Bool) : Bool :=
+def triggersAj (v : Voice.Head) (implicitInternal : Bool) : Bool :=
   hasImplicitExternal v || implicitInternal
 
 /-- -ch always triggers -aj (implicit external agent; p. 69). -/
@@ -303,11 +303,11 @@ theorem w_incorporation_no_aj :
     root's lower event structure. -/
 theorem w_cross_class :
     -- √TV (incorporation antipassive): activity
-    isActivity (buildDecomposition v_w activityLower) = true ∧
+    isActivity (Voice.buildDecomposition v_w activityLower) = true ∧
     -- √POS (positional verbalization): agent + state
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
+    Voice.buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
     -- √NOM (denominal verbalization): activity
-    isActivity (buildDecomposition v_w activityLower) = true := by
+    isActivity (Voice.buildDecomposition v_w activityLower) = true := by
   exact ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -320,8 +320,8 @@ theorem w_cross_class :
     same Voice with different root → same external argument status. -/
 theorem minimalist_division_of_labor :
     -- Same result root: Ø gives causative, -j gives inchoative
-    isCausative (buildDecomposition vØ resultLower) = true ∧
-    isInchoative (buildDecomposition v_j resultLower) = true ∧
+    isCausative (Voice.buildDecomposition vØ resultLower) = true ∧
+    isInchoative (Voice.buildDecomposition v_j resultLower) = true ∧
     -- √TV has theme, √ITV does not — root determines internal arg
     rootTV_res.arity.hasInternalArg = true ∧
     rootITV.arity.hasInternalArg = false := ⟨by decide, by decide, rfl, rfl⟩
@@ -330,10 +330,10 @@ theorem minimalist_division_of_labor :
     (instantiation of `voice_determines_causativity_go_be` for Chuj heads).
     For result roots, causativity tracks exactly with θ-assignment. -/
 theorem chuj_causative_alternation_result :
-    (isCausative (buildDecomposition vØ resultLower) = true ↔ vØ.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_w resultLower) = true ↔ v_w.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_ch resultLower) = true ↔ v_ch.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_j resultLower) = true ↔ v_j.AssignsTheta) :=
+    (isCausative (Voice.buildDecomposition vØ resultLower) = true ↔ vØ.AssignsTheta) ∧
+    (isCausative (Voice.buildDecomposition v_w resultLower) = true ↔ v_w.AssignsTheta) ∧
+    (isCausative (Voice.buildDecomposition v_ch resultLower) = true ↔ v_ch.AssignsTheta) ∧
+    (isCausative (Voice.buildDecomposition v_j resultLower) = true ↔ v_j.AssignsTheta) :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -368,11 +368,11 @@ theorem bare_transitive_iff_theme (rc : CRootClass) :
   cases rc <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 11. Voice Suffix ↔ VoiceHead
+-- § 11. Voice Suffix ↔ Voice.Head
 -- ════════════════════════════════════════════════════
 
-/-- Map the phenomena's voice suffix to the Minimalist VoiceHead. -/
-def toVoiceHead : ChujVoiceSuffix → VoiceHead
+/-- Map the phenomena's voice suffix to the Minimalist Voice.Head. -/
+def toVoiceHead : ChujVoiceSuffix → Voice.Head
   | .null => vØ
   | .ch   => v_ch
   | .j    => v_j
@@ -470,13 +470,13 @@ theorem aj_full_distribution :
     √ITV + -w → activity (intransitive) -/
 theorem event_decomposition_matches_data :
     -- ex10a: √TV + Ø → causative
-    isCausative (buildDecomposition vØ resultLower) = true ∧
+    isCausative (Voice.buildDecomposition vØ resultLower) = true ∧
     -- ex59: √TV + -j → inchoative
-    isInchoative (buildDecomposition v_j resultLower) = true ∧
+    isInchoative (Voice.buildDecomposition v_j resultLower) = true ∧
     -- ex62: √TV + -ch → causative (agent still present)
-    isCausative (buildDecomposition v_ch resultLower) = true ∧
+    isCausative (Voice.buildDecomposition v_ch resultLower) = true ∧
     -- ex7a: √ITV + v_w → activity
-    isActivity (buildDecomposition v_w activityLower) = true :=
+    isActivity (Voice.buildDecomposition v_w activityLower) = true :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -548,9 +548,9 @@ theorem w_verbalization_cross_class :
     isGrammatical .pos .w = true ∧
     isGrammatical .nom .w = true ∧
     -- √POS + -w → [vDO, vBE] (fragment)
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
+    Voice.buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
     -- √NOM + -w → activity [vDO] (fragment)
-    isActivity (buildDecomposition v_w activityLower) = true :=
+    isActivity (Voice.buildDecomposition v_w activityLower) = true :=
   ⟨rfl, rfl, by decide, by decide⟩
 
 end Coon2019

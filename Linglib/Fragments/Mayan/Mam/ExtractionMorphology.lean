@@ -342,10 +342,10 @@ theorem eqya_island_sensitive_derived :
 
 /-- =(y)a' co-occurs with passive voice morphology (*-njtz*).
     This is encoded as empirical data: `passiveOblExtraction.judgment =.licensed`.
-    The co-occurrence is *derivable* from VoiceHead field independence:
-    passive *-njtz* is conditioned by VoiceFlavor, while =(y)a' is
+    The co-occurrence is *derivable* from Voice.Head field independence:
+    passive *-njtz* is conditioned by Voice.Flavor, while =(y)a' is
     conditioned by features ([+oblique]). These are independent fields
-    in VoiceHead, so changing the flavor does not affect the features.
+    in Voice.Head, so changing the flavor does not affect the features.
     See `MinimalismOblExtraction.eqya_not_agent_focus` for the structural
     derivation.
     Elkins et al. §7.2, ex. (53)–(54). -/

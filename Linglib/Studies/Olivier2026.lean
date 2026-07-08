@@ -42,7 +42,7 @@ configuration. The AS prediction is then *derived* from the
 sibling file's `AuxiliarySwitchOccurs` predicate — not stipulated
 per case.
 
-The `Minimalist.TransferStyle` (KEEP/SHARE/DONATE) and `VoiceHead`
+The `Minimalist.TransferStyle` (KEEP/SHARE/DONATE) and `Voice.Head`
 infrastructure are imported but not parametrised at the
 phenomenon level — language-level KEEP-vs-SHARE variation lives
 in the AuxVerbs sibling's diachronic-French / Sardinian

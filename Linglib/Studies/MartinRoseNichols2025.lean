@@ -279,7 +279,7 @@ theorem causative_has_agentive_voice :
     -- Syntactic: causative heads (vDO + vCAUSE + vGO + vBE) per [cuervo-2003]
     isCausative [VerbHead.vDO, .vCAUSE, .vGO, .vBE] = true ∧
     -- Voice: agentive Voice assigns θ-role
-    voiceAgent.AssignsTheta := ⟨by decide, by decide, by decide⟩
+    Voice.agentive.AssignsTheta := ⟨by decide, by decide, by decide⟩
 
 /-- Anticausative structure (intransitive alternant of a change-of-state
     verb) drops the external argument while keeping CAUSE. The head-list
@@ -291,7 +291,7 @@ theorem anticausative_has_nonthematic_voice :
     -- Syntactic: inchoative heads (vCAUSE + vGO + vBE)
     isInchoative [VerbHead.vCAUSE, .vGO, .vBE] = true ∧
     -- Voice: non-thematic Voice has no semantics
-    ¬ voiceAnticausative.HasSemantics := ⟨by decide, by decide, by decide⟩
+    ¬ Voice.anticausative.HasSemantics := ⟨by decide, by decide, by decide⟩
 
 -- § 2: Thick/Thin ↔ Causation Type ↔ Voice
 
@@ -309,8 +309,8 @@ theorem production_aligns_agentive :
     -- Production requires concrete causer
     productionConstraint ThickThinClass.thickManner = .production ∧
     -- Agentive Voice introduces external argument
-    voiceAgent.AssignsTheta ∧
-    voiceAgent.HasD := by refine ⟨rfl, ?_, ?_⟩ <;> decide
+    Voice.agentive.AssignsTheta ∧
+    Voice.agentive.HasD := by refine ⟨rfl, ?_, ?_⟩ <;> decide
 
 -- § 3: Alternation ↔ Voice Alternation
 
@@ -321,8 +321,8 @@ theorem alternation_is_voice_alternation :
     -- Causative head-list extends anticausative by prepending vDO
     ([VerbHead.vDO, .vCAUSE, .vGO, .vBE] = .vDO :: [VerbHead.vCAUSE, .vGO, .vBE]) ∧
     -- The difference is whether Voice introduces an external argument
-    voiceAgent.AssignsTheta ∧
-    ¬ voiceAnticausative.AssignsTheta := ⟨rfl, by decide, by decide⟩
+    Voice.agentive.AssignsTheta ∧
+    ¬ Voice.anticausative.AssignsTheta := ⟨rfl, by decide, by decide⟩
 
 -- § 4: Empirical Bridge: ThickThin Data
 

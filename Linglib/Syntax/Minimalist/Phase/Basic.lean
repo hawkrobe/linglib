@@ -61,7 +61,7 @@ commonly-checked phase categories, call `isPhaseHeadOf` directly:
 - SA as phase head: `isPhaseHeadOf .SA so` — SAP is the highest phase, allocutive
   probing from SA is root-only.
 
-**Voice/v* correspondence**: agentive Voice = v*, tracked by `VoiceHead.IsPhasal`
+**Voice/v* correspondence**: agentive Voice = v*, tracked by `Voice.Head.IsPhasal`
 (`Voice.lean`); recent clause-internal-Voice-phase clients are
 [erlewine-sommerlot-2025] (Malayic) and [pietraszko-2026] (Ndebele). -/
 

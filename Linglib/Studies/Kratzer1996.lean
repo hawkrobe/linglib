@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 
 Two accounts of argument realization make predictions about external
 argument theta roles. The two predicates live next to the types they
-project from: severing in `VoiceFlavor.thetaRole`
+project from: severing in `Voice.Flavor.thetaRole`
 (`Syntax/Minimalist/Verbal/Voice.lean`) and lexicalist in
 `Verb.predictedSubjectTheta`
 (`Semantics/Lexical/VerbEntry.lean`). Both operate over proto-role
@@ -50,7 +50,7 @@ open English.Predicates.Verbal
 severing: transitive "John broke the vase" has agentive Voice with an
 agent in Spec,VoiceP; anticausative "The vase broke" has non-thematic
 Voice with no specifier. Both share the same VP core. Event-structure
-predictions are verified in `Core/Voice.lean` via `buildDecomposition`. -/
+predictions are verified in `Core/Voice.lean` via `Voice.buildDecomposition`. -/
 
 section TreeDerivations
 
@@ -149,7 +149,7 @@ theorem causative_pair_agent_contrast :
     non-thematic does not. This is [kratzer-1996]'s severing
     verified structurally on the tree derivations. -/
 theorem causative_pair_voice_contrast :
-    voiceAgent.AssignsTheta ∧ ¬ voiceAnticausative.AssignsTheta := by decide
+    Voice.agentive.AssignsTheta ∧ ¬ Voice.anticausative.AssignsTheta := by decide
 
 end TreeDerivations
 

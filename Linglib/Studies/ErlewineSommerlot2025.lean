@@ -332,10 +332,10 @@ theorem all_grammatical_derivations_consistent :
 -- § 8: Bridge to Core Minimalist Voice Theory
 -- ============================================================================
 
-/-! ### Connecting Malayic Voice/v to Core VoiceHead
+/-! ### Connecting Malayic Voice/v to Core Voice.Head
 
 [erlewine-sommerlot-2025]'s two-head system (Voice + v) maps onto
-Core's single `VoiceHead` type ([kratzer-1996], [schaefer-2008]).
+Core's single `Voice.Head` type ([kratzer-1996], [schaefer-2008]).
 
 - v_ACT (introduces agent) → agentive Voice flavor
 - v_PASS (no θ) → passive Voice flavor
@@ -351,26 +351,26 @@ to each Spell-out domain in `Linearization/Cyclic.lean`, but operates on
 `SyntacticObject` rather than terminal strings.
 -/
 
-/-- Map Malayic v-flavor to Core VoiceFlavor.
+/-- Map Malayic v-flavor to Core Voice.Flavor.
     v_ACT introduces the external argument → agentive.
     v_PASS licenses EA without θ → passive. -/
-def vFlavorToCore : LittleVFlavor → Minimalist.VoiceFlavor
+def vFlavorToCore : LittleVFlavor → Minimalist.Voice.Flavor
   | .act  => .agentive
   | .pass => .passive
 
-/-- Map each Malayic clause type to its Core VoiceHead equivalent.
+/-- Map each Malayic clause type to its Core Voice.Head equivalent.
     Active and object-extraction Voice are agentive (flavor-default phasal).
     `di-`passive and bare passive use `phaseOverride := some true` to express
     E&S 2025's claim that VoiceP is universally a phase, diverging from the
     Core default for passive Voice ([chomsky-2001], [collins-2005],
-    encoded in `VoiceFlavor.defaultPhasal`). -/
-def clauseToVoiceHead : VoiceConstruction → Minimalist.VoiceHead
+    encoded in `Voice.Flavor.defaultPhasal`). -/
+def clauseToVoiceHead : VoiceConstruction → Minimalist.Voice.Head
   | .active          => { flavor := .agentive, hasD := true }
   | .diPassive       => { flavor := .passive,  hasD := true, phaseOverride := some true }
   | .barePassive     => { flavor := .passive,  hasD := true, phaseOverride := some true }
   | .objectExtraction => { flavor := .agentive, hasD := true }
 
-/-- The VoiceFlavor component is consistent with the v-flavor mapping. -/
+/-- The Voice.Flavor component is consistent with the v-flavor mapping. -/
 theorem voice_flavor_consistent (ct : VoiceConstruction) :
     (clauseToVoiceHead ct).flavor = vFlavorToCore ct.vFlavor := by
   cases ct <;> rfl
@@ -383,13 +383,13 @@ theorem voice_always_phase (ct : VoiceConstruction) :
     passive Voice (following [collins-2005]) is not. -/
 theorem malayic_passive_phase_diverges :
     (clauseToVoiceHead .diPassive).IsPhasal ∧
-    ¬ Minimalist.voicePassive.IsPhasal := by decide
+    ¬ Minimalist.Voice.passive.IsPhasal := by decide
 
 /-- Active clause type maps to Core's agentive Voice, which IS a phase
     head — consistent across both analyses. -/
 theorem active_consistent_with_core :
     (clauseToVoiceHead .active).flavor = .agentive ∧
-    ((clauseToVoiceHead .active).IsPhasal ↔ Minimalist.voiceAgent.IsPhasal) := by
+    ((clauseToVoiceHead .active).IsPhasal ↔ Minimalist.Voice.agentive.IsPhasal) := by
   refine ⟨rfl, ?_⟩; decide
 
 end ErlewineSommerlot2025

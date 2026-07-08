@@ -14,7 +14,7 @@ studies (QI, locative inversion, passives), not study-local helpers.
 ## Composition
 
 ```
-Verb.derivedUnaccusative  →  Verb.voiceFor : VoiceHead
+Verb.derivedUnaccusative  →  Verb.voiceFor : Voice.Head
 Verb.complementType       →  Verb.hasComplement : Bool
                                        ↓
                          Verb.derivedQI = licensesQI ∘ voiceFor ∘ hasComplement
@@ -40,8 +40,8 @@ def hasComplement (v : Verb) : Bool := v.complementType != .none
     Reads `derivedUnaccusative`, which consults `voiceType.assignsTheta`
     when present, so the bridge is grounded in the Voice-as-not-introducing-
     external-argument characterization ([kratzer-1996]). -/
-def voiceFor (v : Verb) : VoiceHead :=
-  if v.derivedUnaccusative then voiceAnticausative else voiceAgent
+def voiceFor (v : Verb) : Voice.Head :=
+  if v.derivedUnaccusative then Voice.anticausative else Voice.agentive
 
 /-- Derived prediction: does the verb license quotative inversion?
     Composes `voiceFor` and `hasComplement` through `licensesQI`
@@ -60,12 +60,12 @@ theorem derivedQI_iff (v : Verb) :
 
 /-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
 theorem voiceFor_of_unaccusative (v : Verb)
-    (h : v.derivedUnaccusative = true) : v.voiceFor = voiceAnticausative := by
+    (h : v.derivedUnaccusative = true) : v.voiceFor = Voice.anticausative := by
   unfold voiceFor; simp [h]
 
 /-- Unergative verbs project agentive Voice. -/
 theorem voiceFor_of_unergative (v : Verb)
-    (h : v.derivedUnaccusative = false) : v.voiceFor = voiceAgent := by
+    (h : v.derivedUnaccusative = false) : v.voiceFor = Voice.agentive := by
   unfold voiceFor; simp [h]
 
 /-- An unaccusative verb with a complement licenses QI. The two

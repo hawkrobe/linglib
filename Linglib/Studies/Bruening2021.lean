@@ -199,7 +199,7 @@ symmetrically as V's selected arguments.
 
 ANALOGUE: Bruening's ι-head (def-implicit licensor) and ApplPass
 (licensor for implicit first object) have no current substrate primitives
-in `Syntax/Minimalist/`. `Voice.ExternalArgSemantics` includes
+in `Syntax/Minimalist/`. `Voice.Voice.ExternalArgSemantics` includes
 `thematicExistential` (the analogue of Bruening's ∃-head); a parallel
 `thematicIota` and a `Pass`-of-`Appl` head are substrate gaps. -/
 

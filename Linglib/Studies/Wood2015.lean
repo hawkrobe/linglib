@@ -114,7 +114,7 @@ def Construction.site : Construction → Site
     the psych verbs the experiencer is an applicative dative, §5.4); figure
     reflexives and reciprocals are agentive (§4); the generic middle is
     expletive (§6.3). -/
-def Construction.voiceFlavor : Construction → VoiceFlavor
+def Construction.voiceFlavor : Construction → Voice.Flavor
   | .anticausative   => .nonThematic
   | .subjectExp      => .nonThematic
   | .inherent        => .nonThematic
@@ -140,7 +140,7 @@ inductive AnticausativeMarking where
     no head (`none`): it is a clitic in a specifier, not an exponent. *-na*
     spells out specifierless Voice{∅}; *-Ø* is the elsewhere Voice exponent
     (compatible with either Voice projection); *-ka* spells out v. -/
-def AnticausativeMarking.exponentOf : AnticausativeMarking → Option VoiceProjectionLocus
+def AnticausativeMarking.exponentOf : AnticausativeMarking → Option Voice.ProjectionLocus
   | .st       => none
   | .na       => some .voiceBare
   | .unmarked => some .voiceDOrBare
@@ -277,9 +277,9 @@ theorem st_not_single_voice_exponent :
     Voice does not (inchoative), but CAUSE is present in both ([wood-2015]
     Ch. 3, in [cuervo-2003] decomposition). -/
 theorem opna_alternation :
-    isCausative (buildDecomposition voiceAgent opnastInfo.rootStructure) = true ∧
-    isInchoative (buildDecomposition voiceAnticausative opnastInfo.rootStructure) = true ∧
-    hasCause (buildDecomposition voiceAnticausative opnastInfo.rootStructure) = true := by
+    isCausative (Voice.buildDecomposition Voice.agentive opnastInfo.rootStructure) = true ∧
+    isInchoative (Voice.buildDecomposition Voice.anticausative opnastInfo.rootStructure) = true ∧
+    hasCause (Voice.buildDecomposition Voice.anticausative opnastInfo.rootStructure) = true := by
   decide
 
 /-- The constructions occupy distinct cells of the ±D / ±λx Voice space
@@ -309,10 +309,10 @@ theorem st_blocked_from_specApplP :
     [wood-2015]'s Icelandic-specific claim that Icelandic lacks true high
     applicatives ([wood-2015] §5.2.1, §5.3.1). -/
 theorem dative_voice_asymmetry :
-    ¬ applHigh.Licensed voiceMiddle ∧
-    applHigh.Licensed voiceAgent ∧
-    applLowRecipient.Licensed voiceMiddle ∧
-    applLowRecipient.Licensed voiceAnticausative := by decide
+    ¬ applHigh.Licensed Voice.middle ∧
+    applHigh.Licensed Voice.agentive ∧
+    applLowRecipient.Licensed Voice.middle ∧
+    applLowRecipient.Licensed Voice.anticausative := by decide
 
 /-! ### Consistency over the verb roster -/
 
