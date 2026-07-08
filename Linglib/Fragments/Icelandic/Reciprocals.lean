@@ -23,7 +23,7 @@ open Pronoun Reciprocal
 
 /-- hvort annað — bipartite reciprocal NP 'each other' (neuter citation
     forms; both parts inflect independently for case and gender). -/
-def hvorAnnad : ReciprocalMarker :=
+def hvorAnnad : Marker :=
   { form := "hvort annað", strategy := .bipartiteNP }
 
 /-- sig — reflexive pronoun (for contrast). -/
@@ -35,6 +35,6 @@ theorem recip_distinct_from_reflexive :
     hvorAnnad.form ≠ sig.form := by decide
 
 /-- Marker inventory. -/
-def markers : List ReciprocalMarker := [hvorAnnad]
+def markers : List Marker := [hvorAnnad]
 
 end Icelandic.Reciprocals

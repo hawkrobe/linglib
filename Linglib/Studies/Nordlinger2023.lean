@@ -29,8 +29,8 @@ constructions, which summarizes earlier classificatory work
 and organizes the empirical picture around strategy/valency correlations
 (§3.2) and Siloni's discontinuity asymmetry (§3.3).
 
-The underlying primitives (`ReciprocalMarker`, `RecipStrategy`, `RecipValency`,
-`RecipFormation`, `ReciprocalType`) live in `Syntax/Reciprocal.lean`,
+The underlying primitives (`Marker`, `Strategy`, `Valency`,
+`Formation`, `ReflexiveRelation`) live in `Syntax/Reciprocal.lean`,
 anchored on the earlier sources the review synthesizes — which preserves
 chronological dependency for `Studies/Siloni2012.lean`. Each profile below
 records a marker *inventory*; the primary strategy and the WALS Ch 106
@@ -42,7 +42,7 @@ the derived values against the external WALS rows.
 - `RecipProfile` per-language profiles (12 languages): marker inventory +
   observed valency, formation, and discontinuity judgments
 - Strategy-valency correlation theorems (§3.2), including the derived
-  default-valency check against `RecipStrategy.defaultValency`
+  default-valency check against `Strategy.defaultValency`
 - Siloni's discontinuity prediction checked against attested judgments (§3.3)
 - WALS Ch 106 grounding for the *derived* reflexive relation (via `lookupISO`)
 - `ReciprocityType` semantic 6-way classification (§4), realized as the
@@ -55,9 +55,9 @@ namespace Nordlinger2023
 
 open Reciprocal
 
-/-- Convert a WALS 106A value to `ReciprocalType` (study-local: WALS
+/-- Convert a WALS 106A value to `ReflexiveRelation` (study-local: WALS
     grounding is this study's business, not the substrate's). -/
-def ofWALS106A : Data.WALS.F106A.ReciprocalType → ReciprocalType
+def ofWALS106A : Data.WALS.F106A.ReciprocalType → ReflexiveRelation
   | .noReciprocalConstruction => .noDedicated
   | .distinctFromReflexive    => .distinctFromReflexive
   | .mixed                    => .mixed
@@ -74,11 +74,11 @@ structure RecipProfile where
   iso : String
   /-- Marker inventory (primary strategy first), sourced from the
       language's `Fragments/{Lang}/Reciprocals.lean`. -/
-  markers : List ReciprocalMarker
+  markers : List Marker
   /-- Observed valency of the primary construction -/
-  valency : RecipValency
+  valency : Valency
   /-- Formation locus of verb-marked reciprocals ([siloni-2012]) -/
-  formation : Option RecipFormation := none
+  formation : Option Formation := none
   /-- Attested availability of the discontinuous reciprocal construction
       ([nordlinger-2023] §3.3 judgments), independent of `formation` so
       Siloni's prediction can be checked rather than stipulated -/
@@ -86,11 +86,11 @@ structure RecipProfile where
   deriving Repr, DecidableEq
 
 /-- Primary strategy: the strategy of the inventory's first marker. -/
-def RecipProfile.primaryStrategy (p : RecipProfile) : Option RecipStrategy :=
+def RecipProfile.primaryStrategy (p : RecipProfile) : Option Strategy :=
   p.markers.head?.map (·.strategy)
 
 /-- WALS Ch 106 reflexive relation, derived from the marker inventory. -/
-def RecipProfile.reflexiveRelation (p : RecipProfile) : ReciprocalType :=
+def RecipProfile.reflexiveRelation (p : RecipProfile) : ReflexiveRelation :=
   ofInventory p.markers
 
 -- Language data: 12 reciprocal profiles from [nordlinger-2023]
@@ -409,14 +409,14 @@ markers outside the 12-language sample. -/
 /-- Yakut *-üs*: reciprocal + collective/sociative — *ölör-üs* 'kill
     each other' or 'kill somebody together' ([nordlinger-2023] ex. 49,
     citing [nedjalkov-2007b]). -/
-def yakutUs : ReciprocalMarker :=
+def yakutUs : Marker :=
   { form := "-üs", strategy := .verbalAffix
   , readings := [.reciprocal, .collective, .sociative] }
 
 /-- East Futunan *fe-...-ʼaki*: reciprocal + iterative — *fe-tapa-ʼaki*
     'sparkle again and again' ([nordlinger-2023] ex. 50, citing
     [nedjalkov-2007b]). -/
-def eastFutunanFeAki : ReciprocalMarker :=
+def eastFutunanFeAki : Marker :=
   { form := "fe-...-ʼaki", strategy := .verbalAffix
   , readings := [.reciprocal, .iterative] }
 

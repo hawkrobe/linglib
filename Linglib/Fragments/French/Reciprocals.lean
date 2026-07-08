@@ -23,12 +23,12 @@ namespace French.Reciprocals
 open Reciprocal
 
 /-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 28, 47). -/
-def se : ReciprocalMarker :=
+def se : Marker :=
   { form := "se", strategy := .recipClitic
   , readings := [.reciprocal, .reflexive] }
 
 /-- l'un l'autre — bipartite reciprocal NP. -/
-def lunLautre : ReciprocalMarker :=
+def lunLautre : Marker :=
   { form := "l'un l'autre", strategy := .bipartiteNP }
 
 /-- The bipartite NP form is distinct from the clitic. -/
@@ -36,6 +36,6 @@ theorem bipartite_distinct_from_clitic :
     lunLautre.form ≠ se.form := by decide
 
 /-- Marker inventory, primary strategy first. -/
-def markers : List ReciprocalMarker := [se, lunLautre]
+def markers : List Marker := [se, lunLautre]
 
 end French.Reciprocals

@@ -20,13 +20,13 @@ namespace Czech.Reciprocals
 open Reciprocal
 
 /-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 29). -/
-def se : ReciprocalMarker :=
+def se : Marker :=
   { form := "se", strategy := .recipClitic
   , readings := [.reciprocal, .reflexive] }
 
 /-- jeden druhého — bipartite periphrastic reciprocal 'one the-other'
     ([siloni-2012]'s Czech examples). -/
-def jedenDruheho : ReciprocalMarker :=
+def jedenDruheho : Marker :=
   { form := "jeden druhého", strategy := .bipartiteNP }
 
 /-- The periphrastic reciprocal is distinct from the clitic. -/
@@ -34,6 +34,6 @@ theorem bipartite_distinct_from_clitic :
     jedenDruheho.form ≠ se.form := by decide
 
 /-- Marker inventory, primary strategy first. -/
-def markers : List ReciprocalMarker := [se, jedenDruheho]
+def markers : List Marker := [se, jedenDruheho]
 
 end Czech.Reciprocals

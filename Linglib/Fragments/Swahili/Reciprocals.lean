@@ -53,10 +53,10 @@ open Reciprocal
 
 /-- The reciprocal suffix as a typological marker (distinct from the
     reflexive *-ji-*). -/
-def anSuffix : ReciprocalMarker :=
+def anSuffix : Marker :=
   { form := "-an-", strategy := .verbalAffix }
 
 /-- Marker inventory. -/
-def markers : List ReciprocalMarker := [anSuffix]
+def markers : List Marker := [anSuffix]
 
 end Swahili.Reciprocals

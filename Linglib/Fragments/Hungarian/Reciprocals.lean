@@ -192,13 +192,13 @@ def singularAntecedentForcesWideScope : Bool := true
 open Reciprocal in
 /-- The reciprocal verbal suffix ([nordlinger-2023] ex. 19, citing
     [siloni-2008]). -/
-def ozSuffix : ReciprocalMarker :=
+def ozSuffix : Marker :=
   { form := "-óz-", strategy := .verbalAffix }
 
 open Reciprocal in
 /-- Marker inventory, primary strategy first: *-óz-* plus the reciprocal
     pronoun *egymás* (form derived from the pronoun entry above). -/
-def markers : List ReciprocalMarker :=
+def markers : List Marker :=
   [ ozSuffix, { form := egymas.form, strategy := .recipPronoun } ]
 
 end Hungarian.Reciprocals

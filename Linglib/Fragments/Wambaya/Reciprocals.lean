@@ -31,12 +31,12 @@ open Reciprocal in
 /-- The RR clitic as a typological marker: it serves both reciprocal and
     reflexive functions (WALS "identical to reflexive" follows by
     `Reciprocal.ofInventory`; form derived from `rrMorpheme`). -/
-def rr : ReciprocalMarker :=
+def rr : Marker :=
   { form := rrMorpheme.form, strategy := .recipClitic
   , readings := [.reciprocal, .reflexive] }
 
 open Reciprocal in
 /-- Marker inventory. -/
-def markers : List ReciprocalMarker := [rr]
+def markers : List Marker := [rr]
 
 end Wambaya.Reciprocals
