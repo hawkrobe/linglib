@@ -103,19 +103,20 @@ notation:max c "⟦" p "⟧" => IContext.update c p
 
 end IContext
 
-/-- Context-to-context transformer (sentence denotation). -/
-def DynProp (W : Type*) (E : Type*) := IContext W E → IContext W E
+/-- Context-to-context transformer (sentence denotation): the spine's
+`CCP` at ICDRT possibilities. -/
+abbrev DynProp (W : Type*) (E : Type*) := CCP (ICDRTAssignment W E × W)
 
 namespace DynProp
 
-/-- Identity (says nothing). Aliases `CCP.id`. -/
-def id : DynProp W E := λ c => c
+/-- Identity (says nothing): the spine's `CCP.id`. -/
+abbrev id : DynProp W E := CCP.id
 
-/-- Absurd (contradiction). Aliases `CCP.absurd`. -/
-def absurd : DynProp W E := λ _ => ∅
+/-- Absurd (contradiction): the spine's `CCP.absurd`. -/
+abbrev absurd : DynProp W E := CCP.absurd
 
 /-- Lift a classical proposition to a context filter. -/
-def ofProp (p : W → Prop) : DynProp W E := λ c => c.update p
+def ofProp (p : W → Prop) : DynProp W E := λ c => IContext.update c p
 
 end DynProp
 

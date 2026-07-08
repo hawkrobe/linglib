@@ -27,9 +27,10 @@ Unlike DPL/DRT, no assignment component - US focuses on propositional content.
 abbrev State (W : Type*) := Set W
 
 /--
-Update function: how a sentence modifies a state.
+Update function: how a sentence modifies a state. This is the spine's
+`CCP W` (set-transformer context change potential) under Veltman's name.
 -/
-abbrev Update (W : Type*) := State W → State W
+abbrev Update (W : Type*) := Core.CCP W
 
 /--
 Propositional update: eliminate worlds where φ fails.

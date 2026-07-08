@@ -87,18 +87,14 @@ section CDRT
 open Semantics.Dynamic.CDRT
 open Semantics.Dynamic.Core
 
--- (`Register E = Assignment E` is now true by abbrev unfolding —
--- the previous bridge theorem `cdrt_register_eq_assignment : … := rfl`
--- was retired when `Register` became `abbrev := Core.Assignment E`.)
-
 /-- Discourse referent introduction under closure = cylindrification.
 
 `closure(new n ;; φ) = cₙ(closure(φ))`: introducing dref `n`
 then continuing with `φ` equals cylindrifying `φ` at `n`. -/
 theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
-    closure (toDRS (DProp.new n ;; φ)) =
-    cylindrify n (closure (toDRS φ)) := by
-  ext g; simp only [closure, toDRS, DProp.seq, DProp.new, cylindrify]
+    closure (DProp.new n ;; φ) =
+    cylindrify n (closure φ) := by
+  ext g; simp only [closure, DProp.seq, dseq, DProp.new, cylindrify]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
     exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩
@@ -107,7 +103,7 @@ theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
 
 /-- CDRT equality condition on drefs = diagonal element. -/
 theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
-    eq' (dref i : Dref (Register E) E) (dref j) = @diagonal E i j := by
+    eq' (dref i : Dref (State E) E) (dref j) = @diagonal E i j := by
   ext g; simp only [eq', dref, diagonal]
 
 end CDRT

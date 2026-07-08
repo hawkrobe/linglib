@@ -178,7 +178,8 @@ the second is type-dependency (witnesses as structure). Both reduce
 to the same classical truth conditions.
 -/
 
-open Semantics.Dynamic.CDRT (DProp Register SProp)
+open Semantics.Dynamic.CDRT (DProp State SProp)
+open Semantics.Dynamic.Core (trueAt dseq test dneg dimpl)
 open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
 open Cooper2023Ch7 (purify purifyUniv)
 
@@ -195,9 +196,10 @@ def ttr_exists (P : E → Prop) : Type := (x : E) × propT (P x)
 
 /-- **Equivalence 1**: CDRT dref introduction and TTR Σ-type have
 the same truth conditions. Both reduce to `∃ x, P x`. -/
-theorem exists_equiv (n : Nat) (P : E → Prop) (i : Register E) :
+theorem exists_equiv (n : Nat) (P : E → Prop) (i : State E) :
     DProp.true_at (cdrt_exists n P) i ↔ Nonempty (ttr_exists P) := by
-  simp only [DProp.true_at, cdrt_exists, DProp.seq, DProp.new, DProp.ofStatic, ttr_exists]
+  simp only [DProp.true_at, trueAt, cdrt_exists, DProp.seq, dseq, DProp.new,
+    DProp.ofStatic, test, ttr_exists]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, rfl, hp⟩
     exact ⟨⟨e, PLift.up (by simpa using hp)⟩⟩
@@ -224,10 +226,10 @@ def ttr_donkey (P Q : E → Prop) : Type :=
 
 /-- **Equivalence 2**: CDRT donkey implication and TTR Π-type have
 the same truth conditions. Both reduce to `∀ x, P x → Q x`. -/
-theorem donkey_equiv (n : Nat) (P Q : E → Prop) (i : Register E) :
+theorem donkey_equiv (n : Nat) (P Q : E → Prop) (i : State E) :
     DProp.true_at (cdrt_donkey n P Q) i ↔ Nonempty (ttr_donkey P Q) := by
-  simp only [DProp.true_at, cdrt_donkey, DProp.impl, DProp.seq, DProp.new,
-    DProp.ofStatic, ttr_donkey]
+  simp only [DProp.true_at, trueAt, cdrt_donkey, DProp.impl, dimpl, DProp.seq, dseq,
+    DProp.new, DProp.ofStatic, test, ttr_donkey]
   constructor
   · rintro ⟨o, rfl, hall⟩
     refine ⟨λ x hpx => PLift.up ?_⟩
@@ -262,12 +264,12 @@ def ttr_full_donkey (farmer donkey_ : E → Prop) (owns beats : E → E → Prop
   (x : E) → farmer x → (y : E) → donkey_ y → owns x y → propT (beats x y)
 
 private theorem donkey_antecedent_iff
-    (farmer donkey_ : E → Prop) (owns : E → E → Prop) (i k : Register E) :
+    (farmer donkey_ : E → Prop) (owns : E → E → Prop) (i k : State E) :
     (DProp.new 0 ;; DProp.ofStatic (λ r => farmer (r 0)) ;;
      DProp.new 1 ;; DProp.ofStatic (λ r => donkey_ (r 1) ∧ owns (r 0) (r 1))) i k ↔
     ∃ x y, k = (λ m => if m = 1 then y else if m = 0 then x else i m) ∧
       farmer x ∧ donkey_ y ∧ owns x y := by
-  simp only [DProp.seq, DProp.new, DProp.ofStatic]
+  simp only [DProp.seq, dseq, DProp.new, DProp.ofStatic, test]
   constructor
   · rintro ⟨k₃, ⟨k₂, ⟨k₁, ⟨e₀, rfl⟩, rfl, hf⟩, ⟨e₁, rfl⟩⟩, rfl, hd, ho⟩
     exact ⟨e₀, e₁, rfl, by simpa, by simpa, by simpa⟩
@@ -279,7 +281,7 @@ private theorem donkey_antecedent_iff
 conditions in CDRT and TTR. -/
 theorem full_donkey_equiv
     (farmer donkey_ : E → Prop) (owns beats : E → E → Prop)
-    (i : Register E) :
+    (i : State E) :
     DProp.true_at (cdrt_full_donkey farmer donkey_ owns beats) i ↔
     Nonempty (ttr_full_donkey farmer donkey_ owns beats) := by
   simp only [cdrt_full_donkey]
@@ -349,17 +351,17 @@ incompatible DNE solutions" table. -/
 /-- In CDRT, negation destroys anaphoric potential. After `¬φ`, the
 output register is unchanged from input — any drefs introduced by φ
 are inaccessible. -/
-theorem neg_destroys_dref {φ : DProp E} (i o : Register E)
+theorem neg_destroys_dref {φ : DProp E} (i o : State E)
     (h : DProp.neg φ i o) : o = i :=
   DProp.neg_output h
 
 /-- Double negation preserves truth but not drefs. `¬¬(∃x.P(x))` has
 the same truth conditions as `∃x.P(x)`, but the output register is
 the *input* register (no binding). -/
-theorem dne_same_truth (n : Nat) (P : E → Prop) (i : Register E) :
+theorem dne_same_truth (n : Nat) (P : E → Prop) (i : State E) :
     DProp.true_at (DProp.neg (DProp.neg (cdrt_exists n P))) i ↔
     DProp.true_at (cdrt_exists n P) i := by
-  simp only [DProp.true_at, DProp.neg]
+  simp only [DProp.true_at, trueAt, DProp.neg, test, dneg]
   constructor
   · rintro ⟨_, rfl, h⟩
     exact Classical.byContradiction (λ hno => h ⟨i, rfl, hno⟩)
@@ -391,7 +393,7 @@ private def ownsP : Ent → Ent → Prop
 private def beatsP : Ent → Ent → Prop
   | .john, .fido => True | _, _ => False
 
-private def initReg : Register Ent := λ _ => .john
+private def initReg : State Ent := λ _ => .john
 
 /-- CDRT donkey sentence is true on this model. -/
 theorem cdrt_donkey_concrete :

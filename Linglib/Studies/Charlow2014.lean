@@ -53,7 +53,7 @@ the dichotomy. Each of DPL, DRT, CDRT supplies one stateful framework.
 
 namespace Charlow2014
 
-open Semantics.Dynamic.CDRT (DProp Register)
+open Semantics.Dynamic.CDRT (DProp State)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. The dichotomy
@@ -168,13 +168,13 @@ Donkey encoding: `cdrt_full_donkey` (`Cooper2023.lean §4`):
             (ofStatic (beats ·0 ·1))`.
 Truth equivalence: `full_donkey_equiv` (Cooper2023 §4) + Π-type
 classical reduction.
-Negation: `DProp.neg φ := λ i o => i = o ∧ ¬ ∃ k, φ i k`. Output
+Negation: `DProp.neg φ := test (dneg φ)` — a test. Output
 register equals input; drefs from inside negation are dropped
 (`neg_destroys_dref`, `dne_same_truth` in Cooper2023 §5). -/
 def cdrt : AnaphoraFramework farmer donkey owns beats where
   name := "CDRT (Muskens 1996)"
   strategy := .stateThreading
-  donkeyHolds := ∀ i : Register E,
+  donkeyHolds := ∀ i : State E,
     DProp.true_at (Cooper2023.cdrt_full_donkey
                     farmer donkey owns beats) i
   donkey_iff_classical := by
