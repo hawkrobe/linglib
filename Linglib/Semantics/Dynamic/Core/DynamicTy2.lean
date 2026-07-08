@@ -40,7 +40,7 @@ namespace Semantics.Dynamic.Core
 -- Semantics.Dynamic.Core continues to see Update, Condition, dseq, test, etc.
 export DynProp (Update Condition
   dseq test dneg dimpl ddisj closure
-  trueAt valid entails
+  valid entails
   dseq_assoc test_dseq dseq_test dneg_dneg_test closure_closure dseq_closure)
 
 /-!

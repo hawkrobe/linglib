@@ -13,10 +13,12 @@ PLA, DRT, DPL, and CDRT formalizations.
 The relational `Update S` ([groenendijk-stokhof-1991], [muskens-1996]) of
 `Connectives/Defs.lean` is the primary dynamic type; `CCP` connects to it
 via `lift R σ = { j | ∃ i ∈ σ, R i j }` and `lower φ i j = j ∈ φ {i}`,
-which form a Galois connection. The `IsDistributive` CCPs — those that
-process elements independently — are exactly the image of `lift`;
-non-distributive operations (`CCP.negTest`, `CCP.might`, `CCP.must`) test
-the *whole* input state rather than filtering per-element.
+which form a round-trip pair: `lower ∘ lift = id` everywhere
+(`lower_lift`), and `lift ∘ lower = id` exactly on the distributive CCPs
+(`lift_lower`). The `IsDistributive` CCPs — those that process elements
+independently — are exactly the image of `lift`; non-distributive
+operations (`CCP.negTest`, `CCP.might`, `CCP.must`) test the *whole*
+input state rather than filtering per-element.
 -/
 
 namespace Semantics.Dynamic.Core
@@ -91,6 +93,12 @@ def neg (φ : CCP P) : CCP P :=
   λ s => s \ φ s
 
 open Classical in
+/-- Whole-state test: pass the state through iff it satisfies `C` — the
+shared shape of `negTest`, `might`, `must`, and `impl`, the
+non-distributive tests that inspect the entire input state. -/
+noncomputable def guard (C : InfoStateOf P → Prop) : CCP P :=
+  λ s => if C s then s else ∅
+
 /--
 Test-based negation: passes (returns input) iff φ yields ∅.
 
@@ -100,16 +108,15 @@ coincide only when `φ s = ∅` or `φ s = s` — see
 `Studies/Beaver2001/ABLE.lean` for the proven divergence.
 -/
 noncomputable def negTest (φ : CCP P) : CCP P :=
-  λ s => if (φ s).Nonempty then ∅ else s
+  guard (λ s => ¬ (φ s).Nonempty)
 
-open Classical in
 /--
 Compatibility test ("might"): passes iff φ yields a nonempty result.
 
 might(φ)(s) = s if φ(s) ≠ ∅, else ∅
 -/
 noncomputable def might (φ : CCP P) : CCP P :=
-  λ s => if (φ s).Nonempty then s else ∅
+  guard (λ s => (φ s).Nonempty)
 
 open Classical in
 /--
@@ -118,7 +125,7 @@ Full support test ("must"): passes iff φ returns input unchanged.
 must(φ)(s) = s if φ(s) = s, else ∅
 -/
 noncomputable def must (φ : CCP P) : CCP P :=
-  λ s => if φ s = s then s else ∅
+  guard (λ s => φ s = s)
 
 open Classical in
 /--
@@ -127,7 +134,7 @@ Dynamic implication test: passes iff output of φ is preserved by ψ.
 impl(φ,ψ)(s) = s if φ(s) ⊆ ψ(φ(s)), else ∅
 -/
 noncomputable def impl (φ ψ : CCP P) : CCP P :=
-  λ s => if φ s ⊆ ψ (φ s) then s else ∅
+  guard (λ s => φ s ⊆ ψ (φ s))
 
 /--
 Dynamic disjunction via De Morgan: φ ∨ ψ = ¬(¬φ ; ¬ψ).
@@ -231,20 +238,20 @@ theorem test_eliminative {P : Type*} (u : CCP P) (h : IsTest u) :
   | inr hemp => rw [hemp] at hp; exact False.elim hp
 
 open Classical in
-theorem CCP.negTest_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.negTest φ) := by
-  intro s; simp only [CCP.negTest]; split <;> simp
+theorem CCP.guard_isTest {P : Type*} (C : Set P → Prop) : IsTest (CCP.guard C) := by
+  intro s; simp only [CCP.guard]; split <;> simp
 
-open Classical in
-theorem CCP.might_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.might φ) := by
-  intro s; simp only [CCP.might]; split <;> simp
+theorem CCP.negTest_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.negTest φ) :=
+  CCP.guard_isTest _
 
-open Classical in
-theorem CCP.must_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.must φ) := by
-  intro s; unfold CCP.must; split <;> simp
+theorem CCP.might_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.might φ) :=
+  CCP.guard_isTest _
 
-open Classical in
-theorem CCP.impl_isTest {P : Type*} (φ ψ : CCP P) : IsTest (CCP.impl φ ψ) := by
-  intro s; unfold CCP.impl; split <;> simp
+theorem CCP.must_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.must φ) :=
+  CCP.guard_isTest _
+
+theorem CCP.impl_isTest {P : Type*} (φ ψ : CCP P) : IsTest (CCP.impl φ ψ) :=
+  CCP.guard_isTest _
 
 open Classical in
 /-- Duality for the test pair: might φ = must-not (must-not φ). The
@@ -253,14 +260,12 @@ on eliminative updates). -/
 theorem CCP.might_eq_negTest_negTest {P : Type*} (φ : CCP P) :
     CCP.might φ = CCP.negTest (CCP.negTest φ) := by
   funext s
-  simp only [CCP.might, CCP.negTest]
-  split
-  · rw [if_neg Set.not_nonempty_empty]
-  · rename_i h
-    by_cases hs : s.Nonempty
-    · rw [if_pos hs]
-    · simp only [Set.not_nonempty_iff_eq_empty] at hs
-      rw [hs, if_neg Set.not_nonempty_empty]
+  by_cases h : (φ s).Nonempty
+  · simp [CCP.might, CCP.negTest, CCP.guard, h]
+  · by_cases hs : s.Nonempty
+    · simp [CCP.might, CCP.negTest, CCP.guard, h, hs]
+    · simp [CCP.might, CCP.negTest, CCP.guard, h, hs,
+        Set.not_nonempty_iff_eq_empty.mp hs]
 
 
 section GaloisContent
@@ -620,12 +625,12 @@ theorem might_not_isDistributive :
     show true ∈ s
     exact Or.inl rfl
   have hmem : false ∈ CCP.might φ s := by
-    simp only [CCP.might, hφ_nonempty, ↓reduceIte]
+    simp only [CCP.might, CCP.guard, hφ_nonempty, ↓reduceIte]
     show false ∈ s
     exact Or.inr rfl
   rw [hD s] at hmem
   obtain ⟨i, hi, hmem_i⟩ := hmem
-  simp only [CCP.might] at hmem_i
+  simp only [CCP.might, CCP.guard] at hmem_i
   split at hmem_i
   · next hne =>
     cases hi with
@@ -679,7 +684,7 @@ def lower (φ : CCP S) : Update S :=
 `lift (R₁ ⨟ R₂) = lift R₁ ;; lift R₂`. -/
 theorem lift_dseq (R₁ R₂ : Update S) :
     lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) := by
-  funext σ; ext k; simp only [lift, CCP.seq, dseq, Set.mem_setOf_eq]
+  funext σ; ext k; simp only [lift, CCP.seq, dseq, Relation.Comp, Set.mem_setOf_eq]
   constructor
   · rintro ⟨i, hi, j, hR₁, hR₂⟩
     exact ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩

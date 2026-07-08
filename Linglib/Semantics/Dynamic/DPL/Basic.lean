@@ -379,7 +379,7 @@ theorem atom_eq_test {E : Type*} (p : Assignment E → Prop) :
 theorem conj_eq_dseq {E : Type*} (φ ψ : DPLRel E) :
     toDRS (DPLRel.conj φ ψ) = dseq (toDRS φ) (toDRS ψ) := by
   ext g h
-  simp only [toDRS, DPLRel.conj, dseq]
+  simp only [toDRS, DPLRel.conj, dseq, Relation.Comp]
 
 theorem neg_eq_test_dneg {E : Type*} (φ : DPLRel E) :
     toDRS (DPLRel.neg φ) = test (dneg (toDRS φ)) := by

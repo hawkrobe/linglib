@@ -87,7 +87,7 @@ Might is a TEST: it doesn't change the state (if it passes).
 theorem might_is_test {W : Type*} (φ : Update W) (s : State W)
     (h : (φ s).Nonempty) :
     Update.might φ s = s := by
-  simp [Update.might, Core.CCP.might, h]
+  simp [Update.might, Core.CCP.might, Core.CCP.guard, h]
 
 /--
 Order matters for epistemic might.
@@ -106,13 +106,15 @@ theorem might_order_matters {W : Type*} [DecidableEq W] [Nontrivial W] :
   obtain ⟨w₁, w₂, hne⟩ := exists_pair_ne W
   refine ⟨fun w => w = w₁, inferInstance, {w₁, w₂}, ?_, ?_⟩
   · -- "p and might(not p)" fails: after learning p, only w₁ remains, and ¬p w₁ is false
-    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might]
+    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might,
+      Core.CCP.guard]
     have h_not_nonempty :
         ¬({w ∈ {w ∈ ({w₁, w₂} : Set W) | w = w₁} | ¬w = w₁}).Nonempty := by
       rintro ⟨w, ⟨_, hw_p⟩, hw_np⟩; exact hw_np hw_p
     simp only [h_not_nonempty, ↓reduceIte]
   · -- "might(not p) and p" succeeds: might test passes on {w₁, w₂}, then p keeps w₁
-    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might]
+    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might,
+      Core.CCP.guard]
     have h_nonempty : ({w ∈ ({w₁, w₂} : Set W) | ¬w = w₁}).Nonempty :=
       ⟨w₂, Or.inr rfl, hne.symm⟩
     simp only [h_nonempty, ↓reduceIte]

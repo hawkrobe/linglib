@@ -83,7 +83,7 @@ def existsAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
 /-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h`. -/
 theorem existsAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
     existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h := by
-  simp only [existsAt, dseq, randomAssignAt]
+  simp only [existsAt, dseq, Relation.Comp, randomAssignAt]
   constructor
   · rintro ⟨k, ⟨d, rfl⟩, hφ⟩; exact ⟨d, hφ⟩
   · rintro ⟨d, hφ⟩; exact ⟨Function.update g n d, ⟨d, rfl⟩, hφ⟩
@@ -97,7 +97,7 @@ def forallAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
 /-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (Function.update g n d) k`. -/
 theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
     forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (Function.update g n d) k := by
-  simp only [forallAt, test, dneg, existsAt, dseq, randomAssignAt]
+  simp only [forallAt, test, dneg, existsAt, dseq, Relation.Comp, randomAssignAt]
   constructor
   · rintro ⟨rfl, hneg⟩
     refine ⟨rfl, fun d => ?_⟩

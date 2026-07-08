@@ -262,10 +262,10 @@ theorem not_neq_ccpNegTest :
     refine Set.mem_diff_of_mem (Or.inr rfl) ?_
     intro ⟨_, hf⟩; exact Bool.noConfusion hf
   rw [h] at this
-  simp only [eval, CCP.negTest] at this
+  simp only [eval, CCP.negTest, CCP.guard] at this
   have hne : ({ p : Bool | p ∈ ({true, false} : Set Bool) ∧ p = true}).Nonempty :=
     ⟨true, Or.inl rfl, rfl⟩
-  simp only [hne, ↓reduceIte] at this
+  simp only [hne, not_true, ↓reduceIte] at this
   exact this
 
 -- ════════════════════════════════════════════════════════════════
