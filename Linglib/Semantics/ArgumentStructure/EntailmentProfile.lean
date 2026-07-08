@@ -27,15 +27,15 @@ with Proto-Patient dominance breaking ties.
 - `activitySubjectProfile` … `accomplishmentObjectProfile` — the
   [rappaport-hovav-levin-1998] template-level profile defaults (per-verb
   content lives in the class map, `Semantics/Lexical/LevinClassProfiles.lean`)
-- `AgentivityLattice.AgentivityNode.fromEntailmentProfile`,
-  `AgentivityLattice.PersistenceLevel.fromPatientProfile` — bridges from
+- `AgentivityNode.fromEntailmentProfile`,
+  `PersistenceLevel.fromPatientProfile` — bridges from
   profiles to [grimm-2011]'s agentivity lattice, with the consistency
   theorems relating the two dominance orders
 
 ## Implementation notes
 
 The ten entailments are not independent ([levin-2019] §2.1): volition
-presupposes sentience (`EntailmentProfile.WellFormedInternal`); causation,
+presupposes sentience (`WellFormedInternal`); causation,
 movement, and independent existence pair asymmetrically with Proto-Patient
 entailments (`WellFormedPair`); and the affectedness-related Proto-Patient
 entailments form an implicational hierarchy ([beavers-2010]). Their algebraic
@@ -132,6 +132,10 @@ def pPatientScore : Nat :=
   p.changeOfState.toNat + p.incrementalTheme.toNat +
   p.causallyAffected.toNat + p.stationary.toNat +
   p.dependentExistence.toNat
+
+end EntailmentProfile
+
+variable (p q subj obj : EntailmentProfile)
 
 /-! ### Lattice comparison -/
 
@@ -274,7 +278,7 @@ instance : DecidablePred IsForceRecipient := λ p => by
 /-- An effector carries at least two Proto-Agent entailments. -/
 theorem two_le_pAgentScore_of_isEffector (h : IsEffector p) :
     2 ≤ p.pAgentScore := by
-  simp [pAgentScore, h.1, h.2]
+  simp [EntailmentProfile.pAgentScore, h.1, h.2]
 
 /-! ### Template-level proto-role defaults
 
@@ -318,16 +322,12 @@ objects measure the event. -/
 def accomplishmentObjectProfile : EntailmentProfile :=
   { changeOfState := true, causallyAffected := true }
 
-end EntailmentProfile
-
 /-! ### Bridge to the Grimm agentivity lattice
 
 The Dowty→Grimm feature translation ([grimm-2011] §2.1, Tables 1–2) and the
 consistency theorems relating [dowty-1991]'s dominance orders to the lattice
 order of `Agentivity/Defs.lean`. The bridge lives here, with the profiles it
 translates, so the lattice substrate stays Mathlib-only. -/
-
-namespace AgentivityLattice
 
 /-- Map Dowty's P-Agent entailments to Grimm's agentivity features.
 
@@ -436,7 +436,6 @@ bridge, the lattice's feature count is monotone in the inclusion order
 `PAgentDominates` is precisely lattice order plus an independent-existence
 implication (§2.2). -/
 
-open EntailmentProfile
 
 /-- Feature count is monotone in the inclusion order ([grimm-2011] §2.3):
     ascending the Fig. 1 lattice never loses agentivity features. -/
@@ -485,6 +484,5 @@ theorem outranks_of_lattice_dominance (subj obj : EntailmentProfile)
       absurd ((pAgentDominates_iff obj subj).mp hqp).1
         (lt_iff_le_not_ge.mp hlt).2⟩
 
-end AgentivityLattice
 
 end ArgumentStructure

@@ -30,7 +30,7 @@ namespace Spanish.Predicates
 
 open Minimalist
 open Semantics.Lexical
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 
 -- ============================================================================
 -- § 1: Anticausative Marking

@@ -44,7 +44,6 @@ participant roles.
 -/
 
 open ArgumentStructure
-open ArgumentStructure (EntailmentProfile)
 
 /-! ### The theta-grid (derived from the proto-role profiles) -/
 

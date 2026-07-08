@@ -52,7 +52,7 @@ open Semantics.Lexical
 open Semantics.Lexical.EventStructure (Template)
 open Features.LevinClassProfiles
 open _root_.ArgumentStructure (EntailmentProfile)
-open _root_.ArgumentStructure.EntailmentProfile
+open _root_.ArgumentStructure
 open Root.Kinds
 
 -- ════════════════════════════════════════════════════
@@ -301,7 +301,7 @@ def deriveEnriched (re : Root.Kinds) (mc : MeaningComponents) : Option ArgTempla
     | .activity =>
       if mc.contact then
         -- Transitive activity: subject gets C from causal interaction
-        some { subjectProfile := ArgumentStructure.EntailmentProfile.accomplishmentSubjectProfile,
+        some { subjectProfile := ArgumentStructure.accomplishmentSubjectProfile,
                objectProfile := some Features.LevinClassProfiles.contactObject }
       else
         some base

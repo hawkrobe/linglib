@@ -37,8 +37,7 @@ succeed and where they diverge from the modern approach.
 namespace Dowty1991
 
 open Semantics.Lexical
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open Features.LevinClassProfiles
 open English.Predicates.Verbal
 
@@ -498,9 +497,9 @@ theorem break_object_it_divergence :
     creation verb. Recorded, not flipped. -/
 theorem eat_object_de_tension :
     matchesProfile Rows.eatObject consumptionObject = true ∧
-    ArgumentStructure.AgentivityLattice.PersistenceLevel.fromPatientProfile
+    PersistenceLevel.fromPatientProfile
       consumptionObject = .exPersBeginning ∧
-    ArgumentStructure.AgentivityLattice.PersistenceLevel.fromPatientProfile
+    PersistenceLevel.fromPatientProfile
       { consumptionObject with dependentExistence := true } = .exPersEnd := by
   refine ⟨by decide, by decide, by decide⟩
 

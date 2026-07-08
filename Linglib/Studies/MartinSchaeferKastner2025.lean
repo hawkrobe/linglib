@@ -65,7 +65,7 @@ namespace MartinSchaeferKastner2025
 
 open Minimalist.Voice (Flavor)
 open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile (PredictsUnaccusative)
+open ArgumentStructure (PredictsUnaccusative)
 open Pragmatics.GriceanMaxims (MannerSubmaxim)
 open French.Predicates
 
