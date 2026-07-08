@@ -2,7 +2,7 @@ import Linglib.Studies.KeshetAbney2024.Bridges
 import Linglib.Studies.KeshetAbney2024.Connectives
 import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Semantics.Dynamic.Connectives.Defs
-import Linglib.Semantics.Dynamic.Connectives.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Data.Examples.Heim1982
 import Linglib.Data.Examples.ElliottSudo2025
 import Mathlib.Data.Set.Basic
@@ -44,6 +44,82 @@ and proves that PIP's predictions match the empirical data on worked
 finite models.
 
 -/
+
+/-! ### Dynamic quantification over `Assignment E`
+
+[groenendijk-stokhof-1991] [muskens-1996]
+
+`Nat`-indexed dynamic operators on the Tarski-style state `Assignment E := Nat → E`
+(`Core.Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
+(DPL `∃x_n.φ`, CDRT `[u_n]; φ`), `forallAt n φ` (DPL `∀x_n.φ`), `closeAt φ` (DPL `◇φ`).
+`existsAt n` is `dseq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`dneg`.
+The abstract `AssignmentStructure` (`Dynamic/Core/DynamicTy2.lean`) takes drefs `S → E`,
+but only projection drefs `fun g => g n` make sense for concrete `Assignment E`.
+
+The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
+`Semantics.Dynamic.Core` so they read as substrate names, awaiting promotion to
+`Studies/GroenendijkStokhof1991.lean`. -/
+
+namespace Semantics.Dynamic.Core
+
+open _root_.Core (Assignment)
+open Semantics.Dynamic.Core.DynProp
+
+variable {E : Type*}
+
+/-- The "open file card n" operation: `g[n↦?]` non-deterministically. -/
+def randomAssignAt (n : Nat) : Update (Assignment E) :=
+  fun g h => ∃ d : E, h = Function.update g n d
+
+/-- `existsAt n φ` is `dseq (randomAssignAt n) φ`. Holds at `(g, h)` iff
+some witness `d : E` makes `φ` accept the input `g[n↦d]` and produce `h`. -/
+def existsAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
+  dseq (randomAssignAt n) φ
+
+/-- The decomposition: `existsAt = dseq ∘ randomAssignAt`. -/
+@[simp] theorem existsAt_eq_dseq (n : Nat) (φ : Update (Assignment E)) :
+    existsAt n φ = dseq (randomAssignAt n) φ := rfl
+
+/-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h`. -/
+theorem existsAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
+    existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h := by
+  simp only [existsAt, dseq, randomAssignAt]
+  constructor
+  · rintro ⟨k, ⟨d, rfl⟩, hφ⟩; exact ⟨d, hφ⟩
+  · rintro ⟨d, hφ⟩; exact ⟨Function.update g n d, ⟨d, rfl⟩, hφ⟩
+
+/-- `forallAt n φ`: a test that requires `φ` to succeed for every value at `n`.
+Definitionally `test (dneg (existsAt n (test (dneg φ))))` — the standard
+DPL/Muskens reduction `∀ ≈ ¬∃¬`. -/
+def forallAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
+  test (dneg (existsAt n (test (dneg φ))))
+
+/-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (Function.update g n d) k`. -/
+theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
+    forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (Function.update g n d) k := by
+  simp only [forallAt, test, dneg, existsAt, dseq, randomAssignAt]
+  constructor
+  · rintro ⟨rfl, hneg⟩
+    refine ⟨rfl, fun d => ?_⟩
+    by_contra hne
+    push_neg at hne
+    exact hneg ⟨Function.update g n d,
+      ⟨Function.update g n d, ⟨d, rfl⟩, rfl, fun ⟨k, hφ⟩ => hne k hφ⟩⟩
+  · rintro ⟨rfl, hall⟩
+    refine ⟨rfl, ?_⟩
+    rintro ⟨_, ⟨_, ⟨d, rfl⟩, rfl, hneg⟩⟩
+    exact hneg (hall d)
+
+/-- `closeAt φ`: a test that succeeds iff `φ` has any output. Equals
+`test (closure φ)` from `Connectives.Defs`. -/
+def closeAt (φ : Update (Assignment E)) : Update (Assignment E) :=
+  test (closure φ)
+
+@[simp] theorem closeAt_eq (φ : Update (Assignment E)) :
+    closeAt φ = test (closure φ) := rfl
+
+end Semantics.Dynamic.Core
+
 
 namespace KeshetAbney2024
 

@@ -1,4 +1,8 @@
-/-
+import Linglib.Semantics.Dynamic.Core.Update
+import Linglib.Core.Logic.Bilateral.Defs
+import Mathlib.Algebra.Group.Defs
+
+/-!
 # Bilateral Denotations
 
 
@@ -32,20 +36,14 @@ BilateralDen W E = {
 
 ## Cross-cutting pointers
 
-This is the BUS / bilateral DNE strategy listed in `Dynamic/Core/DynProp.lean`'s
-"three incompatible DNE solutions" table. The ICDRT-flavored variant
-(`InfoState` → `IContext`) lives in `Dynamic/Bilateral/ICDRT.lean`, and the
-empirical comparison against full ICDRT (which solves disagreement, modal
+This is the BUS / bilateral DNE strategy listed in `Dynamic/Connectives/Defs.lean`'s
+"three incompatible DNE solutions" table. The empirical comparison
+against full ICDRT (which solves disagreement, modal
 subordination, and three-way veridicality on top of DNE + bathroom) is in
 `Studies/Hofmann2025.lean §7`. The empirical comparison
 against PLA (which lacks DNE for anaphora and fails on the bathroom
 sentence) is in `Studies/Dekker2012.lean`.
-
 -/
-
-import Linglib.Semantics.Dynamic.Core.Update
-import Linglib.Core.Logic.Bilateral.Defs
-import Mathlib.Algebra.Group.Defs
 
 namespace Semantics.Dynamic.Core
 

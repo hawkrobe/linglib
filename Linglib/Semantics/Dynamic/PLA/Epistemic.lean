@@ -1,4 +1,7 @@
-/-
+import Linglib.Semantics.Dynamic.PLA.Update
+import Linglib.Semantics.Intensional.Rigidity
+
+/-!
 # PLA Epistemic Operators
 
 [dekker-2012] Chapter 4: Quantification and Modality (§4.3: Alethic and Epistemic Modality).
@@ -19,11 +22,7 @@ TEST the information state:
 For de re/de dicto distinctions:
 - A peg is an extensional reference to an entity
 - A concept is an intensional way of identifying entities
-
 -/
-
-import Linglib.Semantics.Dynamic.PLA.Update
-import Linglib.Semantics.Intensional.Rigidity
 
 namespace Semantics.Dynamic.PLA
 

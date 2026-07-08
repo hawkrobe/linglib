@@ -57,7 +57,7 @@ incompatible ways:
 
 | Framework | DNE mechanism | File |
 |-----------|---------------|------|
-| Bilateral (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]) | Two update channels (positive/negative); negation = swap | `Dynamic/Bilateral/Basic.lean`, `Dynamic/Bilateral/ICDRT.lean` |
+| Bilateral (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]) | Two update channels (positive/negative); negation = swap | `Dynamic/Effects/Bilateral.lean`, `Studies/ElliottSudo2025.lean` |
 | ICDRT ([hofmann-2025]) | Propositional drefs + complementation under flat update | `Studies/Hofmann2025.lean` |
 | TTR ([cooper-2023]) | Classical metalanguage reduction; negation is static | `Semantics/TypeTheoretic/` |
 
@@ -81,9 +81,7 @@ link to one of these comparisons.
 
 namespace Semantics.Dynamic.Core.DynProp
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Core Types
--- ════════════════════════════════════════════════════════════════
+/-! ### Core types -/
 
 /-- Update meaning: type `s(st)` — binary relation on states.
 
@@ -99,9 +97,7 @@ Static conditions that do not change the state. Conditions are
 lifted to Update meanings via `test`. -/
 abbrev Condition (S : Type*) := S → Prop
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Operations
--- ════════════════════════════════════════════════════════════════
+/-! ### Operations -/
 
 section Operations
 
@@ -170,9 +166,7 @@ scoped notation "!" D => closure D
 
 end Operations
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Truth and Entailment
--- ════════════════════════════════════════════════════════════════
+/-! ### Truth and entailment -/
 
 section Truth
 
@@ -193,9 +187,7 @@ scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
 
 end Truth
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Algebraic Properties
--- ════════════════════════════════════════════════════════════════
+/-! ### Algebraic properties -/
 
 section Theorems
 

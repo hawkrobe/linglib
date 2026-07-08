@@ -1,4 +1,8 @@
-/-
+import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Features.MassCount
+import Mathlib.Data.Fintype.Basic
+
+/-!
 # Discourse Referents
 
 Types for individual, propositional, and concept discourse referents.
@@ -44,16 +48,7 @@ ICDRT extends DRT with propositional discourse referents:
 
 This separation enables anaphora to indefinites under negation:
 "Either there's no bathroom, or it's upstairs."
-
 -/
-
-import Linglib.Data.UD.Basic
-import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Features.MassCount
-import Mathlib.Data.Fintype.Basic
-import Linglib.Morphology.Word
-
-
 
 namespace Semantics.Dynamic.Core
 
@@ -142,7 +137,7 @@ end Entity
 -- Concept Discourse Referents
 -- ════════════════════════════════════════════════════
 
--- Mass/Count Feature: uses `MassCount` from `Core.Lexical.Word`.
+-- Mass/Count Feature: uses `MassCount` from `Features.MassCount`.
 
 /--
 A concept discourse referent value: a property annotated with a
@@ -293,7 +288,7 @@ In ICDRT, we need to track two kinds of assignments:
 2. Propositional variable assignments: PVar → Set W
 
 This is used by intensional dynamic semantics
-(`Dynamic/Core/Intensional.lean`); simpler theories can use Nat → E.
+(`Dynamic/Intensional.lean`); simpler theories can use Nat → E.
 -/
 structure ICDRTAssignment (W : Type*) (E : Type*) where
   /-- Individual variable assignment: intensional individual drefs (individual

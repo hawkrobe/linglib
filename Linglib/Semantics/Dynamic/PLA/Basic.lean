@@ -1,8 +1,16 @@
-/-
-# Predicate Logic with Anaphora (PLA)
-[dekker-2012]
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Fold
+import Mathlib.Data.Finset.Union
+import Mathlib.Data.List.Basic
+import Mathlib.Data.Fintype.Basic
 
-[dekker-2012]'s foundational system for dynamic semantics.
+/-!
+# Predicate Logic with Anaphora (PLA)
+[dekker-1994] [dekker-2012]
+
+The foundational system for dynamic semantics with explicit pronoun
+indices, originating in [dekker-1994] and consolidated in [dekker-2012].
 
 ## Innovation
 
@@ -23,15 +31,7 @@ This distinction prevents variable clash and enables clean compositional semanti
 ## Implementation Notes
 
 Uses `Finset.biUnion` instead of `List.foldl` for cleaner proofs.
-
 -/
-
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Fold
-import Mathlib.Data.Finset.Union
-import Mathlib.Data.List.Basic
-import Mathlib.Data.Fintype.Basic
 
 namespace Semantics.Dynamic.PLA
 

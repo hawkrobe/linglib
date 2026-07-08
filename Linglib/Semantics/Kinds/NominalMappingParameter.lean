@@ -379,7 +379,7 @@ inductive NominalDenotation where
   deriving Repr, DecidableEq
 
 -- Mass/Count Distinction
--- Uses `MassCount` from `Core.Lexical.Word`.
+-- Uses `MassCount` from `Features.MassCount`.
 
 /--
 Pluralization / mass extension: the set of non-empty sub-individuals.

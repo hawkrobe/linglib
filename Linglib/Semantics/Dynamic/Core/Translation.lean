@@ -1,4 +1,7 @@
-/-
+import Linglib.Semantics.Dynamic.Core.Update
+import Linglib.Core.Logic.Assignment
+
+/-!
 # Dynamic Semantics Translation Layer
 
 Unifies PLA ([dekker-2012]) and Core (Muskens-style) infrastructures.
@@ -15,11 +18,7 @@ Core uses:
 
 1. PLA to Core: set W = Unit, merge assignment and witnesses
 2. Core to PLA: split assignment, use trivial world
-
 -/
-
-import Linglib.Semantics.Dynamic.Core.Update
-import Linglib.Core.Logic.Assignment
 
 namespace Semantics.Dynamic.Core
 

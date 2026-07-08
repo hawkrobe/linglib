@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Bilateral.BUS
+import Linglib.Semantics.Dynamic.Effects.Bilateral
 import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Data.Examples.ElliottSudo2025
 
@@ -51,9 +51,138 @@ open Classical
 
 variable {W E : Type*}
 
--- ============================================================================
--- § 1. Modality concepts
--- ============================================================================
+/-! ### Bilateral Update Semantics
+
+BUS ([elliott-2023], [elliott-sudo-2025]): dynamic semantics with two update
+dimensions (positive, negative) that validates DNE and handles cross-disjunct
+anaphora. A `BUSDen` is a `BilateralDen`; the operations here add
+presupposition (`hasGap`, `defined`), entailment (`strawsonEntails`,
+`strongEntails`), and epistemic modality (`diamond`, `box`). -/
+
+/-- BUS denotation as bilateral denotation. -/
+abbrev BUSDen (W : Type*) (E : Type*) := BilateralDen W E
+
+namespace BUSDen
+
+/-- Truth-value gap: presupposition failure. -/
+def hasGap (φ : BUSDen W E) (s : InfoState W E) : Prop :=
+  φ.positive s ∪ φ.negative s ⊂ s
+
+/-- Sentence is defined (no presupposition failure). -/
+def defined (φ : BUSDen W E) (s : InfoState W E) : Prop :=
+  φ.positive s ∪ φ.negative s = s
+
+/-- Strong Kleene conjunction. -/
+def skConj (φ ψ : BUSDen W E) : BUSDen W E := BilateralDen.conj φ ψ
+
+/-- Presupposition-preserving conjunction. -/
+def pConj (φ ψ : BUSDen W E) : BUSDen W E :=
+  { positive := λ s => ψ.positive (φ.positive s)
+  , negative := λ s =>
+      φ.negative s ∪ (s \ (φ.positive s ∪ φ.negative s)) ∪
+        (φ.positive s ∩ ψ.negative (φ.positive s)) }
+
+/-- Strawson entailment: φ entails ψ when φ is defined and true. -/
+def strawsonEntails (φ ψ : BUSDen W E) : Prop :=
+  ∀ s : InfoState W E,
+    defined φ s →
+    (φ.positive s).consistent →
+    (φ.positive s) ⊆ ψ.positive (φ.positive s)
+
+/-- Strong entailment: φ entails ψ with no presupposition failure. -/
+def strongEntails (φ ψ : BUSDen W E) : Prop :=
+  ∀ s : InfoState W E,
+    (φ.positive s).consistent →
+    defined ψ (φ.positive s) ∧
+    (φ.positive s) ⊆ ψ.positive (φ.positive s)
+
+theorem neg_positive_eq_negative (φ : BUSDen W E) (s : InfoState W E) :
+    (BilateralDen.neg φ).positive s = φ.negative s := rfl
+
+theorem neg_negative_eq_positive (φ : BUSDen W E) (s : InfoState W E) :
+    (BilateralDen.neg φ).negative s = φ.positive s := rfl
+
+theorem disj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
+    (BilateralDen.disj φ ψ).negative s = ψ.negative (φ.negative s) := rfl
+
+theorem conj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
+    (BilateralDen.conj φ ψ).negative s =
+    φ.negative s ∪ ψ.negative (φ.positive s) ∪ ψ.negative (φ.unknownUpdate s) := rfl
+
+/--
+Epistemic possibility: ◇φ as a bilateral denotation.
+
+- s[◇φ]⁺ = s if s[φ]⁺ is consistent, else ∅
+- s[◇φ]⁻ = s if s subsists in s[φ]⁻, else ∅
+
+Equation (73) of [elliott-sudo-2025].
+-/
+def diamond (φ : BUSDen W E) : BUSDen W E :=
+  { positive := λ s => if (φ.positive s).consistent then s else ∅
+  , negative := λ s => if s ⪯ φ.negative s then s else ∅ }
+
+/--
+Epistemic necessity: □φ = ¬◇¬φ.
+-/
+def box (φ : BUSDen W E) : BUSDen W E :=
+  BilateralDen.neg (diamond (BilateralDen.neg φ))
+
+prefix:max "◇ᵇ" => diamond
+prefix:max "□ᵇ" => box
+
+/-- Diamond positive is a test (returns s or ∅). -/
+theorem diamond_positive_isTest (φ : BUSDen W E) :
+    IsTest (◇ᵇφ).positive (P := Possibility W E) := by
+  intro s
+  show (if (φ.positive s).consistent then s else ∅) = s ∨
+       (if (φ.positive s).consistent then s else ∅) = ∅
+  split
+  · left; rfl
+  · right; rfl
+
+/-- Diamond negative is a test (returns s or ∅). -/
+theorem diamond_negative_isTest (φ : BUSDen W E) :
+    IsTest (◇ᵇφ).negative (P := Possibility W E) := by
+  intro s
+  show (if s ⪯ φ.negative s then s else ∅) = s ∨
+       (if s ⪯ φ.negative s then s else ∅) = ∅
+  split
+  · left; rfl
+  · right; rfl
+
+/-- Diamond positive is eliminative (from IsTest). -/
+theorem diamond_positive_eliminative (φ : BUSDen W E) :
+    IsEliminative (◇ᵇφ).positive (P := Possibility W E) :=
+  test_eliminative _ (diamond_positive_isTest φ)
+
+/-- Diamond positive subset (convenience form). -/
+theorem diamond_positive_subset (φ : BUSDen W E) (s : InfoState W E) :
+    (◇ᵇφ).positive s ⊆ s :=
+  diamond_positive_eliminative φ s
+
+/-- Diamond negative is eliminative (from IsTest). -/
+theorem diamond_negative_eliminative (φ : BUSDen W E) :
+    IsEliminative (◇ᵇφ).negative (P := Possibility W E) :=
+  test_eliminative _ (diamond_negative_isTest φ)
+
+/-- Diamond negative subset (convenience form). -/
+theorem diamond_negative_subset (φ : BUSDen W E) (s : InfoState W E) :
+    (◇ᵇφ).negative s ⊆ s :=
+  diamond_negative_eliminative φ s
+
+/-- Box positive is eliminative (□φ = ¬◇¬φ, so positive = diamond negative of ¬φ). -/
+theorem box_positive_eliminative (φ : BUSDen W E) :
+    IsEliminative (□ᵇφ).positive (P := Possibility W E) :=
+  diamond_negative_eliminative (BilateralDen.neg φ)
+
+/-- Box negative is eliminative. -/
+theorem box_negative_eliminative (φ : BUSDen W E) :
+    IsEliminative (□ᵇφ).negative (P := Possibility W E) :=
+  diamond_positive_eliminative (BilateralDen.neg φ)
+
+end BUSDen
+
+/-! ### Modality concepts -/
 
 /-- Possibility: state s makes ◇φ true iff s[φ]⁺ is consistent.
 Equivalent to checking `(BUSDen.diamond φ).positive s` is non-empty. -/
@@ -74,13 +203,11 @@ theorem impossible_iff_empty (φ : BilateralDen W E) (s : InfoState W E) :
 
 /-- Diamond positive = s when φ is possible, ∅ otherwise. -/
 theorem diamond_positive_eq (φ : BilateralDen W E) (s : InfoState W E) :
-    (BUS.BUSDen.diamond φ).positive s =
+    (BUSDen.diamond φ).positive s =
     if possible φ s then s else ∅ := by
-  simp only [possible, BUS.BUSDen.diamond]; rfl
+  simp only [possible, BUSDen.diamond]; rfl
 
--- ============================================================================
--- § 2. Modal disjunction (anaphora-sensitive, eq. 96)
--- ============================================================================
+/-! ### Modal disjunction (anaphora-sensitive) -/
 
 /-- Standard disjunction: the basic bilateral disjunction without FC
 preconditions. -/
@@ -128,9 +255,7 @@ def disjModal (φ ψ : BilateralDen W E) : BilateralDen W E :=
 
 notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
 
--- ============================================================================
--- § 3. Structural properties of disjPos1 / disjPos2
--- ============================================================================
+/-! ### Structural properties of disjPos1 / disjPos2 -/
 
 /-- The partition property guarantees `φ.positive s ⊆ disjPos1 φ ψ s`:
 every possibility verified by φ ends up in disjPos1 (classified by ψ as
@@ -148,9 +273,7 @@ theorem neg_subset_disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E) :
   intro p hp
   exact Set.mem_union_left _ (Set.mem_union_right _ hp)
 
--- ============================================================================
--- § 4. FC theorems (general)
--- ============================================================================
+/-! ### Free choice theorems (general) -/
 
 /-- FC preconditions: if the modal disjunction is possible, both disjuncts
 contribute possibilities. (eq. 96) -/
@@ -176,9 +299,7 @@ theorem fc_disjPos2_nonempty (φ ψ : BilateralDen W E) (s : InfoState W E)
     (disjPos2 φ ψ s).Nonempty :=
   (fc_preconditions φ ψ s h).2
 
--- ============================================================================
--- § 5. Dual prohibition
--- ============================================================================
+/-! ### Dual prohibition -/
 
 /-- Dual prohibition via disjPos1: if disjPos1 is empty (first disjunct
 contributes nothing), modal disjunction is impossible. -/
@@ -198,9 +319,7 @@ theorem dual_prohibition_disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E)
   have ⟨_, h2⟩ := fc_preconditions φ ψ s hc
   exact absurd h2 h
 
--- ============================================================================
--- § 6. Structural results (DNE, negation, binding)
--- ============================================================================
+/-! ### Structural results (DNE, negation, binding) -/
 
 /-- In BUS, negation swaps positive and negative updates. -/
 theorem negation_swaps_dims (φ : BilateralDen W E) (s : InfoState W E) :
@@ -244,9 +363,7 @@ theorem egli_positive (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E)
   intro p hp
   exact hp
 
--- ============================================================================
--- § 7. Bathroom configuration
--- ============================================================================
+/-! ### Bathroom configuration -/
 
 /-- The bathroom disjunction configuration.
 
@@ -263,9 +380,7 @@ structure BathroomConfig (W E : Type*) where
 def bathroomSentence (cfg : BathroomConfig W E) : BilateralDen W E :=
   (BilateralDen.neg cfg.bathroom) ∨ᶠᶜ cfg.funnyPlace
 
--- ============================================================================
--- § 8. FC with anaphora (bathroom-specific)
--- ============================================================================
+/-! ### Free choice with anaphora (bathroom-specific) -/
 
 /-- DNE as structural equality: ¬¬φ = φ. -/
 theorem anaphora_via_dne (cfg : BathroomConfig W E) :
@@ -297,9 +412,7 @@ theorem fc_with_anaphora (cfg : BathroomConfig W E) (s : InfoState W E)
   obtain ⟨⟨p1, hp1⟩, ⟨p2, hp2⟩⟩ := fc_preconditions _ _ s h_poss
   exact ⟨⟨p1, h_dp1 hp1⟩, ⟨p2, h_dp2 hp2⟩⟩
 
--- ============================================================================
--- § 9. Concrete example
--- ============================================================================
+/-! ### Concrete example -/
 
 inductive BathroomWorld where
   | noBathroom

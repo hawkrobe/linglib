@@ -68,7 +68,7 @@ Does the underlying state remember world–assignment correlation?
 |---|---|---|
 | ICDRT | fibered (`indiv : IVar → W → Entity E`) | `HasFiberedLookup` only |
 | Charlow | joint (`Set (W × Assignment E)`) | `HasFiberedLookup` + `HasJointState` |
-| Bayesian (PDS) | joint (`PMF (W × Assignment E)`, per [grove-white-2025b]) | `HasFiberedLookup` + `HasJointState` |
+| Bayesian (PDS, Probabilistic Dynamic Semantics) | joint (`PMF (W × Assignment E)`, per [grove-white-2025b]) | `HasFiberedLookup` + `HasJointState` |
 | Bayesian (fibered) | fibered (`W → PMF (Assignment E)`) | `HasFiberedLookup` only |
 | FCS | joint (`Sat ⊆ World × Assignment`) | `HasFiberedLookup` + `HasJointState` |
 
@@ -133,14 +133,14 @@ Where does pronoun resolution come from?
 | Family | Mechanism |
 |---|---|
 | Heim/Kamp | dref binding via assignment update |
-| E-type / situation | NP reconstruction (Elbourne, Heim 1990) |
+| E-type / situation | NP reconstruction ([elbourne-2005], [heim-1990]) |
 | Charlow | alternatives in the continuation |
 | Hofmann (ICDRT) | propositional drefs as local contexts |
 | Bayesian | posterior conditioning on observed reference |
 
 The deepest seam — not in the lookup signature, but in how lookups get
 used by `Studies/` files. Each Studies file commits in its own
-resolution semantics. (Karttunen 1976 introduced *the idea* of drefs
+resolution semantics. ([karttunen-1976] introduced *the idea* of drefs
 without the assignment-update formalization, so the binding row is
 attributed to Heim/Kamp.)
 
@@ -213,7 +213,7 @@ provides its own `iLookup` implementation that agrees with marginalizing
 its `joint`; the agreement is a per-family proof obligation, not a
 typeclass field.
 
-Frameworks committing to this typeclass: Charlow 2019
+Frameworks committing to this typeclass: [charlow-2019]
 (`State W E := Set (W × Assignment E)`), FCS (`HeimFile` with
 `Sat ⊆ World × Assignment`), PDS Bayesian per [grove-white-2025b]
 (`PMF (W × Assignment E)`). Frameworks that deliberately do *not*

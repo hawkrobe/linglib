@@ -44,7 +44,7 @@ propositional drefs, following [stone-1999] and
 [brasoveanu-2006]'s flat-update approach. Generic ICDRT
 infrastructure (assignments, updates, variable updates, dynamic
 conditions, predication, veridicality typology, multi-agent discourse
-contexts, maximization) lives in `Dynamic/Core/Intensional.lean`;
+contexts, maximization) lives in `Dynamic/Intensional.lean`;
 this file owns Hofmann's Appendix C compositional fragment and the
 empirical applications.
 

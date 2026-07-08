@@ -1,4 +1,7 @@
-/-
+import Linglib.Semantics.Dynamic.PLA.Semantics
+import Linglib.Semantics.Dynamic.Connectives.CCP
+
+/-!
 # PLA Dynamic Update Semantics
 
 [dekker-2012] Chapter 3: Information Update and Support.
@@ -16,11 +19,7 @@
 - Observation 16 (Proper Update): contents-to-updates equivalence
 - Observation 17 (Proper Support): updates-to-support equivalence
 - Dynamic conjunction: non-commutative, non-idempotent
-
 -/
-
-import Linglib.Semantics.Dynamic.PLA.Semantics
-import Linglib.Semantics.Dynamic.Connectives.CCP
 
 namespace Semantics.Dynamic.PLA
 
@@ -281,17 +280,15 @@ theorem exists_domain_idempotent (x : VarIdx) (φ : Formula) :
 DNE failure for dref-introducing formulas (discussed in [dekker-2012] §2.2, around Observation 9).
 
 "It's not the case that no man came. He sat down." - "He" is problematic.
-Negation "traps" drefs: ∃x.P(x) exports x, but ¬¬∃x.P(x) only tests existence.
-This motivates bilateral semantics (BUS), where DNE holds structurally.
+In Dekker's PLA, negation "traps" drefs: ∃x.P(x) introduces a witness to the
+output state while ¬¬∃x.P(x) only tests existence. In this eliminative
+formalization both are filters (see `update_eliminative`), and the contrast
+survives at the domain/range level. This motivates bilateral semantics
+(BUS), where DNE holds structurally.
 -/
 theorem dne_syntactic (φ : Formula) :
     (∼(∼φ)).domain = φ.domain := by
   simp only [Formula.domain]
-
--- NOTE: The semantic difference is that:
--- - ⟦∃x.φ⟧(s) introduces witnesses that subsequent formulas can reference
--- - ⟦¬¬∃x.φ⟧(s) only checks that ⟦∃x.φ⟧(s) ≠ ∅, introducing nothing
--- This is formalized in DeepTheorems.lean
 
 
 /-- Updating with a tautology leaves state unchanged -/
@@ -583,5 +580,87 @@ theorem obs11_deduction_theorem {E : Type*} [Nonempty E] (M : Model E)
     by_contra hnψ
     exact himpl ⟨hp.2.2, hnψ⟩
 
+/-! ### Update-composition and domain API
+
+Membership characterizations for sequenced updates, and structural facts
+about `Formula.domain` / `Formula.range` under negation and existentials.
+Note the eliminative character these make explicit: updates only filter
+the input state (`update_eliminative`), so an existential's witness values
+figure in the *membership condition*, not in the surviving possibilities. -/
+
+section UpdateAPI
+
+open Semantics.Dynamic.Core.CCP
+
+variable {E : Type*} [Nonempty E]
+
+/-- Existential update output characterization. -/
+theorem exists_update_characterization (M : Model E) (x : VarIdx) (φ : Formula)
+    (s : InfoState E) :
+    (Formula.exists_ x φ).update M s =
+    { p ∈ s | ∃ e : E, φ.sat M (p.1[x ↦ e]) p.2 } := by
+  ext p
+  simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
+
+/-- Domain passes through negation. -/
+theorem neg_domain (φ : Formula) :
+    (∼φ).domain = φ.domain := by
+  simp only [Formula.domain]
+
+/-- Double negation preserves range. -/
+theorem dne_range_same (φ : Formula) :
+    (∼(∼φ)).range = φ.range := by
+  simp only [Formula.range]
+
+/-- Existential domain is nonempty. -/
+theorem exists_domain_nonempty (x : VarIdx) (φ : Formula) :
+    (Formula.exists_ x φ).domain.Nonempty := by
+  use x
+  simp only [Formula.domain]
+  exact Finset.mem_insert_self x _
+
+/-- Sequential update composition membership. -/
+theorem seq_update_mem (M : Model E) (φ ψ : Formula) (s : InfoState E) (p : Poss E) :
+    p ∈ (φ.update M ;; ψ.update M) s ↔
+    p ∈ s ∧ φ.sat M p.1 p.2 ∧ ψ.sat M p.1 p.2 := by
+  simp only [Core.CCP.seq, Formula.update, InfoState.restrict, Set.mem_setOf_eq]
+  tauto
+
+/-- Sequential update as set comprehension. -/
+theorem seq_update_eq (M : Model E) (φ ψ : Formula) (s : InfoState E) :
+    (φ.update M ;; ψ.update M) s =
+    { p ∈ s | φ.sat M p.1 p.2 ∧ ψ.sat M p.1 p.2 } := by
+  ext p
+  rw [seq_update_mem]
+  simp only [Set.mem_setOf_eq]
+
+/-- Dref-free formulas have commutative conjunction. -/
+theorem static_conjunction_commutes (M : Model E) (φ ψ : Formula) (s : InfoState E)
+    (_hφ : φ.domain = ∅) (_hψ : ψ.domain = ∅) :
+    (φ.update M ;; ψ.update M) s = (ψ.update M ;; φ.update M) s := by
+  rw [seq_update_eq, seq_update_eq]
+  ext p
+  simp only [Set.mem_setOf_eq]
+  tauto
+
+/-- Dynamic conjunction equals static for dref-free formulas. -/
+theorem dyn_eq_static_when_no_drefs (M : Model E) (φ ψ : Formula) (s : InfoState E)
+    (_hφ : φ.domain = ∅) (_hψ : ψ.domain = ∅) :
+    (φ.update M ;; ψ.update M) s = (φ ⋀ ψ).update M s := by
+  rw [seq_update_eq]
+  ext p
+  simp only [Set.mem_setOf_eq, Formula.update, InfoState.restrict, Formula.sat]
+
+/-- The existential marks its variable in the domain; conjunction unions
+    domains, leaving the second conjunct's domain unaffected. -/
+theorem static_existential_local_scope (x : VarIdx) (φ ψ : Formula) :
+    x ∈ (Formula.exists_ x φ).domain ∧
+    (Formula.exists_ x φ ⋀ ψ).domain = (Formula.exists_ x φ).domain ∪ ψ.domain := by
+  constructor
+  · simp only [Formula.domain]
+    exact Finset.mem_insert_self x _
+  · simp only [Formula.domain]
+
+end UpdateAPI
 
 end Semantics.Dynamic.PLA
