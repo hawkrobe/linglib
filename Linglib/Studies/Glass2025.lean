@@ -1,7 +1,6 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Dynamic.Postsupposition
 import Linglib.Semantics.Verb.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
@@ -34,8 +33,8 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 
 Belief verb denotations are `PartialProp W` values produced by
 `DoxasticPredicate.toPartialProp`. The presup field captures the factive
-presupposition (or lack thereof). yǐwéi's postsupposition is a separate
-`Semantics.Dynamic.Postsupposition` value. The `PresupClass` classification and PLC
+presupposition (or lack thereof). yǐwéi's postsupposition is a
+`Postsupposition` value (§2 below). The `PresupClass` classification and PLC
 validation from `Doxastic.lean` derive the contrafactive gap.
 -/
 
@@ -43,7 +42,6 @@ namespace Glass2025
 
 open Semantics.Attitudes.Doxastic
 open Semantics.Presupposition
-open Semantics.Dynamic.Postsupposition
 open Semantics.Lexical
 open English.Predicates.Verbal
 open Mandarin.Predicates
@@ -76,7 +74,68 @@ private def neutralCtx : List MiniWorld := [.w0, .w1]
 private def contrafactiveCtx : List MiniWorld := [.w1]
 
 -- ============================================================================
--- §2. Belief Verb PartialProps
+-- §2. Postsuppositions
+-- ============================================================================
+
+/-!
+Output-context constraints ([brasoveanu-2013]): conditions on the Common
+Ground *after* an utterance updates it, as opposed to presuppositions,
+which constrain the *input* context. [glass-2025] argues Mandarin yǐwéi
+carries the postsupposition ◇¬p: after accepting "x yǐwéi p", the
+CommonGround must be compatible with ¬p — a condition not derivable from
+veridicality alone.
+-/
+
+/-- A postsupposition: a constraint on the output context after a discourse
+    update, taking the context set (as `List W`) and the embedded
+    proposition. -/
+structure Postsupposition (W : Type*) where
+  condition : List W → (W → Prop) → Prop
+
+namespace Postsupposition
+
+variable {W : Type*}
+
+/-- No postsupposition (trivially satisfied). -/
+protected def none : Postsupposition W := ⟨fun _ _ => True⟩
+
+/-- Weak contrafactive: the output context is *compatible* with ¬p — some
+    world in the output context falsifies p. This is yǐwéi's ◇¬p
+    ([glass-2025], [glass-2023]). -/
+def weakContrafactive : Postsupposition W :=
+  ⟨fun cs p => ∃ w ∈ cs, ¬ p w⟩
+
+/-- Strong contrafactive: the output context *entails* ¬p — every world in
+    the output context falsifies p. The hypothetical *contra* verb's
+    requirement — UNATTESTED. -/
+def strongContrafactive : Postsupposition W :=
+  ⟨fun cs p => ∀ w ∈ cs, ¬ p w⟩
+
+/-- The trivial postsupposition is always satisfied. -/
+theorem none_condition (cs : List W) (p : W → Prop) :
+    Postsupposition.none.condition cs p := trivial
+
+/-- Strong contrafactivity entails weak (nonempty contexts): CommonGround ⊨ ¬p
+    forces CommonGround ◇ ¬p — [glass-2025]'s observation that yǐwéi's
+    requirement is strictly weaker than *contra*'s. -/
+theorem strong_entails_weak {cs : List W} {p : W → Prop} (hne : cs ≠ [])
+    (h : strongContrafactive.condition cs p) :
+    weakContrafactive.condition cs p :=
+  match cs, hne with
+  | w :: _, _ => ⟨w, by simp, h w (by simp)⟩
+
+/-- Weak contrafactivity does not entail strong: a context can be compatible
+    with ¬p without entailing ¬p. -/
+theorem weak_not_entails_strong :
+    ∃ (cs : List Bool) (p : Bool → Prop),
+      weakContrafactive.condition cs p ∧ ¬ strongContrafactive.condition cs p :=
+  ⟨[true, false], (· = true), ⟨false, by simp, by simp⟩,
+    fun h => h true (by simp) rfl⟩
+
+end Postsupposition
+
+-- ============================================================================
+-- §3. Belief Verb PartialProps
 -- ============================================================================
 
 /-!
@@ -114,7 +173,7 @@ private def yiweiPostsup : Postsupposition MiniWorld :=
   Postsupposition.weakContrafactive
 
 -- ============================================================================
--- §3. Table 1: Context-Set Satisfaction ([glass-2025])
+-- §4. Table 1: Context-Set Satisfaction ([glass-2025])
 -- ============================================================================
 
 /-!
@@ -173,13 +232,16 @@ theorem yiwei_presup_satisfied_neutral :
   intro _ _; trivial
 
 theorem yiwei_postsup_fails_factive :
-    yiweiPostsup.satisfied factiveCtx prop = false := rfl
+    ¬ yiweiPostsup.condition factiveCtx (prop · = true) := by
+  simp [yiweiPostsup, Postsupposition.weakContrafactive, factiveCtx, prop]
 
 theorem yiwei_postsup_satisfied_neutral :
-    yiweiPostsup.satisfied neutralCtx prop = true := rfl
+    yiweiPostsup.condition neutralCtx (prop · = true) :=
+  ⟨.w1, by simp [neutralCtx], by simp [prop]⟩
 
 theorem yiwei_postsup_satisfied_contrafactive :
-    yiweiPostsup.satisfied contrafactiveCtx prop = true := rfl
+    yiweiPostsup.condition contrafactiveCtx (prop · = true) :=
+  ⟨.w1, by simp [contrafactiveCtx], by simp [prop]⟩
 
 -- contra: presup satisfied only in contrafactive context
 
@@ -199,7 +261,7 @@ theorem contra_satisfied_contrafactive :
   subst hw; rfl
 
 -- ============================================================================
--- §4. Per-Verb Verification: Fragment Entries → PresupClass
+-- §5. Per-Verb Verification: Fragment Entries → PresupClass
 -- ============================================================================
 
 /-!
@@ -253,11 +315,11 @@ theorem yiwei_veridicality_nonfactive :
   native_decide
 
 -- ============================================================================
--- §5. yǐwéi Exception: Postsupposition Not Derivable from Veridicality
+-- §6. yǐwéi Exception: Postsupposition Not Derivable from Veridicality
 -- ============================================================================
 
 /-!
-yǐwéi is classified as nonfactive by veridicality (§4), but it has an
+yǐwéi is classified as nonfactive by veridicality (§5), but it has an
 additional postsupposition ◇¬p that is NOT derivable from veridicality.
 Veridicality is a derivable property of the canonical Mandarin entry; the
 postsupposition is [glass-2025]'s paper-specific overlay, recorded here
@@ -266,7 +328,7 @@ in the study rather than as a field on the Fragment entry.
 
 /-- Postsupposition type: output-context constraint distinct from
     presuppositions ([glass-2025]). The world-type-independent tag; the
-    concrete construct is `Semantics.Dynamic.Postsupposition`. -/
+    concrete construct is `Postsupposition` (§2). -/
 inductive PostsupType where
   /-- Output context must be compatible with ¬p: ◇¬p ([glass-2025]). -/
   | weakContrafactive
@@ -294,7 +356,7 @@ theorem yiwei_postsup_not_from_veridicality :
   ⟨by native_decide, rfl⟩
 
 -- ============================================================================
--- §6. The Contrafactive Gap
+-- §7. The Contrafactive Gap
 -- ============================================================================
 
 /-!
@@ -325,7 +387,7 @@ theorem all_english_attitude_verbs_valid :
   native_decide
 
 -- ============================================================================
--- §7. End-to-End Derivation
+-- §8. End-to-End Derivation
 -- ============================================================================
 
 /-!
@@ -358,11 +420,11 @@ theorem know_presup_fails_endtoend :
     (where veridicality-based presupposition is vacuously OK). -/
 theorem yiwei_endtoend :
     (∀ w ∈ neutralCtx, yiweiPresup.presup w) ∧
-    yiweiPostsup.satisfied neutralCtx prop = true :=
-  ⟨fun _ _ => trivial, rfl⟩
+    yiweiPostsup.condition neutralCtx (prop · = true) :=
+  ⟨fun _ _ => trivial, ⟨.w1, by simp [neutralCtx], by simp [prop]⟩⟩
 
 -- ============================================================================
--- §8. Connection to Neg-Raising ([glass-2025] §4.2)
+-- §9. Connection to Neg-Raising ([glass-2025] §4.2)
 -- ============================================================================
 
 /-!

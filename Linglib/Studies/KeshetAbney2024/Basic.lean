@@ -21,7 +21,7 @@ PIP is natively a **static, truth-conditional** system: formulas denote
 truth values relative to a model, plural assignment set G, and evaluation
 world w*. Our formalization encodes PIP as a dynamic update system over
 the generic intensional context type `IContext W E` (in
-`Dynamic/Core/Intensional.lean`), which is a legitimate approach:
+`Dynamic/Intensional.lean`), which is a legitimate approach:
 [brasoveanu-2010] shows the equivalence between plural predicate calculi
 and dynamic plural logics. The key properties (label monotonicity,
 external/local variable distinction) are faithfully preserved.

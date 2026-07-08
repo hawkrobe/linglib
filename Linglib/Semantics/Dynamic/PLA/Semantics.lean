@@ -1,4 +1,8 @@
-/-
+import Linglib.Semantics.Dynamic.PLA.Basic
+import Linglib.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Semantics.Dynamic.Core.Translation
+
+/-!
 # PLA Semantics
 [dekker-2012]
 
@@ -19,12 +23,7 @@ M, g, ê ⊨ φ means formula φ is satisfied in model M relative to:
 ### Truth
 M ⊨ φ means φ is true in M: for all assignments g, there exists a witness
 sequence ê such that M, g, ê ⊨ φ.
-
 -/
-
-import Linglib.Semantics.Dynamic.PLA.Basic
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
-import Linglib.Semantics.Dynamic.Core.Translation
 
 namespace Semantics.Dynamic.PLA
 

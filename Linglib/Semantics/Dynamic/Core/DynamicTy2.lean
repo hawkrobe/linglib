@@ -1,9 +1,11 @@
-/-
+import Linglib.Semantics.Dynamic.Connectives.Defs
+
+/-!
 # Dynamic Ty2: Compositional Dynamic Semantics
 [muskens-1996] [brasoveanu-2007]
 
 The compositional layer that [muskens-1996] adds on top of the
-core dynamic algebra (defined in `Core.Update`): discourse referents as
+core dynamic algebra (defined in `Connectives/Defs.lean`): discourse referents as
 functions from states (`Dref S E = S → E`), the `AssignmentStructure`
 class for random assignment, and atomic condition constructors.
 
@@ -22,7 +24,7 @@ dref's as functions taking info states as arguments.
 | `e` | Individuals | `E` parameter |
 | `t` | Truth values | `Prop` |
 | `sτ` | Drefs (for static τ) | `S → τ` |
-| `s(st)` | Update meanings | `Update S` (from `Core.Update`) |
+| `s(st)` | Update meanings | `Update S` (from `Connectives/Defs.lean`) |
 
 ## Embeddings
 
@@ -30,10 +32,7 @@ dref's as functions taking info states as arguments.
 - PLA: variables + pronouns via resolution
 - DRT: isomorphic to CDRT (box notation)
 - BUS: Dynamic Ty2 + bilateral (pos/neg) structure
-
 -/
-
-import Linglib.Semantics.Dynamic.Connectives.Defs
 
 namespace Semantics.Dynamic.Core
 

@@ -8,21 +8,22 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 /-!
 # Necessity modals over expectation states
 
-[portner-2018]'s **partially ordered set of worlds** (posw, his (1),
-Ch. 4) — the pair `⟨cs, ≤⟩` of a context set and an ordering that his
-mood unification has verbal mood, sentence mood, and modal flavor
-operate on — is [veltman-1996]'s expectation state `ExpState` read at
-the discourse level, a lineage Portner makes explicit: his update
-operations (2) "build on the techniques of update logic developed by"
-[veltman-1996], with the `⋆`-update written via Veltman's `∘`
-refinement. `info` is the Stalnakerian context set ([stalnaker-1978]),
-`order` the Kratzerian ordering source ([kratzer-1981]),
-`ExpState.assert` the `+`-update (his (2a)), and `ExpState.promote`
-the `⋆`-update (his (2b); [portner-2004]'s To-Do-List update). Portner's central architectural insight — belief vs. desire
-is `□_cs` vs. `□_≤` over the same agent's state, assertion vs.
-directive is `+` vs. `⋆` over the discourse state — becomes: the two
-updates touch disjoint components (`ExpState.assert_order`,
-`ExpState.promote_info`), and the two modals quantify over them.
+[portner-2018]'s **partially ordered set of worlds** (posw) — the pair
+`⟨cs, ≤⟩` of a context set and an ordering that his mood unification has
+verbal mood, sentence mood, and modal flavor operate on — is
+[veltman-1996]'s expectation state `ExpState` read at the discourse
+level, a lineage Portner makes explicit by crediting Veltman's update
+logic for his update operations and writing the promotion update via
+Veltman's `∘` refinement. `info` is the Stalnakerian context set
+([stalnaker-1978]), `order` the Kratzerian ordering source
+([kratzer-1981]), `ExpState.assert` Portner's assertive update, and
+`ExpState.promote` his ordering-refinement update ([portner-2004]'s
+To-Do-List update). Portner's central architectural insight — belief vs.
+desire is `□_cs` vs. `□_≤` over the same agent's state, assertion vs.
+directive is the informational vs. the preferential update over the
+discourse state — becomes: the two updates touch disjoint components
+(`ExpState.assert_order`, `ExpState.promote_info`), and the two modals
+quantify over them.
 
 This file adds the *modal* half of that API: the necessity modals
 `□_cs` (`boxCs`) and `□_≤` (`boxLe`), the `best` worlds the latter
@@ -47,15 +48,15 @@ update a *support* condition (`ExpState.le_assert_iff`,
   ambiguous states are exactly the disconnected ones.
 
 The support conditions are linguistically load-bearing:
-[portner-2018]'s (11) reformulates the attitudes as update fixpoints
-— *believe* as `m + φ = m` and *want* as `m ⋆ φ = m`, extending
+[portner-2018] reformulates the attitudes as update fixpoints —
+*believe* as `m + φ = m` and *want* as `m ⋆ φ = m`, extending
 [farkas-2003]'s Heim-style assertive fixpoint to the preferential
-side — so his (11a)/(11b) are exactly `ExpState.le_assert_iff` /
+side — so his fixpoint clauses are exactly `ExpState.le_assert_iff` /
 `ExpState.le_promote_iff`, and `boxLe_of_respects` is the formal
-relation between his two semantics for *want* (the modal (5b) vs. the
-fixpoint (11b)). That the informational component is the one where
-support and necessity coincide is the type-level face of assertion's
-special status among the updates.
+relation between his two semantics for *want* (modal vs. fixpoint).
+That the informational component is the one where support and
+necessity coincide is the type-level face of assertion's special
+status among the updates.
 
 **Caveat** on the preferential side: [condoravdi-lauer-2012]'s
 *preference structures* are strict partial orders on **propositions**,
@@ -72,18 +73,17 @@ open Core.Order
 
 variable {W : Type*}
 
-/-- **Informational necessity** `□_cs` ([portner-2018], (3a)): `p`
-    holds at every world in the information state. The semantics of
-    `believe` (his (5a)) and the Stalnakerian context-set
-    entailment. -/
+/-- **Informational necessity** `□_cs` ([portner-2018]): `p`
+    holds at every world in the information state — the Stalnakerian
+    context-set entailment, and Portner's semantics of *believe*. -/
 def boxCs (σ : ExpState W) (p : W → Prop) : Prop :=
   ∀ w ∈ σ.info, p w
 
-/-- **Preferential necessity** `□_≤` ([portner-2018], (3b)): `p`
+/-- **Preferential necessity** `□_≤` ([portner-2018]): `p`
     holds at every optimal (best-ranked) world of the information
-    state — Portner's `m_c` is `ExpState.optimal`, "worlds compared
-    to which there are no higher-ranked worlds". The semantics of
-    `want` (his (5b)) and Kratzerian deontic/bouletic modals
+    state — Portner's best-world set is `ExpState.optimal`, the worlds
+    with no higher-ranked competitors. The semantics of
+    *want* and Kratzerian deontic/bouletic modals
     ([kratzer-1981], [condoravdi-lauer-2012]); also exactly the test
     condition of [veltman-1996]'s *presumably* (`presumablyTest`). -/
 def boxLe (σ : ExpState W) (p : W → Prop) : Prop :=
@@ -124,8 +124,8 @@ theorem le_assert_iff_boxCs (σ : ExpState W) (p : W → Prop) :
 
 /-- **Support implies preferential necessity on connected orders**
     ([veltman-1996]'s *normally φ ⊩ presumably φ*, and the bridge
-    between [portner-2018]'s fixpoint semantics for *want* (11b) and
-    his modal semantics (5b)): if the ordering already respects `p`
+    between [portner-2018]'s fixpoint semantics for *want* and
+    his modal semantics): if the ordering already respects `p`
     (the `promote`-support condition, `ExpState.le_promote_iff`) and
     is connected, and the information state has a `p`-world, then `p`
     holds at every optimal world. The converse fails, and without

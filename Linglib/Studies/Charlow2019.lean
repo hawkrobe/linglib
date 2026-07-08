@@ -1,17 +1,17 @@
-/-
-Where is the destructive update problem?.
+import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Core.Logic.CylindricAlgebra
+
+/-!
+# Charlow (2019): Where Is the Destructive Update Problem?
+[charlow-2019]
 
 Destructive update is not empirically problematic: assignment modification
 is shared between static and dynamic systems. The static/dynamic divide
 reduces to a single operator ↑ determining whether modified assignments
 are retained.
-
 -/
-
-import Linglib.Semantics.Dynamic.DPL.Basic
-import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
-import Linglib.Core.Logic.CylindricAlgebra
 
 namespace Semantics.Dynamic.Charlow2019
 
@@ -145,12 +145,110 @@ theorem distributive_implies_anaphoric {W E : Type*} (φ : StateCCP W E) :
     rw [hD s]
     exact ⟨i, ht_sub hi, hpi⟩
 
+-- ════════════════════════════════════════════════════════════════
+-- Pointwise ↔ update-theoretic bridge (Charlow's ↑ / ↓)
+-- ════════════════════════════════════════════════════════════════
+
+/-! Charlow's ↑ (`liftPW`) promotes a pointwise `Update (Assignment E)`
+(Dynamic Ty2, [muskens-1996]) to a context-level `StateCCP W E`; his ↓
+(`lowerPW`) extracts a pointwise relation back. Lifted meanings are always
+distributive (`liftPW_preserves_distributive`), so pointwise meanings can
+never produce irreducibly context-level effects — cumulative readings
+require non-distributive updates, which live only in `StateCCP`. -/
+
+/-- Charlow's ↑: lift a pointwise Update to an update on states.
+    `liftPW D s = {⟨w, h⟩ | ∃ ⟨w, g⟩ ∈ s, D g h}`
+    Each world-assignment pair in the output comes from applying D to some
+    input assignment in s, preserving the world. -/
+def liftPW {W E : Type*} (D : Update (Assignment E)) : StateCCP W E :=
+  λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ D q.2 p.2}
+
+/-- Charlow's ↓: extract a pointwise Update from a state update by
+    evaluating K on a singleton context at an arbitrary world. -/
+def lowerPW {W E : Type*} (K : StateCCP W E) (w₀ : W) : Update (Assignment E) :=
+  λ g h => (w₀, h) ∈ K {(w₀, g)}
+
+/-- Round-trip identity: lowering a lifted Update recovers the original.
+
+    `↓(↑D) = D` because the singleton context `{(w₀, g)}` passes through ↑
+    with only `(w₀, g)` as witness, leaving exactly the pairs `h` with `D g h`. -/
+theorem lowerPW_liftPW {W E : Type*} (D : Update (Assignment E)) (w₀ : W) :
+    lowerPW (liftPW D) w₀ = D := by
+  ext g h
+  constructor
+  · intro hm
+    show D g h
+    simp only [lowerPW, liftPW, Set.mem_setOf_eq] at hm
+    obtain ⟨q, hq, h1, h2⟩ := hm
+    cases hq; exact h2
+  · intro hD
+    show (w₀, h) ∈ liftPW D {(w₀, g)}
+    simp only [liftPW, Set.mem_setOf_eq]
+    exact ⟨(w₀, g), rfl, rfl, hD⟩
+
+/-- ↑ is injective: distinct DRSs yield distinct state updates.
+
+    Follows from the round-trip: `D = ↓(↑D)`, so `↑D₁ = ↑D₂` implies
+    `D₁ = ↓(↑D₁) = ↓(↑D₂) = D₂`. Requires `W` to be nonempty for the
+    lowering witness world. -/
+theorem liftPW_injective {W E : Type*} [Nonempty W] (D₁ D₂ : Update (Assignment E))
+    (h : liftPW (W := W) D₁ = liftPW D₂) :
+    D₁ = D₂ := by
+  have w₀ : W := Classical.arbitrary W
+  calc D₁ = lowerPW (liftPW D₁) w₀ := (lowerPW_liftPW D₁ w₀).symm
+    _ = lowerPW (liftPW D₂) w₀ := by rw [h]
+    _ = D₂ := lowerPW_liftPW D₂ w₀
+
+/-- Lifted pointwise DRSs are always distributive.
+
+    `↑D` processes each element of the input state independently — the output
+    at `p` depends only on whether some `q ∈ s` satisfies `D q.2 p.2` with
+    matching world `p.1 = q.1`. This is exactly the singleton decomposition
+    `(↑D)(s) = ⋃_{i∈s} (↑D)({i})`, which is the definition of distributivity. -/
+theorem liftPW_preserves_distributive {W E : Type*} (D : Update (Assignment E)) :
+    IsDistributive (liftPW (W := W) D) := by
+  intro s; ext p
+  constructor
+  · intro hp
+    simp only [liftPW, Set.mem_setOf_eq] at hp
+    obtain ⟨q, hq, h1, h2⟩ := hp
+    exact ⟨q, hq, by simp only [liftPW, Set.mem_setOf_eq]; exact ⟨q, rfl, h1, h2⟩⟩
+  · rintro ⟨i, hi, hp⟩
+    simp only [liftPW, Set.mem_setOf_eq] at hp ⊢
+    obtain ⟨q, hq, h1, h2⟩ := hp
+    cases hq; exact ⟨i, hi, h1, h2⟩
+
+/-- ↑↓ ≠ id: there exist irreducibly update-theoretic meanings K such that
+    liftPW (lowerPW K w₀) ≠ K.
+
+    The simplest witness is `K _ = {(w₀, g₀)}` (constant function ignoring
+    input). Then `K ∅ = {(w₀, g₀)}`, but `liftPW (lowerPW K w₀) ∅ = ∅`
+    because ↑ has no input pairs to draw.
+
+    Requires `Nonempty W` and `Nonempty E` to construct the witness. -/
+theorem liftPW_lowerPW_not_id {W E : Type*} [Nonempty W] [Nonempty E] :
+    ∃ (K : StateCCP W E) (w₀ : W), liftPW (lowerPW K w₀) ≠ K := by
+  let w₀ : W := Classical.arbitrary W
+  let g₀ : Assignment E := λ _ => Classical.arbitrary E
+  let K : StateCCP W E := λ _ => {(w₀, g₀)}
+  use K, w₀
+  intro heq
+  have h₁ : liftPW (lowerPW K w₀) ∅ = (∅ : State W E) := by
+    ext p; simp only [liftPW, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    rintro ⟨q, hq, _, _⟩; exact hq
+  have h₂ : K ∅ = ({(w₀, g₀)} : State W E) := rfl
+  rw [heq] at h₁
+  rw [h₂] at h₁
+  have : (w₀, g₀) ∈ ({(w₀, g₀)} : State W E) := rfl
+  rw [h₁] at this
+  exact this
+
 /- Charlow's thesis (meta-theoretical): destructive update is not empirically
 problematic. Assignment modification is shared between static and dynamic
 systems. The static/dynamic divide reduces to a single operator ↑ determining
 whether modified assignments are retained. This claim is demonstrated by the
-theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`),
-not by a single formal statement. -/
+theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`,
+`liftPW_preserves_distributive`), not by a single formal statement. -/
 
 -- ════════════════════════════════════════════════════════════════
 -- Effect-functor lookup interface — Charlow as `M = Set` instance

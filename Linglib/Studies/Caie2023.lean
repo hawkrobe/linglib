@@ -1,5 +1,6 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Semantics.Dynamic.ParameterizedUpdate
+import Mathlib.Data.Set.Basic
+import Mathlib.Order.Bounds.Basic
 
 /-!
 # Disjunctive Context Updating
@@ -33,13 +34,15 @@ that made α true at w.
 
 ## Architecture
 
-Disjunctive Updating is an instance of ∃-projection from
-`Semantics.Dynamic.ParameterizedUpdate`: the parameter is the compositional
-context C, and the fragment set `F c w := I w c` says which contexts are
-available at each world. `disjunctiveUpdate` = `existentialUpdate` and
-`prune` = `fiberwiseFilter` (both with argument order swapped).
+Disjunctive Updating is an instance of ∃-projection over a **fragment set**
+(§ 0): meaning depends on a parameter — here the compositional context C —
+and the fragment set `F c w := I w c` says which contexts are available at
+each world. `disjunctiveUpdate` = `existentialUpdate` and `prune` =
+`fiberwiseFilter` (both with argument order swapped).
 
-This means general results — De Morgan duality, monotone collapse,
+The § 0 substrate is deliberately framework-general (thresholds,
+precisifications, comparison classes, assignments are all parameters in the
+same sense), so the general results — De Morgan duality, monotone collapse,
 sequential update = single conjunctive update — apply directly.
 
 ## Relationship to Existing Infrastructure
@@ -51,15 +54,282 @@ sequential update = single conjunctive update — apply directly.
 - The `SpecSpace` in `Supervaluation/Basic.lean` is the ∀-dual:
   super-truth = true under ALL specs; Caie's survival = true under SOME.
 
-- `CCP` in `Dynamic/Core/CCP.lean` operates on ⟨assignment, world⟩ pairs;
-  `ContextFragment` here uses ⟨compositional-context, world⟩ — a structural
-  analogue with different conceptual content.
+- `CCP` in `Dynamic/Connectives/CCP.lean` operates on ⟨assignment, world⟩
+  pairs; `ContextFragment` here uses ⟨compositional-context, world⟩ — a
+  structural analogue with different conceptual content.
 -/
 
 namespace Caie2023
 
 open CommonGround (ContextSet)
-open Semantics.Dynamic.ParameterizedUpdate
+
+-- ════════════════════════════════════════════════════════════════
+-- § 0. Parameterized Update (general substrate)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+Framework-agnostic infrastructure for **parameter uncertainty**: meaning
+depends on a parameter (threshold, compositional context, comparison class,
+variable assignment) and truth at a world involves quantifying over
+available parameters.
+
+A fragment set F ⊆ P × W is a fiber bundle over worlds W; the fiber at w,
+F_w = {p : F(p, w)}, collects the parameters available at that world. An
+assertion φ with parameterized semantics ⟦φ⟧ : P → W → Prop acts as a
+**fiberwise filter**: F' = {(p, w) ∈ F : ⟦φ⟧(p, w)}. Theories differ in how
+they project from the bundle back to worlds, via the ∃ ⊣ Δ ⊣ ∀ adjunction:
+
+- **∃-projection** ([caie-2023], [barker-2002]): w survives iff
+  ∃ p ∈ F_w, ⟦φ⟧(p, w)
+- **∀-projection** (supervaluation, [fine-1975]): w survives iff
+  ∀ p ∈ F_w, ⟦φ⟧(p, w)
+- **Σ-projection** (RSA, [lassiter-goodman-2017]): score(w) =
+  Σ_p weight(p) · ⟦φ⟧(p, w) — a soft interpolation, not formalized here
+
+Comparison classes ([klein-1980]) are ∃-projected parameters in the same
+sense. When the semantics is antitone in the parameter (degree semantics:
+`d > θ`), the projections collapse to extremal checks, and the gap between
+min and max is the **borderline region** where ∃ and ∀ disagree.
+-/
+
+section ParameterizedUpdate
+
+variable {P W : Type*}
+
+/-- A fragment set: a relation between parameters and worlds.
+    F(p, w) holds iff parameter p is available at world w.
+    The fiber at w is F_w = {p : F p w}.
+
+    Generalizes `InterpAssignment C W` from [caie-2023]
+    (argument order swapped). -/
+abbrev FragmentSet (P W : Type*) := P → W → Prop
+
+/-- Fiberwise filter: restrict a fragment set to parameter–world pairs
+    where the semantics holds.
+
+    Generalizes Contextual Pruning ([caie-2023]): after asserting α,
+    only parameters that made α true remain available. -/
+def fiberwiseFilter (F : FragmentSet P W) (sem : P → W → Prop) :
+    FragmentSet P W :=
+  λ p w => F p w ∧ sem p w
+
+/-- Existential projection: w survives iff some parameter in F_w makes
+    the semantics true.
+
+    This is [caie-2023]'s disjunctive updating and [barker-2002]'s
+    dynamics of vagueness. -/
+def existentialProjection (F : FragmentSet P W) (sem : P → W → Prop) :
+    Set W :=
+  λ w => ∃ p, F p w ∧ sem p w
+
+/-- Universal projection: w survives iff all parameters in F_w make the
+    semantics true.
+
+    This is super-truth ([fine-1975]): truth under all admissible
+    precisifications. -/
+def universalProjection (F : FragmentSet P W) (sem : P → W → Prop) :
+    Set W :=
+  λ w => ∀ p, F p w → sem p w
+
+/-- Existential update: restrict to the context set, then ∃-project.
+
+    `existentialUpdate cs F sem w ↔ w ∈ cs ∧ ∃ p ∈ F_w, sem(p, w)`. -/
+def existentialUpdate (cs : Set W) (F : FragmentSet P W)
+    (sem : P → W → Prop) : Set W :=
+  λ w => cs w ∧ existentialProjection F sem w
+
+/-- Universal update: restrict to the context set, then ∀-project.
+
+    `universalUpdate cs F sem w ↔ w ∈ cs ∧ ∀ p ∈ F_w, sem(p, w)`. -/
+def universalUpdate (cs : Set W) (F : FragmentSet P W)
+    (sem : P → W → Prop) : Set W :=
+  λ w => cs w ∧ universalProjection F sem w
+
+/-- **De Morgan duality** (∃-side): ∃-projection of sem ↔
+    negation of ∀-projection of the negation. -/
+theorem deMorgan_existential_universal (F : FragmentSet P W)
+    (sem : P → W → Prop) (w : W) :
+    existentialProjection F sem w ↔
+    ¬ universalProjection F (λ p w => ¬ sem p w) w := by
+  constructor
+  · intro ⟨p, hF, hs⟩ hall; exact hall p hF hs
+  · intro h; by_contra hne
+    exact h fun p hF hs => hne ⟨p, hF, hs⟩
+
+/-- **De Morgan duality** (∀-side): ∀-projection of sem ↔
+    negation of ∃-projection of the negation. -/
+theorem deMorgan_universal_existential (F : FragmentSet P W)
+    (sem : P → W → Prop) (w : W) :
+    universalProjection F sem w ↔
+    ¬ existentialProjection F (λ p w => ¬ sem p w) w := by
+  constructor
+  · intro hall ⟨p, hF, hs⟩; exact hs (hall p hF)
+  · intro h p hF; by_contra hs; exact h ⟨p, hF, hs⟩
+
+/-- Monotone collapse (∃): when sem is `Antitone` in p and F_w has
+    a least element, ∃-projection reduces to checking the minimum.
+
+    The `Antitone` condition on `fun p => sem p w` means `p₁ ≤ p₂ →
+    sem p₂ w → sem p₁ w` — truth propagates downward in the parameter
+    ordering. This is the standard situation in degree semantics:
+    `⟦tall⟧(θ, w) = degree(w) > θ` is antitone in θ. -/
+theorem monotoneCollapse_exists [Preorder P]
+    (F : FragmentSet P W) (sem : P → W → Prop) (w : W) (p₀ : P)
+    (h_least : IsLeast {p | F p w} p₀)
+    (h_anti : Antitone (λ p => sem p w)) :
+    existentialProjection F sem w ↔ sem p₀ w := by
+  constructor
+  · intro ⟨p, hF, hs⟩; exact h_anti (h_least.2 hF) hs
+  · intro hs; exact ⟨p₀, h_least.1, hs⟩
+
+/-- Monotone collapse (∀): when sem is `Antitone` in p and F_w has
+    a greatest element, ∀-projection reduces to checking the maximum.
+
+    For degree semantics: the ∀-projection `∀ θ ∈ Θ, degree(w) > θ`
+    collapses to `degree(w) > max(Θ)`. -/
+theorem monotoneCollapse_forall [Preorder P]
+    (F : FragmentSet P W) (sem : P → W → Prop) (w : W) (p₀ : P)
+    (h_greatest : IsGreatest {p | F p w} p₀)
+    (h_anti : Antitone (λ p => sem p w)) :
+    universalProjection F sem w ↔ sem p₀ w := by
+  constructor
+  · intro hall; exact hall p₀ h_greatest.1
+  · intro hs p hF; exact h_anti (h_greatest.2 hF) hs
+
+/-- Corollary: when sem is antitone and F_w has both a least and
+    greatest element, the ∃ and ∀ projections agree iff w is outside
+    the **borderline region** — either sem holds at the hardest
+    parameter (clearly in) or fails at the easiest (clearly out).
+
+    The borderline region where projections disagree is precisely
+    `sem p_min w ∧ ¬ sem p_max w`. -/
+theorem projections_agree_iff_clear [Preorder P]
+    (F : FragmentSet P W) (sem : P → W → Prop) (w : W) (p_min p_max : P)
+    (h_least : IsLeast {p | F p w} p_min)
+    (h_greatest : IsGreatest {p | F p w} p_max)
+    (h_anti : Antitone (λ p => sem p w)) :
+    (existentialProjection F sem w ↔ universalProjection F sem w) ↔
+    (sem p_max w ∨ ¬ sem p_min w) := by
+  rw [monotoneCollapse_exists F sem w p_min h_least h_anti,
+      monotoneCollapse_forall F sem w p_max h_greatest h_anti]
+  constructor
+  · intro ⟨mp, _⟩
+    by_cases h : sem p_min w
+    · exact Or.inl (mp h)
+    · exact Or.inr h
+  · intro h
+    cases h with
+    | inl hmax => exact ⟨λ _ => hmax, λ hs => h_anti (h_least.2 h_greatest.1) hs⟩
+    | inr hmin => exact ⟨λ hs => absurd hs hmin,
+        λ hs => h_anti (h_least.2 h_greatest.1) hs⟩
+
+/-- Sequential ∃-update with pruning: asserting α then β (where β's
+    parameters are pruned by α) equals a single ∃-update checking
+    both α and β.
+
+    This is the general form of Contextual Pruning ([caie-2023]):
+    the two-step process (update context set by α, prune parameters
+    by α, then update by β) is equivalent to a single update requiring
+    both α and β under the same parameter. -/
+theorem sequential_existentialUpdate (cs : Set W) (F : FragmentSet P W)
+    (sem₁ sem₂ : P → W → Prop) :
+    existentialUpdate
+      (existentialUpdate cs F sem₁)
+      (fiberwiseFilter F sem₁)
+      sem₂ =
+    existentialUpdate cs F (λ p w => sem₁ p w ∧ sem₂ p w) := by
+  funext w
+  simp only [existentialUpdate, existentialProjection, fiberwiseFilter]
+  exact propext ⟨
+    λ ⟨⟨hcs, _⟩, p, ⟨hF, hs₁⟩, hs₂⟩ => ⟨hcs, p, hF, hs₁, hs₂⟩,
+    λ ⟨hcs, p, hF, hs₁, hs₂⟩ => ⟨⟨hcs, p, hF, hs₁⟩, p, ⟨hF, hs₁⟩, hs₂⟩⟩
+
+/-- Sequential ∀-update with pruning: asserting α then β (where β's
+    parameters are pruned by α) equals a single ∀-update checking
+    both α and β.
+
+    The ∀ case works because: if all parameters satisfy α (first step),
+    then "pruned parameters" = "all parameters", so requiring β for
+    pruned parameters = requiring β for all parameters. -/
+theorem sequential_universalUpdate (cs : Set W) (F : FragmentSet P W)
+    (sem₁ sem₂ : P → W → Prop) :
+    universalUpdate
+      (universalUpdate cs F sem₁)
+      (fiberwiseFilter F sem₁)
+      sem₂ =
+    universalUpdate cs F (λ p w => sem₁ p w ∧ sem₂ p w) := by
+  funext w
+  simp only [universalUpdate, universalProjection, fiberwiseFilter]
+  exact propext ⟨
+    λ ⟨⟨hcs, h₁⟩, h₂⟩ =>
+      ⟨hcs, λ p hF => ⟨h₁ p hF, h₂ p ⟨hF, h₁ p hF⟩⟩⟩,
+    λ ⟨hcs, hall⟩ =>
+      ⟨⟨hcs, λ p hF => (hall p hF).1⟩,
+       λ p ⟨hF, _⟩ => (hall p hF).2⟩⟩
+
+/-- ∃-projection is `Monotone` in the fragment set: expanding available
+    parameters can only add surviving worlds. The `FragmentSet P W`
+    type `P → W → Prop` carries the pointwise `→` ordering, and
+    `∃-projection` preserves it. -/
+theorem existentialProjection_mono (F₁ F₂ : FragmentSet P W)
+    (sem : P → W → Prop) (h : ∀ p w, F₁ p w → F₂ p w) (w : W) :
+    existentialProjection F₁ sem w → existentialProjection F₂ sem w :=
+  λ ⟨p, hF, hs⟩ => ⟨p, h p w hF, hs⟩
+
+/-- ∀-projection is `Antitone` in the fragment set: expanding available
+    parameters can only remove surviving worlds (more to check). -/
+theorem universalProjection_anti (F₁ F₂ : FragmentSet P W)
+    (sem : P → W → Prop) (h : ∀ p w, F₁ p w → F₂ p w) (w : W) :
+    universalProjection F₂ sem w → universalProjection F₁ sem w :=
+  λ hall p hF₁ => hall p (h p w hF₁)
+
+/-- ∃-update only removes worlds from the context set. -/
+theorem existentialUpdate_restricts (cs : Set W) (F : FragmentSet P W)
+    (sem : P → W → Prop) (w : W) :
+    existentialUpdate cs F sem w → cs w :=
+  And.left
+
+/-- ∀-update only removes worlds from the context set. -/
+theorem universalUpdate_restricts (cs : Set W) (F : FragmentSet P W)
+    (sem : P → W → Prop) (w : W) :
+    universalUpdate cs F sem w → cs w :=
+  And.left
+
+/-- Fiberwise filter only removes parameters. -/
+theorem fiberwiseFilter_sub (F : FragmentSet P W) (sem : P → W → Prop)
+    (p : P) (w : W) :
+    fiberwiseFilter F sem p w → F p w :=
+  And.left
+
+/-- ∀-update implies ∃-update when the fiber is non-empty.
+    Super-truth implies disjunctive survival. -/
+theorem universalUpdate_implies_existentialUpdate (cs : Set W)
+    (F : FragmentSet P W) (sem : P → W → Prop) (w : W)
+    (h_ne : ∃ p, F p w) :
+    universalUpdate cs F sem w → existentialUpdate cs F sem w :=
+  λ ⟨hcs, hall⟩ => let ⟨p, hF⟩ := h_ne; ⟨hcs, p, hF, hall p hF⟩
+
+/-- When F_w is a singleton {p₀}, both projections agree with
+    a direct check of sem(p₀, w). No parameter uncertainty. -/
+theorem singleton_projections_agree (p₀ : P) (sem : P → W → Prop) (w : W) :
+    existentialProjection (λ p _ => p = p₀) sem w ↔
+    universalProjection (λ p _ => p = p₀) sem w := by
+  constructor
+  · intro ⟨_, hp, hs⟩ p hp'; subst hp; subst hp'; exact hs
+  · intro hall; exact ⟨p₀, rfl, hall p₀ rfl⟩
+
+/-- Singleton ∃-update reduces to propositional filtering. -/
+theorem existentialUpdate_singleton (cs : Set W) (p₀ : P)
+    (sem : P → W → Prop) :
+    existentialUpdate cs (λ p _ => p = p₀) sem =
+    λ w => cs w ∧ sem p₀ w := by
+  funext w
+  simp only [existentialUpdate, existentialProjection]
+  exact propext ⟨
+    λ ⟨hcs, _, hp, hs⟩ => by subst hp; exact ⟨hcs, hs⟩,
+    λ ⟨hcs, hs⟩ => ⟨hcs, p₀, rfl, hs⟩⟩
+
+end ParameterizedUpdate
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -75,7 +345,7 @@ The compositional context determines how context-sensitive expressions
 (indexicals, gradable adjectives, configurational predicates) are
 interpreted; the world determines matters of fact.
 
-Structurally analogous to `Possibility W E` in `Dynamic/Core/CCP.lean`
+Structurally analogous to `Possibility W E` in `Dynamic/Core/Update.lean`
 (⟨world, assignment⟩ pairs in dynamic semantics), but the non-world
 parameter is a compositional context rather than a variable assignment. -/
 structure ContextFragment (C W : Type*) where
@@ -95,7 +365,7 @@ abbrev InterpAssignment (C W : Type*) := W → C → Prop
 
 /-- Convert an `InterpAssignment` to a `FragmentSet` by swapping argument
     order. This is the bridge between Caie's convention (index by world
-    first) and the `ParameterizedUpdate` convention (index by parameter
+    first) and the § 0 convention (index by parameter
     first). -/
 abbrev InterpAssignment.toFragmentSet (I : InterpAssignment C W) :
     FragmentSet C W :=
@@ -131,7 +401,7 @@ def standardUpdate (cs : Set W) (c_w : W → C) (sem : C → W → Prop) : Set W
     interpretation set I_w such that ⟦φ⟧^c is true at w. When I_w is a
     singleton {c_w}, this reduces to `standardUpdate`.
 
-    Defined as `existentialUpdate` from `ParameterizedUpdate` with the
+    Defined as `existentialUpdate` (§ 0) with the
     interpretation assignment as the fragment set (argument order swapped).
 
     [caie-2023]: "The result of updating the context given the assertion
@@ -151,7 +421,7 @@ abbrev disjunctiveUpdate (cs : Set W) (I : InterpAssignment C W)
     If β immediately follows α in a discourse at world w, the compositional
     contexts available for β at w are exactly those that made α true at w.
 
-    Defined as `fiberwiseFilter` from `ParameterizedUpdate` (argument order
+    Defined as `fiberwiseFilter` (§ 0, argument order
     swapped).
 
     [caie-2023]: "if {c : c ∈ I^α_w and w ∈ ⟦α⟧^c} ≠ ∅, then
@@ -308,7 +578,7 @@ theorem discourseStep_restricts (cs : Set W) (I : InterpAssignment C W)
     both α and β under the same parameter.
 
     This is [caie-2023]'s central mechanism, obtained for free from
-    `sequential_existentialUpdate` in `ParameterizedUpdate.lean`. -/
+    `sequential_existentialUpdate` (§ 0). -/
 theorem contextual_pruning_sequential (cs : Set W)
     (I : InterpAssignment C W) (sem₁ sem₂ : C → W → Prop) :
     disjunctiveUpdate

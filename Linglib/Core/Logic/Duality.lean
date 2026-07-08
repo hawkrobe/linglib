@@ -425,7 +425,7 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
     `IsLeast`/`IsGreatest` for monotone collapse, and `GaloisConnection`
     for the extension/intension adjunction.
 
-    See `ParameterizedUpdate.lean` for the shared framework (monotone
+    See `Studies/Caie2023.lean` § 0 for the shared framework (monotone
     collapse via `IsLeast`/`IsGreatest` + `Antitone`, borderline region
     characterization, sequential update with pruning).
 -/

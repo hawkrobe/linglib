@@ -340,10 +340,10 @@ how many negations wrap it.
 
 This is the architectural difference: CDRT uses *state* for binding;
 TTR uses *structure*. The bilateral DNE strategy
-(`Semantics/Dynamic/Bilateral/Basic.lean`) is a third
+(`Semantics/Dynamic/Effects/Bilateral.lean`) is a third
 approach — bilateral DNE is structural at the *state* level (swap is
 involutive), distinct from TTR's structural-at-the-*type* level. The
-three are surveyed in `Dynamic/Core/DynProp.lean`'s "three
+three are surveyed in `Dynamic/Connectives/Defs.lean`'s "three
 incompatible DNE solutions" table. -/
 
 /-- In CDRT, negation destroys anaphoric potential. After `¬φ`, the

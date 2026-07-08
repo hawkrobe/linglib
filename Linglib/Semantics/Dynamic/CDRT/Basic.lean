@@ -1,4 +1,7 @@
-/-
+import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.Core.DynamicTy2
+
+/-!
 # Compositional DRT
 [muskens-1996]
 
@@ -29,11 +32,7 @@ Instead of Update boxes, CDRT uses:
 | s | States (registers/assignments) |
 | π | Registers (discourse referents) |
 | s(st) | Box meanings (binary relations on states) |
-
 -/
-
-import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
 
 namespace Semantics.Dynamic.CDRT
 

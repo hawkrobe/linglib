@@ -1,4 +1,7 @@
-/-
+import Linglib.Semantics.Dynamic.Core.Update
+import Linglib.Semantics.Dynamic.Core.DynamicTy2
+
+/-!
 # Dynamic Predicate Logic
 [groenendijk-stokhof-1991]
 
@@ -24,11 +27,7 @@ In DPL:
 1. Scope extension: ∃x(φ ∧ ψ) ≡ (∃xφ) ∧ ψ if x not free in ψ
 2. Anaphora: variables persist across conjunction
 3. DNE failure: ¬¬φ ≠ φ for anaphora (negation is a test)
-
 -/
-
-import Linglib.Semantics.Dynamic.Core.Update
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
 
 namespace Semantics.Dynamic.DPL
 

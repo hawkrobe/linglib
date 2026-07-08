@@ -1,4 +1,6 @@
-/-
+import Linglib.Semantics.Dynamic.Connectives.CCP
+
+/-!
 # Context Change Potentials
 
 Core update operations for dynamic semantics over `Possibility W E` states.
@@ -6,10 +8,7 @@ Core update operations for dynamic semantics over `Possibility W E` states.
 ## Main definitions
 
 `update`, `randomAssign`, `exists_`, `ofProp`, `ofPred1`, `ofPred2`
-
 -/
-
-import Linglib.Semantics.Dynamic.Connectives.CCP
 
 namespace Semantics.Dynamic.Core
 
@@ -87,7 +86,8 @@ end InfoState
 
 
 /-- Random assignment: introduce new discourse referent at variable x. -/
-def InfoState.randomAssign {W E : Type*} (s : InfoState W E) (x : Nat) (domain : Set E) : InfoState W E :=
+def InfoState.randomAssign {W E : Type*} (s : InfoState W E) (x : Nat)
+    (domain : Set E) : InfoState W E :=
   { p' | ∃ p ∈ s, ∃ e ∈ domain, p' = p.extend x e }
 
 /-- Random assignment with full domain -/

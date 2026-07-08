@@ -318,9 +318,7 @@ theorem content_mono (sat : P → φ → Prop) (ψ₁ ψ₂ : φ)
 end GaloisContent
 
 
--- ============================================================================
--- Separation (filtering) infrastructure
--- ============================================================================
+/-! ### Separation (filtering) infrastructure -/
 
 /-- Filtering a set by a predicate is monotone. This is the shared foundation
     for monotonicity of `updateFromSat`, `atom`, `pred1`, `pred2`, etc. -/

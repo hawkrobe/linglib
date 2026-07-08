@@ -10,7 +10,7 @@ import Mathlib.Data.Set.Basic
 
 Generic infrastructure for dynamic semantics built over `ICDRTAssignment`
 (individual drefs as `IVar → W → Entity E` plus propositional drefs as
-`PVar → Set W`). This is a layer above `Dynamic/Core/DiscourseRef.lean`
+`PVar → Set W`). This is a layer above `Dynamic/DiscourseRef.lean`
 (which owns the assignment type) and below paper-specific theories such as
 [hofmann-2025] (whose paper apparatus lives in
 `Studies/Hofmann2025.lean`).
