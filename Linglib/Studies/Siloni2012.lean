@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentStructure.Reciprocal
+import Linglib.Syntax.Reciprocal
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 
 /-!
@@ -19,17 +19,19 @@ These split into two types based on where reciprocalization applies:
   the syntax via a clitic (*se*). Reciprocity involves accumulation of
   sub-events; the operation is productive.
 
-Nine empirical properties cluster along this divide, verified across ten
-languages (Hebrew, Russian, Hungarian, English, French, Italian, Spanish,
-Czech, Romanian, Serbo-Croatian). Both types disallow the "I" reading of
-embedded reciprocals — because both associate the subject with two
-θ-roles, blocking the sole-role requirement for distribution under
+Nine empirical properties cluster along this divide. The paper's sample:
+the lexicon type in Hebrew, Russian, Hungarian, and English; the syntax
+type in Romance (French, Italian, Spanish, Romanian), Serbo-Croatian,
+Czech, and Bulgarian (fn. 13 extends the split family-wide: East Slavic
+lexical, West and South Slavic syntactic). Both types disallow the "I"
+reading of embedded reciprocals — because both associate the subject with
+two θ-roles, blocking the sole-role requirement for distribution under
 embedding.
 
 ## Connections
 
-- `RecipFormation` from `Typology.lean` — extended with nine predicted
-  properties and per-language verification
+- `RecipFormation` from `Syntax/Reciprocal.lean` — extended with nine
+  predicted properties and per-language verification
 - `EntailmentProfile` — used to define θ-role bundling
 - `Verb.StratifiesOver` (`Semantics/Verb/Distributivity.lean`) — the same
   property: symmetric verbs denote singular events that do not distribute
@@ -41,9 +43,7 @@ namespace Siloni2012
 open Reciprocal
 open ArgumentStructure (EntailmentProfile)
 
--- ════════════════════════════════════════════════════
--- § 1. Three-Way Reciprocal Classification (§2.4)
--- ════════════════════════════════════════════════════
+/-! ### Three-way reciprocal classification (§2.4) -/
 
 /-- The three classes of reciprocal constructions.
 
@@ -84,9 +84,7 @@ def RecipClass.allowsSubEventReading : RecipClass → Bool
   | .lexicalVerb   => false
   | .syntacticVerb => true
 
--- ════════════════════════════════════════════════════
--- § 2. Nine-Property Cluster (§§2–7, §8)
--- ════════════════════════════════════════════════════
+/-! ### The nine-property cluster (§§2–7) -/
 
 /-- Nine empirical properties that systematically distinguish lexical
     from syntactic reciprocal verbs. Each `Bool` indicates whether the
@@ -115,20 +113,25 @@ structure PropertyCluster where
       Exception: Czech allows reciprocal event nominals despite a
       syntactic setting, because Czech nominalization is itself a
       syntactic operation that can access syntactic reciprocal outputs
-      (Hron 2005). -/
+      ([hron-2005]). -/
   eventNominals : Bool
   /-- (viii) Can head phrasal idioms unavailable for the transitive
       alternate (§5.3). -/
   phrasalIdioms : Bool
   /-- (ix) Allows the discontinuous reciprocal construction —
-      subject + comitative "with"-phrase (§7). -/
+      subject + comitative "with"-phrase (§7). Language-level
+      availability; English *kiss*/*hug* resist it despite the lexical
+      setting (fn. 32). -/
   discontinuous : Bool
   deriving DecidableEq, Repr
 
 /-- Predicted cluster for lexically-formed reciprocal verbs.
     Symmetric verbs: closed class, singular event, can be frozen or
     drifted, derive event nominals, head idioms, license discontinuity.
-    Cannot form ECM reciprocals or retain accusative on dative targets. -/
+    Cannot form ECM reciprocals or retain accusative on dative targets.
+    Property (ix) calls the substrate classifier
+    `RecipFormation.allowsDiscontinuous`, so the two agree by
+    construction. -/
 def lexicalProperties : PropertyCluster :=
   { singularEvent                := true
   , productive                   := false
@@ -138,7 +141,7 @@ def lexicalProperties : PropertyCluster :=
   , retainsAccOnDativeSuppression := false
   , eventNominals                := true
   , phrasalIdioms                := true
-  , discontinuous                := true }
+  , discontinuous                := RecipFormation.lexical.allowsDiscontinuous }
 
 /-- Predicted cluster for syntactically-formed reciprocal verbs.
     Productive, allow ECM and sub-events, can retain accusative on
@@ -153,9 +156,12 @@ def syntacticProperties : PropertyCluster :=
   , retainsAccOnDativeSuppression := true
   , eventNominals                := false
   , phrasalIdioms                := false
-  , discontinuous                := false }
+  , discontinuous                := RecipFormation.syntactic.allowsDiscontinuous }
 
-/-- Derive the predicted property cluster from formation locus. -/
+/-- Derive the predicted property cluster from formation locus.
+    Cross-paper verification against [nordlinger-2023]'s `RecipProfile`
+    classifications lives in `Studies/Nordlinger2023.lean` (the newer
+    paper checks consistency with the older). -/
 def predictedProperties : RecipFormation → PropertyCluster
   | .lexical  => lexicalProperties
   | .syntactic => syntacticProperties
@@ -176,9 +182,7 @@ theorem properties_complementary :
     lexicalProperties.discontinuous = !syntacticProperties.discontinuous :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Symmetric Verbs (§2.3, §4.1)
--- ════════════════════════════════════════════════════
+/-! ### Symmetric verbs (§2.3, §4.1) -/
 
 /-- Lexical reciprocal verbs are symmetric verbs: their reciprocity
     involves a singular atomic event in which both participants are
@@ -190,12 +194,10 @@ theorem properties_complementary :
     `Verb.StratifiesOver`: *meet* has `¬ meet.StratifiesOver M agentRole`
     — it does not distribute over atomic agents, because the event is
     necessarily collective/atomic. -/
-def isSymmetricVerb : RecipFormation → Prop
-  | .lexical  => True
-  | .syntactic => False
+def isSymmetricVerb (f : RecipFormation) : Prop := f = .lexical
 
-instance : DecidablePred isSymmetricVerb := fun x => by
-  cases x <;> unfold isSymmetricVerb <;> infer_instance
+instance : DecidablePred isSymmetricVerb :=
+  fun f => inferInstanceAs (Decidable (f = .lexical))
 
 theorem symmetric_iff_singular :
     ∀ f : RecipFormation,
@@ -203,19 +205,18 @@ theorem symmetric_iff_singular :
   intro f; cases f <;> simp [isSymmetricVerb, predictedProperties,
     lexicalProperties, syntacticProperties]
 
--- ════════════════════════════════════════════════════
--- § 4. θ-Role Bundling (§4.1)
--- ════════════════════════════════════════════════════
+/-! ### θ-role bundling (§4.1) -/
 
 /-- A bundled θ-role: two entailment profiles merged into a single
-    complex role assigned to one argument. Lexical reciprocalization
-    bundles the external (agent-like) and internal (theme-like) roles
-    of a transitive verb:
+    complex role assigned to one argument ([reinhart-siloni-2005]'s
+    bundling operation). Lexical reciprocalization bundles the external
+    (agent-like) and internal (theme-like) roles of a transitive verb:
 
       V(ACC) [θ_i] [θ_j]  →  V_SYM [θ_i · θ_j]
 
     The subject of the resulting symmetric verb bears both the agent
-    and theme entailments of the base transitive. -/
+    and theme entailments of the base transitive (depictive adjective
+    case in Czech §3.1, comparative ellipsis §3.2). -/
 structure BundledRole where
   /-- The external (agent-like) component -/
   external : EntailmentProfile
@@ -228,15 +229,7 @@ def reciprocalBundle (subjectProfile objectProfile : EntailmentProfile) :
     BundledRole :=
   ⟨subjectProfile, objectProfile⟩
 
-/-- A bundled role carries exactly two component profiles — this is
-    what makes the subject of a reciprocal verb bear both Agent and
-    Theme properties (depictive adjective case in Czech §3.1,
-    comparative ellipsis §3.2). -/
-def BundledRole.componentCount (_b : BundledRole) : Nat := 2
-
--- ════════════════════════════════════════════════════
--- § 5. The "I" Reading (§2.1, §4.3)
--- ════════════════════════════════════════════════════
+/-! ### The "I" reading (§2.1, §4.3) -/
 
 /-! The "I" reading of embedded reciprocals ([higginbotham-1980]):
 
@@ -273,13 +266,14 @@ def RecipClass.allowsIReading (c : RecipClass) : Bool :=
     met) but the sole-role requirement fails (condition 2 unmet). -/
 theorem I_reading_iff_periphrastic :
     ∀ c : RecipClass, c.allowsIReading = (c == .periphrastic) := by
-  intro c; cases c <;> native_decide
+  intro c; cases c <;> rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Cross-Linguistic Data (§2.4, §5, §7)
--- ════════════════════════════════════════════════════
+/-! ### Cross-linguistic data (§2.4, §5, §7) -/
 
-/-- Per-language formation locus from the ten-language sample. -/
+/-- Per-language formation locus. The abstract announces "a sample of ten
+    languages"; eleven languages are named with data across the paper, so
+    all are recorded here (fn. 13 additionally extends the split to the
+    rest of Slavic). -/
 structure LangRecipVerb where
   language : String
   iso : String
@@ -291,10 +285,11 @@ structure LangRecipVerb where
 -- not the primary reciprocal strategy. English's primary strategy is
 -- periphrastic (*each other*), but its reciprocal verbs (intransitive
 -- *kiss*, *meet*, *collide*) are lexical — symmetric verbs formed in
--- the lexicon. This is why `rp_english.formation` in Typology.lean is
--- `none` (primary strategy is not verb formation) while we classify
--- English as `.lexical` (its reciprocal verbs, when they exist, are
--- lexically formed).
+-- the lexicon. This is why `rpEnglish.formation` in
+-- `Studies/Nordlinger2023.lean` is `none` (the primary strategy is not
+-- verb formation) while we classify English as `.lexical`; fn. 32 notes
+-- that English *kiss*/*hug* nonetheless resist the discontinuous
+-- construction.
 def hebrew    : LangRecipVerb := ⟨"Hebrew",    "heb", .lexical⟩
 def russian   : LangRecipVerb := ⟨"Russian",   "rus", .lexical⟩
 def hungarian : LangRecipVerb := ⟨"Hungarian", "hun", .lexical⟩
@@ -307,20 +302,11 @@ def spanish       : LangRecipVerb := ⟨"Spanish",         "spa", .syntactic⟩
 def czech         : LangRecipVerb := ⟨"Czech",           "ces", .syntactic⟩
 def romanian      : LangRecipVerb := ⟨"Romanian",        "ron", .syntactic⟩
 def serboCroatian : LangRecipVerb := ⟨"Serbo-Croatian",  "hbs", .syntactic⟩
+def bulgarian     : LangRecipVerb := ⟨"Bulgarian",       "bul", .syntactic⟩
 
 def siloniSample : List LangRecipVerb :=
   [hebrew, russian, hungarian, english,
-   french, italian, spanish, czech, romanian, serboCroatian]
-
-theorem sample_size : siloniSample.length = 10 := by native_decide
-
-theorem lexical_count :
-    (siloniSample.filter (·.formation == .lexical)).length = 4 := by
-  native_decide
-
-theorem syntactic_count :
-    (siloniSample.filter (·.formation == .syntactic)).length = 6 := by
-  native_decide
+   french, italian, spanish, czech, romanian, serboCroatian, bulgarian]
 
 /-- All lexical-formation languages produce symmetric verbs. -/
 theorem lexical_are_symmetric :
@@ -332,9 +318,7 @@ theorem syntactic_not_symmetric :
     ∀ l ∈ siloniSample.filter (·.formation == .syntactic),
       ¬ isSymmetricVerb l.formation := by decide
 
--- ════════════════════════════════════════════════════
--- § 7. Derivation: Formation Locus → "I" Reading (§3.5 → §4.3)
--- ════════════════════════════════════════════════════
+/-! ### Derivation: formation locus → "I" reading (§3.5 → §4.3) -/
 
 /-! The paper's core argument is a derivation chain, not a conjunction
     of independent facts. Formation locus determines interpretive
@@ -410,18 +394,5 @@ theorem no_I_reading_either_formation (f : RecipFormation) :
   cases f
   · exact lexical_no_I_reading
   · exact syntactic_no_I_reading
-
--- ════════════════════════════════════════════════════
--- § 8. Bridge to Typology.lean primitive
--- ════════════════════════════════════════════════════
-
-/-- The discontinuity prediction from `predictedProperties` agrees
-    with `RecipFormation.allowsDiscontinuous` in Typology.lean.
-    Cross-paper verifications against Nordlinger (2023)'s `RecipProfile`
-    classifications live in `Studies/Nordlinger2023.lean` (the newer
-    paper checks consistency with the older). -/
-theorem discontinuity_bridge (f : RecipFormation) :
-    (predictedProperties f).discontinuous = f.allowsDiscontinuous := by
-  cases f <;> rfl
 
 end Siloni2012

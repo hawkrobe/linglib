@@ -2783,7 +2783,6 @@ import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.ArgumentStructure.Alternation
-import Linglib.Syntax.ArgumentStructure.Reciprocal
 import Linglib.Syntax.AuxiliaryVerbs
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
@@ -2928,6 +2927,7 @@ import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Pronoun.Logophoric
 import Linglib.Syntax.Pronoun.WALS
 import Linglib.Syntax.Question
+import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
