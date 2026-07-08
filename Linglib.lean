@@ -2321,6 +2321,7 @@ import Linglib.Studies.Heim1994
 import Linglib.Studies.Heim2001
 import Linglib.Studies.HeimComments1994
 import Linglib.Studies.HeimKratzer1998
+import Linglib.Studies.HeimLasnikMay1991
 import Linglib.Studies.Heine1997
 import Linglib.Studies.HerbstrittFranke2019
 import Linglib.Studies.Hewett2026
