@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.DiscourseRef
-import Linglib.Semantics.Dynamic.Connectives.Defs
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
 import Mathlib.Data.Set.Basic
 

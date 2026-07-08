@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.TriggerTypology
-import Linglib.Semantics.Dynamic.Connectives.PartialCCP
+import Linglib.Semantics.Dynamic.PartialTransformer
 
 /-!
 # Heim (1983): Projection and Partial Context Change

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Dynamic.DiscourseRef
-import Linglib.Semantics.Dynamic.Connectives.Defs
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Core.Logic.Assignment
 import Linglib.Features.MassCount
 
@@ -42,9 +42,121 @@ namespace Krifka2026
 
 open Semantics.Kinds.NMP (Property Kind IsMass
   kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
-open Semantics.Dynamic.Core (ConceptDRef DRefVal)
 open Semantics.Dynamic.Core.DynProp (Update Condition test dneg eq_of_test)
 open scoped Semantics.Dynamic.Core.DynProp
+
+/-! ### Concept drefs and heterogeneous dref values ([krifka-2026] §4)
+
+Paper-specific substrate: concept discourse referents (property + count
+feature), the heterogeneous `DRefVal` universe, and concept-variable
+indices. -/
+-- ════════════════════════════════════════════════════
+-- Concept Discourse Referents
+-- ════════════════════════════════════════════════════
+
+-- Mass/Count Feature: uses `MassCount` from `Features.MassCount`.
+
+/--
+A concept discourse referent value: a property annotated with a
+morphosyntactic count feature.
+
+Introduced by the NP of an antecedent DP. For example, *dog* in
+*John owns a dog* introduces a concept dref anchored to the property
+`λi.λx[dog(i)(x)]` with feature [COUNT].
+
+Kind anaphors pick up concept drefs and derive kind individuals
+via Chierchia's ∩ (down) operator:
+- ⟦it⟧   = λP[MASS].  λi. ∩P(i)
+- ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i)
+
+The ⊔-closure for count nouns introduces pluralization, allowing for
+the number mismatch between *a spider* (singular) and *they* (plural).
+For mass nouns, ⊔-closure is vacuous (mass predicates are already
+cumulative), so the singular *it* is used.
+-/
+structure ConceptDRef (W E : Type*) where
+  /-- The property this concept is anchored to: λi.λx[P(i)(x)] -/
+  property : W → E → Bool
+  /-- Morphosyntactic count feature -/
+  feature : MassCount
+
+/--
+Values that discourse referent indices can map to.
+
+Standard dynamic semantics restricts assignments to map indices to
+entities. [krifka-2026] §4 extends this: assignments are partial
+functions from ℕ to a heterogeneous universe including entities,
+concepts (properties with count features), and world-time indices.
+
+- `.entity e`: an individual referent (standard entity dref)
+- `.concept c`: a concept dref — the NP property with [MASS]/[COUNT]
+- `.index w`: a world-time index dref
+- `.undef`: index not in the domain (models assignment partiality)
+
+Key property: concept drefs project past operators like negation,
+disjunction, and modals — they are introduced in the global
+assignment, not in local sub-assignments. This is what licenses
+kind anaphora out of anaphoric islands:
+
+  *John doesn't own a dog. He is afraid of them.*
+
+The entity dref for *a dog* is trapped under negation, but the
+concept dref for 'dog' projects to the global context.
+-/
+inductive DRefVal (W E : Type*) where
+  | entity : E → DRefVal W E
+  | concept : ConceptDRef W E → DRefVal W E
+  | index : W → DRefVal W E
+  | undef : DRefVal W E
+
+namespace DRefVal
+
+variable {W E : Type*}
+
+/-- Extract entity value, if present. -/
+def getEntity : DRefVal W E → Option E
+  | .entity e => some e
+  | _ => none
+
+/-- Extract concept dref, if present. -/
+def getConcept : DRefVal W E → Option (ConceptDRef W E)
+  | .concept c => some c
+  | _ => none
+
+/-- Extract world-time index, if present. -/
+def getIndex : DRefVal W E → Option W
+  | .index w => some w
+  | _ => none
+
+/-- Is this index in the domain of the assignment? -/
+def isDefined : DRefVal W E → Prop
+  | .undef => False
+  | _ => True
+
+instance : DecidablePred (@isDefined W E) :=
+  fun d => by unfold isDefined; cases d <;> infer_instance
+
+/-- Lift a predicate on entities to DRefVal (false for non-entities). -/
+def liftEntityPred (p : E → Bool) : DRefVal W E → Bool
+  | .entity e => p e
+  | _ => false
+
+/-- Lift a predicate on concepts to DRefVal (false for non-concepts). -/
+def liftConceptPred (p : ConceptDRef W E → Bool) : DRefVal W E → Bool
+  | .concept c => p c
+  | _ => false
+
+end DRefVal
+
+/--
+A concept variable (names a concept dref).
+
+Concept variables are indices into the assignment that map to
+`ConceptDRef` values — properties annotated with [MASS]/[COUNT].
+-/
+structure CVar where
+  idx : Nat
+  deriving DecidableEq, Repr, Hashable
 
 /-! ### Kind pronoun and kind-operator selection -/
 

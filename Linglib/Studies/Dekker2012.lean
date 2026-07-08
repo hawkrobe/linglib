@@ -8,7 +8,7 @@ PLA (`Semantics/Dynamic/PLA/`, originating in [dekker-1994]) is the
 foundational system for dynamic semantics with explicit pronoun indices.
 This study verifies the formalized PLA's behavior on the canonical anaphora
 puzzles and contrasts it with Bilateral Update Semantics (BUS,
-`Effects/Bilateral.lean` and `Studies/ElliottSudo2025.lean`), which solves
+`Bilateral/Defs.lean` and `Studies/ElliottSudo2025.lean`), which solves
 anaphora cases that PLA structurally cannot.
 
 **Caveat on the formalization**: the PLA substrate as formalized is
@@ -33,7 +33,7 @@ and negative dimensions.
   become available in cross-disjunct contexts.
 
 This is the bilateral DNE strategy listed in
-`Dynamic/Connectives/Defs.lean`'s "three incompatible DNE solutions" table;
+`Dynamic/Update.lean`'s "three incompatible DNE solutions" table;
 ICDRT (`Studies/Hofmann2025.lean §7`) is the third
 strategy and dominates BUS on disagreement, modal subordination, and
 three-way veridicality.
@@ -145,7 +145,7 @@ theorem bathroom_pla_has_domain :
 -- § 2. PLA vs BUS: architectural divergence
 -- ════════════════════════════════════════════════════════════════
 
-/-! BUS's bilateral substrate lives in `Semantics/Dynamic/Effects/Bilateral.lean`
+/-! BUS's bilateral substrate lives in `Semantics/Dynamic/Bilateral/Defs.lean`
 with the type
 
 ```
@@ -156,7 +156,7 @@ structure BilateralDen (W E : Type*) where
 
 and negation as `def neg φ := { positive := φ.negative, negative := φ.positive }`.
 The DNE law `neg (neg φ) = φ` then holds by `rfl`
-(`BilateralDen.neg_neg` in `Effects/Bilateral.lean`).
+(`BilateralDen.neg_neg` in `Bilateral/Defs.lean`).
 
 PLA and BUS use different `InfoState` parametrizations, so a single
 file cannot import both side-by-side. The BUS-side facts are stated

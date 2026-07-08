@@ -54,7 +54,7 @@ sequential update = single conjunctive update — apply directly.
 - The `SpecSpace` in `Supervaluation/Basic.lean` is the ∀-dual:
   super-truth = true under ALL specs; Caie's survival = true under SOME.
 
-- `CCP` in `Dynamic/Connectives/CCP.lean` operates on ⟨assignment, world⟩
+- `CCP` in `Dynamic/ContextChange.lean` operates on ⟨assignment, world⟩
   pairs; `ContextFragment` here uses ⟨compositional-context, world⟩ — a
   structural analogue with different conceptual content.
 -/
@@ -345,7 +345,7 @@ The compositional context determines how context-sensitive expressions
 (indexicals, gradable adjectives, configurational predicates) are
 interpreted; the world determines matters of fact.
 
-Structurally analogous to `Possibility W E` in `Dynamic/Core/Update.lean`
+Structurally analogous to `Possibility W E` in `Dynamic/Possibility.lean`
 (⟨world, assignment⟩ pairs in dynamic semantics), but the non-world
 parameter is a compositional context rather than a variable assignment. -/
 structure ContextFragment (C W : Type*) where

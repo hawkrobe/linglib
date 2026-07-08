@@ -32,7 +32,7 @@ The dynamic primitives are imported from co-located dynamic operator
 files: `dynSUBJ`/`dynIND` from `Semantics/Mood/Dynamic.lean`
 (siblings of static `Mood.SUBJ`/`IND`), `dynFUT` from
 `Semantics/Tense/Dynamic.lean`, and `SitContext`/`SVar` from
-`Semantics/Dynamic/Core/{ContextFilter,DiscourseRef}.lean`.
+`Semantics/Dynamic/ContextFilter.lean` and `Semantics/Dynamic/DiscourseRef.lean`.
 -/
 
 namespace Mendes2025

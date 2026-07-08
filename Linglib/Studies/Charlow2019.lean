@@ -1,5 +1,5 @@
-import Linglib.Semantics.Dynamic.DPL.Basic
-import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.DPL
+import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
 import Linglib.Core.Logic.CylindricAlgebra
 

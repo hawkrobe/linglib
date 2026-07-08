@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.PLA.Semantics
-import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.ContextChange
 
 /-!
 # PLA Dynamic Update Semantics
