@@ -25,7 +25,7 @@ with Proto-Patient dominance breaking ties.
   predictions
 - `activitySubjectProfile` … `accomplishmentObjectProfile` — the
   [rappaport-hovav-levin-1998] template-level profile defaults (per-verb
-  content lives in the class map, `Semantics/Lexical/LevinClassProfiles.lean`)
+  content lives in the class map, `Semantics/ArgumentStructure/LevinClassProfiles.lean`)
 - the projection to [grimm-2011]'s lattice objects and its consistency
   theorems live in `Projection.lean`
 
@@ -283,7 +283,7 @@ Per-template subject/object defaults ([rappaport-hovav-levin-1998] with
 [dowty-1991]'s entailments), consumed by `Template.subjectProfile` and
 `Template.objectProfile` in `EventStructure.lean` and by Fragment-level verb
 entries. Per-verb entailment content is NOT stored here: it lives in the
-Levin-class → template map (`Semantics/Lexical/LevinClassProfiles.lean`),
+Levin-class → template map (`Semantics/ArgumentStructure/LevinClassProfiles.lean`),
 and Dowty's own per-verb attributions are typed data rows in
 `Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
 

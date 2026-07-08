@@ -186,7 +186,7 @@ theorem toRole_canonicalProfile_roundtrip (r : ThetaRole) :
 
 -- `toRole` on the per-class verb profiles lives downstream with the class
 -- map: see `hit_subject_role` … `disappearance_subject_role` in
--- `Semantics/Lexical/LevinClassProfiles.lean`.
+-- `Semantics/ArgumentStructure/LevinClassProfiles.lean`.
 
 -- Between-argument ASP
 

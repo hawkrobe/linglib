@@ -1,5 +1,5 @@
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.Verb.Root.SalienceClass
 import Linglib.Fragments.Mayan.Params
 import Linglib.Features.Case.Basic
@@ -43,7 +43,7 @@ namespace Yukatek
 
 open Verb
 open Semantics.Aspect (ViewpointAspectB)
-open Semantics.Lexical.EventStructure (EventType InternalExternalCause)
+open ArgumentStructure.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)
 
 -- ════════════════════════════════════════════════════
@@ -203,7 +203,7 @@ def haats : YukatekVerb := ⟨"hit", .transitiveActive, .internal⟩
 -- § 5. Bridge to Event Structure Templates
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical.EventStructure (Template)
+open ArgumentStructure.EventStructure (Template)
 
 /-- Map Yukatek verb stem classes to R&H event structure templates.
     This connects the language-specific classification to the

@@ -21,12 +21,12 @@ namespace English.Predicates.Verbal
 export Features (Preferential Attitude Causative Implicative)
 
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Order (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
 open ArgumentStructure
-open Features.LevinClassProfiles
+open ArgumentStructure
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules

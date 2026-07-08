@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Semantics.Lexical.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Valency Alternation Typology
@@ -65,7 +65,7 @@ verbal morphology). The `marking` field captures this.
 namespace Voice
 
 open Features.Prominence (ArgumentRole)
-open Semantics.Lexical (DiathesisAlternation)
+open ArgumentStructure (DiathesisAlternation)
 
 -- ════════════════════════════════════════════════════
 -- § 1. TR-Roles (§1.3.3)

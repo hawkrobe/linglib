@@ -5,8 +5,8 @@ import Linglib.Features.Definiteness
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Phase.Basic
@@ -53,7 +53,7 @@ equally regardless of verb class — hence no VOC effect.
 namespace ShenHuang2026
 
 open Minimalist.Linearization
-open Semantics.Lexical
+open ArgumentStructure
 open Features.Definiteness
 open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
 

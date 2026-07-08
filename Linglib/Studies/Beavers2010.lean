@@ -1,8 +1,8 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.Lexical.LevinClassProfiles
-import Linglib.Semantics.Lexical.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
 
 /-!
@@ -36,9 +36,9 @@ derived corollary `MAP_subset` / `MapHolds.oblique_le`, via the substrate's
 namespace Beavers2010
 
 open ArgumentStructure
-open Features.LevinClassProfiles
+open ArgumentStructure
 open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
-open Semantics.Lexical (DiathesisAlternation)
+open ArgumentStructure (DiathesisAlternation)
 
 -- ════════════════════════════════════════════════════
 -- § 2. L-Thematic Roles as Entailment Sets (§4.3)
@@ -477,17 +477,17 @@ theorem grimm_beavers_monotone_canonical :
 
 
 /-- Project an ArgTemplate's subject profile to a ParticipantType. -/
-def _root_.Features.LevinClassProfiles.ArgTemplate.subjectGrimm
+def _root_.ArgumentStructure.ArgTemplate.subjectGrimm
     (t : ArgTemplate) : ParticipantType :=
   ParticipantType.fromSubjectProfile t.subjectProfile
 
 /-- Project an ArgTemplate's object profile (if any) to a ParticipantType. -/
-def _root_.Features.LevinClassProfiles.ArgTemplate.objectGrimm
+def _root_.ArgumentStructure.ArgTemplate.objectGrimm
     (t : ArgTemplate) : Option ParticipantType :=
   t.objectProfile.map ParticipantType.fromObjectProfile
 
 /-- Project an ArgTemplate's object to its affectedness degree. -/
-def _root_.Features.LevinClassProfiles.ArgTemplate.objectAffectedness
+def _root_.ArgumentStructure.ArgTemplate.objectAffectedness
     (t : ArgTemplate) : Option AffectednessDegree :=
   t.objectProfile.map profileToDegree
 

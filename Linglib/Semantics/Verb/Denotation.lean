@@ -1,7 +1,7 @@
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!
 # Verb denotation — what a verb *does*

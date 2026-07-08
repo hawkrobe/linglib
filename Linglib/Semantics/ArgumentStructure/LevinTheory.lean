@@ -1,10 +1,10 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Verb.Root.Signature
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!
 # Levin Verb Class Theory
@@ -12,8 +12,8 @@ import Linglib.Semantics.Lexical.EventStructure
 
 The `LevinClass` enum and its classification data (`meaningComponents`,
 `predictsUnaccusative`, `isVerbOfCreation`) live in
-`Semantics/Lexical/LevinClass.lean`; `MeaningComponents` in
-`Semantics/Lexical/MeaningComponents.lean`.
+`Semantics/ArgumentStructure/LevinClass.lean`; `MeaningComponents` in
+`Semantics/ArgumentStructure/MeaningComponents.lean`.
 
 This file provides the theoretical content that depends on `Root.Kinds`:
 the root signature label, the root–MC comparison enums, and the universal
@@ -39,10 +39,9 @@ components, plus the universal consistency theorems and divergence witnesses.
 -- ════════════════════════════════════════════════════
 
 section LevinClassMethods
-open Semantics.Lexical
 open Verb
 open Root.Kinds
-namespace Semantics.Lexical
+namespace ArgumentStructure
 
 /-- Root kind signature for each Levin class.
 
@@ -367,4 +366,4 @@ theorem structuralMC_diverges_from_meaningComponents :
       c.meaningComponents.changeOfState = false :=
   ⟨.give, by decide⟩
 
-end Semantics.Lexical
+end ArgumentStructure

@@ -30,7 +30,7 @@ these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
 -/
 
 open Verb
-open Semantics.Lexical
+open ArgumentStructure
 
 /-- The kind signature [levin-1993] attributes to the verb *via its class*
     (`LevinClass.rootEntailments`) — the coarse REALIZATION-layer view, distinct
@@ -50,7 +50,7 @@ theorem Verb.classKinds_wellFormed (v : Verb) :
   intro s hs
   simp only [Verb.classKinds] at hs
   obtain ⟨c, -, rfl⟩ := Option.mem_map.1 hs
-  exact Semantics.Lexical.rootEntailments_wellFormed c
+  exact ArgumentStructure.rootEntailments_wellFormed c
 
 /-- The verb's outcome-set cardinality ([bhadra-2024]), read off its `root`
     (`none` where the root is not annotated for outcomes). -/

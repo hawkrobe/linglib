@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.CaseRegion
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Dowty1991
 
@@ -41,7 +41,7 @@ referential-property treatment the paper attributes to [grimm-2005].
 namespace Grimm2011
 
 open ArgumentStructure
-open Features.LevinClassProfiles
+open ArgumentStructure
 open Features.Prominence
 open Aissen2003
 

@@ -26,7 +26,7 @@ German preferential attitudes pattern with other Indo-European languages:
 
 namespace German.Predicates
 
-open Semantics.Lexical
+open ArgumentStructure
 open Features (Causative)
 
 /-- German verb entry: extends Verb with German inflectional paradigm. -/

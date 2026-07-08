@@ -46,8 +46,8 @@ import Mathlib.Data.Set.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Attitudes.CDistributivity
 import Linglib.Semantics.Attitudes.Doxastic
 

@@ -29,7 +29,7 @@ whether a verb can anticausativize:
 namespace Spanish.Predicates
 
 open Minimalist
-open Semantics.Lexical
+open ArgumentStructure
 open ArgumentStructure
 
 -- ============================================================================

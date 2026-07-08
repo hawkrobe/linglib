@@ -62,7 +62,7 @@ open French.Predicates
 open ArgumentStructure
 open ArgumentStructure.Affectedness
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Minimalist Minimalist.Voice
 
 -- ============================================================================

@@ -47,7 +47,7 @@ open ArgumentStructure
 open Causation.CoerciveImplication
 open Features (Causative)
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Features
 
 -- ════════════════════════════════════════════════════

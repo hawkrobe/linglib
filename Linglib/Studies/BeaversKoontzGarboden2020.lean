@@ -1,6 +1,6 @@
 import Linglib.Semantics.Verb.Root.Closure
 import Linglib.Semantics.Verb.Denotation
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning

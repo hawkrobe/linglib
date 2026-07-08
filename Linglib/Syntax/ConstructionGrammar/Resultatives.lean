@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Features.Aktionsart
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
@@ -43,7 +43,7 @@ quantified over arbitrary `MeaningComponents` and `ResultativeSubconstruction`.
 namespace ConstructionGrammar.Resultatives
 
 open ConstructionGrammar
-open Semantics.Lexical
+open ArgumentStructure
 open Features
 
 /-! ## Core types -/
@@ -199,7 +199,7 @@ Hovav & Levin's event structure templates: causative → accomplishment template
 noncausative → achievement template. The hasCause/hasBecome features of
 SubeventDesc are exactly Template.HasCause/Template.HasResultState. -/
 
-open Semantics.Lexical.EventStructure (Template)
+open ArgumentStructure.EventStructure (Template)
 
 /-- Map subconstruction to the constructional subevent's event template. -/
 def ResultativeSubconstruction.constructionalTemplate :

@@ -44,7 +44,7 @@ namespace GoldbergJackendoff2004
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
-open Semantics.Lexical
+open ArgumentStructure
 open Features
 
 /-! ## Empirical data: resultative entries -/

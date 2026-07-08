@@ -11,14 +11,14 @@ is computed here, not stipulated as enum fields on `Verb`.
 
 open Semantics.Presupposition
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Features.ChangeOfState
 open NaturalLogic (EntailmentSig)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Aspect.Incremental (VerbIncClass)
-open Features.LevinClassProfiles
+open ArgumentStructure
 
 /-- Derive unaccusativity from voice type when present, falling back
     to the stored `unaccusative` field. A verb is unaccusative iff its

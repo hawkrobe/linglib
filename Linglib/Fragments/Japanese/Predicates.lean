@@ -11,7 +11,7 @@ C-distributivity and NVP class are DERIVED from the `attitude` field.
 
 namespace Japanese.Predicates
 
-open Semantics.Lexical
+open ArgumentStructure
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 open Features (Causative)
 

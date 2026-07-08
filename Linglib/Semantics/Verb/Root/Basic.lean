@@ -48,7 +48,7 @@ inductive LexEntailment where
       neutral about *what* causes — only that there is a cause.
       The cause-type distinction (internal vs external,
       [bohnemeyer-2004]) is carried separately by
-      `Semantics.Lexical.EventStructure.InternalExternalCause`. -/
+      `ArgumentStructure.EventStructure.InternalExternalCause`. -/
   | hasCause
   deriving DecidableEq, Repr
 

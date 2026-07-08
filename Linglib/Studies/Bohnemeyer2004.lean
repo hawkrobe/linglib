@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Syntax.Voice.Alternation
 
 /-!
@@ -44,7 +44,7 @@ linking-relevant property. Two classes of counterevidence:
 
 namespace Bohnemeyer2004
 
-open Semantics.Lexical.EventStructure (EventType InternalExternalCause Template)
+open ArgumentStructure.EventStructure (EventType InternalExternalCause Template)
 open Semantics.Aspect (ViewpointAspectB)
 open Mayan (MarkerSet)
 open Yukatek

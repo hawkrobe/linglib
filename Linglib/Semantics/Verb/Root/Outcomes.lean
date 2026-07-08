@@ -29,7 +29,7 @@ outcomes).
 * [bhadra-2024] (roots encode outcome sets)
 -/
 
-namespace Semantics.Lexical
+namespace ArgumentStructure
 
 open Verb
 open _root_.ArgumentStructure (EventRel)
@@ -75,4 +75,4 @@ noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State Time
     OutcomeCardinality :=
   OutcomeCardinality.ofSet vro.outcomes
 
-end Semantics.Lexical
+end ArgumentStructure

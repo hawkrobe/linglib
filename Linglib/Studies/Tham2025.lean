@@ -91,7 +91,7 @@ open Degree (DimensionBindingType GradableAdjective
 open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Semantics.Lexical
+open ArgumentStructure
 open Degree (interpretiveEconomy)
 open English.Predicates
 

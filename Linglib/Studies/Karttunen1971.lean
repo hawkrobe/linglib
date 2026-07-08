@@ -54,7 +54,7 @@ open Causation.Implicative
 open Features (Causative)
 open English.Predicates.Verbal
 open English.Predicates.Copular (beAble)
-open Semantics.Lexical
+open ArgumentStructure
 open Causation
 
 -- ════════════════════════════════════════════════════════════════

@@ -42,7 +42,7 @@ namespace Glass2025
 
 open Semantics.Attitudes.Doxastic
 open Semantics.Presupposition
-open Semantics.Lexical
+open ArgumentStructure
 open English.Predicates.Verbal
 open Mandarin.Predicates
 

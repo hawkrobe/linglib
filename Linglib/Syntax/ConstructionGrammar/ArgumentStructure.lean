@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Semantics.Lexical.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
 /-!
@@ -21,7 +21,7 @@ patterns that only CxG can capture. The decomposition of fully abstract construc
 
 namespace ConstructionGrammar
 
-open Semantics.Lexical
+open ArgumentStructure
 
 /-! ## Construction slots and argument frames -/
 

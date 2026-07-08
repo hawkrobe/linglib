@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Features.Aktionsart
-import Linglib.Semantics.Lexical.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Verb.Root.Closure
 
 /-!
@@ -25,11 +25,7 @@ enriched two-predicate event structure for the wiping-verbs class
 
 -/
 
-namespace Semantics.Lexical.EventStructure
-
-open Semantics.Lexical
-open _root_.ArgumentStructure (EntailmentProfile)
-open _root_.ArgumentStructure
+namespace ArgumentStructure.EventStructure
 open Features
 
 /-! ### Event structure templates -/
@@ -333,25 +329,24 @@ def InternalExternalCause.HasCauseInLSR : InternalExternalCause → Prop
 instance (c : InternalExternalCause) : Decidable c.HasCauseInLSR := by
   cases c <;> unfold InternalExternalCause.HasCauseInLSR <;> infer_instance
 
-end Semantics.Lexical.EventStructure
+end ArgumentStructure.EventStructure
 
-namespace Semantics.Lexical
+namespace ArgumentStructure
 
 /-- Predicted event structure template from meaning components. -/
-def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Lexical.EventStructure.Template
+def MeaningComponents.predictedTemplate : MeaningComponents → ArgumentStructure.EventStructure.Template
   | mc => if mc.changeOfState && mc.causation then .accomplishment
     else if mc.changeOfState then .achievement
     else if !mc.motion && !mc.contact then .state
     else .activity
 
 /-- Predicted template for a Levin class. -/
-def LevinClass.eventTemplate : LevinClass → Semantics.Lexical.EventStructure.Template
+def LevinClass.eventTemplate : LevinClass → ArgumentStructure.EventStructure.Template
   | c => c.meaningComponents.predictedTemplate
 
-end Semantics.Lexical
+end ArgumentStructure
 
-namespace Semantics.Lexical.EventStructure
-open Semantics.Lexical
+namespace ArgumentStructure.EventStructure
 
 /-! ### Verification: canonical quadruple -/
 
@@ -519,4 +514,4 @@ theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
     (v.fuse c).predictedTemplate.HasCause := by
   rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
 
-end Semantics.Lexical.EventStructure
+end ArgumentStructure.EventStructure

@@ -12,8 +12,8 @@ import Linglib.Studies.Sag2010
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.LuPanDegen2025
 
@@ -26,7 +26,7 @@ judgment experiments testing the causal relationship between discourse
 backgroundedness and the manner-of-speaking (MoS) island effect, and this
 file connects that data to the formal backgroundedness model
 (the backgroundedness sections below) and the lexical substrate
-(`Semantics/Lexical/LevinClass`).
+(`Semantics/ArgumentStructure/LevinClass`).
 
 ## Key findings (§0 data)
 
@@ -45,7 +45,7 @@ Mean acceptability ratings and backgroundedness proportions are coded as
 ## Derivation chain (§2–§7)
 
 ```
-Semantics/Lexical/LevinClass  →  mannerSpec = true for MoS verbs (§37.3)
+Semantics/ArgumentStructure/LevinClass  →  mannerSpec = true for MoS verbs (§37.3)
          ↓
 backgroundedness model (below)  →  mannerSpec ↔ hasMannerWeight → island
          ↓
@@ -1235,7 +1235,7 @@ theorem bridge_profile_consistent :
   rw [predict_bridge]; rfl
 
 
-open Semantics.Lexical
+open ArgumentStructure
 
 /-! ## §0. Experimental Data
 

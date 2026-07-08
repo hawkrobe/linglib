@@ -1,13 +1,13 @@
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
-import Linglib.Semantics.Lexical.LevinTheory
-import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinTheory
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.Verb.Root.Profile
 import Linglib.Semantics.Verb.Root.Outcomes
 
-open Semantics.Lexical
+open ArgumentStructure
 open Verb
 
 /-!
@@ -65,7 +65,7 @@ you nothing about whether it entails change, and vice versa.
   40, 225–276.
 -/
 
-open Semantics.Lexical.EventStructure
+open ArgumentStructure.EventStructure
 open ArgumentStructure
 open Features.ChangeOfState
 open Features
@@ -559,7 +559,7 @@ theorem carry_manner_accompaniment :
     let e := DitransitiveRootClass.entailments .carrying
     e.manner = true ∧ e.accompaniment = true ∧ e.possession = .none := ⟨rfl, rfl, rfl⟩
 
-namespace Semantics.Lexical
+namespace ArgumentStructure
 
 /-- Bridge to LevinClass: ditransitive Levin classes → root classes. -/
 def LevinClass.ditransitiveRootClass : LevinClass → Option DitransitiveRootClass
@@ -580,7 +580,7 @@ theorem send_class_sending :
 theorem carry_class_carrying :
     LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
 
-end Semantics.Lexical
+end ArgumentStructure
 
 -- ════════════════════════════════════════════════════
 -- § 7e. MRC Diagnostics (B&[beavers-koontz-garboden-2020] §§4.2–4.3)
@@ -713,14 +713,14 @@ def rootTypeFromChangeEntailment (p : EntailmentProfile) : RootType :=
     eq. (60c)) fall on the other side of the bridge. -/
 theorem result_object_has_changeOfState :
     rootTypeFromChangeEntailment accomplishmentObjectProfile = .result ∧
-    rootTypeFromChangeEntailment Features.LevinClassProfiles.contactObject
+    rootTypeFromChangeEntailment ArgumentStructure.contactObject
       = .propertyConcept := by
   decide
 
 /-- Die subject undergoes change → result-type pattern. -/
 theorem die_result_pattern :
     rootTypeFromChangeEntailment
-      Features.LevinClassProfiles.disappearance.subjectProfile = .result := by
+      ArgumentStructure.disappearance.subjectProfile = .result := by
   decide
 
 -- ════════════════════════════════════════════════════

@@ -42,7 +42,7 @@ namespace Causation.Resultatives
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Features.ChangeOfState
 open Features (Causative)
 open Causation.ProductionDependence

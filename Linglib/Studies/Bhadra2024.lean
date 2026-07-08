@@ -57,8 +57,8 @@ with the object (✓*rebreak a limb* vs. #*rebreak a sewer*, her (73)).
 
 namespace Bhadra2024
 
-open Semantics.Lexical
-open Semantics.Lexical.EventStructure
+open ArgumentStructure
+open ArgumentStructure.EventStructure
 open ArgumentStructure (EventRel)
 open ArgumentStructure
 open ArgumentStructure.Affectedness
@@ -457,7 +457,7 @@ theorem outcomeCard_orthogonal_to_hasResultState :
     two (`⊤` vs `1`) where the affectedness degree does not. -/
 theorem affectedness_bridge :
     profileToDegree { causallyAffected := true, stationary := true }
-      = profileToDegree Features.LevinClassProfiles.contactObject ∧
+      = profileToDegree ArgumentStructure.contactObject ∧
     1 < LevinClass.outcomeCard .bend ∧
     ¬ (1 < LevinClass.outcomeCard .hit) :=
   ⟨rfl, bend_predicts_un, hit_blocks_un_class⟩

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Lexical.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Causation.Resultatives
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
@@ -65,7 +65,7 @@ namespace Levin2026
 open Verb
 open Intensional (WorldTimeIndex)
 
-open Semantics.Lexical
+open ArgumentStructure
 open LevinClass (pushPull hit wipe)
 open English.Predicates.Verbal (push pull kick)
 open English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
@@ -190,7 +190,7 @@ template shift: manner verbs (activity template) become accomplishments
 inside the resultative. This connects to telicity, result state
 diagnostics (*again*/*re-* ambiguity), and CAUSE structure. -/
 
-open Semantics.Lexical.EventStructure
+open ArgumentStructure.EventStructure
 
 /-- PushPull alone is an activity (no CoS, no CAUSE). -/
 theorem pushPull_is_activity :
