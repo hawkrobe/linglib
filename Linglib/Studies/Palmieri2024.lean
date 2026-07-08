@@ -1,6 +1,11 @@
 import Linglib.Syntax.Reciprocal
 import Linglib.Studies.Siloni2012
 import Linglib.Studies.Winter2018
+import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
+import Linglib.Fragments.Romance.Catalan.Reciprocals
+import Linglib.Fragments.Romance.Italian.Reciprocals
+import Linglib.Fragments.Romance.Spanish.Reciprocals
+import Linglib.Fragments.Swahili.Reciprocals
 
 /-!
 # Palmieri (2024): Lexical and Grammatical Reciprocity
@@ -250,11 +255,35 @@ def lexicalReciprocals : List LexicalReciprocal :=
   , ⟨"meet", [bp, c, i, s]⟩
   , ⟨"run into each other", [c, i, s]⟩ ]
 
-/-- Italian attests lexical reciprocals — the witness behind
-    `romance_not_monolithic` ('hug' = *abbracciare*, their (40)). -/
-theorem italian_has_lexical_reciprocals :
-    ∃ v ∈ lexicalReciprocals, Language.italian ∈ v.languages := by
-  exact ⟨⟨"hug", [.brazilianPortuguese, .catalan, .italian, .spanish]⟩,
-    by decide, by decide⟩
+/-- Per-language lexical-reciprocal inventories, from the Appendix A
+    fragment data (`Fragments/Romance/{Lang}/Reciprocals.lean`). -/
+def inventory : Language → List Reciprocal.LexicalVerb
+  | .brazilianPortuguese => BrazilianPortuguese.Reciprocals.lexicalReciprocals
+  | .italian             => Italian.Reciprocals.lexicalReciprocals
+  | .spanish             => Spanish.Reciprocals.lexicalReciprocals
+  | .catalan             => Catalan.Reciprocals.lexicalReciprocals
+
+/-- Every language's fragment attests lexical reciprocals — the
+    Appendix A grounding of definition (44). -/
+theorem every_language_attests :
+    ∀ l : Language, inventory l ≠ [] := by
+  intro l; cases l <;> decide
+
+/-- The witness behind `romance_not_monolithic`, grounded in the
+    Italian fragment: *abbracciare* 'hug' (their (40)) carries a lexical
+    reciprocal entry alongside its homophonous transitive alternate. -/
+theorem abbracciare_grounds_divergence :
+    ∃ v ∈ Italian.Reciprocals.lexicalReciprocals,
+      v.form = "abbracciare" ∧ v.transitiveAlternate.isSome := by
+  decide
+
+/-- Swahili lexical reciprocals ([palmieri-2024] ch. 4, Appendix C) may
+    lack a binary base altogether: *jibizana* 'discuss' has no
+    \**jibiza* — lexical reciprocity is not always derivational, the
+    Bantu analogue of Romance class 1. -/
+theorem jibizana_no_binary_base :
+    ∃ v ∈ Swahili.Reciprocals.lexicalReciprocals,
+      v.form = "jibizana" ∧ v.transitiveAlternate = none := by
+  decide
 
 end Palmieri2024
