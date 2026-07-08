@@ -48,7 +48,7 @@ as formalized siblings; bibliography backlog).
 
 namespace Pietraszko2026
 
-open Minimalist SyntacticObject
+open Minimalist Minimalist.Voice SyntacticObject
 
 /-! ## Notes
 
@@ -93,13 +93,13 @@ namespace Sample
 /-- Voice with EPP feature (Pietraszko 2026): triggers subject movement
     to Spec,VoiceP. VoiceP is always phasal in Ndebele
     (`phaseOverride := some true`); the variation is on the EPP feature. -/
-def voiceWithEPP : Voice.Head :=
+def voiceWithEPP : Head :=
   { flavor := .agentive, hasD := true, phaseOverride := some true
   , features := .ofGramFeatures [.valued (.epp true)] }
 
 /-- Voice without EPP: subject trapped in vP, invisible to higher probes
     via PIC at the Voice phase boundary. -/
-def voiceWithoutEPP : Voice.Head :=
+def voiceWithoutEPP : Head :=
   { flavor := .agentive, hasD := true, phaseOverride := some true
   , features := ⊥ }
 
@@ -128,7 +128,7 @@ def aspToken : LIToken :=
   , id := idAsp }
 
 /-- A Voice head (the lexical leaf; Voice's phasehood and EPP are
-    metadata on the corresponding `Voice.Head`, not on the LIToken). -/
+    metadata on the corresponding `Head`, not on the LIToken). -/
 def voiceToken : LIToken :=
   { item := LexicalItem.simple .Voice [.v]
   , id := idVoice }
@@ -373,7 +373,7 @@ theorem voice_phase_attested_in_two_families :
 
 /-! ## §7. Four-cell phase-override typology
 
-Three concrete clients now exhaust the `(Voice.Flavor.defaultPhasal ×
+Three concrete clients now exhaust the `(Flavor.defaultPhasal ×
 phaseOverride : Option Bool)` typology cells:
 
 - agentive + default-phasal (no override): Collins/Chomsky baseline
@@ -385,12 +385,12 @@ phaseOverride : Option Bool)` typology cells:
 - passive + override-true: [erlewine-sommerlot-2025] (Malayic
   di-passive, bare passive)
 
-The typology theorem witnesses each cell with a concrete Voice.Head. -/
+The typology theorem witnesses each cell with a concrete Head. -/
 
 /-- **Cell 1**: agentive flavor + no override = Collins/Chomsky baseline
     (`Minimalist.Voice.agentive`). Inherits `IsPhasal` from `defaultPhasal`. -/
 theorem typology_cell_default_agentive :
-    Minimalist.Voice.agentive.flavor = Voice.Flavor.agentive ∧
+    Minimalist.Voice.agentive.flavor = Flavor.agentive ∧
     Minimalist.Voice.agentive.phaseOverride = none ∧
     Minimalist.Voice.agentive.IsPhasal := by decide
 
@@ -399,7 +399,7 @@ theorem typology_cell_default_agentive :
     Same observable phasehood as Cell 1 but with explicit override
     documenting the per-paper commitment. -/
 theorem typology_cell_pietraszko :
-    Sample.voiceWithEPP.flavor = Voice.Flavor.agentive ∧
+    Sample.voiceWithEPP.flavor = Flavor.agentive ∧
     Sample.voiceWithEPP.phaseOverride = some true ∧
     Sample.voiceWithEPP.IsPhasal := by decide
 
@@ -408,7 +408,7 @@ theorem typology_cell_pietraszko :
     in [coon-mateo-pedro-preminger-2014]. Override forces non-phasal
     against the agentive flavor default. -/
 theorem typology_cell_coon_intransitive :
-    Coon2019.v_w.flavor = Voice.Flavor.agentive ∧
+    Coon2019.v_w.flavor = Flavor.agentive ∧
     Coon2019.v_w.phaseOverride = some false ∧
     ¬ Coon2019.v_w.IsPhasal := by decide
 
@@ -418,7 +418,7 @@ theorem typology_cell_coon_intransitive :
     treats as non-phasal). -/
 theorem typology_cell_erlewine_sommerlot :
     (ErlewineSommerlot2025.clauseToVoiceHead
-       .diPassive).flavor = Voice.Flavor.passive ∧
+       .diPassive).flavor = Flavor.passive ∧
     (ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).phaseOverride = some true ∧
     (ErlewineSommerlot2025.clauseToVoiceHead

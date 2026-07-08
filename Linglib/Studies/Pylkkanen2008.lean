@@ -65,7 +65,7 @@ in the "Applicative diagnostics" section below.
 
 namespace Pylkkanen2008
 
-open Minimalist SyntacticObject
+open Minimalist Minimalist.Voice SyntacticObject
 open RootedTree
 
 /-! ### Voice projection (relocated from Minimalist/VoiceProjection.lean)
@@ -108,8 +108,8 @@ licensing (Case + smuggling) to Voice. The label "Voice" denotes
 different positions in the two systems.
 
 The orthogonality of the two predicates `IsExternalArgIntroducer` and
-`IsSmugglingProjection` (defined below) reflects this: a `Voice.Head`
-instance can satisfy one, both, or neither. Linglib's `Voice.Head`
+`IsSmugglingProjection` (defined below) reflects this: a `Head`
+instance can satisfy one, both, or neither. Linglib's `Head`
 structure encodes both axes (`assignsTheta` and `permitsSmuggling`)
 independently, accommodating both views simultaneously.
 
@@ -130,76 +130,76 @@ about what makes a Voice head "well-formed Voice." -/
 /-- **Pylkkänen / Kratzer view**: a Voice head is "doing its job" iff
     it introduces an external argument (assigns external θ).
     [kratzer-1996]: Voice = the head bearing the θ-relation. -/
-def IsExternalArgIntroducer (v : Voice.Head) : Prop :=
+def IsExternalArgIntroducer (v : Head) : Prop :=
   v.AssignsTheta
 
-instance (v : Voice.Head) : Decidable (IsExternalArgIntroducer v) := by
+instance (v : Head) : Decidable (IsExternalArgIntroducer v) := by
   unfold IsExternalArgIntroducer; infer_instance
 
 /-- **Collins / Storment view**: a Voice head is "doing its job" iff
     it permits smuggling (it is the structural landing site for a
     constituent moving past an in-situ external argument).
     [collins-2005], [storment-2026]. -/
-def IsSmugglingProjection (v : Voice.Head) : Prop :=
+def IsSmugglingProjection (v : Head) : Prop :=
   v.permitsSmuggling = true
 
-instance (v : Voice.Head) : Decidable (IsSmugglingProjection v) := by
+instance (v : Head) : Decidable (IsSmugglingProjection v) := by
   unfold IsSmugglingProjection; infer_instance
 
 /-! #### The two views are orthogonal
 
-Linglib's `Voice.Head` already encodes both axes. The question is
+Linglib's `Head` already encodes both axes. The question is
 whether they coincide for the canonical Voice instances.
 **Answer: they don't.** A Voice head can satisfy either one, both, or
 neither — the four corners of the orthogonality square. -/
 
-/-- `Voice.agentive` satisfies the Pylkkänen view (it introduces the agent
+/-- `agentive` satisfies the Pylkkänen view (it introduces the agent
     external argument) but **fails** the Collins/Storment view
     (agentive Voice is a strong phase head; smuggling is blocked). -/
 theorem voiceAgent_pylkkanen_yes_collins_no :
-    IsExternalArgIntroducer Voice.agentive ∧ ¬ IsSmugglingProjection Voice.agentive := by
+    IsExternalArgIntroducer agentive ∧ ¬ IsSmugglingProjection agentive := by
   decide
 
-/-- `Voice.passive` satisfies the Collins view (it is the smuggling
+/-- `passive` satisfies the Collins view (it is the smuggling
     landing site) but **fails** the Pylkkänen view (it does not
     introduce an external argument — the external arg is in Spec,vP
     per [collins-2005] §2 UTAH). The passive Voice head is
     *puzzling* on Pylkkänen's view: a Voice head with no θ-role to
     assign. -/
 theorem voicePassive_collins_yes_pylkkanen_no :
-    IsSmugglingProjection Voice.passive ∧ ¬ IsExternalArgIntroducer Voice.passive := by
+    IsSmugglingProjection passive ∧ ¬ IsExternalArgIntroducer passive := by
   decide
 
-/-- `Voice.anticausative` similarly fits the Collins view (smuggling
+/-- `anticausative` similarly fits the Collins view (smuggling
     target for the unaccusative-like derivation Storment uses for QI
     and LI) and fails the Pylkkänen view (no external argument). -/
 theorem voiceAnticausative_collins_yes_pylkkanen_no :
-    IsSmugglingProjection Voice.anticausative ∧
-    ¬ IsExternalArgIntroducer Voice.anticausative := by
+    IsSmugglingProjection anticausative ∧
+    ¬ IsExternalArgIntroducer anticausative := by
   decide
 
 /-- The two views are not equivalent: there exist Voice heads
     distinguishing them (in fact, the canonical instances above all do). -/
 theorem views_not_equivalent :
-    ¬ (∀ v : Voice.Head, IsExternalArgIntroducer v ↔ IsSmugglingProjection v) := by
+    ¬ (∀ v : Head, IsExternalArgIntroducer v ↔ IsSmugglingProjection v) := by
   intro h
-  -- Voice.agentive introduces external arg but blocks smuggling
-  have hExt : IsExternalArgIntroducer Voice.agentive := by decide
-  have hSmug : IsSmugglingProjection Voice.agentive := (h Voice.agentive).mp hExt
+  -- agentive introduces external arg but blocks smuggling
+  have hExt : IsExternalArgIntroducer agentive := by decide
+  have hSmug : IsSmugglingProjection agentive := (h agentive).mp hExt
   exact absurd hSmug (by decide)
 
 /-! #### What the disagreement amounts to
 
 In Pylkkänen's framework, every Voice head should be an
-`IsExternalArgIntroducer`. The fact that linglib's `Voice.passive` and
-`Voice.anticausative` are not means *Pylkkänen would not call these
+`IsExternalArgIntroducer`. The fact that linglib's `passive` and
+`anticausative` are not means *Pylkkänen would not call these
 "Voice"* — she would attribute the structural-licensing function to a
 different (perhaps unnamed) head.
 
 In Collins/Storment's framework, every Voice head should be an
-`IsSmugglingProjection`. The fact that linglib's `Voice.agentive` is not
+`IsSmugglingProjection`. The fact that linglib's `agentive` is not
 means *Collins/Storment would not call this "Voice"* — they would call
-it *v* (which `Voice.agentive`'s thematic role and phase status more
+it *v* (which `agentive`'s thematic role and phase status more
 closely match in their system).
 
 The disagreement is therefore partly *labeling*: which functional head
@@ -214,9 +214,9 @@ the phase/θ-role correlations Storment defends in §4 of his paper. -/
     satisfy both views. (Equivalently: introducing an external argument
     requires being a phase head, which blocks smuggling.) -/
 theorem views_jointly_unsatisfiable_for_canonical_voices :
-    ¬ (IsExternalArgIntroducer Voice.agentive ∧ IsSmugglingProjection Voice.agentive) ∧
-    ¬ (IsExternalArgIntroducer Voice.passive ∧ IsSmugglingProjection Voice.passive) ∧
-    ¬ (IsExternalArgIntroducer Voice.anticausative ∧ IsSmugglingProjection Voice.anticausative) := by
+    ¬ (IsExternalArgIntroducer agentive ∧ IsSmugglingProjection agentive) ∧
+    ¬ (IsExternalArgIntroducer passive ∧ IsSmugglingProjection passive) ∧
+    ¬ (IsExternalArgIntroducer anticausative ∧ IsSmugglingProjection anticausative) := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-! ### Applicative diagnostics (relocated from Minimalist/ApplicativeDiagnostics.lean)
@@ -1062,14 +1062,14 @@ theorem luganda_phase_predictions :
 Pylkkänen's Voice = external-argument introducer. Per the "Voice
 projection" section above, this is one of two
 competing views of Voice (the other being Collins/Storment's smuggling
-projection). Test Pylkkänen's view against the broader `Voice.Head`
+projection). Test Pylkkänen's view against the broader `Head`
 taxonomy in `Syntax/Minimalism/Voice.lean`: which Voice flavors
 *do* introduce external arguments? -/
 
 /-- Pylkkänen's view of Voice tested against all 8 named canonical
-    flavors: Voice.agentive, Voice.causer, Voice.reflexive, and
-    Voice.experiencer introduce external arguments; Voice.middle
-    (expletive), Voice.impersonal, Voice.anticausative, and Voice.passive
+    flavors: agentive, causer, reflexive, and
+    experiencer introduce external arguments; middle
+    (expletive), impersonal, anticausative, and passive
     do not. The Pylkkänen-coherent Voice flavors are exactly the
     θ-assigning ones. (`.antipassive` is defined as a flavor in the
     Voice taxonomy but lacks a canonical `voiceAntipassive` constant
@@ -1248,16 +1248,16 @@ theorem high_appl_licenses_unergative_denotational
 particular Appl head is licensed with a given Voice head: high
 applicatives require event-introducing Voice (`hasSemantics = true`);
 low applicatives are licensed with any Voice. Cross [pylkkanen-2008]'s
-high/low Appl typology with the `Voice.Head` taxonomy: which Voice
+high/low Appl typology with the `Head` taxonomy: which Voice
 flavors license high Appl, and which don't?
 
 This connects §14's Pylkkänen-Voice partition with the [pylkkanen-2008]
 Appl typology in a single matrix. -/
 
 /-- High Appl requires Voice with event semantics. The named Voice
-    flavors split: `Voice.agentive`/`Voice.causer`/`Voice.middle`/
-    `Voice.impersonal`/`Voice.reflexive`/`Voice.experiencer` carry event
-    semantics and license high Appl; `Voice.anticausative`/`Voice.passive`
+    flavors split: `agentive`/`causer`/`middle`/
+    `impersonal`/`reflexive`/`experiencer` carry event
+    semantics and license high Appl; `anticausative`/`passive`
     do not (they're event-semantically inert in this Voice taxonomy)
     and so don't license high Appl. -/
 theorem voice_appl_licensing_matrix :

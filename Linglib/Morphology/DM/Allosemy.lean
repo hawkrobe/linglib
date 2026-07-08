@@ -42,7 +42,7 @@ namespace Morphology.DM.Allosemy
 
 open Morphology.DM (Categorizer CatHead)
 open Morphology.DM.CategorizerSemantics (NSemanticType)
-open Minimalist (Voice.Flavor Voice.Head)
+open Minimalist.Voice (Flavor Head)
 
 -- ════════════════════════════════════════════════════
 -- § 1. General Allosemy Framework
@@ -306,7 +306,7 @@ def VoiceAlloseme.fromComplement
   else if complementIsStative then .holder
   else .expletive
 
-/-- Bridge: Voice allosemes to syntactic `Voice.Flavor`.
+/-- Bridge: Voice allosemes to syntactic `Flavor`.
 
     [myler-2016]: syntactically, all four allosemes realize
     the same Voice_{D} — transitive Voice with a DP specifier.
@@ -315,7 +315,7 @@ def VoiceAlloseme.fromComplement
     agent/engineer → agentive (phase head, assigns θ);
     holder → experiencer (assigns θ, stative);
     expletive → expletive (no θ, no semantics). -/
-def VoiceAlloseme.toFlavor : VoiceAlloseme → Voice.Flavor
+def VoiceAlloseme.toFlavor : VoiceAlloseme → Flavor
   | .agent    => .agentive
   | .holder   => .experiencer
   | .engineer => .agentive
@@ -325,7 +325,7 @@ def VoiceAlloseme.toFlavor : VoiceAlloseme → Voice.Flavor
     the non-θ expletive maps to a non-θ flavor. -/
 theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
     a.assignsTheta = true ↔
-      Voice.Head.AssignsTheta { flavor := a.toFlavor, hasD := true } := by
+      Head.AssignsTheta { flavor := a.toFlavor, hasD := true } := by
   cases a <;> decide
 
 -- ════════════════════════════════════════════════════

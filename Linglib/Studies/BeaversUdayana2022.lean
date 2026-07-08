@@ -89,7 +89,7 @@ namespace BeaversUdayana2022
 
 open Semantics.Lexical
 open Indonesian.VoiceSystem
-open Minimalist (Voice.Params Voice.Flavor Voice.ExternalArgSemantics)
+open Minimalist.Voice (Params Flavor ExternalArgSemantics)
 open Beavers2010
 open ArgumentStructure.Affectedness (AffectednessDegree)
 open Voice

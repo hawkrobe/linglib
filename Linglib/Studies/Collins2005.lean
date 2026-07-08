@@ -43,11 +43,11 @@ passive, satisfying UTAH).
 
 namespace Collins2005
 
-open Minimalist
+open Minimalist Minimalist.Voice
 
 /-! ## §1. Voice properties Collins defends
 
-The four core properties of `Voice.passive`: it does not assign an external
+The four core properties of `passive`: it does not assign an external
 θ-role (which v does, per §2 UTAH), it does check accusative Case (per §4
 Case dissociation), it is not a phase head (which is what permits smuggling
 per §5), and it has a D-feature (it is a Voice head, not an expletive). -/
@@ -55,22 +55,22 @@ per §5), and it has a D-feature (it is a Voice head, not an expletive). -/
 /-- [collins-2005] §2: passive Voice does *not* assign external θ.
     The external θ-role stays on v in both active and passive. -/
 theorem passive_voice_does_not_assign_theta :
-    ¬ Voice.passive.AssignsTheta := by decide
+    ¬ passive.AssignsTheta := by decide
 
 /-- [collins-2005] §4: passive Voice checks accusative Case. The
     Case feature dissociates from v and projects on the Voice head
     (whose lexical realization is *by*). -/
 theorem passive_voice_checks_case :
-    Voice.passive.ChecksCase := by decide
+    passive.ChecksCase := by decide
 
 /-- [collins-2005] §5: passive Voice is not a phase head, which is
     what permits PartP to smuggle past the external argument in Spec,vP. -/
 theorem passive_voice_not_phase :
-    ¬ Voice.passive.IsPhasal := by decide
+    ¬ passive.IsPhasal := by decide
 
 /-- [collins-2005] §5: passive Voice permits smuggling. -/
 theorem passive_permits_smuggling :
-    Voice.passive.permitsSmuggling = true := rfl
+    passive.permitsSmuggling = true := rfl
 
 /-! ## §2. Active vs. passive: feature dissociation (Collins §4 eq. 32)
 
@@ -86,17 +86,17 @@ head. The two heads are then in complementary distribution on
     θ-assignment but distribute the Case-checking feature differently. -/
 theorem active_passive_dissociation :
     -- Active: v assigns θ AND checks Case (Voice does not check Case)
-    (Voice.agentive.AssignsTheta ∧ ¬ Voice.agentive.ChecksCase) ∧
+    (agentive.AssignsTheta ∧ ¬ agentive.ChecksCase) ∧
     -- Passive: v does NOT assign θ; Voice (by) checks Case
-    (¬ Voice.passive.AssignsTheta ∧ Voice.passive.ChecksCase) := by decide
+    (¬ passive.AssignsTheta ∧ passive.ChecksCase) := by decide
 
 /-- The phase status correlates with where Case checking lives.
     Active v* is a strong phase (it checks Case); passive v is not
     (Case has dissociated to Voice). The non-phase status is what
     permits smuggling. -/
 theorem case_dissociation_explains_phase :
-    ¬ Voice.agentive.ChecksCase ∧ Voice.agentive.IsPhasal ∧
-    Voice.passive.ChecksCase ∧ ¬ Voice.passive.IsPhasal := by decide
+    ¬ agentive.ChecksCase ∧ agentive.IsPhasal ∧
+    passive.ChecksCase ∧ ¬ passive.IsPhasal := by decide
 
 /-! ## §3. PartP movement is XP-movement, not head movement
 
@@ -113,7 +113,7 @@ configuration. -/
     smuggling configuration: PartP = [Part V DP] moves *as a constituent*
     to Spec,VoiceP, taking the particle along with the verb. -/
 theorem particle_stranding_requires_xp_movement :
-    licensesPassiveSmuggling Voice.passive true = true := by
+    licensesPassiveSmuggling passive true = true := by
   simp only [licensesPassiveSmuggling, passive_permits_smuggling, Bool.true_and]
 
 /-- [collins-2005] §3 (18–19): pseudo-passives (`John was spoken to
@@ -121,7 +121,7 @@ theorem particle_stranding_requires_xp_movement :
     (P stays adjacent to V, not stranded after EA). Same XP-movement
     diagnostic as particles. -/
 theorem pseudo_passive_requires_xp_movement :
-    licensesPassiveSmuggling Voice.passive true = true :=
+    licensesPassiveSmuggling passive true = true :=
   particle_stranding_requires_xp_movement
 
 /-! ## §4. Without PartP there is nothing to smuggle -/
@@ -129,7 +129,7 @@ theorem pseudo_passive_requires_xp_movement :
 /-- The smuggling derivation requires PartP to be present (something to
     move). Without it, no derivation is licensed. -/
 theorem no_partP_no_passive :
-    licensesPassiveSmuggling Voice.passive false = false := by
+    licensesPassiveSmuggling passive false = false := by
   simp only [licensesPassiveSmuggling, Bool.and_false]
 
 /-! ## §5. Short passives (§6 of paper)
@@ -145,16 +145,16 @@ In the formal terms of this file, a short passive has the same Voice
 configuration as a long passive — the only difference is whether Spec,vP
 is filled by an overt DP or an empty pronominal. -/
 
-/-- Short passives use the same `Voice.passive` head as long passives —
+/-- Short passives use the same `passive` head as long passives —
     smuggling is licensed identically; the difference is only the
     realization of Spec,vP (overt DP vs. empty pronominal). -/
 theorem short_and_long_passive_share_voice :
     -- Both are licensed by the same Voice + PartP configuration
-    licensesPassiveSmuggling Voice.passive true = true ∧
+    licensesPassiveSmuggling passive true = true ∧
     -- Same Voice properties (no theta, checks Case, not phase)
-    ¬ Voice.passive.AssignsTheta ∧
-    Voice.passive.ChecksCase ∧
-    ¬ Voice.passive.IsPhasal := by
+    ¬ passive.AssignsTheta ∧
+    passive.ChecksCase ∧
+    ¬ passive.IsPhasal := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · exact particle_stranding_requires_xp_movement
   all_goals decide
@@ -177,13 +177,13 @@ not `[PP by DP]`. -/
     `[VoiceP PartP [Voice' by vP]]` and the coordination in (63b) is
     VoiceP-coordination with PartP-deletion (Collins §8 eq. 64). The
     substantive constraint is that both conjuncts use the same Voice
-    head, which `Voice.passive` represents. -/
+    head, which `passive` represents. -/
 theorem by_dp_coordination_requires_voiceP :
     -- Both coordinated `by-DP` units project the same passive Voice
-    Voice.passive = Voice.passive ∧
+    passive = passive ∧
     -- Voice properties are stable across the conjuncts
-    Voice.passive.ChecksCase ∧
-    ¬ Voice.passive.AssignsTheta := by
+    passive.ChecksCase ∧
+    ¬ passive.AssignsTheta := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide
 
 /-! ## §7. Inverse-voice family membership
@@ -198,7 +198,7 @@ layer. Collins's passive instance is `Minimalist.passiveCanonical`. -/
 theorem passive_is_inverse_voice :
     Minimalist.passiveCanonical.kind = .passive ∧
     Minimalist.passiveCanonical.licensed = true ∧
-    Minimalist.passiveCanonical.voice = Voice.passive :=
+    Minimalist.passiveCanonical.voice = passive :=
   ⟨rfl, rfl, rfl⟩
 
 /-! ## §8. Transfer equations over the §3 diagnostic rows

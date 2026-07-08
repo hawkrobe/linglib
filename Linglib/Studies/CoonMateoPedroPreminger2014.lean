@@ -55,7 +55,7 @@ supporting its role as a case-assigner.
 
 namespace CoonMateoPedroPreminger2014
 
-open Minimalist
+open Minimalist Minimalist.Voice
 open Mayan (ABSPosition CaseLocus toCaseLocus MayanLang)
 
 -- § 1 uses `CaseLocus` and `toCaseLocus` from `Mayan.Params`.
@@ -175,7 +175,7 @@ theorem intransitive_subject_never_trapped (locus : CaseLocus) :
     marked variant of Voice⁰ is merged only when the normal derivation
     (with regular transitive Voice) would crash — i.e., when the subject
     must be A-bar extracted. -/
-def voiceAF : Voice.Head :=
+def voiceAF : Head :=
   { flavor := .agentive
   , hasD := true
   , phaseOverride := some false  -- intransitive v⁰: NOT phasal (Mam AF)
@@ -206,10 +206,10 @@ theorem af_frees_subject : AfCircumventsTrapping := by decide
     Voice checks case, the object receives case inside vP and need not
     move to the escape hatch. This is the paper's primary explanation
     for why AF circumvents the extraction ban. -/
-def CaseAloneFreesExtraction (v : Voice.Head) : Prop :=
+def CaseAloneFreesExtraction (v : Head) : Prop :=
   v.ChecksCase
 
-instance (v : Voice.Head) : Decidable (CaseAloneFreesExtraction v) := by
+instance (v : Head) : Decidable (CaseAloneFreesExtraction v) := by
   unfold CaseAloneFreesExtraction; infer_instance
 
 theorem af_case_frees : CaseAloneFreesExtraction voiceAF := by decide
@@ -222,7 +222,7 @@ theorem af_morphology_from_phase :
 
 /-- Contrast with regular transitive Voice: phasal, does NOT check case. -/
 theorem regular_voice_traps :
-    Voice.agentive.IsPhasal ∧ ¬ Voice.agentive.ChecksCase := by decide
+    agentive.IsPhasal ∧ ¬ agentive.ChecksCase := by decide
 
 -- ============================================================================
 -- § 6: Non-Finite Predictions
@@ -547,7 +547,7 @@ theorem factor3_necessary :
 
 /-- Agentive Voice is a phase head — this is factor I. -/
 theorem voice_phase_is_factor1 :
-    Voice.agentive.IsPhasal := by decide
+    agentive.IsPhasal := by decide
 
 /-- AF removes factor I: AF Voice is not phasal. With a non-phasal vP,
     there is no locality boundary trapping the subject. -/
@@ -730,27 +730,27 @@ theorem fullDP_end_to_end :
     the PIC. AF Voice is NOT a phase head, so it does not create a phase
     boundary — the complement remains accessible.
 
-    This connects `IsPhasal` on `Voice.Head` to the Phase module's
+    This connects `IsPhasal` on `Head` to the Phase module's
     `isPhaseHeadOf .C`/`isPhaseHeadOf .Voice` selectors. -/
 theorem voice_phase_bridge :
-    Voice.agentive.IsPhasal ∧ ¬ voiceAF.IsPhasal ∧
-    ¬ Voice.passive.IsPhasal ∧ ¬ Voice.anticausative.IsPhasal := by decide
+    agentive.IsPhasal ∧ ¬ voiceAF.IsPhasal ∧
+    ¬ passive.IsPhasal ∧ ¬ anticausative.IsPhasal := by decide
 
 /-- Phase headedness partitions Voice into {trapping, non-trapping}: a
     Voice head traps the subject iff it is a phase head AND does not
     itself check case (freeing Infl⁰ to do so). -/
-def VoiceTrapsSubject (v : Voice.Head) (locus : CaseLocus) : Prop :=
+def VoiceTrapsSubject (v : Head) (locus : CaseLocus) : Prop :=
   v.IsPhasal ∧ ¬ v.ChecksCase ∧ objectMustExitVP locus = true
 
-instance (v : Voice.Head) (locus : CaseLocus) :
+instance (v : Head) (locus : CaseLocus) :
     Decidable (VoiceTrapsSubject v locus) := by
   unfold VoiceTrapsSubject; infer_instance
 
 theorem agent_voice_traps_absNom :
-    VoiceTrapsSubject Voice.agentive .absNom := by decide
+    VoiceTrapsSubject agentive .absNom := by decide
 
 theorem agent_voice_free_absDef :
-    ¬ VoiceTrapsSubject Voice.agentive .absDef := by decide
+    ¬ VoiceTrapsSubject agentive .absDef := by decide
 
 theorem af_voice_never_traps (locus : CaseLocus) :
     ¬ VoiceTrapsSubject voiceAF locus := by
@@ -803,7 +803,7 @@ def kaqClauseSpine : ClauseSpine := ClauseSpine.cP
     agentive Voice is a phase head (flavor default), creating the locality
     boundary that traps the subject in HIGH-ABS Mayan languages
     (CMP 2014 §4–§5). -/
-def kaqVoice : Voice.Head :=
+def kaqVoice : Head :=
   { flavor := .agentive
   , hasD := true }
 
@@ -835,7 +835,7 @@ theorem af_mechanism_contrast :
 /-- Both languages share the underlying problem: agentive Voice is a
     phase head, creating a locality boundary that traps the subject. -/
 theorem shared_phase_problem :
-    Voice.agentive.IsPhasal ∧ kaqVoice.IsPhasal := by decide
+    agentive.IsPhasal ∧ kaqVoice.IsPhasal := by decide
 
 /-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages with extraction
     asymmetries: agent extraction is blocked without AF in both. -/

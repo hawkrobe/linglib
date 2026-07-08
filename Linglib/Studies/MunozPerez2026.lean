@@ -243,7 +243,7 @@ theorem negative_controls_unacceptable :
 
 /-! ### Spanish Fission instantiation -/
 
-open Minimalist
+open Minimalist Minimalist.Voice
 open Morphology.DM
 open Spanish.PersonFeatures
 open Spanish.Predicates
@@ -471,7 +471,7 @@ yet stated as a Lean theorem.
 ## Todo
 
 * **MSK comparison as a real bridge theorem.** Analogously,
-  `MartinSchaeferKastner2025.seVoiceOptions : List Voice.Flavor` is a
+  `MartinSchaeferKastner2025.seVoiceOptions : List Flavor` is a
   list literal `[.nonThematic, .reflexive]`. A subset claim against any
   hand-written Muñoz list of flavors is decided by `decide` over list
   literals — no real Voice-flavor mechanism is engaged. A genuine

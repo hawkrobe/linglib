@@ -48,7 +48,7 @@ agent is the surface subject) and expletive-like behavior
 namespace Indonesian.VoiceSystem
 
 open Voice (VoiceEntry PivotTarget VoiceSystemSymmetry)
-open Minimalist (Voice.Params Voice.ExternalArgSemantics Voice.Flavor)
+open Minimalist.Voice (Params ExternalArgSemantics Flavor)
 
 -- ============================================================================
 -- § 1: Voice Entries (descriptive, theory-neutral)
@@ -86,7 +86,7 @@ def symmetry : VoiceSystemSymmetry := .asymmetrical
 
 /-- *meN-* parameters: active Voice[+D, +λx].
     Projects a full DP external argument and introduces agent semantics. -/
-def menParams : Voice.Params :=
+def menParams : Params :=
   { selectsSpecifier := some true
   , extArgSemantics := some .thematicArgument }
 
@@ -102,7 +102,7 @@ def menParams : Voice.Params :=
     *di-* in the [+D, +∃x] cell — specifier selected, agent existentially
     bound — rather than the [+D, −λx] cell occupied by English passive
     and Romance anticausative SE. -/
-def diParams : Voice.Params :=
+def diParams : Params :=
   { selectsSpecifier := some true
   , extArgSemantics := some .thematicExistential }
 
@@ -111,7 +111,7 @@ def diParams : Voice.Params :=
     independent argument realization strategies (incorporation vs.
     functional application) and lexical semantic/pragmatic factors
     ([beavers-udayana-2022]: §3). -/
-def berParams : Voice.Params :=
+def berParams : Params :=
   { selectsSpecifier := none
   , extArgSemantics := none }
 
@@ -133,7 +133,7 @@ theorem ber_underspecified : berParams.isFullySpecified = false := rfl
 
 /-- *meN-* maps to the same cell as Minimalist agentive Voice. -/
 theorem men_is_agentive :
-    menParams = Voice.Flavor.agentive.toParams := rfl
+    menParams = Flavor.agentive.toParams := rfl
 
 /-- *di-* occupies the [+D, +∃x] cell — a specifier that introduces an
     existentially bound participant. This is distinct from English passive
@@ -144,9 +144,9 @@ theorem di_has_existential_agent :
 theorem di_selects_specifier :
     diParams.selectsSpecifier = some true := rfl
 
-/-- *ber-* is compatible with EVERY named Voice.Flavor — the defining
+/-- *ber-* is compatible with EVERY named Flavor — the defining
     property of an underspecified voice morpheme. -/
-theorem ber_compatible_with_all (f : Voice.Flavor) :
+theorem ber_compatible_with_all (f : Flavor) :
     berParams.isCompatibleWith f.toParams = true := by
   cases f <;> rfl
 

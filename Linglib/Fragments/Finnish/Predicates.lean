@@ -14,7 +14,7 @@ Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
    Active: *Mies avasi oven.* 'The man opened the door.'
    "Passive": *Ovi avattiin.* 'The door was opened (by someone).'
 
-   This is formalized using `Voice.Flavor.impersonal`, distinct from both
+   This is formalized using `Flavor.impersonal`, distinct from both
    `nonThematic` (anticausative, no agent at all) and `agentive` (syntactically
    projected agent).
 
@@ -27,7 +27,7 @@ Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
 namespace Finnish.Predicates
 
-open Minimalist (Voice.Flavor Voice.Head Voice.agentive Voice.impersonal)
+open Minimalist.Voice (Flavor Head agentive impersonal)
 
 -- ============================================================================
 -- § 1: Verb Entry Type
@@ -94,12 +94,12 @@ def haluta : FinnishVerb :=
 -- ============================================================================
 
 /-- Active Finnish voice: agentive, projects a syntactic agent. -/
-def finnishActive : Voice.Head := Voice.agentive
+def finnishActive : Head := agentive
 
 /-- Finnish "passive" voice: impersonal, no syntactic agent specifier.
     The agent is existentially closed — someone performs the action,
     but the someone is not a syntactic argument. -/
-def finnishPassive : Voice.Head := Voice.impersonal
+def finnishPassive : Head := impersonal
 
 -- ============================================================================
 -- § 4: Verification Theorems

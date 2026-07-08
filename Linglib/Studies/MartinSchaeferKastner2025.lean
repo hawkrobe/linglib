@@ -43,9 +43,9 @@ by three interacting factors:
 
 ## Bridges
 
-- `Voice.Flavor.nonThematic` ([schaefer-2008]): the anticausative voice
+- `Flavor.nonThematic` ([schaefer-2008]): the anticausative voice
   flavor — contributes no semantics. Both ±*se* anticausatives have this.
-- `Voice.Flavor.reflexive`: the reflexive voice flavor — assigns agent + theme
+- `Flavor.reflexive`: the reflexive voice flavor — assigns agent + theme
   to the sole DP. Only available with *se*.
 - `MannerSubmaxim.avoidAmbiguity`: the Manner sub-maxim driving the
   unmarked limited-control preference.
@@ -63,7 +63,7 @@ syncretism creates voice ambiguity that speakers must manage.
 
 namespace MartinSchaeferKastner2025
 
-open Minimalist (Voice.Flavor)
+open Minimalist.Voice (Flavor)
 open ArgumentStructure (EntailmentProfile)
 open ArgumentStructure.EntailmentProfile (PredictsUnaccusative)
 open Pragmatics.GriceanMaxims (MannerSubmaxim)
@@ -150,7 +150,7 @@ theorem movement_sufficient_not_necessary :
 /-- Voice flavors available for a form WITHOUT *se*.
     Only the anticausative (non-thematic) parse is available.
     The DP is a theme, not an agent. -/
-def bareVoiceOptions : List Voice.Flavor := [.nonThematic]
+def bareVoiceOptions : List Flavor := [.nonThematic]
 
 /-- Voice flavors available for a form WITH *se*.
     Both anticausative and reflexive parses are available —
@@ -162,7 +162,7 @@ def bareVoiceOptions : List Voice.Flavor := [.nonThematic]
     the reflexive reading (the entity acts on itself) and the
     anticausative reading (EFFECTOR = THEME, agentivity bleached
     by underspecification). -/
-def seVoiceOptions : List Voice.Flavor := [.nonThematic, .reflexive]
+def seVoiceOptions : List Flavor := [.nonThematic, .reflexive]
 
 /-- The *se*-marked form is ambiguous: it has strictly more voice parses. -/
 theorem se_is_ambiguous : seVoiceOptions.length > bareVoiceOptions.length := by decide
@@ -172,13 +172,13 @@ theorem bare_is_unambiguous : bareVoiceOptions = [.nonThematic] := rfl
 
 /-- Both forms share the anticausative parse. -/
 theorem shared_anticausative_parse :
-    Voice.Flavor.nonThematic ∈ bareVoiceOptions ∧
-    Voice.Flavor.nonThematic ∈ seVoiceOptions := ⟨List.mem_cons_self .., List.mem_cons_self ..⟩
+    Flavor.nonThematic ∈ bareVoiceOptions ∧
+    Flavor.nonThematic ∈ seVoiceOptions := ⟨List.mem_cons_self .., List.mem_cons_self ..⟩
 
 /-- The reflexive parse is available only with *se*. -/
 theorem reflexive_only_with_se :
-    Voice.Flavor.reflexive ∈ seVoiceOptions ∧
-    Voice.Flavor.reflexive ∉ bareVoiceOptions := by decide
+    Flavor.reflexive ∈ seVoiceOptions ∧
+    Flavor.reflexive ∉ bareVoiceOptions := by decide
 
 -- ============================================================================
 -- § 4: Agent Bias

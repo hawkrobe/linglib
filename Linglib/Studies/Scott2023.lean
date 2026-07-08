@@ -71,7 +71,7 @@ namespace Scott2023
 
 section VoiceCase
 
-open Minimalist
+open Minimalist Minimalist.Voice
 open Syntax.Case
 
 -- ============================================================================
@@ -113,11 +113,11 @@ theorem voice_based_tripartite :
 /-- Under Agree, anticausative Voice is not a phase head, so it cannot
     serve as an ACC assigner. -/
 theorem agree_anticausative_not_phase :
-    ¬ Voice.anticausative.IsPhasal := by decide
+    ¬ anticausative.IsPhasal := by decide
 
 /-- Under Agree, agentive Voice (v*) is a phase head and can assign ACC. -/
 theorem agree_voice_is_phase_head :
-    Voice.agentive.IsPhasal := by decide
+    agentive.IsPhasal := by decide
 
 -- ============================================================================
 -- § 3: Contrast with Dependent Case

@@ -43,7 +43,7 @@ open Semantics.Lexical
 open English.Predicates.Verbal
 open Data.Examples
 open ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
-open Minimalist (Voice.Flavor Voice.Head Voice.anticausative Voice.agentive)
+open Minimalist.Voice (Flavor Head anticausative agentive)
 
 /-! ## §1 + §2. Lexical annotations and QI data
 
@@ -105,11 +105,11 @@ of [kratzer-1996]); permitting smuggling is equivalent to being
 non-phase, which is equivalent to not introducing an external argument. -/
 
 theorem mos_unaccusatives_nonThematic_voice :
-    ∀ v ∈ mosUnaccusatives, v.toVerb.voiceFor = Voice.anticausative := by
+    ∀ v ∈ mosUnaccusatives, v.toVerb.voiceFor = anticausative := by
   intro v hv; fin_cases hv <;> rfl
 
 theorem communication_unergatives_agentive_voice :
-    ∀ v ∈ communicationUnergatives, v.toVerb.voiceFor = Voice.agentive := by
+    ∀ v ∈ communicationUnergatives, v.toVerb.voiceFor = agentive := by
   intro v hv; fin_cases hv <;> rfl
 
 /-! ## §5. Auxiliary selection bridge
@@ -222,7 +222,7 @@ theorem li_blocks_transitive : Examples.li_kick.judgment = .unacceptable := rfl
     arrive projects non-thematic Voice, permitting VP-smuggling — the
     same mechanism that licenses QI. -/
 theorem li_arrive_smuggling_unified :
-    arrive.toVerb.voiceFor = Voice.anticausative ∧
+    arrive.toVerb.voiceFor = anticausative ∧
     LevinRappaportHovav1995.Examples.loc_arrive.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 

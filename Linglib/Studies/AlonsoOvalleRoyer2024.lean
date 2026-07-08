@@ -391,7 +391,7 @@ theorem internal_adjunct_same (v : Bool) :
 /-! The full derivation chain connecting Chuj clause structure to
 MI flavor predictions:
 
-    Voice.Head.hasD → argPosition → accessibleBinders → predictedMIFlavors
+    Head.hasD → argPosition → accessibleBinders → predictedMIFlavors
 
 `hasD` is the structural claim: Voice heads with [D] introduce a
 specifier in Spec,VoiceP (above vP, hence above AspP). This DP's
@@ -399,20 +399,20 @@ event variable is bound by the speech act event (e₀), not by Asp's
 ∃e₂. Voice heads without [D] have no specifier — the highest DP is
 the internal argument (below AspP), accessible to both e₀ and e₂. -/
 
-open Minimalist (Voice.Head) in
+open Minimalist.Voice (Head) in
 
 /-- Derive argument position from Voice head: [+D] → external (above
 AspP), [-D] → internal (below AspP). This is the structural claim
 that replaces the stipulated position mapping. -/
-def argPositionOf (vh : Voice.Head) : ChujArgPosition :=
+def argPositionOf (vh : Head) : ChujArgPosition :=
   if vh.hasD then .external else .internal
 
-open Minimalist (Voice.Head) in
+open Minimalist.Voice (Head) in
 
 /-- End-to-end: Voice head determines MI flavor availability.
 Given a Voice head and verb volitionality, predict the MI flavors
 by composing the full derivation chain. -/
-def predictedMIFlavorsOf (vh : Voice.Head) (volitional : Bool) : List ModalFlavor :=
+def predictedMIFlavorsOf (vh : Head) (volitional : Bool) : List ModalFlavor :=
   predictedMIFlavors (argPositionOf vh) volitional
 
 open Coon2019 in

@@ -23,7 +23,7 @@ predictions and cross-linguistic data from [myler-2016].
 
 namespace Myler2016
 
-open Minimalist
+open Minimalist Minimalist.Voice
 
 -- ════════════════════════════════════════════════════
 -- § 0. Copula substrate ([myler-2016]: the vacuous light verb)
@@ -42,13 +42,13 @@ inductive CopulaForm where
 
 /-- [myler-2016] (89): v ⇔ HAVE / ___Voice_{D},φ ; v ⇔ BE / elsewhere. The HAVE
     environment is transitive Voice — `hasD` with a thematic, non-passive flavor. -/
-def copulaVI (voice : Voice.Head) : CopulaForm :=
+def copulaVI (voice : Head) : CopulaForm :=
   if voice.hasD && voice.flavor != .nonThematic && voice.flavor != .passive
   then .have else .be
 
 open Morphology.DM.VI in
 /-- The copula VI as competing `VocabItem`s (HAVE specificity 2, BE elsewhere). -/
-def copulaVIRules : List (VocabItem Voice.Head Unit) :=
+def copulaVIRules : List (VocabItem Head Unit) :=
   [ { exponent := "have"
     , contextMatch := λ v => v.hasD && v.flavor != .nonThematic && v.flavor != .passive
     , specificity := 2 }
@@ -56,7 +56,7 @@ def copulaVIRules : List (VocabItem Voice.Head Unit) :=
 
 open Morphology.DM.VI in
 /-- The `VocabItem` formulation agrees with `copulaVI`. -/
-theorem copulaVI_agrees_vocabItem (v : Voice.Head) :
+theorem copulaVI_agrees_vocabItem (v : Head) :
     vocabularyInsertSimple copulaVIRules v =
     some (if copulaVI v = .have then "have" else "be") := by
   cases v with | mk flavor hasD _ checksCase features =>
@@ -65,7 +65,7 @@ theorem copulaVI_agrees_vocabItem (v : Voice.Head) :
     VocabItem.matches, List.mergeSort, List.findSome?]
 
 /-- HAVE ↔ Voice is transitive (external argument, not PF-only, not passive). -/
-theorem vi_characterization (v : Voice.Head) :
+theorem vi_characterization (v : Head) :
     copulaVI v = .have ↔
     (v.hasD = true ∧ v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive) := by
   cases v with | mk flavor hasD _ checksCase _ =>
@@ -211,7 +211,7 @@ theorem too_many_meanings_solution :
 
     Formally: the HAVE/BE distinction depends only on whether Voice is
     transitive, which is independent of the possession relation itself. -/
-theorem too_many_structures_solution (v : Voice.Head) :
+theorem too_many_structures_solution (v : Head) :
     copulaVI v = .have ↔
     (v.hasD = true ∧ v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive) :=
   vi_characterization v
@@ -229,19 +229,19 @@ theorem too_many_structures_solution (v : Voice.Head) :
     A language uses the have-verb strategy iff its possession construction
     has transitive Voice — exactly the `copulaVI` condition.
     Derived from `copulaVI`, not stipulated independently. -/
-def isHaveVerbLanguage (voice : Voice.Head) : Bool :=
+def isHaveVerbLanguage (voice : Head) : Bool :=
   copulaVI voice == .have
 
 /-- A language with transitive, θ-assigning Voice produces HAVE. -/
 theorem haveVerb_from_transitive_voice :
-    isHaveVerbLanguage Voice.agentive = true := rfl
+    isHaveVerbLanguage agentive = true := rfl
 
 /-- A language with intransitive Voice produces BE (locational/existential). -/
 theorem be_from_intransitive_voice :
-    isHaveVerbLanguage Voice.anticausative = false := rfl
+    isHaveVerbLanguage anticausative = false := rfl
 
 /-- `isHaveVerbLanguage` agrees with `copulaVI` by construction. -/
-theorem isHaveVerbLanguage_iff_copulaVI (v : Voice.Head) :
+theorem isHaveVerbLanguage_iff_copulaVI (v : Head) :
     isHaveVerbLanguage v = true ↔ copulaVI v = .have := by
   simp [isHaveVerbLanguage, beq_iff_eq]
 
