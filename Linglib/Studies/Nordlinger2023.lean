@@ -172,11 +172,12 @@ def rpMandarin : RecipProfile :=
 
 /-- Wambaya: reciprocal clitic *-ngg-* (RR morpheme in the auxiliary),
     identical to reflexive. [nordlinger-2023] ex. 11 (citing
-    [nordlinger-1998], p. 142).
-    -- UNVERIFIED: coded bivalent following the file's original claim
-    that the RR clause retains transitive structure; ex. 11 glosses the
-    subject as NOM, so this needs checking against [nordlinger-1998] or
-    [evans-et-al-2007]. -/
+    [nordlinger-1998], p. 142). Coded bivalent because nominal subjects
+    retain ergative marking under reciprocalization
+    ([evans-et-al-2007]: transitivity is compromised but argument
+    structure undisturbed); the NOM subject in ex. 11 is a free
+    pronoun, which declines nominative/accusative regardless of
+    transitivity ([nordlinger-1998]). -/
 def rpWambaya : RecipProfile :=
   { language := "Wambaya", iso := "wmb"
   , primaryStrategy := .recipClitic
@@ -343,16 +344,17 @@ def ReciprocityType.exhaustive : ReciprocityType → Bool
   | .ring     => true
 
 /-- Whether a reciprocity type is symmetric: within each active pair,
-    if A acts on B then B acts on A. Chain and ring are directional
-    (A follows B does not entail B follows A). Radial IS symmetric —
-    the teacher intimidates each pupil AND each pupil intimidates the
-    teacher — it just doesn't cover all pairs. -/
+    if A acts on B then B acts on A. Only strong and pairwise are:
+    chain and ring are directional (A follows B does not entail B
+    follows A), and [majid-et-al-2011] define radial as one participant
+    acting *asymmetrically* with multiple others and melee as multiple
+    *asymmetrical* interactions without full saturation. -/
 def ReciprocityType.symmetric : ReciprocityType → Bool
   | .strong   => true
   | .pairwise => true
   | .chain    => false
-  | .radial   => true
-  | .melee    => true
+  | .radial   => false
+  | .melee    => false
   | .ring     => false
 
 /-- The six reciprocity types English *each other* can express
