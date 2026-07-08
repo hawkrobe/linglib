@@ -1,4 +1,5 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Fragments.Romance.Spanish.Predicates
 
 /-!
 # Spanish Reciprocal Fragment
@@ -28,17 +29,11 @@ def bipartite : Marker :=
 /-- Marker inventory, primary strategy first. -/
 def markers : List Marker := [seClitic, bipartite]
 
-/-- Lexical reciprocal verbs with a transitive alternate
-    ([palmieri-2024], Appendix A). The alternate is homophonous with the
-    reciprocal entry in Romance. -/
-def lexicalReciprocals : List LexicalVerb :=
-  [ { form := "abrazar", gloss := "hug", transitiveAlternate := some "abrazar" }
-  , { form := "acurrucar", gloss := "cuddle", transitiveAlternate := some "acurrucar" }
-  , { form := "besar", gloss := "kiss", transitiveAlternate := some "besar" }
-  , { form := "casar", gloss := "marry", transitiveAlternate := some "casar" }
-  , { form := "consultar", gloss := "consult/confer", transitiveAlternate := some "consultar" }
-  , { form := "cruzar", gloss := "run into, meet accidentally", transitiveAlternate := some "cruzar" }
-  , { form := "dejar", gloss := "leave/break up", transitiveAlternate := some "dejar" }
-  , { form := "encontrar", gloss := "find/meet", transitiveAlternate := some "encontrar" } ]
+/-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
+    Appendix A), referenced as ordinary verb entries — the lexical
+    strategy marks predicates, not forms. The transitive alternate is
+    the entry itself (homophonous in Romance). -/
+def lexicalReciprocals : List Verb :=
+  [Predicates.abrazar, Predicates.acurrucar, Predicates.besar, Predicates.casar, Predicates.consultar, Predicates.cruzar, Predicates.dejar, Predicates.encontrar]
 
 end Spanish.Reciprocals

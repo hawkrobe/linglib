@@ -1098,7 +1098,9 @@ import Linglib.Fragments.Quechua.PolarityItems
 import Linglib.Fragments.Quechua.Possession
 import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 import Linglib.Fragments.Quechua.TenseAspect
+import Linglib.Fragments.Romance.BrazilianPortuguese.Predicates
 import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
+import Linglib.Fragments.Romance.Catalan.Predicates
 import Linglib.Fragments.Romance.Catalan.Reciprocals
 import Linglib.Fragments.Romance.Clitics
 import Linglib.Fragments.Romance.French.Binominals
@@ -1118,7 +1120,9 @@ import Linglib.Fragments.Romance.French.Reciprocals
 import Linglib.Fragments.Romance.French.Relativization
 import Linglib.Fragments.Romance.French.TenseAspect
 import Linglib.Fragments.Romance.Galician.Pronouns
+import Linglib.Fragments.Romance.Italian.Predicates
 import Linglib.Fragments.Romance.Italian.Reciprocals
+import Linglib.Fragments.Romance.Spanish.Predicates
 import Linglib.Fragments.Romance.Spanish.Reciprocals
 import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Sesotho.Morph
@@ -1198,6 +1202,7 @@ import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Swahili.Phonology
 import Linglib.Fragments.Swahili.Plurals
 import Linglib.Fragments.Swahili.Possession
+import Linglib.Fragments.Swahili.Predicates
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Fragments.Swahili.TenseAspect

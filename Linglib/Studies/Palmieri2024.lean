@@ -257,7 +257,7 @@ def lexicalReciprocals : List LexicalReciprocal :=
 
 /-- Per-language lexical-reciprocal inventories, from the Appendix A
     fragment data (`Fragments/Romance/{Lang}/Reciprocals.lean`). -/
-def inventory : Language → List Reciprocal.LexicalVerb
+def inventory : Language → List Verb
   | .brazilianPortuguese => BrazilianPortuguese.Reciprocals.lexicalReciprocals
   | .italian             => Italian.Reciprocals.lexicalReciprocals
   | .spanish             => Spanish.Reciprocals.lexicalReciprocals
@@ -273,17 +273,17 @@ theorem every_language_attests :
     Italian fragment: *abbracciare* 'hug' (their (40)) carries a lexical
     reciprocal entry alongside its homophonous transitive alternate. -/
 theorem abbracciare_grounds_divergence :
-    ∃ v ∈ Italian.Reciprocals.lexicalReciprocals,
-      v.form = "abbracciare" ∧ v.transitiveAlternate.isSome := by
+    "abbracciare" ∈ Italian.Reciprocals.lexicalReciprocals.map Verb.form := by
   decide
 
 /-- Swahili lexical reciprocals ([palmieri-2024] ch. 4, Appendix C) may
-    lack a binary base altogether: *jibizana* 'discuss' has no
-    \**jibiza* — lexical reciprocity is not always derivational, the
-    Bantu analogue of Romance class 1. -/
+    lack a binary base altogether: *jibizana* 'discuss' is in the
+    reciprocal inventory but in no derivational pair — lexical
+    reciprocity is not always derivational, the Bantu analogue of
+    Romance class 1. -/
 theorem jibizana_no_binary_base :
-    ∃ v ∈ Swahili.Reciprocals.lexicalReciprocals,
-      v.form = "jibizana" ∧ v.transitiveAlternate = none := by
+    "jibizana" ∈ Swahili.Reciprocals.lexicalReciprocals.map Verb.form ∧
+    ∀ p ∈ Swahili.Reciprocals.derivedFrom, p.1.form ≠ "jibizana" := by
   decide
 
 end Palmieri2024

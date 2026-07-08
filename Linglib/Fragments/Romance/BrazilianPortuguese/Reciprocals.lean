@@ -1,4 +1,5 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Fragments.Romance.BrazilianPortuguese.Predicates
 
 /-!
 # Brazilian Portuguese Reciprocal Fragment
@@ -28,16 +29,11 @@ def bipartite : Marker :=
 /-- Marker inventory, primary strategy first. -/
 def markers : List Marker := [seClitic, bipartite]
 
-/-- Lexical reciprocal verbs with a transitive alternate
-    ([palmieri-2024], Appendix A). The alternate is homophonous with the
-    reciprocal entry in Romance. -/
-def lexicalReciprocals : List LexicalVerb :=
-  [ { form := "abraçar", gloss := "hug", transitiveAlternate := some "abraçar" }
-  , { form := "beijar", gloss := "kiss", transitiveAlternate := some "beijar" }
-  , { form := "casar", gloss := "marry", transitiveAlternate := some "casar" }
-  , { form := "consultar", gloss := "consult/confer", transitiveAlternate := some "consultar" }
-  , { form := "cumprimentar", gloss := "greet", transitiveAlternate := some "cumprimentar" }
-  , { form := "encontrar", gloss := "meet", transitiveAlternate := some "encontrar" }
-  , { form := "namorar", gloss := "date, be partners", transitiveAlternate := some "namorar" } ]
+/-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
+    Appendix A), referenced as ordinary verb entries — the lexical
+    strategy marks predicates, not forms. The transitive alternate is
+    the entry itself (homophonous in Romance). -/
+def lexicalReciprocals : List Verb :=
+  [Predicates.abracar, Predicates.beijar, Predicates.casar, Predicates.consultar, Predicates.cumprimentar, Predicates.encontrar, Predicates.namorar]
 
 end BrazilianPortuguese.Reciprocals
