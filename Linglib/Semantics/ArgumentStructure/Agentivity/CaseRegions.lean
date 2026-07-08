@@ -8,10 +8,11 @@ import Linglib.Features.Case.Basic
 **connected region** of the agentivity lattice, spreading outwards from the
 maximal agent and maximal patient nodes (Figs. 6–7). This file assigns each
 `GrimmNode` its case region (`GrimmNode.toCaseRegion`), maps regions to
-morphological cases under accusative and ergative alignment, and proves the
-connectedness claim for the three core regions as order-convexity
-(`IsOrderConvex`). The dative region unifies recipients, experiencers, and
-benefactives (§5.1, Fig. 7).
+morphological cases under accusative and ergative alignment, and sharpens
+the connectedness claim: each core region is an order **interval** anchored
+at its pole (`toCaseRegion_eq_nomErg_iff` etc.), with order-convexity a
+corollary. The dative region unifies recipients, experiencers, and second
+arguments of two-place communication/service verbs (§5.1, Fig. 7).
 -/
 
 namespace ArgumentStructure.AgentivityLattice
@@ -21,8 +22,9 @@ namespace ArgumentStructure.AgentivityLattice
 /-- Case regions on the agentivity lattice. Per Grimm 2011 (abstract,
     §2.3, §4), a core case marker corresponds to a **connected region** of
     the lattice; the three core regions (`nomErg`, `accAbs`, `dative`) are
-    proved order-convex (`IsOrderConvex`) below. `oblique` is the residual
-    "middle region" (Grimm p.533) — not claimed to be connected. -/
+    order intervals anchored at the poles (`toCaseRegion_eq_nomErg_iff`
+    etc.). `oblique` is the residual "middle region" (Grimm p.532–533) —
+    not connected (`oblique_not_orderConvex`). -/
 inductive CaseRegion where
   /-- Nominative (accusative systems) / Ergative (ergative systems):
       the region spreading from maximal agent. Marks subjects. -/
@@ -76,7 +78,42 @@ def CaseRegion.toErgativeCase : CaseRegion → Case
   | .dative  => .dat
   | .oblique => .inst
 
-/-! ### Connectedness of core case regions (Grimm 2011 abstract + §4) -/
+/-! ### Core case regions are order intervals (Grimm 2011 abstract + §4)
+
+The abstract's central claim — a core case marker is a connected region
+"spreading outwards from the maximal agent and maximal patient nodes" — in
+sharpened form: each core region is an order **interval** anchored at its
+pole. NOM/ERG is the up-set of `minimalInstigator` (its top is
+`maximalAgent = ⊤`); ACC/ABS runs from `maximalPatient` up to the
+contact-verb patient; the dative sits above `sentientNonInstigatorNode`.
+Order-convexity ("connectedness") follows by transitivity. -/
+
+/-- The bottom of the NOM/ERG interval: instigation alone, at total
+    persistence — the minimal acceptable agent of *kill* (§2.3: natural
+    forces such as electricity or the explosion). -/
+def minimalInstigator : GrimmNode := ⟨⟨false, false, true, false⟩, ⊤⟩
+
+/-- **NOM/ERG is the up-set of the minimal instigator** — the interval from
+    `minimalInstigator` to `maximalAgent = ⊤`. -/
+theorem GrimmNode.toCaseRegion_eq_nomErg_iff (n : GrimmNode) :
+    n.toCaseRegion = .nomErg ↔ minimalInstigator ≤ n := by
+  revert n; decide
+
+/-- **ACC/ABS is the interval from the maximal patient to the contact-verb
+    patient**: ⊥ agentivity, persistence between `exPersBeginning` and
+    `quPersBeginning`. -/
+theorem GrimmNode.toCaseRegion_eq_accAbs_iff (n : GrimmNode) :
+    n.toCaseRegion = .accAbs ↔
+      maximalPatient ≤ n ∧ n ≤ TransitivityRank.contact.patientNode := by
+  revert n; decide
+
+/-- **The dative is the interval above `sentientNonInstigatorNode`**:
+    sentience without instigation, pinned at `quPersBeginning`. -/
+theorem GrimmNode.toCaseRegion_eq_dative_iff (n : GrimmNode) :
+    n.toCaseRegion = .dative ↔
+      sentientNonInstigatorNode ≤ n ∧
+      n ≤ ⟨⟨true, true, false, true⟩, .quPersBeginning⟩ := by
+  revert n; decide
 
 /-- A predicate on a partial order is **order-convex** if it is closed
     under intervals: whenever `P a` and `P b` and `a ≤ x ≤ b`, also `P x`.
@@ -85,75 +122,26 @@ def CaseRegion.toErgativeCase : CaseRegion → Case
 def IsOrderConvex {α : Type*} [LE α] (P : α → Prop) : Prop :=
   ∀ ⦃a b x : α⦄, P a → P b → a ≤ x → x ≤ b → P x
 
--- Characterisation lemmas (single `decide` over 80 GrimmNode elements each)
-
-private theorem GrimmNode.toCaseRegion_eq_nomErg_iff (n : GrimmNode) :
-    n.toCaseRegion = .nomErg ↔
-    n.agentivity.instigation = true ∧ n.persistence = .totalPersistence := by
-  rcases n with ⟨⟨v, s, i, m⟩, p⟩
-  cases v <;> cases s <;> cases i <;> cases m <;> cases p <;> decide
-
-private theorem GrimmNode.toCaseRegion_eq_accAbs_iff (n : GrimmNode) :
-    n.toCaseRegion = .accAbs ↔
-    n.agentivity = ⊥ ∧
-    (n.persistence = .exPersBeginning ∨ n.persistence = .quPersBeginning) := by
-  rcases n with ⟨⟨v, s, i, m⟩, p⟩
-  cases v <;> cases s <;> cases i <;> cases m <;> cases p <;> decide
-
-private theorem GrimmNode.toCaseRegion_eq_dative_iff (n : GrimmNode) :
-    n.toCaseRegion = .dative ↔
-    n.agentivity.sentience = true ∧ n.agentivity.instigation = false ∧
-    n.persistence = .quPersBeginning := by
-  rcases n with ⟨⟨v, s, i, m⟩, p⟩
-  cases v <;> cases s <;> cases i <;> cases m <;> cases p <;> decide
-
-/-- The `nomErg` region is order-convex: any node between two nomErg nodes
-    is itself nomErg. The region equals `{n | n.agentivity.instigation = true
-    ∧ n.persistence = .totalPersistence}`, the intersection of an upper set
-    (instigation = true) with the singleton at top persistence. -/
+/-- Connectedness of NOM/ERG, from the interval form. -/
 theorem nomErg_orderConvex :
     IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .nomErg) := by
   intro a b x ha hb hax hxb
-  rw [GrimmNode.toCaseRegion_eq_nomErg_iff] at *
-  refine ⟨AgentivityNode.le_instigation_mono hax.1 ha.1, ?_⟩
-  have hpers : (.totalPersistence : PersistenceLevel) ≤ x.persistence := ha.2 ▸ hax.2
-  exact le_antisymm le_top hpers
+  rw [GrimmNode.toCaseRegion_eq_nomErg_iff] at ha ⊢
+  exact ha.trans hax
 
-/-- The `accAbs` region is order-convex. It equals
-    `{n | n.agentivity = ⊥ ∧ n.persistence ∈ {.exPersBeginning, .quPersBeginning}}`
-    — the singleton at bottom agentivity intersected with the persistence
-    interval `[.exPersBeginning, .quPersBeginning]`. -/
+/-- Connectedness of ACC/ABS, from the interval form. -/
 theorem accAbs_orderConvex :
     IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .accAbs) := by
   intro a b x ha hb hax hxb
-  rw [GrimmNode.toCaseRegion_eq_accAbs_iff] at *
-  refine ⟨le_bot_iff.mp (hb.1 ▸ hxb.1), ?_⟩
-  -- x.persistence is in [a.persistence, b.persistence]; both endpoints in {exPB, qPB}.
-  -- Case-split on x.persistence (5 cases) using the bounds to rule out the other 3.
-  have hax_p : a.persistence ≤ x.persistence := hax.2
-  have hxb_p : x.persistence ≤ b.persistence := hxb.2
-  rcases ha.2 with hap | hap <;> rcases hb.2 with hbp | hbp <;>
-    rw [hap] at hax_p <;> rw [hbp] at hxb_p <;>
-    (try exact absurd (hax_p.trans hxb_p) (by decide)) <;>
-    (cases hxp : x.persistence <;> rw [hxp] at hax_p hxb_p <;>
-      first | (left; rfl) | (right; rfl) | exact absurd hax_p (by decide) |
-              exact absurd hxb_p (by decide))
+  rw [GrimmNode.toCaseRegion_eq_accAbs_iff] at ha hb ⊢
+  exact ⟨ha.1.trans hax, hxb.trans hb.2⟩
 
-/-- The `dative` region is order-convex. It equals
-    `{n | n.agentivity.sentience = true ∧ n.agentivity.instigation = false
-    ∧ n.persistence = .quPersBeginning}` — sentience upper set ∩ instigation
-    lower set ∩ persistence singleton. -/
+/-- Connectedness of the dative, from the interval form. -/
 theorem dative_orderConvex :
     IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .dative) := by
   intro a b x ha hb hax hxb
-  rw [GrimmNode.toCaseRegion_eq_dative_iff] at *
-  refine ⟨AgentivityNode.le_sentience_mono hax.1 ha.1,
-          AgentivityNode.ge_instigation_mono hxb.1 hb.2.1, ?_⟩
-  have h1 : x.persistence ≤ b.persistence := hxb.2
-  have h2 : a.persistence ≤ x.persistence := hax.2
-  rw [hb.2.2] at h1
-  rw [ha.2.2] at h2
-  exact le_antisymm h1 h2
+  rw [GrimmNode.toCaseRegion_eq_dative_iff] at ha hb ⊢
+  exact ⟨ha.1.trans hax, hxb.trans hb.2⟩
 
 /-- Counterexample showing `oblique` is NOT order-convex. With
     `a = ⟨{motion}, .quPersBeginning⟩` and `b = ⟨{motion, sentience, instigation},
