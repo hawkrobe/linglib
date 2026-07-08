@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.ContextChange
-import Linglib.Semantics.Dynamic.HasFiberedLookup
+import Linglib.Semantics.Dynamic.Accessibility
 import Linglib.Core.Logic.CylindricAlgebra
 
 /-!
@@ -255,33 +255,17 @@ theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`,
 -- ════════════════════════════════════════════════════════════════
 
 /-- Charlow's `State W E = Set (W × Assignment E)` as the **nondeterministic**
-(`M = Set`) instance of the unified lookup interface. The lookup at
+(`M = Set`) instance of the fibered lookup interface. The lookup at
 variable `v` at world `w` yields `{ g v | (w, g) ∈ s }` — one alternative
-per assignment containing `w`. Empty set is the falsifier (no assignment
-defines `v` at `w`).
-
-## SEAM (Falsifier, Seam 1): Charlow commits to `∅` as the no-referent
-case. Bivalence is rejected — there is no `Entity.star` analog at the
-value level. Compositional negation is preserved by the empty-set
-convention; bridge to Hofmann via `supportCollapse` collapses
-genuinely-uncertain states. -/
+per assignment containing `w`. The empty set is the falsifier (no
+assignment defines `v` at `w`): Charlow rejects a value-level `⋆`, so
+compositional negation is preserved by the empty-set convention. The
+fibered projection is lossy — the native joint state records which worlds
+pair with which assignments beyond what a single `(v, w)` query reveals;
+the `supportCollapse` bridge below collapses genuinely-uncertain states. -/
 instance instCharlowHasFiberedLookup (W E : Type) :
     Semantics.Dynamic.Context.HasFiberedLookup Set (State W E) Nat W E where
   iLookup s v w := { e | ∃ g : Assignment E, (w, g) ∈ s ∧ g v = e }
-
-/-- **Charlow as joint-state**: `State W E = Set (W × Assignment E)` is
-*natively* a joint set over (world, assignment) pairs — no marginalization
-needed. The `joint` field is essentially the identity, modulo rendering
-`Assignment E = Nat → E` as the function `V → E` expected by the
-typeclass.
-
-## SEAM (Seam 2): This declaration commits Charlow empirically to having
-joint structure to lose. The fibered `iLookup` projection of this state
-is lossy — it discards which worlds were paired with which assignments
-beyond what a single `(v, w)` query reveals. -/
-instance instCharlowHasJointState (W E : Type) :
-    Semantics.Dynamic.Context.HasJointState Set (State W E) Nat W E where
-  joint s := s
 
 -- ════════════════════════════════════════════════════════════════
 -- Bridge natural transformations — Hofmann ⇄ Charlow
@@ -384,31 +368,19 @@ theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
   rw [← hch, hg₀_v]
 
 -- ════════════════════════════════════════════════════════════════
--- ## SEAM 6 (Anaphora resolution mechanism) — concretized
+-- Anaphora resolution: no propositional drefs
 -- ════════════════════════════════════════════════════════════════
 
 /-! Charlow's `State W E = Set (W × Assignment E)` deliberately carries
-**no propositional-dref structure**. Anaphora-under-negation phenomena
-that ICDRT solves by propositional drefs (e.g. the bathroom-sentence
-theorem `Semantics.Dynamic.Context.counterfactual_blocks_veridical`)
-are solved here by **alternative-set filtering** — a negative
+**no propositional-dref structure**: Charlow does not instantiate
+`HasPropDrefs`, so the bathroom-sentence theorem
+`Semantics.Dynamic.Context.counterfactual_blocks_veridical` (which needs
+only `[HasPropDrefs Ctx P W]`) does not apply here. The same
+anaphora-under-negation phenomenon ("There isn't a bathroom. #It is
+upstairs.") is handled by **alternative-set filtering** — a negative
 antecedent yields an empty alternative set, which by the empty-set
-falsifier (Seam 1) makes downstream lookup empty.
-
-Concretely: Charlow does **not** instantiate `HasPropDrefs`, and
-the typeclass theorem `counterfactual_blocks_veridical` (which lives
-over `[HasPropDrefs Ctx P W]` only — independent of the effect functor
-`M`) does not apply here. Attempting to write
-`HasPropDrefs (State W E) P W` would require inventing a `pLookup`
-that doesn't exist in Charlow's framework.
-
-This is **the seam working as intended**: the unification at
-`HasFiberedLookup` (the lookup signature) is honest, and the divergence
-at the resolution-mechanism layer is preserved as a typeclass-instance
-gap, not papered over by a phony `pLookup` definition. The ICDRT and
-Charlow analyses of the same empirical phenomenon (e.g.
-"There isn't a bathroom. #It is upstairs.") thus live as
-non-interreducible theorems in their respective files. -/
+falsifier makes downstream lookup empty. The divergence is a genuine
+typeclass-instance gap, not papered over by a phony `pLookup`. -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § Cylindric algebra bridges
