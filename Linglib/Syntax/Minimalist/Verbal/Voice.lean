@@ -97,8 +97,9 @@ def Flavor.thetaRole : Flavor → Option ThetaRole
   | .nonThematic | .expletive | .impersonal | .passive => none
 
 /-- Default phasehood ([collins-2005]/[chomsky-2001] baseline):
-    θ-assigning, specifier-projecting Voice is phasal. Antipassive is the
-    documented anomaly (θ-assigning yet non-phasal, per [scott-2023]);
+    θ-assigning, specifier-projecting Voice is phasal — tethered to the
+    parameter grid by `defaultPhasal_eq_baselinePhasal`, with antipassive
+    the machine-checked exception (`antipassive_anomaly`);
     per-construction divergences go via `Head.phaseOverride`. -/
 def Flavor.defaultPhasal : Flavor → Bool
   | .agentive | .causer | .reflexive | .reciprocal | .experiencer => true
@@ -465,6 +466,12 @@ def Params.assignsTheta? (p : Params) : Option Bool :=
   | some .expletive           => some false
   | none                      => none
 
+/-- Baseline phasehood in the parameter grid: a θ-marked specifier
+    ([+D, +λx arg]) makes a phase ([collins-2005]/[chomsky-2001]). -/
+def Params.baselinePhasal (p : Params) : Bool :=
+  p.selectsSpecifier == some true &&
+    p.extArgSemantics == some .thematicArgument
+
 /-- Compatible iff agreeing on all specified dimensions. -/
 def Params.isCompatibleWith (p q : Params) : Bool :=
   (p.selectsSpecifier.isNone || q.selectsSpecifier.isNone ||
@@ -491,6 +498,30 @@ theorem flavor_params_theta_consistent (f : Flavor) :
       | .experiencer | .impersonal => true
       | .nonThematic | .expletive | .passive => false) := by
   cases f <;> rfl
+
+/-- `defaultPhasal` agrees with the parametric baseline everywhere except
+    antipassive. -/
+theorem defaultPhasal_eq_baselinePhasal (f : Flavor)
+    (h : f ≠ .antipassive) :
+    f.defaultPhasal = f.toParams.baselinePhasal := by
+  cases f <;> simp_all <;> rfl
+
+/-- The antipassive anomaly, machine-checked: antipassive occupies a
+    phasal cell of the grid ([+D, +λx arg]) yet is non-phasal by default —
+    phasehood tracks v* transitivity ([chomsky-2001]), and antipassive
+    detransitivizes (its `alternation` has `derivedTransitive = some
+    false`), though reflexive and reciprocal show the residue is not fully
+    derivable from the alternation either. -/
+theorem antipassive_anomaly :
+    Flavor.antipassive.defaultPhasal = false ∧
+    Flavor.antipassive.toParams.baselinePhasal = true := ⟨rfl, rfl⟩
+
+/-- Grid consistency: a flavor θ-marks its specifier iff its cell is
+    [+λx arg]. -/
+theorem thetaRole_isSome_iff (f : Flavor) :
+    f.thetaRole.isSome = true ↔
+      f.toParams.extArgSemantics = some .thematicArgument := by
+  cases f <;> simp [Flavor.thetaRole, Flavor.toParams]
 
 /-- Compatibility is reflexive. -/
 theorem params_compatible_refl (p : Params) :
