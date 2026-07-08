@@ -1,5 +1,6 @@
 import Linglib.Morphology.MorphRule
 import Linglib.Syntax.Reciprocal
+import Linglib.Fragments.Swahili.Predicates
 
 /-!
 # Swahili Reciprocal Fragment
@@ -59,21 +60,20 @@ def anSuffix : Marker :=
 /-- Marker inventory. -/
 def markers : List Marker := [anSuffix]
 
-/-- Lexical reciprocal verbs ([palmieri-2024], Appendix C): *-an-*-formed
-    verbs with lexicalized reciprocal entries, diagnosed by singular
-    predication (modal embedding, habituality) and affix ordering. The
-    binary base is morphologically distinct, sometimes with semantic
-    drift (*pambana* 'fight' < *pamba* 'decorate'); *jibizana* lacks a
-    binary base altogether (\**jibiza*). -/
-def lexicalReciprocals : List LexicalVerb :=
-  [ { form := "achana", gloss := "break up, divorce", transitiveAlternate := some "acha" }
-  , { form := "gawana", gloss := "share", transitiveAlternate := some "gawa" }
-  , { form := "gombana", gloss := "quarrel", transitiveAlternate := some "gomba" }
-  , { form := "gongana", gloss := "collide", transitiveAlternate := some "gonga" }
-  , { form := "jibizana", gloss := "discuss, talk, dialogue" }
-  , { form := "pambana", gloss := "fight, be in conflict", transitiveAlternate := some "pamba" }
-  , { form := "patana", gloss := "agree", transitiveAlternate := some "pata" }
-  , { form := "pigana", gloss := "fight", transitiveAlternate := some "piga" }
-  , { form := "shindana", gloss := "compete", transitiveAlternate := some "shinda" } ]
+/-- The *-an-* verbs with lexicalized reciprocal entries ([palmieri-2024],
+    Appendix C), referenced as ordinary verb entries. -/
+def lexicalReciprocals : List Verb :=
+  [Predicates.achana, Predicates.gawana, Predicates.gombana,
+   Predicates.gongana, Predicates.jibizana, Predicates.pambana,
+   Predicates.patana, Predicates.pigana, Predicates.shindana]
+
+/-- Derivational pairing of each lexical reciprocal with its binary base
+    ([palmieri-2024], Appendix C). *jibizana* is absent: it has no
+    binary base (\**jibiza*). -/
+def derivedFrom : List (Verb × Verb) :=
+  [(Predicates.achana, Predicates.acha), (Predicates.gawana, Predicates.gawa),
+   (Predicates.gombana, Predicates.gomba), (Predicates.gongana, Predicates.gonga),
+   (Predicates.pambana, Predicates.pamba), (Predicates.patana, Predicates.pata),
+   (Predicates.pigana, Predicates.piga), (Predicates.shindana, Predicates.shinda)]
 
 end Swahili.Reciprocals

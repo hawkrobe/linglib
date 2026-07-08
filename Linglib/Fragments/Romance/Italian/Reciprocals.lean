@@ -1,4 +1,5 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Fragments.Romance.Italian.Predicates
 
 /-!
 # Italian Reciprocal Fragment
@@ -28,21 +29,11 @@ def bipartite : Marker :=
 /-- Marker inventory, primary strategy first. -/
 def markers : List Marker := [seClitic, bipartite]
 
-/-- Lexical reciprocal verbs with a transitive alternate
-    ([palmieri-2024], Appendix A). The alternate is homophonous with the
-    reciprocal entry in Romance. -/
-def lexicalReciprocals : List LexicalVerb :=
-  [ { form := "abbracciare", gloss := "hug", transitiveAlternate := some "abbracciare" }
-  , { form := "baciare", gloss := "kiss", transitiveAlternate := some "baciare" }
-  , { form := "coccolare", gloss := "cuddle", transitiveAlternate := some "coccolare" }
-  , { form := "conoscere", gloss := "know (of)", transitiveAlternate := some "conoscere" }
-  , { form := "consultare", gloss := "consult/confer", transitiveAlternate := some "consultare" }
-  , { form := "frequentare", gloss := "date", transitiveAlternate := some "frequentare" }
-  , { form := "incontrare", gloss := "meet", transitiveAlternate := some "incontrare" }
-  , { form := "incrociare", gloss := "run into, meet accidentally", transitiveAlternate := some "incrociare" }
-  , { form := "lasciare", gloss := "leave/break up", transitiveAlternate := some "lasciare" }
-  , { form := "sposare", gloss := "marry", transitiveAlternate := some "sposare" }
-  , { form := "trovare", gloss := "find/meet", transitiveAlternate := some "trovare" }
-  , { form := "vedere", gloss := "see/meet", transitiveAlternate := some "vedere" } ]
+/-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
+    Appendix A), referenced as ordinary verb entries — the lexical
+    strategy marks predicates, not forms. The transitive alternate is
+    the entry itself (homophonous in Romance). -/
+def lexicalReciprocals : List Verb :=
+  [Predicates.abbracciare, Predicates.baciare, Predicates.coccolare, Predicates.conoscere, Predicates.consultare, Predicates.frequentare, Predicates.incontrare, Predicates.incrociare, Predicates.lasciare, Predicates.sposare, Predicates.trovare, Predicates.vedere]
 
 end Italian.Reciprocals
