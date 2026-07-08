@@ -1,29 +1,30 @@
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Reciprocal
 
 /-!
 # Icelandic Reciprocal Fragment
 [nordlinger-2023]
 
-Icelandic uses a bipartite NP strategy: "hvor...annad" ('each...other'),
-where each part independently inflects for case. The first element "hvor"
-takes nominative (subject case), while "annad" takes the case assigned by
-the verb.
+Icelandic uses a bipartite NP strategy: "hvort annað" ('each other',
+neuter forms as in [nordlinger-2023] ex. 17a), where each part
+independently inflects for case — the quantifier agrees with the
+antecedent while the *annað* part takes the case assigned by its
+argument position ([hurst-nordlinger-2021]).
 
 This is a bivalent strategy: the bipartite NP fills the object position,
 preserving transitivity. Formally distinct from the reflexive "sig".
 
-[nordlinger-2023] ex. 17 (citing Hurst & Nordlinger 2021).
+[nordlinger-2023] ex. 17 (citing [hurst-nordlinger-2021]).
 -/
 
 namespace Icelandic.Reciprocals
 
-open Pronoun
+open Pronoun Reciprocal
 
-/-- hvor...annad — bipartite reciprocal NP 'each other'.
-
-    Each part inflects independently for case.  -/
-def hvorAnnad : PersonalPronoun :=
-  { form := "hvor...annad", person := some .third, number := some .plural }
+/-- hvort annað — bipartite reciprocal NP 'each other' (neuter citation
+    forms; both parts inflect independently for case and gender). -/
+def hvorAnnad : ReciprocalMarker :=
+  { form := "hvort annað", strategy := .bipartiteNP }
 
 /-- sig — reflexive pronoun (for contrast). -/
 def sig : PersonalPronoun :=
@@ -32,5 +33,8 @@ def sig : PersonalPronoun :=
 /-- Icelandic reciprocal is formally distinct from reflexive. -/
 theorem recip_distinct_from_reflexive :
     hvorAnnad.form ≠ sig.form := by decide
+
+/-- Marker inventory. -/
+def markers : List ReciprocalMarker := [hvorAnnad]
 
 end Icelandic.Reciprocals

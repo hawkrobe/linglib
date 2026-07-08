@@ -1,4 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Reciprocal
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Data.UD.Basic
@@ -187,5 +188,17 @@ theorem reflexive_inflects :
     wide-scope (I-)reading is available.
     [dalrymple-haug-2024] §2. -/
 def singularAntecedentForcesWideScope : Bool := true
+
+open Reciprocal in
+/-- The reciprocal verbal suffix ([nordlinger-2023] ex. 19, citing
+    [siloni-2008]). -/
+def ozSuffix : ReciprocalMarker :=
+  { form := "-óz-", strategy := .verbalAffix }
+
+open Reciprocal in
+/-- Marker inventory, primary strategy first: *-óz-* plus the reciprocal
+    pronoun *egymás* (form derived from the pronoun entry above). -/
+def markers : List ReciprocalMarker :=
+  [ ozSuffix, { form := egymas.form, strategy := .recipPronoun } ]
 
 end Hungarian.Reciprocals
