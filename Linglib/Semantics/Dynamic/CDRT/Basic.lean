@@ -2,195 +2,99 @@ import Linglib.Semantics.Dynamic.Connectives.CCP
 import Linglib.Semantics.Dynamic.Core.DynamicTy2
 
 /-!
-# Compositional DRT
+# Compositional DRT — states, drefs, and boxes
 [muskens-1996]
 
-Stub for Compositional DRT, which combines DRT with Montague grammar
-for fully compositional dynamic semantics.
+CDRT instantiates Dynamic Ty2 at the concrete state type
+`State E := Core.Assignment E` (`Nat → E`) — Muskens's type `s`. A
+*register* (discourse referent, his type `se`) is a map *from* states —
+here the projection `dref n` — not the state itself. Boxes (type `s(st)`)
+are `DProp E := Update (State E)`: the relational algebra of
+`Connectives/Defs.lean` specialized to CDRT states, so the connectives
+*are* `dseq`/`test`/`dneg`/`dimpl`/`ddisj` by definition rather than
+re-stipulation. Only `DProp.new` (ℕ-indexed random assignment) is a
+CDRT-specific primitive: the abstract `AssignmentStructure` cannot be
+instantiated at `Nat → E`.
 
-## Key Ideas
-
-Muskens' CDRT:
-- Uses type-theoretic framework compatible with Montague semantics
-- DRSs are encoded as state transformers
-- Fully compositional: meanings combine via function application
-- Bridges static (Montague) and dynamic (DRT) semantics
-
-## Semantic Architecture
-
-Instead of Update boxes, CDRT uses:
-- State type: assignment sequences
-- Dynamic propositions: relations between states
-- Compositional combination rules
-
-## Type System (Table 1, p. 155)
-
-| Type | Meaning |
-|------|---------|
-| e | Entities |
-| t | Truth values |
-| s | States (registers/assignments) |
-| π | Registers (discourse referents) |
-| s(st) | Box meanings (binary relations on states) |
+The compositional fragment (T₀ translations, generalized coordination,
+the paper's derivations) and the weakest-precondition calculus live in
+`Studies/Muskens1996.lean`.
 -/
 
 namespace Semantics.Dynamic.CDRT
 
--- Core Types
+open Semantics.Dynamic.Core.DynProp
 
-/--
-CDRT state: a register/assignment function.
+/-- CDRT state: Muskens's type `s`, concretely an assignment `Nat → E`.
+His *registers* are the maps from states (see `dref`), not the states —
+the earlier name `Register` for this type inverted the paper's
+terminology. The alias shares mathlib's `Function.update` simp set with
+H&K composition, DPL, Charlow continuations, and Spector's plural
+substrate. -/
+abbrev State (E : Type*) := Core.Assignment E
 
-Muskens names them "registers" but the type is `Core.Assignment E`;
-this alias preserves Muskens's vocabulary while sharing mathlib's
-`Function.update` simp set with H&K composition, DPL, Charlow continuations, and Spector's plural
-substrate.
--/
-abbrev Register (E : Type*) := Core.Assignment E
+/-- Register lookup as a Dynamic Ty2 dref: Muskens's type `se`,
+picking out the value stored at position `n`. -/
+def dref {E : Type*} (n : Nat) : Semantics.Dynamic.Core.Dref (State E) E :=
+  λ r => r n
 
-/--
-Dynamic proposition: relates input and output states.
+/-- Dynamic proposition (box, type `s(st)`): the relational `Update`
+specialized to CDRT states. -/
+abbrev DProp (E : Type*) := Update (State E)
 
-⟦φ⟧ : Register E → Register E → Prop
--/
-def DProp (E : Type*) := Register E → Register E → Prop
+/-- Static proposition: the spine's `Condition` at CDRT states. -/
+abbrev SProp (E : Type*) := Condition (State E)
 
-/--
-Static proposition (for embedding classical logic).
--/
-def SProp (E : Type*) := Register E → Prop
+/-- Embed a static proposition as a dynamic one: the spine's `test`. -/
+abbrev DProp.ofStatic {E : Type*} (p : SProp E) : DProp E := test p
 
--- Basic Constructions
-
-/--
-Embed a static proposition as a dynamic one (test).
-
-⟦p⟧(i, o) iff i = o ∧ p(i)
--/
-def DProp.ofStatic {E : Type*} (p : SProp E) : DProp E :=
-  λ i o => i = o ∧ p i
-
-/--
-Dynamic conjunction: relational composition.
-
-⟦φ; ψ⟧(i, o) iff ∃k. ⟦φ⟧(i, k) ∧ ⟦ψ⟧(k, o)
--/
-def DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E :=
-  λ i o => ∃ k, φ i k ∧ ψ k o
+/-- Dynamic conjunction: the spine's relational composition `dseq`. -/
+abbrev DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E := dseq φ ψ
 
 infixl:65 " ;; " => DProp.seq
 
-/--
-New discourse referent introduction.
-
-[new n] extends the register at position n with an arbitrary value.
--/
+/-- New discourse referent: `[new n]` extends the state at position `n`
+with an arbitrary value. CDRT's one native primitive. -/
 def DProp.new {E : Type*} (n : Nat) : DProp E :=
   λ i o => ∃ e : E, o = λ m => if m = n then e else i m
 
-/--
-Dynamic negation: test for failure.
+/-- Dynamic negation: the spine's `dneg`, re-entering the update algebra
+via `test`. -/
+abbrev DProp.neg {E : Type*} (φ : DProp E) : DProp E := test (dneg φ)
 
-⟦¬φ⟧(i, o) iff i = o ∧ ¬∃k. ⟦φ⟧(i, k)
--/
-def DProp.neg {E : Type*} (φ : DProp E) : DProp E :=
-  λ i o => i = o ∧ ¬∃ k, φ i k
+/-- Dynamic implication: the spine's `dimpl` via `test`. -/
+abbrev DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E := test (dimpl φ ψ)
 
-/--
-Dynamic implication: if φ succeeds, ψ must succeed.
+/-- Dynamic disjunction as a test (SEM2, [muskens-1996] p. 148): the
+spine's `ddisj` via `test`. -/
+abbrev DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
+  test (Semantics.Dynamic.Core.DynProp.ddisj φ ψ)
 
-⟦φ → ψ⟧(i, o) iff i = o ∧ ∀k. (⟦φ⟧(i, k) → ∃m. ⟦ψ⟧(k, m))
--/
-def DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E :=
-  λ i o => i = o ∧ ∀ k, φ i k → ∃ m, ψ k m
+/-- Truth at a state: the spine's `trueAt`. -/
+abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=
+  trueAt φ i
 
-/--
-Dynamic disjunction: φ or ψ.
-
-⟦φ or ψ⟧(i, o) iff i = o ∧ (∃k. ⟦φ⟧(i, k) ∨ ⟦ψ⟧(i, k))
-
-Disjunction is a test: it checks whether either disjunct is satisfiable
-without changing state. Corresponds to SEM2 ([muskens-1996], p. 148).
--/
-def DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
-  λ i o => i = o ∧ (∃ k, φ i k ∨ ψ i k)
-
--- Compositional Semantics
-
-/--
-Entity type: individuals.
--/
-abbrev CDRTEntity (E : Type*) := E
-
-/--
-Generalized quantifier type.
--/
-def GQ (E : Type*) := (E → DProp E) → DProp E
-
-/--
-Indefinite "a/an": introduces dref and applies predicate.
-
-⟦a⟧ = λP.λQ. new n; P(rn); Q(rn)
-
-where rn is the register lookup at n.
--/
-def indefinite {E : Type*} (n : Nat) (p : E → DProp E) (q : E → DProp E) : DProp E :=
-  DProp.new n ;; (λ i o => ∃ k, p (i n) i k ∧ q (k n) k o)
-
-/--
-Pronoun: lookup register value.
-
-⟦heₙ⟧ = rn (returns the value at register n)
--/
-def pronoun {E : Type*} (n : Nat) : Register E → E :=
-  λ r => r n
-
--- Truth and Entailment
-
-/--
-A dynamic proposition is TRUE at state i if it can transition somewhere.
--/
-def DProp.true_at {E : Type*} (φ : DProp E) (i : Register E) : Prop :=
-  ∃ o, φ i o
-
-/--
-Dynamic entailment: φ entails ψ if ψ is true after φ.
--/
+/-- Dynamic entailment: every output of `φ` can be extended by `ψ`. -/
 def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
   ∀ i o, φ i o → ψ.true_at o
 
--- General reduction lemmas for DProp constructors
+/-! ### Reduction lemmas -/
 
-/-- The output of a negated DProp always equals the input register. -/
-theorem DProp.neg_output {E : Type*} {φ : DProp E} {i o : Register E}
+/-- The output of a negated `DProp` always equals the input state. -/
+theorem DProp.neg_output {E : Type*} {φ : DProp E} {i o : State E}
     (h : DProp.neg φ i o) : o = i := h.1.symm
 
-/-- `DProp.impl` is true at `i` iff every antecedent extension satisfies the consequent. -/
-theorem DProp.impl_true_at {E : Type*} (φ ψ : DProp E) (i : Register E) :
+/-- `DProp.impl` is true at `i` iff every antecedent extension satisfies
+the consequent. -/
+theorem DProp.impl_true_at {E : Type*} (φ ψ : DProp E) (i : State E) :
     DProp.true_at (DProp.impl φ ψ) i ↔ ∀ k, φ i k → DProp.true_at ψ k := by
-  simp only [DProp.true_at, DProp.impl]
+  simp only [DProp.true_at, trueAt, DProp.impl, test, dimpl]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
 
-/-- A static DProp is true at `i` iff its static content holds. -/
-theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : Register E) :
+/-- A static `DProp` is true at `i` iff its static content holds. -/
+theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : State E) :
     DProp.true_at (DProp.ofStatic p) i ↔ p i := by
-  simp only [DProp.true_at, DProp.ofStatic]
+  simp only [DProp.true_at, trueAt, DProp.ofStatic, test]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
-
-/-! ## CDRT-as-Dynamic-Ty2
-
-CDRT's `Register E = Nat → E` is the same type as [muskens-1996]'s
-state space `S` in Dynamic Ty2 with discourse referents `Dref S E = S → E`.
-Drefs in CDRT are register-lookups; `DProp E` and `Update (Register E)` are
-*the same type*, so the embedding is a pair of identity functions.
--/
-
-/-- CDRT register lookup as a Dynamic Ty2 dref. -/
-def dref {E : Type*} (n : Nat) : Semantics.Dynamic.Core.Dref (Register E) E :=
-  λ r => r n
-
-/-- `DProp E` IS an Update over `Register E`. -/
-def toDRS {E : Type*} (φ : DProp E) :
-    Semantics.Dynamic.Core.DynProp.Update (Register E) := φ
 
 end Semantics.Dynamic.CDRT
