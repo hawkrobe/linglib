@@ -1,13 +1,13 @@
 import Linglib.Features.Logophoricity
-import Linglib.Syntax.Pronoun.Basic
-import Linglib.Syntax.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Capabilities
 
 /-!
 # Logophoric pronouns — the pronominal carrier of perspectival orientation
 [sells-1987]
 
 The **pronoun** member of the cross-categorial logophoric series: `LogophoricPronoun` `extends`
-the general `Pronoun` (`Syntax/Pronoun/Basic.lean`) with its [sells-1987] orientation — the minimum
+the general `Pronoun` (`Syntax/Category/Pronoun/Basic.lean`) with its [sells-1987] orientation — the minimum
 perspectival role (`pivot`/`self`/`source`, `Features/Logophoricity.lean`) an antecedent must fill
 to license it. Ewe *yè* is one such object: a logophoric pronoun licensed only by a `self` (an
 attitude holder); long-distance *zibun* is another, licensed by any `pivot`.
@@ -18,7 +18,7 @@ Verbal logophoric marking (Gokana) or a logophoric long-distance reflexive would
 carriers — a different word-class object supplying its own `instance : Logophoric That` — read by the
 same `[Logophoric α]` generic code.
 
-The licensing is **orthogonal to `Bound`** (`Syntax/Pronoun/Capabilities.lean`): a form's
+The licensing is **orthogonal to `Bound`** (`Syntax/Category/Pronoun/Capabilities.lean`): a form's
 perspectival orientation is not its Principle A/B/C role. *zibun* below is a Principle-A reflexive
 (`Bound.IsAnaphor`) whose logophoric licensing is nonetheless the *pivot* orientation, not
 configurational binding — [sells-1987]'s thesis that logophoric anaphora is role-oriented, made

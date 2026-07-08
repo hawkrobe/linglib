@@ -7,7 +7,7 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Finset.Card
-import Linglib.Syntax.Numeral.Composition
+import Linglib.Syntax.Category.Numeral.Composition
 
 /-!
 # [ionin-matushansky-2006]: The Composition of Complex Cardinals
@@ -42,7 +42,7 @@ of uniform size `k` make `n·k`.
 
 Their §3.3 adopts [hurford-1975]'s thesis that most cardinals are
 singular nouns; the syntax here is his grammar
-(`Syntax/Numeral/Composition.lean`).
+(`Syntax/Category/Numeral/Composition.lean`).
 
 ## Main definitions
 

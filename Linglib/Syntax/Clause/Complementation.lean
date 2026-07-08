@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Defs
-import Linglib.Syntax.Complementizer.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Clause complementation: selection

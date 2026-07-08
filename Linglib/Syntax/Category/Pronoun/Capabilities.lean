@@ -7,7 +7,7 @@ import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Clusivity
 import Linglib.Syntax.Binding.Basic
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Morphology.Word
 
 /-!

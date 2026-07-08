@@ -8,7 +8,7 @@ import Linglib.Morphology.Word
 # Complementizer
 
 The lexical core of the complementizer (clause-typing morpheme) as a
-grammatical object, modeled on `Syntax/Pronoun/`: surface form plus the
+grammatical object, modeled on `Syntax/Category/Pronoun/`: surface form plus the
 consensus clause-typing axes, each drawn from existing substrate.
 Per-language fragments instantiate it — free subordinators like *that*
 and *oti*, affixal clause-typers like Buryat *-žA* and Tigrinya *zɨ-*,

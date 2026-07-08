@@ -5,7 +5,7 @@ import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Cantonese.Definiteness

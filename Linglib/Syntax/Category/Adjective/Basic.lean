@@ -5,7 +5,7 @@ import Linglib.Morphology.DegreeContainment
 # Adjective
 
 The syntactic core of the adjective as a grammatical object, modeled on
-`Syntax/Pronoun/`: surface form, the scalar `dimension` **key** it measures + the
+`Syntax/Category/Pronoun/`: surface form, the scalar `dimension` **key** it measures + the
 lexicalized pole, comparison morphology, and lexical antonymy. The dimension is
 carried as a key (cf. `Pronoun` importing `Person`/`Number`), not interpreted here.
 

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Adposition.Order
+import Linglib.Syntax.Category.Adposition.Order
 
 /-!
 # Mandarin adposition order

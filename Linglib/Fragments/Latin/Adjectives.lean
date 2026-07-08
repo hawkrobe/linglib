@@ -1,4 +1,4 @@
-import Linglib.Syntax.Adjective.Basic
+import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
 # Latin Adjective Degree Forms
@@ -6,7 +6,7 @@ import Linglib.Syntax.Adjective.Basic
 
 Latin comparative and superlative morphology, used for cross-linguistic
 verification of [bobaljik-2012]'s *ABA constraint and pattern inventory. Latin
-adjectives instantiate the general `Adjective` object (`Syntax/Adjective/Basic.lean`),
+adjectives instantiate the general `Adjective` object (`Syntax/Category/Adjective/Basic.lean`),
 carrying their morphology in the `comparison` facet; the data here is purely
 morphological (no scale `dimension`).
 

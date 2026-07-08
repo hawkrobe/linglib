@@ -1,6 +1,6 @@
 import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.Nanosyntax.Basic
-import Linglib.Syntax.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.Latin.Indefinites

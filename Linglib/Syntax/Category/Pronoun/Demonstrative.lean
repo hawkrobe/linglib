@@ -1,6 +1,6 @@
 import Linglib.Features.Deixis
-import Linglib.Syntax.Pronoun.Basic
-import Linglib.Syntax.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Capabilities
 
 /-!
 # Demonstrative pronouns — the genuinely deictic carrier

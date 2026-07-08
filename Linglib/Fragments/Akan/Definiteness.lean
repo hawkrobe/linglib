@@ -1,4 +1,4 @@
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Akan Definiteness Fragment

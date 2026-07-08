@@ -1,4 +1,4 @@
-import Linglib.Syntax.Adposition.Order
+import Linglib.Syntax.Category.Adposition.Order
 
 /-!
 # K'iche' adposition order [mondloch-2017] [clemens-coon-2018]

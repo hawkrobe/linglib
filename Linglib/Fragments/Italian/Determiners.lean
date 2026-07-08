@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Quantification.Lexicon
 
 /-! # Italian Determiners (Quantifiers)

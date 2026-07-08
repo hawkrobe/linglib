@@ -1,4 +1,4 @@
-import Linglib.Syntax.Complementizer.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # English Complementizers Lexicon Fragment

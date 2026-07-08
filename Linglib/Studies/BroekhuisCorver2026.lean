@@ -1,6 +1,6 @@
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
-import Linglib.Syntax.Adposition.Order
+import Linglib.Syntax.Category.Adposition.Order
 import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.Spatial.Trace

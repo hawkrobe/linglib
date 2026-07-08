@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Card
 import Linglib.Features.WordOrder
-import Linglib.Syntax.Adposition.Order
+import Linglib.Syntax.Category.Adposition.Order
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.Japanese.WordOrder

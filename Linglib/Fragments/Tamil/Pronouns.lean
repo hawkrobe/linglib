@@ -10,7 +10,7 @@ exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
 
 -/
 
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 
 namespace Tamil.Pronouns
 

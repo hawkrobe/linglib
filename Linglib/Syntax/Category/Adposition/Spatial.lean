@@ -1,4 +1,4 @@
-import Linglib.Syntax.Adposition.Basic
+import Linglib.Syntax.Category.Adposition.Basic
 import Linglib.Syntax.Case.Order
 
 /-!

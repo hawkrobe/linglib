@@ -1,7 +1,7 @@
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Syntax.Pronoun.Demonstrative
+import Linglib.Syntax.Category.Pronoun.Demonstrative
 
 /-!
 # Hanink (2021): DP Structure and Internally Headed Relatives in Wášiw
@@ -208,7 +208,7 @@ theorem anaphoric_const_restrictor_situation_insensitive (d : Nat) :
 -- §6: Grounding the Pronoun API — `DemonstrativePronoun` denotes via `demonstrative`
 -- ════════════════════════════════════════════════════════════════
 
-/-! [hanink-2021] is the theory hub for the demonstrative pronoun (`Syntax/Pronoun/Demonstrative`):
+/-! [hanink-2021] is the theory hub for the demonstrative pronoun (`Syntax/Category/Pronoun/Demonstrative`):
 a demonstrative is the bare anaphoric `idx` (Hanink's Washo *gí*; [elbourne-2005]
 pronouns-as-definites) plus a deictic feature realized as a presupposition on D. The lexical
 `DemonstrativePronoun` supplies its proximal/distal deixis via the `Demonstrative` capability; the

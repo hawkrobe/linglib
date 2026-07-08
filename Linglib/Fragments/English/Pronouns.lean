@@ -1,9 +1,9 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Features.Gender.Basic
-import Linglib.Syntax.Pronoun.Basic
-import Linglib.Syntax.Pronoun.Capabilities
-import Linglib.Syntax.Pronoun.Demonstrative
+import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Demonstrative
 
 /-!
 # English Pronoun Lexicon Fragment

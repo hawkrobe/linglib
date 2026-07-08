@@ -8,7 +8,7 @@ import Linglib.Features.AnsweringSystem
 
 Answer particles are pro-sentential — they stand alone as utterances
 rather than associating with a host constituent — so they deliberately
-do not instantiate the host-associated `Syntax/Particle` core.
+do not instantiate the host-associated `Syntax/Category/Particle` core.
 
 Swedish has a three-way answer particle system:
 - *ja* — affirmative ("yes")

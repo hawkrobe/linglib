@@ -1,4 +1,4 @@
-import Linglib.Syntax.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 
 /-!
 # Russian Indefinite Pronoun Paradigm

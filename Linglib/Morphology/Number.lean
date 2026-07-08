@@ -1,4 +1,4 @@
-import Linglib.Syntax.Pronoun.WALS
+import Linglib.Syntax.Category.Pronoun.WALS
 
 /-!
 # Number: nominal plurality typology (WALS Chs 33-36)
@@ -12,7 +12,7 @@ plurality across [wals-2013] chapters 33–36.
 - `PluralCoding` (Ch 33): how plurality is morphologically realized
 - `PluralOccurrence` (Ch 34): when plural marking occurs (animacy + obligatoriness)
 - `Pronoun.Plurality` (Ch 35): how independent pronouns encode number —
-  the canonical type lives in `Syntax/Pronoun/WALS.lean`; this file bundles it
+  the canonical type lives in `Syntax/Category/Pronoun/WALS.lean`; this file bundles it
 - `AssociativePlural` (Ch 36): "X and associates" construction
 - `PluralityProfile`: per-language bundle of the four
 
@@ -100,7 +100,7 @@ structure PluralityProfile where
   coding : PluralCoding
   /-- Ch 34: when plural marking occurs. -/
   occurrence : PluralOccurrence
-  /-- Ch 35: pronoun plurality type (canonical type in `Syntax/Pronoun/WALS.lean`). -/
+  /-- Ch 35: pronoun plurality type (canonical type in `Syntax/Category/Pronoun/WALS.lean`). -/
   pronounPlurality : _root_.Pronoun.Plurality
   /-- Ch 36: associative plural strategy. -/
   associativePlural : AssociativePlural

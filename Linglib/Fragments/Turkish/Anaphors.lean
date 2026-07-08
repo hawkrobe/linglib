@@ -1,5 +1,5 @@
 import Linglib.Fragments.Turkish.Case
-import Linglib.Syntax.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Capabilities
 
 /-!
 # Turkish Anaphors

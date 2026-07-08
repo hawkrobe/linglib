@@ -55,7 +55,7 @@ end Features
 
 The typeclass face of the binding-class axis, beside its partial companion
 `Features.BindingSource`. The *class* is theory-neutral and lives here; each carrier's
-*instance* lives with the carrier (`Pronoun` in `Syntax/Pronoun/Capabilities.lean`,
+*instance* lives with the carrier (`Pronoun` in `Syntax/Category/Pronoun/Capabilities.lean`,
 Italian clitics and Turkish anaphors in their Fragments). -/
 
 /-- A carrier whose every element carries a (total) `Features.BindingClass` — its Principle A/B/C

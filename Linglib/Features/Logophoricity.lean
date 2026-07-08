@@ -141,7 +141,7 @@ theorem pov_violated :
     Word-class-neutral, like `Indefinite`/`Demonstrative`: logophoric pronouns, exempt
     reflexives, and verbal logophoric marking are sibling carriers, each supplying its own
     instance and read by the same `[Logophoric α]` generic code. **Orthogonal to `Bound`**
-    (`Syntax/Pronoun/Capabilities.lean`): perspectival orientation is not the Principle
+    (`Syntax/Category/Pronoun/Capabilities.lean`): perspectival orientation is not the Principle
     A/B/C binding role — [sells-1987]'s point that logophoric anaphora is role-oriented,
     licensed by a discourse role, not configurationally bound. -/
 class Logophoric (α : Type*) where
