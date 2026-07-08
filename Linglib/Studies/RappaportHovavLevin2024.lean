@@ -546,19 +546,19 @@ theorem sweep_senses_match_templates :
 /-- Basic-*sweep* projects to {motion} on [grimm-2011]'s agentivity lattice —
     the lattice image of variable agentivity. -/
 theorem wipeManner_agentivity :
-    AgentivityNode.fromEntailmentProfile wipeManner.subjectProfile
-      = ⟨false, false, false, true⟩ := rfl
+    Agentivity.fromEntailmentProfile wipeManner.subjectProfile
+      = .mk false false false true := rfl
 
 /-- Broom-*sweep* projects to the full agent {V, S, I, M}. -/
 theorem wipeInstrument_agentivity :
-    AgentivityNode.fromEntailmentProfile wipeInstrument.subjectProfile
-      = ⟨true, true, true, true⟩ := rfl
+    Agentivity.fromEntailmentProfile wipeInstrument.subjectProfile
+      = ⊤ := by decide
 
 /-- Instrument lexicalization strictly raises agentivity on the lattice:
     the paper's obligatory-agentivity claim as strict lattice dominance. -/
 theorem instrument_lexicalization_increases_agentivity :
-    AgentivityNode.fromEntailmentProfile wipeManner.subjectProfile <
-      AgentivityNode.fromEntailmentProfile wipeInstrument.subjectProfile := by
+    Agentivity.fromEntailmentProfile wipeManner.subjectProfile <
+      Agentivity.fromEntailmentProfile wipeInstrument.subjectProfile := by
   decide
 
 end AgentivityBridge

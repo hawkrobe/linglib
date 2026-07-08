@@ -27,7 +27,7 @@ with Proto-Patient dominance breaking ties.
 - `activitySubjectProfile` … `accomplishmentObjectProfile` — the
   [rappaport-hovav-levin-1998] template-level profile defaults (per-verb
   content lives in the class map, `Semantics/Lexical/LevinClassProfiles.lean`)
-- `AgentivityNode.fromEntailmentProfile`,
+- `Agentivity.fromEntailmentProfile`,
   `PersistenceLevel.fromPatientProfile` — bridges from
   profiles to [grimm-2011]'s agentivity lattice, with the consistency
   theorems relating the two dominance orders
@@ -338,18 +338,18 @@ translates, so the lattice substrate stays Mathlib-only. -/
     - movement = motion
 
     Independent existence is handled by the persistence dimension. -/
-def AgentivityNode.fromEntailmentProfile (p : EntailmentProfile) : AgentivityNode :=
-  ⟨p.volition, p.sentience, p.causation, p.movement⟩
+def Agentivity.fromEntailmentProfile (p : EntailmentProfile) : Agentivity :=
+  .mk p.volition p.sentience p.causation p.movement
 
 /-- Two profiles project to the same agentivity node iff they agree on the four
 lattice features: the projection drops independent existence and all five
 Proto-Patient entailments ([grimm-2011] §2.1 recasts them on the persistence
 axis). -/
-theorem AgentivityNode.fromEntailmentProfile_eq_iff (p q : EntailmentProfile) :
-    AgentivityNode.fromEntailmentProfile p = AgentivityNode.fromEntailmentProfile q ↔
+theorem Agentivity.fromEntailmentProfile_eq_iff (p q : EntailmentProfile) :
+    Agentivity.fromEntailmentProfile p = Agentivity.fromEntailmentProfile q ↔
       p.volition = q.volition ∧ p.sentience = q.sentience ∧
       p.causation = q.causation ∧ p.movement = q.movement := by
-  simp [AgentivityNode.fromEntailmentProfile, AgentivityNode.mk.injEq]
+  simp [Agentivity.fromEntailmentProfile, Agentivity.mk_inj]
 
 /-- Map Dowty's P-Patient entailments to Grimm's persistence level.
 
@@ -379,14 +379,14 @@ def PersistenceLevel.fromPatientProfile (p : EntailmentProfile) : PersistenceLev
   else
     .totalNonPersistence                        -- seek, want
 
-/-- Map a full EntailmentProfile to a GrimmNode.
+/-- Map a full EntailmentProfile to a ParticipantType.
 
     The agentivity features come from the P-Agent entailments;
     the persistence level comes from the P-Patient entailments. -/
-def GrimmNode.fromSubjectProfile (p : EntailmentProfile) : GrimmNode :=
+def ParticipantType.fromSubjectProfile (p : EntailmentProfile) : ParticipantType :=
   ⟨.fromEntailmentProfile p, .totalPersistence⟩
 
-def GrimmNode.fromObjectProfile (p : EntailmentProfile) : GrimmNode :=
+def ParticipantType.fromObjectProfile (p : EntailmentProfile) : ParticipantType :=
   ⟨.fromEntailmentProfile p, .fromPatientProfile p⟩
 
 /-! ### Grimm ↔ Dowty ASP consistency -/
@@ -403,27 +403,27 @@ private theorem bImpl (a b : Bool) (h : a = true → b = true) :
     movement=motion). -/
 theorem grimm_agentivity_consistent_with_dowty
     (p q : EntailmentProfile)
-    (h : AgentivityNode.fromEntailmentProfile p ≤
-         AgentivityNode.fromEntailmentProfile q) :
+    (h : Agentivity.fromEntailmentProfile p ≤
+         Agentivity.fromEntailmentProfile q) :
     (!p.volition || q.volition) = true ∧
     (!p.sentience || q.sentience) = true ∧
     (!p.causation || q.causation) = true ∧
     (!p.movement || q.movement) = true := by
-  obtain ⟨h1, h2, h3, h4⟩ := (AgentivityNode.le_iff _ _).mp h
+  obtain ⟨h1, h2, h3, h4⟩ := (Agentivity.le_iff _ _).mp h
   exact ⟨bImpl _ _ h1, bImpl _ _ h2, bImpl _ _ h3, bImpl _ _ h4⟩
 
 /-- The Dowty→Grimm bridge is monotone: if one EntailmentProfile
     dominates another on P-Agent features, the corresponding
-    AgentivityNodes are ordered. -/
+    Agentivitys are ordered. -/
 theorem fromEntailmentProfile_monotone
     (p q : EntailmentProfile)
     (hv : p.volition = true → q.volition = true)
     (hs : p.sentience = true → q.sentience = true)
     (hc : p.causation = true → q.causation = true)
     (hm : p.movement = true → q.movement = true) :
-    AgentivityNode.fromEntailmentProfile p ≤
-    AgentivityNode.fromEntailmentProfile q :=
-  (AgentivityNode.le_iff _ _).mpr ⟨hv, hs, hc, hm⟩
+    Agentivity.fromEntailmentProfile p ≤
+    Agentivity.fromEntailmentProfile q :=
+  (Agentivity.le_iff _ _).mpr ⟨hv, hs, hc, hm⟩
 
 /-! ### Dominance is lattice order plus independent existence
 
@@ -439,16 +439,16 @@ implication (§2.2). -/
 
 /-- Feature count is monotone in the inclusion order ([grimm-2011] §2.3):
     ascending the Fig. 1 lattice never loses agentivity features. -/
-theorem AgentivityNode.featureCount_monotone : Monotone AgentivityNode.featureCount :=
+theorem Agentivity.featureCount_monotone : Monotone Agentivity.featureCount :=
   fun _ _ h =>
-    (by decide : ∀ a b : AgentivityNode, a ≤ b → a.featureCount ≤ b.featureCount) _ _ h
+    (by decide : ∀ a b : Agentivity, a ≤ b → a.featureCount ≤ b.featureCount) _ _ h
 
 /-- Dowty's flat P-Agent count decomposes through the bridge: the four
     lattice features ([grimm-2011] Table 2) plus independent existence,
     the one Table 1 entailment Grimm moves to the persistence axis (§2.1). -/
 theorem pAgentScore_decomposition (p : EntailmentProfile) :
     p.pAgentScore =
-      (AgentivityNode.fromEntailmentProfile p).featureCount +
+      (Agentivity.fromEntailmentProfile p).featureCount +
         p.independentExistence.toNat :=
   rfl
 
@@ -459,8 +459,8 @@ theorem pAgentScore_decomposition (p : EntailmentProfile) :
     `grimm_agentivity_consistent_with_dowty`. -/
 theorem pAgentDominates_iff (p q : EntailmentProfile) :
     PAgentDominates p q ↔
-      AgentivityNode.fromEntailmentProfile q ≤
-        AgentivityNode.fromEntailmentProfile p ∧
+      Agentivity.fromEntailmentProfile q ≤
+        Agentivity.fromEntailmentProfile p ∧
       (q.independentExistence = true → p.independentExistence = true) := by
   constructor
   · rintro ⟨hv, hs, hc, hm, hie⟩
@@ -475,8 +475,8 @@ theorem pAgentDominates_iff (p q : EntailmentProfile) :
     existence is preserved, `subj` is selected — for every profile pair,
     via `pAgentDominates_iff`, not per-verb checking. -/
 theorem outranks_of_lattice_dominance (subj obj : EntailmentProfile)
-    (hlt : AgentivityNode.fromEntailmentProfile obj <
-      AgentivityNode.fromEntailmentProfile subj)
+    (hlt : Agentivity.fromEntailmentProfile obj <
+      Agentivity.fromEntailmentProfile subj)
     (hIE : obj.independentExistence = true → subj.independentExistence = true) :
     OutranksForSubject subj obj :=
   .inl ⟨(pAgentDominates_iff subj obj).mpr ⟨hlt.le, hIE⟩,

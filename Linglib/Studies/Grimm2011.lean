@@ -51,19 +51,19 @@ Subjects populating a maximal chain: positional verbs at ⊥, then know/see
 (+volition, = ⊤). -/
 
 /-- sit/stand subject: ⊥, p.523. -/
-def sitAgentivity : AgentivityNode := ⊥
+def sitAgentivity : Agentivity := ⊥
 
 /-- know/see subject: sentience only, p.523–524. -/
-def knowAgentivity : AgentivityNode := ⟨false, true, false, false⟩
+def knowAgentivity : Agentivity := .mk false true false false
 
 /-- discover subject: sentience + instigation, p.524. -/
-def discoverAgentivity : AgentivityNode := ⟨false, true, true, false⟩
+def discoverAgentivity : Agentivity := .mk false true true false
 
 /-- look at subject: sentience + instigation + motion, p.524. -/
-def lookAtAgentivity : AgentivityNode := ⟨false, true, true, true⟩
+def lookAtAgentivity : Agentivity := .mk false true true true
 
 /-- assassinate subject: all four features, p.524. -/
-def assassinateAgentivity : AgentivityNode := ⊤
+def assassinateAgentivity : Agentivity := ⊤
 
 /-- Each verb adds one feature: a strict chain from ⊥ to ⊤. -/
 theorem canonical_verb_chain :
@@ -86,17 +86,17 @@ substrate facts (`Agentivity/CaseRegions.lean`). -/
 /-- Class I/II patients are in the transitivity region; Class III (pursuit)
     is outside. -/
 theorem tsunoda_region_membership :
-    (TransitivityRank.resultativeEffective.patientNode).InTransitiveRegion ∧
-    (TransitivityRank.contact.patientNode).InTransitiveRegion ∧
-    ¬ (TransitivityRank.pursuit.patientNode).InTransitiveRegion := by decide
+    (TransitivityRank.resultativeEffective.patientType).InTransitiveRegion ∧
+    (TransitivityRank.contact.patientType).InTransitiveRegion ∧
+    ¬ (TransitivityRank.pursuit.patientType).InTransitiveRegion := by decide
 
 /-- Patient nodes are ordered III ≤ I ≤ II: lower persistence, more
     affected. -/
 theorem tsunoda_patient_chain :
-    TransitivityRank.pursuit.patientNode ≤
-      TransitivityRank.resultativeEffective.patientNode ∧
-    TransitivityRank.resultativeEffective.patientNode ≤
-      TransitivityRank.contact.patientNode := by decide
+    TransitivityRank.pursuit.patientType ≤
+      TransitivityRank.resultativeEffective.patientType ∧
+    TransitivityRank.resultativeEffective.patientType ≤
+      TransitivityRank.contact.patientType := by decide
 
 /-! ### Case regions for canonical verb classes (§4)
 
@@ -110,64 +110,64 @@ ACC/ABS — [grimm-2011]'s own Fig. 5 keeps them inside at `quPersBeginning`. -/
     profile — a flagged mis-prediction (English gives contact objects plain
     ACC) inherited from the Fig. 5 deviation. -/
 theorem kick_case_regions :
-    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion
       = .nomErg ∧
-    (GrimmNode.fromObjectProfile contactObject).toCaseRegion = .oblique := by
+    (ParticipantType.fromObjectProfile contactObject).toCaseRegion = .oblique := by
   decide
 
 /-- kick/eat objects are in the transitivity region; build objects (not
     existing at event start, p.529–530) are not. -/
 theorem kick_object_in_region :
-    (GrimmNode.fromObjectProfile contactObject).InTransitiveRegion ∧
-    (GrimmNode.fromObjectProfile consumptionObject).InTransitiveRegion ∧
-    ¬ (GrimmNode.fromObjectProfile creationObject).InTransitiveRegion := by
+    (ParticipantType.fromObjectProfile contactObject).InTransitiveRegion ∧
+    (ParticipantType.fromObjectProfile consumptionObject).InTransitiveRegion ∧
+    ¬ (ParticipantType.fromObjectProfile creationObject).InTransitiveRegion := by
   decide
 
 /-- build: subject → NOM/ERG; the created object (`exPersEnd`) → oblique. -/
 theorem build_case_regions :
-    (GrimmNode.fromSubjectProfile creation.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile creation.subjectProfile).toCaseRegion
       = .nomErg ∧
-    (GrimmNode.fromObjectProfile creationObject).toCaseRegion = .oblique := by
+    (ParticipantType.fromObjectProfile creationObject).toCaseRegion = .oblique := by
   decide
 
 /-- eat: subject → NOM/ERG; the consumed object → ACC/ABS, with destroyed
     objects. -/
 theorem eat_case_regions :
-    (GrimmNode.fromSubjectProfile consumption.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile consumption.subjectProfile).toCaseRegion
       = .nomErg ∧
-    (GrimmNode.fromObjectProfile consumptionObject).toCaseRegion
+    (ParticipantType.fromObjectProfile consumptionObject).toCaseRegion
       = .accAbs := by decide
 
 /-- buy/sell: subject → NOM/ERG. Buyer and seller share one profile — the
     [dowty-1991] §3.2 alternation tie. -/
 theorem possessionTransfer_case_region :
-    (GrimmNode.fromSubjectProfile possessionTransfer.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile possessionTransfer.subjectProfile).toCaseRegion
       = .nomErg := by decide
 
 /-- see: sentience without instigation → oblique. Experiencer *subjects*
     land outside the dative region — `fromSubjectProfile` fixes total
     persistence, the dative region needs `quPersBeginning`. -/
 theorem see_case_region :
-    (GrimmNode.fromSubjectProfile perception.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile perception.subjectProfile).toCaseRegion
       = .oblique := by decide
 
 /-- run: volition + sentience + motion without instigation → oblique,
     matching unergative behaviour in split-S systems. -/
 theorem run_case_region :
-    (GrimmNode.fromSubjectProfile selfMotion.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile selfMotion.subjectProfile).toCaseRegion
       = .oblique := by decide
 
 /-- arrive: motion only → oblique. -/
 theorem arrive_case_region :
-    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
       = .oblique := by decide
 
 /-- die: the sole argument, read as patient, → ACC/ABS; ergative readout
     ABS — the unaccusative pattern. -/
 theorem die_case_region :
-    (GrimmNode.fromObjectProfile disappearance.subjectProfile).toCaseRegion
+    (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion
       = .accAbs ∧
-    (GrimmNode.fromObjectProfile disappearance.subjectProfile).toCaseRegion.toErgativeCase
+    (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion.toErgativeCase
       = .abs := by decide
 
 /-- Instigation (Dowty's causation) exactly divides NOM/ERG subjects from
@@ -190,15 +190,15 @@ natural forces to intentional agents. -/
 
 /-- Everything above *kill*'s minimal agent is NOM/ERG: upward closure plus
     the interval characterization `toCaseRegion_eq_nomErg_iff`. -/
-theorem kill_subject_range {n : GrimmNode} (h : minimalInstigator ≤ n) :
+theorem kill_subject_range {n : ParticipantType} (h : minimalInstigator ≤ n) :
     n.toCaseRegion = .nomErg :=
-  (GrimmNode.toCaseRegion_eq_nomErg_iff n).mpr h
+  (ParticipantType.toCaseRegion_eq_nomErg_iff n).mpr h
 
 /-- The range's endpoints, derived: electricity (instigation only) and the
     assassin (⊤) are both acceptable *kill*-subjects. -/
 theorem kill_subject_endpoints :
     minimalInstigator.toCaseRegion = .nomErg ∧
-    (⊤ : GrimmNode).toCaseRegion = .nomErg :=
+    (⊤ : ParticipantType).toCaseRegion = .nomErg :=
   ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
 
 /-! ### Accusative and ergative alignment (§4, Fig. 6)
@@ -218,9 +218,9 @@ theorem ergative_alignment :
 
 /-- eat in an accusative system: NOM subject, ACC object. -/
 theorem eat_alignment :
-    (GrimmNode.fromSubjectProfile consumption.subjectProfile).toCaseRegion.toAccusativeCase
+    (ParticipantType.fromSubjectProfile consumption.subjectProfile).toCaseRegion.toAccusativeCase
       = .nom ∧
-    (GrimmNode.fromObjectProfile consumptionObject).toCaseRegion.toAccusativeCase
+    (ParticipantType.fromObjectProfile consumptionObject).toCaseRegion.toAccusativeCase
       = .acc := by decide
 
 /-! ### Differential object marking (§4, p.534; [grimm-2005])
@@ -237,9 +237,9 @@ transitivity region but outside ACC/ABS. Grimm himself (following
     inanimate ↦ ⊥. Instigation and motion are event-bound, so never
     contributed; denying animates volition keeps the hierarchy strict — a
     modelling choice, not Grimm's. -/
-def animacyToAgentivity : AnimacyLevel → AgentivityNode
-  | .human     => ⟨true, true, false, false⟩
-  | .animate   => ⟨false, true, false, false⟩
+def animacyToAgentivity : AnimacyLevel → Agentivity
+  | .human     => .mk true true false false
+  | .animate   => .mk false true false false
   | .inanimate => ⊥
 
 /-- All animacy-derived nodes satisfy volition → sentience. -/
@@ -254,7 +254,7 @@ theorem animacyToAgentivity_monotone : Monotone animacyToAgentivity :=
 
 /-- Animacy-derived agentivity × the verb's object persistence. -/
 def objectNodeWithAnimacy (a : AnimacyLevel) (p : PersistenceLevel) :
-    GrimmNode :=
+    ParticipantType :=
   ⟨animacyToAgentivity a, p⟩
 
 /-- The key non-circular derivation: at `quPersBeginning`, `toCaseRegion` —
@@ -268,12 +268,12 @@ theorem object_regions_by_animacy :
     (objectNodeWithAnimacy .human .quPersBeginning).toCaseRegion
       = .dative := by decide
 
-/-- The animate DOM object at `quPersBeginning` IS `sentientNonInstigatorNode`
+/-- The animate DOM object at `quPersBeginning` IS `sentientNonInstigator`
     — one lattice point shared with recipients and experiencers (Fig. 7).
     On this account DOM marking is dative marking (Spanish *a*). -/
 theorem animate_dom_object_is_dative_node :
     objectNodeWithAnimacy .animate .quPersBeginning
-      = sentientNonInstigatorNode := rfl
+      = sentientNonInstigator := rfl
 
 /-- DOM is predicted: the object node is in the transitivity region but
     outside ACC/ABS. -/
@@ -378,7 +378,7 @@ side of the same opposition.) -/
 
 /-- The subject profile lands in NOM/ERG. -/
 def SubjectInAgentRegion (p : EntailmentProfile) : Prop :=
-  (GrimmNode.fromSubjectProfile p).toCaseRegion = .nomErg
+  (ParticipantType.fromSubjectProfile p).toCaseRegion = .nomErg
 
 instance (p : EntailmentProfile) : Decidable (SubjectInAgentRegion p) := by
   unfold SubjectInAgentRegion; infer_instance
@@ -387,7 +387,7 @@ instance (p : EntailmentProfile) : Decidable (SubjectInAgentRegion p) := by
     maximal contrast (*matar*). -/
 theorem kill_type_maximal_contrast :
     SubjectInAgentRegion accomplishmentSubjectProfile ∧
-    (GrimmNode.fromObjectProfile accomplishmentObjectProfile).toCaseRegion
+    (ParticipantType.fromObjectProfile accomplishmentObjectProfile).toCaseRegion
       = .accAbs := by decide
 
 /-- Perception subjects fall outside NOM/ERG — reduced contrast (*ver*). -/
@@ -407,10 +407,10 @@ accusative under the specific reading and genitive under the non-specific
 one — a case contrast between two lattice nodes. -/
 
 /-- Specific reading: the object exists — `exPersBeginning`. -/
-def specificIntensionalObject : GrimmNode := ⟨⊥, .exPersBeginning⟩
+def specificIntensionalObject : ParticipantType := ⟨⊥, .exPersBeginning⟩
 
 /-- Non-specific reading: existence not entailed — total non-persistence. -/
-def nonspecificIntensionalObject : GrimmNode := ⟨⊥, .totalNonPersistence⟩
+def nonspecificIntensionalObject : ParticipantType := ⟨⊥, .totalNonPersistence⟩
 
 /-- The specific reading sits in the ACC/ABS region. -/
 theorem specific_reading_in_accAbs :
@@ -446,21 +446,21 @@ theorem desire_object_bridge_tension :
 
 §2.1 recasts Dowty's ten entailments as four agentivity features plus
 persistence; the projection kernel is
-`AgentivityNode.fromEntailmentProfile_eq_iff`. Below: what the recast loses
+`Agentivity.fromEntailmentProfile_eq_iff`. Below: what the recast loses
 (Dowty's pairing constraints) and what it fixes (the *arrive* anomaly) —
 cross-theory checks absorbed from `Studies/Dowty1991.lean`, since the
 comparison belongs to the later paper. -/
 
 /-- Dowty's `WellFormedPair` is invisible to the projection: a {C} and a
     {C, IE} subject project to the same node (IE is dropped,
-    `AgentivityNode.fromEntailmentProfile_eq_iff`), yet against a {CoS}
+    `Agentivity.fromEntailmentProfile_eq_iff`), yet against a {CoS}
     object only the first satisfies the IE→DE pairing constraint. -/
 theorem wellFormedPair_not_preserved :
     WellFormedPair { causation := true } { changeOfState := true } ∧
     ¬ WellFormedPair { causation := true, independentExistence := true }
         { changeOfState := true } ∧
-    GrimmNode.fromSubjectProfile { causation := true }
-      = GrimmNode.fromSubjectProfile
+    ParticipantType.fromSubjectProfile { causation := true }
+      = ParticipantType.fromSubjectProfile
           { causation := true, independentExistence := true } := by decide
 
 /-- The *arrive* anomaly resolved: Table 1, the priority ASP, and the
@@ -470,14 +470,14 @@ theorem arrive_cross_theory :
         directedMotion.subjectProfile.changeOfState = .unaccusative ∧
     PredictsUnaccusative directedMotion.subjectProfile ∧
     Dowty1991.flatPredictsUnaccusative directedMotion.subjectProfile = false ∧
-    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
+    (ParticipantType.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
       ≠ .nomErg := by decide
 
 /-- kick: ASP outranking and the lattice's subject region agree — NOM
     subject. -/
 theorem kick_asp_grimm_consistent :
     OutranksForSubject mannerContact.subjectProfile contactObject ∧
-    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
+    (ParticipantType.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
       = .nom := by decide
 
 /-- die: priority ASP, flat counting, and the lattice agree on
@@ -485,14 +485,14 @@ theorem kick_asp_grimm_consistent :
 theorem die_asp_grimm_consistent :
     PredictsUnaccusative disappearance.subjectProfile ∧
     Dowty1991.flatPredictsUnaccusative disappearance.subjectProfile = true ∧
-    (GrimmNode.fromObjectProfile disappearance.subjectProfile).toCaseRegion
+    (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion
       = .accAbs := by decide
 
 /-- kiss: the subject strictly dominates the object on the lattice —
     `Dowty1991.kiss_asymmetry_is_volition` as order. -/
 theorem kiss_subject_dominates :
-    AgentivityNode.fromEntailmentProfile Dowty1991.kissObjectProfile <
-      AgentivityNode.fromEntailmentProfile Dowty1991.kissSubjectProfile := by
+    Agentivity.fromEntailmentProfile Dowty1991.kissObjectProfile <
+      Agentivity.fromEntailmentProfile Dowty1991.kissSubjectProfile := by
   decide
 
 /-- Subject selection for *kiss* from lattice dominance alone
@@ -510,7 +510,7 @@ theorem kiss_flat_count_from_lattice :
       Dowty1991.kissSubjectProfile.pAgentScore := by
   rw [pAgentScore_decomposition, pAgentScore_decomposition]
   exact Nat.add_le_add
-    (AgentivityNode.featureCount_monotone kiss_subject_dominates.le) le_rfl
+    (Agentivity.featureCount_monotone kiss_subject_dominates.le) le_rfl
 
 /-! ### Grimm vs dependent case
 
@@ -537,22 +537,22 @@ chain's know/see node. (The *sweep* pair lives in
 
 /-- kick subject: full agent (⊤). -/
 theorem kick_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile mannerContact.subjectProfile = ⊤ :=
-  rfl
+    Agentivity.fromEntailmentProfile mannerContact.subjectProfile = ⊤ := by
+  decide
 
 /-- run subject: {V, S, M} — no instigation. -/
 theorem run_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile selfMotion.subjectProfile
-      = ⟨true, true, false, true⟩ := rfl
+    Agentivity.fromEntailmentProfile selfMotion.subjectProfile
+      = .mk true true false true := rfl
 
 /-- arrive subject: {M}. -/
 theorem arrive_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile directedMotion.subjectProfile
-      = ⟨false, false, false, true⟩ := rfl
+    Agentivity.fromEntailmentProfile directedMotion.subjectProfile
+      = .mk false false false true := rfl
 
 /-- see subject: the chain's know/see node. -/
 theorem see_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile perception.subjectProfile
+    Agentivity.fromEntailmentProfile perception.subjectProfile
       = knowAgentivity := rfl
 
 end Grimm2011

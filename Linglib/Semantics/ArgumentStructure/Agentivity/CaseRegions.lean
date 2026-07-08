@@ -7,7 +7,7 @@ import Linglib.Features.Case.Basic
 [grimm-2011] §4's central claim: a core case marker corresponds to a
 **connected region** of the agentivity lattice, spreading outwards from the
 maximal agent and maximal patient nodes (Figs. 6–7). This file assigns each
-`GrimmNode` its case region (`GrimmNode.toCaseRegion`), maps regions to
+`ParticipantType` its case region (`ParticipantType.toCaseRegion`), maps regions to
 morphological cases under accusative and ergative alignment, and sharpens
 the connectedness claim: each core region is an order **interval** anchored
 at its pole (`toCaseRegion_eq_nomErg_iff` etc.), with order-convexity a
@@ -50,7 +50,7 @@ inductive CaseRegion where
     - dative: sentience (without instigation) + qualitative persistence
       (beginning) — recipients, experiencers, benefactives.
     - oblique: everything else. -/
-def GrimmNode.toCaseRegion (n : GrimmNode) : CaseRegion :=
+def ParticipantType.toCaseRegion (n : ParticipantType) : CaseRegion :=
   if n.agentivity.instigation && n.persistence == .totalPersistence then
     .nomErg
   else if n.agentivity == ⊥ &&
@@ -85,34 +85,34 @@ The abstract's central claim — a core case marker is a connected region
 sharpened form: each core region is an order **interval** anchored at its
 pole. NOM/ERG is the up-set of `minimalInstigator` (its top is
 `maximalAgent = ⊤`); ACC/ABS runs from `maximalPatient` up to the
-contact-verb patient; the dative sits above `sentientNonInstigatorNode`.
+contact-verb patient; the dative sits above `sentientNonInstigator`.
 Order-convexity ("connectedness") follows by transitivity. -/
 
 /-- The bottom of the NOM/ERG interval: instigation alone, at total
     persistence — the minimal acceptable agent of *kill* (§2.3: natural
     forces such as electricity or the explosion). -/
-def minimalInstigator : GrimmNode := ⟨⟨false, false, true, false⟩, ⊤⟩
+def minimalInstigator : ParticipantType := ⟨.mk false false true false, ⊤⟩
 
 /-- **NOM/ERG is the up-set of the minimal instigator** — the interval from
     `minimalInstigator` to `maximalAgent = ⊤`. -/
-theorem GrimmNode.toCaseRegion_eq_nomErg_iff (n : GrimmNode) :
+theorem ParticipantType.toCaseRegion_eq_nomErg_iff (n : ParticipantType) :
     n.toCaseRegion = .nomErg ↔ minimalInstigator ≤ n := by
   revert n; decide
 
 /-- **ACC/ABS is the interval from the maximal patient to the contact-verb
     patient**: ⊥ agentivity, persistence between `exPersBeginning` and
     `quPersBeginning`. -/
-theorem GrimmNode.toCaseRegion_eq_accAbs_iff (n : GrimmNode) :
+theorem ParticipantType.toCaseRegion_eq_accAbs_iff (n : ParticipantType) :
     n.toCaseRegion = .accAbs ↔
-      maximalPatient ≤ n ∧ n ≤ TransitivityRank.contact.patientNode := by
+      maximalPatient ≤ n ∧ n ≤ TransitivityRank.contact.patientType := by
   revert n; decide
 
-/-- **The dative is the interval above `sentientNonInstigatorNode`**:
+/-- **The dative is the interval above `sentientNonInstigator`**:
     sentience without instigation, pinned at `quPersBeginning`. -/
-theorem GrimmNode.toCaseRegion_eq_dative_iff (n : GrimmNode) :
+theorem ParticipantType.toCaseRegion_eq_dative_iff (n : ParticipantType) :
     n.toCaseRegion = .dative ↔
-      sentientNonInstigatorNode ≤ n ∧
-      n ≤ ⟨⟨true, true, false, true⟩, .quPersBeginning⟩ := by
+      sentientNonInstigator ≤ n ∧
+      n ≤ ⟨.mk true true false true, .quPersBeginning⟩ := by
   revert n; decide
 
 /-- A predicate on a partial order is **order-convex** if it is closed
@@ -124,23 +124,23 @@ def IsOrderConvex {α : Type*} [LE α] (P : α → Prop) : Prop :=
 
 /-- Connectedness of NOM/ERG, from the interval form. -/
 theorem nomErg_orderConvex :
-    IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .nomErg) := by
+    IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .nomErg) := by
   intro a b x ha hb hax hxb
-  rw [GrimmNode.toCaseRegion_eq_nomErg_iff] at ha ⊢
+  rw [ParticipantType.toCaseRegion_eq_nomErg_iff] at ha ⊢
   exact ha.trans hax
 
 /-- Connectedness of ACC/ABS, from the interval form. -/
 theorem accAbs_orderConvex :
-    IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .accAbs) := by
+    IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .accAbs) := by
   intro a b x ha hb hax hxb
-  rw [GrimmNode.toCaseRegion_eq_accAbs_iff] at ha hb ⊢
+  rw [ParticipantType.toCaseRegion_eq_accAbs_iff] at ha hb ⊢
   exact ⟨ha.1.trans hax, hxb.trans hb.2⟩
 
 /-- Connectedness of the dative, from the interval form. -/
 theorem dative_orderConvex :
-    IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .dative) := by
+    IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .dative) := by
   intro a b x ha hb hax hxb
-  rw [GrimmNode.toCaseRegion_eq_dative_iff] at ha hb ⊢
+  rw [ParticipantType.toCaseRegion_eq_dative_iff] at ha hb ⊢
   exact ⟨ha.1.trans hax, hxb.trans hb.2⟩
 
 /-- Counterexample showing `oblique` is NOT order-convex. With
@@ -150,11 +150,11 @@ theorem dative_orderConvex :
     Grimm (p.533): oblique is the residual region between maximal agent and
     maximal patient, not a positively-characterised connected case. -/
 theorem oblique_not_orderConvex :
-    ¬ IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .oblique) := by
+    ¬ IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .oblique) := by
   intro h
-  have habs := h (a := ⟨⟨false, false, false, true⟩, .quPersBeginning⟩)
-                 (b := ⟨⟨false, true, true, true⟩, .quPersBeginning⟩)
-                 (x := ⟨⟨false, true, false, true⟩, .quPersBeginning⟩)
+  have habs := h (a := ⟨.mk false false false true, .quPersBeginning⟩)
+                 (b := ⟨.mk false true true true, .quPersBeginning⟩)
+                 (x := ⟨.mk false true false true, .quPersBeginning⟩)
                  (by decide) (by decide) (by decide) (by decide)
   exact absurd habs (by decide)
 
@@ -172,17 +172,17 @@ theorem effectorAgent_toCaseRegion : effectorAgent.toCaseRegion = .nomErg := by 
 
 /-- The destroyed patient of Class I verbs (Fig. 5, Ip) sits in ACC/ABS. -/
 theorem resultativeEffective_patient_toCaseRegion :
-    (TransitivityRank.resultativeEffective.patientNode).toCaseRegion = .accAbs := by decide
+    (TransitivityRank.resultativeEffective.patientType).toCaseRegion = .accAbs := by decide
 
 /-- The affected-but-persisting patient of Class II verbs (Fig. 5, IIp) sits
     in ACC/ABS. -/
 theorem contact_patient_toCaseRegion :
-    (TransitivityRank.contact.patientNode).toCaseRegion = .accAbs := by decide
+    (TransitivityRank.contact.patientType).toCaseRegion = .accAbs := by decide
 
 /-- The possibly-nonexistent patient of Class III pursuit verbs (Fig. 5, IIIp)
     falls outside the core object region. -/
 theorem pursuit_patient_toCaseRegion :
-    (TransitivityRank.pursuit.patientNode).toCaseRegion = .oblique := by decide
+    (TransitivityRank.pursuit.patientType).toCaseRegion = .oblique := by decide
 
 /-! ### Dative polysemy (§5.1) -/
 
@@ -191,11 +191,11 @@ theorem pursuit_patient_toCaseRegion :
     semantic properties of **sentience** and **qualitative persistence
     (beginning)** (Fig. 7, p.536).
 
-    Because `recipientNode` and `experiencerNode` are abbrevs of
-    `sentientNonInstigatorNode`, the convergence is by construction; the
+    Because `recipientType` and `experiencerType` are abbrevs of
+    `sentientNonInstigator`, the convergence is by construction; the
     theorem below asserts only that this single lattice position falls in
     the dative case region. -/
 theorem sentientNonInstigator_in_dative :
-    sentientNonInstigatorNode.toCaseRegion = .dative := rfl
+    sentientNonInstigator.toCaseRegion = .dative := rfl
 
 end ArgumentStructure

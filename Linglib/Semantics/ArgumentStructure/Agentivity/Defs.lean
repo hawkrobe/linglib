@@ -1,5 +1,8 @@
+import Mathlib.Order.BooleanAlgebra.Basic
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Prod
 
 /-!
@@ -33,21 +36,22 @@ innovations over Dowty:
 The carrier types here are implementation **supersets** of Grimm's lattices;
 the validity predicates carve out the paper's objects:
 
-- `AgentivityNode` is the full Boolean cube on the four agentivity
-  primitives (16 elements). Grimm's Fig. 1 lattice is its 12-node
-  `AgentivityNode.Valid` subset (volition → sentience).
+- `Agentivity` is the Boolean cube on `Agentivity.Feature` (16 elements),
+  with the pointwise `BooleanAlgebra`. Grimm's Fig. 1 lattice is its
+  12-element `Agentivity.Valid` subset (volition → sentience).
 - `PersistenceLevel` is exactly Grimm's five valid persistence levels
   (Fig. 2) — here the carrier *is* the paper's object.
-- `GrimmNode` is the full product carrier (80 elements). Grimm's Fig. 3
-  agentivity lattice is its 38-node `GrimmNode.Valid` subset
-  (`AgentivityValid` ∧ `CrossValid`).
+- `ParticipantType` (Grimm's "participant type": agentivity × persistence)
+  is the full product carrier (80 elements). Grimm's Fig. 3 lattice is its
+  38-element `ParticipantType.Valid` subset (`AgentivityValid` ∧
+  `CrossValid`).
 
 ## Mathlib integration
 
 All ordering infrastructure uses Mathlib typeclasses:
-- `AgentivityNode`: `Lattice`, `BoundedOrder`, `Fintype`
+- `Agentivity`: `BooleanAlgebra` (pointwise, from `Pi`), `Fintype`
 - `PersistenceLevel`: `Lattice`, `BoundedOrder`, `Fintype`
-- `GrimmNode`: `Lattice`, `BoundedOrder`, `Fintype`
+- `ParticipantType`: `Lattice`, `BoundedOrder`, `Fintype`
 
 The bridges to [dowty-1991]'s `EntailmentProfile` live in
 `EntailmentProfile.lean`; the case-region geometry lives in
@@ -56,98 +60,92 @@ The bridges to [dowty-1991]'s `EntailmentProfile` live in
 
 namespace ArgumentStructure
 
-/-! ### Agentivity primitives (Table 2, §2.1) -/
+/-! ### Agentivity (Table 2, §2.1) -/
 
 /-- The four agentivity primitives (Table 2 (agentive properties), p.520).
 
-    Each has an agentive (+) and non-agentive (∅) pole. The non-agentive
-    pole is not a separate feature — it is simply the absence of the
-    agentive property. This is the **privative opposition** that replaces
-    Dowty's two independent clusters.
-
-    The carrier is the full 16-element Boolean cube; Grimm's Fig. 1
-    lattice is the 12-node `Valid` subset. -/
-structure AgentivityNode where
+    Each has an agentive (+) and non-agentive (∅) pole; the non-agentive
+    pole is simply the absence of the property — the **privative
+    opposition** that replaces Dowty's two independent clusters. -/
+inductive Agentivity.Feature where
   /-- +volition: the participant intends to bring about the event. -/
-  volition    : Bool
+  | volition
   /-- +sentience: conscious involvement in the action or state. -/
-  sentience   : Bool
+  | sentience
   /-- +instigation: prior independent action whose effects can be
-      attributed to this argument. Replaces Dowty's "causation"
-      (p.521). -/
-  instigation : Bool
+      attributed to this argument. Replaces Dowty's "causation" (p.521). -/
+  | instigation
   /-- +motion: the argument is in motion during the event. -/
-  motion      : Bool
-  deriving DecidableEq, Repr
+  | motion
+  deriving DecidableEq, Repr, Fintype
 
-/-- Validity constraint: volition presupposes sentience
-    (p.521, following [dowty-1991] p.607). Carves Grimm's 12-node
-    Fig. 1 lattice out of the 16-element carrier. -/
-def AgentivityNode.Valid (a : AgentivityNode) : Prop :=
-  a.volition = true → a.sentience = true
+/-- An argument's agentivity: which of the four primitives it bears, as a
+    point of the Boolean cube on `Agentivity.Feature`. Order, lattice, and
+    Boolean-algebra structure are pointwise, so `a ≤ b` is feature-set
+    inclusion; Grimm's Fig. 1 lattice is the 12-element `Valid` subset of
+    the 16-element cube. -/
+def Agentivity := Agentivity.Feature → Bool
 
-instance (a : AgentivityNode) : Decidable a.Valid := by
-  unfold AgentivityNode.Valid; infer_instance
+namespace Agentivity
 
-/-- Number of positive agentivity features (= height in the lattice). -/
-def AgentivityNode.featureCount (a : AgentivityNode) : Nat :=
-  a.volition.toNat + a.sentience.toNat +
-  a.instigation.toNat + a.motion.toNat
+instance : DecidableEq Agentivity :=
+  inferInstanceAs (DecidableEq (Feature → Bool))
 
-/-- Equivalence with `Bool⁴` for `Fintype` derivation. -/
-def AgentivityNode.equiv : AgentivityNode ≃ (Bool × Bool × Bool × Bool) where
-  toFun a := (a.volition, a.sentience, a.instigation, a.motion)
-  invFun p := ⟨p.1, p.2.1, p.2.2.1, p.2.2.2⟩
-  left_inv a := by cases a; rfl
-  right_inv p := by obtain ⟨_, _, _, _⟩ := p; rfl
+instance : Fintype Agentivity := inferInstanceAs (Fintype (Feature → Bool))
 
-instance : Fintype AgentivityNode := Fintype.ofEquiv _ AgentivityNode.equiv.symm
+instance : BooleanAlgebra Agentivity :=
+  inferInstanceAs (BooleanAlgebra (Feature → Bool))
 
-/-- Subset inclusion ordering on agentivity features. `a ≤ b` iff every
-    feature of `a` is also a feature of `b`. Defined componentwise as
-    `Bool` implication; the `PartialOrder` axioms are verified by `decide`
-    over the 16-element `Fintype`. -/
-private def AgentivityNode.leBool (a b : AgentivityNode) : Bool :=
-  (!a.volition || b.volition) && (!a.sentience || b.sentience) &&
-  (!a.instigation || b.instigation) && (!a.motion || b.motion)
+instance : DecidableRel (α := Agentivity) (· ≤ ·) := fun a b =>
+  decidable_of_iff (∀ f, a f ≤ b f) Iff.rfl
 
-instance : PartialOrder AgentivityNode where
-  le a b := a.leBool b = true
-  le_refl a := by simp [AgentivityNode.leBool]
-  le_trans := by decide
-  le_antisymm := by decide
-
-instance : DecidableRel (α := AgentivityNode) (· ≤ ·) := fun a b =>
-  inferInstanceAs (Decidable (a.leBool b = true))
-
-instance : DecidableRel (α := AgentivityNode) (· < ·) := fun _ _ =>
+instance : DecidableRel (α := Agentivity) (· < ·) := fun _ _ =>
   decidable_of_iff' _ lt_iff_le_not_ge
 
-/-- Lattice: componentwise `∨` for join, `∧` for meet. -/
-instance : Lattice AgentivityNode where
-  sup a b := ⟨a.volition || b.volition, a.sentience || b.sentience,
-              a.instigation || b.instigation, a.motion || b.motion⟩
-  inf a b := ⟨a.volition && b.volition, a.sentience && b.sentience,
-              a.instigation && b.instigation, a.motion && b.motion⟩
-  le_sup_left := by decide
-  le_sup_right := by decide
-  sup_le := by decide
-  inf_le_left := by decide
-  inf_le_right := by decide
-  le_inf := by decide
+/-- Build an agentivity value from the four indicators, in Table 2 order. -/
+def mk (volition sentience instigation motion : Bool) : Agentivity
+  | .volition => volition
+  | .sentience => sentience
+  | .instigation => instigation
+  | .motion => motion
 
-instance : OrderBot AgentivityNode where
-  bot := ⟨false, false, false, false⟩
-  bot_le := by decide
+instance : Repr Agentivity :=
+  ⟨fun a _ => repr (a .volition, a .sentience, a .instigation, a .motion)⟩
 
-instance : OrderTop AgentivityNode where
-  top := ⟨true, true, true, true⟩
-  le_top := by decide
+@[simp] theorem mk_inj {v s i m v' s' i' m' : Bool} :
+    mk v s i m = mk v' s' i' m' ↔ v = v' ∧ s = s' ∧ i = i' ∧ m = m' := by
+  constructor
+  · intro h
+    exact ⟨congrFun h .volition, congrFun h .sentience,
+      congrFun h .instigation, congrFun h .motion⟩
+  · rintro ⟨rfl, rfl, rfl, rfl⟩; rfl
 
-/-- Characterisation of the inclusion order by componentwise implication.
-    Public interface to the private `leBool`; verified by `decide` over the
-    16 × 16 pairs. -/
-theorem AgentivityNode.le_iff (a b : AgentivityNode) :
+/-- Volition indicator. -/
+def volition (a : Agentivity) : Bool := a .volition
+
+/-- Sentience indicator. -/
+def sentience (a : Agentivity) : Bool := a .sentience
+
+/-- Instigation indicator. -/
+def instigation (a : Agentivity) : Bool := a .instigation
+
+/-- Motion indicator. -/
+def motion (a : Agentivity) : Bool := a .motion
+
+/-- Validity: volition presupposes sentience (p.521, following
+    [dowty-1991] p.607). Carves Grimm's 12-element Fig. 1 lattice out of
+    the 16-element cube. -/
+def Valid (a : Agentivity) : Prop := a.volition = true → a.sentience = true
+
+instance (a : Agentivity) : Decidable a.Valid := by
+  unfold Valid; infer_instance
+
+/-- Number of positive features (= height in the cube). -/
+def featureCount (a : Agentivity) : Nat :=
+  a.volition.toNat + a.sentience.toNat + a.instigation.toNat + a.motion.toNat
+
+/-- The inclusion order, componentwise. -/
+theorem le_iff (a b : Agentivity) :
     a ≤ b ↔
       (a.volition = true → b.volition = true) ∧
       (a.sentience = true → b.sentience = true) ∧
@@ -155,28 +153,7 @@ theorem AgentivityNode.le_iff (a b : AgentivityNode) :
       (a.motion = true → b.motion = true) := by
   revert a b; decide
 
--- Componentwise Bool monotonicity (extracted from leBool)
-
-theorem AgentivityNode.le_instigation_mono {a b : AgentivityNode}
-    (hab : a ≤ b) (h : a.instigation = true) : b.instigation = true := by
-  have hbool : a.leBool b = true := hab
-  cases hi : b.instigation
-  · simp [AgentivityNode.leBool, h, hi] at hbool
-  · rfl
-
-theorem AgentivityNode.le_sentience_mono {a b : AgentivityNode}
-    (hab : a ≤ b) (h : a.sentience = true) : b.sentience = true := by
-  have hbool : a.leBool b = true := hab
-  cases hi : b.sentience
-  · simp [AgentivityNode.leBool, h, hi] at hbool
-  · rfl
-
-theorem AgentivityNode.ge_instigation_mono {a b : AgentivityNode}
-    (hab : a ≤ b) (h : b.instigation = false) : a.instigation = false := by
-  have hbool : a.leBool b = true := hab
-  cases hi : a.instigation
-  · rfl
-  · simp [AgentivityNode.leBool, hi, h] at hbool
+end Agentivity
 
 /-! ### Persistence levels (§2.2, Fig. 2) -/
 
@@ -318,54 +295,54 @@ instance : Lattice PersistenceLevel where
     2. If the argument does not exist at the beginning (totalNonPersistence
        or exPersEnd), it cannot have any agentivity properties
        (`CrossValid`, p.526–527). -/
-structure GrimmNode where
-  agentivity  : AgentivityNode
+structure ParticipantType where
+  agentivity  : Agentivity
   persistence : PersistenceLevel
   deriving DecidableEq, Repr
 
 /-- The agentivity constraint: volition → sentience. -/
-def GrimmNode.AgentivityValid (n : GrimmNode) : Prop :=
+def ParticipantType.AgentivityValid (n : ParticipantType) : Prop :=
   n.agentivity.Valid
 
-instance (n : GrimmNode) : Decidable n.AgentivityValid := by
-  unfold GrimmNode.AgentivityValid; infer_instance
+instance (n : ParticipantType) : Decidable n.AgentivityValid := by
+  unfold ParticipantType.AgentivityValid; infer_instance
 
 /-- The cross-lattice constraint: if the argument does not exist at the
     beginning of the event, it cannot have any agentivity properties. -/
-def GrimmNode.CrossValid (n : GrimmNode) : Prop :=
+def ParticipantType.CrossValid (n : ParticipantType) : Prop :=
   n.persistence.exPersB = true ∨ n.agentivity = ⊥
 
-instance (n : GrimmNode) : Decidable n.CrossValid := by
-  unfold GrimmNode.CrossValid; infer_instance
+instance (n : ParticipantType) : Decidable n.CrossValid := by
+  unfold ParticipantType.CrossValid; infer_instance
 
 /-- Full validity: both constraints satisfied. Carves Grimm's 38-node
     Fig. 3 lattice out of the 80-element carrier. -/
-def GrimmNode.Valid (n : GrimmNode) : Prop :=
+def ParticipantType.Valid (n : ParticipantType) : Prop :=
   n.AgentivityValid ∧ n.CrossValid
 
-instance (n : GrimmNode) : Decidable n.Valid := by
-  unfold GrimmNode.Valid; infer_instance
+instance (n : ParticipantType) : Decidable n.Valid := by
+  unfold ParticipantType.Valid; infer_instance
 
 /-- Total feature count (agentivity + persistence). -/
-def GrimmNode.featureCount (n : GrimmNode) : Nat :=
+def ParticipantType.featureCount (n : ParticipantType) : Nat :=
   n.agentivity.featureCount + n.persistence.featureCount
 
-def GrimmNode.equiv : GrimmNode ≃ (AgentivityNode × PersistenceLevel) where
+def ParticipantType.equiv : ParticipantType ≃ (Agentivity × PersistenceLevel) where
   toFun n := (n.agentivity, n.persistence)
   invFun p := ⟨p.1, p.2⟩
   left_inv n := by cases n; rfl
   right_inv p := by cases p; rfl
 
-instance : Fintype GrimmNode := Fintype.ofEquiv _ GrimmNode.equiv.symm
+instance : Fintype ParticipantType := Fintype.ofEquiv _ ParticipantType.equiv.symm
 
 /-- Product order: componentwise `≤` on agentivity and persistence. -/
-instance : LE GrimmNode where
+instance : LE ParticipantType where
   le a b := a.agentivity ≤ b.agentivity ∧ a.persistence ≤ b.persistence
 
-instance : LT GrimmNode where
+instance : LT ParticipantType where
   lt a b := a ≤ b ∧ ¬ b ≤ a
 
-instance : PartialOrder GrimmNode where
+instance : PartialOrder ParticipantType where
   le_refl a := ⟨le_refl _, le_refl _⟩
   le_trans _ _ _ h g := ⟨le_trans h.1 g.1, le_trans h.2 g.2⟩
   le_antisymm a b h g := by
@@ -373,19 +350,19 @@ instance : PartialOrder GrimmNode where
     have := le_antisymm h.2 g.2
     cases a; cases b; simp_all
 
-instance : DecidableRel (α := GrimmNode) (· ≤ ·) := fun a b =>
+instance : DecidableRel (α := ParticipantType) (· ≤ ·) := fun a b =>
   inferInstanceAs (Decidable (a.agentivity ≤ b.agentivity ∧ a.persistence ≤ b.persistence))
 
-instance : OrderBot GrimmNode where
+instance : OrderBot ParticipantType where
   bot := ⟨⊥, ⊥⟩
   bot_le _ := ⟨bot_le, bot_le⟩
 
-instance : OrderTop GrimmNode where
+instance : OrderTop ParticipantType where
   top := ⟨⊤, ⊤⟩
   le_top _ := ⟨le_top, le_top⟩
 
 /-- Componentwise lattice: meet/join on each axis independently. -/
-instance : Lattice GrimmNode where
+instance : Lattice ParticipantType where
   sup a b := ⟨a.agentivity ⊔ b.agentivity, a.persistence ⊔ b.persistence⟩
   inf a b := ⟨a.agentivity ⊓ b.agentivity, a.persistence ⊓ b.persistence⟩
   le_sup_left _ _ := ⟨le_sup_left, le_sup_left⟩
@@ -399,35 +376,35 @@ instance : Lattice GrimmNode where
 
 /-- Maximal Agent (Fig. 4): all agentivity features,
     total persistence. The prototypical transitive subject. -/
-def maximalAgent : GrimmNode :=
-  ⟨⟨true, true, true, true⟩, .totalPersistence⟩
+def maximalAgent : ParticipantType :=
+  ⟨⊤, .totalPersistence⟩
 
 /-- Maximal Patient (Fig. 4): no agentivity features,
     existential persistence (beginning). The prototypical affected object
     that ceases to exist (break, destroy). -/
-def maximalPatient : GrimmNode :=
-  ⟨⟨false, false, false, false⟩, .exPersBeginning⟩
+def maximalPatient : ParticipantType :=
+  ⟨⊥, .exPersBeginning⟩
 
 /-- The "effector" participant type: instigation + motion, total
     persistence. The canonical agent of effective action verbs (kill, break).
     §3, labeled Ia/IIa in Fig. 5. -/
-def effectorAgent : GrimmNode :=
-  ⟨⟨false, false, true, true⟩, .totalPersistence⟩
+def effectorAgent : ParticipantType :=
+  ⟨.mk false false true true, .totalPersistence⟩
 
 /-- The lattice position {sentience} × qualitative persistence (beginning).
     Per Grimm 2011 §5.1, diverse uses of the dative converge on this single
     region — recipients, experiencers, and benefactives are aliases below. -/
-def sentientNonInstigatorNode : GrimmNode :=
-  ⟨⟨false, true, false, false⟩, .quPersBeginning⟩
+def sentientNonInstigator : ParticipantType :=
+  ⟨.mk false true false false, .quPersBeginning⟩
 
 /-- Dative experiencer of psych verbs (§5.1.1). Alias of
-    `sentientNonInstigatorNode` — the convergence with `recipientNode` is by
+    `sentientNonInstigator` — the convergence with `recipientType` is by
     construction, not a theorem. -/
-abbrev experiencerNode : GrimmNode := sentientNonInstigatorNode
+abbrev experiencerType : ParticipantType := sentientNonInstigator
 
-/-- Canonical dative recipient (Fig. 7). Alias of `sentientNonInstigatorNode`
+/-- Canonical dative recipient (Fig. 7). Alias of `sentientNonInstigator`
     — see the docstring there for the unified treatment. -/
-abbrev recipientNode : GrimmNode := sentientNonInstigatorNode
+abbrev recipientType : ParticipantType := sentientNonInstigator
 
 /-! ### Transitivity region (§3, Fig. 4) -/
 
@@ -437,11 +414,11 @@ abbrev recipientNode : GrimmNode := sentientNonInstigatorNode
     The transitivity region excludes totalNonPersistence and exPersEnd
     because the prototypical transitive event requires both participants
     to exist at the beginning (p.529–530). -/
-def GrimmNode.InTransitiveRegion (n : GrimmNode) : Prop :=
+def ParticipantType.InTransitiveRegion (n : ParticipantType) : Prop :=
   n.persistence.exPersB = true
 
-instance (n : GrimmNode) : Decidable n.InTransitiveRegion := by
-  unfold GrimmNode.InTransitiveRegion; infer_instance
+instance (n : ParticipantType) : Decidable n.InTransitiveRegion := by
+  unfold ParticipantType.InTransitiveRegion; infer_instance
 
 /-- Tsunoda's transitivity hierarchy (§3, example 8).
 
@@ -470,7 +447,7 @@ inductive TransitivityRank where
     (Fig. 5). The agent position for all three classes is `effectorAgent`
     (Fig. 5, Ia/IIa share the same agent node; Grimm doesn't separately
     label IIIa). -/
-def TransitivityRank.patientNode : TransitivityRank → GrimmNode
+def TransitivityRank.patientType : TransitivityRank → ParticipantType
   | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
   | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
   | .pursuit              => ⟨⊥, .totalNonPersistence⟩ -- IIIp
@@ -509,7 +486,7 @@ theorem maximalAgent_eq_top : maximalAgent = ⊤ := by decide
 theorem maximalAgent_valid : maximalAgent.Valid := by decide
 theorem maximalPatient_valid : maximalPatient.Valid := by decide
 theorem effectorAgent_valid : effectorAgent.Valid := by decide
-theorem experiencerNode_valid : experiencerNode.Valid := by decide
+theorem experiencerType_valid : experiencerType.Valid := by decide
 
 -- Maximal agent is at the top, maximal patient is lower
 
@@ -543,7 +520,7 @@ theorem maximalPatient_in_transitiveRegion :
 
     Formally: the set of acceptable agents for a verb with minimum
     requirement `minReq` is `{a | minReq ≤ a}`, which is an upper set. -/
-theorem agent_upward_closed (minReq a b : AgentivityNode)
+theorem agent_upward_closed (minReq a b : Agentivity)
     (ha : minReq ≤ a) (hab : a ≤ b) :
     minReq ≤ b :=
   le_trans ha hab
