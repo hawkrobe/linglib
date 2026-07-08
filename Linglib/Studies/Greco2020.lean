@@ -6,7 +6,7 @@ import Linglib.Semantics.Negation.Defs
 import Linglib.Syntax.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Spanish.Negation
-import Linglib.Fragments.French.Negation
+import Linglib.Fragments.Romance.French.Negation
 import Linglib.Semantics.Polarity.Item
 import Mathlib.Data.Fintype.Basic
 

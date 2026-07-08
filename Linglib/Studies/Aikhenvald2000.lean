@@ -1,5 +1,5 @@
 import Linglib.Features.NounCategorization.Basic
-import Linglib.Fragments.French.ClassifierSystem
+import Linglib.Fragments.Romance.French.ClassifierSystem
 import Linglib.Fragments.Italian.ClassifierSystem
 import Linglib.Fragments.Mandarin.ClassifierSystem
 import Linglib.Fragments.Japanese.ClassifierSystem

@@ -7,7 +7,7 @@ import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
-import Linglib.Fragments.French.Modals
+import Linglib.Fragments.Romance.French.Modals
 import Mathlib.Data.Fin.Basic
 
 /-!

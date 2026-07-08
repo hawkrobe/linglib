@@ -1,7 +1,7 @@
 import Linglib.Data.WALS.Features.F77A
 import Linglib.Data.WALS.Features.F78A
 import Linglib.Semantics.Evidential.Basic
-import Linglib.Fragments.French.Evidentiality
+import Linglib.Fragments.Romance.French.Evidentiality
 import Linglib.Fragments.Japanese.Evidentiality
 import Linglib.Fragments.Turkish.Evidentiality
 import Linglib.Fragments.Slavic.Bulgarian.Evidentiality

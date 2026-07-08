@@ -3,7 +3,7 @@ import Linglib.Fragments.German.Phonology
 import Linglib.Fragments.Finnish.Phonology
 import Linglib.Fragments.Turkish.Phonology
 import Linglib.Fragments.Slavic.Russian.Phonology
-import Linglib.Fragments.French.Phonology
+import Linglib.Fragments.Romance.French.Phonology
 import Linglib.Fragments.Spanish.Phonology
 import Linglib.Fragments.Japanese.Phonology
 import Linglib.Fragments.Mandarin.Phonology

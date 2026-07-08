@@ -40,7 +40,7 @@ import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Japanese.Pronouns
 import Linglib.Fragments.Tamil.Pronouns
-import Linglib.Fragments.Galician.Pronouns
+import Linglib.Fragments.Romance.Galician.Pronouns
 import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
