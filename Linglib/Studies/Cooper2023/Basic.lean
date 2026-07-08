@@ -1,6 +1,6 @@
 import Linglib.Studies.Cooper2023.Ch8
 import Linglib.Studies.Cooper2023.Ch7
-import Linglib.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Studies.Chomsky1981
 import Linglib.Data.Examples.Geach1962
 import Linglib.Data.Examples.Kanazawa1994
@@ -22,7 +22,7 @@ Per-datum verification: each theorem verifies one data point
 against TTR predictions.
 
 §§ 4–5 establish the truth-conditional bridge from CDRT
-(Dynamic/CDRT/Basic.lean, [muskens-1996]) to TTR for the existential
+(Dynamic/CDRT.lean, [muskens-1996]) to TTR for the existential
 and donkey-implication core, and the divergence under negation: TTR and
 CDRT agree on truth conditions but differ on anaphoric potential
 (state-threading vs. type-structure). This is the formal correspondence
@@ -160,7 +160,7 @@ theorem reflexive_predicts_binding :
 -- § 4. Truth-Conditional Bridge: CDRT ↔ TTR
 -- ════════════════════════════════════════════════════════════════
 
-/-! CDRT (Dynamic/CDRT/Basic.lean, [muskens-1996]) and TTR
+/-! CDRT (Dynamic/CDRT.lean, [muskens-1996]) and TTR
 (TypeTheoretic/, [cooper-2023]) handle overlapping anaphora
 phenomena — discourse referents, donkey anaphora, cross-sentential
 binding — with no shared infrastructure. This section proves they

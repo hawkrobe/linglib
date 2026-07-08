@@ -1626,7 +1626,7 @@ import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Dynamic.Bilateral
-import Linglib.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Dynamic.ContextFilter
 import Linglib.Semantics.Dynamic.DPL
