@@ -83,49 +83,48 @@ For an atomic proposition p:
 - s[p]⁺ = { w ∈ s | p(w) } (keep worlds where p holds)
 - s[p]⁻ = { w ∈ s | ¬p(w) } (keep worlds where p fails)
 -/
-def atom (pred : W → Bool) : BilateralDen W E :=
+def atom (pred : W → Prop) : BilateralDen W E :=
   { positive := λ s => s.update pred
-  , negative := λ s => s.update (λ w => !pred w) }
+  , negative := λ s => s.update (λ w => ¬ pred w) }
 
 /-- Atomic positive and negative are complementary -/
-theorem atom_complementary (pred : W → Bool) (s : InfoState W E) :
+theorem atom_complementary (pred : W → Prop) (s : InfoState W E) :
     (atom pred).positive s ∪ (atom pred).negative s = s := by
   ext p
   simp only [atom, InfoState.update, Set.mem_union, Set.mem_setOf_eq]
   constructor
   · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
   · intro h
-    cases hp : pred p.world
-    · right; exact ⟨h, by simp [hp]⟩
-    · left; exact ⟨h, by simp [hp]⟩
+    by_cases hp : pred p.world
+    · left; exact ⟨h, hp⟩
+    · right; exact ⟨h, hp⟩
 
 /-- Atomic positive and negative are disjoint -/
-theorem atom_disjoint (pred : W → Bool) (s : InfoState W E) :
+theorem atom_disjoint (pred : W → Prop) (s : InfoState W E) :
     (atom pred).positive s ∩ (atom pred).negative s = ∅ := by
   ext p
   constructor
   · intro ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩
-    simp only [atom, InfoState.update, Set.mem_setOf_eq, Bool.not_eq_true] at hp hnp
-    simp_all
+    exact absurd hp hnp
   · intro h; exact h.elim
 
 /-- Atomic positive update is monotone. -/
-theorem atom_positive_monotone (pred : W → Bool) :
+theorem atom_positive_monotone (pred : W → Prop) :
     Monotone (atom pred).positive (α := InfoState W E) :=
   sep_monotone _
 
 /-- Atomic negative update is monotone. -/
-theorem atom_negative_monotone (pred : W → Bool) :
+theorem atom_negative_monotone (pred : W → Prop) :
     Monotone (atom pred).negative (α := InfoState W E) :=
   sep_monotone _
 
 /-- Atomic positive update is eliminative. -/
-theorem atom_positive_eliminative (pred : W → Bool) :
+theorem atom_positive_eliminative (pred : W → Prop) :
     IsEliminative (atom pred).positive (P := Possibility W E) :=
   sep_eliminative _
 
 /-- Atomic negative update is eliminative. -/
-theorem atom_negative_eliminative (pred : W → Bool) :
+theorem atom_negative_eliminative (pred : W → Prop) :
     IsEliminative (atom pred).negative (P := Possibility W E) :=
   sep_eliminative _
 
@@ -184,13 +183,15 @@ theorem unknownUpdate_neg (φ : BilateralDen W E) (s : InfoState W E) :
   simp only [unknownUpdate, neg, Set.mem_setOf_eq, and_comm (a := p ∉ φ.negative s)]
 
 /-- For atomic propositions, the unknown update is empty. -/
-theorem unknownUpdate_atom (pred : W → Bool) (s : InfoState W E) :
+theorem unknownUpdate_atom (pred : W → Prop) (s : InfoState W E) :
     unknownUpdate (atom pred) s = ∅ := by
   ext p
   simp only [unknownUpdate, atom, InfoState.update, Set.mem_setOf_eq,
-    Set.mem_empty_iff_false, iff_false, not_and, Bool.not_eq_true]
-  intro hp
-  cases pred p.world <;> simp_all
+    Set.mem_empty_iff_false, iff_false, not_and]
+  intro hp hpos hneg
+  by_cases h : pred p.world
+  · exact hpos hp h
+  · exact hneg hp h
 
 /--
 Assertability condition: φ is assertable at context c iff the unknown

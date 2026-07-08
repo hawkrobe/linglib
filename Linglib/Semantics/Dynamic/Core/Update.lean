@@ -16,7 +16,7 @@ open InfoState
 
 
 /-- Update state with proposition: keep only possibilities where φ holds. -/
-def InfoState.update {W E : Type*} (s : InfoState W E) (φ : W → Bool) : InfoState W E :=
+def InfoState.update {W E : Type*} (s : InfoState W E) (φ : W → Prop) : InfoState W E :=
   { p ∈ s | φ p.world }
 
 notation:max s "⟦" φ "⟧" => InfoState.update s φ
@@ -26,16 +26,16 @@ namespace InfoState
 variable {W E : Type*}
 
 /-- Propositional update is monotone in the state argument. -/
-theorem update_monotone (φ : W → Bool) : Monotone (· ⟦φ⟧ : InfoState W E → InfoState W E) :=
+theorem update_monotone (φ : W → Prop) : Monotone (· ⟦φ⟧ : InfoState W E → InfoState W E) :=
   sep_monotone _
 
 /-- Update is monotonic: larger states give larger results -/
-theorem update_mono {s s' : InfoState W E} (h : s ⊆ s') (φ : W → Bool) :
+theorem update_mono {s s' : InfoState W E} (h : s ⊆ s') (φ : W → Prop) :
     s⟦φ⟧ ⊆ s'⟦φ⟧ :=
   update_monotone φ h
 
 /-- Update is idempotent -/
-theorem update_update (s : InfoState W E) (φ : W → Bool) :
+theorem update_update (s : InfoState W E) (φ : W → Prop) :
     s⟦φ⟧⟦φ⟧ = s⟦φ⟧ := by
   ext p
   simp only [update, Set.mem_setOf_eq]
@@ -44,40 +44,39 @@ theorem update_update (s : InfoState W E) (φ : W → Bool) :
   · intro ⟨hs, hφ⟩; exact ⟨⟨hs, hφ⟩, hφ⟩
 
 /-- Sequential update = conjunction -/
-theorem update_seq (s : InfoState W E) (φ ψ : W → Bool) :
-    s⟦φ⟧⟦ψ⟧ = s⟦λ w => φ w && ψ w⟧ := by
+theorem update_seq (s : InfoState W E) (φ ψ : W → Prop) :
+    s⟦φ⟧⟦ψ⟧ = s⟦λ w => φ w ∧ ψ w⟧ := by
   ext p
-  simp only [update, Set.mem_setOf_eq, Bool.and_eq_true]
+  simp only [update, Set.mem_setOf_eq]
   constructor
   · intro ⟨⟨hs, hφ⟩, hψ⟩; exact ⟨hs, hφ, hψ⟩
   · intro ⟨hs, hφ, hψ⟩; exact ⟨⟨hs, hφ⟩, hψ⟩
 
 /-- Update preserves definedness -/
-theorem update_preserves_defined (s : InfoState W E) (φ : W → Bool) (x : Nat)
+theorem update_preserves_defined (s : InfoState W E) (φ : W → Prop) (x : Nat)
     (h : s.definedAt x) : s⟦φ⟧.definedAt x := by
   intro p q hp hq
   exact h p q hp.1 hq.1
 
 /-- s[φ] ⊫ φ -/
-theorem update_supports (s : InfoState W E) (φ : W → Bool) : s⟦φ⟧ ⊫ φ := by
+theorem update_supports (s : InfoState W E) (φ : W → Prop) : s⟦φ⟧ ⊫ φ := by
   intro p ⟨_, hφ⟩
   exact hφ
 
 /-- Dynamic entailment for propositions. -/
-def dynamicEntails (φ ψ : W → Bool) : Prop :=
+def dynamicEntails (φ ψ : W → Prop) : Prop :=
   ∀ s : InfoState W E, (s⟦φ⟧).consistent → s⟦φ⟧ ⊫ ψ
 
 /-- Any proposition dynamically entails itself -/
-theorem dynamicEntails_refl (φ : W → Bool) : dynamicEntails (W := W) (E := E) φ φ := by
+theorem dynamicEntails_refl (φ : W → Prop) : dynamicEntails (W := W) (E := E) φ φ := by
   intro s _
   exact update_supports s φ
 
 /-- φ dynamically entails φ ∧ ψ when φ entails ψ -/
-theorem dynamicEntails_conj (φ ψ : W → Bool)
+theorem dynamicEntails_conj (φ ψ : W → Prop)
     (h : dynamicEntails (W := W) (E := E) φ ψ) :
-    dynamicEntails (W := W) (E := E) φ (λ w => φ w && ψ w) := by
+    dynamicEntails (W := W) (E := E) φ (λ w => φ w ∧ ψ w) := by
   intro s hcons p hp
-  simp only [Bool.and_eq_true]
   constructor
   · exact update_supports s φ p hp
   · exact h s hcons p hp
@@ -137,19 +136,19 @@ def CCP.existsFull {W E : Type*} (x : Nat)
 /--
 Lift a classical proposition to a CCP.
 -/
-def CCP.ofProp {W E : Type*} (φ : W → Bool) : CCP (Possibility W E) :=
+def CCP.ofProp {W E : Type*} (φ : W → Prop) : CCP (Possibility W E) :=
   λ (s : InfoState W E) => s⟦φ⟧
 
 /--
 Lift a predicate on entities (via variable lookup).
 -/
-def CCP.ofPred1 {W E : Type*} (p : E → W → Bool) (x : Nat) : CCP (Possibility W E) :=
+def CCP.ofPred1 {W E : Type*} (p : E → W → Prop) (x : Nat) : CCP (Possibility W E) :=
   λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) poss.world }
 
 /--
 Lift a binary predicate.
 -/
-def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP (Possibility W E) :=
+def CCP.ofPred2 {W E : Type*} (p : E → E → W → Prop) (x y : Nat) : CCP (Possibility W E) :=
   λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
 
