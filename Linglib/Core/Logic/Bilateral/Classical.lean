@@ -27,7 +27,7 @@ to be propositional negations of each other.
 
 ## Sibling abstraction
 
-`Core.Logic.Bilateral.IsBilateral` (in `Bilateral/Defs.lean`) is the
+`Core.Logic.Bilateral.IsBilateral` (in `Bilateral.lean`) is the
 **paraconsistent** sibling — same shape (negation relates two
 interpretations) but no commitment to classical-style negation.
 

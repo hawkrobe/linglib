@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Core.Update
+import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Algebra.Group.Defs
 
@@ -36,7 +36,7 @@ BilateralDen W E = {
 
 ## Cross-cutting pointers
 
-This is the BUS / bilateral DNE strategy listed in `Dynamic/Connectives/Defs.lean`'s
+This is the BUS / bilateral DNE strategy listed in `Dynamic/Update.lean`'s
 "three incompatible DNE solutions" table. The empirical comparison
 against full ICDRT (which solves disagreement, modal
 subordination, and three-way veridicality on top of DNE + bathroom) is in

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Connectives.Defs
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Core.Logic.Assignment
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
@@ -11,7 +11,7 @@ potentials, the set-transformer view of dynamic meaning), shared by the
 PLA, DRT, DPL, and CDRT formalizations.
 
 The relational `Update S` ([groenendijk-stokhof-1991], [muskens-1996]) of
-`Connectives/Defs.lean` is the primary dynamic type; `CCP` connects to it
+`Update.lean` is the primary dynamic type; `CCP` connects to it
 via `lift R σ = { j | ∃ i ∈ σ, R i j }` and `lower φ i j = j ∈ φ {i}`,
 which form a round-trip pair: `lower ∘ lift = id` everywhere
 (`lower_lift`), and `lift ∘ lower = id` exactly on the distributive CCPs

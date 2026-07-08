@@ -3,7 +3,7 @@ import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Semantics.Dynamic.HasFiberedLookup
 import Linglib.Semantics.Definiteness.Interpret
 
 /-!
