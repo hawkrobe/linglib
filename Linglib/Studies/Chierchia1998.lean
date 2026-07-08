@@ -1,6 +1,6 @@
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Studies.Aikhenvald2000
-import Linglib.Fragments.French.Nouns
+import Linglib.Fragments.Romance.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Italian.Nouns

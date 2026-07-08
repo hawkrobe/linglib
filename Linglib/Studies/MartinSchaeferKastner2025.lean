@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Fragments.French.Predicates
+import Linglib.Fragments.Romance.French.Predicates
 
 /-!
 # [martin-schaefer-kastner-2025] — The Lexical Pragmatics of Reflexive Marking

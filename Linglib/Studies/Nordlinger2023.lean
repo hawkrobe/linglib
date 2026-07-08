@@ -5,7 +5,7 @@ import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.Chichewa.Reciprocals
-import Linglib.Fragments.French.Reciprocals
+import Linglib.Fragments.Romance.French.Reciprocals
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.Greek.StandardModern.Reciprocals
 import Linglib.Fragments.Hungarian.Reciprocals

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Negation
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.German.Negation
-import Linglib.Fragments.French.Negation
+import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Slavic.Russian.Negation
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Japanese.Negation

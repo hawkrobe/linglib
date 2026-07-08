@@ -7,7 +7,7 @@ import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.Japanese.Negation
 import Linglib.Fragments.Turkish.Negation
-import Linglib.Fragments.French.Negation
+import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Mandarin.Negation

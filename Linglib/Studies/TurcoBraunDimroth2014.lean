@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Marking
 import Mathlib.Tactic.NormNum
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
-import Linglib.Fragments.French.PolarityMarking
+import Linglib.Fragments.Romance.French.PolarityMarking
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking

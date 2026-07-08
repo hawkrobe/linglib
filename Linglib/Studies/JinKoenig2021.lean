@@ -7,7 +7,7 @@ import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Syntax.Negation
-import Linglib.Fragments.French.Negation
+import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.ZarmaSonrai.Negation

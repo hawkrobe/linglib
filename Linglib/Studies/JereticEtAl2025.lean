@@ -4,7 +4,7 @@ import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Competition
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Pragmatics.AvoidAmbiguity
-import Linglib.Fragments.French.Determiners
+import Linglib.Fragments.Romance.French.Determiners
 import Linglib.Fragments.English.Determiners
 
 /-!

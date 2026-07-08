@@ -1,6 +1,6 @@
 import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Mood.SpeechEvent
-import Linglib.Fragments.French.Modals
+import Linglib.Fragments.Romance.French.Modals
 
 /-!
 # [ruytenbeek-etal-2017]: Indirect Request Processing, Sentence Types

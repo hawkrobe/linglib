@@ -15,7 +15,7 @@ import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Tagalog.Comparison
 import Linglib.Fragments.Arabic.ModernStandard.Comparison
 import Linglib.Fragments.Navajo.Comparison
-import Linglib.Fragments.French.Comparison
+import Linglib.Fragments.Romance.French.Comparison
 
 /-!
 # Stassen (2013): WALS chapter 121 on comparative constructions
