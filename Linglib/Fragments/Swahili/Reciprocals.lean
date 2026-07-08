@@ -1,4 +1,5 @@
 import Linglib.Morphology.MorphRule
+import Linglib.Syntax.Reciprocal
 
 /-!
 # Swahili Reciprocal Fragment
@@ -47,5 +48,15 @@ theorem recip_distinct_from_reflexive :
 theorem both_valence_changing :
     reciprocalAffix.category = .valence ∧
     reflexivePrefix.category = .valence := ⟨rfl, rfl⟩
+
+open Reciprocal
+
+/-- The reciprocal suffix as a typological marker (distinct from the
+    reflexive *-ji-*). -/
+def anSuffix : ReciprocalMarker :=
+  { form := "-an-", strategy := .verbalAffix }
+
+/-- Marker inventory. -/
+def markers : List ReciprocalMarker := [anSuffix]
 
 end Swahili.Reciprocals

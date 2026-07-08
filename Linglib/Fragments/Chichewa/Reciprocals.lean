@@ -1,4 +1,5 @@
 import Linglib.Morphology.MorphRule
+import Linglib.Syntax.Reciprocal
 
 /-!
 # Chicheŵa Reciprocal Fragment
@@ -41,5 +42,15 @@ def reflexivePrefix : MorphRule Bool :=
 /-- Reciprocal and reflexive are formally distinct in Chicheŵa. -/
 theorem recip_distinct_from_reflexive :
     reciprocalAffix.value ≠ reflexivePrefix.value := by decide
+
+open Reciprocal
+
+/-- The reciprocal suffix as a typological marker (distinct from the
+    reflexive *dzi-*). -/
+def anSuffix : ReciprocalMarker :=
+  { form := "-an-", strategy := .verbalAffix }
+
+/-- Marker inventory. -/
+def markers : List ReciprocalMarker := [anSuffix]
 
 end Chichewa.Reciprocals

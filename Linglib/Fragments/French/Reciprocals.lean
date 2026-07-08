@@ -1,4 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Reciprocal
 
 /-!
 # French Reciprocal Fragment
@@ -19,18 +20,22 @@ WALS Ch 106 classifying French as "mixed."
 
 namespace French.Reciprocals
 
-open Pronoun
+open Reciprocal
 
-/-- se — reflexive/reciprocal clitic (monovalent strategy). -/
-def se : PersonalPronoun :=
-  { form := "se", person := some .third }
+/-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 28, 47). -/
+def se : ReciprocalMarker :=
+  { form := "se", strategy := .recipClitic
+  , readings := [.reciprocal, .reflexive] }
 
-/-- l'un l'autre — bipartite reciprocal NP (bivalent strategy). -/
-def lunLautre : PersonalPronoun :=
-  { form := "l'un l'autre", person := some .third, number := some .plural }
+/-- l'un l'autre — bipartite reciprocal NP. -/
+def lunLautre : ReciprocalMarker :=
+  { form := "l'un l'autre", strategy := .bipartiteNP }
 
 /-- The bipartite NP form is distinct from the clitic. -/
 theorem bipartite_distinct_from_clitic :
     lunLautre.form ≠ se.form := by decide
+
+/-- Marker inventory, primary strategy first. -/
+def markers : List ReciprocalMarker := [se, lunLautre]
 
 end French.Reciprocals
